@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpsettingseditor.c
- * Copyright (C) 2008-2011 Michael Natterer <mitch@gimp.org>
+ * picmansettingseditor.c
+ * Copyright (C) 2008-2011 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,43 +25,43 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimplist.h"
-#include "core/gimpviewable.h"
+#include "core/picman.h"
+#include "core/picmanlist.h"
+#include "core/picmanviewable.h"
 
-#include "gimpcontainertreestore.h"
-#include "gimpcontainertreeview.h"
-#include "gimpcontainerview.h"
-#include "gimpsettingseditor.h"
-#include "gimpviewrenderer.h"
-#include "gimpwidgets-utils.h"
+#include "picmancontainertreestore.h"
+#include "picmancontainertreeview.h"
+#include "picmancontainerview.h"
+#include "picmansettingseditor.h"
+#include "picmanviewrenderer.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
 {
   PROP_0,
-  PROP_GIMP,
+  PROP_PICMAN,
   PROP_CONFIG,
   PROP_CONTAINER,
   PROP_FILENAME
 };
 
 
-typedef struct _GimpSettingsEditorPrivate GimpSettingsEditorPrivate;
+typedef struct _PicmanSettingsEditorPrivate PicmanSettingsEditorPrivate;
 
-struct _GimpSettingsEditorPrivate
+struct _PicmanSettingsEditorPrivate
 {
-  Gimp          *gimp;
+  Picman          *picman;
   GObject       *config;
-  GimpContainer *container;
+  PicmanContainer *container;
   GObject       *selected_setting;
 
   GtkWidget     *view;
@@ -71,82 +71,82 @@ struct _GimpSettingsEditorPrivate
 };
 
 #define GET_PRIVATE(item) G_TYPE_INSTANCE_GET_PRIVATE (item, \
-                                                       GIMP_TYPE_SETTINGS_EDITOR, \
-                                                       GimpSettingsEditorPrivate)
+                                                       PICMAN_TYPE_SETTINGS_EDITOR, \
+                                                       PicmanSettingsEditorPrivate)
 
 
-static void   gimp_settings_editor_constructed    (GObject             *object);
-static void   gimp_settings_editor_finalize       (GObject             *object);
-static void   gimp_settings_editor_set_property   (GObject             *object,
+static void   picman_settings_editor_constructed    (GObject             *object);
+static void   picman_settings_editor_finalize       (GObject             *object);
+static void   picman_settings_editor_set_property   (GObject             *object,
                                                    guint                property_id,
                                                    const GValue        *value,
                                                    GParamSpec          *pspec);
-static void   gimp_settings_editor_get_property   (GObject             *object,
+static void   picman_settings_editor_get_property   (GObject             *object,
                                                    guint                property_id,
                                                    GValue              *value,
                                                    GParamSpec          *pspec);
 
 static gboolean
-          gimp_settings_editor_row_separator_func (GtkTreeModel        *model,
+          picman_settings_editor_row_separator_func (GtkTreeModel        *model,
                                                    GtkTreeIter         *iter,
                                                    gpointer             data);
-static void   gimp_settings_editor_select_item    (GimpContainerView   *view,
-                                                   GimpViewable        *viewable,
+static void   picman_settings_editor_select_item    (PicmanContainerView   *view,
+                                                   PicmanViewable        *viewable,
                                                    gpointer             insert_data,
-                                                   GimpSettingsEditor  *editor);
-static void   gimp_settings_editor_import_clicked (GtkWidget           *widget,
-                                                   GimpSettingsEditor  *editor);
-static void   gimp_settings_editor_export_clicked (GtkWidget           *widget,
-                                                   GimpSettingsEditor  *editor);
-static void   gimp_settings_editor_delete_clicked (GtkWidget           *widget,
-                                                   GimpSettingsEditor  *editor);
-static void   gimp_settings_editor_name_edited    (GtkCellRendererText *cell,
+                                                   PicmanSettingsEditor  *editor);
+static void   picman_settings_editor_import_clicked (GtkWidget           *widget,
+                                                   PicmanSettingsEditor  *editor);
+static void   picman_settings_editor_export_clicked (GtkWidget           *widget,
+                                                   PicmanSettingsEditor  *editor);
+static void   picman_settings_editor_delete_clicked (GtkWidget           *widget,
+                                                   PicmanSettingsEditor  *editor);
+static void   picman_settings_editor_name_edited    (GtkCellRendererText *cell,
                                                    const gchar         *path_str,
                                                    const gchar         *new_name,
-                                                   GimpSettingsEditor  *editor);
+                                                   PicmanSettingsEditor  *editor);
 
 
-G_DEFINE_TYPE (GimpSettingsEditor, gimp_settings_editor, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanSettingsEditor, picman_settings_editor, GTK_TYPE_BOX)
 
-#define parent_class gimp_settings_editor_parent_class
+#define parent_class picman_settings_editor_parent_class
 
 
 static void
-gimp_settings_editor_class_init (GimpSettingsEditorClass *klass)
+picman_settings_editor_class_init (PicmanSettingsEditorClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_settings_editor_constructed;
-  object_class->finalize     = gimp_settings_editor_finalize;
-  object_class->set_property = gimp_settings_editor_set_property;
-  object_class->get_property = gimp_settings_editor_get_property;
+  object_class->constructed  = picman_settings_editor_constructed;
+  object_class->finalize     = picman_settings_editor_finalize;
+  object_class->set_property = picman_settings_editor_set_property;
+  object_class->get_property = picman_settings_editor_get_property;
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp",
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_CONFIG,
                                    g_param_spec_object ("config",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_CONFIG,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_CONFIG,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_CONTAINER,
                                    g_param_spec_object ("container",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_CONTAINER,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_CONTAINER,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
-  g_type_class_add_private (klass, sizeof (GimpSettingsEditorPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanSettingsEditorPrivate));
 }
 
 static void
-gimp_settings_editor_init (GimpSettingsEditor *editor)
+picman_settings_editor_init (PicmanSettingsEditor *editor)
 {
   gtk_orientable_set_orientation (GTK_ORIENTABLE (editor),
                                   GTK_ORIENTATION_VERTICAL);
@@ -155,63 +155,63 @@ gimp_settings_editor_init (GimpSettingsEditor *editor)
 }
 
 static void
-gimp_settings_editor_constructed (GObject *object)
+picman_settings_editor_constructed (GObject *object)
 {
-  GimpSettingsEditor        *editor  = GIMP_SETTINGS_EDITOR (object);
-  GimpSettingsEditorPrivate *private = GET_PRIVATE (object);
-  GimpContainerTreeView     *tree_view;
+  PicmanSettingsEditor        *editor  = PICMAN_SETTINGS_EDITOR (object);
+  PicmanSettingsEditorPrivate *private = GET_PRIVATE (object);
+  PicmanContainerTreeView     *tree_view;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_GIMP (private->gimp));
-  g_assert (GIMP_IS_CONFIG (private->config));
-  g_assert (GIMP_IS_CONTAINER (private->container));
+  g_assert (PICMAN_IS_PICMAN (private->picman));
+  g_assert (PICMAN_IS_CONFIG (private->config));
+  g_assert (PICMAN_IS_CONTAINER (private->container));
 
-  private->view = gimp_container_tree_view_new (private->container,
-                                                gimp_get_user_context (private->gimp),
+  private->view = picman_container_tree_view_new (private->container,
+                                                picman_get_user_context (private->picman),
                                                16, 0);
   gtk_widget_set_size_request (private->view, 200, 200);
   gtk_box_pack_start (GTK_BOX (editor), private->view, TRUE, TRUE, 0);
   gtk_widget_show (private->view);
 
-  tree_view = GIMP_CONTAINER_TREE_VIEW (private->view);
+  tree_view = PICMAN_CONTAINER_TREE_VIEW (private->view);
 
   gtk_tree_view_set_row_separator_func (tree_view->view,
-                                        gimp_settings_editor_row_separator_func,
+                                        picman_settings_editor_row_separator_func,
                                         private->view, NULL);
 
   g_signal_connect (tree_view, "select-item",
-                    G_CALLBACK (gimp_settings_editor_select_item),
+                    G_CALLBACK (picman_settings_editor_select_item),
                     editor);
 
-  gimp_container_tree_view_connect_name_edited (tree_view,
-                                                G_CALLBACK (gimp_settings_editor_name_edited),
+  picman_container_tree_view_connect_name_edited (tree_view,
+                                                G_CALLBACK (picman_settings_editor_name_edited),
                                                 editor);
 
   private->import_button =
-    gimp_editor_add_button (GIMP_EDITOR (tree_view),
+    picman_editor_add_button (PICMAN_EDITOR (tree_view),
                             GTK_STOCK_OPEN,
                             _("Import settings from a file"),
                             NULL,
-                            G_CALLBACK (gimp_settings_editor_import_clicked),
+                            G_CALLBACK (picman_settings_editor_import_clicked),
                             NULL,
                             editor);
 
   private->export_button =
-    gimp_editor_add_button (GIMP_EDITOR (tree_view),
+    picman_editor_add_button (PICMAN_EDITOR (tree_view),
                             GTK_STOCK_SAVE,
                             _("Export the selected settings to a file"),
                             NULL,
-                            G_CALLBACK (gimp_settings_editor_export_clicked),
+                            G_CALLBACK (picman_settings_editor_export_clicked),
                             NULL,
                             editor);
 
   private->delete_button =
-    gimp_editor_add_button (GIMP_EDITOR (tree_view),
+    picman_editor_add_button (PICMAN_EDITOR (tree_view),
                             GTK_STOCK_DELETE,
                             _("Delete the selected settings"),
                             NULL,
-                            G_CALLBACK (gimp_settings_editor_delete_clicked),
+                            G_CALLBACK (picman_settings_editor_delete_clicked),
                             NULL,
                             editor);
 
@@ -219,9 +219,9 @@ gimp_settings_editor_constructed (GObject *object)
 }
 
 static void
-gimp_settings_editor_finalize (GObject *object)
+picman_settings_editor_finalize (GObject *object)
 {
-  GimpSettingsEditorPrivate *private = GET_PRIVATE (object);
+  PicmanSettingsEditorPrivate *private = GET_PRIVATE (object);
 
   if (private->config)
     {
@@ -239,17 +239,17 @@ gimp_settings_editor_finalize (GObject *object)
 }
 
 static void
-gimp_settings_editor_set_property (GObject      *object,
+picman_settings_editor_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpSettingsEditorPrivate *private = GET_PRIVATE (object);
+  PicmanSettingsEditorPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      private->gimp = g_value_get_object (value); /* don't dup */
+    case PROP_PICMAN:
+      private->picman = g_value_get_object (value); /* don't dup */
       break;
 
     case PROP_CONFIG:
@@ -267,17 +267,17 @@ gimp_settings_editor_set_property (GObject      *object,
 }
 
 static void
-gimp_settings_editor_get_property (GObject    *object,
+picman_settings_editor_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpSettingsEditorPrivate *private = GET_PRIVATE (object);
+  PicmanSettingsEditorPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      g_value_set_object (value, private->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, private->picman);
       break;
 
     case PROP_CONFIG:
@@ -295,14 +295,14 @@ gimp_settings_editor_get_property (GObject    *object,
 }
 
 static gboolean
-gimp_settings_editor_row_separator_func (GtkTreeModel *model,
+picman_settings_editor_row_separator_func (GtkTreeModel *model,
                                          GtkTreeIter  *iter,
                                          gpointer      data)
 {
   gchar *name = NULL;
 
   gtk_tree_model_get (model, iter,
-                      GIMP_CONTAINER_TREE_STORE_COLUMN_NAME, &name,
+                      PICMAN_CONTAINER_TREE_STORE_COLUMN_NAME, &name,
                       -1);
   g_free (name);
 
@@ -310,89 +310,89 @@ gimp_settings_editor_row_separator_func (GtkTreeModel *model,
 }
 
 static void
-gimp_settings_editor_select_item (GimpContainerView  *view,
-                                  GimpViewable       *viewable,
+picman_settings_editor_select_item (PicmanContainerView  *view,
+                                  PicmanViewable       *viewable,
                                   gpointer            insert_data,
-                                  GimpSettingsEditor *editor)
+                                  PicmanSettingsEditor *editor)
 {
-  GimpSettingsEditorPrivate *private = GET_PRIVATE (editor);
+  PicmanSettingsEditorPrivate *private = GET_PRIVATE (editor);
   gboolean                   sensitive;
 
   private->selected_setting = G_OBJECT (viewable);
 
   sensitive = (private->selected_setting != NULL &&
-               gimp_object_get_name (private->selected_setting));
+               picman_object_get_name (private->selected_setting));
 
   gtk_widget_set_sensitive (private->export_button, sensitive);
   gtk_widget_set_sensitive (private->delete_button, sensitive);
 }
 
 static void
-gimp_settings_editor_import_clicked (GtkWidget          *widget,
-                                     GimpSettingsEditor *editor)
+picman_settings_editor_import_clicked (GtkWidget          *widget,
+                                     PicmanSettingsEditor *editor)
 {
 }
 
 static void
-gimp_settings_editor_export_clicked (GtkWidget          *widget,
-                                     GimpSettingsEditor *editor)
+picman_settings_editor_export_clicked (GtkWidget          *widget,
+                                     PicmanSettingsEditor *editor)
 {
 }
 
 static void
-gimp_settings_editor_delete_clicked (GtkWidget          *widget,
-                                     GimpSettingsEditor *editor)
+picman_settings_editor_delete_clicked (GtkWidget          *widget,
+                                     PicmanSettingsEditor *editor)
 {
-  GimpSettingsEditorPrivate *private = GET_PRIVATE (editor);
+  PicmanSettingsEditorPrivate *private = GET_PRIVATE (editor);
 
   if (private->selected_setting)
     {
-      GimpObject *new;
+      PicmanObject *new;
 
-      new = gimp_container_get_neighbor_of (private->container,
-                                            GIMP_OBJECT (private->selected_setting));
+      new = picman_container_get_neighbor_of (private->container,
+                                            PICMAN_OBJECT (private->selected_setting));
 
       /*  don't select the separator  */
-      if (new && ! gimp_object_get_name (new))
+      if (new && ! picman_object_get_name (new))
         new = NULL;
 
-      gimp_container_remove (private->container,
-                             GIMP_OBJECT (private->selected_setting));
+      picman_container_remove (private->container,
+                             PICMAN_OBJECT (private->selected_setting));
 
-      gimp_container_view_select_item (GIMP_CONTAINER_VIEW (private->view),
-                                       GIMP_VIEWABLE (new));
+      picman_container_view_select_item (PICMAN_CONTAINER_VIEW (private->view),
+                                       PICMAN_VIEWABLE (new));
     }
 }
 
 static void
-gimp_settings_editor_name_edited (GtkCellRendererText *cell,
+picman_settings_editor_name_edited (GtkCellRendererText *cell,
                                   const gchar         *path_str,
                                   const gchar         *new_name,
-                                  GimpSettingsEditor  *editor)
+                                  PicmanSettingsEditor  *editor)
 {
-  GimpSettingsEditorPrivate *private = GET_PRIVATE (editor);
-  GimpContainerTreeView     *tree_view;
+  PicmanSettingsEditorPrivate *private = GET_PRIVATE (editor);
+  PicmanContainerTreeView     *tree_view;
   GtkTreePath               *path;
   GtkTreeIter                iter;
 
-  tree_view = GIMP_CONTAINER_TREE_VIEW (private->view);
+  tree_view = PICMAN_CONTAINER_TREE_VIEW (private->view);
 
   path = gtk_tree_path_new_from_string (path_str);
 
   if (gtk_tree_model_get_iter (tree_view->model, &iter, path))
     {
-      GimpViewRenderer *renderer;
-      GimpObject       *object;
+      PicmanViewRenderer *renderer;
+      PicmanObject       *object;
       const gchar      *old_name;
       gchar            *name;
 
       gtk_tree_model_get (tree_view->model, &iter,
-                          GIMP_CONTAINER_TREE_STORE_COLUMN_RENDERER, &renderer,
+                          PICMAN_CONTAINER_TREE_STORE_COLUMN_RENDERER, &renderer,
                           -1);
 
-      object = GIMP_OBJECT (renderer->viewable);
+      object = PICMAN_OBJECT (renderer->viewable);
 
-      old_name = gimp_object_get_name (object);
+      old_name = picman_object_get_name (object);
 
       if (! old_name) old_name = "";
       if (! new_name) new_name = "";
@@ -409,15 +409,15 @@ gimp_settings_editor_name_edited (GtkCellRendererText *cell,
             g_object_set (object, "time", 0, NULL);
 
           /*  set name after time so the object is reordered correctly  */
-          gimp_object_take_name (object, name);
+          picman_object_take_name (object, name);
         }
       else
         {
           g_free (name);
 
-          name = gimp_viewable_get_description (renderer->viewable, NULL);
+          name = picman_viewable_get_description (renderer->viewable, NULL);
           gtk_tree_store_set (GTK_TREE_STORE (tree_view->model), &iter,
-                              GIMP_CONTAINER_TREE_STORE_COLUMN_NAME, name,
+                              PICMAN_CONTAINER_TREE_STORE_COLUMN_NAME, name,
                               -1);
           g_free (name);
         }
@@ -432,16 +432,16 @@ gimp_settings_editor_name_edited (GtkCellRendererText *cell,
 /*  public functions  */
 
 GtkWidget *
-gimp_settings_editor_new (Gimp          *gimp,
+picman_settings_editor_new (Picman          *picman,
                           GObject       *config,
-                          GimpContainer *container)
+                          PicmanContainer *container)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (GIMP_IS_CONFIG (config), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTAINER (container), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONFIG (config), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTAINER (container), NULL);
 
-  return g_object_new (GIMP_TYPE_SETTINGS_EDITOR,
-                       "gimp",      gimp,
+  return g_object_new (PICMAN_TYPE_SETTINGS_EDITOR,
+                       "picman",      picman,
                        "config",    config,
                        "container", container,
                        NULL);

@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpzoommodel.h
- * Copyright (C) 2005  David Odin <dindinx@gimp.org>
+ * picmanzoommodel.h
+ * Copyright (C) 2005  David Odin <dindinx@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,27 +19,27 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_ZOOM_MODEL_H__
-#define __GIMP_ZOOM_MODEL_H__
+#ifndef __PICMAN_ZOOM_MODEL_H__
+#define __PICMAN_ZOOM_MODEL_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_ZOOM_MODEL            (gimp_zoom_model_get_type ())
-#define GIMP_ZOOM_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ZOOM_MODEL, GimpZoomModel))
-#define GIMP_ZOOM_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ZOOM_MODEL, GimpZoomModelClass))
-#define GIMP_IS_ZOOM_MODEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ZOOM_MODEL))
-#define GIMP_IS_ZOOM_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ZOOM_MODEL))
-#define GIMP_ZOOM_MODEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ZOOM_MODEL, GimpZoomModel))
+#define PICMAN_TYPE_ZOOM_MODEL            (picman_zoom_model_get_type ())
+#define PICMAN_ZOOM_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ZOOM_MODEL, PicmanZoomModel))
+#define PICMAN_ZOOM_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ZOOM_MODEL, PicmanZoomModelClass))
+#define PICMAN_IS_ZOOM_MODEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ZOOM_MODEL))
+#define PICMAN_IS_ZOOM_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ZOOM_MODEL))
+#define PICMAN_ZOOM_MODEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ZOOM_MODEL, PicmanZoomModel))
 
 
-typedef struct _GimpZoomModelClass  GimpZoomModelClass;
+typedef struct _PicmanZoomModelClass  PicmanZoomModelClass;
 
-struct _GimpZoomModel
+struct _PicmanZoomModel
 {
   GObject   parent_instance;
 
@@ -47,43 +47,43 @@ struct _GimpZoomModel
   gpointer  priv;
 };
 
-struct _GimpZoomModelClass
+struct _PicmanZoomModelClass
 {
   GObjectClass  parent_class;
 
-  void (* zoomed) (GimpZoomModel *model,
+  void (* zoomed) (PicmanZoomModel *model,
                    gdouble        old_factor,
                    gdouble        new_factor);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType           gimp_zoom_model_get_type     (void) G_GNUC_CONST;
+GType           picman_zoom_model_get_type     (void) G_GNUC_CONST;
 
-GimpZoomModel * gimp_zoom_model_new          (void);
-void            gimp_zoom_model_set_range    (GimpZoomModel      *model,
+PicmanZoomModel * picman_zoom_model_new          (void);
+void            picman_zoom_model_set_range    (PicmanZoomModel      *model,
                                               gdouble             min,
                                               gdouble             max);
-void            gimp_zoom_model_zoom         (GimpZoomModel      *model,
-                                              GimpZoomType        zoom_type,
+void            picman_zoom_model_zoom         (PicmanZoomModel      *model,
+                                              PicmanZoomType        zoom_type,
                                               gdouble             scale);
-gdouble         gimp_zoom_model_get_factor   (GimpZoomModel      *model);
-void            gimp_zoom_model_get_fraction (GimpZoomModel      *model,
+gdouble         picman_zoom_model_get_factor   (PicmanZoomModel      *model);
+void            picman_zoom_model_get_fraction (PicmanZoomModel      *model,
                                               gint               *numerator,
                                               gint               *denominator);
 
-GtkWidget     * gimp_zoom_button_new         (GimpZoomModel      *model,
-                                              GimpZoomType        zoom_type,
+GtkWidget     * picman_zoom_button_new         (PicmanZoomModel      *model,
+                                              PicmanZoomType        zoom_type,
                                               GtkIconSize         icon_size);
 
-gdouble         gimp_zoom_model_zoom_step    (GimpZoomType        zoom_type,
+gdouble         picman_zoom_model_zoom_step    (PicmanZoomType        zoom_type,
                                               gdouble             scale);
 
 G_END_DECLS
 
-#endif /* __GIMP_ZOOM_MODEL_H__ */
+#endif /* __PICMAN_ZOOM_MODEL_H__ */

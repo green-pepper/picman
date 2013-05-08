@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpoldwidgets.h
- * Copyright (C) 2000 Michael Natterer <mitch@gimp.org>
+ * picmanoldwidgets.h
+ * Copyright (C) 2000 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,14 +23,14 @@
  *  written code.
  */
 
-#ifndef GIMP_DISABLE_DEPRECATED
+#ifndef PICMAN_DISABLE_DEPRECATED
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_OLD_WIDGETS_H__
-#define __GIMP_OLD_WIDGETS_H__
+#ifndef __PICMAN_OLD_WIDGETS_H__
+#define __PICMAN_OLD_WIDGETS_H__
 
 G_BEGIN_DECLS
 
@@ -39,7 +39,7 @@ G_BEGIN_DECLS
  *  Widget Constructors
  */
 
-GtkWidget * gimp_int_option_menu_new         (gboolean        menu_only,
+GtkWidget * picman_int_option_menu_new         (gboolean        menu_only,
                                               GCallback       menu_item_callback,
                                               gpointer        menu_item_callback_data,
                                               gint            initial, /* item_data */
@@ -52,18 +52,18 @@ GtkWidget * gimp_int_option_menu_new         (gboolean        menu_only,
 
                                               ...) G_GNUC_NULL_TERMINATED;
 
-void        gimp_int_option_menu_set_history (GtkOptionMenu  *option_menu,
+void        picman_int_option_menu_set_history (GtkOptionMenu  *option_menu,
                                               gint            item_data);
 
-typedef gboolean (* GimpIntOptionMenuSensitivityCallback) (gint     item_data,
+typedef gboolean (* PicmanIntOptionMenuSensitivityCallback) (gint     item_data,
                                                            gpointer callback_data);
 
-void  gimp_int_option_menu_set_sensitive (GtkOptionMenu    *option_menu,
-                                          GimpIntOptionMenuSensitivityCallback callback,
+void  picman_int_option_menu_set_sensitive (GtkOptionMenu    *option_menu,
+                                          PicmanIntOptionMenuSensitivityCallback callback,
                                           gpointer          callback_data);
 
 
-GtkWidget * gimp_option_menu_new     (gboolean         menu_only,
+GtkWidget * picman_option_menu_new     (gboolean         menu_only,
 
                                       /* specify menu items as va_list:
                                        *  gchar       *label,
@@ -75,7 +75,7 @@ GtkWidget * gimp_option_menu_new     (gboolean         menu_only,
                                        */
 
                                       ...) G_GNUC_NULL_TERMINATED;
-GtkWidget * gimp_option_menu_new2    (gboolean          menu_only,
+GtkWidget * picman_option_menu_new2    (gboolean          menu_only,
                                       GCallback         menu_item_callback,
                                       gpointer          menu_item_callback_data,
                                       gpointer          initial, /* item_data */
@@ -86,22 +86,22 @@ GtkWidget * gimp_option_menu_new2    (gboolean          menu_only,
                                        *  GtkWidget   **widget_ptr,
                                        */
                                       ...) G_GNUC_NULL_TERMINATED;
-void  gimp_option_menu_set_history   (GtkOptionMenu    *option_menu,
+void  picman_option_menu_set_history   (GtkOptionMenu    *option_menu,
                                       gpointer          item_data);
 
 
-typedef gboolean (* GimpOptionMenuSensitivityCallback) (gpointer item_data,
+typedef gboolean (* PicmanOptionMenuSensitivityCallback) (gpointer item_data,
                                                         gpointer callback_data);
 
-void  gimp_option_menu_set_sensitive (GtkOptionMenu    *option_menu,
-                                      GimpOptionMenuSensitivityCallback callback,
+void  picman_option_menu_set_sensitive (GtkOptionMenu    *option_menu,
+                                      PicmanOptionMenuSensitivityCallback callback,
                                       gpointer          callback_data);
 
 
-void   gimp_menu_item_update         (GtkWidget        *widget,
+void   picman_menu_item_update         (GtkWidget        *widget,
                                       gpointer          data);
 
-GtkWidget * gimp_pixmap_button_new   (gchar           **xpm_data,
+GtkWidget * picman_pixmap_button_new   (gchar           **xpm_data,
                                       const gchar      *text);
 
 
@@ -109,14 +109,14 @@ GtkWidget * gimp_pixmap_button_new   (gchar           **xpm_data,
  *  Standard Callbacks
  */
 
-void   gimp_toggle_button_sensitive_update (GtkToggleButton *toggle_button);
+void   picman_toggle_button_sensitive_update (GtkToggleButton *toggle_button);
 
-void   gimp_unit_menu_update               (GtkWidget       *widget,
+void   picman_unit_menu_update               (GtkWidget       *widget,
                                             gpointer         data);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_OLD_WIDGETS_H__ */
+#endif /* __PICMAN_OLD_WIDGETS_H__ */
 
-#endif /*  GIMP_DISABLE_DEPRECATED  */
+#endif /*  PICMAN_DISABLE_DEPRECATED  */

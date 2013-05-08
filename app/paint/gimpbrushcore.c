@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,27 +21,27 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "paint-types.h"
 
-#include "gegl/gimp-babl.h"
+#include "gegl/picman-babl.h"
 
-#include "core/gimpbrush.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdynamics.h"
-#include "core/gimpdynamicsoutput.h"
-#include "core/gimperror.h"
-#include "core/gimpimage.h"
-#include "core/gimpmarshal.h"
-#include "core/gimptempbuf.h"
+#include "core/picmanbrush.h"
+#include "core/picmandrawable.h"
+#include "core/picmandynamics.h"
+#include "core/picmandynamicsoutput.h"
+#include "core/picmanerror.h"
+#include "core/picmanimage.h"
+#include "core/picmanmarshal.h"
+#include "core/picmantempbuf.h"
 
-#include "gimpbrushcore.h"
-#include "gimpbrushcore-kernels.h"
+#include "picmanbrushcore.h"
+#include "picmanbrushcore-kernels.h"
 
-#include "gimppaintoptions.h"
+#include "picmanpaintoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define EPSILON  0.00001
@@ -56,128 +56,128 @@ enum
 
 /*  local function prototypes  */
 
-static void      gimp_brush_core_finalize           (GObject          *object);
+static void      picman_brush_core_finalize           (GObject          *object);
 
-static gboolean  gimp_brush_core_start              (GimpPaintCore    *core,
-                                                    GimpDrawable     *drawable,
-                                                     GimpPaintOptions *paint_options,
-                                                     const GimpCoords *coords,
+static gboolean  picman_brush_core_start              (PicmanPaintCore    *core,
+                                                    PicmanDrawable     *drawable,
+                                                     PicmanPaintOptions *paint_options,
+                                                     const PicmanCoords *coords,
                                                      GError          **error);
-static gboolean  gimp_brush_core_pre_paint          (GimpPaintCore    *core,
-                                                     GimpDrawable     *drawable,
-                                                     GimpPaintOptions *paint_options,
-                                                     GimpPaintState    paint_state,
+static gboolean  picman_brush_core_pre_paint          (PicmanPaintCore    *core,
+                                                     PicmanDrawable     *drawable,
+                                                     PicmanPaintOptions *paint_options,
+                                                     PicmanPaintState    paint_state,
                                                      guint32           time);
-static void      gimp_brush_core_post_paint         (GimpPaintCore    *core,
-                                                     GimpDrawable     *drawable,
-                                                     GimpPaintOptions *paint_options,
-                                                     GimpPaintState    paint_state,
+static void      picman_brush_core_post_paint         (PicmanPaintCore    *core,
+                                                     PicmanDrawable     *drawable,
+                                                     PicmanPaintOptions *paint_options,
+                                                     PicmanPaintState    paint_state,
                                                      guint32           time);
-static void      gimp_brush_core_interpolate        (GimpPaintCore    *core,
-                                                     GimpDrawable     *drawable,
-                                                     GimpPaintOptions *paint_options,
+static void      picman_brush_core_interpolate        (PicmanPaintCore    *core,
+                                                     PicmanDrawable     *drawable,
+                                                     PicmanPaintOptions *paint_options,
                                                      guint32           time);
 
-static GeglBuffer * gimp_brush_core_get_paint_buffer(GimpPaintCore    *paint_core,
-                                                     GimpDrawable     *drawable,
-                                                     GimpPaintOptions *paint_options,
-                                                     const GimpCoords *coords,
+static GeglBuffer * picman_brush_core_get_paint_buffer(PicmanPaintCore    *paint_core,
+                                                     PicmanDrawable     *drawable,
+                                                     PicmanPaintOptions *paint_options,
+                                                     const PicmanCoords *coords,
                                                      gint             *paint_buffer_x,
                                                      gint             *paint_buffer_y);
 
-static void      gimp_brush_core_real_set_brush     (GimpBrushCore    *core,
-                                                     GimpBrush        *brush);
-static void      gimp_brush_core_real_set_dynamics  (GimpBrushCore    *core,
-                                                     GimpDynamics     *dynamics);
+static void      picman_brush_core_real_set_brush     (PicmanBrushCore    *core,
+                                                     PicmanBrush        *brush);
+static void      picman_brush_core_real_set_dynamics  (PicmanBrushCore    *core,
+                                                     PicmanDynamics     *dynamics);
 
-static const GimpTempBuf *
-                 gimp_brush_core_subsample_mask     (GimpBrushCore     *core,
-                                                     const GimpTempBuf *mask,
+static const PicmanTempBuf *
+                 picman_brush_core_subsample_mask     (PicmanBrushCore     *core,
+                                                     const PicmanTempBuf *mask,
                                                      gdouble            x,
                                                      gdouble            y);
-static const GimpTempBuf *
-                 gimp_brush_core_pressurize_mask    (GimpBrushCore     *core,
-                                                     const GimpTempBuf *brush_mask,
+static const PicmanTempBuf *
+                 picman_brush_core_pressurize_mask    (PicmanBrushCore     *core,
+                                                     const PicmanTempBuf *brush_mask,
                                                      gdouble            x,
                                                      gdouble            y,
                                                      gdouble            pressure);
-static const GimpTempBuf *
-                 gimp_brush_core_solidify_mask      (GimpBrushCore     *core,
-                                                     const GimpTempBuf *brush_mask,
+static const PicmanTempBuf *
+                 picman_brush_core_solidify_mask      (PicmanBrushCore     *core,
+                                                     const PicmanTempBuf *brush_mask,
                                                      gdouble            x,
                                                      gdouble            y);
-static const GimpTempBuf *
-                 gimp_brush_core_transform_mask     (GimpBrushCore     *core,
-                                                     GimpBrush         *brush);
-static const GimpTempBuf *
-                 gimp_brush_core_transform_pixmap   (GimpBrushCore     *core,
-                                                     GimpBrush         *brush);
+static const PicmanTempBuf *
+                 picman_brush_core_transform_mask     (PicmanBrushCore     *core,
+                                                     PicmanBrush         *brush);
+static const PicmanTempBuf *
+                 picman_brush_core_transform_pixmap   (PicmanBrushCore     *core,
+                                                     PicmanBrush         *brush);
 
-static void      gimp_brush_core_invalidate_cache   (GimpBrush         *brush,
-                                                     GimpBrushCore     *core);
+static void      picman_brush_core_invalidate_cache   (PicmanBrush         *brush,
+                                                     PicmanBrushCore     *core);
 
 /*  brush pipe utility functions  */
-static void  gimp_brush_core_paint_line_pixmap_mask (GimpDrawable      *drawable,
-                                                     const GimpTempBuf *pixmap_mask,
-                                                     const GimpTempBuf *brush_mask,
+static void  picman_brush_core_paint_line_pixmap_mask (PicmanDrawable      *drawable,
+                                                     const PicmanTempBuf *pixmap_mask,
+                                                     const PicmanTempBuf *brush_mask,
                                                      gfloat            *d,
                                                      gint               x,
                                                      gint               y,
                                                      gint               width,
-                                                     GimpBrushApplicationMode  mode);
+                                                     PicmanBrushApplicationMode  mode);
 
 
-G_DEFINE_TYPE (GimpBrushCore, gimp_brush_core, GIMP_TYPE_PAINT_CORE)
+G_DEFINE_TYPE (PicmanBrushCore, picman_brush_core, PICMAN_TYPE_PAINT_CORE)
 
-#define parent_class gimp_brush_core_parent_class
+#define parent_class picman_brush_core_parent_class
 
 static guint core_signals[LAST_SIGNAL] = { 0, };
 
 
 static void
-gimp_brush_core_class_init (GimpBrushCoreClass *klass)
+picman_brush_core_class_init (PicmanBrushCoreClass *klass)
 {
   GObjectClass       *object_class     = G_OBJECT_CLASS (klass);
-  GimpPaintCoreClass *paint_core_class = GIMP_PAINT_CORE_CLASS (klass);
+  PicmanPaintCoreClass *paint_core_class = PICMAN_PAINT_CORE_CLASS (klass);
 
   core_signals[SET_BRUSH] =
     g_signal_new ("set-brush",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpBrushCoreClass, set_brush),
+                  G_STRUCT_OFFSET (PicmanBrushCoreClass, set_brush),
                   NULL, NULL,
-                  gimp_marshal_VOID__OBJECT,
+                  picman_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_BRUSH);
+                  PICMAN_TYPE_BRUSH);
 
   core_signals[SET_DYNAMICS] =
     g_signal_new ("set-dynamics",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpBrushCoreClass, set_dynamics),
+                  G_STRUCT_OFFSET (PicmanBrushCoreClass, set_dynamics),
                   NULL, NULL,
-                  gimp_marshal_VOID__OBJECT,
+                  picman_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_DYNAMICS);
+                  PICMAN_TYPE_DYNAMICS);
 
-  object_class->finalize                    = gimp_brush_core_finalize;
+  object_class->finalize                    = picman_brush_core_finalize;
 
-  paint_core_class->start                   = gimp_brush_core_start;
-  paint_core_class->pre_paint               = gimp_brush_core_pre_paint;
-  paint_core_class->post_paint              = gimp_brush_core_post_paint;
-  paint_core_class->interpolate             = gimp_brush_core_interpolate;
-  paint_core_class->get_paint_buffer        = gimp_brush_core_get_paint_buffer;
+  paint_core_class->start                   = picman_brush_core_start;
+  paint_core_class->pre_paint               = picman_brush_core_pre_paint;
+  paint_core_class->post_paint              = picman_brush_core_post_paint;
+  paint_core_class->interpolate             = picman_brush_core_interpolate;
+  paint_core_class->get_paint_buffer        = picman_brush_core_get_paint_buffer;
 
   klass->handles_changing_brush             = FALSE;
   klass->handles_transforming_brush         = TRUE;
   klass->handles_dynamic_transforming_brush = TRUE;
 
-  klass->set_brush                          = gimp_brush_core_real_set_brush;
-  klass->set_dynamics                       = gimp_brush_core_real_set_dynamics;
+  klass->set_brush                          = picman_brush_core_real_set_brush;
+  klass->set_dynamics                       = picman_brush_core_real_set_dynamics;
 }
 
 static void
-gimp_brush_core_init (GimpBrushCore *core)
+picman_brush_core_init (PicmanBrushCore *core)
 {
   gint i, j;
 
@@ -213,9 +213,9 @@ gimp_brush_core_init (GimpBrushCore *core)
 
   for (i = 0; i < BRUSH_CORE_JITTER_LUTSIZE - 1; ++i)
     {
-      core->jitter_lut_y[i] = cos (gimp_deg_to_rad (i * 360 /
+      core->jitter_lut_y[i] = cos (picman_deg_to_rad (i * 360 /
                                                     BRUSH_CORE_JITTER_LUTSIZE));
-      core->jitter_lut_x[i] = sin (gimp_deg_to_rad (i * 360 /
+      core->jitter_lut_x[i] = sin (picman_deg_to_rad (i * 360 /
                                                     BRUSH_CORE_JITTER_LUTSIZE));
     }
 
@@ -231,14 +231,14 @@ gimp_brush_core_init (GimpBrushCore *core)
 }
 
 static void
-gimp_brush_core_finalize (GObject *object)
+picman_brush_core_finalize (GObject *object)
 {
-  GimpBrushCore *core = GIMP_BRUSH_CORE (object);
+  PicmanBrushCore *core = PICMAN_BRUSH_CORE (object);
   gint           i, j;
 
   if (core->pressure_brush)
     {
-      gimp_temp_buf_unref (core->pressure_brush);
+      picman_temp_buf_unref (core->pressure_brush);
       core->pressure_brush = NULL;
     }
 
@@ -246,7 +246,7 @@ gimp_brush_core_finalize (GObject *object)
     for (j = 0; j < BRUSH_CORE_SOLID_SUBSAMPLE; j++)
       if (core->solid_brushes[i][j])
         {
-          gimp_temp_buf_unref (core->solid_brushes[i][j]);
+          picman_temp_buf_unref (core->solid_brushes[i][j]);
           core->solid_brushes[i][j] = NULL;
         }
 
@@ -260,16 +260,16 @@ gimp_brush_core_finalize (GObject *object)
     for (j = 0; j < KERNEL_SUBSAMPLE + 1; j++)
       if (core->subsample_brushes[i][j])
         {
-          gimp_temp_buf_unref (core->subsample_brushes[i][j]);
+          picman_temp_buf_unref (core->subsample_brushes[i][j]);
           core->subsample_brushes[i][j] = NULL;
         }
 
   if (core->main_brush)
     {
       g_signal_handlers_disconnect_by_func (core->main_brush,
-                                            gimp_brush_core_invalidate_cache,
+                                            picman_brush_core_invalidate_cache,
                                             core);
-      gimp_brush_end_use (core->main_brush);
+      picman_brush_end_use (core->main_brush);
       g_object_unref (core->main_brush);
       core->main_brush = NULL;
     }
@@ -284,22 +284,22 @@ gimp_brush_core_finalize (GObject *object)
 }
 
 static gboolean
-gimp_brush_core_pre_paint (GimpPaintCore    *paint_core,
-                           GimpDrawable     *drawable,
-                           GimpPaintOptions *paint_options,
-                           GimpPaintState    paint_state,
+picman_brush_core_pre_paint (PicmanPaintCore    *paint_core,
+                           PicmanDrawable     *drawable,
+                           PicmanPaintOptions *paint_options,
+                           PicmanPaintState    paint_state,
                            guint32           time)
 {
-  GimpBrushCore *core = GIMP_BRUSH_CORE (paint_core);
+  PicmanBrushCore *core = PICMAN_BRUSH_CORE (paint_core);
 
-  if (paint_state == GIMP_PAINT_STATE_MOTION)
+  if (paint_state == PICMAN_PAINT_STATE_MOTION)
     {
-      GimpCoords last_coords;
-      GimpCoords current_coords;
+      PicmanCoords last_coords;
+      PicmanCoords current_coords;
       gdouble scale;
 
-      gimp_paint_core_get_last_coords (paint_core, &last_coords);
-      gimp_paint_core_get_current_coords (paint_core, &current_coords);
+      picman_paint_core_get_last_coords (paint_core, &last_coords);
+      picman_paint_core_get_current_coords (paint_core, &current_coords);
 
       /* If we current point == last point, check if the brush
        * wants to be painted in that case. (Direction dependent
@@ -308,28 +308,28 @@ gimp_brush_core_pre_paint (GimpPaintCore    *paint_core,
        */
       if (last_coords.x == current_coords.x &&
           last_coords.y == current_coords.y &&
-          ! gimp_brush_want_null_motion (core->main_brush,
+          ! picman_brush_want_null_motion (core->main_brush,
                                          &last_coords,
                                          &current_coords))
         {
           return FALSE;
         }
       /*No drawing anything if the scale is too small*/
-      if (GIMP_BRUSH_CORE_GET_CLASS (core)->handles_transforming_brush)
+      if (PICMAN_BRUSH_CORE_GET_CLASS (core)->handles_transforming_brush)
         {
-          GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+          PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
           gdouble    fade_point;
 
-          if (GIMP_BRUSH_CORE_GET_CLASS (core)->handles_dynamic_transforming_brush)
+          if (PICMAN_BRUSH_CORE_GET_CLASS (core)->handles_dynamic_transforming_brush)
             {
-              fade_point = gimp_paint_options_get_fade (paint_options, image,
+              fade_point = picman_paint_options_get_fade (paint_options, image,
                                                         paint_core->pixel_dist);
 
               scale = paint_options->brush_size /
-                      MAX (gimp_temp_buf_get_width  (core->main_brush->mask),
-                           gimp_temp_buf_get_height (core->main_brush->mask)) *
-                      gimp_dynamics_get_linear_value (core->dynamics,
-                                                      GIMP_DYNAMICS_OUTPUT_SIZE,
+                      MAX (picman_temp_buf_get_width  (core->main_brush->mask),
+                           picman_temp_buf_get_height (core->main_brush->mask)) *
+                      picman_dynamics_get_linear_value (core->dynamics,
+                                                      PICMAN_DYNAMICS_OUTPUT_SIZE,
                                                       &current_coords,
                                                       paint_options,
                                                       fade_point);
@@ -339,9 +339,9 @@ gimp_brush_core_pre_paint (GimpPaintCore    *paint_core,
             }
         }
 
-      if (GIMP_BRUSH_CORE_GET_CLASS (paint_core)->handles_changing_brush)
+      if (PICMAN_BRUSH_CORE_GET_CLASS (paint_core)->handles_changing_brush)
         {
-          core->brush = gimp_brush_select_brush (core->main_brush,
+          core->brush = picman_brush_select_brush (core->main_brush,
                                                  &last_coords,
                                                  &current_coords);
         }
@@ -351,69 +351,69 @@ gimp_brush_core_pre_paint (GimpPaintCore    *paint_core,
 }
 
 static void
-gimp_brush_core_post_paint (GimpPaintCore    *paint_core,
-                            GimpDrawable     *drawable,
-                            GimpPaintOptions *paint_options,
-                            GimpPaintState    paint_state,
+picman_brush_core_post_paint (PicmanPaintCore    *paint_core,
+                            PicmanDrawable     *drawable,
+                            PicmanPaintOptions *paint_options,
+                            PicmanPaintState    paint_state,
                             guint32           time)
 {
-  GimpBrushCore *core = GIMP_BRUSH_CORE (paint_core);
+  PicmanBrushCore *core = PICMAN_BRUSH_CORE (paint_core);
 
-  if (paint_state == GIMP_PAINT_STATE_MOTION)
+  if (paint_state == PICMAN_PAINT_STATE_MOTION)
     {
       core->brush = core->main_brush;
     }
 }
 
 static gboolean
-gimp_brush_core_start (GimpPaintCore     *paint_core,
-                       GimpDrawable      *drawable,
-                       GimpPaintOptions  *paint_options,
-                       const GimpCoords  *coords,
+picman_brush_core_start (PicmanPaintCore     *paint_core,
+                       PicmanDrawable      *drawable,
+                       PicmanPaintOptions  *paint_options,
+                       const PicmanCoords  *coords,
                        GError           **error)
 {
-  GimpBrushCore *core    = GIMP_BRUSH_CORE (paint_core);
-  GimpContext   *context = GIMP_CONTEXT (paint_options);
+  PicmanBrushCore *core    = PICMAN_BRUSH_CORE (paint_core);
+  PicmanContext   *context = PICMAN_CONTEXT (paint_options);
 
-  gimp_brush_core_set_brush (core, gimp_context_get_brush (context));
+  picman_brush_core_set_brush (core, picman_context_get_brush (context));
 
-  gimp_brush_core_set_dynamics (core, gimp_context_get_dynamics (context));
+  picman_brush_core_set_dynamics (core, picman_context_get_dynamics (context));
 
   if (! core->main_brush)
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
                            _("No brushes available for use with this tool."));
       return FALSE;
     }
 
   if (! core->dynamics)
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
                            _("No paint dynamics available for use with this tool."));
       return FALSE;
     }
 
-  if (GIMP_BRUSH_CORE_GET_CLASS (core)->handles_transforming_brush)
+  if (PICMAN_BRUSH_CORE_GET_CLASS (core)->handles_transforming_brush)
     {
-      gimp_brush_core_eval_transform_dynamics (core,
+      picman_brush_core_eval_transform_dynamics (core,
                                                drawable,
                                                paint_options,
                                                coords);
     }
 
-  core->spacing = (gdouble) gimp_brush_get_spacing (core->main_brush) / 100.0;
+  core->spacing = (gdouble) picman_brush_get_spacing (core->main_brush) / 100.0;
 
   core->brush = core->main_brush;
 
   core->jitter =
-    gimp_paint_options_get_jitter (paint_options,
-                                   gimp_item_get_image (GIMP_ITEM (drawable)));
+    picman_paint_options_get_jitter (paint_options,
+                                   picman_item_get_image (PICMAN_ITEM (drawable)));
 
   return TRUE;
 }
 
 /**
- * gimp_avoid_exact_integer
+ * picman_avoid_exact_integer
  * @x: points to a gdouble
  *
  * Adjusts *x such that it is not too close to an integer. This is used
@@ -423,7 +423,7 @@ gimp_brush_core_start (GimpPaintCore     *paint_core,
  * Side effects: Changes the value of *x
  **/
 static void
-gimp_avoid_exact_integer (gdouble *x)
+picman_avoid_exact_integer (gdouble *x)
 {
   const gdouble integral   = floor (*x);
   const gdouble fractional = *x - integral;
@@ -439,23 +439,23 @@ gimp_avoid_exact_integer (gdouble *x)
 }
 
 static void
-gimp_brush_core_interpolate (GimpPaintCore    *paint_core,
-                             GimpDrawable     *drawable,
-                             GimpPaintOptions *paint_options,
+picman_brush_core_interpolate (PicmanPaintCore    *paint_core,
+                             PicmanDrawable     *drawable,
+                             PicmanPaintOptions *paint_options,
                              guint32           time)
 {
-  GimpBrushCore      *core  = GIMP_BRUSH_CORE (paint_core);
-  GimpImage          *image = gimp_item_get_image (GIMP_ITEM (drawable));
-  GimpDynamicsOutput *spacing_output;
-  GimpCoords          last_coords;
-  GimpCoords          current_coords;
-  GimpVector2         delta_vec;
+  PicmanBrushCore      *core  = PICMAN_BRUSH_CORE (paint_core);
+  PicmanImage          *image = picman_item_get_image (PICMAN_ITEM (drawable));
+  PicmanDynamicsOutput *spacing_output;
+  PicmanCoords          last_coords;
+  PicmanCoords          current_coords;
+  PicmanVector2         delta_vec;
   gdouble             delta_pressure;
   gdouble             delta_xtilt, delta_ytilt;
   gdouble             delta_wheel;
   gdouble             delta_velocity;
   gdouble             temp_direction;
-  GimpVector2         temp_vec;
+  PicmanVector2         temp_vec;
   gint                n, num_points;
   gdouble             t0, dt, tn;
   gdouble             st_factor, st_offset;
@@ -470,15 +470,15 @@ gimp_brush_core_interpolate (GimpPaintCore    *paint_core,
   gdouble             fade_point;
   gboolean            use_dyn_spacing;
 
-  g_return_if_fail (GIMP_IS_BRUSH (core->brush));
+  g_return_if_fail (PICMAN_IS_BRUSH (core->brush));
 
-  gimp_paint_core_get_last_coords (paint_core, &last_coords);
-  gimp_paint_core_get_current_coords (paint_core, &current_coords);
+  picman_paint_core_get_last_coords (paint_core, &last_coords);
+  picman_paint_core_get_current_coords (paint_core, &current_coords);
 
-  gimp_avoid_exact_integer (&last_coords.x);
-  gimp_avoid_exact_integer (&last_coords.y);
-  gimp_avoid_exact_integer (&current_coords.x);
-  gimp_avoid_exact_integer (&current_coords.y);
+  picman_avoid_exact_integer (&last_coords.x);
+  picman_avoid_exact_integer (&last_coords.y);
+  picman_avoid_exact_integer (&current_coords.x);
+  picman_avoid_exact_integer (&current_coords.y);
 
   delta_vec.x    = current_coords.x        - last_coords.x;
   delta_vec.y    = current_coords.y        - last_coords.y;
@@ -499,7 +499,7 @@ gimp_brush_core_interpolate (GimpPaintCore    *paint_core,
       ! delta_velocity)
     return;
 
-  pixel_dist    = gimp_vector2_length (&delta_vec);
+  pixel_dist    = picman_vector2_length (&delta_vec);
   pixel_initial = paint_core->pixel_dist;
 
   /*  Zero sized brushes are unfit for interpolate, so we just let
@@ -507,10 +507,10 @@ gimp_brush_core_interpolate (GimpPaintCore    *paint_core,
    */
   if (core->scale == 0.0)
     {
-      gimp_paint_core_set_last_coords (paint_core, &current_coords);
+      picman_paint_core_set_last_coords (paint_core, &current_coords);
 
-      gimp_paint_core_paint (paint_core, drawable, paint_options,
-                             GIMP_PAINT_STATE_MOTION, time);
+      picman_paint_core_paint (paint_core, drawable, paint_options,
+                             PICMAN_PAINT_STATE_MOTION, time);
 
       paint_core->pixel_dist = pixel_initial + pixel_dist; /* Dont forget to update pixel distance*/
 
@@ -518,17 +518,17 @@ gimp_brush_core_interpolate (GimpPaintCore    *paint_core,
     }
 
   /* Handle dynamic spacing */
-  spacing_output = gimp_dynamics_get_output (core->dynamics,
-                                             GIMP_DYNAMICS_OUTPUT_SPACING);
+  spacing_output = picman_dynamics_get_output (core->dynamics,
+                                             PICMAN_DYNAMICS_OUTPUT_SPACING);
 
-  fade_point = gimp_paint_options_get_fade (paint_options, image,
+  fade_point = picman_paint_options_get_fade (paint_options, image,
                                             paint_core->pixel_dist);
 
-  use_dyn_spacing = gimp_dynamics_output_is_enabled (spacing_output);
+  use_dyn_spacing = picman_dynamics_output_is_enabled (spacing_output);
 
   if (use_dyn_spacing)
     {
-      dyn_spacing = gimp_dynamics_output_get_linear_value (spacing_output,
+      dyn_spacing = picman_dynamics_output_get_linear_value (spacing_output,
                                                            &current_coords,
                                                            paint_options,
                                                            fade_point);
@@ -548,18 +548,18 @@ gimp_brush_core_interpolate (GimpPaintCore    *paint_core,
 
   /* calculate the distance traveled in the coordinate space of the brush */
   temp_vec = core->brush->x_axis;
-  gimp_vector2_mul (&temp_vec, core->scale);
-  gimp_vector2_rotate (&temp_vec, core->angle * G_PI * 2);
+  picman_vector2_mul (&temp_vec, core->scale);
+  picman_vector2_rotate (&temp_vec, core->angle * G_PI * 2);
 
-  mag = gimp_vector2_length (&temp_vec);
-  xd  = gimp_vector2_inner_product (&delta_vec, &temp_vec) / (mag * mag);
+  mag = picman_vector2_length (&temp_vec);
+  xd  = picman_vector2_inner_product (&delta_vec, &temp_vec) / (mag * mag);
 
   temp_vec = core->brush->y_axis;
-  gimp_vector2_mul (&temp_vec, core->scale);
-  gimp_vector2_rotate (&temp_vec, core->angle * G_PI * 2);
+  picman_vector2_mul (&temp_vec, core->scale);
+  picman_vector2_rotate (&temp_vec, core->angle * G_PI * 2);
 
-  mag = gimp_vector2_length (&temp_vec);
-  yd  = gimp_vector2_inner_product (&delta_vec, &temp_vec) / (mag * mag);
+  mag = picman_vector2_length (&temp_vec);
+  yd  = picman_vector2_inner_product (&delta_vec, &temp_vec) / (mag * mag);
 
   dist    = 0.5 * sqrt (xd * xd + yd * yd);
   total   = dist + paint_core->distance;
@@ -625,7 +625,7 @@ gimp_brush_core_interpolate (GimpPaintCore    *paint_core,
       current_coords.x = last_coords.x;
       current_coords.y = last_coords.y;
 
-      gimp_paint_core_set_current_coords (paint_core, &current_coords);
+      picman_paint_core_set_current_coords (paint_core, &current_coords);
 
       /* ... but go along with the current pressure, tilt and wheel */
       return;
@@ -737,8 +737,8 @@ gimp_brush_core_interpolate (GimpPaintCore    *paint_core,
           gint32  jitter_angle;
 
           dyn_jitter = (core->jitter *
-                        gimp_dynamics_get_linear_value (core->dynamics,
-                                                        GIMP_DYNAMICS_OUTPUT_JITTER,
+                        picman_dynamics_get_linear_value (core->dynamics,
+                                                        PICMAN_DYNAMICS_OUTPUT_JITTER,
                                                         &current_coords,
                                                         paint_options,
                                                         fade_point));
@@ -756,13 +756,13 @@ gimp_brush_core_interpolate (GimpPaintCore    *paint_core,
             jitter_dist * core->jitter_lut_y[jitter_angle] * core->scale;
         }
 
-      gimp_paint_core_set_current_coords (paint_core, &current_coords);
+      picman_paint_core_set_current_coords (paint_core, &current_coords);
 
       paint_core->distance   = initial       + t * dist;
       paint_core->pixel_dist = pixel_initial + t * pixel_dist;
 
-      gimp_paint_core_paint (paint_core, drawable, paint_options,
-                             GIMP_PAINT_STATE_MOTION, time);
+      picman_paint_core_paint (paint_core, drawable, paint_options,
+                             PICMAN_PAINT_STATE_MOTION, time);
     }
 
   current_coords.x        = last_coords.x        + delta_vec.x;
@@ -773,36 +773,36 @@ gimp_brush_core_interpolate (GimpPaintCore    *paint_core,
   current_coords.wheel    = last_coords.wheel    + delta_wheel;
   current_coords.velocity = last_coords.velocity + delta_velocity;
 
-  gimp_paint_core_set_current_coords (paint_core, &current_coords);
-  gimp_paint_core_set_last_coords (paint_core, &current_coords);
+  picman_paint_core_set_current_coords (paint_core, &current_coords);
+  picman_paint_core_set_last_coords (paint_core, &current_coords);
 
   paint_core->distance   = total;
   paint_core->pixel_dist = pixel_initial + pixel_dist;
 }
 
 static GeglBuffer *
-gimp_brush_core_get_paint_buffer (GimpPaintCore    *paint_core,
-                                  GimpDrawable     *drawable,
-                                  GimpPaintOptions *paint_options,
-                                  const GimpCoords *coords,
+picman_brush_core_get_paint_buffer (PicmanPaintCore    *paint_core,
+                                  PicmanDrawable     *drawable,
+                                  PicmanPaintOptions *paint_options,
+                                  const PicmanCoords *coords,
                                   gint             *paint_buffer_x,
                                   gint             *paint_buffer_y)
 {
-  GimpBrushCore *core = GIMP_BRUSH_CORE (paint_core);
+  PicmanBrushCore *core = PICMAN_BRUSH_CORE (paint_core);
   gint           x, y;
   gint           x1, y1, x2, y2;
   gint           drawable_width, drawable_height;
   gint           brush_width, brush_height;
 
-  if (GIMP_BRUSH_CORE_GET_CLASS (core)->handles_transforming_brush)
+  if (PICMAN_BRUSH_CORE_GET_CLASS (core)->handles_transforming_brush)
     {
-      gimp_brush_core_eval_transform_dynamics (core,
+      picman_brush_core_eval_transform_dynamics (core,
                                                drawable,
                                                paint_options,
                                                coords);
     }
 
-  gimp_brush_transform_size (core->brush,
+  picman_brush_transform_size (core->brush,
                              core->scale, core->aspect_ratio, core->angle,
                              &brush_width, &brush_height);
 
@@ -810,8 +810,8 @@ gimp_brush_core_get_paint_buffer (GimpPaintCore    *paint_core,
   x = (gint) floor (coords->x) - (brush_width  / 2);
   y = (gint) floor (coords->y) - (brush_height / 2);
 
-  drawable_width  = gimp_item_get_width  (GIMP_ITEM (drawable));
-  drawable_height = gimp_item_get_height (GIMP_ITEM (drawable));
+  drawable_width  = picman_item_get_width  (PICMAN_ITEM (drawable));
+  drawable_height = picman_item_get_height (PICMAN_ITEM (drawable));
 
   x1 = CLAMP (x - 1, 0, drawable_width);
   y1 = CLAMP (y - 1, 0, drawable_height);
@@ -821,7 +821,7 @@ gimp_brush_core_get_paint_buffer (GimpPaintCore    *paint_core,
   /*  configure the canvas buffer  */
   if ((x2 - x1) && (y2 - y1))
     {
-      GimpTempBuf *temp_buf;
+      PicmanTempBuf *temp_buf;
 
       if (paint_core->paint_buffer                                       &&
           gegl_buffer_get_width  (paint_core->paint_buffer) == (x2 - x1) &&
@@ -833,7 +833,7 @@ gimp_brush_core_get_paint_buffer (GimpPaintCore    *paint_core,
           return paint_core->paint_buffer;
         }
 
-      temp_buf = gimp_temp_buf_new ((x2 - x1), (y2 - y1),
+      temp_buf = picman_temp_buf_new ((x2 - x1), (y2 - y1),
                                     babl_format ("RGBA float"));
 
       *paint_buffer_x = x1;
@@ -842,9 +842,9 @@ gimp_brush_core_get_paint_buffer (GimpPaintCore    *paint_core,
       if (paint_core->paint_buffer)
         g_object_unref (paint_core->paint_buffer);
 
-      paint_core->paint_buffer = gimp_temp_buf_create_buffer (temp_buf);
+      paint_core->paint_buffer = picman_temp_buf_create_buffer (temp_buf);
 
-      gimp_temp_buf_unref (temp_buf);
+      picman_temp_buf_unref (temp_buf);
 
       return paint_core->paint_buffer;
     }
@@ -853,8 +853,8 @@ gimp_brush_core_get_paint_buffer (GimpPaintCore    *paint_core,
 }
 
 static void
-gimp_brush_core_real_set_brush (GimpBrushCore *core,
-                                GimpBrush     *brush)
+picman_brush_core_real_set_brush (PicmanBrushCore *core,
+                                PicmanBrush     *brush)
 {
   if (brush == core->main_brush)
     return;
@@ -862,9 +862,9 @@ gimp_brush_core_real_set_brush (GimpBrushCore *core,
   if (core->main_brush)
     {
       g_signal_handlers_disconnect_by_func (core->main_brush,
-                                            gimp_brush_core_invalidate_cache,
+                                            picman_brush_core_invalidate_cache,
                                             core);
-      gimp_brush_end_use (core->main_brush);
+      picman_brush_end_use (core->main_brush);
       g_object_unref (core->main_brush);
       core->main_brush = NULL;
     }
@@ -874,16 +874,16 @@ gimp_brush_core_real_set_brush (GimpBrushCore *core,
   if (core->main_brush)
     {
       g_object_ref (core->main_brush);
-      gimp_brush_begin_use (core->main_brush);
+      picman_brush_begin_use (core->main_brush);
       g_signal_connect (core->main_brush, "invalidate-preview",
-                        G_CALLBACK (gimp_brush_core_invalidate_cache),
+                        G_CALLBACK (picman_brush_core_invalidate_cache),
                         core);
     }
 }
 
 static void
-gimp_brush_core_real_set_dynamics (GimpBrushCore *core,
-                                   GimpDynamics  *dynamics)
+picman_brush_core_real_set_dynamics (PicmanBrushCore *core,
+                                   PicmanDynamics  *dynamics)
 {
   if (dynamics == core->dynamics)
     return;
@@ -898,62 +898,62 @@ gimp_brush_core_real_set_dynamics (GimpBrushCore *core,
 }
 
 void
-gimp_brush_core_set_brush (GimpBrushCore *core,
-                           GimpBrush     *brush)
+picman_brush_core_set_brush (PicmanBrushCore *core,
+                           PicmanBrush     *brush)
 {
-  g_return_if_fail (GIMP_IS_BRUSH_CORE (core));
-  g_return_if_fail (brush == NULL || GIMP_IS_BRUSH (brush));
+  g_return_if_fail (PICMAN_IS_BRUSH_CORE (core));
+  g_return_if_fail (brush == NULL || PICMAN_IS_BRUSH (brush));
 
   if (brush != core->main_brush)
     g_signal_emit (core, core_signals[SET_BRUSH], 0, brush);
 }
 
 void
-gimp_brush_core_set_dynamics (GimpBrushCore *core,
-                              GimpDynamics  *dynamics)
+picman_brush_core_set_dynamics (PicmanBrushCore *core,
+                              PicmanDynamics  *dynamics)
 {
-  g_return_if_fail (GIMP_IS_BRUSH_CORE (core));
-  g_return_if_fail (dynamics == NULL || GIMP_IS_DYNAMICS (dynamics));
+  g_return_if_fail (PICMAN_IS_BRUSH_CORE (core));
+  g_return_if_fail (dynamics == NULL || PICMAN_IS_DYNAMICS (dynamics));
 
   if (dynamics != core->dynamics)
     g_signal_emit (core, core_signals[SET_DYNAMICS], 0, dynamics);
 }
 
 void
-gimp_brush_core_paste_canvas (GimpBrushCore            *core,
-                              GimpDrawable             *drawable,
-                              const GimpCoords         *coords,
+picman_brush_core_paste_canvas (PicmanBrushCore            *core,
+                              PicmanDrawable             *drawable,
+                              const PicmanCoords         *coords,
                               gdouble                   brush_opacity,
                               gdouble                   image_opacity,
-                              GimpLayerModeEffects      paint_mode,
-                              GimpBrushApplicationMode  brush_hardness,
+                              PicmanLayerModeEffects      paint_mode,
+                              PicmanBrushApplicationMode  brush_hardness,
                               gdouble                   dynamic_force,
-                              GimpPaintApplicationMode  mode)
+                              PicmanPaintApplicationMode  mode)
 {
-  const GimpTempBuf *brush_mask;
+  const PicmanTempBuf *brush_mask;
 
-  brush_mask = gimp_brush_core_get_brush_mask (core, coords,
+  brush_mask = picman_brush_core_get_brush_mask (core, coords,
                                                brush_hardness,
                                                dynamic_force);
 
   if (brush_mask)
     {
-      GimpPaintCore *paint_core = GIMP_PAINT_CORE (core);
+      PicmanPaintCore *paint_core = PICMAN_PAINT_CORE (core);
       GeglBuffer    *paint_mask;
       gint           x;
       gint           y;
       gint           off_x;
       gint           off_y;
 
-      x = (gint) floor (coords->x) - (gimp_temp_buf_get_width  (brush_mask) >> 1);
-      y = (gint) floor (coords->y) - (gimp_temp_buf_get_height (brush_mask) >> 1);
+      x = (gint) floor (coords->x) - (picman_temp_buf_get_width  (brush_mask) >> 1);
+      y = (gint) floor (coords->y) - (picman_temp_buf_get_height (brush_mask) >> 1);
 
       off_x = (x < 0) ? -x : 0;
       off_y = (y < 0) ? -y : 0;
 
-      paint_mask = gimp_temp_buf_create_buffer ((GimpTempBuf *) brush_mask);
+      paint_mask = picman_temp_buf_create_buffer ((PicmanTempBuf *) brush_mask);
 
-      gimp_paint_core_paste (paint_core, paint_mask,
+      picman_paint_core_paste (paint_core, paint_mask,
                              GEGL_RECTANGLE (off_x, off_y,
                                              gegl_buffer_get_width  (paint_core->paint_buffer),
                                              gegl_buffer_get_height (paint_core->paint_buffer)),
@@ -966,44 +966,44 @@ gimp_brush_core_paste_canvas (GimpBrushCore            *core,
     }
 }
 
-/* Similar to gimp_brush_core_paste_canvas, but replaces the alpha channel
+/* Similar to picman_brush_core_paste_canvas, but replaces the alpha channel
  * rather than using it to composite (i.e. transparent over opaque
  * becomes transparent rather than opauqe.
  */
 void
-gimp_brush_core_replace_canvas (GimpBrushCore            *core,
-                                GimpDrawable             *drawable,
-                                const GimpCoords         *coords,
+picman_brush_core_replace_canvas (PicmanBrushCore            *core,
+                                PicmanDrawable             *drawable,
+                                const PicmanCoords         *coords,
                                 gdouble                   brush_opacity,
                                 gdouble                   image_opacity,
-                                GimpBrushApplicationMode  brush_hardness,
+                                PicmanBrushApplicationMode  brush_hardness,
                                 gdouble                   dynamic_force,
-                                GimpPaintApplicationMode  mode)
+                                PicmanPaintApplicationMode  mode)
 {
-  const GimpTempBuf *brush_mask;
+  const PicmanTempBuf *brush_mask;
 
-  brush_mask = gimp_brush_core_get_brush_mask (core, coords,
+  brush_mask = picman_brush_core_get_brush_mask (core, coords,
                                                brush_hardness,
                                                dynamic_force);
 
   if (brush_mask)
     {
-      GimpPaintCore *paint_core = GIMP_PAINT_CORE (core);
+      PicmanPaintCore *paint_core = PICMAN_PAINT_CORE (core);
       GeglBuffer    *paint_mask;
       gint           x;
       gint           y;
       gint           off_x;
       gint           off_y;
 
-      x = (gint) floor (coords->x) - (gimp_temp_buf_get_width  (brush_mask) >> 1);
-      y = (gint) floor (coords->y) - (gimp_temp_buf_get_height (brush_mask) >> 1);
+      x = (gint) floor (coords->x) - (picman_temp_buf_get_width  (brush_mask) >> 1);
+      y = (gint) floor (coords->y) - (picman_temp_buf_get_height (brush_mask) >> 1);
 
       off_x = (x < 0) ? -x : 0;
       off_y = (y < 0) ? -y : 0;
 
-      paint_mask = gimp_temp_buf_create_buffer ((GimpTempBuf *) brush_mask);
+      paint_mask = picman_temp_buf_create_buffer ((PicmanTempBuf *) brush_mask);
 
-      gimp_paint_core_replace (paint_core, paint_mask,
+      picman_paint_core_replace (paint_core, paint_mask,
                                GEGL_RECTANGLE (off_x, off_y,
                                                gegl_buffer_get_width  (paint_core->paint_buffer),
                                                gegl_buffer_get_height (paint_core->paint_buffer)),
@@ -1018,8 +1018,8 @@ gimp_brush_core_replace_canvas (GimpBrushCore            *core,
 
 
 static void
-gimp_brush_core_invalidate_cache (GimpBrush     *brush,
-                                  GimpBrushCore *core)
+picman_brush_core_invalidate_cache (PicmanBrush     *brush,
+                                  PicmanBrushCore *core)
 {
   /* Make sure we don't cache data for a brush that has changed */
 
@@ -1051,13 +1051,13 @@ rotate_pointers (gulong  **p,
   p[i] = tmp;
 }
 
-static const GimpTempBuf *
-gimp_brush_core_subsample_mask (GimpBrushCore     *core,
-                                const GimpTempBuf *mask,
+static const PicmanTempBuf *
+picman_brush_core_subsample_mask (PicmanBrushCore     *core,
+                                const PicmanTempBuf *mask,
                                 gdouble            x,
                                 gdouble            y)
 {
-  GimpTempBuf  *dest;
+  PicmanTempBuf  *dest;
   gdouble       left;
   const guchar *m;
   guchar       *d;
@@ -1071,8 +1071,8 @@ gimp_brush_core_subsample_mask (GimpBrushCore     *core,
   gint          r, s;
   gulong       *accum[KERNEL_HEIGHT];
   gint          offs;
-  gint          mask_width  = gimp_temp_buf_get_width  (mask);
-  gint          mask_height = gimp_temp_buf_get_height (mask);
+  gint          mask_width  = picman_temp_buf_get_width  (mask);
+  gint          mask_height = picman_temp_buf_get_height (mask);
   gint          dest_width;
   gint          dest_height;
 
@@ -1126,7 +1126,7 @@ gimp_brush_core_subsample_mask (GimpBrushCore     *core,
         for (j = 0; j < KERNEL_SUBSAMPLE + 1; j++)
           if (core->subsample_brushes[i][j])
             {
-              gimp_temp_buf_unref (core->subsample_brushes[i][j]);
+              picman_temp_buf_unref (core->subsample_brushes[i][j]);
               core->subsample_brushes[i][j] = NULL;
             }
 
@@ -1134,13 +1134,13 @@ gimp_brush_core_subsample_mask (GimpBrushCore     *core,
       core->subsample_cache_invalid   = FALSE;
     }
 
-  dest = gimp_temp_buf_new (mask_width  + 2,
+  dest = picman_temp_buf_new (mask_width  + 2,
                             mask_height + 2,
-                            gimp_temp_buf_get_format (mask));
-  gimp_temp_buf_data_clear (dest);
+                            picman_temp_buf_get_format (mask));
+  picman_temp_buf_data_clear (dest);
 
-  dest_width  = gimp_temp_buf_get_width  (dest);
-  dest_height = gimp_temp_buf_get_height (dest);
+  dest_width  = picman_temp_buf_get_width  (dest);
+  dest_height = picman_temp_buf_get_height (dest);
 
   /* Allocate and initialize the accum buffer */
   for (i = 0; i < KERNEL_HEIGHT ; i++)
@@ -1148,7 +1148,7 @@ gimp_brush_core_subsample_mask (GimpBrushCore     *core,
 
   core->subsample_brushes[index2][index1] = dest;
 
-  m = gimp_temp_buf_get_data (mask);
+  m = picman_temp_buf_get_data (mask);
   for (i = 0; i < mask_height; i++)
     {
       for (j = 0; j < mask_width; j++)
@@ -1165,7 +1165,7 @@ gimp_brush_core_subsample_mask (GimpBrushCore     *core,
         }
 
       /* store the accum buffer into the destination mask */
-      d = gimp_temp_buf_get_data (dest) + (i + dest_offset_y) * dest_width;
+      d = picman_temp_buf_get_data (dest) + (i + dest_offset_y) * dest_width;
       for (j = 0; j < dest_width; j++)
         *d++ = (accum[0][j] + 127) / KERNEL_SUM;
 
@@ -1177,7 +1177,7 @@ gimp_brush_core_subsample_mask (GimpBrushCore     *core,
   /* store the rest of the accum buffer into the dest mask */
   while (i + dest_offset_y < dest_height)
     {
-      d = gimp_temp_buf_get_data (dest) + (i + dest_offset_y) * dest_width;
+      d = picman_temp_buf_get_data (dest) + (i + dest_offset_y) * dest_width;
       for (j = 0; j < dest_width; j++)
         *d++ = (accum[0][j] + (KERNEL_SUM / 2)) / KERNEL_SUM;
 
@@ -1193,9 +1193,9 @@ gimp_brush_core_subsample_mask (GimpBrushCore     *core,
 
 /* #define FANCY_PRESSURE */
 
-static const GimpTempBuf *
-gimp_brush_core_pressurize_mask (GimpBrushCore     *core,
-                                 const GimpTempBuf *brush_mask,
+static const PicmanTempBuf *
+picman_brush_core_pressurize_mask (PicmanBrushCore     *core,
+                                 const PicmanTempBuf *brush_mask,
                                  gdouble            x,
                                  gdouble            y,
                                  gdouble            pressure)
@@ -1203,11 +1203,11 @@ gimp_brush_core_pressurize_mask (GimpBrushCore     *core,
   static guchar      mapi[256];
   const guchar      *source;
   guchar            *dest;
-  const GimpTempBuf *subsample_mask;
+  const PicmanTempBuf *subsample_mask;
   gint               i;
 
   /* Get the raw subsampled mask */
-  subsample_mask = gimp_brush_core_subsample_mask (core,
+  subsample_mask = picman_brush_core_subsample_mask (core,
                                                    brush_mask,
                                                    x, y);
 
@@ -1216,13 +1216,13 @@ gimp_brush_core_pressurize_mask (GimpBrushCore     *core,
     return subsample_mask;
 
   if (core->pressure_brush)
-    gimp_temp_buf_unref (core->pressure_brush);
+    picman_temp_buf_unref (core->pressure_brush);
 
   core->pressure_brush =
-    gimp_temp_buf_new (gimp_temp_buf_get_width  (brush_mask) + 2,
-                       gimp_temp_buf_get_height (brush_mask) + 2,
-                       gimp_temp_buf_get_format (brush_mask));
-  gimp_temp_buf_data_clear (core->pressure_brush);
+    picman_temp_buf_new (picman_temp_buf_get_width  (brush_mask) + 2,
+                       picman_temp_buf_get_height (brush_mask) + 2,
+                       picman_temp_buf_get_format (brush_mask));
+  picman_temp_buf_data_clear (core->pressure_brush);
 
 #ifdef FANCY_PRESSURE
 
@@ -1299,11 +1299,11 @@ gimp_brush_core_pressurize_mask (GimpBrushCore     *core,
 
   /* Now convert the brush */
 
-  source = gimp_temp_buf_get_data (subsample_mask);
-  dest   = gimp_temp_buf_get_data (core->pressure_brush);
+  source = picman_temp_buf_get_data (subsample_mask);
+  dest   = picman_temp_buf_get_data (core->pressure_brush);
 
-  i = gimp_temp_buf_get_width  (subsample_mask) *
-      gimp_temp_buf_get_height (subsample_mask);
+  i = picman_temp_buf_get_width  (subsample_mask) *
+      picman_temp_buf_get_height (subsample_mask);
 
   while (i--)
     *dest++ = mapi[(*source++)];
@@ -1311,19 +1311,19 @@ gimp_brush_core_pressurize_mask (GimpBrushCore     *core,
   return core->pressure_brush;
 }
 
-static const GimpTempBuf *
-gimp_brush_core_solidify_mask (GimpBrushCore     *core,
-                               const GimpTempBuf *brush_mask,
+static const PicmanTempBuf *
+picman_brush_core_solidify_mask (PicmanBrushCore     *core,
+                               const PicmanTempBuf *brush_mask,
                                gdouble            x,
                                gdouble            y)
 {
-  GimpTempBuf  *dest;
+  PicmanTempBuf  *dest;
   const guchar *m;
   gfloat       *d;
   gint          dest_offset_x     = 0;
   gint          dest_offset_y     = 0;
-  gint          brush_mask_width  = gimp_temp_buf_get_width  (brush_mask);
-  gint          brush_mask_height = gimp_temp_buf_get_height (brush_mask);
+  gint          brush_mask_width  = picman_temp_buf_get_width  (brush_mask);
+  gint          brush_mask_height = picman_temp_buf_get_height (brush_mask);
   gint          i, j;
 
   if ((brush_mask_width % 2) == 0)
@@ -1356,7 +1356,7 @@ gimp_brush_core_solidify_mask (GimpBrushCore     *core,
         for (j = 0; j < BRUSH_CORE_SOLID_SUBSAMPLE; j++)
           if (core->solid_brushes[i][j])
             {
-              gimp_temp_buf_unref (core->solid_brushes[i][j]);
+              picman_temp_buf_unref (core->solid_brushes[i][j]);
               core->solid_brushes[i][j] = NULL;
             }
 
@@ -1364,16 +1364,16 @@ gimp_brush_core_solidify_mask (GimpBrushCore     *core,
       core->solid_cache_invalid   = FALSE;
     }
 
-  dest = gimp_temp_buf_new (brush_mask_width  + 2,
+  dest = picman_temp_buf_new (brush_mask_width  + 2,
                             brush_mask_height + 2,
                             babl_format ("Y float"));
-  gimp_temp_buf_data_clear (dest);
+  picman_temp_buf_data_clear (dest);
 
   core->solid_brushes[dest_offset_y][dest_offset_x] = dest;
 
-  m = gimp_temp_buf_get_data (brush_mask);
-  d = ((gfloat *) gimp_temp_buf_get_data (dest) +
-       ((dest_offset_y + 1) * gimp_temp_buf_get_width (dest) +
+  m = picman_temp_buf_get_data (brush_mask);
+  d = ((gfloat *) picman_temp_buf_get_data (dest) +
+       ((dest_offset_y + 1) * picman_temp_buf_get_width (dest) +
         (dest_offset_x + 1)));
 
   for (i = 0; i < brush_mask_height; i++)
@@ -1387,16 +1387,16 @@ gimp_brush_core_solidify_mask (GimpBrushCore     *core,
   return dest;
 }
 
-static const GimpTempBuf *
-gimp_brush_core_transform_mask (GimpBrushCore *core,
-                                GimpBrush     *brush)
+static const PicmanTempBuf *
+picman_brush_core_transform_mask (PicmanBrushCore *core,
+                                PicmanBrush     *brush)
 {
-  const GimpTempBuf *mask;
+  const PicmanTempBuf *mask;
 
   if (core->scale <= 0.0)
     return NULL;
 
-  mask = gimp_brush_transform_mask (brush,
+  mask = picman_brush_transform_mask (brush,
                                     core->scale,
                                     core->aspect_ratio,
                                     core->angle,
@@ -1412,16 +1412,16 @@ gimp_brush_core_transform_mask (GimpBrushCore *core,
   return core->transform_brush;
 }
 
-static const GimpTempBuf *
-gimp_brush_core_transform_pixmap (GimpBrushCore *core,
-                                  GimpBrush     *brush)
+static const PicmanTempBuf *
+picman_brush_core_transform_pixmap (PicmanBrushCore *core,
+                                  PicmanBrush     *brush)
 {
-  const GimpTempBuf *pixmap;
+  const PicmanTempBuf *pixmap;
 
   if (core->scale <= 0.0)
     return NULL;
 
-  pixmap = gimp_brush_transform_pixmap (brush,
+  pixmap = picman_brush_transform_pixmap (brush,
                                         core->scale,
                                         core->aspect_ratio,
                                         core->angle,
@@ -1436,35 +1436,35 @@ gimp_brush_core_transform_pixmap (GimpBrushCore *core,
   return core->transform_pixmap;
 }
 
-const GimpTempBuf *
-gimp_brush_core_get_brush_mask (GimpBrushCore            *core,
-                                const GimpCoords         *coords,
-                                GimpBrushApplicationMode  brush_hardness,
+const PicmanTempBuf *
+picman_brush_core_get_brush_mask (PicmanBrushCore            *core,
+                                const PicmanCoords         *coords,
+                                PicmanBrushApplicationMode  brush_hardness,
                                 gdouble                   dynamic_force)
 {
-  const GimpTempBuf *mask;
+  const PicmanTempBuf *mask;
 
-  mask = gimp_brush_core_transform_mask (core, core->brush);
+  mask = picman_brush_core_transform_mask (core, core->brush);
 
   if (! mask)
     return NULL;
 
   switch (brush_hardness)
     {
-    case GIMP_BRUSH_SOFT:
-      return gimp_brush_core_subsample_mask (core, mask,
+    case PICMAN_BRUSH_SOFT:
+      return picman_brush_core_subsample_mask (core, mask,
                                              coords->x,
                                              coords->y);
       break;
 
-    case GIMP_BRUSH_HARD:
-      return gimp_brush_core_solidify_mask (core, mask,
+    case PICMAN_BRUSH_HARD:
+      return picman_brush_core_solidify_mask (core, mask,
                                             coords->x,
                                             coords->y);
       break;
 
-    case GIMP_BRUSH_PRESSURE:
-      return gimp_brush_core_pressurize_mask (core, mask,
+    case PICMAN_BRUSH_PRESSURE:
+      return picman_brush_core_pressurize_mask (core, mask,
                                               coords->x,
                                               coords->y,
                                               dynamic_force);
@@ -1475,60 +1475,60 @@ gimp_brush_core_get_brush_mask (GimpBrushCore            *core,
 }
 
 void
-gimp_brush_core_eval_transform_dynamics (GimpBrushCore     *core,
-                                         GimpDrawable      *drawable,
-                                         GimpPaintOptions  *paint_options,
-                                         const GimpCoords  *coords)
+picman_brush_core_eval_transform_dynamics (PicmanBrushCore     *core,
+                                         PicmanDrawable      *drawable,
+                                         PicmanPaintOptions  *paint_options,
+                                         const PicmanCoords  *coords)
 {
   if (core->main_brush)
     core->scale = paint_options->brush_size /
-                  MAX (gimp_temp_buf_get_width  (core->main_brush->mask),
-                       gimp_temp_buf_get_height (core->main_brush->mask));
+                  MAX (picman_temp_buf_get_width  (core->main_brush->mask),
+                       picman_temp_buf_get_height (core->main_brush->mask));
   else
     core->scale = -1;
 
   core->angle        = paint_options->brush_angle;
   core->aspect_ratio = paint_options->brush_aspect_ratio;
 
-  if (! GIMP_IS_DYNAMICS (core->dynamics))
+  if (! PICMAN_IS_DYNAMICS (core->dynamics))
     return;
 
-  if (GIMP_BRUSH_CORE_GET_CLASS (core)->handles_dynamic_transforming_brush)
+  if (PICMAN_BRUSH_CORE_GET_CLASS (core)->handles_dynamic_transforming_brush)
     {
-      GimpDynamicsOutput *output;
+      PicmanDynamicsOutput *output;
       gdouble             dyn_aspect_ratio = 0.0;
       gdouble             fade_point       = 1.0;
 
       if (drawable)
         {
-          GimpImage     *image      = gimp_item_get_image (GIMP_ITEM (drawable));
-          GimpPaintCore *paint_core = GIMP_PAINT_CORE (core);
+          PicmanImage     *image      = picman_item_get_image (PICMAN_ITEM (drawable));
+          PicmanPaintCore *paint_core = PICMAN_PAINT_CORE (core);
 
-          fade_point = gimp_paint_options_get_fade (paint_options, image,
+          fade_point = picman_paint_options_get_fade (paint_options, image,
                                                     paint_core->pixel_dist);
         }
 
-      core->scale *= gimp_dynamics_get_linear_value (core->dynamics,
-                                                     GIMP_DYNAMICS_OUTPUT_SIZE,
+      core->scale *= picman_dynamics_get_linear_value (core->dynamics,
+                                                     PICMAN_DYNAMICS_OUTPUT_SIZE,
                                                      coords,
                                                      paint_options,
                                                      fade_point);
 
-      core->angle += gimp_dynamics_get_angular_value (core->dynamics,
-                                                      GIMP_DYNAMICS_OUTPUT_ANGLE,
+      core->angle += picman_dynamics_get_angular_value (core->dynamics,
+                                                      PICMAN_DYNAMICS_OUTPUT_ANGLE,
                                                       coords,
                                                       paint_options,
                                                       fade_point);
 
-      core->hardness = gimp_dynamics_get_linear_value (core->dynamics,
-                                                       GIMP_DYNAMICS_OUTPUT_HARDNESS,
+      core->hardness = picman_dynamics_get_linear_value (core->dynamics,
+                                                       PICMAN_DYNAMICS_OUTPUT_HARDNESS,
                                                        coords,
                                                        paint_options,
                                                        fade_point);
 
-      output = gimp_dynamics_get_output (core->dynamics,
-                                         GIMP_DYNAMICS_OUTPUT_ASPECT_RATIO);
-      dyn_aspect_ratio = gimp_dynamics_output_get_aspect_value (output,
+      output = picman_dynamics_get_output (core->dynamics,
+                                         PICMAN_DYNAMICS_OUTPUT_ASPECT_RATIO);
+      dyn_aspect_ratio = picman_dynamics_output_get_aspect_value (output,
                                                                 coords,
                                                                 paint_options,
                                                                 fade_point);
@@ -1537,7 +1537,7 @@ gimp_brush_core_eval_transform_dynamics (GimpBrushCore     *core,
        * to force dynamics to have any effect. Forcing to full results
        * in disapearing stamp if applied to maximum.
        */
-      if (gimp_dynamics_output_is_enabled (output))
+      if (picman_dynamics_output_is_enabled (output))
         {
           if (core->aspect_ratio == 0.0)
             core->aspect_ratio = 10.0 * dyn_aspect_ratio;
@@ -1553,13 +1553,13 @@ gimp_brush_core_eval_transform_dynamics (GimpBrushCore     *core,
 /**************************************************/
 
 void
-gimp_brush_core_color_area_with_pixmap (GimpBrushCore            *core,
-                                        GimpDrawable             *drawable,
-                                        const GimpCoords         *coords,
+picman_brush_core_color_area_with_pixmap (PicmanBrushCore            *core,
+                                        PicmanDrawable             *drawable,
+                                        const PicmanCoords         *coords,
                                         GeglBuffer               *area,
                                         gint                      area_x,
                                         gint                      area_y,
-                                        GimpBrushApplicationMode  mode)
+                                        PicmanBrushApplicationMode  mode)
 {
   GeglBufferIterator *iter;
   GeglRectangle      *roi;
@@ -1567,35 +1567,35 @@ gimp_brush_core_color_area_with_pixmap (GimpBrushCore            *core,
   gint                uly;
   gint                offsetx;
   gint                offsety;
-  const GimpTempBuf  *pixmap_mask;
-  const GimpTempBuf  *brush_mask;
+  const PicmanTempBuf  *pixmap_mask;
+  const PicmanTempBuf  *brush_mask;
 
-  g_return_if_fail (GIMP_IS_BRUSH (core->brush));
+  g_return_if_fail (PICMAN_IS_BRUSH (core->brush));
   g_return_if_fail (core->brush->pixmap != NULL);
 
   /*  scale the brushes  */
-  pixmap_mask = gimp_brush_core_transform_pixmap (core, core->brush);
+  pixmap_mask = picman_brush_core_transform_pixmap (core, core->brush);
 
   if (! pixmap_mask)
     return;
 
-  if (mode != GIMP_BRUSH_HARD)
-    brush_mask = gimp_brush_core_transform_mask (core, core->brush);
+  if (mode != PICMAN_BRUSH_HARD)
+    brush_mask = picman_brush_core_transform_mask (core, core->brush);
   else
     brush_mask = NULL;
 
   /*  Calculate upper left corner of brush as in
-   *  gimp_paint_core_get_paint_area.  Ugly to have to do this here, too.
+   *  picman_paint_core_get_paint_area.  Ugly to have to do this here, too.
    */
-  ulx = (gint) floor (coords->x) - (gimp_temp_buf_get_width  (pixmap_mask) >> 1);
-  uly = (gint) floor (coords->y) - (gimp_temp_buf_get_height (pixmap_mask) >> 1);
+  ulx = (gint) floor (coords->x) - (picman_temp_buf_get_width  (pixmap_mask) >> 1);
+  uly = (gint) floor (coords->y) - (picman_temp_buf_get_height (pixmap_mask) >> 1);
 
   /*  Not sure why this is necessary, but empirically the code does
    *  not work without it for even-sided brushes.  See bug #166622.
    */
-  if (gimp_temp_buf_get_width (pixmap_mask) % 2 == 0)
+  if (picman_temp_buf_get_width (pixmap_mask) % 2 == 0)
     ulx += ROUND (coords->x) - floor (coords->x);
-  if (gimp_temp_buf_get_height (pixmap_mask) % 2 == 0)
+  if (picman_temp_buf_get_height (pixmap_mask) % 2 == 0)
     uly += ROUND (coords->y) - floor (coords->y);
 
   offsetx = area_x - ulx;
@@ -1613,7 +1613,7 @@ gimp_brush_core_color_area_with_pixmap (GimpBrushCore            *core,
 
       for (y = 0; y < roi->height; y++)
         {
-          gimp_brush_core_paint_line_pixmap_mask (drawable,
+          picman_brush_core_paint_line_pixmap_mask (drawable,
                                                   pixmap_mask, brush_mask,
                                                   d, offsetx, y + offsety,
                                                   roi->width, mode);
@@ -1623,50 +1623,50 @@ gimp_brush_core_color_area_with_pixmap (GimpBrushCore            *core,
 }
 
 static void
-gimp_brush_core_paint_line_pixmap_mask (GimpDrawable             *drawable,
-                                        const GimpTempBuf        *pixmap_mask,
-                                        const GimpTempBuf        *brush_mask,
+picman_brush_core_paint_line_pixmap_mask (PicmanDrawable             *drawable,
+                                        const PicmanTempBuf        *pixmap_mask,
+                                        const PicmanTempBuf        *brush_mask,
                                         gfloat                   *d,
                                         gint                      x,
                                         gint                      y,
                                         gint                      width,
-                                        GimpBrushApplicationMode  mode)
+                                        PicmanBrushApplicationMode  mode)
 {
   const Babl        *pixmap_format;
-  GimpImageBaseType  pixmap_base_type;
-  GimpPrecision      pixmap_precision;
+  PicmanImageBaseType  pixmap_base_type;
+  PicmanPrecision      pixmap_precision;
   gint               pixmap_bytes;
   gint               pixmap_width;
   gint               pixmap_height;
   guchar            *b;
 
-  pixmap_width  = gimp_temp_buf_get_width  (pixmap_mask);
-  pixmap_height = gimp_temp_buf_get_height (pixmap_mask);
+  pixmap_width  = picman_temp_buf_get_width  (pixmap_mask);
+  pixmap_height = picman_temp_buf_get_height (pixmap_mask);
 
   /*  Make sure x, y are positive  */
   while (x < 0) x += pixmap_width;
   while (y < 0) y += pixmap_height;
 
-  pixmap_format    = gimp_temp_buf_get_format (pixmap_mask);
-  pixmap_base_type = gimp_babl_format_get_base_type (pixmap_format);
-  pixmap_precision = gimp_babl_format_get_precision (pixmap_format);
+  pixmap_format    = picman_temp_buf_get_format (pixmap_mask);
+  pixmap_base_type = picman_babl_format_get_base_type (pixmap_format);
+  pixmap_precision = picman_babl_format_get_precision (pixmap_format);
   pixmap_bytes     = babl_format_get_bytes_per_pixel (pixmap_format);
 
   /* Point to the approriate scanline */
-  b = (gimp_temp_buf_get_data (pixmap_mask) +
+  b = (picman_temp_buf_get_data (pixmap_mask) +
        (y % pixmap_height) * pixmap_width * pixmap_bytes);
 
-  if (mode == GIMP_BRUSH_SOFT && brush_mask)
+  if (mode == PICMAN_BRUSH_SOFT && brush_mask)
     {
       const Babl   *fish;
-      const guchar *mask     = (gimp_temp_buf_get_data (brush_mask) +
-                                (y % gimp_temp_buf_get_height (brush_mask)) *
-                                gimp_temp_buf_get_width (brush_mask));
+      const guchar *mask     = (picman_temp_buf_get_data (brush_mask) +
+                                (y % picman_temp_buf_get_height (brush_mask)) *
+                                picman_temp_buf_get_width (brush_mask));
       guchar       *line_buf = g_alloca (width * (pixmap_bytes + 1));
       guchar       *l        = line_buf;
       gint          i;
 
-      fish = babl_fish (gimp_babl_format (pixmap_base_type, pixmap_precision,
+      fish = babl_fish (picman_babl_format (pixmap_base_type, pixmap_precision,
                                           TRUE),
                         babl_format ("RGBA float"));
 

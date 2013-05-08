@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * The GIMP Help plug-in
- * Copyright (C) 1999-2008 Sven Neumann <sven@gimp.org>
- *                         Michael Natterer <mitch@gimp.org>
- *                         Henrik Brix Andersen <brix@gimp.org>
+ * The PICMAN Help plug-in
+ * Copyright (C) 1999-2008 Sven Neumann <sven@picman.org>
+ *                         Michael Natterer <mitch@picman.org>
+ *                         Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_HELP_TYPES_H__
-#define __GIMP_HELP_TYPES_H__
+#ifndef __PICMAN_HELP_TYPES_H__
+#define __PICMAN_HELP_TYPES_H__
 
 
-typedef struct _GimpHelpDomain    GimpHelpDomain;
-typedef struct _GimpHelpItem      GimpHelpItem;
-typedef struct _GimpHelpLocale    GimpHelpLocale;
-typedef struct _GimpHelpProgress  GimpHelpProgress;
+typedef struct _PicmanHelpDomain    PicmanHelpDomain;
+typedef struct _PicmanHelpItem      PicmanHelpItem;
+typedef struct _PicmanHelpLocale    PicmanHelpLocale;
+typedef struct _PicmanHelpProgress  PicmanHelpProgress;
 
 
-#endif /* ! __GIMP_HELP_TYPES_H__ */
+#endif /* ! __PICMAN_HELP_TYPES_H__ */

@@ -4,14 +4,14 @@ use lib '../../tools/pdbgen';
 
 require 'util.pl';
 
-*write_file = \&Gimp::CodeGen::util::write_file;
-*FILE_EXT   = \$Gimp::CodeGen::util::FILE_EXT;
+*write_file = \&Picman::CodeGen::util::write_file;
+*FILE_EXT   = \$Picman::CodeGen::util::FILE_EXT;
 
 $destdir = ".";
 $builddir = ".";
 
 $ignorefile = ".gitignore";
-$rcfile     = "gimprc.common";
+$rcfile     = "picmanrc.common";
 
 $outmk = "$builddir/Makefile.am$FILE_EXT";
 $outignore = "$builddir/$ignorefile$FILE_EXT";
@@ -65,23 +65,23 @@ libm = -lm
 endif
 
 if HAVE_WINDRES
-include \$(top_srcdir)/build/windows/gimprc-plug-ins.rule
+include \$(top_srcdir)/build/windows/picmanrc-plug-ins.rule
 include $rcfile
 endif
 
-libgimp = \$(top_builddir)/libgimp/libgimp-\$(GIMP_API_VERSION).la
-libgimpbase = \$(top_builddir)/libgimpbase/libgimpbase-\$(GIMP_API_VERSION).la
-libgimpcolor = \$(top_builddir)/libgimpcolor/libgimpcolor-\$(GIMP_API_VERSION).la
-libgimpconfig = \$(top_builddir)/libgimpconfig/libgimpconfig-\$(GIMP_API_VERSION).la
-libgimpmath = \$(top_builddir)/libgimpmath/libgimpmath-\$(GIMP_API_VERSION).la \$(libm)
-libgimpmodule = \$(top_builddir)/libgimpmodule/libgimpmodule-\$(GIMP_API_VERSION).la
-libgimpui = \$(top_builddir)/libgimp/libgimpui-\$(GIMP_API_VERSION).la
-libgimpwidgets = \$(top_builddir)/libgimpwidgets/libgimpwidgets-\$(GIMP_API_VERSION).la
+libpicman = \$(top_builddir)/libpicman/libpicman-\$(PICMAN_API_VERSION).la
+libpicmanbase = \$(top_builddir)/libpicmanbase/libpicmanbase-\$(PICMAN_API_VERSION).la
+libpicmancolor = \$(top_builddir)/libpicmancolor/libpicmancolor-\$(PICMAN_API_VERSION).la
+libpicmanconfig = \$(top_builddir)/libpicmanconfig/libpicmanconfig-\$(PICMAN_API_VERSION).la
+libpicmanmath = \$(top_builddir)/libpicmanmath/libpicmanmath-\$(PICMAN_API_VERSION).la \$(libm)
+libpicmanmodule = \$(top_builddir)/libpicmanmodule/libpicmanmodule-\$(PICMAN_API_VERSION).la
+libpicmanui = \$(top_builddir)/libpicman/libpicmanui-\$(PICMAN_API_VERSION).la
+libpicmanwidgets = \$(top_builddir)/libpicmanwidgets/libpicmanwidgets-\$(PICMAN_API_VERSION).la
 
 
 AM_LDFLAGS = \$(mwindows)
 
-libexecdir = \$(gimpplugindir)/plug-ins
+libexecdir = \$(picmanplugindir)/plug-ins
 
 EXTRA_DIST = \\
 	mkgen.pl	\\
@@ -124,20 +124,20 @@ foreach (sort keys %plugins) {
     my $makename = $_;
     $makename =~ s/-/_/g;
 
-    my $libgimp = "";
+    my $libpicman = "";
 
     if (exists $plugins{$_}->{ui}) {
-        $libgimp .= "\$(libgimpui)";
-        $libgimp .= "\t\t\\\n\t\$(libgimpwidgets)";
-	$libgimp .= "\t\\\n\t\$(libgimpmodule)";
-	$libgimp .= "\t\\\n\t";
+        $libpicman .= "\$(libpicmanui)";
+        $libpicman .= "\t\t\\\n\t\$(libpicmanwidgets)";
+	$libpicman .= "\t\\\n\t\$(libpicmanmodule)";
+	$libpicman .= "\t\\\n\t";
     }
 
-    $libgimp .= "\$(libgimp)";
-    $libgimp .= "\t\t\\\n\t\$(libgimpmath)";
-    $libgimp .= "\t\t\\\n\t\$(libgimpconfig)";
-    $libgimp .= "\t\\\n\t\$(libgimpcolor)";
-    $libgimp .= "\t\t\\\n\t\$(libgimpbase)";
+    $libpicman .= "\$(libpicman)";
+    $libpicman .= "\t\t\\\n\t\$(libpicmanmath)";
+    $libpicman .= "\t\t\\\n\t\$(libpicmanconfig)";
+    $libpicman .= "\t\\\n\t\$(libpicmancolor)";
+    $libpicman .= "\t\t\\\n\t\$(libpicmanbase)";
 
     my $glib;
     if (exists $plugins{$_}->{ui}) {
@@ -184,7 +184,7 @@ ${makename}_SOURCES = \\
 	$_.c
 
 ${makename}_LDADD = \\
-	$libgimp		\\
+	$libpicman		\\
 	$glib$optlib
 	$deplib		\\
 	$rclib

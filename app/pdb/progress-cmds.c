@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,480 +23,480 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpparamspecs.h"
-#include "plug-in/gimpplugin-progress.h"
-#include "plug-in/gimpplugin.h"
-#include "plug-in/gimppluginmanager.h"
+#include "core/picman.h"
+#include "core/picmanparamspecs.h"
+#include "plug-in/picmanplugin-progress.h"
+#include "plug-in/picmanplugin.h"
+#include "plug-in/picmanpluginmanager.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-progress_init_invoker (GimpProcedure         *procedure,
-                       Gimp                  *gimp,
-                       GimpContext           *context,
-                       GimpProgress          *progress,
-                       const GimpValueArray  *args,
+static PicmanValueArray *
+progress_init_invoker (PicmanProcedure         *procedure,
+                       Picman                  *picman,
+                       PicmanContext           *context,
+                       PicmanProgress          *progress,
+                       const PicmanValueArray  *args,
                        GError               **error)
 {
   gboolean success = TRUE;
   const gchar *message;
-  GimpObject *gdisplay;
+  PicmanObject *gdisplay;
 
-  message = g_value_get_string (gimp_value_array_index (args, 0));
-  gdisplay = gimp_value_get_display (gimp_value_array_index (args, 1), gimp);
+  message = g_value_get_string (picman_value_array_index (args, 0));
+  gdisplay = picman_value_get_display (picman_value_array_index (args, 1), picman);
 
   if (success)
     {
-      GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+      PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
       if (plug_in && plug_in->open)
         {
-          if (! gimp->no_interface)
-            gimp_plug_in_progress_start (plug_in, message, gdisplay);
+          if (! picman->no_interface)
+            picman_plug_in_progress_start (plug_in, message, gdisplay);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-progress_update_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+progress_update_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
   gdouble percentage;
 
-  percentage = g_value_get_double (gimp_value_array_index (args, 0));
+  percentage = g_value_get_double (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+      PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
       if (plug_in && plug_in->open)
         {
-          if (! gimp->no_interface)
-            gimp_plug_in_progress_set_value (plug_in, percentage);
+          if (! picman->no_interface)
+            picman_plug_in_progress_set_value (plug_in, percentage);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-progress_pulse_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+progress_pulse_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
   if (plug_in && plug_in->open)
     {
-      if (! gimp->no_interface)
-        gimp_plug_in_progress_pulse (plug_in);
+      if (! picman->no_interface)
+        picman_plug_in_progress_pulse (plug_in);
     }
   else
     success = FALSE;
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-progress_set_text_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+progress_set_text_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
   const gchar *message;
 
-  message = g_value_get_string (gimp_value_array_index (args, 0));
+  message = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+      PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
       if (plug_in && plug_in->open)
         {
-          if (! gimp->no_interface)
-            gimp_plug_in_progress_set_text (plug_in, message);
+          if (! picman->no_interface)
+            picman_plug_in_progress_set_text (plug_in, message);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-progress_end_invoker (GimpProcedure         *procedure,
-                      Gimp                  *gimp,
-                      GimpContext           *context,
-                      GimpProgress          *progress,
-                      const GimpValueArray  *args,
+static PicmanValueArray *
+progress_end_invoker (PicmanProcedure         *procedure,
+                      Picman                  *picman,
+                      PicmanContext           *context,
+                      PicmanProgress          *progress,
+                      const PicmanValueArray  *args,
                       GError               **error)
 {
   gboolean success = TRUE;
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
   if (plug_in && plug_in->open)
     {
-      GimpPlugInProcFrame *proc_frame = gimp_plug_in_get_proc_frame (plug_in);
+      PicmanPlugInProcFrame *proc_frame = picman_plug_in_get_proc_frame (plug_in);
 
-      gimp_plug_in_progress_end (plug_in, proc_frame);
+      picman_plug_in_progress_end (plug_in, proc_frame);
     }
   else
     success = FALSE;
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-progress_get_window_handle_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+progress_get_window_handle_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 window = 0;
 
-  GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+  PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
   if (plug_in && plug_in->open)
     {
-      if (! gimp->no_interface)
-        window = gimp_plug_in_progress_get_window_id (plug_in);
+      if (! picman->no_interface)
+        window = picman_plug_in_progress_get_window_id (plug_in);
     }
   else
     success = FALSE;
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), window);
+    g_value_set_int (picman_value_array_index (return_vals, 1), window);
 
   return return_vals;
 }
 
-static GimpValueArray *
-progress_install_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+progress_install_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
   const gchar *progress_callback;
 
-  progress_callback = g_value_get_string (gimp_value_array_index (args, 0));
+  progress_callback = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+      PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
       if (plug_in && plug_in->open)
-        success = gimp_plug_in_progress_install (plug_in, progress_callback);
+        success = picman_plug_in_progress_install (plug_in, progress_callback);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-progress_uninstall_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+progress_uninstall_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
   const gchar *progress_callback;
 
-  progress_callback = g_value_get_string (gimp_value_array_index (args, 0));
+  progress_callback = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+      PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
       if (plug_in && plug_in->open)
-        success = gimp_plug_in_progress_uninstall (plug_in, progress_callback);
+        success = picman_plug_in_progress_uninstall (plug_in, progress_callback);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-progress_cancel_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+progress_cancel_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
   const gchar *progress_callback;
 
-  progress_callback = g_value_get_string (gimp_value_array_index (args, 0));
+  progress_callback = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPlugIn *plug_in = gimp->plug_in_manager->current_plug_in;
+      PicmanPlugIn *plug_in = picman->plug_in_manager->current_plug_in;
 
       if (plug_in && plug_in->open)
-        success = gimp_plug_in_progress_cancel (plug_in, progress_callback);
+        success = picman_plug_in_progress_cancel (plug_in, progress_callback);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_progress_procs (GimpPDB *pdb)
+register_progress_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-progress-init
+   * picman-progress-init
    */
-  procedure = gimp_procedure_new (progress_init_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-progress-init");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-progress-init",
+  procedure = picman_procedure_new (progress_init_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-progress-init");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-progress-init",
                                      "Initializes the progress bar for the current plug-in.",
                                      "Initializes the progress bar for the current plug-in. It is only valid to call this procedure from a plug-in.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("message",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("message",
                                                        "message",
                                                        "Message to use in the progress dialog",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_display_id ("gdisplay",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_display_id ("gdisplay",
                                                            "gdisplay",
-                                                           "GimpDisplay to update progressbar in, or -1 for a separate window",
-                                                           pdb->gimp, TRUE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           "PicmanDisplay to update progressbar in, or -1 for a separate window",
+                                                           pdb->picman, TRUE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-progress-update
+   * picman-progress-update
    */
-  procedure = gimp_procedure_new (progress_update_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-progress-update");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-progress-update",
+  procedure = picman_procedure_new (progress_update_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-progress-update");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-progress-update",
                                      "Updates the progress bar for the current plug-in.",
                                      "Updates the progress bar for the current plug-in. It is only valid to call this procedure from a plug-in.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("percentage",
                                                     "percentage",
                                                     "Percentage of progress completed which must be between 0.0 and 1.0",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-progress-pulse
+   * picman-progress-pulse
    */
-  procedure = gimp_procedure_new (progress_pulse_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-progress-pulse");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-progress-pulse",
+  procedure = picman_procedure_new (progress_pulse_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-progress-pulse");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-progress-pulse",
                                      "Pulses the progress bar for the current plug-in.",
-                                     "Updates the progress bar for the current plug-in. It is only valid to call this procedure from a plug-in. Use this function instead of 'gimp-progress-update' if you cannot tell how much progress has been made. This usually causes the the progress bar to enter \"activity mode\", where a block bounces back and forth.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "Updates the progress bar for the current plug-in. It is only valid to call this procedure from a plug-in. Use this function instead of 'picman-progress-update' if you cannot tell how much progress has been made. This usually causes the the progress bar to enter \"activity mode\", where a block bounces back and forth.",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2005",
                                      NULL);
-  gimp_pdb_register_procedure (pdb, procedure);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-progress-set-text
+   * picman-progress-set-text
    */
-  procedure = gimp_procedure_new (progress_set_text_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-progress-set-text");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-progress-set-text",
+  procedure = picman_procedure_new (progress_set_text_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-progress-set-text");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-progress-set-text",
                                      "Changes the text in the progress bar for the current plug-in.",
-                                     "This function changes the text in the progress bar for the current plug-in. Unlike 'gimp-progress-init' it does not change the displayed value.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "This function changes the text in the progress bar for the current plug-in. Unlike 'picman-progress-init' it does not change the displayed value.",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("message",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("message",
                                                        "message",
                                                        "Message to use in the progress dialog",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-progress-end
+   * picman-progress-end
    */
-  procedure = gimp_procedure_new (progress_end_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-progress-end");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-progress-end",
+  procedure = picman_procedure_new (progress_end_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-progress-end");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-progress-end",
                                      "Ends the progress bar for the current plug-in.",
                                      "Ends the progress display for the current plug-in. Most plug-ins don't need to call this, they just exit when the work is done. It is only valid to call this procedure from a plug-in.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2007",
                                      NULL);
-  gimp_pdb_register_procedure (pdb, procedure);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-progress-get-window-handle
+   * picman-progress-get-window-handle
    */
-  procedure = gimp_procedure_new (progress_get_window_handle_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-progress-get-window-handle");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-progress-get-window-handle",
+  procedure = picman_procedure_new (progress_get_window_handle_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-progress-get-window-handle");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-progress-get-window-handle",
                                      "Returns the native window ID of the toplevel window this plug-in's progress is displayed in.",
                                      "This function returns the native window ID of the toplevel window this plug-in\'s progress is displayed in.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("window",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("window",
                                                           "window",
                                                           "The progress bar's toplevel window",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-progress-install
+   * picman-progress-install
    */
-  procedure = gimp_procedure_new (progress_install_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-progress-install");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-progress-install",
+  procedure = picman_procedure_new (progress_install_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-progress-install");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-progress-install",
                                      "Installs a progress callback for the current plug-in.",
                                      "This function installs a temporary PDB procedure which will handle all progress calls made by this plug-in and any procedure it calls. Calling this function multiple times simply replaces the old progress callbacks.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("progress-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("progress-callback",
                                                        "progress callback",
                                                        "The callback PDB proc to call",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-progress-uninstall
+   * picman-progress-uninstall
    */
-  procedure = gimp_procedure_new (progress_uninstall_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-progress-uninstall");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-progress-uninstall",
+  procedure = picman_procedure_new (progress_uninstall_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-progress-uninstall");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-progress-uninstall",
                                      "Uninstalls the progress callback for the current plug-in.",
-                                     "This function uninstalls any progress callback installed with 'gimp-progress-install' before.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This function uninstalls any progress callback installed with 'picman-progress-install' before.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("progress-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("progress-callback",
                                                        "progress callback",
                                                        "The name of the callback registered for this progress",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-progress-cancel
+   * picman-progress-cancel
    */
-  procedure = gimp_procedure_new (progress_cancel_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-progress-cancel");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-progress-cancel",
+  procedure = picman_procedure_new (progress_cancel_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-progress-cancel");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-progress-cancel",
                                      "Cancels a running progress.",
                                      "This function cancels the currently running progress.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("progress-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("progress-callback",
                                                        "progress callback",
                                                        "The name of the callback registered for this progress",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

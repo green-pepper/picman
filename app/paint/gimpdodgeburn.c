@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,101 +19,101 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "paint-types.h"
 
-#include "gegl/gimp-gegl-loops.h"
+#include "gegl/picman-gegl-loops.h"
 
-#include "core/gimp.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdynamics.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmandrawable.h"
+#include "core/picmandynamics.h"
+#include "core/picmanimage.h"
 
-#include "gimpdodgeburn.h"
-#include "gimpdodgeburnoptions.h"
+#include "picmandodgeburn.h"
+#include "picmandodgeburnoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void   gimp_dodge_burn_paint  (GimpPaintCore    *paint_core,
-                                      GimpDrawable     *drawable,
-                                      GimpPaintOptions *paint_options,
-                                      const GimpCoords *coords,
-                                      GimpPaintState    paint_state,
+static void   picman_dodge_burn_paint  (PicmanPaintCore    *paint_core,
+                                      PicmanDrawable     *drawable,
+                                      PicmanPaintOptions *paint_options,
+                                      const PicmanCoords *coords,
+                                      PicmanPaintState    paint_state,
                                       guint32           time);
-static void   gimp_dodge_burn_motion (GimpPaintCore    *paint_core,
-                                      GimpDrawable     *drawable,
-                                      GimpPaintOptions *paint_options,
-                                      const GimpCoords *coords);
+static void   picman_dodge_burn_motion (PicmanPaintCore    *paint_core,
+                                      PicmanDrawable     *drawable,
+                                      PicmanPaintOptions *paint_options,
+                                      const PicmanCoords *coords);
 
 
-G_DEFINE_TYPE (GimpDodgeBurn, gimp_dodge_burn, GIMP_TYPE_BRUSH_CORE)
+G_DEFINE_TYPE (PicmanDodgeBurn, picman_dodge_burn, PICMAN_TYPE_BRUSH_CORE)
 
-#define parent_class gimp_dodge_burn_parent_class
+#define parent_class picman_dodge_burn_parent_class
 
 
 void
-gimp_dodge_burn_register (Gimp                      *gimp,
-                          GimpPaintRegisterCallback  callback)
+picman_dodge_burn_register (Picman                      *picman,
+                          PicmanPaintRegisterCallback  callback)
 {
-  (* callback) (gimp,
-                GIMP_TYPE_DODGE_BURN,
-                GIMP_TYPE_DODGE_BURN_OPTIONS,
-                "gimp-dodge-burn",
+  (* callback) (picman,
+                PICMAN_TYPE_DODGE_BURN,
+                PICMAN_TYPE_DODGE_BURN_OPTIONS,
+                "picman-dodge-burn",
                 _("Dodge/Burn"),
-                "gimp-tool-dodge");
+                "picman-tool-dodge");
 }
 
 static void
-gimp_dodge_burn_class_init (GimpDodgeBurnClass *klass)
+picman_dodge_burn_class_init (PicmanDodgeBurnClass *klass)
 {
-  GimpPaintCoreClass *paint_core_class = GIMP_PAINT_CORE_CLASS (klass);
-  GimpBrushCoreClass *brush_core_class = GIMP_BRUSH_CORE_CLASS (klass);
+  PicmanPaintCoreClass *paint_core_class = PICMAN_PAINT_CORE_CLASS (klass);
+  PicmanBrushCoreClass *brush_core_class = PICMAN_BRUSH_CORE_CLASS (klass);
 
-  paint_core_class->paint = gimp_dodge_burn_paint;
+  paint_core_class->paint = picman_dodge_burn_paint;
 
   brush_core_class->handles_changing_brush = TRUE;
 }
 
 static void
-gimp_dodge_burn_init (GimpDodgeBurn *dodgeburn)
+picman_dodge_burn_init (PicmanDodgeBurn *dodgeburn)
 {
 }
 
 static void
-gimp_dodge_burn_paint (GimpPaintCore    *paint_core,
-                       GimpDrawable     *drawable,
-                       GimpPaintOptions *paint_options,
-                       const GimpCoords *coords,
-                       GimpPaintState    paint_state,
+picman_dodge_burn_paint (PicmanPaintCore    *paint_core,
+                       PicmanDrawable     *drawable,
+                       PicmanPaintOptions *paint_options,
+                       const PicmanCoords *coords,
+                       PicmanPaintState    paint_state,
                        guint32           time)
 {
   switch (paint_state)
     {
-    case GIMP_PAINT_STATE_INIT:
+    case PICMAN_PAINT_STATE_INIT:
       break;
 
-    case GIMP_PAINT_STATE_MOTION:
-      gimp_dodge_burn_motion (paint_core, drawable, paint_options, coords);
+    case PICMAN_PAINT_STATE_MOTION:
+      picman_dodge_burn_motion (paint_core, drawable, paint_options, coords);
       break;
 
-    case GIMP_PAINT_STATE_FINISH:
+    case PICMAN_PAINT_STATE_FINISH:
       break;
     }
 }
 
 static void
-gimp_dodge_burn_motion (GimpPaintCore    *paint_core,
-                        GimpDrawable     *drawable,
-                        GimpPaintOptions *paint_options,
-                        const GimpCoords *coords)
+picman_dodge_burn_motion (PicmanPaintCore    *paint_core,
+                        PicmanDrawable     *drawable,
+                        PicmanPaintOptions *paint_options,
+                        const PicmanCoords *coords)
 {
-  GimpDodgeBurnOptions *options   = GIMP_DODGE_BURN_OPTIONS (paint_options);
-  GimpContext          *context   = GIMP_CONTEXT (paint_options);
-  GimpDynamics         *dynamics  = GIMP_BRUSH_CORE (paint_core)->dynamics;
-  GimpImage            *image     = gimp_item_get_image (GIMP_ITEM (drawable));
+  PicmanDodgeBurnOptions *options   = PICMAN_DODGE_BURN_OPTIONS (paint_options);
+  PicmanContext          *context   = PICMAN_CONTEXT (paint_options);
+  PicmanDynamics         *dynamics  = PICMAN_BRUSH_CORE (paint_core)->dynamics;
+  PicmanImage            *image     = picman_item_get_image (PICMAN_ITEM (drawable));
   GeglBuffer           *paint_buffer;
   gint                  paint_buffer_x;
   gint                  paint_buffer_y;
@@ -121,18 +121,18 @@ gimp_dodge_burn_motion (GimpPaintCore    *paint_core,
   gdouble               opacity;
   gdouble               hardness;
 
-  fade_point = gimp_paint_options_get_fade (paint_options, image,
+  fade_point = picman_paint_options_get_fade (paint_options, image,
                                             paint_core->pixel_dist);
 
-  opacity = gimp_dynamics_get_linear_value (dynamics,
-                                            GIMP_DYNAMICS_OUTPUT_OPACITY,
+  opacity = picman_dynamics_get_linear_value (dynamics,
+                                            PICMAN_DYNAMICS_OUTPUT_OPACITY,
                                             coords,
                                             paint_options,
                                             fade_point);
   if (opacity == 0.0)
     return;
 
-  paint_buffer = gimp_paint_core_get_paint_buffer (paint_core, drawable,
+  paint_buffer = picman_paint_core_get_paint_buffer (paint_core, drawable,
                                                    paint_options, coords,
                                                    &paint_buffer_x,
                                                    &paint_buffer_y);
@@ -140,7 +140,7 @@ gimp_dodge_burn_motion (GimpPaintCore    *paint_core,
     return;
 
   /*  DodgeBurn the region  */
-  gimp_gegl_dodgeburn (gimp_paint_core_get_orig_image (paint_core),
+  picman_gegl_dodgeburn (picman_paint_core_get_orig_image (paint_core),
                        GEGL_RECTANGLE (paint_buffer_x,
                                        paint_buffer_y,
                                        gegl_buffer_get_width  (paint_buffer),
@@ -151,18 +151,18 @@ gimp_dodge_burn_motion (GimpPaintCore    *paint_core,
                        options->type,
                        options->mode);
 
-  hardness = gimp_dynamics_get_linear_value (dynamics,
-                                             GIMP_DYNAMICS_OUTPUT_HARDNESS,
+  hardness = picman_dynamics_get_linear_value (dynamics,
+                                             PICMAN_DYNAMICS_OUTPUT_HARDNESS,
                                              coords,
                                              paint_options,
                                              fade_point);
 
   /* Replace the newly dodgedburned area (paint_area) to the image */
-  gimp_brush_core_replace_canvas (GIMP_BRUSH_CORE (paint_core), drawable,
+  picman_brush_core_replace_canvas (PICMAN_BRUSH_CORE (paint_core), drawable,
                                   coords,
-                                  MIN (opacity, GIMP_OPACITY_OPAQUE),
-                                  gimp_context_get_opacity (context),
-                                  gimp_paint_options_get_brush_mode (paint_options),
+                                  MIN (opacity, PICMAN_OPACITY_OPAQUE),
+                                  picman_context_get_opacity (context),
+                                  picman_paint_options_get_brush_mode (paint_options),
                                   hardness,
-                                  GIMP_PAINT_CONSTANT);
+                                  PICMAN_PAINT_CONSTANT);
 }

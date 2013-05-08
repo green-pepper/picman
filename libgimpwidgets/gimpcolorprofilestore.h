@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpprofilestore.h
- * Copyright (C) 2007  Sven Neumann <sven@gimp.org>
+ * picmanprofilestore.h
+ * Copyright (C) 2007  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,53 +19,53 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_COLOR_PROFILE_STORE_H__
-#define __GIMP_COLOR_PROFILE_STORE_H__
+#ifndef __PICMAN_COLOR_PROFILE_STORE_H__
+#define __PICMAN_COLOR_PROFILE_STORE_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_COLOR_PROFILE_STORE            (gimp_color_profile_store_get_type ())
-#define GIMP_COLOR_PROFILE_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_PROFILE_STORE, GimpColorProfileStore))
-#define GIMP_COLOR_PROFILE_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_PROFILE_STORE, GimpColorProfileStoreClass))
-#define GIMP_IS_COLOR_PROFILE_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_PROFILE_STORE))
-#define GIMP_IS_COLOR_PROFILE_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_PROFILE_STORE))
-#define GIMP_COLOR_PROFILE_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_PROFILE_STORE, GimpColorProfileStoreClass))
+#define PICMAN_TYPE_COLOR_PROFILE_STORE            (picman_color_profile_store_get_type ())
+#define PICMAN_COLOR_PROFILE_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_PROFILE_STORE, PicmanColorProfileStore))
+#define PICMAN_COLOR_PROFILE_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_PROFILE_STORE, PicmanColorProfileStoreClass))
+#define PICMAN_IS_COLOR_PROFILE_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_PROFILE_STORE))
+#define PICMAN_IS_COLOR_PROFILE_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_PROFILE_STORE))
+#define PICMAN_COLOR_PROFILE_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_PROFILE_STORE, PicmanColorProfileStoreClass))
 
 
-typedef struct _GimpColorProfileStoreClass  GimpColorProfileStoreClass;
+typedef struct _PicmanColorProfileStoreClass  PicmanColorProfileStoreClass;
 
-struct _GimpColorProfileStore
+struct _PicmanColorProfileStore
 {
   GtkListStore       parent_instance;
 
   gchar             *history;
 };
 
-struct _GimpColorProfileStoreClass
+struct _PicmanColorProfileStoreClass
 {
   GtkListStoreClass  parent_class;
 
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType          gimp_color_profile_store_get_type (void) G_GNUC_CONST;
+GType          picman_color_profile_store_get_type (void) G_GNUC_CONST;
 
-GtkListStore * gimp_color_profile_store_new      (const gchar           *history);
+GtkListStore * picman_color_profile_store_new      (const gchar           *history);
 
-void           gimp_color_profile_store_add      (GimpColorProfileStore *store,
+void           picman_color_profile_store_add      (PicmanColorProfileStore *store,
                                                   const gchar           *filename,
                                                   const gchar           *label);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_COLOR_PROFILE_STORE_H__ */
+#endif  /* __PICMAN_COLOR_PROFILE_STORE_H__ */

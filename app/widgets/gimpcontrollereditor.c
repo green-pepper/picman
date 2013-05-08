@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimpcontrollereditor.c
- * Copyright (C) 2004-2008 Michael Natterer <mitch@gimp.org>
+ * picmancontrollereditor.c
+ * Copyright (C) 2004-2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,25 +25,25 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#define GIMP_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
-#include "libgimpwidgets/gimpcontroller.h"
+#define PICMAN_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
+#include "libpicmanwidgets/picmancontroller.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcontext.h"
+#include "core/picmancontext.h"
 
-#include "gimpactioneditor.h"
-#include "gimpactionview.h"
-#include "gimpcontrollereditor.h"
-#include "gimpcontrollerinfo.h"
-#include "gimpdialogfactory.h"
-#include "gimphelp-ids.h"
-#include "gimpuimanager.h"
-#include "gimpviewabledialog.h"
+#include "picmanactioneditor.h"
+#include "picmanactionview.h"
+#include "picmancontrollereditor.h"
+#include "picmancontrollerinfo.h"
+#include "picmandialogfactory.h"
+#include "picmanhelp-ids.h"
+#include "picmanuimanager.h"
+#include "picmanviewabledialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -63,83 +63,83 @@ enum
 };
 
 
-static void gimp_controller_editor_constructed    (GObject              *object);
-static void gimp_controller_editor_finalize       (GObject              *object);
-static void gimp_controller_editor_set_property   (GObject              *object,
+static void picman_controller_editor_constructed    (GObject              *object);
+static void picman_controller_editor_finalize       (GObject              *object);
+static void picman_controller_editor_set_property   (GObject              *object,
                                                    guint                 property_id,
                                                    const GValue         *value,
                                                    GParamSpec           *pspec);
-static void gimp_controller_editor_get_property   (GObject              *object,
+static void picman_controller_editor_get_property   (GObject              *object,
                                                    guint                 property_id,
                                                    GValue               *value,
                                                    GParamSpec           *pspec);
 
 
-static void gimp_controller_editor_unmap          (GtkWidget            *widget);
+static void picman_controller_editor_unmap          (GtkWidget            *widget);
 
-static void gimp_controller_editor_sel_changed    (GtkTreeSelection     *sel,
-                                                   GimpControllerEditor *editor);
+static void picman_controller_editor_sel_changed    (GtkTreeSelection     *sel,
+                                                   PicmanControllerEditor *editor);
 
-static void gimp_controller_editor_row_activated  (GtkTreeView          *tv,
+static void picman_controller_editor_row_activated  (GtkTreeView          *tv,
                                                    GtkTreePath          *path,
                                                    GtkTreeViewColumn    *column,
-                                                   GimpControllerEditor *editor);
+                                                   PicmanControllerEditor *editor);
 
-static void gimp_controller_editor_grab_toggled   (GtkWidget            *button,
-                                                   GimpControllerEditor *editor);
-static void gimp_controller_editor_edit_clicked   (GtkWidget            *button,
-                                                   GimpControllerEditor *editor);
-static void gimp_controller_editor_delete_clicked (GtkWidget            *button,
-                                                   GimpControllerEditor *editor);
+static void picman_controller_editor_grab_toggled   (GtkWidget            *button,
+                                                   PicmanControllerEditor *editor);
+static void picman_controller_editor_edit_clicked   (GtkWidget            *button,
+                                                   PicmanControllerEditor *editor);
+static void picman_controller_editor_delete_clicked (GtkWidget            *button,
+                                                   PicmanControllerEditor *editor);
 
-static void gimp_controller_editor_edit_activated (GtkTreeView          *tv,
+static void picman_controller_editor_edit_activated (GtkTreeView          *tv,
                                                    GtkTreePath          *path,
                                                    GtkTreeViewColumn    *column,
-                                                   GimpControllerEditor *editor);
-static void gimp_controller_editor_edit_response  (GtkWidget            *dialog,
+                                                   PicmanControllerEditor *editor);
+static void picman_controller_editor_edit_response  (GtkWidget            *dialog,
                                                    gint                  response_id,
-                                                   GimpControllerEditor *editor);
+                                                   PicmanControllerEditor *editor);
 
-static GtkWidget *  gimp_controller_string_view_new (GimpController *controller,
+static GtkWidget *  picman_controller_string_view_new (PicmanController *controller,
                                                      GParamSpec     *pspec);
-static GtkWidget *  gimp_controller_int_view_new    (GimpController *controller,
+static GtkWidget *  picman_controller_int_view_new    (PicmanController *controller,
                                                      GParamSpec     *pspec);
 
 
-G_DEFINE_TYPE (GimpControllerEditor, gimp_controller_editor, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanControllerEditor, picman_controller_editor, GTK_TYPE_BOX)
 
-#define parent_class gimp_controller_editor_parent_class
+#define parent_class picman_controller_editor_parent_class
 
 
 static void
-gimp_controller_editor_class_init (GimpControllerEditorClass *klass)
+picman_controller_editor_class_init (PicmanControllerEditorClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->constructed  = gimp_controller_editor_constructed;
-  object_class->finalize     = gimp_controller_editor_finalize;
-  object_class->set_property = gimp_controller_editor_set_property;
-  object_class->get_property = gimp_controller_editor_get_property;
+  object_class->constructed  = picman_controller_editor_constructed;
+  object_class->finalize     = picman_controller_editor_finalize;
+  object_class->set_property = picman_controller_editor_set_property;
+  object_class->get_property = picman_controller_editor_get_property;
 
-  widget_class->unmap        = gimp_controller_editor_unmap;
+  widget_class->unmap        = picman_controller_editor_unmap;
 
   g_object_class_install_property (object_class, PROP_CONTROLLER_INFO,
                                    g_param_spec_object ("controller-info",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_CONTROLLER_INFO,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_CONTROLLER_INFO,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (object_class, PROP_CONTEXT,
                                    g_param_spec_object ("context",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_CONTEXT,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_CONTEXT,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_controller_editor_init (GimpControllerEditor *editor)
+picman_controller_editor_init (PicmanControllerEditor *editor)
 {
   gtk_orientable_set_orientation (GTK_ORIENTABLE (editor),
                                   GTK_ORIENTATION_VERTICAL);
@@ -150,13 +150,13 @@ gimp_controller_editor_init (GimpControllerEditor *editor)
 }
 
 static void
-gimp_controller_editor_constructed (GObject *object)
+picman_controller_editor_constructed (GObject *object)
 {
-  GimpControllerEditor *editor = GIMP_CONTROLLER_EDITOR (object);
-  GimpControllerInfo   *info;
-  GimpController       *controller;
-  GimpControllerClass  *controller_class;
-  GimpUIManager        *ui_manager;
+  PicmanControllerEditor *editor = PICMAN_CONTROLLER_EDITOR (object);
+  PicmanControllerInfo   *info;
+  PicmanController       *controller;
+  PicmanControllerClass  *controller_class;
+  PicmanUIManager        *ui_manager;
   GtkListStore         *store;
   GtkWidget            *frame;
   GtkWidget            *vbox;
@@ -176,13 +176,13 @@ gimp_controller_editor_constructed (GObject *object)
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_CONTROLLER_INFO (editor->info));
+  g_assert (PICMAN_IS_CONTROLLER_INFO (editor->info));
 
   info             = editor->info;
   controller       = info->controller;
-  controller_class = GIMP_CONTROLLER_GET_CLASS (controller);
+  controller_class = PICMAN_CONTROLLER_GET_CLASS (controller);
 
-  frame = gimp_frame_new (_("General"));
+  frame = picman_frame_new (_("General"));
   gtk_box_pack_start (GTK_BOX (editor), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -190,21 +190,21 @@ gimp_controller_editor_constructed (GObject *object)
   gtk_container_add (GTK_CONTAINER (frame), vbox);
   gtk_widget_show (vbox);
 
-  entry = gimp_prop_entry_new (G_OBJECT (info), "name", -1);
+  entry = picman_prop_entry_new (G_OBJECT (info), "name", -1);
   gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, FALSE, 0);
   gtk_widget_show (entry);
 
-  button = gimp_prop_check_button_new (G_OBJECT (info), "debug-events",
+  button = picman_prop_check_button_new (G_OBJECT (info), "debug-events",
                                        _("_Dump events from this controller"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
-  button = gimp_prop_check_button_new (G_OBJECT (info), "enabled",
+  button = picman_prop_check_button_new (G_OBJECT (info), "enabled",
                                        _("_Enable this controller"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
-  frame = gimp_frame_new (controller_class->name);
+  frame = picman_frame_new (controller_class->name);
   gtk_box_pack_start (GTK_BOX (editor), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -220,15 +220,15 @@ gimp_controller_editor_constructed (GObject *object)
 
   row = 0;
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, row++,
                              _("Name:"), 0.0, 0.5,
-                             gimp_prop_label_new (G_OBJECT (controller),
+                             picman_prop_label_new (G_OBJECT (controller),
                                                   "name"),
                              1, TRUE);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, row++,
                              _("State:"), 0.0, 0.5,
-                             gimp_prop_label_new (G_OBJECT (controller),
+                             picman_prop_label_new (G_OBJECT (controller),
                                                   "state"),
                              1, TRUE);
 
@@ -241,14 +241,14 @@ gimp_controller_editor_constructed (GObject *object)
       GParamSpec *pspec = property_specs[i];
       GtkWidget  *widget;
 
-      if (pspec->owner_type == GIMP_TYPE_CONTROLLER)
+      if (pspec->owner_type == PICMAN_TYPE_CONTROLLER)
         continue;
 
       if (G_IS_PARAM_SPEC_STRING (pspec))
         {
-          widget = gimp_controller_string_view_new (controller, pspec);
+          widget = picman_controller_string_view_new (controller, pspec);
 
-          gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
+          picman_table_attach_aligned (GTK_TABLE (table), 0, row++,
                                      g_param_spec_get_nick (pspec),
                                      0.0, 0.5,
                                      widget,
@@ -256,9 +256,9 @@ gimp_controller_editor_constructed (GObject *object)
         }
       else if (G_IS_PARAM_SPEC_INT (pspec))
         {
-          widget = gimp_controller_int_view_new (controller, pspec);
+          widget = picman_controller_int_view_new (controller, pspec);
 
-          gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
+          picman_table_attach_aligned (GTK_TABLE (table), 0, row++,
                                      g_param_spec_get_nick (pspec),
                                      0.0, 0.5,
                                      widget,
@@ -286,18 +286,18 @@ gimp_controller_editor_constructed (GObject *object)
   gtk_widget_show (sw);
 
   g_signal_connect (tv, "row-activated",
-                    G_CALLBACK (gimp_controller_editor_row_activated),
+                    G_CALLBACK (picman_controller_editor_row_activated),
                     editor);
 
   editor->sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (tv));
 
   g_signal_connect (editor->sel, "changed",
-                    G_CALLBACK (gimp_controller_editor_sel_changed),
+                    G_CALLBACK (picman_controller_editor_sel_changed),
                     editor);
 
-  ui_manager = gimp_ui_managers_from_name ("<Image>")->data;
+  ui_manager = picman_ui_managers_from_name ("<Image>")->data;
 
-  n_events = gimp_controller_get_n_events (controller);
+  n_events = picman_controller_get_n_events (controller);
 
   for (i = 0; i < n_events; i++)
     {
@@ -307,8 +307,8 @@ gimp_controller_editor_constructed (GObject *object)
       const gchar *event_action;
       const gchar *stock_id = NULL;
 
-      event_name  = gimp_controller_get_event_name  (controller, i);
-      event_blurb = gimp_controller_get_event_blurb (controller, i);
+      event_name  = picman_controller_get_event_name  (controller, i);
+      event_blurb = picman_controller_get_event_blurb (controller, i);
 
       event_action = g_hash_table_lookup (info->mapping, event_name);
 
@@ -316,7 +316,7 @@ gimp_controller_editor_constructed (GObject *object)
         {
           GtkAction *action;
 
-          action = gimp_ui_manager_find_action (ui_manager, NULL, event_action);
+          action = picman_ui_manager_find_action (ui_manager, NULL, event_action);
 
           if (action)
             stock_id = gtk_action_get_stock_id (action);
@@ -362,10 +362,10 @@ gimp_controller_editor_constructed (GObject *object)
   gtk_widget_show (editor->grab_button);
 
   g_signal_connect (editor->grab_button, "toggled",
-                    G_CALLBACK (gimp_controller_editor_grab_toggled),
+                    G_CALLBACK (picman_controller_editor_grab_toggled),
                     editor);
 
-  gimp_help_set_help_data (editor->grab_button,
+  picman_help_set_help_data (editor->grab_button,
                            _("Select the next event arriving from "
                              "the controller"),
                            NULL);
@@ -375,7 +375,7 @@ gimp_controller_editor_constructed (GObject *object)
   gtk_widget_show (editor->edit_button);
 
   g_signal_connect (editor->edit_button, "clicked",
-                    G_CALLBACK (gimp_controller_editor_edit_clicked),
+                    G_CALLBACK (picman_controller_editor_edit_clicked),
                     editor);
 
   editor->delete_button = gtk_button_new_from_stock (GTK_STOCK_CLEAR);
@@ -383,7 +383,7 @@ gimp_controller_editor_constructed (GObject *object)
   gtk_widget_show (editor->delete_button);
 
   g_signal_connect (editor->delete_button, "clicked",
-                    G_CALLBACK (gimp_controller_editor_delete_clicked),
+                    G_CALLBACK (picman_controller_editor_delete_clicked),
                     editor);
 
   gtk_widget_set_sensitive (editor->edit_button,   FALSE);
@@ -391,13 +391,13 @@ gimp_controller_editor_constructed (GObject *object)
 }
 
 static void
-gimp_controller_editor_finalize (GObject *object)
+picman_controller_editor_finalize (GObject *object)
 {
-  GimpControllerEditor *editor = GIMP_CONTROLLER_EDITOR (object);
+  PicmanControllerEditor *editor = PICMAN_CONTROLLER_EDITOR (object);
 
   if (editor->info)
     {
-      gimp_controller_info_set_event_snooper (editor->info, NULL, NULL);
+      picman_controller_info_set_event_snooper (editor->info, NULL, NULL);
 
       g_object_unref (editor->info);
       editor->info = NULL;
@@ -416,12 +416,12 @@ gimp_controller_editor_finalize (GObject *object)
 }
 
 static void
-gimp_controller_editor_set_property (GObject      *object,
+picman_controller_editor_set_property (GObject      *object,
                                      guint         property_id,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  GimpControllerEditor *editor = GIMP_CONTROLLER_EDITOR (object);
+  PicmanControllerEditor *editor = PICMAN_CONTROLLER_EDITOR (object);
 
   switch (property_id)
     {
@@ -440,12 +440,12 @@ gimp_controller_editor_set_property (GObject      *object,
 }
 
 static void
-gimp_controller_editor_get_property (GObject    *object,
+picman_controller_editor_get_property (GObject    *object,
                                      guint       property_id,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  GimpControllerEditor *editor = GIMP_CONTROLLER_EDITOR (object);
+  PicmanControllerEditor *editor = PICMAN_CONTROLLER_EDITOR (object);
 
   switch (property_id)
     {
@@ -464,9 +464,9 @@ gimp_controller_editor_get_property (GObject    *object,
 }
 
 static void
-gimp_controller_editor_unmap (GtkWidget *widget)
+picman_controller_editor_unmap (GtkWidget *widget)
 {
-  GimpControllerEditor *editor = GIMP_CONTROLLER_EDITOR (widget);
+  PicmanControllerEditor *editor = PICMAN_CONTROLLER_EDITOR (widget);
 
   if (editor->edit_dialog)
     gtk_dialog_response (GTK_DIALOG (editor->edit_dialog),
@@ -479,13 +479,13 @@ gimp_controller_editor_unmap (GtkWidget *widget)
 /*  public functions  */
 
 GtkWidget *
-gimp_controller_editor_new (GimpControllerInfo *info,
-                            GimpContext        *context)
+picman_controller_editor_new (PicmanControllerInfo *info,
+                            PicmanContext        *context)
 {
-  g_return_val_if_fail (GIMP_IS_CONTROLLER_INFO (info), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTROLLER_INFO (info), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
-  return g_object_new (GIMP_TYPE_CONTROLLER_EDITOR,
+  return g_object_new (PICMAN_TYPE_CONTROLLER_EDITOR,
                        "controller-info", info,
                        "context",         context,
                        NULL);
@@ -495,8 +495,8 @@ gimp_controller_editor_new (GimpControllerInfo *info,
 /*  private functions  */
 
 static void
-gimp_controller_editor_sel_changed (GtkTreeSelection     *sel,
-                                    GimpControllerEditor *editor)
+picman_controller_editor_sel_changed (GtkTreeSelection     *sel,
+                                    PicmanControllerEditor *editor)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
@@ -532,34 +532,34 @@ gimp_controller_editor_sel_changed (GtkTreeSelection     *sel,
       g_free (event);
     }
 
-  gimp_help_set_help_data (editor->edit_button, edit_help, NULL);
+  picman_help_set_help_data (editor->edit_button, edit_help, NULL);
   gtk_widget_set_sensitive (editor->edit_button, edit_sensitive);
   g_free (edit_help);
 
-  gimp_help_set_help_data (editor->delete_button, delete_help, NULL);
+  picman_help_set_help_data (editor->delete_button, delete_help, NULL);
   gtk_widget_set_sensitive (editor->delete_button, delete_sensitive);
   g_free (delete_help);
 
-  gimp_controller_info_set_event_snooper (editor->info, NULL, NULL);
+  picman_controller_info_set_event_snooper (editor->info, NULL, NULL);
 }
 
 static void
-gimp_controller_editor_row_activated (GtkTreeView          *tv,
+picman_controller_editor_row_activated (GtkTreeView          *tv,
                                       GtkTreePath          *path,
                                       GtkTreeViewColumn    *column,
-                                      GimpControllerEditor *editor)
+                                      PicmanControllerEditor *editor)
 {
   if (gtk_widget_is_sensitive (editor->edit_button))
     gtk_button_clicked (GTK_BUTTON (editor->edit_button));
 }
 
 static gboolean
-gimp_controller_editor_snooper (GimpControllerInfo        *info,
-                                GimpController            *controller,
-                                const GimpControllerEvent *event,
+picman_controller_editor_snooper (PicmanControllerInfo        *info,
+                                PicmanController            *controller,
+                                const PicmanControllerEvent *event,
                                 gpointer                   user_data)
 {
-  GimpControllerEditor *editor = GIMP_CONTROLLER_EDITOR (user_data);
+  PicmanControllerEditor *editor = PICMAN_CONTROLLER_EDITOR (user_data);
   GtkTreeModel         *model;
   GtkTreeIter           iter;
   gboolean              iter_valid;
@@ -567,7 +567,7 @@ gimp_controller_editor_snooper (GimpControllerInfo        *info,
 
   gtk_tree_selection_get_selected (editor->sel, &model, &iter);
 
-  event_name = gimp_controller_get_event_name (info->controller,
+  event_name = picman_controller_get_event_name (info->controller,
                                                event->any.event_id);
 
   for (iter_valid = gtk_tree_model_get_iter_first (model, &iter);
@@ -609,24 +609,24 @@ gimp_controller_editor_snooper (GimpControllerInfo        *info,
 }
 
 static void
-gimp_controller_editor_grab_toggled (GtkWidget            *button,
-                                     GimpControllerEditor *editor)
+picman_controller_editor_grab_toggled (GtkWidget            *button,
+                                     PicmanControllerEditor *editor)
 {
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)))
     {
-      gimp_controller_info_set_event_snooper (editor->info,
-                                              gimp_controller_editor_snooper,
+      picman_controller_info_set_event_snooper (editor->info,
+                                              picman_controller_editor_snooper,
                                               editor);
     }
   else
     {
-      gimp_controller_info_set_event_snooper (editor->info, NULL, NULL);
+      picman_controller_info_set_event_snooper (editor->info, NULL, NULL);
     }
 }
 
 static void
-gimp_controller_editor_edit_clicked (GtkWidget            *button,
-                                     GimpControllerEditor *editor)
+picman_controller_editor_edit_clicked (GtkWidget            *button,
+                                     PicmanControllerEditor *editor)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
@@ -634,7 +634,7 @@ gimp_controller_editor_edit_clicked (GtkWidget            *button,
   gchar        *event_blurb = NULL;
   gchar        *action_name = NULL;
 
-  gimp_controller_info_set_event_snooper (editor->info, NULL, NULL);
+  picman_controller_info_set_event_snooper (editor->info, NULL, NULL);
 
   if (gtk_tree_selection_get_selected (editor->sel, &model, &iter))
     gtk_tree_model_get (model, &iter,
@@ -652,14 +652,14 @@ gimp_controller_editor_edit_clicked (GtkWidget            *button,
                                event_blurb);
 
       editor->edit_dialog =
-        gimp_viewable_dialog_new (GIMP_VIEWABLE (editor->info), editor->context,
+        picman_viewable_dialog_new (PICMAN_VIEWABLE (editor->info), editor->context,
                                   _("Select Controller Event Action"),
-                                  "gimp-controller-action-dialog",
+                                  "picman-controller-action-dialog",
                                   GTK_STOCK_EDIT,
                                   title,
                                   gtk_widget_get_toplevel (GTK_WIDGET (editor)),
-                                  gimp_standard_help_func,
-                                  GIMP_HELP_PREFS_INPUT_CONTROLLERS,
+                                  picman_standard_help_func,
+                                  PICMAN_HELP_PREFS_INPUT_CONTROLLERS,
 
                                   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                   GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -676,26 +676,26 @@ gimp_controller_editor_edit_clicked (GtkWidget            *button,
       g_object_add_weak_pointer (G_OBJECT (editor->edit_dialog),
                                  (gpointer) &editor->edit_dialog);
 
-      gimp_dialog_factory_add_foreign (gimp_dialog_factory_get_singleton (),
-                                       "gimp-controller-action-dialog",
+      picman_dialog_factory_add_foreign (picman_dialog_factory_get_singleton (),
+                                       "picman-controller-action-dialog",
                                        editor->edit_dialog);
 
       g_signal_connect (editor->edit_dialog, "response",
-                        G_CALLBACK (gimp_controller_editor_edit_response),
+                        G_CALLBACK (picman_controller_editor_edit_response),
                         editor);
 
-      view = gimp_action_editor_new (gimp_ui_managers_from_name ("<Image>")->data,
+      view = picman_action_editor_new (picman_ui_managers_from_name ("<Image>")->data,
                                      action_name, FALSE);
       gtk_container_set_border_width (GTK_CONTAINER (view), 12);
       gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (editor->edit_dialog))),
                           view, TRUE, TRUE, 0);
       gtk_widget_show (view);
 
-      g_signal_connect (GIMP_ACTION_EDITOR (view)->view, "row-activated",
-                        G_CALLBACK (gimp_controller_editor_edit_activated),
+      g_signal_connect (PICMAN_ACTION_EDITOR (view)->view, "row-activated",
+                        G_CALLBACK (picman_controller_editor_edit_activated),
                         editor);
 
-      editor->edit_sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (GIMP_ACTION_EDITOR (view)->view));
+      editor->edit_sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (PICMAN_ACTION_EDITOR (view)->view));
 
       g_object_add_weak_pointer (G_OBJECT (editor->edit_sel),
                                  (gpointer) &editor->edit_sel);
@@ -709,14 +709,14 @@ gimp_controller_editor_edit_clicked (GtkWidget            *button,
 }
 
 static void
-gimp_controller_editor_delete_clicked (GtkWidget            *button,
-                                       GimpControllerEditor *editor)
+picman_controller_editor_delete_clicked (GtkWidget            *button,
+                                       PicmanControllerEditor *editor)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
   gchar        *event_name = NULL;
 
-  gimp_controller_info_set_event_snooper (editor->info, NULL, NULL);
+  picman_controller_info_set_event_snooper (editor->info, NULL, NULL);
 
   if (gtk_tree_selection_get_selected (editor->sel, &model, &iter))
     gtk_tree_model_get (model, &iter,
@@ -736,18 +736,18 @@ gimp_controller_editor_delete_clicked (GtkWidget            *button,
 }
 
 static void
-gimp_controller_editor_edit_activated (GtkTreeView          *tv,
+picman_controller_editor_edit_activated (GtkTreeView          *tv,
                                        GtkTreePath          *path,
                                        GtkTreeViewColumn    *column,
-                                       GimpControllerEditor *editor)
+                                       PicmanControllerEditor *editor)
 {
   gtk_dialog_response (GTK_DIALOG (editor->edit_dialog), GTK_RESPONSE_OK);
 }
 
 static void
-gimp_controller_editor_edit_response (GtkWidget            *dialog,
+picman_controller_editor_edit_response (GtkWidget            *dialog,
                                       gint                  response_id,
-                                      GimpControllerEditor *editor)
+                                      PicmanControllerEditor *editor)
 {
   gtk_widget_set_sensitive (GTK_WIDGET (editor), TRUE);
 
@@ -761,8 +761,8 @@ gimp_controller_editor_edit_response (GtkWidget            *dialog,
 
       if (gtk_tree_selection_get_selected (editor->edit_sel, &model, &iter))
         gtk_tree_model_get (model, &iter,
-                            GIMP_ACTION_VIEW_COLUMN_STOCK_ID, &stock_id,
-                            GIMP_ACTION_VIEW_COLUMN_NAME,     &action_name,
+                            PICMAN_ACTION_VIEW_COLUMN_STOCK_ID, &stock_id,
+                            PICMAN_ACTION_VIEW_COLUMN_NAME,     &action_name,
                             -1);
 
       if (gtk_tree_selection_get_selected (editor->sel, &model, &iter))
@@ -786,14 +786,14 @@ gimp_controller_editor_edit_response (GtkWidget            *dialog,
       g_free (stock_id);
       g_free (action_name);
 
-      gimp_controller_editor_sel_changed (editor->sel, editor);
+      picman_controller_editor_sel_changed (editor->sel, editor);
     }
 
   gtk_widget_destroy (dialog);
 }
 
 static GtkWidget *
-gimp_controller_string_view_new (GimpController *controller,
+picman_controller_string_view_new (PicmanController *controller,
                                  GParamSpec     *pspec)
 {
   GtkWidget *widget = NULL;
@@ -821,18 +821,18 @@ gimp_controller_string_view_new (GimpController *controller,
 
       if (model)
         {
-          widget = gimp_prop_string_combo_box_new (G_OBJECT (controller),
+          widget = picman_prop_string_combo_box_new (G_OBJECT (controller),
                                                    pspec->name, model, 0, 1);
           g_object_unref (model);
         }
       else
         {
-          widget = gimp_prop_entry_new (G_OBJECT (controller), pspec->name, -1);
+          widget = picman_prop_entry_new (G_OBJECT (controller), pspec->name, -1);
         }
     }
   else
     {
-      widget = gimp_prop_label_new (G_OBJECT (controller), pspec->name);
+      widget = picman_prop_label_new (G_OBJECT (controller), pspec->name);
     }
 
   return widget;
@@ -840,7 +840,7 @@ gimp_controller_string_view_new (GimpController *controller,
 
 
 static GtkWidget *
-gimp_controller_int_view_new (GimpController *controller,
+picman_controller_int_view_new (PicmanController *controller,
                               GParamSpec     *pspec)
 {
   GtkWidget *widget = NULL;
@@ -849,7 +849,7 @@ gimp_controller_int_view_new (GimpController *controller,
 
   if (pspec->flags & G_PARAM_WRITABLE)
     {
-      GimpIntStore *model      = NULL;
+      PicmanIntStore *model      = NULL;
       gchar        *model_name = g_strdup_printf ("%s-values", pspec->name);
       GParamSpec   *model_spec;
 
@@ -857,7 +857,7 @@ gimp_controller_int_view_new (GimpController *controller,
                                                  model_name);
 
       if (G_IS_PARAM_SPEC_OBJECT (model_spec) &&
-          g_type_is_a (model_spec->value_type, GIMP_TYPE_INT_STORE))
+          g_type_is_a (model_spec->value_type, PICMAN_TYPE_INT_STORE))
         {
           g_object_get (controller,
                         model_name, &model,
@@ -868,19 +868,19 @@ gimp_controller_int_view_new (GimpController *controller,
 
       if (model)
         {
-          widget = gimp_prop_int_combo_box_new (G_OBJECT (controller),
+          widget = picman_prop_int_combo_box_new (G_OBJECT (controller),
                                                 pspec->name, model);
           g_object_unref (model);
         }
       else
         {
-          widget = gimp_prop_spin_button_new (G_OBJECT (controller),
+          widget = picman_prop_spin_button_new (G_OBJECT (controller),
                                               pspec->name, 1, 8, 0);
         }
     }
   else
     {
-      widget = gimp_prop_label_new (G_OBJECT (controller), pspec->name);
+      widget = picman_prop_label_new (G_OBJECT (controller), pspec->name);
     }
 
   return widget;

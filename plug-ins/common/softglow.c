@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Softglow filter for GIMP for BIPS
+/* Softglow filter for PICMAN for BIPS
  *  -Spencer Kimball
  *
  * This filter screens a desaturated, sigmoidally transferred
@@ -27,17 +27,17 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Some useful macros */
 
 #define PLUG_IN_PROC    "plug-in-softglow"
 #define PLUG_IN_BINARY  "softglow"
-#define PLUG_IN_ROLE    "gimp-softglow"
+#define PLUG_IN_ROLE    "picman-softglow"
 #define TILE_CACHE_SIZE 48
 #define SIGMOIDAL_BASE   2
 #define SIGMOIDAL_RANGE 20
@@ -59,13 +59,13 @@ typedef struct
 static void      query             (void);
 static void      run               (const gchar      *name,
                                     gint              nparams,
-                                    const GimpParam  *param,
+                                    const PicmanParam  *param,
                                     gint             *nreturn_vals,
-                                    GimpParam       **return_vals);
+                                    PicmanParam       **return_vals);
 
-static void      softglow          (GimpDrawable     *drawable,
-                                    GimpPreview      *preview);
-static gboolean  softglow_dialog   (GimpDrawable     *drawable);
+static void      softglow          (PicmanDrawable     *drawable,
+                                    PicmanPreview      *preview);
+static gboolean  softglow_dialog   (PicmanDrawable     *drawable);
 
 /*
  * Gaussian blur helper functions
@@ -85,7 +85,7 @@ static void      transfer_pixels   (gdouble *src1,
 
 /***** Local vars *****/
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init  */
   NULL,  /* quit  */
@@ -108,14 +108,14 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"   },
-    { GIMP_PDB_IMAGE,    "image",       "Input image (unused)"           },
-    { GIMP_PDB_DRAWABLE, "drawable",    "Input drawable"                 },
-    { GIMP_PDB_FLOAT,    "glow-radius", "Glow radius (radius in pixels)" },
-    { GIMP_PDB_FLOAT,    "brightness",  "Glow brightness (0.0 - 1.0)"    },
-    { GIMP_PDB_FLOAT,    "sharpness",   "Glow sharpness (0.0 - 1.0)"     }
+    { PICMAN_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"   },
+    { PICMAN_PDB_IMAGE,    "image",       "Input image (unused)"           },
+    { PICMAN_PDB_DRAWABLE, "drawable",    "Input drawable"                 },
+    { PICMAN_PDB_FLOAT,    "glow-radius", "Glow radius (radius in pixels)" },
+    { PICMAN_PDB_FLOAT,    "brightness",  "Glow brightness (0.0 - 1.0)"    },
+    { PICMAN_PDB_FLOAT,    "sharpness",   "Glow sharpness (0.0 - 1.0)"     }
   };
 
   gchar *help_string =
@@ -130,7 +130,7 @@ query (void)
     "to image highlights. The sharpness parameter controls how defined or "
     "alternatively, diffuse, the glow effect should be.";
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Simulate glow by making highlights intense and fuzzy"),
                           help_string,
                           "Spencer Kimball",
@@ -138,104 +138,104 @@ query (void)
                           "2001",
                           N_("_Softglow..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Artistic");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Artistic");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpDrawable      *drawable;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanDrawable      *drawable;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*  set the tile cache size  */
-  gimp_tile_cache_ntiles (TILE_CACHE_SIZE);
+  picman_tile_cache_ntiles (TILE_CACHE_SIZE);
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   INIT_I18N();
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &svals);
+      picman_get_data (PLUG_IN_PROC, &svals);
 
       /*  First acquire information with a dialog  */
       if (! softglow_dialog (drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       svals.glow_radius = param[3].data.d_float;
       svals.brightness  = param[4].data.d_float;
       svals.sharpness   = param[5].data.d_float;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &svals);
+      picman_get_data (PLUG_IN_PROC, &svals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is RGB or GRAY color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init ("Softglow");
+          picman_progress_init ("Softglow");
 
           softglow (drawable, NULL);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &svals, sizeof (SoftglowVals));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &svals, sizeof (SoftglowVals));
         }
       else
         {
-          status        = GIMP_PDB_EXECUTION_ERROR;
+          status        = PICMAN_PDB_EXECUTION_ERROR;
           *nreturn_vals = 2;
-          values[1].type          = GIMP_PDB_STRING;
+          values[1].type          = PICMAN_PDB_STRING;
           values[1].data.d_string = _("Cannot operate on indexed color images.");
         }
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static void
-softglow (GimpDrawable *drawable,
-          GimpPreview  *preview)
+softglow (PicmanDrawable *drawable,
+          PicmanPreview  *preview)
 {
-  GimpPixelRgn  src_rgn, dest_rgn;
-  GimpPixelRgn *pr;
+  PicmanPixelRgn  src_rgn, dest_rgn;
+  PicmanPixelRgn *pr;
   gint          width, height;
   gint          bytes;
   gboolean      has_alpha;
@@ -259,20 +259,20 @@ softglow (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
       x2 = x1 + width;
       y2 = y1 + height;
     }
   else
     {
-      gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+      picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
       width     = (x2 - x1);
       height    = (y2 - y1);
     }
 
   bytes     = drawable->bpp;
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   val_p = g_new (gdouble, MAX (width, height));
   val_m = g_new (gdouble, MAX (width, height));
@@ -283,11 +283,11 @@ softglow (GimpDrawable *drawable,
   max_progress = width * height * 3;
 
   /* Initialize the pixel regions. */
-  gimp_pixel_rgn_init (&src_rgn, drawable, x1, y1, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&src_rgn, drawable, x1, y1, width, height, FALSE, FALSE);
 
-  for (pr = gimp_pixel_rgns_register (1, &src_rgn);
+  for (pr = picman_pixel_rgns_register (1, &src_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       guchar *src_ptr  = src_rgn.data;
       guchar *dest_ptr = dest + (src_rgn.y - y1) * width + (src_rgn.x - x1);
@@ -298,7 +298,7 @@ softglow (GimpDrawable *drawable,
             {
               /* desaturate */
               if (bytes > 2)
-                dest_ptr[col] = (guchar) gimp_rgb_to_l_int (src_ptr[col * bytes + 0],
+                dest_ptr[col] = (guchar) picman_rgb_to_l_int (src_ptr[col * bytes + 0],
                                                             src_ptr[col * bytes + 1],
                                                             src_ptr[col * bytes + 2]);
               else
@@ -318,7 +318,7 @@ softglow (GimpDrawable *drawable,
       if (!preview)
         {
           progress += src_rgn.w * src_rgn.h;
-          gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+          picman_progress_update ((gdouble) progress / (gdouble) max_progress);
         }
     }
 
@@ -375,7 +375,7 @@ softglow (GimpDrawable *drawable,
         {
           progress += height;
           if ((col % 5) == 0)
-            gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+            picman_progress_update ((gdouble) progress / (gdouble) max_progress);
         }
     }
 
@@ -427,18 +427,18 @@ softglow (GimpDrawable *drawable,
         {
           progress += width;
           if ((row % 5) == 0)
-            gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+            picman_progress_update ((gdouble) progress / (gdouble) max_progress);
         }
     }
 
   /* Initialize the pixel regions. */
-  gimp_pixel_rgn_init (&src_rgn, drawable, x1, y1, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable, x1, y1, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        x1, y1, width, height, (preview == NULL), TRUE);
 
-  for (pr = gimp_pixel_rgns_register (2, &src_rgn, &dest_rgn);
+  for (pr = picman_pixel_rgns_register (2, &src_rgn, &dest_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       guchar *src_ptr  = src_rgn.data;
       guchar *dest_ptr = dest_rgn.data;
@@ -464,23 +464,23 @@ softglow (GimpDrawable *drawable,
 
       if (preview)
         {
-          gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview),
+          picman_drawable_preview_draw_region (PICMAN_DRAWABLE_PREVIEW (preview),
                                              &dest_rgn);
         }
       else
         {
           progress += src_rgn.w * src_rgn.h;
-          gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+          picman_progress_update ((gdouble) progress / (gdouble) max_progress);
         }
     }
 
   if (! preview)
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
       /*  merge the shadow, update the drawable  */
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id,
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id,
                             x1, y1, (x2 - x1), (y2 - y1));
     }
 
@@ -619,7 +619,7 @@ find_constants (gdouble n_p[],
 /*******************************************************/
 
 static gboolean
-softglow_dialog (GimpDrawable *drawable)
+softglow_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -628,11 +628,11 @@ softglow_dialog (GimpDrawable *drawable)
   GtkObject *scale_data;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Softglow"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Softglow"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -644,7 +644,7 @@ softglow_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -652,7 +652,7 @@ softglow_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -667,50 +667,50 @@ softglow_dialog (GimpDrawable *drawable)
   gtk_widget_show (table);
 
   /*  Label, scale, entry for svals.amount  */
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                      _("_Glow radius:"), 100, 5,
                                      svals.glow_radius, 1.0, 50.0, 1, 5.0, 2,
                                      TRUE, 0, 0,
                                      NULL, NULL);
 
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &svals.glow_radius);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*  Label, scale, entry for svals.amount  */
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                                      _("_Brightness:"), 100, 5,
                                      svals.brightness, 0.0, 1.0, 0.01, 0.1, 2,
                                      TRUE, 0, 0,
                                      NULL, NULL);
 
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &svals.brightness);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*  Label, scale, entry for svals.amount  */
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                                      _("_Sharpness:"), 100, 5,
                                      svals.sharpness, 0.0, 1.0, 0.01, 0.1, 2,
                                      TRUE, 0, 0,
                                      NULL, NULL);
 
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &svals.sharpness);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

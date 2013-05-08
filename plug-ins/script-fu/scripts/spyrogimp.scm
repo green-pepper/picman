@@ -1,6 +1,6 @@
-; spyrogimp.scm -*-scheme-*-
+; spyropicman.scm -*-scheme-*-
 ; Draws Spirographs, Epitrochoids and Lissajous Curves.
-; More info at http://www.wisdom.weizmann.ac.il/~elad/spyrogimp/
+; More info at http://www.wisdom.weizmann.ac.il/~elad/spyropicman/
 ; Version 1.2
 ;
 ; Copyright (C) 2003 by Elad Shahar <elad@wisdom.weizmann.ac.il>
@@ -21,7 +21,7 @@
 
 ; This routine is invoked by a dialog.
 ; It is the main routine in this file.
-(define (script-fu-spyrogimp img drw
+(define (script-fu-spyropicman img drw
                              type shape
                              oteeth iteeth
                              margin hole-ratio start-angle
@@ -29,7 +29,7 @@
                              color-method color grad)
 
   ; Internal function to draw the spyro.
-  (define (script-fu-spyrogimp-internal img drw
+  (define (script-fu-spyropicman-internal img drw
                x1 y1 x2 y2   ; Bounding box.
                type          ; = 0 (Spirograph), 1 (Epitrochoid), 2(Lissajous) .
                shape         ; = 0 (Circle), 1 (Frame), >2 (Polygons) .
@@ -50,7 +50,7 @@
       (if (= color-method 1)
           ; option 1
           ; Just return the gradient
-          (gimp-gradient-get-uniform-samples grad (min steps 50) FALSE)
+          (picman-gradient-get-uniform-samples grad (min steps 50) FALSE)
 
           ; option 2
           ; The returned list is such that the gradient appears two times, once
@@ -58,7 +58,7 @@
           ; jumps if we go beyond the edge
           (let* (
                 ; Sample the gradient into array "gr".
-                (gr (gimp-gradient-get-uniform-samples grad
+                (gr (picman-gradient-get-uniform-samples grad
                                                        (/ (min steps 50) 2)
                                                        FALSE))
 
@@ -209,10 +209,10 @@
       ;; Draw all the points in *points* with appropriate tool.
       (define (flush-points len)
         (if (= tool 0)
-          (gimp-pencil drw len *points*)              ; Use pencil
+          (picman-pencil drw len *points*)              ; Use pencil
           (if (= tool 1)
-            (gimp-paintbrush-default drw len *points*); use paintbrush
-            (gimp-airbrush-default drw len *points*)  ; use airbrush
+            (picman-paintbrush-default drw len *points*); use paintbrush
+            (picman-airbrush-default drw len *points*)  ; use airbrush
           )
         )
 
@@ -227,17 +227,17 @@
    ;; Execution starts here.
    ;;
 
-      (gimp-context-push)
+      (picman-context-push)
 
-      (gimp-image-undo-group-start img)
+      (picman-image-undo-group-start img)
 
       ; Set new color, brush, opacity, paint mode.
-      (gimp-context-set-foreground color)
-      (gimp-context-set-brush (car brush))
-      (gimp-context-set-opacity (car (cdr brush)))
-      (gimp-context-set-paint-mode (car (cdr (cdr (cdr brush)))))
+      (picman-context-set-foreground color)
+      (picman-context-set-brush (car brush))
+      (picman-context-set-opacity (car (cdr brush)))
+      (picman-context-set-paint-mode (car (cdr (cdr (cdr brush)))))
 
-      (gimp-progress-set-text _"Rendering Spyro")
+      (picman-progress-set-text _"Rendering Spyro")
 
       (while (< index steps)
 
@@ -251,14 +251,14 @@
           (if (< 0 color-method)  ; use gradient.
              (if (< (/ (+ grad-index 4) gradn) (/ index steps))
                (begin
-                (gimp-context-set-foreground
+                (picman-context-set-foreground
                   (list
                     (* 255 (aref grada grad-index))
                     (* 255 (aref grada (+ 1 grad-index)) )
                     (* 255 (aref grada (+ 2 grad-index)) )
                   )
                 )
-                (gimp-context-set-opacity (* 100 (aref grada (+ 3 grad-index) ) )  )
+                (picman-context-set-opacity (* 100 (aref grada (+ 3 grad-index) ) )  )
                 (set! grad-index (+ 4 grad-index))
 
                 ; Draw points
@@ -270,25 +270,25 @@
           (set! index (+ index 1))
 
 	  (if (= 0 (modulo index 16))
-	      (gimp-progress-update (/ index steps))
+	      (picman-progress-update (/ index steps))
 	  )
       )
 
       ; Draw remaining points.
       (flush-points point-index)
 
-      (gimp-progress-update 1.0)
+      (picman-progress-update 1.0)
 
-      (gimp-image-undo-group-end img)
-      (gimp-displays-flush)
+      (picman-image-undo-group-end img)
+      (picman-displays-flush)
 
-      (gimp-context-pop)
+      (picman-context-pop)
     )
   )
 
   (let* (
         ; Get current selection to determine where to draw.
-        (bounds (cdr (gimp-selection-bounds img)))
+        (bounds (cdr (picman-selection-bounds img)))
         (x1 (car bounds))
         (y1 (cadr bounds))
         (x2 (caddr bounds))
@@ -298,7 +298,7 @@
     (set! oteeth (trunc (+ oteeth 0.5)))
     (set! iteeth (trunc (+ iteeth 0.5)))
 
-    (script-fu-spyrogimp-internal img drw
+    (script-fu-spyropicman-internal img drw
              x1 y1 x2 y2
              type shape
              oteeth iteeth
@@ -310,8 +310,8 @@
 
 
 
-(script-fu-register "script-fu-spyrogimp"
-  _"_Spyrogimp..."
+(script-fu-register "script-fu-spyropicman"
+  _"_Spyropicman..."
   _"Add Spirographs, Epitrochoids, and Lissajous Curves to the current layer"
   "Elad Shahar <elad@wisdom.weizmann.ac.il>"
   "Elad Shahar"
@@ -351,5 +351,5 @@
   SF-GRADIENT   _"Gradient"       "Deep Sea"
 )
 
-(script-fu-menu-register "script-fu-spyrogimp"
+(script-fu-menu-register "script-fu-spyropicman"
                          "<Image>/Filters/Render")

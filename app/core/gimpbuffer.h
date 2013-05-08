@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,55 +15,55 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BUFFER_H__
-#define __GIMP_BUFFER_H__
+#ifndef __PICMAN_BUFFER_H__
+#define __PICMAN_BUFFER_H__
 
 
-#include "gimpviewable.h"
+#include "picmanviewable.h"
 
 
-#define GIMP_TYPE_BUFFER            (gimp_buffer_get_type ())
-#define GIMP_BUFFER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BUFFER, GimpBuffer))
-#define GIMP_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BUFFER, GimpBufferClass))
-#define GIMP_IS_BUFFER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BUFFER))
-#define GIMP_IS_BUFFER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BUFFER))
-#define GIMP_BUFFER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BUFFER, GimpBufferClass))
+#define PICMAN_TYPE_BUFFER            (picman_buffer_get_type ())
+#define PICMAN_BUFFER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BUFFER, PicmanBuffer))
+#define PICMAN_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BUFFER, PicmanBufferClass))
+#define PICMAN_IS_BUFFER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BUFFER))
+#define PICMAN_IS_BUFFER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BUFFER))
+#define PICMAN_BUFFER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BUFFER, PicmanBufferClass))
 
 
-typedef struct _GimpBufferClass GimpBufferClass;
+typedef struct _PicmanBufferClass PicmanBufferClass;
 
-struct _GimpBuffer
+struct _PicmanBuffer
 {
-  GimpViewable   parent_instance;
+  PicmanViewable   parent_instance;
 
   GeglBuffer    *buffer;
   gint           offset_x;
   gint           offset_y;
 };
 
-struct _GimpBufferClass
+struct _PicmanBufferClass
 {
-  GimpViewableClass  parent_class;
+  PicmanViewableClass  parent_class;
 };
 
 
-GType           gimp_buffer_get_type        (void) G_GNUC_CONST;
+GType           picman_buffer_get_type        (void) G_GNUC_CONST;
 
-GimpBuffer    * gimp_buffer_new             (GeglBuffer       *buffer,
+PicmanBuffer    * picman_buffer_new             (GeglBuffer       *buffer,
                                              const gchar      *name,
                                              gint              offset_x,
                                              gint              offset_y,
                                              gboolean          copy_pixels);
-GimpBuffer    * gimp_buffer_new_from_pixbuf (GdkPixbuf        *pixbuf,
+PicmanBuffer    * picman_buffer_new_from_pixbuf (GdkPixbuf        *pixbuf,
                                              const gchar      *name,
                                              gint              offset_x,
                                              gint              offset_y);
 
-gint            gimp_buffer_get_width       (const GimpBuffer *buffer);
-gint            gimp_buffer_get_height      (const GimpBuffer *buffer);
-const Babl    * gimp_buffer_get_format      (const GimpBuffer *buffer);
+gint            picman_buffer_get_width       (const PicmanBuffer *buffer);
+gint            picman_buffer_get_height      (const PicmanBuffer *buffer);
+const Babl    * picman_buffer_get_format      (const PicmanBuffer *buffer);
 
-GeglBuffer    * gimp_buffer_get_buffer      (const GimpBuffer *buffer);
+GeglBuffer    * picman_buffer_get_buffer      (const PicmanBuffer *buffer);
 
 
-#endif /* __GIMP_BUFFER_H__ */
+#endif /* __PICMAN_BUFFER_H__ */

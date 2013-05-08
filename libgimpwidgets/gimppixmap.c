@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppixmap.c
- * Copyright (C) 2000 Michael Natterer <mitch@gimp.org>
+ * picmanpixmap.c
+ * Copyright (C) 2000 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,17 +29,17 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#undef GIMP_DISABLE_DEPRECATED
-#include "gimppixmap.h"
+#undef PICMAN_DISABLE_DEPRECATED
+#include "picmanpixmap.h"
 
 
 /**
- * SECTION: gimppixmap
- * @title: GimpPixmap
+ * SECTION: picmanpixmap
+ * @title: PicmanPixmap
  * @short_description: Widget which creates a #GtkPixmap from XPM data.
- * @see_also: gimp_pixmap_button_new(), #GtkPixmap
+ * @see_also: picman_pixmap_button_new(), #GtkPixmap
  *
  * Widget which creates a #GtkPixmap from XPM data.
  *
@@ -48,64 +48,64 @@
  *
  * Note that the drawback of the easy interface is that the actual
  * #GdkPixmap and it's mask have to be constructed every time you call
- * gimp_pixmap_new() and cannot be cached in memory without doing bad
+ * picman_pixmap_new() and cannot be cached in memory without doing bad
  * hacks.
  **/
 
 
-static void   gimp_pixmap_realize           (GtkWidget  *widget);
-static void   gimp_pixmap_create_from_xpm_d (GimpPixmap *pixmap);
+static void   picman_pixmap_realize           (GtkWidget  *widget);
+static void   picman_pixmap_create_from_xpm_d (PicmanPixmap *pixmap);
 
 
-G_DEFINE_TYPE (GimpPixmap, gimp_pixmap, GTK_TYPE_IMAGE)
+G_DEFINE_TYPE (PicmanPixmap, picman_pixmap, GTK_TYPE_IMAGE)
 
-#define parent_class gimp_pixmap_parent_class
+#define parent_class picman_pixmap_parent_class
 
 
 static void
-gimp_pixmap_class_init (GimpPixmapClass *klass)
+picman_pixmap_class_init (PicmanPixmapClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  widget_class->realize = gimp_pixmap_realize;
+  widget_class->realize = picman_pixmap_realize;
 }
 
 static void
-gimp_pixmap_init (GimpPixmap *pixmap)
+picman_pixmap_init (PicmanPixmap *pixmap)
 {
   pixmap->xpm_data = NULL;
 }
 
 /**
- * gimp_pixmap_new:
+ * picman_pixmap_new:
  * @xpm_data: A pointer to a XPM data structure as found in XPM files.
  *
- * Creates a new #GimpPixmap widget.
+ * Creates a new #PicmanPixmap widget.
  *
- * Returns: A pointer to the new #GimpPixmap widget.
+ * Returns: A pointer to the new #PicmanPixmap widget.
  **/
 GtkWidget *
-gimp_pixmap_new (gchar **xpm_data)
+picman_pixmap_new (gchar **xpm_data)
 {
-  GimpPixmap *pixmap = g_object_new (GIMP_TYPE_PIXMAP, NULL);
+  PicmanPixmap *pixmap = g_object_new (PICMAN_TYPE_PIXMAP, NULL);
 
-  gimp_pixmap_set (pixmap, xpm_data);
+  picman_pixmap_set (pixmap, xpm_data);
 
   return GTK_WIDGET (pixmap);
 }
 
 /**
- * gimp_pixmap_set:
+ * picman_pixmap_set:
  * @pixmap: The pixmap widget you want to set the new xpm_data for.
  * @xpm_data: A pointer to a XPM data structure as found in XPM files.
  *
- * Sets a new image for an existing #GimpPixmap widget.
+ * Sets a new image for an existing #PicmanPixmap widget.
  **/
 void
-gimp_pixmap_set (GimpPixmap  *pixmap,
+picman_pixmap_set (PicmanPixmap  *pixmap,
                  gchar      **xpm_data)
 {
-  g_return_if_fail (GIMP_IS_PIXMAP (pixmap));
+  g_return_if_fail (PICMAN_IS_PIXMAP (pixmap));
 
   pixmap->xpm_data = xpm_data;
 
@@ -135,21 +135,21 @@ gimp_pixmap_set (GimpPixmap  *pixmap,
     }
   else
     {
-      gimp_pixmap_create_from_xpm_d (pixmap);
+      picman_pixmap_create_from_xpm_d (pixmap);
     }
 }
 
 static void
-gimp_pixmap_realize (GtkWidget *widget)
+picman_pixmap_realize (GtkWidget *widget)
 {
   if (GTK_WIDGET_CLASS (parent_class)->realize)
     GTK_WIDGET_CLASS (parent_class)->realize (widget);
 
-  gimp_pixmap_create_from_xpm_d (GIMP_PIXMAP (widget));
+  picman_pixmap_create_from_xpm_d (PICMAN_PIXMAP (widget));
 }
 
 static void
-gimp_pixmap_create_from_xpm_d (GimpPixmap *pixmap)
+picman_pixmap_create_from_xpm_d (PicmanPixmap *pixmap)
 {
   GtkStyle   *style;
   GdkPixmap  *gdk_pixmap = NULL;

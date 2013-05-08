@@ -7,13 +7,13 @@ headers
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include <libgimpthumb/gimpthumb.h>
+#include <libpicmanthumb/picmanthumb.h>
 
 /* TODO: Add a header for these */
-void gimpthumb_register_classes(PyObject *d);
-void gimpthumb_add_constants(PyObject *module, const gchar *strip_prefix);
+void picmanthumb_register_classes(PyObject *d);
+void picmanthumb_add_constants(PyObject *module, const gchar *strip_prefix);
 %%
-modulename gimpthumb
+modulename picmanthumb
 %%
 import gobject.GObject as PyGObject_Type
 import gtk.gdk.Pixbuf as PyGdkPixbuf_Type
@@ -21,9 +21,9 @@ import gtk.gdk.Pixbuf as PyGdkPixbuf_Type
 ignore-glob
   *_get_type
 %%
-override gimp_thumb_init kwargs
+override picman_thumb_init kwargs
 static PyObject *
-_wrap_gimp_thumb_init(PyObject *self, PyObject *args, PyObject *kwargs)
+_wrap_picman_thumb_init(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     char *creator, *thumb_basedir = NULL;
 
@@ -34,16 +34,16 @@ _wrap_gimp_thumb_init(PyObject *self, PyObject *args, PyObject *kwargs)
                                      &creator, &thumb_basedir))
         return NULL;
 
-    return PyBool_FromLong(gimp_thumb_init(creator, thumb_basedir));
+    return PyBool_FromLong(picman_thumb_init(creator, thumb_basedir));
 }
 %%
-override gimp_thumb_find_thumb kwargs
+override picman_thumb_find_thumb kwargs
 static PyObject *
-_wrap_gimp_thumb_find_thumb(PyGObject *self, PyObject *args, PyObject *kwargs)
+_wrap_picman_thumb_find_thumb(PyGObject *self, PyObject *args, PyObject *kwargs)
 {
     gchar *uri, *ret;
     PyObject *py_size, *py_ret;
-    GimpThumbSize size;
+    PicmanThumbSize size;
 
     static char *kwlist[] = { "uri", NULL };
 
@@ -51,10 +51,10 @@ _wrap_gimp_thumb_find_thumb(PyGObject *self, PyObject *args, PyObject *kwargs)
                                      &uri, &py_size))
         return NULL;
 
-    if (pyg_enum_get_value(GIMP_TYPE_THUMB_SIZE, py_size, (gint *)&size))
+    if (pyg_enum_get_value(PICMAN_TYPE_THUMB_SIZE, py_size, (gint *)&size))
         return NULL;
 
-    ret = gimp_thumb_find_thumb(uri, &size);
+    ret = picman_thumb_find_thumb(uri, &size);
 
     if (ret == NULL) {
         Py_INCREF(Py_None);
@@ -62,17 +62,17 @@ _wrap_gimp_thumb_find_thumb(PyGObject *self, PyObject *args, PyObject *kwargs)
     }
 
     py_ret = Py_BuildValue("sN", ret,
-                           pyg_enum_from_gtype(GIMP_TYPE_THUMB_SIZE, size));
+                           pyg_enum_from_gtype(PICMAN_TYPE_THUMB_SIZE, size));
     g_free(ret);
     return py_ret;
 }
 %%
-override gimp_thumb_file_test kwargs
+override picman_thumb_file_test kwargs
 static PyObject *
-_wrap_gimp_thumb_file_test(PyGObject *self, PyObject *args, PyObject *kwargs)
+_wrap_picman_thumb_file_test(PyGObject *self, PyObject *args, PyObject *kwargs)
 {
     gchar *filename;
-    GimpThumbFileType ret;
+    PicmanThumbFileType ret;
     gint64 mtime, size;
     gint err_no;
 
@@ -82,9 +82,9 @@ _wrap_gimp_thumb_file_test(PyGObject *self, PyObject *args, PyObject *kwargs)
                                      &filename))
         return NULL;
 
-    ret = gimp_thumb_file_test(filename, &mtime, &size, &err_no);
+    ret = picman_thumb_file_test(filename, &mtime, &size, &err_no);
 
-    if (ret == GIMP_THUMB_FILE_TYPE_NONE) {
+    if (ret == PICMAN_THUMB_FILE_TYPE_NONE) {
         PyObject *v = Py_BuildValue("iss",
                                     err_no, g_strerror(err_no), filename); 
         if (v != NULL) {
@@ -96,7 +96,7 @@ _wrap_gimp_thumb_file_test(PyGObject *self, PyObject *args, PyObject *kwargs)
     }
 
     return Py_BuildValue("NNN", 
-                         pyg_enum_from_gtype(GIMP_TYPE_THUMB_FILE_TYPE, ret),
+                         pyg_enum_from_gtype(PICMAN_TYPE_THUMB_FILE_TYPE, ret),
                          PyLong_FromLongLong(mtime),
                          PyLong_FromLongLong(size));
 }

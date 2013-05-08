@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpmatrix.c
- * Copyright (C) 1998 Jay Cox <jaycox@gimp.org>
+ * picmanmatrix.c
+ * Copyright (C) 1998 Jay Cox <jaycox@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,15 +23,15 @@
 
 #include <glib-object.h>
 
-#include "gimpmath.h"
+#include "picmanmath.h"
 
 
 /**
- * SECTION: gimpmatrix
- * @title: GimpMatrix
+ * SECTION: picmanmatrix
+ * @title: PicmanMatrix
  * @short_description: Utilities to set up and manipulate 3x3
  *                     transformation matrices.
- * @see_also: #GimpVector2, #GimpVector3, #GimpVector4
+ * @see_also: #PicmanVector2, #PicmanVector3, #PicmanVector4
  *
  * When doing image manipulation you will often need 3x3
  * transformation matrices that define translation, rotation, scaling,
@@ -47,24 +47,24 @@
 #define EPSILON 1e-6
 
 
-static GimpMatrix2 * matrix2_copy                  (const GimpMatrix2 *matrix);
+static PicmanMatrix2 * matrix2_copy                  (const PicmanMatrix2 *matrix);
 
 /**
- * gimp_matrix2_get_type:
+ * picman_matrix2_get_type:
  *
  * Reveals the object type
  *
  * Returns: the #GType for Matrix2 objects
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GType
-gimp_matrix2_get_type (void)
+picman_matrix2_get_type (void)
 {
   static GType matrix_type = 0;
 
   if (!matrix_type)
-    matrix_type = g_boxed_type_register_static ("GimpMatrix2",
+    matrix_type = g_boxed_type_register_static ("PicmanMatrix2",
                                                (GBoxedCopyFunc) matrix2_copy,
                                                (GBoxedFreeFunc) g_free);
 
@@ -73,39 +73,39 @@ gimp_matrix2_get_type (void)
 
 
 /*
- * GIMP_TYPE_PARAM_MATRIX2
+ * PICMAN_TYPE_PARAM_MATRIX2
  */
 
-#define GIMP_PARAM_SPEC_MATRIX2(pspec) (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GIMP_TYPE_PARAM_MATRIX2, GimpParamSpecMatrix2))
+#define PICMAN_PARAM_SPEC_MATRIX2(pspec) (G_TYPE_CHECK_INSTANCE_CAST ((pspec), PICMAN_TYPE_PARAM_MATRIX2, PicmanParamSpecMatrix2))
 
-static void   gimp_param_matrix2_class_init  (GParamSpecClass *class);
-static void   gimp_param_matrix2_init        (GParamSpec      *pspec);
-static void   gimp_param_matrix2_set_default (GParamSpec      *pspec,
+static void   picman_param_matrix2_class_init  (GParamSpecClass *class);
+static void   picman_param_matrix2_init        (GParamSpec      *pspec);
+static void   picman_param_matrix2_set_default (GParamSpec      *pspec,
                                               GValue          *value);
-static gint   gimp_param_matrix2_values_cmp  (GParamSpec      *pspec,
+static gint   picman_param_matrix2_values_cmp  (GParamSpec      *pspec,
                                               const GValue    *value1,
                                               const GValue    *value2);
 
-typedef struct _GimpParamSpecMatrix2 GimpParamSpecMatrix2;
+typedef struct _PicmanParamSpecMatrix2 PicmanParamSpecMatrix2;
 
-struct _GimpParamSpecMatrix2
+struct _PicmanParamSpecMatrix2
 {
   GParamSpecBoxed      parent_instance;
 
-  GimpMatrix2          default_value;
+  PicmanMatrix2          default_value;
 };
 
 /**
- * gimp_param_matrix2_get_type:
+ * picman_param_matrix2_get_type:
  *
  * Reveals the object type
  *
- * Returns: the #GType for a GimpMatrix2 object
+ * Returns: the #GType for a PicmanMatrix2 object
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GType
-gimp_param_matrix2_get_type (void)
+picman_param_matrix2_get_type (void)
 {
   static GType spec_type = 0;
 
@@ -115,15 +115,15 @@ gimp_param_matrix2_get_type (void)
       {
         sizeof (GParamSpecClass),
         NULL, NULL,
-        (GClassInitFunc) gimp_param_matrix2_class_init,
+        (GClassInitFunc) picman_param_matrix2_class_init,
         NULL, NULL,
-        sizeof (GimpParamSpecMatrix2),
+        sizeof (PicmanParamSpecMatrix2),
         0,
-        (GInstanceInitFunc) gimp_param_matrix2_init
+        (GInstanceInitFunc) picman_param_matrix2_init
       };
 
       spec_type = g_type_register_static (G_TYPE_PARAM_BOXED,
-                                          "GimpParamMatrix2",
+                                          "PicmanParamMatrix2",
                                           &type_info, 0);
     }
 
@@ -131,37 +131,37 @@ gimp_param_matrix2_get_type (void)
 }
 
 static void
-gimp_param_matrix2_class_init (GParamSpecClass *class)
+picman_param_matrix2_class_init (GParamSpecClass *class)
 {
-  class->value_type        = GIMP_TYPE_MATRIX2;
-  class->value_set_default = gimp_param_matrix2_set_default;
-  class->values_cmp        = gimp_param_matrix2_values_cmp;
+  class->value_type        = PICMAN_TYPE_MATRIX2;
+  class->value_set_default = picman_param_matrix2_set_default;
+  class->values_cmp        = picman_param_matrix2_values_cmp;
 }
 
 static void
-gimp_param_matrix2_init (GParamSpec *pspec)
+picman_param_matrix2_init (GParamSpec *pspec)
 {
-  GimpParamSpecMatrix2 *cspec = GIMP_PARAM_SPEC_MATRIX2 (pspec);
+  PicmanParamSpecMatrix2 *cspec = PICMAN_PARAM_SPEC_MATRIX2 (pspec);
 
-  gimp_matrix2_identity (&cspec->default_value);
+  picman_matrix2_identity (&cspec->default_value);
 }
 
 static void
-gimp_param_matrix2_set_default (GParamSpec *pspec,
+picman_param_matrix2_set_default (GParamSpec *pspec,
                                 GValue     *value)
 {
-  GimpParamSpecMatrix2 *cspec = GIMP_PARAM_SPEC_MATRIX2 (pspec);
+  PicmanParamSpecMatrix2 *cspec = PICMAN_PARAM_SPEC_MATRIX2 (pspec);
 
   g_value_set_static_boxed (value, &cspec->default_value);
 }
 
 static gint
-gimp_param_matrix2_values_cmp (GParamSpec   *pspec,
+picman_param_matrix2_values_cmp (GParamSpec   *pspec,
                                const GValue *value1,
                                const GValue *value2)
 {
-  GimpMatrix2 *matrix1;
-  GimpMatrix2 *matrix2;
+  PicmanMatrix2 *matrix1;
+  PicmanMatrix2 *matrix2;
   gint         i, j;
 
   matrix1 = value1->data[0].v_pointer;
@@ -183,32 +183,32 @@ gimp_param_matrix2_values_cmp (GParamSpec   *pspec,
 }
 
 /**
- * gimp_param_spec_matrix2:
+ * picman_param_spec_matrix2:
  * @name:          Canonical name of the param
  * @nick:          Nickname of the param
  * @blurb:         Brief desciption of param.
  * @default_value: Value to use if none is assigned.
  * @flags:         a combination of #GParamFlags
  *
- * Creates a param spec to hold a #GimpMatrix2 value.
+ * Creates a param spec to hold a #PicmanMatrix2 value.
  * See g_param_spec_internal() for more information.
  *
  * Returns: a newly allocated #GParamSpec instance
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GParamSpec *
-gimp_param_spec_matrix2 (const gchar       *name,
+picman_param_spec_matrix2 (const gchar       *name,
                          const gchar       *nick,
                          const gchar       *blurb,
-                         const GimpMatrix2 *default_value,
+                         const PicmanMatrix2 *default_value,
                          GParamFlags        flags)
 {
-  GimpParamSpecMatrix2 *cspec;
+  PicmanParamSpecMatrix2 *cspec;
 
   g_return_val_if_fail (default_value != NULL, NULL);
 
-  cspec = g_param_spec_internal (GIMP_TYPE_PARAM_MATRIX2,
+  cspec = g_param_spec_internal (PICMAN_TYPE_PARAM_MATRIX2,
                                  name, nick, blurb, flags);
 
   cspec->default_value = *default_value;
@@ -217,40 +217,40 @@ gimp_param_spec_matrix2 (const gchar       *name,
 }
 
 
-static GimpMatrix2 *
-matrix2_copy (const GimpMatrix2 *matrix)
+static PicmanMatrix2 *
+matrix2_copy (const PicmanMatrix2 *matrix)
 {
-  return (GimpMatrix2 *) g_memdup (matrix, sizeof (GimpMatrix2));
+  return (PicmanMatrix2 *) g_memdup (matrix, sizeof (PicmanMatrix2));
 }
 
 
 /**
- * gimp_matrix2_identity:
+ * picman_matrix2_identity:
  * @matrix: A matrix.
  *
  * Sets the matrix to the identity matrix.
  */
 void
-gimp_matrix2_identity (GimpMatrix2 *matrix)
+picman_matrix2_identity (PicmanMatrix2 *matrix)
 {
-  static const GimpMatrix2 identity = { { { 1.0, 0.0 },
+  static const PicmanMatrix2 identity = { { { 1.0, 0.0 },
                                           { 0.0, 1.0 } } };
 
   *matrix = identity;
 }
 
 /**
- * gimp_matrix2_mult:
+ * picman_matrix2_mult:
  * @matrix1: The first input matrix.
  * @matrix2: The second input matrix which will be overwritten by the result.
  *
  * Multiplies two matrices and puts the result into the second one.
  */
 void
-gimp_matrix2_mult (const GimpMatrix2 *matrix1,
-                   GimpMatrix2       *matrix2)
+picman_matrix2_mult (const PicmanMatrix2 *matrix1,
+                   PicmanMatrix2       *matrix2)
 {
-  GimpMatrix2  tmp;
+  PicmanMatrix2  tmp;
 
   tmp.coeff[0][0] = (matrix1->coeff[0][0] * matrix2->coeff[0][0] +
                      matrix1->coeff[0][1] * matrix2->coeff[1][0]);
@@ -265,24 +265,24 @@ gimp_matrix2_mult (const GimpMatrix2 *matrix1,
 }
 
 
-static GimpMatrix3 * matrix3_copy                  (const GimpMatrix3 *matrix);
+static PicmanMatrix3 * matrix3_copy                  (const PicmanMatrix3 *matrix);
 
 /**
- * gimp_matrix3_get_type:
+ * picman_matrix3_get_type:
  *
  * Reveals the object type
  *
  * Returns: the #GType for Matrix3 objects
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 GType
-gimp_matrix3_get_type (void)
+picman_matrix3_get_type (void)
 {
   static GType matrix_type = 0;
 
   if (!matrix_type)
-    matrix_type = g_boxed_type_register_static ("GimpMatrix3",
+    matrix_type = g_boxed_type_register_static ("PicmanMatrix3",
                                                (GBoxedCopyFunc) matrix3_copy,
                                                (GBoxedFreeFunc) g_free);
 
@@ -291,39 +291,39 @@ gimp_matrix3_get_type (void)
 
 
 /*
- * GIMP_TYPE_PARAM_MATRIX3
+ * PICMAN_TYPE_PARAM_MATRIX3
  */
 
-#define GIMP_PARAM_SPEC_MATRIX3(pspec) (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GIMP_TYPE_PARAM_MATRIX3, GimpParamSpecMatrix3))
+#define PICMAN_PARAM_SPEC_MATRIX3(pspec) (G_TYPE_CHECK_INSTANCE_CAST ((pspec), PICMAN_TYPE_PARAM_MATRIX3, PicmanParamSpecMatrix3))
 
-static void   gimp_param_matrix3_class_init  (GParamSpecClass *class);
-static void   gimp_param_matrix3_init        (GParamSpec      *pspec);
-static void   gimp_param_matrix3_set_default (GParamSpec      *pspec,
+static void   picman_param_matrix3_class_init  (GParamSpecClass *class);
+static void   picman_param_matrix3_init        (GParamSpec      *pspec);
+static void   picman_param_matrix3_set_default (GParamSpec      *pspec,
                                               GValue          *value);
-static gint   gimp_param_matrix3_values_cmp  (GParamSpec      *pspec,
+static gint   picman_param_matrix3_values_cmp  (GParamSpec      *pspec,
                                               const GValue    *value1,
                                               const GValue    *value2);
 
-typedef struct _GimpParamSpecMatrix3 GimpParamSpecMatrix3;
+typedef struct _PicmanParamSpecMatrix3 PicmanParamSpecMatrix3;
 
-struct _GimpParamSpecMatrix3
+struct _PicmanParamSpecMatrix3
 {
   GParamSpecBoxed      parent_instance;
 
-  GimpMatrix3          default_value;
+  PicmanMatrix3          default_value;
 };
 
 /**
- * gimp_param_matrix3_get_type:
+ * picman_param_matrix3_get_type:
  *
  * Reveals the object type
  *
- * Returns: the #GType for a GimpMatrix3 object
+ * Returns: the #GType for a PicmanMatrix3 object
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 GType
-gimp_param_matrix3_get_type (void)
+picman_param_matrix3_get_type (void)
 {
   static GType spec_type = 0;
 
@@ -333,15 +333,15 @@ gimp_param_matrix3_get_type (void)
       {
         sizeof (GParamSpecClass),
         NULL, NULL,
-        (GClassInitFunc) gimp_param_matrix3_class_init,
+        (GClassInitFunc) picman_param_matrix3_class_init,
         NULL, NULL,
-        sizeof (GimpParamSpecMatrix3),
+        sizeof (PicmanParamSpecMatrix3),
         0,
-        (GInstanceInitFunc) gimp_param_matrix3_init
+        (GInstanceInitFunc) picman_param_matrix3_init
       };
 
       spec_type = g_type_register_static (G_TYPE_PARAM_BOXED,
-                                          "GimpParamMatrix3",
+                                          "PicmanParamMatrix3",
                                           &type_info, 0);
     }
 
@@ -349,37 +349,37 @@ gimp_param_matrix3_get_type (void)
 }
 
 static void
-gimp_param_matrix3_class_init (GParamSpecClass *class)
+picman_param_matrix3_class_init (GParamSpecClass *class)
 {
-  class->value_type        = GIMP_TYPE_MATRIX3;
-  class->value_set_default = gimp_param_matrix3_set_default;
-  class->values_cmp        = gimp_param_matrix3_values_cmp;
+  class->value_type        = PICMAN_TYPE_MATRIX3;
+  class->value_set_default = picman_param_matrix3_set_default;
+  class->values_cmp        = picman_param_matrix3_values_cmp;
 }
 
 static void
-gimp_param_matrix3_init (GParamSpec *pspec)
+picman_param_matrix3_init (GParamSpec *pspec)
 {
-  GimpParamSpecMatrix3 *cspec = GIMP_PARAM_SPEC_MATRIX3 (pspec);
+  PicmanParamSpecMatrix3 *cspec = PICMAN_PARAM_SPEC_MATRIX3 (pspec);
 
-  gimp_matrix3_identity (&cspec->default_value);
+  picman_matrix3_identity (&cspec->default_value);
 }
 
 static void
-gimp_param_matrix3_set_default (GParamSpec *pspec,
+picman_param_matrix3_set_default (GParamSpec *pspec,
                                 GValue     *value)
 {
-  GimpParamSpecMatrix3 *cspec = GIMP_PARAM_SPEC_MATRIX3 (pspec);
+  PicmanParamSpecMatrix3 *cspec = PICMAN_PARAM_SPEC_MATRIX3 (pspec);
 
   g_value_set_static_boxed (value, &cspec->default_value);
 }
 
 static gint
-gimp_param_matrix3_values_cmp (GParamSpec   *pspec,
+picman_param_matrix3_values_cmp (GParamSpec   *pspec,
                                const GValue *value1,
                                const GValue *value2)
 {
-  GimpMatrix3 *matrix1;
-  GimpMatrix3 *matrix2;
+  PicmanMatrix3 *matrix1;
+  PicmanMatrix3 *matrix2;
   gint         i, j;
 
   matrix1 = value1->data[0].v_pointer;
@@ -401,30 +401,30 @@ gimp_param_matrix3_values_cmp (GParamSpec   *pspec,
 }
 
 /**
- * gimp_param_spec_matrix3:
+ * picman_param_spec_matrix3:
  * @name:          Canonical name of the param
  * @nick:          Nickname of the param
  * @blurb:         Brief desciption of param.
  * @default_value: Value to use if none is assigned.
  * @flags:         a combination of #GParamFlags
  *
- * Creates a param spec to hold a #GimpMatrix3 value.
+ * Creates a param spec to hold a #PicmanMatrix3 value.
  * See g_param_spec_internal() for more information.
  *
  * Returns: a newly allocated #GParamSpec instance
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 GParamSpec *
-gimp_param_spec_matrix3 (const gchar       *name,
+picman_param_spec_matrix3 (const gchar       *name,
                          const gchar       *nick,
                          const gchar       *blurb,
-                         const GimpMatrix3 *default_value,
+                         const PicmanMatrix3 *default_value,
                          GParamFlags        flags)
 {
-  GimpParamSpecMatrix3 *cspec;
+  PicmanParamSpecMatrix3 *cspec;
 
-  cspec = g_param_spec_internal (GIMP_TYPE_PARAM_MATRIX3,
+  cspec = g_param_spec_internal (PICMAN_TYPE_PARAM_MATRIX3,
                                  name, nick, blurb, flags);
 
   if (default_value)
@@ -434,23 +434,23 @@ gimp_param_spec_matrix3 (const gchar       *name,
 }
 
 
-static GimpMatrix3 *
-matrix3_copy (const GimpMatrix3 *matrix)
+static PicmanMatrix3 *
+matrix3_copy (const PicmanMatrix3 *matrix)
 {
-  return (GimpMatrix3 *) g_memdup (matrix, sizeof (GimpMatrix3));
+  return (PicmanMatrix3 *) g_memdup (matrix, sizeof (PicmanMatrix3));
 }
 
 
 /**
- * gimp_matrix3_identity:
+ * picman_matrix3_identity:
  * @matrix: A matrix.
  *
  * Sets the matrix to the identity matrix.
  */
 void
-gimp_matrix3_identity (GimpMatrix3 *matrix)
+picman_matrix3_identity (PicmanMatrix3 *matrix)
 {
-  static const GimpMatrix3 identity = { { { 1.0, 0.0, 0.0 },
+  static const PicmanMatrix3 identity = { { { 1.0, 0.0, 0.0 },
                                           { 0.0, 1.0, 0.0 },
                                           { 0.0, 0.0, 1.0 } } };
 
@@ -458,7 +458,7 @@ gimp_matrix3_identity (GimpMatrix3 *matrix)
 }
 
 /**
- * gimp_matrix3_transform_point:
+ * picman_matrix3_transform_point:
  * @matrix: The transformation matrix.
  * @x: The source X coordinate.
  * @y: The source Y coordinate.
@@ -468,7 +468,7 @@ gimp_matrix3_identity (GimpMatrix3 *matrix)
  * Transforms a point in 2D as specified by the transformation matrix.
  */
 void
-gimp_matrix3_transform_point (const GimpMatrix3 *matrix,
+picman_matrix3_transform_point (const PicmanMatrix3 *matrix,
                               gdouble            x,
                               gdouble            y,
                               gdouble           *newx,
@@ -492,18 +492,18 @@ gimp_matrix3_transform_point (const GimpMatrix3 *matrix,
 }
 
 /**
- * gimp_matrix3_mult:
+ * picman_matrix3_mult:
  * @matrix1: The first input matrix.
  * @matrix2: The second input matrix which will be overwritten by the result.
  *
  * Multiplies two matrices and puts the result into the second one.
  */
 void
-gimp_matrix3_mult (const GimpMatrix3 *matrix1,
-                   GimpMatrix3       *matrix2)
+picman_matrix3_mult (const PicmanMatrix3 *matrix1,
+                   PicmanMatrix3       *matrix2)
 {
   gint         i, j;
-  GimpMatrix3  tmp;
+  PicmanMatrix3  tmp;
   gdouble      t1, t2, t3;
 
   for (i = 0; i < 3; i++)
@@ -524,7 +524,7 @@ gimp_matrix3_mult (const GimpMatrix3 *matrix1,
 }
 
 /**
- * gimp_matrix3_translate:
+ * picman_matrix3_translate:
  * @matrix: The matrix that is to be translated.
  * @x: Translation in X direction.
  * @y: Translation in Y direction.
@@ -532,7 +532,7 @@ gimp_matrix3_mult (const GimpMatrix3 *matrix1,
  * Translates the matrix by x and y.
  */
 void
-gimp_matrix3_translate (GimpMatrix3 *matrix,
+picman_matrix3_translate (PicmanMatrix3 *matrix,
                         gdouble      x,
                         gdouble      y)
 {
@@ -551,7 +551,7 @@ gimp_matrix3_translate (GimpMatrix3 *matrix,
 }
 
 /**
- * gimp_matrix3_scale:
+ * picman_matrix3_scale:
  * @matrix: The matrix that is to be scaled.
  * @x: X scale factor.
  * @y: Y scale factor.
@@ -559,7 +559,7 @@ gimp_matrix3_translate (GimpMatrix3 *matrix,
  * Scales the matrix by x and y
  */
 void
-gimp_matrix3_scale (GimpMatrix3 *matrix,
+picman_matrix3_scale (PicmanMatrix3 *matrix,
                     gdouble      x,
                     gdouble      y)
 {
@@ -573,14 +573,14 @@ gimp_matrix3_scale (GimpMatrix3 *matrix,
 }
 
 /**
- * gimp_matrix3_rotate:
+ * picman_matrix3_rotate:
  * @matrix: The matrix that is to be rotated.
  * @theta: The angle of rotation (in radians).
  *
  * Rotates the matrix by theta degrees.
  */
 void
-gimp_matrix3_rotate (GimpMatrix3 *matrix,
+picman_matrix3_rotate (PicmanMatrix3 *matrix,
                      gdouble      theta)
 {
   gdouble t1, t2;
@@ -606,14 +606,14 @@ gimp_matrix3_rotate (GimpMatrix3 *matrix,
 }
 
 /**
- * gimp_matrix3_xshear:
+ * picman_matrix3_xshear:
  * @matrix: The matrix that is to be sheared.
  * @amount: X shear amount.
  *
  * Shears the matrix in the X direction.
  */
 void
-gimp_matrix3_xshear (GimpMatrix3 *matrix,
+picman_matrix3_xshear (PicmanMatrix3 *matrix,
                      gdouble      amount)
 {
   matrix->coeff[0][0] += amount * matrix->coeff[1][0];
@@ -622,14 +622,14 @@ gimp_matrix3_xshear (GimpMatrix3 *matrix,
 }
 
 /**
- * gimp_matrix3_yshear:
+ * picman_matrix3_yshear:
  * @matrix: The matrix that is to be sheared.
  * @amount: Y shear amount.
  *
  * Shears the matrix in the Y direction.
  */
 void
-gimp_matrix3_yshear (GimpMatrix3 *matrix,
+picman_matrix3_yshear (PicmanMatrix3 *matrix,
                      gdouble      amount)
 {
   matrix->coeff[1][0] += amount * matrix->coeff[0][0];
@@ -638,7 +638,7 @@ gimp_matrix3_yshear (GimpMatrix3 *matrix,
 }
 
 /**
- * gimp_matrix3_affine:
+ * picman_matrix3_affine:
  * @matrix: The input matrix.
  * @a: the 'a' coefficient
  * @b: the 'b' coefficient
@@ -656,7 +656,7 @@ gimp_matrix3_yshear (GimpMatrix3 *matrix,
  *  ( 0 0 1 )
  **/
 void
-gimp_matrix3_affine (GimpMatrix3 *matrix,
+picman_matrix3_affine (PicmanMatrix3 *matrix,
                      gdouble      a,
                      gdouble      b,
                      gdouble      c,
@@ -664,7 +664,7 @@ gimp_matrix3_affine (GimpMatrix3 *matrix,
                      gdouble      e,
                      gdouble      f)
 {
-  GimpMatrix3 affine;
+  PicmanMatrix3 affine;
 
   affine.coeff[0][0] = a;
   affine.coeff[1][0] = b;
@@ -678,11 +678,11 @@ gimp_matrix3_affine (GimpMatrix3 *matrix,
   affine.coeff[1][2] = f;
   affine.coeff[2][2] = 1.0;
 
-  gimp_matrix3_mult (&affine, matrix);
+  picman_matrix3_mult (&affine, matrix);
 }
 
 /**
- * gimp_matrix3_determinant:
+ * picman_matrix3_determinant:
  * @matrix: The input matrix.
  *
  * Calculates the determinant of the given matrix.
@@ -690,7 +690,7 @@ gimp_matrix3_affine (GimpMatrix3 *matrix,
  * Returns: The determinant.
  */
 gdouble
-gimp_matrix3_determinant (const GimpMatrix3 *matrix)
+picman_matrix3_determinant (const PicmanMatrix3 *matrix)
 {
   gdouble determinant;
 
@@ -708,18 +708,18 @@ gimp_matrix3_determinant (const GimpMatrix3 *matrix)
 }
 
 /**
- * gimp_matrix3_invert:
+ * picman_matrix3_invert:
  * @matrix: The matrix that is to be inverted.
  *
  * Inverts the given matrix.
  */
 void
-gimp_matrix3_invert (GimpMatrix3 *matrix)
+picman_matrix3_invert (PicmanMatrix3 *matrix)
 {
-  GimpMatrix3 inv;
+  PicmanMatrix3 inv;
   gdouble     det;
 
-  det = gimp_matrix3_determinant (matrix);
+  det = picman_matrix3_determinant (matrix);
 
   if (det == 0.0)
     return;
@@ -760,7 +760,7 @@ gimp_matrix3_invert (GimpMatrix3 *matrix)
 /*  functions to test for matrix properties  */
 
 /**
- * gimp_matrix3_is_identity:
+ * picman_matrix3_is_identity:
  * @matrix: The matrix that is to be tested.
  *
  * Checks if the given matrix is the identity matrix.
@@ -768,7 +768,7 @@ gimp_matrix3_invert (GimpMatrix3 *matrix)
  * Returns: %TRUE if the matrix is the identity matrix, %FALSE otherwise
  */
 gboolean
-gimp_matrix3_is_identity (const GimpMatrix3 *matrix)
+picman_matrix3_is_identity (const PicmanMatrix3 *matrix)
 {
   gint i, j;
 
@@ -793,7 +793,7 @@ gimp_matrix3_is_identity (const GimpMatrix3 *matrix)
 }
 
 /**
- * gimp_matrix3_is_diagonal:
+ * picman_matrix3_is_diagonal:
  * @matrix: The matrix that is to be tested.
  *
  * Checks if the given matrix is diagonal.
@@ -801,7 +801,7 @@ gimp_matrix3_is_identity (const GimpMatrix3 *matrix)
  * Returns: %TRUE if the matrix is diagonal, %FALSE otherwise
  */
 gboolean
-gimp_matrix3_is_diagonal (const GimpMatrix3 *matrix)
+picman_matrix3_is_diagonal (const PicmanMatrix3 *matrix)
 {
   gint i, j;
 
@@ -818,7 +818,7 @@ gimp_matrix3_is_diagonal (const GimpMatrix3 *matrix)
 }
 
 /**
- * gimp_matrix3_is_affine:
+ * picman_matrix3_is_affine:
  * @matrix: The matrix that is to be tested.
  *
  * Checks if the given matrix defines an affine transformation.
@@ -826,10 +826,10 @@ gimp_matrix3_is_diagonal (const GimpMatrix3 *matrix)
  * Returns: %TRUE if the matrix defines an affine transformation,
  *          %FALSE otherwise
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 gboolean
-gimp_matrix3_is_affine (const GimpMatrix3 *matrix)
+picman_matrix3_is_affine (const PicmanMatrix3 *matrix)
 {
   return (fabs (matrix->coeff[2][0]) < EPSILON &&
           fabs (matrix->coeff[2][1]) < EPSILON &&
@@ -837,7 +837,7 @@ gimp_matrix3_is_affine (const GimpMatrix3 *matrix)
 }
 
 /**
- * gimp_matrix3_is_simple:
+ * picman_matrix3_is_simple:
  * @matrix: The matrix that is to be tested.
  *
  * Checks if we'll need to interpolate when applying this matrix as
@@ -847,7 +847,7 @@ gimp_matrix3_is_affine (const GimpMatrix3 *matrix)
  *          either 0 or 1, %FALSE otherwise
  */
 gboolean
-gimp_matrix3_is_simple (const GimpMatrix3 *matrix)
+picman_matrix3_is_simple (const PicmanMatrix3 *matrix)
 {
   gdouble absm;
   gint    i, j;
@@ -866,7 +866,7 @@ gimp_matrix3_is_simple (const GimpMatrix3 *matrix)
 }
 
 /**
- * gimp_matrix4_to_deg:
+ * picman_matrix4_to_deg:
  * @matrix:
  * @a:
  * @b:
@@ -875,7 +875,7 @@ gimp_matrix3_is_simple (const GimpMatrix3 *matrix)
  *
  **/
 void
-gimp_matrix4_to_deg (const GimpMatrix4 *matrix,
+picman_matrix4_to_deg (const PicmanMatrix4 *matrix,
                      gdouble           *a,
                      gdouble           *b,
                      gdouble           *c)

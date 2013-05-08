@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "xcf-read.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 #define MAX_XCF_STRING_LEN (16L * 1024 * 1024)
 
@@ -111,7 +111,7 @@ xcf_read_string (FILE   *fp,
           if (str[tmp - 1] != '\0')
             str[tmp - 1] = '\0';
 
-          data[i] = gimp_any_to_utf8 (str, -1,
+          data[i] = picman_any_to_utf8 (str, -1,
                                       _("Invalid UTF-8 string in XCF file"));
 
           g_free (str);

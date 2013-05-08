@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpimageselect_pdb.c
+ * picmanimageselect_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpimageselect
- * @title: gimpimageselect
+ * SECTION: picmanimageselect
+ * @title: picmanimageselect
  * @short_description: Modify the image's selection.
  *
  * Functions to modify the image's selection.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_image_select_color:
+ * picman_image_select_color:
  * @image_ID: The affected image.
  * @operation: The selection operation.
  * @drawable_ID: The affected drawable.
@@ -51,45 +51,45 @@
  * (as determined by the threshold and criterion context values) are
  * included in the selection. To select transparent regions, the color
  * specified must also have minimum alpha. This procedure is affected
- * by the following context setters: gimp_context_set_antialias(),
- * gimp_context_set_feather(), gimp_context_set_feather_radius(),
- * gimp_context_set_sample_merged(),
- * gimp_context_set_sample_criterion(),
- * gimp_context_set_sample_threshold(),
- * gimp_context_set_sample_transparent(). In the case of a merged
+ * by the following context setters: picman_context_set_antialias(),
+ * picman_context_set_feather(), picman_context_set_feather_radius(),
+ * picman_context_set_sample_merged(),
+ * picman_context_set_sample_criterion(),
+ * picman_context_set_sample_threshold(),
+ * picman_context_set_sample_transparent(). In the case of a merged
  * sampling, the supplied drawable is ignored.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_select_color (gint32          image_ID,
-                         GimpChannelOps  operation,
+picman_image_select_color (gint32          image_ID,
+                         PicmanChannelOps  operation,
                          gint32          drawable_ID,
-                         const GimpRGB  *color)
+                         const PicmanRGB  *color)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-select-color",
+  return_vals = picman_run_procedure ("picman-image-select-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_COLOR, color,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_COLOR, color,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_select_contiguous_color:
+ * picman_image_select_contiguous_color:
  * @image_ID: The affected image.
  * @operation: The selection operation.
  * @drawable_ID: The affected drawable.
@@ -111,48 +111,48 @@ gimp_image_select_color (gint32          image_ID,
  * the final selection mask will contain intermediate values based on
  * close misses to the threshold bar at pixels along the seed fill
  * boundary. This procedure is affected by the following context
- * setters: gimp_context_set_antialias(), gimp_context_set_feather(),
- * gimp_context_set_feather_radius(), gimp_context_set_sample_merged(),
- * gimp_context_set_sample_criterion(),
- * gimp_context_set_sample_threshold(),
- * gimp_context_set_sample_transparent(). In the case of a merged
+ * setters: picman_context_set_antialias(), picman_context_set_feather(),
+ * picman_context_set_feather_radius(), picman_context_set_sample_merged(),
+ * picman_context_set_sample_criterion(),
+ * picman_context_set_sample_threshold(),
+ * picman_context_set_sample_transparent(). In the case of a merged
  * sampling, the supplied drawable is ignored. If the sample is merged,
  * the specified coordinates are relative to the image origin;
  * otherwise, they are relative to the drawable's origin.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_select_contiguous_color (gint32         image_ID,
-                                    GimpChannelOps operation,
+picman_image_select_contiguous_color (gint32         image_ID,
+                                    PicmanChannelOps operation,
                                     gint32         drawable_ID,
                                     gdouble        x,
                                     gdouble        y)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-select-contiguous-color",
+  return_vals = picman_run_procedure ("picman-image-select-contiguous-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, x,
-                                    GIMP_PDB_FLOAT, y,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_FLOAT, x,
+                                    PICMAN_PDB_FLOAT, y,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_select_rectangle:
+ * picman_image_select_rectangle:
  * @image_ID: The image.
  * @operation: The selection operation.
  * @x: x coordinate of upper-left corner of rectangle.
@@ -166,43 +166,43 @@ gimp_image_select_contiguous_color (gint32         image_ID,
  * The rectangular region can be either added to, subtracted from, or
  * replace the contents of the previous selection mask. This procedure
  * is affected by the following context setters:
- * gimp_context_set_feather(), gimp_context_set_feather_radius().
+ * picman_context_set_feather(), picman_context_set_feather_radius().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_select_rectangle (gint32         image_ID,
-                             GimpChannelOps operation,
+picman_image_select_rectangle (gint32         image_ID,
+                             PicmanChannelOps operation,
                              gdouble        x,
                              gdouble        y,
                              gdouble        width,
                              gdouble        height)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-select-rectangle",
+  return_vals = picman_run_procedure ("picman-image-select-rectangle",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_FLOAT, x,
-                                    GIMP_PDB_FLOAT, y,
-                                    GIMP_PDB_FLOAT, width,
-                                    GIMP_PDB_FLOAT, height,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_FLOAT, x,
+                                    PICMAN_PDB_FLOAT, y,
+                                    PICMAN_PDB_FLOAT, width,
+                                    PICMAN_PDB_FLOAT, height,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_select_round_rectangle:
+ * picman_image_select_round_rectangle:
  * @image_ID: The image.
  * @operation: The selection operation.
  * @x: x coordinate of upper-left corner of rectangle.
@@ -219,16 +219,16 @@ gimp_image_select_rectangle (gint32         image_ID,
  * the specified image. The rectangular region can be either added to,
  * subtracted from, or replace the contents of the previous selection
  * mask. This procedure is affected by the following context setters:
- * gimp_context_set_antialias(), gimp_context_set_feather(),
- * gimp_context_set_feather_radius().
+ * picman_context_set_antialias(), picman_context_set_feather(),
+ * picman_context_set_feather_radius().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_select_round_rectangle (gint32         image_ID,
-                                   GimpChannelOps operation,
+picman_image_select_round_rectangle (gint32         image_ID,
+                                   PicmanChannelOps operation,
                                    gdouble        x,
                                    gdouble        y,
                                    gdouble        width,
@@ -236,31 +236,31 @@ gimp_image_select_round_rectangle (gint32         image_ID,
                                    gdouble        corner_radius_x,
                                    gdouble        corner_radius_y)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-select-round-rectangle",
+  return_vals = picman_run_procedure ("picman-image-select-round-rectangle",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_FLOAT, x,
-                                    GIMP_PDB_FLOAT, y,
-                                    GIMP_PDB_FLOAT, width,
-                                    GIMP_PDB_FLOAT, height,
-                                    GIMP_PDB_FLOAT, corner_radius_x,
-                                    GIMP_PDB_FLOAT, corner_radius_y,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_FLOAT, x,
+                                    PICMAN_PDB_FLOAT, y,
+                                    PICMAN_PDB_FLOAT, width,
+                                    PICMAN_PDB_FLOAT, height,
+                                    PICMAN_PDB_FLOAT, corner_radius_x,
+                                    PICMAN_PDB_FLOAT, corner_radius_y,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_select_ellipse:
+ * picman_image_select_ellipse:
  * @image_ID: The image.
  * @operation: The selection operation.
  * @x: x coordinate of upper-left corner of ellipse bounding box.
@@ -274,44 +274,44 @@ gimp_image_select_round_rectangle (gint32         image_ID,
  * The elliptical region can be either added to, subtracted from, or
  * replace the contents of the previous selection mask. This procedure
  * is affected by the following context setters:
- * gimp_context_set_antialias(), gimp_context_set_feather(),
- * gimp_context_set_feather_radius().
+ * picman_context_set_antialias(), picman_context_set_feather(),
+ * picman_context_set_feather_radius().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_select_ellipse (gint32         image_ID,
-                           GimpChannelOps operation,
+picman_image_select_ellipse (gint32         image_ID,
+                           PicmanChannelOps operation,
                            gdouble        x,
                            gdouble        y,
                            gdouble        width,
                            gdouble        height)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-select-ellipse",
+  return_vals = picman_run_procedure ("picman-image-select-ellipse",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_FLOAT, x,
-                                    GIMP_PDB_FLOAT, y,
-                                    GIMP_PDB_FLOAT, width,
-                                    GIMP_PDB_FLOAT, height,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_FLOAT, x,
+                                    PICMAN_PDB_FLOAT, y,
+                                    PICMAN_PDB_FLOAT, width,
+                                    PICMAN_PDB_FLOAT, height,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_select_polygon:
+ * picman_image_select_polygon:
  * @image_ID: The image.
  * @operation: The selection operation.
  * @num_segs: Number of points (count 1 coordinate as two points).
@@ -328,40 +328,40 @@ gimp_image_select_ellipse (gint32         image_ID,
  * the x and y coordinates. If the final point does not connect to the
  * starting point, a connecting segment is automatically added. This
  * procedure is affected by the following context setters:
- * gimp_context_set_antialias(), gimp_context_set_feather(),
- * gimp_context_set_feather_radius().
+ * picman_context_set_antialias(), picman_context_set_feather(),
+ * picman_context_set_feather_radius().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_select_polygon (gint32          image_ID,
-                           GimpChannelOps  operation,
+picman_image_select_polygon (gint32          image_ID,
+                           PicmanChannelOps  operation,
                            gint            num_segs,
                            const gdouble  *segs)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-select-polygon",
+  return_vals = picman_run_procedure ("picman-image-select-polygon",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_INT32, num_segs,
-                                    GIMP_PDB_FLOATARRAY, segs,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_INT32, num_segs,
+                                    PICMAN_PDB_FLOATARRAY, segs,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_select_item:
+ * picman_image_select_item:
  * @image_ID: The image.
  * @operation: The desired operation with current selection.
  * @item_ID: The item to render to the selection.
@@ -372,32 +372,32 @@ gimp_image_select_polygon (gint32          image_ID,
  * of the image the item belongs to. What exactly the item's outline is
  * depends on the item type: for layers, it's the layer's alpha
  * channel, for vectors the vector's shape. This procedure is affected
- * by the following context setters: gimp_context_set_antialias(),
- * gimp_context_set_feather(), gimp_context_set_feather_radius().
+ * by the following context setters: picman_context_set_antialias(),
+ * picman_context_set_feather(), picman_context_set_feather_radius().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_select_item (gint32         image_ID,
-                        GimpChannelOps operation,
+picman_image_select_item (gint32         image_ID,
+                        PicmanChannelOps operation,
                         gint32         item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-select-item",
+  return_vals = picman_run_procedure ("picman-image-select-item",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@
 
 #include "core-types.h"
 
-#include "gimpimage.h"
-#include "gimplayer.h"
-#include "gimplayerundo.h"
+#include "picmanimage.h"
+#include "picmanlayer.h"
+#include "picmanlayerundo.h"
 
 
 enum
@@ -35,84 +35,84 @@ enum
 };
 
 
-static void     gimp_layer_undo_constructed  (GObject             *object);
-static void     gimp_layer_undo_set_property (GObject             *object,
+static void     picman_layer_undo_constructed  (GObject             *object);
+static void     picman_layer_undo_set_property (GObject             *object,
                                               guint                property_id,
                                               const GValue        *value,
                                               GParamSpec          *pspec);
-static void     gimp_layer_undo_get_property (GObject             *object,
+static void     picman_layer_undo_get_property (GObject             *object,
                                               guint                property_id,
                                               GValue              *value,
                                               GParamSpec          *pspec);
 
-static gint64   gimp_layer_undo_get_memsize  (GimpObject          *object,
+static gint64   picman_layer_undo_get_memsize  (PicmanObject          *object,
                                               gint64              *gui_size);
 
-static void     gimp_layer_undo_pop          (GimpUndo            *undo,
-                                              GimpUndoMode         undo_mode,
-                                              GimpUndoAccumulator *accum);
+static void     picman_layer_undo_pop          (PicmanUndo            *undo,
+                                              PicmanUndoMode         undo_mode,
+                                              PicmanUndoAccumulator *accum);
 
 
-G_DEFINE_TYPE (GimpLayerUndo, gimp_layer_undo, GIMP_TYPE_ITEM_UNDO)
+G_DEFINE_TYPE (PicmanLayerUndo, picman_layer_undo, PICMAN_TYPE_ITEM_UNDO)
 
-#define parent_class gimp_layer_undo_parent_class
+#define parent_class picman_layer_undo_parent_class
 
 
 static void
-gimp_layer_undo_class_init (GimpLayerUndoClass *klass)
+picman_layer_undo_class_init (PicmanLayerUndoClass *klass)
 {
   GObjectClass    *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpUndoClass   *undo_class        = GIMP_UNDO_CLASS (klass);
+  PicmanObjectClass *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanUndoClass   *undo_class        = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed      = gimp_layer_undo_constructed;
-  object_class->set_property     = gimp_layer_undo_set_property;
-  object_class->get_property     = gimp_layer_undo_get_property;
+  object_class->constructed      = picman_layer_undo_constructed;
+  object_class->set_property     = picman_layer_undo_set_property;
+  object_class->get_property     = picman_layer_undo_get_property;
 
-  gimp_object_class->get_memsize = gimp_layer_undo_get_memsize;
+  picman_object_class->get_memsize = picman_layer_undo_get_memsize;
 
-  undo_class->pop                = gimp_layer_undo_pop;
+  undo_class->pop                = picman_layer_undo_pop;
 
   g_object_class_install_property (object_class, PROP_PREV_PARENT,
                                    g_param_spec_object ("prev-parent",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_LAYER,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_LAYER,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_PREV_POSITION,
                                    g_param_spec_int ("prev-position", NULL, NULL,
                                                      0, G_MAXINT, 0,
-                                                     GIMP_PARAM_READWRITE |
+                                                     PICMAN_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_PREV_LAYER,
                                    g_param_spec_object ("prev-layer", NULL, NULL,
-                                                        GIMP_TYPE_LAYER,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_LAYER,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_layer_undo_init (GimpLayerUndo *undo)
+picman_layer_undo_init (PicmanLayerUndo *undo)
 {
 }
 
 static void
-gimp_layer_undo_constructed (GObject *object)
+picman_layer_undo_constructed (GObject *object)
 {
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_LAYER (GIMP_ITEM_UNDO (object)->item));
+  g_assert (PICMAN_IS_LAYER (PICMAN_ITEM_UNDO (object)->item));
 }
 
 static void
-gimp_layer_undo_set_property (GObject      *object,
+picman_layer_undo_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  GimpLayerUndo *layer_undo = GIMP_LAYER_UNDO (object);
+  PicmanLayerUndo *layer_undo = PICMAN_LAYER_UNDO (object);
 
   switch (property_id)
     {
@@ -133,12 +133,12 @@ gimp_layer_undo_set_property (GObject      *object,
 }
 
 static void
-gimp_layer_undo_get_property (GObject    *object,
+picman_layer_undo_get_property (GObject    *object,
                               guint       property_id,
                               GValue     *value,
                               GParamSpec *pspec)
 {
-  GimpLayerUndo *layer_undo = GIMP_LAYER_UNDO (object);
+  PicmanLayerUndo *layer_undo = PICMAN_LAYER_UNDO (object);
 
   switch (property_id)
     {
@@ -159,42 +159,42 @@ gimp_layer_undo_get_property (GObject    *object,
 }
 
 static gint64
-gimp_layer_undo_get_memsize (GimpObject *object,
+picman_layer_undo_get_memsize (PicmanObject *object,
                              gint64     *gui_size)
 {
-  GimpItemUndo *item_undo = GIMP_ITEM_UNDO (object);
+  PicmanItemUndo *item_undo = PICMAN_ITEM_UNDO (object);
   gint64        memsize   = 0;
 
-  if (! gimp_item_is_attached (item_undo->item))
-    memsize += gimp_object_get_memsize (GIMP_OBJECT (item_undo->item),
+  if (! picman_item_is_attached (item_undo->item))
+    memsize += picman_object_get_memsize (PICMAN_OBJECT (item_undo->item),
                                         gui_size);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 static void
-gimp_layer_undo_pop (GimpUndo            *undo,
-                     GimpUndoMode         undo_mode,
-                     GimpUndoAccumulator *accum)
+picman_layer_undo_pop (PicmanUndo            *undo,
+                     PicmanUndoMode         undo_mode,
+                     PicmanUndoAccumulator *accum)
 {
-  GimpLayerUndo *layer_undo = GIMP_LAYER_UNDO (undo);
-  GimpLayer     *layer      = GIMP_LAYER (GIMP_ITEM_UNDO (undo)->item);
+  PicmanLayerUndo *layer_undo = PICMAN_LAYER_UNDO (undo);
+  PicmanLayer     *layer      = PICMAN_LAYER (PICMAN_ITEM_UNDO (undo)->item);
 
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 
-  if ((undo_mode       == GIMP_UNDO_MODE_UNDO &&
-       undo->undo_type == GIMP_UNDO_LAYER_ADD) ||
-      (undo_mode       == GIMP_UNDO_MODE_REDO &&
-       undo->undo_type == GIMP_UNDO_LAYER_REMOVE))
+  if ((undo_mode       == PICMAN_UNDO_MODE_UNDO &&
+       undo->undo_type == PICMAN_UNDO_LAYER_ADD) ||
+      (undo_mode       == PICMAN_UNDO_MODE_REDO &&
+       undo->undo_type == PICMAN_UNDO_LAYER_REMOVE))
     {
       /*  remove layer  */
 
       /*  record the current parent and position  */
-      layer_undo->prev_parent   = gimp_layer_get_parent (layer);
-      layer_undo->prev_position = gimp_item_get_index (GIMP_ITEM (layer));
+      layer_undo->prev_parent   = picman_layer_get_parent (layer);
+      layer_undo->prev_position = picman_item_get_index (PICMAN_ITEM (layer));
 
-      gimp_image_remove_layer (undo->image, layer, FALSE,
+      picman_image_remove_layer (undo->image, layer, FALSE,
                                layer_undo->prev_layer);
     }
   else
@@ -202,9 +202,9 @@ gimp_layer_undo_pop (GimpUndo            *undo,
       /*  restore layer  */
 
       /*  record the active layer  */
-      layer_undo->prev_layer = gimp_image_get_active_layer (undo->image);
+      layer_undo->prev_layer = picman_image_get_active_layer (undo->image);
 
-      gimp_image_add_layer (undo->image, layer,
+      picman_image_add_layer (undo->image, layer,
                             layer_undo->prev_parent,
                             layer_undo->prev_position, FALSE);
     }

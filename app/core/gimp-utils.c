@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -50,18 +50,18 @@
 #include <gobject/gvaluecollector.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimp-utils.h"
-#include "gimpcontainer.h"
-#include "gimpcontext.h"
-#include "gimpparamspecs.h"
+#include "picman.h"
+#include "picman-utils.h"
+#include "picmancontainer.h"
+#include "picmancontext.h"
+#include "picmanparamspecs.h"
 
 
 #define NUM_PROCESSORS_DEFAULT 1
@@ -69,7 +69,7 @@
 
 
 gint64
-gimp_g_type_instance_get_memsize (GTypeInstance *instance)
+picman_g_type_instance_get_memsize (GTypeInstance *instance)
 {
   if (instance)
     {
@@ -84,16 +84,16 @@ gimp_g_type_instance_get_memsize (GTypeInstance *instance)
 }
 
 gint64
-gimp_g_object_get_memsize (GObject *object)
+picman_g_object_get_memsize (GObject *object)
 {
   if (object)
-    return gimp_g_type_instance_get_memsize ((GTypeInstance *) object);
+    return picman_g_type_instance_get_memsize ((GTypeInstance *) object);
 
   return 0;
 }
 
 gint64
-gimp_g_hash_table_get_memsize (GHashTable *hash,
+picman_g_hash_table_get_memsize (GHashTable *hash,
                                gint64      data_size)
 {
   if (hash)
@@ -106,7 +106,7 @@ gimp_g_hash_table_get_memsize (GHashTable *hash,
 
 typedef struct
 {
-  GimpMemsizeFunc func;
+  PicmanMemsizeFunc func;
   gint64          memsize;
   gint64          gui_size;
 } HashMemsize;
@@ -123,8 +123,8 @@ hash_memsize_foreach (gpointer     key,
 }
 
 gint64
-gimp_g_hash_table_get_memsize_foreach (GHashTable      *hash,
-                                       GimpMemsizeFunc  func,
+picman_g_hash_table_get_memsize_foreach (GHashTable      *hash,
+                                       PicmanMemsizeFunc  func,
                                        gint64          *gui_size)
 {
   HashMemsize memsize;
@@ -143,19 +143,19 @@ gimp_g_hash_table_get_memsize_foreach (GHashTable      *hash,
   if (gui_size)
     *gui_size = memsize.gui_size;
 
-  return memsize.memsize + gimp_g_hash_table_get_memsize (hash, 0);
+  return memsize.memsize + picman_g_hash_table_get_memsize (hash, 0);
 }
 
 gint64
-gimp_g_slist_get_memsize (GSList  *slist,
+picman_g_slist_get_memsize (GSList  *slist,
                           gint64   data_size)
 {
   return g_slist_length (slist) * (data_size + sizeof (GSList));
 }
 
 gint64
-gimp_g_slist_get_memsize_foreach (GSList          *slist,
-                                  GimpMemsizeFunc  func,
+picman_g_slist_get_memsize_foreach (GSList          *slist,
+                                  PicmanMemsizeFunc  func,
                                   gint64          *gui_size)
 {
   GSList *l;
@@ -170,15 +170,15 @@ gimp_g_slist_get_memsize_foreach (GSList          *slist,
 }
 
 gint64
-gimp_g_list_get_memsize (GList  *list,
+picman_g_list_get_memsize (GList  *list,
                          gint64  data_size)
 {
   return g_list_length (list) * (data_size + sizeof (GList));
 }
 
 gint64
-gimp_g_list_get_memsize_foreach (GList           *list,
-                                 GimpMemsizeFunc  func,
+picman_g_list_get_memsize_foreach (GList           *list,
+                                 PicmanMemsizeFunc  func,
                                  gint64          *gui_size)
 {
   GList  *l;
@@ -193,7 +193,7 @@ gimp_g_list_get_memsize_foreach (GList           *list,
 }
 
 gint64
-gimp_g_value_get_memsize (GValue *value)
+picman_g_value_get_memsize (GValue *value)
 {
   gint64 memsize = 0;
 
@@ -202,42 +202,42 @@ gimp_g_value_get_memsize (GValue *value)
 
   if (G_VALUE_HOLDS_STRING (value))
     {
-      memsize += gimp_string_get_memsize (g_value_get_string (value));
+      memsize += picman_string_get_memsize (g_value_get_string (value));
     }
   else if (G_VALUE_HOLDS_BOXED (value))
     {
-      if (GIMP_VALUE_HOLDS_RGB (value))
+      if (PICMAN_VALUE_HOLDS_RGB (value))
         {
-          memsize += sizeof (GimpRGB);
+          memsize += sizeof (PicmanRGB);
         }
-      else if (GIMP_VALUE_HOLDS_MATRIX2 (value))
+      else if (PICMAN_VALUE_HOLDS_MATRIX2 (value))
         {
-          memsize += sizeof (GimpMatrix2);
+          memsize += sizeof (PicmanMatrix2);
         }
-      else if (GIMP_VALUE_HOLDS_PARASITE (value))
+      else if (PICMAN_VALUE_HOLDS_PARASITE (value))
         {
-          memsize += gimp_parasite_get_memsize (g_value_get_boxed (value),
+          memsize += picman_parasite_get_memsize (g_value_get_boxed (value),
                                                 NULL);
         }
-      else if (GIMP_VALUE_HOLDS_ARRAY (value)       ||
-               GIMP_VALUE_HOLDS_INT8_ARRAY (value)  ||
-               GIMP_VALUE_HOLDS_INT16_ARRAY (value) ||
-               GIMP_VALUE_HOLDS_INT32_ARRAY (value) ||
-               GIMP_VALUE_HOLDS_FLOAT_ARRAY (value))
+      else if (PICMAN_VALUE_HOLDS_ARRAY (value)       ||
+               PICMAN_VALUE_HOLDS_INT8_ARRAY (value)  ||
+               PICMAN_VALUE_HOLDS_INT16_ARRAY (value) ||
+               PICMAN_VALUE_HOLDS_INT32_ARRAY (value) ||
+               PICMAN_VALUE_HOLDS_FLOAT_ARRAY (value))
         {
-          GimpArray *array = g_value_get_boxed (value);
+          PicmanArray *array = g_value_get_boxed (value);
 
           if (array)
-            memsize += (sizeof (GimpArray) +
+            memsize += (sizeof (PicmanArray) +
                         array->static_data ? 0 : array->length);
         }
-      else if (GIMP_VALUE_HOLDS_STRING_ARRAY (value))
+      else if (PICMAN_VALUE_HOLDS_STRING_ARRAY (value))
         {
-          GimpArray *array = g_value_get_boxed (value);
+          PicmanArray *array = g_value_get_boxed (value);
 
           if (array)
             {
-              memsize += sizeof (GimpArray);
+              memsize += sizeof (PicmanArray);
 
               if (! array->static_data)
                 {
@@ -247,7 +247,7 @@ gimp_g_value_get_memsize (GValue *value)
                   memsize += array->length * sizeof (gchar *);
 
                   for (i = 0; i < array->length; i++)
-                    memsize += gimp_string_get_memsize (tmp[i]);
+                    memsize += picman_string_get_memsize (tmp[i]);
                 }
             }
         }
@@ -267,7 +267,7 @@ gimp_g_value_get_memsize (GValue *value)
 }
 
 gint64
-gimp_g_param_spec_get_memsize (GParamSpec *pspec)
+picman_g_param_spec_get_memsize (GParamSpec *pspec)
 {
   gint64 memsize = 0;
 
@@ -275,19 +275,19 @@ gimp_g_param_spec_get_memsize (GParamSpec *pspec)
     return 0;
 
   if (! (pspec->flags & G_PARAM_STATIC_NAME))
-    memsize += gimp_string_get_memsize (g_param_spec_get_name (pspec));
+    memsize += picman_string_get_memsize (g_param_spec_get_name (pspec));
 
   if (! (pspec->flags & G_PARAM_STATIC_NICK))
-    memsize += gimp_string_get_memsize (g_param_spec_get_nick (pspec));
+    memsize += picman_string_get_memsize (g_param_spec_get_nick (pspec));
 
   if (! (pspec->flags & G_PARAM_STATIC_BLURB))
-    memsize += gimp_string_get_memsize (g_param_spec_get_blurb (pspec));
+    memsize += picman_string_get_memsize (g_param_spec_get_blurb (pspec));
 
-  return memsize + gimp_g_type_instance_get_memsize ((GTypeInstance *) pspec);
+  return memsize + picman_g_type_instance_get_memsize ((GTypeInstance *) pspec);
 }
 
 gint64
-gimp_gegl_buffer_get_memsize (GeglBuffer *buffer)
+picman_gegl_buffer_get_memsize (GeglBuffer *buffer)
 {
   if (buffer)
     {
@@ -296,14 +296,14 @@ gimp_gegl_buffer_get_memsize (GeglBuffer *buffer)
       return (babl_format_get_bytes_per_pixel (format) *
               gegl_buffer_get_width (buffer) *
               gegl_buffer_get_height (buffer) +
-              gimp_g_object_get_memsize (G_OBJECT (buffer)));
+              picman_g_object_get_memsize (G_OBJECT (buffer)));
     }
 
   return 0;
 }
 
 gint64
-gimp_string_get_memsize (const gchar *string)
+picman_string_get_memsize (const gchar *string)
 {
   if (string)
     return strlen (string) + 1;
@@ -312,12 +312,12 @@ gimp_string_get_memsize (const gchar *string)
 }
 
 gint64
-gimp_parasite_get_memsize (GimpParasite *parasite,
+picman_parasite_get_memsize (PicmanParasite *parasite,
                            gint64       *gui_size)
 {
   if (parasite)
-    return (sizeof (GimpParasite) +
-            gimp_string_get_memsize (parasite->name) +
+    return (sizeof (PicmanParasite) +
+            picman_string_get_memsize (parasite->name) +
             parasite->size);
 
   return 0;
@@ -325,13 +325,13 @@ gimp_parasite_get_memsize (GimpParasite *parasite,
 
 
 gint
-gimp_get_pid (void)
+picman_get_pid (void)
 {
   return (gint) getpid ();
 }
 
 gint
-gimp_get_number_of_processors (void)
+picman_get_number_of_processors (void)
 {
   gint retval = NUM_PROCESSORS_DEFAULT;
 
@@ -352,7 +352,7 @@ gimp_get_number_of_processors (void)
 }
 
 guint64
-gimp_get_physical_memory_size (void)
+picman_get_physical_memory_size (void)
 {
 #ifdef G_OS_UNIX
 #if defined(HAVE_UNISTD_H) && defined(_SC_PHYS_PAGES) && defined (_SC_PAGE_SIZE)
@@ -382,14 +382,14 @@ gimp_get_physical_memory_size (void)
 }
 
 /**
- * gimp_get_backtrace:
+ * picman_get_backtrace:
  *
  * Returns: The current stack trace. Free with g_free(). Mainly meant
  * for debugging, for example storing the allocation stack traces for
  * objects to hunt down leaks.
  **/
 gchar *
-gimp_get_backtrace (void)
+picman_get_backtrace (void)
 {
 #ifdef G_OS_UNIX
   void     *functions[MAX_FUNC];
@@ -422,7 +422,7 @@ gimp_get_backtrace (void)
  *  basically copied from gtk_get_default_language()
  */
 gchar *
-gimp_get_default_language (const gchar *category)
+picman_get_default_language (const gchar *category)
 {
   gchar *lang;
   gchar *p;
@@ -458,7 +458,7 @@ gimp_get_default_language (const gchar *category)
   else if (strcmp (category, "LC_MESSAGES") == 0)
     cat = LC_MESSAGES;
   else
-    g_warning ("unsupported category used with gimp_get_default_language()");
+    g_warning ("unsupported category used with picman_get_default_language()");
 
   lang = g_strdup (setlocale (cat, NULL));
 
@@ -474,8 +474,8 @@ gimp_get_default_language (const gchar *category)
   return lang;
 }
 
-GimpUnit
-gimp_get_default_unit (void)
+PicmanUnit
+picman_get_default_unit (void)
 {
 #if defined (HAVE__NL_MEASUREMENT_MEASUREMENT)
   const gchar *measurement = nl_langinfo (_NL_MEASUREMENT_MEASUREMENT);
@@ -483,10 +483,10 @@ gimp_get_default_unit (void)
   switch (*((guchar *) measurement))
     {
     case 1: /* metric   */
-      return GIMP_UNIT_MM;
+      return PICMAN_UNIT_MM;
 
     case 2: /* imperial */
-      return GIMP_UNIT_INCH;
+      return PICMAN_UNIT_INCH;
     }
 
 #elif defined (G_OS_WIN32)
@@ -503,19 +503,19 @@ gimp_get_default_unit (void)
     switch ((guint) measurement)
       {
       case 0: /* metric */
-        return GIMP_UNIT_MM;
+        return PICMAN_UNIT_MM;
 
       case 1: /* imperial */
-        return GIMP_UNIT_INCH;
+        return PICMAN_UNIT_INCH;
       }
     }
 #endif
 
-  return GIMP_UNIT_MM;
+  return PICMAN_UNIT_MM;
 }
 
 GParameter *
-gimp_parameters_append (GType       object_type,
+picman_parameters_append (GType       object_type,
                         GParameter *params,
                         gint       *n_params,
                         ...)
@@ -527,14 +527,14 @@ gimp_parameters_append (GType       object_type,
   g_return_val_if_fail (params != NULL || *n_params == 0, NULL);
 
   va_start (args, n_params);
-  params = gimp_parameters_append_valist (object_type, params, n_params, args);
+  params = picman_parameters_append_valist (object_type, params, n_params, args);
   va_end (args);
 
   return params;
 }
 
 GParameter *
-gimp_parameters_append_valist (GType       object_type,
+picman_parameters_append_valist (GType       object_type,
                                GParameter *params,
                                gint       *n_params,
                                va_list     args)
@@ -591,7 +591,7 @@ gimp_parameters_append_valist (GType       object_type,
 }
 
 void
-gimp_parameters_free (GParameter *params,
+picman_parameters_free (GParameter *params,
                       gint        n_params)
 {
   g_return_if_fail (params != NULL || n_params == 0);
@@ -731,7 +731,7 @@ unescape_gstring (GString *string)
 }
 
 gchar *
-gimp_markup_extract_text (const gchar *markup)
+picman_markup_extract_text (const gchar *markup)
 {
   GString     *string;
   const gchar *p;
@@ -764,22 +764,22 @@ gimp_markup_extract_text (const gchar *markup)
 }
 
 /**
- * gimp_enum_get_value_name:
+ * picman_enum_get_value_name:
  * @enum_type: Enum type
  * @value:     Enum value
  *
  * Returns the value name for a given value of a given enum
- * type. Useful to have inline in GIMP_LOG() messages for example.
+ * type. Useful to have inline in PICMAN_LOG() messages for example.
  *
  * Returns: The value name.
  **/
 const gchar *
-gimp_enum_get_value_name (GType enum_type,
+picman_enum_get_value_name (GType enum_type,
                           gint  value)
 {
   const gchar *value_name = NULL;
 
-  gimp_enum_get_value (enum_type,
+  picman_enum_get_value (enum_type,
                        value,
                        &value_name,
                        NULL /*value_nick*/,
@@ -790,7 +790,7 @@ gimp_enum_get_value_name (GType enum_type,
 }
 
 /**
- * gimp_utils_point_to_line_distance:
+ * picman_utils_point_to_line_distance:
  * @point:              The point to calculate the distance for.
  * @point_on_line:      A point on the line.
  * @line_direction:     Normalized line direction vector.
@@ -801,32 +801,32 @@ gimp_enum_get_value_name (GType enum_type,
  *          @point_on_line and @normalized_line_direction.
  **/
 static gdouble
-gimp_utils_point_to_line_distance (const GimpVector2 *point,
-                                   const GimpVector2 *point_on_line,
-                                   const GimpVector2 *line_direction,
-                                   GimpVector2       *closest_line_point)
+picman_utils_point_to_line_distance (const PicmanVector2 *point,
+                                   const PicmanVector2 *point_on_line,
+                                   const PicmanVector2 *line_direction,
+                                   PicmanVector2       *closest_line_point)
 {
-  GimpVector2 distance_vector;
-  GimpVector2 tmp_a;
-  GimpVector2 tmp_b;
+  PicmanVector2 distance_vector;
+  PicmanVector2 tmp_a;
+  PicmanVector2 tmp_b;
   gdouble     d;
 
-  gimp_vector2_sub (&tmp_a, point, point_on_line);
+  picman_vector2_sub (&tmp_a, point, point_on_line);
 
-  d = gimp_vector2_inner_product (&tmp_a, line_direction);
+  d = picman_vector2_inner_product (&tmp_a, line_direction);
 
-  tmp_b = gimp_vector2_mul_val (*line_direction, d);
+  tmp_b = picman_vector2_mul_val (*line_direction, d);
 
-  *closest_line_point = gimp_vector2_add_val (*point_on_line,
+  *closest_line_point = picman_vector2_add_val (*point_on_line,
                                               tmp_b);
 
-  gimp_vector2_sub (&distance_vector, closest_line_point, point);
+  picman_vector2_sub (&distance_vector, closest_line_point, point);
 
-  return gimp_vector2_length (&distance_vector);
+  return picman_vector2_length (&distance_vector);
 }
 
 /**
- * gimp_constrain_line:
+ * picman_constrain_line:
  * @start_x:
  * @start_y:
  * @end_x:
@@ -839,16 +839,16 @@ gimp_utils_point_to_line_distance (const GimpVector2 *point,
  * 12 on 15 degree steps. etc.
  **/
 void
-gimp_constrain_line (gdouble  start_x,
+picman_constrain_line (gdouble  start_x,
                      gdouble  start_y,
                      gdouble *end_x,
                      gdouble *end_y,
                      gint     n_snap_lines)
 {
-  GimpVector2 line_point          = {  start_x,  start_y };
-  GimpVector2 point               = { *end_x,   *end_y   };
-  GimpVector2 constrained_point;
-  GimpVector2 line_dir;
+  PicmanVector2 line_point          = {  start_x,  start_y };
+  PicmanVector2 point               = { *end_x,   *end_y   };
+  PicmanVector2 constrained_point;
+  PicmanVector2 line_dir;
   gdouble     shortest_dist_moved = G_MAXDOUBLE;
   gdouble     dist_moved;
   gdouble     angle;
@@ -858,11 +858,11 @@ gimp_constrain_line (gdouble  start_x,
     {
       angle = i * G_PI / n_snap_lines;
 
-      gimp_vector2_set (&line_dir,
+      picman_vector2_set (&line_dir,
                         cos (angle),
                         sin (angle));
 
-      dist_moved = gimp_utils_point_to_line_distance (&point,
+      dist_moved = picman_utils_point_to_line_distance (&point,
                                                       &line_point,
                                                       &line_dir,
                                                       &constrained_point);
@@ -879,35 +879,35 @@ gimp_constrain_line (gdouble  start_x,
 
 /*  debug stuff  */
 
-#include "gegl/gimp-babl.h"
-#include "gimpimage.h"
-#include "gimplayer.h"
+#include "gegl/picman-babl.h"
+#include "picmanimage.h"
+#include "picmanlayer.h"
 
 void
-gimp_create_image_from_buffer (Gimp       *gimp,
+picman_create_image_from_buffer (Picman       *picman,
                                GeglBuffer *buffer)
 {
-  GimpImage  *image;
-  GimpLayer  *layer;
+  PicmanImage  *image;
+  PicmanLayer  *layer;
   const Babl *format;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
 
   format = gegl_buffer_get_format (buffer);
 
-  image = gimp_create_image (gimp,
+  image = picman_create_image (picman,
                              gegl_buffer_get_width  (buffer),
                              gegl_buffer_get_height (buffer),
-                             gimp_babl_format_get_base_type (format),
-                             gimp_babl_format_get_precision (format),
+                             picman_babl_format_get_base_type (format),
+                             picman_babl_format_get_precision (format),
                              FALSE);
 
-  layer = gimp_layer_new_from_buffer (buffer, image, format,
+  layer = picman_layer_new_from_buffer (buffer, image, format,
                                       "Debug Image",
-                                      GIMP_OPACITY_OPAQUE,
-                                      GIMP_NORMAL_MODE);
-  gimp_image_add_layer (image, layer, NULL, -1, FALSE);
+                                      PICMAN_OPACITY_OPAQUE,
+                                      PICMAN_NORMAL_MODE);
+  picman_image_add_layer (image, layer, NULL, -1, FALSE);
 
-  gimp_create_display (gimp, image, GIMP_UNIT_PIXEL, 1.0);
+  picman_create_display (picman, image, PICMAN_UNIT_PIXEL, 1.0);
 }

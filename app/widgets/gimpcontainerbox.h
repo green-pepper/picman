@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcontainerbox.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmancontainerbox.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,41 +18,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTAINER_BOX_H__
-#define __GIMP_CONTAINER_BOX_H__
+#ifndef __PICMAN_CONTAINER_BOX_H__
+#define __PICMAN_CONTAINER_BOX_H__
 
 
-#include "gimpeditor.h"
+#include "picmaneditor.h"
 
 
-#define GIMP_TYPE_CONTAINER_BOX            (gimp_container_box_get_type ())
-#define GIMP_CONTAINER_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CONTAINER_BOX, GimpContainerBox))
-#define GIMP_CONTAINER_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CONTAINER_BOX, GimpContainerBoxClass))
-#define GIMP_IS_CONTAINER_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CONTAINER_BOX))
-#define GIMP_IS_CONTAINER_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CONTAINER_BOX))
-#define GIMP_CONTAINER_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CONTAINER_BOX, GimpContainerBoxClass))
+#define PICMAN_TYPE_CONTAINER_BOX            (picman_container_box_get_type ())
+#define PICMAN_CONTAINER_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CONTAINER_BOX, PicmanContainerBox))
+#define PICMAN_CONTAINER_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CONTAINER_BOX, PicmanContainerBoxClass))
+#define PICMAN_IS_CONTAINER_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CONTAINER_BOX))
+#define PICMAN_IS_CONTAINER_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CONTAINER_BOX))
+#define PICMAN_CONTAINER_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CONTAINER_BOX, PicmanContainerBoxClass))
 
 
-typedef struct _GimpContainerBoxClass  GimpContainerBoxClass;
+typedef struct _PicmanContainerBoxClass  PicmanContainerBoxClass;
 
-struct _GimpContainerBox
+struct _PicmanContainerBox
 {
-  GimpEditor  parent_instance;
+  PicmanEditor  parent_instance;
 
   GtkWidget  *scrolled_win;
 };
 
-struct _GimpContainerBoxClass
+struct _PicmanContainerBoxClass
 {
-  GimpEditorClass  parent_class;
+  PicmanEditorClass  parent_class;
 };
 
 
-GType     gimp_container_box_get_type         (void) G_GNUC_CONST;
+GType     picman_container_box_get_type         (void) G_GNUC_CONST;
 
-void      gimp_container_box_set_size_request (GimpContainerBox *box,
+void      picman_container_box_set_size_request (PicmanContainerBox *box,
                                                gint              width,
                                                gint              height);
 
 
-#endif  /*  __GIMP_CONTAINER_BOX_H__  */
+#endif  /*  __PICMAN_CONTAINER_BOX_H__  */

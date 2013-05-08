@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,22 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_SHELL_ROTATE_H__
-#define __GIMP_DISPLAY_SHELL_ROTATE_H__
+#ifndef __PICMAN_DISPLAY_SHELL_ROTATE_H__
+#define __PICMAN_DISPLAY_SHELL_ROTATE_H__
 
 
-void   gimp_display_shell_rotate                  (GimpDisplayShell *shell,
+void   picman_display_shell_rotate                  (PicmanDisplayShell *shell,
                                                    gdouble           delta);
-void   gimp_display_shell_rotate_to               (GimpDisplayShell *shell,
+void   picman_display_shell_rotate_to               (PicmanDisplayShell *shell,
                                                    gdouble           value);
-void   gimp_display_shell_rotate_drag             (GimpDisplayShell *shell,
+void   picman_display_shell_rotate_drag             (PicmanDisplayShell *shell,
                                                    gdouble           last_x,
                                                    gdouble           last_y,
                                                    gdouble           cur_x,
                                                    gdouble           cur_y,
                                                    gboolean          constrain);
 
-void   gimp_display_shell_rotate_update_transform (GimpDisplayShell *shell);
+void   picman_display_shell_rotate_update_transform (PicmanDisplayShell *shell);
 
 
-#endif  /*  __GIMP_DISPLAY_SHELL_ROTATE_H__  */
+#endif  /*  __PICMAN_DISPLAY_SHELL_ROTATE_H__  */

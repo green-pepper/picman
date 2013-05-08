@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * Object properties serialization routines
- * Copyright (C) 2001-2002  Sven Neumann <sven@gimp.org>
+ * Copyright (C) 2001-2002  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,47 +25,47 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmancolor/picmancolor.h"
 
-#include "gimpconfigtypes.h"
+#include "picmanconfigtypes.h"
 
-#include "gimpconfigwriter.h"
-#include "gimpconfig-iface.h"
-#include "gimpconfig-params.h"
-#include "gimpconfig-serialize.h"
-#include "gimpconfig-utils.h"
+#include "picmanconfigwriter.h"
+#include "picmanconfig-iface.h"
+#include "picmanconfig-params.h"
+#include "picmanconfig-serialize.h"
+#include "picmanconfig-utils.h"
 
 
 /**
- * SECTION: gimpconfig-serialize
- * @title: GimpConfig-serialize
- * @short_description: Serializing for libgimpconfig.
+ * SECTION: picmanconfig-serialize
+ * @title: PicmanConfig-serialize
+ * @short_description: Serializing for libpicmanconfig.
  *
- * Serializing interface for libgimpconfig.
+ * Serializing interface for libpicmanconfig.
  **/
 
 
-static gboolean  gimp_config_serialize_rgb (const GValue *value,
+static gboolean  picman_config_serialize_rgb (const GValue *value,
                                             GString      *str,
                                             gboolean      has_alpha);
 
 
 /**
- * gimp_config_serialize_properties:
- * @config: a #GimpConfig.
- * @writer: a #GimpConfigWriter.
+ * picman_config_serialize_properties:
+ * @config: a #PicmanConfig.
+ * @writer: a #PicmanConfigWriter.
  *
  * This function writes all object properties to the @writer.
  *
  * Returns: %TRUE if serialization succeeded, %FALSE otherwise
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_config_serialize_properties (GimpConfig       *config,
-                                  GimpConfigWriter *writer)
+picman_config_serialize_properties (PicmanConfig       *config,
+                                  PicmanConfigWriter *writer)
 {
   GObjectClass  *klass;
   GParamSpec   **property_specs;
@@ -85,10 +85,10 @@ gimp_config_serialize_properties (GimpConfig       *config,
     {
       GParamSpec *prop_spec = property_specs[i];
 
-      if (! (prop_spec->flags & GIMP_CONFIG_PARAM_SERIALIZE))
+      if (! (prop_spec->flags & PICMAN_CONFIG_PARAM_SERIALIZE))
         continue;
 
-      if (! gimp_config_serialize_property (config, prop_spec, writer))
+      if (! picman_config_serialize_property (config, prop_spec, writer))
         return FALSE;
     }
 
@@ -98,20 +98,20 @@ gimp_config_serialize_properties (GimpConfig       *config,
 }
 
 /**
- * gimp_config_serialize_changed_properties:
- * @config: a #GimpConfig.
- * @writer: a #GimpConfigWriter.
+ * picman_config_serialize_changed_properties:
+ * @config: a #PicmanConfig.
+ * @writer: a #PicmanConfigWriter.
  *
  * This function writes all object properties that have been changed from
  * their default values to the @writer.
  *
  * Returns: %TRUE if serialization succeeded, %FALSE otherwise
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_config_serialize_changed_properties (GimpConfig       *config,
-                                          GimpConfigWriter *writer)
+picman_config_serialize_changed_properties (PicmanConfig       *config,
+                                          PicmanConfigWriter *writer)
 {
   GObjectClass  *klass;
   GParamSpec   **property_specs;
@@ -132,7 +132,7 @@ gimp_config_serialize_changed_properties (GimpConfig       *config,
     {
       GParamSpec *prop_spec = property_specs[i];
 
-      if (! (prop_spec->flags & GIMP_CONFIG_PARAM_SERIALIZE))
+      if (! (prop_spec->flags & PICMAN_CONFIG_PARAM_SERIALIZE))
         continue;
 
       g_value_init (&value, prop_spec->value_type);
@@ -140,7 +140,7 @@ gimp_config_serialize_changed_properties (GimpConfig       *config,
 
       if (! g_param_value_defaults (prop_spec, &value))
         {
-          if (! gimp_config_serialize_property (config, prop_spec, writer))
+          if (! picman_config_serialize_property (config, prop_spec, writer))
             return FALSE;
         }
 
@@ -153,37 +153,37 @@ gimp_config_serialize_changed_properties (GimpConfig       *config,
 }
 
 /**
- * gimp_config_serialize_property:
- * @config:     a #GimpConfig.
+ * picman_config_serialize_property:
+ * @config:     a #PicmanConfig.
  * @param_spec: a #GParamSpec.
- * @writer:     a #GimpConfigWriter.
+ * @writer:     a #PicmanConfigWriter.
  *
  * This function serializes a single object property to the @writer.
  *
  * Returns: %TRUE if serialization succeeded, %FALSE otherwise
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_config_serialize_property (GimpConfig       *config,
+picman_config_serialize_property (PicmanConfig       *config,
                                 GParamSpec       *param_spec,
-                                GimpConfigWriter *writer)
+                                PicmanConfigWriter *writer)
 {
-  GimpConfigInterface *config_iface = NULL;
-  GimpConfigInterface *parent_iface = NULL;
+  PicmanConfigInterface *config_iface = NULL;
+  PicmanConfigInterface *parent_iface = NULL;
   GValue               value   = { 0, };
   gboolean             success = FALSE;
 
-  if (! (param_spec->flags & GIMP_CONFIG_PARAM_SERIALIZE))
+  if (! (param_spec->flags & PICMAN_CONFIG_PARAM_SERIALIZE))
     return FALSE;
 
-  if (param_spec->flags & GIMP_CONFIG_PARAM_IGNORE)
+  if (param_spec->flags & PICMAN_CONFIG_PARAM_IGNORE)
     return TRUE;
 
   g_value_init (&value, param_spec->value_type);
   g_object_get_property (G_OBJECT (config), param_spec->name, &value);
 
-  if (param_spec->flags & GIMP_CONFIG_PARAM_DEFAULTS &&
+  if (param_spec->flags & PICMAN_CONFIG_PARAM_DEFAULTS &&
       g_param_value_defaults (param_spec, &value))
     {
       g_value_unset (&value);
@@ -194,17 +194,17 @@ gimp_config_serialize_property (GimpConfig       *config,
     {
       GTypeClass *owner_class = g_type_class_peek (param_spec->owner_type);
 
-      config_iface = g_type_interface_peek (owner_class, GIMP_TYPE_CONFIG);
+      config_iface = g_type_interface_peek (owner_class, PICMAN_TYPE_CONFIG);
 
       /*  We must call serialize_property() *only* if the *exact* class
        *  which implements it is param_spec->owner_type's class.
        *
        *  Therefore, we ask param_spec->owner_type's immediate parent class
-       *  for it's GimpConfigInterface and check if we get a different
+       *  for it's PicmanConfigInterface and check if we get a different
        *  pointer.
        *
        *  (if the pointers are the same, param_spec->owner_type's
-       *   GimpConfigInterface is inherited from one of it's parent classes
+       *   PicmanConfigInterface is inherited from one of it's parent classes
        *   and thus not able to handle param_spec->owner_type's properties).
        */
       if (config_iface)
@@ -214,7 +214,7 @@ gimp_config_serialize_property (GimpConfig       *config,
           owner_parent_class = g_type_class_peek_parent (owner_class);
 
           parent_iface = g_type_interface_peek (owner_parent_class,
-                                                GIMP_TYPE_CONFIG);
+                                                PICMAN_TYPE_CONFIG);
         }
     }
 
@@ -238,59 +238,59 @@ gimp_config_serialize_property (GimpConfig       *config,
     {
       if (G_VALUE_HOLDS_OBJECT (&value))
         {
-          GimpConfigInterface *config_iface = NULL;
-          GimpConfig          *prop_object;
+          PicmanConfigInterface *config_iface = NULL;
+          PicmanConfig          *prop_object;
 
           prop_object = g_value_get_object (&value);
 
           if (prop_object)
-            config_iface = GIMP_CONFIG_GET_INTERFACE (prop_object);
+            config_iface = PICMAN_CONFIG_GET_INTERFACE (prop_object);
           else
             success = TRUE;
 
           if (config_iface)
             {
-              gimp_config_writer_open (writer, param_spec->name);
+              picman_config_writer_open (writer, param_spec->name);
 
-              /*  if the object property is not GIMP_CONFIG_PARAM_AGGREGATE,
+              /*  if the object property is not PICMAN_CONFIG_PARAM_AGGREGATE,
                *  deserializing will need to know the exact type
                *  in order to create the object
                */
-              if (! (param_spec->flags & GIMP_CONFIG_PARAM_AGGREGATE))
+              if (! (param_spec->flags & PICMAN_CONFIG_PARAM_AGGREGATE))
                 {
                   GType object_type = G_TYPE_FROM_INSTANCE (prop_object);
 
-                  gimp_config_writer_string (writer, g_type_name (object_type));
+                  picman_config_writer_string (writer, g_type_name (object_type));
                 }
 
               success = config_iface->serialize (prop_object, writer, NULL);
 
               if (success)
-                gimp_config_writer_close (writer);
+                picman_config_writer_close (writer);
               else
-                gimp_config_writer_revert (writer);
+                picman_config_writer_revert (writer);
             }
         }
       else
         {
           GString *str = g_string_new (NULL);
 
-          if (GIMP_VALUE_HOLDS_RGB (&value))
+          if (PICMAN_VALUE_HOLDS_RGB (&value))
             {
-              gboolean has_alpha = gimp_param_spec_rgb_has_alpha (param_spec);
+              gboolean has_alpha = picman_param_spec_rgb_has_alpha (param_spec);
 
-              success = gimp_config_serialize_rgb (&value, str, has_alpha);
+              success = picman_config_serialize_rgb (&value, str, has_alpha);
             }
           else
             {
-              success = gimp_config_serialize_value (&value, str, TRUE);
+              success = picman_config_serialize_value (&value, str, TRUE);
             }
 
           if (success)
             {
-              gimp_config_writer_open (writer, param_spec->name);
-              gimp_config_writer_print (writer, str->str, str->len);
-              gimp_config_writer_close (writer);
+              picman_config_writer_open (writer, param_spec->name);
+              picman_config_writer_print (writer, str->str, str->len);
+              picman_config_writer_close (writer);
             }
 
           g_string_free (str, TRUE);
@@ -319,21 +319,21 @@ gimp_config_serialize_property (GimpConfig       *config,
 }
 
 /**
- * gimp_config_serialize_property_by_name:
- * @config:    a #GimpConfig.
+ * picman_config_serialize_property_by_name:
+ * @config:    a #PicmanConfig.
  * @prop_name: the property's name.
- * @writer:    a #GimpConfigWriter.
+ * @writer:    a #PicmanConfigWriter.
  *
  * This function serializes a single object property to the @writer.
  *
  * Returns: %TRUE if serialization succeeded, %FALSE otherwise
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_config_serialize_property_by_name (GimpConfig       *config,
+picman_config_serialize_property_by_name (PicmanConfig       *config,
                                         const gchar      *prop_name,
-                                        GimpConfigWriter *writer)
+                                        PicmanConfigWriter *writer)
 {
   GParamSpec *pspec;
 
@@ -343,11 +343,11 @@ gimp_config_serialize_property_by_name (GimpConfig       *config,
   if (! pspec)
     return FALSE;
 
-  return gimp_config_serialize_property (config, pspec, writer);
+  return picman_config_serialize_property (config, pspec, writer);
 }
 
 /**
- * gimp_config_serialize_value:
+ * picman_config_serialize_value:
  * @value: a #GValue.
  * @str: a #GString.
  * @escaped: whether to escape string values.
@@ -356,10 +356,10 @@ gimp_config_serialize_property_by_name (GimpConfig       *config,
  *
  * Return value: %TRUE if serialization succeeded, %FALSE otherwise.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_config_serialize_value (const GValue *value,
+picman_config_serialize_value (const GValue *value,
                              GString      *str,
                              gboolean      escaped)
 {
@@ -399,7 +399,7 @@ gimp_config_serialize_value (const GValue *value,
         return FALSE;
 
       if (escaped)
-        gimp_config_string_append_escaped (str, cstr);
+        picman_config_string_append_escaped (str, cstr);
       else
         g_string_append (str, cstr);
 
@@ -421,14 +421,14 @@ gimp_config_serialize_value (const GValue *value,
       return TRUE;
     }
 
-  if (GIMP_VALUE_HOLDS_RGB (value))
+  if (PICMAN_VALUE_HOLDS_RGB (value))
     {
-      return gimp_config_serialize_rgb (value, str, TRUE);
+      return picman_config_serialize_rgb (value, str, TRUE);
     }
 
-  if (GIMP_VALUE_HOLDS_MATRIX2 (value))
+  if (PICMAN_VALUE_HOLDS_MATRIX2 (value))
     {
-      GimpMatrix2 *trafo;
+      PicmanMatrix2 *trafo;
 
       trafo = g_value_get_boxed (value);
 
@@ -453,15 +453,15 @@ gimp_config_serialize_value (const GValue *value,
       return TRUE;
     }
 
-  if (G_VALUE_TYPE (value) == GIMP_TYPE_VALUE_ARRAY)
+  if (G_VALUE_TYPE (value) == PICMAN_TYPE_VALUE_ARRAY)
     {
-      GimpValueArray *array;
+      PicmanValueArray *array;
 
       array = g_value_get_boxed (value);
 
       if (array)
         {
-          gint length = gimp_value_array_length (array);
+          gint length = picman_value_array_length (array);
           gint i;
 
           g_string_append_printf (str, "%d", length);
@@ -470,7 +470,7 @@ gimp_config_serialize_value (const GValue *value,
             {
               g_string_append (str, " ");
 
-              if (! gimp_config_serialize_value (gimp_value_array_index (array,
+              if (! picman_config_serialize_value (picman_value_array_index (array,
                                                                          i),
                                                  str, TRUE))
                 return FALSE;
@@ -501,11 +501,11 @@ gimp_config_serialize_value (const GValue *value,
 }
 
 static gboolean
-gimp_config_serialize_rgb (const GValue *value,
+picman_config_serialize_rgb (const GValue *value,
                            GString      *str,
                            gboolean      has_alpha)
 {
-  GimpRGB *rgb;
+  PicmanRGB *rgb;
 
   rgb = g_value_get_boxed (value);
 

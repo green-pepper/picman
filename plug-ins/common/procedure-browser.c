@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@
  * NOTE :
  * this is only a exercice for me (my first "plug-in" (extension))
  * so it's very (very) dirty.
- * Btw, hope it gives you some ideas about gimp possibilities.
+ * Btw, hope it gives you some ideas about picman possibilities.
  *
  * The core of the plugin is not here. See dbbrowser_utils (shared
  * with script-fu-console).
@@ -42,25 +42,25 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-dbbrowser"
 #define PLUG_IN_BINARY "procedure-browser"
-#define PLUG_IN_ROLE   "gimp-procedure-browser"
+#define PLUG_IN_ROLE   "picman-procedure-browser"
 
 
 static void   query (void);
 static void   run   (const gchar      *name,
                      gint              nparams,
-                     const GimpParam  *param,
+                     const PicmanParam  *param,
                      gint             *nreturn_vals,
-                     GimpParam       **return_vals);
+                     PicmanParam       **return_vals);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -74,12 +74,12 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32, "run-mode", "The run mode { RUN-INTERACTIVE (0) }" }
+    { PICMAN_PDB_INT32, "run-mode", "The run mode { RUN-INTERACTIVE (0) }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("List available procedures in the PDB"),
                           "",
                           "Thomas Noel",
@@ -87,44 +87,44 @@ query (void)
                           "23th june 1997",
                           N_("Procedure _Browser"),
                           "",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Help/Programming");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Help/Programming");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam values[1];
-  GimpRunMode      run_mode;
+  static PicmanParam values[1];
+  PicmanRunMode      run_mode;
 
   run_mode = param[0].data.d_int32;
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_SUCCESS;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       {
         GtkWidget *dialog;
 
-        gimp_ui_init (PLUG_IN_BINARY, FALSE);
+        picman_ui_init (PLUG_IN_BINARY, FALSE);
 
         dialog =
-          gimp_proc_browser_dialog_new (_("Procedure Browser"), PLUG_IN_BINARY,
-                                        gimp_standard_help_func, PLUG_IN_PROC,
+          picman_proc_browser_dialog_new (_("Procedure Browser"), PLUG_IN_BINARY,
+                                        picman_standard_help_func, PLUG_IN_PROC,
 
                                         GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 
@@ -135,10 +135,10 @@ run (const gchar      *name,
       }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_NONINTERACTIVE:
       g_warning (PLUG_IN_PROC " allows only interactive invocation");
-      values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+      values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
       break;
 
     default:

@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppixelfetcher.h
+ * picmanpixelfetcher.h
  * Contains all kinds of miscellaneous routines factored out from different
  * plug-ins. They stay here until their API has crystalized a bit and we can
  * put them into the file where they belong (Maurits Rijk
@@ -22,12 +22,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
-#ifndef __GIMP_PIXEL_FETCHER_H__
-#define __GIMP_PIXEL_FETCHER_H__
+#ifndef __PICMAN_PIXEL_FETCHER_H__
+#define __PICMAN_PIXEL_FETCHER_H__
 
 G_BEGIN_DECLS
 
@@ -36,41 +36,41 @@ G_BEGIN_DECLS
 
 typedef enum
 {
-  GIMP_PIXEL_FETCHER_EDGE_NONE,
-  GIMP_PIXEL_FETCHER_EDGE_WRAP,
-  GIMP_PIXEL_FETCHER_EDGE_SMEAR,
-  GIMP_PIXEL_FETCHER_EDGE_BLACK,
-  GIMP_PIXEL_FETCHER_EDGE_BACKGROUND
-} GimpPixelFetcherEdgeMode;
+  PICMAN_PIXEL_FETCHER_EDGE_NONE,
+  PICMAN_PIXEL_FETCHER_EDGE_WRAP,
+  PICMAN_PIXEL_FETCHER_EDGE_SMEAR,
+  PICMAN_PIXEL_FETCHER_EDGE_BLACK,
+  PICMAN_PIXEL_FETCHER_EDGE_BACKGROUND
+} PicmanPixelFetcherEdgeMode;
 
 
-typedef struct _GimpPixelFetcher GimpPixelFetcher;
+typedef struct _PicmanPixelFetcher PicmanPixelFetcher;
 
 
-GIMP_DEPRECATED
-GimpPixelFetcher * gimp_pixel_fetcher_new       (GimpDrawable     *drawable,
+PICMAN_DEPRECATED
+PicmanPixelFetcher * picman_pixel_fetcher_new       (PicmanDrawable     *drawable,
                                                  gboolean          shadow);
-GIMP_DEPRECATED
-void               gimp_pixel_fetcher_destroy   (GimpPixelFetcher *pf);
+PICMAN_DEPRECATED
+void               picman_pixel_fetcher_destroy   (PicmanPixelFetcher *pf);
 
-GIMP_DEPRECATED
-void   gimp_pixel_fetcher_set_edge_mode (GimpPixelFetcher         *pf,
-                                         GimpPixelFetcherEdgeMode  mode);
-GIMP_DEPRECATED
-void   gimp_pixel_fetcher_set_bg_color  (GimpPixelFetcher         *pf,
-                                         const GimpRGB            *color);
+PICMAN_DEPRECATED
+void   picman_pixel_fetcher_set_edge_mode (PicmanPixelFetcher         *pf,
+                                         PicmanPixelFetcherEdgeMode  mode);
+PICMAN_DEPRECATED
+void   picman_pixel_fetcher_set_bg_color  (PicmanPixelFetcher         *pf,
+                                         const PicmanRGB            *color);
 
-GIMP_DEPRECATED
-void   gimp_pixel_fetcher_get_pixel     (GimpPixelFetcher         *pf,
+PICMAN_DEPRECATED
+void   picman_pixel_fetcher_get_pixel     (PicmanPixelFetcher         *pf,
                                          gint                      x,
                                          gint                      y,
                                          guchar                   *pixel);
-GIMP_DEPRECATED
-void   gimp_pixel_fetcher_put_pixel     (GimpPixelFetcher         *pf,
+PICMAN_DEPRECATED
+void   picman_pixel_fetcher_put_pixel     (PicmanPixelFetcher         *pf,
                                          gint                      x,
                                          gint                      y,
                                          const guchar             *pixel);
 
 G_END_DECLS
 
-#endif /* __GIMP_PIXEL_FETCHER_H__ */
+#endif /* __PICMAN_PIXEL_FETCHER_H__ */

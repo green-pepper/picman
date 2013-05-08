@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,174 +20,174 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "display-types.h"
 
-#include "config/gimpdisplayoptions.h"
+#include "config/picmandisplayoptions.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimpdockcolumns.h"
-#include "widgets/gimprender.h"
-#include "widgets/gimpuimanager.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmandockcolumns.h"
+#include "widgets/picmanrender.h"
+#include "widgets/picmanuimanager.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimpcanvas.h"
-#include "gimpcanvasitem.h"
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-appearance.h"
-#include "gimpdisplayshell-selection.h"
-#include "gimpimagewindow.h"
-#include "gimpstatusbar.h"
+#include "picmancanvas.h"
+#include "picmancanvasitem.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-appearance.h"
+#include "picmandisplayshell-selection.h"
+#include "picmanimagewindow.h"
+#include "picmanstatusbar.h"
 
 
 /*  local function prototypes  */
 
-static GimpDisplayOptions *
-              appearance_get_options       (GimpDisplayShell       *shell);
-static void   appearance_set_action_active (GimpDisplayShell       *shell,
+static PicmanDisplayOptions *
+              appearance_get_options       (PicmanDisplayShell       *shell);
+static void   appearance_set_action_active (PicmanDisplayShell       *shell,
                                             const gchar            *action,
                                             gboolean                active);
-static void   appearance_set_action_color  (GimpDisplayShell       *shell,
+static void   appearance_set_action_color  (PicmanDisplayShell       *shell,
                                             const gchar            *action,
-                                            const GimpRGB          *color);
+                                            const PicmanRGB          *color);
 
 
 /*  public functions  */
 
 void
-gimp_display_shell_appearance_update (GimpDisplayShell *shell)
+picman_display_shell_appearance_update (PicmanDisplayShell *shell)
 {
-  GimpDisplayOptions *options;
-  GimpImageWindow    *window;
+  PicmanDisplayOptions *options;
+  PicmanImageWindow    *window;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   options = appearance_get_options (shell);
-  window  = gimp_display_shell_get_window (shell);
+  window  = picman_display_shell_get_window (shell);
 
   if (window)
     {
-      GimpDockColumns *left_docks;
-      GimpDockColumns *right_docks;
+      PicmanDockColumns *left_docks;
+      PicmanDockColumns *right_docks;
       gboolean         fullscreen;
       gboolean         has_grip;
 
-      fullscreen = gimp_image_window_get_fullscreen (window);
+      fullscreen = picman_image_window_get_fullscreen (window);
 
       appearance_set_action_active (shell, "view-fullscreen", fullscreen);
 
-      left_docks  = gimp_image_window_get_left_docks (window);
-      right_docks = gimp_image_window_get_right_docks (window);
+      left_docks  = picman_image_window_get_left_docks (window);
+      right_docks = picman_image_window_get_right_docks (window);
 
       has_grip = (! fullscreen &&
-                  ! (left_docks  && gimp_dock_columns_get_docks (left_docks)) &&
-                  ! (right_docks && gimp_dock_columns_get_docks (right_docks)));
+                  ! (left_docks  && picman_dock_columns_get_docks (left_docks)) &&
+                  ! (right_docks && picman_dock_columns_get_docks (right_docks)));
 
       gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (shell->statusbar),
                                          has_grip);
     }
 
-  gimp_display_shell_set_show_menubar       (shell,
+  picman_display_shell_set_show_menubar       (shell,
                                              options->show_menubar);
-  gimp_display_shell_set_show_statusbar     (shell,
+  picman_display_shell_set_show_statusbar     (shell,
                                              options->show_statusbar);
 
-  gimp_display_shell_set_show_rulers        (shell,
+  picman_display_shell_set_show_rulers        (shell,
                                              options->show_rulers);
-  gimp_display_shell_set_show_scrollbars    (shell,
+  picman_display_shell_set_show_scrollbars    (shell,
                                              options->show_scrollbars);
-  gimp_display_shell_set_show_selection     (shell,
+  picman_display_shell_set_show_selection     (shell,
                                              options->show_selection);
-  gimp_display_shell_set_show_layer         (shell,
+  picman_display_shell_set_show_layer         (shell,
                                              options->show_layer_boundary);
-  gimp_display_shell_set_show_guides        (shell,
+  picman_display_shell_set_show_guides        (shell,
                                              options->show_guides);
-  gimp_display_shell_set_show_grid          (shell,
+  picman_display_shell_set_show_grid          (shell,
                                              options->show_grid);
-  gimp_display_shell_set_show_sample_points (shell,
+  picman_display_shell_set_show_sample_points (shell,
                                              options->show_sample_points);
-  gimp_display_shell_set_padding            (shell,
+  picman_display_shell_set_padding            (shell,
                                              options->padding_mode,
                                              &options->padding_color);
 }
 
 void
-gimp_display_shell_set_show_menubar (GimpDisplayShell *shell,
+picman_display_shell_set_show_menubar (PicmanDisplayShell *shell,
                                      gboolean          show)
 {
-  GimpDisplayOptions *options;
-  GimpImageWindow    *window;
+  PicmanDisplayOptions *options;
+  PicmanImageWindow    *window;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   options = appearance_get_options (shell);
-  window  = gimp_display_shell_get_window (shell);
+  window  = picman_display_shell_get_window (shell);
 
   g_object_set (options, "show-menubar", show, NULL);
 
-  if (window && gimp_image_window_get_active_shell (window) == shell)
+  if (window && picman_image_window_get_active_shell (window) == shell)
     {
-      gimp_image_window_keep_canvas_pos (gimp_display_shell_get_window (shell));
-      gimp_image_window_set_show_menubar (window, show);
+      picman_image_window_keep_canvas_pos (picman_display_shell_get_window (shell));
+      picman_image_window_set_show_menubar (window, show);
     }
 
   appearance_set_action_active (shell, "view-show-menubar", show);
 }
 
 gboolean
-gimp_display_shell_get_show_menubar (GimpDisplayShell *shell)
+picman_display_shell_get_show_menubar (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return appearance_get_options (shell)->show_menubar;
 }
 
 void
-gimp_display_shell_set_show_statusbar (GimpDisplayShell *shell,
+picman_display_shell_set_show_statusbar (PicmanDisplayShell *shell,
                                        gboolean          show)
 {
-  GimpDisplayOptions *options;
+  PicmanDisplayOptions *options;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   options = appearance_get_options (shell);
 
   g_object_set (options, "show-statusbar", show, NULL);
 
-  gimp_image_window_keep_canvas_pos (gimp_display_shell_get_window (shell));
-  gimp_statusbar_set_visible (GIMP_STATUSBAR (shell->statusbar), show);
+  picman_image_window_keep_canvas_pos (picman_display_shell_get_window (shell));
+  picman_statusbar_set_visible (PICMAN_STATUSBAR (shell->statusbar), show);
 
   appearance_set_action_active (shell, "view-show-statusbar", show);
 }
 
 gboolean
-gimp_display_shell_get_show_statusbar (GimpDisplayShell *shell)
+picman_display_shell_get_show_statusbar (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return appearance_get_options (shell)->show_statusbar;
 }
 
 void
-gimp_display_shell_set_show_rulers (GimpDisplayShell *shell,
+picman_display_shell_set_show_rulers (PicmanDisplayShell *shell,
                                     gboolean          show)
 {
-  GimpDisplayOptions *options;
+  PicmanDisplayOptions *options;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   options = appearance_get_options (shell);
 
   g_object_set (options, "show-rulers", show, NULL);
 
-  gimp_image_window_keep_canvas_pos (gimp_display_shell_get_window (shell));
+  picman_image_window_keep_canvas_pos (picman_display_shell_get_window (shell));
   gtk_widget_set_visible (shell->origin, show);
   gtk_widget_set_visible (shell->hrule, show);
   gtk_widget_set_visible (shell->vrule, show);
@@ -196,26 +196,26 @@ gimp_display_shell_set_show_rulers (GimpDisplayShell *shell,
 }
 
 gboolean
-gimp_display_shell_get_show_rulers (GimpDisplayShell *shell)
+picman_display_shell_get_show_rulers (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return appearance_get_options (shell)->show_rulers;
 }
 
 void
-gimp_display_shell_set_show_scrollbars (GimpDisplayShell *shell,
+picman_display_shell_set_show_scrollbars (PicmanDisplayShell *shell,
                                         gboolean          show)
 {
-  GimpDisplayOptions *options;
+  PicmanDisplayOptions *options;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   options = appearance_get_options (shell);
 
   g_object_set (options, "show-scrollbars", show, NULL);
 
-  gimp_image_window_keep_canvas_pos (gimp_display_shell_get_window (shell));
+  picman_image_window_keep_canvas_pos (picman_display_shell_get_window (shell));
   gtk_widget_set_visible (shell->nav_ebox, show);
   gtk_widget_set_visible (shell->hsb, show);
   gtk_widget_set_visible (shell->vsb, show);
@@ -226,143 +226,143 @@ gimp_display_shell_set_show_scrollbars (GimpDisplayShell *shell,
 }
 
 gboolean
-gimp_display_shell_get_show_scrollbars (GimpDisplayShell *shell)
+picman_display_shell_get_show_scrollbars (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return appearance_get_options (shell)->show_scrollbars;
 }
 
 void
-gimp_display_shell_set_show_selection (GimpDisplayShell *shell,
+picman_display_shell_set_show_selection (PicmanDisplayShell *shell,
                                        gboolean          show)
 {
-  GimpDisplayOptions *options;
+  PicmanDisplayOptions *options;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   options = appearance_get_options (shell);
 
   g_object_set (options, "show-selection", show, NULL);
 
-  gimp_display_shell_selection_set_show (shell, show);
+  picman_display_shell_selection_set_show (shell, show);
 
   appearance_set_action_active (shell, "view-show-selection", show);
 }
 
 gboolean
-gimp_display_shell_get_show_selection (GimpDisplayShell *shell)
+picman_display_shell_get_show_selection (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return appearance_get_options (shell)->show_selection;
 }
 
 void
-gimp_display_shell_set_show_layer (GimpDisplayShell *shell,
+picman_display_shell_set_show_layer (PicmanDisplayShell *shell,
                                    gboolean          show)
 {
-  GimpDisplayOptions *options;
+  PicmanDisplayOptions *options;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   options = appearance_get_options (shell);
 
   g_object_set (options, "show-layer-boundary", show, NULL);
 
-  gimp_canvas_item_set_visible (shell->layer_boundary, show);
+  picman_canvas_item_set_visible (shell->layer_boundary, show);
 
   appearance_set_action_active (shell, "view-show-layer-boundary", show);
 }
 
 gboolean
-gimp_display_shell_get_show_layer (GimpDisplayShell *shell)
+picman_display_shell_get_show_layer (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return appearance_get_options (shell)->show_layer_boundary;
 }
 
 void
-gimp_display_shell_set_show_guides (GimpDisplayShell *shell,
+picman_display_shell_set_show_guides (PicmanDisplayShell *shell,
                                     gboolean          show)
 {
-  GimpDisplayOptions *options;
+  PicmanDisplayOptions *options;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   options = appearance_get_options (shell);
 
   g_object_set (options, "show-guides", show, NULL);
 
-  gimp_canvas_item_set_visible (shell->guides, show);
+  picman_canvas_item_set_visible (shell->guides, show);
 
   appearance_set_action_active (shell, "view-show-guides", show);
 }
 
 gboolean
-gimp_display_shell_get_show_guides (GimpDisplayShell *shell)
+picman_display_shell_get_show_guides (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return appearance_get_options (shell)->show_guides;
 }
 
 void
-gimp_display_shell_set_show_grid (GimpDisplayShell *shell,
+picman_display_shell_set_show_grid (PicmanDisplayShell *shell,
                                   gboolean          show)
 {
-  GimpDisplayOptions *options;
+  PicmanDisplayOptions *options;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   options = appearance_get_options (shell);
 
   g_object_set (options, "show-grid", show, NULL);
 
-  gimp_canvas_item_set_visible (shell->grid, show);
+  picman_canvas_item_set_visible (shell->grid, show);
 
   appearance_set_action_active (shell, "view-show-grid", show);
 }
 
 gboolean
-gimp_display_shell_get_show_grid (GimpDisplayShell *shell)
+picman_display_shell_get_show_grid (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return appearance_get_options (shell)->show_grid;
 }
 
 void
-gimp_display_shell_set_show_sample_points (GimpDisplayShell *shell,
+picman_display_shell_set_show_sample_points (PicmanDisplayShell *shell,
                                            gboolean          show)
 {
-  GimpDisplayOptions *options;
+  PicmanDisplayOptions *options;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   options = appearance_get_options (shell);
 
   g_object_set (options, "show-sample-points", show, NULL);
 
-  gimp_canvas_item_set_visible (shell->sample_points, show);
+  picman_canvas_item_set_visible (shell->sample_points, show);
 
   appearance_set_action_active (shell, "view-show-sample-points", show);
 }
 
 gboolean
-gimp_display_shell_get_show_sample_points (GimpDisplayShell *shell)
+picman_display_shell_get_show_sample_points (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return appearance_get_options (shell)->show_sample_points;
 }
 
 void
-gimp_display_shell_set_snap_to_grid (GimpDisplayShell *shell,
+picman_display_shell_set_snap_to_grid (PicmanDisplayShell *shell,
                                      gboolean          snap)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   if (snap != shell->snap_to_grid)
     {
@@ -373,18 +373,18 @@ gimp_display_shell_set_snap_to_grid (GimpDisplayShell *shell,
 }
 
 gboolean
-gimp_display_shell_get_snap_to_grid (GimpDisplayShell *shell)
+picman_display_shell_get_snap_to_grid (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return shell->snap_to_grid;
 }
 
 void
-gimp_display_shell_set_snap_to_guides (GimpDisplayShell *shell,
+picman_display_shell_set_snap_to_guides (PicmanDisplayShell *shell,
                                        gboolean          snap)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   if (snap != shell->snap_to_guides)
     {
@@ -395,18 +395,18 @@ gimp_display_shell_set_snap_to_guides (GimpDisplayShell *shell,
 }
 
 gboolean
-gimp_display_shell_get_snap_to_guides (GimpDisplayShell *shell)
+picman_display_shell_get_snap_to_guides (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return shell->snap_to_guides;
 }
 
 void
-gimp_display_shell_set_snap_to_canvas (GimpDisplayShell *shell,
+picman_display_shell_set_snap_to_canvas (PicmanDisplayShell *shell,
                                        gboolean          snap)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   if (snap != shell->snap_to_canvas)
     {
@@ -417,18 +417,18 @@ gimp_display_shell_set_snap_to_canvas (GimpDisplayShell *shell,
 }
 
 gboolean
-gimp_display_shell_get_snap_to_canvas (GimpDisplayShell *shell)
+picman_display_shell_get_snap_to_canvas (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return shell->snap_to_canvas;
 }
 
 void
-gimp_display_shell_set_snap_to_vectors (GimpDisplayShell *shell,
+picman_display_shell_set_snap_to_vectors (PicmanDisplayShell *shell,
                                         gboolean          snap)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   if (snap != shell->snap_to_vectors)
     {
@@ -439,22 +439,22 @@ gimp_display_shell_set_snap_to_vectors (GimpDisplayShell *shell,
 }
 
 gboolean
-gimp_display_shell_get_snap_to_vectors (GimpDisplayShell *shell)
+picman_display_shell_get_snap_to_vectors (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
 
   return shell->snap_to_vectors;
 }
 
 void
-gimp_display_shell_set_padding (GimpDisplayShell      *shell,
-                                GimpCanvasPaddingMode  padding_mode,
-                                const GimpRGB         *padding_color)
+picman_display_shell_set_padding (PicmanDisplayShell      *shell,
+                                PicmanCanvasPaddingMode  padding_mode,
+                                const PicmanRGB         *padding_color)
 {
-  GimpDisplayOptions *options;
-  GimpRGB             color;
+  PicmanDisplayOptions *options;
+  PicmanRGB             color;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (padding_color != NULL);
 
   options = appearance_get_options (shell);
@@ -462,7 +462,7 @@ gimp_display_shell_set_padding (GimpDisplayShell      *shell,
 
   switch (padding_mode)
     {
-    case GIMP_CANVAS_PADDING_MODE_DEFAULT:
+    case PICMAN_CANVAS_PADDING_MODE_DEFAULT:
       if (shell->canvas)
         {
           GtkStyle *style;
@@ -471,20 +471,20 @@ gimp_display_shell_set_padding (GimpDisplayShell      *shell,
 
           style = gtk_widget_get_style (shell->canvas);
 
-          gimp_rgb_set_gdk_color (&color, style->bg + GTK_STATE_NORMAL);
+          picman_rgb_set_gdk_color (&color, style->bg + GTK_STATE_NORMAL);
         }
       break;
 
-    case GIMP_CANVAS_PADDING_MODE_LIGHT_CHECK:
-      color = *gimp_render_light_check_color ();
+    case PICMAN_CANVAS_PADDING_MODE_LIGHT_CHECK:
+      color = *picman_render_light_check_color ();
       break;
 
-    case GIMP_CANVAS_PADDING_MODE_DARK_CHECK:
-      color = *gimp_render_dark_check_color ();
+    case PICMAN_CANVAS_PADDING_MODE_DARK_CHECK:
+      color = *picman_render_dark_check_color ();
       break;
 
-    case GIMP_CANVAS_PADDING_MODE_CUSTOM:
-    case GIMP_CANVAS_PADDING_MODE_RESET:
+    case PICMAN_CANVAS_PADDING_MODE_CUSTOM:
+    case PICMAN_CANVAS_PADDING_MODE_RESET:
       break;
     }
 
@@ -493,20 +493,20 @@ gimp_display_shell_set_padding (GimpDisplayShell      *shell,
                 "padding-color", &color,
                 NULL);
 
-  gimp_canvas_set_bg_color (GIMP_CANVAS (shell->canvas), &color);
+  picman_canvas_set_bg_color (PICMAN_CANVAS (shell->canvas), &color);
 
   appearance_set_action_color (shell, "view-padding-color-menu",
                                &options->padding_color);
 }
 
 void
-gimp_display_shell_get_padding (GimpDisplayShell       *shell,
-                                GimpCanvasPaddingMode  *padding_mode,
-                                GimpRGB                *padding_color)
+picman_display_shell_get_padding (PicmanDisplayShell       *shell,
+                                PicmanCanvasPaddingMode  *padding_mode,
+                                PicmanRGB                *padding_color)
 {
-  GimpDisplayOptions *options;
+  PicmanDisplayOptions *options;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   options = appearance_get_options (shell);
 
@@ -520,14 +520,14 @@ gimp_display_shell_get_padding (GimpDisplayShell       *shell,
 
 /*  private functions  */
 
-static GimpDisplayOptions *
-appearance_get_options (GimpDisplayShell *shell)
+static PicmanDisplayOptions *
+appearance_get_options (PicmanDisplayShell *shell)
 {
-  if (gimp_display_get_image (shell->display))
+  if (picman_display_get_image (shell->display))
     {
-      GimpImageWindow *window = gimp_display_shell_get_window (shell);
+      PicmanImageWindow *window = picman_display_shell_get_window (shell);
 
-      if (window && gimp_image_window_get_fullscreen (window))
+      if (window && picman_image_window_get_fullscreen (window))
         return shell->fullscreen_options;
       else
         return shell->options;
@@ -537,67 +537,67 @@ appearance_get_options (GimpDisplayShell *shell)
 }
 
 static void
-appearance_set_action_active (GimpDisplayShell *shell,
+appearance_set_action_active (PicmanDisplayShell *shell,
                               const gchar      *action,
                               gboolean          active)
 {
-  GimpImageWindow *window = gimp_display_shell_get_window (shell);
-  GimpContext     *context;
+  PicmanImageWindow *window = picman_display_shell_get_window (shell);
+  PicmanContext     *context;
 
-  if (window && gimp_image_window_get_active_shell (window) == shell)
+  if (window && picman_image_window_get_active_shell (window) == shell)
     {
-      GimpUIManager   *manager = gimp_image_window_get_ui_manager (window);
-      GimpActionGroup *action_group;
+      PicmanUIManager   *manager = picman_image_window_get_ui_manager (window);
+      PicmanActionGroup *action_group;
 
-      action_group = gimp_ui_manager_get_action_group (manager, "view");
+      action_group = picman_ui_manager_get_action_group (manager, "view");
 
       if (action_group)
-        gimp_action_group_set_action_active (action_group, action, active);
+        picman_action_group_set_action_active (action_group, action, active);
     }
 
-  context = gimp_get_user_context (shell->display->gimp);
+  context = picman_get_user_context (shell->display->picman);
 
-  if (shell->display == gimp_context_get_display (context))
+  if (shell->display == picman_context_get_display (context))
     {
-      GimpActionGroup *action_group;
+      PicmanActionGroup *action_group;
 
-      action_group = gimp_ui_manager_get_action_group (shell->popup_manager,
+      action_group = picman_ui_manager_get_action_group (shell->popup_manager,
                                                        "view");
 
       if (action_group)
-        gimp_action_group_set_action_active (action_group, action, active);
+        picman_action_group_set_action_active (action_group, action, active);
     }
 }
 
 static void
-appearance_set_action_color (GimpDisplayShell *shell,
+appearance_set_action_color (PicmanDisplayShell *shell,
                              const gchar      *action,
-                             const GimpRGB    *color)
+                             const PicmanRGB    *color)
 {
-  GimpImageWindow *window = gimp_display_shell_get_window (shell);
-  GimpContext     *context;
+  PicmanImageWindow *window = picman_display_shell_get_window (shell);
+  PicmanContext     *context;
 
-  if (window && gimp_image_window_get_active_shell (window) == shell)
+  if (window && picman_image_window_get_active_shell (window) == shell)
     {
-      GimpUIManager   *manager = gimp_image_window_get_ui_manager (window);
-      GimpActionGroup *action_group;
+      PicmanUIManager   *manager = picman_image_window_get_ui_manager (window);
+      PicmanActionGroup *action_group;
 
-      action_group = gimp_ui_manager_get_action_group (manager, "view");
+      action_group = picman_ui_manager_get_action_group (manager, "view");
 
       if (action_group)
-        gimp_action_group_set_action_color (action_group, action, color, FALSE);
+        picman_action_group_set_action_color (action_group, action, color, FALSE);
     }
 
-  context = gimp_get_user_context (shell->display->gimp);
+  context = picman_get_user_context (shell->display->picman);
 
-  if (shell->display == gimp_context_get_display (context))
+  if (shell->display == picman_context_get_display (context))
     {
-      GimpActionGroup *action_group;
+      PicmanActionGroup *action_group;
 
-      action_group = gimp_ui_manager_get_action_group (shell->popup_manager,
+      action_group = picman_ui_manager_get_action_group (shell->popup_manager,
                                                        "view");
 
       if (action_group)
-        gimp_action_group_set_action_color (action_group, action, color, FALSE);
+        picman_action_group_set_action_color (action_group, action, color, FALSE);
     }
 }

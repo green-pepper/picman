@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpactionfactory.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanactionfactory.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,63 +18,63 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ACTION_FACTORY_H__
-#define __GIMP_ACTION_FACTORY_H__
+#ifndef __PICMAN_ACTION_FACTORY_H__
+#define __PICMAN_ACTION_FACTORY_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-typedef struct _GimpActionFactoryEntry GimpActionFactoryEntry;
+typedef struct _PicmanActionFactoryEntry PicmanActionFactoryEntry;
 
-struct _GimpActionFactoryEntry
+struct _PicmanActionFactoryEntry
 {
   gchar                     *identifier;
   gchar                     *label;
   gchar                     *stock_id;
-  GimpActionGroupSetupFunc   setup_func;
-  GimpActionGroupUpdateFunc  update_func;
+  PicmanActionGroupSetupFunc   setup_func;
+  PicmanActionGroupUpdateFunc  update_func;
 };
 
 
-#define GIMP_TYPE_ACTION_FACTORY            (gimp_action_factory_get_type ())
-#define GIMP_ACTION_FACTORY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ACTION_FACTORY, GimpActionFactory))
-#define GIMP_ACTION_FACTORY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ACTION_FACTORY, GimpActionFactoryClass))
-#define GIMP_IS_ACTION_FACTORY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ACTION_FACTORY))
-#define GIMP_IS_ACTION_FACTORY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ACTION_FACTORY))
-#define GIMP_ACTION_FACTORY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ACTION_FACTORY, GimpActionFactoryClass))
+#define PICMAN_TYPE_ACTION_FACTORY            (picman_action_factory_get_type ())
+#define PICMAN_ACTION_FACTORY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ACTION_FACTORY, PicmanActionFactory))
+#define PICMAN_ACTION_FACTORY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ACTION_FACTORY, PicmanActionFactoryClass))
+#define PICMAN_IS_ACTION_FACTORY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ACTION_FACTORY))
+#define PICMAN_IS_ACTION_FACTORY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ACTION_FACTORY))
+#define PICMAN_ACTION_FACTORY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ACTION_FACTORY, PicmanActionFactoryClass))
 
 
-typedef struct _GimpActionFactoryClass  GimpActionFactoryClass;
+typedef struct _PicmanActionFactoryClass  PicmanActionFactoryClass;
 
-struct _GimpActionFactory
+struct _PicmanActionFactory
 {
-  GimpObject  parent_instance;
+  PicmanObject  parent_instance;
 
-  Gimp       *gimp;
+  Picman       *picman;
   GList      *registered_groups;
 };
 
-struct _GimpActionFactoryClass
+struct _PicmanActionFactoryClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType               gimp_action_factory_get_type (void) G_GNUC_CONST;
+GType               picman_action_factory_get_type (void) G_GNUC_CONST;
 
-GimpActionFactory * gimp_action_factory_new      (Gimp              *gimp);
+PicmanActionFactory * picman_action_factory_new      (Picman              *picman);
 
-void          gimp_action_factory_group_register (GimpActionFactory *factory,
+void          picman_action_factory_group_register (PicmanActionFactory *factory,
                                                   const gchar       *identifier,
                                                   const gchar       *label,
                                                   const gchar       *stock_id,
-                                                  GimpActionGroupSetupFunc  setup_func,
-                                                  GimpActionGroupUpdateFunc update_func);
+                                                  PicmanActionGroupSetupFunc  setup_func,
+                                                  PicmanActionGroupUpdateFunc update_func);
 
-GimpActionGroup * gimp_action_factory_group_new  (GimpActionFactory *factory,
+PicmanActionGroup * picman_action_factory_group_new  (PicmanActionFactory *factory,
                                                   const gchar       *identifier,
                                                   gpointer           user_data);
 
 
-#endif  /*  __GIMP_ACTION_FACTORY_H__  */
+#endif  /*  __PICMAN_ACTION_FACTORY_H__  */

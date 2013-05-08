@@ -1,10 +1,10 @@
 /*
- * gimp-thumbnail-list.c
+ * picman-thumbnail-list.c
  */
 
 #include <string.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
-#include <libgimpthumb/gimpthumb.h>
+#include <libpicmanthumb/picmanthumb.h>
 
 
 #define STATE_NONE  -1
@@ -23,7 +23,7 @@ static void      process_folder     (const gchar  *folder);
 static void      process_thumbnail  (const gchar  *filename);
 
 
-static GimpThumbState  option_state   = STATE_NONE;
+static PicmanThumbState  option_state   = STATE_NONE;
 static gboolean        option_verbose = FALSE;
 static gchar          *option_path    = NULL;
 
@@ -107,23 +107,23 @@ parse_option_state (const gchar  *option_name,
                     GError      **error)
 {
   if (strcmp (value, "unknown") == 0)
-    option_state = GIMP_THUMB_STATE_UNKNOWN;
+    option_state = PICMAN_THUMB_STATE_UNKNOWN;
   else if (strcmp (value, "remote") == 0)
-    option_state = GIMP_THUMB_STATE_REMOTE;
+    option_state = PICMAN_THUMB_STATE_REMOTE;
   else if (strcmp (value, "folder") == 0)
-    option_state = GIMP_THUMB_STATE_FOLDER;
+    option_state = PICMAN_THUMB_STATE_FOLDER;
   else if (strcmp (value, "special") == 0)
-    option_state = GIMP_THUMB_STATE_SPECIAL;
+    option_state = PICMAN_THUMB_STATE_SPECIAL;
   else if (strcmp (value, "not-found") == 0)
-    option_state = GIMP_THUMB_STATE_NOT_FOUND;
+    option_state = PICMAN_THUMB_STATE_NOT_FOUND;
   else if (strcmp (value, "exists") == 0)
-    option_state = GIMP_THUMB_STATE_EXISTS;
+    option_state = PICMAN_THUMB_STATE_EXISTS;
   else if (strcmp (value, "old") == 0)
-    option_state = GIMP_THUMB_STATE_OLD;
+    option_state = PICMAN_THUMB_STATE_OLD;
   else if (strcmp (value, "failed") == 0)
-    option_state = GIMP_THUMB_STATE_FAILED;
+    option_state = PICMAN_THUMB_STATE_FAILED;
   else if (strcmp (value, "ok") == 0)
-    option_state = GIMP_THUMB_STATE_OK;
+    option_state = PICMAN_THUMB_STATE_OK;
   else if (strcmp (value, "error") == 0)
     option_state = STATE_ERROR;
   else
@@ -182,12 +182,12 @@ process_folder (const gchar *folder)
 static void
 process_thumbnail (const gchar *filename)
 {
-  GimpThumbnail *thumbnail;
+  PicmanThumbnail *thumbnail;
   GError        *error = NULL;
 
-  thumbnail = gimp_thumbnail_new ();
+  thumbnail = picman_thumbnail_new ();
 
-  if (! gimp_thumbnail_set_from_thumb (thumbnail, filename, &error))
+  if (! picman_thumbnail_set_from_thumb (thumbnail, filename, &error))
     {
       if (option_state == STATE_ERROR)
         {
@@ -201,7 +201,7 @@ process_thumbnail (const gchar *filename)
     }
   else
     {
-      GimpThumbState state = gimp_thumbnail_peek_image (thumbnail);
+      PicmanThumbState state = picman_thumbnail_peek_image (thumbnail);
 
       if ((option_state == STATE_NONE || state == option_state)
 
@@ -219,27 +219,27 @@ process_thumbnail (const gchar *filename)
 #if 0
       switch (foo)
         {
-        case GIMP_THUMB_STATE_REMOTE:
+        case PICMAN_THUMB_STATE_REMOTE:
           g_print ("%s Remote image '%s'\n", filename, thumbnail->image_uri);
           break;
 
-        case GIMP_THUMB_STATE_FOLDER:
+        case PICMAN_THUMB_STATE_FOLDER:
           g_print ("%s Folder '%s'\n", filename, thumbnail->image_uri);
           break;
 
-        case GIMP_THUMB_STATE_SPECIAL:
+        case PICMAN_THUMB_STATE_SPECIAL:
           g_print ("%s Special file '%s'\n", filename, thumbnail->image_uri);
           break;
 
-        case GIMP_THUMB_STATE_NOT_FOUND:
+        case PICMAN_THUMB_STATE_NOT_FOUND:
           g_print ("%s Image not found '%s'\n", filename, thumbnail->image_uri);
           break;
 
-        case GIMP_THUMB_STATE_OLD:
+        case PICMAN_THUMB_STATE_OLD:
           g_print ("%s Thumbnail old '%s'\n", filename, thumbnail->image_uri);
           break;
 
-        case GIMP_THUMB_STATE_FAILED:
+        case PICMAN_THUMB_STATE_FAILED:
           g_print ("%s EEEEEEEEK '%s'\n", filename, thumbnail->image_uri);
           break;
 

@@ -1,7 +1,7 @@
 ;;; grid-system.scm -*-scheme-*-
 ;;; Time-stamp: <1998/01/20 23:22:02 narazaki@InetQ.or.jp>
 ;;; This file is a part of:
-;;;   GIMP (Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis)
+;;;   PICMAN (Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis)
 ;;; Author: Shuji Narazaki (narazaki@InetQ.or.jp)
 ;;; Version 0.6
 
@@ -33,10 +33,10 @@
       ((eq? obj 'g) "g ")
       (eq? obj '1/g) "1/g "))
     (string-append "'(" (apply string-append (map wrap-object l)) ")"))
-  (let* ((drw-width (car (gimp-drawable-width drw)))
-   (drw-height (car (gimp-drawable-height drw)))
-   (drw-offset-x (nth 0 (gimp-drawable-offsets drw)))
-   (drw-offset-y (nth 1 (gimp-drawable-offsets drw)))
+  (let* ((drw-width (car (picman-drawable-width drw)))
+   (drw-height (car (picman-drawable-height drw)))
+   (drw-offset-x (nth 0 (picman-drawable-offsets drw)))
+   (drw-offset-y (nth 1 (picman-drawable-offsets drw)))
    (grid-layer #f)
    (segment (cons-array 4 'double))
    (stepped-x 0)
@@ -49,12 +49,12 @@
    (total-step-x (apply + x-divides))
    (total-step-y (apply + y-divides)))
 
-    (gimp-image-undo-group-start img)
+    (picman-image-undo-group-start img)
 
-    (set! grid-layer (car (gimp-layer-copy drw TRUE)))
-    (gimp-image-insert-layer img grid-layer 0 0)
-    (gimp-edit-clear grid-layer)
-    (gimp-item-set-name grid-layer "Grid Layer")
+    (set! grid-layer (car (picman-layer-copy drw TRUE)))
+    (picman-image-insert-layer img grid-layer 0 0)
+    (picman-edit-clear grid-layer)
+    (picman-item-set-name grid-layer "Grid Layer")
 
     (while (not (null? (cdr x-divides)))
       (set! stepped-x (+ stepped-x (car x-divides)))
@@ -63,7 +63,7 @@
       (update-segment! segment
            (+ drw-offset-x temp) drw-offset-y
            (+ drw-offset-x temp) (+ drw-offset-y drw-height))
-      (gimp-pencil grid-layer 4 segment))
+      (picman-pencil grid-layer 4 segment))
 
     (while (not (null? (cdr y-divides)))
       (set! stepped-y (+ stepped-y (car y-divides)))
@@ -72,13 +72,13 @@
       (update-segment! segment
            drw-offset-x (+ drw-offset-y temp)
            (+ drw-offset-x drw-width) (+ drw-offset-y temp))
-      (gimp-pencil grid-layer 4 segment))
+      (picman-pencil grid-layer 4 segment))
 
-    (gimp-image-undo-group-end img)
+    (picman-image-undo-group-end img)
 
     (set! script-fu-grid-system-x-divides (wrap-list x-divides-orig))
     (set! script-fu-grid-system-y-divides (wrap-list y-divides-orig))
-    (gimp-displays-flush)))
+    (picman-displays-flush)))
 
 (script-fu-register "script-fu-grid-system"
   _"_Grid..."

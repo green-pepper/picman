@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,245 +15,245 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GRADIENT_H__
-#define __GIMP_GRADIENT_H__
+#ifndef __PICMAN_GRADIENT_H__
+#define __PICMAN_GRADIENT_H__
 
 
-#include "gimpdata.h"
+#include "picmandata.h"
 
 
-#define GIMP_GRADIENT_DEFAULT_SAMPLE_SIZE 40
+#define PICMAN_GRADIENT_DEFAULT_SAMPLE_SIZE 40
 
 
-struct _GimpGradientSegment
+struct _PicmanGradientSegment
 {
   gdouble                  left, middle, right;
 
-  GimpGradientColor        left_color_type;
-  GimpRGB                  left_color;
-  GimpGradientColor        right_color_type;
-  GimpRGB                  right_color;
+  PicmanGradientColor        left_color_type;
+  PicmanRGB                  left_color;
+  PicmanGradientColor        right_color_type;
+  PicmanRGB                  right_color;
 
-  GimpGradientSegmentType  type;          /*  Segment's blending function  */
-  GimpGradientSegmentColor color;         /*  Segment's coloring type      */
+  PicmanGradientSegmentType  type;          /*  Segment's blending function  */
+  PicmanGradientSegmentColor color;         /*  Segment's coloring type      */
 
-  GimpGradientSegment     *prev;
-  GimpGradientSegment     *next;
+  PicmanGradientSegment     *prev;
+  PicmanGradientSegment     *next;
 };
 
 
-#define GIMP_TYPE_GRADIENT            (gimp_gradient_get_type ())
-#define GIMP_GRADIENT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_GRADIENT, GimpGradient))
-#define GIMP_GRADIENT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_GRADIENT, GimpGradientClass))
-#define GIMP_IS_GRADIENT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_GRADIENT))
-#define GIMP_IS_GRADIENT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_GRADIENT))
-#define GIMP_GRADIENT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_GRADIENT, GimpGradientClass))
+#define PICMAN_TYPE_GRADIENT            (picman_gradient_get_type ())
+#define PICMAN_GRADIENT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_GRADIENT, PicmanGradient))
+#define PICMAN_GRADIENT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_GRADIENT, PicmanGradientClass))
+#define PICMAN_IS_GRADIENT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_GRADIENT))
+#define PICMAN_IS_GRADIENT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_GRADIENT))
+#define PICMAN_GRADIENT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_GRADIENT, PicmanGradientClass))
 
 
-typedef struct _GimpGradientClass GimpGradientClass;
+typedef struct _PicmanGradientClass PicmanGradientClass;
 
-struct _GimpGradient
+struct _PicmanGradient
 {
-  GimpData             parent_instance;
+  PicmanData             parent_instance;
 
-  GimpGradientSegment *segments;
+  PicmanGradientSegment *segments;
 };
 
-struct _GimpGradientClass
+struct _PicmanGradientClass
 {
-  GimpDataClass  parent_class;
+  PicmanDataClass  parent_class;
 };
 
 
-GType                 gimp_gradient_get_type       (void) G_GNUC_CONST;
+GType                 picman_gradient_get_type       (void) G_GNUC_CONST;
 
-GimpData            * gimp_gradient_new            (GimpContext   *context,
+PicmanData            * picman_gradient_new            (PicmanContext   *context,
                                                     const gchar   *name);
-GimpData            * gimp_gradient_get_standard   (GimpContext   *context);
+PicmanData            * picman_gradient_get_standard   (PicmanContext   *context);
 
-GimpGradientSegment * gimp_gradient_get_color_at   (GimpGradient        *gradient,
-                                                    GimpContext         *context,
-                                                    GimpGradientSegment *seg,
+PicmanGradientSegment * picman_gradient_get_color_at   (PicmanGradient        *gradient,
+                                                    PicmanContext         *context,
+                                                    PicmanGradientSegment *seg,
                                                     gdouble              pos,
                                                     gboolean             reverse,
-                                                    GimpRGB             *color);
-GimpGradientSegment * gimp_gradient_get_segment_at (GimpGradient  *grad,
+                                                    PicmanRGB             *color);
+PicmanGradientSegment * picman_gradient_get_segment_at (PicmanGradient  *grad,
                                                     gdouble        pos);
 
-gboolean          gimp_gradient_has_fg_bg_segments (GimpGradient  *gradient);
-GimpGradient    * gimp_gradient_flatten            (GimpGradient  *gradient,
-                                                    GimpContext   *context);
+gboolean          picman_gradient_has_fg_bg_segments (PicmanGradient  *gradient);
+PicmanGradient    * picman_gradient_flatten            (PicmanGradient  *gradient,
+                                                    PicmanContext   *context);
 
 
 /*  gradient segment functions  */
 
-GimpGradientSegment * gimp_gradient_segment_new       (void);
-GimpGradientSegment * gimp_gradient_segment_get_last  (GimpGradientSegment *seg);
-GimpGradientSegment * gimp_gradient_segment_get_first (GimpGradientSegment *seg);
-GimpGradientSegment * gimp_gradient_segment_get_nth   (GimpGradientSegment *seg,
+PicmanGradientSegment * picman_gradient_segment_new       (void);
+PicmanGradientSegment * picman_gradient_segment_get_last  (PicmanGradientSegment *seg);
+PicmanGradientSegment * picman_gradient_segment_get_first (PicmanGradientSegment *seg);
+PicmanGradientSegment * picman_gradient_segment_get_nth   (PicmanGradientSegment *seg,
                                                        gint                 index);
 
-void                  gimp_gradient_segment_free      (GimpGradientSegment *seg);
-void                  gimp_gradient_segments_free     (GimpGradientSegment *seg);
+void                  picman_gradient_segment_free      (PicmanGradientSegment *seg);
+void                  picman_gradient_segments_free     (PicmanGradientSegment *seg);
 
-void    gimp_gradient_segment_split_midpoint  (GimpGradient         *gradient,
-                                               GimpContext          *context,
-                                               GimpGradientSegment  *lseg,
-                                               GimpGradientSegment **newl,
-                                               GimpGradientSegment **newr);
-void    gimp_gradient_segment_split_uniform   (GimpGradient         *gradient,
-                                               GimpContext          *context,
-                                               GimpGradientSegment  *lseg,
+void    picman_gradient_segment_split_midpoint  (PicmanGradient         *gradient,
+                                               PicmanContext          *context,
+                                               PicmanGradientSegment  *lseg,
+                                               PicmanGradientSegment **newl,
+                                               PicmanGradientSegment **newr);
+void    picman_gradient_segment_split_uniform   (PicmanGradient         *gradient,
+                                               PicmanContext          *context,
+                                               PicmanGradientSegment  *lseg,
                                                gint                  parts,
-                                               GimpGradientSegment **newl,
-                                               GimpGradientSegment **newr);
+                                               PicmanGradientSegment **newl,
+                                               PicmanGradientSegment **newr);
 
 /* Colors Setting/Getting Routines */
-void    gimp_gradient_segment_get_left_color  (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg,
-                                               GimpRGB              *color);
+void    picman_gradient_segment_get_left_color  (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg,
+                                               PicmanRGB              *color);
 
-void    gimp_gradient_segment_set_left_color  (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg,
-                                               const GimpRGB        *color);
-
-
-void    gimp_gradient_segment_get_right_color (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg,
-                                               GimpRGB              *color);
-
-void    gimp_gradient_segment_set_right_color (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg,
-                                               const GimpRGB        *color);
+void    picman_gradient_segment_set_left_color  (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg,
+                                               const PicmanRGB        *color);
 
 
-GimpGradientColor
-gimp_gradient_segment_get_left_color_type     (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg);
+void    picman_gradient_segment_get_right_color (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg,
+                                               PicmanRGB              *color);
 
-void
-gimp_gradient_segment_set_left_color_type     (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg,
-                                               GimpGradientColor     color_type);
+void    picman_gradient_segment_set_right_color (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg,
+                                               const PicmanRGB        *color);
 
 
-GimpGradientColor
-gimp_gradient_segment_get_right_color_type    (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg);
+PicmanGradientColor
+picman_gradient_segment_get_left_color_type     (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg);
 
 void
-gimp_gradient_segment_set_right_color_type    (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg,
-                                               GimpGradientColor     color_type);
+picman_gradient_segment_set_left_color_type     (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg,
+                                               PicmanGradientColor     color_type);
+
+
+PicmanGradientColor
+picman_gradient_segment_get_right_color_type    (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg);
+
+void
+picman_gradient_segment_set_right_color_type    (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg,
+                                               PicmanGradientColor     color_type);
 
 
 /* Position Setting/Getting Routines */
 /* (Setters return the position after it was set) */
-gdouble gimp_gradient_segment_get_left_pos    (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg);
-gdouble gimp_gradient_segment_set_left_pos    (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg,
+gdouble picman_gradient_segment_get_left_pos    (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg);
+gdouble picman_gradient_segment_set_left_pos    (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg,
                                                gdouble               pos);
 
-gdouble gimp_gradient_segment_get_right_pos   (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg);
-gdouble gimp_gradient_segment_set_right_pos   (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg,
+gdouble picman_gradient_segment_get_right_pos   (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg);
+gdouble picman_gradient_segment_set_right_pos   (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg,
                                                gdouble               pos);
 
-gdouble gimp_gradient_segment_get_middle_pos  (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg);
-gdouble gimp_gradient_segment_set_middle_pos  (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg,
+gdouble picman_gradient_segment_get_middle_pos  (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg);
+gdouble picman_gradient_segment_set_middle_pos  (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg,
                                                gdouble               pos);
 
 /* Getting/Setting the Blending Function/Coloring Type */
-GimpGradientSegmentType
-gimp_gradient_segment_get_blending_function   (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg);
-GimpGradientSegmentColor
-gimp_gradient_segment_get_coloring_type       (GimpGradient         *gradient,
-                                               GimpGradientSegment  *seg);
+PicmanGradientSegmentType
+picman_gradient_segment_get_blending_function   (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg);
+PicmanGradientSegmentColor
+picman_gradient_segment_get_coloring_type       (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *seg);
 
 /*
  * If the second segment is NULL, these functions will process
  * until the end of the string.
  * */
-void    gimp_gradient_segment_range_compress  (GimpGradient         *gradient,
-                                               GimpGradientSegment  *range_l,
-                                               GimpGradientSegment  *range_r,
+void    picman_gradient_segment_range_compress  (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *range_l,
+                                               PicmanGradientSegment  *range_r,
                                                gdouble               new_l,
                                                gdouble               new_r);
-void    gimp_gradient_segment_range_blend     (GimpGradient         *gradient,
-                                               GimpGradientSegment  *lseg,
-                                               GimpGradientSegment  *rseg,
-                                               const GimpRGB        *rgb1,
-                                               const GimpRGB        *rgb2,
+void    picman_gradient_segment_range_blend     (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *lseg,
+                                               PicmanGradientSegment  *rseg,
+                                               const PicmanRGB        *rgb1,
+                                               const PicmanRGB        *rgb2,
                                                gboolean              blend_colors,
                                                gboolean              blend_opacity);
 
-void    gimp_gradient_segment_range_set_blending_function
-                                              (GimpGradient         *gradient,
-                                               GimpGradientSegment  *start_seg,
-                                               GimpGradientSegment  *end_seg,
-                                               GimpGradientSegmentType new_type);
+void    picman_gradient_segment_range_set_blending_function
+                                              (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *start_seg,
+                                               PicmanGradientSegment  *end_seg,
+                                               PicmanGradientSegmentType new_type);
 
-void    gimp_gradient_segment_range_set_coloring_type
-                                              (GimpGradient         *gradient,
-                                               GimpGradientSegment  *start_seg,
-                                               GimpGradientSegment  *end_seg,
-                                               GimpGradientSegmentColor new_color);
+void    picman_gradient_segment_range_set_coloring_type
+                                              (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *start_seg,
+                                               PicmanGradientSegment  *end_seg,
+                                               PicmanGradientSegmentColor new_color);
 
-void    gimp_gradient_segment_range_flip      (GimpGradient         *gradient,
-                                               GimpGradientSegment  *start_seg,
-                                               GimpGradientSegment  *end_seg,
-                                               GimpGradientSegment **final_start_seg,
-                                               GimpGradientSegment **final_end_seg);
+void    picman_gradient_segment_range_flip      (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *start_seg,
+                                               PicmanGradientSegment  *end_seg,
+                                               PicmanGradientSegment **final_start_seg,
+                                               PicmanGradientSegment **final_end_seg);
 
-void    gimp_gradient_segment_range_replicate (GimpGradient         *gradient,
-                                               GimpGradientSegment  *start_seg,
-                                               GimpGradientSegment  *end_seg,
+void    picman_gradient_segment_range_replicate (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *start_seg,
+                                               PicmanGradientSegment  *end_seg,
                                                gint                  replicate_times,
-                                               GimpGradientSegment **final_start_seg,
-                                               GimpGradientSegment **final_end_seg);
+                                               PicmanGradientSegment **final_start_seg,
+                                               PicmanGradientSegment **final_end_seg);
 
-void    gimp_gradient_segment_range_split_midpoint
-                                              (GimpGradient         *gradient,
-                                               GimpContext          *context,
-                                               GimpGradientSegment  *start_seg,
-                                               GimpGradientSegment  *end_seg,
-                                               GimpGradientSegment **final_start_seg,
-                                               GimpGradientSegment **final_end_seg);
+void    picman_gradient_segment_range_split_midpoint
+                                              (PicmanGradient         *gradient,
+                                               PicmanContext          *context,
+                                               PicmanGradientSegment  *start_seg,
+                                               PicmanGradientSegment  *end_seg,
+                                               PicmanGradientSegment **final_start_seg,
+                                               PicmanGradientSegment **final_end_seg);
 
-void    gimp_gradient_segment_range_split_uniform
-                                              (GimpGradient         *gradient,
-                                               GimpContext          *context,
-                                               GimpGradientSegment  *start_seg,
-                                               GimpGradientSegment  *end_seg,
+void    picman_gradient_segment_range_split_uniform
+                                              (PicmanGradient         *gradient,
+                                               PicmanContext          *context,
+                                               PicmanGradientSegment  *start_seg,
+                                               PicmanGradientSegment  *end_seg,
                                                gint                  parts,
-                                               GimpGradientSegment **final_start_seg,
-                                               GimpGradientSegment **final_end_seg);
+                                               PicmanGradientSegment **final_start_seg,
+                                               PicmanGradientSegment **final_end_seg);
 
-void    gimp_gradient_segment_range_delete    (GimpGradient         *gradient,
-                                               GimpGradientSegment  *start_seg,
-                                               GimpGradientSegment  *end_seg,
-                                               GimpGradientSegment **final_start_seg,
-                                               GimpGradientSegment **final_end_seg);
+void    picman_gradient_segment_range_delete    (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *start_seg,
+                                               PicmanGradientSegment  *end_seg,
+                                               PicmanGradientSegment **final_start_seg,
+                                               PicmanGradientSegment **final_end_seg);
 
-void    gimp_gradient_segment_range_recenter_handles
-                                              (GimpGradient         *gradient,
-                                               GimpGradientSegment  *start_seg,
-                                               GimpGradientSegment  *end_seg);
-void    gimp_gradient_segment_range_redistribute_handles
-                                              (GimpGradient         *gradient,
-                                               GimpGradientSegment  *start_seg,
-                                               GimpGradientSegment  *end_seg);
+void    picman_gradient_segment_range_recenter_handles
+                                              (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *start_seg,
+                                               PicmanGradientSegment  *end_seg);
+void    picman_gradient_segment_range_redistribute_handles
+                                              (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *start_seg,
+                                               PicmanGradientSegment  *end_seg);
 
-gdouble gimp_gradient_segment_range_move      (GimpGradient         *gradient,
-                                               GimpGradientSegment  *range_l,
-                                               GimpGradientSegment  *range_r,
+gdouble picman_gradient_segment_range_move      (PicmanGradient         *gradient,
+                                               PicmanGradientSegment  *range_l,
+                                               PicmanGradientSegment  *range_r,
                                                gdouble               delta,
                                                gboolean              control_compress);
 
 
-#endif /* __GIMP_GRADIENT_H__ */
+#endif /* __PICMAN_GRADIENT_H__ */

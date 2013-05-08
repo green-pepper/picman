@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpGrid
- * Copyright (C) 2003  Henrik Brix Andersen <brix@gimp.org>
+ * PicmanGrid
+ * Copyright (C) 2003  Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,45 +22,45 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimpgrid.h"
-#include "gimpimage.h"
-#include "gimpimage-grid.h"
-#include "gimpimage-private.h"
-#include "gimpimage-undo-push.h"
+#include "picmangrid.h"
+#include "picmanimage.h"
+#include "picmanimage-grid.h"
+#include "picmanimage-private.h"
+#include "picmanimage-undo-push.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-GimpGrid *
-gimp_image_get_grid (GimpImage *image)
+PicmanGrid *
+picman_image_get_grid (PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->grid;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->grid;
 }
 
 void
-gimp_image_set_grid (GimpImage *image,
-                     GimpGrid  *grid,
+picman_image_set_grid (PicmanImage *image,
+                     PicmanGrid  *grid,
                      gboolean   push_undo)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_GRID (grid));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_GRID (grid));
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  if (gimp_config_is_equal_to (GIMP_CONFIG (private->grid), GIMP_CONFIG (grid)))
+  if (picman_config_is_equal_to (PICMAN_CONFIG (private->grid), PICMAN_CONFIG (grid)))
     return;
 
   if (push_undo)
-    gimp_image_undo_push_image_grid (image,
+    picman_image_undo_push_image_grid (image,
                                      C_("undo-type", "Grid"), private->grid);
 
-  gimp_config_sync (G_OBJECT (grid), G_OBJECT (private->grid), 0);
+  picman_config_sync (G_OBJECT (grid), G_OBJECT (private->grid), 0);
 }

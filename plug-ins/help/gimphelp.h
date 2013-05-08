@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * The GIMP Help plug-in
- * Copyright (C) 1999-2008 Sven Neumann <sven@gimp.org>
- *                         Michael Natterer <mitch@gimp.org>
- *                         Henrik Brix Andersen <brix@gimp.org>
+ * The PICMAN Help plug-in
+ * Copyright (C) 1999-2008 Sven Neumann <sven@picman.org>
+ *                         Michael Natterer <mitch@picman.org>
+ *                         Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,39 +20,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_HELP_H__
-#define __GIMP_HELP_H__
+#ifndef __PICMAN_HELP_H__
+#define __PICMAN_HELP_H__
 
 
-#include "gimphelptypes.h"
+#include "picmanhelptypes.h"
 
-#include "gimphelpdomain.h"
-#include "gimphelpitem.h"
-#include "gimphelplocale.h"
-#include "gimphelpprogress.h"
-
-
-#define GIMP_HELP_DEFAULT_DOMAIN  "http://www.gimp.org/help"
-#define GIMP_HELP_DEFAULT_ID      "gimp-main"
-#define GIMP_HELP_DEFAULT_LOCALE  "en"
-
-#define GIMP_HELP_PREFIX          "help"
-#define GIMP_HELP_ENV_URI         "GIMP2_HELP_URI"
-
-/* #define GIMP_HELP_DEBUG */
+#include "picmanhelpdomain.h"
+#include "picmanhelpitem.h"
+#include "picmanhelplocale.h"
+#include "picmanhelpprogress.h"
 
 
-gboolean         gimp_help_init            (gint            n_domain_names,
+#define PICMAN_HELP_DEFAULT_DOMAIN  "http://www.picman.org/help"
+#define PICMAN_HELP_DEFAULT_ID      "picman-main"
+#define PICMAN_HELP_DEFAULT_LOCALE  "en"
+
+#define PICMAN_HELP_PREFIX          "help"
+#define PICMAN_HELP_ENV_URI         "PICMAN2_HELP_URI"
+
+/* #define PICMAN_HELP_DEBUG */
+
+
+gboolean         picman_help_init            (gint            n_domain_names,
                                             gchar         **domain_names,
                                             gint            n_domain_uris,
                                             gchar         **domain_uris);
-void             gimp_help_exit            (void);
+void             picman_help_exit            (void);
 
-void             gimp_help_register_domain (const gchar    *domain_name,
+void             picman_help_register_domain (const gchar    *domain_name,
                                             const gchar    *domain_uri);
-GimpHelpDomain * gimp_help_lookup_domain   (const gchar    *domain_name);
+PicmanHelpDomain * picman_help_lookup_domain   (const gchar    *domain_name);
 
-GList          * gimp_help_parse_locales   (const gchar    *help_locales);
+GList          * picman_help_parse_locales   (const gchar    *help_locales);
 
 
-#endif /* ! __GIMP_HELP_H__ */
+#endif /* ! __PICMAN_HELP_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,39 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DEVICE_INFO_H__
-#define __GIMP_DEVICE_INFO_H__
+#ifndef __PICMAN_DEVICE_INFO_H__
+#define __PICMAN_DEVICE_INFO_H__
 
 
-#include "core/gimpcontext.h"
+#include "core/picmancontext.h"
 
 
 G_BEGIN_DECLS
 
 
-#define GIMP_DEVICE_INFO_CONTEXT_MASK (GIMP_CONTEXT_TOOL_MASK       | \
-                                       GIMP_CONTEXT_PAINT_INFO_MASK | \
-                                       GIMP_CONTEXT_FOREGROUND_MASK | \
-                                       GIMP_CONTEXT_BACKGROUND_MASK | \
-                                       GIMP_CONTEXT_BRUSH_MASK      | \
-                                       GIMP_CONTEXT_DYNAMICS_MASK   | \
-                                       GIMP_CONTEXT_PATTERN_MASK    | \
-                                       GIMP_CONTEXT_GRADIENT_MASK)
+#define PICMAN_DEVICE_INFO_CONTEXT_MASK (PICMAN_CONTEXT_TOOL_MASK       | \
+                                       PICMAN_CONTEXT_PAINT_INFO_MASK | \
+                                       PICMAN_CONTEXT_FOREGROUND_MASK | \
+                                       PICMAN_CONTEXT_BACKGROUND_MASK | \
+                                       PICMAN_CONTEXT_BRUSH_MASK      | \
+                                       PICMAN_CONTEXT_DYNAMICS_MASK   | \
+                                       PICMAN_CONTEXT_PATTERN_MASK    | \
+                                       PICMAN_CONTEXT_GRADIENT_MASK)
 
 
-#define GIMP_TYPE_DEVICE_INFO            (gimp_device_info_get_type ())
-#define GIMP_DEVICE_INFO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DEVICE_INFO, GimpDeviceInfo))
-#define GIMP_DEVICE_INFO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DEVICE_INFO, GimpDeviceInfoClass))
-#define GIMP_IS_DEVICE_INFO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DEVICE_INFO))
-#define GIMP_IS_DEVICE_INFO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DEVICE_INFO))
-#define GIMP_DEVICE_INFO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DEVICE_INFO, GimpDeviceInfoClass))
+#define PICMAN_TYPE_DEVICE_INFO            (picman_device_info_get_type ())
+#define PICMAN_DEVICE_INFO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DEVICE_INFO, PicmanDeviceInfo))
+#define PICMAN_DEVICE_INFO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DEVICE_INFO, PicmanDeviceInfoClass))
+#define PICMAN_IS_DEVICE_INFO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DEVICE_INFO))
+#define PICMAN_IS_DEVICE_INFO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DEVICE_INFO))
+#define PICMAN_DEVICE_INFO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DEVICE_INFO, PicmanDeviceInfoClass))
 
 
-typedef struct _GimpDeviceInfoClass GimpDeviceInfoClass;
+typedef struct _PicmanDeviceInfoClass PicmanDeviceInfoClass;
 
-struct _GimpDeviceInfo
+struct _PicmanDeviceInfo
 {
-  GimpContext    parent_instance;
+  PicmanContext    parent_instance;
 
   GdkDevice     *device;
   GdkDisplay    *display;
@@ -62,68 +62,68 @@ struct _GimpDeviceInfo
 
   /*  curves  */
 
-  GimpCurve     *pressure_curve;
+  PicmanCurve     *pressure_curve;
 };
 
-struct _GimpDeviceInfoClass
+struct _PicmanDeviceInfoClass
 {
-  GimpContextClass  parent_class;
+  PicmanContextClass  parent_class;
 
-  void (* changed) (GimpDeviceInfo *device_info);
+  void (* changed) (PicmanDeviceInfo *device_info);
 };
 
 
-GType            gimp_device_info_get_type          (void) G_GNUC_CONST;
+GType            picman_device_info_get_type          (void) G_GNUC_CONST;
 
-GimpDeviceInfo * gimp_device_info_new               (Gimp            *gimp,
+PicmanDeviceInfo * picman_device_info_new               (Picman            *picman,
                                                      GdkDevice       *device,
                                                      GdkDisplay      *display);
 
-GdkDevice      * gimp_device_info_get_device        (GimpDeviceInfo  *info,
+GdkDevice      * picman_device_info_get_device        (PicmanDeviceInfo  *info,
                                                      GdkDisplay     **display);
-void             gimp_device_info_set_device        (GimpDeviceInfo  *info,
+void             picman_device_info_set_device        (PicmanDeviceInfo  *info,
                                                      GdkDevice       *device,
                                                      GdkDisplay      *display);
 
-void             gimp_device_info_set_default_tool  (GimpDeviceInfo  *info);
+void             picman_device_info_set_default_tool  (PicmanDeviceInfo  *info);
 
-GdkInputMode     gimp_device_info_get_mode          (GimpDeviceInfo  *info);
-void             gimp_device_info_set_mode          (GimpDeviceInfo  *info,
+GdkInputMode     picman_device_info_get_mode          (PicmanDeviceInfo  *info);
+void             picman_device_info_set_mode          (PicmanDeviceInfo  *info,
                                                      GdkInputMode     mode);
 
-gboolean         gimp_device_info_has_cursor        (GimpDeviceInfo  *info);
+gboolean         picman_device_info_has_cursor        (PicmanDeviceInfo  *info);
 
-gint             gimp_device_info_get_n_axes        (GimpDeviceInfo  *info);
-GdkAxisUse       gimp_device_info_get_axis_use      (GimpDeviceInfo  *info,
+gint             picman_device_info_get_n_axes        (PicmanDeviceInfo  *info);
+GdkAxisUse       picman_device_info_get_axis_use      (PicmanDeviceInfo  *info,
                                                      gint             axis);
-void             gimp_device_info_set_axis_use      (GimpDeviceInfo  *info,
+void             picman_device_info_set_axis_use      (PicmanDeviceInfo  *info,
                                                      gint             axis,
                                                      GdkAxisUse       use);
 
-gint             gimp_device_info_get_n_keys        (GimpDeviceInfo  *info);
-void             gimp_device_info_get_key           (GimpDeviceInfo  *info,
+gint             picman_device_info_get_n_keys        (PicmanDeviceInfo  *info);
+void             picman_device_info_get_key           (PicmanDeviceInfo  *info,
                                                      gint             key,
                                                      guint           *keyval,
                                                      GdkModifierType *modifiers);
-void             gimp_device_info_set_key           (GimpDeviceInfo  *info,
+void             picman_device_info_set_key           (PicmanDeviceInfo  *info,
                                                      gint             key,
                                                      guint            keyval,
                                                      GdkModifierType  modifiers);
 
-GimpCurve      * gimp_device_info_get_curve         (GimpDeviceInfo  *info,
+PicmanCurve      * picman_device_info_get_curve         (PicmanDeviceInfo  *info,
                                                      GdkAxisUse       use);
-gdouble          gimp_device_info_map_axis          (GimpDeviceInfo  *info,
+gdouble          picman_device_info_map_axis          (PicmanDeviceInfo  *info,
                                                      GdkAxisUse       use,
                                                      gdouble          value);
 
-void             gimp_device_info_changed           (GimpDeviceInfo  *info);
+void             picman_device_info_changed           (PicmanDeviceInfo  *info);
 
-GimpDeviceInfo * gimp_device_info_get_by_device     (GdkDevice       *device);
+PicmanDeviceInfo * picman_device_info_get_by_device     (GdkDevice       *device);
 
-gint             gimp_device_info_compare           (GimpDeviceInfo  *a,
-                                                     GimpDeviceInfo  *b);
+gint             picman_device_info_compare           (PicmanDeviceInfo  *a,
+                                                     PicmanDeviceInfo  *b);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_DEVICE_INFO_H__ */
+#endif /* __PICMAN_DEVICE_INFO_H__ */

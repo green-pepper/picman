@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpprocview.h
+ * picmanprocview.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,12 +18,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_UI_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimpui.h> can be included directly."
+#if !defined (__PICMAN_UI_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picmanui.h> can be included directly."
 #endif
 
-#ifndef __GIMP_PROC_VIEW_H__
-#define __GIMP_PROC_VIEW_H__
+#ifndef __PICMAN_PROC_VIEW_H__
+#define __PICMAN_PROC_VIEW_H__
 
 G_BEGIN_DECLS
 
@@ -31,20 +31,20 @@ G_BEGIN_DECLS
 /* For information look into the C source or the html documentation */
 
 
-GtkWidget * gimp_proc_view_new (const gchar        *name,
+GtkWidget * picman_proc_view_new (const gchar        *name,
                                 const gchar        *menu_path,
                                 const gchar        *blurb,
                                 const gchar        *help,
                                 const gchar        *author,
                                 const gchar        *copyright,
                                 const gchar        *date,
-                                GimpPDBProcType     type,
+                                PicmanPDBProcType     type,
                                 gint                n_params,
                                 gint                n_return_vals,
-                                const GimpParamDef *params,
-                                const GimpParamDef *return_vals);
+                                const PicmanParamDef *params,
+                                const PicmanParamDef *return_vals);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_PROC_VIEW_H__ */
+#endif  /* __PICMAN_PROC_VIEW_H__ */

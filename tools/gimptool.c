@@ -1,4 +1,4 @@
-/* gimptool in C
+/* picmantool in C
  * Copyright (C) 2001-2007 Tor Lillqvist
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,10 +16,10 @@
  */
 
 /*
- * Gimptool rewritten in C, originally for Win32, where end-users who
+ * Picmantool rewritten in C, originally for Win32, where end-users who
  * might want to build and install a plug-in from source don't
- * necessarily have any Bourne-compatible shell to run the gimptool
- * script in. Later fixed up to replace the gimptool script on all
+ * necessarily have any Bourne-compatible shell to run the picmantool
+ * script in. Later fixed up to replace the picmantool script on all
  * platforms.
  *
  * Yes, this program leaks dynamically allocated strings without
@@ -34,10 +34,10 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #ifdef G_OS_WIN32
-#include "libgimpbase/gimpwin32-io.h"
+#include "libpicmanbase/picmanwin32-io.h"
 #endif
 
 
@@ -90,8 +90,8 @@ static struct {
    */
   { "includedir",     INCLUDEDIR     },
 #endif
-  { "gimpplugindir",  GIMPPLUGINDIR  },
-  { "gimpdatadir",    GIMPDATADIR    }
+  { "picmanplugindir",  PICMANPLUGINDIR  },
+  { "picmandatadir",    PICMANDATADIR    }
 };
 
 
@@ -171,16 +171,16 @@ get_runtime_prefix (gchar slash)
 #ifdef G_OS_WIN32
 
   /* Don't use the developer package prefix, but deduce the
-   * installation-time prefix from where gimp-x.y.exe can be found.
+   * installation-time prefix from where picman-x.y.exe can be found.
    */
 
   gchar *path;
   gchar *p, *r;
 
-  path = g_find_program_in_path ("gimp-" GIMP_APP_VERSION ".exe");
+  path = g_find_program_in_path ("picman-" PICMAN_APP_VERSION ".exe");
 
   if (path == NULL)
-    path = g_find_program_in_path ("gimp.exe");
+    path = g_find_program_in_path ("picman.exe");
 
   if (path != NULL)
     {
@@ -204,12 +204,12 @@ get_runtime_prefix (gchar slash)
 	}
     }
 
-  g_printerr ("Cannot determine GIMP " GIMP_APP_VERSION " installation location\n");
+  g_printerr ("Cannot determine PICMAN " PICMAN_APP_VERSION " installation location\n");
 
   exit (EXIT_FAILURE);
 #else
   /* On Unix assume the executable package is in the same prefix as the developer stuff */
-  return pkg_config ("--variable=prefix gimp-2.0");
+  return pkg_config ("--variable=prefix picman-2.0");
 #endif
 }
 
@@ -286,12 +286,12 @@ static void
 usage (int exit_status)
 {
   g_print ("\
-Usage: gimptool-2.0 [OPTION]...\n\
+Usage: picmantool-2.0 [OPTION]...\n\
 \n\
 General options:\n\
   --help                  print this message\n\
   --quiet, --silent       don't echo build commands\n\
-  --version               print the version of GIMP associated with this script\n\
+  --version               print the version of PICMAN associated with this script\n\
   -n, --just-print, --dry-run, --recon\n\
                           don't actually run any commands; just print them\n\
 Developer options:\n\
@@ -300,17 +300,17 @@ Developer options:\n\
   --libs                  print the linker flags that are necessary to link a\n\
                           plug-in\n\
   --prefix=PREFIX         use PREFIX instead of the installation prefix that\n\
-                          GIMP was built when computing the output for --cflags\n\
+                          PICMAN was built when computing the output for --cflags\n\
                           and --libs\n\
   --exec-prefix=PREFIX    use PREFIX instead of the installation exec prefix\n\
-                          that GIMP was built when computing the output for\n\
+                          that PICMAN was built when computing the output for\n\
                           --cflags and --libs\n\
   --msvc-syntax           print flags in MSVC syntax\n\
 \n\
 Installation directory options:\n\
   --prefix --exec-prefix --bindir --sbindir --libexecdir --datadir --sysconfdir\n\
   --sharedstatedir --localstatedir --libdir --infodir --mandir --includedir\n\
-  --gimpplugindir --gimpdatadir\n\
+  --picmanplugindir --picmandatadir\n\
 \n\
 The --cflags and --libs options can be appended with -noui to get appropriate\n\
 settings for plug-ins which do not use GTK+.\n\
@@ -332,14 +332,14 @@ user directory.\n\
 \n\
 For plug-ins which do not use GTK+, the --build and --install options can be\n\
 appended with -noui for appropriate settings. For plug-ins that use GTK+ but\n\
-not libgimpui, append -nogimpui.\n");
+not libpicmanui, append -nopicmanui.\n");
   exit (exit_status);
 }
 
 static gchar *
 get_includedir (void)
 {
-  return pkg_config ("--variable=includedir gimp-2.0");
+  return pkg_config ("--variable=includedir picman-2.0");
 }
 
 static void
@@ -351,7 +351,7 @@ do_includedir (void)
 static gchar *
 get_cflags (void)
 {
-  return pkg_config ("--cflags gimpui-2.0");
+  return pkg_config ("--cflags picmanui-2.0");
 }
 
 static void
@@ -363,7 +363,7 @@ do_cflags (void)
 static gchar *
 get_cflags_noui (void)
 {
-  return pkg_config ("--cflags gimp-2.0");
+  return pkg_config ("--cflags picman-2.0");
 }
 
 static void
@@ -373,21 +373,21 @@ do_cflags_noui (void)
 }
 
 static gchar *
-get_cflags_nogimpui (void)
+get_cflags_nopicmanui (void)
 {
-  return pkg_config ("--cflags gimp-2.0 gtk+-2.0");
+  return pkg_config ("--cflags picman-2.0 gtk+-2.0");
 }
 
 static void
-do_cflags_nogimpui (void)
+do_cflags_nopicmanui (void)
 {
-  g_print ("%s\n", get_cflags_nogimpui ());
+  g_print ("%s\n", get_cflags_nopicmanui ());
 }
 
 static gchar *
 get_libs (void)
 {
-  return pkg_config ("--libs gimpui-2.0");
+  return pkg_config ("--libs picmanui-2.0");
 }
 
 static void
@@ -399,7 +399,7 @@ do_libs (void)
 static gchar *
 get_libs_noui (void)
 {
-  return pkg_config ("--libs gimp-2.0");
+  return pkg_config ("--libs picman-2.0");
 }
 
 static void
@@ -409,15 +409,15 @@ do_libs_noui (void)
 }
 
 static gchar *
-get_libs_nogimpui (void)
+get_libs_nopicmanui (void)
 {
-  return pkg_config ("--libs gimp-2.0 gtk+-2.0");
+  return pkg_config ("--libs picman-2.0 gtk+-2.0");
 }
 
 static void
-do_libs_nogimpui (void)
+do_libs_nopicmanui (void)
 {
-  g_print ("%s\n", get_libs_nogimpui ());
+  g_print ("%s\n", get_libs_nopicmanui ());
 }
 
 static void
@@ -520,7 +520,7 @@ do_build_noui (const gchar *what)
 }
 
 static void
-do_build_nogimpui (const gchar *what)
+do_build_nopicmanui (const gchar *what)
 {
   do_build (what);
 }
@@ -528,7 +528,7 @@ do_build_nogimpui (const gchar *what)
 static gchar *
 get_user_plugin_dir (void)
 {
-  return g_build_filename (gimp_directory (),
+  return g_build_filename (picman_directory (),
                            "plug-ins",
                            NULL);
 }
@@ -546,7 +546,7 @@ do_install_noui (const gchar *what)
 }
 
 static void
-do_install_nogimpui (const gchar *what)
+do_install_nopicmanui (const gchar *what)
 {
   do_install (what);
 }
@@ -560,8 +560,8 @@ get_sys_plugin_dir (gboolean forward_slashes)
 
   return g_build_path (forward_slashes ? "/" : G_DIR_SEPARATOR_S,
                        rprefix,
-                       "lib", "gimp",
-                       GIMP_PLUGIN_VERSION,
+                       "lib", "picman",
+                       PICMAN_PLUGIN_VERSION,
                        "plug-ins",
                        NULL);
 }
@@ -579,7 +579,7 @@ do_install_admin_noui (const gchar *what)
 }
 
 static void
-do_install_admin_nogimpui (const gchar *what)
+do_install_admin_nopicmanui (const gchar *what)
 {
   do_build_2 (get_cflags (), get_libs (), get_sys_plugin_dir (TRUE), what);
 }
@@ -643,7 +643,7 @@ do_uninstall_admin_bin (const gchar *what)
 static gchar *
 get_user_script_dir (void)
 {
-  return g_build_filename (gimp_directory (),
+  return g_build_filename (picman_directory (),
                            "scripts",
                            NULL);
 }
@@ -658,8 +658,8 @@ static gchar *
 get_sys_script_dir (void)
 {
   return g_build_filename (get_runtime_prefix (G_DIR_SEPARATOR),
-                           "share", "gimp",
-                           GIMP_PLUGIN_VERSION,
+                           "share", "picman",
+                           PICMAN_PLUGIN_VERSION,
                            "scripts",
                            NULL);
 }
@@ -756,7 +756,7 @@ main (int    argc,
       else if (strcmp (argv[argi], "--version") == 0)
 	{
 	  g_print ("%d.%d.%d\n",
-                   GIMP_MAJOR_VERSION, GIMP_MINOR_VERSION, GIMP_MICRO_VERSION);
+                   PICMAN_MAJOR_VERSION, PICMAN_MINOR_VERSION, PICMAN_MICRO_VERSION);
 	  exit (EXIT_SUCCESS);
 	}
       else if (strcmp (argv[argi], "-n") == 0 ||
@@ -770,14 +770,14 @@ main (int    argc,
 	do_cflags ();
       else if (strcmp (argv[argi], "--cflags-noui") == 0)
 	do_cflags_noui ();
-      else if (strcmp (argv[argi], "--cflags-nogimpui") == 0)
-	do_cflags_nogimpui ();
+      else if (strcmp (argv[argi], "--cflags-nopicmanui") == 0)
+	do_cflags_nopicmanui ();
       else if (strcmp (argv[argi], "--libs") == 0)
 	do_libs ();
       else if (strcmp (argv[argi], "--libs-noui") == 0)
 	do_libs_noui ();
-      else if (strcmp (argv[argi], "--libs-nogimpui") == 0)
-	do_libs_nogimpui ();
+      else if (strcmp (argv[argi], "--libs-nopicmanui") == 0)
+	do_libs_nopicmanui ();
       else if (g_str_has_prefix (argv[argi], "--prefix="))
 	;
       else if (g_str_has_prefix (argv[argi], "--exec-prefix="))
@@ -788,20 +788,20 @@ main (int    argc,
 	do_build (argv[++argi]);
       else if (strcmp (argv[argi], "--build-noui") == 0)
 	do_build_noui (argv[++argi]);
-      else if (strcmp (argv[argi], "--build-nogimpui") == 0)
-	do_build_nogimpui (argv[++argi]);
+      else if (strcmp (argv[argi], "--build-nopicmanui") == 0)
+	do_build_nopicmanui (argv[++argi]);
       else if (strcmp (argv[argi], "--install") == 0)
 	do_install (argv[++argi]);
       else if (strcmp (argv[argi], "--install-noui") == 0)
 	do_install_noui (argv[++argi]);
-      else if (strcmp (argv[argi], "--install-nogimpui") == 0)
-	do_install_nogimpui (argv[++argi]);
+      else if (strcmp (argv[argi], "--install-nopicmanui") == 0)
+	do_install_nopicmanui (argv[++argi]);
       else if (strcmp (argv[argi], "--install-admin") == 0)
 	do_install_admin (argv[++argi]);
       else if (strcmp (argv[argi], "--install-admin-noui") == 0)
 	do_install_admin_noui (argv[++argi]);
-      else if (strcmp (argv[argi], "--install-admin-nogimpui") == 0)
-	do_install_admin_nogimpui (argv[++argi]);
+      else if (strcmp (argv[argi], "--install-admin-nopicmanui") == 0)
+	do_install_admin_nopicmanui (argv[++argi]);
       else if (strcmp (argv[argi], "--install-bin") == 0)
 	do_install_bin (argv[++argi]);
       else if (strcmp (argv[argi], "--install-admin-bin") == 0)

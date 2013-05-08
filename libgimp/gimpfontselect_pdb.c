@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpfontselect_pdb.c
+ * picmanfontselect_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpfontselect
- * @title: gimpfontselect
+ * SECTION: picmanfontselect
+ * @title: picmanfontselect
  * @short_description: Functions providing a font selection dialog.
  *
  * Functions providing a font selection dialog.
@@ -35,42 +35,42 @@
 
 
 /**
- * gimp_fonts_popup:
+ * picman_fonts_popup:
  * @font_callback: The callback PDB proc to call when font selection is made.
  * @popup_title: Title of the font selection dialog.
  * @initial_font: The name of the font to set as the first selected.
  *
- * Invokes the Gimp font selection.
+ * Invokes the Picman font selection.
  *
  * This procedure opens the font selection dialog.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_fonts_popup (const gchar *font_callback,
+picman_fonts_popup (const gchar *font_callback,
                   const gchar *popup_title,
                   const gchar *initial_font)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-fonts-popup",
+  return_vals = picman_run_procedure ("picman-fonts-popup",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, font_callback,
-                                    GIMP_PDB_STRING, popup_title,
-                                    GIMP_PDB_STRING, initial_font,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, font_callback,
+                                    PICMAN_PDB_STRING, popup_title,
+                                    PICMAN_PDB_STRING, initial_font,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_fonts_close_popup:
+ * picman_fonts_close_popup:
  * @font_callback: The name of the callback registered for this pop-up.
  *
  * Close the font selection dialog.
@@ -80,26 +80,26 @@ gimp_fonts_popup (const gchar *font_callback,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_fonts_close_popup (const gchar *font_callback)
+picman_fonts_close_popup (const gchar *font_callback)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-fonts-close-popup",
+  return_vals = picman_run_procedure ("picman-fonts-close-popup",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, font_callback,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, font_callback,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_fonts_set_popup:
+ * picman_fonts_set_popup:
  * @font_callback: The name of the callback registered for this pop-up.
  * @font_name: The name of the font to set as selected.
  *
@@ -110,22 +110,22 @@ gimp_fonts_close_popup (const gchar *font_callback)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_fonts_set_popup (const gchar *font_callback,
+picman_fonts_set_popup (const gchar *font_callback,
                       const gchar *font_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-fonts-set-popup",
+  return_vals = picman_run_procedure ("picman-fonts-set-popup",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, font_callback,
-                                    GIMP_PDB_STRING, font_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, font_callback,
+                                    PICMAN_PDB_STRING, font_name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

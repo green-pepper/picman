@@ -1,4 +1,4 @@
-/* Gimp - The GNU Image Manipulation Program
+/* Picman - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,61 +21,61 @@
 
 #include "core-types.h"
 
-#include "gimplayer.h"
-#include "gimplayermaskpropundo.h"
+#include "picmanlayer.h"
+#include "picmanlayermaskpropundo.h"
 
 
-static void   gimp_layer_mask_prop_undo_constructed (GObject             *object);
+static void   picman_layer_mask_prop_undo_constructed (GObject             *object);
 
-static void   gimp_layer_mask_prop_undo_pop         (GimpUndo            *undo,
-                                                     GimpUndoMode         undo_mode,
-                                                     GimpUndoAccumulator *accum);
+static void   picman_layer_mask_prop_undo_pop         (PicmanUndo            *undo,
+                                                     PicmanUndoMode         undo_mode,
+                                                     PicmanUndoAccumulator *accum);
 
 
-G_DEFINE_TYPE (GimpLayerMaskPropUndo, gimp_layer_mask_prop_undo,
-               GIMP_TYPE_ITEM_UNDO)
+G_DEFINE_TYPE (PicmanLayerMaskPropUndo, picman_layer_mask_prop_undo,
+               PICMAN_TYPE_ITEM_UNDO)
 
-#define parent_class gimp_layer_mask_prop_undo_parent_class
+#define parent_class picman_layer_mask_prop_undo_parent_class
 
 
 static void
-gimp_layer_mask_prop_undo_class_init (GimpLayerMaskPropUndoClass *klass)
+picman_layer_mask_prop_undo_class_init (PicmanLayerMaskPropUndoClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
-  GimpUndoClass *undo_class   = GIMP_UNDO_CLASS (klass);
+  PicmanUndoClass *undo_class   = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed = gimp_layer_mask_prop_undo_constructed;
+  object_class->constructed = picman_layer_mask_prop_undo_constructed;
 
-  undo_class->pop           = gimp_layer_mask_prop_undo_pop;
+  undo_class->pop           = picman_layer_mask_prop_undo_pop;
 }
 
 static void
-gimp_layer_mask_prop_undo_init (GimpLayerMaskPropUndo *undo)
+picman_layer_mask_prop_undo_init (PicmanLayerMaskPropUndo *undo)
 {
 }
 
 static void
-gimp_layer_mask_prop_undo_constructed (GObject *object)
+picman_layer_mask_prop_undo_constructed (GObject *object)
 {
-  GimpLayerMaskPropUndo *layer_mask_prop_undo;
-  GimpLayer             *layer;
+  PicmanLayerMaskPropUndo *layer_mask_prop_undo;
+  PicmanLayer             *layer;
 
-  layer_mask_prop_undo = GIMP_LAYER_MASK_PROP_UNDO (object);
+  layer_mask_prop_undo = PICMAN_LAYER_MASK_PROP_UNDO (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_LAYER (GIMP_ITEM_UNDO (object)->item));
+  g_assert (PICMAN_IS_LAYER (PICMAN_ITEM_UNDO (object)->item));
 
-  layer = GIMP_LAYER (GIMP_ITEM_UNDO (object)->item);
+  layer = PICMAN_LAYER (PICMAN_ITEM_UNDO (object)->item);
 
-  switch (GIMP_UNDO (object)->undo_type)
+  switch (PICMAN_UNDO (object)->undo_type)
     {
-    case GIMP_UNDO_LAYER_MASK_APPLY:
-      layer_mask_prop_undo->apply = gimp_layer_get_apply_mask (layer);
+    case PICMAN_UNDO_LAYER_MASK_APPLY:
+      layer_mask_prop_undo->apply = picman_layer_get_apply_mask (layer);
       break;
 
-    case GIMP_UNDO_LAYER_MASK_SHOW:
-      layer_mask_prop_undo->show = gimp_layer_get_show_mask (layer);
+    case PICMAN_UNDO_LAYER_MASK_SHOW:
+      layer_mask_prop_undo->show = picman_layer_get_show_mask (layer);
       break;
 
     default:
@@ -84,33 +84,33 @@ gimp_layer_mask_prop_undo_constructed (GObject *object)
 }
 
 static void
-gimp_layer_mask_prop_undo_pop (GimpUndo            *undo,
-                               GimpUndoMode         undo_mode,
-                               GimpUndoAccumulator *accum)
+picman_layer_mask_prop_undo_pop (PicmanUndo            *undo,
+                               PicmanUndoMode         undo_mode,
+                               PicmanUndoAccumulator *accum)
 {
-  GimpLayerMaskPropUndo *layer_mask_prop_undo = GIMP_LAYER_MASK_PROP_UNDO (undo);
-  GimpLayer             *layer                = GIMP_LAYER (GIMP_ITEM_UNDO (undo)->item);
+  PicmanLayerMaskPropUndo *layer_mask_prop_undo = PICMAN_LAYER_MASK_PROP_UNDO (undo);
+  PicmanLayer             *layer                = PICMAN_LAYER (PICMAN_ITEM_UNDO (undo)->item);
 
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 
   switch (undo->undo_type)
     {
-    case GIMP_UNDO_LAYER_MASK_APPLY:
+    case PICMAN_UNDO_LAYER_MASK_APPLY:
       {
         gboolean apply;
 
-        apply = gimp_layer_get_apply_mask (layer);
-        gimp_layer_set_apply_mask (layer, layer_mask_prop_undo->apply, FALSE);
+        apply = picman_layer_get_apply_mask (layer);
+        picman_layer_set_apply_mask (layer, layer_mask_prop_undo->apply, FALSE);
         layer_mask_prop_undo->apply = apply;
       }
       break;
 
-    case GIMP_UNDO_LAYER_MASK_SHOW:
+    case PICMAN_UNDO_LAYER_MASK_SHOW:
       {
         gboolean show;
 
-        show = gimp_layer_get_show_mask (layer);
-        gimp_layer_set_show_mask (layer, layer_mask_prop_undo->show, FALSE);
+        show = picman_layer_get_show_mask (layer);
+        picman_layer_set_show_mask (layer, layer_mask_prop_undo->show, FALSE);
         layer_mask_prop_undo->show = show;
       }
       break;

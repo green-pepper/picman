@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpexport.c
- * Copyright (C) 1999-2004 Sven Neumann <sven@gimp.org>
+ * picmanexport.c
+ * Copyright (C) 1999-2004 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,26 +25,26 @@
 
 #include <gtk/gtk.h>
 
-#include "gimp.h"
-#include "gimpui.h"
+#include "picman.h"
+#include "picmanui.h"
 
-#include "libgimp-intl.h"
+#include "libpicman-intl.h"
 
 
 /**
- * SECTION: gimpexport
- * @title: gimpexport
+ * SECTION: picmanexport
+ * @title: picmanexport
  * @short_description: Export an image before it is saved.
  *
  * This function should be called by all save_plugins unless they are
- * able to save all image formats GIMP knows about. It takes care of
+ * able to save all image formats PICMAN knows about. It takes care of
  * asking the user if she wishes to export the image to a format the
  * save_plugin can handle. It then performs the necessary conversions
  * (e.g. Flatten) on a copy of the image so that the image can be
  * saved without changing the original image.
  *
  * The capabilities of the save_plugin are specified by combining
- * #GimpExportCapabilities using a bitwise OR.
+ * #PicmanExportCapabilities using a bitwise OR.
  *
  * Make sure you have initialized GTK+ before you call this function
  * as it will most probably have to open a dialog.
@@ -79,10 +79,10 @@ export_merge (gint32  image_ID,
   gint32  merged;
   gint32  transp;
 
-  layers = gimp_image_get_layers (image_ID, &nlayers);
+  layers = picman_image_get_layers (image_ID, &nlayers);
   for (i = 0; i < nlayers; i++)
     {
-      if (gimp_item_get_visible (layers[i]))
+      if (picman_item_get_visible (layers[i]))
         nvisible++;
     }
 
@@ -91,39 +91,39 @@ export_merge (gint32  image_ID,
       /* if there is only one (or zero) visible layer, add a new transparent
          layer that has the same size as the canvas.  The merge that follows
          will ensure that the offset, opacity and size are correct */
-      transp = gimp_layer_new (image_ID, "-",
-                               gimp_image_width (image_ID),
-                               gimp_image_height (image_ID),
-                               gimp_drawable_type (*drawable_ID) | 1,
-                               100.0, GIMP_NORMAL_MODE);
-      gimp_image_insert_layer (image_ID, transp, -1, 1);
-      gimp_selection_none (image_ID);
-      gimp_edit_clear (transp);
+      transp = picman_layer_new (image_ID, "-",
+                               picman_image_width (image_ID),
+                               picman_image_height (image_ID),
+                               picman_drawable_type (*drawable_ID) | 1,
+                               100.0, PICMAN_NORMAL_MODE);
+      picman_image_insert_layer (image_ID, transp, -1, 1);
+      picman_selection_none (image_ID);
+      picman_edit_clear (transp);
       nvisible++;
     }
 
   if (nvisible > 1)
     {
       g_free (layers);
-      merged = gimp_image_merge_visible_layers (image_ID, GIMP_CLIP_TO_IMAGE);
+      merged = picman_image_merge_visible_layers (image_ID, PICMAN_CLIP_TO_IMAGE);
 
       if (merged != -1)
         *drawable_ID = merged;
       else
         return;  /* shouldn't happen */
 
-      layers = gimp_image_get_layers (image_ID, &nlayers);
+      layers = picman_image_get_layers (image_ID, &nlayers);
 
       /*  make sure that the merged drawable matches the image size  */
-      if (gimp_drawable_width  (merged) != gimp_image_width  (image_ID) ||
-          gimp_drawable_height (merged) != gimp_image_height (image_ID))
+      if (picman_drawable_width  (merged) != picman_image_width  (image_ID) ||
+          picman_drawable_height (merged) != picman_image_height (image_ID))
         {
           gint off_x, off_y;
 
-          gimp_drawable_offsets (merged, &off_x, &off_y);
-          gimp_layer_resize (merged,
-                             gimp_image_width (image_ID),
-                             gimp_image_height (image_ID),
+          picman_drawable_offsets (merged, &off_x, &off_y);
+          picman_layer_resize (merged,
+                             picman_image_width (image_ID),
+                             picman_image_height (image_ID),
                              off_x, off_y);
         }
     }
@@ -132,7 +132,7 @@ export_merge (gint32  image_ID,
   for (i = 0; i < nlayers; i++)
     {
       if (layers[i] != *drawable_ID)
-        gimp_image_remove_layer (image_ID, layers[i]);
+        picman_image_remove_layer (image_ID, layers[i]);
     }
   g_free (layers);
 }
@@ -143,7 +143,7 @@ export_flatten (gint32  image_ID,
 {
   gint32 flattened;
 
-  flattened = gimp_image_flatten (image_ID);
+  flattened = picman_image_flatten (image_ID);
 
   if (flattened != -1)
     *drawable_ID = flattened;
@@ -157,12 +157,12 @@ export_apply_masks (gint32  image_ID,
   gint32 *layers;
   gint    i;
 
-  layers = gimp_image_get_layers (image_ID, &n_layers);
+  layers = picman_image_get_layers (image_ID, &n_layers);
 
   for (i = 0; i < n_layers; i++)
     {
-      if (gimp_layer_get_mask (layers[i]) != -1)
-        gimp_layer_remove_mask (layers[i], GIMP_MASK_APPLY);
+      if (picman_layer_get_mask (layers[i]) != -1)
+        picman_layer_remove_mask (layers[i], PICMAN_MASK_APPLY);
     }
 
   g_free (layers);
@@ -172,14 +172,14 @@ static void
 export_convert_rgb (gint32  image_ID,
                     gint32 *drawable_ID)
 {
-  gimp_image_convert_rgb (image_ID);
+  picman_image_convert_rgb (image_ID);
 }
 
 static void
 export_convert_grayscale (gint32  image_ID,
                           gint32 *drawable_ID)
 {
-  gimp_image_convert_grayscale (image_ID);
+  picman_image_convert_grayscale (image_ID);
 }
 
 static void
@@ -189,24 +189,24 @@ export_convert_indexed (gint32  image_ID,
   gint32 nlayers;
 
   /* check alpha */
-  g_free (gimp_image_get_layers (image_ID, &nlayers));
-  if (nlayers > 1 || gimp_drawable_has_alpha (*drawable_ID))
-    gimp_image_convert_indexed (image_ID, GIMP_NO_DITHER,
-                                GIMP_MAKE_PALETTE, 255, FALSE, FALSE, "");
+  g_free (picman_image_get_layers (image_ID, &nlayers));
+  if (nlayers > 1 || picman_drawable_has_alpha (*drawable_ID))
+    picman_image_convert_indexed (image_ID, PICMAN_NO_DITHER,
+                                PICMAN_MAKE_PALETTE, 255, FALSE, FALSE, "");
   else
-    gimp_image_convert_indexed (image_ID, GIMP_NO_DITHER,
-                                GIMP_MAKE_PALETTE, 256, FALSE, FALSE, "");
+    picman_image_convert_indexed (image_ID, PICMAN_NO_DITHER,
+                                PICMAN_MAKE_PALETTE, 256, FALSE, FALSE, "");
 }
 
 static void
 export_convert_bitmap (gint32  image_ID,
                        gint32 *drawable_ID)
 {
-  if (gimp_image_base_type (image_ID) == GIMP_INDEXED)
-    gimp_image_convert_rgb (image_ID);
+  if (picman_image_base_type (image_ID) == PICMAN_INDEXED)
+    picman_image_convert_rgb (image_ID);
 
-  gimp_image_convert_indexed (image_ID, GIMP_FS_DITHER,
-                              GIMP_MAKE_PALETTE, 2, FALSE, FALSE, "");
+  picman_image_convert_indexed (image_ID, PICMAN_FS_DITHER,
+                              PICMAN_MAKE_PALETTE, 2, FALSE, FALSE, "");
 }
 
 static void
@@ -217,11 +217,11 @@ export_add_alpha (gint32  image_ID,
   gint32  i;
   gint32 *layers;
 
-  layers = gimp_image_get_layers (image_ID, &nlayers);
+  layers = picman_image_get_layers (image_ID, &nlayers);
   for (i = 0; i < nlayers; i++)
     {
-      if (!gimp_drawable_has_alpha (layers[i]))
-        gimp_layer_add_alpha (layers[i]);
+      if (!picman_drawable_has_alpha (layers[i]))
+        picman_layer_add_alpha (layers[i]);
     }
   g_free (layers);
 }
@@ -412,7 +412,7 @@ export_toggle_callback (GtkWidget *widget,
     *choice = TRUE;
 }
 
-static GimpExportReturn
+static PicmanExportReturn
 confirm_save_dialog (const gchar *message,
                      const gchar *format_name)
 {
@@ -422,15 +422,15 @@ confirm_save_dialog (const gchar *message,
   GtkWidget        *main_vbox;
   GtkWidget        *label;
   gchar            *text;
-  GimpExportReturn  retval;
+  PicmanExportReturn  retval;
 
-  g_return_val_if_fail (message != NULL, GIMP_EXPORT_CANCEL);
-  g_return_val_if_fail (format_name != NULL, GIMP_EXPORT_CANCEL);
+  g_return_val_if_fail (message != NULL, PICMAN_EXPORT_CANCEL);
+  g_return_val_if_fail (format_name != NULL, PICMAN_EXPORT_CANCEL);
 
-  dialog = gimp_dialog_new (_("Confirm Save"), "gimp-export-image-confirm",
+  dialog = picman_dialog_new (_("Confirm Save"), "picman-export-image-confirm",
                             NULL, 0,
-                            gimp_standard_help_func,
-                            "gimp-export-confirm-dialog",
+                            picman_standard_help_func,
+                            "picman-export-confirm-dialog",
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             _("Confirm"),     GTK_RESPONSE_OK,
@@ -443,7 +443,7 @@ confirm_save_dialog (const gchar *message,
                                            -1);
 
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))),
@@ -465,7 +465,7 @@ confirm_save_dialog (const gchar *message,
   label = gtk_label_new (text);
   g_free (text);
 
-  gimp_label_set_attributes (GTK_LABEL (label),
+  picman_label_set_attributes (GTK_LABEL (label),
                              PANGO_ATTR_SCALE,  PANGO_SCALE_LARGE,
                              PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                              -1);
@@ -477,14 +477,14 @@ confirm_save_dialog (const gchar *message,
 
   gtk_widget_show (dialog);
 
-  switch (gimp_dialog_run (GIMP_DIALOG (dialog)))
+  switch (picman_dialog_run (PICMAN_DIALOG (dialog)))
     {
     case GTK_RESPONSE_OK:
-      retval = GIMP_EXPORT_EXPORT;
+      retval = PICMAN_EXPORT_EXPORT;
       break;
 
     default:
-      retval = GIMP_EXPORT_CANCEL;
+      retval = PICMAN_EXPORT_CANCEL;
       break;
     }
 
@@ -493,7 +493,7 @@ confirm_save_dialog (const gchar *message,
   return retval;
 }
 
-static GimpExportReturn
+static PicmanExportReturn
 export_dialog (GSList      *actions,
                const gchar *format_name)
 {
@@ -504,14 +504,14 @@ export_dialog (GSList      *actions,
   GtkWidget        *label;
   GSList           *list;
   gchar            *text;
-  GimpExportReturn  retval;
+  PicmanExportReturn  retval;
 
-  g_return_val_if_fail (actions != NULL, GIMP_EXPORT_CANCEL);
-  g_return_val_if_fail (format_name != NULL, GIMP_EXPORT_CANCEL);
+  g_return_val_if_fail (actions != NULL, PICMAN_EXPORT_CANCEL);
+  g_return_val_if_fail (format_name != NULL, PICMAN_EXPORT_CANCEL);
 
-  dialog = gimp_dialog_new (_("Export File"), "gimp-export-image",
+  dialog = picman_dialog_new (_("Export File"), "picman-export-image",
                             NULL, 0,
-                            gimp_standard_help_func, "gimp-export-dialog",
+                            picman_standard_help_func, "picman-export-dialog",
 
                             _("_Ignore"),     GTK_RESPONSE_NO,
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -526,7 +526,7 @@ export_dialog (GSList      *actions,
                                            -1);
 
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))),
@@ -551,7 +551,7 @@ export_dialog (GSList      *actions,
   label = gtk_label_new (text);
   g_free (text);
 
-  gimp_label_set_attributes (GTK_LABEL (label),
+  picman_label_set_attributes (GTK_LABEL (label),
                              PANGO_ATTR_SCALE,  PANGO_SCALE_LARGE,
                              -1);
   gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.0);
@@ -567,7 +567,7 @@ export_dialog (GSList      *actions,
       GtkWidget    *vbox;
 
       text = g_strdup_printf (gettext (action->reason), format_name);
-      frame = gimp_frame_new (text);
+      frame = picman_frame_new (text);
       g_free (text);
 
       gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
@@ -621,7 +621,7 @@ export_dialog (GSList      *actions,
   /* the footline */
   label = gtk_label_new (_("The export conversion won't modify your "
                            "original image."));
-  gimp_label_set_attributes (GTK_LABEL (label),
+  picman_label_set_attributes (GTK_LABEL (label),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              -1);
   gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.0);
@@ -632,18 +632,18 @@ export_dialog (GSList      *actions,
 
   gtk_widget_show (dialog);
 
-  switch (gimp_dialog_run (GIMP_DIALOG (dialog)))
+  switch (picman_dialog_run (PICMAN_DIALOG (dialog)))
     {
     case GTK_RESPONSE_OK:
-      retval = GIMP_EXPORT_EXPORT;
+      retval = PICMAN_EXPORT_EXPORT;
       break;
 
     case GTK_RESPONSE_NO:
-      retval = GIMP_EXPORT_IGNORE;
+      retval = PICMAN_EXPORT_IGNORE;
       break;
 
     default:
-      retval = GIMP_EXPORT_CANCEL;
+      retval = PICMAN_EXPORT_CANCEL;
       break;
     }
 
@@ -653,7 +653,7 @@ export_dialog (GSList      *actions,
 }
 
 /**
- * gimp_export_image:
+ * picman_export_image:
  * @image_ID: Pointer to the image_ID.
  * @drawable_ID: Pointer to the drawable_ID.
  * @format_name: The (short) name of the image_format (e.g. JPEG or GIF).
@@ -668,64 +668,64 @@ export_dialog (GSList      *actions,
  * If the user chooses to export the image, a copy is created.
  * This copy is then converted, the image_ID and drawable_ID
  * are changed to point to the new image and the procedure returns
- * GIMP_EXPORT_EXPORT. The save_plugin has to take care of deleting the
- * created image using gimp_image_delete() when it has saved it.
+ * PICMAN_EXPORT_EXPORT. The save_plugin has to take care of deleting the
+ * created image using picman_image_delete() when it has saved it.
  *
  * If the user chooses to Ignore the export problem, the image_ID
- * and drawable_ID is not altered, GIMP_EXPORT_IGNORE is returned and
+ * and drawable_ID is not altered, PICMAN_EXPORT_IGNORE is returned and
  * the save_plugin should try to save the original image. If the
- * user chooses Cancel, GIMP_EXPORT_CANCEL is returned and the
- * save_plugin should quit itself with status %GIMP_PDB_CANCEL.
+ * user chooses Cancel, PICMAN_EXPORT_CANCEL is returned and the
+ * save_plugin should quit itself with status %PICMAN_PDB_CANCEL.
  *
  * If @format_name is NULL, no dialogs will be shown and this function
  * will behave as if the user clicked on the 'Export' button, if a
  * dialog would have been shown.
  *
- * Returns: An enum of #GimpExportReturn describing the user_action.
+ * Returns: An enum of #PicmanExportReturn describing the user_action.
  **/
-GimpExportReturn
-gimp_export_image (gint32                 *image_ID,
+PicmanExportReturn
+picman_export_image (gint32                 *image_ID,
                    gint32                 *drawable_ID,
                    const gchar            *format_name,
-                   GimpExportCapabilities  capabilities)
+                   PicmanExportCapabilities  capabilities)
 {
   GSList            *actions = NULL;
-  GimpImageBaseType  type;
+  PicmanImageBaseType  type;
   gint32             i;
   gint32             n_layers;
   gint32            *layers;
   gboolean           added_flatten        = FALSE;
   gboolean           has_layer_masks      = FALSE;
   gboolean           background_has_alpha = TRUE;
-  GimpExportReturn   retval               = GIMP_EXPORT_CANCEL;
+  PicmanExportReturn   retval               = PICMAN_EXPORT_CANCEL;
 
   g_return_val_if_fail (*image_ID > -1 && *drawable_ID > -1, FALSE);
 
   /* do some sanity checks */
-  if (capabilities & GIMP_EXPORT_NEEDS_ALPHA)
-    capabilities |= GIMP_EXPORT_CAN_HANDLE_ALPHA;
+  if (capabilities & PICMAN_EXPORT_NEEDS_ALPHA)
+    capabilities |= PICMAN_EXPORT_CAN_HANDLE_ALPHA;
 
-  if (capabilities & GIMP_EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION)
-    capabilities |= GIMP_EXPORT_CAN_HANDLE_LAYERS;
+  if (capabilities & PICMAN_EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION)
+    capabilities |= PICMAN_EXPORT_CAN_HANDLE_LAYERS;
 
-  if (capabilities & GIMP_EXPORT_CAN_HANDLE_LAYER_MASKS)
-    capabilities |= GIMP_EXPORT_CAN_HANDLE_LAYERS;
+  if (capabilities & PICMAN_EXPORT_CAN_HANDLE_LAYER_MASKS)
+    capabilities |= PICMAN_EXPORT_CAN_HANDLE_LAYERS;
 
-  if (capabilities & GIMP_EXPORT_CAN_HANDLE_LAYERS)
-    capabilities |= GIMP_EXPORT_CAN_HANDLE_ALPHA;
+  if (capabilities & PICMAN_EXPORT_CAN_HANDLE_LAYERS)
+    capabilities |= PICMAN_EXPORT_CAN_HANDLE_ALPHA;
 
   /* ask for confirmation if the user is not saving a layer (see bug #51114) */
   if (format_name &&
-      ! gimp_item_is_layer (*drawable_ID) &&
-      ! (capabilities & GIMP_EXPORT_CAN_HANDLE_LAYERS))
+      ! picman_item_is_layer (*drawable_ID) &&
+      ! (capabilities & PICMAN_EXPORT_CAN_HANDLE_LAYERS))
     {
-      if (gimp_item_is_layer_mask (*drawable_ID))
+      if (picman_item_is_layer_mask (*drawable_ID))
         {
           retval = confirm_save_dialog
             (_("You are about to save a layer mask as %s.\n"
                "This will not save the visible layers."), format_name);
         }
-      else if (gimp_item_is_channel (*drawable_ID))
+      else if (picman_item_is_channel (*drawable_ID))
         {
           retval = confirm_save_dialog
             (_("You are about to save a channel (saved selection) as %s.\n"
@@ -738,19 +738,19 @@ gimp_export_image (gint32                 *image_ID,
         }
 
       /* cancel - the user can then select an appropriate layer to save */
-      if (retval == GIMP_EXPORT_CANCEL)
-        return GIMP_EXPORT_CANCEL;
+      if (retval == PICMAN_EXPORT_CANCEL)
+        return PICMAN_EXPORT_CANCEL;
     }
 
 
   /* check alpha and layer masks */
-  layers = gimp_image_get_layers (*image_ID, &n_layers);
+  layers = picman_image_get_layers (*image_ID, &n_layers);
 
   for (i = 0; i < n_layers; i++)
     {
-      if (gimp_drawable_has_alpha (layers[i]))
+      if (picman_drawable_has_alpha (layers[i]))
         {
-          if (! (capabilities & GIMP_EXPORT_CAN_HANDLE_ALPHA))
+          if (! (capabilities & PICMAN_EXPORT_CAN_HANDLE_ALPHA))
             {
               actions = g_slist_prepend (actions, &export_action_flatten);
               added_flatten = TRUE;
@@ -762,10 +762,10 @@ gimp_export_image (gint32                 *image_ID,
           /*  If this is the last layer, it's visible and has no alpha
            *  channel, then the image has a "flat" background
            */
-                if (i == n_layers - 1 && gimp_item_get_visible (layers[i]))
+                if (i == n_layers - 1 && picman_item_get_visible (layers[i]))
             background_has_alpha = FALSE;
 
-          if (capabilities & GIMP_EXPORT_NEEDS_ALPHA)
+          if (capabilities & PICMAN_EXPORT_NEEDS_ALPHA)
             {
               actions = g_slist_prepend (actions, &export_action_add_alpha);
               break;
@@ -777,7 +777,7 @@ gimp_export_image (gint32                 *image_ID,
     {
       for (i = 0; i < n_layers; i++)
         {
-          if (gimp_layer_get_mask (layers[i]) != -1)
+          if (picman_layer_get_mask (layers[i]) != -1)
             has_layer_masks = TRUE;
         }
     }
@@ -788,22 +788,22 @@ gimp_export_image (gint32                 *image_ID,
     {
       /* check if layer size != canvas size, opacity != 100%, or offsets != 0 */
       if (n_layers == 1                     &&
-          gimp_item_is_layer (*drawable_ID) &&
-          ! (capabilities & GIMP_EXPORT_CAN_HANDLE_LAYERS))
+          picman_item_is_layer (*drawable_ID) &&
+          ! (capabilities & PICMAN_EXPORT_CAN_HANDLE_LAYERS))
         {
           gint offset_x;
           gint offset_y;
 
-          gimp_drawable_offsets (*drawable_ID, &offset_x, &offset_y);
+          picman_drawable_offsets (*drawable_ID, &offset_x, &offset_y);
 
-          if ((gimp_layer_get_opacity (*drawable_ID) < 100.0) ||
-              (gimp_image_width (*image_ID) !=
-               gimp_drawable_width (*drawable_ID))            ||
-              (gimp_image_height (*image_ID) !=
-               gimp_drawable_height (*drawable_ID))           ||
+          if ((picman_layer_get_opacity (*drawable_ID) < 100.0) ||
+              (picman_image_width (*image_ID) !=
+               picman_drawable_width (*drawable_ID))            ||
+              (picman_image_height (*image_ID) !=
+               picman_drawable_height (*drawable_ID))           ||
               offset_x || offset_y)
             {
-              if (capabilities & GIMP_EXPORT_CAN_HANDLE_ALPHA)
+              if (capabilities & PICMAN_EXPORT_CAN_HANDLE_ALPHA)
                 {
                   actions = g_slist_prepend (actions,
                                              &export_action_merge_single);
@@ -818,19 +818,19 @@ gimp_export_image (gint32                 *image_ID,
       /* check multiple layers */
       else if (n_layers > 1)
         {
-          if (capabilities & GIMP_EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION)
+          if (capabilities & PICMAN_EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION)
             {
               if (background_has_alpha ||
-                  capabilities & GIMP_EXPORT_NEEDS_ALPHA)
+                  capabilities & PICMAN_EXPORT_NEEDS_ALPHA)
                 actions = g_slist_prepend (actions,
                                            &export_action_animate_or_merge);
               else
                 actions = g_slist_prepend (actions,
                                            &export_action_animate_or_flatten);
             }
-          else if (! (capabilities & GIMP_EXPORT_CAN_HANDLE_LAYERS))
+          else if (! (capabilities & PICMAN_EXPORT_CAN_HANDLE_LAYERS))
             {
-              if (capabilities & GIMP_EXPORT_NEEDS_ALPHA)
+              if (capabilities & PICMAN_EXPORT_NEEDS_ALPHA)
                 actions = g_slist_prepend (actions,
                                            &export_action_merge);
               else
@@ -841,70 +841,70 @@ gimp_export_image (gint32                 *image_ID,
 
       /* check layer masks */
       if (has_layer_masks &&
-          ! (capabilities & GIMP_EXPORT_CAN_HANDLE_LAYER_MASKS))
+          ! (capabilities & PICMAN_EXPORT_CAN_HANDLE_LAYER_MASKS))
         actions = g_slist_prepend (actions, &export_action_apply_masks);
     }
 
   /* check the image type */
-  type = gimp_image_base_type (*image_ID);
+  type = picman_image_base_type (*image_ID);
   switch (type)
     {
-    case GIMP_RGB:
-      if (! (capabilities & GIMP_EXPORT_CAN_HANDLE_RGB))
+    case PICMAN_RGB:
+      if (! (capabilities & PICMAN_EXPORT_CAN_HANDLE_RGB))
         {
-          if ((capabilities & GIMP_EXPORT_CAN_HANDLE_INDEXED) &&
-              (capabilities & GIMP_EXPORT_CAN_HANDLE_GRAY))
+          if ((capabilities & PICMAN_EXPORT_CAN_HANDLE_INDEXED) &&
+              (capabilities & PICMAN_EXPORT_CAN_HANDLE_GRAY))
             actions = g_slist_prepend (actions,
                                        &export_action_convert_indexed_or_grayscale);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_INDEXED)
+          else if (capabilities & PICMAN_EXPORT_CAN_HANDLE_INDEXED)
             actions = g_slist_prepend (actions,
                                        &export_action_convert_indexed);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_GRAY)
+          else if (capabilities & PICMAN_EXPORT_CAN_HANDLE_GRAY)
             actions = g_slist_prepend (actions,
                                        &export_action_convert_grayscale);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_BITMAP)
+          else if (capabilities & PICMAN_EXPORT_CAN_HANDLE_BITMAP)
             actions = g_slist_prepend (actions,
                                        &export_action_convert_bitmap);
         }
       break;
 
-    case GIMP_GRAY:
-      if (! (capabilities & GIMP_EXPORT_CAN_HANDLE_GRAY))
+    case PICMAN_GRAY:
+      if (! (capabilities & PICMAN_EXPORT_CAN_HANDLE_GRAY))
         {
-          if ((capabilities & GIMP_EXPORT_CAN_HANDLE_RGB) &&
-              (capabilities & GIMP_EXPORT_CAN_HANDLE_INDEXED))
+          if ((capabilities & PICMAN_EXPORT_CAN_HANDLE_RGB) &&
+              (capabilities & PICMAN_EXPORT_CAN_HANDLE_INDEXED))
             actions = g_slist_prepend (actions,
                                        &export_action_convert_rgb_or_indexed);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_RGB)
+          else if (capabilities & PICMAN_EXPORT_CAN_HANDLE_RGB)
             actions = g_slist_prepend (actions,
                                        &export_action_convert_rgb);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_INDEXED)
+          else if (capabilities & PICMAN_EXPORT_CAN_HANDLE_INDEXED)
             actions = g_slist_prepend (actions,
                                        &export_action_convert_indexed);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_BITMAP)
+          else if (capabilities & PICMAN_EXPORT_CAN_HANDLE_BITMAP)
             actions = g_slist_prepend (actions,
                                        &export_action_convert_bitmap);
         }
       break;
 
-    case GIMP_INDEXED:
-      if (! (capabilities & GIMP_EXPORT_CAN_HANDLE_INDEXED))
+    case PICMAN_INDEXED:
+      if (! (capabilities & PICMAN_EXPORT_CAN_HANDLE_INDEXED))
         {
-          if ((capabilities & GIMP_EXPORT_CAN_HANDLE_RGB) &&
-              (capabilities & GIMP_EXPORT_CAN_HANDLE_GRAY))
+          if ((capabilities & PICMAN_EXPORT_CAN_HANDLE_RGB) &&
+              (capabilities & PICMAN_EXPORT_CAN_HANDLE_GRAY))
             actions = g_slist_prepend (actions,
                                        &export_action_convert_rgb_or_grayscale);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_RGB)
+          else if (capabilities & PICMAN_EXPORT_CAN_HANDLE_RGB)
             actions = g_slist_prepend (actions,
                                        &export_action_convert_rgb);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_GRAY)
+          else if (capabilities & PICMAN_EXPORT_CAN_HANDLE_GRAY)
             actions = g_slist_prepend (actions,
                                        &export_action_convert_grayscale);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_BITMAP)
+          else if (capabilities & PICMAN_EXPORT_CAN_HANDLE_BITMAP)
             {
               gint n_colors;
 
-              g_free (gimp_image_get_colormap (*image_ID, &n_colors));
+              g_free (picman_image_get_colormap (*image_ID, &n_colors));
 
               if (n_colors > 2)
                 actions = g_slist_prepend (actions,
@@ -921,21 +921,21 @@ gimp_export_image (gint32                 *image_ID,
       if (format_name)
         retval = export_dialog (actions, format_name);
       else
-        retval = GIMP_EXPORT_EXPORT;
+        retval = PICMAN_EXPORT_EXPORT;
     }
   else
     {
-      retval = GIMP_EXPORT_IGNORE;
+      retval = PICMAN_EXPORT_IGNORE;
     }
 
-  if (retval == GIMP_EXPORT_EXPORT)
+  if (retval == PICMAN_EXPORT_EXPORT)
     {
       GSList *list;
 
-      *image_ID = gimp_image_duplicate (*image_ID);
-      *drawable_ID = gimp_image_get_active_layer (*image_ID);
+      *image_ID = picman_image_duplicate (*image_ID);
+      *drawable_ID = picman_image_get_active_layer (*image_ID);
 
-      gimp_image_undo_disable (*image_ID);
+      picman_image_undo_disable (*image_ID);
 
       for (list = actions; list; list = list->next)
         {
@@ -949,17 +949,17 @@ gimp_export_image (gint32                 *image_ID,
 }
 
 /**
- * gimp_export_dialog_new:
+ * picman_export_dialog_new:
  * @format_name: The short name of the image_format (e.g. JPEG or PNG).
  * @role:        The dialog's @role which will be set with
  *               gtk_window_set_role().
- * @help_id:     The GIMP help id.
+ * @help_id:     The PICMAN help id.
  *
  * Creates a new export dialog. All file plug-ins should use this
  * dialog to get a consistent look on the export dialogs. Use
- * gimp_export_dialog_get_content_area() to get a #GtkVBox to be
+ * picman_export_dialog_get_content_area() to get a #GtkVBox to be
  * filled with export options. The export dialog is a wrapped
- * #GimpDialog.
+ * #PicmanDialog.
  *
  * The dialog response when the user clicks on the Export button is
  * %GTK_RESPONSE_OK, and when the Cancel button is clicked it is
@@ -967,10 +967,10 @@ gimp_export_image (gint32                 *image_ID,
  *
  * Returns: The new export dialog.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 GtkWidget *
-gimp_export_dialog_new (const gchar *format_name,
+picman_export_dialog_new (const gchar *format_name,
                         const gchar *role,
                         const gchar *help_id)
 {
@@ -978,13 +978,13 @@ gimp_export_dialog_new (const gchar *format_name,
   GtkWidget *button = NULL;
   gchar     *title  = g_strconcat (_("Export Image as "), format_name, NULL);
 
-  dialog = gimp_dialog_new (title, role,
+  dialog = picman_dialog_new (title, role,
                             NULL, 0,
-                            gimp_standard_help_func, help_id,
+                            picman_standard_help_func, help_id,
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             NULL);
 
-  button = gimp_dialog_add_button (GIMP_DIALOG (dialog),
+  button = picman_dialog_add_button (PICMAN_DIALOG (dialog),
                                    _("_Export"), GTK_RESPONSE_OK);
   gtk_button_set_image (GTK_BUTTON (button),
                         gtk_image_new_from_stock (GTK_STOCK_SAVE,
@@ -995,7 +995,7 @@ gimp_export_dialog_new (const gchar *format_name,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   g_free (title);
 
@@ -1003,18 +1003,18 @@ gimp_export_dialog_new (const gchar *format_name,
 }
 
 /**
- * gimp_export_dialog_get_content_area:
- * @dialog: A dialog created with gimp_export_dialog_new()
+ * picman_export_dialog_get_content_area:
+ * @dialog: A dialog created with picman_export_dialog_new()
  *
  * Returns the #GtkVBox of the passed export dialog to be filled with
  * export options.
  *
  * Returns: The #GtkVBox to fill with export options.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 GtkWidget *
-gimp_export_dialog_get_content_area (GtkWidget *dialog)
+picman_export_dialog_get_content_area (GtkWidget *dialog)
 {
   return gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 }

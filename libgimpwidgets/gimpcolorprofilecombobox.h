@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorprofilecombobox.h
- * Copyright (C) 2007  Sven Neumann <sven@gimp.org>
+ * picmancolorprofilecombobox.h
+ * Copyright (C) 2007  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,60 +19,60 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_COLOR_PROFILE_COMBO_BOX_H__
-#define __GIMP_COLOR_PROFILE_COMBO_BOX_H__
+#ifndef __PICMAN_COLOR_PROFILE_COMBO_BOX_H__
+#define __PICMAN_COLOR_PROFILE_COMBO_BOX_H__
 
 G_BEGIN_DECLS
 
-#define GIMP_TYPE_COLOR_PROFILE_COMBO_BOX            (gimp_color_profile_combo_box_get_type ())
-#define GIMP_COLOR_PROFILE_COMBO_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_PROFILE_COMBO_BOX, GimpColorProfileComboBox))
-#define GIMP_COLOR_PROFILE_COMBO_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_PROFILE_COMBO_BOX, GimpColorProfileComboBoxClass))
-#define GIMP_IS_COLOR_PROFILE_COMBO_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_PROFILE_COMBO_BOX))
-#define GIMP_IS_COLOR_PROFILE_COMBO_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_PROFILE_COMBO_BOX))
-#define GIMP_COLOR_PROFILE_COMBO_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_PROFILE_COMBO_BOX, GimpColorProfileComboBoxClass))
+#define PICMAN_TYPE_COLOR_PROFILE_COMBO_BOX            (picman_color_profile_combo_box_get_type ())
+#define PICMAN_COLOR_PROFILE_COMBO_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_PROFILE_COMBO_BOX, PicmanColorProfileComboBox))
+#define PICMAN_COLOR_PROFILE_COMBO_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_PROFILE_COMBO_BOX, PicmanColorProfileComboBoxClass))
+#define PICMAN_IS_COLOR_PROFILE_COMBO_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_PROFILE_COMBO_BOX))
+#define PICMAN_IS_COLOR_PROFILE_COMBO_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_PROFILE_COMBO_BOX))
+#define PICMAN_COLOR_PROFILE_COMBO_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_PROFILE_COMBO_BOX, PicmanColorProfileComboBoxClass))
 
 
-typedef struct _GimpColorProfileComboBoxClass  GimpColorProfileComboBoxClass;
+typedef struct _PicmanColorProfileComboBoxClass  PicmanColorProfileComboBoxClass;
 
-struct _GimpColorProfileComboBox
+struct _PicmanColorProfileComboBox
 {
   GtkComboBox       parent_instance;
 
   GtkWidget        *dialog;
 };
 
-struct _GimpColorProfileComboBoxClass
+struct _PicmanColorProfileComboBoxClass
 {
   GtkComboBoxClass  parent_class;
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType       gimp_color_profile_combo_box_get_type         (void) G_GNUC_CONST;
+GType       picman_color_profile_combo_box_get_type         (void) G_GNUC_CONST;
 
-GtkWidget * gimp_color_profile_combo_box_new              (GtkWidget    *dialog,
+GtkWidget * picman_color_profile_combo_box_new              (GtkWidget    *dialog,
                                                            const gchar  *history);
-GtkWidget * gimp_color_profile_combo_box_new_with_model   (GtkWidget    *dialog,
+GtkWidget * picman_color_profile_combo_box_new_with_model   (GtkWidget    *dialog,
                                                            GtkTreeModel *model);
 
-void        gimp_color_profile_combo_box_add              (GimpColorProfileComboBox *combo,
+void        picman_color_profile_combo_box_add              (PicmanColorProfileComboBox *combo,
                                                            const gchar              *filename,
                                                            const gchar              *label);
-void        gimp_color_profile_combo_box_set_active       (GimpColorProfileComboBox *combo,
+void        picman_color_profile_combo_box_set_active       (PicmanColorProfileComboBox *combo,
                                                            const gchar              *filename,
                                                            const gchar              *label);
-gchar *     gimp_color_profile_combo_box_get_active       (GimpColorProfileComboBox *combo);
+gchar *     picman_color_profile_combo_box_get_active       (PicmanColorProfileComboBox *combo);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_COLOR_PROFILE_COMBO_BOX_H__ */
+#endif  /* __PICMAN_COLOR_PROFILE_COMBO_BOX_H__ */

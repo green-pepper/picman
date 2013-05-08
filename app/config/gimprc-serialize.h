@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpRc serialization routines
- * Copyright (C) 2001-2005  Sven Neumann <sven@gimp.org>
+ * PicmanRc serialization routines
+ * Copyright (C) 2001-2005  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_RC_SERIALIZE_H__
-#define __GIMP_RC_SERIALIZE_H__
+#ifndef __PICMAN_RC_SERIALIZE_H__
+#define __PICMAN_RC_SERIALIZE_H__
 
 
-gboolean  gimp_rc_serialize (GimpConfig       *config,
-                             GimpConfigWriter *writer,
+gboolean  picman_rc_serialize (PicmanConfig       *config,
+                             PicmanConfigWriter *writer,
                              gpointer          data);
 
 
-#endif /* __GIMP_RC_SERIALIZE_H__ */
+#endif /* __PICMAN_RC_SERIALIZE_H__ */

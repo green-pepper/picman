@@ -1,6 +1,6 @@
-/* GimpXmpModelEntry.h - custom entry widget linked to the xmp model
+/* PicmanXmpModelEntry.h - custom entry widget linked to the xmp model
  *
- * Copyright (C) 2009, Róman Joost <romanofski@gimp.org>
+ * Copyright (C) 2009, Róman Joost <romanofski@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,51 +17,51 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_XMP_MODEL_ENTRY_H__
-#define __GIMP_XMP_MODEL_ENTRY_H__
+#ifndef __PICMAN_XMP_MODEL_ENTRY_H__
+#define __PICMAN_XMP_MODEL_ENTRY_H__
 
 G_BEGIN_DECLS
 
-#define GIMP_TYPE_XMP_MODEL_ENTRY               (gimp_xmp_model_entry_get_type ())
-#define GIMP_XMP_MODEL_ENTRY(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_XMP_MODEL_ENTRY, GimpXmpModelEntry))
-#define GIMP_XMP_MODEL_ENTRY_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_XMP_MODEL_ENTRY, XMPModelClass))
-#define GIMP_IS_XMP_MODEL_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_XMP_MODEL_ENTRY))
-#define GIMP_IS_XMP_MODEL_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_XMP_MODEL_ENTRY))
-#define GIMP_XMP_MODEL_ENTRY_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_XMP_MODEL_ENTRY, XMPModelClass))
+#define PICMAN_TYPE_XMP_MODEL_ENTRY               (picman_xmp_model_entry_get_type ())
+#define PICMAN_XMP_MODEL_ENTRY(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_XMP_MODEL_ENTRY, PicmanXmpModelEntry))
+#define PICMAN_XMP_MODEL_ENTRY_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_XMP_MODEL_ENTRY, XMPModelClass))
+#define PICMAN_IS_XMP_MODEL_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_XMP_MODEL_ENTRY))
+#define PICMAN_IS_XMP_MODEL_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_XMP_MODEL_ENTRY))
+#define PICMAN_XMP_MODEL_ENTRY_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_XMP_MODEL_ENTRY, XMPModelClass))
 
 
-typedef struct _GimpXmpModelEntry       GimpXmpModelEntry;
-typedef struct _GimpXmpModelEntryClass  GimpXmpModelEntryClass;
+typedef struct _PicmanXmpModelEntry       PicmanXmpModelEntry;
+typedef struct _PicmanXmpModelEntryClass  PicmanXmpModelEntryClass;
 
 
-struct _GimpXmpModelEntryClass
+struct _PicmanXmpModelEntryClass
 {
   GtkEntryClass parent_class;
 
-  void          (*gimp_xmp_model_set_text) (GimpXmpModelEntry *entry,
+  void          (*picman_xmp_model_set_text) (PicmanXmpModelEntry *entry,
                                             const gchar       *value);
 
-  const gchar * (*gimp_xmp_model_get_text) (GimpXmpModelEntry *entry);
+  const gchar * (*picman_xmp_model_get_text) (PicmanXmpModelEntry *entry);
 };
 
-struct _GimpXmpModelEntry
+struct _PicmanXmpModelEntry
 {
   GtkEntry   parent_instance;
   gpointer   priv;
 };
 
 
-GType         gimp_xmp_model_entry_get_type (void) G_GNUC_CONST;
+GType         picman_xmp_model_entry_get_type (void) G_GNUC_CONST;
 
-GtkWidget   * gimp_xmp_model_entry_new      (const gchar       *schema_uri,
+GtkWidget   * picman_xmp_model_entry_new      (const gchar       *schema_uri,
                                              const gchar       *property,
                                              XMPModel          *xmp_model);
 
-void          gimp_xmp_model_set_text       (GimpXmpModelEntry *entry,
+void          picman_xmp_model_set_text       (PicmanXmpModelEntry *entry,
                                              const gchar       *value);
 
-const gchar * gimp_xmp_model_get_text       (GimpXmpModelEntry *entry);
+const gchar * picman_xmp_model_get_text       (PicmanXmpModelEntry *entry);
 
 G_END_DECLS
 
-#endif /* __GIMP_XMP_MODEL_ENTRY_H__ */
+#endif /* __PICMAN_XMP_MODEL_ENTRY_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpscalebutton.h
- * Copyright (C) 2008 Sven Neumann <sven@gimp.org>
+ * picmanscalebutton.h
+ * Copyright (C) 2008 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SCALE_BUTTON_H__
-#define __GIMP_SCALE_BUTTON_H__
+#ifndef __PICMAN_SCALE_BUTTON_H__
+#define __PICMAN_SCALE_BUTTON_H__
 
 
-#define GIMP_TYPE_SCALE_BUTTON            (gimp_scale_button_get_type ())
-#define GIMP_SCALE_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SCALE_BUTTON, GimpScaleButton))
-#define GIMP_SCALE_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SCALE_BUTTON, GimpScaleButtonClass))
-#define GIMP_IS_SCALE_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SCALE_BUTTON))
-#define GIMP_IS_SCALE_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), GIMP_TYPE_SCALE_BUTTON))
-#define GIMP_SCALE_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GIMP_TYPE_SCALE_BUTTON, GimpScaleButtonClass))
+#define PICMAN_TYPE_SCALE_BUTTON            (picman_scale_button_get_type ())
+#define PICMAN_SCALE_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SCALE_BUTTON, PicmanScaleButton))
+#define PICMAN_SCALE_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SCALE_BUTTON, PicmanScaleButtonClass))
+#define PICMAN_IS_SCALE_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SCALE_BUTTON))
+#define PICMAN_IS_SCALE_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), PICMAN_TYPE_SCALE_BUTTON))
+#define PICMAN_SCALE_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PICMAN_TYPE_SCALE_BUTTON, PicmanScaleButtonClass))
 
 
-typedef struct _GimpScaleButtonClass GimpScaleButtonClass;
+typedef struct _PicmanScaleButtonClass PicmanScaleButtonClass;
 
-struct _GimpScaleButton
+struct _PicmanScaleButton
 {
   GtkScaleButton      parent_instance;
 };
 
-struct _GimpScaleButtonClass
+struct _PicmanScaleButtonClass
 {
   GtkScaleButtonClass parent_class;
 };
 
 
-GType       gimp_scale_button_get_type (void) G_GNUC_CONST;
+GType       picman_scale_button_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_scale_button_new      (gdouble value,
+GtkWidget * picman_scale_button_new      (gdouble value,
                                         gdouble min,
                                         gdouble max);
 
 
-#endif  /* __GIMP_SCALE_BUTTON_H__ */
+#endif  /* __PICMAN_SCALE_BUTTON_H__ */

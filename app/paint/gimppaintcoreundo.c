@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,8 @@
 
 #include "paint-types.h"
 
-#include "gimppaintcore.h"
-#include "gimppaintcoreundo.h"
+#include "picmanpaintcore.h"
+#include "picmanpaintcoreundo.h"
 
 
 enum
@@ -32,61 +32,61 @@ enum
 };
 
 
-static void   gimp_paint_core_undo_constructed  (GObject             *object);
-static void   gimp_paint_core_undo_set_property (GObject             *object,
+static void   picman_paint_core_undo_constructed  (GObject             *object);
+static void   picman_paint_core_undo_set_property (GObject             *object,
                                                  guint                property_id,
                                                  const GValue        *value,
                                                  GParamSpec          *pspec);
-static void   gimp_paint_core_undo_get_property (GObject             *object,
+static void   picman_paint_core_undo_get_property (GObject             *object,
                                                  guint                property_id,
                                                  GValue              *value,
                                                  GParamSpec          *pspec);
 
-static void   gimp_paint_core_undo_pop          (GimpUndo            *undo,
-                                                 GimpUndoMode         undo_mode,
-                                                 GimpUndoAccumulator *accum);
-static void   gimp_paint_core_undo_free         (GimpUndo            *undo,
-                                                 GimpUndoMode         undo_mode);
+static void   picman_paint_core_undo_pop          (PicmanUndo            *undo,
+                                                 PicmanUndoMode         undo_mode,
+                                                 PicmanUndoAccumulator *accum);
+static void   picman_paint_core_undo_free         (PicmanUndo            *undo,
+                                                 PicmanUndoMode         undo_mode);
 
 
-G_DEFINE_TYPE (GimpPaintCoreUndo, gimp_paint_core_undo, GIMP_TYPE_UNDO)
+G_DEFINE_TYPE (PicmanPaintCoreUndo, picman_paint_core_undo, PICMAN_TYPE_UNDO)
 
-#define parent_class gimp_paint_core_undo_parent_class
+#define parent_class picman_paint_core_undo_parent_class
 
 
 static void
-gimp_paint_core_undo_class_init (GimpPaintCoreUndoClass *klass)
+picman_paint_core_undo_class_init (PicmanPaintCoreUndoClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
-  GimpUndoClass *undo_class   = GIMP_UNDO_CLASS (klass);
+  PicmanUndoClass *undo_class   = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed  = gimp_paint_core_undo_constructed;
-  object_class->set_property = gimp_paint_core_undo_set_property;
-  object_class->get_property = gimp_paint_core_undo_get_property;
+  object_class->constructed  = picman_paint_core_undo_constructed;
+  object_class->set_property = picman_paint_core_undo_set_property;
+  object_class->get_property = picman_paint_core_undo_get_property;
 
-  undo_class->pop            = gimp_paint_core_undo_pop;
-  undo_class->free           = gimp_paint_core_undo_free;
+  undo_class->pop            = picman_paint_core_undo_pop;
+  undo_class->free           = picman_paint_core_undo_free;
 
   g_object_class_install_property (object_class, PROP_PAINT_CORE,
                                    g_param_spec_object ("paint-core", NULL, NULL,
-                                                        GIMP_TYPE_PAINT_CORE,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_PAINT_CORE,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_paint_core_undo_init (GimpPaintCoreUndo *undo)
+picman_paint_core_undo_init (PicmanPaintCoreUndo *undo)
 {
 }
 
 static void
-gimp_paint_core_undo_constructed (GObject *object)
+picman_paint_core_undo_constructed (GObject *object)
 {
-  GimpPaintCoreUndo *paint_core_undo = GIMP_PAINT_CORE_UNDO (object);
+  PicmanPaintCoreUndo *paint_core_undo = PICMAN_PAINT_CORE_UNDO (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_PAINT_CORE (paint_core_undo->paint_core));
+  g_assert (PICMAN_IS_PAINT_CORE (paint_core_undo->paint_core));
 
   paint_core_undo->last_coords = paint_core_undo->paint_core->start_coords;
 
@@ -95,12 +95,12 @@ gimp_paint_core_undo_constructed (GObject *object)
 }
 
 static void
-gimp_paint_core_undo_set_property (GObject      *object,
+picman_paint_core_undo_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpPaintCoreUndo *paint_core_undo = GIMP_PAINT_CORE_UNDO (object);
+  PicmanPaintCoreUndo *paint_core_undo = PICMAN_PAINT_CORE_UNDO (object);
 
   switch (property_id)
     {
@@ -115,12 +115,12 @@ gimp_paint_core_undo_set_property (GObject      *object,
 }
 
 static void
-gimp_paint_core_undo_get_property (GObject    *object,
+picman_paint_core_undo_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpPaintCoreUndo *paint_core_undo = GIMP_PAINT_CORE_UNDO (object);
+  PicmanPaintCoreUndo *paint_core_undo = PICMAN_PAINT_CORE_UNDO (object);
 
   switch (property_id)
     {
@@ -135,18 +135,18 @@ gimp_paint_core_undo_get_property (GObject    *object,
 }
 
 static void
-gimp_paint_core_undo_pop (GimpUndo              *undo,
-                          GimpUndoMode           undo_mode,
-                          GimpUndoAccumulator   *accum)
+picman_paint_core_undo_pop (PicmanUndo              *undo,
+                          PicmanUndoMode           undo_mode,
+                          PicmanUndoAccumulator   *accum)
 {
-  GimpPaintCoreUndo *paint_core_undo = GIMP_PAINT_CORE_UNDO (undo);
+  PicmanPaintCoreUndo *paint_core_undo = PICMAN_PAINT_CORE_UNDO (undo);
 
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 
   /*  only pop if the core still exists  */
   if (paint_core_undo->paint_core)
     {
-      GimpCoords tmp_coords;
+      PicmanCoords tmp_coords;
 
       tmp_coords = paint_core_undo->paint_core->last_coords;
       paint_core_undo->paint_core->last_coords = paint_core_undo->last_coords;
@@ -155,10 +155,10 @@ gimp_paint_core_undo_pop (GimpUndo              *undo,
 }
 
 static void
-gimp_paint_core_undo_free (GimpUndo     *undo,
-                           GimpUndoMode  undo_mode)
+picman_paint_core_undo_free (PicmanUndo     *undo,
+                           PicmanUndoMode  undo_mode)
 {
-  GimpPaintCoreUndo *paint_core_undo = GIMP_PAINT_CORE_UNDO (undo);
+  PicmanPaintCoreUndo *paint_core_undo = PICMAN_PAINT_CORE_UNDO (undo);
 
   if (paint_core_undo->paint_core)
     {
@@ -167,5 +167,5 @@ gimp_paint_core_undo_free (GimpUndo     *undo,
       paint_core_undo->paint_core = NULL;
     }
 
-  GIMP_UNDO_CLASS (parent_class)->free (undo, undo_mode);
+  PICMAN_UNDO_CLASS (parent_class)->free (undo, undo_mode);
 }

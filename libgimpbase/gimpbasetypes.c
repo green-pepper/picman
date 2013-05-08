@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpbasetypes.c
- * Copyright (C) 2004 Sven Neumann <sven@gimp.org>
+ * picmanbasetypes.c
+ * Copyright (C) 2004 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,12 +23,12 @@
 
 #include <glib-object.h>
 
-#include "gimpbasetypes.h"
+#include "picmanbasetypes.h"
 
 
 /**
- * SECTION: gimpbasetypes
- * @title: gimpbasetypes
+ * SECTION: picmanbasetypes
+ * @title: picmanbasetypes
  * @short_description: Translation between gettext translation domain
  *                     identifier and GType.
  *
@@ -37,13 +37,13 @@
  **/
 
 
-static GQuark  gimp_translation_domain_quark  (void) G_GNUC_CONST;
-static GQuark  gimp_translation_context_quark (void) G_GNUC_CONST;
-static GQuark  gimp_value_descriptions_quark  (void) G_GNUC_CONST;
+static GQuark  picman_translation_domain_quark  (void) G_GNUC_CONST;
+static GQuark  picman_translation_context_quark (void) G_GNUC_CONST;
+static GQuark  picman_value_descriptions_quark  (void) G_GNUC_CONST;
 
 
 /**
- * gimp_type_set_translation_domain:
+ * picman_type_set_translation_domain:
  * @type:   a #GType
  * @domain: a constant string that identifies a translation domain or %NULL
  *
@@ -52,39 +52,39 @@ static GQuark  gimp_value_descriptions_quark  (void) G_GNUC_CONST;
  * to use it when registering a #G_TYPE_ENUM with translatable value
  * names.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_type_set_translation_domain (GType        type,
+picman_type_set_translation_domain (GType        type,
                                   const gchar *domain)
 {
   g_type_set_qdata (type,
-                    gimp_translation_domain_quark (), (gpointer) domain);
+                    picman_translation_domain_quark (), (gpointer) domain);
 }
 
 /**
- * gimp_type_get_translation_domain:
+ * picman_type_get_translation_domain:
  * @type: a #GType
  *
  * Retrieves the gettext translation domain identifier that has been
- * previously set using gimp_type_set_translation_domain(). You should
- * not need to use this function directly, use gimp_enum_get_value()
- * or gimp_enum_value_get_desc() instead.
+ * previously set using picman_type_set_translation_domain(). You should
+ * not need to use this function directly, use picman_enum_get_value()
+ * or picman_enum_value_get_desc() instead.
  *
  * Return value: the translation domain associated with @type
  *               or %NULL if no domain was set
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 const gchar *
-gimp_type_get_translation_domain (GType type)
+picman_type_get_translation_domain (GType type)
 {
   return (const gchar *) g_type_get_qdata (type,
-                                           gimp_translation_domain_quark ());
+                                           picman_translation_domain_quark ());
 }
 
 /**
- * gimp_type_set_translation_context:
+ * picman_type_set_translation_context:
  * @type:    a #GType
  * @context: a constant string that identifies a translation context or %NULL
  *
@@ -92,153 +92,153 @@ gimp_type_get_translation_domain (GType type)
  * to a #GType. The only purpose of this function is to use it when
  * registering a #G_TYPE_ENUM with translatable value names.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 void
-gimp_type_set_translation_context (GType        type,
+picman_type_set_translation_context (GType        type,
                                    const gchar *context)
 {
   g_type_set_qdata (type,
-                    gimp_translation_context_quark (), (gpointer) context);
+                    picman_translation_context_quark (), (gpointer) context);
 }
 
 /**
- * gimp_type_get_translation_context:
+ * picman_type_get_translation_context:
  * @type: a #GType
  *
  * Retrieves the translation context that has been previously set
- * using gimp_type_set_translation_context(). You should not need to
- * use this function directly, use gimp_enum_get_value() or
- * gimp_enum_value_get_desc() instead.
+ * using picman_type_set_translation_context(). You should not need to
+ * use this function directly, use picman_enum_get_value() or
+ * picman_enum_value_get_desc() instead.
  *
  * Return value: the translation context associated with @type
  *               or %NULL if no context was set
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 const gchar *
-gimp_type_get_translation_context (GType type)
+picman_type_get_translation_context (GType type)
 {
   return (const gchar *) g_type_get_qdata (type,
-                                           gimp_translation_context_quark ());
+                                           picman_translation_context_quark ());
 }
 
 /**
- * gimp_enum_set_value_descriptions:
+ * picman_enum_set_value_descriptions:
  * @enum_type:    a #GType
- * @descriptions: a %NULL terminated constant static array of #GimpEnumDesc
+ * @descriptions: a %NULL terminated constant static array of #PicmanEnumDesc
  *
  * Sets the array of human readable and translatable descriptions
  * and help texts for enum values.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_enum_set_value_descriptions (GType               enum_type,
-                                  const GimpEnumDesc *descriptions)
+picman_enum_set_value_descriptions (GType               enum_type,
+                                  const PicmanEnumDesc *descriptions)
 {
   g_return_if_fail (g_type_is_a (enum_type, G_TYPE_ENUM));
   g_return_if_fail (descriptions != NULL);
 
   g_type_set_qdata (enum_type,
-                    gimp_value_descriptions_quark (),
+                    picman_value_descriptions_quark (),
                     (gpointer) descriptions);
 }
 
 /**
- * gimp_enum_get_value_descriptions:
+ * picman_enum_get_value_descriptions:
  * @enum_type: a #GType
  *
  * Retreives the array of human readable and translatable descriptions
  * and help texts for enum values.
  *
- * Returns: a %NULL terminated constant array of #GimpEnumDesc
+ * Returns: a %NULL terminated constant array of #PicmanEnumDesc
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
-const GimpEnumDesc *
-gimp_enum_get_value_descriptions (GType enum_type)
+const PicmanEnumDesc *
+picman_enum_get_value_descriptions (GType enum_type)
 {
   g_return_val_if_fail (g_type_is_a (enum_type, G_TYPE_ENUM), NULL);
 
-  return (const GimpEnumDesc *)
-    g_type_get_qdata (enum_type, gimp_value_descriptions_quark ());
+  return (const PicmanEnumDesc *)
+    g_type_get_qdata (enum_type, picman_value_descriptions_quark ());
 }
 
 /**
- * gimp_flags_set_value_descriptions:
+ * picman_flags_set_value_descriptions:
  * @flags_type:   a #GType
- * @descriptions: a %NULL terminated constant static array of #GimpFlagsDesc
+ * @descriptions: a %NULL terminated constant static array of #PicmanFlagsDesc
  *
  * Sets the array of human readable and translatable descriptions
  * and help texts for flags values.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_flags_set_value_descriptions (GType                flags_type,
-                                   const GimpFlagsDesc *descriptions)
+picman_flags_set_value_descriptions (GType                flags_type,
+                                   const PicmanFlagsDesc *descriptions)
 {
   g_return_if_fail (g_type_is_a (flags_type, G_TYPE_FLAGS));
   g_return_if_fail (descriptions != NULL);
 
   g_type_set_qdata (flags_type,
-                    gimp_value_descriptions_quark (),
+                    picman_value_descriptions_quark (),
                     (gpointer) descriptions);
 }
 
 /**
- * gimp_flags_get_value_descriptions:
+ * picman_flags_get_value_descriptions:
  * @flags_type: a #GType
  *
  * Retreives the array of human readable and translatable descriptions
  * and help texts for flags values.
  *
- * Returns: a %NULL terminated constant array of #GimpFlagsDesc
+ * Returns: a %NULL terminated constant array of #PicmanFlagsDesc
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
-const GimpFlagsDesc *
-gimp_flags_get_value_descriptions (GType flags_type)
+const PicmanFlagsDesc *
+picman_flags_get_value_descriptions (GType flags_type)
 {
   g_return_val_if_fail (g_type_is_a (flags_type, G_TYPE_FLAGS), NULL);
 
-  return (const GimpFlagsDesc *)
-    g_type_get_qdata (flags_type, gimp_value_descriptions_quark ());
+  return (const PicmanFlagsDesc *)
+    g_type_get_qdata (flags_type, picman_value_descriptions_quark ());
 }
 
 
 /*  private functions  */
 
 static GQuark
-gimp_translation_domain_quark (void)
+picman_translation_domain_quark (void)
 {
   static GQuark quark = 0;
 
   if (! quark)
-    quark = g_quark_from_static_string ("gimp-translation-domain-quark");
+    quark = g_quark_from_static_string ("picman-translation-domain-quark");
 
   return quark;
 }
 
 static GQuark
-gimp_translation_context_quark (void)
+picman_translation_context_quark (void)
 {
   static GQuark quark = 0;
 
   if (! quark)
-    quark = g_quark_from_static_string ("gimp-translation-context-quark");
+    quark = g_quark_from_static_string ("picman-translation-context-quark");
 
   return quark;
 }
 
 static GQuark
-gimp_value_descriptions_quark (void)
+picman_value_descriptions_quark (void)
 {
   static GQuark quark = 0;
 
   if (! quark)
-    quark = g_quark_from_static_string ("gimp-value-descriptions-quark");
+    quark = g_quark_from_static_string ("picman-value-descriptions-quark");
 
   return quark;
 }

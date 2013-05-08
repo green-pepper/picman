@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp_brush_generated module Copyright 1998 Jay Cox <jaycox@earthlink.net>
+ * picman_brush_generated module Copyright 1998 Jay Cox <jaycox@earthlink.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,44 +30,44 @@
 #include <gegl.h>
 #include <glib/gstdio.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
-#include "gimpbrushgenerated.h"
-#include "gimpbrushgenerated-save.h"
+#include "picmanbrushgenerated.h"
+#include "picmanbrushgenerated-save.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 gboolean
-gimp_brush_generated_save (GimpData  *data,
+picman_brush_generated_save (PicmanData  *data,
                            GError   **error)
 {
-  GimpBrushGenerated *brush = GIMP_BRUSH_GENERATED (data);
-  const gchar        *name  = gimp_object_get_name (data);
+  PicmanBrushGenerated *brush = PICMAN_BRUSH_GENERATED (data);
+  const gchar        *name  = picman_object_get_name (data);
   FILE               *file;
   gchar               buf[G_ASCII_DTOSTR_BUF_SIZE];
   gboolean            have_shape = FALSE;
 
   g_return_val_if_fail (name != NULL && *name != '\0', FALSE);
 
-  file = g_fopen (gimp_data_get_filename (data), "wb");
+  file = g_fopen (picman_data_get_filename (data), "wb");
 
   if (! file)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (gimp_data_get_filename (data)),
+                   picman_filename_to_utf8 (picman_data_get_filename (data)),
                    g_strerror (errno));
       return FALSE;
     }
 
   /* write magic header */
-  fprintf (file, "GIMP-VBR\n");
+  fprintf (file, "PICMAN-VBR\n");
 
   /* write version */
-  if (brush->shape != GIMP_BRUSH_GENERATED_CIRCLE || brush->spikes > 2)
+  if (brush->shape != PICMAN_BRUSH_GENERATED_CIRCLE || brush->spikes > 2)
     {
       fprintf (file, "1.5\n");
       have_shape = TRUE;
@@ -85,7 +85,7 @@ gimp_brush_generated_save (GimpData  *data,
       GEnumClass *enum_class;
       GEnumValue *shape_val;
 
-      enum_class = g_type_class_peek (GIMP_TYPE_BRUSH_GENERATED_SHAPE);
+      enum_class = g_type_class_peek (PICMAN_TYPE_BRUSH_GENERATED_SHAPE);
 
       /* write shape */
       shape_val = g_enum_get_value (enum_class, brush->shape);
@@ -95,7 +95,7 @@ gimp_brush_generated_save (GimpData  *data,
   /* write brush spacing */
   fprintf (file, "%s\n",
            g_ascii_formatd (buf, G_ASCII_DTOSTR_BUF_SIZE, "%f",
-                            gimp_brush_get_spacing (GIMP_BRUSH (brush))));
+                            picman_brush_get_spacing (PICMAN_BRUSH (brush))));
 
   /* write brush radius */
   fprintf (file, "%s\n",

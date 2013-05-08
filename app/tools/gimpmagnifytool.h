@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,46 +15,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_MAGNIFY_TOOL_H__
-#define __GIMP_MAGNIFY_TOOL_H__
+#ifndef __PICMAN_MAGNIFY_TOOL_H__
+#define __PICMAN_MAGNIFY_TOOL_H__
 
 
-#include "gimpdrawtool.h"
+#include "picmandrawtool.h"
 
 
-#define GIMP_TYPE_MAGNIFY_TOOL            (gimp_magnify_tool_get_type ())
-#define GIMP_MAGNIFY_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_MAGNIFY_TOOL, GimpMagnifyTool))
-#define GIMP_MAGNIFY_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_MAGNIFY_TOOL, GimpMagnifyToolClass))
-#define GIMP_IS_MAGNIFY_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_MAGNIFY_TOOL))
-#define GIMP_IS_MAGNIFY_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_MAGNIFY_TOOL))
-#define GIMP_MAGNIFY_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_MAGNIFY_TOOL, GimpMagnifyToolClass))
+#define PICMAN_TYPE_MAGNIFY_TOOL            (picman_magnify_tool_get_type ())
+#define PICMAN_MAGNIFY_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_MAGNIFY_TOOL, PicmanMagnifyTool))
+#define PICMAN_MAGNIFY_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_MAGNIFY_TOOL, PicmanMagnifyToolClass))
+#define PICMAN_IS_MAGNIFY_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_MAGNIFY_TOOL))
+#define PICMAN_IS_MAGNIFY_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_MAGNIFY_TOOL))
+#define PICMAN_MAGNIFY_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_MAGNIFY_TOOL, PicmanMagnifyToolClass))
 
-#define GIMP_MAGNIFY_TOOL_GET_OPTIONS(t)  (GIMP_MAGNIFY_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_MAGNIFY_TOOL_GET_OPTIONS(t)  (PICMAN_MAGNIFY_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpMagnifyTool      GimpMagnifyTool;
-typedef struct _GimpMagnifyToolClass GimpMagnifyToolClass;
+typedef struct _PicmanMagnifyTool      PicmanMagnifyTool;
+typedef struct _PicmanMagnifyToolClass PicmanMagnifyToolClass;
 
-struct _GimpMagnifyTool
+struct _PicmanMagnifyTool
 {
-  GimpDrawTool    parent_instance;
+  PicmanDrawTool    parent_instance;
 
   gdouble         x, y;  /*  upper left hand coordinate  */
   gdouble         w, h;  /*  width and height            */
 
-  GimpCanvasItem *rectangle;
+  PicmanCanvasItem *rectangle;
 };
 
-struct _GimpMagnifyToolClass
+struct _PicmanMagnifyToolClass
 {
-  GimpDrawToolClass  parent_class;
+  PicmanDrawToolClass  parent_class;
 };
 
 
-void    gimp_magnify_tool_register (GimpToolRegisterCallback  callback,
+void    picman_magnify_tool_register (PicmanToolRegisterCallback  callback,
                                     gpointer                  data);
 
-GType   gimp_magnify_tool_get_type (void) G_GNUC_CONST;
+GType   picman_magnify_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_MAGNIFY_TOOL_H__  */
+#endif  /*  __PICMAN_MAGNIFY_TOOL_H__  */

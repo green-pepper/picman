@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpmath.h
+ * picmanmath.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_MATH_H__
-#define __GIMP_MATH_H__
+#ifndef __PICMAN_MATH_H__
+#define __PICMAN_MATH_H__
 
 
 #include <math.h>
@@ -32,26 +32,26 @@
 #include <float.h>
 #endif
 
-#define __GIMP_MATH_H_INSIDE__
+#define __PICMAN_MATH_H_INSIDE__
 
-#include <libgimpmath/gimpmathtypes.h>
+#include <libpicmanmath/picmanmathtypes.h>
 
-#include <libgimpmath/gimpmatrix.h>
-#include <libgimpmath/gimpmd5.h>
-#include <libgimpmath/gimpvector.h>
+#include <libpicmanmath/picmanmatrix.h>
+#include <libpicmanmath/picmanmd5.h>
+#include <libpicmanmath/picmanvector.h>
 
-#undef __GIMP_MATH_H_INSIDE__
+#undef __PICMAN_MATH_H_INSIDE__
 
 
 G_BEGIN_DECLS
 
 
 /**
- * SECTION: gimpmath
- * @title: GimpMath
+ * SECTION: picmanmath
+ * @title: PicmanMath
  * @short_description: Mathematical definitions and macros.
  *
- * Mathematical definitions and macros for use both by the GIMP
+ * Mathematical definitions and macros for use both by the PICMAN
  * application and plug-ins. These macros should be used rather than
  * the ones from &lt;math.h&gt; for enhanced portability.
  **/
@@ -112,22 +112,22 @@ G_BEGIN_DECLS
 #define CLAMP0255(a)  CLAMP(a,0,255)
 
 /**
- * gimp_deg_to_rad:
+ * picman_deg_to_rad:
  * @angle: the angle to be converted.
  *
  * This macro converts its argument @angle from degree to radian.
  **/
-#define gimp_deg_to_rad(angle) ((angle) * (2.0 * G_PI) / 360.0)
+#define picman_deg_to_rad(angle) ((angle) * (2.0 * G_PI) / 360.0)
 
 /**
- * gimp_rad_to_deg:
+ * picman_rad_to_deg:
  * @angle: the angle to be converted.
  *
  * This macro converts its argument @angle from radian to degree.
  **/
-#define gimp_rad_to_deg(angle) ((angle) * 360.0 / (2.0 * G_PI))
+#define picman_rad_to_deg(angle) ((angle) * 360.0 / (2.0 * G_PI))
 
 
 G_END_DECLS
 
-#endif /* __GIMP_MATH_H__ */
+#endif /* __PICMAN_MATH_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,22 +20,22 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpitem.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanitem.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpsizebox.h"
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmansizebox.h"
+#include "widgets/picmanviewabledialog.h"
 
 #include "scale-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define RESPONSE_RESET 1
@@ -43,12 +43,12 @@
 
 typedef struct
 {
-  GimpViewable          *viewable;
-  GimpUnit               unit;
-  GimpInterpolationType  interpolation;
+  PicmanViewable          *viewable;
+  PicmanUnit               unit;
+  PicmanInterpolationType  interpolation;
   GtkWidget             *box;
   GtkWidget             *combo;
-  GimpScaleCallback      callback;
+  PicmanScaleCallback      callback;
   gpointer               user_data;
 } ScaleDialog;
 
@@ -61,16 +61,16 @@ static void   scale_dialog_free     (ScaleDialog *private);
 
 
 GtkWidget *
-scale_dialog_new (GimpViewable          *viewable,
-                  GimpContext           *context,
+scale_dialog_new (PicmanViewable          *viewable,
+                  PicmanContext           *context,
                   const gchar           *title,
                   const gchar           *role,
                   GtkWidget             *parent,
-                  GimpHelpFunc           help_func,
+                  PicmanHelpFunc           help_func,
                   const gchar           *help_id,
-                  GimpUnit               unit,
-                  GimpInterpolationType  interpolation,
-                  GimpScaleCallback      callback,
+                  PicmanUnit               unit,
+                  PicmanInterpolationType  interpolation,
+                  PicmanScaleCallback      callback,
                   gpointer               user_data)
 {
   GtkWidget   *dialog;
@@ -79,32 +79,32 @@ scale_dialog_new (GimpViewable          *viewable,
   GtkWidget   *frame;
   GtkWidget   *label;
   ScaleDialog *private;
-  GimpImage   *image = NULL;
+  PicmanImage   *image = NULL;
   const gchar *text  = NULL;
   gint         width, height;
   gdouble      xres, yres;
 
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (callback != NULL, NULL);
 
-  if (GIMP_IS_IMAGE (viewable))
+  if (PICMAN_IS_IMAGE (viewable))
     {
-      image = GIMP_IMAGE (viewable);
+      image = PICMAN_IMAGE (viewable);
 
-      width  = gimp_image_get_width (image);
-      height = gimp_image_get_height (image);
+      width  = picman_image_get_width (image);
+      height = picman_image_get_height (image);
 
       text = _("Image Size");
     }
-  else if (GIMP_IS_ITEM (viewable))
+  else if (PICMAN_IS_ITEM (viewable))
     {
-      GimpItem *item = GIMP_ITEM (viewable);
+      PicmanItem *item = PICMAN_ITEM (viewable);
 
-      image = gimp_item_get_image (item);
+      image = picman_item_get_image (item);
 
-      width  = gimp_item_get_width  (item);
-      height = gimp_item_get_height (item);
+      width  = picman_item_get_width  (item);
+      height = picman_item_get_height (item);
 
       text = _("Layer Size");
     }
@@ -113,14 +113,14 @@ scale_dialog_new (GimpViewable          *viewable,
       g_return_val_if_reached (NULL);
     }
 
-  dialog = gimp_viewable_dialog_new (viewable, context,
-                                     title, role, GIMP_STOCK_SCALE, title,
+  dialog = picman_viewable_dialog_new (viewable, context,
+                                     title, role, PICMAN_STOCK_SCALE, title,
                                      parent,
                                      help_func, help_id,
 
-                                     GIMP_STOCK_RESET, RESPONSE_RESET,
+                                     PICMAN_STOCK_RESET, RESPONSE_RESET,
                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                     GIMP_STOCK_SCALE, GTK_RESPONSE_OK,
+                                     PICMAN_STOCK_SCALE, GTK_RESPONSE_OK,
 
                                      NULL);
 
@@ -143,17 +143,17 @@ scale_dialog_new (GimpViewable          *viewable,
   private->callback      = callback;
   private->user_data     = user_data;
 
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
 
-  private->box = g_object_new (GIMP_TYPE_SIZE_BOX,
+  private->box = g_object_new (PICMAN_TYPE_SIZE_BOX,
                                "width",           width,
                                "height",          height,
                                "unit",            unit,
                                "xresolution",     xres,
                                "yresolution",     yres,
-                               "resolution-unit", gimp_image_get_unit (image),
+                               "resolution-unit", picman_image_get_unit (image),
                                "keep-aspect",     TRUE,
-                               "edit-resolution", GIMP_IS_IMAGE (viewable),
+                               "edit-resolution", PICMAN_IS_IMAGE (viewable),
                                NULL);
 
   g_signal_connect (dialog, "response",
@@ -166,14 +166,14 @@ scale_dialog_new (GimpViewable          *viewable,
                       vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  frame = gimp_frame_new (text);
+  frame = picman_frame_new (text);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
   gtk_container_add (GTK_CONTAINER (frame), private->box);
   gtk_widget_show (private->box);
 
-  frame = gimp_frame_new (_("Quality"));
+  frame = picman_frame_new (_("Quality"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -189,21 +189,21 @@ scale_dialog_new (GimpViewable          *viewable,
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  gtk_size_group_add_widget (GIMP_SIZE_BOX (private->box)->size_group, label);
+  gtk_size_group_add_widget (PICMAN_SIZE_BOX (private->box)->size_group, label);
 
-  private->combo = gimp_enum_combo_box_new (GIMP_TYPE_INTERPOLATION_TYPE);
+  private->combo = picman_enum_combo_box_new (PICMAN_TYPE_INTERPOLATION_TYPE);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), private->combo);
   gtk_box_pack_start (GTK_BOX (hbox), private->combo, TRUE, TRUE, 0);
   gtk_widget_show (private->combo);
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->combo),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (private->combo),
                                  private->interpolation);
 
-  if (gimp_image_get_base_type (image) == GIMP_INDEXED)
+  if (picman_image_get_base_type (image) == PICMAN_INDEXED)
     {
-      GtkWidget *box = gimp_message_box_new (GIMP_STOCK_INFO);
+      GtkWidget *box = picman_message_box_new (PICMAN_STOCK_INFO);
 
-      gimp_message_box_set_text (GIMP_MESSAGE_BOX (box),
+      picman_message_box_set_text (PICMAN_MESSAGE_BOX (box),
                                  _("Indexed color layers are always scaled "
                                    "without interpolation. The chosen "
                                    "interpolation type will affect channels "
@@ -222,9 +222,9 @@ scale_dialog_response (GtkWidget   *dialog,
                        gint         response_id,
                        ScaleDialog *private)
 {
-  GimpUnit  unit          = private->unit;
+  PicmanUnit  unit          = private->unit;
   gint      interpolation = private->interpolation;
-  GimpUnit  resolution_unit;
+  PicmanUnit  resolution_unit;
   gint      width, height;
   gdouble   xres, yres;
 
@@ -244,7 +244,7 @@ scale_dialog_response (GtkWidget   *dialog,
                     "resolution-unit", &resolution_unit,
                     NULL);
 
-      gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (private->combo),
+      picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (private->combo),
                                      &interpolation);
 
       private->callback (dialog,
@@ -263,32 +263,32 @@ scale_dialog_response (GtkWidget   *dialog,
 static void
 scale_dialog_reset (ScaleDialog *private)
 {
-  GimpImage *image;
+  PicmanImage *image;
   gint       width, height;
   gdouble    xres, yres;
 
-  if (GIMP_IS_IMAGE (private->viewable))
+  if (PICMAN_IS_IMAGE (private->viewable))
     {
-      image = GIMP_IMAGE (private->viewable);
+      image = PICMAN_IMAGE (private->viewable);
 
-      width  = gimp_image_get_width (image);
-      height = gimp_image_get_height (image);
+      width  = picman_image_get_width (image);
+      height = picman_image_get_height (image);
     }
-  else if (GIMP_IS_ITEM (private->viewable))
+  else if (PICMAN_IS_ITEM (private->viewable))
     {
-      GimpItem *item = GIMP_ITEM (private->viewable);
+      PicmanItem *item = PICMAN_ITEM (private->viewable);
 
-      image = gimp_item_get_image (item);
+      image = picman_item_get_image (item);
 
-      width  = gimp_item_get_width  (item);
-      height = gimp_item_get_height (item);
+      width  = picman_item_get_width  (item);
+      height = picman_item_get_height (item);
     }
   else
     {
       g_return_if_reached ();
     }
 
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
 
   g_object_set (private->box,
                 "keep-aspect",     FALSE,
@@ -304,10 +304,10 @@ scale_dialog_reset (ScaleDialog *private)
                 "keep-aspect",     TRUE,
                 "xresolution",     xres,
                 "yresolution",     yres,
-                "resolution-unit", gimp_image_get_unit (image),
+                "resolution-unit", picman_image_get_unit (image),
                 NULL);
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->combo),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (private->combo),
                                  private->interpolation);
 }
 

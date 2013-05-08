@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * test-single-window-mode.c
@@ -25,53 +25,53 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs/dialogs-types.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-scale.h"
-#include "display/gimpdisplayshell-transform.h"
-#include "display/gimpimagewindow.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-scale.h"
+#include "display/picmandisplayshell-transform.h"
+#include "display/picmanimagewindow.h"
 
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpdock.h"
-#include "widgets/gimpdockable.h"
-#include "widgets/gimpdockbook.h"
-#include "widgets/gimpdockcontainer.h"
-#include "widgets/gimpdocked.h"
-#include "widgets/gimpdockwindow.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpsessioninfo.h"
-#include "widgets/gimptoolbox.h"
-#include "widgets/gimptooloptionseditor.h"
-#include "widgets/gimpuimanager.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmandock.h"
+#include "widgets/picmandockable.h"
+#include "widgets/picmandockbook.h"
+#include "widgets/picmandockcontainer.h"
+#include "widgets/picmandocked.h"
+#include "widgets/picmandockwindow.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmansessioninfo.h"
+#include "widgets/picmantoolbox.h"
+#include "widgets/picmantooloptionseditor.h"
+#include "widgets/picmanuimanager.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "core/gimp.h"
-#include "core/gimpchannel.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
-#include "core/gimptoolinfo.h"
-#include "core/gimptooloptions.h"
+#include "core/picman.h"
+#include "core/picmanchannel.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
+#include "core/picmantoolinfo.h"
+#include "core/picmantooloptions.h"
 
 #include "tests.h"
 
-#include "gimp-app-test-utils.h"
+#include "picman-app-test-utils.h"
 
 
 #define ADD_TEST(function) \
-  g_test_add_data_func ("/gimp-single-window-mode/" #function, gimp, function);
+  g_test_add_data_func ("/picman-single-window-mode/" #function, picman, function);
 
 
 /* Put this in the code below when you want the test to pause so you
  * can do measurements of widgets on the screen for example
  */
-#define GIMP_PAUSE (g_usleep (20 * 1000 * 1000))
+#define PICMAN_PAUSE (g_usleep (20 * 1000 * 1000))
 
 
 /**
@@ -84,8 +84,8 @@
 static void
 new_dockable_not_in_new_window (gconstpointer data)
 {
-  Gimp              *gimp             = GIMP (data);
-  GimpDialogFactory *factory          = gimp_dialog_factory_get_singleton ();
+  Picman              *picman             = PICMAN (data);
+  PicmanDialogFactory *factory          = picman_dialog_factory_get_singleton ();
   gint               dialogs_before   = 0;
   gint               toplevels_before = 0;
   gint               dialogs_after    = 0;
@@ -93,10 +93,10 @@ new_dockable_not_in_new_window (gconstpointer data)
   GList             *dialogs;
   GList             *iter;
 
-  gimp_test_run_mainloop_until_idle ();
+  picman_test_run_mainloop_until_idle ();
 
   /* Count dialogs before we create the dockable */
-  dialogs        = gimp_dialog_factory_get_open_dialogs (factory);
+  dialogs        = picman_dialog_factory_get_open_dialogs (factory);
   dialogs_before = g_list_length (dialogs);
   for (iter = dialogs; iter; iter = g_list_next (iter))
     {
@@ -105,13 +105,13 @@ new_dockable_not_in_new_window (gconstpointer data)
     }
 
   /* Create a dockable */
-  gimp_ui_manager_activate_action (gimp_test_utils_get_ui_manager (gimp),
+  picman_ui_manager_activate_action (picman_test_utils_get_ui_manager (picman),
                                    "dialogs",
                                    "dialogs-undo-history");
-  gimp_test_run_mainloop_until_idle ();
+  picman_test_run_mainloop_until_idle ();
 
   /* Count dialogs after we created the dockable */
-  dialogs        = gimp_dialog_factory_get_open_dialogs (factory);
+  dialogs        = picman_dialog_factory_get_open_dialogs (factory);
   dialogs_after = g_list_length (dialogs);
   for (iter = dialogs; iter; iter = g_list_next (iter))
     {
@@ -127,20 +127,20 @@ new_dockable_not_in_new_window (gconstpointer data)
 
 int main(int argc, char **argv)
 {
-  Gimp  *gimp   = NULL;
+  Picman  *picman   = NULL;
   gint   result = -1;
 
-  gimp_test_bail_if_no_display ();
+  picman_test_bail_if_no_display ();
   gtk_test_init (&argc, &argv, NULL);
 
-  gimp_test_utils_set_gimp2_directory ("GIMP_TESTING_ABS_TOP_SRCDIR",
-                                       "app/tests/gimpdir");
-  gimp_test_utils_setup_menus_dir ();
+  picman_test_utils_set_picman2_directory ("PICMAN_TESTING_ABS_TOP_SRCDIR",
+                                       "app/tests/picmandir");
+  picman_test_utils_setup_menus_dir ();
 
-  /* Launch GIMP in single-window mode */
-  g_setenv ("GIMP_TESTING_SESSIONRC_NAME", "sessionrc-2-8-single-window", TRUE /*overwrite*/);
-  gimp = gimp_init_for_gui_testing (TRUE /*show_gui*/);
-  gimp_test_run_mainloop_until_idle ();
+  /* Launch PICMAN in single-window mode */
+  g_setenv ("PICMAN_TESTING_SESSIONRC_NAME", "sessionrc-2-8-single-window", TRUE /*overwrite*/);
+  picman = picman_init_for_gui_testing (TRUE /*show_gui*/);
+  picman_test_run_mainloop_until_idle ();
 
   ADD_TEST (new_dockable_not_in_new_window);
 
@@ -148,11 +148,11 @@ int main(int argc, char **argv)
   result = g_test_run ();
 
   /* Don't write files to the source dir */
-  gimp_test_utils_set_gimp2_directory ("GIMP_TESTING_ABS_TOP_BUILDDIR",
-                                       "app/tests/gimpdir-output");
+  picman_test_utils_set_picman2_directory ("PICMAN_TESTING_ABS_TOP_BUILDDIR",
+                                       "app/tests/picmandir-output");
 
   /* Exit properly so we don't break script-fu plug-in wire */
-  gimp_exit (gimp, TRUE);
+  picman_exit (picman, TRUE);
 
   return result;
 }

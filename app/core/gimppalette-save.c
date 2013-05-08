@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,49 +30,49 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <glib/gstdio.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "gimppalette.h"
-#include "gimppalette-save.h"
+#include "picmanpalette.h"
+#include "picmanpalette-save.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 gboolean
-gimp_palette_save (GimpData  *data,
+picman_palette_save (PicmanData  *data,
                    GError   **error)
 {
-  GimpPalette *palette = GIMP_PALETTE (data);
+  PicmanPalette *palette = PICMAN_PALETTE (data);
   GList       *list;
   FILE        *file;
 
-  file = g_fopen (gimp_data_get_filename (data), "wb");
+  file = g_fopen (picman_data_get_filename (data), "wb");
 
   if (! file)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (gimp_data_get_filename (data)),
+                   picman_filename_to_utf8 (picman_data_get_filename (data)),
                    g_strerror (errno));
       return FALSE;
     }
 
-  fprintf (file, "GIMP Palette\n");
-  fprintf (file, "Name: %s\n", gimp_object_get_name (palette));
-  fprintf (file, "Columns: %d\n#\n", CLAMP (gimp_palette_get_columns (palette),
+  fprintf (file, "PICMAN Palette\n");
+  fprintf (file, "Name: %s\n", picman_object_get_name (palette));
+  fprintf (file, "Columns: %d\n#\n", CLAMP (picman_palette_get_columns (palette),
                                             0, 256));
 
-  for (list = gimp_palette_get_colors (palette);
+  for (list = picman_palette_get_colors (palette);
        list;
        list = g_list_next (list))
     {
-      GimpPaletteEntry *entry = list->data;
+      PicmanPaletteEntry *entry = list->data;
       guchar            r, g, b;
 
-      gimp_rgb_get_uchar (&entry->color, &r, &g, &b);
+      picman_rgb_get_uchar (&entry->color, &r, &g, &b);
 
       fprintf (file, "%3d %3d %3d\t%s\n", r, g, b, entry->name);
     }

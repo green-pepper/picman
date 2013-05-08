@@ -1,9 +1,9 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorscale.c
- * Copyright (C) 2002-2010  Sven Neumann <sven@gimp.org>
- *                          Michael Natterer <mitch@gimp.org>
+ * picmancolorscale.c
+ * Copyright (C) 2002-2010  Sven Neumann <sven@picman.org>
+ *                          Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,18 +27,18 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpbase/gimpbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpcairo-utils.h"
-#include "gimpcolorscale.h"
+#include "picmancairo-utils.h"
+#include "picmancolorscale.h"
 
 
 /**
- * SECTION: gimpcolorscale
- * @title: GimpColorScale
+ * SECTION: picmancolorscale
+ * @title: PicmanColorScale
  * @short_description: Fancy colored sliders.
  *
  * Fancy colored sliders.
@@ -52,70 +52,70 @@ enum
 };
 
 
-static void     gimp_color_scale_finalize       (GObject         *object);
-static void     gimp_color_scale_get_property   (GObject         *object,
+static void     picman_color_scale_finalize       (GObject         *object);
+static void     picman_color_scale_get_property   (GObject         *object,
                                                  guint            property_id,
                                                  GValue          *value,
                                                  GParamSpec      *pspec);
-static void     gimp_color_scale_set_property   (GObject         *object,
+static void     picman_color_scale_set_property   (GObject         *object,
                                                  guint            property_id,
                                                  const GValue    *value,
                                                  GParamSpec      *pspec);
 
-static void     gimp_color_scale_size_allocate  (GtkWidget       *widget,
+static void     picman_color_scale_size_allocate  (GtkWidget       *widget,
                                                  GtkAllocation   *allocation);
-static void     gimp_color_scale_state_changed  (GtkWidget       *widget,
+static void     picman_color_scale_state_changed  (GtkWidget       *widget,
                                                  GtkStateType     previous_state);
-static gboolean gimp_color_scale_button_press   (GtkWidget       *widget,
+static gboolean picman_color_scale_button_press   (GtkWidget       *widget,
                                                  GdkEventButton  *event);
-static gboolean gimp_color_scale_button_release (GtkWidget       *widget,
+static gboolean picman_color_scale_button_release (GtkWidget       *widget,
                                                  GdkEventButton  *event);
-static gboolean gimp_color_scale_expose         (GtkWidget       *widget,
+static gboolean picman_color_scale_expose         (GtkWidget       *widget,
                                                  GdkEventExpose  *event);
 
-static void     gimp_color_scale_render         (GimpColorScale  *scale);
-static void     gimp_color_scale_render_alpha   (GimpColorScale  *scale);
-static void     gimp_color_scale_render_stipple (GimpColorScale  *scale);
+static void     picman_color_scale_render         (PicmanColorScale  *scale);
+static void     picman_color_scale_render_alpha   (PicmanColorScale  *scale);
+static void     picman_color_scale_render_stipple (PicmanColorScale  *scale);
 
 
-G_DEFINE_TYPE (GimpColorScale, gimp_color_scale, GTK_TYPE_SCALE)
+G_DEFINE_TYPE (PicmanColorScale, picman_color_scale, GTK_TYPE_SCALE)
 
-#define parent_class gimp_color_scale_parent_class
+#define parent_class picman_color_scale_parent_class
 
 
 static void
-gimp_color_scale_class_init (GimpColorScaleClass *klass)
+picman_color_scale_class_init (PicmanColorScaleClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize             = gimp_color_scale_finalize;
-  object_class->get_property         = gimp_color_scale_get_property;
-  object_class->set_property         = gimp_color_scale_set_property;
+  object_class->finalize             = picman_color_scale_finalize;
+  object_class->get_property         = picman_color_scale_get_property;
+  object_class->set_property         = picman_color_scale_set_property;
 
-  widget_class->size_allocate        = gimp_color_scale_size_allocate;
-  widget_class->state_changed        = gimp_color_scale_state_changed;
-  widget_class->button_press_event   = gimp_color_scale_button_press;
-  widget_class->button_release_event = gimp_color_scale_button_release;
-  widget_class->expose_event         = gimp_color_scale_expose;
+  widget_class->size_allocate        = picman_color_scale_size_allocate;
+  widget_class->state_changed        = picman_color_scale_state_changed;
+  widget_class->button_press_event   = picman_color_scale_button_press;
+  widget_class->button_release_event = picman_color_scale_button_release;
+  widget_class->expose_event         = picman_color_scale_expose;
 
   /**
-   * GimpColorScale:channel:
+   * PicmanColorScale:channel:
    *
    * The channel which is edited by the color scale.
    *
-   * Since: GIMP 2.8
+   * Since: PICMAN 2.8
    */
   g_object_class_install_property (object_class, PROP_CHANNEL,
                                    g_param_spec_enum ("channel", NULL, NULL,
-                                                      GIMP_TYPE_COLOR_SELECTOR_CHANNEL,
-                                                      GIMP_COLOR_SELECTOR_VALUE,
-                                                      GIMP_PARAM_READWRITE |
+                                                      PICMAN_TYPE_COLOR_SELECTOR_CHANNEL,
+                                                      PICMAN_COLOR_SELECTOR_VALUE,
+                                                      PICMAN_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_color_scale_init (GimpColorScale *scale)
+picman_color_scale_init (PicmanColorScale *scale)
 {
   GtkRange *range = GTK_RANGE (scale);
 
@@ -124,20 +124,20 @@ gimp_color_scale_init (GimpColorScale *scale)
 
   gtk_scale_set_draw_value (GTK_SCALE (scale), FALSE);
 
-  scale->channel      = GIMP_COLOR_SELECTOR_VALUE;
+  scale->channel      = PICMAN_COLOR_SELECTOR_VALUE;
   scale->needs_render = TRUE;
 
   gtk_orientable_set_orientation (GTK_ORIENTABLE (range),
                                   GTK_ORIENTATION_HORIZONTAL);
 
-  gimp_rgba_set (&scale->rgb, 0.0, 0.0, 0.0, 1.0);
-  gimp_rgb_to_hsv (&scale->rgb, &scale->hsv);
+  picman_rgba_set (&scale->rgb, 0.0, 0.0, 0.0, 1.0);
+  picman_rgb_to_hsv (&scale->rgb, &scale->hsv);
 }
 
 static void
-gimp_color_scale_finalize (GObject *object)
+picman_color_scale_finalize (GObject *object)
 {
-  GimpColorScale *scale = GIMP_COLOR_SCALE (object);
+  PicmanColorScale *scale = PICMAN_COLOR_SCALE (object);
 
   if (scale->buf)
     {
@@ -152,12 +152,12 @@ gimp_color_scale_finalize (GObject *object)
 }
 
 static void
-gimp_color_scale_get_property (GObject    *object,
+picman_color_scale_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpColorScale *scale = GIMP_COLOR_SCALE (object);
+  PicmanColorScale *scale = PICMAN_COLOR_SCALE (object);
 
   switch (property_id)
     {
@@ -172,17 +172,17 @@ gimp_color_scale_get_property (GObject    *object,
 }
 
 static void
-gimp_color_scale_set_property (GObject      *object,
+picman_color_scale_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpColorScale *scale = GIMP_COLOR_SCALE (object);
+  PicmanColorScale *scale = PICMAN_COLOR_SCALE (object);
 
   switch (property_id)
     {
     case PROP_CHANNEL:
-      gimp_color_scale_set_channel (scale, g_value_get_enum (value));
+      picman_color_scale_set_channel (scale, g_value_get_enum (value));
       break;
 
     default:
@@ -192,10 +192,10 @@ gimp_color_scale_set_property (GObject      *object,
 }
 
 static void
-gimp_color_scale_size_allocate (GtkWidget     *widget,
+picman_color_scale_size_allocate (GtkWidget     *widget,
                                 GtkAllocation *allocation)
 {
-  GimpColorScale *scale = GIMP_COLOR_SCALE (widget);
+  PicmanColorScale *scale = PICMAN_COLOR_SCALE (widget);
   GtkRange       *range = GTK_RANGE (widget);
   GdkRectangle    range_rect;
   gint            focus = 0;
@@ -258,13 +258,13 @@ gimp_color_scale_size_allocate (GtkWidget     *widget,
 }
 
 static void
-gimp_color_scale_state_changed (GtkWidget    *widget,
+picman_color_scale_state_changed (GtkWidget    *widget,
                                 GtkStateType  previous_state)
 {
   if (gtk_widget_get_state (widget) == GTK_STATE_INSENSITIVE ||
       previous_state == GTK_STATE_INSENSITIVE)
     {
-      GIMP_COLOR_SCALE (widget)->needs_render = TRUE;
+      PICMAN_COLOR_SCALE (widget)->needs_render = TRUE;
     }
 
   if (GTK_WIDGET_CLASS (parent_class)->state_changed)
@@ -272,7 +272,7 @@ gimp_color_scale_state_changed (GtkWidget    *widget,
 }
 
 static gboolean
-gimp_color_scale_button_press (GtkWidget      *widget,
+picman_color_scale_button_press (GtkWidget      *widget,
                                GdkEventButton *event)
 {
   if (event->button == 1)
@@ -295,7 +295,7 @@ gimp_color_scale_button_press (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_color_scale_button_release (GtkWidget      *widget,
+picman_color_scale_button_release (GtkWidget      *widget,
                                  GdkEventButton *event)
 {
   if (event->button == 1)
@@ -318,10 +318,10 @@ gimp_color_scale_button_release (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_color_scale_expose (GtkWidget      *widget,
+picman_color_scale_expose (GtkWidget      *widget,
                          GdkEventExpose *event)
 {
-  GimpColorScale  *scale     = GIMP_COLOR_SCALE (widget);
+  PicmanColorScale  *scale     = PICMAN_COLOR_SCALE (widget);
   GtkRange        *range     = GTK_RANGE (widget);
   GtkStyle        *style     = gtk_widget_get_style (widget);
   GdkWindow       *window    = gtk_widget_get_window (widget);
@@ -375,10 +375,10 @@ gimp_color_scale_expose (GtkWidget      *widget,
 
   if (scale->needs_render)
     {
-      gimp_color_scale_render (scale);
+      picman_color_scale_render (scale);
 
       if (! sensitive)
-        gimp_color_scale_render_stipple (scale);
+        picman_color_scale_render_stipple (scale);
 
       scale->needs_render = FALSE;
     }
@@ -500,19 +500,19 @@ gimp_color_scale_expose (GtkWidget      *widget,
 }
 
 /**
- * gimp_color_scale_new:
+ * picman_color_scale_new:
  * @orientation: the scale's orientation (horizontal or vertical)
  * @channel: the scale's color channel
  *
- * Creates a new #GimpColorScale widget.
+ * Creates a new #PicmanColorScale widget.
  *
- * Return value: a new #GimpColorScale widget
+ * Return value: a new #PicmanColorScale widget
  **/
 GtkWidget *
-gimp_color_scale_new (GtkOrientation            orientation,
-                      GimpColorSelectorChannel  channel)
+picman_color_scale_new (GtkOrientation            orientation,
+                      PicmanColorSelectorChannel  channel)
 {
-  GimpColorScale *scale = g_object_new (GIMP_TYPE_COLOR_SCALE,
+  PicmanColorScale *scale = g_object_new (PICMAN_TYPE_COLOR_SCALE,
                                         "orientation", orientation,
                                         "channel",     channel,
                                         NULL);
@@ -524,17 +524,17 @@ gimp_color_scale_new (GtkOrientation            orientation,
 }
 
 /**
- * gimp_color_scale_set_channel:
- * @scale: a #GimpColorScale widget
+ * picman_color_scale_set_channel:
+ * @scale: a #PicmanColorScale widget
  * @channel: the new color channel
  *
  * Changes the color channel displayed by the @scale.
  **/
 void
-gimp_color_scale_set_channel (GimpColorScale           *scale,
-                              GimpColorSelectorChannel  channel)
+picman_color_scale_set_channel (PicmanColorScale           *scale,
+                              PicmanColorSelectorChannel  channel)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SCALE (scale));
+  g_return_if_fail (PICMAN_IS_COLOR_SCALE (scale));
 
   if (channel != scale->channel)
     {
@@ -548,19 +548,19 @@ gimp_color_scale_set_channel (GimpColorScale           *scale,
 }
 
 /**
- * gimp_color_scale_set_color:
- * @scale: a #GimpColorScale widget
- * @rgb: the new color as #GimpRGB
- * @hsv: the new color as #GimpHSV
+ * picman_color_scale_set_color:
+ * @scale: a #PicmanColorScale widget
+ * @rgb: the new color as #PicmanRGB
+ * @hsv: the new color as #PicmanHSV
  *
  * Changes the color value of the @scale.
  **/
 void
-gimp_color_scale_set_color (GimpColorScale *scale,
-                            const GimpRGB  *rgb,
-                            const GimpHSV  *hsv)
+picman_color_scale_set_color (PicmanColorScale *scale,
+                            const PicmanRGB  *rgb,
+                            const PicmanHSV  *hsv)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SCALE (scale));
+  g_return_if_fail (PICMAN_IS_COLOR_SCALE (scale));
   g_return_if_fail (rgb != NULL);
   g_return_if_fail (hsv != NULL);
 
@@ -595,11 +595,11 @@ should_invert (GtkRange *range)
 }
 
 static void
-gimp_color_scale_render (GimpColorScale *scale)
+picman_color_scale_render (PicmanColorScale *scale)
 {
   GtkRange *range = GTK_RANGE (scale);
-  GimpRGB   rgb;
-  GimpHSV   hsv;
+  PicmanRGB   rgb;
+  PicmanHSV   hsv;
   guint     x, y;
   gdouble  *channel_value = NULL; /* shut up compiler */
   gboolean  to_rgb        = FALSE;
@@ -610,9 +610,9 @@ gimp_color_scale_render (GimpColorScale *scale)
   if ((buf = scale->buf) == NULL)
     return;
 
-  if (scale->channel == GIMP_COLOR_SELECTOR_ALPHA)
+  if (scale->channel == PICMAN_COLOR_SELECTOR_ALPHA)
     {
-      gimp_color_scale_render_alpha (scale);
+      picman_color_scale_render_alpha (scale);
       return;
     }
 
@@ -621,20 +621,20 @@ gimp_color_scale_render (GimpColorScale *scale)
 
   switch (scale->channel)
     {
-    case GIMP_COLOR_SELECTOR_HUE:        channel_value = &hsv.h; break;
-    case GIMP_COLOR_SELECTOR_SATURATION: channel_value = &hsv.s; break;
-    case GIMP_COLOR_SELECTOR_VALUE:      channel_value = &hsv.v; break;
-    case GIMP_COLOR_SELECTOR_RED:        channel_value = &rgb.r; break;
-    case GIMP_COLOR_SELECTOR_GREEN:      channel_value = &rgb.g; break;
-    case GIMP_COLOR_SELECTOR_BLUE:       channel_value = &rgb.b; break;
-    case GIMP_COLOR_SELECTOR_ALPHA:      channel_value = &rgb.a; break;
+    case PICMAN_COLOR_SELECTOR_HUE:        channel_value = &hsv.h; break;
+    case PICMAN_COLOR_SELECTOR_SATURATION: channel_value = &hsv.s; break;
+    case PICMAN_COLOR_SELECTOR_VALUE:      channel_value = &hsv.v; break;
+    case PICMAN_COLOR_SELECTOR_RED:        channel_value = &rgb.r; break;
+    case PICMAN_COLOR_SELECTOR_GREEN:      channel_value = &rgb.g; break;
+    case PICMAN_COLOR_SELECTOR_BLUE:       channel_value = &rgb.b; break;
+    case PICMAN_COLOR_SELECTOR_ALPHA:      channel_value = &rgb.a; break;
     }
 
   switch (scale->channel)
     {
-    case GIMP_COLOR_SELECTOR_HUE:
-    case GIMP_COLOR_SELECTOR_SATURATION:
-    case GIMP_COLOR_SELECTOR_VALUE:
+    case PICMAN_COLOR_SELECTOR_HUE:
+    case PICMAN_COLOR_SELECTOR_SATURATION:
+    case PICMAN_COLOR_SELECTOR_VALUE:
       to_rgb = TRUE;
       break;
 
@@ -658,11 +658,11 @@ gimp_color_scale_render (GimpColorScale *scale)
           *channel_value = value;
 
           if (to_rgb)
-            gimp_hsv_to_rgb (&hsv, &rgb);
+            picman_hsv_to_rgb (&hsv, &rgb);
 
-          gimp_rgb_get_uchar (&rgb, &r, &g, &b);
+          picman_rgb_get_uchar (&rgb, &r, &g, &b);
 
-          GIMP_CAIRO_RGB24_SET_PIXEL (d, r, g, b);
+          PICMAN_CAIRO_RGB24_SET_PIXEL (d, r, g, b);
         }
 
       d = buf + scale->rowstride;
@@ -685,13 +685,13 @@ gimp_color_scale_render (GimpColorScale *scale)
           *channel_value = value;
 
           if (to_rgb)
-            gimp_hsv_to_rgb (&hsv, &rgb);
+            picman_hsv_to_rgb (&hsv, &rgb);
 
-          gimp_rgb_get_uchar (&rgb, &r, &g, &b);
+          picman_rgb_get_uchar (&rgb, &r, &g, &b);
 
           for (x = 0, d = buf; x < scale->width; x++, d += 4)
             {
-              GIMP_CAIRO_RGB24_SET_PIXEL (d, r, g, b);
+              PICMAN_CAIRO_RGB24_SET_PIXEL (d, r, g, b);
             }
 
           buf += scale->rowstride;
@@ -701,10 +701,10 @@ gimp_color_scale_render (GimpColorScale *scale)
 }
 
 static void
-gimp_color_scale_render_alpha (GimpColorScale *scale)
+picman_color_scale_render_alpha (PicmanColorScale *scale)
 {
   GtkRange *range = GTK_RANGE (scale);
-  GimpRGB   rgb;
+  PicmanRGB   rgb;
   gboolean  invert;
   gdouble   a;
   guint     x, y;
@@ -725,12 +725,12 @@ gimp_color_scale_render_alpha (GimpColorScale *scale)
 
         light = buf;
         /* this won't work correctly for very thin scales */
-        dark  = (scale->height > GIMP_CHECK_SIZE_SM ?
-                 buf + GIMP_CHECK_SIZE_SM * scale->rowstride : light);
+        dark  = (scale->height > PICMAN_CHECK_SIZE_SM ?
+                 buf + PICMAN_CHECK_SIZE_SM * scale->rowstride : light);
 
         for (x = 0, d = light, l = dark; x < scale->width; x++)
           {
-            if ((x % GIMP_CHECK_SIZE_SM) == 0)
+            if ((x % PICMAN_CHECK_SIZE_SM) == 0)
               {
                 guchar *t;
 
@@ -744,31 +744,31 @@ gimp_color_scale_render_alpha (GimpColorScale *scale)
             if (invert)
               a = 1.0 - a;
 
-            GIMP_CAIRO_RGB24_SET_PIXEL (l,
-                                        (GIMP_CHECK_LIGHT +
-                                         (rgb.r - GIMP_CHECK_LIGHT) * a) * 255.999,
-                                        (GIMP_CHECK_LIGHT +
-                                         (rgb.g - GIMP_CHECK_LIGHT) * a) * 255.999,
-                                        (GIMP_CHECK_LIGHT +
-                                         (rgb.b - GIMP_CHECK_LIGHT) * a) * 255.999);
+            PICMAN_CAIRO_RGB24_SET_PIXEL (l,
+                                        (PICMAN_CHECK_LIGHT +
+                                         (rgb.r - PICMAN_CHECK_LIGHT) * a) * 255.999,
+                                        (PICMAN_CHECK_LIGHT +
+                                         (rgb.g - PICMAN_CHECK_LIGHT) * a) * 255.999,
+                                        (PICMAN_CHECK_LIGHT +
+                                         (rgb.b - PICMAN_CHECK_LIGHT) * a) * 255.999);
             l += 4;
 
-            GIMP_CAIRO_RGB24_SET_PIXEL (d,
-                                        (GIMP_CHECK_DARK +
-                                         (rgb.r - GIMP_CHECK_DARK) * a) * 255.999,
-                                        (GIMP_CHECK_DARK +
-                                         (rgb.g - GIMP_CHECK_DARK) * a) * 255.999,
-                                        (GIMP_CHECK_DARK +
-                                         (rgb.b - GIMP_CHECK_DARK) * a) * 255.999);
+            PICMAN_CAIRO_RGB24_SET_PIXEL (d,
+                                        (PICMAN_CHECK_DARK +
+                                         (rgb.r - PICMAN_CHECK_DARK) * a) * 255.999,
+                                        (PICMAN_CHECK_DARK +
+                                         (rgb.g - PICMAN_CHECK_DARK) * a) * 255.999,
+                                        (PICMAN_CHECK_DARK +
+                                         (rgb.b - PICMAN_CHECK_DARK) * a) * 255.999);
             d += 4;
           }
 
         for (y = 0, d = buf; y < scale->height; y++, d += scale->rowstride)
           {
-            if (y == 0 || y == GIMP_CHECK_SIZE_SM)
+            if (y == 0 || y == PICMAN_CHECK_SIZE_SM)
               continue;
 
-            if ((y / GIMP_CHECK_SIZE_SM) & 1)
+            if ((y / PICMAN_CHECK_SIZE_SM) & 1)
               memcpy (d, dark, scale->rowstride);
             else
               memcpy (d, light, scale->rowstride);
@@ -788,25 +788,25 @@ gimp_color_scale_render_alpha (GimpColorScale *scale)
             if (invert)
               a = 1.0 - a;
 
-            GIMP_CAIRO_RGB24_SET_PIXEL (light,
-                                        (GIMP_CHECK_LIGHT +
-                                         (rgb.r - GIMP_CHECK_LIGHT) * a) * 255.999,
-                                        (GIMP_CHECK_LIGHT +
-                                         (rgb.g - GIMP_CHECK_LIGHT) * a) * 255.999,
-                                        (GIMP_CHECK_LIGHT +
-                                         (rgb.b - GIMP_CHECK_LIGHT) * a) * 255.999);
+            PICMAN_CAIRO_RGB24_SET_PIXEL (light,
+                                        (PICMAN_CHECK_LIGHT +
+                                         (rgb.r - PICMAN_CHECK_LIGHT) * a) * 255.999,
+                                        (PICMAN_CHECK_LIGHT +
+                                         (rgb.g - PICMAN_CHECK_LIGHT) * a) * 255.999,
+                                        (PICMAN_CHECK_LIGHT +
+                                         (rgb.b - PICMAN_CHECK_LIGHT) * a) * 255.999);
 
-            GIMP_CAIRO_RGB24_SET_PIXEL (dark,
-                                        (GIMP_CHECK_DARK +
-                                         (rgb.r - GIMP_CHECK_DARK) * a) * 255.999,
-                                        (GIMP_CHECK_DARK +
-                                         (rgb.g - GIMP_CHECK_DARK) * a) * 255.999,
-                                        (GIMP_CHECK_DARK +
-                                         (rgb.b - GIMP_CHECK_DARK) * a) * 255.999);
+            PICMAN_CAIRO_RGB24_SET_PIXEL (dark,
+                                        (PICMAN_CHECK_DARK +
+                                         (rgb.r - PICMAN_CHECK_DARK) * a) * 255.999,
+                                        (PICMAN_CHECK_DARK +
+                                         (rgb.g - PICMAN_CHECK_DARK) * a) * 255.999,
+                                        (PICMAN_CHECK_DARK +
+                                         (rgb.b - PICMAN_CHECK_DARK) * a) * 255.999);
 
             for (x = 0, l = d; x < scale->width; x++, l += 4)
               {
-                if (((x / GIMP_CHECK_SIZE_SM) ^ (y / GIMP_CHECK_SIZE_SM)) & 1)
+                if (((x / PICMAN_CHECK_SIZE_SM) ^ (y / PICMAN_CHECK_SIZE_SM)) & 1)
                   {
                     l[0] = light[0];
                     l[1] = light[1];
@@ -832,7 +832,7 @@ gimp_color_scale_render_alpha (GimpColorScale *scale)
  * slightly faster. But we trade speed for keeping the code simple.
  */
 static void
-gimp_color_scale_render_stipple (GimpColorScale *scale)
+picman_color_scale_render_stipple (PicmanColorScale *scale)
 {
   GtkWidget *widget = GTK_WIDGET (scale);
   GtkStyle  *style  = gtk_widget_get_style (widget);
@@ -843,7 +843,7 @@ gimp_color_scale_render_stipple (GimpColorScale *scale)
   if ((buf = scale->buf) == NULL)
     return;
 
-  GIMP_CAIRO_RGB24_SET_PIXEL (insensitive,
+  PICMAN_CAIRO_RGB24_SET_PIXEL (insensitive,
                               style->bg[GTK_STATE_INSENSITIVE].red   >> 8,
                               style->bg[GTK_STATE_INSENSITIVE].green >> 8,
                               style->bg[GTK_STATE_INSENSITIVE].blue  >> 8);

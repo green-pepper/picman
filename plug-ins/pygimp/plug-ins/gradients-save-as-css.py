@@ -22,9 +22,9 @@
 # TODO: Respect gradient alpha, off-center segments, different blending
 # functions and HSV colors 
     
-from gimpfu import *
+from picmanfu import *
 
-gettext.install("gimp20-python", gimp.locale_directory, unicode=True)
+gettext.install("picman20-python", picman.locale_directory, unicode=True)
 
 w3c_template = """background-image: linear-gradient(top, %s);\n"""
 moz_template = """background-image: -moz-linear-gradient(center top, %s);\n"""
@@ -51,17 +51,17 @@ def format_text(text):
 def gradient_css_save(gradient, file_name):
     stops = []
     wk_stops = []
-    n_segments = pdb.gimp_gradient_get_number_of_segments(gradient)
+    n_segments = pdb.picman_gradient_get_number_of_segments(gradient)
     last_stop = None
     for index in xrange(n_segments):
-        lcolor, lopacity = pdb.gimp_gradient_segment_get_left_color(
+        lcolor, lopacity = pdb.picman_gradient_segment_get_left_color(
                                 gradient,
                                 index)
-        rcolor, ropacity = pdb.gimp_gradient_segment_get_right_color(
+        rcolor, ropacity = pdb.picman_gradient_segment_get_right_color(
                                 gradient,
                                 index)
-        lpos = pdb.gimp_gradient_segment_get_left_pos(gradient, index)
-        rpos = pdb.gimp_gradient_segment_get_right_pos(gradient, index)
+        lpos = pdb.picman_gradient_segment_get_left_pos(gradient, index)
+        rpos = pdb.picman_gradient_segment_get_right_pos(gradient, index)
         
         lstop = color_to_html(lcolor) + " %d%%" % int(100 * lpos)
         wk_lstop = "color-stop(%.03f, %s)" %(lpos, color_to_html(lcolor))
@@ -99,6 +99,6 @@ register(
         [],
         gradient_css_save,
         menu="<Gradients>",
-        domain=("gimp20-python", gimp.locale_directory)
+        domain=("picman20-python", picman.locale_directory)
         )
 main()

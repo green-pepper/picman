@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppixbuf.h
- * Copyright (C) 2004 Sven Neumann <sven@gimp.org>
+ * picmanpixbuf.h
+ * Copyright (C) 2004 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
-#ifndef __LIBGIMP_GIMP_PIXBUF_H__
-#define __LIBGIMP_GIMP_PIXBUF_H__
+#ifndef __LIBPICMAN_PICMAN_PIXBUF_H__
+#define __LIBPICMAN_PICMAN_PIXBUF_H__
 
 G_BEGIN_DECLS
 
@@ -33,29 +33,29 @@ G_BEGIN_DECLS
 
 typedef enum
 {
-  GIMP_PIXBUF_KEEP_ALPHA,
-  GIMP_PIXBUF_SMALL_CHECKS,
-  GIMP_PIXBUF_LARGE_CHECKS
-} GimpPixbufTransparency;
+  PICMAN_PIXBUF_KEEP_ALPHA,
+  PICMAN_PIXBUF_SMALL_CHECKS,
+  PICMAN_PIXBUF_LARGE_CHECKS
+} PicmanPixbufTransparency;
 
 
-GdkPixbuf * gimp_image_get_thumbnail        (gint32                  image_ID,
+GdkPixbuf * picman_image_get_thumbnail        (gint32                  image_ID,
                                              gint                    width,
                                              gint                    height,
-                                             GimpPixbufTransparency  alpha);
-GdkPixbuf * gimp_drawable_get_thumbnail     (gint32                  drawable_ID,
+                                             PicmanPixbufTransparency  alpha);
+GdkPixbuf * picman_drawable_get_thumbnail     (gint32                  drawable_ID,
                                              gint                    width,
                                              gint                    height,
-                                             GimpPixbufTransparency  alpha);
-GdkPixbuf * gimp_drawable_get_sub_thumbnail (gint32                  drawable_ID,
+                                             PicmanPixbufTransparency  alpha);
+GdkPixbuf * picman_drawable_get_sub_thumbnail (gint32                  drawable_ID,
                                              gint                    src_x,
                                              gint                    src_y,
                                              gint                    src_width,
                                              gint                    src_height,
                                              gint                    dest_width,
                                              gint                    dest_height,
-                                             GimpPixbufTransparency  alpha);
+                                             PicmanPixbufTransparency  alpha);
 
 G_END_DECLS
 
-#endif /* __LIBGIMP_GIMP_PIXBUF_H__ */
+#endif /* __LIBPICMAN_PICMAN_PIXBUF_H__ */

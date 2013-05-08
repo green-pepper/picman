@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * Copyright (C) 1997 Daniel Risacher
  *
@@ -17,10 +17,10 @@
  */
 
 /*
- *   GUMP - Gimp Useless Mail Plugin
+ *   GUMP - Picman Useless Mail Plugin
  *          (or Gump Useless Mail Plugin if you prefer)
  *
- *   by Adrian Likins <adrian@gimp.org>
+ *   by Adrian Likins <adrian@picman.org>
  *      MIME encapsulation by Reagan Blundell <reagan@emails.net>
  *
  * As always: The utility of this plugin is left as an exercise for
@@ -37,10 +37,10 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* GdkPixbuf RGBA C-Source image dump 1-byte-run-length-encoded */
@@ -110,7 +110,7 @@ static const guint8 mail_icon[] =
 
 #define PLUG_IN_PROC   "plug-in-mail-image"
 #define PLUG_IN_BINARY "mail"
-#define PLUG_IN_ROLE   "gimp-mail"
+#define PLUG_IN_ROLE   "picman-mail"
 
 typedef struct
 {
@@ -125,11 +125,11 @@ typedef struct
 static void               query                (void);
 static void               run                  (const gchar      *name,
                                                 gint              nparams,
-                                                const GimpParam  *param,
+                                                const PicmanParam  *param,
                                                 gint             *nreturn_vals,
-                                                GimpParam       **return_vals);
+                                                PicmanParam       **return_vals);
 
-static GimpPDBStatusType  save_image           (const gchar      *filename,
+static PicmanPDBStatusType  save_image           (const gchar      *filename,
                                                 gint32            image_ID,
                                                 gint32            drawable_ID,
                                                 gint32            run_mode);
@@ -150,7 +150,7 @@ static FILE             * sendmail_pipe        (gchar           **cmd,
                                                 GPid             *pid);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -171,20 +171,20 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",      "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",         "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",      "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",      "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "to-address",    "The email address to send to" },
-    { GIMP_PDB_STRING,   "from-address",  "The email address for the From: field" },
-    { GIMP_PDB_STRING,   "subject",       "The subject" },
-    { GIMP_PDB_STRING,   "comment",       "The Comment" },
-    { GIMP_PDB_INT32,    "encapsulation", "ignored" }
+    { PICMAN_PDB_INT32,    "run-mode",      "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",         "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",      "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",      "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "to-address",    "The email address to send to" },
+    { PICMAN_PDB_STRING,   "from-address",  "The email address for the From: field" },
+    { PICMAN_PDB_STRING,   "subject",       "The subject" },
+    { PICMAN_PDB_STRING,   "comment",       "The Comment" },
+    { PICMAN_PDB_INT32,    "encapsulation", "ignored" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Send the image by email"),
                           "You need to have sendmail installed",
                           "Adrian Likins, Reagan Blundell",
@@ -193,7 +193,7 @@ query (void)
                           "1995-1997",
                           N_("Send by E_mail..."),
                           "*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -201,13 +201,13 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint32             image_ID;
   gint32             drawable_ID;
 
@@ -220,17 +220,17 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   if (strcmp (name, PLUG_IN_PROC) == 0)
     {
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-          gimp_get_data (PLUG_IN_PROC, &mail_info);
+        case PICMAN_RUN_INTERACTIVE:
+          picman_get_data (PLUG_IN_PROC, &mail_info);
           {
-            gchar *filename = gimp_image_get_filename (image_ID);
+            gchar *filename = picman_image_get_filename (image_ID);
 
             if (filename)
               {
@@ -243,14 +243,14 @@ run (const gchar      *name,
           }
 
           if (! save_dialog ())
-            status = GIMP_PDB_CANCEL;
+            status = PICMAN_PDB_CANCEL;
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           /*  Make sure all the arguments are there!  */
           if (nparams < 8)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
@@ -267,45 +267,45 @@ run (const gchar      *name,
             }
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_get_data (PLUG_IN_PROC, &mail_info);
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_get_data (PLUG_IN_PROC, &mail_info);
           break;
 
         default:
           break;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           status = save_image (mail_info.filename,
                                image_ID,
                                drawable_ID,
                                run_mode);
 
-          if (status == GIMP_PDB_SUCCESS)
+          if (status == PICMAN_PDB_SUCCESS)
             {
               if (mesg_body)
                 g_strlcpy (mail_info.comment, mesg_body, BUFFER_SIZE);
 
-              gimp_set_data (PLUG_IN_PROC, &mail_info, sizeof (m_info));
+              picman_set_data (PLUG_IN_PROC, &mail_info, sizeof (m_info));
             }
         }
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
   values[0].data.d_status = status;
 }
 
-static GimpPDBStatusType
+static PicmanPDBStatusType
 save_image (const gchar *filename,
             gint32       image_ID,
             gint32       drawable_ID,
             gint32       run_mode)
 {
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gchar             *ext;
   gchar             *tmpname;
   gchar             *mailcmd[3];
@@ -316,10 +316,10 @@ save_image (const gchar *filename,
   ext = find_extension (filename);
 
   if (ext == NULL)
-    return GIMP_PDB_CALLING_ERROR;
+    return PICMAN_PDB_CALLING_ERROR;
 
   /* get a temp name with the right extension and save into it. */
-  tmpname = gimp_temp_name (ext + 1);
+  tmpname = picman_temp_name (ext + 1);
 
   /* construct the "sendmail user@location" line */
   mailcmd[0] = SENDMAIL;
@@ -330,13 +330,13 @@ save_image (const gchar *filename,
   mailpipe = sendmail_pipe (mailcmd, &mailpid);
 
   if (mailpipe == NULL)
-    return GIMP_PDB_EXECUTION_ERROR;
+    return PICMAN_PDB_EXECUTION_ERROR;
 
   create_headers (mailpipe);
 
   fflush (mailpipe);
 
-  if (! (gimp_file_save (run_mode,
+  if (! (picman_file_save (run_mode,
                          image_ID,
                          drawable_ID,
                          tmpname,
@@ -359,7 +359,7 @@ save_image (const gchar *filename,
 error:
   /* stop sendmail from doing anything */
   kill (mailpid, SIGINT);
-  status = GIMP_PDB_EXECUTION_ERROR;
+  status = PICMAN_PDB_EXECUTION_ERROR;
 
 cleanup:
   /* close out the sendmail process */
@@ -389,10 +389,10 @@ save_dialog (void)
   gint           row = 0;
   gboolean       run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  /* check gimprc for a preferred "From:" address */
-  gump_from = gimp_gimprc_query ("gump-from");
+  /* check picmanrc for a preferred "From:" address */
+  gump_from = picman_picmanrc_query ("gump-from");
 
   if (gump_from)
     {
@@ -400,9 +400,9 @@ save_dialog (void)
       g_free (gump_from);
     }
 
-  dlg = gimp_dialog_new (_("Send by Email"), PLUG_IN_ROLE,
+  dlg = picman_dialog_new (_("Send by Email"), PLUG_IN_ROLE,
                          NULL, 0,
-                         gimp_standard_help_func, PLUG_IN_PROC,
+                         picman_standard_help_func, PLUG_IN_PROC,
 
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                          _("_Send"),       GTK_RESPONSE_OK,
@@ -414,7 +414,7 @@ save_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dlg));
+  picman_window_set_transient (GTK_WINDOW (dlg));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -436,7 +436,7 @@ save_dialog (void)
   gtk_widget_set_size_request (entry, 200, -1);
   gtk_entry_set_max_length (GTK_ENTRY (entry), BUFFER_SIZE - 1);
   gtk_entry_set_text (GTK_ENTRY (entry), mail_info.filename);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, row++,
                              _("_Filename:"), 0.0, 0.5,
                              entry, 1, FALSE);
   g_signal_connect (entry, "changed",
@@ -448,7 +448,7 @@ save_dialog (void)
   gtk_widget_set_size_request (entry, 200, -1);
   gtk_entry_set_max_length (GTK_ENTRY (entry), BUFFER_SIZE - 1);
   gtk_entry_set_text (GTK_ENTRY (entry), mail_info.receipt);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, row++,
                              C_("email-address", "_To:"), 0.0, 0.5,
                              entry, 1, FALSE);
   g_signal_connect (entry, "changed",
@@ -462,7 +462,7 @@ save_dialog (void)
   gtk_widget_set_size_request (entry, 200, -1);
   gtk_entry_set_max_length (GTK_ENTRY (entry), BUFFER_SIZE - 1);
   gtk_entry_set_text (GTK_ENTRY (entry), mail_info.from);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, row++,
                              C_("email-address", "_From:"), 0.0, 0.5,
                              entry, 1, FALSE);
   g_signal_connect (entry, "changed",
@@ -474,7 +474,7 @@ save_dialog (void)
   gtk_widget_set_size_request (entry, 200, -1);
   gtk_entry_set_max_length (GTK_ENTRY (entry), BUFFER_SIZE - 1);
   gtk_entry_set_text (GTK_ENTRY (entry), mail_info.subject);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, row++,
                              _("S_ubject:"), 0.0, 0.5,
                              entry, 1, FALSE);
   g_signal_connect (entry, "changed",
@@ -508,7 +508,7 @@ save_dialog (void)
 
   gtk_widget_show (dlg);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dlg)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dlg)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dlg);
 
@@ -633,7 +633,7 @@ create_headers (FILE *mailpipe)
 {
   /* create all the mail header stuff. Feel free to add your own */
   /* It is advisable to leave the X-Mailer header though, as     */
-  /* there is a possibility of a Gimp mail scanner/reader in the  */
+  /* there is a possibility of a Picman mail scanner/reader in the  */
   /* future. It will probabaly need that header.                 */
 
   fprintf (mailpipe, "To: %s \n", mail_info.receipt);
@@ -641,7 +641,7 @@ create_headers (FILE *mailpipe)
   if (strlen (mail_info.from) > 0)
     fprintf (mailpipe, "From: %s \n", mail_info.from);
 
-  fprintf (mailpipe, "X-Mailer: GIMP Useless Mail Plug-In %s\n", GIMP_VERSION);
+  fprintf (mailpipe, "X-Mailer: PICMAN Useless Mail Plug-In %s\n", PICMAN_VERSION);
 
   fprintf (mailpipe, "MIME-Version: 1.0\n");
   fprintf (mailpipe, "Content-type: multipart/mixed; "

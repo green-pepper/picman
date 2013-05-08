@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpThrobber
- * Copyright (C) 2005  Sven Neumann <sven@gimp.org>
+ * PicmanThrobber
+ * Copyright (C) 2005  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,51 +18,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_THROBBER_H__
-#define __GIMP_THROBBER_H__
+#ifndef __PICMAN_THROBBER_H__
+#define __PICMAN_THROBBER_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_THROBBER            (gimp_throbber_get_type ())
-#define GIMP_THROBBER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_THROBBER, GimpThrobber))
-#define GIMP_THROBBER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_THROBBER, GimpThrobberClass))
-#define GIMP_IS_THROBBER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_THROBBER))
-#define GIMP_IS_THROBBER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_THROBBER))
-#define GIMP_THROBBER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GIMP_TYPE_THROBBER, GimpThrobberClass))
+#define PICMAN_TYPE_THROBBER            (picman_throbber_get_type ())
+#define PICMAN_THROBBER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_THROBBER, PicmanThrobber))
+#define PICMAN_THROBBER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_THROBBER, PicmanThrobberClass))
+#define PICMAN_IS_THROBBER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_THROBBER))
+#define PICMAN_IS_THROBBER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_THROBBER))
+#define PICMAN_THROBBER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PICMAN_TYPE_THROBBER, PicmanThrobberClass))
 
 
-typedef struct _GimpThrobber        GimpThrobber;
-typedef struct _GimpThrobberClass   GimpThrobberClass;
-typedef struct _GimpThrobberPrivate GimpThrobberPrivate;
+typedef struct _PicmanThrobber        PicmanThrobber;
+typedef struct _PicmanThrobberClass   PicmanThrobberClass;
+typedef struct _PicmanThrobberPrivate PicmanThrobberPrivate;
 
-struct _GimpThrobber
+struct _PicmanThrobber
 {
   GtkToolItem          parent;
 
   /*< private >*/
-  GimpThrobberPrivate *priv;
+  PicmanThrobberPrivate *priv;
 };
 
-struct _GimpThrobberClass
+struct _PicmanThrobberClass
 {
   GtkToolItemClass parent_class;
 
   /* signal */
-  void  (* clicked) (GimpThrobber *button);
+  void  (* clicked) (PicmanThrobber *button);
 };
 
-GType         gimp_throbber_get_type      (void) G_GNUC_CONST;
+GType         picman_throbber_get_type      (void) G_GNUC_CONST;
 
-GtkToolItem * gimp_throbber_new           (const gchar  *stock_id);
-void          gimp_throbber_set_stock_id  (GimpThrobber *button,
+GtkToolItem * picman_throbber_new           (const gchar  *stock_id);
+void          picman_throbber_set_stock_id  (PicmanThrobber *button,
                                            const gchar  *stock_id);
-const gchar * gimp_throbber_get_stock_id  (GimpThrobber *button);
-void          gimp_throbber_set_image     (GimpThrobber *button,
+const gchar * picman_throbber_get_stock_id  (PicmanThrobber *button);
+void          picman_throbber_set_image     (PicmanThrobber *button,
                                            GtkWidget    *image);
-GtkWidget   * gimp_throbber_get_image     (GimpThrobber *button);
+GtkWidget   * picman_throbber_get_image     (PicmanThrobber *button);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_THROBBER_H__ */
+#endif /* __PICMAN_THROBBER_H__ */

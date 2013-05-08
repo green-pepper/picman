@@ -1,6 +1,6 @@
-# Hungarian translation of gimp-python.
+# Hungarian translation of picman-python.
 # Copyright (C) 2001, 2003, 2004, 2007, 2008, 2012 Free Software Foundation, Inc.
-# This file is distributed under the same license as the gimp-python package.
+# This file is distributed under the same license as the picman-python package.
 #
 # Andras Timar <timar@gnome.hu>, 2001, 2003.
 # Emese Kovacs <emese@gnome.hu>, 2001.
@@ -11,8 +11,8 @@
 # Arpad Biro .
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-python.gimp-2-6\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gimp&keywords=I18N+L10N&component=general\n"
+"Project-Id-Version: picman-python.picman-2-6\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-05-31 17:53+0000\n"
 "PO-Revision-Date: 2012-06-04 21:54+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
@@ -24,327 +24,327 @@ msgstr ""
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 "Language: hu\n"
 
-#: ../plug-ins/pygimp/gimpfu.py:394
+#: ../plug-ins/pypicman/picmanfu.py:394
 msgid "Missing exception information"
 msgstr "Hiányzó kivételinformációk"
 
-#: ../plug-ins/pygimp/gimpfu.py:403
+#: ../plug-ins/pypicman/picmanfu.py:403
 #, python-format
 msgid "An error occurred running %s"
 msgstr "Hiba történt a következő futtatásakor: %s"
 
-#: ../plug-ins/pygimp/gimpfu.py:414
+#: ../plug-ins/pypicman/picmanfu.py:414
 msgid "_More Information"
 msgstr "_További információk"
 
-#: ../plug-ins/pygimp/gimpfu.py:526 ../plug-ins/pygimp/gimpfu.py:538
-#: ../plug-ins/pygimp/gimpfu.py:544
+#: ../plug-ins/pypicman/picmanfu.py:526 ../plug-ins/pypicman/picmanfu.py:538
+#: ../plug-ins/pypicman/picmanfu.py:544
 msgid "No"
 msgstr "Nem"
 
-#: ../plug-ins/pygimp/gimpfu.py:536 ../plug-ins/pygimp/gimpfu.py:544
+#: ../plug-ins/pypicman/picmanfu.py:536 ../plug-ins/pypicman/picmanfu.py:544
 msgid "Yes"
 msgstr "Igen"
 
-#: ../plug-ins/pygimp/gimpfu.py:596 ../plug-ins/pygimp/gimpui.py:223
+#: ../plug-ins/pypicman/picmanfu.py:596 ../plug-ins/pypicman/picmanui.py:223
 msgid "Python-Fu File Selection"
 msgstr "Python-Fu fájlválasztás"
 
-#: ../plug-ins/pygimp/gimpfu.py:607
+#: ../plug-ins/pypicman/picmanfu.py:607
 msgid "Python-Fu Folder Selection"
 msgstr "Python-Fu mappaválasztás"
 
-#: ../plug-ins/pygimp/gimpfu.py:696
+#: ../plug-ins/pypicman/picmanfu.py:696
 #, python-format
 msgid "Invalid input for '%s'"
 msgstr "A(z) „%s” bemenete érvénytelen"
 
-#: ../plug-ins/pygimp/gimpui.py:176
+#: ../plug-ins/pypicman/picmanui.py:176
 msgid "Python-Fu Color Selection"
 msgstr "Python-Fu színválasztás"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:109
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:109
 msgid "Saving as colored XHTML"
 msgstr "Mentés színes XHTML-ként"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:186
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:186
 msgid "Save as colored XHTML"
 msgstr "Mentés színes XHTML-ként"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:191
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:191
 msgid "Colored XHTML"
 msgstr "Színes XHTML"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:198
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:198
 msgid "Character _source"
 msgstr "_Karakterforrás"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:199
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:199
 msgid "Source code"
 msgstr "Forráskód"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:200
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:200
 msgid "Text file"
 msgstr "Szövegfájl"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:201
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:201
 msgid "Entry box"
 msgstr "Beviteli mező"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:202
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:202
 msgid "_File to read or characters to use"
 msgstr "_Olvasandó fájl vagy használandó karakterek"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:204
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:204
 msgid "Fo_nt size in pixels"
 msgstr "Betű_méret képpontokban"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:205
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:205
 msgid "_Write a separate CSS file"
 msgstr "Önálló _CSS fájl írása"
 
-#: ../plug-ins/pygimp/plug-ins/gradients-save-as-css.py:96
+#: ../plug-ins/pypicman/plug-ins/gradients-save-as-css.py:96
 msgid "Gradient to use"
 msgstr "Használandó színátmenet"
 
-#: ../plug-ins/pygimp/plug-ins/gradients-save-as-css.py:97
+#: ../plug-ins/pypicman/plug-ins/gradients-save-as-css.py:97
 msgid "File Name"
 msgstr "Fájlnév"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:56
+#: ../plug-ins/pypicman/plug-ins/foggify.py:56
 msgid "Add a layer of fog"
 msgstr "Ködréteg hozzáadása"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:61
+#: ../plug-ins/pypicman/plug-ins/foggify.py:61
 msgid "_Fog..."
 msgstr "_Köd…"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:66
+#: ../plug-ins/pypicman/plug-ins/foggify.py:66
 msgid "_Layer name"
 msgstr "Réteg _neve"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:66
+#: ../plug-ins/pypicman/plug-ins/foggify.py:66
 msgid "Clouds"
 msgstr "Felhők"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:67
+#: ../plug-ins/pypicman/plug-ins/foggify.py:67
 msgid "_Fog color"
 msgstr "A _köd színe"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:68
+#: ../plug-ins/pypicman/plug-ins/foggify.py:68
 msgid "_Turbulence"
 msgstr "Ö_rvénylés"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:69
+#: ../plug-ins/pypicman/plug-ins/foggify.py:69
 msgid "Op_acity"
 msgstr "Át_látszatlanság"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:44
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:44
 msgid "Offset the colors in a palette"
 msgstr "Színek eltolása egy palettában"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:49
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:49
 msgid "_Offset Palette..."
 msgstr "Paletta _eltolása…"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:52
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:56
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:59
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:81
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:52
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:56
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:59
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:81
 msgid "Palette"
 msgstr "Paletta"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:53
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:53
 msgid "Off_set"
 msgstr "_Eltolás"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:48
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:48
 msgid "Sort the colors in a palette"
 msgstr "Paletta színeinek rendezése"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:53
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:53
 msgid "_Sort Palette..."
 msgstr "Paletta _rendezése…"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:57
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:57
 msgid "Color _model"
 msgstr "Szí_nmodell"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:58
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:58
 msgid "RGB"
 msgstr "RGB"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:59
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:59
 msgid "HSV"
 msgstr "HSV"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:60
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:60
 msgid "Channel to _sort"
 msgstr "Rendezendő _csatorna"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:61
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:61
 msgid "Red or Hue"
 msgstr "Vörös vagy árnyalat"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:62
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:62
 msgid "Green or Saturation"
 msgstr "Zöld vagy telítettség"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:63
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:63
 msgid "Blue or Value"
 msgstr "Kék vagy érték"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:64
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:64
 msgid "_Ascending"
 msgstr "Nö_vekvő"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:52
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:52
 msgid "Create a repeating gradient using colors from the palette"
 msgstr "Ismétlődő színátmenet létrehozása a paletta színeit felhasználva"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:57
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:57
 msgid "Palette to _Repeating Gradient"
 msgstr "Palettát is_métlődő színátmenetté"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:74
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:74
 msgid "Create a gradient using colors from the palette"
 msgstr "Színátmenet létrehozása a paletta színeit felhasználva"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:79
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:79
 msgid "Palette to _Gradient"
 msgstr "Palettát színátme_netté"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:59
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:59
 msgid "Slice"
 msgstr "Szeletelés"
 
 #. table snippet means a small piece of HTML code here
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:420
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:420
 msgid "Cuts an image along its guides, creates images and a HTML table snippet"
 msgstr ""
 "Kép vágása a segédvonalak mentén – képeket és egy HTML-táblázathoz való "
 "kódot hoz létre"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:431
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:431
 msgid "_Slice..."
 msgstr "_Szeletelés…"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:436
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:436
 msgid "Path for HTML export"
 msgstr "Útvonal a HTML-exportáláshoz"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:437
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:437
 msgid "Filename for export"
 msgstr "Fájlnév az exportáláshoz"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:438
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:438
 msgid "Image name prefix"
 msgstr "Képnév-előtag"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:439
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:439
 msgid "Image format"
 msgstr "Képformátum"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:440
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:440
 msgid "Separate image folder"
 msgstr "Különálló képmappa"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:442
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:442
 msgid "Folder for image export"
 msgstr "Mappa a kép-exportáláshoz"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:443
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:443
 msgid "Space between table elements"
 msgstr "Helykihagyás a táblázat-elemek közt"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:445
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:445
 msgid "Javascript for onmouseover and clicked"
 msgstr "Javascript-kód rámutatáshoz és kattintáshoz"
 
 #. table caps are table cells on the edge of the table
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:448
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:448
 msgid "Skip animation for table caps"
 msgstr "Animáció kihagyása a táblafeliratoknál"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:56
+#: ../plug-ins/pypicman/plug-ins/python-console.py:56
 msgid "Python Console"
 msgstr "Python-konzol"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:60
+#: ../plug-ins/pypicman/plug-ins/python-console.py:60
 msgid "_Browse..."
 msgstr "_Tallózás…"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:138
+#: ../plug-ins/pypicman/plug-ins/python-console.py:138
 msgid "Python Procedure Browser"
 msgstr "Python eljárásböngésző"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:167
+#: ../plug-ins/pypicman/plug-ins/python-console.py:167
 #, python-format
 msgid "Could not open '%s' for writing: %s"
 msgstr "„%s” nem nyitható meg írásra: %s"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:182
+#: ../plug-ins/pypicman/plug-ins/python-console.py:182
 #, python-format
 msgid "Could not write to '%s': %s"
 msgstr "„%s” nem írható: %s"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:190
+#: ../plug-ins/pypicman/plug-ins/python-console.py:190
 msgid "Save Python-Fu Console Output"
 msgstr "A Python-Fu konzolkimenetének mentése"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:216
-msgid "Interactive GIMP Python interpreter"
-msgstr "Interaktív GIMP-Python-fordító"
+#: ../plug-ins/pypicman/plug-ins/python-console.py:216
+msgid "Interactive PICMAN Python interpreter"
+msgstr "Interaktív PICMAN-Python-fordító"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:221
+#: ../plug-ins/pypicman/plug-ins/python-console.py:221
 msgid "_Console"
 msgstr "_Konzol"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:60
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:60
 msgid "Add a drop shadow to a layer, and optionally bevel it"
 msgstr "Vetett árnyék hozzáadása egy réteghez esetleges rézsútos eltolással"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:65
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:65
 msgid "_Drop Shadow and Bevel..."
 msgstr "Vetett árnyék és rézsútos _eltolás…"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:70
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:70
 msgid "_Shadow blur"
 msgstr "Árnyék e_lmosása"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:71
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:71
 msgid "_Bevel"
 msgstr "Rézsútos _eltolás"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:72
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:72
 msgid "_Drop shadow"
 msgstr "_Vetett árnyék"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:73
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:73
 msgid "Drop shadow _X displacement"
 msgstr "Vetett árnyék _X-eltolása"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:74
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:74
 msgid "Drop shadow _Y displacement"
 msgstr "Vetett árnyék _Y-eltolása"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:75
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:75
 msgid "Create a new brush with characters from a text sequence"
 msgstr "Új ecset létrehozása egy szöveg karaktereiből"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:81
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:81
 msgid "New Brush from _Text..."
 msgstr "Új _ecset szövegből…"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:84
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:84
 msgid "Font"
 msgstr "Betűkészlet"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:85
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:85
 msgid "Pixel Size"
 msgstr "Képpontméret"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:86
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:86
 #| msgid "Text file"
 msgid "Text"
 msgstr "Szöveg"

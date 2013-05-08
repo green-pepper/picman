@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * plug-in-icc-profile.h
- * Copyright (C) 2006  Sven Neumann <sven@gimp.org>
+ * Copyright (C) 2006  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,23 +22,23 @@
 #define __PLUG_IN_ICC_PROFILE_H__
 
 
-gboolean  plug_in_icc_profile_apply_rgb (GimpImage     *image,
-                                         GimpContext   *context,
-                                         GimpProgress  *progress,
-                                         GimpRunMode    run_mode,
+gboolean  plug_in_icc_profile_apply_rgb (PicmanImage     *image,
+                                         PicmanContext   *context,
+                                         PicmanProgress  *progress,
+                                         PicmanRunMode    run_mode,
                                          GError       **error);
 
-gboolean  plug_in_icc_profile_info      (GimpImage     *image,
-                                         GimpContext   *context,
-                                         GimpProgress  *progress,
+gboolean  plug_in_icc_profile_info      (PicmanImage     *image,
+                                         PicmanContext   *context,
+                                         PicmanProgress  *progress,
                                          gchar        **name,
                                          gchar        **desc,
                                          gchar        **info,
                                          GError       **error);
 
-gboolean  plug_in_icc_profile_file_info (Gimp          *gimp,
-                                         GimpContext   *context,
-                                         GimpProgress  *progress,
+gboolean  plug_in_icc_profile_file_info (Picman          *picman,
+                                         PicmanContext   *context,
+                                         PicmanProgress  *progress,
                                          const gchar   *filename,
                                          gchar        **name,
                                          gchar        **desc,

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,36 +23,36 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
-#include "core/gimpparamspecs.h"
-#include "text/gimptext-compat.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
+#include "core/picmanparamspecs.h"
+#include "text/picmantext-compat.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-text_fontname_invoker (GimpProcedure         *procedure,
-                       Gimp                  *gimp,
-                       GimpContext           *context,
-                       GimpProgress          *progress,
-                       const GimpValueArray  *args,
+static PicmanValueArray *
+text_fontname_invoker (PicmanProcedure         *procedure,
+                       Picman                  *picman,
+                       PicmanContext           *context,
+                       PicmanProgress          *progress,
+                       const PicmanValueArray  *args,
                        GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
+  PicmanDrawable *drawable;
   gdouble x;
   gdouble y;
   const gchar *text;
@@ -60,24 +60,24 @@ text_fontname_invoker (GimpProcedure         *procedure,
   gboolean antialias;
   gdouble size;
   const gchar *fontname;
-  GimpLayer *text_layer = NULL;
+  PicmanLayer *text_layer = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 1), gimp);
-  x = g_value_get_double (gimp_value_array_index (args, 2));
-  y = g_value_get_double (gimp_value_array_index (args, 3));
-  text = g_value_get_string (gimp_value_array_index (args, 4));
-  border = g_value_get_int (gimp_value_array_index (args, 5));
-  antialias = g_value_get_boolean (gimp_value_array_index (args, 6));
-  size = g_value_get_double (gimp_value_array_index (args, 7));
-  fontname = g_value_get_string (gimp_value_array_index (args, 9));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 1), picman);
+  x = g_value_get_double (picman_value_array_index (args, 2));
+  y = g_value_get_double (picman_value_array_index (args, 3));
+  text = g_value_get_string (picman_value_array_index (args, 4));
+  border = g_value_get_int (picman_value_array_index (args, 5));
+  antialias = g_value_get_boolean (picman_value_array_index (args, 6));
+  size = g_value_get_double (picman_value_array_index (args, 7));
+  fontname = g_value_get_string (picman_value_array_index (args, 9));
 
   if (success)
     {
       if (drawable &&
-          (! gimp_pdb_item_is_attached (GIMP_ITEM (drawable), image,
-                                        GIMP_PDB_ITEM_CONTENT, error) ||
-           ! gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error)))
+          (! picman_pdb_item_is_attached (PICMAN_ITEM (drawable), image,
+                                        PICMAN_PDB_ITEM_CONTENT, error) ||
+           ! picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error)))
         success = FALSE;
 
       if (success)
@@ -92,25 +92,25 @@ text_fontname_invoker (GimpProcedure         *procedure,
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer (gimp_value_array_index (return_vals, 1), text_layer);
+    picman_value_set_layer (picman_value_array_index (return_vals, 1), text_layer);
 
   return return_vals;
 }
 
-static GimpValueArray *
-text_get_extents_fontname_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+text_get_extents_fontname_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *text;
   gdouble size;
   const gchar *fontname;
@@ -119,9 +119,9 @@ text_get_extents_fontname_invoker (GimpProcedure         *procedure,
   gint32 ascent = 0;
   gint32 descent = 0;
 
-  text = g_value_get_string (gimp_value_array_index (args, 0));
-  size = g_value_get_double (gimp_value_array_index (args, 1));
-  fontname = g_value_get_string (gimp_value_array_index (args, 3));
+  text = g_value_get_string (picman_value_array_index (args, 0));
+  size = g_value_get_double (picman_value_array_index (args, 1));
+  fontname = g_value_get_string (picman_value_array_index (args, 3));
 
   if (success)
     {
@@ -134,32 +134,32 @@ text_get_extents_fontname_invoker (GimpProcedure         *procedure,
       g_free (real_fontname);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), width);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), height);
-      g_value_set_int (gimp_value_array_index (return_vals, 3), ascent);
-      g_value_set_int (gimp_value_array_index (return_vals, 4), descent);
+      g_value_set_int (picman_value_array_index (return_vals, 1), width);
+      g_value_set_int (picman_value_array_index (return_vals, 2), height);
+      g_value_set_int (picman_value_array_index (return_vals, 3), ascent);
+      g_value_set_int (picman_value_array_index (return_vals, 4), descent);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-text_invoker (GimpProcedure         *procedure,
-              Gimp                  *gimp,
-              GimpContext           *context,
-              GimpProgress          *progress,
-              const GimpValueArray  *args,
+static PicmanValueArray *
+text_invoker (PicmanProcedure         *procedure,
+              Picman                  *picman,
+              PicmanContext           *context,
+              PicmanProgress          *progress,
+              const PicmanValueArray  *args,
               GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
+  PicmanDrawable *drawable;
   gdouble x;
   gdouble y;
   const gchar *text;
@@ -167,24 +167,24 @@ text_invoker (GimpProcedure         *procedure,
   gboolean antialias;
   gdouble size;
   const gchar *family;
-  GimpLayer *text_layer = NULL;
+  PicmanLayer *text_layer = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 1), gimp);
-  x = g_value_get_double (gimp_value_array_index (args, 2));
-  y = g_value_get_double (gimp_value_array_index (args, 3));
-  text = g_value_get_string (gimp_value_array_index (args, 4));
-  border = g_value_get_int (gimp_value_array_index (args, 5));
-  antialias = g_value_get_boolean (gimp_value_array_index (args, 6));
-  size = g_value_get_double (gimp_value_array_index (args, 7));
-  family = g_value_get_string (gimp_value_array_index (args, 10));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 1), picman);
+  x = g_value_get_double (picman_value_array_index (args, 2));
+  y = g_value_get_double (picman_value_array_index (args, 3));
+  text = g_value_get_string (picman_value_array_index (args, 4));
+  border = g_value_get_int (picman_value_array_index (args, 5));
+  antialias = g_value_get_boolean (picman_value_array_index (args, 6));
+  size = g_value_get_double (picman_value_array_index (args, 7));
+  family = g_value_get_string (picman_value_array_index (args, 10));
 
   if (success)
     {
       if (drawable &&
-          (! gimp_pdb_item_is_attached (GIMP_ITEM (drawable), image,
-                                        GIMP_PDB_ITEM_CONTENT, error) ||
-           ! gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error)))
+          (! picman_pdb_item_is_attached (PICMAN_ITEM (drawable), image,
+                                        PICMAN_PDB_ITEM_CONTENT, error) ||
+           ! picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error)))
         success = FALSE;
 
       if (success)
@@ -199,25 +199,25 @@ text_invoker (GimpProcedure         *procedure,
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer (gimp_value_array_index (return_vals, 1), text_layer);
+    picman_value_set_layer (picman_value_array_index (return_vals, 1), text_layer);
 
   return return_vals;
 }
 
-static GimpValueArray *
-text_get_extents_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+text_get_extents_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *text;
   gdouble size;
   const gchar *family;
@@ -226,9 +226,9 @@ text_get_extents_invoker (GimpProcedure         *procedure,
   gint32 ascent = 0;
   gint32 descent = 0;
 
-  text = g_value_get_string (gimp_value_array_index (args, 0));
-  size = g_value_get_double (gimp_value_array_index (args, 1));
-  family = g_value_get_string (gimp_value_array_index (args, 4));
+  text = g_value_get_string (picman_value_array_index (args, 0));
+  size = g_value_get_double (picman_value_array_index (args, 1));
+  family = g_value_get_string (picman_value_array_index (args, 4));
 
   if (success)
     {
@@ -241,428 +241,428 @@ text_get_extents_invoker (GimpProcedure         *procedure,
       g_free (real_fontname);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), width);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), height);
-      g_value_set_int (gimp_value_array_index (return_vals, 3), ascent);
-      g_value_set_int (gimp_value_array_index (return_vals, 4), descent);
+      g_value_set_int (picman_value_array_index (return_vals, 1), width);
+      g_value_set_int (picman_value_array_index (return_vals, 2), height);
+      g_value_set_int (picman_value_array_index (return_vals, 3), ascent);
+      g_value_set_int (picman_value_array_index (return_vals, 4), descent);
     }
 
   return return_vals;
 }
 
 void
-register_text_tool_procs (GimpPDB *pdb)
+register_text_tool_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-text-fontname
+   * picman-text-fontname
    */
-  procedure = gimp_procedure_new (text_fontname_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-text-fontname");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-text-fontname",
+  procedure = picman_procedure_new (text_fontname_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-text-fontname");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-text-fontname",
                                      "Add text at the specified location as a floating selection or a new layer.",
                                      "This tool requires a fontname matching an installed PangoFT2 font. You can specify the fontsize in units of pixels or points, and the appropriate metric is specified using the size_type argument. The x and y parameters together control the placement of the new text by specifying the upper left corner of the text bounding box. If the specified drawable parameter is valid, the text will be created as a floating selection attached to the drawable. If the drawable parameter is not valid (-1), the text will appear as a new layer. Finally, a border can be specified around the final rendered text. The border is measured in pixels. Parameter size-type is not used and is currently ignored. If you need to display a font in points, divide the size in points by 72.0 and multiply it by the image's vertical resolution.",
                                      "Martin Edlman & Sven Neumann",
                                      "Spencer Kimball & Peter Mattis",
                                      "1998- 2001",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable: (-1 for a new text layer)",
-                                                            pdb->gimp, TRUE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, TRUE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x",
                                                     "x",
                                                     "The x coordinate for the left of the text bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y",
                                                     "y",
                                                     "The y coordinate for the top of the text bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("text",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("text",
                                                        "text",
                                                        "The text to generate (in UTF-8 encoding)",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("border",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("border",
                                                       "border",
                                                       "The size of the border",
                                                       -1, G_MAXINT32, -1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("antialias",
                                                      "antialias",
                                                      "Antialiasing",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("size",
                                                     "size",
                                                     "The size of text in either pixels or points",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("size-type",
                                                   "size type",
                                                   "The units of specified size",
-                                                  GIMP_TYPE_SIZE_TYPE,
-                                                  GIMP_PIXELS,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("fontname",
+                                                  PICMAN_TYPE_SIZE_TYPE,
+                                                  PICMAN_PIXELS,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("fontname",
                                                        "fontname",
                                                        "The name of the font",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_id ("text-layer",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_id ("text-layer",
                                                              "text layer",
                                                              "The new text layer or -1 if no layer was created.",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-text-get-extents-fontname
+   * picman-text-get-extents-fontname
    */
-  procedure = gimp_procedure_new (text_get_extents_fontname_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-text-get-extents-fontname");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-text-get-extents-fontname",
+  procedure = picman_procedure_new (text_get_extents_fontname_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-text-get-extents-fontname");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-text-get-extents-fontname",
                                      "Get extents of the bounding box for the specified text.",
                                      "This tool returns the width and height of a bounding box for the specified text string with the specified font information. Ascent and descent for the specified font are returned as well. Parameter size-type is not used and is currently ignored. If you need to display a font in points, divide the size in points by 72.0 and multiply it by the vertical resolution of the image you are taking into account.",
                                      "Martin Edlman & Sven Neumann",
                                      "Spencer Kimball & Peter Mattis",
                                      "1998- 2001",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("text",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("text",
                                                        "text",
                                                        "The text to generate (in UTF-8 encoding)",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("size",
                                                     "size",
                                                     "The size of text in either pixels or points",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("size-type",
                                                   "size type",
                                                   "The units of specified size",
-                                                  GIMP_TYPE_SIZE_TYPE,
-                                                  GIMP_PIXELS,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("fontname",
+                                                  PICMAN_TYPE_SIZE_TYPE,
+                                                  PICMAN_PIXELS,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("fontname",
                                                        "fontname",
                                                        "The name of the font",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("width",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("width",
                                                           "width",
                                                           "The width of the specified font",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("height",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("height",
                                                           "height",
                                                           "The height of the specified font",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("ascent",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("ascent",
                                                           "ascent",
                                                           "The ascent of the specified font",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("descent",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("descent",
                                                           "descent",
                                                           "The descent of the specified font",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-text
+   * picman-text
    */
-  procedure = gimp_procedure_new (text_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-text");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-text",
-                                     "Deprecated: Use 'gimp-text-fontname' instead.",
-                                     "Deprecated: Use 'gimp-text-fontname' instead.",
+  procedure = picman_procedure_new (text_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-text");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-text",
+                                     "Deprecated: Use 'picman-text-fontname' instead.",
+                                     "Deprecated: Use 'picman-text-fontname' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-text-fontname");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                     "picman-text-fontname");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable: (-1 for a new text layer)",
-                                                            pdb->gimp, TRUE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, TRUE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x",
                                                     "x",
                                                     "The x coordinate for the left of the text bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y",
                                                     "y",
                                                     "The y coordinate for the top of the text bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("text",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("text",
                                                        "text",
                                                        "The text to generate (in UTF-8 encoding)",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("border",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("border",
                                                       "border",
                                                       "The size of the border",
                                                       -1, G_MAXINT32, -1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("antialias",
                                                      "antialias",
                                                      "Antialiasing",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("size",
                                                     "size",
                                                     "The size of text in either pixels or points",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("size-type",
                                                   "size type",
                                                   "The units of specified size",
-                                                  GIMP_TYPE_SIZE_TYPE,
-                                                  GIMP_PIXELS,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("foundry",
+                                                  PICMAN_TYPE_SIZE_TYPE,
+                                                  PICMAN_PIXELS,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("foundry",
                                                        "foundry",
                                                        "The font foundry",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("family",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("family",
                                                        "family",
                                                        "The font family",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("weight",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("weight",
                                                        "weight",
                                                        "The font weight",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("slant",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("slant",
                                                        "slant",
                                                        "The font slant",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("set-width",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("set-width",
                                                        "set width",
                                                        "The font set-width",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("spacing",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("spacing",
                                                        "spacing",
                                                        "The font spacing",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("registry",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("registry",
                                                        "registry",
                                                        "The font registry",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("encoding",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("encoding",
                                                        "encoding",
                                                        "The font encoding",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_id ("text-layer",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_id ("text-layer",
                                                              "text layer",
                                                              "The new text layer or -1 if no layer was created.",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-text-get-extents
+   * picman-text-get-extents
    */
-  procedure = gimp_procedure_new (text_get_extents_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-text-get-extents");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-text-get-extents",
-                                     "Deprecated: Use 'gimp-text-get-extents-fontname' instead.",
-                                     "Deprecated: Use 'gimp-text-get-extents-fontname' instead.",
+  procedure = picman_procedure_new (text_get_extents_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-text-get-extents");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-text-get-extents",
+                                     "Deprecated: Use 'picman-text-get-extents-fontname' instead.",
+                                     "Deprecated: Use 'picman-text-get-extents-fontname' instead.",
                                      "",
                                      "",
                                      "",
-                                     "gimp-text-get-extents-fontname");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("text",
+                                     "picman-text-get-extents-fontname");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("text",
                                                        "text",
                                                        "The text to generate (in UTF-8 encoding)",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("size",
                                                     "size",
                                                     "The size of text in either pixels or points",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("size-type",
                                                   "size type",
                                                   "The units of specified size",
-                                                  GIMP_TYPE_SIZE_TYPE,
-                                                  GIMP_PIXELS,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("foundry",
+                                                  PICMAN_TYPE_SIZE_TYPE,
+                                                  PICMAN_PIXELS,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("foundry",
                                                        "foundry",
                                                        "The font foundry",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("family",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("family",
                                                        "family",
                                                        "The font family",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("weight",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("weight",
                                                        "weight",
                                                        "The font weight",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("slant",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("slant",
                                                        "slant",
                                                        "The font slant",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("set-width",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("set-width",
                                                        "set width",
                                                        "The font set-width",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("spacing",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("spacing",
                                                        "spacing",
                                                        "The font spacing",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("registry",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("registry",
                                                        "registry",
                                                        "The font registry",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("encoding",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("encoding",
                                                        "encoding",
                                                        "The font encoding",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("width",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("width",
                                                           "width",
                                                           "The width of the specified font",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("height",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("height",
                                                           "height",
                                                           "The height of the specified font",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("ascent",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("ascent",
                                                           "ascent",
                                                           "The ascent of the specified font",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("descent",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("descent",
                                                           "descent",
                                                           "The descent of the specified font",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

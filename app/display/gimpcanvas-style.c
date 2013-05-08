@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvas-style.c
- * Copyright (C) 2010  Michael Natterer <mitch@gimp.org>
+ * picmancanvas-style.c
+ * Copyright (C) 2010  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,61 +23,61 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "display-types.h"
 
-#include "core/gimp-cairo.h"
-#include "core/gimpgrid.h"
-#include "core/gimplayer.h"
+#include "core/picman-cairo.h"
+#include "core/picmangrid.h"
+#include "core/picmanlayer.h"
 
-#include "gimpcanvas-style.h"
+#include "picmancanvas-style.h"
 
 
-static const GimpRGB guide_normal_fg     = { 0.0, 0.0, 0.0, 1.0 };
-static const GimpRGB guide_normal_bg     = { 0.0, 0.5, 1.0, 1.0 };
-static const GimpRGB guide_active_fg     = { 0.0, 0.0, 0.0, 1.0 };
-static const GimpRGB guide_active_bg     = { 1.0, 0.0, 0.0, 1.0 };
+static const PicmanRGB guide_normal_fg     = { 0.0, 0.0, 0.0, 1.0 };
+static const PicmanRGB guide_normal_bg     = { 0.0, 0.5, 1.0, 1.0 };
+static const PicmanRGB guide_active_fg     = { 0.0, 0.0, 0.0, 1.0 };
+static const PicmanRGB guide_active_bg     = { 1.0, 0.0, 0.0, 1.0 };
 
-static const GimpRGB sample_point_normal = { 0.0, 0.5, 1.0, 1.0 };
-static const GimpRGB sample_point_active = { 1.0, 0.0, 0.0, 1.0 };
+static const PicmanRGB sample_point_normal = { 0.0, 0.5, 1.0, 1.0 };
+static const PicmanRGB sample_point_active = { 1.0, 0.0, 0.0, 1.0 };
 
-static const GimpRGB layer_fg            = { 0.0, 0.0, 0.0, 1.0 };
-static const GimpRGB layer_bg            = { 1.0, 1.0, 0.0, 1.0 };
+static const PicmanRGB layer_fg            = { 0.0, 0.0, 0.0, 1.0 };
+static const PicmanRGB layer_bg            = { 1.0, 1.0, 0.0, 1.0 };
 
-static const GimpRGB layer_group_fg      = { 0.0, 0.0, 0.0, 1.0 };
-static const GimpRGB layer_group_bg      = { 0.0, 1.0, 1.0, 1.0 };
+static const PicmanRGB layer_group_fg      = { 0.0, 0.0, 0.0, 1.0 };
+static const PicmanRGB layer_group_bg      = { 0.0, 1.0, 1.0, 1.0 };
 
-static const GimpRGB layer_mask_fg       = { 0.0, 0.0, 0.0, 1.0 };
-static const GimpRGB layer_mask_bg       = { 0.0, 1.0, 0.0, 1.0 };
+static const PicmanRGB layer_mask_fg       = { 0.0, 0.0, 0.0, 1.0 };
+static const PicmanRGB layer_mask_bg       = { 0.0, 1.0, 0.0, 1.0 };
 
-static const GimpRGB selection_out_fg    = { 1.0, 1.0, 1.0, 1.0 };
-static const GimpRGB selection_out_bg    = { 0.5, 0.5, 0.5, 1.0 };
+static const PicmanRGB selection_out_fg    = { 1.0, 1.0, 1.0, 1.0 };
+static const PicmanRGB selection_out_bg    = { 0.5, 0.5, 0.5, 1.0 };
 
-static const GimpRGB selection_in_fg     = { 0.0, 0.0, 0.0, 1.0 };
-static const GimpRGB selection_in_bg     = { 1.0, 1.0, 1.0, 1.0 };
+static const PicmanRGB selection_in_fg     = { 0.0, 0.0, 0.0, 1.0 };
+static const PicmanRGB selection_in_bg     = { 1.0, 1.0, 1.0, 1.0 };
 
-static const GimpRGB vectors_normal_bg   = { 1.0, 1.0, 1.0, 0.6 };
-static const GimpRGB vectors_normal_fg   = { 0.0, 0.0, 1.0, 0.8 };
+static const PicmanRGB vectors_normal_bg   = { 1.0, 1.0, 1.0, 0.6 };
+static const PicmanRGB vectors_normal_fg   = { 0.0, 0.0, 1.0, 0.8 };
 
-static const GimpRGB vectors_active_bg   = { 1.0, 1.0, 1.0, 0.6 };
-static const GimpRGB vectors_active_fg   = { 1.0, 0.0, 0.0, 0.8 };
+static const PicmanRGB vectors_active_bg   = { 1.0, 1.0, 1.0, 0.6 };
+static const PicmanRGB vectors_active_fg   = { 1.0, 0.0, 0.0, 0.8 };
 
-static const GimpRGB outline_bg          = { 1.0, 1.0, 1.0, 0.6 };
-static const GimpRGB outline_fg          = { 0.0, 0.0, 0.0, 0.8 };
+static const PicmanRGB outline_bg          = { 1.0, 1.0, 1.0, 0.6 };
+static const PicmanRGB outline_fg          = { 0.0, 0.0, 0.0, 0.8 };
 
-static const GimpRGB passe_partout       = { 0.0, 0.0, 0.0, 0.5 };
+static const PicmanRGB passe_partout       = { 0.0, 0.0, 0.0, 0.5 };
 
-static const GimpRGB tool_bg             = { 0.0, 0.0, 0.0, 0.4 };
-static const GimpRGB tool_fg             = { 1.0, 1.0, 1.0, 0.8 };
-static const GimpRGB tool_fg_highlight   = { 1.0, 0.8, 0.2, 0.8 };
+static const PicmanRGB tool_bg             = { 0.0, 0.0, 0.0, 0.4 };
+static const PicmanRGB tool_fg             = { 1.0, 1.0, 1.0, 0.8 };
+static const PicmanRGB tool_fg_highlight   = { 1.0, 0.8, 0.2, 0.8 };
 
 
 /*  public functions  */
 
 void
-gimp_canvas_set_guide_style (GtkWidget *canvas,
+picman_canvas_set_guide_style (GtkWidget *canvas,
                              cairo_t   *cr,
                              gboolean   active)
 {
@@ -89,11 +89,11 @@ gimp_canvas_set_guide_style (GtkWidget *canvas,
   cairo_set_line_width (cr, 1.0);
 
   if (active)
-    pattern = gimp_cairo_stipple_pattern_create (&guide_active_fg,
+    pattern = picman_cairo_stipple_pattern_create (&guide_active_fg,
                                                  &guide_active_bg,
                                                  0);
   else
-    pattern = gimp_cairo_stipple_pattern_create (&guide_normal_fg,
+    pattern = picman_cairo_stipple_pattern_create (&guide_normal_fg,
                                                  &guide_normal_bg,
                                                  0);
 
@@ -102,7 +102,7 @@ gimp_canvas_set_guide_style (GtkWidget *canvas,
 }
 
 void
-gimp_canvas_set_sample_point_style (GtkWidget *canvas,
+picman_canvas_set_sample_point_style (GtkWidget *canvas,
                                     cairo_t   *cr,
                                     gboolean   active)
 {
@@ -112,19 +112,19 @@ gimp_canvas_set_sample_point_style (GtkWidget *canvas,
   cairo_set_line_width (cr, 1.0);
 
   if (active)
-    gimp_cairo_set_source_rgb (cr, &sample_point_active);
+    picman_cairo_set_source_rgb (cr, &sample_point_active);
   else
-    gimp_cairo_set_source_rgb (cr, &sample_point_normal);
+    picman_cairo_set_source_rgb (cr, &sample_point_normal);
 }
 
 void
-gimp_canvas_set_grid_style (GtkWidget *canvas,
+picman_canvas_set_grid_style (GtkWidget *canvas,
                             cairo_t   *cr,
-                            GimpGrid  *grid)
+                            PicmanGrid  *grid)
 {
   g_return_if_fail (GTK_IS_WIDGET (canvas));
   g_return_if_fail (cr != NULL);
-  g_return_if_fail (GIMP_IS_GRID (grid));
+  g_return_if_fail (PICMAN_IS_GRID (grid));
 
   cairo_set_line_width (cr, 1.0);
 
@@ -132,19 +132,19 @@ gimp_canvas_set_grid_style (GtkWidget *canvas,
     {
       cairo_pattern_t *pattern;
 
-    case GIMP_GRID_ON_OFF_DASH:
-    case GIMP_GRID_DOUBLE_DASH:
-      if (grid->style == GIMP_GRID_DOUBLE_DASH)
+    case PICMAN_GRID_ON_OFF_DASH:
+    case PICMAN_GRID_DOUBLE_DASH:
+      if (grid->style == PICMAN_GRID_DOUBLE_DASH)
         {
-          pattern = gimp_cairo_stipple_pattern_create (&grid->fgcolor,
+          pattern = picman_cairo_stipple_pattern_create (&grid->fgcolor,
                                                        &grid->bgcolor,
                                                        0);
         }
       else
         {
-          GimpRGB bg = { 0.0, 0.0, 0.0, 0.0 };
+          PicmanRGB bg = { 0.0, 0.0, 0.0, 0.0 };
 
-          pattern = gimp_cairo_stipple_pattern_create (&grid->fgcolor,
+          pattern = picman_cairo_stipple_pattern_create (&grid->fgcolor,
                                                        &bg,
                                                        0);
         }
@@ -153,18 +153,18 @@ gimp_canvas_set_grid_style (GtkWidget *canvas,
       cairo_pattern_destroy (pattern);
       break;
 
-    case GIMP_GRID_DOTS:
-    case GIMP_GRID_INTERSECTIONS:
-    case GIMP_GRID_SOLID:
-      gimp_cairo_set_source_rgb (cr, &grid->fgcolor);
+    case PICMAN_GRID_DOTS:
+    case PICMAN_GRID_INTERSECTIONS:
+    case PICMAN_GRID_SOLID:
+      picman_cairo_set_source_rgb (cr, &grid->fgcolor);
       break;
     }
 }
 
 void
-gimp_canvas_set_pen_style (GtkWidget     *canvas,
+picman_canvas_set_pen_style (GtkWidget     *canvas,
                            cairo_t       *cr,
-                           const GimpRGB *color,
+                           const PicmanRGB *color,
                            gint           width)
 {
   g_return_if_fail (GTK_IS_WIDGET (canvas));
@@ -176,39 +176,39 @@ gimp_canvas_set_pen_style (GtkWidget     *canvas,
   cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
   cairo_set_line_join (cr, CAIRO_LINE_JOIN_ROUND);
 
-  gimp_cairo_set_source_rgb (cr, color);
+  picman_cairo_set_source_rgb (cr, color);
 }
 
 void
-gimp_canvas_set_layer_style (GtkWidget *canvas,
+picman_canvas_set_layer_style (GtkWidget *canvas,
                              cairo_t   *cr,
-                             GimpLayer *layer)
+                             PicmanLayer *layer)
 {
   cairo_pattern_t *pattern;
 
   g_return_if_fail (GTK_IS_WIDGET (canvas));
   g_return_if_fail (cr != NULL);
-  g_return_if_fail (GIMP_IS_LAYER (layer));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
 
   cairo_set_line_width (cr, 1.0);
   cairo_set_line_cap (cr, CAIRO_LINE_CAP_SQUARE);
 
-  if (gimp_layer_get_mask (layer) &&
-      gimp_layer_get_edit_mask (layer))
+  if (picman_layer_get_mask (layer) &&
+      picman_layer_get_edit_mask (layer))
     {
-      pattern = gimp_cairo_stipple_pattern_create (&layer_mask_fg,
+      pattern = picman_cairo_stipple_pattern_create (&layer_mask_fg,
                                                    &layer_mask_bg,
                                                    0);
     }
-  else if (gimp_viewable_get_children (GIMP_VIEWABLE (layer)))
+  else if (picman_viewable_get_children (PICMAN_VIEWABLE (layer)))
     {
-      pattern = gimp_cairo_stipple_pattern_create (&layer_group_fg,
+      pattern = picman_cairo_stipple_pattern_create (&layer_group_fg,
                                                    &layer_group_bg,
                                                    0);
     }
   else
     {
-      pattern = gimp_cairo_stipple_pattern_create (&layer_fg,
+      pattern = picman_cairo_stipple_pattern_create (&layer_fg,
                                                    &layer_bg,
                                                    0);
     }
@@ -218,7 +218,7 @@ gimp_canvas_set_layer_style (GtkWidget *canvas,
 }
 
 void
-gimp_canvas_set_selection_out_style (GtkWidget *canvas,
+picman_canvas_set_selection_out_style (GtkWidget *canvas,
                                      cairo_t   *cr)
 {
   cairo_pattern_t *pattern;
@@ -229,7 +229,7 @@ gimp_canvas_set_selection_out_style (GtkWidget *canvas,
   cairo_set_line_width (cr, 1.0);
   cairo_set_line_cap (cr, CAIRO_LINE_CAP_SQUARE);
 
-  pattern = gimp_cairo_stipple_pattern_create (&selection_out_fg,
+  pattern = picman_cairo_stipple_pattern_create (&selection_out_fg,
                                                &selection_out_bg,
                                                0);
   cairo_set_source (cr, pattern);
@@ -237,7 +237,7 @@ gimp_canvas_set_selection_out_style (GtkWidget *canvas,
 }
 
 void
-gimp_canvas_set_selection_in_style (GtkWidget *canvas,
+picman_canvas_set_selection_in_style (GtkWidget *canvas,
                                     cairo_t   *cr,
                                     gint       index)
 {
@@ -249,7 +249,7 @@ gimp_canvas_set_selection_in_style (GtkWidget *canvas,
   cairo_set_line_width (cr, 1.0);
   cairo_set_line_cap (cr, CAIRO_LINE_CAP_SQUARE);
 
-  pattern = gimp_cairo_stipple_pattern_create (&selection_in_fg,
+  pattern = picman_cairo_stipple_pattern_create (&selection_in_fg,
                                                &selection_in_bg,
                                                index);
   cairo_set_source (cr, pattern);
@@ -257,7 +257,7 @@ gimp_canvas_set_selection_in_style (GtkWidget *canvas,
 }
 
 void
-gimp_canvas_set_vectors_bg_style (GtkWidget *canvas,
+picman_canvas_set_vectors_bg_style (GtkWidget *canvas,
                                   cairo_t   *cr,
                                   gboolean   active)
 {
@@ -267,13 +267,13 @@ gimp_canvas_set_vectors_bg_style (GtkWidget *canvas,
   cairo_set_line_width (cr, 3.0);
 
   if (active)
-    gimp_cairo_set_source_rgba (cr, &vectors_active_bg);
+    picman_cairo_set_source_rgba (cr, &vectors_active_bg);
   else
-    gimp_cairo_set_source_rgba (cr, &vectors_normal_bg);
+    picman_cairo_set_source_rgba (cr, &vectors_normal_bg);
 }
 
 void
-gimp_canvas_set_vectors_fg_style (GtkWidget *canvas,
+picman_canvas_set_vectors_fg_style (GtkWidget *canvas,
                                   cairo_t   *cr,
                                   gboolean   active)
 {
@@ -283,24 +283,24 @@ gimp_canvas_set_vectors_fg_style (GtkWidget *canvas,
   cairo_set_line_width (cr, 1.0);
 
   if (active)
-    gimp_cairo_set_source_rgba (cr, &vectors_active_fg);
+    picman_cairo_set_source_rgba (cr, &vectors_active_fg);
   else
-    gimp_cairo_set_source_rgba (cr, &vectors_normal_fg);
+    picman_cairo_set_source_rgba (cr, &vectors_normal_fg);
 }
 
 void
-gimp_canvas_set_outline_bg_style (GtkWidget *canvas,
+picman_canvas_set_outline_bg_style (GtkWidget *canvas,
                                   cairo_t   *cr)
 {
   g_return_if_fail (GTK_IS_WIDGET (canvas));
   g_return_if_fail (cr != NULL);
 
   cairo_set_line_width (cr, 1.0);
-  gimp_cairo_set_source_rgba (cr, &outline_bg);
+  picman_cairo_set_source_rgba (cr, &outline_bg);
 }
 
 void
-gimp_canvas_set_outline_fg_style (GtkWidget *canvas,
+picman_canvas_set_outline_fg_style (GtkWidget *canvas,
                                   cairo_t   *cr)
 {
   static const double dashes[] = { 4.0, 4.0 };
@@ -309,22 +309,22 @@ gimp_canvas_set_outline_fg_style (GtkWidget *canvas,
   g_return_if_fail (cr != NULL);
 
   cairo_set_line_width (cr, 1.0);
-  gimp_cairo_set_source_rgba (cr, &outline_fg);
+  picman_cairo_set_source_rgba (cr, &outline_fg);
   cairo_set_dash (cr, dashes, G_N_ELEMENTS (dashes), 0);
 }
 
 void
-gimp_canvas_set_passe_partout_style (GtkWidget *canvas,
+picman_canvas_set_passe_partout_style (GtkWidget *canvas,
                                      cairo_t   *cr)
 {
   g_return_if_fail (GTK_IS_WIDGET (canvas));
   g_return_if_fail (cr != NULL);
 
-  gimp_cairo_set_source_rgba (cr, &passe_partout);
+  picman_cairo_set_source_rgba (cr, &passe_partout);
 }
 
 void
-gimp_canvas_set_tool_bg_style (GtkWidget *canvas,
+picman_canvas_set_tool_bg_style (GtkWidget *canvas,
                                cairo_t   *cr)
 {
   g_return_if_fail (GTK_IS_WIDGET (canvas));
@@ -333,11 +333,11 @@ gimp_canvas_set_tool_bg_style (GtkWidget *canvas,
   cairo_set_line_width (cr, 3.0);
   cairo_set_line_join (cr, CAIRO_LINE_JOIN_ROUND);
 
-  gimp_cairo_set_source_rgba (cr, &tool_bg);
+  picman_cairo_set_source_rgba (cr, &tool_bg);
 }
 
 void
-gimp_canvas_set_tool_fg_style (GtkWidget *canvas,
+picman_canvas_set_tool_fg_style (GtkWidget *canvas,
                                cairo_t   *cr,
                                gboolean   highlight)
 {
@@ -347,7 +347,7 @@ gimp_canvas_set_tool_fg_style (GtkWidget *canvas,
   cairo_set_line_join (cr, CAIRO_LINE_JOIN_ROUND);
 
   if (highlight)
-    gimp_cairo_set_source_rgba (cr, &tool_fg_highlight);
+    picman_cairo_set_source_rgba (cr, &tool_fg_highlight);
   else
-    gimp_cairo_set_source_rgba (cr, &tool_fg);
+    picman_cairo_set_source_rgba (cr, &tool_fg);
 }

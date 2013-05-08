@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu\n"
+"Project-Id-Version: picman-script-fu\n"
 "POT-Creation-Date: 2001-09-23 20:12-0400\n"
 "PO-Revision-Date: 2001-12-21 17:40GMT+0200\n"
 "Last-Translator: Vasif İsmayıloğlu MD <azerb_linux@hotmail.com>\n"
@@ -671,34 +671,34 @@ msgstr "<Toolbox> Skript Səhifə Örtülər Naxış."
 msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Beveled Pattern/Hrule..."
 msgstr "<Toolbox> Skript Səhifə Örtülər Naxış."
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Gimp.Org/Big Header..."
+msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Picman.Org/Big Header..."
 msgstr "<Toolbox> Skript Səhifə Örtülər Qur Böyük Başlıq."
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Gimp.Org/General Tube Labels..."
+msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Picman.Org/General Tube Labels..."
 msgstr "<Toolbox> Skript Səhifə Örtülər Qur Ümumi Etiketlər."
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Gimp.Org/Small Header..."
+msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Picman.Org/Small Header..."
 msgstr "<Toolbox> Skript Səhifə Örtülər Qur Dar Başlıq."
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Gimp.Org/Tube Button Label..."
+msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Picman.Org/Tube Button Label..."
 msgstr "<Toolbox> Skript Səhifə Örtülər Qur Düymə Etiket."
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Gimp.Org/Tube Sub-Button Label..."
+msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Picman.Org/Tube Sub-Button Label..."
 msgstr "<Toolbox> Skript Səhifə Örtülər Qur Baz. Düymə Etiket."
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Gimp.Org/Tube Sub-Sub-Button Label..."
+msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Picman.Org/Tube Sub-Sub-Button Label..."
 msgstr "<Toolbox> Skript Səhifə Örtülər Qur Baz. Baz. Düymə Etiket."
 
 #: plug-ins/webbrowser/web-browser.scm:0
@@ -708,72 +708,72 @@ msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/GIMP Bugs"
+msgid "<Toolbox>/Xtns/Web Browser/PICMAN Bugs"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/GIMP Manual"
+msgid "<Toolbox>/Xtns/Web Browser/PICMAN Manual"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/GIMP News"
+msgid "<Toolbox>/Xtns/Web Browser/PICMAN News"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/GIMP Tutorials"
+msgid "<Toolbox>/Xtns/Web Browser/PICMAN Tutorials"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Documenation"
+msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Documenation"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Download"
+msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Download"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/GIMP Art"
+msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/PICMAN Art"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/GTK"
+msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/GTK"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Links"
+msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Links"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Mailing Lists"
+msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Mailing Lists"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Resources"
+msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Resources"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/The GIMP"
+msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/The PICMAN"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/Gimp-Savvy.com"
+msgid "<Toolbox>/Xtns/Web Browser/Picman-Savvy.com"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
 #, fuzzy
-msgid "<Toolbox>/Xtns/Web Browser/Grokking the GIMP"
+msgid "<Toolbox>/Xtns/Web Browser/Grokking the PICMAN"
 msgstr "<Toolbox> Səyyah"
 
 #: plug-ins/webbrowser/web-browser.scm:0
@@ -833,8 +833,8 @@ msgstr "Əlavə Et"
 msgid "Apply Layer Mask (or discard)"
 msgstr "Əlavə Et Lay"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
 msgid "AutoCrop"
 msgstr ""
 
@@ -873,7 +873,7 @@ msgstr ""
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm:0
 #: plug-ins/script-fu/scripts/frosty-logo.scm:0
 #: plug-ins/script-fu/scripts/frosty-logo.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #: plug-ins/script-fu/scripts/glossy.scm:0
 #: plug-ins/script-fu/scripts/glossy.scm:0
 #: plug-ins/script-fu/scripts/glowing-logo.scm:0
@@ -1155,8 +1155,8 @@ msgstr "Yarat"
 msgid "Custom Gradient"
 msgstr "Xüsusi Qradiyent"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
 #, fuzzy
 msgid "Dark Color"
 msgstr "Tünd"
@@ -1437,9 +1437,9 @@ msgstr "Yazı növü"
 #: plug-ins/script-fu/scripts/crystal-logo.scm:0
 #: plug-ins/script-fu/scripts/font-map.scm:0
 #: plug-ins/script-fu/scripts/frosty-logo.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #: plug-ins/script-fu/scripts/glossy.scm:0
 #: plug-ins/script-fu/scripts/glowing-logo.scm:0
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm:0
@@ -1480,9 +1480,9 @@ msgstr "Yazı növü Böyüklük piksel"
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm:0
 #: plug-ins/script-fu/scripts/crystal-logo.scm:0
 #: plug-ins/script-fu/scripts/frosty-logo.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #: plug-ins/script-fu/scripts/glossy.scm:0
 #: plug-ins/script-fu/scripts/glowing-logo.scm:0
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm:0
@@ -1592,7 +1592,7 @@ msgid "Grids Y"
 msgstr ""
 
 #: plug-ins/script-fu/scripts/beveled-pattern-hrule.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #: plug-ins/script-fu/scripts/gradient-example.scm:0
 #: plug-ins/script-fu/scripts/mkbrush.scm:0
 #: plug-ins/script-fu/scripts/mkbrush.scm:0
@@ -1613,8 +1613,8 @@ msgstr ""
 msgid "Highlight Balance"
 msgstr "İşarətlə"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
 #: plug-ins/script-fu/scripts/xach-effect.scm:0
 #, fuzzy
 msgid "Highlight Color"
@@ -1670,12 +1670,12 @@ msgstr "Rəsm Nümayişcisi"
 msgid "Image to Carve"
 msgstr "Rəsm a(ə)"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #, fuzzy
 msgid "Index Image"
 msgstr "İndeks"
@@ -1812,9 +1812,9 @@ msgstr "Yox"
 msgid "Number of Bands"
 msgstr "Rəqəm"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 msgid "Number of Colors"
 msgstr "Rəng Sayı"
 
@@ -1875,13 +1875,13 @@ msgid "Offset Radius"
 msgstr "Bədəl"
 
 #: plug-ins/script-fu/scripts/drop-shadow.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #, fuzzy
 msgid "Offset X"
 msgstr "Bədəl"
 
 #: plug-ins/script-fu/scripts/drop-shadow.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #, fuzzy
 msgid "Offset Y"
 msgstr "Bədəl"
@@ -2055,12 +2055,12 @@ msgstr "Uzunluq"
 msgid "Relative Radius"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #, fuzzy
 msgid "Remove Background"
 msgstr "Sil"
@@ -2120,8 +2120,8 @@ msgstr ""
 msgid "Seed"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #, fuzzy
 msgid "Select-By-Color Threshold"
 msgstr "Seç Rəng"
@@ -2143,9 +2143,9 @@ msgstr ""
 msgid "Shadow Blur Radius"
 msgstr "Dumanlı"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 msgid "Shadow Color"
 msgstr ""
 
@@ -2305,9 +2305,9 @@ msgstr "Mətn Rəng Fəal"
 #: plug-ins/script-fu/scripts/beveled-button.scm:0
 #: plug-ins/script-fu/scripts/beveled-pattern-button.scm:0
 #: plug-ins/script-fu/scripts/blended-logo.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #: plug-ins/script-fu/scripts/i26-gunya2.scm:0
 #: plug-ins/script-fu/scripts/news-text.scm:0
 #: plug-ins/script-fu/scripts/pupi-button.scm:0
@@ -2339,12 +2339,12 @@ msgstr "Mətn"
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm:0
 #: plug-ins/script-fu/scripts/crystal-logo.scm:0
 #: plug-ins/script-fu/scripts/frosty-logo.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-headers.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
-#: plug-ins/script-fu/scripts/gimp-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-headers.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
+#: plug-ins/script-fu/scripts/picman-labels.scm:0
 #: plug-ins/script-fu/scripts/glossy.scm:0
 #: plug-ins/script-fu/scripts/glowing-logo.scm:0
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm:0

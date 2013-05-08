@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpRc
- * Copyright (C) 2001  Sven Neumann <sven@gimp.org>
+ * PicmanRc
+ * Copyright (C) 2001  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,52 +18,52 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_RC_H__
-#define __GIMP_RC_H__
+#ifndef __PICMAN_RC_H__
+#define __PICMAN_RC_H__
 
-#include "config/gimppluginconfig.h"
-
-
-#define GIMP_TYPE_RC            (gimp_rc_get_type ())
-#define GIMP_RC(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_RC, GimpRc))
-#define GIMP_RC_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_RC, GimpRcClass))
-#define GIMP_IS_RC(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_RC))
-#define GIMP_IS_RC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_RC))
+#include "config/picmanpluginconfig.h"
 
 
-typedef struct _GimpRcClass GimpRcClass;
+#define PICMAN_TYPE_RC            (picman_rc_get_type ())
+#define PICMAN_RC(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_RC, PicmanRc))
+#define PICMAN_RC_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_RC, PicmanRcClass))
+#define PICMAN_IS_RC(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_RC))
+#define PICMAN_IS_RC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_RC))
 
-struct _GimpRc
+
+typedef struct _PicmanRcClass PicmanRcClass;
+
+struct _PicmanRc
 {
-  GimpPluginConfig  parent_instance;
+  PicmanPluginConfig  parent_instance;
 
-  gchar            *user_gimprc;
-  gchar            *system_gimprc;
+  gchar            *user_picmanrc;
+  gchar            *system_picmanrc;
   gboolean          verbose;
   gboolean          autosave;
   guint             save_idle_id;
 };
 
-struct _GimpRcClass
+struct _PicmanRcClass
 {
-  GimpPluginConfigClass  parent_class;
+  PicmanPluginConfigClass  parent_class;
 };
 
 
-GType     gimp_rc_get_type          (void) G_GNUC_CONST;
-GimpRc  * gimp_rc_new               (const gchar *system_gimprc,
-                                     const gchar *user_gimprc,
+GType     picman_rc_get_type          (void) G_GNUC_CONST;
+PicmanRc  * picman_rc_new               (const gchar *system_picmanrc,
+                                     const gchar *user_picmanrc,
                                      gboolean     verbose);
-void      gimp_rc_set_autosave      (GimpRc      *gimprc,
+void      picman_rc_set_autosave      (PicmanRc      *picmanrc,
                                      gboolean     autosave);
-void      gimp_rc_save              (GimpRc      *gimprc);
-gchar   * gimp_rc_query             (GimpRc      *rc,
+void      picman_rc_save              (PicmanRc      *picmanrc);
+gchar   * picman_rc_query             (PicmanRc      *rc,
                                      const gchar *key);
-void      gimp_rc_set_unknown_token (GimpRc      *rc,
+void      picman_rc_set_unknown_token (PicmanRc      *rc,
                                      const gchar *token,
                                      const gchar *value);
 
-void      gimp_rc_migrate           (GimpRc      *rc);
+void      picman_rc_migrate           (PicmanRc      *rc);
 
 
-#endif /* GIMP_RC_H__ */
+#endif /* PICMAN_RC_H__ */

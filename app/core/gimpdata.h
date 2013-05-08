@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdata.h
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmandata.h
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,103 +18,103 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DATA_H__
-#define __GIMP_DATA_H__
+#ifndef __PICMAN_DATA_H__
+#define __PICMAN_DATA_H__
 
 #include <time.h>      /* time_t */
 
-#include "gimpviewable.h"
+#include "picmanviewable.h"
 
 
 typedef enum
 {
-  GIMP_DATA_ERROR_OPEN,   /*  opening data file failed   */
-  GIMP_DATA_ERROR_READ,   /*  reading data file failed   */
-  GIMP_DATA_ERROR_WRITE,  /*  writing data file failed   */
-  GIMP_DATA_ERROR_DELETE  /*  deleting data file failed  */
-} GimpDataError;
+  PICMAN_DATA_ERROR_OPEN,   /*  opening data file failed   */
+  PICMAN_DATA_ERROR_READ,   /*  reading data file failed   */
+  PICMAN_DATA_ERROR_WRITE,  /*  writing data file failed   */
+  PICMAN_DATA_ERROR_DELETE  /*  deleting data file failed  */
+} PicmanDataError;
 
 
-#define GIMP_TYPE_DATA            (gimp_data_get_type ())
-#define GIMP_DATA(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DATA, GimpData))
-#define GIMP_DATA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DATA, GimpDataClass))
-#define GIMP_IS_DATA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DATA))
-#define GIMP_IS_DATA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DATA))
-#define GIMP_DATA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DATA, GimpDataClass))
+#define PICMAN_TYPE_DATA            (picman_data_get_type ())
+#define PICMAN_DATA(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DATA, PicmanData))
+#define PICMAN_DATA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DATA, PicmanDataClass))
+#define PICMAN_IS_DATA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DATA))
+#define PICMAN_IS_DATA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DATA))
+#define PICMAN_DATA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DATA, PicmanDataClass))
 
 
-typedef struct _GimpDataClass GimpDataClass;
+typedef struct _PicmanDataClass PicmanDataClass;
 
-struct _GimpData
+struct _PicmanData
 {
-  GimpViewable  parent_instance;
+  PicmanViewable  parent_instance;
 };
 
-struct _GimpDataClass
+struct _PicmanDataClass
 {
-  GimpViewableClass  parent_class;
+  PicmanViewableClass  parent_class;
 
   /*  signals  */
-  void          (* dirty)         (GimpData  *data);
+  void          (* dirty)         (PicmanData  *data);
 
   /*  virtual functions  */
-  gboolean      (* save)          (GimpData  *data,
+  gboolean      (* save)          (PicmanData  *data,
                                    GError   **error);
-  const gchar * (* get_extension) (GimpData  *data);
-  GimpData    * (* duplicate)     (GimpData  *data);
+  const gchar * (* get_extension) (PicmanData  *data);
+  PicmanData    * (* duplicate)     (PicmanData  *data);
 };
 
 
-GType         gimp_data_get_type         (void) G_GNUC_CONST;
+GType         picman_data_get_type         (void) G_GNUC_CONST;
 
-gboolean      gimp_data_save             (GimpData     *data,
+gboolean      picman_data_save             (PicmanData     *data,
                                           GError      **error);
 
-void          gimp_data_dirty            (GimpData     *data);
-void          gimp_data_clean            (GimpData     *data);
-gboolean      gimp_data_is_dirty         (GimpData     *data);
+void          picman_data_dirty            (PicmanData     *data);
+void          picman_data_clean            (PicmanData     *data);
+gboolean      picman_data_is_dirty         (PicmanData     *data);
 
-void          gimp_data_freeze           (GimpData     *data);
-void          gimp_data_thaw             (GimpData     *data);
-gboolean      gimp_data_is_frozen        (GimpData     *data);
+void          picman_data_freeze           (PicmanData     *data);
+void          picman_data_thaw             (PicmanData     *data);
+gboolean      picman_data_is_frozen        (PicmanData     *data);
 
-gboolean      gimp_data_delete_from_disk (GimpData     *data,
+gboolean      picman_data_delete_from_disk (PicmanData     *data,
                                           GError      **error);
 
-const gchar * gimp_data_get_extension    (GimpData     *data);
+const gchar * picman_data_get_extension    (PicmanData     *data);
 
-void          gimp_data_set_filename     (GimpData     *data,
+void          picman_data_set_filename     (PicmanData     *data,
                                           const gchar  *filename,
                                           gboolean      writable,
                                           gboolean      deletable);
-void          gimp_data_create_filename  (GimpData     *data,
+void          picman_data_create_filename  (PicmanData     *data,
                                           const gchar  *dest_dir);
-const gchar * gimp_data_get_filename     (GimpData     *data);
+const gchar * picman_data_get_filename     (PicmanData     *data);
 
-void          gimp_data_set_folder_tags  (GimpData     *data,
+void          picman_data_set_folder_tags  (PicmanData     *data,
                                           const gchar  *top_directory);
 
-const gchar * gimp_data_get_mime_type    (GimpData     *data);
+const gchar * picman_data_get_mime_type    (PicmanData     *data);
 
-gboolean      gimp_data_is_writable      (GimpData     *data);
-gboolean      gimp_data_is_deletable     (GimpData     *data);
+gboolean      picman_data_is_writable      (PicmanData     *data);
+gboolean      picman_data_is_deletable     (PicmanData     *data);
 
-void          gimp_data_set_mtime        (GimpData     *data,
+void          picman_data_set_mtime        (PicmanData     *data,
                                           time_t        mtime);
-time_t        gimp_data_get_mtime        (GimpData     *data);
+time_t        picman_data_get_mtime        (PicmanData     *data);
 
-GimpData    * gimp_data_duplicate        (GimpData     *data);
+PicmanData    * picman_data_duplicate        (PicmanData     *data);
 
-void          gimp_data_make_internal    (GimpData     *data,
+void          picman_data_make_internal    (PicmanData     *data,
                                           const gchar  *identifier);
-gboolean      gimp_data_is_internal      (GimpData     *data);
+gboolean      picman_data_is_internal      (PicmanData     *data);
 
-gint          gimp_data_compare          (GimpData     *data1,
-                                          GimpData     *data2);
+gint          picman_data_compare          (PicmanData     *data1,
+                                          PicmanData     *data2);
 
-#define GIMP_DATA_ERROR (gimp_data_error_quark ())
+#define PICMAN_DATA_ERROR (picman_data_error_quark ())
 
-GQuark        gimp_data_error_quark      (void) G_GNUC_CONST;
+GQuark        picman_data_error_quark      (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_DATA_H__ */
+#endif /* __PICMAN_DATA_H__ */

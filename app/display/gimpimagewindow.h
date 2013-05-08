@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,81 +15,81 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_WINDOW_H__
-#define __GIMP_IMAGE_WINDOW_H__
+#ifndef __PICMAN_IMAGE_WINDOW_H__
+#define __PICMAN_IMAGE_WINDOW_H__
 
 
-#include "widgets/gimpwindow.h"
+#include "widgets/picmanwindow.h"
 
 
-#define GIMP_TYPE_IMAGE_WINDOW            (gimp_image_window_get_type ())
-#define GIMP_IMAGE_WINDOW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_IMAGE_WINDOW, GimpImageWindow))
-#define GIMP_IMAGE_WINDOW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_IMAGE_WINDOW, GimpImageWindowClass))
-#define GIMP_IS_IMAGE_WINDOW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_IMAGE_WINDOW))
-#define GIMP_IS_IMAGE_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_IMAGE_WINDOW))
-#define GIMP_IMAGE_WINDOW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_IMAGE_WINDOW, GimpImageWindowClass))
+#define PICMAN_TYPE_IMAGE_WINDOW            (picman_image_window_get_type ())
+#define PICMAN_IMAGE_WINDOW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_IMAGE_WINDOW, PicmanImageWindow))
+#define PICMAN_IMAGE_WINDOW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_IMAGE_WINDOW, PicmanImageWindowClass))
+#define PICMAN_IS_IMAGE_WINDOW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_IMAGE_WINDOW))
+#define PICMAN_IS_IMAGE_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_IMAGE_WINDOW))
+#define PICMAN_IMAGE_WINDOW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_IMAGE_WINDOW, PicmanImageWindowClass))
 
 
-typedef struct _GimpImageWindowClass  GimpImageWindowClass;
+typedef struct _PicmanImageWindowClass  PicmanImageWindowClass;
 
-struct _GimpImageWindow
+struct _PicmanImageWindow
 {
-  GimpWindow  parent_instance;
+  PicmanWindow  parent_instance;
 };
 
-struct _GimpImageWindowClass
+struct _PicmanImageWindowClass
 {
-  GimpWindowClass  parent_class;
+  PicmanWindowClass  parent_class;
 };
 
 
-GType              gimp_image_window_get_type             (void) G_GNUC_CONST;
+GType              picman_image_window_get_type             (void) G_GNUC_CONST;
 
-GimpImageWindow  * gimp_image_window_new                  (Gimp              *gimp,
-                                                           GimpImage         *image,
-                                                           GimpMenuFactory   *menu_factory,
-                                                           GimpDialogFactory *dialog_factory);
-void               gimp_image_window_destroy              (GimpImageWindow   *window);
+PicmanImageWindow  * picman_image_window_new                  (Picman              *picman,
+                                                           PicmanImage         *image,
+                                                           PicmanMenuFactory   *menu_factory,
+                                                           PicmanDialogFactory *dialog_factory);
+void               picman_image_window_destroy              (PicmanImageWindow   *window);
 
-GimpUIManager    * gimp_image_window_get_ui_manager       (GimpImageWindow  *window);
-GimpDockColumns  * gimp_image_window_get_left_docks       (GimpImageWindow  *window);
-GimpDockColumns  * gimp_image_window_get_right_docks      (GimpImageWindow  *window);
+PicmanUIManager    * picman_image_window_get_ui_manager       (PicmanImageWindow  *window);
+PicmanDockColumns  * picman_image_window_get_left_docks       (PicmanImageWindow  *window);
+PicmanDockColumns  * picman_image_window_get_right_docks      (PicmanImageWindow  *window);
 
-void               gimp_image_window_add_shell            (GimpImageWindow  *window,
-                                                           GimpDisplayShell *shell);
-GimpDisplayShell * gimp_image_window_get_shell            (GimpImageWindow  *window,
+void               picman_image_window_add_shell            (PicmanImageWindow  *window,
+                                                           PicmanDisplayShell *shell);
+PicmanDisplayShell * picman_image_window_get_shell            (PicmanImageWindow  *window,
                                                            gint              index);
-void               gimp_image_window_remove_shell         (GimpImageWindow  *window,
-                                                           GimpDisplayShell *shell);
+void               picman_image_window_remove_shell         (PicmanImageWindow  *window,
+                                                           PicmanDisplayShell *shell);
 
-gint               gimp_image_window_get_n_shells         (GimpImageWindow  *window);
+gint               picman_image_window_get_n_shells         (PicmanImageWindow  *window);
 
-void               gimp_image_window_set_active_shell     (GimpImageWindow  *window,
-                                                           GimpDisplayShell *shell);
-GimpDisplayShell * gimp_image_window_get_active_shell     (GimpImageWindow  *window);
+void               picman_image_window_set_active_shell     (PicmanImageWindow  *window,
+                                                           PicmanDisplayShell *shell);
+PicmanDisplayShell * picman_image_window_get_active_shell     (PicmanImageWindow  *window);
 
-void               gimp_image_window_set_fullscreen       (GimpImageWindow  *window,
+void               picman_image_window_set_fullscreen       (PicmanImageWindow  *window,
                                                            gboolean          fullscreen);
-gboolean           gimp_image_window_get_fullscreen       (GimpImageWindow  *window);
+gboolean           picman_image_window_get_fullscreen       (PicmanImageWindow  *window);
 
-void               gimp_image_window_set_show_menubar     (GimpImageWindow  *window,
+void               picman_image_window_set_show_menubar     (PicmanImageWindow  *window,
                                                            gboolean          show);
-gboolean           gimp_image_window_get_show_menubar     (GimpImageWindow  *window);
+gboolean           picman_image_window_get_show_menubar     (PicmanImageWindow  *window);
 
-void               gimp_image_window_set_show_statusbar   (GimpImageWindow  *window,
+void               picman_image_window_set_show_statusbar   (PicmanImageWindow  *window,
                                                            gboolean          show);
-gboolean           gimp_image_window_get_show_statusbar   (GimpImageWindow  *window);
+gboolean           picman_image_window_get_show_statusbar   (PicmanImageWindow  *window);
 
-gboolean           gimp_image_window_is_iconified         (GimpImageWindow  *window);
-gboolean           gimp_image_window_is_maximized         (GimpImageWindow  *window);
+gboolean           picman_image_window_is_iconified         (PicmanImageWindow  *window);
+gboolean           picman_image_window_is_maximized         (PicmanImageWindow  *window);
 
-gboolean           gimp_image_window_has_toolbox          (GimpImageWindow  *window);
+gboolean           picman_image_window_has_toolbox          (PicmanImageWindow  *window);
 
-void               gimp_image_window_shrink_wrap          (GimpImageWindow  *window,
+void               picman_image_window_shrink_wrap          (PicmanImageWindow  *window,
                                                            gboolean          grow_only);
 
-GtkWidget        * gimp_image_window_get_default_dockbook (GimpImageWindow  *window);
+GtkWidget        * picman_image_window_get_default_dockbook (PicmanImageWindow  *window);
 
-void               gimp_image_window_keep_canvas_pos      (GimpImageWindow  *window);
+void               picman_image_window_keep_canvas_pos      (PicmanImageWindow  *window);
 
-#endif /* __GIMP_IMAGE_WINDOW_H__ */
+#endif /* __PICMAN_IMAGE_WINDOW_H__ */

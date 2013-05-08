@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,159 +23,159 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp-transform-utils.h"
-#include "core/gimpchannel.h"
-#include "core/gimpdrawable-transform.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimpitem.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimpprogress.h"
+#include "core/picman-transform-utils.h"
+#include "core/picmanchannel.h"
+#include "core/picmandrawable-transform.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picmanitem.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanprogress.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimppdbcontext.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanpdbcontext.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GimpValueArray *
-item_transform_flip_simple_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+item_transform_flip_simple_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gint32 flip_type;
   gboolean auto_center;
   gdouble axis;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  flip_type = g_value_get_enum (gimp_value_array_index (args, 1));
-  auto_center = g_value_get_boolean (gimp_value_array_index (args, 2));
-  axis = g_value_get_double (gimp_value_array_index (args, 3));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  flip_type = g_value_get_enum (picman_value_array_index (args, 1));
+  auto_center = g_value_get_boolean (picman_value_array_index (args, 2));
+  axis = g_value_get_double (picman_value_array_index (args, 3));
 
   if (success)
     {
       gint x, y, width, height;
 
-      success = gimp_pdb_item_is_attached (item, NULL,
-                                           GIMP_PDB_ITEM_CONTENT |
-                                           GIMP_PDB_ITEM_POSITION, error);
+      success = picman_pdb_item_is_attached (item, NULL,
+                                           PICMAN_PDB_ITEM_CONTENT |
+                                           PICMAN_PDB_ITEM_POSITION, error);
 
       if (success &&
-          gimp_item_mask_intersect (item, &x, &y, &width, &height))
+          picman_item_mask_intersect (item, &x, &y, &width, &height))
         {
-          GimpPDBContext *pdb_context = GIMP_PDB_CONTEXT (context);
+          PicmanPDBContext *pdb_context = PICMAN_PDB_CONTEXT (context);
           gint            off_x, off_y;
 
-          gimp_item_get_offset (item, &off_x, &off_y);
+          picman_item_get_offset (item, &off_x, &off_y);
           x += off_x;
           y += off_y;
 
-          gimp_transform_get_flip_axis (x, y, width, height,
+          picman_transform_get_flip_axis (x, y, width, height,
                                         flip_type, auto_center, &axis);
 
-          if (GIMP_IS_DRAWABLE (item) &&
-              ! gimp_viewable_get_children (GIMP_VIEWABLE (item)) &&
-              ! gimp_channel_is_empty (gimp_image_get_mask (gimp_item_get_image (item))))
+          if (PICMAN_IS_DRAWABLE (item) &&
+              ! picman_viewable_get_children (PICMAN_VIEWABLE (item)) &&
+              ! picman_channel_is_empty (picman_image_get_mask (picman_item_get_image (item))))
             {
-              GimpDrawable *drawable;
+              PicmanDrawable *drawable;
 
-              drawable = gimp_drawable_transform_flip (GIMP_DRAWABLE (item), context,
+              drawable = picman_drawable_transform_flip (PICMAN_DRAWABLE (item), context,
                                                        flip_type, axis,
                                                        pdb_context->transform_resize);
 
               if (drawable)
-                item = GIMP_ITEM (drawable);
+                item = PICMAN_ITEM (drawable);
               else
                 success = FALSE;
             }
           else
             {
-              gimp_item_flip (item, context,
+              picman_item_flip (item, context,
                               flip_type, axis,
                               pdb_context->transform_resize);
             }
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_item (gimp_value_array_index (return_vals, 1), item);
+    picman_value_set_item (picman_value_array_index (return_vals, 1), item);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_transform_flip_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+item_transform_flip_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gdouble x0;
   gdouble y0;
   gdouble x1;
   gdouble y1;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  x0 = g_value_get_double (gimp_value_array_index (args, 1));
-  y0 = g_value_get_double (gimp_value_array_index (args, 2));
-  x1 = g_value_get_double (gimp_value_array_index (args, 3));
-  y1 = g_value_get_double (gimp_value_array_index (args, 4));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  x0 = g_value_get_double (picman_value_array_index (args, 1));
+  y0 = g_value_get_double (picman_value_array_index (args, 2));
+  x1 = g_value_get_double (picman_value_array_index (args, 3));
+  y1 = g_value_get_double (picman_value_array_index (args, 4));
 
   if (success)
     {
       gint x, y, width, height;
 
-      success = gimp_pdb_item_is_attached (item, NULL,
-                                                        GIMP_PDB_ITEM_CONTENT |
-                                                        GIMP_PDB_ITEM_POSITION, error);
+      success = picman_pdb_item_is_attached (item, NULL,
+                                                        PICMAN_PDB_ITEM_CONTENT |
+                                                        PICMAN_PDB_ITEM_POSITION, error);
 
       if (success &&
-          gimp_item_mask_intersect (item, &x, &y, &width, &height))
+          picman_item_mask_intersect (item, &x, &y, &width, &height))
         {
-          GimpPDBContext *pdb_context = GIMP_PDB_CONTEXT (context);
-          GimpMatrix3     matrix;
+          PicmanPDBContext *pdb_context = PICMAN_PDB_CONTEXT (context);
+          PicmanMatrix3     matrix;
           gint            off_x, off_y;
 
-          gimp_item_get_offset (item, &off_x, &off_y);
+          picman_item_get_offset (item, &off_x, &off_y);
           x += off_x;
           y += off_y;
 
           /* Assemble the transformation matrix */
-          gimp_matrix3_identity (&matrix);
-          gimp_transform_matrix_flip_free (&matrix, x0, y0, x1, y1);
+          picman_matrix3_identity (&matrix);
+          picman_transform_matrix_flip_free (&matrix, x0, y0, x1, y1);
 
           if (progress)
-            gimp_progress_start (progress, _("Flipping"), FALSE);
+            picman_progress_start (progress, _("Flipping"), FALSE);
 
-          if (GIMP_IS_DRAWABLE (item) &&
-              ! gimp_viewable_get_children (GIMP_VIEWABLE (item)) &&
-              ! gimp_channel_is_empty (gimp_image_get_mask (gimp_item_get_image (item))))
+          if (PICMAN_IS_DRAWABLE (item) &&
+              ! picman_viewable_get_children (PICMAN_VIEWABLE (item)) &&
+              ! picman_channel_is_empty (picman_image_get_mask (picman_item_get_image (item))))
             {
-              GimpDrawable *drawable;
+              PicmanDrawable *drawable;
 
-              drawable = gimp_drawable_transform_affine (GIMP_DRAWABLE (item),
+              drawable = picman_drawable_transform_affine (PICMAN_DRAWABLE (item),
                                                          context, &matrix,
                                                          pdb_context->transform_direction,
                                                          pdb_context->interpolation,
@@ -184,13 +184,13 @@ item_transform_flip_invoker (GimpProcedure         *procedure,
                                                          progress);
 
               if (drawable)
-                item = GIMP_ITEM (drawable);
+                item = PICMAN_ITEM (drawable);
               else
                 success = FALSE;
             }
           else
             {
-              gimp_item_transform (item, context, &matrix,
+              picman_item_transform (item, context, &matrix,
                                    pdb_context->transform_direction,
                                    pdb_context->interpolation,
                                    pdb_context->transform_recursion,
@@ -199,30 +199,30 @@ item_transform_flip_invoker (GimpProcedure         *procedure,
             }
 
           if (progress)
-            gimp_progress_end (progress);
+            picman_progress_end (progress);
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_item (gimp_value_array_index (return_vals, 1), item);
+    picman_value_set_item (picman_value_array_index (return_vals, 1), item);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_transform_perspective_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+item_transform_perspective_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gdouble x0;
   gdouble y0;
   gdouble x1;
@@ -232,52 +232,52 @@ item_transform_perspective_invoker (GimpProcedure         *procedure,
   gdouble x3;
   gdouble y3;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  x0 = g_value_get_double (gimp_value_array_index (args, 1));
-  y0 = g_value_get_double (gimp_value_array_index (args, 2));
-  x1 = g_value_get_double (gimp_value_array_index (args, 3));
-  y1 = g_value_get_double (gimp_value_array_index (args, 4));
-  x2 = g_value_get_double (gimp_value_array_index (args, 5));
-  y2 = g_value_get_double (gimp_value_array_index (args, 6));
-  x3 = g_value_get_double (gimp_value_array_index (args, 7));
-  y3 = g_value_get_double (gimp_value_array_index (args, 8));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  x0 = g_value_get_double (picman_value_array_index (args, 1));
+  y0 = g_value_get_double (picman_value_array_index (args, 2));
+  x1 = g_value_get_double (picman_value_array_index (args, 3));
+  y1 = g_value_get_double (picman_value_array_index (args, 4));
+  x2 = g_value_get_double (picman_value_array_index (args, 5));
+  y2 = g_value_get_double (picman_value_array_index (args, 6));
+  x3 = g_value_get_double (picman_value_array_index (args, 7));
+  y3 = g_value_get_double (picman_value_array_index (args, 8));
 
   if (success)
     {
       gint x, y, width, height;
 
-      success = gimp_pdb_item_is_attached (item, NULL,
-                                                        GIMP_PDB_ITEM_CONTENT |
-                                                        GIMP_PDB_ITEM_POSITION, error);
+      success = picman_pdb_item_is_attached (item, NULL,
+                                                        PICMAN_PDB_ITEM_CONTENT |
+                                                        PICMAN_PDB_ITEM_POSITION, error);
 
       if (success &&
-          gimp_item_mask_intersect (item, &x, &y, &width, &height))
+          picman_item_mask_intersect (item, &x, &y, &width, &height))
         {
-          GimpPDBContext *pdb_context = GIMP_PDB_CONTEXT (context);
-          GimpMatrix3     matrix;
+          PicmanPDBContext *pdb_context = PICMAN_PDB_CONTEXT (context);
+          PicmanMatrix3     matrix;
           gint            off_x, off_y;
 
-          gimp_item_get_offset (item, &off_x, &off_y);
+          picman_item_get_offset (item, &off_x, &off_y);
           x += off_x;
           y += off_y;
 
           /* Assemble the transformation matrix */
-          gimp_matrix3_identity (&matrix);
-          gimp_transform_matrix_perspective (&matrix,
+          picman_matrix3_identity (&matrix);
+          picman_transform_matrix_perspective (&matrix,
                                              x, y, width, height,
                                              x0, y0, x1, y1,
                                              x2, y2, x3, y3);
 
           if (progress)
-            gimp_progress_start (progress, _("Perspective"), FALSE);
+            picman_progress_start (progress, _("Perspective"), FALSE);
 
-          if (GIMP_IS_DRAWABLE (item) &&
-              ! gimp_viewable_get_children (GIMP_VIEWABLE (item)) &&
-              ! gimp_channel_is_empty (gimp_image_get_mask (gimp_item_get_image (item))))
+          if (PICMAN_IS_DRAWABLE (item) &&
+              ! picman_viewable_get_children (PICMAN_VIEWABLE (item)) &&
+              ! picman_channel_is_empty (picman_image_get_mask (picman_item_get_image (item))))
             {
-              GimpDrawable *drawable;
+              PicmanDrawable *drawable;
 
-              drawable = gimp_drawable_transform_affine (GIMP_DRAWABLE (item),
+              drawable = picman_drawable_transform_affine (PICMAN_DRAWABLE (item),
                                                          context, &matrix,
                                                          pdb_context->transform_direction,
                                                          pdb_context->interpolation,
@@ -286,13 +286,13 @@ item_transform_perspective_invoker (GimpProcedure         *procedure,
                                                          progress);
 
               if (drawable)
-                item = GIMP_ITEM (drawable);
+                item = PICMAN_ITEM (drawable);
               else
                 success = FALSE;
             }
           else
             {
-              gimp_item_transform (item, context, &matrix,
+              picman_item_transform (item, context, &matrix,
                                    pdb_context->transform_direction,
                                    pdb_context->interpolation,
                                    pdb_context->transform_recursion,
@@ -301,82 +301,82 @@ item_transform_perspective_invoker (GimpProcedure         *procedure,
             }
 
           if (progress)
-            gimp_progress_end (progress);
+            picman_progress_end (progress);
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_item (gimp_value_array_index (return_vals, 1), item);
+    picman_value_set_item (picman_value_array_index (return_vals, 1), item);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_transform_rotate_simple_invoker (GimpProcedure         *procedure,
-                                      Gimp                  *gimp,
-                                      GimpContext           *context,
-                                      GimpProgress          *progress,
-                                      const GimpValueArray  *args,
+static PicmanValueArray *
+item_transform_rotate_simple_invoker (PicmanProcedure         *procedure,
+                                      Picman                  *picman,
+                                      PicmanContext           *context,
+                                      PicmanProgress          *progress,
+                                      const PicmanValueArray  *args,
                                       GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gint32 rotate_type;
   gboolean auto_center;
   gdouble center_x;
   gdouble center_y;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  rotate_type = g_value_get_enum (gimp_value_array_index (args, 1));
-  auto_center = g_value_get_boolean (gimp_value_array_index (args, 2));
-  center_x = g_value_get_double (gimp_value_array_index (args, 3));
-  center_y = g_value_get_double (gimp_value_array_index (args, 4));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  rotate_type = g_value_get_enum (picman_value_array_index (args, 1));
+  auto_center = g_value_get_boolean (picman_value_array_index (args, 2));
+  center_x = g_value_get_double (picman_value_array_index (args, 3));
+  center_y = g_value_get_double (picman_value_array_index (args, 4));
 
   if (success)
     {
       gint x, y, width, height;
 
-      success = gimp_pdb_item_is_attached (item, NULL,
-                                           GIMP_PDB_ITEM_CONTENT |
-                                           GIMP_PDB_ITEM_POSITION, error);
+      success = picman_pdb_item_is_attached (item, NULL,
+                                           PICMAN_PDB_ITEM_CONTENT |
+                                           PICMAN_PDB_ITEM_POSITION, error);
 
       if (success &&
-          gimp_item_mask_intersect (item, &x, &y, &width, &height))
+          picman_item_mask_intersect (item, &x, &y, &width, &height))
         {
-          GimpPDBContext *pdb_context = GIMP_PDB_CONTEXT (context);
+          PicmanPDBContext *pdb_context = PICMAN_PDB_CONTEXT (context);
           gint            off_x, off_y;
 
-          gimp_item_get_offset (item, &off_x, &off_y);
+          picman_item_get_offset (item, &off_x, &off_y);
           x += off_x;
           y += off_y;
 
-          gimp_transform_get_rotate_center (x, y, width, height,
+          picman_transform_get_rotate_center (x, y, width, height,
                                             auto_center, &center_x, &center_y);
 
-          if (GIMP_IS_DRAWABLE (item) &&
-              ! gimp_viewable_get_children (GIMP_VIEWABLE (item)) &&
-              ! gimp_channel_is_empty (gimp_image_get_mask (gimp_item_get_image (item))))
+          if (PICMAN_IS_DRAWABLE (item) &&
+              ! picman_viewable_get_children (PICMAN_VIEWABLE (item)) &&
+              ! picman_channel_is_empty (picman_image_get_mask (picman_item_get_image (item))))
             {
-              GimpDrawable *drawable;
+              PicmanDrawable *drawable;
 
-              drawable = gimp_drawable_transform_rotate (GIMP_DRAWABLE (item),
+              drawable = picman_drawable_transform_rotate (PICMAN_DRAWABLE (item),
                                                          context,
                                                          rotate_type,
                                                          center_x, center_y,
                                                          pdb_context->transform_resize);
 
               if (drawable)
-                item = GIMP_ITEM (drawable);
+                item = PICMAN_ITEM (drawable);
               else
                 success = FALSE;
             }
           else
             {
-              gimp_item_rotate (item, context,
+              picman_item_rotate (item, context,
                                 rotate_type,
                                 center_x, center_y,
                                 pdb_context->transform_resize);
@@ -384,75 +384,75 @@ item_transform_rotate_simple_invoker (GimpProcedure         *procedure,
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_item (gimp_value_array_index (return_vals, 1), item);
+    picman_value_set_item (picman_value_array_index (return_vals, 1), item);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_transform_rotate_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+item_transform_rotate_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gdouble angle;
   gboolean auto_center;
   gdouble center_x;
   gdouble center_y;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  angle = g_value_get_double (gimp_value_array_index (args, 1));
-  auto_center = g_value_get_boolean (gimp_value_array_index (args, 2));
-  center_x = g_value_get_double (gimp_value_array_index (args, 3));
-  center_y = g_value_get_double (gimp_value_array_index (args, 4));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  angle = g_value_get_double (picman_value_array_index (args, 1));
+  auto_center = g_value_get_boolean (picman_value_array_index (args, 2));
+  center_x = g_value_get_double (picman_value_array_index (args, 3));
+  center_y = g_value_get_double (picman_value_array_index (args, 4));
 
   if (success)
     {
       gint x, y, width, height;
 
-      success = gimp_pdb_item_is_attached (item, NULL,
-                                                        GIMP_PDB_ITEM_CONTENT |
-                                                        GIMP_PDB_ITEM_POSITION, error);
+      success = picman_pdb_item_is_attached (item, NULL,
+                                                        PICMAN_PDB_ITEM_CONTENT |
+                                                        PICMAN_PDB_ITEM_POSITION, error);
 
       if (success &&
-          gimp_item_mask_intersect (item, &x, &y, &width, &height))
+          picman_item_mask_intersect (item, &x, &y, &width, &height))
         {
-          GimpPDBContext *pdb_context = GIMP_PDB_CONTEXT (context);
-          GimpMatrix3     matrix;
+          PicmanPDBContext *pdb_context = PICMAN_PDB_CONTEXT (context);
+          PicmanMatrix3     matrix;
           gint            off_x, off_y;
 
-          gimp_item_get_offset (item, &off_x, &off_y);
+          picman_item_get_offset (item, &off_x, &off_y);
           x += off_x;
           y += off_y;
 
           /* Assemble the transformation matrix */
-          gimp_matrix3_identity (&matrix);
+          picman_matrix3_identity (&matrix);
           if (auto_center)
-            gimp_transform_matrix_rotate_rect (&matrix,
+            picman_transform_matrix_rotate_rect (&matrix,
                                                x, y, width, height, angle);
           else
-            gimp_transform_matrix_rotate_center (&matrix,
+            picman_transform_matrix_rotate_center (&matrix,
                                                  center_x, center_y, angle);
 
           if (progress)
-            gimp_progress_start (progress, _("Rotating"), FALSE);
+            picman_progress_start (progress, _("Rotating"), FALSE);
 
-          if (GIMP_IS_DRAWABLE (item) &&
-              ! gimp_viewable_get_children (GIMP_VIEWABLE (item)) &&
-              ! gimp_channel_is_empty (gimp_image_get_mask (gimp_item_get_image (item))))
+          if (PICMAN_IS_DRAWABLE (item) &&
+              ! picman_viewable_get_children (PICMAN_VIEWABLE (item)) &&
+              ! picman_channel_is_empty (picman_image_get_mask (picman_item_get_image (item))))
             {
-              GimpDrawable *drawable;
+              PicmanDrawable *drawable;
 
-              drawable = gimp_drawable_transform_affine (GIMP_DRAWABLE (item),
+              drawable = picman_drawable_transform_affine (PICMAN_DRAWABLE (item),
                                                          context, &matrix,
                                                          pdb_context->transform_direction,
                                                          pdb_context->interpolation,
@@ -461,13 +461,13 @@ item_transform_rotate_invoker (GimpProcedure         *procedure,
                                                          progress);
 
               if (drawable)
-                item = GIMP_ITEM (drawable);
+                item = PICMAN_ITEM (drawable);
               else
                 success = FALSE;
             }
           else
             {
-              gimp_item_transform (item, context, &matrix,
+              picman_item_transform (item, context, &matrix,
                                    pdb_context->transform_direction,
                                    pdb_context->interpolation,
                                    pdb_context->transform_recursion,
@@ -476,76 +476,76 @@ item_transform_rotate_invoker (GimpProcedure         *procedure,
             }
 
           if (progress)
-            gimp_progress_end (progress);
+            picman_progress_end (progress);
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_item (gimp_value_array_index (return_vals, 1), item);
+    picman_value_set_item (picman_value_array_index (return_vals, 1), item);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_transform_scale_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+item_transform_scale_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gdouble x0;
   gdouble y0;
   gdouble x1;
   gdouble y1;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  x0 = g_value_get_double (gimp_value_array_index (args, 1));
-  y0 = g_value_get_double (gimp_value_array_index (args, 2));
-  x1 = g_value_get_double (gimp_value_array_index (args, 3));
-  y1 = g_value_get_double (gimp_value_array_index (args, 4));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  x0 = g_value_get_double (picman_value_array_index (args, 1));
+  y0 = g_value_get_double (picman_value_array_index (args, 2));
+  x1 = g_value_get_double (picman_value_array_index (args, 3));
+  y1 = g_value_get_double (picman_value_array_index (args, 4));
 
   if (success)
     {
       gint x, y, width, height;
 
-      success = (gimp_pdb_item_is_attached (item, NULL,
-                                                          GIMP_PDB_ITEM_CONTENT |
-                                                          GIMP_PDB_ITEM_POSITION, error) && x0 < x1 && y0 < y1);
+      success = (picman_pdb_item_is_attached (item, NULL,
+                                                          PICMAN_PDB_ITEM_CONTENT |
+                                                          PICMAN_PDB_ITEM_POSITION, error) && x0 < x1 && y0 < y1);
 
       if (success &&
-          gimp_item_mask_intersect (item, &x, &y, &width, &height))
+          picman_item_mask_intersect (item, &x, &y, &width, &height))
         {
-          GimpPDBContext *pdb_context = GIMP_PDB_CONTEXT (context);
-          GimpMatrix3     matrix;
+          PicmanPDBContext *pdb_context = PICMAN_PDB_CONTEXT (context);
+          PicmanMatrix3     matrix;
           gint            off_x, off_y;
 
-          gimp_item_get_offset (item, &off_x, &off_y);
+          picman_item_get_offset (item, &off_x, &off_y);
           x += off_x;
           y += off_y;
 
           /* Assemble the transformation matrix */
-          gimp_matrix3_identity (&matrix);
-          gimp_transform_matrix_scale (&matrix,
+          picman_matrix3_identity (&matrix);
+          picman_transform_matrix_scale (&matrix,
                                        x, y, width, height,
                                        x0, y0, x1 - x0, y1 - y0);
 
           if (progress)
-            gimp_progress_start (progress, _("Scaling"), FALSE);
+            picman_progress_start (progress, _("Scaling"), FALSE);
 
-          if (GIMP_IS_DRAWABLE (item) &&
-              ! gimp_viewable_get_children (GIMP_VIEWABLE (item)) &&
-              ! gimp_channel_is_empty (gimp_image_get_mask (gimp_item_get_image (item))))
+          if (PICMAN_IS_DRAWABLE (item) &&
+              ! picman_viewable_get_children (PICMAN_VIEWABLE (item)) &&
+              ! picman_channel_is_empty (picman_image_get_mask (picman_item_get_image (item))))
             {
-              GimpDrawable *drawable;
+              PicmanDrawable *drawable;
 
-              drawable = gimp_drawable_transform_affine (GIMP_DRAWABLE (item),
+              drawable = picman_drawable_transform_affine (PICMAN_DRAWABLE (item),
                                                          context, &matrix,
                                                          pdb_context->transform_direction,
                                                          pdb_context->interpolation,
@@ -554,13 +554,13 @@ item_transform_scale_invoker (GimpProcedure         *procedure,
                                                          progress);
 
               if (drawable)
-                item = GIMP_ITEM (drawable);
+                item = PICMAN_ITEM (drawable);
               else
                 success = FALSE;
             }
           else
             {
-              gimp_item_transform (item, context, &matrix,
+              picman_item_transform (item, context, &matrix,
                                    pdb_context->transform_direction,
                                    pdb_context->interpolation,
                                    pdb_context->transform_recursion,
@@ -569,72 +569,72 @@ item_transform_scale_invoker (GimpProcedure         *procedure,
             }
 
           if (progress)
-            gimp_progress_end (progress);
+            picman_progress_end (progress);
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_item (gimp_value_array_index (return_vals, 1), item);
+    picman_value_set_item (picman_value_array_index (return_vals, 1), item);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_transform_shear_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+item_transform_shear_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gint32 shear_type;
   gdouble magnitude;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  shear_type = g_value_get_enum (gimp_value_array_index (args, 1));
-  magnitude = g_value_get_double (gimp_value_array_index (args, 2));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  shear_type = g_value_get_enum (picman_value_array_index (args, 1));
+  magnitude = g_value_get_double (picman_value_array_index (args, 2));
 
   if (success)
     {
       gint x, y, width, height;
 
-      success = gimp_pdb_item_is_attached (item, NULL,
-                                                        GIMP_PDB_ITEM_CONTENT |
-                                                        GIMP_PDB_ITEM_POSITION, error);
+      success = picman_pdb_item_is_attached (item, NULL,
+                                                        PICMAN_PDB_ITEM_CONTENT |
+                                                        PICMAN_PDB_ITEM_POSITION, error);
 
       if (success &&
-          gimp_item_mask_intersect (item, &x, &y, &width, &height))
+          picman_item_mask_intersect (item, &x, &y, &width, &height))
         {
-          GimpPDBContext *pdb_context = GIMP_PDB_CONTEXT (context);
-          GimpMatrix3     matrix;
+          PicmanPDBContext *pdb_context = PICMAN_PDB_CONTEXT (context);
+          PicmanMatrix3     matrix;
           gint            off_x, off_y;
 
-          gimp_item_get_offset (item, &off_x, &off_y);
+          picman_item_get_offset (item, &off_x, &off_y);
           x += off_x;
           y += off_y;
 
           /* Assemble the transformation matrix */
-          gimp_matrix3_identity (&matrix);
-          gimp_transform_matrix_shear (&matrix,
+          picman_matrix3_identity (&matrix);
+          picman_transform_matrix_shear (&matrix,
                                        x, y, width, height,
                                        shear_type, magnitude);
 
           if (progress)
-            gimp_progress_start (progress, _("Shearing"), FALSE);
+            picman_progress_start (progress, _("Shearing"), FALSE);
 
-          if (GIMP_IS_DRAWABLE (item) &&
-              ! gimp_viewable_get_children (GIMP_VIEWABLE (item)) &&
-              ! gimp_channel_is_empty (gimp_image_get_mask (gimp_item_get_image (item))))
+          if (PICMAN_IS_DRAWABLE (item) &&
+              ! picman_viewable_get_children (PICMAN_VIEWABLE (item)) &&
+              ! picman_channel_is_empty (picman_image_get_mask (picman_item_get_image (item))))
             {
-              GimpDrawable *drawable;
+              PicmanDrawable *drawable;
 
-              drawable = gimp_drawable_transform_affine (GIMP_DRAWABLE (item),
+              drawable = picman_drawable_transform_affine (PICMAN_DRAWABLE (item),
                                                          context, &matrix,
                                                          pdb_context->transform_direction,
                                                          pdb_context->interpolation,
@@ -643,13 +643,13 @@ item_transform_shear_invoker (GimpProcedure         *procedure,
                                                          progress);
 
               if (drawable)
-                item = GIMP_ITEM (drawable);
+                item = PICMAN_ITEM (drawable);
               else
                 success = FALSE;
             }
           else
             {
-              gimp_item_transform (item, context, &matrix,
+              picman_item_transform (item, context, &matrix,
                                    pdb_context->transform_direction,
                                    pdb_context->interpolation,
                                    pdb_context->transform_recursion,
@@ -658,30 +658,30 @@ item_transform_shear_invoker (GimpProcedure         *procedure,
             }
 
           if (progress)
-            gimp_progress_end (progress);
+            picman_progress_end (progress);
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_item (gimp_value_array_index (return_vals, 1), item);
+    picman_value_set_item (picman_value_array_index (return_vals, 1), item);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_transform_2d_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+item_transform_2d_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gdouble source_x;
   gdouble source_y;
   gdouble scale_x;
@@ -690,51 +690,51 @@ item_transform_2d_invoker (GimpProcedure         *procedure,
   gdouble dest_x;
   gdouble dest_y;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  source_x = g_value_get_double (gimp_value_array_index (args, 1));
-  source_y = g_value_get_double (gimp_value_array_index (args, 2));
-  scale_x = g_value_get_double (gimp_value_array_index (args, 3));
-  scale_y = g_value_get_double (gimp_value_array_index (args, 4));
-  angle = g_value_get_double (gimp_value_array_index (args, 5));
-  dest_x = g_value_get_double (gimp_value_array_index (args, 6));
-  dest_y = g_value_get_double (gimp_value_array_index (args, 7));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  source_x = g_value_get_double (picman_value_array_index (args, 1));
+  source_y = g_value_get_double (picman_value_array_index (args, 2));
+  scale_x = g_value_get_double (picman_value_array_index (args, 3));
+  scale_y = g_value_get_double (picman_value_array_index (args, 4));
+  angle = g_value_get_double (picman_value_array_index (args, 5));
+  dest_x = g_value_get_double (picman_value_array_index (args, 6));
+  dest_y = g_value_get_double (picman_value_array_index (args, 7));
 
   if (success)
     {
       gint x, y, width, height;
 
-      success = gimp_pdb_item_is_attached (item, NULL,
-                                                        GIMP_PDB_ITEM_CONTENT |
-                                                        GIMP_PDB_ITEM_POSITION, error);
+      success = picman_pdb_item_is_attached (item, NULL,
+                                                        PICMAN_PDB_ITEM_CONTENT |
+                                                        PICMAN_PDB_ITEM_POSITION, error);
 
       if (success &&
-          gimp_item_mask_intersect (item, &x, &y, &width, &height))
+          picman_item_mask_intersect (item, &x, &y, &width, &height))
         {
-          GimpPDBContext *pdb_context = GIMP_PDB_CONTEXT (context);
-          GimpMatrix3     matrix;
+          PicmanPDBContext *pdb_context = PICMAN_PDB_CONTEXT (context);
+          PicmanMatrix3     matrix;
           gint            off_x, off_y;
 
-          gimp_item_get_offset (item, &off_x, &off_y);
+          picman_item_get_offset (item, &off_x, &off_y);
           x += off_x;
           y += off_y;
 
           /* Assemble the transformation matrix */
-          gimp_matrix3_identity  (&matrix);
-          gimp_matrix3_translate (&matrix, -source_x, -source_y);
-          gimp_matrix3_scale     (&matrix, scale_x, scale_y);
-          gimp_matrix3_rotate    (&matrix, angle);
-          gimp_matrix3_translate (&matrix, dest_x, dest_y);
+          picman_matrix3_identity  (&matrix);
+          picman_matrix3_translate (&matrix, -source_x, -source_y);
+          picman_matrix3_scale     (&matrix, scale_x, scale_y);
+          picman_matrix3_rotate    (&matrix, angle);
+          picman_matrix3_translate (&matrix, dest_x, dest_y);
 
           if (progress)
-            gimp_progress_start (progress, _("2D Transform"), FALSE);
+            picman_progress_start (progress, _("2D Transform"), FALSE);
 
-          if (GIMP_IS_DRAWABLE (item) &&
-              ! gimp_viewable_get_children (GIMP_VIEWABLE (item)) &&
-              ! gimp_channel_is_empty (gimp_image_get_mask (gimp_item_get_image (item))))
+          if (PICMAN_IS_DRAWABLE (item) &&
+              ! picman_viewable_get_children (PICMAN_VIEWABLE (item)) &&
+              ! picman_channel_is_empty (picman_image_get_mask (picman_item_get_image (item))))
             {
-              GimpDrawable *drawable;
+              PicmanDrawable *drawable;
 
-              drawable = gimp_drawable_transform_affine (GIMP_DRAWABLE (item),
+              drawable = picman_drawable_transform_affine (PICMAN_DRAWABLE (item),
                                                          context, &matrix,
                                                          pdb_context->transform_direction,
                                                          pdb_context->interpolation,
@@ -743,13 +743,13 @@ item_transform_2d_invoker (GimpProcedure         *procedure,
                                                          progress);
 
               if (drawable)
-                item = GIMP_ITEM (drawable);
+                item = PICMAN_ITEM (drawable);
               else
                 success = FALSE;
             }
           else
             {
-              gimp_item_transform (item, context, &matrix,
+              picman_item_transform (item, context, &matrix,
                                    pdb_context->transform_direction,
                                    pdb_context->interpolation,
                                    pdb_context->transform_recursion,
@@ -758,30 +758,30 @@ item_transform_2d_invoker (GimpProcedure         *procedure,
             }
 
           if (progress)
-            gimp_progress_end (progress);
+            picman_progress_end (progress);
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_item (gimp_value_array_index (return_vals, 1), item);
+    picman_value_set_item (picman_value_array_index (return_vals, 1), item);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_transform_matrix_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+item_transform_matrix_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gdouble coeff_0_0;
   gdouble coeff_0_1;
   gdouble coeff_0_2;
@@ -792,33 +792,33 @@ item_transform_matrix_invoker (GimpProcedure         *procedure,
   gdouble coeff_2_1;
   gdouble coeff_2_2;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  coeff_0_0 = g_value_get_double (gimp_value_array_index (args, 1));
-  coeff_0_1 = g_value_get_double (gimp_value_array_index (args, 2));
-  coeff_0_2 = g_value_get_double (gimp_value_array_index (args, 3));
-  coeff_1_0 = g_value_get_double (gimp_value_array_index (args, 4));
-  coeff_1_1 = g_value_get_double (gimp_value_array_index (args, 5));
-  coeff_1_2 = g_value_get_double (gimp_value_array_index (args, 6));
-  coeff_2_0 = g_value_get_double (gimp_value_array_index (args, 7));
-  coeff_2_1 = g_value_get_double (gimp_value_array_index (args, 8));
-  coeff_2_2 = g_value_get_double (gimp_value_array_index (args, 9));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  coeff_0_0 = g_value_get_double (picman_value_array_index (args, 1));
+  coeff_0_1 = g_value_get_double (picman_value_array_index (args, 2));
+  coeff_0_2 = g_value_get_double (picman_value_array_index (args, 3));
+  coeff_1_0 = g_value_get_double (picman_value_array_index (args, 4));
+  coeff_1_1 = g_value_get_double (picman_value_array_index (args, 5));
+  coeff_1_2 = g_value_get_double (picman_value_array_index (args, 6));
+  coeff_2_0 = g_value_get_double (picman_value_array_index (args, 7));
+  coeff_2_1 = g_value_get_double (picman_value_array_index (args, 8));
+  coeff_2_2 = g_value_get_double (picman_value_array_index (args, 9));
 
   if (success)
     {
       gint x, y, width, height;
 
-      success = gimp_pdb_item_is_attached (item, NULL,
-                                                        GIMP_PDB_ITEM_CONTENT |
-                                                        GIMP_PDB_ITEM_POSITION, error);
+      success = picman_pdb_item_is_attached (item, NULL,
+                                                        PICMAN_PDB_ITEM_CONTENT |
+                                                        PICMAN_PDB_ITEM_POSITION, error);
 
       if (success &&
-          gimp_item_mask_intersect (item, &x, &y, &width, &height))
+          picman_item_mask_intersect (item, &x, &y, &width, &height))
         {
-          GimpPDBContext *pdb_context = GIMP_PDB_CONTEXT (context);
-          GimpMatrix3     matrix;
+          PicmanPDBContext *pdb_context = PICMAN_PDB_CONTEXT (context);
+          PicmanMatrix3     matrix;
           gint            off_x, off_y;
 
-          gimp_item_get_offset (item, &off_x, &off_y);
+          picman_item_get_offset (item, &off_x, &off_y);
           x += off_x;
           y += off_y;
 
@@ -834,15 +834,15 @@ item_transform_matrix_invoker (GimpProcedure         *procedure,
           matrix.coeff[2][2] = coeff_2_2;
 
           if (progress)
-            gimp_progress_start (progress, _("2D Transforming"), FALSE);
+            picman_progress_start (progress, _("2D Transforming"), FALSE);
 
-          if (GIMP_IS_DRAWABLE (item) &&
-              ! gimp_viewable_get_children (GIMP_VIEWABLE (item)) &&
-              ! gimp_channel_is_empty (gimp_image_get_mask (gimp_item_get_image (item))))
+          if (PICMAN_IS_DRAWABLE (item) &&
+              ! picman_viewable_get_children (PICMAN_VIEWABLE (item)) &&
+              ! picman_channel_is_empty (picman_image_get_mask (picman_item_get_image (item))))
             {
-              GimpDrawable *drawable;
+              PicmanDrawable *drawable;
 
-              drawable = gimp_drawable_transform_affine (GIMP_DRAWABLE (item),
+              drawable = picman_drawable_transform_affine (PICMAN_DRAWABLE (item),
                                                          context, &matrix,
                                                          pdb_context->transform_direction,
                                                          pdb_context->interpolation,
@@ -851,13 +851,13 @@ item_transform_matrix_invoker (GimpProcedure         *procedure,
                                                          progress);
 
               if (drawable)
-                item = GIMP_ITEM (drawable);
+                item = PICMAN_ITEM (drawable);
               else
                 success = FALSE;
             }
           else
             {
-              gimp_item_transform (item, context, &matrix,
+              picman_item_transform (item, context, &matrix,
                                    pdb_context->transform_direction,
                                    pdb_context->interpolation,
                                    pdb_context->transform_recursion,
@@ -866,560 +866,560 @@ item_transform_matrix_invoker (GimpProcedure         *procedure,
             }
 
           if (progress)
-            gimp_progress_end (progress);
+            picman_progress_end (progress);
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_item (gimp_value_array_index (return_vals, 1), item);
+    picman_value_set_item (picman_value_array_index (return_vals, 1), item);
 
   return return_vals;
 }
 
 void
-register_item_transform_procs (GimpPDB *pdb)
+register_item_transform_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-item-transform-flip-simple
+   * picman-item-transform-flip-simple
    */
-  procedure = gimp_procedure_new (item_transform_flip_simple_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-transform-flip-simple");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-transform-flip-simple",
+  procedure = picman_procedure_new (item_transform_flip_simple_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-transform-flip-simple");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-transform-flip-simple",
                                      "Flip the specified item either vertically or horizontally.",
-                                     "This procedure flips the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then flipped. If auto_center is set to TRUE, the flip is around the selection's center. Otherwise, the coordinate of the axis needs to be specified. The return value is the ID of the flipped item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and flipped drawable. This procedure is affected by the following context setters: 'gimp-context-set-transform-resize'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure flips the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then flipped. If auto_center is set to TRUE, the flip is around the selection's center. Otherwise, the coordinate of the axis needs to be specified. The return value is the ID of the flipped item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and flipped drawable. This procedure is affected by the following context setters: 'picman-context-set-transform-resize'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The affected item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_enum ("flip-type",
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_enum ("flip-type",
                                                      "flip type",
                                                      "Type of flip",
-                                                     GIMP_TYPE_ORIENTATION_TYPE,
-                                                     GIMP_ORIENTATION_HORIZONTAL,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->args[1]),
-                                      GIMP_ORIENTATION_UNKNOWN);
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_TYPE_ORIENTATION_TYPE,
+                                                     PICMAN_ORIENTATION_HORIZONTAL,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_param_spec_enum_exclude_value (PICMAN_PARAM_SPEC_ENUM (procedure->args[1]),
+                                      PICMAN_ORIENTATION_UNKNOWN);
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("auto-center",
                                                      "auto center",
                                                      "Whether to automatically position the axis in the selection center",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("axis",
                                                     "axis",
                                                     "coord. of flip axis",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_item_id ("item",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_item_id ("item",
                                                             "item",
                                                             "The flipped item",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-transform-flip
+   * picman-item-transform-flip
    */
-  procedure = gimp_procedure_new (item_transform_flip_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-transform-flip");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-transform-flip",
+  procedure = picman_procedure_new (item_transform_flip_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-transform-flip");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-transform-flip",
                                      "Flip the specified item around a given line.",
-                                     "This procedure flips the specified item. If a selection exists and the item is a drawable , the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then flipped. The axis to flip around is specified by specifying two points from that line. The return value is the ID of the flipped item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and flipped drawable. This procedure is affected by the following context setters: 'gimp-context-set-interpolation', 'gimp-context-set-transform-direction', 'gimp-context-set-transform-resize', 'gimp-context-set-transform-recursion'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure flips the specified item. If a selection exists and the item is a drawable , the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then flipped. The axis to flip around is specified by specifying two points from that line. The return value is the ID of the flipped item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and flipped drawable. This procedure is affected by the following context setters: 'picman-context-set-interpolation', 'picman-context-set-transform-direction', 'picman-context-set-transform-resize', 'picman-context-set-transform-recursion'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The affected item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x0",
                                                     "x0",
                                                     "horz. coord. of one end of axis",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y0",
                                                     "y0",
                                                     "vert. coord. of one end of axis",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x1",
                                                     "x1",
                                                     "horz. coord. of other end of axis",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y1",
                                                     "y1",
                                                     "vert. coord. of other end of axis",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_item_id ("item",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_item_id ("item",
                                                             "item",
                                                             "The flipped item",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-transform-perspective
+   * picman-item-transform-perspective
    */
-  procedure = gimp_procedure_new (item_transform_perspective_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-transform-perspective");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-transform-perspective",
+  procedure = picman_procedure_new (item_transform_perspective_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-transform-perspective");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-transform-perspective",
                                      "Perform a possibly non-affine transformation on the specified item.",
                                      "This procedure performs a possibly non-affine transformation on the specified item by allowing the corners of the original bounding box to be arbitrarily remapped to any values. The specified item is remapped if no selection exists or it is not a drawable. However, if a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then remapped as specified. The return value is the ID of the remapped item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and remapped drawable. The 4 coordinates specify the new locations of each corner of the original bounding box. By specifying these values, any affine transformation (rotation, scaling, translation) can be affected. Additionally, these values can be specified such that the resulting transformed item will appear to have"
-  "been projected via a perspective transform. This procedure is affected by the following context setters: 'gimp-context-set-interpolation', 'gimp-context-set-transform-direction', 'gimp-context-set-transform-resize', 'gimp-context-set-transform-recursion'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+  "been projected via a perspective transform. This procedure is affected by the following context setters: 'picman-context-set-interpolation', 'picman-context-set-transform-direction', 'picman-context-set-transform-resize', 'picman-context-set-transform-recursion'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The affected item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x0",
                                                     "x0",
                                                     "The new x coordinate of upper-left corner of original bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y0",
                                                     "y0",
                                                     "The new y coordinate of upper-left corner of original bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x1",
                                                     "x1",
                                                     "The new x coordinate of upper-right corner of original bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y1",
                                                     "y1",
                                                     "The new y coordinate of upper-right corner of original bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x2",
                                                     "x2",
                                                     "The new x coordinate of lower-left corner of original bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y2",
                                                     "y2",
                                                     "The new y coordinate of lower-left corner of original bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x3",
                                                     "x3",
                                                     "The new x coordinate of lower-right corner of original bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y3",
                                                     "y3",
                                                     "The new y coordinate of lower-right corner of original bounding box",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_item_id ("item",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_item_id ("item",
                                                             "item",
                                                             "The newly mapped item",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-transform-rotate-simple
+   * picman-item-transform-rotate-simple
    */
-  procedure = gimp_procedure_new (item_transform_rotate_simple_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-transform-rotate-simple");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-transform-rotate-simple",
+  procedure = picman_procedure_new (item_transform_rotate_simple_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-transform-rotate-simple");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-transform-rotate-simple",
                                      "Rotate the specified item about given coordinates through the specified angle.",
-                                     "This function rotates the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then rotated by the specified amount. The return value is the ID of the rotated item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and rotated drawable. This procedure is affected by the following context setters: 'gimp-context-set-transform-resize'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This function rotates the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then rotated by the specified amount. The return value is the ID of the rotated item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and rotated drawable. This procedure is affected by the following context setters: 'picman-context-set-transform-resize'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The affected item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("rotate-type",
                                                   "rotate type",
                                                   "Type of rotation",
-                                                  GIMP_TYPE_ROTATION_TYPE,
-                                                  GIMP_ROTATE_90,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_ROTATION_TYPE,
+                                                  PICMAN_ROTATE_90,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("auto-center",
                                                      "auto center",
                                                      "Whether to automatically rotate around the selection center",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("center-x",
                                                     "center x",
                                                     "The hor. coordinate of the center of rotation",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("center-y",
                                                     "center y",
                                                     "The vert. coordinate of the center of rotation",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_item_id ("item",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_item_id ("item",
                                                             "item",
                                                             "The rotated item",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-transform-rotate
+   * picman-item-transform-rotate
    */
-  procedure = gimp_procedure_new (item_transform_rotate_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-transform-rotate");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-transform-rotate",
+  procedure = picman_procedure_new (item_transform_rotate_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-transform-rotate");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-transform-rotate",
                                      "Rotate the specified item about given coordinates through the specified angle.",
-                                     "This function rotates the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then rotated by the specified amount. The return value is the ID of the rotated item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and rotated drawable. This procedure is affected by the following context setters: 'gimp-context-set-interpolation', 'gimp-context-set-transform-direction', 'gimp-context-set-transform-resize', 'gimp-context-set-transform-recursion'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This function rotates the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then rotated by the specified amount. The return value is the ID of the rotated item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and rotated drawable. This procedure is affected by the following context setters: 'picman-context-set-interpolation', 'picman-context-set-transform-direction', 'picman-context-set-transform-resize', 'picman-context-set-transform-recursion'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The affected item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("angle",
                                                     "angle",
                                                     "The angle of rotation (radians)",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("auto-center",
                                                      "auto center",
                                                      "Whether to automatically rotate around the selection center",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("center-x",
                                                     "center x",
                                                     "The hor. coordinate of the center of rotation",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("center-y",
                                                     "center y",
                                                     "The vert. coordinate of the center of rotation",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_item_id ("item",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_item_id ("item",
                                                             "item",
                                                             "The rotated item",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-transform-scale
+   * picman-item-transform-scale
    */
-  procedure = gimp_procedure_new (item_transform_scale_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-transform-scale");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-transform-scale",
+  procedure = picman_procedure_new (item_transform_scale_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-transform-scale");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-transform-scale",
                                      "Scale the specified item.",
-                                     "This procedure scales the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then scaled by the specified amount. The return value is the ID of the scaled item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and scaled drawable. This procedure is affected by the following context setters: 'gimp-context-set-interpolation', 'gimp-context-set-transform-direction', 'gimp-context-set-transform-resize', 'gimp-context-set-transform-recursion'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure scales the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then scaled by the specified amount. The return value is the ID of the scaled item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and scaled drawable. This procedure is affected by the following context setters: 'picman-context-set-interpolation', 'picman-context-set-transform-direction', 'picman-context-set-transform-resize', 'picman-context-set-transform-recursion'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The affected item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x0",
                                                     "x0",
                                                     "The new x coordinate of the upper-left corner of the scaled region",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y0",
                                                     "y0",
                                                     "The new y coordinate of the upper-left corner of the scaled region",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("x1",
                                                     "x1",
                                                     "The new x coordinate of the lower-right corner of the scaled region",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("y1",
                                                     "y1",
                                                     "The new y coordinate of the lower-right corner of the scaled region",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_item_id ("item",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_item_id ("item",
                                                             "item",
                                                             "The scaled item",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-transform-shear
+   * picman-item-transform-shear
    */
-  procedure = gimp_procedure_new (item_transform_shear_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-transform-shear");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-transform-shear",
+  procedure = picman_procedure_new (item_transform_shear_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-transform-shear");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-transform-shear",
                                      "Shear the specified item about its center by the specified magnitude.",
-                                     "This procedure shears the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then sheard by the specified amount. The return value is the ID of the sheard item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and sheard drawable. The shear type parameter indicates whether the shear will be applied horizontally or vertically. The magnitude can be either positive or negative and indicates the extent (in pixels) to shear by. This procedure is affected by the following context setters: 'gimp-context-set-interpolation', 'gimp-context-set-transform-direction', 'gimp-context-set-transform-resize', 'gimp-context-set-transform-recursion'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure shears the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then sheard by the specified amount. The return value is the ID of the sheard item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and sheard drawable. The shear type parameter indicates whether the shear will be applied horizontally or vertically. The magnitude can be either positive or negative and indicates the extent (in pixels) to shear by. This procedure is affected by the following context setters: 'picman-context-set-interpolation', 'picman-context-set-transform-direction', 'picman-context-set-transform-resize', 'picman-context-set-transform-recursion'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The affected item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_enum ("shear-type",
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_enum ("shear-type",
                                                      "shear type",
                                                      "Type of shear",
-                                                     GIMP_TYPE_ORIENTATION_TYPE,
-                                                     GIMP_ORIENTATION_HORIZONTAL,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->args[1]),
-                                      GIMP_ORIENTATION_UNKNOWN);
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_TYPE_ORIENTATION_TYPE,
+                                                     PICMAN_ORIENTATION_HORIZONTAL,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_param_spec_enum_exclude_value (PICMAN_PARAM_SPEC_ENUM (procedure->args[1]),
+                                      PICMAN_ORIENTATION_UNKNOWN);
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("magnitude",
                                                     "magnitude",
                                                     "The magnitude of the shear",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_item_id ("item",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_item_id ("item",
                                                             "item",
                                                             "The sheared item",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-transform-2d
+   * picman-item-transform-2d
    */
-  procedure = gimp_procedure_new (item_transform_2d_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-transform-2d");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-transform-2d",
+  procedure = picman_procedure_new (item_transform_2d_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-transform-2d");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-transform-2d",
                                      "Transform the specified item in 2d.",
-                                     "This procedure transforms the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then transformed. The transformation is done by scaling the image by the x and y scale factors about the point (source_x, source_y), then rotating around the same point, then translating that point to the new position (dest_x, dest_y). The return value is the ID of the rotated drawable. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and transformed drawable. This procedure is affected by the following context setters: 'gimp-context-set-interpolation', 'gimp-context-set-transform-direction', 'gimp-context-set-transform-resize', 'gimp-context-set-transform-recursion'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure transforms the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then transformed. The transformation is done by scaling the image by the x and y scale factors about the point (source_x, source_y), then rotating around the same point, then translating that point to the new position (dest_x, dest_y). The return value is the ID of the rotated drawable. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and transformed drawable. This procedure is affected by the following context setters: 'picman-context-set-interpolation', 'picman-context-set-transform-direction', 'picman-context-set-transform-resize', 'picman-context-set-transform-recursion'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The affected item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("source-x",
                                                     "source x",
                                                     "X coordinate of the transformation center",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("source-y",
                                                     "source y",
                                                     "Y coordinate of the transformation center",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("scale-x",
                                                     "scale x",
                                                     "Amount to scale in x direction",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("scale-y",
                                                     "scale y",
                                                     "Amount to scale in y direction",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("angle",
                                                     "angle",
                                                     "The angle of rotation (radians)",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("dest-x",
                                                     "dest x",
                                                     "X coordinate of where the center goes",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("dest-y",
                                                     "dest y",
                                                     "Y coordinate of where the center goes",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_item_id ("item",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_item_id ("item",
                                                             "item",
                                                             "The transformed item",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-transform-matrix
+   * picman-item-transform-matrix
    */
-  procedure = gimp_procedure_new (item_transform_matrix_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-transform-matrix");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-transform-matrix",
+  procedure = picman_procedure_new (item_transform_matrix_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-transform-matrix");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-transform-matrix",
                                      "Transform the specified item in 2d.",
-                                     "This procedure transforms the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then transformed. The transformation is done by assembling a 3x3 matrix from the coefficients passed. The return value is the ID of the transformed item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and transformed drawable. This procedure is affected by the following context setters: 'gimp-context-set-interpolation', 'gimp-context-set-transform-direction', 'gimp-context-set-transform-resize', 'gimp-context-set-transform-recursion'.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure transforms the specified item. If a selection exists and the item is a drawable, the portion of the drawable which lies under the selection is cut from the drawable and made into a floating selection which is then transformed. The transformation is done by assembling a 3x3 matrix from the coefficients passed. The return value is the ID of the transformed item. If there was no selection or the item is not a drawable, this will be equal to the item ID supplied as input. Otherwise, this will be the newly created and transformed drawable. This procedure is affected by the following context setters: 'picman-context-set-interpolation', 'picman-context-set-transform-direction', 'picman-context-set-transform-resize', 'picman-context-set-transform-recursion'.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The affected item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("coeff-0-0",
                                                     "coeff 0 0",
                                                     "coefficient (0,0) of the transformation matrix",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("coeff-0-1",
                                                     "coeff 0 1",
                                                     "coefficient (0,1) of the transformation matrix",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("coeff-0-2",
                                                     "coeff 0 2",
                                                     "coefficient (0,2) of the transformation matrix",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("coeff-1-0",
                                                     "coeff 1 0",
                                                     "coefficient (1,0) of the transformation matrix",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("coeff-1-1",
                                                     "coeff 1 1",
                                                     "coefficient (1,1) of the transformation matrix",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("coeff-1-2",
                                                     "coeff 1 2",
                                                     "coefficient (1,2) of the transformation matrix",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("coeff-2-0",
                                                     "coeff 2 0",
                                                     "coefficient (2,0) of the transformation matrix",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("coeff-2-1",
                                                     "coeff 2 1",
                                                     "coefficient (2,1) of the transformation matrix",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("coeff-2-2",
                                                     "coeff 2 2",
                                                     "coefficient (2,2) of the transformation matrix",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_item_id ("item",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_item_id ("item",
                                                             "item",
                                                             "The transformed item",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

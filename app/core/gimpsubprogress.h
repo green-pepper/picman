@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,45 +15,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SUB_PROGRESS_H__
-#define __GIMP_SUB_PROGRESS_H__
+#ifndef __PICMAN_SUB_PROGRESS_H__
+#define __PICMAN_SUB_PROGRESS_H__
 
 
-#define GIMP_TYPE_SUB_PROGRESS            (gimp_sub_progress_get_type ())
-#define GIMP_SUB_PROGRESS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SUB_PROGRESS, GimpSubProgress))
-#define GIMP_SUB_PROGRESS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SUB_PROGRESS, GimpSubProgressClass))
-#define GIMP_IS_SUB_PROGRESS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SUB_PROGRESS))
-#define GIMP_IS_SUB_PROGRESS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SUB_PROGRESS))
-#define GIMP_SUB_PROGRESS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SUB_PROGRESS, GimpSubProgressClass))
+#define PICMAN_TYPE_SUB_PROGRESS            (picman_sub_progress_get_type ())
+#define PICMAN_SUB_PROGRESS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SUB_PROGRESS, PicmanSubProgress))
+#define PICMAN_SUB_PROGRESS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SUB_PROGRESS, PicmanSubProgressClass))
+#define PICMAN_IS_SUB_PROGRESS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SUB_PROGRESS))
+#define PICMAN_IS_SUB_PROGRESS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SUB_PROGRESS))
+#define PICMAN_SUB_PROGRESS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SUB_PROGRESS, PicmanSubProgressClass))
 
 
-typedef struct _GimpSubProgressClass GimpSubProgressClass;
+typedef struct _PicmanSubProgressClass PicmanSubProgressClass;
 
-struct _GimpSubProgress
+struct _PicmanSubProgress
 {
   GObject       parent_instance;
 
-  GimpProgress *progress;
+  PicmanProgress *progress;
   gdouble       start;
   gdouble       end;
 };
 
-struct _GimpSubProgressClass
+struct _PicmanSubProgressClass
 {
   GObjectClass  parent_class;
 };
 
 
-GType          gimp_sub_progress_get_type (void) G_GNUC_CONST;
+GType          picman_sub_progress_get_type (void) G_GNUC_CONST;
 
-GimpProgress * gimp_sub_progress_new       (GimpProgress    *progress);
-void           gimp_sub_progress_set_range (GimpSubProgress *progress,
+PicmanProgress * picman_sub_progress_new       (PicmanProgress    *progress);
+void           picman_sub_progress_set_range (PicmanSubProgress *progress,
                                             gdouble          start,
                                             gdouble          end);
-void           gimp_sub_progress_set_step  (GimpSubProgress *progress,
+void           picman_sub_progress_set_step  (PicmanSubProgress *progress,
                                             gint             index,
                                             gint             num_steps);
 
 
 
-#endif /* __GIMP_SUB_PROGRESS_H__ */
+#endif /* __PICMAN_SUB_PROGRESS_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationlevels.h
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanoperationlevels.h
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,40 +18,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_LEVELS_H__
-#define __GIMP_OPERATION_LEVELS_H__
+#ifndef __PICMAN_OPERATION_LEVELS_H__
+#define __PICMAN_OPERATION_LEVELS_H__
 
 
-#include "gimpoperationpointfilter.h"
+#include "picmanoperationpointfilter.h"
 
 
-#define GIMP_TYPE_OPERATION_LEVELS            (gimp_operation_levels_get_type ())
-#define GIMP_OPERATION_LEVELS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_LEVELS, GimpOperationLevels))
-#define GIMP_OPERATION_LEVELS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_LEVELS, GimpOperationLevelsClass))
-#define GIMP_IS_OPERATION_LEVELS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_LEVELS))
-#define GIMP_IS_OPERATION_LEVELS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_LEVELS))
-#define GIMP_OPERATION_LEVELS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_LEVELS, GimpOperationLevelsClass))
+#define PICMAN_TYPE_OPERATION_LEVELS            (picman_operation_levels_get_type ())
+#define PICMAN_OPERATION_LEVELS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_LEVELS, PicmanOperationLevels))
+#define PICMAN_OPERATION_LEVELS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_LEVELS, PicmanOperationLevelsClass))
+#define PICMAN_IS_OPERATION_LEVELS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_LEVELS))
+#define PICMAN_IS_OPERATION_LEVELS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_LEVELS))
+#define PICMAN_OPERATION_LEVELS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_LEVELS, PicmanOperationLevelsClass))
 
 
-typedef struct _GimpOperationLevels      GimpOperationLevels;
-typedef struct _GimpOperationLevelsClass GimpOperationLevelsClass;
+typedef struct _PicmanOperationLevels      PicmanOperationLevels;
+typedef struct _PicmanOperationLevelsClass PicmanOperationLevelsClass;
 
-struct _GimpOperationLevels
+struct _PicmanOperationLevels
 {
-  GimpOperationPointFilter  parent_instance;
+  PicmanOperationPointFilter  parent_instance;
 };
 
-struct _GimpOperationLevelsClass
+struct _PicmanOperationLevelsClass
 {
-  GimpOperationPointFilterClass  parent_class;
+  PicmanOperationPointFilterClass  parent_class;
 };
 
 
-GType     gimp_operation_levels_get_type  (void) G_GNUC_CONST;
+GType     picman_operation_levels_get_type  (void) G_GNUC_CONST;
 
-gdouble   gimp_operation_levels_map_input (GimpLevelsConfig     *config,
-                                           GimpHistogramChannel  channel,
+gdouble   picman_operation_levels_map_input (PicmanLevelsConfig     *config,
+                                           PicmanHistogramChannel  channel,
                                            gdouble               value);
 
 
-#endif /* __GIMP_OPERATION_LEVELS_H__ */
+#endif /* __PICMAN_OPERATION_LEVELS_H__ */

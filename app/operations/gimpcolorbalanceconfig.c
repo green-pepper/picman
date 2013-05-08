@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcolorbalanceconfig.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmancolorbalanceconfig.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,13 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "operations-types.h"
 
-#include "gimpcolorbalanceconfig.h"
+#include "picmancolorbalanceconfig.h"
 
 
 enum
@@ -44,101 +44,101 @@ enum
 };
 
 
-static void     gimp_color_balance_config_iface_init   (GimpConfigInterface *iface);
+static void     picman_color_balance_config_iface_init   (PicmanConfigInterface *iface);
 
-static void     gimp_color_balance_config_get_property (GObject          *object,
+static void     picman_color_balance_config_get_property (GObject          *object,
                                                         guint             property_id,
                                                         GValue           *value,
                                                         GParamSpec       *pspec);
-static void     gimp_color_balance_config_set_property (GObject          *object,
+static void     picman_color_balance_config_set_property (GObject          *object,
                                                         guint             property_id,
                                                         const GValue     *value,
                                                         GParamSpec       *pspec);
 
-static gboolean gimp_color_balance_config_serialize    (GimpConfig       *config,
-                                                        GimpConfigWriter *writer,
+static gboolean picman_color_balance_config_serialize    (PicmanConfig       *config,
+                                                        PicmanConfigWriter *writer,
                                                         gpointer          data);
-static gboolean gimp_color_balance_config_deserialize  (GimpConfig       *config,
+static gboolean picman_color_balance_config_deserialize  (PicmanConfig       *config,
                                                         GScanner         *scanner,
                                                         gint              nest_level,
                                                         gpointer          data);
-static gboolean gimp_color_balance_config_equal        (GimpConfig       *a,
-                                                        GimpConfig       *b);
-static void     gimp_color_balance_config_reset        (GimpConfig       *config);
-static gboolean gimp_color_balance_config_copy         (GimpConfig       *src,
-                                                        GimpConfig       *dest,
+static gboolean picman_color_balance_config_equal        (PicmanConfig       *a,
+                                                        PicmanConfig       *b);
+static void     picman_color_balance_config_reset        (PicmanConfig       *config);
+static gboolean picman_color_balance_config_copy         (PicmanConfig       *src,
+                                                        PicmanConfig       *dest,
                                                         GParamFlags       flags);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpColorBalanceConfig, gimp_color_balance_config,
-                         GIMP_TYPE_IMAGE_MAP_CONFIG,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG,
-                                                gimp_color_balance_config_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanColorBalanceConfig, picman_color_balance_config,
+                         PICMAN_TYPE_IMAGE_MAP_CONFIG,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG,
+                                                picman_color_balance_config_iface_init))
 
-#define parent_class gimp_color_balance_config_parent_class
+#define parent_class picman_color_balance_config_parent_class
 
 
 static void
-gimp_color_balance_config_class_init (GimpColorBalanceConfigClass *klass)
+picman_color_balance_config_class_init (PicmanColorBalanceConfigClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->set_property       = gimp_color_balance_config_set_property;
-  object_class->get_property       = gimp_color_balance_config_get_property;
+  object_class->set_property       = picman_color_balance_config_set_property;
+  object_class->get_property       = picman_color_balance_config_get_property;
 
-  viewable_class->default_stock_id = "gimp-tool-color-balance";
+  viewable_class->default_stock_id = "picman-tool-color-balance";
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_RANGE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_RANGE,
                                  "range",
                                  "The affected range",
-                                 GIMP_TYPE_TRANSFER_MODE,
-                                 GIMP_MIDTONES, 0);
+                                 PICMAN_TYPE_TRANSFER_MODE,
+                                 PICMAN_MIDTONES, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_CYAN_RED,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_CYAN_RED,
                                    "cyan-red",
                                    "Cyan-Red",
                                    -1.0, 1.0, 0.0, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_MAGENTA_GREEN,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_MAGENTA_GREEN,
                                    "magenta-green",
                                    "Magenta-Green",
                                    -1.0, 1.0, 0.0, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_YELLOW_BLUE,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_YELLOW_BLUE,
                                    "yellow-blue",
                                    "Yellow-Blue",
                                    -1.0, 1.0, 0.0, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_PRESERVE_LUMINOSITY,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_PRESERVE_LUMINOSITY,
                                     "preserve-luminosity",
                                     "Preserve Luminosity",
                                     TRUE, 0);
 }
 
 static void
-gimp_color_balance_config_iface_init (GimpConfigInterface *iface)
+picman_color_balance_config_iface_init (PicmanConfigInterface *iface)
 {
-  iface->serialize   = gimp_color_balance_config_serialize;
-  iface->deserialize = gimp_color_balance_config_deserialize;
-  iface->equal       = gimp_color_balance_config_equal;
-  iface->reset       = gimp_color_balance_config_reset;
-  iface->copy        = gimp_color_balance_config_copy;
+  iface->serialize   = picman_color_balance_config_serialize;
+  iface->deserialize = picman_color_balance_config_deserialize;
+  iface->equal       = picman_color_balance_config_equal;
+  iface->reset       = picman_color_balance_config_reset;
+  iface->copy        = picman_color_balance_config_copy;
 }
 
 static void
-gimp_color_balance_config_init (GimpColorBalanceConfig *self)
+picman_color_balance_config_init (PicmanColorBalanceConfig *self)
 {
-  gimp_config_reset (GIMP_CONFIG (self));
+  picman_config_reset (PICMAN_CONFIG (self));
 }
 
 static void
-gimp_color_balance_config_get_property (GObject    *object,
+picman_color_balance_config_get_property (GObject    *object,
                                         guint       property_id,
                                         GValue     *value,
                                         GParamSpec *pspec)
 {
-  GimpColorBalanceConfig *self = GIMP_COLOR_BALANCE_CONFIG (object);
+  PicmanColorBalanceConfig *self = PICMAN_COLOR_BALANCE_CONFIG (object);
 
   switch (property_id)
     {
@@ -169,12 +169,12 @@ gimp_color_balance_config_get_property (GObject    *object,
 }
 
 static void
-gimp_color_balance_config_set_property (GObject      *object,
+picman_color_balance_config_set_property (GObject      *object,
                                         guint         property_id,
                                         const GValue *value,
                                         GParamSpec   *pspec)
 {
-  GimpColorBalanceConfig *self = GIMP_COLOR_BALANCE_CONFIG (object);
+  PicmanColorBalanceConfig *self = PICMAN_COLOR_BALANCE_CONFIG (object);
 
   switch (property_id)
     {
@@ -208,34 +208,34 @@ gimp_color_balance_config_set_property (GObject      *object,
 }
 
 static gboolean
-gimp_color_balance_config_serialize (GimpConfig       *config,
-                                     GimpConfigWriter *writer,
+picman_color_balance_config_serialize (PicmanConfig       *config,
+                                     PicmanConfigWriter *writer,
                                      gpointer          data)
 {
-  GimpColorBalanceConfig *bc_config = GIMP_COLOR_BALANCE_CONFIG (config);
-  GimpTransferMode        range;
-  GimpTransferMode        old_range;
+  PicmanColorBalanceConfig *bc_config = PICMAN_COLOR_BALANCE_CONFIG (config);
+  PicmanTransferMode        range;
+  PicmanTransferMode        old_range;
   gboolean                success = TRUE;
 
-  if (! gimp_config_serialize_property_by_name (config, "time", writer))
+  if (! picman_config_serialize_property_by_name (config, "time", writer))
     return FALSE;
 
   old_range = bc_config->range;
 
-  for (range = GIMP_SHADOWS; range <= GIMP_HIGHLIGHTS; range++)
+  for (range = PICMAN_SHADOWS; range <= PICMAN_HIGHLIGHTS; range++)
     {
       bc_config->range = range;
 
-      success = (gimp_config_serialize_property_by_name (config,
+      success = (picman_config_serialize_property_by_name (config,
                                                          "range",
                                                          writer) &&
-                 gimp_config_serialize_property_by_name (config,
+                 picman_config_serialize_property_by_name (config,
                                                          "cyan-red",
                                                          writer) &&
-                 gimp_config_serialize_property_by_name (config,
+                 picman_config_serialize_property_by_name (config,
                                                          "magenta-green",
                                                          writer) &&
-                 gimp_config_serialize_property_by_name (config,
+                 picman_config_serialize_property_by_name (config,
                                                          "yellow-blue",
                                                          writer));
 
@@ -244,7 +244,7 @@ gimp_color_balance_config_serialize (GimpConfig       *config,
     }
 
   if (success)
-    success = gimp_config_serialize_property_by_name (config,
+    success = picman_config_serialize_property_by_name (config,
                                                       "preserve-luminosity",
                                                       writer);
 
@@ -254,18 +254,18 @@ gimp_color_balance_config_serialize (GimpConfig       *config,
 }
 
 static gboolean
-gimp_color_balance_config_deserialize (GimpConfig *config,
+picman_color_balance_config_deserialize (PicmanConfig *config,
                                        GScanner   *scanner,
                                        gint        nest_level,
                                        gpointer    data)
 {
-  GimpColorBalanceConfig *cb_config = GIMP_COLOR_BALANCE_CONFIG (config);
-  GimpTransferMode        old_range;
+  PicmanColorBalanceConfig *cb_config = PICMAN_COLOR_BALANCE_CONFIG (config);
+  PicmanTransferMode        old_range;
   gboolean                success = TRUE;
 
   old_range = cb_config->range;
 
-  success = gimp_config_deserialize_properties (config, scanner, nest_level);
+  success = picman_config_deserialize_properties (config, scanner, nest_level);
 
   g_object_set (config, "range", old_range, NULL);
 
@@ -273,14 +273,14 @@ gimp_color_balance_config_deserialize (GimpConfig *config,
 }
 
 static gboolean
-gimp_color_balance_config_equal (GimpConfig *a,
-                                 GimpConfig *b)
+picman_color_balance_config_equal (PicmanConfig *a,
+                                 PicmanConfig *b)
 {
-  GimpColorBalanceConfig *config_a = GIMP_COLOR_BALANCE_CONFIG (a);
-  GimpColorBalanceConfig *config_b = GIMP_COLOR_BALANCE_CONFIG (b);
-  GimpTransferMode        range;
+  PicmanColorBalanceConfig *config_a = PICMAN_COLOR_BALANCE_CONFIG (a);
+  PicmanColorBalanceConfig *config_b = PICMAN_COLOR_BALANCE_CONFIG (b);
+  PicmanTransferMode        range;
 
-  for (range = GIMP_SHADOWS; range <= GIMP_HIGHLIGHTS; range++)
+  for (range = PICMAN_SHADOWS; range <= PICMAN_HIGHLIGHTS; range++)
     {
       if (config_a->cyan_red[range]      != config_b->cyan_red[range]      ||
           config_a->magenta_green[range] != config_b->magenta_green[range] ||
@@ -297,31 +297,31 @@ gimp_color_balance_config_equal (GimpConfig *a,
 }
 
 static void
-gimp_color_balance_config_reset (GimpConfig *config)
+picman_color_balance_config_reset (PicmanConfig *config)
 {
-  GimpColorBalanceConfig *cb_config = GIMP_COLOR_BALANCE_CONFIG (config);
-  GimpTransferMode        range;
+  PicmanColorBalanceConfig *cb_config = PICMAN_COLOR_BALANCE_CONFIG (config);
+  PicmanTransferMode        range;
 
-  for (range = GIMP_SHADOWS; range <= GIMP_HIGHLIGHTS; range++)
+  for (range = PICMAN_SHADOWS; range <= PICMAN_HIGHLIGHTS; range++)
     {
       cb_config->range = range;
-      gimp_color_balance_config_reset_range (cb_config);
+      picman_color_balance_config_reset_range (cb_config);
     }
 
-  gimp_config_reset_property (G_OBJECT (config), "range");
-  gimp_config_reset_property (G_OBJECT (config), "preserve-luminosity");
+  picman_config_reset_property (G_OBJECT (config), "range");
+  picman_config_reset_property (G_OBJECT (config), "preserve-luminosity");
 }
 
 static gboolean
-gimp_color_balance_config_copy (GimpConfig  *src,
-                                GimpConfig  *dest,
+picman_color_balance_config_copy (PicmanConfig  *src,
+                                PicmanConfig  *dest,
                                 GParamFlags  flags)
 {
-  GimpColorBalanceConfig *src_config  = GIMP_COLOR_BALANCE_CONFIG (src);
-  GimpColorBalanceConfig *dest_config = GIMP_COLOR_BALANCE_CONFIG (dest);
-  GimpTransferMode        range;
+  PicmanColorBalanceConfig *src_config  = PICMAN_COLOR_BALANCE_CONFIG (src);
+  PicmanColorBalanceConfig *dest_config = PICMAN_COLOR_BALANCE_CONFIG (dest);
+  PicmanTransferMode        range;
 
-  for (range = GIMP_SHADOWS; range <= GIMP_HIGHLIGHTS; range++)
+  for (range = PICMAN_SHADOWS; range <= PICMAN_HIGHLIGHTS; range++)
     {
       dest_config->cyan_red[range]      = src_config->cyan_red[range];
       dest_config->magenta_green[range] = src_config->magenta_green[range];
@@ -345,15 +345,15 @@ gimp_color_balance_config_copy (GimpConfig  *src,
 /*  public functions  */
 
 void
-gimp_color_balance_config_reset_range (GimpColorBalanceConfig *config)
+picman_color_balance_config_reset_range (PicmanColorBalanceConfig *config)
 {
-  g_return_if_fail (GIMP_IS_COLOR_BALANCE_CONFIG (config));
+  g_return_if_fail (PICMAN_IS_COLOR_BALANCE_CONFIG (config));
 
   g_object_freeze_notify (G_OBJECT (config));
 
-  gimp_config_reset_property (G_OBJECT (config), "cyan-red");
-  gimp_config_reset_property (G_OBJECT (config), "magenta-green");
-  gimp_config_reset_property (G_OBJECT (config), "yellow-blue");
+  picman_config_reset_property (G_OBJECT (config), "cyan-red");
+  picman_config_reset_property (G_OBJECT (config), "magenta-green");
+  picman_config_reset_property (G_OBJECT (config), "yellow-blue");
 
   g_object_thaw_notify (G_OBJECT (config));
 }

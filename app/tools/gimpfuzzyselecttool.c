@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfuzzyselecttool.c
+ * picmanfuzzyselecttool.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,81 +24,81 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimpimage.h"
-#include "core/gimpimage-contiguous-region.h"
-#include "core/gimpitem.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-contiguous-region.h"
+#include "core/picmanitem.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimpfuzzyselecttool.h"
-#include "gimpregionselectoptions.h"
-#include "gimptoolcontrol.h"
+#include "picmanfuzzyselecttool.h"
+#include "picmanregionselectoptions.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
-
-
-static GeglBuffer * gimp_fuzzy_select_tool_get_mask (GimpRegionSelectTool *region_select,
-                                                     GimpDisplay          *display);
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpFuzzySelectTool, gimp_fuzzy_select_tool,
-               GIMP_TYPE_REGION_SELECT_TOOL)
+static GeglBuffer * picman_fuzzy_select_tool_get_mask (PicmanRegionSelectTool *region_select,
+                                                     PicmanDisplay          *display);
 
-#define parent_class gimp_fuzzy_select_tool_parent_class
+
+G_DEFINE_TYPE (PicmanFuzzySelectTool, picman_fuzzy_select_tool,
+               PICMAN_TYPE_REGION_SELECT_TOOL)
+
+#define parent_class picman_fuzzy_select_tool_parent_class
 
 
 void
-gimp_fuzzy_select_tool_register (GimpToolRegisterCallback  callback,
+picman_fuzzy_select_tool_register (PicmanToolRegisterCallback  callback,
                                  gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_FUZZY_SELECT_TOOL,
-                GIMP_TYPE_REGION_SELECT_OPTIONS,
-                gimp_region_select_options_gui,
+  (* callback) (PICMAN_TYPE_FUZZY_SELECT_TOOL,
+                PICMAN_TYPE_REGION_SELECT_OPTIONS,
+                picman_region_select_options_gui,
                 0,
-                "gimp-fuzzy-select-tool",
+                "picman-fuzzy-select-tool",
                 _("Fuzzy Select"),
                 _("Fuzzy Select Tool: Select a contiguous region on the basis of color"),
                 N_("Fu_zzy Select"), "U",
-                NULL, GIMP_HELP_TOOL_FUZZY_SELECT,
-                GIMP_STOCK_TOOL_FUZZY_SELECT,
+                NULL, PICMAN_HELP_TOOL_FUZZY_SELECT,
+                PICMAN_STOCK_TOOL_FUZZY_SELECT,
                 data);
 }
 
 static void
-gimp_fuzzy_select_tool_class_init (GimpFuzzySelectToolClass *klass)
+picman_fuzzy_select_tool_class_init (PicmanFuzzySelectToolClass *klass)
 {
-  GimpRegionSelectToolClass *region_class;
+  PicmanRegionSelectToolClass *region_class;
 
-  region_class = GIMP_REGION_SELECT_TOOL_CLASS (klass);
+  region_class = PICMAN_REGION_SELECT_TOOL_CLASS (klass);
 
   region_class->undo_desc = C_("command", "Fuzzy Select");
-  region_class->get_mask  = gimp_fuzzy_select_tool_get_mask;
+  region_class->get_mask  = picman_fuzzy_select_tool_get_mask;
 }
 
 static void
-gimp_fuzzy_select_tool_init (GimpFuzzySelectTool *fuzzy_select)
+picman_fuzzy_select_tool_init (PicmanFuzzySelectTool *fuzzy_select)
 {
-  GimpTool *tool = GIMP_TOOL (fuzzy_select);
+  PicmanTool *tool = PICMAN_TOOL (fuzzy_select);
 
-  gimp_tool_control_set_tool_cursor (tool->control,
-                                     GIMP_TOOL_CURSOR_FUZZY_SELECT);
+  picman_tool_control_set_tool_cursor (tool->control,
+                                     PICMAN_TOOL_CURSOR_FUZZY_SELECT);
 }
 
 static GeglBuffer *
-gimp_fuzzy_select_tool_get_mask (GimpRegionSelectTool *region_select,
-                                 GimpDisplay          *display)
+picman_fuzzy_select_tool_get_mask (PicmanRegionSelectTool *region_select,
+                                 PicmanDisplay          *display)
 {
-  GimpTool                *tool        = GIMP_TOOL (region_select);
-  GimpSelectionOptions    *sel_options = GIMP_SELECTION_TOOL_GET_OPTIONS (tool);
-  GimpRegionSelectOptions *options     = GIMP_REGION_SELECT_TOOL_GET_OPTIONS (tool);
-  GimpImage               *image       = gimp_display_get_image (display);
-  GimpDrawable            *drawable    = gimp_image_get_active_drawable (image);
+  PicmanTool                *tool        = PICMAN_TOOL (region_select);
+  PicmanSelectionOptions    *sel_options = PICMAN_SELECTION_TOOL_GET_OPTIONS (tool);
+  PicmanRegionSelectOptions *options     = PICMAN_REGION_SELECT_TOOL_GET_OPTIONS (tool);
+  PicmanImage               *image       = picman_display_get_image (display);
+  PicmanDrawable            *drawable    = picman_image_get_active_drawable (image);
   gint                     x, y;
 
   x = region_select->x;
@@ -108,13 +108,13 @@ gimp_fuzzy_select_tool_get_mask (GimpRegionSelectTool *region_select,
     {
       gint off_x, off_y;
 
-      gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+      picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
 
       x -= off_x;
       y -= off_y;
     }
 
-  return gimp_image_contiguous_region_by_seed (image, drawable,
+  return picman_image_contiguous_region_by_seed (image, drawable,
                                                options->sample_merged,
                                                sel_options->antialias,
                                                options->threshold / 255.0,

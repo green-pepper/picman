@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_BOUNDARY_H__
-#define __GIMP_BRUSH_BOUNDARY_H__
+#ifndef __PICMAN_BRUSH_BOUNDARY_H__
+#define __PICMAN_BRUSH_BOUNDARY_H__
 
 
-GimpBezierDesc * gimp_brush_real_transform_boundary (GimpBrush *brush,
+PicmanBezierDesc * picman_brush_real_transform_boundary (PicmanBrush *brush,
                                                      gdouble    scale,
                                                      gdouble    aspect_ratio,
                                                      gdouble    angle,
@@ -28,4 +28,4 @@ GimpBezierDesc * gimp_brush_real_transform_boundary (GimpBrush *brush,
                                                      gint      *height);
 
 
-#endif /* __GIMP_BRUSH_BOUNDARY_H__ */
+#endif /* __PICMAN_BRUSH_BOUNDARY_H__ */

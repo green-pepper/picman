@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2000 Peter Mattis and Spencer Kimball
  *
- * gimpselection.h
+ * picmanselection.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,28 +18,28 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
-#ifndef __GIMP_SELECTION_H__
-#define __GIMP_SELECTION_H__
+#ifndef __PICMAN_SELECTION_H__
+#define __PICMAN_SELECTION_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-gint32   gimp_selection_float (gint32 image_ID,
+gint32   picman_selection_float (gint32 image_ID,
                                gint32 drawable_ID,
                                gint   offx,
                                gint   offy);
 
-GIMP_DEPRECATED_FOR(gimp_selection_none)
-gboolean gimp_selection_clear (gint32 image_ID);
+PICMAN_DEPRECATED_FOR(picman_selection_none)
+gboolean picman_selection_clear (gint32 image_ID);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_SELECTION_H__ */
+#endif /* __PICMAN_SELECTION_H__ */
 

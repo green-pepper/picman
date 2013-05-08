@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,27 +19,27 @@
 #define __RESIZE_DIALOG_H__
 
 
-typedef void (* GimpResizeCallback) (GtkWidget    *dialog,
-                                     GimpViewable *viewable,
+typedef void (* PicmanResizeCallback) (GtkWidget    *dialog,
+                                     PicmanViewable *viewable,
                                      gint          width,
                                      gint          height,
-                                     GimpUnit      unit,
+                                     PicmanUnit      unit,
                                      gint          offset_x,
                                      gint          offset_y,
-                                     GimpItemSet   layer_set,
+                                     PicmanItemSet   layer_set,
                                      gboolean      resize_text_layers,
                                      gpointer      user_data);
 
 
-GtkWidget * resize_dialog_new (GimpViewable       *viewable,
-                               GimpContext        *context,
+GtkWidget * resize_dialog_new (PicmanViewable       *viewable,
+                               PicmanContext        *context,
                                const gchar        *title,
                                const gchar        *role,
                                GtkWidget          *parent,
-                               GimpHelpFunc        help_func,
+                               PicmanHelpFunc        help_func,
                                const gchar        *help_id,
-                               GimpUnit            unit,
-                               GimpResizeCallback  callback,
+                               PicmanUnit            unit,
+                               PicmanResizeCallback  callback,
                                gpointer            user_data);
 
 

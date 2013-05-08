@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpenvirontable.h
- * (C) 2002 Manish Singh <yosh@gimp.org>
+ * picmanenvirontable.h
+ * (C) 2002 Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ENVIRON_TABLE_H__
-#define __GIMP_ENVIRON_TABLE_H__
+#ifndef __PICMAN_ENVIRON_TABLE_H__
+#define __PICMAN_ENVIRON_TABLE_H__
 
 
-#define GIMP_TYPE_ENVIRON_TABLE            (gimp_environ_table_get_type ())
-#define GIMP_ENVIRON_TABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ENVIRON_TABLE, GimpEnvironTable))
-#define GIMP_ENVIRON_TABLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ENVIRON_TABLE, GimpEnvironTableClass))
-#define GIMP_IS_ENVIRON_TABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ENVIRON_TABLE))
-#define GIMP_IS_ENVIRON_TABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ENVIRON_TABLE))
-#define GIMP_ENVIRON_TABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ENVIRON_TABLE, GimpEnvironTableClass))
+#define PICMAN_TYPE_ENVIRON_TABLE            (picman_environ_table_get_type ())
+#define PICMAN_ENVIRON_TABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ENVIRON_TABLE, PicmanEnvironTable))
+#define PICMAN_ENVIRON_TABLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ENVIRON_TABLE, PicmanEnvironTableClass))
+#define PICMAN_IS_ENVIRON_TABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ENVIRON_TABLE))
+#define PICMAN_IS_ENVIRON_TABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ENVIRON_TABLE))
+#define PICMAN_ENVIRON_TABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ENVIRON_TABLE, PicmanEnvironTableClass))
 
 
-typedef struct _GimpEnvironTableClass GimpEnvironTableClass;
+typedef struct _PicmanEnvironTableClass PicmanEnvironTableClass;
 
-struct _GimpEnvironTable
+struct _PicmanEnvironTable
 {
   GObject      parent_instance;
 
@@ -42,29 +42,29 @@ struct _GimpEnvironTable
   gchar      **envp;
 };
 
-struct _GimpEnvironTableClass
+struct _PicmanEnvironTableClass
 {
   GObjectClass  parent_class;
 };
 
 
-GType               gimp_environ_table_get_type  (void) G_GNUC_CONST;
-GimpEnvironTable  * gimp_environ_table_new       (void);
+GType               picman_environ_table_get_type  (void) G_GNUC_CONST;
+PicmanEnvironTable  * picman_environ_table_new       (void);
 
-void                gimp_environ_table_load      (GimpEnvironTable *environ_table,
+void                picman_environ_table_load      (PicmanEnvironTable *environ_table,
                                                   const gchar      *env_path);
 
-void                gimp_environ_table_add       (GimpEnvironTable *environ_table,
+void                picman_environ_table_add       (PicmanEnvironTable *environ_table,
                                                   const gchar      *name,
                                                   const gchar      *value,
                                                   const gchar      *separator);
-void                gimp_environ_table_remove    (GimpEnvironTable *environ_table,
+void                picman_environ_table_remove    (PicmanEnvironTable *environ_table,
                                                   const gchar      *name);
 
-void                gimp_environ_table_clear     (GimpEnvironTable *environ_table);
-void                gimp_environ_table_clear_all (GimpEnvironTable *environ_table);
+void                picman_environ_table_clear     (PicmanEnvironTable *environ_table);
+void                picman_environ_table_clear_all (PicmanEnvironTable *environ_table);
 
-gchar            ** gimp_environ_table_get_envp  (GimpEnvironTable *environ_table);
+gchar            ** picman_environ_table_get_envp  (PicmanEnvironTable *environ_table);
 
 
-#endif /* __GIMP_ENVIRON_TABLE_H__ */
+#endif /* __PICMAN_ENVIRON_TABLE_H__ */

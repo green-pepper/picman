@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimptransformtools_pdb.c
+ * picmantransformtools_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimptransformtools
- * @title: gimptransformtools
+ * SECTION: picmantransformtools
+ * @title: picmantransformtools
  * @short_description: Access to toolbox transform tools.
  *
  * Functions giving access to toolbox transform tools.
@@ -35,38 +35,38 @@
 
 
 /**
- * gimp_flip:
+ * picman_flip:
  * @drawable_ID: The affected drawable.
  * @flip_type: Type of flip.
  *
- * Deprecated: Use gimp_item_transform_flip_simple() instead.
+ * Deprecated: Use picman_item_transform_flip_simple() instead.
  *
  * Returns: The flipped drawable.
  **/
 gint32
-gimp_flip (gint32              drawable_ID,
-           GimpOrientationType flip_type)
+picman_flip (gint32              drawable_ID,
+           PicmanOrientationType flip_type)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_drawable_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-flip",
+  return_vals = picman_run_procedure ("picman-flip",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, flip_type,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, flip_type,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_drawable_ID = return_vals[1].data.d_drawable;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_drawable_ID;
 }
 
 /**
- * gimp_perspective:
+ * picman_perspective:
  * @drawable_ID: The affected drawable.
  * @interpolation: Whether to use interpolation.
  * @x0: The new x coordinate of upper-left corner of original bounding box.
@@ -78,12 +78,12 @@ gimp_flip (gint32              drawable_ID,
  * @x3: The new x coordinate of lower-right corner of original bounding box.
  * @y3: The new y coordinate of lower-right corner of original bounding box.
  *
- * Deprecated: Use gimp_item_transform_perspective() instead.
+ * Deprecated: Use picman_item_transform_perspective() instead.
  *
  * Returns: The newly mapped drawable.
  **/
 gint32
-gimp_perspective (gint32   drawable_ID,
+picman_perspective (gint32   drawable_ID,
                   gboolean interpolation,
                   gdouble  x0,
                   gdouble  y0,
@@ -94,68 +94,68 @@ gimp_perspective (gint32   drawable_ID,
                   gdouble  x3,
                   gdouble  y3)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_drawable_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-perspective",
+  return_vals = picman_run_procedure ("picman-perspective",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, interpolation,
-                                    GIMP_PDB_FLOAT, x0,
-                                    GIMP_PDB_FLOAT, y0,
-                                    GIMP_PDB_FLOAT, x1,
-                                    GIMP_PDB_FLOAT, y1,
-                                    GIMP_PDB_FLOAT, x2,
-                                    GIMP_PDB_FLOAT, y2,
-                                    GIMP_PDB_FLOAT, x3,
-                                    GIMP_PDB_FLOAT, y3,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, interpolation,
+                                    PICMAN_PDB_FLOAT, x0,
+                                    PICMAN_PDB_FLOAT, y0,
+                                    PICMAN_PDB_FLOAT, x1,
+                                    PICMAN_PDB_FLOAT, y1,
+                                    PICMAN_PDB_FLOAT, x2,
+                                    PICMAN_PDB_FLOAT, y2,
+                                    PICMAN_PDB_FLOAT, x3,
+                                    PICMAN_PDB_FLOAT, y3,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_drawable_ID = return_vals[1].data.d_drawable;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_drawable_ID;
 }
 
 /**
- * gimp_rotate:
+ * picman_rotate:
  * @drawable_ID: The affected drawable.
  * @interpolation: Whether to use interpolation.
  * @angle: The angle of rotation (radians).
  *
- * Deprecated: Use gimp_item_transform_rotate() instead.
+ * Deprecated: Use picman_item_transform_rotate() instead.
  *
  * Returns: The rotated drawable.
  **/
 gint32
-gimp_rotate (gint32   drawable_ID,
+picman_rotate (gint32   drawable_ID,
              gboolean interpolation,
              gdouble  angle)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_drawable_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-rotate",
+  return_vals = picman_run_procedure ("picman-rotate",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, interpolation,
-                                    GIMP_PDB_FLOAT, angle,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, interpolation,
+                                    PICMAN_PDB_FLOAT, angle,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_drawable_ID = return_vals[1].data.d_drawable;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_drawable_ID;
 }
 
 /**
- * gimp_scale:
+ * picman_scale:
  * @drawable_ID: The affected drawable.
  * @interpolation: Whether to use interpolation.
  * @x0: The new x coordinate of the upper-left corner of the scaled region.
@@ -163,79 +163,79 @@ gimp_rotate (gint32   drawable_ID,
  * @x1: The new x coordinate of the lower-right corner of the scaled region.
  * @y1: The new y coordinate of the lower-right corner of the scaled region.
  *
- * Deprecated: Use gimp_item_transform_scale() instead.
+ * Deprecated: Use picman_item_transform_scale() instead.
  *
  * Returns: The scaled drawable.
  **/
 gint32
-gimp_scale (gint32   drawable_ID,
+picman_scale (gint32   drawable_ID,
             gboolean interpolation,
             gdouble  x0,
             gdouble  y0,
             gdouble  x1,
             gdouble  y1)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_drawable_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-scale",
+  return_vals = picman_run_procedure ("picman-scale",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, interpolation,
-                                    GIMP_PDB_FLOAT, x0,
-                                    GIMP_PDB_FLOAT, y0,
-                                    GIMP_PDB_FLOAT, x1,
-                                    GIMP_PDB_FLOAT, y1,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, interpolation,
+                                    PICMAN_PDB_FLOAT, x0,
+                                    PICMAN_PDB_FLOAT, y0,
+                                    PICMAN_PDB_FLOAT, x1,
+                                    PICMAN_PDB_FLOAT, y1,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_drawable_ID = return_vals[1].data.d_drawable;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_drawable_ID;
 }
 
 /**
- * gimp_shear:
+ * picman_shear:
  * @drawable_ID: The affected drawable.
  * @interpolation: Whether to use interpolation.
  * @shear_type: Type of shear.
  * @magnitude: The magnitude of the shear.
  *
- * Deprecated: Use gimp_item_transform_shear() instead.
+ * Deprecated: Use picman_item_transform_shear() instead.
  *
  * Returns: The sheared drawable.
  **/
 gint32
-gimp_shear (gint32              drawable_ID,
+picman_shear (gint32              drawable_ID,
             gboolean            interpolation,
-            GimpOrientationType shear_type,
+            PicmanOrientationType shear_type,
             gdouble             magnitude)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_drawable_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-shear",
+  return_vals = picman_run_procedure ("picman-shear",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, interpolation,
-                                    GIMP_PDB_INT32, shear_type,
-                                    GIMP_PDB_FLOAT, magnitude,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, interpolation,
+                                    PICMAN_PDB_INT32, shear_type,
+                                    PICMAN_PDB_FLOAT, magnitude,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_drawable_ID = return_vals[1].data.d_drawable;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_drawable_ID;
 }
 
 /**
- * gimp_transform_2d:
+ * picman_transform_2d:
  * @drawable_ID: The affected drawable.
  * @interpolation: Whether to use interpolation.
  * @source_x: X coordinate of the transformation center.
@@ -246,12 +246,12 @@ gimp_shear (gint32              drawable_ID,
  * @dest_x: X coordinate of where the centre goes.
  * @dest_y: Y coordinate of where the centre goes.
  *
- * Deprecated: Use gimp_item_transform_2d() instead.
+ * Deprecated: Use picman_item_transform_2d() instead.
  *
  * Returns: The transformed drawable.
  **/
 gint32
-gimp_transform_2d (gint32   drawable_ID,
+picman_transform_2d (gint32   drawable_ID,
                    gboolean interpolation,
                    gdouble  source_x,
                    gdouble  source_y,
@@ -261,27 +261,27 @@ gimp_transform_2d (gint32   drawable_ID,
                    gdouble  dest_x,
                    gdouble  dest_y)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_drawable_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-transform-2d",
+  return_vals = picman_run_procedure ("picman-transform-2d",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, interpolation,
-                                    GIMP_PDB_FLOAT, source_x,
-                                    GIMP_PDB_FLOAT, source_y,
-                                    GIMP_PDB_FLOAT, scale_x,
-                                    GIMP_PDB_FLOAT, scale_y,
-                                    GIMP_PDB_FLOAT, angle,
-                                    GIMP_PDB_FLOAT, dest_x,
-                                    GIMP_PDB_FLOAT, dest_y,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, interpolation,
+                                    PICMAN_PDB_FLOAT, source_x,
+                                    PICMAN_PDB_FLOAT, source_y,
+                                    PICMAN_PDB_FLOAT, scale_x,
+                                    PICMAN_PDB_FLOAT, scale_y,
+                                    PICMAN_PDB_FLOAT, angle,
+                                    PICMAN_PDB_FLOAT, dest_x,
+                                    PICMAN_PDB_FLOAT, dest_y,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_drawable_ID = return_vals[1].data.d_drawable;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_drawable_ID;
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,50 +15,50 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ALIGN_OPTIONS_H__
-#define __GIMP_ALIGN_OPTIONS_H__
+#ifndef __PICMAN_ALIGN_OPTIONS_H__
+#define __PICMAN_ALIGN_OPTIONS_H__
 
 
-#include "core/gimptooloptions.h"
+#include "core/picmantooloptions.h"
 
 
 #define ALIGN_OPTIONS_N_BUTTONS 12
 
 
-#define GIMP_TYPE_ALIGN_OPTIONS            (gimp_align_options_get_type ())
-#define GIMP_ALIGN_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ALIGN_OPTIONS, GimpAlignOptions))
-#define GIMP_ALIGN_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ALIGN_OPTIONS, GimpAlignOptionsClass))
-#define GIMP_IS_ALIGN_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ALIGN_OPTIONS))
-#define GIMP_IS_ALIGN_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ALIGN_OPTIONS))
-#define GIMP_ALIGN_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ALIGN_OPTIONS, GimpAlignOptionsClass))
+#define PICMAN_TYPE_ALIGN_OPTIONS            (picman_align_options_get_type ())
+#define PICMAN_ALIGN_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ALIGN_OPTIONS, PicmanAlignOptions))
+#define PICMAN_ALIGN_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ALIGN_OPTIONS, PicmanAlignOptionsClass))
+#define PICMAN_IS_ALIGN_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ALIGN_OPTIONS))
+#define PICMAN_IS_ALIGN_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ALIGN_OPTIONS))
+#define PICMAN_ALIGN_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ALIGN_OPTIONS, PicmanAlignOptionsClass))
 
 
-typedef struct _GimpAlignOptions      GimpAlignOptions;
-typedef struct _GimpAlignOptionsClass GimpAlignOptionsClass;
+typedef struct _PicmanAlignOptions      PicmanAlignOptions;
+typedef struct _PicmanAlignOptionsClass PicmanAlignOptionsClass;
 
-struct _GimpAlignOptions
+struct _PicmanAlignOptions
 {
-  GimpToolOptions         parent_instence;
+  PicmanToolOptions         parent_instence;
 
-  GimpAlignReferenceType  align_reference;
+  PicmanAlignReferenceType  align_reference;
   gdouble                 offset_x;
   gdouble                 offset_y;
 
   GtkWidget              *button[ALIGN_OPTIONS_N_BUTTONS];
 };
 
-struct _GimpAlignOptionsClass
+struct _PicmanAlignOptionsClass
 {
-  GimpToolOptionsClass  parent_class;
+  PicmanToolOptionsClass  parent_class;
 
-  void (* align_button_clicked) (GimpAlignOptions  *options,
-                                 GimpAlignmentType  align_type);
+  void (* align_button_clicked) (PicmanAlignOptions  *options,
+                                 PicmanAlignmentType  align_type);
 };
 
 
-GType       gimp_align_options_get_type (void) G_GNUC_CONST;
+GType       picman_align_options_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_align_options_gui      (GimpToolOptions *tool_options);
+GtkWidget * picman_align_options_gui      (PicmanToolOptions *tool_options);
 
 
-#endif /* __GIMP_ALIGN_OPTIONS_H__ */
+#endif /* __PICMAN_ALIGN_OPTIONS_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,18 +20,18 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "display-types.h"
 
-#include "config/gimpdisplayconfig.h"
+#include "config/picmandisplayconfig.h"
 
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimpcanvas.h"
+#include "picmancanvas.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define MAX_BATCH_SIZE 32000
@@ -46,70 +46,70 @@ enum
 
 /*  local function prototypes  */
 
-static void       gimp_canvas_set_property    (GObject         *object,
+static void       picman_canvas_set_property    (GObject         *object,
                                                guint            property_id,
                                                const GValue    *value,
                                                GParamSpec      *pspec);
-static void       gimp_canvas_get_property    (GObject         *object,
+static void       picman_canvas_get_property    (GObject         *object,
                                                guint            property_id,
                                                GValue          *value,
                                                GParamSpec      *pspec);
 
-static void       gimp_canvas_unrealize       (GtkWidget       *widget);
-static void       gimp_canvas_style_set       (GtkWidget       *widget,
+static void       picman_canvas_unrealize       (GtkWidget       *widget);
+static void       picman_canvas_style_set       (GtkWidget       *widget,
                                                GtkStyle        *prev_style);
-static gboolean   gimp_canvas_focus_in_event  (GtkWidget       *widget,
+static gboolean   picman_canvas_focus_in_event  (GtkWidget       *widget,
                                                GdkEventFocus   *event);
-static gboolean   gimp_canvas_focus_out_event (GtkWidget       *widget,
+static gboolean   picman_canvas_focus_out_event (GtkWidget       *widget,
                                                GdkEventFocus   *event);
-static gboolean   gimp_canvas_focus           (GtkWidget       *widget,
+static gboolean   picman_canvas_focus           (GtkWidget       *widget,
                                                GtkDirectionType direction);
 
 
-G_DEFINE_TYPE (GimpCanvas, gimp_canvas, GIMP_TYPE_OVERLAY_BOX)
+G_DEFINE_TYPE (PicmanCanvas, picman_canvas, PICMAN_TYPE_OVERLAY_BOX)
 
-#define parent_class gimp_canvas_parent_class
+#define parent_class picman_canvas_parent_class
 
 
 static void
-gimp_canvas_class_init (GimpCanvasClass *klass)
+picman_canvas_class_init (PicmanCanvasClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->set_property    = gimp_canvas_set_property;
-  object_class->get_property    = gimp_canvas_get_property;
+  object_class->set_property    = picman_canvas_set_property;
+  object_class->get_property    = picman_canvas_get_property;
 
-  widget_class->unrealize       = gimp_canvas_unrealize;
-  widget_class->style_set       = gimp_canvas_style_set;
-  widget_class->focus_in_event  = gimp_canvas_focus_in_event;
-  widget_class->focus_out_event = gimp_canvas_focus_out_event;
-  widget_class->focus           = gimp_canvas_focus;
+  widget_class->unrealize       = picman_canvas_unrealize;
+  widget_class->style_set       = picman_canvas_style_set;
+  widget_class->focus_in_event  = picman_canvas_focus_in_event;
+  widget_class->focus_out_event = picman_canvas_focus_out_event;
+  widget_class->focus           = picman_canvas_focus;
 
   g_object_class_install_property (object_class, PROP_CONFIG,
                                    g_param_spec_object ("config", NULL, NULL,
-                                                        GIMP_TYPE_DISPLAY_CONFIG,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_DISPLAY_CONFIG,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_canvas_init (GimpCanvas *canvas)
+picman_canvas_init (PicmanCanvas *canvas)
 {
   GtkWidget *widget = GTK_WIDGET (canvas);
 
   gtk_widget_set_can_focus (widget, TRUE);
-  gtk_widget_add_events (widget, GIMP_CANVAS_EVENT_MASK);
+  gtk_widget_add_events (widget, PICMAN_CANVAS_EVENT_MASK);
   gtk_widget_set_extension_events (widget, GDK_EXTENSION_EVENTS_ALL);
 }
 
 static void
-gimp_canvas_set_property (GObject      *object,
+picman_canvas_set_property (GObject      *object,
                           guint         property_id,
                           const GValue *value,
                           GParamSpec   *pspec)
 {
-  GimpCanvas *canvas = GIMP_CANVAS (object);
+  PicmanCanvas *canvas = PICMAN_CANVAS (object);
 
   switch (property_id)
     {
@@ -124,12 +124,12 @@ gimp_canvas_set_property (GObject      *object,
 }
 
 static void
-gimp_canvas_get_property (GObject    *object,
+picman_canvas_get_property (GObject    *object,
                           guint       property_id,
                           GValue     *value,
                           GParamSpec *pspec)
 {
-  GimpCanvas *canvas = GIMP_CANVAS (object);
+  PicmanCanvas *canvas = PICMAN_CANVAS (object);
 
   switch (property_id)
     {
@@ -144,9 +144,9 @@ gimp_canvas_get_property (GObject    *object,
 }
 
 static void
-gimp_canvas_unrealize (GtkWidget *widget)
+picman_canvas_unrealize (GtkWidget *widget)
 {
-  GimpCanvas *canvas = GIMP_CANVAS (widget);
+  PicmanCanvas *canvas = PICMAN_CANVAS (widget);
 
   if (canvas->layout)
     {
@@ -158,10 +158,10 @@ gimp_canvas_unrealize (GtkWidget *widget)
 }
 
 static void
-gimp_canvas_style_set (GtkWidget *widget,
+picman_canvas_style_set (GtkWidget *widget,
                        GtkStyle  *prev_style)
 {
-  GimpCanvas *canvas = GIMP_CANVAS (widget);
+  PicmanCanvas *canvas = PICMAN_CANVAS (widget);
 
   GTK_WIDGET_CLASS (parent_class)->style_set (widget, prev_style);
 
@@ -173,7 +173,7 @@ gimp_canvas_style_set (GtkWidget *widget,
 }
 
 static gboolean
-gimp_canvas_focus_in_event (GtkWidget     *widget,
+picman_canvas_focus_in_event (GtkWidget     *widget,
                             GdkEventFocus *event)
 {
   /*  don't allow the default impl to invalidate the whole widget,
@@ -183,7 +183,7 @@ gimp_canvas_focus_in_event (GtkWidget     *widget,
 }
 
 static gboolean
-gimp_canvas_focus_out_event (GtkWidget     *widget,
+picman_canvas_focus_out_event (GtkWidget     *widget,
                              GdkEventFocus *event)
 {
   /*  see focus-in-event
@@ -192,7 +192,7 @@ gimp_canvas_focus_out_event (GtkWidget     *widget,
 }
 
 static gboolean
-gimp_canvas_focus (GtkWidget        *widget,
+picman_canvas_focus (GtkWidget        *widget,
                    GtkDirectionType  direction)
 {
   GtkWidget *focus = gtk_container_get_focus_child (GTK_CONTAINER (widget));
@@ -214,35 +214,35 @@ gimp_canvas_focus (GtkWidget        *widget,
 /*  public functions  */
 
 /**
- * gimp_canvas_new:
+ * picman_canvas_new:
  *
- * Creates a new #GimpCanvas widget.
+ * Creates a new #PicmanCanvas widget.
  *
- * The #GimpCanvas widget is a #GtkDrawingArea abstraction. It manages
- * a set of graphic contexts for drawing on a GIMP display. If you
- * draw using a #GimpCanvasStyle, #GimpCanvas makes sure that the
+ * The #PicmanCanvas widget is a #GtkDrawingArea abstraction. It manages
+ * a set of graphic contexts for drawing on a PICMAN display. If you
+ * draw using a #PicmanCanvasStyle, #PicmanCanvas makes sure that the
  * associated #GdkGC is created. All drawing on the canvas needs to
- * happen by means of the #GimpCanvas drawing functions. Besides from
- * not needing a #GdkGC pointer, the #GimpCanvas drawing functions
- * look and work like their #GdkDrawable counterparts. #GimpCanvas
+ * happen by means of the #PicmanCanvas drawing functions. Besides from
+ * not needing a #GdkGC pointer, the #PicmanCanvas drawing functions
+ * look and work like their #GdkDrawable counterparts. #PicmanCanvas
  * gracefully handles attempts to draw on the unrealized widget.
  *
- * Return value: a new #GimpCanvas widget
+ * Return value: a new #PicmanCanvas widget
  **/
 GtkWidget *
-gimp_canvas_new (GimpDisplayConfig *config)
+picman_canvas_new (PicmanDisplayConfig *config)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_CONFIG (config), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_CONFIG (config), NULL);
 
-  return g_object_new (GIMP_TYPE_CANVAS,
-                       "name",   "gimp-canvas",
+  return g_object_new (PICMAN_TYPE_CANVAS,
+                       "name",   "picman-canvas",
                        "config", config,
                        NULL);
 }
 
 /**
- * gimp_canvas_get_layout:
- * @canvas:  a #GimpCanvas widget
+ * picman_canvas_get_layout:
+ * @canvas:  a #PicmanCanvas widget
  * @format:  a standard printf() format string.
  * @Varargs: the parameters to insert into the format string.
  *
@@ -254,7 +254,7 @@ gimp_canvas_new (GimpDisplayConfig *config)
  * Returns: a #PangoLayout owned by the canvas.
  **/
 PangoLayout *
-gimp_canvas_get_layout (GimpCanvas  *canvas,
+picman_canvas_get_layout (PicmanCanvas  *canvas,
                         const gchar *format,
                         ...)
 {
@@ -276,16 +276,16 @@ gimp_canvas_get_layout (GimpCanvas  *canvas,
 }
 
 /**
- * gimp_canvas_set_bg_color:
- * @canvas:   a #GimpCanvas widget
- * @color:    a color in #GimpRGB format
+ * picman_canvas_set_bg_color:
+ * @canvas:   a #PicmanCanvas widget
+ * @color:    a color in #PicmanRGB format
  *
  * Sets the background color of the canvas's window.  This
  * is the color the canvas is set to if it is cleared.
  **/
 void
-gimp_canvas_set_bg_color (GimpCanvas *canvas,
-                          GimpRGB    *color)
+picman_canvas_set_bg_color (PicmanCanvas *canvas,
+                          PicmanRGB    *color)
 {
   GtkWidget   *widget = GTK_WIDGET (canvas);
   GdkColormap *colormap;
@@ -294,7 +294,7 @@ gimp_canvas_set_bg_color (GimpCanvas *canvas,
   if (! gtk_widget_get_realized (widget))
     return;
 
-  gimp_rgb_get_gdk_color (color, &gdk_color);
+  picman_rgb_get_gdk_color (color, &gdk_color);
 
   colormap = gdk_drawable_get_colormap (gtk_widget_get_window (widget));
   g_return_if_fail (colormap != NULL);

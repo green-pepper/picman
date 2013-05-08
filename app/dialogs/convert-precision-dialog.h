@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 #define __CONVERT_PRECISION_DIALOG_H__
 
 
-GtkWidget * convert_precision_dialog_new (GimpImage     *image,
-                                          GimpContext   *context,
+GtkWidget * convert_precision_dialog_new (PicmanImage     *image,
+                                          PicmanContext   *context,
                                           GtkWidget     *parent,
-                                          GimpPrecision  precision,
-                                          GimpProgress  *progress);
+                                          PicmanPrecision  precision,
+                                          PicmanProgress  *progress);
 
 
 #endif  /*  __CONVERT_PRECISION_DIALOG_H__  */

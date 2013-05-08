@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptag.c
+ * picmantag.c
  * Copyright (C) 2008 Aurimas Juška <aurisj@svn.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,24 +25,24 @@
 
 #include "core-types.h"
 
-#include "gimptag.h"
+#include "picmantag.h"
 
 
-#define GIMP_TAG_INTERNAL_PREFIX "gimp:"
+#define PICMAN_TAG_INTERNAL_PREFIX "picman:"
 
 
-G_DEFINE_TYPE (GimpTag, gimp_tag, G_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanTag, picman_tag, G_TYPE_OBJECT)
 
-#define parent_class gimp_tag_parent_class
+#define parent_class picman_tag_parent_class
 
 
 static void
-gimp_tag_class_init (GimpTagClass *klass)
+picman_tag_class_init (PicmanTagClass *klass)
 {
 }
 
 static void
-gimp_tag_init (GimpTag *tag)
+picman_tag_init (PicmanTag *tag)
 {
   tag->tag         = 0;
   tag->collate_key = 0;
@@ -50,29 +50,29 @@ gimp_tag_init (GimpTag *tag)
 }
 
 /**
- * gimp_tag_new:
+ * picman_tag_new:
  * @tag_string: a tag name.
  *
  * If given tag name is not valid, an attempt will be made to fix it.
  *
- * Return value: a new #GimpTag object, or NULL if tag string is invalid and
+ * Return value: a new #PicmanTag object, or NULL if tag string is invalid and
  * cannot be fixed.
  **/
-GimpTag *
-gimp_tag_new (const char *tag_string)
+PicmanTag *
+picman_tag_new (const char *tag_string)
 {
-  GimpTag *tag;
+  PicmanTag *tag;
   gchar   *tag_name;
   gchar   *case_folded;
   gchar   *collate_key;
 
   g_return_val_if_fail (tag_string != NULL, NULL);
 
-  tag_name = gimp_tag_string_make_valid (tag_string);
+  tag_name = picman_tag_string_make_valid (tag_string);
   if (! tag_name)
     return NULL;
 
-  tag = g_object_new (GIMP_TYPE_TAG, NULL);
+  tag = g_object_new (PICMAN_TYPE_TAG, NULL);
 
   tag->tag = g_quark_from_string (tag_name);
 
@@ -87,28 +87,28 @@ gimp_tag_new (const char *tag_string)
 }
 
 /**
- * gimp_tag_try_new:
+ * picman_tag_try_new:
  * @tag_string: a tag name.
  *
- * Similar to gimp_tag_new(), but returns NULL if tag is surely not equal
+ * Similar to picman_tag_new(), but returns NULL if tag is surely not equal
  * to any of currently created tags. It is useful for tag querying to avoid
  * unneeded comparisons. If tag is created, however, it does not mean that
  * it would necessarily match with some other tag.
  *
- * Return value: new #GimpTag object, or NULL if tag will not match with any
- * other #GimpTag.
+ * Return value: new #PicmanTag object, or NULL if tag will not match with any
+ * other #PicmanTag.
  **/
-GimpTag *
-gimp_tag_try_new (const char *tag_string)
+PicmanTag *
+picman_tag_try_new (const char *tag_string)
 {
-  GimpTag *tag;
+  PicmanTag *tag;
   gchar   *tag_name;
   gchar   *case_folded;
   gchar   *collate_key;
   GQuark   tag_quark;
   GQuark   collate_key_quark;
 
-  tag_name = gimp_tag_string_make_valid (tag_string);
+  tag_name = picman_tag_string_make_valid (tag_string);
   if (! tag_name)
     return NULL;
 
@@ -129,7 +129,7 @@ gimp_tag_try_new (const char *tag_string)
   if (! tag_quark)
     return NULL;
 
-  tag = g_object_new (GIMP_TYPE_TAG, NULL);
+  tag = g_object_new (PICMAN_TYPE_TAG, NULL);
   tag->tag = tag_quark;
   tag->collate_key = collate_key_quark;
 
@@ -137,24 +137,24 @@ gimp_tag_try_new (const char *tag_string)
 }
 
 /**
- * gimp_tag_get_internal:
- * @tag: a gimp tag.
+ * picman_tag_get_internal:
+ * @tag: a picman tag.
  *
  * Retrieve internal status of the tag.
  *
  * Return value: internal status of tag. Internal tags are not saved.
  **/
 gboolean
-gimp_tag_get_internal (GimpTag *tag)
+picman_tag_get_internal (PicmanTag *tag)
 {
-  g_return_val_if_fail (GIMP_IS_TAG (tag), FALSE);
+  g_return_val_if_fail (PICMAN_IS_TAG (tag), FALSE);
 
   return tag->internal;
 }
 
 /**
- * gimp_tag_set_internal:
- * @tag: a gimp tag.
+ * picman_tag_set_internal:
+ * @tag: a picman tag.
  * @inernal: desired tag internal status
  *
  * Set internal status of the tag. Internal tags are usually automaticaly
@@ -162,70 +162,70 @@ gimp_tag_get_internal (GimpTag *tag)
  *
  **/
 void
-gimp_tag_set_internal (GimpTag *tag, gboolean internal)
+picman_tag_set_internal (PicmanTag *tag, gboolean internal)
 {
-  g_return_if_fail (GIMP_IS_TAG (tag));
+  g_return_if_fail (PICMAN_IS_TAG (tag));
 
   tag->internal = internal;
 }
 
 
 /**
- * gimp_tag_get_name:
- * @tag: a gimp tag.
+ * picman_tag_get_name:
+ * @tag: a picman tag.
  *
  * Retrieve name of the tag.
  *
  * Return value: name of tag.
  **/
 const gchar *
-gimp_tag_get_name (GimpTag *tag)
+picman_tag_get_name (PicmanTag *tag)
 {
-  g_return_val_if_fail (GIMP_IS_TAG (tag), NULL);
+  g_return_val_if_fail (PICMAN_IS_TAG (tag), NULL);
 
   return g_quark_to_string (tag->tag);
 }
 
 /**
- * gimp_tag_get_hash:
- * @tag: a gimp tag.
+ * picman_tag_get_hash:
+ * @tag: a picman tag.
  *
- * Hashing function which is useful, for example, to store #GimpTag in
+ * Hashing function which is useful, for example, to store #PicmanTag in
  * a #GHashTable.
  *
  * Return value: hash value for tag.
  **/
 guint
-gimp_tag_get_hash (GimpTag *tag)
+picman_tag_get_hash (PicmanTag *tag)
 {
-  g_return_val_if_fail (GIMP_IS_TAG (tag), -1);
+  g_return_val_if_fail (PICMAN_IS_TAG (tag), -1);
 
   return tag->collate_key;
 }
 
 /**
- * gimp_tag_equals:
- * @tag:   a gimp tag.
- * @other: another gimp tag to compare with.
+ * picman_tag_equals:
+ * @tag:   a picman tag.
+ * @other: another picman tag to compare with.
  *
  * Compares tags for equality according to tag comparison rules.
  *
  * Return value: TRUE if tags are equal, FALSE otherwise.
  **/
 gboolean
-gimp_tag_equals (const GimpTag *tag,
-                 const GimpTag *other)
+picman_tag_equals (const PicmanTag *tag,
+                 const PicmanTag *other)
 {
-  g_return_val_if_fail (GIMP_IS_TAG (tag), FALSE);
-  g_return_val_if_fail (GIMP_IS_TAG (other), FALSE);
+  g_return_val_if_fail (PICMAN_IS_TAG (tag), FALSE);
+  g_return_val_if_fail (PICMAN_IS_TAG (other), FALSE);
 
   return tag->collate_key == other->collate_key;
 }
 
 /**
- * gimp_tag_compare_func:
- * @p1: pointer to left-hand #GimpTag object.
- * @p2: pointer to right-hand #GimpTag object.
+ * picman_tag_compare_func:
+ * @p1: pointer to left-hand #PicmanTag object.
+ * @p2: pointer to right-hand #PicmanTag object.
  *
  * Compares tags according to tag comparison rules. Useful for sorting
  * functions.
@@ -233,29 +233,29 @@ gimp_tag_equals (const GimpTag *tag,
  * Return value: meaning of return value is the same as in strcmp().
  **/
 int
-gimp_tag_compare_func (const void *p1,
+picman_tag_compare_func (const void *p1,
                        const void *p2)
 {
-  GimpTag      *t1 = GIMP_TAG (p1);
-  GimpTag      *t2 = GIMP_TAG (p2);
+  PicmanTag      *t1 = PICMAN_TAG (p1);
+  PicmanTag      *t2 = PICMAN_TAG (p2);
 
   return g_strcmp0 (g_quark_to_string (t1->collate_key),
                     g_quark_to_string (t2->collate_key));
 }
 
 /**
- * gimp_tag_compare_with_string:
- * @tag:        a #GimpTag object.
+ * picman_tag_compare_with_string:
+ * @tag:        a #PicmanTag object.
  * @tag_string: the string to compare to.
  *
  * Compares tag and a string according to tag comparison rules. Similar to
- * gimp_tag_compare_func(), but can be used without creating temporary tag
+ * picman_tag_compare_func(), but can be used without creating temporary tag
  * object.
  *
  * Return value: meaning of return value is the same as in strcmp().
  **/
 gint
-gimp_tag_compare_with_string (GimpTag     *tag,
+picman_tag_compare_with_string (PicmanTag     *tag,
                               const gchar *tag_string)
 {
   gchar        *case_folded;
@@ -263,7 +263,7 @@ gimp_tag_compare_with_string (GimpTag     *tag,
   gchar        *collate_key2;
   gint          result;
 
-  g_return_val_if_fail (GIMP_IS_TAG (tag), 0);
+  g_return_val_if_fail (PICMAN_IS_TAG (tag), 0);
   g_return_val_if_fail (tag_string != NULL, 0);
 
   collate_key = g_quark_to_string (tag->collate_key);
@@ -277,25 +277,25 @@ gimp_tag_compare_with_string (GimpTag     *tag,
 }
 
 /**
- * gimp_tag_has_prefix:
- * @tag:           a #GimpTag object.
+ * picman_tag_has_prefix:
+ * @tag:           a #PicmanTag object.
  * @prefix_string: the prefix to compare to.
  *
  * Compares tag and a prefix according to tag comparison rules. Similar to
- * gimp_tag_compare_with_string(), but does not work on the collate key
+ * picman_tag_compare_with_string(), but does not work on the collate key
  * because that can't be matched partially.
  *
  * Return value: wheher #tag starts with @prefix_string.
  **/
 gboolean
-gimp_tag_has_prefix (GimpTag     *tag,
+picman_tag_has_prefix (PicmanTag     *tag,
                      const gchar *prefix_string)
 {
   gchar    *case_folded1;
   gchar    *case_folded2;
   gboolean  has_prefix;
 
-  g_return_val_if_fail (GIMP_IS_TAG (tag), FALSE);
+  g_return_val_if_fail (PICMAN_IS_TAG (tag), FALSE);
   g_return_val_if_fail (prefix_string != NULL, FALSE);
 
   case_folded1 = g_utf8_casefold (g_quark_to_string (tag->tag), -1);
@@ -313,7 +313,7 @@ gimp_tag_has_prefix (GimpTag     *tag,
 }
 
 /**
- * gimp_tag_string_make_valid:
+ * picman_tag_string_make_valid:
  * @tag_string: a text string.
  *
  * Tries to create a valid tag string from given @tag_string.
@@ -323,7 +323,7 @@ gimp_tag_has_prefix (GimpTag     *tag,
  * using g_free().
  **/
 gchar *
-gimp_tag_string_make_valid (const gchar *tag_string)
+picman_tag_string_make_valid (const gchar *tag_string)
 {
   gchar    *tag;
   GString  *buffer;
@@ -345,16 +345,16 @@ gimp_tag_string_make_valid (const gchar *tag_string)
 
   buffer = g_string_new ("");
   tag_cursor = tag;
-  if (g_str_has_prefix (tag_cursor, GIMP_TAG_INTERNAL_PREFIX))
+  if (g_str_has_prefix (tag_cursor, PICMAN_TAG_INTERNAL_PREFIX))
     {
-      tag_cursor += strlen (GIMP_TAG_INTERNAL_PREFIX);
+      tag_cursor += strlen (PICMAN_TAG_INTERNAL_PREFIX);
     }
   do
     {
       c = g_utf8_get_char (tag_cursor);
       tag_cursor = g_utf8_next_char (tag_cursor);
       if (g_unichar_isprint (c)
-          && ! gimp_tag_is_tag_separator (c))
+          && ! picman_tag_is_tag_separator (c))
         {
           g_string_append_unichar (buffer, c);
         }
@@ -374,7 +374,7 @@ gimp_tag_string_make_valid (const gchar *tag_string)
 }
 
 /**
- * gimp_tag_is_tag_separator:
+ * picman_tag_is_tag_separator:
  * @c: Unicode character.
  *
  * Defines a set of characters that are considered tag separators. The
@@ -385,7 +385,7 @@ gimp_tag_string_make_valid (const gchar *tag_string)
  * Return value: %TRUE if the character is a tag separator.
  */
 gboolean
-gimp_tag_is_tag_separator (gunichar c)
+picman_tag_is_tag_separator (gunichar c)
 {
   switch (c)
     {
@@ -408,34 +408,34 @@ gimp_tag_is_tag_separator (gunichar c)
 }
 
 /**
- * gimp_tag_or_null_ref:
- * @tag: a #GimpTag
+ * picman_tag_or_null_ref:
+ * @tag: a #PicmanTag
  *
  * A simple wrapper around g_object_ref() that silently accepts #NULL.
  **/
 void
-gimp_tag_or_null_ref (GimpTag *tag_or_null)
+picman_tag_or_null_ref (PicmanTag *tag_or_null)
 {
   if (tag_or_null)
     {
-      g_return_if_fail (GIMP_IS_TAG (tag_or_null));
+      g_return_if_fail (PICMAN_IS_TAG (tag_or_null));
 
       g_object_ref (tag_or_null);
     }
 }
 
 /**
- * gimp_tag_or_null_unref:
- * @tag: a #GimpTag
+ * picman_tag_or_null_unref:
+ * @tag: a #PicmanTag
  *
  * A simple wrapper around g_object_unref() that silently accepts #NULL.
  **/
 void
-gimp_tag_or_null_unref (GimpTag *tag_or_null)
+picman_tag_or_null_unref (PicmanTag *tag_or_null)
 {
   if (tag_or_null)
     {
-      g_return_if_fail (GIMP_IS_TAG (tag_or_null));
+      g_return_if_fail (PICMAN_IS_TAG (tag_or_null));
 
       g_object_unref (tag_or_null);
     }

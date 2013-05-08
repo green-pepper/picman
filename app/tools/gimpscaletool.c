@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,26 +22,26 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimp-transform-utils.h"
-#include "core/gimpimage.h"
-#include "core/gimpdrawable-transform.h"
+#include "core/picman-transform-utils.h"
+#include "core/picmanimage.h"
+#include "core/picmandrawable-transform.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpsizebox.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmansizebox.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
 
-#include "gimpscaletool.h"
-#include "gimptoolcontrol.h"
-#include "gimptransformoptions.h"
+#include "picmanscaletool.h"
+#include "picmantoolcontrol.h"
+#include "picmantransformoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  index into trans_info array  */
@@ -60,60 +60,60 @@ enum
 
 /*  local function prototypes  */
 
-static void    gimp_scale_tool_dialog        (GimpTransformTool  *tr_tool);
-static void    gimp_scale_tool_dialog_update (GimpTransformTool  *tr_tool);
-static void    gimp_scale_tool_prepare       (GimpTransformTool  *tr_tool);
-static void    gimp_scale_tool_motion        (GimpTransformTool  *tr_tool);
-static void    gimp_scale_tool_recalc_matrix (GimpTransformTool  *tr_tool);
-static gchar * gimp_scale_tool_get_undo_desc (GimpTransformTool  *tr_tool);
+static void    picman_scale_tool_dialog        (PicmanTransformTool  *tr_tool);
+static void    picman_scale_tool_dialog_update (PicmanTransformTool  *tr_tool);
+static void    picman_scale_tool_prepare       (PicmanTransformTool  *tr_tool);
+static void    picman_scale_tool_motion        (PicmanTransformTool  *tr_tool);
+static void    picman_scale_tool_recalc_matrix (PicmanTransformTool  *tr_tool);
+static gchar * picman_scale_tool_get_undo_desc (PicmanTransformTool  *tr_tool);
 
-static void    gimp_scale_tool_size_notify   (GtkWidget          *box,
+static void    picman_scale_tool_size_notify   (GtkWidget          *box,
                                               GParamSpec         *pspec,
-                                              GimpTransformTool  *tr_tool);
+                                              PicmanTransformTool  *tr_tool);
 
 
-G_DEFINE_TYPE (GimpScaleTool, gimp_scale_tool, GIMP_TYPE_TRANSFORM_TOOL)
+G_DEFINE_TYPE (PicmanScaleTool, picman_scale_tool, PICMAN_TYPE_TRANSFORM_TOOL)
 
-#define parent_class gimp_scale_tool_parent_class
+#define parent_class picman_scale_tool_parent_class
 
 
 void
-gimp_scale_tool_register (GimpToolRegisterCallback  callback,
+picman_scale_tool_register (PicmanToolRegisterCallback  callback,
                           gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_SCALE_TOOL,
-                GIMP_TYPE_TRANSFORM_OPTIONS,
-                gimp_transform_options_gui,
-                GIMP_CONTEXT_BACKGROUND_MASK,
-                "gimp-scale-tool",
+  (* callback) (PICMAN_TYPE_SCALE_TOOL,
+                PICMAN_TYPE_TRANSFORM_OPTIONS,
+                picman_transform_options_gui,
+                PICMAN_CONTEXT_BACKGROUND_MASK,
+                "picman-scale-tool",
                 _("Scale"),
                 _("Scale Tool: Scale the layer, selection or path"),
                 N_("_Scale"), "<shift>T",
-                NULL, GIMP_HELP_TOOL_SCALE,
-                GIMP_STOCK_TOOL_SCALE,
+                NULL, PICMAN_HELP_TOOL_SCALE,
+                PICMAN_STOCK_TOOL_SCALE,
                 data);
 }
 
 static void
-gimp_scale_tool_class_init (GimpScaleToolClass *klass)
+picman_scale_tool_class_init (PicmanScaleToolClass *klass)
 {
-  GimpTransformToolClass *trans_class = GIMP_TRANSFORM_TOOL_CLASS (klass);
+  PicmanTransformToolClass *trans_class = PICMAN_TRANSFORM_TOOL_CLASS (klass);
 
-  trans_class->dialog        = gimp_scale_tool_dialog;
-  trans_class->dialog_update = gimp_scale_tool_dialog_update;
-  trans_class->prepare       = gimp_scale_tool_prepare;
-  trans_class->motion        = gimp_scale_tool_motion;
-  trans_class->recalc_matrix = gimp_scale_tool_recalc_matrix;
-  trans_class->get_undo_desc = gimp_scale_tool_get_undo_desc;
+  trans_class->dialog        = picman_scale_tool_dialog;
+  trans_class->dialog_update = picman_scale_tool_dialog_update;
+  trans_class->prepare       = picman_scale_tool_prepare;
+  trans_class->motion        = picman_scale_tool_motion;
+  trans_class->recalc_matrix = picman_scale_tool_recalc_matrix;
+  trans_class->get_undo_desc = picman_scale_tool_get_undo_desc;
 }
 
 static void
-gimp_scale_tool_init (GimpScaleTool *scale_tool)
+picman_scale_tool_init (PicmanScaleTool *scale_tool)
 {
-  GimpTool          *tool    = GIMP_TOOL (scale_tool);
-  GimpTransformTool *tr_tool = GIMP_TRANSFORM_TOOL (scale_tool);
+  PicmanTool          *tool    = PICMAN_TOOL (scale_tool);
+  PicmanTransformTool *tr_tool = PICMAN_TRANSFORM_TOOL (scale_tool);
 
-  gimp_tool_control_set_tool_cursor (tool->control, GIMP_TOOL_CURSOR_RESIZE);
+  picman_tool_control_set_tool_cursor (tool->control, PICMAN_TOOL_CURSOR_RESIZE);
 
   tr_tool->progress_text   = _("Scaling");
 
@@ -124,19 +124,19 @@ gimp_scale_tool_init (GimpScaleTool *scale_tool)
 }
 
 static void
-gimp_scale_tool_dialog (GimpTransformTool *tr_tool)
+picman_scale_tool_dialog (PicmanTransformTool *tr_tool)
 {
 }
 
 static void
-gimp_scale_tool_dialog_update (GimpTransformTool *tr_tool)
+picman_scale_tool_dialog_update (PicmanTransformTool *tr_tool)
 {
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
 
   gint width  = ROUND (tr_tool->trans_info[X1] - tr_tool->trans_info[X0]);
   gint height = ROUND (tr_tool->trans_info[Y1] - tr_tool->trans_info[Y0]);
 
-  g_object_set (GIMP_SCALE_TOOL (tr_tool)->box,
+  g_object_set (PICMAN_SCALE_TOOL (tr_tool)->box,
                 "width",       width,
                 "height",      height,
                 "keep-aspect", options->constrain_scale,
@@ -144,11 +144,11 @@ gimp_scale_tool_dialog_update (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_scale_tool_prepare (GimpTransformTool *tr_tool)
+picman_scale_tool_prepare (PicmanTransformTool *tr_tool)
 {
-  GimpScaleTool        *scale   = GIMP_SCALE_TOOL (tr_tool);
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
-  GimpDisplay          *display = GIMP_TOOL (tr_tool)->display;
+  PicmanScaleTool        *scale   = PICMAN_SCALE_TOOL (tr_tool);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
+  PicmanDisplay          *display = PICMAN_TOOL (tr_tool)->display;
   gdouble               xres;
   gdouble               yres;
 
@@ -157,26 +157,26 @@ gimp_scale_tool_prepare (GimpTransformTool *tr_tool)
   tr_tool->trans_info[X1] = (gdouble) tr_tool->x2;
   tr_tool->trans_info[Y1] = (gdouble) tr_tool->y2;
 
-  gimp_image_get_resolution (gimp_display_get_image (display),
+  picman_image_get_resolution (picman_display_get_image (display),
                              &xres, &yres);
 
   if (scale->box)
     {
       g_signal_handlers_disconnect_by_func (scale->box,
-                                            gimp_scale_tool_size_notify,
+                                            picman_scale_tool_size_notify,
                                             tr_tool);
       gtk_widget_destroy (scale->box);
     }
 
-  /*  Need to create a new GimpSizeBox widget because the initial
+  /*  Need to create a new PicmanSizeBox widget because the initial
    *  width and height is what counts as 100%.
    */
   scale->box =
-    g_object_new (GIMP_TYPE_SIZE_BOX,
+    g_object_new (PICMAN_TYPE_SIZE_BOX,
                   "width",       tr_tool->x2 - tr_tool->x1,
                   "height",      tr_tool->y2 - tr_tool->y1,
                   "keep-aspect", options->constrain_scale,
-                  "unit",        gimp_display_get_shell (display)->unit,
+                  "unit",        picman_display_get_shell (display)->unit,
                   "xresolution", xres,
                   "yresolution", yres,
                   NULL);
@@ -187,14 +187,14 @@ gimp_scale_tool_prepare (GimpTransformTool *tr_tool)
   gtk_widget_show (scale->box);
 
   g_signal_connect (scale->box, "notify",
-                    G_CALLBACK (gimp_scale_tool_size_notify),
+                    G_CALLBACK (picman_scale_tool_size_notify),
                     tr_tool);
 }
 
 static void
-gimp_scale_tool_motion (GimpTransformTool *tr_tool)
+picman_scale_tool_motion (PicmanTransformTool *tr_tool)
 {
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
   gdouble              *x1;
   gdouble              *y1;
   gdouble              *x2;
@@ -315,10 +315,10 @@ gimp_scale_tool_motion (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_scale_tool_recalc_matrix (GimpTransformTool *tr_tool)
+picman_scale_tool_recalc_matrix (PicmanTransformTool *tr_tool)
 {
-  gimp_matrix3_identity (&tr_tool->transform);
-  gimp_transform_matrix_scale (&tr_tool->transform,
+  picman_matrix3_identity (&tr_tool->transform);
+  picman_transform_matrix_scale (&tr_tool->transform,
                                tr_tool->x1,
                                tr_tool->y1,
                                tr_tool->x2 - tr_tool->x1,
@@ -330,7 +330,7 @@ gimp_scale_tool_recalc_matrix (GimpTransformTool *tr_tool)
 }
 
 static gchar *
-gimp_scale_tool_get_undo_desc (GimpTransformTool *tr_tool)
+picman_scale_tool_get_undo_desc (PicmanTransformTool *tr_tool)
 {
   gint width  = ROUND (tr_tool->trans_info[X1] - tr_tool->trans_info[X0]);
   gint height = ROUND (tr_tool->trans_info[Y1] - tr_tool->trans_info[Y0]);
@@ -340,11 +340,11 @@ gimp_scale_tool_get_undo_desc (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_scale_tool_size_notify (GtkWidget         *box,
+picman_scale_tool_size_notify (GtkWidget         *box,
                              GParamSpec        *pspec,
-                             GimpTransformTool *tr_tool)
+                             PicmanTransformTool *tr_tool)
 {
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
 
   if (! strcmp (pspec->name, "width") ||
       ! strcmp (pspec->name, "height"))
@@ -364,16 +364,16 @@ gimp_scale_tool_size_notify (GtkWidget         *box,
 
       if ((width != old_width) || (height != old_height))
         {
-          gimp_draw_tool_pause (GIMP_DRAW_TOOL (tr_tool));
+          picman_draw_tool_pause (PICMAN_DRAW_TOOL (tr_tool));
 
           tr_tool->trans_info[X1] = tr_tool->trans_info[X0] + width;
           tr_tool->trans_info[Y1] = tr_tool->trans_info[Y0] + height;
 
-          gimp_transform_tool_push_internal_undo (tr_tool);
+          picman_transform_tool_push_internal_undo (tr_tool);
 
-          gimp_transform_tool_recalc_matrix (tr_tool);
+          picman_transform_tool_recalc_matrix (tr_tool);
 
-          gimp_draw_tool_resume (GIMP_DRAW_TOOL (tr_tool));
+          picman_draw_tool_resume (PICMAN_DRAW_TOOL (tr_tool));
         }
     }
   else if (! strcmp (pspec->name, "keep-aspect"))

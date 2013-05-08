@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,14 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "gimpressionist.h"
+#include "picmanressionist.h"
 #include "infile.h"
 #include "general.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define COLORBUTTONWIDTH  30
@@ -98,7 +98,7 @@ general_restore (void)
                             pcvals.general_shadow_blur);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (general_tileable),
                                 pcvals.general_tileable);
-  gimp_color_button_set_color (GIMP_COLOR_BUTTON (general_color_button),
+  picman_color_button_set_color (PICMAN_COLOR_BUTTON (general_color_button),
                                &pcvals.color);
   gtk_adjustment_set_value (GTK_ADJUSTMENT (dev_thresh_adjust),
                             pcvals.devthresh);
@@ -136,7 +136,7 @@ create_generalpage (GtkNotebook *notebook)
   gtk_container_set_border_width (GTK_CONTAINER (thispage), 12);
   gtk_widget_show (thispage);
 
-  frame = gimp_frame_new (_("Background"));
+  frame = picman_frame_new (_("Background"));
   gtk_box_pack_start (GTK_BOX (thispage), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -166,15 +166,15 @@ create_generalpage (GtkNotebook *notebook)
                          _("Solid colored background"),
                          &radio_group);
 
-  general_color_button = gimp_color_button_new (_("Color"),
+  general_color_button = picman_color_button_new (_("Color"),
                                                 COLORBUTTONWIDTH,
                                                 COLORBUTTONHEIGHT,
                                                 &pcvals.color,
-                                                GIMP_COLOR_AREA_FLAT);
+                                                PICMAN_COLOR_AREA_FLAT);
   g_signal_connect (general_color_button, "clicked",
                     G_CALLBACK (select_color), NULL);
   g_signal_connect (general_color_button, "color-changed",
-                    G_CALLBACK (gimp_color_button_get_color),
+                    G_CALLBACK (picman_color_button_get_color),
                     &pcvals.color);
   gtk_box_pack_start (GTK_BOX (box4), general_color_button, FALSE, FALSE, 0);
   gtk_widget_show (general_color_button);
@@ -203,7 +203,7 @@ create_generalpage (GtkNotebook *notebook)
   general_paint_edges = tmpw;
   gtk_box_pack_start (GTK_BOX (box2), tmpw, FALSE, FALSE, 0);
   gtk_widget_show (tmpw);
-  gimp_help_set_help_data (tmpw,
+  picman_help_set_help_data (tmpw,
                            _("Selects if to place strokes all the way out to the edges of the image"),
                            NULL);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (tmpw),
@@ -212,7 +212,7 @@ create_generalpage (GtkNotebook *notebook)
   general_tileable = tmpw = gtk_check_button_new_with_label ( _("Tileable"));
   gtk_box_pack_start (GTK_BOX (box2), tmpw, FALSE, FALSE, 0);
   gtk_widget_show (tmpw);
-  gimp_help_set_help_data (tmpw,
+  picman_help_set_help_data (tmpw,
                            _("Selects if the resulting image should be seamlessly tileable"),
                            NULL);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (tmpw),
@@ -222,7 +222,7 @@ create_generalpage (GtkNotebook *notebook)
   general_drop_shadow = tmpw;
   gtk_box_pack_start (GTK_BOX (box2), tmpw, FALSE, FALSE, 0);
   gtk_widget_show (tmpw);
-  gimp_help_set_help_data (tmpw,
+  picman_help_set_help_data (tmpw,
                            _("Adds a shadow effect to each brush stroke"),
                            NULL);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (tmpw),
@@ -235,7 +235,7 @@ create_generalpage (GtkNotebook *notebook)
   gtk_widget_show (table);
 
   general_dark_edge_adjust =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                           _("Edge darken:"),
                           150, 6, pcvals.general_dark_edge,
                           0.0, 1.0, 0.01, 0.1, 2,
@@ -244,7 +244,7 @@ create_generalpage (GtkNotebook *notebook)
                           NULL);
 
   general_shadow_adjust =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                           _("Shadow darken:"),
                           150, 6, pcvals.general_shadow_darkness,
                           0.0, 99.0, 0.1, 1, 2,
@@ -253,7 +253,7 @@ create_generalpage (GtkNotebook *notebook)
                           NULL);
 
   general_shadow_depth =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                           _("Shadow depth:"),
                           150, 6, pcvals.general_shadow_depth,
                           0, 99, 1, 5, 0,
@@ -262,7 +262,7 @@ create_generalpage (GtkNotebook *notebook)
                           NULL);
 
   general_shadow_blur =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 3,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 3,
                           _("Shadow blur:"),
                           150, 6, pcvals.general_shadow_blur,
                           0, 99, 1, 5, 0,
@@ -271,7 +271,7 @@ create_generalpage (GtkNotebook *notebook)
                           NULL);
 
   dev_thresh_adjust =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 4,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 4,
                           _("Deviation threshold:"),
                           150, 6, pcvals.devthresh,
                           0.0, 1.0, 0.01, 0.01, 2,

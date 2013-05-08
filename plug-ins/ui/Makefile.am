@@ -1,4 +1,4 @@
-uidatadir = $(gimpdatadir)/ui/plug-ins
+uidatadir = $(picmandatadir)/ui/plug-ins
 
 uidata_DATA = \
 	plug-in-file-gif.ui	\

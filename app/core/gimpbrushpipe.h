@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * Copyright (C) 1999 Adrian Likins and Tor Lillqvist
  *
@@ -16,19 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_PIPE_H__
-#define __GIMP_BRUSH_PIPE_H__
+#ifndef __PICMAN_BRUSH_PIPE_H__
+#define __PICMAN_BRUSH_PIPE_H__
 
 
-#include "gimpbrush.h"
+#include "picmanbrush.h"
 
 
-#define GIMP_TYPE_BRUSH_PIPE            (gimp_brush_pipe_get_type ())
-#define GIMP_BRUSH_PIPE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BRUSH_PIPE, GimpBrushPipe))
-#define GIMP_BRUSH_PIPE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BRUSH_PIPE, GimpBrushPipeClass))
-#define GIMP_IS_BRUSH_PIPE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BRUSH_PIPE))
-#define GIMP_IS_BRUSH_PIPE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BRUSH_PIPE))
-#define GIMP_BRUSH_PIPE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BRUSH_PIPE, GimpBrushPipeClass))
+#define PICMAN_TYPE_BRUSH_PIPE            (picman_brush_pipe_get_type ())
+#define PICMAN_BRUSH_PIPE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BRUSH_PIPE, PicmanBrushPipe))
+#define PICMAN_BRUSH_PIPE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BRUSH_PIPE, PicmanBrushPipeClass))
+#define PICMAN_IS_BRUSH_PIPE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BRUSH_PIPE))
+#define PICMAN_IS_BRUSH_PIPE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BRUSH_PIPE))
+#define PICMAN_BRUSH_PIPE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BRUSH_PIPE, PicmanBrushPipeClass))
 
 
 typedef enum
@@ -44,11 +44,11 @@ typedef enum
 } PipeSelectModes;
 
 
-typedef struct _GimpBrushPipeClass GimpBrushPipeClass;
+typedef struct _PicmanBrushPipeClass PicmanBrushPipeClass;
 
-struct _GimpBrushPipe
+struct _PicmanBrushPipe
 {
-  GimpBrush         parent_instance;
+  PicmanBrush         parent_instance;
 
   gint              dimension;
   gint             *rank;       /* Size in each dimension */
@@ -59,17 +59,17 @@ struct _GimpBrushPipe
 
   gint              n_brushes;  /* Might be less than the product of the
                                  * ranks in some odd special case */
-  GimpBrush       **brushes;
-  GimpBrush        *current;    /* Currently selected brush */
+  PicmanBrush       **brushes;
+  PicmanBrush        *current;    /* Currently selected brush */
 };
 
-struct _GimpBrushPipeClass
+struct _PicmanBrushPipeClass
 {
-  GimpBrushClass  parent_class;
+  PicmanBrushClass  parent_class;
 };
 
 
-GType   gimp_brush_pipe_get_type (void) G_GNUC_CONST;
+GType   picman_brush_pipe_get_type (void) G_GNUC_CONST;
 
 
-#endif  /* __GIMP_BRUSH_PIPE_H__ */
+#endif  /* __PICMAN_BRUSH_PIPE_H__ */

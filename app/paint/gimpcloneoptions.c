@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "paint-types.h"
 
-#include "gimpcloneoptions.h"
+#include "picmancloneoptions.h"
 
 
 enum
@@ -35,48 +35,48 @@ enum
 };
 
 
-static void   gimp_clone_options_set_property (GObject      *object,
+static void   picman_clone_options_set_property (GObject      *object,
                                                guint         property_id,
                                                const GValue *value,
                                                GParamSpec   *pspec);
-static void   gimp_clone_options_get_property (GObject      *object,
+static void   picman_clone_options_get_property (GObject      *object,
                                                guint         property_id,
                                                GValue       *value,
                                                GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpCloneOptions, gimp_clone_options, GIMP_TYPE_SOURCE_OPTIONS)
+G_DEFINE_TYPE (PicmanCloneOptions, picman_clone_options, PICMAN_TYPE_SOURCE_OPTIONS)
 
-#define parent_class gimp_clone_options_parent_class
+#define parent_class picman_clone_options_parent_class
 
 
 static void
-gimp_clone_options_class_init (GimpCloneOptionsClass *klass)
+picman_clone_options_class_init (PicmanCloneOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_clone_options_set_property;
-  object_class->get_property = gimp_clone_options_get_property;
+  object_class->set_property = picman_clone_options_set_property;
+  object_class->get_property = picman_clone_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CLONE_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CLONE_TYPE,
                                  "clone-type", NULL,
-                                 GIMP_TYPE_CLONE_TYPE,
-                                 GIMP_IMAGE_CLONE,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_CLONE_TYPE,
+                                 PICMAN_IMAGE_CLONE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_clone_options_init (GimpCloneOptions *options)
+picman_clone_options_init (PicmanCloneOptions *options)
 {
 }
 
 static void
-gimp_clone_options_set_property (GObject      *object,
+picman_clone_options_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  GimpCloneOptions *options = GIMP_CLONE_OPTIONS (object);
+  PicmanCloneOptions *options = PICMAN_CLONE_OPTIONS (object);
 
   switch (property_id)
     {
@@ -90,12 +90,12 @@ gimp_clone_options_set_property (GObject      *object,
 }
 
 static void
-gimp_clone_options_get_property (GObject    *object,
+picman_clone_options_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  GimpCloneOptions *options = GIMP_CLONE_OPTIONS (object);
+  PicmanCloneOptions *options = PICMAN_CLONE_OPTIONS (object);
 
   switch (property_id)
     {

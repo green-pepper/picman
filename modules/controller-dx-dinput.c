@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * controller_dx_dinput.c
- * Copyright (C) 2004-2007 Sven Neumann <sven@gimp.org>
- *                         Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2004-2007 Sven Neumann <sven@picman.org>
+ *                         Michael Natterer <mitch@picman.org>
  *                         Tor Lillqvist <tml@iki.fi>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -40,16 +40,16 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#define GIMP_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
-#include "libgimpwidgets/gimpcontroller.h"
+#define PICMAN_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
+#include "libpicmanwidgets/picmancontroller.h"
 
-#include "gimpinputdevicestore.h"
+#include "picmaninputdevicestore.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 enum
 {
@@ -81,9 +81,9 @@ struct _DXDInputSource
 
 struct _ControllerDXDInput
 {
-  GimpController        parent_instance;
+  PicmanController        parent_instance;
 
-  GimpInputDeviceStore *store;
+  PicmanInputDeviceStore *store;
 
   LPDIRECTINPUTDEVICE8W didevice8;
 
@@ -120,7 +120,7 @@ struct _ControllerDXDInput
 
 struct _ControllerDXDInputClass
 {
-  GimpControllerClass  parent_class;
+  PicmanControllerClass  parent_class;
 };
 
 
@@ -137,10 +137,10 @@ static void   dx_dinput_get_property            (GObject        *object,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
 
-static gint          dx_dinput_get_n_events     (GimpController *controller);
-static const gchar * dx_dinput_get_event_name   (GimpController *controller,
+static gint          dx_dinput_get_n_events     (PicmanController *controller);
+static const gchar * dx_dinput_get_event_name   (PicmanController *controller,
                                                  gint            event_id);
-static const gchar * dx_dinput_get_event_blurb  (GimpController *controller,
+static const gchar * dx_dinput_get_event_blurb  (PicmanController *controller,
                                                  gint            event_id);
 
 static void          dx_dinput_device_changed   (ControllerDXDInput *controller,
@@ -149,9 +149,9 @@ static gboolean      dx_dinput_set_device       (ControllerDXDInput *controller,
                                                  const gchar        *guid);
 
 
-static const GimpModuleInfo dx_dinput_info =
+static const PicmanModuleInfo dx_dinput_info =
 {
-  GIMP_MODULE_ABI_VERSION,
+  PICMAN_MODULE_ABI_VERSION,
   N_("DirectX DirectInput event controller"),
   "Tor Lillqvist <tml@iki.fi>",
   "v0.1",
@@ -161,19 +161,19 @@ static const GimpModuleInfo dx_dinput_info =
 
 
 G_DEFINE_DYNAMIC_TYPE (ControllerDXDInput, controller_dx_dinput,
-                       GIMP_TYPE_CONTROLLER)
+                       PICMAN_TYPE_CONTROLLER)
 
 
-G_MODULE_EXPORT const GimpModuleInfo *
-gimp_module_query (GTypeModule *module)
+G_MODULE_EXPORT const PicmanModuleInfo *
+picman_module_query (GTypeModule *module)
 {
   return &dx_dinput_info;
 }
 
 G_MODULE_EXPORT gboolean
-gimp_module_register (GTypeModule *module)
+picman_module_register (GTypeModule *module)
 {
-  gimp_input_device_store_register_types (module);
+  picman_input_device_store_register_types (module);
   controller_dx_dinput_register_type (module);
 
   return TRUE;
@@ -182,7 +182,7 @@ gimp_module_register (GTypeModule *module)
 static void
 controller_dx_dinput_class_init (ControllerDXDInputClass *klass)
 {
-  GimpControllerClass *controller_class = GIMP_CONTROLLER_CLASS (klass);
+  PicmanControllerClass *controller_class = PICMAN_CONTROLLER_CLASS (klass);
   GObjectClass        *object_class     = G_OBJECT_CLASS (klass);
 
   object_class->dispose            = dx_dinput_dispose;
@@ -195,16 +195,16 @@ controller_dx_dinput_class_init (ControllerDXDInputClass *klass)
                                                         _("Device:"),
                                                         _("The device to read DirectInput events from."),
                                                         NULL,
-                                                        GIMP_CONFIG_PARAM_FLAGS));
+                                                        PICMAN_CONFIG_PARAM_FLAGS));
   g_object_class_install_property (object_class, PROP_DEVICE_STORE,
                                    g_param_spec_object ("device-values",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_INPUT_DEVICE_STORE,
+                                                        PICMAN_TYPE_INPUT_DEVICE_STORE,
                                                         G_PARAM_READABLE));
 
   controller_class->name            = _("DirectX DirectInput");
-  controller_class->help_id         = "gimp-controller-directx-directinput";
-  controller_class->stock_id        = GIMP_STOCK_CONTROLLER_LINUX_INPUT;
+  controller_class->help_id         = "picman-controller-directx-directinput";
+  controller_class->stock_id        = PICMAN_STOCK_CONTROLLER_LINUX_INPUT;
 
   controller_class->get_n_events    = dx_dinput_get_n_events;
   controller_class->get_event_name  = dx_dinput_get_event_name;
@@ -219,7 +219,7 @@ controller_dx_dinput_class_finalize (ControllerDXDInputClass *klass)
 static void
 controller_dx_dinput_init (ControllerDXDInput *controller)
 {
-  controller->store = gimp_input_device_store_new ();
+  controller->store = picman_input_device_store_new ();
 
   if (controller->store)
     {
@@ -324,7 +324,7 @@ dx_dinput_get_property (GObject    *object,
 }
 
 static gint
-dx_dinput_get_n_events (GimpController *controller)
+dx_dinput_get_n_events (PicmanController *controller)
 {
   ControllerDXDInput *cdxdi = (ControllerDXDInput *) controller;
 
@@ -332,7 +332,7 @@ dx_dinput_get_n_events (GimpController *controller)
 }
 
 static const gchar *
-dx_dinput_get_event_name (GimpController *controller,
+dx_dinput_get_event_name (PicmanController *controller,
                           gint            event_id)
 {
   ControllerDXDInput *cdxdi = (ControllerDXDInput *) controller;
@@ -344,7 +344,7 @@ dx_dinput_get_event_name (GimpController *controller,
 }
 
 static const gchar *
-dx_dinput_get_event_blurb (GimpController *controller,
+dx_dinput_get_event_blurb (PicmanController *controller,
                            gint            event_id)
 {
   ControllerDXDInput *cdxdi = (ControllerDXDInput *) controller;
@@ -548,7 +548,7 @@ dx_dinput_get_device_info (ControllerDXDInput *controller,
                                                           DIDFT_RELAXIS|
                                                           DIDFT_TGLBUTTON))))
     {
-      g_set_error (error, GIMP_MODULE_ERROR, GIMP_MODULE_FAILED,
+      g_set_error (error, PICMAN_MODULE_ERROR, PICMAN_MODULE_FAILED,
                    "IDirectInputDevice8::EnumObjects failed: %s",
                    g_win32_error_message (hresult));
       return FALSE;
@@ -588,7 +588,7 @@ dx_dinput_get_device_info (ControllerDXDInput *controller,
       g_free (controller->event_names);
       g_free (controller->event_blurbs);
 
-      g_set_error (error, GIMP_MODULE_ERROR, GIMP_MODULE_FAILED,
+      g_set_error (error, PICMAN_MODULE_ERROR, PICMAN_MODULE_FAILED,
                    "IDirectInputDevice8::EnumObjects failed: %s",
                    g_win32_error_message (hresult));
       return FALSE;
@@ -644,13 +644,13 @@ dx_dinput_event_dispatch (GSource     *source,
                           gpointer     user_data)
 {
   ControllerDXDInput * const       input = ((DXDInputSource *) source)->controller;
-  GimpController                  *controller = &input->parent_instance;
+  PicmanController                  *controller = &input->parent_instance;
   const DIDATAFORMAT * const       format = input->format;
   const DIOBJECTDATAFORMAT        *rgodf = format->rgodf;
   HRESULT                          hresult;
   guchar                          *data;
   gint                             i;
-  GimpControllerEvent              cevent = { 0, };
+  PicmanControllerEvent              cevent = { 0, };
 
   data = g_alloca (format->dwDataSize);
 
@@ -670,22 +670,22 @@ dx_dinput_event_dispatch (GSource     *source,
           if (data[rgodf->dwOfs] & 0x80)
             {
               /* Click event, compatibility with Linux Input */
-              cevent.any.type = GIMP_CONTROLLER_EVENT_TRIGGER;
+              cevent.any.type = PICMAN_CONTROLLER_EVENT_TRIGGER;
               cevent.any.source = controller;
               cevent.any.event_id = i*NUM_EVENTS_PER_BUTTON;
-              gimp_controller_event (controller, &cevent);
+              picman_controller_event (controller, &cevent);
 
               /* Press event */
               cevent.any.event_id = i*NUM_EVENTS_PER_BUTTON + 1;
-              gimp_controller_event (controller, &cevent);
+              picman_controller_event (controller, &cevent);
             }
           else
             {
               /* Release event */
-              cevent.any.type = GIMP_CONTROLLER_EVENT_TRIGGER;
+              cevent.any.type = PICMAN_CONTROLLER_EVENT_TRIGGER;
               cevent.any.source = controller;
               cevent.any.event_id = i*NUM_EVENTS_PER_BUTTON + 2;
-              gimp_controller_event (controller, &cevent);
+              picman_controller_event (controller, &cevent);
             }
         }
       rgodf++;
@@ -698,7 +698,7 @@ dx_dinput_event_dispatch (GSource     *source,
 
       if (ABS (*prev - *curr) > 1)
         {
-          cevent.any.type = GIMP_CONTROLLER_EVENT_VALUE;
+          cevent.any.type = PICMAN_CONTROLLER_EVENT_VALUE;
           cevent.any.source = controller;
           cevent.any.event_id =
             input->num_button_events +
@@ -713,7 +713,7 @@ dx_dinput_event_dispatch (GSource     *source,
               cevent.any.event_id++;
               g_value_set_double (&cevent.value.value, *curr - *prev);
             }
-          gimp_controller_event (controller, &cevent);
+          picman_controller_event (controller, &cevent);
           g_value_unset (&cevent.value.value);
         }
       else
@@ -728,7 +728,7 @@ dx_dinput_event_dispatch (GSource     *source,
 
       if (ABS (*prev - *curr) > 1)
         {
-          cevent.any.type = GIMP_CONTROLLER_EVENT_VALUE;
+          cevent.any.type = PICMAN_CONTROLLER_EVENT_VALUE;
           cevent.any.source = controller;
           cevent.any.event_id =
             input->num_button_events +
@@ -744,7 +744,7 @@ dx_dinput_event_dispatch (GSource     *source,
               cevent.any.event_id++;
               g_value_set_double (&cevent.value.value, *curr - *prev);
             }
-          gimp_controller_event (controller, &cevent);
+          picman_controller_event (controller, &cevent);
           g_value_unset (&cevent.value.value);
         }
       else
@@ -782,7 +782,7 @@ dx_dinput_event_dispatch (GSource     *source,
               curry = cos (curr/36000.*2.*G_PI);
             }
 
-          cevent.any.type = GIMP_CONTROLLER_EVENT_VALUE;
+          cevent.any.type = PICMAN_CONTROLLER_EVENT_VALUE;
           cevent.any.source = controller;
           cevent.any.event_id =
             input->num_button_events +
@@ -791,16 +791,16 @@ dx_dinput_event_dispatch (GSource     *source,
             i*NUM_EVENTS_PER_POV;
           g_value_init (&cevent.value.value, G_TYPE_DOUBLE);
           g_value_set_double (&cevent.value.value, currx - prevx);
-          gimp_controller_event (controller, &cevent);
+          picman_controller_event (controller, &cevent);
           cevent.any.event_id++;
           g_value_set_double (&cevent.value.value, curry - prevy);
-          gimp_controller_event (controller, &cevent);
+          picman_controller_event (controller, &cevent);
           g_value_unset (&cevent.value.value);
           if (curr == -1)
             {
-              cevent.any.type = GIMP_CONTROLLER_EVENT_TRIGGER;
+              cevent.any.type = PICMAN_CONTROLLER_EVENT_TRIGGER;
               cevent.any.event_id++;
-              gimp_controller_event (controller, &cevent);
+              picman_controller_event (controller, &cevent);
             }
         }
       rgodf++;
@@ -826,7 +826,7 @@ static GSourceFuncs dx_dinput_event_funcs = {
 static void
 dump_data_format (const DIDATAFORMAT *format)
 {
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
   gint i;
 
   g_print ("dwSize: %ld\n", format->dwSize);
@@ -913,7 +913,7 @@ dx_dinput_setup_events (ControllerDXDInput *controller,
 
   if ((controller->event = CreateEvent (NULL, TRUE, FALSE, NULL)) == NULL)
     {
-      g_set_error (error, GIMP_MODULE_ERROR, GIMP_MODULE_FAILED,
+      g_set_error (error, PICMAN_MODULE_ERROR, PICMAN_MODULE_FAILED,
                    "CreateEvent failed: %s",
                    g_win32_error_message (GetLastError ()));
       return FALSE;
@@ -933,7 +933,7 @@ dx_dinput_setup_events (ControllerDXDInput *controller,
                                                           DIPROP_AXISMODE,
                                                           &dword.diph))))
     {
-      g_set_error (error, GIMP_MODULE_ERROR, GIMP_MODULE_FAILED,
+      g_set_error (error, PICMAN_MODULE_ERROR, PICMAN_MODULE_FAILED,
                    "IDirectInputDevice8::GetParameters failed: %s",
                    g_win32_error_message (hresult));
       goto fail0;
@@ -1004,7 +1004,7 @@ dx_dinput_setup_events (ControllerDXDInput *controller,
   if (FAILED ((hresult = IDirectInputDevice8_SetDataFormat (controller->didevice8,
                                                             controller->format))))
     {
-      g_set_error (error, GIMP_MODULE_ERROR, GIMP_MODULE_FAILED,
+      g_set_error (error, PICMAN_MODULE_ERROR, PICMAN_MODULE_FAILED,
                    "IDirectInputDevice8::SetDataFormat failed: %s",
                    g_win32_error_message (hresult));
       goto fail1;
@@ -1013,7 +1013,7 @@ dx_dinput_setup_events (ControllerDXDInput *controller,
   if (FAILED ((hresult = IDirectInputDevice8_SetEventNotification (controller->didevice8,
                                                                    controller->event))))
     {
-      g_set_error (error, GIMP_MODULE_ERROR, GIMP_MODULE_FAILED,
+      g_set_error (error, PICMAN_MODULE_ERROR, PICMAN_MODULE_FAILED,
                    "IDirectInputDevice8::SetEventNotification failed: %s",
                    g_win32_error_message (hresult));
       goto fail2;
@@ -1021,7 +1021,7 @@ dx_dinput_setup_events (ControllerDXDInput *controller,
 
   if (FAILED ((hresult = IDirectInputDevice8_Acquire (controller->didevice8))))
     {
-      g_set_error (error, GIMP_MODULE_ERROR, GIMP_MODULE_FAILED,
+      g_set_error (error, PICMAN_MODULE_ERROR, PICMAN_MODULE_FAILED,
                    "IDirectInputDevice8::Acquire failed: %s",
                    g_win32_error_message (hresult));
       goto fail2;
@@ -1031,7 +1031,7 @@ dx_dinput_setup_events (ControllerDXDInput *controller,
                                                              controller->format->dwDataSize,
                                                              controller->prevdata))))
     {
-      g_set_error (error, GIMP_MODULE_ERROR, GIMP_MODULE_FAILED,
+      g_set_error (error, PICMAN_MODULE_ERROR, PICMAN_MODULE_FAILED,
                    "IDirectInputDevice8::GetDeviceState failed: %s",
                    g_win32_error_message (hresult));
       goto fail2;
@@ -1084,7 +1084,7 @@ dx_dinput_set_device (ControllerDXDInput *controller,
     {
       if (controller->store)
         controller->didevice8 =
-          (LPDIRECTINPUTDEVICE8W) gimp_input_device_store_get_device_file (controller->store,
+          (LPDIRECTINPUTDEVICE8W) picman_input_device_store_get_device_file (controller->store,
                                                                            controller->guid);
     }
   else
@@ -1105,7 +1105,7 @@ dx_dinput_set_device (ControllerDXDInput *controller,
     }
   else if (controller->store)
     {
-      error = gimp_input_device_store_get_error (controller->store);
+      error = picman_input_device_store_get_error (controller->store);
 
       if (error)
         {

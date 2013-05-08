@@ -1,6 +1,6 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
- * Copyright (C) 2005-2006  Manish Singh <yosh@gimp.org>
+ * Picman-Python - allows the writing of Picman plugins in Python.
+ * Copyright (C) 2005-2006  Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,16 @@
 
 #define NO_IMPORT_PYGOBJECT
 
-#include "pygimp.h"
-#include "pygimpcolor.h"
+#include "pypicman.h"
+#include "pypicmancolor.h"
 
-#include <libgimpmath/gimpmath.h>
+#include <libpicmanmath/picmanmath.h>
 
 static PyObject *
 rgb_set(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *r = NULL, *g = NULL, *b = NULL, *a = NULL;
-    GimpRGB tmprgb, *rgb;
+    PicmanRGB tmprgb, *rgb;
     static char *kwlist[] = { "r", "g", "b", "a", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OOOO:set", kwlist,
@@ -46,7 +46,7 @@ rgb_set(PyObject *self, PyObject *args, PyObject *kwargs)
 	return NULL;
     }
 
-    rgb = pyg_boxed_get(self, GimpRGB);
+    rgb = pyg_boxed_get(self, PicmanRGB);
     tmprgb = *rgb;
 
 #define SET_MEMBER(m)	G_STMT_START {				\
@@ -82,7 +82,7 @@ static PyObject *
 rgb_set_alpha(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *py_a;
-    GimpRGB *rgb;
+    PicmanRGB *rgb;
     static char *kwlist[] = { "a", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
@@ -90,7 +90,7 @@ rgb_set_alpha(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &py_a))
         return NULL;
 
-    rgb = pyg_boxed_get(self, GimpRGB);
+    rgb = pyg_boxed_get(self, PicmanRGB);
 
     if (PyInt_Check(py_a))
 	rgb->a = (double) PyInt_AS_LONG(py_a) / 255.0;
@@ -113,15 +113,15 @@ rgb_add(PyObject *self, PyObject *args, PyObject *kwargs)
     static char *kwlist[] = { "color", "with_alpha", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!|i:add", kwlist,
-				     &PyGimpRGB_Type, &color, &with_alpha))
+				     &PyPicmanRGB_Type, &color, &with_alpha))
         return NULL;
 
     if (with_alpha)
-	gimp_rgba_add(pyg_boxed_get(self, GimpRGB),
-		      pyg_boxed_get(color, GimpRGB));
+	picman_rgba_add(pyg_boxed_get(self, PicmanRGB),
+		      pyg_boxed_get(color, PicmanRGB));
     else
-	gimp_rgb_add(pyg_boxed_get(self, GimpRGB),
-		     pyg_boxed_get(color, GimpRGB));
+	picman_rgb_add(pyg_boxed_get(self, PicmanRGB),
+		     pyg_boxed_get(color, PicmanRGB));
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -135,15 +135,15 @@ rgb_subtract(PyObject *self, PyObject *args, PyObject *kwargs)
     static char *kwlist[] = { "color", "with_alpha", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!|i:subtract", kwlist,
-				     &PyGimpRGB_Type, &color, &with_alpha))
+				     &PyPicmanRGB_Type, &color, &with_alpha))
         return NULL;
 
     if (with_alpha)
-	gimp_rgba_subtract(pyg_boxed_get(self, GimpRGB),
-			   pyg_boxed_get(color, GimpRGB));
+	picman_rgba_subtract(pyg_boxed_get(self, PicmanRGB),
+			   pyg_boxed_get(color, PicmanRGB));
     else
-	gimp_rgb_subtract(pyg_boxed_get(self, GimpRGB),
-			  pyg_boxed_get(color, GimpRGB));
+	picman_rgb_subtract(pyg_boxed_get(self, PicmanRGB),
+			  pyg_boxed_get(color, PicmanRGB));
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -161,9 +161,9 @@ rgb_multiply(PyObject *self, PyObject *args, PyObject *kwargs)
         return NULL;
 
     if (with_alpha)
-	gimp_rgba_multiply(pyg_boxed_get(self, GimpRGB), factor);
+	picman_rgba_multiply(pyg_boxed_get(self, PicmanRGB), factor);
     else
-	gimp_rgb_multiply(pyg_boxed_get(self, GimpRGB), factor);
+	picman_rgb_multiply(pyg_boxed_get(self, PicmanRGB), factor);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -178,11 +178,11 @@ rgb_distance(PyObject *self, PyObject *args, PyObject *kwargs)
     static char *kwlist[] = { "color", "alpha", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!|i:distance", kwlist,
-				     &PyGimpRGB_Type, &color, &alpha))
+				     &PyPicmanRGB_Type, &color, &alpha))
         return NULL;
 
-    ret = gimp_rgb_distance(pyg_boxed_get(self, GimpRGB),
-			    pyg_boxed_get(color, GimpRGB));
+    ret = picman_rgb_distance(pyg_boxed_get(self, PicmanRGB),
+			    pyg_boxed_get(color, PicmanRGB));
 
 
     return PyFloat_FromDouble(ret);
@@ -191,19 +191,19 @@ rgb_distance(PyObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 rgb_max(PyObject *self)
 {
-    return PyFloat_FromDouble(gimp_rgb_max(pyg_boxed_get(self, GimpRGB)));
+    return PyFloat_FromDouble(picman_rgb_max(pyg_boxed_get(self, PicmanRGB)));
 }
 
 static PyObject *
 rgb_min(PyObject *self)
 {
-    return PyFloat_FromDouble(gimp_rgb_min(pyg_boxed_get(self, GimpRGB)));
+    return PyFloat_FromDouble(picman_rgb_min(pyg_boxed_get(self, PicmanRGB)));
 }
 
 static PyObject *
 rgb_clamp(PyObject *self)
 {
-    gimp_rgb_clamp(pyg_boxed_get(self, GimpRGB));
+    picman_rgb_clamp(pyg_boxed_get(self, PicmanRGB));
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -218,7 +218,7 @@ rgb_gamma(PyObject *self, PyObject *args, PyObject *kwargs)
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "d:gamma", kwlist, &gamma))
         return NULL;
 
-    gimp_rgb_gamma(pyg_boxed_get(self, GimpRGB), gamma);
+    picman_rgb_gamma(pyg_boxed_get(self, PicmanRGB), gamma);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -227,28 +227,28 @@ rgb_gamma(PyObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 rgb_luminance(PyObject *self)
 {
-    return PyFloat_FromDouble(gimp_rgb_luminance(pyg_boxed_get(self, GimpRGB)));
+    return PyFloat_FromDouble(picman_rgb_luminance(pyg_boxed_get(self, PicmanRGB)));
 }
 
 static PyObject *
 rgb_composite(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *color;
-    int mode = GIMP_RGB_COMPOSITE_NORMAL;
+    int mode = PICMAN_RGB_COMPOSITE_NORMAL;
     static char *kwlist[] = { "color", "mode", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
 				     "O!|i:composite", kwlist,
-				     &PyGimpRGB_Type, &color, &mode))
+				     &PyPicmanRGB_Type, &color, &mode))
         return NULL;
 
-    if (mode < GIMP_RGB_COMPOSITE_NONE || mode > GIMP_RGB_COMPOSITE_BEHIND) {
+    if (mode < PICMAN_RGB_COMPOSITE_NONE || mode > PICMAN_RGB_COMPOSITE_BEHIND) {
 	PyErr_SetString(PyExc_TypeError, "composite type is not valid");
 	return NULL;
     }
 
-    gimp_rgb_composite(pyg_boxed_get(self, GimpRGB),
-		       pyg_boxed_get(color, GimpRGB),
+    picman_rgb_composite(pyg_boxed_get(self, PicmanRGB),
+		       pyg_boxed_get(color, PicmanRGB),
 		       mode);
 
     Py_INCREF(Py_None);
@@ -267,7 +267,7 @@ rgb_parse_name(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &name, &len))
         return NULL;
 
-    success = gimp_rgb_parse_name(pyg_boxed_get(self, GimpRGB), name, len);
+    success = picman_rgb_parse_name(pyg_boxed_get(self, PicmanRGB), name, len);
 
     if (!success) {
 	PyErr_SetString(PyExc_ValueError, "unable to parse color name");
@@ -290,7 +290,7 @@ rgb_parse_hex(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &hex, &len))
         return NULL;
 
-    success = gimp_rgb_parse_hex(pyg_boxed_get(self, GimpRGB), hex, len);
+    success = picman_rgb_parse_hex(pyg_boxed_get(self, PicmanRGB), hex, len);
 
     if (!success) {
 	PyErr_SetString(PyExc_ValueError, "unable to parse hex value");
@@ -315,9 +315,9 @@ rgb_parse_css(PyObject *self, PyObject *args, PyObject *kwargs)
         return NULL;
 
     if (with_alpha)
-	success = gimp_rgba_parse_css(pyg_boxed_get(self, GimpRGB), css, len);
+	success = picman_rgba_parse_css(pyg_boxed_get(self, PicmanRGB), css, len);
     else
-	success = gimp_rgb_parse_css(pyg_boxed_get(self, GimpRGB), css, len);
+	success = picman_rgb_parse_css(pyg_boxed_get(self, PicmanRGB), css, len);
 
     if (!success) {
 	PyErr_SetString(PyExc_ValueError, "unable to parse CSS color");
@@ -331,34 +331,34 @@ rgb_parse_css(PyObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 rgb_to_hsv(PyObject *self)
 {
-    GimpRGB *rgb;
-    GimpHSV hsv;
+    PicmanRGB *rgb;
+    PicmanHSV hsv;
 
-    rgb = pyg_boxed_get(self, GimpRGB);
+    rgb = pyg_boxed_get(self, PicmanRGB);
 
-    gimp_rgb_to_hsv(rgb, &hsv);
+    picman_rgb_to_hsv(rgb, &hsv);
 
-    return pygimp_hsv_new(&hsv);
+    return pypicman_hsv_new(&hsv);
 }
 
 static PyObject *
 rgb_to_hsl(PyObject *self)
 {
-    GimpRGB *rgb;
-    GimpHSL hsl;
+    PicmanRGB *rgb;
+    PicmanHSL hsl;
 
-    rgb = pyg_boxed_get(self, GimpRGB);
+    rgb = pyg_boxed_get(self, PicmanRGB);
 
-    gimp_rgb_to_hsl(rgb, &hsl);
+    picman_rgb_to_hsl(rgb, &hsl);
 
-    return pygimp_hsl_new(&hsl);
+    return pypicman_hsl_new(&hsl);
 }
 
 static PyObject *
 rgb_to_cmyk(PyObject *self, PyObject *args, PyObject *kwargs)
 {
-    GimpRGB *rgb;
-    GimpCMYK cmyk;
+    PicmanRGB *rgb;
+    PicmanCMYK cmyk;
     gdouble pullout = 1.0;
     static char *kwlist[] = { "pullout", NULL };
 
@@ -367,20 +367,20 @@ rgb_to_cmyk(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &pullout))
 	return NULL;
 
-    rgb = pyg_boxed_get(self, GimpRGB);
+    rgb = pyg_boxed_get(self, PicmanRGB);
 
-    gimp_rgb_to_cmyk(rgb, pullout, &cmyk);
+    picman_rgb_to_cmyk(rgb, pullout, &cmyk);
 
-    return pygimp_cmyk_new(&cmyk);
+    return pypicman_cmyk_new(&cmyk);
 }
 
 /* __getstate__ isn't exposed */
 static PyObject *
 rgb_getstate(PyObject *self)
 {
-    GimpRGB *rgb;
+    PicmanRGB *rgb;
 
-    rgb = pyg_boxed_get(self, GimpRGB);
+    rgb = pyg_boxed_get(self, PicmanRGB);
 
     return Py_BuildValue("dddd", rgb->r, rgb->g, rgb->b, rgb->a);
 }
@@ -418,12 +418,12 @@ static PyMethodDef rgb_methods[] = {
 static PyObject *							\
 rgb_get_ ## m(PyObject *self, void *closure)				\
 {									\
-    return PyFloat_FromDouble(pyg_boxed_get(self, GimpRGB)->m);		\
+    return PyFloat_FromDouble(pyg_boxed_get(self, PicmanRGB)->m);		\
 }									\
 static int								\
 rgb_set_ ## m(PyObject *self, PyObject *value, void *closure)		\
 {									\
-    GimpRGB *rgb = pyg_boxed_get(self, GimpRGB);			\
+    PicmanRGB *rgb = pyg_boxed_get(self, PicmanRGB);			\
     if (value == NULL) {						\
 	PyErr_SetString(PyExc_TypeError, "cannot delete value");	\
 	return -1;							\
@@ -467,7 +467,7 @@ rgb_length(PyObject *self)
 static PyObject *
 rgb_getitem(PyObject *self, Py_ssize_t pos)
 {
-    GimpRGB *rgb;
+    PicmanRGB *rgb;
     double val;
 
     if (pos < 0)
@@ -478,7 +478,7 @@ rgb_getitem(PyObject *self, Py_ssize_t pos)
 	return NULL;
     }
 
-    rgb = pyg_boxed_get(self, GimpRGB);
+    rgb = pyg_boxed_get(self, PicmanRGB);
 
     switch (pos) {
     case 0: val = rgb->r; break;
@@ -629,10 +629,10 @@ rgb_hash(PyObject *self)
 static PyObject *
 rgb_richcompare(PyObject *self, PyObject *other, int op)
 {
-    GimpRGB *c1, *c2;
+    PicmanRGB *c1, *c2;
     PyObject *ret;
 
-    if (!pygimp_rgb_check(other)) {
+    if (!pypicman_rgb_check(other)) {
 	PyErr_Format(PyExc_TypeError,
 		     "can't compare %s to %s",
 		     self->ob_type->tp_name, other->ob_type->tp_name);
@@ -645,8 +645,8 @@ rgb_richcompare(PyObject *self, PyObject *other, int op)
 	return NULL;
     }
 
-    c1 = pyg_boxed_get(self, GimpRGB);
-    c2 = pyg_boxed_get(other, GimpRGB);
+    c1 = pyg_boxed_get(self, PicmanRGB);
+    c2 = pyg_boxed_get(other, PicmanRGB);
 
     if ((c1->r == c2->r && c1->g == c2->g && c1->b == c2->b && c1->a == c2->a) == (op == Py_EQ))
 	ret = Py_True;
@@ -660,7 +660,7 @@ rgb_richcompare(PyObject *self, PyObject *other, int op)
 static PyObject *
 rgb_pretty_print(PyObject *self, gboolean inexact)
 {
-    GimpRGB *rgb;
+    PicmanRGB *rgb;
     PyObject *ret = NULL;
     PyObject *r_f = NULL, *g_f = NULL, *b_f = NULL, *a_f = NULL;
     PyObject *r = NULL, *g = NULL, *b = NULL, *a = NULL;
@@ -675,7 +675,7 @@ rgb_pretty_print(PyObject *self, gboolean inexact)
 	prefix = self->ob_type->tp_name;
     }
 
-    rgb = pyg_boxed_get(self, GimpRGB);
+    rgb = pyg_boxed_get(self, PicmanRGB);
 
     if ((r_f = PyFloat_FromDouble(rgb->r)) == NULL) goto cleanup;
     if ((g_f = PyFloat_FromDouble(rgb->g)) == NULL) goto cleanup;
@@ -717,7 +717,7 @@ static int
 rgb_init(PyGBoxed *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *r, *g, *b, *a = NULL;
-    GimpRGB rgb;
+    PicmanRGB rgb;
     static char *kwlist[] = { "r", "g", "b", "a", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
@@ -748,17 +748,17 @@ rgb_init(PyGBoxed *self, PyObject *args, PyObject *kwargs)
 
 #undef SET_MEMBER
 
-    self->gtype = GIMP_TYPE_RGB;
+    self->gtype = PICMAN_TYPE_RGB;
     self->free_on_dealloc = TRUE;
-    self->boxed = g_boxed_copy(GIMP_TYPE_RGB, &rgb);
+    self->boxed = g_boxed_copy(PICMAN_TYPE_RGB, &rgb);
 
     return 0;
 }
 
-PyTypeObject PyGimpRGB_Type = {
+PyTypeObject PyPicmanRGB_Type = {
     PyObject_HEAD_INIT(NULL)
     0,					/* ob_size */
-    "gimpcolor.RGB",			/* tp_name */
+    "picmancolor.RGB",			/* tp_name */
     sizeof(PyGBoxed),			/* tp_basicsize */
     0,					/* tp_itemsize */
     /* methods */
@@ -801,9 +801,9 @@ PyTypeObject PyGimpRGB_Type = {
 };
 
 PyObject *
-pygimp_rgb_new(const GimpRGB *rgb)
+pypicman_rgb_new(const PicmanRGB *rgb)
 {
-    return pyg_boxed_new(GIMP_TYPE_RGB, (gpointer)rgb, TRUE, TRUE);
+    return pyg_boxed_new(PICMAN_TYPE_RGB, (gpointer)rgb, TRUE, TRUE);
 }
 
 
@@ -811,7 +811,7 @@ static PyObject *
 hsv_set(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *h = NULL, *s = NULL, *v = NULL, *a = NULL;
-    GimpHSV tmphsv, *hsv;
+    PicmanHSV tmphsv, *hsv;
     static char *kwlist[] = { "h", "s", "v", "a", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OOOO:set", kwlist,
@@ -830,7 +830,7 @@ hsv_set(PyObject *self, PyObject *args, PyObject *kwargs)
 	return NULL;
     }
 
-    hsv = pyg_boxed_get(self, GimpHSV);
+    hsv = pyg_boxed_get(self, PicmanHSV);
     tmphsv = *hsv;
 
 #define SET_MEMBER(m, s)	G_STMT_START {			\
@@ -866,7 +866,7 @@ static PyObject *
 hsv_set_alpha(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *py_a;
-    GimpHSV *hsv;
+    PicmanHSV *hsv;
     static char *kwlist[] = { "a", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
@@ -874,7 +874,7 @@ hsv_set_alpha(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &py_a))
         return NULL;
 
-    hsv = pyg_boxed_get(self, GimpHSV);
+    hsv = pyg_boxed_get(self, PicmanHSV);
 
     if (PyInt_Check(py_a))
         hsv->a = (double) PyInt_AS_LONG(py_a) / 255.0;
@@ -892,7 +892,7 @@ hsv_set_alpha(PyObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 hsv_clamp(PyObject *self)
 {
-    gimp_hsv_clamp(pyg_boxed_get(self, GimpHSV));
+    picman_hsv_clamp(pyg_boxed_get(self, PicmanHSV));
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -901,23 +901,23 @@ hsv_clamp(PyObject *self)
 static PyObject *
 hsv_to_rgb(PyObject *self)
 {
-    GimpHSV *hsv;
-    GimpRGB rgb;
+    PicmanHSV *hsv;
+    PicmanRGB rgb;
 
-    hsv = pyg_boxed_get(self, GimpHSV);
+    hsv = pyg_boxed_get(self, PicmanHSV);
 
-    gimp_hsv_to_rgb(hsv, &rgb);
+    picman_hsv_to_rgb(hsv, &rgb);
 
-    return pygimp_rgb_new(&rgb);
+    return pypicman_rgb_new(&rgb);
 }
 
 /* __getstate__ isn't exposed */
 static PyObject *
 hsv_getstate(PyObject *self)
 {
-    GimpHSV *hsv;
+    PicmanHSV *hsv;
 
-    hsv = pyg_boxed_get(self, GimpHSV);
+    hsv = pyg_boxed_get(self, PicmanHSV);
 
     return Py_BuildValue("dddd", hsv->h, hsv->s, hsv->v, hsv->a);
 }
@@ -941,12 +941,12 @@ static PyMethodDef hsv_methods[] = {
 static PyObject *							\
 hsv_get_ ## m(PyObject *self, void *closure)				\
 {									\
-    return PyFloat_FromDouble(pyg_boxed_get(self, GimpHSV)->m);		\
+    return PyFloat_FromDouble(pyg_boxed_get(self, PicmanHSV)->m);		\
 }									\
 static int								\
 hsv_set_ ## m(PyObject *self, PyObject *value, void *closure)		\
 {									\
-    GimpHSV *hsv = pyg_boxed_get(self, GimpHSV);			\
+    PicmanHSV *hsv = pyg_boxed_get(self, PicmanHSV);			\
     if (value == NULL) {						\
 	PyErr_SetString(PyExc_TypeError, "cannot delete value");	\
 	return -1;							\
@@ -990,7 +990,7 @@ hsv_length(PyObject *self)
 static PyObject *
 hsv_getitem(PyObject *self, Py_ssize_t pos)
 {
-    GimpHSV *hsv;
+    PicmanHSV *hsv;
     double val, scale_factor;
 
     if (pos < 0)
@@ -1001,7 +1001,7 @@ hsv_getitem(PyObject *self, Py_ssize_t pos)
 	return NULL;
     }
 
-    hsv = pyg_boxed_get(self, GimpHSV);
+    hsv = pyg_boxed_get(self, PicmanHSV);
 
     switch (pos) {
     case 0: val = hsv->h; scale_factor = 360.0; break;
@@ -1152,10 +1152,10 @@ hsv_hash(PyObject *self)
 static PyObject *
 hsv_richcompare(PyObject *self, PyObject *other, int op)
 {
-    GimpHSV *c1, *c2;
+    PicmanHSV *c1, *c2;
     PyObject *ret;
 
-    if (!pygimp_hsv_check(other)) {
+    if (!pypicman_hsv_check(other)) {
 	PyErr_Format(PyExc_TypeError,
 		     "can't compare %s to %s",
 		     self->ob_type->tp_name, other->ob_type->tp_name);
@@ -1168,8 +1168,8 @@ hsv_richcompare(PyObject *self, PyObject *other, int op)
 	return NULL;
     }
 
-    c1 = pyg_boxed_get(self, GimpHSV);
-    c2 = pyg_boxed_get(other, GimpHSV);
+    c1 = pyg_boxed_get(self, PicmanHSV);
+    c2 = pyg_boxed_get(other, PicmanHSV);
 
     if ((c1->h == c2->h && c1->s == c2->s && c1->v == c2->v && c1->a == c2->a) == (op == Py_EQ))
 	ret = Py_True;
@@ -1183,7 +1183,7 @@ hsv_richcompare(PyObject *self, PyObject *other, int op)
 static PyObject *
 hsv_pretty_print(PyObject *self, gboolean inexact)
 {
-    GimpHSV *hsv;
+    PicmanHSV *hsv;
     PyObject *ret = NULL;
     PyObject *h_f = NULL, *s_f = NULL, *v_f = NULL, *a_f = NULL;
     PyObject *h = NULL, *s = NULL, *v = NULL, *a = NULL;
@@ -1198,7 +1198,7 @@ hsv_pretty_print(PyObject *self, gboolean inexact)
 	prefix = self->ob_type->tp_name;
     }
 
-    hsv = pyg_boxed_get(self, GimpHSV);
+    hsv = pyg_boxed_get(self, PicmanHSV);
 
     if ((h_f = PyFloat_FromDouble(hsv->h)) == NULL) goto cleanup;
     if ((s_f = PyFloat_FromDouble(hsv->s)) == NULL) goto cleanup;
@@ -1240,7 +1240,7 @@ static int
 hsv_init(PyGBoxed *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *h, *s, *v, *a = NULL;
-    GimpHSV hsv;
+    PicmanHSV hsv;
     static char *kwlist[] = { "h", "s", "v", "a", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
@@ -1271,17 +1271,17 @@ hsv_init(PyGBoxed *self, PyObject *args, PyObject *kwargs)
 
 #undef SET_MEMBER
 
-    self->gtype = GIMP_TYPE_HSV;
+    self->gtype = PICMAN_TYPE_HSV;
     self->free_on_dealloc = TRUE;
-    self->boxed = g_boxed_copy(GIMP_TYPE_HSV, &hsv);
+    self->boxed = g_boxed_copy(PICMAN_TYPE_HSV, &hsv);
 
     return 0;
 }
 
-PyTypeObject PyGimpHSV_Type = {
+PyTypeObject PyPicmanHSV_Type = {
     PyObject_HEAD_INIT(NULL)
     0,					/* ob_size */
-    "gimpcolor.HSV",			/* tp_name */
+    "picmancolor.HSV",			/* tp_name */
     sizeof(PyGBoxed),			/* tp_basicsize */
     0,					/* tp_itemsize */
     /* methods */
@@ -1324,9 +1324,9 @@ PyTypeObject PyGimpHSV_Type = {
 };
 
 PyObject *
-pygimp_hsv_new(const GimpHSV *hsv)
+pypicman_hsv_new(const PicmanHSV *hsv)
 {
-    return pyg_boxed_new(GIMP_TYPE_HSV, (gpointer)hsv, TRUE, TRUE);
+    return pyg_boxed_new(PICMAN_TYPE_HSV, (gpointer)hsv, TRUE, TRUE);
 }
 
 
@@ -1334,7 +1334,7 @@ static PyObject *
 hsl_set(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *h = NULL, *s = NULL, *l = NULL, *a = NULL;
-    GimpHSL tmphsl, *hsl;
+    PicmanHSL tmphsl, *hsl;
     static char *kwlist[] = { "h", "s", "l", "a", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OOOO:set", kwlist,
@@ -1353,7 +1353,7 @@ hsl_set(PyObject *self, PyObject *args, PyObject *kwargs)
 	return NULL;
     }
 
-    hsl = pyg_boxed_get(self, GimpHSL);
+    hsl = pyg_boxed_get(self, PicmanHSL);
     tmphsl = *hsl;
 
 #define SET_MEMBER(m, s)	G_STMT_START {			\
@@ -1389,7 +1389,7 @@ static PyObject *
 hsl_set_alpha(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *py_a;
-    GimpHSL *hsl;
+    PicmanHSL *hsl;
     static char *kwlist[] = { "a", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
@@ -1397,7 +1397,7 @@ hsl_set_alpha(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &py_a))
         return NULL;
 
-    hsl = pyg_boxed_get(self, GimpHSL);
+    hsl = pyg_boxed_get(self, PicmanHSL);
 
     if (PyInt_Check(py_a))
         hsl->a = (double) PyInt_AS_LONG(py_a) / 255.0;
@@ -1415,23 +1415,23 @@ hsl_set_alpha(PyObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 hsl_to_rgb(PyObject *self)
 {
-    GimpHSL *hsl;
-    GimpRGB rgb;
+    PicmanHSL *hsl;
+    PicmanRGB rgb;
 
-    hsl = pyg_boxed_get(self, GimpHSL);
+    hsl = pyg_boxed_get(self, PicmanHSL);
 
-    gimp_hsl_to_rgb(hsl, &rgb);
+    picman_hsl_to_rgb(hsl, &rgb);
 
-    return pygimp_rgb_new(&rgb);
+    return pypicman_rgb_new(&rgb);
 }
 
 /* __getstate__ isn't exposed */
 static PyObject *
 hsl_getstate(PyObject *self)
 {
-    GimpHSL *hsl;
+    PicmanHSL *hsl;
 
-    hsl = pyg_boxed_get(self, GimpHSL);
+    hsl = pyg_boxed_get(self, PicmanHSL);
 
     return Py_BuildValue("dddd", hsl->h, hsl->s, hsl->l, hsl->a);
 }
@@ -1454,12 +1454,12 @@ static PyMethodDef hsl_methods[] = {
 static PyObject *							\
 hsl_get_ ## m(PyObject *self, void *closure)				\
 {									\
-    return PyFloat_FromDouble(pyg_boxed_get(self, GimpHSL)->m);		\
+    return PyFloat_FromDouble(pyg_boxed_get(self, PicmanHSL)->m);		\
 }									\
 static int								\
 hsl_set_ ## m(PyObject *self, PyObject *value, void *closure)		\
 {									\
-    GimpHSL *hsl = pyg_boxed_get(self, GimpHSL);			\
+    PicmanHSL *hsl = pyg_boxed_get(self, PicmanHSL);			\
     if (value == NULL) {						\
 	PyErr_SetString(PyExc_TypeError, "cannot delete value");	\
 	return -1;							\
@@ -1503,7 +1503,7 @@ hsl_length(PyObject *self)
 static PyObject *
 hsl_getitem(PyObject *self, Py_ssize_t pos)
 {
-    GimpHSL *hsl;
+    PicmanHSL *hsl;
     double val, scale_factor;
 
     if (pos < 0)
@@ -1514,7 +1514,7 @@ hsl_getitem(PyObject *self, Py_ssize_t pos)
 	return NULL;
     }
 
-    hsl = pyg_boxed_get(self, GimpHSL);
+    hsl = pyg_boxed_get(self, PicmanHSL);
 
     switch (pos) {
     case 0: val = hsl->h; scale_factor = 360.0; break;
@@ -1665,10 +1665,10 @@ hsl_hash(PyObject *self)
 static PyObject *
 hsl_richcompare(PyObject *self, PyObject *other, int op)
 {
-    GimpHSL *c1, *c2;
+    PicmanHSL *c1, *c2;
     PyObject *ret;
 
-    if (!pygimp_hsl_check(other)) {
+    if (!pypicman_hsl_check(other)) {
 	PyErr_Format(PyExc_TypeError,
 		     "can't compare %s to %s",
 		     self->ob_type->tp_name, other->ob_type->tp_name);
@@ -1681,8 +1681,8 @@ hsl_richcompare(PyObject *self, PyObject *other, int op)
 	return NULL;
     }
 
-    c1 = pyg_boxed_get(self, GimpHSL);
-    c2 = pyg_boxed_get(other, GimpHSL);
+    c1 = pyg_boxed_get(self, PicmanHSL);
+    c2 = pyg_boxed_get(other, PicmanHSL);
 
     if ((c1->h == c2->h && c1->s == c2->s && c1->l == c2->l && c1->a == c2->a) == (op == Py_EQ))
 	ret = Py_True;
@@ -1696,7 +1696,7 @@ hsl_richcompare(PyObject *self, PyObject *other, int op)
 static PyObject *
 hsl_pretty_print(PyObject *self, gboolean inexact)
 {
-    GimpHSL *hsl;
+    PicmanHSL *hsl;
     PyObject *ret = NULL;
     PyObject *h_f = NULL, *s_f = NULL, *l_f = NULL, *a_f = NULL;
     PyObject *h = NULL, *s = NULL, *l = NULL, *a = NULL;
@@ -1711,7 +1711,7 @@ hsl_pretty_print(PyObject *self, gboolean inexact)
 	prefix = self->ob_type->tp_name;
     }
 
-    hsl = pyg_boxed_get(self, GimpHSL);
+    hsl = pyg_boxed_get(self, PicmanHSL);
 
     if ((h_f = PyFloat_FromDouble(hsl->h)) == NULL) goto cleanup;
     if ((s_f = PyFloat_FromDouble(hsl->s)) == NULL) goto cleanup;
@@ -1753,7 +1753,7 @@ static int
 hsl_init(PyGBoxed *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *h, *s, *l, *a = NULL;
-    GimpHSL hsl;
+    PicmanHSL hsl;
     static char *kwlist[] = { "h", "s", "l", "a", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
@@ -1784,17 +1784,17 @@ hsl_init(PyGBoxed *self, PyObject *args, PyObject *kwargs)
 
 #undef SET_MEMBER
 
-    self->gtype = GIMP_TYPE_HSL;
+    self->gtype = PICMAN_TYPE_HSL;
     self->free_on_dealloc = TRUE;
-    self->boxed = g_boxed_copy(GIMP_TYPE_HSL, &hsl);
+    self->boxed = g_boxed_copy(PICMAN_TYPE_HSL, &hsl);
 
     return 0;
 }
 
-PyTypeObject PyGimpHSL_Type = {
+PyTypeObject PyPicmanHSL_Type = {
     PyObject_HEAD_INIT(NULL)
     0,					/* ob_size */
-    "gimpcolor.HSL",			/* tp_name */
+    "picmancolor.HSL",			/* tp_name */
     sizeof(PyGBoxed),			/* tp_basicsize */
     0,					/* tp_itemsize */
     /* methods */
@@ -1837,9 +1837,9 @@ PyTypeObject PyGimpHSL_Type = {
 };
 
 PyObject *
-pygimp_hsl_new(const GimpHSL *hsl)
+pypicman_hsl_new(const PicmanHSL *hsl)
 {
-    return pyg_boxed_new(GIMP_TYPE_HSL, (gpointer)hsl, TRUE, TRUE);
+    return pyg_boxed_new(PICMAN_TYPE_HSL, (gpointer)hsl, TRUE, TRUE);
 }
 
 
@@ -1847,7 +1847,7 @@ static PyObject *
 cmyk_set(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *c = NULL, *m = NULL, *y = NULL, *k = NULL, *a = NULL;
-    GimpCMYK tmpcmyk, *cmyk;
+    PicmanCMYK tmpcmyk, *cmyk;
     static char *kwlist[] = { "c", "m", "y", "k", "a", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OOOOO:set", kwlist,
@@ -1867,7 +1867,7 @@ cmyk_set(PyObject *self, PyObject *args, PyObject *kwargs)
 	return NULL;
     }
 
-    cmyk = pyg_boxed_get(self, GimpCMYK);
+    cmyk = pyg_boxed_get(self, PicmanCMYK);
     tmpcmyk = *cmyk;
 
 #define SET_MEMBER(m)	G_STMT_START {				\
@@ -1904,7 +1904,7 @@ static PyObject *
 cmyk_set_alpha(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *py_a;
-    GimpCMYK *cmyk;
+    PicmanCMYK *cmyk;
     static char *kwlist[] = { "a", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
@@ -1912,7 +1912,7 @@ cmyk_set_alpha(PyObject *self, PyObject *args, PyObject *kwargs)
 				     &py_a))
         return NULL;
 
-    cmyk = pyg_boxed_get(self, GimpCMYK);
+    cmyk = pyg_boxed_get(self, PicmanCMYK);
 
     if (PyInt_Check(py_a))
 	cmyk->a = (double) PyInt_AS_LONG(py_a) / 255.0;
@@ -1931,9 +1931,9 @@ cmyk_set_alpha(PyObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 cmyk_getstate(PyObject *self)
 {
-    GimpCMYK *cmyk;
+    PicmanCMYK *cmyk;
 
-    cmyk = pyg_boxed_get(self, GimpCMYK);
+    cmyk = pyg_boxed_get(self, PicmanCMYK);
 
     return Py_BuildValue("ddddd", cmyk->c, cmyk->m, cmyk->y, cmyk->k, cmyk->a);
 }
@@ -1955,12 +1955,12 @@ static PyMethodDef cmyk_methods[] = {
 static PyObject *							\
 cmyk_get_ ## m(PyObject *self, void *closure)				\
 {									\
-    return PyFloat_FromDouble(pyg_boxed_get(self, GimpCMYK)->m);	\
+    return PyFloat_FromDouble(pyg_boxed_get(self, PicmanCMYK)->m);	\
 }									\
 static int								\
 cmyk_set_ ## m(PyObject *self, PyObject *value, void *closure)		\
 {									\
-    GimpCMYK *cmyk = pyg_boxed_get(self, GimpCMYK);			\
+    PicmanCMYK *cmyk = pyg_boxed_get(self, PicmanCMYK);			\
     if (value == NULL) {						\
 	PyErr_SetString(PyExc_TypeError, "cannot delete value");	\
 	return -1;							\
@@ -2007,7 +2007,7 @@ cmyk_length(PyObject *self)
 static PyObject *
 cmyk_getitem(PyObject *self, Py_ssize_t pos)
 {
-    GimpCMYK *cmyk;
+    PicmanCMYK *cmyk;
     double val;
 
     if (pos < 0)
@@ -2018,7 +2018,7 @@ cmyk_getitem(PyObject *self, Py_ssize_t pos)
 	return NULL;
     }
 
-    cmyk = pyg_boxed_get(self, GimpCMYK);
+    cmyk = pyg_boxed_get(self, PicmanCMYK);
 
     switch (pos) {
     case 0: val = cmyk->c; break;
@@ -2174,10 +2174,10 @@ cmyk_hash(PyObject *self)
 static PyObject *
 cmyk_richcompare(PyObject *self, PyObject *other, int op)
 {
-    GimpCMYK *c1, *c2;
+    PicmanCMYK *c1, *c2;
     PyObject *ret;
 
-    if (!pygimp_cmyk_check(other)) {
+    if (!pypicman_cmyk_check(other)) {
 	PyErr_Format(PyExc_TypeError,
 		     "can't compare %s to %s",
 		     self->ob_type->tp_name, other->ob_type->tp_name);
@@ -2190,8 +2190,8 @@ cmyk_richcompare(PyObject *self, PyObject *other, int op)
 	return NULL;
     }
 
-    c1 = pyg_boxed_get(self, GimpCMYK);
-    c2 = pyg_boxed_get(other, GimpCMYK);
+    c1 = pyg_boxed_get(self, PicmanCMYK);
+    c2 = pyg_boxed_get(other, PicmanCMYK);
 
     if ((c1->c == c2->c && c1->m == c2->m && c1->y == c2->y && c1->k == c2->k && c1->a == c2->a) == (op == Py_EQ))
 	ret = Py_True;
@@ -2205,7 +2205,7 @@ cmyk_richcompare(PyObject *self, PyObject *other, int op)
 static PyObject *
 cmyk_pretty_print(PyObject *self, gboolean inexact)
 {
-    GimpCMYK *cmyk;
+    PicmanCMYK *cmyk;
     PyObject *ret = NULL;
     PyObject *c_f = NULL, *m_f = NULL, *y_f = NULL, *k_f = NULL, *a_f = NULL;
     PyObject *c = NULL, *m = NULL, *y = NULL, *k = NULL, *a = NULL;
@@ -2220,7 +2220,7 @@ cmyk_pretty_print(PyObject *self, gboolean inexact)
 	prefix = self->ob_type->tp_name;
     }
 
-    cmyk = pyg_boxed_get(self, GimpCMYK);
+    cmyk = pyg_boxed_get(self, PicmanCMYK);
 
     if ((c_f = PyFloat_FromDouble(cmyk->c)) == NULL) goto cleanup;
     if ((m_f = PyFloat_FromDouble(cmyk->m)) == NULL) goto cleanup;
@@ -2265,7 +2265,7 @@ static int
 cmyk_init(PyGBoxed *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *c, *m, *y, *k, *a = NULL;
-    GimpCMYK cmyk;
+    PicmanCMYK cmyk;
     static char *kwlist[] = { "c", "m", "y", "k", "a", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
@@ -2297,17 +2297,17 @@ cmyk_init(PyGBoxed *self, PyObject *args, PyObject *kwargs)
 
 #undef SET_MEMBER
 
-    self->gtype = GIMP_TYPE_CMYK;
+    self->gtype = PICMAN_TYPE_CMYK;
     self->free_on_dealloc = TRUE;
-    self->boxed = g_boxed_copy(GIMP_TYPE_CMYK, &cmyk);
+    self->boxed = g_boxed_copy(PICMAN_TYPE_CMYK, &cmyk);
 
     return 0;
 }
 
-PyTypeObject PyGimpCMYK_Type = {
+PyTypeObject PyPicmanCMYK_Type = {
     PyObject_HEAD_INIT(NULL)
     0,					/* ob_size */
-    "gimpcolor.CMYK",			/* tp_name */
+    "picmancolor.CMYK",			/* tp_name */
     sizeof(PyGBoxed),			/* tp_basicsize */
     0,					/* tp_itemsize */
     /* methods */
@@ -2350,21 +2350,21 @@ PyTypeObject PyGimpCMYK_Type = {
 };
 
 PyObject *
-pygimp_cmyk_new(const GimpCMYK *cmyk)
+pypicman_cmyk_new(const PicmanCMYK *cmyk)
 {
-    return pyg_boxed_new(GIMP_TYPE_CMYK, (gpointer)cmyk, TRUE, TRUE);
+    return pyg_boxed_new(PICMAN_TYPE_CMYK, (gpointer)cmyk, TRUE, TRUE);
 }
 
 int
-pygimp_rgb_from_pyobject(PyObject *object, GimpRGB *color)
+pypicman_rgb_from_pyobject(PyObject *object, PicmanRGB *color)
 {
     g_return_val_if_fail(color != NULL, FALSE);
 
-    if (pygimp_rgb_check(object)) {
-        *color = *pyg_boxed_get(object, GimpRGB);
+    if (pypicman_rgb_check(object)) {
+        *color = *pyg_boxed_get(object, PicmanRGB);
         return 1;
     } else if (PyString_Check(object)) {
-        if (gimp_rgb_parse_css (color, PyString_AsString(object), -1)) {
+        if (picman_rgb_parse_css (color, PyString_AsString(object), -1)) {
             return 1;
         } else {
             PyErr_SetString(PyExc_TypeError, "unable to parse color string");
@@ -2397,11 +2397,11 @@ pygimp_rgb_from_pyobject(PyObject *object, GimpRGB *color)
         else
             color->a = 1.0;
 
-        gimp_rgb_clamp(color);
+        picman_rgb_clamp(color);
 
         return 1;
     }
 
-    PyErr_SetString(PyExc_TypeError, "could not convert to GimpRGB");
+    PyErr_SetString(PyExc_TypeError, "could not convert to PicmanRGB");
     return 0;
 }

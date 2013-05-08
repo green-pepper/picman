@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpitemstack.c
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanitemstack.c
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,122 +26,122 @@
 
 #include "core-types.h"
 
-#include "gimpitem.h"
-#include "gimpitemstack.h"
+#include "picmanitem.h"
+#include "picmanitemstack.h"
 
 
 /*  local function prototypes  */
 
-static void   gimp_item_stack_constructed (GObject       *object);
+static void   picman_item_stack_constructed (GObject       *object);
 
-static void   gimp_item_stack_add         (GimpContainer *container,
-                                           GimpObject    *object);
-static void   gimp_item_stack_remove      (GimpContainer *container,
-                                           GimpObject    *object);
+static void   picman_item_stack_add         (PicmanContainer *container,
+                                           PicmanObject    *object);
+static void   picman_item_stack_remove      (PicmanContainer *container,
+                                           PicmanObject    *object);
 
 
-G_DEFINE_TYPE (GimpItemStack, gimp_item_stack, GIMP_TYPE_FILTER_STACK)
+G_DEFINE_TYPE (PicmanItemStack, picman_item_stack, PICMAN_TYPE_FILTER_STACK)
 
-#define parent_class gimp_item_stack_parent_class
+#define parent_class picman_item_stack_parent_class
 
 
 static void
-gimp_item_stack_class_init (GimpItemStackClass *klass)
+picman_item_stack_class_init (PicmanItemStackClass *klass)
 {
   GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
-  GimpContainerClass *container_class = GIMP_CONTAINER_CLASS (klass);
+  PicmanContainerClass *container_class = PICMAN_CONTAINER_CLASS (klass);
 
-  object_class->constructed = gimp_item_stack_constructed;
+  object_class->constructed = picman_item_stack_constructed;
 
-  container_class->add      = gimp_item_stack_add;
-  container_class->remove   = gimp_item_stack_remove;
+  container_class->add      = picman_item_stack_add;
+  container_class->remove   = picman_item_stack_remove;
 }
 
 static void
-gimp_item_stack_init (GimpItemStack *stack)
+picman_item_stack_init (PicmanItemStack *stack)
 {
 }
 
 static void
-gimp_item_stack_constructed (GObject *object)
+picman_item_stack_constructed (GObject *object)
 {
-  GimpContainer *container = GIMP_CONTAINER (object);
+  PicmanContainer *container = PICMAN_CONTAINER (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (g_type_is_a (gimp_container_get_children_type (container),
-                         GIMP_TYPE_ITEM));
+  g_assert (g_type_is_a (picman_container_get_children_type (container),
+                         PICMAN_TYPE_ITEM));
 }
 
 static void
-gimp_item_stack_add (GimpContainer *container,
-                     GimpObject    *object)
+picman_item_stack_add (PicmanContainer *container,
+                     PicmanObject    *object)
 {
   g_object_ref_sink (object);
 
-  GIMP_CONTAINER_CLASS (parent_class)->add (container, object);
+  PICMAN_CONTAINER_CLASS (parent_class)->add (container, object);
 
   g_object_unref (object);
 }
 
 static void
-gimp_item_stack_remove (GimpContainer *container,
-                        GimpObject    *object)
+picman_item_stack_remove (PicmanContainer *container,
+                        PicmanObject    *object)
 {
-  GIMP_CONTAINER_CLASS (parent_class)->remove (container, object);
+  PICMAN_CONTAINER_CLASS (parent_class)->remove (container, object);
 }
 
 
 /*  public functions  */
 
-GimpContainer *
-gimp_item_stack_new (GType item_type)
+PicmanContainer *
+picman_item_stack_new (GType item_type)
 {
-  g_return_val_if_fail (g_type_is_a (item_type, GIMP_TYPE_ITEM), NULL);
+  g_return_val_if_fail (g_type_is_a (item_type, PICMAN_TYPE_ITEM), NULL);
 
-  return g_object_new (GIMP_TYPE_ITEM_STACK,
+  return g_object_new (PICMAN_TYPE_ITEM_STACK,
                        "name",          g_type_name (item_type),
                        "children-type", item_type,
-                       "policy",        GIMP_CONTAINER_POLICY_STRONG,
+                       "policy",        PICMAN_CONTAINER_POLICY_STRONG,
                        NULL);
 }
 
 gint
-gimp_item_stack_get_n_items (GimpItemStack *stack)
+picman_item_stack_get_n_items (PicmanItemStack *stack)
 {
   GList *list;
   gint   n_items = 0;
 
-  g_return_val_if_fail (GIMP_IS_ITEM_STACK (stack), 0);
+  g_return_val_if_fail (PICMAN_IS_ITEM_STACK (stack), 0);
 
-  for (list = GIMP_LIST (stack)->list; list; list = g_list_next (list))
+  for (list = PICMAN_LIST (stack)->list; list; list = g_list_next (list))
     {
-      GimpItem      *item = list->data;
-      GimpContainer *children;
+      PicmanItem      *item = list->data;
+      PicmanContainer *children;
 
       n_items++;
 
-      children = gimp_viewable_get_children (GIMP_VIEWABLE (item));
+      children = picman_viewable_get_children (PICMAN_VIEWABLE (item));
 
       if (children)
-        n_items += gimp_item_stack_get_n_items (GIMP_ITEM_STACK (children));
+        n_items += picman_item_stack_get_n_items (PICMAN_ITEM_STACK (children));
     }
 
   return n_items;
 }
 
 gboolean
-gimp_item_stack_is_flat (GimpItemStack *stack)
+picman_item_stack_is_flat (PicmanItemStack *stack)
 {
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_ITEM_STACK (stack), TRUE);
+  g_return_val_if_fail (PICMAN_IS_ITEM_STACK (stack), TRUE);
 
-  for (list = GIMP_LIST (stack)->list; list; list = g_list_next (list))
+  for (list = PICMAN_LIST (stack)->list; list; list = g_list_next (list))
     {
-      GimpViewable *viewable = list->data;
+      PicmanViewable *viewable = list->data;
 
-      if (gimp_viewable_get_children (viewable))
+      if (picman_viewable_get_children (viewable))
         return FALSE;
     }
 
@@ -149,37 +149,37 @@ gimp_item_stack_is_flat (GimpItemStack *stack)
 }
 
 GList *
-gimp_item_stack_get_item_iter (GimpItemStack *stack)
+picman_item_stack_get_item_iter (PicmanItemStack *stack)
 {
-  g_return_val_if_fail (GIMP_IS_ITEM_STACK (stack), NULL);
+  g_return_val_if_fail (PICMAN_IS_ITEM_STACK (stack), NULL);
 
-  return GIMP_LIST (stack)->list;
+  return PICMAN_LIST (stack)->list;
 }
 
 GList *
-gimp_item_stack_get_item_list (GimpItemStack *stack)
+picman_item_stack_get_item_list (PicmanItemStack *stack)
 {
   GList *list;
   GList *result = NULL;
 
-  g_return_val_if_fail (GIMP_IS_ITEM_STACK (stack), NULL);
+  g_return_val_if_fail (PICMAN_IS_ITEM_STACK (stack), NULL);
 
-  for (list = GIMP_LIST (stack)->list;
+  for (list = PICMAN_LIST (stack)->list;
        list;
        list = g_list_next (list))
     {
-      GimpViewable  *viewable = list->data;
-      GimpContainer *children;
+      PicmanViewable  *viewable = list->data;
+      PicmanContainer *children;
 
       result = g_list_prepend (result, viewable);
 
-      children = gimp_viewable_get_children (viewable);
+      children = picman_viewable_get_children (viewable);
 
       if (children)
         {
           GList *child_list;
 
-          child_list = gimp_item_stack_get_item_list (GIMP_ITEM_STACK (children));
+          child_list = picman_item_stack_get_item_list (PICMAN_ITEM_STACK (children));
 
           while (child_list)
             {
@@ -193,27 +193,27 @@ gimp_item_stack_get_item_list (GimpItemStack *stack)
   return g_list_reverse (result);
 }
 
-GimpItem *
-gimp_item_stack_get_item_by_tattoo (GimpItemStack *stack,
-                                    GimpTattoo     tattoo)
+PicmanItem *
+picman_item_stack_get_item_by_tattoo (PicmanItemStack *stack,
+                                    PicmanTattoo     tattoo)
 {
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_ITEM_STACK (stack), NULL);
+  g_return_val_if_fail (PICMAN_IS_ITEM_STACK (stack), NULL);
 
-  for (list = GIMP_LIST (stack)->list; list; list = g_list_next (list))
+  for (list = PICMAN_LIST (stack)->list; list; list = g_list_next (list))
     {
-      GimpItem      *item = list->data;
-      GimpContainer *children;
+      PicmanItem      *item = list->data;
+      PicmanContainer *children;
 
-      if (gimp_item_get_tattoo (item) == tattoo)
+      if (picman_item_get_tattoo (item) == tattoo)
         return item;
 
-      children = gimp_viewable_get_children (GIMP_VIEWABLE (item));
+      children = picman_viewable_get_children (PICMAN_VIEWABLE (item));
 
       if (children)
         {
-          item = gimp_item_stack_get_item_by_tattoo (GIMP_ITEM_STACK (children),
+          item = picman_item_stack_get_item_by_tattoo (PICMAN_ITEM_STACK (children),
                                                      tattoo);
 
           if (item)
@@ -224,31 +224,31 @@ gimp_item_stack_get_item_by_tattoo (GimpItemStack *stack,
   return NULL;
 }
 
-GimpItem *
-gimp_item_stack_get_item_by_path (GimpItemStack *stack,
+PicmanItem *
+picman_item_stack_get_item_by_path (PicmanItemStack *stack,
                                   GList         *path)
 {
-  GimpContainer *container;
-  GimpItem      *item = NULL;
+  PicmanContainer *container;
+  PicmanItem      *item = NULL;
 
-  g_return_val_if_fail (GIMP_IS_ITEM_STACK (stack), NULL);
+  g_return_val_if_fail (PICMAN_IS_ITEM_STACK (stack), NULL);
   g_return_val_if_fail (path != NULL, NULL);
 
-  container = GIMP_CONTAINER (stack);
+  container = PICMAN_CONTAINER (stack);
 
   while (path)
     {
       guint32 i = GPOINTER_TO_UINT (path->data);
 
-      item = GIMP_ITEM (gimp_container_get_child_by_index (container, i));
+      item = PICMAN_ITEM (picman_container_get_child_by_index (container, i));
 
-      g_return_val_if_fail (GIMP_IS_ITEM (item), item);
+      g_return_val_if_fail (PICMAN_IS_ITEM (item), item);
 
       if (path->next)
         {
-          container = gimp_viewable_get_children (GIMP_VIEWABLE (item));
+          container = picman_viewable_get_children (PICMAN_VIEWABLE (item));
 
-          g_return_val_if_fail (GIMP_IS_ITEM_STACK (container), item);
+          g_return_val_if_fail (PICMAN_IS_ITEM_STACK (container), item);
         }
 
       path = path->next;
@@ -257,15 +257,15 @@ gimp_item_stack_get_item_by_path (GimpItemStack *stack,
   return item;
 }
 
-GimpItem *
-gimp_item_stack_get_parent_by_path (GimpItemStack *stack,
+PicmanItem *
+picman_item_stack_get_parent_by_path (PicmanItemStack *stack,
                                     GList         *path,
                                     gint          *index)
 {
-  GimpItem *parent = NULL;
+  PicmanItem *parent = NULL;
   guint32   i;
 
-  g_return_val_if_fail (GIMP_IS_ITEM_STACK (stack), NULL);
+  g_return_val_if_fail (PICMAN_IS_ITEM_STACK (stack), NULL);
   g_return_val_if_fail (path != NULL, NULL);
 
   i = GPOINTER_TO_UINT (path->data);
@@ -275,19 +275,19 @@ gimp_item_stack_get_parent_by_path (GimpItemStack *stack,
 
   while (path->next)
     {
-      GimpObject    *child;
-      GimpContainer *children;
+      PicmanObject    *child;
+      PicmanContainer *children;
 
-      child = gimp_container_get_child_by_index (GIMP_CONTAINER (stack), i);
+      child = picman_container_get_child_by_index (PICMAN_CONTAINER (stack), i);
 
-      g_return_val_if_fail (GIMP_IS_ITEM (child), parent);
+      g_return_val_if_fail (PICMAN_IS_ITEM (child), parent);
 
-      children = gimp_viewable_get_children (GIMP_VIEWABLE (child));
+      children = picman_viewable_get_children (PICMAN_VIEWABLE (child));
 
-      g_return_val_if_fail (GIMP_IS_ITEM_STACK (children), parent);
+      g_return_val_if_fail (PICMAN_IS_ITEM_STACK (children), parent);
 
-      parent = GIMP_ITEM (child);
-      stack  = GIMP_ITEM_STACK (children);
+      parent = PICMAN_ITEM (child);
+      stack  = PICMAN_ITEM_STACK (children);
 
       path = path->next;
 
@@ -301,22 +301,22 @@ gimp_item_stack_get_parent_by_path (GimpItemStack *stack,
 }
 
 static void
-gimp_item_stack_invalidate_preview (GimpViewable *viewable)
+picman_item_stack_invalidate_preview (PicmanViewable *viewable)
 {
-  GimpContainer *children = gimp_viewable_get_children (viewable);
+  PicmanContainer *children = picman_viewable_get_children (viewable);
 
   if (children)
-    gimp_item_stack_invalidate_previews (GIMP_ITEM_STACK (children));
+    picman_item_stack_invalidate_previews (PICMAN_ITEM_STACK (children));
 
-  gimp_viewable_invalidate_preview (viewable);
+  picman_viewable_invalidate_preview (viewable);
 }
 
 void
-gimp_item_stack_invalidate_previews (GimpItemStack *stack)
+picman_item_stack_invalidate_previews (PicmanItemStack *stack)
 {
-  g_return_if_fail (GIMP_IS_ITEM_STACK (stack));
+  g_return_if_fail (PICMAN_IS_ITEM_STACK (stack));
 
-  gimp_container_foreach (GIMP_CONTAINER (stack),
-                          (GFunc) gimp_item_stack_invalidate_preview,
+  picman_container_foreach (PICMAN_CONTAINER (stack),
+                          (GFunc) picman_item_stack_invalidate_preview,
                           NULL);
 }

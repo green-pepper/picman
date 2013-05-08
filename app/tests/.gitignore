@@ -1,12 +1,12 @@
 .deps
 .libs
-/gimpdir-output
+/picmandir-output
 Makefile
 Makefile.in
-libgimpapptestutils.a
+libpicmanapptestutils.a
 test-core*
-test-gimpidtable*
-test-gimptilebackendtilemanager*
+test-picmanidtable*
+test-picmantilebackendtilemanager*
 test-layer-grouping*
 test-save-and-export*
 test-session-2-6-compatibility*

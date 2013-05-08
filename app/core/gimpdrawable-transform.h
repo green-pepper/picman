@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis, and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,78 +15,78 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DRAWABLE_TRANSFORM_H__
-#define __GIMP_DRAWABLE_TRANSFORM_H__
+#ifndef __PICMAN_DRAWABLE_TRANSFORM_H__
+#define __PICMAN_DRAWABLE_TRANSFORM_H__
 
 
-GeglBuffer  * gimp_drawable_transform_buffer_affine (GimpDrawable           *drawable,
-                                                     GimpContext            *context,
+GeglBuffer  * picman_drawable_transform_buffer_affine (PicmanDrawable           *drawable,
+                                                     PicmanContext            *context,
                                                      GeglBuffer             *orig_buffer,
                                                      gint                    orig_offset_x,
                                                      gint                    orig_offset_y,
-                                                     const GimpMatrix3      *matrix,
-                                                     GimpTransformDirection  direction,
-                                                     GimpInterpolationType   interpolation_type,
+                                                     const PicmanMatrix3      *matrix,
+                                                     PicmanTransformDirection  direction,
+                                                     PicmanInterpolationType   interpolation_type,
                                                      gint                    recursion_level,
-                                                     GimpTransformResize     clip_result,
+                                                     PicmanTransformResize     clip_result,
                                                      gint                   *new_offset_x,
                                                      gint                   *new_offset_y,
-                                                     GimpProgress           *progress);
-GeglBuffer  * gimp_drawable_transform_buffer_flip   (GimpDrawable           *drawable,
-                                                     GimpContext            *context,
+                                                     PicmanProgress           *progress);
+GeglBuffer  * picman_drawable_transform_buffer_flip   (PicmanDrawable           *drawable,
+                                                     PicmanContext            *context,
                                                      GeglBuffer             *orig_buffer,
                                                      gint                    orig_offset_x,
                                                      gint                    orig_offset_y,
-                                                     GimpOrientationType     flip_type,
+                                                     PicmanOrientationType     flip_type,
                                                      gdouble                 axis,
                                                      gboolean                clip_result,
                                                      gint                   *new_offset_x,
                                                      gint                   *new_offset_y);
 
-GeglBuffer  * gimp_drawable_transform_buffer_rotate (GimpDrawable           *drawable,
-                                                     GimpContext            *context,
+GeglBuffer  * picman_drawable_transform_buffer_rotate (PicmanDrawable           *drawable,
+                                                     PicmanContext            *context,
                                                      GeglBuffer             *buffer,
                                                      gint                    orig_offset_x,
                                                      gint                    orig_offset_y,
-                                                     GimpRotationType        rotate_type,
+                                                     PicmanRotationType        rotate_type,
                                                      gdouble                 center_x,
                                                      gdouble                 center_y,
                                                      gboolean                clip_result,
                                                      gint                   *new_offset_x,
                                                      gint                   *new_offset_y);
 
-GimpDrawable * gimp_drawable_transform_affine       (GimpDrawable           *drawable,
-                                                     GimpContext            *context,
-                                                     const GimpMatrix3      *matrix,
-                                                     GimpTransformDirection  direction,
-                                                     GimpInterpolationType   interpolation_type,
+PicmanDrawable * picman_drawable_transform_affine       (PicmanDrawable           *drawable,
+                                                     PicmanContext            *context,
+                                                     const PicmanMatrix3      *matrix,
+                                                     PicmanTransformDirection  direction,
+                                                     PicmanInterpolationType   interpolation_type,
                                                      gint                    recursion_level,
-                                                     GimpTransformResize     clip_result,
-                                                     GimpProgress           *progress);
+                                                     PicmanTransformResize     clip_result,
+                                                     PicmanProgress           *progress);
 
-GimpDrawable * gimp_drawable_transform_flip         (GimpDrawable           *drawable,
-                                                     GimpContext            *context,
-                                                     GimpOrientationType     flip_type,
+PicmanDrawable * picman_drawable_transform_flip         (PicmanDrawable           *drawable,
+                                                     PicmanContext            *context,
+                                                     PicmanOrientationType     flip_type,
                                                      gdouble                 axis,
                                                      gboolean                clip_result);
 
-GimpDrawable * gimp_drawable_transform_rotate       (GimpDrawable           *drawable,
-                                                     GimpContext            *context,
-                                                     GimpRotationType        rotate_type,
+PicmanDrawable * picman_drawable_transform_rotate       (PicmanDrawable           *drawable,
+                                                     PicmanContext            *context,
+                                                     PicmanRotationType        rotate_type,
                                                      gdouble                 center_x,
                                                      gdouble                 center_y,
                                                      gboolean                clip_result);
 
-GeglBuffer   * gimp_drawable_transform_cut          (GimpDrawable           *drawable,
-                                                     GimpContext            *context,
+GeglBuffer   * picman_drawable_transform_cut          (PicmanDrawable           *drawable,
+                                                     PicmanContext            *context,
                                                      gint                   *offset_x,
                                                      gint                   *offset_y,
                                                      gboolean               *new_layer);
-GimpDrawable * gimp_drawable_transform_paste        (GimpDrawable           *drawable,
+PicmanDrawable * picman_drawable_transform_paste        (PicmanDrawable           *drawable,
                                                      GeglBuffer             *buffer,
                                                      gint                    offset_x,
                                                      gint                    offset_y,
                                                      gboolean                new_layer);
 
 
-#endif  /*  __GIMP_DRAWABLE_TRANSFORM_H__  */
+#endif  /*  __PICMAN_DRAWABLE_TRANSFORM_H__  */

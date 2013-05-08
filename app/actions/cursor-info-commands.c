@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,19 +19,19 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpcursorview.h"
+#include "display/picmancursorview.h"
 
 #include "cursor-info-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  public functions  */
@@ -40,10 +40,10 @@ void
 cursor_info_sample_merged_cmd_callback (GtkAction *action,
                                         gpointer   data)
 {
-  GimpCursorView *view = GIMP_CURSOR_VIEW (data);
+  PicmanCursorView *view = PICMAN_CURSOR_VIEW (data);
   gboolean        active;
 
   active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_cursor_view_set_sample_merged (view, active);
+  picman_cursor_view_set_sample_merged (view, active);
 }

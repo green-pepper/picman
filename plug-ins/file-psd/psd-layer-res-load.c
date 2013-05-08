@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GIMP PSD Plug-in
+ * PICMAN PSD Plug-in
  * Copyright 2007 by John Marshall
  *
  * This program is free software: you can redistribute it and/or modify
@@ -94,13 +94,13 @@
 #include <errno.h>
 
 #include <glib/gstdio.h>
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include "psd.h"
 #include "psd-util.h"
 #include "psd-layer-res-load.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 /*  Local function prototypes  */
 static gint     load_resource_unknown (const PSDlayerres     *res_a,
@@ -267,7 +267,7 @@ load_resource_ladj (const PSDlayerres  *res_a,
     {
       g_message ("Warning:\n"
                  "The image file contains adjustment layers. "
-                 "These are not supported by the GIMP and will "
+                 "These are not supported by the PICMAN and will "
                  "be dropped.");
       msg_flag = TRUE;
     }
@@ -289,7 +289,7 @@ load_resource_lfil (const PSDlayerres  *res_a,
     {
       g_message ("Warning:\n"
                  "The image file contains fill layers. "
-                 "These are not supported by the GIMP and will "
+                 "These are not supported by the PICMAN and will "
                  "be rasterized.");
       msg_flag = TRUE;
     }
@@ -311,7 +311,7 @@ load_resource_lfx (const PSDlayerres  *res_a,
     {
       g_message ("Warning:\n"
                  "The image file contains layer effects. "
-                 "These are not supported by the GIMP and will "
+                 "These are not supported by the PICMAN and will "
                  "be dropped.");
       msg_flag = TRUE;
     }
@@ -349,7 +349,7 @@ load_resource_ltyp (const PSDlayerres  *res_a,
     {
       g_message ("Warning:\n"
                  "The image file contains type tool layers. "
-                 "These are not supported by the GIMP and will "
+                 "These are not supported by the PICMAN and will "
                  "be dropped.");
       msg_flag = TRUE;
     }

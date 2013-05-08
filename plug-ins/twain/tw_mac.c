@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include "tw_platform.h"
 #include "tw_func.h"
@@ -169,16 +169,16 @@ static void twainSetupMacUI()
 {
   ProcessSerialNumber psn;
   GetCurrentProcess (&psn);
-  CPSSetProcessName (&psn, "GIMP TWAIN");
+  CPSSetProcessName (&psn, "PICMAN TWAIN");
 
   /* Need to do some magic here to get the UI to work */
   CPSEnableForegroundOperation (&psn, 0x03, 0x3C, 0x2C, 0x1103);
   SetFrontProcess (&psn);
 
   /* We end up with the ugly console dock icon; let's override it */
-  gchar *iconfile = g_build_filename (gimp_data_directory (),
+  gchar *iconfile = g_build_filename (picman_data_directory (),
                                       "twain",
-                                      "gimp-twain.png",
+                                      "picman-twain.png",
                                       NULL);
   CFURLRef url = CFURLCreateFromFileSystemRepresentation (kCFAllocatorDefault,
                                                           iconfile,

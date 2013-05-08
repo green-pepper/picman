@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,44 +19,44 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "widgets/gimpdeviceeditor.h"
-#include "widgets/gimpdevices.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmandeviceeditor.h"
+#include "widgets/picmandevices.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "input-devices-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
 static void   input_devices_dialog_response (GtkWidget *dialog,
                                              guint      response_id,
-                                             Gimp      *gimp);
+                                             Picman      *picman);
 
 
 /*  public functions  */
 
 GtkWidget *
-input_devices_dialog_new (Gimp *gimp)
+input_devices_dialog_new (Picman *picman)
 {
   GtkWidget *dialog;
   GtkWidget *content_area;
   GtkWidget *editor;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  dialog = gimp_dialog_new (_("Configure Input Devices"),
-                            "gimp-input-devices-dialog",
+  dialog = picman_dialog_new (_("Configure Input Devices"),
+                            "picman-input-devices-dialog",
                             NULL, 0,
-                            gimp_standard_help_func,
-                            GIMP_HELP_INPUT_DEVICES,
+                            picman_standard_help_func,
+                            PICMAN_HELP_INPUT_DEVICES,
 
                             GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
                             GTK_STOCK_SAVE,  GTK_RESPONSE_OK,
@@ -70,11 +70,11 @@ input_devices_dialog_new (Gimp *gimp)
 
   g_signal_connect (dialog, "response",
                     G_CALLBACK (input_devices_dialog_response),
-                    gimp);
+                    picman);
 
   content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
-  editor = gimp_device_editor_new (gimp);
+  editor = picman_device_editor_new (picman);
   gtk_container_set_border_width (GTK_CONTAINER (editor), 12);
   gtk_box_pack_start (GTK_BOX (content_area), editor, TRUE, TRUE, 0);
   gtk_widget_show (editor);
@@ -88,12 +88,12 @@ input_devices_dialog_new (Gimp *gimp)
 static void
 input_devices_dialog_response (GtkWidget *dialog,
                                guint      response_id,
-                               Gimp      *gimp)
+                               Picman      *picman)
 {
   switch (response_id)
     {
     case GTK_RESPONSE_OK:
-      gimp_devices_save (gimp, TRUE);
+      picman_devices_save (picman, TRUE);
       break;
 
     default:

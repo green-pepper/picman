@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationdesaturate.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanoperationdesaturate.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,15 +24,15 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "operations-types.h"
 
-#include "gimpoperationdesaturate.h"
-#include "gimpdesaturateconfig.h"
+#include "picmanoperationdesaturate.h"
+#include "picmandesaturateconfig.h"
 
 
-static gboolean  gimp_operation_desaturate_process (GeglOperation       *operation,
+static gboolean  picman_operation_desaturate_process (GeglOperation       *operation,
                                                     void                *in_buf,
                                                     void                *out_buf,
                                                     glong                samples,
@@ -40,55 +40,55 @@ static gboolean  gimp_operation_desaturate_process (GeglOperation       *operati
                                                     gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationDesaturate, gimp_operation_desaturate,
-               GIMP_TYPE_OPERATION_POINT_FILTER)
+G_DEFINE_TYPE (PicmanOperationDesaturate, picman_operation_desaturate,
+               PICMAN_TYPE_OPERATION_POINT_FILTER)
 
-#define parent_class gimp_operation_desaturate_parent_class
+#define parent_class picman_operation_desaturate_parent_class
 
 
 static void
-gimp_operation_desaturate_class_init (GimpOperationDesaturateClass *klass)
+picman_operation_desaturate_class_init (PicmanOperationDesaturateClass *klass)
 {
   GObjectClass                  *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass            *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationPointFilterClass *point_class     = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  object_class->set_property   = gimp_operation_point_filter_set_property;
-  object_class->get_property   = gimp_operation_point_filter_get_property;
+  object_class->set_property   = picman_operation_point_filter_set_property;
+  object_class->get_property   = picman_operation_point_filter_get_property;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:desaturate",
+                                 "name",        "picman:desaturate",
                                  "categories",  "color",
-                                 "description", "GIMP Desaturate operation",
+                                 "description", "PICMAN Desaturate operation",
                                  NULL);
 
-  point_class->process = gimp_operation_desaturate_process;
+  point_class->process = picman_operation_desaturate_process;
 
   g_object_class_install_property (object_class,
-                                   GIMP_OPERATION_POINT_FILTER_PROP_CONFIG,
+                                   PICMAN_OPERATION_POINT_FILTER_PROP_CONFIG,
                                    g_param_spec_object ("config",
                                                         "Config",
                                                         "The config object",
-                                                        GIMP_TYPE_DESATURATE_CONFIG,
+                                                        PICMAN_TYPE_DESATURATE_CONFIG,
                                                         G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_operation_desaturate_init (GimpOperationDesaturate *self)
+picman_operation_desaturate_init (PicmanOperationDesaturate *self)
 {
 }
 
 static gboolean
-gimp_operation_desaturate_process (GeglOperation       *operation,
+picman_operation_desaturate_process (GeglOperation       *operation,
                                    void                *in_buf,
                                    void                *out_buf,
                                    glong                samples,
                                    const GeglRectangle *roi,
                                    gint                 level)
 {
-  GimpOperationPointFilter *point  = GIMP_OPERATION_POINT_FILTER (operation);
-  GimpDesaturateConfig     *config = GIMP_DESATURATE_CONFIG (point->config);
+  PicmanOperationPointFilter *point  = PICMAN_OPERATION_POINT_FILTER (operation);
+  PicmanDesaturateConfig     *config = PICMAN_DESATURATE_CONFIG (point->config);
   gfloat                   *src    = in_buf;
   gfloat                   *dest   = out_buf;
 
@@ -97,7 +97,7 @@ gimp_operation_desaturate_process (GeglOperation       *operation,
 
   switch (config->mode)
     {
-    case GIMP_DESATURATE_LIGHTNESS:
+    case PICMAN_DESATURATE_LIGHTNESS:
       while (samples--)
         {
           gfloat min, max, value;
@@ -119,10 +119,10 @@ gimp_operation_desaturate_process (GeglOperation       *operation,
         }
       break;
 
-    case GIMP_DESATURATE_LUMINOSITY:
+    case PICMAN_DESATURATE_LUMINOSITY:
       while (samples--)
         {
-          gfloat value = GIMP_RGB_LUMINANCE (src[0], src[1], src[2]);
+          gfloat value = PICMAN_RGB_LUMINANCE (src[0], src[1], src[2]);
 
           dest[0] = value;
           dest[1] = value;
@@ -134,7 +134,7 @@ gimp_operation_desaturate_process (GeglOperation       *operation,
         }
       break;
 
-    case GIMP_DESATURATE_AVERAGE:
+    case PICMAN_DESATURATE_AVERAGE:
       while (samples--)
         {
           gfloat value = (src[0] + src[1] + src[2]) / 3;

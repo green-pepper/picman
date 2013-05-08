@@ -1,6 +1,6 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
- * Copyright (C) 2005  Manish Singh <yosh@gimp.org>
+ * Picman-Python - allows the writing of Picman plugins in Python.
+ * Copyright (C) 2005  Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,35 +16,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PYGIMP_API_H_
-#define _PYGIMP_API_H_
+#ifndef _PYPICMAN_API_H_
+#define _PYPICMAN_API_H_
 
 #include <Python.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 typedef struct {
     PyObject_HEAD
     gint32 ID;
-} PyGimpImage, PyGimpItem;
+} PyPicmanImage, PyPicmanItem;
 
 typedef struct {
     PyObject_HEAD
     gint32 ID;
-} PyGimpDisplay;
+} PyPicmanDisplay;
 
 typedef struct {
     PyObject_HEAD
     gint32 ID;
-    GimpDrawable *drawable;
-} PyGimpDrawable, PyGimpLayer, PyGimpGroupLayer, PyGimpChannel;
+    PicmanDrawable *drawable;
+} PyPicmanDrawable, PyPicmanLayer, PyPicmanGroupLayer, PyPicmanChannel;
 
 typedef struct {
     PyObject_HEAD
     gint32 ID;
-} PyGimpVectors;
+} PyPicmanVectors;
 
-struct _PyGimp_Functions {
+struct _PyPicman_Functions {
     PyTypeObject *Image_Type;
     PyObject *(* image_new)(gint32 ID);
 
@@ -55,7 +55,7 @@ struct _PyGimp_Functions {
     PyObject *(* item_new)(gint32 ID);
 
     PyTypeObject *Drawable_Type;
-    PyObject *(* drawable_new)(GimpDrawable *drawable, gint32 ID);
+    PyObject *(* drawable_new)(PicmanDrawable *drawable, gint32 ID);
 
     PyTypeObject *Layer_Type;
     PyObject *(* layer_new)(gint32 ID);
@@ -69,54 +69,54 @@ struct _PyGimp_Functions {
     PyTypeObject *Vectors_Type;
     PyObject *(* vectors_new)(gint32 ID);
 
-    PyObject *pygimp_error;
+    PyObject *pypicman_error;
 };
 
-#ifndef _INSIDE_PYGIMP_
+#ifndef _INSIDE_PYPICMAN_
 
-#if defined(NO_IMPORT) || defined(NO_IMPORT_PYGIMP)
-extern struct _PyGimp_Functions *_PyGimp_API;
+#if defined(NO_IMPORT) || defined(NO_IMPORT_PYPICMAN)
+extern struct _PyPicman_Functions *_PyPicman_API;
 #else
-struct _PyGimp_Functions *_PyGimp_API;
+struct _PyPicman_Functions *_PyPicman_API;
 #endif
 
-#define PyGimpImage_Type        (_PyGimp_API->Image_Type)
-#define pygimp_image_new        (_PyGimp_API->image_new)
-#define PyGimpDisplay_Type      (_PyGimp_API->Display_Type)
-#define pygimp_display_new      (_PyGimp_API->display_new)
-#define PyGimpItem_Type         (_PyGimp_API->Item_Type)
-#define pygimp_item_new         (_PyGimp_API->item_new)
-#define PyGimpDrawable_Type     (_PyGimp_API->Drawable_Type)
-#define pygimp_drawable_new     (_PyGimp_API->drawable_new)
-#define PyGimpLayer_Type        (_PyGimp_API->Layer_Type)
-#define pygimp_layer_new        (_PyGimp_API->layer_new)
-#define PyGimpGroupLayer_Type   (_PyGimp_API->GroupLayer_Type)
-#define pygimp_group_layer_new  (_PyGimp_API->group_layer_new)
-#define PyGimpChannel_Type      (_PyGimp_API->Channel_Type)
-#define pygimp_channel_new      (_PyGimp_API->channel_new)
-#define PyGimpVectors_Type      (_PyGimp_API->Vectors_Type)
-#define pygimp_vectors_new      (_PyGimp_API->vectors_new)
-#define pygimp_error            (_PyGimp_API->pygimp_error)
+#define PyPicmanImage_Type        (_PyPicman_API->Image_Type)
+#define pypicman_image_new        (_PyPicman_API->image_new)
+#define PyPicmanDisplay_Type      (_PyPicman_API->Display_Type)
+#define pypicman_display_new      (_PyPicman_API->display_new)
+#define PyPicmanItem_Type         (_PyPicman_API->Item_Type)
+#define pypicman_item_new         (_PyPicman_API->item_new)
+#define PyPicmanDrawable_Type     (_PyPicman_API->Drawable_Type)
+#define pypicman_drawable_new     (_PyPicman_API->drawable_new)
+#define PyPicmanLayer_Type        (_PyPicman_API->Layer_Type)
+#define pypicman_layer_new        (_PyPicman_API->layer_new)
+#define PyPicmanGroupLayer_Type   (_PyPicman_API->GroupLayer_Type)
+#define pypicman_group_layer_new  (_PyPicman_API->group_layer_new)
+#define PyPicmanChannel_Type      (_PyPicman_API->Channel_Type)
+#define pypicman_channel_new      (_PyPicman_API->channel_new)
+#define PyPicmanVectors_Type      (_PyPicman_API->Vectors_Type)
+#define pypicman_vectors_new      (_PyPicman_API->vectors_new)
+#define pypicman_error            (_PyPicman_API->pypicman_error)
 
-#define init_pygimp() G_STMT_START { \
-    PyObject *gimpmodule = PyImport_ImportModule("gimp"); \
-    if (gimpmodule != NULL) { \
-        PyObject *mdict = PyModule_GetDict(gimpmodule); \
-        PyObject *cobject = PyDict_GetItemString(mdict, "_PyGimp_API"); \
+#define init_pypicman() G_STMT_START { \
+    PyObject *picmanmodule = PyImport_ImportModule("picman"); \
+    if (picmanmodule != NULL) { \
+        PyObject *mdict = PyModule_GetDict(picmanmodule); \
+        PyObject *cobject = PyDict_GetItemString(mdict, "_PyPicman_API"); \
         if (PyCObject_Check(cobject)) \
-            _PyGimp_API = PyCObject_AsVoidPtr(cobject); \
+            _PyPicman_API = PyCObject_AsVoidPtr(cobject); \
         else { \
             PyErr_SetString(PyExc_RuntimeError, \
-                            "could not find _PyGimp_API object"); \
+                            "could not find _PyPicman_API object"); \
             return; \
         } \
     } else { \
         PyErr_SetString(PyExc_ImportError, \
-                        "could not import gimp"); \
+                        "could not import picman"); \
         return; \
     } \
 } G_STMT_END
 
-#endif /* ! _INSIDE_PYGIMP_ */
+#endif /* ! _INSIDE_PYPICMAN_ */
 
-#endif /* _PYGIMP_API_H_ */
+#endif /* _PYPICMAN_API_H_ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,44 +15,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_POSTERIZE_TOOL_H__
-#define __GIMP_POSTERIZE_TOOL_H__
+#ifndef __PICMAN_POSTERIZE_TOOL_H__
+#define __PICMAN_POSTERIZE_TOOL_H__
 
 
-#include "gimpimagemaptool.h"
+#include "picmanimagemaptool.h"
 
 
-#define GIMP_TYPE_POSTERIZE_TOOL            (gimp_posterize_tool_get_type ())
-#define GIMP_POSTERIZE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_POSTERIZE_TOOL, GimpPosterizeTool))
-#define GIMP_POSTERIZE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_POSTERIZE_TOOL, GimpPosterizeToolClass))
-#define GIMP_IS_POSTERIZE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_POSTERIZE_TOOL))
-#define GIMP_IS_POSTERIZE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_POSTERIZE_TOOL))
-#define GIMP_POSTERIZE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_POSTERIZE_TOOL, GimpPosterizeToolClass))
+#define PICMAN_TYPE_POSTERIZE_TOOL            (picman_posterize_tool_get_type ())
+#define PICMAN_POSTERIZE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_POSTERIZE_TOOL, PicmanPosterizeTool))
+#define PICMAN_POSTERIZE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_POSTERIZE_TOOL, PicmanPosterizeToolClass))
+#define PICMAN_IS_POSTERIZE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_POSTERIZE_TOOL))
+#define PICMAN_IS_POSTERIZE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_POSTERIZE_TOOL))
+#define PICMAN_POSTERIZE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_POSTERIZE_TOOL, PicmanPosterizeToolClass))
 
 
-typedef struct _GimpPosterizeTool      GimpPosterizeTool;
-typedef struct _GimpPosterizeToolClass GimpPosterizeToolClass;
+typedef struct _PicmanPosterizeTool      PicmanPosterizeTool;
+typedef struct _PicmanPosterizeToolClass PicmanPosterizeToolClass;
 
-struct _GimpPosterizeTool
+struct _PicmanPosterizeTool
 {
-  GimpImageMapTool     parent_instance;
+  PicmanImageMapTool     parent_instance;
 
-  GimpPosterizeConfig *config;
+  PicmanPosterizeConfig *config;
 
   /*  dialog  */
   GtkAdjustment       *levels_data;
 };
 
-struct _GimpPosterizeToolClass
+struct _PicmanPosterizeToolClass
 {
-  GimpImageMapToolClass  parent_class;
+  PicmanImageMapToolClass  parent_class;
 };
 
 
-void    gimp_posterize_tool_register (GimpToolRegisterCallback  callback,
+void    picman_posterize_tool_register (PicmanToolRegisterCallback  callback,
                                       gpointer                  data);
 
-GType   gimp_posterize_tool_get_type (void) G_GNUC_CONST;
+GType   picman_posterize_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_POSTERIZE_TOOL_H__  */
+#endif  /*  __PICMAN_POSTERIZE_TOOL_H__  */

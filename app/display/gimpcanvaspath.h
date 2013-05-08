@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program Copyright (C) 1995
+/* PICMAN - The GNU Image Manipulation Program Copyright (C) 1995
  * Spencer Kimball and Peter Mattis
  *
- * gimpcanvaspolygon.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvaspolygon.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,46 +18,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_POLYGON_H__
-#define __GIMP_CANVAS_PATH_H__
+#ifndef __PICMAN_CANVAS_POLYGON_H__
+#define __PICMAN_CANVAS_PATH_H__
 
 
-#include "gimpcanvasitem.h"
+#include "picmancanvasitem.h"
 
 
-#define GIMP_TYPE_CANVAS_PATH            (gimp_canvas_path_get_type ())
-#define GIMP_CANVAS_PATH(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_PATH, GimpCanvasPath))
-#define GIMP_CANVAS_PATH_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_PATH, GimpCanvasPathClass))
-#define GIMP_IS_CANVAS_PATH(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_PATH))
-#define GIMP_IS_CANVAS_PATH_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_PATH))
-#define GIMP_CANVAS_PATH_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_PATH, GimpCanvasPathClass))
+#define PICMAN_TYPE_CANVAS_PATH            (picman_canvas_path_get_type ())
+#define PICMAN_CANVAS_PATH(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_PATH, PicmanCanvasPath))
+#define PICMAN_CANVAS_PATH_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_PATH, PicmanCanvasPathClass))
+#define PICMAN_IS_CANVAS_PATH(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_PATH))
+#define PICMAN_IS_CANVAS_PATH_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_PATH))
+#define PICMAN_CANVAS_PATH_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_PATH, PicmanCanvasPathClass))
 
 
-typedef struct _GimpCanvasPath      GimpCanvasPath;
-typedef struct _GimpCanvasPathClass GimpCanvasPathClass;
+typedef struct _PicmanCanvasPath      PicmanCanvasPath;
+typedef struct _PicmanCanvasPathClass PicmanCanvasPathClass;
 
-struct _GimpCanvasPath
+struct _PicmanCanvasPath
 {
-  GimpCanvasItem  parent_instance;
+  PicmanCanvasItem  parent_instance;
 };
 
-struct _GimpCanvasPathClass
+struct _PicmanCanvasPathClass
 {
-  GimpCanvasItemClass  parent_class;
+  PicmanCanvasItemClass  parent_class;
 };
 
 
-GType            gimp_canvas_path_get_type (void) G_GNUC_CONST;
+GType            picman_canvas_path_get_type (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_canvas_path_new      (GimpDisplayShell     *shell,
-                                            const GimpBezierDesc *bezier,
+PicmanCanvasItem * picman_canvas_path_new      (PicmanDisplayShell     *shell,
+                                            const PicmanBezierDesc *bezier,
                                             gdouble               x,
                                             gdouble               y,
                                             gboolean              filled,
-                                            GimpPathStyle         style);
+                                            PicmanPathStyle         style);
 
-void             gimp_canvas_path_set      (GimpCanvasItem       *path,
-                                            const GimpBezierDesc *bezier);
+void             picman_canvas_path_set      (PicmanCanvasItem       *path,
+                                            const PicmanBezierDesc *bezier);
 
 
-#endif /* __GIMP_CANVAS_PATH_H__ */
+#endif /* __PICMAN_CANVAS_PATH_H__ */

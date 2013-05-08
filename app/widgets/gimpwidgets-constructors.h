@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_WIDGETS_CONSTRUCTORS_H__
-#define __GIMP_WIDGETS_CONSTRUCTORS_H__
+#ifndef __PICMAN_WIDGETS_CONSTRUCTORS_H__
+#define __PICMAN_WIDGETS_CONSTRUCTORS_H__
 
 
-GtkWidget * gimp_paint_mode_menu_new (gboolean     with_behind_mode,
+GtkWidget * picman_paint_mode_menu_new (gboolean     with_behind_mode,
                                       gboolean     with_replace_modes);
 
-GtkWidget * gimp_stock_button_new    (const gchar *stock_id,
+GtkWidget * picman_stock_button_new    (const gchar *stock_id,
                                       const gchar *label);
 
 
-#endif  /*  __GIMP_WIDGETS_CONSTRUCTORS_H__  */
+#endif  /*  __PICMAN_WIDGETS_CONSTRUCTORS_H__  */

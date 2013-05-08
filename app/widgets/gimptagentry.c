@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptagentry.c
+ * picmantagentry.c
  * Copyright (C) 2008 Aurimas Juška <aurisj@svn.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,27 +26,27 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp-utils.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimptag.h"
-#include "core/gimptagged.h"
-#include "core/gimptaggedcontainer.h"
-#include "core/gimpviewable.h"
+#include "core/picman-utils.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmantag.h"
+#include "core/picmantagged.h"
+#include "core/picmantaggedcontainer.h"
+#include "core/picmanviewable.h"
 
-#include "gimptagentry.h"
+#include "picmantagentry.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-#define GIMP_TAG_ENTRY_QUERY_DESC       _("filter")
-#define GIMP_TAG_ENTRY_ASSIGN_DESC      _("enter tags")
+#define PICMAN_TAG_ENTRY_QUERY_DESC       _("filter")
+#define PICMAN_TAG_ENTRY_ASSIGN_DESC      _("enter tags")
 
-#define GIMP_TAG_ENTRY_MAX_RECENT_ITEMS 20
+#define PICMAN_TAG_ENTRY_MAX_RECENT_ITEMS 20
 
 
 typedef enum
@@ -54,7 +54,7 @@ typedef enum
   TAG_SEARCH_NONE,
   TAG_SEARCH_LEFT,
   TAG_SEARCH_RIGHT,
-} GimpTagSearchDir;
+} PicmanTagSearchDir;
 
 enum
 {
@@ -64,105 +64,105 @@ enum
 };
 
 
-static void     gimp_tag_entry_dispose                   (GObject          *object);
-static void     gimp_tag_entry_set_property              (GObject          *object,
+static void     picman_tag_entry_dispose                   (GObject          *object);
+static void     picman_tag_entry_set_property              (GObject          *object,
                                                           guint             property_id,
                                                           const GValue     *value,
                                                           GParamSpec       *pspec);
-static void     gimp_tag_entry_get_property              (GObject          *object,
+static void     picman_tag_entry_get_property              (GObject          *object,
                                                           guint             property_id,
                                                           GValue           *value,
                                                           GParamSpec       *pspec);
-static void     gimp_tag_entry_activate                  (GtkEntry         *entry);
-static void     gimp_tag_entry_changed                   (GtkEntry         *entry);
-static void     gimp_tag_entry_insert_text               (GtkEditable      *editable,
+static void     picman_tag_entry_activate                  (GtkEntry         *entry);
+static void     picman_tag_entry_changed                   (GtkEntry         *entry);
+static void     picman_tag_entry_insert_text               (GtkEditable      *editable,
                                                           gchar            *new_text,
                                                           gint              text_length,
                                                           gint             *position);
-static void     gimp_tag_entry_delete_text               (GtkEditable      *editable,
+static void     picman_tag_entry_delete_text               (GtkEditable      *editable,
                                                           gint              start_pos,
                                                           gint              end_pos);
-static gboolean gimp_tag_entry_focus_in                  (GtkWidget        *widget,
+static gboolean picman_tag_entry_focus_in                  (GtkWidget        *widget,
                                                           GdkEventFocus    *event);
-static gboolean gimp_tag_entry_focus_out                 (GtkWidget        *widget,
+static gboolean picman_tag_entry_focus_out                 (GtkWidget        *widget,
                                                           GdkEventFocus    *event);
-static void     gimp_tag_entry_container_changed         (GimpContainer    *container,
-                                                          GimpObject       *object,
-                                                          GimpTagEntry     *entry);
-static gboolean gimp_tag_entry_button_release            (GtkWidget        *widget,
+static void     picman_tag_entry_container_changed         (PicmanContainer    *container,
+                                                          PicmanObject       *object,
+                                                          PicmanTagEntry     *entry);
+static gboolean picman_tag_entry_button_release            (GtkWidget        *widget,
                                                           GdkEventButton   *event);
-static gboolean gimp_tag_entry_key_press                 (GtkWidget        *widget,
+static gboolean picman_tag_entry_key_press                 (GtkWidget        *widget,
                                                           GdkEventKey      *event);
-static gboolean gimp_tag_entry_query_tag                 (GimpTagEntry     *entry);
+static gboolean picman_tag_entry_query_tag                 (PicmanTagEntry     *entry);
 
-static void     gimp_tag_entry_assign_tags               (GimpTagEntry     *entry);
-static void     gimp_tag_entry_load_selection            (GimpTagEntry     *entry,
+static void     picman_tag_entry_assign_tags               (PicmanTagEntry     *entry);
+static void     picman_tag_entry_load_selection            (PicmanTagEntry     *entry,
                                                           gboolean          sort);
-static void     gimp_tag_entry_find_common_tags          (gpointer          key,
+static void     picman_tag_entry_find_common_tags          (gpointer          key,
                                                           gpointer          value,
                                                           gpointer          user_data);
 
-static gchar *  gimp_tag_entry_get_completion_prefix     (GimpTagEntry     *entry);
-static GList *  gimp_tag_entry_get_completion_candidates (GimpTagEntry     *entry,
+static gchar *  picman_tag_entry_get_completion_prefix     (PicmanTagEntry     *entry);
+static GList *  picman_tag_entry_get_completion_candidates (PicmanTagEntry     *entry,
                                                           gchar           **used_tags,
                                                           gchar            *prefix);
-static gchar *  gimp_tag_entry_get_completion_string     (GimpTagEntry     *entry,
+static gchar *  picman_tag_entry_get_completion_string     (PicmanTagEntry     *entry,
                                                           GList            *candidates,
                                                           gchar            *prefix);
-static gboolean gimp_tag_entry_auto_complete             (GimpTagEntry     *entry);
+static gboolean picman_tag_entry_auto_complete             (PicmanTagEntry     *entry);
 
-static void     gimp_tag_entry_toggle_desc               (GimpTagEntry     *widget,
+static void     picman_tag_entry_toggle_desc               (PicmanTagEntry     *widget,
                                                           gboolean          show);
-static gboolean gimp_tag_entry_expose                    (GtkWidget        *widget,
+static gboolean picman_tag_entry_expose                    (GtkWidget        *widget,
                                                           GdkEventExpose   *event);
-static void     gimp_tag_entry_commit_region             (GString          *tags,
+static void     picman_tag_entry_commit_region             (GString          *tags,
                                                           GString          *mask);
-static void     gimp_tag_entry_commit_tags               (GimpTagEntry     *entry);
-static gboolean gimp_tag_entry_commit_source_func        (GimpTagEntry     *entry);
-static gboolean gimp_tag_entry_select_jellybean          (GimpTagEntry     *entry,
+static void     picman_tag_entry_commit_tags               (PicmanTagEntry     *entry);
+static gboolean picman_tag_entry_commit_source_func        (PicmanTagEntry     *entry);
+static gboolean picman_tag_entry_select_jellybean          (PicmanTagEntry     *entry,
                                                           gint              selection_start,
                                                           gint              selection_end,
-                                                          GimpTagSearchDir  search_dir);
-static gboolean gimp_tag_entry_try_select_jellybean      (GimpTagEntry     *entry);
+                                                          PicmanTagSearchDir  search_dir);
+static gboolean picman_tag_entry_try_select_jellybean      (PicmanTagEntry     *entry);
 
-static gboolean gimp_tag_entry_add_to_recent             (GimpTagEntry     *entry,
+static gboolean picman_tag_entry_add_to_recent             (PicmanTagEntry     *entry,
                                                           const gchar      *tags_string,
                                                           gboolean          to_front);
 
-static void     gimp_tag_entry_next_tag                  (GimpTagEntry     *entry,
+static void     picman_tag_entry_next_tag                  (PicmanTagEntry     *entry,
                                                           gboolean          select);
-static void     gimp_tag_entry_previous_tag              (GimpTagEntry     *entry,
+static void     picman_tag_entry_previous_tag              (PicmanTagEntry     *entry,
                                                           gboolean          select);
 
-static void     gimp_tag_entry_select_for_deletion       (GimpTagEntry     *entry,
-                                                          GimpTagSearchDir  search_dir);
-static gboolean gimp_tag_entry_strip_extra_whitespace    (GimpTagEntry     *entry);
+static void     picman_tag_entry_select_for_deletion       (PicmanTagEntry     *entry,
+                                                          PicmanTagSearchDir  search_dir);
+static gboolean picman_tag_entry_strip_extra_whitespace    (PicmanTagEntry     *entry);
 
 
 
-G_DEFINE_TYPE (GimpTagEntry, gimp_tag_entry, GTK_TYPE_ENTRY)
+G_DEFINE_TYPE (PicmanTagEntry, picman_tag_entry, GTK_TYPE_ENTRY)
 
-#define parent_class gimp_tag_entry_parent_class
+#define parent_class picman_tag_entry_parent_class
 
 
 static void
-gimp_tag_entry_class_init (GimpTagEntryClass *klass)
+picman_tag_entry_class_init (PicmanTagEntryClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->dispose              = gimp_tag_entry_dispose;
-  object_class->get_property         = gimp_tag_entry_get_property;
-  object_class->set_property         = gimp_tag_entry_set_property;
+  object_class->dispose              = picman_tag_entry_dispose;
+  object_class->get_property         = picman_tag_entry_get_property;
+  object_class->set_property         = picman_tag_entry_set_property;
 
-  widget_class->button_release_event = gimp_tag_entry_button_release;
+  widget_class->button_release_event = picman_tag_entry_button_release;
 
   g_object_class_install_property (object_class,
                                    PROP_CONTAINER,
                                    g_param_spec_object ("container",
                                                         "Tagged container",
                                                         "The Tagged container",
-                                                        GIMP_TYPE_TAGGED_CONTAINER,
+                                                        PICMAN_TYPE_TAGGED_CONTAINER,
                                                         G_PARAM_CONSTRUCT_ONLY |
                                                         G_PARAM_READWRITE));
 
@@ -171,54 +171,54 @@ gimp_tag_entry_class_init (GimpTagEntryClass *klass)
                                    g_param_spec_enum ("mode",
                                                       "Working mode",
                                                       "Mode in which to work.",
-                                                      GIMP_TYPE_TAG_ENTRY_MODE,
-                                                      GIMP_TAG_ENTRY_MODE_QUERY,
+                                                      PICMAN_TYPE_TAG_ENTRY_MODE,
+                                                      PICMAN_TAG_ENTRY_MODE_QUERY,
                                                       G_PARAM_CONSTRUCT_ONLY |
                                                       G_PARAM_READWRITE));
 }
 
 static void
-gimp_tag_entry_init (GimpTagEntry *entry)
+picman_tag_entry_init (PicmanTagEntry *entry)
 {
   entry->container            = NULL;
   entry->selected_items       = NULL;
   entry->common_tags          = NULL;
   entry->tab_completion_index = -1;
-  entry->mode                 = GIMP_TAG_ENTRY_MODE_QUERY;
+  entry->mode                 = PICMAN_TAG_ENTRY_MODE_QUERY;
   entry->description_shown    = FALSE;
   entry->has_invalid_tags     = FALSE;
   entry->mask                 = g_string_new ("");
 
   g_signal_connect (entry, "activate",
-                    G_CALLBACK (gimp_tag_entry_activate),
+                    G_CALLBACK (picman_tag_entry_activate),
                     NULL);
   g_signal_connect (entry, "changed",
-                    G_CALLBACK (gimp_tag_entry_changed),
+                    G_CALLBACK (picman_tag_entry_changed),
                     NULL);
   g_signal_connect (entry, "insert-text",
-                    G_CALLBACK (gimp_tag_entry_insert_text),
+                    G_CALLBACK (picman_tag_entry_insert_text),
                     NULL);
   g_signal_connect (entry, "delete-text",
-                    G_CALLBACK (gimp_tag_entry_delete_text),
+                    G_CALLBACK (picman_tag_entry_delete_text),
                     NULL);
   g_signal_connect (entry, "key-press-event",
-                    G_CALLBACK (gimp_tag_entry_key_press),
+                    G_CALLBACK (picman_tag_entry_key_press),
                     NULL);
   g_signal_connect (entry, "focus-in-event",
-                    G_CALLBACK (gimp_tag_entry_focus_in),
+                    G_CALLBACK (picman_tag_entry_focus_in),
                     NULL);
   g_signal_connect (entry, "focus-out-event",
-                    G_CALLBACK (gimp_tag_entry_focus_out),
+                    G_CALLBACK (picman_tag_entry_focus_out),
                     NULL);
   g_signal_connect_after (entry, "expose-event",
-                          G_CALLBACK (gimp_tag_entry_expose),
+                          G_CALLBACK (picman_tag_entry_expose),
                           NULL);
 }
 
 static void
-gimp_tag_entry_dispose (GObject *object)
+picman_tag_entry_dispose (GObject *object)
 {
-  GimpTagEntry *entry = GIMP_TAG_ENTRY (object);
+  PicmanTagEntry *entry = PICMAN_TAG_ENTRY (object);
 
   if (entry->selected_items)
     {
@@ -241,7 +241,7 @@ gimp_tag_entry_dispose (GObject *object)
   if (entry->container)
     {
       g_signal_handlers_disconnect_by_func (entry->container,
-                                            gimp_tag_entry_container_changed,
+                                            picman_tag_entry_container_changed,
                                             entry);
       g_object_unref (entry->container);
       entry->container = NULL;
@@ -263,28 +263,28 @@ gimp_tag_entry_dispose (GObject *object)
 }
 
 static void
-gimp_tag_entry_set_property (GObject      *object,
+picman_tag_entry_set_property (GObject      *object,
                              guint         property_id,
                              const GValue *value,
                              GParamSpec   *pspec)
 {
-  GimpTagEntry *entry = GIMP_TAG_ENTRY (object);
+  PicmanTagEntry *entry = PICMAN_TAG_ENTRY (object);
 
   switch (property_id)
     {
     case PROP_CONTAINER:
       entry->container = g_value_dup_object (value);
       g_signal_connect (entry->container, "add",
-                        G_CALLBACK (gimp_tag_entry_container_changed),
+                        G_CALLBACK (picman_tag_entry_container_changed),
                         entry);
       g_signal_connect (entry->container, "remove",
-                        G_CALLBACK (gimp_tag_entry_container_changed),
+                        G_CALLBACK (picman_tag_entry_container_changed),
                         entry);
       break;
 
     case PROP_MODE:
       entry->mode = g_value_get_enum (value);
-      gimp_tag_entry_toggle_desc (entry, TRUE);
+      picman_tag_entry_toggle_desc (entry, TRUE);
       break;
 
     default:
@@ -294,12 +294,12 @@ gimp_tag_entry_set_property (GObject      *object,
 }
 
 static void
-gimp_tag_entry_get_property (GObject    *object,
+picman_tag_entry_get_property (GObject    *object,
                              guint       property_id,
                              GValue     *value,
                              GParamSpec *pspec)
 {
-  GimpTagEntry *entry = GIMP_TAG_ENTRY (object);
+  PicmanTagEntry *entry = PICMAN_TAG_ENTRY (object);
 
   switch (property_id)
     {
@@ -318,38 +318,38 @@ gimp_tag_entry_get_property (GObject    *object,
 }
 
 /**
- * gimp_tag_entry_new:
- * @container: a #GimpTaggedContainer object
- * @mode:      #GimpTagEntryMode to work in.
+ * picman_tag_entry_new:
+ * @container: a #PicmanTaggedContainer object
+ * @mode:      #PicmanTagEntryMode to work in.
  *
- * #GimpTagEntry is a widget which can query and assign tags to tagged objects.
+ * #PicmanTagEntry is a widget which can query and assign tags to tagged objects.
  * When operating in query mode, @container is kept up to date with
  * tags selected. When operating in assignment mode, tags are assigned to
  * objects selected and visible in @container.
  *
- * Return value: a new GimpTagEntry widget.
+ * Return value: a new PicmanTagEntry widget.
  **/
 GtkWidget *
-gimp_tag_entry_new (GimpTaggedContainer *container,
-                    GimpTagEntryMode     mode)
+picman_tag_entry_new (PicmanTaggedContainer *container,
+                    PicmanTagEntryMode     mode)
 {
-  g_return_val_if_fail (GIMP_IS_TAGGED_CONTAINER (container), NULL);
+  g_return_val_if_fail (PICMAN_IS_TAGGED_CONTAINER (container), NULL);
 
-  return g_object_new (GIMP_TYPE_TAG_ENTRY,
+  return g_object_new (PICMAN_TYPE_TAG_ENTRY,
                        "container", container,
                        "mode",      mode,
                        NULL);
 }
 
 static void
-gimp_tag_entry_activate (GtkEntry *entry)
+picman_tag_entry_activate (GtkEntry *entry)
 {
-  GimpTagEntry *tag_entry = GIMP_TAG_ENTRY (entry);
+  PicmanTagEntry *tag_entry = PICMAN_TAG_ENTRY (entry);
   gint          selection_start;
   gint          selection_end;
   GList        *list;
 
-  gimp_tag_entry_toggle_desc (tag_entry, FALSE);
+  picman_tag_entry_toggle_desc (tag_entry, FALSE);
 
   gtk_editable_get_selection_bounds (GTK_EDITABLE (entry),
                                      &selection_start, &selection_end);
@@ -361,34 +361,34 @@ gimp_tag_entry_activate (GtkEntry *entry)
 
   for (list = tag_entry->selected_items; list; list = g_list_next (list))
     {
-      if (gimp_container_have (GIMP_CONTAINER (tag_entry->container),
-                               GIMP_OBJECT (list->data)))
+      if (picman_container_have (PICMAN_CONTAINER (tag_entry->container),
+                               PICMAN_OBJECT (list->data)))
         {
           break;
         }
     }
 
-  if (tag_entry->mode == GIMP_TAG_ENTRY_MODE_ASSIGN && list)
+  if (tag_entry->mode == PICMAN_TAG_ENTRY_MODE_ASSIGN && list)
     {
-      gimp_tag_entry_assign_tags (GIMP_TAG_ENTRY (entry));
+      picman_tag_entry_assign_tags (PICMAN_TAG_ENTRY (entry));
     }
 }
 
 /**
- * gimp_tag_entry_set_tag_string:
- * @entry:      a #GimpTagEntry object.
+ * picman_tag_entry_set_tag_string:
+ * @entry:      a #PicmanTagEntry object.
  * @tag_string: string of tags, separated by any terminal punctuation
  *              character.
  *
  * Sets tags from @tag_string to @tag_entry. Given tags do not need to
  * be valid as they can be fixed or dropped automatically. Depending on
- * selected #GimpTagEntryMode, appropriate action is performed.
+ * selected #PicmanTagEntryMode, appropriate action is performed.
  **/
 void
-gimp_tag_entry_set_tag_string (GimpTagEntry *entry,
+picman_tag_entry_set_tag_string (PicmanTagEntry *entry,
                                const gchar  *tag_string)
 {
-  g_return_if_fail (GIMP_IS_TAG_ENTRY (entry));
+  g_return_if_fail (PICMAN_IS_TAG_ENTRY (entry));
 
   entry->internal_operation++;
   entry->suppress_tag_query++;
@@ -399,22 +399,22 @@ gimp_tag_entry_set_tag_string (GimpTagEntry *entry,
   entry->suppress_tag_query--;
   entry->internal_operation--;
 
-  gimp_tag_entry_commit_tags (entry);
+  picman_tag_entry_commit_tags (entry);
 
-  if (entry->mode == GIMP_TAG_ENTRY_MODE_ASSIGN)
+  if (entry->mode == PICMAN_TAG_ENTRY_MODE_ASSIGN)
     {
-      gimp_tag_entry_assign_tags (entry);
+      picman_tag_entry_assign_tags (entry);
     }
-  else if (entry->mode == GIMP_TAG_ENTRY_MODE_QUERY)
+  else if (entry->mode == PICMAN_TAG_ENTRY_MODE_QUERY)
     {
-      gimp_tag_entry_query_tag (entry);
+      picman_tag_entry_query_tag (entry);
     }
 }
 
 static void
-gimp_tag_entry_changed (GtkEntry *entry)
+picman_tag_entry_changed (GtkEntry *entry)
 {
-  GimpTagEntry *tag_entry = GIMP_TAG_ENTRY (entry);
+  PicmanTagEntry *tag_entry = PICMAN_TAG_ENTRY (entry);
   gchar        *text;
 
   text = g_strdup (gtk_entry_get_text (entry));
@@ -423,31 +423,31 @@ gimp_tag_entry_changed (GtkEntry *entry)
   if (! gtk_widget_has_focus (GTK_WIDGET (entry)) &&
       strlen (text) == 0)
     {
-      gimp_tag_entry_toggle_desc (tag_entry, TRUE);
+      picman_tag_entry_toggle_desc (tag_entry, TRUE);
     }
   else
     {
-      gimp_tag_entry_toggle_desc (tag_entry, FALSE);
+      picman_tag_entry_toggle_desc (tag_entry, FALSE);
     }
 
   g_free (text);
 
-  if (tag_entry->mode == GIMP_TAG_ENTRY_MODE_QUERY &&
+  if (tag_entry->mode == PICMAN_TAG_ENTRY_MODE_QUERY &&
       ! tag_entry->suppress_tag_query              &&
       ! tag_entry->tag_query_idle_id)
     {
       tag_entry->tag_query_idle_id =
-        g_idle_add ((GSourceFunc) gimp_tag_entry_query_tag, entry);
+        g_idle_add ((GSourceFunc) picman_tag_entry_query_tag, entry);
     }
 }
 
 static void
-gimp_tag_entry_insert_text (GtkEditable *editable,
+picman_tag_entry_insert_text (GtkEditable *editable,
                             gchar       *new_text,
                             gint         text_length,
                             gint        *position)
 {
-  GimpTagEntry *entry = GIMP_TAG_ENTRY (editable);
+  PicmanTagEntry *entry = PICMAN_TAG_ENTRY (editable);
   gboolean      is_tag[2];
   gint          i;
   gint          insert_pos = *position;
@@ -490,14 +490,14 @@ gimp_tag_entry_insert_text (GtkEditable *editable,
             }
 
           g_signal_handlers_block_by_func (editable,
-                                           gimp_tag_entry_insert_text,
+                                           picman_tag_entry_insert_text,
                                            NULL);
 
           gtk_editable_insert_text (editable, " ", 1, position);
           gtk_editable_insert_text (editable, new_text, text_length, position);
 
           g_signal_handlers_unblock_by_func (editable,
-                                             gimp_tag_entry_insert_text,
+                                             picman_tag_entry_insert_text,
                                              NULL);
 
           g_signal_stop_emission_by_name (editable, "insert-text");
@@ -514,7 +514,7 @@ gimp_tag_entry_insert_text (GtkEditable *editable,
             }
 
           g_signal_handlers_block_by_func (editable,
-                                           gimp_tag_entry_insert_text,
+                                           picman_tag_entry_insert_text,
                                            NULL);
 
           gtk_editable_insert_text (editable, new_text, text_length, position);
@@ -522,7 +522,7 @@ gimp_tag_entry_insert_text (GtkEditable *editable,
           (*position)--;
 
           g_signal_handlers_unblock_by_func (editable,
-                                             gimp_tag_entry_insert_text,
+                                             picman_tag_entry_insert_text,
                                              NULL);
 
           g_signal_stop_emission_by_name (editable, "insert-text");
@@ -540,21 +540,21 @@ gimp_tag_entry_insert_text (GtkEditable *editable,
   if (! entry->internal_operation)
     {
       entry->tab_completion_index = -1;
-      g_idle_add ((GSourceFunc) gimp_tag_entry_auto_complete, editable);
+      g_idle_add ((GSourceFunc) picman_tag_entry_auto_complete, editable);
     }
 }
 
 static void
-gimp_tag_entry_delete_text (GtkEditable *editable,
+picman_tag_entry_delete_text (GtkEditable *editable,
                             gint         start_pos,
                             gint         end_pos)
 {
-  GimpTagEntry *entry = GIMP_TAG_ENTRY (editable);
+  PicmanTagEntry *entry = PICMAN_TAG_ENTRY (editable);
 
   if (! entry->internal_operation)
     {
       g_signal_handlers_block_by_func (editable,
-                                       gimp_tag_entry_delete_text,
+                                       picman_tag_entry_delete_text,
                                        NULL);
 
       if (end_pos > start_pos &&
@@ -575,7 +575,7 @@ gimp_tag_entry_delete_text (GtkEditable *editable,
         }
 
       g_signal_handlers_unblock_by_func (editable,
-                                         gimp_tag_entry_delete_text,
+                                         picman_tag_entry_delete_text,
                                          NULL);
 
       g_signal_stop_emission_by_name (editable, "delete-text");
@@ -590,7 +590,7 @@ gimp_tag_entry_delete_text (GtkEditable *editable,
 }
 
 static gboolean
-gimp_tag_entry_query_tag (GimpTagEntry *entry)
+picman_tag_entry_query_tag (PicmanTagEntry *entry)
 {
   gchar    **parsed_tags;
   gint       count;
@@ -605,13 +605,13 @@ gimp_tag_entry_query_tag (GimpTagEntry *entry)
 
   has_invalid_tags = FALSE;
 
-  parsed_tags = gimp_tag_entry_parse_tags (entry);
+  parsed_tags = picman_tag_entry_parse_tags (entry);
   count = g_strv_length (parsed_tags);
   for (i = 0; i < count; i++)
     {
       if (strlen (parsed_tags[i]) > 0)
         {
-          GimpTag *tag = gimp_tag_try_new (parsed_tags[i]);
+          PicmanTag *tag = picman_tag_try_new (parsed_tags[i]);
 
           if (! tag)
             has_invalid_tags = TRUE;
@@ -621,10 +621,10 @@ gimp_tag_entry_query_tag (GimpTagEntry *entry)
     }
   g_strfreev (parsed_tags);
 
-  gimp_tagged_container_set_filter (GIMP_TAGGED_CONTAINER (entry->container),
+  picman_tagged_container_set_filter (PICMAN_TAGGED_CONTAINER (entry->container),
                                     query_list);
 
-  g_list_free_full (query_list, (GDestroyNotify) gimp_tag_or_null_unref);
+  g_list_free_full (query_list, (GDestroyNotify) picman_tag_or_null_unref);
 
   if (has_invalid_tags != entry->has_invalid_tags)
     {
@@ -636,7 +636,7 @@ gimp_tag_entry_query_tag (GimpTagEntry *entry)
 }
 
 static gboolean
-gimp_tag_entry_auto_complete (GimpTagEntry *tag_entry)
+picman_tag_entry_auto_complete (PicmanTagEntry *tag_entry)
 {
   GtkEntry  *entry = GTK_ENTRY (tag_entry);
   gchar     *completion_prefix;
@@ -648,13 +648,13 @@ gimp_tag_entry_auto_complete (GimpTagEntry *tag_entry)
   gint       end_position;
 
   tag_entry->suppress_tag_query--;
-  if (tag_entry->mode == GIMP_TAG_ENTRY_MODE_QUERY)
+  if (tag_entry->mode == PICMAN_TAG_ENTRY_MODE_QUERY)
     {
       /* tag query was suppressed until we got to auto completion (here),
        * now queue tag query
        */
       tag_entry->tag_query_idle_id =
-        g_idle_add ((GSourceFunc) gimp_tag_entry_query_tag, tag_entry);
+        g_idle_add ((GSourceFunc) picman_tag_entry_query_tag, tag_entry);
     }
 
   if (tag_entry->tab_completion_index >= 0)
@@ -677,18 +677,18 @@ gimp_tag_entry_auto_complete (GimpTagEntry *tag_entry)
     }
 
   completion_prefix =
-    gimp_tag_entry_get_completion_prefix (GIMP_TAG_ENTRY (entry));
-  tags = gimp_tag_entry_parse_tags (GIMP_TAG_ENTRY (entry));
+    picman_tag_entry_get_completion_prefix (PICMAN_TAG_ENTRY (entry));
+  tags = picman_tag_entry_parse_tags (PICMAN_TAG_ENTRY (entry));
   completion_candidates =
-    gimp_tag_entry_get_completion_candidates (GIMP_TAG_ENTRY (entry),
+    picman_tag_entry_get_completion_candidates (PICMAN_TAG_ENTRY (entry),
                                               tags,
                                               completion_prefix);
   completion_candidates = g_list_sort (completion_candidates,
-                                       gimp_tag_compare_func);
+                                       picman_tag_compare_func);
 
   if (tag_entry->tab_completion_index >= 0 && completion_candidates)
     {
-      GimpTag *the_chosen_one;
+      PicmanTag *the_chosen_one;
 
       candidate_count = g_list_length (completion_candidates);
       tag_entry->tab_completion_index %= candidate_count;
@@ -700,7 +700,7 @@ gimp_tag_entry_auto_complete (GimpTagEntry *tag_entry)
                                              the_chosen_one);
     }
 
-  completion = gimp_tag_entry_get_completion_string (GIMP_TAG_ENTRY (entry),
+  completion = picman_tag_entry_get_completion_string (PICMAN_TAG_ENTRY (entry),
                                                      completion_candidates,
                                                      completion_prefix);
 
@@ -734,7 +734,7 @@ gimp_tag_entry_auto_complete (GimpTagEntry *tag_entry)
 }
 
 static void
-gimp_tag_entry_assign_tags (GimpTagEntry *tag_entry)
+picman_tag_entry_assign_tags (PicmanTagEntry *tag_entry)
 {
   gchar **parsed_tags;
   gint    count;
@@ -746,17 +746,17 @@ gimp_tag_entry_assign_tags (GimpTagEntry *tag_entry)
   GList  *add_list         = NULL;
   GList  *common_tags      = NULL;
 
-  parsed_tags = gimp_tag_entry_parse_tags (tag_entry);
+  parsed_tags = picman_tag_entry_parse_tags (tag_entry);
 
   count = g_strv_length (parsed_tags);
   for (i = 0; i < count; i++)
     {
-      GimpTag *tag = gimp_tag_new (parsed_tags[i]);
+      PicmanTag *tag = picman_tag_new (parsed_tags[i]);
 
       if (tag)
         {
           if (g_list_find_custom (tag_entry->common_tags, tag,
-                                  gimp_tag_compare_func))
+                                  picman_tag_compare_func))
             {
               dont_remove_list = g_list_prepend (dont_remove_list, tag);
             }
@@ -777,7 +777,7 @@ gimp_tag_entry_assign_tags (GimpTagEntry *tag_entry)
        tag_iter = g_list_next (tag_iter))
     {
       if (! g_list_find_custom (dont_remove_list, tag_iter->data,
-                                gimp_tag_compare_func))
+                                picman_tag_compare_func))
         {
           remove_list = g_list_prepend (remove_list, tag_iter->data);
         }
@@ -789,16 +789,16 @@ gimp_tag_entry_assign_tags (GimpTagEntry *tag_entry)
        resource_iter;
        resource_iter = g_list_next (resource_iter))
     {
-      GimpTagged *tagged = GIMP_TAGGED (resource_iter->data);
+      PicmanTagged *tagged = PICMAN_TAGGED (resource_iter->data);
 
       for (tag_iter = remove_list; tag_iter; tag_iter = g_list_next (tag_iter))
         {
-          gimp_tagged_remove_tag (tagged, GIMP_TAG (tag_iter->data));
+          picman_tagged_remove_tag (tagged, PICMAN_TAG (tag_iter->data));
         }
 
       for (tag_iter = add_list; tag_iter; tag_iter = g_list_next (tag_iter))
         {
-          gimp_tagged_add_tag (tagged, GIMP_TAG (tag_iter->data));
+          picman_tagged_add_tag (tagged, PICMAN_TAG (tag_iter->data));
         }
     }
 
@@ -811,8 +811,8 @@ gimp_tag_entry_assign_tags (GimpTagEntry *tag_entry)
 }
 
 /**
- * gimp_tag_entry_parse_tags:
- * @entry: a #GimpTagEntry widget.
+ * picman_tag_entry_parse_tags:
+ * @entry: a #PicmanTagEntry widget.
  *
  * Parses currently entered tags from @entry. Tags do not need to be
  * valid as they are fixed when necessary. Only valid tags are
@@ -822,7 +822,7 @@ gimp_tag_entry_assign_tags (GimpTagEntry *tag_entry)
  *               should be freed using g_strfreev().
  **/
 gchar **
-gimp_tag_entry_parse_tags (GimpTagEntry *entry)
+picman_tag_entry_parse_tags (PicmanTagEntry *entry)
 {
   gchar       **parsed_tags;
   gint          length;
@@ -833,7 +833,7 @@ gimp_tag_entry_parse_tags (GimpTagEntry *entry)
   GList        *iterator;
   gunichar      c;
 
-  g_return_val_if_fail (GIMP_IS_TAG_ENTRY (entry), NULL);
+  g_return_val_if_fail (PICMAN_IS_TAG_ENTRY (entry), NULL);
 
   parsed_tag = g_string_new ("");
   cursor = gtk_entry_get_text (GTK_ENTRY (entry));
@@ -842,11 +842,11 @@ gimp_tag_entry_parse_tags (GimpTagEntry *entry)
       c = g_utf8_get_char (cursor);
       cursor = g_utf8_next_char (cursor);
 
-      if (! c || gimp_tag_is_tag_separator (c))
+      if (! c || picman_tag_is_tag_separator (c))
         {
           if (parsed_tag->len > 0)
             {
-              gchar *validated_tag = gimp_tag_string_make_valid (parsed_tag->str);
+              gchar *validated_tag = picman_tag_string_make_valid (parsed_tag->str);
 
               if (validated_tag)
                 {
@@ -882,19 +882,19 @@ gimp_tag_entry_parse_tags (GimpTagEntry *entry)
 }
 
 /**
- * gimp_tag_entry_set_selected_items:
- * @tag_entry:  a #GimpTagEntry widget.
- * @items:      a list of #GimpTagged objects.
+ * picman_tag_entry_set_selected_items:
+ * @tag_entry:  a #PicmanTagEntry widget.
+ * @items:      a list of #PicmanTagged objects.
  *
- * Set list of currently selected #GimpTagged objects. Only selected and
- * visible (not filtered out) #GimpTagged objects are assigned tags when
+ * Set list of currently selected #PicmanTagged objects. Only selected and
+ * visible (not filtered out) #PicmanTagged objects are assigned tags when
  * operating in tag assignment mode.
  **/
 void
-gimp_tag_entry_set_selected_items (GimpTagEntry *tag_entry,
+picman_tag_entry_set_selected_items (PicmanTagEntry *tag_entry,
                                    GList        *items)
 {
-  g_return_if_fail (GIMP_IS_TAG_ENTRY (tag_entry));
+  g_return_if_fail (PICMAN_IS_TAG_ENTRY (tag_entry));
 
   if (tag_entry->selected_items)
     {
@@ -910,14 +910,14 @@ gimp_tag_entry_set_selected_items (GimpTagEntry *tag_entry,
 
   tag_entry->selected_items = g_list_copy (items);
 
-  if (tag_entry->mode == GIMP_TAG_ENTRY_MODE_ASSIGN)
+  if (tag_entry->mode == PICMAN_TAG_ENTRY_MODE_ASSIGN)
     {
-      gimp_tag_entry_load_selection (tag_entry, TRUE);
+      picman_tag_entry_load_selection (tag_entry, TRUE);
     }
 }
 
 static void
-gimp_tag_entry_load_selection (GimpTagEntry *tag_entry,
+picman_tag_entry_load_selection (PicmanTagEntry *tag_entry,
                                gboolean      sort)
 {
   GList      *list;
@@ -932,19 +932,19 @@ gimp_tag_entry_load_selection (GimpTagEntry *tag_entry,
 
   if (! tag_entry->selected_items)
     {
-      gimp_tag_entry_toggle_desc (tag_entry, FALSE);
+      picman_tag_entry_toggle_desc (tag_entry, FALSE);
       return;
     }
 
-  refcounts = g_hash_table_new ((GHashFunc) gimp_tag_get_hash,
-                                (GEqualFunc) gimp_tag_equals);
+  refcounts = g_hash_table_new ((GHashFunc) picman_tag_get_hash,
+                                (GEqualFunc) picman_tag_equals);
 
   /* find set of tags common to all resources. */
   for (resource = tag_entry->selected_items;
        resource;
        resource = g_list_next (resource))
     {
-      for (tag = gimp_tagged_get_tags (GIMP_TAGGED (resource->data));
+      for (tag = picman_tagged_get_tags (PICMAN_TAGGED (resource->data));
            tag;
            tag = g_list_next (tag))
         {
@@ -957,23 +957,23 @@ gimp_tag_entry_load_selection (GimpTagEntry *tag_entry,
         }
     }
 
-  g_hash_table_foreach (refcounts, gimp_tag_entry_find_common_tags,tag_entry);
+  g_hash_table_foreach (refcounts, picman_tag_entry_find_common_tags,tag_entry);
 
   g_hash_table_destroy (refcounts);
 
   tag_entry->common_tags = g_list_sort (tag_entry->common_tags,
-                                        gimp_tag_compare_func);
+                                        picman_tag_compare_func);
 
   insert_pos = gtk_editable_get_position (GTK_EDITABLE (tag_entry));
 
   for (list = tag_entry->common_tags; list; list = g_list_next (list))
     {
-      GimpTag *tag = list->data;
+      PicmanTag *tag = list->data;
       gchar   *text;
 
       text = g_strdup_printf ("%s%s ",
-                              gimp_tag_get_name (tag),
-                              gimp_tag_entry_get_separator ());
+                              picman_tag_get_name (tag),
+                              picman_tag_entry_get_separator ());
 
       tag_entry->internal_operation++;
       gtk_editable_insert_text (GTK_EDITABLE (tag_entry), text, strlen (text),
@@ -983,16 +983,16 @@ gimp_tag_entry_load_selection (GimpTagEntry *tag_entry,
       g_free (text);
     }
 
-  gimp_tag_entry_commit_tags (tag_entry);
+  picman_tag_entry_commit_tags (tag_entry);
 }
 
 static void
-gimp_tag_entry_find_common_tags (gpointer key,
+picman_tag_entry_find_common_tags (gpointer key,
                                  gpointer value,
                                  gpointer user_data)
 {
   guint         ref_count = GPOINTER_TO_UINT (value);
-  GimpTagEntry *tag_entry = GIMP_TAG_ENTRY (user_data);
+  PicmanTagEntry *tag_entry = PICMAN_TAG_ENTRY (user_data);
 
   /* FIXME: more efficient list length */
   if (ref_count == g_list_length (tag_entry->selected_items))
@@ -1002,7 +1002,7 @@ gimp_tag_entry_find_common_tags (gpointer key,
 }
 
 static gchar *
-gimp_tag_entry_get_completion_prefix (GimpTagEntry *entry)
+picman_tag_entry_get_completion_prefix (PicmanTagEntry *entry)
 {
   gchar *original_string;
   gchar *prefix_start;
@@ -1028,7 +1028,7 @@ gimp_tag_entry_get_completion_prefix (GimpTagEntry *entry)
       c = g_utf8_get_char (cursor);
       cursor = g_utf8_next_char (cursor);
 
-      if (gimp_tag_is_tag_separator (c))
+      if (picman_tag_is_tag_separator (c))
         prefix_start = cursor;
     }
   *cursor = '\0';
@@ -1040,7 +1040,7 @@ gimp_tag_entry_get_completion_prefix (GimpTagEntry *entry)
 }
 
 static GList *
-gimp_tag_entry_get_completion_candidates (GimpTagEntry  *tag_entry,
+picman_tag_entry_get_completion_candidates (PicmanTagEntry  *tag_entry,
                                           gchar        **used_tags,
                                           gchar         *src_prefix)
 {
@@ -1062,16 +1062,16 @@ gimp_tag_entry_get_completion_candidates (GimpTagEntry  *tag_entry,
 
   for (list = all_tags; list; list = g_list_next (list))
     {
-      GimpTag *tag = list->data;
+      PicmanTag *tag = list->data;
 
-      if (gimp_tag_has_prefix (tag, prefix))
+      if (picman_tag_has_prefix (tag, prefix))
         {
           gint i;
 
           /* check if tag is not already entered */
           for (i = 0; i < length; i++)
             {
-              if (! gimp_tag_compare_with_string (tag, used_tags[i]))
+              if (! picman_tag_compare_with_string (tag, used_tags[i]))
                 break;
             }
 
@@ -1088,7 +1088,7 @@ gimp_tag_entry_get_completion_candidates (GimpTagEntry  *tag_entry,
 }
 
 static gchar *
-gimp_tag_entry_get_completion_string (GimpTagEntry *tag_entry,
+picman_tag_entry_get_completion_string (PicmanTagEntry *tag_entry,
                                       GList        *candidates,
                                       gchar        *prefix)
 {
@@ -1118,7 +1118,7 @@ gimp_tag_entry_get_completion_string (GimpTagEntry *tag_entry,
   length = g_list_length (candidates);
   if (length < 2)
     {
-      candidate_string = gimp_tag_get_name (GIMP_TAG (candidates->data));
+      candidate_string = picman_tag_get_name (PICMAN_TAG (candidates->data));
       return g_strdup (candidate_string + prefix_length);
     }
 
@@ -1126,7 +1126,7 @@ gimp_tag_entry_get_completion_string (GimpTagEntry *tag_entry,
   candidate_iterator = candidates;
   for (i = 0; i < length; i++)
     {
-      candidate_string = gimp_tag_get_name (GIMP_TAG (candidate_iterator->data));
+      candidate_string = picman_tag_get_name (PICMAN_TAG (candidate_iterator->data));
       completions[i] = candidate_string + prefix_length;
       candidate_iterator = g_list_next (candidate_iterator);
     }
@@ -1144,7 +1144,7 @@ gimp_tag_entry_get_completion_string (GimpTagEntry *tag_entry,
 
           if (c != d)
             {
-              candidate_string = gimp_tag_get_name (GIMP_TAG (candidates->data));
+              candidate_string = picman_tag_get_name (PICMAN_TAG (candidates->data));
               candidate_string += prefix_length;
               completion_end = g_utf8_offset_to_pointer (candidate_string,
                                                          num_chars_match);
@@ -1168,55 +1168,55 @@ gimp_tag_entry_get_completion_string (GimpTagEntry *tag_entry,
 
   g_free (completions);
 
-  candidate_string = gimp_tag_get_name (GIMP_TAG (candidates->data));
+  candidate_string = picman_tag_get_name (PICMAN_TAG (candidates->data));
 
   return g_strdup (candidate_string + prefix_length);
 }
 
 static gboolean
-gimp_tag_entry_focus_in (GtkWidget     *widget,
+picman_tag_entry_focus_in (GtkWidget     *widget,
                          GdkEventFocus *event)
 {
-  gimp_tag_entry_toggle_desc (GIMP_TAG_ENTRY (widget), FALSE);
+  picman_tag_entry_toggle_desc (PICMAN_TAG_ENTRY (widget), FALSE);
 
   return FALSE;
 }
 
 static gboolean
-gimp_tag_entry_focus_out (GtkWidget     *widget,
+picman_tag_entry_focus_out (GtkWidget     *widget,
                           GdkEventFocus *event)
 {
-  GimpTagEntry  *tag_entry = GIMP_TAG_ENTRY (widget);
+  PicmanTagEntry  *tag_entry = PICMAN_TAG_ENTRY (widget);
 
-  gimp_tag_entry_commit_tags (tag_entry);
-  if (tag_entry->mode == GIMP_TAG_ENTRY_MODE_ASSIGN)
+  picman_tag_entry_commit_tags (tag_entry);
+  if (tag_entry->mode == PICMAN_TAG_ENTRY_MODE_ASSIGN)
     {
-      gimp_tag_entry_assign_tags (GIMP_TAG_ENTRY (widget));
+      picman_tag_entry_assign_tags (PICMAN_TAG_ENTRY (widget));
     }
 
-  gimp_tag_entry_add_to_recent (tag_entry,
+  picman_tag_entry_add_to_recent (tag_entry,
                                 gtk_entry_get_text (GTK_ENTRY (widget)),
                                 TRUE);
 
-  gimp_tag_entry_toggle_desc (tag_entry, TRUE);
+  picman_tag_entry_toggle_desc (tag_entry, TRUE);
 
   return FALSE;
 }
 
 static void
-gimp_tag_entry_container_changed (GimpContainer *container,
-                                  GimpObject    *object,
-                                  GimpTagEntry  *tag_entry)
+picman_tag_entry_container_changed (PicmanContainer *container,
+                                  PicmanObject    *object,
+                                  PicmanTagEntry  *tag_entry)
 {
-  if (tag_entry->mode == GIMP_TAG_ENTRY_MODE_ASSIGN)
+  if (tag_entry->mode == PICMAN_TAG_ENTRY_MODE_ASSIGN)
     {
       GList *list;
 
       for (list = tag_entry->selected_items; list; list = g_list_next (list))
         {
-          if (gimp_tagged_get_tags (GIMP_TAGGED (list->data)) &&
-              gimp_container_have (GIMP_CONTAINER (tag_entry->container),
-                                   GIMP_OBJECT(list->data)))
+          if (picman_tagged_get_tags (PICMAN_TAGGED (list->data)) &&
+              picman_container_have (PICMAN_CONTAINER (tag_entry->container),
+                                   PICMAN_OBJECT(list->data)))
             {
               break;
             }
@@ -1232,7 +1232,7 @@ gimp_tag_entry_container_changed (GimpContainer *container,
 }
 
 static void
-gimp_tag_entry_toggle_desc (GimpTagEntry *tag_entry,
+picman_tag_entry_toggle_desc (PicmanTagEntry *tag_entry,
                             gboolean      show)
 {
   GtkWidget *widget = GTK_WIDGET (tag_entry);
@@ -1266,10 +1266,10 @@ gimp_tag_entry_toggle_desc (GimpTagEntry *tag_entry,
 }
 
 static gboolean
-gimp_tag_entry_expose (GtkWidget      *widget,
+picman_tag_entry_expose (GtkWidget      *widget,
                        GdkEventExpose *event)
 {
-  GimpTagEntry   *tag_entry = GIMP_TAG_ENTRY (widget);
+  PicmanTagEntry   *tag_entry = PICMAN_TAG_ENTRY (widget);
   PangoLayout    *layout;
   PangoAttrList  *attr_list;
   PangoAttribute *attribute;
@@ -1284,16 +1284,16 @@ gimp_tag_entry_expose (GtkWidget      *widget,
   if (event->window != gtk_entry_get_text_window (GTK_ENTRY (widget)))
     return FALSE;
 
-  if (! GIMP_TAG_ENTRY (widget)->description_shown)
+  if (! PICMAN_TAG_ENTRY (widget)->description_shown)
     return FALSE;
 
-  if (tag_entry->mode == GIMP_TAG_ENTRY_MODE_QUERY)
+  if (tag_entry->mode == PICMAN_TAG_ENTRY_MODE_QUERY)
     {
-      display_text = GIMP_TAG_ENTRY_QUERY_DESC;
+      display_text = PICMAN_TAG_ENTRY_QUERY_DESC;
     }
   else
     {
-      display_text = GIMP_TAG_ENTRY_ASSIGN_DESC;
+      display_text = PICMAN_TAG_ENTRY_ASSIGN_DESC;
     }
 
   layout = gtk_widget_create_pango_layout (widget, display_text);
@@ -1330,10 +1330,10 @@ gimp_tag_entry_expose (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_tag_entry_key_press (GtkWidget   *widget,
+picman_tag_entry_key_press (GtkWidget   *widget,
                           GdkEventKey *event)
 {
-  GimpTagEntry    *entry = GIMP_TAG_ENTRY (widget);
+  PicmanTagEntry    *entry = PICMAN_TAG_ENTRY (widget);
   GdkModifierType  extend_mask;
   guchar           c;
 
@@ -1342,9 +1342,9 @@ gimp_tag_entry_key_press (GtkWidget   *widget,
                                   GDK_MODIFIER_INTENT_EXTEND_SELECTION);
 
   c = gdk_keyval_to_unicode (event->keyval);
-  if (gimp_tag_is_tag_separator (c))
+  if (picman_tag_is_tag_separator (c))
     {
-      g_idle_add ((GSourceFunc) gimp_tag_entry_commit_source_func, entry);
+      g_idle_add ((GSourceFunc) picman_tag_entry_commit_source_func, entry);
       return FALSE;
     }
 
@@ -1358,11 +1358,11 @@ gimp_tag_entry_key_press (GtkWidget   *widget,
         {
           entry->tab_completion_index++;
           entry->suppress_tag_query++;
-          g_idle_add ((GSourceFunc) gimp_tag_entry_auto_complete, entry);
+          g_idle_add ((GSourceFunc) picman_tag_entry_auto_complete, entry);
         }
       else
         {
-          gimp_tag_entry_commit_tags (entry);
+          picman_tag_entry_commit_tags (entry);
           g_signal_emit_by_name (widget, "move-focus",
                                  (event->state & GDK_SHIFT_MASK) ?
                                  GTK_DIR_TAB_BACKWARD : GTK_DIR_TAB_FORWARD);
@@ -1370,16 +1370,16 @@ gimp_tag_entry_key_press (GtkWidget   *widget,
       return TRUE;
 
     case GDK_KEY_Return:
-      gimp_tag_entry_commit_tags (entry);
+      picman_tag_entry_commit_tags (entry);
       break;
 
     case GDK_KEY_Left:
-      gimp_tag_entry_previous_tag (entry,
+      picman_tag_entry_previous_tag (entry,
                                    (event->state & extend_mask) ? TRUE : FALSE);
       return TRUE;
 
     case GDK_KEY_Right:
-      gimp_tag_entry_next_tag (entry,
+      picman_tag_entry_next_tag (entry,
                                (event->state & extend_mask) ? TRUE : FALSE);
       return TRUE;
 
@@ -1390,7 +1390,7 @@ gimp_tag_entry_key_press (GtkWidget   *widget,
 
         gtk_editable_get_selection_bounds (GTK_EDITABLE (entry),
                                            &selection_start, &selection_end);
-        if (gimp_tag_entry_select_jellybean (entry,
+        if (picman_tag_entry_select_jellybean (entry,
                                              selection_start, selection_end,
                                              TAG_SEARCH_LEFT))
           {
@@ -1398,9 +1398,9 @@ gimp_tag_entry_key_press (GtkWidget   *widget,
           }
         else
           {
-            gimp_tag_entry_select_for_deletion (entry, TAG_SEARCH_LEFT);
+            picman_tag_entry_select_for_deletion (entry, TAG_SEARCH_LEFT);
             /* FIXME: need to remove idle handler in dispose */
-            g_idle_add ((GSourceFunc) gimp_tag_entry_strip_extra_whitespace,
+            g_idle_add ((GSourceFunc) picman_tag_entry_strip_extra_whitespace,
                         entry);
           }
       }
@@ -1413,7 +1413,7 @@ gimp_tag_entry_key_press (GtkWidget   *widget,
 
         gtk_editable_get_selection_bounds (GTK_EDITABLE (entry),
                                            &selection_start, &selection_end);
-        if (gimp_tag_entry_select_jellybean (entry,
+        if (picman_tag_entry_select_jellybean (entry,
                                              selection_start, selection_end,
                                              TAG_SEARCH_RIGHT))
           {
@@ -1421,9 +1421,9 @@ gimp_tag_entry_key_press (GtkWidget   *widget,
           }
         else
           {
-            gimp_tag_entry_select_for_deletion (entry, TAG_SEARCH_RIGHT);
+            picman_tag_entry_select_for_deletion (entry, TAG_SEARCH_RIGHT);
             /* FIXME: need to remove idle handler in dispose */
-            g_idle_add ((GSourceFunc) gimp_tag_entry_strip_extra_whitespace,
+            g_idle_add ((GSourceFunc) picman_tag_entry_strip_extra_whitespace,
                         entry);
           }
       }
@@ -1437,7 +1437,7 @@ gimp_tag_entry_key_press (GtkWidget   *widget,
           gchar *very_recent_item;
 
           very_recent_item = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
-          gimp_tag_entry_add_to_recent (entry, very_recent_item, TRUE);
+          picman_tag_entry_add_to_recent (entry, very_recent_item, TRUE);
           g_free (very_recent_item);
 
           if (event->keyval == GDK_KEY_Up)
@@ -1469,13 +1469,13 @@ gimp_tag_entry_key_press (GtkWidget   *widget,
 }
 
 static gboolean
-gimp_tag_entry_button_release (GtkWidget      *widget,
+picman_tag_entry_button_release (GtkWidget      *widget,
                                GdkEventButton *event)
 {
   if (event->button == 1)
     {
       /* FIXME: need to remove idle handler in dispose */
-      g_idle_add ((GSourceFunc) gimp_tag_entry_try_select_jellybean,
+      g_idle_add ((GSourceFunc) picman_tag_entry_try_select_jellybean,
                   widget);
     }
 
@@ -1483,7 +1483,7 @@ gimp_tag_entry_button_release (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_tag_entry_try_select_jellybean (GimpTagEntry *entry)
+picman_tag_entry_try_select_jellybean (PicmanTagEntry *entry)
 {
   gint selection_start;
   gint selection_end;
@@ -1497,17 +1497,17 @@ gimp_tag_entry_try_select_jellybean (GimpTagEntry *entry)
 
   gtk_editable_get_selection_bounds (GTK_EDITABLE (entry),
                                      &selection_start, &selection_end);
-  gimp_tag_entry_select_jellybean (entry, selection_start, selection_end,
+  picman_tag_entry_select_jellybean (entry, selection_start, selection_end,
                                    TAG_SEARCH_NONE);
 
   return FALSE;
 }
 
 static gboolean
-gimp_tag_entry_select_jellybean (GimpTagEntry     *entry,
+picman_tag_entry_select_jellybean (PicmanTagEntry     *entry,
                                  gint              selection_start,
                                  gint              selection_end,
-                                 GimpTagSearchDir  search_dir)
+                                 PicmanTagSearchDir  search_dir)
 {
   gint prev_selection_start;
   gint prev_selection_end;
@@ -1656,7 +1656,7 @@ gimp_tag_entry_select_jellybean (GimpTagEntry     *entry,
 }
 
 static gboolean
-gimp_tag_entry_add_to_recent (GimpTagEntry *entry,
+picman_tag_entry_add_to_recent (PicmanTagEntry *entry,
                               const gchar  *tags_string,
                               gboolean      to_front)
 {
@@ -1665,7 +1665,7 @@ gimp_tag_entry_add_to_recent (GimpTagEntry *entry,
   gint   stripped_length;
   GList *list;
 
-  if (entry->mode == GIMP_TAG_ENTRY_MODE_ASSIGN)
+  if (entry->mode == PICMAN_TAG_ENTRY_MODE_ASSIGN)
     return FALSE;
 
   stripped_string = g_strdup (tags_string);
@@ -1681,7 +1681,7 @@ gimp_tag_entry_add_to_recent (GimpTagEntry *entry,
       return FALSE;
     }
 
-  if (g_list_length (entry->recent_list) >= GIMP_TAG_ENTRY_MAX_RECENT_ITEMS)
+  if (g_list_length (entry->recent_list) >= PICMAN_TAG_ENTRY_MAX_RECENT_ITEMS)
     {
       gchar *last_item = g_list_last (entry->recent_list)->data;
       entry->recent_list = g_list_remove (entry->recent_list, last_item);
@@ -1716,7 +1716,7 @@ gimp_tag_entry_add_to_recent (GimpTagEntry *entry,
 }
 
 /**
- * gimp_tag_entry_get_separator:
+ * picman_tag_entry_get_separator:
  *
  * Tag separator is a single Unicode terminal punctuation
  * character.
@@ -1724,7 +1724,7 @@ gimp_tag_entry_add_to_recent (GimpTagEntry *entry,
  * Return value: returns locale dependent tag separator.
  **/
 const gchar *
-gimp_tag_entry_get_separator (void)
+picman_tag_entry_get_separator (void)
 {
   /* Seperator for tags
    * IMPORTANT: use only one of Unicode terminal punctuation chars.
@@ -1734,7 +1734,7 @@ gimp_tag_entry_get_separator (void)
 }
 
 static void
-gimp_tag_entry_commit_region (GString *tags,
+picman_tag_entry_commit_region (GString *tags,
                               GString *mask)
 {
   gint      i = 0;
@@ -1773,13 +1773,13 @@ gimp_tag_entry_commit_region (GString *tags,
       if (stage == 1)
         {
           /* tag */
-          if (c && ! gimp_tag_is_tag_separator (c))
+          if (c && ! picman_tag_is_tag_separator (c))
             {
               g_string_append_unichar (tag_buffer, c);
             }
           else
             {
-              gchar *valid_tag = gimp_tag_string_make_valid (tag_buffer->str);
+              gchar *valid_tag = picman_tag_string_make_valid (tag_buffer->str);
               gsize  tag_length;
 
               if (valid_tag)
@@ -1794,7 +1794,7 @@ gimp_tag_entry_commit_region (GString *tags,
 
                   if (! c)
                     {
-                      g_string_append (out_tags, gimp_tag_entry_get_separator ());
+                      g_string_append (out_tags, picman_tag_entry_get_separator ());
                       g_string_append_c (out_mask, 's');
                     }
 
@@ -1812,7 +1812,7 @@ gimp_tag_entry_commit_region (GString *tags,
 
       if (stage == 2)
         {
-          if (gimp_tag_is_tag_separator (c))
+          if (picman_tag_is_tag_separator (c))
             {
               g_string_append_unichar (out_tags, c);
               g_string_append_c (out_mask, 's');
@@ -1839,7 +1839,7 @@ gimp_tag_entry_commit_region (GString *tags,
 }
 
 static void
-gimp_tag_entry_commit_tags (GimpTagEntry *entry)
+picman_tag_entry_commit_tags (PicmanTagEntry *entry)
 {
   gboolean found_region;
   gint     cursor_position;
@@ -1892,7 +1892,7 @@ gimp_tag_entry_commit_tags (GimpTagEntry *entry)
 
           mask = g_string_new_len (entry->mask->str + region_start, region_end - region_start);
 
-          gimp_tag_entry_commit_region (tags, mask);
+          picman_tag_entry_commit_region (tags, mask);
 
           /* prepend space before if needed */
           if (region_start > 0
@@ -1941,19 +1941,19 @@ gimp_tag_entry_commit_tags (GimpTagEntry *entry)
   while (found_region);
 
   gtk_editable_set_position (GTK_EDITABLE (entry), cursor_position);
-  gimp_tag_entry_strip_extra_whitespace (entry);
+  picman_tag_entry_strip_extra_whitespace (entry);
 }
 
 static gboolean
-gimp_tag_entry_commit_source_func (GimpTagEntry *entry)
+picman_tag_entry_commit_source_func (PicmanTagEntry *entry)
 {
-  gimp_tag_entry_commit_tags (entry);
+  picman_tag_entry_commit_tags (entry);
 
   return FALSE;
 }
 
 static void
-gimp_tag_entry_next_tag (GimpTagEntry *entry,
+picman_tag_entry_next_tag (PicmanTagEntry *entry,
                          gboolean      select)
 {
   gint position = gtk_editable_get_position (GTK_EDITABLE (entry));
@@ -2004,7 +2004,7 @@ gimp_tag_entry_next_tag (GimpTagEntry *entry,
 }
 
 static void
-gimp_tag_entry_previous_tag (GimpTagEntry *entry,
+picman_tag_entry_previous_tag (PicmanTagEntry *entry,
                              gboolean      select)
 {
   gint  position = gtk_editable_get_position (GTK_EDITABLE (entry));
@@ -2064,8 +2064,8 @@ gimp_tag_entry_previous_tag (GimpTagEntry *entry,
 }
 
 static void
-gimp_tag_entry_select_for_deletion (GimpTagEntry     *entry,
-                                    GimpTagSearchDir  search_dir)
+picman_tag_entry_select_for_deletion (PicmanTagEntry     *entry,
+                                    PicmanTagSearchDir  search_dir)
 {
   gint start_pos;
   gint end_pos;
@@ -2120,7 +2120,7 @@ gimp_tag_entry_select_for_deletion (GimpTagEntry     *entry,
 }
 
 static gboolean
-gimp_tag_entry_strip_extra_whitespace (GimpTagEntry *entry)
+picman_tag_entry_strip_extra_whitespace (PicmanTagEntry *entry)
 {
   gint  i;
   gint  position;

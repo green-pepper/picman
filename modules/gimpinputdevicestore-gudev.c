@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpinputdevicestore-gudev.c
+ * picmaninputdevicestore-gudev.c
  * Input device store based on GUdev, the hardware abstraction layer.
- * Copyright (C) 2007  Sven Neumann <sven@gimp.org>
- *               2011  Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2007  Sven Neumann <sven@picman.org>
+ *               2011  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpinputdevicestore.h"
+#include "picmaninputdevicestore.h"
 
-#include "libgimpmodule/gimpmodule.h"
+#include "libpicmanmodule/picmanmodule.h"
 
 
 #ifdef HAVE_LIBGUDEV
@@ -56,9 +56,9 @@ enum
   LAST_SIGNAL
 };
 
-typedef struct _GimpInputDeviceStoreClass GimpInputDeviceStoreClass;
+typedef struct _PicmanInputDeviceStoreClass PicmanInputDeviceStoreClass;
 
-struct _GimpInputDeviceStore
+struct _PicmanInputDeviceStore
 {
   GtkListStore  parent_instance;
 
@@ -67,44 +67,44 @@ struct _GimpInputDeviceStore
 };
 
 
-struct _GimpInputDeviceStoreClass
+struct _PicmanInputDeviceStoreClass
 {
   GtkListStoreClass   parent_class;
 
-  void  (* device_added)   (GimpInputDeviceStore *store,
+  void  (* device_added)   (PicmanInputDeviceStore *store,
                             const gchar          *identifier);
-  void  (* device_removed) (GimpInputDeviceStore *store,
+  void  (* device_removed) (PicmanInputDeviceStore *store,
                             const gchar          *identifier);
 };
 
 
-static void      gimp_input_device_store_finalize   (GObject              *object);
+static void      picman_input_device_store_finalize   (GObject              *object);
 
-static gboolean  gimp_input_device_store_add        (GimpInputDeviceStore *store,
+static gboolean  picman_input_device_store_add        (PicmanInputDeviceStore *store,
                                                      GUdevDevice          *device);
-static gboolean  gimp_input_device_store_remove     (GimpInputDeviceStore *store,
+static gboolean  picman_input_device_store_remove     (PicmanInputDeviceStore *store,
                                                      GUdevDevice          *device);
 
-static void      gimp_input_device_store_uevent     (GUdevClient          *client,
+static void      picman_input_device_store_uevent     (GUdevClient          *client,
                                                      const gchar          *action,
                                                      GUdevDevice          *device,
-                                                     GimpInputDeviceStore *store);
+                                                     PicmanInputDeviceStore *store);
 
 
-G_DEFINE_DYNAMIC_TYPE (GimpInputDeviceStore, gimp_input_device_store,
+G_DEFINE_DYNAMIC_TYPE (PicmanInputDeviceStore, picman_input_device_store,
                        GTK_TYPE_LIST_STORE)
 
 static guint store_signals[LAST_SIGNAL] = { 0 };
 
 
 void
-gimp_input_device_store_register_types (GTypeModule *module)
+picman_input_device_store_register_types (GTypeModule *module)
 {
-  gimp_input_device_store_register_type (module);
+  picman_input_device_store_register_type (module);
 }
 
 static void
-gimp_input_device_store_class_init (GimpInputDeviceStoreClass *klass)
+picman_input_device_store_class_init (PicmanInputDeviceStoreClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -112,7 +112,7 @@ gimp_input_device_store_class_init (GimpInputDeviceStoreClass *klass)
     g_signal_new ("device-added",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpInputDeviceStoreClass, device_added),
+                  G_STRUCT_OFFSET (PicmanInputDeviceStoreClass, device_added),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__STRING,
                   G_TYPE_NONE, 1, G_TYPE_STRING);
@@ -121,24 +121,24 @@ gimp_input_device_store_class_init (GimpInputDeviceStoreClass *klass)
     g_signal_new ("device-removed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpInputDeviceStoreClass, device_removed),
+                  G_STRUCT_OFFSET (PicmanInputDeviceStoreClass, device_removed),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__STRING,
                   G_TYPE_NONE, 1, G_TYPE_STRING);
 
-  object_class->finalize = gimp_input_device_store_finalize;
+  object_class->finalize = picman_input_device_store_finalize;
 
   klass->device_added    = NULL;
   klass->device_removed  = NULL;
 }
 
 static void
-gimp_input_device_store_class_finalize (GimpInputDeviceStoreClass *klass)
+picman_input_device_store_class_finalize (PicmanInputDeviceStoreClass *klass)
 {
 }
 
 static void
-gimp_input_device_store_init (GimpInputDeviceStore *store)
+picman_input_device_store_init (PicmanInputDeviceStore *store)
 {
   GType        types[]      = { G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING };
   const gchar *subsystems[] = { "input", NULL };
@@ -156,21 +156,21 @@ gimp_input_device_store_init (GimpInputDeviceStore *store)
     {
       GUdevDevice *device = list->data;
 
-      gimp_input_device_store_add (store, device);
+      picman_input_device_store_add (store, device);
       g_object_unref (device);
     }
 
   g_list_free (devices);
 
   g_signal_connect (store->client, "uevent",
-                    G_CALLBACK (gimp_input_device_store_uevent),
+                    G_CALLBACK (picman_input_device_store_uevent),
                     store);
 }
 
 static void
-gimp_input_device_store_finalize (GObject *object)
+picman_input_device_store_finalize (GObject *object)
 {
-  GimpInputDeviceStore *store = GIMP_INPUT_DEVICE_STORE (object);
+  PicmanInputDeviceStore *store = PICMAN_INPUT_DEVICE_STORE (object);
 
   if (store->client)
     {
@@ -184,11 +184,11 @@ gimp_input_device_store_finalize (GObject *object)
       store->error = NULL;
     }
 
-  G_OBJECT_CLASS (gimp_input_device_store_parent_class)->finalize (object);
+  G_OBJECT_CLASS (picman_input_device_store_parent_class)->finalize (object);
 }
 
 static gboolean
-gimp_input_device_store_lookup (GimpInputDeviceStore *store,
+picman_input_device_store_lookup (PicmanInputDeviceStore *store,
                                 const gchar          *identifier,
                                 GtkTreeIter          *iter)
 {
@@ -220,7 +220,7 @@ gimp_input_device_store_lookup (GimpInputDeviceStore *store,
 
 /*  insert in alphabetic order  */
 static void
-gimp_input_device_store_insert (GimpInputDeviceStore *store,
+picman_input_device_store_insert (PicmanInputDeviceStore *store,
                                 const gchar          *identifier,
                                 const gchar          *label,
                                 const gchar          *device_file)
@@ -258,7 +258,7 @@ gimp_input_device_store_insert (GimpInputDeviceStore *store,
 }
 
 static gboolean
-gimp_input_device_store_add (GimpInputDeviceStore *store,
+picman_input_device_store_add (PicmanInputDeviceStore *store,
                              GUdevDevice          *device)
 {
   const gchar *device_file = g_udev_device_get_device_file (device);
@@ -280,9 +280,9 @@ gimp_input_device_store_add (GimpInputDeviceStore *store,
         {
           GtkTreeIter unused;
 
-          if (! gimp_input_device_store_lookup (store, name, &unused))
+          if (! picman_input_device_store_lookup (store, name, &unused))
             {
-              gimp_input_device_store_insert (store, name, name, device_file);
+              picman_input_device_store_insert (store, name, name, device_file);
 
               g_signal_emit (store, store_signals[DEVICE_ADDED], 0,
                              name);
@@ -304,10 +304,10 @@ gimp_input_device_store_add (GimpInputDeviceStore *store,
                 {
                   GtkTreeIter unused;
 
-                  if (! gimp_input_device_store_lookup (store, parent_name,
+                  if (! picman_input_device_store_lookup (store, parent_name,
                                                         &unused))
                     {
-                      gimp_input_device_store_insert (store,
+                      picman_input_device_store_insert (store,
                                                       parent_name, parent_name,
                                                       device_file);
 
@@ -328,7 +328,7 @@ gimp_input_device_store_add (GimpInputDeviceStore *store,
 }
 
 static gboolean
-gimp_input_device_store_remove (GimpInputDeviceStore *store,
+picman_input_device_store_remove (PicmanInputDeviceStore *store,
                                 GUdevDevice          *device)
 {
   const gchar *name = g_udev_device_get_sysfs_attr (device, "name");
@@ -336,7 +336,7 @@ gimp_input_device_store_remove (GimpInputDeviceStore *store,
 
   if (name)
     {
-      if (gimp_input_device_store_lookup (store, name, &iter))
+      if (picman_input_device_store_lookup (store, name, &iter))
         {
           gtk_list_store_remove (GTK_LIST_STORE (store), &iter);
 
@@ -350,40 +350,40 @@ gimp_input_device_store_remove (GimpInputDeviceStore *store,
 }
 
 static void
-gimp_input_device_store_uevent (GUdevClient          *client,
+picman_input_device_store_uevent (GUdevClient          *client,
                                 const gchar          *action,
                                 GUdevDevice          *device,
-                                GimpInputDeviceStore *store)
+                                PicmanInputDeviceStore *store)
 {
   if (! strcmp (action, "add"))
     {
-      gimp_input_device_store_add (store, device);
+      picman_input_device_store_add (store, device);
     }
   else if (! strcmp (action, "remove"))
     {
-      gimp_input_device_store_remove (store, device);
+      picman_input_device_store_remove (store, device);
     }
 }
 
-GimpInputDeviceStore *
-gimp_input_device_store_new (void)
+PicmanInputDeviceStore *
+picman_input_device_store_new (void)
 {
-  return g_object_new (GIMP_TYPE_INPUT_DEVICE_STORE, NULL);
+  return g_object_new (PICMAN_TYPE_INPUT_DEVICE_STORE, NULL);
 }
 
 gchar *
-gimp_input_device_store_get_device_file (GimpInputDeviceStore *store,
+picman_input_device_store_get_device_file (PicmanInputDeviceStore *store,
                                          const gchar          *identifier)
 {
   GtkTreeIter iter;
 
-  g_return_val_if_fail (GIMP_IS_INPUT_DEVICE_STORE (store), NULL);
+  g_return_val_if_fail (PICMAN_IS_INPUT_DEVICE_STORE (store), NULL);
   g_return_val_if_fail (identifier != NULL, NULL);
 
   if (! store->client)
     return NULL;
 
-  if (gimp_input_device_store_lookup (store, identifier, &iter))
+  if (picman_input_device_store_lookup (store, identifier, &iter))
     {
       GtkTreeModel *model = GTK_TREE_MODEL (store);
       gchar        *device_file;
@@ -399,9 +399,9 @@ gimp_input_device_store_get_device_file (GimpInputDeviceStore *store,
 }
 
 GError *
-gimp_input_device_store_get_error (GimpInputDeviceStore  *store)
+picman_input_device_store_get_error (PicmanInputDeviceStore  *store)
 {
-  g_return_val_if_fail (GIMP_IS_INPUT_DEVICE_STORE (store), NULL);
+  g_return_val_if_fail (PICMAN_IS_INPUT_DEVICE_STORE (store), NULL);
 
   return store->error ? g_error_copy (store->error) : NULL;
 }
@@ -409,31 +409,31 @@ gimp_input_device_store_get_error (GimpInputDeviceStore  *store)
 #else /* HAVE_LIBGUDEV */
 
 void
-gimp_input_device_store_register_types (GTypeModule *module)
+picman_input_device_store_register_types (GTypeModule *module)
 {
 }
 
 GType
-gimp_input_device_store_get_type (void)
+picman_input_device_store_get_type (void)
 {
   return G_TYPE_NONE;
 }
 
-GimpInputDeviceStore *
-gimp_input_device_store_new (void)
+PicmanInputDeviceStore *
+picman_input_device_store_new (void)
 {
   return NULL;
 }
 
 gchar *
-gimp_input_device_store_get_device_file (GimpInputDeviceStore *store,
+picman_input_device_store_get_device_file (PicmanInputDeviceStore *store,
                                          const gchar          *identifier)
 {
   return NULL;
 }
 
 GError *
-gimp_input_device_store_get_error (GimpInputDeviceStore  *store)
+picman_input_device_store_get_error (PicmanInputDeviceStore  *store)
 {
   return NULL;
 }

@@ -1,6 +1,6 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  *
- * gimpoperationcagetransform.h
+ * picmanoperationcagetransform.h
  * Copyright (C) 2010 Michael Muré <batolettre@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,30 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_CAGE_TRANSFORM_H__
-#define __GIMP_OPERATION_CAGE_TRANSFORM_H__
+#ifndef __PICMAN_OPERATION_CAGE_TRANSFORM_H__
+#define __PICMAN_OPERATION_CAGE_TRANSFORM_H__
 
 
 #include <gegl-plugin.h>
 #include <operation/gegl-operation-composer.h>
 
 
-#define GIMP_TYPE_OPERATION_CAGE_TRANSFORM            (gimp_operation_cage_transform_get_type ())
-#define GIMP_OPERATION_CAGE_TRANSFORM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_CAGE_TRANSFORM, GimpOperationCageTransform))
-#define GIMP_OPERATION_CAGE_TRANSFORM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_CAGE_TRANSFORM, GimpOperationCageTransformClass))
-#define GIMP_IS_OPERATION_CAGE_TRANSFORM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_CAGE_TRANSFORM))
-#define GIMP_IS_OPERATION_CAGE_TRANSFORM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_CAGE_TRANSFORM))
-#define GIMP_OPERATION_CAGE_TRANSFORM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_CAGE_TRANSFORM, GimpOperationCageTransformClass))
+#define PICMAN_TYPE_OPERATION_CAGE_TRANSFORM            (picman_operation_cage_transform_get_type ())
+#define PICMAN_OPERATION_CAGE_TRANSFORM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_CAGE_TRANSFORM, PicmanOperationCageTransform))
+#define PICMAN_OPERATION_CAGE_TRANSFORM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_CAGE_TRANSFORM, PicmanOperationCageTransformClass))
+#define PICMAN_IS_OPERATION_CAGE_TRANSFORM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_CAGE_TRANSFORM))
+#define PICMAN_IS_OPERATION_CAGE_TRANSFORM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_CAGE_TRANSFORM))
+#define PICMAN_OPERATION_CAGE_TRANSFORM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_CAGE_TRANSFORM, PicmanOperationCageTransformClass))
 
 
-typedef struct _GimpOperationCageTransform      GimpOperationCageTransform;
-typedef struct _GimpOperationCageTransformClass GimpOperationCageTransformClass;
+typedef struct _PicmanOperationCageTransform      PicmanOperationCageTransform;
+typedef struct _PicmanOperationCageTransformClass PicmanOperationCageTransformClass;
 
-struct _GimpOperationCageTransform
+struct _PicmanOperationCageTransform
 {
   GeglOperationComposer  parent_instance;
 
-  GimpCageConfig        *config;
+  PicmanCageConfig        *config;
   gboolean               fill_plain_color;
 
   const Babl            *format_coords;
@@ -48,13 +48,13 @@ struct _GimpOperationCageTransform
   gdouble                progress; /* bad hack */
 };
 
-struct _GimpOperationCageTransformClass
+struct _PicmanOperationCageTransformClass
 {
   GeglOperationComposerClass  parent_class;
 };
 
 
-GType   gimp_operation_cage_transform_get_type (void) G_GNUC_CONST;
+GType   picman_operation_cage_transform_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_CAGE_TRANSFORM_H__ */
+#endif /* __PICMAN_OPERATION_CAGE_TRANSFORM_H__ */

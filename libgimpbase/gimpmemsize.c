@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -22,16 +22,16 @@
 
 #include <glib-object.h>
 
-#include "gimpbasetypes.h"
+#include "picmanbasetypes.h"
 
-#include "gimpmemsize.h"
+#include "picmanmemsize.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpmemsize
- * @title: gimpmemsize
+ * SECTION: picmanmemsize
+ * @title: picmanmemsize
  * @short_description: Functions to (de)serialize a given memory size.
  *
  * Functions to (de)serialize a given memory size.
@@ -45,7 +45,7 @@ static void   string_to_memsize (const GValue *src_value,
 
 
 GType
-gimp_memsize_get_type (void)
+picman_memsize_get_type (void)
 {
   static GType memsize_type = 0;
 
@@ -53,7 +53,7 @@ gimp_memsize_get_type (void)
     {
       const GTypeInfo type_info = { 0, };
 
-      memsize_type = g_type_register_static (G_TYPE_UINT64, "GimpMemsize",
+      memsize_type = g_type_register_static (G_TYPE_UINT64, "PicmanMemsize",
                                              &type_info, 0);
 
       g_value_register_transform_func (memsize_type, G_TYPE_STRING,
@@ -66,20 +66,20 @@ gimp_memsize_get_type (void)
 }
 
 /**
- * gimp_memsize_serialize:
+ * picman_memsize_serialize:
  * @memsize: memory size in bytes
  *
  * Creates a string representation of a given memory size. This string
- * can be parsed by gimp_memsize_deserialize() and can thus be used in
+ * can be parsed by picman_memsize_deserialize() and can thus be used in
  * config files. It should not be displayed to the user. If you need a
  * nice human-readable string please use g_format_size().
  *
  * Return value: A newly allocated string representation of @memsize.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_memsize_serialize (guint64 memsize)
+picman_memsize_serialize (guint64 memsize)
 {
   if (memsize > (1 << 30) && memsize % (1 << 30) == 0)
     return g_strdup_printf ("%" G_GUINT64_FORMAT "G", memsize >> 30);
@@ -92,20 +92,20 @@ gimp_memsize_serialize (guint64 memsize)
 }
 
 /**
- * gimp_memsize_deserialize:
- * @string:  a string as returned by gimp_memsize_serialize()
+ * picman_memsize_deserialize:
+ * @string:  a string as returned by picman_memsize_serialize()
  * @memsize: return location for memory size in bytes
  *
  * Parses a string representation of a memory size as returned by
- * gimp_memsize_serialize().
+ * picman_memsize_serialize().
  *
  * Return value: %TRUE if the @string was successfully parsed and
  *               @memsize has been set, %FALSE otherwise.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_memsize_deserialize (const gchar *string,
+picman_memsize_deserialize (const gchar *string,
                           guint64     *memsize)
 {
   gchar   *end;
@@ -160,7 +160,7 @@ gimp_memsize_deserialize (const gchar *string,
 
 
 /**
- * gimp_memsize_to_string:
+ * picman_memsize_to_string:
  * @memsize: A memory size in bytes.
  *
  * This function is deprecated! Use g_format_size() instead.
@@ -168,7 +168,7 @@ gimp_memsize_deserialize (const gchar *string,
  * Return value: A newly allocated human-readable, translated string.
  **/
 gchar *
-gimp_memsize_to_string (guint64 memsize)
+picman_memsize_to_string (guint64 memsize)
 {
   return g_format_size (memsize);
 }
@@ -179,7 +179,7 @@ memsize_to_string (const GValue *src_value,
                    GValue       *dest_value)
 {
   g_value_take_string (dest_value,
-                       gimp_memsize_serialize (g_value_get_uint64 (src_value)));
+                       picman_memsize_serialize (g_value_get_uint64 (src_value)));
 }
 
 static void
@@ -191,34 +191,34 @@ string_to_memsize (const GValue *src_value,
 
   str = g_value_get_string (src_value);
 
-  if (str && gimp_memsize_deserialize (str, &memsize))
+  if (str && picman_memsize_deserialize (str, &memsize))
     {
       g_value_set_uint64 (dest_value, memsize);
     }
   else
     {
-      g_warning ("Can't convert string to GimpMemsize.");
+      g_warning ("Can't convert string to PicmanMemsize.");
     }
 }
 
 
 /*
- * GIMP_TYPE_PARAM_MEMSIZE
+ * PICMAN_TYPE_PARAM_MEMSIZE
  */
 
-static void  gimp_param_memsize_class_init (GParamSpecClass *class);
+static void  picman_param_memsize_class_init (GParamSpecClass *class);
 
 /**
- * gimp_param_memsize_get_type:
+ * picman_param_memsize_get_type:
  *
  * Reveals the object type
  *
  * Returns: the #GType for a memsize object
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GType
-gimp_param_memsize_get_type (void)
+picman_param_memsize_get_type (void)
 {
   static GType spec_type = 0;
 
@@ -228,14 +228,14 @@ gimp_param_memsize_get_type (void)
       {
         sizeof (GParamSpecClass),
         NULL, NULL,
-        (GClassInitFunc) gimp_param_memsize_class_init,
+        (GClassInitFunc) picman_param_memsize_class_init,
         NULL, NULL,
         sizeof (GParamSpecUInt64),
         0, NULL, NULL
       };
 
       spec_type = g_type_register_static (G_TYPE_PARAM_UINT64,
-                                          "GimpParamMemsize",
+                                          "PicmanParamMemsize",
                                           &type_info, 0);
     }
 
@@ -243,13 +243,13 @@ gimp_param_memsize_get_type (void)
 }
 
 static void
-gimp_param_memsize_class_init (GParamSpecClass *class)
+picman_param_memsize_class_init (GParamSpecClass *class)
 {
-  class->value_type = GIMP_TYPE_MEMSIZE;
+  class->value_type = PICMAN_TYPE_MEMSIZE;
 }
 
 /**
- * gimp_param_spec_memsize:
+ * picman_param_spec_memsize:
  * @name:          Canonical name of the param
  * @nick:          Nickname of the param
  * @blurb:         Brief desciption of param.
@@ -263,10 +263,10 @@ gimp_param_memsize_class_init (GParamSpecClass *class)
  *
  * Returns: a newly allocated #GParamSpec instance
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GParamSpec *
-gimp_param_spec_memsize (const gchar *name,
+picman_param_spec_memsize (const gchar *name,
                          const gchar *nick,
                          const gchar *blurb,
                          guint64      minimum,
@@ -276,7 +276,7 @@ gimp_param_spec_memsize (const gchar *name,
 {
   GParamSpecUInt64 *pspec;
 
-  pspec = g_param_spec_internal (GIMP_TYPE_PARAM_MEMSIZE,
+  pspec = g_param_spec_internal (PICMAN_TYPE_PARAM_MEMSIZE,
                                  name, nick, blurb, flags);
 
   pspec->minimum       = minimum;

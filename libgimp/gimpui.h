@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,56 +16,56 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_UI_H__
-#define __GIMP_UI_H__
+#ifndef __PICMAN_UI_H__
+#define __PICMAN_UI_H__
 
 #include <gtk/gtk.h>
 
-#include <libgimpwidgets/gimpwidgets.h>
+#include <libpicmanwidgets/picmanwidgets.h>
 
-#define __GIMP_UI_H_INSIDE__
+#define __PICMAN_UI_H_INSIDE__
 
-#include <libgimp/gimpuitypes.h>
+#include <libpicman/picmanuitypes.h>
 
-#include <libgimp/gimpexport.h>
-#include <libgimp/gimpmenu.h>
-#include <libgimp/gimpaspectpreview.h>
-#include <libgimp/gimpdrawablepreview.h>
-#include <libgimp/gimpbrushmenu.h>
-#include <libgimp/gimpfontmenu.h>
-#include <libgimp/gimpgradientmenu.h>
-#include <libgimp/gimppalettemenu.h>
-#include <libgimp/gimppatternmenu.h>
-#include <libgimp/gimpprocbrowserdialog.h>
-#include <libgimp/gimpprocview.h>
-#include <libgimp/gimpprogressbar.h>
-#include <libgimp/gimpitemcombobox.h>
-#include <libgimp/gimpimagecombobox.h>
-#include <libgimp/gimpselectbutton.h>
-#include <libgimp/gimpbrushselectbutton.h>
-#include <libgimp/gimpfontselectbutton.h>
-#include <libgimp/gimpgradientselectbutton.h>
-#include <libgimp/gimppaletteselectbutton.h>
-#include <libgimp/gimppatternselectbutton.h>
-#include <libgimp/gimpzoompreview.h>
+#include <libpicman/picmanexport.h>
+#include <libpicman/picmanmenu.h>
+#include <libpicman/picmanaspectpreview.h>
+#include <libpicman/picmandrawablepreview.h>
+#include <libpicman/picmanbrushmenu.h>
+#include <libpicman/picmanfontmenu.h>
+#include <libpicman/picmangradientmenu.h>
+#include <libpicman/picmanpalettemenu.h>
+#include <libpicman/picmanpatternmenu.h>
+#include <libpicman/picmanprocbrowserdialog.h>
+#include <libpicman/picmanprocview.h>
+#include <libpicman/picmanprogressbar.h>
+#include <libpicman/picmanitemcombobox.h>
+#include <libpicman/picmanimagecombobox.h>
+#include <libpicman/picmanselectbutton.h>
+#include <libpicman/picmanbrushselectbutton.h>
+#include <libpicman/picmanfontselectbutton.h>
+#include <libpicman/picmangradientselectbutton.h>
+#include <libpicman/picmanpaletteselectbutton.h>
+#include <libpicman/picmanpatternselectbutton.h>
+#include <libpicman/picmanzoompreview.h>
 
-#undef __GIMP_UI_H_INSIDE__
+#undef __PICMAN_UI_H_INSIDE__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-void        gimp_ui_init                          (const gchar *prog_name,
+void        picman_ui_init                          (const gchar *prog_name,
                                                    gboolean     preview);
 
-GdkWindow * gimp_ui_get_display_window            (guint32      gdisp_ID);
-GdkWindow * gimp_ui_get_progress_window           (void);
+GdkWindow * picman_ui_get_display_window            (guint32      gdisp_ID);
+GdkWindow * picman_ui_get_progress_window           (void);
 
-void        gimp_window_set_transient_for_display (GtkWindow   *window,
+void        picman_window_set_transient_for_display (GtkWindow   *window,
                                                    guint32      gdisp_ID);
-void        gimp_window_set_transient             (GtkWindow   *window);
+void        picman_window_set_transient             (GtkWindow   *window);
 
 G_END_DECLS
 
-#endif /* __GIMP_UI_H__ */
+#endif /* __PICMAN_UI_H__ */

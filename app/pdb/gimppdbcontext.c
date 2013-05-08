@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimppdbcontext.c
+ * picmanpdbcontext.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,22 +21,22 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "pdb-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimplist.h"
-#include "core/gimppaintinfo.h"
+#include "core/picman.h"
+#include "core/picmanlist.h"
+#include "core/picmanpaintinfo.h"
 
-#include "paint/gimpbrushcore.h"
-#include "paint/gimppaintoptions.h"
+#include "paint/picmanbrushcore.h"
+#include "paint/picmanpaintoptions.h"
 
-#include "gimppdbcontext.h"
+#include "picmanpdbcontext.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -57,118 +57,118 @@ enum
 };
 
 
-static void   gimp_pdb_context_constructed  (GObject      *object);
-static void   gimp_pdb_context_finalize     (GObject      *object);
-static void   gimp_pdb_context_set_property (GObject      *object,
+static void   picman_pdb_context_constructed  (GObject      *object);
+static void   picman_pdb_context_finalize     (GObject      *object);
+static void   picman_pdb_context_set_property (GObject      *object,
                                              guint         property_id,
                                              const GValue *value,
                                              GParamSpec   *pspec);
-static void   gimp_pdb_context_get_property (GObject      *object,
+static void   picman_pdb_context_get_property (GObject      *object,
                                              guint         property_id,
                                              GValue       *value,
                                              GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpPDBContext, gimp_pdb_context, GIMP_TYPE_CONTEXT)
+G_DEFINE_TYPE (PicmanPDBContext, picman_pdb_context, PICMAN_TYPE_CONTEXT)
 
-#define parent_class gimp_pdb_context_parent_class
+#define parent_class picman_pdb_context_parent_class
 
 
 static void
-gimp_pdb_context_class_init (GimpPDBContextClass *klass)
+picman_pdb_context_class_init (PicmanPDBContextClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_pdb_context_constructed;
-  object_class->finalize     = gimp_pdb_context_finalize;
-  object_class->set_property = gimp_pdb_context_set_property;
-  object_class->get_property = gimp_pdb_context_get_property;
+  object_class->constructed  = picman_pdb_context_constructed;
+  object_class->finalize     = picman_pdb_context_finalize;
+  object_class->set_property = picman_pdb_context_set_property;
+  object_class->get_property = picman_pdb_context_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ANTIALIAS,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ANTIALIAS,
                                     "antialias",
                                     N_("Smooth edges"),
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FEATHER,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FEATHER,
                                     "feather", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_FEATHER_RADIUS_X,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_FEATHER_RADIUS_X,
                                    "feather-radius-x", NULL,
                                    0.0, 1000.0, 10.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_FEATHER_RADIUS_Y,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_FEATHER_RADIUS_Y,
                                    "feather-radius-y", NULL,
                                    0.0, 1000.0, 10.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_MERGED,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_MERGED,
                                     "sample-merged", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_SAMPLE_CRITERION,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_SAMPLE_CRITERION,
                                  "sample-criterion", NULL,
-                                 GIMP_TYPE_SELECT_CRITERION,
-                                 GIMP_SELECT_CRITERION_COMPOSITE,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_SELECT_CRITERION,
+                                 PICMAN_SELECT_CRITERION_COMPOSITE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SAMPLE_THRESHOLD,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SAMPLE_THRESHOLD,
                                    "sample-threshold", NULL,
                                    0.0, 1.0, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_TRANSPARENT,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_TRANSPARENT,
                                     "sample-transparent", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_INTERPOLATION,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_INTERPOLATION,
                                  "interpolation", NULL,
-                                 GIMP_TYPE_INTERPOLATION_TYPE,
-                                 GIMP_INTERPOLATION_CUBIC,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_INTERPOLATION_TYPE,
+                                 PICMAN_INTERPOLATION_CUBIC,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TRANSFORM_DIRECTION,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TRANSFORM_DIRECTION,
                                  "transform-direction", NULL,
-                                 GIMP_TYPE_TRANSFORM_DIRECTION,
-                                 GIMP_TRANSFORM_FORWARD,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_TRANSFORM_DIRECTION,
+                                 PICMAN_TRANSFORM_FORWARD,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TRANSFORM_RESIZE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TRANSFORM_RESIZE,
                                  "transform-resize", NULL,
-                                 GIMP_TYPE_TRANSFORM_RESIZE,
-                                 GIMP_TRANSFORM_RESIZE_ADJUST,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_TRANSFORM_RESIZE,
+                                 PICMAN_TRANSFORM_RESIZE_ADJUST,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_TRANSFORM_RECURSION,
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_TRANSFORM_RECURSION,
                                 "transform-recursion", NULL,
                                 1, G_MAXINT32, 3,
-                                GIMP_PARAM_STATIC_STRINGS);
+                                PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_pdb_context_init (GimpPDBContext *context)
+picman_pdb_context_init (PicmanPDBContext *context)
 {
-  context->paint_options_list = gimp_list_new (GIMP_TYPE_PAINT_OPTIONS,
+  context->paint_options_list = picman_list_new (PICMAN_TYPE_PAINT_OPTIONS,
                                                FALSE);
 }
 
 static void
-gimp_pdb_context_constructed (GObject *object)
+picman_pdb_context_constructed (GObject *object)
 {
-  GimpInterpolationType  interpolation;
+  PicmanInterpolationType  interpolation;
   gint                   threshold;
   GParamSpec            *pspec;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  /* get default interpolation from gimprc */
+  /* get default interpolation from picmanrc */
 
-  interpolation = GIMP_CONTEXT (object)->gimp->config->interpolation_type;
+  interpolation = PICMAN_CONTEXT (object)->picman->config->interpolation_type;
 
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (object),
                                         "interpolation");
@@ -178,9 +178,9 @@ gimp_pdb_context_constructed (GObject *object)
 
   g_object_set (object, "interpolation", interpolation, NULL);
 
-  /* get default threshold from gimprc */
+  /* get default threshold from picmanrc */
 
-  threshold = GIMP_CONTEXT (object)->gimp->config->default_threshold;
+  threshold = PICMAN_CONTEXT (object)->picman->config->default_threshold;
 
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (object),
                                         "sample-threshold");
@@ -192,9 +192,9 @@ gimp_pdb_context_constructed (GObject *object)
 }
 
 static void
-gimp_pdb_context_finalize (GObject *object)
+picman_pdb_context_finalize (GObject *object)
 {
-  GimpPDBContext *context = GIMP_PDB_CONTEXT (object);
+  PicmanPDBContext *context = PICMAN_PDB_CONTEXT (object);
 
   if (context->paint_options_list)
     {
@@ -206,12 +206,12 @@ gimp_pdb_context_finalize (GObject *object)
 }
 
 static void
-gimp_pdb_context_set_property (GObject      *object,
+picman_pdb_context_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpPDBContext *options = GIMP_PDB_CONTEXT (object);
+  PicmanPDBContext *options = PICMAN_PDB_CONTEXT (object);
 
   switch (property_id)
     {
@@ -270,12 +270,12 @@ gimp_pdb_context_set_property (GObject      *object,
 }
 
 static void
-gimp_pdb_context_get_property (GObject    *object,
+picman_pdb_context_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpPDBContext *options = GIMP_PDB_CONTEXT (object);
+  PicmanPDBContext *options = PICMAN_PDB_CONTEXT (object);
 
   switch (property_id)
     {
@@ -333,83 +333,83 @@ gimp_pdb_context_get_property (GObject    *object,
     }
 }
 
-GimpContext *
-gimp_pdb_context_new (Gimp        *gimp,
-                      GimpContext *parent,
+PicmanContext *
+picman_pdb_context_new (Picman        *picman,
+                      PicmanContext *parent,
                       gboolean     set_parent)
 {
-  GimpPDBContext *context;
+  PicmanPDBContext *context;
   GList          *list;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (parent), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (parent), NULL);
 
-  context = g_object_new (GIMP_TYPE_PDB_CONTEXT,
-                          "gimp", gimp,
+  context = g_object_new (PICMAN_TYPE_PDB_CONTEXT,
+                          "picman", picman,
                           "name", "PDB Context",
                           NULL);
 
-  gimp_config_sync (G_OBJECT (parent), G_OBJECT (context), 0);
+  picman_config_sync (G_OBJECT (parent), G_OBJECT (context), 0);
 
   if (set_parent)
     {
-      gimp_context_define_properties (GIMP_CONTEXT (context),
-                                      GIMP_CONTEXT_ALL_PROPS_MASK, FALSE);
-      gimp_context_set_parent (GIMP_CONTEXT (context), parent);
+      picman_context_define_properties (PICMAN_CONTEXT (context),
+                                      PICMAN_CONTEXT_ALL_PROPS_MASK, FALSE);
+      picman_context_set_parent (PICMAN_CONTEXT (context), parent);
 
-      for (list = gimp_get_paint_info_iter (gimp);
+      for (list = picman_get_paint_info_iter (picman);
            list;
            list = g_list_next (list))
         {
-          GimpPaintInfo *info = list->data;
+          PicmanPaintInfo *info = list->data;
 
-          gimp_container_add (context->paint_options_list,
-                              GIMP_OBJECT (info->paint_options));
+          picman_container_add (context->paint_options_list,
+                              PICMAN_OBJECT (info->paint_options));
         }
     }
   else
     {
-      for (list = GIMP_LIST (GIMP_PDB_CONTEXT (parent)->paint_options_list)->list;
+      for (list = PICMAN_LIST (PICMAN_PDB_CONTEXT (parent)->paint_options_list)->list;
            list;
            list = g_list_next (list))
         {
-          GimpPaintOptions *options = gimp_config_duplicate (list->data);
+          PicmanPaintOptions *options = picman_config_duplicate (list->data);
 
-          gimp_container_add (context->paint_options_list,
-                              GIMP_OBJECT (options));
+          picman_container_add (context->paint_options_list,
+                              PICMAN_OBJECT (options));
           g_object_unref (options);
         }
     }
 
-  return GIMP_CONTEXT (context);
+  return PICMAN_CONTEXT (context);
 }
 
-GimpPaintOptions *
-gimp_pdb_context_get_paint_options (GimpPDBContext *context,
+PicmanPaintOptions *
+picman_pdb_context_get_paint_options (PicmanPDBContext *context,
                                     const gchar    *name)
 {
-  g_return_val_if_fail (GIMP_IS_PDB_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_PDB_CONTEXT (context), NULL);
   g_return_val_if_fail (name != NULL, NULL);
 
-  return (GimpPaintOptions *)
-    gimp_container_get_child_by_name (context->paint_options_list, name);
+  return (PicmanPaintOptions *)
+    picman_container_get_child_by_name (context->paint_options_list, name);
 }
 
 GList *
-gimp_pdb_context_get_brush_options (GimpPDBContext *context)
+picman_pdb_context_get_brush_options (PicmanPDBContext *context)
 {
   GList *brush_options = NULL;
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_PDB_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_PDB_CONTEXT (context), NULL);
 
-  for (list = GIMP_LIST (context->paint_options_list)->list;
+  for (list = PICMAN_LIST (context->paint_options_list)->list;
        list;
        list = g_list_next (list))
     {
-      GimpPaintOptions *options = list->data;
+      PicmanPaintOptions *options = list->data;
 
-      if (g_type_is_a (options->paint_info->paint_type, GIMP_TYPE_BRUSH_CORE))
+      if (g_type_is_a (options->paint_info->paint_type, PICMAN_TYPE_BRUSH_CORE))
         brush_options = g_list_prepend (brush_options, options);
     }
 

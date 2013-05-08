@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationmaskcomponents.c
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picmanoperationmaskcomponents.c
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 
 #include "operations-types.h"
 
-#include "gimpoperationmaskcomponents.h"
+#include "picmanoperationmaskcomponents.h"
 
 
 enum
@@ -34,22 +34,22 @@ enum
 };
 
 
-static void       gimp_operation_mask_components_get_property (GObject             *object,
+static void       picman_operation_mask_components_get_property (GObject             *object,
                                                                guint                property_id,
                                                                GValue              *value,
                                                                GParamSpec          *pspec);
-static void       gimp_operation_mask_components_set_property (GObject             *object,
+static void       picman_operation_mask_components_set_property (GObject             *object,
                                                                guint                property_id,
                                                                const GValue        *value,
                                                                GParamSpec          *pspec);
 
-static void       gimp_operation_mask_components_prepare      (GeglOperation       *operation);
-static gboolean gimp_operation_mask_components_parent_process (GeglOperation        *operation,
+static void       picman_operation_mask_components_prepare      (GeglOperation       *operation);
+static gboolean picman_operation_mask_components_parent_process (GeglOperation        *operation,
                                                                GeglOperationContext *context,
                                                                const gchar          *output_prop,
                                                                const GeglRectangle  *result,
                                                                gint                  level);
-static gboolean   gimp_operation_mask_components_process      (GeglOperation       *operation,
+static gboolean   picman_operation_mask_components_process      (GeglOperation       *operation,
                                                                void                *in_buf,
                                                                void                *aux_buf,
                                                                void                *out_buf,
@@ -58,55 +58,55 @@ static gboolean   gimp_operation_mask_components_process      (GeglOperation    
                                                                gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationMaskComponents, gimp_operation_mask_components,
+G_DEFINE_TYPE (PicmanOperationMaskComponents, picman_operation_mask_components,
                GEGL_TYPE_OPERATION_POINT_COMPOSER)
 
-#define parent_class gimp_operation_mask_components_parent_class
+#define parent_class picman_operation_mask_components_parent_class
 
 
 static void
-gimp_operation_mask_components_class_init (GimpOperationMaskComponentsClass *klass)
+picman_operation_mask_components_class_init (PicmanOperationMaskComponentsClass *klass)
 {
   GObjectClass                    *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass              *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationPointComposerClass *point_class     = GEGL_OPERATION_POINT_COMPOSER_CLASS (klass);
 
-  object_class->set_property = gimp_operation_mask_components_set_property;
-  object_class->get_property = gimp_operation_mask_components_get_property;
+  object_class->set_property = picman_operation_mask_components_set_property;
+  object_class->get_property = picman_operation_mask_components_get_property;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:mask-components",
-                                 "categories",  "gimp",
+                                 "name",        "picman:mask-components",
+                                 "categories",  "picman",
                                  "description", "Selectively pick components from src or aux",
                                  NULL);
 
-  operation_class->prepare = gimp_operation_mask_components_prepare;
-  operation_class->process = gimp_operation_mask_components_parent_process;
+  operation_class->prepare = picman_operation_mask_components_prepare;
+  operation_class->process = picman_operation_mask_components_parent_process;
 
-  point_class->process     = gimp_operation_mask_components_process;
+  point_class->process     = picman_operation_mask_components_process;
 
   g_object_class_install_property (object_class, PROP_MASK,
                                    g_param_spec_flags ("mask",
                                                        "Mask",
                                                        "The component mask",
-                                                       GIMP_TYPE_COMPONENT_MASK,
-                                                       GIMP_COMPONENT_ALL,
+                                                       PICMAN_TYPE_COMPONENT_MASK,
+                                                       PICMAN_COMPONENT_ALL,
                                                        G_PARAM_READWRITE |
                                                        G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_operation_mask_components_init (GimpOperationMaskComponents *self)
+picman_operation_mask_components_init (PicmanOperationMaskComponents *self)
 {
 }
 
 static void
-gimp_operation_mask_components_get_property (GObject    *object,
+picman_operation_mask_components_get_property (GObject    *object,
                                              guint       property_id,
                                              GValue     *value,
                                              GParamSpec *pspec)
 {
-  GimpOperationMaskComponents *self = GIMP_OPERATION_MASK_COMPONENTS (object);
+  PicmanOperationMaskComponents *self = PICMAN_OPERATION_MASK_COMPONENTS (object);
 
   switch (property_id)
     {
@@ -121,12 +121,12 @@ gimp_operation_mask_components_get_property (GObject    *object,
 }
 
 static void
-gimp_operation_mask_components_set_property (GObject      *object,
+picman_operation_mask_components_set_property (GObject      *object,
                                              guint         property_id,
                                              const GValue *value,
                                              GParamSpec   *pspec)
 {
-  GimpOperationMaskComponents *self = GIMP_OPERATION_MASK_COMPONENTS (object);
+  PicmanOperationMaskComponents *self = PICMAN_OPERATION_MASK_COMPONENTS (object);
 
   switch (property_id)
     {
@@ -141,7 +141,7 @@ gimp_operation_mask_components_set_property (GObject      *object,
 }
 
 static void
-gimp_operation_mask_components_prepare (GeglOperation *operation)
+picman_operation_mask_components_prepare (GeglOperation *operation)
 {
   const Babl *format = gegl_operation_get_source_format (operation, "input");
 
@@ -165,13 +165,13 @@ gimp_operation_mask_components_prepare (GeglOperation *operation)
 }
 
 static gboolean
-gimp_operation_mask_components_parent_process (GeglOperation        *operation,
+picman_operation_mask_components_parent_process (GeglOperation        *operation,
                                                GeglOperationContext *context,
                                                const gchar          *output_prop,
                                                const GeglRectangle  *result,
                                                gint                  level)
 {
-  GimpOperationMaskComponents *self = GIMP_OPERATION_MASK_COMPONENTS (operation);
+  PicmanOperationMaskComponents *self = PICMAN_OPERATION_MASK_COMPONENTS (operation);
 
   if (self->mask == 0)
     {
@@ -181,7 +181,7 @@ gimp_operation_mask_components_parent_process (GeglOperation        *operation,
 
       return TRUE;
     }
-  else if (self->mask == GIMP_COMPONENT_ALL)
+  else if (self->mask == PICMAN_COMPONENT_ALL)
     {
       GObject *aux = gegl_operation_context_get_object (context, "aux");
 
@@ -196,7 +196,7 @@ gimp_operation_mask_components_parent_process (GeglOperation        *operation,
 }
 
 static gboolean
-gimp_operation_mask_components_process (GeglOperation       *operation,
+picman_operation_mask_components_process (GeglOperation       *operation,
                                         void                *in_buf,
                                         void                *aux_buf,
                                         void                *out_buf,
@@ -204,11 +204,11 @@ gimp_operation_mask_components_process (GeglOperation       *operation,
                                         const GeglRectangle *roi,
                                         gint                 level)
 {
-  GimpOperationMaskComponents *self = GIMP_OPERATION_MASK_COMPONENTS (operation);
+  PicmanOperationMaskComponents *self = PICMAN_OPERATION_MASK_COMPONENTS (operation);
   gfloat                      *src  = in_buf;
   gfloat                      *aux  = aux_buf;
   gfloat                      *dest = out_buf;
-  GimpComponentMask            mask = self->mask;
+  PicmanComponentMask            mask = self->mask;
   static const gfloat          nothing[] = { 0.0, 0.0, 0.0, 1.0 };
 
   if (! aux)
@@ -216,10 +216,10 @@ gimp_operation_mask_components_process (GeglOperation       *operation,
 
   while (samples--)
     {
-      dest[RED]   = (mask & GIMP_COMPONENT_RED)   ? aux[RED]   : src[RED];
-      dest[GREEN] = (mask & GIMP_COMPONENT_GREEN) ? aux[GREEN] : src[GREEN];
-      dest[BLUE]  = (mask & GIMP_COMPONENT_BLUE)  ? aux[BLUE]  : src[BLUE];
-      dest[ALPHA] = (mask & GIMP_COMPONENT_ALPHA) ? aux[ALPHA] : src[ALPHA];
+      dest[RED]   = (mask & PICMAN_COMPONENT_RED)   ? aux[RED]   : src[RED];
+      dest[GREEN] = (mask & PICMAN_COMPONENT_GREEN) ? aux[GREEN] : src[GREEN];
+      dest[BLUE]  = (mask & PICMAN_COMPONENT_BLUE)  ? aux[BLUE]  : src[BLUE];
+      dest[ALPHA] = (mask & PICMAN_COMPONENT_ALPHA) ? aux[ALPHA] : src[ALPHA];
 
       src += 4;
 

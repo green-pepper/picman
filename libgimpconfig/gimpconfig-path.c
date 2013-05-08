@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpconfig-path.c
- * Copyright (C) 2001  Sven Neumann <sven@gimp.org>
+ * picmanconfig-path.c
+ * Copyright (C) 2001  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,34 +26,34 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpconfig-error.h"
-#include "gimpconfig-path.h"
+#include "picmanconfig-error.h"
+#include "picmanconfig-path.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpconfig-path
- * @title: GimpConfig-path
- * @short_description: File path utilities for libgimpconfig.
+ * SECTION: picmanconfig-path
+ * @title: PicmanConfig-path
+ * @short_description: File path utilities for libpicmanconfig.
  *
- * File path utilities for libgimpconfig.
+ * File path utilities for libpicmanconfig.
  **/
 
 
 /**
- * gimp_config_path_get_type:
+ * picman_config_path_get_type:
  *
  * Reveals the object type
  *
- * Returns: the #GType for a GimpConfigPath string property
+ * Returns: the #GType for a PicmanConfigPath string property
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GType
-gimp_config_path_get_type (void)
+picman_config_path_get_type (void)
 {
   static GType path_type = 0;
 
@@ -61,7 +61,7 @@ gimp_config_path_get_type (void)
     {
       const GTypeInfo type_info = { 0, };
 
-      path_type = g_type_register_static (G_TYPE_STRING, "GimpConfigPath",
+      path_type = g_type_register_static (G_TYPE_STRING, "PicmanConfigPath",
                                           &type_info, 0);
     }
 
@@ -70,33 +70,33 @@ gimp_config_path_get_type (void)
 
 
 /*
- * GIMP_TYPE_PARAM_CONFIG_PATH
+ * PICMAN_TYPE_PARAM_CONFIG_PATH
  */
 
-#define GIMP_PARAM_SPEC_CONFIG_PATH(pspec) (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GIMP_TYPE_PARAM_CONFIG_PATH, GimpParamSpecConfigPath))
+#define PICMAN_PARAM_SPEC_CONFIG_PATH(pspec) (G_TYPE_CHECK_INSTANCE_CAST ((pspec), PICMAN_TYPE_PARAM_CONFIG_PATH, PicmanParamSpecConfigPath))
 
-typedef struct _GimpParamSpecConfigPath GimpParamSpecConfigPath;
+typedef struct _PicmanParamSpecConfigPath PicmanParamSpecConfigPath;
 
-struct _GimpParamSpecConfigPath
+struct _PicmanParamSpecConfigPath
 {
   GParamSpecString    parent_instance;
 
-  GimpConfigPathType  type;
+  PicmanConfigPathType  type;
 };
 
-static void  gimp_param_config_path_class_init (GParamSpecClass *class);
+static void  picman_param_config_path_class_init (GParamSpecClass *class);
 
 /**
- * gimp_param_config_path_get_type:
+ * picman_param_config_path_get_type:
  *
  * Reveals the object type
  *
  * Returns: the #GType for a directory path object
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GType
-gimp_param_config_path_get_type (void)
+picman_param_config_path_get_type (void)
 {
   static GType spec_type = 0;
 
@@ -106,14 +106,14 @@ gimp_param_config_path_get_type (void)
       {
         sizeof (GParamSpecClass),
         NULL, NULL,
-        (GClassInitFunc) gimp_param_config_path_class_init,
+        (GClassInitFunc) picman_param_config_path_class_init,
         NULL, NULL,
-        sizeof (GimpParamSpecConfigPath),
+        sizeof (PicmanParamSpecConfigPath),
         0, NULL, NULL
       };
 
       spec_type = g_type_register_static (G_TYPE_PARAM_STRING,
-                                          "GimpParamConfigPath",
+                                          "PicmanParamConfigPath",
                                           &type_info, 0);
     }
 
@@ -121,17 +121,17 @@ gimp_param_config_path_get_type (void)
 }
 
 static void
-gimp_param_config_path_class_init (GParamSpecClass *class)
+picman_param_config_path_class_init (GParamSpecClass *class)
 {
-  class->value_type = GIMP_TYPE_CONFIG_PATH;
+  class->value_type = PICMAN_TYPE_CONFIG_PATH;
 }
 
 /**
- * gimp_param_spec_config_path:
+ * picman_param_spec_config_path:
  * @name:          Canonical name of the param
  * @nick:          Nickname of the param
  * @blurb:         Brief desciption of param.
- * @type:          a #GimpConfigPathType value.
+ * @type:          a #PicmanConfigPathType value.
  * @default_value: Value to use if none is assigned.
  * @flags:         a combination of #GParamFlags
  *
@@ -141,152 +141,152 @@ gimp_param_config_path_class_init (GParamSpecClass *class)
  *
  * Returns: a newly allocated #GParamSpec instance
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GParamSpec *
-gimp_param_spec_config_path (const gchar        *name,
+picman_param_spec_config_path (const gchar        *name,
                              const gchar        *nick,
                              const gchar        *blurb,
-                             GimpConfigPathType  type,
+                             PicmanConfigPathType  type,
                              const gchar        *default_value,
                              GParamFlags         flags)
 {
   GParamSpecString *pspec;
 
-  pspec = g_param_spec_internal (GIMP_TYPE_PARAM_CONFIG_PATH,
+  pspec = g_param_spec_internal (PICMAN_TYPE_PARAM_CONFIG_PATH,
                                  name, nick, blurb, flags);
 
   pspec->default_value = g_strdup (default_value);
 
-  GIMP_PARAM_SPEC_CONFIG_PATH (pspec)->type = type;
+  PICMAN_PARAM_SPEC_CONFIG_PATH (pspec)->type = type;
 
   return G_PARAM_SPEC (pspec);
 }
 
 /**
- * gimp_param_spec_config_path_type:
+ * picman_param_spec_config_path_type:
  * @pspec:         A #GParamSpec for a path param
  *
  * Tells whether the path param encodes a filename,
  * dir name, or list of file or dir names.
  *
- * Returns: a #GimpConfigPathType value
+ * Returns: a #PicmanConfigPathType value
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
-GimpConfigPathType
-gimp_param_spec_config_path_type (GParamSpec *pspec)
+PicmanConfigPathType
+picman_param_spec_config_path_type (GParamSpec *pspec)
 {
-  g_return_val_if_fail (GIMP_IS_PARAM_SPEC_CONFIG_PATH (pspec), 0);
+  g_return_val_if_fail (PICMAN_IS_PARAM_SPEC_CONFIG_PATH (pspec), 0);
 
-  return GIMP_PARAM_SPEC_CONFIG_PATH (pspec)->type;
+  return PICMAN_PARAM_SPEC_CONFIG_PATH (pspec)->type;
 }
 
 
 /*
- * GimpConfig path utilities
+ * PicmanConfig path utilities
  */
 
-static gchar        * gimp_config_path_expand_only   (const gchar  *path,
+static gchar        * picman_config_path_expand_only   (const gchar  *path,
                                                       GError      **error) G_GNUC_MALLOC;
-static inline gchar * gimp_config_path_extract_token (const gchar **str);
+static inline gchar * picman_config_path_extract_token (const gchar **str);
 
 
 /**
- * gimp_config_build_data_path:
+ * picman_config_build_data_path:
  * @name: directory name (in UTF-8 encoding)
  *
- * Creates a search path as it is used in the gimprc file.  The path
- * returned by gimp_config_build_data_path() includes a directory
- * below the user's gimp directory and one in the system-wide data
+ * Creates a search path as it is used in the picmanrc file.  The path
+ * returned by picman_config_build_data_path() includes a directory
+ * below the user's picman directory and one in the system-wide data
  * directory.
  *
- * Note that you cannot use this path directly with gimp_path_parse().
- * As it is in the gimprc notation, you first need to expand and
- * recode it using gimp_config_path_expand().
+ * Note that you cannot use this path directly with picman_path_parse().
+ * As it is in the picmanrc notation, you first need to expand and
+ * recode it using picman_config_path_expand().
  *
  * Returns: a newly allocated string
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gchar *
-gimp_config_build_data_path (const gchar *name)
+picman_config_build_data_path (const gchar *name)
 {
-  return g_strconcat ("${gimp_dir}", G_DIR_SEPARATOR_S, name,
+  return g_strconcat ("${picman_dir}", G_DIR_SEPARATOR_S, name,
                       G_SEARCHPATH_SEPARATOR_S,
-                      "${gimp_data_dir}", G_DIR_SEPARATOR_S, name,
+                      "${picman_data_dir}", G_DIR_SEPARATOR_S, name,
                       NULL);
 }
 
 /**
- * gimp_config_build_plug_in_path:
+ * picman_config_build_plug_in_path:
  * @name: directory name (in UTF-8 encoding)
  *
- * Creates a search path as it is used in the gimprc file.  The path
- * returned by gimp_config_build_plug_in_path() includes a directory
- * below the user's gimp directory and one in the system-wide plug-in
+ * Creates a search path as it is used in the picmanrc file.  The path
+ * returned by picman_config_build_plug_in_path() includes a directory
+ * below the user's picman directory and one in the system-wide plug-in
  * directory.
  *
- * Note that you cannot use this path directly with gimp_path_parse().
- * As it is in the gimprc notation, you first need to expand and
- * recode it using gimp_config_path_expand().
+ * Note that you cannot use this path directly with picman_path_parse().
+ * As it is in the picmanrc notation, you first need to expand and
+ * recode it using picman_config_path_expand().
  *
  * Returns: a newly allocated string
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gchar *
-gimp_config_build_plug_in_path (const gchar *name)
+picman_config_build_plug_in_path (const gchar *name)
 {
-  return g_strconcat ("${gimp_dir}", G_DIR_SEPARATOR_S, name,
+  return g_strconcat ("${picman_dir}", G_DIR_SEPARATOR_S, name,
                       G_SEARCHPATH_SEPARATOR_S,
-                      "${gimp_plug_in_dir}", G_DIR_SEPARATOR_S, name,
+                      "${picman_plug_in_dir}", G_DIR_SEPARATOR_S, name,
                       NULL);
 }
 
 /**
- * gimp_config_build_writable_path:
+ * picman_config_build_writable_path:
  * @name: directory name (in UTF-8 encoding)
  *
- * Creates a search path as it is used in the gimprc file.  The path
- * returned by gimp_config_build_writable_path() is just the writable
- * parts of the search path constructed by gimp_config_build_data_path().
+ * Creates a search path as it is used in the picmanrc file.  The path
+ * returned by picman_config_build_writable_path() is just the writable
+ * parts of the search path constructed by picman_config_build_data_path().
  *
- * Note that you cannot use this path directly with gimp_path_parse().
- * As it is in the gimprc notation, you first need to expand and
- * recode it using gimp_config_path_expand().
+ * Note that you cannot use this path directly with picman_path_parse().
+ * As it is in the picmanrc notation, you first need to expand and
+ * recode it using picman_config_path_expand().
  *
  * Returns: a newly allocated string
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gchar *
-gimp_config_build_writable_path (const gchar *name)
+picman_config_build_writable_path (const gchar *name)
 {
-  return g_strconcat ("${gimp_dir}", G_DIR_SEPARATOR_S, name, NULL);
+  return g_strconcat ("${picman_dir}", G_DIR_SEPARATOR_S, name, NULL);
 }
 
 
 /**
- * gimp_config_path_expand:
+ * picman_config_path_expand:
  * @path: a NUL-terminated string in UTF-8 encoding
  * @recode: whether to convert to the filesystem's encoding
  * @error: return location for errors
  *
- * Paths as stored in the gimprc have to be treated special.  The
+ * Paths as stored in the picmanrc have to be treated special.  The
  * string may contain special identifiers such as for example
- * ${gimp_dir} that have to be substituted before use. Also the user's
+ * ${picman_dir} that have to be substituted before use. Also the user's
  * filesystem may be in a different encoding than UTF-8 (which is what
- * is used for the gimprc). This function does the variable
+ * is used for the picmanrc). This function does the variable
  * substitution for you and can also attempt to convert to the
  * filesystem encoding.
  *
  * Return value: a newly allocated NUL-terminated string
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gchar *
-gimp_config_path_expand (const gchar  *path,
+picman_config_path_expand (const gchar  *path,
                          gboolean      recode,
                          GError      **error)
 {
@@ -296,7 +296,7 @@ gimp_config_path_expand (const gchar  *path,
   if (recode)
     {
       gchar *retval;
-      gchar *expanded = gimp_config_path_expand_only (path, error);
+      gchar *expanded = picman_config_path_expand_only (path, error);
 
       if (! expanded)
         return NULL;
@@ -308,14 +308,14 @@ gimp_config_path_expand (const gchar  *path,
       return retval;
     }
 
-  return gimp_config_path_expand_only (path, error);
+  return picman_config_path_expand_only (path, error);
 }
 
 
 #define SUBSTS_ALLOC 4
 
 static gchar *
-gimp_config_path_expand_only (const gchar  *path,
+picman_config_path_expand_only (const gchar  *path,
                               GError      **error)
 {
   const gchar *home;
@@ -332,7 +332,7 @@ gimp_config_path_expand_only (const gchar  *path,
 
   home = g_get_home_dir ();
   if (home)
-    home = gimp_filename_to_utf8 (home);
+    home = picman_filename_to_utf8 (home);
 
   p = path;
 
@@ -343,7 +343,7 @@ gimp_config_path_expand_only (const gchar  *path,
           length += strlen (home);
           p += 1;
         }
-      else if ((token = gimp_config_path_extract_token (&p)) != NULL)
+      else if ((token = picman_config_path_extract_token (&p)) != NULL)
         {
           for (i = 0; i < n_substs; i++)
             if (strcmp (substs[2*i], token) == 0)
@@ -357,23 +357,23 @@ gimp_config_path_expand_only (const gchar  *path,
             {
               s = NULL;
 
-              if (strcmp (token, "gimp_dir") == 0)
-                s = gimp_directory ();
-              else if (strcmp (token, "gimp_data_dir") == 0)
-                s = gimp_data_directory ();
-              else if (strcmp (token, "gimp_plug_in_dir") == 0 ||
-                       strcmp (token, "gimp_plugin_dir") == 0)
-                s = gimp_plug_in_directory ();
-              else if (strcmp (token, "gimp_sysconf_dir") == 0)
-                s = gimp_sysconf_directory ();
-              else if (strcmp (token, "gimp_installation_dir") == 0)
-                s = gimp_installation_directory ();
+              if (strcmp (token, "picman_dir") == 0)
+                s = picman_directory ();
+              else if (strcmp (token, "picman_data_dir") == 0)
+                s = picman_data_directory ();
+              else if (strcmp (token, "picman_plug_in_dir") == 0 ||
+                       strcmp (token, "picman_plugin_dir") == 0)
+                s = picman_plug_in_directory ();
+              else if (strcmp (token, "picman_sysconf_dir") == 0)
+                s = picman_sysconf_directory ();
+              else if (strcmp (token, "picman_installation_dir") == 0)
+                s = picman_installation_directory ();
 
               if (!s)
                 s = g_getenv (token);
 
 #ifdef G_OS_WIN32
-              /* The default user gimprc on Windows references
+              /* The default user picmanrc on Windows references
                * ${TEMP}, but not all Windows installations have that
                * environment variable, even if it should be kinda
                * standard. So special-case it.
@@ -385,7 +385,7 @@ gimp_config_path_expand_only (const gchar  *path,
 
           if (!s)
             {
-              g_set_error (error, GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_PARSE,
+              g_set_error (error, PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_PARSE,
 			   _("Cannot expand ${%s}"), token);
               g_free (token);
               goto cleanup;
@@ -395,7 +395,7 @@ gimp_config_path_expand_only (const gchar  *path,
             substs = g_renew (gchar *, substs, 2 * (n_substs + SUBSTS_ALLOC));
 
           substs[2*n_substs]     = token;
-          substs[2*n_substs + 1] = (gchar *) gimp_filename_to_utf8 (s);
+          substs[2*n_substs + 1] = (gchar *) picman_filename_to_utf8 (s);
 
           length += strlen (substs[2*n_substs + 1]);
 
@@ -425,7 +425,7 @@ gimp_config_path_expand_only (const gchar  *path,
           n += strlen (home);
           p += 1;
         }
-      else if ((token = gimp_config_path_extract_token (&p)) != NULL)
+      else if ((token = picman_config_path_extract_token (&p)) != NULL)
         {
           for (i = 0; i < n_substs; i++)
             {
@@ -462,7 +462,7 @@ gimp_config_path_expand_only (const gchar  *path,
 }
 
 static inline gchar *
-gimp_config_path_extract_token (const gchar **str)
+picman_config_path_extract_token (const gchar **str)
 {
   const gchar *p;
   gchar       *token;

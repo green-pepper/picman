@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_SHELL_RENDER_H__
-#define __GIMP_DISPLAY_SHELL_RENDER_H__
+#ifndef __PICMAN_DISPLAY_SHELL_RENDER_H__
+#define __PICMAN_DISPLAY_SHELL_RENDER_H__
 
-void  gimp_display_shell_render (GimpDisplayShell *shell,
+void  picman_display_shell_render (PicmanDisplayShell *shell,
                                  cairo_t          *cr,
                                  gint              x,
                                  gint              y,
                                  gint              w,
                                  gint              h);
 
-#endif  /*  __GIMP_DISPLAY_SHELL_RENDER_H__  */
+#endif  /*  __PICMAN_DISPLAY_SHELL_RENDER_H__  */

@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates clickable image maps.
  *
@@ -22,13 +22,13 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "imap_file.h"
 #include "imap_main.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 static void
@@ -173,7 +173,7 @@ do_file_error_dialog (const char *error,
       GTK_BUTTONS_CLOSE,
       "<span weight=\"bold\" size=\"larger\">%s</span>\n\n%s",
       error,
-      gimp_filename_to_utf8 (filename));
+      picman_filename_to_utf8 (filename));
 
    g_signal_connect_swapped (dialog, "response",
                              G_CALLBACK (gtk_widget_destroy),

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,23 +20,23 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimptooloptions.h"
+#include "core/picmantooloptions.h"
 
-#include "gimptooloptions-gui.h"
+#include "picmantooloptions-gui.h"
 
 
 /*  public functions  */
 
 GtkWidget *
-gimp_tool_options_gui (GimpToolOptions *tool_options)
+picman_tool_options_gui (PicmanToolOptions *tool_options)
 {
   GtkWidget *vbox;
 
-  g_return_val_if_fail (GIMP_IS_TOOL_OPTIONS (tool_options), NULL);
+  g_return_val_if_fail (PICMAN_IS_TOOL_OPTIONS (tool_options), NULL);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
 

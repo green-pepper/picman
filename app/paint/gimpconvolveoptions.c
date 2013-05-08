@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,14 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "paint-types.h"
 
-#include "gimpconvolveoptions.h"
+#include "picmanconvolveoptions.h"
 
 
-#define DEFAULT_CONVOLVE_TYPE  GIMP_BLUR_CONVOLVE
+#define DEFAULT_CONVOLVE_TYPE  PICMAN_BLUR_CONVOLVE
 #define DEFAULT_CONVOLVE_RATE  50.0
 
 
@@ -38,51 +38,51 @@ enum
 };
 
 
-static void   gimp_convolve_options_set_property (GObject      *object,
+static void   picman_convolve_options_set_property (GObject      *object,
                                                   guint         property_id,
                                                   const GValue *value,
                                                   GParamSpec   *pspec);
-static void   gimp_convolve_options_get_property (GObject      *object,
+static void   picman_convolve_options_get_property (GObject      *object,
                                                   guint         property_id,
                                                   GValue       *value,
                                                   GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpConvolveOptions, gimp_convolve_options,
-               GIMP_TYPE_PAINT_OPTIONS)
+G_DEFINE_TYPE (PicmanConvolveOptions, picman_convolve_options,
+               PICMAN_TYPE_PAINT_OPTIONS)
 
 
 static void
-gimp_convolve_options_class_init (GimpConvolveOptionsClass *klass)
+picman_convolve_options_class_init (PicmanConvolveOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_convolve_options_set_property;
-  object_class->get_property = gimp_convolve_options_get_property;
+  object_class->set_property = picman_convolve_options_set_property;
+  object_class->get_property = picman_convolve_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TYPE,
                                  "type", NULL,
-                                 GIMP_TYPE_CONVOLVE_TYPE,
+                                 PICMAN_TYPE_CONVOLVE_TYPE,
                                  DEFAULT_CONVOLVE_TYPE,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_RATE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_RATE,
                                    "rate", NULL,
                                    0.0, 100.0, DEFAULT_CONVOLVE_RATE,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_convolve_options_init (GimpConvolveOptions *options)
+picman_convolve_options_init (PicmanConvolveOptions *options)
 {
 }
 
 static void
-gimp_convolve_options_set_property (GObject      *object,
+picman_convolve_options_set_property (GObject      *object,
                                     guint         property_id,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
-  GimpConvolveOptions *options = GIMP_CONVOLVE_OPTIONS (object);
+  PicmanConvolveOptions *options = PICMAN_CONVOLVE_OPTIONS (object);
 
   switch (property_id)
     {
@@ -99,12 +99,12 @@ gimp_convolve_options_set_property (GObject      *object,
 }
 
 static void
-gimp_convolve_options_get_property (GObject    *object,
+picman_convolve_options_get_property (GObject    *object,
                                     guint       property_id,
                                     GValue     *value,
                                     GParamSpec *pspec)
 {
-  GimpConvolveOptions *options = GIMP_CONVOLVE_OPTIONS (object);
+  PicmanConvolveOptions *options = PICMAN_CONVOLVE_OPTIONS (object);
 
   switch (property_id)
     {

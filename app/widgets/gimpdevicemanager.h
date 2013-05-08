@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdevicemanager.h
+ * picmandevicemanager.h
  * Copyright (C) 2011 Michael Natterer
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,46 +18,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DEVICE_MANAGER_H__
-#define __GIMP_DEVICE_MANAGER_H__
+#ifndef __PICMAN_DEVICE_MANAGER_H__
+#define __PICMAN_DEVICE_MANAGER_H__
 
 
-#include "core/gimplist.h"
+#include "core/picmanlist.h"
 
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_DEVICE_MANAGER            (gimp_device_manager_get_type ())
-#define GIMP_DEVICE_MANAGER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DEVICE_MANAGER, GimpDeviceManager))
-#define GIMP_DEVICE_MANAGER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DEVICE_MANAGER, GimpDeviceManagerClass))
-#define GIMP_IS_DEVICE_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DEVICE_MANAGER))
-#define GIMP_IS_DEVICE_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DEVICE_MANAGER))
-#define GIMP_DEVICE_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DEVICE_MANAGER, GimpDeviceManagerClass))
+#define PICMAN_TYPE_DEVICE_MANAGER            (picman_device_manager_get_type ())
+#define PICMAN_DEVICE_MANAGER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DEVICE_MANAGER, PicmanDeviceManager))
+#define PICMAN_DEVICE_MANAGER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DEVICE_MANAGER, PicmanDeviceManagerClass))
+#define PICMAN_IS_DEVICE_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DEVICE_MANAGER))
+#define PICMAN_IS_DEVICE_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DEVICE_MANAGER))
+#define PICMAN_DEVICE_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DEVICE_MANAGER, PicmanDeviceManagerClass))
 
 
-typedef struct _GimpDeviceManagerClass GimpDeviceManagerClass;
+typedef struct _PicmanDeviceManagerClass PicmanDeviceManagerClass;
 
-struct _GimpDeviceManager
+struct _PicmanDeviceManager
 {
-  GimpList  parent_instance;
+  PicmanList  parent_instance;
 };
 
-struct _GimpDeviceManagerClass
+struct _PicmanDeviceManagerClass
 {
-  GimpListClass  parent_class;
+  PicmanListClass  parent_class;
 };
 
 
-GType               gimp_device_manager_get_type           (void) G_GNUC_CONST;
+GType               picman_device_manager_get_type           (void) G_GNUC_CONST;
 
-GimpDeviceManager * gimp_device_manager_new                (Gimp *gimp);
+PicmanDeviceManager * picman_device_manager_new                (Picman *picman);
 
-GimpDeviceInfo    * gimp_device_manager_get_current_device (GimpDeviceManager *manager);
-void                gimp_device_manager_set_current_device (GimpDeviceManager *manager,
-                                                            GimpDeviceInfo    *info);
+PicmanDeviceInfo    * picman_device_manager_get_current_device (PicmanDeviceManager *manager);
+void                picman_device_manager_set_current_device (PicmanDeviceManager *manager,
+                                                            PicmanDeviceInfo    *info);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_DEVICE_MANAGER_H__ */
+#endif /* __PICMAN_DEVICE_MANAGER_H__ */

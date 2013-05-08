@@ -7,7 +7,7 @@
  **********************************************************************
  */
 
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,14 +26,14 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #define PLUG_IN_PROC   "plug-in-alienmap2"
 #define PLUG_IN_BINARY "alien-map"
-#define PLUG_IN_ROLE   "gimp-alien-map"
+#define PLUG_IN_ROLE   "picman-alien-map"
 #define SCALE_WIDTH    200
 #define ENTRY_WIDTH      6
 
@@ -65,17 +65,17 @@ typedef struct
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
-static void      alienmap2                (GimpDrawable  *drawable);
+static void      alienmap2                (PicmanDrawable  *drawable);
 static void      transform                (guchar        *r,
                                            guchar        *g,
                                            guchar        *b);
 static gint      alienmap2_dialog         (void);
-static void      dialog_update_preview    (GimpDrawable  *drawable,
-                                           GimpPreview   *preview);
+static void      dialog_update_preview    (PicmanDrawable  *drawable,
+                                           PicmanPreview   *preview);
 static void      dialog_scale_update      (GtkAdjustment *adjustment,
                                            gdouble       *value);
 static void      alienmap2_toggle_update  (GtkWidget     *widget,
@@ -92,7 +92,7 @@ static void      alienmap2_get_label_size (void);
 
 static GtkWidget *preview;
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -114,7 +114,7 @@ static alienmap2_vals_t wvals =
   TRUE
 };
 
-static GimpDrawable *drawable         = NULL;
+static PicmanDrawable *drawable         = NULL;
 
 static GtkWidget    *toggle_modify_rh = NULL;
 static GtkWidget    *toggle_modify_gs = NULL;
@@ -162,24 +162,24 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",       "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",          "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",       "Input drawable" },
-    { GIMP_PDB_FLOAT,    "redfrequency",   "Red/hue component frequency factor" },
-    { GIMP_PDB_FLOAT,    "redangle",       "Red/hue component angle factor (0-360)" },
-    { GIMP_PDB_FLOAT,    "greenfrequency", "Green/saturation component frequency factor" },
-    { GIMP_PDB_FLOAT,    "greenangle",     "Green/saturation component angle factor (0-360)" },
-    { GIMP_PDB_FLOAT,    "bluefrequency",  "Blue/luminance component frequency factor" },
-    { GIMP_PDB_FLOAT,    "blueangle",      "Blue/luminance component angle factor (0-360)" },
-    { GIMP_PDB_INT8,     "colormodel",     "Color model { RGB-MODEL (0), HSL-MODEL (1) }" },
-    { GIMP_PDB_INT8,     "redmode",        "Red/hue application mode { TRUE, FALSE }" },
-    { GIMP_PDB_INT8,     "greenmode",      "Green/saturation application mode { TRUE, FALSE }" },
-    { GIMP_PDB_INT8,     "bluemode",       "Blue/luminance application mode { TRUE, FALSE }" },
+    { PICMAN_PDB_INT32,    "run-mode",       "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",          "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",       "Input drawable" },
+    { PICMAN_PDB_FLOAT,    "redfrequency",   "Red/hue component frequency factor" },
+    { PICMAN_PDB_FLOAT,    "redangle",       "Red/hue component angle factor (0-360)" },
+    { PICMAN_PDB_FLOAT,    "greenfrequency", "Green/saturation component frequency factor" },
+    { PICMAN_PDB_FLOAT,    "greenangle",     "Green/saturation component angle factor (0-360)" },
+    { PICMAN_PDB_FLOAT,    "bluefrequency",  "Blue/luminance component frequency factor" },
+    { PICMAN_PDB_FLOAT,    "blueangle",      "Blue/luminance component angle factor (0-360)" },
+    { PICMAN_PDB_INT8,     "colormodel",     "Color model { RGB-MODEL (0), HSL-MODEL (1) }" },
+    { PICMAN_PDB_INT8,     "redmode",        "Red/hue application mode { TRUE, FALSE }" },
+    { PICMAN_PDB_INT8,     "greenmode",      "Green/saturation application mode { TRUE, FALSE }" },
+    { PICMAN_PDB_INT8,     "bluemode",       "Blue/luminance application mode { TRUE, FALSE }" },
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Alter colors in various psychedelic ways"),
                           "No help yet. Just try it and you'll see!",
                           "Martin Weber (martweb@gmx.net)",
@@ -187,11 +187,11 @@ query (void)
                           "24th April 1998",
                           N_("_Alien Map..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Map");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Map");
 }
 
 static void
@@ -203,11 +203,11 @@ transform (guchar *r,
     {
     case HSL_MODEL:
       {
-        GimpHSL hsl;
-        GimpRGB rgb;
+        PicmanHSL hsl;
+        PicmanRGB rgb;
 
-        gimp_rgb_set_uchar (&rgb, *r, *g, *b);
-        gimp_rgb_to_hsl (&rgb, &hsl);
+        picman_rgb_set_uchar (&rgb, *r, *g, *b);
+        picman_rgb_to_hsl (&rgb, &hsl);
 
         if (wvals.redmode)
           hsl.h = 0.5 * (1.0 + sin (((2 * hsl.h - 1.0) * wvals.redfrequency +
@@ -221,8 +221,8 @@ transform (guchar *r,
           hsl.l = 0.5 * (1.0 + sin (((2 * hsl.l - 1.0) * wvals.bluefrequency +
                                      wvals.blueangle / 180.0) * G_PI));
 
-        gimp_hsl_to_rgb (&hsl, &rgb);
-        gimp_rgb_get_uchar (&rgb, r, g, b);
+        picman_hsl_to_rgb (&hsl, &rgb);
+        picman_rgb_get_uchar (&rgb, r, g, b);
       }
       break;
 
@@ -248,33 +248,33 @@ transform (guchar *r,
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
-  GimpRunMode       run_mode;
+  static PicmanParam  values[1];
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
+  PicmanRunMode       run_mode;
 
   INIT_I18N ();
 
   run_mode = param[0].data.d_int32;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   *nreturn_vals = 1;
   *return_vals = values;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /* See how we will run */
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /* Possibly retrieve data */
-      gimp_get_data (PLUG_IN_PROC, &wvals);
+      picman_get_data (PLUG_IN_PROC, &wvals);
 
       /* Get information from the dialog */
       if (!alienmap2_dialog ())
@@ -282,12 +282,12 @@ run (const gchar      *name,
 
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /* Make sure all the arguments are present */
       if (nparams != 13)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           wvals.redfrequency   = param[3].data.d_float;
           wvals.redangle       = param[4].data.d_float;
@@ -303,47 +303,47 @@ run (const gchar      *name,
 
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /* Possibly retrieve data */
-      gimp_get_data (PLUG_IN_PROC, &wvals);
+      picman_get_data (PLUG_IN_PROC, &wvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is RGB or RGBA  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id))
         {
-          gimp_progress_init (_("Alien Map: Transforming"));
+          picman_progress_init (_("Alien Map: Transforming"));
 
           /* Set the tile cache size */
-          gimp_tile_cache_ntiles (2 * (drawable->width /
-                                       gimp_tile_width () + 1));
+          picman_tile_cache_ntiles (2 * (drawable->width /
+                                       picman_tile_width () + 1));
 
           /* Run! */
 
           alienmap2 (drawable);
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /* Store data */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC,
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC,
                            &wvals, sizeof (alienmap2_vals_t));
         }
       else
         {
-          /* gimp_message("This filter only applies on RGB_MODEL-images"); */
-          status = GIMP_PDB_EXECUTION_ERROR;
+          /* picman_message("This filter only applies on RGB_MODEL-images"); */
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static void
@@ -369,9 +369,9 @@ alienmap2_func (const guchar *src,
 }
 
 static void
-alienmap2 (GimpDrawable *drawable)
+alienmap2 (PicmanDrawable *drawable)
 {
-  gimp_rgn_iterate2 (drawable, 0 /* unused */, alienmap2_func, NULL);
+  picman_rgn_iterate2 (drawable, 0 /* unused */, alienmap2_func, NULL);
 }
 
 static gint
@@ -388,11 +388,11 @@ alienmap2_dialog (void)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Alien Map"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Alien Map"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -404,7 +404,7 @@ alienmap2_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -412,7 +412,7 @@ alienmap2_dialog (void)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_zoom_preview_new (drawable);
+  preview = picman_zoom_preview_new (drawable);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -435,73 +435,73 @@ alienmap2_dialog (void)
   gtk_widget_show (table);
 
   entry_freq_rh = adj =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                           NULL, SCALE_WIDTH, ENTRY_WIDTH,
                           wvals.redfrequency, 0, 20.0, 0.1, 1, 2,
                           TRUE, 0, 0,
                           _("Number of cycles covering full value range"),
                           NULL);
-  label_freq_rh = GIMP_SCALE_ENTRY_LABEL (adj);
+  label_freq_rh = PICMAN_SCALE_ENTRY_LABEL (adj);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (dialog_scale_update),
                     &wvals.redfrequency);
 
   entry_phase_rh = adj =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                           NULL, SCALE_WIDTH, ENTRY_WIDTH,
                           wvals.redangle, 0, 360.0, 1, 15, 2,
                           TRUE, 0, 0,
                           _("Phase angle, range 0-360"),
                           NULL);
-  label_phase_rh = GIMP_SCALE_ENTRY_LABEL (adj);
+  label_phase_rh = PICMAN_SCALE_ENTRY_LABEL (adj);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (dialog_scale_update),
                     &wvals.redangle);
 
   entry_freq_gs = adj =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                           NULL, SCALE_WIDTH, ENTRY_WIDTH,
                           wvals.greenfrequency, 0, 20.0, 0.1, 1, 2,
                           TRUE, 0, 0,
                           _("Number of cycles covering full value range"),
                           NULL);
-  label_freq_gs = GIMP_SCALE_ENTRY_LABEL (adj);
+  label_freq_gs = PICMAN_SCALE_ENTRY_LABEL (adj);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (dialog_scale_update),
                     &wvals.greenfrequency);
 
   entry_phase_gs = adj =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 3,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 3,
                           NULL, SCALE_WIDTH, ENTRY_WIDTH,
                           wvals.redangle, 0, 360.0, 1, 15, 2,
                           TRUE, 0, 0,
                           _("Phase angle, range 0-360"),
                           NULL);
-  label_phase_gs = GIMP_SCALE_ENTRY_LABEL (adj);
+  label_phase_gs = PICMAN_SCALE_ENTRY_LABEL (adj);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (dialog_scale_update),
                     &wvals.greenangle);
 
   entry_freq_bl = adj =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 4,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 4,
                           NULL, SCALE_WIDTH, ENTRY_WIDTH,
                           wvals.bluefrequency, 0, 20.0, 0.1, 1, 2,
                           TRUE, 0, 0,
                           _("Number of cycles covering full value range"),
                           NULL);
-  label_freq_bl = GIMP_SCALE_ENTRY_LABEL (adj);
+  label_freq_bl = PICMAN_SCALE_ENTRY_LABEL (adj);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (dialog_scale_update),
                     &wvals.bluefrequency);
 
   entry_phase_bl = adj =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 5,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 5,
                           NULL, SCALE_WIDTH, ENTRY_WIDTH,
                           wvals.blueangle, 0, 360.0, 1, 15, 2,
                           TRUE, 0, 0,
                           _("Phase angle, range 0-360"),
                           NULL);
-  label_phase_bl = GIMP_SCALE_ENTRY_LABEL (adj);
+  label_phase_bl = PICMAN_SCALE_ENTRY_LABEL (adj);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (dialog_scale_update),
                     &wvals.blueangle);
@@ -513,7 +513,7 @@ alienmap2_dialog (void)
   gtk_widget_show (hbox);
 
   frame =
-    gimp_int_radio_group_new (TRUE, _("Mode"),
+    picman_int_radio_group_new (TRUE, _("Mode"),
                               G_CALLBACK (alienmap2_radio_update),
                               &wvals.colormodel, wvals.colormodel,
 
@@ -562,7 +562,7 @@ alienmap2_dialog (void)
   alienmap2_set_labels ();
   alienmap2_set_sensitive ();
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -570,21 +570,21 @@ alienmap2_dialog (void)
 }
 
 static void
-dialog_update_preview (GimpDrawable *drawable,
-                       GimpPreview  *preview)
+dialog_update_preview (PicmanDrawable *drawable,
+                       PicmanPreview  *preview)
 {
   guchar *dest, *src;
   gint    width, height, bpp;
   gint    i;
 
-  src = gimp_zoom_preview_get_source (GIMP_ZOOM_PREVIEW (preview),
+  src = picman_zoom_preview_get_source (PICMAN_ZOOM_PREVIEW (preview),
                                       &width, &height, &bpp);
   dest = g_new (guchar, width * height * bpp);
 
   for (i = 0 ; i < width * height ; i++)
     alienmap2_func (src + i * bpp, dest + i * bpp, bpp, NULL);
 
-  gimp_preview_draw_buffer (preview, dest, width * bpp);
+  picman_preview_draw_buffer (preview, dest, width * bpp);
 
   g_free (src);
   g_free (dest);
@@ -594,43 +594,43 @@ static void
 dialog_scale_update (GtkAdjustment *adjustment,
                      gdouble       *value)
 {
-  gimp_double_adjustment_update (adjustment, value);
+  picman_double_adjustment_update (adjustment, value);
 
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }
 
 static void
 alienmap2_toggle_update (GtkWidget *widget,
                          gpointer   data)
 {
-  gimp_toggle_button_update (widget, data);
+  picman_toggle_button_update (widget, data);
 
   alienmap2_set_sensitive ();
 
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }
 
 static void
 alienmap2_radio_update (GtkWidget *widget,
                         gpointer   data)
 {
-  gimp_radio_button_update (widget, data);
+  picman_radio_button_update (widget, data);
 
   alienmap2_set_labels ();
 
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }
 
 
 static void
 alienmap2_set_sensitive (void)
 {
-  gimp_scale_entry_set_sensitive (entry_freq_rh,  wvals.redmode);
-  gimp_scale_entry_set_sensitive (entry_phase_rh, wvals.redmode);
-  gimp_scale_entry_set_sensitive (entry_freq_gs,  wvals.greenmode);
-  gimp_scale_entry_set_sensitive (entry_phase_gs, wvals.greenmode);
-  gimp_scale_entry_set_sensitive (entry_freq_bl,  wvals.bluemode);
-  gimp_scale_entry_set_sensitive (entry_phase_bl, wvals.bluemode);
+  picman_scale_entry_set_sensitive (entry_freq_rh,  wvals.redmode);
+  picman_scale_entry_set_sensitive (entry_phase_rh, wvals.redmode);
+  picman_scale_entry_set_sensitive (entry_freq_gs,  wvals.greenmode);
+  picman_scale_entry_set_sensitive (entry_phase_gs, wvals.greenmode);
+  picman_scale_entry_set_sensitive (entry_freq_bl,  wvals.bluemode);
+  picman_scale_entry_set_sensitive (entry_phase_bl, wvals.bluemode);
 }
 
 

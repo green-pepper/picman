@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,28 +21,28 @@
 
 #include "core-types.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimpdrawable.h"
-#include "gimpdrawable-private.h"
-#include "gimpdrawable-shadow.h"
+#include "picmandrawable.h"
+#include "picmandrawable-private.h"
+#include "picmandrawable-shadow.h"
 
 
 GeglBuffer *
-gimp_drawable_get_shadow_buffer (GimpDrawable *drawable)
+picman_drawable_get_shadow_buffer (PicmanDrawable *drawable)
 {
-  GimpItem   *item;
+  PicmanItem   *item;
   gint        width;
   gint        height;
   const Babl *format;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
-  item = GIMP_ITEM (drawable);
+  item = PICMAN_ITEM (drawable);
 
-  width  = gimp_item_get_width  (item);
-  height = gimp_item_get_height (item);
-  format = gimp_drawable_get_format (drawable);
+  width  = picman_item_get_width  (item);
+  height = picman_item_get_height (item);
+  format = picman_drawable_get_format (drawable);
 
   if (drawable->private->shadow)
     {
@@ -50,7 +50,7 @@ gimp_drawable_get_shadow_buffer (GimpDrawable *drawable)
           (height != gegl_buffer_get_height (drawable->private->shadow)) ||
           (format != gegl_buffer_get_format (drawable->private->shadow)))
         {
-          gimp_drawable_free_shadow_buffer (drawable);
+          picman_drawable_free_shadow_buffer (drawable);
         }
       else
         {
@@ -66,9 +66,9 @@ gimp_drawable_get_shadow_buffer (GimpDrawable *drawable)
 }
 
 void
-gimp_drawable_free_shadow_buffer (GimpDrawable *drawable)
+picman_drawable_free_shadow_buffer (PicmanDrawable *drawable)
 {
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
 
   if (drawable->private->shadow)
     {
@@ -78,29 +78,29 @@ gimp_drawable_free_shadow_buffer (GimpDrawable *drawable)
 }
 
 void
-gimp_drawable_merge_shadow_buffer (GimpDrawable *drawable,
+picman_drawable_merge_shadow_buffer (PicmanDrawable *drawable,
                                    gboolean      push_undo,
                                    const gchar  *undo_desc)
 {
   gint x, y;
   gint width, height;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)));
   g_return_if_fail (GEGL_IS_BUFFER (drawable->private->shadow));
 
   /*  A useful optimization here is to limit the update to the
    *  extents of the selection mask, as it cannot extend beyond
    *  them.
    */
-  if (gimp_item_mask_intersect (GIMP_ITEM (drawable), &x, &y, &width, &height))
+  if (picman_item_mask_intersect (PICMAN_ITEM (drawable), &x, &y, &width, &height))
     {
       GeglBuffer *buffer = g_object_ref (drawable->private->shadow);
 
-      gimp_drawable_apply_buffer (drawable, buffer,
+      picman_drawable_apply_buffer (drawable, buffer,
                                   GEGL_RECTANGLE (x, y, width, height),
                                   push_undo, undo_desc,
-                                  GIMP_OPACITY_OPAQUE, GIMP_REPLACE_MODE,
+                                  PICMAN_OPACITY_OPAQUE, PICMAN_REPLACE_MODE,
                                   NULL, x, y);
 
       g_object_unref (buffer);

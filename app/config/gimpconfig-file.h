@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * File utitility functions for GimpConfig.
- * Copyright (C) 2001-2003  Sven Neumann <sven@gimp.org>
+ * File utitility functions for PicmanConfig.
+ * Copyright (C) 2001-2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONFIG_FILE_H__
-#define __GIMP_CONFIG_FILE_H__
+#ifndef __PICMAN_CONFIG_FILE_H__
+#define __PICMAN_CONFIG_FILE_H__
 
 
-gboolean   gimp_config_file_copy             (const gchar        *source,
+gboolean   picman_config_file_copy             (const gchar        *source,
                                               const gchar        *dest,
                                               const gchar        *old_options_regexp,
                                               GRegexEvalCallback  update_callback,
                                               GError      **error);
-gboolean   gimp_config_file_backup_on_error  (const gchar  *filename,
+gboolean   picman_config_file_backup_on_error  (const gchar  *filename,
                                               const gchar  *name,
                                               GError      **error);
 
 
-#endif  /* __GIMP_CONFIG_FILE_H__ */
+#endif  /* __PICMAN_CONFIG_FILE_H__ */

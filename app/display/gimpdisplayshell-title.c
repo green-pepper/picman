@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,37 +22,37 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "display-types.h"
 
-#include "config/gimpdisplayconfig.h"
+#include "config/picmandisplayconfig.h"
 
-#include "gegl/gimp-babl.h"
+#include "gegl/picman-babl.h"
 
-#include "core/gimpcontainer.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimpitem.h"
+#include "core/picmancontainer.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picmanitem.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-title.h"
-#include "gimpstatusbar.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-title.h"
+#include "picmanstatusbar.h"
 
 #include "about.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define MAX_TITLE_BUF 512
 
 
-static gboolean gimp_display_shell_update_title_idle (gpointer          data);
-static gint     gimp_display_shell_format_title      (GimpDisplayShell *display,
+static gboolean picman_display_shell_update_title_idle (gpointer          data);
+static gint     picman_display_shell_format_title      (PicmanDisplayShell *display,
                                                       gchar            *title,
                                                       gint              title_len,
                                                       const gchar      *format);
@@ -61,14 +61,14 @@ static gint     gimp_display_shell_format_title      (GimpDisplayShell *display,
 /*  public functions  */
 
 void
-gimp_display_shell_title_update (GimpDisplayShell *shell)
+picman_display_shell_title_update (PicmanDisplayShell *shell)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   if (shell->title_idle_id)
     g_source_remove (shell->title_idle_id);
 
-  shell->title_idle_id = g_idle_add (gimp_display_shell_update_title_idle,
+  shell->title_idle_id = g_idle_add (picman_display_shell_update_title_idle,
                                      shell);
 }
 
@@ -76,30 +76,30 @@ gimp_display_shell_title_update (GimpDisplayShell *shell)
 /*  private functions  */
 
 static gboolean
-gimp_display_shell_update_title_idle (gpointer data)
+picman_display_shell_update_title_idle (gpointer data)
 {
-  GimpDisplayShell *shell = GIMP_DISPLAY_SHELL (data);
+  PicmanDisplayShell *shell = PICMAN_DISPLAY_SHELL (data);
 
   shell->title_idle_id = 0;
 
-  if (gimp_display_get_image (shell->display))
+  if (picman_display_get_image (shell->display))
     {
-      GimpDisplayConfig *config = shell->display->config;
+      PicmanDisplayConfig *config = shell->display->config;
       gchar              title[MAX_TITLE_BUF];
       gchar              status[MAX_TITLE_BUF];
       gint               len;
 
       /* format the title */
-      len = gimp_display_shell_format_title (shell, title, sizeof (title),
+      len = picman_display_shell_format_title (shell, title, sizeof (title),
                                              config->image_title_format);
 
       if (len)  /* U+2013 EN DASH */
         len += g_strlcpy (title + len, " \342\200\223 ", sizeof (title) - len);
 
-      g_strlcpy (title + len, GIMP_ACRONYM, sizeof (title) - len);
+      g_strlcpy (title + len, PICMAN_ACRONYM, sizeof (title) - len);
 
       /* format the statusbar */
-      gimp_display_shell_format_title (shell, status, sizeof (status),
+      picman_display_shell_format_title (shell, status, sizeof (status),
                                        config->image_status_format);
 
       g_object_set (shell,
@@ -110,7 +110,7 @@ gimp_display_shell_update_title_idle (gpointer data)
   else
     {
       g_object_set (shell,
-                    "title",  GIMP_NAME,
+                    "title",  PICMAN_NAME,
                     "status", " ",
                     NULL);
     }
@@ -119,23 +119,23 @@ gimp_display_shell_update_title_idle (gpointer data)
 }
 
 static const gchar *
-gimp_display_shell_title_image_type (GimpImage *image)
+picman_display_shell_title_image_type (PicmanImage *image)
 {
   const gchar *name = "";
 
-  gimp_enum_get_value (GIMP_TYPE_IMAGE_BASE_TYPE,
-                       gimp_image_get_base_type (image), NULL, NULL, &name, NULL);
+  picman_enum_get_value (PICMAN_TYPE_IMAGE_BASE_TYPE,
+                       picman_image_get_base_type (image), NULL, NULL, &name, NULL);
 
   return name;
 }
 
 static const gchar *
-gimp_display_shell_title_image_precision (GimpImage *image)
+picman_display_shell_title_image_precision (PicmanImage *image)
 {
   const gchar *name = "";
 
-  gimp_enum_get_value (GIMP_TYPE_PRECISION,
-                       gimp_image_get_precision (image), NULL, NULL, &name, NULL);
+  picman_enum_get_value (PICMAN_TYPE_PRECISION,
+                       picman_image_get_precision (image), NULL, NULL, &name, NULL);
 
   return name;
 }
@@ -168,18 +168,18 @@ print (gchar       *buf,
 }
 
 static gint
-gimp_display_shell_format_title (GimpDisplayShell *shell,
+picman_display_shell_format_title (PicmanDisplayShell *shell,
                                  gchar            *title,
                                  gint              title_len,
                                  const gchar      *format)
 {
-  GimpImage *image;
+  PicmanImage *image;
   gint       num, denom;
   gint       i = 0;
 
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), 0);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), 0);
 
-  image = gimp_display_get_image (shell->display);
+  image = picman_display_get_image (shell->display);
 
   if (! image)
     {
@@ -187,7 +187,7 @@ gimp_display_shell_format_title (GimpDisplayShell *shell,
       return 0;
     }
 
-  gimp_zoom_model_get_fraction (shell->zoom, &num, &denom);
+  picman_zoom_model_get_fraction (shell->zoom, &num, &denom);
 
   while (i < title_len && *format)
     {
@@ -206,37 +206,37 @@ gimp_display_shell_format_title (GimpDisplayShell *shell,
 
             case 'f': /* base filename */
               i += print (title, title_len, i, "%s",
-                          gimp_image_get_display_name (image));
+                          picman_image_get_display_name (image));
               break;
 
             case 'F': /* full filename */
               i += print (title, title_len, i, "%s",
-                          gimp_image_get_display_path (image));
+                          picman_image_get_display_path (image));
               break;
 
             case 'p': /* PDB id */
-              i += print (title, title_len, i, "%d", gimp_image_get_ID (image));
+              i += print (title, title_len, i, "%d", picman_image_get_ID (image));
               break;
 
             case 'i': /* instance */
               i += print (title, title_len, i, "%d",
-                          gimp_display_get_instance (shell->display));
+                          picman_display_get_instance (shell->display));
               break;
 
             case 't': /* image type */
               i += print (title, title_len, i, "%s %s",
-                          gimp_display_shell_title_image_type (image),
-                          gimp_display_shell_title_image_precision (image));
+                          picman_display_shell_title_image_type (image),
+                          picman_display_shell_title_image_precision (image));
               break;
 
             case 'T': /* drawable type */
               {
-                GimpDrawable *drawable = gimp_image_get_active_drawable (image);
-                const Babl   *format   = gimp_drawable_get_format (drawable);
+                PicmanDrawable *drawable = picman_image_get_active_drawable (image);
+                const Babl   *format   = picman_drawable_get_format (drawable);
 
                 if (drawable)
                   i += print (title, title_len, i, "%s",
-                              gimp_babl_get_description (format));
+                              picman_babl_get_description (format));
               }
               break;
 
@@ -250,7 +250,7 @@ gimp_display_shell_format_title (GimpDisplayShell *shell,
 
             case 'z': /* user zoom factor (percentage) */
               {
-                gdouble  scale = gimp_zoom_model_get_factor (shell->zoom);
+                gdouble  scale = picman_zoom_model_get_factor (shell->zoom);
 
                 i += print (title, title_len, i,
                             scale >= 0.15 ? "%.0f" : "%.2f", 100.0 * scale);
@@ -264,7 +264,7 @@ gimp_display_shell_format_title (GimpDisplayShell *shell,
                   i += print (title, title_len, i, "%%D");
                   break;
                 }
-              if (gimp_image_is_dirty (image))
+              if (picman_image_is_dirty (image))
                 title[i++] = format[1];
               format++;
               break;
@@ -276,27 +276,27 @@ gimp_display_shell_format_title (GimpDisplayShell *shell,
                   i += print (title, title_len, i, "%%C");
                   break;
                 }
-              if (! gimp_image_is_dirty (image))
+              if (! picman_image_is_dirty (image))
                 title[i++] = format[1];
               format++;
               break;
 
             case 'B': /* dirty flag (long) */
-              if (gimp_image_is_dirty (image))
+              if (picman_image_is_dirty (image))
                 i += print (title, title_len, i, "%s", _("(modified)"));
               break;
 
             case 'A': /* clean flag (long) */
-              if (! gimp_image_is_dirty (image))
+              if (! picman_image_is_dirty (image))
                 i += print (title, title_len, i, "%s", _("(clean)"));
               break;
 
             case 'm': /* memory used by image */
               {
-                GimpObject *object = GIMP_OBJECT (image);
+                PicmanObject *object = PICMAN_OBJECT (image);
                 gchar      *str;
 
-                str = g_format_size (gimp_object_get_memsize (object, NULL));
+                str = g_format_size (picman_object_get_memsize (object, NULL));
                 i += print (title, title_len, i, "%s", str);
                 g_free (str);
               }
@@ -304,18 +304,18 @@ gimp_display_shell_format_title (GimpDisplayShell *shell,
 
             case 'M': /* image size in megapixels */
               i += print (title, title_len, i, "%.1f",
-                          (gdouble) gimp_image_get_width (image) *
-                          (gdouble) gimp_image_get_height (image) / 1000000.0);
+                          (gdouble) picman_image_get_width (image) *
+                          (gdouble) picman_image_get_height (image) / 1000000.0);
               break;
 
             case 'l': /* number of layers */
               i += print (title, title_len, i, "%d",
-                          gimp_image_get_n_layers (image));
+                          picman_image_get_n_layers (image));
               break;
 
             case 'L': /* number of layers (long) */
               {
-                gint num = gimp_image_get_n_layers (image);
+                gint num = picman_image_get_n_layers (image);
 
                 i += print (title, title_len, i,
                             ngettext ("%d layer", "%d layers", num), num);
@@ -324,13 +324,13 @@ gimp_display_shell_format_title (GimpDisplayShell *shell,
 
             case 'n': /* active drawable name */
               {
-                GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+                PicmanDrawable *drawable = picman_image_get_active_drawable (image);
 
                 if (drawable)
                   {
                     gchar *desc;
 
-                    desc = gimp_viewable_get_description (GIMP_VIEWABLE (drawable),
+                    desc = picman_viewable_get_description (PICMAN_VIEWABLE (drawable),
                                                           NULL);
 
                     i += print (title, title_len, i, "%s", desc);
@@ -346,68 +346,68 @@ gimp_display_shell_format_title (GimpDisplayShell *shell,
 
             case 'P': /* active drawable PDB id */
               {
-                GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+                PicmanDrawable *drawable = picman_image_get_active_drawable (image);
 
                 if (drawable)
                   i += print (title, title_len, i, "%d",
-                              gimp_item_get_ID (GIMP_ITEM (drawable)));
+                              picman_item_get_ID (PICMAN_ITEM (drawable)));
                 else
                   i += print (title, title_len, i, "%s", _("(none)"));
               }
               break;
 
             case 'W': /* width in real-world units */
-              if (shell->unit != GIMP_UNIT_PIXEL)
+              if (shell->unit != PICMAN_UNIT_PIXEL)
                 {
                   gdouble xres;
                   gdouble yres;
                   gchar   unit_format[8];
 
-                  gimp_image_get_resolution (image, &xres, &yres);
+                  picman_image_get_resolution (image, &xres, &yres);
 
                   g_snprintf (unit_format, sizeof (unit_format), "%%.%df",
-                              gimp_unit_get_digits (shell->unit) + 1);
+                              picman_unit_get_digits (shell->unit) + 1);
                   i += print (title, title_len, i, unit_format,
-                              gimp_pixels_to_units (gimp_image_get_width (image),
+                              picman_pixels_to_units (picman_image_get_width (image),
                                                     shell->unit, xres));
                   break;
                 }
               /* else fallthru */
             case 'w': /* width in pixels */
               i += print (title, title_len, i, "%d",
-                          gimp_image_get_width (image));
+                          picman_image_get_width (image));
               break;
 
             case 'H': /* height in real-world units */
-              if (shell->unit != GIMP_UNIT_PIXEL)
+              if (shell->unit != PICMAN_UNIT_PIXEL)
                 {
                   gdouble xres;
                   gdouble yres;
                   gchar   unit_format[8];
 
-                  gimp_image_get_resolution (image, &xres, &yres);
+                  picman_image_get_resolution (image, &xres, &yres);
 
                   g_snprintf (unit_format, sizeof (unit_format), "%%.%df",
-                              gimp_unit_get_digits (shell->unit) + 1);
+                              picman_unit_get_digits (shell->unit) + 1);
                   i += print (title, title_len, i, unit_format,
-                              gimp_pixels_to_units (gimp_image_get_height (image),
+                              picman_pixels_to_units (picman_image_get_height (image),
                                                     shell->unit, yres));
                   break;
                 }
               /* else fallthru */
             case 'h': /* height in pixels */
               i += print (title, title_len, i, "%d",
-                          gimp_image_get_height (image));
+                          picman_image_get_height (image));
               break;
 
             case 'u': /* unit symbol */
               i += print (title, title_len, i, "%s",
-                          gimp_unit_get_symbol (shell->unit));
+                          picman_unit_get_symbol (shell->unit));
               break;
 
             case 'U': /* unit abbreviation */
               i += print (title, title_len, i, "%s",
-                          gimp_unit_get_abbreviation (shell->unit));
+                          picman_unit_get_abbreviation (shell->unit));
               break;
 
               /* Other cool things to be added:

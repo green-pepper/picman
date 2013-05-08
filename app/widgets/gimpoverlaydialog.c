@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoverlaydialog.c
- * Copyright (C) 2009-2010  Michael Natterer <mitch@gimp.org>
+ * picmanoverlaydialog.c
+ * Copyright (C) 2009-2010  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +24,14 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpmarshal.h"
-#include "core/gimptoolinfo.h"
+#include "core/picmanmarshal.h"
+#include "core/picmantoolinfo.h"
 
-#include "gimpoverlaydialog.h"
+#include "picmanoverlaydialog.h"
 
 
 enum
@@ -50,55 +50,55 @@ struct _ResponseData
 };
 
 
-static void       gimp_overlay_dialog_dispose       (GObject           *object);
+static void       picman_overlay_dialog_dispose       (GObject           *object);
 
-static void       gimp_overlay_dialog_size_request  (GtkWidget         *widget,
+static void       picman_overlay_dialog_size_request  (GtkWidget         *widget,
                                                      GtkRequisition    *requisition);
-static void       gimp_overlay_dialog_size_allocate (GtkWidget         *widget,
+static void       picman_overlay_dialog_size_allocate (GtkWidget         *widget,
                                                      GtkAllocation     *allocation);
 
-static void       gimp_overlay_dialog_forall        (GtkContainer      *container,
+static void       picman_overlay_dialog_forall        (GtkContainer      *container,
                                                      gboolean           include_internals,
                                                      GtkCallback        callback,
                                                      gpointer           callback_data);
 
-static void       gimp_overlay_dialog_close         (GimpOverlayDialog *dialog);
+static void       picman_overlay_dialog_close         (PicmanOverlayDialog *dialog);
 
 static ResponseData * get_response_data             (GtkWidget         *widget,
                                                      gboolean          create);
 
 
-G_DEFINE_TYPE (GimpOverlayDialog, gimp_overlay_dialog,
-               GIMP_TYPE_OVERLAY_FRAME)
+G_DEFINE_TYPE (PicmanOverlayDialog, picman_overlay_dialog,
+               PICMAN_TYPE_OVERLAY_FRAME)
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-#define parent_class gimp_overlay_dialog_parent_class
+#define parent_class picman_overlay_dialog_parent_class
 
 
 static void
-gimp_overlay_dialog_class_init (GimpOverlayDialogClass *klass)
+picman_overlay_dialog_class_init (PicmanOverlayDialogClass *klass)
 {
   GObjectClass      *object_class    = G_OBJECT_CLASS (klass);
   GtkWidgetClass    *widget_class    = GTK_WIDGET_CLASS (klass);
   GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
-  object_class->dispose       = gimp_overlay_dialog_dispose;
+  object_class->dispose       = picman_overlay_dialog_dispose;
 
-  widget_class->size_request  = gimp_overlay_dialog_size_request;
-  widget_class->size_allocate = gimp_overlay_dialog_size_allocate;
+  widget_class->size_request  = picman_overlay_dialog_size_request;
+  widget_class->size_allocate = picman_overlay_dialog_size_allocate;
 
-  container_class->forall     = gimp_overlay_dialog_forall;
+  container_class->forall     = picman_overlay_dialog_forall;
 
-  klass->close                = gimp_overlay_dialog_close;
+  klass->close                = picman_overlay_dialog_close;
 
   signals[RESPONSE] =
     g_signal_new ("response",
                   G_OBJECT_CLASS_TYPE (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpOverlayDialogClass, response),
+                  G_STRUCT_OFFSET (PicmanOverlayDialogClass, response),
                   NULL, NULL,
-                  gimp_marshal_VOID__INT,
+                  picman_marshal_VOID__INT,
                   G_TYPE_NONE, 1,
                   G_TYPE_INT);
 
@@ -106,9 +106,9 @@ gimp_overlay_dialog_class_init (GimpOverlayDialogClass *klass)
     g_signal_new ("close",
                   G_OBJECT_CLASS_TYPE (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                  G_STRUCT_OFFSET (GimpOverlayDialogClass, close),
+                  G_STRUCT_OFFSET (PicmanOverlayDialogClass, close),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
   gtk_binding_entry_add_signal (gtk_binding_set_by_class (klass),
@@ -116,7 +116,7 @@ gimp_overlay_dialog_class_init (GimpOverlayDialogClass *klass)
 }
 
 static void
-gimp_overlay_dialog_init (GimpOverlayDialog *dialog)
+picman_overlay_dialog_init (PicmanOverlayDialog *dialog)
 {
   dialog->action_area = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog->action_area),
@@ -126,9 +126,9 @@ gimp_overlay_dialog_init (GimpOverlayDialog *dialog)
 }
 
 static void
-gimp_overlay_dialog_dispose (GObject *object)
+picman_overlay_dialog_dispose (GObject *object)
 {
-  GimpOverlayDialog *dialog = GIMP_OVERLAY_DIALOG (object);
+  PicmanOverlayDialog *dialog = PICMAN_OVERLAY_DIALOG (object);
 
   if (dialog->action_area)
     {
@@ -140,11 +140,11 @@ gimp_overlay_dialog_dispose (GObject *object)
 }
 
 static void
-gimp_overlay_dialog_size_request (GtkWidget      *widget,
+picman_overlay_dialog_size_request (GtkWidget      *widget,
                                   GtkRequisition *requisition)
 {
   GtkContainer      *container = GTK_CONTAINER (widget);
-  GimpOverlayDialog *dialog    = GIMP_OVERLAY_DIALOG (widget);
+  PicmanOverlayDialog *dialog    = PICMAN_OVERLAY_DIALOG (widget);
   GtkWidget         *child     = gtk_bin_get_child (GTK_BIN (widget));
   GtkRequisition     child_requisition;
   GtkRequisition     action_requisition;
@@ -175,11 +175,11 @@ gimp_overlay_dialog_size_request (GtkWidget      *widget,
 }
 
 static void
-gimp_overlay_dialog_size_allocate (GtkWidget     *widget,
+picman_overlay_dialog_size_allocate (GtkWidget     *widget,
                                    GtkAllocation *allocation)
 {
   GtkContainer      *container = GTK_CONTAINER (widget);
-  GimpOverlayDialog *dialog    = GIMP_OVERLAY_DIALOG (widget);
+  PicmanOverlayDialog *dialog    = PICMAN_OVERLAY_DIALOG (widget);
   GtkWidget         *child     = gtk_bin_get_child (GTK_BIN (widget));
   GtkRequisition     action_requisition;
   GtkAllocation      child_allocation = { 0, };
@@ -214,7 +214,7 @@ gimp_overlay_dialog_size_allocate (GtkWidget     *widget,
 }
 
 static void
-gimp_overlay_dialog_forall (GtkContainer *container,
+picman_overlay_dialog_forall (GtkContainer *container,
                             gboolean      include_internals,
                             GtkCallback   callback,
                             gpointer      callback_data)
@@ -224,7 +224,7 @@ gimp_overlay_dialog_forall (GtkContainer *container,
 
   if (include_internals)
     {
-      GimpOverlayDialog *dialog = GIMP_OVERLAY_DIALOG (container);
+      PicmanOverlayDialog *dialog = PICMAN_OVERLAY_DIALOG (container);
 
       if (dialog->action_area)
         (* callback) (dialog->action_area, callback_data);
@@ -232,7 +232,7 @@ gimp_overlay_dialog_forall (GtkContainer *container,
 }
 
 static void
-gimp_overlay_dialog_close (GimpOverlayDialog *dialog)
+picman_overlay_dialog_close (PicmanOverlayDialog *dialog)
 {
   GList        *children;
   GList        *list;
@@ -258,11 +258,11 @@ gimp_overlay_dialog_close (GimpOverlayDialog *dialog)
   g_list_free (children);
 
   if (ad)
-    gimp_overlay_dialog_response (dialog, ad->response_id);
+    picman_overlay_dialog_response (dialog, ad->response_id);
 }
 
 GtkWidget *
-gimp_overlay_dialog_new (GimpToolInfo *tool_info,
+picman_overlay_dialog_new (PicmanToolInfo *tool_info,
                          const gchar  *desc,
                          ...)
 {
@@ -270,57 +270,57 @@ gimp_overlay_dialog_new (GimpToolInfo *tool_info,
   /* const gchar *stock_id; */
   va_list      args;
 
-  g_return_val_if_fail (GIMP_IS_TOOL_INFO (tool_info), NULL);
+  g_return_val_if_fail (PICMAN_IS_TOOL_INFO (tool_info), NULL);
 
-  /* stock_id = gimp_viewable_get_stock_id (GIMP_VIEWABLE (tool_info)); */
+  /* stock_id = picman_viewable_get_stock_id (PICMAN_VIEWABLE (tool_info)); */
 
-  dialog = g_object_new (GIMP_TYPE_OVERLAY_DIALOG, NULL);
+  dialog = g_object_new (PICMAN_TYPE_OVERLAY_DIALOG, NULL);
 
   va_start (args, desc);
-  gimp_overlay_dialog_add_buttons_valist (GIMP_OVERLAY_DIALOG (dialog), args);
+  picman_overlay_dialog_add_buttons_valist (PICMAN_OVERLAY_DIALOG (dialog), args);
   va_end (args);
 
   return dialog;
 }
 
 void
-gimp_overlay_dialog_response (GimpOverlayDialog *dialog,
+picman_overlay_dialog_response (PicmanOverlayDialog *dialog,
                               gint               response_id)
 {
-  g_return_if_fail (GIMP_IS_OVERLAY_DIALOG (dialog));
+  g_return_if_fail (PICMAN_IS_OVERLAY_DIALOG (dialog));
 
   g_signal_emit (dialog, signals[RESPONSE], 0,
 		 response_id);
 }
 
 void
-gimp_overlay_dialog_add_buttons_valist (GimpOverlayDialog *dialog,
+picman_overlay_dialog_add_buttons_valist (PicmanOverlayDialog *dialog,
                                         va_list            args)
 {
   const gchar *button_text;
   gint         response_id;
 
-  g_return_if_fail (GIMP_IS_OVERLAY_DIALOG (dialog));
+  g_return_if_fail (PICMAN_IS_OVERLAY_DIALOG (dialog));
 
   while ((button_text = va_arg (args, const gchar *)))
     {
       response_id = va_arg (args, gint);
 
-      gimp_overlay_dialog_add_button (dialog, button_text, response_id);
+      picman_overlay_dialog_add_button (dialog, button_text, response_id);
     }
 }
 
 static void
 action_widget_activated (GtkWidget         *widget,
-                         GimpOverlayDialog *dialog)
+                         PicmanOverlayDialog *dialog)
 {
   ResponseData *ad = get_response_data (widget, FALSE);
 
-  gimp_overlay_dialog_response (dialog, ad->response_id);
+  picman_overlay_dialog_response (dialog, ad->response_id);
 }
 
 GtkWidget *
-gimp_overlay_dialog_add_button (GimpOverlayDialog *dialog,
+picman_overlay_dialog_add_button (PicmanOverlayDialog *dialog,
                                 const gchar       *button_text,
                                 gint               response_id)
 {
@@ -329,7 +329,7 @@ gimp_overlay_dialog_add_button (GimpOverlayDialog *dialog,
   guint         signal_id;
   GClosure     *closure;
 
-  g_return_val_if_fail (GIMP_IS_OVERLAY_DIALOG (dialog), NULL);
+  g_return_val_if_fail (PICMAN_IS_OVERLAY_DIALOG (dialog), NULL);
   g_return_val_if_fail (button_text != NULL, NULL);
 
   button = gtk_button_new_from_stock (button_text);
@@ -369,14 +369,14 @@ get_response_data (GtkWidget *widget,
 		   gboolean   create)
 {
   ResponseData *ad = g_object_get_data (G_OBJECT (widget),
-                                        "gimp-overlay-dialog-response-data");
+                                        "picman-overlay-dialog-response-data");
 
   if (! ad && create)
     {
       ad = g_slice_new (ResponseData);
 
       g_object_set_data_full (G_OBJECT (widget),
-                              "gimp-overlay-dialog-response-data",
+                              "picman-overlay-dialog-response-data",
                               ad, response_data_free);
     }
 

@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,25 +16,25 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONFIG_H__
-#define __GIMP_CONFIG_H__
+#ifndef __PICMAN_CONFIG_H__
+#define __PICMAN_CONFIG_H__
 
-#define __GIMP_CONFIG_H_INSIDE__
+#define __PICMAN_CONFIG_H_INSIDE__
 
-#include <libgimpconfig/gimpconfigtypes.h>
+#include <libpicmanconfig/picmanconfigtypes.h>
 
-#include <libgimpconfig/gimpconfigwriter.h>
-#include <libgimpconfig/gimpconfig-iface.h>
-#include <libgimpconfig/gimpconfig-error.h>
-#include <libgimpconfig/gimpconfig-serialize.h>
-#include <libgimpconfig/gimpconfig-deserialize.h>
-#include <libgimpconfig/gimpconfig-utils.h>
-#include <libgimpconfig/gimpconfig-params.h>
-#include <libgimpconfig/gimpconfig-path.h>
-#include <libgimpconfig/gimpscanner.h>
+#include <libpicmanconfig/picmanconfigwriter.h>
+#include <libpicmanconfig/picmanconfig-iface.h>
+#include <libpicmanconfig/picmanconfig-error.h>
+#include <libpicmanconfig/picmanconfig-serialize.h>
+#include <libpicmanconfig/picmanconfig-deserialize.h>
+#include <libpicmanconfig/picmanconfig-utils.h>
+#include <libpicmanconfig/picmanconfig-params.h>
+#include <libpicmanconfig/picmanconfig-path.h>
+#include <libpicmanconfig/picmanscanner.h>
 
-#include <libgimpconfig/gimpcolorconfig.h>
+#include <libpicmanconfig/picmancolorconfig.h>
 
-#undef __GIMP_CONFIG_H_INSIDE__
+#undef __PICMAN_CONFIG_H_INSIDE__
 
-#endif  /* __GIMP_CONFIG_H__ */
+#endif  /* __PICMAN_CONFIG_H__ */

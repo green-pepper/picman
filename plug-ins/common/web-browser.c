@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Web Browser Plug-in
- * Copyright (C) 2003  Henrik Brix Andersen <brix@gimp.org>
+ * Copyright (C) 2003  Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #ifdef G_OS_WIN32
 #include <windows.h>
@@ -35,19 +35,19 @@
 
 #define PLUG_IN_PROC   "plug-in-web-browser"
 #define PLUG_IN_BINARY "web-browser"
-#define PLUG_IN_ROLE   "gimp-web-browser"
+#define PLUG_IN_ROLE   "picman-web-browser"
 
 
 static void     query            (void);
 static void     run              (const gchar      *name,
                                   gint              nparams,
-                                  const GimpParam  *param,
+                                  const PicmanParam  *param,
                                   gint             *nreturn_vals,
-                                  GimpParam       **return_vals);
+                                  PicmanParam       **return_vals);
 static gboolean browser_open_url (const gchar      *url,
                                   GError          **error);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -61,19 +61,19 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_STRING, "url", "URL to open" }
+    { PICMAN_PDB_STRING, "url", "URL to open" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           "Open an URL in the user specified web browser",
                           "Opens the given URL in the user specified web browser.",
-                          "Henrik Brix Andersen <brix@gimp.org>",
+                          "Henrik Brix Andersen <brix@picman.org>",
                           "2003",
                           "2003/09/16",
                           NULL, NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -81,18 +81,18 @@ query (void)
 static void
 run (const gchar      *name,
      gint             nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpPDBStatusType  status;
+  static PicmanParam   values[2];
+  PicmanPDBStatusType  status;
   GError            *error = NULL;
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  status   = GIMP_PDB_SUCCESS;
+  status   = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
 
@@ -102,18 +102,18 @@ run (const gchar      *name,
     {
       if (! browser_open_url (param[0].data.d_string, &error))
         {
-          status                  = GIMP_PDB_EXECUTION_ERROR;
+          status                  = PICMAN_PDB_EXECUTION_ERROR;
           *nreturn_vals           = 2;
-          values[1].type          = GIMP_PDB_STRING;
+          values[1].type          = PICMAN_PDB_STRING;
           values[1].data.d_string = error->message;
         }
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 }
 
@@ -181,7 +181,7 @@ browser_open_url (const gchar  *url,
 
   return TRUE;
 #else
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
   return gtk_show_uri (gdk_screen_get_default (),
                        url,

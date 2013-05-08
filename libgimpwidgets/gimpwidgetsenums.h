@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,8 +16,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_WIDGETS_ENUMS_H__
-#define __GIMP_WIDGETS_ENUMS_H__
+#ifndef __PICMAN_WIDGETS_ENUMS_H__
+#define __PICMAN_WIDGETS_ENUMS_H__
 
 
 G_BEGIN_DECLS
@@ -26,162 +26,162 @@ G_BEGIN_DECLS
 
 
 /**
- * GimpAspectType:
- * @GIMP_ASPECT_SQUARE:    it's a 1:1 square
- * @GIMP_ASPECT_PORTRAIT:  it's higher than it's wide
- * @GIMP_ASPECT_LANDSCAPE: it's wider than it's high
+ * PicmanAspectType:
+ * @PICMAN_ASPECT_SQUARE:    it's a 1:1 square
+ * @PICMAN_ASPECT_PORTRAIT:  it's higher than it's wide
+ * @PICMAN_ASPECT_LANDSCAPE: it's wider than it's high
  *
  * Aspect ratios.
  **/
-#define GIMP_TYPE_ASPECT_TYPE (gimp_aspect_type_get_type ())
+#define PICMAN_TYPE_ASPECT_TYPE (picman_aspect_type_get_type ())
 
-GType gimp_aspect_type_get_type (void) G_GNUC_CONST;
+GType picman_aspect_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_ASPECT_SQUARE,    /*< desc="Square"    >*/
-  GIMP_ASPECT_PORTRAIT,  /*< desc="Portrait"  >*/
-  GIMP_ASPECT_LANDSCAPE  /*< desc="Landscape" >*/
-} GimpAspectType;
+  PICMAN_ASPECT_SQUARE,    /*< desc="Square"    >*/
+  PICMAN_ASPECT_PORTRAIT,  /*< desc="Portrait"  >*/
+  PICMAN_ASPECT_LANDSCAPE  /*< desc="Landscape" >*/
+} PicmanAspectType;
 
 
 /**
- * GimpChainPosition:
- * @GIMP_CHAIN_TOP:    the chain is on top
- * @GIMP_CHAIN_LEFT:   the chain is to the left
- * @GIMP_CHAIN_BOTTOM: the chain is on bottom
- * @GIMP_CHAIN_RIGHT:  the chain is to the right
+ * PicmanChainPosition:
+ * @PICMAN_CHAIN_TOP:    the chain is on top
+ * @PICMAN_CHAIN_LEFT:   the chain is to the left
+ * @PICMAN_CHAIN_BOTTOM: the chain is on bottom
+ * @PICMAN_CHAIN_RIGHT:  the chain is to the right
  *
- * Possible chain positions for #GimpChainButton.
+ * Possible chain positions for #PicmanChainButton.
  **/
-#define GIMP_TYPE_CHAIN_POSITION (gimp_chain_position_get_type ())
+#define PICMAN_TYPE_CHAIN_POSITION (picman_chain_position_get_type ())
 
-GType gimp_chain_position_get_type (void) G_GNUC_CONST;
+GType picman_chain_position_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_CHAIN_TOP,
-  GIMP_CHAIN_LEFT,
-  GIMP_CHAIN_BOTTOM,
-  GIMP_CHAIN_RIGHT
-} GimpChainPosition;
+  PICMAN_CHAIN_TOP,
+  PICMAN_CHAIN_LEFT,
+  PICMAN_CHAIN_BOTTOM,
+  PICMAN_CHAIN_RIGHT
+} PicmanChainPosition;
 
 
 /**
- * GimpColorAreaType:
- * @GIMP_COLOR_AREA_FLAT:         don't display transparency
- * @GIMP_COLOR_AREA_SMALL_CHECKS: display transparency using small checks
- * @GIMP_COLOR_AREA_LARGE_CHECKS: display transparency using large checks
+ * PicmanColorAreaType:
+ * @PICMAN_COLOR_AREA_FLAT:         don't display transparency
+ * @PICMAN_COLOR_AREA_SMALL_CHECKS: display transparency using small checks
+ * @PICMAN_COLOR_AREA_LARGE_CHECKS: display transparency using large checks
  *
- * The types of transparency display for #GimpColorArea.
+ * The types of transparency display for #PicmanColorArea.
  **/
-#define GIMP_TYPE_COLOR_AREA_TYPE (gimp_color_area_type_get_type ())
+#define PICMAN_TYPE_COLOR_AREA_TYPE (picman_color_area_type_get_type ())
 
-GType gimp_color_area_type_get_type (void) G_GNUC_CONST;
+GType picman_color_area_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_COLOR_AREA_FLAT = 0,
-  GIMP_COLOR_AREA_SMALL_CHECKS,
-  GIMP_COLOR_AREA_LARGE_CHECKS
-} GimpColorAreaType;
+  PICMAN_COLOR_AREA_FLAT = 0,
+  PICMAN_COLOR_AREA_SMALL_CHECKS,
+  PICMAN_COLOR_AREA_LARGE_CHECKS
+} PicmanColorAreaType;
 
 
 /**
- * GimpColorSelectorChannel:
- * @GIMP_COLOR_SELECTOR_HUE:        the hue channel
- * @GIMP_COLOR_SELECTOR_SATURATION: the saturation channel
- * @GIMP_COLOR_SELECTOR_VALUE:      the value channel
- * @GIMP_COLOR_SELECTOR_RED:        the red channel
- * @GIMP_COLOR_SELECTOR_GREEN:      the green channel
- * @GIMP_COLOR_SELECTOR_BLUE:       the blue channel
- * @GIMP_COLOR_SELECTOR_ALPHA:      the alpha channel
+ * PicmanColorSelectorChannel:
+ * @PICMAN_COLOR_SELECTOR_HUE:        the hue channel
+ * @PICMAN_COLOR_SELECTOR_SATURATION: the saturation channel
+ * @PICMAN_COLOR_SELECTOR_VALUE:      the value channel
+ * @PICMAN_COLOR_SELECTOR_RED:        the red channel
+ * @PICMAN_COLOR_SELECTOR_GREEN:      the green channel
+ * @PICMAN_COLOR_SELECTOR_BLUE:       the blue channel
+ * @PICMAN_COLOR_SELECTOR_ALPHA:      the alpha channel
  *
  * An enum to specify the types of color channels edited in
- * #GimpColorSelector widgets.
+ * #PicmanColorSelector widgets.
  **/
-#define GIMP_TYPE_COLOR_SELECTOR_CHANNEL (gimp_color_selector_channel_get_type ())
+#define PICMAN_TYPE_COLOR_SELECTOR_CHANNEL (picman_color_selector_channel_get_type ())
 
-GType gimp_color_selector_channel_get_type (void) G_GNUC_CONST;
+GType picman_color_selector_channel_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_COLOR_SELECTOR_HUE,        /*< desc="_H", help="Hue"        >*/
-  GIMP_COLOR_SELECTOR_SATURATION, /*< desc="_S", help="Saturation" >*/
-  GIMP_COLOR_SELECTOR_VALUE,      /*< desc="_V", help="Value"      >*/
-  GIMP_COLOR_SELECTOR_RED,        /*< desc="_R", help="Red"        >*/
-  GIMP_COLOR_SELECTOR_GREEN,      /*< desc="_G", help="Green"      >*/
-  GIMP_COLOR_SELECTOR_BLUE,       /*< desc="_B", help="Blue"       >*/
-  GIMP_COLOR_SELECTOR_ALPHA       /*< desc="_A", help="Alpha"      >*/
-} GimpColorSelectorChannel;
+  PICMAN_COLOR_SELECTOR_HUE,        /*< desc="_H", help="Hue"        >*/
+  PICMAN_COLOR_SELECTOR_SATURATION, /*< desc="_S", help="Saturation" >*/
+  PICMAN_COLOR_SELECTOR_VALUE,      /*< desc="_V", help="Value"      >*/
+  PICMAN_COLOR_SELECTOR_RED,        /*< desc="_R", help="Red"        >*/
+  PICMAN_COLOR_SELECTOR_GREEN,      /*< desc="_G", help="Green"      >*/
+  PICMAN_COLOR_SELECTOR_BLUE,       /*< desc="_B", help="Blue"       >*/
+  PICMAN_COLOR_SELECTOR_ALPHA       /*< desc="_A", help="Alpha"      >*/
+} PicmanColorSelectorChannel;
 
 
 /**
- * GimpPageSelectorTarget:
- * @GIMP_PAGE_SELECTOR_TARGET_LAYERS: import as layers of one image
- * @GIMP_PAGE_SELECTOR_TARGET_IMAGES: import as separate images
+ * PicmanPageSelectorTarget:
+ * @PICMAN_PAGE_SELECTOR_TARGET_LAYERS: import as layers of one image
+ * @PICMAN_PAGE_SELECTOR_TARGET_IMAGES: import as separate images
  *
- * Import targets for #GimpPageSelector.
+ * Import targets for #PicmanPageSelector.
  **/
-#define GIMP_TYPE_PAGE_SELECTOR_TARGET (gimp_page_selector_target_get_type ())
+#define PICMAN_TYPE_PAGE_SELECTOR_TARGET (picman_page_selector_target_get_type ())
 
-GType gimp_page_selector_target_get_type (void) G_GNUC_CONST;
+GType picman_page_selector_target_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_PAGE_SELECTOR_TARGET_LAYERS, /*< desc="Layers" >*/
-  GIMP_PAGE_SELECTOR_TARGET_IMAGES  /*< desc="Images" >*/
-} GimpPageSelectorTarget;
+  PICMAN_PAGE_SELECTOR_TARGET_LAYERS, /*< desc="Layers" >*/
+  PICMAN_PAGE_SELECTOR_TARGET_IMAGES  /*< desc="Images" >*/
+} PicmanPageSelectorTarget;
 
 
 /**
- * GimpSizeEntryUpdatePolicy:
- * @GIMP_SIZE_ENTRY_UPDATE_NONE:       the size entry's meaning is up to the user
- * @GIMP_SIZE_ENTRY_UPDATE_SIZE:       the size entry displays values
- * @GIMP_SIZE_ENTRY_UPDATE_RESOLUTION: the size entry displays resolutions
+ * PicmanSizeEntryUpdatePolicy:
+ * @PICMAN_SIZE_ENTRY_UPDATE_NONE:       the size entry's meaning is up to the user
+ * @PICMAN_SIZE_ENTRY_UPDATE_SIZE:       the size entry displays values
+ * @PICMAN_SIZE_ENTRY_UPDATE_RESOLUTION: the size entry displays resolutions
  *
- * Update policies for #GimpSizeEntry.
+ * Update policies for #PicmanSizeEntry.
  **/
-#define GIMP_TYPE_SIZE_ENTRY_UPDATE_POLICY (gimp_size_entry_update_policy_get_type ())
+#define PICMAN_TYPE_SIZE_ENTRY_UPDATE_POLICY (picman_size_entry_update_policy_get_type ())
 
-GType gimp_size_entry_update_policy_get_type (void) G_GNUC_CONST;
+GType picman_size_entry_update_policy_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_SIZE_ENTRY_UPDATE_NONE       = 0,
-  GIMP_SIZE_ENTRY_UPDATE_SIZE       = 1,
-  GIMP_SIZE_ENTRY_UPDATE_RESOLUTION = 2
-} GimpSizeEntryUpdatePolicy;
+  PICMAN_SIZE_ENTRY_UPDATE_NONE       = 0,
+  PICMAN_SIZE_ENTRY_UPDATE_SIZE       = 1,
+  PICMAN_SIZE_ENTRY_UPDATE_RESOLUTION = 2
+} PicmanSizeEntryUpdatePolicy;
 
 
 /**
- * GimpZoomType:
- * @GIMP_ZOOM_IN:       zoom in
- * @GIMP_ZOOM_OUT:      zoom out
- * @GIMP_ZOOM_IN_MORE:  zoom in a lot
- * @GIMP_ZOOM_OUT_MORE: zoom out a lot
- * @GIMP_ZOOM_IN_MAX:   zoom in as far as possible
- * @GIMP_ZOOM_OUT_MAX:  zoom out as far as possible
- * @GIMP_ZOOM_TO:       zoom to a specific zoom factor
+ * PicmanZoomType:
+ * @PICMAN_ZOOM_IN:       zoom in
+ * @PICMAN_ZOOM_OUT:      zoom out
+ * @PICMAN_ZOOM_IN_MORE:  zoom in a lot
+ * @PICMAN_ZOOM_OUT_MORE: zoom out a lot
+ * @PICMAN_ZOOM_IN_MAX:   zoom in as far as possible
+ * @PICMAN_ZOOM_OUT_MAX:  zoom out as far as possible
+ * @PICMAN_ZOOM_TO:       zoom to a specific zoom factor
  *
- * the zoom types for #GimpZoomModel.
+ * the zoom types for #PicmanZoomModel.
  **/
-#define GIMP_TYPE_ZOOM_TYPE (gimp_zoom_type_get_type ())
+#define PICMAN_TYPE_ZOOM_TYPE (picman_zoom_type_get_type ())
 
-GType gimp_zoom_type_get_type (void) G_GNUC_CONST;
+GType picman_zoom_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_ZOOM_IN,        /*< desc="Zoom in"  >*/
-  GIMP_ZOOM_OUT,       /*< desc="Zoom out" >*/
-  GIMP_ZOOM_IN_MORE,   /*< skip >*/
-  GIMP_ZOOM_OUT_MORE,  /*< skip >*/
-  GIMP_ZOOM_IN_MAX,    /*< skip >*/
-  GIMP_ZOOM_OUT_MAX,   /*< skip >*/
-  GIMP_ZOOM_TO         /*< skip >*/
-} GimpZoomType;
+  PICMAN_ZOOM_IN,        /*< desc="Zoom in"  >*/
+  PICMAN_ZOOM_OUT,       /*< desc="Zoom out" >*/
+  PICMAN_ZOOM_IN_MORE,   /*< skip >*/
+  PICMAN_ZOOM_OUT_MORE,  /*< skip >*/
+  PICMAN_ZOOM_IN_MAX,    /*< skip >*/
+  PICMAN_ZOOM_OUT_MAX,   /*< skip >*/
+  PICMAN_ZOOM_TO         /*< skip >*/
+} PicmanZoomType;
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_WIDGETS_ENUMS_H__ */
+#endif  /* __PICMAN_WIDGETS_ENUMS_H__ */

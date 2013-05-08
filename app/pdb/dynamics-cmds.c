@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,122 +23,122 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer-filter.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman.h"
+#include "core/picmancontainer-filter.h"
+#include "core/picmancontainer.h"
+#include "core/picmandatafactory.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-dynamics_refresh_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+dynamics_refresh_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
-  gimp_data_factory_data_refresh (gimp->dynamics_factory, context);
+  picman_data_factory_data_refresh (picman->dynamics_factory, context);
 
-  return gimp_procedure_get_return_values (procedure, TRUE, NULL);
+  return picman_procedure_get_return_values (procedure, TRUE, NULL);
 }
 
-static GimpValueArray *
-dynamics_get_list_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+dynamics_get_list_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *filter;
   gint32 num_dynamics = 0;
   gchar **dynamics_list = NULL;
 
-  filter = g_value_get_string (gimp_value_array_index (args, 0));
+  filter = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      dynamics_list = gimp_container_get_filtered_name_array (gimp_data_factory_get_container (gimp->dynamics_factory),
+      dynamics_list = picman_container_get_filtered_name_array (picman_data_factory_get_container (picman->dynamics_factory),
                                                               filter, &num_dynamics);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_dynamics);
-      gimp_value_take_stringarray (gimp_value_array_index (return_vals, 2), dynamics_list, num_dynamics);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_dynamics);
+      picman_value_take_stringarray (picman_value_array_index (return_vals, 2), dynamics_list, num_dynamics);
     }
 
   return return_vals;
 }
 
 void
-register_dynamics_procs (GimpPDB *pdb)
+register_dynamics_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-dynamics-refresh
+   * picman-dynamics-refresh
    */
-  procedure = gimp_procedure_new (dynamics_refresh_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-dynamics-refresh");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-dynamics-refresh",
+  procedure = picman_procedure_new (dynamics_refresh_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-dynamics-refresh");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-dynamics-refresh",
                                      "Refresh current paint dynamics. This function always succeeds.",
                                      "This procedure retrieves all paint dynamics currently in the user's paint dynamics path and updates the paint dynamics dialogs accordingly.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_pdb_register_procedure (pdb, procedure);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-dynamics-get-list
+   * picman-dynamics-get-list
    */
-  procedure = gimp_procedure_new (dynamics_get_list_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-dynamics-get-list");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-dynamics-get-list",
+  procedure = picman_procedure_new (dynamics_get_list_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-dynamics-get-list");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-dynamics-get-list",
                                      "Retrieve the list of loaded paint dynamics.",
                                      "This procedure returns a list of the paint dynamics that are currently available.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2011",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filter",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filter",
                                                        "filter",
                                                        "An optional regular expression used to filter the list",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-dynamics",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-dynamics",
                                                           "num dynamics",
                                                           "The number of available paint dynamics",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string_array ("dynamics-list",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string_array ("dynamics-list",
                                                                  "dynamics list",
                                                                  "The list of paint dynamics names",
-                                                                 GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                 PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

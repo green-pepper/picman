@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,15 +22,15 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "widgets-types.h"
 
-#include "gimpcolorbar.h"
+#include "picmancolorbar.h"
 
 
 enum
@@ -44,61 +44,61 @@ enum
 
 /*  local function prototypes  */
 
-static void      gimp_color_bar_set_property (GObject        *object,
+static void      picman_color_bar_set_property (GObject        *object,
                                               guint           property_id,
                                               const GValue   *value,
                                               GParamSpec     *pspec);
-static void      gimp_color_bar_get_property (GObject        *object,
+static void      picman_color_bar_get_property (GObject        *object,
                                               guint           property_id,
                                               GValue         *value,
                                               GParamSpec     *pspec);
 
-static gboolean  gimp_color_bar_expose       (GtkWidget      *widget,
+static gboolean  picman_color_bar_expose       (GtkWidget      *widget,
                                               GdkEventExpose *event);
 
 
-G_DEFINE_TYPE (GimpColorBar, gimp_color_bar, GTK_TYPE_EVENT_BOX)
+G_DEFINE_TYPE (PicmanColorBar, picman_color_bar, GTK_TYPE_EVENT_BOX)
 
-#define parent_class gimp_color_bar_parent_class
+#define parent_class picman_color_bar_parent_class
 
 
 static void
-gimp_color_bar_class_init (GimpColorBarClass *klass)
+picman_color_bar_class_init (PicmanColorBarClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-  GimpRGB         white        = { 1.0, 1.0, 1.0, 1.0 };
+  PicmanRGB         white        = { 1.0, 1.0, 1.0, 1.0 };
 
-  object_class->set_property = gimp_color_bar_set_property;
-  object_class->get_property = gimp_color_bar_get_property;
+  object_class->set_property = picman_color_bar_set_property;
+  object_class->get_property = picman_color_bar_get_property;
 
-  widget_class->expose_event = gimp_color_bar_expose;
+  widget_class->expose_event = picman_color_bar_expose;
 
   g_object_class_install_property (object_class, PROP_ORIENTATION,
                                    g_param_spec_enum ("orientation",
                                                       NULL, NULL,
                                                       GTK_TYPE_ORIENTATION,
                                                       GTK_ORIENTATION_HORIZONTAL,
-                                                      GIMP_PARAM_READWRITE |
+                                                      PICMAN_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_COLOR,
-                                   gimp_param_spec_rgb ("color",
+                                   picman_param_spec_rgb ("color",
                                                         NULL, NULL,
                                                         FALSE, &white,
-                                                        GIMP_PARAM_WRITABLE |
+                                                        PICMAN_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_CHANNEL,
                                    g_param_spec_enum ("histogram-channel",
                                                       NULL, NULL,
-                                                      GIMP_TYPE_HISTOGRAM_CHANNEL,
-                                                      GIMP_HISTOGRAM_VALUE,
-                                                      GIMP_PARAM_WRITABLE));
+                                                      PICMAN_TYPE_HISTOGRAM_CHANNEL,
+                                                      PICMAN_HISTOGRAM_VALUE,
+                                                      PICMAN_PARAM_WRITABLE));
 }
 
 static void
-gimp_color_bar_init (GimpColorBar *bar)
+picman_color_bar_init (PicmanColorBar *bar)
 {
   gtk_event_box_set_visible_window (GTK_EVENT_BOX (bar), FALSE);
 
@@ -107,12 +107,12 @@ gimp_color_bar_init (GimpColorBar *bar)
 
 
 static void
-gimp_color_bar_set_property (GObject      *object,
+picman_color_bar_set_property (GObject      *object,
                              guint         property_id,
                              const GValue *value,
                              GParamSpec   *pspec)
 {
-  GimpColorBar *bar = GIMP_COLOR_BAR (object);
+  PicmanColorBar *bar = PICMAN_COLOR_BAR (object);
 
   switch (property_id)
     {
@@ -120,10 +120,10 @@ gimp_color_bar_set_property (GObject      *object,
       bar->orientation = g_value_get_enum (value);
       break;
     case PROP_COLOR:
-      gimp_color_bar_set_color (bar, g_value_get_boxed (value));
+      picman_color_bar_set_color (bar, g_value_get_boxed (value));
       break;
     case PROP_CHANNEL:
-      gimp_color_bar_set_channel (bar, g_value_get_enum (value));
+      picman_color_bar_set_channel (bar, g_value_get_enum (value));
       break;
 
     default:
@@ -133,12 +133,12 @@ gimp_color_bar_set_property (GObject      *object,
 }
 
 static void
-gimp_color_bar_get_property (GObject    *object,
+picman_color_bar_get_property (GObject    *object,
                              guint       property_id,
                              GValue     *value,
                              GParamSpec *pspec)
 {
-  GimpColorBar *bar = GIMP_COLOR_BAR (object);
+  PicmanColorBar *bar = PICMAN_COLOR_BAR (object);
 
   switch (property_id)
     {
@@ -153,10 +153,10 @@ gimp_color_bar_get_property (GObject    *object,
 }
 
 static gboolean
-gimp_color_bar_expose (GtkWidget      *widget,
+picman_color_bar_expose (GtkWidget      *widget,
                        GdkEventExpose *event)
 {
-  GimpColorBar    *bar = GIMP_COLOR_BAR (widget);
+  PicmanColorBar    *bar = PICMAN_COLOR_BAR (widget);
   cairo_t         *cr;
   GtkAllocation    allocation;
   cairo_surface_t *surface;
@@ -192,7 +192,7 @@ gimp_color_bar_expose (GtkWidget      *widget,
        i < 256;
        i++, src += 3, dest += 4)
     {
-      GIMP_CAIRO_RGB24_SET_PIXEL(dest, src[0], src[1], src[2]);
+      PICMAN_CAIRO_RGB24_SET_PIXEL(dest, src[0], src[1], src[2]);
     }
 
   cairo_surface_mark_dirty (surface);
@@ -226,38 +226,38 @@ gimp_color_bar_expose (GtkWidget      *widget,
 /*  public functions  */
 
 /**
- * gimp_color_bar_new:
+ * picman_color_bar_new:
  * @orientation: whether the bar should be oriented horizontally or
  *               vertically
  *
- * Creates a new #GimpColorBar widget.
+ * Creates a new #PicmanColorBar widget.
  *
- * Return value: The new #GimpColorBar widget.
+ * Return value: The new #PicmanColorBar widget.
  **/
 GtkWidget *
-gimp_color_bar_new (GtkOrientation  orientation)
+picman_color_bar_new (GtkOrientation  orientation)
 {
-  return g_object_new (GIMP_TYPE_COLOR_BAR,
+  return g_object_new (PICMAN_TYPE_COLOR_BAR,
                        "orientation", orientation,
                        NULL);
 }
 
 /**
- * gimp_color_bar_set_color:
- * @bar:   a #GimpColorBar widget
- * @color: a #GimpRGB color
+ * picman_color_bar_set_color:
+ * @bar:   a #PicmanColorBar widget
+ * @color: a #PicmanRGB color
  *
  * Makes the @bar display a gradient from black (on the left or the
  * bottom), to the given @color (on the right or at the top).
  **/
 void
-gimp_color_bar_set_color (GimpColorBar  *bar,
-                          const GimpRGB *color)
+picman_color_bar_set_color (PicmanColorBar  *bar,
+                          const PicmanRGB *color)
 {
   guchar *buf;
   gint    i;
 
-  g_return_if_fail (GIMP_IS_COLOR_BAR (bar));
+  g_return_if_fail (PICMAN_IS_COLOR_BAR (bar));
   g_return_if_fail (color != NULL);
 
   for (i = 0, buf = bar->buf; i < 256; i++, buf += 3)
@@ -271,45 +271,45 @@ gimp_color_bar_set_color (GimpColorBar  *bar,
 }
 
 /**
- * gimp_color_bar_set_channel:
- * @bar:     a #GimpColorBar widget
- * @channel: a #GimpHistogramChannel
+ * picman_color_bar_set_channel:
+ * @bar:     a #PicmanColorBar widget
+ * @channel: a #PicmanHistogramChannel
  *
- * Convenience function that calls gimp_color_bar_set_color() with the
+ * Convenience function that calls picman_color_bar_set_color() with the
  * color that matches the @channel.
  **/
 void
-gimp_color_bar_set_channel (GimpColorBar         *bar,
-                            GimpHistogramChannel  channel)
+picman_color_bar_set_channel (PicmanColorBar         *bar,
+                            PicmanHistogramChannel  channel)
 {
-  GimpRGB  color = { 1.0, 1.0, 1.0, 1.0 };
+  PicmanRGB  color = { 1.0, 1.0, 1.0, 1.0 };
 
-  g_return_if_fail (GIMP_IS_COLOR_BAR (bar));
+  g_return_if_fail (PICMAN_IS_COLOR_BAR (bar));
 
   switch (channel)
     {
-    case GIMP_HISTOGRAM_VALUE:
-    case GIMP_HISTOGRAM_ALPHA:
-    case GIMP_HISTOGRAM_RGB:
-      gimp_rgb_set (&color, 1.0, 1.0, 1.0);
+    case PICMAN_HISTOGRAM_VALUE:
+    case PICMAN_HISTOGRAM_ALPHA:
+    case PICMAN_HISTOGRAM_RGB:
+      picman_rgb_set (&color, 1.0, 1.0, 1.0);
       break;
-    case GIMP_HISTOGRAM_RED:
-      gimp_rgb_set (&color, 1.0, 0.0, 0.0);
+    case PICMAN_HISTOGRAM_RED:
+      picman_rgb_set (&color, 1.0, 0.0, 0.0);
       break;
-    case GIMP_HISTOGRAM_GREEN:
-      gimp_rgb_set (&color, 0.0, 1.0, 0.0);
+    case PICMAN_HISTOGRAM_GREEN:
+      picman_rgb_set (&color, 0.0, 1.0, 0.0);
       break;
-    case GIMP_HISTOGRAM_BLUE:
-      gimp_rgb_set (&color, 0.0, 0.0, 1.0);
+    case PICMAN_HISTOGRAM_BLUE:
+      picman_rgb_set (&color, 0.0, 0.0, 1.0);
       break;
     }
 
-  gimp_color_bar_set_color (bar, &color);
+  picman_color_bar_set_color (bar, &color);
 }
 
 /**
- * gimp_color_bar_set_buffers:
- * @bar:   a #GimpColorBar widget
+ * picman_color_bar_set_buffers:
+ * @bar:   a #PicmanColorBar widget
  * @red:   an array of 256 values
  * @green: an array of 256 values
  * @blue:  an array of 256 values
@@ -319,7 +319,7 @@ gimp_color_bar_set_channel (GimpColorBar         *bar,
  * or a #Curves struct.
  **/
 void
-gimp_color_bar_set_buffers (GimpColorBar *bar,
+picman_color_bar_set_buffers (PicmanColorBar *bar,
                             const guchar *red,
                             const guchar *green,
                             const guchar *blue)
@@ -327,7 +327,7 @@ gimp_color_bar_set_buffers (GimpColorBar *bar,
   guchar *buf;
   gint    i;
 
-  g_return_if_fail (GIMP_IS_COLOR_BAR (bar));
+  g_return_if_fail (PICMAN_IS_COLOR_BAR (bar));
   g_return_if_fail (red != NULL);
   g_return_if_fail (green != NULL);
   g_return_if_fail (blue != NULL);

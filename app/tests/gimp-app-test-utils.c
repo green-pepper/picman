@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 2009 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,24 +22,24 @@
 
 #include "display/display-types.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpimagewindow.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmanimagewindow.h"
 
-#include "widgets/gimpuimanager.h"
-#include "widgets/gimpdialogfactory.h"
+#include "widgets/picmanuimanager.h"
+#include "widgets/picmandialogfactory.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
 
 #include "tests.h"
 
-#include "gimp-app-test-utils.h"
+#include "picman-app-test-utils.h"
 
 
 void
-gimp_test_utils_set_env_to_subpath (const gchar *root_env_var,
+picman_test_utils_set_env_to_subpath (const gchar *root_env_var,
                                     const gchar *subdir,
                                     const gchar *target_env_var)
 {
@@ -53,7 +53,7 @@ gimp_test_utils_set_env_to_subpath (const gchar *root_env_var,
                 "*  The env var %s is not set, you are probably running\n"
                 "*  in a debugger. Set it manually, e.g.:\n"
                 "*\n"
-                "*    set env %s=%s/source/gimp\n"
+                "*    set env %s=%s/source/picman\n"
                 "*\n",
                 root_env_var,
                 root_env_var, g_get_home_dir ());
@@ -66,90 +66,90 @@ gimp_test_utils_set_env_to_subpath (const gchar *root_env_var,
 
 
 /**
- * gimp_test_utils_set_gimp2_directory:
- * @root_env_var: Either "GIMP_TESTING_ABS_TOP_SRCDIR" or
- *                "GIMP_TESTING_ABS_TOP_BUILDDIR"
+ * picman_test_utils_set_picman2_directory:
+ * @root_env_var: Either "PICMAN_TESTING_ABS_TOP_SRCDIR" or
+ *                "PICMAN_TESTING_ABS_TOP_BUILDDIR"
  * @subdir:       Subdir, may be %NULL
  *
- * Sets GIMP2_DIRECTORY to the source dir @root_env_var/@subdir. The
+ * Sets PICMAN2_DIRECTORY to the source dir @root_env_var/@subdir. The
  * environment variables is set up by the test runner, see Makefile.am
  **/
 void
-gimp_test_utils_set_gimp2_directory (const gchar *root_env_var,
+picman_test_utils_set_picman2_directory (const gchar *root_env_var,
                                      const gchar *subdir)
 {
-  gimp_test_utils_set_env_to_subpath (root_env_var,
+  picman_test_utils_set_env_to_subpath (root_env_var,
                                       subdir,
-                                      "GIMP2_DIRECTORY" /*target_env_var*/);
+                                      "PICMAN2_DIRECTORY" /*target_env_var*/);
 }
 
 /**
- * gimp_test_utils_setup_menus_dir:
+ * picman_test_utils_setup_menus_dir:
  *
- * Sets GIMP_TESTING_MENUS_DIR to "$top_srcdir/menus".
+ * Sets PICMAN_TESTING_MENUS_DIR to "$top_srcdir/menus".
  **/
 void
-gimp_test_utils_setup_menus_dir (void)
+picman_test_utils_setup_menus_dir (void)
 {
-  /* GIMP_TESTING_ABS_TOP_SRCDIR is set by the automake test runner,
+  /* PICMAN_TESTING_ABS_TOP_SRCDIR is set by the automake test runner,
    * see Makefile.am
    */
-  gimp_test_utils_set_env_to_subpath ("GIMP_TESTING_ABS_TOP_SRCDIR" /*root_env_var*/,
+  picman_test_utils_set_env_to_subpath ("PICMAN_TESTING_ABS_TOP_SRCDIR" /*root_env_var*/,
                                       "menus" /*subdir*/,
-                                      "GIMP_TESTING_MENUS_DIR" /*target_env_var*/);
+                                      "PICMAN_TESTING_MENUS_DIR" /*target_env_var*/);
 }
 
 /**
- * gimp_test_utils_create_image:
- * @gimp:   A #Gimp instance.
+ * picman_test_utils_create_image:
+ * @picman:   A #Picman instance.
  * @width:  Width of image (and layer)
  * @height: Height of image (and layer)
  *
  * Creates a new image of a given size with one layer of same size and
  * a display.
  *
- * Returns: The new #GimpImage.
+ * Returns: The new #PicmanImage.
  **/
 void
-gimp_test_utils_create_image (Gimp *gimp,
+picman_test_utils_create_image (Picman *picman,
                               gint  width,
                               gint  height)
 {
-  GimpImage *image;
-  GimpLayer *layer;
+  PicmanImage *image;
+  PicmanLayer *layer;
 
-  image = gimp_image_new (gimp, width, height,
-                          GIMP_RGB, GIMP_PRECISION_U8);
+  image = picman_image_new (picman, width, height,
+                          PICMAN_RGB, PICMAN_PRECISION_U8);
 
-  layer = gimp_layer_new (image,
+  layer = picman_layer_new (image,
                           width,
                           height,
-                          gimp_image_get_layer_format (image, TRUE),
+                          picman_image_get_layer_format (image, TRUE),
                           "layer1",
                           1.0,
-                          GIMP_NORMAL_MODE);
+                          PICMAN_NORMAL_MODE);
 
-  gimp_image_add_layer (image,
+  picman_image_add_layer (image,
                         layer,
                         NULL /*parent*/,
                         0 /*position*/,
                         FALSE /*push_undo*/);
 
-  gimp_create_display (gimp,
+  picman_create_display (picman,
                        image,
-                       GIMP_UNIT_PIXEL,
+                       PICMAN_UNIT_PIXEL,
                        1.0 /*scale*/);
 }
 
 /**
- * gimp_test_utils_synthesize_key_event:
+ * picman_test_utils_synthesize_key_event:
  * @widget: Widget to target.
  * @keyval: Keyval, e.g. GDK_Return
  *
  * Simulates a keypress and release with gdk_test_simulate_key().
  **/
 void
-gimp_test_utils_synthesize_key_event (GtkWidget *widget,
+picman_test_utils_synthesize_key_event (GtkWidget *widget,
                                       guint      keyval)
 {
   gdk_test_simulate_key (gtk_widget_get_window (widget),
@@ -165,70 +165,70 @@ gimp_test_utils_synthesize_key_event (GtkWidget *widget,
 }
 
 /**
- * gimp_test_utils_get_ui_manager:
- * @gimp: The #Gimp instance.
+ * picman_test_utils_get_ui_manager:
+ * @picman: The #Picman instance.
  *
- * Returns the "best" #GimpUIManager to use when performing
+ * Returns the "best" #PicmanUIManager to use when performing
  * actions. It gives the ui manager of the empty display if it exists,
  * otherwise it gives it the ui manager of the first display.
  *
- * Returns: The #GimpUIManager.
+ * Returns: The #PicmanUIManager.
  **/
-GimpUIManager *
-gimp_test_utils_get_ui_manager (Gimp *gimp)
+PicmanUIManager *
+picman_test_utils_get_ui_manager (Picman *picman)
 {
-  GimpDisplay       *display      = NULL;
-  GimpDisplayShell  *shell        = NULL;
+  PicmanDisplay       *display      = NULL;
+  PicmanDisplayShell  *shell        = NULL;
   GtkWidget         *toplevel     = NULL;
-  GimpImageWindow   *image_window = NULL;
-  GimpUIManager     *ui_manager   = NULL;
+  PicmanImageWindow   *image_window = NULL;
+  PicmanUIManager     *ui_manager   = NULL;
 
-  display = GIMP_DISPLAY (gimp_get_empty_display (gimp));
+  display = PICMAN_DISPLAY (picman_get_empty_display (picman));
 
   /* If there were not empty display, assume that there is at least
    * one image display and use that
    */
   if (! display)
-    display = GIMP_DISPLAY (gimp_get_display_iter (gimp)->data);
+    display = PICMAN_DISPLAY (picman_get_display_iter (picman)->data);
 
-  shell            = gimp_display_get_shell (display);
+  shell            = picman_display_get_shell (display);
   toplevel         = gtk_widget_get_toplevel (GTK_WIDGET (shell));
-  image_window     = GIMP_IMAGE_WINDOW (toplevel);
-  ui_manager       = gimp_image_window_get_ui_manager (image_window);
+  image_window     = PICMAN_IMAGE_WINDOW (toplevel);
+  ui_manager       = picman_image_window_get_ui_manager (image_window);
 
   return ui_manager;
 }
 
 /**
- * gimp_test_utils_create_image_from_dalog:
- * @gimp:
+ * picman_test_utils_create_image_from_dalog:
+ * @picman:
  *
  * Creates a new image using the "New image" dialog, and then returns
- * the #GimpImage created.
+ * the #PicmanImage created.
  *
- * Returns: The created #GimpImage.
+ * Returns: The created #PicmanImage.
  **/
-GimpImage *
-gimp_test_utils_create_image_from_dialog (Gimp *gimp)
+PicmanImage *
+picman_test_utils_create_image_from_dialog (Picman *picman)
 {
-  GimpImage     *image            = NULL;
+  PicmanImage     *image            = NULL;
   GtkWidget     *new_image_dialog = NULL;
-  guint          n_initial_images = g_list_length (gimp_get_image_iter (gimp));
+  guint          n_initial_images = g_list_length (picman_get_image_iter (picman));
   guint          n_images         = -1;
   gint           tries_left       = 100;
-  GimpUIManager *ui_manager       = gimp_test_utils_get_ui_manager (gimp);
+  PicmanUIManager *ui_manager       = picman_test_utils_get_ui_manager (picman);
 
   /* Bring up the new image dialog */
-  gimp_ui_manager_activate_action (ui_manager,
+  picman_ui_manager_activate_action (ui_manager,
                                    "image",
                                    "image-new");
-  gimp_test_run_mainloop_until_idle ();
+  picman_test_run_mainloop_until_idle ();
 
   /* Get the GtkWindow of the dialog */
   new_image_dialog =
-    gimp_dialog_factory_dialog_raise (gimp_dialog_factory_get_singleton (),
+    picman_dialog_factory_dialog_raise (picman_dialog_factory_get_singleton (),
                                       gdk_screen_get_default (),
-                                      "gimp-image-new-dialog",
+                                      "picman-image-new-dialog",
                                       -1 /*view_size*/);
 
   /* Press the focused widget, it should be the Ok button. It will
@@ -238,8 +238,8 @@ gimp_test_utils_create_image_from_dialog (Gimp *gimp)
   do
     {
       g_usleep (20 * 1000);
-      gimp_test_run_mainloop_until_idle ();
-      n_images = g_list_length (gimp_get_image_iter (gimp));
+      picman_test_run_mainloop_until_idle ();
+      n_images = g_list_length (picman_get_image_iter (picman));
     }
   while (tries_left-- &&
          n_images != n_initial_images + 1);
@@ -249,7 +249,7 @@ gimp_test_utils_create_image_from_dialog (Gimp *gimp)
                    ==,
                    n_initial_images + 1);
 
-  image = GIMP_IMAGE (gimp_get_image_iter (gimp)->data);
+  image = PICMAN_IMAGE (picman_get_image_iter (picman)->data);
 
   return image;
 }

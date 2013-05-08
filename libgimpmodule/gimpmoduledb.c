@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -22,21 +22,21 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpmoduletypes.h"
+#include "picmanmoduletypes.h"
 
-#include "gimpmodule.h"
-#include "gimpmoduledb.h"
+#include "picmanmodule.h"
+#include "picmanmoduledb.h"
 
 
 /**
- * SECTION: gimpmoduledb
- * @title: GimpModuleDB
- * @short_description: Keeps a list of #GimpModule's found in a given
+ * SECTION: picmanmoduledb
+ * @title: PicmanModuleDB
+ * @short_description: Keeps a list of #PicmanModule's found in a given
  *                     searchpath.
  *
- * Keeps a list of #GimpModule's found in a given searchpath.
+ * Keeps a list of #PicmanModule's found in a given searchpath.
  **/
 
 
@@ -52,36 +52,36 @@ enum
 /*  #define DUMP_DB 1  */
 
 
-static void         gimp_module_db_finalize            (GObject      *object);
+static void         picman_module_db_finalize            (GObject      *object);
 
-static void         gimp_module_db_module_initialize   (const GimpDatafileData *file_data,
+static void         picman_module_db_module_initialize   (const PicmanDatafileData *file_data,
                                                         gpointer                user_data);
 
-static GimpModule * gimp_module_db_module_find_by_path (GimpModuleDB *db,
+static PicmanModule * picman_module_db_module_find_by_path (PicmanModuleDB *db,
                                                         const char   *fullpath);
 
 #ifdef DUMP_DB
-static void         gimp_module_db_dump_module         (gpointer      data,
+static void         picman_module_db_dump_module         (gpointer      data,
                                                         gpointer      user_data);
 #endif
 
-static void         gimp_module_db_module_on_disk_func (gpointer      data,
+static void         picman_module_db_module_on_disk_func (gpointer      data,
                                                         gpointer      user_data);
-static void         gimp_module_db_module_remove_func  (gpointer      data,
+static void         picman_module_db_module_remove_func  (gpointer      data,
                                                         gpointer      user_data);
-static void         gimp_module_db_module_modified     (GimpModule   *module,
-                                                        GimpModuleDB *db);
+static void         picman_module_db_module_modified     (PicmanModule   *module,
+                                                        PicmanModuleDB *db);
 
 
-G_DEFINE_TYPE (GimpModuleDB, gimp_module_db, G_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanModuleDB, picman_module_db, G_TYPE_OBJECT)
 
-#define parent_class gimp_module_db_parent_class
+#define parent_class picman_module_db_parent_class
 
 static guint db_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_module_db_class_init (GimpModuleDBClass *klass)
+picman_module_db_class_init (PicmanModuleDBClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -89,40 +89,40 @@ gimp_module_db_class_init (GimpModuleDBClass *klass)
     g_signal_new ("add",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpModuleDBClass, add),
+                  G_STRUCT_OFFSET (PicmanModuleDBClass, add),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_MODULE);
+                  PICMAN_TYPE_MODULE);
 
   db_signals[REMOVE] =
     g_signal_new ("remove",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpModuleDBClass, remove),
+                  G_STRUCT_OFFSET (PicmanModuleDBClass, remove),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_MODULE);
+                  PICMAN_TYPE_MODULE);
 
   db_signals[MODULE_MODIFIED] =
     g_signal_new ("module-modified",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpModuleDBClass, module_modified),
+                  G_STRUCT_OFFSET (PicmanModuleDBClass, module_modified),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_MODULE);
+                  PICMAN_TYPE_MODULE);
 
-  object_class->finalize = gimp_module_db_finalize;
+  object_class->finalize = picman_module_db_finalize;
 
   klass->add             = NULL;
   klass->remove          = NULL;
 }
 
 static void
-gimp_module_db_init (GimpModuleDB *db)
+picman_module_db_init (PicmanModuleDB *db)
 {
   db->modules      = NULL;
   db->load_inhibit = NULL;
@@ -130,9 +130,9 @@ gimp_module_db_init (GimpModuleDB *db)
 }
 
 static void
-gimp_module_db_finalize (GObject *object)
+picman_module_db_finalize (GObject *object)
 {
-  GimpModuleDB *db = GIMP_MODULE_DB (object);
+  PicmanModuleDB *db = PICMAN_MODULE_DB (object);
 
   if (db->modules)
     {
@@ -150,20 +150,20 @@ gimp_module_db_finalize (GObject *object)
 }
 
 /**
- * gimp_module_db_new:
+ * picman_module_db_new:
  * @verbose: Pass %TRUE to enable debugging output.
  *
- * Creates a new #GimpModuleDB instance. The @verbose parameter will be
- * passed to the created #GimpModule instances using gimp_module_new().
+ * Creates a new #PicmanModuleDB instance. The @verbose parameter will be
+ * passed to the created #PicmanModule instances using picman_module_new().
  *
- * Return value: The new #GimpModuleDB instance.
+ * Return value: The new #PicmanModuleDB instance.
  **/
-GimpModuleDB *
-gimp_module_db_new (gboolean verbose)
+PicmanModuleDB *
+picman_module_db_new (gboolean verbose)
 {
-  GimpModuleDB *db;
+  PicmanModuleDB *db;
 
-  db = g_object_new (GIMP_TYPE_MODULE_DB, NULL);
+  db = g_object_new (PICMAN_TYPE_MODULE_DB, NULL);
 
   db->verbose = verbose ? TRUE : FALSE;
 
@@ -207,21 +207,21 @@ is_in_inhibit_list (const gchar *filename,
 }
 
 /**
- * gimp_module_db_set_load_inhibit:
- * @db:           A #GimpModuleDB.
+ * picman_module_db_set_load_inhibit:
+ * @db:           A #PicmanModuleDB.
  * @load_inhibit: A #G_SEARCHPATH_SEPARATOR delimited list of module
  *                filenames to exclude from auto-loading.
  *
- * Sets the @load_inhibit flag for all #GimpModule's which are kept
- * by @db (using gimp_module_set_load_inhibit()).
+ * Sets the @load_inhibit flag for all #PicmanModule's which are kept
+ * by @db (using picman_module_set_load_inhibit()).
  **/
 void
-gimp_module_db_set_load_inhibit (GimpModuleDB *db,
+picman_module_db_set_load_inhibit (PicmanModuleDB *db,
                                  const gchar  *load_inhibit)
 {
   GList *list;
 
-  g_return_if_fail (GIMP_IS_MODULE_DB (db));
+  g_return_if_fail (PICMAN_IS_MODULE_DB (db));
 
   if (db->load_inhibit)
     g_free (db->load_inhibit);
@@ -230,17 +230,17 @@ gimp_module_db_set_load_inhibit (GimpModuleDB *db,
 
   for (list = db->modules; list; list = g_list_next (list))
     {
-      GimpModule *module = list->data;
+      PicmanModule *module = list->data;
 
-      gimp_module_set_load_inhibit (module,
+      picman_module_set_load_inhibit (module,
                                     is_in_inhibit_list (module->filename,
                                                         load_inhibit));
     }
 }
 
 /**
- * gimp_module_db_get_load_inhibit:
- * @db: A #GimpModuleDB.
+ * picman_module_db_get_load_inhibit:
+ * @db: A #PicmanModuleDB.
  *
  * Return the #G_SEARCHPATH_SEPARATOR delimited list of module filenames
  * which are excluded from auto-loading.
@@ -248,119 +248,119 @@ gimp_module_db_set_load_inhibit (GimpModuleDB *db,
  * Return value: the @db's @load_inhibit string.
  **/
 const gchar *
-gimp_module_db_get_load_inhibit (GimpModuleDB *db)
+picman_module_db_get_load_inhibit (PicmanModuleDB *db)
 {
-  g_return_val_if_fail (GIMP_IS_MODULE_DB (db), NULL);
+  g_return_val_if_fail (PICMAN_IS_MODULE_DB (db), NULL);
 
   return db->load_inhibit;
 }
 
 /**
- * gimp_module_db_load:
- * @db:          A #GimpModuleDB.
+ * picman_module_db_load:
+ * @db:          A #PicmanModuleDB.
  * @module_path: A #G_SEARCHPATH_SEPARATOR delimited list of directories
  *               to load modules from.
  *
  * Scans the directories contained in @module_path using
- * gimp_datafiles_read_directories() and creates a #GimpModule
+ * picman_datafiles_read_directories() and creates a #PicmanModule
  * instance for every loadable module contained in the directories.
  **/
 void
-gimp_module_db_load (GimpModuleDB *db,
+picman_module_db_load (PicmanModuleDB *db,
                      const gchar  *module_path)
 {
-  g_return_if_fail (GIMP_IS_MODULE_DB (db));
+  g_return_if_fail (PICMAN_IS_MODULE_DB (db));
   g_return_if_fail (module_path != NULL);
 
   if (g_module_supported ())
-    gimp_datafiles_read_directories (module_path,
+    picman_datafiles_read_directories (module_path,
                                      G_FILE_TEST_EXISTS,
-                                     gimp_module_db_module_initialize,
+                                     picman_module_db_module_initialize,
                                      db);
 
 #ifdef DUMP_DB
-  g_list_foreach (db->modules, gimp_module_db_dump_module, NULL);
+  g_list_foreach (db->modules, picman_module_db_dump_module, NULL);
 #endif
 }
 
 /**
- * gimp_module_db_refresh:
- * @db:          A #GimpModuleDB.
+ * picman_module_db_refresh:
+ * @db:          A #PicmanModuleDB.
  * @module_path: A #G_SEARCHPATH_SEPARATOR delimited list of directories
  *               to load modules from.
  *
- * Does the same as gimp_module_db_load(), plus removes all #GimpModule
+ * Does the same as picman_module_db_load(), plus removes all #PicmanModule
  * instances whose modules have been deleted from disk.
  *
- * Note that the #GimpModule's will just be removed from the internal
+ * Note that the #PicmanModule's will just be removed from the internal
  * list and not freed as this is not possible with #GTypeModule
  * instances which actually implement types.
  **/
 void
-gimp_module_db_refresh (GimpModuleDB *db,
+picman_module_db_refresh (PicmanModuleDB *db,
                         const gchar  *module_path)
 {
   GList *kill_list = NULL;
 
-  g_return_if_fail (GIMP_IS_MODULE_DB (db));
+  g_return_if_fail (PICMAN_IS_MODULE_DB (db));
   g_return_if_fail (module_path != NULL);
 
   /* remove modules we don't have on disk anymore */
   g_list_foreach (db->modules,
-                  gimp_module_db_module_on_disk_func,
+                  picman_module_db_module_on_disk_func,
                   &kill_list);
   g_list_foreach (kill_list,
-                  gimp_module_db_module_remove_func,
+                  picman_module_db_module_remove_func,
                   db);
   g_list_free (kill_list);
 
   /* walk filesystem and add new things we find */
-  gimp_datafiles_read_directories (module_path,
+  picman_datafiles_read_directories (module_path,
                                    G_FILE_TEST_EXISTS,
-                                   gimp_module_db_module_initialize,
+                                   picman_module_db_module_initialize,
                                    db);
 }
 
 static void
-gimp_module_db_module_initialize (const GimpDatafileData *file_data,
+picman_module_db_module_initialize (const PicmanDatafileData *file_data,
                                   gpointer                user_data)
 {
-  GimpModuleDB *db = GIMP_MODULE_DB (user_data);
-  GimpModule   *module;
+  PicmanModuleDB *db = PICMAN_MODULE_DB (user_data);
+  PicmanModule   *module;
   gboolean      load_inhibit;
 
-  if (! gimp_datafiles_check_extension (file_data->filename,
+  if (! picman_datafiles_check_extension (file_data->filename,
                                         "." G_MODULE_SUFFIX))
     return;
 
   /* don't load if we already know about it */
-  if (gimp_module_db_module_find_by_path (db, file_data->filename))
+  if (picman_module_db_module_find_by_path (db, file_data->filename))
     return;
 
   load_inhibit = is_in_inhibit_list (file_data->filename,
                                      db->load_inhibit);
 
-  module = gimp_module_new (file_data->filename,
+  module = picman_module_new (file_data->filename,
                             load_inhibit,
                             db->verbose);
 
   g_signal_connect (module, "modified",
-                    G_CALLBACK (gimp_module_db_module_modified),
+                    G_CALLBACK (picman_module_db_module_modified),
                     db);
 
   db->modules = g_list_append (db->modules, module);
   g_signal_emit (db, db_signals[ADD], 0, module);
 }
 
-static GimpModule *
-gimp_module_db_module_find_by_path (GimpModuleDB *db,
+static PicmanModule *
+picman_module_db_module_find_by_path (PicmanModuleDB *db,
                                     const char   *fullpath)
 {
   GList *list;
 
   for (list = db->modules; list; list = g_list_next (list))
     {
-      GimpModule *module = list->data;
+      PicmanModule *module = list->data;
 
       if (! strcmp (module->filename, fullpath))
         return module;
@@ -371,14 +371,14 @@ gimp_module_db_module_find_by_path (GimpModuleDB *db,
 
 #ifdef DUMP_DB
 static void
-gimp_module_db_dump_module (gpointer data,
+picman_module_db_dump_module (gpointer data,
                             gpointer user_data)
 {
-  GimpModule *module = data;
+  PicmanModule *module = data;
 
   g_print ("\n%s: %s\n",
-           gimp_filename_to_utf8 (module->filename),
-           gimp_module_state_name (module->state));
+           picman_filename_to_utf8 (module->filename),
+           picman_module_state_name (module->state));
 
   g_print ("  module: %p  lasterr: %s  query: %p register: %p\n",
            module->module,
@@ -403,10 +403,10 @@ gimp_module_db_dump_module (gpointer data,
 #endif
 
 static void
-gimp_module_db_module_on_disk_func (gpointer data,
+picman_module_db_module_on_disk_func (gpointer data,
                                     gpointer user_data)
 {
-  GimpModule  *module    = data;
+  PicmanModule  *module    = data;
   GList      **kill_list = user_data;
   gboolean     old_on_disk;
 
@@ -424,18 +424,18 @@ gimp_module_db_module_on_disk_func (gpointer data,
     }
 
   if (module && module->on_disk != old_on_disk)
-    gimp_module_modified (module);
+    picman_module_modified (module);
 }
 
 static void
-gimp_module_db_module_remove_func (gpointer data,
+picman_module_db_module_remove_func (gpointer data,
                                    gpointer user_data)
 {
-  GimpModule   *module = data;
-  GimpModuleDB *db     = user_data;
+  PicmanModule   *module = data;
+  PicmanModuleDB *db     = user_data;
 
   g_signal_handlers_disconnect_by_func (module,
-                                        gimp_module_db_module_modified,
+                                        picman_module_db_module_modified,
                                         db);
 
   db->modules = g_list_remove (db->modules, module);
@@ -444,8 +444,8 @@ gimp_module_db_module_remove_func (gpointer data,
 }
 
 static void
-gimp_module_db_module_modified (GimpModule   *module,
-                                GimpModuleDB *db)
+picman_module_db_module_modified (PicmanModule   *module,
+                                PicmanModuleDB *db)
 {
   g_signal_emit (db, db_signals[MODULE_MODIFIED], 0, module);
 }

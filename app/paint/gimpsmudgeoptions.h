@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,37 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SMUDGE_OPTIONS_H__
-#define __GIMP_SMUDGE_OPTIONS_H__
+#ifndef __PICMAN_SMUDGE_OPTIONS_H__
+#define __PICMAN_SMUDGE_OPTIONS_H__
 
 
-#include "gimppaintoptions.h"
+#include "picmanpaintoptions.h"
 
 
-#define GIMP_TYPE_SMUDGE_OPTIONS            (gimp_smudge_options_get_type ())
-#define GIMP_SMUDGE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SMUDGE_OPTIONS, GimpSmudgeOptions))
-#define GIMP_SMUDGE_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SMUDGE_OPTIONS, GimpSmudgeOptionsClass))
-#define GIMP_IS_SMUDGE_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SMUDGE_OPTIONS))
-#define GIMP_IS_SMUDGE_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SMUDGE_OPTIONS))
-#define GIMP_SMUDGE_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SMUDGE_OPTIONS, GimpSmudgeOptionsClass))
+#define PICMAN_TYPE_SMUDGE_OPTIONS            (picman_smudge_options_get_type ())
+#define PICMAN_SMUDGE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SMUDGE_OPTIONS, PicmanSmudgeOptions))
+#define PICMAN_SMUDGE_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SMUDGE_OPTIONS, PicmanSmudgeOptionsClass))
+#define PICMAN_IS_SMUDGE_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SMUDGE_OPTIONS))
+#define PICMAN_IS_SMUDGE_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SMUDGE_OPTIONS))
+#define PICMAN_SMUDGE_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SMUDGE_OPTIONS, PicmanSmudgeOptionsClass))
 
 
-typedef struct _GimpSmudgeOptionsClass GimpSmudgeOptionsClass;
+typedef struct _PicmanSmudgeOptionsClass PicmanSmudgeOptionsClass;
 
-struct _GimpSmudgeOptions
+struct _PicmanSmudgeOptions
 {
-  GimpPaintOptions  parent_instance;
+  PicmanPaintOptions  parent_instance;
 
   gdouble           rate;
 };
 
-struct _GimpSmudgeOptionsClass
+struct _PicmanSmudgeOptionsClass
 {
-  GimpPaintOptionsClass  parent_class;
+  PicmanPaintOptionsClass  parent_class;
 };
 
 
-GType   gimp_smudge_options_get_type (void) G_GNUC_CONST;
+GType   picman_smudge_options_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_SMUDGE_OPTIONS_H__  */
+#endif  /*  __PICMAN_SMUDGE_OPTIONS_H__  */

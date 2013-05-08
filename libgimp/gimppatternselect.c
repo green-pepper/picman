@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppatternselect.c
+ * picmanpatternselect.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 typedef struct
@@ -32,52 +32,52 @@ typedef struct
   gint                    height;
   gint                    bytes;
   guchar                 *pattern_mask_data;
-  GimpRunPatternCallback  callback;
+  PicmanRunPatternCallback  callback;
   gboolean                closing;
   gpointer                data;
-} GimpPatternData;
+} PicmanPatternData;
 
 
 /*  local function prototypes  */
 
-static void      gimp_pattern_data_free     (GimpPatternData  *data);
+static void      picman_pattern_data_free     (PicmanPatternData  *data);
 
-static void      gimp_temp_pattern_run      (const gchar      *name,
+static void      picman_temp_pattern_run      (const gchar      *name,
                                              gint              nparams,
-                                             const GimpParam  *param,
+                                             const PicmanParam  *param,
                                              gint             *nreturn_vals,
-                                             GimpParam       **return_vals);
-static gboolean  gimp_temp_pattern_run_idle (GimpPatternData  *pattern_data);
+                                             PicmanParam       **return_vals);
+static gboolean  picman_temp_pattern_run_idle (PicmanPatternData  *pattern_data);
 
 
 /*  private variables  */
 
-static GHashTable *gimp_pattern_select_ht = NULL;
+static GHashTable *picman_pattern_select_ht = NULL;
 
 
 /*  public functions  */
 
 const gchar *
-gimp_pattern_select_new (const gchar            *title,
+picman_pattern_select_new (const gchar            *title,
                          const gchar            *pattern_name,
-                         GimpRunPatternCallback  callback,
+                         PicmanRunPatternCallback  callback,
                          gpointer                data)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_STRING,   "str",           "String"                      },
-    { GIMP_PDB_INT32,    "mask width",    "Pattern width"               },
-    { GIMP_PDB_INT32,    "mask height",   "Pattern heigth"              },
-    { GIMP_PDB_INT32,    "mask bpp",      "Pattern bytes per pixel"     },
-    { GIMP_PDB_INT32,    "mask len",      "Length of pattern mask data" },
-    { GIMP_PDB_INT8ARRAY,"mask data",     "The pattern mask data"       },
-    { GIMP_PDB_INT32,    "dialog status", "If the dialog was closing "
+    { PICMAN_PDB_STRING,   "str",           "String"                      },
+    { PICMAN_PDB_INT32,    "mask width",    "Pattern width"               },
+    { PICMAN_PDB_INT32,    "mask height",   "Pattern heigth"              },
+    { PICMAN_PDB_INT32,    "mask bpp",      "Pattern bytes per pixel"     },
+    { PICMAN_PDB_INT32,    "mask len",      "Length of pattern mask data" },
+    { PICMAN_PDB_INT8ARRAY,"mask data",     "The pattern mask data"       },
+    { PICMAN_PDB_INT32,    "dialog status", "If the dialog was closing "
                                           "[0 = No, 1 = Yes]"           }
   };
 
-  gchar *pattern_callback = gimp_procedural_db_temp_name ();
+  gchar *pattern_callback = picman_procedural_db_temp_name ();
 
-  gimp_install_temp_proc (pattern_callback,
+  picman_install_temp_proc (pattern_callback,
                           "Temporary pattern popup callback procedure",
                           "",
                           "",
@@ -85,53 +85,53 @@ gimp_pattern_select_new (const gchar            *title,
                           "",
                           NULL,
                           "",
-                          GIMP_TEMPORARY,
+                          PICMAN_TEMPORARY,
                           G_N_ELEMENTS (args), 0,
                           args, NULL,
-                          gimp_temp_pattern_run);
+                          picman_temp_pattern_run);
 
-  if (gimp_patterns_popup (pattern_callback, title, pattern_name))
+  if (picman_patterns_popup (pattern_callback, title, pattern_name))
     {
-      GimpPatternData *pattern_data;
+      PicmanPatternData *pattern_data;
 
-      gimp_extension_enable (); /* Allow callbacks to be watched */
+      picman_extension_enable (); /* Allow callbacks to be watched */
 
       /* Now add to hash table so we can find it again */
-      if (! gimp_pattern_select_ht)
+      if (! picman_pattern_select_ht)
         {
-          gimp_pattern_select_ht =
+          picman_pattern_select_ht =
             g_hash_table_new_full (g_str_hash, g_str_equal,
                                    g_free,
-                                   (GDestroyNotify) gimp_pattern_data_free);
+                                   (GDestroyNotify) picman_pattern_data_free);
         }
 
-      pattern_data = g_slice_new0 (GimpPatternData);
+      pattern_data = g_slice_new0 (PicmanPatternData);
 
       pattern_data->pattern_callback = pattern_callback;
       pattern_data->callback         = callback;
       pattern_data->data             = data;
 
-      g_hash_table_insert (gimp_pattern_select_ht,
+      g_hash_table_insert (picman_pattern_select_ht,
                            pattern_callback, pattern_data);
 
       return pattern_callback;
     }
 
-  gimp_uninstall_temp_proc (pattern_callback);
+  picman_uninstall_temp_proc (pattern_callback);
   g_free (pattern_callback);
 
   return NULL;
 }
 
 void
-gimp_pattern_select_destroy (const gchar *pattern_callback)
+picman_pattern_select_destroy (const gchar *pattern_callback)
 {
-  GimpPatternData *pattern_data;
+  PicmanPatternData *pattern_data;
 
   g_return_if_fail (pattern_callback != NULL);
-  g_return_if_fail (gimp_pattern_select_ht != NULL);
+  g_return_if_fail (picman_pattern_select_ht != NULL);
 
-  pattern_data = g_hash_table_lookup (gimp_pattern_select_ht,
+  pattern_data = g_hash_table_lookup (picman_pattern_select_ht,
                                       pattern_callback);
 
   if (! pattern_data)
@@ -147,33 +147,33 @@ gimp_pattern_select_destroy (const gchar *pattern_callback)
   g_free (pattern_data->pattern_mask_data);
 
   if (pattern_data->pattern_callback)
-    gimp_patterns_close_popup (pattern_data->pattern_callback);
+    picman_patterns_close_popup (pattern_data->pattern_callback);
 
-  gimp_uninstall_temp_proc (pattern_callback);
+  picman_uninstall_temp_proc (pattern_callback);
 
-  g_hash_table_remove (gimp_pattern_select_ht, pattern_callback);
+  g_hash_table_remove (picman_pattern_select_ht, pattern_callback);
 }
 
 
 /*  private functions  */
 
 static void
-gimp_pattern_data_free (GimpPatternData *data)
+picman_pattern_data_free (PicmanPatternData *data)
 {
-  g_slice_free (GimpPatternData, data);
+  g_slice_free (PicmanPatternData, data);
 }
 
 static void
-gimp_temp_pattern_run (const gchar      *name,
+picman_temp_pattern_run (const gchar      *name,
                        gint              nparams,
-                       const GimpParam  *param,
+                       const PicmanParam  *param,
                        gint             *nreturn_vals,
-                       GimpParam       **return_vals)
+                       PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
-  GimpPatternData  *pattern_data;
+  static PicmanParam  values[1];
+  PicmanPatternData  *pattern_data;
 
-  pattern_data = g_hash_table_lookup (gimp_pattern_select_ht, name);
+  pattern_data = g_hash_table_lookup (picman_pattern_select_ht, name);
 
   if (! pattern_data)
     {
@@ -193,19 +193,19 @@ gimp_temp_pattern_run (const gchar      *name,
       pattern_data->closing           = param[6].data.d_int32;
 
       if (! pattern_data->idle_id)
-        pattern_data->idle_id = g_idle_add ((GSourceFunc) gimp_temp_pattern_run_idle,
+        pattern_data->idle_id = g_idle_add ((GSourceFunc) picman_temp_pattern_run_idle,
                                             pattern_data);
     }
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_SUCCESS;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_SUCCESS;
 }
 
 static gboolean
-gimp_temp_pattern_run_idle (GimpPatternData *pattern_data)
+picman_temp_pattern_run_idle (PicmanPatternData *pattern_data)
 {
   pattern_data->idle_id = 0;
 
@@ -223,7 +223,7 @@ gimp_temp_pattern_run_idle (GimpPatternData *pattern_data)
       gchar *pattern_callback = pattern_data->pattern_callback;
 
       pattern_data->pattern_callback = NULL;
-      gimp_pattern_select_destroy (pattern_callback);
+      picman_pattern_select_destroy (pattern_callback);
     }
 
   return FALSE;

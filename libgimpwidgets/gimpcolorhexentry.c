@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorhexentry.c
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmancolorhexentry.c
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,17 +27,17 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpcellrenderercolor.h"
-#include "gimpcolorhexentry.h"
+#include "picmancellrenderercolor.h"
+#include "picmancolorhexentry.h"
 
 
 /**
- * SECTION: gimpcolorhexentry
- * @title: GimpColorHexEntry
+ * SECTION: picmancolorhexentry
+ * @title: PicmanColorHexEntry
  * @short_description: Widget for entering a color's hex triplet.
  *
  * Widget for entering a color's hex triplet.
@@ -58,30 +58,30 @@ enum
 };
 
 
-static gboolean  gimp_color_hex_entry_events     (GtkWidget          *widget,
+static gboolean  picman_color_hex_entry_events     (GtkWidget          *widget,
                                                   GdkEvent           *event);
 
-static gboolean  gimp_color_hex_entry_matched    (GtkEntryCompletion *completion,
+static gboolean  picman_color_hex_entry_matched    (GtkEntryCompletion *completion,
                                                   GtkTreeModel       *model,
                                                   GtkTreeIter        *iter,
-                                                  GimpColorHexEntry  *entry);
+                                                  PicmanColorHexEntry  *entry);
 
 
-G_DEFINE_TYPE (GimpColorHexEntry, gimp_color_hex_entry, GTK_TYPE_ENTRY)
+G_DEFINE_TYPE (PicmanColorHexEntry, picman_color_hex_entry, GTK_TYPE_ENTRY)
 
-#define parent_class gimp_color_hex_entry_parent_class
+#define parent_class picman_color_hex_entry_parent_class
 
 static guint entry_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_color_hex_entry_class_init (GimpColorHexEntryClass *klass)
+picman_color_hex_entry_class_init (PicmanColorHexEntryClass *klass)
 {
   entry_signals[COLOR_CHANGED] =
     g_signal_new ("color-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpColorHexEntryClass, color_changed),
+                  G_STRUCT_OFFSET (PicmanColorHexEntryClass, color_changed),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
@@ -90,12 +90,12 @@ gimp_color_hex_entry_class_init (GimpColorHexEntryClass *klass)
 }
 
 static void
-gimp_color_hex_entry_init (GimpColorHexEntry *entry)
+picman_color_hex_entry_init (PicmanColorHexEntry *entry)
 {
   GtkEntryCompletion  *completion;
   GtkCellRenderer     *cell;
   GtkListStore        *store;
-  GimpRGB             *colors;
+  PicmanRGB             *colors;
   const gchar        **names;
   gint                 num_colors;
   gint                 i;
@@ -105,11 +105,11 @@ gimp_color_hex_entry_init (GimpColorHexEntry *entry)
    */
   gtk_entry_set_width_chars (GTK_ENTRY (entry), 8);
 
-  gimp_rgba_set (&entry->color, 0.0, 0.0, 0.0, 1.0);
+  picman_rgba_set (&entry->color, 0.0, 0.0, 0.0, 1.0);
 
-  store = gtk_list_store_new (NUM_COLUMNS, G_TYPE_STRING, GIMP_TYPE_RGB);
+  store = gtk_list_store_new (NUM_COLUMNS, G_TYPE_STRING, PICMAN_TYPE_RGB);
 
-  num_colors = gimp_rgb_list_names (&names, &colors);
+  num_colors = picman_rgb_list_names (&names, &colors);
 
   for (i = 0; i < num_colors; i++)
     {
@@ -130,7 +130,7 @@ gimp_color_hex_entry_init (GimpColorHexEntry *entry)
                              NULL);
   g_object_unref (store);
 
-  cell = gimp_cell_renderer_color_new ();
+  cell = picman_cell_renderer_color_new ();
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (completion), cell, FALSE);
   gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (completion), cell,
                                   "color", COLUMN_COLOR,
@@ -144,57 +144,57 @@ gimp_color_hex_entry_init (GimpColorHexEntry *entry)
   gtk_entry_set_text (GTK_ENTRY (entry), "000000");
 
   g_signal_connect (entry, "focus-out-event",
-                    G_CALLBACK (gimp_color_hex_entry_events),
+                    G_CALLBACK (picman_color_hex_entry_events),
                     NULL);
   g_signal_connect (entry, "key-press-event",
-                    G_CALLBACK (gimp_color_hex_entry_events),
+                    G_CALLBACK (picman_color_hex_entry_events),
                     NULL);
 
   g_signal_connect (completion, "match-selected",
-                    G_CALLBACK (gimp_color_hex_entry_matched),
+                    G_CALLBACK (picman_color_hex_entry_matched),
                     entry);
 }
 
 /**
- * gimp_color_hex_entry_new:
+ * picman_color_hex_entry_new:
  *
- * Return value: a new #GimpColorHexEntry widget
+ * Return value: a new #PicmanColorHexEntry widget
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 GtkWidget *
-gimp_color_hex_entry_new (void)
+picman_color_hex_entry_new (void)
 {
-  return g_object_new (GIMP_TYPE_COLOR_HEX_ENTRY, NULL);
+  return g_object_new (PICMAN_TYPE_COLOR_HEX_ENTRY, NULL);
 }
 
 /**
- * gimp_color_hex_entry_set_color:
- * @entry: a #GimpColorHexEntry widget
- * @color: pointer to a #GimpRGB
+ * picman_color_hex_entry_set_color:
+ * @entry: a #PicmanColorHexEntry widget
+ * @color: pointer to a #PicmanRGB
  *
- * Sets the color displayed by a #GimpColorHexEntry. If the new color
+ * Sets the color displayed by a #PicmanColorHexEntry. If the new color
  * is different to the previously set color, the "color-changed"
  * signal is emitted.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_color_hex_entry_set_color (GimpColorHexEntry *entry,
-                                const GimpRGB     *color)
+picman_color_hex_entry_set_color (PicmanColorHexEntry *entry,
+                                const PicmanRGB     *color)
 {
-  g_return_if_fail (GIMP_IS_COLOR_HEX_ENTRY (entry));
+  g_return_if_fail (PICMAN_IS_COLOR_HEX_ENTRY (entry));
   g_return_if_fail (color != NULL);
 
-  if (gimp_rgb_distance (&entry->color, color) > 0.0)
+  if (picman_rgb_distance (&entry->color, color) > 0.0)
     {
       gchar   buffer[8];
       guchar  r, g, b;
 
-      gimp_rgb_set (&entry->color, color->r, color->g, color->b);
-      gimp_rgb_clamp (&entry->color);
+      picman_rgb_set (&entry->color, color->r, color->g, color->b);
+      picman_rgb_clamp (&entry->color);
 
-      gimp_rgb_get_uchar (&entry->color, &r, &g, &b);
+      picman_rgb_get_uchar (&entry->color, &r, &g, &b);
       g_snprintf (buffer, sizeof (buffer), "%.2x%.2x%.2x", r, g, b);
 
       gtk_entry_set_text (GTK_ENTRY (entry), buffer);
@@ -207,29 +207,29 @@ gimp_color_hex_entry_set_color (GimpColorHexEntry *entry,
 }
 
 /**
- * gimp_color_hex_entry_get_color:
- * @entry: a #GimpColorHexEntry widget
- * @color: pointer to a #GimpRGB
+ * picman_color_hex_entry_get_color:
+ * @entry: a #PicmanColorHexEntry widget
+ * @color: pointer to a #PicmanRGB
  *
- * Retrieves the color value displayed by a #GimpColorHexEntry.
+ * Retrieves the color value displayed by a #PicmanColorHexEntry.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_color_hex_entry_get_color (GimpColorHexEntry *entry,
-                                GimpRGB           *color)
+picman_color_hex_entry_get_color (PicmanColorHexEntry *entry,
+                                PicmanRGB           *color)
 {
-  g_return_if_fail (GIMP_IS_COLOR_HEX_ENTRY (entry));
+  g_return_if_fail (PICMAN_IS_COLOR_HEX_ENTRY (entry));
   g_return_if_fail (color != NULL);
 
   *color = entry->color;
 }
 
 static gboolean
-gimp_color_hex_entry_events (GtkWidget *widget,
+picman_color_hex_entry_events (GtkWidget *widget,
                              GdkEvent  *event)
 {
-  GimpColorHexEntry *entry = GIMP_COLOR_HEX_ENTRY (widget);
+  PicmanColorHexEntry *entry = PICMAN_COLOR_HEX_ENTRY (widget);
 
   switch (event->type)
     {
@@ -252,19 +252,19 @@ gimp_color_hex_entry_events (GtkWidget *widget,
 
         text = gtk_entry_get_text (GTK_ENTRY (widget));
 
-        gimp_rgb_get_uchar (&entry->color, &r, &g, &b);
+        picman_rgb_get_uchar (&entry->color, &r, &g, &b);
         g_snprintf (buffer, sizeof (buffer), "%.2x%.2x%.2x", r, g, b);
 
         if (g_ascii_strcasecmp (buffer, text) != 0)
           {
-            GimpRGB  color;
+            PicmanRGB  color;
             gsize    len = strlen (text);
 
             if (len > 0 &&
-                (gimp_rgb_parse_hex (&color, text, len) ||
-                 gimp_rgb_parse_name (&color, text, -1)))
+                (picman_rgb_parse_hex (&color, text, len) ||
+                 picman_rgb_parse_name (&color, text, -1)))
               {
-                gimp_color_hex_entry_set_color (entry, &color);
+                picman_color_hex_entry_set_color (entry, &color);
               }
             else
               {
@@ -283,20 +283,20 @@ gimp_color_hex_entry_events (GtkWidget *widget,
 }
 
 static gboolean
-gimp_color_hex_entry_matched (GtkEntryCompletion *completion,
+picman_color_hex_entry_matched (GtkEntryCompletion *completion,
                               GtkTreeModel       *model,
                               GtkTreeIter        *iter,
-                              GimpColorHexEntry  *entry)
+                              PicmanColorHexEntry  *entry)
 {
   gchar   *name;
-  GimpRGB  color;
+  PicmanRGB  color;
 
   gtk_tree_model_get (model, iter,
                       COLUMN_NAME, &name,
                       -1);
 
-  if (gimp_rgb_parse_name (&color, name, -1))
-    gimp_color_hex_entry_set_color (entry, &color);
+  if (picman_rgb_parse_name (&color, name, -1))
+    picman_color_hex_entry_set_color (entry, &color);
 
   g_free (name);
 

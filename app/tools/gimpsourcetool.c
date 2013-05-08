@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,115 +22,115 @@
 
 #include "tools-types.h"
 
-#include "core/gimpchannel.h"
-#include "core/gimpimage.h"
-#include "core/gimppickable.h"
+#include "core/picmanchannel.h"
+#include "core/picmanimage.h"
+#include "core/picmanpickable.h"
 
-#include "paint/gimpsourcecore.h"
-#include "paint/gimpsourceoptions.h"
+#include "paint/picmansourcecore.h"
+#include "paint/picmansourceoptions.h"
 
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpcanvashandle.h"
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell-items.h"
+#include "display/picmancanvashandle.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell-items.h"
 
-#include "gimpsourcetool.h"
-#include "gimptoolcontrol.h"
+#include "picmansourcetool.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static gboolean      gimp_source_tool_has_display   (GimpTool            *tool,
-                                                     GimpDisplay         *display);
-static GimpDisplay * gimp_source_tool_has_image     (GimpTool            *tool,
-                                                     GimpImage           *image);
-static void          gimp_source_tool_control       (GimpTool            *tool,
-                                                     GimpToolAction       action,
-                                                     GimpDisplay         *display);
-static void          gimp_source_tool_button_press  (GimpTool            *tool,
-                                                     const GimpCoords    *coords,
+static gboolean      picman_source_tool_has_display   (PicmanTool            *tool,
+                                                     PicmanDisplay         *display);
+static PicmanDisplay * picman_source_tool_has_image     (PicmanTool            *tool,
+                                                     PicmanImage           *image);
+static void          picman_source_tool_control       (PicmanTool            *tool,
+                                                     PicmanToolAction       action,
+                                                     PicmanDisplay         *display);
+static void          picman_source_tool_button_press  (PicmanTool            *tool,
+                                                     const PicmanCoords    *coords,
                                                      guint32              time,
                                                      GdkModifierType      state,
-                                                     GimpButtonPressType  press_type,
-                                                     GimpDisplay         *display);
-static void          gimp_source_tool_motion        (GimpTool            *tool,
-                                                     const GimpCoords    *coords,
+                                                     PicmanButtonPressType  press_type,
+                                                     PicmanDisplay         *display);
+static void          picman_source_tool_motion        (PicmanTool            *tool,
+                                                     const PicmanCoords    *coords,
                                                      guint32              time,
                                                      GdkModifierType      state,
-                                                     GimpDisplay         *display);
-static void          gimp_source_tool_cursor_update (GimpTool            *tool,
-                                                     const GimpCoords    *coords,
+                                                     PicmanDisplay         *display);
+static void          picman_source_tool_cursor_update (PicmanTool            *tool,
+                                                     const PicmanCoords    *coords,
                                                      GdkModifierType      state,
-                                                     GimpDisplay         *display);
-static void          gimp_source_tool_modifier_key  (GimpTool            *tool,
+                                                     PicmanDisplay         *display);
+static void          picman_source_tool_modifier_key  (PicmanTool            *tool,
                                                      GdkModifierType      key,
                                                      gboolean             press,
                                                      GdkModifierType      state,
-                                                     GimpDisplay         *display);
-static void          gimp_source_tool_oper_update   (GimpTool            *tool,
-                                                     const GimpCoords    *coords,
+                                                     PicmanDisplay         *display);
+static void          picman_source_tool_oper_update   (PicmanTool            *tool,
+                                                     const PicmanCoords    *coords,
                                                      GdkModifierType      state,
                                                      gboolean             proximity,
-                                                     GimpDisplay         *display);
+                                                     PicmanDisplay         *display);
 
-static void          gimp_source_tool_draw          (GimpDrawTool        *draw_tool);
+static void          picman_source_tool_draw          (PicmanDrawTool        *draw_tool);
 
-static void          gimp_source_tool_set_src_display (GimpSourceTool      *source_tool,
-                                                       GimpDisplay         *display);
+static void          picman_source_tool_set_src_display (PicmanSourceTool      *source_tool,
+                                                       PicmanDisplay         *display);
 
 
-G_DEFINE_TYPE (GimpSourceTool, gimp_source_tool, GIMP_TYPE_BRUSH_TOOL)
+G_DEFINE_TYPE (PicmanSourceTool, picman_source_tool, PICMAN_TYPE_BRUSH_TOOL)
 
-#define parent_class gimp_source_tool_parent_class
+#define parent_class picman_source_tool_parent_class
 
 
 static void
-gimp_source_tool_class_init (GimpSourceToolClass *klass)
+picman_source_tool_class_init (PicmanSourceToolClass *klass)
 {
-  GimpToolClass     *tool_class      = GIMP_TOOL_CLASS (klass);
-  GimpDrawToolClass *draw_tool_class = GIMP_DRAW_TOOL_CLASS (klass);
+  PicmanToolClass     *tool_class      = PICMAN_TOOL_CLASS (klass);
+  PicmanDrawToolClass *draw_tool_class = PICMAN_DRAW_TOOL_CLASS (klass);
 
-  tool_class->has_display   = gimp_source_tool_has_display;
-  tool_class->has_image     = gimp_source_tool_has_image;
-  tool_class->control       = gimp_source_tool_control;
-  tool_class->button_press  = gimp_source_tool_button_press;
-  tool_class->motion        = gimp_source_tool_motion;
-  tool_class->modifier_key  = gimp_source_tool_modifier_key;
-  tool_class->oper_update   = gimp_source_tool_oper_update;
-  tool_class->cursor_update = gimp_source_tool_cursor_update;
+  tool_class->has_display   = picman_source_tool_has_display;
+  tool_class->has_image     = picman_source_tool_has_image;
+  tool_class->control       = picman_source_tool_control;
+  tool_class->button_press  = picman_source_tool_button_press;
+  tool_class->motion        = picman_source_tool_motion;
+  tool_class->modifier_key  = picman_source_tool_modifier_key;
+  tool_class->oper_update   = picman_source_tool_oper_update;
+  tool_class->cursor_update = picman_source_tool_cursor_update;
 
-  draw_tool_class->draw     = gimp_source_tool_draw;
+  draw_tool_class->draw     = picman_source_tool_draw;
 }
 
 static void
-gimp_source_tool_init (GimpSourceTool *source)
+picman_source_tool_init (PicmanSourceTool *source)
 {
   source->show_source_outline = TRUE;
 }
 
 static gboolean
-gimp_source_tool_has_display (GimpTool    *tool,
-                              GimpDisplay *display)
+picman_source_tool_has_display (PicmanTool    *tool,
+                              PicmanDisplay *display)
 {
-  GimpSourceTool *source_tool = GIMP_SOURCE_TOOL (tool);
+  PicmanSourceTool *source_tool = PICMAN_SOURCE_TOOL (tool);
 
   return (display == source_tool->src_display ||
-          GIMP_TOOL_CLASS (parent_class)->has_display (tool, display));
+          PICMAN_TOOL_CLASS (parent_class)->has_display (tool, display));
 }
 
-static GimpDisplay *
-gimp_source_tool_has_image (GimpTool  *tool,
-                            GimpImage *image)
+static PicmanDisplay *
+picman_source_tool_has_image (PicmanTool  *tool,
+                            PicmanImage *image)
 {
-  GimpSourceTool *source_tool = GIMP_SOURCE_TOOL (tool);
-  GimpDisplay    *display;
+  PicmanSourceTool *source_tool = PICMAN_SOURCE_TOOL (tool);
+  PicmanDisplay    *display;
 
-  display = GIMP_TOOL_CLASS (parent_class)->has_image (tool, image);
+  display = PICMAN_TOOL_CLASS (parent_class)->has_image (tool, image);
 
   if (! display && source_tool->src_display)
     {
-      if (image && gimp_display_get_image (source_tool->src_display) == image)
+      if (image && picman_display_get_image (source_tool->src_display) == image)
         display = source_tool->src_display;
 
       /*  NULL image means any display  */
@@ -142,101 +142,101 @@ gimp_source_tool_has_image (GimpTool  *tool,
 }
 
 static void
-gimp_source_tool_control (GimpTool       *tool,
-                          GimpToolAction  action,
-                          GimpDisplay    *display)
+picman_source_tool_control (PicmanTool       *tool,
+                          PicmanToolAction  action,
+                          PicmanDisplay    *display)
 {
-  GimpSourceTool *source_tool = GIMP_SOURCE_TOOL (tool);
+  PicmanSourceTool *source_tool = PICMAN_SOURCE_TOOL (tool);
 
   switch (action)
     {
-    case GIMP_TOOL_ACTION_PAUSE:
-    case GIMP_TOOL_ACTION_RESUME:
+    case PICMAN_TOOL_ACTION_PAUSE:
+    case PICMAN_TOOL_ACTION_RESUME:
       break;
 
-    case GIMP_TOOL_ACTION_HALT:
-      gimp_source_tool_set_src_display (source_tool, NULL);
-      g_object_set (GIMP_PAINT_TOOL (tool)->core,
+    case PICMAN_TOOL_ACTION_HALT:
+      picman_source_tool_set_src_display (source_tool, NULL);
+      g_object_set (PICMAN_PAINT_TOOL (tool)->core,
                     "src-drawable", NULL,
                     NULL);
       break;
     }
 
-  GIMP_TOOL_CLASS (parent_class)->control (tool, action, display);
+  PICMAN_TOOL_CLASS (parent_class)->control (tool, action, display);
 }
 
 static void
-gimp_source_tool_button_press (GimpTool            *tool,
-                               const GimpCoords    *coords,
+picman_source_tool_button_press (PicmanTool            *tool,
+                               const PicmanCoords    *coords,
                                guint32              time,
                                GdkModifierType      state,
-                               GimpButtonPressType  press_type,
-                               GimpDisplay         *display)
+                               PicmanButtonPressType  press_type,
+                               PicmanDisplay         *display)
 {
-  GimpPaintTool  *paint_tool  = GIMP_PAINT_TOOL (tool);
-  GimpSourceTool *source_tool = GIMP_SOURCE_TOOL (tool);
-  GimpSourceCore *source      = GIMP_SOURCE_CORE (paint_tool->core);
-  GdkModifierType toggle_mask = gimp_get_toggle_behavior_mask ();
+  PicmanPaintTool  *paint_tool  = PICMAN_PAINT_TOOL (tool);
+  PicmanSourceTool *source_tool = PICMAN_SOURCE_TOOL (tool);
+  PicmanSourceCore *source      = PICMAN_SOURCE_CORE (paint_tool->core);
+  GdkModifierType toggle_mask = picman_get_toggle_behavior_mask ();
 
-  gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
+  picman_draw_tool_pause (PICMAN_DRAW_TOOL (tool));
 
   if ((state & (toggle_mask | GDK_SHIFT_MASK)) == toggle_mask)
     {
       source->set_source = TRUE;
 
-      gimp_source_tool_set_src_display (source_tool, display);
+      picman_source_tool_set_src_display (source_tool, display);
     }
   else
     {
       source->set_source = FALSE;
     }
 
-  GIMP_TOOL_CLASS (parent_class)->button_press (tool, coords, time, state,
+  PICMAN_TOOL_CLASS (parent_class)->button_press (tool, coords, time, state,
                                                 press_type, display);
 
   source_tool->src_x = source->src_x;
   source_tool->src_y = source->src_y;
 
-  gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
+  picman_draw_tool_resume (PICMAN_DRAW_TOOL (tool));
 }
 
 static void
-gimp_source_tool_motion (GimpTool         *tool,
-                         const GimpCoords *coords,
+picman_source_tool_motion (PicmanTool         *tool,
+                         const PicmanCoords *coords,
                          guint32           time,
                          GdkModifierType   state,
-                         GimpDisplay      *display)
+                         PicmanDisplay      *display)
 {
-  GimpSourceTool *source_tool = GIMP_SOURCE_TOOL (tool);
-  GimpPaintTool  *paint_tool  = GIMP_PAINT_TOOL (tool);
-  GimpSourceCore *source      = GIMP_SOURCE_CORE (paint_tool->core);
+  PicmanSourceTool *source_tool = PICMAN_SOURCE_TOOL (tool);
+  PicmanPaintTool  *paint_tool  = PICMAN_PAINT_TOOL (tool);
+  PicmanSourceCore *source      = PICMAN_SOURCE_CORE (paint_tool->core);
 
-  gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
+  picman_draw_tool_pause (PICMAN_DRAW_TOOL (tool));
 
-  GIMP_TOOL_CLASS (parent_class)->motion (tool, coords, time, state, display);
+  PICMAN_TOOL_CLASS (parent_class)->motion (tool, coords, time, state, display);
 
   source_tool->src_x = source->src_x;
   source_tool->src_y = source->src_y;
 
-  gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
+  picman_draw_tool_resume (PICMAN_DRAW_TOOL (tool));
 }
 
 static void
-gimp_source_tool_modifier_key (GimpTool        *tool,
+picman_source_tool_modifier_key (PicmanTool        *tool,
                                GdkModifierType  key,
                                gboolean         press,
                                GdkModifierType  state,
-                               GimpDisplay     *display)
+                               PicmanDisplay     *display)
 {
-  GimpSourceTool    *source_tool = GIMP_SOURCE_TOOL (tool);
-  GimpPaintTool     *paint_tool  = GIMP_PAINT_TOOL (tool);
-  GimpSourceOptions *options     = GIMP_SOURCE_TOOL_GET_OPTIONS (tool);
+  PicmanSourceTool    *source_tool = PICMAN_SOURCE_TOOL (tool);
+  PicmanPaintTool     *paint_tool  = PICMAN_PAINT_TOOL (tool);
+  PicmanSourceOptions *options     = PICMAN_SOURCE_TOOL_GET_OPTIONS (tool);
 
-  if (gimp_source_core_use_source (GIMP_SOURCE_CORE (paint_tool->core),
+  if (picman_source_core_use_source (PICMAN_SOURCE_CORE (paint_tool->core),
                                    options) &&
-      key == gimp_get_toggle_behavior_mask ())
+      key == picman_get_toggle_behavior_mask ())
     {
-      gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
+      picman_draw_tool_pause (PICMAN_DRAW_TOOL (tool));
 
       if (press)
         {
@@ -251,91 +251,91 @@ gimp_source_tool_modifier_key (GimpTool        *tool,
           source_tool->show_source_outline = TRUE;
         }
 
-      gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
+      picman_draw_tool_resume (PICMAN_DRAW_TOOL (tool));
     }
 
-  GIMP_TOOL_CLASS (parent_class)->modifier_key (tool, key, press, state,
+  PICMAN_TOOL_CLASS (parent_class)->modifier_key (tool, key, press, state,
                                                 display);
 }
 
 static void
-gimp_source_tool_cursor_update (GimpTool         *tool,
-                                const GimpCoords *coords,
+picman_source_tool_cursor_update (PicmanTool         *tool,
+                                const PicmanCoords *coords,
                                 GdkModifierType   state,
-                                GimpDisplay      *display)
+                                PicmanDisplay      *display)
 {
-  GimpPaintTool      *paint_tool = GIMP_PAINT_TOOL (tool);
-  GimpSourceOptions  *options    = GIMP_SOURCE_TOOL_GET_OPTIONS (tool);
-  GimpCursorType      cursor     = GIMP_CURSOR_MOUSE;
-  GimpCursorModifier  modifier   = GIMP_CURSOR_MODIFIER_NONE;
+  PicmanPaintTool      *paint_tool = PICMAN_PAINT_TOOL (tool);
+  PicmanSourceOptions  *options    = PICMAN_SOURCE_TOOL_GET_OPTIONS (tool);
+  PicmanCursorType      cursor     = PICMAN_CURSOR_MOUSE;
+  PicmanCursorModifier  modifier   = PICMAN_CURSOR_MODIFIER_NONE;
 
-  if (gimp_source_core_use_source (GIMP_SOURCE_CORE (paint_tool->core),
+  if (picman_source_core_use_source (PICMAN_SOURCE_CORE (paint_tool->core),
                                    options))
     {
-      GdkModifierType toggle_mask = gimp_get_toggle_behavior_mask ();
+      GdkModifierType toggle_mask = picman_get_toggle_behavior_mask ();
 
       if ((state & (toggle_mask | GDK_SHIFT_MASK)) == toggle_mask)
         {
-          cursor = GIMP_CURSOR_CROSSHAIR_SMALL;
+          cursor = PICMAN_CURSOR_CROSSHAIR_SMALL;
         }
-      else if (! GIMP_SOURCE_CORE (GIMP_PAINT_TOOL (tool)->core)->src_drawable)
+      else if (! PICMAN_SOURCE_CORE (PICMAN_PAINT_TOOL (tool)->core)->src_drawable)
         {
-          modifier = GIMP_CURSOR_MODIFIER_BAD;
+          modifier = PICMAN_CURSOR_MODIFIER_BAD;
         }
     }
 
-  gimp_tool_control_set_cursor          (tool->control, cursor);
-  gimp_tool_control_set_cursor_modifier (tool->control, modifier);
+  picman_tool_control_set_cursor          (tool->control, cursor);
+  picman_tool_control_set_cursor_modifier (tool->control, modifier);
 
-  GIMP_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
+  PICMAN_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
 }
 
 static void
-gimp_source_tool_oper_update (GimpTool         *tool,
-                              const GimpCoords *coords,
+picman_source_tool_oper_update (PicmanTool         *tool,
+                              const PicmanCoords *coords,
                               GdkModifierType   state,
                               gboolean          proximity,
-                              GimpDisplay      *display)
+                              PicmanDisplay      *display)
 {
-  GimpPaintTool     *paint_tool  = GIMP_PAINT_TOOL (tool);
-  GimpSourceTool    *source_tool = GIMP_SOURCE_TOOL (tool);
-  GimpSourceOptions *options     = GIMP_SOURCE_TOOL_GET_OPTIONS (tool);
-  GimpSourceCore    *source;
+  PicmanPaintTool     *paint_tool  = PICMAN_PAINT_TOOL (tool);
+  PicmanSourceTool    *source_tool = PICMAN_SOURCE_TOOL (tool);
+  PicmanSourceOptions *options     = PICMAN_SOURCE_TOOL_GET_OPTIONS (tool);
+  PicmanSourceCore    *source;
 
-  source = GIMP_SOURCE_CORE (GIMP_PAINT_TOOL (tool)->core);
+  source = PICMAN_SOURCE_CORE (PICMAN_PAINT_TOOL (tool)->core);
 
   if (proximity)
     {
-      if (gimp_source_core_use_source (source, options))
+      if (picman_source_core_use_source (source, options))
         paint_tool->status_ctrl = source_tool->status_set_source_ctrl;
       else
         paint_tool->status_ctrl = NULL;
     }
 
-  GIMP_TOOL_CLASS (parent_class)->oper_update (tool, coords, state, proximity,
+  PICMAN_TOOL_CLASS (parent_class)->oper_update (tool, coords, state, proximity,
                                                display);
 
-  if (gimp_source_core_use_source (source, options))
+  if (picman_source_core_use_source (source, options))
     {
       if (source->src_drawable == NULL)
         {
-          GdkModifierType toggle_mask = gimp_get_toggle_behavior_mask ();
+          GdkModifierType toggle_mask = picman_get_toggle_behavior_mask ();
 
           if (state & toggle_mask)
             {
-              gimp_tool_replace_status (tool, display, "%s",
+              picman_tool_replace_status (tool, display, "%s",
                                         source_tool->status_set_source);
             }
           else
             {
-              gimp_tool_replace_status (tool, display, "%s-%s",
-                                        gimp_get_mod_string (toggle_mask),
+              picman_tool_replace_status (tool, display, "%s-%s",
+                                        picman_get_mod_string (toggle_mask),
                                         source_tool->status_set_source);
             }
         }
       else
         {
-          gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
+          picman_draw_tool_pause (PICMAN_DRAW_TOOL (tool));
 
           source_tool->src_x = source->src_x;
           source_tool->src_y = source->src_y;
@@ -344,12 +344,12 @@ gimp_source_tool_oper_update (GimpTool         *tool,
             {
               switch (options->align_mode)
                 {
-                case GIMP_SOURCE_ALIGN_YES:
+                case PICMAN_SOURCE_ALIGN_YES:
                   source_tool->src_x = coords->x + source->offset_x;
                   source_tool->src_y = coords->y + source->offset_y;
                   break;
 
-                case GIMP_SOURCE_ALIGN_REGISTERED:
+                case PICMAN_SOURCE_ALIGN_REGISTERED:
                   source_tool->src_x = coords->x;
                   source_tool->src_y = coords->y;
                   break;
@@ -359,36 +359,36 @@ gimp_source_tool_oper_update (GimpTool         *tool,
                 }
             }
 
-          gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
+          picman_draw_tool_resume (PICMAN_DRAW_TOOL (tool));
         }
     }
 }
 
 static void
-gimp_source_tool_draw (GimpDrawTool *draw_tool)
+picman_source_tool_draw (PicmanDrawTool *draw_tool)
 {
-  GimpSourceTool    *source_tool = GIMP_SOURCE_TOOL (draw_tool);
-  GimpSourceOptions *options     = GIMP_SOURCE_TOOL_GET_OPTIONS (draw_tool);
-  GimpSourceCore    *source;
+  PicmanSourceTool    *source_tool = PICMAN_SOURCE_TOOL (draw_tool);
+  PicmanSourceOptions *options     = PICMAN_SOURCE_TOOL_GET_OPTIONS (draw_tool);
+  PicmanSourceCore    *source;
 
-  source = GIMP_SOURCE_CORE (GIMP_PAINT_TOOL (draw_tool)->core);
+  source = PICMAN_SOURCE_CORE (PICMAN_PAINT_TOOL (draw_tool)->core);
 
-  GIMP_DRAW_TOOL_CLASS (parent_class)->draw (draw_tool);
+  PICMAN_DRAW_TOOL_CLASS (parent_class)->draw (draw_tool);
 
-  if (gimp_source_core_use_source (source, options) &&
+  if (picman_source_core_use_source (source, options) &&
       source->src_drawable && source_tool->src_display)
     {
-      GimpDisplayShell *src_shell;
+      PicmanDisplayShell *src_shell;
       gint              off_x;
       gint              off_y;
 
-      src_shell = gimp_display_get_shell (source_tool->src_display);
+      src_shell = picman_display_get_shell (source_tool->src_display);
 
-      gimp_item_get_offset (GIMP_ITEM (source->src_drawable), &off_x, &off_y);
+      picman_item_get_offset (PICMAN_ITEM (source->src_drawable), &off_x, &off_y);
 
       if (source_tool->src_outline)
         {
-          gimp_display_shell_remove_tool_item (src_shell,
+          picman_display_shell_remove_tool_item (src_shell,
                                                source_tool->src_outline);
           source_tool->src_outline = NULL;
         }
@@ -396,7 +396,7 @@ gimp_source_tool_draw (GimpDrawTool *draw_tool)
       if (source_tool->show_source_outline)
         {
           source_tool->src_outline =
-            gimp_brush_tool_create_outline (GIMP_BRUSH_TOOL (source_tool),
+            picman_brush_tool_create_outline (PICMAN_BRUSH_TOOL (source_tool),
                                             source_tool->src_display,
                                             source_tool->src_x + off_x,
                                             source_tool->src_y + off_y,
@@ -404,7 +404,7 @@ gimp_source_tool_draw (GimpDrawTool *draw_tool)
 
           if (source_tool->src_outline)
             {
-              gimp_display_shell_add_tool_item (src_shell,
+              picman_display_shell_add_tool_item (src_shell,
                                                 source_tool->src_outline);
               g_object_unref (source_tool->src_outline);
             }
@@ -413,20 +413,20 @@ gimp_source_tool_draw (GimpDrawTool *draw_tool)
       if (! source_tool->src_handle)
         {
           source_tool->src_handle =
-            gimp_canvas_handle_new (src_shell,
-                                    GIMP_HANDLE_CROSS,
-                                    GIMP_HANDLE_ANCHOR_CENTER,
+            picman_canvas_handle_new (src_shell,
+                                    PICMAN_HANDLE_CROSS,
+                                    PICMAN_HANDLE_ANCHOR_CENTER,
                                     source_tool->src_x + off_x,
                                     source_tool->src_y + off_y,
-                                    GIMP_TOOL_HANDLE_SIZE_CROSS,
-                                    GIMP_TOOL_HANDLE_SIZE_CROSS);
-          gimp_display_shell_add_tool_item (src_shell,
+                                    PICMAN_TOOL_HANDLE_SIZE_CROSS,
+                                    PICMAN_TOOL_HANDLE_SIZE_CROSS);
+          picman_display_shell_add_tool_item (src_shell,
                                             source_tool->src_handle);
           g_object_unref (source_tool->src_handle);
         }
       else
         {
-          gimp_canvas_handle_set_position (source_tool->src_handle,
+          picman_canvas_handle_set_position (source_tool->src_handle,
                                            source_tool->src_x + off_x,
                                            source_tool->src_y + off_y);
         }
@@ -434,27 +434,27 @@ gimp_source_tool_draw (GimpDrawTool *draw_tool)
 }
 
 static void
-gimp_source_tool_set_src_display (GimpSourceTool *source_tool,
-                                  GimpDisplay    *display)
+picman_source_tool_set_src_display (PicmanSourceTool *source_tool,
+                                  PicmanDisplay    *display)
 {
   if (source_tool->src_display != display)
     {
       if (source_tool->src_display)
         {
-          GimpDisplayShell *src_shell;
+          PicmanDisplayShell *src_shell;
 
-          src_shell = gimp_display_get_shell (source_tool->src_display);
+          src_shell = picman_display_get_shell (source_tool->src_display);
 
           if (source_tool->src_handle)
             {
-              gimp_display_shell_remove_tool_item (src_shell,
+              picman_display_shell_remove_tool_item (src_shell,
                                                    source_tool->src_handle);
               source_tool->src_handle = NULL;
             }
 
           if (source_tool->src_outline)
             {
-              gimp_display_shell_remove_tool_item (src_shell,
+              picman_display_shell_remove_tool_item (src_shell,
                                                    source_tool->src_outline);
               source_tool->src_outline = NULL;
             }

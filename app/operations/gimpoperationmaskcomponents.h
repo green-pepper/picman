@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationmaskcomponents.h
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picmanoperationmaskcomponents.h
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,37 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_MASK_COMPONENTS_H__
-#define __GIMP_OPERATION_MASK_COMPONENTS_H__
+#ifndef __PICMAN_OPERATION_MASK_COMPONENTS_H__
+#define __PICMAN_OPERATION_MASK_COMPONENTS_H__
 
 #include <gegl-plugin.h>
 
 
-#define GIMP_TYPE_OPERATION_MASK_COMPONENTS            (gimp_operation_mask_components_get_type ())
-#define GIMP_OPERATION_MASK_COMPONENTS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_MASK_COMPONENTS, GimpOperationMaskComponents))
-#define GIMP_OPERATION_MASK_COMPONENTS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_MASK_COMPONENTS, GimpOperationMaskComponentsClass))
-#define GIMP_IS_OPERATION_MASK_COMPONENTS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_MASK_COMPONENTS))
-#define GIMP_IS_OPERATION_MASK_COMPONENTS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_MASK_COMPONENTS))
-#define GIMP_OPERATION_MASK_COMPONENTS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_MASK_COMPONENTS, GimpOperationMaskComponentsClass))
+#define PICMAN_TYPE_OPERATION_MASK_COMPONENTS            (picman_operation_mask_components_get_type ())
+#define PICMAN_OPERATION_MASK_COMPONENTS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_MASK_COMPONENTS, PicmanOperationMaskComponents))
+#define PICMAN_OPERATION_MASK_COMPONENTS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_MASK_COMPONENTS, PicmanOperationMaskComponentsClass))
+#define PICMAN_IS_OPERATION_MASK_COMPONENTS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_MASK_COMPONENTS))
+#define PICMAN_IS_OPERATION_MASK_COMPONENTS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_MASK_COMPONENTS))
+#define PICMAN_OPERATION_MASK_COMPONENTS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_MASK_COMPONENTS, PicmanOperationMaskComponentsClass))
 
 
-typedef struct _GimpOperationMaskComponents      GimpOperationMaskComponents;
-typedef struct _GimpOperationMaskComponentsClass GimpOperationMaskComponentsClass;
+typedef struct _PicmanOperationMaskComponents      PicmanOperationMaskComponents;
+typedef struct _PicmanOperationMaskComponentsClass PicmanOperationMaskComponentsClass;
 
-struct _GimpOperationMaskComponents
+struct _PicmanOperationMaskComponents
 {
   GeglOperationPointComposer  parent_instance;
 
-  GimpComponentMask           mask;
+  PicmanComponentMask           mask;
 };
 
-struct _GimpOperationMaskComponentsClass
+struct _PicmanOperationMaskComponentsClass
 {
   GeglOperationPointComposerClass  parent_class;
 };
 
 
-GType   gimp_operation_mask_components_get_type (void) G_GNUC_CONST;
+GType   picman_operation_mask_components_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_MASK_COMPONENTS_H__ */
+#endif /* __PICMAN_OPERATION_MASK_COMPONENTS_H__ */

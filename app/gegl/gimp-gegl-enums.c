@@ -1,28 +1,28 @@
 
-/* Generated data (by gimp-mkenums) */
+/* Generated data (by picman-mkenums) */
 
 #include "config.h"
 #include <glib-object.h>
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 #include "core/core-enums.h"
-#include "gimp-gegl-enums.h"
-#include "gimp-intl.h"
+#include "picman-gegl-enums.h"
+#include "picman-intl.h"
 
-/* enumerations from "./gimp-gegl-enums.h" */
+/* enumerations from "./picman-gegl-enums.h" */
 GType
-gimp_cage_mode_get_type (void)
+picman_cage_mode_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_CAGE_MODE_CAGE_CHANGE, "GIMP_CAGE_MODE_CAGE_CHANGE", "cage-change" },
-    { GIMP_CAGE_MODE_DEFORM, "GIMP_CAGE_MODE_DEFORM", "deform" },
+    { PICMAN_CAGE_MODE_CAGE_CHANGE, "PICMAN_CAGE_MODE_CAGE_CHANGE", "cage-change" },
+    { PICMAN_CAGE_MODE_DEFORM, "PICMAN_CAGE_MODE_DEFORM", "deform" },
     { 0, NULL, NULL }
   };
 
-  static const GimpEnumDesc descs[] =
+  static const PicmanEnumDesc descs[] =
   {
-    { GIMP_CAGE_MODE_CAGE_CHANGE, NC_("cage-mode", "Create or adjust the cage"), NULL },
-    { GIMP_CAGE_MODE_DEFORM, NC_("cage-mode", "Deform the cage\nto deform the image"), NULL },
+    { PICMAN_CAGE_MODE_CAGE_CHANGE, NC_("cage-mode", "Create or adjust the cage"), NULL },
+    { PICMAN_CAGE_MODE_DEFORM, NC_("cage-mode", "Deform the cage\nto deform the image"), NULL },
     { 0, NULL, NULL }
   };
 
@@ -30,9 +30,9 @@ gimp_cage_mode_get_type (void)
 
   if (G_UNLIKELY (! type))
     {
-      type = g_enum_register_static ("GimpCageMode", values);
-      gimp_type_set_translation_context (type, "cage-mode");
-      gimp_enum_set_value_descriptions (type, descs);
+      type = g_enum_register_static ("PicmanCageMode", values);
+      picman_type_set_translation_context (type, "cage-mode");
+      picman_enum_set_value_descriptions (type, descs);
     }
 
   return type;

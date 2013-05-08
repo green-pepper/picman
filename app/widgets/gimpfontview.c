@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfontview.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmanfontview.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,69 +23,69 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
 
-#include "gimpcontainerview.h"
-#include "gimpeditor.h"
-#include "gimpfontview.h"
-#include "gimphelp-ids.h"
-#include "gimpmenufactory.h"
-#include "gimpuimanager.h"
-#include "gimpviewrenderer.h"
+#include "picmancontainerview.h"
+#include "picmaneditor.h"
+#include "picmanfontview.h"
+#include "picmanhelp-ids.h"
+#include "picmanmenufactory.h"
+#include "picmanuimanager.h"
+#include "picmanviewrenderer.h"
 
-#include "gimp-intl.h"
-
-
-static void   gimp_font_view_activate_item (GimpContainerEditor *editor,
-                                            GimpViewable        *viewable);
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpFontView, gimp_font_view, GIMP_TYPE_CONTAINER_EDITOR)
+static void   picman_font_view_activate_item (PicmanContainerEditor *editor,
+                                            PicmanViewable        *viewable);
 
-#define parent_class gimp_font_view_parent_class
+
+G_DEFINE_TYPE (PicmanFontView, picman_font_view, PICMAN_TYPE_CONTAINER_EDITOR)
+
+#define parent_class picman_font_view_parent_class
 
 
 static void
-gimp_font_view_class_init (GimpFontViewClass *klass)
+picman_font_view_class_init (PicmanFontViewClass *klass)
 {
-  GimpContainerEditorClass *editor_class = GIMP_CONTAINER_EDITOR_CLASS (klass);
+  PicmanContainerEditorClass *editor_class = PICMAN_CONTAINER_EDITOR_CLASS (klass);
 
-  editor_class->activate_item = gimp_font_view_activate_item;
+  editor_class->activate_item = picman_font_view_activate_item;
 }
 
 static void
-gimp_font_view_init (GimpFontView *view)
+picman_font_view_init (PicmanFontView *view)
 {
   view->refresh_button = NULL;
 }
 
 GtkWidget *
-gimp_font_view_new (GimpViewType     view_type,
-                    GimpContainer   *container,
-                    GimpContext     *context,
+picman_font_view_new (PicmanViewType     view_type,
+                    PicmanContainer   *container,
+                    PicmanContext     *context,
                     gint             view_size,
                     gint             view_border_width,
-                    GimpMenuFactory *menu_factory)
+                    PicmanMenuFactory *menu_factory)
 {
-  GimpFontView        *font_view;
-  GimpContainerEditor *editor;
+  PicmanFontView        *font_view;
+  PicmanContainerEditor *editor;
 
-  g_return_val_if_fail (GIMP_IS_CONTAINER (container), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTAINER (container), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (view_size > 0 &&
-                        view_size <= GIMP_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
+                        view_size <= PICMAN_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
   g_return_val_if_fail (view_border_width >= 0 &&
-                        view_border_width <= GIMP_VIEW_MAX_BORDER_WIDTH,
+                        view_border_width <= PICMAN_VIEW_MAX_BORDER_WIDTH,
                         NULL);
   g_return_val_if_fail (menu_factory == NULL ||
-                        GIMP_IS_MENU_FACTORY (menu_factory), NULL);
+                        PICMAN_IS_MENU_FACTORY (menu_factory), NULL);
 
-  font_view = g_object_new (GIMP_TYPE_FONT_VIEW,
+  font_view = g_object_new (PICMAN_TYPE_FONT_VIEW,
                             "view-type",         view_type,
                             "container",         container,
                             "context",           context,
@@ -96,25 +96,25 @@ gimp_font_view_new (GimpViewType     view_type,
                             "ui-path",           "/fonts-popup",
                             NULL);
 
-  editor = GIMP_CONTAINER_EDITOR (font_view);
+  editor = PICMAN_CONTAINER_EDITOR (font_view);
 
-  gimp_container_view_set_reorderable (GIMP_CONTAINER_VIEW (editor->view),
+  picman_container_view_set_reorderable (PICMAN_CONTAINER_VIEW (editor->view),
                                        FALSE);
 
   font_view->refresh_button =
-    gimp_editor_add_action_button (GIMP_EDITOR (editor->view), "fonts",
+    picman_editor_add_action_button (PICMAN_EDITOR (editor->view), "fonts",
                                    "fonts-refresh", NULL);
 
-  gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor->view)),
+  picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor->view)),
                           editor);
 
   return GTK_WIDGET (font_view);
 }
 
 static void
-gimp_font_view_activate_item (GimpContainerEditor *editor,
-                              GimpViewable        *viewable)
+picman_font_view_activate_item (PicmanContainerEditor *editor,
+                              PicmanViewable        *viewable)
 {
-  if (GIMP_CONTAINER_EDITOR_CLASS (parent_class)->activate_item)
-    GIMP_CONTAINER_EDITOR_CLASS (parent_class)->activate_item (editor, viewable);
+  if (PICMAN_CONTAINER_EDITOR_CLASS (parent_class)->activate_item)
+    PICMAN_CONTAINER_EDITOR_CLASS (parent_class)->activate_item (editor, viewable);
 }

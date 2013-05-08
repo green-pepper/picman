@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpfilterstack.c
- * Copyright (C) 2008-2013 Michael Natterer <mitch@gimp.org>
+ * picmanfilterstack.c
+ * Copyright (C) 2008-2013 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,68 +24,68 @@
 
 #include "core-types.h"
 
-#include "gimpfilter.h"
-#include "gimpfilterstack.h"
+#include "picmanfilter.h"
+#include "picmanfilterstack.h"
 
 
 /*  local function prototypes  */
 
-static void   gimp_filter_stack_constructed (GObject         *object);
-static void   gimp_filter_stack_finalize    (GObject         *object);
+static void   picman_filter_stack_constructed (GObject         *object);
+static void   picman_filter_stack_finalize    (GObject         *object);
 
-static void   gimp_filter_stack_add         (GimpContainer   *container,
-                                             GimpObject      *object);
-static void   gimp_filter_stack_remove      (GimpContainer   *container,
-                                             GimpObject      *object);
-static void   gimp_filter_stack_reorder     (GimpContainer   *container,
-                                             GimpObject      *object,
+static void   picman_filter_stack_add         (PicmanContainer   *container,
+                                             PicmanObject      *object);
+static void   picman_filter_stack_remove      (PicmanContainer   *container,
+                                             PicmanObject      *object);
+static void   picman_filter_stack_reorder     (PicmanContainer   *container,
+                                             PicmanObject      *object,
                                              gint             new_index);
 
-static void   gimp_filter_stack_add_node    (GimpFilterStack *stack,
-                                             GimpFilter      *filter);
-static void   gimp_filter_stack_remove_node (GimpFilterStack *stack,
-                                             GimpFilter      *filter);
+static void   picman_filter_stack_add_node    (PicmanFilterStack *stack,
+                                             PicmanFilter      *filter);
+static void   picman_filter_stack_remove_node (PicmanFilterStack *stack,
+                                             PicmanFilter      *filter);
 
 
-G_DEFINE_TYPE (GimpFilterStack, gimp_filter_stack, GIMP_TYPE_LIST);
+G_DEFINE_TYPE (PicmanFilterStack, picman_filter_stack, PICMAN_TYPE_LIST);
 
-#define parent_class gimp_filter_stack_parent_class
+#define parent_class picman_filter_stack_parent_class
 
 
 static void
-gimp_filter_stack_class_init (GimpFilterStackClass *klass)
+picman_filter_stack_class_init (PicmanFilterStackClass *klass)
 {
   GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
-  GimpContainerClass *container_class = GIMP_CONTAINER_CLASS (klass);
+  PicmanContainerClass *container_class = PICMAN_CONTAINER_CLASS (klass);
 
-  object_class->constructed = gimp_filter_stack_constructed;
-  object_class->finalize    = gimp_filter_stack_finalize;
+  object_class->constructed = picman_filter_stack_constructed;
+  object_class->finalize    = picman_filter_stack_finalize;
 
-  container_class->add      = gimp_filter_stack_add;
-  container_class->remove   = gimp_filter_stack_remove;
-  container_class->reorder  = gimp_filter_stack_reorder;
+  container_class->add      = picman_filter_stack_add;
+  container_class->remove   = picman_filter_stack_remove;
+  container_class->reorder  = picman_filter_stack_reorder;
 }
 
 static void
-gimp_filter_stack_init (GimpFilterStack *stack)
+picman_filter_stack_init (PicmanFilterStack *stack)
 {
 }
 
 static void
-gimp_filter_stack_constructed (GObject *object)
+picman_filter_stack_constructed (GObject *object)
 {
-  GimpContainer *container = GIMP_CONTAINER (object);
+  PicmanContainer *container = PICMAN_CONTAINER (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (g_type_is_a (gimp_container_get_children_type (container),
-                         GIMP_TYPE_FILTER));
+  g_assert (g_type_is_a (picman_container_get_children_type (container),
+                         PICMAN_TYPE_FILTER));
 }
 
 static void
-gimp_filter_stack_finalize (GObject *object)
+picman_filter_stack_finalize (GObject *object)
 {
-  GimpFilterStack *stack = GIMP_FILTER_STACK (object);
+  PicmanFilterStack *stack = PICMAN_FILTER_STACK (object);
 
   if (stack->graph)
     {
@@ -97,73 +97,73 @@ gimp_filter_stack_finalize (GObject *object)
 }
 
 static void
-gimp_filter_stack_add (GimpContainer *container,
-                       GimpObject    *object)
+picman_filter_stack_add (PicmanContainer *container,
+                       PicmanObject    *object)
 {
-  GimpFilterStack *stack = GIMP_FILTER_STACK (container);
+  PicmanFilterStack *stack = PICMAN_FILTER_STACK (container);
 
-  GIMP_CONTAINER_CLASS (parent_class)->add (container, object);
+  PICMAN_CONTAINER_CLASS (parent_class)->add (container, object);
 
   if (stack->graph)
     {
-      GimpFilter *filter = GIMP_FILTER (object);
+      PicmanFilter *filter = PICMAN_FILTER (object);
 
-      gegl_node_add_child (stack->graph, gimp_filter_get_node (filter));
-      gimp_filter_stack_add_node (stack, filter);
+      gegl_node_add_child (stack->graph, picman_filter_get_node (filter));
+      picman_filter_stack_add_node (stack, filter);
     }
 }
 
 static void
-gimp_filter_stack_remove (GimpContainer *container,
-                          GimpObject    *object)
+picman_filter_stack_remove (PicmanContainer *container,
+                          PicmanObject    *object)
 {
-  GimpFilterStack *stack = GIMP_FILTER_STACK (container);
+  PicmanFilterStack *stack = PICMAN_FILTER_STACK (container);
 
   if (stack->graph)
     {
-      GimpFilter *filter = GIMP_FILTER (object);
+      PicmanFilter *filter = PICMAN_FILTER (object);
 
-      gimp_filter_stack_remove_node (stack, filter);
-      gegl_node_remove_child (stack->graph, gimp_filter_get_node (filter));
+      picman_filter_stack_remove_node (stack, filter);
+      gegl_node_remove_child (stack->graph, picman_filter_get_node (filter));
     }
 
-  GIMP_CONTAINER_CLASS (parent_class)->remove (container, object);
+  PICMAN_CONTAINER_CLASS (parent_class)->remove (container, object);
 }
 
 static void
-gimp_filter_stack_reorder (GimpContainer *container,
-                           GimpObject    *object,
+picman_filter_stack_reorder (PicmanContainer *container,
+                           PicmanObject    *object,
                            gint           new_index)
 {
-  GimpFilterStack *stack  = GIMP_FILTER_STACK (container);
-  GimpFilter      *filter = GIMP_FILTER (object);
+  PicmanFilterStack *stack  = PICMAN_FILTER_STACK (container);
+  PicmanFilter      *filter = PICMAN_FILTER (object);
 
   if (stack->graph)
-    gimp_filter_stack_remove_node (stack, filter);
+    picman_filter_stack_remove_node (stack, filter);
 
-  GIMP_CONTAINER_CLASS (parent_class)->reorder (container, object, new_index);
+  PICMAN_CONTAINER_CLASS (parent_class)->reorder (container, object, new_index);
 
   if (stack->graph)
-    gimp_filter_stack_add_node (stack, filter);
+    picman_filter_stack_add_node (stack, filter);
 }
 
 
 /*  public functions  */
 
-GimpContainer *
-gimp_filter_stack_new (GType filter_type)
+PicmanContainer *
+picman_filter_stack_new (GType filter_type)
 {
-  g_return_val_if_fail (g_type_is_a (filter_type, GIMP_TYPE_FILTER), NULL);
+  g_return_val_if_fail (g_type_is_a (filter_type, PICMAN_TYPE_FILTER), NULL);
 
-  return g_object_new (GIMP_TYPE_FILTER_STACK,
+  return g_object_new (PICMAN_TYPE_FILTER_STACK,
                        "name",          g_type_name (filter_type),
                        "children-type", filter_type,
-                       "policy",        GIMP_CONTAINER_POLICY_STRONG,
+                       "policy",        PICMAN_CONTAINER_POLICY_STRONG,
                        NULL);
 }
 
 GeglNode *
-gimp_filter_stack_get_graph (GimpFilterStack *stack)
+picman_filter_stack_get_graph (PicmanFilterStack *stack)
 {
   GList    *list;
   GList    *reverse_list = NULL;
@@ -172,29 +172,29 @@ gimp_filter_stack_get_graph (GimpFilterStack *stack)
   GeglNode *input;
   GeglNode *output;
 
-  g_return_val_if_fail (GIMP_IS_FILTER_STACK (stack), NULL);
+  g_return_val_if_fail (PICMAN_IS_FILTER_STACK (stack), NULL);
 
   if (stack->graph)
     return stack->graph;
 
-  for (list = GIMP_LIST (stack)->list;
+  for (list = PICMAN_LIST (stack)->list;
        list;
        list = g_list_next (list))
     {
-      GimpFilter *filter = list->data;
+      PicmanFilter *filter = list->data;
 
       reverse_list = g_list_prepend (reverse_list, filter);
 
       if (! g_list_next (list))
-        gimp_filter_set_is_last_node (filter, TRUE);
+        picman_filter_set_is_last_node (filter, TRUE);
     }
 
   stack->graph = gegl_node_new ();
 
   for (list = reverse_list; list; list = g_list_next (list))
     {
-      GimpFilter *filter = list->data;
-      GeglNode   *node   = gimp_filter_get_node (filter);
+      PicmanFilter *filter = list->data;
+      GeglNode   *node   = picman_filter_get_node (filter);
 
       if (! first)
         first = node;
@@ -233,20 +233,20 @@ gimp_filter_stack_get_graph (GimpFilterStack *stack)
 /*  private functions  */
 
 static void
-gimp_filter_stack_add_node (GimpFilterStack *stack,
-                              GimpFilter        *filter)
+picman_filter_stack_add_node (PicmanFilterStack *stack,
+                              PicmanFilter        *filter)
 {
-  GimpFilter *filter_above = NULL;
-  GimpFilter *filter_below;
+  PicmanFilter *filter_above = NULL;
+  PicmanFilter *filter_below;
   GeglNode   *node_above;
   GeglNode   *node_below;
   GeglNode   *node;
   gint        index;
 
-  node = gimp_filter_get_node (filter);
+  node = picman_filter_get_node (filter);
 
-  index = gimp_container_get_child_index (GIMP_CONTAINER (stack),
-                                          GIMP_OBJECT (filter));
+  index = picman_container_get_child_index (PICMAN_CONTAINER (stack),
+                                          PICMAN_OBJECT (filter));
 
   if (index == 0)
     {
@@ -254,30 +254,30 @@ gimp_filter_stack_add_node (GimpFilterStack *stack,
     }
   else
     {
-      filter_above = (GimpFilter *)
-        gimp_container_get_child_by_index (GIMP_CONTAINER (stack), index - 1);
+      filter_above = (PicmanFilter *)
+        picman_container_get_child_by_index (PICMAN_CONTAINER (stack), index - 1);
 
-      node_above = gimp_filter_get_node (filter_above);
+      node_above = picman_filter_get_node (filter_above);
     }
 
   gegl_node_connect_to (node,       "output",
                         node_above, "input");
 
-  filter_below = (GimpFilter *)
-    gimp_container_get_child_by_index (GIMP_CONTAINER (stack), index + 1);
+  filter_below = (PicmanFilter *)
+    picman_container_get_child_by_index (PICMAN_CONTAINER (stack), index + 1);
 
   if (filter_below)
     {
-      node_below = gimp_filter_get_node (filter_below);
+      node_below = picman_filter_get_node (filter_below);
     }
   else
     {
       node_below = gegl_node_get_input_proxy (stack->graph, "input");
 
       if (filter_above)
-        gimp_filter_set_is_last_node (filter_above, FALSE);
+        picman_filter_set_is_last_node (filter_above, FALSE);
 
-      gimp_filter_set_is_last_node (filter, TRUE);
+      picman_filter_set_is_last_node (filter, TRUE);
     }
 
   gegl_node_connect_to (node_below, "output",
@@ -285,22 +285,22 @@ gimp_filter_stack_add_node (GimpFilterStack *stack,
 }
 
 static void
-gimp_filter_stack_remove_node (GimpFilterStack *stack,
-                                 GimpFilter        *filter)
+picman_filter_stack_remove_node (PicmanFilterStack *stack,
+                                 PicmanFilter        *filter)
 {
-  GimpFilter *filter_above = NULL;
-  GimpFilter *filter_below;
+  PicmanFilter *filter_above = NULL;
+  PicmanFilter *filter_below;
   GeglNode   *node_above;
   GeglNode   *node_below;
   GeglNode   *node;
   gint        index;
 
-  node = gimp_filter_get_node (filter);
+  node = picman_filter_get_node (filter);
 
   gegl_node_disconnect (node, "input");
 
-  index = gimp_container_get_child_index (GIMP_CONTAINER (stack),
-                                          GIMP_OBJECT (filter));
+  index = picman_container_get_child_index (PICMAN_CONTAINER (stack),
+                                          PICMAN_OBJECT (filter));
 
   if (index == 0)
     {
@@ -308,27 +308,27 @@ gimp_filter_stack_remove_node (GimpFilterStack *stack,
     }
   else
     {
-      filter_above = (GimpFilter *)
-        gimp_container_get_child_by_index (GIMP_CONTAINER (stack), index - 1);
+      filter_above = (PicmanFilter *)
+        picman_container_get_child_by_index (PICMAN_CONTAINER (stack), index - 1);
 
-      node_above = gimp_filter_get_node (filter_above);
+      node_above = picman_filter_get_node (filter_above);
     }
 
-  filter_below = (GimpFilter *)
-    gimp_container_get_child_by_index (GIMP_CONTAINER (stack), index + 1);
+  filter_below = (PicmanFilter *)
+    picman_container_get_child_by_index (PICMAN_CONTAINER (stack), index + 1);
 
   if (filter_below)
     {
-      node_below = gimp_filter_get_node (filter_below);
+      node_below = picman_filter_get_node (filter_below);
     }
   else
     {
       node_below = gegl_node_get_input_proxy (stack->graph, "input");
 
-      gimp_filter_set_is_last_node (filter, FALSE);
+      picman_filter_set_is_last_node (filter, FALSE);
 
       if (filter_above)
-        gimp_filter_set_is_last_node (filter_above, TRUE);
+        picman_filter_set_is_last_node (filter_above, TRUE);
     }
 
   gegl_node_connect_to (node_below, "output",

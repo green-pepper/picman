@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginprocframe.h
+ * picmanpluginprocframe.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,27 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_PROC_FRAME_H__
-#define __GIMP_PLUG_IN_PRON_FRAME_H__
+#ifndef __PICMAN_PLUG_IN_PROC_FRAME_H__
+#define __PICMAN_PLUG_IN_PRON_FRAME_H__
 
 
-struct _GimpPlugInProcFrame
+struct _PicmanPlugInProcFrame
 {
   gint                 ref_count;
 
-  GimpContext         *main_context;
+  PicmanContext         *main_context;
   GList               *context_stack;
 
-  GimpProcedure       *procedure;
+  PicmanProcedure       *procedure;
   GMainLoop           *main_loop;
 
-  GimpValueArray      *return_vals;
+  PicmanValueArray      *return_vals;
 
-  GimpProgress        *progress;
+  PicmanProgress        *progress;
   gboolean             progress_created;
   gulong               progress_cancel_id;
 
-  GimpPDBErrorHandler  error_handler;
+  PicmanPDBErrorHandler  error_handler;
 
   /*  lists of things to clean up on dispose  */
   GList               *image_cleanups;
@@ -45,23 +45,23 @@ struct _GimpPlugInProcFrame
 };
 
 
-GimpPlugInProcFrame * gimp_plug_in_proc_frame_new     (GimpContext         *context,
-                                                       GimpProgress        *progress,
-                                                       GimpPlugInProcedure *procedure);
-void                  gimp_plug_in_proc_frame_init    (GimpPlugInProcFrame *proc_frame,
-                                                       GimpContext         *context,
-                                                       GimpProgress        *progress,
-                                                       GimpPlugInProcedure *procedure);
+PicmanPlugInProcFrame * picman_plug_in_proc_frame_new     (PicmanContext         *context,
+                                                       PicmanProgress        *progress,
+                                                       PicmanPlugInProcedure *procedure);
+void                  picman_plug_in_proc_frame_init    (PicmanPlugInProcFrame *proc_frame,
+                                                       PicmanContext         *context,
+                                                       PicmanProgress        *progress,
+                                                       PicmanPlugInProcedure *procedure);
 
-void                  gimp_plug_in_proc_frame_dispose (GimpPlugInProcFrame *proc_frame,
-                                                       GimpPlugIn          *plug_in);
+void                  picman_plug_in_proc_frame_dispose (PicmanPlugInProcFrame *proc_frame,
+                                                       PicmanPlugIn          *plug_in);
 
-GimpPlugInProcFrame * gimp_plug_in_proc_frame_ref     (GimpPlugInProcFrame *proc_frame);
-void                  gimp_plug_in_proc_frame_unref   (GimpPlugInProcFrame *proc_frame,
-                                                       GimpPlugIn          *plug_in);
+PicmanPlugInProcFrame * picman_plug_in_proc_frame_ref     (PicmanPlugInProcFrame *proc_frame);
+void                  picman_plug_in_proc_frame_unref   (PicmanPlugInProcFrame *proc_frame,
+                                                       PicmanPlugIn          *plug_in);
 
-GimpValueArray      * gimp_plug_in_proc_frame_get_return_values
-                                                      (GimpPlugInProcFrame *proc_frame);
+PicmanValueArray      * picman_plug_in_proc_frame_get_return_values
+                                                      (PicmanPlugInProcFrame *proc_frame);
 
 
-#endif /* __GIMP_PLUG_IN_PROC_FRAME_H__ */
+#endif /* __PICMAN_PLUG_IN_PROC_FRAME_H__ */

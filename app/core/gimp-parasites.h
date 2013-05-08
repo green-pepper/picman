@@ -1,4 +1,4 @@
-/* gimpparasite.h: Copyright 1998 Jay Cox <jaycox@gimp.org>
+/* picmanparasite.h: Copyright 1998 Jay Cox <jaycox@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,25 +14,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PARASITES_H__
-#define __GIMP_PARASITES_H__
+#ifndef __PICMAN_PARASITES_H__
+#define __PICMAN_PARASITES_H__
 
 
-/* some wrappers to access gimp->parasites, mainly for the PDB */
+/* some wrappers to access picman->parasites, mainly for the PDB */
 
-void                  gimp_parasite_attach       (Gimp               *gimp,
-                                                  const GimpParasite *parasite);
-void                  gimp_parasite_detach       (Gimp               *gimp,
+void                  picman_parasite_attach       (Picman               *picman,
+                                                  const PicmanParasite *parasite);
+void                  picman_parasite_detach       (Picman               *picman,
                                                   const gchar        *name);
-const GimpParasite  * gimp_parasite_find         (Gimp               *gimp,
+const PicmanParasite  * picman_parasite_find         (Picman               *picman,
                                                   const gchar        *name);
-gchar              ** gimp_parasite_list         (Gimp               *gimp,
+gchar              ** picman_parasite_list         (Picman               *picman,
                                                   gint               *count);
 
-void                  gimp_parasite_shift_parent (GimpParasite       *parasite);
+void                  picman_parasite_shift_parent (PicmanParasite       *parasite);
 
-void                  gimp_parasiterc_load       (Gimp               *gimp);
-void                  gimp_parasiterc_save       (Gimp               *gimp);
+void                  picman_parasiterc_load       (Picman               *picman);
+void                  picman_parasiterc_save       (Picman               *picman);
 
 
-#endif  /*  __GIMP_PARASITES_H__  */
+#endif  /*  __PICMAN_PARASITES_H__  */

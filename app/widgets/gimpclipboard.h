@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,30 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CLIPBOARD_H__
-#define __GIMP_CLIPBOARD_H__
+#ifndef __PICMAN_CLIPBOARD_H__
+#define __PICMAN_CLIPBOARD_H__
 
 
-void         gimp_clipboard_init       (Gimp        *gimp);
-void         gimp_clipboard_exit       (Gimp        *gimp);
+void         picman_clipboard_init       (Picman        *picman);
+void         picman_clipboard_exit       (Picman        *picman);
 
-gboolean     gimp_clipboard_has_buffer (Gimp        *gimp);
-gboolean     gimp_clipboard_has_svg    (Gimp        *gimp);
-gboolean     gimp_clipboard_has_curve  (Gimp        *gimp);
+gboolean     picman_clipboard_has_buffer (Picman        *picman);
+gboolean     picman_clipboard_has_svg    (Picman        *picman);
+gboolean     picman_clipboard_has_curve  (Picman        *picman);
 
-GimpBuffer * gimp_clipboard_get_buffer (Gimp        *gimp);
-gchar      * gimp_clipboard_get_svg    (Gimp        *gimp,
+PicmanBuffer * picman_clipboard_get_buffer (Picman        *picman);
+gchar      * picman_clipboard_get_svg    (Picman        *picman,
                                         gsize       *svg_length);
-GimpCurve  * gimp_clipboard_get_curve  (Gimp        *gimp);
+PicmanCurve  * picman_clipboard_get_curve  (Picman        *picman);
 
-void         gimp_clipboard_set_buffer (Gimp        *gimp,
-                                        GimpBuffer  *buffer);
-void         gimp_clipboard_set_svg    (Gimp        *gimp,
+void         picman_clipboard_set_buffer (Picman        *picman,
+                                        PicmanBuffer  *buffer);
+void         picman_clipboard_set_svg    (Picman        *picman,
                                         const gchar *svg);
-void         gimp_clipboard_set_text   (Gimp        *gimp,
+void         picman_clipboard_set_text   (Picman        *picman,
                                         const gchar *text);
-void         gimp_clipboard_set_curve  (Gimp        *gimp,
-                                        GimpCurve   *curve);
+void         picman_clipboard_set_curve  (Picman        *picman,
+                                        PicmanCurve   *curve);
 
 
-#endif /* __GIMP_CLIPBOARD_H__ */
+#endif /* __PICMAN_CLIPBOARD_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,152 +19,152 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimpimage.h"
-#include "gimpimage-private.h"
-#include "gimpimage-sample-points.h"
-#include "gimpimage-undo-push.h"
-#include "gimpsamplepoint.h"
+#include "picman.h"
+#include "picmanimage.h"
+#include "picmanimage-private.h"
+#include "picmanimage-sample-points.h"
+#include "picmanimage-undo-push.h"
+#include "picmansamplepoint.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  public functions  */
 
-GimpSamplePoint *
-gimp_image_add_sample_point_at_pos (GimpImage *image,
+PicmanSamplePoint *
+picman_image_add_sample_point_at_pos (PicmanImage *image,
                                     gint       x,
                                     gint       y,
                                     gboolean   push_undo)
 {
-  GimpSamplePoint *sample_point;
+  PicmanSamplePoint *sample_point;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (x >= 0 && x < gimp_image_get_width  (image), NULL);
-  g_return_val_if_fail (y >= 0 && y < gimp_image_get_height (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (x >= 0 && x < picman_image_get_width  (image), NULL);
+  g_return_val_if_fail (y >= 0 && y < picman_image_get_height (image), NULL);
 
-  sample_point = gimp_sample_point_new (image->gimp->next_sample_point_ID++);
+  sample_point = picman_sample_point_new (image->picman->next_sample_point_ID++);
 
   if (push_undo)
-    gimp_image_undo_push_sample_point (image, C_("undo-type", "Add Sample Point"),
+    picman_image_undo_push_sample_point (image, C_("undo-type", "Add Sample Point"),
                                        sample_point);
 
-  gimp_image_add_sample_point (image, sample_point, x, y);
-  gimp_sample_point_unref (sample_point);
+  picman_image_add_sample_point (image, sample_point, x, y);
+  picman_sample_point_unref (sample_point);
 
   return sample_point;
 }
 
 void
-gimp_image_add_sample_point (GimpImage       *image,
-                             GimpSamplePoint *sample_point,
+picman_image_add_sample_point (PicmanImage       *image,
+                             PicmanSamplePoint *sample_point,
                              gint             x,
                              gint             y)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (sample_point != NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   private->sample_points = g_list_append (private->sample_points, sample_point);
 
   sample_point->x = x;
   sample_point->y = y;
-  gimp_sample_point_ref (sample_point);
+  picman_sample_point_ref (sample_point);
 
-  gimp_image_sample_point_added (image, sample_point);
+  picman_image_sample_point_added (image, sample_point);
 }
 
 void
-gimp_image_remove_sample_point (GimpImage       *image,
-                                GimpSamplePoint *sample_point,
+picman_image_remove_sample_point (PicmanImage       *image,
+                                PicmanSamplePoint *sample_point,
                                 gboolean         push_undo)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (sample_point != NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   if (push_undo)
-    gimp_image_undo_push_sample_point (image,
+    picman_image_undo_push_sample_point (image,
                                        C_("undo-type", "Remove Sample Point"),
                                        sample_point);
 
   private->sample_points = g_list_remove (private->sample_points, sample_point);
 
-  gimp_image_sample_point_removed (image, sample_point);
+  picman_image_sample_point_removed (image, sample_point);
 
   sample_point->x = -1;
   sample_point->y = -1;
-  gimp_sample_point_unref (sample_point);
+  picman_sample_point_unref (sample_point);
 }
 
 void
-gimp_image_move_sample_point (GimpImage       *image,
-                              GimpSamplePoint *sample_point,
+picman_image_move_sample_point (PicmanImage       *image,
+                              PicmanSamplePoint *sample_point,
                               gint             x,
                               gint             y,
                               gboolean         push_undo)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (sample_point != NULL);
   g_return_if_fail (x >= 0);
   g_return_if_fail (y >= 0);
-  g_return_if_fail (x < gimp_image_get_width  (image));
-  g_return_if_fail (y < gimp_image_get_height (image));
+  g_return_if_fail (x < picman_image_get_width  (image));
+  g_return_if_fail (y < picman_image_get_height (image));
 
   if (push_undo)
-    gimp_image_undo_push_sample_point (image,
+    picman_image_undo_push_sample_point (image,
                                        C_("undo-type", "Move Sample Point"),
                                        sample_point);
 
   sample_point->x = x;
   sample_point->y = y;
 
-  gimp_image_sample_point_moved (image, sample_point);
+  picman_image_sample_point_moved (image, sample_point);
 }
 
 GList *
-gimp_image_get_sample_points (GimpImage *image)
+picman_image_get_sample_points (PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->sample_points;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->sample_points;
 }
 
-GimpSamplePoint *
-gimp_image_find_sample_point (GimpImage *image,
+PicmanSamplePoint *
+picman_image_find_sample_point (PicmanImage *image,
                               gdouble    x,
                               gdouble    y,
                               gdouble    epsilon_x,
                               gdouble    epsilon_y)
 {
   GList           *list;
-  GimpSamplePoint *ret     = NULL;
+  PicmanSamplePoint *ret     = NULL;
   gdouble          mindist = G_MAXDOUBLE;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (epsilon_x > 0 && epsilon_y > 0, NULL);
 
-  if (x < 0 || x >= gimp_image_get_width  (image) ||
-      y < 0 || y >= gimp_image_get_height (image))
+  if (x < 0 || x >= picman_image_get_width  (image) ||
+      y < 0 || y >= picman_image_get_height (image))
     {
       return NULL;
     }
 
-  for (list = GIMP_IMAGE_GET_PRIVATE (image)->sample_points;
+  for (list = PICMAN_IMAGE_GET_PRIVATE (image)->sample_points;
        list;
        list = g_list_next (list))
     {
-      GimpSamplePoint *sample_point = list->data;
+      PicmanSamplePoint *sample_point = list->data;
       gdouble          dist;
 
       if (sample_point->x < 0 || sample_point->y < 0)

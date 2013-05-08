@@ -2,7 +2,7 @@
 
 """
 defcheck.py -- Consistency check for the .def files.
-Copyright (C) 2006  Simon Budig <simon@gimp.org>
+Copyright (C) 2006  Simon Budig <simon@picman.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 This is a hack to check the consistency of the .def files compared to
 the respective libraries.
 
-Invoke in the top level of the gimp source tree after compiling GIMP.
+Invoke in the top level of the picman source tree after compiling PICMAN.
 If srcdir != builddir, run it in the build directory and pass the name
 of the source directory on the command-line.
 
@@ -34,15 +34,15 @@ import sys, commands
 from os import path
 
 def_files = (
-   "libgimpbase/gimpbase.def",
-   "libgimpcolor/gimpcolor.def",
-   "libgimpconfig/gimpconfig.def",
-   "libgimp/gimp.def",
-   "libgimp/gimpui.def",
-   "libgimpmath/gimpmath.def",
-   "libgimpmodule/gimpmodule.def",
-   "libgimpthumb/gimpthumb.def",
-   "libgimpwidgets/gimpwidgets.def"
+   "libpicmanbase/picmanbase.def",
+   "libpicmancolor/picmancolor.def",
+   "libpicmanconfig/picmanconfig.def",
+   "libpicman/picman.def",
+   "libpicman/picmanui.def",
+   "libpicmanmath/picmanmath.def",
+   "libpicmanmodule/picmanmodule.def",
+   "libpicmanthumb/picmanthumb.def",
+   "libpicmanwidgets/picmanwidgets.def"
 )
 
 have_errors = 0

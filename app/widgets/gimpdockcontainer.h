@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdockcontainer.h
+ * picmandockcontainer.h
  * Copyright (C) 2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,41 +18,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DOCK_CONTAINER_H__
-#define __GIMP_DOCK_CONTAINER_H__
+#ifndef __PICMAN_DOCK_CONTAINER_H__
+#define __PICMAN_DOCK_CONTAINER_H__
 
 
-#define GIMP_TYPE_DOCK_CONTAINER               (gimp_dock_container_interface_get_type ())
-#define GIMP_DOCK_CONTAINER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DOCK_CONTAINER, GimpDockContainer))
-#define GIMP_IS_DOCK_CONTAINER(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DOCK_CONTAINER))
-#define GIMP_DOCK_CONTAINER_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GIMP_TYPE_DOCK_CONTAINER, GimpDockContainerInterface))
+#define PICMAN_TYPE_DOCK_CONTAINER               (picman_dock_container_interface_get_type ())
+#define PICMAN_DOCK_CONTAINER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DOCK_CONTAINER, PicmanDockContainer))
+#define PICMAN_IS_DOCK_CONTAINER(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DOCK_CONTAINER))
+#define PICMAN_DOCK_CONTAINER_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), PICMAN_TYPE_DOCK_CONTAINER, PicmanDockContainerInterface))
 
 
-typedef struct _GimpDockContainerInterface GimpDockContainerInterface;
+typedef struct _PicmanDockContainerInterface PicmanDockContainerInterface;
 
-struct _GimpDockContainerInterface
+struct _PicmanDockContainerInterface
 {
   GTypeInterface base_iface;
 
   /*  virtual functions  */
-  GList           * (* get_docks)         (GimpDockContainer   *container);
-  GimpUIManager   * (* get_ui_manager)    (GimpDockContainer   *container);
-  void              (* add_dock)          (GimpDockContainer   *container,
-                                           GimpDock            *dock,
-                                           GimpSessionInfoDock *dock_info);
-  GimpAlignmentType (* get_dock_side)     (GimpDockContainer   *container,
-                                           GimpDock            *dock);
+  GList           * (* get_docks)         (PicmanDockContainer   *container);
+  PicmanUIManager   * (* get_ui_manager)    (PicmanDockContainer   *container);
+  void              (* add_dock)          (PicmanDockContainer   *container,
+                                           PicmanDock            *dock,
+                                           PicmanSessionInfoDock *dock_info);
+  PicmanAlignmentType (* get_dock_side)     (PicmanDockContainer   *container,
+                                           PicmanDock            *dock);
 };
 
 
-GType              gimp_dock_container_interface_get_type  (void) G_GNUC_CONST;
-GList            * gimp_dock_container_get_docks           (GimpDockContainer   *container);
-GimpUIManager    * gimp_dock_container_get_ui_manager      (GimpDockContainer   *container);
-void               gimp_dock_container_add_dock            (GimpDockContainer   *container,
-                                                            GimpDock            *dock,
-                                                            GimpSessionInfoDock *dock_info);
-GimpAlignmentType  gimp_dock_container_get_dock_side       (GimpDockContainer   *container,
-                                                            GimpDock            *dock);
+GType              picman_dock_container_interface_get_type  (void) G_GNUC_CONST;
+GList            * picman_dock_container_get_docks           (PicmanDockContainer   *container);
+PicmanUIManager    * picman_dock_container_get_ui_manager      (PicmanDockContainer   *container);
+void               picman_dock_container_add_dock            (PicmanDockContainer   *container,
+                                                            PicmanDock            *dock,
+                                                            PicmanSessionInfoDock *dock_info);
+PicmanAlignmentType  picman_dock_container_get_dock_side       (PicmanDockContainer   *container,
+                                                            PicmanDock            *dock);
 
 
-#endif  /*  __GIMP_DOCK_CONTAINER_H__  */
+#endif  /*  __PICMAN_DOCK_CONTAINER_H__  */

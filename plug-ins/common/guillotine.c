@@ -2,7 +2,7 @@
  *  Guillotine plug-in v0.9 by Adam D. Moss, adam@foxbox.org.  1998/09/01
  */
 
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,9 +23,9 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC "plug-in-guillotine"
@@ -36,15 +36,15 @@
 static void    query      (void);
 static void    run        (const gchar      *name,
                            gint              nparams,
-                           const GimpParam  *param,
+                           const PicmanParam  *param,
                            gint             *nreturn_vals,
-                           GimpParam       **return_vals);
+                           PicmanParam       **return_vals);
 
 static GList * guillotine (gint32            image_ID,
                            gboolean          interactive);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -58,19 +58,19 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,      "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,      "image",    "Input image"             },
-    { GIMP_PDB_DRAWABLE,   "drawable", "Input drawable (unused)" }
+    { PICMAN_PDB_INT32,      "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,      "image",    "Input image"             },
+    { PICMAN_PDB_DRAWABLE,   "drawable", "Input drawable (unused)" }
   };
-  static const GimpParamDef return_vals[] =
+  static const PicmanParamDef return_vals[] =
   {
-    { GIMP_PDB_INT32,      "image-count", "Number of images created" },
-    { GIMP_PDB_INT32ARRAY, "image-ids",   "Output images"            }
+    { PICMAN_PDB_INT32,      "image-count", "Number of images created" },
+    { PICMAN_PDB_INT32ARRAY, "image-ids",   "Output images"            }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Slice the image into subimages using guides"),
                           "This function takes an image and slices it along "
                           "its guides, creating new images. The original "
@@ -80,46 +80,46 @@ query (void)
                           "1998",
                           N_("_Guillotine"),
                           "RGB*, INDEXED*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), G_N_ELEMENTS (return_vals),
                           args, return_vals);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Image/Transform");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Image/Transform");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[3];
-  GimpRunMode       run_mode = param[0].data.d_int32;
-  GimpPDBStatusType status   = GIMP_PDB_SUCCESS;
+  static PicmanParam  values[3];
+  PicmanRunMode       run_mode = param[0].data.d_int32;
+  PicmanPDBStatusType status   = PICMAN_PDB_SUCCESS;
 
   *nreturn_vals = 3;
   *return_vals  = values;
 
-  values[0].type              = GIMP_PDB_STATUS;
+  values[0].type              = PICMAN_PDB_STATUS;
   values[0].data.d_status     = status;
-  values[1].type              = GIMP_PDB_INT32;
+  values[1].type              = PICMAN_PDB_INT32;
   values[1].data.d_int32      = 0;
-  values[2].type              = GIMP_PDB_INT32ARRAY;
+  values[2].type              = PICMAN_PDB_INT32ARRAY;
   values[2].data.d_int32array = NULL;
 
   INIT_I18N();
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       GList *images;
       GList *list;
       gint   i;
 
-      gimp_progress_init (_("Guillotine"));
+      picman_progress_init (_("Guillotine"));
 
       images = guillotine (param[1].data.d_image,
-                           run_mode == GIMP_RUN_INTERACTIVE);
+                           run_mode == PICMAN_RUN_INTERACTIVE);
 
       values[1].data.d_int32      = g_list_length (images);
       values[2].data.d_int32array = g_new (gint32, values[1].data.d_int32);
@@ -131,8 +131,8 @@ run (const gchar      *name,
 
       g_list_free (images);
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_displays_flush ();
     }
 
   values[0].data.d_status = status;
@@ -158,8 +158,8 @@ guillotine (gint32   image_ID,
   GList    *hguides, *hg;
   GList    *vguides, *vg;
 
-  image_width  = gimp_image_width (image_ID);
-  image_height = gimp_image_height (image_ID);
+  image_width  = picman_image_width (image_ID);
+  image_height = picman_image_height (image_ID);
 
   hguides = g_list_append (NULL,    GINT_TO_POINTER (0));
   hguides = g_list_append (hguides, GINT_TO_POINTER (image_height));
@@ -167,15 +167,15 @@ guillotine (gint32   image_ID,
   vguides = g_list_append (NULL,    GINT_TO_POINTER (0));
   vguides = g_list_append (vguides, GINT_TO_POINTER (image_width));
 
-  for (guide = gimp_image_find_next_guide (image_ID, 0);
+  for (guide = picman_image_find_next_guide (image_ID, 0);
        guide > 0;
-       guide = gimp_image_find_next_guide (image_ID, guide))
+       guide = picman_image_find_next_guide (image_ID, guide))
     {
-      gint position = gimp_image_get_guide_position (image_ID, guide);
+      gint position = picman_image_get_guide_position (image_ID, guide);
 
-      switch (gimp_image_get_guide_orientation (image_ID, guide))
+      switch (picman_image_get_guide_orientation (image_ID, guide))
         {
-        case GIMP_ORIENTATION_HORIZONTAL:
+        case PICMAN_ORIENTATION_HORIZONTAL:
           if (! g_list_find (hguides, GINT_TO_POINTER (position)))
             {
               hguides = g_list_insert_sorted (hguides,
@@ -185,7 +185,7 @@ guillotine (gint32   image_ID,
             }
           break;
 
-        case GIMP_ORIENTATION_VERTICAL:
+        case PICMAN_ORIENTATION_VERTICAL:
           if (! g_list_find (vguides, GINT_TO_POINTER (position)))
             {
               vguides = g_list_insert_sorted (vguides,
@@ -195,7 +195,7 @@ guillotine (gint32   image_ID,
             }
           break;
 
-        case GIMP_ORIENTATION_UNKNOWN:
+        case PICMAN_ORIENTATION_UNKNOWN:
           g_assert_not_reached ();
           break;
         }
@@ -209,7 +209,7 @@ guillotine (gint32   image_ID,
       gchar *hformat;
       gchar *format;
 
-      filename = gimp_image_get_filename (image_ID);
+      filename = picman_image_get_filename (image_ID);
 
       if (! filename)
         filename = g_strdup (_("Untitled"));
@@ -233,7 +233,7 @@ guillotine (gint32   image_ID,
         {
           for (x = 0, vg = vguides; vg && vg->next; x++, vg = vg->next)
             {
-              gint32   new_image = gimp_image_duplicate (image_ID);
+              gint32   new_image = picman_image_duplicate (image_ID);
               GString *new_filename;
               gchar   *fileextension;
               gchar   *fileindex;
@@ -247,9 +247,9 @@ guillotine (gint32   image_ID,
                   return images;
                 }
 
-              gimp_image_undo_disable (new_image);
+              picman_image_undo_disable (new_image);
 
-              gimp_image_crop (new_image,
+              picman_image_crop (new_image,
                                GPOINTER_TO_INT (vg->next->data) -
                                GPOINTER_TO_INT (vg->data),
                                GPOINTER_TO_INT (hg->next->data) -
@@ -271,16 +271,16 @@ guillotine (gint32   image_ID,
               g_string_insert (new_filename, pos, fileindex);
               g_free (fileindex);
 
-              gimp_image_set_filename (new_image, new_filename->str);
+              picman_image_set_filename (new_image, new_filename->str);
               g_string_free (new_filename, TRUE);
 
-              while ((guide = gimp_image_find_next_guide (new_image, 0)))
-                gimp_image_delete_guide (new_image, guide);
+              while ((guide = picman_image_find_next_guide (new_image, 0)))
+                picman_image_delete_guide (new_image, guide);
 
-              gimp_image_undo_enable (new_image);
+              picman_image_undo_enable (new_image);
 
               if (interactive)
-                gimp_display_new (new_image);
+                picman_display_new (new_image);
 
               images = g_list_prepend (images, GINT_TO_POINTER (new_image));
             }

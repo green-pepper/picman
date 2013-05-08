@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,59 +23,59 @@
 
 #include "vectors-types.h"
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "core/gimpimage.h"
-#include "core/gimptempbuf.h"
+#include "core/picmanimage.h"
+#include "core/picmantempbuf.h"
 
-#include "gimpstroke.h"
-#include "gimpvectors.h"
-#include "gimpvectors-preview.h"
+#include "picmanstroke.h"
+#include "picmanvectors.h"
+#include "picmanvectors-preview.h"
 
 
 /*  public functions  */
 
-GimpTempBuf *
-gimp_vectors_get_new_preview (GimpViewable *viewable,
-                              GimpContext  *context,
+PicmanTempBuf *
+picman_vectors_get_new_preview (PicmanViewable *viewable,
+                              PicmanContext  *context,
                               gint          width,
                               gint          height)
 {
-  GimpVectors *vectors;
-  GimpItem    *item;
-  GimpStroke  *cur_stroke;
+  PicmanVectors *vectors;
+  PicmanItem    *item;
+  PicmanStroke  *cur_stroke;
   gdouble      xscale, yscale;
   guchar      *data;
-  GimpTempBuf *temp_buf;
+  PicmanTempBuf *temp_buf;
 
-  vectors = GIMP_VECTORS (viewable);
-  item    = GIMP_ITEM (viewable);
+  vectors = PICMAN_VECTORS (viewable);
+  item    = PICMAN_ITEM (viewable);
 
-  xscale = ((gdouble) width)  / gimp_image_get_width  (gimp_item_get_image (item));
-  yscale = ((gdouble) height) / gimp_image_get_height (gimp_item_get_image (item));
+  xscale = ((gdouble) width)  / picman_image_get_width  (picman_item_get_image (item));
+  yscale = ((gdouble) height) / picman_image_get_height (picman_item_get_image (item));
 
-  temp_buf = gimp_temp_buf_new (width, height, babl_format ("Y' u8"));
-  data = gimp_temp_buf_get_data (temp_buf);
+  temp_buf = picman_temp_buf_new (width, height, babl_format ("Y' u8"));
+  data = picman_temp_buf_get_data (temp_buf);
   memset (data, 255, width * height);
 
-  for (cur_stroke = gimp_vectors_stroke_get_next (vectors, NULL);
+  for (cur_stroke = picman_vectors_stroke_get_next (vectors, NULL);
        cur_stroke;
-       cur_stroke = gimp_vectors_stroke_get_next (vectors, cur_stroke))
+       cur_stroke = picman_vectors_stroke_get_next (vectors, cur_stroke))
     {
       GArray   *coords;
       gboolean  closed;
       gint      i;
 
-      coords = gimp_stroke_interpolate (cur_stroke, 0.5, &closed);
+      coords = picman_stroke_interpolate (cur_stroke, 0.5, &closed);
 
       if (coords)
         {
           for (i = 0; i < coords->len; i++)
             {
-              GimpCoords point;
+              PicmanCoords point;
               gint       x, y;
 
-              point = g_array_index (coords, GimpCoords, i);
+              point = g_array_index (coords, PicmanCoords, i);
 
               x = ROUND (point.x * xscale);
               y = ROUND (point.y * yscale);

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewabledialog.c
- * Copyright (C) 2000 Michael Natterer <mitch@gimp.org>
+ * picmanviewabledialog.c
+ * Copyright (C) 2000 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,19 +23,19 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpitem.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanitem.h"
 
 #include "file/file-utils.h"
 
-#include "gimpview.h"
-#include "gimpviewabledialog.h"
-#include "gimpviewrenderer.h"
+#include "picmanview.h"
+#include "picmanviewabledialog.h"
+#include "picmanviewrenderer.h"
 
 
 enum
@@ -48,60 +48,60 @@ enum
 };
 
 
-static void   gimp_viewable_dialog_dispose      (GObject            *object);
-static void   gimp_viewable_dialog_set_property (GObject            *object,
+static void   picman_viewable_dialog_dispose      (GObject            *object);
+static void   picman_viewable_dialog_set_property (GObject            *object,
                                                  guint               property_id,
                                                  const GValue       *value,
                                                  GParamSpec         *pspec);
-static void   gimp_viewable_dialog_get_property (GObject            *object,
+static void   picman_viewable_dialog_get_property (GObject            *object,
                                                  guint               property_id,
                                                  GValue             *value,
                                                  GParamSpec         *pspec);
 
-static void   gimp_viewable_dialog_name_changed (GimpObject         *object,
-                                                 GimpViewableDialog *dialog);
-static void   gimp_viewable_dialog_close        (GimpViewableDialog *dialog);
+static void   picman_viewable_dialog_name_changed (PicmanObject         *object,
+                                                 PicmanViewableDialog *dialog);
+static void   picman_viewable_dialog_close        (PicmanViewableDialog *dialog);
 
 
-G_DEFINE_TYPE (GimpViewableDialog, gimp_viewable_dialog, GIMP_TYPE_DIALOG)
+G_DEFINE_TYPE (PicmanViewableDialog, picman_viewable_dialog, PICMAN_TYPE_DIALOG)
 
-#define parent_class gimp_viewable_dialog_parent_class
+#define parent_class picman_viewable_dialog_parent_class
 
 
 static void
-gimp_viewable_dialog_class_init (GimpViewableDialogClass *klass)
+picman_viewable_dialog_class_init (PicmanViewableDialogClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->dispose      = gimp_viewable_dialog_dispose;
-  object_class->get_property = gimp_viewable_dialog_get_property;
-  object_class->set_property = gimp_viewable_dialog_set_property;
+  object_class->dispose      = picman_viewable_dialog_dispose;
+  object_class->get_property = picman_viewable_dialog_get_property;
+  object_class->set_property = picman_viewable_dialog_set_property;
 
   g_object_class_install_property (object_class, PROP_VIEWABLE,
                                    g_param_spec_object ("viewable", NULL, NULL,
-                                                        GIMP_TYPE_VIEWABLE,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_VIEWABLE,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_CONTEXT,
                                    g_param_spec_object ("context", NULL, NULL,
-                                                        GIMP_TYPE_CONTEXT,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_CONTEXT,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_STOCK_ID,
                                    g_param_spec_string ("stock-id", NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_WRITABLE |
+                                                        PICMAN_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_DESC,
                                    g_param_spec_string ("description", NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_WRITABLE |
+                                                        PICMAN_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_viewable_dialog_init (GimpViewableDialog *dialog)
+picman_viewable_dialog_init (PicmanViewableDialog *dialog)
 {
   GtkWidget *content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
   GtkWidget *frame;
@@ -129,7 +129,7 @@ gimp_viewable_dialog_init (GimpViewableDialog *dialog)
 
   dialog->desc_label = gtk_label_new (NULL);
   gtk_misc_set_alignment (GTK_MISC (dialog->desc_label), 0.0, 0.5);
-  gimp_label_set_attributes (GTK_LABEL (dialog->desc_label),
+  picman_label_set_attributes (GTK_LABEL (dialog->desc_label),
                              PANGO_ATTR_SCALE,  PANGO_SCALE_LARGE,
                              PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                              -1);
@@ -141,7 +141,7 @@ gimp_viewable_dialog_init (GimpViewableDialog *dialog)
                                          "yalign",    0.5,
                                          "ellipsize", PANGO_ELLIPSIZE_END,
                                          NULL);
-  gimp_label_set_attributes (GTK_LABEL (dialog->viewable_label),
+  picman_label_set_attributes (GTK_LABEL (dialog->viewable_label),
                              PANGO_ATTR_SCALE,  PANGO_SCALE_SMALL,
                              -1);
   gtk_box_pack_start (GTK_BOX (vbox), dialog->viewable_label, FALSE, FALSE, 0);
@@ -149,36 +149,36 @@ gimp_viewable_dialog_init (GimpViewableDialog *dialog)
 }
 
 static void
-gimp_viewable_dialog_dispose (GObject *object)
+picman_viewable_dialog_dispose (GObject *object)
 {
-  GimpViewableDialog *dialog = GIMP_VIEWABLE_DIALOG (object);
+  PicmanViewableDialog *dialog = PICMAN_VIEWABLE_DIALOG (object);
 
   if (dialog->view)
-    gimp_viewable_dialog_set_viewable (dialog, NULL, NULL);
+    picman_viewable_dialog_set_viewable (dialog, NULL, NULL);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_viewable_dialog_set_property (GObject      *object,
+picman_viewable_dialog_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpViewableDialog *dialog = GIMP_VIEWABLE_DIALOG (object);
+  PicmanViewableDialog *dialog = PICMAN_VIEWABLE_DIALOG (object);
 
   switch (property_id)
     {
     case PROP_VIEWABLE:
-      gimp_viewable_dialog_set_viewable (dialog,
+      picman_viewable_dialog_set_viewable (dialog,
                                          g_value_get_object (value),
                                          dialog->context);
       break;
 
     case PROP_CONTEXT:
-      gimp_viewable_dialog_set_viewable (dialog,
+      picman_viewable_dialog_set_viewable (dialog,
                                          dialog->view ?
-                                         GIMP_VIEW (dialog->view)->viewable :
+                                         PICMAN_VIEW (dialog->view)->viewable :
                                          NULL,
                                          g_value_get_object (value));
       break;
@@ -201,19 +201,19 @@ gimp_viewable_dialog_set_property (GObject      *object,
 }
 
 static void
-gimp_viewable_dialog_get_property (GObject    *object,
+picman_viewable_dialog_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpViewableDialog *dialog = GIMP_VIEWABLE_DIALOG (object);
+  PicmanViewableDialog *dialog = PICMAN_VIEWABLE_DIALOG (object);
 
   switch (property_id)
     {
     case PROP_VIEWABLE:
       g_value_set_object (value,
                           dialog->view ?
-                          GIMP_VIEW (dialog->view)->viewable : NULL);
+                          PICMAN_VIEW (dialog->view)->viewable : NULL);
       break;
 
     case PROP_CONTEXT:
@@ -227,30 +227,30 @@ gimp_viewable_dialog_get_property (GObject    *object,
 }
 
 GtkWidget *
-gimp_viewable_dialog_new (GimpViewable *viewable,
-                          GimpContext  *context,
+picman_viewable_dialog_new (PicmanViewable *viewable,
+                          PicmanContext  *context,
                           const gchar  *title,
                           const gchar  *role,
                           const gchar  *stock_id,
                           const gchar  *desc,
                           GtkWidget    *parent,
-                          GimpHelpFunc  help_func,
+                          PicmanHelpFunc  help_func,
                           const gchar  *help_id,
                           ...)
 {
-  GimpViewableDialog *dialog;
+  PicmanViewableDialog *dialog;
   va_list             args;
 
-  g_return_val_if_fail (viewable == NULL || GIMP_IS_VIEWABLE (viewable), NULL);
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (viewable == NULL || PICMAN_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (title != NULL, NULL);
   g_return_val_if_fail (role != NULL, NULL);
   g_return_val_if_fail (parent == NULL || GTK_IS_WIDGET (parent), NULL);
 
   if (! viewable)
-    g_warning ("Use of GimpViewableDialog with a NULL viewable is depecrated!");
+    g_warning ("Use of PicmanViewableDialog with a NULL viewable is depecrated!");
 
-  dialog = g_object_new (GIMP_TYPE_VIEWABLE_DIALOG,
+  dialog = g_object_new (PICMAN_TYPE_VIEWABLE_DIALOG,
                          "viewable",    viewable,
                          "context",     context,
                          "title",       title,
@@ -263,30 +263,30 @@ gimp_viewable_dialog_new (GimpViewable *viewable,
                          NULL);
 
   va_start (args, help_id);
-  gimp_dialog_add_buttons_valist (GIMP_DIALOG (dialog), args);
+  picman_dialog_add_buttons_valist (PICMAN_DIALOG (dialog), args);
   va_end (args);
 
   return GTK_WIDGET (dialog);
 }
 
 void
-gimp_viewable_dialog_set_viewable (GimpViewableDialog *dialog,
-                                   GimpViewable       *viewable,
-                                   GimpContext        *context)
+picman_viewable_dialog_set_viewable (PicmanViewableDialog *dialog,
+                                   PicmanViewable       *viewable,
+                                   PicmanContext        *context)
 {
-  g_return_if_fail (GIMP_IS_VIEWABLE_DIALOG (dialog));
-  g_return_if_fail (viewable == NULL || GIMP_IS_VIEWABLE (viewable));
-  g_return_if_fail (context == NULL || GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_VIEWABLE_DIALOG (dialog));
+  g_return_if_fail (viewable == NULL || PICMAN_IS_VIEWABLE (viewable));
+  g_return_if_fail (context == NULL || PICMAN_IS_CONTEXT (context));
 
   dialog->context = context;
 
   if (dialog->view)
     {
-      GimpViewable *old_viewable = GIMP_VIEW (dialog->view)->viewable;
+      PicmanViewable *old_viewable = PICMAN_VIEW (dialog->view)->viewable;
 
       if (viewable == old_viewable)
         {
-          gimp_view_renderer_set_context (GIMP_VIEW (dialog->view)->renderer,
+          picman_view_renderer_set_context (PICMAN_VIEW (dialog->view)->renderer,
                                           context);
           return;
         }
@@ -296,11 +296,11 @@ gimp_viewable_dialog_set_viewable (GimpViewableDialog *dialog,
       if (old_viewable)
         {
           g_signal_handlers_disconnect_by_func (old_viewable,
-                                                gimp_viewable_dialog_name_changed,
+                                                picman_viewable_dialog_name_changed,
                                                 dialog);
 
           g_signal_handlers_disconnect_by_func (old_viewable,
-                                                gimp_viewable_dialog_close,
+                                                picman_viewable_dialog_close,
                                                 dialog);
         }
     }
@@ -310,33 +310,33 @@ gimp_viewable_dialog_set_viewable (GimpViewableDialog *dialog,
       GtkWidget *box;
 
       g_signal_connect_object (viewable,
-                               GIMP_VIEWABLE_GET_CLASS (viewable)->name_changed_signal,
-                               G_CALLBACK (gimp_viewable_dialog_name_changed),
+                               PICMAN_VIEWABLE_GET_CLASS (viewable)->name_changed_signal,
+                               G_CALLBACK (picman_viewable_dialog_name_changed),
                                dialog,
                                0);
 
       box = gtk_widget_get_parent (dialog->icon);
 
-      dialog->view = gimp_view_new (context, viewable, 32, 1, TRUE);
+      dialog->view = picman_view_new (context, viewable, 32, 1, TRUE);
       gtk_box_pack_end (GTK_BOX (box), dialog->view, FALSE, FALSE, 2);
       gtk_widget_show (dialog->view);
 
       g_object_add_weak_pointer (G_OBJECT (dialog->view),
                                  (gpointer) &dialog->view);
 
-      gimp_viewable_dialog_name_changed (GIMP_OBJECT (viewable), dialog);
+      picman_viewable_dialog_name_changed (PICMAN_OBJECT (viewable), dialog);
 
-      if (GIMP_IS_ITEM (viewable))
+      if (PICMAN_IS_ITEM (viewable))
         {
           g_signal_connect_object (viewable, "removed",
-                                   G_CALLBACK (gimp_viewable_dialog_close),
+                                   G_CALLBACK (picman_viewable_dialog_close),
                                    dialog,
                                    G_CONNECT_SWAPPED);
         }
       else
         {
           g_signal_connect_object (viewable, "disconnect",
-                                   G_CALLBACK (gimp_viewable_dialog_close),
+                                   G_CALLBACK (picman_viewable_dialog_close),
                                    dialog,
                                    G_CONNECT_SWAPPED);
         }
@@ -347,23 +347,23 @@ gimp_viewable_dialog_set_viewable (GimpViewableDialog *dialog,
 /*  private functions  */
 
 static void
-gimp_viewable_dialog_name_changed (GimpObject         *object,
-                                   GimpViewableDialog *dialog)
+picman_viewable_dialog_name_changed (PicmanObject         *object,
+                                   PicmanViewableDialog *dialog)
 {
   gchar *name;
 
-  name = gimp_viewable_get_description (GIMP_VIEWABLE (object), NULL);
+  name = picman_viewable_get_description (PICMAN_VIEWABLE (object), NULL);
 
-  if (GIMP_IS_ITEM (object))
+  if (PICMAN_IS_ITEM (object))
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (object));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (object));
       gchar     *tmp;
 
       tmp = name;
       name = g_strdup_printf ("%s-%d (%s)",
                               tmp,
-                              gimp_item_get_ID (GIMP_ITEM (object)),
-                              gimp_image_get_display_name (image));
+                              picman_item_get_ID (PICMAN_ITEM (object)),
+                              picman_image_get_display_name (image));
       g_free (tmp);
     }
 
@@ -372,7 +372,7 @@ gimp_viewable_dialog_name_changed (GimpObject         *object,
 }
 
 static void
-gimp_viewable_dialog_close (GimpViewableDialog *dialog)
+picman_viewable_dialog_close (PicmanViewableDialog *dialog)
 {
   g_signal_emit_by_name (dialog, "close");
 }

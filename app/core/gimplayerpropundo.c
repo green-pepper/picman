@@ -1,4 +1,4 @@
-/* Gimp - The GNU Image Manipulation Program
+/* Picman - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,67 +19,67 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
-#include "gimpimage.h"
-#include "gimplayer.h"
-#include "gimplayerpropundo.h"
+#include "picmanimage.h"
+#include "picmanlayer.h"
+#include "picmanlayerpropundo.h"
 
 
-static void   gimp_layer_prop_undo_constructed (GObject             *object);
+static void   picman_layer_prop_undo_constructed (GObject             *object);
 
-static void   gimp_layer_prop_undo_pop         (GimpUndo            *undo,
-                                                GimpUndoMode         undo_mode,
-                                                GimpUndoAccumulator *accum);
+static void   picman_layer_prop_undo_pop         (PicmanUndo            *undo,
+                                                PicmanUndoMode         undo_mode,
+                                                PicmanUndoAccumulator *accum);
 
 
-G_DEFINE_TYPE (GimpLayerPropUndo, gimp_layer_prop_undo, GIMP_TYPE_ITEM_UNDO)
+G_DEFINE_TYPE (PicmanLayerPropUndo, picman_layer_prop_undo, PICMAN_TYPE_ITEM_UNDO)
 
-#define parent_class gimp_layer_prop_undo_parent_class
+#define parent_class picman_layer_prop_undo_parent_class
 
 
 static void
-gimp_layer_prop_undo_class_init (GimpLayerPropUndoClass *klass)
+picman_layer_prop_undo_class_init (PicmanLayerPropUndoClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
-  GimpUndoClass *undo_class   = GIMP_UNDO_CLASS (klass);
+  PicmanUndoClass *undo_class   = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed = gimp_layer_prop_undo_constructed;
+  object_class->constructed = picman_layer_prop_undo_constructed;
 
-  undo_class->pop           = gimp_layer_prop_undo_pop;
+  undo_class->pop           = picman_layer_prop_undo_pop;
 }
 
 static void
-gimp_layer_prop_undo_init (GimpLayerPropUndo *undo)
+picman_layer_prop_undo_init (PicmanLayerPropUndo *undo)
 {
 }
 
 static void
-gimp_layer_prop_undo_constructed (GObject *object)
+picman_layer_prop_undo_constructed (GObject *object)
 {
-  GimpLayerPropUndo *layer_prop_undo = GIMP_LAYER_PROP_UNDO (object);
-  GimpLayer         *layer;
+  PicmanLayerPropUndo *layer_prop_undo = PICMAN_LAYER_PROP_UNDO (object);
+  PicmanLayer         *layer;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_LAYER (GIMP_ITEM_UNDO (object)->item));
+  g_assert (PICMAN_IS_LAYER (PICMAN_ITEM_UNDO (object)->item));
 
-  layer = GIMP_LAYER (GIMP_ITEM_UNDO (object)->item);
+  layer = PICMAN_LAYER (PICMAN_ITEM_UNDO (object)->item);
 
-  switch (GIMP_UNDO (object)->undo_type)
+  switch (PICMAN_UNDO (object)->undo_type)
     {
-    case GIMP_UNDO_LAYER_MODE:
-      layer_prop_undo->mode = gimp_layer_get_mode (layer);
+    case PICMAN_UNDO_LAYER_MODE:
+      layer_prop_undo->mode = picman_layer_get_mode (layer);
       break;
 
-    case GIMP_UNDO_LAYER_OPACITY:
-      layer_prop_undo->opacity = gimp_layer_get_opacity (layer);
+    case PICMAN_UNDO_LAYER_OPACITY:
+      layer_prop_undo->opacity = picman_layer_get_opacity (layer);
       break;
 
-    case GIMP_UNDO_LAYER_LOCK_ALPHA:
-      layer_prop_undo->lock_alpha = gimp_layer_get_lock_alpha (layer);
+    case PICMAN_UNDO_LAYER_LOCK_ALPHA:
+      layer_prop_undo->lock_alpha = picman_layer_get_lock_alpha (layer);
       break;
 
     default:
@@ -88,43 +88,43 @@ gimp_layer_prop_undo_constructed (GObject *object)
 }
 
 static void
-gimp_layer_prop_undo_pop (GimpUndo            *undo,
-                          GimpUndoMode         undo_mode,
-                          GimpUndoAccumulator *accum)
+picman_layer_prop_undo_pop (PicmanUndo            *undo,
+                          PicmanUndoMode         undo_mode,
+                          PicmanUndoAccumulator *accum)
 {
-  GimpLayerPropUndo *layer_prop_undo = GIMP_LAYER_PROP_UNDO (undo);
-  GimpLayer         *layer           = GIMP_LAYER (GIMP_ITEM_UNDO (undo)->item);
+  PicmanLayerPropUndo *layer_prop_undo = PICMAN_LAYER_PROP_UNDO (undo);
+  PicmanLayer         *layer           = PICMAN_LAYER (PICMAN_ITEM_UNDO (undo)->item);
 
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 
   switch (undo->undo_type)
     {
-    case GIMP_UNDO_LAYER_MODE:
+    case PICMAN_UNDO_LAYER_MODE:
       {
-        GimpLayerModeEffects mode;
+        PicmanLayerModeEffects mode;
 
-        mode = gimp_layer_get_mode (layer);
-        gimp_layer_set_mode (layer, layer_prop_undo->mode, FALSE);
+        mode = picman_layer_get_mode (layer);
+        picman_layer_set_mode (layer, layer_prop_undo->mode, FALSE);
         layer_prop_undo->mode = mode;
       }
       break;
 
-    case GIMP_UNDO_LAYER_OPACITY:
+    case PICMAN_UNDO_LAYER_OPACITY:
       {
         gdouble opacity;
 
-        opacity = gimp_layer_get_opacity (layer);
-        gimp_layer_set_opacity (layer, layer_prop_undo->opacity, FALSE);
+        opacity = picman_layer_get_opacity (layer);
+        picman_layer_set_opacity (layer, layer_prop_undo->opacity, FALSE);
         layer_prop_undo->opacity = opacity;
       }
       break;
 
-    case GIMP_UNDO_LAYER_LOCK_ALPHA:
+    case PICMAN_UNDO_LAYER_LOCK_ALPHA:
       {
         gboolean lock_alpha;
 
-        lock_alpha = gimp_layer_get_lock_alpha (layer);
-        gimp_layer_set_lock_alpha (layer, layer_prop_undo->lock_alpha, FALSE);
+        lock_alpha = picman_layer_get_lock_alpha (layer);
+        picman_layer_set_lock_alpha (layer, layer_prop_undo->lock_alpha, FALSE);
         layer_prop_undo->lock_alpha = lock_alpha;
       }
       break;

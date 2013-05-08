@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcomponenteditor.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmancomponenteditor.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COMPONENT_EDITOR_H__
-#define __GIMP_COMPONENT_EDITOR_H__
+#ifndef __PICMAN_COMPONENT_EDITOR_H__
+#define __PICMAN_COMPONENT_EDITOR_H__
 
 
-#include "gimpimageeditor.h"
+#include "picmanimageeditor.h"
 
 
-#define GIMP_TYPE_COMPONENT_EDITOR            (gimp_component_editor_get_type ())
-#define GIMP_COMPONENT_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COMPONENT_EDITOR, GimpComponentEditor))
-#define GIMP_COMPONENT_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COMPONENT_EDITOR, GimpComponentEditorClass))
-#define GIMP_IS_COMPONENT_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COMPONENT_EDITOR))
-#define GIMP_IS_COMPONENT_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COMPONENT_EDITOR))
-#define GIMP_COMPONENT_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COMPONENT_EDITOR, GimpComponentEditorClass))
+#define PICMAN_TYPE_COMPONENT_EDITOR            (picman_component_editor_get_type ())
+#define PICMAN_COMPONENT_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COMPONENT_EDITOR, PicmanComponentEditor))
+#define PICMAN_COMPONENT_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COMPONENT_EDITOR, PicmanComponentEditorClass))
+#define PICMAN_IS_COMPONENT_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COMPONENT_EDITOR))
+#define PICMAN_IS_COMPONENT_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COMPONENT_EDITOR))
+#define PICMAN_COMPONENT_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COMPONENT_EDITOR, PicmanComponentEditorClass))
 
 
-typedef struct _GimpComponentEditorClass  GimpComponentEditorClass;
+typedef struct _PicmanComponentEditorClass  PicmanComponentEditorClass;
 
-struct _GimpComponentEditor
+struct _PicmanComponentEditor
 {
-  GimpImageEditor    parent_instance;
+  PicmanImageEditor    parent_instance;
 
   gint               view_size;
 
@@ -49,21 +49,21 @@ struct _GimpComponentEditor
   GtkCellRenderer   *eye_cell;
   GtkCellRenderer   *renderer_cell;
 
-  GimpChannelType    clicked_component;
+  PicmanChannelType    clicked_component;
 };
 
-struct _GimpComponentEditorClass
+struct _PicmanComponentEditorClass
 {
-  GimpImageEditorClass  parent_class;
+  PicmanImageEditorClass  parent_class;
 };
 
 
-GType       gimp_component_editor_get_type      (void) G_GNUC_CONST;
+GType       picman_component_editor_get_type      (void) G_GNUC_CONST;
 
-GtkWidget * gimp_component_editor_new           (gint                 view_size,
-                                                 GimpMenuFactory     *menu_factory);
-void        gimp_component_editor_set_view_size (GimpComponentEditor *editor,
+GtkWidget * picman_component_editor_new           (gint                 view_size,
+                                                 PicmanMenuFactory     *menu_factory);
+void        picman_component_editor_set_view_size (PicmanComponentEditor *editor,
                                                  gint                 view_size);
 
 
-#endif  /*  __GIMP_COMPONENT_EDITOR_H__  */
+#endif  /*  __PICMAN_COMPONENT_EDITOR_H__  */

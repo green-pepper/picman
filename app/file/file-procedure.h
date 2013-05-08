@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * file-procedure.h
@@ -30,14 +30,14 @@ typedef enum
 } FileProcedureGroup;
 
 
-GimpPlugInProcedure *file_procedure_find              (GSList               *procs,
+PicmanPlugInProcedure *file_procedure_find              (GSList               *procs,
                                                        const gchar          *filename,
                                                        GError              **error);
-GimpPlugInProcedure *file_procedure_find_by_prefix    (GSList               *procs,
+PicmanPlugInProcedure *file_procedure_find_by_prefix    (GSList               *procs,
                                                        const gchar          *uri);
-GimpPlugInProcedure *file_procedure_find_by_extension (GSList               *procs,
+PicmanPlugInProcedure *file_procedure_find_by_extension (GSList               *procs,
                                                        const gchar          *uri);
-gboolean             file_procedure_in_group          (GimpPlugInProcedure  *file_proc,
+gboolean             file_procedure_in_group          (PicmanPlugInProcedure  *file_proc,
                                                        FileProcedureGroup    group);
 
 

@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 # The name of the module.
-DOC_MODULE = libgimpthumb
+DOC_MODULE = libpicmanthumb
 
 # The top-level SGML file.
 DOC_MAIN_SGML_FILE = $(DOC_MODULE)-docs.sgml
@@ -16,17 +16,17 @@ SCANGOBJ_OPTIONS =
 SCAN_OPTIONS =
 
 # Extra options to supply to gtkdoc-mkdb
-MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=gimp
+MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=picman
 
 # Extra options to supply to gtkdoc-fixref
-FIXXREF_OPTIONS = --extra-dir=../libgimpmath/html
+FIXXREF_OPTIONS = --extra-dir=../libpicmanmath/html
 
 # Used for dependencies
 HFILE_GLOB = $(DOC_SOURCE_DIR)/*.h
 CFILE_GLOB = $(DOC_SOURCE_DIR)/*.c
 
 # Header files to ignore when scanning
-IGNORE_HFILES = libgimpthumb.h
+IGNORE_HFILES = libpicmanthumb.h
 
 # Images to copy into HTML directory
 HTML_IMAGES =
@@ -46,8 +46,8 @@ GTKDOC_CFLAGS = \
 	@GDK_PIXBUF_CFLAGS@
 
 GTKDOC_LIBS = \
-        $(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la   \
-        $(top_builddir)/libgimpthumb/libgimpthumb-$(GIMP_API_VERSION).la \
+        $(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la   \
+        $(top_builddir)/libpicmanthumb/libpicmanthumb-$(PICMAN_API_VERSION).la \
 	@GDK_PIXBUF_LIBS@
 
 

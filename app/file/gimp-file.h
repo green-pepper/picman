@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-file.h
+ * picman-file.h
  * Copyright (C) 2009 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,13 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FILE_H__
-#define __GIMP_FILE_H__
+#ifndef __PICMAN_FILE_H__
+#define __PICMAN_FILE_H__
 
-/* Data keys for Gimp */
-#define GIMP_FILE_OPEN_LAST_URI_KEY     "gimp-file-open-last-uri"
-#define GIMP_FILE_SAVE_LAST_URI_KEY     "gimp-file-save-last-uri"
-#define GIMP_FILE_EXPORT_LAST_URI_KEY   "gimp-file-export-last-uri"
+/* Data keys for Picman */
+#define PICMAN_FILE_OPEN_LAST_URI_KEY     "picman-file-open-last-uri"
+#define PICMAN_FILE_SAVE_LAST_URI_KEY     "picman-file-save-last-uri"
+#define PICMAN_FILE_EXPORT_LAST_URI_KEY   "picman-file-export-last-uri"
 
 
-#endif /* __GIMP_FILE_H__ */
+#endif /* __PICMAN_FILE_H__ */

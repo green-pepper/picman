@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpbrushselect_pdb.c
+ * picmanbrushselect_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpbrushselect
- * @title: gimpbrushselect
+ * SECTION: picmanbrushselect
+ * @title: picmanbrushselect
  * @short_description: Functions providing a brush selection dialog.
  *
  * Functions providing a brush selection dialog.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_brushes_popup:
+ * picman_brushes_popup:
  * @brush_callback: The callback PDB proc to call when brush selection is made.
  * @popup_title: Title of the brush selection dialog.
  * @initial_brush: The name of the brush to set as the first selected.
@@ -43,43 +43,43 @@
  * @spacing: The initial spacing of the brush (if < 0 then use brush default spacing).
  * @paint_mode: The initial paint mode.
  *
- * Invokes the Gimp brush selection.
+ * Invokes the Picman brush selection.
  *
  * This procedure opens the brush selection dialog.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_brushes_popup (const gchar          *brush_callback,
+picman_brushes_popup (const gchar          *brush_callback,
                     const gchar          *popup_title,
                     const gchar          *initial_brush,
                     gdouble               opacity,
                     gint                  spacing,
-                    GimpLayerModeEffects  paint_mode)
+                    PicmanLayerModeEffects  paint_mode)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-brushes-popup",
+  return_vals = picman_run_procedure ("picman-brushes-popup",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, brush_callback,
-                                    GIMP_PDB_STRING, popup_title,
-                                    GIMP_PDB_STRING, initial_brush,
-                                    GIMP_PDB_FLOAT, opacity,
-                                    GIMP_PDB_INT32, spacing,
-                                    GIMP_PDB_INT32, paint_mode,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, brush_callback,
+                                    PICMAN_PDB_STRING, popup_title,
+                                    PICMAN_PDB_STRING, initial_brush,
+                                    PICMAN_PDB_FLOAT, opacity,
+                                    PICMAN_PDB_INT32, spacing,
+                                    PICMAN_PDB_INT32, paint_mode,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_brushes_close_popup:
+ * picman_brushes_close_popup:
  * @brush_callback: The name of the callback registered for this pop-up.
  *
  * Close the brush selection dialog.
@@ -89,26 +89,26 @@ gimp_brushes_popup (const gchar          *brush_callback,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_brushes_close_popup (const gchar *brush_callback)
+picman_brushes_close_popup (const gchar *brush_callback)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-brushes-close-popup",
+  return_vals = picman_run_procedure ("picman-brushes-close-popup",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, brush_callback,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, brush_callback,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_brushes_set_popup:
+ * picman_brushes_set_popup:
  * @brush_callback: The name of the callback registered for this pop-up.
  * @brush_name: The name of the brush to set as selected.
  * @opacity: The initial opacity of the brush.
@@ -122,28 +122,28 @@ gimp_brushes_close_popup (const gchar *brush_callback)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_brushes_set_popup (const gchar          *brush_callback,
+picman_brushes_set_popup (const gchar          *brush_callback,
                         const gchar          *brush_name,
                         gdouble               opacity,
                         gint                  spacing,
-                        GimpLayerModeEffects  paint_mode)
+                        PicmanLayerModeEffects  paint_mode)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-brushes-set-popup",
+  return_vals = picman_run_procedure ("picman-brushes-set-popup",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, brush_callback,
-                                    GIMP_PDB_STRING, brush_name,
-                                    GIMP_PDB_FLOAT, opacity,
-                                    GIMP_PDB_INT32, spacing,
-                                    GIMP_PDB_INT32, paint_mode,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, brush_callback,
+                                    PICMAN_PDB_STRING, brush_name,
+                                    PICMAN_PDB_FLOAT, opacity,
+                                    PICMAN_PDB_INT32, spacing,
+                                    PICMAN_PDB_INT32, paint_mode,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

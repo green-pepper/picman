@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,37 +20,37 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
 #include "core/core-enums.h"
-#include "core/gimp.h"
-#include "core/gimpchannel.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-convert-precision.h"
-#include "core/gimpimage-convert-type.h"
-#include "core/gimpimage-crop.h"
-#include "core/gimpimage-duplicate.h"
-#include "core/gimpimage-flip.h"
-#include "core/gimpimage-merge.h"
-#include "core/gimpimage-resize.h"
-#include "core/gimpimage-rotate.h"
-#include "core/gimpimage-scale.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimppickable.h"
-#include "core/gimppickable-auto-shrink.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmanchannel.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-convert-precision.h"
+#include "core/picmanimage-convert-type.h"
+#include "core/picmanimage-crop.h"
+#include "core/picmanimage-duplicate.h"
+#include "core/picmanimage-flip.h"
+#include "core/picmanimage-merge.h"
+#include "core/picmanimage-resize.h"
+#include "core/picmanimage-rotate.h"
+#include "core/picmanimage-scale.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanpickable.h"
+#include "core/picmanpickable-auto-shrink.h"
+#include "core/picmanprogress.h"
 
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpdock.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmandock.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
 
 #include "dialogs/convert-precision-dialog.h"
 #include "dialogs/convert-type-dialog.h"
@@ -65,7 +65,7 @@
 #include "actions.h"
 #include "image-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define IMAGE_CONVERT_PRECISION_DIALOG_KEY "image-convert-precision-dialog"
@@ -74,41 +74,41 @@
 
 typedef struct
 {
-  GimpContext *context;
-  GimpDisplay *display;
+  PicmanContext *context;
+  PicmanDisplay *display;
 } ImageResizeOptions;
 
 
 /*  local function prototypes  */
 
 static void   image_resize_callback        (GtkWidget              *dialog,
-                                            GimpViewable           *viewable,
+                                            PicmanViewable           *viewable,
                                             gint                    width,
                                             gint                    height,
-                                            GimpUnit                unit,
+                                            PicmanUnit                unit,
                                             gint                    offset_x,
                                             gint                    offset_y,
-                                            GimpItemSet             layer_set,
+                                            PicmanItemSet             layer_set,
                                             gboolean                resize_text_layers,
                                             gpointer                data);
 static void   image_resize_options_free    (ImageResizeOptions     *options);
 
 static void   image_print_size_callback    (GtkWidget              *dialog,
-                                            GimpImage              *image,
+                                            PicmanImage              *image,
                                             gdouble                 xresolution,
                                             gdouble                 yresolution,
-                                            GimpUnit                resolution_unit,
+                                            PicmanUnit                resolution_unit,
                                             gpointer                data);
 
 static void   image_scale_callback         (GtkWidget              *dialog,
-                                            GimpViewable           *viewable,
+                                            PicmanViewable           *viewable,
                                             gint                    width,
                                             gint                    height,
-                                            GimpUnit                unit,
-                                            GimpInterpolationType   interpolation,
+                                            PicmanUnit                unit,
+                                            PicmanInterpolationType   interpolation,
                                             gdouble                 xresolution,
                                             gdouble                 yresolution,
-                                            GimpUnit                resolution_unit,
+                                            PicmanUnit                resolution_unit,
                                             gpointer                user_data);
 
 static void   image_merge_layers_response  (GtkWidget              *widget,
@@ -118,12 +118,12 @@ static void   image_merge_layers_response  (GtkWidget              *widget,
 
 /*  private variables  */
 
-static GimpMergeType         image_merge_layers_type               = GIMP_EXPAND_AS_NECESSARY;
+static PicmanMergeType         image_merge_layers_type               = PICMAN_EXPAND_AS_NECESSARY;
 static gboolean              image_merge_layers_merge_active_group = TRUE;
 static gboolean              image_merge_layers_discard_invisible  = FALSE;
-static GimpUnit              image_resize_unit                     = GIMP_UNIT_PIXEL;
-static GimpUnit              image_scale_unit                      = GIMP_UNIT_PIXEL;
-static GimpInterpolationType image_scale_interp                    = -1;
+static PicmanUnit              image_resize_unit                     = PICMAN_UNIT_PIXEL;
+static PicmanUnit              image_scale_unit                      = PICMAN_UNIT_PIXEL;
+static PicmanInterpolationType image_scale_interp                    = -1;
 
 
 /*  public functions  */
@@ -136,14 +136,14 @@ image_new_cmd_callback (GtkAction *action,
   GtkWidget *dialog;
   return_if_no_widget (widget, data);
 
-  dialog = gimp_dialog_factory_dialog_new (gimp_dialog_factory_get_singleton (),
+  dialog = picman_dialog_factory_dialog_new (picman_dialog_factory_get_singleton (),
                                            gtk_widget_get_screen (widget),
                                            NULL /*ui_manager*/,
-                                           "gimp-image-new-dialog", -1, FALSE);
+                                           "picman-image-new-dialog", -1, FALSE);
 
   if (dialog)
     {
-      GimpImage *image = action_data_get_image (data);
+      PicmanImage *image = action_data_get_image (data);
 
       image_new_dialog_set (dialog, image, NULL);
 
@@ -162,10 +162,10 @@ image_convert_base_type_cmd_callback (GtkAction *action,
                                       GtkAction *current,
                                       gpointer   data)
 {
-  GimpImage         *image;
+  PicmanImage         *image;
   GtkWidget         *widget;
-  GimpDisplay       *display;
-  GimpImageBaseType  value;
+  PicmanDisplay       *display;
+  PicmanImageBaseType  value;
   GError            *error = NULL;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
@@ -173,26 +173,26 @@ image_convert_base_type_cmd_callback (GtkAction *action,
 
   value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
-  if (value == gimp_image_get_base_type (image))
+  if (value == picman_image_get_base_type (image))
     return;
 
   switch (value)
     {
-    case GIMP_RGB:
-    case GIMP_GRAY:
-      if (! gimp_image_convert_type (image, value,
+    case PICMAN_RGB:
+    case PICMAN_GRAY:
+      if (! picman_image_convert_type (image, value,
                                      0, 0, FALSE, FALSE, FALSE, 0, NULL,
                                      NULL, &error))
         {
-          gimp_message_literal (image->gimp,
-				G_OBJECT (widget), GIMP_MESSAGE_WARNING,
+          picman_message_literal (image->picman,
+				G_OBJECT (widget), PICMAN_MESSAGE_WARNING,
 				error->message);
           g_clear_error (&error);
           return;
         }
       break;
 
-    case GIMP_INDEXED:
+    case PICMAN_INDEXED:
       {
         GtkWidget *dialog;
 
@@ -204,7 +204,7 @@ image_convert_base_type_cmd_callback (GtkAction *action,
             dialog = convert_type_dialog_new (image,
                                               action_data_get_context (data),
                                               widget,
-                                              GIMP_PROGRESS (display));
+                                              PICMAN_PROGRESS (display));
 
             g_object_set_data (G_OBJECT (widget),
                                IMAGE_CONVERT_TYPE_DIALOG_KEY, dialog);
@@ -219,7 +219,7 @@ image_convert_base_type_cmd_callback (GtkAction *action,
       break;
     }
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 static void
@@ -233,20 +233,20 @@ image_convert_precision_cmd_callback (GtkAction *action,
                                       GtkAction *current,
                                       gpointer   data)
 {
-  GimpImage     *image;
+  PicmanImage     *image;
   GtkWidget     *widget;
-  GimpDisplay   *display;
-  GimpPrecision  value;
+  PicmanDisplay   *display;
+  PicmanPrecision  value;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
   return_if_no_display (display, data);
 
   value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
-  if (value == gimp_image_get_precision (image))
+  if (value == picman_image_get_precision (image))
     return;
 
-  if (value < gimp_image_get_precision (image))
+  if (value < picman_image_get_precision (image))
     {
       GtkWidget *dialog;
 
@@ -259,7 +259,7 @@ image_convert_precision_cmd_callback (GtkAction *action,
                                                  action_data_get_context (data),
                                                  widget,
                                                  value,
-                                                 GIMP_PROGRESS (display));
+                                                 PICMAN_PROGRESS (display));
 
           g_object_set_data (G_OBJECT (widget),
                              IMAGE_CONVERT_PRECISION_DIALOG_KEY, dialog);
@@ -273,11 +273,11 @@ image_convert_precision_cmd_callback (GtkAction *action,
     }
   else
     {
-      gimp_image_convert_precision (image, value, 0, 0, 0,
-                                    GIMP_PROGRESS (display));
+      picman_image_convert_precision (image, value, 0, 0, 0,
+                                    PICMAN_PROGRESS (display));
     }
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
@@ -285,9 +285,9 @@ image_resize_cmd_callback (GtkAction *action,
                            gpointer   data)
 {
   ImageResizeOptions *options;
-  GimpImage          *image;
+  PicmanImage          *image;
   GtkWidget          *widget;
-  GimpDisplay        *display;
+  PicmanDisplay        *display;
   GtkWidget          *dialog;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
@@ -298,14 +298,14 @@ image_resize_cmd_callback (GtkAction *action,
   options->display = display;
   options->context = action_data_get_context (data);
 
-  if (image_resize_unit != GIMP_UNIT_PERCENT)
-    image_resize_unit = gimp_display_get_shell (display)->unit;
+  if (image_resize_unit != PICMAN_UNIT_PERCENT)
+    image_resize_unit = picman_display_get_shell (display)->unit;
 
-  dialog = resize_dialog_new (GIMP_VIEWABLE (image),
+  dialog = resize_dialog_new (PICMAN_VIEWABLE (image),
                               action_data_get_context (data),
-                              _("Set Image Canvas Size"), "gimp-image-resize",
+                              _("Set Image Canvas Size"), "picman-image-resize",
                               widget,
-                              gimp_standard_help_func, GIMP_HELP_IMAGE_RESIZE,
+                              picman_standard_help_func, PICMAN_HELP_IMAGE_RESIZE,
                               image_resize_unit,
                               image_resize_callback,
                               options);
@@ -324,70 +324,70 @@ void
 image_resize_to_layers_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
-  GimpDisplay  *display;
-  GimpImage    *image;
-  GimpProgress *progress;
+  PicmanDisplay  *display;
+  PicmanImage    *image;
+  PicmanProgress *progress;
   return_if_no_display (display, data);
 
-  image = gimp_display_get_image (display);
+  image = picman_display_get_image (display);
 
-  progress = gimp_progress_start (GIMP_PROGRESS (display),
+  progress = picman_progress_start (PICMAN_PROGRESS (display),
                                   _("Resizing"), FALSE);
 
-  gimp_image_resize_to_layers (image,
+  picman_image_resize_to_layers (image,
                                action_data_get_context (data),
                                progress);
 
   if (progress)
-    gimp_progress_end (progress);
+    picman_progress_end (progress);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 image_resize_to_selection_cmd_callback (GtkAction *action,
                                         gpointer   data)
 {
-  GimpDisplay  *display;
-  GimpImage    *image;
-  GimpProgress *progress;
+  PicmanDisplay  *display;
+  PicmanImage    *image;
+  PicmanProgress *progress;
   return_if_no_display (display, data);
 
-  image = gimp_display_get_image (display);
+  image = picman_display_get_image (display);
 
-  progress = gimp_progress_start (GIMP_PROGRESS (display),
+  progress = picman_progress_start (PICMAN_PROGRESS (display),
                                   _("Resizing"), FALSE);
 
-  gimp_image_resize_to_selection (image,
+  picman_image_resize_to_selection (image,
                                   action_data_get_context (data),
                                   progress);
 
   if (progress)
-    gimp_progress_end (progress);
+    picman_progress_end (progress);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 image_print_size_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpDisplay *display;
-  GimpImage   *image;
+  PicmanDisplay *display;
+  PicmanImage   *image;
   GtkWidget   *widget;
   GtkWidget   *dialog;
   return_if_no_display (display, data);
   return_if_no_widget (widget, data);
 
-  image = gimp_display_get_image (display);
+  image = picman_display_get_image (display);
 
   dialog = print_size_dialog_new (image,
                                   action_data_get_context (data),
                                   _("Set Image Print Resolution"),
-                                  "gimp-image-print-size",
+                                  "picman-image-print-size",
                                   widget,
-                                  gimp_standard_help_func,
-                                  GIMP_HELP_IMAGE_PRINT_SIZE,
+                                  picman_standard_help_func,
+                                  PICMAN_HELP_IMAGE_PRINT_SIZE,
                                   image_print_size_callback,
                                   NULL);
 
@@ -402,20 +402,20 @@ void
 image_scale_cmd_callback (GtkAction *action,
                           gpointer   data)
 {
-  GimpDisplay *display;
-  GimpImage   *image;
+  PicmanDisplay *display;
+  PicmanImage   *image;
   GtkWidget   *widget;
   GtkWidget   *dialog;
   return_if_no_display (display, data);
   return_if_no_widget (widget, data);
 
-  image = gimp_display_get_image (display);
+  image = picman_display_get_image (display);
 
-  if (image_scale_unit != GIMP_UNIT_PERCENT)
-    image_scale_unit = gimp_display_get_shell (display)->unit;
+  if (image_scale_unit != PICMAN_UNIT_PERCENT)
+    image_scale_unit = picman_display_get_shell (display)->unit;
 
   if (image_scale_interp == -1)
-    image_scale_interp = display->gimp->config->interpolation_type;
+    image_scale_interp = display->picman->config->interpolation_type;
 
   dialog = image_scale_dialog_new (image,
                                    action_data_get_context (data),
@@ -437,23 +437,23 @@ image_flip_cmd_callback (GtkAction *action,
                          gint       value,
                          gpointer   data)
 {
-  GimpDisplay  *display;
-  GimpImage    *image;
-  GimpProgress *progress;
+  PicmanDisplay  *display;
+  PicmanImage    *image;
+  PicmanProgress *progress;
   return_if_no_display (display, data);
 
-  image = gimp_display_get_image (display);
+  image = picman_display_get_image (display);
 
-  progress = gimp_progress_start (GIMP_PROGRESS (display),
+  progress = picman_progress_start (PICMAN_PROGRESS (display),
                                   _("Flipping"), FALSE);
 
-  gimp_image_flip (image, action_data_get_context (data),
-                   (GimpOrientationType) value, progress);
+  picman_image_flip (image, action_data_get_context (data),
+                   (PicmanOrientationType) value, progress);
 
   if (progress)
-    gimp_progress_end (progress);
+    picman_progress_end (progress);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
@@ -461,95 +461,95 @@ image_rotate_cmd_callback (GtkAction *action,
                            gint       value,
                            gpointer   data)
 {
-  GimpDisplay  *display;
-  GimpImage    *image;
-  GimpProgress *progress;
+  PicmanDisplay  *display;
+  PicmanImage    *image;
+  PicmanProgress *progress;
   return_if_no_display (display, data);
 
-  image = gimp_display_get_image (display);
+  image = picman_display_get_image (display);
 
-  progress = gimp_progress_start (GIMP_PROGRESS (display),
+  progress = picman_progress_start (PICMAN_PROGRESS (display),
                                   _("Rotating"), FALSE);
 
-  gimp_image_rotate (image, action_data_get_context (data),
-                     (GimpRotationType) value, progress);
+  picman_image_rotate (image, action_data_get_context (data),
+                     (PicmanRotationType) value, progress);
 
   if (progress)
-    gimp_progress_end (progress);
+    picman_progress_end (progress);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 image_crop_to_selection_cmd_callback (GtkAction *action,
                                       gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   GtkWidget *widget;
   gint       x1, y1, x2, y2;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
 
-  if (! gimp_channel_bounds (gimp_image_get_mask (image),
+  if (! picman_channel_bounds (picman_image_get_mask (image),
                              &x1, &y1, &x2, &y2))
     {
-      gimp_message_literal (image->gimp,
-			    G_OBJECT (widget), GIMP_MESSAGE_WARNING,
+      picman_message_literal (image->picman,
+			    G_OBJECT (widget), PICMAN_MESSAGE_WARNING,
 			    _("Cannot crop because the current selection is empty."));
       return;
     }
 
-  gimp_image_crop (image, action_data_get_context (data),
+  picman_image_crop (image, action_data_get_context (data),
                    x1, y1, x2, y2, TRUE);
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 image_crop_to_content_cmd_callback (GtkAction *action,
                                     gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   GtkWidget *widget;
   gint       x1, y1, x2, y2;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
 
-  if (! gimp_pickable_auto_shrink (GIMP_PICKABLE (gimp_image_get_projection (image)),
+  if (! picman_pickable_auto_shrink (PICMAN_PICKABLE (picman_image_get_projection (image)),
                                    0, 0,
-                                   gimp_image_get_width  (image),
-                                   gimp_image_get_height (image),
+                                   picman_image_get_width  (image),
+                                   picman_image_get_height (image),
                                    &x1, &y1, &x2, &y2))
     {
-      gimp_message_literal (image->gimp,
-			    G_OBJECT (widget), GIMP_MESSAGE_WARNING,
+      picman_message_literal (image->picman,
+			    G_OBJECT (widget), PICMAN_MESSAGE_WARNING,
 			    _("Cannot crop because the image has no content."));
       return;
     }
 
-  gimp_image_crop (image, action_data_get_context (data),
+  picman_image_crop (image, action_data_get_context (data),
                    x1, y1, x2, y2, TRUE);
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 image_duplicate_cmd_callback (GtkAction *action,
                               gpointer   data)
 {
-  GimpDisplay      *display;
-  GimpImage        *image;
-  GimpDisplayShell *shell;
-  GimpImage        *new_image;
+  PicmanDisplay      *display;
+  PicmanImage        *image;
+  PicmanDisplayShell *shell;
+  PicmanImage        *new_image;
   return_if_no_display (display, data);
 
-  image = gimp_display_get_image (display);
-  shell = gimp_display_get_shell (display);
+  image = picman_display_get_image (display);
+  shell = picman_display_get_shell (display);
 
-  new_image = gimp_image_duplicate (image);
+  new_image = picman_image_duplicate (image);
 
-  gimp_create_display (new_image->gimp,
+  picman_create_display (new_image->picman,
                        new_image,
                        shell->unit,
-                       gimp_zoom_model_get_factor (shell->zoom));
+                       picman_zoom_model_get_factor (shell->zoom));
 
   g_object_unref (new_image);
 }
@@ -559,7 +559,7 @@ image_merge_layers_cmd_callback (GtkAction *action,
                                  gpointer   data)
 {
   ImageMergeLayersDialog *dialog;
-  GimpImage              *image;
+  PicmanImage              *image;
   GtkWidget              *widget;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
@@ -582,24 +582,24 @@ void
 image_flatten_image_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   return_if_no_image (image, data);
 
-  gimp_image_flatten (image, action_data_get_context (data));
-  gimp_image_flush (image);
+  picman_image_flatten (image, action_data_get_context (data));
+  picman_image_flush (image);
 }
 
 void
 image_configure_grid_cmd_callback (GtkAction *action,
                                    gpointer   data)
 {
-  GimpDisplay      *display;
-  GimpImage        *image;
-  GimpDisplayShell *shell;
+  PicmanDisplay      *display;
+  PicmanImage        *image;
+  PicmanDisplayShell *shell;
   return_if_no_display (display, data);
 
-  image = gimp_display_get_image (display);
-  shell = gimp_display_get_shell (display);
+  image = picman_display_get_image (display);
+  shell = picman_display_get_shell (display);
 
   if (! shell->grid_dialog)
     {
@@ -623,14 +623,14 @@ void
 image_properties_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpDisplay      *display;
-  GimpImage        *image;
-  GimpDisplayShell *shell;
+  PicmanDisplay      *display;
+  PicmanImage        *image;
+  PicmanDisplayShell *shell;
   GtkWidget        *dialog;
   return_if_no_display (display, data);
 
-  image = gimp_display_get_image (display);
-  shell = gimp_display_get_shell (display);
+  image = picman_display_get_image (display);
+  shell = picman_display_get_shell (display);
 
   dialog = image_properties_dialog_new (image,
                                         action_data_get_context (data),
@@ -649,13 +649,13 @@ image_properties_cmd_callback (GtkAction *action,
 
 static void
 image_resize_callback (GtkWidget    *dialog,
-                       GimpViewable *viewable,
+                       PicmanViewable *viewable,
                        gint          width,
                        gint          height,
-                       GimpUnit      unit,
+                       PicmanUnit      unit,
                        gint          offset_x,
                        gint          offset_y,
-                       GimpItemSet   layer_set,
+                       PicmanItemSet   layer_set,
                        gboolean      resize_text_layers,
                        gpointer      data)
 {
@@ -665,21 +665,21 @@ image_resize_callback (GtkWidget    *dialog,
 
   if (width > 0 && height > 0)
     {
-      GimpImage    *image   = GIMP_IMAGE (viewable);
-      GimpDisplay  *display = options->display;
-      GimpContext  *context = options->context;
-      GimpProgress *progress;
+      PicmanImage    *image   = PICMAN_IMAGE (viewable);
+      PicmanDisplay  *display = options->display;
+      PicmanContext  *context = options->context;
+      PicmanProgress *progress;
 
       gtk_widget_destroy (dialog);
 
-      if (width  == gimp_image_get_width  (image) &&
-          height == gimp_image_get_height (image))
+      if (width  == picman_image_get_width  (image) &&
+          height == picman_image_get_height (image))
         return;
 
-      progress = gimp_progress_start (GIMP_PROGRESS (display),
+      progress = picman_progress_start (PICMAN_PROGRESS (display),
                                       _("Resizing"), FALSE);
 
-      gimp_image_resize_with_layers (image,
+      picman_image_resize_with_layers (image,
                                      context,
                                      width, height, offset_x, offset_y,
                                      layer_set,
@@ -687,9 +687,9 @@ image_resize_callback (GtkWidget    *dialog,
                                      progress);
 
       if (progress)
-        gimp_progress_end (progress);
+        picman_progress_end (progress);
 
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
   else
     {
@@ -706,10 +706,10 @@ image_resize_options_free (ImageResizeOptions *options)
 
 static void
 image_print_size_callback (GtkWidget *dialog,
-                           GimpImage *image,
+                           PicmanImage *image,
                            gdouble    xresolution,
                            gdouble    yresolution,
-                           GimpUnit   resolution_unit,
+                           PicmanUnit   resolution_unit,
                            gpointer   data)
 {
   gdouble xres;
@@ -717,77 +717,77 @@ image_print_size_callback (GtkWidget *dialog,
 
   gtk_widget_destroy (dialog);
 
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
 
   if (xresolution     == xres &&
       yresolution     == yres &&
-      resolution_unit == gimp_image_get_unit (image))
+      resolution_unit == picman_image_get_unit (image))
     return;
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_IMAGE_SCALE,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_IMAGE_SCALE,
                                _("Change Print Size"));
 
-  gimp_image_set_resolution (image, xresolution, yresolution);
-  gimp_image_set_unit (image, resolution_unit);
+  picman_image_set_resolution (image, xresolution, yresolution);
+  picman_image_set_unit (image, resolution_unit);
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 static void
 image_scale_callback (GtkWidget              *dialog,
-                      GimpViewable           *viewable,
+                      PicmanViewable           *viewable,
                       gint                    width,
                       gint                    height,
-                      GimpUnit                unit,
-                      GimpInterpolationType   interpolation,
+                      PicmanUnit                unit,
+                      PicmanInterpolationType   interpolation,
                       gdouble                 xresolution,
                       gdouble                 yresolution,
-                      GimpUnit                resolution_unit,
+                      PicmanUnit                resolution_unit,
                       gpointer                user_data)
 {
-  GimpImage *image = GIMP_IMAGE (viewable);
+  PicmanImage *image = PICMAN_IMAGE (viewable);
   gdouble    xres;
   gdouble    yres;
 
   image_scale_unit   = unit;
   image_scale_interp = interpolation;
 
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
 
   if (width > 0 && height > 0)
     {
-      if (width           == gimp_image_get_width  (image) &&
-          height          == gimp_image_get_height (image) &&
+      if (width           == picman_image_get_width  (image) &&
+          height          == picman_image_get_height (image) &&
           xresolution     == xres                          &&
           yresolution     == yres                          &&
-          resolution_unit == gimp_image_get_unit (image))
+          resolution_unit == picman_image_get_unit (image))
         return;
 
-      gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_IMAGE_SCALE,
+      picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_IMAGE_SCALE,
                                    _("Scale Image"));
 
-      gimp_image_set_resolution (image, xresolution, yresolution);
-      gimp_image_set_unit (image, resolution_unit);
+      picman_image_set_resolution (image, xresolution, yresolution);
+      picman_image_set_unit (image, resolution_unit);
 
-      if (width  != gimp_image_get_width  (image) ||
-          height != gimp_image_get_height (image))
+      if (width  != picman_image_get_width  (image) ||
+          height != picman_image_get_height (image))
         {
-          GimpProgress *progress;
+          PicmanProgress *progress;
 
-          progress = gimp_progress_start (GIMP_PROGRESS (user_data),
+          progress = picman_progress_start (PICMAN_PROGRESS (user_data),
                                           _("Scaling"), FALSE);
 
-          gimp_image_scale (image, width, height, interpolation, progress);
+          picman_image_scale (image, width, height, interpolation, progress);
 
           if (progress)
-            gimp_progress_end (progress);
+            picman_progress_end (progress);
         }
 
-      gimp_image_undo_group_end (image);
+      picman_image_undo_group_end (image);
 
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
   else
     {
@@ -807,13 +807,13 @@ image_merge_layers_response (GtkWidget              *widget,
       image_merge_layers_merge_active_group = dialog->merge_active_group;
       image_merge_layers_discard_invisible  = dialog->discard_invisible;
 
-      gimp_image_merge_visible_layers (dialog->image,
+      picman_image_merge_visible_layers (dialog->image,
                                        dialog->context,
                                        image_merge_layers_type,
                                        image_merge_layers_merge_active_group,
                                        image_merge_layers_discard_invisible);
 
-      gimp_image_flush (dialog->image);
+      picman_image_flush (dialog->image);
     }
 
   gtk_widget_destroy (widget);

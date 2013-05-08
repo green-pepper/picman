@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * Datafiles module copyight (C) 1996 Federico Mena Quintero
@@ -19,12 +19,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_BASE_H_INSIDE__) && !defined (GIMP_BASE_COMPILATION)
-#error "Only <libgimpbase/gimpbase.h> can be included directly."
+#if !defined (__PICMAN_BASE_H_INSIDE__) && !defined (PICMAN_BASE_COMPILATION)
+#error "Only <libpicmanbase/picmanbase.h> can be included directly."
 #endif
 
-#ifndef __GIMP_DATAFILES_H__
-#define __GIMP_DATAFILES_H__
+#ifndef __PICMAN_DATAFILES_H__
+#define __PICMAN_DATAFILES_H__
 
 #include <time.h>
 
@@ -32,7 +32,7 @@ G_BEGIN_DECLS
 
 
 /**
- * GimpDatafileData:
+ * PicmanDatafileData:
  * @filename: the data file's full path.
  * @dirname:  the folder the data file is is.
  * @basename: the data file's basename.
@@ -40,11 +40,11 @@ G_BEGIN_DECLS
  * @mtime:    the last time the file was modified.
  * @ctime:    the time the file was created.
  *
- * This structure is passed to the #GimpDatafileLoaderFunc given to
- * gimp_datafiles_read_directories() for each file encountered in the
+ * This structure is passed to the #PicmanDatafileLoaderFunc given to
+ * picman_datafiles_read_directories() for each file encountered in the
  * data path.
  **/
-struct _GimpDatafileData
+struct _PicmanDatafileData
 {
   const gchar *filename;
   const gchar *dirname;
@@ -56,15 +56,15 @@ struct _GimpDatafileData
 };
 
 
-gboolean   gimp_datafiles_check_extension  (const gchar            *filename,
+gboolean   picman_datafiles_check_extension  (const gchar            *filename,
                                             const gchar            *extension);
 
-void       gimp_datafiles_read_directories (const gchar            *path_str,
+void       picman_datafiles_read_directories (const gchar            *path_str,
                                             GFileTest               flags,
-                                            GimpDatafileLoaderFunc  loader_func,
+                                            PicmanDatafileLoaderFunc  loader_func,
                                             gpointer                user_data);
 
 
 G_END_DECLS
 
-#endif  /*  __GIMP_DATAFILES_H__ */
+#endif  /*  __PICMAN_DATAFILES_H__ */

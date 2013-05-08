@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcontrollereditor.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmancontrollereditor.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTROLLER_EDITOR_H__
-#define __GIMP_CONTROLLER_EDITOR_H__
+#ifndef __PICMAN_CONTROLLER_EDITOR_H__
+#define __PICMAN_CONTROLLER_EDITOR_H__
 
 
-#define GIMP_TYPE_CONTROLLER_EDITOR            (gimp_controller_editor_get_type ())
-#define GIMP_CONTROLLER_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CONTROLLER_EDITOR, GimpControllerEditor))
-#define GIMP_CONTROLLER_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CONTROLLER_EDITOR, GimpControllerEditorClass))
-#define GIMP_IS_CONTROLLER_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CONTROLLER_EDITOR))
-#define GIMP_IS_CONTROLLER_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CONTROLLER_EDITOR))
-#define GIMP_CONTROLLER_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CONTROLLER_EDITOR, GimpControllerEditorClass))
+#define PICMAN_TYPE_CONTROLLER_EDITOR            (picman_controller_editor_get_type ())
+#define PICMAN_CONTROLLER_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CONTROLLER_EDITOR, PicmanControllerEditor))
+#define PICMAN_CONTROLLER_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CONTROLLER_EDITOR, PicmanControllerEditorClass))
+#define PICMAN_IS_CONTROLLER_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CONTROLLER_EDITOR))
+#define PICMAN_IS_CONTROLLER_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CONTROLLER_EDITOR))
+#define PICMAN_CONTROLLER_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CONTROLLER_EDITOR, PicmanControllerEditorClass))
 
 
-typedef struct _GimpControllerEditorClass GimpControllerEditorClass;
+typedef struct _PicmanControllerEditorClass PicmanControllerEditorClass;
 
-struct _GimpControllerEditor
+struct _PicmanControllerEditor
 {
   GtkBox              parent_instance;
 
-  GimpControllerInfo *info;
-  GimpContext        *context;
+  PicmanControllerInfo *info;
+  PicmanContext        *context;
 
   GtkTreeSelection   *sel;
 
@@ -49,16 +49,16 @@ struct _GimpControllerEditor
   GtkTreeSelection   *edit_sel;
 };
 
-struct _GimpControllerEditorClass
+struct _PicmanControllerEditorClass
 {
   GtkBoxClass   parent_class;
 };
 
 
-GType       gimp_controller_editor_get_type (void) G_GNUC_CONST;
+GType       picman_controller_editor_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_controller_editor_new      (GimpControllerInfo *info,
-                                             GimpContext        *context);
+GtkWidget * picman_controller_editor_new      (PicmanControllerInfo *info,
+                                             PicmanContext        *context);
 
 
-#endif  /*  __GIMP_CONTROLLER_EDITOR_H__  */
+#endif  /*  __PICMAN_CONTROLLER_EDITOR_H__  */

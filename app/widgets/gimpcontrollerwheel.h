@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcontrollerwheel.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmancontrollerwheel.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,39 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTROLLER_WHELL_H__
-#define __GIMP_CONTROLLER_WHEEL_H__
+#ifndef __PICMAN_CONTROLLER_WHELL_H__
+#define __PICMAN_CONTROLLER_WHEEL_H__
 
 
-#define GIMP_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
-#include "libgimpwidgets/gimpcontroller.h"
+#define PICMAN_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
+#include "libpicmanwidgets/picmancontroller.h"
 
 
-#define GIMP_TYPE_CONTROLLER_WHEEL            (gimp_controller_wheel_get_type ())
-#define GIMP_CONTROLLER_WHEEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CONTROLLER_WHEEL, GimpControllerWheel))
-#define GIMP_CONTROLLER_WHEEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CONTROLLER_WHEEL, GimpControllerWheelClass))
-#define GIMP_IS_CONTROLLER_WHEEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CONTROLLER_WHEEL))
-#define GIMP_IS_CONTROLLER_WHEEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CONTROLLER_WHEEL))
-#define GIMP_CONTROLLER_WHEEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CONTROLLER_WHEEL, GimpControllerWheelClass))
+#define PICMAN_TYPE_CONTROLLER_WHEEL            (picman_controller_wheel_get_type ())
+#define PICMAN_CONTROLLER_WHEEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CONTROLLER_WHEEL, PicmanControllerWheel))
+#define PICMAN_CONTROLLER_WHEEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CONTROLLER_WHEEL, PicmanControllerWheelClass))
+#define PICMAN_IS_CONTROLLER_WHEEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CONTROLLER_WHEEL))
+#define PICMAN_IS_CONTROLLER_WHEEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CONTROLLER_WHEEL))
+#define PICMAN_CONTROLLER_WHEEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CONTROLLER_WHEEL, PicmanControllerWheelClass))
 
 
-typedef struct _GimpControllerWheelClass GimpControllerWheelClass;
+typedef struct _PicmanControllerWheelClass PicmanControllerWheelClass;
 
-struct _GimpControllerWheel
+struct _PicmanControllerWheel
 {
-  GimpController parent_instance;
+  PicmanController parent_instance;
 };
 
-struct _GimpControllerWheelClass
+struct _PicmanControllerWheelClass
 {
-  GimpControllerClass parent_class;
+  PicmanControllerClass parent_class;
 };
 
 
-GType      gimp_controller_wheel_get_type (void) G_GNUC_CONST;
+GType      picman_controller_wheel_get_type (void) G_GNUC_CONST;
 
-gboolean   gimp_controller_wheel_scroll   (GimpControllerWheel  *wheel,
+gboolean   picman_controller_wheel_scroll   (PicmanControllerWheel  *wheel,
                                            const GdkEventScroll *sevent);
 
 
-#endif /* __GIMP_CONTROLLER_WHEEL_H__ */
+#endif /* __PICMAN_CONTROLLER_WHEEL_H__ */

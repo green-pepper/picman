@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorscales.c
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * picmancolorscales.c
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * based on color_notebook module
  * Copyright (C) 1998 Austin Donnelly <austin@greenend.org.uk>
@@ -29,97 +29,97 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpcolorscale.h"
-#include "gimpcolorscales.h"
-#include "gimpwidgets.h"
+#include "picmancolorscale.h"
+#include "picmancolorscales.h"
+#include "picmanwidgets.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpcolorscales
- * @title: GimpColorScales
- * @short_description: A #GimpColorSelector implementation.
+ * SECTION: picmancolorscales
+ * @title: PicmanColorScales
+ * @short_description: A #PicmanColorSelector implementation.
  *
- * The #GimpColorScales widget is an implementation of a
- * #GimpColorSelector. It shows a group of #GimpColorScale widgets
+ * The #PicmanColorScales widget is an implementation of a
+ * #PicmanColorSelector. It shows a group of #PicmanColorScale widgets
  * that allow to adjust the HSV and RGB color channels.
  **/
 
 
-#define GIMP_COLOR_SCALES_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_SCALES, GimpColorScalesClass))
-#define GIMP_IS_COLOR_SCALES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_SCALES))
-#define GIMP_COLOR_SCALES_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_SCALES, GimpColorScalesClass))
+#define PICMAN_COLOR_SCALES_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_SCALES, PicmanColorScalesClass))
+#define PICMAN_IS_COLOR_SCALES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_SCALES))
+#define PICMAN_COLOR_SCALES_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_SCALES, PicmanColorScalesClass))
 
 
-typedef struct _GimpColorScalesClass GimpColorScalesClass;
+typedef struct _PicmanColorScalesClass PicmanColorScalesClass;
 
-struct _GimpColorScales
+struct _PicmanColorScales
 {
-  GimpColorSelector  parent_instance;
+  PicmanColorSelector  parent_instance;
 
   GtkWidget         *toggles[7];
   GtkWidget         *sliders[7];
   GtkObject         *slider_data[7];
 };
 
-struct _GimpColorScalesClass
+struct _PicmanColorScalesClass
 {
-  GimpColorSelectorClass  parent_class;
+  PicmanColorSelectorClass  parent_class;
 };
 
 
-static void   gimp_color_scales_togg_sensitive (GimpColorSelector *selector,
+static void   picman_color_scales_togg_sensitive (PicmanColorSelector *selector,
                                                 gboolean           sensitive);
-static void   gimp_color_scales_togg_visible   (GimpColorSelector *selector,
+static void   picman_color_scales_togg_visible   (PicmanColorSelector *selector,
                                                 gboolean           visible);
 
-static void   gimp_color_scales_set_show_alpha (GimpColorSelector *selector,
+static void   picman_color_scales_set_show_alpha (PicmanColorSelector *selector,
                                                 gboolean           show_alpha);
-static void   gimp_color_scales_set_color      (GimpColorSelector *selector,
-                                                const GimpRGB     *rgb,
-                                                const GimpHSV     *hsv);
-static void   gimp_color_scales_set_channel    (GimpColorSelector *selector,
-                                                GimpColorSelectorChannel  channel);
+static void   picman_color_scales_set_color      (PicmanColorSelector *selector,
+                                                const PicmanRGB     *rgb,
+                                                const PicmanHSV     *hsv);
+static void   picman_color_scales_set_channel    (PicmanColorSelector *selector,
+                                                PicmanColorSelectorChannel  channel);
 
-static void   gimp_color_scales_update_scales  (GimpColorScales   *scales,
+static void   picman_color_scales_update_scales  (PicmanColorScales   *scales,
                                                 gint               skip);
-static void   gimp_color_scales_toggle_update  (GtkWidget         *widget,
-                                                GimpColorScales   *scales);
-static void   gimp_color_scales_scale_update   (GtkAdjustment     *adjustment,
-                                                GimpColorScales   *scales);
+static void   picman_color_scales_toggle_update  (GtkWidget         *widget,
+                                                PicmanColorScales   *scales);
+static void   picman_color_scales_scale_update   (GtkAdjustment     *adjustment,
+                                                PicmanColorScales   *scales);
 
 
-G_DEFINE_TYPE (GimpColorScales, gimp_color_scales, GIMP_TYPE_COLOR_SELECTOR)
+G_DEFINE_TYPE (PicmanColorScales, picman_color_scales, PICMAN_TYPE_COLOR_SELECTOR)
 
-#define parent_class gimp_color_scales_parent_class
+#define parent_class picman_color_scales_parent_class
 
 
 static void
-gimp_color_scales_class_init (GimpColorScalesClass *klass)
+picman_color_scales_class_init (PicmanColorScalesClass *klass)
 {
-  GimpColorSelectorClass *selector_class = GIMP_COLOR_SELECTOR_CLASS (klass);
+  PicmanColorSelectorClass *selector_class = PICMAN_COLOR_SELECTOR_CLASS (klass);
 
   selector_class->name                  = _("Scales");
-  selector_class->help_id               = "gimp-colorselector-scales";
-  selector_class->stock_id              = GIMP_STOCK_TOOL_OPTIONS;
-  selector_class->set_toggles_visible   = gimp_color_scales_togg_visible;
-  selector_class->set_toggles_sensitive = gimp_color_scales_togg_sensitive;
-  selector_class->set_show_alpha        = gimp_color_scales_set_show_alpha;
-  selector_class->set_color             = gimp_color_scales_set_color;
-  selector_class->set_channel           = gimp_color_scales_set_channel;
+  selector_class->help_id               = "picman-colorselector-scales";
+  selector_class->stock_id              = PICMAN_STOCK_TOOL_OPTIONS;
+  selector_class->set_toggles_visible   = picman_color_scales_togg_visible;
+  selector_class->set_toggles_sensitive = picman_color_scales_togg_sensitive;
+  selector_class->set_show_alpha        = picman_color_scales_set_show_alpha;
+  selector_class->set_color             = picman_color_scales_set_color;
+  selector_class->set_channel           = picman_color_scales_set_channel;
 }
 
 static void
-gimp_color_scales_init (GimpColorScales *scales)
+picman_color_scales_init (PicmanColorScales *scales)
 {
-  GimpColorSelector *selector = GIMP_COLOR_SELECTOR (scales);
+  PicmanColorSelector *selector = PICMAN_COLOR_SELECTOR (scales);
   GtkWidget         *table;
   GEnumClass        *enum_class;
   GSList            *group;
@@ -144,17 +144,17 @@ gimp_color_scales_init (GimpColorScales *scales)
   gtk_box_pack_start (GTK_BOX (scales), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  enum_class = g_type_class_ref (GIMP_TYPE_COLOR_SELECTOR_CHANNEL);
+  enum_class = g_type_class_ref (PICMAN_TYPE_COLOR_SELECTOR_CHANNEL);
 
   group = NULL;
 
-  for (i = GIMP_COLOR_SELECTOR_HUE; i <= GIMP_COLOR_SELECTOR_ALPHA; i++)
+  for (i = PICMAN_COLOR_SELECTOR_HUE; i <= PICMAN_COLOR_SELECTOR_ALPHA; i++)
     {
-      GimpEnumDesc *enum_desc;
+      PicmanEnumDesc *enum_desc;
 
-      enum_desc = gimp_enum_get_desc (enum_class, i);
+      enum_desc = picman_enum_get_desc (enum_class, i);
 
-      if (i == GIMP_COLOR_SELECTOR_ALPHA)
+      if (i == PICMAN_COLOR_SELECTOR_ALPHA)
         {
           scales->toggles[i] = NULL;
         }
@@ -169,16 +169,16 @@ gimp_color_scales_init (GimpColorScales *scales)
           if (selector->toggles_visible)
             gtk_widget_show (scales->toggles[i]);
 
-          gimp_help_set_help_data (scales->toggles[i],
+          picman_help_set_help_data (scales->toggles[i],
                                    gettext (enum_desc->value_help), NULL);
 
           g_signal_connect (scales->toggles[i], "toggled",
-                            G_CALLBACK (gimp_color_scales_toggle_update),
+                            G_CALLBACK (picman_color_scales_toggle_update),
                             scales);
         }
 
       scales->slider_data[i] =
-        gimp_color_scale_entry_new (GTK_TABLE (table), 1, i,
+        picman_color_scale_entry_new (GTK_TABLE (table), 1, i,
                                     gettext (enum_desc->value_desc),
                                     -1, -1,
                                     slider_initial_vals[i],
@@ -188,12 +188,12 @@ gimp_color_scales_init (GimpColorScales *scales)
                                     gettext (enum_desc->value_help),
                                     NULL);
 
-      scales->sliders[i] = GIMP_SCALE_ENTRY_SCALE (scales->slider_data[i]);
+      scales->sliders[i] = PICMAN_SCALE_ENTRY_SCALE (scales->slider_data[i]);
 
-      gimp_color_scale_set_channel (GIMP_COLOR_SCALE (scales->sliders[i]), i);
+      picman_color_scale_set_channel (PICMAN_COLOR_SCALE (scales->sliders[i]), i);
 
       g_signal_connect (scales->slider_data[i], "value-changed",
-                        G_CALLBACK (gimp_color_scales_scale_update),
+                        G_CALLBACK (picman_color_scales_scale_update),
                         scales);
     }
 
@@ -201,10 +201,10 @@ gimp_color_scales_init (GimpColorScales *scales)
 }
 
 static void
-gimp_color_scales_togg_sensitive (GimpColorSelector *selector,
+picman_color_scales_togg_sensitive (PicmanColorSelector *selector,
                                   gboolean           sensitive)
 {
-  GimpColorScales *scales = GIMP_COLOR_SCALES (selector);
+  PicmanColorScales *scales = PICMAN_COLOR_SCALES (selector);
   gint             i;
 
   for (i = 0; i < 6; i++)
@@ -212,10 +212,10 @@ gimp_color_scales_togg_sensitive (GimpColorSelector *selector,
 }
 
 static void
-gimp_color_scales_togg_visible (GimpColorSelector *selector,
+picman_color_scales_togg_visible (PicmanColorSelector *selector,
                                 gboolean           visible)
 {
-  GimpColorScales *scales = GIMP_COLOR_SCALES (selector);
+  PicmanColorScales *scales = PICMAN_COLOR_SCALES (selector);
   gint             i;
 
   for (i = 0; i < 6; i++)
@@ -223,18 +223,18 @@ gimp_color_scales_togg_visible (GimpColorSelector *selector,
 }
 
 static void
-gimp_color_scales_set_show_alpha (GimpColorSelector *selector,
+picman_color_scales_set_show_alpha (PicmanColorSelector *selector,
                                   gboolean           show_alpha)
 {
-  GimpColorScales *scales = GIMP_COLOR_SCALES (selector);
+  PicmanColorScales *scales = PICMAN_COLOR_SCALES (selector);
   GtkWidget       *label;
   GtkWidget       *scale;
   GtkWidget       *spin;
   GtkWidget       *table;
 
-  label = GIMP_SCALE_ENTRY_LABEL (scales->slider_data[6]);
-  scale = GIMP_SCALE_ENTRY_SCALE (scales->slider_data[6]);
-  spin  = GIMP_SCALE_ENTRY_SPINBUTTON (scales->slider_data[6]);
+  label = PICMAN_SCALE_ENTRY_LABEL (scales->slider_data[6]);
+  scale = PICMAN_SCALE_ENTRY_SCALE (scales->slider_data[6]);
+  spin  = PICMAN_SCALE_ENTRY_SPINBUTTON (scales->slider_data[6]);
 
   table = gtk_widget_get_parent (scale);
   if (GTK_IS_TABLE (table))
@@ -249,78 +249,78 @@ gimp_color_scales_set_show_alpha (GimpColorSelector *selector,
 }
 
 static void
-gimp_color_scales_set_color (GimpColorSelector *selector,
-                             const GimpRGB     *rgb,
-                             const GimpHSV     *hsv)
+picman_color_scales_set_color (PicmanColorSelector *selector,
+                             const PicmanRGB     *rgb,
+                             const PicmanHSV     *hsv)
 {
-  GimpColorScales *scales = GIMP_COLOR_SCALES (selector);
+  PicmanColorScales *scales = PICMAN_COLOR_SCALES (selector);
 
-  gimp_color_scales_update_scales (scales, -1);
+  picman_color_scales_update_scales (scales, -1);
 }
 
 static void
-gimp_color_scales_set_channel (GimpColorSelector        *selector,
-                               GimpColorSelectorChannel  channel)
+picman_color_scales_set_channel (PicmanColorSelector        *selector,
+                               PicmanColorSelectorChannel  channel)
 {
-  GimpColorScales *scales = GIMP_COLOR_SCALES (selector);
+  PicmanColorScales *scales = PICMAN_COLOR_SCALES (selector);
 
   if (channel < 7)
     {
       g_signal_handlers_block_by_func (scales->toggles[channel],
-                                       gimp_color_scales_toggle_update,
+                                       picman_color_scales_toggle_update,
                                        scales);
 
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (scales->toggles[channel]),
                                     TRUE);
 
       g_signal_handlers_unblock_by_func (scales->toggles[channel],
-                                         gimp_color_scales_toggle_update,
+                                         picman_color_scales_toggle_update,
                                          scales);
     }
 }
 
 static void
-gimp_color_scales_update_scales (GimpColorScales *scales,
+picman_color_scales_update_scales (PicmanColorScales *scales,
                                  gint             skip)
 {
-  GimpColorSelector *selector = GIMP_COLOR_SELECTOR (scales);
+  PicmanColorSelector *selector = PICMAN_COLOR_SELECTOR (scales);
   gint               values[7];
   gint               i;
 
-  values[GIMP_COLOR_SELECTOR_HUE]        = ROUND (selector->hsv.h * 360.0);
-  values[GIMP_COLOR_SELECTOR_SATURATION] = ROUND (selector->hsv.s * 100.0);
-  values[GIMP_COLOR_SELECTOR_VALUE]      = ROUND (selector->hsv.v * 100.0);
-  values[GIMP_COLOR_SELECTOR_RED]        = ROUND (selector->rgb.r * 255.0);
-  values[GIMP_COLOR_SELECTOR_GREEN]      = ROUND (selector->rgb.g * 255.0);
-  values[GIMP_COLOR_SELECTOR_BLUE]       = ROUND (selector->rgb.b * 255.0);
-  values[GIMP_COLOR_SELECTOR_ALPHA]      = ROUND (selector->rgb.a * 100.0);
+  values[PICMAN_COLOR_SELECTOR_HUE]        = ROUND (selector->hsv.h * 360.0);
+  values[PICMAN_COLOR_SELECTOR_SATURATION] = ROUND (selector->hsv.s * 100.0);
+  values[PICMAN_COLOR_SELECTOR_VALUE]      = ROUND (selector->hsv.v * 100.0);
+  values[PICMAN_COLOR_SELECTOR_RED]        = ROUND (selector->rgb.r * 255.0);
+  values[PICMAN_COLOR_SELECTOR_GREEN]      = ROUND (selector->rgb.g * 255.0);
+  values[PICMAN_COLOR_SELECTOR_BLUE]       = ROUND (selector->rgb.b * 255.0);
+  values[PICMAN_COLOR_SELECTOR_ALPHA]      = ROUND (selector->rgb.a * 100.0);
 
   for (i = 0; i < 7; i++)
     {
       if (i != skip)
         {
           g_signal_handlers_block_by_func (scales->slider_data[i],
-                                           gimp_color_scales_scale_update,
+                                           picman_color_scales_scale_update,
                                            scales);
 
           gtk_adjustment_set_value (GTK_ADJUSTMENT (scales->slider_data[i]),
                                     values[i]);
 
           g_signal_handlers_unblock_by_func (scales->slider_data[i],
-                                             gimp_color_scales_scale_update,
+                                             picman_color_scales_scale_update,
                                              scales);
         }
 
-      gimp_color_scale_set_color (GIMP_COLOR_SCALE (scales->sliders[i]),
+      picman_color_scale_set_color (PICMAN_COLOR_SCALE (scales->sliders[i]),
                                   &selector->rgb, &selector->hsv);
     }
 }
 
 static void
-gimp_color_scales_toggle_update (GtkWidget       *widget,
-                                 GimpColorScales *scales)
+picman_color_scales_toggle_update (GtkWidget       *widget,
+                                 PicmanColorScales *scales)
 {
-  GimpColorSelector *selector = GIMP_COLOR_SELECTOR (scales);
+  PicmanColorSelector *selector = PICMAN_COLOR_SELECTOR (scales);
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
     {
@@ -329,19 +329,19 @@ gimp_color_scales_toggle_update (GtkWidget       *widget,
       for (i = 0; i < 6; i++)
         if (widget == scales->toggles[i])
           {
-            selector->channel = (GimpColorSelectorChannel) i;
+            selector->channel = (PicmanColorSelectorChannel) i;
             break;
           }
 
-      gimp_color_selector_channel_changed (selector);
+      picman_color_selector_channel_changed (selector);
     }
 }
 
 static void
-gimp_color_scales_scale_update (GtkAdjustment   *adjustment,
-                                GimpColorScales *scales)
+picman_color_scales_scale_update (GtkAdjustment   *adjustment,
+                                PicmanColorScales *scales)
 {
-  GimpColorSelector *selector = GIMP_COLOR_SELECTOR (scales);
+  PicmanColorSelector *selector = PICMAN_COLOR_SELECTOR (scales);
   gdouble            value    = gtk_adjustment_get_value (adjustment);
   gint               i;
 
@@ -351,45 +351,45 @@ gimp_color_scales_scale_update (GtkAdjustment   *adjustment,
 
   switch (i)
     {
-    case GIMP_COLOR_SELECTOR_HUE:
+    case PICMAN_COLOR_SELECTOR_HUE:
       selector->hsv.h = value / 360.0;
       break;
 
-    case GIMP_COLOR_SELECTOR_SATURATION:
+    case PICMAN_COLOR_SELECTOR_SATURATION:
       selector->hsv.s = value / 100.0;
       break;
 
-    case GIMP_COLOR_SELECTOR_VALUE:
+    case PICMAN_COLOR_SELECTOR_VALUE:
       selector->hsv.v = value / 100.0;
       break;
 
-    case GIMP_COLOR_SELECTOR_RED:
+    case PICMAN_COLOR_SELECTOR_RED:
       selector->rgb.r = value / 255.0;
       break;
 
-    case GIMP_COLOR_SELECTOR_GREEN:
+    case PICMAN_COLOR_SELECTOR_GREEN:
       selector->rgb.g = value / 255.0;
       break;
 
-    case GIMP_COLOR_SELECTOR_BLUE:
+    case PICMAN_COLOR_SELECTOR_BLUE:
       selector->rgb.b = value / 255.0;
       break;
 
-    case GIMP_COLOR_SELECTOR_ALPHA:
+    case PICMAN_COLOR_SELECTOR_ALPHA:
       selector->hsv.a = selector->rgb.a = value / 100.0;
       break;
     }
 
-  if ((i >= GIMP_COLOR_SELECTOR_HUE) && (i <= GIMP_COLOR_SELECTOR_VALUE))
+  if ((i >= PICMAN_COLOR_SELECTOR_HUE) && (i <= PICMAN_COLOR_SELECTOR_VALUE))
     {
-      gimp_hsv_to_rgb (&selector->hsv, &selector->rgb);
+      picman_hsv_to_rgb (&selector->hsv, &selector->rgb);
     }
-  else if ((i >= GIMP_COLOR_SELECTOR_RED) && (i <= GIMP_COLOR_SELECTOR_BLUE))
+  else if ((i >= PICMAN_COLOR_SELECTOR_RED) && (i <= PICMAN_COLOR_SELECTOR_BLUE))
     {
-      gimp_rgb_to_hsv (&selector->rgb, &selector->hsv);
+      picman_rgb_to_hsv (&selector->rgb, &selector->hsv);
     }
 
-  gimp_color_scales_update_scales (scales, i);
+  picman_color_scales_update_scales (scales, i);
 
-  gimp_color_selector_color_changed (selector);
+  picman_color_selector_color_changed (selector);
 }

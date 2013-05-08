@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,36 +20,36 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimp-edit.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdrawableundo.h"
-#include "core/gimpundostack.h"
+#include "core/picman-edit.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmandrawable.h"
+#include "core/picmandrawableundo.h"
+#include "core/picmanundostack.h"
 
-#include "widgets/gimppropwidgets.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmanpropwidgets.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanviewabledialog.h"
 
 #include "fade-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 typedef struct
 {
-  GimpImage            *image;
-  GimpDrawable         *drawable;
-  GimpContext          *context;
+  PicmanImage            *image;
+  PicmanDrawable         *drawable;
+  PicmanContext          *context;
 
   gboolean              applied;
-  GimpLayerModeEffects  orig_paint_mode;
+  PicmanLayerModeEffects  orig_paint_mode;
   gdouble               orig_opacity;
 } FadeDialog;
 
@@ -65,13 +65,13 @@ static void   fade_dialog_free            (FadeDialog *private);
 /*  public functions  */
 
 GtkWidget *
-fade_dialog_new (GimpImage *image,
+fade_dialog_new (PicmanImage *image,
                  GtkWidget *parent)
 {
   FadeDialog       *private;
-  GimpDrawableUndo *undo;
-  GimpDrawable     *drawable;
-  GimpItem         *item;
+  PicmanDrawableUndo *undo;
+  PicmanDrawable     *drawable;
+  PicmanItem         *item;
 
   GtkWidget        *dialog;
   GtkWidget        *main_vbox;
@@ -80,22 +80,22 @@ fade_dialog_new (GimpImage *image,
   gchar            *title;
   gint              table_row = 0;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (GTK_IS_WIDGET (parent), NULL);
 
-  undo = GIMP_DRAWABLE_UNDO (gimp_image_undo_get_fadeable (image));
+  undo = PICMAN_DRAWABLE_UNDO (picman_image_undo_get_fadeable (image));
 
   if (! (undo && undo->applied_buffer))
     return NULL;
 
-  item      = GIMP_ITEM_UNDO (undo)->item;
-  drawable  = GIMP_DRAWABLE (item);
+  item      = PICMAN_ITEM_UNDO (undo)->item;
+  drawable  = PICMAN_DRAWABLE (item);
 
   private = g_slice_new0 (FadeDialog);
 
   private->image           = image;
   private->drawable        = drawable;
-  private->context         = gimp_context_new (image->gimp,
+  private->context         = picman_context_new (image->picman,
                                                "fade-dialog", NULL);
   private->applied         = FALSE;
   private->orig_paint_mode = undo->paint_mode;
@@ -106,16 +106,16 @@ fade_dialog_new (GimpImage *image,
                 "opacity",    undo->opacity,
                 NULL);
 
-  title = g_strdup_printf (_("Fade %s"), gimp_object_get_name (undo));
+  title = g_strdup_printf (_("Fade %s"), picman_object_get_name (undo));
 
 
-  dialog = gimp_viewable_dialog_new (GIMP_VIEWABLE (drawable),
+  dialog = picman_viewable_dialog_new (PICMAN_VIEWABLE (drawable),
                                      private->context,
-                                     title, "gimp-edit-fade",
+                                     title, "picman-edit-fade",
                                      GTK_STOCK_UNDO, title,
                                      parent,
-                                     gimp_standard_help_func,
-                                     GIMP_HELP_EDIT_FADE,
+                                     picman_standard_help_func,
+                                     PICMAN_HELP_EDIT_FADE,
 
                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                      _("_Fade"),       GTK_RESPONSE_OK,
@@ -150,14 +150,14 @@ fade_dialog_new (GimpImage *image,
   gtk_widget_show (table);
 
   /*  the paint mode menu  */
-  menu = gimp_prop_paint_mode_menu_new (G_OBJECT (private->context),
+  menu = picman_prop_paint_mode_menu_new (G_OBJECT (private->context),
                                         "paint-mode", TRUE, TRUE);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, table_row++,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, table_row++,
                              _("_Mode:"), 0.0, 0.5,
                              menu, 2, FALSE);
 
   /*  the opacity scale  */
-  gimp_prop_opacity_entry_new (G_OBJECT (private->context), "opacity",
+  picman_prop_opacity_entry_new (G_OBJECT (private->context), "opacity",
                                GTK_TABLE (table), 0, table_row++,
                                _("_Opacity:"));
 
@@ -200,10 +200,10 @@ fade_dialog_response (GtkWidget  *dialog,
 static void
 fade_dialog_context_changed (FadeDialog *private)
 {
-  if (gimp_edit_fade (private->image, private->context))
+  if (picman_edit_fade (private->image, private->context))
     {
       private->applied = TRUE;
-      gimp_image_flush (private->image);
+      picman_image_flush (private->image);
     }
 }
 

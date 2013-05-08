@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,89 +22,89 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "display-types.h"
 
-#include "core/gimp.h"
-#include "core/gimp-edit.h"
-#include "core/gimpbuffer.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-merge.h"
-#include "core/gimpimage-new.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimplayer.h"
-#include "core/gimplayermask.h"
-#include "core/gimppattern.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picman-edit.h"
+#include "core/picmanbuffer.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-merge.h"
+#include "core/picmanimage-new.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanlayer.h"
+#include "core/picmanlayermask.h"
+#include "core/picmanpattern.h"
+#include "core/picmanprogress.h"
 
 #include "file/file-open.h"
 #include "file/file-utils.h"
 
-#include "text/gimptext.h"
-#include "text/gimptextlayer.h"
+#include "text/picmantext.h"
+#include "text/picmantextlayer.h"
 
-#include "vectors/gimpvectors.h"
-#include "vectors/gimpvectors-import.h"
+#include "vectors/picmanvectors.h"
+#include "vectors/picmanvectors-import.h"
 
-#include "widgets/gimpdnd.h"
+#include "widgets/picmandnd.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-dnd.h"
-#include "gimpdisplayshell-transform.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-dnd.h"
+#include "picmandisplayshell-transform.h"
 
-#include "gimp-log.h"
-#include "gimp-intl.h"
+#include "picman-log.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   gimp_display_shell_drop_drawable  (GtkWidget       *widget,
+static void   picman_display_shell_drop_drawable  (GtkWidget       *widget,
                                                  gint             x,
                                                  gint             y,
-                                                 GimpViewable    *viewable,
+                                                 PicmanViewable    *viewable,
                                                  gpointer         data);
-static void   gimp_display_shell_drop_vectors   (GtkWidget       *widget,
+static void   picman_display_shell_drop_vectors   (GtkWidget       *widget,
                                                  gint             x,
                                                  gint             y,
-                                                 GimpViewable    *viewable,
+                                                 PicmanViewable    *viewable,
                                                  gpointer         data);
-static void   gimp_display_shell_drop_svg       (GtkWidget       *widget,
+static void   picman_display_shell_drop_svg       (GtkWidget       *widget,
                                                  gint             x,
                                                  gint             y,
                                                  const guchar    *svg_data,
                                                  gsize            svg_data_length,
                                                  gpointer         data);
-static void   gimp_display_shell_drop_pattern   (GtkWidget       *widget,
+static void   picman_display_shell_drop_pattern   (GtkWidget       *widget,
                                                  gint             x,
                                                  gint             y,
-                                                 GimpViewable    *viewable,
+                                                 PicmanViewable    *viewable,
                                                  gpointer         data);
-static void   gimp_display_shell_drop_color     (GtkWidget       *widget,
+static void   picman_display_shell_drop_color     (GtkWidget       *widget,
                                                  gint             x,
                                                  gint             y,
-                                                 const GimpRGB   *color,
+                                                 const PicmanRGB   *color,
                                                  gpointer         data);
-static void   gimp_display_shell_drop_buffer    (GtkWidget       *widget,
+static void   picman_display_shell_drop_buffer    (GtkWidget       *widget,
                                                  gint             x,
                                                  gint             y,
-                                                 GimpViewable    *viewable,
+                                                 PicmanViewable    *viewable,
                                                  gpointer         data);
-static void   gimp_display_shell_drop_uri_list  (GtkWidget       *widget,
+static void   picman_display_shell_drop_uri_list  (GtkWidget       *widget,
                                                  gint             x,
                                                  gint             y,
                                                  GList           *uri_list,
                                                  gpointer         data);
-static void   gimp_display_shell_drop_component (GtkWidget       *widget,
+static void   picman_display_shell_drop_component (GtkWidget       *widget,
                                                  gint             x,
                                                  gint             y,
-                                                 GimpImage       *image,
-                                                 GimpChannelType  component,
+                                                 PicmanImage       *image,
+                                                 PicmanChannelType  component,
                                                  gpointer         data);
-static void   gimp_display_shell_drop_pixbuf    (GtkWidget       *widget,
+static void   picman_display_shell_drop_pixbuf    (GtkWidget       *widget,
                                                  gint             x,
                                                  gint             y,
                                                  GdkPixbuf       *pixbuf,
@@ -114,42 +114,42 @@ static void   gimp_display_shell_drop_pixbuf    (GtkWidget       *widget,
 /*  public functions  */
 
 void
-gimp_display_shell_dnd_init (GimpDisplayShell *shell)
+picman_display_shell_dnd_init (PicmanDisplayShell *shell)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
-  gimp_dnd_viewable_dest_add  (shell->canvas, GIMP_TYPE_LAYER,
-                               gimp_display_shell_drop_drawable,
+  picman_dnd_viewable_dest_add  (shell->canvas, PICMAN_TYPE_LAYER,
+                               picman_display_shell_drop_drawable,
                                shell);
-  gimp_dnd_viewable_dest_add  (shell->canvas, GIMP_TYPE_LAYER_MASK,
-                               gimp_display_shell_drop_drawable,
+  picman_dnd_viewable_dest_add  (shell->canvas, PICMAN_TYPE_LAYER_MASK,
+                               picman_display_shell_drop_drawable,
                                shell);
-  gimp_dnd_viewable_dest_add  (shell->canvas, GIMP_TYPE_CHANNEL,
-                               gimp_display_shell_drop_drawable,
+  picman_dnd_viewable_dest_add  (shell->canvas, PICMAN_TYPE_CHANNEL,
+                               picman_display_shell_drop_drawable,
                                shell);
-  gimp_dnd_viewable_dest_add  (shell->canvas, GIMP_TYPE_VECTORS,
-                               gimp_display_shell_drop_vectors,
+  picman_dnd_viewable_dest_add  (shell->canvas, PICMAN_TYPE_VECTORS,
+                               picman_display_shell_drop_vectors,
                                shell);
-  gimp_dnd_viewable_dest_add  (shell->canvas, GIMP_TYPE_PATTERN,
-                               gimp_display_shell_drop_pattern,
+  picman_dnd_viewable_dest_add  (shell->canvas, PICMAN_TYPE_PATTERN,
+                               picman_display_shell_drop_pattern,
                                shell);
-  gimp_dnd_viewable_dest_add  (shell->canvas, GIMP_TYPE_BUFFER,
-                               gimp_display_shell_drop_buffer,
+  picman_dnd_viewable_dest_add  (shell->canvas, PICMAN_TYPE_BUFFER,
+                               picman_display_shell_drop_buffer,
                                shell);
-  gimp_dnd_color_dest_add     (shell->canvas,
-                               gimp_display_shell_drop_color,
+  picman_dnd_color_dest_add     (shell->canvas,
+                               picman_display_shell_drop_color,
                                shell);
-  gimp_dnd_component_dest_add (shell->canvas,
-                               gimp_display_shell_drop_component,
+  picman_dnd_component_dest_add (shell->canvas,
+                               picman_display_shell_drop_component,
                                shell);
-  gimp_dnd_uri_list_dest_add  (shell->canvas,
-                               gimp_display_shell_drop_uri_list,
+  picman_dnd_uri_list_dest_add  (shell->canvas,
+                               picman_display_shell_drop_uri_list,
                                shell);
-  gimp_dnd_svg_dest_add       (shell->canvas,
-                               gimp_display_shell_drop_svg,
+  picman_dnd_svg_dest_add       (shell->canvas,
+                               picman_display_shell_drop_svg,
                                shell);
-  gimp_dnd_pixbuf_dest_add    (shell->canvas,
-                               gimp_display_shell_drop_pixbuf,
+  picman_dnd_pixbuf_dest_add    (shell->canvas,
+                               picman_display_shell_drop_pixbuf,
                                shell);
 }
 
@@ -160,337 +160,337 @@ gimp_display_shell_dnd_init (GimpDisplayShell *shell)
  * Position the dropped item in the middle of the viewport.
  */
 static void
-gimp_display_shell_dnd_position_item (GimpDisplayShell *shell,
-                                      GimpImage        *image,
-                                      GimpItem         *item)
+picman_display_shell_dnd_position_item (PicmanDisplayShell *shell,
+                                      PicmanImage        *image,
+                                      PicmanItem         *item)
 {
-  gint item_width  = gimp_item_get_width  (item);
-  gint item_height = gimp_item_get_height (item);
+  gint item_width  = picman_item_get_width  (item);
+  gint item_height = picman_item_get_height (item);
   gint off_x, off_y;
 
-  if (item_width  >= gimp_image_get_width  (image) &&
-      item_height >= gimp_image_get_height (image))
+  if (item_width  >= picman_image_get_width  (image) &&
+      item_height >= picman_image_get_height (image))
     {
-      off_x = (gimp_image_get_width  (image) - item_width)  / 2;
-      off_y = (gimp_image_get_height (image) - item_height) / 2;
+      off_x = (picman_image_get_width  (image) - item_width)  / 2;
+      off_y = (picman_image_get_height (image) - item_height) / 2;
     }
   else
     {
       gint x, y;
       gint width, height;
 
-      gimp_display_shell_untransform_viewport (shell, &x, &y, &width, &height);
+      picman_display_shell_untransform_viewport (shell, &x, &y, &width, &height);
 
       off_x = x + (width  - item_width)  / 2;
       off_y = y + (height - item_height) / 2;
     }
 
-  gimp_item_translate (item,
-                       off_x - gimp_item_get_offset_x (item),
-                       off_y - gimp_item_get_offset_y (item),
+  picman_item_translate (item,
+                       off_x - picman_item_get_offset_x (item),
+                       off_y - picman_item_get_offset_y (item),
                        FALSE);
 }
 
 static void
-gimp_display_shell_dnd_flush (GimpDisplayShell *shell,
-                              GimpImage        *image)
+picman_display_shell_dnd_flush (PicmanDisplayShell *shell,
+                              PicmanImage        *image)
 {
-  gimp_display_shell_present (shell);
+  picman_display_shell_present (shell);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 
-  gimp_context_set_display (gimp_get_user_context (shell->display->gimp),
+  picman_context_set_display (picman_get_user_context (shell->display->picman),
                             shell->display);
 }
 
 static void
-gimp_display_shell_drop_drawable (GtkWidget    *widget,
+picman_display_shell_drop_drawable (GtkWidget    *widget,
                                   gint          x,
                                   gint          y,
-                                  GimpViewable *viewable,
+                                  PicmanViewable *viewable,
                                   gpointer      data)
 {
-  GimpDisplayShell *shell     = GIMP_DISPLAY_SHELL (data);
-  GimpImage        *image     = gimp_display_get_image (shell->display);
+  PicmanDisplayShell *shell     = PICMAN_DISPLAY_SHELL (data);
+  PicmanImage        *image     = picman_display_get_image (shell->display);
   GType             new_type;
-  GimpItem         *new_item;
+  PicmanItem         *new_item;
 
-  GIMP_LOG (DND, NULL);
+  PICMAN_LOG (DND, NULL);
 
-  if (shell->display->gimp->busy)
+  if (shell->display->picman->busy)
     return;
 
   if (! image)
     {
-      image = gimp_image_new_from_drawable (shell->display->gimp,
-                                            GIMP_DRAWABLE (viewable));
-      gimp_create_display (shell->display->gimp, image, GIMP_UNIT_PIXEL, 1.0);
+      image = picman_image_new_from_drawable (shell->display->picman,
+                                            PICMAN_DRAWABLE (viewable));
+      picman_create_display (shell->display->picman, image, PICMAN_UNIT_PIXEL, 1.0);
       g_object_unref (image);
 
       return;
     }
 
-  if (GIMP_IS_LAYER (viewable))
+  if (PICMAN_IS_LAYER (viewable))
     new_type = G_TYPE_FROM_INSTANCE (viewable);
   else
-    new_type = GIMP_TYPE_LAYER;
+    new_type = PICMAN_TYPE_LAYER;
 
-  new_item = gimp_item_convert (GIMP_ITEM (viewable), image, new_type);
+  new_item = picman_item_convert (PICMAN_ITEM (viewable), image, new_type);
 
   if (new_item)
     {
-      GimpLayer *new_layer = GIMP_LAYER (new_item);
+      PicmanLayer *new_layer = PICMAN_LAYER (new_item);
 
-      gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_EDIT_PASTE,
+      picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_EDIT_PASTE,
                                    _("Drop New Layer"));
 
-      gimp_display_shell_dnd_position_item (shell, image, new_item);
+      picman_display_shell_dnd_position_item (shell, image, new_item);
 
-      gimp_item_set_visible (new_item, TRUE, FALSE);
-      gimp_item_set_linked (new_item, FALSE, FALSE);
+      picman_item_set_visible (new_item, TRUE, FALSE);
+      picman_item_set_linked (new_item, FALSE, FALSE);
 
-      gimp_image_add_layer (image, new_layer,
-                            GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+      picman_image_add_layer (image, new_layer,
+                            PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-      gimp_image_undo_group_end (image);
+      picman_image_undo_group_end (image);
 
-      gimp_display_shell_dnd_flush (shell, image);
+      picman_display_shell_dnd_flush (shell, image);
     }
 }
 
 static void
-gimp_display_shell_drop_vectors (GtkWidget    *widget,
+picman_display_shell_drop_vectors (GtkWidget    *widget,
                                  gint          x,
                                  gint          y,
-                                 GimpViewable *viewable,
+                                 PicmanViewable *viewable,
                                  gpointer      data)
 {
-  GimpDisplayShell *shell = GIMP_DISPLAY_SHELL (data);
-  GimpImage        *image = gimp_display_get_image (shell->display);
-  GimpItem         *new_item;
+  PicmanDisplayShell *shell = PICMAN_DISPLAY_SHELL (data);
+  PicmanImage        *image = picman_display_get_image (shell->display);
+  PicmanItem         *new_item;
 
-  GIMP_LOG (DND, NULL);
+  PICMAN_LOG (DND, NULL);
 
-  if (shell->display->gimp->busy)
+  if (shell->display->picman->busy)
     return;
 
   if (! image)
     return;
 
-  new_item = gimp_item_convert (GIMP_ITEM (viewable),
+  new_item = picman_item_convert (PICMAN_ITEM (viewable),
                                 image, G_TYPE_FROM_INSTANCE (viewable));
 
   if (new_item)
     {
-      GimpVectors *new_vectors = GIMP_VECTORS (new_item);
+      PicmanVectors *new_vectors = PICMAN_VECTORS (new_item);
 
-      gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_EDIT_PASTE,
+      picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_EDIT_PASTE,
                                    _("Drop New Path"));
 
-      gimp_image_add_vectors (image, new_vectors,
-                              GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+      picman_image_add_vectors (image, new_vectors,
+                              PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-      gimp_image_undo_group_end (image);
+      picman_image_undo_group_end (image);
 
-      gimp_display_shell_dnd_flush (shell, image);
+      picman_display_shell_dnd_flush (shell, image);
     }
 }
 
 static void
-gimp_display_shell_drop_svg (GtkWidget     *widget,
+picman_display_shell_drop_svg (GtkWidget     *widget,
                              gint           x,
                              gint           y,
                              const guchar  *svg_data,
                              gsize          svg_data_len,
                              gpointer       data)
 {
-  GimpDisplayShell *shell = GIMP_DISPLAY_SHELL (data);
-  GimpImage        *image = gimp_display_get_image (shell->display);
+  PicmanDisplayShell *shell = PICMAN_DISPLAY_SHELL (data);
+  PicmanImage        *image = picman_display_get_image (shell->display);
   GError           *error  = NULL;
 
-  GIMP_LOG (DND, NULL);
+  PICMAN_LOG (DND, NULL);
 
-  if (shell->display->gimp->busy)
+  if (shell->display->picman->busy)
     return;
 
   if (! image)
     return;
 
-  if (! gimp_vectors_import_buffer (image,
+  if (! picman_vectors_import_buffer (image,
                                     (const gchar *) svg_data, svg_data_len,
                                     TRUE, FALSE,
-                                    GIMP_IMAGE_ACTIVE_PARENT, -1,
+                                    PICMAN_IMAGE_ACTIVE_PARENT, -1,
                                     NULL, &error))
     {
-      gimp_message_literal (shell->display->gimp, G_OBJECT (shell->display),
-			    GIMP_MESSAGE_ERROR,
+      picman_message_literal (shell->display->picman, G_OBJECT (shell->display),
+			    PICMAN_MESSAGE_ERROR,
 			    error->message);
       g_clear_error (&error);
     }
   else
     {
-      gimp_display_shell_dnd_flush (shell, image);
+      picman_display_shell_dnd_flush (shell, image);
     }
 }
 
 static void
-gimp_display_shell_dnd_bucket_fill (GimpDisplayShell   *shell,
-                                    GimpBucketFillMode  fill_mode,
-                                    const GimpRGB      *color,
-                                    GimpPattern        *pattern)
+picman_display_shell_dnd_bucket_fill (PicmanDisplayShell   *shell,
+                                    PicmanBucketFillMode  fill_mode,
+                                    const PicmanRGB      *color,
+                                    PicmanPattern        *pattern)
 {
-  GimpImage    *image = gimp_display_get_image (shell->display);
-  GimpDrawable *drawable;
+  PicmanImage    *image = picman_display_get_image (shell->display);
+  PicmanDrawable *drawable;
 
-  if (shell->display->gimp->busy)
+  if (shell->display->picman->busy)
     return;
 
   if (! image)
     return;
 
-  drawable = gimp_image_get_active_drawable (image);
+  drawable = picman_image_get_active_drawable (image);
 
   if (! drawable)
     return;
 
-  if (gimp_viewable_get_children (GIMP_VIEWABLE (drawable)))
+  if (picman_viewable_get_children (PICMAN_VIEWABLE (drawable)))
     {
-      gimp_message_literal (shell->display->gimp, G_OBJECT (shell->display),
-                            GIMP_MESSAGE_ERROR,
+      picman_message_literal (shell->display->picman, G_OBJECT (shell->display),
+                            PICMAN_MESSAGE_ERROR,
                             _("Cannot modify the pixels of layer groups."));
       return;
     }
 
-  if (gimp_item_is_content_locked (GIMP_ITEM (drawable)))
+  if (picman_item_is_content_locked (PICMAN_ITEM (drawable)))
     {
-      gimp_message_literal (shell->display->gimp, G_OBJECT (shell->display),
-                            GIMP_MESSAGE_ERROR,
+      picman_message_literal (shell->display->picman, G_OBJECT (shell->display),
+                            PICMAN_MESSAGE_ERROR,
                             _("The active layer's pixels are locked."));
       return;
     }
 
   /* FIXME: there should be a virtual method for this that the
-   *        GimpTextLayer can override.
+   *        PicmanTextLayer can override.
    */
-  if (color && gimp_item_is_text_layer (GIMP_ITEM (drawable)))
+  if (color && picman_item_is_text_layer (PICMAN_ITEM (drawable)))
     {
-      gimp_text_layer_set (GIMP_TEXT_LAYER (drawable), NULL,
+      picman_text_layer_set (PICMAN_TEXT_LAYER (drawable), NULL,
                            "color", color,
                            NULL);
     }
   else
     {
-      gimp_edit_fill_full (image, drawable,
+      picman_edit_fill_full (image, drawable,
                            color, pattern,
-                           GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE,
+                           PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE,
                            pattern ?
                            C_("undo-type", "Drop pattern to layer") :
                            C_("undo-type", "Drop color to layer"));
     }
 
-  gimp_display_shell_dnd_flush (shell, image);
+  picman_display_shell_dnd_flush (shell, image);
 }
 
 static void
-gimp_display_shell_drop_pattern (GtkWidget    *widget,
+picman_display_shell_drop_pattern (GtkWidget    *widget,
                                  gint          x,
                                  gint          y,
-                                 GimpViewable *viewable,
+                                 PicmanViewable *viewable,
                                  gpointer      data)
 {
-  GIMP_LOG (DND, NULL);
+  PICMAN_LOG (DND, NULL);
 
-  if (GIMP_IS_PATTERN (viewable))
-    gimp_display_shell_dnd_bucket_fill (GIMP_DISPLAY_SHELL (data),
-                                        GIMP_PATTERN_BUCKET_FILL,
-                                        NULL, GIMP_PATTERN (viewable));
+  if (PICMAN_IS_PATTERN (viewable))
+    picman_display_shell_dnd_bucket_fill (PICMAN_DISPLAY_SHELL (data),
+                                        PICMAN_PATTERN_BUCKET_FILL,
+                                        NULL, PICMAN_PATTERN (viewable));
 }
 
 static void
-gimp_display_shell_drop_color (GtkWidget     *widget,
+picman_display_shell_drop_color (GtkWidget     *widget,
                                gint           x,
                                gint           y,
-                               const GimpRGB *color,
+                               const PicmanRGB *color,
                                gpointer       data)
 {
-  GIMP_LOG (DND, NULL);
+  PICMAN_LOG (DND, NULL);
 
-  gimp_display_shell_dnd_bucket_fill (GIMP_DISPLAY_SHELL (data),
-                                      GIMP_FG_BUCKET_FILL,
+  picman_display_shell_dnd_bucket_fill (PICMAN_DISPLAY_SHELL (data),
+                                      PICMAN_FG_BUCKET_FILL,
                                       color, NULL);
 }
 
 static void
-gimp_display_shell_drop_buffer (GtkWidget    *widget,
+picman_display_shell_drop_buffer (GtkWidget    *widget,
                                 gint          drop_x,
                                 gint          drop_y,
-                                GimpViewable *viewable,
+                                PicmanViewable *viewable,
                                 gpointer      data)
 {
-  GimpDisplayShell *shell = GIMP_DISPLAY_SHELL (data);
-  GimpImage        *image = gimp_display_get_image (shell->display);
-  GimpDrawable     *drawable;
-  GimpBuffer       *buffer;
+  PicmanDisplayShell *shell = PICMAN_DISPLAY_SHELL (data);
+  PicmanImage        *image = picman_display_get_image (shell->display);
+  PicmanDrawable     *drawable;
+  PicmanBuffer       *buffer;
   gint              x, y, width, height;
 
-  GIMP_LOG (DND, NULL);
+  PICMAN_LOG (DND, NULL);
 
-  if (shell->display->gimp->busy)
+  if (shell->display->picman->busy)
     return;
 
   if (! image)
     {
-      image = gimp_image_new_from_buffer (shell->display->gimp, NULL,
-                                          GIMP_BUFFER (viewable));
-      gimp_create_display (image->gimp, image, GIMP_UNIT_PIXEL, 1.0);
+      image = picman_image_new_from_buffer (shell->display->picman, NULL,
+                                          PICMAN_BUFFER (viewable));
+      picman_create_display (image->picman, image, PICMAN_UNIT_PIXEL, 1.0);
       g_object_unref (image);
 
       return;
     }
 
-  drawable = gimp_image_get_active_drawable (image);
+  drawable = picman_image_get_active_drawable (image);
 
   if (drawable)
     {
-      if (gimp_viewable_get_children (GIMP_VIEWABLE (drawable)))
+      if (picman_viewable_get_children (PICMAN_VIEWABLE (drawable)))
         {
-          gimp_message_literal (shell->display->gimp, G_OBJECT (shell->display),
-                                GIMP_MESSAGE_ERROR,
+          picman_message_literal (shell->display->picman, G_OBJECT (shell->display),
+                                PICMAN_MESSAGE_ERROR,
                                 _("Cannot modify the pixels of layer groups."));
           return;
         }
 
-      if (gimp_item_is_content_locked (GIMP_ITEM (drawable)))
+      if (picman_item_is_content_locked (PICMAN_ITEM (drawable)))
         {
-          gimp_message_literal (shell->display->gimp, G_OBJECT (shell->display),
-                                GIMP_MESSAGE_ERROR,
+          picman_message_literal (shell->display->picman, G_OBJECT (shell->display),
+                                PICMAN_MESSAGE_ERROR,
                                 _("The active layer's pixels are locked."));
           return;
         }
     }
 
-  buffer = GIMP_BUFFER (viewable);
+  buffer = PICMAN_BUFFER (viewable);
 
-  gimp_display_shell_untransform_viewport (shell, &x, &y, &width, &height);
+  picman_display_shell_untransform_viewport (shell, &x, &y, &width, &height);
 
   /* FIXME: popup a menu for selecting "Paste Into" */
 
-  gimp_edit_paste (image, drawable, buffer, FALSE,
+  picman_edit_paste (image, drawable, buffer, FALSE,
                    x, y, width, height);
 
-  gimp_display_shell_dnd_flush (shell, image);
+  picman_display_shell_dnd_flush (shell, image);
 }
 
 static void
-gimp_display_shell_drop_uri_list (GtkWidget *widget,
+picman_display_shell_drop_uri_list (GtkWidget *widget,
                                   gint       x,
                                   gint       y,
                                   GList     *uri_list,
                                   gpointer   data)
 {
-  GimpDisplayShell *shell   = GIMP_DISPLAY_SHELL (data);
-  GimpImage        *image;
-  GimpContext      *context;
+  PicmanDisplayShell *shell   = PICMAN_DISPLAY_SHELL (data);
+  PicmanImage        *image;
+  PicmanContext      *context;
   GList            *list;
   gboolean          open_as_layers;
 
@@ -501,23 +501,23 @@ gimp_display_shell_drop_uri_list (GtkWidget *widget,
       return;
     }
 
-  image = gimp_display_get_image (shell->display);
-  context = gimp_get_user_context (shell->display->gimp);
+  image = picman_display_get_image (shell->display);
+  context = picman_get_user_context (shell->display->picman);
 
-  GIMP_LOG (DND, NULL);
+  PICMAN_LOG (DND, NULL);
 
   open_as_layers = (image != NULL);
 
   for (list = uri_list; list; list = g_list_next (list))
     {
       const gchar       *uri   = list->data;
-      GimpPDBStatusType  status;
+      PicmanPDBStatusType  status;
       GError            *error = NULL;
       gboolean           warn  = FALSE;
 
       if (! shell->display)
         {
-          /* It seems as if GIMP is being torn down for quitting. Bail out. */
+          /* It seems as if PICMAN is being torn down for quitting. Bail out. */
           return;
         }
 
@@ -525,10 +525,10 @@ gimp_display_shell_drop_uri_list (GtkWidget *widget,
         {
           GList *new_layers;
 
-          new_layers = file_open_layers (shell->display->gimp, context,
-                                         GIMP_PROGRESS (shell->display),
+          new_layers = file_open_layers (shell->display->picman, context,
+                                         PICMAN_PROGRESS (shell->display),
                                          image, FALSE,
-                                         uri, GIMP_RUN_INTERACTIVE, NULL,
+                                         uri, PICMAN_RUN_INTERACTIVE, NULL,
                                          &status, &error);
 
           if (new_layers)
@@ -536,43 +536,43 @@ gimp_display_shell_drop_uri_list (GtkWidget *widget,
               gint x, y;
               gint width, height;
 
-              gimp_display_shell_untransform_viewport (shell, &x, &y,
+              picman_display_shell_untransform_viewport (shell, &x, &y,
                                                        &width, &height);
 
-              gimp_image_add_layers (image, new_layers,
-                                     GIMP_IMAGE_ACTIVE_PARENT, -1,
+              picman_image_add_layers (image, new_layers,
+                                     PICMAN_IMAGE_ACTIVE_PARENT, -1,
                                      x, y, width, height,
                                      _("Drop layers"));
 
               g_list_free (new_layers);
             }
-          else if (status != GIMP_PDB_CANCEL)
+          else if (status != PICMAN_PDB_CANCEL)
             {
               warn = TRUE;
             }
         }
-      else if (gimp_display_get_image (shell->display))
+      else if (picman_display_get_image (shell->display))
         {
           /*  open any subsequent images in a new display  */
-          GimpImage *new_image;
+          PicmanImage *new_image;
 
-          new_image = file_open_with_display (shell->display->gimp, context,
+          new_image = file_open_with_display (shell->display->picman, context,
                                               NULL,
                                               uri, FALSE,
                                               &status, &error);
 
-          if (! new_image && status != GIMP_PDB_CANCEL)
+          if (! new_image && status != PICMAN_PDB_CANCEL)
             warn = TRUE;
         }
       else
         {
           /*  open the first image in the empty display  */
-          image = file_open_with_display (shell->display->gimp, context,
-                                          GIMP_PROGRESS (shell->display),
+          image = file_open_with_display (shell->display->picman, context,
+                                          PICMAN_PROGRESS (shell->display),
                                           uri, FALSE,
                                           &status, &error);
 
-          if (! image && status != GIMP_PDB_CANCEL)
+          if (! image && status != PICMAN_PDB_CANCEL)
             warn = TRUE;
         }
 
@@ -583,8 +583,8 @@ gimp_display_shell_drop_uri_list (GtkWidget *widget,
         {
           gchar *filename = file_utils_uri_display_name (uri);
 
-          gimp_message (shell->display->gimp, G_OBJECT (shell->display),
-                        GIMP_MESSAGE_ERROR,
+          picman_message (shell->display->picman, G_OBJECT (shell->display),
+                        PICMAN_MESSAGE_ERROR,
                         _("Opening '%s' failed:\n\n%s"),
                         filename, error->message);
 
@@ -594,89 +594,89 @@ gimp_display_shell_drop_uri_list (GtkWidget *widget,
     }
 
   if (image)
-    gimp_display_shell_dnd_flush (shell, image);
+    picman_display_shell_dnd_flush (shell, image);
 }
 
 static void
-gimp_display_shell_drop_component (GtkWidget       *widget,
+picman_display_shell_drop_component (GtkWidget       *widget,
                                    gint             x,
                                    gint             y,
-                                   GimpImage       *image,
-                                   GimpChannelType  component,
+                                   PicmanImage       *image,
+                                   PicmanChannelType  component,
                                    gpointer         data)
 {
-  GimpDisplayShell *shell      = GIMP_DISPLAY_SHELL (data);
-  GimpImage        *dest_image = gimp_display_get_image (shell->display);
-  GimpChannel      *channel;
-  GimpItem         *new_item;
+  PicmanDisplayShell *shell      = PICMAN_DISPLAY_SHELL (data);
+  PicmanImage        *dest_image = picman_display_get_image (shell->display);
+  PicmanChannel      *channel;
+  PicmanItem         *new_item;
   const gchar      *desc;
 
-  GIMP_LOG (DND, NULL);
+  PICMAN_LOG (DND, NULL);
 
-  if (shell->display->gimp->busy)
+  if (shell->display->picman->busy)
     return;
 
   if (! dest_image)
     {
-      dest_image = gimp_image_new_from_component (image->gimp,
+      dest_image = picman_image_new_from_component (image->picman,
                                                   image, component);
-      gimp_create_display (dest_image->gimp, dest_image, GIMP_UNIT_PIXEL, 1.0);
+      picman_create_display (dest_image->picman, dest_image, PICMAN_UNIT_PIXEL, 1.0);
       g_object_unref (dest_image);
 
       return;
     }
 
-  channel = gimp_channel_new_from_component (image, component, NULL, NULL);
+  channel = picman_channel_new_from_component (image, component, NULL, NULL);
 
-  new_item = gimp_item_convert (GIMP_ITEM (channel),
-                                dest_image, GIMP_TYPE_LAYER);
+  new_item = picman_item_convert (PICMAN_ITEM (channel),
+                                dest_image, PICMAN_TYPE_LAYER);
   g_object_unref (channel);
 
   if (new_item)
     {
-      GimpLayer *new_layer = GIMP_LAYER (new_item);
+      PicmanLayer *new_layer = PICMAN_LAYER (new_item);
 
-      gimp_enum_get_value (GIMP_TYPE_CHANNEL_TYPE, component,
+      picman_enum_get_value (PICMAN_TYPE_CHANNEL_TYPE, component,
                            NULL, NULL, &desc, NULL);
-      gimp_object_take_name (GIMP_OBJECT (new_layer),
+      picman_object_take_name (PICMAN_OBJECT (new_layer),
                              g_strdup_printf (_("%s Channel Copy"), desc));
 
-      gimp_image_undo_group_start (dest_image, GIMP_UNDO_GROUP_EDIT_PASTE,
+      picman_image_undo_group_start (dest_image, PICMAN_UNDO_GROUP_EDIT_PASTE,
                                    _("Drop New Layer"));
 
-      gimp_display_shell_dnd_position_item (shell, image, new_item);
+      picman_display_shell_dnd_position_item (shell, image, new_item);
 
-      gimp_image_add_layer (dest_image, new_layer,
-                            GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+      picman_image_add_layer (dest_image, new_layer,
+                            PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-      gimp_image_undo_group_end (dest_image);
+      picman_image_undo_group_end (dest_image);
 
-      gimp_display_shell_dnd_flush (shell, dest_image);
+      picman_display_shell_dnd_flush (shell, dest_image);
     }
 }
 
 static void
-gimp_display_shell_drop_pixbuf (GtkWidget *widget,
+picman_display_shell_drop_pixbuf (GtkWidget *widget,
                                 gint       x,
                                 gint       y,
                                 GdkPixbuf *pixbuf,
                                 gpointer   data)
 {
-  GimpDisplayShell *shell = GIMP_DISPLAY_SHELL (data);
-  GimpImage        *image = gimp_display_get_image (shell->display);
-  GimpLayer        *new_layer;
+  PicmanDisplayShell *shell = PICMAN_DISPLAY_SHELL (data);
+  PicmanImage        *image = picman_display_get_image (shell->display);
+  PicmanLayer        *new_layer;
   gboolean          has_alpha = FALSE;
 
-  GIMP_LOG (DND, NULL);
+  PICMAN_LOG (DND, NULL);
 
-  if (shell->display->gimp->busy)
+  if (shell->display->picman->busy)
     return;
 
   if (! image)
     {
-      image = gimp_image_new_from_pixbuf (shell->display->gimp, pixbuf,
+      image = picman_image_new_from_pixbuf (shell->display->picman, pixbuf,
                                           _("Dropped Buffer"));
-      gimp_create_display (image->gimp, image, GIMP_UNIT_PIXEL, 1.0);
+      picman_create_display (image->picman, image, PICMAN_UNIT_PIXEL, 1.0);
       g_object_unref (image);
 
       return;
@@ -689,25 +689,25 @@ gimp_display_shell_drop_pixbuf (GtkWidget *widget,
     }
 
   new_layer =
-    gimp_layer_new_from_pixbuf (pixbuf, image,
-                                gimp_image_get_layer_format (image, has_alpha),
+    picman_layer_new_from_pixbuf (pixbuf, image,
+                                picman_image_get_layer_format (image, has_alpha),
                                 _("Dropped Buffer"),
-                                GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+                                PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
 
   if (new_layer)
     {
-      GimpItem *new_item = GIMP_ITEM (new_layer);
+      PicmanItem *new_item = PICMAN_ITEM (new_layer);
 
-      gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_EDIT_PASTE,
+      picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_EDIT_PASTE,
                                    _("Drop New Layer"));
 
-      gimp_display_shell_dnd_position_item (shell, image, new_item);
+      picman_display_shell_dnd_position_item (shell, image, new_item);
 
-      gimp_image_add_layer (image, new_layer,
-                            GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+      picman_image_add_layer (image, new_layer,
+                            PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-      gimp_image_undo_group_end (image);
+      picman_image_undo_group_end (image);
 
-      gimp_display_shell_dnd_flush (shell, image);
+      picman_display_shell_dnd_flush (shell, image);
     }
 }

@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; xach effect script
@@ -38,10 +38,10 @@
         (ds-blur (max ds-blur 0))
         (ds-opacity (min ds-opacity 100))
         (ds-opacity (max ds-opacity 0))
-        (type (car (gimp-drawable-type-with-alpha drawable)))
-        (image-width (car (gimp-image-width image)))
+        (type (car (picman-drawable-type-with-alpha drawable)))
+        (image-width (car (picman-image-width image)))
         (hl-opacity (list hl-opacity-comp hl-opacity-comp hl-opacity-comp))
-        (image-height (car (gimp-image-height image)))
+        (image-height (car (picman-image-height image)))
         (active-selection 0)
         (from-selection 0)
         (theLayer 0)
@@ -50,77 +50,77 @@
         (mask 0)
         )
 
-    (gimp-context-push)
-    (gimp-context-set-defaults)
+    (picman-context-push)
+    (picman-context-set-defaults)
 
-    (gimp-image-undo-group-start image)
-    (gimp-layer-add-alpha drawable)
+    (picman-image-undo-group-start image)
+    (picman-layer-add-alpha drawable)
 
-    (if (= (car (gimp-selection-is-empty image)) TRUE)
+    (if (= (car (picman-selection-is-empty image)) TRUE)
         (begin
-          (gimp-image-select-item image CHANNEL-OP-REPLACE drawable)
-          (set! active-selection (car (gimp-selection-save image)))
+          (picman-image-select-item image CHANNEL-OP-REPLACE drawable)
+          (set! active-selection (car (picman-selection-save image)))
           (set! from-selection FALSE))
         (begin
           (set! from-selection TRUE)
-          (set! active-selection (car (gimp-selection-save image)))))
+          (set! active-selection (car (picman-selection-save image)))))
 
-    (set! hl-layer (car (gimp-layer-new image image-width image-height type _"Highlight" 100 NORMAL-MODE)))
-    (gimp-image-insert-layer image hl-layer 0 -1)
+    (set! hl-layer (car (picman-layer-new image image-width image-height type _"Highlight" 100 NORMAL-MODE)))
+    (picman-image-insert-layer image hl-layer 0 -1)
 
-    (gimp-selection-none image)
-    (gimp-edit-clear hl-layer)
-    (gimp-image-select-item image CHANNEL-OP-REPLACE active-selection)
+    (picman-selection-none image)
+    (picman-edit-clear hl-layer)
+    (picman-image-select-item image CHANNEL-OP-REPLACE active-selection)
 
-    (gimp-context-set-background hl-color)
-    (gimp-edit-fill hl-layer BACKGROUND-FILL)
-    (gimp-selection-translate image hl-offset-x hl-offset-y)
-    (gimp-edit-fill hl-layer BACKGROUND-FILL)
-    (gimp-selection-none image)
-    (gimp-image-select-item image CHANNEL-OP-REPLACE active-selection)
+    (picman-context-set-background hl-color)
+    (picman-edit-fill hl-layer BACKGROUND-FILL)
+    (picman-selection-translate image hl-offset-x hl-offset-y)
+    (picman-edit-fill hl-layer BACKGROUND-FILL)
+    (picman-selection-none image)
+    (picman-image-select-item image CHANNEL-OP-REPLACE active-selection)
 
-    (set! mask (car (gimp-layer-create-mask hl-layer ADD-WHITE-MASK)))
-    (gimp-layer-add-mask hl-layer mask)
+    (set! mask (car (picman-layer-create-mask hl-layer ADD-WHITE-MASK)))
+    (picman-layer-add-mask hl-layer mask)
 
-    (gimp-context-set-background hl-opacity)
-    (gimp-edit-fill mask BACKGROUND-FILL)
+    (picman-context-set-background hl-opacity)
+    (picman-edit-fill mask BACKGROUND-FILL)
 
-    (set! shadow-layer (car (gimp-layer-new image
+    (set! shadow-layer (car (picman-layer-new image
                                             image-width
                                             image-height
                                             type
                                             _"Shadow"
                                             ds-opacity
                                             NORMAL-MODE)))
-    (gimp-image-insert-layer image shadow-layer 0 -1)
-    (gimp-selection-none image)
-    (gimp-edit-clear shadow-layer)
-    (gimp-image-select-item image CHANNEL-OP-REPLACE active-selection)
-    (gimp-selection-translate image ds-offset-x ds-offset-y)
-    (gimp-context-set-background ds-color)
-    (gimp-edit-fill shadow-layer BACKGROUND-FILL)
-    (gimp-selection-none image)
+    (picman-image-insert-layer image shadow-layer 0 -1)
+    (picman-selection-none image)
+    (picman-edit-clear shadow-layer)
+    (picman-image-select-item image CHANNEL-OP-REPLACE active-selection)
+    (picman-selection-translate image ds-offset-x ds-offset-y)
+    (picman-context-set-background ds-color)
+    (picman-edit-fill shadow-layer BACKGROUND-FILL)
+    (picman-selection-none image)
     (plug-in-gauss-rle RUN-NONINTERACTIVE image shadow-layer ds-blur TRUE TRUE)
-    (gimp-image-select-item image CHANNEL-OP-REPLACE active-selection)
-    (gimp-edit-clear shadow-layer)
-    (gimp-image-lower-item image shadow-layer)
+    (picman-image-select-item image CHANNEL-OP-REPLACE active-selection)
+    (picman-edit-clear shadow-layer)
+    (picman-image-lower-item image shadow-layer)
 
     (if (= keep-selection FALSE)
-        (gimp-selection-none image))
+        (picman-selection-none image))
 
-    (gimp-image-set-active-layer image drawable)
-    (gimp-image-remove-channel image active-selection)
-    (gimp-image-undo-group-end image)
-    (gimp-displays-flush)
+    (picman-image-set-active-layer image drawable)
+    (picman-image-remove-channel image active-selection)
+    (picman-image-undo-group-end image)
+    (picman-displays-flush)
 
-    (gimp-context-pop)
+    (picman-context-pop)
   )
 )
 
 (script-fu-register "script-fu-xach-effect"
   _"_Xach-Effect..."
   _"Add a subtle translucent 3D effect to the selected region (or alpha)"
-  "Adrian Likins <adrian@gimp.org>"
+  "Adrian Likins <adrian@picman.org>"
   "Adrian Likins"
   "9/28/97"
   "RGB* GRAY*"

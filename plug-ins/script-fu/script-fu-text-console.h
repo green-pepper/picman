@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@
 
 void  script_fu_text_console_run (const gchar      *name,
                                   gint              nparams,
-                                  const GimpParam  *params,
+                                  const PicmanParam  *params,
                                   gint             *nreturn_vals,
-                                  GimpParam       **return_vals);
+                                  PicmanParam       **return_vals);
 
 
 #endif /*  __SCRIPT_FU_TEXT_CONSOLE_H__  */

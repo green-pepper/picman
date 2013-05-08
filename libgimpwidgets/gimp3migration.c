@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimp3migration.c
- * Copyright (C) 2011 Michael Natterer <mitch@gimp.org>
+ * picman3migration.c
+ * Copyright (C) 2011 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,9 +25,9 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimp3migration.h"
+#include "picman3migration.h"
 
 
 GtkWidget *

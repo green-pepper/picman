@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpuimanager.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanuimanager.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,90 +18,90 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_UI_MANAGER_H__
-#define __GIMP_UI_MANAGER_H__
+#ifndef __PICMAN_UI_MANAGER_H__
+#define __PICMAN_UI_MANAGER_H__
 
 
-typedef struct _GimpUIManagerUIEntry GimpUIManagerUIEntry;
+typedef struct _PicmanUIManagerUIEntry PicmanUIManagerUIEntry;
 
-struct _GimpUIManagerUIEntry
+struct _PicmanUIManagerUIEntry
 {
   gchar                  *ui_path;
   gchar                  *basename;
-  GimpUIManagerSetupFunc  setup_func;
+  PicmanUIManagerSetupFunc  setup_func;
   guint                   merge_id;
   GtkWidget              *widget;
 };
 
 
-#define GIMP_TYPE_UI_MANAGER              (gimp_ui_manager_get_type ())
-#define GIMP_UI_MANAGER(obj)              (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_UI_MANAGER, GimpUIManager))
-#define GIMP_UI_MANAGER_CLASS(vtable)     (G_TYPE_CHECK_CLASS_CAST ((vtable), GIMP_TYPE_UI_MANAGER, GimpUIManagerClass))
-#define GIMP_IS_UI_MANAGER(obj)           (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_UI_MANAGER))
-#define GIMP_IS_UI_MANAGER_CLASS(vtable)  (G_TYPE_CHECK_CLASS_TYPE ((vtable), GIMP_TYPE_UI_MANAGER))
-#define GIMP_UI_MANAGER_GET_CLASS(inst)   (G_TYPE_INSTANCE_GET_CLASS ((inst), GIMP_TYPE_UI_MANAGER, GimpUIManagerClass))
+#define PICMAN_TYPE_UI_MANAGER              (picman_ui_manager_get_type ())
+#define PICMAN_UI_MANAGER(obj)              (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_UI_MANAGER, PicmanUIManager))
+#define PICMAN_UI_MANAGER_CLASS(vtable)     (G_TYPE_CHECK_CLASS_CAST ((vtable), PICMAN_TYPE_UI_MANAGER, PicmanUIManagerClass))
+#define PICMAN_IS_UI_MANAGER(obj)           (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_UI_MANAGER))
+#define PICMAN_IS_UI_MANAGER_CLASS(vtable)  (G_TYPE_CHECK_CLASS_TYPE ((vtable), PICMAN_TYPE_UI_MANAGER))
+#define PICMAN_UI_MANAGER_GET_CLASS(inst)   (G_TYPE_INSTANCE_GET_CLASS ((inst), PICMAN_TYPE_UI_MANAGER, PicmanUIManagerClass))
 
 
-typedef struct _GimpUIManagerClass GimpUIManagerClass;
+typedef struct _PicmanUIManagerClass PicmanUIManagerClass;
 
 /**
  * Among other things, is responsible for updating menu bars. A more
- * appropriate name would perhaps be GimpMenubarManager.
+ * appropriate name would perhaps be PicmanMenubarManager.
  */
-struct _GimpUIManager
+struct _PicmanUIManager
 {
   GtkUIManager  parent_instance;
 
   gchar        *name;
-  Gimp         *gimp;
+  Picman         *picman;
   GList        *registered_uis;
 };
 
-struct _GimpUIManagerClass
+struct _PicmanUIManagerClass
 {
   GtkUIManagerClass  parent_class;
 
   GHashTable        *managers;
 
-  void (* update)       (GimpUIManager *manager,
+  void (* update)       (PicmanUIManager *manager,
                          gpointer       update_data);
-  void (* show_tooltip) (GimpUIManager *manager,
+  void (* show_tooltip) (PicmanUIManager *manager,
                          const gchar   *tooltip);
-  void (* hide_tooltip) (GimpUIManager *manager);
+  void (* hide_tooltip) (PicmanUIManager *manager);
 };
 
 
-GType           gimp_ui_manager_get_type    (void) G_GNUC_CONST;
+GType           picman_ui_manager_get_type    (void) G_GNUC_CONST;
 
-GimpUIManager * gimp_ui_manager_new         (Gimp                   *gimp,
+PicmanUIManager * picman_ui_manager_new         (Picman                   *picman,
                                              const gchar            *name);
 
-GList         * gimp_ui_managers_from_name  (const gchar            *name);
+GList         * picman_ui_managers_from_name  (const gchar            *name);
 
-void            gimp_ui_manager_update      (GimpUIManager          *manager,
+void            picman_ui_manager_update      (PicmanUIManager          *manager,
                                              gpointer                update_data);
-GimpActionGroup * gimp_ui_manager_get_action_group (GimpUIManager   *manager,
+PicmanActionGroup * picman_ui_manager_get_action_group (PicmanUIManager   *manager,
                                                     const gchar     *name);
 
-GtkAction     * gimp_ui_manager_find_action     (GimpUIManager      *manager,
+GtkAction     * picman_ui_manager_find_action     (PicmanUIManager      *manager,
                                                  const gchar        *group_name,
                                                  const gchar        *action_name);
-gboolean        gimp_ui_manager_activate_action (GimpUIManager      *manager,
+gboolean        picman_ui_manager_activate_action (PicmanUIManager      *manager,
                                                  const gchar        *group_name,
                                                  const gchar        *action_name);
 
-void            gimp_ui_manager_ui_register (GimpUIManager          *manager,
+void            picman_ui_manager_ui_register (PicmanUIManager          *manager,
                                              const gchar            *ui_path,
                                              const gchar            *basename,
-                                             GimpUIManagerSetupFunc  setup_func);
+                                             PicmanUIManagerSetupFunc  setup_func);
 
-void            gimp_ui_manager_ui_popup    (GimpUIManager          *manager,
+void            picman_ui_manager_ui_popup    (PicmanUIManager          *manager,
                                              const gchar            *ui_path,
                                              GtkWidget              *parent,
-                                             GimpMenuPositionFunc    position_func,
+                                             PicmanMenuPositionFunc    position_func,
                                              gpointer                position_data,
                                              GDestroyNotify          popdown_func,
                                              gpointer                popdown_data);
 
 
-#endif  /* __GIMP_UI_MANAGER_H__ */
+#endif  /* __PICMAN_UI_MANAGER_H__ */

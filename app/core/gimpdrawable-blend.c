@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,25 +24,25 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "gegl/gimp-gegl-apply-operation.h"
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-apply-operation.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimp.h"
-#include "gimp-utils.h"
-#include "gimpchannel.h"
-#include "gimpcontext.h"
-#include "gimpdrawable-blend.h"
-#include "gimpgradient.h"
-#include "gimpimage.h"
-#include "gimpprogress.h"
+#include "picman.h"
+#include "picman-utils.h"
+#include "picmanchannel.h"
+#include "picmancontext.h"
+#include "picmandrawable-blend.h"
+#include "picmangradient.h"
+#include "picmanimage.h"
+#include "picmanprogress.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 //#define USE_GRADIENT_CACHE 1
@@ -50,21 +50,21 @@
 
 typedef struct
 {
-  GimpGradient     *gradient;
-  GimpContext      *context;
+  PicmanGradient     *gradient;
+  PicmanContext      *context;
   gboolean          reverse;
 #ifdef USE_GRADIENT_CACHE
-  GimpRGB          *gradient_cache;
+  PicmanRGB          *gradient_cache;
   gint              gradient_cache_size;
 #endif
   gdouble           offset;
   gdouble           sx, sy;
-  GimpBlendMode     blend_mode;
-  GimpGradientType  gradient_type;
-  GimpRGB           fg, bg;
+  PicmanBlendMode     blend_mode;
+  PicmanGradientType  gradient_type;
+  PicmanRGB           fg, bg;
   gdouble           dist;
   gdouble           vec[2];
-  GimpRepeatMode    repeat;
+  PicmanRepeatMode    repeat;
   GRand            *seed;
   GeglBuffer       *dist_buffer;
 } RenderBlendData;
@@ -125,30 +125,30 @@ static gdouble  gradient_calc_shapeburst_dimpled_factor   (GeglBuffer *dist_buff
                                                            gdouble     x,
                                                            gdouble     y);
 
-static GeglBuffer * gradient_precalc_shapeburst (GimpImage           *image,
-                                                 GimpDrawable        *drawable,
+static GeglBuffer * gradient_precalc_shapeburst (PicmanImage           *image,
+                                                 PicmanDrawable        *drawable,
                                                  const GeglRectangle *region,
                                                  gdouble              dist,
-                                                 GimpProgress        *progress);
+                                                 PicmanProgress        *progress);
 
 static void     gradient_render_pixel       (gdouble              x,
                                              gdouble              y,
-                                             GimpRGB             *color,
+                                             PicmanRGB             *color,
                                              gpointer             render_data);
 static void     gradient_put_pixel          (gint                 x,
                                              gint                 y,
-                                             GimpRGB             *color,
+                                             PicmanRGB             *color,
                                              gpointer             put_pixel_data);
 
-static void     gradient_fill_region        (GimpImage           *image,
-                                             GimpDrawable        *drawable,
-                                             GimpContext         *context,
+static void     gradient_fill_region        (PicmanImage           *image,
+                                             PicmanDrawable        *drawable,
+                                             PicmanContext         *context,
                                              GeglBuffer          *buffer,
                                              const GeglRectangle *buffer_region,
-                                             GimpBlendMode        blend_mode,
-                                             GimpGradientType     gradient_type,
+                                             PicmanBlendMode        blend_mode,
+                                             PicmanGradientType     gradient_type,
                                              gdouble              offset,
-                                             GimpRepeatMode       repeat,
+                                             PicmanRepeatMode       repeat,
                                              gboolean             reverse,
                                              gboolean             supersample,
                                              gint                 max_depth,
@@ -158,20 +158,20 @@ static void     gradient_fill_region        (GimpImage           *image,
                                              gdouble              sy,
                                              gdouble              ex,
                                              gdouble              ey,
-                                             GimpProgress        *progress);
+                                             PicmanProgress        *progress);
 
 
 /*  public functions  */
 
 void
-gimp_drawable_blend (GimpDrawable         *drawable,
-                     GimpContext          *context,
-                     GimpBlendMode         blend_mode,
-                     GimpLayerModeEffects  paint_mode,
-                     GimpGradientType      gradient_type,
+picman_drawable_blend (PicmanDrawable         *drawable,
+                     PicmanContext          *context,
+                     PicmanBlendMode         blend_mode,
+                     PicmanLayerModeEffects  paint_mode,
+                     PicmanGradientType      gradient_type,
                      gdouble               opacity,
                      gdouble               offset,
-                     GimpRepeatMode        repeat,
+                     PicmanRepeatMode        repeat,
                      gboolean              reverse,
                      gboolean              supersample,
                      gint                  max_depth,
@@ -181,27 +181,27 @@ gimp_drawable_blend (GimpDrawable         *drawable,
                      gdouble               starty,
                      gdouble               endx,
                      gdouble               endy,
-                     GimpProgress         *progress)
+                     PicmanProgress         *progress)
 {
-  GimpImage   *image;
+  PicmanImage   *image;
   GeglBuffer  *buffer;
   gint         x, y, width, height;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
-  image = gimp_item_get_image (GIMP_ITEM (drawable));
+  image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-  if (! gimp_item_mask_intersect (GIMP_ITEM (drawable), &x, &y, &width, &height))
+  if (! picman_item_mask_intersect (PICMAN_ITEM (drawable), &x, &y, &width, &height))
     return;
 
-  gimp_set_busy (image->gimp);
+  picman_set_busy (image->picman);
 
   /*  Always create an alpha temp buf (for generality) */
   buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0, width, height),
-                            gimp_drawable_get_format_with_alpha (drawable));
+                            picman_drawable_get_format_with_alpha (drawable));
 
   gradient_fill_region (image, drawable, context,
                         buffer, GEGL_RECTANGLE (0, 0, width, height),
@@ -211,19 +211,19 @@ gimp_drawable_blend (GimpDrawable         *drawable,
                         (endx - x), (endy - y),
                         progress);
 
-  gimp_drawable_apply_buffer (drawable, buffer,
+  picman_drawable_apply_buffer (drawable, buffer,
                               GEGL_RECTANGLE (0, 0, width, height),
                               TRUE, C_("undo-type", "Blend"),
                               opacity, paint_mode,
                               NULL, x, y);
 
   /*  update the image  */
-  gimp_drawable_update (drawable, x, y, width, height);
+  picman_drawable_update (drawable, x, y, width, height);
 
   /*  free the temporary buffer  */
   g_object_unref (buffer);
 
-  gimp_unset_busy (image->gimp);
+  picman_unset_busy (image->picman);
 }
 
 static gdouble
@@ -530,20 +530,20 @@ gradient_calc_shapeburst_dimpled_factor (GeglBuffer *dist_buffer,
 }
 
 static GeglBuffer *
-gradient_precalc_shapeburst (GimpImage           *image,
-                             GimpDrawable        *drawable,
+gradient_precalc_shapeburst (PicmanImage           *image,
+                             PicmanDrawable        *drawable,
                              const GeglRectangle *region,
                              gdouble              dist,
-                             GimpProgress        *progress)
+                             PicmanProgress        *progress)
 {
-  GimpChannel *mask;
+  PicmanChannel *mask;
   GeglBuffer  *dist_buffer;
   GeglBuffer  *temp_buffer;
   GeglNode    *shapeburst;
   gdouble      max;
   gfloat       max_iteration;
 
-  gimp_progress_set_text (progress, _("Calculating distance map"));
+  picman_progress_set_text (progress, _("Calculating distance map"));
 
   /*  allocate the distance map  */
   dist_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
@@ -551,26 +551,26 @@ gradient_precalc_shapeburst (GimpImage           *image,
                                  babl_format ("Y float"));
 
   /*  allocate the selection mask copy
-   *  XXX: its format should be the same of gimp:shapeburst input buffer
+   *  XXX: its format should be the same of picman:shapeburst input buffer
    *       porting the op to 'float' should be reflected here as well
    */
   temp_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
                                                  region->width, region->height),
                                  babl_format ("Y u8"));
 
-  mask = gimp_image_get_mask (image);
+  mask = picman_image_get_mask (image);
 
   /*  If the image mask is not empty, use it as the shape burst source  */
-  if (! gimp_channel_is_empty (mask))
+  if (! picman_channel_is_empty (mask))
     {
       gint x, y, width, height;
       gint off_x, off_y;
 
-      gimp_item_mask_intersect (GIMP_ITEM (drawable), &x, &y, &width, &height);
-      gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+      picman_item_mask_intersect (PICMAN_ITEM (drawable), &x, &y, &width, &height);
+      picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
 
       /*  copy the mask to the temp mask  */
-      gegl_buffer_copy (gimp_drawable_get_buffer (GIMP_DRAWABLE (mask)),
+      gegl_buffer_copy (picman_drawable_get_buffer (PICMAN_DRAWABLE (mask)),
                         GEGL_RECTANGLE (x + off_x, y + off_y, width, height),
                         temp_buffer,
                         GEGL_RECTANGLE (0, 0, 0, 0));
@@ -578,7 +578,7 @@ gradient_precalc_shapeburst (GimpImage           *image,
   else
     {
       /*  If the intended drawable has an alpha channel, use that  */
-      if (gimp_drawable_has_alpha (drawable))
+      if (picman_drawable_has_alpha (drawable))
         {
           const Babl *component_format;
 
@@ -586,7 +586,7 @@ gradient_precalc_shapeburst (GimpImage           *image,
 
           /*  extract the aplha into the temp mask  */
           gegl_buffer_set_format (temp_buffer, component_format);
-          gegl_buffer_copy (gimp_drawable_get_buffer (drawable),
+          gegl_buffer_copy (picman_drawable_get_buffer (drawable),
                             GEGL_RECTANGLE (region->x, region->y,
                                             region->width, region->height),
                             temp_buffer,
@@ -604,12 +604,12 @@ gradient_precalc_shapeburst (GimpImage           *image,
     }
 
   shapeburst = gegl_node_new_child (NULL,
-                                    "operation", "gimp:shapeburst",
+                                    "operation", "picman:shapeburst",
                                     NULL);
 
-  gimp_gegl_progress_connect (shapeburst, progress, NULL);
+  picman_gegl_progress_connect (shapeburst, progress, NULL);
 
-  gimp_gegl_apply_operation (temp_buffer, NULL, NULL,
+  picman_gegl_apply_operation (temp_buffer, NULL, NULL,
                              shapeburst,
                              dist_buffer, NULL);
 
@@ -645,7 +645,7 @@ gradient_precalc_shapeburst (GimpImage           *image,
 static void
 gradient_render_pixel (gdouble   x,
                        gdouble   y,
-                       GimpRGB  *color,
+                       PicmanRGB  *color,
                        gpointer  render_data)
 {
   RenderBlendData *rbd = render_data;
@@ -655,60 +655,60 @@ gradient_render_pixel (gdouble   x,
 
   switch (rbd->gradient_type)
     {
-    case GIMP_GRADIENT_LINEAR:
+    case PICMAN_GRADIENT_LINEAR:
       factor = gradient_calc_linear_factor (rbd->dist,
                                             rbd->vec, rbd->offset,
                                             x - rbd->sx, y - rbd->sy);
       break;
 
-    case GIMP_GRADIENT_BILINEAR:
+    case PICMAN_GRADIENT_BILINEAR:
       factor = gradient_calc_bilinear_factor (rbd->dist,
                                               rbd->vec, rbd->offset,
                                               x - rbd->sx, y - rbd->sy);
       break;
 
-    case GIMP_GRADIENT_RADIAL:
+    case PICMAN_GRADIENT_RADIAL:
       factor = gradient_calc_radial_factor (rbd->dist,
                                             rbd->offset,
                                             x - rbd->sx, y - rbd->sy);
       break;
 
-    case GIMP_GRADIENT_SQUARE:
+    case PICMAN_GRADIENT_SQUARE:
       factor = gradient_calc_square_factor (rbd->dist, rbd->offset,
                                             x - rbd->sx, y - rbd->sy);
       break;
 
-    case GIMP_GRADIENT_CONICAL_SYMMETRIC:
+    case PICMAN_GRADIENT_CONICAL_SYMMETRIC:
       factor = gradient_calc_conical_sym_factor (rbd->dist,
                                                  rbd->vec, rbd->offset,
                                                  x - rbd->sx, y - rbd->sy);
       break;
 
-    case GIMP_GRADIENT_CONICAL_ASYMMETRIC:
+    case PICMAN_GRADIENT_CONICAL_ASYMMETRIC:
       factor = gradient_calc_conical_asym_factor (rbd->dist,
                                                   rbd->vec, rbd->offset,
                                                   x - rbd->sx, y - rbd->sy);
       break;
 
-    case GIMP_GRADIENT_SHAPEBURST_ANGULAR:
+    case PICMAN_GRADIENT_SHAPEBURST_ANGULAR:
       factor = gradient_calc_shapeburst_angular_factor (rbd->dist_buffer, x, y);
       break;
 
-    case GIMP_GRADIENT_SHAPEBURST_SPHERICAL:
+    case PICMAN_GRADIENT_SHAPEBURST_SPHERICAL:
       factor = gradient_calc_shapeburst_spherical_factor (rbd->dist_buffer, x, y);
       break;
 
-    case GIMP_GRADIENT_SHAPEBURST_DIMPLED:
+    case PICMAN_GRADIENT_SHAPEBURST_DIMPLED:
       factor = gradient_calc_shapeburst_dimpled_factor (rbd->dist_buffer, x, y);
       break;
 
-    case GIMP_GRADIENT_SPIRAL_CLOCKWISE:
+    case PICMAN_GRADIENT_SPIRAL_CLOCKWISE:
       factor = gradient_calc_spiral_factor (rbd->dist,
                                             rbd->vec, rbd->offset,
                                             x - rbd->sx, y - rbd->sy, TRUE);
       break;
 
-    case GIMP_GRADIENT_SPIRAL_ANTICLOCKWISE:
+    case PICMAN_GRADIENT_SPIRAL_ANTICLOCKWISE:
       factor = gradient_calc_spiral_factor (rbd->dist,
                                             rbd->vec, rbd->offset,
                                             x - rbd->sx, y - rbd->sy, FALSE);
@@ -723,15 +723,15 @@ gradient_render_pixel (gdouble   x,
 
   switch (rbd->repeat)
     {
-    case GIMP_REPEAT_NONE:
+    case PICMAN_REPEAT_NONE:
       factor = CLAMP (factor, 0.0, 1.0);
       break;
 
-    case GIMP_REPEAT_SAWTOOTH:
+    case PICMAN_REPEAT_SAWTOOTH:
       factor = factor - floor (factor);
       break;
 
-    case GIMP_REPEAT_TRIANGULAR:
+    case PICMAN_REPEAT_TRIANGULAR:
       {
         guint ifactor;
 
@@ -749,12 +749,12 @@ gradient_render_pixel (gdouble   x,
 
   /* Blend the colors */
 
-  if (rbd->blend_mode == GIMP_CUSTOM_MODE)
+  if (rbd->blend_mode == PICMAN_CUSTOM_MODE)
     {
 #ifdef USE_GRADIENT_CACHE
       *color = rbd->gradient_cache[(gint) (factor * (rbd->gradient_cache_size - 1))];
 #else
-      gimp_gradient_get_color_at (rbd->gradient, rbd->context, NULL,
+      picman_gradient_get_color_at (rbd->gradient, rbd->context, NULL,
                                   factor, rbd->reverse, color);
 #endif
     }
@@ -770,11 +770,11 @@ gradient_render_pixel (gdouble   x,
       color->b = rbd->fg.b + (rbd->bg.b - rbd->fg.b) * factor;
       color->a = rbd->fg.a + (rbd->bg.a - rbd->fg.a) * factor;
 
-      if (rbd->blend_mode == GIMP_FG_BG_HSV_MODE)
+      if (rbd->blend_mode == PICMAN_FG_BG_HSV_MODE)
         {
-          GimpHSV hsv = *((GimpHSV *) color);
+          PicmanHSV hsv = *((PicmanHSV *) color);
 
-          gimp_hsv_to_rgb (&hsv, color);
+          picman_hsv_to_rgb (&hsv, color);
         }
     }
 }
@@ -782,7 +782,7 @@ gradient_render_pixel (gdouble   x,
 static void
 gradient_put_pixel (gint      x,
                     gint      y,
-                    GimpRGB  *color,
+                    PicmanRGB  *color,
                     gpointer  put_pixel_data)
 {
   PutPixelData *ppd  = put_pixel_data;
@@ -814,15 +814,15 @@ gradient_put_pixel (gint      x,
 }
 
 static void
-gradient_fill_region (GimpImage           *image,
-                      GimpDrawable        *drawable,
-                      GimpContext         *context,
+gradient_fill_region (PicmanImage           *image,
+                      PicmanDrawable        *drawable,
+                      PicmanContext         *context,
                       GeglBuffer          *buffer,
                       const GeglRectangle *buffer_region,
-                      GimpBlendMode        blend_mode,
-                      GimpGradientType     gradient_type,
+                      PicmanBlendMode        blend_mode,
+                      PicmanGradientType     gradient_type,
                       gdouble              offset,
-                      GimpRepeatMode       repeat,
+                      PicmanRepeatMode       repeat,
                       gboolean             reverse,
                       gboolean             supersample,
                       gint                 max_depth,
@@ -832,13 +832,13 @@ gradient_fill_region (GimpImage           *image,
                       gdouble              sy,
                       gdouble              ex,
                       gdouble              ey,
-                      GimpProgress        *progress)
+                      PicmanProgress        *progress)
 {
   RenderBlendData rbd = { 0, };
 
-  GIMP_TIMER_START();
+  PICMAN_TIMER_START();
 
-  rbd.gradient = gimp_context_get_gradient (context);
+  rbd.gradient = picman_context_get_gradient (context);
   rbd.context  = context;
   rbd.reverse  = reverse;
 
@@ -847,54 +847,54 @@ gradient_fill_region (GimpImage           *image,
     gint i;
 
     rbd.gradient_cache_size = ceil (sqrt (SQR (sx - ex) + SQR (sy - ey)));
-    rbd.gradient_cache      = g_new0 (GimpRGB, rbd.gradient_cache_size);
+    rbd.gradient_cache      = g_new0 (PicmanRGB, rbd.gradient_cache_size);
 
     for (i = 0; i < rbd.gradient_cache_size; i++)
       {
         gdouble factor = (gdouble) i / (gdouble) (rbd.gradient_cache_size - 1);
 
-        gimp_gradient_get_color_at (rbd.gradient, rbd.context, NULL,
+        picman_gradient_get_color_at (rbd.gradient, rbd.context, NULL,
                                     factor, rbd.reverse,
                                     rbd.gradient_cache + i);
       }
   }
 #endif
 
-  if (gimp_gradient_has_fg_bg_segments (rbd.gradient))
-    rbd.gradient = gimp_gradient_flatten (rbd.gradient, context);
+  if (picman_gradient_has_fg_bg_segments (rbd.gradient))
+    rbd.gradient = picman_gradient_flatten (rbd.gradient, context);
   else
     rbd.gradient = g_object_ref (rbd.gradient);
 
-  gimp_context_get_foreground (context, &rbd.fg);
-  gimp_context_get_background (context, &rbd.bg);
+  picman_context_get_foreground (context, &rbd.fg);
+  picman_context_get_background (context, &rbd.bg);
 
   switch (blend_mode)
     {
-    case GIMP_FG_BG_RGB_MODE:
+    case PICMAN_FG_BG_RGB_MODE:
       break;
 
-    case GIMP_FG_BG_HSV_MODE:
+    case PICMAN_FG_BG_HSV_MODE:
       /* Convert to HSV */
       {
-        GimpHSV fg_hsv;
-        GimpHSV bg_hsv;
+        PicmanHSV fg_hsv;
+        PicmanHSV bg_hsv;
 
-        gimp_rgb_to_hsv (&rbd.fg, &fg_hsv);
-        gimp_rgb_to_hsv (&rbd.bg, &bg_hsv);
+        picman_rgb_to_hsv (&rbd.fg, &fg_hsv);
+        picman_rgb_to_hsv (&rbd.bg, &bg_hsv);
 
-        memcpy (&rbd.fg, &fg_hsv, sizeof (GimpRGB));
-        memcpy (&rbd.bg, &bg_hsv, sizeof (GimpRGB));
+        memcpy (&rbd.fg, &fg_hsv, sizeof (PicmanRGB));
+        memcpy (&rbd.bg, &bg_hsv, sizeof (PicmanRGB));
       }
       break;
 
-    case GIMP_FG_TRANSPARENT_MODE:
+    case PICMAN_FG_TRANSPARENT_MODE:
       /* Color does not change, just the opacity */
 
       rbd.bg   = rbd.fg;
-      rbd.bg.a = GIMP_OPACITY_TRANSPARENT;
+      rbd.bg.a = PICMAN_OPACITY_TRANSPARENT;
       break;
 
-    case GIMP_CUSTOM_MODE:
+    case PICMAN_CUSTOM_MODE:
       break;
 
     default:
@@ -906,20 +906,20 @@ gradient_fill_region (GimpImage           *image,
 
   switch (gradient_type)
     {
-    case GIMP_GRADIENT_RADIAL:
+    case PICMAN_GRADIENT_RADIAL:
       rbd.dist = sqrt (SQR (ex - sx) + SQR (ey - sy));
       break;
 
-    case GIMP_GRADIENT_SQUARE:
+    case PICMAN_GRADIENT_SQUARE:
       rbd.dist = MAX (fabs (ex - sx), fabs (ey - sy));
       break;
 
-    case GIMP_GRADIENT_CONICAL_SYMMETRIC:
-    case GIMP_GRADIENT_CONICAL_ASYMMETRIC:
-    case GIMP_GRADIENT_SPIRAL_CLOCKWISE:
-    case GIMP_GRADIENT_SPIRAL_ANTICLOCKWISE:
-    case GIMP_GRADIENT_LINEAR:
-    case GIMP_GRADIENT_BILINEAR:
+    case PICMAN_GRADIENT_CONICAL_SYMMETRIC:
+    case PICMAN_GRADIENT_CONICAL_ASYMMETRIC:
+    case PICMAN_GRADIENT_SPIRAL_CLOCKWISE:
+    case PICMAN_GRADIENT_SPIRAL_ANTICLOCKWISE:
+    case PICMAN_GRADIENT_LINEAR:
+    case PICMAN_GRADIENT_BILINEAR:
       rbd.dist = sqrt (SQR (ex - sx) + SQR (ey - sy));
 
       if (rbd.dist > 0.0)
@@ -930,14 +930,14 @@ gradient_fill_region (GimpImage           *image,
 
       break;
 
-    case GIMP_GRADIENT_SHAPEBURST_ANGULAR:
-    case GIMP_GRADIENT_SHAPEBURST_SPHERICAL:
-    case GIMP_GRADIENT_SHAPEBURST_DIMPLED:
+    case PICMAN_GRADIENT_SHAPEBURST_ANGULAR:
+    case PICMAN_GRADIENT_SHAPEBURST_SPHERICAL:
+    case PICMAN_GRADIENT_SHAPEBURST_DIMPLED:
       rbd.dist = sqrt (SQR (ex - sx) + SQR (ey - sy));
       rbd.dist_buffer = gradient_precalc_shapeburst (image, drawable,
                                                      buffer_region,
                                                      rbd.dist, progress);
-      gimp_progress_set_text (progress, _("Blending"));
+      picman_progress_set_text (progress, _("Blending"));
       break;
 
     default:
@@ -965,14 +965,14 @@ gradient_fill_region (GimpImage           *image,
       ppd.width       = buffer_region->width;
       ppd.dither_rand = g_rand_new ();
 
-      gimp_adaptive_supersample_area (0, 0,
+      picman_adaptive_supersample_area (0, 0,
                                       (buffer_region->width  - 1),
                                       (buffer_region->height - 1),
                                       max_depth, threshold,
                                       gradient_render_pixel, &rbd,
                                       gradient_put_pixel, &ppd,
                                       progress ?
-                                      gimp_progress_update_and_flush : NULL,
+                                      picman_progress_update_and_flush : NULL,
                                       progress);
 
       g_rand_free (ppd.dither_rand);
@@ -1007,7 +1007,7 @@ gradient_fill_region (GimpImage           *image,
               for (y = roi->y; y < endy; y++)
                 for (x = roi->x; x < endx; x++)
                   {
-                    GimpRGB  color;
+                    PicmanRGB  color;
                     gint     i = g_rand_int (dither_rand);
 
                     gradient_render_pixel (x, y, &color, &rbd);
@@ -1025,7 +1025,7 @@ gradient_fill_region (GimpImage           *image,
               for (y = roi->y; y < endy; y++)
                 for (x = roi->x; x < endx; x++)
                   {
-                    GimpRGB  color;
+                    PicmanRGB  color;
 
                     gradient_render_pixel (x, y, &color, &rbd);
 
@@ -1039,7 +1039,7 @@ gradient_fill_region (GimpImage           *image,
           done += roi->width * roi->height;
 
           if (progress)
-            gimp_progress_set_value (progress,
+            picman_progress_set_value (progress,
                                      (gdouble) done / (gdouble) total);
         }
 
@@ -1056,5 +1056,5 @@ gradient_fill_region (GimpImage           *image,
   if (rbd.dist_buffer)
     g_object_unref (rbd.dist_buffer);
 
-  GIMP_TIMER_END("gradient_fill_region");
+  PICMAN_TIMER_END("gradient_fill_region");
 }

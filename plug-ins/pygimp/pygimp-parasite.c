@@ -1,5 +1,5 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
+ * Picman-Python - allows the writing of Picman plugins in Python.
  * Copyright (C) 1997-2002  James Henstridge <james@daa.com.au>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,37 +20,37 @@
 #  include <config.h>
 #endif
 
-#include "pygimp.h"
+#include "pypicman.h"
 
 static PyObject *
-para_copy(PyGimpParasite *self, PyObject *args)
+para_copy(PyPicmanParasite *self, PyObject *args)
 {
     if (!PyArg_ParseTuple(args, ":copy"))
 	return NULL;
 
-    return pygimp_parasite_new(gimp_parasite_copy(self->para));
+    return pypicman_parasite_new(picman_parasite_copy(self->para));
 }
 
 static PyObject *
-para_is_type(PyGimpParasite *self, PyObject *args)
+para_is_type(PyPicmanParasite *self, PyObject *args)
 {
     char *name;
 
     if (!PyArg_ParseTuple(args, "s:is_type", &name))
 	return NULL;
 
-    return PyInt_FromLong(gimp_parasite_is_type(self->para, name));
+    return PyInt_FromLong(picman_parasite_is_type(self->para, name));
 }
 
 static PyObject *
-para_has_flag(PyGimpParasite *self, PyObject *args)
+para_has_flag(PyPicmanParasite *self, PyObject *args)
 {
     int flag;
 
     if (!PyArg_ParseTuple(args, "i:has_flag", &flag))
 	return NULL;
 
-    return PyInt_FromLong(gimp_parasite_has_flag(self->para, flag));
+    return PyInt_FromLong(picman_parasite_has_flag(self->para, flag));
 }
 
 
@@ -63,34 +63,34 @@ static PyMethodDef para_methods[] = {
 };
 
 static PyObject *
-para_get_is_persistent(PyGimpParasite *self, void *closure)
+para_get_is_persistent(PyPicmanParasite *self, void *closure)
 {
-    return PyBool_FromLong(gimp_parasite_is_persistent(self->para));
+    return PyBool_FromLong(picman_parasite_is_persistent(self->para));
 }
 
 static PyObject *
-para_get_is_undoable(PyGimpParasite *self, void *closure)
+para_get_is_undoable(PyPicmanParasite *self, void *closure)
 {
-    return PyBool_FromLong(gimp_parasite_is_undoable(self->para));
+    return PyBool_FromLong(picman_parasite_is_undoable(self->para));
 }
 
 static PyObject *
-para_get_flags(PyGimpParasite *self, void *closure)
+para_get_flags(PyPicmanParasite *self, void *closure)
 {
-    return PyInt_FromLong(gimp_parasite_flags(self->para));
+    return PyInt_FromLong(picman_parasite_flags(self->para));
 }
 
 static PyObject *
-para_get_name(PyGimpParasite *self, void *closure)
+para_get_name(PyPicmanParasite *self, void *closure)
 {
-    return PyString_FromString(gimp_parasite_name(self->para));
+    return PyString_FromString(picman_parasite_name(self->para));
 }
 
 static PyObject *
-para_get_data(PyGimpParasite *self, void *closure)
+para_get_data(PyPicmanParasite *self, void *closure)
 {
-    return PyString_FromStringAndSize(gimp_parasite_data(self->para),
-				      gimp_parasite_data_size(self->para));
+    return PyString_FromStringAndSize(picman_parasite_data(self->para),
+				      picman_parasite_data_size(self->para));
 }
 
 static PyGetSetDef para_getsets[] = {
@@ -103,31 +103,31 @@ static PyGetSetDef para_getsets[] = {
 };
 
 static void
-para_dealloc(PyGimpParasite *self)
+para_dealloc(PyPicmanParasite *self)
 {
-    gimp_parasite_free(self->para);
+    picman_parasite_free(self->para);
     PyObject_DEL(self);
 }
 
 static PyObject *
-para_repr(PyGimpParasite *self)
+para_repr(PyPicmanParasite *self)
 {
     PyObject *s;
 
-    s = PyString_FromFormat("<parasite %s>", gimp_parasite_name(self->para));
+    s = PyString_FromFormat("<parasite %s>", picman_parasite_name(self->para));
 
     return s;
 }
 
 static PyObject *
-para_str(PyGimpParasite *self)
+para_str(PyPicmanParasite *self)
 {
-    return PyString_FromStringAndSize(gimp_parasite_data(self->para),
-				      gimp_parasite_data_size(self->para));
+    return PyString_FromStringAndSize(picman_parasite_data(self->para),
+				      picman_parasite_data_size(self->para));
 }
 
 static int
-para_init(PyGimpParasite *self, PyObject *args, PyObject *kwargs)
+para_init(PyPicmanParasite *self, PyObject *args, PyObject *kwargs)
 {
     char *name;
     int flags, size;
@@ -136,15 +136,15 @@ para_init(PyGimpParasite *self, PyObject *args, PyObject *kwargs)
     static char *kwlist[] = { "name", "flags", "data", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
-				     "sis#:gimp.Parasite.__init__", kwlist,
+				     "sis#:picman.Parasite.__init__", kwlist,
 				     &name, &flags,
 				     &data, &size))
 	return -1;
 
-    self->para = gimp_parasite_new(name, flags, size, data);
+    self->para = picman_parasite_new(name, flags, size, data);
 
     if (!self->para) {
-	PyErr_Format(pygimp_error, "could not create parasite '%s'", name);
+	PyErr_Format(pypicman_error, "could not create parasite '%s'", name);
 	return -1;
     }
 
@@ -152,11 +152,11 @@ para_init(PyGimpParasite *self, PyObject *args, PyObject *kwargs)
 }
 
 
-PyTypeObject PyGimpParasite_Type = {
+PyTypeObject PyPicmanParasite_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                  /* ob_size */
-    "gimp.Parasite",                    /* tp_name */
-    sizeof(PyGimpParasite),             /* tp_basicsize */
+    "picman.Parasite",                    /* tp_name */
+    sizeof(PyPicmanParasite),             /* tp_basicsize */
     0,                                  /* tp_itemsize */
     /* methods */
     (destructor)para_dealloc,           /* tp_dealloc */
@@ -196,16 +196,16 @@ PyTypeObject PyGimpParasite_Type = {
 };
 
 PyObject *
-pygimp_parasite_new(GimpParasite *para)
+pypicman_parasite_new(PicmanParasite *para)
 {
-    PyGimpParasite *self;
+    PyPicmanParasite *self;
 
     if (!para) {
 	Py_INCREF(Py_None);
 	return Py_None;
     }
 
-    self = PyObject_NEW(PyGimpParasite, &PyGimpParasite_Type);
+    self = PyObject_NEW(PyPicmanParasite, &PyPicmanParasite_Type);
 
     if (self == NULL)
 	return NULL;

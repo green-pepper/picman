@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,21 +19,21 @@
  * EXIF-handling code for the metadata library.
  */
 
-#ifndef __GIMP_EXIF_H__
-#define __GIMP_EXIF_H__
+#ifndef __PICMAN_EXIF_H__
+#define __PICMAN_EXIF_H__
 
-void          gimp_metadata_store_exif    (gint32       image_ID,
+void          picman_metadata_store_exif    (gint32       image_ID,
                                            ExifData    *exif_data);
 
-ExifData *    gimp_metadata_generate_exif (gint32       image_ID);
+ExifData *    picman_metadata_generate_exif (gint32       image_ID);
 
-const gchar * gimp_exif_content_get_value (ExifContent *content,
+const gchar * picman_exif_content_get_value (ExifContent *content,
                                            ExifTag      tag,
                                            gchar       *value,
                                            gint         maxlen);
 
-void          gimp_exif_data_remove_entry (ExifData    *exif_data,
+void          picman_exif_data_remove_entry (ExifData    *exif_data,
                                            ExifIfd      ifd,
                                            ExifTag      tag);
 
-#endif /* __GIMP_EXIF_H__ */
+#endif /* __PICMAN_EXIF_H__ */

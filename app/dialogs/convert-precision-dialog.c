@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,39 +20,39 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-convert-precision.h"
-#include "core/gimplist.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-convert-precision.h"
+#include "core/picmanlist.h"
+#include "core/picmanprogress.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpviewablebox.h"
-#include "widgets/gimpviewabledialog.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanviewablebox.h"
+#include "widgets/picmanviewabledialog.h"
+#include "widgets/picmanwidgets-utils.h"
 
 #include "convert-precision-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 typedef struct
 {
   GtkWidget     *dialog;
 
-  GimpImage     *image;
-  GimpProgress  *progress;
-  GimpContext   *context;
+  PicmanImage     *image;
+  PicmanProgress  *progress;
+  PicmanContext   *context;
 
-  GimpPrecision  precision;
+  PicmanPrecision  precision;
   gint           layer_dither_type;
   gint           text_layer_dither_type;
   gint           mask_dither_type;
@@ -75,11 +75,11 @@ static gint   saved_mask_dither_type       = 0;
 /*  public functions  */
 
 GtkWidget *
-convert_precision_dialog_new (GimpImage     *image,
-                              GimpContext   *context,
+convert_precision_dialog_new (PicmanImage     *image,
+                              PicmanContext   *context,
                               GtkWidget     *parent,
-                              GimpPrecision  precision,
-                              GimpProgress  *progress)
+                              PicmanPrecision  precision,
+                              PicmanProgress  *progress)
 {
   ConvertDialog *dialog;
   GtkWidget     *button;
@@ -94,10 +94,10 @@ convert_precision_dialog_new (GimpImage     *image,
   gchar         *blurb;
   GType          dither_type;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (GTK_IS_WIDGET (parent), NULL);
-  g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress), NULL);
+  g_return_val_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress), NULL);
 
   dialog = g_slice_new0 (ConvertDialog);
 
@@ -108,20 +108,20 @@ convert_precision_dialog_new (GimpImage     *image,
   dialog->text_layer_dither_type = saved_text_layer_dither_type;
   dialog->mask_dither_type       = saved_mask_dither_type;
 
-  gimp_enum_get_value (GIMP_TYPE_PRECISION, precision,
+  picman_enum_get_value (PICMAN_TYPE_PRECISION, precision,
                        NULL, NULL, &enum_desc, NULL);
 
   blurb = g_strdup_printf (_("Convert Image to %s"), enum_desc);
 
   dialog->dialog =
-    gimp_viewable_dialog_new (GIMP_VIEWABLE (image), context,
+    picman_viewable_dialog_new (PICMAN_VIEWABLE (image), context,
                               _("Precision Conversion"),
-                              "gimp-image-convert-precision",
-                              GIMP_STOCK_CONVERT_PRECISION,
+                              "picman-image-convert-precision",
+                              PICMAN_STOCK_CONVERT_PRECISION,
                               blurb,
                               parent,
-                              gimp_standard_help_func,
-                              GIMP_HELP_IMAGE_CONVERT_PRECISION,
+                              picman_standard_help_func,
+                              PICMAN_HELP_IMAGE_CONVERT_PRECISION,
 
                               GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 
@@ -132,7 +132,7 @@ convert_precision_dialog_new (GimpImage     *image,
   button = gtk_dialog_add_button (GTK_DIALOG (dialog->dialog),
                                   _("C_onvert"), GTK_RESPONSE_OK);
   gtk_button_set_image (GTK_BUTTON (button),
-                        gtk_image_new_from_stock (GIMP_STOCK_CONVERT_PRECISION,
+                        gtk_image_new_from_stock (PICMAN_STOCK_CONVERT_PRECISION,
                                                   GTK_ICON_SIZE_BUTTON));
 
   gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog->dialog),
@@ -158,10 +158,10 @@ convert_precision_dialog_new (GimpImage     *image,
 
   /*  dithering  */
 
-  dither_type = gimp_gegl_get_op_enum_type ("gegl:color-reduction",
+  dither_type = picman_gegl_get_op_enum_type ("gegl:color-reduction",
                                             "dither-strategy");
 
-  frame = gimp_frame_new (_("Dithering"));
+  frame = picman_frame_new (_("Dithering"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -183,14 +183,14 @@ convert_precision_dialog_new (GimpImage     *image,
   gtk_size_group_add_widget (size_group, label);
   gtk_widget_show (label);
 
-  combo = gimp_enum_combo_box_new (dither_type);
+  combo = picman_enum_combo_box_new (dither_type);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
   gtk_widget_show (combo);
 
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                               dialog->layer_dither_type,
-                              G_CALLBACK (gimp_int_combo_box_get_active),
+                              G_CALLBACK (picman_int_combo_box_get_active),
                               &dialog->layer_dither_type);
 
   /*  text layers  */
@@ -205,17 +205,17 @@ convert_precision_dialog_new (GimpImage     *image,
   gtk_size_group_add_widget (size_group, label);
   gtk_widget_show (label);
 
-  combo = gimp_enum_combo_box_new (dither_type);
+  combo = picman_enum_combo_box_new (dither_type);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
   gtk_widget_show (combo);
 
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                               dialog->text_layer_dither_type,
-                              G_CALLBACK (gimp_int_combo_box_get_active),
+                              G_CALLBACK (picman_int_combo_box_get_active),
                               &dialog->text_layer_dither_type);
 
-  gimp_help_set_help_data (combo,
+  picman_help_set_help_data (combo,
                            _("Dithering text layers will make them uneditable"),
                            NULL);
 
@@ -231,14 +231,14 @@ convert_precision_dialog_new (GimpImage     *image,
   gtk_size_group_add_widget (size_group, label);
   gtk_widget_show (label);
 
-  combo = gimp_enum_combo_box_new (dither_type);
+  combo = picman_enum_combo_box_new (dither_type);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
   gtk_widget_show (combo);
 
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                               dialog->mask_dither_type,
-                              G_CALLBACK (gimp_int_combo_box_get_active),
+                              G_CALLBACK (picman_int_combo_box_get_active),
                               &dialog->mask_dither_type);
 
   g_object_unref (size_group);
@@ -256,12 +256,12 @@ convert_precision_dialog_response (GtkWidget     *widget,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpProgress *progress;
+      PicmanProgress *progress;
 
-      progress = gimp_progress_start (dialog->progress,
+      progress = picman_progress_start (dialog->progress,
                                       _("Converting to lower bit depth"), FALSE);
 
-      gimp_image_convert_precision (dialog->image,
+      picman_image_convert_precision (dialog->image,
                                     dialog->precision,
                                     dialog->layer_dither_type,
                                     dialog->text_layer_dither_type,
@@ -269,9 +269,9 @@ convert_precision_dialog_response (GtkWidget     *widget,
                                     progress);
 
       if (progress)
-        gimp_progress_end (progress);
+        picman_progress_end (progress);
 
-      gimp_image_flush (dialog->image);
+      picman_image_flush (dialog->image);
 
       /* Save defaults for next time */
       saved_layer_dither_type = dialog->layer_dither_type;

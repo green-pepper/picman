@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,81 +20,81 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "paint/gimpairbrushoptions.h"
+#include "paint/picmanairbrushoptions.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimppropwidgets.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanpropwidgets.h"
 
-#include "gimpairbrushtool.h"
-#include "gimppaintoptions-gui.h"
-#include "gimptoolcontrol.h"
+#include "picmanairbrushtool.h"
+#include "picmanpaintoptions-gui.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
-
-
-static GtkWidget * gimp_airbrush_options_gui (GimpToolOptions *tool_options);
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpAirbrushTool, gimp_airbrush_tool, GIMP_TYPE_PAINTBRUSH_TOOL)
+static GtkWidget * picman_airbrush_options_gui (PicmanToolOptions *tool_options);
+
+
+G_DEFINE_TYPE (PicmanAirbrushTool, picman_airbrush_tool, PICMAN_TYPE_PAINTBRUSH_TOOL)
 
 
 void
-gimp_airbrush_tool_register (GimpToolRegisterCallback  callback,
+picman_airbrush_tool_register (PicmanToolRegisterCallback  callback,
                              gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_AIRBRUSH_TOOL,
-                GIMP_TYPE_AIRBRUSH_OPTIONS,
-                gimp_airbrush_options_gui,
-                GIMP_PAINT_OPTIONS_CONTEXT_MASK |
-                GIMP_CONTEXT_GRADIENT_MASK,
-                "gimp-airbrush-tool",
+  (* callback) (PICMAN_TYPE_AIRBRUSH_TOOL,
+                PICMAN_TYPE_AIRBRUSH_OPTIONS,
+                picman_airbrush_options_gui,
+                PICMAN_PAINT_OPTIONS_CONTEXT_MASK |
+                PICMAN_CONTEXT_GRADIENT_MASK,
+                "picman-airbrush-tool",
                 _("Airbrush"),
                 _("Airbrush Tool: Paint using a brush, with variable pressure"),
                 N_("_Airbrush"), "A",
-                NULL, GIMP_HELP_TOOL_AIRBRUSH,
-                GIMP_STOCK_TOOL_AIRBRUSH,
+                NULL, PICMAN_HELP_TOOL_AIRBRUSH,
+                PICMAN_STOCK_TOOL_AIRBRUSH,
                 data);
 }
 
 static void
-gimp_airbrush_tool_class_init (GimpAirbrushToolClass *klass)
+picman_airbrush_tool_class_init (PicmanAirbrushToolClass *klass)
 {
 }
 
 static void
-gimp_airbrush_tool_init (GimpAirbrushTool *airbrush)
+picman_airbrush_tool_init (PicmanAirbrushTool *airbrush)
 {
-  GimpTool *tool = GIMP_TOOL (airbrush);
+  PicmanTool *tool = PICMAN_TOOL (airbrush);
 
-  gimp_tool_control_set_tool_cursor (tool->control, GIMP_TOOL_CURSOR_AIRBRUSH);
+  picman_tool_control_set_tool_cursor (tool->control, PICMAN_TOOL_CURSOR_AIRBRUSH);
 }
 
 
 /*  tool options stuff  */
 
 static GtkWidget *
-gimp_airbrush_options_gui (GimpToolOptions *tool_options)
+picman_airbrush_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config = G_OBJECT (tool_options);
-  GtkWidget *vbox   = gimp_paint_options_gui (tool_options);
+  GtkWidget *vbox   = picman_paint_options_gui (tool_options);
   GtkWidget *button;
   GtkWidget *scale;
 
-  button = gimp_prop_check_button_new (config, "motion-only", _("Motion only"));
+  button = picman_prop_check_button_new (config, "motion-only", _("Motion only"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
-  scale = gimp_prop_spin_scale_new (config, "rate",
+  scale = picman_prop_spin_scale_new (config, "rate",
                                     C_("airbrush-tool", "Rate"),
                                     1.0, 10.0, 1);
   gtk_box_pack_start (GTK_BOX (vbox), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
-  scale = gimp_prop_spin_scale_new (config, "flow",
+  scale = picman_prop_spin_scale_new (config, "flow",
                                     _("Flow"),
                                     1.0, 10.0, 1);
   gtk_box_pack_start (GTK_BOX (vbox), scale, FALSE, FALSE, 0);

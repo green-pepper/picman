@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppanedbox.c
- * Copyright (C) 2001-2005 Michael Natterer <mitch@gimp.org>
+ * picmanpanedbox.c
+ * Copyright (C) 2001-2005 Michael Natterer <mitch@picman.org>
  * Copyright (C) 2009-2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,26 +24,26 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpmarshal.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpdialogfactory.h"
-#include "gimpdnd.h"
-#include "gimpdockable.h"
-#include "gimpdockbook.h"
-#include "gimpmenudock.h"
-#include "gimppanedbox.h"
-#include "gimptoolbox.h"
-#include "gimpwidgets-utils.h"
+#include "picmandialogfactory.h"
+#include "picmandnd.h"
+#include "picmandockable.h"
+#include "picmandockbook.h"
+#include "picmanmenudock.h"
+#include "picmanpanedbox.h"
+#include "picmantoolbox.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-log.h"
+#include "picman-log.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /**
@@ -59,7 +59,7 @@
 #define INSTRUCTIONS_TEXT         _("You can drop dockable dialogs here")
 
 
-struct _GimpPanedBoxPrivate
+struct _PicmanPanedBoxPrivate
 {
   /* Widgets that are separated by panes */
   GList                  *widgets;
@@ -74,66 +74,66 @@ struct _GimpPanedBoxPrivate
   gint                    insert_index;
 
   /* Callback on drop */
-  GimpPanedBoxDroppedFunc dropped_cb;
+  PicmanPanedBoxDroppedFunc dropped_cb;
   gpointer                dropped_cb_data;
 
   /* A drag handler offered to handle drag events */
-  GimpPanedBox           *drag_handler;
+  PicmanPanedBox           *drag_handler;
 };
 
 
-static void      gimp_paned_box_dispose                 (GObject        *object);
+static void      picman_paned_box_dispose                 (GObject        *object);
 
-static void      gimp_paned_box_drag_leave              (GtkWidget      *widget,
+static void      picman_paned_box_drag_leave              (GtkWidget      *widget,
                                                          GdkDragContext *context,
                                                          guint           time);
-static gboolean  gimp_paned_box_drag_motion             (GtkWidget      *widget,
-                                                         GdkDragContext *context,
-                                                         gint            x,
-                                                         gint            y,
-                                                         guint           time);
-static gboolean  gimp_paned_box_drag_drop               (GtkWidget      *widget,
+static gboolean  picman_paned_box_drag_motion             (GtkWidget      *widget,
                                                          GdkDragContext *context,
                                                          gint            x,
                                                          gint            y,
                                                          guint           time);
-static void      gimp_paned_box_realize                 (GtkWidget      *widget);
-static void      gimp_paned_box_unrealize               (GtkWidget      *widget);
-static void      gimp_paned_box_set_widget_drag_handler (GtkWidget      *widget,
-                                                         GimpPanedBox   *handler);
-static gint      gimp_paned_box_get_drop_area_size      (GimpPanedBox   *paned_box);
+static gboolean  picman_paned_box_drag_drop               (GtkWidget      *widget,
+                                                         GdkDragContext *context,
+                                                         gint            x,
+                                                         gint            y,
+                                                         guint           time);
+static void      picman_paned_box_realize                 (GtkWidget      *widget);
+static void      picman_paned_box_unrealize               (GtkWidget      *widget);
+static void      picman_paned_box_set_widget_drag_handler (GtkWidget      *widget,
+                                                         PicmanPanedBox   *handler);
+static gint      picman_paned_box_get_drop_area_size      (PicmanPanedBox   *paned_box);
 
 
-G_DEFINE_TYPE (GimpPanedBox, gimp_paned_box, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanPanedBox, picman_paned_box, GTK_TYPE_BOX)
 
-#define parent_class gimp_paned_box_parent_class
+#define parent_class picman_paned_box_parent_class
 
-static const GtkTargetEntry dialog_target_table[] = { GIMP_TARGET_DIALOG };
+static const GtkTargetEntry dialog_target_table[] = { PICMAN_TARGET_DIALOG };
 
 
 static void
-gimp_paned_box_class_init (GimpPanedBoxClass *klass)
+picman_paned_box_class_init (PicmanPanedBoxClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->dispose     = gimp_paned_box_dispose;
+  object_class->dispose     = picman_paned_box_dispose;
 
-  widget_class->drag_leave  = gimp_paned_box_drag_leave;
-  widget_class->drag_motion = gimp_paned_box_drag_motion;
-  widget_class->drag_drop   = gimp_paned_box_drag_drop;
-  widget_class->realize     = gimp_paned_box_realize;
-  widget_class->unrealize   = gimp_paned_box_unrealize;
+  widget_class->drag_leave  = picman_paned_box_drag_leave;
+  widget_class->drag_motion = picman_paned_box_drag_motion;
+  widget_class->drag_drop   = picman_paned_box_drag_drop;
+  widget_class->realize     = picman_paned_box_realize;
+  widget_class->unrealize   = picman_paned_box_unrealize;
 
-  g_type_class_add_private (klass, sizeof (GimpPanedBoxPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanPanedBoxPrivate));
 }
 
 static void
-gimp_paned_box_init (GimpPanedBox *paned_box)
+picman_paned_box_init (PicmanPanedBox *paned_box)
 {
   paned_box->p = G_TYPE_INSTANCE_GET_PRIVATE (paned_box,
-                                              GIMP_TYPE_PANED_BOX,
-                                              GimpPanedBoxPrivate);
+                                              PICMAN_TYPE_PANED_BOX,
+                                              PicmanPanedBoxPrivate);
 
   /* Instructions label
    *
@@ -148,7 +148,7 @@ gimp_paned_box_init (GimpPanedBox *paned_box)
   gtk_label_set_justify (GTK_LABEL (paned_box->p->instructions),
                          GTK_JUSTIFY_CENTER);
   gtk_widget_set_size_request (paned_box->p->instructions, 16, DROP_AREA_SIZE);
-  gimp_label_set_attributes (GTK_LABEL (paned_box->p->instructions),
+  picman_label_set_attributes (GTK_LABEL (paned_box->p->instructions),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              -1);
   gtk_box_pack_start (GTK_BOX (paned_box), paned_box->p->instructions,
@@ -164,16 +164,16 @@ gimp_paned_box_init (GimpPanedBox *paned_box)
 }
 
 static void
-gimp_paned_box_dispose (GObject *object)
+picman_paned_box_dispose (GObject *object)
 {
-  GimpPanedBox *paned_box = GIMP_PANED_BOX (object);
+  PicmanPanedBox *paned_box = PICMAN_PANED_BOX (object);
 
   while (paned_box->p->widgets)
     {
       GtkWidget *widget = paned_box->p->widgets->data;
 
       g_object_ref (widget);
-      gimp_paned_box_remove_widget (paned_box, widget);
+      picman_paned_box_remove_widget (paned_box, widget);
       gtk_widget_destroy (widget);
       g_object_unref (widget);
     }
@@ -182,19 +182,19 @@ gimp_paned_box_dispose (GObject *object)
 }
 
 static void
-gimp_paned_box_realize (GtkWidget *widget)
+picman_paned_box_realize (GtkWidget *widget)
 {
   GTK_WIDGET_CLASS (parent_class)->realize (widget);
 
   /* We realize() dnd_window on demand in
-   * gimp_paned_box_show_separators()
+   * picman_paned_box_show_separators()
    */
 }
 
 static void
-gimp_paned_box_unrealize (GtkWidget *widget)
+picman_paned_box_unrealize (GtkWidget *widget)
 {
-  GimpPanedBox *paned_box = GIMP_PANED_BOX (widget);
+  PicmanPanedBox *paned_box = PICMAN_PANED_BOX (widget);
 
   if (paned_box->p->dnd_window)
     {
@@ -207,11 +207,11 @@ gimp_paned_box_unrealize (GtkWidget *widget)
 }
 
 static void
-gimp_paned_box_set_widget_drag_handler (GtkWidget    *widget,
-                                        GimpPanedBox *drag_handler)
+picman_paned_box_set_widget_drag_handler (GtkWidget    *widget,
+                                        PicmanPanedBox *drag_handler)
 {
   /* Hook us in for drag events. We could abstract this properly and
-   * put gimp_paned_box_will_handle_drag() in an interface for
+   * put picman_paned_box_will_handle_drag() in an interface for
    * example, but it doesn't feel worth it at this point
    *
    * Note that we don't have 'else if's because a widget can be both a
@@ -221,28 +221,28 @@ gimp_paned_box_set_widget_drag_handler (GtkWidget    *widget,
    * We so need to introduce som abstractions here...
    */
 
-  if (GIMP_IS_DOCKBOOK (widget))
+  if (PICMAN_IS_DOCKBOOK (widget))
     {
-      gimp_dockbook_set_drag_handler (GIMP_DOCKBOOK (widget),
+      picman_dockbook_set_drag_handler (PICMAN_DOCKBOOK (widget),
                                       drag_handler);
     }
 
-  if (GIMP_IS_DOCK (widget))
+  if (PICMAN_IS_DOCK (widget))
     {
-      GimpPanedBox *dock_paned_box = NULL;
-      dock_paned_box = GIMP_PANED_BOX (gimp_dock_get_vbox (GIMP_DOCK (widget)));
-      gimp_paned_box_set_drag_handler (dock_paned_box, drag_handler);
+      PicmanPanedBox *dock_paned_box = NULL;
+      dock_paned_box = PICMAN_PANED_BOX (picman_dock_get_vbox (PICMAN_DOCK (widget)));
+      picman_paned_box_set_drag_handler (dock_paned_box, drag_handler);
     }
 
-  if (GIMP_IS_TOOLBOX (widget))
+  if (PICMAN_IS_TOOLBOX (widget))
     {
-      GimpToolbox *toolbox = GIMP_TOOLBOX (widget);
-      gimp_toolbox_set_drag_handler (toolbox, drag_handler);
+      PicmanToolbox *toolbox = PICMAN_TOOLBOX (widget);
+      picman_toolbox_set_drag_handler (toolbox, drag_handler);
     }
 }
 
 static gint
-gimp_paned_box_get_drop_area_size (GimpPanedBox *paned_box)
+picman_paned_box_get_drop_area_size (PicmanPanedBox *paned_box)
 {
   gint drop_area_size = 0;
 
@@ -266,7 +266,7 @@ gimp_paned_box_get_drop_area_size (GimpPanedBox *paned_box)
 }
 
 static void
-gimp_paned_box_position_drop_indicator (GimpPanedBox *paned_box,
+picman_paned_box_position_drop_indicator (PicmanPanedBox *paned_box,
                                         gint          x,
                                         gint          y,
                                         gint          width,
@@ -313,7 +313,7 @@ gimp_paned_box_position_drop_indicator (GimpPanedBox *paned_box,
 }
 
 static void
-gimp_paned_box_hide_drop_indicator (GimpPanedBox *paned_box)
+picman_paned_box_hide_drop_indicator (PicmanPanedBox *paned_box)
 {
   if (! paned_box->p->dnd_window)
     return;
@@ -322,22 +322,22 @@ gimp_paned_box_hide_drop_indicator (GimpPanedBox *paned_box)
 }
 
 static void
-gimp_paned_box_drag_leave (GtkWidget      *widget,
+picman_paned_box_drag_leave (GtkWidget      *widget,
                            GdkDragContext *context,
                            guint           time)
 {
-  gimp_paned_box_hide_drop_indicator (GIMP_PANED_BOX (widget));
-  gimp_highlight_widget (widget, FALSE);
+  picman_paned_box_hide_drop_indicator (PICMAN_PANED_BOX (widget));
+  picman_highlight_widget (widget, FALSE);
 }
 
 static gboolean
-gimp_paned_box_drag_motion (GtkWidget      *widget,
+picman_paned_box_drag_motion (GtkWidget      *widget,
                             GdkDragContext *context,
                             gint            x,
                             gint            y,
                             guint           time)
 {
-  GimpPanedBox  *paned_box      = GIMP_PANED_BOX (widget);
+  PicmanPanedBox  *paned_box      = PICMAN_PANED_BOX (widget);
   gint           insert_index   = INSERT_INDEX_UNUSED;
   gint           dnd_window_x   = 0;
   gint           dnd_window_y   = 0;
@@ -346,9 +346,9 @@ gimp_paned_box_drag_motion (GtkWidget      *widget,
   GtkAllocation  allocation     = { 0, };
   GtkOrientation orientation    = 0;
   gboolean       handle         = FALSE;
-  gint           drop_area_size = gimp_paned_box_get_drop_area_size (paned_box);
+  gint           drop_area_size = picman_paned_box_get_drop_area_size (paned_box);
 
-  if (gimp_paned_box_will_handle_drag (paned_box->p->drag_handler,
+  if (picman_paned_box_will_handle_drag (paned_box->p->drag_handler,
                                        widget,
                                        context,
                                        x, y,
@@ -420,7 +420,7 @@ gimp_paned_box_drag_motion (GtkWidget      *widget,
   handle = (insert_index != INSERT_INDEX_UNUSED);
   if (handle)
     {
-      gimp_paned_box_position_drop_indicator (paned_box,
+      picman_paned_box_position_drop_indicator (paned_box,
                                               allocation.x + dnd_window_x,
                                               allocation.y + dnd_window_y,
                                               dnd_window_w,
@@ -428,7 +428,7 @@ gimp_paned_box_drag_motion (GtkWidget      *widget,
     }
   else
     {
-      gimp_paned_box_hide_drop_indicator (paned_box);
+      picman_paned_box_hide_drop_indicator (paned_box);
     }
 
   /* Save the insert index for drag-drop */
@@ -436,21 +436,21 @@ gimp_paned_box_drag_motion (GtkWidget      *widget,
 
  finish:
   gdk_drag_status (context, handle ? GDK_ACTION_MOVE : 0, time);
-  gimp_highlight_widget (widget, handle);
+  picman_highlight_widget (widget, handle);
   return handle;
 }
 
 static gboolean
-gimp_paned_box_drag_drop (GtkWidget      *widget,
+picman_paned_box_drag_drop (GtkWidget      *widget,
                           GdkDragContext *context,
                           gint            x,
                           gint            y,
                           guint           time)
 {
   gboolean      found   = FALSE;
-  GimpPanedBox *paned_box = GIMP_PANED_BOX (widget);
+  PicmanPanedBox *paned_box = PICMAN_PANED_BOX (widget);
 
-  if (gimp_paned_box_will_handle_drag (paned_box->p->drag_handler,
+  if (picman_paned_box_will_handle_drag (paned_box->p->drag_handler,
                                        widget,
                                        context,
                                        x, y,
@@ -479,11 +479,11 @@ gimp_paned_box_drag_drop (GtkWidget      *widget,
 
 
 GtkWidget *
-gimp_paned_box_new (gboolean       homogeneous,
+picman_paned_box_new (gboolean       homogeneous,
                     gint           spacing,
                     GtkOrientation orientation)
 {
-  return g_object_new (GIMP_TYPE_PANED_BOX,
+  return g_object_new (PICMAN_TYPE_PANED_BOX,
                        "homogeneous",  homogeneous,
                        "spacing",      0,
                        "orientation",  orientation,
@@ -491,36 +491,36 @@ gimp_paned_box_new (gboolean       homogeneous,
 }
 
 void
-gimp_paned_box_set_dropped_cb (GimpPanedBox            *paned_box,
-                               GimpPanedBoxDroppedFunc  dropped_cb,
+picman_paned_box_set_dropped_cb (PicmanPanedBox            *paned_box,
+                               PicmanPanedBoxDroppedFunc  dropped_cb,
                                gpointer                 dropped_cb_data)
 {
-  g_return_if_fail (GIMP_IS_PANED_BOX (paned_box));
+  g_return_if_fail (PICMAN_IS_PANED_BOX (paned_box));
 
   paned_box->p->dropped_cb      = dropped_cb;
   paned_box->p->dropped_cb_data = dropped_cb_data;
 }
 
 /**
- * gimp_paned_box_add_widget:
- * @paned_box: A #GimpPanedBox
+ * picman_paned_box_add_widget:
+ * @paned_box: A #PicmanPanedBox
  * @widget:    The #GtkWidget to add
  * @index:     Where to add the @widget
  *
- * Add a #GtkWidget to the #GimpPanedBox in a hierarchy of #GtkPaned:s
+ * Add a #GtkWidget to the #PicmanPanedBox in a hierarchy of #GtkPaned:s
  * so the space can be manually distributed between the widgets.
  **/
 void
-gimp_paned_box_add_widget (GimpPanedBox *paned_box,
+picman_paned_box_add_widget (PicmanPanedBox *paned_box,
                            GtkWidget    *widget,
                            gint          index)
 {
   gint old_length = 0;
 
-  g_return_if_fail (GIMP_IS_PANED_BOX (paned_box));
+  g_return_if_fail (PICMAN_IS_PANED_BOX (paned_box));
   g_return_if_fail (GTK_IS_WIDGET (widget));
 
-  GIMP_LOG (DND, "Adding GtkWidget %p to GimpPanedBox %p", widget, paned_box);
+  PICMAN_LOG (DND, "Adding GtkWidget %p to PicmanPanedBox %p", widget, paned_box);
 
   /* Calculate length */
   old_length = g_list_length (paned_box->p->widgets);
@@ -537,7 +537,7 @@ gimp_paned_box_add_widget (GimpPanedBox *paned_box,
   /* Hook us in for drag events. We could abstract this but it doesn't
    * seem worth it at this point
    */
-  gimp_paned_box_set_widget_drag_handler (widget, paned_box);
+  picman_paned_box_set_widget_drag_handler (widget, paned_box);
 
   /* Insert into the GtkPaned hierarchy */
   if (old_length == 0)
@@ -612,15 +612,15 @@ gimp_paned_box_add_widget (GimpPanedBox *paned_box,
 }
 
 /**
- * gimp_paned_box_remove_widget:
- * @paned_box: A #GimpPanedBox
+ * picman_paned_box_remove_widget:
+ * @paned_box: A #PicmanPanedBox
  * @widget:    The #GtkWidget to remove
  *
- * Remove a #GtkWidget from a #GimpPanedBox added with
- * gimp_widgets_add_paned_widget().
+ * Remove a #GtkWidget from a #PicmanPanedBox added with
+ * picman_widgets_add_paned_widget().
  **/
 void
-gimp_paned_box_remove_widget (GimpPanedBox *paned_box,
+picman_paned_box_remove_widget (PicmanPanedBox *paned_box,
                               GtkWidget    *widget)
 {
   gint       old_length   = 0;
@@ -629,10 +629,10 @@ gimp_paned_box_remove_widget (GimpPanedBox *paned_box,
   GtkWidget *parent       = NULL;
   GtkWidget *grandparent  = NULL;
 
-  g_return_if_fail (GIMP_IS_PANED_BOX (paned_box));
+  g_return_if_fail (PICMAN_IS_PANED_BOX (paned_box));
   g_return_if_fail (GTK_IS_WIDGET (widget));
 
-  GIMP_LOG (DND, "Removing GtkWidget %p from GimpPanedBox %p", widget, paned_box);
+  PICMAN_LOG (DND, "Removing GtkWidget %p from PicmanPanedBox %p", widget, paned_box);
 
   /* Calculate length and index */
   old_length = g_list_length (paned_box->p->widgets);
@@ -642,7 +642,7 @@ gimp_paned_box_remove_widget (GimpPanedBox *paned_box,
   paned_box->p->widgets = g_list_remove (paned_box->p->widgets, widget);
 
   /* Reset the drag events hook */
-  gimp_paned_box_set_widget_drag_handler (widget, NULL);
+  picman_paned_box_set_widget_drag_handler (widget, NULL);
 
   /* Remove from widget hierarchy */
   if (old_length == 1)
@@ -687,8 +687,8 @@ gimp_paned_box_remove_widget (GimpPanedBox *paned_box,
 }
 
 /**
- * gimp_paned_box_will_handle_drag:
- * @paned_box: A #GimpPanedBox
+ * picman_paned_box_will_handle_drag:
+ * @paned_box: A #PicmanPanedBox
  * @widget:    The widget that got the drag event
  * @context:   Context from drag event
  * @x:         x from drag event
@@ -699,7 +699,7 @@ gimp_paned_box_remove_widget (GimpPanedBox *paned_box,
  *          @paned_box.
  **/
 gboolean
-gimp_paned_box_will_handle_drag (GimpPanedBox   *paned_box,
+picman_paned_box_will_handle_drag (PicmanPanedBox   *paned_box,
                                  GtkWidget      *widget,
                                  GdkDragContext *context,
                                  gint            x,
@@ -714,14 +714,14 @@ gimp_paned_box_will_handle_drag (GimpPanedBox   *paned_box,
   gint           drop_area_size = 0;
 
   g_return_val_if_fail (paned_box == NULL ||
-                        GIMP_IS_PANED_BOX (paned_box), FALSE);
+                        PICMAN_IS_PANED_BOX (paned_box), FALSE);
 
   /* Check for NULL to allow cleaner client code */
   if (paned_box == NULL)
     return FALSE;
 
   /* Our handler might handle it */
-  if (gimp_paned_box_will_handle_drag (paned_box->p->drag_handler,
+  if (picman_paned_box_will_handle_drag (paned_box->p->drag_handler,
                                        widget,
                                        context,
                                        x, y,
@@ -746,7 +746,7 @@ gimp_paned_box_will_handle_drag (GimpPanedBox   *paned_box,
    */
   gtk_widget_get_allocation (GTK_WIDGET (paned_box), &allocation);
   orientation    = gtk_orientable_get_orientation (GTK_ORIENTABLE (paned_box));
-  drop_area_size = gimp_paned_box_get_drop_area_size (paned_box);
+  drop_area_size = picman_paned_box_get_drop_area_size (paned_box);
   if (orientation == GTK_ORIENTATION_HORIZONTAL)
     {
       will_handle = (paned_box_x < drop_area_size ||
@@ -762,10 +762,10 @@ gimp_paned_box_will_handle_drag (GimpPanedBox   *paned_box,
 }
 
 void
-gimp_paned_box_set_drag_handler (GimpPanedBox *paned_box,
-                                 GimpPanedBox *drag_handler)
+picman_paned_box_set_drag_handler (PicmanPanedBox *paned_box,
+                                 PicmanPanedBox *drag_handler)
 {
-  g_return_if_fail (GIMP_IS_PANED_BOX (paned_box));
+  g_return_if_fail (PICMAN_IS_PANED_BOX (paned_box));
 
   paned_box->p->drag_handler = drag_handler;
 }

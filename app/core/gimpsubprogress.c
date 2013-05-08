@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,50 +21,50 @@
 
 #include "core-types.h"
 
-#include "core/gimpsubprogress.h"
-#include "core/gimpprogress.h"
+#include "core/picmansubprogress.h"
+#include "core/picmanprogress.h"
 
 
-static void           gimp_sub_progress_iface_init    (GimpProgressInterface *iface);
+static void           picman_sub_progress_iface_init    (PicmanProgressInterface *iface);
 
-static void           gimp_sub_progress_finalize      (GObject             *object);
+static void           picman_sub_progress_finalize      (GObject             *object);
 
-static GimpProgress * gimp_sub_progress_start         (GimpProgress        *progress,
+static PicmanProgress * picman_sub_progress_start         (PicmanProgress        *progress,
                                                        const gchar         *message,
                                                        gboolean             cancelable);
-static void           gimp_sub_progress_end           (GimpProgress        *progress);
-static gboolean       gimp_sub_progress_is_active     (GimpProgress        *progress);
-static void           gimp_sub_progress_set_text      (GimpProgress        *progress,
+static void           picman_sub_progress_end           (PicmanProgress        *progress);
+static gboolean       picman_sub_progress_is_active     (PicmanProgress        *progress);
+static void           picman_sub_progress_set_text      (PicmanProgress        *progress,
                                                        const gchar         *message);
-static void           gimp_sub_progress_set_value     (GimpProgress        *progress,
+static void           picman_sub_progress_set_value     (PicmanProgress        *progress,
                                                        gdouble              percentage);
-static gdouble        gimp_sub_progress_get_value     (GimpProgress        *progress);
-static void           gimp_sub_progress_pulse         (GimpProgress        *progress);
-static guint32        gimp_sub_progress_get_window_id (GimpProgress        *progress);
-static gboolean       gimp_sub_progress_message       (GimpProgress        *progress,
-                                                       Gimp                *gimp,
-                                                       GimpMessageSeverity  severity,
+static gdouble        picman_sub_progress_get_value     (PicmanProgress        *progress);
+static void           picman_sub_progress_pulse         (PicmanProgress        *progress);
+static guint32        picman_sub_progress_get_window_id (PicmanProgress        *progress);
+static gboolean       picman_sub_progress_message       (PicmanProgress        *progress,
+                                                       Picman                *picman,
+                                                       PicmanMessageSeverity  severity,
                                                        const gchar         *domain,
                                                        const gchar         *message);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpSubProgress, gimp_sub_progress, G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PROGRESS,
-                                                gimp_sub_progress_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanSubProgress, picman_sub_progress, G_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PROGRESS,
+                                                picman_sub_progress_iface_init))
 
-#define parent_class gimp_sub_progress_parent_class
+#define parent_class picman_sub_progress_parent_class
 
 
 static void
-gimp_sub_progress_class_init (GimpSubProgressClass *klass)
+picman_sub_progress_class_init (PicmanSubProgressClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize = gimp_sub_progress_finalize;
+  object_class->finalize = picman_sub_progress_finalize;
 }
 
 static void
-gimp_sub_progress_init (GimpSubProgress *sub)
+picman_sub_progress_init (PicmanSubProgress *sub)
 {
   sub->progress = NULL;
   sub->start    = 0.0;
@@ -72,9 +72,9 @@ gimp_sub_progress_init (GimpSubProgress *sub)
 }
 
 static void
-gimp_sub_progress_finalize (GObject *object)
+picman_sub_progress_finalize (GObject *object)
 {
-  GimpSubProgress *sub = GIMP_SUB_PROGRESS (object);
+  PicmanSubProgress *sub = PICMAN_SUB_PROGRESS (object);
 
   if (sub->progress)
     {
@@ -86,21 +86,21 @@ gimp_sub_progress_finalize (GObject *object)
 }
 
 static void
-gimp_sub_progress_iface_init (GimpProgressInterface *iface)
+picman_sub_progress_iface_init (PicmanProgressInterface *iface)
 {
-  iface->start         = gimp_sub_progress_start;
-  iface->end           = gimp_sub_progress_end;
-  iface->is_active     = gimp_sub_progress_is_active;
-  iface->set_text      = gimp_sub_progress_set_text;
-  iface->set_value     = gimp_sub_progress_set_value;
-  iface->get_value     = gimp_sub_progress_get_value;
-  iface->pulse         = gimp_sub_progress_pulse;
-  iface->get_window_id = gimp_sub_progress_get_window_id;
-  iface->message       = gimp_sub_progress_message;
+  iface->start         = picman_sub_progress_start;
+  iface->end           = picman_sub_progress_end;
+  iface->is_active     = picman_sub_progress_is_active;
+  iface->set_text      = picman_sub_progress_set_text;
+  iface->set_value     = picman_sub_progress_set_value;
+  iface->get_value     = picman_sub_progress_get_value;
+  iface->pulse         = picman_sub_progress_pulse;
+  iface->get_window_id = picman_sub_progress_get_window_id;
+  iface->message       = picman_sub_progress_message;
 }
 
-static GimpProgress *
-gimp_sub_progress_start (GimpProgress *progress,
+static PicmanProgress *
+picman_sub_progress_start (PicmanProgress *progress,
                          const gchar  *message,
                          gboolean      cancelable)
 {
@@ -109,116 +109,116 @@ gimp_sub_progress_start (GimpProgress *progress,
 }
 
 static void
-gimp_sub_progress_end (GimpProgress *progress)
+picman_sub_progress_end (PicmanProgress *progress)
 {
   /* does nothing */
 }
 
 static gboolean
-gimp_sub_progress_is_active (GimpProgress *progress)
+picman_sub_progress_is_active (PicmanProgress *progress)
 {
-  GimpSubProgress *sub = GIMP_SUB_PROGRESS (progress);
+  PicmanSubProgress *sub = PICMAN_SUB_PROGRESS (progress);
 
   if (sub->progress)
-    return gimp_progress_is_active (sub->progress);
+    return picman_progress_is_active (sub->progress);
 
   return FALSE;
 }
 
 static void
-gimp_sub_progress_set_text (GimpProgress *progress,
+picman_sub_progress_set_text (PicmanProgress *progress,
                             const gchar  *message)
 {
   /* does nothing */
 }
 
 static void
-gimp_sub_progress_set_value (GimpProgress *progress,
+picman_sub_progress_set_value (PicmanProgress *progress,
                              gdouble       percentage)
 {
-  GimpSubProgress *sub = GIMP_SUB_PROGRESS (progress);
+  PicmanSubProgress *sub = PICMAN_SUB_PROGRESS (progress);
 
   if (sub->progress)
-    gimp_progress_set_value (sub->progress,
+    picman_progress_set_value (sub->progress,
                              sub->start + percentage * (sub->end - sub->start));
 }
 
 static gdouble
-gimp_sub_progress_get_value (GimpProgress *progress)
+picman_sub_progress_get_value (PicmanProgress *progress)
 {
-  GimpSubProgress *sub = GIMP_SUB_PROGRESS (progress);
+  PicmanSubProgress *sub = PICMAN_SUB_PROGRESS (progress);
 
   if (sub->progress)
-    return gimp_progress_get_value (sub->progress);
+    return picman_progress_get_value (sub->progress);
 
   return 0.0;
 }
 
 static void
-gimp_sub_progress_pulse (GimpProgress *progress)
+picman_sub_progress_pulse (PicmanProgress *progress)
 {
-  GimpSubProgress *sub = GIMP_SUB_PROGRESS (progress);
+  PicmanSubProgress *sub = PICMAN_SUB_PROGRESS (progress);
 
   if (sub->progress)
-    gimp_progress_pulse (sub->progress);
+    picman_progress_pulse (sub->progress);
 }
 
 static guint32
-gimp_sub_progress_get_window_id (GimpProgress *progress)
+picman_sub_progress_get_window_id (PicmanProgress *progress)
 {
-  GimpSubProgress *sub = GIMP_SUB_PROGRESS (progress);
+  PicmanSubProgress *sub = PICMAN_SUB_PROGRESS (progress);
 
   if (sub->progress)
-    return gimp_progress_get_window_id (sub->progress);
+    return picman_progress_get_window_id (sub->progress);
 
   return 0;
 }
 
 static gboolean
-gimp_sub_progress_message (GimpProgress        *progress,
-                           Gimp                *gimp,
-                           GimpMessageSeverity  severity,
+picman_sub_progress_message (PicmanProgress        *progress,
+                           Picman                *picman,
+                           PicmanMessageSeverity  severity,
                            const gchar         *domain,
                            const gchar         *message)
 {
-  GimpSubProgress *sub = GIMP_SUB_PROGRESS (progress);
+  PicmanSubProgress *sub = PICMAN_SUB_PROGRESS (progress);
 
   if (sub->progress)
-    return gimp_progress_message (sub->progress,
-                                  gimp, severity, domain, message);
+    return picman_progress_message (sub->progress,
+                                  picman, severity, domain, message);
 
   return FALSE;
 }
 
 /**
- * gimp_sub_progress_new:
+ * picman_sub_progress_new:
  * @progress: parent progress or %NULL
  *
- * GimpSubProgress implements the GimpProgress interface and can be
- * used wherever a GimpProgress is needed. It maps progress
+ * PicmanSubProgress implements the PicmanProgress interface and can be
+ * used wherever a PicmanProgress is needed. It maps progress
  * information to a sub-range of its parent @progress. This is useful
  * when an action breaks down into multiple sub-actions that itself
- * need a #GimpProgress pointer. See gimp_image_scale() for an example.
+ * need a #PicmanProgress pointer. See picman_image_scale() for an example.
  *
- * Return value: a new #GimpProgress object
+ * Return value: a new #PicmanProgress object
  */
-GimpProgress *
-gimp_sub_progress_new (GimpProgress *progress)
+PicmanProgress *
+picman_sub_progress_new (PicmanProgress *progress)
 {
-  GimpSubProgress *sub;
+  PicmanSubProgress *sub;
 
-  g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress), NULL);
+  g_return_val_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress), NULL);
 
-  sub = g_object_new (GIMP_TYPE_SUB_PROGRESS, NULL);
+  sub = g_object_new (PICMAN_TYPE_SUB_PROGRESS, NULL);
 
   if (progress)
     sub->progress = g_object_ref (progress);
 
-  return GIMP_PROGRESS (sub);
+  return PICMAN_PROGRESS (sub);
 }
 
 /**
- * gimp_sub_progress_set_range:
+ * picman_sub_progress_set_range:
  * @start: start value of range on the parent process
  * @end:   end value of range on the parent process
  *
@@ -226,11 +226,11 @@ gimp_sub_progress_new (GimpProgress *progress)
  * mapped to.
  */
 void
-gimp_sub_progress_set_range (GimpSubProgress *progress,
+picman_sub_progress_set_range (PicmanSubProgress *progress,
                              gdouble          start,
                              gdouble          end)
 {
-  g_return_if_fail (GIMP_IS_SUB_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_SUB_PROGRESS (progress));
   g_return_if_fail (start < end);
 
   progress->start = start;
@@ -238,18 +238,18 @@ gimp_sub_progress_set_range (GimpSubProgress *progress,
 }
 
 /**
- * gimp_sub_progress_set_step:
+ * picman_sub_progress_set_step:
  * @index:     step index
  * @num_steps: number of steps
  *
- * A more convenient form of gimp_sub_progress_set_range().
+ * A more convenient form of picman_sub_progress_set_range().
  */
 void
-gimp_sub_progress_set_step (GimpSubProgress *progress,
+picman_sub_progress_set_step (PicmanSubProgress *progress,
                             gint             index,
                             gint             num_steps)
 {
-  g_return_if_fail (GIMP_IS_SUB_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_SUB_PROGRESS (progress));
   g_return_if_fail (index < num_steps && num_steps > 0);
 
   progress->start = (gdouble) index / num_steps;

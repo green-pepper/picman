@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppatternclipboard.c
- * Copyright (C) 2006 Michael Natterer <mitch@gimp.org>
+ * picmanpatternclipboard.c
+ * Copyright (C) 2006 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,104 +24,104 @@
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimpbuffer.h"
-#include "gimppatternclipboard.h"
-#include "gimpimage.h"
-#include "gimppickable.h"
-#include "gimptempbuf.h"
+#include "picman.h"
+#include "picmanbuffer.h"
+#include "picmanpatternclipboard.h"
+#include "picmanimage.h"
+#include "picmanpickable.h"
+#include "picmantempbuf.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
 {
   PROP_0,
-  PROP_GIMP
+  PROP_PICMAN
 };
 
 
 /*  local function prototypes  */
 
-static void       gimp_pattern_clipboard_constructed  (GObject      *object);
-static void       gimp_pattern_clipboard_set_property (GObject      *object,
+static void       picman_pattern_clipboard_constructed  (GObject      *object);
+static void       picman_pattern_clipboard_set_property (GObject      *object,
                                                        guint         property_id,
                                                        const GValue *value,
                                                        GParamSpec   *pspec);
-static void       gimp_pattern_clipboard_get_property (GObject      *object,
+static void       picman_pattern_clipboard_get_property (GObject      *object,
                                                        guint         property_id,
                                                        GValue       *value,
                                                        GParamSpec   *pspec);
 #if 0
-static GimpData * gimp_pattern_clipboard_duplicate    (GimpData     *data);
+static PicmanData * picman_pattern_clipboard_duplicate    (PicmanData     *data);
 #endif
 
-static void     gimp_pattern_clipboard_buffer_changed (Gimp         *gimp,
-                                                       GimpPattern  *pattern);
+static void     picman_pattern_clipboard_buffer_changed (Picman         *picman,
+                                                       PicmanPattern  *pattern);
 
 
-G_DEFINE_TYPE (GimpPatternClipboard, gimp_pattern_clipboard, GIMP_TYPE_PATTERN)
+G_DEFINE_TYPE (PicmanPatternClipboard, picman_pattern_clipboard, PICMAN_TYPE_PATTERN)
 
-#define parent_class gimp_pattern_clipboard_parent_class
+#define parent_class picman_pattern_clipboard_parent_class
 
 
 static void
-gimp_pattern_clipboard_class_init (GimpPatternClipboardClass *klass)
+picman_pattern_clipboard_class_init (PicmanPatternClipboardClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
 #if 0
-  GimpDataClass *data_class   = GIMP_DATA_CLASS (klass);
+  PicmanDataClass *data_class   = PICMAN_DATA_CLASS (klass);
 #endif
 
-  object_class->constructed  = gimp_pattern_clipboard_constructed;
-  object_class->set_property = gimp_pattern_clipboard_set_property;
-  object_class->get_property = gimp_pattern_clipboard_get_property;
+  object_class->constructed  = picman_pattern_clipboard_constructed;
+  object_class->set_property = picman_pattern_clipboard_set_property;
+  object_class->get_property = picman_pattern_clipboard_get_property;
 
 #if 0
-  data_class->duplicate      = gimp_pattern_clipboard_duplicate;
+  data_class->duplicate      = picman_pattern_clipboard_duplicate;
 #endif
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp", NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman", NULL, NULL,
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_pattern_clipboard_init (GimpPatternClipboard *pattern)
+picman_pattern_clipboard_init (PicmanPatternClipboard *pattern)
 {
-  pattern->gimp = NULL;
+  pattern->picman = NULL;
 }
 
 static void
-gimp_pattern_clipboard_constructed (GObject *object)
+picman_pattern_clipboard_constructed (GObject *object)
 {
-  GimpPatternClipboard *pattern = GIMP_PATTERN_CLIPBOARD (object);
+  PicmanPatternClipboard *pattern = PICMAN_PATTERN_CLIPBOARD (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_GIMP (pattern->gimp));
+  g_assert (PICMAN_IS_PICMAN (pattern->picman));
 
-  g_signal_connect_object (pattern->gimp, "buffer-changed",
-                           G_CALLBACK (gimp_pattern_clipboard_buffer_changed),
+  g_signal_connect_object (pattern->picman, "buffer-changed",
+                           G_CALLBACK (picman_pattern_clipboard_buffer_changed),
                            pattern, 0);
 
-  gimp_pattern_clipboard_buffer_changed (pattern->gimp, GIMP_PATTERN (pattern));
+  picman_pattern_clipboard_buffer_changed (pattern->picman, PICMAN_PATTERN (pattern));
 }
 
 static void
-gimp_pattern_clipboard_set_property (GObject      *object,
+picman_pattern_clipboard_set_property (GObject      *object,
                                      guint         property_id,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  GimpPatternClipboard *pattern = GIMP_PATTERN_CLIPBOARD (object);
+  PicmanPatternClipboard *pattern = PICMAN_PATTERN_CLIPBOARD (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      pattern->gimp = g_value_get_object (value);
+    case PROP_PICMAN:
+      pattern->picman = g_value_get_object (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -130,17 +130,17 @@ gimp_pattern_clipboard_set_property (GObject      *object,
 }
 
 static void
-gimp_pattern_clipboard_get_property (GObject    *object,
+picman_pattern_clipboard_get_property (GObject    *object,
                                      guint       property_id,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  GimpPatternClipboard *pattern = GIMP_PATTERN_CLIPBOARD (object);
+  PicmanPatternClipboard *pattern = PICMAN_PATTERN_CLIPBOARD (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      g_value_set_object (value, pattern->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, pattern->picman);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -149,23 +149,23 @@ gimp_pattern_clipboard_get_property (GObject    *object,
 }
 
 #if 0
-static GimpData *
-gimp_pattern_clipboard_duplicate (GimpData *data)
+static PicmanData *
+picman_pattern_clipboard_duplicate (PicmanData *data)
 {
-  GimpPatternClipboard *pattern = GIMP_PATTERN_CLIPBOARD (data);
+  PicmanPatternClipboard *pattern = PICMAN_PATTERN_CLIPBOARD (data);
 
-  return gimp_pattern_clipboard_new (pattern->gimp);
+  return picman_pattern_clipboard_new (pattern->picman);
 }
 #endif
 
-GimpData *
-gimp_pattern_clipboard_new (Gimp *gimp)
+PicmanData *
+picman_pattern_clipboard_new (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  return g_object_new (GIMP_TYPE_PATTERN_CLIPBOARD,
+  return g_object_new (PICMAN_TYPE_PATTERN_CLIPBOARD,
                        "name", _("Clipboard"),
-                       "gimp", gimp,
+                       "picman", picman,
                        NULL);
 }
 
@@ -173,38 +173,38 @@ gimp_pattern_clipboard_new (Gimp *gimp)
 /*  private functions  */
 
 static void
-gimp_pattern_clipboard_buffer_changed (Gimp        *gimp,
-                                       GimpPattern *pattern)
+picman_pattern_clipboard_buffer_changed (Picman        *picman,
+                                       PicmanPattern *pattern)
 {
   if (pattern->mask)
     {
-      gimp_temp_buf_unref (pattern->mask);
+      picman_temp_buf_unref (pattern->mask);
       pattern->mask = NULL;
     }
 
-  if (gimp->global_buffer)
+  if (picman->global_buffer)
     {
-      GimpBuffer *buffer = gimp->global_buffer;
+      PicmanBuffer *buffer = picman->global_buffer;
       gint        width;
       gint        height;
 
-      width  = MIN (gimp_buffer_get_width  (buffer), 2048);
-      height = MIN (gimp_buffer_get_height (buffer), 2048);
+      width  = MIN (picman_buffer_get_width  (buffer), 2048);
+      height = MIN (picman_buffer_get_height (buffer), 2048);
 
-      pattern->mask = gimp_temp_buf_new (width, height,
-                                         gimp_buffer_get_format (buffer));
+      pattern->mask = picman_temp_buf_new (width, height,
+                                         picman_buffer_get_format (buffer));
 
-      gegl_buffer_get (gimp_buffer_get_buffer (buffer),
+      gegl_buffer_get (picman_buffer_get_buffer (buffer),
                        GEGL_RECTANGLE (0, 0, width, height), 1.0,
                        NULL,
-                       gimp_temp_buf_get_data (pattern->mask),
+                       picman_temp_buf_get_data (pattern->mask),
                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
     }
   else
     {
-      pattern->mask = gimp_temp_buf_new (16, 16, babl_format ("R'G'B' u8"));
-      memset (gimp_temp_buf_get_data (pattern->mask), 255, 16 * 16 * 3);
+      pattern->mask = picman_temp_buf_new (16, 16, babl_format ("R'G'B' u8"));
+      memset (picman_temp_buf_get_data (pattern->mask), 255, 16 * 16 * 3);
     }
 
-  gimp_data_dirty (GIMP_DATA (pattern));
+  picman_data_dirty (PICMAN_DATA (pattern));
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,16 +19,16 @@
 #define __SCALE_DIALOG_H__
 
 
-GtkWidget * scale_dialog_new (GimpViewable          *viewable,
-                              GimpContext           *context,
+GtkWidget * scale_dialog_new (PicmanViewable          *viewable,
+                              PicmanContext           *context,
                               const gchar           *title,
                               const gchar           *role,
                               GtkWidget             *parent,
-                              GimpHelpFunc           help_func,
+                              PicmanHelpFunc           help_func,
                               const gchar           *help_id,
-                              GimpUnit               unit,
-                              GimpInterpolationType  interpolation,
-                              GimpScaleCallback      callback,
+                              PicmanUnit               unit,
+                              PicmanInterpolationType  interpolation,
+                              PicmanScaleCallback      callback,
                               gpointer               user_data);
 
 

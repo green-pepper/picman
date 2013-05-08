@@ -1,9 +1,9 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcairo.h
- * Copyright (C) 2007      Sven Neumann <sven@gimp.org>
- *               2010-2012 Michael Natterer <mitch@gimp.org>
+ * picmancairo.h
+ * Copyright (C) 2007      Sven Neumann <sven@picman.org>
+ *               2010-2012 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,28 +20,28 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CAIRO_H__
-#define __GIMP_CAIRO_H__
+#ifndef __PICMAN_CAIRO_H__
+#define __PICMAN_CAIRO_H__
 
 
-void              gimp_cairo_set_source_rgb        (cairo_t         *cr,
-                                                    const GimpRGB   *color);
-void              gimp_cairo_set_source_rgba       (cairo_t         *cr,
-                                                    const GimpRGB   *color);
+void              picman_cairo_set_source_rgb        (cairo_t         *cr,
+                                                    const PicmanRGB   *color);
+void              picman_cairo_set_source_rgba       (cairo_t         *cr,
+                                                    const PicmanRGB   *color);
 
-cairo_pattern_t * gimp_cairo_checkerboard_create   (cairo_t         *cr,
+cairo_pattern_t * picman_cairo_checkerboard_create   (cairo_t         *cr,
                                                     gint             size,
-                                                    const GimpRGB   *light,
-                                                    const GimpRGB   *dark);
+                                                    const PicmanRGB   *light,
+                                                    const PicmanRGB   *dark);
 
-const Babl      * gimp_cairo_surface_get_format    (cairo_surface_t *surface);
-GeglBuffer      * gimp_cairo_surface_create_buffer (cairo_surface_t *surface);
+const Babl      * picman_cairo_surface_get_format    (cairo_surface_t *surface);
+GeglBuffer      * picman_cairo_surface_create_buffer (cairo_surface_t *surface);
 
 
 /*  some useful macros for writing directly to a Cairo surface  */
 
 /**
- * GIMP_CAIRO_RGB24_SET_PIXEL:
+ * PICMAN_CAIRO_RGB24_SET_PIXEL:
  * @d: pointer to the destination buffer
  * @r: red component
  * @g: green component
@@ -49,19 +49,19 @@ GeglBuffer      * gimp_cairo_surface_create_buffer (cairo_surface_t *surface);
  *
  * Sets a single pixel in an Cairo image surface in %CAIRO_FORMAT_RGB24.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-#define GIMP_CAIRO_RGB24_SET_PIXEL(d, r, g, b) \
+#define PICMAN_CAIRO_RGB24_SET_PIXEL(d, r, g, b) \
   G_STMT_START { d[0] = (b);  d[1] = (g);  d[2] = (r); } G_STMT_END
 #else
-#define GIMP_CAIRO_RGB24_SET_PIXEL(d, r, g, b) \
+#define PICMAN_CAIRO_RGB24_SET_PIXEL(d, r, g, b) \
   G_STMT_START { d[1] = (r);  d[2] = (g);  d[3] = (b); } G_STMT_END
 #endif
 
 
 /**
- * GIMP_CAIRO_RGB24_GET_PIXEL:
+ * PICMAN_CAIRO_RGB24_GET_PIXEL:
  * @s: pointer to the source buffer
  * @r: red component
  * @g: green component
@@ -69,19 +69,19 @@ GeglBuffer      * gimp_cairo_surface_create_buffer (cairo_surface_t *surface);
  *
  * Gets a single pixel from a Cairo image surface in %CAIRO_FORMAT_RGB24.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-#define GIMP_CAIRO_RGB24_GET_PIXEL(s, r, g, b) \
+#define PICMAN_CAIRO_RGB24_GET_PIXEL(s, r, g, b) \
   G_STMT_START { (b) = s[0]; (g) = s[1]; (r) = s[2]; } G_STMT_END
 #else
-#define GIMP_CAIRO_RGB24_GET_PIXEL(s, r, g, b) \
+#define PICMAN_CAIRO_RGB24_GET_PIXEL(s, r, g, b) \
   G_STMT_START { (r) = s[1]; (g) = s[2]; (b) = s[3]; } G_STMT_END
 #endif
 
 
 /**
- * GIMP_CAIRO_ARGB32_SET_PIXEL:
+ * PICMAN_CAIRO_ARGB32_SET_PIXEL:
  * @d: pointer to the destination buffer
  * @r: red component, not pre-multiplied
  * @g: green component, not pre-multiplied
@@ -90,10 +90,10 @@ GeglBuffer      * gimp_cairo_surface_create_buffer (cairo_surface_t *surface);
  *
  * Sets a single pixel in an Cairo image surface in %CAIRO_FORMAT_ARGB32.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-#define GIMP_CAIRO_ARGB32_SET_PIXEL(d, r, g, b, a) \
+#define PICMAN_CAIRO_ARGB32_SET_PIXEL(d, r, g, b, a) \
   G_STMT_START {                                   \
     const guint tr = (a) * (r) + 0x80;             \
     const guint tg = (a) * (g) + 0x80;             \
@@ -104,7 +104,7 @@ GeglBuffer      * gimp_cairo_surface_create_buffer (cairo_surface_t *surface);
     (d)[3] = (a);                                  \
   } G_STMT_END
 #else
-#define GIMP_CAIRO_ARGB32_SET_PIXEL(d, r, g, b, a) \
+#define PICMAN_CAIRO_ARGB32_SET_PIXEL(d, r, g, b, a) \
   G_STMT_START {                                   \
     const guint tr = (a) * (r) + 0x80;             \
     const guint tg = (a) * (g) + 0x80;             \
@@ -118,7 +118,7 @@ GeglBuffer      * gimp_cairo_surface_create_buffer (cairo_surface_t *surface);
 
 
 /**
- * GIMP_CAIRO_ARGB32_GET_PIXEL:
+ * PICMAN_CAIRO_ARGB32_GET_PIXEL:
  * @s: pointer to the source buffer
  * @r: red component, not pre-multiplied
  * @g: green component, not pre-multiplied
@@ -127,10 +127,10 @@ GeglBuffer      * gimp_cairo_surface_create_buffer (cairo_surface_t *surface);
  *
  * Gets a single pixel from a Cairo image surface in %CAIRO_FORMAT_ARGB32.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-#define GIMP_CAIRO_ARGB32_GET_PIXEL(s, r, g, b, a) \
+#define PICMAN_CAIRO_ARGB32_GET_PIXEL(s, r, g, b, a) \
   G_STMT_START {                                   \
     const guint tb = (s)[0];                       \
     const guint tg = (s)[1];                       \
@@ -142,7 +142,7 @@ GeglBuffer      * gimp_cairo_surface_create_buffer (cairo_surface_t *surface);
     (a) = ta;                                      \
   } G_STMT_END
 #else
-#define GIMP_CAIRO_ARGB32_GET_PIXEL(s, r, g, b, a) \
+#define PICMAN_CAIRO_ARGB32_GET_PIXEL(s, r, g, b, a) \
   G_STMT_START {                                   \
     const guint ta = (s)[0];                       \
     const guint tr = (s)[1];                       \
@@ -156,4 +156,4 @@ GeglBuffer      * gimp_cairo_surface_create_buffer (cairo_surface_t *surface);
 #endif
 
 
-#endif /* __GIMP_CAIRO_H__ */
+#endif /* __PICMAN_CAIRO_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,37 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_INK_UNDO_H__
-#define __GIMP_INK_UNDO_H__
+#ifndef __PICMAN_INK_UNDO_H__
+#define __PICMAN_INK_UNDO_H__
 
 
-#include "gimppaintcoreundo.h"
+#include "picmanpaintcoreundo.h"
 
 
-#define GIMP_TYPE_INK_UNDO            (gimp_ink_undo_get_type ())
-#define GIMP_INK_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_INK_UNDO, GimpInkUndo))
-#define GIMP_INK_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_INK_UNDO, GimpInkUndoClass))
-#define GIMP_IS_INK_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_INK_UNDO))
-#define GIMP_IS_INK_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_INK_UNDO))
-#define GIMP_INK_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_INK_UNDO, GimpInkUndoClass))
+#define PICMAN_TYPE_INK_UNDO            (picman_ink_undo_get_type ())
+#define PICMAN_INK_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_INK_UNDO, PicmanInkUndo))
+#define PICMAN_INK_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_INK_UNDO, PicmanInkUndoClass))
+#define PICMAN_IS_INK_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_INK_UNDO))
+#define PICMAN_IS_INK_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_INK_UNDO))
+#define PICMAN_INK_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_INK_UNDO, PicmanInkUndoClass))
 
 
-typedef struct _GimpInkUndoClass GimpInkUndoClass;
+typedef struct _PicmanInkUndoClass PicmanInkUndoClass;
 
-struct _GimpInkUndo
+struct _PicmanInkUndo
 {
-  GimpPaintCoreUndo  parent_instance;
+  PicmanPaintCoreUndo  parent_instance;
 
-  GimpBlob         *last_blob;
+  PicmanBlob         *last_blob;
 };
 
-struct _GimpInkUndoClass
+struct _PicmanInkUndoClass
 {
-  GimpPaintCoreUndoClass  parent_class;
+  PicmanPaintCoreUndoClass  parent_class;
 };
 
 
-GType   gimp_ink_undo_get_type (void) G_GNUC_CONST;
+GType   picman_ink_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_INK_UNDO_H__ */
+#endif /* __PICMAN_INK_UNDO_H__ */

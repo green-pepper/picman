@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,22 +22,22 @@
 #include <gegl.h>
 #include <glib/gstdio.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #ifdef G_OS_WIN32
-#include "libgimpbase/gimpwin32-io.h"
+#include "libpicmanbase/picmanwin32-io.h"
 #endif
 
 #include "core-types.h"
 
-#include "gimpcurve.h"
-#include "gimpcurve-load.h"
+#include "picmancurve.h"
+#include "picmancurve-load.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 GList *
-gimp_curve_load (const gchar  *filename,
+picman_curve_load (const gchar  *filename,
                  GError      **error)
 {
   FILE *file;
@@ -50,9 +50,9 @@ gimp_curve_load (const gchar  *filename,
 
   if (! file)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 

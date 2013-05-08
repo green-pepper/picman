@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcompat.h
- * Compatibility defines to ease migration from the GIMP-1.2 API
+ * picmancompat.h
+ * Compatibility defines to ease migration from the PICMAN-1.2 API
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COMPAT_H__
-#define __GIMP_COMPAT_H__
+#ifndef __PICMAN_COMPAT_H__
+#define __PICMAN_COMPAT_H__
 
 G_BEGIN_DECLS
 
@@ -32,193 +32,193 @@ G_BEGIN_DECLS
  * These defines will be removed in the next development cycle.
  */
 
-#ifndef GIMP_DISABLE_DEPRECATED
+#ifndef PICMAN_DISABLE_DEPRECATED
 
 
-#define GimpRunModeType                         GimpRunMode
-#define GimpExportReturnType                    GimpExportReturn
+#define PicmanRunModeType                         PicmanRunMode
+#define PicmanExportReturnType                    PicmanExportReturn
 
-#define gimp_use_xshm()                         (TRUE)
-#define gimp_color_cube                         ((guchar *) { 6, 6, 4, 24 })
+#define picman_use_xshm()                         (TRUE)
+#define picman_color_cube                         ((guchar *) { 6, 6, 4, 24 })
 
-#define gimp_blend                              gimp_edit_blend
-#define gimp_bucket_fill                        gimp_edit_bucket_fill
-#define gimp_color_picker                       gimp_image_pick_color
-#define gimp_convert_rgb                        gimp_image_convert_rgb
-#define gimp_convert_grayscale                  gimp_image_convert_grayscale
-#define gimp_convert_indexed                    gimp_image_convert_indexed
-#define gimp_crop                               gimp_image_crop
+#define picman_blend                              picman_edit_blend
+#define picman_bucket_fill                        picman_edit_bucket_fill
+#define picman_color_picker                       picman_image_pick_color
+#define picman_convert_rgb                        picman_image_convert_rgb
+#define picman_convert_grayscale                  picman_image_convert_grayscale
+#define picman_convert_indexed                    picman_image_convert_indexed
+#define picman_crop                               picman_image_crop
 
-#define gimp_channel_get_image_id               gimp_drawable_get_image
-#define gimp_channel_delete                     gimp_drawable_delete
-#define gimp_channel_get_name                   gimp_drawable_get_name
-#define gimp_channel_set_name                   gimp_drawable_set_name
-#define gimp_channel_get_visible                gimp_drawable_get_visible
-#define gimp_channel_set_visible                gimp_drawable_set_visible
-#define gimp_channel_get_tattoo                 gimp_drawable_get_tattoo
-#define gimp_channel_set_tattoo                 gimp_drawable_set_tattoo
+#define picman_channel_get_image_id               picman_drawable_get_image
+#define picman_channel_delete                     picman_drawable_delete
+#define picman_channel_get_name                   picman_drawable_get_name
+#define picman_channel_set_name                   picman_drawable_set_name
+#define picman_channel_get_visible                picman_drawable_get_visible
+#define picman_channel_set_visible                picman_drawable_set_visible
+#define picman_channel_get_tattoo                 picman_drawable_get_tattoo
+#define picman_channel_set_tattoo                 picman_drawable_set_tattoo
 
-#define gimp_channel_ops_offset                 gimp_drawable_offset
-#define gimp_channel_ops_duplicate              gimp_image_duplictate
+#define picman_channel_ops_offset                 picman_drawable_offset
+#define picman_channel_ops_duplicate              picman_image_duplictate
 
-#define gimp_layer_get_image_id                 gimp_drawable_get_image
-#define gimp_layer_delete                       gimp_drawable_delete
-#define gimp_layer_get_name                     gimp_drawable_get_name
-#define gimp_layer_set_name                     gimp_drawable_set_name
-#define gimp_layer_get_visible                  gimp_drawable_get_visible
-#define gimp_layer_set_visible                  gimp_drawable_set_visible
-#define gimp_layer_get_linked                   gimp_drawable_get_linked
-#define gimp_layer_set_linked                   gimp_drawable_set_linked
-#define gimp_layer_get_tattoo                   gimp_drawable_get_tattoo
-#define gimp_layer_set_tattoo                   gimp_drawable_set_tattoo
-#define gimp_layer_is_floating_selection        gimp_layer_is_floating_sel
-#define gimp_layer_get_preserve_transparency    gimp_layer_get_preserve_trans
-#define gimp_layer_set_preserve_transparency    gimp_layer_set_preserve_trans
+#define picman_layer_get_image_id                 picman_drawable_get_image
+#define picman_layer_delete                       picman_drawable_delete
+#define picman_layer_get_name                     picman_drawable_get_name
+#define picman_layer_set_name                     picman_drawable_set_name
+#define picman_layer_get_visible                  picman_drawable_get_visible
+#define picman_layer_set_visible                  picman_drawable_set_visible
+#define picman_layer_get_linked                   picman_drawable_get_linked
+#define picman_layer_set_linked                   picman_drawable_set_linked
+#define picman_layer_get_tattoo                   picman_drawable_get_tattoo
+#define picman_layer_set_tattoo                   picman_drawable_set_tattoo
+#define picman_layer_is_floating_selection        picman_layer_is_floating_sel
+#define picman_layer_get_preserve_transparency    picman_layer_get_preserve_trans
+#define picman_layer_set_preserve_transparency    picman_layer_set_preserve_trans
 
-#define gimp_layer_mask                         gimp_layer_get_mask
-#define gimp_layer_get_mask_id                  gimp_layer_get_mask
+#define picman_layer_mask                         picman_layer_get_mask
+#define picman_layer_get_mask_id                  picman_layer_get_mask
 
-#define gimp_drawable_image                     gimp_drawable_get_image
-#define gimp_drawable_image_id                  gimp_drawable_get_image
-#define gimp_drawable_name                      gimp_drawable_get_name
-#define gimp_drawable_visible                   gimp_drawable_get_visible
-#define gimp_drawable_bytes                     gimp_drawable_bpp
+#define picman_drawable_image                     picman_drawable_get_image
+#define picman_drawable_image_id                  picman_drawable_get_image
+#define picman_drawable_name                      picman_drawable_get_name
+#define picman_drawable_visible                   picman_drawable_get_visible
+#define picman_drawable_bytes                     picman_drawable_bpp
 
-#define gimp_image_active_drawable              gimp_image_get_active_drawable
-#define gimp_image_floating_selection           gimp_image_get_floating_sel
-#define gimp_image_add_layer_mask(i,l,m)        gimp_layer_add_mask(l,m)
-#define gimp_image_remove_layer_mask(i,l,m)     gimp_layer_remove_mask(l,m)
+#define picman_image_active_drawable              picman_image_get_active_drawable
+#define picman_image_floating_selection           picman_image_get_floating_sel
+#define picman_image_add_layer_mask(i,l,m)        picman_layer_add_mask(l,m)
+#define picman_image_remove_layer_mask(i,l,m)     picman_layer_remove_mask(l,m)
 
-#define gimp_gradients_get_active               gimp_gradients_get_gradient
-#define gimp_gradients_set_active               gimp_gradients_set_gradient
+#define picman_gradients_get_active               picman_gradients_get_gradient
+#define picman_gradients_set_active               picman_gradients_set_gradient
 
-#define gimp_palette_refresh                    gimp_palettes_refresh
+#define picman_palette_refresh                    picman_palettes_refresh
 
-#define gimp_temp_PDB_name                      gimp_procedural_db_temp_name
+#define picman_temp_PDB_name                      picman_procedural_db_temp_name
 
-#define gimp_undo_push_group_start              gimp_image_undo_group_start
-#define gimp_undo_push_group_end                gimp_image_undo_group_end
+#define picman_undo_push_group_start              picman_image_undo_group_start
+#define picman_undo_push_group_end                picman_image_undo_group_end
 
-#define gimp_help_init()                        ((void) 0)
-#define gimp_help_free()                        ((void) 0)
+#define picman_help_init()                        ((void) 0)
+#define picman_help_free()                        ((void) 0)
 
-#define gimp_interactive_selection_brush        gimp_brush_select_new
-#define gimp_brush_select_widget                gimp_brush_select_widget_new
-#define gimp_brush_select_widget_set_popup      gimp_brush_select_widget_set
-#define gimp_brush_select_widget_close_popup    gimp_brush_select_widget_close
+#define picman_interactive_selection_brush        picman_brush_select_new
+#define picman_brush_select_widget                picman_brush_select_widget_new
+#define picman_brush_select_widget_set_popup      picman_brush_select_widget_set
+#define picman_brush_select_widget_close_popup    picman_brush_select_widget_close
 
-#define gimp_interactive_selection_font         gimp_font_select_new
-#define gimp_gradient_select_widget             gimp_gradient_select_widget_new
-#define gimp_gradient_select_widget_set_popup   gimp_gradient_select_widget_set
-#define gimp_gradient_select_widget_close_popup gimp_gradient_select_widget_close
+#define picman_interactive_selection_font         picman_font_select_new
+#define picman_gradient_select_widget             picman_gradient_select_widget_new
+#define picman_gradient_select_widget_set_popup   picman_gradient_select_widget_set
+#define picman_gradient_select_widget_close_popup picman_gradient_select_widget_close
 
-#define gimp_interactive_selection_gradient     gimp_gradient_select_new
-#define gimp_font_select_widget                 gimp_font_select_widget_new
-#define gimp_font_select_widget_set_popup       gimp_font_select_widget_set
-#define gimp_font_select_widget_close_popup     gimp_font_select_widget_close
+#define picman_interactive_selection_gradient     picman_gradient_select_new
+#define picman_font_select_widget                 picman_font_select_widget_new
+#define picman_font_select_widget_set_popup       picman_font_select_widget_set
+#define picman_font_select_widget_close_popup     picman_font_select_widget_close
 
-#define gimp_interactive_selection_pattern      gimp_pattern_select_new
-#define gimp_pattern_select_widget              gimp_pattern_select_widget_new
-#define gimp_pattern_select_widget_set_popup    gimp_pattern_select_widget_set
-#define gimp_pattern_select_widget_close_popup  gimp_pattern_select_widget_close
+#define picman_interactive_selection_pattern      picman_pattern_select_new
+#define picman_pattern_select_widget              picman_pattern_select_widget_new
+#define picman_pattern_select_widget_set_popup    picman_pattern_select_widget_set
+#define picman_pattern_select_widget_close_popup  picman_pattern_select_widget_close
 
-#define INTENSITY(r,g,b)                        GIMP_RGB_INTENSITY(r,g,b)
-#define INTENSITY_RED                           GIMP_RGB_INTENSITY_RED
-#define INTENSITY_GREEN                         GIMP_RGB_INTENSITY_GREEN
-#define INTENSITY_BLUE                          GIMP_RGB_INTENSITY_BLUE
+#define INTENSITY(r,g,b)                        PICMAN_RGB_INTENSITY(r,g,b)
+#define INTENSITY_RED                           PICMAN_RGB_INTENSITY_RED
+#define INTENSITY_GREEN                         PICMAN_RGB_INTENSITY_GREEN
+#define INTENSITY_BLUE                          PICMAN_RGB_INTENSITY_BLUE
 
-#define gimp_file_selection_                    gimp_file_entry_
-#define GimpFileSelection                       GimpFileEntry
-#define GIMP_TYPE_FILE_SELECTION                GIMP_TYPE_FILE_ENTRY
-#define GIMP_FILE_SELECTION                     GIMP_FILE_ENTRY
-#define GIMP_IS_FILE_SELECTION                  GIMP_IS_FILE_ENTRY
+#define picman_file_selection_                    picman_file_entry_
+#define PicmanFileSelection                       PicmanFileEntry
+#define PICMAN_TYPE_FILE_SELECTION                PICMAN_TYPE_FILE_ENTRY
+#define PICMAN_FILE_SELECTION                     PICMAN_FILE_ENTRY
+#define PICMAN_IS_FILE_SELECTION                  PICMAN_IS_FILE_ENTRY
 
 
 enum
 {
-  GIMP_WHITE_MASK         = GIMP_ADD_WHITE_MASK,
-  GIMP_BLACK_MASK         = GIMP_ADD_BLACK_MASK,
-  GIMP_ALPHA_MASK         = GIMP_ADD_ALPHA_MASK,
-  GIMP_SELECTION_MASK     = GIMP_ADD_SELECTION_MASK,
-  GIMP_COPY_MASK          = GIMP_ADD_COPY_MASK,
+  PICMAN_WHITE_MASK         = PICMAN_ADD_WHITE_MASK,
+  PICMAN_BLACK_MASK         = PICMAN_ADD_BLACK_MASK,
+  PICMAN_ALPHA_MASK         = PICMAN_ADD_ALPHA_MASK,
+  PICMAN_SELECTION_MASK     = PICMAN_ADD_SELECTION_MASK,
+  PICMAN_COPY_MASK          = PICMAN_ADD_COPY_MASK,
 };
 
 enum
 {
-  GIMP_ADD       = GIMP_CHANNEL_OP_ADD,
-  GIMP_SUB       = GIMP_CHANNEL_OP_SUBTRACT,
-  GIMP_REPLACE   = GIMP_CHANNEL_OP_REPLACE,
-  GIMP_INTERSECT = GIMP_CHANNEL_OP_INTERSECT
+  PICMAN_ADD       = PICMAN_CHANNEL_OP_ADD,
+  PICMAN_SUB       = PICMAN_CHANNEL_OP_SUBTRACT,
+  PICMAN_REPLACE   = PICMAN_CHANNEL_OP_REPLACE,
+  PICMAN_INTERSECT = PICMAN_CHANNEL_OP_INTERSECT
 };
 
 enum
 {
-  GIMP_FG_BG_RGB = GIMP_FG_BG_RGB_MODE,
-  GIMP_FG_BG_HSV = GIMP_FG_BG_HSV_MODE,
-  GIMP_FG_TRANS  = GIMP_FG_TRANSPARENT_MODE,
-  GIMP_CUSTOM    = GIMP_CUSTOM_MODE
+  PICMAN_FG_BG_RGB = PICMAN_FG_BG_RGB_MODE,
+  PICMAN_FG_BG_HSV = PICMAN_FG_BG_HSV_MODE,
+  PICMAN_FG_TRANS  = PICMAN_FG_TRANSPARENT_MODE,
+  PICMAN_CUSTOM    = PICMAN_CUSTOM_MODE
 };
 
 enum
 {
-  GIMP_FG_IMAGE_FILL    = GIMP_FOREGROUND_FILL,
-  GIMP_BG_IMAGE_FILL    = GIMP_BACKGROUND_FILL,
-  GIMP_WHITE_IMAGE_FILL = GIMP_WHITE_FILL,
-  GIMP_TRANS_IMAGE_FILL = GIMP_TRANSPARENT_FILL
+  PICMAN_FG_IMAGE_FILL    = PICMAN_FOREGROUND_FILL,
+  PICMAN_BG_IMAGE_FILL    = PICMAN_BACKGROUND_FILL,
+  PICMAN_WHITE_IMAGE_FILL = PICMAN_WHITE_FILL,
+  PICMAN_TRANS_IMAGE_FILL = PICMAN_TRANSPARENT_FILL
 };
 
 enum
 {
-  GIMP_APPLY   = GIMP_MASK_APPLY,
-  GIMP_DISCARD = GIMP_MASK_DISCARD
+  PICMAN_APPLY   = PICMAN_MASK_APPLY,
+  PICMAN_DISCARD = PICMAN_MASK_DISCARD
 };
 
 enum
 {
-  GIMP_HARD = GIMP_BRUSH_HARD,
-  GIMP_SOFT = GIMP_BRUSH_SOFT,
+  PICMAN_HARD = PICMAN_BRUSH_HARD,
+  PICMAN_SOFT = PICMAN_BRUSH_SOFT,
 };
 
 enum
 {
-  GIMP_CONTINUOUS  = GIMP_PAINT_CONSTANT,
-  GIMP_INCREMENTAL = GIMP_PAINT_INCREMENTAL
+  PICMAN_CONTINUOUS  = PICMAN_PAINT_CONSTANT,
+  PICMAN_INCREMENTAL = PICMAN_PAINT_INCREMENTAL
 };
 
 enum
 {
-  GIMP_HORIZONTAL = GIMP_ORIENTATION_HORIZONTAL,
-  GIMP_VERTICAL   = GIMP_ORIENTATION_VERTICAL,
-  GIMP_UNKNOWN    = GIMP_ORIENTATION_UNKNOWN
+  PICMAN_HORIZONTAL = PICMAN_ORIENTATION_HORIZONTAL,
+  PICMAN_VERTICAL   = PICMAN_ORIENTATION_VERTICAL,
+  PICMAN_UNKNOWN    = PICMAN_ORIENTATION_UNKNOWN
 };
 
 enum
 {
-  GIMP_LINEAR               = GIMP_GRADIENT_LINEAR,
-  GIMP_BILNEAR              = GIMP_GRADIENT_BILINEAR,
-  GIMP_RADIAL               = GIMP_GRADIENT_RADIAL,
-  GIMP_SQUARE               = GIMP_GRADIENT_SQUARE,
-  GIMP_CONICAL_SYMMETRIC    = GIMP_GRADIENT_CONICAL_SYMMETRIC,
-  GIMP_CONICAL_ASYMMETRIC   = GIMP_GRADIENT_CONICAL_ASYMMETRIC,
-  GIMP_SHAPEBURST_ANGULAR   = GIMP_GRADIENT_SHAPEBURST_ANGULAR,
-  GIMP_SHAPEBURST_SPHERICAL = GIMP_GRADIENT_SHAPEBURST_SPHERICAL,
-  GIMP_SHAPEBURST_DIMPLED   = GIMP_GRADIENT_SHAPEBURST_DIMPLED,
-  GIMP_SPIRAL_CLOCKWISE     = GIMP_GRADIENT_SPIRAL_CLOCKWISE,
-  GIMP_SPIRAL_ANTICLOCKWISE = GIMP_GRADIENT_SPIRAL_ANTICLOCKWISE
+  PICMAN_LINEAR               = PICMAN_GRADIENT_LINEAR,
+  PICMAN_BILNEAR              = PICMAN_GRADIENT_BILINEAR,
+  PICMAN_RADIAL               = PICMAN_GRADIENT_RADIAL,
+  PICMAN_SQUARE               = PICMAN_GRADIENT_SQUARE,
+  PICMAN_CONICAL_SYMMETRIC    = PICMAN_GRADIENT_CONICAL_SYMMETRIC,
+  PICMAN_CONICAL_ASYMMETRIC   = PICMAN_GRADIENT_CONICAL_ASYMMETRIC,
+  PICMAN_SHAPEBURST_ANGULAR   = PICMAN_GRADIENT_SHAPEBURST_ANGULAR,
+  PICMAN_SHAPEBURST_SPHERICAL = PICMAN_GRADIENT_SHAPEBURST_SPHERICAL,
+  PICMAN_SHAPEBURST_DIMPLED   = PICMAN_GRADIENT_SHAPEBURST_DIMPLED,
+  PICMAN_SPIRAL_CLOCKWISE     = PICMAN_GRADIENT_SPIRAL_CLOCKWISE,
+  PICMAN_SPIRAL_ANTICLOCKWISE = PICMAN_GRADIENT_SPIRAL_ANTICLOCKWISE
 };
 
 enum
 {
-  GIMP_VALUE_LUT = GIMP_HISTOGRAM_VALUE,
-  GIMP_RED_LUT   = GIMP_HISTOGRAM_RED,
-  GIMP_GREEN_LUT = GIMP_HISTOGRAM_GREEN,
-  GIMP_BLUE_LUT  = GIMP_HISTOGRAM_BLUE,
-  GIMP_ALPHA_LUT = GIMP_HISTOGRAM_ALPHA
+  PICMAN_VALUE_LUT = PICMAN_HISTOGRAM_VALUE,
+  PICMAN_RED_LUT   = PICMAN_HISTOGRAM_RED,
+  PICMAN_GREEN_LUT = PICMAN_HISTOGRAM_GREEN,
+  PICMAN_BLUE_LUT  = PICMAN_HISTOGRAM_BLUE,
+  PICMAN_ALPHA_LUT = PICMAN_HISTOGRAM_ALPHA
 };
 
 
-#endif  /* GIMP_DISABLE_DEPRECATED */
+#endif  /* PICMAN_DISABLE_DEPRECATED */
 
 G_END_DECLS
 
-#endif  /* __GIMP_COMPAT_H__ */
+#endif  /* __PICMAN_COMPAT_H__ */

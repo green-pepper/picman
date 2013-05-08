@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimphelp_pdb.c
+ * picmanhelp_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,20 +22,20 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimphelp
- * @title: gimphelp
- * @short_description: Loading help pages using gimp_help.
+ * SECTION: picmanhelp
+ * @title: picmanhelp
+ * @short_description: Loading help pages using picman_help.
  *
- * Loading help pages using gimp_help.
+ * Loading help pages using picman_help.
  **/
 
 
 /**
- * gimp_help:
+ * picman_help:
  * @help_domain: The help domain in which help_id is registered.
  * @help_id: The help page's ID.
  *
@@ -44,29 +44,29 @@
  * This procedure loads the specified help page into the helpbrowser or
  * what ever is configured as help viewer. The help page is identified
  * by its domain and ID: if help_domain is NULL, we use the help_domain
- * which was registered using the gimp_plugin_help_register()
+ * which was registered using the picman_plugin_help_register()
  * procedure. If help_domain is NULL and no help domain was registered,
- * the help domain of the main GIMP installation is used.
+ * the help domain of the main PICMAN installation is used.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_help (const gchar *help_domain,
+picman_help (const gchar *help_domain,
            const gchar *help_id)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-help",
+  return_vals = picman_run_procedure ("picman-help",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, help_domain,
-                                    GIMP_PDB_STRING, help_id,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, help_domain,
+                                    PICMAN_PDB_STRING, help_id,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,67 +20,67 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "paint/gimpclone.h"
-#include "paint/gimpcloneoptions.h"
+#include "paint/picmanclone.h"
+#include "paint/picmancloneoptions.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpviewablebox.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanviewablebox.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimpclonetool.h"
-#include "gimppaintoptions-gui.h"
-#include "gimptoolcontrol.h"
+#include "picmanclonetool.h"
+#include "picmanpaintoptions-gui.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
-
-
-static GtkWidget * gimp_clone_options_gui (GimpToolOptions *tool_options);
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpCloneTool, gimp_clone_tool, GIMP_TYPE_SOURCE_TOOL)
+static GtkWidget * picman_clone_options_gui (PicmanToolOptions *tool_options);
 
-#define parent_class gimp_clone_tool_parent_class
+
+G_DEFINE_TYPE (PicmanCloneTool, picman_clone_tool, PICMAN_TYPE_SOURCE_TOOL)
+
+#define parent_class picman_clone_tool_parent_class
 
 
 void
-gimp_clone_tool_register (GimpToolRegisterCallback  callback,
+picman_clone_tool_register (PicmanToolRegisterCallback  callback,
                           gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_CLONE_TOOL,
-                GIMP_TYPE_CLONE_OPTIONS,
-                gimp_clone_options_gui,
-                GIMP_PAINT_OPTIONS_CONTEXT_MASK |
-                GIMP_CONTEXT_PATTERN_MASK,
-                "gimp-clone-tool",
+  (* callback) (PICMAN_TYPE_CLONE_TOOL,
+                PICMAN_TYPE_CLONE_OPTIONS,
+                picman_clone_options_gui,
+                PICMAN_PAINT_OPTIONS_CONTEXT_MASK |
+                PICMAN_CONTEXT_PATTERN_MASK,
+                "picman-clone-tool",
                 _("Clone"),
                 _("Clone Tool: Selectively copy from an image or pattern, using a brush"),
                 N_("_Clone"), "C",
-                NULL, GIMP_HELP_TOOL_CLONE,
-                GIMP_STOCK_TOOL_CLONE,
+                NULL, PICMAN_HELP_TOOL_CLONE,
+                PICMAN_STOCK_TOOL_CLONE,
                 data);
 }
 
 static void
-gimp_clone_tool_class_init (GimpCloneToolClass *klass)
+picman_clone_tool_class_init (PicmanCloneToolClass *klass)
 {
 }
 
 static void
-gimp_clone_tool_init (GimpCloneTool *clone)
+picman_clone_tool_init (PicmanCloneTool *clone)
 {
-  GimpTool       *tool        = GIMP_TOOL (clone);
-  GimpPaintTool  *paint_tool  = GIMP_PAINT_TOOL (tool);
-  GimpSourceTool *source_tool = GIMP_SOURCE_TOOL (tool);
+  PicmanTool       *tool        = PICMAN_TOOL (clone);
+  PicmanPaintTool  *paint_tool  = PICMAN_PAINT_TOOL (tool);
+  PicmanSourceTool *source_tool = PICMAN_SOURCE_TOOL (tool);
 
-  gimp_tool_control_set_tool_cursor     (tool->control,
-                                         GIMP_TOOL_CURSOR_CLONE);
-  gimp_tool_control_set_action_object_2 (tool->control,
+  picman_tool_control_set_tool_cursor     (tool->control,
+                                         PICMAN_TOOL_CURSOR_CLONE);
+  picman_tool_control_set_action_object_2 (tool->control,
                                          "context/context-pattern-select-set");
 
   paint_tool->status      = _("Click to clone");
@@ -96,31 +96,31 @@ gimp_clone_tool_init (GimpCloneTool *clone)
 /*  tool options stuff  */
 
 static GtkWidget *
-gimp_clone_options_gui (GimpToolOptions *tool_options)
+picman_clone_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config = G_OBJECT (tool_options);
-  GtkWidget *vbox   = gimp_paint_options_gui (tool_options);
+  GtkWidget *vbox   = picman_paint_options_gui (tool_options);
   GtkWidget *frame;
   GtkWidget *button;
   GtkWidget *hbox;
   GtkWidget *combo;
   GtkWidget *label;
 
-  frame = gimp_prop_enum_radio_frame_new (config, "clone-type",
+  frame = picman_prop_enum_radio_frame_new (config, "clone-type",
                                           _("Source"), 0, 0);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  button = gimp_prop_check_button_new (config, "sample-merged",
+  button = picman_prop_check_button_new (config, "sample-merged",
                                        _("Sample merged"));
-  gimp_enum_radio_frame_add (GTK_FRAME (frame), button,
-                             GIMP_IMAGE_CLONE, TRUE);
+  picman_enum_radio_frame_add (GTK_FRAME (frame), button,
+                             PICMAN_IMAGE_CLONE, TRUE);
 
-  hbox = gimp_prop_pattern_box_new (NULL, GIMP_CONTEXT (tool_options),
+  hbox = picman_prop_pattern_box_new (NULL, PICMAN_CONTEXT (tool_options),
                                     NULL, 2,
                                     "pattern-view-type", "pattern-view-size");
-  gimp_enum_radio_frame_add (GTK_FRAME (frame), hbox,
-                             GIMP_PATTERN_CLONE, TRUE);
+  picman_enum_radio_frame_add (GTK_FRAME (frame), hbox,
+                             PICMAN_PATTERN_CLONE, TRUE);
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
@@ -130,7 +130,7 @@ gimp_clone_options_gui (GimpToolOptions *tool_options)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  combo = gimp_prop_enum_combo_box_new (config, "align-mode", 0, 0);
+  combo = picman_prop_enum_combo_box_new (config, "align-mode", 0, 0);
   gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
   gtk_widget_show (combo);
 

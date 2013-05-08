@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpvaluearray.h ported from GValueArray
+ * picmanvaluearray.h ported from GValueArray
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,72 +18,72 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_BASE_H_INSIDE__) && !defined (GIMP_BASE_COMPILATION)
-#error "Only <libgimpbase/gimpbase.h> can be included directly."
+#if !defined (__PICMAN_BASE_H_INSIDE__) && !defined (PICMAN_BASE_COMPILATION)
+#error "Only <libpicmanbase/picmanbase.h> can be included directly."
 #endif
 
-#ifndef __GIMP_VALUE_ARRAY_H__
-#define __GIMP_VALUE_ARRAY_H__
+#ifndef __PICMAN_VALUE_ARRAY_H__
+#define __PICMAN_VALUE_ARRAY_H__
 
 G_BEGIN_DECLS
 
 /**
- * GIMP_TYPE_VALUE_ARRAY:
+ * PICMAN_TYPE_VALUE_ARRAY:
  *
- * The type ID of the "GimpValueArray" type which is a boxed type,
- * used to pass around pointers to GimpValueArrays.
+ * The type ID of the "PicmanValueArray" type which is a boxed type,
+ * used to pass around pointers to PicmanValueArrays.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  */
-#define GIMP_TYPE_VALUE_ARRAY (gimp_value_array_get_type ())
+#define PICMAN_TYPE_VALUE_ARRAY (picman_value_array_get_type ())
 
 
-GType            gimp_value_array_get_type (void) G_GNUC_CONST;
+GType            picman_value_array_get_type (void) G_GNUC_CONST;
 
-GimpValueArray * gimp_value_array_new      (gint                  n_prealloced);
+PicmanValueArray * picman_value_array_new      (gint                  n_prealloced);
 
-GimpValueArray * gimp_value_array_ref      (GimpValueArray       *value_array);
-void             gimp_value_array_unref    (GimpValueArray       *value_array);
+PicmanValueArray * picman_value_array_ref      (PicmanValueArray       *value_array);
+void             picman_value_array_unref    (PicmanValueArray       *value_array);
 
-gint             gimp_value_array_length   (const GimpValueArray *value_array);
+gint             picman_value_array_length   (const PicmanValueArray *value_array);
 
-GValue         * gimp_value_array_index    (const GimpValueArray *value_array,
+GValue         * picman_value_array_index    (const PicmanValueArray *value_array,
                                             gint                  index);
 
-GimpValueArray * gimp_value_array_prepend  (GimpValueArray       *value_array,
+PicmanValueArray * picman_value_array_prepend  (PicmanValueArray       *value_array,
                                             const GValue         *value);
-GimpValueArray * gimp_value_array_append   (GimpValueArray       *value_array,
+PicmanValueArray * picman_value_array_append   (PicmanValueArray       *value_array,
                                             const GValue         *value);
-GimpValueArray * gimp_value_array_insert   (GimpValueArray       *value_array,
+PicmanValueArray * picman_value_array_insert   (PicmanValueArray       *value_array,
                                             gint                  index,
                                             const GValue         *value);
 
-GimpValueArray * gimp_value_array_remove   (GimpValueArray       *value_array,
+PicmanValueArray * picman_value_array_remove   (PicmanValueArray       *value_array,
                                             gint                  index);
-void             gimp_value_array_truncate (GimpValueArray       *value_array,
+void             picman_value_array_truncate (PicmanValueArray       *value_array,
                                             gint                  n_values);
 
 
 /*
- * GIMP_TYPE_PARAM_VALUE_ARRAY
+ * PICMAN_TYPE_PARAM_VALUE_ARRAY
  */
 
-#define GIMP_TYPE_PARAM_VALUE_ARRAY           (gimp_param_value_array_get_type ())
-#define GIMP_IS_PARAM_SPEC_VALUE_ARRAY(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GIMP_TYPE_PARAM_VALUE_ARRAY))
-#define GIMP_PARAM_SPEC_VALUE_ARRAY(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GIMP_TYPE_PARAM_VALUE_ARRAY, GimpParamSpecValueArray))
+#define PICMAN_TYPE_PARAM_VALUE_ARRAY           (picman_param_value_array_get_type ())
+#define PICMAN_IS_PARAM_SPEC_VALUE_ARRAY(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), PICMAN_TYPE_PARAM_VALUE_ARRAY))
+#define PICMAN_PARAM_SPEC_VALUE_ARRAY(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), PICMAN_TYPE_PARAM_VALUE_ARRAY, PicmanParamSpecValueArray))
 
-typedef struct _GimpParamSpecValueArray GimpParamSpecValueArray;
+typedef struct _PicmanParamSpecValueArray PicmanParamSpecValueArray;
 
-struct _GimpParamSpecValueArray
+struct _PicmanParamSpecValueArray
 {
   GParamSpec  parent_instance;
   GParamSpec *element_spec;
   gint        fixed_n_elements;
 };
 
-GType        gimp_param_value_array_get_type (void) G_GNUC_CONST;
+GType        picman_param_value_array_get_type (void) G_GNUC_CONST;
 
-GParamSpec * gimp_param_spec_value_array     (const gchar    *name,
+GParamSpec * picman_param_spec_value_array     (const gchar    *name,
                                               const gchar    *nick,
                                               const gchar    *blurb,
                                               GParamSpec     *element_spec,
@@ -92,4 +92,4 @@ GParamSpec * gimp_param_spec_value_array     (const gchar    *name,
 
 G_END_DECLS
 
-#endif /* __GIMP_VALUE_ARRAY_H__ */
+#endif /* __PICMAN_VALUE_ARRAY_H__ */

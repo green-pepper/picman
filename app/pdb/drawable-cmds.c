@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,606 +23,606 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "config/gimpcoreconfig.h"
-#include "core/gimp.h"
-#include "core/gimpdrawable-foreground-extract.h"
-#include "core/gimpdrawable-offset.h"
-#include "core/gimpdrawable-preview.h"
-#include "core/gimpdrawable-shadow.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimptempbuf.h"
-#include "gegl/gimp-babl-compat.h"
-#include "gegl/gimp-babl.h"
-#include "plug-in/gimpplugin-cleanup.h"
-#include "plug-in/gimpplugin.h"
-#include "plug-in/gimppluginmanager.h"
+#include "config/picmancoreconfig.h"
+#include "core/picman.h"
+#include "core/picmandrawable-foreground-extract.h"
+#include "core/picmandrawable-offset.h"
+#include "core/picmandrawable-preview.h"
+#include "core/picmandrawable-shadow.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmantempbuf.h"
+#include "gegl/picman-babl-compat.h"
+#include "gegl/picman-babl.h"
+#include "plug-in/picmanplugin-cleanup.h"
+#include "plug-in/picmanplugin.h"
+#include "plug-in/picmanpluginmanager.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GimpValueArray *
-drawable_get_format_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_get_format_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gchar *format = NULL;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp->plug_in_manager->current_plug_in)
-        gimp_plug_in_enable_precision (gimp->plug_in_manager->current_plug_in);
+      if (picman->plug_in_manager->current_plug_in)
+        picman_plug_in_enable_precision (picman->plug_in_manager->current_plug_in);
 
-      format = g_strdup (babl_get_name (gimp_drawable_get_format (drawable)));
+      format = g_strdup (babl_get_name (picman_drawable_get_format (drawable)));
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), format);
+    g_value_take_string (picman_value_array_index (return_vals, 1), format);
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_type_invoker (GimpProcedure         *procedure,
-                       Gimp                  *gimp,
-                       GimpContext           *context,
-                       GimpProgress          *progress,
-                       const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_type_invoker (PicmanProcedure         *procedure,
+                       Picman                  *picman,
+                       PicmanContext           *context,
+                       PicmanProgress          *progress,
+                       const PicmanValueArray  *args,
                        GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gint32 type = 0;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      type = gimp_babl_format_get_image_type (gimp_drawable_get_format (drawable));
+      type = picman_babl_format_get_image_type (picman_drawable_get_format (drawable));
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_enum (gimp_value_array_index (return_vals, 1), type);
+    g_value_set_enum (picman_value_array_index (return_vals, 1), type);
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_type_with_alpha_invoker (GimpProcedure         *procedure,
-                                  Gimp                  *gimp,
-                                  GimpContext           *context,
-                                  GimpProgress          *progress,
-                                  const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_type_with_alpha_invoker (PicmanProcedure         *procedure,
+                                  Picman                  *picman,
+                                  PicmanContext           *context,
+                                  PicmanProgress          *progress,
+                                  const PicmanValueArray  *args,
                                   GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gint32 type_with_alpha = 0;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      const Babl *format = gimp_drawable_get_format_with_alpha (drawable);
+      const Babl *format = picman_drawable_get_format_with_alpha (drawable);
 
-      type_with_alpha = gimp_babl_format_get_image_type (format);
+      type_with_alpha = picman_babl_format_get_image_type (format);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_enum (gimp_value_array_index (return_vals, 1), type_with_alpha);
+    g_value_set_enum (picman_value_array_index (return_vals, 1), type_with_alpha);
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_has_alpha_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_has_alpha_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gboolean has_alpha = FALSE;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      has_alpha = gimp_drawable_has_alpha (drawable);
+      has_alpha = picman_drawable_has_alpha (drawable);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), has_alpha);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), has_alpha);
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_is_rgb_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_is_rgb_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gboolean is_rgb = FALSE;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      is_rgb = gimp_drawable_is_rgb (drawable);
+      is_rgb = picman_drawable_is_rgb (drawable);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), is_rgb);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), is_rgb);
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_is_gray_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_is_gray_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gboolean is_gray = FALSE;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      is_gray = gimp_drawable_is_gray (drawable);
+      is_gray = picman_drawable_is_gray (drawable);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), is_gray);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), is_gray);
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_is_indexed_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_is_indexed_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gboolean is_indexed = FALSE;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      is_indexed = gimp_drawable_is_indexed (drawable);
+      is_indexed = picman_drawable_is_indexed (drawable);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), is_indexed);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), is_indexed);
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_bpp_invoker (GimpProcedure         *procedure,
-                      Gimp                  *gimp,
-                      GimpContext           *context,
-                      GimpProgress          *progress,
-                      const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_bpp_invoker (PicmanProcedure         *procedure,
+                      Picman                  *picman,
+                      PicmanContext           *context,
+                      PicmanProgress          *progress,
+                      const PicmanValueArray  *args,
                       GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gint32 bpp = 0;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      const Babl *format = gimp_drawable_get_format (drawable);
+      const Babl *format = picman_drawable_get_format (drawable);
 
-      if (! gimp->plug_in_manager->current_plug_in ||
-          ! gimp_plug_in_precision_enabled (gimp->plug_in_manager->current_plug_in))
+      if (! picman->plug_in_manager->current_plug_in ||
+          ! picman_plug_in_precision_enabled (picman->plug_in_manager->current_plug_in))
         {
-          format = gimp_babl_compat_u8_format (format);
+          format = picman_babl_compat_u8_format (format);
         }
 
       bpp = babl_format_get_bytes_per_pixel (format);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), bpp);
+    g_value_set_int (picman_value_array_index (return_vals, 1), bpp);
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_width_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_width_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gint32 width = 0;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      width = gimp_item_get_width (GIMP_ITEM (drawable));
+      width = picman_item_get_width (PICMAN_ITEM (drawable));
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), width);
+    g_value_set_int (picman_value_array_index (return_vals, 1), width);
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_height_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_height_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gint32 height = 0;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      height = gimp_item_get_height (GIMP_ITEM (drawable));
+      height = picman_item_get_height (PICMAN_ITEM (drawable));
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), height);
+    g_value_set_int (picman_value_array_index (return_vals, 1), height);
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_offsets_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_offsets_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gint32 offset_x = 0;
   gint32 offset_y = 0;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      gimp_item_get_offset (GIMP_ITEM (drawable), &offset_x, &offset_y);
+      picman_item_get_offset (PICMAN_ITEM (drawable), &offset_x, &offset_y);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), offset_x);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), offset_y);
+      g_value_set_int (picman_value_array_index (return_vals, 1), offset_x);
+      g_value_set_int (picman_value_array_index (return_vals, 2), offset_y);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_set_image_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_set_image_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
-  GimpImage *image;
+  PicmanDrawable *drawable;
+  PicmanImage *image;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  image = gimp_value_get_image (gimp_value_array_index (args, 1), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  image = picman_value_get_image (picman_value_array_index (args, 1), picman);
 
   if (success)
     {
-      if (image != gimp_item_get_image (GIMP_ITEM (drawable)))
+      if (image != picman_item_get_image (PICMAN_ITEM (drawable)))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-drawable_mask_bounds_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_mask_bounds_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gboolean non_empty = FALSE;
   gint32 x1 = 0;
   gint32 y1 = 0;
   gint32 x2 = 0;
   gint32 y2 = 0;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL, 0, error))
-        non_empty = gimp_item_mask_bounds (GIMP_ITEM (drawable), &x1, &y1, &x2, &y2);
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL, 0, error))
+        non_empty = picman_item_mask_bounds (PICMAN_ITEM (drawable), &x1, &y1, &x2, &y2);
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_boolean (gimp_value_array_index (return_vals, 1), non_empty);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), x1);
-      g_value_set_int (gimp_value_array_index (return_vals, 3), y1);
-      g_value_set_int (gimp_value_array_index (return_vals, 4), x2);
-      g_value_set_int (gimp_value_array_index (return_vals, 5), y2);
+      g_value_set_boolean (picman_value_array_index (return_vals, 1), non_empty);
+      g_value_set_int (picman_value_array_index (return_vals, 2), x1);
+      g_value_set_int (picman_value_array_index (return_vals, 3), y1);
+      g_value_set_int (picman_value_array_index (return_vals, 4), x2);
+      g_value_set_int (picman_value_array_index (return_vals, 5), y2);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_mask_intersect_invoker (GimpProcedure         *procedure,
-                                 Gimp                  *gimp,
-                                 GimpContext           *context,
-                                 GimpProgress          *progress,
-                                 const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_mask_intersect_invoker (PicmanProcedure         *procedure,
+                                 Picman                  *picman,
+                                 PicmanContext           *context,
+                                 PicmanProgress          *progress,
+                                 const PicmanValueArray  *args,
                                  GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gboolean non_empty = FALSE;
   gint32 x = 0;
   gint32 y = 0;
   gint32 width = 0;
   gint32 height = 0;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL, 0, error))
-        non_empty = gimp_item_mask_intersect (GIMP_ITEM (drawable),
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL, 0, error))
+        non_empty = picman_item_mask_intersect (PICMAN_ITEM (drawable),
                                               &x, &y, &width, &height);
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_boolean (gimp_value_array_index (return_vals, 1), non_empty);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), x);
-      g_value_set_int (gimp_value_array_index (return_vals, 3), y);
-      g_value_set_int (gimp_value_array_index (return_vals, 4), width);
-      g_value_set_int (gimp_value_array_index (return_vals, 5), height);
+      g_value_set_boolean (picman_value_array_index (return_vals, 1), non_empty);
+      g_value_set_int (picman_value_array_index (return_vals, 2), x);
+      g_value_set_int (picman_value_array_index (return_vals, 3), y);
+      g_value_set_int (picman_value_array_index (return_vals, 4), width);
+      g_value_set_int (picman_value_array_index (return_vals, 5), height);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_merge_shadow_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_merge_shadow_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gboolean undo;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  undo = g_value_get_boolean (gimp_value_array_index (args, 1));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  undo = g_value_get_boolean (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
           const gchar *undo_desc = _("Plug-In");
 
-          if (gimp->plug_in_manager->current_plug_in)
-            undo_desc = gimp_plug_in_get_undo_desc (gimp->plug_in_manager->current_plug_in);
+          if (picman->plug_in_manager->current_plug_in)
+            undo_desc = picman_plug_in_get_undo_desc (picman->plug_in_manager->current_plug_in);
 
-          gimp_drawable_merge_shadow_buffer (drawable, undo, undo_desc);
+          picman_drawable_merge_shadow_buffer (drawable, undo, undo_desc);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-drawable_free_shadow_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_free_shadow_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp->plug_in_manager->current_plug_in)
-        gimp_plug_in_cleanup_remove_shadow (gimp->plug_in_manager->current_plug_in,
+      if (picman->plug_in_manager->current_plug_in)
+        picman_plug_in_cleanup_remove_shadow (picman->plug_in_manager->current_plug_in,
                                             drawable);
 
-      gimp_drawable_free_shadow_buffer (drawable);
+      picman_drawable_free_shadow_buffer (drawable);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-drawable_update_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_update_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 x;
   gint32 y;
   gint32 width;
   gint32 height;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  x = g_value_get_int (gimp_value_array_index (args, 1));
-  y = g_value_get_int (gimp_value_array_index (args, 2));
-  width = g_value_get_int (gimp_value_array_index (args, 3));
-  height = g_value_get_int (gimp_value_array_index (args, 4));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  x = g_value_get_int (picman_value_array_index (args, 1));
+  y = g_value_get_int (picman_value_array_index (args, 2));
+  width = g_value_get_int (picman_value_array_index (args, 3));
+  height = g_value_get_int (picman_value_array_index (args, 4));
 
   if (success)
     {
-      gimp_drawable_update (drawable, x, y, width, height);
+      picman_drawable_update (drawable, x, y, width, height);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-drawable_get_pixel_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_get_pixel_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gint32 x_coord;
   gint32 y_coord;
   gint32 num_channels = 0;
   guint8 *pixel = NULL;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  x_coord = g_value_get_int (gimp_value_array_index (args, 1));
-  y_coord = g_value_get_int (gimp_value_array_index (args, 2));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  x_coord = g_value_get_int (picman_value_array_index (args, 1));
+  y_coord = g_value_get_int (picman_value_array_index (args, 2));
 
   if (success)
     {
-      const Babl *format = gimp_drawable_get_format (drawable);
+      const Babl *format = picman_drawable_get_format (drawable);
 
-      if (! gimp->plug_in_manager->current_plug_in ||
-          ! gimp_plug_in_precision_enabled (gimp->plug_in_manager->current_plug_in))
+      if (! picman->plug_in_manager->current_plug_in ||
+          ! picman_plug_in_precision_enabled (picman->plug_in_manager->current_plug_in))
         {
-          format = gimp_babl_compat_u8_format (format);
+          format = picman_babl_compat_u8_format (format);
         }
 
-      if (x_coord < gimp_item_get_width  (GIMP_ITEM (drawable)) &&
-          y_coord < gimp_item_get_height (GIMP_ITEM (drawable)))
+      if (x_coord < picman_item_get_width  (PICMAN_ITEM (drawable)) &&
+          y_coord < picman_item_get_height (PICMAN_ITEM (drawable)))
         {
-          gegl_buffer_sample (gimp_drawable_get_buffer (drawable),
+          gegl_buffer_sample (picman_drawable_get_buffer (drawable),
                               x_coord, y_coord, NULL, pixel, format,
                               GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
         }
@@ -630,57 +630,57 @@ drawable_get_pixel_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_channels);
-      gimp_value_take_int8array (gimp_value_array_index (return_vals, 2), pixel, num_channels);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_channels);
+      picman_value_take_int8array (picman_value_array_index (return_vals, 2), pixel, num_channels);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_set_pixel_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_set_pixel_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 x_coord;
   gint32 y_coord;
   gint32 num_channels;
   const guint8 *pixel;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  x_coord = g_value_get_int (gimp_value_array_index (args, 1));
-  y_coord = g_value_get_int (gimp_value_array_index (args, 2));
-  num_channels = g_value_get_int (gimp_value_array_index (args, 3));
-  pixel = gimp_value_get_int8array (gimp_value_array_index (args, 4));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  x_coord = g_value_get_int (picman_value_array_index (args, 1));
+  y_coord = g_value_get_int (picman_value_array_index (args, 2));
+  num_channels = g_value_get_int (picman_value_array_index (args, 3));
+  pixel = picman_value_get_int8array (picman_value_array_index (args, 4));
 
   if (success)
     {
-      const Babl *format = gimp_drawable_get_format (drawable);
+      const Babl *format = picman_drawable_get_format (drawable);
 
-      if (! gimp->plug_in_manager->current_plug_in ||
-          ! gimp_plug_in_precision_enabled (gimp->plug_in_manager->current_plug_in))
+      if (! picman->plug_in_manager->current_plug_in ||
+          ! picman_plug_in_precision_enabled (picman->plug_in_manager->current_plug_in))
         {
-          format = gimp_babl_compat_u8_format (format);
+          format = picman_babl_compat_u8_format (format);
         }
 
-      if (gimp_pdb_item_is_modifyable (GIMP_ITEM (drawable),
-                                       GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error) &&
-          x_coord < gimp_item_get_width  (GIMP_ITEM (drawable)) &&
-          y_coord < gimp_item_get_height (GIMP_ITEM (drawable)) &&
+      if (picman_pdb_item_is_modifyable (PICMAN_ITEM (drawable),
+                                       PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error) &&
+          x_coord < picman_item_get_width  (PICMAN_ITEM (drawable)) &&
+          y_coord < picman_item_get_height (PICMAN_ITEM (drawable)) &&
           num_channels == babl_format_get_bytes_per_pixel (format))
         {
-          gegl_buffer_set (gimp_drawable_get_buffer (drawable),
+          gegl_buffer_set (picman_drawable_get_buffer (drawable),
                            GEGL_RECTANGLE (x_coord, y_coord, 1, 1),
                            1.0, format, pixel, GEGL_AUTO_ROWSTRIDE);
         }
@@ -688,86 +688,86 @@ drawable_set_pixel_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-drawable_fill_invoker (GimpProcedure         *procedure,
-                       Gimp                  *gimp,
-                       GimpContext           *context,
-                       GimpProgress          *progress,
-                       const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_fill_invoker (PicmanProcedure         *procedure,
+                       Picman                  *picman,
+                       PicmanContext           *context,
+                       PicmanProgress          *progress,
+                       const PicmanValueArray  *args,
                        GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 fill_type;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  fill_type = g_value_get_enum (gimp_value_array_index (args, 1));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  fill_type = g_value_get_enum (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp_pdb_item_is_modifyable (GIMP_ITEM (drawable),
-                                       GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
-        gimp_drawable_fill_by_type (drawable, context, (GimpFillType) fill_type);
+      if (picman_pdb_item_is_modifyable (PICMAN_ITEM (drawable),
+                                       PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
+        picman_drawable_fill_by_type (drawable, context, (PicmanFillType) fill_type);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-drawable_offset_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_offset_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gboolean wrap_around;
   gint32 fill_type;
   gint32 offset_x;
   gint32 offset_y;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  wrap_around = g_value_get_boolean (gimp_value_array_index (args, 1));
-  fill_type = g_value_get_enum (gimp_value_array_index (args, 2));
-  offset_x = g_value_get_int (gimp_value_array_index (args, 3));
-  offset_y = g_value_get_int (gimp_value_array_index (args, 4));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  wrap_around = g_value_get_boolean (picman_value_array_index (args, 1));
+  fill_type = g_value_get_enum (picman_value_array_index (args, 2));
+  offset_x = g_value_get_int (picman_value_array_index (args, 3));
+  offset_y = g_value_get_int (picman_value_array_index (args, 4));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
-        gimp_drawable_offset (drawable, context, wrap_around, fill_type,
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
+        picman_drawable_offset (drawable, context, wrap_around, fill_type,
                               offset_x, offset_y);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-drawable_thumbnail_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_thumbnail_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gint32 width;
   gint32 height;
   gint32 actual_width = 0;
@@ -776,76 +776,76 @@ drawable_thumbnail_invoker (GimpProcedure         *procedure,
   gint32 thumbnail_data_count = 0;
   guint8 *thumbnail_data = NULL;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  width = g_value_get_int (gimp_value_array_index (args, 1));
-  height = g_value_get_int (gimp_value_array_index (args, 2));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  width = g_value_get_int (picman_value_array_index (args, 1));
+  height = g_value_get_int (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpImage   *image = gimp_item_get_image (GIMP_ITEM (drawable));
-      GimpTempBuf *buf;
+      PicmanImage   *image = picman_item_get_image (PICMAN_ITEM (drawable));
+      PicmanTempBuf *buf;
       gint         dwidth, dheight;
 
-      g_assert (GIMP_VIEWABLE_MAX_PREVIEW_SIZE >= 1024);
+      g_assert (PICMAN_VIEWABLE_MAX_PREVIEW_SIZE >= 1024);
 
       /* Adjust the width/height ratio */
-      dwidth  = gimp_item_get_width  (GIMP_ITEM (drawable));
-      dheight = gimp_item_get_height (GIMP_ITEM (drawable));
+      dwidth  = picman_item_get_width  (PICMAN_ITEM (drawable));
+      dheight = picman_item_get_height (PICMAN_ITEM (drawable));
 
       if (dwidth > dheight)
         height = MAX (1, (width * dheight) / dwidth);
       else
         width  = MAX (1, (height * dwidth) / dheight);
 
-      if (image->gimp->config->layer_previews)
-        buf = gimp_viewable_get_new_preview (GIMP_VIEWABLE (drawable), context,
+      if (image->picman->config->layer_previews)
+        buf = picman_viewable_get_new_preview (PICMAN_VIEWABLE (drawable), context,
                                              width, height);
       else
-        buf = gimp_viewable_get_dummy_preview (GIMP_VIEWABLE (drawable),
+        buf = picman_viewable_get_dummy_preview (PICMAN_VIEWABLE (drawable),
                                                width, height,
-                                               gimp_drawable_get_preview_format (drawable));
+                                               picman_drawable_get_preview_format (drawable));
 
       if (buf)
         {
-          actual_width         = gimp_temp_buf_get_width  (buf);
-          actual_height        = gimp_temp_buf_get_height (buf);
-          bpp                  = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (buf));
-          thumbnail_data_count = gimp_temp_buf_get_data_size (buf);
-          thumbnail_data       = g_memdup (gimp_temp_buf_get_data (buf),
+          actual_width         = picman_temp_buf_get_width  (buf);
+          actual_height        = picman_temp_buf_get_height (buf);
+          bpp                  = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (buf));
+          thumbnail_data_count = picman_temp_buf_get_data_size (buf);
+          thumbnail_data       = g_memdup (picman_temp_buf_get_data (buf),
                                            thumbnail_data_count);
 
-          gimp_temp_buf_unref (buf);
+          picman_temp_buf_unref (buf);
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), actual_width);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), actual_height);
-      g_value_set_int (gimp_value_array_index (return_vals, 3), bpp);
-      g_value_set_int (gimp_value_array_index (return_vals, 4), thumbnail_data_count);
-      gimp_value_take_int8array (gimp_value_array_index (return_vals, 5), thumbnail_data, thumbnail_data_count);
+      g_value_set_int (picman_value_array_index (return_vals, 1), actual_width);
+      g_value_set_int (picman_value_array_index (return_vals, 2), actual_height);
+      g_value_set_int (picman_value_array_index (return_vals, 3), bpp);
+      g_value_set_int (picman_value_array_index (return_vals, 4), thumbnail_data_count);
+      picman_value_take_int8array (picman_value_array_index (return_vals, 5), thumbnail_data, thumbnail_data_count);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_sub_thumbnail_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_sub_thumbnail_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
   gint32 src_x;
   gint32 src_y;
   gint32 src_width;
@@ -858,42 +858,42 @@ drawable_sub_thumbnail_invoker (GimpProcedure         *procedure,
   gint32 thumbnail_data_count = 0;
   guint8 *thumbnail_data = NULL;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  src_x = g_value_get_int (gimp_value_array_index (args, 1));
-  src_y = g_value_get_int (gimp_value_array_index (args, 2));
-  src_width = g_value_get_int (gimp_value_array_index (args, 3));
-  src_height = g_value_get_int (gimp_value_array_index (args, 4));
-  dest_width = g_value_get_int (gimp_value_array_index (args, 5));
-  dest_height = g_value_get_int (gimp_value_array_index (args, 6));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  src_x = g_value_get_int (picman_value_array_index (args, 1));
+  src_y = g_value_get_int (picman_value_array_index (args, 2));
+  src_width = g_value_get_int (picman_value_array_index (args, 3));
+  src_height = g_value_get_int (picman_value_array_index (args, 4));
+  dest_width = g_value_get_int (picman_value_array_index (args, 5));
+  dest_height = g_value_get_int (picman_value_array_index (args, 6));
 
   if (success)
     {
-      if ((src_x + src_width)  <= gimp_item_get_width  (GIMP_ITEM (drawable)) &&
-          (src_y + src_height) <= gimp_item_get_height (GIMP_ITEM (drawable)))
+      if ((src_x + src_width)  <= picman_item_get_width  (PICMAN_ITEM (drawable)) &&
+          (src_y + src_height) <= picman_item_get_height (PICMAN_ITEM (drawable)))
         {
-          GimpImage   *image = gimp_item_get_image (GIMP_ITEM (drawable));
-          GimpTempBuf *buf;
+          PicmanImage   *image = picman_item_get_image (PICMAN_ITEM (drawable));
+          PicmanTempBuf *buf;
 
-          if (image->gimp->config->layer_previews)
-            buf = gimp_drawable_get_sub_preview (drawable,
+          if (image->picman->config->layer_previews)
+            buf = picman_drawable_get_sub_preview (drawable,
                                                  src_x, src_y,
                                                  src_width, src_height,
                                                  dest_width, dest_height);
           else
-            buf = gimp_viewable_get_dummy_preview (GIMP_VIEWABLE (drawable),
+            buf = picman_viewable_get_dummy_preview (PICMAN_VIEWABLE (drawable),
                                                    dest_width, dest_height,
-                                                   gimp_drawable_get_preview_format (drawable));
+                                                   picman_drawable_get_preview_format (drawable));
 
           if (buf)
             {
-              width                = gimp_temp_buf_get_width  (buf);
-              height               = gimp_temp_buf_get_height (buf);
-              bpp                  = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (buf));
-              thumbnail_data_count = gimp_temp_buf_get_data_size (buf);
-              thumbnail_data       = g_memdup (gimp_temp_buf_get_data (buf),
+              width                = picman_temp_buf_get_width  (buf);
+              height               = picman_temp_buf_get_height (buf);
+              bpp                  = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (buf));
+              thumbnail_data_count = picman_temp_buf_get_data_size (buf);
+              thumbnail_data       = g_memdup (picman_temp_buf_get_data (buf),
                                                thumbnail_data_count);
 
-              gimp_temp_buf_unref (buf);
+              picman_temp_buf_unref (buf);
             }
           else
             success = FALSE;
@@ -902,981 +902,981 @@ drawable_sub_thumbnail_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), width);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), height);
-      g_value_set_int (gimp_value_array_index (return_vals, 3), bpp);
-      g_value_set_int (gimp_value_array_index (return_vals, 4), thumbnail_data_count);
-      gimp_value_take_int8array (gimp_value_array_index (return_vals, 5), thumbnail_data, thumbnail_data_count);
+      g_value_set_int (picman_value_array_index (return_vals, 1), width);
+      g_value_set_int (picman_value_array_index (return_vals, 2), height);
+      g_value_set_int (picman_value_array_index (return_vals, 3), bpp);
+      g_value_set_int (picman_value_array_index (return_vals, 4), thumbnail_data_count);
+      picman_value_take_int8array (picman_value_array_index (return_vals, 5), thumbnail_data, thumbnail_data_count);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-drawable_foreground_extract_invoker (GimpProcedure         *procedure,
-                                     Gimp                  *gimp,
-                                     GimpContext           *context,
-                                     GimpProgress          *progress,
-                                     const GimpValueArray  *args,
+static PicmanValueArray *
+drawable_foreground_extract_invoker (PicmanProcedure         *procedure,
+                                     Picman                  *picman,
+                                     PicmanContext           *context,
+                                     PicmanProgress          *progress,
+                                     const PicmanValueArray  *args,
                                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 mode;
-  GimpDrawable *mask;
+  PicmanDrawable *mask;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  mode = g_value_get_enum (gimp_value_array_index (args, 1));
-  mask = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  mode = g_value_get_enum (picman_value_array_index (args, 1));
+  mask = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
 
   if (success)
     {
     /*
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL, 0, error))
-        gimp_drawable_foreground_extract (drawable, mode, mask, progress);
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL, 0, error))
+        picman_drawable_foreground_extract (drawable, mode, mask, progress);
       else
         success = FALSE;
     */
       success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_drawable_procs (GimpPDB *pdb)
+register_drawable_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-drawable-get-format
+   * picman-drawable-get-format
    */
-  procedure = gimp_procedure_new (drawable_get_format_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-get-format");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-get-format",
+  procedure = picman_procedure_new (drawable_get_format_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-get-format");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-get-format",
                                      "Returns the drawable's Babl format",
                                      "This procedure returns the drawable's Babl format.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("format",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("format",
                                                            "format",
                                                            "The drawable's Babl format",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-type
+   * picman-drawable-type
    */
-  procedure = gimp_procedure_new (drawable_type_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-type");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-type",
+  procedure = picman_procedure_new (drawable_type_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-type");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-type",
                                      "Returns the drawable's type.",
                                      "This procedure returns the drawable's type.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("type",
                                                       "type",
                                                       "The drawable's type",
-                                                      GIMP_TYPE_IMAGE_TYPE,
-                                                      GIMP_RGB_IMAGE,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_TYPE_IMAGE_TYPE,
+                                                      PICMAN_RGB_IMAGE,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-type-with-alpha
+   * picman-drawable-type-with-alpha
    */
-  procedure = gimp_procedure_new (drawable_type_with_alpha_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-type-with-alpha");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-type-with-alpha",
+  procedure = picman_procedure_new (drawable_type_with_alpha_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-type-with-alpha");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-type-with-alpha",
                                      "Returns the drawable's type with alpha.",
                                      "This procedure returns the drawable's type as if had an alpha channel. If the type is currently Gray, for instance, the returned type would be GrayA. If the drawable already has an alpha channel, the drawable's type is simply returned.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_enum ("type-with-alpha",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_enum ("type-with-alpha",
                                                          "type with alpha",
                                                          "The drawable's type with alpha",
-                                                         GIMP_TYPE_IMAGE_TYPE,
-                                                         GIMP_RGB_IMAGE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->values[0]),
-                                      GIMP_RGB_IMAGE);
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->values[0]),
-                                      GIMP_GRAY_IMAGE);
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->values[0]),
-                                      GIMP_INDEXED_IMAGE);
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_TYPE_IMAGE_TYPE,
+                                                         PICMAN_RGB_IMAGE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_param_spec_enum_exclude_value (PICMAN_PARAM_SPEC_ENUM (procedure->values[0]),
+                                      PICMAN_RGB_IMAGE);
+  picman_param_spec_enum_exclude_value (PICMAN_PARAM_SPEC_ENUM (procedure->values[0]),
+                                      PICMAN_GRAY_IMAGE);
+  picman_param_spec_enum_exclude_value (PICMAN_PARAM_SPEC_ENUM (procedure->values[0]),
+                                      PICMAN_INDEXED_IMAGE);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-has-alpha
+   * picman-drawable-has-alpha
    */
-  procedure = gimp_procedure_new (drawable_has_alpha_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-has-alpha");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-has-alpha",
+  procedure = picman_procedure_new (drawable_has_alpha_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-has-alpha");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-has-alpha",
                                      "Returns TRUE if the drawable has an alpha channel.",
                                      "This procedure returns whether the specified drawable has an alpha channel. This can only be true for layers, and the associated type will be one of: { RGBA , GRAYA, INDEXEDA }.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("has-alpha",
                                                          "has alpha",
                                                          "Does the drawable have an alpha channel?",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-is-rgb
+   * picman-drawable-is-rgb
    */
-  procedure = gimp_procedure_new (drawable_is_rgb_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-is-rgb");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-is-rgb",
+  procedure = picman_procedure_new (drawable_is_rgb_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-is-rgb");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-is-rgb",
                                      "Returns whether the drawable is an RGB type.",
                                      "This procedure returns TRUE if the specified drawable is of type { RGB, RGBA }.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("is-rgb",
                                                          "is rgb",
                                                          "TRUE if the drawable is an RGB type",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-is-gray
+   * picman-drawable-is-gray
    */
-  procedure = gimp_procedure_new (drawable_is_gray_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-is-gray");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-is-gray",
+  procedure = picman_procedure_new (drawable_is_gray_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-is-gray");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-is-gray",
                                      "Returns whether the drawable is a grayscale type.",
                                      "This procedure returns TRUE if the specified drawable is of type { Gray, GrayA }.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("is-gray",
                                                          "is gray",
                                                          "TRUE if the drawable is a grayscale type",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-is-indexed
+   * picman-drawable-is-indexed
    */
-  procedure = gimp_procedure_new (drawable_is_indexed_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-is-indexed");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-is-indexed",
+  procedure = picman_procedure_new (drawable_is_indexed_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-is-indexed");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-is-indexed",
                                      "Returns whether the drawable is an indexed type.",
                                      "This procedure returns TRUE if the specified drawable is of type { Indexed, IndexedA }.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("is-indexed",
                                                          "is indexed",
                                                          "TRUE if the drawable is an indexed type",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-bpp
+   * picman-drawable-bpp
    */
-  procedure = gimp_procedure_new (drawable_bpp_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-bpp");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-bpp",
+  procedure = picman_procedure_new (drawable_bpp_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-bpp");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-bpp",
                                      "Returns the bytes per pixel.",
-                                     "This procedure returns the number of bytes per pixel, which corresponds to the number of components unless 'gimp-plugin-enable-precision' was called.",
+                                     "This procedure returns the number of bytes per pixel, which corresponds to the number of components unless 'picman-plugin-enable-precision' was called.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("bpp",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("bpp",
                                                           "bpp",
                                                           "Bytes per pixel",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-width
+   * picman-drawable-width
    */
-  procedure = gimp_procedure_new (drawable_width_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-width");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-width",
+  procedure = picman_procedure_new (drawable_width_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-width");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-width",
                                      "Returns the width of the drawable.",
                                      "This procedure returns the specified drawable's width in pixels.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("width",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("width",
                                                           "width",
                                                           "Width of drawable",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-height
+   * picman-drawable-height
    */
-  procedure = gimp_procedure_new (drawable_height_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-height");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-height",
+  procedure = picman_procedure_new (drawable_height_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-height");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-height",
                                      "Returns the height of the drawable.",
                                      "This procedure returns the specified drawable's height in pixels.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("height",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("height",
                                                           "height",
                                                           "Height of drawable",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-offsets
+   * picman-drawable-offsets
    */
-  procedure = gimp_procedure_new (drawable_offsets_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-offsets");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-offsets",
+  procedure = picman_procedure_new (drawable_offsets_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-offsets");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-offsets",
                                      "Returns the offsets for the drawable.",
                                      "This procedure returns the specified drawable's offsets. This only makes sense if the drawable is a layer since channels are anchored. The offsets of a channel will be returned as 0.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("offset-x",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("offset-x",
                                                           "offset x",
                                                           "x offset of drawable",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("offset-y",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("offset-y",
                                                           "offset y",
                                                           "y offset of drawable",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-set-image
+   * picman-drawable-set-image
    */
-  procedure = gimp_procedure_new (drawable_set_image_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-set-image");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-set-image",
+  procedure = picman_procedure_new (drawable_set_image_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-set-image");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-set-image",
                                      "Deprecated: There is no replacement for this procedure.",
                                      "Deprecated: There is no replacement for this procedure.",
                                      "",
                                      "",
                                      "",
                                      "NONE");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-mask-bounds
+   * picman-drawable-mask-bounds
    */
-  procedure = gimp_procedure_new (drawable_mask_bounds_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-mask-bounds");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-mask-bounds",
+  procedure = picman_procedure_new (drawable_mask_bounds_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-mask-bounds");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-mask-bounds",
                                      "Find the bounding box of the current selection in relation to the specified drawable.",
-                                     "This procedure returns whether there is a selection. If there is one, the upper left and lower right-hand corners of its bounding box are returned. These coordinates are specified relative to the drawable's origin, and bounded by the drawable's extents. Please note that the pixel specified by the lower right-hand coordinate of the bounding box is not part of the selection. The selection ends at the upper left corner of this pixel. This means the width of the selection can be calculated as (x2 - x1), its height as (y2 - y1). Note that the returned boolean does NOT correspond with the returned region being empty or not, it always returns whether the selection is non_empty. See 'gimp-drawable-mask-intersect' for a boolean return value which is more useful in most cases.",
+                                     "This procedure returns whether there is a selection. If there is one, the upper left and lower right-hand corners of its bounding box are returned. These coordinates are specified relative to the drawable's origin, and bounded by the drawable's extents. Please note that the pixel specified by the lower right-hand coordinate of the bounding box is not part of the selection. The selection ends at the upper left corner of this pixel. This means the width of the selection can be calculated as (x2 - x1), its height as (y2 - y1). Note that the returned boolean does NOT correspond with the returned region being empty or not, it always returns whether the selection is non_empty. See 'picman-drawable-mask-intersect' for a boolean return value which is more useful in most cases.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("non-empty",
                                                          "non empty",
                                                          "TRUE if there is a selection",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("x1",
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("x1",
                                                           "x1",
                                                           "x coordinate of the upper left corner of selection bounds",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("y1",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("y1",
                                                           "y1",
                                                           "y coordinate of the upper left corner of selection bounds",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("x2",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("x2",
                                                           "x2",
                                                           "x coordinate of the lower right corner of selection bounds",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("y2",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("y2",
                                                           "y2",
                                                           "y coordinate of the lower right corner of selection bounds",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-mask-intersect
+   * picman-drawable-mask-intersect
    */
-  procedure = gimp_procedure_new (drawable_mask_intersect_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-mask-intersect");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-mask-intersect",
+  procedure = picman_procedure_new (drawable_mask_intersect_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-mask-intersect");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-mask-intersect",
                                      "Find the bounding box of the current selection in relation to the specified drawable.",
-                                     "This procedure returns whether there is an intersection between the drawable and the selection. Unlike 'gimp-drawable-mask-bounds', the intersection's bounds are returned as x, y, width, height. If there is no selection this function returns TRUE and the returned bounds are the extents of the whole drawable.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "This procedure returns whether there is an intersection between the drawable and the selection. Unlike 'picman-drawable-mask-bounds', the intersection's bounds are returned as x, y, width, height. If there is no selection this function returns TRUE and the returned bounds are the extents of the whole drawable.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("non-empty",
                                                          "non empty",
                                                          "TRUE if the returned area is not empty",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("x",
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("x",
                                                           "x",
                                                           "x coordinate of the upper left corner of the intersection",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("y",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("y",
                                                           "y",
                                                           "y coordinate of the upper left corner of the intersection",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("width",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("width",
                                                           "width",
                                                           "width of the intersection",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("height",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("height",
                                                           "height",
                                                           "height of the intersection",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-merge-shadow
+   * picman-drawable-merge-shadow
    */
-  procedure = gimp_procedure_new (drawable_merge_shadow_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-merge-shadow");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-merge-shadow",
+  procedure = picman_procedure_new (drawable_merge_shadow_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-merge-shadow");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-merge-shadow",
                                      "Merge the shadow buffer with the specified drawable.",
                                      "This procedure combines the contents of the drawable's shadow buffer (for temporary processing) with the specified drawable. The 'undo' parameter specifies whether to add an undo step for the operation. Requesting no undo is useful for such applications as 'auto-apply'.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("undo",
                                                      "undo",
                                                      "Push merge to undo stack?",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-free-shadow
+   * picman-drawable-free-shadow
    */
-  procedure = gimp_procedure_new (drawable_free_shadow_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-free-shadow");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-free-shadow",
+  procedure = picman_procedure_new (drawable_free_shadow_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-free-shadow");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-free-shadow",
                                      "Free the specified drawable's shadow data (if it exists).",
                                      "This procedure is intended as a memory saving device. If any shadow memory has been allocated, it will be freed automatically when the drawable is removed from the image, or when the plug-in procedure which allocated it returns.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2008",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-update
+   * picman-drawable-update
    */
-  procedure = gimp_procedure_new (drawable_update_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-update");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-update",
+  procedure = picman_procedure_new (drawable_update_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-update");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-update",
                                      "Update the specified region of the drawable.",
                                      "This procedure updates the specified region of the drawable. The (x, y) coordinate pair is relative to the drawable's origin, not to the image origin. Therefore, the entire drawable can be updated using (0, 0, width, height).",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("x",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("x",
                                                       "x",
                                                       "x coordinate of upper left corner of update region",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("y",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("y",
                                                       "y",
                                                       "y coordinate of upper left corner of update region",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("width",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("width",
                                                       "width",
                                                       "Width of update region",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("height",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("height",
                                                       "height",
                                                       "Height of update region",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-get-pixel
+   * picman-drawable-get-pixel
    */
-  procedure = gimp_procedure_new (drawable_get_pixel_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-get-pixel");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-get-pixel",
+  procedure = picman_procedure_new (drawable_get_pixel_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-get-pixel");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-get-pixel",
                                      "Gets the value of the pixel at the specified coordinates.",
                                      "This procedure gets the pixel value at the specified coordinates. The 'num_channels' argument must always be equal to the bytes-per-pixel value for the specified drawable.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("x-coord",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("x-coord",
                                                       "x coord",
                                                       "The x coordinate",
                                                       0, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("y-coord",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("y-coord",
                                                       "y coord",
                                                       "The y coordinate",
                                                       0, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-channels",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-channels",
                                                           "num channels",
                                                           "The number of channels for the pixel",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int8_array ("pixel",
+                                                          PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int8_array ("pixel",
                                                                "pixel",
                                                                "The pixel value",
-                                                               GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                               PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-set-pixel
+   * picman-drawable-set-pixel
    */
-  procedure = gimp_procedure_new (drawable_set_pixel_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-set-pixel");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-set-pixel",
+  procedure = picman_procedure_new (drawable_set_pixel_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-set-pixel");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-set-pixel",
                                      "Sets the value of the pixel at the specified coordinates.",
                                      "This procedure sets the pixel value at the specified coordinates. The 'num_channels' argument must always be equal to the bytes-per-pixel value for the specified drawable. Note that this function is not undoable, you should use it only on drawables you just created yourself.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("x-coord",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("x-coord",
                                                       "x coord",
                                                       "The x coordinate",
                                                       0, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("y-coord",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("y-coord",
                                                       "y coord",
                                                       "The y coordinate",
                                                       0, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-channels",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-channels",
                                                       "num channels",
                                                       "The number of channels for the pixel",
                                                       0, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int8_array ("pixel",
+                                                      PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int8_array ("pixel",
                                                            "pixel",
                                                            "The pixel value",
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-fill
+   * picman-drawable-fill
    */
-  procedure = gimp_procedure_new (drawable_fill_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-fill");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-fill",
+  procedure = picman_procedure_new (drawable_fill_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-fill");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-fill",
                                      "Fill the drawable with the specified fill mode.",
-                                     "This procedure fills the drawable. If the fill mode is foreground the current foreground color is used. If the fill mode is background, the current background color is used. If the fill type is white, then white is used. Transparent fill only affects layers with an alpha channel, in which case the alpha channel is set to transparent. If the drawable has no alpha channel, it is filled to white. No fill leaves the drawable's contents undefined. This procedure is unlike 'gimp-edit-fill' or the bucket fill tool because it fills regardless of a selection. Its main purpose is to fill a newly created drawable before adding it to the image. This operation cannot be undone.",
+                                     "This procedure fills the drawable. If the fill mode is foreground the current foreground color is used. If the fill mode is background, the current background color is used. If the fill type is white, then white is used. Transparent fill only affects layers with an alpha channel, in which case the alpha channel is set to transparent. If the drawable has no alpha channel, it is filled to white. No fill leaves the drawable's contents undefined. This procedure is unlike 'picman-edit-fill' or the bucket fill tool because it fills regardless of a selection. Its main purpose is to fill a newly created drawable before adding it to the image. This operation cannot be undone.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("fill-type",
                                                   "fill type",
                                                   "The type of fill",
-                                                  GIMP_TYPE_FILL_TYPE,
-                                                  GIMP_FOREGROUND_FILL,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_FILL_TYPE,
+                                                  PICMAN_FOREGROUND_FILL,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-offset
+   * picman-drawable-offset
    */
-  procedure = gimp_procedure_new (drawable_offset_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-offset");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-offset",
+  procedure = picman_procedure_new (drawable_offset_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-offset");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-offset",
                                      "Offset the drawable by the specified amounts in the X and Y directions",
                                      "This procedure offsets the specified drawable by the amounts specified by 'offset_x' and 'offset_y'. If 'wrap_around' is set to TRUE, then portions of the drawable which are offset out of bounds are wrapped around. Alternatively, the undefined regions of the drawable can be filled with transparency or the background color, as specified by the 'fill-type' parameter.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable to offset",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("wrap-around",
                                                      "wrap around",
                                                      "wrap image around or fill vacated regions",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("fill-type",
                                                   "fill type",
                                                   "fill vacated regions of drawable with background or transparent",
-                                                  GIMP_TYPE_OFFSET_TYPE,
-                                                  GIMP_OFFSET_BACKGROUND,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("offset-x",
+                                                  PICMAN_TYPE_OFFSET_TYPE,
+                                                  PICMAN_OFFSET_BACKGROUND,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("offset-x",
                                                       "offset x",
                                                       "offset by this amount in X direction",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("offset-y",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("offset-y",
                                                       "offset y",
                                                       "offset by this amount in Y direction",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-thumbnail
+   * picman-drawable-thumbnail
    */
-  procedure = gimp_procedure_new (drawable_thumbnail_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-thumbnail");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-thumbnail",
+  procedure = picman_procedure_new (drawable_thumbnail_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-thumbnail");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-thumbnail",
                                      "Get a thumbnail of a drawable.",
                                      "This function gets data from which a thumbnail of a drawable preview can be created. Maximum x or y dimension is 1024 pixels. The pixels are returned in RGB[A] or GRAY[A] format. The bpp return value gives the number of bytes in the image.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1999",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("width",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("width",
                                                       "width",
                                                       "The requested thumbnail width",
                                                       1, 1024, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("height",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("height",
                                                       "height",
                                                       "The requested thumbnail height",
                                                       1, 1024, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("actual-width",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("actual-width",
                                                           "actual width",
                                                           "The previews width",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("actual-height",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("actual-height",
                                                           "actual height",
                                                           "The previews height",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("bpp",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("bpp",
                                                           "bpp",
                                                           "The previews bpp",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("thumbnail-data-count",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("thumbnail-data-count",
                                                           "thumbnail data count",
                                                           "The number of bytes in thumbnail data",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int8_array ("thumbnail-data",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int8_array ("thumbnail-data",
                                                                "thumbnail data",
                                                                "The thumbnail data",
-                                                               GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                               PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-sub-thumbnail
+   * picman-drawable-sub-thumbnail
    */
-  procedure = gimp_procedure_new (drawable_sub_thumbnail_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-sub-thumbnail");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-sub-thumbnail",
+  procedure = picman_procedure_new (drawable_sub_thumbnail_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-sub-thumbnail");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-sub-thumbnail",
                                      "Get a thumbnail of a sub-area of a drawable drawable.",
                                      "This function gets data from which a thumbnail of a drawable preview can be created. Maximum x or y dimension is 1024 pixels. The pixels are returned in RGB[A] or GRAY[A] format. The bpp return value gives the number of bytes in the image.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("src-x",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("src-x",
                                                       "src x",
                                                       "The x coordinate of the area",
                                                       0, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("src-y",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("src-y",
                                                       "src y",
                                                       "The y coordinate of the area",
                                                       0, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("src-width",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("src-width",
                                                       "src width",
                                                       "The width of the area",
                                                       1, G_MAXINT32, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("src-height",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("src-height",
                                                       "src height",
                                                       "The height of the area",
                                                       1, G_MAXINT32, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("dest-width",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("dest-width",
                                                       "dest width",
                                                       "The thumbnail width",
                                                       1, 1024, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("dest-height",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("dest-height",
                                                       "dest height",
                                                       "The thumbnail height",
                                                       1, 1024, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("width",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("width",
                                                           "width",
                                                           "The previews width",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("height",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("height",
                                                           "height",
                                                           "The previews height",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("bpp",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("bpp",
                                                           "bpp",
                                                           "The previews bpp",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("thumbnail-data-count",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("thumbnail-data-count",
                                                           "thumbnail data count",
                                                           "The number of bytes in thumbnail data",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int8_array ("thumbnail-data",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int8_array ("thumbnail-data",
                                                                "thumbnail data",
                                                                "The thumbnail data",
-                                                               GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                               PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-drawable-foreground-extract
+   * picman-drawable-foreground-extract
    */
-  procedure = gimp_procedure_new (drawable_foreground_extract_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-foreground-extract");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-foreground-extract",
+  procedure = picman_procedure_new (drawable_foreground_extract_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-drawable-foreground-extract");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-drawable-foreground-extract",
                                      "Extract the foreground of a drawable using a given trimap.",
                                      "Image Segmentation by Uniform Color Clustering, see http://www.inf.fu-berlin.de/inst/pubs/tr-b-05-07.pdf",
-                                     "Gerald Friedland <fland@inf.fu-berlin.de>, Kristian Jantz <jantz@inf.fu-berlin.de>, Sven Neumann <sven@gimp.org>",
+                                     "Gerald Friedland <fland@inf.fu-berlin.de>, Kristian Jantz <jantz@inf.fu-berlin.de>, Sven Neumann <sven@picman.org>",
                                      "Gerald Friedland",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("mode",
                                                   "mode",
                                                   "The algorithm to use",
-                                                  GIMP_TYPE_FOREGROUND_EXTRACT_MODE,
-                                                  GIMP_FOREGROUND_EXTRACT_SIOX,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("mask",
+                                                  PICMAN_TYPE_FOREGROUND_EXTRACT_MODE,
+                                                  PICMAN_FOREGROUND_EXTRACT_SIOX,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("mask",
                                                             "mask",
                                                             "Tri-Map",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

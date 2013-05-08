@@ -4,70 +4,70 @@
 
 <para role="gallery" xml:base="visual-index.xml">
 
-  <link linkend="GimpButton">
-    <inlinegraphic fileref="gimp-button.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanButton">
+    <inlinegraphic fileref="picman-button.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpChainButton">
-    <inlinegraphic fileref="gimp-chain-button.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanChainButton">
+    <inlinegraphic fileref="picman-chain-button.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpColorArea">
-    <inlinegraphic fileref="gimp-color-area.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanColorArea">
+    <inlinegraphic fileref="picman-color-area.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpColorButton">
-    <inlinegraphic fileref="gimp-color-button.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanColorButton">
+    <inlinegraphic fileref="picman-color-button.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpColorHexEntry">
-    <inlinegraphic fileref="gimp-color-hex-entry.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanColorHexEntry">
+    <inlinegraphic fileref="picman-color-hex-entry.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpColorScale">
-    <inlinegraphic fileref="gimp-color-scale.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanColorScale">
+    <inlinegraphic fileref="picman-color-scale.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpColorSelection">
-    <inlinegraphic fileref="gimp-color-selection.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanColorSelection">
+    <inlinegraphic fileref="picman-color-selection.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpColorProfileComboBox">
-    <inlinegraphic fileref="gimp-color-profile-combo-box.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanColorProfileComboBox">
+    <inlinegraphic fileref="picman-color-profile-combo-box.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpDialog">
-    <inlinegraphic fileref="gimp-dialog.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanDialog">
+    <inlinegraphic fileref="picman-dialog.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpEnumComboBox">
-    <inlinegraphic fileref="gimp-enum-combo-box.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanEnumComboBox">
+    <inlinegraphic fileref="picman-enum-combo-box.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpFileEntry">
-    <inlinegraphic fileref="gimp-file-entry.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanFileEntry">
+    <inlinegraphic fileref="picman-file-entry.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpFrame">
-    <inlinegraphic fileref="gimp-frame.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanFrame">
+    <inlinegraphic fileref="picman-frame.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpIntComboBox">
-    <inlinegraphic fileref="gimp-int-combo-box.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanIntComboBox">
+    <inlinegraphic fileref="picman-int-combo-box.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpMemsizeEntry">
-    <inlinegraphic fileref="gimp-memsize-entry.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanMemsizeEntry">
+    <inlinegraphic fileref="picman-memsize-entry.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpNumberPairEntry">
-    <inlinegraphic fileref="gimp-number-pair-entry.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanNumberPairEntry">
+    <inlinegraphic fileref="picman-number-pair-entry.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpOffsetArea">
-    <inlinegraphic fileref="gimp-offset-area.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanOffsetArea">
+    <inlinegraphic fileref="picman-offset-area.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpPageSelector">
-    <inlinegraphic fileref="gimp-page-selector.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanPageSelector">
+    <inlinegraphic fileref="picman-page-selector.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpPathEditor">
-    <inlinegraphic fileref="gimp-path-editor.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanPathEditor">
+    <inlinegraphic fileref="picman-path-editor.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpPickButton">
-    <inlinegraphic fileref="gimp-pick-button.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanPickButton">
+    <inlinegraphic fileref="picman-pick-button.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpPreviewArea">
-    <inlinegraphic fileref="gimp-preview-area.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanPreviewArea">
+    <inlinegraphic fileref="picman-preview-area.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpStringComboBox">
-    <inlinegraphic fileref="gimp-string-combo-box.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanStringComboBox">
+    <inlinegraphic fileref="picman-string-combo-box.png" format="PNG"></inlinegraphic>
   </link>
-  <link linkend="GimpUnitMenu">
-    <inlinegraphic fileref="gimp-unit-menu.png" format="PNG"></inlinegraphic>
+  <link linkend="PicmanUnitMenu">
+    <inlinegraphic fileref="picman-unit-menu.png" format="PNG"></inlinegraphic>
   </link>
 </para>

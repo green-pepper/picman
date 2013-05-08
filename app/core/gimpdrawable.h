@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,70 +15,70 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DRAWABLE_H__
-#define __GIMP_DRAWABLE_H__
+#ifndef __PICMAN_DRAWABLE_H__
+#define __PICMAN_DRAWABLE_H__
 
 
-#include "gimpitem.h"
+#include "picmanitem.h"
 
 
-#define GIMP_TYPE_DRAWABLE            (gimp_drawable_get_type ())
-#define GIMP_DRAWABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DRAWABLE, GimpDrawable))
-#define GIMP_DRAWABLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DRAWABLE, GimpDrawableClass))
-#define GIMP_IS_DRAWABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DRAWABLE))
-#define GIMP_IS_DRAWABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DRAWABLE))
-#define GIMP_DRAWABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DRAWABLE, GimpDrawableClass))
+#define PICMAN_TYPE_DRAWABLE            (picman_drawable_get_type ())
+#define PICMAN_DRAWABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DRAWABLE, PicmanDrawable))
+#define PICMAN_DRAWABLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DRAWABLE, PicmanDrawableClass))
+#define PICMAN_IS_DRAWABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DRAWABLE))
+#define PICMAN_IS_DRAWABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DRAWABLE))
+#define PICMAN_DRAWABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DRAWABLE, PicmanDrawableClass))
 
 
-typedef struct _GimpDrawablePrivate GimpDrawablePrivate;
-typedef struct _GimpDrawableClass   GimpDrawableClass;
+typedef struct _PicmanDrawablePrivate PicmanDrawablePrivate;
+typedef struct _PicmanDrawableClass   PicmanDrawableClass;
 
-struct _GimpDrawable
+struct _PicmanDrawable
 {
-  GimpItem             parent_instance;
+  PicmanItem             parent_instance;
 
-  GimpDrawablePrivate *private;
+  PicmanDrawablePrivate *private;
 };
 
-struct _GimpDrawableClass
+struct _PicmanDrawableClass
 {
-  GimpItemClass  parent_class;
+  PicmanItemClass  parent_class;
 
   /*  signals  */
-  void          (* update)                (GimpDrawable         *drawable,
+  void          (* update)                (PicmanDrawable         *drawable,
                                            gint                  x,
                                            gint                  y,
                                            gint                  width,
                                            gint                  height);
-  void          (* alpha_changed)         (GimpDrawable         *drawable);
+  void          (* alpha_changed)         (PicmanDrawable         *drawable);
 
   /*  virtual functions  */
-  gint64        (* estimate_memsize)      (const GimpDrawable   *drawable,
+  gint64        (* estimate_memsize)      (const PicmanDrawable   *drawable,
                                            gint                  width,
                                            gint                  height);
-  void          (* invalidate_boundary)   (GimpDrawable         *drawable);
-  void          (* get_active_components) (const GimpDrawable   *drawable,
+  void          (* invalidate_boundary)   (PicmanDrawable         *drawable);
+  void          (* get_active_components) (const PicmanDrawable   *drawable,
                                            gboolean             *active);
-  GimpComponentMask (* get_active_mask)   (const GimpDrawable   *drawable);
-  void          (* convert_type)          (GimpDrawable         *drawable,
-                                           GimpImage            *dest_image,
+  PicmanComponentMask (* get_active_mask)   (const PicmanDrawable   *drawable);
+  void          (* convert_type)          (PicmanDrawable         *drawable,
+                                           PicmanImage            *dest_image,
                                            const Babl           *new_format,
-                                           GimpImageBaseType     new_base_type,
-                                           GimpPrecision         new_precision,
+                                           PicmanImageBaseType     new_base_type,
+                                           PicmanPrecision         new_precision,
                                            gint                  layer_dither_type,
                                            gint                  mask_dither_type,
                                            gboolean              push_undo);
-  void          (* apply_buffer)          (GimpDrawable         *drawable,
+  void          (* apply_buffer)          (PicmanDrawable         *drawable,
                                            GeglBuffer           *buffer,
                                            const GeglRectangle  *buffer_region,
                                            gboolean              push_undo,
                                            const gchar          *undo_desc,
                                            gdouble               opacity,
-                                           GimpLayerModeEffects  mode,
+                                           PicmanLayerModeEffects  mode,
                                            GeglBuffer           *base_buffer,
                                            gint                  base_x,
                                            gint                  base_y);
-  void          (* replace_buffer)        (GimpDrawable         *drawable,
+  void          (* replace_buffer)        (PicmanDrawable         *drawable,
                                            GeglBuffer           *buffer,
                                            const GeglRectangle  *buffer_region,
                                            gboolean              push_undo,
@@ -88,31 +88,31 @@ struct _GimpDrawableClass
                                            const GeglRectangle  *mask_region,
                                            gint                  x,
                                            gint                  y);
-  GeglBuffer  * (* get_buffer)            (GimpDrawable         *drawable);
-  void          (* set_buffer)            (GimpDrawable         *drawable,
+  GeglBuffer  * (* get_buffer)            (PicmanDrawable         *drawable);
+  void          (* set_buffer)            (PicmanDrawable         *drawable,
                                            gboolean              push_undo,
                                            const gchar          *undo_desc,
                                            GeglBuffer           *buffer,
                                            gint                  offset_x,
                                            gint                  offset_y);
-  void          (* push_undo)             (GimpDrawable         *drawable,
+  void          (* push_undo)             (PicmanDrawable         *drawable,
                                            const gchar          *undo_desc,
                                            GeglBuffer           *buffer,
                                            gint                  x,
                                            gint                  y,
                                            gint                  width,
                                            gint                  height);
-  void          (* swap_pixels)           (GimpDrawable         *drawable,
+  void          (* swap_pixels)           (PicmanDrawable         *drawable,
                                            GeglBuffer           *buffer,
                                            gint                  x,
                                            gint                  y);
 };
 
 
-GType           gimp_drawable_get_type           (void) G_GNUC_CONST;
+GType           picman_drawable_get_type           (void) G_GNUC_CONST;
 
-GimpDrawable  * gimp_drawable_new                (GType               type,
-                                                  GimpImage          *image,
+PicmanDrawable  * picman_drawable_new                (GType               type,
+                                                  PicmanImage          *image,
                                                   const gchar        *name,
                                                   gint                offset_x,
                                                   gint                offset_y,
@@ -120,41 +120,41 @@ GimpDrawable  * gimp_drawable_new                (GType               type,
                                                   gint                height,
                                                   const Babl         *format);
 
-gint64          gimp_drawable_estimate_memsize   (const GimpDrawable *drawable,
+gint64          picman_drawable_estimate_memsize   (const PicmanDrawable *drawable,
                                                   gint                width,
                                                   gint                height);
 
-void            gimp_drawable_update             (GimpDrawable       *drawable,
+void            picman_drawable_update             (PicmanDrawable       *drawable,
                                                   gint                x,
                                                   gint                y,
                                                   gint                width,
                                                   gint                height);
-void            gimp_drawable_alpha_changed      (GimpDrawable       *drawable);
+void            picman_drawable_alpha_changed      (PicmanDrawable       *drawable);
 
-void           gimp_drawable_invalidate_boundary (GimpDrawable       *drawable);
-void         gimp_drawable_get_active_components (const GimpDrawable *drawable,
+void           picman_drawable_invalidate_boundary (PicmanDrawable       *drawable);
+void         picman_drawable_get_active_components (const PicmanDrawable *drawable,
                                                   gboolean           *active);
-GimpComponentMask gimp_drawable_get_active_mask  (const GimpDrawable *drawable);
+PicmanComponentMask picman_drawable_get_active_mask  (const PicmanDrawable *drawable);
 
-void            gimp_drawable_convert_type       (GimpDrawable       *drawable,
-                                                  GimpImage          *dest_image,
-                                                  GimpImageBaseType   new_base_type,
-                                                  GimpPrecision       new_precision,
+void            picman_drawable_convert_type       (PicmanDrawable       *drawable,
+                                                  PicmanImage          *dest_image,
+                                                  PicmanImageBaseType   new_base_type,
+                                                  PicmanPrecision       new_precision,
                                                   gint                layer_dither_type,
                                                   gint                mask_dither_type,
                                                   gboolean            push_undo);
 
-void            gimp_drawable_apply_buffer       (GimpDrawable        *drawable,
+void            picman_drawable_apply_buffer       (PicmanDrawable        *drawable,
                                                   GeglBuffer          *buffer,
                                                   const GeglRectangle *buffer_rect,
                                                   gboolean             push_undo,
                                                   const gchar         *undo_desc,
                                                   gdouble              opacity,
-                                                  GimpLayerModeEffects mode,
+                                                  PicmanLayerModeEffects mode,
                                                   GeglBuffer          *base_buffer,
                                                   gint                 base_x,
                                                   gint                 base_y);
-void            gimp_drawable_replace_buffer     (GimpDrawable        *drawable,
+void            picman_drawable_replace_buffer     (PicmanDrawable        *drawable,
                                                   GeglBuffer          *buffer,
                                                   const GeglRectangle *buffer_region,
                                                   gboolean             push_undo,
@@ -165,27 +165,27 @@ void            gimp_drawable_replace_buffer     (GimpDrawable        *drawable,
                                                   gint                 x,
                                                   gint                 y);
 
-GeglBuffer    * gimp_drawable_get_buffer         (GimpDrawable       *drawable);
-void            gimp_drawable_set_buffer         (GimpDrawable       *drawable,
+GeglBuffer    * picman_drawable_get_buffer         (PicmanDrawable       *drawable);
+void            picman_drawable_set_buffer         (PicmanDrawable       *drawable,
                                                   gboolean            push_undo,
                                                   const gchar        *undo_desc,
                                                   GeglBuffer         *buffer);
-void            gimp_drawable_set_buffer_full    (GimpDrawable       *drawable,
+void            picman_drawable_set_buffer_full    (PicmanDrawable       *drawable,
                                                   gboolean            push_undo,
                                                   const gchar        *undo_desc,
                                                   GeglBuffer         *buffer,
                                                   gint                offset_x,
                                                   gint                offset_y);
 
-GeglNode      * gimp_drawable_get_source_node    (GimpDrawable       *drawable);
-GeglNode      * gimp_drawable_get_mode_node      (GimpDrawable       *drawable);
+GeglNode      * picman_drawable_get_source_node    (PicmanDrawable       *drawable);
+GeglNode      * picman_drawable_get_mode_node      (PicmanDrawable       *drawable);
 
-void            gimp_drawable_swap_pixels        (GimpDrawable       *drawable,
+void            picman_drawable_swap_pixels        (PicmanDrawable       *drawable,
                                                   GeglBuffer         *buffer,
                                                   gint                x,
                                                   gint                y);
 
-void            gimp_drawable_push_undo          (GimpDrawable       *drawable,
+void            picman_drawable_push_undo          (PicmanDrawable       *drawable,
                                                   const gchar        *undo_desc,
                                                   GeglBuffer         *buffer,
                                                   gint                x,
@@ -193,34 +193,34 @@ void            gimp_drawable_push_undo          (GimpDrawable       *drawable,
                                                   gint                width,
                                                   gint                height);
 
-void            gimp_drawable_fill               (GimpDrawable       *drawable,
-                                                  const GimpRGB      *color,
-                                                  const GimpPattern  *pattern);
-void            gimp_drawable_fill_by_type       (GimpDrawable       *drawable,
-                                                  GimpContext        *context,
-                                                  GimpFillType        fill_type);
+void            picman_drawable_fill               (PicmanDrawable       *drawable,
+                                                  const PicmanRGB      *color,
+                                                  const PicmanPattern  *pattern);
+void            picman_drawable_fill_by_type       (PicmanDrawable       *drawable,
+                                                  PicmanContext        *context,
+                                                  PicmanFillType        fill_type);
 
-const Babl    * gimp_drawable_get_format         (const GimpDrawable *drawable);
-const Babl    * gimp_drawable_get_format_with_alpha
-                                                 (const GimpDrawable *drawable);
-const Babl    * gimp_drawable_get_format_without_alpha
-                                                 (const GimpDrawable *drawable);
-gboolean        gimp_drawable_get_linear         (const GimpDrawable *drawable);
-gboolean        gimp_drawable_has_alpha          (const GimpDrawable *drawable);
-GimpImageBaseType gimp_drawable_get_base_type    (const GimpDrawable *drawable);
-GimpPrecision   gimp_drawable_get_precision      (const GimpDrawable *drawable);
-gboolean        gimp_drawable_is_rgb             (const GimpDrawable *drawable);
-gboolean        gimp_drawable_is_gray            (const GimpDrawable *drawable);
-gboolean        gimp_drawable_is_indexed         (const GimpDrawable *drawable);
+const Babl    * picman_drawable_get_format         (const PicmanDrawable *drawable);
+const Babl    * picman_drawable_get_format_with_alpha
+                                                 (const PicmanDrawable *drawable);
+const Babl    * picman_drawable_get_format_without_alpha
+                                                 (const PicmanDrawable *drawable);
+gboolean        picman_drawable_get_linear         (const PicmanDrawable *drawable);
+gboolean        picman_drawable_has_alpha          (const PicmanDrawable *drawable);
+PicmanImageBaseType picman_drawable_get_base_type    (const PicmanDrawable *drawable);
+PicmanPrecision   picman_drawable_get_precision      (const PicmanDrawable *drawable);
+gboolean        picman_drawable_is_rgb             (const PicmanDrawable *drawable);
+gboolean        picman_drawable_is_gray            (const PicmanDrawable *drawable);
+gboolean        picman_drawable_is_indexed         (const PicmanDrawable *drawable);
 
-const guchar  * gimp_drawable_get_colormap       (const GimpDrawable *drawable);
+const guchar  * picman_drawable_get_colormap       (const PicmanDrawable *drawable);
 
-GimpLayer    * gimp_drawable_get_floating_sel    (const GimpDrawable *drawable);
-void           gimp_drawable_attach_floating_sel (GimpDrawable       *drawable,
-                                                  GimpLayer          *floating_sel);
-void           gimp_drawable_detach_floating_sel (GimpDrawable       *drawable);
-GimpFilter *
-           gimp_drawable_get_floating_sel_filter (GimpDrawable       *drawable);
+PicmanLayer    * picman_drawable_get_floating_sel    (const PicmanDrawable *drawable);
+void           picman_drawable_attach_floating_sel (PicmanDrawable       *drawable,
+                                                  PicmanLayer          *floating_sel);
+void           picman_drawable_detach_floating_sel (PicmanDrawable       *drawable);
+PicmanFilter *
+           picman_drawable_get_floating_sel_filter (PicmanDrawable       *drawable);
 
 
-#endif /* __GIMP_DRAWABLE_H__ */
+#endif /* __PICMAN_DRAWABLE_H__ */

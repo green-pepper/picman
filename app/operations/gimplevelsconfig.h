@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimplevelsconfig.h
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanlevelsconfig.h
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_LEVELS_CONFIG_H__
-#define __GIMP_LEVELS_CONFIG_H__
+#ifndef __PICMAN_LEVELS_CONFIG_H__
+#define __PICMAN_LEVELS_CONFIG_H__
 
 
-#include "core/gimpimagemapconfig.h"
+#include "core/picmanimagemapconfig.h"
 
 
-#define GIMP_TYPE_LEVELS_CONFIG            (gimp_levels_config_get_type ())
-#define GIMP_LEVELS_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_LEVELS_CONFIG, GimpLevelsConfig))
-#define GIMP_LEVELS_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_LEVELS_CONFIG, GimpLevelsConfigClass))
-#define GIMP_IS_LEVELS_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_LEVELS_CONFIG))
-#define GIMP_IS_LEVELS_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_LEVELS_CONFIG))
-#define GIMP_LEVELS_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_LEVELS_CONFIG, GimpLevelsConfigClass))
+#define PICMAN_TYPE_LEVELS_CONFIG            (picman_levels_config_get_type ())
+#define PICMAN_LEVELS_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_LEVELS_CONFIG, PicmanLevelsConfig))
+#define PICMAN_LEVELS_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_LEVELS_CONFIG, PicmanLevelsConfigClass))
+#define PICMAN_IS_LEVELS_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_LEVELS_CONFIG))
+#define PICMAN_IS_LEVELS_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_LEVELS_CONFIG))
+#define PICMAN_LEVELS_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_LEVELS_CONFIG, PicmanLevelsConfigClass))
 
 
-typedef struct _GimpLevelsConfigClass GimpLevelsConfigClass;
+typedef struct _PicmanLevelsConfigClass PicmanLevelsConfigClass;
 
-struct _GimpLevelsConfig
+struct _PicmanLevelsConfig
 {
-  GimpImageMapConfig    parent_instance;
+  PicmanImageMapConfig    parent_instance;
 
-  GimpHistogramChannel  channel;
+  PicmanHistogramChannel  channel;
 
   gdouble               gamma[5];
 
@@ -50,37 +50,37 @@ struct _GimpLevelsConfig
   gdouble               high_output[5];
 };
 
-struct _GimpLevelsConfigClass
+struct _PicmanLevelsConfigClass
 {
-  GimpImageMapConfigClass  parent_class;
+  PicmanImageMapConfigClass  parent_class;
 };
 
 
-GType      gimp_levels_config_get_type         (void) G_GNUC_CONST;
+GType      picman_levels_config_get_type         (void) G_GNUC_CONST;
 
-void       gimp_levels_config_reset_channel    (GimpLevelsConfig      *config);
+void       picman_levels_config_reset_channel    (PicmanLevelsConfig      *config);
 
-void       gimp_levels_config_stretch          (GimpLevelsConfig      *config,
-                                                GimpHistogram         *histogram,
+void       picman_levels_config_stretch          (PicmanLevelsConfig      *config,
+                                                PicmanHistogram         *histogram,
                                                 gboolean               is_color);
-void       gimp_levels_config_stretch_channel  (GimpLevelsConfig      *config,
-                                                GimpHistogram         *histogram,
-                                                GimpHistogramChannel   channel);
-void       gimp_levels_config_adjust_by_colors (GimpLevelsConfig      *config,
-                                                GimpHistogramChannel   channel,
-                                                const GimpRGB         *black,
-                                                const GimpRGB         *gray,
-                                                const GimpRGB         *white);
+void       picman_levels_config_stretch_channel  (PicmanLevelsConfig      *config,
+                                                PicmanHistogram         *histogram,
+                                                PicmanHistogramChannel   channel);
+void       picman_levels_config_adjust_by_colors (PicmanLevelsConfig      *config,
+                                                PicmanHistogramChannel   channel,
+                                                const PicmanRGB         *black,
+                                                const PicmanRGB         *gray,
+                                                const PicmanRGB         *white);
 
-GimpCurvesConfig *
-           gimp_levels_config_to_curves_config (GimpLevelsConfig      *config);
+PicmanCurvesConfig *
+           picman_levels_config_to_curves_config (PicmanLevelsConfig      *config);
 
-gboolean   gimp_levels_config_load_cruft       (GimpLevelsConfig      *config,
+gboolean   picman_levels_config_load_cruft       (PicmanLevelsConfig      *config,
                                                 gpointer               fp,
                                                 GError               **error);
-gboolean   gimp_levels_config_save_cruft       (GimpLevelsConfig      *config,
+gboolean   picman_levels_config_save_cruft       (PicmanLevelsConfig      *config,
                                                 gpointer               fp,
                                                 GError               **error);
 
 
-#endif /* __GIMP_LEVELS_CONFIG_H__ */
+#endif /* __PICMAN_LEVELS_CONFIG_H__ */

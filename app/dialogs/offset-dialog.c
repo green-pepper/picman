@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,43 +20,43 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpchannel.h"
-#include "core/gimpcontext.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdrawable-offset.h"
-#include "core/gimpitem.h"
-#include "core/gimplayer.h"
-#include "core/gimplayermask.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmanchannel.h"
+#include "core/picmancontext.h"
+#include "core/picmandrawable.h"
+#include "core/picmandrawable-offset.h"
+#include "core/picmanitem.h"
+#include "core/picmanlayer.h"
+#include "core/picmanlayermask.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanviewabledialog.h"
 
 #include "offset-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define WRAP_AROUND  (1 << 3)
-#define FILL_MASK    (GIMP_OFFSET_BACKGROUND | GIMP_OFFSET_TRANSPARENT)
+#define FILL_MASK    (PICMAN_OFFSET_BACKGROUND | PICMAN_OFFSET_TRANSPARENT)
 
 
 typedef struct
 {
-  GimpContext    *context;
+  PicmanContext    *context;
 
   GtkWidget      *dialog;
   GtkWidget      *off_se;
 
-  GimpOffsetType  fill_type;
+  PicmanOffsetType  fill_type;
 
-  GimpImage      *image;
+  PicmanImage      *image;
 } OffsetDialog;
 
 
@@ -77,11 +77,11 @@ static void  offset_dialog_free      (OffsetDialog *dialog);
 /*  public functions  */
 
 GtkWidget *
-offset_dialog_new (GimpDrawable *drawable,
-                   GimpContext  *context,
+offset_dialog_new (PicmanDrawable *drawable,
+                   PicmanContext  *context,
                    GtkWidget    *parent)
 {
-  GimpItem     *item;
+  PicmanItem     *item;
   OffsetDialog *dialog;
   GtkWidget    *main_vbox;
   GtkWidget    *vbox;
@@ -95,36 +95,36 @@ offset_dialog_new (GimpDrawable *drawable,
   gdouble       yres;
   const gchar  *title = NULL;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (GTK_IS_WIDGET (parent), NULL);
 
   dialog = g_slice_new0 (OffsetDialog);
 
   dialog->context   = context;
-  dialog->fill_type = gimp_drawable_has_alpha (drawable) | WRAP_AROUND;
-  item = GIMP_ITEM (drawable);
-  dialog->image     = gimp_item_get_image (item);
+  dialog->fill_type = picman_drawable_has_alpha (drawable) | WRAP_AROUND;
+  item = PICMAN_ITEM (drawable);
+  dialog->image     = picman_item_get_image (item);
 
-  gimp_image_get_resolution (dialog->image, &xres, &yres);
+  picman_image_get_resolution (dialog->image, &xres, &yres);
 
-  if (GIMP_IS_LAYER (drawable))
+  if (PICMAN_IS_LAYER (drawable))
     title = _("Offset Layer");
-  else if (GIMP_IS_LAYER_MASK (drawable))
+  else if (PICMAN_IS_LAYER_MASK (drawable))
     title = _("Offset Layer Mask");
-  else if (GIMP_IS_CHANNEL (drawable))
+  else if (PICMAN_IS_CHANNEL (drawable))
     title = _("Offset Channel");
   else
     g_warning ("%s: unexpected drawable type", G_STRFUNC);
 
   dialog->dialog =
-    gimp_viewable_dialog_new (GIMP_VIEWABLE (drawable), context,
-                              _("Offset"), "gimp-drawable-offset",
-                              GIMP_STOCK_TOOL_MOVE,
+    picman_viewable_dialog_new (PICMAN_VIEWABLE (drawable), context,
+                              _("Offset"), "picman-drawable-offset",
+                              PICMAN_STOCK_TOOL_MOVE,
                               title,
                               parent,
-                              gimp_standard_help_func,
-                              GIMP_HELP_LAYER_OFFSET,
+                              picman_standard_help_func,
+                              PICMAN_HELP_LAYER_OFFSET,
 
                               GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                               /*  offset, used as a verb  */
@@ -153,7 +153,7 @@ offset_dialog_new (GimpDrawable *drawable,
   gtk_widget_show (main_vbox);
 
   /*  The offset frame  */
-  frame = gimp_frame_new (_("Offset"));
+  frame = picman_frame_new (_("Offset"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -161,54 +161,54 @@ offset_dialog_new (GimpDrawable *drawable,
   gtk_container_add (GTK_CONTAINER (frame), vbox);
   gtk_widget_show (vbox);
 
-  spinbutton = gimp_spin_button_new (&adjustment,
+  spinbutton = picman_spin_button_new (&adjustment,
                                      1, 1, 1, 1, 10, 0,
                                      1, 2);
   gtk_entry_set_width_chars (GTK_ENTRY (spinbutton), 10);
 
-  dialog->off_se = gimp_size_entry_new (1, GIMP_UNIT_PIXEL, "%a",
+  dialog->off_se = picman_size_entry_new (1, PICMAN_UNIT_PIXEL, "%a",
                                         TRUE, TRUE, FALSE, 10,
-                                        GIMP_SIZE_ENTRY_UPDATE_SIZE);
+                                        PICMAN_SIZE_ENTRY_UPDATE_SIZE);
 
   gtk_table_set_col_spacing (GTK_TABLE (dialog->off_se), 0, 4);
   gtk_table_set_col_spacing (GTK_TABLE (dialog->off_se), 1, 4);
   gtk_table_set_row_spacing (GTK_TABLE (dialog->off_se), 0, 2);
 
-  gimp_size_entry_add_field (GIMP_SIZE_ENTRY (dialog->off_se),
+  picman_size_entry_add_field (PICMAN_SIZE_ENTRY (dialog->off_se),
                              GTK_SPIN_BUTTON (spinbutton), NULL);
   gtk_table_attach_defaults (GTK_TABLE (dialog->off_se), spinbutton,
                              1, 2, 0, 1);
   gtk_widget_show (spinbutton);
 
-  gimp_size_entry_attach_label (GIMP_SIZE_ENTRY (dialog->off_se),
+  picman_size_entry_attach_label (PICMAN_SIZE_ENTRY (dialog->off_se),
                                 _("_X:"), 0, 0, 0.0);
-  gimp_size_entry_attach_label (GIMP_SIZE_ENTRY (dialog->off_se),
+  picman_size_entry_attach_label (PICMAN_SIZE_ENTRY (dialog->off_se),
                                 _("_Y:"), 1, 0, 0.0);
 
   gtk_box_pack_start (GTK_BOX (vbox), dialog->off_se, FALSE, FALSE, 0);
   gtk_widget_show (dialog->off_se);
 
-  gimp_size_entry_set_unit (GIMP_SIZE_ENTRY (dialog->off_se), GIMP_UNIT_PIXEL);
+  picman_size_entry_set_unit (PICMAN_SIZE_ENTRY (dialog->off_se), PICMAN_UNIT_PIXEL);
 
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (dialog->off_se), 0,
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (dialog->off_se), 0,
                                   xres, FALSE);
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (dialog->off_se), 1,
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (dialog->off_se), 1,
                                   yres, FALSE);
 
-  gimp_size_entry_set_refval_boundaries (GIMP_SIZE_ENTRY (dialog->off_se), 0,
-                                         - gimp_item_get_width (item),
-                                         gimp_item_get_width (item));
-  gimp_size_entry_set_refval_boundaries (GIMP_SIZE_ENTRY (dialog->off_se), 1,
-                                         - gimp_item_get_height (item),
-                                         gimp_item_get_height (item));
+  picman_size_entry_set_refval_boundaries (PICMAN_SIZE_ENTRY (dialog->off_se), 0,
+                                         - picman_item_get_width (item),
+                                         picman_item_get_width (item));
+  picman_size_entry_set_refval_boundaries (PICMAN_SIZE_ENTRY (dialog->off_se), 1,
+                                         - picman_item_get_height (item),
+                                         picman_item_get_height (item));
 
-  gimp_size_entry_set_size (GIMP_SIZE_ENTRY (dialog->off_se), 0,
-                            0, gimp_item_get_width (item));
-  gimp_size_entry_set_size (GIMP_SIZE_ENTRY (dialog->off_se), 1,
-                            0, gimp_item_get_height (item));
+  picman_size_entry_set_size (PICMAN_SIZE_ENTRY (dialog->off_se), 0,
+                            0, picman_item_get_width (item));
+  picman_size_entry_set_size (PICMAN_SIZE_ENTRY (dialog->off_se), 1,
+                            0, picman_item_get_height (item));
 
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (dialog->off_se), 0, 0);
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (dialog->off_se), 1, 0);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (dialog->off_se), 0, 0);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (dialog->off_se), 1, 0);
 
   button = gtk_button_new_with_mnemonic (_("By width/_2, height/2"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
@@ -239,21 +239,21 @@ offset_dialog_new (GimpDrawable *drawable,
                     dialog);
 
   /*  The edge behavior frame  */
-  frame = gimp_int_radio_group_new (TRUE, _("Edge Behavior"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Edge Behavior"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &dialog->fill_type, dialog->fill_type,
 
                                     _("W_rap around"),
                                     WRAP_AROUND, NULL,
 
                                     _("Fill with _background color"),
-                                    GIMP_OFFSET_BACKGROUND, NULL,
+                                    PICMAN_OFFSET_BACKGROUND, NULL,
 
                                     _("Make _transparent"),
-                                    GIMP_OFFSET_TRANSPARENT, &radio_button,
+                                    PICMAN_OFFSET_TRANSPARENT, &radio_button,
                                     NULL);
 
-  if (! gimp_drawable_has_alpha (drawable))
+  if (! picman_drawable_has_alpha (drawable))
     gtk_widget_set_sensitive (radio_button, FALSE);
 
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
@@ -272,27 +272,27 @@ offset_response (GtkWidget    *widget,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpImage *image = dialog->image;
+      PicmanImage *image = dialog->image;
 
       if (image)
         {
-          GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+          PicmanDrawable *drawable = picman_image_get_active_drawable (image);
           gint          offset_x;
           gint          offset_y;
 
           offset_x =
-            RINT (gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (dialog->off_se),
+            RINT (picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (dialog->off_se),
                                               0));
           offset_y =
-            RINT (gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (dialog->off_se),
+            RINT (picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (dialog->off_se),
                                               1));
 
-          gimp_drawable_offset (drawable,
+          picman_drawable_offset (drawable,
                                 dialog->context,
                                 dialog->fill_type & WRAP_AROUND ? TRUE : FALSE,
                                 dialog->fill_type & FILL_MASK,
                                 offset_x, offset_y);
-          gimp_image_flush (image);
+          picman_image_flush (image);
         }
     }
 
@@ -303,16 +303,16 @@ static void
 offset_half_xy_callback (GtkWidget    *widget,
                          OffsetDialog *dialog)
 {
-  GimpImage *image = dialog->image;
+  PicmanImage *image = dialog->image;
 
   if (image)
     {
-      GimpItem *item = GIMP_ITEM (gimp_image_get_active_drawable (image));
+      PicmanItem *item = PICMAN_ITEM (picman_image_get_active_drawable (image));
 
-      gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (dialog->off_se),
-                                  0, gimp_item_get_width (item) / 2);
-      gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (dialog->off_se),
-                                  1, gimp_item_get_height (item) / 2);
+      picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (dialog->off_se),
+                                  0, picman_item_get_width (item) / 2);
+      picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (dialog->off_se),
+                                  1, picman_item_get_height (item) / 2);
    }
 }
 
@@ -320,14 +320,14 @@ static void
 offset_half_x_callback (GtkWidget    *widget,
                         OffsetDialog *dialog)
 {
-  GimpImage *image = dialog->image;
+  PicmanImage *image = dialog->image;
 
   if (image)
     {
-      GimpItem *item = GIMP_ITEM (gimp_image_get_active_drawable (image));
+      PicmanItem *item = PICMAN_ITEM (picman_image_get_active_drawable (image));
 
-      gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (dialog->off_se),
-                                  0, gimp_item_get_width (item) / 2);
+      picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (dialog->off_se),
+                                  0, picman_item_get_width (item) / 2);
    }
 }
 
@@ -335,14 +335,14 @@ static void
 offset_half_y_callback (GtkWidget    *widget,
                         OffsetDialog *dialog)
 {
-  GimpImage *image = dialog->image;
+  PicmanImage *image = dialog->image;
 
   if (image)
     {
-      GimpItem *item = GIMP_ITEM (gimp_image_get_active_drawable (image));
+      PicmanItem *item = PICMAN_ITEM (picman_image_get_active_drawable (image));
 
-      gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (dialog->off_se),
-                                  1, gimp_item_get_height (item) / 2);
+      picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (dialog->off_se),
+                                  1, picman_item_get_height (item) / 2);
    }
 }
 

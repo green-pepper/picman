@@ -2,9 +2,9 @@ Developers documentation using gtk-doc
 --------------------------------------
 
 The goal is to provide useful source documentation. Right now this is
-limited to libgimp since that is the part that is used by third-party
+limited to libpicman since that is the part that is used by third-party
 coders (plug-in developers). Other parts of the code may follow later,
-but not before libgimp is properly documented.
+but not before libpicman is properly documented.
 
 
 Principle
@@ -19,7 +19,7 @@ into SGML template files.
 Requirements
 ------------
 
-GIMP release tarballs contain a complete set of precompiled HTML files
+PICMAN release tarballs contain a complete set of precompiled HTML files
 as well as DocBook XML files to create other formats. You only need
 gtk-doc if you want to work on the documentation itself.  In that case
 you will need the following utilities:
@@ -79,7 +79,7 @@ How to write proper gtk-doc comments
 Here are some hints on writing proper gtk-doc comments. They are based
 on the gtk-doc documentation which comes with the gtk-doc source tree:
 
-These are the comment blocks used in GIMP source files to document
+These are the comment blocks used in PICMAN source files to document
 functions (and macros, signals and properties, if you want).
 
 /**

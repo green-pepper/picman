@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# GIMP Plug-in for the OpenRaster file format
+# PICMAN Plug-in for the OpenRaster file format
 # http://create.freedesktop.org/wiki/OpenRaster
 
 # Copyright (C) 2009 by Jon Nordby <jononor@gmail.com>
@@ -13,7 +13,7 @@
 # Based on MyPaint source code by Martin Renold
 # http://gitorious.org/mypaint/mypaint/blobs/edd84bcc1e091d0d56aa6d26637aa8a925987b6a/lib/document.py
 
-from gimpfu import *
+from picmanfu import *
 
 import tempfile, zipfile, os
 import xml.etree.ElementTree as ET
@@ -64,7 +64,7 @@ def thumbnail_ora(filename, thumb_size):
     # FIXME: Untested. Does not seem to be used at all? should be run
     # when registered and there is no thumbnail in cache
 
-    tempdir = tempfile.mkdtemp('gimp-plugin-file-openraster')
+    tempdir = tempfile.mkdtemp('picman-plugin-file-openraster')
     orafile = zipfile.ZipFile(filename)
     stack, w, h = get_image_attributes(orafile)
 
@@ -89,7 +89,7 @@ def save_ora(img, drawable, filename, raw_filename):
         zi.external_attr = 0100644 << 16
         zfile.writestr(zi, data)
 
-    tempdir = tempfile.mkdtemp('gimp-plugin-file-openraster')
+    tempdir = tempfile.mkdtemp('picman-plugin-file-openraster')
 
     # use .tmpsave extension, so we don't overwrite a valid file if
     # there is an exception
@@ -113,19 +113,19 @@ def save_ora(img, drawable, filename, raw_filename):
         orafile.write(tmp, path)
         os.remove(tmp)
 
-    def add_layer(x, y, opac, gimp_layer, path, visible=True):
-        store_layer(img, gimp_layer, path)
+    def add_layer(x, y, opac, picman_layer, path, visible=True):
+        store_layer(img, picman_layer, path)
         # create layer attributes
         layer = ET.Element('layer')
         stack.append(layer)
         a = layer.attrib
         a['src'] = path
-        a['name'] = gimp_layer.name
+        a['name'] = picman_layer.name
         a['x'] = str(x)
         a['y'] = str(y)
         a['opacity'] = str(opac)
         a['visibility'] = 'visible' if visible else 'hidden'
-        a['composite-op'] = reverse_map(layermodes_map).get(gimp_layer.mode, 'svg:src-over')
+        a['composite-op'] = reverse_map(layermodes_map).get(picman_layer.mode, 'svg:src-over')
         return layer
 
     # save layers
@@ -141,11 +141,11 @@ def save_ora(img, drawable, filename, raw_filename):
         w, h = 256, max(h*256/w, 1)
     else:
         w, h = max(w*256/h, 1), 256
-    thumb = pdb['gimp-image-duplicate'](img)
+    thumb = pdb['picman-image-duplicate'](img)
     thumb_layer = thumb.flatten()
     thumb_layer.scale(w, h)
     store_layer(thumb, thumb_layer, 'Thumbnails/thumbnail.png')
-    gimp.delete(thumb)
+    picman.delete(thumb)
 
     # write stack.xml
     xml = ET.tostring(image, encoding='UTF-8')
@@ -159,11 +159,11 @@ def save_ora(img, drawable, filename, raw_filename):
     os.rename(filename + '.tmpsave', filename)
 
 def load_ora(filename, raw_filename):
-    tempdir = tempfile.mkdtemp('gimp-plugin-file-openraster')
+    tempdir = tempfile.mkdtemp('picman-plugin-file-openraster')
     orafile = zipfile.ZipFile(filename)
     stack, w, h = get_image_attributes(orafile)
 
-    img = gimp.Image(w, h, RGB)
+    img = picman.Image(w, h, RGB)
     img.filename = filename
 
     def get_layers(root):
@@ -186,7 +186,7 @@ def load_ora(filename, raw_filename):
             n = os.path.basename(path)
             name = os.path.splitext(n)[0]
 
-        # create temp file. Needed because gimp cannot load files from inside a zip file
+        # create temp file. Needed because picman cannot load files from inside a zip file
         tmp = os.path.join(tempdir, 'tmp.png')
         f = open(tmp, 'wb')
         try:
@@ -199,13 +199,13 @@ def load_ora(filename, raw_filename):
         f.close()
 
         # import layer, set attributes and add to image
-        gimp_layer = pdb['gimp-file-load-layer'](img, tmp)
-        gimp_layer.name = name
-        gimp_layer.mode = layer_mode
-        gimp_layer.set_offsets(x, y)  # move to correct position
-        gimp_layer.opacity = opac * 100  # a float between 0 and 100
-        gimp_layer.visible = visible
-        img.add_layer(gimp_layer, layer_no)
+        picman_layer = pdb['picman-file-load-layer'](img, tmp)
+        picman_layer.name = name
+        picman_layer.mode = layer_mode
+        picman_layer.set_offsets(x, y)  # move to correct position
+        picman_layer.opacity = opac * 100  # a float between 0 and 100
+        picman_layer.visible = visible
+        img.add_layer(picman_layer, layer_no)
 
         os.remove(tmp)
     os.rmdir(tempdir)
@@ -214,12 +214,12 @@ def load_ora(filename, raw_filename):
 
 
 def register_load_handlers():
-    gimp.register_load_handler('file-openraster-load', 'ora', '')
-    pdb['gimp-register-file-handler-mime']('file-openraster-load', 'image/openraster')
-    pdb['gimp-register-thumbnail-loader']('file-openraster-load', 'file-openraster-load-thumb')
+    picman.register_load_handler('file-openraster-load', 'ora', '')
+    pdb['picman-register-file-handler-mime']('file-openraster-load', 'image/openraster')
+    pdb['picman-register-thumbnail-loader']('file-openraster-load', 'file-openraster-load-thumb')
 
 def register_save_handlers():
-    gimp.register_save_handler('file-openraster-save', 'ora', '')
+    picman.register_save_handler('file-openraster-save', 'ora', '')
 
 register(
     'file-openraster-load-thumb', #name

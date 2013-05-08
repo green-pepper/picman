@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,51 +20,51 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "paint/gimppenciloptions.h"
+#include "paint/picmanpenciloptions.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "gimppenciltool.h"
-#include "gimppaintoptions-gui.h"
-#include "gimptoolcontrol.h"
+#include "picmanpenciltool.h"
+#include "picmanpaintoptions-gui.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpPencilTool, gimp_pencil_tool, GIMP_TYPE_PAINTBRUSH_TOOL)
+G_DEFINE_TYPE (PicmanPencilTool, picman_pencil_tool, PICMAN_TYPE_PAINTBRUSH_TOOL)
 
 
 void
-gimp_pencil_tool_register (GimpToolRegisterCallback  callback,
+picman_pencil_tool_register (PicmanToolRegisterCallback  callback,
                            gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_PENCIL_TOOL,
-                GIMP_TYPE_PENCIL_OPTIONS,
-                gimp_paint_options_gui,
-                GIMP_PAINT_OPTIONS_CONTEXT_MASK |
-                GIMP_CONTEXT_GRADIENT_MASK,
-                "gimp-pencil-tool",
+  (* callback) (PICMAN_TYPE_PENCIL_TOOL,
+                PICMAN_TYPE_PENCIL_OPTIONS,
+                picman_paint_options_gui,
+                PICMAN_PAINT_OPTIONS_CONTEXT_MASK |
+                PICMAN_CONTEXT_GRADIENT_MASK,
+                "picman-pencil-tool",
                 _("Pencil"),
                 _("Pencil Tool: Hard edge painting using a brush"),
                 N_("Pe_ncil"), "N",
-                NULL, GIMP_HELP_TOOL_PENCIL,
-                GIMP_STOCK_TOOL_PENCIL,
+                NULL, PICMAN_HELP_TOOL_PENCIL,
+                PICMAN_STOCK_TOOL_PENCIL,
                 data);
 }
 
 static void
-gimp_pencil_tool_class_init (GimpPencilToolClass *klass)
+picman_pencil_tool_class_init (PicmanPencilToolClass *klass)
 {
 }
 
 static void
-gimp_pencil_tool_init (GimpPencilTool *pencil)
+picman_pencil_tool_init (PicmanPencilTool *pencil)
 {
-  GimpTool *tool = GIMP_TOOL (pencil);
+  PicmanTool *tool = PICMAN_TOOL (pencil);
 
-  gimp_tool_control_set_tool_cursor (tool->control, GIMP_TOOL_CURSOR_PENCIL);
+  picman_tool_control_set_tool_cursor (tool->control, PICMAN_TOOL_CURSOR_PENCIL);
 }

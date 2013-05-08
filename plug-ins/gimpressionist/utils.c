@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,12 +26,12 @@
 
 #include <glib-object.h>
 
-#include <libgimpconfig/gimpconfig.h>
-#include <libgimpmath/gimpmath.h>
+#include <libpicmanconfig/picmanconfig.h>
+#include <libpicmanmath/picmanmath.h>
 
-#include "gimpressionist.h"
+#include "picmanressionist.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Mathematical Utilities */
@@ -127,7 +127,7 @@ parsepath (void)
   if (parsepath_cached_path)
     return parsepath_cached_path;
 
-  path = gimp_gimprc_query ("gimpressionist-path");
+  path = picman_picmanrc_query ("picmanressionist-path");
   if (path)
     {
       rc_path = g_filename_from_utf8 (path, -1, NULL, NULL, NULL);
@@ -135,25 +135,25 @@ parsepath (void)
     }
   else
     {
-      gchar *gimprc    = gimp_personal_rc_file ("gimprc");
-      gchar *full_path = gimp_config_build_data_path ("gimpressionist");
+      gchar *picmanrc    = picman_personal_rc_file ("picmanrc");
+      gchar *full_path = picman_config_build_data_path ("picmanressionist");
       gchar *esc_path  = g_strescape (full_path, NULL);
 
-      g_message (_("No %s in gimprc:\n"
+      g_message (_("No %s in picmanrc:\n"
                    "You need to add an entry like\n"
                    "(%s \"%s\")\n"
                    "to your %s file."),
                  "gflare-path", "gflare-path",
-                 esc_path, gimp_filename_to_utf8 (gimprc));
+                 esc_path, picman_filename_to_utf8 (picmanrc));
 
-      g_free (gimprc);
+      g_free (picmanrc);
       g_free (esc_path);
 
-      rc_path = gimp_config_path_expand (full_path, TRUE, NULL);
+      rc_path = picman_config_path_expand (full_path, TRUE, NULL);
       g_free (full_path);
     }
 
-  parsepath_cached_path = gimp_path_parse (rc_path, 256, FALSE, NULL);
+  parsepath_cached_path = picman_path_parse (rc_path, 256, FALSE, NULL);
 
   g_free (rc_path);
 
@@ -405,7 +405,7 @@ create_radio_button (GtkWidget    *box,
 
   g_signal_connect (tmpw, "clicked",
                     G_CALLBACK (callback), GINT_TO_POINTER (orient_type));
-  gimp_help_set_help_data (tmpw, help_string, NULL);
+  picman_help_set_help_data (tmpw, help_string, NULL);
 
   *radio_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (tmpw));
 

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
 
 #include "menus-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmanuimanager.h"
 
 #include "window-menu.h"
 
@@ -34,16 +34,16 @@
 
 static void   window_menu_display_opened (GdkDisplayManager *disp_manager,
                                           GdkDisplay        *display,
-                                          GimpUIManager     *manager);
+                                          PicmanUIManager     *manager);
 static void   window_menu_display_closed (GdkDisplay        *display,
                                           gboolean           is_error,
-                                          GimpUIManager     *manager);
+                                          PicmanUIManager     *manager);
 
 
 /*  public functions  */
 
 void
-window_menu_setup (GimpUIManager *manager,
+window_menu_setup (PicmanUIManager *manager,
                    const gchar   *group_name,
                    const gchar   *ui_path)
 {
@@ -51,7 +51,7 @@ window_menu_setup (GimpUIManager *manager,
   GSList            *displays;
   GSList            *list;
 
-  g_return_if_fail (GIMP_IS_UI_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_UI_MANAGER (manager));
   g_return_if_fail (ui_path != NULL);
 
   g_object_set_data_full (G_OBJECT (manager), "move-to-screen-group-name",
@@ -84,7 +84,7 @@ window_menu_setup (GimpUIManager *manager,
 static void
 window_menu_display_opened (GdkDisplayManager *disp_manager,
                             GdkDisplay        *display,
-                            GimpUIManager     *manager)
+                            PicmanUIManager     *manager)
 {
   GtkUIManager *ui_manager = GTK_UI_MANAGER (manager);
   const gchar  *group_name;
@@ -148,7 +148,7 @@ window_menu_display_opened (GdkDisplayManager *disp_manager,
 static void
 window_menu_display_closed (GdkDisplay    *display,
                             gboolean       is_error,
-                            GimpUIManager *manager)
+                            PicmanUIManager *manager)
 {
   const gchar *display_name;
   gchar       *merge_key;

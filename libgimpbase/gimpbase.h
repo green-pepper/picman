@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,30 +16,30 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BASE_H__
-#define __GIMP_BASE_H__
+#ifndef __PICMAN_BASE_H__
+#define __PICMAN_BASE_H__
 
-#define __GIMP_BASE_H_INSIDE__
+#define __PICMAN_BASE_H_INSIDE__
 
-#include <libgimpbase/gimpbasetypes.h>
+#include <libpicmanbase/picmanbasetypes.h>
 
-#include <libgimpbase/gimpchecks.h>
-#include <libgimpbase/gimpcpuaccel.h>
-#include <libgimpbase/gimpdatafiles.h>
-#include <libgimpbase/gimpenv.h>
-#include <libgimpbase/gimplimits.h>
-#include <libgimpbase/gimpmemsize.h>
-#include <libgimpbase/gimpparasite.h>
-#include <libgimpbase/gimprectangle.h>
-#include <libgimpbase/gimpunit.h>
-#include <libgimpbase/gimputils.h>
-#include <libgimpbase/gimpversion.h>
-#include <libgimpbase/gimpvaluearray.h>
+#include <libpicmanbase/picmanchecks.h>
+#include <libpicmanbase/picmancpuaccel.h>
+#include <libpicmanbase/picmandatafiles.h>
+#include <libpicmanbase/picmanenv.h>
+#include <libpicmanbase/picmanlimits.h>
+#include <libpicmanbase/picmanmemsize.h>
+#include <libpicmanbase/picmanparasite.h>
+#include <libpicmanbase/picmanrectangle.h>
+#include <libpicmanbase/picmanunit.h>
+#include <libpicmanbase/picmanutils.h>
+#include <libpicmanbase/picmanversion.h>
+#include <libpicmanbase/picmanvaluearray.h>
 
 #ifndef G_OS_WIN32
-#include <libgimpbase/gimpsignal.h>
+#include <libpicmanbase/picmansignal.h>
 #endif
 
-#undef __GIMP_BASE_H_INSIDE__
+#undef __PICMAN_BASE_H_INSIDE__
 
-#endif  /* __GIMP_BASE_H__ */
+#endif  /* __PICMAN_BASE_H__ */

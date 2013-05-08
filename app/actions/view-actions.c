@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,29 +20,29 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "config/gimpdisplayoptions.h"
-#include "config/gimpguiconfig.h"
+#include "config/picmandisplayoptions.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimprender.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanrender.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-appearance.h"
-#include "display/gimpdisplayshell-scale.h"
-#include "display/gimpimagewindow.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-appearance.h"
+#include "display/picmandisplayshell-scale.h"
+#include "display/picmanimagewindow.h"
 
 #include "actions.h"
 #include "view-actions.h"
@@ -50,89 +50,89 @@
 #include "window-actions.h"
 #include "window-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   view_actions_set_zoom          (GimpActionGroup   *group,
-                                              GimpDisplayShell  *shell);
-static void   view_actions_set_rotate        (GimpActionGroup   *group,
-                                              GimpDisplayShell  *shell);
-static void   view_actions_check_type_notify (GimpDisplayConfig *config,
+static void   view_actions_set_zoom          (PicmanActionGroup   *group,
+                                              PicmanDisplayShell  *shell);
+static void   view_actions_set_rotate        (PicmanActionGroup   *group,
+                                              PicmanDisplayShell  *shell);
+static void   view_actions_check_type_notify (PicmanDisplayConfig *config,
                                               GParamSpec        *pspec,
-                                              GimpActionGroup   *group);
+                                              PicmanActionGroup   *group);
 
 
-static const GimpActionEntry view_actions[] =
+static const PicmanActionEntry view_actions[] =
 {
   { "view-menu",                NULL, NC_("view-action", "_View")          },
   { "view-zoom-menu",           NULL, NC_("view-action", "_Zoom")          },
   { "view-rotate-menu",         NULL, NC_("view-action", "_Rotate")        },
   { "view-padding-color-menu",  NULL, NC_("view-action", "_Padding Color") },
-  { "view-move-to-screen-menu", GIMP_STOCK_MOVE_TO_SCREEN,
+  { "view-move-to-screen-menu", PICMAN_STOCK_MOVE_TO_SCREEN,
     NC_("view-action", "Move to Screen"), NULL, NULL, NULL,
-    GIMP_HELP_VIEW_CHANGE_SCREEN },
+    PICMAN_HELP_VIEW_CHANGE_SCREEN },
 
   { "view-new", GTK_STOCK_NEW,
     NC_("view-action", "_New View"), "",
     NC_("view-action", "Create another view on this image"),
     G_CALLBACK (view_new_cmd_callback),
-    GIMP_HELP_VIEW_NEW },
+    PICMAN_HELP_VIEW_NEW },
 
   { "view-close", GTK_STOCK_CLOSE,
     NC_("view-action",  "_Close View"), "<primary>W",
     NC_("view-action", "Close the active image view"),
     G_CALLBACK (view_close_cmd_callback),
-    GIMP_HELP_FILE_CLOSE },
+    PICMAN_HELP_FILE_CLOSE },
 
   { "view-zoom-fit-in", GTK_STOCK_ZOOM_FIT,
     NC_("view-action", "_Fit Image in Window"), "<primary><shift>J",
     NC_("view-action", "Adjust the zoom ratio so that the image becomes fully visible"),
     G_CALLBACK (view_zoom_fit_in_cmd_callback),
-    GIMP_HELP_VIEW_ZOOM_FIT_IN },
+    PICMAN_HELP_VIEW_ZOOM_FIT_IN },
 
   { "view-zoom-fill", GTK_STOCK_ZOOM_FIT,
     NC_("view-action", "Fi_ll Window"), NULL,
     NC_("view-action", "Adjust the zoom ratio so that the entire window is used"),
     G_CALLBACK (view_zoom_fill_cmd_callback),
-    GIMP_HELP_VIEW_ZOOM_FILL },
+    PICMAN_HELP_VIEW_ZOOM_FILL },
 
   { "view-zoom-revert", NULL,
     NC_("view-action", "Re_vert Zoom"), "grave",
     NC_("view-action", "Restore the previous zoom level"),
     G_CALLBACK (view_zoom_revert_cmd_callback),
-    GIMP_HELP_VIEW_ZOOM_REVERT },
+    PICMAN_HELP_VIEW_ZOOM_REVERT },
 
-  { "view-rotate-reset", GIMP_STOCK_RESET,
+  { "view-rotate-reset", PICMAN_STOCK_RESET,
     NC_("view-action", "_Reset to 0°"), "exclam",
     NC_("view-action", "Reset the angle of rotation to 0°"),
     G_CALLBACK (view_rotate_reset_cmd_callback),
-    GIMP_HELP_VIEW_ROTATE_RESET },
+    PICMAN_HELP_VIEW_ROTATE_RESET },
 
   { "view-rotate-other", NULL,
     NC_("view-action", "Othe_r..."), NULL,
     NC_("view-action", "Set a custom rotation angle"),
      G_CALLBACK (view_rotate_other_cmd_callback),
-    GIMP_HELP_VIEW_ROTATE_OTHER },
+    PICMAN_HELP_VIEW_ROTATE_OTHER },
 
-  { "view-navigation-window", GIMP_STOCK_NAVIGATION,
+  { "view-navigation-window", PICMAN_STOCK_NAVIGATION,
     NC_("view-action", "Na_vigation Window"), NULL,
     NC_("view-action", "Show an overview window for this image"),
     G_CALLBACK (view_navigation_window_cmd_callback),
-    GIMP_HELP_NAVIGATION_DIALOG },
+    PICMAN_HELP_NAVIGATION_DIALOG },
 
-  { "view-display-filters", GIMP_STOCK_DISPLAY_FILTER,
+  { "view-display-filters", PICMAN_STOCK_DISPLAY_FILTER,
     NC_("view-action", "Display _Filters..."), NULL,
     NC_("view-action", "Configure filters applied to this view"),
     G_CALLBACK (view_display_filters_cmd_callback),
-    GIMP_HELP_DISPLAY_FILTER_DIALOG },
+    PICMAN_HELP_DISPLAY_FILTER_DIALOG },
 
   { "view-shrink-wrap", GTK_STOCK_ZOOM_FIT,
     NC_("view-action", "Shrink _Wrap"), "<primary>J",
     NC_("view-action", "Reduce the image window to the size of the image display"),
     G_CALLBACK (view_shrink_wrap_cmd_callback),
-    GIMP_HELP_VIEW_SHRINK_WRAP },
+    PICMAN_HELP_VIEW_SHRINK_WRAP },
 
   { "view-open-display", NULL,
     NC_("view-action", "_Open Display..."), NULL,
@@ -141,432 +141,432 @@ static const GimpActionEntry view_actions[] =
     NULL }
 };
 
-static const GimpToggleActionEntry view_toggle_actions[] =
+static const PicmanToggleActionEntry view_toggle_actions[] =
 {
   { "view-dot-for-dot", NULL,
     NC_("view-action", "_Dot for Dot"), NULL,
     NC_("view-action", "A pixel on the screen represents an image pixel"),
     G_CALLBACK (view_dot_for_dot_cmd_callback),
     TRUE,
-    GIMP_HELP_VIEW_DOT_FOR_DOT },
+    PICMAN_HELP_VIEW_DOT_FOR_DOT },
 
   { "view-show-selection", NULL,
     NC_("view-action", "Show _Selection"), "<primary>T",
     NC_("view-action", "Display the selection outline"),
     G_CALLBACK (view_toggle_selection_cmd_callback),
     TRUE,
-    GIMP_HELP_VIEW_SHOW_SELECTION },
+    PICMAN_HELP_VIEW_SHOW_SELECTION },
 
   { "view-show-layer-boundary", NULL,
     NC_("view-action", "Show _Layer Boundary"), NULL,
     NC_("view-action", "Draw a border around the active layer"),
     G_CALLBACK (view_toggle_layer_boundary_cmd_callback),
     TRUE,
-    GIMP_HELP_VIEW_SHOW_LAYER_BOUNDARY },
+    PICMAN_HELP_VIEW_SHOW_LAYER_BOUNDARY },
 
   { "view-show-guides", NULL,
     NC_("view-action", "Show _Guides"), "<primary><shift>T",
     NC_("view-action", "Display the image's guides"),
     G_CALLBACK (view_toggle_guides_cmd_callback),
     TRUE,
-    GIMP_HELP_VIEW_SHOW_GUIDES },
+    PICMAN_HELP_VIEW_SHOW_GUIDES },
 
   { "view-show-grid", NULL,
     NC_("view-action", "S_how Grid"), NULL,
     NC_("view-action", "Display the image's grid"),
     G_CALLBACK (view_toggle_grid_cmd_callback),
     FALSE,
-    GIMP_HELP_VIEW_SHOW_GRID },
+    PICMAN_HELP_VIEW_SHOW_GRID },
 
   { "view-show-sample-points", NULL,
     NC_("view-action", "Show Sample Points"), NULL,
     NC_("view-action", "Display the image's color sample points"),
     G_CALLBACK (view_toggle_sample_points_cmd_callback),
     TRUE,
-    GIMP_HELP_VIEW_SHOW_SAMPLE_POINTS },
+    PICMAN_HELP_VIEW_SHOW_SAMPLE_POINTS },
 
   { "view-snap-to-guides", NULL,
     NC_("view-action", "Sn_ap to Guides"), NULL,
     NC_("view-action", "Tool operations snap to guides"),
     G_CALLBACK (view_snap_to_guides_cmd_callback),
     TRUE,
-    GIMP_HELP_VIEW_SNAP_TO_GUIDES },
+    PICMAN_HELP_VIEW_SNAP_TO_GUIDES },
 
   { "view-snap-to-grid", NULL,
     NC_("view-action", "Sna_p to Grid"), NULL,
     NC_("view-action", "Tool operations snap to the grid"),
     G_CALLBACK (view_snap_to_grid_cmd_callback),
     FALSE,
-    GIMP_HELP_VIEW_SNAP_TO_GRID },
+    PICMAN_HELP_VIEW_SNAP_TO_GRID },
 
   { "view-snap-to-canvas", NULL,
     NC_("view-action", "Snap to _Canvas Edges"), NULL,
     NC_("view-action", "Tool operations snap to the canvas edges"),
     G_CALLBACK (view_snap_to_canvas_cmd_callback),
     FALSE,
-    GIMP_HELP_VIEW_SNAP_TO_CANVAS },
+    PICMAN_HELP_VIEW_SNAP_TO_CANVAS },
 
   { "view-snap-to-vectors", NULL,
     NC_("view-action", "Snap t_o Active Path"), NULL,
     NC_("view-action", "Tool operations snap to the active path"),
     G_CALLBACK (view_snap_to_vectors_cmd_callback),
     FALSE,
-    GIMP_HELP_VIEW_SNAP_TO_VECTORS },
+    PICMAN_HELP_VIEW_SNAP_TO_VECTORS },
 
   { "view-show-menubar", NULL,
     NC_("view-action", "Show _Menubar"), NULL,
     NC_("view-action", "Show this window's menubar"),
     G_CALLBACK (view_toggle_menubar_cmd_callback),
     TRUE,
-    GIMP_HELP_VIEW_SHOW_MENUBAR },
+    PICMAN_HELP_VIEW_SHOW_MENUBAR },
 
   { "view-show-rulers", NULL,
     NC_("view-action", "Show R_ulers"), "<primary><shift>R",
     NC_("view-action", "Show this window's rulers"),
     G_CALLBACK (view_toggle_rulers_cmd_callback),
     TRUE,
-    GIMP_HELP_VIEW_SHOW_RULERS },
+    PICMAN_HELP_VIEW_SHOW_RULERS },
 
   { "view-show-scrollbars", NULL,
     NC_("view-action", "Show Scroll_bars"), NULL,
     NC_("view-action", "Show this window's scrollbars"),
     G_CALLBACK (view_toggle_scrollbars_cmd_callback),
     TRUE,
-    GIMP_HELP_VIEW_SHOW_SCROLLBARS },
+    PICMAN_HELP_VIEW_SHOW_SCROLLBARS },
 
   { "view-show-statusbar", NULL,
     NC_("view-action", "Show S_tatusbar"), NULL,
     NC_("view-action", "Show this window's statusbar"),
     G_CALLBACK (view_toggle_statusbar_cmd_callback),
     TRUE,
-    GIMP_HELP_VIEW_SHOW_STATUSBAR },
+    PICMAN_HELP_VIEW_SHOW_STATUSBAR },
 
   { "view-fullscreen", GTK_STOCK_FULLSCREEN,
     NC_("view-action", "Fullscr_een"), "F11",
     NC_("view-action", "Toggle fullscreen view"),
     G_CALLBACK (view_fullscreen_cmd_callback),
     FALSE,
-    GIMP_HELP_VIEW_FULLSCREEN }
+    PICMAN_HELP_VIEW_FULLSCREEN }
 };
 
-static const GimpEnumActionEntry view_zoom_actions[] =
+static const PicmanEnumActionEntry view_zoom_actions[] =
 {
   { "view-zoom", NULL,
     "Set zoom factor", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
 
   { "view-zoom-minimum", GTK_STOCK_ZOOM_OUT,
     "Zoom out as far as possible", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
-    GIMP_HELP_VIEW_ZOOM_OUT },
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_HELP_VIEW_ZOOM_OUT },
 
   { "view-zoom-maximum", GTK_STOCK_ZOOM_IN,
     "Zoom in as far as possible", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
-    GIMP_HELP_VIEW_ZOOM_IN },
+    PICMAN_ACTION_SELECT_LAST, FALSE,
+    PICMAN_HELP_VIEW_ZOOM_IN },
 
   { "view-zoom-out", GTK_STOCK_ZOOM_OUT,
     NC_("view-zoom-action", "Zoom _Out"), "minus",
     NC_("view-zoom-action", "Zoom out"),
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
-    GIMP_HELP_VIEW_ZOOM_OUT },
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_HELP_VIEW_ZOOM_OUT },
 
   { "view-zoom-in", GTK_STOCK_ZOOM_IN,
     NC_("view-zoom-action", "Zoom _In"), "plus",
     NC_("view-zoom-action", "Zoom in"),
-    GIMP_ACTION_SELECT_NEXT, FALSE,
-    GIMP_HELP_VIEW_ZOOM_IN },
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_HELP_VIEW_ZOOM_IN },
 
-  { "view-zoom-out-accel", GIMP_STOCK_CHAR_PICKER,
+  { "view-zoom-out-accel", PICMAN_STOCK_CHAR_PICKER,
     NC_("view-zoom-action", "Zoom Out"), "KP_Subtract",
     NC_("view-zoom-action", "Zoom out"),
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
-    GIMP_HELP_VIEW_ZOOM_OUT },
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_HELP_VIEW_ZOOM_OUT },
 
-  { "view-zoom-in-accel", GIMP_STOCK_CHAR_PICKER,
+  { "view-zoom-in-accel", PICMAN_STOCK_CHAR_PICKER,
     NC_("view-zoom-action", "Zoom In"), "KP_Add",
     NC_("view-zoom-action", "Zoom in"),
-    GIMP_ACTION_SELECT_NEXT, FALSE,
-    GIMP_HELP_VIEW_ZOOM_IN },
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_HELP_VIEW_ZOOM_IN },
 
   { "view-zoom-out-skip", GTK_STOCK_ZOOM_OUT,
     "Zoom out a lot", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
-    GIMP_HELP_VIEW_ZOOM_OUT },
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_HELP_VIEW_ZOOM_OUT },
 
   { "view-zoom-in-skip", GTK_STOCK_ZOOM_IN,
     "Zoom in a lot", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
-    GIMP_HELP_VIEW_ZOOM_IN }
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_HELP_VIEW_ZOOM_IN }
 };
 
-static const GimpRadioActionEntry view_zoom_explicit_actions[] =
+static const PicmanRadioActionEntry view_zoom_explicit_actions[] =
 {
   { "view-zoom-16-1", NULL,
     NC_("view-zoom-action", "1_6:1  (1600%)"), "5",
     NC_("view-zoom-action", "Zoom 16:1"),
     160000,
-    GIMP_HELP_VIEW_ZOOM_IN },
+    PICMAN_HELP_VIEW_ZOOM_IN },
 
   { "view-zoom-16-1-accel", NULL,
     NC_("view-zoom-action", "1_6:1  (1600%)"), "KP_5",
     NC_("view-zoom-action", "Zoom 16:1"),
     160000,
-    GIMP_HELP_VIEW_ZOOM_IN },
+    PICMAN_HELP_VIEW_ZOOM_IN },
 
   { "view-zoom-8-1", NULL,
     NC_("view-zoom-action", "_8:1  (800%)"), "4",
     NC_("view-zoom-action", "Zoom 8:1"),
     80000,
-    GIMP_HELP_VIEW_ZOOM_IN },
+    PICMAN_HELP_VIEW_ZOOM_IN },
 
   { "view-zoom-8-1-accel", NULL,
     NC_("view-zoom-action", "_8:1  (800%)"), "KP_4",
     NC_("view-zoom-action", "Zoom 8:1"),
     80000,
-    GIMP_HELP_VIEW_ZOOM_IN },
+    PICMAN_HELP_VIEW_ZOOM_IN },
 
   { "view-zoom-4-1", NULL,
     NC_("view-zoom-action", "_4:1  (400%)"), "3",
     NC_("view-zoom-action", "Zoom 4:1"),
     40000,
-    GIMP_HELP_VIEW_ZOOM_IN },
+    PICMAN_HELP_VIEW_ZOOM_IN },
 
   { "view-zoom-4-1-accel", NULL,
     NC_("view-zoom-action", "_4:1  (400%)"), "KP_3",
     NC_("view-zoom-action", "Zoom 4:1"),
     40000,
-    GIMP_HELP_VIEW_ZOOM_IN },
+    PICMAN_HELP_VIEW_ZOOM_IN },
 
   { "view-zoom-2-1", NULL,
     NC_("view-zoom-action", "_2:1  (200%)"), "2",
     NC_("view-zoom-action", "Zoom 2:1"),
     20000,
-    GIMP_HELP_VIEW_ZOOM_IN },
+    PICMAN_HELP_VIEW_ZOOM_IN },
 
   { "view-zoom-2-1-accel", NULL,
     NC_("view-zoom-action", "_2:1  (200%)"), "KP_2",
     NC_("view-zoom-action", "Zoom 2:1"),
     20000,
-    GIMP_HELP_VIEW_ZOOM_IN },
+    PICMAN_HELP_VIEW_ZOOM_IN },
 
   { "view-zoom-1-1", GTK_STOCK_ZOOM_100,
     NC_("view-zoom-action", "_1:1  (100%)"), "1",
     NC_("view-zoom-action", "Zoom 1:1"),
     10000,
-    GIMP_HELP_VIEW_ZOOM_100 },
+    PICMAN_HELP_VIEW_ZOOM_100 },
 
   { "view-zoom-1-1-accel", GTK_STOCK_ZOOM_100,
     NC_("view-zoom-action", "_1:1  (100%)"), "KP_1",
     NC_("view-zoom-action", "Zoom 1:1"),
     10000,
-    GIMP_HELP_VIEW_ZOOM_100 },
+    PICMAN_HELP_VIEW_ZOOM_100 },
 
   { "view-zoom-1-2", NULL,
     NC_("view-zoom-action", "1:_2  (50%)"), "<shift>2",
     NC_("view-zoom-action", "Zoom 1:2"),
     5000,
-    GIMP_HELP_VIEW_ZOOM_OUT },
+    PICMAN_HELP_VIEW_ZOOM_OUT },
 
   { "view-zoom-1-4", NULL,
     NC_("view-zoom-action", "1:_4  (25%)"), "<shift>3",
     NC_("view-zoom-action", "Zoom 1:4"),
     2500,
-    GIMP_HELP_VIEW_ZOOM_OUT },
+    PICMAN_HELP_VIEW_ZOOM_OUT },
 
   { "view-zoom-1-8", NULL,
     NC_("view-zoom-action", "1:_8  (12.5%)"), "<shift>4",
     NC_("view-zoom-action", "Zoom 1:8"),
     1250,
-    GIMP_HELP_VIEW_ZOOM_OUT },
+    PICMAN_HELP_VIEW_ZOOM_OUT },
 
   { "view-zoom-1-16", NULL,
     NC_("view-zoom-action", "1:1_6  (6.25%)"), "<shift>5",
     NC_("view-zoom-action", "Zoom 1:16"),
     625,
-    GIMP_HELP_VIEW_ZOOM_OUT },
+    PICMAN_HELP_VIEW_ZOOM_OUT },
 
   { "view-zoom-other", NULL,
     NC_("view-zoom-action", "Othe_r..."), NULL,
     NC_("view-zoom-action", "Set a custom zoom factor"),
     0,
-    GIMP_HELP_VIEW_ZOOM_OTHER }
+    PICMAN_HELP_VIEW_ZOOM_OTHER }
 };
 
-static const GimpEnumActionEntry view_rotate_actions[] =
+static const PicmanEnumActionEntry view_rotate_actions[] =
 {
-  { "view-rotate-90", GIMP_STOCK_ROTATE_90,
+  { "view-rotate-90", PICMAN_STOCK_ROTATE_90,
     NC_("view-action", "Rotate 90° _clockwise"), NULL,
     NC_("view-action", "Rotate 90 degrees to the right"),
-    GIMP_ROTATE_90, FALSE,
-    GIMP_HELP_VIEW_ROTATE_90 },
+    PICMAN_ROTATE_90, FALSE,
+    PICMAN_HELP_VIEW_ROTATE_90 },
 
-  { "view-rotate-180", GIMP_STOCK_ROTATE_180,
+  { "view-rotate-180", PICMAN_STOCK_ROTATE_180,
     NC_("view-action", "Rotate _180°"), NULL,
     NC_("view-action", "Turn upside-down"),
-    GIMP_ROTATE_180, FALSE,
-    GIMP_HELP_VIEW_ROTATE_180 },
+    PICMAN_ROTATE_180, FALSE,
+    PICMAN_HELP_VIEW_ROTATE_180 },
 
-  { "view-rotate-270", GIMP_STOCK_ROTATE_270,
+  { "view-rotate-270", PICMAN_STOCK_ROTATE_270,
     NC_("view-action", "Rotate 90° counter-clock_wise"), NULL,
     NC_("view-action", "Rotate 90 degrees to the left"),
-    GIMP_ROTATE_270, FALSE,
-    GIMP_HELP_VIEW_ROTATE_270 }
+    PICMAN_ROTATE_270, FALSE,
+    PICMAN_HELP_VIEW_ROTATE_270 }
 };
 
-static const GimpEnumActionEntry view_padding_color_actions[] =
+static const PicmanEnumActionEntry view_padding_color_actions[] =
 {
   { "view-padding-color-theme", NULL,
     NC_("view-padding-color", "From _Theme"), NULL,
     NC_("view-padding-color", "Use the current theme's background color"),
-    GIMP_CANVAS_PADDING_MODE_DEFAULT, FALSE,
-    GIMP_HELP_VIEW_PADDING_COLOR },
+    PICMAN_CANVAS_PADDING_MODE_DEFAULT, FALSE,
+    PICMAN_HELP_VIEW_PADDING_COLOR },
 
   { "view-padding-color-light-check", NULL,
     NC_("view-padding-color", "_Light Check Color"), NULL,
     NC_("view-padding-color", "Use the light check color"),
-    GIMP_CANVAS_PADDING_MODE_LIGHT_CHECK, FALSE,
-    GIMP_HELP_VIEW_PADDING_COLOR },
+    PICMAN_CANVAS_PADDING_MODE_LIGHT_CHECK, FALSE,
+    PICMAN_HELP_VIEW_PADDING_COLOR },
 
   { "view-padding-color-dark-check", NULL,
     NC_("view-padding-color", "_Dark Check Color"), NULL,
     NC_("view-padding-color", "Use the dark check color"),
-    GIMP_CANVAS_PADDING_MODE_DARK_CHECK, FALSE,
-    GIMP_HELP_VIEW_PADDING_COLOR },
+    PICMAN_CANVAS_PADDING_MODE_DARK_CHECK, FALSE,
+    PICMAN_HELP_VIEW_PADDING_COLOR },
 
   { "view-padding-color-custom", GTK_STOCK_SELECT_COLOR,
     NC_("view-padding-color", "Select _Custom Color..."), NULL,
     NC_("view-padding-color", "Use an arbitrary color"),
-    GIMP_CANVAS_PADDING_MODE_CUSTOM, FALSE,
-    GIMP_HELP_VIEW_PADDING_COLOR },
+    PICMAN_CANVAS_PADDING_MODE_CUSTOM, FALSE,
+    PICMAN_HELP_VIEW_PADDING_COLOR },
 
-  { "view-padding-color-prefs", GIMP_STOCK_RESET,
+  { "view-padding-color-prefs", PICMAN_STOCK_RESET,
     NC_("view-padding-color", "As in _Preferences"), NULL,
     NC_("view-padding-color",
         "Reset padding color to what's configured in preferences"),
-    GIMP_CANVAS_PADDING_MODE_RESET, FALSE,
-    GIMP_HELP_VIEW_PADDING_COLOR }
+    PICMAN_CANVAS_PADDING_MODE_RESET, FALSE,
+    PICMAN_HELP_VIEW_PADDING_COLOR }
 };
 
-static const GimpEnumActionEntry view_scroll_horizontal_actions[] =
+static const PicmanEnumActionEntry view_scroll_horizontal_actions[] =
 {
   { "view-scroll-horizontal", NULL,
     "Set horizontal scroll offset", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
 
   { "view-scroll-left-border", NULL,
     "Scroll to left border", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
 
   { "view-scroll-right-border", NULL,
     "Scroll to right border", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
 
   { "view-scroll-left", NULL,
     "Scroll left", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
 
   { "view-scroll-right", NULL,
     "Scroll right", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
 
   { "view-scroll-page-left", NULL,
     "Scroll page left", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
 
   { "view-scroll-page-right", NULL,
     "Scroll page right", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL }
 };
 
-static const GimpEnumActionEntry view_scroll_vertical_actions[] =
+static const PicmanEnumActionEntry view_scroll_vertical_actions[] =
 {
   { "view-scroll-vertical", NULL,
     "Set vertical scroll offset", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
 
   { "view-scroll-top-border", NULL,
     "Scroll to top border", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
 
   { "view-scroll-bottom-border", NULL,
     "Scroll to bottom border", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
 
   { "view-scroll-up", NULL,
     "Scroll up", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
 
   { "view-scroll-down", NULL,
     "Scroll down", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
 
   { "view-scroll-page-up", NULL,
     "Scroll page up", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
 
   { "view-scroll-page-down", NULL,
     "Scroll page down", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL }
 };
 
 
 void
-view_actions_setup (GimpActionGroup *group)
+view_actions_setup (PicmanActionGroup *group)
 {
   GtkAction *action;
 
-  gimp_action_group_add_actions (group, "view-action",
+  picman_action_group_add_actions (group, "view-action",
                                  view_actions,
                                  G_N_ELEMENTS (view_actions));
 
-  gimp_action_group_add_toggle_actions (group, "view-action",
+  picman_action_group_add_toggle_actions (group, "view-action",
                                         view_toggle_actions,
                                         G_N_ELEMENTS (view_toggle_actions));
 
-  gimp_action_group_add_enum_actions (group, "view-zoom-action",
+  picman_action_group_add_enum_actions (group, "view-zoom-action",
                                       view_zoom_actions,
                                       G_N_ELEMENTS (view_zoom_actions),
                                       G_CALLBACK (view_zoom_cmd_callback));
 
-  gimp_action_group_add_radio_actions (group, "view-zoom-action",
+  picman_action_group_add_radio_actions (group, "view-zoom-action",
                                        view_zoom_explicit_actions,
                                        G_N_ELEMENTS (view_zoom_explicit_actions),
                                        NULL,
                                        10000,
                                        G_CALLBACK (view_zoom_explicit_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, "view-rotate-action",
+  picman_action_group_add_enum_actions (group, "view-rotate-action",
                                       view_rotate_actions,
                                       G_N_ELEMENTS (view_rotate_actions),
                                       G_CALLBACK (view_rotate_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, "view-padding-color",
+  picman_action_group_add_enum_actions (group, "view-padding-color",
                                       view_padding_color_actions,
                                       G_N_ELEMENTS (view_padding_color_actions),
                                       G_CALLBACK (view_padding_color_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       view_scroll_horizontal_actions,
                                       G_N_ELEMENTS (view_scroll_horizontal_actions),
                                       G_CALLBACK (view_scroll_horizontal_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       view_scroll_vertical_actions,
                                       G_N_ELEMENTS (view_scroll_vertical_actions),
                                       G_CALLBACK (view_scroll_vertical_cmd_callback));
@@ -580,60 +580,60 @@ view_actions_setup (GimpActionGroup *group)
                     G_CALLBACK (view_zoom_other_cmd_callback),
                     group->user_data);
 
-  g_signal_connect_object (group->gimp->config, "notify::check-type",
+  g_signal_connect_object (group->picman->config, "notify::check-type",
                            G_CALLBACK (view_actions_check_type_notify),
                            group, 0);
-  view_actions_check_type_notify (GIMP_DISPLAY_CONFIG (group->gimp->config),
+  view_actions_check_type_notify (PICMAN_DISPLAY_CONFIG (group->picman->config),
                                   NULL, group);
 
-  if (GIMP_IS_IMAGE_WINDOW (group->user_data) ||
-      GIMP_IS_GIMP (group->user_data))
+  if (PICMAN_IS_IMAGE_WINDOW (group->user_data) ||
+      PICMAN_IS_PICMAN (group->user_data))
     {
       /*  add window actions only if the context of the group is
        *  the display itself or the global popup (not if the context
        *  is a dock)
        *  (see dock-actions.c)
        */
-      window_actions_setup (group, GIMP_HELP_VIEW_CHANGE_SCREEN);
+      window_actions_setup (group, PICMAN_HELP_VIEW_CHANGE_SCREEN);
     }
 }
 
 void
-view_actions_update (GimpActionGroup *group,
+view_actions_update (PicmanActionGroup *group,
                      gpointer         data)
 {
-  GimpDisplay        *display        = action_data_get_display (data);
-  GimpImage          *image          = NULL;
-  GimpDisplayShell   *shell          = NULL;
-  GimpDisplayOptions *options        = NULL;
+  PicmanDisplay        *display        = action_data_get_display (data);
+  PicmanImage          *image          = NULL;
+  PicmanDisplayShell   *shell          = NULL;
+  PicmanDisplayOptions *options        = NULL;
   gchar              *label          = NULL;
   gboolean            fullscreen     = FALSE;
   gboolean            revert_enabled = FALSE;   /* able to revert zoom? */
 
   if (display)
     {
-      GimpImageWindow *window;
+      PicmanImageWindow *window;
 
-      image  = gimp_display_get_image (display);
-      shell  = gimp_display_get_shell (display);
-      window = gimp_display_shell_get_window (shell);
+      image  = picman_display_get_image (display);
+      shell  = picman_display_get_shell (display);
+      window = picman_display_shell_get_window (shell);
 
       if (window)
-        fullscreen = gimp_image_window_get_fullscreen (window);
+        fullscreen = picman_image_window_get_fullscreen (window);
 
       options = (image ?
                  (fullscreen ? shell->fullscreen_options : shell->options) :
                  shell->no_image_options);
 
-      revert_enabled = gimp_display_shell_scale_can_revert (shell);
+      revert_enabled = picman_display_shell_scale_can_revert (shell);
     }
 
 #define SET_ACTIVE(action,condition) \
-        gimp_action_group_set_action_active (group, action, (condition) != 0)
+        picman_action_group_set_action_active (group, action, (condition) != 0)
 #define SET_SENSITIVE(action,condition) \
-        gimp_action_group_set_action_sensitive (group, action, (condition) != 0)
+        picman_action_group_set_action_sensitive (group, action, (condition) != 0)
 #define SET_COLOR(action,color) \
-        gimp_action_group_set_action_color (group, action, color, FALSE)
+        picman_action_group_set_action_color (group, action, color, FALSE)
 
   SET_SENSITIVE ("view-new",   image);
   SET_SENSITIVE ("view-close", image);
@@ -646,12 +646,12 @@ view_actions_update (GimpActionGroup *group,
     {
       label = g_strdup_printf (_("Re_vert Zoom (%d%%)"),
                                ROUND (shell->last_scale * 100));
-      gimp_action_group_set_action_label (group, "view-zoom-revert", label);
+      picman_action_group_set_action_label (group, "view-zoom-revert", label);
       g_free (label);
     }
   else
     {
-      gimp_action_group_set_action_label (group, "view-zoom-revert",
+      picman_action_group_set_action_label (group, "view-zoom-revert",
                                           _("Re_vert Zoom"));
     }
 
@@ -719,11 +719,11 @@ view_actions_update (GimpActionGroup *group,
       if (shell->canvas)
         {
           GtkStyle *style = gtk_widget_get_style (shell->canvas);
-          GimpRGB   color;
+          PicmanRGB   color;
 
           gtk_widget_ensure_style (shell->canvas);
-          gimp_rgb_set_gdk_color (&color, style->bg + GTK_STATE_NORMAL);
-          gimp_rgb_set_alpha (&color, GIMP_OPACITY_OPAQUE);
+          picman_rgb_set_gdk_color (&color, style->bg + GTK_STATE_NORMAL);
+          picman_rgb_set_alpha (&color, PICMAN_OPACITY_OPAQUE);
 
           SET_COLOR ("view-padding-color-theme",  &color);
         }
@@ -741,8 +741,8 @@ view_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("view-shrink-wrap", image);
   SET_ACTIVE    ("view-fullscreen",  display && fullscreen);
 
-  if (GIMP_IS_IMAGE_WINDOW (group->user_data) ||
-      GIMP_IS_GIMP (group->user_data))
+  if (PICMAN_IS_IMAGE_WINDOW (group->user_data) ||
+      PICMAN_IS_PICMAN (group->user_data))
     {
       GtkWidget *window = NULL;
 
@@ -763,8 +763,8 @@ view_actions_update (GimpActionGroup *group,
 /*  private functions  */
 
 static void
-view_actions_set_zoom (GimpActionGroup  *group,
-                       GimpDisplayShell *shell)
+view_actions_set_zoom (PicmanActionGroup  *group,
+                       PicmanDisplayShell *shell)
 {
   const gchar *action = NULL;
   gchar       *str;
@@ -775,7 +775,7 @@ view_actions_set_zoom (GimpActionGroup  *group,
                 "percentage", &str,
                 NULL);
 
-  scale = ROUND (gimp_zoom_model_get_factor (shell->zoom) * 1000);
+  scale = ROUND (picman_zoom_model_get_factor (shell->zoom) * 1000);
 
   switch (scale)
     {
@@ -796,16 +796,16 @@ view_actions_set_zoom (GimpActionGroup  *group,
       action = "view-zoom-other";
 
       label = g_strdup_printf (_("Othe_r (%s)..."), str);
-      gimp_action_group_set_action_label (group, action, label);
+      picman_action_group_set_action_label (group, action, label);
       g_free (label);
 
-      shell->other_scale = gimp_zoom_model_get_factor (shell->zoom);
+      shell->other_scale = picman_zoom_model_get_factor (shell->zoom);
     }
 
-  gimp_action_group_set_action_active (group, action, TRUE);
+  picman_action_group_set_action_active (group, action, TRUE);
 
   label = g_strdup_printf (_("_Zoom (%s)"), str);
-  gimp_action_group_set_action_label (group, "view-zoom-menu", label);
+  picman_action_group_set_action_label (group, "view-zoom-menu", label);
   g_free (label);
 
   /* flag as dirty */
@@ -815,25 +815,25 @@ view_actions_set_zoom (GimpActionGroup  *group,
 }
 
 static void
-view_actions_set_rotate (GimpActionGroup  *group,
-                         GimpDisplayShell *shell)
+view_actions_set_rotate (PicmanActionGroup  *group,
+                         PicmanDisplayShell *shell)
 {
   gchar *label;
 
   label = g_strdup_printf (_("_Rotate (%d°)"), (gint) shell->rotate_angle);
-  gimp_action_group_set_action_label (group, "view-rotate-menu", label);
+  picman_action_group_set_action_label (group, "view-rotate-menu", label);
   g_free (label);
 }
 
 static void
-view_actions_check_type_notify (GimpDisplayConfig *config,
+view_actions_check_type_notify (PicmanDisplayConfig *config,
                                 GParamSpec        *pspec,
-                                GimpActionGroup   *group)
+                                PicmanActionGroup   *group)
 {
-  gimp_action_group_set_action_color (group, "view-padding-color-light-check",
-                                      gimp_render_light_check_color (),
+  picman_action_group_set_action_color (group, "view-padding-color-light-check",
+                                      picman_render_light_check_color (),
                                       FALSE);
-  gimp_action_group_set_action_color (group, "view-padding-color-dark-check",
-                                      gimp_render_dark_check_color (),
+  picman_action_group_set_action_color (group, "view-padding-color-dark-check",
+                                      picman_render_dark_check_color (),
                                       FALSE);
 }

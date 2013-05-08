@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpfontmenu.c
- * Copyright (C) 2003  Sven Neumann  <sven@gimp.org>
+ * picmanfontmenu.c
+ * Copyright (C) 2003  Sven Neumann  <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,16 +23,16 @@
 
 #include <gtk/gtk.h>
 
-#include "gimp.h"
+#include "picman.h"
 
-#include "gimpuitypes.h"
-#include "gimpfontmenu.h"
-#include "gimpfontselectbutton.h"
+#include "picmanuitypes.h"
+#include "picmanfontmenu.h"
+#include "picmanfontselectbutton.h"
 
 
 /**
- * SECTION: gimpfontmenu
- * @title: gimpfontmenu
+ * SECTION: picmanfontmenu
+ * @title: picmanfontmenu
  * @short_description: A widget for selecting fonts.
  *
  * A widget for selecting fonts.
@@ -41,12 +41,12 @@
 
 typedef struct
 {
-  GimpRunFontCallback callback;
+  PicmanRunFontCallback callback;
   gpointer            data;
 } CompatCallbackData;
 
 
-static void compat_callback           (GimpFontSelectButton *font_button,
+static void compat_callback           (PicmanFontSelectButton *font_button,
                                        const gchar          *font_name,
                                        gboolean              dialog_closing,
                                        CompatCallbackData   *data);
@@ -54,7 +54,7 @@ static void compat_callback_data_free (CompatCallbackData   *data);
 
 
 /**
- * gimp_font_select_widget_new:
+ * picman_font_select_widget_new:
  * @title:     Title of the dialog to use or %NULL to use the default title.
  * @font_name: Initial font name.
  * @callback:  A function to call when the selected font changes.
@@ -67,9 +67,9 @@ static void compat_callback_data_free (CompatCallbackData   *data);
  * Returns: A #GtkWidget that you can use in your UI.
  */
 GtkWidget *
-gimp_font_select_widget_new (const gchar         *title,
+picman_font_select_widget_new (const gchar         *title,
                              const gchar         *font_name,
-                             GimpRunFontCallback  callback,
+                             PicmanRunFontCallback  callback,
                              gpointer             data)
 {
   GtkWidget          *font_button;
@@ -77,7 +77,7 @@ gimp_font_select_widget_new (const gchar         *title,
 
   g_return_val_if_fail (callback != NULL, NULL);
 
-  font_button = gimp_font_select_button_new (title, font_name);
+  font_button = picman_font_select_button_new (title, font_name);
 
   compat_data = g_slice_new (CompatCallbackData);
 
@@ -93,41 +93,41 @@ gimp_font_select_widget_new (const gchar         *title,
 }
 
 /**
- * gimp_font_select_widget_close:
+ * picman_font_select_widget_close:
  * @widget: A font select widget.
  *
  * Closes the popup window associated with @widget.
  */
 void
-gimp_font_select_widget_close (GtkWidget *widget)
+picman_font_select_widget_close (GtkWidget *widget)
 {
   g_return_if_fail (widget != NULL);
 
-  gimp_select_button_close_popup (GIMP_SELECT_BUTTON (widget));
+  picman_select_button_close_popup (PICMAN_SELECT_BUTTON (widget));
 }
 
 /**
- * gimp_font_select_widget_set:
+ * picman_font_select_widget_set:
  * @widget:    A font select widget.
  * @font_name: Font name to set; %NULL means no change.
  *
  * Sets the current font for the font select widget.  Calls the
  * callback function if one was supplied in the call to
- * gimp_font_select_widget_new().
+ * picman_font_select_widget_new().
  */
 void
-gimp_font_select_widget_set (GtkWidget   *widget,
+picman_font_select_widget_set (GtkWidget   *widget,
                              const gchar *font_name)
 {
   g_return_if_fail (widget != NULL);
 
-  gimp_font_select_button_set_font (GIMP_FONT_SELECT_BUTTON (widget),
+  picman_font_select_button_set_font (PICMAN_FONT_SELECT_BUTTON (widget),
                                     font_name);
 }
 
 
 static void
-compat_callback (GimpFontSelectButton *font_button,
+compat_callback (PicmanFontSelectButton *font_button,
                  const gchar          *font_name,
                  gboolean              dialog_closing,
                  CompatCallbackData   *data)

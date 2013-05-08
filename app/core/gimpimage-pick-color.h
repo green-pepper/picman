@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,20 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_IMAGE_PICK_COLOR_H__
-#define  __GIMP_IMAGE_PICK_COLOR_H__
+#ifndef  __PICMAN_IMAGE_PICK_COLOR_H__
+#define  __PICMAN_IMAGE_PICK_COLOR_H__
 
 
-gboolean   gimp_image_pick_color (GimpImage     *image,
-                                  GimpDrawable  *drawable,
+gboolean   picman_image_pick_color (PicmanImage     *image,
+                                  PicmanDrawable  *drawable,
                                   gint           x,
                                   gint           y,
                                   gboolean       sample_merged,
                                   gboolean       sample_average,
                                   gdouble        average_radius,
                                   const Babl   **sample_format,
-                                  GimpRGB       *color,
+                                  PicmanRGB       *color,
                                   gint          *color_index);
 
 
-#endif  /* __GIMP_IMAGE_PICK_COLOR_H__ */
+#endif  /* __PICMAN_IMAGE_PICK_COLOR_H__ */

@@ -3,41 +3,41 @@
 AC_PREREQ(2.54)
 
 # Making releases on the stable branch:
-#   GIMP_MICRO_VERSION += 1;
-#   GIMP_INTERFACE_AGE += 1;
+#   PICMAN_MICRO_VERSION += 1;
+#   PICMAN_INTERFACE_AGE += 1;
 
-m4_define([gimp_major_version], [2])
-m4_define([gimp_minor_version], [9])
-m4_define([gimp_micro_version], [1])
-m4_define([gimp_real_version],
-          [gimp_major_version.gimp_minor_version.gimp_micro_version])
-m4_define([gimp_version], [gimp_real_version])
-m4_define([gimp_interface_age], [0])
-m4_define([gimp_binary_age],
-          [m4_eval(100 * gimp_minor_version + gimp_micro_version)])
+m4_define([picman_major_version], [2])
+m4_define([picman_minor_version], [9])
+m4_define([picman_micro_version], [1])
+m4_define([picman_real_version],
+          [picman_major_version.picman_minor_version.picman_micro_version])
+m4_define([picman_version], [picman_real_version])
+m4_define([picman_interface_age], [0])
+m4_define([picman_binary_age],
+          [m4_eval(100 * picman_minor_version + picman_micro_version)])
 
 # For overriding the version string. Comment out if not needed.
-# m4_define([gimp_version], [2.9.1])
+# m4_define([picman_version], [2.9.1])
 
-# This is the X.Y used in -lgimp-X.Y
-m4_define([gimp_api_version], [2.0])
+# This is the X.Y used in -lpicman-X.Y
+m4_define([picman_api_version], [2.0])
 
 # Versions used for apps, plugins, tools, pkg-config files, and data,
 # as well as global and user prefs
-m4_define([gimp_app_version], [2.9])
-m4_define([gimp_plugin_version], [2.0])
-m4_define([gimp_tool_version], [2.0])
-m4_define([gimp_pkgconfig_version], [2.0])
-m4_define([gimp_data_version], [2.0])
-m4_define([gimp_sysconf_version], [2.0])
-m4_define([gimp_user_version], [2.9])
+m4_define([picman_app_version], [2.9])
+m4_define([picman_plugin_version], [2.0])
+m4_define([picman_tool_version], [2.0])
+m4_define([picman_pkgconfig_version], [2.0])
+m4_define([picman_data_version], [2.0])
+m4_define([picman_sysconf_version], [2.0])
+m4_define([picman_user_version], [2.9])
 
-m4_define([gimp_unstable],
-          m4_if(m4_eval(gimp_minor_version % 2), [1], [yes], [no]))
-m4_define([gimp_stable],
-          m4_if(m4_eval(gimp_minor_version % 2), [0], [yes], [no]))
+m4_define([picman_unstable],
+          m4_if(m4_eval(picman_minor_version % 2), [1], [yes], [no]))
+m4_define([picman_stable],
+          m4_if(m4_eval(picman_minor_version % 2), [0], [yes], [no]))
 
-m4_define([gimp_full_name], [GNU Image Manipulation Program])
+m4_define([picman_full_name], [GNU Image Manipulation Program])
 
 # required versions of other packages
 m4_define([babl_required_version], [0.1.11])
@@ -66,12 +66,12 @@ m4_define([libpng_required_version], [1.2.37])
 m4_define([liblzma_required_version], [5.0.0])
 
 
-AC_INIT([GIMP], [gimp_version],
-        [http://bugzilla.gnome.org/enter_bug.cgi?product=GIMP],
-        [gimp])
+AC_INIT([PICMAN], [picman_version],
+        [http://bugzilla.gnome.org/enter_bug.cgi?product=PICMAN],
+        [picman])
 
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_SRCDIR([app/core/gimp.c])
+AC_CONFIG_SRCDIR([app/core/picman.c])
 AC_CONFIG_MACRO_DIR([m4macros])
 
 AM_INIT_AUTOMAKE(no-define dist-bzip2 dist-xz no-dist-gzip -Wno-portability)
@@ -81,40 +81,40 @@ AM_INIT_AUTOMAKE(no-define dist-bzip2 dist-xz no-dist-gzip -Wno-portability)
 # configure or passing V=1 to make
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-GIMP_MAJOR_VERSION=gimp_major_version
-GIMP_MINOR_VERSION=gimp_minor_version
-GIMP_MICRO_VERSION=gimp_micro_version
-GIMP_INTERFACE_AGE=gimp_interface_age
-GIMP_BINARY_AGE=gimp_binary_age
-GIMP_VERSION=gimp_version
-GIMP_REAL_VERSION=gimp_real_version
-GIMP_API_VERSION=gimp_api_version
-GIMP_APP_VERSION=gimp_app_version
-GIMP_PLUGIN_VERSION=gimp_plugin_version
-GIMP_TOOL_VERSION=gimp_tool_version
-GIMP_PKGCONFIG_VERSION=gimp_pkgconfig_version
-GIMP_DATA_VERSION=gimp_data_version
-GIMP_SYSCONF_VERSION=gimp_sysconf_version
-GIMP_USER_VERSION=gimp_user_version
-GIMP_UNSTABLE=gimp_unstable
-GIMP_FULL_NAME="gimp_full_name"
-AC_SUBST(GIMP_MAJOR_VERSION)
-AC_SUBST(GIMP_MINOR_VERSION)
-AC_SUBST(GIMP_MICRO_VERSION)
-AC_SUBST(GIMP_INTERFACE_AGE)
-AC_SUBST(GIMP_BINARY_AGE)
-AC_SUBST(GIMP_VERSION)
-AC_SUBST(GIMP_REAL_VERSION)
-AC_SUBST(GIMP_API_VERSION)
-AC_SUBST(GIMP_APP_VERSION)
-AC_SUBST(GIMP_PLUGIN_VERSION)
-AC_SUBST(GIMP_TOOL_VERSION)
-AC_SUBST(GIMP_PKGCONFIG_VERSION)
-AC_SUBST(GIMP_DATA_VERSION)
-AC_SUBST(GIMP_SYSCONF_VERSION)
-AC_SUBST(GIMP_USER_VERSION)
-AC_SUBST(GIMP_UNSTABLE)
-AC_SUBST(GIMP_FULL_NAME)
+PICMAN_MAJOR_VERSION=picman_major_version
+PICMAN_MINOR_VERSION=picman_minor_version
+PICMAN_MICRO_VERSION=picman_micro_version
+PICMAN_INTERFACE_AGE=picman_interface_age
+PICMAN_BINARY_AGE=picman_binary_age
+PICMAN_VERSION=picman_version
+PICMAN_REAL_VERSION=picman_real_version
+PICMAN_API_VERSION=picman_api_version
+PICMAN_APP_VERSION=picman_app_version
+PICMAN_PLUGIN_VERSION=picman_plugin_version
+PICMAN_TOOL_VERSION=picman_tool_version
+PICMAN_PKGCONFIG_VERSION=picman_pkgconfig_version
+PICMAN_DATA_VERSION=picman_data_version
+PICMAN_SYSCONF_VERSION=picman_sysconf_version
+PICMAN_USER_VERSION=picman_user_version
+PICMAN_UNSTABLE=picman_unstable
+PICMAN_FULL_NAME="picman_full_name"
+AC_SUBST(PICMAN_MAJOR_VERSION)
+AC_SUBST(PICMAN_MINOR_VERSION)
+AC_SUBST(PICMAN_MICRO_VERSION)
+AC_SUBST(PICMAN_INTERFACE_AGE)
+AC_SUBST(PICMAN_BINARY_AGE)
+AC_SUBST(PICMAN_VERSION)
+AC_SUBST(PICMAN_REAL_VERSION)
+AC_SUBST(PICMAN_API_VERSION)
+AC_SUBST(PICMAN_APP_VERSION)
+AC_SUBST(PICMAN_PLUGIN_VERSION)
+AC_SUBST(PICMAN_TOOL_VERSION)
+AC_SUBST(PICMAN_PKGCONFIG_VERSION)
+AC_SUBST(PICMAN_DATA_VERSION)
+AC_SUBST(PICMAN_SYSCONF_VERSION)
+AC_SUBST(PICMAN_USER_VERSION)
+AC_SUBST(PICMAN_UNSTABLE)
+AC_SUBST(PICMAN_FULL_NAME)
 
 
 # These are used in the .pc files
@@ -129,20 +129,20 @@ AC_SUBST(GTK_REQUIRED_VERSION)
 AC_SUBST(CAIRO_REQUIRED_VERSION)
 AC_SUBST(GEGL_REQUIRED_VERSION)
 
-# The symbol GIMP_UNSTABLE is defined above for substitution in
+# The symbol PICMAN_UNSTABLE is defined above for substitution in
 # Makefiles and conditionally defined here as a preprocessor symbol
 # and automake conditional.
-if test "x$GIMP_UNSTABLE" = "xyes"; then
-  AC_DEFINE(GIMP_UNSTABLE, 1,
-            [Define to 1 if this is an unstable version of GIMP])
+if test "x$PICMAN_UNSTABLE" = "xyes"; then
+  AC_DEFINE(PICMAN_UNSTABLE, 1,
+            [Define to 1 if this is an unstable version of PICMAN])
 fi
-AM_CONDITIONAL(GIMP_UNSTABLE, test "x$GIMP_UNSTABLE" = "xyes")
+AM_CONDITIONAL(PICMAN_UNSTABLE, test "x$PICMAN_UNSTABLE" = "xyes")
 
 
 # libtool versioning
-m4_define([lt_current], [m4_eval(100 * gimp_minor_version + gimp_micro_version - gimp_interface_age)])
-m4_define([lt_revision], [gimp_interface_age])
-m4_define([lt_age], [m4_eval(gimp_binary_age - gimp_interface_age)])
+m4_define([lt_current], [m4_eval(100 * picman_minor_version + picman_micro_version - picman_interface_age)])
+m4_define([lt_revision], [picman_interface_age])
+m4_define([lt_age], [m4_eval(picman_binary_age - picman_interface_age)])
 LT_VERSION_INFO="lt_current:lt_revision:lt_age"
 LT_CURRENT_MINUS_AGE=m4_eval(lt_current - lt_age)
 AC_SUBST(LT_VERSION_INFO)
@@ -150,7 +150,7 @@ AC_SUBST(LT_CURRENT_MINUS_AGE)
 
 
 # gettext i18n support
-GETTEXT_PACKAGE=gimp20
+GETTEXT_PACKAGE=picman20
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",
                    [The prefix for our gettext translation domains.])
@@ -328,54 +328,54 @@ changequote([,])dnl
 
 
 # If possible, warn if C99isms are used
-GIMP_DETECT_CFLAGS(extra_warnings, '-Wdeclaration-after-statement')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-Wdeclaration-after-statement')
 CFLAGS="$CFLAGS $extra_warnings"
 
-GIMP_DETECT_CFLAGS(extra_warnings, '-Wmissing-prototypes')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-Wmissing-prototypes')
 CFLAGS="$CFLAGS $extra_warnings"
 
 # We really don't want anyone using code with missing prototypes, which
 # can cause random behavior. If compile breaks due to the following,
 # come to us and we will point you to a newer version which works.
-GIMP_DETECT_CFLAGS(extra_warnings, '-Werror=missing-prototypes')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-Werror=missing-prototypes')
 CFLAGS="$CFLAGS $extra_warnings"
 
-GIMP_DETECT_CFLAGS(extra_warnings, '-Wstrict-prototypes')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-Wstrict-prototypes')
 CFLAGS="$CFLAGS $extra_warnings"
 
-GIMP_DETECT_CFLAGS(extra_warnings, '-Wmissing-declarations')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-Wmissing-declarations')
 CFLAGS="$CFLAGS $extra_warnings"
 
-GIMP_DETECT_CFLAGS(extra_warnings, '-Winit-self')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-Winit-self')
 CFLAGS="$CFLAGS $extra_warnings"
 
-GIMP_DETECT_CFLAGS(extra_warnings, '-Wpointer-arith')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-Wpointer-arith')
 CFLAGS="$CFLAGS $extra_warnings"
 
-GIMP_DETECT_CFLAGS(extra_warnings, '-Wold-style-definition')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-Wold-style-definition')
 CFLAGS="$CFLAGS $extra_warnings"
 
-GIMP_DETECT_CFLAGS(extra_warnings, '-Wmissing-format-attribute')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-Wmissing-format-attribute')
 CFLAGS="$CFLAGS $extra_warnings"
 
-GIMP_DETECT_CFLAGS(extra_warnings, '-Wformat-security')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-Wformat-security')
 CFLAGS="$CFLAGS $extra_warnings"
 
-GIMP_DETECT_CFLAGS(extra_warnings, '-Wformat-non-literal')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-Wformat-non-literal')
 CFLAGS="$CFLAGS $extra_warnings"
 
-GIMP_DETECT_CFLAGS(extra_warnings, '-fno-common')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-fno-common')
 CFLAGS="$CFLAGS $extra_warnings"
 
-GIMP_DETECT_CFLAGS(extra_warnings, '-fdiagnostics-show-option')
+PICMAN_DETECT_CFLAGS(extra_warnings, '-fdiagnostics-show-option')
 CFLAGS="$CFLAGS $extra_warnings"
 
 
 # Extra optimization flags for super performance
-GIMP_DETECT_CFLAGS(extra_warnings, '--omg-optimized')
+PICMAN_DETECT_CFLAGS(extra_warnings, '--omg-optimized')
 CFLAGS="$CFLAGS $extra_warnings"
 
-GIMP_DETECT_CFLAGS(extra_warnings, '--disable-instructions')
+PICMAN_DETECT_CFLAGS(extra_warnings, '--disable-instructions')
 CFLAGS="$CFLAGS $extra_warnings"
 
 
@@ -502,13 +502,13 @@ AC_MSG_RESULT($have_glib_2_31)
 
 
 # Check for bind_textdomain_codeset, including -lintl if GLib brings it in.
-gimp_save_LIBS=$LIBS
+picman_save_LIBS=$LIBS
 LIBS="$LIBS $GLIB_LIBS"
 AC_CHECK_FUNCS(bind_textdomain_codeset,,
   AC_MSG_ERROR([
 *** Check for bind_textdomain_codeset() failed!  This is required.
 ]))
-LIBS=$gimp_save_LIBS
+LIBS=$picman_save_LIBS
 
 
 AC_PATH_XTRA
@@ -549,7 +549,7 @@ PKG_CHECK_MODULES(PANGOCAIRO,
 *** We require Pango with the optional support for Cairo compiled in.
 *** See the file 'INSTALL' for more help.]))
 
-gimp_save_CFLAGS=$CFLAGS
+picman_save_CFLAGS=$CFLAGS
 CFLAGS="$PANGOCAIRO_CFLAGS $CFLAGS"
 
 PKG_CHECK_MODULES(FONTCONFIG, fontconfig >= fontconfig_required_version)
@@ -573,7 +573,7 @@ AC_COMPILE_IFELSE(
   [fontconfig_ok=no])
 AC_MSG_RESULT($fontconfig_ok)
 
-CFLAGS=$gimp_save_CFLAGS
+CFLAGS=$picman_save_CFLAGS
 
 if test "x$fontconfig_ok" = xno; then
   AC_MSG_ERROR([
@@ -607,14 +607,14 @@ AC_CHECK_HEADERS(math.h ieeefp.h)
 
 # DU4 native cc currently needs -std1 for ANSI mode (instead of K&R)
 AC_MSG_CHECKING([for extra flags to get ANSI library prototypes])
-gimp_save_LIBS=$LIBS
+picman_save_LIBS=$LIBS
 LIBS="$LIBS -lm"
 AC_RUN_IFELSE(
   [AC_LANG_SOURCE([[
     #include <math.h>
     int main (void) { return (log(1) != log(1.)); }]])],
   [AC_MSG_RESULT(none needed)],
-  [gimp_save_CFLAGS=$CFLAGS
+  [picman_save_CFLAGS=$CFLAGS
    CFLAGS="$CFLAGS -std1"
    AC_RUN_IFELSE(
      [AC_LANG_SOURCE([[
@@ -622,7 +622,7 @@ AC_RUN_IFELSE(
        int main (void) { return (log(1) != log(1.)); }]])],
      [AC_MSG_RESULT(-std1)],
      [AC_MSG_RESULT()
-      CFLAGS=$gimp_save_CFLAGS
+      CFLAGS=$picman_save_CFLAGS
       AC_MSG_WARN([No ANSI prototypes found in library. (-std1 didn't work.)])],
      [AC_MSG_RESULT])],
   [AC_MSG_RESULT()])
@@ -648,7 +648,7 @@ AC_CHECK_FUNCS(finite, , [
 AC_SUBST(HAVE_FINITE)
 AC_SUBST(HAVE_ISFINITE)
 
-LIBS=$gimp_save_LIBS
+LIBS=$picman_save_LIBS
 
 
 # check for rint
@@ -662,7 +662,7 @@ AC_CHECK_FUNC(rint, AC_DEFINE(HAVE_RINT, 1,
 # Check for extra libs needed for getaddrinfo, getnameinfo and socket
 #####################################################################
 
-gimp_save_LIBS=$LIBS
+picman_save_LIBS=$LIBS
 LIBS=""
 
 AC_CHECK_FUNCS(getaddrinfo, , AC_CHECK_LIB(nsl, getaddrinfo))
@@ -670,7 +670,7 @@ AC_CHECK_FUNCS(getnameinfo, , AC_CHECK_LIB(nsl, getnameinfo))
 AC_CHECK_LIB(socket, socket)
 
 SOCKET_LIBS="$LIBS"
-LIBS=$gimp_save_LIBS
+LIBS=$picman_save_LIBS
 
 AC_SUBST(SOCKET_LIBS)
 
@@ -688,7 +688,7 @@ AC_ARG_ENABLE(sse,
   enable_sse=$enable_mmx)
 
 if test "x$enable_mmx" = xyes; then
-  GIMP_DETECT_CFLAGS(MMX_EXTRA_CFLAGS, '-mmmx')
+  PICMAN_DETECT_CFLAGS(MMX_EXTRA_CFLAGS, '-mmmx')
   SSE_EXTRA_CFLAGS=
 
   AC_MSG_CHECKING(whether we can compile MMX code)
@@ -702,7 +702,7 @@ if test "x$enable_mmx" = xyes; then
     AC_MSG_RESULT(yes)
 
     if test "x$enable_sse" = xyes; then
-      GIMP_DETECT_CFLAGS(sse_flag, '-msse')
+      PICMAN_DETECT_CFLAGS(sse_flag, '-msse')
       SSE_EXTRA_CFLAGS="$MMX_EXTRA_CFLAGS $sse_flag"
 
       AC_MSG_CHECKING(whether we can compile SSE code)
@@ -742,7 +742,7 @@ AC_ARG_ENABLE(altivec,
 
 if test "x$enable_altivec" = xyes; then
 
-  GIMP_DETECT_CFLAGS(altivec_flag, '-faltivec' '-maltivec -mabi=altivec')
+  PICMAN_DETECT_CFLAGS(altivec_flag, '-faltivec' '-maltivec -mabi=altivec')
 
   ALTIVEC_EXTRA_CFLAGS=
   case "$altivec_flag" in
@@ -930,17 +930,17 @@ if test "x$os_win32" != xyes; then
     [AC_LANG_PROGRAM(
       [[#include <sys/types.h>]],
       [[fd_set readMask, writeMask;]])],
-    [gimp_ok=yes],
-    [gimp_ok=no])
-  if test "x$gimp_ok" = xno; then
-      AC_EGREP_HEADER(fd_mask, sys/select.h, gimp_ok=yes)
-      if test "x$gimp_ok" = xyes; then
+    [picman_ok=yes],
+    [picman_ok=no])
+  if test "x$picman_ok" = xno; then
+      AC_EGREP_HEADER(fd_mask, sys/select.h, picman_ok=yes)
+      if test "x$picman_ok" = xyes; then
 	  AC_DEFINE(HAVE_SYS_SELECT_H, 1,
 		    [Define to 1 if you have the <sys/select.h> header.])
       fi
   fi
-  AC_MSG_RESULT($gimp_ok)
-  if test "x$gimp_ok" = xno; then
+  AC_MSG_RESULT($picman_ok)
+  if test "x$picman_ok" = xno; then
       AC_DEFINE(NO_FD_SET, 1,
 		[Define to 1 if you don't have the fd_set typedef.])
   fi
@@ -976,8 +976,8 @@ if test "$gdk_target" = x11; then
    # screenshot plug-in needs to link to X11 explicitly
    SCREENSHOT_LIBS="$X_LIBS -lX11"
 
-   gimp_save_CFLAGS="$CFLAGS"
-   gimp_save_LDFLAGS="$LDFLAGS"
+   picman_save_CFLAGS="$CFLAGS"
+   picman_save_LDFLAGS="$LDFLAGS"
    CFLAGS="$CFLAGS $GTK_CFLAGS"
    LDFLAGS="$LDFLAGS $X_LIBS"
 
@@ -998,8 +998,8 @@ if test "$gdk_target" = x11; then
         SCREENSHOT_LIBS="$SCREENSHOT_LIBS -lXext",,[#include <gdk/gdkx.h>])],,
      -lX11 -lXext)
 
-   CFLAGS="$gimp_save_CFLAGS"
-   LDFLAGS="$gimp_save_LDFLAGS"
+   CFLAGS="$picman_save_CFLAGS"
+   LDFLAGS="$picman_save_LDFLAGS"
 
    # check for the XFixes extension
    PKG_CHECK_MODULES(XFIXES, xfixes,
@@ -1015,9 +1015,9 @@ AC_SUBST(SCREENSHOT_LIBS)
 AC_SUBST(DOC_SHOOTER)
 
 
-GIMP_COMMAND='gimp-gimp_app_version'
+PICMAN_COMMAND='picman-picman_app_version'
 
-AC_SUBST(GIMP_COMMAND)
+AC_SUBST(PICMAN_COMMAND)
 
 
 ############
@@ -1026,7 +1026,7 @@ AC_SUBST(GIMP_COMMAND)
 
 # The list of MIME types that are supported by plug-ins that are compiled
 # unconditionally:
-MIME_TYPES="image/bmp;image/g3fax;image/gif;image/x-fits;image/x-pcx;image/x-portable-anymap;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-psd;image/x-sgi;image/x-tga;image/x-xbitmap;image/x-xwindowdump;image/x-xcf;image/x-compressed-xcf;image/x-gimp-gbr;image/x-gimp-pat;image/x-gimp-gih"
+MIME_TYPES="image/bmp;image/g3fax;image/gif;image/x-fits;image/x-pcx;image/x-portable-anymap;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-psd;image/x-sgi;image/x-tga;image/x-xbitmap;image/x-xwindowdump;image/x-xcf;image/x-compressed-xcf;image/x-picman-gbr;image/x-picman-pat;image/x-picman-gih"
 
 
 ###################
@@ -1330,9 +1330,9 @@ AC_SUBST(AA_LIBS)
 
 AC_ARG_WITH(libxpm,  [  --without-libxpm        build without XPM support])
 
-gimp_save_CFLAGS="$CFLAGS"
+picman_save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS $X_CFLAGS"
-gimp_save_LDFLAGS="$LDFLAGS"
+picman_save_LDFLAGS="$LDFLAGS"
 LDFLAGS="$LDFLAGS $X_LIBS"
 if test "$gdk_target" = x11; then
   lib_X11=-lX11
@@ -1346,8 +1346,8 @@ if test "x$with_libxpm" != xno && test -z "$XPM_LIBS"; then
       [have_libxpm="no (XPM header file not found)"])],
     [have_libxpm="no (XPM library not found)"], $X_PRE_LIBS $lib_X11)
 fi
-CFLAGS="$gimp_save_CFLAGS"
-LDFLAGS="$gimp_save_LDFLAGS"
+CFLAGS="$picman_save_CFLAGS"
+LDFLAGS="$picman_save_LDFLAGS"
 
 if test "x$have_libxpm" = xyes; then
   MIME_TYPES="$MIME_TYPES;image/x-xpixmap"
@@ -1690,7 +1690,7 @@ fi
 if test "x$have_dbus_glib" = xyes; then
   AC_DEFINE(HAVE_DBUS_GLIB, 1,
             [Define to 1 if D-Bus GLib bindings are available])
-  GIMP_COMMAND='gimp-gimp_app_version'
+  PICMAN_COMMAND='picman-picman_app_version'
 fi
 
 
@@ -1775,7 +1775,7 @@ AM_CONDITIONAL(WITH_PDBGEN, test "x$with_pdbgen" = xyes)
 # Check for python
 ##################
 
-# Pygimp configure stuff ...
+# Pypicman configure stuff ...
 AC_ARG_ENABLE(python,
   AS_HELP_STRING([--disable-python],
                  [do not build the python extension]))
@@ -1784,7 +1784,7 @@ m4_define([pycheck_error], [
 *** Could not find $1.
 *** Please install $2, or skip building the python scripting extension by
 *** passing --disable-python to configure (but then you will not be able
-*** to use scripts for GIMP that are written in Python).])
+*** to use scripts for PICMAN that are written in Python).])
 
 if test "x$enable_python" != xno; then
   enable_python="yes"
@@ -1825,8 +1825,8 @@ if test "x$enable_python" != xno; then
   AC_SUBST(PYGTK_DEFSDIR)
   AC_MSG_RESULT($PYGTK_DEFSDIR)
 
-  GIMP_DETECT_CFLAGS(PYGIMP_EXTRA_CFLAGS, '-fno-strict-aliasing')
-  AC_SUBST(PYGIMP_EXTRA_CFLAGS)
+  PICMAN_DETECT_CFLAGS(PYPICMAN_EXTRA_CFLAGS, '-fno-strict-aliasing')
+  AC_SUBST(PYPICMAN_EXTRA_CFLAGS)
 fi
 AM_CONDITIONAL(BUILD_PYTHON, test "x$enable_python" != xno)
 
@@ -1966,47 +1966,47 @@ AM_CONDITIONAL(ENABLE_GTK_DOC_APP, test "x$enable_gtk_doc_app" = xyes)
 
 
 #########################################
-# Allow to configure the GIMP environment
+# Allow to configure the PICMAN environment
 #########################################
 
-AC_ARG_ENABLE(default-binary, [  --enable-default-binary install this as the default gimp binary (default=gimp_stable)], , enable_default_binary=gimp_stable)
+AC_ARG_ENABLE(default-binary, [  --enable-default-binary install this as the default picman binary (default=picman_stable)], , enable_default_binary=picman_stable)
 
 AM_CONDITIONAL(DEFAULT_BINARY, test "x$enable_default_binary" = xyes)
 
 
-AC_ARG_ENABLE(gimp-console, [  --enable-gimp-console   build a console-only binary which does not link GTK+], , enable_gimp_console=yes)
+AC_ARG_ENABLE(picman-console, [  --enable-picman-console   build a console-only binary which does not link GTK+], , enable_picman_console=yes)
 
-AM_CONDITIONAL(ENABLE_GIMP_CONSOLE, test "x$enable_gimp_console" != xno)
+AM_CONDITIONAL(ENABLE_PICMAN_CONSOLE, test "x$enable_picman_console" != xno)
 
 
-# Possibly change default gimpdir from .gimp-major.minor
-gimpdir=GIMP
-AC_ARG_WITH(gimpdir, [  --with-gimpdir=DIR      change default gimpdir from $XDG_CONFIG_HOME/GIMP/gimp_user_version to $XDG_CONFIG_HOME/DIR/gimp_user_version],
-if eval "test x$with_gimpdir != x"; then
-  if eval "test x$with_gimpdir != xyes"; then
-    gimpdir=$with_gimpdir
+# Possibly change default picmandir from .picman-major.minor
+picmandir=PICMAN
+AC_ARG_WITH(picmandir, [  --with-picmandir=DIR      change default picmandir from $XDG_CONFIG_HOME/PICMAN/picman_user_version to $XDG_CONFIG_HOME/DIR/picman_user_version],
+if eval "test x$with_picmandir != x"; then
+  if eval "test x$with_picmandir != xyes"; then
+    picmandir=$with_picmandir
   fi
 fi)
 
-gimpdatadir="$datadir/$PACKAGE/gimp_data_version"
-gimpplugindir="$libdir/$PACKAGE/gimp_plugin_version"
-gimpsysconfdir="$sysconfdir/$PACKAGE/gimp_sysconf_version"
+picmandatadir="$datadir/$PACKAGE/picman_data_version"
+picmanplugindir="$libdir/$PACKAGE/picman_plugin_version"
+picmansysconfdir="$sysconfdir/$PACKAGE/picman_sysconf_version"
 
-AC_SUBST(gimpdir)
-AC_SUBST(gimpdatadir)
-AC_SUBST(gimpplugindir)
-AC_SUBST(gimpsysconfdir)
+AC_SUBST(picmandir)
+AC_SUBST(picmandatadir)
+AC_SUBST(picmanplugindir)
+AC_SUBST(picmansysconfdir)
 
 
 # GNU format message catalogs go into $datadir/locale,
 # standard location is $libdir/locale. DATADIRNAME set accordingly.
 
-gimplocaledir="$datadir/locale"
+picmanlocaledir="$datadir/locale"
 if test "$DATADIRNAME" = "lib"; then
-   gimplocaledir="$libdir/locale"
+   picmanlocaledir="$libdir/locale"
 fi
 
-AC_SUBST(gimplocaledir)
+AC_SUBST(picmanlocaledir)
 
 
 ############################
@@ -2016,8 +2016,8 @@ AC_SUBST(gimplocaledir)
 AM_CONDITIONAL(STATICLIBS, test "x$enable_static" = xyes)
 
 # a tuned version of glib-mkenums
-GIMP_MKENUMS="\$(PERL) \$(top_srcdir)/tools/gimp-mkenums"
-AC_SUBST(GIMP_MKENUMS)
+PICMAN_MKENUMS="\$(PERL) \$(top_srcdir)/tools/picman-mkenums"
+AC_SUBST(PICMAN_MKENUMS)
 
 #Add required trailing ; to list
 MIME_TYPES="$MIME_TYPES;"
@@ -2029,7 +2029,7 @@ AC_SUBST(MIME_TYPES)
 # Disable deprecated APIs
 #########################
 
-CPPFLAGS="${CPPFLAGS} -DGIMP_DISABLE_DEPRECATED -DBABL_DISABLE_DEPRECATED -DGSEAL_ENABLE"
+CPPFLAGS="${CPPFLAGS} -DPICMAN_DISABLE_DEPRECATED -DBABL_DISABLE_DEPRECATED -DGSEAL_ENABLE"
 
 # Make sure not to disable deprecated APIs for unreleased versions.
 # We must build without problems with future releases of libraries
@@ -2064,36 +2064,36 @@ CPPFLAGS="${CPPFLAGS} -DGDK_MULTIHEAD_SAFE -DGTK_MULTIHEAD_SAFE"
 ##################
 
 # easy way to skip the plug-in build
-GIMP_PLUGINS=plug-ins
-GIMP_MODULES=modules
-AC_SUBST(GIMP_PLUGINS)
-AC_SUBST(GIMP_MODULES)
+PICMAN_PLUGINS=plug-ins
+PICMAN_MODULES=modules
+AC_SUBST(PICMAN_PLUGINS)
+AC_SUBST(PICMAN_MODULES)
 
-AC_CONFIG_COMMANDS([libgimpbase/gimpversion.h], [
-  outfile=gimpversion.h-tmp
+AC_CONFIG_COMMANDS([libpicmanbase/picmanversion.h], [
+  outfile=picmanversion.h-tmp
   cat > $outfile <<\_______EOF
-/* gimpversion.h
+/* picmanversion.h
  *
  * This is a generated file.  Please modify 'configure.ac'
  */
 
-#if !defined (__GIMP_BASE_H_INSIDE__) && !defined (GIMP_BASE_COMPILATION)
-#error "Only <libgimpbase/gimpbase.h> can be included directly."
+#if !defined (__PICMAN_BASE_H_INSIDE__) && !defined (PICMAN_BASE_COMPILATION)
+#error "Only <libpicmanbase/picmanbase.h> can be included directly."
 #endif
 
-#ifndef __GIMP_VERSION_H__
-#define __GIMP_VERSION_H__
+#ifndef __PICMAN_VERSION_H__
+#define __PICMAN_VERSION_H__
 
 G_BEGIN_DECLS
 
 
 /**
- * SECTION: gimpversion
- * @title: gimpversion
+ * SECTION: picmanversion
+ * @title: picmanversion
  * @short_description: Macros and constants useful for determining
- *                     GIMP's version number and capabilities.
+ *                     PICMAN's version number and capabilities.
  *
- * Macros and constants useful for determining GIMP's version number and
+ * Macros and constants useful for determining PICMAN's version number and
  * capabilities.
  **/
 
@@ -2101,80 +2101,80 @@ _______EOF
 
   cat >>$outfile <<_______EOF
 /**
- * GIMP_MAJOR_VERSION:
+ * PICMAN_MAJOR_VERSION:
  *
- * The major GIMP version number.
+ * The major PICMAN version number.
  **/
-#define GIMP_MAJOR_VERSION                              ($gimp_major_ver)
+#define PICMAN_MAJOR_VERSION                              ($picman_major_ver)
 
 /**
- * GIMP_MINOR_VERSION:
+ * PICMAN_MINOR_VERSION:
  *
- * The minor GIMP version number.
+ * The minor PICMAN version number.
  **/
-#define GIMP_MINOR_VERSION                              ($gimp_minor_ver)
+#define PICMAN_MINOR_VERSION                              ($picman_minor_ver)
 
 /**
- * GIMP_MICRO_VERSION:
+ * PICMAN_MICRO_VERSION:
  *
- * The micro GIMP version number.
+ * The micro PICMAN version number.
  **/
-#define GIMP_MICRO_VERSION                              ($gimp_micro_ver)
+#define PICMAN_MICRO_VERSION                              ($picman_micro_ver)
 
 /**
- * GIMP_VERSION:
+ * PICMAN_VERSION:
  *
- * The GIMP version as a string.
+ * The PICMAN version as a string.
  **/
-#define GIMP_VERSION                                    "$gimp_ver"
+#define PICMAN_VERSION                                    "$picman_ver"
 
 /**
- * GIMP_API_VERSION:
+ * PICMAN_API_VERSION:
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
-#define GIMP_API_VERSION                                "$gimp_api_ver"
+#define PICMAN_API_VERSION                                "$picman_api_ver"
 
 _______EOF
 
   cat >>$outfile <<\_______EOF
-#define GIMP_CHECK_VERSION(major, minor, micro) \
-    (GIMP_MAJOR_VERSION > (major) || \
-     (GIMP_MAJOR_VERSION == (major) && GIMP_MINOR_VERSION > (minor)) || \
-     (GIMP_MAJOR_VERSION == (major) && GIMP_MINOR_VERSION == (minor) && \
-      GIMP_MICRO_VERSION >= (micro)))
+#define PICMAN_CHECK_VERSION(major, minor, micro) \
+    (PICMAN_MAJOR_VERSION > (major) || \
+     (PICMAN_MAJOR_VERSION == (major) && PICMAN_MINOR_VERSION > (minor)) || \
+     (PICMAN_MAJOR_VERSION == (major) && PICMAN_MINOR_VERSION == (minor) && \
+      PICMAN_MICRO_VERSION >= (micro)))
 
 
 G_END_DECLS
 
-#endif /* __GIMP_VERSION_H__ */
+#endif /* __PICMAN_VERSION_H__ */
 _______EOF
 
-  if cmp -s $outfile libgimpbase/gimpversion.h; then
-    AC_MSG_NOTICE([libgimpbase/gimpversion.h is unchanged])
+  if cmp -s $outfile libpicmanbase/picmanversion.h; then
+    AC_MSG_NOTICE([libpicmanbase/picmanversion.h is unchanged])
     rm -f $outfile
   else
-    mv $outfile libgimpbase/gimpversion.h
+    mv $outfile libpicmanbase/picmanversion.h
   fi
 ],[
-  gimp_major_ver=gimp_major_version
-  gimp_minor_ver=gimp_minor_version
-  gimp_micro_ver=gimp_micro_version
-  gimp_ver=gimp_version
-  gimp_api_ver=gimp_api_version
+  picman_major_ver=picman_major_version
+  picman_minor_ver=picman_minor_version
+  picman_micro_ver=picman_micro_version
+  picman_ver=picman_version
+  picman_api_ver=picman_api_version
 ])
 
 AC_CONFIG_FILES([
 tools/Makefile
 tools/pdbgen/Makefile
-libgimp/Makefile
-libgimpbase/Makefile
-libgimpconfig/Makefile
-libgimpcolor/Makefile
-libgimpmath/Makefile
-libgimpmodule/Makefile
-libgimpthumb/Makefile
-libgimpwidgets/Makefile
+libpicman/Makefile
+libpicmanbase/Makefile
+libpicmanconfig/Makefile
+libpicmancolor/Makefile
+libpicmanmath/Makefile
+libpicmanmodule/Makefile
+libpicmanthumb/Makefile
+libpicmanwidgets/Makefile
 app/Makefile
 app/actions/Makefile
 app/config/Makefile
@@ -2197,18 +2197,18 @@ app/widgets/Makefile
 app/xcf/Makefile
 app/tests/Makefile
 app/tests/files/Makefile
-app/tests/gimpdir-empty/Makefile
-app/tests/gimpdir-empty/brushes/Makefile
-app/tests/gimpdir-empty/gradients/Makefile
-app/tests/gimpdir-empty/patterns/Makefile
-app/tests/gimpdir/Makefile
-app/tests/gimpdir/brushes/Makefile
-app/tests/gimpdir/gradients/Makefile
-app/tests/gimpdir/patterns/Makefile
+app/tests/picmandir-empty/Makefile
+app/tests/picmandir-empty/brushes/Makefile
+app/tests/picmandir-empty/gradients/Makefile
+app/tests/picmandir-empty/patterns/Makefile
+app/tests/picmandir/Makefile
+app/tests/picmandir/brushes/Makefile
+app/tests/picmandir/gradients/Makefile
+app/tests/picmandir/patterns/Makefile
 build/Makefile
 build/windows/Makefile
-build/windows/gimp.rc
-build/windows/gimp-plug-ins.rc
+build/windows/picman.rc
+build/windows/picman-plug-ins.rc
 plug-ins/Makefile
 plug-ins/color-rotate/Makefile
 plug-ins/color-rotate/images/Makefile
@@ -2229,10 +2229,10 @@ plug-ins/gfig/Makefile
 plug-ins/gfig/gfig-examples/Makefile
 plug-ins/gfig/images/Makefile
 plug-ins/ui/Makefile
-plug-ins/gimpressionist/Brushes/Makefile
-plug-ins/gimpressionist/Makefile
-plug-ins/gimpressionist/Paper/Makefile
-plug-ins/gimpressionist/Presets/Makefile
+plug-ins/picmanressionist/Brushes/Makefile
+plug-ins/picmanressionist/Makefile
+plug-ins/picmanressionist/Paper/Makefile
+plug-ins/picmanressionist/Presets/Makefile
 plug-ins/gradient-flare/Makefile
 plug-ins/gradient-flare/flares/Makefile
 plug-ins/help-browser/Makefile
@@ -2247,8 +2247,8 @@ plug-ins/maze/Makefile
 plug-ins/metadata/Makefile
 plug-ins/pagecurl/Makefile
 plug-ins/print/Makefile
-plug-ins/pygimp/Makefile
-plug-ins/pygimp/plug-ins/Makefile
+plug-ins/pypicman/Makefile
+plug-ins/pypicman/plug-ins/Makefile
 plug-ins/script-fu/Makefile
 plug-ins/script-fu/ftx/Makefile
 plug-ins/script-fu/scripts/Makefile
@@ -2262,22 +2262,22 @@ modules/Makefile
 devel-docs/Makefile
 devel-docs/app/Makefile
 devel-docs/app/version
-devel-docs/libgimp/Makefile
-devel-docs/libgimp/version
-devel-docs/libgimpbase/Makefile
-devel-docs/libgimpbase/version
-devel-docs/libgimpconfig/Makefile
-devel-docs/libgimpconfig/version
-devel-docs/libgimpcolor/Makefile
-devel-docs/libgimpcolor/version
-devel-docs/libgimpmath/Makefile
-devel-docs/libgimpmath/version
-devel-docs/libgimpmodule/Makefile
-devel-docs/libgimpmodule/version
-devel-docs/libgimpthumb/Makefile
-devel-docs/libgimpthumb/version
-devel-docs/libgimpwidgets/Makefile
-devel-docs/libgimpwidgets/version
+devel-docs/libpicman/Makefile
+devel-docs/libpicman/version
+devel-docs/libpicmanbase/Makefile
+devel-docs/libpicmanbase/version
+devel-docs/libpicmanconfig/Makefile
+devel-docs/libpicmanconfig/version
+devel-docs/libpicmancolor/Makefile
+devel-docs/libpicmancolor/version
+devel-docs/libpicmanmath/Makefile
+devel-docs/libpicmanmath/version
+devel-docs/libpicmanmodule/Makefile
+devel-docs/libpicmanmodule/version
+devel-docs/libpicmanthumb/Makefile
+devel-docs/libpicmanthumb/version
+devel-docs/libpicmanwidgets/Makefile
+devel-docs/libpicmanwidgets/version
 devel-docs/tools/Makefile
 docs/Makefile
 menus/Makefile
@@ -2290,7 +2290,7 @@ themes/Small/Makefile
 data/Makefile
 data/brushes/Makefile
 data/brushes/Basic/Makefile
-data/brushes/gimp-obsolete-files/Makefile
+data/brushes/picman-obsolete-files/Makefile
 data/brushes/Media/Makefile
 data/brushes/Legacy/Makefile
 data/brushes/Sketch/Makefile
@@ -2313,31 +2313,31 @@ data/tool-presets/Paint/Makefile
 data/tool-presets/Selection/Makefile
 data/tool-presets/Sketch/Makefile
 desktop/Makefile
-desktop/gimp.desktop.in
+desktop/picman.desktop.in
 etc/Makefile
 m4macros/Makefile
 po/Makefile.in
-po-libgimp/Makefile.in
+po-libpicman/Makefile.in
 po-plug-ins/Makefile.in
 po-python/Makefile.in
 po-script-fu/Makefile.in
 po-tips/Makefile.in
-gimp-zip
+picman-zip
 Makefile
 ])
 
 # Files with versions in their names
 AC_CONFIG_FILES(
-docs/gimp-gimp_app_version.1:docs/gimp.1.in
-docs/gimprc-gimp_app_version.5:docs/gimprc.5.in
-docs/gimptool-gimp_tool_version.1:docs/gimptool.1.in
-gimp-gimp_pkgconfig_version.pc:gimp.pc.in
-gimpthumb-gimp_pkgconfig_version.pc:gimpthumb.pc.in
-gimpui-gimp_pkgconfig_version.pc:gimpui.pc.in
+docs/picman-picman_app_version.1:docs/picman.1.in
+docs/picmanrc-picman_app_version.5:docs/picmanrc.5.in
+docs/picmantool-picman_tool_version.1:docs/picmantool.1.in
+picman-picman_pkgconfig_version.pc:picman.pc.in
+picmanthumb-picman_pkgconfig_version.pc:picmanthumb.pc.in
+picmanui-picman_pkgconfig_version.pc:picmanui.pc.in
 )
 
 AC_CONFIG_COMMANDS([sed-po-makefiles],
-[sed -e "/POTFILES =/r po-libgimp/POTFILES" po-libgimp/Makefile.in > po-libgimp/Makefile && touch po-libgimp/stamp-it
+[sed -e "/POTFILES =/r po-libpicman/POTFILES" po-libpicman/Makefile.in > po-libpicman/Makefile && touch po-libpicman/stamp-it
 sed -e "/POTFILES =/r po-python/POTFILES" po-python/Makefile.in > po-python/Makefile && touch po-python/stamp-it
 sed -e "/POTFILES =/r po-plug-ins/POTFILES" po-plug-ins/Makefile.in > po-plug-ins/Makefile && touch po-plug-ins/stamp-it
 sed -e "/POTFILES =/r po-script-fu/POTFILES" po-script-fu/Makefile.in > po-script-fu/Makefile && touch po-script-fu/stamp-it
@@ -2347,11 +2347,11 @@ AC_OUTPUT
 
 # Print a summary of features enabled/disabled:
 AC_MSG_RESULT([
-Building GIMP with prefix=$prefix, datarootdir=$datarootdir
+Building PICMAN with prefix=$prefix, datarootdir=$datarootdir
 Desktop files install into $DESKTOP_DATADIR
 
 Extra Binaries:
-  gimp-console:        $enable_gimp_console
+  picman-console:        $enable_picman_console
 
 Optional Features:
   D-Bus service:       $have_dbus_glib

@@ -1,9 +1,9 @@
-/* MapObject 1.2.0 -- image filter plug-in for GIMP
+/* MapObject 1.2.0 -- image filter plug-in for PICMAN
  *
  * Copyright (C) 1996-98 Tom Bech
  * Copyright (C) 1996-98 Federico Mena Quintero
  *
- * E-mail: tomb@gimp.org (Tom) or quartic@gimp.org (Federico)
+ * E-mail: tomb@picman.org (Tom) or quartic@picman.org (Federico)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "map-object-ui.h"
 #include "map-object-image.h"
@@ -32,7 +32,7 @@
 #include "map-object-preview.h"
 #include "map-object-main.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Global variables */
@@ -53,14 +53,14 @@ set_default_settings (void)
 {
   gint i;
 
-  gimp_vector3_set (&mapvals.viewpoint,  0.5, 0.5, 2.0);
-  gimp_vector3_set (&mapvals.firstaxis,  1.0, 0.0, 0.0);
-  gimp_vector3_set (&mapvals.secondaxis, 0.0, 1.0, 0.0);
-  gimp_vector3_set (&mapvals.normal,     0.0, 0.0, 1.0);
-  gimp_vector3_set (&mapvals.position,   0.5, 0.5, 0.0);
-  gimp_vector3_set (&mapvals.lightsource.position,  -0.5, -0.5, 2.0);
-  gimp_vector3_set (&mapvals.lightsource.direction, -1.0, -1.0, 1.0);
-  gimp_vector3_set (&mapvals.scale,      0.5, 0.5, 0.5);
+  picman_vector3_set (&mapvals.viewpoint,  0.5, 0.5, 2.0);
+  picman_vector3_set (&mapvals.firstaxis,  1.0, 0.0, 0.0);
+  picman_vector3_set (&mapvals.secondaxis, 0.0, 1.0, 0.0);
+  picman_vector3_set (&mapvals.normal,     0.0, 0.0, 1.0);
+  picman_vector3_set (&mapvals.position,   0.5, 0.5, 0.0);
+  picman_vector3_set (&mapvals.lightsource.position,  -0.5, -0.5, 2.0);
+  picman_vector3_set (&mapvals.lightsource.direction, -1.0, -1.0, 1.0);
+  picman_vector3_set (&mapvals.scale,      0.5, 0.5, 0.5);
 
   mapvals.maptype = MAP_PLANE;
 
@@ -85,7 +85,7 @@ set_default_settings (void)
   mapvals.showgrid               = TRUE;
 
   mapvals.lightsource.intensity = 1.0;
-  gimp_rgba_set (&mapvals.lightsource.color, 1.0, 1.0, 1.0, 1.0);
+  picman_rgba_set (&mapvals.lightsource.color, 1.0, 1.0, 1.0, 1.0);
 
   mapvals.material.ambient_int  = 0.3;
   mapvals.material.diffuse_int  = 1.0;
@@ -101,7 +101,7 @@ set_default_settings (void)
 }
 
 static void
-check_drawables (GimpDrawable *drawable)
+check_drawables (PicmanDrawable *drawable)
 {
   gint i;
 
@@ -111,8 +111,8 @@ check_drawables (GimpDrawable *drawable)
   for (i = 0; i < 6; i++)
     {
       if (mapvals.boxmap_id[i] == -1 ||
-          !gimp_item_is_valid (mapvals.boxmap_id[i]) ||
-          gimp_drawable_is_gray (mapvals.boxmap_id[i]))
+          !picman_item_is_valid (mapvals.boxmap_id[i]) ||
+          picman_drawable_is_gray (mapvals.boxmap_id[i]))
         mapvals.boxmap_id[i] = drawable->drawable_id;
     }
 
@@ -122,8 +122,8 @@ check_drawables (GimpDrawable *drawable)
   for (i = 0; i < 2; i++)
     {
       if (mapvals.cylindermap_id[i] == -1 ||
-          !gimp_item_is_valid (mapvals.cylindermap_id[i]) ||
-          gimp_drawable_is_gray (mapvals.cylindermap_id[i]))
+          !picman_item_is_valid (mapvals.cylindermap_id[i]) ||
+          picman_drawable_is_gray (mapvals.cylindermap_id[i]))
         mapvals.cylindermap_id[i] = drawable->drawable_id;
     }
 }
@@ -131,60 +131,60 @@ check_drawables (GimpDrawable *drawable)
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",              "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",                 "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",              "Input drawable" },
-    { GIMP_PDB_INT32,    "maptype",               "Type of mapping (0=plane,1=sphere,2=box,3=cylinder)" },
-    { GIMP_PDB_FLOAT,    "viewpoint-x",           "Position of viewpoint (x,y,z)" },
-    { GIMP_PDB_FLOAT,    "viewpoint-y",           "Position of viewpoint (x,y,z)" },
-    { GIMP_PDB_FLOAT,    "viewpoint-z",           "Position of viewpoint (x,y,z)" },
-    { GIMP_PDB_FLOAT,    "position-x",            "Object position (x,y,z)" },
-    { GIMP_PDB_FLOAT,    "position-y",            "Object position (x,y,z)" },
-    { GIMP_PDB_FLOAT,    "position-z",            "Object position (x,y,z)" },
-    { GIMP_PDB_FLOAT,    "firstaxis-x",           "First axis of object [x,y,z]" },
-    { GIMP_PDB_FLOAT,    "firstaxis-y",           "First axis of object [x,y,z]" },
-    { GIMP_PDB_FLOAT,    "firstaxis-z",           "First axis of object [x,y,z]" },
-    { GIMP_PDB_FLOAT,    "secondaxis-x",          "Second axis of object [x,y,z]" },
-    { GIMP_PDB_FLOAT,    "secondaxis-y",          "Second axis of object [x,y,z]" },
-    { GIMP_PDB_FLOAT,    "secondaxis-z",          "Second axis of object [x,y,z]" },
-    { GIMP_PDB_FLOAT,    "rotationangle-x",       "Rotation about X axis in degrees" },
-    { GIMP_PDB_FLOAT,    "rotationangle-y",       "Rotation about Y axis in degrees" },
-    { GIMP_PDB_FLOAT,    "rotationangle-z",       "Rotation about Z axis in degrees" },
-    { GIMP_PDB_INT32,    "lighttype",             "Type of lightsource (0=point,1=directional,2=none)" },
-    { GIMP_PDB_COLOR,    "lightcolor",            "Lightsource color (r,g,b)" },
-    { GIMP_PDB_FLOAT,    "lightposition-x",       "Lightsource position (x,y,z)" },
-    { GIMP_PDB_FLOAT,    "lightposition-y",       "Lightsource position (x,y,z)" },
-    { GIMP_PDB_FLOAT,    "lightposition-z",       "Lightsource position (x,y,z)" },
-    { GIMP_PDB_FLOAT,    "lightdirection-x",      "Lightsource direction [x,y,z]" },
-    { GIMP_PDB_FLOAT,    "lightdirection-y",      "Lightsource direction [x,y,z]" },
-    { GIMP_PDB_FLOAT,    "lightdirection-z",      "Lightsource direction [x,y,z]" },
-    { GIMP_PDB_FLOAT,    "ambient_intensity",     "Material ambient intensity (0..1)" },
-    { GIMP_PDB_FLOAT,    "diffuse_intensity",     "Material diffuse intensity (0..1)" },
-    { GIMP_PDB_FLOAT,    "diffuse_reflectivity",  "Material diffuse reflectivity (0..1)" },
-    { GIMP_PDB_FLOAT,    "specular_reflectivity", "Material specular reflectivity (0..1)" },
-    { GIMP_PDB_FLOAT,    "highlight",             "Material highlight (0..->), note: it's expotential" },
-    { GIMP_PDB_INT32,    "antialiasing",          "Apply antialiasing (TRUE/FALSE)" },
-    { GIMP_PDB_INT32,    "tiled",                 "Tile source image (TRUE/FALSE)" },
-    { GIMP_PDB_INT32,    "newimage",              "Create a new image (TRUE/FALSE)" },
-    { GIMP_PDB_INT32,    "transparentbackground", "Make background transparent (TRUE/FALSE)" },
-    { GIMP_PDB_FLOAT,    "radius",                "Sphere/cylinder radius (only used when maptype=1 or 3)" },
-    { GIMP_PDB_FLOAT,    "x-scale",               "Box x size (0..->)" },
-    { GIMP_PDB_FLOAT,    "y-scale",               "Box y size (0..->)" },
-    { GIMP_PDB_FLOAT,    "z-scale",               "Box z size (0..->)"},
-    { GIMP_PDB_FLOAT,    "cylinder-length",       "Cylinder length (0..->)"},
-    { GIMP_PDB_DRAWABLE, "box-front-drawable",    "Box front face (set these to -1 if not used)" },
-    { GIMP_PDB_DRAWABLE, "box-back-drawable",     "Box back face" },
-    { GIMP_PDB_DRAWABLE, "box-top-drawable",      "Box top face" },
-    { GIMP_PDB_DRAWABLE, "box-bottom-drawable",   "Box bottom face" },
-    { GIMP_PDB_DRAWABLE, "box-left-drawable",     "Box left face" },
-    { GIMP_PDB_DRAWABLE, "box-right-drawable",    "Box right face" },
-    { GIMP_PDB_DRAWABLE, "cyl-top-drawable",      "Cylinder top face (set these to -1 if not used)" },
-    { GIMP_PDB_DRAWABLE, "cyl-bottom-drawable",   "Cylinder bottom face" }
+    { PICMAN_PDB_INT32,    "run-mode",              "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",                 "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",              "Input drawable" },
+    { PICMAN_PDB_INT32,    "maptype",               "Type of mapping (0=plane,1=sphere,2=box,3=cylinder)" },
+    { PICMAN_PDB_FLOAT,    "viewpoint-x",           "Position of viewpoint (x,y,z)" },
+    { PICMAN_PDB_FLOAT,    "viewpoint-y",           "Position of viewpoint (x,y,z)" },
+    { PICMAN_PDB_FLOAT,    "viewpoint-z",           "Position of viewpoint (x,y,z)" },
+    { PICMAN_PDB_FLOAT,    "position-x",            "Object position (x,y,z)" },
+    { PICMAN_PDB_FLOAT,    "position-y",            "Object position (x,y,z)" },
+    { PICMAN_PDB_FLOAT,    "position-z",            "Object position (x,y,z)" },
+    { PICMAN_PDB_FLOAT,    "firstaxis-x",           "First axis of object [x,y,z]" },
+    { PICMAN_PDB_FLOAT,    "firstaxis-y",           "First axis of object [x,y,z]" },
+    { PICMAN_PDB_FLOAT,    "firstaxis-z",           "First axis of object [x,y,z]" },
+    { PICMAN_PDB_FLOAT,    "secondaxis-x",          "Second axis of object [x,y,z]" },
+    { PICMAN_PDB_FLOAT,    "secondaxis-y",          "Second axis of object [x,y,z]" },
+    { PICMAN_PDB_FLOAT,    "secondaxis-z",          "Second axis of object [x,y,z]" },
+    { PICMAN_PDB_FLOAT,    "rotationangle-x",       "Rotation about X axis in degrees" },
+    { PICMAN_PDB_FLOAT,    "rotationangle-y",       "Rotation about Y axis in degrees" },
+    { PICMAN_PDB_FLOAT,    "rotationangle-z",       "Rotation about Z axis in degrees" },
+    { PICMAN_PDB_INT32,    "lighttype",             "Type of lightsource (0=point,1=directional,2=none)" },
+    { PICMAN_PDB_COLOR,    "lightcolor",            "Lightsource color (r,g,b)" },
+    { PICMAN_PDB_FLOAT,    "lightposition-x",       "Lightsource position (x,y,z)" },
+    { PICMAN_PDB_FLOAT,    "lightposition-y",       "Lightsource position (x,y,z)" },
+    { PICMAN_PDB_FLOAT,    "lightposition-z",       "Lightsource position (x,y,z)" },
+    { PICMAN_PDB_FLOAT,    "lightdirection-x",      "Lightsource direction [x,y,z]" },
+    { PICMAN_PDB_FLOAT,    "lightdirection-y",      "Lightsource direction [x,y,z]" },
+    { PICMAN_PDB_FLOAT,    "lightdirection-z",      "Lightsource direction [x,y,z]" },
+    { PICMAN_PDB_FLOAT,    "ambient_intensity",     "Material ambient intensity (0..1)" },
+    { PICMAN_PDB_FLOAT,    "diffuse_intensity",     "Material diffuse intensity (0..1)" },
+    { PICMAN_PDB_FLOAT,    "diffuse_reflectivity",  "Material diffuse reflectivity (0..1)" },
+    { PICMAN_PDB_FLOAT,    "specular_reflectivity", "Material specular reflectivity (0..1)" },
+    { PICMAN_PDB_FLOAT,    "highlight",             "Material highlight (0..->), note: it's expotential" },
+    { PICMAN_PDB_INT32,    "antialiasing",          "Apply antialiasing (TRUE/FALSE)" },
+    { PICMAN_PDB_INT32,    "tiled",                 "Tile source image (TRUE/FALSE)" },
+    { PICMAN_PDB_INT32,    "newimage",              "Create a new image (TRUE/FALSE)" },
+    { PICMAN_PDB_INT32,    "transparentbackground", "Make background transparent (TRUE/FALSE)" },
+    { PICMAN_PDB_FLOAT,    "radius",                "Sphere/cylinder radius (only used when maptype=1 or 3)" },
+    { PICMAN_PDB_FLOAT,    "x-scale",               "Box x size (0..->)" },
+    { PICMAN_PDB_FLOAT,    "y-scale",               "Box y size (0..->)" },
+    { PICMAN_PDB_FLOAT,    "z-scale",               "Box z size (0..->)"},
+    { PICMAN_PDB_FLOAT,    "cylinder-length",       "Cylinder length (0..->)"},
+    { PICMAN_PDB_DRAWABLE, "box-front-drawable",    "Box front face (set these to -1 if not used)" },
+    { PICMAN_PDB_DRAWABLE, "box-back-drawable",     "Box back face" },
+    { PICMAN_PDB_DRAWABLE, "box-top-drawable",      "Box top face" },
+    { PICMAN_PDB_DRAWABLE, "box-bottom-drawable",   "Box bottom face" },
+    { PICMAN_PDB_DRAWABLE, "box-left-drawable",     "Box left face" },
+    { PICMAN_PDB_DRAWABLE, "box-right-drawable",    "Box right face" },
+    { PICMAN_PDB_DRAWABLE, "cyl-top-drawable",      "Cylinder top face (set these to -1 if not used)" },
+    { PICMAN_PDB_DRAWABLE, "cyl-bottom-drawable",   "Cylinder bottom face" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Map the image to an object (plane, sphere, box or cylinder)"),
                           "No help yet",
                           "Tom Bech & Federico Mena Quintero",
@@ -192,7 +192,7 @@ query (void)
                           "Version 1.2.0, July 16 1998",
                           N_("Map _Object..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -200,21 +200,21 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode    run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode    run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint               i;
 
   run_mode = param[0].data.d_int32;
 
   INIT_I18N ();
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   *nreturn_vals = 1;
@@ -229,36 +229,36 @@ run (const gchar      *name,
   /* ========================== */
 
   image_id = param[1].data.d_int32;
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   switch (run_mode)
     {
-      case GIMP_RUN_INTERACTIVE:
+      case PICMAN_RUN_INTERACTIVE:
 
         /* Possibly retrieve data */
         /* ====================== */
 
-        gimp_get_data (PLUG_IN_PROC, &mapvals);
+        picman_get_data (PLUG_IN_PROC, &mapvals);
         check_drawables (drawable);
         if (main_dialog (drawable))
           {
             compute_image ();
 
-            gimp_set_data (PLUG_IN_PROC, &mapvals, sizeof (MapObjectValues));
+            picman_set_data (PLUG_IN_PROC, &mapvals, sizeof (MapObjectValues));
           }
         break;
 
-      case GIMP_RUN_WITH_LAST_VALS:
-        gimp_get_data (PLUG_IN_PROC, &mapvals);
+      case PICMAN_RUN_WITH_LAST_VALS:
+        picman_get_data (PLUG_IN_PROC, &mapvals);
         check_drawables (drawable);
         image_setup (drawable, FALSE);
         compute_image ();
         break;
 
-      case GIMP_RUN_NONINTERACTIVE:
+      case PICMAN_RUN_NONINTERACTIVE:
         if (nparams != 49)
           {
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
           }
         else
           {
@@ -317,13 +317,13 @@ run (const gchar      *name,
 
   values[0].data.d_status = status;
 
-  if (run_mode != GIMP_RUN_NONINTERACTIVE)
-    gimp_displays_flush ();
+  if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+    picman_displays_flush ();
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */

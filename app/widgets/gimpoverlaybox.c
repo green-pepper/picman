@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpOverlayBox
- * Copyright (C) 2009 Michael Natterer <mitch@gimp.org>
+ * PicmanOverlayBox
+ * Copyright (C) 2009 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,87 +24,87 @@
 
 #include "widgets-types.h"
 
-#include "gimpoverlaybox.h"
-#include "gimpoverlaychild.h"
+#include "picmanoverlaybox.h"
+#include "picmanoverlaychild.h"
 
 
 /*  local function prototypes  */
 
-static void        gimp_overlay_box_set_property        (GObject        *object,
+static void        picman_overlay_box_set_property        (GObject        *object,
                                                          guint           property_id,
                                                          const GValue   *value,
                                                          GParamSpec     *pspec);
-static void        gimp_overlay_box_get_property        (GObject        *object,
+static void        picman_overlay_box_get_property        (GObject        *object,
                                                          guint           property_id,
                                                          GValue         *value,
                                                          GParamSpec     *pspec);
 
-static void        gimp_overlay_box_realize             (GtkWidget      *widget);
-static void        gimp_overlay_box_unrealize           (GtkWidget      *widget);
-static void        gimp_overlay_box_size_request        (GtkWidget      *widget,
+static void        picman_overlay_box_realize             (GtkWidget      *widget);
+static void        picman_overlay_box_unrealize           (GtkWidget      *widget);
+static void        picman_overlay_box_size_request        (GtkWidget      *widget,
                                                          GtkRequisition *requisition);
-static void        gimp_overlay_box_size_allocate       (GtkWidget      *widget,
+static void        picman_overlay_box_size_allocate       (GtkWidget      *widget,
                                                          GtkAllocation  *allocation);
-static gboolean    gimp_overlay_box_expose              (GtkWidget      *widget,
+static gboolean    picman_overlay_box_expose              (GtkWidget      *widget,
                                                          GdkEventExpose *event);
-static gboolean    gimp_overlay_box_damage              (GtkWidget      *widget,
+static gboolean    picman_overlay_box_damage              (GtkWidget      *widget,
                                                          GdkEventExpose *event);
 
-static void        gimp_overlay_box_add                 (GtkContainer   *container,
+static void        picman_overlay_box_add                 (GtkContainer   *container,
                                                          GtkWidget      *widget);
-static void        gimp_overlay_box_remove              (GtkContainer   *container,
+static void        picman_overlay_box_remove              (GtkContainer   *container,
                                                          GtkWidget      *widget);
-static void        gimp_overlay_box_forall              (GtkContainer   *container,
+static void        picman_overlay_box_forall              (GtkContainer   *container,
                                                          gboolean        include_internals,
                                                          GtkCallback     callback,
                                                          gpointer        callback_data);
-static GType       gimp_overlay_box_child_type          (GtkContainer   *container);
+static GType       picman_overlay_box_child_type          (GtkContainer   *container);
 
-static GdkWindow * gimp_overlay_box_pick_embedded_child (GdkWindow      *window,
+static GdkWindow * picman_overlay_box_pick_embedded_child (GdkWindow      *window,
                                                          gdouble         x,
                                                          gdouble         y,
-                                                         GimpOverlayBox *box);
+                                                         PicmanOverlayBox *box);
 
 
-G_DEFINE_TYPE (GimpOverlayBox, gimp_overlay_box, GTK_TYPE_CONTAINER)
+G_DEFINE_TYPE (PicmanOverlayBox, picman_overlay_box, GTK_TYPE_CONTAINER)
 
-#define parent_class gimp_overlay_box_parent_class
+#define parent_class picman_overlay_box_parent_class
 
 
 static void
-gimp_overlay_box_class_init (GimpOverlayBoxClass *klass)
+picman_overlay_box_class_init (PicmanOverlayBoxClass *klass)
 {
   GObjectClass      *object_class    = G_OBJECT_CLASS (klass);
   GtkWidgetClass    *widget_class    = GTK_WIDGET_CLASS (klass);
   GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
-  object_class->set_property  = gimp_overlay_box_set_property;
-  object_class->get_property  = gimp_overlay_box_get_property;
+  object_class->set_property  = picman_overlay_box_set_property;
+  object_class->get_property  = picman_overlay_box_get_property;
 
-  widget_class->realize       = gimp_overlay_box_realize;
-  widget_class->unrealize     = gimp_overlay_box_unrealize;
-  widget_class->size_request  = gimp_overlay_box_size_request;
-  widget_class->size_allocate = gimp_overlay_box_size_allocate;
-  widget_class->expose_event  = gimp_overlay_box_expose;
+  widget_class->realize       = picman_overlay_box_realize;
+  widget_class->unrealize     = picman_overlay_box_unrealize;
+  widget_class->size_request  = picman_overlay_box_size_request;
+  widget_class->size_allocate = picman_overlay_box_size_allocate;
+  widget_class->expose_event  = picman_overlay_box_expose;
 
   g_signal_override_class_handler ("damage-event",
-                                   GIMP_TYPE_OVERLAY_BOX,
-                                   G_CALLBACK (gimp_overlay_box_damage));
+                                   PICMAN_TYPE_OVERLAY_BOX,
+                                   G_CALLBACK (picman_overlay_box_damage));
 
-  container_class->add        = gimp_overlay_box_add;
-  container_class->remove     = gimp_overlay_box_remove;
-  container_class->forall     = gimp_overlay_box_forall;
-  container_class->child_type = gimp_overlay_box_child_type;
+  container_class->add        = picman_overlay_box_add;
+  container_class->remove     = picman_overlay_box_remove;
+  container_class->forall     = picman_overlay_box_forall;
+  container_class->child_type = picman_overlay_box_child_type;
 }
 
 static void
-gimp_overlay_box_init (GimpOverlayBox *box)
+picman_overlay_box_init (PicmanOverlayBox *box)
 {
   gtk_widget_set_has_window (GTK_WIDGET (box), TRUE);
 }
 
 static void
-gimp_overlay_box_set_property (GObject      *object,
+picman_overlay_box_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
@@ -118,7 +118,7 @@ gimp_overlay_box_set_property (GObject      *object,
 }
 
 static void
-gimp_overlay_box_get_property (GObject    *object,
+picman_overlay_box_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
@@ -132,9 +132,9 @@ gimp_overlay_box_get_property (GObject    *object,
 }
 
 static void
-gimp_overlay_box_realize (GtkWidget *widget)
+picman_overlay_box_realize (GtkWidget *widget)
 {
-  GimpOverlayBox *box = GIMP_OVERLAY_BOX (widget);
+  PicmanOverlayBox *box = PICMAN_OVERLAY_BOX (widget);
   GtkAllocation   allocation;
   GdkWindowAttr   attributes;
   gint            attributes_mask;
@@ -162,7 +162,7 @@ gimp_overlay_box_realize (GtkWidget *widget)
   gdk_window_set_user_data (gtk_widget_get_window (widget), widget);
 
   g_signal_connect (gtk_widget_get_window (widget), "pick-embedded-child",
-                    G_CALLBACK (gimp_overlay_box_pick_embedded_child),
+                    G_CALLBACK (picman_overlay_box_pick_embedded_child),
                     widget);
 
   gtk_widget_style_attach (widget);
@@ -171,26 +171,26 @@ gimp_overlay_box_realize (GtkWidget *widget)
                             GTK_STATE_NORMAL);
 
   for (list = box->children; list; list = g_list_next (list))
-    gimp_overlay_child_realize (box, list->data);
+    picman_overlay_child_realize (box, list->data);
 }
 
 static void
-gimp_overlay_box_unrealize (GtkWidget *widget)
+picman_overlay_box_unrealize (GtkWidget *widget)
 {
-  GimpOverlayBox *box = GIMP_OVERLAY_BOX (widget);
+  PicmanOverlayBox *box = PICMAN_OVERLAY_BOX (widget);
   GList          *list;
 
   for (list = box->children; list; list = g_list_next (list))
-    gimp_overlay_child_unrealize (box, list->data);
+    picman_overlay_child_unrealize (box, list->data);
 
   GTK_WIDGET_CLASS (parent_class)->unrealize (widget);
 }
 
 static void
-gimp_overlay_box_size_request (GtkWidget      *widget,
+picman_overlay_box_size_request (GtkWidget      *widget,
                                GtkRequisition *requisition)
 {
-  GimpOverlayBox *box = GIMP_OVERLAY_BOX (widget);
+  PicmanOverlayBox *box = PICMAN_OVERLAY_BOX (widget);
   GList          *list;
   gint            border_width;
 
@@ -200,14 +200,14 @@ gimp_overlay_box_size_request (GtkWidget      *widget,
   requisition->height = 1 + 2 * border_width;
 
   for (list = box->children; list; list = g_list_next (list))
-    gimp_overlay_child_size_request (box, list->data);
+    picman_overlay_child_size_request (box, list->data);
 }
 
 static void
-gimp_overlay_box_size_allocate (GtkWidget     *widget,
+picman_overlay_box_size_allocate (GtkWidget     *widget,
                                 GtkAllocation *allocation)
 {
-  GimpOverlayBox *box = GIMP_OVERLAY_BOX (widget);
+  PicmanOverlayBox *box = PICMAN_OVERLAY_BOX (widget);
   GList          *list;
 
   gtk_widget_set_allocation (widget, allocation);
@@ -220,21 +220,21 @@ gimp_overlay_box_size_allocate (GtkWidget     *widget,
                             allocation->height);
 
   for (list = box->children; list; list = g_list_next (list))
-    gimp_overlay_child_size_allocate (box, list->data);
+    picman_overlay_child_size_allocate (box, list->data);
 }
 
 static gboolean
-gimp_overlay_box_expose (GtkWidget      *widget,
+picman_overlay_box_expose (GtkWidget      *widget,
                          GdkEventExpose *event)
 {
   if (gtk_widget_is_drawable (widget))
     {
-      GimpOverlayBox *box = GIMP_OVERLAY_BOX (widget);
+      PicmanOverlayBox *box = PICMAN_OVERLAY_BOX (widget);
       GList          *list;
 
       for (list = box->children; list; list = g_list_next (list))
         {
-          if (gimp_overlay_child_expose (box, list->data, event))
+          if (picman_overlay_child_expose (box, list->data, event))
             return FALSE;
         }
     }
@@ -243,15 +243,15 @@ gimp_overlay_box_expose (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_overlay_box_damage (GtkWidget      *widget,
+picman_overlay_box_damage (GtkWidget      *widget,
                          GdkEventExpose *event)
 {
-  GimpOverlayBox *box = GIMP_OVERLAY_BOX (widget);
+  PicmanOverlayBox *box = PICMAN_OVERLAY_BOX (widget);
   GList          *list;
 
   for (list = box->children; list; list = g_list_next (list))
     {
-      if (gimp_overlay_child_damage (box, list->data, event))
+      if (picman_overlay_child_damage (box, list->data, event))
         return FALSE;
     }
 
@@ -259,43 +259,43 @@ gimp_overlay_box_damage (GtkWidget      *widget,
 }
 
 static void
-gimp_overlay_box_add (GtkContainer *container,
+picman_overlay_box_add (GtkContainer *container,
                       GtkWidget    *widget)
 {
-  gimp_overlay_box_add_child (GIMP_OVERLAY_BOX (container), widget, 0.5, 0.5);
+  picman_overlay_box_add_child (PICMAN_OVERLAY_BOX (container), widget, 0.5, 0.5);
 }
 
 static void
-gimp_overlay_box_remove (GtkContainer *container,
+picman_overlay_box_remove (GtkContainer *container,
                          GtkWidget    *widget)
 {
-  GimpOverlayBox   *box   = GIMP_OVERLAY_BOX (container);
-  GimpOverlayChild *child = gimp_overlay_child_find (box, widget);
+  PicmanOverlayBox   *box   = PICMAN_OVERLAY_BOX (container);
+  PicmanOverlayChild *child = picman_overlay_child_find (box, widget);
 
   if (child)
     {
       if (gtk_widget_get_visible (widget))
-        gimp_overlay_child_invalidate (box, child);
+        picman_overlay_child_invalidate (box, child);
 
       box->children = g_list_remove (box->children, child);
 
-      gimp_overlay_child_free (box, child);
+      picman_overlay_child_free (box, child);
     }
 }
 
 static void
-gimp_overlay_box_forall (GtkContainer *container,
+picman_overlay_box_forall (GtkContainer *container,
                          gboolean      include_internals,
                          GtkCallback   callback,
                          gpointer      callback_data)
 {
-  GimpOverlayBox *box = GIMP_OVERLAY_BOX (container);
+  PicmanOverlayBox *box = PICMAN_OVERLAY_BOX (container);
   GList          *list;
 
   list = box->children;
   while (list)
     {
-      GimpOverlayChild *child = list->data;
+      PicmanOverlayChild *child = list->data;
 
       list = list->next;
 
@@ -304,24 +304,24 @@ gimp_overlay_box_forall (GtkContainer *container,
 }
 
 static GType
-gimp_overlay_box_child_type (GtkContainer *container)
+picman_overlay_box_child_type (GtkContainer *container)
 {
   return GTK_TYPE_WIDGET;
 }
 
 static GdkWindow *
-gimp_overlay_box_pick_embedded_child (GdkWindow      *parent,
+picman_overlay_box_pick_embedded_child (GdkWindow      *parent,
                                       gdouble         parent_x,
                                       gdouble         parent_y,
-                                      GimpOverlayBox *box)
+                                      PicmanOverlayBox *box)
 {
   GList *list;
 
   for (list = box->children; list; list = g_list_next (list))
     {
-      GimpOverlayChild *child = list->data;
+      PicmanOverlayChild *child = list->data;
 
-      if (gimp_overlay_child_pick (box, child, parent_x, parent_y))
+      if (picman_overlay_child_pick (box, child, parent_x, parent_y))
         return child->window;
     }
 
@@ -332,16 +332,16 @@ gimp_overlay_box_pick_embedded_child (GdkWindow      *parent,
 /*  public functions  */
 
 /**
- * gimp_overlay_box_new:
+ * picman_overlay_box_new:
  *
- * Creates a new #GimpOverlayBox widget.
+ * Creates a new #PicmanOverlayBox widget.
  *
- * Return value: a new #GimpOverlayBox widget
+ * Return value: a new #PicmanOverlayBox widget
  **/
 GtkWidget *
-gimp_overlay_box_new (void)
+picman_overlay_box_new (void)
 {
-  return g_object_new (GIMP_TYPE_OVERLAY_BOX, NULL);
+  return g_object_new (PICMAN_TYPE_OVERLAY_BOX, NULL);
 }
 
 static void
@@ -364,30 +364,30 @@ unset_double_buffered (GtkWidget *widget)
 }
 
 void
-gimp_overlay_box_add_child (GimpOverlayBox *box,
+picman_overlay_box_add_child (PicmanOverlayBox *box,
                             GtkWidget      *widget,
                             gdouble         xalign,
                             gdouble         yalign)
 {
-  GimpOverlayChild *child;
+  PicmanOverlayChild *child;
 
-  g_return_if_fail (GIMP_IS_OVERLAY_BOX (box));
+  g_return_if_fail (PICMAN_IS_OVERLAY_BOX (box));
   g_return_if_fail (GTK_IS_WIDGET (widget));
 
   unset_double_buffered (widget);
 
-  child = gimp_overlay_child_new (box, widget, xalign, yalign, 0.0, 0.7);
+  child = picman_overlay_child_new (box, widget, xalign, yalign, 0.0, 0.7);
 
   box->children = g_list_append (box->children, child);
 }
 
 void
-gimp_overlay_box_set_child_alignment (GimpOverlayBox *box,
+picman_overlay_box_set_child_alignment (PicmanOverlayBox *box,
                                       GtkWidget      *widget,
                                       gdouble         xalign,
                                       gdouble         yalign)
 {
-  GimpOverlayChild *child = gimp_overlay_child_find (box, widget);
+  PicmanOverlayChild *child = picman_overlay_child_find (box, widget);
 
   if (child)
     {
@@ -398,7 +398,7 @@ gimp_overlay_box_set_child_alignment (GimpOverlayBox *box,
           child->xalign != xalign ||
           child->yalign != yalign)
         {
-          gimp_overlay_child_invalidate (box, child);
+          picman_overlay_child_invalidate (box, child);
 
           child->has_position = FALSE;
           child->xalign       = xalign;
@@ -410,12 +410,12 @@ gimp_overlay_box_set_child_alignment (GimpOverlayBox *box,
 }
 
 void
-gimp_overlay_box_set_child_position (GimpOverlayBox *box,
+picman_overlay_box_set_child_position (PicmanOverlayBox *box,
                                      GtkWidget      *widget,
                                      gdouble         x,
                                      gdouble         y)
 {
-  GimpOverlayChild *child = gimp_overlay_child_find (box, widget);
+  PicmanOverlayChild *child = picman_overlay_child_find (box, widget);
 
   if (child)
     {
@@ -423,7 +423,7 @@ gimp_overlay_box_set_child_position (GimpOverlayBox *box,
           child->x != x         ||
           child->y != y)
         {
-          gimp_overlay_child_invalidate (box, child);
+          picman_overlay_child_invalidate (box, child);
 
           child->has_position = TRUE;
           child->x            = x;
@@ -435,17 +435,17 @@ gimp_overlay_box_set_child_position (GimpOverlayBox *box,
 }
 
 void
-gimp_overlay_box_set_child_angle (GimpOverlayBox *box,
+picman_overlay_box_set_child_angle (PicmanOverlayBox *box,
                                   GtkWidget      *widget,
                                   gdouble         angle)
 {
-  GimpOverlayChild *child = gimp_overlay_child_find (box, widget);
+  PicmanOverlayChild *child = picman_overlay_child_find (box, widget);
 
   if (child)
     {
       if (child->angle != angle)
         {
-          gimp_overlay_child_invalidate (box, child);
+          picman_overlay_child_invalidate (box, child);
 
           child->angle = angle;
 
@@ -455,11 +455,11 @@ gimp_overlay_box_set_child_angle (GimpOverlayBox *box,
 }
 
 void
-gimp_overlay_box_set_child_opacity (GimpOverlayBox *box,
+picman_overlay_box_set_child_opacity (PicmanOverlayBox *box,
                                     GtkWidget      *widget,
                                     gdouble         opacity)
 {
-  GimpOverlayChild *child = gimp_overlay_child_find (box, widget);
+  PicmanOverlayChild *child = picman_overlay_child_find (box, widget);
 
   if (child)
     {
@@ -475,8 +475,8 @@ gimp_overlay_box_set_child_opacity (GimpOverlayBox *box,
 }
 
 /**
- * gimp_overlay_box_scroll:
- * @box: the #GimpOverlayBox widget to scroll.
+ * picman_overlay_box_scroll:
+ * @box: the #PicmanOverlayBox widget to scroll.
  * @offset_x: the x scroll amount.
  * @offset_y: the y scroll amount.
  *
@@ -484,7 +484,7 @@ gimp_overlay_box_set_child_opacity (GimpOverlayBox *box,
  * is displayed immediately by calling gdk_window_process_updates().
  **/
 void
-gimp_overlay_box_scroll (GimpOverlayBox *box,
+picman_overlay_box_scroll (PicmanOverlayBox *box,
                          gint            offset_x,
                          gint            offset_y)
 {
@@ -492,7 +492,7 @@ gimp_overlay_box_scroll (GimpOverlayBox *box,
   GdkWindow *window;
   GList     *list;
 
-  g_return_if_fail (GIMP_IS_OVERLAY_BOX (box));
+  g_return_if_fail (PICMAN_IS_OVERLAY_BOX (box));
 
   widget = GTK_WIDGET (box);
   window = gtk_widget_get_window (widget);
@@ -500,9 +500,9 @@ gimp_overlay_box_scroll (GimpOverlayBox *box,
   /*  Undraw all overlays  */
   for (list = box->children; list; list = g_list_next (list))
     {
-      GimpOverlayChild *child = list->data;
+      PicmanOverlayChild *child = list->data;
 
-      gimp_overlay_child_invalidate (box, child);
+      picman_overlay_child_invalidate (box, child);
     }
 
   gdk_window_scroll (window, offset_x, offset_y);
@@ -510,9 +510,9 @@ gimp_overlay_box_scroll (GimpOverlayBox *box,
   /*  Re-draw all overlays  */
   for (list = box->children; list; list = g_list_next (list))
     {
-      GimpOverlayChild *child = list->data;
+      PicmanOverlayChild *child = list->data;
 
-      gimp_overlay_child_invalidate (box, child);
+      picman_overlay_child_invalidate (box, child);
     }
 
   /*  Make sure expose events are processed before scrolling again  */

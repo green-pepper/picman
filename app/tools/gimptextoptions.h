@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,42 +15,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEXT_OPTIONS_H__
-#define __GIMP_TEXT_OPTIONS_H__
+#ifndef __PICMAN_TEXT_OPTIONS_H__
+#define __PICMAN_TEXT_OPTIONS_H__
 
 
-#include "core/gimptooloptions.h"
+#include "core/picmantooloptions.h"
 
 
-#define GIMP_TYPE_TEXT_OPTIONS            (gimp_text_options_get_type ())
-#define GIMP_TEXT_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TEXT_OPTIONS, GimpTextOptions))
-#define GIMP_TEXT_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TEXT_OPTIONS, GimpTextOptionsClass))
-#define GIMP_IS_TEXT_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TEXT_OPTIONS))
-#define GIMP_IS_TEXT_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TEXT_OPTIONS))
-#define GIMP_TEXT_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TEXT_OPTIONS, GimpTextOptionsClass))
+#define PICMAN_TYPE_TEXT_OPTIONS            (picman_text_options_get_type ())
+#define PICMAN_TEXT_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TEXT_OPTIONS, PicmanTextOptions))
+#define PICMAN_TEXT_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TEXT_OPTIONS, PicmanTextOptionsClass))
+#define PICMAN_IS_TEXT_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TEXT_OPTIONS))
+#define PICMAN_IS_TEXT_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TEXT_OPTIONS))
+#define PICMAN_TEXT_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TEXT_OPTIONS, PicmanTextOptionsClass))
 
 
-typedef struct _GimpTextOptions      GimpTextOptions;
-typedef struct _GimpToolOptionsClass GimpTextOptionsClass;
+typedef struct _PicmanTextOptions      PicmanTextOptions;
+typedef struct _PicmanToolOptionsClass PicmanTextOptionsClass;
 
-struct _GimpTextOptions
+struct _PicmanTextOptions
 {
-  GimpToolOptions        tool_options;
+  PicmanToolOptions        tool_options;
 
-  GimpUnit               unit;
+  PicmanUnit               unit;
   gdouble                font_size;
   gboolean               antialias;
-  GimpTextHintStyle      hint_style;
+  PicmanTextHintStyle      hint_style;
   gchar                 *language;
-  GimpTextDirection      base_dir;
-  GimpTextJustification  justify;
+  PicmanTextDirection      base_dir;
+  PicmanTextJustification  justify;
   gdouble                indent;
   gdouble                line_spacing;
   gdouble                letter_spacing;
-  GimpTextBoxMode        box_mode;
+  PicmanTextBoxMode        box_mode;
 
-  GimpViewType           font_view_type;
-  GimpViewSize           font_view_size;
+  PicmanViewType           font_view_type;
+  PicmanViewSize           font_view_size;
 
   gboolean               use_editor;
 
@@ -59,22 +59,22 @@ struct _GimpTextOptions
 };
 
 
-GType       gimp_text_options_get_type     (void) G_GNUC_CONST;
+GType       picman_text_options_get_type     (void) G_GNUC_CONST;
 
-void        gimp_text_options_connect_text (GimpTextOptions *options,
-                                            GimpText        *text);
+void        picman_text_options_connect_text (PicmanTextOptions *options,
+                                            PicmanText        *text);
 
-GtkWidget * gimp_text_options_gui          (GimpToolOptions *tool_options);
+GtkWidget * picman_text_options_gui          (PicmanToolOptions *tool_options);
 
-GtkWidget * gimp_text_options_editor_new   (GtkWindow       *parent,
-                                            Gimp            *gimp,
-                                            GimpTextOptions *options,
-                                            GimpMenuFactory *menu_factory,
+GtkWidget * picman_text_options_editor_new   (GtkWindow       *parent,
+                                            Picman            *picman,
+                                            PicmanTextOptions *options,
+                                            PicmanMenuFactory *menu_factory,
                                             const gchar     *title,
-                                            GimpText        *text,
-                                            GimpTextBuffer  *text_buffer,
+                                            PicmanText        *text,
+                                            PicmanTextBuffer  *text_buffer,
                                             gdouble          xres,
                                             gdouble          yres);
 
 
-#endif /* __GIMP_TEXT_OPTIONS_H__ */
+#endif /* __PICMAN_TEXT_OPTIONS_H__ */

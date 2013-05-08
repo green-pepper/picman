@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewrendererpalette.c
- * Copyright (C) 2005 Michael Natterer <mitch@gimp.org>
+ * picmanviewrendererpalette.c
+ * Copyright (C) 2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,45 +25,45 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimppalette.h"
+#include "core/picmanpalette.h"
 
-#include "gimpviewrendererpalette.h"
+#include "picmanviewrendererpalette.h"
 
 
 #define COLUMNS 16
 
 
-static void   gimp_view_renderer_palette_finalize (GObject          *object);
+static void   picman_view_renderer_palette_finalize (GObject          *object);
 
-static void   gimp_view_renderer_palette_render   (GimpViewRenderer *renderer,
+static void   picman_view_renderer_palette_render   (PicmanViewRenderer *renderer,
                                                    GtkWidget        *widget);
 
 
-G_DEFINE_TYPE (GimpViewRendererPalette, gimp_view_renderer_palette,
-               GIMP_TYPE_VIEW_RENDERER)
+G_DEFINE_TYPE (PicmanViewRendererPalette, picman_view_renderer_palette,
+               PICMAN_TYPE_VIEW_RENDERER)
 
-#define parent_class gimp_view_renderer_palette_parent_class
+#define parent_class picman_view_renderer_palette_parent_class
 
 
 static void
-gimp_view_renderer_palette_class_init (GimpViewRendererPaletteClass *klass)
+picman_view_renderer_palette_class_init (PicmanViewRendererPaletteClass *klass)
 {
   GObjectClass          *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewRendererClass *renderer_class = GIMP_VIEW_RENDERER_CLASS (klass);
+  PicmanViewRendererClass *renderer_class = PICMAN_VIEW_RENDERER_CLASS (klass);
 
-  object_class->finalize = gimp_view_renderer_palette_finalize;
+  object_class->finalize = picman_view_renderer_palette_finalize;
 
-  renderer_class->render = gimp_view_renderer_palette_render;
+  renderer_class->render = picman_view_renderer_palette_render;
 }
 
 static void
-gimp_view_renderer_palette_init (GimpViewRendererPalette *renderer)
+picman_view_renderer_palette_init (PicmanViewRendererPalette *renderer)
 {
   renderer->cell_size = 4;
   renderer->draw_grid = FALSE;
@@ -71,17 +71,17 @@ gimp_view_renderer_palette_init (GimpViewRendererPalette *renderer)
 }
 
 static void
-gimp_view_renderer_palette_finalize (GObject *object)
+picman_view_renderer_palette_finalize (GObject *object)
 {
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
-gimp_view_renderer_palette_render (GimpViewRenderer *renderer,
+picman_view_renderer_palette_render (PicmanViewRenderer *renderer,
                                    GtkWidget        *widget)
 {
-  GimpViewRendererPalette *renderpal = GIMP_VIEW_RENDERER_PALETTE (renderer);
-  GimpPalette             *palette;
+  PicmanViewRendererPalette *renderpal = PICMAN_VIEW_RENDERER_PALETTE (renderer);
+  PicmanPalette             *palette;
   guchar                  *row;
   guchar                  *dest;
   GList                   *list;
@@ -90,16 +90,16 @@ gimp_view_renderer_palette_render (GimpViewRenderer *renderer,
   gint                     dest_stride;
   gint                     y;
 
-  palette = GIMP_PALETTE (renderer->viewable);
+  palette = PICMAN_PALETTE (renderer->viewable);
 
-  if (gimp_palette_get_n_colors (palette) == 0)
+  if (picman_palette_get_n_colors (palette) == 0)
     return;
 
   grid_width = renderpal->draw_grid ? 1 : 0;
 
   if (renderpal->cell_size > 0)
     {
-      gint n_columns = gimp_palette_get_columns (palette);
+      gint n_columns = picman_palette_get_columns (palette);
 
       if (n_columns > 0)
         cell_width = MAX ((gdouble) renderpal->cell_size,
@@ -110,7 +110,7 @@ gimp_view_renderer_palette_render (GimpViewRenderer *renderer,
     }
   else
     {
-      gint n_columns = gimp_palette_get_columns (palette);
+      gint n_columns = picman_palette_get_columns (palette);
 
       if (n_columns > 0)
         cell_width = ((gdouble) (renderer->width - grid_width) /
@@ -125,8 +125,8 @@ gimp_view_renderer_palette_render (GimpViewRenderer *renderer,
 
   renderpal->columns = (gdouble) (renderer->width - grid_width) / cell_width;
 
-  renderpal->rows = gimp_palette_get_n_colors (palette) / renderpal->columns;
-  if (gimp_palette_get_n_colors (palette) % renderpal->columns)
+  renderpal->rows = picman_palette_get_n_colors (palette) / renderpal->columns;
+  if (picman_palette_get_n_colors (palette) % renderpal->columns)
     renderpal->rows += 1;
 
   renderpal->cell_height = MAX (4, ((renderer->height - grid_width) /
@@ -136,7 +136,7 @@ gimp_view_renderer_palette_render (GimpViewRenderer *renderer,
     renderpal->cell_height = MIN (renderpal->cell_height,
                                   renderpal->cell_width);
 
-  list = gimp_palette_get_colors (palette);
+  list = picman_palette_get_colors (palette);
 
   if (! renderer->surface)
     renderer->surface = cairo_image_surface_create (CAIRO_FORMAT_RGB24,
@@ -170,12 +170,12 @@ gimp_view_renderer_palette_render (GimpViewRenderer *renderer,
                   if (list && n < renderpal->columns &&
                       renderer->width - x >= renderpal->cell_width)
                     {
-                      GimpPaletteEntry *entry = list->data;
+                      PicmanPaletteEntry *entry = list->data;
 
                       list = g_list_next (list);
                       n++;
 
-                      gimp_rgb_get_uchar (&entry->color, &r, &g, &b);
+                      picman_rgb_get_uchar (&entry->color, &r, &g, &b);
                     }
                   else
                     {
@@ -185,11 +185,11 @@ gimp_view_renderer_palette_render (GimpViewRenderer *renderer,
 
               if (renderpal->draw_grid && (x % renderpal->cell_width) == 0)
                 {
-                  GIMP_CAIRO_RGB24_SET_PIXEL (d, 0, 0, 0);
+                  PICMAN_CAIRO_RGB24_SET_PIXEL (d, 0, 0, 0);
                 }
               else
                 {
-                  GIMP_CAIRO_RGB24_SET_PIXEL (d, r, g, b);
+                  PICMAN_CAIRO_RGB24_SET_PIXEL (d, r, g, b);
                 }
             }
         }
@@ -217,29 +217,29 @@ gimp_view_renderer_palette_render (GimpViewRenderer *renderer,
 /*  public functions  */
 
 void
-gimp_view_renderer_palette_set_cell_size (GimpViewRendererPalette *renderer,
+picman_view_renderer_palette_set_cell_size (PicmanViewRendererPalette *renderer,
                                           gint                     cell_size)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER_PALETTE (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER_PALETTE (renderer));
 
   if (cell_size != renderer->cell_size)
     {
       renderer->cell_size = cell_size;
 
-      gimp_view_renderer_invalidate (GIMP_VIEW_RENDERER (renderer));
+      picman_view_renderer_invalidate (PICMAN_VIEW_RENDERER (renderer));
     }
 }
 
 void
-gimp_view_renderer_palette_set_draw_grid (GimpViewRendererPalette *renderer,
+picman_view_renderer_palette_set_draw_grid (PicmanViewRendererPalette *renderer,
                                           gboolean                 draw_grid)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER_PALETTE (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER_PALETTE (renderer));
 
   if (draw_grid != renderer->draw_grid)
     {
       renderer->draw_grid = draw_grid ? TRUE : FALSE;
 
-      gimp_view_renderer_invalidate (GIMP_VIEW_RENDERER (renderer));
+      picman_view_renderer_invalidate (PICMAN_VIEW_RENDERER (renderer));
     }
 }

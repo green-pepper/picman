@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_MEASURE_TOOL_H__
-#define __GIMP_MEASURE_TOOL_H__
+#ifndef __PICMAN_MEASURE_TOOL_H__
+#define __PICMAN_MEASURE_TOOL_H__
 
 
-#include "gimpdrawtool.h"
+#include "picmandrawtool.h"
 
 
 /*  possible measure functions  */
@@ -34,22 +34,22 @@ typedef enum
 } MeasureFunction;
 
 
-#define GIMP_TYPE_MEASURE_TOOL            (gimp_measure_tool_get_type ())
-#define GIMP_MEASURE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_MEASURE_TOOL, GimpMeasureTool))
-#define GIMP_MEASURE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_MEASURE_TOOL, GimpMeasureToolClass))
-#define GIMP_IS_MEASURE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_MEASURE_TOOL))
-#define GIMP_IS_MEASURE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_MEASURE_TOOL))
-#define GIMP_MEASURE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_MEASURE_TOOL, GimpMeasureToolClass))
+#define PICMAN_TYPE_MEASURE_TOOL            (picman_measure_tool_get_type ())
+#define PICMAN_MEASURE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_MEASURE_TOOL, PicmanMeasureTool))
+#define PICMAN_MEASURE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_MEASURE_TOOL, PicmanMeasureToolClass))
+#define PICMAN_IS_MEASURE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_MEASURE_TOOL))
+#define PICMAN_IS_MEASURE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_MEASURE_TOOL))
+#define PICMAN_MEASURE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_MEASURE_TOOL, PicmanMeasureToolClass))
 
-#define GIMP_MEASURE_TOOL_GET_OPTIONS(t)  (GIMP_MEASURE_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_MEASURE_TOOL_GET_OPTIONS(t)  (PICMAN_MEASURE_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpMeasureTool      GimpMeasureTool;
-typedef struct _GimpMeasureToolClass GimpMeasureToolClass;
+typedef struct _PicmanMeasureTool      PicmanMeasureTool;
+typedef struct _PicmanMeasureToolClass PicmanMeasureToolClass;
 
-struct _GimpMeasureTool
+struct _PicmanMeasureTool
 {
-  GimpDrawTool     parent_instance;
+  PicmanDrawTool     parent_instance;
 
   MeasureFunction  function;    /*  function we're performing  */
   gdouble          mouse_x;     /*  pointer x coordinate       */
@@ -64,7 +64,7 @@ struct _GimpMeasureTool
   gdouble          angle2;      /*  second angle               */
   gboolean         status_help; /*  help is currently in s.bar */
 
-  GimpCanvasItem  *handles[3];
+  PicmanCanvasItem  *handles[3];
 
   GtkWidget       *dialog;
   GtkWidget       *distance_label[2];
@@ -74,16 +74,16 @@ struct _GimpMeasureTool
   GtkWidget       *unit_label[4];
 };
 
-struct _GimpMeasureToolClass
+struct _PicmanMeasureToolClass
 {
-  GimpDrawToolClass parent_class;
+  PicmanDrawToolClass parent_class;
 };
 
 
-void    gimp_measure_tool_register (GimpToolRegisterCallback  callback,
+void    picman_measure_tool_register (PicmanToolRegisterCallback  callback,
                                     gpointer                  data);
 
-GType   gimp_measure_tool_get_type (void) G_GNUC_CONST;
+GType   picman_measure_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_MEASURE_TOOL_H__  */
+#endif  /*  __PICMAN_MEASURE_TOOL_H__  */

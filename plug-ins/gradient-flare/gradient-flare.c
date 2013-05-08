@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * GFlare plug-in -- lense flare effect by using custom gradients
@@ -18,12 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * A fair proportion of this code was taken from GIMP & Script-fu
+ * A fair proportion of this code was taken from PICMAN & Script-fu
  * copyrighted by Spencer Kimball and Peter Mattis, and from Gradient
  * Editor copyrighted by Federico Mena Quintero. (See copyright notice
- * below) Thanks for senior GIMP hackers!!
+ * below) Thanks for senior PICMAN hackers!!
  *
- * GIMP - The GNU Image Manipulation Program
+ * PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Gradient editor module copyight (C) 1996-1997 Federico Mena Quintero
@@ -44,10 +44,10 @@
 
 #include <glib-object.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 /* #define DEBUG */
 
@@ -57,19 +57,19 @@
 #define DEBUG_PRINT(X)
 #endif
 
-#define LUMINOSITY(PIX) (GIMP_RGB_LUMINANCE (PIX[0], PIX[1], PIX[2]) + 0.5)
+#define LUMINOSITY(PIX) (PICMAN_RGB_LUMINANCE (PIX[0], PIX[1], PIX[2]) + 0.5)
 
 #define RESPONSE_RESCAN     1
 
 #define PLUG_IN_PROC        "plug-in-gflare"
 #define PLUG_IN_BINARY      "gradient-flare"
-#define PLUG_IN_ROLE        "gimp-gradient-flare"
+#define PLUG_IN_ROLE        "picman-gradient-flare"
 
 #define GRADIENT_NAME_MAX   256
 #define GRADIENT_RESOLUTION 360
 
 #define GFLARE_NAME_MAX     256
-#define GFLARE_FILE_HEADER  "GIMP GFlare 0.25\n"
+#define GFLARE_FILE_HEADER  "PICMAN GFlare 0.25\n"
 #define SFLARE_NUM           30
 
 #define DLG_PREVIEW_WIDTH   256
@@ -375,9 +375,9 @@ typedef void (* QueryFunc) (GtkWidget *,
 static void    plugin_query (void);
 static void    plugin_run   (const gchar      *name,
                              gint              nparams,
-                             const GimpParam  *param,
+                             const PicmanParam  *param,
                              gint             *nreturn_vals,
-                             GimpParam       **return_vals);
+                             PicmanParam       **return_vals);
 
 static GFlare * gflare_new_with_default (const gchar *new_name);
 static GFlare * gflare_dup              (const GFlare      *src,
@@ -469,7 +469,7 @@ static void             gradient_cache_flush  (void);
 ***     Variables
 **/
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,         /* init_proc  */
   NULL,         /* quit_proc  */
@@ -555,10 +555,10 @@ static const gchar *gflare_menu_modes[] =
 };
 
 static gint32              image_ID;
-static GimpDrawable       *drawable;
+static PicmanDrawable       *drawable;
 static DrawableInfo        dinfo;
-static GimpPixelFetcher   *tk_read;
-static GimpPixelFetcher   *tk_write;
+static PicmanPixelFetcher   *tk_read;
+static PicmanPixelFetcher   *tk_write;
 static GFlareDialog       *dlg = NULL;
 static GFlareEditor       *ed = NULL;
 static GList              *gflares_list = NULL;
@@ -593,11 +593,11 @@ static void plugin_do_non_asupsample    (void);
 static void plugin_do_asupsample        (void);
 static void plugin_render_func          (gdouble       x,
                                          gdouble       y,
-                                         GimpRGB      *color,
+                                         PicmanRGB      *color,
                                          gpointer      data);
 static void plugin_put_pixel_func       (gint          ix,
                                          gint          iy,
-                                         GimpRGB      *color,
+                                         PicmanRGB      *color,
                                          gpointer      data);
 static void plugin_progress_func        (gint          y1,
                                          gint          y2,
@@ -777,58 +777,58 @@ MAIN ()
 void
 plugin_query (void)
 {
-  static const GimpParamDef args[]=
+  static const PicmanParamDef args[]=
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable" },
-    { GIMP_PDB_STRING,   "gflare-name", "The name of GFlare" },
-    { GIMP_PDB_INT32,    "xcenter",  "X coordinate of center of GFlare" },
-    { GIMP_PDB_INT32,    "ycenter",  "Y coordinate of center of GFlare" },
-    { GIMP_PDB_FLOAT,    "radius",   "Radius of GFlare (pixel)" },
-    { GIMP_PDB_FLOAT,    "rotation", "Rotation of GFlare (degree)" },
-    { GIMP_PDB_FLOAT,    "hue",      "Hue rotation of GFlare (degree)" },
-    { GIMP_PDB_FLOAT,    "vangle",   "Vector angle for second flares (degree)" },
-    { GIMP_PDB_FLOAT,    "vlength",  "Vector length for second flares (percentage to Radius)" },
-    { GIMP_PDB_INT32,    "use-asupsample", "Whether it uses or not adaptive supersampling while rendering (boolean)" },
-    { GIMP_PDB_INT32,    "asupsample-max-depth", "Max depth for adaptive supersampling"},
-    { GIMP_PDB_FLOAT,    "asupsample-threshold", "Threshold for adaptive supersampling"}
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable" },
+    { PICMAN_PDB_STRING,   "gflare-name", "The name of GFlare" },
+    { PICMAN_PDB_INT32,    "xcenter",  "X coordinate of center of GFlare" },
+    { PICMAN_PDB_INT32,    "ycenter",  "Y coordinate of center of GFlare" },
+    { PICMAN_PDB_FLOAT,    "radius",   "Radius of GFlare (pixel)" },
+    { PICMAN_PDB_FLOAT,    "rotation", "Rotation of GFlare (degree)" },
+    { PICMAN_PDB_FLOAT,    "hue",      "Hue rotation of GFlare (degree)" },
+    { PICMAN_PDB_FLOAT,    "vangle",   "Vector angle for second flares (degree)" },
+    { PICMAN_PDB_FLOAT,    "vlength",  "Vector length for second flares (percentage to Radius)" },
+    { PICMAN_PDB_INT32,    "use-asupsample", "Whether it uses or not adaptive supersampling while rendering (boolean)" },
+    { PICMAN_PDB_INT32,    "asupsample-max-depth", "Max depth for adaptive supersampling"},
+    { PICMAN_PDB_FLOAT,    "asupsample-threshold", "Threshold for adaptive supersampling"}
   };
 
   const gchar *help_string =
     "This plug-in produces a lense flare effect using custom gradients. "
     "In interactive call, the user can edit his/her own favorite lense flare "
     "(GFlare) and render it. Edited gflare is saved automatically to "
-    "the folder in gflare-path, if it is defined in gimprc. "
+    "the folder in gflare-path, if it is defined in picmanrc. "
     "In non-interactive call, the user can only render one of GFlare "
     "which has been stored in gflare-path already.";
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Produce a lense flare effect using gradients"),
                           help_string,
                           "Eiichi Takamori",
-                          "Eiichi Takamori, and a lot of GIMP people",
+                          "Eiichi Takamori, and a lot of PICMAN people",
                           "1997",
                           N_("_Gradient Flare..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC,
+  picman_plugin_menu_register (PLUG_IN_PROC,
                              "<Image>/Filters/Light and Shadow/Light");
 }
 
 void
 plugin_run (const gchar      *name,
             gint              nparams,
-            const GimpParam  *param,
+            const PicmanParam  *param,
             gint             *nreturn_vals,
-            GimpParam       **return_vals)
+            PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gchar             *path;
 
   /* Initialize */
@@ -839,7 +839,7 @@ plugin_run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*
@@ -847,13 +847,13 @@ plugin_run (const gchar      *name,
    */
 
   image_ID = param[1].data.d_image;
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
-  dinfo.is_color  = gimp_drawable_is_rgb (drawable->drawable_id);
-  dinfo.has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
-  gimp_drawable_mask_bounds (drawable->drawable_id, &dinfo.x1, &dinfo.y1,
+  drawable = picman_drawable_get (param[2].data.d_drawable);
+  dinfo.is_color  = picman_drawable_is_rgb (drawable->drawable_id);
+  dinfo.has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
+  picman_drawable_mask_bounds (drawable->drawable_id, &dinfo.x1, &dinfo.y1,
                              &dinfo.x2, &dinfo.y2);
-  dinfo.tile_width = gimp_tile_width ();
-  dinfo.tile_height = gimp_tile_height ();
+  dinfo.tile_width = picman_tile_width ();
+  dinfo.tile_height = picman_tile_height ();
 
   /*
    *    Start gradient caching
@@ -862,10 +862,10 @@ plugin_run (const gchar      *name,
   gradient_init ();
 
   /*
-   *    Parse gflare path from gimprc and load gflares
+   *    Parse gflare path from picmanrc and load gflares
    */
 
-  path = gimp_gimprc_query ("gflare-path");
+  path = picman_picmanrc_query ("gflare-path");
   if (path)
     {
       gflare_path = g_filename_from_utf8 (path, -1, NULL, NULL, NULL);
@@ -873,46 +873,46 @@ plugin_run (const gchar      *name,
     }
   else
     {
-      gchar *gimprc    = gimp_personal_rc_file ("gimprc");
-      gchar *full_path = gimp_config_build_data_path ("gflare");
+      gchar *picmanrc    = picman_personal_rc_file ("picmanrc");
+      gchar *full_path = picman_config_build_data_path ("gflare");
       gchar *esc_path  = g_strescape (full_path, NULL);
       g_free (full_path);
 
-      g_message (_("No %s in gimprc:\n"
+      g_message (_("No %s in picmanrc:\n"
                    "You need to add an entry like\n"
                    "(%s \"%s\")\n"
                    "to your %s file."),
                  "gflare-path", "gflare-path",
-                 esc_path, gimp_filename_to_utf8 (gimprc));
+                 esc_path, picman_filename_to_utf8 (picmanrc));
 
-      g_free (gimprc);
+      g_free (picmanrc);
       g_free (esc_path);
     }
 
   gflares_list_load_all ();
 
-  gimp_tile_cache_ntiles (drawable->width / gimp_tile_width () + 2);
+  picman_tile_cache_ntiles (drawable->width / picman_tile_width () + 2);
 
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
 
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &pvals);
+      picman_get_data (PLUG_IN_PROC, &pvals);
 
       /*  First acquire information with a dialog  */
       if (! dlg_run ())
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams != 14)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -929,40 +929,40 @@ plugin_run (const gchar      *name,
           pvals.asupsample_threshold = param[13].data.d_float;
 
           if (pvals.radius <= 0)
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &pvals);
+      picman_get_data (PLUG_IN_PROC, &pvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init (_("Gradient Flare"));
+          picman_progress_init (_("Gradient Flare"));
           plugin_do ();
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &pvals, sizeof (PluginValues));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &pvals, sizeof (PluginValues));
         }
       else
         {
-          status        = GIMP_PDB_EXECUTION_ERROR;
+          status        = PICMAN_PDB_EXECUTION_ERROR;
           *nreturn_vals = 2;
-          values[1].type          = GIMP_PDB_STRING;
+          values[1].type          = PICMAN_PDB_STRING;
           values[1].data.d_string = _("Cannot operate on indexed color images.");
         }
     }
@@ -973,7 +973,7 @@ plugin_run (const gchar      *name,
    *    Deinitialization
    */
   gradient_free ();
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static void
@@ -1002,12 +1002,12 @@ plugin_do (void)
   else
     plugin_do_non_asupsample ();
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
   /* Clean up */
   calc_deinit ();
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, dinfo.x1, dinfo.y1,
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, dinfo.x1, dinfo.y1,
                         (dinfo.x2 - dinfo.x1), (dinfo.y2 - dinfo.y1));
 }
 
@@ -1016,7 +1016,7 @@ plugin_do (void)
 static void
 plugin_do_non_asupsample (void)
 {
-  GimpPixelRgn  src_rgn, dest_rgn;
+  PicmanPixelRgn  src_rgn, dest_rgn;
   gpointer      pr;
   gint          width, height;
   gint          progress, max_progress;
@@ -1027,13 +1027,13 @@ plugin_do_non_asupsample (void)
   progress = 0;
   max_progress = width * height;
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        dinfo.x1, dinfo.y1, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        dinfo.x1, dinfo.y1, width, height, TRUE, TRUE);
 
-  for (pr = gimp_pixel_rgns_register (2, &src_rgn, &dest_rgn);
-       pr != NULL; pr = gimp_pixel_rgns_process (pr))
+  for (pr = picman_pixel_rgns_register (2, &src_rgn, &dest_rgn);
+       pr != NULL; pr = picman_pixel_rgns_process (pr))
     {
       const guchar *src_row  = src_rgn.data;
       guchar       *dest_row = dest_rgn.data;
@@ -1081,19 +1081,19 @@ plugin_do_non_asupsample (void)
 
       /* Update progress */
       progress += src_rgn.w * src_rgn.h;
-      gimp_progress_update ((double) progress / (double) max_progress);
+      picman_progress_update ((double) progress / (double) max_progress);
     }
 }
 
 static void
 plugin_do_asupsample (void)
 {
-  tk_read  = gimp_pixel_fetcher_new (drawable, FALSE);
-  gimp_pixel_fetcher_set_edge_mode (tk_read, GIMP_PIXEL_FETCHER_EDGE_BLACK);
+  tk_read  = picman_pixel_fetcher_new (drawable, FALSE);
+  picman_pixel_fetcher_set_edge_mode (tk_read, PICMAN_PIXEL_FETCHER_EDGE_BLACK);
 
-  tk_write = gimp_pixel_fetcher_new (drawable, TRUE);
+  tk_write = picman_pixel_fetcher_new (drawable, TRUE);
 
-  gimp_adaptive_supersample_area (dinfo.x1, dinfo.y1,
+  picman_adaptive_supersample_area (dinfo.x1, dinfo.y1,
                                   dinfo.x2 - 1, dinfo.y2 - 1,
                                   pvals.asupsample_max_depth,
                                   pvals.asupsample_threshold,
@@ -1104,8 +1104,8 @@ plugin_do_asupsample (void)
                                   plugin_progress_func,
                                   NULL);
 
-  gimp_pixel_fetcher_destroy (tk_write);
-  gimp_pixel_fetcher_destroy (tk_read);
+  picman_pixel_fetcher_destroy (tk_write);
+  picman_pixel_fetcher_destroy (tk_read);
 }
 
 /*
@@ -1118,7 +1118,7 @@ plugin_do_asupsample (void)
 static void
 plugin_render_func (gdouble   x,
                     gdouble   y,
-                    GimpRGB  *color,
+                    PicmanRGB  *color,
                     gpointer  data)
 {
   guchar        src_pix[4];
@@ -1132,7 +1132,7 @@ plugin_render_func (gdouble   x,
   ix = floor (x + 0.5);
   iy = floor (y + 0.5);
 
-  gimp_pixel_fetcher_get_pixel (tk_read, ix, iy, src);
+  picman_pixel_fetcher_get_pixel (tk_read, ix, iy, src);
 
   for (b = 0; b < 3; b++)
     src_pix[b] = dinfo.is_color ? src[b] : src[0];
@@ -1149,7 +1149,7 @@ plugin_render_func (gdouble   x,
 static void
 plugin_put_pixel_func (gint      ix,
                        gint      iy,
-                       GimpRGB  *color,
+                       PicmanRGB  *color,
                        gpointer  data)
 {
   guchar dest[4];
@@ -1162,13 +1162,13 @@ plugin_put_pixel_func (gint      ix,
     }
   else
     {
-      dest[0] = gimp_rgb_luminance_uchar (color);
+      dest[0] = picman_rgb_luminance_uchar (color);
     }
 
   if (dinfo.has_alpha)
     dest[drawable->bpp - 1] = color->a * 255;
 
-  gimp_pixel_fetcher_put_pixel (tk_write, ix, iy, dest);
+  picman_pixel_fetcher_put_pixel (tk_write, ix, iy, dest);
 }
 
 static void
@@ -1177,7 +1177,7 @@ plugin_progress_func (gint     y1,
                       gint     curr_y,
                       gpointer data)
 {
-  gimp_progress_update ((double) curr_y / (double) (y2 - y1));
+  picman_progress_update ((double) curr_y / (double) (y2 - y1));
 }
 
 /*************************************************************************/
@@ -1188,7 +1188,7 @@ plugin_progress_func (gint     y1,
 
 /*
  *      These code are more or less based on Quartic's gradient.c,
- *      other gimp sources, and script-fu.
+ *      other picman sources, and script-fu.
  */
 
 static GFlare *
@@ -1263,7 +1263,7 @@ gflare_load (const gchar *filename,
   if (!fp)
     {
       g_message (_("Failed to open GFlare file '%s': %s"),
-                  gimp_filename_to_utf8 (filename), g_strerror (errno));
+                  picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
@@ -1271,7 +1271,7 @@ gflare_load (const gchar *filename,
       || strcmp (header, GFLARE_FILE_HEADER) != 0)
     {
       g_warning (_("'%s' is not a valid GFlare file."),
-                  gimp_filename_to_utf8 (filename));
+                  picman_filename_to_utf8 (filename));
       fclose (fp);
       return NULL;
     }
@@ -1442,22 +1442,22 @@ gflare_save (GFlare *gflare)
         {
           if (! message_ok)
             {
-              gchar *gimprc      = gimp_personal_rc_file ("gimprc");
-              gchar *dir         = gimp_personal_rc_file ("gflare");
+              gchar *picmanrc      = picman_personal_rc_file ("picmanrc");
+              gchar *dir         = picman_personal_rc_file ("gflare");
               gchar *gflare_dir;
 
               gflare_dir =
-                g_strescape ("${gimp_dir}" G_DIR_SEPARATOR_S "gflare", NULL);
+                g_strescape ("${picman_dir}" G_DIR_SEPARATOR_S "gflare", NULL);
 
               g_message (_("GFlare '%s' is not saved. If you add a new entry "
                            "in '%s', like:\n"
                            "(gflare-path \"%s\")\n"
                            "and make a folder '%s', then you can save "
                            "your own GFlares into that folder."),
-                         gflare->name, gimprc, gflare_dir,
-                         gimp_filename_to_utf8 (dir));
+                         gflare->name, picmanrc, gflare_dir,
+                         picman_filename_to_utf8 (dir));
 
-              g_free (gimprc);
+              g_free (picmanrc);
               g_free (gflare_dir);
               g_free (dir);
 
@@ -1467,12 +1467,12 @@ gflare_save (GFlare *gflare)
           return;
         }
 
-      list = gimp_path_parse (gflare_path, 256, FALSE, NULL);
-      path = gimp_path_get_user_writable_dir (list);
-      gimp_path_free (list);
+      list = picman_path_parse (gflare_path, 256, FALSE, NULL);
+      path = picman_path_get_user_writable_dir (list);
+      picman_path_free (list);
 
       if (! path)
-        path = g_strdup (gimp_directory ());
+        path = g_strdup (picman_directory ());
 
       gflare->filename = g_build_filename (path, gflare->name, NULL);
 
@@ -1483,7 +1483,7 @@ gflare_save (GFlare *gflare)
   if (!fp)
     {
       g_message (_("Failed to write GFlare file '%s': %s"),
-                  gimp_filename_to_utf8 (gflare->filename), g_strerror (errno));
+                  picman_filename_to_utf8 (gflare->filename), g_strerror (errno));
       return;
     }
 
@@ -1634,7 +1634,7 @@ gflares_list_remove (GFlare *gflare)
  * Load all gflares, which are founded in gflare-path-list, into gflares_list.
  */
 static void
-gflares_list_load_one (const GimpDatafileData *file_data,
+gflares_list_load_one (const PicmanDatafileData *file_data,
                        gpointer                user_data)
 {
   GFlare *gflare;
@@ -1651,7 +1651,7 @@ gflares_list_load_all (void)
   /*  Make sure to clear any existing gflares  */
   gflares_list_free_all ();
 
-  gimp_datafiles_read_directories (gflare_path, G_FILE_TEST_EXISTS,
+  picman_datafiles_read_directories (gflare_path, G_FILE_TEST_EXISTS,
                                    gflares_list_load_one,
                                    NULL);
 }
@@ -1862,9 +1862,9 @@ calc_sample_one_gradient (void)
                       g = gradient[j*4+1];
                       b = gradient[j*4+2];
 
-                      gimp_rgb_to_hsv_int (&r, &g, &b);
+                      picman_rgb_to_hsv_int (&r, &g, &b);
                       r = (r + hue) % 256;
-                      gimp_hsv_to_rgb_int (&r, &g, &b);
+                      picman_hsv_to_rgb_int (&r, &g, &b);
 
                       gradient[j*4] = r;
                       gradient[j*4+1] = g;
@@ -2332,7 +2332,7 @@ dlg_run (void)
   GtkWidget *notebook;
   gboolean   run = FALSE;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
   /*
    *    Init Main Dialog
@@ -2353,9 +2353,9 @@ dlg_run (void)
    *    Dialog Shell
    */
 
-  shell = dlg->shell = gimp_dialog_new (_("Gradient Flare"), PLUG_IN_ROLE,
+  shell = dlg->shell = picman_dialog_new (_("Gradient Flare"), PLUG_IN_ROLE,
                                         NULL, 0,
-                                        gimp_standard_help_func, PLUG_IN_PROC,
+                                        picman_standard_help_func, PLUG_IN_PROC,
 
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                         GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -2439,7 +2439,7 @@ dlg_run (void)
   dlg->init = FALSE;
   dlg_preview_update ();
 
-  if (gimp_dialog_run (GIMP_DIALOG (shell)) == GTK_RESPONSE_OK)
+  if (picman_dialog_run (PICMAN_DIALOG (shell)) == GTK_RESPONSE_OK)
     {
       gflare_name_copy (pvals.gflare_name, dlg->gflare->name);
 
@@ -2570,13 +2570,13 @@ dlg_preview_handle_event (GtkWidget *widget,
           if (x != pvals.xcenter)
             {
               pvals.xcenter = x;
-              gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (dlg->sizeentry),
+              picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (dlg->sizeentry),
                                           0, x);
             }
           if (y != pvals.ycenter)
             {
               pvals.ycenter = y;
-              gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (dlg->sizeentry),
+              picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (dlg->sizeentry),
                                           1, y);
             }
           dlg_preview_update ();
@@ -2625,7 +2625,7 @@ dlg_preview_render_func (Preview  *preview,
                          gint      y,
                          gpointer  data)
 {
-  GimpPixelRgn  srcPR;
+  PicmanPixelRgn  srcPR;
   gint          x;
   gint          dx, dy;         /* drawable x, y */
   guchar       *src_row, *src;
@@ -2642,9 +2642,9 @@ dlg_preview_render_func (Preview  *preview,
     }
 
   src_row = g_new (guchar, drawable->bpp * drawable->width);
-  gimp_pixel_rgn_init (&srcPR, drawable,
+  picman_pixel_rgn_init (&srcPR, drawable,
                        0, 0, drawable->width, drawable->height, FALSE, FALSE);
-  gimp_pixel_rgn_get_row (&srcPR, src_row, 0, dy, drawable->width);
+  picman_pixel_rgn_get_row (&srcPR, src_row, 0, dy, drawable->width);
 
   for (x = 0; x < DLG_PREVIEW_HEIGHT; x++)
     {
@@ -2709,27 +2709,27 @@ dlg_make_page_settings (GFlareDialog *dlg,
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
 
-  frame = gimp_frame_new (_("Center"));
+  frame = picman_frame_new (_("Center"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  gimp_image_get_resolution (image_ID, &xres, &yres);
+  picman_image_get_resolution (image_ID, &xres, &yres);
 
   center = dlg->sizeentry =
-    gimp_coordinates_new (gimp_image_get_unit (image_ID), "%a",
-                          TRUE, TRUE, 75, GIMP_SIZE_ENTRY_UPDATE_SIZE,
+    picman_coordinates_new (picman_image_get_unit (image_ID), "%a",
+                          TRUE, TRUE, 75, PICMAN_SIZE_ENTRY_UPDATE_SIZE,
 
                           FALSE, FALSE,
 
                           _("_X:"), pvals.xcenter, xres,
-                          -GIMP_MAX_IMAGE_SIZE, GIMP_MAX_IMAGE_SIZE,
-                          0, gimp_drawable_width (drawable->drawable_id),
+                          -PICMAN_MAX_IMAGE_SIZE, PICMAN_MAX_IMAGE_SIZE,
+                          0, picman_drawable_width (drawable->drawable_id),
 
                           _("_Y:"), pvals.ycenter, yres,
-                          -GIMP_MAX_IMAGE_SIZE, GIMP_MAX_IMAGE_SIZE,
-                          0, gimp_drawable_height (drawable->drawable_id));
+                          -PICMAN_MAX_IMAGE_SIZE, PICMAN_MAX_IMAGE_SIZE,
+                          0, picman_drawable_height (drawable->drawable_id));
 
-  chain = GTK_WIDGET (GIMP_COORDINATES_CHAINBUTTON (center));
+  chain = GTK_WIDGET (PICMAN_COORDINATES_CHAINBUTTON (center));
 
   gtk_container_add (GTK_CONTAINER (frame), center);
   g_signal_connect (center, "value-changed",
@@ -2741,7 +2741,7 @@ dlg_make_page_settings (GFlareDialog *dlg,
   gtk_widget_hide (chain);
   gtk_widget_show (center);
 
-  frame = gimp_frame_new (_("Parameters"));
+  frame = picman_frame_new (_("Parameters"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -2753,62 +2753,62 @@ dlg_make_page_settings (GFlareDialog *dlg,
 
   row = 0;
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("_Radius:"), SCALE_WIDTH, 6,
                               pvals.radius, 0.0, drawable->width / 2,
                               1.0, 10.0, 1,
-                              FALSE, 0.0, GIMP_MAX_IMAGE_SIZE,
+                              FALSE, 0.0, PICMAN_MAX_IMAGE_SIZE,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pvals.radius);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (dlg_preview_update),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Ro_tation:"), SCALE_WIDTH, 6,
                               pvals.rotation, -180.0, 180.0, 1.0, 15.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pvals.rotation);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (dlg_preview_update),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("_Hue rotation:"), SCALE_WIDTH, 6,
                               pvals.hue, -180.0, 180.0, 1.0, 15.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pvals.hue);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (dlg_preview_update),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Vector _angle:"), SCALE_WIDTH, 6,
                               pvals.vangle, 0.0, 359.0, 1.0, 15.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pvals.vangle);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (dlg_preview_update),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Vector _length:"), SCALE_WIDTH, 6,
                               pvals.vlength, 1, 1000, 1.0, 10.0, 1,
-                              FALSE, 1, GIMP_MAX_IMAGE_SIZE,
+                              FALSE, 1, PICMAN_MAX_IMAGE_SIZE,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pvals.vlength);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (dlg_preview_update),
@@ -2816,11 +2816,11 @@ dlg_make_page_settings (GFlareDialog *dlg,
 
   /**
   ***   Asupsample settings
-  ***   This code is stolen from gimp-0.99.x/app/blend.c
+  ***   This code is stolen from picman-0.99.x/app/blend.c
   **/
 
   /*  asupsample frame */
-  frame = dlg->asupsample_frame = gimp_frame_new (NULL);
+  frame = dlg->asupsample_frame = picman_frame_new (NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -2837,31 +2837,31 @@ dlg_make_page_settings (GFlareDialog *dlg,
   gtk_widget_show (asup_table);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &pvals.use_asupsample);
 
   g_object_bind_property (button,     "active",
                           asup_table, "sensitive",
                           G_BINDING_SYNC_CREATE);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (asup_table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (asup_table), 0, 0,
                               _("_Max depth:"), -1, 4,
                               pvals.asupsample_max_depth,
                               1.0, 10.0, 1.0, 1.0, 0,
                               TRUE, 0.0, 0.0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &pvals.asupsample_max_depth);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (asup_table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (asup_table), 0, 1,
                               _("_Threshold"), -1, 4,
                               pvals.asupsample_threshold,
                               0.0, 4.0, 0.01, 0.01, 2,
                               TRUE, 0.0, 0.0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pvals.asupsample_threshold);
 
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), main_vbox,
@@ -2874,8 +2874,8 @@ dlg_position_entry_callback (GtkWidget *widget, gpointer data)
 {
   gint x, y;
 
-  x = RINT (gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (widget), 0));
-  y = RINT (gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (widget), 1));
+  x = RINT (picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (widget), 0));
+  y = RINT (picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (widget), 1));
 
   DEBUG_PRINT (("dlg_position_entry_callback\n"));
 
@@ -2893,7 +2893,7 @@ static void
 dlg_update_preview_callback (GtkWidget *widget,
                              gpointer   data)
 {
-  gimp_toggle_button_update (widget, data);
+  picman_toggle_button_update (widget, data);
 
   dlg_preview_update ();
 }
@@ -3057,9 +3057,9 @@ dlg_selector_new_callback (GtkWidget *widget,
 {
   GtkWidget *query_box;
 
-  query_box = gimp_query_string_box (_("New Gradient Flare"),
+  query_box = picman_query_string_box (_("New Gradient Flare"),
                                      gtk_widget_get_toplevel (widget),
-                                     gimp_standard_help_func, PLUG_IN_PROC,
+                                     picman_standard_help_func, PLUG_IN_PROC,
                                      _("Enter a name for the new GFlare"),
                                      _("Unnamed"),
                                      NULL, NULL,
@@ -3136,9 +3136,9 @@ dlg_selector_copy_callback (GtkWidget *widget,
 
   name = g_strdup_printf ("%s copy", dlg->gflare->name);
 
-  query_box = gimp_query_string_box (_("Copy Gradient Flare"),
+  query_box = picman_query_string_box (_("Copy Gradient Flare"),
                                      gtk_widget_get_toplevel (widget),
-                                     gimp_standard_help_func, PLUG_IN_PROC,
+                                     picman_standard_help_func, PLUG_IN_PROC,
                                      _("Enter a name for the copied GFlare"),
                                      name,
                                      NULL, NULL,
@@ -3202,9 +3202,9 @@ dlg_selector_delete_callback (GtkWidget *widget,
                            "\"%s\" from the list and from disk?"),
                          dlg->gflare->name);
 
-  dialog = gimp_query_boolean_box (_("Delete Gradient Flare"),
+  dialog = picman_query_boolean_box (_("Delete Gradient Flare"),
                                    dlg->shell,
-                                   gimp_standard_help_func, PLUG_IN_PROC,
+                                   picman_standard_help_func, PLUG_IN_PROC,
                                    GTK_STOCK_DIALOG_QUESTION,
                                    str,
                                    GTK_STOCK_DELETE, GTK_STOCK_CANCEL,
@@ -3315,9 +3315,9 @@ ed_run (GtkWindow            *parent,
    *    Dialog Shell
    */
   ed->shell =
-    shell = gimp_dialog_new (_("Gradient Flare Editor"), PLUG_IN_ROLE,
+    shell = picman_dialog_new (_("Gradient Flare Editor"), PLUG_IN_ROLE,
                              GTK_WIDGET (parent), 0,
-                             gimp_standard_help_func, PLUG_IN_PROC,
+                             picman_standard_help_func, PLUG_IN_PROC,
 
                              _("Rescan Gradients"), RESPONSE_RESCAN,
                              GTK_STOCK_CANCEL,      GTK_RESPONSE_CANCEL,
@@ -3444,7 +3444,7 @@ ed_make_page_general (GFlareEditor *ed,
 
   /*  Glow  */
 
-  frame = gimp_frame_new (_("Glow Paint Options"));
+  frame = picman_frame_new (_("Glow Paint Options"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -3454,25 +3454,25 @@ ed_make_page_general (GFlareEditor *ed,
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("Opacity:"), SCALE_WIDTH, 6,
                               gflare->glow_opacity, 0.0, 100.0, 1.0, 10.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->glow_opacity);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
                     NULL);
 
   combo = ed_mode_menu_new (&gflare->glow_mode);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("Paint mode:"), 0.0, 0.5, combo, 1, FALSE);
 
   /*  Rays  */
 
-  frame = gimp_frame_new (_("Rays Paint Options"));
+  frame = picman_frame_new (_("Rays Paint Options"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -3482,25 +3482,25 @@ ed_make_page_general (GFlareEditor *ed,
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("Opacity:"), SCALE_WIDTH, 6,
                               gflare->rays_opacity, 0.0, 100.0, 1.0, 10.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->rays_opacity);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
                     NULL);
 
   combo = ed_mode_menu_new (&gflare->rays_mode);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("Paint mode:"), 0.0, 0.5, combo, 1, FALSE);
 
   /*  Rays  */
 
-  frame = gimp_frame_new (_("Second Flares Paint Options"));
+  frame = picman_frame_new (_("Second Flares Paint Options"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -3510,20 +3510,20 @@ ed_make_page_general (GFlareEditor *ed,
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("Opacity:"), SCALE_WIDTH, 6,
                               gflare->sflare_opacity, 0.0, 100.0, 1.0, 10.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->sflare_opacity);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
                     NULL);
 
   combo = ed_mode_menu_new (&gflare->sflare_mode);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("Paint mode:"), 0.0, 0.5, combo, 1, FALSE);
 
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox,
@@ -3553,7 +3553,7 @@ ed_make_page_glow (GFlareEditor *ed,
    *  Gradient Menus
    */
 
-  frame = gimp_frame_new (_("Gradients"));
+  frame = picman_frame_new (_("Gradients"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -3580,7 +3580,7 @@ ed_make_page_glow (GFlareEditor *ed,
    *  Scales
    */
 
-  frame = gimp_frame_new (_("Parameters"));
+  frame = picman_frame_new (_("Parameters"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -3591,37 +3591,37 @@ ed_make_page_glow (GFlareEditor *ed,
 
   row = 0;
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Size (%):"), SCALE_WIDTH, 6,
                               gflare->glow_size, 0.0, 200.0, 1.0, 10.0, 1,
                               FALSE, 0, G_MAXINT,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->glow_size);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Rotation:"), SCALE_WIDTH, 6,
                               gflare->glow_rotation, -180.0, 180.0, 1.0, 15.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->glow_rotation);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Hue rotation:"), SCALE_WIDTH, 6,
                               gflare->glow_hue, -180.0, 180.0, 1.0, 15.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->glow_hue);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
@@ -3656,7 +3656,7 @@ ed_make_page_rays (GFlareEditor *ed,
    *  Gradient Menus
    */
 
-  frame = gimp_frame_new (_("Gradients"));
+  frame = picman_frame_new (_("Gradients"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -3685,7 +3685,7 @@ ed_make_page_rays (GFlareEditor *ed,
    *    Scales
    */
 
-  frame = gimp_frame_new (_("Parameters"));
+  frame = picman_frame_new (_("Parameters"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -3696,62 +3696,62 @@ ed_make_page_rays (GFlareEditor *ed,
 
   row = 0;
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Size (%):"), SCALE_WIDTH, 6,
                               gflare->rays_size, 0.0, 200.0, 1.0, 10.0, 1,
                               FALSE, 0, G_MAXINT,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->rays_size);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Rotation:"), SCALE_WIDTH, 6,
                               gflare->rays_rotation,
                               -180.0, 180.0, 1.0, 15.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->rays_rotation);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Hue rotation:"), SCALE_WIDTH, 6,
                               gflare->rays_hue, -180.0, 180.0, 1.0, 15.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->rays_hue);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("# of Spikes:"), SCALE_WIDTH, 6,
                               gflare->rays_nspikes, 1, 300, 1.0, 10.0, 0,
                               FALSE, 0, G_MAXINT,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &gflare->rays_nspikes);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Spike thickness:"), SCALE_WIDTH, 6,
                               gflare->rays_thickness, 1.0, 100.0, 1.0, 10.0, 1,
-                              FALSE, 0, GIMP_MAX_IMAGE_SIZE,
+                              FALSE, 0, PICMAN_MAX_IMAGE_SIZE,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->rays_thickness);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
@@ -3795,7 +3795,7 @@ ed_make_page_sflare (GFlareEditor *ed,
    *  Gradient Menus
    */
 
-  frame = gimp_frame_new (_("Gradients"));
+  frame = picman_frame_new (_("Gradients"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -3822,7 +3822,7 @@ ed_make_page_sflare (GFlareEditor *ed,
    *    Scales
    */
 
-  frame = gimp_frame_new (_("Parameters"));
+  frame = picman_frame_new (_("Parameters"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -3833,38 +3833,38 @@ ed_make_page_sflare (GFlareEditor *ed,
 
   row = 0;
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Size (%):"), SCALE_WIDTH, 6,
                               gflare->sflare_size, 0.0, 200.0, 1.0, 10.0, 1,
                               FALSE, 0, G_MAXINT,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->sflare_size);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Rotation:"), SCALE_WIDTH, 6,
                               gflare->sflare_rotation,
                               -180.0, 180.0, 1.0, 15.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->sflare_rotation);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
                     NULL);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                               _("Hue rotation:"), SCALE_WIDTH, 6,
                               gflare->sflare_hue, -180.0, 180.0, 1.0, 15.0, 1,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &gflare->sflare_hue);
   g_signal_connect (adj, "value-changed",
                     G_CALLBACK (ed_preview_update),
@@ -3876,7 +3876,7 @@ ed_make_page_sflare (GFlareEditor *ed,
    *    Shape Radio Button Frame
    */
 
-  frame = gimp_frame_new (_("Shape of Second Flares"));
+  frame = picman_frame_new (_("Shape of Second Flares"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -3886,7 +3886,7 @@ ed_make_page_sflare (GFlareEditor *ed,
 
   toggle = gtk_radio_button_new_with_label (shape_group, _("Circle"));
   shape_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (toggle));
-  g_object_set_data (G_OBJECT (toggle), "gimp-item-data",
+  g_object_set_data (G_OBJECT (toggle), "picman-item-data",
                      GINT_TO_POINTER (GF_CIRCLE));
   g_signal_connect (toggle, "toggled",
                     G_CALLBACK (ed_shape_radio_callback),
@@ -3903,7 +3903,7 @@ ed_make_page_sflare (GFlareEditor *ed,
   toggle = ed->polygon_toggle =
     gtk_radio_button_new_with_label (shape_group, _("Polygon"));
   shape_group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (toggle));
-  g_object_set_data (G_OBJECT (toggle), "gimp-item-data",
+  g_object_set_data (G_OBJECT (toggle), "picman-item-data",
                      GINT_TO_POINTER (GF_POLYGON));
   g_signal_connect (toggle, "toggled",
                     G_CALLBACK (ed_shape_radio_callback),
@@ -3940,11 +3940,11 @@ ed_make_page_sflare (GFlareEditor *ed,
   gtk_box_pack_start (GTK_BOX (seed_hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  seed = gimp_random_seed_new (&gflare->sflare_seed, &gflare->random_seed);
+  seed = picman_random_seed_new (&gflare->sflare_seed, &gflare->random_seed);
   gtk_box_pack_start (GTK_BOX (seed_hbox), seed, FALSE, TRUE, 0);
   gtk_widget_show (seed);
 
-  g_signal_connect (GIMP_RANDOM_SEED_SPINBUTTON_ADJ (seed), "value-changed",
+  g_signal_connect (PICMAN_RANDOM_SEED_SPINBUTTON_ADJ (seed), "value-changed",
                     G_CALLBACK (ed_preview_update),
                     NULL);
 
@@ -3959,10 +3959,10 @@ ed_make_page_sflare (GFlareEditor *ed,
 GtkWidget *
 ed_mode_menu_new (GFlareMode *mode_var)
 {
-  GtkWidget *combo = gimp_int_combo_box_new_array (GF_NUM_MODES,
+  GtkWidget *combo = picman_int_combo_box_new_array (GF_NUM_MODES,
                                                    gflare_menu_modes);
 
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo), *mode_var,
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo), *mode_var,
                               G_CALLBACK (ed_mode_menu_callback),
                               mode_var);
 
@@ -4001,7 +4001,7 @@ static void
 ed_mode_menu_callback (GtkWidget *widget,
                        gpointer   data)
 {
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), (gint *) data);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), (gint *) data);
 
   ed_preview_update ();
 }
@@ -4021,7 +4021,7 @@ static void
 ed_shape_radio_callback (GtkWidget *widget,
                          gpointer   data)
 {
-  gimp_radio_button_update (widget, data);
+  picman_radio_button_update (widget, data);
 
   ed_preview_update ();
 }
@@ -4225,7 +4225,7 @@ preview_new (gint                  width,
 
   preview = g_new0 (Preview, 1);
 
-  preview->widget = gimp_preview_area_new ();
+  preview->widget = picman_preview_area_new ();
   gtk_widget_set_size_request (preview->widget, width, height);
   gtk_widget_show (preview->widget);
 
@@ -4330,9 +4330,9 @@ preview_handle_idle (Preview *preview)
 
   if (done)
     {
-      gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview->widget),
+      picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview->widget),
                               0, 0, preview->width, preview->height,
-                              GIMP_RGB_IMAGE,
+                              PICMAN_RGB_IMAGE,
                               preview->full_image_buffer,
                               preview->width * 3);
 
@@ -4370,11 +4370,11 @@ preview_rgba_to_rgb (guchar *dest,
     }
   else
     {
-      if ((x % (GIMP_CHECK_SIZE) < GIMP_CHECK_SIZE_SM) ^
-          (y % (GIMP_CHECK_SIZE) < GIMP_CHECK_SIZE_SM))
-        check = GIMP_CHECK_LIGHT * 255;
+      if ((x % (PICMAN_CHECK_SIZE) < PICMAN_CHECK_SIZE_SM) ^
+          (y % (PICMAN_CHECK_SIZE) < PICMAN_CHECK_SIZE_SM))
+        check = PICMAN_CHECK_LIGHT * 255;
       else
-        check = GIMP_CHECK_DARK * 255;
+        check = PICMAN_CHECK_DARK * 255;
 
       if (src_a == 0)   /* full transparent */
         {
@@ -4443,11 +4443,11 @@ gradient_menu_new (GradientMenuCallback callback,
   gm->callback = callback;
   gm->callback_data = callback_data;
 
-  gm->preview = gimp_preview_area_new ();
+  gm->preview = picman_preview_area_new ();
   gtk_widget_set_size_request (gm->preview,
                                GM_PREVIEW_WIDTH, GM_PREVIEW_HEIGHT);
 
-  gm->combo = g_object_new (GIMP_TYPE_INT_COMBO_BOX, NULL);
+  gm->combo = g_object_new (PICMAN_TYPE_INT_COMBO_BOX, NULL);
 
   g_signal_connect (gm->combo, "changed",
                     G_CALLBACK (gm_gradient_combo_callback),
@@ -4499,13 +4499,13 @@ gm_gradient_combo_fill (GradientMenu *gm,
       if (strcmp (name, default_gradient) == 0)
         active = i;
 
-      gimp_int_combo_box_append (GIMP_INT_COMBO_BOX (gm->combo),
-                                 GIMP_INT_STORE_VALUE, i,
-                                 GIMP_INT_STORE_LABEL, name,
+      picman_int_combo_box_append (PICMAN_INT_COMBO_BOX (gm->combo),
+                                 PICMAN_INT_STORE_VALUE, i,
+                                 PICMAN_INT_STORE_LABEL, name,
                                  -1);
     }
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (gm->combo), active);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (gm->combo), active);
 }
 
 static void
@@ -4516,7 +4516,7 @@ gm_gradient_combo_callback (GtkWidget *widget,
   const gchar  *gradient_name;
   gint          index;
 
-  if (! gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &index) ||
+  if (! picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &index) ||
       index < 0 ||
       index >= num_gradient_names)
     return;
@@ -4552,7 +4552,7 @@ gm_preview_draw (GtkWidget   *preview,
   dest_total_preview_buffer = g_new (guchar,
                                      GM_PREVIEW_HEIGHT * GM_PREVIEW_WIDTH * 3);
 
-  for (row = 0; row < GM_PREVIEW_HEIGHT; row += GIMP_CHECK_SIZE_SM)
+  for (row = 0; row < GM_PREVIEW_HEIGHT; row += PICMAN_CHECK_SIZE_SM)
     {
       for (col = 0; col < GM_PREVIEW_WIDTH; col++)
         {
@@ -4568,14 +4568,14 @@ gm_preview_draw (GtkWidget   *preview,
           else
             {
               /* more or less transparent */
-              if((col % (GIMP_CHECK_SIZE) < GIMP_CHECK_SIZE_SM) ^
-                  (row % (GIMP_CHECK_SIZE) < GIMP_CHECK_SIZE_SM))
+              if((col % (PICMAN_CHECK_SIZE) < PICMAN_CHECK_SIZE_SM) ^
+                  (row % (PICMAN_CHECK_SIZE) < PICMAN_CHECK_SIZE_SM))
                 {
-                  check = GIMP_CHECK_LIGHT * 255;
+                  check = PICMAN_CHECK_LIGHT * 255;
                 }
               else
                 {
-                  check = GIMP_CHECK_DARK * 255;
+                  check = PICMAN_CHECK_DARK * 255;
                 }
 
               if (src[alpha] == 0)
@@ -4595,7 +4595,7 @@ gm_preview_draw (GtkWidget   *preview,
         }
 
       for (irow = 0;
-           irow < GIMP_CHECK_SIZE_SM && row + irow < GM_PREVIEW_HEIGHT;
+           irow < PICMAN_CHECK_SIZE_SM && row + irow < GM_PREVIEW_HEIGHT;
            irow++)
         {
           memcpy (dest_total_preview_buffer + (row+irow) * 3 * GM_PREVIEW_WIDTH,
@@ -4604,9 +4604,9 @@ gm_preview_draw (GtkWidget   *preview,
         }
     }
 
-    gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+    picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                             0, 0, GM_PREVIEW_WIDTH, GM_PREVIEW_HEIGHT,
-                            GIMP_RGB_IMAGE,
+                            PICMAN_RGB_IMAGE,
                             (const guchar *) dest_total_preview_buffer,
                             GM_PREVIEW_WIDTH * 3);
 
@@ -4711,7 +4711,7 @@ gradient_get_list (gint *num_gradients)
   gint    i, n;
 
   gradient_cache_flush ();
-  external_gradients = gimp_gradients_get_list (NULL, &external_ngradients);
+  external_gradients = picman_gradients_get_list (NULL, &external_ngradients);
 
   *num_gradients = G_N_ELEMENTS (internal_gradients) + external_ngradients;
   gradients = g_new (gchar *, *num_gradients);
@@ -4931,7 +4931,7 @@ gradient_get_values_real_external (const gchar *gradient_name,
   gint     i;
   gint     j;
 
-  gimp_gradient_get_uniform_samples (gradient_name, nvalues, reverse,
+  picman_gradient_get_uniform_samples (gradient_name, nvalues, reverse,
                                      &n_tmp_values, &tmp_values);
 
   for (i = 0; i < nvalues; i++)

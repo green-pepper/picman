@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,28 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_HISTOGRAM_VIEW_H__
-#define __GIMP_HISTOGRAM_VIEW_H__
+#ifndef __PICMAN_HISTOGRAM_VIEW_H__
+#define __PICMAN_HISTOGRAM_VIEW_H__
 
 
-#define GIMP_TYPE_HISTOGRAM_VIEW            (gimp_histogram_view_get_type ())
-#define GIMP_HISTOGRAM_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_HISTOGRAM_VIEW, GimpHistogramView))
-#define GIMP_HISTOGRAM_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_HISTOGRAM_VIEW, GimpHistogramViewClass))
-#define GIMP_IS_HISTOGRAM_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_HISTOGRAM_VIEW))
-#define GIMP_IS_HISTOGRAM_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_HISTOGRAM_VIEW))
-#define GIMP_HISTOGRAM_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_HISTOGRAM_VIEW, GimpHistogramViewClass))
+#define PICMAN_TYPE_HISTOGRAM_VIEW            (picman_histogram_view_get_type ())
+#define PICMAN_HISTOGRAM_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_HISTOGRAM_VIEW, PicmanHistogramView))
+#define PICMAN_HISTOGRAM_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_HISTOGRAM_VIEW, PicmanHistogramViewClass))
+#define PICMAN_IS_HISTOGRAM_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_HISTOGRAM_VIEW))
+#define PICMAN_IS_HISTOGRAM_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_HISTOGRAM_VIEW))
+#define PICMAN_HISTOGRAM_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_HISTOGRAM_VIEW, PicmanHistogramViewClass))
 
 
-typedef struct _GimpHistogramViewClass  GimpHistogramViewClass;
+typedef struct _PicmanHistogramViewClass  PicmanHistogramViewClass;
 
-struct _GimpHistogramView
+struct _PicmanHistogramView
 {
   GtkDrawingArea         parent_instance;
 
-  GimpHistogram         *histogram;
-  GimpHistogram         *bg_histogram;
-  GimpHistogramChannel   channel;
-  GimpHistogramScale     scale;
+  PicmanHistogram         *histogram;
+  PicmanHistogram         *bg_histogram;
+  PicmanHistogramChannel   channel;
+  PicmanHistogramScale     scale;
   gint                   start;
   gint                   end;
 
@@ -44,44 +44,44 @@ struct _GimpHistogramView
   gint                   subdivisions;
 };
 
-struct _GimpHistogramViewClass
+struct _PicmanHistogramViewClass
 {
   GtkDrawingAreaClass  parent_class;
 
-  void (* range_changed) (GimpHistogramView *view,
+  void (* range_changed) (PicmanHistogramView *view,
                           gint               start,
                           gint               end);
 };
 
 
-GType           gimp_histogram_view_get_type       (void) G_GNUC_CONST;
+GType           picman_histogram_view_get_type       (void) G_GNUC_CONST;
 
-GtkWidget     * gimp_histogram_view_new            (gboolean             range);
+GtkWidget     * picman_histogram_view_new            (gboolean             range);
 
-void            gimp_histogram_view_set_histogram  (GimpHistogramView   *view,
-                                                    GimpHistogram       *histogram);
-GimpHistogram * gimp_histogram_view_get_histogram  (GimpHistogramView   *view);
+void            picman_histogram_view_set_histogram  (PicmanHistogramView   *view,
+                                                    PicmanHistogram       *histogram);
+PicmanHistogram * picman_histogram_view_get_histogram  (PicmanHistogramView   *view);
 
-void            gimp_histogram_view_set_background (GimpHistogramView   *view,
-                                                    GimpHistogram       *histogram);
-GimpHistogram * gimp_histogram_view_get_background (GimpHistogramView   *view);
+void            picman_histogram_view_set_background (PicmanHistogramView   *view,
+                                                    PicmanHistogram       *histogram);
+PicmanHistogram * picman_histogram_view_get_background (PicmanHistogramView   *view);
 
-void            gimp_histogram_view_set_channel    (GimpHistogramView   *view,
-                                                    GimpHistogramChannel channel);
-GimpHistogramChannel
-                gimp_histogram_view_get_channel    (GimpHistogramView   *view);
+void            picman_histogram_view_set_channel    (PicmanHistogramView   *view,
+                                                    PicmanHistogramChannel channel);
+PicmanHistogramChannel
+                picman_histogram_view_get_channel    (PicmanHistogramView   *view);
 
-void            gimp_histogram_view_set_scale      (GimpHistogramView   *view,
-                                                    GimpHistogramScale   scale);
-GimpHistogramScale
-                gimp_histogram_view_get_scale      (GimpHistogramView   *view);
+void            picman_histogram_view_set_scale      (PicmanHistogramView   *view,
+                                                    PicmanHistogramScale   scale);
+PicmanHistogramScale
+                picman_histogram_view_get_scale      (PicmanHistogramView   *view);
 
-void            gimp_histogram_view_set_range      (GimpHistogramView   *view,
+void            picman_histogram_view_set_range      (PicmanHistogramView   *view,
                                                     gint                 start,
                                                     gint                 end);
-void            gimp_histogram_view_get_range      (GimpHistogramView   *view,
+void            picman_histogram_view_get_range      (PicmanHistogramView   *view,
                                                     gint                *start,
                                                     gint                *end);
 
 
-#endif /* __GIMP_HISTOGRAM_VIEW_H__ */
+#endif /* __PICMAN_HISTOGRAM_VIEW_H__ */

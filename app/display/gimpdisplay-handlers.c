@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,65 +22,65 @@
 
 #include "display-types.h"
 
-#include "core/gimpimage.h"
+#include "core/picmanimage.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplay-handlers.h"
+#include "picmandisplay.h"
+#include "picmandisplay-handlers.h"
 
 
 /*  local function prototypes  */
 
-static void   gimp_display_update_handler (GimpProjection *projection,
+static void   picman_display_update_handler (PicmanProjection *projection,
                                            gboolean        now,
                                            gint            x,
                                            gint            y,
                                            gint            w,
                                            gint            h,
-                                           GimpDisplay    *display);
-static void   gimp_display_flush_handler  (GimpImage      *image,
+                                           PicmanDisplay    *display);
+static void   picman_display_flush_handler  (PicmanImage      *image,
                                            gboolean        invalidate_preview,
-                                           GimpDisplay    *display);
+                                           PicmanDisplay    *display);
 
 
 /*  public functions  */
 
 void
-gimp_display_connect (GimpDisplay *display)
+picman_display_connect (PicmanDisplay *display)
 {
-  GimpImage *image;
+  PicmanImage *image;
 
-  g_return_if_fail (GIMP_IS_DISPLAY (display));
+  g_return_if_fail (PICMAN_IS_DISPLAY (display));
 
-  image = gimp_display_get_image (display);
+  image = picman_display_get_image (display);
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  g_signal_connect (gimp_image_get_projection (image), "update",
-                    G_CALLBACK (gimp_display_update_handler),
+  g_signal_connect (picman_image_get_projection (image), "update",
+                    G_CALLBACK (picman_display_update_handler),
                     display);
 
   g_signal_connect (image, "flush",
-                    G_CALLBACK (gimp_display_flush_handler),
+                    G_CALLBACK (picman_display_flush_handler),
                     display);
 }
 
 void
-gimp_display_disconnect (GimpDisplay *display)
+picman_display_disconnect (PicmanDisplay *display)
 {
-  GimpImage *image;
+  PicmanImage *image;
 
-  g_return_if_fail (GIMP_IS_DISPLAY (display));
+  g_return_if_fail (PICMAN_IS_DISPLAY (display));
 
-  image = gimp_display_get_image (display);
+  image = picman_display_get_image (display);
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
   g_signal_handlers_disconnect_by_func (image,
-                                        gimp_display_flush_handler,
+                                        picman_display_flush_handler,
                                         display);
 
-  g_signal_handlers_disconnect_by_func (gimp_image_get_projection (image),
-                                        gimp_display_update_handler,
+  g_signal_handlers_disconnect_by_func (picman_image_get_projection (image),
+                                        picman_display_update_handler,
                                         display);
 }
 
@@ -88,21 +88,21 @@ gimp_display_disconnect (GimpDisplay *display)
 /*  private functions  */
 
 static void
-gimp_display_update_handler (GimpProjection *projection,
+picman_display_update_handler (PicmanProjection *projection,
                              gboolean        now,
                              gint            x,
                              gint            y,
                              gint            w,
                              gint            h,
-                             GimpDisplay    *display)
+                             PicmanDisplay    *display)
 {
-  gimp_display_update_area (display, now, x, y, w, h);
+  picman_display_update_area (display, now, x, y, w, h);
 }
 
 static void
-gimp_display_flush_handler (GimpImage   *image,
+picman_display_flush_handler (PicmanImage   *image,
                             gboolean     invalidate_preview,
-                            GimpDisplay *display)
+                            PicmanDisplay *display)
 {
-  gimp_display_flush (display);
+  picman_display_flush (display);
 }

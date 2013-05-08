@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfilleditor.h
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanfilleditor.h
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,38 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FILL_EDITOR_H__
-#define __GIMP_FILL_EDITOR_H__
+#ifndef __PICMAN_FILL_EDITOR_H__
+#define __PICMAN_FILL_EDITOR_H__
 
 
-#define GIMP_TYPE_FILL_EDITOR            (gimp_fill_editor_get_type ())
-#define GIMP_FILL_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FILL_EDITOR, GimpFillEditor))
-#define GIMP_FILL_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FILL_EDITOR, GimpFillEditorClass))
-#define GIMP_IS_FILL_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FILL_EDITOR))
-#define GIMP_IS_FILL_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FILL_EDITOR))
-#define GIMP_FILL_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FILL_EDITOR, GimpFillEditorClass))
+#define PICMAN_TYPE_FILL_EDITOR            (picman_fill_editor_get_type ())
+#define PICMAN_FILL_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FILL_EDITOR, PicmanFillEditor))
+#define PICMAN_FILL_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FILL_EDITOR, PicmanFillEditorClass))
+#define PICMAN_IS_FILL_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FILL_EDITOR))
+#define PICMAN_IS_FILL_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FILL_EDITOR))
+#define PICMAN_FILL_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FILL_EDITOR, PicmanFillEditorClass))
 
 
-typedef struct _GimpFillEditorClass GimpFillEditorClass;
+typedef struct _PicmanFillEditorClass PicmanFillEditorClass;
 
-struct _GimpFillEditor
+struct _PicmanFillEditor
 {
   GtkBox           parent_instance;
 
-  GimpFillOptions *options;
+  PicmanFillOptions *options;
   gboolean         edit_context;
 };
 
-struct _GimpFillEditorClass
+struct _PicmanFillEditorClass
 {
   GtkBoxClass      parent_class;
 };
 
 
-GType       gimp_fill_editor_get_type (void) G_GNUC_CONST;
+GType       picman_fill_editor_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_fill_editor_new      (GimpFillOptions *options,
+GtkWidget * picman_fill_editor_new      (PicmanFillOptions *options,
                                        gboolean         edit_context);
 
 
-#endif /* __GIMP_FILL_EDITOR_H__ */
+#endif /* __PICMAN_FILL_EDITOR_H__ */

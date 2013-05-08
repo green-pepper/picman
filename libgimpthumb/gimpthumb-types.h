@@ -1,11 +1,11 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * Thumbnail handling according to the Thumbnail Managing Standard.
  * http://triq.net/~pearl/thumbnail-spec/
  *
- * Copyright (C) 2001-2003  Sven Neumann <sven@gimp.org>
- *                          Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2001-2003  Sven Neumann <sven@picman.org>
+ *                          Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,17 +22,17 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_THUMB_TYPES_H__
-#define __GIMP_THUMB_TYPES_H__
+#ifndef __PICMAN_THUMB_TYPES_H__
+#define __PICMAN_THUMB_TYPES_H__
 
 
-#include <libgimpthumb/gimpthumb-enums.h>
+#include <libpicmanthumb/picmanthumb-enums.h>
 
 G_BEGIN_DECLS
 
-typedef struct _GimpThumbnail GimpThumbnail;
+typedef struct _PicmanThumbnail PicmanThumbnail;
 
 G_END_DECLS
 
 
-#endif /* __GIMP_THUMB_TYPES_H__ */
+#endif /* __PICMAN_THUMB_TYPES_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimperrordialog.c
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanerrordialog.c
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,43 +24,43 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "gimperrordialog.h"
-#include "gimpmessagebox.h"
+#include "picmanerrordialog.h"
+#include "picmanmessagebox.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
-#define GIMP_ERROR_DIALOG_MAX_MESSAGES 3
+#define PICMAN_ERROR_DIALOG_MAX_MESSAGES 3
 
 
-static void   gimp_error_dialog_finalize (GObject   *object);
-static void   gimp_error_dialog_response (GtkDialog *dialog,
+static void   picman_error_dialog_finalize (GObject   *object);
+static void   picman_error_dialog_response (GtkDialog *dialog,
                                           gint       response_id);
 
 
-G_DEFINE_TYPE (GimpErrorDialog, gimp_error_dialog, GIMP_TYPE_DIALOG)
+G_DEFINE_TYPE (PicmanErrorDialog, picman_error_dialog, PICMAN_TYPE_DIALOG)
 
-#define parent_class gimp_error_dialog_parent_class
+#define parent_class picman_error_dialog_parent_class
 
 
 static void
-gimp_error_dialog_class_init (GimpErrorDialogClass *klass)
+picman_error_dialog_class_init (PicmanErrorDialogClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkDialogClass *dialog_class = GTK_DIALOG_CLASS (klass);
 
-  object_class->finalize = gimp_error_dialog_finalize;
+  object_class->finalize = picman_error_dialog_finalize;
 
-  dialog_class->response = gimp_error_dialog_response;
+  dialog_class->response = picman_error_dialog_response;
 }
 
 static void
-gimp_error_dialog_init (GimpErrorDialog *dialog)
+picman_error_dialog_init (PicmanErrorDialog *dialog)
 {
-  gtk_window_set_role (GTK_WINDOW (dialog), "gimp-message");
+  gtk_window_set_role (GTK_WINDOW (dialog), "picman-message");
 
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           GTK_STOCK_OK, GTK_RESPONSE_CLOSE,
@@ -82,9 +82,9 @@ gimp_error_dialog_init (GimpErrorDialog *dialog)
 }
 
 static void
-gimp_error_dialog_finalize (GObject *object)
+picman_error_dialog_finalize (GObject *object)
 {
-  GimpErrorDialog *dialog = GIMP_ERROR_DIALOG (object);
+  PicmanErrorDialog *dialog = PICMAN_ERROR_DIALOG (object);
 
   if (dialog->last_domain)
     {
@@ -101,7 +101,7 @@ gimp_error_dialog_finalize (GObject *object)
 }
 
 static void
-gimp_error_dialog_response (GtkDialog *dialog,
+picman_error_dialog_response (GtkDialog *dialog,
                             gint       response_id)
 {
   gtk_widget_destroy (GTK_WIDGET (dialog));
@@ -111,17 +111,17 @@ gimp_error_dialog_response (GtkDialog *dialog,
 /*  public functions  */
 
 GtkWidget *
-gimp_error_dialog_new (const gchar *title)
+picman_error_dialog_new (const gchar *title)
 {
   g_return_val_if_fail (title != NULL, NULL);
 
-  return g_object_new (GIMP_TYPE_ERROR_DIALOG,
+  return g_object_new (PICMAN_TYPE_ERROR_DIALOG,
                        "title", title,
                        NULL);
 }
 
 void
-gimp_error_dialog_add (GimpErrorDialog *dialog,
+picman_error_dialog_add (PicmanErrorDialog *dialog,
                        const gchar     *stock_id,
                        const gchar     *domain,
                        const gchar     *message)
@@ -129,7 +129,7 @@ gimp_error_dialog_add (GimpErrorDialog *dialog,
   GtkWidget *box;
   gboolean   overflow = FALSE;
 
-  g_return_if_fail (GIMP_IS_ERROR_DIALOG (dialog));
+  g_return_if_fail (PICMAN_IS_ERROR_DIALOG (dialog));
   g_return_if_fail (domain != NULL);
   g_return_if_fail (message != NULL);
 
@@ -137,16 +137,16 @@ gimp_error_dialog_add (GimpErrorDialog *dialog,
       dialog->last_domain  && strcmp (dialog->last_domain,  domain)  == 0 &&
       dialog->last_message && strcmp (dialog->last_message, message) == 0)
     {
-      if (gimp_message_box_repeat (GIMP_MESSAGE_BOX (dialog->last_box)))
+      if (picman_message_box_repeat (PICMAN_MESSAGE_BOX (dialog->last_box)))
         return;
     }
 
-  if (dialog->num_messages >= GIMP_ERROR_DIALOG_MAX_MESSAGES)
+  if (dialog->num_messages >= PICMAN_ERROR_DIALOG_MAX_MESSAGES)
     {
       g_printerr ("%s: %s\n\n", domain, message);
 
       overflow = TRUE;
-      stock_id = GIMP_STOCK_WILBER_EEK;
+      stock_id = PICMAN_STOCK_WILBER_EEK;
       domain   = _("Too many error messages!");
       message  = _("Messages are redirected to stderr.");
 
@@ -157,23 +157,23 @@ gimp_error_dialog_add (GimpErrorDialog *dialog,
         }
     }
 
-  box = g_object_new (GIMP_TYPE_MESSAGE_BOX,
+  box = g_object_new (PICMAN_TYPE_MESSAGE_BOX,
                       "stock-id", stock_id,
                       NULL);
 
   dialog->num_messages++;
 
   if (overflow)
-    gimp_message_box_set_primary_text (GIMP_MESSAGE_BOX (box), "%s", domain);
+    picman_message_box_set_primary_text (PICMAN_MESSAGE_BOX (box), "%s", domain);
   else
-    gimp_message_box_set_primary_text (GIMP_MESSAGE_BOX (box),
+    picman_message_box_set_primary_text (PICMAN_MESSAGE_BOX (box),
                                        /* %s is a message domain,
-                                        * like "GIMP Message" or
+                                        * like "PICMAN Message" or
                                         * "PNG Message"
                                         */
                                        _("%s Message"), domain);
 
-  gimp_message_box_set_text (GIMP_MESSAGE_BOX (box), "%s", message);
+  picman_message_box_set_text (PICMAN_MESSAGE_BOX (box), "%s", message);
 
   gtk_box_pack_start (GTK_BOX (dialog->vbox), box, TRUE, TRUE, 0);
   gtk_widget_show (box);

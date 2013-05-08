@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptooloptionseditor.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmantooloptionseditor.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,41 +18,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TOOL_OPTIONS_EDITOR_H__
-#define __GIMP_TOOL_OPTIONS_EDITOR_H__
+#ifndef __PICMAN_TOOL_OPTIONS_EDITOR_H__
+#define __PICMAN_TOOL_OPTIONS_EDITOR_H__
 
 
-#include "gimpeditor.h"
+#include "picmaneditor.h"
 
 
-#define GIMP_TYPE_TOOL_OPTIONS_EDITOR            (gimp_tool_options_editor_get_type ())
-#define GIMP_TOOL_OPTIONS_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TOOL_OPTIONS_EDITOR, GimpToolOptionsEditor))
-#define GIMP_TOOL_OPTIONS_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TOOL_OPTIONS_EDITOR, GimpToolOptionsEditorClass))
-#define GIMP_IS_TOOL_OPTIONS_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TOOL_OPTIONS_EDITOR))
-#define GIMP_IS_TOOL_OPTIONS_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TOOL_OPTIONS_EDITOR))
-#define GIMP_TOOL_OPTIONS_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TOOL_OPTIONS_EDITOR, GimpToolOptionsEditorClass))
+#define PICMAN_TYPE_TOOL_OPTIONS_EDITOR            (picman_tool_options_editor_get_type ())
+#define PICMAN_TOOL_OPTIONS_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TOOL_OPTIONS_EDITOR, PicmanToolOptionsEditor))
+#define PICMAN_TOOL_OPTIONS_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TOOL_OPTIONS_EDITOR, PicmanToolOptionsEditorClass))
+#define PICMAN_IS_TOOL_OPTIONS_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TOOL_OPTIONS_EDITOR))
+#define PICMAN_IS_TOOL_OPTIONS_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TOOL_OPTIONS_EDITOR))
+#define PICMAN_TOOL_OPTIONS_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TOOL_OPTIONS_EDITOR, PicmanToolOptionsEditorClass))
 
 
-typedef struct _GimpToolOptionsEditorPrivate  GimpToolOptionsEditorPrivate;
-typedef struct _GimpToolOptionsEditorClass    GimpToolOptionsEditorClass;
+typedef struct _PicmanToolOptionsEditorPrivate  PicmanToolOptionsEditorPrivate;
+typedef struct _PicmanToolOptionsEditorClass    PicmanToolOptionsEditorClass;
 
-struct _GimpToolOptionsEditor
+struct _PicmanToolOptionsEditor
 {
-  GimpEditor                    parent_instance;
+  PicmanEditor                    parent_instance;
 
-  GimpToolOptionsEditorPrivate *p;
+  PicmanToolOptionsEditorPrivate *p;
 };
 
-struct _GimpToolOptionsEditorClass
+struct _PicmanToolOptionsEditorClass
 {
-  GimpEditorClass  parent_class;
+  PicmanEditorClass  parent_class;
 };
 
 
-GType             gimp_tool_options_editor_get_type         (void) G_GNUC_CONST;
-GtkWidget       * gimp_tool_options_editor_new              (Gimp                  *gimp,
-                                                             GimpMenuFactory       *menu_factory);
-GimpToolOptions * gimp_tool_options_editor_get_tool_options (GimpToolOptionsEditor *editor);
+GType             picman_tool_options_editor_get_type         (void) G_GNUC_CONST;
+GtkWidget       * picman_tool_options_editor_new              (Picman                  *picman,
+                                                             PicmanMenuFactory       *menu_factory);
+PicmanToolOptions * picman_tool_options_editor_get_tool_options (PicmanToolOptionsEditor *editor);
 
 
-#endif  /*  __GIMP_TOOL_OPTIONS_EDITOR_H__  */
+#endif  /*  __PICMAN_TOOL_OPTIONS_EDITOR_H__  */

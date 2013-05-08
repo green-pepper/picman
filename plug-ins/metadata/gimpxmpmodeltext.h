@@ -1,6 +1,6 @@
-/* GimpXmpModelText.h - custom text widget linked to the xmp model
+/* PicmanXmpModelText.h - custom text widget linked to the xmp model
  *
- * Copyright (C) 2010, Róman Joost <romanofski@gimp.org>
+ * Copyright (C) 2010, Róman Joost <romanofski@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,51 +17,51 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_XMP_MODEL_TEXT_H__
-#define __GIMP_XMP_MODEL_TEXT_H__
+#ifndef __PICMAN_XMP_MODEL_TEXT_H__
+#define __PICMAN_XMP_MODEL_TEXT_H__
 
 G_BEGIN_DECLS
 
-#define GIMP_TYPE_XMP_MODEL_TEXT               (gimp_xmp_model_text_get_type ())
-#define GIMP_XMP_MODEL_TEXT(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_XMP_MODEL_TEXT, GimpXmpModelText))
-#define GIMP_XMP_MODEL_TEXT_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_XMP_MODEL_TEXT, XMPModelClass))
-#define GIMP_IS_XMP_MODEL_TEXT(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_XMP_MODEL_TEXT))
-#define GIMP_IS_XMP_MODEL_TEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_XMP_MODEL_TEXT))
-#define GIMP_XMP_MODEL_TEXT_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_XMP_MODEL_TEXT, XMPModelClass))
+#define PICMAN_TYPE_XMP_MODEL_TEXT               (picman_xmp_model_text_get_type ())
+#define PICMAN_XMP_MODEL_TEXT(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_XMP_MODEL_TEXT, PicmanXmpModelText))
+#define PICMAN_XMP_MODEL_TEXT_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_XMP_MODEL_TEXT, XMPModelClass))
+#define PICMAN_IS_XMP_MODEL_TEXT(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_XMP_MODEL_TEXT))
+#define PICMAN_IS_XMP_MODEL_TEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_XMP_MODEL_TEXT))
+#define PICMAN_XMP_MODEL_TEXT_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_XMP_MODEL_TEXT, XMPModelClass))
 
 
-typedef struct _GimpXmpModelText       GimpXmpModelText;
-typedef struct _GimpXmpModelTextClass  GimpXmpModelTextClass;
+typedef struct _PicmanXmpModelText       PicmanXmpModelText;
+typedef struct _PicmanXmpModelTextClass  PicmanXmpModelTextClass;
 
 
-struct _GimpXmpModelTextClass
+struct _PicmanXmpModelTextClass
 {
   GtkTextViewClass parent_class;
 
-  void          (*gimp_xmp_model_set_text_text) (GimpXmpModelText *text,
+  void          (*picman_xmp_model_set_text_text) (PicmanXmpModelText *text,
                                                  const gchar      *value);
 
-  const gchar * (*gimp_xmp_model_get_text_text) (GimpXmpModelText *text);
+  const gchar * (*picman_xmp_model_get_text_text) (PicmanXmpModelText *text);
 };
 
-struct _GimpXmpModelText
+struct _PicmanXmpModelText
 {
   GtkTextView   parent_instance;
   gpointer      priv;
 };
 
 
-GType         gimp_xmp_model_text_get_type       (void) G_GNUC_CONST;
+GType         picman_xmp_model_text_get_type       (void) G_GNUC_CONST;
 
-GtkWidget   * gimp_xmp_model_text_new            (const gchar       *schema_uri,
+GtkWidget   * picman_xmp_model_text_new            (const gchar       *schema_uri,
                                                   const gchar       *property,
                                                   XMPModel          *xmp_model);
 
-void          gimp_xmp_model_set_text_text       (GimpXmpModelText  *text,
+void          picman_xmp_model_set_text_text       (PicmanXmpModelText  *text,
                                                   const gchar       *value);
 
-const gchar * gimp_xmp_model_get_text_text       (GimpXmpModelText *text);
+const gchar * picman_xmp_model_get_text_text       (PicmanXmpModelText *text);
 
 G_END_DECLS
 
-#endif /* __GIMP_XMP_MODEL_TEXT_H__ */
+#endif /* __PICMAN_XMP_MODEL_TEXT_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpTextEditor
- * Copyright (C) 2002-2003, 2008  Sven Neumann <sven@gimp.org>
+ * PicmanTextEditor
+ * Copyright (C) 2002-2003, 2008  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,23 +22,23 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpmarshal.h"
+#include "core/picman.h"
+#include "core/picmanmarshal.h"
 
-#include "text/gimptext.h"
+#include "text/picmantext.h"
 
-#include "gimphelp-ids.h"
-#include "gimpmenufactory.h"
-#include "gimptextbuffer.h"
-#include "gimptexteditor.h"
-#include "gimptextstyleeditor.h"
-#include "gimpuimanager.h"
+#include "picmanhelp-ids.h"
+#include "picmanmenufactory.h"
+#include "picmantextbuffer.h"
+#include "picmantexteditor.h"
+#include "picmantextstyleeditor.h"
+#include "picmanuimanager.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -49,27 +49,27 @@ enum
 };
 
 
-static void   gimp_text_editor_finalize     (GObject         *object);
+static void   picman_text_editor_finalize     (GObject         *object);
 
-static void   gimp_text_editor_text_changed (GtkTextBuffer   *buffer,
-                                             GimpTextEditor  *editor);
-static void   gimp_text_editor_font_toggled (GtkToggleButton *button,
-                                             GimpTextEditor  *editor);
+static void   picman_text_editor_text_changed (GtkTextBuffer   *buffer,
+                                             PicmanTextEditor  *editor);
+static void   picman_text_editor_font_toggled (GtkToggleButton *button,
+                                             PicmanTextEditor  *editor);
 
 
-G_DEFINE_TYPE (GimpTextEditor, gimp_text_editor, GIMP_TYPE_DIALOG)
+G_DEFINE_TYPE (PicmanTextEditor, picman_text_editor, PICMAN_TYPE_DIALOG)
 
-#define parent_class gimp_text_editor_parent_class
+#define parent_class picman_text_editor_parent_class
 
 static guint text_editor_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_text_editor_class_init (GimpTextEditorClass *klass)
+picman_text_editor_class_init (PicmanTextEditorClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize = gimp_text_editor_finalize;
+  object_class->finalize = picman_text_editor_finalize;
 
   klass->text_changed    = NULL;
   klass->dir_changed     = NULL;
@@ -78,23 +78,23 @@ gimp_text_editor_class_init (GimpTextEditorClass *klass)
     g_signal_new ("text-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpTextEditorClass, text_changed),
+                  G_STRUCT_OFFSET (PicmanTextEditorClass, text_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
   text_editor_signals[DIR_CHANGED] =
     g_signal_new ("dir-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpTextEditorClass, dir_changed),
+                  G_STRUCT_OFFSET (PicmanTextEditorClass, dir_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 }
 
 static void
-gimp_text_editor_init (GimpTextEditor *editor)
+picman_text_editor_init (PicmanTextEditor *editor)
 {
   editor->view        = NULL;
   editor->file_dialog = NULL;
@@ -104,18 +104,18 @@ gimp_text_editor_init (GimpTextEditor *editor)
     {
     case GTK_TEXT_DIR_NONE:
     case GTK_TEXT_DIR_LTR:
-      editor->base_dir = GIMP_TEXT_DIRECTION_LTR;
+      editor->base_dir = PICMAN_TEXT_DIRECTION_LTR;
       break;
     case GTK_TEXT_DIR_RTL:
-      editor->base_dir = GIMP_TEXT_DIRECTION_RTL;
+      editor->base_dir = PICMAN_TEXT_DIRECTION_RTL;
       break;
     }
 }
 
 static void
-gimp_text_editor_finalize (GObject *object)
+picman_text_editor_finalize (GObject *object)
 {
-  GimpTextEditor *editor = GIMP_TEXT_EDITOR (object);
+  PicmanTextEditor *editor = PICMAN_TEXT_EDITOR (object);
 
   if (editor->font_name)
     g_free (editor->font_name);
@@ -130,16 +130,16 @@ gimp_text_editor_finalize (GObject *object)
 /*  public functions  */
 
 GtkWidget *
-gimp_text_editor_new (const gchar     *title,
+picman_text_editor_new (const gchar     *title,
                       GtkWindow       *parent,
-                      Gimp            *gimp,
-                      GimpMenuFactory *menu_factory,
-                      GimpText        *text,
-                      GimpTextBuffer  *text_buffer,
+                      Picman            *picman,
+                      PicmanMenuFactory *menu_factory,
+                      PicmanText        *text,
+                      PicmanTextBuffer  *text_buffer,
                       gdouble          xres,
                       gdouble          yres)
 {
-  GimpTextEditor *editor;
+  PicmanTextEditor *editor;
   GtkWidget      *content_area;
   GtkWidget      *toolbar;
   GtkWidget      *style_editor;
@@ -147,17 +147,17 @@ gimp_text_editor_new (const gchar     *title,
 
   g_return_val_if_fail (title != NULL, NULL);
   g_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), NULL);
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (GIMP_IS_MENU_FACTORY (menu_factory), NULL);
-  g_return_val_if_fail (GIMP_IS_TEXT (text), NULL);
-  g_return_val_if_fail (GIMP_IS_TEXT_BUFFER (text_buffer), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (PICMAN_IS_MENU_FACTORY (menu_factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEXT (text), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEXT_BUFFER (text_buffer), NULL);
 
-  editor = g_object_new (GIMP_TYPE_TEXT_EDITOR,
+  editor = g_object_new (PICMAN_TYPE_TEXT_EDITOR,
                          "title",         title,
-                         "role",          "gimp-text-editor",
+                         "role",          "picman-text-editor",
                          "transient-for", parent,
-                         "help-func",     gimp_standard_help_func,
-                         "help-id",       GIMP_HELP_TEXT_EDITOR_DIALOG,
+                         "help-func",     picman_standard_help_func,
+                         "help-id",       PICMAN_HELP_TEXT_EDITOR_DIALOG,
                          NULL);
 
   gtk_dialog_add_button (GTK_DIALOG (editor),
@@ -168,10 +168,10 @@ gimp_text_editor_new (const gchar     *title,
                     NULL);
 
   g_signal_connect_object (text_buffer, "changed",
-                           G_CALLBACK (gimp_text_editor_text_changed),
+                           G_CALLBACK (picman_text_editor_text_changed),
                            editor, 0);
 
-  editor->ui_manager = gimp_menu_factory_manager_new (menu_factory,
+  editor->ui_manager = picman_menu_factory_manager_new (menu_factory,
                                                       "<TextEditor>",
                                                       editor, FALSE);
 
@@ -186,8 +186,8 @@ gimp_text_editor_new (const gchar     *title,
       gtk_widget_show (toolbar);
     }
 
-  style_editor = gimp_text_style_editor_new (gimp, text, text_buffer,
-                                             gimp->fonts,
+  style_editor = picman_text_style_editor_new (picman, text, text_buffer,
+                                             picman->fonts,
                                              xres, yres);
   gtk_box_pack_start (GTK_BOX (content_area), style_editor, FALSE, FALSE, 0);
   gtk_widget_show (style_editor);
@@ -208,10 +208,10 @@ gimp_text_editor_new (const gchar     *title,
 
   switch (editor->base_dir)
     {
-    case GIMP_TEXT_DIRECTION_LTR:
+    case PICMAN_TEXT_DIRECTION_LTR:
       gtk_widget_set_direction (editor->view, GTK_TEXT_DIR_LTR);
       break;
-    case GIMP_TEXT_DIRECTION_RTL:
+    case PICMAN_TEXT_DIRECTION_RTL:
       gtk_widget_set_direction (editor->view, GTK_TEXT_DIR_RTL);
       break;
     }
@@ -225,24 +225,24 @@ gimp_text_editor_new (const gchar     *title,
   gtk_widget_show (editor->font_toggle);
 
   g_signal_connect (editor->font_toggle, "toggled",
-                    G_CALLBACK (gimp_text_editor_font_toggled),
+                    G_CALLBACK (picman_text_editor_font_toggled),
                     editor);
 
   gtk_widget_grab_focus (editor->view);
 
-  gimp_ui_manager_update (editor->ui_manager, editor);
+  picman_ui_manager_update (editor->ui_manager, editor);
 
   return GTK_WIDGET (editor);
 }
 
 void
-gimp_text_editor_set_text (GimpTextEditor *editor,
+picman_text_editor_set_text (PicmanTextEditor *editor,
                            const gchar    *text,
                            gint            len)
 {
   GtkTextBuffer *buffer;
 
-  g_return_if_fail (GIMP_IS_TEXT_EDITOR (editor));
+  g_return_if_fail (PICMAN_IS_TEXT_EDITOR (editor));
   g_return_if_fail (text != NULL || len == 0);
 
   buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (editor->view));
@@ -254,22 +254,22 @@ gimp_text_editor_set_text (GimpTextEditor *editor,
 }
 
 gchar *
-gimp_text_editor_get_text (GimpTextEditor *editor)
+picman_text_editor_get_text (PicmanTextEditor *editor)
 {
   GtkTextBuffer *buffer;
 
-  g_return_val_if_fail (GIMP_IS_TEXT_EDITOR (editor), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEXT_EDITOR (editor), NULL);
 
   buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (editor->view));
 
-  return gimp_text_buffer_get_text (GIMP_TEXT_BUFFER (buffer));
+  return picman_text_buffer_get_text (PICMAN_TEXT_BUFFER (buffer));
 }
 
 void
-gimp_text_editor_set_direction (GimpTextEditor    *editor,
-                                GimpTextDirection  base_dir)
+picman_text_editor_set_direction (PicmanTextEditor    *editor,
+                                PicmanTextDirection  base_dir)
 {
-  g_return_if_fail (GIMP_IS_TEXT_EDITOR (editor));
+  g_return_if_fail (PICMAN_IS_TEXT_EDITOR (editor));
 
   if (editor->base_dir == base_dir)
     return;
@@ -280,33 +280,33 @@ gimp_text_editor_set_direction (GimpTextEditor    *editor,
     {
       switch (editor->base_dir)
         {
-        case GIMP_TEXT_DIRECTION_LTR:
+        case PICMAN_TEXT_DIRECTION_LTR:
           gtk_widget_set_direction (editor->view, GTK_TEXT_DIR_LTR);
           break;
-        case GIMP_TEXT_DIRECTION_RTL:
+        case PICMAN_TEXT_DIRECTION_RTL:
           gtk_widget_set_direction (editor->view, GTK_TEXT_DIR_RTL);
           break;
         }
     }
 
-  gimp_ui_manager_update (editor->ui_manager, editor);
+  picman_ui_manager_update (editor->ui_manager, editor);
 
   g_signal_emit (editor, text_editor_signals[DIR_CHANGED], 0);
 }
 
-GimpTextDirection
-gimp_text_editor_get_direction (GimpTextEditor *editor)
+PicmanTextDirection
+picman_text_editor_get_direction (PicmanTextEditor *editor)
 {
-  g_return_val_if_fail (GIMP_IS_TEXT_EDITOR (editor), GIMP_TEXT_DIRECTION_LTR);
+  g_return_val_if_fail (PICMAN_IS_TEXT_EDITOR (editor), PICMAN_TEXT_DIRECTION_LTR);
 
   return editor->base_dir;
 }
 
 void
-gimp_text_editor_set_font_name (GimpTextEditor *editor,
+picman_text_editor_set_font_name (PicmanTextEditor *editor,
                                 const gchar    *font_name)
 {
-  g_return_if_fail (GIMP_IS_TEXT_EDITOR (editor));
+  g_return_if_fail (PICMAN_IS_TEXT_EDITOR (editor));
 
   if (editor->font_name)
     g_free (editor->font_name);
@@ -328,9 +328,9 @@ gimp_text_editor_set_font_name (GimpTextEditor *editor,
 }
 
 const gchar *
-gimp_text_editor_get_font_name (GimpTextEditor *editor)
+picman_text_editor_get_font_name (PicmanTextEditor *editor)
 {
-  g_return_val_if_fail (GIMP_IS_TEXT_EDITOR (editor), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEXT_EDITOR (editor), NULL);
 
   return editor->font_name;
 }
@@ -339,15 +339,15 @@ gimp_text_editor_get_font_name (GimpTextEditor *editor)
 /*  private functions  */
 
 static void
-gimp_text_editor_text_changed (GtkTextBuffer  *buffer,
-                               GimpTextEditor *editor)
+picman_text_editor_text_changed (GtkTextBuffer  *buffer,
+                               PicmanTextEditor *editor)
 {
   g_signal_emit (editor, text_editor_signals[TEXT_CHANGED], 0);
 }
 
 static void
-gimp_text_editor_font_toggled (GtkToggleButton *button,
-                               GimpTextEditor  *editor)
+picman_text_editor_font_toggled (GtkToggleButton *button,
+                               PicmanTextEditor  *editor)
 {
   PangoFontDescription *font_desc = NULL;
 

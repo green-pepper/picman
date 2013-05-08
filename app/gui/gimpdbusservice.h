@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpDBusService
- * Copyright (C) 2007, 2008 Sven Neumann <sven@gimp.org>
+ * PicmanDBusService
+ * Copyright (C) 2007, 2008 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,63 +18,63 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DBUS_SERVICE_H__
-#define __GIMP_DBUS_SERVICE_H__
+#ifndef __PICMAN_DBUS_SERVICE_H__
+#define __PICMAN_DBUS_SERVICE_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_DBUS_SERVICE_NAME       "org.gimp.GIMP.UI"
-#define GIMP_DBUS_SERVICE_PATH       "/org/gimp/GIMP/UI"
-#define GIMP_DBUS_SERVICE_INTERFACE  "org.gimp.GIMP.UI"
+#define PICMAN_DBUS_SERVICE_NAME       "org.picman.PICMAN.UI"
+#define PICMAN_DBUS_SERVICE_PATH       "/org/picman/PICMAN/UI"
+#define PICMAN_DBUS_SERVICE_INTERFACE  "org.picman.PICMAN.UI"
 
 
-#define GIMP_TYPE_DBUS_SERVICE            (gimp_dbus_service_get_type ())
-#define GIMP_DBUS_SERVICE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DBUS_SERVICE, GimpDBusService))
-#define GIMP_DBUS_SERVICE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DBUS_SERVICE, GimpDBusServiceClass))
-#define GIMP_IS_DBUS_SERVICE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DBUS_SERVICE))
-#define GIMP_IS_DBUS_SERVICE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DBUS_SERVICE))
-#define GIMP_DBUS_SERVICE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DBUS_SERVICE, GimpDBusServiceClass))
+#define PICMAN_TYPE_DBUS_SERVICE            (picman_dbus_service_get_type ())
+#define PICMAN_DBUS_SERVICE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DBUS_SERVICE, PicmanDBusService))
+#define PICMAN_DBUS_SERVICE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DBUS_SERVICE, PicmanDBusServiceClass))
+#define PICMAN_IS_DBUS_SERVICE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DBUS_SERVICE))
+#define PICMAN_IS_DBUS_SERVICE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DBUS_SERVICE))
+#define PICMAN_DBUS_SERVICE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DBUS_SERVICE, PicmanDBusServiceClass))
 
 
-typedef struct _GimpDBusService      GimpDBusService;
-typedef struct _GimpDBusServiceClass GimpDBusServiceClass;
+typedef struct _PicmanDBusService      PicmanDBusService;
+typedef struct _PicmanDBusServiceClass PicmanDBusServiceClass;
 
-struct _GimpDBusService
+struct _PicmanDBusService
 {
   GObject  parent_instance;
 
-  Gimp    *gimp;
+  Picman    *picman;
   GQueue  *queue;
   GSource *source;
 };
 
-struct _GimpDBusServiceClass
+struct _PicmanDBusServiceClass
 {
   GObjectClass  parent_class;
 
   /*  signals  */
-  void (* opened) (GimpDBusService *service,
+  void (* opened) (PicmanDBusService *service,
 		   const gchar     *uri);
 };
 
 
-GType     gimp_dbus_service_get_type    (void) G_GNUC_CONST;
+GType     picman_dbus_service_get_type    (void) G_GNUC_CONST;
 
-GObject * gimp_dbus_service_new         (Gimp            *gimp);
+GObject * picman_dbus_service_new         (Picman            *picman);
 
-gboolean  gimp_dbus_service_open        (GimpDBusService  *service,
+gboolean  picman_dbus_service_open        (PicmanDBusService  *service,
                                          const gchar      *uri,
                                          gboolean         *success,
                                          GError          **dbus_error);
-gboolean  gimp_dbus_service_open_as_new (GimpDBusService  *service,
+gboolean  picman_dbus_service_open_as_new (PicmanDBusService  *service,
                                          const gchar      *uri,
                                          gboolean         *success,
                                          GError          **dbus_error);
-gboolean  gimp_dbus_service_activate    (GimpDBusService  *service,
+gboolean  picman_dbus_service_activate    (PicmanDBusService  *service,
                                          GError          **dbus_error);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_DBUS_SERVICE_H__ */
+#endif /* __PICMAN_DBUS_SERVICE_H__ */

@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpchecks.c
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanchecks.c
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,14 +23,14 @@
 
 #include <glib-object.h>
 
-#include "gimpbasetypes.h"
+#include "picmanbasetypes.h"
 
-#include "gimpchecks.h"
+#include "picmanchecks.h"
 
 
 /**
- * SECTION: gimpchecks
- * @title: gimpchecks
+ * SECTION: picmanchecks
+ * @title: picmanchecks
  * @short_description: Constants and functions related to rendering
  *                     checkerboards.
  *
@@ -39,18 +39,18 @@
 
 
 /**
- * gimp_checks_get_shades:
+ * picman_checks_get_shades:
  * @type:  the checkerboard type
  * @light: return location for the light shade
  * @dark:  return location for the dark shade
  *
  * Retrieves the actual shades of gray to use when drawing a
- * checkerboard for a certain #GimpCheckType.
+ * checkerboard for a certain #PicmanCheckType.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_checks_get_shades (GimpCheckType  type,
+picman_checks_get_shades (PicmanCheckType  type,
                         guchar        *light,
                         guchar        *dark)
 {

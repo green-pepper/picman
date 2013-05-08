@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpText
- * Copyright (C) 2002-2003  Sven Neumann <sven@gimp.org>
+ * PicmanText
+ * Copyright (C) 2002-2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,30 +24,30 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <pango/pangocairo.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "text-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpchannel.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimplayer-floating-sel.h"
+#include "core/picman.h"
+#include "core/picmanchannel.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanlayer-floating-sel.h"
 
-#include "gimptext.h"
-#include "gimptext-compat.h"
-#include "gimptextlayer.h"
+#include "picmantext.h"
+#include "picmantext-compat.h"
+#include "picmantextlayer.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-GimpLayer *
-text_render (GimpImage    *image,
-             GimpDrawable *drawable,
-             GimpContext  *context,
+PicmanLayer *
+text_render (PicmanImage    *image,
+             PicmanDrawable *drawable,
+             PicmanContext  *context,
              gint          text_x,
              gint          text_y,
              const gchar  *fontname,
@@ -56,17 +56,17 @@ text_render (GimpImage    *image,
              gboolean      antialias)
 {
   PangoFontDescription *desc;
-  GimpText             *gtext;
-  GimpLayer            *layer;
-  GimpRGB               color;
+  PicmanText             *gtext;
+  PicmanLayer            *layer;
+  PicmanRGB               color;
   gchar                *font;
   gdouble               size;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (drawable == NULL || GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (drawable == NULL || PICMAN_IS_DRAWABLE (drawable), NULL);
   g_return_val_if_fail (drawable == NULL ||
-                        gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+                        picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (fontname != NULL, NULL);
   g_return_val_if_fail (text != NULL, NULL);
 
@@ -81,9 +81,9 @@ text_render (GimpImage    *image,
 
   pango_font_description_free (desc);
 
-  gimp_context_get_foreground (context, &color);
+  picman_context_get_foreground (context, &color);
 
-  gtext = g_object_new (GIMP_TYPE_TEXT,
+  gtext = g_object_new (PICMAN_TYPE_TEXT,
                         "text",      text,
                         "font",      font,
                         "font-size", size,
@@ -94,7 +94,7 @@ text_render (GimpImage    *image,
 
   g_free (font);
 
-  layer = gimp_text_layer_new (image, gtext);
+  layer = picman_text_layer_new (image, gtext);
 
   g_object_unref (gtext);
 
@@ -102,23 +102,23 @@ text_render (GimpImage    *image,
     return NULL;
 
   /*  Start a group undo  */
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_TEXT,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_TEXT,
                                _("Add Text Layer"));
 
   /*  Set the layer offsets  */
-  gimp_item_set_offset (GIMP_ITEM (layer), text_x, text_y);
+  picman_item_set_offset (PICMAN_ITEM (layer), text_x, text_y);
 
   /*  If there is a selection mask clear it--
    *  this might not always be desired, but in general,
    *  it seems like the correct behavior.
    */
-  if (! gimp_channel_is_empty (gimp_image_get_mask (image)))
-    gimp_channel_clear (gimp_image_get_mask (image), NULL, TRUE);
+  if (! picman_channel_is_empty (picman_image_get_mask (image)))
+    picman_channel_clear (picman_image_get_mask (image), NULL, TRUE);
 
   if (drawable == NULL)
     {
       /*  If the drawable is NULL, create a new layer  */
-      gimp_image_add_layer (image, layer, NULL, -1, TRUE);
+      picman_image_add_layer (image, layer, NULL, -1, TRUE);
     }
   else
     {
@@ -127,7 +127,7 @@ text_render (GimpImage    *image,
     }
 
   /*  end the group undo  */
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
   return layer;
 }

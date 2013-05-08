@@ -1,14 +1,14 @@
 ## Process this file with automake to produce Makefile.in
 
-libgimpui = $(top_builddir)/libgimp/libgimpui-$(GIMP_API_VERSION).la
-libgimpconfig = $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la
-libgimpwidgets = $(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la
-libgimp = $(top_builddir)/libgimp/libgimp-$(GIMP_API_VERSION).la
-libgimpcolor = $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
-libgimpmath = $(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la
+libpicmanui = $(top_builddir)/libpicman/libpicmanui-$(PICMAN_API_VERSION).la
+libpicmanconfig = $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la
+libpicmanwidgets = $(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la
+libpicman = $(top_builddir)/libpicman/libpicman-$(PICMAN_API_VERSION).la
+libpicmancolor = $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
+libpicmanmath = $(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la
 
-libexecdir = $(gimpplugindir)/plug-ins
+libexecdir = $(picmanplugindir)/plug-ins
 
 libexec_PROGRAMS = win-snap
 
@@ -33,13 +33,13 @@ INCLUDES = \
 
 LDADD = \
 	winsnap-win32res.o	\
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpconfig)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanconfig)	\
+	$(libpicman)		\
+	$(libpicmanmath)		\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(RT_LIBS)		\
 	$(GTK_LIBS)		\
 	$(INTLLIBS)

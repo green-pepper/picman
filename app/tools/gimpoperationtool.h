@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,51 +15,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_TOOL_H__
-#define __GIMP_OPERATION_TOOL_H__
+#ifndef __PICMAN_OPERATION_TOOL_H__
+#define __PICMAN_OPERATION_TOOL_H__
 
 
-#include "gimpimagemaptool.h"
+#include "picmanimagemaptool.h"
 
 
-#define GIMP_TYPE_OPERATION_TOOL            (gimp_operation_tool_get_type ())
-#define GIMP_OPERATION_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_TOOL, GimpOperationTool))
-#define GIMP_OPERATION_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_OPERATION_TOOL, GimpOperationToolClass))
-#define GIMP_IS_OPERATION_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_TOOL))
-#define GIMP_IS_OPERATION_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_OPERATION_TOOL))
-#define GIMP_OPERATION_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_OPERATION_TOOL, GimpOperationToolClass))
+#define PICMAN_TYPE_OPERATION_TOOL            (picman_operation_tool_get_type ())
+#define PICMAN_OPERATION_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_TOOL, PicmanOperationTool))
+#define PICMAN_OPERATION_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_OPERATION_TOOL, PicmanOperationToolClass))
+#define PICMAN_IS_OPERATION_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_TOOL))
+#define PICMAN_IS_OPERATION_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_OPERATION_TOOL))
+#define PICMAN_OPERATION_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_OPERATION_TOOL, PicmanOperationToolClass))
 
 
-typedef struct _GimpOperationTool      GimpOperationTool;
-typedef struct _GimpOperationToolClass GimpOperationToolClass;
+typedef struct _PicmanOperationTool      PicmanOperationTool;
+typedef struct _PicmanOperationToolClass PicmanOperationToolClass;
 
-struct _GimpOperationTool
+struct _PicmanOperationTool
 {
-  GimpImageMapTool  parent_instance;
+  PicmanImageMapTool  parent_instance;
 
   gchar            *operation;
   gchar            *undo_desc;
-  GimpObject       *config;
+  PicmanObject       *config;
 
   /* dialog */
   GtkWidget        *options_box;
   GtkWidget        *options_table;
 };
 
-struct _GimpOperationToolClass
+struct _PicmanOperationToolClass
 {
-  GimpImageMapToolClass  parent_class;
+  PicmanImageMapToolClass  parent_class;
 };
 
 
-void    gimp_operation_tool_register      (GimpToolRegisterCallback  callback,
+void    picman_operation_tool_register      (PicmanToolRegisterCallback  callback,
                                            gpointer                  data);
 
-GType   gimp_operation_tool_get_type      (void) G_GNUC_CONST;
+GType   picman_operation_tool_get_type      (void) G_GNUC_CONST;
 
-void    gimp_operation_tool_set_operation (GimpOperationTool        *tool,
+void    picman_operation_tool_set_operation (PicmanOperationTool        *tool,
                                            const gchar              *operation,
                                            const gchar              *undo_desc);
 
 
-#endif  /*  __GIMP_OPERATION_TOOL_H__  */
+#endif  /*  __PICMAN_OPERATION_TOOL_H__  */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "paint-types.h"
 
-#include "gimperaseroptions.h"
+#include "picmaneraseroptions.h"
 
 
 #define ERASER_DEFAULT_ANTI_ERASE FALSE
@@ -36,46 +36,46 @@ enum
 };
 
 
-static void   gimp_eraser_options_set_property (GObject         *object,
+static void   picman_eraser_options_set_property (GObject         *object,
                                                 guint            property_id,
                                                 const GValue    *value,
                                                 GParamSpec      *pspec);
-static void   gimp_eraser_options_get_property (GObject         *object,
+static void   picman_eraser_options_get_property (GObject         *object,
                                                 guint            property_id,
                                                 GValue          *value,
                                                 GParamSpec      *pspec);
 
 
-G_DEFINE_TYPE (GimpEraserOptions, gimp_eraser_options,
-               GIMP_TYPE_PAINT_OPTIONS)
+G_DEFINE_TYPE (PicmanEraserOptions, picman_eraser_options,
+               PICMAN_TYPE_PAINT_OPTIONS)
 
 
 static void
-gimp_eraser_options_class_init (GimpEraserOptionsClass *klass)
+picman_eraser_options_class_init (PicmanEraserOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_eraser_options_set_property;
-  object_class->get_property = gimp_eraser_options_get_property;
+  object_class->set_property = picman_eraser_options_set_property;
+  object_class->get_property = picman_eraser_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ANTI_ERASE,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ANTI_ERASE,
                                     "anti-erase", NULL,
                                     ERASER_DEFAULT_ANTI_ERASE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_eraser_options_init (GimpEraserOptions *options)
+picman_eraser_options_init (PicmanEraserOptions *options)
 {
 }
 
 static void
-gimp_eraser_options_set_property (GObject      *object,
+picman_eraser_options_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  GimpEraserOptions *options = GIMP_ERASER_OPTIONS (object);
+  PicmanEraserOptions *options = PICMAN_ERASER_OPTIONS (object);
 
   switch (property_id)
     {
@@ -89,12 +89,12 @@ gimp_eraser_options_set_property (GObject      *object,
 }
 
 static void
-gimp_eraser_options_get_property (GObject    *object,
+picman_eraser_options_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  GimpEraserOptions *options = GIMP_ERASER_OPTIONS (object);
+  PicmanEraserOptions *options = PICMAN_ERASER_OPTIONS (object);
 
   switch (property_id)
     {

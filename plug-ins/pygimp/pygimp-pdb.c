@@ -1,5 +1,5 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
+ * Picman-Python - allows the writing of Picman plugins in Python.
  * Copyright (C) 1997-2002  James Henstridge <james@daa.com.au>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,10 +23,10 @@
 #define NO_IMPORT_PYGOBJECT
 #include <pygobject.h>
 
-#include "pygimp.h"
+#include "pypicman.h"
 
-#define NO_IMPORT_PYGIMPCOLOR
-#include "pygimpcolor-api.h"
+#define NO_IMPORT_PYPICMANCOLOR
+#include "pypicmancolor-api.h"
 
 #include <structmember.h>
 
@@ -43,7 +43,7 @@
 
 typedef struct {
     PyObject_HEAD
-} PyGimpPDB;
+} PyPicmanPDB;
 
 
 /* ---------------------------------------------------------------- */
@@ -57,55 +57,55 @@ typedef struct {
 	*proc_copyright, *proc_date, *proc_type, *py_params,
 	*py_return_vals;
     int nparams, nreturn_vals;
-    GimpParamDef *params, *return_vals;
-} PyGimpPDBFunction;
+    PicmanParamDef *params, *return_vals;
+} PyPicmanPDBFunction;
 
-static PyObject *pygimp_pdb_function_new_from_proc_db(char *name);
+static PyObject *pypicman_pdb_function_new_from_proc_db(char *name);
 
 /* ---------------------------------------------------------------- */
 
-/* routines to convert between Python tuples and gimp GimpParam's */
+/* routines to convert between Python tuples and picman PicmanParam's */
 
 #if PG_DEBUG > 0
 
 static void
-pygimp_param_print(int nparams, GimpParam *params)
+pypicman_param_print(int nparams, PicmanParam *params)
 {
     int i;
 
     for (i = 0; i < nparams; i++) {
-	g_printf("param_print: type: %d, PDB_ITEM: %d\n",  params[i].type, GIMP_PDB_ITEM);
+	g_printf("param_print: type: %d, PDB_ITEM: %d\n",  params[i].type, PICMAN_PDB_ITEM);
 	switch(params[i].type) {
-	case GIMP_PDB_INT32:
+	case PICMAN_PDB_INT32:
 	    g_printerr("%i. int %i\n", i,
                        params[i].data.d_int32);
 	    break;
-	case GIMP_PDB_INT16:
+	case PICMAN_PDB_INT16:
 	    g_printerr("%i. int %i\n", i,
                        params[i].data.d_int16);
 	    break;
-	case GIMP_PDB_INT8:
+	case PICMAN_PDB_INT8:
 	    g_printerr("%i. int %u\n", i,
                        params[i].data.d_int8);
 	    break;
-	case GIMP_PDB_FLOAT:
+	case PICMAN_PDB_FLOAT:
 	    g_printerr("%i. float %f\n", i,
                        params[i].data.d_float);
 	    break;
-	case GIMP_PDB_STRING:
+	case PICMAN_PDB_STRING:
 	    g_printerr("%i. string %s\n", i,
                        params[i].data.d_string);
 	    break;
-	case GIMP_PDB_INT32ARRAY:
-	case GIMP_PDB_INT16ARRAY:
-	case GIMP_PDB_INT8ARRAY:
-	case GIMP_PDB_FLOATARRAY:
-	case GIMP_PDB_STRINGARRAY:
+	case PICMAN_PDB_INT32ARRAY:
+	case PICMAN_PDB_INT16ARRAY:
+	case PICMAN_PDB_INT8ARRAY:
+	case PICMAN_PDB_FLOATARRAY:
+	case PICMAN_PDB_STRINGARRAY:
 	    g_printerr("%i. array of type %i %s\n", i,
                        params[i].type,
                        params[i].data.d_int32array == NULL ? "(null)":"");
 	    break;
-	case GIMP_PDB_STATUS:
+	case PICMAN_PDB_STATUS:
 	    g_printerr("%i. status %i\n", i,
                        params[i].data.d_status);
 	    break;
@@ -120,33 +120,33 @@ pygimp_param_print(int nparams, GimpParam *params)
 #endif
 
 PyObject *
-pygimp_param_to_tuple(int nparams, const GimpParam *params)
+pypicman_param_to_tuple(int nparams, const PicmanParam *params)
 {
     PyObject *args, *tmp;
     int i, j, n;
 
     args = PyTuple_New(nparams);
-    for (i = 0; i < nparams && params[i].type != GIMP_PDB_END; i++) {
+    for (i = 0; i < nparams && params[i].type != PICMAN_PDB_END; i++) {
 	PyObject *value = NULL;
 	
 #if PG_DEBUG > 1
-	g_printf("param_to_tuple: type: %d, PDB_ITEM: %d\n",  params[i].type, GIMP_PDB_ITEM);
+	g_printf("param_to_tuple: type: %d, PDB_ITEM: %d\n",  params[i].type, PICMAN_PDB_ITEM);
 #endif
 
 	switch(params[i].type) {
-	case GIMP_PDB_INT32:
+	case PICMAN_PDB_INT32:
 	    value = PyInt_FromLong(params[i].data.d_int32);
 	    break;
-	case GIMP_PDB_INT16:
+	case PICMAN_PDB_INT16:
 	    value = PyInt_FromLong(params[i].data.d_int16);
 	    break;
-	case GIMP_PDB_INT8:
+	case PICMAN_PDB_INT8:
 	    value = PyInt_FromLong(params[i].data.d_int8);
 	    break;
-	case GIMP_PDB_FLOAT:
+	case PICMAN_PDB_FLOAT:
 	    value = PyFloat_FromDouble(params[i].data.d_float);
 	    break;
-	case GIMP_PDB_STRING:
+	case PICMAN_PDB_STRING:
 	    if (params[i].data.d_string == NULL) {
 		Py_INCREF(Py_None);
 		value = Py_None;
@@ -157,7 +157,7 @@ pygimp_param_to_tuple(int nparams, const GimpParam *params)
 	    /* For these to work, the previous argument must have
 	     * been an integer
 	     */
-	case GIMP_PDB_INT32ARRAY:
+	case PICMAN_PDB_INT32ARRAY:
 	    if (params[i].data.d_int32array == NULL) {
 		value = PyTuple_New(0);
 		break;
@@ -178,7 +178,7 @@ pygimp_param_to_tuple(int nparams, const GimpParam *params)
 		PyTuple_SetItem(value, j,
 			PyInt_FromLong(params[i].data.d_int32array[j]));
 	    break;
-	case GIMP_PDB_INT16ARRAY:
+	case PICMAN_PDB_INT16ARRAY:
 	    if (params[i].data.d_int16array == NULL) {
 		value = PyTuple_New(0);
 		break;
@@ -199,7 +199,7 @@ pygimp_param_to_tuple(int nparams, const GimpParam *params)
 		PyTuple_SetItem(value, j,
 			PyInt_FromLong(params[i].data.d_int16array[j]));
 	    break;
-	case GIMP_PDB_INT8ARRAY:
+	case PICMAN_PDB_INT8ARRAY:
 	    if (params[i].data.d_int8array == NULL) {
 		value = PyTuple_New(0);
 		break;
@@ -220,7 +220,7 @@ pygimp_param_to_tuple(int nparams, const GimpParam *params)
 		PyTuple_SetItem(value, j,
 			PyInt_FromLong(params[i].data.d_int8array[j]));
 	    break;
-	case GIMP_PDB_FLOATARRAY:
+	case PICMAN_PDB_FLOATARRAY:
 	    if (params[i].data.d_floatarray == NULL) {
 		value = PyTuple_New(0);
 		break;
@@ -241,7 +241,7 @@ pygimp_param_to_tuple(int nparams, const GimpParam *params)
 		PyTuple_SetItem(value, j,
 			PyFloat_FromDouble(params[i].data.d_floatarray[j]));
 	    break;
-	case GIMP_PDB_STRINGARRAY:
+	case PICMAN_PDB_STRINGARRAY:
 	    if (params[i].data.d_stringarray == NULL) {
 		value = PyTuple_New(0);
 		break;
@@ -264,13 +264,13 @@ pygimp_param_to_tuple(int nparams, const GimpParam *params)
 			PyString_FromString(params[i].data.d_stringarray[j]) :
 			PyString_FromString(""));
 	    break;
-	case GIMP_PDB_COLOR:
-	    value = pygimp_rgb_new(&params[i].data.d_color);
+	case PICMAN_PDB_COLOR:
+	    value = pypicman_rgb_new(&params[i].data.d_color);
 	    break;
 	/*
-	GIMP_PDB_REGION is deprecated in libgimpbase/gimpbaseenums.h
-	and conflicts with GIMP_PDB_ITEM
-	case GIMP_PDB_REGION:
+	PICMAN_PDB_REGION is deprecated in libpicmanbase/picmanbaseenums.h
+	and conflicts with PICMAN_PDB_ITEM
+	case PICMAN_PDB_REGION:
 	    value = Py_BuildValue("(iiii)",
 				  (int) params[i].data.d_region.x,
 				  (int) params[i].data.d_region.y,
@@ -278,28 +278,28 @@ pygimp_param_to_tuple(int nparams, const GimpParam *params)
 				  (int) params[i].data.d_region.height);
 	    break;
 	*/
-	case GIMP_PDB_DISPLAY:
-	    value = pygimp_display_new(params[i].data.d_display);
+	case PICMAN_PDB_DISPLAY:
+	    value = pypicman_display_new(params[i].data.d_display);
 	    break;
-	case GIMP_PDB_IMAGE:
-	    value = pygimp_image_new(params[i].data.d_image);
+	case PICMAN_PDB_IMAGE:
+	    value = pypicman_image_new(params[i].data.d_image);
 	    break;
-	case GIMP_PDB_LAYER:
-	    value = pygimp_layer_new(params[i].data.d_layer);
+	case PICMAN_PDB_LAYER:
+	    value = pypicman_layer_new(params[i].data.d_layer);
 	    break;
-	case GIMP_PDB_CHANNEL:
-	    value = pygimp_channel_new(params[i].data.d_channel);
+	case PICMAN_PDB_CHANNEL:
+	    value = pypicman_channel_new(params[i].data.d_channel);
 	    break;
-	case GIMP_PDB_ITEM:
-	    value = pygimp_item_new(params[i].data.d_item);
+	case PICMAN_PDB_ITEM:
+	    value = pypicman_item_new(params[i].data.d_item);
 	    break;
-	case GIMP_PDB_DRAWABLE:
-	    value = pygimp_drawable_new(NULL, params[i].data.d_drawable);
+	case PICMAN_PDB_DRAWABLE:
+	    value = pypicman_drawable_new(NULL, params[i].data.d_drawable);
 	    break;
-	case GIMP_PDB_SELECTION:
-	    value = pygimp_channel_new(params[i].data.d_selection);
+	case PICMAN_PDB_SELECTION:
+	    value = pypicman_channel_new(params[i].data.d_selection);
 	    break;
-	case GIMP_PDB_COLORARRAY:
+	case PICMAN_PDB_COLORARRAY:
 	    if (params[i].data.d_colorarray == NULL) {
 		value = PyTuple_New(0);
 		break;
@@ -318,19 +318,19 @@ pygimp_param_to_tuple(int nparams, const GimpParam *params)
 	    value = PyTuple_New(n);
 	    for (j = 0; j < n; j++)
 		PyTuple_SetItem(value, j,
-                                pygimp_rgb_new(&params[i].data.d_colorarray[j]));
+                                pypicman_rgb_new(&params[i].data.d_colorarray[j]));
 	    break;
-	case GIMP_PDB_VECTORS:
-	    value = pygimp_vectors_new(params[i].data.d_vectors);
+	case PICMAN_PDB_VECTORS:
+	    value = pypicman_vectors_new(params[i].data.d_vectors);
 	    break;
-	case GIMP_PDB_PARASITE:
-	    value = pygimp_parasite_new(gimp_parasite_copy(
+	case PICMAN_PDB_PARASITE:
+	    value = pypicman_parasite_new(picman_parasite_copy(
 					&(params[i].data.d_parasite)));
 	    break;
-	case GIMP_PDB_STATUS:
+	case PICMAN_PDB_STATUS:
 	    value = PyInt_FromLong(params[i].data.d_status);
 	    break;
-	case GIMP_PDB_END:
+	case PICMAN_PDB_END:
 	    break;
 	}
 	PyTuple_SetItem(args, i, value);
@@ -338,11 +338,11 @@ pygimp_param_to_tuple(int nparams, const GimpParam *params)
     return args;
 }
 
-GimpParam *
-pygimp_param_from_tuple(PyObject *args, const GimpParamDef *ptype, int nparams)
+PicmanParam *
+pypicman_param_from_tuple(PyObject *args, const PicmanParamDef *ptype, int nparams)
 {
     PyObject *tuple, *item, *x, *y;
-    GimpParam *ret;
+    PicmanParam *ret;
     int i, j, len;
     gint32 *i32a; gint16 *i16a; guint8 *i8a; gdouble *fa; gchar **sa;
 
@@ -366,49 +366,49 @@ pygimp_param_from_tuple(PyObject *args, const GimpParamDef *ptype, int nparams)
 	return NULL;
     }
 
-    ret = g_new(GimpParam, nparams+1);
+    ret = g_new(PicmanParam, nparams+1);
     for (i = 0; i <= nparams; i++)
-	ret[i].type = GIMP_PDB_STATUS;
+	ret[i].type = PICMAN_PDB_STATUS;
 #define check(expr) if (expr) { \
 	    PyErr_SetString(PyExc_TypeError, "wrong parameter type"); \
 	    Py_DECREF(tuple); \
-	    gimp_destroy_params(ret, nparams); \
+	    picman_destroy_params(ret, nparams); \
 	    return NULL; \
 	}
 #define arraycheck(expr, ar) if (expr) { \
 	    PyErr_SetString(PyExc_TypeError, "subscript of wrong type"); \
 	    Py_DECREF(tuple); \
-	    gimp_destroy_params(ret, nparams); \
+	    picman_destroy_params(ret, nparams); \
 	    g_free(ar); \
 	    return NULL; \
 	}
     for (i = 1; i <= nparams; i++) {
 	item = PyTuple_GetItem(tuple, i-1);
 #if PG_DEBUG > 1
-	g_printf("param_from_tuple: type: %d, PDB_ITEM: %d\n",  ptype[i-1].type, GIMP_PDB_ITEM);
+	g_printf("param_from_tuple: type: %d, PDB_ITEM: %d\n",  ptype[i-1].type, PICMAN_PDB_ITEM);
 #endif
 	switch (ptype[i-1].type) {
-	case GIMP_PDB_INT32:
+	case PICMAN_PDB_INT32:
 	    check((x = PyNumber_Int(item)) == NULL);
 	    ret[i].data.d_int32 = (gint32)PyInt_AsLong(x);
 	    Py_DECREF(x);
 	    break;
-	case GIMP_PDB_INT16:
+	case PICMAN_PDB_INT16:
 	    check((x = PyNumber_Int(item)) == NULL);
 	    ret[i].data.d_int16 = (gint16)PyInt_AsLong(x);
 	    Py_DECREF(x);
 	    break;
-	case GIMP_PDB_INT8:
+	case PICMAN_PDB_INT8:
 	    check((x = PyNumber_Int(item)) == NULL);
 	    ret[i].data.d_int8 = (guint8)PyInt_AsLong(x);
 	    Py_DECREF(x);
 	    break;
-	case GIMP_PDB_FLOAT:
+	case PICMAN_PDB_FLOAT:
 	    check((x = PyNumber_Float(item)) == NULL);
 	    ret[i].data.d_float = PyFloat_AsDouble(x);
 	    Py_DECREF(x);
 	    break;
-	case GIMP_PDB_STRING:
+	case PICMAN_PDB_STRING:
 	    if (item == Py_None) {
 		ret[i].data.d_string = NULL;
 		break;
@@ -417,7 +417,7 @@ pygimp_param_from_tuple(PyObject *args, const GimpParamDef *ptype, int nparams)
 	    ret[i].data.d_string = g_strdup(PyString_AsString(x));
 	    Py_DECREF(x);
 	    break;
-	case GIMP_PDB_INT32ARRAY:
+	case PICMAN_PDB_INT32ARRAY:
 	    check(!PySequence_Check(item));
 	    len = PySequence_Length(item);
 	    i32a = g_new(gint32, len);
@@ -430,7 +430,7 @@ pygimp_param_from_tuple(PyObject *args, const GimpParamDef *ptype, int nparams)
 	    }
 	    ret[i].data.d_int32array = i32a;
 	    break;
-	case GIMP_PDB_INT16ARRAY:
+	case PICMAN_PDB_INT16ARRAY:
 	    check(!PySequence_Check(item));
 	    len = PySequence_Length(item);
 	    i16a = g_new(gint16, len);
@@ -443,7 +443,7 @@ pygimp_param_from_tuple(PyObject *args, const GimpParamDef *ptype, int nparams)
 	    }
 	    ret[i].data.d_int16array = i16a;
 	    break;
-	case GIMP_PDB_INT8ARRAY:
+	case PICMAN_PDB_INT8ARRAY:
 	    check(!PySequence_Check(item));
 	    len = PySequence_Length(item);
 	    i8a = g_new(guint8, len);
@@ -456,7 +456,7 @@ pygimp_param_from_tuple(PyObject *args, const GimpParamDef *ptype, int nparams)
 	    }
 	    ret[i].data.d_int8array = i8a;
 	    break;
-	case GIMP_PDB_FLOATARRAY:
+	case PICMAN_PDB_FLOATARRAY:
 	    check(!PySequence_Check(item));
 	    len = PySequence_Length(item);
 	    fa = g_new(gdouble, len);
@@ -469,7 +469,7 @@ pygimp_param_from_tuple(PyObject *args, const GimpParamDef *ptype, int nparams)
 	    }
 	    ret[i].data.d_floatarray = fa;
 	    break;
-	case GIMP_PDB_STRINGARRAY:
+	case PICMAN_PDB_STRINGARRAY:
 	    check(!PySequence_Check(item));
 	    len = PySequence_Length(item);
 	    sa = g_new(gchar *, len);
@@ -486,13 +486,13 @@ pygimp_param_from_tuple(PyObject *args, const GimpParamDef *ptype, int nparams)
 	    }
 	    ret[i].data.d_stringarray = sa;
 	    break;
-	case GIMP_PDB_COLOR:
+	case PICMAN_PDB_COLOR:
 	    {
-                GimpRGB rgb;
+                PicmanRGB rgb;
 
-                if (!pygimp_rgb_from_pyobject(item, &rgb)) {
+                if (!pypicman_rgb_from_pyobject(item, &rgb)) {
                     Py_DECREF(tuple);
-                    gimp_destroy_params(ret, nparams);
+                    picman_destroy_params(ret, nparams);
                     return NULL;
 		}
 
@@ -500,7 +500,7 @@ pygimp_param_from_tuple(PyObject *args, const GimpParamDef *ptype, int nparams)
 	    }
 	    break;
 /*
-	case GIMP_PDB_REGION:
+	case PICMAN_PDB_REGION:
 	    check(!PySequence_Check(item) ||
 		  PySequence_Length(item) < 4);
 	    x = PySequence_GetItem(item, 0);
@@ -515,96 +515,96 @@ pygimp_param_from_tuple(PyObject *args, const GimpParamDef *ptype, int nparams)
 	    ret[i].data.d_region.height = PyInt_AsLong(h);
 	    break;
 */
-	case GIMP_PDB_DISPLAY:
+	case PICMAN_PDB_DISPLAY:
             if (item == Py_None) {
                 ret[i].data.d_display = -1;
                 break;
             }
-	    check(!pygimp_display_check(item));
-	    ret[i].data.d_display = ((PyGimpDisplay *)item)->ID;
+	    check(!pypicman_display_check(item));
+	    ret[i].data.d_display = ((PyPicmanDisplay *)item)->ID;
 	    break;
-	case GIMP_PDB_IMAGE:
+	case PICMAN_PDB_IMAGE:
 	    if (item == Py_None) {
 		ret[i].data.d_image = -1;
 		break;
 	    }
-	    check(!pygimp_image_check(item));
-	    ret[i].data.d_image = ((PyGimpImage *)item)->ID;
+	    check(!pypicman_image_check(item));
+	    ret[i].data.d_image = ((PyPicmanImage *)item)->ID;
 	    break;
-	case GIMP_PDB_LAYER:
+	case PICMAN_PDB_LAYER:
 	    if (item == Py_None) {
 		ret[i].data.d_layer = -1;
 		break;
 	    }
-	    check(!pygimp_layer_check(item));
-	    ret[i].data.d_layer = ((PyGimpLayer *)item)->ID;
+	    check(!pypicman_layer_check(item));
+	    ret[i].data.d_layer = ((PyPicmanLayer *)item)->ID;
 	    break;
-	case GIMP_PDB_CHANNEL:
+	case PICMAN_PDB_CHANNEL:
 	    if (item == Py_None) {
 		ret[i].data.d_channel = -1;
 		break;
 	    }
-	    check(!pygimp_channel_check(item));
-	    ret[i].data.d_channel = ((PyGimpChannel *)item)->ID;
+	    check(!pypicman_channel_check(item));
+	    ret[i].data.d_channel = ((PyPicmanChannel *)item)->ID;
 	    break;
-	case GIMP_PDB_ITEM:
+	case PICMAN_PDB_ITEM:
 	    if (item == Py_None) {
 		ret[i].data.d_channel = -1;
 		break;
 	    }
-	    check(!pygimp_item_check(item));
-	    ret[i].data.d_item = ((PyGimpItem *)item)->ID;
+	    check(!pypicman_item_check(item));
+	    ret[i].data.d_item = ((PyPicmanItem *)item)->ID;
 	    break;
-	case GIMP_PDB_DRAWABLE:
+	case PICMAN_PDB_DRAWABLE:
 	    if (item == Py_None) {
 		ret[i].data.d_channel = -1;
 		break;
 	    }
-	    check(!pygimp_drawable_check(item));
-	    ret[i].data.d_channel = ((PyGimpDrawable *)item)->ID;
+	    check(!pypicman_drawable_check(item));
+	    ret[i].data.d_channel = ((PyPicmanDrawable *)item)->ID;
 	    break;
-	case GIMP_PDB_SELECTION:
+	case PICMAN_PDB_SELECTION:
 	    if (item == Py_None) {
 		ret[i].data.d_channel = -1;
 		break;
 	    }
-	    check(!pygimp_channel_check(item));
-	    ret[i].data.d_selection = ((PyGimpChannel *)item)->ID;
+	    check(!pypicman_channel_check(item));
+	    ret[i].data.d_selection = ((PyPicmanChannel *)item)->ID;
 	    break;
-	case GIMP_PDB_COLORARRAY:
+	case PICMAN_PDB_COLORARRAY:
 	    {
-                GimpRGB *rgb;
+                PicmanRGB *rgb;
 
 		check(!PySequence_Check(item));
 		len = PySequence_Length(item);
-		rgb = g_new(GimpRGB, len);
+		rgb = g_new(PicmanRGB, len);
 		for (j = 0; j < len; j++) {
-		    if (!pygimp_rgb_from_pyobject(item, &rgb[j])) {
+		    if (!pypicman_rgb_from_pyobject(item, &rgb[j])) {
 			Py_DECREF(tuple);
 			g_free(rgb);
-			gimp_destroy_params(ret, nparams);
+			picman_destroy_params(ret, nparams);
 			return NULL;
 		    }
 		}
                 ret[i].data.d_colorarray = rgb;
 	    }
 	    break;
-	case GIMP_PDB_VECTORS:
+	case PICMAN_PDB_VECTORS:
 	    if (item == Py_None) {
 		ret[i].data.d_vectors = -1;
 		break;
 	    }
-	    check(!pygimp_vectors_check(item));
-	    ret[i].data.d_vectors = ((PyGimpVectors *)item)->ID;
+	    check(!pypicman_vectors_check(item));
+	    ret[i].data.d_vectors = ((PyPicmanVectors *)item)->ID;
 	    break;
-	case GIMP_PDB_PARASITE:
-	    /* can't do anything, since size of GimpParasite is not known */
+	case PICMAN_PDB_PARASITE:
+	    /* can't do anything, since size of PicmanParasite is not known */
 	    break;
-	case GIMP_PDB_STATUS:
+	case PICMAN_PDB_STATUS:
 	    check(!PyInt_Check(item));
 	    ret[i].data.d_status = PyInt_AsLong(item);
 	    break;
-	case GIMP_PDB_END:
+	case PICMAN_PDB_END:
 	    break;
 	}
 #undef check
@@ -619,18 +619,18 @@ pygimp_param_from_tuple(PyObject *args, const GimpParamDef *ptype, int nparams)
 /* ---------------------------------------------------------------- */
 
 static PyObject *
-pdb_query(PyGimpPDB *self, PyObject *args)
+pdb_query(PyPicmanPDB *self, PyObject *args)
 {
     char *n=".*", *b=".*", *h=".*", *a=".*", *c=".*", *d=".*", *t=".*";
     int num, i;
     char **names;
     PyObject *ret;
 
-    if (!PyArg_ParseTuple(args, "|zzzzzzz:gimp.pdb.query", &n, &b, &h, &a,
+    if (!PyArg_ParseTuple(args, "|zzzzzzz:picman.pdb.query", &n, &b, &h, &a,
 			  &c, &d, &t))
 	return NULL;
 
-    gimp_procedural_db_query(n, b, h, a, c, d, t, &num, &names);
+    picman_procedural_db_query(n, b, h, a, c, d, t, &num, &names);
 
     ret = PyList_New(num);
 
@@ -651,9 +651,9 @@ static PyMethodDef pdb_methods[] = {
 
 
 PyObject *
-pygimp_pdb_new(void)
+pypicman_pdb_new(void)
 {
-    PyGimpPDB *self = PyObject_NEW(PyGimpPDB, &PyGimpPDB_Type);
+    PyPicmanPDB *self = PyObject_NEW(PyPicmanPDB, &PyPicmanPDB_Type);
 
     if (self == NULL)
 	return NULL;
@@ -663,21 +663,21 @@ pygimp_pdb_new(void)
 
 
 static void
-pdb_dealloc(PyGimpPDB *self)
+pdb_dealloc(PyPicmanPDB *self)
 {
     PyObject_DEL(self);
 }
 
 static PyObject *
-pdb_repr(PyGimpPDB *self)
+pdb_repr(PyPicmanPDB *self)
 {
-    return PyString_FromString("<gimp procedural database>");
+    return PyString_FromString("<picman procedural database>");
 }
 
 /* Code to access pdb objects as mappings */
 
 static PyObject *
-pdb_subscript(PyGimpPDB *self, PyObject *key)
+pdb_subscript(PyPicmanPDB *self, PyObject *key)
 {
     PyObject *r;
 
@@ -686,7 +686,7 @@ pdb_subscript(PyGimpPDB *self, PyObject *key)
 	return NULL;
     }
 
-    r = (PyObject *)pygimp_pdb_function_new_from_proc_db(PyString_AsString(key));
+    r = (PyObject *)pypicman_pdb_function_new_from_proc_db(PyString_AsString(key));
 
     if (r == NULL) {
 	PyErr_Clear();
@@ -711,7 +711,7 @@ build_procedure_list(void)
     char **names, *name, *p;
     PyObject *ret;
 
-    gimp_procedural_db_query(".*", ".*", ".*", ".*", ".*", ".*", ".*",
+    picman_procedural_db_query(".*", ".*", ".*", ".*", ".*", ".*", ".*",
                              &num, &names);
 
     ret = PyList_New(num);
@@ -731,7 +731,7 @@ build_procedure_list(void)
 }
 
 static PyObject *
-pdb_getattro(PyGimpPDB *self, PyObject *attr)
+pdb_getattro(PyPicmanPDB *self, PyObject *attr)
 {
     char *attr_name;
     PyObject *ret;
@@ -756,14 +756,14 @@ pdb_getattro(PyGimpPDB *self, PyObject *attr)
 
     PyErr_Clear();
 
-    return pygimp_pdb_function_new_from_proc_db(attr_name);
+    return pypicman_pdb_function_new_from_proc_db(attr_name);
 }
 
-PyTypeObject PyGimpPDB_Type = {
+PyTypeObject PyPicmanPDB_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                  /* ob_size */
-    "gimp.PDB",                         /* tp_name */
-    sizeof(PyGimpPDB),                  /* tp_basicsize */
+    "picman.PDB",                         /* tp_name */
+    sizeof(PyPicmanPDB),                  /* tp_basicsize */
     0,                                  /* tp_itemsize */
     /* methods */
     (destructor)pdb_dealloc,           /* tp_dealloc */
@@ -807,21 +807,21 @@ PyTypeObject PyGimpPDB_Type = {
 
 
 static PyObject *
-pygimp_pdb_function_new_from_proc_db(char *name)
+pypicman_pdb_function_new_from_proc_db(char *name)
 {
     PyObject *ret;
     char *b,*h,*a,*c,*d;
     int np, nr;
-    GimpPDBProcType pt;
-    GimpParamDef *p, *r;
+    PicmanPDBProcType pt;
+    PicmanParamDef *p, *r;
 
-    if (!gimp_procedural_db_proc_info (name, &b, &h, &a, &c, &d, &pt,
+    if (!picman_procedural_db_proc_info (name, &b, &h, &a, &c, &d, &pt,
 				       &np, &nr, &p, &r)) {
-	PyErr_SetString(pygimp_error, "procedure not found");
+	PyErr_SetString(pypicman_error, "procedure not found");
 	return NULL;
     }
 
-    ret = pygimp_pdb_function_new(name, b, h, a, c, d, pt, np, nr, p, r);
+    ret = pypicman_pdb_function_new(name, b, h, a, c, d, pt, np, nr, p, r);
 
     g_free(b); g_free(h); g_free(a); g_free(c); g_free(d);
 
@@ -829,7 +829,7 @@ pygimp_pdb_function_new_from_proc_db(char *name)
 }
 
 static void
-pf_dealloc(PyGimpPDBFunction *self)
+pf_dealloc(PyPicmanPDBFunction *self)
 {
     g_free(self->name);
 
@@ -843,13 +843,13 @@ pf_dealloc(PyGimpPDBFunction *self)
     Py_DECREF(self->py_params);
     Py_DECREF(self->py_return_vals);
 
-    gimp_destroy_paramdefs(self->params, self->nparams);
-    gimp_destroy_paramdefs(self->return_vals, self->nreturn_vals);
+    picman_destroy_paramdefs(self->params, self->nparams);
+    picman_destroy_paramdefs(self->return_vals, self->nreturn_vals);
 
     PyObject_DEL(self);
 }
 
-#define OFF(x) offsetof(PyGimpPDBFunction, x)
+#define OFF(x) offsetof(PyPicmanPDBFunction, x)
 static struct PyMemberDef pf_members[] = {
     {"proc_name",      T_OBJECT, OFF(proc_name),      RO},
     {"proc_blurb",     T_OBJECT, OFF(proc_blurb),     RO},
@@ -867,19 +867,19 @@ static struct PyMemberDef pf_members[] = {
 #undef OFF
 
 static PyObject *
-pf_repr(PyGimpPDBFunction *self)
+pf_repr(PyPicmanPDBFunction *self)
 {
     return PyString_FromFormat("<pdb function '%s'>",
 			       PyString_AsString(self->proc_name));
 }
 
 static PyObject *
-pf_call(PyGimpPDBFunction *self, PyObject *args, PyObject *kwargs)
+pf_call(PyPicmanPDBFunction *self, PyObject *args, PyObject *kwargs)
 {
-    GimpParam *params, *ret;
+    PicmanParam *params, *ret;
     int nret;
     PyObject *t = NULL, *r;
-    GimpRunMode run_mode = GIMP_RUN_NONINTERACTIVE;
+    PicmanRunMode run_mode = PICMAN_RUN_NONINTERACTIVE;
 
 #if PG_DEBUG > 0
     g_printerr("--- %s --- ", PyString_AsString(self->proc_name));
@@ -907,7 +907,7 @@ pf_call(PyGimpPDBFunction *self, PyObject *args, PyObject *kwargs)
                 return NULL;
             }
 
-            if (pyg_enum_get_value(GIMP_TYPE_RUN_MODE, val, (gpointer)&run_mode))
+            if (pyg_enum_get_value(PICMAN_TYPE_RUN_MODE, val, (gpointer)&run_mode))
                 return NULL;
         } else if (len != 0) {
             PyErr_SetString(PyExc_TypeError,
@@ -917,7 +917,7 @@ pf_call(PyGimpPDBFunction *self, PyObject *args, PyObject *kwargs)
     }
 
     if (self->nparams > 0 && !strcmp(self->params[0].name, "run-mode")) {
-	params = pygimp_param_from_tuple(args, self->params + 1,
+	params = pypicman_param_from_tuple(args, self->params + 1,
 					 self->nparams - 1);
 
 	if (params == NULL)
@@ -927,27 +927,27 @@ pf_call(PyGimpPDBFunction *self, PyObject *args, PyObject *kwargs)
 	params[0].data.d_int32 = run_mode;
 
 #if PG_DEBUG > 1
-	pygimp_param_print(self->nparams, params);
+	pypicman_param_print(self->nparams, params);
 #endif
 
-	ret = gimp_run_procedure2(self->name, &nret, self->nparams, params);
+	ret = picman_run_procedure2(self->name, &nret, self->nparams, params);
     } else {
-	params = pygimp_param_from_tuple(args, self->params, self->nparams);
+	params = pypicman_param_from_tuple(args, self->params, self->nparams);
 
 	if (params == NULL)
 	    return NULL;
 
 #if PG_DEBUG > 1
-	pygimp_param_print(self->nparams, params+1);
+	pypicman_param_print(self->nparams, params+1);
 #endif
 
-	ret = gimp_run_procedure2(self->name, &nret, self->nparams, params + 1);
+	ret = picman_run_procedure2(self->name, &nret, self->nparams, params + 1);
     }
 
-    gimp_destroy_params(params, self->nparams);
+    picman_destroy_params(params, self->nparams);
 
     if (!ret) {
-	PyErr_SetString(pygimp_error, "no status returned");
+	PyErr_SetString(pypicman_error, "no status returned");
 #if PG_DEBUG >= 1
 	g_printerr("ret == NULL\n");
 #endif
@@ -955,41 +955,41 @@ pf_call(PyGimpPDBFunction *self, PyObject *args, PyObject *kwargs)
     }
 
     switch(ret[0].data.d_status) {
-    case GIMP_PDB_SUCCESS:
+    case PICMAN_PDB_SUCCESS:
 #if PG_DEBUG > 0
 	g_printerr("success\n");
 #endif
-	t = pygimp_param_to_tuple(nret-1, ret+1);
-	gimp_destroy_params(ret, nret);
+	t = pypicman_param_to_tuple(nret-1, ret+1);
+	picman_destroy_params(ret, nret);
 
 	if (t == NULL) {
-	    PyErr_SetString(pygimp_error, "could not make return value");
+	    PyErr_SetString(pypicman_error, "could not make return value");
 	    return NULL;
 	}
 	break;
 
-    case GIMP_PDB_EXECUTION_ERROR:
+    case PICMAN_PDB_EXECUTION_ERROR:
 #if PG_DEBUG > 0
 	g_printerr("execution error\n");
 #endif
-        PyErr_SetString(PyExc_RuntimeError, gimp_get_pdb_error());
-	gimp_destroy_params(ret, nret);
+        PyErr_SetString(PyExc_RuntimeError, picman_get_pdb_error());
+	picman_destroy_params(ret, nret);
 	return NULL;
 
-    case GIMP_PDB_CALLING_ERROR:
+    case PICMAN_PDB_CALLING_ERROR:
 #if PG_DEBUG > 0
 	g_printerr("calling error\n");
 #endif
-        PyErr_SetString(PyExc_RuntimeError, gimp_get_pdb_error());
-	gimp_destroy_params(ret, nret);
+        PyErr_SetString(PyExc_RuntimeError, picman_get_pdb_error());
+	picman_destroy_params(ret, nret);
 	return NULL;
 
-    case GIMP_PDB_CANCEL:
+    case PICMAN_PDB_CANCEL:
 #if PG_DEBUG > 0
 	g_printerr("cancel\n");
 #endif
-        PyErr_SetString(PyExc_RuntimeError, gimp_get_pdb_error());
-	gimp_destroy_params(ret, nret);
+        PyErr_SetString(PyExc_RuntimeError, picman_get_pdb_error());
+	picman_destroy_params(ret, nret);
 	return NULL;
 
     default:
@@ -997,7 +997,7 @@ pf_call(PyGimpPDBFunction *self, PyObject *args, PyObject *kwargs)
 	g_printerr("unknown - %i (type %i)\n",
                    ret[0].data.d_status, ret[0].type);
 #endif
-	PyErr_SetString(pygimp_error, "unknown return code");
+	PyErr_SetString(pypicman_error, "unknown return code");
 	return NULL;
     }
 
@@ -1019,11 +1019,11 @@ pf_call(PyGimpPDBFunction *self, PyObject *args, PyObject *kwargs)
 }
 
 
-PyTypeObject PyGimpPDBFunction_Type = {
+PyTypeObject PyPicmanPDBFunction_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                  /* ob_size */
-    "gimp.PDBFunction",                 /* tp_name */
-    sizeof(PyGimpPDBFunction),          /* tp_basicsize */
+    "picman.PDBFunction",                 /* tp_name */
+    sizeof(PyPicmanPDBFunction),          /* tp_basicsize */
     0,                                  /* tp_itemsize */
     /* methods */
     (destructor)pf_dealloc,             /* tp_dealloc */
@@ -1063,16 +1063,16 @@ PyTypeObject PyGimpPDBFunction_Type = {
 };
 
 PyObject *
-pygimp_pdb_function_new(const char *name, const char *blurb, const char *help,
+pypicman_pdb_function_new(const char *name, const char *blurb, const char *help,
 			const char *author, const char *copyright,
-			const char *date, GimpPDBProcType proc_type,
+			const char *date, PicmanPDBProcType proc_type,
 			int n_params, int n_return_vals,
-			GimpParamDef *params, GimpParamDef *return_vals)
+			PicmanParamDef *params, PicmanParamDef *return_vals)
 {
-    PyGimpPDBFunction *self;
+    PyPicmanPDBFunction *self;
     int i;
 
-    self = PyObject_NEW(PyGimpPDBFunction, &PyGimpPDBFunction_Type);
+    self = PyObject_NEW(PyPicmanPDBFunction, &PyPicmanPDBFunction_Type);
 
     if (self == NULL)
 	return NULL;

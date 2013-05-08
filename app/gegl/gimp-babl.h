@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-babl.h
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picman-babl.h
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BABL_H__
-#define __GIMP_BABL_H__
+#ifndef __PICMAN_BABL_H__
+#define __PICMAN_BABL_H__
 
 
-void                gimp_babl_init                  (void);
+void                picman_babl_init                  (void);
 
-const gchar       * gimp_babl_get_description       (const Babl        *babl);
+const gchar       * picman_babl_get_description       (const Babl        *babl);
 
-GimpImageBaseType   gimp_babl_format_get_base_type  (const Babl        *format);
-GimpPrecision       gimp_babl_format_get_precision  (const Babl        *format);
-gboolean            gimp_babl_format_get_linear     (const Babl        *format);
+PicmanImageBaseType   picman_babl_format_get_base_type  (const Babl        *format);
+PicmanPrecision       picman_babl_format_get_precision  (const Babl        *format);
+gboolean            picman_babl_format_get_linear     (const Babl        *format);
 
 
-const Babl        * gimp_babl_format                (GimpImageBaseType  base_type,
-                                                     GimpPrecision      precision,
+const Babl        * picman_babl_format                (PicmanImageBaseType  base_type,
+                                                     PicmanPrecision      precision,
                                                      gboolean           with_alpha);
-const Babl        * gimp_babl_mask_format           (GimpPrecision      precision);
-const Babl        * gimp_babl_component_format      (GimpImageBaseType  base_type,
-                                                     GimpPrecision      precision,
+const Babl        * picman_babl_mask_format           (PicmanPrecision      precision);
+const Babl        * picman_babl_component_format      (PicmanImageBaseType  base_type,
+                                                     PicmanPrecision      precision,
                                                      gint               index);
 
 
-#endif /* __GIMP_BABL_H__ */
+#endif /* __PICMAN_BABL_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,18 +22,18 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimpcurve.h"
-#include "gimpcurve-load.h"
-#include "gimpcurve-save.h"
-#include "gimpparamspecs.h"
+#include "picmancurve.h"
+#include "picmancurve-load.h"
+#include "picmancurve-save.h"
+#include "picmanparamspecs.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -49,151 +49,151 @@ enum
 
 /*  local function prototypes  */
 
-static void          gimp_curve_config_iface_init (GimpConfigInterface *iface);
+static void          picman_curve_config_iface_init (PicmanConfigInterface *iface);
 
-static void          gimp_curve_finalize          (GObject          *object);
-static void          gimp_curve_set_property      (GObject          *object,
+static void          picman_curve_finalize          (GObject          *object);
+static void          picman_curve_set_property      (GObject          *object,
                                                    guint             property_id,
                                                    const GValue     *value,
                                                    GParamSpec       *pspec);
-static void          gimp_curve_get_property      (GObject          *object,
+static void          picman_curve_get_property      (GObject          *object,
                                                    guint             property_id,
                                                    GValue           *value,
                                                    GParamSpec       *pspec);
 
-static gint64        gimp_curve_get_memsize       (GimpObject       *object,
+static gint64        picman_curve_get_memsize       (PicmanObject       *object,
                                                    gint64           *gui_size);
 
-static void          gimp_curve_get_preview_size  (GimpViewable     *viewable,
+static void          picman_curve_get_preview_size  (PicmanViewable     *viewable,
                                                    gint              size,
                                                    gboolean          popup,
                                                    gboolean          dot_for_dot,
                                                    gint             *width,
                                                    gint             *height);
-static gboolean      gimp_curve_get_popup_size    (GimpViewable     *viewable,
+static gboolean      picman_curve_get_popup_size    (PicmanViewable     *viewable,
                                                    gint              width,
                                                    gint              height,
                                                    gboolean          dot_for_dot,
                                                    gint             *popup_width,
                                                    gint             *popup_height);
-static GimpTempBuf * gimp_curve_get_new_preview   (GimpViewable     *viewable,
-                                                   GimpContext      *context,
+static PicmanTempBuf * picman_curve_get_new_preview   (PicmanViewable     *viewable,
+                                                   PicmanContext      *context,
                                                    gint              width,
                                                    gint              height);
-static gchar       * gimp_curve_get_description   (GimpViewable     *viewable,
+static gchar       * picman_curve_get_description   (PicmanViewable     *viewable,
                                                    gchar           **tooltip);
 
-static void          gimp_curve_dirty             (GimpData         *data);
-static const gchar * gimp_curve_get_extension     (GimpData         *data);
-static GimpData    * gimp_curve_duplicate         (GimpData         *data);
+static void          picman_curve_dirty             (PicmanData         *data);
+static const gchar * picman_curve_get_extension     (PicmanData         *data);
+static PicmanData    * picman_curve_duplicate         (PicmanData         *data);
 
-static gboolean      gimp_curve_serialize         (GimpConfig       *config,
-                                                   GimpConfigWriter *writer,
+static gboolean      picman_curve_serialize         (PicmanConfig       *config,
+                                                   PicmanConfigWriter *writer,
                                                    gpointer          data);
-static gboolean      gimp_curve_deserialize       (GimpConfig       *config,
+static gboolean      picman_curve_deserialize       (PicmanConfig       *config,
                                                    GScanner         *scanner,
                                                    gint              nest_level,
                                                    gpointer          data);
-static gboolean      gimp_curve_equal             (GimpConfig       *a,
-                                                   GimpConfig       *b);
-static void          _gimp_curve_reset            (GimpConfig       *config);
-static gboolean      gimp_curve_copy              (GimpConfig       *src,
-                                                   GimpConfig       *dest,
+static gboolean      picman_curve_equal             (PicmanConfig       *a,
+                                                   PicmanConfig       *b);
+static void          _picman_curve_reset            (PicmanConfig       *config);
+static gboolean      picman_curve_copy              (PicmanConfig       *src,
+                                                   PicmanConfig       *dest,
                                                    GParamFlags       flags);
 
-static void          gimp_curve_set_n_points      (GimpCurve        *curve,
+static void          picman_curve_set_n_points      (PicmanCurve        *curve,
                                                    gint              n_points);
-static void          gimp_curve_set_n_samples     (GimpCurve        *curve,
+static void          picman_curve_set_n_samples     (PicmanCurve        *curve,
                                                    gint              n_samples);
 
-static void          gimp_curve_calculate         (GimpCurve        *curve);
-static void          gimp_curve_plot              (GimpCurve        *curve,
+static void          picman_curve_calculate         (PicmanCurve        *curve);
+static void          picman_curve_plot              (PicmanCurve        *curve,
                                                    gint              p1,
                                                    gint              p2,
                                                    gint              p3,
                                                    gint              p4);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpCurve, gimp_curve, GIMP_TYPE_DATA,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG,
-                                                gimp_curve_config_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanCurve, picman_curve, PICMAN_TYPE_DATA,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG,
+                                                picman_curve_config_iface_init))
 
-#define parent_class gimp_curve_parent_class
+#define parent_class picman_curve_parent_class
 
 
 static void
-gimp_curve_class_init (GimpCurveClass *klass)
+picman_curve_class_init (PicmanCurveClass *klass)
 {
   GObjectClass      *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass   *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class    = GIMP_VIEWABLE_CLASS (klass);
-  GimpDataClass     *data_class        = GIMP_DATA_CLASS (klass);
+  PicmanObjectClass   *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanViewableClass *viewable_class    = PICMAN_VIEWABLE_CLASS (klass);
+  PicmanDataClass     *data_class        = PICMAN_DATA_CLASS (klass);
   GParamSpec        *array_spec;
 
-  object_class->finalize           = gimp_curve_finalize;
-  object_class->set_property       = gimp_curve_set_property;
-  object_class->get_property       = gimp_curve_get_property;
+  object_class->finalize           = picman_curve_finalize;
+  object_class->set_property       = picman_curve_set_property;
+  object_class->get_property       = picman_curve_get_property;
 
-  gimp_object_class->get_memsize   = gimp_curve_get_memsize;
+  picman_object_class->get_memsize   = picman_curve_get_memsize;
 
   viewable_class->default_stock_id = "FIXME";
-  viewable_class->get_preview_size = gimp_curve_get_preview_size;
-  viewable_class->get_popup_size   = gimp_curve_get_popup_size;
-  viewable_class->get_new_preview  = gimp_curve_get_new_preview;
-  viewable_class->get_description  = gimp_curve_get_description;
+  viewable_class->get_preview_size = picman_curve_get_preview_size;
+  viewable_class->get_popup_size   = picman_curve_get_popup_size;
+  viewable_class->get_new_preview  = picman_curve_get_new_preview;
+  viewable_class->get_description  = picman_curve_get_description;
 
-  data_class->dirty                = gimp_curve_dirty;
-  data_class->save                 = gimp_curve_save;
-  data_class->get_extension        = gimp_curve_get_extension;
-  data_class->duplicate            = gimp_curve_duplicate;
+  data_class->dirty                = picman_curve_dirty;
+  data_class->save                 = picman_curve_save;
+  data_class->get_extension        = picman_curve_get_extension;
+  data_class->duplicate            = picman_curve_duplicate;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CURVE_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CURVE_TYPE,
                                  "curve-type",
                                  "The curve type",
-                                 GIMP_TYPE_CURVE_TYPE,
-                                 GIMP_CURVE_SMOOTH, 0);
+                                 PICMAN_TYPE_CURVE_TYPE,
+                                 PICMAN_CURVE_SMOOTH, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_N_POINTS,
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_N_POINTS,
                                 "n-points",
                                 "The number of points",
                                 17, 17, 17, 0);
 
   array_spec = g_param_spec_double ("point", NULL, NULL,
-                                    -1.0, 1.0, 0.0, GIMP_PARAM_READWRITE);
+                                    -1.0, 1.0, 0.0, PICMAN_PARAM_READWRITE);
   g_object_class_install_property (object_class, PROP_POINTS,
-                                   gimp_param_spec_value_array ("points",
+                                   picman_param_spec_value_array ("points",
                                                                 NULL, NULL,
                                                                 array_spec,
-                                                                GIMP_PARAM_STATIC_STRINGS |
-                                                                GIMP_CONFIG_PARAM_FLAGS));
+                                                                PICMAN_PARAM_STATIC_STRINGS |
+                                                                PICMAN_CONFIG_PARAM_FLAGS));
 
-  GIMP_CONFIG_INSTALL_PROP_INT  (object_class, PROP_N_SAMPLES,
+  PICMAN_CONFIG_INSTALL_PROP_INT  (object_class, PROP_N_SAMPLES,
                                  "n-samples",
                                  "The number of samples",
                                  256, 256, 256, 0);
 
   array_spec = g_param_spec_double ("sample", NULL, NULL,
-                                    0.0, 1.0, 0.0, GIMP_PARAM_READWRITE);
+                                    0.0, 1.0, 0.0, PICMAN_PARAM_READWRITE);
   g_object_class_install_property (object_class, PROP_SAMPLES,
-                                   gimp_param_spec_value_array ("samples",
+                                   picman_param_spec_value_array ("samples",
                                                                 NULL, NULL,
                                                                 array_spec,
-                                                                GIMP_PARAM_STATIC_STRINGS |
-                                                                GIMP_CONFIG_PARAM_FLAGS));
+                                                                PICMAN_PARAM_STATIC_STRINGS |
+                                                                PICMAN_CONFIG_PARAM_FLAGS));
 }
 
 static void
-gimp_curve_config_iface_init (GimpConfigInterface *iface)
+picman_curve_config_iface_init (PicmanConfigInterface *iface)
 {
-  iface->serialize   = gimp_curve_serialize;
-  iface->deserialize = gimp_curve_deserialize;
-  iface->equal       = gimp_curve_equal;
-  iface->reset       = _gimp_curve_reset;
-  iface->copy        = gimp_curve_copy;
+  iface->serialize   = picman_curve_serialize;
+  iface->deserialize = picman_curve_deserialize;
+  iface->equal       = picman_curve_equal;
+  iface->reset       = _picman_curve_reset;
+  iface->copy        = picman_curve_copy;
 }
 
 static void
-gimp_curve_init (GimpCurve *curve)
+picman_curve_init (PicmanCurve *curve)
 {
   curve->n_points  = 0;
   curve->points    = NULL;
@@ -203,9 +203,9 @@ gimp_curve_init (GimpCurve *curve)
 }
 
 static void
-gimp_curve_finalize (GObject *object)
+picman_curve_finalize (GObject *object)
 {
-  GimpCurve *curve = GIMP_CURVE (object);
+  PicmanCurve *curve = PICMAN_CURVE (object);
 
   if (curve->points)
     {
@@ -223,38 +223,38 @@ gimp_curve_finalize (GObject *object)
 }
 
 static void
-gimp_curve_set_property (GObject      *object,
+picman_curve_set_property (GObject      *object,
                          guint         property_id,
                          const GValue *value,
                          GParamSpec   *pspec)
 {
-  GimpCurve *curve = GIMP_CURVE (object);
+  PicmanCurve *curve = PICMAN_CURVE (object);
 
   switch (property_id)
     {
     case PROP_CURVE_TYPE:
-      gimp_curve_set_curve_type (curve, g_value_get_enum (value));
+      picman_curve_set_curve_type (curve, g_value_get_enum (value));
       break;
 
     case PROP_N_POINTS:
-      gimp_curve_set_n_points (curve, g_value_get_int (value));
+      picman_curve_set_n_points (curve, g_value_get_int (value));
       break;
 
     case PROP_POINTS:
       {
-        GimpValueArray *array = g_value_get_boxed (value);
+        PicmanValueArray *array = g_value_get_boxed (value);
         gint            length;
         gint            i;
 
         if (! array)
           break;
 
-        length = gimp_value_array_length (array);
+        length = picman_value_array_length (array);
 
         for (i = 0; i < curve->n_points && i * 2 < length; i++)
           {
-            GValue *x = gimp_value_array_index (array, i * 2);
-            GValue *y = gimp_value_array_index (array, i * 2 + 1);
+            GValue *x = picman_value_array_index (array, i * 2);
+            GValue *y = picman_value_array_index (array, i * 2 + 1);
 
             curve->points[i].x = g_value_get_double (x);
             curve->points[i].y = g_value_get_double (y);
@@ -263,23 +263,23 @@ gimp_curve_set_property (GObject      *object,
       break;
 
     case PROP_N_SAMPLES:
-      gimp_curve_set_n_samples (curve, g_value_get_int (value));
+      picman_curve_set_n_samples (curve, g_value_get_int (value));
       break;
 
     case PROP_SAMPLES:
       {
-        GimpValueArray *array = g_value_get_boxed (value);
+        PicmanValueArray *array = g_value_get_boxed (value);
         gint            length;
         gint            i;
 
         if (! array)
           break;
 
-        length = gimp_value_array_length (array);
+        length = picman_value_array_length (array);
 
         for (i = 0; i < curve->n_samples && i < length; i++)
           {
-            GValue *v = gimp_value_array_index (array, i);
+            GValue *v = picman_value_array_index (array, i);
 
             curve->samples[i] = g_value_get_double (v);
           }
@@ -293,12 +293,12 @@ gimp_curve_set_property (GObject      *object,
 }
 
 static void
-gimp_curve_get_property (GObject    *object,
+picman_curve_get_property (GObject    *object,
                          guint       property_id,
                          GValue     *value,
                          GParamSpec *pspec)
 {
-  GimpCurve *curve = GIMP_CURVE (object);
+  PicmanCurve *curve = PICMAN_CURVE (object);
 
   switch (property_id)
     {
@@ -312,7 +312,7 @@ gimp_curve_get_property (GObject    *object,
 
     case PROP_POINTS:
       {
-        GimpValueArray *array = gimp_value_array_new (curve->n_points * 2);
+        PicmanValueArray *array = picman_value_array_new (curve->n_points * 2);
         GValue          v     = { 0, };
         gint            i;
 
@@ -321,10 +321,10 @@ gimp_curve_get_property (GObject    *object,
         for (i = 0; i < curve->n_points; i++)
           {
             g_value_set_double (&v, curve->points[i].x);
-            gimp_value_array_append (array, &v);
+            picman_value_array_append (array, &v);
 
             g_value_set_double (&v, curve->points[i].y);
-            gimp_value_array_append (array, &v);
+            picman_value_array_append (array, &v);
           }
 
         g_value_unset (&v);
@@ -339,7 +339,7 @@ gimp_curve_get_property (GObject    *object,
 
     case PROP_SAMPLES:
       {
-        GimpValueArray *array = gimp_value_array_new (curve->n_samples);
+        PicmanValueArray *array = picman_value_array_new (curve->n_samples);
         GValue          v     = { 0, };
         gint            i;
 
@@ -348,7 +348,7 @@ gimp_curve_get_property (GObject    *object,
         for (i = 0; i < curve->n_samples; i++)
           {
             g_value_set_double (&v, curve->samples[i]);
-            gimp_value_array_append (array, &v);
+            picman_value_array_append (array, &v);
           }
 
         g_value_unset (&v);
@@ -364,21 +364,21 @@ gimp_curve_get_property (GObject    *object,
 }
 
 static gint64
-gimp_curve_get_memsize (GimpObject *object,
+picman_curve_get_memsize (PicmanObject *object,
                         gint64     *gui_size)
 {
-  GimpCurve *curve   = GIMP_CURVE (object);
+  PicmanCurve *curve   = PICMAN_CURVE (object);
   gint64     memsize = 0;
 
-  memsize += curve->n_points  * sizeof (GimpVector2);
+  memsize += curve->n_points  * sizeof (PicmanVector2);
   memsize += curve->n_samples * sizeof (gdouble);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 static void
-gimp_curve_get_preview_size (GimpViewable *viewable,
+picman_curve_get_preview_size (PicmanViewable *viewable,
                              gint          size,
                              gboolean      popup,
                              gboolean      dot_for_dot,
@@ -390,7 +390,7 @@ gimp_curve_get_preview_size (GimpViewable *viewable,
 }
 
 static gboolean
-gimp_curve_get_popup_size (GimpViewable *viewable,
+picman_curve_get_popup_size (PicmanViewable *viewable,
                            gint          width,
                            gint          height,
                            gboolean      dot_for_dot,
@@ -403,9 +403,9 @@ gimp_curve_get_popup_size (GimpViewable *viewable,
   return TRUE;
 }
 
-static GimpTempBuf *
-gimp_curve_get_new_preview (GimpViewable *viewable,
-                            GimpContext  *context,
+static PicmanTempBuf *
+picman_curve_get_new_preview (PicmanViewable *viewable,
+                            PicmanContext  *context,
                             gint          width,
                             gint          height)
 {
@@ -413,78 +413,78 @@ gimp_curve_get_new_preview (GimpViewable *viewable,
 }
 
 static gchar *
-gimp_curve_get_description (GimpViewable  *viewable,
+picman_curve_get_description (PicmanViewable  *viewable,
                             gchar        **tooltip)
 {
-  GimpCurve *curve = GIMP_CURVE (viewable);
+  PicmanCurve *curve = PICMAN_CURVE (viewable);
 
-  return g_strdup_printf ("%s", gimp_object_get_name (curve));
+  return g_strdup_printf ("%s", picman_object_get_name (curve));
 }
 
 static void
-gimp_curve_dirty (GimpData *data)
+picman_curve_dirty (PicmanData *data)
 {
-  GimpCurve *curve = GIMP_CURVE (data);
+  PicmanCurve *curve = PICMAN_CURVE (data);
 
   curve->identity = FALSE;
 
-  gimp_curve_calculate (curve);
+  picman_curve_calculate (curve);
 
-  GIMP_DATA_CLASS (parent_class)->dirty (data);
+  PICMAN_DATA_CLASS (parent_class)->dirty (data);
 }
 
 static const gchar *
-gimp_curve_get_extension (GimpData *data)
+picman_curve_get_extension (PicmanData *data)
 {
-  return GIMP_CURVE_FILE_EXTENSION;
+  return PICMAN_CURVE_FILE_EXTENSION;
 }
 
-static GimpData *
-gimp_curve_duplicate (GimpData *data)
+static PicmanData *
+picman_curve_duplicate (PicmanData *data)
 {
-  GimpCurve *new = g_object_new (GIMP_TYPE_CURVE, NULL);
+  PicmanCurve *new = g_object_new (PICMAN_TYPE_CURVE, NULL);
 
-  gimp_config_copy (GIMP_CONFIG (data),
-                    GIMP_CONFIG (new), 0);
+  picman_config_copy (PICMAN_CONFIG (data),
+                    PICMAN_CONFIG (new), 0);
 
-  return GIMP_DATA (new);
+  return PICMAN_DATA (new);
 }
 
 static gboolean
-gimp_curve_serialize (GimpConfig       *config,
-                      GimpConfigWriter *writer,
+picman_curve_serialize (PicmanConfig       *config,
+                      PicmanConfigWriter *writer,
                       gpointer          data)
 {
-  return gimp_config_serialize_properties (config, writer);
+  return picman_config_serialize_properties (config, writer);
 }
 
 static gboolean
-gimp_curve_deserialize (GimpConfig *config,
+picman_curve_deserialize (PicmanConfig *config,
                         GScanner   *scanner,
                         gint        nest_level,
                         gpointer    data)
 {
   gboolean success;
 
-  success = gimp_config_deserialize_properties (config, scanner, nest_level);
+  success = picman_config_deserialize_properties (config, scanner, nest_level);
 
-  GIMP_CURVE (config)->identity = FALSE;
+  PICMAN_CURVE (config)->identity = FALSE;
 
   return success;
 }
 
 static gboolean
-gimp_curve_equal (GimpConfig *a,
-                  GimpConfig *b)
+picman_curve_equal (PicmanConfig *a,
+                  PicmanConfig *b)
 {
-  GimpCurve *a_curve = GIMP_CURVE (a);
-  GimpCurve *b_curve = GIMP_CURVE (b);
+  PicmanCurve *a_curve = PICMAN_CURVE (a);
+  PicmanCurve *b_curve = PICMAN_CURVE (b);
 
   if (a_curve->curve_type != b_curve->curve_type)
     return FALSE;
 
   if (memcmp (a_curve->points, b_curve->points,
-              sizeof (GimpVector2) * b_curve->n_points) ||
+              sizeof (PicmanVector2) * b_curve->n_points) ||
       memcmp (a_curve->samples, b_curve->samples,
               sizeof (gdouble) * b_curve->n_samples))
     return FALSE;
@@ -493,24 +493,24 @@ gimp_curve_equal (GimpConfig *a,
 }
 
 static void
-_gimp_curve_reset (GimpConfig *config)
+_picman_curve_reset (PicmanConfig *config)
 {
-  gimp_curve_reset (GIMP_CURVE (config), TRUE);
+  picman_curve_reset (PICMAN_CURVE (config), TRUE);
 }
 
 static gboolean
-gimp_curve_copy (GimpConfig  *src,
-                 GimpConfig  *dest,
+picman_curve_copy (PicmanConfig  *src,
+                 PicmanConfig  *dest,
                  GParamFlags  flags)
 {
-  GimpCurve *src_curve  = GIMP_CURVE (src);
-  GimpCurve *dest_curve = GIMP_CURVE (dest);
+  PicmanCurve *src_curve  = PICMAN_CURVE (src);
+  PicmanCurve *dest_curve = PICMAN_CURVE (dest);
 
-  gimp_config_sync (G_OBJECT (src), G_OBJECT (dest), flags);
+  picman_config_sync (G_OBJECT (src), G_OBJECT (dest), flags);
 
   dest_curve->identity = src_curve->identity;
 
-  gimp_data_dirty (GIMP_DATA (dest));
+  picman_data_dirty (PICMAN_DATA (dest));
 
   return TRUE;
 }
@@ -518,29 +518,29 @@ gimp_curve_copy (GimpConfig  *src,
 
 /*  public functions  */
 
-GimpData *
-gimp_curve_new (const gchar *name)
+PicmanData *
+picman_curve_new (const gchar *name)
 {
   g_return_val_if_fail (name != NULL, NULL);
   g_return_val_if_fail (*name != '\0', NULL);
 
-  return g_object_new (GIMP_TYPE_CURVE,
+  return g_object_new (PICMAN_TYPE_CURVE,
                        "name", name,
                        NULL);
 }
 
-GimpData *
-gimp_curve_get_standard (void)
+PicmanData *
+picman_curve_get_standard (void)
 {
-  static GimpData *standard_curve = NULL;
+  static PicmanData *standard_curve = NULL;
 
   if (! standard_curve)
     {
-      standard_curve = gimp_curve_new ("Standard");
+      standard_curve = picman_curve_new ("Standard");
 
-      gimp_data_clean (standard_curve);
-      gimp_data_make_internal (standard_curve,
-                               "gimp-curve-standard");
+      picman_data_clean (standard_curve);
+      picman_data_make_internal (standard_curve,
+                               "picman-curve-standard");
 
       g_object_ref (standard_curve);
     }
@@ -549,12 +549,12 @@ gimp_curve_get_standard (void)
 }
 
 void
-gimp_curve_reset (GimpCurve *curve,
+picman_curve_reset (PicmanCurve *curve,
                   gboolean   reset_type)
 {
   gint i;
 
-  g_return_if_fail (GIMP_IS_CURVE (curve));
+  g_return_if_fail (PICMAN_IS_CURVE (curve));
 
   g_object_freeze_notify (G_OBJECT (curve));
 
@@ -579,7 +579,7 @@ gimp_curve_reset (GimpCurve *curve,
 
   if (reset_type)
     {
-      curve->curve_type = GIMP_CURVE_SMOOTH;
+      curve->curve_type = PICMAN_CURVE_SMOOTH;
       g_object_notify (G_OBJECT (curve), "curve-type");
     }
 
@@ -587,14 +587,14 @@ gimp_curve_reset (GimpCurve *curve,
 
   g_object_thaw_notify (G_OBJECT (curve));
 
-  gimp_data_dirty (GIMP_DATA (curve));
+  picman_data_dirty (PICMAN_DATA (curve));
 }
 
 void
-gimp_curve_set_curve_type (GimpCurve     *curve,
-                           GimpCurveType  curve_type)
+picman_curve_set_curve_type (PicmanCurve     *curve,
+                           PicmanCurveType  curve_type)
 {
-  g_return_if_fail (GIMP_IS_CURVE (curve));
+  g_return_if_fail (PICMAN_IS_CURVE (curve));
 
   if (curve->curve_type != curve_type)
     {
@@ -602,7 +602,7 @@ gimp_curve_set_curve_type (GimpCurve     *curve,
 
       curve->curve_type = curve_type;
 
-      if (curve_type == GIMP_CURVE_SMOOTH)
+      if (curve_type == PICMAN_CURVE_SMOOTH)
         {
           gint n_points;
           gint i;
@@ -635,23 +635,23 @@ gimp_curve_set_curve_type (GimpCurve     *curve,
 
       g_object_thaw_notify (G_OBJECT (curve));
 
-      gimp_data_dirty (GIMP_DATA (curve));
+      picman_data_dirty (PICMAN_DATA (curve));
     }
 }
 
-GimpCurveType
-gimp_curve_get_curve_type (GimpCurve *curve)
+PicmanCurveType
+picman_curve_get_curve_type (PicmanCurve *curve)
 {
-  g_return_val_if_fail (GIMP_IS_CURVE (curve), GIMP_CURVE_SMOOTH);
+  g_return_val_if_fail (PICMAN_IS_CURVE (curve), PICMAN_CURVE_SMOOTH);
 
   return curve->curve_type;
 }
 
 static void
-gimp_curve_set_n_points (GimpCurve *curve,
+picman_curve_set_n_points (PicmanCurve *curve,
                          gint       n_points)
 {
-  g_return_if_fail (GIMP_IS_CURVE (curve));
+  g_return_if_fail (PICMAN_IS_CURVE (curve));
 
   if (n_points != curve->n_points)
     {
@@ -662,7 +662,7 @@ gimp_curve_set_n_points (GimpCurve *curve,
       curve->n_points = n_points;
       g_object_notify (G_OBJECT (curve), "n-points");
 
-      curve->points = g_renew (GimpVector2, curve->points, curve->n_points);
+      curve->points = g_renew (PicmanVector2, curve->points, curve->n_points);
 
       curve->points[0].x = 0.0;
       curve->points[0].y = 0.0;
@@ -678,7 +678,7 @@ gimp_curve_set_n_points (GimpCurve *curve,
 
       g_object_notify (G_OBJECT (curve), "points");
 
-      if (curve->curve_type == GIMP_CURVE_SMOOTH)
+      if (curve->curve_type == PICMAN_CURVE_SMOOTH)
         curve->identity = TRUE;
 
       g_object_thaw_notify (G_OBJECT (curve));
@@ -686,18 +686,18 @@ gimp_curve_set_n_points (GimpCurve *curve,
 }
 
 gint
-gimp_curve_get_n_points (GimpCurve *curve)
+picman_curve_get_n_points (PicmanCurve *curve)
 {
-  g_return_val_if_fail (GIMP_IS_CURVE (curve), 0);
+  g_return_val_if_fail (PICMAN_IS_CURVE (curve), 0);
 
   return curve->n_points;
 }
 
 static void
-gimp_curve_set_n_samples (GimpCurve *curve,
+picman_curve_set_n_samples (PicmanCurve *curve,
                           gint       n_samples)
 {
-  g_return_if_fail (GIMP_IS_CURVE (curve));
+  g_return_if_fail (PICMAN_IS_CURVE (curve));
 
   if (n_samples != curve->n_samples)
     {
@@ -715,7 +715,7 @@ gimp_curve_set_n_samples (GimpCurve *curve,
 
       g_object_notify (G_OBJECT (curve), "samples");
 
-      if (curve->curve_type == GIMP_CURVE_FREE)
+      if (curve->curve_type == PICMAN_CURVE_FREE)
         curve->identity = TRUE;
 
       g_object_thaw_notify (G_OBJECT (curve));
@@ -723,22 +723,22 @@ gimp_curve_set_n_samples (GimpCurve *curve,
 }
 
 gint
-gimp_curve_get_n_samples (GimpCurve *curve)
+picman_curve_get_n_samples (PicmanCurve *curve)
 {
-  g_return_val_if_fail (GIMP_IS_CURVE (curve), 0);
+  g_return_val_if_fail (PICMAN_IS_CURVE (curve), 0);
 
   return curve->n_samples;
 }
 
 gint
-gimp_curve_get_closest_point (GimpCurve *curve,
+picman_curve_get_closest_point (PicmanCurve *curve,
                               gdouble    x)
 {
   gint    closest_point = 0;
   gdouble distance      = G_MAXDOUBLE;
   gint    i;
 
-  g_return_val_if_fail (GIMP_IS_CURVE (curve), 0);
+  g_return_val_if_fail (PICMAN_IS_CURVE (curve), 0);
 
   for (i = 0; i < curve->n_points; i++)
     {
@@ -757,17 +757,17 @@ gimp_curve_get_closest_point (GimpCurve *curve,
 }
 
 void
-gimp_curve_set_point (GimpCurve *curve,
+picman_curve_set_point (PicmanCurve *curve,
                       gint       point,
                       gdouble    x,
                       gdouble    y)
 {
-  g_return_if_fail (GIMP_IS_CURVE (curve));
+  g_return_if_fail (PICMAN_IS_CURVE (curve));
   g_return_if_fail (point >= 0 && point < curve->n_points);
   g_return_if_fail (x == -1.0 || (x >= 0 && x <= 1.0));
   g_return_if_fail (y == -1.0 || (y >= 0 && y <= 1.0));
 
-  if (curve->curve_type == GIMP_CURVE_FREE)
+  if (curve->curve_type == PICMAN_CURVE_FREE)
     return;
 
   g_object_freeze_notify (G_OBJECT (curve));
@@ -779,19 +779,19 @@ gimp_curve_set_point (GimpCurve *curve,
 
   g_object_thaw_notify (G_OBJECT (curve));
 
-  gimp_data_dirty (GIMP_DATA (curve));
+  picman_data_dirty (PICMAN_DATA (curve));
 }
 
 void
-gimp_curve_move_point (GimpCurve *curve,
+picman_curve_move_point (PicmanCurve *curve,
                        gint       point,
                        gdouble    y)
 {
-  g_return_if_fail (GIMP_IS_CURVE (curve));
+  g_return_if_fail (PICMAN_IS_CURVE (curve));
   g_return_if_fail (point >= 0 && point < curve->n_points);
   g_return_if_fail (y >= 0 && y <= 1.0);
 
-  if (curve->curve_type == GIMP_CURVE_FREE)
+  if (curve->curve_type == PICMAN_CURVE_FREE)
     return;
 
   g_object_freeze_notify (G_OBJECT (curve));
@@ -802,14 +802,14 @@ gimp_curve_move_point (GimpCurve *curve,
 
   g_object_thaw_notify (G_OBJECT (curve));
 
-  gimp_data_dirty (GIMP_DATA (curve));
+  picman_data_dirty (PICMAN_DATA (curve));
 }
 
 void
-gimp_curve_delete_point (GimpCurve *curve,
+picman_curve_delete_point (PicmanCurve *curve,
                          gint       point)
 {
-  g_return_if_fail (GIMP_IS_CURVE (curve));
+  g_return_if_fail (PICMAN_IS_CURVE (curve));
   g_return_if_fail (point >= 0 && point < curve->n_points);
 
   if (point == 0)
@@ -830,19 +830,19 @@ gimp_curve_delete_point (GimpCurve *curve,
 
   g_object_notify (G_OBJECT (curve), "points");
 
-  gimp_data_dirty (GIMP_DATA (curve));
+  picman_data_dirty (PICMAN_DATA (curve));
 }
 
 void
-gimp_curve_get_point (GimpCurve *curve,
+picman_curve_get_point (PicmanCurve *curve,
                       gint       point,
                       gdouble   *x,
                       gdouble   *y)
 {
-  g_return_if_fail (GIMP_IS_CURVE (curve));
+  g_return_if_fail (PICMAN_IS_CURVE (curve));
   g_return_if_fail (point >= 0 && point < curve->n_points);
 
-  if (curve->curve_type == GIMP_CURVE_FREE)
+  if (curve->curve_type == PICMAN_CURVE_FREE)
     {
       if (x) *x = -1.0;
       if (y) *y = -1.0;
@@ -855,15 +855,15 @@ gimp_curve_get_point (GimpCurve *curve,
 }
 
 void
-gimp_curve_set_curve (GimpCurve *curve,
+picman_curve_set_curve (PicmanCurve *curve,
                       gdouble    x,
                       gdouble    y)
 {
-  g_return_if_fail (GIMP_IS_CURVE (curve));
+  g_return_if_fail (PICMAN_IS_CURVE (curve));
   g_return_if_fail (x >= 0 && x <= 1.0);
   g_return_if_fail (y >= 0 && y <= 1.0);
 
-  if (curve->curve_type == GIMP_CURVE_SMOOTH)
+  if (curve->curve_type == PICMAN_CURVE_SMOOTH)
     return;
 
   g_object_freeze_notify (G_OBJECT (curve));
@@ -874,12 +874,12 @@ gimp_curve_set_curve (GimpCurve *curve,
 
   g_object_thaw_notify (G_OBJECT (curve));
 
-  gimp_data_dirty (GIMP_DATA (curve));
+  picman_data_dirty (PICMAN_DATA (curve));
 }
 
 /**
- * gimp_curve_is_identity:
- * @curve: a #GimpCurve object
+ * picman_curve_is_identity:
+ * @curve: a #PicmanCurve object
  *
  * If this function returns %TRUE, then the curve maps each value to
  * itself. If it returns %FALSE, then this assumption can not be made.
@@ -887,21 +887,21 @@ gimp_curve_set_curve (GimpCurve *curve,
  * Return value: %TRUE if the curve is an identity mapping, %FALSE otherwise.
  **/
 gboolean
-gimp_curve_is_identity (GimpCurve *curve)
+picman_curve_is_identity (PicmanCurve *curve)
 {
-  g_return_val_if_fail (GIMP_IS_CURVE (curve), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CURVE (curve), FALSE);
 
   return curve->identity;
 }
 
 void
-gimp_curve_get_uchar (GimpCurve *curve,
+picman_curve_get_uchar (PicmanCurve *curve,
                       gint       n_samples,
                       guchar    *samples)
 {
   gint i;
 
-  g_return_if_fail (GIMP_IS_CURVE (curve));
+  g_return_if_fail (PICMAN_IS_CURVE (curve));
   /* FIXME: support n_samples != curve->n_samples */
   g_return_if_fail (n_samples == curve->n_samples);
   g_return_if_fail (samples != NULL);
@@ -914,21 +914,21 @@ gimp_curve_get_uchar (GimpCurve *curve,
 /*  private functions  */
 
 static void
-gimp_curve_calculate (GimpCurve *curve)
+picman_curve_calculate (PicmanCurve *curve)
 {
   gint *points;
   gint  i;
   gint  num_pts;
   gint  p1, p2, p3, p4;
 
-  if (gimp_data_is_frozen (GIMP_DATA (curve)))
+  if (picman_data_is_frozen (PICMAN_DATA (curve)))
     return;
 
   points = g_newa (gint, curve->n_points);
 
   switch (curve->curve_type)
     {
-    case GIMP_CURVE_SMOOTH:
+    case PICMAN_CURVE_SMOOTH:
       /*  cycle through the curves  */
       num_pts = 0;
       for (i = 0; i < curve->n_points; i++)
@@ -938,7 +938,7 @@ gimp_curve_calculate (GimpCurve *curve)
       /*  Initialize boundary curve points */
       if (num_pts != 0)
         {
-          GimpVector2 point;
+          PicmanVector2 point;
           gint        boundary;
 
           point    = curve->points[points[0]];
@@ -961,7 +961,7 @@ gimp_curve_calculate (GimpCurve *curve)
           p3 = points[i + 1];
           p4 = points[MIN (i + 2, num_pts - 1)];
 
-          gimp_curve_plot (curve, p1, p2, p3, p4);
+          picman_curve_plot (curve, p1, p2, p3, p4);
         }
 
       /* ensure that the control points are used exactly */
@@ -976,7 +976,7 @@ gimp_curve_calculate (GimpCurve *curve)
       g_object_notify (G_OBJECT (curve), "samples");
       break;
 
-    case GIMP_CURVE_FREE:
+    case PICMAN_CURVE_FREE:
       break;
     }
 }
@@ -991,7 +991,7 @@ gimp_curve_calculate (GimpCurve *curve)
  * neighbor curve control points.
  */
 static void
-gimp_curve_plot (GimpCurve *curve,
+picman_curve_plot (PicmanCurve *curve,
                  gint       p1,
                  gint       p2,
                  gint       p3,

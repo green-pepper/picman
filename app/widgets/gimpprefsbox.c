@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpprefsbox.c
- * Copyright (C) 2013 Michael Natterer <mitch@gimp.org>
+ * picmanprefsbox.c
+ * Copyright (C) 2013 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "gimpprefsbox.h"
+#include "picmanprefsbox.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -40,9 +40,9 @@ enum
   COLUMN_PAGE_INDEX
 };
 
-typedef struct _GimpPrefsBoxPrivate GimpPrefsBoxPrivate;
+typedef struct _PicmanPrefsBoxPrivate PicmanPrefsBoxPrivate;
 
-struct _GimpPrefsBoxPrivate
+struct _PicmanPrefsBoxPrivate
 {
   GtkTreeStore *store;
   GtkWidget    *tree_view;
@@ -54,33 +54,33 @@ struct _GimpPrefsBoxPrivate
 };
 
 #define GET_PRIVATE(item) G_TYPE_INSTANCE_GET_PRIVATE (item, \
-                                                       GIMP_TYPE_PREFS_BOX, \
-                                                       GimpPrefsBoxPrivate)
+                                                       PICMAN_TYPE_PREFS_BOX, \
+                                                       PicmanPrefsBoxPrivate)
 
 
-static void   gimp_prefs_box_tree_select_callback   (GtkTreeSelection *sel,
-                                                     GimpPrefsBox     *box);
-static void   gimp_prefs_box_notebook_page_callback (GtkNotebook      *notebook,
+static void   picman_prefs_box_tree_select_callback   (GtkTreeSelection *sel,
+                                                     PicmanPrefsBox     *box);
+static void   picman_prefs_box_notebook_page_callback (GtkNotebook      *notebook,
                                                      gpointer          page,
                                                      guint             page_num,
-                                                     GimpPrefsBox     *box);
+                                                     PicmanPrefsBox     *box);
 
 
-G_DEFINE_TYPE (GimpPrefsBox, gimp_prefs_box, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanPrefsBox, picman_prefs_box, GTK_TYPE_BOX)
 
-#define parent_class gimp_prefs_box_parent_class
+#define parent_class picman_prefs_box_parent_class
 
 
 static void
-gimp_prefs_box_class_init (GimpPrefsBoxClass *klass)
+picman_prefs_box_class_init (PicmanPrefsBoxClass *klass)
 {
-  g_type_class_add_private (klass, sizeof (GimpPrefsBoxPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanPrefsBoxPrivate));
 }
 
 static void
-gimp_prefs_box_init (GimpPrefsBox *box)
+picman_prefs_box_init (PicmanPrefsBox *box)
 {
-  GimpPrefsBoxPrivate *private = GET_PRIVATE (box);
+  PicmanPrefsBoxPrivate *private = GET_PRIVATE (box);
   GtkTreeViewColumn   *column;
   GtkCellRenderer     *cell;
   GtkTreeSelection    *sel;
@@ -152,7 +152,7 @@ gimp_prefs_box_init (GimpPrefsBox *box)
 
   private->label = gtk_label_new (NULL);
   gtk_misc_set_alignment (GTK_MISC (private->label), 0.0, 0.5);
-  gimp_label_set_attributes (GTK_LABEL (private->label),
+  picman_label_set_attributes (GTK_LABEL (private->label),
                              PANGO_ATTR_SCALE,  PANGO_SCALE_LARGE,
                              PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                              -1);
@@ -172,18 +172,18 @@ gimp_prefs_box_init (GimpPrefsBox *box)
 
   sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (private->tree_view));
   g_signal_connect (sel, "changed",
-                    G_CALLBACK (gimp_prefs_box_tree_select_callback),
+                    G_CALLBACK (picman_prefs_box_tree_select_callback),
                     box);
   g_signal_connect (private->notebook, "switch-page",
-                    G_CALLBACK (gimp_prefs_box_notebook_page_callback),
+                    G_CALLBACK (picman_prefs_box_notebook_page_callback),
                     box);
 }
 
 static void
-gimp_prefs_box_tree_select_callback (GtkTreeSelection *sel,
-                                     GimpPrefsBox     *box)
+picman_prefs_box_tree_select_callback (GtkTreeSelection *sel,
+                                     PicmanPrefsBox     *box)
 {
-  GimpPrefsBoxPrivate *private = GET_PRIVATE (box);
+  PicmanPrefsBoxPrivate *private = GET_PRIVATE (box);
   GtkTreeModel        *model;
   GtkTreeIter          iter;
   gchar               *text;
@@ -207,23 +207,23 @@ gimp_prefs_box_tree_select_callback (GtkTreeSelection *sel,
     g_object_unref (pixbuf);
 
   g_signal_handlers_block_by_func (private->notebook,
-                                   gimp_prefs_box_notebook_page_callback,
+                                   picman_prefs_box_notebook_page_callback,
                                    sel);
 
   gtk_notebook_set_current_page (GTK_NOTEBOOK (private->notebook), index);
 
   g_signal_handlers_unblock_by_func (private->notebook,
-                                     gimp_prefs_box_notebook_page_callback,
+                                     picman_prefs_box_notebook_page_callback,
                                      sel);
 }
 
 static void
-gimp_prefs_box_notebook_page_callback (GtkNotebook  *notebook,
+picman_prefs_box_notebook_page_callback (GtkNotebook  *notebook,
                                        gpointer      page,
                                        guint         page_num,
-                                       GimpPrefsBox *box)
+                                       PicmanPrefsBox *box)
 {
-  GimpPrefsBoxPrivate *private = GET_PRIVATE (box);
+  PicmanPrefsBoxPrivate *private = GET_PRIVATE (box);
   GtkTreeSelection    *sel;
   GtkTreeModel        *model;
   GtkTreeIter          iter;
@@ -283,13 +283,13 @@ gimp_prefs_box_notebook_page_callback (GtkNotebook  *notebook,
 /*  public functions  */
 
 GtkWidget *
-gimp_prefs_box_new (void)
+picman_prefs_box_new (void)
 {
-  return g_object_new (GIMP_TYPE_PREFS_BOX, NULL);
+  return g_object_new (PICMAN_TYPE_PREFS_BOX, NULL);
 }
 
 GtkWidget *
-gimp_prefs_box_add_page (GimpPrefsBox *box,
+picman_prefs_box_add_page (PicmanPrefsBox *box,
                          const gchar  *notebook_label,
                          GdkPixbuf    *notebook_icon,
                          const gchar  *tree_label,
@@ -298,11 +298,11 @@ gimp_prefs_box_add_page (GimpPrefsBox *box,
                          GtkTreeIter  *parent,
                          GtkTreeIter  *iter)
 {
-  GimpPrefsBoxPrivate *private;
+  PicmanPrefsBoxPrivate *private;
   GtkWidget           *event_box;
   GtkWidget           *vbox;
 
-  g_return_val_if_fail (GIMP_IS_PREFS_BOX (box), NULL);
+  g_return_val_if_fail (PICMAN_IS_PREFS_BOX (box), NULL);
 
   private = GET_PRIVATE (box);
 
@@ -311,7 +311,7 @@ gimp_prefs_box_add_page (GimpPrefsBox *box,
   gtk_notebook_append_page (GTK_NOTEBOOK (private->notebook), event_box, NULL);
   gtk_widget_show (event_box);
 
-  gimp_help_set_help_data (event_box, NULL, help_id);
+  picman_help_set_help_data (event_box, NULL, help_id);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_add (GTK_CONTAINER (event_box), vbox);
@@ -339,25 +339,25 @@ gimp_prefs_box_add_page (GimpPrefsBox *box,
 }
 
 GtkWidget *
-gimp_prefs_box_get_tree_view (GimpPrefsBox *box)
+picman_prefs_box_get_tree_view (PicmanPrefsBox *box)
 {
-  g_return_val_if_fail (GIMP_IS_PREFS_BOX (box), NULL);
+  g_return_val_if_fail (PICMAN_IS_PREFS_BOX (box), NULL);
 
   return GET_PRIVATE (box)->tree_view;
 }
 
 GtkWidget *
-gimp_prefs_box_get_notebook (GimpPrefsBox *box)
+picman_prefs_box_get_notebook (PicmanPrefsBox *box)
 {
-  g_return_val_if_fail (GIMP_IS_PREFS_BOX (box), NULL);
+  g_return_val_if_fail (PICMAN_IS_PREFS_BOX (box), NULL);
 
   return GET_PRIVATE (box)->notebook;
 }
 
 GtkWidget *
-gimp_prefs_box_get_image (GimpPrefsBox *box)
+picman_prefs_box_get_image (PicmanPrefsBox *box)
 {
-  g_return_val_if_fail (GIMP_IS_PREFS_BOX (box), NULL);
+  g_return_val_if_fail (PICMAN_IS_PREFS_BOX (box), NULL);
 
   return GET_PRIVATE (box)->image;
 }

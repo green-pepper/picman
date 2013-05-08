@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -37,27 +37,27 @@
 #include <glib/gstdio.h>
 
 #ifdef G_OS_WIN32
-#include "libgimpbase/gimpwin32-io.h"
+#include "libpicmanbase/picmanwin32-io.h"
 #endif
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "gimppalette.h"
-#include "gimppalette-load.h"
+#include "picmanpalette.h"
+#include "picmanpalette-load.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 GList *
-gimp_palette_load (GimpContext  *context,
+picman_palette_load (PicmanContext  *context,
                    const gchar  *filename,
                    GError      **error)
 {
-  GimpPalette      *palette;
-  GimpPaletteEntry *entry;
+  PicmanPalette      *palette;
+  PicmanPaletteEntry *entry;
   gchar             str[1024];
   gchar            *tok;
   FILE             *file;
@@ -74,45 +74,45 @@ gimp_palette_load (GimpContext  *context,
 
   if (! file)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
   linenum = 1;
   if (! fgets (str, sizeof (str), file))
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in palette file '%s': "
                      "Read error in line %d."),
-                   gimp_filename_to_utf8 (filename), linenum);
+                   picman_filename_to_utf8 (filename), linenum);
       fclose (file);
       return NULL;
     }
 
-  if (! g_str_has_prefix (str, "GIMP Palette"))
+  if (! g_str_has_prefix (str, "PICMAN Palette"))
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in palette file '%s': "
                      "Missing magic header."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       fclose (file);
       return NULL;
     }
 
-  palette = g_object_new (GIMP_TYPE_PALETTE,
-                          "mime-type", "application/x-gimp-palette",
+  palette = g_object_new (PICMAN_TYPE_PALETTE,
+                          "mime-type", "application/x-picman-palette",
                           NULL);
 
   linenum++;
 
   if (! fgets (str, sizeof (str), file))
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in palette file '%s': "
                      "Read error in line %d."),
-                   gimp_filename_to_utf8 (filename), linenum);
+                   picman_filename_to_utf8 (filename), linenum);
       fclose (file);
       g_object_unref (palette);
       return NULL;
@@ -122,18 +122,18 @@ gimp_palette_load (GimpContext  *context,
     {
       gchar *utf8;
 
-      utf8 = gimp_any_to_utf8 (g_strstrip (str + strlen ("Name: ")), -1,
+      utf8 = picman_any_to_utf8 (g_strstrip (str + strlen ("Name: ")), -1,
                                _("Invalid UTF-8 string in palette file '%s'"),
-                               gimp_filename_to_utf8 (filename));
-      gimp_object_take_name (GIMP_OBJECT (palette), utf8);
+                               picman_filename_to_utf8 (filename));
+      picman_object_take_name (PICMAN_OBJECT (palette), utf8);
 
       linenum++;
       if (! fgets (str, sizeof (str), file))
         {
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Fatal parse error in palette file '%s': "
                          "Read error in line %d."),
-                       gimp_filename_to_utf8 (filename), linenum);
+                       picman_filename_to_utf8 (filename), linenum);
           fclose (file);
           g_object_unref (palette);
           return NULL;
@@ -150,19 +150,19 @@ gimp_palette_load (GimpContext  *context,
               g_message (_("Reading palette file '%s': "
                            "Invalid number of columns in line %d. "
                            "Using default value."),
-                         gimp_filename_to_utf8 (filename), linenum);
+                         picman_filename_to_utf8 (filename), linenum);
               columns = 0;
             }
 
-          gimp_palette_set_columns (palette, columns);
+          picman_palette_set_columns (palette, columns);
 
           linenum++;
           if (! fgets (str, sizeof (str), file))
             {
-              g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+              g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                            _("Fatal parse error in palette file '%s': "
                              "Read error in line %d."),
-                           gimp_filename_to_utf8 (filename), linenum);
+                           picman_filename_to_utf8 (filename), linenum);
               fclose (file);
               g_object_unref (palette);
               return NULL;
@@ -171,7 +171,7 @@ gimp_palette_load (GimpContext  *context,
     }
   else /* old palette format */
     {
-      gimp_object_take_name (GIMP_OBJECT (palette),
+      picman_object_take_name (PICMAN_OBJECT (palette),
                              g_filename_display_basename (filename));
     }
 
@@ -185,7 +185,7 @@ gimp_palette_load (GimpContext  *context,
           else
             g_message (_("Reading palette file '%s': "
                          "Missing RED component in line %d."),
-                       gimp_filename_to_utf8 (filename), linenum);
+                       picman_filename_to_utf8 (filename), linenum);
 
           tok = strtok (NULL, " \t");
           if (tok)
@@ -193,7 +193,7 @@ gimp_palette_load (GimpContext  *context,
           else
             g_message (_("Reading palette file '%s': "
                          "Missing GREEN component in line %d."),
-                       gimp_filename_to_utf8 (filename), linenum);
+                       picman_filename_to_utf8 (filename), linenum);
 
           tok = strtok (NULL, " \t");
           if (tok)
@@ -201,7 +201,7 @@ gimp_palette_load (GimpContext  *context,
           else
             g_message (_("Reading palette file '%s': "
                          "Missing BLUE component in line %d."),
-                       gimp_filename_to_utf8 (filename), linenum);
+                       picman_filename_to_utf8 (filename), linenum);
 
           /* optional name */
           tok = strtok (NULL, "\n");
@@ -211,19 +211,19 @@ gimp_palette_load (GimpContext  *context,
               b < 0 || b > 255)
             g_message (_("Reading palette file '%s': "
                          "RGB value out of range in line %d."),
-                       gimp_filename_to_utf8 (filename), linenum);
+                       picman_filename_to_utf8 (filename), linenum);
 
-          /* don't call gimp_palette_add_entry here, it's rather inefficient */
-          entry = g_slice_new0 (GimpPaletteEntry);
+          /* don't call picman_palette_add_entry here, it's rather inefficient */
+          entry = g_slice_new0 (PicmanPaletteEntry);
 
-          gimp_rgba_set_uchar (&entry->color,
+          picman_rgba_set_uchar (&entry->color,
                                (guchar) r,
                                (guchar) g,
                                (guchar) b,
                                255);
 
           entry->name     = g_strdup (tok ? tok : _("Untitled"));
-          entry->position = gimp_palette_get_n_colors (palette);
+          entry->position = picman_palette_get_n_colors (palette);
 
           palette->colors = g_list_prepend (palette->colors, entry);
           palette->n_colors++;
@@ -235,10 +235,10 @@ gimp_palette_load (GimpContext  *context,
           if (feof (file))
             break;
 
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Fatal parse error in palette file '%s': "
                          "Read error in line %d."),
-                       gimp_filename_to_utf8 (filename), linenum);
+                       picman_filename_to_utf8 (filename), linenum);
           fclose (file);
           g_object_unref (palette);
           return NULL;
@@ -253,11 +253,11 @@ gimp_palette_load (GimpContext  *context,
 }
 
 GList *
-gimp_palette_load_act (GimpContext  *context,
+picman_palette_load_act (PicmanContext  *context,
                        const gchar  *filename,
                        GError      **error)
 {
-  GimpPalette *palette;
+  PicmanPalette *palette;
   gchar       *palette_name;
   gint         fd;
   guchar       color_bytes[4];
@@ -273,24 +273,24 @@ gimp_palette_load_act (GimpContext  *context,
       g_set_error (error,
                    G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
   palette_name = g_filename_display_basename (filename);
-  palette = GIMP_PALETTE (gimp_palette_new (context, palette_name));
+  palette = PICMAN_PALETTE (picman_palette_new (context, palette_name));
   g_free (palette_name);
 
   while (read (fd, color_bytes, 3) == 3)
     {
-      GimpRGB color;
+      PicmanRGB color;
 
-      gimp_rgba_set_uchar (&color,
+      picman_rgba_set_uchar (&color,
                            color_bytes[0],
                            color_bytes[1],
                            color_bytes[2],
                            255);
-      gimp_palette_add_entry (palette, -1, NULL, &color);
+      picman_palette_add_entry (palette, -1, NULL, &color);
     }
 
   close (fd);
@@ -299,11 +299,11 @@ gimp_palette_load_act (GimpContext  *context,
 }
 
 GList *
-gimp_palette_load_riff (GimpContext  *context,
+picman_palette_load_riff (PicmanContext  *context,
                         const gchar  *filename,
                         GError      **error)
 {
-  GimpPalette *palette;
+  PicmanPalette *palette;
   gchar       *palette_name;
   gint         fd;
   guchar       color_bytes[4];
@@ -319,12 +319,12 @@ gimp_palette_load_riff (GimpContext  *context,
       g_set_error (error,
                    G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
   palette_name = g_filename_display_basename (filename);
-  palette = GIMP_PALETTE (gimp_palette_new (context, palette_name));
+  palette = PICMAN_PALETTE (picman_palette_new (context, palette_name));
   g_free (palette_name);
 
   lseek (fd, 28, SEEK_SET);
@@ -332,14 +332,14 @@ gimp_palette_load_riff (GimpContext  *context,
   while (read (fd,
                color_bytes, sizeof (color_bytes)) == sizeof (color_bytes))
     {
-      GimpRGB color;
+      PicmanRGB color;
 
-      gimp_rgba_set_uchar (&color,
+      picman_rgba_set_uchar (&color,
                            color_bytes[0],
                            color_bytes[1],
                            color_bytes[2],
                            255);
-      gimp_palette_add_entry (palette, -1, NULL, &color);
+      picman_palette_add_entry (palette, -1, NULL, &color);
     }
 
   close (fd);
@@ -348,11 +348,11 @@ gimp_palette_load_riff (GimpContext  *context,
 }
 
 GList *
-gimp_palette_load_psp (GimpContext  *context,
+picman_palette_load_psp (PicmanContext  *context,
                        const gchar  *filename,
                        GError      **error)
 {
-  GimpPalette *palette;
+  PicmanPalette *palette;
   gchar       *palette_name;
   gint         fd;
   guchar       color_bytes[4];
@@ -376,12 +376,12 @@ gimp_palette_load_psp (GimpContext  *context,
       g_set_error (error,
                    G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
   palette_name = g_filename_display_basename (filename);
-  palette = GIMP_PALETTE (gimp_palette_new (context, palette_name));
+  palette = PICMAN_PALETTE (picman_palette_new (context, palette_name));
   g_free (palette_name);
 
   lseek (fd, 16, SEEK_SET);
@@ -397,7 +397,7 @@ gimp_palette_load_psp (GimpContext  *context,
       if (lines[i + 1] == NULL)
         {
           g_printerr ("Premature end of file reading %s.",
-                      gimp_filename_to_utf8 (filename));
+                      picman_filename_to_utf8 (filename));
           break;
         }
 
@@ -409,7 +409,7 @@ gimp_palette_load_psp (GimpContext  *context,
           if (ascii_colors[j] == NULL)
             {
               g_printerr ("Corrupted palette file %s.",
-                          gimp_filename_to_utf8 (filename));
+                          picman_filename_to_utf8 (filename));
               color_ok = FALSE;
               break;
             }
@@ -419,14 +419,14 @@ gimp_palette_load_psp (GimpContext  *context,
 
       if (color_ok)
         {
-          GimpRGB color;
+          PicmanRGB color;
 
-          gimp_rgba_set_uchar (&color,
+          picman_rgba_set_uchar (&color,
                                color_bytes[0],
                                color_bytes[1],
                                color_bytes[2],
                                255);
-          gimp_palette_add_entry (palette, -1, NULL, &color);
+          picman_palette_add_entry (palette, -1, NULL, &color);
         }
 
       g_strfreev (ascii_colors);
@@ -440,11 +440,11 @@ gimp_palette_load_psp (GimpContext  *context,
 }
 
 GList *
-gimp_palette_load_aco (GimpContext  *context,
+picman_palette_load_aco (PicmanContext  *context,
                        const gchar  *filename,
                        GError      **error)
 {
-  GimpPalette *palette;
+  PicmanPalette *palette;
   gchar       *palette_name;
   gint         fd;
   gint         format_version;
@@ -466,7 +466,7 @@ gimp_palette_load_aco (GimpContext  *context,
       g_set_error (error,
                    G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
@@ -475,15 +475,15 @@ gimp_palette_load_aco (GimpContext  *context,
   if (status != sizeof (header))
     {
       g_set_error (error,
-                   GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+                   PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Could not read header from palette file '%s'"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       close (fd);
       return NULL;
     }
 
   palette_name = g_filename_display_basename (filename);
-  palette = GIMP_PALETTE (gimp_palette_new (context, palette_name));
+  palette = PICMAN_PALETTE (picman_palette_new (context, palette_name));
   g_free (palette_name);
 
   format_version = header[1] + (header[0] << 8);
@@ -494,13 +494,13 @@ gimp_palette_load_aco (GimpContext  *context,
       gint     color_space;
       gint     w, x, y, z;
       gboolean color_ok = FALSE;
-      GimpRGB  color;
+      PicmanRGB  color;
 
       if (read (fd, color_info, sizeof (color_info)) != sizeof (color_info))
 	{
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Fatal parse error in palette file '%s'"),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           close (fd);
           g_object_unref (palette);
           return NULL;
@@ -519,34 +519,34 @@ gimp_palette_load_aco (GimpContext  *context,
           gdouble G = ((gdouble) x) / 65536.0;
           gdouble B = ((gdouble) y) / 65536.0;
 
-          gimp_rgba_set (&color, R, G, B, 1.0);
+          picman_rgba_set (&color, R, G, B, 1.0);
 
           color_ok = TRUE;
         }
       else if (color_space == 1) /* HSV */
         {
-          GimpHSV hsv;
+          PicmanHSV hsv;
 
           gdouble H = ((gdouble) w) / 65536.0;
           gdouble S = ((gdouble) x) / 65536.0;
           gdouble V = ((gdouble) y) / 65536.0;
 
-          gimp_hsva_set (&hsv, H, S, V, 1.0);
-          gimp_hsv_to_rgb (&hsv, &color);
+          picman_hsva_set (&hsv, H, S, V, 1.0);
+          picman_hsv_to_rgb (&hsv, &color);
 
           color_ok = TRUE;
         }
       else if (color_space == 2) /* CMYK */
         {
-          GimpCMYK cmyk;
+          PicmanCMYK cmyk;
 
           gdouble C = 1.0 - (((gdouble) w) / 65536.0);
           gdouble M = 1.0 - (((gdouble) x) / 65536.0);
           gdouble Y = 1.0 - (((gdouble) y) / 65536.0);
           gdouble K = 1.0 - (((gdouble) z) / 65536.0);
 
-          gimp_cmyka_set (&cmyk, C, M, Y, K, 1.0);
-          gimp_cmyk_to_rgb (&cmyk, &color);
+          picman_cmyka_set (&cmyk, C, M, Y, K, 1.0);
+          picman_cmyk_to_rgb (&cmyk, &color);
 
           color_ok = TRUE;
         }
@@ -554,28 +554,28 @@ gimp_palette_load_aco (GimpContext  *context,
         {
           gdouble K = 1.0 - (((gdouble) w) / 10000.0);
 
-          gimp_rgba_set (&color, K, K, K, 1.0);
+          picman_rgba_set (&color, K, K, K, 1.0);
 
           color_ok = TRUE;
         }
       else if (color_space == 9) /* Wide? CMYK */
         {
-          GimpCMYK cmyk;
+          PicmanCMYK cmyk;
 
           gdouble C = 1.0 - (((gdouble) w) / 10000.0);
           gdouble M = 1.0 - (((gdouble) x) / 10000.0);
           gdouble Y = 1.0 - (((gdouble) y) / 10000.0);
           gdouble K = 1.0 - (((gdouble) z) / 10000.0);
 
-          gimp_cmyka_set (&cmyk, C, M, Y, K, 1.0);
-          gimp_cmyk_to_rgb (&cmyk, &color);
+          picman_cmyka_set (&cmyk, C, M, Y, K, 1.0);
+          picman_cmyk_to_rgb (&cmyk, &color);
 
           color_ok = TRUE;
         }
       else
         {
           g_printerr ("Unsupported color space (%d) in ACO file %s\n",
-                      color_space, gimp_filename_to_utf8 (filename));
+                      color_space, picman_filename_to_utf8 (filename));
         }
 
       if (format_version == 2)
@@ -586,9 +586,9 @@ gimp_palette_load_aco (GimpContext  *context,
 		    format2_preamble,
 		    sizeof (format2_preamble)) != sizeof (format2_preamble))
 	    {
-	      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+	      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
 			   _("Fatal parse error in palette file '%s'"),
-			   gimp_filename_to_utf8 (filename));
+			   picman_filename_to_utf8 (filename));
 	      close (fd);
 	      g_object_unref (palette);
 	      return NULL;
@@ -599,7 +599,7 @@ gimp_palette_load_aco (GimpContext  *context,
         }
 
       if (color_ok)
-        gimp_palette_add_entry (palette, -1, NULL, &color);
+        picman_palette_add_entry (palette, -1, NULL, &color);
     }
 
   close(fd);
@@ -609,15 +609,15 @@ gimp_palette_load_aco (GimpContext  *context,
 
 
 GList *
-gimp_palette_load_css (GimpContext  *context,
+picman_palette_load_css (PicmanContext  *context,
                        const gchar  *filename,
                        GError      **error)
 {
-  GimpPalette *palette;
+  PicmanPalette *palette;
   gchar       *name;
   FILE        *file;
   GRegex      *regex;
-  GimpRGB      color;
+  PicmanRGB      color;
 
   g_return_val_if_fail (filename != NULL, NULL);
   g_return_val_if_fail (g_path_is_absolute (filename), NULL);
@@ -631,14 +631,14 @@ gimp_palette_load_css (GimpContext  *context,
 
   if (! file)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
   name = g_filename_display_basename (filename);
-  palette = GIMP_PALETTE (gimp_palette_new (context, name));
+  palette = PICMAN_PALETTE (picman_palette_new (context, name));
   g_free (name);
 
   do
@@ -652,11 +652,11 @@ gimp_palette_load_css (GimpContext  *context,
             {
               gchar *word = g_match_info_fetch_named (matches, "param");
 
-              if (gimp_rgb_parse_css (&color, word, -1))
+              if (picman_rgb_parse_css (&color, word, -1))
                 {
-                  if (! gimp_palette_find_entry (palette, &color, NULL))
+                  if (! picman_palette_find_entry (palette, &color, NULL))
                     {
-                      gimp_palette_add_entry (palette, -1, NULL, &color);
+                      picman_palette_add_entry (palette, -1, NULL, &color);
                     }
                 }
 
@@ -672,10 +672,10 @@ gimp_palette_load_css (GimpContext  *context,
   return g_list_prepend (NULL, palette);
 }
 
-GimpPaletteFileFormat
-gimp_palette_load_detect_format (const gchar *filename)
+PicmanPaletteFileFormat
+picman_palette_load_detect_format (const gchar *filename)
 {
-  GimpPaletteFileFormat format = GIMP_PALETTE_FILE_FORMAT_UNKNOWN;
+  PicmanPaletteFileFormat format = PICMAN_PALETTE_FILE_FORMAT_UNKNOWN;
   gint                  fd;
   gchar                 header[16];
 
@@ -688,42 +688,42 @@ gimp_palette_load_detect_format (const gchar *filename)
           if (g_str_has_prefix (header + 0, "RIFF") &&
               g_str_has_prefix (header + 8, "PAL data"))
             {
-              format = GIMP_PALETTE_FILE_FORMAT_RIFF_PAL;
+              format = PICMAN_PALETTE_FILE_FORMAT_RIFF_PAL;
             }
-          else if (g_str_has_prefix (header, "GIMP Palette"))
+          else if (g_str_has_prefix (header, "PICMAN Palette"))
             {
-              format = GIMP_PALETTE_FILE_FORMAT_GPL;
+              format = PICMAN_PALETTE_FILE_FORMAT_GPL;
             }
           else if (g_str_has_prefix (header, "JASC-PAL"))
             {
-              format = GIMP_PALETTE_FILE_FORMAT_PSP_PAL;
+              format = PICMAN_PALETTE_FILE_FORMAT_PSP_PAL;
             }
         }
 
-      if (format == GIMP_PALETTE_FILE_FORMAT_UNKNOWN)
+      if (format == PICMAN_PALETTE_FILE_FORMAT_UNKNOWN)
         {
           gchar *lower_filename = g_ascii_strdown (filename, -1);
 
           if (g_str_has_suffix (lower_filename, ".aco"))
             {
-              format = GIMP_PALETTE_FILE_FORMAT_ACO;
+              format = PICMAN_PALETTE_FILE_FORMAT_ACO;
             }
           else if (g_str_has_suffix (lower_filename, ".css"))
             {
-              format = GIMP_PALETTE_FILE_FORMAT_CSS;
+              format = PICMAN_PALETTE_FILE_FORMAT_CSS;
             }
 
           g_free (lower_filename);
         }
 
-      if (format == GIMP_PALETTE_FILE_FORMAT_UNKNOWN)
+      if (format == PICMAN_PALETTE_FILE_FORMAT_UNKNOWN)
         {
           struct stat file_stat;
 
           if (fstat (fd, &file_stat) >= 0)
             {
               if (file_stat.st_size == 768)
-                format = GIMP_PALETTE_FILE_FORMAT_ACT;
+                format = PICMAN_PALETTE_FILE_FORMAT_ACT;
             }
         }
 

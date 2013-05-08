@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,14 +21,14 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "gimpressionist.h"
+#include "picmanressionist.h"
 #include "ppmtool.h"
 #include "paper.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 static GtkWidget *paper_preview       = NULL;
@@ -65,9 +65,9 @@ static void paper_update_preview (void)
               buf[j] = 255 - buf[j];
         }
     }
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (paper_preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (paper_preview),
                           0, 0, 100, 100,
-                          GIMP_GRAY_IMAGE,
+                          PICMAN_GRAY_IMAGE,
                           paper_preview_buffer,
                           100);
 
@@ -158,7 +158,7 @@ create_paperpage (GtkNotebook *notebook)
   gtk_box_pack_start (GTK_BOX (box2), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  paper_preview = tmpw = gimp_preview_area_new ();
+  paper_preview = tmpw = picman_preview_area_new ();
   gtk_widget_set_size_request (tmpw, 100, 100);
   gtk_container_add (GTK_CONTAINER (frame), tmpw);
   gtk_widget_show (tmpw);
@@ -169,7 +169,7 @@ create_paperpage (GtkNotebook *notebook)
   gtk_widget_show (tmpw);
   g_signal_connect_swapped (tmpw, "clicked",
                             G_CALLBACK (paper_select), selection);
-  gimp_help_set_help_data (tmpw, _("Inverts the Papers texture"), NULL);
+  picman_help_set_help_data (tmpw, _("Inverts the Papers texture"), NULL);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (tmpw),
                                 pcvals.paper_invert);
 
@@ -177,7 +177,7 @@ create_paperpage (GtkNotebook *notebook)
   gtk_box_pack_start (GTK_BOX (box2), tmpw, FALSE, FALSE, 0);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (tmpw), FALSE);
   gtk_widget_show (tmpw);
-  gimp_help_set_help_data
+  picman_help_set_help_data
     (tmpw, _("Applies the paper as it is (without embossing it)"), NULL);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (tmpw),
                                 pcvals.paper_overlay);
@@ -189,7 +189,7 @@ create_paperpage (GtkNotebook *notebook)
   gtk_widget_show (table);
 
   paper_scale_adjust =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                           _("Scale:"),
                           150, -1, pcvals.paper_scale,
                           3.0, 150.0, 1.0, 10.0, 1,
@@ -197,11 +197,11 @@ create_paperpage (GtkNotebook *notebook)
                           _("Specifies the scale of the texture (in percent of original file)"),
                           NULL);
   g_signal_connect (paper_scale_adjust, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pcvals.paper_scale);
 
   paper_relief_adjust =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                           _("Relief:"),
                           150, -1, pcvals.paper_relief,
                           0.0, 100.0, 1.0, 10.0, 1,
@@ -209,7 +209,7 @@ create_paperpage (GtkNotebook *notebook)
                           _("Specifies the amount of embossing to apply to the image (in percent)"),
                           NULL);
   g_signal_connect (paper_relief_adjust, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pcvals.paper_relief);
 
 

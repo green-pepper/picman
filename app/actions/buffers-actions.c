@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,74 +20,74 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimpcontext.h"
+#include "core/picmancontext.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "actions.h"
 #include "buffers-actions.h"
 #include "buffers-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry buffers_actions[] =
+static const PicmanActionEntry buffers_actions[] =
 {
-  { "buffers-popup", GIMP_STOCK_BUFFER,
+  { "buffers-popup", PICMAN_STOCK_BUFFER,
     NC_("buffers-action", "Buffers Menu"), NULL, NULL, NULL,
-    GIMP_HELP_BUFFER_DIALOG },
+    PICMAN_HELP_BUFFER_DIALOG },
 
   { "buffers-paste", GTK_STOCK_PASTE,
     NC_("buffers-action", "_Paste Buffer"), "",
     NC_("buffers-action", "Paste the selected buffer"),
     G_CALLBACK (buffers_paste_cmd_callback),
-    GIMP_HELP_BUFFER_PASTE },
+    PICMAN_HELP_BUFFER_PASTE },
 
-  { "buffers-paste-into", GIMP_STOCK_PASTE_INTO,
+  { "buffers-paste-into", PICMAN_STOCK_PASTE_INTO,
     NC_("buffers-action", "Paste Buffer _Into"), NULL,
     NC_("buffers-action", "Paste the selected buffer into the selection"),
     G_CALLBACK (buffers_paste_into_cmd_callback),
-    GIMP_HELP_BUFFER_PASTE_INTO },
+    PICMAN_HELP_BUFFER_PASTE_INTO },
 
-  { "buffers-paste-as-new", GIMP_STOCK_PASTE_AS_NEW,
+  { "buffers-paste-as-new", PICMAN_STOCK_PASTE_AS_NEW,
     NC_("buffers-action", "Paste Buffer as _New"), NULL,
     NC_("buffers-action", "Paste the selected buffer as a new image"),
     G_CALLBACK (buffers_paste_as_new_cmd_callback),
-    GIMP_HELP_BUFFER_PASTE_AS_NEW },
+    PICMAN_HELP_BUFFER_PASTE_AS_NEW },
 
   { "buffers-delete", GTK_STOCK_DELETE,
     NC_("buffers-action", "_Delete Buffer"), "",
     NC_("buffers-action", "Delete the selected buffer"),
     G_CALLBACK (buffers_delete_cmd_callback),
-    GIMP_HELP_BUFFER_DELETE }
+    PICMAN_HELP_BUFFER_DELETE }
 };
 
 
 void
-buffers_actions_setup (GimpActionGroup *group)
+buffers_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_actions (group, "buffers-action",
+  picman_action_group_add_actions (group, "buffers-action",
                                  buffers_actions,
                                  G_N_ELEMENTS (buffers_actions));
 }
 
 void
-buffers_actions_update (GimpActionGroup *group,
+buffers_actions_update (PicmanActionGroup *group,
                         gpointer         data)
 {
-  GimpContext *context = action_data_get_context (data);
-  GimpBuffer  *buffer  = NULL;
+  PicmanContext *context = action_data_get_context (data);
+  PicmanBuffer  *buffer  = NULL;
 
   if (context)
-    buffer = gimp_context_get_buffer (context);
+    buffer = picman_context_get_buffer (context);
 
 #define SET_SENSITIVE(action,condition) \
-        gimp_action_group_set_action_sensitive (group, action, (condition) != 0)
+        picman_action_group_set_action_sensitive (group, action, (condition) != 0)
 
   SET_SENSITIVE ("buffers-paste",        buffer);
   SET_SENSITIVE ("buffers-paste-into",   buffer);

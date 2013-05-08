@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,44 +22,44 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
-#include "libgimpwidgets/gimpwidgets-private.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
+#include "libpicmanwidgets/picmanwidgets-private.h"
 
 #include "gui-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmantoolinfo.h"
 
-#include "plug-in/gimpenvirontable.h"
-#include "plug-in/gimppluginmanager.h"
+#include "plug-in/picmanenvirontable.h"
+#include "plug-in/picmanpluginmanager.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplay-foreach.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpstatusbar.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplay-foreach.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmanstatusbar.h"
 
-#include "tools/gimp-tools.h"
+#include "tools/picman-tools.h"
 
-#include "widgets/gimpclipboard.h"
-#include "widgets/gimpcolorselectorpalette.h"
-#include "widgets/gimpcontrollers.h"
-#include "widgets/gimpdevices.h"
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpdnd.h"
-#include "widgets/gimprender.h"
-#include "widgets/gimphelp.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpmenufactory.h"
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpsessioninfo.h"
-#include "widgets/gimpuimanager.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanclipboard.h"
+#include "widgets/picmancolorselectorpalette.h"
+#include "widgets/picmancontrollers.h"
+#include "widgets/picmandevices.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmandnd.h"
+#include "widgets/picmanrender.h"
+#include "widgets/picmanhelp.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanmenufactory.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmansessioninfo.h"
+#include "widgets/picmanuimanager.h"
+#include "widgets/picmanwidgets-utils.h"
 
 #include "actions/actions.h"
 #include "actions/windows-commands.h"
@@ -69,7 +69,7 @@
 #include "dialogs/dialogs.h"
 
 #include "color-history.h"
-#include "gimpuiconfigurer.h"
+#include "picmanuiconfigurer.h"
 #include "gui.h"
 #include "gui-unique.h"
 #include "gui-vtable.h"
@@ -80,7 +80,7 @@
 #include "ige-mac-menu.h"
 #endif /* GDK_WINDOWING_QUARTZ */
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
@@ -88,56 +88,56 @@
 static gchar    * gui_sanity_check              (void);
 static void       gui_help_func                 (const gchar        *help_id,
                                                  gpointer            help_data);
-static gboolean   gui_get_background_func       (GimpRGB            *color);
-static gboolean   gui_get_foreground_func       (GimpRGB            *color);
+static gboolean   gui_get_background_func       (PicmanRGB            *color);
+static gboolean   gui_get_foreground_func       (PicmanRGB            *color);
 
-static void       gui_initialize_after_callback (Gimp               *gimp,
-                                                 GimpInitStatusFunc  callback);
+static void       gui_initialize_after_callback (Picman               *picman,
+                                                 PicmanInitStatusFunc  callback);
 
-static void       gui_restore_callback          (Gimp               *gimp,
-                                                 GimpInitStatusFunc  callback);
-static void       gui_restore_after_callback    (Gimp               *gimp,
-                                                 GimpInitStatusFunc  callback);
+static void       gui_restore_callback          (Picman               *picman,
+                                                 PicmanInitStatusFunc  callback);
+static void       gui_restore_after_callback    (Picman               *picman,
+                                                 PicmanInitStatusFunc  callback);
 
-static gboolean   gui_exit_callback             (Gimp               *gimp,
+static gboolean   gui_exit_callback             (Picman               *picman,
                                                  gboolean            force);
-static gboolean   gui_exit_after_callback       (Gimp               *gimp,
+static gboolean   gui_exit_after_callback       (Picman               *picman,
                                                  gboolean            force);
 
-static void       gui_show_tooltips_notify      (GimpGuiConfig      *gui_config,
+static void       gui_show_tooltips_notify      (PicmanGuiConfig      *gui_config,
                                                  GParamSpec         *pspec,
-                                                 Gimp               *gimp);
-static void       gui_show_help_button_notify   (GimpGuiConfig      *gui_config,
+                                                 Picman               *picman);
+static void       gui_show_help_button_notify   (PicmanGuiConfig      *gui_config,
                                                  GParamSpec         *pspec,
-                                                 Gimp               *gimp);
-static void       gui_user_manual_notify        (GimpGuiConfig      *gui_config,
+                                                 Picman               *picman);
+static void       gui_user_manual_notify        (PicmanGuiConfig      *gui_config,
                                                  GParamSpec         *pspec,
-                                                 Gimp               *gimp);
-static void       gui_single_window_mode_notify (GimpGuiConfig      *gui_config,
+                                                 Picman               *picman);
+static void       gui_single_window_mode_notify (PicmanGuiConfig      *gui_config,
                                                  GParamSpec         *pspec,
-                                                 GimpUIConfigurer   *ui_configurer);
-static void       gui_tearoff_menus_notify      (GimpGuiConfig      *gui_config,
+                                                 PicmanUIConfigurer   *ui_configurer);
+static void       gui_tearoff_menus_notify      (PicmanGuiConfig      *gui_config,
                                                  GParamSpec         *pspec,
                                                  GtkUIManager       *manager);
 
-static void       gui_global_buffer_changed     (Gimp               *gimp);
+static void       gui_global_buffer_changed     (Picman               *picman);
 
-static void       gui_menu_show_tooltip         (GimpUIManager      *manager,
+static void       gui_menu_show_tooltip         (PicmanUIManager      *manager,
                                                  const gchar        *tooltip,
-                                                 Gimp               *gimp);
-static void       gui_menu_hide_tooltip         (GimpUIManager      *manager,
-                                                 Gimp               *gimp);
+                                                 Picman               *picman);
+static void       gui_menu_hide_tooltip         (PicmanUIManager      *manager,
+                                                 Picman               *picman);
 
-static void       gui_display_changed           (GimpContext        *context,
-                                                 GimpDisplay        *display,
-                                                 Gimp               *gimp);
+static void       gui_display_changed           (PicmanContext        *context,
+                                                 PicmanDisplay        *display,
+                                                 Picman               *picman);
 
 
 /*  private variables  */
 
-static Gimp             *the_gui_gimp     = NULL;
-static GimpUIManager    *image_ui_manager = NULL;
-static GimpUIConfigurer *ui_configurer    = NULL;
+static Picman             *the_gui_picman     = NULL;
+static PicmanUIManager    *image_ui_manager = NULL;
+static PicmanUIConfigurer *ui_configurer    = NULL;
 
 
 /*  public functions  */
@@ -158,86 +158,86 @@ gui_abort (const gchar *abort_message)
 
   g_return_if_fail (abort_message != NULL);
 
-  dialog = gimp_dialog_new (_("GIMP Message"), "gimp-abort",
+  dialog = picman_dialog_new (_("PICMAN Message"), "picman-abort",
                             NULL, GTK_DIALOG_MODAL, NULL, NULL,
                             GTK_STOCK_OK, GTK_RESPONSE_OK,
                             NULL);
 
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
 
-  box = g_object_new (GIMP_TYPE_MESSAGE_BOX,
-                      "stock-id",     GIMP_STOCK_WILBER_EEK,
+  box = g_object_new (PICMAN_TYPE_MESSAGE_BOX,
+                      "stock-id",     PICMAN_STOCK_WILBER_EEK,
                       "border-width", 12,
                       NULL);
 
-  gimp_message_box_set_text (GIMP_MESSAGE_BOX (box), "%s", abort_message);
+  picman_message_box_set_text (PICMAN_MESSAGE_BOX (box), "%s", abort_message);
 
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))),
                       box, TRUE, TRUE, 0);
   gtk_widget_show (box);
 
-  gimp_dialog_run (GIMP_DIALOG (dialog));
+  picman_dialog_run (PICMAN_DIALOG (dialog));
 
   exit (EXIT_FAILURE);
 }
 
-GimpInitStatusFunc
-gui_init (Gimp     *gimp,
+PicmanInitStatusFunc
+gui_init (Picman     *picman,
           gboolean  no_splash)
 {
-  GimpInitStatusFunc  status_callback = NULL;
+  PicmanInitStatusFunc  status_callback = NULL;
   GdkScreen          *screen;
   gchar              *abort_message;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (the_gui_gimp == NULL, NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (the_gui_picman == NULL, NULL);
 
   abort_message = gui_sanity_check ();
   if (abort_message)
     gui_abort (abort_message);
 
-  the_gui_gimp = gimp;
+  the_gui_picman = picman;
 
-  gui_unique_init (gimp);
+  gui_unique_init (picman);
 
-  gimp_widgets_init (gui_help_func,
+  picman_widgets_init (gui_help_func,
                      gui_get_foreground_func,
                      gui_get_background_func,
                      NULL);
 
-  g_type_class_ref (GIMP_TYPE_COLOR_SELECT);
+  g_type_class_ref (PICMAN_TYPE_COLOR_SELECT);
 
   /*  disable automatic startup notification  */
   gtk_window_set_auto_startup_notification (FALSE);
 
-  gimp_dnd_init (gimp);
+  picman_dnd_init (picman);
 
-  themes_init (gimp);
+  themes_init (picman);
 
   screen = gdk_screen_get_default ();
   gtk_widget_set_default_colormap (gdk_screen_get_rgb_colormap (screen));
 
   if (! no_splash)
     {
-      splash_create (gimp->be_verbose);
+      splash_create (picman->be_verbose);
       status_callback = splash_update;
     }
 
-  g_signal_connect_after (gimp, "initialize",
+  g_signal_connect_after (picman, "initialize",
                           G_CALLBACK (gui_initialize_after_callback),
                           NULL);
 
-  g_signal_connect (gimp, "restore",
+  g_signal_connect (picman, "restore",
                     G_CALLBACK (gui_restore_callback),
                     NULL);
-  g_signal_connect_after (gimp, "restore",
+  g_signal_connect_after (picman, "restore",
                           G_CALLBACK (gui_restore_after_callback),
                           NULL);
 
-  g_signal_connect (gimp, "exit",
+  g_signal_connect (picman, "exit",
                     G_CALLBACK (gui_exit_callback),
                     NULL);
-  g_signal_connect_after (gimp, "exit",
+  g_signal_connect_after (picman, "exit",
                           G_CALLBACK (gui_exit_after_callback),
                           NULL);
 
@@ -262,10 +262,10 @@ gui_sanity_check (void)
     {
       return g_strdup_printf
         ("%s\n\n"
-         "GIMP requires GTK+ version %d.%d.%d or later.\n"
+         "PICMAN requires GTK+ version %d.%d.%d or later.\n"
          "Installed GTK+ version is %d.%d.%d.\n\n"
          "Somehow you or your software packager managed\n"
-         "to install GIMP with an older GTK+ version.\n\n"
+         "to install PICMAN with an older GTK+ version.\n\n"
          "Please upgrade to GTK+ version %d.%d.%d or later.",
          mismatch,
          GTK_REQUIRED_MAJOR, GTK_REQUIRED_MINOR, GTK_REQUIRED_MICRO,
@@ -285,42 +285,42 @@ static void
 gui_help_func (const gchar *help_id,
                gpointer     help_data)
 {
-  g_return_if_fail (GIMP_IS_GIMP (the_gui_gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (the_gui_picman));
 
-  gimp_help (the_gui_gimp, NULL, NULL, help_id);
+  picman_help (the_gui_picman, NULL, NULL, help_id);
 }
 
 static gboolean
-gui_get_foreground_func (GimpRGB *color)
+gui_get_foreground_func (PicmanRGB *color)
 {
   g_return_val_if_fail (color != NULL, FALSE);
-  g_return_val_if_fail (GIMP_IS_GIMP (the_gui_gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (the_gui_picman), FALSE);
 
-  gimp_context_get_foreground (gimp_get_user_context (the_gui_gimp), color);
+  picman_context_get_foreground (picman_get_user_context (the_gui_picman), color);
 
   return TRUE;
 }
 
 static gboolean
-gui_get_background_func (GimpRGB *color)
+gui_get_background_func (PicmanRGB *color)
 {
   g_return_val_if_fail (color != NULL, FALSE);
-  g_return_val_if_fail (GIMP_IS_GIMP (the_gui_gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (the_gui_picman), FALSE);
 
-  gimp_context_get_background (gimp_get_user_context (the_gui_gimp), color);
+  picman_context_get_background (picman_get_user_context (the_gui_picman), color);
 
   return TRUE;
 }
 
 static void
-gui_initialize_after_callback (Gimp               *gimp,
-                               GimpInitStatusFunc  status_callback)
+gui_initialize_after_callback (Picman               *picman,
+                               PicmanInitStatusFunc  status_callback)
 {
   const gchar *name = NULL;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  if (gimp->be_verbose)
+  if (picman->be_verbose)
     g_print ("INIT: %s\n", G_STRFUNC);
 
 #if defined (GDK_WINDOWING_X11)
@@ -335,99 +335,99 @@ gui_initialize_after_callback (Gimp               *gimp,
     {
       gchar *display = gdk_get_display ();
 
-      gimp_environ_table_add (gimp->plug_in_manager->environ_table,
+      picman_environ_table_add (picman->plug_in_manager->environ_table,
                               name, display, NULL);
       g_free (display);
     }
 
-  gimp_tools_init (gimp);
+  picman_tools_init (picman);
 
-  gimp_context_set_tool (gimp_get_user_context (gimp),
-                         gimp_tool_info_get_standard (gimp));
+  picman_context_set_tool (picman_get_user_context (picman),
+                         picman_tool_info_get_standard (picman));
 }
 
 static void
-gui_restore_callback (Gimp               *gimp,
-                      GimpInitStatusFunc  status_callback)
+gui_restore_callback (Picman               *picman,
+                      PicmanInitStatusFunc  status_callback)
 {
-  GimpDisplayConfig *display_config = GIMP_DISPLAY_CONFIG (gimp->config);
-  GimpGuiConfig     *gui_config     = GIMP_GUI_CONFIG (gimp->config);
+  PicmanDisplayConfig *display_config = PICMAN_DISPLAY_CONFIG (picman->config);
+  PicmanGuiConfig     *gui_config     = PICMAN_GUI_CONFIG (picman->config);
 
-  if (gimp->be_verbose)
+  if (picman->be_verbose)
     g_print ("INIT: %s\n", G_STRFUNC);
 
-  gui_vtable_init (gimp);
+  gui_vtable_init (picman);
 
   if (! gui_config->show_tooltips)
-    gimp_help_disable_tooltips ();
+    picman_help_disable_tooltips ();
 
   g_signal_connect (gui_config, "notify::show-tooltips",
                     G_CALLBACK (gui_show_tooltips_notify),
-                    gimp);
+                    picman);
 
-  gimp_dialogs_show_help_button (gui_config->use_help &&
+  picman_dialogs_show_help_button (gui_config->use_help &&
                                  gui_config->show_help_button);
 
   g_signal_connect (gui_config, "notify::use-help",
                     G_CALLBACK (gui_show_help_button_notify),
-                    gimp);
+                    picman);
   g_signal_connect (gui_config, "notify::user-manual-online",
                     G_CALLBACK (gui_user_manual_notify),
-                    gimp);
+                    picman);
   g_signal_connect (gui_config, "notify::show-help-button",
                     G_CALLBACK (gui_show_help_button_notify),
-                    gimp);
+                    picman);
 
-  g_signal_connect (gimp_get_user_context (gimp), "display-changed",
+  g_signal_connect (picman_get_user_context (picman), "display-changed",
                     G_CALLBACK (gui_display_changed),
-                    gimp);
+                    picman);
 
   /* make sure the monitor resolution is valid */
   if (display_config->monitor_res_from_gdk               ||
-      display_config->monitor_xres < GIMP_MIN_RESOLUTION ||
-      display_config->monitor_yres < GIMP_MIN_RESOLUTION)
+      display_config->monitor_xres < PICMAN_MIN_RESOLUTION ||
+      display_config->monitor_yres < PICMAN_MIN_RESOLUTION)
     {
       gdouble xres, yres;
 
-      gimp_get_screen_resolution (NULL, &xres, &yres);
+      picman_get_screen_resolution (NULL, &xres, &yres);
 
-      g_object_set (gimp->config,
+      g_object_set (picman->config,
                     "monitor-xresolution",                      xres,
                     "monitor-yresolution",                      yres,
                     "monitor-resolution-from-windowing-system", TRUE,
                     NULL);
     }
 
-  actions_init (gimp);
-  menus_init (gimp, global_action_factory);
-  gimp_render_init (gimp);
+  actions_init (picman);
+  menus_init (picman, global_action_factory);
+  picman_render_init (picman);
 
-  dialogs_init (gimp, global_menu_factory);
+  dialogs_init (picman, global_menu_factory);
 
-  gimp_clipboard_init (gimp);
-  gimp_clipboard_set_buffer (gimp, gimp->global_buffer);
+  picman_clipboard_init (picman);
+  picman_clipboard_set_buffer (picman, picman->global_buffer);
 
-  g_signal_connect (gimp, "buffer-changed",
+  g_signal_connect (picman, "buffer-changed",
                     G_CALLBACK (gui_global_buffer_changed),
                     NULL);
 
-  gimp_devices_init (gimp);
-  gimp_controllers_init (gimp);
-  session_init (gimp);
+  picman_devices_init (picman);
+  picman_controllers_init (picman);
+  session_init (picman);
 
-  g_type_class_unref (g_type_class_ref (GIMP_TYPE_COLOR_SELECTOR_PALETTE));
+  g_type_class_unref (g_type_class_ref (PICMAN_TYPE_COLOR_SELECTOR_PALETTE));
 
   /*  initialize the document history  */
   status_callback (NULL, _("Documents"), 0.9);
-  gimp_recent_list_load (gimp);
+  picman_recent_list_load (picman);
 
   status_callback (NULL, _("Tool Options"), 1.0);
-  gimp_tools_restore (gimp);
+  picman_tools_restore (picman);
 }
 
 #ifdef GDK_WINDOWING_QUARTZ
 static void
-gui_add_to_app_menu (GimpUIManager   *ui_manager,
+gui_add_to_app_menu (PicmanUIManager   *ui_manager,
                      IgeMacMenuGroup *group,
                      const gchar     *action_path,
                      const gchar     *label)
@@ -442,29 +442,29 @@ gui_add_to_app_menu (GimpUIManager   *ui_manager,
 #endif
 
 static void
-gui_restore_after_callback (Gimp               *gimp,
-                            GimpInitStatusFunc  status_callback)
+gui_restore_after_callback (Picman               *picman,
+                            PicmanInitStatusFunc  status_callback)
 {
-  GimpGuiConfig *gui_config = GIMP_GUI_CONFIG (gimp->config);
-  GimpDisplay   *display;
+  PicmanGuiConfig *gui_config = PICMAN_GUI_CONFIG (picman->config);
+  PicmanDisplay   *display;
 
-  if (gimp->be_verbose)
+  if (picman->be_verbose)
     g_print ("INIT: %s\n", G_STRFUNC);
 
-  gimp->message_handler = GIMP_MESSAGE_BOX;
+  picman->message_handler = PICMAN_MESSAGE_BOX;
 
   if (gui_config->restore_accels)
-    menus_restore (gimp);
+    menus_restore (picman);
 
-  ui_configurer = g_object_new (GIMP_TYPE_UI_CONFIGURER,
-                                "gimp", gimp,
+  ui_configurer = g_object_new (PICMAN_TYPE_UI_CONFIGURER,
+                                "picman", picman,
                                 NULL);
 
-  image_ui_manager = gimp_menu_factory_manager_new (global_menu_factory,
+  image_ui_manager = picman_menu_factory_manager_new (global_menu_factory,
                                                     "<Image>",
-                                                    gimp,
+                                                    picman,
                                                     gui_config->tearoff_menus);
-  gimp_ui_manager_update (image_ui_manager, gimp);
+  picman_ui_manager_update (image_ui_manager, picman);
 
 #ifdef GDK_WINDOWING_QUARTZ
   {
@@ -490,7 +490,7 @@ gui_restore_after_callback (Gimp               *gimp,
 
     gui_add_to_app_menu (image_ui_manager, group,
                          "/dummy-menubar/image-popup/Help/dialogs-about",
-                         _("About GIMP"));
+                         _("About PICMAN"));
 
     /*  the preferences group  */
     group = ige_mac_menu_add_app_menu_group ();
@@ -520,33 +520,33 @@ gui_restore_after_callback (Gimp               *gimp,
                            image_ui_manager, 0);
   g_signal_connect (image_ui_manager, "show-tooltip",
                     G_CALLBACK (gui_menu_show_tooltip),
-                    gimp);
+                    picman);
   g_signal_connect (image_ui_manager, "hide-tooltip",
                     G_CALLBACK (gui_menu_hide_tooltip),
-                    gimp);
+                    picman);
 
-  gimp_devices_restore (gimp);
-  gimp_controllers_restore (gimp, image_ui_manager);
+  picman_devices_restore (picman);
+  picman_controllers_restore (picman, image_ui_manager);
 
   if (status_callback == splash_update)
     splash_destroy ();
 
-  color_history_restore (gimp);
+  color_history_restore (picman);
 
-  if (gimp_get_show_gui (gimp))
+  if (picman_get_show_gui (picman))
     {
-      GimpDisplayShell *shell;
+      PicmanDisplayShell *shell;
 
       /*  create the empty display  */
-      display = GIMP_DISPLAY (gimp_create_display (gimp,
+      display = PICMAN_DISPLAY (picman_create_display (picman,
                                                    NULL,
-                                                   GIMP_UNIT_PIXEL,
+                                                   PICMAN_UNIT_PIXEL,
                                                    1.0));
 
-      shell = gimp_display_get_shell (display);
+      shell = picman_display_get_shell (display);
 
       if (gui_config->restore_session)
-        session_restore (gimp);
+        session_restore (picman);
 
       /*  move keyboard focus to the display  */
       gtk_window_present (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (shell))));
@@ -557,69 +557,69 @@ gui_restore_after_callback (Gimp               *gimp,
 }
 
 static gboolean
-gui_exit_callback (Gimp     *gimp,
+gui_exit_callback (Picman     *picman,
                    gboolean  force)
 {
-  GimpGuiConfig  *gui_config = GIMP_GUI_CONFIG (gimp->config);
+  PicmanGuiConfig  *gui_config = PICMAN_GUI_CONFIG (picman->config);
 
-  if (gimp->be_verbose)
+  if (picman->be_verbose)
     g_print ("EXIT: %s\n", G_STRFUNC);
 
-  if (! force && gimp_displays_dirty (gimp))
+  if (! force && picman_displays_dirty (picman))
     {
-      gimp_dialog_factory_dialog_raise (gimp_dialog_factory_get_singleton (),
+      picman_dialog_factory_dialog_raise (picman_dialog_factory_get_singleton (),
                                         gdk_screen_get_default (),
-                                        "gimp-quit-dialog", -1);
+                                        "picman-quit-dialog", -1);
 
       return TRUE; /* stop exit for now */
     }
 
-  gimp->message_handler = GIMP_CONSOLE;
+  picman->message_handler = PICMAN_CONSOLE;
 
   gui_unique_exit ();
 
   if (gui_config->save_session_info)
-    session_save (gimp, FALSE);
+    session_save (picman, FALSE);
 
-  color_history_save (gimp);
+  color_history_save (picman);
 
   if (gui_config->save_accels)
-    menus_save (gimp, FALSE);
+    menus_save (picman, FALSE);
 
   if (gui_config->save_device_status)
-    gimp_devices_save (gimp, FALSE);
+    picman_devices_save (picman, FALSE);
 
   if (TRUE /* gui_config->save_controllers */)
-    gimp_controllers_save (gimp);
+    picman_controllers_save (picman);
 
-  g_signal_handlers_disconnect_by_func (gimp_get_user_context (gimp),
+  g_signal_handlers_disconnect_by_func (picman_get_user_context (picman),
                                         gui_display_changed,
-                                        gimp);
+                                        picman);
 
-  gimp_displays_delete (gimp);
+  picman_displays_delete (picman);
 
-  gimp_tools_save (gimp, gui_config->save_tool_options, FALSE);
-  gimp_tools_exit (gimp);
+  picman_tools_save (picman, gui_config->save_tool_options, FALSE);
+  picman_tools_exit (picman);
 
   return FALSE; /* continue exiting */
 }
 
 static gboolean
-gui_exit_after_callback (Gimp     *gimp,
+gui_exit_after_callback (Picman     *picman,
                          gboolean  force)
 {
-  if (gimp->be_verbose)
+  if (picman->be_verbose)
     g_print ("EXIT: %s\n", G_STRFUNC);
 
-  g_signal_handlers_disconnect_by_func (gimp->config,
+  g_signal_handlers_disconnect_by_func (picman->config,
                                         gui_show_help_button_notify,
-                                        gimp);
-  g_signal_handlers_disconnect_by_func (gimp->config,
+                                        picman);
+  g_signal_handlers_disconnect_by_func (picman->config,
                                         gui_user_manual_notify,
-                                        gimp);
-  g_signal_handlers_disconnect_by_func (gimp->config,
+                                        picman);
+  g_signal_handlers_disconnect_by_func (picman->config,
                                         gui_show_tooltips_notify,
-                                        gimp);
+                                        picman);
 
   g_object_unref (image_ui_manager);
   image_ui_manager = NULL;
@@ -627,65 +627,65 @@ gui_exit_after_callback (Gimp     *gimp,
   g_object_unref (ui_configurer);
   ui_configurer = NULL;
 
-  session_exit (gimp);
-  menus_exit (gimp);
-  actions_exit (gimp);
-  gimp_render_exit (gimp);
+  session_exit (picman);
+  menus_exit (picman);
+  actions_exit (picman);
+  picman_render_exit (picman);
 
-  gimp_controllers_exit (gimp);
-  gimp_devices_exit (gimp);
-  dialogs_exit (gimp);
+  picman_controllers_exit (picman);
+  picman_devices_exit (picman);
+  dialogs_exit (picman);
 
-  g_signal_handlers_disconnect_by_func (gimp,
+  g_signal_handlers_disconnect_by_func (picman,
                                         G_CALLBACK (gui_global_buffer_changed),
                                         NULL);
-  gimp_clipboard_exit (gimp);
+  picman_clipboard_exit (picman);
 
-  themes_exit (gimp);
+  themes_exit (picman);
 
-  g_type_class_unref (g_type_class_peek (GIMP_TYPE_COLOR_SELECT));
+  g_type_class_unref (g_type_class_peek (PICMAN_TYPE_COLOR_SELECT));
 
   return FALSE; /* continue exiting */
 }
 
 static void
-gui_show_tooltips_notify (GimpGuiConfig *gui_config,
+gui_show_tooltips_notify (PicmanGuiConfig *gui_config,
                           GParamSpec    *param_spec,
-                          Gimp          *gimp)
+                          Picman          *picman)
 {
   if (gui_config->show_tooltips)
-    gimp_help_enable_tooltips ();
+    picman_help_enable_tooltips ();
   else
-    gimp_help_disable_tooltips ();
+    picman_help_disable_tooltips ();
 }
 
 static void
-gui_show_help_button_notify (GimpGuiConfig *gui_config,
+gui_show_help_button_notify (PicmanGuiConfig *gui_config,
                              GParamSpec    *param_spec,
-                             Gimp          *gimp)
+                             Picman          *picman)
 {
-  gimp_dialogs_show_help_button (gui_config->use_help &&
+  picman_dialogs_show_help_button (gui_config->use_help &&
                                  gui_config->show_help_button);
 }
 
 static void
-gui_user_manual_notify (GimpGuiConfig *gui_config,
+gui_user_manual_notify (PicmanGuiConfig *gui_config,
                         GParamSpec    *param_spec,
-                        Gimp          *gimp)
+                        Picman          *picman)
 {
-  gimp_help_user_manual_changed (gimp);
+  picman_help_user_manual_changed (picman);
 }
 
 static void
-gui_single_window_mode_notify (GimpGuiConfig      *gui_config,
+gui_single_window_mode_notify (PicmanGuiConfig      *gui_config,
                                GParamSpec         *pspec,
-                               GimpUIConfigurer   *ui_configurer)
+                               PicmanUIConfigurer   *ui_configurer)
 {
-  gimp_ui_configurer_configure (ui_configurer,
+  picman_ui_configurer_configure (ui_configurer,
                                 gui_config->single_window_mode);
 }
 static void
-gui_tearoff_menus_notify (GimpGuiConfig *gui_config,
+gui_tearoff_menus_notify (PicmanGuiConfig *gui_config,
                           GParamSpec    *pspec,
                           GtkUIManager  *manager)
 {
@@ -693,67 +693,67 @@ gui_tearoff_menus_notify (GimpGuiConfig *gui_config,
 }
 
 static void
-gui_global_buffer_changed (Gimp *gimp)
+gui_global_buffer_changed (Picman *picman)
 {
-  gimp_clipboard_set_buffer (gimp, gimp->global_buffer);
+  picman_clipboard_set_buffer (picman, picman->global_buffer);
 }
 
 static void
-gui_menu_show_tooltip (GimpUIManager *manager,
+gui_menu_show_tooltip (PicmanUIManager *manager,
                        const gchar   *tooltip,
-                       Gimp          *gimp)
+                       Picman          *picman)
 {
-  GimpContext *context = gimp_get_user_context (gimp);
-  GimpDisplay *display = gimp_context_get_display (context);
+  PicmanContext *context = picman_get_user_context (picman);
+  PicmanDisplay *display = picman_context_get_display (context);
 
   if (display)
     {
-      GimpDisplayShell *shell     = gimp_display_get_shell (display);
-      GimpStatusbar    *statusbar = gimp_display_shell_get_statusbar (shell);
+      PicmanDisplayShell *shell     = picman_display_get_shell (display);
+      PicmanStatusbar    *statusbar = picman_display_shell_get_statusbar (shell);
 
-      gimp_statusbar_push (statusbar, "menu-tooltip",
+      picman_statusbar_push (statusbar, "menu-tooltip",
                            NULL, "%s", tooltip);
     }
 }
 
 static void
-gui_menu_hide_tooltip (GimpUIManager *manager,
-                       Gimp          *gimp)
+gui_menu_hide_tooltip (PicmanUIManager *manager,
+                       Picman          *picman)
 {
-  GimpContext *context = gimp_get_user_context (gimp);
-  GimpDisplay *display = gimp_context_get_display (context);
+  PicmanContext *context = picman_get_user_context (picman);
+  PicmanDisplay *display = picman_context_get_display (context);
 
   if (display)
     {
-      GimpDisplayShell *shell     = gimp_display_get_shell (display);
-      GimpStatusbar    *statusbar = gimp_display_shell_get_statusbar (shell);
+      PicmanDisplayShell *shell     = picman_display_get_shell (display);
+      PicmanStatusbar    *statusbar = picman_display_shell_get_statusbar (shell);
 
-      gimp_statusbar_pop (statusbar, "menu-tooltip");
+      picman_statusbar_pop (statusbar, "menu-tooltip");
     }
 }
 
 static void
-gui_display_changed (GimpContext *context,
-                     GimpDisplay *display,
-                     Gimp        *gimp)
+gui_display_changed (PicmanContext *context,
+                     PicmanDisplay *display,
+                     Picman        *picman)
 {
   if (! display)
     {
-      GimpImage *image = gimp_context_get_image (context);
+      PicmanImage *image = picman_context_get_image (context);
 
       if (image)
         {
           GList *list;
 
-          for (list = gimp_get_display_iter (gimp);
+          for (list = picman_get_display_iter (picman);
                list;
                list = g_list_next (list))
             {
-              GimpDisplay *display2 = list->data;
+              PicmanDisplay *display2 = list->data;
 
-              if (gimp_display_get_image (display2) == image)
+              if (picman_display_get_image (display2) == image)
                 {
-                  gimp_context_set_display (context, display2);
+                  picman_context_set_display (context, display2);
 
                   /* stop the emission of the original signal
                    * (the emission of the recursive signal is finished)
@@ -763,9 +763,9 @@ gui_display_changed (GimpContext *context,
                 }
             }
 
-          gimp_context_set_image (context, NULL);
+          picman_context_set_image (context, NULL);
         }
     }
 
-  gimp_ui_manager_update (image_ui_manager, display);
+  picman_ui_manager_update (image_ui_manager, display);
 }

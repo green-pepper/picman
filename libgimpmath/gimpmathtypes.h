@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpmathtypes.h
+ * picmanmathtypes.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,84 +18,84 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_MATH_TYPES_H__
-#define __GIMP_MATH_TYPES_H__
+#ifndef __PICMAN_MATH_TYPES_H__
+#define __PICMAN_MATH_TYPES_H__
 
 
-#include <libgimpbase/gimpbasetypes.h>
+#include <libpicmanbase/picmanbasetypes.h>
 
 
 G_BEGIN_DECLS
 
-typedef struct _GimpMatrix2 GimpMatrix2;
-typedef struct _GimpMatrix3 GimpMatrix3;
-typedef struct _GimpMatrix4 GimpMatrix4;
+typedef struct _PicmanMatrix2 PicmanMatrix2;
+typedef struct _PicmanMatrix3 PicmanMatrix3;
+typedef struct _PicmanMatrix4 PicmanMatrix4;
 
 /**
- * GimpMatrix2
+ * PicmanMatrix2
  * @coeff: the coefficients
  *
  * A two by two matrix.
  **/
-struct _GimpMatrix2
+struct _PicmanMatrix2
 {
   gdouble coeff[2][2];
 };
 
 /**
- * GimpMatrix3
+ * PicmanMatrix3
  * @coeff: the coefficients
  *
  * A three by three matrix.
  **/
-struct _GimpMatrix3
+struct _PicmanMatrix3
 {
   gdouble coeff[3][3];
 };
 
 /**
- * GimpMatrix4
+ * PicmanMatrix4
  * @coeff: the coefficients
  *
  * A four by four matrix.
  **/
-struct _GimpMatrix4
+struct _PicmanMatrix4
 {
   gdouble coeff[4][4];
 };
 
 
-typedef struct _GimpVector2 GimpVector2;
-typedef struct _GimpVector3 GimpVector3;
-typedef struct _GimpVector4 GimpVector4;
+typedef struct _PicmanVector2 PicmanVector2;
+typedef struct _PicmanVector3 PicmanVector3;
+typedef struct _PicmanVector4 PicmanVector4;
 
 /**
- * GimpVector2:
+ * PicmanVector2:
  * @x: the x axis
  * @y: the y axis
  *
  * A two dimensional vector.
  **/
-struct _GimpVector2
+struct _PicmanVector2
 {
   gdouble x, y;
 };
 
 /**
- * GimpVector3:
+ * PicmanVector3:
  * @x: the x axis
  * @y: the y axis
  * @z: the z axis
  *
  * A three dimensional vector.
  **/
-struct _GimpVector3
+struct _PicmanVector3
 {
   gdouble x, y, z;
 };
 
 /**
- * GimpVector4:
+ * PicmanVector4:
  * @x: the x axis
  * @y: the y axis
  * @z: the z axis
@@ -103,7 +103,7 @@ struct _GimpVector3
  *
  * A four dimensional vector.
  **/
-struct _GimpVector4
+struct _PicmanVector4
 {
   gdouble x, y, z, w;
 };
@@ -111,4 +111,4 @@ struct _GimpVector4
 
 G_END_DECLS
 
-#endif /* __GIMP_MATH_TYPES_H__ */
+#endif /* __PICMAN_MATH_TYPES_H__ */

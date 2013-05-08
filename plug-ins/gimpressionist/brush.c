@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,20 +19,20 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include <libgimpmath/gimpmath.h>
+#include <libpicmanmath/picmanmath.h>
 
 #include <gtk/gtklist.h>
 #include <gtk/gtkpreview.h>
 
-#include "gimpressionist.h"
+#include "picmanressionist.h"
 #include "ppmtool.h"
 #include "brush.h"
 #include "presets.h"
 
-#include <libgimp/stdplugins-intl.h>
+#include <libpicman/stdplugins-intl.h>
 
 
 static void  update_brush_preview (const char *fn);
@@ -99,7 +99,7 @@ static void
 brushdmenuselect (GtkWidget *widget,
                   gpointer   data)
 {
-  GimpPixelRgn  src_rgn;
+  PicmanPixelRgn  src_rgn;
   guchar       *src_row;
   guchar       *src;
   gint          id;
@@ -108,10 +108,10 @@ brushdmenuselect (GtkWidget *widget,
   ppm_t        *p;
   gint          x1, y1, x2, y2;
   gint          row;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint          rowstride;
 
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &id);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &id);
 
   if (id == -1)
     return;
@@ -130,11 +130,11 @@ brushdmenuselect (GtkWidget *widget,
   gtk_adjustment_set_value (brush_gamma_adjust, 1.0);
   gtk_adjustment_set_value (brush_aspect_adjust, 0.0);
 
-  drawable = gimp_drawable_get (id);
+  drawable = picman_drawable_get (id);
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
 
-  bpp = gimp_drawable_bpp (drawable->drawable_id);
+  bpp = picman_drawable_bpp (drawable->drawable_id);
 
   ppm_kill (&brushppm);
   ppm_new (&brushppm, x2 - x1, y2 - y1);
@@ -144,7 +144,7 @@ brushdmenuselect (GtkWidget *widget,
 
   src_row = g_new (guchar, (x2 - x1) * bpp);
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        0, 0, x2 - x1, y2 - y1,
                        FALSE, FALSE);
 
@@ -154,7 +154,7 @@ brushdmenuselect (GtkWidget *widget,
 
       for (row = 0, y = y1; y < y2; row++, y++)
         {
-          gimp_pixel_rgn_get_row (&src_rgn, src_row, x1, y, (x2 - x1));
+          picman_pixel_rgn_get_row (&src_rgn, src_row, x1, y, (x2 - x1));
           memcpy (p->col + row*rowstride, src_row, bpr);
         }
     }
@@ -167,7 +167,7 @@ brushdmenuselect (GtkWidget *widget,
           guchar *tmprow = p->col + row * rowstride;
           guchar *tmprow_ptr;
 
-          gimp_pixel_rgn_get_row (&src_rgn, src_row, x1, y, (x2 - x1));
+          picman_pixel_rgn_get_row (&src_rgn, src_row, x1, y, (x2 - x1));
           src = src_row;
           tmprow_ptr = tmprow;
           /* Possible micro-optimization here:
@@ -284,8 +284,8 @@ validdrawable (gint32    imageid,
                gint32    drawableid,
                gpointer  data)
 {
-  return (gimp_drawable_is_rgb (drawableid) ||
-          gimp_drawable_is_gray (drawableid));
+  return (picman_drawable_is_rgb (drawableid) ||
+          picman_drawable_is_gray (drawableid));
 }
 
 /*
@@ -384,9 +384,9 @@ update_brush_preview (const gchar *fn)
         }
       ppm_kill (&p);
     }
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (brush_preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (brush_preview),
                           0, 0, 100, 100,
-                          GIMP_GRAY_IMAGE,
+                          PICMAN_GRAY_IMAGE,
                           preview_image,
                           100);
 
@@ -484,7 +484,7 @@ brush_preview_size_allocate (GtkWidget *preview)
 static void
 brush_asepct_adjust_cb (GtkWidget *w, gpointer data)
 {
-  gimp_double_adjustment_update (GTK_ADJUSTMENT (w), data);
+  picman_double_adjustment_update (GTK_ADJUSTMENT (w), data);
   update_brush_preview (pcvals.selected_brush);
 }
 
@@ -526,7 +526,7 @@ create_brushpage (GtkNotebook *notebook)
   gtk_box_pack_start (GTK_BOX (box2), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  brush_preview = tmpw = gimp_preview_area_new ();
+  brush_preview = tmpw = picman_preview_area_new ();
   gtk_widget_set_size_request (brush_preview, 100, 100);
   gtk_container_add (GTK_CONTAINER (frame), tmpw);
   gtk_widget_show (tmpw);
@@ -554,7 +554,7 @@ create_brushpage (GtkNotebook *notebook)
                             G_CALLBACK (update_brush_preview),
                             pcvals.selected_brush);
 
-  gimp_help_set_help_data
+  picman_help_set_help_data
     (tmpw, _("Changes the gamma (brightness) of the selected brush"), NULL);
 
   box3 = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
@@ -571,8 +571,8 @@ create_brushpage (GtkNotebook *notebook)
   gtk_size_group_add_widget (group, tmpw);
   g_object_unref (group);
 
-  combo = gimp_drawable_combo_box_new (validdrawable, NULL);
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo), -1,
+  combo = picman_drawable_combo_box_new (validdrawable, NULL);
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo), -1,
                               G_CALLBACK (brushdmenuselect),
                               NULL);
 
@@ -591,7 +591,7 @@ create_brushpage (GtkNotebook *notebook)
   gtk_widget_show (table);
 
   brush_aspect_adjust = (GtkAdjustment *)
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                           _("Aspect ratio:"),
                           150, -1, pcvals.brush_aspect,
                           -1.0, 1.0, 0.1, 0.1, 2,
@@ -599,12 +599,12 @@ create_brushpage (GtkNotebook *notebook)
                           _("Specifies the aspect ratio of the brush"),
                           NULL);
   gtk_size_group_add_widget (group,
-                             GIMP_SCALE_ENTRY_LABEL (brush_aspect_adjust));
+                             PICMAN_SCALE_ENTRY_LABEL (brush_aspect_adjust));
   g_signal_connect (brush_aspect_adjust, "value-changed",
                     G_CALLBACK (brush_asepct_adjust_cb), &pcvals.brush_aspect);
 
   brush_relief_adjust = (GtkAdjustment *)
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                           _("Relief:"),
                           150, -1, pcvals.brush_relief,
                           0.0, 100.0, 1.0, 10.0, 1,
@@ -612,9 +612,9 @@ create_brushpage (GtkNotebook *notebook)
                           _("Specifies the amount of embossing to apply to the image (in percent)"),
                           NULL);
   gtk_size_group_add_widget (group,
-                             GIMP_SCALE_ENTRY_LABEL (brush_relief_adjust));
+                             PICMAN_SCALE_ENTRY_LABEL (brush_relief_adjust));
   g_signal_connect (brush_relief_adjust, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pcvals.brush_relief);
 
   brush_select (selection, FALSE);

@@ -1,6 +1,6 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
- * Copyright (C) 2006  Manish Singh <yosh@gimp.org>
+ * Picman-Python - allows the writing of Picman plugins in Python.
+ * Copyright (C) 2006  Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PYGIMP_UTIL_H_
-#define _PYGIMP_UTIL_H_
+#ifndef _PYPICMAN_UTIL_H_
+#define _PYPICMAN_UTIL_H_
 
 #include <Python.h>
 
@@ -25,7 +25,7 @@
 
 #include <pygobject.h>
 
-#define pygimp_init_pygobject() G_STMT_START { \
+#define pypicman_init_pygobject() G_STMT_START { \
     PyObject *pygtkmodule = PyImport_ImportModule("pygtk"); \
     if (pygtkmodule != NULL) { \
 	PyObject *mdict, *require_obj, *require_ver, *require_res; \
@@ -50,4 +50,4 @@
     init_pygobject(); \
 } G_STMT_END
 
-#endif /* _PYGIMP_UTIL_H_ */
+#endif /* _PYPICMAN_UTIL_H_ */

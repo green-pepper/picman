@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * The GIMP Help Browser - URI functions
+ * The PICMAN Help Browser - URI functions
  * Copyright (C) 2001  Jacob Schroeder  <jacob@convergence.de>
  *
  * This program is free software: you can redistribute it and/or modify

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,36 +22,36 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "paint-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdynamics.h"
-#include "core/gimperror.h"
-#include "core/gimpimage.h"
-#include "core/gimppattern.h"
-#include "core/gimppickable.h"
+#include "core/picman.h"
+#include "core/picmandrawable.h"
+#include "core/picmandynamics.h"
+#include "core/picmanerror.h"
+#include "core/picmanimage.h"
+#include "core/picmanpattern.h"
+#include "core/picmanpickable.h"
 
-#include "gimpclone.h"
-#include "gimpcloneoptions.h"
+#include "picmanclone.h"
+#include "picmancloneoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static gboolean   gimp_clone_start      (GimpPaintCore     *paint_core,
-                                         GimpDrawable      *drawable,
-                                         GimpPaintOptions  *paint_options,
-                                         const GimpCoords  *coords,
+static gboolean   picman_clone_start      (PicmanPaintCore     *paint_core,
+                                         PicmanDrawable      *drawable,
+                                         PicmanPaintOptions  *paint_options,
+                                         const PicmanCoords  *coords,
                                          GError           **error);
 
-static void       gimp_clone_motion     (GimpSourceCore    *source_core,
-                                         GimpDrawable      *drawable,
-                                         GimpPaintOptions  *paint_options,
-                                         const GimpCoords  *coords,
+static void       picman_clone_motion     (PicmanSourceCore    *source_core,
+                                         PicmanDrawable      *drawable,
+                                         PicmanPaintOptions  *paint_options,
+                                         const PicmanCoords  *coords,
                                          gdouble            opacity,
-                                         GimpPickable      *src_pickable,
+                                         PicmanPickable      *src_pickable,
                                          GeglBuffer        *src_buffer,
                                          GeglRectangle     *src_rect,
                                          gint               src_offset_x,
@@ -64,65 +64,65 @@ static void       gimp_clone_motion     (GimpSourceCore    *source_core,
                                          gint               paint_area_width,
                                          gint               paint_area_height);
 
-static gboolean   gimp_clone_use_source (GimpSourceCore    *source_core,
-                                         GimpSourceOptions *options);
+static gboolean   picman_clone_use_source (PicmanSourceCore    *source_core,
+                                         PicmanSourceOptions *options);
 
 
-G_DEFINE_TYPE (GimpClone, gimp_clone, GIMP_TYPE_SOURCE_CORE)
+G_DEFINE_TYPE (PicmanClone, picman_clone, PICMAN_TYPE_SOURCE_CORE)
 
-#define parent_class gimp_clone_parent_class
+#define parent_class picman_clone_parent_class
 
 
 void
-gimp_clone_register (Gimp                      *gimp,
-                     GimpPaintRegisterCallback  callback)
+picman_clone_register (Picman                      *picman,
+                     PicmanPaintRegisterCallback  callback)
 {
-  (* callback) (gimp,
-                GIMP_TYPE_CLONE,
-                GIMP_TYPE_CLONE_OPTIONS,
-                "gimp-clone",
+  (* callback) (picman,
+                PICMAN_TYPE_CLONE,
+                PICMAN_TYPE_CLONE_OPTIONS,
+                "picman-clone",
                 _("Clone"),
-                "gimp-tool-clone");
+                "picman-tool-clone");
 }
 
 static void
-gimp_clone_class_init (GimpCloneClass *klass)
+picman_clone_class_init (PicmanCloneClass *klass)
 {
-  GimpPaintCoreClass  *paint_core_class  = GIMP_PAINT_CORE_CLASS (klass);
-  GimpSourceCoreClass *source_core_class = GIMP_SOURCE_CORE_CLASS (klass);
+  PicmanPaintCoreClass  *paint_core_class  = PICMAN_PAINT_CORE_CLASS (klass);
+  PicmanSourceCoreClass *source_core_class = PICMAN_SOURCE_CORE_CLASS (klass);
 
-  paint_core_class->start       = gimp_clone_start;
+  paint_core_class->start       = picman_clone_start;
 
-  source_core_class->use_source = gimp_clone_use_source;
-  source_core_class->motion     = gimp_clone_motion;
+  source_core_class->use_source = picman_clone_use_source;
+  source_core_class->motion     = picman_clone_motion;
 }
 
 static void
-gimp_clone_init (GimpClone *clone)
+picman_clone_init (PicmanClone *clone)
 {
 }
 
 static gboolean
-gimp_clone_start (GimpPaintCore     *paint_core,
-                  GimpDrawable      *drawable,
-                  GimpPaintOptions  *paint_options,
-                  const GimpCoords  *coords,
+picman_clone_start (PicmanPaintCore     *paint_core,
+                  PicmanDrawable      *drawable,
+                  PicmanPaintOptions  *paint_options,
+                  const PicmanCoords  *coords,
                   GError           **error)
 {
-  GimpCloneOptions *options = GIMP_CLONE_OPTIONS (paint_options);
+  PicmanCloneOptions *options = PICMAN_CLONE_OPTIONS (paint_options);
 
-  if (! GIMP_PAINT_CORE_CLASS (parent_class)->start (paint_core, drawable,
+  if (! PICMAN_PAINT_CORE_CLASS (parent_class)->start (paint_core, drawable,
                                                      paint_options, coords,
                                                      error))
     {
       return FALSE;
     }
 
-  if (options->clone_type == GIMP_PATTERN_CLONE)
+  if (options->clone_type == PICMAN_PATTERN_CLONE)
     {
-      if (! gimp_context_get_pattern (GIMP_CONTEXT (options)))
+      if (! picman_context_get_pattern (PICMAN_CONTEXT (options)))
         {
-          g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+          g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			       _("No patterns available for use with this tool."));
           return FALSE;
         }
@@ -132,12 +132,12 @@ gimp_clone_start (GimpPaintCore     *paint_core,
 }
 
 static void
-gimp_clone_motion (GimpSourceCore   *source_core,
-                   GimpDrawable     *drawable,
-                   GimpPaintOptions *paint_options,
-                   const GimpCoords *coords,
+picman_clone_motion (PicmanSourceCore   *source_core,
+                   PicmanDrawable     *drawable,
+                   PicmanPaintOptions *paint_options,
+                   const PicmanCoords *coords,
                    gdouble           opacity,
-                   GimpPickable     *src_pickable,
+                   PicmanPickable     *src_pickable,
                    GeglBuffer       *src_buffer,
                    GeglRectangle    *src_rect,
                    gint              src_offset_x,
@@ -150,15 +150,15 @@ gimp_clone_motion (GimpSourceCore   *source_core,
                    gint              paint_area_width,
                    gint              paint_area_height)
 {
-  GimpPaintCore     *paint_core     = GIMP_PAINT_CORE (source_core);
-  GimpCloneOptions  *options        = GIMP_CLONE_OPTIONS (paint_options);
-  GimpSourceOptions *source_options = GIMP_SOURCE_OPTIONS (paint_options);
-  GimpContext       *context        = GIMP_CONTEXT (paint_options);
-  GimpImage         *image          = gimp_item_get_image (GIMP_ITEM (drawable));
+  PicmanPaintCore     *paint_core     = PICMAN_PAINT_CORE (source_core);
+  PicmanCloneOptions  *options        = PICMAN_CLONE_OPTIONS (paint_options);
+  PicmanSourceOptions *source_options = PICMAN_SOURCE_OPTIONS (paint_options);
+  PicmanContext       *context        = PICMAN_CONTEXT (paint_options);
+  PicmanImage         *image          = picman_item_get_image (PICMAN_ITEM (drawable));
   gdouble            fade_point;
   gdouble            force;
 
-  if (gimp_source_core_use_source (source_core, source_options))
+  if (picman_source_core_use_source (source_core, source_options))
     {
       gegl_buffer_copy (src_buffer,
                         GEGL_RECTANGLE (src_rect->x,
@@ -170,10 +170,10 @@ gimp_clone_motion (GimpSourceCore   *source_core,
                                         paint_area_offset_y,
                                         0, 0));
     }
-  else if (options->clone_type == GIMP_PATTERN_CLONE)
+  else if (options->clone_type == PICMAN_PATTERN_CLONE)
     {
-      GimpPattern *pattern    = gimp_context_get_pattern (context);
-      GeglBuffer  *src_buffer = gimp_pattern_create_buffer (pattern);
+      PicmanPattern *pattern    = picman_context_get_pattern (context);
+      GeglBuffer  *src_buffer = picman_pattern_create_buffer (pattern);
 
       gegl_buffer_set_pattern (paint_buffer,
                                GEGL_RECTANGLE (paint_area_offset_x,
@@ -191,21 +191,21 @@ gimp_clone_motion (GimpSourceCore   *source_core,
       g_return_if_reached ();
     }
 
-  fade_point = gimp_paint_options_get_fade (paint_options, image,
+  fade_point = picman_paint_options_get_fade (paint_options, image,
                                             paint_core->pixel_dist);
 
-  force = gimp_dynamics_get_linear_value (GIMP_BRUSH_CORE (paint_core)->dynamics,
-                                          GIMP_DYNAMICS_OUTPUT_FORCE,
+  force = picman_dynamics_get_linear_value (PICMAN_BRUSH_CORE (paint_core)->dynamics,
+                                          PICMAN_DYNAMICS_OUTPUT_FORCE,
                                           coords,
                                           paint_options,
                                           fade_point);
 
-  gimp_brush_core_paste_canvas (GIMP_BRUSH_CORE (paint_core), drawable,
+  picman_brush_core_paste_canvas (PICMAN_BRUSH_CORE (paint_core), drawable,
                                 coords,
-                                MIN (opacity, GIMP_OPACITY_OPAQUE),
-                                gimp_context_get_opacity (context),
-                                gimp_context_get_paint_mode (context),
-                                gimp_paint_options_get_brush_mode (paint_options),
+                                MIN (opacity, PICMAN_OPACITY_OPAQUE),
+                                picman_context_get_opacity (context),
+                                picman_context_get_paint_mode (context),
+                                picman_paint_options_get_brush_mode (paint_options),
                                 force,
 
                                 /* In fixed mode, paint incremental so the
@@ -215,13 +215,13 @@ gimp_clone_motion (GimpSourceCore   *source_core,
                                  * and we don't need intermediate masking.
                                  */
                                 source_options->align_mode ==
-                                GIMP_SOURCE_ALIGN_FIXED ?
-                                GIMP_PAINT_INCREMENTAL : GIMP_PAINT_CONSTANT);
+                                PICMAN_SOURCE_ALIGN_FIXED ?
+                                PICMAN_PAINT_INCREMENTAL : PICMAN_PAINT_CONSTANT);
 }
 
 static gboolean
-gimp_clone_use_source (GimpSourceCore    *source_core,
-                       GimpSourceOptions *options)
+picman_clone_use_source (PicmanSourceCore    *source_core,
+                       PicmanSourceOptions *options)
 {
-  return GIMP_CLONE_OPTIONS (options)->clone_type == GIMP_IMAGE_CLONE;
+  return PICMAN_CLONE_OPTIONS (options)->clone_type == PICMAN_IMAGE_CLONE;
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,19 +23,19 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimpparamspecs-desc.h"
+#include "core/picmanparamspecs-desc.h"
 
-#include "gimppdb.h"
-#include "gimppdb-query.h"
-#include "gimppdberror.h"
-#include "gimp-pdb-compat.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-query.h"
+#include "picmanpdberror.h"
+#include "picman-pdb-compat.h"
+#include "picmanprocedure.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define PDB_REGEX_FLAGS    (G_REGEX_CASELESS | G_REGEX_OPTIMIZE)
@@ -47,7 +47,7 @@ typedef struct _PDBDump PDBDump;
 
 struct _PDBDump
 {
-  GimpPDB  *pdb;
+  PicmanPDB  *pdb;
   FILE     *file;
 
   gboolean  dumping_compat;
@@ -57,7 +57,7 @@ typedef struct _PDBQuery PDBQuery;
 
 struct _PDBQuery
 {
-  GimpPDB  *pdb;
+  PicmanPDB  *pdb;
 
   GRegex   *name_regex;
   GRegex   *blurb_regex;
@@ -88,27 +88,27 @@ struct _PDBStrings
 
 /*  local function prototypes  */
 
-static void   gimp_pdb_query_entry  (gpointer       key,
+static void   picman_pdb_query_entry  (gpointer       key,
                                      gpointer       value,
                                      gpointer       user_data);
-static void   gimp_pdb_print_entry  (gpointer       key,
+static void   picman_pdb_print_entry  (gpointer       key,
                                      gpointer       value,
                                      gpointer       user_data);
-static void   gimp_pdb_get_strings  (PDBStrings    *strings,
-                                     GimpProcedure *procedure,
+static void   picman_pdb_get_strings  (PDBStrings    *strings,
+                                     PicmanProcedure *procedure,
                                      gboolean       compat);
-static void   gimp_pdb_free_strings (PDBStrings    *strings);
+static void   picman_pdb_free_strings (PDBStrings    *strings);
 
 
 /*  public functions  */
 
 gboolean
-gimp_pdb_dump (GimpPDB     *pdb,
+picman_pdb_dump (PicmanPDB     *pdb,
                const gchar *filename)
 {
   PDBDump pdb_dump;
 
-  g_return_val_if_fail (GIMP_IS_PDB (pdb), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PDB (pdb), FALSE);
   g_return_val_if_fail (filename != NULL, FALSE);
 
   pdb_dump.pdb  = pdb;
@@ -120,13 +120,13 @@ gimp_pdb_dump (GimpPDB     *pdb,
   pdb_dump.dumping_compat = FALSE;
 
   g_hash_table_foreach (pdb->procedures,
-                        gimp_pdb_print_entry,
+                        picman_pdb_print_entry,
                         &pdb_dump);
 
   pdb_dump.dumping_compat = TRUE;
 
   g_hash_table_foreach (pdb->compat_proc_names,
-                        gimp_pdb_print_entry,
+                        picman_pdb_print_entry,
                         &pdb_dump);
 
   fclose (pdb_dump.file);
@@ -135,7 +135,7 @@ gimp_pdb_dump (GimpPDB     *pdb,
 }
 
 gboolean
-gimp_pdb_query (GimpPDB       *pdb,
+picman_pdb_query (PicmanPDB       *pdb,
                 const gchar   *name,
                 const gchar   *blurb,
                 const gchar   *help,
@@ -150,7 +150,7 @@ gimp_pdb_query (GimpPDB       *pdb,
   PDBQuery pdb_query = { 0, };
   gboolean success   = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_PDB (pdb), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PDB (pdb), FALSE);
   g_return_val_if_fail (name != NULL, FALSE);
   g_return_val_if_fail (blurb != NULL, FALSE);
   g_return_val_if_fail (help != NULL, FALSE);
@@ -201,12 +201,12 @@ gimp_pdb_query (GimpPDB       *pdb,
   pdb_query.querying_compat = FALSE;
 
   g_hash_table_foreach (pdb->procedures,
-                        gimp_pdb_query_entry, &pdb_query);
+                        picman_pdb_query_entry, &pdb_query);
 
   pdb_query.querying_compat = TRUE;
 
   g_hash_table_foreach (pdb->compat_proc_names,
-                        gimp_pdb_query_entry, &pdb_query);
+                        picman_pdb_query_entry, &pdb_query);
 
  cleanup:
 
@@ -241,43 +241,43 @@ gimp_pdb_query (GimpPDB       *pdb,
 }
 
 gboolean
-gimp_pdb_proc_info (GimpPDB          *pdb,
+picman_pdb_proc_info (PicmanPDB          *pdb,
                     const gchar      *proc_name,
                     gchar           **blurb,
                     gchar           **help,
                     gchar           **author,
                     gchar           **copyright,
                     gchar           **date,
-                    GimpPDBProcType  *proc_type,
+                    PicmanPDBProcType  *proc_type,
                     gint             *num_args,
                     gint             *num_values,
                     GError          **error)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
   PDBStrings     strings;
 
-  g_return_val_if_fail (GIMP_IS_PDB (pdb), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PDB (pdb), FALSE);
   g_return_val_if_fail (proc_name != NULL, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  procedure = gimp_pdb_lookup_procedure (pdb, proc_name);
+  procedure = picman_pdb_lookup_procedure (pdb, proc_name);
 
   if (procedure)
     {
-      gimp_pdb_get_strings (&strings, procedure, FALSE);
+      picman_pdb_get_strings (&strings, procedure, FALSE);
     }
   else
     {
       const gchar *compat_name;
 
-      compat_name = gimp_pdb_lookup_compat_proc_name (pdb, proc_name);
+      compat_name = picman_pdb_lookup_compat_proc_name (pdb, proc_name);
 
       if (compat_name)
         {
-          procedure = gimp_pdb_lookup_procedure (pdb, compat_name);
+          procedure = picman_pdb_lookup_procedure (pdb, compat_name);
 
           if (procedure)
-            gimp_pdb_get_strings (&strings, procedure, TRUE);
+            picman_pdb_get_strings (&strings, procedure, TRUE);
         }
     }
 
@@ -295,7 +295,7 @@ gimp_pdb_proc_info (GimpPDB          *pdb,
       return TRUE;
     }
 
-  g_set_error (error, GIMP_PDB_ERROR, GIMP_PDB_ERROR_PROCEDURE_NOT_FOUND,
+  g_set_error (error, PICMAN_PDB_ERROR, PICMAN_PDB_ERROR_PROCEDURE_NOT_FOUND,
                _("Procedure '%s' not found"), proc_name);
 
   return FALSE;
@@ -315,17 +315,17 @@ match_string (GRegex      *regex,
 }
 
 static void
-gimp_pdb_query_entry (gpointer key,
+picman_pdb_query_entry (gpointer key,
                       gpointer value,
                       gpointer user_data)
 {
   PDBQuery      *pdb_query = user_data;
   GList         *list;
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
   const gchar   *proc_name;
   PDBStrings     strings;
   GEnumClass    *enum_class;
-  GimpEnumDesc  *type_desc;
+  PicmanEnumDesc  *type_desc;
 
   proc_name = key;
 
@@ -339,10 +339,10 @@ gimp_pdb_query_entry (gpointer key,
 
   procedure = list->data;
 
-  gimp_pdb_get_strings (&strings, procedure, pdb_query->querying_compat);
+  picman_pdb_get_strings (&strings, procedure, pdb_query->querying_compat);
 
-  enum_class = g_type_class_ref (GIMP_TYPE_PDB_PROC_TYPE);
-  type_desc = gimp_enum_get_desc (enum_class, procedure->proc_type);
+  enum_class = g_type_class_ref (PICMAN_TYPE_PDB_PROC_TYPE);
+  type_desc = picman_enum_get_desc (enum_class, procedure->proc_type);
   g_type_class_unref  (enum_class);
 
   if (match_string (pdb_query->name_regex,      proc_name)         &&
@@ -359,7 +359,7 @@ gimp_pdb_query_entry (gpointer key,
       pdb_query->list_of_procs[pdb_query->num_procs - 1] = g_strdup (proc_name);
     }
 
-  gimp_pdb_free_strings (&strings);
+  picman_pdb_free_strings (&strings);
 }
 
 /* #define DEBUG_OUTPUT 1 */
@@ -400,7 +400,7 @@ output_string (FILE        *file,
 }
 
 static void
-gimp_pdb_print_entry (gpointer key,
+picman_pdb_print_entry (gpointer key,
                       gpointer value,
                       gpointer user_data)
 {
@@ -420,22 +420,22 @@ gimp_pdb_print_entry (gpointer key,
   else
     list = value;
 
-  arg_class  = g_type_class_ref (GIMP_TYPE_PDB_ARG_TYPE);
-  proc_class = g_type_class_ref (GIMP_TYPE_PDB_PROC_TYPE);
+  arg_class  = g_type_class_ref (PICMAN_TYPE_PDB_ARG_TYPE);
+  proc_class = g_type_class_ref (PICMAN_TYPE_PDB_PROC_TYPE);
 
   buf = g_string_new ("");
 
   for (; list; list = list->next)
     {
-      GimpProcedure *procedure = list->data;
+      PicmanProcedure *procedure = list->data;
       PDBStrings     strings;
       GEnumValue    *arg_value;
-      GimpEnumDesc  *type_desc;
+      PicmanEnumDesc  *type_desc;
       gint           i;
 
       num++;
 
-      gimp_pdb_get_strings (&strings, procedure, pdb_dump->dumping_compat);
+      picman_pdb_get_strings (&strings, procedure, pdb_dump->dumping_compat);
 
 #ifdef DEBUG_OUTPUT
       fprintf (file, "(");
@@ -453,7 +453,7 @@ gimp_pdb_print_entry (gpointer key,
           output_string (file, proc_name);
         }
 
-      type_desc = gimp_enum_get_desc (proc_class, procedure->proc_type);
+      type_desc = picman_enum_get_desc (proc_class, procedure->proc_type);
 
 #ifdef DEBUG_OUTPUT
 
@@ -462,9 +462,9 @@ gimp_pdb_print_entry (gpointer key,
       for (i = 0; i < procedure->num_args; i++)
         {
           GParamSpec     *pspec = procedure->args[i];
-          GimpPDBArgType  arg_type;
+          PicmanPDBArgType  arg_type;
 
-          arg_type = gimp_pdb_compat_arg_type_from_gtype (pspec->value_type);
+          arg_type = picman_pdb_compat_arg_type_from_gtype (pspec->value_type);
 
           arg_value = g_enum_get_value (arg_class, arg_type);
 
@@ -479,9 +479,9 @@ gimp_pdb_print_entry (gpointer key,
       for (i = 0; i < procedure->num_values; i++)
         {
           GParamSpec     *pspec = procedure->values[i];
-          GimpPDBArgType  arg_type;
+          PicmanPDBArgType  arg_type;
 
-          arg_type = gimp_pdb_compat_arg_type_from_gtype (pspec->value_type);
+          arg_type = picman_pdb_compat_arg_type_from_gtype (pspec->value_type);
 
           arg_value = g_enum_get_value (arg_class, arg_type);
 
@@ -511,12 +511,12 @@ gimp_pdb_print_entry (gpointer key,
       for (i = 0; i < procedure->num_args; i++)
         {
           GParamSpec     *pspec = procedure->args[i];
-          GimpPDBArgType  arg_type;
-          gchar          *desc  = gimp_param_spec_get_desc (pspec);
+          PicmanPDBArgType  arg_type;
+          gchar          *desc  = picman_param_spec_get_desc (pspec);
 
           fprintf (file, "\n    (\n");
 
-          arg_type = gimp_pdb_compat_arg_type_from_gtype (pspec->value_type);
+          arg_type = picman_pdb_compat_arg_type_from_gtype (pspec->value_type);
 
           arg_value = g_enum_get_value (arg_class, arg_type);
 
@@ -536,12 +536,12 @@ gimp_pdb_print_entry (gpointer key,
       for (i = 0; i < procedure->num_values; i++)
         {
           GParamSpec     *pspec = procedure->values[i];
-          GimpPDBArgType  arg_type;
-          gchar          *desc  = gimp_param_spec_get_desc (pspec);
+          PicmanPDBArgType  arg_type;
+          gchar          *desc  = picman_param_spec_get_desc (pspec);
 
           fprintf (file, "\n    (\n");
 
-          arg_type = gimp_pdb_compat_arg_type_from_gtype (pspec->value_type);
+          arg_type = picman_pdb_compat_arg_type_from_gtype (pspec->value_type);
 
           arg_value = g_enum_get_value (arg_class, arg_type);
 
@@ -560,7 +560,7 @@ gimp_pdb_print_entry (gpointer key,
 
 #endif /* DEBUG_OUTPUT */
 
-      gimp_pdb_free_strings (&strings);
+      picman_pdb_free_strings (&strings);
     }
 
   g_string_free (buf, TRUE);
@@ -570,8 +570,8 @@ gimp_pdb_print_entry (gpointer key,
 }
 
 static void
-gimp_pdb_get_strings (PDBStrings    *strings,
-                      GimpProcedure *procedure,
+picman_pdb_get_strings (PDBStrings    *strings,
+                      PicmanProcedure *procedure,
                       gboolean       compat)
 {
   strings->compat = compat;
@@ -579,7 +579,7 @@ gimp_pdb_get_strings (PDBStrings    *strings,
   if (compat)
     {
       strings->blurb     = g_strdup_printf (COMPAT_BLURB,
-                                            gimp_object_get_name (procedure));
+                                            picman_object_get_name (procedure));
       strings->help      = g_strdup (strings->blurb);
       strings->author    = NULL;
       strings->copyright = NULL;
@@ -596,7 +596,7 @@ gimp_pdb_get_strings (PDBStrings    *strings,
 }
 
 static void
-gimp_pdb_free_strings (PDBStrings *strings)
+picman_pdb_free_strings (PDBStrings *strings)
 {
   if (strings->compat)
     {

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattisbvf
  *
- * GimpGrid
- * Copyright (C) 2003  Henrik Brix Andersen <brix@gimp.org>
+ * PicmanGrid
+ * Copyright (C) 2003  Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_GRID_H__
-#define __GIMP_IMAGE_GRID_H__
+#ifndef __PICMAN_IMAGE_GRID_H__
+#define __PICMAN_IMAGE_GRID_H__
 
 
-GimpGrid * gimp_image_get_grid (GimpImage *image);
-void       gimp_image_set_grid (GimpImage *image,
-                                GimpGrid  *grid,
+PicmanGrid * picman_image_get_grid (PicmanImage *image);
+void       picman_image_set_grid (PicmanImage *image,
+                                PicmanGrid  *grid,
                                 gboolean   push_undo);
 
 
-#endif /* __GIMP_IMAGE_GRID_H__ */
+#endif /* __PICMAN_IMAGE_GRID_H__ */

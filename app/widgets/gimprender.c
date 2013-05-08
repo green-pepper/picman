@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,65 +22,65 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "gimprender.h"
+#include "picmanrender.h"
 
 
-static void   gimp_render_setup_notify (gpointer    config,
+static void   picman_render_setup_notify (gpointer    config,
                                         GParamSpec *param_spec,
-                                        Gimp       *gimp);
+                                        Picman       *picman);
 
 
-static GimpRGB light;
-static GimpRGB dark;
+static PicmanRGB light;
+static PicmanRGB dark;
 
 
 void
-gimp_render_init (Gimp *gimp)
+picman_render_init (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  g_signal_connect (gimp->config, "notify::transparency-type",
-                    G_CALLBACK (gimp_render_setup_notify),
-                    gimp);
+  g_signal_connect (picman->config, "notify::transparency-type",
+                    G_CALLBACK (picman_render_setup_notify),
+                    picman);
 
-  gimp_render_setup_notify (gimp->config, NULL, gimp);
+  picman_render_setup_notify (picman->config, NULL, picman);
 }
 
 void
-gimp_render_exit (Gimp *gimp)
+picman_render_exit (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  g_signal_handlers_disconnect_by_func (gimp->config,
-                                        gimp_render_setup_notify,
-                                        gimp);
+  g_signal_handlers_disconnect_by_func (picman->config,
+                                        picman_render_setup_notify,
+                                        picman);
 }
 
-const GimpRGB *
-gimp_render_light_check_color (void)
+const PicmanRGB *
+picman_render_light_check_color (void)
 {
   return &light;
 }
 
-const GimpRGB *
-gimp_render_dark_check_color (void)
+const PicmanRGB *
+picman_render_dark_check_color (void)
 {
   return &dark;
 }
 
 static void
-gimp_render_setup_notify (gpointer    config,
+picman_render_setup_notify (gpointer    config,
                           GParamSpec *param_spec,
-                          Gimp       *gimp)
+                          Picman       *picman)
 {
-  GimpCheckType check_type;
+  PicmanCheckType check_type;
   guchar        dark_check;
   guchar        light_check;
 
@@ -88,8 +88,8 @@ gimp_render_setup_notify (gpointer    config,
                 "transparency-type", &check_type,
                 NULL);
 
-  gimp_checks_get_shades (check_type, &light_check, &dark_check);
+  picman_checks_get_shades (check_type, &light_check, &dark_check);
 
-  gimp_rgba_set_uchar (&light, light_check, light_check, light_check, 255);
-  gimp_rgba_set_uchar (&dark,  dark_check,  dark_check,  dark_check,  255);
+  picman_rgba_set_uchar (&light, light_check, light_check, light_check, 255);
+  picman_rgba_set_uchar (&dark,  dark_check,  dark_check,  dark_check,  255);
 }

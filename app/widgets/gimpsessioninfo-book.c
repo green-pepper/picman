@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpsessioninfo-book.c
- * Copyright (C) 2001-2007 Michael Natterer <mitch@gimp.org>
+ * picmansessioninfo-book.c
+ * Copyright (C) 2001-2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,19 +22,19 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "widgets-types.h"
 
 #include "menus/menus.h"
 
-#include "gimpdialogfactory.h"
-#include "gimpdock.h"
-#include "gimpdockbook.h"
-#include "gimpsessioninfo.h" /* for gimp_session_info_class_apply_position_accuracy() */
-#include "gimpsessioninfo-book.h"
-#include "gimpsessioninfo-dockable.h"
-#include "gimpwidgets-utils.h"
+#include "picmandialogfactory.h"
+#include "picmandock.h"
+#include "picmandockbook.h"
+#include "picmansessioninfo.h" /* for picman_session_info_class_apply_position_accuracy() */
+#include "picmansessioninfo-book.h"
+#include "picmansessioninfo-dockable.h"
+#include "picmanwidgets-utils.h"
 
 
 enum
@@ -47,57 +47,57 @@ enum
 
 /*  public functions  */
 
-GimpSessionInfoBook *
-gimp_session_info_book_new (void)
+PicmanSessionInfoBook *
+picman_session_info_book_new (void)
 {
-  return g_slice_new0 (GimpSessionInfoBook);
+  return g_slice_new0 (PicmanSessionInfoBook);
 }
 
 void
-gimp_session_info_book_free (GimpSessionInfoBook *info)
+picman_session_info_book_free (PicmanSessionInfoBook *info)
 {
   g_return_if_fail (info != NULL);
 
   if (info->dockables)
     {
       g_list_free_full (info->dockables,
-                        (GDestroyNotify) gimp_session_info_dockable_free);
+                        (GDestroyNotify) picman_session_info_dockable_free);
       info->dockables = NULL;
     }
 
-  g_slice_free (GimpSessionInfoBook, info);
+  g_slice_free (PicmanSessionInfoBook, info);
 }
 
 void
-gimp_session_info_book_serialize (GimpConfigWriter    *writer,
-                                  GimpSessionInfoBook *info)
+picman_session_info_book_serialize (PicmanConfigWriter    *writer,
+                                  PicmanSessionInfoBook *info)
 {
   GList *pages;
 
   g_return_if_fail (writer != NULL);
   g_return_if_fail (info != NULL);
 
-  gimp_config_writer_open (writer, "book");
+  picman_config_writer_open (writer, "book");
 
   if (info->position != 0)
-    gimp_session_write_position (writer, info->position);
+    picman_session_write_position (writer, info->position);
 
-  gimp_config_writer_open (writer, "current-page");
-  gimp_config_writer_printf (writer, "%d", info->current_page);
-  gimp_config_writer_close (writer);
+  picman_config_writer_open (writer, "current-page");
+  picman_config_writer_printf (writer, "%d", info->current_page);
+  picman_config_writer_close (writer);
 
   for (pages = info->dockables; pages; pages = g_list_next (pages))
-    gimp_session_info_dockable_serialize (writer, pages->data);
+    picman_session_info_dockable_serialize (writer, pages->data);
 
-  gimp_config_writer_close (writer);
+  picman_config_writer_close (writer);
 }
 
 GTokenType
-gimp_session_info_book_deserialize (GScanner             *scanner,
+picman_session_info_book_deserialize (GScanner             *scanner,
                                     gint                  scope,
-                                    GimpSessionInfoBook **book)
+                                    PicmanSessionInfoBook **book)
 {
-  GimpSessionInfoBook *info;
+  PicmanSessionInfoBook *info;
   GTokenType           token;
 
   g_return_val_if_fail (scanner != NULL, G_TOKEN_LEFT_PAREN);
@@ -110,7 +110,7 @@ gimp_session_info_book_deserialize (GScanner             *scanner,
   g_scanner_scope_add_symbol (scanner, scope, "dockable",
                               GINT_TO_POINTER (SESSION_INFO_BOOK_DOCKABLE));
 
-  info = gimp_session_info_book_new ();
+  info = picman_session_info_book_new ();
 
   token = G_TOKEN_LEFT_PAREN;
 
@@ -127,23 +127,23 @@ gimp_session_info_book_deserialize (GScanner             *scanner,
         case G_TOKEN_SYMBOL:
           switch (GPOINTER_TO_INT (scanner->value.v_symbol))
             {
-              GimpSessionInfoDockable *dockable;
+              PicmanSessionInfoDockable *dockable;
 
             case SESSION_INFO_BOOK_POSITION:
               token = G_TOKEN_INT;
-              if (! gimp_scanner_parse_int (scanner, &info->position))
+              if (! picman_scanner_parse_int (scanner, &info->position))
                 goto error;
               break;
 
             case SESSION_INFO_BOOK_CURRENT_PAGE:
               token = G_TOKEN_INT;
-              if (! gimp_scanner_parse_int (scanner, &info->current_page))
+              if (! picman_scanner_parse_int (scanner, &info->current_page))
                 goto error;
               break;
 
             case SESSION_INFO_BOOK_DOCKABLE:
               g_scanner_set_scope (scanner, scope + 1);
-              token = gimp_session_info_dockable_deserialize (scanner,
+              token = picman_session_info_dockable_deserialize (scanner,
                                                               scope + 1,
                                                               &dockable);
 
@@ -183,22 +183,22 @@ gimp_session_info_book_deserialize (GScanner             *scanner,
  error:
   *book = NULL;
 
-  gimp_session_info_book_free (info);
+  picman_session_info_book_free (info);
 
   return token;
 }
 
-GimpSessionInfoBook *
-gimp_session_info_book_from_widget (GimpDockbook *dockbook)
+PicmanSessionInfoBook *
+picman_session_info_book_from_widget (PicmanDockbook *dockbook)
 {
-  GimpSessionInfoBook *info;
+  PicmanSessionInfoBook *info;
   GtkWidget           *parent;
   GList               *children;
   GList               *list;
 
-  g_return_val_if_fail (GIMP_IS_DOCKBOOK (dockbook), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCKBOOK (dockbook), NULL);
 
-  info = gimp_session_info_book_new ();
+  info = picman_session_info_book_new ();
 
   parent = gtk_widget_get_parent (GTK_WIDGET (dockbook));
 
@@ -217,9 +217,9 @@ gimp_session_info_book_from_widget (GimpDockbook *dockbook)
 
   for (list = children; list; list = g_list_next (list))
     {
-      GimpSessionInfoDockable *dockable;
+      PicmanSessionInfoDockable *dockable;
 
-      dockable = gimp_session_info_dockable_from_widget (list->data);
+      dockable = picman_session_info_dockable_from_widget (list->data);
 
       info->dockables = g_list_prepend (info->dockables, dockable);
     }
@@ -231,31 +231,31 @@ gimp_session_info_book_from_widget (GimpDockbook *dockbook)
   return info;
 }
 
-GimpDockbook *
-gimp_session_info_book_restore (GimpSessionInfoBook *info,
-                                GimpDock            *dock)
+PicmanDockbook *
+picman_session_info_book_restore (PicmanSessionInfoBook *info,
+                                PicmanDock            *dock)
 {
   GtkWidget *dockbook;
   GList     *pages;
   gint       n_dockables = 0;
 
   g_return_val_if_fail (info != NULL, NULL);
-  g_return_val_if_fail (GIMP_IS_DOCK (dock), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK (dock), NULL);
 
-  dockbook = gimp_dockbook_new (global_menu_factory);
+  dockbook = picman_dockbook_new (global_menu_factory);
 
-  gimp_dock_add_book (dock, GIMP_DOCKBOOK (dockbook), -1);
+  picman_dock_add_book (dock, PICMAN_DOCKBOOK (dockbook), -1);
 
   for (pages = info->dockables; pages; pages = g_list_next (pages))
     {
-      GimpSessionInfoDockable *dockable_info = pages->data;
-      GimpDockable            *dockable;
+      PicmanSessionInfoDockable *dockable_info = pages->data;
+      PicmanDockable            *dockable;
 
-      dockable = gimp_session_info_dockable_restore (dockable_info, dock);
+      dockable = picman_session_info_dockable_restore (dockable_info, dock);
 
       if (dockable)
         {
-          gimp_dockbook_add (GIMP_DOCKBOOK (dockbook), dockable, -1);
+          picman_dockbook_add (PICMAN_DOCKBOOK (dockbook), dockable, -1);
           n_dockables++;
         }
     }
@@ -278,5 +278,5 @@ gimp_session_info_book_restore (GimpSessionInfoBook *info,
    *  levels. Instead, we check for restored empty dockbooks in our
    *  caller.
    */
-  return GIMP_DOCKBOOK (dockbook);
+  return PICMAN_DOCKBOOK (dockbook);
 }

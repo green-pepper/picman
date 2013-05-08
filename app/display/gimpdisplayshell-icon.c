@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,42 +22,42 @@
 
 #include "display-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-icon.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-icon.h"
 
 
-#define GIMP_DISPLAY_UPDATE_ICON_TIMEOUT  1000
+#define PICMAN_DISPLAY_UPDATE_ICON_TIMEOUT  1000
 
-static gboolean   gimp_display_shell_icon_update_idle (gpointer data);
+static gboolean   picman_display_shell_icon_update_idle (gpointer data);
 
 
 /*  public functions  */
 
 void
-gimp_display_shell_icon_update (GimpDisplayShell *shell)
+picman_display_shell_icon_update (PicmanDisplayShell *shell)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
-  gimp_display_shell_icon_update_stop (shell);
+  picman_display_shell_icon_update_stop (shell);
 
-  if (gimp_display_get_image (shell->display))
+  if (picman_display_get_image (shell->display))
     shell->icon_idle_id = g_timeout_add_full (G_PRIORITY_LOW,
-                                              GIMP_DISPLAY_UPDATE_ICON_TIMEOUT,
-                                              gimp_display_shell_icon_update_idle,
+                                              PICMAN_DISPLAY_UPDATE_ICON_TIMEOUT,
+                                              picman_display_shell_icon_update_idle,
                                               shell,
                                               NULL);
   else
-    gimp_display_shell_icon_update_idle (shell);
+    picman_display_shell_icon_update_idle (shell);
 }
 
 void
-gimp_display_shell_icon_update_stop (GimpDisplayShell *shell)
+picman_display_shell_icon_update_stop (PicmanDisplayShell *shell)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   if (shell->icon_idle_id)
     {
@@ -70,21 +70,21 @@ gimp_display_shell_icon_update_stop (GimpDisplayShell *shell)
 /*  private functions  */
 
 static gboolean
-gimp_display_shell_icon_update_idle (gpointer data)
+picman_display_shell_icon_update_idle (gpointer data)
 {
-  GimpDisplayShell *shell  = GIMP_DISPLAY_SHELL (data);
-  GimpImage        *image  = gimp_display_get_image (shell->display);
+  PicmanDisplayShell *shell  = PICMAN_DISPLAY_SHELL (data);
+  PicmanImage        *image  = picman_display_get_image (shell->display);
   GdkPixbuf        *pixbuf = NULL;
 
   shell->icon_idle_id = 0;
 
   if (image)
     {
-      Gimp    *gimp   = gimp_display_get_gimp (shell->display);
+      Picman    *picman   = picman_display_get_picman (shell->display);
       gint     width;
       gint     height;
-      gdouble  factor = ((gdouble) gimp_image_get_height (image) /
-                         (gdouble) gimp_image_get_width  (image));
+      gdouble  factor = ((gdouble) picman_image_get_height (image) /
+                         (gdouble) picman_image_get_width  (image));
 
       if (factor >= 1)
         {
@@ -97,8 +97,8 @@ gimp_display_shell_icon_update_idle (gpointer data)
           width  = MAX (shell->icon_size, 1);
         }
 
-      pixbuf = gimp_viewable_get_pixbuf (GIMP_VIEWABLE (image),
-                                         gimp_get_user_context (gimp),
+      pixbuf = picman_viewable_get_pixbuf (PICMAN_VIEWABLE (image),
+                                         picman_get_user_context (picman),
                                          width, height);
     }
 

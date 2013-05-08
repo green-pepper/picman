@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"Gimp-PDB\"
+	-DG_LOG_DOMAIN=\"Picman-PDB\"
 
 INCLUDES = \
 	-I$(top_builddir)	\
@@ -18,20 +18,20 @@ noinst_LIBRARIES = libapppdb.a libappinternal-procs.a
 libapppdb_a_SOURCES = \
 	pdb-types.h			\
 	\
-	gimp-pdb-compat.c		\
-	gimp-pdb-compat.h		\
-	gimppdb.c			\
-	gimppdb.h			\
-	gimppdb-query.c			\
-	gimppdb-query.h			\
-	gimppdb-utils.c			\
-	gimppdb-utils.h			\
-	gimppdbcontext.c		\
-	gimppdbcontext.h		\
-	gimppdberror.c			\
-	gimppdberror.h			\
-	gimpprocedure.c			\
-	gimpprocedure.h
+	picman-pdb-compat.c		\
+	picman-pdb-compat.h		\
+	picmanpdb.c			\
+	picmanpdb.h			\
+	picmanpdb-query.c			\
+	picmanpdb-query.h			\
+	picmanpdb-utils.c			\
+	picmanpdb-utils.h			\
+	picmanpdbcontext.c		\
+	picmanpdbcontext.h		\
+	picmanpdberror.c			\
+	picmanpdberror.h			\
+	picmanprocedure.c			\
+	picmanprocedure.h
 
 libappinternal_procs_a_SOURCES = \
 	internal-procs.c		\
@@ -53,8 +53,8 @@ libappinternal_procs_a_SOURCES = \
 	floating-sel-cmds.c		\
 	font-select-cmds.c		\
 	fonts-cmds.c			\
-	gimp-cmds.c			\
-	gimprc-cmds.c			\
+	picman-cmds.c			\
+	picmanrc-cmds.c			\
 	gradient-cmds.c			\
 	gradient-select-cmds.c		\
 	gradients-cmds.c		\

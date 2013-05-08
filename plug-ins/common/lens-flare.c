@@ -1,5 +1,5 @@
 /*
- * This is the FlareFX plug-in for GIMP 0.99
+ * This is the FlareFX plug-in for PICMAN 0.99
  * Version 1.05
  *
  * Copyright (C) 1997-1998 Karl-Johan Andersson (t96kja@student.tdb.uu.se)
@@ -46,15 +46,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-flarefx"
 #define PLUG_IN_BINARY "flarefx"
-#define PLUG_IN_ROLE   "gimp-flarefx"
+#define PLUG_IN_ROLE   "picman-flarefx"
 
 /* --- Typedefs --- */
 typedef struct
@@ -65,7 +65,7 @@ typedef struct
 
 typedef struct REFLECT
 {
-  GimpRGB ccol;
+  PicmanRGB ccol;
   gfloat  size;
   gint    xp;
   gint    yp;
@@ -74,8 +74,8 @@ typedef struct REFLECT
 
 typedef struct
 {
-  GimpDrawable *drawable;
-  GimpPreview  *preview;
+  PicmanDrawable *drawable;
+  PicmanPreview  *preview;
   GtkWidget    *coords;
 } FlareCenter;
 
@@ -84,17 +84,17 @@ typedef struct
 static void        query                          (void);
 static void        run                            (const gchar      *name,
                                                    gint              nparams,
-                                                   const GimpParam  *param,
+                                                   const PicmanParam  *param,
                                                    gint             *nreturn_vals,
-                                                   GimpParam       **return_vals);
+                                                   PicmanParam       **return_vals);
 
-static void        FlareFX                        (GimpDrawable     *drawable,
-                                                   GimpPreview      *preview);
-static gboolean    flare_dialog                   (GimpDrawable     *drawable);
+static void        FlareFX                        (PicmanDrawable     *drawable,
+                                                   PicmanPreview      *preview);
+static gboolean    flare_dialog                   (PicmanDrawable     *drawable);
 
-static GtkWidget * flare_center_create            (GimpDrawable     *drawable,
-                                                   GimpPreview      *preview);
-static void        flare_center_coords_update     (GimpSizeEntry    *coords,
+static GtkWidget * flare_center_create            (PicmanDrawable     *drawable,
+                                                   PicmanPreview      *preview);
+static void        flare_center_coords_update     (PicmanSizeEntry    *coords,
                                                    FlareCenter      *center);
 static void        flare_center_preview_realize   (GtkWidget        *widget,
                                                    FlareCenter      *center);
@@ -122,7 +122,7 @@ static void initref (gint     sx,
                      gint     matt);
 static void fixpix  (guchar  *data,
                      float    procent,
-                     GimpRGB *colpro);
+                     PicmanRGB *colpro);
 static void mrt1    (guchar  *s,
                      Reflect *ref,
                      gint     col,
@@ -142,7 +142,7 @@ static void mrt4    (guchar  *s,
 
 
 /* --- Variables --- */
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -159,7 +159,7 @@ static gfloat     scolor, sglow, sinner, souter; /* size     */
 static gfloat     shalo;
 static gint       xs, ys;
 static gint       numref;
-static GimpRGB    color, glow, inner, outer, halo;
+static PicmanRGB    color, glow, inner, outer, halo;
 static Reflect    ref1[19];
 static gboolean   show_cursor = TRUE;
 
@@ -170,16 +170,16 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"       },
-    { GIMP_PDB_INT32,    "pos-x",    "X-position"           },
-    { GIMP_PDB_INT32,    "pos-y",    "Y-position"           }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"       },
+    { PICMAN_PDB_INT32,    "pos-x",    "X-position"           },
+    { PICMAN_PDB_INT32,    "pos-y",    "Y-position"           }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Add a lens flare effect"),
                           "Adds a lens flare effects.  Makes your image look "
                           "like it was snapped with a cheap camera with a lot "
@@ -189,25 +189,25 @@ query (void)
                           "May 2000",
                           N_("Lens _Flare..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC,
+  picman_plugin_menu_register (PLUG_IN_PROC,
                              "<Image>/Filters/Light and Shadow/Light");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
@@ -216,79 +216,79 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &fvals);
+      picman_get_data (PLUG_IN_PROC, &fvals);
 
       /*  First acquire information with a dialog  */
       if (! flare_dialog (drawable))
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 5)
-        status = GIMP_PDB_CALLING_ERROR;
-      if (status == GIMP_PDB_SUCCESS)
+        status = PICMAN_PDB_CALLING_ERROR;
+      if (status == PICMAN_PDB_SUCCESS)
         {
           fvals.posx = (gint) param[3].data.d_int32;
           fvals.posy = (gint) param[4].data.d_int32;
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &fvals);
+      picman_get_data (PLUG_IN_PROC, &fvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init (_("Render lens flare"));
-          gimp_tile_cache_ntiles (2 *
-                                  (drawable->width / gimp_tile_width () + 1));
+          picman_progress_init (_("Render lens flare"));
+          picman_tile_cache_ntiles (2 *
+                                  (drawable->width / picman_tile_width () + 1));
 
           FlareFX (drawable, NULL);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &fvals, sizeof (FlareValues));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &fvals, sizeof (FlareValues));
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 
 static gboolean
-flare_dialog (GimpDrawable *drawable)
+flare_dialog (PicmanDrawable *drawable)
 {
   GtkWidget   *dialog;
   GtkWidget   *main_vbox;
@@ -296,11 +296,11 @@ flare_dialog (GimpDrawable *drawable)
   GtkWidget   *frame;
   gboolean     run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Lens Flare"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Lens Flare"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -312,7 +312,7 @@ flare_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -320,8 +320,8 @@ flare_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_zoom_preview_new (drawable);
-  gtk_widget_add_events (GIMP_PREVIEW (preview)->area,
+  preview = picman_zoom_preview_new (drawable);
+  gtk_widget_add_events (PICMAN_PREVIEW (preview)->area,
                          GDK_POINTER_MOTION_MASK);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
@@ -330,13 +330,13 @@ flare_dialog (GimpDrawable *drawable)
                             G_CALLBACK (FlareFX),
                             drawable);
 
-  frame = flare_center_create (drawable, GIMP_PREVIEW (preview));
+  frame = flare_center_create (drawable, PICMAN_PREVIEW (preview));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -345,10 +345,10 @@ flare_dialog (GimpDrawable *drawable)
 
 /* --- Filter functions --- */
 static void
-FlareFX (GimpDrawable *drawable,
-         GimpPreview  *preview)
+FlareFX (PicmanDrawable *drawable,
+         PicmanPreview  *preview)
 {
-  GimpPixelRgn  srcPR, destPR;
+  PicmanPixelRgn  srcPR, destPR;
   gint          width, height;
   gint          bytes;
   guchar       *cur_row, *s;
@@ -363,12 +363,12 @@ FlareFX (GimpDrawable *drawable,
   bytes  = drawable->bpp;
   if (preview)
     {
-      src = gimp_zoom_preview_get_source (GIMP_ZOOM_PREVIEW (preview),
+      src = picman_zoom_preview_get_source (PICMAN_ZOOM_PREVIEW (preview),
                                           &width, &height, &bytes);
 
-      zoom = gimp_zoom_preview_get_factor (GIMP_ZOOM_PREVIEW (preview));
+      zoom = picman_zoom_preview_get_factor (PICMAN_ZOOM_PREVIEW (preview));
 
-      gimp_preview_transform (preview,
+      picman_preview_transform (preview,
                               fvals.posx, fvals.posy, &xs, &ys);
 
       x1 = 0;
@@ -379,15 +379,15 @@ FlareFX (GimpDrawable *drawable,
     }
   else
     {
-      gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+      picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
       width  = drawable->width;
       height = drawable->height;
 
       xs = fvals.posx; /* set x,y of flare center */
       ys = fvals.posy;
       /*  initialize the pixel regions  */
-      gimp_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, FALSE);
-      gimp_pixel_rgn_init (&destPR, drawable, 0, 0, width, height, TRUE, TRUE);
+      picman_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, FALSE);
+      picman_pixel_rgn_init (&destPR, drawable, 0, 0, width, height, TRUE, TRUE);
     }
 
   if (preview)
@@ -417,7 +417,7 @@ FlareFX (GimpDrawable *drawable,
       if (preview)
         memcpy (cur_row, src + row * width * bytes, width * bytes);
       else
-        gimp_pixel_rgn_get_row (&srcPR, cur_row, x1, row, x2-x1);
+        picman_pixel_rgn_get_row (&srcPR, cur_row, x1, row, x2-x1);
 
       s = cur_row;
       for (col = x1; col < x2; col++) /* x-coord */
@@ -457,26 +457,26 @@ FlareFX (GimpDrawable *drawable,
       else
         {
           /*  store the dest  */
-          gimp_pixel_rgn_set_row (&destPR, cur_row, x1, row, (x2 - x1));
+          picman_pixel_rgn_set_row (&destPR, cur_row, x1, row, (x2 - x1));
         }
 
       if ((row % 5) == 0 && !preview)
-        gimp_progress_update ((double) row / (double) (y2 - y1));
+        picman_progress_update ((double) row / (double) (y2 - y1));
     }
 
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, dest, width * bytes);
+      picman_preview_draw_buffer (preview, dest, width * bytes);
       g_free (src);
       g_free (dest);
     }
   else
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
       /*  update the textured region  */
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
     }
 
   g_free (cur_row);
@@ -560,7 +560,7 @@ mhalo (guchar *s,
 static void
 fixpix (guchar   *data,
         float     procent,
-        GimpRGB  *colpro)
+        PicmanRGB  *colpro)
 {
   data[0] += (255 - data[0]) * procent * colpro->r;
   data[1] += (255 - data[1]) * procent * colpro->g;
@@ -726,8 +726,8 @@ mrt4 (guchar *s,
  */
 
 static GtkWidget *
-flare_center_create (GimpDrawable *drawable,
-                     GimpPreview  *preview)
+flare_center_create (PicmanDrawable *drawable,
+                     PicmanPreview  *preview)
 {
   FlareCenter *center;
   GtkWidget   *frame;
@@ -742,7 +742,7 @@ flare_center_create (GimpDrawable *drawable,
   center->drawable = drawable;
   center->preview  = preview;
 
-  frame = gimp_frame_new (_("Center of Flare Effect"));
+  frame = picman_frame_new (_("Center of Flare Effect"));
 
   g_object_set_data (G_OBJECT (frame), "center", center);
 
@@ -754,11 +754,11 @@ flare_center_create (GimpDrawable *drawable,
   gtk_container_add (GTK_CONTAINER (frame), hbox);
   gtk_widget_show (hbox);
 
-  image_ID = gimp_item_get_image (drawable->drawable_id);
-  gimp_image_get_resolution (image_ID, &res_x, &res_y);
+  image_ID = picman_item_get_image (drawable->drawable_id);
+  picman_image_get_resolution (image_ID, &res_x, &res_y);
 
-  center->coords = gimp_coordinates_new (GIMP_UNIT_PIXEL, "%p", TRUE, TRUE, -1,
-                                         GIMP_SIZE_ENTRY_UPDATE_SIZE,
+  center->coords = picman_coordinates_new (PICMAN_UNIT_PIXEL, "%p", TRUE, TRUE, -1,
+                                         PICMAN_SIZE_ENTRY_UPDATE_SIZE,
                                          FALSE, FALSE,
 
                                          _("_X:"), fvals.posx, res_x,
@@ -789,7 +789,7 @@ flare_center_create (GimpDrawable *drawable,
   gtk_widget_show (check);
 
   g_signal_connect (check, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &show_cursor);
   g_signal_connect_swapped (check, "toggled",
                             G_CALLBACK (gtk_widget_queue_draw),
@@ -812,13 +812,13 @@ flare_center_create (GimpDrawable *drawable,
  *  CenterFrame entry callback
  */
 static void
-flare_center_coords_update (GimpSizeEntry *coords,
+flare_center_coords_update (PicmanSizeEntry *coords,
                             FlareCenter   *center)
 {
-  fvals.posx = gimp_size_entry_get_refval (coords, 0);
-  fvals.posy = gimp_size_entry_get_refval (coords, 1);
+  fvals.posx = picman_size_entry_get_refval (coords, 0);
+  fvals.posy = picman_size_entry_get_refval (coords, 1);
 
-  gimp_preview_invalidate (center->preview);
+  picman_preview_invalidate (center->preview);
 }
 
 /*
@@ -831,7 +831,7 @@ flare_center_preview_realize (GtkWidget   *widget,
   GdkDisplay *display = gtk_widget_get_display (widget);
   GdkCursor  *cursor  = gdk_cursor_new_for_display (display, GDK_CROSSHAIR);
 
-  gimp_preview_set_default_cursor (center->preview, cursor);
+  picman_preview_set_default_cursor (center->preview, cursor);
   gdk_cursor_unref (cursor);
 }
 
@@ -851,11 +851,11 @@ flare_center_preview_expose (GtkWidget   *widget,
 
       cr = gdk_cairo_create (gtk_widget_get_window (center->preview->area));
 
-      gimp_preview_transform (center->preview,
+      picman_preview_transform (center->preview,
                               fvals.posx, fvals.posy,
                               &x, &y);
 
-      gimp_preview_get_size (center->preview, &width, &height);
+      picman_preview_get_size (center->preview, &width, &height);
 
       cairo_move_to (cr, x + 0.5, 0);
       cairo_line_to (cr, x + 0.5, height);
@@ -899,7 +899,7 @@ flare_center_preview_events (GtkWidget   *widget,
 
         if (bevent->button == 1)
           {
-            gimp_preview_untransform (center->preview,
+            picman_preview_untransform (center->preview,
                                       bevent->x, bevent->y,
                                       &tx, &ty);
 
@@ -907,16 +907,16 @@ flare_center_preview_events (GtkWidget   *widget,
                                              flare_center_coords_update,
                                              center);
 
-            gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (center->coords),
+            picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (center->coords),
                                         0, tx);
-            gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (center->coords),
+            picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (center->coords),
                                         1, ty);
 
             g_signal_handlers_unblock_by_func (center->coords,
                                                flare_center_coords_update,
                                                center);
 
-            flare_center_coords_update (GIMP_SIZE_ENTRY (center->coords), center);
+            flare_center_coords_update (PICMAN_SIZE_ENTRY (center->coords), center);
 
             gtk_widget_queue_draw (center->preview->area);
 

@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpidtable.h
+ * picmanidtable.h
  * Copyright (C) 2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,51 +18,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ID_TABLE_H__
-#define __GIMP_ID_TABLE_H__
+#ifndef __PICMAN_ID_TABLE_H__
+#define __PICMAN_ID_TABLE_H__
 
 
-#include "gimpobject.h"
+#include "picmanobject.h"
 
 
-#define GIMP_TYPE_ID_TABLE            (gimp_id_table_get_type ())
-#define GIMP_ID_TABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ID_TABLE, GimpIdTable))
-#define GIMP_ID_TABLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ID_TABLE, GimpIdTableClass))
-#define GIMP_IS_ID_TABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ID_TABLE))
-#define GIMP_IS_ID_TABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ID_TABLE))
-#define GIMP_ID_TABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ID_TABLE, GimpIdTableClass))
+#define PICMAN_TYPE_ID_TABLE            (picman_id_table_get_type ())
+#define PICMAN_ID_TABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ID_TABLE, PicmanIdTable))
+#define PICMAN_ID_TABLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ID_TABLE, PicmanIdTableClass))
+#define PICMAN_IS_ID_TABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ID_TABLE))
+#define PICMAN_IS_ID_TABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ID_TABLE))
+#define PICMAN_ID_TABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ID_TABLE, PicmanIdTableClass))
 
 
-typedef struct _GimpIdTableClass  GimpIdTableClass;
-typedef struct _GimpIdTablePriv   GimpIdTablePriv;
+typedef struct _PicmanIdTableClass  PicmanIdTableClass;
+typedef struct _PicmanIdTablePriv   PicmanIdTablePriv;
 
-struct _GimpIdTable
+struct _PicmanIdTable
 {
-  GimpObject       parent_instance;
+  PicmanObject       parent_instance;
 
-  GimpIdTablePriv *priv;
+  PicmanIdTablePriv *priv;
 };
 
-struct _GimpIdTableClass
+struct _PicmanIdTableClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType          gimp_id_table_get_type       (void) G_GNUC_CONST;
-GimpIdTable *  gimp_id_table_new            (void);
-gint           gimp_id_table_insert         (GimpIdTable *id_table,
+GType          picman_id_table_get_type       (void) G_GNUC_CONST;
+PicmanIdTable *  picman_id_table_new            (void);
+gint           picman_id_table_insert         (PicmanIdTable *id_table,
                                              gpointer     data);
-gint           gimp_id_table_insert_with_id (GimpIdTable *id_table,
+gint           picman_id_table_insert_with_id (PicmanIdTable *id_table,
                                              gint         id,
                                              gpointer     data);
-void           gimp_id_table_replace        (GimpIdTable *id_table,
+void           picman_id_table_replace        (PicmanIdTable *id_table,
                                              gint         id,
                                              gpointer     data);
-gpointer       gimp_id_table_lookup         (GimpIdTable *id_table,
+gpointer       picman_id_table_lookup         (PicmanIdTable *id_table,
                                              gint         id);
-gboolean       gimp_id_table_remove         (GimpIdTable *id_table,
+gboolean       picman_id_table_remove         (PicmanIdTable *id_table,
                                              gint         id);
 
 
-#endif  /*  __GIMP_ID_TABLE_H__  */
+#endif  /*  __PICMAN_ID_TABLE_H__  */

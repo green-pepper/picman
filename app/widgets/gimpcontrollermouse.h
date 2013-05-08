@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcontrollermouse.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmancontrollermouse.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  * Copyright (C) 2011 Mikael Magnusson <mikachu@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,39 +19,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTROLLER_WHELL_H__
-#define __GIMP_CONTROLLER_MOUSE_H__
+#ifndef __PICMAN_CONTROLLER_WHELL_H__
+#define __PICMAN_CONTROLLER_MOUSE_H__
 
 
-#define GIMP_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
-#include "libgimpwidgets/gimpcontroller.h"
+#define PICMAN_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
+#include "libpicmanwidgets/picmancontroller.h"
 
 
-#define GIMP_TYPE_CONTROLLER_MOUSE            (gimp_controller_mouse_get_type ())
-#define GIMP_CONTROLLER_MOUSE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CONTROLLER_MOUSE, GimpControllerMouse))
-#define GIMP_CONTROLLER_MOUSE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CONTROLLER_MOUSE, GimpControllerMouseClass))
-#define GIMP_IS_CONTROLLER_MOUSE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CONTROLLER_MOUSE))
-#define GIMP_IS_CONTROLLER_MOUSE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CONTROLLER_MOUSE))
-#define GIMP_CONTROLLER_MOUSE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CONTROLLER_MOUSE, GimpControllerMouseClass))
+#define PICMAN_TYPE_CONTROLLER_MOUSE            (picman_controller_mouse_get_type ())
+#define PICMAN_CONTROLLER_MOUSE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CONTROLLER_MOUSE, PicmanControllerMouse))
+#define PICMAN_CONTROLLER_MOUSE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CONTROLLER_MOUSE, PicmanControllerMouseClass))
+#define PICMAN_IS_CONTROLLER_MOUSE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CONTROLLER_MOUSE))
+#define PICMAN_IS_CONTROLLER_MOUSE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CONTROLLER_MOUSE))
+#define PICMAN_CONTROLLER_MOUSE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CONTROLLER_MOUSE, PicmanControllerMouseClass))
 
 
-typedef struct _GimpControllerMouseClass GimpControllerMouseClass;
+typedef struct _PicmanControllerMouseClass PicmanControllerMouseClass;
 
-struct _GimpControllerMouse
+struct _PicmanControllerMouse
 {
-  GimpController parent_instance;
+  PicmanController parent_instance;
 };
 
-struct _GimpControllerMouseClass
+struct _PicmanControllerMouseClass
 {
-  GimpControllerClass parent_class;
+  PicmanControllerClass parent_class;
 };
 
 
-GType      gimp_controller_mouse_get_type (void) G_GNUC_CONST;
+GType      picman_controller_mouse_get_type (void) G_GNUC_CONST;
 
-gboolean   gimp_controller_mouse_button   (GimpControllerMouse  *mouse,
+gboolean   picman_controller_mouse_button   (PicmanControllerMouse  *mouse,
                                            const GdkEventButton *bevent);
 
 
-#endif /* __GIMP_CONTROLLER_MOUSE_H__ */
+#endif /* __PICMAN_CONTROLLER_MOUSE_H__ */

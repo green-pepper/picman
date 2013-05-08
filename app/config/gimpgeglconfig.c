@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpGeglConfig class
- * Copyright (C) 2001  Sven Neumann <sven@gimp.org>
+ * PicmanGeglConfig class
+ * Copyright (C) 2001  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,23 +26,23 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core/core-types.h" /* eek */
 
-#include "gimprc-blurbs.h"
-#include "gimpgeglconfig.h"
+#include "picmanrc-blurbs.h"
+#include "picmangeglconfig.h"
 
-#include "core/gimp-utils.h"
+#include "core/picman-utils.h"
 
-#include "gimp-debug.h"
+#include "picman-debug.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-#define GIMP_MAX_NUM_THREADS 16
-#define GIMP_MAX_MEM_PROCESS (MIN (G_MAXSIZE, GIMP_MAX_MEMSIZE))
+#define PICMAN_MAX_NUM_THREADS 16
+#define PICMAN_MAX_MEM_PROCESS (MIN (G_MAXSIZE, PICMAN_MAX_MEMSIZE))
 
 enum
 {
@@ -57,15 +57,15 @@ enum
 };
 
 
-static void   gimp_gegl_config_class_init   (GimpGeglConfigClass *klass);
-static void   gimp_gegl_config_init         (GimpGeglConfig      *config,
-                                             GimpGeglConfigClass *klass);
-static void   gimp_gegl_config_finalize     (GObject             *object);
-static void   gimp_gegl_config_set_property (GObject             *object,
+static void   picman_gegl_config_class_init   (PicmanGeglConfigClass *klass);
+static void   picman_gegl_config_init         (PicmanGeglConfig      *config,
+                                             PicmanGeglConfigClass *klass);
+static void   picman_gegl_config_finalize     (GObject             *object);
+static void   picman_gegl_config_set_property (GObject             *object,
                                              guint                property_id,
                                              const GValue        *value,
                                              GParamSpec          *pspec);
-static void   gimp_gegl_config_get_property (GObject             *object,
+static void   picman_gegl_config_get_property (GObject             *object,
                                              guint                property_id,
                                              GValue              *value,
                                              GParamSpec          *pspec);
@@ -75,7 +75,7 @@ static GObjectClass *parent_class = NULL;
 
 
 GType
-gimp_gegl_config_get_type (void)
+picman_gegl_config_get_type (void)
 {
   static GType config_type = 0;
 
@@ -83,19 +83,19 @@ gimp_gegl_config_get_type (void)
     {
       const GTypeInfo config_info =
       {
-        sizeof (GimpGeglConfigClass),
+        sizeof (PicmanGeglConfigClass),
         (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) gimp_gegl_config_class_init,
+        (GClassInitFunc) picman_gegl_config_class_init,
         NULL,           /* class_finalize */
         NULL,           /* class_data     */
-        sizeof (GimpGeglConfig),
+        sizeof (PicmanGeglConfig),
         0,              /* n_preallocs    */
-        (GInstanceInitFunc) gimp_gegl_config_init,
+        (GInstanceInitFunc) picman_gegl_config_init,
       };
 
       config_type = g_type_register_static (G_TYPE_OBJECT,
-                                            "GimpGeglConfig",
+                                            "PicmanGeglConfig",
                                             &config_info, 0);
     }
 
@@ -103,7 +103,7 @@ gimp_gegl_config_get_type (void)
 }
 
 static void
-gimp_gegl_config_class_init (GimpGeglConfigClass *klass)
+picman_gegl_config_class_init (PicmanGeglConfigClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   gint          num_processors;
@@ -111,87 +111,87 @@ gimp_gegl_config_class_init (GimpGeglConfigClass *klass)
 
   parent_class = g_type_class_peek_parent (klass);
 
-  object_class->finalize     = gimp_gegl_config_finalize;
-  object_class->set_property = gimp_gegl_config_set_property;
-  object_class->get_property = gimp_gegl_config_get_property;
+  object_class->finalize     = picman_gegl_config_finalize;
+  object_class->set_property = picman_gegl_config_set_property;
+  object_class->get_property = picman_gegl_config_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_TEMP_PATH,
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_TEMP_PATH,
                                  "temp-path", TEMP_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR,
-                                 "${gimp_dir}" G_DIR_SEPARATOR_S "tmp",
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_SWAP_PATH,
+                                 PICMAN_CONFIG_PATH_DIR,
+                                 "${picman_dir}" G_DIR_SEPARATOR_S "tmp",
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_SWAP_PATH,
                                  "swap-path", SWAP_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR,
-                                 "${gimp_dir}",
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR,
+                                 "${picman_dir}",
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
 
-  num_processors = gimp_get_number_of_processors ();
+  num_processors = picman_get_number_of_processors ();
 
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
   num_processors = num_processors * 2;
 #endif
 
-  num_processors = MIN (num_processors, GIMP_MAX_NUM_THREADS);
+  num_processors = MIN (num_processors, PICMAN_MAX_NUM_THREADS);
 
-  GIMP_CONFIG_INSTALL_PROP_UINT (object_class, PROP_NUM_PROCESSORS,
+  PICMAN_CONFIG_INSTALL_PROP_UINT (object_class, PROP_NUM_PROCESSORS,
                                  "num-processors", NUM_PROCESSORS_BLURB,
-                                 1, GIMP_MAX_NUM_THREADS, num_processors,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 1, PICMAN_MAX_NUM_THREADS, num_processors,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  memory_size = gimp_get_physical_memory_size ();
+  memory_size = picman_get_physical_memory_size ();
 
   /* limit to the amount one process can handle */
-  memory_size = MIN (GIMP_MAX_MEM_PROCESS, memory_size);
+  memory_size = MIN (PICMAN_MAX_MEM_PROCESS, memory_size);
 
   if (memory_size > 0)
     memory_size = memory_size / 2; /* half the memory */
   else
     memory_size = 1 << 30; /* 1GB */
 
-  GIMP_CONFIG_INSTALL_PROP_MEMSIZE (object_class, PROP_TILE_CACHE_SIZE,
+  PICMAN_CONFIG_INSTALL_PROP_MEMSIZE (object_class, PROP_TILE_CACHE_SIZE,
                                     "tile-cache-size", TILE_CACHE_SIZE_BLURB,
-                                    0, GIMP_MAX_MEM_PROCESS,
+                                    0, PICMAN_MAX_MEM_PROCESS,
                                     memory_size,
-                                    GIMP_PARAM_STATIC_STRINGS |
-                                    GIMP_CONFIG_PARAM_CONFIRM);
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_CONFIRM);
 
   /*  only for backward compatibility:  */
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_STINGY_MEMORY_USE,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_STINGY_MEMORY_USE,
                                     "stingy-memory-use", NULL,
                                     FALSE,
-                                    GIMP_CONFIG_PARAM_IGNORE);
+                                    PICMAN_CONFIG_PARAM_IGNORE);
 }
 
 static void
-gimp_gegl_config_init (GimpGeglConfig      *config,
-                       GimpGeglConfigClass *klass)
+picman_gegl_config_init (PicmanGeglConfig      *config,
+                       PicmanGeglConfigClass *klass)
 {
-  gimp_debug_add_instance (G_OBJECT (config), G_OBJECT_CLASS (klass));
+  picman_debug_add_instance (G_OBJECT (config), G_OBJECT_CLASS (klass));
 }
 
 static void
-gimp_gegl_config_finalize (GObject *object)
+picman_gegl_config_finalize (GObject *object)
 {
-  GimpGeglConfig *gegl_config = GIMP_GEGL_CONFIG (object);
+  PicmanGeglConfig *gegl_config = PICMAN_GEGL_CONFIG (object);
 
   g_free (gegl_config->temp_path);
   g_free (gegl_config->swap_path);
 
-  gimp_debug_remove_instance (object);
+  picman_debug_remove_instance (object);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
-gimp_gegl_config_set_property (GObject      *object,
+picman_gegl_config_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpGeglConfig *gegl_config = GIMP_GEGL_CONFIG (object);
+  PicmanGeglConfig *gegl_config = PICMAN_GEGL_CONFIG (object);
 
   switch (property_id)
     {
@@ -221,12 +221,12 @@ gimp_gegl_config_set_property (GObject      *object,
 }
 
 static void
-gimp_gegl_config_get_property (GObject    *object,
+picman_gegl_config_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpGeglConfig *gegl_config = GIMP_GEGL_CONFIG (object);
+  PicmanGeglConfig *gegl_config = PICMAN_GEGL_CONFIG (object);
 
   switch (property_id)
     {

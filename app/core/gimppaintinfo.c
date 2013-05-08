@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,48 +21,48 @@
 
 #include "core-types.h"
 
-#include "paint/gimppaintoptions.h"
+#include "paint/picmanpaintoptions.h"
 
-#include "gimp.h"
-#include "gimppaintinfo.h"
+#include "picman.h"
+#include "picmanpaintinfo.h"
 
 
-static void    gimp_paint_info_dispose         (GObject       *object);
-static void    gimp_paint_info_finalize        (GObject       *object);
-static gchar * gimp_paint_info_get_description (GimpViewable  *viewable,
+static void    picman_paint_info_dispose         (GObject       *object);
+static void    picman_paint_info_finalize        (GObject       *object);
+static gchar * picman_paint_info_get_description (PicmanViewable  *viewable,
                                                 gchar        **tooltip);
 
 
-G_DEFINE_TYPE (GimpPaintInfo, gimp_paint_info, GIMP_TYPE_VIEWABLE)
+G_DEFINE_TYPE (PicmanPaintInfo, picman_paint_info, PICMAN_TYPE_VIEWABLE)
 
-#define parent_class gimp_paint_info_parent_class
+#define parent_class picman_paint_info_parent_class
 
 
 static void
-gimp_paint_info_class_init (GimpPaintInfoClass *klass)
+picman_paint_info_class_init (PicmanPaintInfoClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->dispose           = gimp_paint_info_dispose;
-  object_class->finalize          = gimp_paint_info_finalize;
+  object_class->dispose           = picman_paint_info_dispose;
+  object_class->finalize          = picman_paint_info_finalize;
 
-  viewable_class->get_description = gimp_paint_info_get_description;
+  viewable_class->get_description = picman_paint_info_get_description;
 }
 
 static void
-gimp_paint_info_init (GimpPaintInfo *paint_info)
+picman_paint_info_init (PicmanPaintInfo *paint_info)
 {
-  paint_info->gimp          = NULL;
+  paint_info->picman          = NULL;
   paint_info->paint_type    = G_TYPE_NONE;
   paint_info->blurb         = NULL;
   paint_info->paint_options = NULL;
 }
 
 static void
-gimp_paint_info_dispose (GObject *object)
+picman_paint_info_dispose (GObject *object)
 {
-  GimpPaintInfo *paint_info = GIMP_PAINT_INFO (object);
+  PicmanPaintInfo *paint_info = PICMAN_PAINT_INFO (object);
 
   if (paint_info->paint_options)
     {
@@ -75,9 +75,9 @@ gimp_paint_info_dispose (GObject *object)
 }
 
 static void
-gimp_paint_info_finalize (GObject *object)
+picman_paint_info_finalize (GObject *object)
 {
-  GimpPaintInfo *paint_info = GIMP_PAINT_INFO (object);
+  PicmanPaintInfo *paint_info = PICMAN_PAINT_INFO (object);
 
   if (paint_info->blurb)
     {
@@ -89,67 +89,67 @@ gimp_paint_info_finalize (GObject *object)
 }
 
 static gchar *
-gimp_paint_info_get_description (GimpViewable  *viewable,
+picman_paint_info_get_description (PicmanViewable  *viewable,
                                  gchar        **tooltip)
 {
-  GimpPaintInfo *paint_info = GIMP_PAINT_INFO (viewable);
+  PicmanPaintInfo *paint_info = PICMAN_PAINT_INFO (viewable);
 
   return g_strdup (paint_info->blurb);
 }
 
-GimpPaintInfo *
-gimp_paint_info_new (Gimp        *gimp,
+PicmanPaintInfo *
+picman_paint_info_new (Picman        *picman,
                      GType        paint_type,
                      GType        paint_options_type,
                      const gchar *identifier,
                      const gchar *blurb,
                      const gchar *stock_id)
 {
-  GimpPaintInfo *paint_info;
+  PicmanPaintInfo *paint_info;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (identifier != NULL, NULL);
   g_return_val_if_fail (blurb != NULL, NULL);
   g_return_val_if_fail (stock_id != NULL, NULL);
 
-  paint_info = g_object_new (GIMP_TYPE_PAINT_INFO,
+  paint_info = g_object_new (PICMAN_TYPE_PAINT_INFO,
                              "name",     identifier,
                              "stock-id", stock_id,
                              NULL);
 
-  paint_info->gimp               = gimp;
+  paint_info->picman               = picman;
   paint_info->paint_type         = paint_type;
   paint_info->paint_options_type = paint_options_type;
   paint_info->blurb              = g_strdup (blurb);
 
-  paint_info->paint_options      = gimp_paint_options_new (paint_info);
+  paint_info->paint_options      = picman_paint_options_new (paint_info);
 
   return paint_info;
 }
 
 void
-gimp_paint_info_set_standard (Gimp          *gimp,
-                              GimpPaintInfo *paint_info)
+picman_paint_info_set_standard (Picman          *picman,
+                              PicmanPaintInfo *paint_info)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (! paint_info || GIMP_IS_PAINT_INFO (paint_info));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (! paint_info || PICMAN_IS_PAINT_INFO (paint_info));
 
-  if (paint_info != gimp->standard_paint_info)
+  if (paint_info != picman->standard_paint_info)
     {
-      if (gimp->standard_paint_info)
-        g_object_unref (gimp->standard_paint_info);
+      if (picman->standard_paint_info)
+        g_object_unref (picman->standard_paint_info);
 
-      gimp->standard_paint_info = paint_info;
+      picman->standard_paint_info = paint_info;
 
-      if (gimp->standard_paint_info)
-        g_object_ref (gimp->standard_paint_info);
+      if (picman->standard_paint_info)
+        g_object_ref (picman->standard_paint_info);
     }
 }
 
-GimpPaintInfo *
-gimp_paint_info_get_standard (Gimp *gimp)
+PicmanPaintInfo *
+picman_paint_info_get_standard (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  return gimp->standard_paint_info;
+  return picman->standard_paint_info;
 }

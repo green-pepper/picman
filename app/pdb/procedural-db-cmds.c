@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,77 +23,77 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpparamspecs-desc.h"
-#include "core/gimpparamspecs.h"
-#include "gimp-pdb-compat.h"
-#include "gimppdb-query.h"
-#include "plug-in/gimppluginmanager-data.h"
+#include "core/picman.h"
+#include "core/picmanparamspecs-desc.h"
+#include "core/picmanparamspecs.h"
+#include "picman-pdb-compat.h"
+#include "picmanpdb-query.h"
+#include "plug-in/picmanpluginmanager-data.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-procedural_db_temp_name_invoker (GimpProcedure         *procedure,
-                                 Gimp                  *gimp,
-                                 GimpContext           *context,
-                                 GimpProgress          *progress,
-                                 const GimpValueArray  *args,
+static PicmanValueArray *
+procedural_db_temp_name_invoker (PicmanProcedure         *procedure,
+                                 Picman                  *picman,
+                                 PicmanContext           *context,
+                                 PicmanProgress          *progress,
+                                 const PicmanValueArray  *args,
                                  GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gchar *temp_name = NULL;
 
   static gint proc_number = 0;
 
   temp_name = g_strdup_printf ("temp-procedure-number-%d", proc_number++);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_take_string (gimp_value_array_index (return_vals, 1), temp_name);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_take_string (picman_value_array_index (return_vals, 1), temp_name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-procedural_db_dump_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+procedural_db_dump_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
   const gchar *filename;
 
-  filename = g_value_get_string (gimp_value_array_index (args, 0));
+  filename = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      success = gimp_pdb_dump (gimp->pdb, filename);
+      success = picman_pdb_dump (picman->pdb, filename);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-procedural_db_query_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+procedural_db_query_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   const gchar *blurb;
   const gchar *help;
@@ -104,65 +104,65 @@ procedural_db_query_invoker (GimpProcedure         *procedure,
   gint32 num_matches = 0;
   gchar **procedure_names = NULL;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
-  blurb = g_value_get_string (gimp_value_array_index (args, 1));
-  help = g_value_get_string (gimp_value_array_index (args, 2));
-  author = g_value_get_string (gimp_value_array_index (args, 3));
-  copyright = g_value_get_string (gimp_value_array_index (args, 4));
-  date = g_value_get_string (gimp_value_array_index (args, 5));
-  proc_type = g_value_get_string (gimp_value_array_index (args, 6));
+  name = g_value_get_string (picman_value_array_index (args, 0));
+  blurb = g_value_get_string (picman_value_array_index (args, 1));
+  help = g_value_get_string (picman_value_array_index (args, 2));
+  author = g_value_get_string (picman_value_array_index (args, 3));
+  copyright = g_value_get_string (picman_value_array_index (args, 4));
+  date = g_value_get_string (picman_value_array_index (args, 5));
+  proc_type = g_value_get_string (picman_value_array_index (args, 6));
 
   if (success)
     {
-      success = gimp_pdb_query (gimp->pdb,
+      success = picman_pdb_query (picman->pdb,
                                 name, blurb, help, author,
                                 copyright, date, proc_type,
                                 &num_matches, &procedure_names,
                                 error);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_matches);
-      gimp_value_take_stringarray (gimp_value_array_index (return_vals, 2), procedure_names, num_matches);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_matches);
+      picman_value_take_stringarray (picman_value_array_index (return_vals, 2), procedure_names, num_matches);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-procedural_db_proc_exists_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+procedural_db_proc_exists_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *procedure_name;
   gboolean exists = FALSE;
 
-  procedure_name = g_value_get_string (gimp_value_array_index (args, 0));
+  procedure_name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpProcedure *procedure;
+      PicmanProcedure *procedure;
       gchar         *canonical;
 
-      canonical = gimp_canonicalize_identifier (procedure_name);
+      canonical = picman_canonicalize_identifier (procedure_name);
 
-      procedure = gimp_pdb_lookup_procedure (gimp->pdb, canonical);
+      procedure = picman_pdb_lookup_procedure (picman->pdb, canonical);
 
       if (! procedure)
         {
-          procedure_name = gimp_pdb_lookup_compat_proc_name (gimp->pdb, canonical);
+          procedure_name = picman_pdb_lookup_compat_proc_name (picman->pdb, canonical);
 
           if (procedure_name)
-            procedure = gimp_pdb_lookup_procedure (gimp->pdb, procedure_name);
+            procedure = picman_pdb_lookup_procedure (picman->pdb, procedure_name);
         }
 
       g_free (canonical);
@@ -170,25 +170,25 @@ procedural_db_proc_exists_invoker (GimpProcedure         *procedure,
       exists = (procedure != NULL);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), exists);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), exists);
 
   return return_vals;
 }
 
-static GimpValueArray *
-procedural_db_proc_info_invoker (GimpProcedure         *procedure,
-                                 Gimp                  *gimp,
-                                 GimpContext           *context,
-                                 GimpProgress          *progress,
-                                 const GimpValueArray  *args,
+static PicmanValueArray *
+procedural_db_proc_info_invoker (PicmanProcedure         *procedure,
+                                 Picman                  *picman,
+                                 PicmanContext           *context,
+                                 PicmanProgress          *progress,
+                                 const PicmanValueArray  *args,
                                  GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *procedure_name;
   gchar *blurb = NULL;
   gchar *help = NULL;
@@ -199,16 +199,16 @@ procedural_db_proc_info_invoker (GimpProcedure         *procedure,
   gint32 num_args = 0;
   gint32 num_values = 0;
 
-  procedure_name = g_value_get_string (gimp_value_array_index (args, 0));
+  procedure_name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpPDBProcType  ptype;
+      PicmanPDBProcType  ptype;
       gchar           *canonical;
 
-      canonical = gimp_canonicalize_identifier (procedure_name);
+      canonical = picman_canonicalize_identifier (procedure_name);
 
-      success = gimp_pdb_proc_info (gimp->pdb, canonical,
+      success = picman_pdb_proc_info (picman->pdb, canonical,
                                     &blurb, &help, &author,
                                     &copyright, &date, &ptype,
                                     &num_args, &num_values,
@@ -218,60 +218,60 @@ procedural_db_proc_info_invoker (GimpProcedure         *procedure,
       g_free (canonical);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_take_string (gimp_value_array_index (return_vals, 1), blurb);
-      g_value_take_string (gimp_value_array_index (return_vals, 2), help);
-      g_value_take_string (gimp_value_array_index (return_vals, 3), author);
-      g_value_take_string (gimp_value_array_index (return_vals, 4), copyright);
-      g_value_take_string (gimp_value_array_index (return_vals, 5), date);
-      g_value_set_enum (gimp_value_array_index (return_vals, 6), proc_type);
-      g_value_set_int (gimp_value_array_index (return_vals, 7), num_args);
-      g_value_set_int (gimp_value_array_index (return_vals, 8), num_values);
+      g_value_take_string (picman_value_array_index (return_vals, 1), blurb);
+      g_value_take_string (picman_value_array_index (return_vals, 2), help);
+      g_value_take_string (picman_value_array_index (return_vals, 3), author);
+      g_value_take_string (picman_value_array_index (return_vals, 4), copyright);
+      g_value_take_string (picman_value_array_index (return_vals, 5), date);
+      g_value_set_enum (picman_value_array_index (return_vals, 6), proc_type);
+      g_value_set_int (picman_value_array_index (return_vals, 7), num_args);
+      g_value_set_int (picman_value_array_index (return_vals, 8), num_values);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-procedural_db_proc_arg_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+procedural_db_proc_arg_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *procedure_name;
   gint32 arg_num;
   gint32 arg_type = 0;
   gchar *arg_name = NULL;
   gchar *arg_desc = NULL;
 
-  procedure_name = g_value_get_string (gimp_value_array_index (args, 0));
-  arg_num = g_value_get_int (gimp_value_array_index (args, 1));
+  procedure_name = g_value_get_string (picman_value_array_index (args, 0));
+  arg_num = g_value_get_int (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpProcedure *proc;
+      PicmanProcedure *proc;
       gchar         *canonical;
 
-      canonical = gimp_canonicalize_identifier (procedure_name);
+      canonical = picman_canonicalize_identifier (procedure_name);
 
-      proc = gimp_pdb_lookup_procedure (gimp->pdb, canonical);
+      proc = picman_pdb_lookup_procedure (picman->pdb, canonical);
 
       if (! proc)
         {
           const gchar *compat_name;
 
-          compat_name = gimp_pdb_lookup_compat_proc_name (gimp->pdb, canonical);
+          compat_name = picman_pdb_lookup_compat_proc_name (picman->pdb, canonical);
 
           if (compat_name)
-            proc = gimp_pdb_lookup_procedure (gimp->pdb, compat_name);
+            proc = picman_pdb_lookup_procedure (picman->pdb, compat_name);
         }
 
       g_free (canonical);
@@ -280,63 +280,63 @@ procedural_db_proc_arg_invoker (GimpProcedure         *procedure,
         {
           GParamSpec *pspec = proc->args[arg_num];
 
-          arg_type = gimp_pdb_compat_arg_type_from_gtype (G_PARAM_SPEC_VALUE_TYPE (pspec));
+          arg_type = picman_pdb_compat_arg_type_from_gtype (G_PARAM_SPEC_VALUE_TYPE (pspec));
           arg_name = g_strdup (g_param_spec_get_name (pspec));
-          arg_desc = gimp_param_spec_get_desc (pspec);
+          arg_desc = picman_param_spec_get_desc (pspec);
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_enum (gimp_value_array_index (return_vals, 1), arg_type);
-      g_value_take_string (gimp_value_array_index (return_vals, 2), arg_name);
-      g_value_take_string (gimp_value_array_index (return_vals, 3), arg_desc);
+      g_value_set_enum (picman_value_array_index (return_vals, 1), arg_type);
+      g_value_take_string (picman_value_array_index (return_vals, 2), arg_name);
+      g_value_take_string (picman_value_array_index (return_vals, 3), arg_desc);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-procedural_db_proc_val_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+procedural_db_proc_val_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *procedure_name;
   gint32 val_num;
   gint32 val_type = 0;
   gchar *val_name = NULL;
   gchar *val_desc = NULL;
 
-  procedure_name = g_value_get_string (gimp_value_array_index (args, 0));
-  val_num = g_value_get_int (gimp_value_array_index (args, 1));
+  procedure_name = g_value_get_string (picman_value_array_index (args, 0));
+  val_num = g_value_get_int (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpProcedure *proc;
+      PicmanProcedure *proc;
       gchar         *canonical;
 
-      canonical = gimp_canonicalize_identifier (procedure_name);
+      canonical = picman_canonicalize_identifier (procedure_name);
 
-      proc = gimp_pdb_lookup_procedure (gimp->pdb, canonical);
+      proc = picman_pdb_lookup_procedure (picman->pdb, canonical);
 
       if (! proc)
         {
           const gchar *compat_name;
 
-          compat_name = gimp_pdb_lookup_compat_proc_name (gimp->pdb, canonical);
+          compat_name = picman_pdb_lookup_compat_proc_name (picman->pdb, canonical);
 
           if (compat_name)
-            proc = gimp_pdb_lookup_procedure (gimp->pdb, compat_name);
+            proc = picman_pdb_lookup_procedure (picman->pdb, compat_name);
         }
 
       g_free (canonical);
@@ -345,49 +345,49 @@ procedural_db_proc_val_invoker (GimpProcedure         *procedure,
         {
           GParamSpec *pspec = proc->values[val_num];
 
-          val_type = gimp_pdb_compat_arg_type_from_gtype (G_PARAM_SPEC_VALUE_TYPE (pspec));
+          val_type = picman_pdb_compat_arg_type_from_gtype (G_PARAM_SPEC_VALUE_TYPE (pspec));
           val_name = g_strdup (g_param_spec_get_name (pspec));
-          val_desc = gimp_param_spec_get_desc (pspec);
+          val_desc = picman_param_spec_get_desc (pspec);
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_enum (gimp_value_array_index (return_vals, 1), val_type);
-      g_value_take_string (gimp_value_array_index (return_vals, 2), val_name);
-      g_value_take_string (gimp_value_array_index (return_vals, 3), val_desc);
+      g_value_set_enum (picman_value_array_index (return_vals, 1), val_type);
+      g_value_take_string (picman_value_array_index (return_vals, 2), val_name);
+      g_value_take_string (picman_value_array_index (return_vals, 3), val_desc);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-procedural_db_get_data_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+procedural_db_get_data_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *identifier;
   gint32 bytes = 0;
   guint8 *data = NULL;
 
-  identifier = g_value_get_string (gimp_value_array_index (args, 0));
+  identifier = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      gchar        *canonical = gimp_canonicalize_identifier (identifier);
+      gchar        *canonical = picman_canonicalize_identifier (identifier);
       const guint8 *orig_data;
 
-      orig_data = gimp_plug_in_manager_get_data (gimp->plug_in_manager,
+      orig_data = picman_plug_in_manager_get_data (picman->plug_in_manager,
                                                  canonical, &bytes);
 
       g_free (canonical);
@@ -398,59 +398,59 @@ procedural_db_get_data_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), bytes);
-      gimp_value_take_int8array (gimp_value_array_index (return_vals, 2), data, bytes);
+      g_value_set_int (picman_value_array_index (return_vals, 1), bytes);
+      picman_value_take_int8array (picman_value_array_index (return_vals, 2), data, bytes);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-procedural_db_get_data_size_invoker (GimpProcedure         *procedure,
-                                     Gimp                  *gimp,
-                                     GimpContext           *context,
-                                     GimpProgress          *progress,
-                                     const GimpValueArray  *args,
+static PicmanValueArray *
+procedural_db_get_data_size_invoker (PicmanProcedure         *procedure,
+                                     Picman                  *picman,
+                                     PicmanContext           *context,
+                                     PicmanProgress          *progress,
+                                     const PicmanValueArray  *args,
                                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *identifier;
   gint32 bytes = 0;
 
-  identifier = g_value_get_string (gimp_value_array_index (args, 0));
+  identifier = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      gchar *canonical = gimp_canonicalize_identifier (identifier);
+      gchar *canonical = picman_canonicalize_identifier (identifier);
 
-      if (! gimp_plug_in_manager_get_data (gimp->plug_in_manager,
+      if (! picman_plug_in_manager_get_data (picman->plug_in_manager,
                                            canonical, &bytes))
         success = FALSE;
 
       g_free (canonical);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), bytes);
+    g_value_set_int (picman_value_array_index (return_vals, 1), bytes);
 
   return return_vals;
 }
 
-static GimpValueArray *
-procedural_db_set_data_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+procedural_db_set_data_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
@@ -458,465 +458,465 @@ procedural_db_set_data_invoker (GimpProcedure         *procedure,
   gint32 bytes;
   const guint8 *data;
 
-  identifier = g_value_get_string (gimp_value_array_index (args, 0));
-  bytes = g_value_get_int (gimp_value_array_index (args, 1));
-  data = gimp_value_get_int8array (gimp_value_array_index (args, 2));
+  identifier = g_value_get_string (picman_value_array_index (args, 0));
+  bytes = g_value_get_int (picman_value_array_index (args, 1));
+  data = picman_value_get_int8array (picman_value_array_index (args, 2));
 
   if (success)
     {
-      gchar *canonical = gimp_canonicalize_identifier (identifier);
+      gchar *canonical = picman_canonicalize_identifier (identifier);
 
-      gimp_plug_in_manager_set_data (gimp->plug_in_manager,
+      picman_plug_in_manager_set_data (picman->plug_in_manager,
                                      canonical, bytes, data);
 
       g_free (canonical);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_procedural_db_procs (GimpPDB *pdb)
+register_procedural_db_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-procedural-db-temp-name
+   * picman-procedural-db-temp-name
    */
-  procedure = gimp_procedure_new (procedural_db_temp_name_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-procedural-db-temp-name");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-procedural-db-temp-name",
+  procedure = picman_procedure_new (procedural_db_temp_name_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-procedural-db-temp-name");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-procedural-db-temp-name",
                                      "Generates a unique temporary PDB name.",
                                      "This procedure generates a temporary PDB entry name that is guaranteed to be unique.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("temp-name",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("temp-name",
                                                            "temp name",
                                                            "A unique temporary name for a temporary PDB entry",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-procedural-db-dump
+   * picman-procedural-db-dump
    */
-  procedure = gimp_procedure_new (procedural_db_dump_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-procedural-db-dump");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-procedural-db-dump",
+  procedure = picman_procedure_new (procedural_db_dump_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-procedural-db-dump");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-procedural-db-dump",
                                      "Dumps the current contents of the procedural database",
                                      "This procedure dumps the contents of the procedural database to the specified file. The file will contain all of the information provided for each registered procedure.",
                                      "Spencer Kimball & Josh MacDonald",
                                      "Spencer Kimball & Josh MacDonald & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("filename",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("filename",
                                                        "filename",
                                                        "The dump filename",
                                                        TRUE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-procedural-db-query
+   * picman-procedural-db-query
    */
-  procedure = gimp_procedure_new (procedural_db_query_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-procedural-db-query");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-procedural-db-query",
+  procedure = picman_procedure_new (procedural_db_query_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-procedural-db-query");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-procedural-db-query",
                                      "Queries the procedural database for its contents using regular expression matching.",
                                      "This procedure queries the contents of the procedural database. It is supplied with seven arguments matching procedures on { name, blurb, help, author, copyright, date, procedure type}. This is accomplished using regular expression matching. For instance, to find all procedures with \"jpeg\" listed in the blurb, all seven arguments can be supplied as \".*\", except for the second, which can be supplied as \".*jpeg.*\". There are two return arguments for this procedure. The first is the number of procedures matching the query. The second is a concatenated list of procedure names corresponding to those matching the query. If no matching entries are found, then the returned string is NULL and the number of entries is 0.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The regex for procedure name",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("blurb",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("blurb",
                                                        "blurb",
                                                        "The regex for procedure blurb",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("help",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("help",
                                                        "help",
                                                        "The regex for procedure help",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("author",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("author",
                                                        "author",
                                                        "The regex for procedure author",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("copyright",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("copyright",
                                                        "copyright",
                                                        "The regex for procedure copyright",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("date",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("date",
                                                        "date",
                                                        "The regex for procedure date",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("proc-type",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("proc-type",
                                                        "proc type",
-                                                       "The regex for procedure type: { 'Internal GIMP procedure', 'GIMP Plug-In', 'GIMP Extension', 'Temporary Procedure' }",
+                                                       "The regex for procedure type: { 'Internal PICMAN procedure', 'PICMAN Plug-In', 'PICMAN Extension', 'Temporary Procedure' }",
                                                        TRUE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-matches",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-matches",
                                                           "num matches",
                                                           "The number of matching procedures",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string_array ("procedure-names",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string_array ("procedure-names",
                                                                  "procedure names",
                                                                  "The list of procedure names",
-                                                                 GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                 PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-procedural-db-proc-exists
+   * picman-procedural-db-proc-exists
    */
-  procedure = gimp_procedure_new (procedural_db_proc_exists_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-procedural-db-proc-exists");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-procedural-db-proc-exists",
+  procedure = picman_procedure_new (procedural_db_proc_exists_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-procedural-db-proc-exists");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-procedural-db-proc-exists",
                                      "Checks if the specified procedure exists in the procedural database",
                                      "This procedure checks if the specified procedure is registered in the procedural database.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2008",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("procedure-name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("procedure-name",
                                                        "procedure name",
                                                        "The procedure name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("exists",
                                                          "exists",
                                                          "Whether a procedure of that name is registered",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-procedural-db-proc-info
+   * picman-procedural-db-proc-info
    */
-  procedure = gimp_procedure_new (procedural_db_proc_info_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-procedural-db-proc-info");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-procedural-db-proc-info",
+  procedure = picman_procedure_new (procedural_db_proc_info_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-procedural-db-proc-info");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-procedural-db-proc-info",
                                      "Queries the procedural database for information on the specified procedure.",
-                                     "This procedure returns information on the specified procedure. A short blurb, detailed help, author(s), copyright information, procedure type, number of input, and number of return values are returned. For specific information on each input argument and return value, use the 'gimp-procedural-db-proc-arg' and 'gimp-procedural-db-proc-val' procedures.",
+                                     "This procedure returns information on the specified procedure. A short blurb, detailed help, author(s), copyright information, procedure type, number of input, and number of return values are returned. For specific information on each input argument and return value, use the 'picman-procedural-db-proc-arg' and 'picman-procedural-db-proc-val' procedures.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("procedure-name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("procedure-name",
                                                        "procedure name",
                                                        "The procedure name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("blurb",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("blurb",
                                                            "blurb",
                                                            "A short blurb",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("help",
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("help",
                                                            "help",
                                                            "Detailed procedure help",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("author",
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("author",
                                                            "author",
                                                            "Author(s) of the procedure",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("copyright",
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("copyright",
                                                            "copyright",
                                                            "The copyright",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("date",
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("date",
                                                            "date",
                                                            "Copyright date",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("proc-type",
                                                       "proc type",
                                                       "The procedure type",
-                                                      GIMP_TYPE_PDB_PROC_TYPE,
-                                                      GIMP_INTERNAL,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-args",
+                                                      PICMAN_TYPE_PDB_PROC_TYPE,
+                                                      PICMAN_INTERNAL,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-args",
                                                           "num args",
                                                           "The number of input arguments",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-values",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-values",
                                                           "num values",
                                                           "The number of return values",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-procedural-db-proc-arg
+   * picman-procedural-db-proc-arg
    */
-  procedure = gimp_procedure_new (procedural_db_proc_arg_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-procedural-db-proc-arg");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-procedural-db-proc-arg",
+  procedure = picman_procedure_new (procedural_db_proc_arg_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-procedural-db-proc-arg");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-procedural-db-proc-arg",
                                      "Queries the procedural database for information on the specified procedure's argument.",
                                      "This procedure returns information on the specified procedure's argument. The argument type, name, and a description are retrieved.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("procedure-name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("procedure-name",
                                                        "procedure name",
                                                        "The procedure name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("arg-num",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("arg-num",
                                                       "arg num",
                                                       "The argument number",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_enum ("arg-type",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_enum ("arg-type",
                                                          "arg type",
                                                          "The type of argument",
-                                                         GIMP_TYPE_PDB_ARG_TYPE,
-                                                         GIMP_PDB_INT32,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->values[0]),
-                                      GIMP_PDB_END);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("arg-name",
+                                                         PICMAN_TYPE_PDB_ARG_TYPE,
+                                                         PICMAN_PDB_INT32,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_param_spec_enum_exclude_value (PICMAN_PARAM_SPEC_ENUM (procedure->values[0]),
+                                      PICMAN_PDB_END);
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("arg-name",
                                                            "arg name",
                                                            "The name of the argument",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("arg-desc",
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("arg-desc",
                                                            "arg desc",
                                                            "A description of the argument",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-procedural-db-proc-val
+   * picman-procedural-db-proc-val
    */
-  procedure = gimp_procedure_new (procedural_db_proc_val_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-procedural-db-proc-val");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-procedural-db-proc-val",
+  procedure = picman_procedure_new (procedural_db_proc_val_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-procedural-db-proc-val");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-procedural-db-proc-val",
                                      "Queries the procedural database for information on the specified procedure's return value.",
                                      "This procedure returns information on the specified procedure's return value. The return value type, name, and a description are retrieved.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("procedure-name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("procedure-name",
                                                        "procedure name",
                                                        "The procedure name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("val-num",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("val-num",
                                                       "val num",
                                                       "The return value number",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_enum ("val-type",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_enum ("val-type",
                                                          "val type",
                                                          "The type of return value",
-                                                         GIMP_TYPE_PDB_ARG_TYPE,
-                                                         GIMP_PDB_INT32,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->values[0]),
-                                      GIMP_PDB_END);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("val-name",
+                                                         PICMAN_TYPE_PDB_ARG_TYPE,
+                                                         PICMAN_PDB_INT32,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_param_spec_enum_exclude_value (PICMAN_PARAM_SPEC_ENUM (procedure->values[0]),
+                                      PICMAN_PDB_END);
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("val-name",
                                                            "val name",
                                                            "The name of the return value",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("val-desc",
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("val-desc",
                                                            "val desc",
                                                            "A description of the return value",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-procedural-db-get-data
+   * picman-procedural-db-get-data
    */
-  procedure = gimp_procedure_new (procedural_db_get_data_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-procedural-db-get-data");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-procedural-db-get-data",
+  procedure = picman_procedure_new (procedural_db_get_data_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-procedural-db-get-data");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-procedural-db-get-data",
                                      "Returns data associated with the specified identifier.",
                                      "This procedure returns any data which may have been associated with the specified identifier. The data is a variable length array of bytes. If no data has been associated with the identifier, an error is returned.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("identifier",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("identifier",
                                                        "identifier",
                                                        "The identifier associated with data",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("bytes",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("bytes",
                                                           "bytes",
                                                           "The number of bytes in the data",
                                                           1, G_MAXINT32, 1,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int8_array ("data",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int8_array ("data",
                                                                "data",
                                                                "A byte array containing data",
-                                                               GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                               PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-procedural-db-get-data-size
+   * picman-procedural-db-get-data-size
    */
-  procedure = gimp_procedure_new (procedural_db_get_data_size_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-procedural-db-get-data-size");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-procedural-db-get-data-size",
+  procedure = picman_procedure_new (procedural_db_get_data_size_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-procedural-db-get-data-size");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-procedural-db-get-data-size",
                                      "Returns size of data associated with the specified identifier.",
                                      "This procedure returns the size of any data which may have been associated with the specified identifier. If no data has been associated with the identifier, an error is returned.",
                                      "Nick Lamb",
                                      "Nick Lamb",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("identifier",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("identifier",
                                                        "identifier",
                                                        "The identifier associated with data",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("bytes",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("bytes",
                                                           "bytes",
                                                           "The number of bytes in the data",
                                                           1, G_MAXINT32, 1,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-procedural-db-set-data
+   * picman-procedural-db-set-data
    */
-  procedure = gimp_procedure_new (procedural_db_set_data_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-procedural-db-set-data");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-procedural-db-set-data",
+  procedure = picman_procedure_new (procedural_db_set_data_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-procedural-db-set-data");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-procedural-db-set-data",
                                      "Associates the specified identifier with the supplied data.",
                                      "This procedure associates the supplied data with the provided identifier. The data may be subsequently retrieved by a call to 'procedural-db-get-data'.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("identifier",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("identifier",
                                                        "identifier",
                                                        "The identifier associated with data",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("bytes",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("bytes",
                                                       "bytes",
                                                       "The number of bytes in the data",
                                                       1, G_MAXINT32, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int8_array ("data",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int8_array ("data",
                                                            "data",
                                                            "A byte array containing data",
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

@@ -1,6 +1,6 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
- * Copyright (C) 2006  Manish Singh <yosh@gimp.org>
+ * Picman-Python - allows the writing of Picman plugins in Python.
+ * Copyright (C) 2006  Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,20 @@
 #  include <config.h>
 #endif
 
-#include "pygimp.h"
+#include "pypicman.h"
 
 
-static PyObject *vectors_bezier_stroke_new(PyGimpVectors *vectors, int stroke);
+static PyObject *vectors_bezier_stroke_new(PyPicmanVectors *vectors, int stroke);
 
 
 typedef struct {
     PyObject_HEAD
     gint32 vectors_ID;
     int stroke;
-} PyGimpVectorsStroke;
+} PyPicmanVectorsStroke;
 
 static PyObject *
-vs_get_length(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
+vs_get_length(PyPicmanVectorsStroke *self, PyObject *args, PyObject *kwargs)
 {
     double precision;
     double length;
@@ -44,14 +44,14 @@ vs_get_length(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
                                      &precision))
         return NULL;
 
-    length = gimp_vectors_stroke_get_length(self->vectors_ID, self->stroke,
+    length = picman_vectors_stroke_get_length(self->vectors_ID, self->stroke,
                                             precision);
 
     return PyFloat_FromDouble(length);
 }
 
 static PyObject *
-vs_get_point_at_dist(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
+vs_get_point_at_dist(PyPicmanVectorsStroke *self, PyObject *args, PyObject *kwargs)
 {
     double dist, precision;
     double x, y, slope;
@@ -65,7 +65,7 @@ vs_get_point_at_dist(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs
                                      &dist, &precision))
         return NULL;
 
-    gimp_vectors_stroke_get_point_at_dist(self->vectors_ID, self->stroke,
+    picman_vectors_stroke_get_point_at_dist(self->vectors_ID, self->stroke,
                                           dist, precision,
                                           &x, &y, &slope, &valid);
 
@@ -82,16 +82,16 @@ vs_get_point_at_dist(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs
 }
 
 static PyObject *
-vs_close(PyGimpVectorsStroke *self)
+vs_close(PyPicmanVectorsStroke *self)
 {
-    gimp_vectors_stroke_close(self->vectors_ID, self->stroke);
+    picman_vectors_stroke_close(self->vectors_ID, self->stroke);
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 
 static PyObject *
-vs_translate(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
+vs_translate(PyPicmanVectorsStroke *self, PyObject *args, PyObject *kwargs)
 {
     double off_x, off_y;
 
@@ -101,14 +101,14 @@ vs_translate(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
                                      &off_x, &off_y))
         return NULL;
 
-    gimp_vectors_stroke_translate(self->vectors_ID, self->stroke, off_x, off_y);
+    picman_vectors_stroke_translate(self->vectors_ID, self->stroke, off_x, off_y);
 
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 static PyObject *
-vs_scale(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
+vs_scale(PyPicmanVectorsStroke *self, PyObject *args, PyObject *kwargs)
 {
     double scale_x, scale_y;
 
@@ -118,14 +118,14 @@ vs_scale(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
                                      &scale_x, &scale_y))
         return NULL;
 
-    gimp_vectors_stroke_scale(self->vectors_ID, self->stroke, scale_x, scale_y);
+    picman_vectors_stroke_scale(self->vectors_ID, self->stroke, scale_x, scale_y);
 
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 static PyObject *
-vs_rotate(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
+vs_rotate(PyPicmanVectorsStroke *self, PyObject *args, PyObject *kwargs)
 {
     double center_x, center_y, angle;
 
@@ -135,7 +135,7 @@ vs_rotate(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
                                      &center_x, &center_y, &angle))
         return NULL;
 
-    gimp_vectors_stroke_rotate(self->vectors_ID, self->stroke, center_x,
+    picman_vectors_stroke_rotate(self->vectors_ID, self->stroke, center_x,
                                center_y, angle);
 
     Py_INCREF(Py_None);
@@ -143,7 +143,7 @@ vs_rotate(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyObject *
-vs_flip(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
+vs_flip(PyPicmanVectorsStroke *self, PyObject *args, PyObject *kwargs)
 {
     int    flip_type;
     double axis;
@@ -154,14 +154,14 @@ vs_flip(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
                                      &flip_type, &axis))
         return NULL;
 
-    gimp_vectors_stroke_flip(self->vectors_ID, self->stroke, flip_type, axis);
+    picman_vectors_stroke_flip(self->vectors_ID, self->stroke, flip_type, axis);
 
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 static PyObject *
-vs_flip_free(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
+vs_flip_free(PyPicmanVectorsStroke *self, PyObject *args, PyObject *kwargs)
 {
     double x1,y1,x2,y2;
 
@@ -171,7 +171,7 @@ vs_flip_free(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
                                      &x1, &y1, &x2, &y2))
         return NULL;
 
-    gimp_vectors_stroke_flip_free(self->vectors_ID, self->stroke,
+    picman_vectors_stroke_flip_free(self->vectors_ID, self->stroke,
                                   x1, y1, x2, y2);
     Py_INCREF(Py_None);
     return Py_None;
@@ -180,7 +180,7 @@ vs_flip_free(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
 
 
 static PyObject *
-vs_interpolate(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
+vs_interpolate(PyPicmanVectorsStroke *self, PyObject *args, PyObject *kwargs)
 {
     double precision;
     double *coords;
@@ -194,7 +194,7 @@ vs_interpolate(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
                                      &precision))
         return NULL;
 
-    coords = gimp_vectors_stroke_interpolate(self->vectors_ID, self->stroke,
+    coords = picman_vectors_stroke_interpolate(self->vectors_ID, self->stroke,
                                              precision, &num_coords, &closed);
 
     ret = PyTuple_New(2);
@@ -230,26 +230,26 @@ static PyMethodDef vs_methods[] = {
 };
 
 static PyObject *
-vs_get_ID(PyGimpVectorsStroke *self, void *closure)
+vs_get_ID(PyPicmanVectorsStroke *self, void *closure)
 {
     return PyInt_FromLong(self->stroke);
 }
 
 static PyObject *
-vs_get_vectors_ID(PyGimpVectorsStroke *self, void *closure)
+vs_get_vectors_ID(PyPicmanVectorsStroke *self, void *closure)
 {
     return PyInt_FromLong(self->vectors_ID);
 }
 
 static PyObject *
-vs_get_points(PyGimpVectorsStroke *self, void *closure)
+vs_get_points(PyPicmanVectorsStroke *self, void *closure)
 {
     double *controlpoints;
     int i, num_points;
     gboolean closed;
     PyObject *ret, *ret_points;
 
-    gimp_vectors_stroke_get_points(self->vectors_ID, self->stroke,
+    picman_vectors_stroke_get_points(self->vectors_ID, self->stroke,
                                    &num_points, &controlpoints, &closed);
 
     ret = PyTuple_New(2);
@@ -279,19 +279,19 @@ static PyGetSetDef vs_getsets[] = {
 };
 
 static void
-vs_dealloc(PyGimpVectorsStroke *self)
+vs_dealloc(PyPicmanVectorsStroke *self)
 {
     PyObject_DEL(self);
 }
 
 static PyObject *
-vs_repr(PyGimpVectorsStroke *self)
+vs_repr(PyPicmanVectorsStroke *self)
 {
     PyObject *s;
     char *name;
 
-    name = gimp_item_get_name(self->vectors_ID);
-    s = PyString_FromFormat("<gimp.VectorsStroke %d of gimp.Vectors '%s'>",
+    name = picman_item_get_name(self->vectors_ID);
+    s = PyString_FromFormat("<picman.VectorsStroke %d of picman.Vectors '%s'>",
                             self->stroke, name ? name : "(null)");
     g_free(name);
 
@@ -299,7 +299,7 @@ vs_repr(PyGimpVectorsStroke *self)
 }
 
 static int
-vs_cmp(PyGimpVectorsStroke *self, PyGimpVectorsStroke *other)
+vs_cmp(PyPicmanVectorsStroke *self, PyPicmanVectorsStroke *other)
 {
     if (self->vectors_ID == other->vectors_ID) {
         if (self->stroke == other->stroke)
@@ -313,11 +313,11 @@ vs_cmp(PyGimpVectorsStroke *self, PyGimpVectorsStroke *other)
     return 1;
 }
 
-PyTypeObject PyGimpVectorsStroke_Type = {
+PyTypeObject PyPicmanVectorsStroke_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                  /* ob_size */
-    "gimp.VectorsStroke",               /* tp_name */
-    sizeof(PyGimpVectorsStroke),        /* tp_basicsize */
+    "picman.VectorsStroke",               /* tp_name */
+    sizeof(PyPicmanVectorsStroke),        /* tp_basicsize */
     0,                                  /* tp_itemsize */
     /* methods */
     (destructor)vs_dealloc,             /* tp_dealloc */
@@ -360,7 +360,7 @@ PyTypeObject PyGimpVectorsStroke_Type = {
 static PyObject *
 vbs_new_moveto(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 {
-    PyGimpVectors *vectors;
+    PyPicmanVectors *vectors;
     double x0, y0;
     int stroke;
 
@@ -368,11 +368,11 @@ vbs_new_moveto(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
                                      "O!dd:new_moveto", kwlist,
-                                     &PyGimpVectors_Type, &vectors,
+                                     &PyPicmanVectors_Type, &vectors,
                                      &x0, &y0))
         return NULL;
 
-    stroke = gimp_vectors_bezier_stroke_new_moveto(vectors->ID, x0, y0);
+    stroke = picman_vectors_bezier_stroke_new_moveto(vectors->ID, x0, y0);
 
     return vectors_bezier_stroke_new(vectors, stroke);
 }
@@ -380,7 +380,7 @@ vbs_new_moveto(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 static PyObject *
 vbs_new_ellipse(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 {
-    PyGimpVectors *vectors;
+    PyPicmanVectors *vectors;
     double x0, y0, radius_x, radius_y, angle;
     int stroke;
 
@@ -389,18 +389,18 @@ vbs_new_ellipse(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
                                      "O!ddddd:new_ellipse", kwlist,
-                                     &PyGimpVectors_Type, &vectors,
+                                     &PyPicmanVectors_Type, &vectors,
                                      &x0, &y0, &radius_x, &radius_y, &angle))
         return NULL;
 
-    stroke = gimp_vectors_bezier_stroke_new_ellipse(vectors->ID, x0, y0,
+    stroke = picman_vectors_bezier_stroke_new_ellipse(vectors->ID, x0, y0,
                                                     radius_x, radius_y, angle);
 
     return vectors_bezier_stroke_new(vectors, stroke);
 }
 
 static PyObject *
-vbs_lineto(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
+vbs_lineto(PyPicmanVectorsStroke *self, PyObject *args, PyObject *kwargs)
 {
     double x0, y0;
 
@@ -411,14 +411,14 @@ vbs_lineto(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
                                      &x0, &y0))
         return NULL;
 
-    gimp_vectors_bezier_stroke_lineto(self->vectors_ID, self->stroke, x0, y0);
+    picman_vectors_bezier_stroke_lineto(self->vectors_ID, self->stroke, x0, y0);
 
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 static PyObject *
-vbs_conicto(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
+vbs_conicto(PyPicmanVectorsStroke *self, PyObject *args, PyObject *kwargs)
 {
     double x0, y0, x1, y1;
 
@@ -429,7 +429,7 @@ vbs_conicto(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
                                      &x0, &y0, &x1, &y1))
         return NULL;
 
-    gimp_vectors_bezier_stroke_conicto(self->vectors_ID, self->stroke,
+    picman_vectors_bezier_stroke_conicto(self->vectors_ID, self->stroke,
                                        x0, y0, x1, y1);
 
     Py_INCREF(Py_None);
@@ -437,7 +437,7 @@ vbs_conicto(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyObject *
-vbs_cubicto(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
+vbs_cubicto(PyPicmanVectorsStroke *self, PyObject *args, PyObject *kwargs)
 {
     double x0, y0, x1, y1, x2, y2;
 
@@ -448,7 +448,7 @@ vbs_cubicto(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
                                      &x0, &y0, &x1, &y1, &x2, &y2))
         return NULL;
 
-    gimp_vectors_bezier_stroke_cubicto(self->vectors_ID, self->stroke,
+    picman_vectors_bezier_stroke_cubicto(self->vectors_ID, self->stroke,
                                        x0, y0, x1, y1, x2, y2);
 
     Py_INCREF(Py_None);
@@ -465,13 +465,13 @@ static PyMethodDef vbs_methods[] = {
 };
 
 static PyObject *
-vbs_repr(PyGimpVectorsStroke *self)
+vbs_repr(PyPicmanVectorsStroke *self)
 {
     PyObject *s;
     char *name;
 
-    name = gimp_item_get_name(self->vectors_ID);
-    s = PyString_FromFormat("<gimp.VectorsBezierStroke %d of gimp.Vectors '%s'>",
+    name = picman_item_get_name(self->vectors_ID);
+    s = PyString_FromFormat("<picman.VectorsBezierStroke %d of picman.Vectors '%s'>",
                             self->stroke, name ? name : "(null)");
     g_free(name);
 
@@ -479,9 +479,9 @@ vbs_repr(PyGimpVectorsStroke *self)
 }
 
 static int
-vbs_init(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
+vbs_init(PyPicmanVectorsStroke *self, PyObject *args, PyObject *kwargs)
 {
-    PyGimpVectors *vectors;
+    PyPicmanVectors *vectors;
     double *controlpoints;
     gboolean closed = FALSE;
     PyObject *py_controlpoints, *item;
@@ -490,9 +490,9 @@ vbs_init(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
     static char *kwlist[] = { "vectors", "controlpoints", "closed", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
-                                     "O!O|i:gimp.VectorsBezierStroke.__init__",
+                                     "O!O|i:picman.VectorsBezierStroke.__init__",
                                      kwlist,
-                                     &PyGimpVectors_Type, &vectors,
+                                     &PyPicmanVectors_Type, &vectors,
                                      &py_controlpoints, &closed))
         return -1;
 
@@ -520,8 +520,8 @@ vbs_init(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
 
     self->vectors_ID = vectors->ID;
     self->stroke =
-        gimp_vectors_stroke_new_from_points(self->vectors_ID,
-                                            GIMP_VECTORS_STROKE_TYPE_BEZIER,
+        picman_vectors_stroke_new_from_points(self->vectors_ID,
+                                            PICMAN_VECTORS_STROKE_TYPE_BEZIER,
                                             num_points, controlpoints, closed);
 
     g_free(controlpoints);
@@ -529,11 +529,11 @@ vbs_init(PyGimpVectorsStroke *self, PyObject *args, PyObject *kwargs)
     return 0;
 }
 
-PyTypeObject PyGimpVectorsBezierStroke_Type = {
+PyTypeObject PyPicmanVectorsBezierStroke_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                  /* ob_size */
-    "gimp.VectorsBezierStroke",         /* tp_name */
-    sizeof(PyGimpVectorsStroke),        /* tp_basicsize */
+    "picman.VectorsBezierStroke",         /* tp_name */
+    sizeof(PyPicmanVectorsStroke),        /* tp_basicsize */
     0,                                  /* tp_itemsize */
     /* methods */
     (destructor)vs_dealloc,             /* tp_dealloc */
@@ -562,7 +562,7 @@ PyTypeObject PyGimpVectorsBezierStroke_Type = {
     vbs_methods,                        /* tp_methods */
     0,                                  /* tp_members */
     0,                                  /* tp_getset */
-    &PyGimpVectorsStroke_Type,          /* tp_base */
+    &PyPicmanVectorsStroke_Type,          /* tp_base */
     (PyObject *)0,                      /* tp_dict */
     0,                                  /* tp_descr_get */
     0,                                  /* tp_descr_set */
@@ -573,11 +573,11 @@ PyTypeObject PyGimpVectorsBezierStroke_Type = {
 };
 
 static PyObject *
-vectors_bezier_stroke_new(PyGimpVectors *vectors, int stroke)
+vectors_bezier_stroke_new(PyPicmanVectors *vectors, int stroke)
 {
-    PyGimpVectorsStroke *self;
+    PyPicmanVectorsStroke *self;
 
-    self = PyObject_NEW(PyGimpVectorsStroke, &PyGimpVectorsBezierStroke_Type);
+    self = PyObject_NEW(PyPicmanVectorsStroke, &PyPicmanVectorsBezierStroke_Type);
 
     if (self == NULL)
         return NULL;
@@ -590,10 +590,10 @@ vectors_bezier_stroke_new(PyGimpVectors *vectors, int stroke)
 
 
 static PyObject *
-vectors_remove_stroke(PyGimpVectors *self, PyObject *args, PyObject *kwargs)
+vectors_remove_stroke(PyPicmanVectors *self, PyObject *args, PyObject *kwargs)
 {
     int stroke_id ;
-    /* PyGimpVectorsStroke *stroke; */
+    /* PyPicmanVectorsStroke *stroke; */
     PyObject *stroke = NULL;
 
     static char *kwlist[] = { "stroke", NULL };
@@ -602,23 +602,23 @@ vectors_remove_stroke(PyGimpVectors *self, PyObject *args, PyObject *kwargs)
 
     if (PyInt_Check(stroke))
         stroke_id = PyInt_AsLong(stroke);
-    else if (PyObject_IsInstance(stroke, (PyObject *) &PyGimpVectorsStroke_Type))
-        stroke_id = ((PyGimpVectorsStroke *) stroke)->stroke;
+    else if (PyObject_IsInstance(stroke, (PyObject *) &PyPicmanVectorsStroke_Type))
+        stroke_id = ((PyPicmanVectorsStroke *) stroke)->stroke;
     else  {
-        PyErr_SetString(PyExc_TypeError, "stroke must be a gimp.VectorsBezierStroke object or an Integer");
+        PyErr_SetString(PyExc_TypeError, "stroke must be a picman.VectorsBezierStroke object or an Integer");
         return NULL;
     }
 
-    gimp_vectors_remove_stroke(self->ID, stroke_id);
+    picman_vectors_remove_stroke(self->ID, stroke_id);
 
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 static PyObject *
-vectors_to_selection(PyGimpVectors *self, PyObject *args, PyObject *kwargs)
+vectors_to_selection(PyPicmanVectors *self, PyObject *args, PyObject *kwargs)
 {
-    GimpChannelOps operation = GIMP_CHANNEL_OP_REPLACE;
+    PicmanChannelOps operation = PICMAN_CHANNEL_OP_REPLACE;
     gboolean antialias = TRUE, feather = FALSE;
     double feather_radius_x = 0.0, feather_radius_y = 0.0;
 
@@ -631,39 +631,39 @@ vectors_to_selection(PyGimpVectors *self, PyObject *args, PyObject *kwargs)
                                      &feather_radius_x, &feather_radius_y))
         return NULL;
 
-    gimp_context_push();
-    gimp_context_set_antialias(antialias);
-    gimp_context_set_feather(feather);
-    gimp_context_set_feather_radius(feather_radius_x, feather_radius_y);
-    gimp_image_select_item(gimp_item_get_image(self->ID), operation, self->ID);
-    gimp_context_pop();
+    picman_context_push();
+    picman_context_set_antialias(antialias);
+    picman_context_set_feather(feather);
+    picman_context_set_feather_radius(feather_radius_x, feather_radius_y);
+    picman_image_select_item(picman_item_get_image(self->ID), operation, self->ID);
+    picman_context_pop();
 
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 static PyObject *
-vectors_parasite_find(PyGimpVectors *self, PyObject *args)
+vectors_parasite_find(PyPicmanVectors *self, PyObject *args)
 {
     char *name;
 
     if (!PyArg_ParseTuple(args, "s:parasite_find", &name))
         return NULL;
 
-    return pygimp_parasite_new(gimp_item_get_parasite(self->ID, name));
+    return pypicman_parasite_new(picman_item_get_parasite(self->ID, name));
 }
 
 static PyObject *
-vectors_parasite_attach(PyGimpVectors *self, PyObject *args)
+vectors_parasite_attach(PyPicmanVectors *self, PyObject *args)
 {
-    PyGimpParasite *parasite;
+    PyPicmanParasite *parasite;
 
-    if (!PyArg_ParseTuple(args, "O!:parasite_attach", &PyGimpParasite_Type,
+    if (!PyArg_ParseTuple(args, "O!:parasite_attach", &PyPicmanParasite_Type,
                           &parasite))
         return NULL;
 
-    if (!gimp_item_attach_parasite(self->ID, parasite->para)) {
-        PyErr_Format(pygimp_error,
+    if (!picman_item_attach_parasite(self->ID, parasite->para)) {
+        PyErr_Format(pypicman_error,
                      "could not attach parasite '%s' to vectors (ID %d)",
                      parasite->para->name, self->ID);
         return NULL;
@@ -674,15 +674,15 @@ vectors_parasite_attach(PyGimpVectors *self, PyObject *args)
 }
 
 static PyObject *
-vectors_parasite_detach(PyGimpVectors *self, PyObject *args)
+vectors_parasite_detach(PyPicmanVectors *self, PyObject *args)
 {
     char *name;
 
     if (!PyArg_ParseTuple(args, "s:parasite_detach", &name))
         return NULL;
 
-    if (!gimp_item_detach_parasite(self->ID, name)) {
-        PyErr_Format(pygimp_error,
+    if (!picman_item_detach_parasite(self->ID, name)) {
+        PyErr_Format(pypicman_error,
                      "could not detach parasite '%s' from vectors (ID %d)",
                      name, self->ID);
         return NULL;
@@ -693,12 +693,12 @@ vectors_parasite_detach(PyGimpVectors *self, PyObject *args)
 }
 
 static PyObject *
-vectors_parasite_list(PyGimpVectors *self)
+vectors_parasite_list(PyPicmanVectors *self)
 {
     gint num_parasites;
     gchar **parasites;
 
-    parasites = gimp_item_get_parasite_list(self->ID, &num_parasites);
+    parasites = picman_item_get_parasite_list(self->ID, &num_parasites);
     if (parasites) {
         PyObject *ret;
         gint i;
@@ -713,7 +713,7 @@ vectors_parasite_list(PyGimpVectors *self)
         return ret;
     }
 
-    PyErr_Format(pygimp_error, "could not list parasites on vectors (ID %d)",
+    PyErr_Format(pypicman_error, "could not list parasites on vectors (ID %d)",
                  self->ID);
     return NULL;
 }
@@ -741,25 +741,25 @@ static PyMethodDef vectors_methods[] = {
 };
 
 static PyObject *
-vectors_get_image(PyGimpVectors *self, void *closure)
+vectors_get_image(PyPicmanVectors *self, void *closure)
 {
-    return pygimp_image_new(gimp_item_get_image(self->ID));
+    return pypicman_image_new(picman_item_get_image(self->ID));
 }
 
 static PyObject *
-vectors_get_ID(PyGimpVectors *self, void *closure)
+vectors_get_ID(PyPicmanVectors *self, void *closure)
 {
     return PyInt_FromLong(self->ID);
 }
 
 static PyObject *
-vectors_get_name(PyGimpVectors *self, void *closure)
+vectors_get_name(PyPicmanVectors *self, void *closure)
 {
-    return PyString_FromString(gimp_item_get_name(self->ID));
+    return PyString_FromString(picman_item_get_name(self->ID));
 }
 
 static int
-vectors_set_name(PyGimpVectors *self, PyObject *value, void *closure)
+vectors_set_name(PyPicmanVectors *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete name");
@@ -771,19 +771,19 @@ vectors_set_name(PyGimpVectors *self, PyObject *value, void *closure)
         return -1;
     }
 
-    gimp_item_set_name(self->ID, PyString_AsString(value));
+    picman_item_set_name(self->ID, PyString_AsString(value));
 
     return 0;
 }
 
 static PyObject *
-vectors_get_visible(PyGimpVectors *self, void *closure)
+vectors_get_visible(PyPicmanVectors *self, void *closure)
 {
-    return PyBool_FromLong(gimp_item_get_visible(self->ID));
+    return PyBool_FromLong(picman_item_get_visible(self->ID));
 }
 
 static int
-vectors_set_visible(PyGimpVectors *self, PyObject *value, void *closure)
+vectors_set_visible(PyPicmanVectors *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete visible");
@@ -795,19 +795,19 @@ vectors_set_visible(PyGimpVectors *self, PyObject *value, void *closure)
         return -1;
     }
 
-    gimp_item_set_visible(self->ID, PyInt_AsLong(value));
+    picman_item_set_visible(self->ID, PyInt_AsLong(value));
 
     return 0;
 }
 
 static PyObject *
-vectors_get_linked(PyGimpVectors *self, void *closure)
+vectors_get_linked(PyPicmanVectors *self, void *closure)
 {
-    return PyBool_FromLong(gimp_item_get_linked(self->ID));
+    return PyBool_FromLong(picman_item_get_linked(self->ID));
 }
 
 static int
-vectors_set_linked(PyGimpVectors *self, PyObject *value, void *closure)
+vectors_set_linked(PyPicmanVectors *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete linked");
@@ -819,19 +819,19 @@ vectors_set_linked(PyGimpVectors *self, PyObject *value, void *closure)
         return -1;
     }
 
-    gimp_item_set_linked(self->ID, PyInt_AsLong(value));
+    picman_item_set_linked(self->ID, PyInt_AsLong(value));
 
     return 0;
 }
 
 static PyObject *
-vectors_get_tattoo(PyGimpVectors *self, void *closure)
+vectors_get_tattoo(PyPicmanVectors *self, void *closure)
 {
-    return PyInt_FromLong(gimp_item_get_tattoo(self->ID));
+    return PyInt_FromLong(picman_item_get_tattoo(self->ID));
 }
 
 static int
-vectors_set_tattoo(PyGimpVectors *self, PyObject *value, void *closure)
+vectors_set_tattoo(PyPicmanVectors *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete tattoo");
@@ -843,19 +843,19 @@ vectors_set_tattoo(PyGimpVectors *self, PyObject *value, void *closure)
         return -1;
     }
 
-    gimp_item_set_tattoo(self->ID, PyInt_AsLong(value));
+    picman_item_set_tattoo(self->ID, PyInt_AsLong(value));
 
     return 0;
 }
 
 static PyObject *
-vectors_get_strokes(PyGimpVectors *self, void *closure)
+vectors_get_strokes(PyPicmanVectors *self, void *closure)
 {
     int *strokes;
     int i, num_strokes;
     PyObject *ret;
 
-    strokes = gimp_vectors_get_strokes(self->ID, &num_strokes);
+    strokes = picman_vectors_get_strokes(self->ID, &num_strokes);
 
     ret = PyList_New(num_strokes);
     if (ret == NULL)
@@ -881,26 +881,26 @@ static PyGetSetDef vectors_getsets[] = {
 };
 
 static void
-vectors_dealloc(PyGimpVectors *self)
+vectors_dealloc(PyPicmanVectors *self)
 {
     PyObject_DEL(self);
 }
 
 static PyObject *
-vectors_repr(PyGimpVectors *self)
+vectors_repr(PyPicmanVectors *self)
 {
     PyObject *s;
     char *name;
 
-    name = gimp_item_get_name(self->ID);
-    s = PyString_FromFormat("<gimp.Vectors '%s'>", name ? name : "(null)");
+    name = picman_item_get_name(self->ID);
+    s = PyString_FromFormat("<picman.Vectors '%s'>", name ? name : "(null)");
     g_free(name);
 
     return s;
 }
 
 static int
-vectors_cmp(PyGimpVectors *self, PyGimpVectors *other)
+vectors_cmp(PyPicmanVectors *self, PyPicmanVectors *other)
 {
     if (self->ID == other->ID)
         return 0;
@@ -910,23 +910,23 @@ vectors_cmp(PyGimpVectors *self, PyGimpVectors *other)
 }
 
 static int
-vectors_init(PyGimpVectors *self, PyObject *args, PyObject *kwargs)
+vectors_init(PyPicmanVectors *self, PyObject *args, PyObject *kwargs)
 {
-    PyGimpImage *img;
+    PyPicmanImage *img;
     char *name;
 
     static char *kwlist[] = { "image", "name", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
-                                     "O!s:gimp.Vectors.__init__",
+                                     "O!s:picman.Vectors.__init__",
                                      kwlist,
-                                     &PyGimpImage_Type, &img, &name))
+                                     &PyPicmanImage_Type, &img, &name))
         return -1;
 
-    self->ID = gimp_vectors_new(img->ID, name);
+    self->ID = picman_vectors_new(img->ID, name);
 
     if (self->ID < 0) {
-        PyErr_Format(pygimp_error,
+        PyErr_Format(pypicman_error,
                      "could not create vectors '%s' on image (ID %d)",
                      name, img->ID);
         return -1;
@@ -935,11 +935,11 @@ vectors_init(PyGimpVectors *self, PyObject *args, PyObject *kwargs)
     return 0;
 }
 
-PyTypeObject PyGimpVectors_Type = {
+PyTypeObject PyPicmanVectors_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                  /* ob_size */
-    "gimp.Vectors",                     /* tp_name */
-    sizeof(PyGimpVectors),              /* tp_basicsize */
+    "picman.Vectors",                     /* tp_name */
+    sizeof(PyPicmanVectors),              /* tp_basicsize */
     0,                                  /* tp_itemsize */
     /* methods */
     (destructor)vectors_dealloc,        /* tp_dealloc */
@@ -968,7 +968,7 @@ PyTypeObject PyGimpVectors_Type = {
     vectors_methods,                    /* tp_methods */
     0,                                  /* tp_members */
     vectors_getsets,                    /* tp_getset */
-    &PyGimpItem_Type,                   /* tp_base */
+    &PyPicmanItem_Type,                   /* tp_base */
     (PyObject *)0,                      /* tp_dict */
     0,                                  /* tp_descr_get */
     0,                                  /* tp_descr_set */
@@ -979,16 +979,16 @@ PyTypeObject PyGimpVectors_Type = {
 };
 
 PyObject *
-pygimp_vectors_new(gint32 ID)
+pypicman_vectors_new(gint32 ID)
 {
-    PyGimpVectors *self;
+    PyPicmanVectors *self;
 
-    if (!gimp_item_is_valid(ID)) {
+    if (!picman_item_is_valid(ID)) {
         Py_INCREF(Py_None);
         return Py_None;
     }
 
-    self = PyObject_NEW(PyGimpVectors, &PyGimpVectors_Type);
+    self = PyObject_NEW(PyPicmanVectors, &PyPicmanVectors_Type);
 
     if (self == NULL)
         return NULL;

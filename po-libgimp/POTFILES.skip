@@ -2,6 +2,6 @@ app
 data/tags
 data/tips
 desktop
-desktop/gimp.desktop.in
+desktop/picman.desktop.in
 plug-ins
 tools

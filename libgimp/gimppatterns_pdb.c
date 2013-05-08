@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimppatterns_pdb.c
+ * picmanpatterns_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,12 @@
 
 #include <string.h>
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimppatterns
- * @title: gimppatterns
+ * SECTION: picmanpatterns
+ * @title: picmanpatterns
  * @short_description: Functions relating to patterns.
  *
  * Functions relating to patterns.
@@ -37,7 +37,7 @@
 
 
 /**
- * gimp_patterns_refresh:
+ * picman_patterns_refresh:
  *
  * Refresh current patterns. This function always succeeds.
  *
@@ -47,54 +47,54 @@
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_patterns_refresh (void)
+picman_patterns_refresh (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-patterns-refresh",
+  return_vals = picman_run_procedure ("picman-patterns-refresh",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_patterns_get_list:
+ * picman_patterns_get_list:
  * @filter: An optional regular expression used to filter the list.
  * @num_patterns: The number of patterns in the pattern list.
  *
  * Retrieve a complete listing of the available patterns.
  *
- * This procedure returns a complete listing of available GIMP
+ * This procedure returns a complete listing of available PICMAN
  * patterns. Each name returned can be used as input to the
- * gimp_context_set_pattern().
+ * picman_context_set_pattern().
  *
  * Returns: The list of pattern names. The returned value must be freed
  * with g_strfreev().
  **/
 gchar **
-gimp_patterns_get_list (const gchar *filter,
+picman_patterns_get_list (const gchar *filter,
                         gint        *num_patterns)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar **pattern_list = NULL;
   gint i;
 
-  return_vals = gimp_run_procedure ("gimp-patterns-get-list",
+  return_vals = picman_run_procedure ("picman-patterns-get-list",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, filter,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, filter,
+                                    PICMAN_PDB_END);
 
   *num_patterns = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_patterns = return_vals[1].data.d_int32;
       pattern_list = g_new (gchar *, *num_patterns + 1);
@@ -103,46 +103,46 @@ gimp_patterns_get_list (const gchar *filter,
       pattern_list[i] = NULL;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return pattern_list;
 }
 
 /**
- * gimp_patterns_get_pattern:
+ * picman_patterns_get_pattern:
  * @width: The pattern width.
  * @height: The pattern height.
  *
- * Deprecated: Use gimp_context_get_pattern() instead.
+ * Deprecated: Use picman_context_get_pattern() instead.
  *
  * Returns: The pattern name.
  **/
 gchar *
-gimp_patterns_get_pattern (gint *width,
+picman_patterns_get_pattern (gint *width,
                            gint *height)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-patterns-get-pattern",
+  return_vals = picman_run_procedure ("picman-patterns-get-pattern",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       name = g_strdup (return_vals[1].data.d_string);
       *width = return_vals[2].data.d_int32;
       *height = return_vals[3].data.d_int32;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return name;
 }
 
 /**
- * gimp_patterns_get_pattern_data:
+ * picman_patterns_get_pattern_data:
  * @name: The pattern name (\"\" means currently active pattern).
  * @width: The pattern width.
  * @height: The pattern height.
@@ -150,30 +150,30 @@ gimp_patterns_get_pattern (gint *width,
  * @length: Length of pattern mask data.
  * @mask_data: The pattern mask data.
  *
- * Deprecated: Use gimp_pattern_get_pixels() instead.
+ * Deprecated: Use picman_pattern_get_pixels() instead.
  *
  * Returns: The pattern name.
  **/
 gchar *
-gimp_patterns_get_pattern_data (const gchar  *name,
+picman_patterns_get_pattern_data (const gchar  *name,
                                 gint         *width,
                                 gint         *height,
                                 gint         *mask_bpp,
                                 gint         *length,
                                 guint8      **mask_data)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *actual_name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-patterns-get-pattern-data",
+  return_vals = picman_run_procedure ("picman-patterns-get-pattern-data",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
   *length = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       actual_name = g_strdup (return_vals[1].data.d_string);
       *width = return_vals[2].data.d_int32;
@@ -186,7 +186,7 @@ gimp_patterns_get_pattern_data (const gchar  *name,
               *length * sizeof (guint8));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return actual_name;
 }

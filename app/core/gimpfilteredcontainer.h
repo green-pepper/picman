@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpfilteredcontainer.h
+ * picmanfilteredcontainer.h
  * Copyright (C) 2008 Aurimas Juška <aurisj@svn.gnome.org>
- *               2011 Michael Natterer <mitch@gimp.org>
+ *               2011 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,50 +19,50 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FILTERED_CONTAINER_H__
-#define __GIMP_FILTERED_CONTAINER_H__
+#ifndef __PICMAN_FILTERED_CONTAINER_H__
+#define __PICMAN_FILTERED_CONTAINER_H__
 
 
-#include "gimplist.h"
+#include "picmanlist.h"
 
 
-#define GIMP_TYPE_FILTERED_CONTAINER            (gimp_filtered_container_get_type ())
-#define GIMP_FILTERED_CONTAINER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FILTERED_CONTAINER, GimpFilteredContainer))
-#define GIMP_FILTERED_CONTAINER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FILTERED_CONTAINER, GimpFilteredContainerClass))
-#define GIMP_IS_FILTERED_CONTAINER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FILTERED_CONTAINER))
-#define GIMP_IS_FILTERED_CONTAINER_CLASS(class) (G_TYPE_CHECK_CLASS_TYPE ((class), GIMP_TYPE_FILTERED_CONTAINER))
-#define GIMP_FILTERED_CONTAINER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FILTERED_CONTAINER, GimpFilteredContainerClass))
+#define PICMAN_TYPE_FILTERED_CONTAINER            (picman_filtered_container_get_type ())
+#define PICMAN_FILTERED_CONTAINER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FILTERED_CONTAINER, PicmanFilteredContainer))
+#define PICMAN_FILTERED_CONTAINER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FILTERED_CONTAINER, PicmanFilteredContainerClass))
+#define PICMAN_IS_FILTERED_CONTAINER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FILTERED_CONTAINER))
+#define PICMAN_IS_FILTERED_CONTAINER_CLASS(class) (G_TYPE_CHECK_CLASS_TYPE ((class), PICMAN_TYPE_FILTERED_CONTAINER))
+#define PICMAN_FILTERED_CONTAINER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FILTERED_CONTAINER, PicmanFilteredContainerClass))
 
 
-typedef struct _GimpFilteredContainerClass GimpFilteredContainerClass;
+typedef struct _PicmanFilteredContainerClass PicmanFilteredContainerClass;
 
-struct _GimpFilteredContainer
+struct _PicmanFilteredContainer
 {
-  GimpList              parent_instance;
+  PicmanList              parent_instance;
 
-  GimpContainer        *src_container;
-  GimpObjectFilterFunc  filter_func;
+  PicmanContainer        *src_container;
+  PicmanObjectFilterFunc  filter_func;
   gpointer              filter_data;
 };
 
-struct _GimpFilteredContainerClass
+struct _PicmanFilteredContainerClass
 {
-  GimpContainerClass  parent_class;
+  PicmanContainerClass  parent_class;
 
-  void (* src_add)    (GimpFilteredContainer *filtered_container,
-                       GimpObject            *object);
-  void (* src_remove) (GimpFilteredContainer *filtered_container,
-                       GimpObject            *object);
-  void (* src_freeze) (GimpFilteredContainer *filtered_container);
-  void (* src_thaw)   (GimpFilteredContainer *filtered_container);
+  void (* src_add)    (PicmanFilteredContainer *filtered_container,
+                       PicmanObject            *object);
+  void (* src_remove) (PicmanFilteredContainer *filtered_container,
+                       PicmanObject            *object);
+  void (* src_freeze) (PicmanFilteredContainer *filtered_container);
+  void (* src_thaw)   (PicmanFilteredContainer *filtered_container);
 };
 
 
-GType           gimp_filtered_container_get_type (void) G_GNUC_CONST;
+GType           picman_filtered_container_get_type (void) G_GNUC_CONST;
 
-GimpContainer * gimp_filtered_container_new      (GimpContainer        *src_container,
-                                                  GimpObjectFilterFunc  filter_func,
+PicmanContainer * picman_filtered_container_new      (PicmanContainer        *src_container,
+                                                  PicmanObjectFilterFunc  filter_func,
                                                   gpointer              filter_data);
 
 
-#endif  /* __GIMP_FILTERED_CONTAINER_H__ */
+#endif  /* __PICMAN_FILTERED_CONTAINER_H__ */

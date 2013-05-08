@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program Copyright (C) 1995
+/* PICMAN - The GNU Image Manipulation Program Copyright (C) 1995
  * Spencer Kimball and Peter Mattis
  *
- * gimpcanvasboundary.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasboundary.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,43 +18,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_BOUNDARY_H__
-#define __GIMP_CANVAS_BOUNDARY_H__
+#ifndef __PICMAN_CANVAS_BOUNDARY_H__
+#define __PICMAN_CANVAS_BOUNDARY_H__
 
 
-#include "gimpcanvasitem.h"
+#include "picmancanvasitem.h"
 
 
-#define GIMP_TYPE_CANVAS_BOUNDARY            (gimp_canvas_boundary_get_type ())
-#define GIMP_CANVAS_BOUNDARY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_BOUNDARY, GimpCanvasBoundary))
-#define GIMP_CANVAS_BOUNDARY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_BOUNDARY, GimpCanvasBoundaryClass))
-#define GIMP_IS_CANVAS_BOUNDARY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_BOUNDARY))
-#define GIMP_IS_CANVAS_BOUNDARY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_BOUNDARY))
-#define GIMP_CANVAS_BOUNDARY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_BOUNDARY, GimpCanvasBoundaryClass))
+#define PICMAN_TYPE_CANVAS_BOUNDARY            (picman_canvas_boundary_get_type ())
+#define PICMAN_CANVAS_BOUNDARY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_BOUNDARY, PicmanCanvasBoundary))
+#define PICMAN_CANVAS_BOUNDARY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_BOUNDARY, PicmanCanvasBoundaryClass))
+#define PICMAN_IS_CANVAS_BOUNDARY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_BOUNDARY))
+#define PICMAN_IS_CANVAS_BOUNDARY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_BOUNDARY))
+#define PICMAN_CANVAS_BOUNDARY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_BOUNDARY, PicmanCanvasBoundaryClass))
 
 
-typedef struct _GimpCanvasBoundary      GimpCanvasBoundary;
-typedef struct _GimpCanvasBoundaryClass GimpCanvasBoundaryClass;
+typedef struct _PicmanCanvasBoundary      PicmanCanvasBoundary;
+typedef struct _PicmanCanvasBoundaryClass PicmanCanvasBoundaryClass;
 
-struct _GimpCanvasBoundary
+struct _PicmanCanvasBoundary
 {
-  GimpCanvasItem  parent_instance;
+  PicmanCanvasItem  parent_instance;
 };
 
-struct _GimpCanvasBoundaryClass
+struct _PicmanCanvasBoundaryClass
 {
-  GimpCanvasItemClass  parent_class;
+  PicmanCanvasItemClass  parent_class;
 };
 
 
-GType            gimp_canvas_boundary_get_type (void) G_GNUC_CONST;
+GType            picman_canvas_boundary_get_type (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_canvas_boundary_new      (GimpDisplayShell   *shell,
-                                                const GimpBoundSeg *segs,
+PicmanCanvasItem * picman_canvas_boundary_new      (PicmanDisplayShell   *shell,
+                                                const PicmanBoundSeg *segs,
                                                 gint                n_segs,
-                                                GimpMatrix3        *transform,
+                                                PicmanMatrix3        *transform,
                                                 gdouble             offset_x,
                                                 gdouble             offset_y);
 
 
-#endif /* __GIMP_CANVAS_BOUNDARY_H__ */
+#endif /* __PICMAN_CANVAS_BOUNDARY_H__ */

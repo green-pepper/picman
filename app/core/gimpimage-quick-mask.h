@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,29 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_QUICK_MASK_H__
-#define __GIMP_IMAGE_QUICK_MASK_H__
+#ifndef __PICMAN_IMAGE_QUICK_MASK_H__
+#define __PICMAN_IMAGE_QUICK_MASK_H__
 
 
 /*  don't change this string, it's used to identify the Quick Mask
  *  when opening files.
  */
-#define GIMP_IMAGE_QUICK_MASK_NAME "Qmask"
+#define PICMAN_IMAGE_QUICK_MASK_NAME "Qmask"
 
 
-void          gimp_image_set_quick_mask_state    (GimpImage       *image,
+void          picman_image_set_quick_mask_state    (PicmanImage       *image,
                                                   gboolean         active);
-gboolean      gimp_image_get_quick_mask_state    (const GimpImage *image);
+gboolean      picman_image_get_quick_mask_state    (const PicmanImage *image);
 
-void          gimp_image_set_quick_mask_color    (GimpImage       *image,
-                                                  const GimpRGB   *color);
-void          gimp_image_get_quick_mask_color    (const GimpImage *image,
-                                                  GimpRGB         *color);
+void          picman_image_set_quick_mask_color    (PicmanImage       *image,
+                                                  const PicmanRGB   *color);
+void          picman_image_get_quick_mask_color    (const PicmanImage *image,
+                                                  PicmanRGB         *color);
 
-GimpChannel * gimp_image_get_quick_mask          (const GimpImage *image);
+PicmanChannel * picman_image_get_quick_mask          (const PicmanImage *image);
 
-void          gimp_image_quick_mask_invert       (GimpImage       *image);
-gboolean      gimp_image_get_quick_mask_inverted (const GimpImage *image);
+void          picman_image_quick_mask_invert       (PicmanImage       *image);
+gboolean      picman_image_get_quick_mask_inverted (const PicmanImage *image);
 
 
-#endif /* __GIMP_IMAGE_QUICK_MASK_H__ */
+#endif /* __PICMAN_IMAGE_QUICK_MASK_H__ */

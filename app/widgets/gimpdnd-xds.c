@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpdnd-xds.c
- * Copyright (C) 2005  Sven Neumann <sven@gimp.org>
+ * picmandnd-xds.c
+ * Copyright (C) 2005  Sven Neumann <sven@picman.org>
  *
  * Saving Files via Drag-and-Drop:
  * The Direct Save Protocol for the X Window System
@@ -33,26 +33,26 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
 
-#include "plug-in/gimppluginmanager.h"
+#include "plug-in/picmanpluginmanager.h"
 
 #include "file/file-procedure.h"
 #include "file/file-save.h"
 #include "file/file-utils.h"
 
-#include "gimpdnd-xds.h"
-#include "gimpfiledialog.h"
-#include "gimpmessagebox.h"
-#include "gimpmessagedialog.h"
+#include "picmandnd-xds.h"
+#include "picmanfiledialog.h"
+#include "picmanmessagebox.h"
+#include "picmanmessagedialog.h"
 
-#include "gimp-log.h"
-#include "gimp-intl.h"
+#include "picman-log.h"
+#include "picman-intl.h"
 
 
 #define MAX_URI_LEN 4096
@@ -60,29 +60,29 @@
 
 /*  local function prototypes  */
 
-static gboolean   gimp_file_overwrite_dialog (GtkWidget   *parent,
+static gboolean   picman_file_overwrite_dialog (GtkWidget   *parent,
                                               const gchar *uri);
 
 
 /*  public functions  */
 
 void
-gimp_dnd_xds_source_set (GdkDragContext *context,
-                         GimpImage      *image)
+picman_dnd_xds_source_set (GdkDragContext *context,
+                         PicmanImage      *image)
 {
   GdkAtom  property;
 
   g_return_if_fail (GDK_IS_DRAG_CONTEXT (context));
-  g_return_if_fail (image == NULL || GIMP_IS_IMAGE (image));
+  g_return_if_fail (image == NULL || PICMAN_IS_IMAGE (image));
 
-  GIMP_LOG (DND, NULL);
+  PICMAN_LOG (DND, NULL);
 
   property = gdk_atom_intern_static_string ("XdndDirectSave0");
 
   if (image)
     {
       GdkAtom  type     = gdk_atom_intern_static_string ("text/plain");
-      gchar   *filename = gimp_image_get_filename (image);
+      gchar   *filename = picman_image_get_filename (image);
       gchar   *basename;
 
       if (filename)
@@ -112,11 +112,11 @@ gimp_dnd_xds_source_set (GdkDragContext *context,
 }
 
 void
-gimp_dnd_xds_save_image (GdkDragContext   *context,
-                         GimpImage        *image,
+picman_dnd_xds_save_image (GdkDragContext   *context,
+                         PicmanImage        *image,
                          GtkSelectionData *selection)
 {
-  GimpPlugInProcedure *proc;
+  PicmanPlugInProcedure *proc;
   GdkAtom              property;
   GdkAtom              type;
   gint                 length;
@@ -126,9 +126,9 @@ gimp_dnd_xds_save_image (GdkDragContext   *context,
   GError              *error  = NULL;
 
   g_return_if_fail (GDK_IS_DRAG_CONTEXT (context));
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  GIMP_LOG (DND, NULL);
+  PICMAN_LOG (DND, NULL);
 
   property = gdk_atom_intern_static_string ("XdndDirectSave0");
   type     = gdk_atom_intern_static_string ("text/plain");
@@ -142,11 +142,11 @@ gimp_dnd_xds_save_image (GdkDragContext   *context,
   uri = g_strndup ((const gchar *) data, length);
   g_free (data);
 
-  proc = file_procedure_find (image->gimp->plug_in_manager->save_procs, uri,
+  proc = file_procedure_find (image->picman->plug_in_manager->save_procs, uri,
                               NULL);
   if (! proc)
     {
-      proc = file_procedure_find (image->gimp->plug_in_manager->export_procs, uri,
+      proc = file_procedure_find (image->picman->plug_in_manager->export_procs, uri,
                                   NULL);
 
       export = TRUE;
@@ -160,13 +160,13 @@ gimp_dnd_xds_save_image (GdkDragContext   *context,
 
       if (! filename ||
           ! g_file_test (filename, G_FILE_TEST_EXISTS) ||
-          gimp_file_overwrite_dialog (NULL, uri))
+          picman_file_overwrite_dialog (NULL, uri))
         {
-          if (file_save (image->gimp,
+          if (file_save (image->picman,
                          image, NULL,
-                         uri, proc, GIMP_RUN_INTERACTIVE,
+                         uri, proc, PICMAN_RUN_INTERACTIVE,
                          ! export, FALSE, export,
-                         &error) == GIMP_PDB_SUCCESS)
+                         &error) == PICMAN_PDB_SUCCESS)
             {
               gtk_selection_data_set (selection,
                                       gtk_selection_data_get_target (selection),
@@ -182,7 +182,7 @@ gimp_dnd_xds_save_image (GdkDragContext   *context,
                 {
                   gchar *filename = file_utils_uri_display_name (uri);
 
-                  gimp_message (image->gimp, NULL, GIMP_MESSAGE_ERROR,
+                  picman_message (image->picman, NULL, PICMAN_MESSAGE_ERROR,
                                 _("Saving '%s' failed:\n\n%s"),
                                 filename, error->message);
 
@@ -200,7 +200,7 @@ gimp_dnd_xds_save_image (GdkDragContext   *context,
                               gtk_selection_data_get_target (selection),
                               8, (const guchar *) "E", 1);
 
-      gimp_message_literal (image->gimp, NULL, GIMP_MESSAGE_ERROR,
+      picman_message_literal (image->picman, NULL, PICMAN_MESSAGE_ERROR,
 			    _("The given filename does not have any known "
 			      "file extension."));
     }
@@ -212,16 +212,16 @@ gimp_dnd_xds_save_image (GdkDragContext   *context,
 /*  private functions  */
 
 static gboolean
-gimp_file_overwrite_dialog (GtkWidget   *parent,
+picman_file_overwrite_dialog (GtkWidget   *parent,
                             const gchar *uri)
 {
   GtkWidget *dialog;
   gchar     *filename;
   gboolean   overwrite = FALSE;
 
-  dialog = gimp_message_dialog_new (_("File Exists"), GIMP_STOCK_WARNING,
+  dialog = picman_message_dialog_new (_("File Exists"), PICMAN_STOCK_WARNING,
                                     parent, GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    gimp_standard_help_func, NULL,
+                                    picman_standard_help_func, NULL,
 
                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                     _("_Replace"),    GTK_RESPONSE_OK,
@@ -234,12 +234,12 @@ gimp_file_overwrite_dialog (GtkWidget   *parent,
                                            -1);
 
   filename = file_utils_uri_display_name (uri);
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                      _("A file named '%s' already exists."),
                                      filename);
   g_free (filename);
 
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                              _("Do you want to replace it with the image "
                                "you are saving?"));
 
@@ -249,7 +249,7 @@ gimp_file_overwrite_dialog (GtkWidget   *parent,
 
   g_object_ref (dialog);
 
-  overwrite = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  overwrite = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
   g_object_unref (dialog);

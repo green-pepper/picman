@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,30 +22,30 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimppalette.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmandatafactory.h"
+#include "core/picmanpalette.h"
 
-#include "gimpdnd.h"
-#include "gimpdocked.h"
-#include "gimphelp-ids.h"
-#include "gimppaletteeditor.h"
-#include "gimppaletteview.h"
-#include "gimpsessioninfo-aux.h"
-#include "gimpuimanager.h"
-#include "gimpviewrendererpalette.h"
-#include "gimpwidgets-utils.h"
+#include "picmandnd.h"
+#include "picmandocked.h"
+#include "picmanhelp-ids.h"
+#include "picmanpaletteeditor.h"
+#include "picmanpaletteview.h"
+#include "picmansessioninfo-aux.h"
+#include "picmanuimanager.h"
+#include "picmanviewrendererpalette.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define ENTRY_WIDTH  12
@@ -60,107 +60,107 @@
 
 /*  local function prototypes  */
 
-static void   gimp_palette_editor_docked_iface_init (GimpDockedInterface *face);
+static void   picman_palette_editor_docked_iface_init (PicmanDockedInterface *face);
 
-static void   gimp_palette_editor_constructed      (GObject           *object);
-static void   gimp_palette_editor_dispose          (GObject           *object);
+static void   picman_palette_editor_constructed      (GObject           *object);
+static void   picman_palette_editor_dispose          (GObject           *object);
 
-static void   gimp_palette_editor_unmap            (GtkWidget         *widget);
+static void   picman_palette_editor_unmap            (GtkWidget         *widget);
 
-static void   gimp_palette_editor_set_data         (GimpDataEditor    *editor,
-                                                    GimpData          *data);
+static void   picman_palette_editor_set_data         (PicmanDataEditor    *editor,
+                                                    PicmanData          *data);
 
-static void   gimp_palette_editor_set_context      (GimpDocked        *docked,
-                                                    GimpContext       *context);
-static void   gimp_palette_editor_set_aux_info     (GimpDocked        *docked,
+static void   picman_palette_editor_set_context      (PicmanDocked        *docked,
+                                                    PicmanContext       *context);
+static void   picman_palette_editor_set_aux_info     (PicmanDocked        *docked,
                                                     GList             *aux_info);
-static GList *gimp_palette_editor_get_aux_info     (GimpDocked        *docked);
+static GList *picman_palette_editor_get_aux_info     (PicmanDocked        *docked);
 
-static void   palette_editor_invalidate_preview    (GimpPalette       *palette,
-                                                    GimpPaletteEditor *editor);
+static void   palette_editor_invalidate_preview    (PicmanPalette       *palette,
+                                                    PicmanPaletteEditor *editor);
 
 static void   palette_editor_viewport_size_allocate(GtkWidget         *widget,
                                                     GtkAllocation     *allocation,
-                                                    GimpPaletteEditor *editor);
+                                                    PicmanPaletteEditor *editor);
 
 static void   palette_editor_drop_palette          (GtkWidget         *widget,
                                                     gint               x,
                                                     gint               y,
-                                                    GimpViewable      *viewable,
+                                                    PicmanViewable      *viewable,
                                                     gpointer           data);
 
-static void   palette_editor_entry_clicked         (GimpPaletteView   *view,
-                                                    GimpPaletteEntry  *entry,
+static void   palette_editor_entry_clicked         (PicmanPaletteView   *view,
+                                                    PicmanPaletteEntry  *entry,
                                                     GdkModifierType    state,
-                                                    GimpPaletteEditor *editor);
-static void   palette_editor_entry_selected        (GimpPaletteView   *view,
-                                                    GimpPaletteEntry  *entry,
-                                                    GimpPaletteEditor *editor);
-static void   palette_editor_entry_activated       (GimpPaletteView   *view,
-                                                    GimpPaletteEntry  *entry,
-                                                    GimpPaletteEditor *editor);
-static void   palette_editor_entry_context         (GimpPaletteView   *view,
-                                                    GimpPaletteEntry  *entry,
-                                                    GimpPaletteEditor *editor);
-static void   palette_editor_color_dropped         (GimpPaletteView   *view,
-                                                    GimpPaletteEntry  *entry,
-                                                    const GimpRGB     *color,
-                                                    GimpPaletteEditor *editor);
+                                                    PicmanPaletteEditor *editor);
+static void   palette_editor_entry_selected        (PicmanPaletteView   *view,
+                                                    PicmanPaletteEntry  *entry,
+                                                    PicmanPaletteEditor *editor);
+static void   palette_editor_entry_activated       (PicmanPaletteView   *view,
+                                                    PicmanPaletteEntry  *entry,
+                                                    PicmanPaletteEditor *editor);
+static void   palette_editor_entry_context         (PicmanPaletteView   *view,
+                                                    PicmanPaletteEntry  *entry,
+                                                    PicmanPaletteEditor *editor);
+static void   palette_editor_color_dropped         (PicmanPaletteView   *view,
+                                                    PicmanPaletteEntry  *entry,
+                                                    const PicmanRGB     *color,
+                                                    PicmanPaletteEditor *editor);
 
 static void   palette_editor_color_name_changed    (GtkWidget         *widget,
-                                                    GimpPaletteEditor *editor);
+                                                    PicmanPaletteEditor *editor);
 static void   palette_editor_columns_changed       (GtkAdjustment     *adj,
-                                                    GimpPaletteEditor *editor);
+                                                    PicmanPaletteEditor *editor);
 
-static void   palette_editor_resize                (GimpPaletteEditor *editor,
+static void   palette_editor_resize                (PicmanPaletteEditor *editor,
                                                     gint               width,
                                                     gdouble            zoom_factor);
-static void   palette_editor_scroll_top_left       (GimpPaletteEditor *editor);
+static void   palette_editor_scroll_top_left       (PicmanPaletteEditor *editor);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpPaletteEditor, gimp_palette_editor,
-                         GIMP_TYPE_DATA_EDITOR,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_DOCKED,
-                                                gimp_palette_editor_docked_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanPaletteEditor, picman_palette_editor,
+                         PICMAN_TYPE_DATA_EDITOR,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_DOCKED,
+                                                picman_palette_editor_docked_iface_init))
 
-#define parent_class gimp_palette_editor_parent_class
+#define parent_class picman_palette_editor_parent_class
 
-static GimpDockedInterface *parent_docked_iface = NULL;
+static PicmanDockedInterface *parent_docked_iface = NULL;
 
 
 static void
-gimp_palette_editor_class_init (GimpPaletteEditorClass *klass)
+picman_palette_editor_class_init (PicmanPaletteEditorClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass      *widget_class = GTK_WIDGET_CLASS (klass);
-  GimpDataEditorClass *editor_class = GIMP_DATA_EDITOR_CLASS (klass);
+  PicmanDataEditorClass *editor_class = PICMAN_DATA_EDITOR_CLASS (klass);
 
-  object_class->constructed = gimp_palette_editor_constructed;
-  object_class->dispose     = gimp_palette_editor_dispose;
+  object_class->constructed = picman_palette_editor_constructed;
+  object_class->dispose     = picman_palette_editor_dispose;
 
-  widget_class->unmap       = gimp_palette_editor_unmap;
+  widget_class->unmap       = picman_palette_editor_unmap;
 
-  editor_class->set_data    = gimp_palette_editor_set_data;
+  editor_class->set_data    = picman_palette_editor_set_data;
   editor_class->title       = _("Palette Editor");
 }
 
 static void
-gimp_palette_editor_docked_iface_init (GimpDockedInterface *iface)
+picman_palette_editor_docked_iface_init (PicmanDockedInterface *iface)
 {
   parent_docked_iface = g_type_interface_peek_parent (iface);
 
   if (! parent_docked_iface)
-    parent_docked_iface = g_type_default_interface_peek (GIMP_TYPE_DOCKED);
+    parent_docked_iface = g_type_default_interface_peek (PICMAN_TYPE_DOCKED);
 
-  iface->set_context  = gimp_palette_editor_set_context;
-  iface->set_aux_info = gimp_palette_editor_set_aux_info;
-  iface->get_aux_info = gimp_palette_editor_get_aux_info;
+  iface->set_context  = picman_palette_editor_set_context;
+  iface->set_aux_info = picman_palette_editor_set_aux_info;
+  iface->get_aux_info = picman_palette_editor_get_aux_info;
 }
 
 static void
-gimp_palette_editor_init (GimpPaletteEditor *editor)
+picman_palette_editor_init (PicmanPaletteEditor *editor)
 {
-  GimpDataEditor *data_editor = GIMP_DATA_EDITOR (editor);
+  PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (editor);
   GtkWidget      *hbox;
   GtkWidget      *label;
   GtkWidget      *spinbutton;
@@ -179,15 +179,15 @@ gimp_palette_editor_init (GimpPaletteEditor *editor)
   gtk_box_pack_start (GTK_BOX (editor), data_editor->view, TRUE, TRUE, 0);
   gtk_widget_show (data_editor->view);
 
-  editor->view = gimp_view_new_full_by_types (NULL,
-                                              GIMP_TYPE_PALETTE_VIEW,
-                                              GIMP_TYPE_PALETTE,
+  editor->view = picman_view_new_full_by_types (NULL,
+                                              PICMAN_TYPE_PALETTE_VIEW,
+                                              PICMAN_TYPE_PALETTE,
                                               PREVIEW_WIDTH, PREVIEW_HEIGHT, 0,
                                               FALSE, TRUE, FALSE);
-  gimp_view_renderer_palette_set_cell_size
-    (GIMP_VIEW_RENDERER_PALETTE (GIMP_VIEW (editor->view)->renderer), -1);
-  gimp_view_renderer_palette_set_draw_grid
-    (GIMP_VIEW_RENDERER_PALETTE (GIMP_VIEW (editor->view)->renderer), TRUE);
+  picman_view_renderer_palette_set_cell_size
+    (PICMAN_VIEW_RENDERER_PALETTE (PICMAN_VIEW (editor->view)->renderer), -1);
+  picman_view_renderer_palette_set_draw_grid
+    (PICMAN_VIEW_RENDERER_PALETTE (PICMAN_VIEW (editor->view)->renderer), TRUE);
 
   gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (data_editor->view),
                                          editor->view);
@@ -213,7 +213,7 @@ gimp_palette_editor_init (GimpPaletteEditor *editor)
                     G_CALLBACK (palette_editor_color_dropped),
                     editor);
 
-  gimp_dnd_viewable_dest_add (editor->view, GIMP_TYPE_PALETTE,
+  picman_dnd_viewable_dest_add (editor->view, PICMAN_TYPE_PALETTE,
                               palette_editor_drop_palette,
                               editor);
 
@@ -236,7 +236,7 @@ gimp_palette_editor_init (GimpPaletteEditor *editor)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  spinbutton = gimp_spin_button_new (&adj, 0, 0, 64, 1, 4, 0, 1, 0);
+  spinbutton = picman_spin_button_new (&adj, 0, 0, 64, 1, 4, 0, 1, 0);
   editor->columns_data = GTK_ADJUSTMENT (adj);
   gtk_box_pack_start (GTK_BOX (hbox), spinbutton, FALSE, FALSE, 0);
   gtk_widget_show (spinbutton);
@@ -247,38 +247,38 @@ gimp_palette_editor_init (GimpPaletteEditor *editor)
 }
 
 static void
-gimp_palette_editor_constructed (GObject *object)
+picman_palette_editor_constructed (GObject *object)
 {
-  GimpPaletteEditor *editor = GIMP_PALETTE_EDITOR (object);
+  PicmanPaletteEditor *editor = PICMAN_PALETTE_EDITOR (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  gimp_editor_add_action_button (GIMP_EDITOR (editor), "palette-editor",
+  picman_editor_add_action_button (PICMAN_EDITOR (editor), "palette-editor",
                                  "palette-editor-edit-color", NULL);
 
-  gimp_editor_add_action_button (GIMP_EDITOR (editor), "palette-editor",
+  picman_editor_add_action_button (PICMAN_EDITOR (editor), "palette-editor",
                                  "palette-editor-new-color-fg",
                                  "palette-editor-new-color-bg",
-                                 gimp_get_toggle_behavior_mask (),
+                                 picman_get_toggle_behavior_mask (),
                                  NULL);
 
-  gimp_editor_add_action_button (GIMP_EDITOR (editor), "palette-editor",
+  picman_editor_add_action_button (PICMAN_EDITOR (editor), "palette-editor",
                                  "palette-editor-delete-color", NULL);
 
-  gimp_editor_add_action_button (GIMP_EDITOR (editor), "palette-editor",
+  picman_editor_add_action_button (PICMAN_EDITOR (editor), "palette-editor",
                                  "palette-editor-zoom-out", NULL);
 
-  gimp_editor_add_action_button (GIMP_EDITOR (editor), "palette-editor",
+  picman_editor_add_action_button (PICMAN_EDITOR (editor), "palette-editor",
                                  "palette-editor-zoom-in", NULL);
 
-  gimp_editor_add_action_button (GIMP_EDITOR (editor), "palette-editor",
+  picman_editor_add_action_button (PICMAN_EDITOR (editor), "palette-editor",
                                  "palette-editor-zoom-all", NULL);
 }
 
 static void
-gimp_palette_editor_dispose (GObject *object)
+picman_palette_editor_dispose (GObject *object)
 {
-  GimpPaletteEditor *editor = GIMP_PALETTE_EDITOR (object);
+  PicmanPaletteEditor *editor = PICMAN_PALETTE_EDITOR (object);
 
   if (editor->color_dialog)
     {
@@ -290,9 +290,9 @@ gimp_palette_editor_dispose (GObject *object)
 }
 
 static void
-gimp_palette_editor_unmap (GtkWidget *widget)
+picman_palette_editor_unmap (GtkWidget *widget)
 {
-  GimpPaletteEditor *editor = GIMP_PALETTE_EDITOR (widget);
+  PicmanPaletteEditor *editor = PICMAN_PALETTE_EDITOR (widget);
 
   if (editor->color_dialog)
     gtk_widget_hide (editor->color_dialog);
@@ -301,10 +301,10 @@ gimp_palette_editor_unmap (GtkWidget *widget)
 }
 
 static void
-gimp_palette_editor_set_data (GimpDataEditor *editor,
-                              GimpData       *data)
+picman_palette_editor_set_data (PicmanDataEditor *editor,
+                              PicmanData       *data)
 {
-  GimpPaletteEditor *palette_editor = GIMP_PALETTE_EDITOR (editor);
+  PicmanPaletteEditor *palette_editor = PICMAN_PALETTE_EDITOR (editor);
 
   g_signal_handlers_block_by_func (palette_editor->columns_data,
                                    palette_editor_columns_changed,
@@ -325,25 +325,25 @@ gimp_palette_editor_set_data (GimpDataEditor *editor,
       gtk_adjustment_set_value (palette_editor->columns_data, 0);
     }
 
-  GIMP_DATA_EDITOR_CLASS (parent_class)->set_data (editor, data);
+  PICMAN_DATA_EDITOR_CLASS (parent_class)->set_data (editor, data);
 
-  gimp_view_set_viewable (GIMP_VIEW (palette_editor->view),
-                          GIMP_VIEWABLE (data));
+  picman_view_set_viewable (PICMAN_VIEW (palette_editor->view),
+                          PICMAN_VIEWABLE (data));
 
   if (editor->data)
     {
-      GimpPalette *palette = GIMP_PALETTE (editor->data);
+      PicmanPalette *palette = PICMAN_PALETTE (editor->data);
 
       g_signal_connect (editor->data, "invalidate-preview",
                         G_CALLBACK (palette_editor_invalidate_preview),
                         editor);
 
       gtk_adjustment_set_value (palette_editor->columns_data,
-                                gimp_palette_get_columns (palette));
+                                picman_palette_get_columns (palette));
 
       palette_editor_scroll_top_left (palette_editor);
 
-      palette_editor_invalidate_preview (GIMP_PALETTE (editor->data),
+      palette_editor_invalidate_preview (PICMAN_PALETTE (editor->data),
                                          palette_editor);
     }
 
@@ -353,31 +353,31 @@ gimp_palette_editor_set_data (GimpDataEditor *editor,
 }
 
 static void
-gimp_palette_editor_set_context (GimpDocked  *docked,
-                                 GimpContext *context)
+picman_palette_editor_set_context (PicmanDocked  *docked,
+                                 PicmanContext *context)
 {
-  GimpPaletteEditor *editor = GIMP_PALETTE_EDITOR (docked);
+  PicmanPaletteEditor *editor = PICMAN_PALETTE_EDITOR (docked);
 
   parent_docked_iface->set_context (docked, context);
 
-  gimp_view_renderer_set_context (GIMP_VIEW (editor->view)->renderer,
+  picman_view_renderer_set_context (PICMAN_VIEW (editor->view)->renderer,
                                   context);
 }
 
 #define AUX_INFO_ZOOM_FACTOR "zoom-factor"
 
 static void
-gimp_palette_editor_set_aux_info (GimpDocked *docked,
+picman_palette_editor_set_aux_info (PicmanDocked *docked,
                                   GList      *aux_info)
 {
-  GimpPaletteEditor *editor = GIMP_PALETTE_EDITOR (docked);
+  PicmanPaletteEditor *editor = PICMAN_PALETTE_EDITOR (docked);
   GList             *list;
 
   parent_docked_iface->set_aux_info (docked, aux_info);
 
   for (list = aux_info; list; list = g_list_next (list))
     {
-      GimpSessionInfoAux *aux = list->data;
+      PicmanSessionInfoAux *aux = list->data;
 
       if (! strcmp (aux->name, AUX_INFO_ZOOM_FACTOR))
         {
@@ -391,21 +391,21 @@ gimp_palette_editor_set_aux_info (GimpDocked *docked,
 }
 
 static GList *
-gimp_palette_editor_get_aux_info (GimpDocked *docked)
+picman_palette_editor_get_aux_info (PicmanDocked *docked)
 {
-  GimpPaletteEditor *editor = GIMP_PALETTE_EDITOR (docked);
+  PicmanPaletteEditor *editor = PICMAN_PALETTE_EDITOR (docked);
   GList             *aux_info;
 
   aux_info = parent_docked_iface->get_aux_info (docked);
 
   if (editor->zoom_factor != 1.0)
     {
-      GimpSessionInfoAux *aux;
+      PicmanSessionInfoAux *aux;
       gchar               value[G_ASCII_DTOSTR_BUF_SIZE];
 
       g_ascii_formatd (value, sizeof (value), "%.2f", editor->zoom_factor);
 
-      aux = gimp_session_info_aux_new (AUX_INFO_ZOOM_FACTOR, value);
+      aux = picman_session_info_aux_new (AUX_INFO_ZOOM_FACTOR, value);
       aux_info = g_list_append (aux_info, aux);
     }
 
@@ -416,51 +416,51 @@ gimp_palette_editor_get_aux_info (GimpDocked *docked)
 /*  public functions  */
 
 GtkWidget *
-gimp_palette_editor_new (GimpContext     *context,
-                         GimpMenuFactory *menu_factory)
+picman_palette_editor_new (PicmanContext     *context,
+                         PicmanMenuFactory *menu_factory)
 {
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
-  return g_object_new (GIMP_TYPE_PALETTE_EDITOR,
+  return g_object_new (PICMAN_TYPE_PALETTE_EDITOR,
                        "menu-factory",    menu_factory,
                        "menu-identifier", "<PaletteEditor>",
                        "ui-path",         "/palette-editor-popup",
-                       "data-factory",    context->gimp->palette_factory,
+                       "data-factory",    context->picman->palette_factory,
                        "context",         context,
-                       "data",            gimp_context_get_palette (context),
+                       "data",            picman_context_get_palette (context),
                        NULL);
 }
 
 void
-gimp_palette_editor_pick_color (GimpPaletteEditor  *editor,
-                                const GimpRGB      *color,
-                                GimpColorPickState  pick_state)
+picman_palette_editor_pick_color (PicmanPaletteEditor  *editor,
+                                const PicmanRGB      *color,
+                                PicmanColorPickState  pick_state)
 {
-  g_return_if_fail (GIMP_IS_PALETTE_EDITOR (editor));
+  g_return_if_fail (PICMAN_IS_PALETTE_EDITOR (editor));
   g_return_if_fail (color != NULL);
 
-  if (GIMP_DATA_EDITOR (editor)->data_editable)
+  if (PICMAN_DATA_EDITOR (editor)->data_editable)
     {
-      GimpPaletteEntry *entry;
-      GimpData         *data;
+      PicmanPaletteEntry *entry;
+      PicmanData         *data;
       gint              index = -1;
 
-      data = gimp_data_editor_get_data (GIMP_DATA_EDITOR (editor));
+      data = picman_data_editor_get_data (PICMAN_DATA_EDITOR (editor));
 
       switch (pick_state)
         {
-        case GIMP_COLOR_PICK_STATE_NEW:
+        case PICMAN_COLOR_PICK_STATE_NEW:
           if (editor->color)
             index = editor->color->position + 1;
 
-          entry = gimp_palette_add_entry (GIMP_PALETTE (data), index,
+          entry = picman_palette_add_entry (PICMAN_PALETTE (data), index,
                                           NULL, color);
-          gimp_palette_view_select_entry (GIMP_PALETTE_VIEW (editor->view),
+          picman_palette_view_select_entry (PICMAN_PALETTE_VIEW (editor->view),
                                           entry);
           break;
 
-        case GIMP_COLOR_PICK_STATE_UPDATE:
-          gimp_palette_set_entry_color (GIMP_PALETTE (data),
+        case PICMAN_COLOR_PICK_STATE_UPDATE:
+          picman_palette_set_entry_color (PICMAN_PALETTE (data),
                                         editor->color->position,
                                         color);
           break;
@@ -469,15 +469,15 @@ gimp_palette_editor_pick_color (GimpPaletteEditor  *editor,
 }
 
 void
-gimp_palette_editor_zoom (GimpPaletteEditor  *editor,
-                          GimpZoomType        zoom_type)
+picman_palette_editor_zoom (PicmanPaletteEditor  *editor,
+                          PicmanZoomType        zoom_type)
 {
-  GimpPalette *palette;
+  PicmanPalette *palette;
   gdouble      zoom_factor;
 
-  g_return_if_fail (GIMP_IS_PALETTE_EDITOR (editor));
+  g_return_if_fail (PICMAN_IS_PALETTE_EDITOR (editor));
 
-  palette = GIMP_PALETTE (GIMP_DATA_EDITOR (editor)->data);
+  palette = PICMAN_PALETTE (PICMAN_DATA_EDITOR (editor)->data);
 
   if (! palette)
     return;
@@ -486,21 +486,21 @@ gimp_palette_editor_zoom (GimpPaletteEditor  *editor,
 
   switch (zoom_type)
     {
-    case GIMP_ZOOM_IN_MAX:
-    case GIMP_ZOOM_IN_MORE:
-    case GIMP_ZOOM_IN:
+    case PICMAN_ZOOM_IN_MAX:
+    case PICMAN_ZOOM_IN_MORE:
+    case PICMAN_ZOOM_IN:
       zoom_factor += 0.1;
       break;
 
-    case GIMP_ZOOM_OUT_MORE:
-    case GIMP_ZOOM_OUT:
+    case PICMAN_ZOOM_OUT_MORE:
+    case PICMAN_ZOOM_OUT:
       zoom_factor -= 0.1;
       break;
 
-    case GIMP_ZOOM_OUT_MAX:
-    case GIMP_ZOOM_TO: /* abused as ZOOM_ALL */
+    case PICMAN_ZOOM_OUT_MAX:
+    case PICMAN_ZOOM_TO: /* abused as ZOOM_ALL */
       {
-        GtkWidget     *scrolled_win = GIMP_DATA_EDITOR (editor)->view;
+        GtkWidget     *scrolled_win = PICMAN_DATA_EDITOR (editor)->view;
         GtkWidget     *viewport     = gtk_bin_get_child (GTK_BIN (scrolled_win));
         GtkAllocation  allocation;
         gint           columns;
@@ -508,12 +508,12 @@ gimp_palette_editor_zoom (GimpPaletteEditor  *editor,
 
         gtk_widget_get_allocation (viewport, &allocation);
 
-        columns = gimp_palette_get_columns (palette);
+        columns = picman_palette_get_columns (palette);
         if (columns == 0)
           columns = COLUMNS;
 
-        rows = gimp_palette_get_n_colors (palette) / columns;
-        if (gimp_palette_get_n_colors (palette) % columns)
+        rows = picman_palette_get_n_colors (palette) / columns;
+        if (picman_palette_get_n_colors (palette) % columns)
           rows += 1;
 
         rows = MAX (1, rows);
@@ -526,7 +526,7 @@ gimp_palette_editor_zoom (GimpPaletteEditor  *editor,
 
   zoom_factor = CLAMP (zoom_factor, 0.1, 4.0);
 
-  editor->columns = gimp_palette_get_columns (palette);
+  editor->columns = picman_palette_get_columns (palette);
   if (editor->columns == 0)
     editor->columns = COLUMNS;
 
@@ -536,21 +536,21 @@ gimp_palette_editor_zoom (GimpPaletteEditor  *editor,
 }
 
 gint
-gimp_palette_editor_get_index (GimpPaletteEditor *editor,
-                               const GimpRGB     *search)
+picman_palette_editor_get_index (PicmanPaletteEditor *editor,
+                               const PicmanRGB     *search)
 {
-  GimpPalette *palette;
+  PicmanPalette *palette;
 
-  g_return_val_if_fail (GIMP_IS_PALETTE_EDITOR (editor), -1);
+  g_return_val_if_fail (PICMAN_IS_PALETTE_EDITOR (editor), -1);
   g_return_val_if_fail (search != NULL, -1);
 
-  palette = GIMP_PALETTE (GIMP_DATA_EDITOR (editor)->data);
+  palette = PICMAN_PALETTE (PICMAN_DATA_EDITOR (editor)->data);
 
-  if (palette && gimp_palette_get_n_colors (palette) > 0)
+  if (palette && picman_palette_get_n_colors (palette) > 0)
     {
-      GimpPaletteEntry *entry;
+      PicmanPaletteEntry *entry;
 
-      entry = gimp_palette_find_entry (palette, search, editor->color);
+      entry = picman_palette_find_entry (palette, search, editor->color);
 
       if (entry)
         return entry->position;
@@ -560,25 +560,25 @@ gimp_palette_editor_get_index (GimpPaletteEditor *editor,
 }
 
 gboolean
-gimp_palette_editor_set_index (GimpPaletteEditor *editor,
+picman_palette_editor_set_index (PicmanPaletteEditor *editor,
                                gint               index,
-                               GimpRGB           *color)
+                               PicmanRGB           *color)
 {
-  GimpPalette *palette;
+  PicmanPalette *palette;
 
-  g_return_val_if_fail (GIMP_IS_PALETTE_EDITOR (editor), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PALETTE_EDITOR (editor), FALSE);
 
-  palette = GIMP_PALETTE (GIMP_DATA_EDITOR (editor)->data);
+  palette = PICMAN_PALETTE (PICMAN_DATA_EDITOR (editor)->data);
 
-  if (palette && gimp_palette_get_n_colors (palette) > 0)
+  if (palette && picman_palette_get_n_colors (palette) > 0)
     {
-      GimpPaletteEntry *entry;
+      PicmanPaletteEntry *entry;
 
-      index = CLAMP (index, 0, gimp_palette_get_n_colors (palette) - 1);
+      index = CLAMP (index, 0, picman_palette_get_n_colors (palette) - 1);
 
-      entry = gimp_palette_get_entry (palette, index);
+      entry = picman_palette_get_entry (palette, index);
 
-      gimp_palette_view_select_entry (GIMP_PALETTE_VIEW (editor->view),
+      picman_palette_view_select_entry (PICMAN_PALETTE_VIEW (editor->view),
                                       entry);
 
       if (color)
@@ -591,17 +591,17 @@ gimp_palette_editor_set_index (GimpPaletteEditor *editor,
 }
 
 gint
-gimp_palette_editor_max_index (GimpPaletteEditor *editor)
+picman_palette_editor_max_index (PicmanPaletteEditor *editor)
 {
-  GimpPalette *palette;
+  PicmanPalette *palette;
 
-  g_return_val_if_fail (GIMP_IS_PALETTE_EDITOR (editor), -1);
+  g_return_val_if_fail (PICMAN_IS_PALETTE_EDITOR (editor), -1);
 
-  palette = GIMP_PALETTE (GIMP_DATA_EDITOR (editor)->data);
+  palette = PICMAN_PALETTE (PICMAN_DATA_EDITOR (editor)->data);
 
-  if (palette && gimp_palette_get_n_colors (palette) > 0)
+  if (palette && picman_palette_get_n_colors (palette) > 0)
     {
-      return gimp_palette_get_n_colors (palette) - 1;
+      return picman_palette_get_n_colors (palette) - 1;
     }
 
   return -1;
@@ -611,10 +611,10 @@ gimp_palette_editor_max_index (GimpPaletteEditor *editor)
 /*  private functions  */
 
 static void
-palette_editor_invalidate_preview (GimpPalette       *palette,
-                                   GimpPaletteEditor *editor)
+palette_editor_invalidate_preview (PicmanPalette       *palette,
+                                   PicmanPaletteEditor *editor)
 {
-  editor->columns = gimp_palette_get_columns (palette);
+  editor->columns = picman_palette_get_columns (palette);
   if (editor->columns == 0)
     editor->columns = COLUMNS;
 
@@ -624,7 +624,7 @@ palette_editor_invalidate_preview (GimpPalette       *palette,
 static void
 palette_editor_viewport_size_allocate (GtkWidget         *widget,
                                        GtkAllocation     *allocation,
-                                       GimpPaletteEditor *editor)
+                                       PicmanPaletteEditor *editor)
 {
   if (allocation->width != editor->last_width)
     {
@@ -637,38 +637,38 @@ static void
 palette_editor_drop_palette (GtkWidget    *widget,
                              gint          x,
                              gint          y,
-                             GimpViewable *viewable,
+                             PicmanViewable *viewable,
                              gpointer      data)
 {
-  gimp_data_editor_set_data (GIMP_DATA_EDITOR (data), GIMP_DATA (viewable));
+  picman_data_editor_set_data (PICMAN_DATA_EDITOR (data), PICMAN_DATA (viewable));
 }
 
 
 /*  palette view callbacks  */
 
 static void
-palette_editor_entry_clicked (GimpPaletteView   *view,
-                              GimpPaletteEntry  *entry,
+palette_editor_entry_clicked (PicmanPaletteView   *view,
+                              PicmanPaletteEntry  *entry,
                               GdkModifierType    state,
-                              GimpPaletteEditor *editor)
+                              PicmanPaletteEditor *editor)
 {
   if (entry)
     {
-      GimpDataEditor *data_editor = GIMP_DATA_EDITOR (editor);
+      PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (editor);
 
-      if (state & gimp_get_toggle_behavior_mask ())
-        gimp_context_set_background (data_editor->context, &entry->color);
+      if (state & picman_get_toggle_behavior_mask ())
+        picman_context_set_background (data_editor->context, &entry->color);
       else
-        gimp_context_set_foreground (data_editor->context, &entry->color);
+        picman_context_set_foreground (data_editor->context, &entry->color);
     }
 }
 
 static void
-palette_editor_entry_selected (GimpPaletteView   *view,
-                               GimpPaletteEntry  *entry,
-                               GimpPaletteEditor *editor)
+palette_editor_entry_selected (PicmanPaletteView   *view,
+                               PicmanPaletteEntry  *entry,
+                               PicmanPaletteEditor *editor)
 {
-  GimpDataEditor *data_editor = GIMP_DATA_EDITOR (editor);
+  PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (editor);
 
   if (editor->color != entry)
     {
@@ -688,48 +688,48 @@ palette_editor_entry_selected (GimpPaletteView   *view,
       gtk_editable_set_editable (GTK_EDITABLE (editor->color_name),
                                  entry && data_editor->data_editable);
 
-      gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                              gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+      picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                              picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
     }
 }
 
 static void
-palette_editor_entry_activated (GimpPaletteView   *view,
-                                GimpPaletteEntry  *entry,
-                                GimpPaletteEditor *editor)
+palette_editor_entry_activated (PicmanPaletteView   *view,
+                                PicmanPaletteEntry  *entry,
+                                PicmanPaletteEditor *editor)
 {
-  if (GIMP_DATA_EDITOR (editor)->data_editable && entry == editor->color)
+  if (PICMAN_DATA_EDITOR (editor)->data_editable && entry == editor->color)
     {
-      gimp_ui_manager_activate_action (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
+      picman_ui_manager_activate_action (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
                                        "palette-editor",
                                        "palette-editor-edit-color");
     }
 }
 
 static void
-palette_editor_entry_context (GimpPaletteView   *view,
-                              GimpPaletteEntry  *entry,
-                              GimpPaletteEditor *editor)
+palette_editor_entry_context (PicmanPaletteView   *view,
+                              PicmanPaletteEntry  *entry,
+                              PicmanPaletteEditor *editor)
 {
-  gimp_editor_popup_menu (GIMP_EDITOR (editor), NULL, NULL);
+  picman_editor_popup_menu (PICMAN_EDITOR (editor), NULL, NULL);
 }
 
 static void
-palette_editor_color_dropped (GimpPaletteView   *view,
-                              GimpPaletteEntry  *entry,
-                              const GimpRGB     *color,
-                              GimpPaletteEditor *editor)
+palette_editor_color_dropped (PicmanPaletteView   *view,
+                              PicmanPaletteEntry  *entry,
+                              const PicmanRGB     *color,
+                              PicmanPaletteEditor *editor)
 {
-  if (GIMP_DATA_EDITOR (editor)->data_editable)
+  if (PICMAN_DATA_EDITOR (editor)->data_editable)
     {
-      GimpPalette *palette = GIMP_PALETTE (GIMP_DATA_EDITOR (editor)->data);
+      PicmanPalette *palette = PICMAN_PALETTE (PICMAN_DATA_EDITOR (editor)->data);
       gint         pos     = -1;
 
       if (entry)
         pos = entry->position;
 
-      entry = gimp_palette_add_entry (palette, pos, NULL, color);
-      gimp_palette_view_select_entry (GIMP_PALETTE_VIEW (editor->view), entry);
+      entry = picman_palette_add_entry (palette, pos, NULL, color);
+      picman_palette_view_select_entry (PICMAN_PALETTE_VIEW (editor->view), entry);
     }
 }
 
@@ -738,28 +738,28 @@ palette_editor_color_dropped (GimpPaletteView   *view,
 
 static void
 palette_editor_color_name_changed (GtkWidget         *widget,
-                                   GimpPaletteEditor *editor)
+                                   PicmanPaletteEditor *editor)
 {
-  if (GIMP_DATA_EDITOR (editor)->data)
+  if (PICMAN_DATA_EDITOR (editor)->data)
     {
-      GimpPalette *palette = GIMP_PALETTE (GIMP_DATA_EDITOR (editor)->data);
+      PicmanPalette *palette = PICMAN_PALETTE (PICMAN_DATA_EDITOR (editor)->data);
       const gchar *name;
 
       name = gtk_entry_get_text (GTK_ENTRY (editor->color_name));
 
-      gimp_palette_set_entry_name (palette, editor->color->position, name);
+      picman_palette_set_entry_name (palette, editor->color->position, name);
     }
 }
 
 static void
 palette_editor_columns_changed (GtkAdjustment     *adj,
-                                GimpPaletteEditor *editor)
+                                PicmanPaletteEditor *editor)
 {
-  if (GIMP_DATA_EDITOR (editor)->data)
+  if (PICMAN_DATA_EDITOR (editor)->data)
     {
-      GimpPalette *palette = GIMP_PALETTE (GIMP_DATA_EDITOR (editor)->data);
+      PicmanPalette *palette = PICMAN_PALETTE (PICMAN_DATA_EDITOR (editor)->data);
 
-      gimp_palette_set_columns (palette,
+      picman_palette_set_columns (palette,
                                 ROUND (gtk_adjustment_get_value (adj)));
     }
 }
@@ -768,16 +768,16 @@ palette_editor_columns_changed (GtkAdjustment     *adj,
 /*  misc utils  */
 
 static void
-palette_editor_resize (GimpPaletteEditor *editor,
+palette_editor_resize (PicmanPaletteEditor *editor,
                        gint               width,
                        gdouble            zoom_factor)
 {
-  GimpPalette *palette;
+  PicmanPalette *palette;
   gint         rows;
   gint         preview_width;
   gint         preview_height;
 
-  palette = GIMP_PALETTE (GIMP_DATA_EDITOR (editor)->data);
+  palette = PICMAN_PALETTE (PICMAN_DATA_EDITOR (editor)->data);
 
   if (! palette)
     return;
@@ -789,26 +789,26 @@ palette_editor_resize (GimpPaletteEditor *editor,
   if (editor->col_width < 0)
     editor->col_width = 0;
 
-  rows = gimp_palette_get_n_colors (palette) / editor->columns;
-  if (gimp_palette_get_n_colors (palette) % editor->columns)
+  rows = picman_palette_get_n_colors (palette) / editor->columns;
+  if (picman_palette_get_n_colors (palette) % editor->columns)
     rows += 1;
 
   preview_width  = (editor->col_width + SPACING) * editor->columns;
   preview_height = (rows *
                     (SPACING + (gint) (ENTRY_HEIGHT * editor->zoom_factor)));
 
-  if (preview_height > GIMP_VIEWABLE_MAX_PREVIEW_SIZE)
-    preview_height = ((GIMP_VIEWABLE_MAX_PREVIEW_SIZE - SPACING) / rows) * rows;
+  if (preview_height > PICMAN_VIEWABLE_MAX_PREVIEW_SIZE)
+    preview_height = ((PICMAN_VIEWABLE_MAX_PREVIEW_SIZE - SPACING) / rows) * rows;
 
-  gimp_view_renderer_set_size_full (GIMP_VIEW (editor->view)->renderer,
+  picman_view_renderer_set_size_full (PICMAN_VIEW (editor->view)->renderer,
                                     preview_width  + SPACING,
                                     preview_height + SPACING, 0);
 }
 
 static void
-palette_editor_scroll_top_left (GimpPaletteEditor *palette_editor)
+palette_editor_scroll_top_left (PicmanPaletteEditor *palette_editor)
 {
-  GimpDataEditor *data_editor = GIMP_DATA_EDITOR (palette_editor);
+  PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (palette_editor);
   GtkAdjustment  *hadj;
   GtkAdjustment  *vadj;
 

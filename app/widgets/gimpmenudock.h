@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpmenudock.h
- * Copyright (C) 2001-2005 Michael Natterer <mitch@gimp.org>
+ * picmanmenudock.h
+ * Copyright (C) 2001-2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,40 +18,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_MENU_DOCK_H__
-#define __GIMP_MENU_DOCK_H__
+#ifndef __PICMAN_MENU_DOCK_H__
+#define __PICMAN_MENU_DOCK_H__
 
 
-#include "gimpdock.h"
+#include "picmandock.h"
 
 
-#define GIMP_TYPE_MENU_DOCK            (gimp_menu_dock_get_type ())
-#define GIMP_MENU_DOCK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_MENU_DOCK, GimpMenuDock))
-#define GIMP_MENU_DOCK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_MENU_DOCK, GimpMenuDockClass))
-#define GIMP_IS_MENU_DOCK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_MENU_DOCK))
-#define GIMP_IS_MENU_DOCK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_MENU_DOCK))
-#define GIMP_MENU_DOCK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_MENU_DOCK, GimpMenuDockClass))
+#define PICMAN_TYPE_MENU_DOCK            (picman_menu_dock_get_type ())
+#define PICMAN_MENU_DOCK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_MENU_DOCK, PicmanMenuDock))
+#define PICMAN_MENU_DOCK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_MENU_DOCK, PicmanMenuDockClass))
+#define PICMAN_IS_MENU_DOCK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_MENU_DOCK))
+#define PICMAN_IS_MENU_DOCK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_MENU_DOCK))
+#define PICMAN_MENU_DOCK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_MENU_DOCK, PicmanMenuDockClass))
 
-typedef struct _GimpMenuDockPrivate GimpMenuDockPrivate;
-typedef struct _GimpMenuDockClass   GimpMenuDockClass;
+typedef struct _PicmanMenuDockPrivate PicmanMenuDockPrivate;
+typedef struct _PicmanMenuDockClass   PicmanMenuDockClass;
 
-struct _GimpMenuDock
+struct _PicmanMenuDock
 {
-  GimpDock             parent_instance;
+  PicmanDock             parent_instance;
 
-  GimpMenuDockPrivate *p;
+  PicmanMenuDockPrivate *p;
 };
 
-struct _GimpMenuDockClass
+struct _PicmanMenuDockClass
 {
-  GimpDockClass  parent_class;
+  PicmanDockClass  parent_class;
 };
 
 
-GType       gimp_menu_dock_get_type (void) G_GNUC_CONST;
+GType       picman_menu_dock_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_menu_dock_new      (void);
+GtkWidget * picman_menu_dock_new      (void);
 
 
 
-#endif /* __GIMP_MENU_DOCK_H__ */
+#endif /* __PICMAN_MENU_DOCK_H__ */

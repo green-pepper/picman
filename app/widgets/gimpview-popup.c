@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpview-popup.c
- * Copyright (C) 2003-2006 Michael Natterer <mitch@gimp.org>
+ * picmanview-popup.c
+ * Copyright (C) 2003-2006 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,28 +23,28 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpviewable.h"
+#include "core/picmancontext.h"
+#include "core/picmanviewable.h"
 
-#include "gimpview.h"
-#include "gimpviewrenderer.h"
-#include "gimpview-popup.h"
+#include "picmanview.h"
+#include "picmanviewrenderer.h"
+#include "picmanview-popup.h"
 
 
 #define VIEW_POPUP_DELAY 150
 
 
-typedef struct _GimpViewPopup GimpViewPopup;
+typedef struct _PicmanViewPopup PicmanViewPopup;
 
-struct _GimpViewPopup
+struct _PicmanViewPopup
 {
   GtkWidget    *widget;
-  GimpContext  *context;
-  GimpViewable *viewable;
+  PicmanContext  *context;
+  PicmanViewable *viewable;
 
   gint          popup_width;
   gint          popup_height;
@@ -60,39 +60,39 @@ struct _GimpViewPopup
 
 /*  local function prototypes  */
 
-static void       gimp_view_popup_hide           (GimpViewPopup  *popup);
-static gboolean   gimp_view_popup_button_release (GtkWidget      *widget,
+static void       picman_view_popup_hide           (PicmanViewPopup  *popup);
+static gboolean   picman_view_popup_button_release (GtkWidget      *widget,
                                                   GdkEventButton *bevent,
-                                                  GimpViewPopup  *popup);
-static void       gimp_view_popup_unmap          (GtkWidget      *widget,
-                                                  GimpViewPopup  *popup);
-static void       gimp_view_popup_drag_begin     (GtkWidget      *widget,
+                                                  PicmanViewPopup  *popup);
+static void       picman_view_popup_unmap          (GtkWidget      *widget,
+                                                  PicmanViewPopup  *popup);
+static void       picman_view_popup_drag_begin     (GtkWidget      *widget,
                                                   GdkDragContext *context,
-                                                  GimpViewPopup  *popup);
-static gboolean   gimp_view_popup_timeout        (GimpViewPopup  *popup);
+                                                  PicmanViewPopup  *popup);
+static gboolean   picman_view_popup_timeout        (PicmanViewPopup  *popup);
 
 
 /*  public functions  */
 
 gboolean
-gimp_view_popup_show (GtkWidget      *widget,
+picman_view_popup_show (GtkWidget      *widget,
                       GdkEventButton *bevent,
-                      GimpContext    *context,
-                      GimpViewable   *viewable,
+                      PicmanContext    *context,
+                      PicmanViewable   *viewable,
                       gint            view_width,
                       gint            view_height,
                       gboolean        dot_for_dot)
 {
-  GimpViewPopup *popup;
+  PicmanViewPopup *popup;
   gint           popup_width;
   gint           popup_height;
 
   g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
   g_return_val_if_fail (bevent != NULL, FALSE);
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), FALSE);
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), FALSE);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), FALSE);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), FALSE);
 
-  if (! gimp_viewable_get_popup_size (viewable,
+  if (! picman_viewable_get_popup_size (viewable,
                                       view_width,
                                       view_height,
                                       dot_for_dot,
@@ -100,7 +100,7 @@ gimp_view_popup_show (GtkWidget      *widget,
                                       &popup_height))
     return FALSE;
 
-  popup = g_slice_new0 (GimpViewPopup);
+  popup = g_slice_new0 (PicmanViewPopup);
 
   popup->widget       = widget;
   popup->context      = context;
@@ -113,21 +113,21 @@ gimp_view_popup_show (GtkWidget      *widget,
   popup->button_y     = bevent->y_root;
 
   g_signal_connect (widget, "button-release-event",
-                    G_CALLBACK (gimp_view_popup_button_release),
+                    G_CALLBACK (picman_view_popup_button_release),
                     popup);
   g_signal_connect (widget, "unmap",
-                    G_CALLBACK (gimp_view_popup_unmap),
+                    G_CALLBACK (picman_view_popup_unmap),
                     popup);
   g_signal_connect (widget, "drag-begin",
-                    G_CALLBACK (gimp_view_popup_drag_begin),
+                    G_CALLBACK (picman_view_popup_drag_begin),
                     popup);
 
   popup->timeout_id = g_timeout_add (VIEW_POPUP_DELAY,
-                                     (GSourceFunc) gimp_view_popup_timeout,
+                                     (GSourceFunc) picman_view_popup_timeout,
                                      popup);
 
-  g_object_set_data_full (G_OBJECT (widget), "gimp-view-popup", popup,
-                          (GDestroyNotify) gimp_view_popup_hide);
+  g_object_set_data_full (G_OBJECT (widget), "picman-view-popup", popup,
+                          (GDestroyNotify) picman_view_popup_hide);
 
   gtk_grab_add (widget);
 
@@ -138,7 +138,7 @@ gimp_view_popup_show (GtkWidget      *widget,
 /*  private functions  */
 
 static void
-gimp_view_popup_hide (GimpViewPopup *popup)
+picman_view_popup_hide (PicmanViewPopup *popup)
 {
   if (popup->timeout_id)
     g_source_remove (popup->timeout_id);
@@ -147,48 +147,48 @@ gimp_view_popup_hide (GimpViewPopup *popup)
     gtk_widget_destroy (popup->popup);
 
   g_signal_handlers_disconnect_by_func (popup->widget,
-                                        gimp_view_popup_button_release,
+                                        picman_view_popup_button_release,
                                         popup);
   g_signal_handlers_disconnect_by_func (popup->widget,
-                                        gimp_view_popup_unmap,
+                                        picman_view_popup_unmap,
                                         popup);
   g_signal_handlers_disconnect_by_func (popup->widget,
-                                        gimp_view_popup_drag_begin,
+                                        picman_view_popup_drag_begin,
                                         popup);
 
   gtk_grab_remove (popup->widget);
 
-  g_slice_free (GimpViewPopup, popup);
+  g_slice_free (PicmanViewPopup, popup);
 }
 
 static gboolean
-gimp_view_popup_button_release (GtkWidget      *widget,
+picman_view_popup_button_release (GtkWidget      *widget,
                                 GdkEventButton *bevent,
-                                GimpViewPopup  *popup)
+                                PicmanViewPopup  *popup)
 {
   if (bevent->button == popup->button)
-    g_object_set_data (G_OBJECT (popup->widget), "gimp-view-popup", NULL);
+    g_object_set_data (G_OBJECT (popup->widget), "picman-view-popup", NULL);
 
   return FALSE;
 }
 
 static void
-gimp_view_popup_unmap (GtkWidget     *widget,
-                       GimpViewPopup *popup)
+picman_view_popup_unmap (GtkWidget     *widget,
+                       PicmanViewPopup *popup)
 {
-  g_object_set_data (G_OBJECT (popup->widget), "gimp-view-popup", NULL);
+  g_object_set_data (G_OBJECT (popup->widget), "picman-view-popup", NULL);
 }
 
 static void
-gimp_view_popup_drag_begin (GtkWidget      *widget,
+picman_view_popup_drag_begin (GtkWidget      *widget,
                             GdkDragContext *context,
-                            GimpViewPopup  *popup)
+                            PicmanViewPopup  *popup)
 {
-  g_object_set_data (G_OBJECT (popup->widget), "gimp-view-popup", NULL);
+  g_object_set_data (G_OBJECT (popup->widget), "picman-view-popup", NULL);
 }
 
 static gboolean
-gimp_view_popup_timeout (GimpViewPopup *popup)
+picman_view_popup_timeout (PicmanViewPopup *popup)
 {
   GtkWidget    *window;
   GtkWidget    *frame;
@@ -215,12 +215,12 @@ gimp_view_popup_timeout (GimpViewPopup *popup)
   gtk_container_add (GTK_CONTAINER (window), frame);
   gtk_widget_show (frame);
 
-  view = gimp_view_new_full (popup->context,
+  view = picman_view_new_full (popup->context,
                              popup->viewable,
                              popup->popup_width,
                              popup->popup_height,
                              0, TRUE, FALSE, FALSE);
-  gimp_view_renderer_set_dot_for_dot (GIMP_VIEW (view)->renderer,
+  picman_view_renderer_set_dot_for_dot (PICMAN_VIEW (view)->renderer,
                                       popup->dot_for_dot);
   gtk_container_add (GTK_CONTAINER (frame), view);
   gtk_widget_show (view);

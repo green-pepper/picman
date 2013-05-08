@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimppalette.h
+ * picmanpalette.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,30 +18,30 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
-#ifndef __GIMP_PALETTE_H__
-#define __GIMP_PALETTE_H__
+#ifndef __PICMAN_PALETTE_H__
+#define __PICMAN_PALETTE_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
-GIMP_DEPRECATED_FOR(gimp_context_get_foreground)
-gboolean gimp_palette_get_foreground     (GimpRGB       *foreground);
-GIMP_DEPRECATED_FOR(gimp_context_get_background)
-gboolean gimp_palette_get_background     (GimpRGB       *background);
-GIMP_DEPRECATED_FOR(gimp_context_set_foreground)
-gboolean gimp_palette_set_foreground     (const GimpRGB *foreground);
-GIMP_DEPRECATED_FOR(gimp_context_set_background)
-gboolean gimp_palette_set_background     (const GimpRGB *background);
-GIMP_DEPRECATED_FOR(gimp_context_set_default_colors)
-gboolean gimp_palette_set_default_colors (void);
-GIMP_DEPRECATED_FOR(gimp_context_swap_colors)
-gboolean gimp_palette_swap_colors        (void);
+PICMAN_DEPRECATED_FOR(picman_context_get_foreground)
+gboolean picman_palette_get_foreground     (PicmanRGB       *foreground);
+PICMAN_DEPRECATED_FOR(picman_context_get_background)
+gboolean picman_palette_get_background     (PicmanRGB       *background);
+PICMAN_DEPRECATED_FOR(picman_context_set_foreground)
+gboolean picman_palette_set_foreground     (const PicmanRGB *foreground);
+PICMAN_DEPRECATED_FOR(picman_context_set_background)
+gboolean picman_palette_set_background     (const PicmanRGB *background);
+PICMAN_DEPRECATED_FOR(picman_context_set_default_colors)
+gboolean picman_palette_set_default_colors (void);
+PICMAN_DEPRECATED_FOR(picman_context_swap_colors)
+gboolean picman_palette_swap_colors        (void);
 
 G_END_DECLS
 
-#endif /* __GIMP_PALETTE_H__ */
+#endif /* __PICMAN_PALETTE_H__ */

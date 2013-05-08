@@ -3,7 +3,7 @@
 /.libs
 /Makefile
 /Makefile.in
-/gimpmarshal.c
-/gimpmarshal.h
+/picmanmarshal.c
+/picmanmarshal.h
 /libappcore.a
 /libappcore.la

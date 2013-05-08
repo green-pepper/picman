@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpmessagebox.c
- * Copyright (C) 2004 Sven Neumann <sven@gimp.org>
+ * picmanmessagebox.c
+ * Copyright (C) 2004 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,17 +22,17 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "gimpmessagebox.h"
+#include "picmanmessagebox.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-#define GIMP_MESSAGE_BOX_SPACING  12
+#define PICMAN_MESSAGE_BOX_SPACING  12
 
 enum
 {
@@ -41,62 +41,62 @@ enum
 };
 
 
-static void   gimp_message_box_constructed   (GObject        *object);
-static void   gimp_message_box_dispose       (GObject        *object);
-static void   gimp_message_box_finalize      (GObject        *object);
-static void   gimp_message_box_set_property  (GObject        *object,
+static void   picman_message_box_constructed   (GObject        *object);
+static void   picman_message_box_dispose       (GObject        *object);
+static void   picman_message_box_finalize      (GObject        *object);
+static void   picman_message_box_set_property  (GObject        *object,
                                               guint           property_id,
                                               const GValue   *value,
                                               GParamSpec     *pspec);
-static void   gimp_message_box_get_property  (GObject        *object,
+static void   picman_message_box_get_property  (GObject        *object,
                                               guint           property_id,
                                               GValue         *value,
                                               GParamSpec     *pspec);
 
-static void   gimp_message_box_forall        (GtkContainer   *container,
+static void   picman_message_box_forall        (GtkContainer   *container,
                                               gboolean        include_internals,
                                               GtkCallback     callback,
                                               gpointer        callback_data);
 
-static void   gimp_message_box_size_request  (GtkWidget      *widget,
+static void   picman_message_box_size_request  (GtkWidget      *widget,
                                               GtkRequisition *requisition);
-static void   gimp_message_box_size_allocate (GtkWidget      *widget,
+static void   picman_message_box_size_allocate (GtkWidget      *widget,
                                               GtkAllocation  *allocation);
 
 
-G_DEFINE_TYPE (GimpMessageBox, gimp_message_box, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanMessageBox, picman_message_box, GTK_TYPE_BOX)
 
-#define parent_class gimp_message_box_parent_class
+#define parent_class picman_message_box_parent_class
 
 
 static void
-gimp_message_box_class_init (GimpMessageBoxClass *klass)
+picman_message_box_class_init (PicmanMessageBoxClass *klass)
 {
   GObjectClass      *object_class    = G_OBJECT_CLASS (klass);
   GtkWidgetClass    *widget_class    = GTK_WIDGET_CLASS (klass);
   GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
-  object_class->constructed   = gimp_message_box_constructed;
-  object_class->dispose       = gimp_message_box_dispose;
-  object_class->finalize      = gimp_message_box_finalize;
-  object_class->set_property  = gimp_message_box_set_property;
-  object_class->get_property  = gimp_message_box_get_property;
+  object_class->constructed   = picman_message_box_constructed;
+  object_class->dispose       = picman_message_box_dispose;
+  object_class->finalize      = picman_message_box_finalize;
+  object_class->set_property  = picman_message_box_set_property;
+  object_class->get_property  = picman_message_box_get_property;
 
 
-  widget_class->size_request  = gimp_message_box_size_request;
-  widget_class->size_allocate = gimp_message_box_size_allocate;
+  widget_class->size_request  = picman_message_box_size_request;
+  widget_class->size_allocate = picman_message_box_size_allocate;
 
-  container_class->forall     = gimp_message_box_forall;
+  container_class->forall     = picman_message_box_forall;
 
   g_object_class_install_property (object_class, PROP_STOCK_ID,
                                    g_param_spec_string ("stock-id", NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_message_box_init (GimpMessageBox *box)
+picman_message_box_init (PicmanMessageBox *box)
 {
   gint i;
 
@@ -107,7 +107,7 @@ gimp_message_box_init (GimpMessageBox *box)
   gtk_container_set_border_width (GTK_CONTAINER (box), 12);
 
   /*  Unset the focus chain to keep the labels from being in the focus
-   *  chain.  Users of GimpMessageBox that add focusable widgets should
+   *  chain.  Users of PicmanMessageBox that add focusable widgets should
    *  either unset the focus chain or (better) explicitly set one.
    */
   gtk_container_set_focus_chain (GTK_CONTAINER (box), NULL);
@@ -122,7 +122,7 @@ gimp_message_box_init (GimpMessageBox *box)
                                        NULL);
 
       if (i == 0)
-        gimp_label_set_attributes (GTK_LABEL (label),
+        picman_label_set_attributes (GTK_LABEL (label),
                                    PANGO_ATTR_SCALE,  PANGO_SCALE_LARGE,
                                    PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                                    -1);
@@ -137,9 +137,9 @@ gimp_message_box_init (GimpMessageBox *box)
 }
 
 static void
-gimp_message_box_constructed (GObject *object)
+picman_message_box_constructed (GObject *object)
 {
-  GimpMessageBox *box = GIMP_MESSAGE_BOX (object);
+  PicmanMessageBox *box = PICMAN_MESSAGE_BOX (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
@@ -157,9 +157,9 @@ gimp_message_box_constructed (GObject *object)
 }
 
 static void
-gimp_message_box_dispose (GObject *object)
+picman_message_box_dispose (GObject *object)
 {
-  GimpMessageBox *box = GIMP_MESSAGE_BOX (object);
+  PicmanMessageBox *box = PICMAN_MESSAGE_BOX (object);
 
   if (box->image)
     {
@@ -171,9 +171,9 @@ gimp_message_box_dispose (GObject *object)
 }
 
 static void
-gimp_message_box_finalize (GObject *object)
+picman_message_box_finalize (GObject *object)
 {
-  GimpMessageBox *box = GIMP_MESSAGE_BOX (object);
+  PicmanMessageBox *box = PICMAN_MESSAGE_BOX (object);
 
   if (box->stock_id)
     {
@@ -185,12 +185,12 @@ gimp_message_box_finalize (GObject *object)
 }
 
 static void
-gimp_message_box_set_property (GObject      *object,
+picman_message_box_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpMessageBox *box = GIMP_MESSAGE_BOX (object);
+  PicmanMessageBox *box = PICMAN_MESSAGE_BOX (object);
 
   switch (property_id)
     {
@@ -204,12 +204,12 @@ gimp_message_box_set_property (GObject      *object,
 }
 
 static void
-gimp_message_box_get_property (GObject    *object,
+picman_message_box_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpMessageBox *box = GIMP_MESSAGE_BOX (object);
+  PicmanMessageBox *box = PICMAN_MESSAGE_BOX (object);
 
   switch (property_id)
     {
@@ -223,10 +223,10 @@ gimp_message_box_get_property (GObject    *object,
 }
 
 static void
-gimp_message_box_size_request (GtkWidget      *widget,
+picman_message_box_size_request (GtkWidget      *widget,
                                GtkRequisition *requisition)
 {
-  GimpMessageBox *box = GIMP_MESSAGE_BOX (widget);
+  PicmanMessageBox *box = PICMAN_MESSAGE_BOX (widget);
 
   GTK_WIDGET_CLASS (parent_class)->size_request (widget, requisition);
 
@@ -239,7 +239,7 @@ gimp_message_box_size_request (GtkWidget      *widget,
 
       border_width = gtk_container_get_border_width (GTK_CONTAINER (widget));
 
-      requisition->width  += child_requisition.width + GIMP_MESSAGE_BOX_SPACING;
+      requisition->width  += child_requisition.width + PICMAN_MESSAGE_BOX_SPACING;
       requisition->height = MAX (requisition->height,
                                  child_requisition.height +
                                  2 * border_width);
@@ -247,10 +247,10 @@ gimp_message_box_size_request (GtkWidget      *widget,
 }
 
 static void
-gimp_message_box_size_allocate (GtkWidget     *widget,
+picman_message_box_size_allocate (GtkWidget     *widget,
                                 GtkAllocation *allocation)
 {
-  GimpMessageBox *box       = GIMP_MESSAGE_BOX (widget);
+  PicmanMessageBox *box       = PICMAN_MESSAGE_BOX (widget);
   GtkContainer   *container = GTK_CONTAINER (widget);
   gint            width     = 0;
   gboolean        rtl;
@@ -269,7 +269,7 @@ gimp_message_box_size_allocate (GtkWidget     *widget,
       border_width = gtk_container_get_border_width (container);
 
       width  = MIN (allocation->width - 2 * border_width,
-                    child_requisition.width + GIMP_MESSAGE_BOX_SPACING);
+                    child_requisition.width + PICMAN_MESSAGE_BOX_SPACING);
       width  = MAX (1, width);
 
       height = allocation->height - 2 * border_width;
@@ -301,14 +301,14 @@ gimp_message_box_size_allocate (GtkWidget     *widget,
 }
 
 static void
-gimp_message_box_forall (GtkContainer *container,
+picman_message_box_forall (GtkContainer *container,
                          gboolean      include_internals,
                          GtkCallback   callback,
                          gpointer      callback_data)
 {
   if (include_internals)
     {
-      GimpMessageBox *box = GIMP_MESSAGE_BOX (container);
+      PicmanMessageBox *box = PICMAN_MESSAGE_BOX (container);
 
       if (box->image)
         (* callback) (box->image, callback_data);
@@ -319,7 +319,7 @@ gimp_message_box_forall (GtkContainer *container,
 }
 
 static void
-gimp_message_box_set_label_text (GimpMessageBox *box,
+picman_message_box_set_label_text (PicmanMessageBox *box,
                                  gint            n,
                                  const gchar    *format,
                                  va_list         args)
@@ -329,7 +329,7 @@ gimp_message_box_set_label_text (GimpMessageBox *box,
   if (format)
     {
       gchar *text = g_strdup_vprintf (format, args);
-      gchar *utf8 = gimp_any_to_utf8 (text, -1, "Cannot convert text to utf8.");
+      gchar *utf8 = picman_any_to_utf8 (text, -1, "Cannot convert text to utf8.");
 
       gtk_label_set_text (GTK_LABEL (label), utf8);
       gtk_widget_show (label);
@@ -345,7 +345,7 @@ gimp_message_box_set_label_text (GimpMessageBox *box,
 }
 
 static void
-gimp_message_box_set_label_markup (GimpMessageBox *box,
+picman_message_box_set_label_markup (PicmanMessageBox *box,
                                    gint            n,
                                    const gchar    *format,
                                    va_list         args)
@@ -371,61 +371,61 @@ gimp_message_box_set_label_markup (GimpMessageBox *box,
 /*  public functions  */
 
 GtkWidget *
-gimp_message_box_new (const gchar *stock_id)
+picman_message_box_new (const gchar *stock_id)
 {
-  return g_object_new (GIMP_TYPE_MESSAGE_BOX,
+  return g_object_new (PICMAN_TYPE_MESSAGE_BOX,
                        "stock-id",  stock_id,
                        NULL);
 }
 
 void
-gimp_message_box_set_primary_text (GimpMessageBox *box,
+picman_message_box_set_primary_text (PicmanMessageBox *box,
                                    const gchar    *format,
                                    ...)
 {
   va_list args;
 
-  g_return_if_fail (GIMP_IS_MESSAGE_BOX (box));
+  g_return_if_fail (PICMAN_IS_MESSAGE_BOX (box));
 
   va_start (args, format);
-  gimp_message_box_set_label_text (box, 0, format, args);
+  picman_message_box_set_label_text (box, 0, format, args);
   va_end (args);
 }
 
 void
-gimp_message_box_set_text (GimpMessageBox *box,
+picman_message_box_set_text (PicmanMessageBox *box,
                            const gchar    *format,
                            ...)
 {
   va_list args;
 
-  g_return_if_fail (GIMP_IS_MESSAGE_BOX (box));
+  g_return_if_fail (PICMAN_IS_MESSAGE_BOX (box));
 
   va_start (args, format);
-  gimp_message_box_set_label_text (box, 1, format, args);
+  picman_message_box_set_label_text (box, 1, format, args);
   va_end (args);
 }
 
 void
-gimp_message_box_set_markup (GimpMessageBox *box,
+picman_message_box_set_markup (PicmanMessageBox *box,
                              const gchar    *format,
                              ...)
 {
   va_list args;
 
-  g_return_if_fail (GIMP_IS_MESSAGE_BOX (box));
+  g_return_if_fail (PICMAN_IS_MESSAGE_BOX (box));
 
   va_start (args, format);
-  gimp_message_box_set_label_markup (box, 1,format, args);
+  picman_message_box_set_label_markup (box, 1,format, args);
   va_end (args);
 }
 
 gint
-gimp_message_box_repeat (GimpMessageBox *box)
+picman_message_box_repeat (PicmanMessageBox *box)
 {
   gchar *message;
 
-  g_return_val_if_fail (GIMP_IS_MESSAGE_BOX (box), 0);
+  g_return_val_if_fail (PICMAN_IS_MESSAGE_BOX (box), 0);
 
   box->repeat++;
 
@@ -443,7 +443,7 @@ gimp_message_box_repeat (GimpMessageBox *box)
       GtkWidget *label = box->label[2] = gtk_label_new (message);
 
       gtk_misc_set_alignment (GTK_MISC (label), 0.0, 1.0);
-      gimp_label_set_attributes (GTK_LABEL (label),
+      picman_label_set_attributes (GTK_LABEL (label),
                                  PANGO_ATTR_STYLE, PANGO_STYLE_OBLIQUE,
                                  -1);
       gtk_box_pack_end (GTK_BOX (box), label, FALSE, FALSE, 0);

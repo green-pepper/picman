@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpunitstore.h
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanunitstore.h
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,49 +19,49 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_UNIT_STORE_H__
-#define __GIMP_UNIT_STORE_H__
+#ifndef __PICMAN_UNIT_STORE_H__
+#define __PICMAN_UNIT_STORE_H__
 
 G_BEGIN_DECLS
 
 
 enum
 {
-  GIMP_UNIT_STORE_UNIT,
-  GIMP_UNIT_STORE_UNIT_FACTOR,
-  GIMP_UNIT_STORE_UNIT_DIGITS,
-  GIMP_UNIT_STORE_UNIT_IDENTIFIER,
-  GIMP_UNIT_STORE_UNIT_SYMBOL,
-  GIMP_UNIT_STORE_UNIT_ABBREVIATION,
-  GIMP_UNIT_STORE_UNIT_SINGULAR,
-  GIMP_UNIT_STORE_UNIT_PLURAL,
-  GIMP_UNIT_STORE_UNIT_SHORT_FORMAT,
-  GIMP_UNIT_STORE_UNIT_LONG_FORMAT,
-  GIMP_UNIT_STORE_UNIT_COLUMNS,
-  GIMP_UNIT_STORE_FIRST_VALUE = GIMP_UNIT_STORE_UNIT_COLUMNS
+  PICMAN_UNIT_STORE_UNIT,
+  PICMAN_UNIT_STORE_UNIT_FACTOR,
+  PICMAN_UNIT_STORE_UNIT_DIGITS,
+  PICMAN_UNIT_STORE_UNIT_IDENTIFIER,
+  PICMAN_UNIT_STORE_UNIT_SYMBOL,
+  PICMAN_UNIT_STORE_UNIT_ABBREVIATION,
+  PICMAN_UNIT_STORE_UNIT_SINGULAR,
+  PICMAN_UNIT_STORE_UNIT_PLURAL,
+  PICMAN_UNIT_STORE_UNIT_SHORT_FORMAT,
+  PICMAN_UNIT_STORE_UNIT_LONG_FORMAT,
+  PICMAN_UNIT_STORE_UNIT_COLUMNS,
+  PICMAN_UNIT_STORE_FIRST_VALUE = PICMAN_UNIT_STORE_UNIT_COLUMNS
 };
 
 
-#define GIMP_TYPE_UNIT_STORE            (gimp_unit_store_get_type ())
-#define GIMP_UNIT_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_UNIT_STORE, GimpUnitStore))
-#define GIMP_UNIT_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_UNIT_STORE, GimpUnitStoreClass))
-#define GIMP_IS_UNIT_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_UNIT_STORE))
-#define GIMP_IS_UNIT_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_UNIT_STORE))
-#define GIMP_UNIT_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_UNIT_STORE, GimpUnitStoreClass))
+#define PICMAN_TYPE_UNIT_STORE            (picman_unit_store_get_type ())
+#define PICMAN_UNIT_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_UNIT_STORE, PicmanUnitStore))
+#define PICMAN_UNIT_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_UNIT_STORE, PicmanUnitStoreClass))
+#define PICMAN_IS_UNIT_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_UNIT_STORE))
+#define PICMAN_IS_UNIT_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_UNIT_STORE))
+#define PICMAN_UNIT_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_UNIT_STORE, PicmanUnitStoreClass))
 
 
-typedef struct _GimpUnitStoreClass  GimpUnitStoreClass;
+typedef struct _PicmanUnitStoreClass  PicmanUnitStoreClass;
 
-struct _GimpUnitStore
+struct _PicmanUnitStore
 {
   GObject  parent_instance;
 };
 
-struct _GimpUnitStoreClass
+struct _PicmanUnitStoreClass
 {
   GObjectClass  parent_class;
 
@@ -73,39 +73,39 @@ struct _GimpUnitStoreClass
 };
 
 
-GType           gimp_unit_store_get_type         (void) G_GNUC_CONST;
+GType           picman_unit_store_get_type         (void) G_GNUC_CONST;
 
-GimpUnitStore * gimp_unit_store_new              (gint           num_values);
+PicmanUnitStore * picman_unit_store_new              (gint           num_values);
 
-void            gimp_unit_store_set_has_pixels   (GimpUnitStore *store,
+void            picman_unit_store_set_has_pixels   (PicmanUnitStore *store,
                                                   gboolean       has_pixels);
-gboolean        gimp_unit_store_get_has_pixels   (GimpUnitStore *store);
+gboolean        picman_unit_store_get_has_pixels   (PicmanUnitStore *store);
 
-void            gimp_unit_store_set_has_percent  (GimpUnitStore *store,
+void            picman_unit_store_set_has_percent  (PicmanUnitStore *store,
                                                   gboolean       has_percent);
-gboolean        gimp_unit_store_get_has_percent  (GimpUnitStore *store);
+gboolean        picman_unit_store_get_has_percent  (PicmanUnitStore *store);
 
-void            gimp_unit_store_set_pixel_value  (GimpUnitStore *store,
+void            picman_unit_store_set_pixel_value  (PicmanUnitStore *store,
                                                   gint           index,
                                                   gdouble        value);
-void            gimp_unit_store_set_pixel_values (GimpUnitStore *store,
+void            picman_unit_store_set_pixel_values (PicmanUnitStore *store,
                                                   gdouble        first_value,
                                                   ...);
-void            gimp_unit_store_set_resolution   (GimpUnitStore *store,
+void            picman_unit_store_set_resolution   (PicmanUnitStore *store,
                                                   gint           index,
                                                   gdouble        resolution);
-void            gimp_unit_store_set_resolutions  (GimpUnitStore *store,
+void            picman_unit_store_set_resolutions  (PicmanUnitStore *store,
                                                   gdouble        first_resolution,
                                                   ...);
-gdouble         gimp_unit_store_get_value        (GimpUnitStore *store,
-                                                  GimpUnit       unit,
+gdouble         picman_unit_store_get_value        (PicmanUnitStore *store,
+                                                  PicmanUnit       unit,
                                                   gint           index);
-void            gimp_unit_store_get_values       (GimpUnitStore *store,
-                                                  GimpUnit       unit,
+void            picman_unit_store_get_values       (PicmanUnitStore *store,
+                                                  PicmanUnit       unit,
                                                   gdouble       *first_value,
                                                   ...);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_UNIT_STORE_H__ */
+#endif  /* __PICMAN_UNIT_STORE_H__ */

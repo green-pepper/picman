@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvascursor.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvascursor.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,18 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "core/gimp-cairo.h"
+#include "core/picman-cairo.h"
 
-#include "gimpcanvascursor.h"
-#include "gimpdisplayshell.h"
+#include "picmancanvascursor.h"
+#include "picmandisplayshell.h"
 
 
-#define GIMP_CURSOR_SIZE 7
+#define PICMAN_CURSOR_SIZE 7
 
 
 enum
@@ -45,9 +45,9 @@ enum
 };
 
 
-typedef struct _GimpCanvasCursorPrivate GimpCanvasCursorPrivate;
+typedef struct _PicmanCanvasCursorPrivate PicmanCanvasCursorPrivate;
 
-struct _GimpCanvasCursorPrivate
+struct _PicmanCanvasCursorPrivate
 {
   gdouble x;
   gdouble y;
@@ -55,72 +55,72 @@ struct _GimpCanvasCursorPrivate
 
 #define GET_PRIVATE(cursor) \
         G_TYPE_INSTANCE_GET_PRIVATE (cursor, \
-                                     GIMP_TYPE_CANVAS_CURSOR, \
-                                     GimpCanvasCursorPrivate)
+                                     PICMAN_TYPE_CANVAS_CURSOR, \
+                                     PicmanCanvasCursorPrivate)
 
 
 /*  local function prototypes  */
 
-static void             gimp_canvas_cursor_set_property (GObject        *object,
+static void             picman_canvas_cursor_set_property (GObject        *object,
                                                          guint           property_id,
                                                          const GValue   *value,
                                                          GParamSpec     *pspec);
-static void             gimp_canvas_cursor_get_property (GObject        *object,
+static void             picman_canvas_cursor_get_property (GObject        *object,
                                                          guint           property_id,
                                                          GValue         *value,
                                                          GParamSpec     *pspec);
-static void             gimp_canvas_cursor_draw         (GimpCanvasItem *item,
+static void             picman_canvas_cursor_draw         (PicmanCanvasItem *item,
                                                          cairo_t        *cr);
-static cairo_region_t * gimp_canvas_cursor_get_extents  (GimpCanvasItem *item);
+static cairo_region_t * picman_canvas_cursor_get_extents  (PicmanCanvasItem *item);
 
 
-G_DEFINE_TYPE (GimpCanvasCursor, gimp_canvas_cursor,
-               GIMP_TYPE_CANVAS_ITEM)
+G_DEFINE_TYPE (PicmanCanvasCursor, picman_canvas_cursor,
+               PICMAN_TYPE_CANVAS_ITEM)
 
-#define parent_class gimp_canvas_cursor_parent_class
+#define parent_class picman_canvas_cursor_parent_class
 
 
 static void
-gimp_canvas_cursor_class_init (GimpCanvasCursorClass *klass)
+picman_canvas_cursor_class_init (PicmanCanvasCursorClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpCanvasItemClass *item_class   = GIMP_CANVAS_ITEM_CLASS (klass);
+  PicmanCanvasItemClass *item_class   = PICMAN_CANVAS_ITEM_CLASS (klass);
 
-  object_class->set_property = gimp_canvas_cursor_set_property;
-  object_class->get_property = gimp_canvas_cursor_get_property;
+  object_class->set_property = picman_canvas_cursor_set_property;
+  object_class->get_property = picman_canvas_cursor_get_property;
 
-  item_class->draw           = gimp_canvas_cursor_draw;
-  item_class->get_extents    = gimp_canvas_cursor_get_extents;
+  item_class->draw           = picman_canvas_cursor_draw;
+  item_class->get_extents    = picman_canvas_cursor_get_extents;
 
   g_object_class_install_property (object_class, PROP_X,
                                    g_param_spec_double ("x", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_Y,
                                    g_param_spec_double ("y", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpCanvasCursorPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanCanvasCursorPrivate));
 }
 
 static void
-gimp_canvas_cursor_init (GimpCanvasCursor *cursor)
+picman_canvas_cursor_init (PicmanCanvasCursor *cursor)
 {
-  gimp_canvas_item_set_line_cap (GIMP_CANVAS_ITEM (cursor),
+  picman_canvas_item_set_line_cap (PICMAN_CANVAS_ITEM (cursor),
                                  CAIRO_LINE_CAP_SQUARE);
 }
 
 static void
-gimp_canvas_cursor_set_property (GObject      *object,
+picman_canvas_cursor_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  GimpCanvasCursorPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasCursorPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -138,12 +138,12 @@ gimp_canvas_cursor_set_property (GObject      *object,
 }
 
 static void
-gimp_canvas_cursor_get_property (GObject    *object,
+picman_canvas_cursor_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  GimpCanvasCursorPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasCursorPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -161,72 +161,72 @@ gimp_canvas_cursor_get_property (GObject    *object,
 }
 
 static void
-gimp_canvas_cursor_draw (GimpCanvasItem *item,
+picman_canvas_cursor_draw (PicmanCanvasItem *item,
                          cairo_t        *cr)
 {
-  GimpCanvasCursorPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasCursorPrivate *private = GET_PRIVATE (item);
   gdouble                  x, y;
 
   x = floor (private->x) + 0.5;
   y = floor (private->y) + 0.5;
 
-  cairo_move_to (cr, x - GIMP_CURSOR_SIZE, y);
-  cairo_line_to (cr, x + GIMP_CURSOR_SIZE, y);
+  cairo_move_to (cr, x - PICMAN_CURSOR_SIZE, y);
+  cairo_line_to (cr, x + PICMAN_CURSOR_SIZE, y);
 
-  cairo_move_to (cr, x, y - GIMP_CURSOR_SIZE);
-  cairo_line_to (cr, x, y + GIMP_CURSOR_SIZE);
+  cairo_move_to (cr, x, y - PICMAN_CURSOR_SIZE);
+  cairo_line_to (cr, x, y + PICMAN_CURSOR_SIZE);
 
-  _gimp_canvas_item_stroke (item, cr);
+  _picman_canvas_item_stroke (item, cr);
 }
 
 static cairo_region_t *
-gimp_canvas_cursor_get_extents (GimpCanvasItem *item)
+picman_canvas_cursor_get_extents (PicmanCanvasItem *item)
 {
-  GimpCanvasCursorPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasCursorPrivate *private = GET_PRIVATE (item);
   cairo_rectangle_int_t    rectangle;
   gdouble                  x, y;
 
   x = floor (private->x) + 0.5;
   y = floor (private->y) + 0.5;
 
-  rectangle.x      = floor (x - GIMP_CURSOR_SIZE - 1.5);
-  rectangle.y      = floor (y - GIMP_CURSOR_SIZE - 1.5);
-  rectangle.width  = ceil (x + GIMP_CURSOR_SIZE + 1.5) - rectangle.x;
-  rectangle.height = ceil (y + GIMP_CURSOR_SIZE + 1.5) - rectangle.y;
+  rectangle.x      = floor (x - PICMAN_CURSOR_SIZE - 1.5);
+  rectangle.y      = floor (y - PICMAN_CURSOR_SIZE - 1.5);
+  rectangle.width  = ceil (x + PICMAN_CURSOR_SIZE + 1.5) - rectangle.x;
+  rectangle.height = ceil (y + PICMAN_CURSOR_SIZE + 1.5) - rectangle.y;
 
   return cairo_region_create_rectangle (&rectangle);
 }
 
-GimpCanvasItem *
-gimp_canvas_cursor_new (GimpDisplayShell *shell)
+PicmanCanvasItem *
+picman_canvas_cursor_new (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
 
-  return g_object_new (GIMP_TYPE_CANVAS_CURSOR,
+  return g_object_new (PICMAN_TYPE_CANVAS_CURSOR,
                        "shell", shell,
                        NULL);
 }
 
 void
-gimp_canvas_cursor_set (GimpCanvasItem *cursor,
+picman_canvas_cursor_set (PicmanCanvasItem *cursor,
                         gdouble         x,
                         gdouble         y)
 {
-  GimpCanvasCursorPrivate *private;
+  PicmanCanvasCursorPrivate *private;
 
-  g_return_if_fail (GIMP_IS_CANVAS_CURSOR (cursor));
+  g_return_if_fail (PICMAN_IS_CANVAS_CURSOR (cursor));
 
   private = GET_PRIVATE (cursor);
 
   if (private->x != x || private->y != y)
     {
-      gimp_canvas_item_begin_change (cursor);
+      picman_canvas_item_begin_change (cursor);
 
       g_object_set (cursor,
                     "x", x,
                     "y", y,
                     NULL);
 
-      gimp_canvas_item_end_change (cursor);
+      picman_canvas_item_end_change (cursor);
     }
 }

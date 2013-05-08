@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppdbprogress.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanpdbprogress.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PDB_PROGRESS_H__
-#define __GIMP_PDB_PROGRESS_H__
+#ifndef __PICMAN_PDB_PROGRESS_H__
+#define __PICMAN_PDB_PROGRESS_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_PDB_PROGRESS            (gimp_pdb_progress_get_type ())
-#define GIMP_PDB_PROGRESS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PDB_PROGRESS, GimpPdbProgress))
-#define GIMP_PDB_PROGRESS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PDB_PROGRESS, GimpPdbProgressClass))
-#define GIMP_IS_PDB_PROGRESS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PDB_PROGRESS))
-#define GIMP_IS_PDB_PROGRESS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PDB_PROGRESS))
-#define GIMP_PDB_PROGRESS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PDB_PROGRESS, GimpPdbProgressClass))
+#define PICMAN_TYPE_PDB_PROGRESS            (picman_pdb_progress_get_type ())
+#define PICMAN_PDB_PROGRESS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PDB_PROGRESS, PicmanPdbProgress))
+#define PICMAN_PDB_PROGRESS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PDB_PROGRESS, PicmanPdbProgressClass))
+#define PICMAN_IS_PDB_PROGRESS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PDB_PROGRESS))
+#define PICMAN_IS_PDB_PROGRESS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PDB_PROGRESS))
+#define PICMAN_PDB_PROGRESS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PDB_PROGRESS, PicmanPdbProgressClass))
 
 
-typedef struct _GimpPdbProgressClass  GimpPdbProgressClass;
+typedef struct _PicmanPdbProgressClass  PicmanPdbProgressClass;
 
-struct _GimpPdbProgress
+struct _PicmanPdbProgress
 {
   GObject      object;
 
   gboolean     active;
   gdouble      value;
 
-  GimpPDB     *pdb;
-  GimpContext *context;
+  PicmanPDB     *pdb;
+  PicmanContext *context;
   gchar       *callback_name;
   gboolean     callback_busy;
 };
 
-struct _GimpPdbProgressClass
+struct _PicmanPdbProgressClass
 {
   GObjectClass  parent_class;
 
@@ -55,12 +55,12 @@ struct _GimpPdbProgressClass
 };
 
 
-GType             gimp_pdb_progress_get_type        (void) G_GNUC_CONST;
+GType             picman_pdb_progress_get_type        (void) G_GNUC_CONST;
 
-GimpPdbProgress * gimp_pdb_progress_get_by_callback (GimpPdbProgressClass *klass,
+PicmanPdbProgress * picman_pdb_progress_get_by_callback (PicmanPdbProgressClass *klass,
                                                      const gchar          *callback_name);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_PDB_PROGRESS_H__ */
+#endif /* __PICMAN_PDB_PROGRESS_H__ */

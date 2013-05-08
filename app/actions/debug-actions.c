@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "widgets/gimpactiongroup.h"
+#include "widgets/picmanactiongroup.h"
 
 #include "debug-actions.h"
 #include "debug-commands.h"
@@ -33,7 +33,7 @@
 
 #ifdef ENABLE_DEBUG_MENU
 
-static const GimpActionEntry debug_actions[] =
+static const PicmanActionEntry debug_actions[] =
 {
   { "debug-menu", NULL, "_Debug" },
 
@@ -72,17 +72,17 @@ static const GimpActionEntry debug_actions[] =
 #endif
 
 void
-debug_actions_setup (GimpActionGroup *group)
+debug_actions_setup (PicmanActionGroup *group)
 {
 #ifdef ENABLE_DEBUG_MENU
-  gimp_action_group_add_actions (group, NULL,
+  picman_action_group_add_actions (group, NULL,
                                  debug_actions,
                                  G_N_ELEMENTS (debug_actions));
 #endif
 }
 
 void
-debug_actions_update (GimpActionGroup *group,
+debug_actions_update (PicmanActionGroup *group,
                       gpointer         data)
 {
 }

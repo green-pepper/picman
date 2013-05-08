@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimpdevicestatus.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmandevicestatus.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,30 +25,30 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpbrush.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpgradient.h"
-#include "core/gimplist.h"
-#include "core/gimppattern.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmanbrush.h"
+#include "core/picmandatafactory.h"
+#include "core/picmangradient.h"
+#include "core/picmanlist.h"
+#include "core/picmanpattern.h"
+#include "core/picmantoolinfo.h"
 
-#include "gimpdnd.h"
-#include "gimpdeviceinfo.h"
-#include "gimpdevicemanager.h"
-#include "gimpdevices.h"
-#include "gimpdevicestatus.h"
-#include "gimpdialogfactory.h"
-#include "gimppropwidgets.h"
-#include "gimpview.h"
-#include "gimpwindowstrategy.h"
+#include "picmandnd.h"
+#include "picmandeviceinfo.h"
+#include "picmandevicemanager.h"
+#include "picmandevices.h"
+#include "picmandevicestatus.h"
+#include "picmandialogfactory.h"
+#include "picmanpropwidgets.h"
+#include "picmanview.h"
+#include "picmanwindowstrategy.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define CELL_SIZE 20 /* The size of the view cells */
@@ -57,13 +57,13 @@
 enum
 {
   PROP_0,
-  PROP_GIMP
+  PROP_PICMAN
 };
 
 
-struct _GimpDeviceStatusEntry
+struct _PicmanDeviceStatusEntry
 {
-  GimpDeviceInfo *device_info;
+  PicmanDeviceInfo *device_info;
 
   GtkWidget      *ebox;
   GtkWidget      *tool;
@@ -75,57 +75,57 @@ struct _GimpDeviceStatusEntry
 };
 
 
-static void gimp_device_status_constructed     (GObject               *object);
-static void gimp_device_status_dispose         (GObject               *object);
-static void gimp_device_status_set_property    (GObject               *object,
+static void picman_device_status_constructed     (GObject               *object);
+static void picman_device_status_dispose         (GObject               *object);
+static void picman_device_status_set_property    (GObject               *object,
                                                 guint                  property_id,
                                                 const GValue          *value,
                                                 GParamSpec            *pspec);
 
-static void gimp_device_status_device_add      (GimpContainer         *devices,
-                                                GimpDeviceInfo        *device_info,
-                                                GimpDeviceStatus      *status);
-static void gimp_device_status_device_remove   (GimpContainer         *devices,
-                                                GimpDeviceInfo        *device_info,
-                                                GimpDeviceStatus      *status);
+static void picman_device_status_device_add      (PicmanContainer         *devices,
+                                                PicmanDeviceInfo        *device_info,
+                                                PicmanDeviceStatus      *status);
+static void picman_device_status_device_remove   (PicmanContainer         *devices,
+                                                PicmanDeviceInfo        *device_info,
+                                                PicmanDeviceStatus      *status);
 
-static void gimp_device_status_notify_device   (GimpDeviceManager     *manager,
+static void picman_device_status_notify_device   (PicmanDeviceManager     *manager,
                                                 const GParamSpec      *pspec,
-                                                GimpDeviceStatus      *status);
-static void gimp_device_status_update_entry    (GimpDeviceInfo        *device_info,
-                                                GimpDeviceStatusEntry *entry);
-static void gimp_device_status_save_clicked    (GtkWidget             *button,
-                                                GimpDeviceStatus      *status);
-static void gimp_device_status_view_clicked    (GtkWidget             *widget,
+                                                PicmanDeviceStatus      *status);
+static void picman_device_status_update_entry    (PicmanDeviceInfo        *device_info,
+                                                PicmanDeviceStatusEntry *entry);
+static void picman_device_status_save_clicked    (GtkWidget             *button,
+                                                PicmanDeviceStatus      *status);
+static void picman_device_status_view_clicked    (GtkWidget             *widget,
                                                 GdkModifierType        state,
                                                 const gchar           *identifier);
 
 
-G_DEFINE_TYPE (GimpDeviceStatus, gimp_device_status, GIMP_TYPE_EDITOR)
+G_DEFINE_TYPE (PicmanDeviceStatus, picman_device_status, PICMAN_TYPE_EDITOR)
 
-#define parent_class gimp_device_status_parent_class
+#define parent_class picman_device_status_parent_class
 
 
 static void
-gimp_device_status_class_init (GimpDeviceStatusClass *klass)
+picman_device_status_class_init (PicmanDeviceStatusClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_device_status_constructed;
-  object_class->dispose      = gimp_device_status_dispose;
-  object_class->set_property = gimp_device_status_set_property;
+  object_class->constructed  = picman_device_status_constructed;
+  object_class->dispose      = picman_device_status_dispose;
+  object_class->set_property = picman_device_status_set_property;
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp", NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_WRITABLE |
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman", NULL, NULL,
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_device_status_init (GimpDeviceStatus *status)
+picman_device_status_init (PicmanDeviceStatus *status)
 {
-  status->gimp           = NULL;
+  status->picman           = NULL;
   status->current_device = NULL;
 
   status->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
@@ -134,47 +134,47 @@ gimp_device_status_init (GimpDeviceStatus *status)
   gtk_widget_show (status->vbox);
 
   status->save_button =
-    gimp_editor_add_button (GIMP_EDITOR (status), GTK_STOCK_SAVE,
+    picman_editor_add_button (PICMAN_EDITOR (status), GTK_STOCK_SAVE,
                             _("Save device status"), NULL,
-                            G_CALLBACK (gimp_device_status_save_clicked),
+                            G_CALLBACK (picman_device_status_save_clicked),
                             NULL,
                             status);
 }
 
 static void
-gimp_device_status_constructed (GObject *object)
+picman_device_status_constructed (GObject *object)
 {
-  GimpDeviceStatus *status = GIMP_DEVICE_STATUS (object);
-  GimpContainer    *devices;
+  PicmanDeviceStatus *status = PICMAN_DEVICE_STATUS (object);
+  PicmanContainer    *devices;
   GList            *list;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_GIMP (status->gimp));
+  g_assert (PICMAN_IS_PICMAN (status->picman));
 
-  devices = GIMP_CONTAINER (gimp_devices_get_manager (status->gimp));
+  devices = PICMAN_CONTAINER (picman_devices_get_manager (status->picman));
 
-  for (list = GIMP_LIST (devices)->list; list; list = list->next)
-    gimp_device_status_device_add (devices, list->data, status);
+  for (list = PICMAN_LIST (devices)->list; list; list = list->next)
+    picman_device_status_device_add (devices, list->data, status);
 
   g_signal_connect_object (devices, "add",
-                           G_CALLBACK (gimp_device_status_device_add),
+                           G_CALLBACK (picman_device_status_device_add),
                            status, 0);
   g_signal_connect_object (devices, "remove",
-                           G_CALLBACK (gimp_device_status_device_remove),
+                           G_CALLBACK (picman_device_status_device_remove),
                            status, 0);
 
   g_signal_connect (devices, "notify::current-device",
-                    G_CALLBACK (gimp_device_status_notify_device),
+                    G_CALLBACK (picman_device_status_notify_device),
                     status);
 
-  gimp_device_status_notify_device (GIMP_DEVICE_MANAGER (devices), NULL, status);
+  picman_device_status_notify_device (PICMAN_DEVICE_MANAGER (devices), NULL, status);
 }
 
 static void
-gimp_device_status_dispose (GObject *object)
+picman_device_status_dispose (GObject *object)
 {
-  GimpDeviceStatus *status = GIMP_DEVICE_STATUS (object);
+  PicmanDeviceStatus *status = PICMAN_DEVICE_STATUS (object);
 
   if (status->devices)
     {
@@ -182,20 +182,20 @@ gimp_device_status_dispose (GObject *object)
 
       for (list = status->devices; list; list = list->next)
         {
-          GimpDeviceStatusEntry *entry = list->data;
+          PicmanDeviceStatusEntry *entry = list->data;
 
           g_signal_handlers_disconnect_by_func (entry->device_info,
-                                                gimp_device_status_update_entry,
+                                                picman_device_status_update_entry,
                                                 entry);
 
-          g_slice_free (GimpDeviceStatusEntry, entry);
+          g_slice_free (PicmanDeviceStatusEntry, entry);
         }
 
       g_list_free (status->devices);
       status->devices = NULL;
 
-      g_signal_handlers_disconnect_by_func (gimp_devices_get_manager (status->gimp),
-                                            gimp_device_status_notify_device,
+      g_signal_handlers_disconnect_by_func (picman_devices_get_manager (status->picman),
+                                            picman_device_status_notify_device,
                                             status);
     }
 
@@ -203,17 +203,17 @@ gimp_device_status_dispose (GObject *object)
 }
 
 static void
-gimp_device_status_set_property (GObject      *object,
+picman_device_status_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  GimpDeviceStatus *status = GIMP_DEVICE_STATUS (object);
+  PicmanDeviceStatus *status = PICMAN_DEVICE_STATUS (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      status->gimp = g_value_get_object (value);
+    case PROP_PICMAN:
+      status->picman = g_value_get_object (value);
       break;
 
     default:
@@ -223,25 +223,25 @@ gimp_device_status_set_property (GObject      *object,
 }
 
 static void
-gimp_device_status_device_add (GimpContainer    *devices,
-                               GimpDeviceInfo   *device_info,
-                               GimpDeviceStatus *status)
+picman_device_status_device_add (PicmanContainer    *devices,
+                               PicmanDeviceInfo   *device_info,
+                               PicmanDeviceStatus *status)
 {
-  GimpContext           *context = GIMP_CONTEXT (device_info);
-  GimpDeviceStatusEntry *entry;
+  PicmanContext           *context = PICMAN_CONTEXT (device_info);
+  PicmanDeviceStatusEntry *entry;
   GClosure              *closure;
   GtkWidget             *vbox;
   GtkWidget             *hbox;
   GtkWidget             *label;
   gchar                 *name;
 
-  entry = g_slice_new0 (GimpDeviceStatusEntry);
+  entry = g_slice_new0 (PicmanDeviceStatusEntry);
 
   status->devices = g_list_prepend (status->devices, entry);
 
   entry->device_info = device_info;
 
-  closure = g_cclosure_new (G_CALLBACK (gimp_device_status_update_entry),
+  closure = g_cclosure_new (G_CALLBACK (picman_device_status_update_entry),
                             entry, NULL);
   g_object_watch_closure (G_OBJECT (status), closure);
   g_signal_connect_closure (device_info, "changed", closure, FALSE);
@@ -260,17 +260,17 @@ gimp_device_status_device_add (GimpContainer    *devices,
 
   if (device_info->display == NULL ||
       device_info->display == gdk_display_get_default ())
-    name = g_strdup (gimp_object_get_name (device_info));
+    name = g_strdup (picman_object_get_name (device_info));
   else
     name = g_strdup_printf ("%s (%s)",
-                            gimp_object_get_name (device_info),
+                            picman_object_get_name (device_info),
                             gdk_display_get_name (device_info->display));
 
   label = gtk_label_new (name);
   g_free (name);
 
   gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
-  gimp_label_set_attributes (GTK_LABEL (label),
+  picman_label_set_attributes (GTK_LABEL (label),
                              PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                              -1);
   gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
@@ -285,17 +285,17 @@ gimp_device_status_device_add (GimpContainer    *devices,
 
   /*  the tool  */
 
-  entry->tool = gimp_prop_view_new (G_OBJECT (context), "tool",
+  entry->tool = picman_prop_view_new (G_OBJECT (context), "tool",
                                     context, CELL_SIZE);
   gtk_box_pack_start (GTK_BOX (hbox), entry->tool, FALSE, FALSE, 0);
   gtk_widget_show (entry->tool);
 
   /*  the foreground color  */
 
-  entry->foreground = gimp_prop_color_area_new (G_OBJECT (context),
+  entry->foreground = picman_prop_color_area_new (G_OBJECT (context),
                                                 "foreground",
                                                 CELL_SIZE, CELL_SIZE,
-                                                GIMP_COLOR_AREA_FLAT);
+                                                PICMAN_COLOR_AREA_FLAT);
   gtk_widget_add_events (entry->foreground,
                          GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
   gtk_box_pack_start (GTK_BOX (hbox), entry->foreground, FALSE, FALSE, 0);
@@ -303,10 +303,10 @@ gimp_device_status_device_add (GimpContainer    *devices,
 
   /*  the background color  */
 
-  entry->background = gimp_prop_color_area_new (G_OBJECT (context),
+  entry->background = picman_prop_color_area_new (G_OBJECT (context),
                                                 "background",
                                                 CELL_SIZE, CELL_SIZE,
-                                                GIMP_COLOR_AREA_FLAT);
+                                                PICMAN_COLOR_AREA_FLAT);
   gtk_widget_add_events (entry->background,
                          GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
   gtk_box_pack_start (GTK_BOX (hbox), entry->background, FALSE, FALSE, 0);
@@ -314,66 +314,66 @@ gimp_device_status_device_add (GimpContainer    *devices,
 
   /*  the brush  */
 
-  entry->brush = gimp_prop_view_new (G_OBJECT (context), "brush",
+  entry->brush = picman_prop_view_new (G_OBJECT (context), "brush",
                                      context, CELL_SIZE);
-  GIMP_VIEW (entry->brush)->clickable  = TRUE;
-  GIMP_VIEW (entry->brush)->show_popup = TRUE;
+  PICMAN_VIEW (entry->brush)->clickable  = TRUE;
+  PICMAN_VIEW (entry->brush)->show_popup = TRUE;
   gtk_box_pack_start (GTK_BOX (hbox), entry->brush, FALSE, FALSE, 0);
   gtk_widget_show (entry->brush);
 
   g_signal_connect (entry->brush, "clicked",
-                    G_CALLBACK (gimp_device_status_view_clicked),
-                    "gimp-brush-grid|gimp-brush-list");
+                    G_CALLBACK (picman_device_status_view_clicked),
+                    "picman-brush-grid|picman-brush-list");
 
   /*  the pattern  */
 
-  entry->pattern = gimp_prop_view_new (G_OBJECT (context), "pattern",
+  entry->pattern = picman_prop_view_new (G_OBJECT (context), "pattern",
                                        context, CELL_SIZE);
-  GIMP_VIEW (entry->pattern)->clickable  = TRUE;
-  GIMP_VIEW (entry->pattern)->show_popup = TRUE;
+  PICMAN_VIEW (entry->pattern)->clickable  = TRUE;
+  PICMAN_VIEW (entry->pattern)->show_popup = TRUE;
   gtk_box_pack_start (GTK_BOX (hbox), entry->pattern, FALSE, FALSE, 0);
   gtk_widget_show (entry->pattern);
 
   g_signal_connect (entry->pattern, "clicked",
-                    G_CALLBACK (gimp_device_status_view_clicked),
-                    "gimp-pattern-grid|gimp-pattern-list");
+                    G_CALLBACK (picman_device_status_view_clicked),
+                    "picman-pattern-grid|picman-pattern-list");
 
   /*  the gradient  */
 
-  entry->gradient = gimp_prop_view_new (G_OBJECT (context), "gradient",
+  entry->gradient = picman_prop_view_new (G_OBJECT (context), "gradient",
                                         context, 2 * CELL_SIZE);
-  GIMP_VIEW (entry->gradient)->clickable  = TRUE;
-  GIMP_VIEW (entry->gradient)->show_popup = TRUE;
+  PICMAN_VIEW (entry->gradient)->clickable  = TRUE;
+  PICMAN_VIEW (entry->gradient)->show_popup = TRUE;
   gtk_box_pack_start (GTK_BOX (hbox), entry->gradient, FALSE, FALSE, 0);
   gtk_widget_show (entry->gradient);
 
   g_signal_connect (entry->gradient, "clicked",
-                    G_CALLBACK (gimp_device_status_view_clicked),
-                    "gimp-gradient-list|gimp-gradient-grid");
+                    G_CALLBACK (picman_device_status_view_clicked),
+                    "picman-gradient-list|picman-gradient-grid");
 
-  gimp_device_status_update_entry (device_info, entry);
+  picman_device_status_update_entry (device_info, entry);
 }
 
 static void
-gimp_device_status_device_remove (GimpContainer    *devices,
-                                  GimpDeviceInfo   *device_info,
-                                  GimpDeviceStatus *status)
+picman_device_status_device_remove (PicmanContainer    *devices,
+                                  PicmanDeviceInfo   *device_info,
+                                  PicmanDeviceStatus *status)
 {
   GList *list;
 
   for (list = status->devices; list; list = list->next)
     {
-      GimpDeviceStatusEntry *entry = list->data;
+      PicmanDeviceStatusEntry *entry = list->data;
 
       if (entry->device_info == device_info)
         {
           status->devices = g_list_remove (status->devices, entry);
 
           g_signal_handlers_disconnect_by_func (entry->device_info,
-                                                gimp_device_status_update_entry,
+                                                picman_device_status_update_entry,
                                                 entry);
 
-          g_slice_free (GimpDeviceStatusEntry, entry);
+          g_slice_free (PicmanDeviceStatusEntry, entry);
 
           return;
         }
@@ -381,12 +381,12 @@ gimp_device_status_device_remove (GimpContainer    *devices,
 }
 
 GtkWidget *
-gimp_device_status_new (Gimp *gimp)
+picman_device_status_new (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  return g_object_new (GIMP_TYPE_DEVICE_STATUS,
-                       "gimp", gimp,
+  return g_object_new (PICMAN_TYPE_DEVICE_STATUS,
+                       "picman", picman,
                        NULL);
 }
 
@@ -394,17 +394,17 @@ gimp_device_status_new (Gimp *gimp)
 /*  private functions  */
 
 static void
-gimp_device_status_notify_device (GimpDeviceManager *manager,
+picman_device_status_notify_device (PicmanDeviceManager *manager,
                                   const GParamSpec  *pspec,
-                                  GimpDeviceStatus  *status)
+                                  PicmanDeviceStatus  *status)
 {
   GList *list;
 
-  status->current_device = gimp_device_manager_get_current_device (manager);
+  status->current_device = picman_device_manager_get_current_device (manager);
 
   for (list = status->devices; list; list = list->next)
     {
-      GimpDeviceStatusEntry *entry = list->data;
+      PicmanDeviceStatusEntry *entry = list->data;
 
       gtk_widget_set_state (entry->ebox,
                             entry->device_info == status->current_device ?
@@ -413,56 +413,56 @@ gimp_device_status_notify_device (GimpDeviceManager *manager,
 }
 
 static void
-gimp_device_status_update_entry (GimpDeviceInfo        *device_info,
-                                 GimpDeviceStatusEntry *entry)
+picman_device_status_update_entry (PicmanDeviceInfo        *device_info,
+                                 PicmanDeviceStatusEntry *entry)
 {
-  if (! gimp_device_info_get_device (device_info, NULL) ||
-      gimp_device_info_get_mode (device_info) == GDK_MODE_DISABLED)
+  if (! picman_device_info_get_device (device_info, NULL) ||
+      picman_device_info_get_mode (device_info) == GDK_MODE_DISABLED)
     {
       gtk_widget_hide (entry->ebox);
     }
   else
     {
-      GimpContext *context = GIMP_CONTEXT (device_info);
-      GimpRGB      color;
+      PicmanContext *context = PICMAN_CONTEXT (device_info);
+      PicmanRGB      color;
       guchar       r, g, b;
       gchar        buf[64];
 
-      gimp_context_get_foreground (context, &color);
-      gimp_rgb_get_uchar (&color, &r, &g, &b);
+      picman_context_get_foreground (context, &color);
+      picman_rgb_get_uchar (&color, &r, &g, &b);
       g_snprintf (buf, sizeof (buf), _("Foreground: %d, %d, %d"), r, g, b);
-      gimp_help_set_help_data (entry->foreground, buf, NULL);
+      picman_help_set_help_data (entry->foreground, buf, NULL);
 
-      gimp_context_get_background (context, &color);
-      gimp_rgb_get_uchar (&color, &r, &g, &b);
+      picman_context_get_background (context, &color);
+      picman_rgb_get_uchar (&color, &r, &g, &b);
       g_snprintf (buf, sizeof (buf), _("Background: %d, %d, %d"), r, g, b);
-      gimp_help_set_help_data (entry->background, buf, NULL);
+      picman_help_set_help_data (entry->background, buf, NULL);
 
       gtk_widget_show (entry->ebox);
     }
 }
 
 static void
-gimp_device_status_save_clicked (GtkWidget        *button,
-                                 GimpDeviceStatus *status)
+picman_device_status_save_clicked (GtkWidget        *button,
+                                 PicmanDeviceStatus *status)
 {
-  gimp_devices_save (status->gimp, TRUE);
+  picman_devices_save (status->picman, TRUE);
 }
 
 static void
-gimp_device_status_view_clicked (GtkWidget       *widget,
+picman_device_status_view_clicked (GtkWidget       *widget,
                                  GdkModifierType  state,
                                  const gchar     *identifier)
 {
-  GimpDeviceStatus  *status;
-  GimpDialogFactory *dialog_factory;
+  PicmanDeviceStatus  *status;
+  PicmanDialogFactory *dialog_factory;
 
-  status = GIMP_DEVICE_STATUS (gtk_widget_get_ancestor (widget,
-                                                        GIMP_TYPE_DEVICE_STATUS));
-  dialog_factory = gimp_dialog_factory_get_singleton ();
+  status = PICMAN_DEVICE_STATUS (gtk_widget_get_ancestor (widget,
+                                                        PICMAN_TYPE_DEVICE_STATUS));
+  dialog_factory = picman_dialog_factory_get_singleton ();
 
-  gimp_window_strategy_show_dockable_dialog (GIMP_WINDOW_STRATEGY (gimp_get_window_strategy (status->gimp)),
-                                             status->gimp,
+  picman_window_strategy_show_dockable_dialog (PICMAN_WINDOW_STRATEGY (picman_get_window_strategy (status->picman)),
+                                             status->picman,
                                              dialog_factory,
                                              gtk_widget_get_screen (widget),
                                              identifier);

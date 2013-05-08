@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewrenderer.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmanviewrenderer.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,31 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VIEW_RENDERER_H__
-#define __GIMP_VIEW_RENDERER_H__
+#ifndef __PICMAN_VIEW_RENDERER_H__
+#define __PICMAN_VIEW_RENDERER_H__
 
 
-#define GIMP_VIEW_MAX_BORDER_WIDTH 16
+#define PICMAN_VIEW_MAX_BORDER_WIDTH 16
 
 
-#define GIMP_TYPE_VIEW_RENDERER            (gimp_view_renderer_get_type ())
-#define GIMP_VIEW_RENDERER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_VIEW_RENDERER, GimpViewRenderer))
-#define GIMP_VIEW_RENDERER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_VIEW_RENDERER, GimpViewRendererClass))
-#define GIMP_IS_VIEW_RENDERER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, GIMP_TYPE_VIEW_RENDERER))
-#define GIMP_IS_VIEW_RENDERER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_VIEW_RENDERER))
-#define GIMP_VIEW_RENDERER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_VIEW_RENDERER, GimpViewRendererClass))
+#define PICMAN_TYPE_VIEW_RENDERER            (picman_view_renderer_get_type ())
+#define PICMAN_VIEW_RENDERER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_VIEW_RENDERER, PicmanViewRenderer))
+#define PICMAN_VIEW_RENDERER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_VIEW_RENDERER, PicmanViewRendererClass))
+#define PICMAN_IS_VIEW_RENDERER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, PICMAN_TYPE_VIEW_RENDERER))
+#define PICMAN_IS_VIEW_RENDERER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_VIEW_RENDERER))
+#define PICMAN_VIEW_RENDERER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_VIEW_RENDERER, PicmanViewRendererClass))
 
 
-typedef struct _GimpViewRendererClass  GimpViewRendererClass;
+typedef struct _PicmanViewRendererClass  PicmanViewRendererClass;
 
-struct _GimpViewRenderer
+struct _PicmanViewRenderer
 {
   GObject             parent_instance;
 
-  GimpContext        *context;
+  PicmanContext        *context;
 
   GType               viewable_type;
-  GimpViewable       *viewable;
+  PicmanViewable       *viewable;
 
   gint                width;
   gint                height;
@@ -50,8 +50,8 @@ struct _GimpViewRenderer
   guint               dot_for_dot : 1;
   guint               is_popup    : 1;
 
-  GimpViewBorderType  border_type;
-  GimpRGB             border_color;
+  PicmanViewBorderType  border_type;
+  PicmanRGB             border_color;
 
   /*< protected >*/
   cairo_surface_t    *surface;
@@ -66,7 +66,7 @@ struct _GimpViewRenderer
   guint               idle_id;
 };
 
-struct _GimpViewRendererClass
+struct _PicmanViewRendererClass
 {
   GObjectClass   parent_class;
 
@@ -77,62 +77,62 @@ struct _GimpViewRendererClass
   gint           frame_top;
 
   /*  signals  */
-  void (* update)      (GimpViewRenderer *renderer);
+  void (* update)      (PicmanViewRenderer *renderer);
 
   /*  virtual functions  */
-  void (* set_context) (GimpViewRenderer *renderer,
-                        GimpContext      *context);
-  void (* invalidate)  (GimpViewRenderer *renderer);
-  void (* draw)        (GimpViewRenderer *renderer,
+  void (* set_context) (PicmanViewRenderer *renderer,
+                        PicmanContext      *context);
+  void (* invalidate)  (PicmanViewRenderer *renderer);
+  void (* draw)        (PicmanViewRenderer *renderer,
                         GtkWidget        *widget,
                         cairo_t          *cr,
                         gint              available_width,
                         gint              available_height);
-  void (* render)      (GimpViewRenderer *renderer,
+  void (* render)      (PicmanViewRenderer *renderer,
                         GtkWidget        *widget);
 };
 
 
-GType              gimp_view_renderer_get_type (void) G_GNUC_CONST;
+GType              picman_view_renderer_get_type (void) G_GNUC_CONST;
 
-GimpViewRenderer * gimp_view_renderer_new      (GimpContext *context,
+PicmanViewRenderer * picman_view_renderer_new      (PicmanContext *context,
                                                 GType        viewable_type,
                                                 gint         size,
                                                 gint         border_width,
                                                 gboolean     is_popup);
-GimpViewRenderer * gimp_view_renderer_new_full (GimpContext *context,
+PicmanViewRenderer * picman_view_renderer_new_full (PicmanContext *context,
                                                 GType        viewable_type,
                                                 gint         width,
                                                 gint         height,
                                                 gint         border_width,
                                                 gboolean     is_popup);
 
-void   gimp_view_renderer_set_context      (GimpViewRenderer   *renderer,
-                                            GimpContext        *context);
-void   gimp_view_renderer_set_viewable     (GimpViewRenderer   *renderer,
-                                            GimpViewable       *viewable);
-void   gimp_view_renderer_set_size         (GimpViewRenderer   *renderer,
+void   picman_view_renderer_set_context      (PicmanViewRenderer   *renderer,
+                                            PicmanContext        *context);
+void   picman_view_renderer_set_viewable     (PicmanViewRenderer   *renderer,
+                                            PicmanViewable       *viewable);
+void   picman_view_renderer_set_size         (PicmanViewRenderer   *renderer,
                                             gint                size,
                                             gint                border_width);
-void   gimp_view_renderer_set_size_full    (GimpViewRenderer   *renderer,
+void   picman_view_renderer_set_size_full    (PicmanViewRenderer   *renderer,
                                             gint                width,
                                             gint                height,
                                             gint                border_width);
-void   gimp_view_renderer_set_dot_for_dot  (GimpViewRenderer   *renderer,
+void   picman_view_renderer_set_dot_for_dot  (PicmanViewRenderer   *renderer,
                                             gboolean            dot_for_dot);
-void   gimp_view_renderer_set_border_type  (GimpViewRenderer   *renderer,
-                                            GimpViewBorderType  border_type);
-void   gimp_view_renderer_set_border_color (GimpViewRenderer   *renderer,
-                                            const GimpRGB      *border_color);
-void   gimp_view_renderer_set_background   (GimpViewRenderer   *renderer,
+void   picman_view_renderer_set_border_type  (PicmanViewRenderer   *renderer,
+                                            PicmanViewBorderType  border_type);
+void   picman_view_renderer_set_border_color (PicmanViewRenderer   *renderer,
+                                            const PicmanRGB      *border_color);
+void   picman_view_renderer_set_background   (PicmanViewRenderer   *renderer,
                                             const gchar        *stock_id);
 
-void   gimp_view_renderer_invalidate       (GimpViewRenderer   *renderer);
-void   gimp_view_renderer_update           (GimpViewRenderer   *renderer);
-void   gimp_view_renderer_update_idle      (GimpViewRenderer   *renderer);
-void   gimp_view_renderer_remove_idle      (GimpViewRenderer   *renderer);
+void   picman_view_renderer_invalidate       (PicmanViewRenderer   *renderer);
+void   picman_view_renderer_update           (PicmanViewRenderer   *renderer);
+void   picman_view_renderer_update_idle      (PicmanViewRenderer   *renderer);
+void   picman_view_renderer_remove_idle      (PicmanViewRenderer   *renderer);
 
-void   gimp_view_renderer_draw             (GimpViewRenderer   *renderer,
+void   picman_view_renderer_draw             (PicmanViewRenderer   *renderer,
                                             GtkWidget          *widget,
                                             cairo_t            *cr,
                                             gint                available_width,
@@ -140,21 +140,21 @@ void   gimp_view_renderer_draw             (GimpViewRenderer   *renderer,
 
 /*  protected  */
 
-void   gimp_view_renderer_render_temp_buf_simple (GimpViewRenderer *renderer,
-                                                  GimpTempBuf      *temp_buf);
-void   gimp_view_renderer_render_temp_buf        (GimpViewRenderer *renderer,
-                                                  GimpTempBuf      *temp_buf,
+void   picman_view_renderer_render_temp_buf_simple (PicmanViewRenderer *renderer,
+                                                  PicmanTempBuf      *temp_buf);
+void   picman_view_renderer_render_temp_buf        (PicmanViewRenderer *renderer,
+                                                  PicmanTempBuf      *temp_buf,
                                                   gint              temp_buf_x,
                                                   gint              temp_buf_y,
                                                   gint              channel,
-                                                  GimpViewBG        inside_bg,
-                                                  GimpViewBG        outside_bg);
-void   gimp_view_renderer_render_pixbuf          (GimpViewRenderer *renderer,
+                                                  PicmanViewBG        inside_bg,
+                                                  PicmanViewBG        outside_bg);
+void   picman_view_renderer_render_pixbuf          (PicmanViewRenderer *renderer,
                                                   GdkPixbuf        *pixbuf);
-void   gimp_view_renderer_render_stock           (GimpViewRenderer *renderer,
+void   picman_view_renderer_render_stock           (PicmanViewRenderer *renderer,
                                                   GtkWidget        *widget,
                                                   const gchar      *stock_id);
 
 
 
-#endif /* __GIMP_VIEW_RENDERER_H__ */
+#endif /* __PICMAN_VIEW_RENDERER_H__ */

@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpunitstore.c
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanunitstore.c
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,11 +23,11 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpunitstore.h"
+#include "picmanunitstore.h"
 
 
 enum
@@ -51,64 +51,64 @@ typedef struct
 
   gdouble  *values;
   gdouble  *resolutions;
-} GimpUnitStorePrivate;
+} PicmanUnitStorePrivate;
 
 #define GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE (obj, \
-                                                      GIMP_TYPE_UNIT_STORE, \
-                                                      GimpUnitStorePrivate)
+                                                      PICMAN_TYPE_UNIT_STORE, \
+                                                      PicmanUnitStorePrivate)
 
 
-static void         gimp_unit_store_tree_model_init (GtkTreeModelIface *iface);
+static void         picman_unit_store_tree_model_init (GtkTreeModelIface *iface);
 
-static void         gimp_unit_store_finalize        (GObject      *object);
-static void         gimp_unit_store_set_property    (GObject      *object,
+static void         picman_unit_store_finalize        (GObject      *object);
+static void         picman_unit_store_set_property    (GObject      *object,
                                                      guint         property_id,
                                                      const GValue *value,
                                                      GParamSpec   *pspec);
-static void         gimp_unit_store_get_property    (GObject      *object,
+static void         picman_unit_store_get_property    (GObject      *object,
                                                      guint         property_id,
                                                      GValue       *value,
                                                      GParamSpec   *pspec);
 
-static GtkTreeModelFlags gimp_unit_store_get_flags  (GtkTreeModel *tree_model);
-static gint         gimp_unit_store_get_n_columns   (GtkTreeModel *tree_model);
-static GType        gimp_unit_store_get_column_type (GtkTreeModel *tree_model,
+static GtkTreeModelFlags picman_unit_store_get_flags  (GtkTreeModel *tree_model);
+static gint         picman_unit_store_get_n_columns   (GtkTreeModel *tree_model);
+static GType        picman_unit_store_get_column_type (GtkTreeModel *tree_model,
                                                      gint          index);
-static gboolean     gimp_unit_store_get_iter        (GtkTreeModel *tree_model,
+static gboolean     picman_unit_store_get_iter        (GtkTreeModel *tree_model,
                                                      GtkTreeIter  *iter,
                                                      GtkTreePath  *path);
-static GtkTreePath *gimp_unit_store_get_path        (GtkTreeModel *tree_model,
+static GtkTreePath *picman_unit_store_get_path        (GtkTreeModel *tree_model,
                                                      GtkTreeIter  *iter);
-static void    gimp_unit_store_tree_model_get_value (GtkTreeModel *tree_model,
+static void    picman_unit_store_tree_model_get_value (GtkTreeModel *tree_model,
                                                      GtkTreeIter  *iter,
                                                      gint          column,
                                                      GValue       *value);
-static gboolean     gimp_unit_store_iter_next       (GtkTreeModel *tree_model,
+static gboolean     picman_unit_store_iter_next       (GtkTreeModel *tree_model,
                                                      GtkTreeIter  *iter);
-static gboolean     gimp_unit_store_iter_children   (GtkTreeModel *tree_model,
+static gboolean     picman_unit_store_iter_children   (GtkTreeModel *tree_model,
                                                      GtkTreeIter  *iter,
                                                      GtkTreeIter  *parent);
-static gboolean     gimp_unit_store_iter_has_child  (GtkTreeModel *tree_model,
+static gboolean     picman_unit_store_iter_has_child  (GtkTreeModel *tree_model,
                                                      GtkTreeIter  *iter);
-static gint         gimp_unit_store_iter_n_children (GtkTreeModel *tree_model,
+static gint         picman_unit_store_iter_n_children (GtkTreeModel *tree_model,
                                                      GtkTreeIter  *iter);
-static gboolean     gimp_unit_store_iter_nth_child  (GtkTreeModel *tree_model,
+static gboolean     picman_unit_store_iter_nth_child  (GtkTreeModel *tree_model,
                                                      GtkTreeIter  *iter,
                                                      GtkTreeIter  *parent,
                                                      gint          n);
-static gboolean     gimp_unit_store_iter_parent     (GtkTreeModel *tree_model,
+static gboolean     picman_unit_store_iter_parent     (GtkTreeModel *tree_model,
                                                      GtkTreeIter  *iter,
                                                      GtkTreeIter  *child);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpUnitStore, gimp_unit_store, G_TYPE_OBJECT,
+G_DEFINE_TYPE_WITH_CODE (PicmanUnitStore, picman_unit_store, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL,
-                                                gimp_unit_store_tree_model_init))
+                                                picman_unit_store_tree_model_init))
 
-#define parent_class gimp_unit_store_parent_class
+#define parent_class picman_unit_store_parent_class
 
 
-static GType column_types[GIMP_UNIT_STORE_UNIT_COLUMNS] =
+static GType column_types[PICMAN_UNIT_STORE_UNIT_COLUMNS] =
 {
   G_TYPE_INVALID,
   G_TYPE_DOUBLE,
@@ -124,54 +124,54 @@ static GType column_types[GIMP_UNIT_STORE_UNIT_COLUMNS] =
 
 
 static void
-gimp_unit_store_class_init (GimpUnitStoreClass *klass)
+picman_unit_store_class_init (PicmanUnitStoreClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  column_types[GIMP_UNIT_STORE_UNIT] = GIMP_TYPE_UNIT;
+  column_types[PICMAN_UNIT_STORE_UNIT] = PICMAN_TYPE_UNIT;
 
-  object_class->finalize     = gimp_unit_store_finalize;
-  object_class->set_property = gimp_unit_store_set_property;
-  object_class->get_property = gimp_unit_store_get_property;
+  object_class->finalize     = picman_unit_store_finalize;
+  object_class->set_property = picman_unit_store_set_property;
+  object_class->get_property = picman_unit_store_get_property;
 
   g_object_class_install_property (object_class, PROP_NUM_VALUES,
                                    g_param_spec_int ("num-values",
                                                      NULL, NULL,
                                                      0, G_MAXINT, 0,
-                                                     GIMP_PARAM_READWRITE |
+                                                     PICMAN_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_HAS_PIXELS,
                                    g_param_spec_boolean ("has-pixels",
                                                          NULL, NULL,
                                                          TRUE,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_HAS_PERCENT,
                                    g_param_spec_boolean ("has-percent",
                                                          NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_SHORT_FORMAT,
                                    g_param_spec_string ("short-format",
                                                         NULL, NULL,
                                                         "%a",
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_LONG_FORMAT,
                                    g_param_spec_string ("long-format",
                                                         NULL, NULL,
                                                         "%p",
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (object_class, sizeof (GimpUnitStorePrivate));
+  g_type_class_add_private (object_class, sizeof (PicmanUnitStorePrivate));
 }
 
 static void
-gimp_unit_store_init (GimpUnitStore *store)
+picman_unit_store_init (PicmanUnitStore *store)
 {
-  GimpUnitStorePrivate *private = GET_PRIVATE (store);
+  PicmanUnitStorePrivate *private = GET_PRIVATE (store);
 
   private->has_pixels   = TRUE;
   private->has_percent  = FALSE;
@@ -180,26 +180,26 @@ gimp_unit_store_init (GimpUnitStore *store)
 }
 
 static void
-gimp_unit_store_tree_model_init (GtkTreeModelIface *iface)
+picman_unit_store_tree_model_init (GtkTreeModelIface *iface)
 {
-  iface->get_flags       = gimp_unit_store_get_flags;
-  iface->get_n_columns   = gimp_unit_store_get_n_columns;
-  iface->get_column_type = gimp_unit_store_get_column_type;
-  iface->get_iter        = gimp_unit_store_get_iter;
-  iface->get_path        = gimp_unit_store_get_path;
-  iface->get_value       = gimp_unit_store_tree_model_get_value;
-  iface->iter_next       = gimp_unit_store_iter_next;
-  iface->iter_children   = gimp_unit_store_iter_children;
-  iface->iter_has_child  = gimp_unit_store_iter_has_child;
-  iface->iter_n_children = gimp_unit_store_iter_n_children;
-  iface->iter_nth_child  = gimp_unit_store_iter_nth_child;
-  iface->iter_parent     = gimp_unit_store_iter_parent;
+  iface->get_flags       = picman_unit_store_get_flags;
+  iface->get_n_columns   = picman_unit_store_get_n_columns;
+  iface->get_column_type = picman_unit_store_get_column_type;
+  iface->get_iter        = picman_unit_store_get_iter;
+  iface->get_path        = picman_unit_store_get_path;
+  iface->get_value       = picman_unit_store_tree_model_get_value;
+  iface->iter_next       = picman_unit_store_iter_next;
+  iface->iter_children   = picman_unit_store_iter_children;
+  iface->iter_has_child  = picman_unit_store_iter_has_child;
+  iface->iter_n_children = picman_unit_store_iter_n_children;
+  iface->iter_nth_child  = picman_unit_store_iter_nth_child;
+  iface->iter_parent     = picman_unit_store_iter_parent;
 }
 
 static void
-gimp_unit_store_finalize (GObject *object)
+picman_unit_store_finalize (GObject *object)
 {
-  GimpUnitStorePrivate *private = GET_PRIVATE (object);
+  PicmanUnitStorePrivate *private = GET_PRIVATE (object);
 
   if (private->short_format)
     {
@@ -224,12 +224,12 @@ gimp_unit_store_finalize (GObject *object)
 }
 
 static void
-gimp_unit_store_set_property (GObject      *object,
+picman_unit_store_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  GimpUnitStorePrivate *private = GET_PRIVATE (object);
+  PicmanUnitStorePrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -243,11 +243,11 @@ gimp_unit_store_set_property (GObject      *object,
         }
       break;
     case PROP_HAS_PIXELS:
-      gimp_unit_store_set_has_pixels (GIMP_UNIT_STORE (object),
+      picman_unit_store_set_has_pixels (PICMAN_UNIT_STORE (object),
                                       g_value_get_boolean (value));
       break;
     case PROP_HAS_PERCENT:
-      gimp_unit_store_set_has_percent (GIMP_UNIT_STORE (object),
+      picman_unit_store_set_has_percent (PICMAN_UNIT_STORE (object),
                                        g_value_get_boolean (value));
       break;
     case PROP_SHORT_FORMAT:
@@ -270,12 +270,12 @@ gimp_unit_store_set_property (GObject      *object,
 }
 
 static void
-gimp_unit_store_get_property (GObject      *object,
+picman_unit_store_get_property (GObject      *object,
                               guint         property_id,
                               GValue       *value,
                               GParamSpec   *pspec)
 {
-  GimpUnitStorePrivate *private = GET_PRIVATE (object);
+  PicmanUnitStorePrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -302,39 +302,39 @@ gimp_unit_store_get_property (GObject      *object,
 }
 
 static GtkTreeModelFlags
-gimp_unit_store_get_flags (GtkTreeModel *tree_model)
+picman_unit_store_get_flags (GtkTreeModel *tree_model)
 {
   return GTK_TREE_MODEL_ITERS_PERSIST | GTK_TREE_MODEL_LIST_ONLY;
 }
 
 static gint
-gimp_unit_store_get_n_columns (GtkTreeModel *tree_model)
+picman_unit_store_get_n_columns (GtkTreeModel *tree_model)
 {
-  GimpUnitStorePrivate *private = GET_PRIVATE (tree_model);
+  PicmanUnitStorePrivate *private = GET_PRIVATE (tree_model);
 
-  return GIMP_UNIT_STORE_UNIT_COLUMNS + private->num_values;
+  return PICMAN_UNIT_STORE_UNIT_COLUMNS + private->num_values;
 }
 
 static GType
-gimp_unit_store_get_column_type (GtkTreeModel *tree_model,
+picman_unit_store_get_column_type (GtkTreeModel *tree_model,
                                  gint          index)
 {
   g_return_val_if_fail (index >= 0, G_TYPE_INVALID);
 
-  if (index < GIMP_UNIT_STORE_UNIT_COLUMNS)
+  if (index < PICMAN_UNIT_STORE_UNIT_COLUMNS)
     return column_types[index];
 
   return G_TYPE_DOUBLE;
 }
 
 static gboolean
-gimp_unit_store_get_iter (GtkTreeModel *tree_model,
+picman_unit_store_get_iter (GtkTreeModel *tree_model,
                           GtkTreeIter  *iter,
                           GtkTreePath  *path)
 {
-  GimpUnitStorePrivate *private = GET_PRIVATE (tree_model);
+  PicmanUnitStorePrivate *private = GET_PRIVATE (tree_model);
   gint                  index;
-  GimpUnit              unit;
+  PicmanUnit              unit;
 
   g_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
 
@@ -352,19 +352,19 @@ gimp_unit_store_get_iter (GtkTreeModel *tree_model,
       if (private->has_pixels)
         {
           if (index == 0)
-            unit = GIMP_UNIT_PIXEL;
+            unit = PICMAN_UNIT_PIXEL;
           else if (index == 1)
-            unit = GIMP_UNIT_PERCENT;
+            unit = PICMAN_UNIT_PERCENT;
         }
       else
         {
           if (index == 0)
-            unit = GIMP_UNIT_PERCENT;
+            unit = PICMAN_UNIT_PERCENT;
         }
     }
 
-  if ((unit >= 0 && unit < gimp_unit_get_number_of_units ()) ||
-      ((unit == GIMP_UNIT_PERCENT && private->has_percent)))
+  if ((unit >= 0 && unit < picman_unit_get_number_of_units ()) ||
+      ((unit == PICMAN_UNIT_PERCENT && private->has_percent)))
     {
       iter->user_data = GINT_TO_POINTER (unit);
       return TRUE;
@@ -374,12 +374,12 @@ gimp_unit_store_get_iter (GtkTreeModel *tree_model,
 }
 
 static GtkTreePath *
-gimp_unit_store_get_path (GtkTreeModel *tree_model,
+picman_unit_store_get_path (GtkTreeModel *tree_model,
                           GtkTreeIter  *iter)
 {
-  GimpUnitStorePrivate *private = GET_PRIVATE (tree_model);
+  PicmanUnitStorePrivate *private = GET_PRIVATE (tree_model);
   GtkTreePath          *path    = gtk_tree_path_new ();
-  GimpUnit              unit    = GPOINTER_TO_INT (iter->user_data);
+  PicmanUnit              unit    = GPOINTER_TO_INT (iter->user_data);
   gint                  index;
 
   index = unit;
@@ -393,14 +393,14 @@ gimp_unit_store_get_path (GtkTreeModel *tree_model,
 
       if (private->has_pixels)
         {
-          if (unit == GIMP_UNIT_PIXEL)
+          if (unit == PICMAN_UNIT_PIXEL)
             index = 0;
-          else if (unit == GIMP_UNIT_PERCENT)
+          else if (unit == PICMAN_UNIT_PERCENT)
             index = 1;
         }
       else
         {
-          if (unit == GIMP_UNIT_PERCENT)
+          if (unit == PICMAN_UNIT_PERCENT)
             index = 0;
         }
     }
@@ -411,67 +411,67 @@ gimp_unit_store_get_path (GtkTreeModel *tree_model,
 }
 
 static void
-gimp_unit_store_tree_model_get_value (GtkTreeModel *tree_model,
+picman_unit_store_tree_model_get_value (GtkTreeModel *tree_model,
                                       GtkTreeIter  *iter,
                                       gint          column,
                                       GValue       *value)
 {
-  GimpUnitStorePrivate *private = GET_PRIVATE (tree_model);
-  GimpUnit              unit;
+  PicmanUnitStorePrivate *private = GET_PRIVATE (tree_model);
+  PicmanUnit              unit;
 
   g_return_if_fail (column >= 0 &&
-                    column < GIMP_UNIT_STORE_UNIT_COLUMNS + private->num_values);
+                    column < PICMAN_UNIT_STORE_UNIT_COLUMNS + private->num_values);
 
   g_value_init (value,
-                column < GIMP_UNIT_STORE_UNIT_COLUMNS ?
+                column < PICMAN_UNIT_STORE_UNIT_COLUMNS ?
                 column_types[column] :
                 G_TYPE_DOUBLE);
 
   unit = GPOINTER_TO_INT (iter->user_data);
 
-  if ((unit >= 0 && unit < gimp_unit_get_number_of_units ()) ||
-      ((unit == GIMP_UNIT_PERCENT && private->has_percent)))
+  if ((unit >= 0 && unit < picman_unit_get_number_of_units ()) ||
+      ((unit == PICMAN_UNIT_PERCENT && private->has_percent)))
     {
       switch (column)
         {
-        case GIMP_UNIT_STORE_UNIT:
+        case PICMAN_UNIT_STORE_UNIT:
           g_value_set_int (value, unit);
           break;
-        case GIMP_UNIT_STORE_UNIT_FACTOR:
-          g_value_set_double (value, gimp_unit_get_factor (unit));
+        case PICMAN_UNIT_STORE_UNIT_FACTOR:
+          g_value_set_double (value, picman_unit_get_factor (unit));
           break;
-        case GIMP_UNIT_STORE_UNIT_DIGITS:
-          g_value_set_int (value, gimp_unit_get_digits (unit));
+        case PICMAN_UNIT_STORE_UNIT_DIGITS:
+          g_value_set_int (value, picman_unit_get_digits (unit));
           break;
-        case GIMP_UNIT_STORE_UNIT_IDENTIFIER:
-          g_value_set_static_string (value, gimp_unit_get_identifier (unit));
+        case PICMAN_UNIT_STORE_UNIT_IDENTIFIER:
+          g_value_set_static_string (value, picman_unit_get_identifier (unit));
           break;
-        case GIMP_UNIT_STORE_UNIT_SYMBOL:
-          g_value_set_static_string (value, gimp_unit_get_symbol (unit));
+        case PICMAN_UNIT_STORE_UNIT_SYMBOL:
+          g_value_set_static_string (value, picman_unit_get_symbol (unit));
           break;
-        case GIMP_UNIT_STORE_UNIT_ABBREVIATION:
-          g_value_set_static_string (value, gimp_unit_get_abbreviation (unit));
+        case PICMAN_UNIT_STORE_UNIT_ABBREVIATION:
+          g_value_set_static_string (value, picman_unit_get_abbreviation (unit));
           break;
-        case GIMP_UNIT_STORE_UNIT_SINGULAR:
-          g_value_set_static_string (value, gimp_unit_get_singular (unit));
+        case PICMAN_UNIT_STORE_UNIT_SINGULAR:
+          g_value_set_static_string (value, picman_unit_get_singular (unit));
           break;
-        case GIMP_UNIT_STORE_UNIT_PLURAL:
-          g_value_set_static_string (value, gimp_unit_get_plural (unit));
+        case PICMAN_UNIT_STORE_UNIT_PLURAL:
+          g_value_set_static_string (value, picman_unit_get_plural (unit));
           break;
-        case GIMP_UNIT_STORE_UNIT_SHORT_FORMAT:
+        case PICMAN_UNIT_STORE_UNIT_SHORT_FORMAT:
           g_value_take_string (value,
-                               gimp_unit_format_string (private->short_format,
+                               picman_unit_format_string (private->short_format,
                                                         unit));
           break;
-        case GIMP_UNIT_STORE_UNIT_LONG_FORMAT:
+        case PICMAN_UNIT_STORE_UNIT_LONG_FORMAT:
           g_value_take_string (value,
-                               gimp_unit_format_string (private->long_format,
+                               picman_unit_format_string (private->long_format,
                                                         unit));
           break;
 
         default:
-          column -= GIMP_UNIT_STORE_UNIT_COLUMNS;
-          if (unit == GIMP_UNIT_PIXEL)
+          column -= PICMAN_UNIT_STORE_UNIT_COLUMNS;
+          if (unit == PICMAN_UNIT_PIXEL)
             {
               g_value_set_double (value, private->values[column]);
             }
@@ -479,7 +479,7 @@ gimp_unit_store_tree_model_get_value (GtkTreeModel *tree_model,
             {
               g_value_set_double (value,
                                   private->values[column] *
-                                  gimp_unit_get_factor (unit) /
+                                  picman_unit_get_factor (unit) /
                                   private->resolutions[column]);
             }
           break;
@@ -488,21 +488,21 @@ gimp_unit_store_tree_model_get_value (GtkTreeModel *tree_model,
 }
 
 static gboolean
-gimp_unit_store_iter_next (GtkTreeModel *tree_model,
+picman_unit_store_iter_next (GtkTreeModel *tree_model,
                            GtkTreeIter  *iter)
 {
-  GimpUnitStorePrivate *private = GET_PRIVATE (tree_model);
-  GimpUnit              unit    = GPOINTER_TO_INT (iter->user_data);
+  PicmanUnitStorePrivate *private = GET_PRIVATE (tree_model);
+  PicmanUnit              unit    = GPOINTER_TO_INT (iter->user_data);
 
-  if (unit == GIMP_UNIT_PIXEL && private->has_percent)
+  if (unit == PICMAN_UNIT_PIXEL && private->has_percent)
     {
-      unit = GIMP_UNIT_PERCENT;
+      unit = PICMAN_UNIT_PERCENT;
     }
-  else if (unit == GIMP_UNIT_PERCENT)
+  else if (unit == PICMAN_UNIT_PERCENT)
     {
-      unit = GIMP_UNIT_INCH;
+      unit = PICMAN_UNIT_INCH;
     }
-  else if (unit >= 0 && unit < gimp_unit_get_number_of_units () - 1)
+  else if (unit >= 0 && unit < picman_unit_get_number_of_units () - 1)
     {
       unit++;
     }
@@ -517,12 +517,12 @@ gimp_unit_store_iter_next (GtkTreeModel *tree_model,
 }
 
 static gboolean
-gimp_unit_store_iter_children (GtkTreeModel *tree_model,
+picman_unit_store_iter_children (GtkTreeModel *tree_model,
                                GtkTreeIter  *iter,
                                GtkTreeIter  *parent)
 {
-  GimpUnitStorePrivate *private = GET_PRIVATE (tree_model);
-  GimpUnit              unit;
+  PicmanUnitStorePrivate *private = GET_PRIVATE (tree_model);
+  PicmanUnit              unit;
 
   /* this is a list, nodes have no children */
   if (parent)
@@ -530,15 +530,15 @@ gimp_unit_store_iter_children (GtkTreeModel *tree_model,
 
   if (private->has_pixels)
     {
-      unit = GIMP_UNIT_PIXEL;
+      unit = PICMAN_UNIT_PIXEL;
     }
   else if (private->has_percent)
     {
-      unit = GIMP_UNIT_PERCENT;
+      unit = PICMAN_UNIT_PERCENT;
     }
   else
     {
-      unit = GIMP_UNIT_INCH;
+      unit = PICMAN_UNIT_INCH;
     }
 
   iter->user_data = GINT_TO_POINTER (unit);
@@ -547,23 +547,23 @@ gimp_unit_store_iter_children (GtkTreeModel *tree_model,
 }
 
 static gboolean
-gimp_unit_store_iter_has_child (GtkTreeModel *tree_model,
+picman_unit_store_iter_has_child (GtkTreeModel *tree_model,
                                 GtkTreeIter  *iter)
 {
   return FALSE;
 }
 
 static gint
-gimp_unit_store_iter_n_children (GtkTreeModel *tree_model,
+picman_unit_store_iter_n_children (GtkTreeModel *tree_model,
                                  GtkTreeIter  *iter)
 {
-  GimpUnitStorePrivate *private = GET_PRIVATE (tree_model);
+  PicmanUnitStorePrivate *private = GET_PRIVATE (tree_model);
   gint                  n_children;
 
   if (iter)
     return 0;
 
-  n_children = gimp_unit_get_number_of_units ();
+  n_children = picman_unit_get_number_of_units ();
 
   if (! private->has_pixels)
     n_children--;
@@ -575,22 +575,22 @@ gimp_unit_store_iter_n_children (GtkTreeModel *tree_model,
 }
 
 static gboolean
-gimp_unit_store_iter_nth_child (GtkTreeModel *tree_model,
+picman_unit_store_iter_nth_child (GtkTreeModel *tree_model,
                                 GtkTreeIter  *iter,
                                 GtkTreeIter  *parent,
                                 gint          n)
 {
-  GimpUnitStorePrivate *private = GET_PRIVATE (tree_model);
+  PicmanUnitStorePrivate *private = GET_PRIVATE (tree_model);
   gint                  n_children;
 
   if (parent)
     return FALSE;
 
-  n_children = gimp_unit_store_iter_n_children (tree_model, NULL);
+  n_children = picman_unit_store_iter_n_children (tree_model, NULL);
 
   if (n >= 0 && n < n_children)
     {
-      GimpUnit unit = n;
+      PicmanUnit unit = n;
 
       if (! private->has_pixels)
         unit++;
@@ -602,14 +602,14 @@ gimp_unit_store_iter_nth_child (GtkTreeModel *tree_model,
           if (private->has_pixels)
             {
               if (n == 0)
-                unit = GIMP_UNIT_PIXEL;
+                unit = PICMAN_UNIT_PIXEL;
               else if (n == 1)
-                unit = GIMP_UNIT_PERCENT;
+                unit = PICMAN_UNIT_PERCENT;
             }
           else
             {
               if (n == 0)
-                unit = GIMP_UNIT_PERCENT;
+                unit = PICMAN_UNIT_PERCENT;
             }
         }
 
@@ -622,7 +622,7 @@ gimp_unit_store_iter_nth_child (GtkTreeModel *tree_model,
 }
 
 static gboolean
-gimp_unit_store_iter_parent (GtkTreeModel *tree_model,
+picman_unit_store_iter_parent (GtkTreeModel *tree_model,
                              GtkTreeIter  *iter,
                              GtkTreeIter  *child)
 {
@@ -630,21 +630,21 @@ gimp_unit_store_iter_parent (GtkTreeModel *tree_model,
 }
 
 
-GimpUnitStore *
-gimp_unit_store_new (gint  num_values)
+PicmanUnitStore *
+picman_unit_store_new (gint  num_values)
 {
-  return g_object_new (GIMP_TYPE_UNIT_STORE,
+  return g_object_new (PICMAN_TYPE_UNIT_STORE,
                        "num-values", num_values,
                        NULL);
 }
 
 void
-gimp_unit_store_set_has_pixels (GimpUnitStore *store,
+picman_unit_store_set_has_pixels (PicmanUnitStore *store,
                                 gboolean       has_pixels)
 {
-  GimpUnitStorePrivate *private;
+  PicmanUnitStorePrivate *private;
 
-  g_return_if_fail (GIMP_IS_UNIT_STORE (store));
+  g_return_if_fail (PICMAN_IS_UNIT_STORE (store));
 
   private = GET_PRIVATE (store);
 
@@ -686,11 +686,11 @@ gimp_unit_store_set_has_pixels (GimpUnitStore *store,
 }
 
 gboolean
-gimp_unit_store_get_has_pixels (GimpUnitStore *store)
+picman_unit_store_get_has_pixels (PicmanUnitStore *store)
 {
-  GimpUnitStorePrivate *private;
+  PicmanUnitStorePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_UNIT_STORE (store), FALSE);
+  g_return_val_if_fail (PICMAN_IS_UNIT_STORE (store), FALSE);
 
   private = GET_PRIVATE (store);
 
@@ -698,12 +698,12 @@ gimp_unit_store_get_has_pixels (GimpUnitStore *store)
 }
 
 void
-gimp_unit_store_set_has_percent (GimpUnitStore *store,
+picman_unit_store_set_has_percent (PicmanUnitStore *store,
                                  gboolean       has_percent)
 {
-  GimpUnitStorePrivate *private;
+  PicmanUnitStorePrivate *private;
 
-  g_return_if_fail (GIMP_IS_UNIT_STORE (store));
+  g_return_if_fail (PICMAN_IS_UNIT_STORE (store));
 
   private = GET_PRIVATE (store);
 
@@ -749,11 +749,11 @@ gimp_unit_store_set_has_percent (GimpUnitStore *store,
 }
 
 gboolean
-gimp_unit_store_get_has_percent (GimpUnitStore *store)
+picman_unit_store_get_has_percent (PicmanUnitStore *store)
 {
-  GimpUnitStorePrivate *private;
+  PicmanUnitStorePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_UNIT_STORE (store), FALSE);
+  g_return_val_if_fail (PICMAN_IS_UNIT_STORE (store), FALSE);
 
   private = GET_PRIVATE (store);
 
@@ -761,13 +761,13 @@ gimp_unit_store_get_has_percent (GimpUnitStore *store)
 }
 
 void
-gimp_unit_store_set_pixel_value (GimpUnitStore *store,
+picman_unit_store_set_pixel_value (PicmanUnitStore *store,
                                  gint           index,
                                  gdouble        value)
 {
-  GimpUnitStorePrivate *private;
+  PicmanUnitStorePrivate *private;
 
-  g_return_if_fail (GIMP_IS_UNIT_STORE (store));
+  g_return_if_fail (PICMAN_IS_UNIT_STORE (store));
 
   private = GET_PRIVATE (store);
 
@@ -777,15 +777,15 @@ gimp_unit_store_set_pixel_value (GimpUnitStore *store,
 }
 
 void
-gimp_unit_store_set_pixel_values (GimpUnitStore *store,
+picman_unit_store_set_pixel_values (PicmanUnitStore *store,
                                   gdouble        first_value,
                                   ...)
 {
-  GimpUnitStorePrivate *private;
+  PicmanUnitStorePrivate *private;
   va_list               args;
   gint                  i;
 
-  g_return_if_fail (GIMP_IS_UNIT_STORE (store));
+  g_return_if_fail (PICMAN_IS_UNIT_STORE (store));
 
   private = GET_PRIVATE (store);
 
@@ -803,13 +803,13 @@ gimp_unit_store_set_pixel_values (GimpUnitStore *store,
 }
 
 void
-gimp_unit_store_set_resolution (GimpUnitStore *store,
+picman_unit_store_set_resolution (PicmanUnitStore *store,
                                 gint           index,
                                 gdouble        resolution)
 {
-  GimpUnitStorePrivate *private;
+  PicmanUnitStorePrivate *private;
 
-  g_return_if_fail (GIMP_IS_UNIT_STORE (store));
+  g_return_if_fail (PICMAN_IS_UNIT_STORE (store));
 
   private = GET_PRIVATE (store);
 
@@ -819,15 +819,15 @@ gimp_unit_store_set_resolution (GimpUnitStore *store,
 }
 
 void
-gimp_unit_store_set_resolutions  (GimpUnitStore *store,
+picman_unit_store_set_resolutions  (PicmanUnitStore *store,
                                   gdouble        first_resolution,
                                   ...)
 {
-  GimpUnitStorePrivate *private;
+  PicmanUnitStorePrivate *private;
   va_list               args;
   gint                  i;
 
-  g_return_if_fail (GIMP_IS_UNIT_STORE (store));
+  g_return_if_fail (PICMAN_IS_UNIT_STORE (store));
 
   private = GET_PRIVATE (store);
 
@@ -845,15 +845,15 @@ gimp_unit_store_set_resolutions  (GimpUnitStore *store,
 }
 
 gdouble
-gimp_unit_store_get_value (GimpUnitStore *store,
-                           GimpUnit       unit,
+picman_unit_store_get_value (PicmanUnitStore *store,
+                           PicmanUnit       unit,
                            gint           index)
 {
-  GimpUnitStorePrivate *private;
+  PicmanUnitStorePrivate *private;
   GtkTreeIter          iter;
   GValue               value = { 0, };
 
-  g_return_val_if_fail (GIMP_IS_UNIT_STORE (store), 0.0);
+  g_return_val_if_fail (PICMAN_IS_UNIT_STORE (store), 0.0);
 
   private = GET_PRIVATE (store);
 
@@ -861,25 +861,25 @@ gimp_unit_store_get_value (GimpUnitStore *store,
 
   iter.user_data = GINT_TO_POINTER (unit);
 
-  gimp_unit_store_tree_model_get_value (GTK_TREE_MODEL (store),
+  picman_unit_store_tree_model_get_value (GTK_TREE_MODEL (store),
                                         &iter,
-                                        GIMP_UNIT_STORE_FIRST_VALUE + index,
+                                        PICMAN_UNIT_STORE_FIRST_VALUE + index,
                                         &value);
 
   return g_value_get_double (&value);
 }
 
 void
-gimp_unit_store_get_values (GimpUnitStore *store,
-                            GimpUnit       unit,
+picman_unit_store_get_values (PicmanUnitStore *store,
+                            PicmanUnit       unit,
                             gdouble       *first_value,
                             ...)
 {
-  GimpUnitStorePrivate *private;
+  PicmanUnitStorePrivate *private;
   va_list               args;
   gint                  i;
 
-  g_return_if_fail (GIMP_IS_UNIT_STORE (store));
+  g_return_if_fail (PICMAN_IS_UNIT_STORE (store));
 
   private = GET_PRIVATE (store);
 
@@ -888,7 +888,7 @@ gimp_unit_store_get_values (GimpUnitStore *store,
   for (i = 0; i < private->num_values; )
     {
       if (first_value)
-        *first_value = gimp_unit_store_get_value (store, unit, i);
+        *first_value = picman_unit_store_get_value (store, unit, i);
 
       if (++i < private->num_values)
         first_value = va_arg (args, gdouble *);

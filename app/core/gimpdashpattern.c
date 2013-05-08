@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimpdashpattern.c
+ * picmandashpattern.c
  * Copyright (C) 2003 Simon Budig
  * Copyright (C) 2005 Sven Neumann
  *
@@ -23,28 +23,28 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
-#include "gimpdashpattern.h"
+#include "picmandashpattern.h"
 
 
 GType
-gimp_dash_pattern_get_type (void)
+picman_dash_pattern_get_type (void)
 {
   static GType type = 0;
 
   if (! type)
-    type = g_boxed_type_register_static ("GimpDashPattern",
-                                         (GBoxedCopyFunc) gimp_dash_pattern_copy,
-                                         (GBoxedFreeFunc) gimp_dash_pattern_free);
+    type = g_boxed_type_register_static ("PicmanDashPattern",
+                                         (GBoxedCopyFunc) picman_dash_pattern_copy,
+                                         (GBoxedFreeFunc) picman_dash_pattern_free);
 
   return type;
 }
 
 GArray *
-gimp_dash_pattern_new_from_preset (GimpDashPreset preset)
+picman_dash_pattern_new_from_preset (PicmanDashPreset preset)
 {
   GArray *pattern;
   gdouble dash;
@@ -54,29 +54,29 @@ gimp_dash_pattern_new_from_preset (GimpDashPreset preset)
 
   switch (preset)
     {
-    case GIMP_DASH_CUSTOM:
-      g_warning ("GIMP_DASH_CUSTOM passed to gimp_dash_pattern_from_preset()");
+    case PICMAN_DASH_CUSTOM:
+      g_warning ("PICMAN_DASH_CUSTOM passed to picman_dash_pattern_from_preset()");
       break;
 
-    case GIMP_DASH_LINE:
+    case PICMAN_DASH_LINE:
       break;
 
-    case GIMP_DASH_LONG_DASH:
+    case PICMAN_DASH_LONG_DASH:
       dash = 9.0; g_array_append_val (pattern, dash);
       dash = 3.0; g_array_append_val (pattern, dash);
       break;
 
-    case GIMP_DASH_MEDIUM_DASH:
+    case PICMAN_DASH_MEDIUM_DASH:
       dash = 6.0; g_array_append_val (pattern, dash);
       dash = 6.0; g_array_append_val (pattern, dash);
       break;
 
-    case GIMP_DASH_SHORT_DASH:
+    case PICMAN_DASH_SHORT_DASH:
       dash = 3.0; g_array_append_val (pattern, dash);
       dash = 9.0; g_array_append_val (pattern, dash);
       break;
 
-    case GIMP_DASH_SPARSE_DOTS:
+    case PICMAN_DASH_SPARSE_DOTS:
       for (i = 0; i < 2; i++)
         {
           dash = 1.0; g_array_append_val (pattern, dash);
@@ -84,7 +84,7 @@ gimp_dash_pattern_new_from_preset (GimpDashPreset preset)
         }
       break;
 
-    case GIMP_DASH_NORMAL_DOTS:
+    case PICMAN_DASH_NORMAL_DOTS:
       for (i = 0; i < 3; i++)
         {
           dash = 1.0; g_array_append_val (pattern, dash);
@@ -92,28 +92,28 @@ gimp_dash_pattern_new_from_preset (GimpDashPreset preset)
         }
       break;
 
-    case GIMP_DASH_DENSE_DOTS:
+    case PICMAN_DASH_DENSE_DOTS:
       for (i = 0; i < 12; i++)
         {
           dash = 1.0; g_array_append_val (pattern, dash);
         }
       break;
 
-    case GIMP_DASH_STIPPLES:
+    case PICMAN_DASH_STIPPLES:
       for (i = 0; i < 24; i++)
         {
           dash = 0.5; g_array_append_val (pattern, dash);
         }
       break;
 
-    case GIMP_DASH_DASH_DOT:
+    case PICMAN_DASH_DASH_DOT:
       dash = 7.0; g_array_append_val (pattern, dash);
       dash = 2.0; g_array_append_val (pattern, dash);
       dash = 1.0; g_array_append_val (pattern, dash);
       dash = 2.0; g_array_append_val (pattern, dash);
       break;
 
-    case GIMP_DASH_DASH_DOT_DOT:
+    case PICMAN_DASH_DASH_DOT_DOT:
       dash = 7.0; g_array_append_val (pattern, dash);
       for (i=0; i < 5; i++)
         {
@@ -124,7 +124,7 @@ gimp_dash_pattern_new_from_preset (GimpDashPreset preset)
 
   if (pattern->len < 2)
     {
-      gimp_dash_pattern_free (pattern);
+      picman_dash_pattern_free (pattern);
       return NULL;
     }
 
@@ -132,7 +132,7 @@ gimp_dash_pattern_new_from_preset (GimpDashPreset preset)
 }
 
 GArray *
-gimp_dash_pattern_new_from_segments (const gboolean *segments,
+picman_dash_pattern_new_from_segments (const gboolean *segments,
                                      gint            n_segments,
                                      gdouble         dash_length)
 {
@@ -164,7 +164,7 @@ gimp_dash_pattern_new_from_segments (const gboolean *segments,
 
   if (pattern->len < 2)
     {
-      gimp_dash_pattern_free (pattern);
+      picman_dash_pattern_free (pattern);
       return NULL;
     }
 
@@ -172,7 +172,7 @@ gimp_dash_pattern_new_from_segments (const gboolean *segments,
 }
 
 void
-gimp_dash_pattern_fill_segments (GArray   *pattern,
+picman_dash_pattern_fill_segments (GArray   *pattern,
                                  gboolean *segments,
                                  gint      n_segments)
 {
@@ -216,9 +216,9 @@ gimp_dash_pattern_fill_segments (GArray   *pattern,
 }
 
 GArray *
-gimp_dash_pattern_from_value_array (GimpValueArray *value_array)
+picman_dash_pattern_from_value_array (PicmanValueArray *value_array)
 {
-  if (value_array == NULL || gimp_value_array_length (value_array) == 0)
+  if (value_array == NULL || picman_value_array_length (value_array) == 0)
     {
       return NULL;
     }
@@ -228,13 +228,13 @@ gimp_dash_pattern_from_value_array (GimpValueArray *value_array)
       gint    length;
       gint    i;
 
-      length = gimp_value_array_length (value_array);
+      length = picman_value_array_length (value_array);
 
       pattern = g_array_sized_new (FALSE, FALSE, sizeof (gdouble), length);
 
       for (i = 0; i < length; i++)
         {
-          GValue *item = gimp_value_array_index (value_array, i);
+          GValue *item = picman_value_array_index (value_array, i);
           gdouble val;
 
           g_return_val_if_fail (G_VALUE_HOLDS_DOUBLE (item), NULL);
@@ -248,8 +248,8 @@ gimp_dash_pattern_from_value_array (GimpValueArray *value_array)
     }
 }
 
-GimpValueArray *
-gimp_dash_pattern_to_value_array (GArray *pattern)
+PicmanValueArray *
+picman_dash_pattern_to_value_array (GArray *pattern)
 {
   if (pattern == NULL || pattern->len == 0)
     {
@@ -257,7 +257,7 @@ gimp_dash_pattern_to_value_array (GArray *pattern)
     }
   else
     {
-      GimpValueArray *value_array = gimp_value_array_new (pattern->len);
+      PicmanValueArray *value_array = picman_value_array_new (pattern->len);
       GValue          item        = { 0, };
       gint            i;
 
@@ -266,7 +266,7 @@ gimp_dash_pattern_to_value_array (GArray *pattern)
       for (i = 0; i < pattern->len; i++)
         {
           g_value_set_double (&item, g_array_index (pattern, gdouble, i));
-          gimp_value_array_append (value_array, &item);
+          picman_value_array_append (value_array, &item);
         }
 
       g_value_unset (&item);
@@ -276,7 +276,7 @@ gimp_dash_pattern_to_value_array (GArray *pattern)
 }
 
 GArray *
-gimp_dash_pattern_copy (GArray *pattern)
+picman_dash_pattern_copy (GArray *pattern)
 {
   if (pattern)
     {
@@ -295,7 +295,7 @@ gimp_dash_pattern_copy (GArray *pattern)
 }
 
 void
-gimp_dash_pattern_free (GArray *pattern)
+picman_dash_pattern_free (GArray *pattern)
 {
   if (pattern)
     g_array_free (pattern, TRUE);

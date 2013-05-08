@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 2009 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,56 +22,56 @@
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs/dialogs-types.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-scale.h"
-#include "display/gimpdisplayshell-transform.h"
-#include "display/gimpimagewindow.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-scale.h"
+#include "display/picmandisplayshell-transform.h"
+#include "display/picmanimagewindow.h"
 
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpdock.h"
-#include "widgets/gimpdockable.h"
-#include "widgets/gimpdockbook.h"
-#include "widgets/gimpdocked.h"
-#include "widgets/gimpdockwindow.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpsessioninfo.h"
-#include "widgets/gimptoolbox.h"
-#include "widgets/gimptooloptionseditor.h"
-#include "widgets/gimpuimanager.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmandock.h"
+#include "widgets/picmandockable.h"
+#include "widgets/picmandockbook.h"
+#include "widgets/picmandocked.h"
+#include "widgets/picmandockwindow.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmansessioninfo.h"
+#include "widgets/picmantoolbox.h"
+#include "widgets/picmantooloptionseditor.h"
+#include "widgets/picmanuimanager.h"
+#include "widgets/picmanwidgets-utils.h"
 
 #include "file/file-open.h"
 #include "file/file-procedure.h"
 #include "file/file-save.h"
 #include "file/file-utils.h"
 
-#include "plug-in/gimppluginmanager.h"
+#include "plug-in/picmanpluginmanager.h"
 
-#include "core/gimp.h"
-#include "core/gimpchannel.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
-#include "core/gimptoolinfo.h"
-#include "core/gimptooloptions.h"
+#include "core/picman.h"
+#include "core/picmanchannel.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
+#include "core/picmantoolinfo.h"
+#include "core/picmantooloptions.h"
 
 #include "tests.h"
 
-#include "gimp-app-test-utils.h"
+#include "picman-app-test-utils.h"
 
 
 #define ADD_TEST(function) \
-  g_test_add_data_func ("/gimp-save-and-export/" #function, gimp, function);
+  g_test_add_data_func ("/picman-save-and-export/" #function, picman, function);
 
 
-typedef gboolean (*GimpUiTestFunc) (GObject *object);
+typedef gboolean (*PicmanUiTestFunc) (GObject *object);
 
 
 /**
@@ -83,50 +83,50 @@ typedef gboolean (*GimpUiTestFunc) (GObject *object);
 static void
 new_file_has_no_uris (gconstpointer    data)
 {
-  Gimp      *gimp  = GIMP (data);
-  GimpImage *image = gimp_test_utils_create_image_from_dialog (gimp);
+  Picman      *picman  = PICMAN (data);
+  PicmanImage *image = picman_test_utils_create_image_from_dialog (picman);
 
-  g_assert (gimp_image_get_uri (image) == NULL);
-  g_assert (gimp_image_get_imported_uri (image) == NULL);
-  g_assert (gimp_image_get_exported_uri (image) == NULL);
+  g_assert (picman_image_get_uri (image) == NULL);
+  g_assert (picman_image_get_imported_uri (image) == NULL);
+  g_assert (picman_image_get_exported_uri (image) == NULL);
 }
 
 /**
  * opened_xcf_file_uris:
  * @data:
  *
- * Tests that GimpImage URIs are correct for an XCF file that has just
+ * Tests that PicmanImage URIs are correct for an XCF file that has just
  * been opened.
  **/
 static void
 opened_xcf_file_uris (gconstpointer data)
 {
-  Gimp              *gimp = GIMP (data);
-  GimpImage         *image;
+  Picman              *picman = PICMAN (data);
+  PicmanImage         *image;
   gchar             *uri;
   gchar             *filename;
-  GimpPDBStatusType  status;
+  PicmanPDBStatusType  status;
 
-  filename = g_build_filename (g_getenv ("GIMP_TESTING_ABS_TOP_SRCDIR"),
-                               "app/tests/files/gimp-2-6-file.xcf",
+  filename = g_build_filename (g_getenv ("PICMAN_TESTING_ABS_TOP_SRCDIR"),
+                               "app/tests/files/picman-2-6-file.xcf",
                                NULL);
   uri = g_filename_to_uri (filename, NULL, NULL);
 
-  image = file_open_image (gimp,
-                           gimp_get_user_context (gimp),
+  image = file_open_image (picman,
+                           picman_get_user_context (picman),
                            NULL /*progress*/,
                            uri,
                            filename,
                            FALSE /*as_new*/,
                            NULL /*file_proc*/,
-                           GIMP_RUN_NONINTERACTIVE,
+                           PICMAN_RUN_NONINTERACTIVE,
                            &status,
                            NULL /*mime_type*/,
                            NULL /*error*/);
 
-  g_assert_cmpstr (gimp_image_get_uri (image), ==, uri);
-  g_assert (gimp_image_get_imported_uri (image) == NULL);
-  g_assert (gimp_image_get_exported_uri (image) == NULL);
+  g_assert_cmpstr (picman_image_get_uri (image), ==, uri);
+  g_assert (picman_image_get_imported_uri (image) == NULL);
+  g_assert (picman_image_get_exported_uri (image) == NULL);
 
   /* Don't bother g_free()ing strings */
 }
@@ -140,33 +140,33 @@ opened_xcf_file_uris (gconstpointer data)
 static void
 imported_file_uris (gconstpointer data)
 {
-  Gimp              *gimp = GIMP (data);
-  GimpImage         *image;
+  Picman              *picman = PICMAN (data);
+  PicmanImage         *image;
   gchar             *uri;
   gchar             *filename;
-  GimpPDBStatusType  status;
+  PicmanPDBStatusType  status;
 
-  filename = g_build_filename (g_getenv ("GIMP_TESTING_ABS_TOP_SRCDIR"),
-                               "desktop/64x64/gimp.png",
+  filename = g_build_filename (g_getenv ("PICMAN_TESTING_ABS_TOP_SRCDIR"),
+                               "desktop/64x64/picman.png",
                                NULL);
   g_assert (g_file_test (filename, G_FILE_TEST_EXISTS));
 
   uri = g_filename_to_uri (filename, NULL, NULL);
-  image = file_open_image (gimp,
-                           gimp_get_user_context (gimp),
+  image = file_open_image (picman,
+                           picman_get_user_context (picman),
                            NULL /*progress*/,
                            uri,
                            filename,
                            FALSE /*as_new*/,
                            NULL /*file_proc*/,
-                           GIMP_RUN_NONINTERACTIVE,
+                           PICMAN_RUN_NONINTERACTIVE,
                            &status,
                            NULL /*mime_type*/,
                            NULL /*error*/);
 
-  g_assert (gimp_image_get_uri (image) == NULL);
-  g_assert_cmpstr (gimp_image_get_imported_uri (image), ==, uri);
-  g_assert (gimp_image_get_exported_uri (image) == NULL);
+  g_assert (picman_image_get_uri (image) == NULL);
+  g_assert_cmpstr (picman_image_get_imported_uri (image), ==, uri);
+  g_assert (picman_image_get_exported_uri (image) == NULL);
 }
 
 /**
@@ -179,54 +179,54 @@ imported_file_uris (gconstpointer data)
 static void
 saved_imported_file_uris (gconstpointer data)
 {
-  Gimp                *gimp = GIMP (data);
-  GimpImage           *image;
+  Picman                *picman = PICMAN (data);
+  PicmanImage           *image;
   gchar               *import_uri;
   gchar               *import_filename;
   gchar               *save_uri;
   gchar               *save_filename;
-  GimpPDBStatusType    status;
-  GimpPlugInProcedure *proc;
+  PicmanPDBStatusType    status;
+  PicmanPlugInProcedure *proc;
 
-  import_filename = g_build_filename (g_getenv ("GIMP_TESTING_ABS_TOP_SRCDIR"),
-                                      "desktop/64x64/gimp.png",
+  import_filename = g_build_filename (g_getenv ("PICMAN_TESTING_ABS_TOP_SRCDIR"),
+                                      "desktop/64x64/picman.png",
                                       NULL);
   import_uri = g_filename_to_uri (import_filename, NULL, NULL);
-  save_filename = g_build_filename (g_get_tmp_dir (), "gimp-test.xcf", NULL);
+  save_filename = g_build_filename (g_get_tmp_dir (), "picman-test.xcf", NULL);
   save_uri = g_filename_to_uri (save_filename, NULL, NULL);
 
   /* Import */
-  image = file_open_image (gimp,
-                           gimp_get_user_context (gimp),
+  image = file_open_image (picman,
+                           picman_get_user_context (picman),
                            NULL /*progress*/,
                            import_uri,
                            import_filename,
                            FALSE /*as_new*/,
                            NULL /*file_proc*/,
-                           GIMP_RUN_NONINTERACTIVE,
+                           PICMAN_RUN_NONINTERACTIVE,
                            &status,
                            NULL /*mime_type*/,
                            NULL /*error*/);
 
   /* Save */
-  proc = file_procedure_find (image->gimp->plug_in_manager->save_procs,
+  proc = file_procedure_find (image->picman->plug_in_manager->save_procs,
                               save_uri,
                               NULL /*error*/);
-  file_save (gimp,
+  file_save (picman,
              image,
              NULL /*progress*/,
              save_uri,
              proc,
-             GIMP_RUN_NONINTERACTIVE,
+             PICMAN_RUN_NONINTERACTIVE,
              TRUE /*change_saved_state*/,
              FALSE /*export_backward*/,
              FALSE /*export_forward*/,
              NULL /*error*/);
 
   /* Assert */
-  g_assert_cmpstr (gimp_image_get_uri (image), ==, save_uri);
-  g_assert (gimp_image_get_imported_uri (image) == NULL);
-  g_assert (gimp_image_get_exported_uri (image) == NULL);
+  g_assert_cmpstr (picman_image_get_uri (image), ==, save_uri);
+  g_assert (picman_image_get_imported_uri (image) == NULL);
+  g_assert (picman_image_get_exported_uri (image) == NULL);
 
   g_unlink (save_filename);
 }
@@ -243,30 +243,30 @@ exported_file_uris (gconstpointer data)
 {
   gchar               *save_uri;
   gchar               *save_filename;
-  GimpPlugInProcedure *proc;
-  Gimp                *gimp  = GIMP (data);
-  GimpImage           *image = gimp_test_utils_create_image_from_dialog (gimp);
+  PicmanPlugInProcedure *proc;
+  Picman                *picman  = PICMAN (data);
+  PicmanImage           *image = picman_test_utils_create_image_from_dialog (picman);
 
-  save_filename = g_build_filename (g_get_tmp_dir (), "gimp-test.png", NULL);
+  save_filename = g_build_filename (g_get_tmp_dir (), "picman-test.png", NULL);
   save_uri = g_filename_to_uri (save_filename, NULL, NULL);
 
-  proc = file_procedure_find (image->gimp->plug_in_manager->export_procs,
+  proc = file_procedure_find (image->picman->plug_in_manager->export_procs,
                               save_uri,
                               NULL /*error*/);
-  file_save (gimp,
+  file_save (picman,
              image,
              NULL /*progress*/,
              save_uri,
              proc,
-             GIMP_RUN_NONINTERACTIVE,
+             PICMAN_RUN_NONINTERACTIVE,
              FALSE /*change_saved_state*/,
              FALSE /*export_backward*/,
              TRUE /*export_forward*/,
              NULL /*error*/);
 
-  g_assert (gimp_image_get_uri (image) == NULL);
-  g_assert (gimp_image_get_imported_uri (image) == NULL);
-  g_assert_cmpstr (gimp_image_get_exported_uri (image), ==, save_uri);
+  g_assert (picman_image_get_uri (image) == NULL);
+  g_assert (picman_image_get_imported_uri (image) == NULL);
+  g_assert_cmpstr (picman_image_get_exported_uri (image), ==, save_uri);
 
   g_unlink (save_filename);
 }
@@ -282,75 +282,75 @@ exported_file_uris (gconstpointer data)
 static void
 clear_import_uri_after_export (gconstpointer data)
 {
-  Gimp                *gimp = GIMP (data);
-  GimpImage           *image;
+  Picman                *picman = PICMAN (data);
+  PicmanImage           *image;
   gchar               *uri;
   gchar               *filename;
   gchar               *save_uri;
   gchar               *save_filename;
-  GimpPlugInProcedure *proc;
-  GimpPDBStatusType    status;
+  PicmanPlugInProcedure *proc;
+  PicmanPDBStatusType    status;
 
-  filename = g_build_filename (g_getenv ("GIMP_TESTING_ABS_TOP_SRCDIR"),
-                               "desktop/64x64/gimp.png",
+  filename = g_build_filename (g_getenv ("PICMAN_TESTING_ABS_TOP_SRCDIR"),
+                               "desktop/64x64/picman.png",
                                NULL);
   uri = g_filename_to_uri (filename, NULL, NULL);
 
-  image = file_open_image (gimp,
-                           gimp_get_user_context (gimp),
+  image = file_open_image (picman,
+                           picman_get_user_context (picman),
                            NULL /*progress*/,
                            uri,
                            filename,
                            FALSE /*as_new*/,
                            NULL /*file_proc*/,
-                           GIMP_RUN_NONINTERACTIVE,
+                           PICMAN_RUN_NONINTERACTIVE,
                            &status,
                            NULL /*mime_type*/,
                            NULL /*error*/);
 
-  g_assert (gimp_image_get_uri (image) == NULL);
-  g_assert_cmpstr (gimp_image_get_imported_uri (image), ==, uri);
-  g_assert (gimp_image_get_exported_uri (image) == NULL);
+  g_assert (picman_image_get_uri (image) == NULL);
+  g_assert_cmpstr (picman_image_get_imported_uri (image), ==, uri);
+  g_assert (picman_image_get_exported_uri (image) == NULL);
 
-  save_filename = g_build_filename (g_get_tmp_dir (), "gimp-test.png", NULL);
+  save_filename = g_build_filename (g_get_tmp_dir (), "picman-test.png", NULL);
   save_uri = g_filename_to_uri (save_filename, NULL, NULL);
 
-  proc = file_procedure_find (image->gimp->plug_in_manager->export_procs,
+  proc = file_procedure_find (image->picman->plug_in_manager->export_procs,
                               save_uri,
                               NULL /*error*/);
-  file_save (gimp,
+  file_save (picman,
              image,
              NULL /*progress*/,
              save_uri,
              proc,
-             GIMP_RUN_NONINTERACTIVE,
+             PICMAN_RUN_NONINTERACTIVE,
              FALSE /*change_saved_state*/,
              FALSE /*export_backward*/,
              TRUE /*export_forward*/,
              NULL /*error*/);
 
-  g_assert (gimp_image_get_uri (image) == NULL);
-  g_assert (gimp_image_get_imported_uri (image) == NULL);
-  g_assert_cmpstr (gimp_image_get_exported_uri (image), ==, save_uri);
+  g_assert (picman_image_get_uri (image) == NULL);
+  g_assert (picman_image_get_imported_uri (image) == NULL);
+  g_assert_cmpstr (picman_image_get_exported_uri (image), ==, save_uri);
 
   g_unlink (save_filename);
 }
 
 int main(int argc, char **argv)
 {
-  Gimp *gimp   = NULL;
+  Picman *picman   = NULL;
   gint  result = -1;
 
-  gimp_test_bail_if_no_display ();
+  picman_test_bail_if_no_display ();
   gtk_test_init (&argc, &argv, NULL);
 
-  gimp_test_utils_set_gimp2_directory ("GIMP_TESTING_ABS_TOP_SRCDIR",
-                                       "app/tests/gimpdir");
-  gimp_test_utils_setup_menus_dir ();
+  picman_test_utils_set_picman2_directory ("PICMAN_TESTING_ABS_TOP_SRCDIR",
+                                       "app/tests/picmandir");
+  picman_test_utils_setup_menus_dir ();
 
-  /* Start up GIMP */
-  gimp = gimp_init_for_gui_testing (TRUE /*show_gui*/);
-  gimp_test_run_mainloop_until_idle ();
+  /* Start up PICMAN */
+  picman = picman_init_for_gui_testing (TRUE /*show_gui*/);
+  picman_test_run_mainloop_until_idle ();
 
   ADD_TEST (new_file_has_no_uris);
   ADD_TEST (opened_xcf_file_uris);
@@ -363,11 +363,11 @@ int main(int argc, char **argv)
   result = g_test_run ();
 
   /* Don't write files to the source dir */
-  gimp_test_utils_set_gimp2_directory ("GIMP_TESTING_ABS_TOP_BUILDDIR",
-                                       "app/tests/gimpdir-output");
+  picman_test_utils_set_picman2_directory ("PICMAN_TESTING_ABS_TOP_BUILDDIR",
+                                       "app/tests/picmandir-output");
 
   /* Exit properly so we don't break script-fu plug-in wire */
-  gimp_exit (gimp, TRUE);
+  picman_exit (picman, TRUE);
 
   return result;
 }

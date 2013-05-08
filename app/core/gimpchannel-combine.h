@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,25 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CHANNEL_COMBINE_H__
-#define __GIMP_CHANNEL_COMBINE_H__
+#ifndef __PICMAN_CHANNEL_COMBINE_H__
+#define __PICMAN_CHANNEL_COMBINE_H__
 
 
-void   gimp_channel_combine_rect         (GimpChannel    *mask,
-                                          GimpChannelOps  op,
+void   picman_channel_combine_rect         (PicmanChannel    *mask,
+                                          PicmanChannelOps  op,
                                           gint            x,
                                           gint            y,
                                           gint            w,
                                           gint            h);
-void   gimp_channel_combine_ellipse      (GimpChannel    *mask,
-                                          GimpChannelOps  op,
+void   picman_channel_combine_ellipse      (PicmanChannel    *mask,
+                                          PicmanChannelOps  op,
                                           gint            x,
                                           gint            y,
                                           gint            w,
                                           gint            h,
                                           gboolean        antialias);
-void   gimp_channel_combine_ellipse_rect (GimpChannel    *mask,
-                                          GimpChannelOps  op,
+void   picman_channel_combine_ellipse_rect (PicmanChannel    *mask,
+                                          PicmanChannelOps  op,
                                           gint            x,
                                           gint            y,
                                           gint            w,
@@ -41,16 +41,16 @@ void   gimp_channel_combine_ellipse_rect (GimpChannel    *mask,
                                           gdouble         a,
                                           gdouble         b,
                                           gboolean        antialias);
-void   gimp_channel_combine_mask         (GimpChannel    *mask,
-                                          GimpChannel    *add_on,
-                                          GimpChannelOps  op,
+void   picman_channel_combine_mask         (PicmanChannel    *mask,
+                                          PicmanChannel    *add_on,
+                                          PicmanChannelOps  op,
                                           gint            off_x,
                                           gint            off_y);
-void   gimp_channel_combine_buffer       (GimpChannel    *mask,
+void   picman_channel_combine_buffer       (PicmanChannel    *mask,
                                           GeglBuffer     *add_on_buffer,
-                                          GimpChannelOps  op,
+                                          PicmanChannelOps  op,
                                           gint            off_x,
                                           gint            off_y);
 
 
-#endif /* __GIMP_CHANNEL_COMBINE_H__ */
+#endif /* __PICMAN_CHANNEL_COMBINE_H__ */

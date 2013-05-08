@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimptemplate.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmantemplate.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,18 +25,18 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gegl/gimp-babl.h"
+#include "gegl/picman-babl.h"
 
-#include "gimpimage.h"
-#include "gimpprojection.h"
-#include "gimptemplate.h"
+#include "picmanimage.h"
+#include "picmanprojection.h"
+#include "picmantemplate.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define DEFAULT_RESOLUTION    72.0
@@ -59,22 +59,22 @@ enum
 };
 
 
-typedef struct _GimpTemplatePrivate GimpTemplatePrivate;
+typedef struct _PicmanTemplatePrivate PicmanTemplatePrivate;
 
-struct _GimpTemplatePrivate
+struct _PicmanTemplatePrivate
 {
   gint               width;
   gint               height;
-  GimpUnit           unit;
+  PicmanUnit           unit;
 
   gdouble            xresolution;
   gdouble            yresolution;
-  GimpUnit           resolution_unit;
+  PicmanUnit           resolution_unit;
 
-  GimpImageBaseType  base_type;
-  GimpPrecision      precision;
+  PicmanImageBaseType  base_type;
+  PicmanPrecision      precision;
 
-  GimpFillType       fill_type;
+  PicmanFillType       fill_type;
 
   gchar             *comment;
   gchar             *filename;
@@ -83,118 +83,118 @@ struct _GimpTemplatePrivate
 };
 
 #define GET_PRIVATE(template) G_TYPE_INSTANCE_GET_PRIVATE (template, \
-                                                           GIMP_TYPE_TEMPLATE, \
-                                                           GimpTemplatePrivate)
+                                                           PICMAN_TYPE_TEMPLATE, \
+                                                           PicmanTemplatePrivate)
 
 
-static void      gimp_template_finalize     (GObject      *object);
-static void      gimp_template_set_property (GObject      *object,
+static void      picman_template_finalize     (GObject      *object);
+static void      picman_template_set_property (GObject      *object,
                                              guint         property_id,
                                              const GValue *value,
                                              GParamSpec   *pspec);
-static void      gimp_template_get_property (GObject      *object,
+static void      picman_template_get_property (GObject      *object,
                                              guint         property_id,
                                              GValue       *value,
                                              GParamSpec   *pspec);
-static void      gimp_template_notify       (GObject      *object,
+static void      picman_template_notify       (GObject      *object,
                                              GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpTemplate, gimp_template, GIMP_TYPE_VIEWABLE,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanTemplate, picman_template, PICMAN_TYPE_VIEWABLE,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL))
 
-#define parent_class gimp_template_parent_class
+#define parent_class picman_template_parent_class
 
 
 static void
-gimp_template_class_init (GimpTemplateClass *klass)
+picman_template_class_init (PicmanTemplateClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->finalize     = gimp_template_finalize;
+  object_class->finalize     = picman_template_finalize;
 
-  object_class->set_property = gimp_template_set_property;
-  object_class->get_property = gimp_template_get_property;
-  object_class->notify       = gimp_template_notify;
+  object_class->set_property = picman_template_set_property;
+  object_class->get_property = picman_template_get_property;
+  object_class->notify       = picman_template_notify;
 
-  viewable_class->default_stock_id = "gimp-template";
+  viewable_class->default_stock_id = "picman-template";
 
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_WIDTH, "width",
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_WIDTH, "width",
                                 NULL,
-                                GIMP_MIN_IMAGE_SIZE, GIMP_MAX_IMAGE_SIZE,
-                                GIMP_DEFAULT_IMAGE_WIDTH,
-                                GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_HEIGHT, "height",
+                                PICMAN_MIN_IMAGE_SIZE, PICMAN_MAX_IMAGE_SIZE,
+                                PICMAN_DEFAULT_IMAGE_WIDTH,
+                                PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_HEIGHT, "height",
                                 NULL,
-                                GIMP_MIN_IMAGE_SIZE, GIMP_MAX_IMAGE_SIZE,
-                                GIMP_DEFAULT_IMAGE_HEIGHT,
-                                GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_UNIT, "unit",
+                                PICMAN_MIN_IMAGE_SIZE, PICMAN_MAX_IMAGE_SIZE,
+                                PICMAN_DEFAULT_IMAGE_HEIGHT,
+                                PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_UNIT, "unit",
                                  N_("The unit used for coordinate display "
                                     "when not in dot-for-dot mode."),
-                                 TRUE, FALSE, GIMP_UNIT_PIXEL,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 TRUE, FALSE, PICMAN_UNIT_PIXEL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_RESOLUTION (object_class, PROP_XRESOLUTION,
+  PICMAN_CONFIG_INSTALL_PROP_RESOLUTION (object_class, PROP_XRESOLUTION,
                                        "xresolution",
                                        N_("The horizontal image resolution."),
                                        DEFAULT_RESOLUTION,
-                                       GIMP_PARAM_STATIC_STRINGS |
-                                       GIMP_TEMPLATE_PARAM_COPY_FIRST);
-  GIMP_CONFIG_INSTALL_PROP_RESOLUTION (object_class, PROP_YRESOLUTION,
+                                       PICMAN_PARAM_STATIC_STRINGS |
+                                       PICMAN_TEMPLATE_PARAM_COPY_FIRST);
+  PICMAN_CONFIG_INSTALL_PROP_RESOLUTION (object_class, PROP_YRESOLUTION,
                                        "yresolution",
                                        N_("The vertical image resolution."),
                                        DEFAULT_RESOLUTION,
-                                       GIMP_PARAM_STATIC_STRINGS |
-                                       GIMP_TEMPLATE_PARAM_COPY_FIRST);
-  GIMP_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_RESOLUTION_UNIT,
+                                       PICMAN_PARAM_STATIC_STRINGS |
+                                       PICMAN_TEMPLATE_PARAM_COPY_FIRST);
+  PICMAN_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_RESOLUTION_UNIT,
                                  "resolution-unit",
                                  NULL,
-                                 FALSE, FALSE, GIMP_UNIT_INCH,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 FALSE, FALSE, PICMAN_UNIT_INCH,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_BASE_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_BASE_TYPE,
                                  "image-type", /* serialized name */
                                  NULL,
-                                 GIMP_TYPE_IMAGE_BASE_TYPE, GIMP_RGB,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_PRECISION,
+                                 PICMAN_TYPE_IMAGE_BASE_TYPE, PICMAN_RGB,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_PRECISION,
                                  "precision",
                                  NULL,
-                                 GIMP_TYPE_PRECISION, GIMP_PRECISION_U8,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_PRECISION, PICMAN_PRECISION_U8,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_FILL_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_FILL_TYPE,
                                  "fill-type",
                                  NULL,
-                                 GIMP_TYPE_FILL_TYPE, GIMP_BACKGROUND_FILL,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_FILL_TYPE, PICMAN_BACKGROUND_FILL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_COMMENT,
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_COMMENT,
                                    "comment",
                                    NULL,
                                    NULL,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_FILENAME,
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_FILENAME,
                                    "filename",
                                    NULL,
                                    NULL,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  g_type_class_add_private (klass, sizeof (GimpTemplatePrivate));
+  g_type_class_add_private (klass, sizeof (PicmanTemplatePrivate));
 }
 
 static void
-gimp_template_init (GimpTemplate *template)
+picman_template_init (PicmanTemplate *template)
 {
 }
 
 static void
-gimp_template_finalize (GObject *object)
+picman_template_finalize (GObject *object)
 {
-  GimpTemplatePrivate *private = GET_PRIVATE (object);
+  PicmanTemplatePrivate *private = GET_PRIVATE (object);
 
   if (private->comment)
     {
@@ -212,12 +212,12 @@ gimp_template_finalize (GObject *object)
 }
 
 static void
-gimp_template_set_property (GObject      *object,
+picman_template_set_property (GObject      *object,
                             guint         property_id,
                             const GValue *value,
                             GParamSpec   *pspec)
 {
-  GimpTemplatePrivate *private = GET_PRIVATE (object);
+  PicmanTemplatePrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -265,12 +265,12 @@ gimp_template_set_property (GObject      *object,
 }
 
 static void
-gimp_template_get_property (GObject    *object,
+picman_template_get_property (GObject    *object,
                             guint       property_id,
                             GValue     *value,
                             GParamSpec *pspec)
 {
-  GimpTemplatePrivate *private = GET_PRIVATE (object);
+  PicmanTemplatePrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -314,10 +314,10 @@ gimp_template_get_property (GObject    *object,
 }
 
 static void
-gimp_template_notify (GObject    *object,
+picman_template_notify (GObject    *object,
                       GParamSpec *pspec)
 {
-  GimpTemplatePrivate *private = GET_PRIVATE (object);
+  PicmanTemplatePrivate *private = GET_PRIVATE (object);
   const Babl          *format;
   gint                 bytes;
 
@@ -325,13 +325,13 @@ gimp_template_notify (GObject    *object,
     G_OBJECT_CLASS (parent_class)->notify (object, pspec);
 
   /* the initial layer */
-  format = gimp_babl_format (private->base_type,
+  format = picman_babl_format (private->base_type,
                              private->precision,
-                             private->fill_type == GIMP_TRANSPARENT_FILL);
+                             private->fill_type == PICMAN_TRANSPARENT_FILL);
   bytes = babl_format_get_bytes_per_pixel (format);
 
   /* the selection */
-  format = gimp_babl_format (GIMP_GRAY,
+  format = picman_babl_format (PICMAN_GRAY,
                              private->precision,
                              FALSE);
   bytes += babl_format_get_bytes_per_pixel (format);
@@ -341,60 +341,60 @@ gimp_template_notify (GObject    *object,
                            (guint64) private->height);
 
   private->initial_size +=
-    gimp_projection_estimate_memsize (private->base_type,
+    picman_projection_estimate_memsize (private->base_type,
                                       private->precision,
                                       private->width, private->height);
 
   if (! strcmp (pspec->name, "stock-id"))
-    gimp_viewable_invalidate_preview (GIMP_VIEWABLE (object));
+    picman_viewable_invalidate_preview (PICMAN_VIEWABLE (object));
 }
 
 
 /*  public functions  */
 
-GimpTemplate *
-gimp_template_new (const gchar *name)
+PicmanTemplate *
+picman_template_new (const gchar *name)
 {
   g_return_val_if_fail (name != NULL, NULL);
 
-  return g_object_new (GIMP_TYPE_TEMPLATE,
+  return g_object_new (PICMAN_TYPE_TEMPLATE,
                        "name", name,
                        NULL);
 }
 
 void
-gimp_template_set_from_image (GimpTemplate *template,
-                              GimpImage    *image)
+picman_template_set_from_image (PicmanTemplate *template,
+                              PicmanImage    *image)
 {
   gdouble             xresolution;
   gdouble             yresolution;
-  GimpImageBaseType   base_type;
-  const GimpParasite *parasite;
+  PicmanImageBaseType   base_type;
+  const PicmanParasite *parasite;
   gchar              *comment = NULL;
 
-  g_return_if_fail (GIMP_IS_TEMPLATE (template));
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_TEMPLATE (template));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  gimp_image_get_resolution (image, &xresolution, &yresolution);
+  picman_image_get_resolution (image, &xresolution, &yresolution);
 
-  base_type = gimp_image_get_base_type (image);
+  base_type = picman_image_get_base_type (image);
 
-  if (base_type == GIMP_INDEXED)
-    base_type = GIMP_RGB;
+  if (base_type == PICMAN_INDEXED)
+    base_type = PICMAN_RGB;
 
-  parasite =  gimp_image_parasite_find (image, "gimp-comment");
+  parasite =  picman_image_parasite_find (image, "picman-comment");
   if (parasite)
-    comment = g_strndup (gimp_parasite_data (parasite),
-                         gimp_parasite_data_size (parasite));
+    comment = g_strndup (picman_parasite_data (parasite),
+                         picman_parasite_data_size (parasite));
 
   g_object_set (template,
-                "width",           gimp_image_get_width (image),
-                "height",          gimp_image_get_height (image),
+                "width",           picman_image_get_width (image),
+                "height",          picman_image_get_height (image),
                 "xresolution",     xresolution,
                 "yresolution",     yresolution,
-                "resolution-unit", gimp_image_get_unit (image),
+                "resolution-unit", picman_image_get_unit (image),
                 "image-type",      base_type,
-                "precision",       gimp_image_get_precision (image),
+                "precision",       picman_image_get_precision (image),
                 "comment",         comment,
                 NULL);
 
@@ -403,89 +403,89 @@ gimp_template_set_from_image (GimpTemplate *template,
 }
 
 gint
-gimp_template_get_width (GimpTemplate *template)
+picman_template_get_width (PicmanTemplate *template)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), 0);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE (template), 0);
 
   return GET_PRIVATE (template)->width;
 }
 
 gint
-gimp_template_get_height (GimpTemplate *template)
+picman_template_get_height (PicmanTemplate *template)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), 0);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE (template), 0);
 
   return GET_PRIVATE (template)->height;
 }
 
-GimpUnit
-gimp_template_get_unit (GimpTemplate *template)
+PicmanUnit
+picman_template_get_unit (PicmanTemplate *template)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), GIMP_UNIT_INCH);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE (template), PICMAN_UNIT_INCH);
 
   return GET_PRIVATE (template)->unit;
 }
 
 gdouble
-gimp_template_get_resolution_x (GimpTemplate *template)
+picman_template_get_resolution_x (PicmanTemplate *template)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), 1.0);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE (template), 1.0);
 
   return GET_PRIVATE (template)->xresolution;
 }
 
 gdouble
-gimp_template_get_resolution_y (GimpTemplate *template)
+picman_template_get_resolution_y (PicmanTemplate *template)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), 1.0);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE (template), 1.0);
 
   return GET_PRIVATE (template)->yresolution;
 }
 
-GimpUnit
-gimp_template_get_resolution_unit (GimpTemplate *template)
+PicmanUnit
+picman_template_get_resolution_unit (PicmanTemplate *template)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), GIMP_UNIT_INCH);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE (template), PICMAN_UNIT_INCH);
 
   return GET_PRIVATE (template)->resolution_unit;
 }
 
-GimpImageBaseType
-gimp_template_get_base_type (GimpTemplate *template)
+PicmanImageBaseType
+picman_template_get_base_type (PicmanTemplate *template)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), GIMP_RGB);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE (template), PICMAN_RGB);
 
   return GET_PRIVATE (template)->base_type;
 }
 
-GimpPrecision
-gimp_template_get_precision (GimpTemplate *template)
+PicmanPrecision
+picman_template_get_precision (PicmanTemplate *template)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), GIMP_PRECISION_U8);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE (template), PICMAN_PRECISION_U8);
 
   return GET_PRIVATE (template)->precision;
 }
 
-GimpFillType
-gimp_template_get_fill_type (GimpTemplate *template)
+PicmanFillType
+picman_template_get_fill_type (PicmanTemplate *template)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), GIMP_NO_FILL);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE (template), PICMAN_NO_FILL);
 
   return GET_PRIVATE (template)->fill_type;
 }
 
 const gchar *
-gimp_template_get_comment (GimpTemplate *template)
+picman_template_get_comment (PicmanTemplate *template)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE (template), NULL);
 
   return GET_PRIVATE (template)->comment;
 }
 
 guint64
-gimp_template_get_initial_size (GimpTemplate *template)
+picman_template_get_initial_size (PicmanTemplate *template)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), 0);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE (template), 0);
 
   return GET_PRIVATE (template)->initial_size;
 }

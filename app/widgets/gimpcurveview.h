@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,31 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CURVE_VIEW_H__
-#define __GIMP_CURVE_VIEW_H__
+#ifndef __PICMAN_CURVE_VIEW_H__
+#define __PICMAN_CURVE_VIEW_H__
 
 
-#include "gimphistogramview.h"
+#include "picmanhistogramview.h"
 
 
-#define GIMP_TYPE_CURVE_VIEW            (gimp_curve_view_get_type ())
-#define GIMP_CURVE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CURVE_VIEW, GimpCurveView))
-#define GIMP_CURVE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CURVE_VIEW, GimpCurveViewClass))
-#define GIMP_IS_CURVE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CURVE_VIEW))
-#define GIMP_IS_CURVE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CURVE_VIEW))
-#define GIMP_CURVE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CURVE_VIEW, GimpCurveViewClass))
+#define PICMAN_TYPE_CURVE_VIEW            (picman_curve_view_get_type ())
+#define PICMAN_CURVE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CURVE_VIEW, PicmanCurveView))
+#define PICMAN_CURVE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CURVE_VIEW, PicmanCurveViewClass))
+#define PICMAN_IS_CURVE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CURVE_VIEW))
+#define PICMAN_IS_CURVE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CURVE_VIEW))
+#define PICMAN_CURVE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CURVE_VIEW, PicmanCurveViewClass))
 
 
-typedef struct _GimpCurveViewClass  GimpCurveViewClass;
+typedef struct _PicmanCurveViewClass  PicmanCurveViewClass;
 
-struct _GimpCurveView
+struct _PicmanCurveView
 {
-  GimpHistogramView  parent_instance;
+  PicmanHistogramView  parent_instance;
 
-  Gimp              *gimp; /* only needed for copy & paste */
+  Picman              *picman; /* only needed for copy & paste */
 
-  GimpCurve         *curve;
-  GimpRGB           *curve_color;
+  PicmanCurve         *curve;
+  PicmanRGB           *curve_color;
 
   GList             *bg_curves;
 
@@ -74,48 +74,48 @@ struct _GimpCurveView
   gchar             *y_axis_label;
 };
 
-struct _GimpCurveViewClass
+struct _PicmanCurveViewClass
 {
-  GimpHistogramViewClass  parent_class;
+  PicmanHistogramViewClass  parent_class;
 
-  void (* cut_clipboard)   (GimpCurveView *view);
-  void (* copy_clipboard)  (GimpCurveView *view);
-  void (* paste_clipboard) (GimpCurveView *view);
+  void (* cut_clipboard)   (PicmanCurveView *view);
+  void (* copy_clipboard)  (PicmanCurveView *view);
+  void (* paste_clipboard) (PicmanCurveView *view);
 };
 
 
-GType       gimp_curve_view_get_type          (void) G_GNUC_CONST;
+GType       picman_curve_view_get_type          (void) G_GNUC_CONST;
 
-GtkWidget * gimp_curve_view_new               (void);
+GtkWidget * picman_curve_view_new               (void);
 
-void        gimp_curve_view_set_curve         (GimpCurveView *view,
-                                               GimpCurve     *curve,
-                                               const GimpRGB *color);
-GimpCurve * gimp_curve_view_get_curve         (GimpCurveView *view);
+void        picman_curve_view_set_curve         (PicmanCurveView *view,
+                                               PicmanCurve     *curve,
+                                               const PicmanRGB *color);
+PicmanCurve * picman_curve_view_get_curve         (PicmanCurveView *view);
 
-void        gimp_curve_view_add_background    (GimpCurveView *view,
-                                               GimpCurve     *curve,
-                                               const GimpRGB *color);
-void        gimp_curve_view_remove_background (GimpCurveView *view,
-                                               GimpCurve     *curve);
+void        picman_curve_view_add_background    (PicmanCurveView *view,
+                                               PicmanCurve     *curve,
+                                               const PicmanRGB *color);
+void        picman_curve_view_remove_background (PicmanCurveView *view,
+                                               PicmanCurve     *curve);
 
-void   gimp_curve_view_remove_all_backgrounds (GimpCurveView *view);
+void   picman_curve_view_remove_all_backgrounds (PicmanCurveView *view);
 
-void        gimp_curve_view_set_selected      (GimpCurveView *view,
+void        picman_curve_view_set_selected      (PicmanCurveView *view,
                                                gint           selected);
-void        gimp_curve_view_set_range_x       (GimpCurveView *view,
+void        picman_curve_view_set_range_x       (PicmanCurveView *view,
                                                gdouble        min,
                                                gdouble        max);
-void        gimp_curve_view_set_range_y       (GimpCurveView *view,
+void        picman_curve_view_set_range_y       (PicmanCurveView *view,
                                                gdouble        min,
                                                gdouble        max);
-void        gimp_curve_view_set_xpos          (GimpCurveView *view,
+void        picman_curve_view_set_xpos          (PicmanCurveView *view,
                                                gdouble        x);
 
-void        gimp_curve_view_set_x_axis_label  (GimpCurveView *view,
+void        picman_curve_view_set_x_axis_label  (PicmanCurveView *view,
                                                const gchar   *label);
-void        gimp_curve_view_set_y_axis_label  (GimpCurveView *view,
+void        picman_curve_view_set_y_axis_label  (PicmanCurveView *view,
                                                const gchar   *label);
 
 
-#endif /* __GIMP_CURVE_VIEW_H__ */
+#endif /* __PICMAN_CURVE_VIEW_H__ */

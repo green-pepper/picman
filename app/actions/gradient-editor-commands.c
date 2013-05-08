@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,49 +20,49 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpgradient.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmandatafactory.h"
+#include "core/picmangradient.h"
 
-#include "widgets/gimpcolordialog.h"
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpgradienteditor.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpuimanager.h"
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmancolordialog.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmangradienteditor.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanuimanager.h"
+#include "widgets/picmanviewabledialog.h"
 
 #include "gradient-editor-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   gradient_editor_left_color_update      (GimpColorDialog     *dialog,
-                                                      const GimpRGB       *color,
-                                                      GimpColorDialogState state,
-                                                      GimpGradientEditor  *editor);
-static void   gradient_editor_right_color_update     (GimpColorDialog     *dialog,
-                                                      const GimpRGB       *color,
-                                                      GimpColorDialogState state,
-                                                      GimpGradientEditor  *editor);
+static void   gradient_editor_left_color_update      (PicmanColorDialog     *dialog,
+                                                      const PicmanRGB       *color,
+                                                      PicmanColorDialogState state,
+                                                      PicmanGradientEditor  *editor);
+static void   gradient_editor_right_color_update     (PicmanColorDialog     *dialog,
+                                                      const PicmanRGB       *color,
+                                                      PicmanColorDialogState state,
+                                                      PicmanGradientEditor  *editor);
 
-static GimpGradientSegment *
-              gradient_editor_save_selection         (GimpGradientEditor  *editor);
-static void   gradient_editor_replace_selection      (GimpGradientEditor  *editor,
-                                                      GimpGradientSegment *replace_seg);
+static PicmanGradientSegment *
+              gradient_editor_save_selection         (PicmanGradientEditor  *editor);
+static void   gradient_editor_replace_selection      (PicmanGradientEditor  *editor,
+                                                      PicmanGradientSegment *replace_seg);
 
 static void   gradient_editor_split_uniform_response (GtkWidget           *widget,
                                                       gint                 response_id,
-                                                      GimpGradientEditor  *editor);
+                                                      PicmanGradientEditor  *editor);
 static void   gradient_editor_replicate_response     (GtkWidget           *widget,
                                                       gint                 response_id,
-                                                      GimpGradientEditor  *editor);
+                                                      PicmanGradientEditor  *editor);
 
 
 /*  public functionss */
@@ -71,23 +71,23 @@ void
 gradient_editor_left_color_cmd_callback (GtkAction *action,
                                          gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
-  editor->left_saved_dirty    = gimp_data_is_dirty (GIMP_DATA (gradient));
+  editor->left_saved_dirty    = picman_data_is_dirty (PICMAN_DATA (gradient));
   editor->left_saved_segments = gradient_editor_save_selection (editor);
 
   editor->color_dialog =
-    gimp_color_dialog_new (GIMP_VIEWABLE (gradient),
-                           GIMP_DATA_EDITOR (editor)->context,
+    picman_color_dialog_new (PICMAN_VIEWABLE (gradient),
+                           PICMAN_DATA_EDITOR (editor)->context,
                            _("Left Endpoint Color"),
-                           GIMP_STOCK_GRADIENT,
+                           PICMAN_STOCK_GRADIENT,
                            _("Gradient Segment's Left Endpoint Color"),
                            GTK_WIDGET (editor),
-                           gimp_dialog_factory_get_singleton (),
-                           "gimp-gradient-editor-color-dialog",
+                           picman_dialog_factory_get_singleton (),
+                           "picman-gradient-editor-color-dialog",
                            &editor->control_sel_l->left_color,
                            TRUE, TRUE);
 
@@ -100,8 +100,8 @@ gradient_editor_left_color_cmd_callback (GtkAction *action,
                     editor);
 
   gtk_widget_set_sensitive (GTK_WIDGET (editor), FALSE);
-  gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                          gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+  picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                          picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
 
   gtk_window_present (GTK_WINDOW (editor->color_dialog));
 }
@@ -111,37 +111,37 @@ gradient_editor_left_color_type_cmd_callback (GtkAction *action,
                                               GtkAction *current,
                                               gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
   gint                value;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
   value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
   if (gradient && value >= 0)
     {
-      GimpGradientColor color_type = value;
-      GimpRGB           color;
+      PicmanGradientColor color_type = value;
+      PicmanRGB           color;
 
-      gimp_gradient_get_color_at (gradient,
-                                  GIMP_DATA_EDITOR (editor)->context,
+      picman_gradient_get_color_at (gradient,
+                                  PICMAN_DATA_EDITOR (editor)->context,
                                   editor->control_sel_l,
                                   editor->control_sel_l->left, FALSE,
                                   &color);
 
-      gimp_data_freeze (GIMP_DATA (gradient));
+      picman_data_freeze (PICMAN_DATA (gradient));
 
-      gimp_gradient_segment_set_left_color_type (gradient,
+      picman_gradient_segment_set_left_color_type (gradient,
                                                  editor->control_sel_l,
                                                  color_type);
 
-      if (color_type == GIMP_GRADIENT_COLOR_FIXED)
-        gimp_gradient_segment_set_left_color (gradient,
+      if (color_type == PICMAN_GRADIENT_COLOR_FIXED)
+        picman_gradient_segment_set_left_color (gradient,
                                               editor->control_sel_l,
                                               &color);
 
-      gimp_data_thaw (GIMP_DATA (gradient));
+      picman_data_thaw (PICMAN_DATA (gradient));
     }
 }
 
@@ -150,14 +150,14 @@ gradient_editor_load_left_cmd_callback (GtkAction *action,
                                         gint       value,
                                         gpointer   data)
 {
-  GimpGradientEditor  *editor      = GIMP_GRADIENT_EDITOR (data);
-  GimpDataEditor      *data_editor = GIMP_DATA_EDITOR (data);
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
-  GimpRGB              color;
-  GimpGradientColor    color_type = GIMP_GRADIENT_COLOR_FIXED;
+  PicmanGradientEditor  *editor      = PICMAN_GRADIENT_EDITOR (data);
+  PicmanDataEditor      *data_editor = PICMAN_DATA_EDITOR (data);
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
+  PicmanRGB              color;
+  PicmanGradientColor    color_type = PICMAN_GRADIENT_COLOR_FIXED;
 
-  gradient = GIMP_GRADIENT (data_editor->data);
+  gradient = PICMAN_GRADIENT (data_editor->data);
 
   switch (value)
     {
@@ -165,7 +165,7 @@ gradient_editor_load_left_cmd_callback (GtkAction *action,
       if (editor->control_sel_l->prev != NULL)
         seg = editor->control_sel_l->prev;
       else
-        seg = gimp_gradient_segment_get_last (editor->control_sel_l);
+        seg = picman_gradient_segment_get_last (editor->control_sel_l);
 
       color      = seg->right_color;
       color_type = seg->right_color_type;
@@ -177,11 +177,11 @@ gradient_editor_load_left_cmd_callback (GtkAction *action,
       break;
 
     case GRADIENT_EDITOR_COLOR_FOREGROUND:
-      gimp_context_get_foreground (data_editor->context, &color);
+      picman_context_get_foreground (data_editor->context, &color);
       break;
 
     case GRADIENT_EDITOR_COLOR_BACKGROUND:
-      gimp_context_get_background (data_editor->context, &color);
+      picman_context_get_background (data_editor->context, &color);
       break;
 
     default: /* Load a color */
@@ -189,19 +189,19 @@ gradient_editor_load_left_cmd_callback (GtkAction *action,
       break;
     }
 
-  gimp_data_freeze (GIMP_DATA (gradient));
+  picman_data_freeze (PICMAN_DATA (gradient));
 
-  gimp_gradient_segment_range_blend (gradient,
+  picman_gradient_segment_range_blend (gradient,
                                      editor->control_sel_l,
                                      editor->control_sel_r,
                                      &color,
                                      &editor->control_sel_r->right_color,
                                      TRUE, TRUE);
-  gimp_gradient_segment_set_left_color_type (gradient,
+  picman_gradient_segment_set_left_color_type (gradient,
                                              editor->control_sel_l,
                                              color_type);
 
-  gimp_data_thaw (GIMP_DATA (gradient));
+  picman_data_thaw (PICMAN_DATA (gradient));
 }
 
 void
@@ -209,12 +209,12 @@ gradient_editor_save_left_cmd_callback (GtkAction *action,
                                         gint       value,
                                         gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
-  gimp_gradient_segment_get_left_color (gradient, editor->control_sel_l,
+  picman_gradient_segment_get_left_color (gradient, editor->control_sel_l,
                                         &editor->saved_colors[value]);
 }
 
@@ -222,23 +222,23 @@ void
 gradient_editor_right_color_cmd_callback (GtkAction *action,
                                           gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
-  editor->right_saved_dirty    = gimp_data_is_dirty (GIMP_DATA (gradient));
+  editor->right_saved_dirty    = picman_data_is_dirty (PICMAN_DATA (gradient));
   editor->right_saved_segments = gradient_editor_save_selection (editor);
 
   editor->color_dialog =
-    gimp_color_dialog_new (GIMP_VIEWABLE (gradient),
-                           GIMP_DATA_EDITOR (editor)->context,
+    picman_color_dialog_new (PICMAN_VIEWABLE (gradient),
+                           PICMAN_DATA_EDITOR (editor)->context,
                            _("Right Endpoint Color"),
-                           GIMP_STOCK_GRADIENT,
+                           PICMAN_STOCK_GRADIENT,
                            _("Gradient Segment's Right Endpoint Color"),
                            GTK_WIDGET (editor),
-                           gimp_dialog_factory_get_singleton (),
-                           "gimp-gradient-editor-color-dialog",
+                           picman_dialog_factory_get_singleton (),
+                           "picman-gradient-editor-color-dialog",
                            &editor->control_sel_l->right_color,
                            TRUE, TRUE);
 
@@ -251,8 +251,8 @@ gradient_editor_right_color_cmd_callback (GtkAction *action,
                     editor);
 
   gtk_widget_set_sensitive (GTK_WIDGET (editor), FALSE);
-  gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                          gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+  picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                          picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
 
   gtk_window_present (GTK_WINDOW (editor->color_dialog));
 }
@@ -262,37 +262,37 @@ gradient_editor_right_color_type_cmd_callback (GtkAction *action,
                                                GtkAction *current,
                                                gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
   gint                value;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
   value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
   if (gradient && value >= 0)
     {
-      GimpGradientColor color_type = value;
-      GimpRGB           color;
+      PicmanGradientColor color_type = value;
+      PicmanRGB           color;
 
-      gimp_gradient_get_color_at (gradient,
-                                  GIMP_DATA_EDITOR (editor)->context,
+      picman_gradient_get_color_at (gradient,
+                                  PICMAN_DATA_EDITOR (editor)->context,
                                   editor->control_sel_r,
                                   editor->control_sel_r->right, FALSE,
                                   &color);
 
-      gimp_data_freeze (GIMP_DATA (gradient));
+      picman_data_freeze (PICMAN_DATA (gradient));
 
-      gimp_gradient_segment_set_right_color_type (gradient,
+      picman_gradient_segment_set_right_color_type (gradient,
                                                   editor->control_sel_r,
                                                   color_type);
 
-      if (color_type == GIMP_GRADIENT_COLOR_FIXED)
-        gimp_gradient_segment_set_right_color (gradient,
+      if (color_type == PICMAN_GRADIENT_COLOR_FIXED)
+        picman_gradient_segment_set_right_color (gradient,
                                                editor->control_sel_r,
                                                &color);
 
-      gimp_data_thaw (GIMP_DATA (gradient));
+      picman_data_thaw (PICMAN_DATA (gradient));
     }
 }
 
@@ -301,14 +301,14 @@ gradient_editor_load_right_cmd_callback (GtkAction *action,
                                          gint       value,
                                          gpointer   data)
 {
-  GimpGradientEditor  *editor      = GIMP_GRADIENT_EDITOR (data);
-  GimpDataEditor      *data_editor = GIMP_DATA_EDITOR (data);
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
-  GimpRGB              color;
-  GimpGradientColor    color_type = GIMP_GRADIENT_COLOR_FIXED;
+  PicmanGradientEditor  *editor      = PICMAN_GRADIENT_EDITOR (data);
+  PicmanDataEditor      *data_editor = PICMAN_DATA_EDITOR (data);
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
+  PicmanRGB              color;
+  PicmanGradientColor    color_type = PICMAN_GRADIENT_COLOR_FIXED;
 
-  gradient = GIMP_GRADIENT (data_editor->data);
+  gradient = PICMAN_GRADIENT (data_editor->data);
 
   switch (value)
     {
@@ -316,7 +316,7 @@ gradient_editor_load_right_cmd_callback (GtkAction *action,
       if (editor->control_sel_r->next != NULL)
         seg = editor->control_sel_r->next;
       else
-        seg = gimp_gradient_segment_get_first (editor->control_sel_r);
+        seg = picman_gradient_segment_get_first (editor->control_sel_r);
 
       color      = seg->left_color;
       color_type = seg->left_color_type;
@@ -328,11 +328,11 @@ gradient_editor_load_right_cmd_callback (GtkAction *action,
       break;
 
     case GRADIENT_EDITOR_COLOR_FOREGROUND:
-      gimp_context_get_foreground (data_editor->context, &color);
+      picman_context_get_foreground (data_editor->context, &color);
       break;
 
     case GRADIENT_EDITOR_COLOR_BACKGROUND:
-      gimp_context_get_background (data_editor->context, &color);
+      picman_context_get_background (data_editor->context, &color);
       break;
 
     default: /* Load a color */
@@ -340,19 +340,19 @@ gradient_editor_load_right_cmd_callback (GtkAction *action,
       break;
     }
 
-  gimp_data_freeze (GIMP_DATA (gradient));
+  picman_data_freeze (PICMAN_DATA (gradient));
 
-  gimp_gradient_segment_range_blend (gradient,
+  picman_gradient_segment_range_blend (gradient,
                                      editor->control_sel_l,
                                      editor->control_sel_r,
                                      &editor->control_sel_l->left_color,
                                      &color,
                                      TRUE, TRUE);
-  gimp_gradient_segment_set_right_color_type (gradient,
+  picman_gradient_segment_set_right_color_type (gradient,
                                               editor->control_sel_l,
                                               color_type);
 
-  gimp_data_thaw (GIMP_DATA (gradient));
+  picman_data_thaw (PICMAN_DATA (gradient));
 }
 
 void
@@ -360,12 +360,12 @@ gradient_editor_save_right_cmd_callback (GtkAction *action,
                                          gint       value,
                                          gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
-  gimp_gradient_segment_get_right_color (gradient, editor->control_sel_r,
+  picman_gradient_segment_get_right_color (gradient, editor->control_sel_r,
                                          &editor->saved_colors[value]);
 }
 
@@ -374,19 +374,19 @@ gradient_editor_blending_func_cmd_callback (GtkAction *action,
                                             GtkAction *current,
                                             gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
   gint                value;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
   value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
   if (gradient && value >= 0)
     {
-      GimpGradientSegmentType type = value;
+      PicmanGradientSegmentType type = value;
 
-      gimp_gradient_segment_range_set_blending_function (gradient,
+      picman_gradient_segment_range_set_blending_function (gradient,
                                                          editor->control_sel_l,
                                                          editor->control_sel_r,
                                                          type);
@@ -398,19 +398,19 @@ gradient_editor_coloring_type_cmd_callback (GtkAction *action,
                                             GtkAction *current,
                                             gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
   gint                value;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
   value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
   if (gradient && value >= 0)
     {
-      GimpGradientSegmentColor color = value;
+      PicmanGradientSegmentColor color = value;
 
-      gimp_gradient_segment_range_set_coloring_type (gradient,
+      picman_gradient_segment_range_set_coloring_type (gradient,
                                                      editor->control_sel_l,
                                                      editor->control_sel_r,
                                                      color);
@@ -421,12 +421,12 @@ void
 gradient_editor_flip_cmd_callback (GtkAction *action,
                                    gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
-  gimp_gradient_segment_range_flip (gradient,
+  picman_gradient_segment_range_flip (gradient,
                                     editor->control_sel_l,
                                     editor->control_sel_r,
                                     &editor->control_sel_l,
@@ -437,8 +437,8 @@ void
 gradient_editor_replicate_cmd_callback (GtkAction *action,
                                         gpointer   data)
 {
-  GimpGradientEditor *editor      = GIMP_GRADIENT_EDITOR (data);
-  GimpDataEditor     *data_editor = GIMP_DATA_EDITOR (data);
+  PicmanGradientEditor *editor      = PICMAN_GRADIENT_EDITOR (data);
+  PicmanDataEditor     *data_editor = PICMAN_DATA_EDITOR (data);
   GtkWidget          *dialog;
   GtkWidget          *vbox;
   GtkWidget          *label;
@@ -459,13 +459,13 @@ gradient_editor_replicate_cmd_callback (GtkAction *action,
     }
 
   dialog =
-    gimp_viewable_dialog_new (GIMP_VIEWABLE (data_editor->data),
+    picman_viewable_dialog_new (PICMAN_VIEWABLE (data_editor->data),
                               data_editor->context,
-                              title, "gimp-gradient-segment-replicate",
-                              GIMP_STOCK_GRADIENT, desc,
+                              title, "picman-gradient-segment-replicate",
+                              PICMAN_STOCK_GRADIENT, desc,
                               GTK_WIDGET (editor),
-                              gimp_standard_help_func,
-                              GIMP_HELP_GRADIENT_EDITOR_REPLICATE,
+                              picman_standard_help_func,
+                              PICMAN_HELP_GRADIENT_EDITOR_REPLICATE,
 
                               GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                               _("Replicate"),   GTK_RESPONSE_OK,
@@ -509,12 +509,12 @@ gradient_editor_replicate_cmd_callback (GtkAction *action,
   gtk_widget_show (scale);
 
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &editor->replicate_times);
 
   gtk_widget_set_sensitive (GTK_WIDGET (editor), FALSE);
-  gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                          gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+  picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                          picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
 
   gtk_widget_show (dialog);
 }
@@ -523,11 +523,11 @@ void
 gradient_editor_split_midpoint_cmd_callback (GtkAction *action,
                                              gpointer   data)
 {
-  GimpGradientEditor *editor      = GIMP_GRADIENT_EDITOR (data);
-  GimpDataEditor     *data_editor = GIMP_DATA_EDITOR (data);
-  GimpGradient       *gradient    = GIMP_GRADIENT (data_editor->data);
+  PicmanGradientEditor *editor      = PICMAN_GRADIENT_EDITOR (data);
+  PicmanDataEditor     *data_editor = PICMAN_DATA_EDITOR (data);
+  PicmanGradient       *gradient    = PICMAN_GRADIENT (data_editor->data);
 
-  gimp_gradient_segment_range_split_midpoint (gradient,
+  picman_gradient_segment_range_split_midpoint (gradient,
                                               data_editor->context,
                                               editor->control_sel_l,
                                               editor->control_sel_r,
@@ -539,8 +539,8 @@ void
 gradient_editor_split_uniformly_cmd_callback (GtkAction *action,
                                               gpointer   data)
 {
-  GimpGradientEditor *editor      = GIMP_GRADIENT_EDITOR (data);
-  GimpDataEditor     *data_editor = GIMP_DATA_EDITOR (data);
+  PicmanGradientEditor *editor      = PICMAN_GRADIENT_EDITOR (data);
+  PicmanDataEditor     *data_editor = PICMAN_DATA_EDITOR (data);
   GtkWidget          *dialog;
   GtkWidget          *vbox;
   GtkWidget          *label;
@@ -561,13 +561,13 @@ gradient_editor_split_uniformly_cmd_callback (GtkAction *action,
     }
 
   dialog =
-    gimp_viewable_dialog_new (GIMP_VIEWABLE (data_editor->data),
+    picman_viewable_dialog_new (PICMAN_VIEWABLE (data_editor->data),
                               data_editor->context,
-                              title, "gimp-gradient-segment-split-uniformly",
-                              GIMP_STOCK_GRADIENT, desc,
+                              title, "picman-gradient-segment-split-uniformly",
+                              PICMAN_STOCK_GRADIENT, desc,
                               GTK_WIDGET (editor),
-                              gimp_standard_help_func,
-                              GIMP_HELP_GRADIENT_EDITOR_SPLIT_UNIFORM,
+                              picman_standard_help_func,
+                              PICMAN_HELP_GRADIENT_EDITOR_SPLIT_UNIFORM,
 
                               GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                               _("Split"),       GTK_RESPONSE_OK,
@@ -612,12 +612,12 @@ gradient_editor_split_uniformly_cmd_callback (GtkAction *action,
   gtk_widget_show (scale);
 
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &editor->split_parts);
 
   gtk_widget_set_sensitive (GTK_WIDGET (editor), FALSE);
-  gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                          gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+  picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                          picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
 
   gtk_widget_show (dialog);
 }
@@ -626,12 +626,12 @@ void
 gradient_editor_delete_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
-  gimp_gradient_segment_range_delete (gradient,
+  picman_gradient_segment_range_delete (gradient,
                                       editor->control_sel_l,
                                       editor->control_sel_r,
                                       &editor->control_sel_l,
@@ -642,12 +642,12 @@ void
 gradient_editor_recenter_cmd_callback (GtkAction *action,
                                        gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
-  gimp_gradient_segment_range_recenter_handles (gradient,
+  picman_gradient_segment_range_recenter_handles (gradient,
                                                 editor->control_sel_l,
                                                 editor->control_sel_r);
 }
@@ -656,12 +656,12 @@ void
 gradient_editor_redistribute_cmd_callback (GtkAction *action,
                                            gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
-  gimp_gradient_segment_range_redistribute_handles (gradient,
+  picman_gradient_segment_range_redistribute_handles (gradient,
                                                     editor->control_sel_l,
                                                     editor->control_sel_r);
 }
@@ -670,12 +670,12 @@ void
 gradient_editor_blend_color_cmd_callback (GtkAction *action,
                                           gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
-  gimp_gradient_segment_range_blend (gradient,
+  picman_gradient_segment_range_blend (gradient,
                                      editor->control_sel_l,
                                      editor->control_sel_r,
                                      &editor->control_sel_l->left_color,
@@ -687,12 +687,12 @@ void
 gradient_editor_blend_opacity_cmd_callback (GtkAction *action,
                                             gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
-  GimpGradient       *gradient;
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
+  PicmanGradient       *gradient;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
-  gimp_gradient_segment_range_blend (gradient,
+  picman_gradient_segment_range_blend (gradient,
                                      editor->control_sel_l,
                                      editor->control_sel_r,
                                      &editor->control_sel_l->left_color,
@@ -705,26 +705,26 @@ gradient_editor_zoom_cmd_callback (GtkAction *action,
                                    gint       value,
                                    gpointer   data)
 {
-  GimpGradientEditor *editor = GIMP_GRADIENT_EDITOR (data);
+  PicmanGradientEditor *editor = PICMAN_GRADIENT_EDITOR (data);
 
-  gimp_gradient_editor_zoom (editor, (GimpZoomType) value);
+  picman_gradient_editor_zoom (editor, (PicmanZoomType) value);
 }
 
 
 /*  private functions  */
 
 static void
-gradient_editor_left_color_update (GimpColorDialog      *dialog,
-                                   const GimpRGB        *color,
-                                   GimpColorDialogState  state,
-                                   GimpGradientEditor   *editor)
+gradient_editor_left_color_update (PicmanColorDialog      *dialog,
+                                   const PicmanRGB        *color,
+                                   PicmanColorDialogState  state,
+                                   PicmanGradientEditor   *editor)
 {
-  GimpGradient *gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  PicmanGradient *gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
   switch (state)
     {
-    case GIMP_COLOR_DIALOG_UPDATE:
-      gimp_gradient_segment_range_blend (gradient,
+    case PICMAN_COLOR_DIALOG_UPDATE:
+      picman_gradient_segment_range_blend (gradient,
                                          editor->control_sel_l,
                                          editor->control_sel_r,
                                          color,
@@ -732,47 +732,47 @@ gradient_editor_left_color_update (GimpColorDialog      *dialog,
                                          TRUE, TRUE);
       break;
 
-    case GIMP_COLOR_DIALOG_OK:
-      gimp_gradient_segment_range_blend (gradient,
+    case PICMAN_COLOR_DIALOG_OK:
+      picman_gradient_segment_range_blend (gradient,
                                          editor->control_sel_l,
                                          editor->control_sel_r,
                                          color,
                                          &editor->control_sel_r->right_color,
                                          TRUE, TRUE);
-      gimp_gradient_segments_free (editor->left_saved_segments);
+      picman_gradient_segments_free (editor->left_saved_segments);
       gtk_widget_destroy (editor->color_dialog);
       editor->color_dialog = NULL;
       gtk_widget_set_sensitive (GTK_WIDGET (editor), TRUE);
-      gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                              gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+      picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                              picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
       break;
 
-    case GIMP_COLOR_DIALOG_CANCEL:
+    case PICMAN_COLOR_DIALOG_CANCEL:
       gradient_editor_replace_selection (editor, editor->left_saved_segments);
       if (! editor->left_saved_dirty)
-        gimp_data_clean (GIMP_DATA (gradient));
-      gimp_viewable_invalidate_preview (GIMP_VIEWABLE (gradient));
+        picman_data_clean (PICMAN_DATA (gradient));
+      picman_viewable_invalidate_preview (PICMAN_VIEWABLE (gradient));
       gtk_widget_destroy (editor->color_dialog);
       editor->color_dialog = NULL;
       gtk_widget_set_sensitive (GTK_WIDGET (editor), TRUE);
-      gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                              gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+      picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                              picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
       break;
     }
 }
 
 static void
-gradient_editor_right_color_update (GimpColorDialog      *dialog,
-                                    const GimpRGB        *color,
-                                    GimpColorDialogState  state,
-                                    GimpGradientEditor   *editor)
+gradient_editor_right_color_update (PicmanColorDialog      *dialog,
+                                    const PicmanRGB        *color,
+                                    PicmanColorDialogState  state,
+                                    PicmanGradientEditor   *editor)
 {
-  GimpGradient *gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  PicmanGradient *gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
   switch (state)
     {
-    case GIMP_COLOR_DIALOG_UPDATE:
-      gimp_gradient_segment_range_blend (gradient,
+    case PICMAN_COLOR_DIALOG_UPDATE:
+      picman_gradient_segment_range_blend (gradient,
                                          editor->control_sel_l,
                                          editor->control_sel_r,
                                          &editor->control_sel_l->left_color,
@@ -780,40 +780,40 @@ gradient_editor_right_color_update (GimpColorDialog      *dialog,
                                          TRUE, TRUE);
       break;
 
-    case GIMP_COLOR_DIALOG_OK:
-      gimp_gradient_segment_range_blend (gradient,
+    case PICMAN_COLOR_DIALOG_OK:
+      picman_gradient_segment_range_blend (gradient,
                                          editor->control_sel_l,
                                          editor->control_sel_r,
                                          &editor->control_sel_l->left_color,
                                          color,
                                          TRUE, TRUE);
-      gimp_gradient_segments_free (editor->right_saved_segments);
+      picman_gradient_segments_free (editor->right_saved_segments);
       gtk_widget_destroy (editor->color_dialog);
       editor->color_dialog = NULL;
       gtk_widget_set_sensitive (GTK_WIDGET (editor), TRUE);
-      gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                              gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+      picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                              picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
       break;
 
-    case GIMP_COLOR_DIALOG_CANCEL:
+    case PICMAN_COLOR_DIALOG_CANCEL:
       gradient_editor_replace_selection (editor, editor->right_saved_segments);
       if (! editor->right_saved_dirty)
-        gimp_data_clean (GIMP_DATA (gradient));
-      gimp_viewable_invalidate_preview (GIMP_VIEWABLE (gradient));
+        picman_data_clean (PICMAN_DATA (gradient));
+      picman_viewable_invalidate_preview (PICMAN_VIEWABLE (gradient));
       gtk_widget_destroy (editor->color_dialog);
       editor->color_dialog = NULL;
       gtk_widget_set_sensitive (GTK_WIDGET (editor), TRUE);
-      gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                              gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+      picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                              picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
       break;
     }
 }
 
-static GimpGradientSegment *
-gradient_editor_save_selection (GimpGradientEditor *editor)
+static PicmanGradientSegment *
+gradient_editor_save_selection (PicmanGradientEditor *editor)
 {
-  GimpGradientSegment *seg, *prev, *tmp;
-  GimpGradientSegment *oseg, *oaseg;
+  PicmanGradientSegment *seg, *prev, *tmp;
+  PicmanGradientSegment *oseg, *oaseg;
 
   prev = NULL;
   oseg = editor->control_sel_l;
@@ -821,7 +821,7 @@ gradient_editor_save_selection (GimpGradientEditor *editor)
 
   do
     {
-      seg = gimp_gradient_segment_new ();
+      seg = picman_gradient_segment_new ();
 
       *seg = *oseg; /* Copy everything */
 
@@ -843,27 +843,27 @@ gradient_editor_save_selection (GimpGradientEditor *editor)
 }
 
 static void
-gradient_editor_replace_selection (GimpGradientEditor  *editor,
-                                   GimpGradientSegment *replace_seg)
+gradient_editor_replace_selection (PicmanGradientEditor  *editor,
+                                   PicmanGradientSegment *replace_seg)
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *lseg, *rseg;
-  GimpGradientSegment *replace_last;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *lseg, *rseg;
+  PicmanGradientSegment *replace_last;
 
-  gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+  gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
   /* Remember left and right segments */
 
   lseg = editor->control_sel_l->prev;
   rseg = editor->control_sel_r->next;
 
-  replace_last = gimp_gradient_segment_get_last (replace_seg);
+  replace_last = picman_gradient_segment_get_last (replace_seg);
 
   /* Free old selection */
 
   editor->control_sel_r->next = NULL;
 
-  gimp_gradient_segments_free (editor->control_sel_l);
+  picman_gradient_segments_free (editor->control_sel_l);
 
   /* Link in new segments */
 
@@ -886,19 +886,19 @@ gradient_editor_replace_selection (GimpGradientEditor  *editor,
 static void
 gradient_editor_split_uniform_response (GtkWidget          *widget,
                                         gint                response_id,
-                                        GimpGradientEditor *editor)
+                                        PicmanGradientEditor *editor)
 {
   gtk_widget_destroy (widget);
   gtk_widget_set_sensitive (GTK_WIDGET (editor), TRUE);
-  gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                          gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+  picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                          picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
 
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpDataEditor *data_editor = GIMP_DATA_EDITOR (editor);
-      GimpGradient   *gradient    = GIMP_GRADIENT (data_editor->data);
+      PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (editor);
+      PicmanGradient   *gradient    = PICMAN_GRADIENT (data_editor->data);
 
-      gimp_gradient_segment_range_split_uniform (gradient,
+      picman_gradient_segment_range_split_uniform (gradient,
                                                  data_editor->context,
                                                  editor->control_sel_l,
                                                  editor->control_sel_r,
@@ -911,18 +911,18 @@ gradient_editor_split_uniform_response (GtkWidget          *widget,
 static void
 gradient_editor_replicate_response (GtkWidget          *widget,
                                     gint                response_id,
-                                    GimpGradientEditor *editor)
+                                    PicmanGradientEditor *editor)
 {
   gtk_widget_destroy (widget);
   gtk_widget_set_sensitive (GTK_WIDGET (editor), TRUE);
-  gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                          gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+  picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                          picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
 
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpGradient *gradient = GIMP_GRADIENT (GIMP_DATA_EDITOR (editor)->data);
+      PicmanGradient *gradient = PICMAN_GRADIENT (PICMAN_DATA_EDITOR (editor)->data);
 
-      gimp_gradient_segment_range_replicate (gradient,
+      picman_gradient_segment_range_replicate (gradient,
                                              editor->control_sel_l,
                                              editor->control_sel_r,
                                              editor->replicate_times,

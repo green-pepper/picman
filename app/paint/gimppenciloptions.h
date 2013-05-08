@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,35 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PENCIL_OPTIONS_H__
-#define __GIMP_PENCIL_OPTIONS_H__
+#ifndef __PICMAN_PENCIL_OPTIONS_H__
+#define __PICMAN_PENCIL_OPTIONS_H__
 
 
-#include "gimppaintoptions.h"
+#include "picmanpaintoptions.h"
 
 
-#define GIMP_TYPE_PENCIL_OPTIONS            (gimp_pencil_options_get_type ())
-#define GIMP_PENCIL_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PENCIL_OPTIONS, GimpPencilOptions))
-#define GIMP_PENCIL_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PENCIL_OPTIONS, GimpPencilOptionsClass))
-#define GIMP_IS_PENCIL_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PENCIL_OPTIONS))
-#define GIMP_IS_PENCIL_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PENCIL_OPTIONS))
-#define GIMP_PENCIL_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PENCIL_OPTIONS, GimpPencilOptionsClass))
+#define PICMAN_TYPE_PENCIL_OPTIONS            (picman_pencil_options_get_type ())
+#define PICMAN_PENCIL_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PENCIL_OPTIONS, PicmanPencilOptions))
+#define PICMAN_PENCIL_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PENCIL_OPTIONS, PicmanPencilOptionsClass))
+#define PICMAN_IS_PENCIL_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PENCIL_OPTIONS))
+#define PICMAN_IS_PENCIL_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PENCIL_OPTIONS))
+#define PICMAN_PENCIL_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PENCIL_OPTIONS, PicmanPencilOptionsClass))
 
 
-typedef struct _GimpPencilOptionsClass GimpPencilOptionsClass;
+typedef struct _PicmanPencilOptionsClass PicmanPencilOptionsClass;
 
-struct _GimpPencilOptions
+struct _PicmanPencilOptions
 {
-  GimpPaintOptions  parent_instance;
+  PicmanPaintOptions  parent_instance;
 };
 
-struct _GimpPencilOptionsClass
+struct _PicmanPencilOptionsClass
 {
-  GimpPaintOptionsClass  parent_class;
+  PicmanPaintOptionsClass  parent_class;
 };
 
 
-GType   gimp_pencil_options_get_type (void) G_GNUC_CONST;
+GType   picman_pencil_options_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_PENCIL_OPTIONS_H__  */
+#endif  /*  __PICMAN_PENCIL_OPTIONS_H__  */

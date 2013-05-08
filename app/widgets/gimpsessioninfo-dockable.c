@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpsessioninfo-dockable.c
- * Copyright (C) 2001-2007 Michael Natterer <mitch@gimp.org>
+ * picmansessioninfo-dockable.c
+ * Copyright (C) 2001-2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,19 +22,19 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "widgets-types.h"
 
-#include "gimpcontainerview-utils.h"
-#include "gimpcontainerview.h"
-#include "gimpdialogfactory.h"
-#include "gimpdock.h"
-#include "gimpdockable.h"
-#include "gimpsessioninfo-aux.h"
-#include "gimpsessioninfo-dockable.h"
-#include "gimpsessionmanaged.h"
-#include "gimptoolbox.h"
+#include "picmancontainerview-utils.h"
+#include "picmancontainerview.h"
+#include "picmandialogfactory.h"
+#include "picmandock.h"
+#include "picmandockable.h"
+#include "picmansessioninfo-aux.h"
+#include "picmansessioninfo-dockable.h"
+#include "picmansessionmanaged.h"
+#include "picmantoolbox.h"
 
 
 enum
@@ -48,14 +48,14 @@ enum
 
 /*  public functions  */
 
-GimpSessionInfoDockable *
-gimp_session_info_dockable_new (void)
+PicmanSessionInfoDockable *
+picman_session_info_dockable_new (void)
 {
-  return g_slice_new0 (GimpSessionInfoDockable);
+  return g_slice_new0 (PicmanSessionInfoDockable);
 }
 
 void
-gimp_session_info_dockable_free (GimpSessionInfoDockable *info)
+picman_session_info_dockable_free (PicmanSessionInfoDockable *info)
 {
   g_return_if_fail (info != NULL);
 
@@ -68,16 +68,16 @@ gimp_session_info_dockable_free (GimpSessionInfoDockable *info)
   if (info->aux_info)
     {
       g_list_free_full (info->aux_info,
-                        (GDestroyNotify) gimp_session_info_aux_free);
+                        (GDestroyNotify) picman_session_info_aux_free);
       info->aux_info = NULL;
     }
 
-  g_slice_free (GimpSessionInfoDockable, info);
+  g_slice_free (PicmanSessionInfoDockable, info);
 }
 
 void
-gimp_session_info_dockable_serialize (GimpConfigWriter        *writer,
-                                      GimpSessionInfoDockable *info)
+picman_session_info_dockable_serialize (PicmanConfigWriter        *writer,
+                                      PicmanSessionInfoDockable *info)
 {
   GEnumClass  *enum_class;
   GEnumValue  *enum_value;
@@ -86,15 +86,15 @@ gimp_session_info_dockable_serialize (GimpConfigWriter        *writer,
   g_return_if_fail (writer != NULL);
   g_return_if_fail (info != NULL);
 
-  enum_class = g_type_class_ref (GIMP_TYPE_TAB_STYLE);
+  enum_class = g_type_class_ref (PICMAN_TYPE_TAB_STYLE);
 
-  gimp_config_writer_open (writer, "dockable");
-  gimp_config_writer_string (writer, info->identifier);
+  picman_config_writer_open (writer, "dockable");
+  picman_config_writer_string (writer, info->identifier);
 
   if (info->locked)
     {
-      gimp_config_writer_open (writer, "locked");
-      gimp_config_writer_close (writer);
+      picman_config_writer_open (writer, "locked");
+      picman_config_writer_close (writer);
     }
 
   enum_value = g_enum_get_value (enum_class, info->tab_style);
@@ -102,31 +102,31 @@ gimp_session_info_dockable_serialize (GimpConfigWriter        *writer,
   if (enum_value)
     tab_style = enum_value->value_nick;
 
-  gimp_config_writer_open (writer, "tab-style");
-  gimp_config_writer_print (writer, tab_style, -1);
-  gimp_config_writer_close (writer);
+  picman_config_writer_open (writer, "tab-style");
+  picman_config_writer_print (writer, tab_style, -1);
+  picman_config_writer_close (writer);
 
   if (info->view_size > 0)
     {
-      gimp_config_writer_open (writer, "preview-size");
-      gimp_config_writer_printf (writer, "%d", info->view_size);
-      gimp_config_writer_close (writer);
+      picman_config_writer_open (writer, "preview-size");
+      picman_config_writer_printf (writer, "%d", info->view_size);
+      picman_config_writer_close (writer);
     }
 
   if (info->aux_info)
-    gimp_session_info_aux_serialize (writer, info->aux_info);
+    picman_session_info_aux_serialize (writer, info->aux_info);
 
-  gimp_config_writer_close (writer);
+  picman_config_writer_close (writer);
 
   g_type_class_unref (enum_class);
 }
 
 GTokenType
-gimp_session_info_dockable_deserialize (GScanner                 *scanner,
+picman_session_info_dockable_deserialize (GScanner                 *scanner,
                                         gint                      scope,
-                                        GimpSessionInfoDockable **dockable)
+                                        PicmanSessionInfoDockable **dockable)
 {
-  GimpSessionInfoDockable *info;
+  PicmanSessionInfoDockable *info;
   GEnumClass              *enum_class;
   GEnumValue              *enum_value;
   GTokenType               token;
@@ -143,12 +143,12 @@ gimp_session_info_dockable_deserialize (GScanner                 *scanner,
   g_scanner_scope_add_symbol (scanner, scope, "aux-info",
                               GINT_TO_POINTER (SESSION_INFO_DOCKABLE_AUX));
 
-  info = gimp_session_info_dockable_new ();
+  info = picman_session_info_dockable_new ();
 
-  enum_class = g_type_class_ref (GIMP_TYPE_TAB_STYLE);
+  enum_class = g_type_class_ref (PICMAN_TYPE_TAB_STYLE);
 
   token = G_TOKEN_STRING;
-  if (! gimp_scanner_parse_string (scanner, &info->identifier))
+  if (! picman_scanner_parse_string (scanner, &info->identifier))
     goto error;
 
   token = G_TOKEN_LEFT_PAREN;
@@ -190,12 +190,12 @@ gimp_session_info_dockable_deserialize (GScanner                 *scanner,
 
             case SESSION_INFO_DOCKABLE_VIEW_SIZE:
               token = G_TOKEN_INT;
-              if (! gimp_scanner_parse_int (scanner, &info->view_size))
+              if (! picman_scanner_parse_int (scanner, &info->view_size))
                 goto error;
               break;
 
             case SESSION_INFO_DOCKABLE_AUX:
-              token = gimp_session_info_aux_deserialize (scanner,
+              token = picman_session_info_aux_deserialize (scanner,
                                                          &info->aux_info);
               if (token != G_TOKEN_LEFT_PAREN)
                 goto error;
@@ -230,83 +230,83 @@ gimp_session_info_dockable_deserialize (GScanner                 *scanner,
  error:
   *dockable = NULL;
 
-  gimp_session_info_dockable_free (info);
+  picman_session_info_dockable_free (info);
   g_type_class_unref (enum_class);
 
   return token;
 }
 
-GimpSessionInfoDockable *
-gimp_session_info_dockable_from_widget (GimpDockable *dockable)
+PicmanSessionInfoDockable *
+picman_session_info_dockable_from_widget (PicmanDockable *dockable)
 {
-  GimpSessionInfoDockable *info;
-  GimpDialogFactoryEntry  *entry;
-  GimpContainerView       *view;
+  PicmanSessionInfoDockable *info;
+  PicmanDialogFactoryEntry  *entry;
+  PicmanContainerView       *view;
   gint                     view_size = -1;
 
-  g_return_val_if_fail (GIMP_IS_DOCKABLE (dockable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCKABLE (dockable), NULL);
 
-  gimp_dialog_factory_from_widget (GTK_WIDGET (dockable), &entry);
+  picman_dialog_factory_from_widget (GTK_WIDGET (dockable), &entry);
 
   g_return_val_if_fail (entry != NULL, NULL);
 
-  info = gimp_session_info_dockable_new ();
+  info = picman_session_info_dockable_new ();
 
-  info->locked     = gimp_dockable_get_locked (dockable);
+  info->locked     = picman_dockable_get_locked (dockable);
   info->identifier = g_strdup (entry->identifier);
-  info->tab_style  = gimp_dockable_get_tab_style (dockable);
+  info->tab_style  = picman_dockable_get_tab_style (dockable);
   info->view_size  = -1;
 
-  view = gimp_container_view_get_by_dockable (dockable);
+  view = picman_container_view_get_by_dockable (dockable);
 
   if (view)
-    view_size = gimp_container_view_get_view_size (view, NULL);
+    view_size = picman_container_view_get_view_size (view, NULL);
 
   if (view_size > 0 && view_size != entry->view_size)
     info->view_size = view_size;
 
-  if (GIMP_IS_SESSION_MANAGED (dockable))
+  if (PICMAN_IS_SESSION_MANAGED (dockable))
     info->aux_info =
-      gimp_session_managed_get_aux_info (GIMP_SESSION_MANAGED (dockable));
+      picman_session_managed_get_aux_info (PICMAN_SESSION_MANAGED (dockable));
 
   return info;
 }
 
-GimpDockable *
-gimp_session_info_dockable_restore (GimpSessionInfoDockable *info,
-                                    GimpDock                *dock)
+PicmanDockable *
+picman_session_info_dockable_restore (PicmanSessionInfoDockable *info,
+                                    PicmanDock                *dock)
 {
   GtkWidget *dockable;
 
   g_return_val_if_fail (info != NULL, NULL);
-  g_return_val_if_fail (GIMP_IS_DOCK (dock), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK (dock), NULL);
 
-  if (info->view_size < GIMP_VIEW_SIZE_TINY ||
-      info->view_size > GIMP_VIEW_SIZE_GIGANTIC)
+  if (info->view_size < PICMAN_VIEW_SIZE_TINY ||
+      info->view_size > PICMAN_VIEW_SIZE_GIGANTIC)
     info->view_size = -1;
 
   dockable =
-    gimp_dialog_factory_dockable_new (gimp_dock_get_dialog_factory (dock),
+    picman_dialog_factory_dockable_new (picman_dock_get_dialog_factory (dock),
                                       dock,
                                       info->identifier,
                                       info->view_size);
 
   if (dockable)
     {
-      /*  gimp_dialog_factory_dockable_new() might return an already
+      /*  picman_dialog_factory_dockable_new() might return an already
        *  existing singleton dockable, return NULL so our caller won't
        *  try to add it to another dockbook
        */
-      if (gimp_dockable_get_dockbook (GIMP_DOCKABLE (dockable)))
+      if (picman_dockable_get_dockbook (PICMAN_DOCKABLE (dockable)))
         return NULL;
 
-      gimp_dockable_set_locked    (GIMP_DOCKABLE (dockable), info->locked);
-      gimp_dockable_set_tab_style (GIMP_DOCKABLE (dockable), info->tab_style);
+      picman_dockable_set_locked    (PICMAN_DOCKABLE (dockable), info->locked);
+      picman_dockable_set_tab_style (PICMAN_DOCKABLE (dockable), info->tab_style);
 
       if (info->aux_info)
-        gimp_session_managed_set_aux_info (GIMP_SESSION_MANAGED (dockable),
+        picman_session_managed_set_aux_info (PICMAN_SESSION_MANAGED (dockable),
                                            info->aux_info);
     }
 
-  return GIMP_DOCKABLE (dockable);
+  return PICMAN_DOCKABLE (dockable);
 }

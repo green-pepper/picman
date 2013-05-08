@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpplugin-cleanup.c
+ * picmanplugin-cleanup.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,38 +23,38 @@
 
 #include "plug-in-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdrawable-shadow.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimpundostack.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmandrawable.h"
+#include "core/picmandrawable-shadow.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanundostack.h"
 
-#include "gimpplugin.h"
-#include "gimpplugin-cleanup.h"
-#include "gimppluginmanager.h"
-#include "gimppluginprocedure.h"
+#include "picmanplugin.h"
+#include "picmanplugin-cleanup.h"
+#include "picmanpluginmanager.h"
+#include "picmanpluginprocedure.h"
 
-#include "gimp-log.h"
+#include "picman-log.h"
 
 
-typedef struct _GimpPlugInCleanupImage GimpPlugInCleanupImage;
+typedef struct _PicmanPlugInCleanupImage PicmanPlugInCleanupImage;
 
-struct _GimpPlugInCleanupImage
+struct _PicmanPlugInCleanupImage
 {
-  GimpImage *image;
+  PicmanImage *image;
   gint       image_ID;
 
   gint       undo_group_count;
 };
 
 
-typedef struct _GimpPlugInCleanupItem GimpPlugInCleanupItem;
+typedef struct _PicmanPlugInCleanupItem PicmanPlugInCleanupItem;
 
-struct _GimpPlugInCleanupItem
+struct _PicmanPlugInCleanupItem
 {
-  GimpItem *item;
+  PicmanItem *item;
   gint      item_ID;
 
   gboolean  shadow_buffer;
@@ -63,45 +63,45 @@ struct _GimpPlugInCleanupItem
 
 /*  local function prototypes  */
 
-static GimpPlugInCleanupImage *
-              gimp_plug_in_cleanup_image_new  (GimpImage              *image);
-static void   gimp_plug_in_cleanup_image_free (GimpPlugInCleanupImage *cleanup);
-static GimpPlugInCleanupImage *
-              gimp_plug_in_cleanup_image_get  (GimpPlugInProcFrame    *proc_frame,
-                                               GimpImage              *image);
-static void   gimp_plug_in_cleanup_image      (GimpPlugInProcFrame    *proc_frame,
-                                               GimpPlugInCleanupImage *cleanup);
+static PicmanPlugInCleanupImage *
+              picman_plug_in_cleanup_image_new  (PicmanImage              *image);
+static void   picman_plug_in_cleanup_image_free (PicmanPlugInCleanupImage *cleanup);
+static PicmanPlugInCleanupImage *
+              picman_plug_in_cleanup_image_get  (PicmanPlugInProcFrame    *proc_frame,
+                                               PicmanImage              *image);
+static void   picman_plug_in_cleanup_image      (PicmanPlugInProcFrame    *proc_frame,
+                                               PicmanPlugInCleanupImage *cleanup);
 
-static GimpPlugInCleanupItem *
-              gimp_plug_in_cleanup_item_new   (GimpItem               *item);
-static void   gimp_plug_in_cleanup_item_free  (GimpPlugInCleanupItem  *cleanup);
-static GimpPlugInCleanupItem *
-              gimp_plug_in_cleanup_item_get   (GimpPlugInProcFrame    *proc_frame,
-                                               GimpItem               *item);
-static void   gimp_plug_in_cleanup_item       (GimpPlugInProcFrame    *proc_frame,
-                                               GimpPlugInCleanupItem  *cleanup);
+static PicmanPlugInCleanupItem *
+              picman_plug_in_cleanup_item_new   (PicmanItem               *item);
+static void   picman_plug_in_cleanup_item_free  (PicmanPlugInCleanupItem  *cleanup);
+static PicmanPlugInCleanupItem *
+              picman_plug_in_cleanup_item_get   (PicmanPlugInProcFrame    *proc_frame,
+                                               PicmanItem               *item);
+static void   picman_plug_in_cleanup_item       (PicmanPlugInProcFrame    *proc_frame,
+                                               PicmanPlugInCleanupItem  *cleanup);
 
 
 /*  public functions  */
 
 gboolean
-gimp_plug_in_cleanup_undo_group_start (GimpPlugIn *plug_in,
-                                       GimpImage  *image)
+picman_plug_in_cleanup_undo_group_start (PicmanPlugIn *plug_in,
+                                       PicmanImage  *image)
 {
-  GimpPlugInProcFrame    *proc_frame;
-  GimpPlugInCleanupImage *cleanup;
+  PicmanPlugInProcFrame    *proc_frame;
+  PicmanPlugInCleanupImage *cleanup;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN (plug_in), FALSE);
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN (plug_in), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
-  cleanup    = gimp_plug_in_cleanup_image_get (proc_frame, image);
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
+  cleanup    = picman_plug_in_cleanup_image_get (proc_frame, image);
 
   if (! cleanup)
     {
-      cleanup = gimp_plug_in_cleanup_image_new (image);
+      cleanup = picman_plug_in_cleanup_image_new (image);
 
-      cleanup->undo_group_count = gimp_image_get_undo_group_count (image);
+      cleanup->undo_group_count = picman_image_get_undo_group_count (image);
 
       proc_frame->image_cleanups = g_list_prepend (proc_frame->image_cleanups,
                                                    cleanup);
@@ -111,47 +111,47 @@ gimp_plug_in_cleanup_undo_group_start (GimpPlugIn *plug_in,
 }
 
 gboolean
-gimp_plug_in_cleanup_undo_group_end (GimpPlugIn *plug_in,
-                                     GimpImage  *image)
+picman_plug_in_cleanup_undo_group_end (PicmanPlugIn *plug_in,
+                                     PicmanImage  *image)
 {
-  GimpPlugInProcFrame    *proc_frame;
-  GimpPlugInCleanupImage *cleanup;
+  PicmanPlugInProcFrame    *proc_frame;
+  PicmanPlugInCleanupImage *cleanup;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN (plug_in), FALSE);
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN (plug_in), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
-  cleanup    = gimp_plug_in_cleanup_image_get (proc_frame, image);
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
+  cleanup    = picman_plug_in_cleanup_image_get (proc_frame, image);
 
   if (! cleanup)
     return FALSE;
 
-  if (cleanup->undo_group_count == gimp_image_get_undo_group_count (image) - 1)
+  if (cleanup->undo_group_count == picman_image_get_undo_group_count (image) - 1)
     {
       proc_frame->image_cleanups = g_list_remove (proc_frame->image_cleanups,
                                                   cleanup);
-      gimp_plug_in_cleanup_image_free (cleanup);
+      picman_plug_in_cleanup_image_free (cleanup);
     }
 
   return TRUE;
 }
 
 gboolean
-gimp_plug_in_cleanup_add_shadow (GimpPlugIn   *plug_in,
-                                 GimpDrawable *drawable)
+picman_plug_in_cleanup_add_shadow (PicmanPlugIn   *plug_in,
+                                 PicmanDrawable *drawable)
 {
-  GimpPlugInProcFrame   *proc_frame;
-  GimpPlugInCleanupItem *cleanup;
+  PicmanPlugInProcFrame   *proc_frame;
+  PicmanPlugInCleanupItem *cleanup;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN (plug_in), FALSE);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN (plug_in), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
-  cleanup    = gimp_plug_in_cleanup_item_get (proc_frame, GIMP_ITEM (drawable));
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
+  cleanup    = picman_plug_in_cleanup_item_get (proc_frame, PICMAN_ITEM (drawable));
 
   if (! cleanup)
     {
-      cleanup = gimp_plug_in_cleanup_item_new (GIMP_ITEM (drawable));
+      cleanup = picman_plug_in_cleanup_item_new (PICMAN_ITEM (drawable));
 
       proc_frame->item_cleanups = g_list_prepend (proc_frame->item_cleanups,
                                                   cleanup);
@@ -163,17 +163,17 @@ gimp_plug_in_cleanup_add_shadow (GimpPlugIn   *plug_in,
 }
 
 gboolean
-gimp_plug_in_cleanup_remove_shadow (GimpPlugIn   *plug_in,
-                                    GimpDrawable *drawable)
+picman_plug_in_cleanup_remove_shadow (PicmanPlugIn   *plug_in,
+                                    PicmanDrawable *drawable)
 {
-  GimpPlugInProcFrame   *proc_frame;
-  GimpPlugInCleanupItem *cleanup;
+  PicmanPlugInProcFrame   *proc_frame;
+  PicmanPlugInCleanupItem *cleanup;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN (plug_in), FALSE);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN (plug_in), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
-  cleanup    = gimp_plug_in_cleanup_item_get (proc_frame, GIMP_ITEM (drawable));
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
+  cleanup    = picman_plug_in_cleanup_item_get (proc_frame, PICMAN_ITEM (drawable));
 
   if (! cleanup)
     return FALSE;
@@ -183,31 +183,31 @@ gimp_plug_in_cleanup_remove_shadow (GimpPlugIn   *plug_in,
 
   proc_frame->item_cleanups = g_list_remove (proc_frame->item_cleanups,
                                              cleanup);
-  gimp_plug_in_cleanup_item_free (cleanup);
+  picman_plug_in_cleanup_item_free (cleanup);
 
   return TRUE;
 }
 
 void
-gimp_plug_in_cleanup (GimpPlugIn          *plug_in,
-                      GimpPlugInProcFrame *proc_frame)
+picman_plug_in_cleanup (PicmanPlugIn          *plug_in,
+                      PicmanPlugInProcFrame *proc_frame)
 {
   GList *list;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN (plug_in));
+  g_return_if_fail (PICMAN_IS_PLUG_IN (plug_in));
   g_return_if_fail (proc_frame != NULL);
 
   for (list = proc_frame->image_cleanups; list; list = g_list_next (list))
     {
-      GimpPlugInCleanupImage *cleanup = list->data;
+      PicmanPlugInCleanupImage *cleanup = list->data;
 
-      if (gimp_image_get_by_ID (plug_in->manager->gimp,
+      if (picman_image_get_by_ID (plug_in->manager->picman,
                                 cleanup->image_ID) == cleanup->image)
         {
-          gimp_plug_in_cleanup_image (proc_frame, cleanup);
+          picman_plug_in_cleanup_image (proc_frame, cleanup);
         }
 
-      gimp_plug_in_cleanup_image_free (cleanup);
+      picman_plug_in_cleanup_image_free (cleanup);
     }
 
   g_list_free (proc_frame->image_cleanups);
@@ -215,15 +215,15 @@ gimp_plug_in_cleanup (GimpPlugIn          *plug_in,
 
   for (list = proc_frame->item_cleanups; list; list = g_list_next (list))
     {
-      GimpPlugInCleanupItem *cleanup = list->data;
+      PicmanPlugInCleanupItem *cleanup = list->data;
 
-      if (gimp_item_get_by_ID (plug_in->manager->gimp,
+      if (picman_item_get_by_ID (plug_in->manager->picman,
                                cleanup->item_ID) == cleanup->item)
         {
-          gimp_plug_in_cleanup_item (proc_frame, cleanup);
+          picman_plug_in_cleanup_item (proc_frame, cleanup);
         }
 
-      gimp_plug_in_cleanup_item_free (cleanup);
+      picman_plug_in_cleanup_item_free (cleanup);
     }
 
   g_list_free (proc_frame->item_cleanups);
@@ -233,32 +233,32 @@ gimp_plug_in_cleanup (GimpPlugIn          *plug_in,
 
 /*  private functions  */
 
-static GimpPlugInCleanupImage *
-gimp_plug_in_cleanup_image_new (GimpImage *image)
+static PicmanPlugInCleanupImage *
+picman_plug_in_cleanup_image_new (PicmanImage *image)
 {
-  GimpPlugInCleanupImage *cleanup = g_slice_new0 (GimpPlugInCleanupImage);
+  PicmanPlugInCleanupImage *cleanup = g_slice_new0 (PicmanPlugInCleanupImage);
 
   cleanup->image    = image;
-  cleanup->image_ID = gimp_image_get_ID (image);
+  cleanup->image_ID = picman_image_get_ID (image);
 
   return cleanup;
 }
 
 static void
-gimp_plug_in_cleanup_image_free (GimpPlugInCleanupImage *cleanup)
+picman_plug_in_cleanup_image_free (PicmanPlugInCleanupImage *cleanup)
 {
-  g_slice_free (GimpPlugInCleanupImage, cleanup);
+  g_slice_free (PicmanPlugInCleanupImage, cleanup);
 }
 
-static GimpPlugInCleanupImage *
-gimp_plug_in_cleanup_image_get (GimpPlugInProcFrame *proc_frame,
-                                GimpImage           *image)
+static PicmanPlugInCleanupImage *
+picman_plug_in_cleanup_image_get (PicmanPlugInProcFrame *proc_frame,
+                                PicmanImage           *image)
 {
   GList *list;
 
   for (list = proc_frame->image_cleanups; list; list = g_list_next (list))
     {
-      GimpPlugInCleanupImage *cleanup = list->data;
+      PicmanPlugInCleanupImage *cleanup = list->data;
 
       if (cleanup->image == image)
         return cleanup;
@@ -268,56 +268,56 @@ gimp_plug_in_cleanup_image_get (GimpPlugInProcFrame *proc_frame,
 }
 
 static void
-gimp_plug_in_cleanup_image (GimpPlugInProcFrame    *proc_frame,
-                            GimpPlugInCleanupImage *cleanup)
+picman_plug_in_cleanup_image (PicmanPlugInProcFrame    *proc_frame,
+                            PicmanPlugInCleanupImage *cleanup)
 {
-  GimpImage *image = cleanup->image;
+  PicmanImage *image = cleanup->image;
 
-  if (gimp_image_get_undo_group_count (image) == 0)
+  if (picman_image_get_undo_group_count (image) == 0)
     return;
 
-  if (cleanup->undo_group_count != gimp_image_get_undo_group_count (image))
+  if (cleanup->undo_group_count != picman_image_get_undo_group_count (image))
     {
-      GimpProcedure *proc = proc_frame->procedure;
+      PicmanProcedure *proc = proc_frame->procedure;
 
       g_message ("Plug-In '%s' left image undo in inconsistent state, "
                  "closing open undo groups.",
-                 gimp_plug_in_procedure_get_label (GIMP_PLUG_IN_PROCEDURE (proc)));
+                 picman_plug_in_procedure_get_label (PICMAN_PLUG_IN_PROCEDURE (proc)));
 
-      while (cleanup->undo_group_count < gimp_image_get_undo_group_count (image))
+      while (cleanup->undo_group_count < picman_image_get_undo_group_count (image))
         {
-          if (! gimp_image_undo_group_end (image))
+          if (! picman_image_undo_group_end (image))
             break;
         }
     }
 }
 
-static GimpPlugInCleanupItem *
-gimp_plug_in_cleanup_item_new (GimpItem *item)
+static PicmanPlugInCleanupItem *
+picman_plug_in_cleanup_item_new (PicmanItem *item)
 {
-  GimpPlugInCleanupItem *cleanup = g_slice_new0 (GimpPlugInCleanupItem);
+  PicmanPlugInCleanupItem *cleanup = g_slice_new0 (PicmanPlugInCleanupItem);
 
   cleanup->item    = item;
-  cleanup->item_ID = gimp_item_get_ID (item);
+  cleanup->item_ID = picman_item_get_ID (item);
 
   return cleanup;
 }
 
 static void
-gimp_plug_in_cleanup_item_free (GimpPlugInCleanupItem *cleanup)
+picman_plug_in_cleanup_item_free (PicmanPlugInCleanupItem *cleanup)
 {
-  g_slice_free (GimpPlugInCleanupItem, cleanup);
+  g_slice_free (PicmanPlugInCleanupItem, cleanup);
 }
 
-static GimpPlugInCleanupItem *
-gimp_plug_in_cleanup_item_get (GimpPlugInProcFrame *proc_frame,
-                               GimpItem            *item)
+static PicmanPlugInCleanupItem *
+picman_plug_in_cleanup_item_get (PicmanPlugInProcFrame *proc_frame,
+                               PicmanItem            *item)
 {
   GList *list;
 
   for (list = proc_frame->item_cleanups; list; list = g_list_next (list))
     {
-      GimpPlugInCleanupItem *cleanup = list->data;
+      PicmanPlugInCleanupItem *cleanup = list->data;
 
       if (cleanup->item == item)
         return cleanup;
@@ -327,20 +327,20 @@ gimp_plug_in_cleanup_item_get (GimpPlugInProcFrame *proc_frame,
 }
 
 static void
-gimp_plug_in_cleanup_item (GimpPlugInProcFrame   *proc_frame,
-                           GimpPlugInCleanupItem *cleanup)
+picman_plug_in_cleanup_item (PicmanPlugInProcFrame   *proc_frame,
+                           PicmanPlugInCleanupItem *cleanup)
 {
-  GimpItem *item = cleanup->item;
+  PicmanItem *item = cleanup->item;
 
   if (cleanup->shadow_buffer)
     {
-      GimpProcedure *proc = proc_frame->procedure;
+      PicmanProcedure *proc = proc_frame->procedure;
 
-      GIMP_LOG (SHADOW_TILES,
+      PICMAN_LOG (SHADOW_TILES,
                 "Freeing shadow buffer of drawable '%s' on behalf of '%s'.",
-                gimp_object_get_name (item),
-                gimp_plug_in_procedure_get_label (GIMP_PLUG_IN_PROCEDURE (proc)));
+                picman_object_get_name (item),
+                picman_plug_in_procedure_get_label (PICMAN_PLUG_IN_PROCEDURE (proc)));
 
-      gimp_drawable_free_shadow_buffer (GIMP_DRAWABLE (item));
+      picman_drawable_free_shadow_buffer (PICMAN_DRAWABLE (item));
     }
 }

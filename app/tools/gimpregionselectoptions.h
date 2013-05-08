@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,38 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_REGION_SELECT_OPTIONS_H__
-#define __GIMP_REGION_SELECT_OPTIONS_H__
+#ifndef __PICMAN_REGION_SELECT_OPTIONS_H__
+#define __PICMAN_REGION_SELECT_OPTIONS_H__
 
 
-#include "gimpselectionoptions.h"
+#include "picmanselectionoptions.h"
 
 
-#define GIMP_TYPE_REGION_SELECT_OPTIONS            (gimp_region_select_options_get_type ())
-#define GIMP_REGION_SELECT_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_REGION_SELECT_OPTIONS, GimpRegionSelectOptions))
-#define GIMP_REGION_SELECT_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_REGION_SELECT_OPTIONS, GimpRegionSelectOptionsClass))
-#define GIMP_IS_REGION_SELECT_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_REGION_SELECT_OPTIONS))
-#define GIMP_IS_REGION_SELECT_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_REGION_SELECT_OPTIONS))
-#define GIMP_REGION_SELECT_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_REGION_SELECT_OPTIONS, GimpRegionSelectOptionsClass))
+#define PICMAN_TYPE_REGION_SELECT_OPTIONS            (picman_region_select_options_get_type ())
+#define PICMAN_REGION_SELECT_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_REGION_SELECT_OPTIONS, PicmanRegionSelectOptions))
+#define PICMAN_REGION_SELECT_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_REGION_SELECT_OPTIONS, PicmanRegionSelectOptionsClass))
+#define PICMAN_IS_REGION_SELECT_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_REGION_SELECT_OPTIONS))
+#define PICMAN_IS_REGION_SELECT_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_REGION_SELECT_OPTIONS))
+#define PICMAN_REGION_SELECT_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_REGION_SELECT_OPTIONS, PicmanRegionSelectOptionsClass))
 
 
-typedef struct _GimpRegionSelectOptions GimpRegionSelectOptions;
-typedef struct _GimpToolOptionsClass    GimpRegionSelectOptionsClass;
+typedef struct _PicmanRegionSelectOptions PicmanRegionSelectOptions;
+typedef struct _PicmanToolOptionsClass    PicmanRegionSelectOptionsClass;
 
-struct _GimpRegionSelectOptions
+struct _PicmanRegionSelectOptions
 {
-  GimpSelectionOptions  parent_instance;
+  PicmanSelectionOptions  parent_instance;
 
   gboolean              select_transparent;
   gboolean              sample_merged;
   gdouble               threshold;
-  GimpSelectCriterion   select_criterion;
+  PicmanSelectCriterion   select_criterion;
 };
 
 
-GType       gimp_region_select_options_get_type (void) G_GNUC_CONST;
+GType       picman_region_select_options_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_region_select_options_gui      (GimpToolOptions *tool_options);
+GtkWidget * picman_region_select_options_gui      (PicmanToolOptions *tool_options);
 
 
-#endif  /*  __GIMP_REGION_SELECT_OPTIONS_H__  */
+#endif  /*  __PICMAN_REGION_SELECT_OPTIONS_H__  */

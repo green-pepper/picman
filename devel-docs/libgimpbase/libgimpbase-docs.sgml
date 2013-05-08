@@ -5,48 +5,48 @@
 <book id="index" xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <bookinfo>
-    <title>GIMP Base Library Reference Manual</title>
+    <title>PICMAN Base Library Reference Manual</title>
     <releaseinfo>
-      for GIMP <xi:include href="version" parse="text"/>
+      for PICMAN <xi:include href="version" parse="text"/>
     </releaseinfo>
   </bookinfo>
 
-  <part id="libgimpbase">
-    <title>GIMP Base Library</title>
-    <xi:include href="xml/gimpbaseenums.xml" />
-    <xi:include href="xml/gimpbasetypes.xml" />
-    <xi:include href="xml/gimpversion.xml" />
-    <xi:include href="xml/gimplimits.xml" />
-    <xi:include href="xml/gimpparam.xml" />
-    <xi:include href="xml/gimpchecks.xml" />
-    <xi:include href="xml/gimpcpuaccel.xml" />
-    <xi:include href="xml/gimpdatafiles.xml" />
-    <xi:include href="xml/gimpenv.xml" />
-    <xi:include href="xml/gimpmemsize.xml" />
-    <xi:include href="xml/gimprectangle.xml" />
-    <xi:include href="xml/gimpparasite.xml" />
-    <xi:include href="xml/gimpparasiteio.xml" />
-    <xi:include href="xml/gimpsignal.xml" />
-    <xi:include href="xml/gimpunit.xml" />
-    <xi:include href="xml/gimputils.xml" />
+  <part id="libpicmanbase">
+    <title>PICMAN Base Library</title>
+    <xi:include href="xml/picmanbaseenums.xml" />
+    <xi:include href="xml/picmanbasetypes.xml" />
+    <xi:include href="xml/picmanversion.xml" />
+    <xi:include href="xml/picmanlimits.xml" />
+    <xi:include href="xml/picmanparam.xml" />
+    <xi:include href="xml/picmanchecks.xml" />
+    <xi:include href="xml/picmancpuaccel.xml" />
+    <xi:include href="xml/picmandatafiles.xml" />
+    <xi:include href="xml/picmanenv.xml" />
+    <xi:include href="xml/picmanmemsize.xml" />
+    <xi:include href="xml/picmanrectangle.xml" />
+    <xi:include href="xml/picmanparasite.xml" />
+    <xi:include href="xml/picmanparasiteio.xml" />
+    <xi:include href="xml/picmansignal.xml" />
+    <xi:include href="xml/picmanunit.xml" />
+    <xi:include href="xml/picmanutils.xml" />
   </part>
 
-  <index id="libgimpbase-index">
+  <index id="libpicmanbase-index">
     <title>Index</title>
   </index>
-  <index role="GIMP 2.2" id="libgimpbase-index-new-in-2-2">
-    <title>Index of new symbols in GIMP 2.2</title>
+  <index role="PICMAN 2.2" id="libpicmanbase-index-new-in-2-2">
+    <title>Index of new symbols in PICMAN 2.2</title>
   </index>
-  <index role="GIMP 2.4" id="libgimpbase-index-new-in-2-4">
-    <title>Index of new symbols in GIMP 2.4</title>
+  <index role="PICMAN 2.4" id="libpicmanbase-index-new-in-2-4">
+    <title>Index of new symbols in PICMAN 2.4</title>
   </index>
-  <index role="GIMP 2.6" id="libgimpbase-index-new-in-2-6">
-    <title>Index of new symbols in GIMP 2.6</title>
+  <index role="PICMAN 2.6" id="libpicmanbase-index-new-in-2-6">
+    <title>Index of new symbols in PICMAN 2.6</title>
   </index>
-  <index role="GIMP 2.8" id="libgimpbase-index-new-in-2-8">
-    <title>Index of new symbols in GIMP 2.8</title>
+  <index role="PICMAN 2.8" id="libpicmanbase-index-new-in-2-8">
+    <title>Index of new symbols in PICMAN 2.8</title>
   </index>
-  <index role="deprecated" id="libgimpbase-index-deprecated">
+  <index role="deprecated" id="libpicmanbase-index-deprecated">
     <title>Index of deprecated symbols</title>
   </index>
 

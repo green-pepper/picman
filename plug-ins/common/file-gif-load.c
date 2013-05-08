@@ -1,9 +1,9 @@
-/* GIF loading file filter for GIMP 2.x
+/* GIF loading file filter for PICMAN 2.x
  * +-------------------------------------------------------------------+
  * |  Copyright Adam D. Moss, Peter Mattis, Spencer Kimball            |
  * +-------------------------------------------------------------------+
  * Version 1.50.4 - 2003/06/03
- *                        Adam D. Moss - <adam@gimp.org> <adam@foxbox.org>
+ *                        Adam D. Moss - <adam@picman.org> <adam@foxbox.org>
  */
 
 /* Copyright notice for old GIF code from which this plugin was long ago */
@@ -30,7 +30,7 @@
  *     Also, fix a stupid old bug when clearing the code table between
  *     subimages.  (Enables us to deal better with errors when the stream is
  *     corrupted pretty early in a subimage.) [adam]
- *     Minor-version-bump to distinguish between gimp1.2/1.4 branches.
+ *     Minor-version-bump to distinguish between picman1.2/1.4 branches.
  *
  * 2000/03/31
  * 1.00.03 - Just mildly more useful comments/messages concerning frame
@@ -70,9 +70,9 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define LOAD_PROC        "file-gif-load"
@@ -88,9 +88,9 @@
 static void   query      (void);
 static void   run        (const gchar      *name,
                           gint              nparams,
-                          const GimpParam  *param,
+                          const PicmanParam  *param,
                           gint             *nreturn_vals,
-                          GimpParam       **return_vals);
+                          PicmanParam       **return_vals);
 static gint32 load_image (const gchar      *filename,
                           gboolean          thumbnail,
                           GError          **error);
@@ -99,11 +99,11 @@ static gint32 load_image (const gchar      *filename,
 static guchar        used_cmap[3][256];
 static guchar        highest_used_index;
 static gboolean      promote_to_rgb   = FALSE;
-static guchar        gimp_cmap[768];
-static GimpParasite *comment_parasite = NULL;
+static guchar        picman_cmap[768];
+static PicmanParasite *comment_parasite = NULL;
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -117,29 +117,29 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename", "The name entered"             }
+    { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename", "The name entered"             }
   };
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,  "image",        "Output image"                 }
+    { PICMAN_PDB_IMAGE,  "image",        "Output image"                 }
   };
-  static const GimpParamDef thumb_args[] =
+  static const PicmanParamDef thumb_args[] =
   {
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_INT32,  "thumb-size",   "Preferred thumbnail size"     }
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_INT32,  "thumb-size",   "Preferred thumbnail size"     }
   };
-  static const GimpParamDef thumb_return_vals[] =
+  static const PicmanParamDef thumb_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,  "image",        "Output image"                 },
-    { GIMP_PDB_INT32,  "image-width",  "Width of full-sized image"    },
-    { GIMP_PDB_INT32,  "image-height", "Height of full-sized image"   }
+    { PICMAN_PDB_IMAGE,  "image",        "Output image"                 },
+    { PICMAN_PDB_INT32,  "image-width",  "Width of full-sized image"    },
+    { PICMAN_PDB_INT32,  "image-height", "Height of full-sized image"   }
   };
 
-  gimp_install_procedure (LOAD_PROC,
+  picman_install_procedure (LOAD_PROC,
                           "Loads files of Compuserve GIF file format",
                           "FIXME: write help for gif_load",
                           "Spencer Kimball, Peter Mattis, Adam Moss, David Koblas",
@@ -147,18 +147,18 @@ query (void)
                           "1995-2006",
                           N_("GIF image"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_file_handler_mime (LOAD_PROC, "image/gif");
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_register_file_handler_mime (LOAD_PROC, "image/gif");
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "gif",
                                     "",
                                     "0,string,GIF8");
 
-  gimp_install_procedure (LOAD_THUMB_PROC,
+  picman_install_procedure (LOAD_THUMB_PROC,
                           "Loads only the first frame of a GIF image, to be "
                           "used as a thumbnail",
                           "",
@@ -167,23 +167,23 @@ query (void)
                           "2006",
                           NULL,
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (thumb_args),
                           G_N_ELEMENTS (thumb_return_vals),
                           thumb_args, thumb_return_vals);
 
-  gimp_register_thumbnail_loader (LOAD_PROC, LOAD_THUMB_PROC);
+  picman_register_thumbnail_loader (LOAD_PROC, LOAD_THUMB_PROC);
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[4];
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[4];
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   GError            *error  = NULL;
   gint32             image_ID;
 
@@ -193,8 +193,8 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   if (strcmp (name, LOAD_PROC) == 0)
     {
@@ -206,10 +206,10 @@ run (const gchar      *name,
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       if (image_ID != -1)
         {
@@ -220,37 +220,37 @@ run (const gchar      *name,
            *  without intermediate indexed->RGB->indexed pumps up the number of
            *  bits used, as we add an index each time for the transparent
            *  colour.  Ouch.  We either do some heavier analysis at save-time,
-           *  or trim down the number of GIMP colours at load-time.  We do the
+           *  or trim down the number of PICMAN colours at load-time.  We do the
            *  latter for now.
            */
 #ifdef GIFDEBUG
           g_print ("GIF: Highest used index is %d\n", highest_used_index);
 #endif
           if (! promote_to_rgb)
-            gimp_image_set_colormap (image_ID,
-                                     gimp_cmap, highest_used_index + 1);
+            picman_image_set_colormap (image_ID,
+                                     picman_cmap, highest_used_index + 1);
 
           *nreturn_vals = 2;
-          values[1].type         = GIMP_PDB_IMAGE;
+          values[1].type         = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_ID;
 
           if (strcmp (name, LOAD_THUMB_PROC) == 0)
             {
               *nreturn_vals = 4;
-              values[2].type         = GIMP_PDB_INT32;
-              values[2].data.d_int32 = gimp_image_width (image_ID);
-              values[3].type         = GIMP_PDB_INT32;
-              values[3].data.d_int32 = gimp_image_height (image_ID);
+              values[2].type         = PICMAN_PDB_INT32;
+              values[2].data.d_int32 = picman_image_width (image_ID);
+              values[3].type         = PICMAN_PDB_INT32;
+              values[3].data.d_int32 = picman_image_height (image_ID);
             }
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
 
           if (error)
             {
               *nreturn_vals = 2;
-              values[1].type          = GIMP_PDB_STRING;
+              values[1].type          = PICMAN_PDB_STRING;
               values[1].data.d_string = error->message;
             }
         }
@@ -354,12 +354,12 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   if (! ReadOK (fd, buf, 6))
     {
@@ -495,9 +495,9 @@ load_image (const gchar  *filename,
       if (comment_parasite != NULL)
         {
           if (! thumbnail)
-            gimp_image_attach_parasite (image_ID, comment_parasite);
+            picman_image_attach_parasite (image_ID, comment_parasite);
 
-          gimp_parasite_free (comment_parasite);
+          picman_parasite_free (comment_parasite);
           comment_parasite = NULL;
         }
 
@@ -598,10 +598,10 @@ DoExtension (FILE *fd,
             continue;
 
           if (comment_parasite)
-            gimp_parasite_free (comment_parasite);
+            picman_parasite_free (comment_parasite);
 
-          comment_parasite = gimp_parasite_new ("gimp-comment",
-                                                GIMP_PARASITE_PERSISTENT,
+          comment_parasite = picman_parasite_new ("picman-comment",
+                                                PICMAN_PARASITE_PERSISTENT,
                                                 strlen (comment) + 1, comment);
         }
       return TRUE;
@@ -835,7 +835,7 @@ LZWReadByte (FILE *fd,
           if (code == table[0][code])
             {
               g_message ("Circular table entry.  Corrupt file.");
-              gimp_quit ();
+              picman_quit ();
             }
           code = table[0][code];
         }
@@ -927,17 +927,17 @@ ReadImage (FILE        *fd,
       if (screenheight == 0)
         screenheight = height;
 
-      image_ID = gimp_image_new (screenwidth, screenheight, GIMP_INDEXED);
-      gimp_image_set_filename (image_ID, filename);
+      image_ID = picman_image_new (screenwidth, screenheight, PICMAN_INDEXED);
+      picman_image_set_filename (image_ID, filename);
 
       for (i = 0, j = 0; i < ncols; i++)
         {
-          used_cmap[0][i] = gimp_cmap[j++] = cmap[0][i];
-          used_cmap[1][i] = gimp_cmap[j++] = cmap[1][i];
-          used_cmap[2][i] = gimp_cmap[j++] = cmap[2][i];
+          used_cmap[0][i] = picman_cmap[j++] = cmap[0][i];
+          used_cmap[1][i] = picman_cmap[j++] = cmap[1][i];
+          used_cmap[2][i] = picman_cmap[j++] = cmap[2][i];
         }
 
-      gimp_image_set_colormap (image_ID, gimp_cmap, ncols);
+      picman_image_set_colormap (image_ID, picman_cmap, ncols);
 
       if (Gif89.delayTime < 0)
         framename = g_strdup (_("Background"));
@@ -949,15 +949,15 @@ ReadImage (FILE        *fd,
 
       if (Gif89.transparent == -1)
         {
-          layer_ID = gimp_layer_new (image_ID, framename,
+          layer_ID = picman_layer_new (image_ID, framename,
                                      len, height,
-                                     GIMP_INDEXED_IMAGE, 100, GIMP_NORMAL_MODE);
+                                     PICMAN_INDEXED_IMAGE, 100, PICMAN_NORMAL_MODE);
         }
       else
         {
-          layer_ID = gimp_layer_new (image_ID, framename,
+          layer_ID = picman_layer_new (image_ID, framename,
                                      len, height,
-                                     GIMP_INDEXEDA_IMAGE, 100, GIMP_NORMAL_MODE);
+                                     PICMAN_INDEXEDA_IMAGE, 100, PICMAN_NORMAL_MODE);
           alpha_frame=TRUE;
         }
 
@@ -965,10 +965,10 @@ ReadImage (FILE        *fd,
     }
   else /* NOT FIRST FRAME */
     {
-      gimp_progress_set_text_printf (_("Opening '%s' (frame %d)"),
-                                     gimp_filename_to_utf8 (filename),
+      picman_progress_set_text_printf (_("Opening '%s' (frame %d)"),
+                                     picman_filename_to_utf8 (filename),
                                      frame_number);
-      gimp_progress_pulse ();
+      picman_progress_pulse ();
 
        /* If the colourmap is now different, we have to promote to RGB! */
       if (! promote_to_rgb)
@@ -986,7 +986,7 @@ ReadImage (FILE        *fd,
 #ifdef GIFDEBUG
                   g_print ("GIF: Promoting image to RGB...\n");
 #endif
-                  gimp_image_convert_rgb (image_ID);
+                  picman_image_convert_rgb (image_ID);
 
                   break;
                 }
@@ -1014,7 +1014,7 @@ ReadImage (FILE        *fd,
           g_free (framename_ptr);
           break;
         case 0x03:  /* Rarely-used, and unhandled by many
-                       loaders/players (including GIMP: we treat as
+                       loaders/players (including PICMAN: we treat as
                        'combine' mode). */
           framename_ptr = framename;
           framename = g_strconcat (framename, " (combine) (!)", NULL);
@@ -1038,27 +1038,27 @@ ReadImage (FILE        *fd,
         }
       previous_disposal = Gif89.disposal;
 
-      layer_ID = gimp_layer_new (image_ID, framename,
+      layer_ID = picman_layer_new (image_ID, framename,
                                  len, height,
                                  promote_to_rgb ?
-                                 GIMP_RGBA_IMAGE : GIMP_INDEXEDA_IMAGE,
-                                 100, GIMP_NORMAL_MODE);
+                                 PICMAN_RGBA_IMAGE : PICMAN_INDEXEDA_IMAGE,
+                                 100, PICMAN_NORMAL_MODE);
       alpha_frame = TRUE;
       g_free (framename);
     }
 
   frame_number++;
 
-  gimp_image_insert_layer (image_ID, layer_ID, -1, 0);
-  gimp_layer_translate (layer_ID, (gint) leftpos, (gint) toppos);
+  picman_image_insert_layer (image_ID, layer_ID, -1, 0);
+  picman_layer_translate (layer_ID, (gint) leftpos, (gint) toppos);
 
   cur_progress = 0;
   max_progress = height;
 
   if (len > (G_MAXSIZE / height / (alpha_frame ? (promote_to_rgb ? 4 : 2) : 1)))
   {
-    g_message ("'%s' has a larger image size than GIMP can handle.",
-               gimp_filename_to_utf8 (filename));
+    g_message ("'%s' has a larger image size than PICMAN can handle.",
+               picman_filename_to_utf8 (filename));
     return -1;
   }
 
@@ -1077,8 +1077,8 @@ ReadImage (FILE        *fd,
       /* I don't see how one would easily construct a GIF in which
          this could happen, but it's a mad mad world. */
       g_message ("Ouch!  Can't handle non-alpha RGB frames.\n"
-                 "Please file a bug report in GIMP's bugzilla.");
-      gimp_quit ();
+                 "Please file a bug report in PICMAN's bugzilla.");
+      picman_quit ();
     }
 
   while ((v = LZWReadByte (fd, FALSE, c)) >= 0)
@@ -1160,7 +1160,7 @@ ReadImage (FILE        *fd,
             {
               cur_progress++;
               if ((cur_progress % 16) == 0)
-                gimp_progress_update ((gdouble) cur_progress /
+                picman_progress_update ((gdouble) cur_progress /
                                       (gdouble) max_progress);
             }
         }
@@ -1173,7 +1173,7 @@ ReadImage (FILE        *fd,
   if (LZWReadByte (fd, FALSE, c) >= 0)
     g_print ("GIF: too much input data, ignoring extra...\n");
 
-  buffer = gimp_drawable_get_buffer (layer_ID);
+  buffer = picman_drawable_get_buffer (layer_ID);
 
   gegl_buffer_set (buffer, GEGL_RECTANGLE (0, 0, len, height), 0,
                    NULL, dest, GEGL_AUTO_ROWSTRIDE);
@@ -1182,7 +1182,7 @@ ReadImage (FILE        *fd,
 
   g_object_unref (buffer);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   return image_ID;
 }

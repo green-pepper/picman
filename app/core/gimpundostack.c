@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,54 +21,54 @@
 
 #include "core-types.h"
 
-#include "gimpimage.h"
-#include "gimplist.h"
-#include "gimpundo.h"
-#include "gimpundostack.h"
+#include "picmanimage.h"
+#include "picmanlist.h"
+#include "picmanundo.h"
+#include "picmanundostack.h"
 
 
-static void    gimp_undo_stack_finalize    (GObject             *object);
+static void    picman_undo_stack_finalize    (GObject             *object);
 
-static gint64  gimp_undo_stack_get_memsize (GimpObject          *object,
+static gint64  picman_undo_stack_get_memsize (PicmanObject          *object,
                                             gint64              *gui_size);
 
-static void    gimp_undo_stack_pop         (GimpUndo            *undo,
-                                            GimpUndoMode         undo_mode,
-                                            GimpUndoAccumulator *accum);
-static void    gimp_undo_stack_free        (GimpUndo            *undo,
-                                            GimpUndoMode         undo_mode);
+static void    picman_undo_stack_pop         (PicmanUndo            *undo,
+                                            PicmanUndoMode         undo_mode,
+                                            PicmanUndoAccumulator *accum);
+static void    picman_undo_stack_free        (PicmanUndo            *undo,
+                                            PicmanUndoMode         undo_mode);
 
 
-G_DEFINE_TYPE (GimpUndoStack, gimp_undo_stack, GIMP_TYPE_UNDO)
+G_DEFINE_TYPE (PicmanUndoStack, picman_undo_stack, PICMAN_TYPE_UNDO)
 
-#define parent_class gimp_undo_stack_parent_class
+#define parent_class picman_undo_stack_parent_class
 
 
 static void
-gimp_undo_stack_class_init (GimpUndoStackClass *klass)
+picman_undo_stack_class_init (PicmanUndoStackClass *klass)
 {
   GObjectClass    *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpUndoClass   *undo_class        = GIMP_UNDO_CLASS (klass);
+  PicmanObjectClass *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanUndoClass   *undo_class        = PICMAN_UNDO_CLASS (klass);
 
-  object_class->finalize         = gimp_undo_stack_finalize;
+  object_class->finalize         = picman_undo_stack_finalize;
 
-  gimp_object_class->get_memsize = gimp_undo_stack_get_memsize;
+  picman_object_class->get_memsize = picman_undo_stack_get_memsize;
 
-  undo_class->pop                = gimp_undo_stack_pop;
-  undo_class->free               = gimp_undo_stack_free;
+  undo_class->pop                = picman_undo_stack_pop;
+  undo_class->free               = picman_undo_stack_free;
 }
 
 static void
-gimp_undo_stack_init (GimpUndoStack *stack)
+picman_undo_stack_init (PicmanUndoStack *stack)
 {
-  stack->undos = gimp_list_new (GIMP_TYPE_UNDO, FALSE);
+  stack->undos = picman_list_new (PICMAN_TYPE_UNDO, FALSE);
 }
 
 static void
-gimp_undo_stack_finalize (GObject *object)
+picman_undo_stack_finalize (GObject *object)
 {
-  GimpUndoStack *stack = GIMP_UNDO_STACK (object);
+  PicmanUndoStack *stack = PICMAN_UNDO_STACK (object);
 
   if (stack->undos)
     {
@@ -80,92 +80,92 @@ gimp_undo_stack_finalize (GObject *object)
 }
 
 static gint64
-gimp_undo_stack_get_memsize (GimpObject *object,
+picman_undo_stack_get_memsize (PicmanObject *object,
                              gint64     *gui_size)
 {
-  GimpUndoStack *stack   = GIMP_UNDO_STACK (object);
+  PicmanUndoStack *stack   = PICMAN_UNDO_STACK (object);
   gint64         memsize = 0;
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (stack->undos), gui_size);
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (stack->undos), gui_size);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 static void
-gimp_undo_stack_pop (GimpUndo            *undo,
-                     GimpUndoMode         undo_mode,
-                     GimpUndoAccumulator *accum)
+picman_undo_stack_pop (PicmanUndo            *undo,
+                     PicmanUndoMode         undo_mode,
+                     PicmanUndoAccumulator *accum)
 {
-  GimpUndoStack *stack = GIMP_UNDO_STACK (undo);
+  PicmanUndoStack *stack = PICMAN_UNDO_STACK (undo);
   GList         *list;
 
-  for (list = GIMP_LIST (stack->undos)->list;
+  for (list = PICMAN_LIST (stack->undos)->list;
        list;
        list = g_list_next (list))
     {
-      GimpUndo *child = list->data;
+      PicmanUndo *child = list->data;
 
-      gimp_undo_pop (child, undo_mode, accum);
+      picman_undo_pop (child, undo_mode, accum);
     }
 }
 
 static void
-gimp_undo_stack_free (GimpUndo     *undo,
-                      GimpUndoMode  undo_mode)
+picman_undo_stack_free (PicmanUndo     *undo,
+                      PicmanUndoMode  undo_mode)
 {
-  GimpUndoStack *stack = GIMP_UNDO_STACK (undo);
+  PicmanUndoStack *stack = PICMAN_UNDO_STACK (undo);
   GList         *list;
 
-  for (list = GIMP_LIST (stack->undos)->list;
+  for (list = PICMAN_LIST (stack->undos)->list;
        list;
        list = g_list_next (list))
     {
-      GimpUndo *child = list->data;
+      PicmanUndo *child = list->data;
 
-      gimp_undo_free (child, undo_mode);
+      picman_undo_free (child, undo_mode);
       g_object_unref (child);
     }
 
-  gimp_container_clear (stack->undos);
+  picman_container_clear (stack->undos);
 }
 
-GimpUndoStack *
-gimp_undo_stack_new (GimpImage *image)
+PicmanUndoStack *
+picman_undo_stack_new (PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return g_object_new (GIMP_TYPE_UNDO_STACK,
+  return g_object_new (PICMAN_TYPE_UNDO_STACK,
                        "image", image,
                        NULL);
 }
 
 void
-gimp_undo_stack_push_undo (GimpUndoStack *stack,
-                           GimpUndo      *undo)
+picman_undo_stack_push_undo (PicmanUndoStack *stack,
+                           PicmanUndo      *undo)
 {
-  g_return_if_fail (GIMP_IS_UNDO_STACK (stack));
-  g_return_if_fail (GIMP_IS_UNDO (undo));
+  g_return_if_fail (PICMAN_IS_UNDO_STACK (stack));
+  g_return_if_fail (PICMAN_IS_UNDO (undo));
 
-  gimp_container_add (stack->undos, GIMP_OBJECT (undo));
+  picman_container_add (stack->undos, PICMAN_OBJECT (undo));
 }
 
-GimpUndo *
-gimp_undo_stack_pop_undo (GimpUndoStack       *stack,
-                          GimpUndoMode         undo_mode,
-                          GimpUndoAccumulator *accum)
+PicmanUndo *
+picman_undo_stack_pop_undo (PicmanUndoStack       *stack,
+                          PicmanUndoMode         undo_mode,
+                          PicmanUndoAccumulator *accum)
 {
-  GimpUndo *undo;
+  PicmanUndo *undo;
 
-  g_return_val_if_fail (GIMP_IS_UNDO_STACK (stack), NULL);
+  g_return_val_if_fail (PICMAN_IS_UNDO_STACK (stack), NULL);
   g_return_val_if_fail (accum != NULL, NULL);
 
-  undo = GIMP_UNDO (gimp_container_get_first_child (stack->undos));
+  undo = PICMAN_UNDO (picman_container_get_first_child (stack->undos));
 
   if (undo)
     {
-      gimp_container_remove (stack->undos, GIMP_OBJECT (undo));
-      gimp_undo_pop (undo, undo_mode, accum);
+      picman_container_remove (stack->undos, PICMAN_OBJECT (undo));
+      picman_undo_pop (undo, undo_mode, accum);
 
       return undo;
     }
@@ -173,20 +173,20 @@ gimp_undo_stack_pop_undo (GimpUndoStack       *stack,
   return NULL;
 }
 
-GimpUndo *
-gimp_undo_stack_free_bottom (GimpUndoStack *stack,
-                             GimpUndoMode   undo_mode)
+PicmanUndo *
+picman_undo_stack_free_bottom (PicmanUndoStack *stack,
+                             PicmanUndoMode   undo_mode)
 {
-  GimpUndo *undo;
+  PicmanUndo *undo;
 
-  g_return_val_if_fail (GIMP_IS_UNDO_STACK (stack), NULL);
+  g_return_val_if_fail (PICMAN_IS_UNDO_STACK (stack), NULL);
 
-  undo = GIMP_UNDO (gimp_container_get_last_child (stack->undos));
+  undo = PICMAN_UNDO (picman_container_get_last_child (stack->undos));
 
   if (undo)
     {
-      gimp_container_remove (stack->undos, GIMP_OBJECT (undo));
-      gimp_undo_free (undo, undo_mode);
+      picman_container_remove (stack->undos, PICMAN_OBJECT (undo));
+      picman_undo_free (undo, undo_mode);
 
       return undo;
     }
@@ -194,18 +194,18 @@ gimp_undo_stack_free_bottom (GimpUndoStack *stack,
   return NULL;
 }
 
-GimpUndo *
-gimp_undo_stack_peek (GimpUndoStack *stack)
+PicmanUndo *
+picman_undo_stack_peek (PicmanUndoStack *stack)
 {
-  g_return_val_if_fail (GIMP_IS_UNDO_STACK (stack), NULL);
+  g_return_val_if_fail (PICMAN_IS_UNDO_STACK (stack), NULL);
 
-  return GIMP_UNDO (gimp_container_get_first_child (stack->undos));
+  return PICMAN_UNDO (picman_container_get_first_child (stack->undos));
 }
 
 gint
-gimp_undo_stack_get_depth (GimpUndoStack *stack)
+picman_undo_stack_get_depth (PicmanUndoStack *stack)
 {
-  g_return_val_if_fail (GIMP_IS_UNDO_STACK (stack), 0);
+  g_return_val_if_fail (PICMAN_IS_UNDO_STACK (stack), 0);
 
-  return gimp_container_get_n_children (stack->undos);
+  return picman_container_get_n_children (stack->undos);
 }

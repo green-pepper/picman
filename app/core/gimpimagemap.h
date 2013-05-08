@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,28 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_MAP_H__
-#define __GIMP_IMAGE_MAP_H__
+#ifndef __PICMAN_IMAGE_MAP_H__
+#define __PICMAN_IMAGE_MAP_H__
 
 
-#include "gimpobject.h"
+#include "picmanobject.h"
 
 
-#define GIMP_TYPE_IMAGE_MAP            (gimp_image_map_get_type ())
-#define GIMP_IMAGE_MAP(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_IMAGE_MAP, GimpImageMap))
-#define GIMP_IMAGE_MAP_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_IMAGE_MAP, GimpImageMapClass))
-#define GIMP_IS_IMAGE_MAP(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_IMAGE_MAP))
-#define GIMP_IS_IMAGE_MAP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_IMAGE_MAP))
-#define GIMP_IMAGE_MAP_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_IMAGE_MAP, GimpImageMapClass))
+#define PICMAN_TYPE_IMAGE_MAP            (picman_image_map_get_type ())
+#define PICMAN_IMAGE_MAP(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_IMAGE_MAP, PicmanImageMap))
+#define PICMAN_IMAGE_MAP_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_IMAGE_MAP, PicmanImageMapClass))
+#define PICMAN_IS_IMAGE_MAP(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_IMAGE_MAP))
+#define PICMAN_IS_IMAGE_MAP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_IMAGE_MAP))
+#define PICMAN_IMAGE_MAP_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_IMAGE_MAP, PicmanImageMapClass))
 
 
-typedef struct _GimpImageMapClass  GimpImageMapClass;
+typedef struct _PicmanImageMapClass  PicmanImageMapClass;
 
-struct _GimpImageMapClass
+struct _PicmanImageMapClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 
-  void (* flush) (GimpImageMap *image_map);
+  void (* flush) (PicmanImageMap *image_map);
 };
 
 
@@ -47,18 +47,18 @@ struct _GimpImageMapClass
  *  The image map is no longer valid after a call to commit or abort.
  */
 
-GType          gimp_image_map_get_type (void) G_GNUC_CONST;
+GType          picman_image_map_get_type (void) G_GNUC_CONST;
 
-GimpImageMap * gimp_image_map_new      (GimpDrawable *drawable,
+PicmanImageMap * picman_image_map_new      (PicmanDrawable *drawable,
                                         const gchar  *undo_desc,
                                         GeglNode     *operation,
                                         const gchar  *stock_id);
 
-void           gimp_image_map_apply    (GimpImageMap *image_map);
+void           picman_image_map_apply    (PicmanImageMap *image_map);
 
-void           gimp_image_map_commit   (GimpImageMap *image_map,
-                                        GimpProgress *progress);
-void           gimp_image_map_abort    (GimpImageMap *image_map);
+void           picman_image_map_commit   (PicmanImageMap *image_map,
+                                        PicmanProgress *progress);
+void           picman_image_map_abort    (PicmanImageMap *image_map);
 
 
-#endif /* __GIMP_IMAGE_MAP_H__ */
+#endif /* __PICMAN_IMAGE_MAP_H__ */

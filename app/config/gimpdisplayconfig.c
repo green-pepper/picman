@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpDisplayConfig class
- * Copyright (C) 2001  Sven Neumann <sven@gimp.org>
+ * PicmanDisplayConfig class
+ * Copyright (C) 2001  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +24,17 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "config-types.h"
 
-#include "gimprc-blurbs.h"
-#include "gimpdisplayconfig.h"
-#include "gimpdisplayoptions.h"
+#include "picmanrc-blurbs.h"
+#include "picmandisplayconfig.h"
+#include "picmandisplayoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define DEFAULT_ACTIVATE_ON_FOCUS    TRUE
@@ -81,223 +81,223 @@ enum
 };
 
 
-static void  gimp_display_config_finalize          (GObject      *object);
-static void  gimp_display_config_set_property      (GObject      *object,
+static void  picman_display_config_finalize          (GObject      *object);
+static void  picman_display_config_set_property      (GObject      *object,
                                                     guint         property_id,
                                                     const GValue *value,
                                                     GParamSpec   *pspec);
-static void  gimp_display_config_get_property      (GObject      *object,
+static void  picman_display_config_get_property      (GObject      *object,
                                                     guint         property_id,
                                                     GValue       *value,
                                                     GParamSpec   *pspec);
 
-static void  gimp_display_config_view_notify       (GObject      *object,
+static void  picman_display_config_view_notify       (GObject      *object,
                                                     GParamSpec   *pspec,
                                                     gpointer      data);
-static void  gimp_display_config_fullscreen_notify (GObject      *object,
+static void  picman_display_config_fullscreen_notify (GObject      *object,
                                                     GParamSpec   *pspec,
                                                     gpointer      data);
 
 
-G_DEFINE_TYPE (GimpDisplayConfig, gimp_display_config, GIMP_TYPE_CORE_CONFIG)
+G_DEFINE_TYPE (PicmanDisplayConfig, picman_display_config, PICMAN_TYPE_CORE_CONFIG)
 
-#define parent_class gimp_display_config_parent_class
+#define parent_class picman_display_config_parent_class
 
 
 static void
-gimp_display_config_class_init (GimpDisplayConfigClass *klass)
+picman_display_config_class_init (PicmanDisplayConfigClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  GimpRGB       color        = { 0, 0, 0, 0 };
+  PicmanRGB       color        = { 0, 0, 0, 0 };
 
-  object_class->finalize     = gimp_display_config_finalize;
-  object_class->set_property = gimp_display_config_set_property;
-  object_class->get_property = gimp_display_config_get_property;
+  object_class->finalize     = picman_display_config_finalize;
+  object_class->set_property = picman_display_config_set_property;
+  object_class->get_property = picman_display_config_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TRANSPARENCY_SIZE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TRANSPARENCY_SIZE,
                                  "transparency-size", TRANSPARENCY_SIZE_BLURB,
-                                 GIMP_TYPE_CHECK_SIZE,
-                                 GIMP_CHECK_SIZE_MEDIUM_CHECKS,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TRANSPARENCY_TYPE,
+                                 PICMAN_TYPE_CHECK_SIZE,
+                                 PICMAN_CHECK_SIZE_MEDIUM_CHECKS,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TRANSPARENCY_TYPE,
                                  "transparency-type", TRANSPARENCY_TYPE_BLURB,
-                                 GIMP_TYPE_CHECK_TYPE,
-                                 GIMP_CHECK_TYPE_GRAY_CHECKS,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_SNAP_DISTANCE,
+                                 PICMAN_TYPE_CHECK_TYPE,
+                                 PICMAN_CHECK_TYPE_GRAY_CHECKS,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_SNAP_DISTANCE,
                                 "snap-distance", DEFAULT_SNAP_DISTANCE_BLURB,
                                 1, 255, 8,
-                                GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_MARCHING_ANTS_SPEED,
+                                PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_MARCHING_ANTS_SPEED,
                                 "marching-ants-speed",
                                 MARCHING_ANTS_SPEED_BLURB,
                                 10, 10000, DEFAULT_MARCHING_ANTS_SPEED,
-                                GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_RESIZE_WINDOWS_ON_ZOOM,
+                                PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_RESIZE_WINDOWS_ON_ZOOM,
                                     "resize-windows-on-zoom",
                                     RESIZE_WINDOWS_ON_ZOOM_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_RESIZE_WINDOWS_ON_RESIZE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_RESIZE_WINDOWS_ON_RESIZE,
                                     "resize-windows-on-resize",
                                     RESIZE_WINDOWS_ON_RESIZE_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DEFAULT_DOT_FOR_DOT,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DEFAULT_DOT_FOR_DOT,
                                     "default-dot-for-dot",
                                     DEFAULT_DOT_FOR_DOT_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_INITIAL_ZOOM_TO_FIT,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_INITIAL_ZOOM_TO_FIT,
                                     "initial-zoom-to-fit",
                                     INITIAL_ZOOM_TO_FIT_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_PERFECT_MOUSE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_PERFECT_MOUSE,
                                     "perfect-mouse", PERFECT_MOUSE_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CURSOR_MODE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CURSOR_MODE,
                                  "cursor-mode", CURSOR_MODE_BLURB,
-                                 GIMP_TYPE_CURSOR_MODE,
-                                 GIMP_CURSOR_MODE_TOOL_ICON,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CURSOR_UPDATING,
+                                 PICMAN_TYPE_CURSOR_MODE,
+                                 PICMAN_CURSOR_MODE_TOOL_ICON,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CURSOR_UPDATING,
                                     "cursor-updating", CURSOR_UPDATING_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_BRUSH_OUTLINE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_BRUSH_OUTLINE,
                                     "show-brush-outline",
                                     SHOW_BRUSH_OUTLINE_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_PAINT_TOOL_CURSOR,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_PAINT_TOOL_CURSOR,
                                     "show-paint-tool-cursor",
                                     SHOW_PAINT_TOOL_CURSOR_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_IMAGE_TITLE_FORMAT,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_IMAGE_TITLE_FORMAT,
                                    "image-title-format",
                                    IMAGE_TITLE_FORMAT_BLURB,
-                                   GIMP_CONFIG_DEFAULT_IMAGE_TITLE_FORMAT,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_IMAGE_STATUS_FORMAT,
+                                   PICMAN_CONFIG_DEFAULT_IMAGE_TITLE_FORMAT,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_IMAGE_STATUS_FORMAT,
                                    "image-status-format",
                                    IMAGE_STATUS_FORMAT_BLURB,
-                                   GIMP_CONFIG_DEFAULT_IMAGE_STATUS_FORMAT,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_RESOLUTION (object_class, PROP_MONITOR_XRESOLUTION,
+                                   PICMAN_CONFIG_DEFAULT_IMAGE_STATUS_FORMAT,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_RESOLUTION (object_class, PROP_MONITOR_XRESOLUTION,
                                        "monitor-xresolution",
                                        MONITOR_XRESOLUTION_BLURB,
                                        DEFAULT_MONITOR_RESOLUTION,
-                                       GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_RESOLUTION (object_class, PROP_MONITOR_YRESOLUTION,
+                                       PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_RESOLUTION (object_class, PROP_MONITOR_YRESOLUTION,
                                        "monitor-yresolution",
                                        MONITOR_YRESOLUTION_BLURB,
                                        DEFAULT_MONITOR_RESOLUTION,
-                                       GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_MONITOR_RES_FROM_GDK,
+                                       PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_MONITOR_RES_FROM_GDK,
                                     "monitor-resolution-from-windowing-system",
                                     MONITOR_RES_FROM_GDK_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_NAV_PREVIEW_SIZE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_NAV_PREVIEW_SIZE,
                                  "navigation-preview-size",
                                  NAVIGATION_PREVIEW_SIZE_BLURB,
-                                 GIMP_TYPE_VIEW_SIZE,
-                                 GIMP_VIEW_SIZE_MEDIUM,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_DEFAULT_VIEW,
+                                 PICMAN_TYPE_VIEW_SIZE,
+                                 PICMAN_VIEW_SIZE_MEDIUM,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_DEFAULT_VIEW,
                                    "default-view",
                                    DEFAULT_VIEW_BLURB,
-                                   GIMP_TYPE_DISPLAY_OPTIONS,
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_DEFAULT_FULLSCREEN_VIEW,
+                                   PICMAN_TYPE_DISPLAY_OPTIONS,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_DEFAULT_FULLSCREEN_VIEW,
                                    "default-fullscreen-view",
                                    DEFAULT_FULLSCREEN_VIEW_BLURB,
-                                   GIMP_TYPE_DISPLAY_OPTIONS,
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DEFAULT_SNAP_TO_GUIDES,
+                                   PICMAN_TYPE_DISPLAY_OPTIONS,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DEFAULT_SNAP_TO_GUIDES,
                                     "default-snap-to-guides",
                                     DEFAULT_SNAP_TO_GUIDES_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DEFAULT_SNAP_TO_GRID,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DEFAULT_SNAP_TO_GRID,
                                     "default-snap-to-grid",
                                     DEFAULT_SNAP_TO_GRID_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DEFAULT_SNAP_TO_CANVAS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DEFAULT_SNAP_TO_CANVAS,
                                     "default-snap-to-canvas",
                                     DEFAULT_SNAP_TO_CANVAS_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DEFAULT_SNAP_TO_PATH,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DEFAULT_SNAP_TO_PATH,
                                     "default-snap-to-path",
                                     DEFAULT_SNAP_TO_PATH_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ACTIVATE_ON_FOCUS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ACTIVATE_ON_FOCUS,
                                     "activate-on-focus",
                                     ACTIVATE_ON_FOCUS_BLURB,
                                     DEFAULT_ACTIVATE_ON_FOCUS,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_SPACE_BAR_ACTION,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_SPACE_BAR_ACTION,
                                  "space-bar-action",
                                  SPACE_BAR_ACTION_BLURB,
-                                 GIMP_TYPE_SPACE_BAR_ACTION,
-                                 GIMP_SPACE_BAR_ACTION_PAN,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_ZOOM_QUALITY,
+                                 PICMAN_TYPE_SPACE_BAR_ACTION,
+                                 PICMAN_SPACE_BAR_ACTION_PAN,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_ZOOM_QUALITY,
                                  "zoom-quality",
                                  ZOOM_QUALITY_BLURB,
-                                 GIMP_TYPE_ZOOM_QUALITY,
-                                 GIMP_ZOOM_QUALITY_HIGH,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_ZOOM_QUALITY,
+                                 PICMAN_ZOOM_QUALITY_HIGH,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_EVENT_HISTORY,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_EVENT_HISTORY,
                                     "use-event-history",
                                     DEFAULT_USE_EVENT_HISTORY_BLURB,
                                     DEFAULT_USE_EVENT_HISTORY,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
   /*  only for backward compatibility:  */
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONFIRM_ON_CLOSE,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONFIRM_ON_CLOSE,
                                     "confirm-on-close", NULL,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS |
-                                    GIMP_CONFIG_PARAM_IGNORE);
-  GIMP_CONFIG_INSTALL_PROP_RGB (object_class, PROP_XOR_COLOR,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_IGNORE);
+  PICMAN_CONFIG_INSTALL_PROP_RGB (object_class, PROP_XOR_COLOR,
                                 "xor-color", NULL,
                                 FALSE, &color,
-                                GIMP_PARAM_STATIC_STRINGS |
-                                GIMP_CONFIG_PARAM_IGNORE);
+                                PICMAN_PARAM_STATIC_STRINGS |
+                                PICMAN_CONFIG_PARAM_IGNORE);
 }
 
 static void
-gimp_display_config_init (GimpDisplayConfig *config)
+picman_display_config_init (PicmanDisplayConfig *config)
 {
   config->default_view =
-    g_object_new (GIMP_TYPE_DISPLAY_OPTIONS, NULL);
+    g_object_new (PICMAN_TYPE_DISPLAY_OPTIONS, NULL);
 
   g_signal_connect (config->default_view, "notify",
-                    G_CALLBACK (gimp_display_config_view_notify),
+                    G_CALLBACK (picman_display_config_view_notify),
                     config);
 
   config->default_fullscreen_view =
-    g_object_new (GIMP_TYPE_DISPLAY_OPTIONS, NULL);
+    g_object_new (PICMAN_TYPE_DISPLAY_OPTIONS, NULL);
 
   g_signal_connect (config->default_fullscreen_view, "notify",
-                    G_CALLBACK (gimp_display_config_fullscreen_notify),
+                    G_CALLBACK (picman_display_config_fullscreen_notify),
                     config);
 }
 
 static void
-gimp_display_config_finalize (GObject *object)
+picman_display_config_finalize (GObject *object)
 {
-  GimpDisplayConfig *display_config = GIMP_DISPLAY_CONFIG (object);
+  PicmanDisplayConfig *display_config = PICMAN_DISPLAY_CONFIG (object);
 
   g_free (display_config->image_title_format);
   g_free (display_config->image_status_format);
@@ -312,12 +312,12 @@ gimp_display_config_finalize (GObject *object)
 }
 
 static void
-gimp_display_config_set_property (GObject      *object,
+picman_display_config_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  GimpDisplayConfig *display_config = GIMP_DISPLAY_CONFIG (object);
+  PicmanDisplayConfig *display_config = PICMAN_DISPLAY_CONFIG (object);
 
   switch (property_id)
     {
@@ -382,12 +382,12 @@ gimp_display_config_set_property (GObject      *object,
       break;
     case PROP_DEFAULT_VIEW:
       if (g_value_get_object (value))
-        gimp_config_sync (g_value_get_object (value),
+        picman_config_sync (g_value_get_object (value),
                           G_OBJECT (display_config->default_view), 0);
       break;
     case PROP_DEFAULT_FULLSCREEN_VIEW:
       if (g_value_get_object (value))
-        gimp_config_sync (g_value_get_object (value),
+        picman_config_sync (g_value_get_object (value),
                           G_OBJECT (display_config->default_fullscreen_view),
                           0);
       break;
@@ -428,12 +428,12 @@ gimp_display_config_set_property (GObject      *object,
 }
 
 static void
-gimp_display_config_get_property (GObject    *object,
+picman_display_config_get_property (GObject    *object,
                                   guint       property_id,
                                   GValue     *value,
                                   GParamSpec *pspec)
 {
-  GimpDisplayConfig *display_config = GIMP_DISPLAY_CONFIG (object);
+  PicmanDisplayConfig *display_config = PICMAN_DISPLAY_CONFIG (object);
 
   switch (property_id)
     {
@@ -537,7 +537,7 @@ gimp_display_config_get_property (GObject    *object,
 }
 
 static void
-gimp_display_config_view_notify (GObject    *object,
+picman_display_config_view_notify (GObject    *object,
                                  GParamSpec *pspec,
                                  gpointer    data)
 {
@@ -545,7 +545,7 @@ gimp_display_config_view_notify (GObject    *object,
 }
 
 static void
-gimp_display_config_fullscreen_notify (GObject    *object,
+picman_display_config_fullscreen_notify (GObject    *object,
                                        GParamSpec *pspec,
                                        gpointer    data)
 {

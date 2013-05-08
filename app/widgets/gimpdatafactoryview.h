@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdatafactoryview.h
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmandatafactoryview.h
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,56 +18,56 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DATA_FACTORY_VIEW_H__
-#define __GIMP_DATA_FACTORY_VIEW_H__
+#ifndef __PICMAN_DATA_FACTORY_VIEW_H__
+#define __PICMAN_DATA_FACTORY_VIEW_H__
 
 
-#include "gimpcontainereditor.h"
+#include "picmancontainereditor.h"
 
 
-#define GIMP_TYPE_DATA_FACTORY_VIEW            (gimp_data_factory_view_get_type ())
-#define GIMP_DATA_FACTORY_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DATA_FACTORY_VIEW, GimpDataFactoryView))
-#define GIMP_DATA_FACTORY_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DATA_FACTORY_VIEW, GimpDataFactoryViewClass))
-#define GIMP_IS_DATA_FACTORY_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DATA_FACTORY_VIEW))
-#define GIMP_IS_DATA_FACTORY_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DATA_FACTORY_VIEW))
-#define GIMP_DATA_FACTORY_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DATA_FACTORY_VIEW, GimpDataFactoryViewClass))
+#define PICMAN_TYPE_DATA_FACTORY_VIEW            (picman_data_factory_view_get_type ())
+#define PICMAN_DATA_FACTORY_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DATA_FACTORY_VIEW, PicmanDataFactoryView))
+#define PICMAN_DATA_FACTORY_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DATA_FACTORY_VIEW, PicmanDataFactoryViewClass))
+#define PICMAN_IS_DATA_FACTORY_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DATA_FACTORY_VIEW))
+#define PICMAN_IS_DATA_FACTORY_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DATA_FACTORY_VIEW))
+#define PICMAN_DATA_FACTORY_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DATA_FACTORY_VIEW, PicmanDataFactoryViewClass))
 
 
-typedef struct _GimpDataFactoryViewClass  GimpDataFactoryViewClass;
-typedef struct _GimpDataFactoryViewPriv   GimpDataFactoryViewPriv;
+typedef struct _PicmanDataFactoryViewClass  PicmanDataFactoryViewClass;
+typedef struct _PicmanDataFactoryViewPriv   PicmanDataFactoryViewPriv;
 
-struct _GimpDataFactoryView
+struct _PicmanDataFactoryView
 {
-  GimpContainerEditor      parent_instance;
+  PicmanContainerEditor      parent_instance;
 
-  GimpDataFactoryViewPriv *priv;
+  PicmanDataFactoryViewPriv *priv;
 };
 
-struct _GimpDataFactoryViewClass
+struct _PicmanDataFactoryViewClass
 {
-  GimpContainerEditorClass  parent_class;
+  PicmanContainerEditorClass  parent_class;
 };
 
 
-GType             gimp_data_factory_view_get_type             (void) G_GNUC_CONST;
+GType             picman_data_factory_view_get_type             (void) G_GNUC_CONST;
 
-GtkWidget *       gimp_data_factory_view_new                  (GimpViewType      view_type,
-                                                               GimpDataFactory  *factory,
-                                                               GimpContext      *context,
+GtkWidget *       picman_data_factory_view_new                  (PicmanViewType      view_type,
+                                                               PicmanDataFactory  *factory,
+                                                               PicmanContext      *context,
                                                                gint              view_size,
                                                                gint              view_border_width,
-                                                               GimpMenuFactory  *menu_factory,
+                                                               PicmanMenuFactory  *menu_factory,
                                                                const gchar      *menu_identifier,
                                                                const gchar      *ui_path,
                                                                const gchar      *action_group);
 
-GtkWidget       * gimp_data_factory_view_get_edit_button      (GimpDataFactoryView *factory_view);
-GtkWidget       * gimp_data_factory_view_get_duplicate_button (GimpDataFactoryView *factory_view);
-GimpDataFactory * gimp_data_factory_view_get_data_factory     (GimpDataFactoryView *factory_view);
-GType             gimp_data_factory_view_get_children_type    (GimpDataFactoryView *factory_view);
-gboolean          gimp_data_factory_view_has_data_new_func    (GimpDataFactoryView *factory_view);
-gboolean          gimp_data_factory_view_have                 (GimpDataFactoryView *factory_view,
-                                                               GimpObject          *object);
+GtkWidget       * picman_data_factory_view_get_edit_button      (PicmanDataFactoryView *factory_view);
+GtkWidget       * picman_data_factory_view_get_duplicate_button (PicmanDataFactoryView *factory_view);
+PicmanDataFactory * picman_data_factory_view_get_data_factory     (PicmanDataFactoryView *factory_view);
+GType             picman_data_factory_view_get_children_type    (PicmanDataFactoryView *factory_view);
+gboolean          picman_data_factory_view_has_data_new_func    (PicmanDataFactoryView *factory_view);
+gboolean          picman_data_factory_view_have                 (PicmanDataFactoryView *factory_view,
+                                                               PicmanObject          *object);
 
 
-#endif  /*  __GIMP_DATA_FACTORY_VIEW_H__  */
+#endif  /*  __PICMAN_DATA_FACTORY_VIEW_H__  */

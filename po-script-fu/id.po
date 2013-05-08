@@ -1,14 +1,14 @@
-# Indonesian translation for gimp.
-# Copyright (C) 2003 gimp's COPYRIGHT HOLDER
-# This file is distributed under the same license as the gimp package.
+# Indonesian translation for picman.
+# Copyright (C) 2003 picman's COPYRIGHT HOLDER
+# This file is distributed under the same license as the picman package.
 # 
 # Mohammad DAMT  <mdamt@bisnisweb.com>, 2003
 # Andika Triwidada <andika@gmail.com>, 2012
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu master\n"
+"Project-Id-Version: picman-script-fu master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-09-23 21:57+0000\n"
 "PO-Revision-Date: 2012-09-24 18:39+0700\n"
 "Last-Translator: Andika Triwidada <andika@gmail.com>\n"
@@ -37,8 +37,8 @@ msgid "_Start Server..."
 msgstr "Mulai _Server…"
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
-msgstr "_GIMP Daring"
+msgid "_PICMAN Online"
+msgstr "_PICMAN Daring"
 
 #: ../plug-ins/script-fu/script-fu.c:302
 msgid "_User Manual"
@@ -79,8 +79,8 @@ msgid "_Beveled Pattern"
 msgstr "Pola _Belah Ketupat"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Classic.Picman.Org"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -245,19 +245,19 @@ msgstr "Horisontal"
 msgid "Wrap"
 msgstr "Genap"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:323
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:323
 msgid "Spyrograph"
 msgstr "Spyrograph"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:326
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:326
 msgid "Circle"
 msgstr "Lingkaran"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:342
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:342
 msgid "Pencil"
 msgstr "Pinsil"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:347
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:347
 msgid "Solid Color"
 msgstr "Warna Rata"
 

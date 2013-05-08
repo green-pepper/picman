@@ -1,9 +1,9 @@
 EXTRA_DIST = \
-	gimprc.rule		\
-	gimprc-plug-ins.rule	\
-	gimp.rc			\
-	gimp-plug-ins.rc	\
-	gimp.manifest		\
+	picmanrc.rule		\
+	picmanrc-plug-ins.rule	\
+	picman.rc			\
+	picman-plug-ins.rc	\
+	picman.manifest		\
 	fileicon.ico		\
 	plug-ins.ico		\
 	wilber.ico

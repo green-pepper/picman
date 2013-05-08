@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,39 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CLONE_TOOL_H__
-#define __GIMP_CLONE_TOOL_H__
+#ifndef __PICMAN_CLONE_TOOL_H__
+#define __PICMAN_CLONE_TOOL_H__
 
 
-#include "gimpsourcetool.h"
+#include "picmansourcetool.h"
 
 
-#define GIMP_TYPE_CLONE_TOOL            (gimp_clone_tool_get_type ())
-#define GIMP_CLONE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CLONE_TOOL, GimpCloneTool))
-#define GIMP_CLONE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CLONE_TOOL, GimpCloneToolClass))
-#define GIMP_IS_CLONE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CLONE_TOOL))
-#define GIMP_IS_CLONE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CLONE_TOOL))
-#define GIMP_CLONE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CLONE_TOOL, GimpCloneToolClass))
+#define PICMAN_TYPE_CLONE_TOOL            (picman_clone_tool_get_type ())
+#define PICMAN_CLONE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CLONE_TOOL, PicmanCloneTool))
+#define PICMAN_CLONE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CLONE_TOOL, PicmanCloneToolClass))
+#define PICMAN_IS_CLONE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CLONE_TOOL))
+#define PICMAN_IS_CLONE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CLONE_TOOL))
+#define PICMAN_CLONE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CLONE_TOOL, PicmanCloneToolClass))
 
 
-typedef struct _GimpCloneTool      GimpCloneTool;
-typedef struct _GimpCloneToolClass GimpCloneToolClass;
+typedef struct _PicmanCloneTool      PicmanCloneTool;
+typedef struct _PicmanCloneToolClass PicmanCloneToolClass;
 
-struct _GimpCloneTool
+struct _PicmanCloneTool
 {
-  GimpSourceTool parent_instance;
+  PicmanSourceTool parent_instance;
 };
 
-struct _GimpCloneToolClass
+struct _PicmanCloneToolClass
 {
-  GimpSourceToolClass parent_class;
+  PicmanSourceToolClass parent_class;
 };
 
 
-void    gimp_clone_tool_register (GimpToolRegisterCallback  callback,
+void    picman_clone_tool_register (PicmanToolRegisterCallback  callback,
                                   gpointer                  data);
 
-GType   gimp_clone_tool_get_type (void) G_GNUC_CONST;
+GType   picman_clone_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_CLONE_TOOL_H__  */
+#endif  /*  __PICMAN_CLONE_TOOL_H__  */

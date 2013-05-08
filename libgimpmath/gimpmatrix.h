@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpmatrix.h
- * Copyright (C) 1998 Jay Cox <jaycox@gimp.org>
+ * picmanmatrix.h
+ * Copyright (C) 1998 Jay Cox <jaycox@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_MATH_H_INSIDE__) && !defined (GIMP_MATH_COMPILATION)
-#error "Only <libgimpmath/gimpmath.h> can be included directly."
+#if !defined (__PICMAN_MATH_H_INSIDE__) && !defined (PICMAN_MATH_COMPILATION)
+#error "Only <libpicmanmath/picmanmath.h> can be included directly."
 #endif
 
-#ifndef __GIMP_MATRIX_H__
-#define __GIMP_MATRIX_H__
+#ifndef __PICMAN_MATRIX_H__
+#define __PICMAN_MATRIX_H__
 
 G_BEGIN_DECLS
 
@@ -32,70 +32,70 @@ G_BEGIN_DECLS
 
 
 /*****************/
-/*  GimpMatrix2  */
+/*  PicmanMatrix2  */
 /*****************/
 
-#define GIMP_TYPE_MATRIX2               (gimp_matrix2_get_type ())
-#define GIMP_VALUE_HOLDS_MATRIX2(value) (G_TYPE_CHECK_VALUE_TYPE ((value), GIMP_TYPE_MATRIX2))
+#define PICMAN_TYPE_MATRIX2               (picman_matrix2_get_type ())
+#define PICMAN_VALUE_HOLDS_MATRIX2(value) (G_TYPE_CHECK_VALUE_TYPE ((value), PICMAN_TYPE_MATRIX2))
 
-GType         gimp_matrix2_get_type        (void) G_GNUC_CONST;
+GType         picman_matrix2_get_type        (void) G_GNUC_CONST;
 
 
-#define GIMP_TYPE_PARAM_MATRIX2            (gimp_param_matrix2_get_type ())
-#define GIMP_IS_PARAM_SPEC_MATRIX2(pspec)  (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GIMP_TYPE_PARAM_MATRIX2))
+#define PICMAN_TYPE_PARAM_MATRIX2            (picman_param_matrix2_get_type ())
+#define PICMAN_IS_PARAM_SPEC_MATRIX2(pspec)  (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), PICMAN_TYPE_PARAM_MATRIX2))
 
-GType         gimp_param_matrix2_get_type  (void) G_GNUC_CONST;
+GType         picman_param_matrix2_get_type  (void) G_GNUC_CONST;
 
-GParamSpec *  gimp_param_spec_matrix2      (const gchar        *name,
+GParamSpec *  picman_param_spec_matrix2      (const gchar        *name,
                                             const gchar        *nick,
                                             const gchar        *blurb,
-                                            const GimpMatrix2  *default_value,
+                                            const PicmanMatrix2  *default_value,
                                             GParamFlags         flags);
 
 
-void          gimp_matrix2_identity        (GimpMatrix2       *matrix);
-void          gimp_matrix2_mult            (const GimpMatrix2 *matrix1,
-                                            GimpMatrix2       *matrix2);
+void          picman_matrix2_identity        (PicmanMatrix2       *matrix);
+void          picman_matrix2_mult            (const PicmanMatrix2 *matrix1,
+                                            PicmanMatrix2       *matrix2);
 
 
 /*****************/
-/*  GimpMatrix3  */
+/*  PicmanMatrix3  */
 /*****************/
 
-#define GIMP_TYPE_MATRIX3               (gimp_matrix3_get_type ())
-#define GIMP_VALUE_HOLDS_MATRIX3(value) (G_TYPE_CHECK_VALUE_TYPE ((value), GIMP_TYPE_MATRIX3))
+#define PICMAN_TYPE_MATRIX3               (picman_matrix3_get_type ())
+#define PICMAN_VALUE_HOLDS_MATRIX3(value) (G_TYPE_CHECK_VALUE_TYPE ((value), PICMAN_TYPE_MATRIX3))
 
-GType         gimp_matrix3_get_type        (void) G_GNUC_CONST;
+GType         picman_matrix3_get_type        (void) G_GNUC_CONST;
 
 
-#define GIMP_TYPE_PARAM_MATRIX3            (gimp_param_matrix3_get_type ())
-#define GIMP_IS_PARAM_SPEC_MATRIX3(pspec)  (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GIMP_TYPE_PARAM_MATRIX3))
+#define PICMAN_TYPE_PARAM_MATRIX3            (picman_param_matrix3_get_type ())
+#define PICMAN_IS_PARAM_SPEC_MATRIX3(pspec)  (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), PICMAN_TYPE_PARAM_MATRIX3))
 
-GType         gimp_param_matrix3_get_type  (void) G_GNUC_CONST;
+GType         picman_param_matrix3_get_type  (void) G_GNUC_CONST;
 
-GParamSpec *  gimp_param_spec_matrix3      (const gchar        *name,
+GParamSpec *  picman_param_spec_matrix3      (const gchar        *name,
                                             const gchar        *nick,
                                             const gchar        *blurb,
-                                            const GimpMatrix3  *default_value,
+                                            const PicmanMatrix3  *default_value,
                                             GParamFlags         flags);
 
 
-void          gimp_matrix3_identity        (GimpMatrix3       *matrix);
-void          gimp_matrix3_mult            (const GimpMatrix3 *matrix1,
-                                            GimpMatrix3       *matrix2);
-void          gimp_matrix3_translate       (GimpMatrix3       *matrix,
+void          picman_matrix3_identity        (PicmanMatrix3       *matrix);
+void          picman_matrix3_mult            (const PicmanMatrix3 *matrix1,
+                                            PicmanMatrix3       *matrix2);
+void          picman_matrix3_translate       (PicmanMatrix3       *matrix,
                                             gdouble            x,
                                             gdouble            y);
-void          gimp_matrix3_scale           (GimpMatrix3       *matrix,
+void          picman_matrix3_scale           (PicmanMatrix3       *matrix,
                                             gdouble            x,
                                             gdouble            y);
-void          gimp_matrix3_rotate          (GimpMatrix3       *matrix,
+void          picman_matrix3_rotate          (PicmanMatrix3       *matrix,
                                             gdouble            theta);
-void          gimp_matrix3_xshear          (GimpMatrix3       *matrix,
+void          picman_matrix3_xshear          (PicmanMatrix3       *matrix,
                                             gdouble            amount);
-void          gimp_matrix3_yshear          (GimpMatrix3       *matrix,
+void          picman_matrix3_yshear          (PicmanMatrix3       *matrix,
                                             gdouble            amount);
-void          gimp_matrix3_affine          (GimpMatrix3       *matrix,
+void          picman_matrix3_affine          (PicmanMatrix3       *matrix,
                                             gdouble            a,
                                             gdouble            b,
                                             gdouble            c,
@@ -103,15 +103,15 @@ void          gimp_matrix3_affine          (GimpMatrix3       *matrix,
                                             gdouble            e,
                                             gdouble            f);
 
-gdouble       gimp_matrix3_determinant     (const GimpMatrix3 *matrix);
-void          gimp_matrix3_invert          (GimpMatrix3       *matrix);
+gdouble       picman_matrix3_determinant     (const PicmanMatrix3 *matrix);
+void          picman_matrix3_invert          (PicmanMatrix3       *matrix);
 
-gboolean      gimp_matrix3_is_identity     (const GimpMatrix3 *matrix);
-gboolean      gimp_matrix3_is_diagonal     (const GimpMatrix3 *matrix);
-gboolean      gimp_matrix3_is_affine       (const GimpMatrix3 *matrix);
-gboolean      gimp_matrix3_is_simple       (const GimpMatrix3 *matrix);
+gboolean      picman_matrix3_is_identity     (const PicmanMatrix3 *matrix);
+gboolean      picman_matrix3_is_diagonal     (const PicmanMatrix3 *matrix);
+gboolean      picman_matrix3_is_affine       (const PicmanMatrix3 *matrix);
+gboolean      picman_matrix3_is_simple       (const PicmanMatrix3 *matrix);
 
-void          gimp_matrix3_transform_point (const GimpMatrix3 *matrix,
+void          picman_matrix3_transform_point (const PicmanMatrix3 *matrix,
                                             gdouble            x,
                                             gdouble            y,
                                             gdouble           *newx,
@@ -119,10 +119,10 @@ void          gimp_matrix3_transform_point (const GimpMatrix3 *matrix,
 
 
 /*****************/
-/*  GimpMatrix4  */
+/*  PicmanMatrix4  */
 
 /*****************/
-void          gimp_matrix4_to_deg          (const GimpMatrix4 *matrix,
+void          picman_matrix4_to_deg          (const PicmanMatrix4 *matrix,
                                             gdouble           *a,
                                             gdouble           *b,
                                             gdouble           *c);
@@ -130,4 +130,4 @@ void          gimp_matrix4_to_deg          (const GimpMatrix4 *matrix,
 
 G_END_DECLS
 
-#endif /* __GIMP_MATRIX_H__ */
+#endif /* __PICMAN_MATRIX_H__ */

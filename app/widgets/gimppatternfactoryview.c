@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppatternfactoryview.c
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmanpatternfactoryview.c
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,56 +23,56 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpviewable.h"
+#include "core/picmancontext.h"
+#include "core/picmandatafactory.h"
+#include "core/picmanviewable.h"
 
-#include "gimpeditor.h"
-#include "gimpmenufactory.h"
-#include "gimppatternfactoryview.h"
-#include "gimpviewrenderer.h"
+#include "picmaneditor.h"
+#include "picmanmenufactory.h"
+#include "picmanpatternfactoryview.h"
+#include "picmanviewrenderer.h"
 
 
-G_DEFINE_TYPE (GimpPatternFactoryView, gimp_pattern_factory_view,
-               GIMP_TYPE_DATA_FACTORY_VIEW)
+G_DEFINE_TYPE (PicmanPatternFactoryView, picman_pattern_factory_view,
+               PICMAN_TYPE_DATA_FACTORY_VIEW)
 
 
 static void
-gimp_pattern_factory_view_class_init (GimpPatternFactoryViewClass *klass)
+picman_pattern_factory_view_class_init (PicmanPatternFactoryViewClass *klass)
 {
 }
 
 static void
-gimp_pattern_factory_view_init (GimpPatternFactoryView *view)
+picman_pattern_factory_view_init (PicmanPatternFactoryView *view)
 {
 }
 
 GtkWidget *
-gimp_pattern_factory_view_new (GimpViewType      view_type,
-                               GimpDataFactory  *factory,
-                               GimpContext      *context,
+picman_pattern_factory_view_new (PicmanViewType      view_type,
+                               PicmanDataFactory  *factory,
+                               PicmanContext      *context,
                                gint              view_size,
                                gint              view_border_width,
-                               GimpMenuFactory  *menu_factory)
+                               PicmanMenuFactory  *menu_factory)
 {
-  GimpPatternFactoryView *factory_view;
-  GimpContainerEditor    *editor;
+  PicmanPatternFactoryView *factory_view;
+  PicmanContainerEditor    *editor;
 
-  g_return_val_if_fail (GIMP_IS_DATA_FACTORY (factory), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DATA_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (view_size > 0 &&
-                        view_size <= GIMP_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
+                        view_size <= PICMAN_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
   g_return_val_if_fail (view_border_width >= 0 &&
-                        view_border_width <= GIMP_VIEW_MAX_BORDER_WIDTH,
+                        view_border_width <= PICMAN_VIEW_MAX_BORDER_WIDTH,
                         NULL);
   g_return_val_if_fail (menu_factory == NULL ||
-                        GIMP_IS_MENU_FACTORY (menu_factory), NULL);
+                        PICMAN_IS_MENU_FACTORY (menu_factory), NULL);
 
-  factory_view = g_object_new (GIMP_TYPE_PATTERN_FACTORY_VIEW,
+  factory_view = g_object_new (PICMAN_TYPE_PATTERN_FACTORY_VIEW,
                                "view-type",         view_type,
                                "data-factory",      factory,
                                "context",           context,
@@ -84,14 +84,14 @@ gimp_pattern_factory_view_new (GimpViewType      view_type,
                                "action-group",      "patterns",
                                NULL);
 
-  editor = GIMP_CONTAINER_EDITOR (factory_view);
+  editor = PICMAN_CONTAINER_EDITOR (factory_view);
 
-  gimp_editor_add_action_button (GIMP_EDITOR (editor->view),
+  picman_editor_add_action_button (PICMAN_EDITOR (editor->view),
                                  "patterns", "patterns-open-as-image",
                                  NULL);
 
-  gtk_widget_hide (gimp_data_factory_view_get_edit_button (GIMP_DATA_FACTORY_VIEW (factory_view)));
-  gtk_widget_hide (gimp_data_factory_view_get_duplicate_button (GIMP_DATA_FACTORY_VIEW (factory_view)));
+  gtk_widget_hide (picman_data_factory_view_get_edit_button (PICMAN_DATA_FACTORY_VIEW (factory_view)));
+  gtk_widget_hide (picman_data_factory_view_get_duplicate_button (PICMAN_DATA_FACTORY_VIEW (factory_view)));
 
   return GTK_WIDGET (factory_view);
 }

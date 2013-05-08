@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,40 +15,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SCALE_TOOL_H__
-#define __GIMP_SCALE_TOOL_H__
+#ifndef __PICMAN_SCALE_TOOL_H__
+#define __PICMAN_SCALE_TOOL_H__
 
 
-#include "gimptransformtool.h"
+#include "picmantransformtool.h"
 
 
-#define GIMP_TYPE_SCALE_TOOL            (gimp_scale_tool_get_type ())
-#define GIMP_SCALE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SCALE_TOOL, GimpScaleTool))
-#define GIMP_SCALE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SCALE_TOOL, GimpScaleToolClass))
-#define GIMP_IS_SCALE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SCALE_TOOL))
-#define GIMP_SCALE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SCALE_TOOL, GimpScaleToolClass))
+#define PICMAN_TYPE_SCALE_TOOL            (picman_scale_tool_get_type ())
+#define PICMAN_SCALE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SCALE_TOOL, PicmanScaleTool))
+#define PICMAN_SCALE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SCALE_TOOL, PicmanScaleToolClass))
+#define PICMAN_IS_SCALE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SCALE_TOOL))
+#define PICMAN_SCALE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SCALE_TOOL, PicmanScaleToolClass))
 
 
-typedef struct _GimpScaleTool      GimpScaleTool;
-typedef struct _GimpScaleToolClass GimpScaleToolClass;
+typedef struct _PicmanScaleTool      PicmanScaleTool;
+typedef struct _PicmanScaleToolClass PicmanScaleToolClass;
 
-struct _GimpScaleTool
+struct _PicmanScaleTool
 {
-  GimpTransformTool  parent_instance;
+  PicmanTransformTool  parent_instance;
 
   GtkWidget         *box;
 };
 
-struct _GimpScaleToolClass
+struct _PicmanScaleToolClass
 {
-  GimpTransformToolClass parent_class;
+  PicmanTransformToolClass parent_class;
 };
 
 
-void    gimp_scale_tool_register (GimpToolRegisterCallback  callback,
+void    picman_scale_tool_register (PicmanToolRegisterCallback  callback,
                                   gpointer                  data);
 
-GType   gimp_scale_tool_get_type (void) G_GNUC_CONST;
+GType   picman_scale_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_SCALE_TOOL_H__  */
+#endif  /*  __PICMAN_SCALE_TOOL_H__  */

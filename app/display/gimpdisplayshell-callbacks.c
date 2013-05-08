@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,106 +20,106 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "display-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-quick-mask.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-quick-mask.h"
 
-#include "widgets/gimpcairo-wilber.h"
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmancairo-wilber.h"
+#include "widgets/picmanuimanager.h"
 
-#include "gimpcanvasitem.h"
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-appearance.h"
-#include "gimpdisplayshell-callbacks.h"
-#include "gimpdisplayshell-draw.h"
-#include "gimpdisplayshell-scale.h"
-#include "gimpdisplayshell-scroll.h"
-#include "gimpdisplayshell-selection.h"
-#include "gimpdisplayshell-title.h"
-#include "gimpdisplayxfer.h"
-#include "gimpimagewindow.h"
-#include "gimpnavigationeditor.h"
+#include "picmancanvasitem.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-appearance.h"
+#include "picmandisplayshell-callbacks.h"
+#include "picmandisplayshell-draw.h"
+#include "picmandisplayshell-scale.h"
+#include "picmandisplayshell-scroll.h"
+#include "picmandisplayshell-selection.h"
+#include "picmandisplayshell-title.h"
+#include "picmandisplayxfer.h"
+#include "picmanimagewindow.h"
+#include "picmannavigationeditor.h"
 
 
 /*  local function prototypes  */
 
-static void       gimp_display_shell_vadjustment_changed      (GtkAdjustment    *adjustment,
-                                                               GimpDisplayShell *shell);
-static void       gimp_display_shell_hadjustment_changed      (GtkAdjustment    *adjustment,
-                                                               GimpDisplayShell *shell);
-static gboolean   gimp_display_shell_vscrollbar_change_value  (GtkRange         *range,
+static void       picman_display_shell_vadjustment_changed      (GtkAdjustment    *adjustment,
+                                                               PicmanDisplayShell *shell);
+static void       picman_display_shell_hadjustment_changed      (GtkAdjustment    *adjustment,
+                                                               PicmanDisplayShell *shell);
+static gboolean   picman_display_shell_vscrollbar_change_value  (GtkRange         *range,
                                                                GtkScrollType     scroll,
                                                                gdouble           value,
-                                                               GimpDisplayShell *shell);
+                                                               PicmanDisplayShell *shell);
 
-static gboolean   gimp_display_shell_hscrollbar_change_value  (GtkRange         *range,
+static gboolean   picman_display_shell_hscrollbar_change_value  (GtkRange         *range,
                                                                GtkScrollType     scroll,
                                                                gdouble           value,
-                                                               GimpDisplayShell *shell);
+                                                               PicmanDisplayShell *shell);
 
-static void       gimp_display_shell_canvas_draw_image        (GimpDisplayShell *shell,
+static void       picman_display_shell_canvas_draw_image        (PicmanDisplayShell *shell,
                                                                cairo_t          *cr);
-static void       gimp_display_shell_canvas_draw_drop_zone    (GimpDisplayShell *shell,
+static void       picman_display_shell_canvas_draw_drop_zone    (PicmanDisplayShell *shell,
                                                                cairo_t          *cr);
 
 
 /*  public functions  */
 
 void
-gimp_display_shell_canvas_realize (GtkWidget        *canvas,
-                                   GimpDisplayShell *shell)
+picman_display_shell_canvas_realize (GtkWidget        *canvas,
+                                   PicmanDisplayShell *shell)
 {
-  GimpCanvasPaddingMode padding_mode;
-  GimpRGB               padding_color;
+  PicmanCanvasPaddingMode padding_mode;
+  PicmanRGB               padding_color;
   GtkAllocation         allocation;
 
   gtk_widget_grab_focus (canvas);
 
-  gimp_display_shell_get_padding (shell, &padding_mode, &padding_color);
-  gimp_display_shell_set_padding (shell, padding_mode, &padding_color);
+  picman_display_shell_get_padding (shell, &padding_mode, &padding_color);
+  picman_display_shell_set_padding (shell, padding_mode, &padding_color);
 
   gtk_widget_get_allocation (canvas, &allocation);
 
-  gimp_display_shell_title_update (shell);
+  picman_display_shell_title_update (shell);
 
   shell->disp_width  = allocation.width;
   shell->disp_height = allocation.height;
 
   /*  set up the scrollbar observers  */
   g_signal_connect (shell->hsbdata, "value-changed",
-                    G_CALLBACK (gimp_display_shell_hadjustment_changed),
+                    G_CALLBACK (picman_display_shell_hadjustment_changed),
                     shell);
   g_signal_connect (shell->vsbdata, "value-changed",
-                    G_CALLBACK (gimp_display_shell_vadjustment_changed),
+                    G_CALLBACK (picman_display_shell_vadjustment_changed),
                     shell);
 
   g_signal_connect (shell->hsb, "change-value",
-                    G_CALLBACK (gimp_display_shell_hscrollbar_change_value),
+                    G_CALLBACK (picman_display_shell_hscrollbar_change_value),
                     shell);
 
   g_signal_connect (shell->vsb, "change-value",
-                    G_CALLBACK (gimp_display_shell_vscrollbar_change_value),
+                    G_CALLBACK (picman_display_shell_vscrollbar_change_value),
                     shell);
 
   /*  allow shrinking  */
   gtk_widget_set_size_request (GTK_WIDGET (shell), 0, 0);
 
-  shell->xfer = gimp_display_xfer_realize (GTK_WIDGET(shell));
+  shell->xfer = picman_display_xfer_realize (GTK_WIDGET(shell));
 }
 
 void
-gimp_display_shell_canvas_size_allocate (GtkWidget        *widget,
+picman_display_shell_canvas_size_allocate (GtkWidget        *widget,
                                          GtkAllocation    *allocation,
-                                         GimpDisplayShell *shell)
+                                         PicmanDisplayShell *shell)
 {
   /*  are we in destruction?  */
-  if (! shell->display || ! gimp_display_get_shell (shell->display))
+  if (! shell->display || ! picman_display_get_shell (shell->display))
     return;
 
   if ((shell->disp_width  != allocation->width) ||
@@ -131,7 +131,7 @@ gimp_display_shell_canvas_size_allocate (GtkWidget        *widget,
           allocation->width  > 64 &&
           allocation->height > 64)
         {
-          gdouble scale = gimp_zoom_model_get_factor (shell->zoom);
+          gdouble scale = picman_zoom_model_get_factor (shell->zoom);
           gint    offset_x;
           gint    offset_y;
 
@@ -148,7 +148,7 @@ gimp_display_shell_canvas_size_allocate (GtkWidget        *widget,
           offset_x = UNSCALEX (shell, shell->offset_x);
           offset_y = UNSCALEX (shell, shell->offset_y);
 
-          gimp_zoom_model_zoom (shell->zoom, GIMP_ZOOM_TO, scale);
+          picman_zoom_model_zoom (shell->zoom, PICMAN_ZOOM_TO, scale);
 
           shell->offset_x = SCALEX (shell, offset_x);
           shell->offset_y = SCALEY (shell, offset_y);
@@ -171,12 +171,12 @@ gimp_display_shell_canvas_size_allocate (GtkWidget        *widget,
           gint     sw;
           gint     sh;
 
-          gimp_display_shell_scale_get_image_size (shell, &sw, &sh);
+          picman_display_shell_scale_get_image_size (shell, &sw, &sh);
 
           center_horizontally = sw <= shell->disp_width;
           center_vertically   = sh <= shell->disp_height;
 
-          gimp_display_shell_scroll_center_image (shell,
+          picman_display_shell_scroll_center_image (shell,
                                                   center_horizontally,
                                                   center_vertically);
 
@@ -197,13 +197,13 @@ gimp_display_shell_canvas_size_allocate (GtkWidget        *widget,
               target_offset_y = MAX (shell->offset_y, 0);
             }
 
-          gimp_display_shell_scroll_set_offset (shell,
+          picman_display_shell_scroll_set_offset (shell,
                                                 target_offset_x,
                                                 target_offset_y);
         }
 
-      gimp_display_shell_scroll_clamp_and_update (shell);
-      gimp_display_shell_scaled (shell);
+      picman_display_shell_scroll_clamp_and_update (shell);
+      picman_display_shell_scaled (shell);
 
       /* Reset */
       shell->size_allocate_from_configure_event = FALSE;
@@ -211,12 +211,12 @@ gimp_display_shell_canvas_size_allocate (GtkWidget        *widget,
 }
 
 gboolean
-gimp_display_shell_canvas_expose (GtkWidget        *widget,
+picman_display_shell_canvas_expose (GtkWidget        *widget,
                                   GdkEventExpose   *eevent,
-                                  GimpDisplayShell *shell)
+                                  PicmanDisplayShell *shell)
 {
   /*  are we in destruction?  */
-  if (! shell->display || ! gimp_display_get_shell (shell->display))
+  if (! shell->display || ! picman_display_get_shell (shell->display))
     return TRUE;
 
   /*  ignore events on overlays  */
@@ -228,13 +228,13 @@ gimp_display_shell_canvas_expose (GtkWidget        *widget,
       gdk_cairo_region (cr, eevent->region);
       cairo_clip (cr);
 
-      if (gimp_display_get_image (shell->display))
+      if (picman_display_get_image (shell->display))
         {
-          gimp_display_shell_canvas_draw_image (shell, cr);
+          picman_display_shell_canvas_draw_image (shell, cr);
         }
       else
         {
-          gimp_display_shell_canvas_draw_drop_zone (shell, cr);
+          picman_display_shell_canvas_draw_drop_zone (shell, cr);
         }
 
       cairo_destroy (cr);
@@ -244,11 +244,11 @@ gimp_display_shell_canvas_expose (GtkWidget        *widget,
 }
 
 gboolean
-gimp_display_shell_origin_button_press (GtkWidget        *widget,
+picman_display_shell_origin_button_press (GtkWidget        *widget,
                                         GdkEventButton   *event,
-                                        GimpDisplayShell *shell)
+                                        PicmanDisplayShell *shell)
 {
-  if (! shell->display->gimp->busy)
+  if (! shell->display->picman->busy)
     {
       if (event->type == GDK_BUTTON_PRESS && event->button == 1)
         {
@@ -265,22 +265,22 @@ gimp_display_shell_origin_button_press (GtkWidget        *widget,
 }
 
 gboolean
-gimp_display_shell_quick_mask_button_press (GtkWidget        *widget,
+picman_display_shell_quick_mask_button_press (GtkWidget        *widget,
                                             GdkEventButton   *bevent,
-                                            GimpDisplayShell *shell)
+                                            PicmanDisplayShell *shell)
 {
-  if (! gimp_display_get_image (shell->display))
+  if (! picman_display_get_image (shell->display))
     return TRUE;
 
   if (gdk_event_triggers_context_menu ((GdkEvent *) bevent))
     {
-      GimpImageWindow *window = gimp_display_shell_get_window (shell);
+      PicmanImageWindow *window = picman_display_shell_get_window (shell);
 
       if (window)
         {
-          GimpUIManager *manager = gimp_image_window_get_ui_manager (window);
+          PicmanUIManager *manager = picman_image_window_get_ui_manager (window);
 
-          gimp_ui_manager_ui_popup (manager,
+          picman_ui_manager_ui_popup (manager,
                                     "/quick-mask-popup",
                                     GTK_WIDGET (shell),
                                     NULL, NULL, NULL, NULL);
@@ -293,31 +293,31 @@ gimp_display_shell_quick_mask_button_press (GtkWidget        *widget,
 }
 
 void
-gimp_display_shell_quick_mask_toggled (GtkWidget        *widget,
-                                       GimpDisplayShell *shell)
+picman_display_shell_quick_mask_toggled (GtkWidget        *widget,
+                                       PicmanDisplayShell *shell)
 {
-  GimpImage *image  = gimp_display_get_image (shell->display);
+  PicmanImage *image  = picman_display_get_image (shell->display);
   gboolean   active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
 
-  if (active != gimp_image_get_quick_mask_state (image))
+  if (active != picman_image_get_quick_mask_state (image))
     {
-      gimp_image_set_quick_mask_state (image, active);
+      picman_image_set_quick_mask_state (image, active);
 
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
 }
 
 gboolean
-gimp_display_shell_navigation_button_press (GtkWidget        *widget,
+picman_display_shell_navigation_button_press (GtkWidget        *widget,
                                             GdkEventButton   *bevent,
-                                            GimpDisplayShell *shell)
+                                            PicmanDisplayShell *shell)
 {
-  if (! gimp_display_get_image (shell->display))
+  if (! picman_display_get_image (shell->display))
     return TRUE;
 
   if (bevent->type == GDK_BUTTON_PRESS && bevent->button == 1)
     {
-      gimp_navigation_editor_popup (shell, widget, bevent->x, bevent->y);
+      picman_navigation_editor_popup (shell, widget, bevent->x, bevent->y);
     }
 
   return TRUE;
@@ -327,38 +327,38 @@ gimp_display_shell_navigation_button_press (GtkWidget        *widget,
 /*  private functions  */
 
 static void
-gimp_display_shell_vadjustment_changed (GtkAdjustment    *adjustment,
-                                        GimpDisplayShell *shell)
+picman_display_shell_vadjustment_changed (GtkAdjustment    *adjustment,
+                                        PicmanDisplayShell *shell)
 {
   /*  If we are panning with mouse, scrollbars are to be ignored or
    *  they will cause jitter in motion
    */
   if (! shell->scrolling)
-    gimp_display_shell_scroll (shell,
+    picman_display_shell_scroll (shell,
                                0,
                                gtk_adjustment_get_value (adjustment) -
                                shell->offset_y);
 }
 
 static void
-gimp_display_shell_hadjustment_changed (GtkAdjustment    *adjustment,
-                                        GimpDisplayShell *shell)
+picman_display_shell_hadjustment_changed (GtkAdjustment    *adjustment,
+                                        PicmanDisplayShell *shell)
 {
   /* If we are panning with mouse, scrollbars are to be ignored or
    * they will cause jitter in motion
    */
   if (! shell->scrolling)
-    gimp_display_shell_scroll (shell,
+    picman_display_shell_scroll (shell,
                                gtk_adjustment_get_value (adjustment) -
                                shell->offset_x,
                                0);
 }
 
 static gboolean
-gimp_display_shell_hscrollbar_change_value (GtkRange         *range,
+picman_display_shell_hscrollbar_change_value (GtkRange         *range,
                                             GtkScrollType     scroll,
                                             gdouble           value,
-                                            GimpDisplayShell *shell)
+                                            PicmanDisplayShell *shell)
 {
   if (! shell->display)
     return TRUE;
@@ -370,7 +370,7 @@ gimp_display_shell_hscrollbar_change_value (GtkRange         *range,
 
   g_object_freeze_notify (G_OBJECT (shell->hsbdata));
 
-  gimp_display_shell_scroll_setup_hscrollbar (shell, value);
+  picman_display_shell_scroll_setup_hscrollbar (shell, value);
 
   g_object_thaw_notify (G_OBJECT (shell->hsbdata)); /* emits "changed" */
 
@@ -378,10 +378,10 @@ gimp_display_shell_hscrollbar_change_value (GtkRange         *range,
 }
 
 static gboolean
-gimp_display_shell_vscrollbar_change_value (GtkRange         *range,
+picman_display_shell_vscrollbar_change_value (GtkRange         *range,
                                             GtkScrollType     scroll,
                                             gdouble           value,
-                                            GimpDisplayShell *shell)
+                                            PicmanDisplayShell *shell)
 {
   if (! shell->display)
     return TRUE;
@@ -393,7 +393,7 @@ gimp_display_shell_vscrollbar_change_value (GtkRange         *range,
 
   g_object_freeze_notify (G_OBJECT (shell->vsbdata));
 
-  gimp_display_shell_scroll_setup_vscrollbar (shell, value);
+  picman_display_shell_scroll_setup_vscrollbar (shell, value);
 
   g_object_thaw_notify (G_OBJECT (shell->vsbdata)); /* emits "changed" */
 
@@ -401,7 +401,7 @@ gimp_display_shell_vscrollbar_change_value (GtkRange         *range,
 }
 
 static void
-gimp_display_shell_canvas_draw_image (GimpDisplayShell *shell,
+picman_display_shell_canvas_draw_image (PicmanDisplayShell *shell,
                                       cairo_t          *cr)
 {
   cairo_rectangle_list_t *clip_rectangles;
@@ -409,7 +409,7 @@ gimp_display_shell_canvas_draw_image (GimpDisplayShell *shell,
 
   image_rect.x = - shell->offset_x;
   image_rect.y = - shell->offset_y;
-  gimp_display_shell_scale_get_image_size (shell,
+  picman_display_shell_scale_get_image_size (shell,
                                            &image_rect.width,
                                            &image_rect.height);
 
@@ -433,7 +433,7 @@ gimp_display_shell_canvas_draw_image (GimpDisplayShell *shell,
   cairo_clip (cr);
 
   if (gdk_cairo_get_clip_rectangle (cr, NULL))
-    gimp_display_shell_draw_background (shell, cr);
+    picman_display_shell_draw_background (shell, cr);
 
   cairo_restore (cr);
 
@@ -460,14 +460,14 @@ gimp_display_shell_canvas_draw_image (GimpDisplayShell *shell,
       gint i;
 
       cairo_save (cr);
-      gimp_display_shell_draw_checkerboard (shell, cr);
+      picman_display_shell_draw_checkerboard (shell, cr);
       cairo_restore (cr);
 
       for (i = 0; i < clip_rectangles->num_rectangles; i++)
         {
           cairo_rectangle_t rect = clip_rectangles->rectangles[i];
 
-          gimp_display_shell_draw_image (shell, cr,
+          picman_display_shell_draw_image (shell, cr,
                                          floor (rect.x),
                                          floor (rect.y),
                                          ceil (rect.width),
@@ -488,21 +488,21 @@ gimp_display_shell_canvas_draw_image (GimpDisplayShell *shell,
   if (shell->rotate_transform)
     cairo_transform (cr, shell->rotate_transform);
 
-  gimp_canvas_item_draw (shell->canvas_item, cr);
+  picman_canvas_item_draw (shell->canvas_item, cr);
 
   cairo_restore (cr);
 
-  gimp_canvas_item_draw (shell->unrotated_item, cr);
+  picman_canvas_item_draw (shell->unrotated_item, cr);
 
   /* restart (and recalculate) the selection boundaries */
-  gimp_display_shell_selection_restart (shell);
+  picman_display_shell_selection_restart (shell);
 }
 
 static void
-gimp_display_shell_canvas_draw_drop_zone (GimpDisplayShell *shell,
+picman_display_shell_canvas_draw_drop_zone (PicmanDisplayShell *shell,
                                           cairo_t          *cr)
 {
-  gimp_display_shell_draw_background (shell, cr);
+  picman_display_shell_draw_background (shell, cr);
 
-  gimp_cairo_draw_drop_wilber (shell->canvas, cr);
+  picman_cairo_draw_drop_wilber (shell->canvas, cr);
 }

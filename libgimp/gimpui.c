@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -32,47 +32,47 @@
 #include <Cocoa/Cocoa.h>
 #endif
 
-#include "gimp.h"
-#include "gimpui.h"
+#include "picman.h"
+#include "picmanui.h"
 
-#include "libgimpmodule/gimpmodule.h"
+#include "libpicmanmodule/picmanmodule.h"
 
-#include "libgimpwidgets/gimpwidgets.h"
-#include "libgimpwidgets/gimpwidgets-private.h"
+#include "libpicmanwidgets/picmanwidgets.h"
+#include "libpicmanwidgets/picmanwidgets-private.h"
 
 
 /**
- * SECTION: gimpui
- * @title: gimpui
+ * SECTION: picmanui
+ * @title: picmanui
  * @short_description: Common user interface functions. This header includes
- *                     all other GIMP User Interface Library headers.
+ *                     all other PICMAN User Interface Library headers.
  * @see_also: gtk_init(), gdk_set_use_xshm(), gdk_rgb_get_visual(),
  *            gdk_rgb_get_cmap(), gtk_widget_set_default_visual(),
  *            gtk_widget_set_default_colormap(), gtk_preview_set_gamma().
  *
  * Common user interface functions. This header includes all other
- * GIMP User Interface Library headers.
+ * PICMAN User Interface Library headers.
  **/
 
 
 /*  local function prototypes  */
 
-static void      gimp_ui_help_func              (const gchar *help_id,
+static void      picman_ui_help_func              (const gchar *help_id,
                                                  gpointer     help_data);
-static void      gimp_ensure_modules            (void);
-static void      gimp_window_transient_realized (GtkWidget   *window,
+static void      picman_ensure_modules            (void);
+static void      picman_window_transient_realized (GtkWidget   *window,
                                                  GdkWindow   *parent);
-static gboolean  gimp_window_set_transient_for  (GtkWindow   *window,
+static gboolean  picman_window_set_transient_for  (GtkWindow   *window,
                                                  GdkWindow   *parent);
 
 
-static gboolean gimp_ui_initialized = FALSE;
+static gboolean picman_ui_initialized = FALSE;
 
 
 /*  public functions  */
 
 /**
- * gimp_ui_init:
+ * picman_ui_init:
  * @prog_name: The name of the plug-in which will be passed as argv[0] to
  *             gtk_init(). It's a convention to use the name of the
  *             executable and _not_ the PDB procedure name.
@@ -80,17 +80,17 @@ static gboolean gimp_ui_initialized = FALSE;
  *             reasons only.
  *
  * This function initializes GTK+ with gtk_init() and initializes GDK's
- * image rendering subsystem (GdkRGB) to follow the GIMP main program's
+ * image rendering subsystem (GdkRGB) to follow the PICMAN main program's
  * colormap allocation/installation policy.
  *
  * It also sets up various other things so that the plug-in user looks
- * and behaves like the GIMP core. This includes selecting the GTK+
- * theme and setting up the help system as chosen in the GIMP
+ * and behaves like the PICMAN core. This includes selecting the GTK+
+ * theme and setting up the help system as chosen in the PICMAN
  * preferences. Any plug-in that provides a user interface should call
  * this function.
  **/
 void
-gimp_ui_init (const gchar *prog_name,
+picman_ui_init (const gchar *prog_name,
               gboolean     preview)
 {
   GdkScreen   *screen;
@@ -99,12 +99,12 @@ gimp_ui_init (const gchar *prog_name,
 
   g_return_if_fail (prog_name != NULL);
 
-  if (gimp_ui_initialized)
+  if (picman_ui_initialized)
     return;
 
   g_set_prgname (prog_name);
 
-  display_name = gimp_display_name ();
+  display_name = picman_display_name ();
 
   if (display_name)
     {
@@ -115,12 +115,12 @@ gimp_ui_init (const gchar *prog_name,
 #endif
     }
 
-  if (gimp_user_time ())
+  if (picman_user_time ())
     {
       /* Construct a fake startup ID as we only want to pass the
        * interaction timestamp, see _gdk_windowing_set_default_display().
        */
-      gchar *startup_id = g_strdup_printf ("_TIME%u", gimp_user_time ());
+      gchar *startup_id = g_strdup_printf ("_TIME%u", picman_user_time ());
 
       g_setenv ("DESKTOP_STARTUP_ID", startup_id, TRUE);
       g_free (startup_id);
@@ -128,34 +128,34 @@ gimp_ui_init (const gchar *prog_name,
 
   gtk_init (NULL, NULL);
 
-  themerc = gimp_personal_rc_file ("themerc");
+  themerc = picman_personal_rc_file ("themerc");
   gtk_rc_add_default_file (themerc);
   g_free (themerc);
 
-  gdk_set_program_class (gimp_wm_class ());
+  gdk_set_program_class (picman_wm_class ());
 
   screen = gdk_screen_get_default ();
   gtk_widget_set_default_colormap (gdk_screen_get_rgb_colormap (screen));
 
-  gimp_widgets_init (gimp_ui_help_func,
-                     gimp_context_get_foreground,
-                     gimp_context_get_background,
-                     gimp_ensure_modules);
+  picman_widgets_init (picman_ui_help_func,
+                     picman_context_get_foreground,
+                     picman_context_get_background,
+                     picman_ensure_modules);
 
-  if (! gimp_show_tool_tips ())
-    gimp_help_disable_tooltips ();
+  if (! picman_show_tool_tips ())
+    picman_help_disable_tooltips ();
 
-  gimp_dialogs_show_help_button (gimp_show_help_button ());
+  picman_dialogs_show_help_button (picman_show_help_button ());
 
 #ifdef GDK_WINDOWING_QUARTZ
   [NSApp activateIgnoringOtherApps:YES];
 #endif
 
-  gimp_ui_initialized = TRUE;
+  picman_ui_initialized = TRUE;
 }
 
 static GdkWindow *
-gimp_ui_get_foreign_window (guint32 window)
+picman_ui_get_foreign_window (guint32 window)
 {
 #ifdef GDK_WINDOWING_X11
   return gdk_x11_window_foreign_new_for_display (gdk_display_get_default (),
@@ -171,100 +171,100 @@ gimp_ui_get_foreign_window (guint32 window)
 }
 
 /**
- * gimp_ui_get_display_window:
- * @gdisp_ID: a #GimpDisplay ID.
+ * picman_ui_get_display_window:
+ * @gdisp_ID: a #PicmanDisplay ID.
  *
  * Returns the #GdkWindow of a display window. The purpose is to allow
  * to make plug-in dialogs transient to the image display as explained
  * with gdk_window_set_transient_for().
  *
  * You shouldn't have to call this function directly. Use
- * gimp_window_set_transient_for_display() instead.
+ * picman_window_set_transient_for_display() instead.
  *
  * Return value: A reference to a #GdkWindow or %NULL. You should
  *               unref the window using g_object_unref() as soon as
  *               you don't need it any longer.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 GdkWindow *
-gimp_ui_get_display_window (guint32 gdisp_ID)
+picman_ui_get_display_window (guint32 gdisp_ID)
 {
   guint32 window;
 
-  g_return_val_if_fail (gimp_ui_initialized, NULL);
+  g_return_val_if_fail (picman_ui_initialized, NULL);
 
-  window = gimp_display_get_window_handle (gdisp_ID);
+  window = picman_display_get_window_handle (gdisp_ID);
   if (window)
-    return gimp_ui_get_foreign_window (window);
+    return picman_ui_get_foreign_window (window);
 
   return NULL;
 }
 
 /**
- * gimp_ui_get_progress_window:
+ * picman_ui_get_progress_window:
  *
  * Returns the #GdkWindow of the window this plug-in's progress bar is
  * shown in. Use it to make plug-in dialogs transient to this window
  * as explained with gdk_window_set_transient_for().
  *
  * You shouldn't have to call this function directly. Use
- * gimp_window_set_transient() instead.
+ * picman_window_set_transient() instead.
  *
  * Return value: A reference to a #GdkWindow or %NULL. You should
  *               unref the window using g_object_unref() as soon as
  *               you don't need it any longer.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 GdkWindow *
-gimp_ui_get_progress_window (void)
+picman_ui_get_progress_window (void)
 {
   guint32  window;
 
-  g_return_val_if_fail (gimp_ui_initialized, NULL);
+  g_return_val_if_fail (picman_ui_initialized, NULL);
 
-  window = gimp_progress_get_window_handle ();
+  window = picman_progress_get_window_handle ();
   if (window)
-     return gimp_ui_get_foreign_window (window);
+     return picman_ui_get_foreign_window (window);
 
   return NULL;
 }
 
 #ifdef GDK_WINDOWING_QUARTZ
 static void
-gimp_window_transient_show (GtkWidget *window)
+picman_window_transient_show (GtkWidget *window)
 {
   g_signal_handlers_disconnect_by_func (window,
-                                        gimp_window_transient_show,
+                                        picman_window_transient_show,
                                         NULL);
   [NSApp arrangeInFront: nil];
 }
 #endif
 
 /**
- * gimp_window_set_transient_for_display:
+ * picman_window_set_transient_for_display:
  * @window:   the #GtkWindow that should become transient
  * @gdisp_ID: display ID of the image window that should become the parent
  *
  * Indicates to the window manager that @window is a transient dialog
- * associated with the GIMP image window that is identified by it's
+ * associated with the PICMAN image window that is identified by it's
  * display ID.  See gdk_window_set_transient_for () for more information.
  *
  * Most of the time you will want to use the convenience function
- * gimp_window_set_transient().
+ * picman_window_set_transient().
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 void
-gimp_window_set_transient_for_display (GtkWindow *window,
+picman_window_set_transient_for_display (GtkWindow *window,
                                        guint32    gdisp_ID)
 {
-  g_return_if_fail (gimp_ui_initialized);
+  g_return_if_fail (picman_ui_initialized);
   g_return_if_fail (GTK_IS_WINDOW (window));
 
-  if (! gimp_window_set_transient_for (window,
-                                       gimp_ui_get_display_window (gdisp_ID)))
+  if (! picman_window_set_transient_for (window,
+                                       picman_ui_get_display_window (gdisp_ID)))
     {
       /*  if setting the window transient failed, at least set
        *  WIN_POS_CENTER, which will center the window on the screen
@@ -274,36 +274,36 @@ gimp_window_set_transient_for_display (GtkWindow *window,
 
 #ifdef GDK_WINDOWING_QUARTZ
       g_signal_connect (window, "show",
-                        G_CALLBACK (gimp_window_transient_show),
+                        G_CALLBACK (picman_window_transient_show),
                         NULL);
 #endif
     }
 }
 
 /**
- * gimp_window_set_transient:
+ * picman_window_set_transient:
  * @window: the #GtkWindow that should become transient
  *
  * Indicates to the window manager that @window is a transient dialog
- * associated with the GIMP window that the plug-in has been
- * started from. See also gimp_window_set_transient_for_display().
+ * associated with the PICMAN window that the plug-in has been
+ * started from. See also picman_window_set_transient_for_display().
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 void
-gimp_window_set_transient (GtkWindow *window)
+picman_window_set_transient (GtkWindow *window)
 {
-  g_return_if_fail (gimp_ui_initialized);
+  g_return_if_fail (picman_ui_initialized);
   g_return_if_fail (GTK_IS_WINDOW (window));
 
-  if (! gimp_window_set_transient_for (window, gimp_ui_get_progress_window ()))
+  if (! picman_window_set_transient_for (window, picman_ui_get_progress_window ()))
     {
       /*  see above  */
       gtk_window_set_position (window, GTK_WIN_POS_CENTER);
 
 #ifdef GDK_WINDOWING_QUARTZ
       g_signal_connect (window, "show",
-                        G_CALLBACK (gimp_window_transient_show),
+                        G_CALLBACK (picman_window_transient_show),
                         NULL);
 #endif
     }
@@ -313,26 +313,26 @@ gimp_window_set_transient (GtkWindow *window)
 /*  private functions  */
 
 static void
-gimp_ui_help_func (const gchar *help_id,
+picman_ui_help_func (const gchar *help_id,
                    gpointer     help_data)
 {
-  gimp_help (NULL, help_id);
+  picman_help (NULL, help_id);
 }
 
 static void
-gimp_ensure_modules (void)
+picman_ensure_modules (void)
 {
-  static GimpModuleDB *module_db = NULL;
+  static PicmanModuleDB *module_db = NULL;
 
   if (! module_db)
     {
-      gchar *load_inhibit = gimp_get_module_load_inhibit ();
-      gchar *module_path  = gimp_gimprc_query ("module-path");
+      gchar *load_inhibit = picman_get_module_load_inhibit ();
+      gchar *module_path  = picman_picmanrc_query ("module-path");
 
-      module_db = gimp_module_db_new (FALSE);
+      module_db = picman_module_db_new (FALSE);
 
-      gimp_module_db_set_load_inhibit (module_db, load_inhibit);
-      gimp_module_db_load (module_db, module_path);
+      picman_module_db_set_load_inhibit (module_db, load_inhibit);
+      picman_module_db_load (module_db, module_path);
 
       g_free (module_path);
       g_free (load_inhibit);
@@ -340,7 +340,7 @@ gimp_ensure_modules (void)
 }
 
 static void
-gimp_window_transient_realized (GtkWidget *window,
+picman_window_transient_realized (GtkWidget *window,
                                 GdkWindow *parent)
 {
   if (gtk_widget_get_realized (window))
@@ -348,7 +348,7 @@ gimp_window_transient_realized (GtkWidget *window,
 }
 
 static gboolean
-gimp_window_set_transient_for (GtkWindow *window,
+picman_window_set_transient_for (GtkWindow *window,
                                GdkWindow *parent)
 {
   gtk_window_set_transient_for (window, NULL);
@@ -356,7 +356,7 @@ gimp_window_set_transient_for (GtkWindow *window,
 #ifndef GDK_WINDOWING_WIN32
   g_signal_handlers_disconnect_matched (window, G_SIGNAL_MATCH_FUNC,
                                         0, 0, NULL,
-                                        gimp_window_transient_realized,
+                                        picman_window_transient_realized,
                                         NULL);
 
   if (! parent)
@@ -367,7 +367,7 @@ gimp_window_set_transient_for (GtkWindow *window,
                                   parent);
 
   g_signal_connect_object (window, "realize",
-                           G_CALLBACK (gimp_window_transient_realized),
+                           G_CALLBACK (picman_window_transient_realized),
                            parent, 0);
   g_object_unref (parent);
 

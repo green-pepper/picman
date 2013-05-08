@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-#   Gimp-Python - allows the writing of Gimp plugins in Python.
-#   Copyright (C) 2006  Manish Singh <yosh@gimp.org>
+#   Picman-Python - allows the writing of Picman plugins in Python.
+#   Copyright (C) 2006  Manish Singh <yosh@picman.org>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gimpfu import *
+from picmanfu import *
 
 def code_eval(code):
     if code == '-':

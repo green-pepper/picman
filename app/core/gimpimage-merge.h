@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,28 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_MERGE_H__
-#define __GIMP_IMAGE_MERGE_H__
+#ifndef __PICMAN_IMAGE_MERGE_H__
+#define __PICMAN_IMAGE_MERGE_H__
 
 
-GimpLayer   * gimp_image_merge_visible_layers  (GimpImage      *image,
-                                                GimpContext    *context,
-                                                GimpMergeType   merge_type,
+PicmanLayer   * picman_image_merge_visible_layers  (PicmanImage      *image,
+                                                PicmanContext    *context,
+                                                PicmanMergeType   merge_type,
                                                 gboolean        merge_active_group,
                                                 gboolean        discard_invisible);
-GimpLayer   * gimp_image_merge_down            (GimpImage      *image,
-                                                GimpLayer      *current_layer,
-                                                GimpContext    *context,
-                                                GimpMergeType   merge_type,
+PicmanLayer   * picman_image_merge_down            (PicmanImage      *image,
+                                                PicmanLayer      *current_layer,
+                                                PicmanContext    *context,
+                                                PicmanMergeType   merge_type,
                                                 GError        **error);
-GimpLayer   * gimp_image_merge_group_layer     (GimpImage      *image,
-                                                GimpGroupLayer *group);
+PicmanLayer   * picman_image_merge_group_layer     (PicmanImage      *image,
+                                                PicmanGroupLayer *group);
 
-GimpLayer   * gimp_image_flatten               (GimpImage      *image,
-                                                GimpContext    *context);
+PicmanLayer   * picman_image_flatten               (PicmanImage      *image,
+                                                PicmanContext    *context);
 
-GimpVectors * gimp_image_merge_visible_vectors (GimpImage      *image,
+PicmanVectors * picman_image_merge_visible_vectors (PicmanImage      *image,
                                                 GError        **error);
 
 
-#endif /* __GIMP_IMAGE_MERGE_H__ */
+#endif /* __PICMAN_IMAGE_MERGE_H__ */

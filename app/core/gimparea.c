@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,19 +21,19 @@
 
 #include "core-types.h"
 
-#include "gimparea.h"
+#include "picmanarea.h"
 
 
 #define OVERHEAD 25  /*  in units of pixel area  */
 
 
-GimpArea *
-gimp_area_new (gint x1,
+PicmanArea *
+picman_area_new (gint x1,
                gint y1,
                gint x2,
                gint y2)
 {
-  GimpArea *area = g_slice_new (GimpArea);
+  PicmanArea *area = g_slice_new (PicmanArea);
 
   area->x1 = x1;
   area->y1 = y1;
@@ -44,19 +44,19 @@ gimp_area_new (gint x1,
 }
 
 void
-gimp_area_free (GimpArea *area)
+picman_area_free (PicmanArea *area)
 {
-  g_slice_free (GimpArea, area);
+  g_slice_free (PicmanArea, area);
 }
 
 
 /*
- *  As far as I can tell, this function takes a GimpArea and unifies it with
- *  an existing list of GimpAreas, trying to avoid overdraw.  [adam]
+ *  As far as I can tell, this function takes a PicmanArea and unifies it with
+ *  an existing list of PicmanAreas, trying to avoid overdraw.  [adam]
  */
 GSList *
-gimp_area_list_process (GSList   *list,
-                        GimpArea *area)
+picman_area_list_process (GSList   *list,
+                        PicmanArea *area)
 {
   GSList *retval;
   GSList *l;
@@ -65,7 +65,7 @@ gimp_area_list_process (GSList   *list,
 
   for (l = list; l; l = g_slist_next (l))
     {
-      GimpArea *this = l->data;
+      PicmanArea *this = l->data;
       gint      area1;
       gint      area2;
       gint      area3;
@@ -86,7 +86,7 @@ gimp_area_list_process (GSList   *list,
           area->x2 = MAX (area->x2, this->x2);
           area->y2 = MAX (area->y2, this->y2);
 
-          g_slice_free (GimpArea, this);
+          g_slice_free (PicmanArea, this);
         }
     }
 
@@ -97,12 +97,12 @@ gimp_area_list_process (GSList   *list,
 }
 
 void
-gimp_area_list_free (GSList *areas)
+picman_area_list_free (GSList *areas)
 {
   GSList *list;
 
   for (list = areas; list; list = list->next)
-    gimp_area_free (list->data);
+    picman_area_free (list->data);
 
   g_slist_free (areas);
 }

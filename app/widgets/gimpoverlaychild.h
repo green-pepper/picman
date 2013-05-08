@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoverlaychild.h
- * Copyright (C) 2009 Michael Natterer <mitch@gimp.org>
+ * picmanoverlaychild.h
+ * Copyright (C) 2009 Michael Natterer <mitch@picman.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GIMP_OVERLAY_CHILD_H__
-#define __GIMP_OVERLAY_CHILD_H__
+#ifndef __PICMAN_OVERLAY_CHILD_H__
+#define __PICMAN_OVERLAY_CHILD_H__
 
 
-typedef struct _GimpOverlayChild GimpOverlayChild;
+typedef struct _PicmanOverlayChild PicmanOverlayChild;
 
-struct _GimpOverlayChild
+struct _PicmanOverlayChild
 {
   GtkWidget      *widget;
   GdkWindow      *window;
@@ -44,39 +44,39 @@ struct _GimpOverlayChild
 };
 
 
-GimpOverlayChild * gimp_overlay_child_new           (GimpOverlayBox  *box,
+PicmanOverlayChild * picman_overlay_child_new           (PicmanOverlayBox  *box,
                                                      GtkWidget       *widget,
                                                      gdouble          xalign,
                                                      gdouble          yalign,
                                                      gdouble          angle,
                                                      gdouble          opacity);
-void               gimp_overlay_child_free          (GimpOverlayBox   *box,
-                                                     GimpOverlayChild *child);
+void               picman_overlay_child_free          (PicmanOverlayBox   *box,
+                                                     PicmanOverlayChild *child);
 
-GimpOverlayChild * gimp_overlay_child_find          (GimpOverlayBox   *box,
+PicmanOverlayChild * picman_overlay_child_find          (PicmanOverlayBox   *box,
                                                      GtkWidget        *widget);
 
-void               gimp_overlay_child_realize       (GimpOverlayBox   *box,
-                                                     GimpOverlayChild *child);
-void               gimp_overlay_child_unrealize     (GimpOverlayBox   *box,
-                                                     GimpOverlayChild *child);
-void               gimp_overlay_child_size_request  (GimpOverlayBox   *box,
-                                                     GimpOverlayChild *child);
-void               gimp_overlay_child_size_allocate (GimpOverlayBox   *box,
-                                                     GimpOverlayChild *child);
-gboolean           gimp_overlay_child_expose        (GimpOverlayBox   *box,
-                                                     GimpOverlayChild *child,
+void               picman_overlay_child_realize       (PicmanOverlayBox   *box,
+                                                     PicmanOverlayChild *child);
+void               picman_overlay_child_unrealize     (PicmanOverlayBox   *box,
+                                                     PicmanOverlayChild *child);
+void               picman_overlay_child_size_request  (PicmanOverlayBox   *box,
+                                                     PicmanOverlayChild *child);
+void               picman_overlay_child_size_allocate (PicmanOverlayBox   *box,
+                                                     PicmanOverlayChild *child);
+gboolean           picman_overlay_child_expose        (PicmanOverlayBox   *box,
+                                                     PicmanOverlayChild *child,
                                                      GdkEventExpose   *event);
-gboolean           gimp_overlay_child_damage        (GimpOverlayBox   *box,
-                                                     GimpOverlayChild *child,
+gboolean           picman_overlay_child_damage        (PicmanOverlayBox   *box,
+                                                     PicmanOverlayChild *child,
                                                      GdkEventExpose   *event);
 
-void               gimp_overlay_child_invalidate    (GimpOverlayBox   *box,
-                                                     GimpOverlayChild *child);
-gboolean           gimp_overlay_child_pick          (GimpOverlayBox   *box,
-                                                     GimpOverlayChild *child,
+void               picman_overlay_child_invalidate    (PicmanOverlayBox   *box,
+                                                     PicmanOverlayChild *child);
+gboolean           picman_overlay_child_pick          (PicmanOverlayBox   *box,
+                                                     PicmanOverlayChild *child,
                                                      gdouble           box_x,
                                                      gdouble           box_y);
 
 
-#endif /* __GIMP_OVERLAY_CHILD_H__ */
+#endif /* __PICMAN_OVERLAY_CHILD_H__ */

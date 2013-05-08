@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub image_is_valid {
     $blurb = 'Returns TRUE if the image is valid.';
@@ -39,7 +39,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  valid = GIMP_IS_IMAGE (image);
+  valid = PICMAN_IS_IMAGE (image);
 }
 CODE
     );
@@ -49,7 +49,7 @@ sub image_list {
     $blurb = 'Returns the list of images currently open.';
 
     $help = <<'HELP';
-This procedure returns the list of images currently open in GIMP.
+This procedure returns the list of images currently open in PICMAN.
 HELP
 
     &std_pdb_misc;
@@ -64,7 +64,7 @@ HELP
     %invoke = (
         code => <<CODE
 {
-  GList *list = gimp_get_image_iter (gimp);
+  GList *list = picman_get_image_iter (picman);
 
   num_images = g_list_length (list);
 
@@ -75,7 +75,7 @@ HELP
       image_ids = g_new (gint32, num_images);
 
       for (i = 0; i < num_images; i++, list = g_list_next (list))
-        image_ids[i] = gimp_image_get_ID (GIMP_IMAGE (list->data));
+        image_ids[i] = picman_image_get_ID (PICMAN_IMAGE (list->data));
     }
 }
 CODE
@@ -88,20 +88,20 @@ sub image_new {
     $help = <<'HELP';
 Creates a new image, undisplayed with the specified extents and
 type. A layer should be created and added before this image is
-displayed, or subsequent calls to gimp_display_new() with this image
+displayed, or subsequent calls to picman_display_new() with this image
 as an argument will fail. Layers can be created using the
-gimp_layer_new() commands. They can be added to an image using the
-gimp_image_insert_layer() command.
+picman_layer_new() commands. They can be added to an image using the
+picman_image_insert_layer() command.
 HELP
 
     &std_pdb_misc;
 
     @inargs = (
-        { name => 'width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'width', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'The width of the image' },
-        { name => 'height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'height', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'The height of the image' },
-        { name => 'type', type => 'enum GimpImageBaseType',
+        { name => 'type', type => 'enum PicmanImageBaseType',
           desc => 'The type of image' }
     );
 
@@ -113,8 +113,8 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  image = gimp_create_image (gimp, width, height, type,
-                             GIMP_PRECISION_U8, FALSE);
+  image = picman_create_image (picman, width, height, type,
+                             PICMAN_PRECISION_U8, FALSE);
 
   if (! image)
     success = FALSE;
@@ -128,20 +128,20 @@ sub image_new_with_precision {
 
     $help = <<'HELP';
 Creates a new image, undisplayed with the specified extents, type
-and precision. Indexed images can only be created at GIMP_PRECISION_U8
-precision. See gimp_image_new() for further details.
+and precision. Indexed images can only be created at PICMAN_PRECISION_U8
+precision. See picman_image_new() for further details.
 HELP
 
     &mitch_pdb_misc('2012', '2.10');
 
     @inargs = (
-        { name => 'width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'width', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'The width of the image' },
-        { name => 'height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'height', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'The height of the image' },
-        { name => 'type', type => 'enum GimpImageBaseType',
+        { name => 'type', type => 'enum PicmanImageBaseType',
           desc => 'The type of image' },
-        { name => 'precision', type => 'enum GimpPrecision',
+        { name => 'precision', type => 'enum PicmanPrecision',
           desc => 'The precision' }
     );
 
@@ -153,12 +153,12 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp->plug_in_manager->current_plug_in)
-    gimp_plug_in_enable_precision (gimp->plug_in_manager->current_plug_in);
+  if (picman->plug_in_manager->current_plug_in)
+    picman_plug_in_enable_precision (picman->plug_in_manager->current_plug_in);
 
-  if (type != GIMP_INDEXED || precision == GIMP_PRECISION_U8)
+  if (type != PICMAN_INDEXED || precision == PICMAN_PRECISION_U8)
     {
-      image = gimp_create_image (gimp, width, height, type,
+      image = picman_create_image (picman, width, height, type,
                                  precision, FALSE);
       if (! image)
         success = FALSE;
@@ -192,10 +192,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-duplicate.h") ],
+        headers => [ qw("core/picmanimage-duplicate.h") ],
         code => <<'CODE'
 {
-  new_image = gimp_image_duplicate (image);
+  new_image = picman_image_duplicate (image);
 
   if (! new_image)
     success = FALSE;
@@ -225,7 +225,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_image_get_display_count (image) == 0)
+  if (picman_image_get_display_count (image) == 0)
     g_object_unref (image);
   else
     success = FALSE;
@@ -251,9 +251,9 @@ HELP
     @inargs = (
         { name => 'image', type => 'image',
           desc => 'The image' },
-        { name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'new_width', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'New image width' },
-        { name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'new_height', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'New image height' },
         { name => 'offx', type => 'int32',
           desc => 'x offset between upper left corner of old and
@@ -264,10 +264,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-resize.h") ],
+        headers => [ qw("core/picmanimage-resize.h") ],
         code => <<'CODE'
 {
-  gimp_image_resize (image, context,
+  picman_image_resize (image, context,
                      new_width, new_height, offx, offy, NULL);
 }
 CODE
@@ -292,10 +292,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-resize.h") ],
+        headers => [ qw("core/picmanimage-resize.h") ],
         code => <<'CODE'
 {
-  gimp_image_resize_to_layers (image, context, NULL);
+  picman_image_resize_to_layers (image, context, NULL);
 }
 CODE
     );
@@ -310,7 +310,7 @@ This procedure scales the image so that its new width and height are
 equal to the supplied parameters. All layers and channels within the
 image are scaled according to the specified parameters; this includes
 the image selection mask. The interpolation method used can be set
-with gimp_context_set_interpolation().
+with picman_context_set_interpolation().
 HELP
 
     &std_pdb_misc;
@@ -318,58 +318,58 @@ HELP
     @inargs = (
         { name => 'image', type => 'image',
           desc => 'The image' },
-        { name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'new_width', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'New image width' },
-        { name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'new_height', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'New image height' }
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-scale.h") ],
+        headers => [ qw("core/picmanimage-scale.h") ],
         code => <<'CODE'
 {
-  GimpPDBContext *pdb_context = GIMP_PDB_CONTEXT (context);
+  PicmanPDBContext *pdb_context = PICMAN_PDB_CONTEXT (context);
 
   if (progress)
-    gimp_progress_start (progress, _("Scaling"), FALSE);
+    picman_progress_start (progress, _("Scaling"), FALSE);
 
-  gimp_image_scale (image, new_width, new_height,
+  picman_image_scale (image, new_width, new_height,
                     pdb_context->interpolation,
                     progress);
 
   if (progress)
-    gimp_progress_end (progress);
+    picman_progress_end (progress);
 }
 CODE
     );
 }
 
 sub image_scale_full {
-    &std_pdb_deprecated('gimp-image-scale');
+    &std_pdb_deprecated('picman-image-scale');
     &neo_pdb_misc('2008', '2.6');
 
     @inargs = (
         { name => 'image', type => 'image',
           desc => 'The image' },
-        { name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'new_width', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'New image width' },
-        { name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'new_height', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'New image height' },
-        { name => 'interpolation', type => 'enum GimpInterpolationType',
+        { name => 'interpolation', type => 'enum PicmanInterpolationType',
           desc => 'Type of interpolation' }
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-scale.h") ],
+        headers => [ qw("core/picmanimage-scale.h") ],
         code => <<'CODE'
 {
   if (progress)
-    gimp_progress_start (progress, _("Scaling"), FALSE);
+    picman_progress_start (progress, _("Scaling"), FALSE);
 
-  gimp_image_scale (image, new_width, new_height, interpolation, progress);
+  picman_image_scale (image, new_width, new_height, interpolation, progress);
 
   if (progress)
-    gimp_progress_end (progress);
+    picman_progress_end (progress);
 }
 CODE
     );
@@ -392,9 +392,9 @@ HELP
     @inargs = (
         { name => 'image', type => 'image',
           desc => 'The image' },
-        { name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'new_width', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'New image width: (0 < new_width <= width)' },
-        { name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+        { name => 'new_height', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
           desc => 'New image height: (0 < new_height <= height)' },
         { name => 'offx', type => '0 <= int32',
           desc => 'X offset: (0 <= offx <= (width - new_width))' },
@@ -403,16 +403,16 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-crop.h") ],
+        headers => [ qw("core/picmanimage-crop.h") ],
         code => <<'CODE'
 {
-  if (new_width  >  gimp_image_get_width  (image)              ||
-      new_height >  gimp_image_get_height (image)              ||
-      offx       > (gimp_image_get_width  (image) - new_width) ||
-      offy       > (gimp_image_get_height (image) - new_height))
+  if (new_width  >  picman_image_get_width  (image)              ||
+      new_height >  picman_image_get_height (image)              ||
+      offx       > (picman_image_get_width  (image) - new_width) ||
+      offy       > (picman_image_get_height (image) - new_height))
     success = FALSE;
   else
-    gimp_image_crop (image, context,
+    picman_image_crop (image, context,
                      offx, offy, offx + new_width, offy + new_height,
                      TRUE);
 }
@@ -433,15 +433,15 @@ HELP
         { name => 'image', type => 'image',
           desc => 'The image' },
         { name => 'flip_type',
-          type => 'enum GimpOrientationType (no GIMP_ORIENTATION_UNKNOWN)',
+          type => 'enum PicmanOrientationType (no PICMAN_ORIENTATION_UNKNOWN)',
           desc => 'Type of flip' }
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-flip.h") ],
+        headers => [ qw("core/picmanimage-flip.h") ],
         code => <<'CODE'
 {
-  gimp_image_flip (image, context, flip_type, NULL);
+  picman_image_flip (image, context, flip_type, NULL);
 }
 CODE
     );
@@ -456,28 +456,28 @@ sub image_rotate {
     @inargs = (
         { name => 'image', type => 'image',
           desc => 'The image' },
-        { name => 'rotate_type', type => 'enum GimpRotationType',
+        { name => 'rotate_type', type => 'enum PicmanRotationType',
           desc => 'Angle of rotation' }
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-rotate.h") ],
+        headers => [ qw("core/picmanimage-rotate.h") ],
         code => <<'CODE'
 {
   if (progress)
-    gimp_progress_start (progress, _("Rotating"), FALSE);
+    picman_progress_start (progress, _("Rotating"), FALSE);
 
-  gimp_image_rotate (image, context, rotate_type, progress);
+  picman_image_rotate (image, context, rotate_type, progress);
 
   if (progress)
-    gimp_progress_end (progress);
+    picman_progress_end (progress);
 }
 CODE
     );
 }
 
 sub image_free_shadow {
-    &std_pdb_deprecated ('gimp-drawable-free-shadow');
+    &std_pdb_deprecated ('picman-drawable-free-shadow');
 
     @inargs = (
         { name => 'image', type => 'image', dead => 1,
@@ -517,7 +517,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GList *list = gimp_image_get_layer_iter (image);
+  GList *list = picman_image_get_layer_iter (image);
 
   num_layers = g_list_length (list);
 
@@ -528,7 +528,7 @@ HELP
       layer_ids = g_new (gint32, num_layers);
 
       for (i = 0; i < num_layers; i++, list = g_list_next (list))
-        layer_ids[i] = gimp_item_get_ID (GIMP_ITEM (list->data));
+        layer_ids[i] = picman_item_get_ID (PICMAN_ITEM (list->data));
     }
 }
 CODE
@@ -561,7 +561,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GList *list = gimp_image_get_channel_iter (image);
+  GList *list = picman_image_get_channel_iter (image);
 
   num_channels = g_list_length (list);
 
@@ -572,7 +572,7 @@ HELP
       channel_ids = g_new (gint32, num_channels);
 
       for (i = 0; i < num_channels; i++, list = g_list_next (list))
-        channel_ids[i] = gimp_item_get_ID (GIMP_ITEM (list->data));
+        channel_ids[i] = picman_item_get_ID (PICMAN_ITEM (list->data));
     }
 }
 CODE
@@ -603,7 +603,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GList *list = gimp_image_get_vectors_iter (image);
+  GList *list = picman_image_get_vectors_iter (image);
 
   num_vectors = g_list_length (list);
 
@@ -614,7 +614,7 @@ HELP
       vector_ids = g_new (gint32, num_vectors);
 
       for (i = 0; i < num_vectors; i++, list = g_list_next (list))
-        vector_ids[i] = gimp_item_get_ID (GIMP_ITEM (list->data));
+        vector_ids[i] = picman_item_get_ID (PICMAN_ITEM (list->data));
     }
 }
 CODE
@@ -641,7 +641,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gimp_image_unset_active_channel (image);
+  picman_image_unset_active_channel (image);
 }
 CODE
     );
@@ -692,11 +692,11 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-pick-color.h" "core/gimppickable.h") ],
+        headers => [ qw("core/picmanimage-pick-color.h" "core/picmanpickable.h") ],
         code => <<'CODE'
 {
   if (!sample_merged)
-    if (!drawable || (gimp_item_get_image (GIMP_ITEM (drawable)) != image))
+    if (!drawable || (picman_item_get_image (PICMAN_ITEM (drawable)) != image))
       success = FALSE;
 
   if (success && sample_average)
@@ -708,11 +708,11 @@ HELP
   if (success)
     {
       if (sample_merged)
-        gimp_pickable_flush (GIMP_PICKABLE (gimp_image_get_projection (image)));
+        picman_pickable_flush (PICMAN_PICKABLE (picman_image_get_projection (image)));
       else
-        gimp_pickable_flush (GIMP_PICKABLE (drawable));
+        picman_pickable_flush (PICMAN_PICKABLE (drawable));
 
-      success = gimp_image_pick_color (image,
+      success = picman_image_pick_color (image,
                                        drawable,
                                        (gint) x, (gint) y,
                                        sample_merged,
@@ -755,10 +755,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-pick-layer.h") ],
+        headers => [ qw("core/picmanimage-pick-layer.h") ],
         code => <<'CODE'
 {
-  layer = gimp_image_pick_layer (image, x, y);
+  layer = picman_image_pick_layer (image, x, y);
 }
 CODE
     );
@@ -791,8 +791,8 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_in_tree (item, image, 0, error))
-    position = gimp_item_get_index (item);
+  if (picman_pdb_item_is_in_tree (item, image, 0, error))
+    position = picman_item_get_index (item);
   else
     success = FALSE;
 }
@@ -820,8 +820,8 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_in_tree (item, image, 0, error))
-    success = gimp_image_raise_item (image, item, error);
+  if (picman_pdb_item_is_in_tree (item, image, 0, error))
+    success = picman_image_raise_item (image, item, error);
   else
     success = FALSE;
 }
@@ -849,8 +849,8 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_in_tree (item, image, 0, error))
-    success = gimp_image_lower_item (image, item, error);
+  if (picman_pdb_item_is_in_tree (item, image, 0, error))
+    success = picman_image_lower_item (image, item, error);
   else
     success = FALSE;
 }
@@ -880,8 +880,8 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_in_tree (item, image, 0, error))
-    success = gimp_image_raise_item_to_top (image, item);
+  if (picman_pdb_item_is_in_tree (item, image, 0, error))
+    success = picman_image_raise_item_to_top (image, item);
   else
     success = FALSE;
 }
@@ -911,8 +911,8 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_in_tree (item, image, 0, error))
-    success = gimp_image_lower_item_to_bottom (image, item);
+  if (picman_pdb_item_is_in_tree (item, image, 0, error))
+    success = picman_image_lower_item_to_bottom (image, item);
   else
     success = FALSE;
 }
@@ -943,13 +943,13 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_in_tree (item, image, 0, error) &&
+  if (picman_pdb_item_is_in_tree (item, image, 0, error) &&
       (parent == NULL ||
-       (gimp_pdb_item_is_in_same_tree (item, parent, image, error) &&
-        gimp_pdb_item_is_group (parent, error) &&
-        gimp_pdb_item_is_not_ancestor (item, parent, error))))
+       (picman_pdb_item_is_in_same_tree (item, parent, image, error) &&
+        picman_pdb_item_is_group (parent, error) &&
+        picman_pdb_item_is_not_ancestor (item, parent, error))))
     {
-      success = gimp_image_reorder_item (image, item, parent, position,
+      success = picman_image_reorder_item (image, item, parent, position,
                                          TRUE, NULL);
     }
   else
@@ -977,7 +977,7 @@ HELP
         { name => 'image', type => 'image',
           desc => 'The image' },
         { name => 'merge_type',
-          type => 'enum GimpMergeType (no GIMP_FLATTEN_IMAGE)',
+          type => 'enum PicmanMergeType (no PICMAN_FLATTEN_IMAGE)',
           desc => 'The type of merge' }
     );
 
@@ -987,10 +987,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-merge.h") ],
+        headers => [ qw("core/picmanimage-merge.h") ],
         code => <<'CODE'
 {
-  layer = gimp_image_merge_visible_layers (image, context, merge_type,
+  layer = picman_image_merge_visible_layers (image, context, merge_type,
                                            FALSE, FALSE);
 
   if (! layer)
@@ -1021,7 +1021,7 @@ HELP
         { name => 'merge_layer', type => 'layer',
           desc => 'The layer to merge down from' },
         { name => 'merge_type',
-          type => 'enum GimpMergeType (no GIMP_FLATTEN_IMAGE)',
+          type => 'enum PicmanMergeType (no PICMAN_FLATTEN_IMAGE)',
           desc => 'The type of merge' }
     );
 
@@ -1031,12 +1031,12 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-merge.h") ],
+        headers => [ qw("core/picmanimage-merge.h") ],
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (merge_layer), image, 0, error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (merge_layer), image, 0, error))
     {
-      layer = gimp_image_merge_down (image, merge_layer, context, merge_type,
+      layer = picman_image_merge_down (image, merge_layer, context, merge_type,
                                      error);
 
       if (! layer)
@@ -1073,10 +1073,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-merge.h") ],
+        headers => [ qw("core/picmanimage-merge.h") ],
         code => <<'CODE'
 {
-  layer = gimp_image_flatten (image, context);
+  layer = picman_image_flatten (image, context);
 
   if (! layer)
     success = FALSE;
@@ -1086,7 +1086,7 @@ CODE
 }
 
 sub image_add_layer {
-    &std_pdb_deprecated ('gimp-image-insert-layer');
+    &std_pdb_deprecated ('picman-image-insert-layer');
 
     @inargs = (
         { name => 'image', type => 'image',
@@ -1099,12 +1099,12 @@ sub image_add_layer {
 
     $invoke{code} = <<'CODE';
 {
-  if (gimp_pdb_item_is_floating (GIMP_ITEM (layer), image, error) &&
-      gimp_pdb_image_is_base_type (image,
-                                   gimp_drawable_get_base_type (GIMP_DRAWABLE (layer)),
+  if (picman_pdb_item_is_floating (PICMAN_ITEM (layer), image, error) &&
+      picman_pdb_image_is_base_type (image,
+                                   picman_drawable_get_base_type (PICMAN_DRAWABLE (layer)),
                                    error))
     {
-      success = gimp_image_add_layer (image, layer,
+      success = picman_image_add_layer (image, layer,
                                       NULL, MAX (position, -1), TRUE);
     }
   else
@@ -1121,7 +1121,7 @@ sub image_insert_layer {
     $help = <<'HELP';
 This procedure adds the specified layer to the image at the given
 position. If the specified parent is a valid layer group (See
-gimp_item_is_group() and gimp_layer_group_new()) then the layer is
+picman_item_is_group() and picman_layer_group_new()) then the layer is
 added inside the group. If the parent is 0, the layer is added inside
 the main stack, outside of any group. The position argument specifies
 the location of the layer inside the stack (or the group, if a valid
@@ -1147,18 +1147,18 @@ HELP
 
     $invoke{code} = <<'CODE';
 {
-  if (gimp_pdb_item_is_floating (GIMP_ITEM (layer), image, error) &&
-      gimp_pdb_image_is_base_type (image,
-                                   gimp_drawable_get_base_type (GIMP_DRAWABLE (layer)),
+  if (picman_pdb_item_is_floating (PICMAN_ITEM (layer), image, error) &&
+      picman_pdb_image_is_base_type (image,
+                                   picman_drawable_get_base_type (PICMAN_DRAWABLE (layer)),
                                    error) &&
       (parent == NULL ||
-       (gimp_pdb_item_is_in_tree (GIMP_ITEM (parent), image, 0, error) &&
-        gimp_pdb_item_is_group (GIMP_ITEM (parent), error))))
+       (picman_pdb_item_is_in_tree (PICMAN_ITEM (parent), image, 0, error) &&
+        picman_pdb_item_is_group (PICMAN_ITEM (parent), error))))
     {
       if (position == -1 && parent == NULL)
-        parent = GIMP_IMAGE_ACTIVE_PARENT;
+        parent = PICMAN_IMAGE_ACTIVE_PARENT;
 
-      success = gimp_image_add_layer (image, layer,
+      success = picman_image_add_layer (image, layer,
                                       parent, MAX (position, -1), TRUE);
     }
   else
@@ -1191,8 +1191,8 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), image, 0, error))
-    gimp_image_remove_layer (image, layer, TRUE, NULL);
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), image, 0, error))
+    picman_image_remove_layer (image, layer, TRUE, NULL);
   else
     success = FALSE;
 }
@@ -1201,7 +1201,7 @@ CODE
 }
 
 sub image_add_layer_mask {
-    &std_pdb_deprecated ('gimp-layer-add-mask');
+    &std_pdb_deprecated ('picman-layer-add-mask');
 
     @inargs = (
         { name => 'image', type => 'image',
@@ -1215,9 +1215,9 @@ sub image_add_layer_mask {
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_floating (GIMP_ITEM (mask), image, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (layer), error))
-    success = (gimp_layer_add_mask (layer, mask, TRUE, error) == mask);
+  if (picman_pdb_item_is_floating (PICMAN_ITEM (mask), image, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (layer), error))
+    success = (picman_layer_add_mask (layer, mask, TRUE, error) == mask);
   else
     success = FALSE;
 }
@@ -1226,28 +1226,28 @@ CODE
 }
 
 sub image_remove_layer_mask {
-    &std_pdb_deprecated ('gimp-layer-remove-mask');
+    &std_pdb_deprecated ('picman-layer-remove-mask');
 
     @inargs = (
         { name => 'image', type => 'image',
           desc => 'The image' },
         { name => 'layer', type => 'layer',
           desc => 'The layer from which to remove mask' },
-        { name => 'mode', type => 'enum GimpMaskApplyMode',
+        { name => 'mode', type => 'enum PicmanMaskApplyMode',
           desc => 'Removal mode' }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  GimpPDBItemModify modify = 0;
+  PicmanPDBItemModify modify = 0;
 
-  if (mode == GIMP_MASK_APPLY)
-    modify |= GIMP_PDB_ITEM_CONTENT;
+  if (mode == PICMAN_MASK_APPLY)
+    modify |= PICMAN_PDB_ITEM_CONTENT;
 
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), image, modify, error) &&
-      gimp_layer_get_mask (layer))
-    gimp_layer_apply_mask (layer, mode, TRUE);
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), image, modify, error) &&
+      picman_layer_get_mask (layer))
+    picman_layer_apply_mask (layer, mode, TRUE);
   else
     success = FALSE;
 }
@@ -1256,7 +1256,7 @@ CODE
 }
 
 sub image_add_channel {
-    &std_pdb_deprecated ('gimp-image-insert-channel');
+    &std_pdb_deprecated ('picman-image-insert-channel');
 
     @inargs = (
         { name => 'image', type => 'image',
@@ -1270,9 +1270,9 @@ sub image_add_channel {
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_floating (GIMP_ITEM (channel), image, error))
+  if (picman_pdb_item_is_floating (PICMAN_ITEM (channel), image, error))
     {
-      success = gimp_image_add_channel (image, channel,
+      success = picman_image_add_channel (image, channel,
                                         NULL, MAX (position, -1), TRUE);
     }
   else
@@ -1311,15 +1311,15 @@ HELP
 
     $invoke{code} = <<'CODE';
 {
-  if (gimp_pdb_item_is_floating (GIMP_ITEM (channel), image, error) &&
+  if (picman_pdb_item_is_floating (PICMAN_ITEM (channel), image, error) &&
       (parent == NULL ||
-       (gimp_pdb_item_is_in_tree (GIMP_ITEM (parent), image, 0, error) &&
-        gimp_pdb_item_is_group (GIMP_ITEM (parent), error))))
+       (picman_pdb_item_is_in_tree (PICMAN_ITEM (parent), image, 0, error) &&
+        picman_pdb_item_is_group (PICMAN_ITEM (parent), error))))
     {
       if (position == -1 && parent == NULL)
-        parent = GIMP_IMAGE_ACTIVE_PARENT;
+        parent = PICMAN_IMAGE_ACTIVE_PARENT;
 
-      success = gimp_image_add_channel (image, channel,
+      success = picman_image_add_channel (image, channel,
                                         parent, MAX (position, -1), TRUE);
     }
   else
@@ -1350,8 +1350,8 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (channel), image, 0, error))
-    gimp_image_remove_channel (image, channel, TRUE, NULL);
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (channel), image, 0, error))
+    picman_image_remove_channel (image, channel, TRUE, NULL);
   else
     success = FALSE;
 }
@@ -1360,7 +1360,7 @@ CODE
 }
 
 sub image_add_vectors {
-    &std_pdb_deprecated ('gimp-image-insert-vectors');
+    &std_pdb_deprecated ('picman-image-insert-vectors');
 
     @inargs = (
         { name => 'image', type => 'image',
@@ -1373,9 +1373,9 @@ sub image_add_vectors {
 
     $invoke{code} = <<'CODE';
 {
-  if (gimp_pdb_item_is_floating (GIMP_ITEM (vectors), image, error))
+  if (picman_pdb_item_is_floating (PICMAN_ITEM (vectors), image, error))
     {
-      success = gimp_image_add_vectors (image, vectors,
+      success = picman_image_add_vectors (image, vectors,
                                         NULL, MAX (position, -1), TRUE);
     }
   else
@@ -1413,15 +1413,15 @@ HELP
 
     $invoke{code} = <<'CODE';
 {
-  if (gimp_pdb_item_is_floating (GIMP_ITEM (vectors), image, error) &&
+  if (picman_pdb_item_is_floating (PICMAN_ITEM (vectors), image, error) &&
       (parent == NULL ||
-       (gimp_pdb_item_is_in_tree (GIMP_ITEM (parent), image, 0, error) &&
-        gimp_pdb_item_is_group (GIMP_ITEM (parent), error))))
+       (picman_pdb_item_is_in_tree (PICMAN_ITEM (parent), image, 0, error) &&
+        picman_pdb_item_is_group (PICMAN_ITEM (parent), error))))
     {
       if (position == -1 && parent == NULL)
-        parent = GIMP_IMAGE_ACTIVE_PARENT;
+        parent = PICMAN_IMAGE_ACTIVE_PARENT;
 
-      success = gimp_image_add_vectors (image, vectors,
+      success = picman_image_add_vectors (image, vectors,
                                         parent, MAX (position, -1), TRUE);
     }
   else
@@ -1452,8 +1452,8 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (vectors), image, 0, error))
-    gimp_image_remove_vectors (image, vectors, TRUE, NULL);
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (vectors), image, 0, error))
+    picman_image_remove_vectors (image, vectors, TRUE, NULL);
   else
     success = FALSE;
 }
@@ -1487,7 +1487,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  drawable = gimp_image_get_active_drawable (image);
+  drawable = picman_image_get_active_drawable (image);
 }
 CODE
     );
@@ -1509,14 +1509,14 @@ HELP
     );
 
     @outargs = (
-        { name => 'base_type', type => 'enum GimpImageBaseType',
+        { name => 'base_type', type => 'enum PicmanImageBaseType',
           desc => "The image's base type" }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  base_type = gimp_image_get_base_type (image);
+  base_type = picman_image_get_base_type (image);
 }
 CODE
     );
@@ -1537,17 +1537,17 @@ HELP
     );
 
     @outargs = (
-        { name => 'precision', type => 'enum GimpPrecision',
+        { name => 'precision', type => 'enum PicmanPrecision',
           desc => "The image's precision" }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp->plug_in_manager->current_plug_in)
-    gimp_plug_in_enable_precision (gimp->plug_in_manager->current_plug_in);
+  if (picman->plug_in_manager->current_plug_in)
+    picman_plug_in_enable_precision (picman->plug_in_manager->current_plug_in);
 
-  precision = gimp_image_get_precision (image);
+  precision = picman_image_get_precision (image);
 }
 CODE
     );
@@ -1578,11 +1578,11 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-colormap.h") ],
+        headers => [ qw("core/picmanimage-colormap.h") ],
         code => <<'CODE'
 {
-  num_bytes = 3 * gimp_image_get_colormap_size (image);
-  colormap = g_memdup (gimp_image_get_colormap (image), num_bytes);
+  num_bytes = 3 * picman_image_get_colormap_size (image);
+  colormap = g_memdup (picman_image_get_colormap (image), num_bytes);
 }
 CODE
     );
@@ -1610,10 +1610,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpimage-colormap.h") ],
+        headers => [ qw("core/picmanimage-colormap.h") ],
         code => <<'CODE'
 {
-  gimp_image_set_colormap (image, colormap, num_bytes / 3, TRUE);
+  picman_image_set_colormap (image, colormap, num_bytes / 3, TRUE);
 }
 CODE
     );
@@ -1641,7 +1641,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gimp_image_clean_all (image);
+  picman_image_clean_all (image);
 }
 CODE
     );
@@ -1653,7 +1653,7 @@ sub image_is_dirty {
     $help = <<'HELP';
 This procedure checks the specified image's dirty count to see if it
 needs to be saved. Note that saving the image does not automatically
-set the dirty count to 0, you need to call gimp_image_clean_all() after
+set the dirty count to 0, you need to call picman_image_clean_all() after
 calling a save procedure to make the image clean.
 HELP
 
@@ -1672,7 +1672,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  dirty = gimp_image_is_dirty (image);
+  dirty = picman_image_is_dirty (image);
 }
 CODE
     );
@@ -1701,7 +1701,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  floating_sel = gimp_image_get_floating_selection (image);
+  floating_sel = picman_image_get_floating_selection (image);
 }
 CODE
     );
@@ -1730,10 +1730,10 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpLayer *floating_sel = gimp_image_get_floating_selection (image);
+  PicmanLayer *floating_sel = picman_image_get_floating_selection (image);
 
   if (floating_sel)
-    drawable = gimp_layer_get_floating_sel_drawable (floating_sel);
+    drawable = picman_layer_get_floating_sel_drawable (floating_sel);
   else
     drawable = NULL;
 }
@@ -1764,7 +1764,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  width = gimp_image_get_width (image);
+  width = picman_image_get_width (image);
 }
 CODE
     );
@@ -1793,7 +1793,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  height = gimp_image_get_height (image);
+  height = picman_image_get_height (image);
 }
 CODE
     );
@@ -1823,7 +1823,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  active_layer = gimp_image_get_active_layer (image);
+  active_layer = picman_image_get_active_layer (image);
 }
 CODE
     );
@@ -1851,7 +1851,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_image_set_active_layer (image, active_layer) != active_layer)
+  if (picman_image_set_active_layer (image, active_layer) != active_layer)
     success = FALSE;
 }
 CODE
@@ -1880,7 +1880,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  active_channel = gimp_image_get_active_channel (image);
+  active_channel = picman_image_get_active_channel (image);
 }
 CODE
     );
@@ -1908,7 +1908,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_image_set_active_channel (image, active_channel) != active_channel)
+  if (picman_image_set_active_channel (image, active_channel) != active_channel)
     success = FALSE;
 }
 CODE
@@ -1937,7 +1937,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  active_vectors = gimp_image_get_active_vectors (image);
+  active_vectors = picman_image_get_active_vectors (image);
 }
 CODE
     );
@@ -1962,7 +1962,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_image_set_active_vectors (image, active_vectors) != active_vectors)
+  if (picman_image_set_active_vectors (image, active_vectors) != active_vectors)
     success = FALSE;
 }
 CODE
@@ -1992,7 +1992,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  selection = GIMP_SELECTION (gimp_image_get_mask (image));
+  selection = PICMAN_SELECTION (picman_image_get_mask (image));
 
   if (! selection)
     success = FALSE;
@@ -2016,7 +2016,7 @@ HELP
     @inargs = (
         { name => 'image', type => 'image',
           desc => 'The image' },
-        { name => 'component', type => 'enum GimpChannelType',
+        { name => 'component', type => 'enum PicmanChannelType',
           desc => 'The image component' }
     );
 
@@ -2028,15 +2028,15 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (component == GIMP_GRAY_CHANNEL)
-    success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-  else if (component == GIMP_INDEXED_CHANNEL)
-    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
+  if (component == PICMAN_GRAY_CHANNEL)
+    success = picman_pdb_image_is_base_type (image, PICMAN_GRAY, error);
+  else if (component == PICMAN_INDEXED_CHANNEL)
+    success = picman_pdb_image_is_base_type (image, PICMAN_INDEXED, error);
   else
-    success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
+    success = picman_pdb_image_is_base_type (image, PICMAN_RGB, error);
 
   if (success)
-    active = gimp_image_get_component_active (image, component);
+    active = picman_image_get_component_active (image, component);
 }
 CODE
     );
@@ -2057,7 +2057,7 @@ HELP
     @inargs = (
         { name => 'image', type => 'image',
           desc => 'The image' },
-        { name => 'component', type => 'enum GimpChannelType',
+        { name => 'component', type => 'enum PicmanChannelType',
           desc => 'The image component' },
         { name => 'active', type => 'boolean',
           desc => 'Component is active' }
@@ -2066,15 +2066,15 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (component == GIMP_GRAY_CHANNEL)
-    success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-  else if (component == GIMP_INDEXED_CHANNEL)
-    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
+  if (component == PICMAN_GRAY_CHANNEL)
+    success = picman_pdb_image_is_base_type (image, PICMAN_GRAY, error);
+  else if (component == PICMAN_INDEXED_CHANNEL)
+    success = picman_pdb_image_is_base_type (image, PICMAN_INDEXED, error);
   else
-    success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
+    success = picman_pdb_image_is_base_type (image, PICMAN_RGB, error);
 
   if (success)
-    gimp_image_set_component_active (image, component, active);
+    picman_image_set_component_active (image, component, active);
 }
 CODE
     );
@@ -2095,7 +2095,7 @@ HELP
     @inargs = (
         { name => 'image', type => 'image',
           desc => 'The image' },
-        { name => 'component', type => 'enum GimpChannelType',
+        { name => 'component', type => 'enum PicmanChannelType',
           desc => 'The image component' }
     );
 
@@ -2107,15 +2107,15 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (component == GIMP_GRAY_CHANNEL)
-    success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-  else if (component == GIMP_INDEXED_CHANNEL)
-    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
+  if (component == PICMAN_GRAY_CHANNEL)
+    success = picman_pdb_image_is_base_type (image, PICMAN_GRAY, error);
+  else if (component == PICMAN_INDEXED_CHANNEL)
+    success = picman_pdb_image_is_base_type (image, PICMAN_INDEXED, error);
   else
-    success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
+    success = picman_pdb_image_is_base_type (image, PICMAN_RGB, error);
 
   if (success)
-    visible = gimp_image_get_component_visible (image, component);
+    visible = picman_image_get_component_visible (image, component);
 }
 CODE
     );
@@ -2136,7 +2136,7 @@ HELP
     @inargs = (
         { name => 'image', type => 'image',
           desc => 'The image' },
-        { name => 'component', type => 'enum GimpChannelType',
+        { name => 'component', type => 'enum PicmanChannelType',
           desc => 'The image component' },
         { name => 'visible', type => 'boolean',
           desc => 'Component is visible' }
@@ -2145,15 +2145,15 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (component == GIMP_GRAY_CHANNEL)
-    success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-  else if (component == GIMP_INDEXED_CHANNEL)
-    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
+  if (component == PICMAN_GRAY_CHANNEL)
+    success = picman_pdb_image_is_base_type (image, PICMAN_GRAY, error);
+  else if (component == PICMAN_INDEXED_CHANNEL)
+    success = picman_pdb_image_is_base_type (image, PICMAN_INDEXED, error);
   else
-    success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
+    success = picman_pdb_image_is_base_type (image, PICMAN_RGB, error);
 
   if (success)
-    gimp_image_set_component_visible (image, component, visible);
+    picman_image_set_component_visible (image, component, visible);
 }
 CODE
     );
@@ -2166,7 +2166,7 @@ sub image_get_filename {
 This procedure returns the specified image's filename in the
 filesystem encoding. The image has a filename only if it was loaded or
 imported from a file or has since been saved or exported. Otherwise,
-this function returns %NULL. See also gimp_image_get_uri().
+this function returns %NULL. See also picman_image_get_uri().
 HELP
 
     &std_pdb_misc;
@@ -2184,7 +2184,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  const gchar *uri = gimp_image_get_any_uri (image);
+  const gchar *uri = picman_image_get_any_uri (image);
   if (uri)
     filename = g_filename_from_uri (uri, NULL, NULL);
 }
@@ -2230,7 +2230,7 @@ HELP
     success = FALSE;
 
   if (success)
-    gimp_image_set_filename (image, filename);
+    picman_image_set_filename (image, filename);
 }
 CODE
     );
@@ -2243,10 +2243,10 @@ sub image_get_uri {
 This procedure returns the URI associated with the specified image.
 The image has an URI only if it was loaded or imported from a file or
 has since been saved or exported. Otherwise, this function returns
-%NULL.  See also gimp-image-get-imported-uri to get the URI of the
-current file if it was imported from a non-GIMP file format and not
-yet saved, or gimp-image-get-exported-uri if the image has been
-exported to a non-GIMP file format.
+%NULL.  See also picman-image-get-imported-uri to get the URI of the
+current file if it was imported from a non-PICMAN file format and not
+yet saved, or picman-image-get-exported-uri if the image has been
+exported to a non-PICMAN file format.
 HELP
 
     &neo_pdb_misc('2009', '2.8');
@@ -2264,7 +2264,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  uri = g_strdup (gimp_image_get_any_uri (image));
+  uri = g_strdup (picman_image_get_any_uri (image));
 }
 CODE
     );
@@ -2278,7 +2278,7 @@ This procedure returns the XCF URI associated with the image. If
 there is no such URI, this procedure returns %NULL.
 HELP
 
-    $author = 'Eric Grivel <gimp@lumenssolutions.com>';
+    $author = 'Eric Grivel <picman@lumenssolutions.com>';
     $copyright = 'Eric Grivel';
     $date = '2011';
     $since = '2.8';
@@ -2296,7 +2296,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  uri = g_strdup (gimp_image_get_uri (image));
+  uri = g_strdup (picman_image_get_uri (image));
 }
 CODE
     );
@@ -2307,12 +2307,12 @@ sub image_get_imported_uri {
 
     $help = <<'HELP';
 This procedure returns the URI associated with the specified image
-if the image was imported from a non-native Gimp format. If the
-image was not imported, or has since been saved in the native Gimp
+if the image was imported from a non-native Picman format. If the
+image was not imported, or has since been saved in the native Picman
 format, this procedure returns %NULL.
 HELP
 
-    $author = 'Eric Grivel <gimp@lumenssolutions.com>';
+    $author = 'Eric Grivel <picman@lumenssolutions.com>';
     $copyright = 'Eric Grivel';
     $date = '2011';
     $since = '2.8';
@@ -2330,7 +2330,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  uri = g_strdup (gimp_image_get_imported_uri (image));
+  uri = g_strdup (picman_image_get_imported_uri (image));
 }
 CODE
     );
@@ -2341,11 +2341,11 @@ sub image_get_exported_uri {
 
     $help = <<'HELP';
 This procedure returns the URI associated with the specified image
-if the image was exported a non-native GIMP format. If the
+if the image was exported a non-native PICMAN format. If the
 image was not exported, this procedure returns %NULL.
 HELP
 
-    $author = 'Eric Grivel <gimp@lumenssolutions.com>';
+    $author = 'Eric Grivel <picman@lumenssolutions.com>';
     $copyright = 'Eric Grivel';
     $date = '2011';
     $since = '2.8';
@@ -2363,7 +2363,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  uri = g_strdup (gimp_image_get_exported_uri (image));
+  uri = g_strdup (picman_image_get_exported_uri (image));
 }
 CODE
     );
@@ -2394,7 +2394,7 @@ HELP
 {
   /* XXX do we really want to return this, or the name as in the title? */
 
-  const gchar *uri = gimp_image_get_uri_or_untitled (image);
+  const gchar *uri = picman_image_get_uri_or_untitled (image);
 
   name = file_utils_uri_display_basename (uri);
 }
@@ -2427,7 +2427,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gimp_image_get_resolution (image, &xresolution, &yresolution);
+  picman_image_get_resolution (image, &xresolution, &yresolution);
 }
 CODE
     );
@@ -2457,19 +2457,19 @@ HELP
         code => <<'CODE'
 {
   if (! FINITE (xresolution) ||
-      xresolution < GIMP_MIN_RESOLUTION || xresolution > GIMP_MAX_RESOLUTION ||
+      xresolution < PICMAN_MIN_RESOLUTION || xresolution > PICMAN_MAX_RESOLUTION ||
       ! FINITE (yresolution) ||
-      yresolution < GIMP_MIN_RESOLUTION || yresolution > GIMP_MAX_RESOLUTION)
+      yresolution < PICMAN_MIN_RESOLUTION || yresolution > PICMAN_MAX_RESOLUTION)
     {
-      g_set_error_literal (error, GIMP_PDB_ERROR,
-                           GIMP_PDB_ERROR_INVALID_ARGUMENT,
+      g_set_error_literal (error, PICMAN_PDB_ERROR,
+                           PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                            _("Image resolution is out of bounds, "
                              "using the default resolution instead."));
       success = FALSE;
     }
   else
     {
-      gimp_image_set_resolution (image, xresolution, yresolution);
+      picman_image_set_resolution (image, xresolution, yresolution);
     }
 }
 CODE
@@ -2481,7 +2481,7 @@ sub image_get_unit {
 
     $help = <<'HELP';
 This procedure returns the specified image's unit. This value is
-independent of any of the layers in this image. See the gimp_unit_*()
+independent of any of the layers in this image. See the picman_unit_*()
 procedure definitions for the valid range of unit IDs and a
 description of the unit system.
 HELP
@@ -2501,7 +2501,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  unit = gimp_image_get_unit (image);
+  unit = picman_image_get_unit (image);
 }
 CODE
     );
@@ -2513,7 +2513,7 @@ sub image_set_unit {
     $help = <<'HELP';
 This procedure sets the specified image's unit. No scaling or resizing
 is performed. This value is independent of any of the layers in this
-image. See the gimp_unit_*() procedure definitions for the valid range
+image. See the picman_unit_*() procedure definitions for the valid range
 of unit IDs and a description of the unit system.
 HELP
 
@@ -2522,14 +2522,14 @@ HELP
     @inargs = (
         { name => 'image', type => 'image',
           desc => 'The image' },
-        { name => 'unit', type => 'unit (min GIMP_UNIT_INCH)',
+        { name => 'unit', type => 'unit (min PICMAN_UNIT_INCH)',
           desc => 'The new image unit' }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  gimp_image_set_unit (image, unit);
+  picman_image_set_unit (image, unit);
 }
 CODE
     );
@@ -2559,7 +2559,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  tattoo_state = gimp_image_get_tattoo_state (image);
+  tattoo_state = picman_image_get_tattoo_state (image);
 }
 CODE
     );
@@ -2594,7 +2594,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gimp_image_set_tattoo_state (image, tattoo_state);
+  picman_image_set_tattoo_state (image, tattoo_state);
 }
 CODE
     );
@@ -2624,7 +2624,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  layer = gimp_image_get_layer_by_tattoo (image, tattoo);
+  layer = picman_image_get_layer_by_tattoo (image, tattoo);
 }
 CODE
     );
@@ -2654,7 +2654,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  channel = gimp_image_get_channel_by_tattoo (image, tattoo);
+  channel = picman_image_get_channel_by_tattoo (image, tattoo);
 }
 CODE
     );
@@ -2685,7 +2685,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  vectors = gimp_image_get_vectors_by_tattoo (image, tattoo);
+  vectors = picman_image_get_vectors_by_tattoo (image, tattoo);
 }
 CODE
     );
@@ -2715,7 +2715,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  layer = gimp_image_get_layer_by_name (image, name);
+  layer = picman_image_get_layer_by_name (image, name);
 }
 CODE
     );
@@ -2745,7 +2745,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  channel = gimp_image_get_channel_by_name (image, name);
+  channel = picman_image_get_channel_by_name (image, name);
 }
 CODE
     );
@@ -2776,7 +2776,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  vectors = gimp_image_get_vectors_by_name (image, name);
+  vectors = picman_image_get_vectors_by_name (image, name);
 }
 CODE
     );
@@ -2801,7 +2801,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gimp_image_parasite_attach (image, parasite);
+  picman_image_parasite_attach (image, parasite);
 }
 CODE
     );
@@ -2826,7 +2826,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gimp_image_parasite_detach (image, name);
+  picman_image_parasite_detach (image, name);
 }
 CODE
     );
@@ -2856,7 +2856,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  parasite = gimp_parasite_copy (gimp_image_parasite_find (image, name));
+  parasite = picman_parasite_copy (picman_image_parasite_find (image, name));
 
   if (! parasite)
     success = FALSE;
@@ -2885,7 +2885,7 @@ sub image_get_parasite_list {
     %invoke = (
         code => <<'CODE'
 {
-  parasites = gimp_image_parasite_list (image, &num_parasites);
+  parasites = picman_image_parasite_list (image, &num_parasites);
 }
 CODE
     );
@@ -2928,35 +2928,35 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpTempBuf *buf;
+  PicmanTempBuf *buf;
   gint         dwidth, dheight;
 
-  g_assert (GIMP_VIEWABLE_MAX_PREVIEW_SIZE >= 1024);
+  g_assert (PICMAN_VIEWABLE_MAX_PREVIEW_SIZE >= 1024);
 
   /* Adjust the width/height ratio */
-  dwidth  = gimp_image_get_width  (image);
-  dheight = gimp_image_get_height (image);
+  dwidth  = picman_image_get_width  (image);
+  dheight = picman_image_get_height (image);
 
   if (dwidth > dheight)
     height = MAX (1, (width * dheight) / dwidth);
   else
     width  = MAX (1, (height * dwidth) / dheight);
 
-  gimp_pickable_flush (GIMP_PICKABLE (gimp_image_get_projection (image)));
+  picman_pickable_flush (PICMAN_PICKABLE (picman_image_get_projection (image)));
 
-  buf = gimp_viewable_get_new_preview (GIMP_VIEWABLE (image), context,
+  buf = picman_viewable_get_new_preview (PICMAN_VIEWABLE (image), context,
                                        width, height);
 
   if (buf)
     {
-      actual_width         = gimp_temp_buf_get_width  (buf);
-      actual_height        = gimp_temp_buf_get_height (buf);
-      bpp                  = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (buf));
-      thumbnail_data_count = gimp_temp_buf_get_data_size (buf);
-      thumbnail_data       = g_memdup (gimp_temp_buf_get_data (buf),
+      actual_width         = picman_temp_buf_get_width  (buf);
+      actual_height        = picman_temp_buf_get_height (buf);
+      bpp                  = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (buf));
+      thumbnail_data_count = picman_temp_buf_get_data_size (buf);
+      thumbnail_data       = g_memdup (picman_temp_buf_get_data (buf),
                                        thumbnail_data_count);
 
-      gimp_temp_buf_unref (buf);
+      picman_temp_buf_unref (buf);
     }
   else
     success = FALSE;
@@ -2978,20 +2978,20 @@ $extra{app}->{code} = <<'CODE';
 #endif
 CODE
 
-@headers = qw("libgimpmath/gimpmath.h"
-              "libgimpbase/gimpbase.h"
-              "core/gimp.h"
-              "core/gimpcontainer.h"
-              "core/gimpprogress.h"
-              "core/gimptempbuf.h"
-              "core/gimpunit.h"
-              "plug-in/gimpplugin.h"
-              "plug-in/gimppluginmanager.h"
+@headers = qw("libpicmanmath/picmanmath.h"
+              "libpicmanbase/picmanbase.h"
+              "core/picman.h"
+              "core/picmancontainer.h"
+              "core/picmanprogress.h"
+              "core/picmantempbuf.h"
+              "core/picmanunit.h"
+              "plug-in/picmanplugin.h"
+              "plug-in/picmanpluginmanager.h"
               "file/file-utils.h"
-              "gimppdbcontext.h"
-              "gimppdberror.h"
-              "gimppdb-utils.h"
-              "gimp-intl.h");
+              "picmanpdbcontext.h"
+              "picmanpdberror.h"
+              "picmanpdb-utils.h"
+              "picman-intl.h");
 
 @procs = qw(image_is_valid
             image_list
@@ -3057,7 +3057,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs[0..44,47..85]]);
 
 $desc = 'Image';
-$doc_title = 'gimpimage';
+$doc_title = 'picmanimage';
 $doc_short_desc = 'Operations on complete images.';
 $doc_long_desc = 'Operations on complete images: creation, resizing/rescaling, and operations involving multiple layers.';
 

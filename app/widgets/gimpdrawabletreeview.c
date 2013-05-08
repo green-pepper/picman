@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdrawabletreeview.c
- * Copyright (C) 2001-2009 Michael Natterer <mitch@gimp.org>
+ * picmandrawabletreeview.c
+ * Copyright (C) 2001-2009 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,160 +23,160 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimp-edit.h"
-#include "core/gimpcontext.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimppattern.h"
+#include "core/picman.h"
+#include "core/picman-edit.h"
+#include "core/picmancontext.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanpattern.h"
 
-#include "gimpcontainerview.h"
-#include "gimpdnd.h"
-#include "gimpdrawabletreeview.h"
+#include "picmancontainerview.h"
+#include "picmandnd.h"
+#include "picmandrawabletreeview.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void   gimp_drawable_tree_view_view_iface_init (GimpContainerViewInterface *iface);
+static void   picman_drawable_tree_view_view_iface_init (PicmanContainerViewInterface *iface);
 
-static void     gimp_drawable_tree_view_constructed (GObject           *object);
+static void     picman_drawable_tree_view_constructed (GObject           *object);
 
-static gboolean gimp_drawable_tree_view_select_item (GimpContainerView *view,
-                                                     GimpViewable      *item,
+static gboolean picman_drawable_tree_view_select_item (PicmanContainerView *view,
+                                                     PicmanViewable      *item,
                                                      gpointer           insert_data);
 
-static gboolean gimp_drawable_tree_view_drop_possible(GimpContainerTreeView *view,
-                                                      GimpDndType          src_type,
-                                                      GimpViewable        *src_viewable,
-                                                      GimpViewable        *dest_viewable,
+static gboolean picman_drawable_tree_view_drop_possible(PicmanContainerTreeView *view,
+                                                      PicmanDndType          src_type,
+                                                      PicmanViewable        *src_viewable,
+                                                      PicmanViewable        *dest_viewable,
                                                       GtkTreePath         *drop_path,
                                                       GtkTreeViewDropPosition  drop_pos,
                                                       GtkTreeViewDropPosition *return_drop_pos,
                                                       GdkDragAction       *return_drag_action);
-static void   gimp_drawable_tree_view_drop_viewable (GimpContainerTreeView *view,
-                                                     GimpViewable     *src_viewable,
-                                                     GimpViewable     *dest_viewable,
+static void   picman_drawable_tree_view_drop_viewable (PicmanContainerTreeView *view,
+                                                     PicmanViewable     *src_viewable,
+                                                     PicmanViewable     *dest_viewable,
                                                      GtkTreeViewDropPosition  drop_pos);
-static void   gimp_drawable_tree_view_drop_color (GimpContainerTreeView *view,
-                                                  const GimpRGB       *color,
-                                                  GimpViewable        *dest_viewable,
+static void   picman_drawable_tree_view_drop_color (PicmanContainerTreeView *view,
+                                                  const PicmanRGB       *color,
+                                                  PicmanViewable        *dest_viewable,
                                                   GtkTreeViewDropPosition  drop_pos);
 
-static void   gimp_drawable_tree_view_set_image  (GimpItemTreeView     *view,
-                                                  GimpImage            *image);
+static void   picman_drawable_tree_view_set_image  (PicmanItemTreeView     *view,
+                                                  PicmanImage            *image);
 
-static void   gimp_drawable_tree_view_floating_selection_changed
-                                                 (GimpImage            *image,
-                                                  GimpDrawableTreeView *view);
+static void   picman_drawable_tree_view_floating_selection_changed
+                                                 (PicmanImage            *image,
+                                                  PicmanDrawableTreeView *view);
 
-static void   gimp_drawable_tree_view_new_pattern_dropped
+static void   picman_drawable_tree_view_new_pattern_dropped
                                                  (GtkWidget            *widget,
                                                   gint                  x,
                                                   gint                  y,
-                                                  GimpViewable         *viewable,
+                                                  PicmanViewable         *viewable,
                                                   gpointer              data);
-static void   gimp_drawable_tree_view_new_color_dropped
+static void   picman_drawable_tree_view_new_color_dropped
                                                  (GtkWidget            *widget,
                                                   gint                  x,
                                                   gint                  y,
-                                                  const GimpRGB        *color,
+                                                  const PicmanRGB        *color,
                                                   gpointer              data);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpDrawableTreeView, gimp_drawable_tree_view,
-                         GIMP_TYPE_ITEM_TREE_VIEW,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONTAINER_VIEW,
-                                                gimp_drawable_tree_view_view_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanDrawableTreeView, picman_drawable_tree_view,
+                         PICMAN_TYPE_ITEM_TREE_VIEW,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONTAINER_VIEW,
+                                                picman_drawable_tree_view_view_iface_init))
 
-#define parent_class gimp_drawable_tree_view_parent_class
+#define parent_class picman_drawable_tree_view_parent_class
 
-static GimpContainerViewInterface *parent_view_iface = NULL;
+static PicmanContainerViewInterface *parent_view_iface = NULL;
 
 
 static void
-gimp_drawable_tree_view_class_init (GimpDrawableTreeViewClass *klass)
+picman_drawable_tree_view_class_init (PicmanDrawableTreeViewClass *klass)
 {
   GObjectClass               *object_class;
-  GimpContainerTreeViewClass *tree_view_class;
-  GimpItemTreeViewClass      *item_view_class;
+  PicmanContainerTreeViewClass *tree_view_class;
+  PicmanItemTreeViewClass      *item_view_class;
 
   object_class    = G_OBJECT_CLASS (klass);
-  tree_view_class = GIMP_CONTAINER_TREE_VIEW_CLASS (klass);
-  item_view_class = GIMP_ITEM_TREE_VIEW_CLASS (klass);
+  tree_view_class = PICMAN_CONTAINER_TREE_VIEW_CLASS (klass);
+  item_view_class = PICMAN_ITEM_TREE_VIEW_CLASS (klass);
 
-  object_class->constructed      = gimp_drawable_tree_view_constructed;
+  object_class->constructed      = picman_drawable_tree_view_constructed;
 
-  tree_view_class->drop_possible = gimp_drawable_tree_view_drop_possible;
-  tree_view_class->drop_viewable = gimp_drawable_tree_view_drop_viewable;
-  tree_view_class->drop_color    = gimp_drawable_tree_view_drop_color;
+  tree_view_class->drop_possible = picman_drawable_tree_view_drop_possible;
+  tree_view_class->drop_viewable = picman_drawable_tree_view_drop_viewable;
+  tree_view_class->drop_color    = picman_drawable_tree_view_drop_color;
 
-  item_view_class->set_image     = gimp_drawable_tree_view_set_image;
+  item_view_class->set_image     = picman_drawable_tree_view_set_image;
 
-  item_view_class->lock_content_stock_id  = GIMP_STOCK_TOOL_PAINTBRUSH;
+  item_view_class->lock_content_stock_id  = PICMAN_STOCK_TOOL_PAINTBRUSH;
   item_view_class->lock_content_tooltip   = _("Lock pixels");
-  item_view_class->lock_position_stock_id = GIMP_STOCK_TOOL_MOVE;
+  item_view_class->lock_position_stock_id = PICMAN_STOCK_TOOL_MOVE;
   item_view_class->lock_position_tooltip  = _("Lock position and size");
 }
 
 static void
-gimp_drawable_tree_view_view_iface_init (GimpContainerViewInterface *iface)
+picman_drawable_tree_view_view_iface_init (PicmanContainerViewInterface *iface)
 {
   parent_view_iface = g_type_interface_peek_parent (iface);
 
-  iface->select_item = gimp_drawable_tree_view_select_item;
+  iface->select_item = picman_drawable_tree_view_select_item;
 }
 
 static void
-gimp_drawable_tree_view_init (GimpDrawableTreeView *view)
+picman_drawable_tree_view_init (PicmanDrawableTreeView *view)
 {
 }
 
 static void
-gimp_drawable_tree_view_constructed (GObject *object)
+picman_drawable_tree_view_constructed (GObject *object)
 {
-  GimpContainerTreeView *tree_view = GIMP_CONTAINER_TREE_VIEW (object);
-  GimpItemTreeView      *item_view = GIMP_ITEM_TREE_VIEW (object);
+  PicmanContainerTreeView *tree_view = PICMAN_CONTAINER_TREE_VIEW (object);
+  PicmanItemTreeView      *item_view = PICMAN_ITEM_TREE_VIEW (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  gimp_dnd_viewable_dest_add (gimp_item_tree_view_get_new_button (item_view),
-                              GIMP_TYPE_PATTERN,
-                              gimp_drawable_tree_view_new_pattern_dropped,
+  picman_dnd_viewable_dest_add (picman_item_tree_view_get_new_button (item_view),
+                              PICMAN_TYPE_PATTERN,
+                              picman_drawable_tree_view_new_pattern_dropped,
                               item_view);
-  gimp_dnd_color_dest_add (gimp_item_tree_view_get_new_button (item_view),
-                           gimp_drawable_tree_view_new_color_dropped,
+  picman_dnd_color_dest_add (picman_item_tree_view_get_new_button (item_view),
+                           picman_drawable_tree_view_new_color_dropped,
                            item_view);
 
-  gimp_dnd_color_dest_add    (GTK_WIDGET (tree_view->view),
+  picman_dnd_color_dest_add    (GTK_WIDGET (tree_view->view),
                               NULL, tree_view);
-  gimp_dnd_viewable_dest_add (GTK_WIDGET (tree_view->view), GIMP_TYPE_PATTERN,
+  picman_dnd_viewable_dest_add (GTK_WIDGET (tree_view->view), PICMAN_TYPE_PATTERN,
                               NULL, tree_view);
 }
 
 
-/*  GimpContainerView methods  */
+/*  PicmanContainerView methods  */
 
 static gboolean
-gimp_drawable_tree_view_select_item (GimpContainerView *view,
-                                     GimpViewable      *item,
+picman_drawable_tree_view_select_item (PicmanContainerView *view,
+                                     PicmanViewable      *item,
                                      gpointer           insert_data)
 {
-  GimpItemTreeView *item_view = GIMP_ITEM_TREE_VIEW (view);
+  PicmanItemTreeView *item_view = PICMAN_ITEM_TREE_VIEW (view);
   gboolean          success   = TRUE;
 
-  if (gimp_item_tree_view_get_image (item_view))
+  if (picman_item_tree_view_get_image (item_view))
     {
-      GimpLayer *floating_sel =
-        gimp_image_get_floating_selection (gimp_item_tree_view_get_image (item_view));
+      PicmanLayer *floating_sel =
+        picman_image_get_floating_selection (picman_item_tree_view_get_image (item_view));
 
       success = (item         == NULL ||
                  floating_sel == NULL ||
-                 item         == GIMP_VIEWABLE (floating_sel));
+                 item         == PICMAN_VIEWABLE (floating_sel));
     }
 
   if (success)
@@ -186,19 +186,19 @@ gimp_drawable_tree_view_select_item (GimpContainerView *view,
 }
 
 
-/*  GimpContainerTreeView methods  */
+/*  PicmanContainerTreeView methods  */
 
 static gboolean
-gimp_drawable_tree_view_drop_possible (GimpContainerTreeView   *tree_view,
-                                       GimpDndType              src_type,
-                                       GimpViewable            *src_viewable,
-                                       GimpViewable            *dest_viewable,
+picman_drawable_tree_view_drop_possible (PicmanContainerTreeView   *tree_view,
+                                       PicmanDndType              src_type,
+                                       PicmanViewable            *src_viewable,
+                                       PicmanViewable            *dest_viewable,
                                        GtkTreePath             *drop_path,
                                        GtkTreeViewDropPosition  drop_pos,
                                        GtkTreeViewDropPosition *return_drop_pos,
                                        GdkDragAction           *return_drag_action)
 {
-  if (GIMP_CONTAINER_TREE_VIEW_CLASS (parent_class)->drop_possible (tree_view,
+  if (PICMAN_CONTAINER_TREE_VIEW_CLASS (parent_class)->drop_possible (tree_view,
                                                                     src_type,
                                                                     src_viewable,
                                                                     dest_viewable,
@@ -207,12 +207,12 @@ gimp_drawable_tree_view_drop_possible (GimpContainerTreeView   *tree_view,
                                                                     return_drop_pos,
                                                                     return_drag_action))
     {
-      if (src_type == GIMP_DND_TYPE_COLOR ||
-          src_type == GIMP_DND_TYPE_PATTERN)
+      if (src_type == PICMAN_DND_TYPE_COLOR ||
+          src_type == PICMAN_DND_TYPE_PATTERN)
         {
           if (! dest_viewable ||
-              gimp_item_is_content_locked (GIMP_ITEM (dest_viewable)) ||
-              gimp_viewable_get_children (GIMP_VIEWABLE (dest_viewable)))
+              picman_item_is_content_locked (PICMAN_ITEM (dest_viewable)) ||
+              picman_viewable_get_children (PICMAN_VIEWABLE (dest_viewable)))
             return FALSE;
 
           if (return_drop_pos)
@@ -228,65 +228,65 @@ gimp_drawable_tree_view_drop_possible (GimpContainerTreeView   *tree_view,
 }
 
 static void
-gimp_drawable_tree_view_drop_viewable (GimpContainerTreeView   *view,
-                                       GimpViewable            *src_viewable,
-                                       GimpViewable            *dest_viewable,
+picman_drawable_tree_view_drop_viewable (PicmanContainerTreeView   *view,
+                                       PicmanViewable            *src_viewable,
+                                       PicmanViewable            *dest_viewable,
                                        GtkTreeViewDropPosition  drop_pos)
 {
-  if (dest_viewable && GIMP_IS_PATTERN (src_viewable))
+  if (dest_viewable && PICMAN_IS_PATTERN (src_viewable))
     {
-      gimp_edit_fill_full (gimp_item_get_image (GIMP_ITEM (dest_viewable)),
-                           GIMP_DRAWABLE (dest_viewable),
-                           NULL, GIMP_PATTERN (src_viewable),
-                           GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE,
+      picman_edit_fill_full (picman_item_get_image (PICMAN_ITEM (dest_viewable)),
+                           PICMAN_DRAWABLE (dest_viewable),
+                           NULL, PICMAN_PATTERN (src_viewable),
+                           PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE,
                            C_("undo-type", "Drop pattern to layer"));
 
-      gimp_image_flush (gimp_item_get_image (GIMP_ITEM (dest_viewable)));
+      picman_image_flush (picman_item_get_image (PICMAN_ITEM (dest_viewable)));
       return;
     }
 
-  GIMP_CONTAINER_TREE_VIEW_CLASS (parent_class)->drop_viewable (view,
+  PICMAN_CONTAINER_TREE_VIEW_CLASS (parent_class)->drop_viewable (view,
                                                                 src_viewable,
                                                                 dest_viewable,
                                                                 drop_pos);
 }
 
 static void
-gimp_drawable_tree_view_drop_color (GimpContainerTreeView   *view,
-                                    const GimpRGB           *color,
-                                    GimpViewable            *dest_viewable,
+picman_drawable_tree_view_drop_color (PicmanContainerTreeView   *view,
+                                    const PicmanRGB           *color,
+                                    PicmanViewable            *dest_viewable,
                                     GtkTreeViewDropPosition  drop_pos)
 {
   if (dest_viewable)
     {
-      gimp_edit_fill_full (gimp_item_get_image (GIMP_ITEM (dest_viewable)),
-                           GIMP_DRAWABLE (dest_viewable),
+      picman_edit_fill_full (picman_item_get_image (PICMAN_ITEM (dest_viewable)),
+                           PICMAN_DRAWABLE (dest_viewable),
                            color, NULL,
-                           GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE,
+                           PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE,
                            C_("undo-type", "Drop color to layer"));
 
-      gimp_image_flush (gimp_item_get_image (GIMP_ITEM (dest_viewable)));
+      picman_image_flush (picman_item_get_image (PICMAN_ITEM (dest_viewable)));
     }
 }
 
 
-/*  GimpItemTreeView methods  */
+/*  PicmanItemTreeView methods  */
 
 static void
-gimp_drawable_tree_view_set_image (GimpItemTreeView *view,
-                                   GimpImage        *image)
+picman_drawable_tree_view_set_image (PicmanItemTreeView *view,
+                                   PicmanImage        *image)
 {
-  if (gimp_item_tree_view_get_image (view))
-    g_signal_handlers_disconnect_by_func (gimp_item_tree_view_get_image (view),
-                                          gimp_drawable_tree_view_floating_selection_changed,
+  if (picman_item_tree_view_get_image (view))
+    g_signal_handlers_disconnect_by_func (picman_item_tree_view_get_image (view),
+                                          picman_drawable_tree_view_floating_selection_changed,
                                           view);
 
-  GIMP_ITEM_TREE_VIEW_CLASS (parent_class)->set_image (view, image);
+  PICMAN_ITEM_TREE_VIEW_CLASS (parent_class)->set_image (view, image);
 
-  if (gimp_item_tree_view_get_image (view))
-    g_signal_connect (gimp_item_tree_view_get_image (view),
+  if (picman_item_tree_view_get_image (view))
+    g_signal_connect (picman_item_tree_view_get_image (view),
                       "floating-selection-changed",
-                      G_CALLBACK (gimp_drawable_tree_view_floating_selection_changed),
+                      G_CALLBACK (picman_drawable_tree_view_floating_selection_changed),
                       view);
 }
 
@@ -294,66 +294,66 @@ gimp_drawable_tree_view_set_image (GimpItemTreeView *view,
 /*  callbacks  */
 
 static void
-gimp_drawable_tree_view_floating_selection_changed (GimpImage            *image,
-                                                    GimpDrawableTreeView *view)
+picman_drawable_tree_view_floating_selection_changed (PicmanImage            *image,
+                                                    PicmanDrawableTreeView *view)
 {
-  GimpItem *item;
+  PicmanItem *item;
 
-  item = GIMP_ITEM_TREE_VIEW_GET_CLASS (view)->get_active_item (image);
+  item = PICMAN_ITEM_TREE_VIEW_GET_CLASS (view)->get_active_item (image);
 
   /*  update button states  */
-  gimp_container_view_select_item (GIMP_CONTAINER_VIEW (view),
-                                   (GimpViewable *) item);
+  picman_container_view_select_item (PICMAN_CONTAINER_VIEW (view),
+                                   (PicmanViewable *) item);
 }
 
 static void
-gimp_drawable_tree_view_new_dropped (GimpItemTreeView   *view,
+picman_drawable_tree_view_new_dropped (PicmanItemTreeView   *view,
                                      gint                x,
                                      gint                y,
-                                     const GimpRGB      *color,
-                                     GimpPattern        *pattern)
+                                     const PicmanRGB      *color,
+                                     PicmanPattern        *pattern)
 {
-  GimpItem *item;
+  PicmanItem *item;
 
-  gimp_image_undo_group_start (gimp_item_tree_view_get_image (view), GIMP_UNDO_GROUP_EDIT_PASTE,
+  picman_image_undo_group_start (picman_item_tree_view_get_image (view), PICMAN_UNDO_GROUP_EDIT_PASTE,
                                _("New Layer"));
 
-  item = GIMP_ITEM_TREE_VIEW_GET_CLASS (view)->new_item (gimp_item_tree_view_get_image (view));
+  item = PICMAN_ITEM_TREE_VIEW_GET_CLASS (view)->new_item (picman_item_tree_view_get_image (view));
 
   if (item)
     {
-      gimp_edit_fill_full (gimp_item_get_image (item),
-                           GIMP_DRAWABLE (item),
+      picman_edit_fill_full (picman_item_get_image (item),
+                           PICMAN_DRAWABLE (item),
                            color, pattern,
-                           GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE,
+                           PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE,
                            pattern ?
                            C_("undo-type", "Drop pattern to layer") :
                            C_("undo-type", "Drop color to layer"));
     }
 
-  gimp_image_undo_group_end (gimp_item_tree_view_get_image (view));
+  picman_image_undo_group_end (picman_item_tree_view_get_image (view));
 
-  gimp_image_flush (gimp_item_tree_view_get_image (view));
+  picman_image_flush (picman_item_tree_view_get_image (view));
 }
 
 static void
-gimp_drawable_tree_view_new_pattern_dropped (GtkWidget    *widget,
+picman_drawable_tree_view_new_pattern_dropped (GtkWidget    *widget,
                                              gint          x,
                                              gint          y,
-                                             GimpViewable *viewable,
+                                             PicmanViewable *viewable,
                                              gpointer      data)
 {
-  gimp_drawable_tree_view_new_dropped (GIMP_ITEM_TREE_VIEW (data), x, y,
-                                       NULL, GIMP_PATTERN (viewable));
+  picman_drawable_tree_view_new_dropped (PICMAN_ITEM_TREE_VIEW (data), x, y,
+                                       NULL, PICMAN_PATTERN (viewable));
 }
 
 static void
-gimp_drawable_tree_view_new_color_dropped (GtkWidget     *widget,
+picman_drawable_tree_view_new_color_dropped (GtkWidget     *widget,
                                            gint           x,
                                            gint           y,
-                                           const GimpRGB *color,
+                                           const PicmanRGB *color,
                                            gpointer       data)
 {
-  gimp_drawable_tree_view_new_dropped (GIMP_ITEM_TREE_VIEW (data), x, y,
+  picman_drawable_tree_view_new_dropped (PICMAN_ITEM_TREE_VIEW (data), x, y,
                                        color, NULL);
 }

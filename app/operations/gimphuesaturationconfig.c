@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimphuesaturationconfig.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanhuesaturationconfig.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,11 @@
 #include <cairo.h>
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "operations-types.h"
 
-#include "gimphuesaturationconfig.h"
+#include "picmanhuesaturationconfig.h"
 
 
 enum
@@ -41,101 +41,101 @@ enum
 };
 
 
-static void     gimp_hue_saturation_config_iface_init   (GimpConfigInterface *iface);
+static void     picman_hue_saturation_config_iface_init   (PicmanConfigInterface *iface);
 
-static void     gimp_hue_saturation_config_get_property (GObject          *object,
+static void     picman_hue_saturation_config_get_property (GObject          *object,
                                                          guint             property_id,
                                                          GValue           *value,
                                                          GParamSpec       *pspec);
-static void     gimp_hue_saturation_config_set_property (GObject          *object,
+static void     picman_hue_saturation_config_set_property (GObject          *object,
                                                          guint             property_id,
                                                          const GValue     *value,
                                                          GParamSpec       *pspec);
 
-static gboolean gimp_hue_saturation_config_serialize    (GimpConfig       *config,
-                                                         GimpConfigWriter *writer,
+static gboolean picman_hue_saturation_config_serialize    (PicmanConfig       *config,
+                                                         PicmanConfigWriter *writer,
                                                          gpointer          data);
-static gboolean gimp_hue_saturation_config_deserialize  (GimpConfig       *config,
+static gboolean picman_hue_saturation_config_deserialize  (PicmanConfig       *config,
                                                          GScanner         *scanner,
                                                          gint              nest_level,
                                                          gpointer          data);
-static gboolean gimp_hue_saturation_config_equal        (GimpConfig       *a,
-                                                         GimpConfig       *b);
-static void     gimp_hue_saturation_config_reset        (GimpConfig       *config);
-static gboolean gimp_hue_saturation_config_copy         (GimpConfig       *src,
-                                                         GimpConfig       *dest,
+static gboolean picman_hue_saturation_config_equal        (PicmanConfig       *a,
+                                                         PicmanConfig       *b);
+static void     picman_hue_saturation_config_reset        (PicmanConfig       *config);
+static gboolean picman_hue_saturation_config_copy         (PicmanConfig       *src,
+                                                         PicmanConfig       *dest,
                                                          GParamFlags       flags);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpHueSaturationConfig, gimp_hue_saturation_config,
-                         GIMP_TYPE_IMAGE_MAP_CONFIG,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG,
-                                                gimp_hue_saturation_config_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanHueSaturationConfig, picman_hue_saturation_config,
+                         PICMAN_TYPE_IMAGE_MAP_CONFIG,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG,
+                                                picman_hue_saturation_config_iface_init))
 
-#define parent_class gimp_hue_saturation_config_parent_class
+#define parent_class picman_hue_saturation_config_parent_class
 
 
 static void
-gimp_hue_saturation_config_class_init (GimpHueSaturationConfigClass *klass)
+picman_hue_saturation_config_class_init (PicmanHueSaturationConfigClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->set_property       = gimp_hue_saturation_config_set_property;
-  object_class->get_property       = gimp_hue_saturation_config_get_property;
+  object_class->set_property       = picman_hue_saturation_config_set_property;
+  object_class->get_property       = picman_hue_saturation_config_get_property;
 
-  viewable_class->default_stock_id = "gimp-tool-hue-saturation";
+  viewable_class->default_stock_id = "picman-tool-hue-saturation";
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_RANGE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_RANGE,
                                  "range",
                                  "The affected range",
-                                 GIMP_TYPE_HUE_RANGE,
-                                 GIMP_ALL_HUES, 0);
+                                 PICMAN_TYPE_HUE_RANGE,
+                                 PICMAN_ALL_HUES, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_HUE,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_HUE,
                                    "hue",
                                    "Hue",
                                    -1.0, 1.0, 0.0, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SATURATION,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SATURATION,
                                    "saturation",
                                    "Saturation",
                                    -1.0, 1.0, 0.0, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LIGHTNESS,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LIGHTNESS,
                                    "lightness",
                                    "Lightness",
                                    -1.0, 1.0, 0.0, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_OVERLAP,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_OVERLAP,
                                    "overlap",
                                    "Overlap",
                                    0.0, 1.0, 0.0, 0);
 }
 
 static void
-gimp_hue_saturation_config_iface_init (GimpConfigInterface *iface)
+picman_hue_saturation_config_iface_init (PicmanConfigInterface *iface)
 {
-  iface->serialize   = gimp_hue_saturation_config_serialize;
-  iface->deserialize = gimp_hue_saturation_config_deserialize;
-  iface->equal       = gimp_hue_saturation_config_equal;
-  iface->reset       = gimp_hue_saturation_config_reset;
-  iface->copy        = gimp_hue_saturation_config_copy;
+  iface->serialize   = picman_hue_saturation_config_serialize;
+  iface->deserialize = picman_hue_saturation_config_deserialize;
+  iface->equal       = picman_hue_saturation_config_equal;
+  iface->reset       = picman_hue_saturation_config_reset;
+  iface->copy        = picman_hue_saturation_config_copy;
 }
 
 static void
-gimp_hue_saturation_config_init (GimpHueSaturationConfig *self)
+picman_hue_saturation_config_init (PicmanHueSaturationConfig *self)
 {
-  gimp_config_reset (GIMP_CONFIG (self));
+  picman_config_reset (PICMAN_CONFIG (self));
 }
 
 static void
-gimp_hue_saturation_config_get_property (GObject    *object,
+picman_hue_saturation_config_get_property (GObject    *object,
                                          guint       property_id,
                                          GValue     *value,
                                          GParamSpec *pspec)
 {
-  GimpHueSaturationConfig *self = GIMP_HUE_SATURATION_CONFIG (object);
+  PicmanHueSaturationConfig *self = PICMAN_HUE_SATURATION_CONFIG (object);
 
   switch (property_id)
     {
@@ -166,12 +166,12 @@ gimp_hue_saturation_config_get_property (GObject    *object,
 }
 
 static void
-gimp_hue_saturation_config_set_property (GObject      *object,
+picman_hue_saturation_config_set_property (GObject      *object,
                                          guint         property_id,
                                          const GValue *value,
                                          GParamSpec   *pspec)
 {
-  GimpHueSaturationConfig *self = GIMP_HUE_SATURATION_CONFIG (object);
+  PicmanHueSaturationConfig *self = PICMAN_HUE_SATURATION_CONFIG (object);
 
   switch (property_id)
     {
@@ -205,31 +205,31 @@ gimp_hue_saturation_config_set_property (GObject      *object,
 }
 
 static gboolean
-gimp_hue_saturation_config_serialize (GimpConfig       *config,
-                                      GimpConfigWriter *writer,
+picman_hue_saturation_config_serialize (PicmanConfig       *config,
+                                      PicmanConfigWriter *writer,
                                       gpointer          data)
 {
-  GimpHueSaturationConfig *hs_config = GIMP_HUE_SATURATION_CONFIG (config);
-  GimpHueRange             range;
-  GimpHueRange             old_range;
+  PicmanHueSaturationConfig *hs_config = PICMAN_HUE_SATURATION_CONFIG (config);
+  PicmanHueRange             range;
+  PicmanHueRange             old_range;
   gboolean                 success = TRUE;
 
-  if (! gimp_config_serialize_property_by_name (config, "time", writer))
+  if (! picman_config_serialize_property_by_name (config, "time", writer))
     return FALSE;
 
   old_range = hs_config->range;
 
-  for (range = GIMP_ALL_HUES; range <= GIMP_MAGENTA_HUES; range++)
+  for (range = PICMAN_ALL_HUES; range <= PICMAN_MAGENTA_HUES; range++)
     {
       hs_config->range = range;
 
-      success = (gimp_config_serialize_property_by_name (config, "range",
+      success = (picman_config_serialize_property_by_name (config, "range",
                                                          writer) &&
-                 gimp_config_serialize_property_by_name (config, "hue",
+                 picman_config_serialize_property_by_name (config, "hue",
                                                          writer) &&
-                 gimp_config_serialize_property_by_name (config, "saturation",
+                 picman_config_serialize_property_by_name (config, "saturation",
                                                          writer) &&
-                 gimp_config_serialize_property_by_name (config, "lightness",
+                 picman_config_serialize_property_by_name (config, "lightness",
                                                          writer));
 
       if (! success)
@@ -237,7 +237,7 @@ gimp_hue_saturation_config_serialize (GimpConfig       *config,
     }
 
   if (success)
-    success = gimp_config_serialize_property_by_name (config, "overlap",
+    success = picman_config_serialize_property_by_name (config, "overlap",
                                                       writer);
 
   hs_config->range = old_range;
@@ -246,18 +246,18 @@ gimp_hue_saturation_config_serialize (GimpConfig       *config,
 }
 
 static gboolean
-gimp_hue_saturation_config_deserialize (GimpConfig *config,
+picman_hue_saturation_config_deserialize (PicmanConfig *config,
                                         GScanner   *scanner,
                                         gint        nest_level,
                                         gpointer    data)
 {
-  GimpHueSaturationConfig *hs_config = GIMP_HUE_SATURATION_CONFIG (config);
-  GimpHueRange             old_range;
+  PicmanHueSaturationConfig *hs_config = PICMAN_HUE_SATURATION_CONFIG (config);
+  PicmanHueRange             old_range;
   gboolean                 success = TRUE;
 
   old_range = hs_config->range;
 
-  success = gimp_config_deserialize_properties (config, scanner, nest_level);
+  success = picman_config_deserialize_properties (config, scanner, nest_level);
 
   g_object_set (config, "range", old_range, NULL);
 
@@ -265,14 +265,14 @@ gimp_hue_saturation_config_deserialize (GimpConfig *config,
 }
 
 static gboolean
-gimp_hue_saturation_config_equal (GimpConfig *a,
-                                  GimpConfig *b)
+picman_hue_saturation_config_equal (PicmanConfig *a,
+                                  PicmanConfig *b)
 {
-  GimpHueSaturationConfig *config_a = GIMP_HUE_SATURATION_CONFIG (a);
-  GimpHueSaturationConfig *config_b = GIMP_HUE_SATURATION_CONFIG (b);
-  GimpHueRange             range;
+  PicmanHueSaturationConfig *config_a = PICMAN_HUE_SATURATION_CONFIG (a);
+  PicmanHueSaturationConfig *config_b = PICMAN_HUE_SATURATION_CONFIG (b);
+  PicmanHueRange             range;
 
-  for (range = GIMP_ALL_HUES; range <= GIMP_MAGENTA_HUES; range++)
+  for (range = PICMAN_ALL_HUES; range <= PICMAN_MAGENTA_HUES; range++)
     {
       if (config_a->hue[range]        != config_b->hue[range]        ||
           config_a->saturation[range] != config_b->saturation[range] ||
@@ -289,31 +289,31 @@ gimp_hue_saturation_config_equal (GimpConfig *a,
 }
 
 static void
-gimp_hue_saturation_config_reset (GimpConfig *config)
+picman_hue_saturation_config_reset (PicmanConfig *config)
 {
-  GimpHueSaturationConfig *hs_config = GIMP_HUE_SATURATION_CONFIG (config);
-  GimpHueRange             range;
+  PicmanHueSaturationConfig *hs_config = PICMAN_HUE_SATURATION_CONFIG (config);
+  PicmanHueRange             range;
 
-  for (range = GIMP_ALL_HUES; range <= GIMP_MAGENTA_HUES; range++)
+  for (range = PICMAN_ALL_HUES; range <= PICMAN_MAGENTA_HUES; range++)
     {
       hs_config->range = range;
-      gimp_hue_saturation_config_reset_range (hs_config);
+      picman_hue_saturation_config_reset_range (hs_config);
     }
 
-  gimp_config_reset_property (G_OBJECT (config), "range");
-  gimp_config_reset_property (G_OBJECT (config), "overlap");
+  picman_config_reset_property (G_OBJECT (config), "range");
+  picman_config_reset_property (G_OBJECT (config), "overlap");
 }
 
 static gboolean
-gimp_hue_saturation_config_copy (GimpConfig   *src,
-                                 GimpConfig   *dest,
+picman_hue_saturation_config_copy (PicmanConfig   *src,
+                                 PicmanConfig   *dest,
                                  GParamFlags   flags)
 {
-  GimpHueSaturationConfig *src_config  = GIMP_HUE_SATURATION_CONFIG (src);
-  GimpHueSaturationConfig *dest_config = GIMP_HUE_SATURATION_CONFIG (dest);
-  GimpHueRange             range;
+  PicmanHueSaturationConfig *src_config  = PICMAN_HUE_SATURATION_CONFIG (src);
+  PicmanHueSaturationConfig *dest_config = PICMAN_HUE_SATURATION_CONFIG (dest);
+  PicmanHueRange             range;
 
-  for (range = GIMP_ALL_HUES; range <= GIMP_MAGENTA_HUES; range++)
+  for (range = PICMAN_ALL_HUES; range <= PICMAN_MAGENTA_HUES; range++)
     {
       dest_config->hue[range]        = src_config->hue[range];
       dest_config->saturation[range] = src_config->saturation[range];
@@ -337,15 +337,15 @@ gimp_hue_saturation_config_copy (GimpConfig   *src,
 /*  public functions  */
 
 void
-gimp_hue_saturation_config_reset_range (GimpHueSaturationConfig *config)
+picman_hue_saturation_config_reset_range (PicmanHueSaturationConfig *config)
 {
-  g_return_if_fail (GIMP_IS_HUE_SATURATION_CONFIG (config));
+  g_return_if_fail (PICMAN_IS_HUE_SATURATION_CONFIG (config));
 
   g_object_freeze_notify (G_OBJECT (config));
 
-  gimp_config_reset_property (G_OBJECT (config), "hue");
-  gimp_config_reset_property (G_OBJECT (config), "saturation");
-  gimp_config_reset_property (G_OBJECT (config), "lightness");
+  picman_config_reset_property (G_OBJECT (config), "hue");
+  picman_config_reset_property (G_OBJECT (config), "saturation");
+  picman_config_reset_property (G_OBJECT (config), "lightness");
 
   g_object_thaw_notify (G_OBJECT (config));
 }

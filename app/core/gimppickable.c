@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppickable.c
- * Copyright (C) 2004  Michael Natterer <mitch@gimp.org>
+ * picmanpickable.c
+ * Copyright (C) 2004  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,17 +30,17 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "gimpobject.h"
-#include "gimpimage.h"
-#include "gimppickable.h"
+#include "picmanobject.h"
+#include "picmanimage.h"
+#include "picmanpickable.h"
 
 
 GType
-gimp_pickable_interface_get_type (void)
+picman_pickable_interface_get_type (void)
 {
   static GType pickable_iface_type = 0;
 
@@ -48,43 +48,43 @@ gimp_pickable_interface_get_type (void)
     {
       const GTypeInfo pickable_iface_info =
       {
-        sizeof (GimpPickableInterface),
+        sizeof (PicmanPickableInterface),
         (GBaseInitFunc)     NULL,
         (GBaseFinalizeFunc) NULL,
       };
 
       pickable_iface_type = g_type_register_static (G_TYPE_INTERFACE,
-                                                    "GimpPickableInterface",
+                                                    "PicmanPickableInterface",
                                                     &pickable_iface_info,
                                                     0);
 
-      g_type_interface_add_prerequisite (pickable_iface_type, GIMP_TYPE_OBJECT);
+      g_type_interface_add_prerequisite (pickable_iface_type, PICMAN_TYPE_OBJECT);
     }
 
   return pickable_iface_type;
 }
 
 void
-gimp_pickable_flush (GimpPickable *pickable)
+picman_pickable_flush (PicmanPickable *pickable)
 {
-  GimpPickableInterface *pickable_iface;
+  PicmanPickableInterface *pickable_iface;
 
-  g_return_if_fail (GIMP_IS_PICKABLE (pickable));
+  g_return_if_fail (PICMAN_IS_PICKABLE (pickable));
 
-  pickable_iface = GIMP_PICKABLE_GET_INTERFACE (pickable);
+  pickable_iface = PICMAN_PICKABLE_GET_INTERFACE (pickable);
 
   if (pickable_iface->flush)
     pickable_iface->flush (pickable);
 }
 
-GimpImage *
-gimp_pickable_get_image (GimpPickable *pickable)
+PicmanImage *
+picman_pickable_get_image (PicmanPickable *pickable)
 {
-  GimpPickableInterface *pickable_iface;
+  PicmanPickableInterface *pickable_iface;
 
-  g_return_val_if_fail (GIMP_IS_PICKABLE (pickable), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICKABLE (pickable), NULL);
 
-  pickable_iface = GIMP_PICKABLE_GET_INTERFACE (pickable);
+  pickable_iface = PICMAN_PICKABLE_GET_INTERFACE (pickable);
 
   if (pickable_iface->get_image)
     return pickable_iface->get_image (pickable);
@@ -93,13 +93,13 @@ gimp_pickable_get_image (GimpPickable *pickable)
 }
 
 const Babl *
-gimp_pickable_get_format (GimpPickable *pickable)
+picman_pickable_get_format (PicmanPickable *pickable)
 {
-  GimpPickableInterface *pickable_iface;
+  PicmanPickableInterface *pickable_iface;
 
-  g_return_val_if_fail (GIMP_IS_PICKABLE (pickable), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICKABLE (pickable), NULL);
 
-  pickable_iface = GIMP_PICKABLE_GET_INTERFACE (pickable);
+  pickable_iface = PICMAN_PICKABLE_GET_INTERFACE (pickable);
 
   if (pickable_iface->get_format)
     return pickable_iface->get_format (pickable);
@@ -108,13 +108,13 @@ gimp_pickable_get_format (GimpPickable *pickable)
 }
 
 const Babl *
-gimp_pickable_get_format_with_alpha (GimpPickable *pickable)
+picman_pickable_get_format_with_alpha (PicmanPickable *pickable)
 {
-  GimpPickableInterface *pickable_iface;
+  PicmanPickableInterface *pickable_iface;
 
-  g_return_val_if_fail (GIMP_IS_PICKABLE (pickable), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICKABLE (pickable), NULL);
 
-  pickable_iface = GIMP_PICKABLE_GET_INTERFACE (pickable);
+  pickable_iface = PICMAN_PICKABLE_GET_INTERFACE (pickable);
 
   if (pickable_iface->get_format_with_alpha)
     return pickable_iface->get_format_with_alpha (pickable);
@@ -123,13 +123,13 @@ gimp_pickable_get_format_with_alpha (GimpPickable *pickable)
 }
 
 GeglBuffer *
-gimp_pickable_get_buffer (GimpPickable *pickable)
+picman_pickable_get_buffer (PicmanPickable *pickable)
 {
-  GimpPickableInterface *pickable_iface;
+  PicmanPickableInterface *pickable_iface;
 
-  g_return_val_if_fail (GIMP_IS_PICKABLE (pickable), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICKABLE (pickable), NULL);
 
-  pickable_iface = GIMP_PICKABLE_GET_INTERFACE (pickable);
+  pickable_iface = PICMAN_PICKABLE_GET_INTERFACE (pickable);
 
   if (pickable_iface->get_buffer)
     return pickable_iface->get_buffer (pickable);
@@ -138,21 +138,21 @@ gimp_pickable_get_buffer (GimpPickable *pickable)
 }
 
 gboolean
-gimp_pickable_get_pixel_at (GimpPickable *pickable,
+picman_pickable_get_pixel_at (PicmanPickable *pickable,
                             gint          x,
                             gint          y,
                             const Babl   *format,
                             gpointer      pixel)
 {
-  GimpPickableInterface *pickable_iface;
+  PicmanPickableInterface *pickable_iface;
 
-  g_return_val_if_fail (GIMP_IS_PICKABLE (pickable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICKABLE (pickable), FALSE);
   g_return_val_if_fail (pixel != NULL, FALSE);
 
   if (! format)
-    format = gimp_pickable_get_format (pickable);
+    format = picman_pickable_get_format (pickable);
 
-  pickable_iface = GIMP_PICKABLE_GET_INTERFACE (pickable);
+  pickable_iface = PICMAN_PICKABLE_GET_INTERFACE (pickable);
 
   if (pickable_iface->get_pixel_at)
     return pickable_iface->get_pixel_at (pickable, x, y, format, pixel);
@@ -161,58 +161,58 @@ gimp_pickable_get_pixel_at (GimpPickable *pickable,
 }
 
 gboolean
-gimp_pickable_get_color_at (GimpPickable *pickable,
+picman_pickable_get_color_at (PicmanPickable *pickable,
                             gint          x,
                             gint          y,
-                            GimpRGB      *color)
+                            PicmanRGB      *color)
 {
   guchar pixel[32];
 
-  g_return_val_if_fail (GIMP_IS_PICKABLE (pickable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICKABLE (pickable), FALSE);
   g_return_val_if_fail (color != NULL, FALSE);
 
-  if (! gimp_pickable_get_pixel_at (pickable, x, y, NULL, pixel))
+  if (! picman_pickable_get_pixel_at (pickable, x, y, NULL, pixel))
     return FALSE;
 
-  gimp_rgba_set_pixel (color, gimp_pickable_get_format (pickable), pixel);
+  picman_rgba_set_pixel (color, picman_pickable_get_format (pickable), pixel);
 
   return TRUE;
 }
 
 gdouble
-gimp_pickable_get_opacity_at (GimpPickable *pickable,
+picman_pickable_get_opacity_at (PicmanPickable *pickable,
                               gint          x,
                               gint          y)
 {
-  GimpPickableInterface *pickable_iface;
+  PicmanPickableInterface *pickable_iface;
 
-  g_return_val_if_fail (GIMP_IS_PICKABLE (pickable), GIMP_OPACITY_TRANSPARENT);
+  g_return_val_if_fail (PICMAN_IS_PICKABLE (pickable), PICMAN_OPACITY_TRANSPARENT);
 
-  pickable_iface = GIMP_PICKABLE_GET_INTERFACE (pickable);
+  pickable_iface = PICMAN_PICKABLE_GET_INTERFACE (pickable);
 
   if (pickable_iface->get_opacity_at)
     return pickable_iface->get_opacity_at (pickable, x, y);
 
-  return GIMP_OPACITY_TRANSPARENT;
+  return PICMAN_OPACITY_TRANSPARENT;
 }
 
 gboolean
-gimp_pickable_pick_color (GimpPickable *pickable,
+picman_pickable_pick_color (PicmanPickable *pickable,
                           gint          x,
                           gint          y,
                           gboolean      sample_average,
                           gdouble       average_radius,
-                          GimpRGB      *color,
+                          PicmanRGB      *color,
                           gint         *color_index)
 {
   const Babl *format;
   guchar      pixel[4];
 
-  g_return_val_if_fail (GIMP_IS_PICKABLE (pickable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICKABLE (pickable), FALSE);
 
   format = babl_format ("R'G'B'A u8");
 
-  if (! gimp_pickable_get_pixel_at (pickable, x, y, format, pixel))
+  if (! picman_pickable_get_pixel_at (pickable, x, y, format, pixel))
     return FALSE;
 
   if (sample_average)
@@ -224,7 +224,7 @@ gimp_pickable_pick_color (GimpPickable *pickable,
 
       for (i = x - radius; i <= x + radius; i++)
         for (j = y - radius; j <= y + radius; j++)
-          if (gimp_pickable_get_pixel_at (pickable, i, j, format, pixel))
+          if (picman_pickable_get_pixel_at (pickable, i, j, format, pixel))
             {
               count++;
 
@@ -240,7 +240,7 @@ gimp_pickable_pick_color (GimpPickable *pickable,
       pixel[ALPHA] = (guchar) ((color_avg[ALPHA] + count / 2) / count);
     }
 
-  gimp_rgba_set_uchar (color,
+  picman_rgba_set_uchar (color,
                        pixel[RED],
                        pixel[GREEN],
                        pixel[BLUE],
@@ -248,11 +248,11 @@ gimp_pickable_pick_color (GimpPickable *pickable,
 
   if (color_index)
     {
-      format = gimp_pickable_get_format (pickable);
+      format = picman_pickable_get_format (pickable);
 
       if (babl_format_is_palette (format) && ! sample_average)
         {
-          gimp_pickable_get_pixel_at (pickable, x, y, format, pixel);
+          picman_pickable_get_pixel_at (pickable, x, y, format, pixel);
 
           *color_index = pixel[0];
         }

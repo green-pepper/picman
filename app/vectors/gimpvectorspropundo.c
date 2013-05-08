@@ -1,4 +1,4 @@
-/* Gimp - The GNU Image Manipulation Program
+/* Picman - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,52 +21,52 @@
 
 #include "vectors-types.h"
 
-#include "core/gimpimage.h"
+#include "core/picmanimage.h"
 
-#include "gimpvectors.h"
-#include "gimpvectorspropundo.h"
-
-
-static void   gimp_vectors_prop_undo_constructed (GObject             *object);
-
-static void   gimp_vectors_prop_undo_pop         (GimpUndo            *undo,
-                                                  GimpUndoMode         undo_mode,
-                                                  GimpUndoAccumulator *accum);
+#include "picmanvectors.h"
+#include "picmanvectorspropundo.h"
 
 
-G_DEFINE_TYPE (GimpVectorsPropUndo, gimp_vectors_prop_undo, GIMP_TYPE_ITEM_UNDO)
+static void   picman_vectors_prop_undo_constructed (GObject             *object);
 
-#define parent_class gimp_vectors_prop_undo_parent_class
+static void   picman_vectors_prop_undo_pop         (PicmanUndo            *undo,
+                                                  PicmanUndoMode         undo_mode,
+                                                  PicmanUndoAccumulator *accum);
+
+
+G_DEFINE_TYPE (PicmanVectorsPropUndo, picman_vectors_prop_undo, PICMAN_TYPE_ITEM_UNDO)
+
+#define parent_class picman_vectors_prop_undo_parent_class
 
 
 static void
-gimp_vectors_prop_undo_class_init (GimpVectorsPropUndoClass *klass)
+picman_vectors_prop_undo_class_init (PicmanVectorsPropUndoClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
-  GimpUndoClass *undo_class   = GIMP_UNDO_CLASS (klass);
+  PicmanUndoClass *undo_class   = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed = gimp_vectors_prop_undo_constructed;
+  object_class->constructed = picman_vectors_prop_undo_constructed;
 
-  undo_class->pop           = gimp_vectors_prop_undo_pop;
+  undo_class->pop           = picman_vectors_prop_undo_pop;
 }
 
 static void
-gimp_vectors_prop_undo_init (GimpVectorsPropUndo *undo)
+picman_vectors_prop_undo_init (PicmanVectorsPropUndo *undo)
 {
 }
 
 static void
-gimp_vectors_prop_undo_constructed (GObject *object)
+picman_vectors_prop_undo_constructed (GObject *object)
 {
-  /* GimpVectors *vectors; */
+  /* PicmanVectors *vectors; */
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_VECTORS (GIMP_ITEM_UNDO (object)->item));
+  g_assert (PICMAN_IS_VECTORS (PICMAN_ITEM_UNDO (object)->item));
 
-  /* vectors = GIMP_VECTORS (GIMP_ITEM_UNDO (object)->item); */
+  /* vectors = PICMAN_VECTORS (PICMAN_ITEM_UNDO (object)->item); */
 
-  switch (GIMP_UNDO (object)->undo_type)
+  switch (PICMAN_UNDO (object)->undo_type)
     {
     default:
       g_assert_not_reached ();
@@ -74,16 +74,16 @@ gimp_vectors_prop_undo_constructed (GObject *object)
 }
 
 static void
-gimp_vectors_prop_undo_pop (GimpUndo            *undo,
-                            GimpUndoMode         undo_mode,
-                            GimpUndoAccumulator *accum)
+picman_vectors_prop_undo_pop (PicmanUndo            *undo,
+                            PicmanUndoMode         undo_mode,
+                            PicmanUndoAccumulator *accum)
 {
 #if 0
-  GimpVectorsPropUndo *vectors_prop_undo = GIMP_VECTORS_PROP_UNDO (undo);
-  GimpVectors         *vectors           = GIMP_VECTORS (GIMP_ITEM_UNDO (undo)->item);
+  PicmanVectorsPropUndo *vectors_prop_undo = PICMAN_VECTORS_PROP_UNDO (undo);
+  PicmanVectors         *vectors           = PICMAN_VECTORS (PICMAN_ITEM_UNDO (undo)->item);
 #endif
 
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 
   switch (undo->undo_type)
     {

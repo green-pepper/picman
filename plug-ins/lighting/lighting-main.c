@@ -1,9 +1,9 @@
-/* Lighting Effects 0.2.2 -- image filter plug-in for GIMP
+/* Lighting Effects 0.2.2 -- image filter plug-in for PICMAN
  *
  * Copyright (C) 1996-98 Tom Bech
  * Copyright (C) 1996-98 Federico Mena Quintero
  *
- * E-mail: tomb@gimp.org (Tom) or quartic@gimp.org (Federico)
+ * E-mail: tomb@picman.org (Tom) or quartic@picman.org (Federico)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include "lighting-apply.h"
 #include "lighting-image.h"
@@ -32,7 +32,7 @@
 #include "lighting-shade.h"
 #include "lighting-ui.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 LightingValues mapvals;
@@ -54,34 +54,34 @@ set_default_settings (void)
   mapvals.light_selected = 0;
   mapvals.light_isolated = FALSE;
 
-  gimp_vector3_set (&mapvals.viewpoint,   0.5, 0.5, 0.25);
-  gimp_vector3_set (&mapvals.planenormal, 0.0, 0.0, 1.0);
+  picman_vector3_set (&mapvals.viewpoint,   0.5, 0.5, 0.25);
+  picman_vector3_set (&mapvals.planenormal, 0.0, 0.0, 1.0);
 
-  gimp_vector3_set (&mapvals.lightsource[0].position,  -1.0, -1.0, 1.0);
-  gimp_vector3_set (&mapvals.lightsource[0].direction, -1.0, -1.0, 1.0);
+  picman_vector3_set (&mapvals.lightsource[0].position,  -1.0, -1.0, 1.0);
+  picman_vector3_set (&mapvals.lightsource[0].direction, -1.0, -1.0, 1.0);
 
-  gimp_rgba_set (&mapvals.lightsource[0].color, 1.0, 1.0, 1.0, 1.0);
+  picman_rgba_set (&mapvals.lightsource[0].color, 1.0, 1.0, 1.0, 1.0);
   mapvals.lightsource[0].intensity = 1.0;
   mapvals.lightsource[0].type      = POINT_LIGHT;
   mapvals.lightsource[0].active    = TRUE;
 
   /* init lights 2 and 3 pos to upper left and below */
-  gimp_vector3_set (&mapvals.lightsource[1].position,   2.0, -1.0, 1.0);
-  gimp_vector3_set (&mapvals.lightsource[1].direction,  1.0, -1.0, 1.0);
+  picman_vector3_set (&mapvals.lightsource[1].position,   2.0, -1.0, 1.0);
+  picman_vector3_set (&mapvals.lightsource[1].direction,  1.0, -1.0, 1.0);
 
-  gimp_vector3_set (&mapvals.lightsource[2].position,   1.0,  2.0, 1.0);
-  gimp_vector3_set (&mapvals.lightsource[2].direction,  0.0,  1.0, 1.0);
+  picman_vector3_set (&mapvals.lightsource[2].position,   1.0,  2.0, 1.0);
+  picman_vector3_set (&mapvals.lightsource[2].direction,  0.0,  1.0, 1.0);
 
   /* init any remaining lights to directly overhead */
   for (k = 3; k < NUM_LIGHTS; k++)
     {
-      gimp_vector3_set (&mapvals.lightsource[k].position,   0.0,  0.0, 1.0);
-      gimp_vector3_set (&mapvals.lightsource[k].direction,  0.0,  0.0, 1.0);
+      picman_vector3_set (&mapvals.lightsource[k].position,   0.0,  0.0, 1.0);
+      picman_vector3_set (&mapvals.lightsource[k].direction,  0.0,  0.0, 1.0);
     }
 
   for (k = 1; k < NUM_LIGHTS; k++)
     {
-      gimp_rgba_set (&mapvals.lightsource[k].color, 1.0, 1.0, 1.0, 1.0);
+      picman_rgba_set (&mapvals.lightsource[k].color, 1.0, 1.0, 1.0, 1.0);
       mapvals.lightsource[k].intensity = 1.0;
       mapvals.lightsource[k].type      = NO_LIGHT;
       mapvals.lightsource[k].active    = TRUE;
@@ -121,17 +121,17 @@ check_drawables (void)
   if (mapvals.bump_mapped)
     {
       if (mapvals.bumpmap_id != -1 &&
-          gimp_item_get_image (mapvals.bumpmap_id) == -1)
+          picman_item_get_image (mapvals.bumpmap_id) == -1)
         {
           mapvals.bump_mapped = FALSE;
           mapvals.bumpmap_id  = -1;
         }
 
-      if (gimp_drawable_is_indexed (mapvals.bumpmap_id) ||
-          (gimp_drawable_width (mapvals.drawable_id) !=
-           gimp_drawable_width (mapvals.bumpmap_id)) ||
-          (gimp_drawable_height (mapvals.drawable_id) !=
-           gimp_drawable_height (mapvals.bumpmap_id)))
+      if (picman_drawable_is_indexed (mapvals.bumpmap_id) ||
+          (picman_drawable_width (mapvals.drawable_id) !=
+           picman_drawable_width (mapvals.bumpmap_id)) ||
+          (picman_drawable_height (mapvals.drawable_id) !=
+           picman_drawable_height (mapvals.bumpmap_id)))
         {
           mapvals.bump_mapped = FALSE;
           mapvals.bumpmap_id  = -1;
@@ -141,14 +141,14 @@ check_drawables (void)
   if (mapvals.env_mapped)
     {
       if (mapvals.envmap_id != -1 &&
-          gimp_item_get_image (mapvals.envmap_id) == -1)
+          picman_item_get_image (mapvals.envmap_id) == -1)
         {
           mapvals.env_mapped = FALSE;
           mapvals.envmap_id  = -1;
         }
 
-      if (gimp_drawable_is_gray (mapvals.envmap_id) ||
-          gimp_drawable_has_alpha (mapvals.envmap_id))
+      if (picman_drawable_is_gray (mapvals.envmap_id) ||
+          picman_drawable_has_alpha (mapvals.envmap_id))
         {
           mapvals.env_mapped = FALSE;
           mapvals.envmap_id  = -1;
@@ -159,35 +159,35 @@ check_drawables (void)
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",              "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",                 "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",              "Input drawable" },
-    { GIMP_PDB_DRAWABLE, "bumpdrawable",          "Bumpmap drawable (set to 0 if disabled)" },
-    { GIMP_PDB_DRAWABLE, "envdrawable",           "Environmentmap drawable (set to 0 if disabled)" },
-    { GIMP_PDB_INT32,    "dobumpmap",             "Enable bumpmapping (TRUE/FALSE)" },
-    { GIMP_PDB_INT32,    "doenvmap",              "Enable envmapping (TRUE/FALSE)" },
-    { GIMP_PDB_INT32,    "bumpmaptype",           "Type of mapping (0=linear,1=log, 2=sinusoidal, 3=spherical)" },
-    { GIMP_PDB_INT32,    "lighttype",             "Type of lightsource (0=point,1=directional,3=spot,4=none)" },
-    { GIMP_PDB_COLOR,    "lightcolor",            "Lightsource color (r,g,b)" },
-    { GIMP_PDB_FLOAT,    "lightposition-x",       "Lightsource position (x,y,z)" },
-    { GIMP_PDB_FLOAT,    "lightposition-y",       "Lightsource position (x,y,z)" },
-    { GIMP_PDB_FLOAT,    "lightposition-z",       "Lightsource position (x,y,z)" },
-    { GIMP_PDB_FLOAT,    "lightdirection-x",      "Lightsource direction [x,y,z]" },
-    { GIMP_PDB_FLOAT,    "lightdirection-y",      "Lightsource direction [x,y,z]" },
-    { GIMP_PDB_FLOAT,    "lightdirection-z",      "Lightsource direction [x,y,z]" },
-    { GIMP_PDB_FLOAT,    "ambient-intensity",     "Material ambient intensity (0..1)" },
-    { GIMP_PDB_FLOAT,    "diffuse-intensity",     "Material diffuse intensity (0..1)" },
-    { GIMP_PDB_FLOAT,    "diffuse-reflectivity",  "Material diffuse reflectivity (0..1)" },
-    { GIMP_PDB_FLOAT,    "specular-reflectivity", "Material specular reflectivity (0..1)" },
-    { GIMP_PDB_FLOAT,    "highlight",             "Material highlight (0..->), note: it's expotential" },
-    { GIMP_PDB_INT32,    "antialiasing",          "Apply antialiasing (TRUE/FALSE)" },
-    { GIMP_PDB_INT32,    "newimage",              "Create a new image (TRUE/FALSE)" },
-    { GIMP_PDB_INT32,    "transparentbackground", "Make background transparent (TRUE/FALSE)" }
+    { PICMAN_PDB_INT32,    "run-mode",              "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",                 "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",              "Input drawable" },
+    { PICMAN_PDB_DRAWABLE, "bumpdrawable",          "Bumpmap drawable (set to 0 if disabled)" },
+    { PICMAN_PDB_DRAWABLE, "envdrawable",           "Environmentmap drawable (set to 0 if disabled)" },
+    { PICMAN_PDB_INT32,    "dobumpmap",             "Enable bumpmapping (TRUE/FALSE)" },
+    { PICMAN_PDB_INT32,    "doenvmap",              "Enable envmapping (TRUE/FALSE)" },
+    { PICMAN_PDB_INT32,    "bumpmaptype",           "Type of mapping (0=linear,1=log, 2=sinusoidal, 3=spherical)" },
+    { PICMAN_PDB_INT32,    "lighttype",             "Type of lightsource (0=point,1=directional,3=spot,4=none)" },
+    { PICMAN_PDB_COLOR,    "lightcolor",            "Lightsource color (r,g,b)" },
+    { PICMAN_PDB_FLOAT,    "lightposition-x",       "Lightsource position (x,y,z)" },
+    { PICMAN_PDB_FLOAT,    "lightposition-y",       "Lightsource position (x,y,z)" },
+    { PICMAN_PDB_FLOAT,    "lightposition-z",       "Lightsource position (x,y,z)" },
+    { PICMAN_PDB_FLOAT,    "lightdirection-x",      "Lightsource direction [x,y,z]" },
+    { PICMAN_PDB_FLOAT,    "lightdirection-y",      "Lightsource direction [x,y,z]" },
+    { PICMAN_PDB_FLOAT,    "lightdirection-z",      "Lightsource direction [x,y,z]" },
+    { PICMAN_PDB_FLOAT,    "ambient-intensity",     "Material ambient intensity (0..1)" },
+    { PICMAN_PDB_FLOAT,    "diffuse-intensity",     "Material diffuse intensity (0..1)" },
+    { PICMAN_PDB_FLOAT,    "diffuse-reflectivity",  "Material diffuse reflectivity (0..1)" },
+    { PICMAN_PDB_FLOAT,    "specular-reflectivity", "Material specular reflectivity (0..1)" },
+    { PICMAN_PDB_FLOAT,    "highlight",             "Material highlight (0..->), note: it's expotential" },
+    { PICMAN_PDB_INT32,    "antialiasing",          "Apply antialiasing (TRUE/FALSE)" },
+    { PICMAN_PDB_INT32,    "newimage",              "Create a new image (TRUE/FALSE)" },
+    { PICMAN_PDB_INT32,    "transparentbackground", "Make background transparent (TRUE/FALSE)" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Apply various lighting effects to an image"),
                           "No help yet",
                           "Tom Bech & Federico Mena Quintero",
@@ -195,25 +195,25 @@ query (void)
                           "Version 0.2.0, March 15 1998",
                           N_("_Lighting Effects..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC,
+  picman_plugin_menu_register (PLUG_IN_PROC,
                              "<Image>/Filters/Light and Shadow/Light");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
@@ -222,7 +222,7 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /* Set default values */
@@ -233,52 +233,52 @@ run (const gchar      *name,
   /* Possibly retrieve data */
   /* ====================== */
 
-  gimp_get_data (PLUG_IN_PROC, &mapvals);
+  picman_get_data (PLUG_IN_PROC, &mapvals);
 
   /* Get the specified drawable */
   /* ========================== */
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   mapvals.drawable_id = drawable->drawable_id;
 
   check_drawables ();
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /* Make sure that the drawable is RGBA or RGB color */
       /* ================================================ */
 
-      if (gimp_drawable_is_rgb (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id))
         {
           /* Set the tile cache size */
           /* ======================= */
 
-          gimp_tile_cache_ntiles (TILE_CACHE_SIZE);
+          picman_tile_cache_ntiles (TILE_CACHE_SIZE);
 
           switch (run_mode)
             {
-              case GIMP_RUN_INTERACTIVE:
+              case PICMAN_RUN_INTERACTIVE:
                 if (main_dialog (drawable))
                   {
                     compute_image ();
 
-                    gimp_set_data (PLUG_IN_PROC,
+                    picman_set_data (PLUG_IN_PROC,
                                    &mapvals, sizeof (LightingValues));
-                    gimp_displays_flush ();
+                    picman_displays_flush ();
                   }
               break;
 
-              case GIMP_RUN_WITH_LAST_VALS:
+              case PICMAN_RUN_WITH_LAST_VALS:
                 image_setup (drawable, FALSE);
                 compute_image ();
-                gimp_displays_flush ();
+                picman_displays_flush ();
                 break;
 
-              case GIMP_RUN_NONINTERACTIVE:
+              case PICMAN_RUN_NONINTERACTIVE:
                 if (nparams != 24)
                   {
-                    status = GIMP_PDB_CALLING_ERROR;
+                    status = PICMAN_PDB_CALLING_ERROR;
                   }
                 else
                   {
@@ -313,17 +313,17 @@ run (const gchar      *name,
             }
         }
       else
-        status = GIMP_PDB_EXECUTION_ERROR;
+        status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   g_free (xpostab);
   g_free (ypostab);
 }
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */

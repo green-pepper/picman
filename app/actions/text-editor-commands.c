@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,28 +19,28 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimptextbuffer.h"
-#include "widgets/gimptexteditor.h"
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmantextbuffer.h"
+#include "widgets/picmantexteditor.h"
+#include "widgets/picmanuimanager.h"
 
 #include "text-editor-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
 static void   text_editor_load_response (GtkWidget      *dialog,
                                          gint            response_id,
-                                         GimpTextEditor *editor);
+                                         PicmanTextEditor *editor);
 
 
 /*  public functions  */
@@ -49,7 +49,7 @@ void
 text_editor_load_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpTextEditor *editor = GIMP_TEXT_EDITOR (data);
+  PicmanTextEditor *editor = PICMAN_TEXT_EDITOR (data);
   GtkFileChooser *chooser;
 
   if (editor->file_dialog)
@@ -78,7 +78,7 @@ text_editor_load_cmd_callback (GtkAction *action,
   g_object_add_weak_pointer (G_OBJECT (chooser),
                              (gpointer) &editor->file_dialog);
 
-  gtk_window_set_role (GTK_WINDOW (chooser), "gimp-text-load-file");
+  gtk_window_set_role (GTK_WINDOW (chooser), "picman-text-load-file");
   gtk_window_set_position (GTK_WINDOW (chooser), GTK_WIN_POS_MOUSE);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (chooser), TRUE);
 
@@ -98,7 +98,7 @@ void
 text_editor_clear_cmd_callback (GtkAction *action,
                                 gpointer   data)
 {
-  GimpTextEditor *editor = GIMP_TEXT_EDITOR (data);
+  PicmanTextEditor *editor = PICMAN_TEXT_EDITOR (data);
   GtkTextBuffer  *buffer;
 
   buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (editor->view));
@@ -111,12 +111,12 @@ text_editor_direction_cmd_callback (GtkAction *action,
                                     GtkAction *current,
                                     gpointer   data)
 {
-  GimpTextEditor *editor = GIMP_TEXT_EDITOR (data);
+  PicmanTextEditor *editor = PICMAN_TEXT_EDITOR (data);
   gint            value;
 
   value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
-  gimp_text_editor_set_direction (editor, (GimpTextDirection) value);
+  picman_text_editor_set_direction (editor, (PicmanTextDirection) value);
 }
 
 
@@ -125,7 +125,7 @@ text_editor_direction_cmd_callback (GtkAction *action,
 static void
 text_editor_load_response (GtkWidget      *dialog,
                            gint            response_id,
-                           GimpTextEditor *editor)
+                           PicmanTextEditor *editor)
 {
   if (response_id == GTK_RESPONSE_OK)
     {
@@ -136,12 +136,12 @@ text_editor_load_response (GtkWidget      *dialog,
       buffer   = gtk_text_view_get_buffer (GTK_TEXT_VIEW (editor->view));
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 
-      if (! gimp_text_buffer_load (GIMP_TEXT_BUFFER (buffer), filename, &error))
+      if (! picman_text_buffer_load (PICMAN_TEXT_BUFFER (buffer), filename, &error))
         {
-          gimp_message (editor->ui_manager->gimp, G_OBJECT (dialog),
-                        GIMP_MESSAGE_ERROR,
+          picman_message (editor->ui_manager->picman, G_OBJECT (dialog),
+                        PICMAN_MESSAGE_ERROR,
                         _("Could not open '%s' for reading: %s"),
-                        gimp_filename_to_utf8 (filename),
+                        picman_filename_to_utf8 (filename),
                         error->message);
           g_clear_error (&error);
           g_free (filename);

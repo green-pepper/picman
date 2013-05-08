@@ -1,9 +1,9 @@
-# GIMP sessionrc
+# PICMAN sessionrc
 # 
 # This file takes session-specific info (that is info, you want to keep
-# between two GIMP sessions).  You are not supposed to edit it manually, but
+# between two PICMAN sessions).  You are not supposed to edit it manually, but
 # of course you can do.  The sessionrc will be entirely rewritten every time
-# you quit GIMP.  If this file isn't found, defaults are used.
+# you quit PICMAN.  If this file isn't found, defaults are used.
 
 (session-info "dock" "dock"
     (position 565 170)
@@ -15,13 +15,13 @@
     (dock
         (book
             (current-page 0)
-            (dockable "gimp-layer-list"
+            (dockable "picman-layer-list"
                 (tab-style icon)
                 (preview-size 32)))
         (book
             (position 289)
             (current-page 0)
-            (dockable "gimp-brush-grid"
+            (dockable "picman-brush-grid"
                 (tab-style preview)))))
 (session-info "dock" "dock"
     (position 140 290)
@@ -33,7 +33,7 @@
     (dock
         (book
             (current-page 0)
-            (dockable "gimp-tool-options"
+            (dockable "picman-tool-options"
                 (tab-style icon)))))
 (session-info "dock" "dock"
     (position 795 45)
@@ -45,9 +45,9 @@
     (dock
         (book
             (current-page 1)
-            (dockable "gimp-pattern-grid"
+            (dockable "picman-pattern-grid"
                 (tab-style preview))
-            (dockable "gimp-gradient-list"
+            (dockable "picman-gradient-list"
                 (tab-style preview)))))
 (session-info "dock" "dock"
     (position 805 345)
@@ -59,13 +59,13 @@
     (dock
         (book
             (current-page 0)
-            (dockable "gimp-channel-list"
+            (dockable "picman-channel-list"
                 (tab-style automatic)
                 (preview-size 32)))
         (book
             (position 200)
             (current-page 0)
-            (dockable "gimp-palette-editor"
+            (dockable "picman-palette-editor"
                 (tab-style icon)
                 (aux-info
                     (edit-active "true")
@@ -77,12 +77,12 @@
 #     (position 15 35)
 #     (size 95 620)
 #     (open-on-exit))
-(session-info "toplevel" "gimp-file-open-dialog"
+(session-info "toplevel" "picman-file-open-dialog"
     (position 390 140)
     (size 900 815))
-(session-info "toplevel" "gimp-image-new-dialog"
+(session-info "toplevel" "picman-image-new-dialog"
     (position 100 100))
-(session-info "display" "gimp-empty-image-window"
+(session-info "display" "picman-empty-image-window"
     (position 140 30)
     (size 610 190))
 

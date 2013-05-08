@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpwidgets-private.c
- * Copyright (C) 2003 Sven Neumann <sven@gimp.org>
+ * picmanwidgets-private.c
+ * Copyright (C) 2003 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,28 +23,28 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpstock.h"
-#include "gimpwidgets-private.h"
+#include "picmanstock.h"
+#include "picmanwidgets-private.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
-#include "gimp-wilber-pixbufs.h"
+#include "picman-wilber-pixbufs.h"
 
 
-GimpHelpFunc          _gimp_standard_help_func  = NULL;
-GimpGetColorFunc      _gimp_get_foreground_func = NULL;
-GimpGetColorFunc      _gimp_get_background_func = NULL;
-GimpEnsureModulesFunc _gimp_ensure_modules_func = NULL;
+PicmanHelpFunc          _picman_standard_help_func  = NULL;
+PicmanGetColorFunc      _picman_get_foreground_func = NULL;
+PicmanGetColorFunc      _picman_get_background_func = NULL;
+PicmanEnsureModulesFunc _picman_ensure_modules_func = NULL;
 
 
 static void
-gimp_widgets_init_foreign_enums (void)
+picman_widgets_init_foreign_enums (void)
 {
-  static const GimpEnumDesc input_mode_descs[] =
+  static const PicmanEnumDesc input_mode_descs[] =
   {
     { GDK_MODE_DISABLED, NC_("input-mode", "Disabled"), NULL },
     { GDK_MODE_SCREEN,   NC_("input-mode", "Screen"),   NULL },
@@ -52,19 +52,19 @@ gimp_widgets_init_foreign_enums (void)
     { 0, NULL, NULL }
   };
 
-  gimp_type_set_translation_domain (GDK_TYPE_INPUT_MODE,
-                                    GETTEXT_PACKAGE "-libgimp");
-  gimp_type_set_translation_context (GDK_TYPE_INPUT_MODE, "input-mode");
-  gimp_enum_set_value_descriptions (GDK_TYPE_INPUT_MODE, input_mode_descs);
+  picman_type_set_translation_domain (GDK_TYPE_INPUT_MODE,
+                                    GETTEXT_PACKAGE "-libpicman");
+  picman_type_set_translation_context (GDK_TYPE_INPUT_MODE, "input-mode");
+  picman_enum_set_value_descriptions (GDK_TYPE_INPUT_MODE, input_mode_descs);
 }
 
 void
-gimp_widgets_init (GimpHelpFunc          standard_help_func,
-                   GimpGetColorFunc      get_foreground_func,
-                   GimpGetColorFunc      get_background_func,
-                   GimpEnsureModulesFunc ensure_modules_func)
+picman_widgets_init (PicmanHelpFunc          standard_help_func,
+                   PicmanGetColorFunc      get_foreground_func,
+                   PicmanGetColorFunc      get_background_func,
+                   PicmanEnsureModulesFunc ensure_modules_func)
 {
-  static gboolean  gimp_widgets_initialized = FALSE;
+  static gboolean  picman_widgets_initialized = FALSE;
 
   GdkPixbuf *pixbuf;
   GList     *icon_list = NULL;
@@ -80,15 +80,15 @@ gimp_widgets_init (GimpHelpFunc          standard_help_func,
 
   g_return_if_fail (standard_help_func != NULL);
 
-  if (gimp_widgets_initialized)
-    g_error ("gimp_widgets_init() must only be called once!");
+  if (picman_widgets_initialized)
+    g_error ("picman_widgets_init() must only be called once!");
 
-  _gimp_standard_help_func  = standard_help_func;
-  _gimp_get_foreground_func = get_foreground_func;
-  _gimp_get_background_func = get_background_func;
-  _gimp_ensure_modules_func = ensure_modules_func;
+  _picman_standard_help_func  = standard_help_func;
+  _picman_get_foreground_func = get_foreground_func;
+  _picman_get_background_func = get_background_func;
+  _picman_ensure_modules_func = ensure_modules_func;
 
-  gimp_stock_init ();
+  picman_stock_init ();
 
   for (i = 0; i < G_N_ELEMENTS (inline_pixbufs); i++)
     {
@@ -100,7 +100,7 @@ gimp_widgets_init (GimpHelpFunc          standard_help_func,
 
   g_list_free_full (icon_list, (GDestroyNotify) g_object_unref);
 
-  gimp_widgets_init_foreign_enums ();
+  picman_widgets_init_foreign_enums ();
 
-  gimp_widgets_initialized = TRUE;
+  picman_widgets_initialized = TRUE;
 }

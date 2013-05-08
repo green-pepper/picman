@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,97 +20,97 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimprectangleoptions.h"
-#include "gimpcropoptions.h"
-#include "gimptooloptions-gui.h"
+#include "picmanrectangleoptions.h"
+#include "picmancropoptions.h"
+#include "picmantooloptions-gui.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
 {
-  PROP_LAYER_ONLY = GIMP_RECTANGLE_OPTIONS_PROP_LAST + 1,
+  PROP_LAYER_ONLY = PICMAN_RECTANGLE_OPTIONS_PROP_LAST + 1,
   PROP_ALLOW_GROWING
 };
 
 
-static void   gimp_crop_options_rectangle_options_iface_init (GimpRectangleOptionsInterface *iface);
+static void   picman_crop_options_rectangle_options_iface_init (PicmanRectangleOptionsInterface *iface);
 
-static void   gimp_crop_options_set_property (GObject      *object,
+static void   picman_crop_options_set_property (GObject      *object,
                                               guint         property_id,
                                               const GValue *value,
                                               GParamSpec   *pspec);
-static void   gimp_crop_options_get_property (GObject      *object,
+static void   picman_crop_options_get_property (GObject      *object,
                                               guint         property_id,
                                               GValue       *value,
                                               GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpCropOptions, gimp_crop_options,
-                         GIMP_TYPE_TOOL_OPTIONS,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_RECTANGLE_OPTIONS,
-                                                gimp_crop_options_rectangle_options_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanCropOptions, picman_crop_options,
+                         PICMAN_TYPE_TOOL_OPTIONS,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_RECTANGLE_OPTIONS,
+                                                picman_crop_options_rectangle_options_iface_init))
 
 
 static void
-gimp_crop_options_class_init (GimpCropOptionsClass *klass)
+picman_crop_options_class_init (PicmanCropOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_crop_options_set_property;
-  object_class->get_property = gimp_crop_options_get_property;
+  object_class->set_property = picman_crop_options_set_property;
+  object_class->get_property = picman_crop_options_get_property;
 
   /* The 'highlight' property is defined here because we want different
    * default values for the Crop and the Rectangle Select tools.
    */
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class,
-                                    GIMP_RECTANGLE_OPTIONS_PROP_HIGHLIGHT,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class,
+                                    PICMAN_RECTANGLE_OPTIONS_PROP_HIGHLIGHT,
                                     "highlight",
                                     N_("Dim everything outside selection"),
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_LAYER_ONLY,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_LAYER_ONLY,
                                     "layer-only",
                                     N_("Crop only currently selected layer"),
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ALLOW_GROWING,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ALLOW_GROWING,
                                     "allow-growing",
                                     N_("Allow resizing canvas by dragging cropping frame "
                                        "beyond image boundary"),
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  gimp_rectangle_options_install_properties (object_class);
+  picman_rectangle_options_install_properties (object_class);
 }
 
 static void
-gimp_crop_options_init (GimpCropOptions *options)
+picman_crop_options_init (PicmanCropOptions *options)
 {
 }
 
 static void
-gimp_crop_options_rectangle_options_iface_init (GimpRectangleOptionsInterface *iface)
+picman_crop_options_rectangle_options_iface_init (PicmanRectangleOptionsInterface *iface)
 {
 }
 
 static void
-gimp_crop_options_set_property (GObject      *object,
+picman_crop_options_set_property (GObject      *object,
                                 guint         property_id,
                                 const GValue *value,
                                 GParamSpec   *pspec)
 {
-  GimpCropOptions *options = GIMP_CROP_OPTIONS (object);
+  PicmanCropOptions *options = PICMAN_CROP_OPTIONS (object);
 
   switch (property_id)
     {
@@ -123,18 +123,18 @@ gimp_crop_options_set_property (GObject      *object,
       break;
 
     default:
-      gimp_rectangle_options_set_property (object, property_id, value, pspec);
+      picman_rectangle_options_set_property (object, property_id, value, pspec);
       break;
     }
 }
 
 static void
-gimp_crop_options_get_property (GObject    *object,
+picman_crop_options_get_property (GObject    *object,
                                 guint       property_id,
                                 GValue     *value,
                                 GParamSpec *pspec)
 {
-  GimpCropOptions *options = GIMP_CROP_OPTIONS (object);
+  PicmanCropOptions *options = PICMAN_CROP_OPTIONS (object);
 
   switch (property_id)
     {
@@ -147,33 +147,33 @@ gimp_crop_options_get_property (GObject    *object,
       break;
 
     default:
-      gimp_rectangle_options_get_property (object, property_id, value, pspec);
+      picman_rectangle_options_get_property (object, property_id, value, pspec);
       break;
     }
 }
 
 GtkWidget *
-gimp_crop_options_gui (GimpToolOptions *tool_options)
+picman_crop_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config = G_OBJECT (tool_options);
-  GtkWidget *vbox   = gimp_tool_options_gui (tool_options);
+  GtkWidget *vbox   = picman_tool_options_gui (tool_options);
   GtkWidget *vbox_rectangle;
   GtkWidget *button;
 
   /*  layer toggle  */
-  button = gimp_prop_check_button_new (config, "layer-only",
+  button = picman_prop_check_button_new (config, "layer-only",
                                        _("Current layer only"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   /*  allow growing toggle  */
-  button = gimp_prop_check_button_new (config, "allow-growing",
+  button = picman_prop_check_button_new (config, "allow-growing",
                                        _("Allow growing"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   /*  rectangle options  */
-  vbox_rectangle = gimp_rectangle_options_gui (tool_options);
+  vbox_rectangle = picman_rectangle_options_gui (tool_options);
   gtk_box_pack_start (GTK_BOX (vbox), vbox_rectangle, FALSE, FALSE, 0);
   gtk_widget_show (vbox_rectangle);
 

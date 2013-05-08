@@ -20,7 +20,7 @@
 
         (if (= use-name TRUE)
             (set! text font))
-        (set! extents (gimp-text-get-extents-fontname text
+        (set! extents (picman-text-get-extents-fontname text
                                                       font-size PIXELS
                                                       font))
         (set! width (car extents))
@@ -47,7 +47,7 @@
         (if (= use-name TRUE)
             (set! text font)
         )
-        (set! extents (gimp-text-get-extents-fontname text
+        (set! extents (picman-text-get-extents-fontname text
                                                       font-size PIXELS
                                                       font))
         (set! height (cadr extents))
@@ -64,7 +64,7 @@
   )
 
   (let* (
-        (font-data  (gimp-fonts-get-list font-filter))
+        (font-data  (picman-fonts-get-list font-filter))
         (font-list  (cadr font-data))
         (num-fonts  (car font-data))
         (label-size (/ font-size 2))
@@ -75,35 +75,35 @@
         (width      (+ maxwidth (* 2 border)))
         (height     (+ (+ (* maxheight num-fonts) (* 2 border))
                        (* labels (* label-size num-fonts))))
-        (img        (car (gimp-image-new width height (if (= colors 0)
+        (img        (car (picman-image-new width height (if (= colors 0)
                                                           GRAY RGB))))
-        (drawable   (car (gimp-layer-new img width height (if (= colors 0)
+        (drawable   (car (picman-layer-new img width height (if (= colors 0)
                                                               GRAY-IMAGE RGB-IMAGE)
                                          "Background" 100 NORMAL-MODE)))
         (count      0)
         (font       "")
         )
 
-    (gimp-context-push)
+    (picman-context-push)
 
-    (gimp-image-undo-disable img)
+    (picman-image-undo-disable img)
 
     (if (= colors 0)
         (begin
-          (gimp-context-set-background '(255 255 255))
-          (gimp-context-set-foreground '(0 0 0))))
+          (picman-context-set-background '(255 255 255))
+          (picman-context-set-foreground '(0 0 0))))
 
-    (gimp-image-insert-layer img drawable 0 0)
-    (gimp-edit-clear drawable)
+    (picman-image-insert-layer img drawable 0 0)
+    (picman-edit-clear drawable)
 
     (if (= labels TRUE)
         (begin
-          (set! drawable (car (gimp-layer-new img width height
+          (set! drawable (car (picman-layer-new img width height
                                               (if (= colors 0)
                                                   GRAYA-IMAGE RGBA-IMAGE)
                                               "Labels" 100 NORMAL-MODE)))
-          (gimp-image-insert-layer img drawable 0 -1)))
-          (gimp-edit-clear drawable)
+          (picman-image-insert-layer img drawable 0 -1)))
+          (picman-edit-clear drawable)
 
     (while (< count num-fonts)
       (set! font (car font-list))
@@ -111,7 +111,7 @@
       (if (= use-name TRUE)
           (set! text font))
 
-      (gimp-text-fontname img -1
+      (picman-text-fontname img -1
                           border
                           y
                           text
@@ -122,7 +122,7 @@
 
       (if (= labels TRUE)
           (begin
-            (gimp-floating-sel-anchor (car (gimp-text-fontname img drawable
+            (picman-floating-sel-anchor (car (picman-text-fontname img drawable
                                                                (- border
                                                                   (/ label-size 2))
                                                                (- y
@@ -139,12 +139,12 @@
       (set! count (+ count 1))
     )
 
-    (gimp-image-set-active-layer img drawable)
+    (picman-image-set-active-layer img drawable)
 
-    (gimp-image-undo-enable img)
-    (gimp-display-new img)
+    (picman-image-undo-enable img)
+    (picman-display-new img)
 
-    (gimp-context-pop)
+    (picman-context-pop)
   )
 )
 

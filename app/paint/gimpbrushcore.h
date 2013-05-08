@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_CORE_H__
-#define __GIMP_BRUSH_CORE_H__
+#ifndef __PICMAN_BRUSH_CORE_H__
+#define __PICMAN_BRUSH_CORE_H__
 
 
-#include "gimppaintcore.h"
+#include "picmanpaintcore.h"
 
 
 #define BRUSH_CORE_SUBSAMPLE        4
@@ -27,23 +27,23 @@
 #define BRUSH_CORE_JITTER_LUTSIZE   360
 
 
-#define GIMP_TYPE_BRUSH_CORE            (gimp_brush_core_get_type ())
-#define GIMP_BRUSH_CORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BRUSH_CORE, GimpBrushCore))
-#define GIMP_BRUSH_CORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BRUSH_CORE, GimpBrushCoreClass))
-#define GIMP_IS_BRUSH_CORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BRUSH_CORE))
-#define GIMP_IS_BRUSH_CORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BRUSH_CORE))
-#define GIMP_BRUSH_CORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BRUSH_CORE, GimpBrushCoreClass))
+#define PICMAN_TYPE_BRUSH_CORE            (picman_brush_core_get_type ())
+#define PICMAN_BRUSH_CORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BRUSH_CORE, PicmanBrushCore))
+#define PICMAN_BRUSH_CORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BRUSH_CORE, PicmanBrushCoreClass))
+#define PICMAN_IS_BRUSH_CORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BRUSH_CORE))
+#define PICMAN_IS_BRUSH_CORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BRUSH_CORE))
+#define PICMAN_BRUSH_CORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BRUSH_CORE, PicmanBrushCoreClass))
 
 
-typedef struct _GimpBrushCoreClass GimpBrushCoreClass;
+typedef struct _PicmanBrushCoreClass PicmanBrushCoreClass;
 
-struct _GimpBrushCore
+struct _PicmanBrushCore
 {
-  GimpPaintCore      parent_instance;
+  PicmanPaintCore      parent_instance;
 
-  GimpBrush         *main_brush;
-  GimpBrush         *brush;
-  GimpDynamics      *dynamics;
+  PicmanBrush         *main_brush;
+  PicmanBrush         *brush;
+  PicmanDynamics      *dynamics;
   gdouble            spacing;
   gdouble            scale;
   gdouble            angle;
@@ -51,17 +51,17 @@ struct _GimpBrushCore
   gdouble            aspect_ratio;
 
   /*  brush buffers  */
-  GimpTempBuf       *pressure_brush;
+  PicmanTempBuf       *pressure_brush;
 
-  GimpTempBuf       *solid_brushes[BRUSH_CORE_SOLID_SUBSAMPLE][BRUSH_CORE_SOLID_SUBSAMPLE];
-  const GimpTempBuf *last_solid_brush_mask;
+  PicmanTempBuf       *solid_brushes[BRUSH_CORE_SOLID_SUBSAMPLE][BRUSH_CORE_SOLID_SUBSAMPLE];
+  const PicmanTempBuf *last_solid_brush_mask;
   gboolean           solid_cache_invalid;
 
-  const GimpTempBuf *transform_brush;
-  const GimpTempBuf *transform_pixmap;
+  const PicmanTempBuf *transform_brush;
+  const PicmanTempBuf *transform_pixmap;
 
-  GimpTempBuf       *subsample_brushes[BRUSH_CORE_SUBSAMPLE + 1][BRUSH_CORE_SUBSAMPLE + 1];
-  const GimpTempBuf *last_subsample_brush_mask;
+  PicmanTempBuf       *subsample_brushes[BRUSH_CORE_SUBSAMPLE + 1][BRUSH_CORE_SUBSAMPLE + 1];
+  const PicmanTempBuf *last_subsample_brush_mask;
   gboolean           subsample_cache_invalid;
 
   gdouble            jitter;
@@ -71,9 +71,9 @@ struct _GimpBrushCore
   GRand             *rand;
 };
 
-struct _GimpBrushCoreClass
+struct _PicmanBrushCoreClass
 {
-  GimpPaintCoreClass  parent_class;
+  PicmanPaintCoreClass  parent_class;
 
   /*  Set for tools that don't mind if the brush changes while painting  */
   gboolean            handles_changing_brush;
@@ -84,59 +84,59 @@ struct _GimpBrushCoreClass
   /*  Set for tools that don't mind if the brush scales mid stroke  */
   gboolean            handles_dynamic_transforming_brush;
 
-  void (* set_brush)    (GimpBrushCore *core,
-                         GimpBrush     *brush);
-  void (* set_dynamics) (GimpBrushCore *core,
-                         GimpDynamics  *brush);
+  void (* set_brush)    (PicmanBrushCore *core,
+                         PicmanBrush     *brush);
+  void (* set_dynamics) (PicmanBrushCore *core,
+                         PicmanDynamics  *brush);
 };
 
 
-GType  gimp_brush_core_get_type       (void) G_GNUC_CONST;
+GType  picman_brush_core_get_type       (void) G_GNUC_CONST;
 
-void   gimp_brush_core_set_brush      (GimpBrushCore            *core,
-                                       GimpBrush                *brush);
+void   picman_brush_core_set_brush      (PicmanBrushCore            *core,
+                                       PicmanBrush                *brush);
 
-void   gimp_brush_core_set_dynamics   (GimpBrushCore            *core,
-                                       GimpDynamics             *dynamics);
+void   picman_brush_core_set_dynamics   (PicmanBrushCore            *core,
+                                       PicmanDynamics             *dynamics);
 
-void   gimp_brush_core_paste_canvas   (GimpBrushCore            *core,
-                                       GimpDrawable             *drawable,
-                                       const GimpCoords         *coords,
+void   picman_brush_core_paste_canvas   (PicmanBrushCore            *core,
+                                       PicmanDrawable             *drawable,
+                                       const PicmanCoords         *coords,
                                        gdouble                   brush_opacity,
                                        gdouble                   image_opacity,
-                                       GimpLayerModeEffects      paint_mode,
-                                       GimpBrushApplicationMode  brush_hardness,
+                                       PicmanLayerModeEffects      paint_mode,
+                                       PicmanBrushApplicationMode  brush_hardness,
                                        gdouble                   dynamic_hardness,
-                                       GimpPaintApplicationMode  mode);
-void   gimp_brush_core_replace_canvas (GimpBrushCore            *core,
-                                       GimpDrawable             *drawable,
-                                       const GimpCoords         *coords,
+                                       PicmanPaintApplicationMode  mode);
+void   picman_brush_core_replace_canvas (PicmanBrushCore            *core,
+                                       PicmanDrawable             *drawable,
+                                       const PicmanCoords         *coords,
                                        gdouble                   brush_opacity,
                                        gdouble                   image_opacity,
-                                       GimpBrushApplicationMode  brush_hardness,
+                                       PicmanBrushApplicationMode  brush_hardness,
                                        gdouble                   dynamic_hardness,
-                                       GimpPaintApplicationMode  mode);
+                                       PicmanPaintApplicationMode  mode);
 
-void   gimp_brush_core_color_area_with_pixmap
-                                      (GimpBrushCore            *core,
-                                       GimpDrawable             *drawable,
-                                       const GimpCoords         *coords,
+void   picman_brush_core_color_area_with_pixmap
+                                      (PicmanBrushCore            *core,
+                                       PicmanDrawable             *drawable,
+                                       const PicmanCoords         *coords,
                                        GeglBuffer               *area,
                                        gint                      area_x,
                                        gint                      area_y,
-                                       GimpBrushApplicationMode  mode);
+                                       PicmanBrushApplicationMode  mode);
 
-const GimpTempBuf * gimp_brush_core_get_brush_mask
-                                      (GimpBrushCore            *core,
-                                       const GimpCoords         *coords,
-                                       GimpBrushApplicationMode  brush_hardness,
+const PicmanTempBuf * picman_brush_core_get_brush_mask
+                                      (PicmanBrushCore            *core,
+                                       const PicmanCoords         *coords,
+                                       PicmanBrushApplicationMode  brush_hardness,
                                        gdouble                   dynamic_hardness);
 
-void   gimp_brush_core_eval_transform_dynamics
-                                      (GimpBrushCore            *paint_core,
-                                       GimpDrawable             *drawable,
-                                       GimpPaintOptions         *paint_options,
-                                       const GimpCoords         *coords);
+void   picman_brush_core_eval_transform_dynamics
+                                      (PicmanBrushCore            *paint_core,
+                                       PicmanDrawable             *drawable,
+                                       PicmanPaintOptions         *paint_options,
+                                       const PicmanCoords         *coords);
 
 
-#endif  /*  __GIMP_BRUSH_CORE_H__  */
+#endif  /*  __PICMAN_BRUSH_CORE_H__  */

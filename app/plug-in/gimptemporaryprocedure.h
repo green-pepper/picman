@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptemporaryprocedure.h
+ * picmantemporaryprocedure.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,39 +17,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEMPORARY_PROCEDURE_H__
-#define __GIMP_TEMPORARY_PROCEDURE_H__
+#ifndef __PICMAN_TEMPORARY_PROCEDURE_H__
+#define __PICMAN_TEMPORARY_PROCEDURE_H__
 
 
-#include "gimppluginprocedure.h"
+#include "picmanpluginprocedure.h"
 
 
-#define GIMP_TYPE_TEMPORARY_PROCEDURE            (gimp_temporary_procedure_get_type ())
-#define GIMP_TEMPORARY_PROCEDURE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TEMPORARY_PROCEDURE, GimpTemporaryProcedure))
-#define GIMP_TEMPORARY_PROCEDURE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TEMPORARY_PROCEDURE, GimpTemporaryProcedureClass))
-#define GIMP_IS_TEMPORARY_PROCEDURE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TEMPORARY_PROCEDURE))
-#define GIMP_IS_TEMPORARY_PROCEDURE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TEMPORARY_PROCEDURE))
-#define GIMP_TEMPORARY_PROCEDURE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TEMPORARY_PROCEDURE, GimpTemporaryProcedureClass))
+#define PICMAN_TYPE_TEMPORARY_PROCEDURE            (picman_temporary_procedure_get_type ())
+#define PICMAN_TEMPORARY_PROCEDURE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TEMPORARY_PROCEDURE, PicmanTemporaryProcedure))
+#define PICMAN_TEMPORARY_PROCEDURE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TEMPORARY_PROCEDURE, PicmanTemporaryProcedureClass))
+#define PICMAN_IS_TEMPORARY_PROCEDURE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TEMPORARY_PROCEDURE))
+#define PICMAN_IS_TEMPORARY_PROCEDURE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TEMPORARY_PROCEDURE))
+#define PICMAN_TEMPORARY_PROCEDURE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TEMPORARY_PROCEDURE, PicmanTemporaryProcedureClass))
 
 
-typedef struct _GimpTemporaryProcedureClass GimpTemporaryProcedureClass;
+typedef struct _PicmanTemporaryProcedureClass PicmanTemporaryProcedureClass;
 
-struct _GimpTemporaryProcedure
+struct _PicmanTemporaryProcedure
 {
-  GimpPlugInProcedure  parent_instance;
+  PicmanPlugInProcedure  parent_instance;
 
-  GimpPlugIn          *plug_in;
+  PicmanPlugIn          *plug_in;
 };
 
-struct _GimpTemporaryProcedureClass
+struct _PicmanTemporaryProcedureClass
 {
-  GimpPlugInProcedureClass parent_class;
+  PicmanPlugInProcedureClass parent_class;
 };
 
 
-GType           gimp_temporary_procedure_get_type (void) G_GNUC_CONST;
+GType           picman_temporary_procedure_get_type (void) G_GNUC_CONST;
 
-GimpProcedure * gimp_temporary_procedure_new      (GimpPlugIn *plug_in);
+PicmanProcedure * picman_temporary_procedure_new      (PicmanPlugIn *plug_in);
 
 
-#endif /* __GIMP_TEMPORARY_PROCEDURE_H__ */
+#endif /* __PICMAN_TEMPORARY_PROCEDURE_H__ */

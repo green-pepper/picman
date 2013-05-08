@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis, and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,19 +20,19 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "config/gimpconfig-utils.h"
+#include "config/picmanconfig-utils.h"
 
-#include "widgets/gimphistogramview.h"
+#include "widgets/picmanhistogramview.h"
 
-#include "gimphistogramoptions.h"
-#include "gimptooloptions-gui.h"
+#include "picmanhistogramoptions.h"
+#include "picmantooloptions-gui.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -42,47 +42,47 @@ enum
 };
 
 
-static void   gimp_histogram_options_set_property (GObject      *object,
+static void   picman_histogram_options_set_property (GObject      *object,
                                                    guint         property_id,
                                                    const GValue *value,
                                                    GParamSpec   *pspec);
-static void   gimp_histogram_options_get_property (GObject      *object,
+static void   picman_histogram_options_get_property (GObject      *object,
                                                    guint         property_id,
                                                    GValue       *value,
                                                    GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpHistogramOptions, gimp_histogram_options,
-               GIMP_TYPE_COLOR_OPTIONS)
+G_DEFINE_TYPE (PicmanHistogramOptions, picman_histogram_options,
+               PICMAN_TYPE_COLOR_OPTIONS)
 
 
 static void
-gimp_histogram_options_class_init (GimpHistogramOptionsClass *klass)
+picman_histogram_options_class_init (PicmanHistogramOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_histogram_options_set_property;
-  object_class->get_property = gimp_histogram_options_get_property;
+  object_class->set_property = picman_histogram_options_set_property;
+  object_class->get_property = picman_histogram_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_SCALE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_SCALE,
                                  "histogram-scale", NULL,
-                                 GIMP_TYPE_HISTOGRAM_SCALE,
-                                 GIMP_HISTOGRAM_SCALE_LINEAR,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_HISTOGRAM_SCALE,
+                                 PICMAN_HISTOGRAM_SCALE_LINEAR,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_histogram_options_init (GimpHistogramOptions *options)
+picman_histogram_options_init (PicmanHistogramOptions *options)
 {
 }
 
 static void
-gimp_histogram_options_set_property (GObject      *object,
+picman_histogram_options_set_property (GObject      *object,
                                      guint         property_id,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  GimpHistogramOptions *options = GIMP_HISTOGRAM_OPTIONS (object);
+  PicmanHistogramOptions *options = PICMAN_HISTOGRAM_OPTIONS (object);
 
   switch (property_id)
     {
@@ -97,12 +97,12 @@ gimp_histogram_options_set_property (GObject      *object,
 }
 
 static void
-gimp_histogram_options_get_property (GObject    *object,
+picman_histogram_options_get_property (GObject    *object,
                                      guint       property_id,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  GimpHistogramOptions *options = GIMP_HISTOGRAM_OPTIONS (object);
+  PicmanHistogramOptions *options = PICMAN_HISTOGRAM_OPTIONS (object);
 
   switch (property_id)
     {
@@ -117,13 +117,13 @@ gimp_histogram_options_get_property (GObject    *object,
 }
 
 GtkWidget *
-gimp_histogram_options_gui (GimpToolOptions *tool_options)
+picman_histogram_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config = G_OBJECT (tool_options);
-  GtkWidget *vbox   = gimp_tool_options_gui (tool_options);
+  GtkWidget *vbox   = picman_tool_options_gui (tool_options);
   GtkWidget *frame;
 
-  frame = gimp_prop_enum_radio_frame_new (config, "histogram-scale",
+  frame = picman_prop_enum_radio_frame_new (config, "histogram-scale",
                                           _("Histogram Scale"), 0, 0);
   gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
@@ -132,13 +132,13 @@ gimp_histogram_options_gui (GimpToolOptions *tool_options)
 }
 
 void
-gimp_histogram_options_connect_view (GimpHistogramOptions *options,
-                                     GimpHistogramView    *view)
+picman_histogram_options_connect_view (PicmanHistogramOptions *options,
+                                     PicmanHistogramView    *view)
 {
-  g_return_if_fail (GIMP_IS_HISTOGRAM_OPTIONS (options));
-  g_return_if_fail (GIMP_IS_HISTOGRAM_VIEW (view));
+  g_return_if_fail (PICMAN_IS_HISTOGRAM_OPTIONS (options));
+  g_return_if_fail (PICMAN_IS_HISTOGRAM_VIEW (view));
 
-  gimp_config_connect (G_OBJECT (options), G_OBJECT (view), "histogram-scale");
+  picman_config_connect (G_OBJECT (options), G_OBJECT (view), "histogram-scale");
 
   g_object_notify (G_OBJECT (options), "histogram-scale");
 }

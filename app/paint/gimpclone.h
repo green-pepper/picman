@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,38 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CLONE_H__
-#define __GIMP_CLONE_H__
+#ifndef __PICMAN_CLONE_H__
+#define __PICMAN_CLONE_H__
 
 
-#include "gimpsourcecore.h"
+#include "picmansourcecore.h"
 
 
-#define GIMP_TYPE_CLONE            (gimp_clone_get_type ())
-#define GIMP_CLONE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CLONE, GimpClone))
-#define GIMP_CLONE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CLONE, GimpCloneClass))
-#define GIMP_IS_CLONE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CLONE))
-#define GIMP_IS_CLONE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CLONE))
-#define GIMP_CLONE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CLONE, GimpCloneClass))
+#define PICMAN_TYPE_CLONE            (picman_clone_get_type ())
+#define PICMAN_CLONE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CLONE, PicmanClone))
+#define PICMAN_CLONE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CLONE, PicmanCloneClass))
+#define PICMAN_IS_CLONE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CLONE))
+#define PICMAN_IS_CLONE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CLONE))
+#define PICMAN_CLONE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CLONE, PicmanCloneClass))
 
 
-typedef struct _GimpCloneClass GimpCloneClass;
+typedef struct _PicmanCloneClass PicmanCloneClass;
 
-struct _GimpClone
+struct _PicmanClone
 {
-  GimpSourceCore  parent_instance;
+  PicmanSourceCore  parent_instance;
 };
 
-struct _GimpCloneClass
+struct _PicmanCloneClass
 {
-  GimpSourceCoreClass  parent_class;
+  PicmanSourceCoreClass  parent_class;
 };
 
 
-void    gimp_clone_register (Gimp                      *gimp,
-                             GimpPaintRegisterCallback  callback);
+void    picman_clone_register (Picman                      *picman,
+                             PicmanPaintRegisterCallback  callback);
 
-GType   gimp_clone_get_type (void) G_GNUC_CONST;
+GType   picman_clone_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_CLONE_H__  */
+#endif  /*  __PICMAN_CLONE_H__  */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,46 +21,46 @@
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimpcontainer.h"
-#include "gimpcontext.h"
-#include "gimpguide.h"
-#include "gimpimage.h"
-#include "gimpimage-flip.h"
-#include "gimpimage-guides.h"
-#include "gimpimage-sample-points.h"
-#include "gimpimage-undo.h"
-#include "gimpimage-undo-push.h"
-#include "gimpitem.h"
-#include "gimpprogress.h"
-#include "gimpsamplepoint.h"
+#include "picman.h"
+#include "picmancontainer.h"
+#include "picmancontext.h"
+#include "picmanguide.h"
+#include "picmanimage.h"
+#include "picmanimage-flip.h"
+#include "picmanimage-guides.h"
+#include "picmanimage-sample-points.h"
+#include "picmanimage-undo.h"
+#include "picmanimage-undo-push.h"
+#include "picmanitem.h"
+#include "picmanprogress.h"
+#include "picmansamplepoint.h"
 
 
 void
-gimp_image_flip (GimpImage           *image,
-                 GimpContext         *context,
-                 GimpOrientationType  flip_type,
-                 GimpProgress        *progress)
+picman_image_flip (PicmanImage           *image,
+                 PicmanContext         *context,
+                 PicmanOrientationType  flip_type,
+                 PicmanProgress        *progress)
 {
   GList   *list;
   gdouble  axis;
   gdouble  progress_max;
   gdouble  progress_current = 1.0;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
-  gimp_set_busy (image->gimp);
+  picman_set_busy (image->picman);
 
   switch (flip_type)
     {
-    case GIMP_ORIENTATION_HORIZONTAL:
-      axis = (gdouble) gimp_image_get_width (image) / 2.0;
+    case PICMAN_ORIENTATION_HORIZONTAL:
+      axis = (gdouble) picman_image_get_width (image) / 2.0;
       break;
 
-    case GIMP_ORIENTATION_VERTICAL:
-      axis = (gdouble) gimp_image_get_height (image) / 2.0;
+    case PICMAN_ORIENTATION_VERTICAL:
+      axis = (gdouble) picman_image_get_height (image) / 2.0;
       break;
 
     default:
@@ -68,80 +68,80 @@ gimp_image_flip (GimpImage           *image,
       return;
     }
 
-  progress_max = (gimp_container_get_n_children (gimp_image_get_channels (image)) +
-                  gimp_container_get_n_children (gimp_image_get_layers (image))   +
-                  gimp_container_get_n_children (gimp_image_get_vectors (image))  +
+  progress_max = (picman_container_get_n_children (picman_image_get_channels (image)) +
+                  picman_container_get_n_children (picman_image_get_layers (image))   +
+                  picman_container_get_n_children (picman_image_get_vectors (image))  +
                   1 /* selection */);
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_IMAGE_FLIP, NULL);
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_IMAGE_FLIP, NULL);
 
   /*  Flip all channels  */
-  for (list = gimp_image_get_channel_iter (image);
+  for (list = picman_image_get_channel_iter (image);
        list;
        list = g_list_next (list))
     {
-      GimpItem *item = list->data;
+      PicmanItem *item = list->data;
 
-      gimp_item_flip (item, context, flip_type, axis, TRUE);
+      picman_item_flip (item, context, flip_type, axis, TRUE);
 
       if (progress)
-        gimp_progress_set_value (progress, progress_current++ / progress_max);
+        picman_progress_set_value (progress, progress_current++ / progress_max);
     }
 
   /*  Flip all vectors  */
-  for (list = gimp_image_get_vectors_iter (image);
+  for (list = picman_image_get_vectors_iter (image);
        list;
        list = g_list_next (list))
     {
-      GimpItem *item = list->data;
+      PicmanItem *item = list->data;
 
-      gimp_item_flip (item, context, flip_type, axis, FALSE);
+      picman_item_flip (item, context, flip_type, axis, FALSE);
 
       if (progress)
-        gimp_progress_set_value (progress, progress_current++ / progress_max);
+        picman_progress_set_value (progress, progress_current++ / progress_max);
     }
 
   /*  Don't forget the selection mask!  */
-  gimp_item_flip (GIMP_ITEM (gimp_image_get_mask (image)), context,
+  picman_item_flip (PICMAN_ITEM (picman_image_get_mask (image)), context,
                   flip_type, axis, TRUE);
 
   if (progress)
-    gimp_progress_set_value (progress, progress_current++ / progress_max);
+    picman_progress_set_value (progress, progress_current++ / progress_max);
 
   /*  Flip all layers  */
-  for (list = gimp_image_get_layer_iter (image);
+  for (list = picman_image_get_layer_iter (image);
        list;
        list = g_list_next (list))
     {
-      GimpItem *item = list->data;
+      PicmanItem *item = list->data;
 
-      gimp_item_flip (item, context, flip_type, axis, FALSE);
+      picman_item_flip (item, context, flip_type, axis, FALSE);
 
       if (progress)
-        gimp_progress_set_value (progress, progress_current++ / progress_max);
+        picman_progress_set_value (progress, progress_current++ / progress_max);
     }
 
   /*  Flip all Guides  */
-  for (list = gimp_image_get_guides (image);
+  for (list = picman_image_get_guides (image);
        list;
        list = g_list_next (list))
     {
-      GimpGuide *guide    = list->data;
-      gint       position = gimp_guide_get_position (guide);
+      PicmanGuide *guide    = list->data;
+      gint       position = picman_guide_get_position (guide);
 
-      switch (gimp_guide_get_orientation (guide))
+      switch (picman_guide_get_orientation (guide))
         {
-        case GIMP_ORIENTATION_HORIZONTAL:
-          if (flip_type == GIMP_ORIENTATION_VERTICAL)
-            gimp_image_move_guide (image, guide,
-                                   gimp_image_get_height (image) - position,
+        case PICMAN_ORIENTATION_HORIZONTAL:
+          if (flip_type == PICMAN_ORIENTATION_VERTICAL)
+            picman_image_move_guide (image, guide,
+                                   picman_image_get_height (image) - position,
                                    TRUE);
           break;
 
-        case GIMP_ORIENTATION_VERTICAL:
-          if (flip_type == GIMP_ORIENTATION_HORIZONTAL)
-            gimp_image_move_guide (image, guide,
-                                   gimp_image_get_width (image) - position,
+        case PICMAN_ORIENTATION_VERTICAL:
+          if (flip_type == PICMAN_ORIENTATION_HORIZONTAL)
+            picman_image_move_guide (image, guide,
+                                   picman_image_get_width (image) - position,
                                    TRUE);
           break;
 
@@ -151,28 +151,28 @@ gimp_image_flip (GimpImage           *image,
     }
 
   /*  Flip all sample points  */
-  for (list = gimp_image_get_sample_points (image);
+  for (list = picman_image_get_sample_points (image);
        list;
        list = g_list_next (list))
     {
-      GimpSamplePoint *sample_point = list->data;
+      PicmanSamplePoint *sample_point = list->data;
 
-      if (flip_type == GIMP_ORIENTATION_VERTICAL)
-        gimp_image_move_sample_point (image, sample_point,
+      if (flip_type == PICMAN_ORIENTATION_VERTICAL)
+        picman_image_move_sample_point (image, sample_point,
                                       sample_point->x,
-                                      gimp_image_get_height (image) -
+                                      picman_image_get_height (image) -
                                       sample_point->y,
                                       TRUE);
 
-      if (flip_type == GIMP_ORIENTATION_HORIZONTAL)
-        gimp_image_move_sample_point (image, sample_point,
-                                      gimp_image_get_width (image) -
+      if (flip_type == PICMAN_ORIENTATION_HORIZONTAL)
+        picman_image_move_sample_point (image, sample_point,
+                                      picman_image_get_width (image) -
                                       sample_point->x,
                                       sample_point->y,
                                       TRUE);
     }
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
-  gimp_unset_busy (image->gimp);
+  picman_unset_busy (image->picman);
 }

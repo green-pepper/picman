@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,23 +23,23 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "gimpchannel.h"
-#include "gimpcontainer.h"
-#include "gimpcontext.h"
-#include "gimpgradient.h"
-#include "gimpimage.h"
-#include "gimpimage-colormap.h"
-#include "gimppalette.h"
-#include "gimppalette-import.h"
-#include "gimppalette-load.h"
-#include "gimppickable.h"
+#include "picmanchannel.h"
+#include "picmancontainer.h"
+#include "picmancontext.h"
+#include "picmangradient.h"
+#include "picmanimage.h"
+#include "picmanimage-colormap.h"
+#include "picmanpalette.h"
+#include "picmanpalette-import.h"
+#include "picmanpalette-load.h"
+#include "picmanpickable.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define MAX_IMAGE_COLORS (10000 * 2)
@@ -47,33 +47,33 @@
 
 /*  create a palette from a gradient  ****************************************/
 
-GimpPalette *
-gimp_palette_import_from_gradient (GimpGradient *gradient,
-                                   GimpContext  *context,
+PicmanPalette *
+picman_palette_import_from_gradient (PicmanGradient *gradient,
+                                   PicmanContext  *context,
                                    gboolean      reverse,
                                    const gchar  *palette_name,
                                    gint          n_colors)
 {
-  GimpPalette         *palette;
-  GimpGradientSegment *seg = NULL;
+  PicmanPalette         *palette;
+  PicmanGradientSegment *seg = NULL;
   gdouble              dx, cur_x;
-  GimpRGB              color;
+  PicmanRGB              color;
   gint                 i;
 
-  g_return_val_if_fail (GIMP_IS_GRADIENT (gradient), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_GRADIENT (gradient), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (palette_name != NULL, NULL);
   g_return_val_if_fail (n_colors > 1, NULL);
 
-  palette = GIMP_PALETTE (gimp_palette_new (context, palette_name));
+  palette = PICMAN_PALETTE (picman_palette_new (context, palette_name));
 
   dx = 1.0 / (n_colors - 1);
 
   for (i = 0, cur_x = 0; i < n_colors; i++, cur_x += dx)
     {
-      seg = gimp_gradient_get_color_at (gradient, context,
+      seg = picman_gradient_get_color_at (gradient, context,
                                         seg, cur_x, reverse, &color);
-      gimp_palette_add_entry (palette, -1, NULL, &color);
+      picman_palette_add_entry (palette, -1, NULL, &color);
     }
 
   return palette;
@@ -98,7 +98,7 @@ struct _ImgColors
 static gint count_color_entries = 0;
 
 static GHashTable *
-gimp_palette_import_store_colors (GHashTable *table,
+picman_palette_import_store_colors (GHashTable *table,
                                   guchar     *colors,
                                   guchar     *colors_real,
                                   gint        n_colors)
@@ -166,7 +166,7 @@ gimp_palette_import_store_colors (GHashTable *table,
 }
 
 static void
-gimp_palette_import_create_list (gpointer key,
+picman_palette_import_create_list (gpointer key,
                                  gpointer value,
                                  gpointer user_data)
 {
@@ -177,7 +177,7 @@ gimp_palette_import_create_list (gpointer key,
 }
 
 static gint
-gimp_palette_import_sort_colors (gconstpointer a,
+picman_palette_import_sort_colors (gconstpointer a,
                                  gconstpointer b)
 {
   const ImgColors *s1 = a;
@@ -192,58 +192,58 @@ gimp_palette_import_sort_colors (gconstpointer a,
 }
 
 static void
-gimp_palette_import_create_image_palette (gpointer data,
+picman_palette_import_create_image_palette (gpointer data,
                                           gpointer user_data)
 {
-  GimpPalette *palette   = user_data;
+  PicmanPalette *palette   = user_data;
   ImgColors   *color_tab = data;
   gint         n_colors;
   gchar       *lab;
-  GimpRGB      color;
+  PicmanRGB      color;
 
   n_colors = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (palette),
                                                  "import-n-colors"));
 
-  if (gimp_palette_get_n_colors (palette) >= n_colors)
+  if (picman_palette_get_n_colors (palette) >= n_colors)
     return;
 
   lab = g_strdup_printf ("%s (occurs %u)", _("Untitled"), color_tab->count);
 
   /* Adjust the colors to the mean of the the sample */
-  gimp_rgba_set_uchar
+  picman_rgba_set_uchar
     (&color,
      (guchar) color_tab->r + (color_tab->r_adj / color_tab->count),
      (guchar) color_tab->g + (color_tab->g_adj / color_tab->count),
      (guchar) color_tab->b + (color_tab->b_adj / color_tab->count),
      255);
 
-  gimp_palette_add_entry (palette, -1, lab, &color);
+  picman_palette_add_entry (palette, -1, lab, &color);
 
   g_free (lab);
 }
 
-static GimpPalette *
-gimp_palette_import_make_palette (GHashTable  *table,
+static PicmanPalette *
+picman_palette_import_make_palette (GHashTable  *table,
                                   const gchar *palette_name,
-                                  GimpContext *context,
+                                  PicmanContext *context,
                                   gint         n_colors)
 {
-  GimpPalette *palette;
+  PicmanPalette *palette;
   GSList      *list = NULL;
   GSList      *iter;
 
-  palette = GIMP_PALETTE (gimp_palette_new (context, palette_name));
+  palette = PICMAN_PALETTE (picman_palette_new (context, palette_name));
 
   if (! table)
     return palette;
 
-  g_hash_table_foreach (table, gimp_palette_import_create_list, &list);
-  list = g_slist_sort (list, gimp_palette_import_sort_colors);
+  g_hash_table_foreach (table, picman_palette_import_create_list, &list);
+  list = g_slist_sort (list, picman_palette_import_sort_colors);
 
   g_object_set_data (G_OBJECT (palette), "import-n-colors",
                      GINT_TO_POINTER (n_colors));
 
-  g_slist_foreach (list, gimp_palette_import_create_image_palette, palette);
+  g_slist_foreach (list, picman_palette_import_create_image_palette, palette);
 
   g_object_set_data (G_OBJECT (palette), "import-n-colors", NULL);
 
@@ -262,8 +262,8 @@ gimp_palette_import_make_palette (GHashTable  *table,
 }
 
 static GHashTable *
-gimp_palette_import_extract (GimpImage     *image,
-                             GimpPickable  *pickable,
+picman_palette_import_extract (PicmanImage     *image,
+                             PicmanPickable  *pickable,
                              gint           pickable_off_x,
                              gint           pickable_off_y,
                              gboolean       selection_only,
@@ -283,7 +283,7 @@ gimp_palette_import_extract (GimpImage     *image,
   gint                bpp;
   gint                mask_bpp = 0;
 
-  buffer = gimp_pickable_get_buffer (pickable);
+  buffer = picman_pickable_get_buffer (pickable);
   format = babl_format ("R'G'B'A u8");
 
   iter = gegl_buffer_iterator_new (buffer, &rect, 0, format,
@@ -291,14 +291,14 @@ gimp_palette_import_extract (GimpImage     *image,
   bpp = babl_format_get_bytes_per_pixel (format);
 
   if (selection_only &&
-      ! gimp_channel_is_empty (gimp_image_get_mask (image)))
+      ! picman_channel_is_empty (picman_image_get_mask (image)))
     {
-      GimpDrawable *mask = GIMP_DRAWABLE (gimp_image_get_mask (image));
+      PicmanDrawable *mask = PICMAN_DRAWABLE (picman_image_get_mask (image));
 
       rect.x = x + pickable_off_x;
       rect.y = y + pickable_off_y;
 
-      buffer = gimp_drawable_get_buffer (mask);
+      buffer = picman_drawable_get_buffer (mask);
       format = babl_format ("Y u8");
 
       gegl_buffer_iterator_add (iter, buffer, &rect, 0, format,
@@ -330,7 +330,7 @@ gimp_palette_import_extract (GimpImage     *image,
               rgba[1] = (rgba[1] / threshold) * threshold;
               rgba[2] = (rgba[2] / threshold) * threshold;
 
-              colors = gimp_palette_import_store_colors (colors,
+              colors = picman_palette_import_store_colors (colors,
                                                          rgba, rgb_real,
                                                          n_colors);
             }
@@ -345,32 +345,32 @@ gimp_palette_import_extract (GimpImage     *image,
   return colors;
 }
 
-GimpPalette *
-gimp_palette_import_from_image (GimpImage   *image,
-                                GimpContext *context,
+PicmanPalette *
+picman_palette_import_from_image (PicmanImage   *image,
+                                PicmanContext *context,
                                 const gchar *palette_name,
                                 gint         n_colors,
                                 gint         threshold,
                                 gboolean     selection_only)
 {
-  GimpProjection *projection;
+  PicmanProjection *projection;
   GHashTable     *colors;
   gint            x, y;
   gint            width, height;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (palette_name != NULL, NULL);
   g_return_val_if_fail (n_colors > 1, NULL);
   g_return_val_if_fail (threshold > 0, NULL);
 
-  projection = gimp_image_get_projection (image);
+  projection = picman_image_get_projection (image);
 
-  gimp_pickable_flush (GIMP_PICKABLE (projection));
+  picman_pickable_flush (PICMAN_PICKABLE (projection));
 
   if (selection_only)
     {
-      gimp_channel_bounds (gimp_image_get_mask (image),
+      picman_channel_bounds (picman_image_get_mask (image),
                            &x, &y, &width, &height);
 
       width  -= x;
@@ -380,44 +380,44 @@ gimp_palette_import_from_image (GimpImage   *image,
     {
       x      = 0;
       y      = 0;
-      width  = gimp_image_get_width  (image);
-      height = gimp_image_get_height (image);
+      width  = picman_image_get_width  (image);
+      height = picman_image_get_height (image);
     }
 
-  colors = gimp_palette_import_extract (image,
-                                        GIMP_PICKABLE (projection),
+  colors = picman_palette_import_extract (image,
+                                        PICMAN_PICKABLE (projection),
                                         0, 0,
                                         selection_only,
                                         x, y, width, height,
                                         n_colors, threshold);
 
-  return gimp_palette_import_make_palette (colors, palette_name, context,
+  return picman_palette_import_make_palette (colors, palette_name, context,
                                            n_colors);
 }
 
 
 /*  create a palette from an indexed image  **********************************/
 
-GimpPalette *
-gimp_palette_import_from_indexed_image (GimpImage   *image,
-                                        GimpContext *context,
+PicmanPalette *
+picman_palette_import_from_indexed_image (PicmanImage   *image,
+                                        PicmanContext *context,
                                         const gchar *palette_name)
 {
-  GimpPalette  *palette;
+  PicmanPalette  *palette;
   const guchar *colormap;
   guint         n_colors;
   gint          count;
-  GimpRGB       color;
+  PicmanRGB       color;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
-  g_return_val_if_fail (gimp_image_get_base_type (image) == GIMP_INDEXED, NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (picman_image_get_base_type (image) == PICMAN_INDEXED, NULL);
   g_return_val_if_fail (palette_name != NULL, NULL);
 
-  palette = GIMP_PALETTE (gimp_palette_new (context, palette_name));
+  palette = PICMAN_PALETTE (picman_palette_new (context, palette_name));
 
-  colormap = gimp_image_get_colormap (image);
-  n_colors = gimp_image_get_colormap_size (image);
+  colormap = picman_image_get_colormap (image);
+  n_colors = picman_image_get_colormap_size (image);
 
   for (count = 0; count < n_colors; ++count)
     {
@@ -425,13 +425,13 @@ gimp_palette_import_from_indexed_image (GimpImage   *image,
 
       g_snprintf (name, sizeof (name), _("Index %d"), count);
 
-      gimp_rgba_set_uchar (&color,
+      picman_rgba_set_uchar (&color,
                            colormap[count * 3 + 0],
                            colormap[count * 3 + 1],
                            colormap[count * 3 + 2],
                            255);
 
-      gimp_palette_add_entry (palette, -1, name, &color);
+      picman_palette_add_entry (palette, -1, name, &color);
     }
 
   return palette;
@@ -440,9 +440,9 @@ gimp_palette_import_from_indexed_image (GimpImage   *image,
 
 /*  create a palette from a drawable  ****************************************/
 
-GimpPalette *
-gimp_palette_import_from_drawable (GimpDrawable *drawable,
-                                   GimpContext  *context,
+PicmanPalette *
+picman_palette_import_from_drawable (PicmanDrawable *drawable,
+                                   PicmanContext  *context,
                                    const gchar  *palette_name,
                                    gint          n_colors,
                                    gint          threshold,
@@ -453,16 +453,16 @@ gimp_palette_import_from_drawable (GimpDrawable *drawable,
   gint        width, height;
   gint        off_x, off_y;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
   g_return_val_if_fail (palette_name != NULL, NULL);
   g_return_val_if_fail (n_colors > 1, NULL);
   g_return_val_if_fail (threshold > 0, NULL);
 
   if (selection_only)
     {
-      if (! gimp_item_mask_intersect (GIMP_ITEM (drawable),
+      if (! picman_item_mask_intersect (PICMAN_ITEM (drawable),
                                       &x, &y, &width, &height))
         return NULL;
     }
@@ -470,79 +470,79 @@ gimp_palette_import_from_drawable (GimpDrawable *drawable,
     {
       x      = 0;
       y      = 0;
-      width  = gimp_item_get_width  (GIMP_ITEM (drawable));
-      height = gimp_item_get_height (GIMP_ITEM (drawable));
+      width  = picman_item_get_width  (PICMAN_ITEM (drawable));
+      height = picman_item_get_height (PICMAN_ITEM (drawable));
     }
 
-  gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+  picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
 
   colors =
-    gimp_palette_import_extract (gimp_item_get_image (GIMP_ITEM (drawable)),
-                                 GIMP_PICKABLE (drawable),
+    picman_palette_import_extract (picman_item_get_image (PICMAN_ITEM (drawable)),
+                                 PICMAN_PICKABLE (drawable),
                                  off_x, off_y,
                                  selection_only,
                                  x, y, width, height,
                                  n_colors, threshold);
 
-  return gimp_palette_import_make_palette (colors, palette_name, context,
+  return picman_palette_import_make_palette (colors, palette_name, context,
                                            n_colors);
 }
 
 
 /*  create a palette from a file  **********************************/
 
-GimpPalette *
-gimp_palette_import_from_file (GimpContext  *context,
+PicmanPalette *
+picman_palette_import_from_file (PicmanContext  *context,
                                const gchar  *filename,
                                const gchar  *palette_name,
                                GError      **error)
 {
   GList *palette_list = NULL;
 
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (filename != NULL, NULL);
   g_return_val_if_fail (palette_name != NULL, NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  switch (gimp_palette_load_detect_format (filename))
+  switch (picman_palette_load_detect_format (filename))
     {
-    case GIMP_PALETTE_FILE_FORMAT_GPL:
-      palette_list = gimp_palette_load (context, filename, error);
+    case PICMAN_PALETTE_FILE_FORMAT_GPL:
+      palette_list = picman_palette_load (context, filename, error);
       break;
 
-    case GIMP_PALETTE_FILE_FORMAT_ACT:
-      palette_list = gimp_palette_load_act (context, filename, error);
+    case PICMAN_PALETTE_FILE_FORMAT_ACT:
+      palette_list = picman_palette_load_act (context, filename, error);
       break;
 
-    case GIMP_PALETTE_FILE_FORMAT_RIFF_PAL:
-      palette_list = gimp_palette_load_riff (context, filename, error);
+    case PICMAN_PALETTE_FILE_FORMAT_RIFF_PAL:
+      palette_list = picman_palette_load_riff (context, filename, error);
       break;
 
-    case GIMP_PALETTE_FILE_FORMAT_PSP_PAL:
-      palette_list = gimp_palette_load_psp (context, filename, error);
+    case PICMAN_PALETTE_FILE_FORMAT_PSP_PAL:
+      palette_list = picman_palette_load_psp (context, filename, error);
       break;
 
-    case GIMP_PALETTE_FILE_FORMAT_ACO:
-      palette_list = gimp_palette_load_aco (context, filename, error);
+    case PICMAN_PALETTE_FILE_FORMAT_ACO:
+      palette_list = picman_palette_load_aco (context, filename, error);
       break;
 
-    case GIMP_PALETTE_FILE_FORMAT_CSS:
-      palette_list = gimp_palette_load_css (context, filename, error);
+    case PICMAN_PALETTE_FILE_FORMAT_CSS:
+      palette_list = picman_palette_load_css (context, filename, error);
       break;
 
     default:
       g_set_error (error,
-                   GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+                   PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Unknown type of palette file: %s"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       break;
     }
 
   if (palette_list)
     {
-      GimpPalette *palette = g_object_ref (palette_list->data);
+      PicmanPalette *palette = g_object_ref (palette_list->data);
 
-      gimp_object_set_name (GIMP_OBJECT (palette), palette_name);
+      picman_object_set_name (PICMAN_OBJECT (palette), palette_name);
 
       g_list_free_full (palette_list, (GDestroyNotify) g_object_unref);
 

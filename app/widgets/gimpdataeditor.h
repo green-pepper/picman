@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdataeditor.h
- * Copyright (C) 2002-2004 Michael Natterer <mitch@gimp.org>
+ * picmandataeditor.h
+ * Copyright (C) 2002-2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,32 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DATA_EDITOR_H__
-#define __GIMP_DATA_EDITOR_H__
+#ifndef __PICMAN_DATA_EDITOR_H__
+#define __PICMAN_DATA_EDITOR_H__
 
 
-#include "gimpeditor.h"
+#include "picmaneditor.h"
 
 
-#define GIMP_TYPE_DATA_EDITOR            (gimp_data_editor_get_type ())
-#define GIMP_DATA_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DATA_EDITOR, GimpDataEditor))
-#define GIMP_DATA_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DATA_EDITOR, GimpDataEditorClass))
-#define GIMP_IS_DATA_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DATA_EDITOR))
-#define GIMP_IS_DATA_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DATA_EDITOR))
-#define GIMP_DATA_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DATA_EDITOR, GimpDataEditorClass))
+#define PICMAN_TYPE_DATA_EDITOR            (picman_data_editor_get_type ())
+#define PICMAN_DATA_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DATA_EDITOR, PicmanDataEditor))
+#define PICMAN_DATA_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DATA_EDITOR, PicmanDataEditorClass))
+#define PICMAN_IS_DATA_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DATA_EDITOR))
+#define PICMAN_IS_DATA_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DATA_EDITOR))
+#define PICMAN_DATA_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DATA_EDITOR, PicmanDataEditorClass))
 
 
-typedef struct _GimpDataEditorClass GimpDataEditorClass;
+typedef struct _PicmanDataEditorClass PicmanDataEditorClass;
 
-struct _GimpDataEditor
+struct _PicmanDataEditor
 {
-  GimpEditor       parent_instance;
+  PicmanEditor       parent_instance;
 
-  GimpDataFactory *data_factory;
-  GimpContext     *context;
+  PicmanDataFactory *data_factory;
+  PicmanContext     *context;
   gboolean         edit_active;
 
-  GimpData        *data;
+  PicmanData        *data;
   gboolean         data_editable;
 
   GtkWidget       *name_entry;
@@ -54,27 +54,27 @@ struct _GimpDataEditor
   GtkWidget       *revert_button;
 };
 
-struct _GimpDataEditorClass
+struct _PicmanDataEditorClass
 {
-  GimpEditorClass  parent_class;
+  PicmanEditorClass  parent_class;
 
   /*  virtual functions  */
-  void (* set_data) (GimpDataEditor *editor,
-                     GimpData       *data);
+  void (* set_data) (PicmanDataEditor *editor,
+                     PicmanData       *data);
 
   const gchar *title;
 };
 
 
-GType       gimp_data_editor_get_type        (void) G_GNUC_CONST;
+GType       picman_data_editor_get_type        (void) G_GNUC_CONST;
 
-void        gimp_data_editor_set_data        (GimpDataEditor *editor,
-                                              GimpData       *data);
-GimpData  * gimp_data_editor_get_data        (GimpDataEditor *editor);
+void        picman_data_editor_set_data        (PicmanDataEditor *editor,
+                                              PicmanData       *data);
+PicmanData  * picman_data_editor_get_data        (PicmanDataEditor *editor);
 
-void        gimp_data_editor_set_edit_active (GimpDataEditor *editor,
+void        picman_data_editor_set_edit_active (PicmanDataEditor *editor,
                                               gboolean        edit_active);
-gboolean    gimp_data_editor_get_edit_active (GimpDataEditor *editor);
+gboolean    picman_data_editor_get_edit_active (PicmanDataEditor *editor);
 
 
-#endif  /*  __GIMP_DATA_EDITOR_H__  */
+#endif  /*  __PICMAN_DATA_EDITOR_H__  */

@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpstringcombobox.h
- * Copyright (C) 2007  Sven Neumann <sven@gimp.org>
+ * picmanstringcombobox.h
+ * Copyright (C) 2007  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,27 +19,27 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_STRING_COMBO_BOX_H__
-#define __GIMP_STRING_COMBO_BOX_H__
+#ifndef __PICMAN_STRING_COMBO_BOX_H__
+#define __PICMAN_STRING_COMBO_BOX_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_STRING_COMBO_BOX            (gimp_string_combo_box_get_type ())
-#define GIMP_STRING_COMBO_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_STRING_COMBO_BOX, GimpStringComboBox))
-#define GIMP_STRING_COMBO_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_STRING_COMBO_BOX, GimpStringComboBoxClass))
-#define GIMP_IS_STRING_COMBO_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_STRING_COMBO_BOX))
-#define GIMP_IS_STRING_COMBO_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_STRING_COMBO_BOX))
-#define GIMP_STRING_COMBO_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_STRING_COMBO_BOX, GimpStringComboBoxClass))
+#define PICMAN_TYPE_STRING_COMBO_BOX            (picman_string_combo_box_get_type ())
+#define PICMAN_STRING_COMBO_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_STRING_COMBO_BOX, PicmanStringComboBox))
+#define PICMAN_STRING_COMBO_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_STRING_COMBO_BOX, PicmanStringComboBoxClass))
+#define PICMAN_IS_STRING_COMBO_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_STRING_COMBO_BOX))
+#define PICMAN_IS_STRING_COMBO_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_STRING_COMBO_BOX))
+#define PICMAN_STRING_COMBO_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_STRING_COMBO_BOX, PicmanStringComboBoxClass))
 
 
-typedef struct _GimpStringComboBoxClass  GimpStringComboBoxClass;
+typedef struct _PicmanStringComboBoxClass  PicmanStringComboBoxClass;
 
-struct _GimpStringComboBox
+struct _PicmanStringComboBox
 {
   GtkComboBox       parent_instance;
 
@@ -47,28 +47,28 @@ struct _GimpStringComboBox
   gpointer          priv;
 };
 
-struct _GimpStringComboBoxClass
+struct _PicmanStringComboBoxClass
 {
   GtkComboBoxClass  parent_class;
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType       gimp_string_combo_box_get_type   (void) G_GNUC_CONST;
+GType       picman_string_combo_box_get_type   (void) G_GNUC_CONST;
 
-GtkWidget * gimp_string_combo_box_new        (GtkTreeModel       *model,
+GtkWidget * picman_string_combo_box_new        (GtkTreeModel       *model,
                                               gint                id_column,
                                               gint                label_column);
-gboolean    gimp_string_combo_box_set_active (GimpStringComboBox *combo_box,
+gboolean    picman_string_combo_box_set_active (PicmanStringComboBox *combo_box,
                                               const gchar        *id);
-gchar     * gimp_string_combo_box_get_active (GimpStringComboBox *combo_box);
+gchar     * picman_string_combo_box_get_active (PicmanStringComboBox *combo_box);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_STRING_COMBO_BOX_H__ */
+#endif  /* __PICMAN_STRING_COMBO_BOX_H__ */

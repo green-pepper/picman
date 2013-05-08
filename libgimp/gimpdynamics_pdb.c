@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpdynamics_pdb.c
+ * picmandynamics_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpdynamics
- * @title: gimpdynamics
+ * SECTION: picmandynamics
+ * @title: picmandynamics
  * @short_description: Operations related to paint dynamics.
  *
  * Operations related to paint dynamics.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_dynamics_refresh:
+ * picman_dynamics_refresh:
  *
  * Refresh current paint dynamics. This function always succeeds.
  *
@@ -45,28 +45,28 @@
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_dynamics_refresh (void)
+picman_dynamics_refresh (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-dynamics-refresh",
+  return_vals = picman_run_procedure ("picman-dynamics-refresh",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_dynamics_get_list:
+ * picman_dynamics_get_list:
  * @filter: An optional regular expression used to filter the list.
  * @num_dynamics: The number of available paint dynamics.
  *
@@ -78,25 +78,25 @@ gimp_dynamics_refresh (void)
  * Returns: The list of paint dynamics names. The returned value must
  * be freed with g_strfreev().
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gchar **
-gimp_dynamics_get_list (const gchar *filter,
+picman_dynamics_get_list (const gchar *filter,
                         gint        *num_dynamics)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar **dynamics_list = NULL;
   gint i;
 
-  return_vals = gimp_run_procedure ("gimp-dynamics-get-list",
+  return_vals = picman_run_procedure ("picman-dynamics-get-list",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, filter,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, filter,
+                                    PICMAN_PDB_END);
 
   *num_dynamics = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_dynamics = return_vals[1].data.d_int32;
       dynamics_list = g_new (gchar *, *num_dynamics + 1);
@@ -105,7 +105,7 @@ gimp_dynamics_get_list (const gchar *filter,
       dynamics_list[i] = NULL;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return dynamics_list;
 }

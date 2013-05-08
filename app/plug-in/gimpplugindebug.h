@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpplugindebug.h
+ * picmanplugindebug.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,27 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_DEBUG_H__
-#define __GIMP_PLUG_IN_DEBUG_H__
+#ifndef __PICMAN_PLUG_IN_DEBUG_H__
+#define __PICMAN_PLUG_IN_DEBUG_H__
 
 
 typedef enum
 {
-  GIMP_DEBUG_WRAP_QUERY = 1 << 0,
-  GIMP_DEBUG_WRAP_INIT  = 1 << 1,
-  GIMP_DEBUG_WRAP_RUN   = 1 << 2,
+  PICMAN_DEBUG_WRAP_QUERY = 1 << 0,
+  PICMAN_DEBUG_WRAP_INIT  = 1 << 1,
+  PICMAN_DEBUG_WRAP_RUN   = 1 << 2,
 
-  GIMP_DEBUG_WRAP_DEFAULT = GIMP_DEBUG_WRAP_RUN
-} GimpDebugWrapFlag;
+  PICMAN_DEBUG_WRAP_DEFAULT = PICMAN_DEBUG_WRAP_RUN
+} PicmanDebugWrapFlag;
 
 
-GimpPlugInDebug  * gimp_plug_in_debug_new  (void);
-void               gimp_plug_in_debug_free (GimpPlugInDebug    *debug);
+PicmanPlugInDebug  * picman_plug_in_debug_new  (void);
+void               picman_plug_in_debug_free (PicmanPlugInDebug    *debug);
 
-gchar           ** gimp_plug_in_debug_argv (GimpPlugInDebug    *debug,
+gchar           ** picman_plug_in_debug_argv (PicmanPlugInDebug    *debug,
                                             const gchar        *name,
-                                            GimpDebugWrapFlag   flag,
+                                            PicmanDebugWrapFlag   flag,
                                             const gchar       **args);
 
 
-#endif /* __GIMP_PLUG_IN_DEBUG_H__ */
+#endif /* __PICMAN_PLUG_IN_DEBUG_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,45 +23,45 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimpbrush.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdynamics.h"
-#include "core/gimppaintinfo.h"
-#include "core/gimpparamspecs.h"
-#include "paint/gimppaintcore-stroke.h"
-#include "paint/gimppaintcore.h"
-#include "paint/gimppaintoptions.h"
+#include "core/picmanbrush.h"
+#include "core/picmandrawable.h"
+#include "core/picmandynamics.h"
+#include "core/picmanpaintinfo.h"
+#include "core/picmanparamspecs.h"
+#include "paint/picmanpaintcore-stroke.h"
+#include "paint/picmanpaintcore.h"
+#include "paint/picmanpaintoptions.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimppdbcontext.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanpdbcontext.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static const GimpCoords default_coords = GIMP_COORDS_DEFAULT_VALUES;
+static const PicmanCoords default_coords = PICMAN_COORDS_DEFAULT_VALUES;
 
 static gboolean
-paint_tools_stroke (Gimp              *gimp,
-                    GimpContext       *context,
-                    GimpPaintOptions  *options,
-                    GimpDrawable      *drawable,
+paint_tools_stroke (Picman              *picman,
+                    PicmanContext       *context,
+                    PicmanPaintOptions  *options,
+                    PicmanDrawable      *drawable,
                     gint               n_strokes,
                     const gdouble     *strokes,
                     GError           **error,
                     const gchar       *first_property_name,
                     ...)
 {
-  GimpPaintCore *core;
-  GimpCoords    *coords;
-  GimpBrush     *brush;
+  PicmanPaintCore *core;
+  PicmanCoords    *coords;
+  PicmanBrush     *brush;
   gboolean       retval;
   gdouble        brush_size;
   gint           height, width;
@@ -70,8 +70,8 @@ paint_tools_stroke (Gimp              *gimp,
 
   n_strokes /= 2;  /* #doubles -> #points */
 
-  brush = gimp_context_get_brush (context);
-  gimp_brush_transform_size (brush, 1.0, 1.0, 0.0, &height, &width);
+  brush = picman_context_get_brush (context);
+  picman_brush_transform_size (brush, 1.0, 1.0, 0.0, &height, &width);
   brush_size = MAX (height, width);
 
   g_object_set (options,
@@ -81,17 +81,17 @@ paint_tools_stroke (Gimp              *gimp,
   /*  undefine the paint-relevant context properties and get them
    *  from the current context
    */
-  gimp_context_define_properties (GIMP_CONTEXT (options),
-                                  GIMP_CONTEXT_PAINT_PROPS_MASK,
+  picman_context_define_properties (PICMAN_CONTEXT (options),
+                                  PICMAN_CONTEXT_PAINT_PROPS_MASK,
                                   FALSE);
-  gimp_context_set_parent (GIMP_CONTEXT (options), context);
+  picman_context_set_parent (PICMAN_CONTEXT (options), context);
 
   va_start (args, first_property_name);
-  core = GIMP_PAINT_CORE (g_object_new_valist (options->paint_info->paint_type,
+  core = PICMAN_PAINT_CORE (g_object_new_valist (options->paint_info->paint_type,
                                                first_property_name, args));
   va_end (args);
 
-  coords = g_new (GimpCoords, n_strokes);
+  coords = g_new (PicmanCoords, n_strokes);
 
   for (i = 0; i < n_strokes; i++)
     {
@@ -100,7 +100,7 @@ paint_tools_stroke (Gimp              *gimp,
       coords[i].y = strokes[2 * i + 1];
     }
 
-  retval = gimp_paint_core_stroke (core, drawable, options,
+  retval = picman_paint_core_stroke (core, drawable, options,
                                    coords, n_strokes, TRUE,
                                    error);
 
@@ -112,43 +112,43 @@ paint_tools_stroke (Gimp              *gimp,
   return retval;
 }
 
-static GimpValueArray *
-airbrush_invoker (GimpProcedure         *procedure,
-                  Gimp                  *gimp,
-                  GimpContext           *context,
-                  GimpProgress          *progress,
-                  const GimpValueArray  *args,
+static PicmanValueArray *
+airbrush_invoker (PicmanProcedure         *procedure,
+                  Picman                  *picman,
+                  PicmanContext           *context,
+                  PicmanProgress          *progress,
+                  const PicmanValueArray  *args,
                   GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gdouble pressure;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  pressure = g_value_get_double (gimp_value_array_index (args, 1));
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 2));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 3));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  pressure = g_value_get_double (picman_value_array_index (args, 1));
+  num_strokes = g_value_get_int (picman_value_array_index (args, 2));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 3));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-airbrush");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-airbrush");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
           g_object_set (options,
                         "pressure", pressure,
                         NULL);
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -157,41 +157,41 @@ airbrush_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-airbrush_default_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+airbrush_default_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 1));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 2));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  num_strokes = g_value_get_int (picman_value_array_index (args, 1));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-airbrush");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-airbrush");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -200,53 +200,53 @@ airbrush_default_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-clone_invoker (GimpProcedure         *procedure,
-               Gimp                  *gimp,
-               GimpContext           *context,
-               GimpProgress          *progress,
-               const GimpValueArray  *args,
+static PicmanValueArray *
+clone_invoker (PicmanProcedure         *procedure,
+               Picman                  *picman,
+               PicmanContext           *context,
+               PicmanProgress          *progress,
+               const PicmanValueArray  *args,
                GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
-  GimpDrawable *src_drawable;
+  PicmanDrawable *drawable;
+  PicmanDrawable *src_drawable;
   gint32 clone_type;
   gdouble src_x;
   gdouble src_y;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  src_drawable = gimp_value_get_drawable (gimp_value_array_index (args, 1), gimp);
-  clone_type = g_value_get_enum (gimp_value_array_index (args, 2));
-  src_x = g_value_get_double (gimp_value_array_index (args, 3));
-  src_y = g_value_get_double (gimp_value_array_index (args, 4));
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 5));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 6));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  src_drawable = picman_value_get_drawable (picman_value_array_index (args, 1), picman);
+  clone_type = g_value_get_enum (picman_value_array_index (args, 2));
+  src_x = g_value_get_double (picman_value_array_index (args, 3));
+  src_y = g_value_get_double (picman_value_array_index (args, 4));
+  num_strokes = g_value_get_int (picman_value_array_index (args, 5));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 6));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-clone");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-clone");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
           g_object_set (options,
                         "clone-type", clone_type,
                         NULL);
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc",    options->paint_info->blurb,
                                         "src-drawable", src_drawable,
@@ -258,41 +258,41 @@ clone_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-clone_default_invoker (GimpProcedure         *procedure,
-                       Gimp                  *gimp,
-                       GimpContext           *context,
-                       GimpProgress          *progress,
-                       const GimpValueArray  *args,
+static PicmanValueArray *
+clone_default_invoker (PicmanProcedure         *procedure,
+                       Picman                  *picman,
+                       PicmanContext           *context,
+                       PicmanProgress          *progress,
+                       const PicmanValueArray  *args,
                        GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 1));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 2));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  num_strokes = g_value_get_int (picman_value_array_index (args, 1));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-clone");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-clone");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -301,50 +301,50 @@ clone_default_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-convolve_invoker (GimpProcedure         *procedure,
-                  Gimp                  *gimp,
-                  GimpContext           *context,
-                  GimpProgress          *progress,
-                  const GimpValueArray  *args,
+static PicmanValueArray *
+convolve_invoker (PicmanProcedure         *procedure,
+                  Picman                  *picman,
+                  PicmanContext           *context,
+                  PicmanProgress          *progress,
+                  const PicmanValueArray  *args,
                   GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gdouble pressure;
   gint32 convolve_type;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  pressure = g_value_get_double (gimp_value_array_index (args, 1));
-  convolve_type = g_value_get_enum (gimp_value_array_index (args, 2));
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 3));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 4));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  pressure = g_value_get_double (picman_value_array_index (args, 1));
+  convolve_type = g_value_get_enum (picman_value_array_index (args, 2));
+  num_strokes = g_value_get_int (picman_value_array_index (args, 3));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 4));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-convolve");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-convolve");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
           g_object_set (options,
                         "type", convolve_type,
                         "rate", pressure,
                         NULL);
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -353,41 +353,41 @@ convolve_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-convolve_default_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+convolve_default_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 1));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 2));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  num_strokes = g_value_get_int (picman_value_array_index (args, 1));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-convolve");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-convolve");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -396,45 +396,45 @@ convolve_default_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-dodgeburn_invoker (GimpProcedure         *procedure,
-                   Gimp                  *gimp,
-                   GimpContext           *context,
-                   GimpProgress          *progress,
-                   const GimpValueArray  *args,
+static PicmanValueArray *
+dodgeburn_invoker (PicmanProcedure         *procedure,
+                   Picman                  *picman,
+                   PicmanContext           *context,
+                   PicmanProgress          *progress,
+                   const PicmanValueArray  *args,
                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gdouble exposure;
   gint32 dodgeburn_type;
   gint32 dodgeburn_mode;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  exposure = g_value_get_double (gimp_value_array_index (args, 1));
-  dodgeburn_type = g_value_get_enum (gimp_value_array_index (args, 2));
-  dodgeburn_mode = g_value_get_enum (gimp_value_array_index (args, 3));
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 4));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 5));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  exposure = g_value_get_double (picman_value_array_index (args, 1));
+  dodgeburn_type = g_value_get_enum (picman_value_array_index (args, 2));
+  dodgeburn_mode = g_value_get_enum (picman_value_array_index (args, 3));
+  num_strokes = g_value_get_int (picman_value_array_index (args, 4));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 5));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-dodge-burn");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-dodge-burn");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
           g_object_set (options,
                         "type",     dodgeburn_type,
@@ -442,7 +442,7 @@ dodgeburn_invoker (GimpProcedure         *procedure,
                         "exposure", exposure,
                         NULL);
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -451,41 +451,41 @@ dodgeburn_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-dodgeburn_default_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+dodgeburn_default_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 1));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 2));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  num_strokes = g_value_get_int (picman_value_array_index (args, 1));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-dodge-burn");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-dodge-burn");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -494,50 +494,50 @@ dodgeburn_default_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-eraser_invoker (GimpProcedure         *procedure,
-                Gimp                  *gimp,
-                GimpContext           *context,
-                GimpProgress          *progress,
-                const GimpValueArray  *args,
+static PicmanValueArray *
+eraser_invoker (PicmanProcedure         *procedure,
+                Picman                  *picman,
+                PicmanContext           *context,
+                PicmanProgress          *progress,
+                const PicmanValueArray  *args,
                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 num_strokes;
   const gdouble *strokes;
   gint32 hardness;
   gint32 method;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 1));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 2));
-  hardness = g_value_get_enum (gimp_value_array_index (args, 3));
-  method = g_value_get_enum (gimp_value_array_index (args, 4));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  num_strokes = g_value_get_int (picman_value_array_index (args, 1));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 2));
+  hardness = g_value_get_enum (picman_value_array_index (args, 3));
+  method = g_value_get_enum (picman_value_array_index (args, 4));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-eraser");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-eraser");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
           g_object_set (options,
                         "application-mode", method,
                         "hard",             hardness,
                         NULL);
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -546,41 +546,41 @@ eraser_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-eraser_default_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+eraser_default_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 1));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 2));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  num_strokes = g_value_get_int (picman_value_array_index (args, 1));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-eraser");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-eraser");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -589,47 +589,47 @@ eraser_default_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-heal_invoker (GimpProcedure         *procedure,
-              Gimp                  *gimp,
-              GimpContext           *context,
-              GimpProgress          *progress,
-              const GimpValueArray  *args,
+static PicmanValueArray *
+heal_invoker (PicmanProcedure         *procedure,
+              Picman                  *picman,
+              PicmanContext           *context,
+              PicmanProgress          *progress,
+              const PicmanValueArray  *args,
               GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
-  GimpDrawable *src_drawable;
+  PicmanDrawable *drawable;
+  PicmanDrawable *src_drawable;
   gdouble src_x;
   gdouble src_y;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  src_drawable = gimp_value_get_drawable (gimp_value_array_index (args, 1), gimp);
-  src_x = g_value_get_double (gimp_value_array_index (args, 2));
-  src_y = g_value_get_double (gimp_value_array_index (args, 3));
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 4));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 5));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  src_drawable = picman_value_get_drawable (picman_value_array_index (args, 1), picman);
+  src_x = g_value_get_double (picman_value_array_index (args, 2));
+  src_y = g_value_get_double (picman_value_array_index (args, 3));
+  num_strokes = g_value_get_int (picman_value_array_index (args, 4));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 5));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-heal");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-heal");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc",    options->paint_info->blurb,
                                         "src-drawable", src_drawable,
@@ -641,41 +641,41 @@ heal_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-heal_default_invoker (GimpProcedure         *procedure,
-                      Gimp                  *gimp,
-                      GimpContext           *context,
-                      GimpProgress          *progress,
-                      const GimpValueArray  *args,
+static PicmanValueArray *
+heal_default_invoker (PicmanProcedure         *procedure,
+                      Picman                  *picman,
+                      PicmanContext           *context,
+                      PicmanProgress          *progress,
+                      const PicmanValueArray  *args,
                       GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 1));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 2));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  num_strokes = g_value_get_int (picman_value_array_index (args, 1));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-heal");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-heal");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -684,48 +684,48 @@ heal_default_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-paintbrush_invoker (GimpProcedure         *procedure,
-                    Gimp                  *gimp,
-                    GimpContext           *context,
-                    GimpProgress          *progress,
-                    const GimpValueArray  *args,
+static PicmanValueArray *
+paintbrush_invoker (PicmanProcedure         *procedure,
+                    Picman                  *picman,
+                    PicmanContext           *context,
+                    PicmanProgress          *progress,
+                    const PicmanValueArray  *args,
                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gdouble fade_out;
   gint32 num_strokes;
   const gdouble *strokes;
   gint32 method;
   gdouble gradient_length;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  fade_out = g_value_get_double (gimp_value_array_index (args, 1));
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 2));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 3));
-  method = g_value_get_enum (gimp_value_array_index (args, 4));
-  gradient_length = g_value_get_double (gimp_value_array_index (args, 5));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  fade_out = g_value_get_double (picman_value_array_index (args, 1));
+  num_strokes = g_value_get_int (picman_value_array_index (args, 2));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 3));
+  method = g_value_get_enum (picman_value_array_index (args, 4));
+  gradient_length = g_value_get_double (picman_value_array_index (args, 5));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-paintbrush");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-paintbrush");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          GimpDynamics *pdb_dynamics  = GIMP_DYNAMICS (gimp_dynamics_new (context, "pdb"));
-          GimpDynamics *user_dynamics = gimp_context_get_dynamics (context);
+          PicmanDynamics *pdb_dynamics  = PICMAN_DYNAMICS (picman_dynamics_new (context, "pdb"));
+          PicmanDynamics *user_dynamics = picman_context_get_dynamics (context);
 
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
           g_object_set (options,
                         "application-mode", method,
@@ -734,9 +734,9 @@ paintbrush_invoker (GimpProcedure         *procedure,
 
           if (fade_out > 0)
             {
-               GimpDynamicsOutput *opacity_output =
-                 gimp_dynamics_get_output (pdb_dynamics,
-                                           GIMP_DYNAMICS_OUTPUT_OPACITY);
+               PicmanDynamicsOutput *opacity_output =
+                 picman_dynamics_get_output (pdb_dynamics,
+                                           PICMAN_DYNAMICS_OUTPUT_OPACITY);
 
                g_object_set (opacity_output,
                              "use-fade", TRUE,
@@ -745,23 +745,23 @@ paintbrush_invoker (GimpProcedure         *procedure,
 
           if (gradient_length > 0)
             {
-              GimpDynamicsOutput *color_output =
-                gimp_dynamics_get_output (pdb_dynamics,
-                                          GIMP_DYNAMICS_OUTPUT_COLOR);
+              PicmanDynamicsOutput *color_output =
+                picman_dynamics_get_output (pdb_dynamics,
+                                          PICMAN_DYNAMICS_OUTPUT_COLOR);
 
               g_object_set (color_output,
                             "use-fade", TRUE,
                             NULL);
             }
 
-          gimp_context_set_dynamics (context, pdb_dynamics);
+          picman_context_set_dynamics (context, pdb_dynamics);
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
 
-          gimp_context_set_dynamics (context, user_dynamics);
+          picman_context_set_dynamics (context, user_dynamics);
 
           g_object_unref (pdb_dynamics);
         }
@@ -769,41 +769,41 @@ paintbrush_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-paintbrush_default_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+paintbrush_default_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 1));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 2));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  num_strokes = g_value_get_int (picman_value_array_index (args, 1));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-paintbrush");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-paintbrush");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -812,41 +812,41 @@ paintbrush_default_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-pencil_invoker (GimpProcedure         *procedure,
-                Gimp                  *gimp,
-                GimpContext           *context,
-                GimpProgress          *progress,
-                const GimpValueArray  *args,
+static PicmanValueArray *
+pencil_invoker (PicmanProcedure         *procedure,
+                Picman                  *picman,
+                PicmanContext           *context,
+                PicmanProgress          *progress,
+                const PicmanValueArray  *args,
                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 1));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 2));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  num_strokes = g_value_get_int (picman_value_array_index (args, 1));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-pencil");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-pencil");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -855,47 +855,47 @@ pencil_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-smudge_invoker (GimpProcedure         *procedure,
-                Gimp                  *gimp,
-                GimpContext           *context,
-                GimpProgress          *progress,
-                const GimpValueArray  *args,
+static PicmanValueArray *
+smudge_invoker (PicmanProcedure         *procedure,
+                Picman                  *picman,
+                PicmanContext           *context,
+                PicmanProgress          *progress,
+                const PicmanValueArray  *args,
                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gdouble pressure;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  pressure = g_value_get_double (gimp_value_array_index (args, 1));
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 2));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 3));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  pressure = g_value_get_double (picman_value_array_index (args, 1));
+  num_strokes = g_value_get_int (picman_value_array_index (args, 2));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 3));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-smudge");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-smudge");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
           g_object_set (options,
                         "rate", pressure,
                         NULL);
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -904,41 +904,41 @@ smudge_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-smudge_default_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+smudge_default_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 num_strokes;
   const gdouble *strokes;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  num_strokes = g_value_get_int (gimp_value_array_index (args, 1));
-  strokes = gimp_value_get_floatarray (gimp_value_array_index (args, 2));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  num_strokes = g_value_get_int (picman_value_array_index (args, 1));
+  strokes = picman_value_get_floatarray (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpPaintOptions *options =
-        gimp_pdb_context_get_paint_options (GIMP_PDB_CONTEXT (context),
-                                            "gimp-smudge");
+      PicmanPaintOptions *options =
+        picman_pdb_context_get_paint_options (PICMAN_PDB_CONTEXT (context),
+                                            "picman-smudge");
 
       if (options &&
-          gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+          picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
-          options = gimp_config_duplicate (GIMP_CONFIG (options));
+          options = picman_config_duplicate (PICMAN_CONFIG (options));
 
-          success = paint_tools_stroke (gimp, context, options, drawable,
+          success = paint_tools_stroke (picman, context, options, drawable,
                                         num_strokes, strokes, error,
                                         "undo-desc", options->paint_info->blurb,
                                         NULL);
@@ -947,711 +947,711 @@ smudge_default_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_paint_tools_procs (GimpPDB *pdb)
+register_paint_tools_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-airbrush
+   * picman-airbrush
    */
-  procedure = gimp_procedure_new (airbrush_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-airbrush");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-airbrush",
+  procedure = picman_procedure_new (airbrush_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-airbrush");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-airbrush",
                                      "Paint in the current brush with varying pressure. Paint application is time-dependent.",
                                      "This tool simulates the use of an airbrush. Paint pressure represents the relative intensity of the paint application. High pressure results in a thicker layer of paint while low pressure results in a thinner layer.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("pressure",
                                                     "pressure",
                                                     "The pressure of the airbrush strokes",
                                                     0, 100, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-airbrush-default
+   * picman-airbrush-default
    */
-  procedure = gimp_procedure_new (airbrush_default_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-airbrush-default");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-airbrush-default",
+  procedure = picman_procedure_new (airbrush_default_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-airbrush-default");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-airbrush-default",
                                      "Paint in the current brush with varying pressure. Paint application is time-dependent.",
-                                     "This tool simulates the use of an airbrush. It is similar to 'gimp-airbrush' except that the pressure is derived from the airbrush tools options box. It the option has not been set the default for the option will be used.",
+                                     "This tool simulates the use of an airbrush. It is similar to 'picman-airbrush' except that the pressure is derived from the airbrush tools options box. It the option has not been set the default for the option will be used.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1999",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-clone
+   * picman-clone
    */
-  procedure = gimp_procedure_new (clone_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-clone");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-clone",
+  procedure = picman_procedure_new (clone_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-clone");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-clone",
                                      "Clone from the source to the dest drawable using the current brush",
                                      "This tool clones (copies) from the source drawable starting at the specified source coordinates to the dest drawable. If the \"clone_type\" argument is set to PATTERN-CLONE, then the current pattern is used as the source and the \"src_drawable\" argument is ignored. Pattern cloning assumes a tileable pattern and mods the sum of the src coordinates and subsequent stroke offsets with the width and height of the pattern. For image cloning, if the sum of the src coordinates and subsequent stroke offsets exceeds the extents of the src drawable, then no paint is transferred. The clone tool is capable of transforming between any image types including RGB->Indexed--although converting from any type to indexed is significantly slower.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("src-drawable",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("src-drawable",
                                                             "src drawable",
                                                             "The source drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("clone-type",
                                                   "clone type",
                                                   "The type of clone",
-                                                  GIMP_TYPE_CLONE_TYPE,
-                                                  GIMP_IMAGE_CLONE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_CLONE_TYPE,
+                                                  PICMAN_IMAGE_CLONE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("src-x",
                                                     "src x",
                                                     "The x coordinate in the source image",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("src-y",
                                                     "src y",
                                                     "The y coordinate in the source image",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-clone-default
+   * picman-clone-default
    */
-  procedure = gimp_procedure_new (clone_default_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-clone-default");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-clone-default",
+  procedure = picman_procedure_new (clone_default_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-clone-default");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-clone-default",
                                      "Clone from the source to the dest drawable using the current brush",
-                                     "This tool clones (copies) from the source drawable starting at the specified source coordinates to the dest drawable. This function performs exactly the same as the 'gimp-clone' function except that the tools arguments are obtained from the clones option dialog. It this dialog has not been activated then the dialogs default values will be used.",
+                                     "This tool clones (copies) from the source drawable starting at the specified source coordinates to the dest drawable. This function performs exactly the same as the 'picman-clone' function except that the tools arguments are obtained from the clones option dialog. It this dialog has not been activated then the dialogs default values will be used.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1999",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-convolve
+   * picman-convolve
    */
-  procedure = gimp_procedure_new (convolve_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-convolve");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-convolve",
+  procedure = picman_procedure_new (convolve_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-convolve");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-convolve",
                                      "Convolve (Blur, Sharpen) using the current brush.",
                                      "This tool convolves the specified drawable with either a sharpening or blurring kernel. The pressure parameter controls the magnitude of the operation. Like the paintbrush, this tool linearly interpolates between the specified stroke coordinates.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("pressure",
                                                     "pressure",
                                                     "The pressure",
                                                     0, 100, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("convolve-type",
                                                   "convolve type",
                                                   "Convolve type",
-                                                  GIMP_TYPE_CONVOLVE_TYPE,
-                                                  GIMP_BLUR_CONVOLVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                  PICMAN_TYPE_CONVOLVE_TYPE,
+                                                  PICMAN_BLUR_CONVOLVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-convolve-default
+   * picman-convolve-default
    */
-  procedure = gimp_procedure_new (convolve_default_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-convolve-default");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-convolve-default",
+  procedure = picman_procedure_new (convolve_default_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-convolve-default");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-convolve-default",
                                      "Convolve (Blur, Sharpen) using the current brush.",
-                                     "This tool convolves the specified drawable with either a sharpening or blurring kernel. This function performs exactly the same as the 'gimp-convolve' function except that the tools arguments are obtained from the convolve option dialog. It this dialog has not been activated then the dialogs default values will be used.",
+                                     "This tool convolves the specified drawable with either a sharpening or blurring kernel. This function performs exactly the same as the 'picman-convolve' function except that the tools arguments are obtained from the convolve option dialog. It this dialog has not been activated then the dialogs default values will be used.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1999",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-dodgeburn
+   * picman-dodgeburn
    */
-  procedure = gimp_procedure_new (dodgeburn_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-dodgeburn");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-dodgeburn",
+  procedure = picman_procedure_new (dodgeburn_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-dodgeburn");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-dodgeburn",
                                      "Dodgeburn image with varying exposure.",
                                      "Dodgeburn. More details here later.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1999",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("exposure",
                                                     "exposure",
                                                     "The exposure of the strokes",
                                                     0, 100, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("dodgeburn-type",
                                                   "dodgeburn type",
                                                   "The type either dodge or burn",
-                                                  GIMP_TYPE_DODGE_BURN_TYPE,
-                                                  GIMP_DODGE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_DODGE_BURN_TYPE,
+                                                  PICMAN_DODGE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("dodgeburn-mode",
                                                   "dodgeburn mode",
                                                   "The mode",
-                                                  GIMP_TYPE_TRANSFER_MODE,
-                                                  GIMP_SHADOWS,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                  PICMAN_TYPE_TRANSFER_MODE,
+                                                  PICMAN_SHADOWS,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-dodgeburn-default
+   * picman-dodgeburn-default
    */
-  procedure = gimp_procedure_new (dodgeburn_default_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-dodgeburn-default");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-dodgeburn-default",
-                                     "Dodgeburn image with varying exposure. This is the same as the gimp_dodgeburn() function except that the exposure, type and mode are taken from the tools option dialog. If the dialog has not been activated then the defaults as used by the dialog will be used.",
+  procedure = picman_procedure_new (dodgeburn_default_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-dodgeburn-default");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-dodgeburn-default",
+                                     "Dodgeburn image with varying exposure. This is the same as the picman_dodgeburn() function except that the exposure, type and mode are taken from the tools option dialog. If the dialog has not been activated then the defaults as used by the dialog will be used.",
                                      "Dodgeburn. More details here later.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-eraser
+   * picman-eraser
    */
-  procedure = gimp_procedure_new (eraser_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-eraser");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-eraser",
+  procedure = picman_procedure_new (eraser_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-eraser");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-eraser",
                                      "Erase using the current brush.",
                                      "This tool erases using the current brush mask. If the specified drawable contains an alpha channel, then the erased pixels will become transparent. Otherwise, the eraser tool replaces the contents of the drawable with the background color. Like paintbrush, this tool linearly interpolates between the specified stroke coordinates.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("hardness",
                                                   "hardness",
                                                   "How to apply the brush",
-                                                  GIMP_TYPE_BRUSH_APPLICATION_MODE,
-                                                  GIMP_BRUSH_HARD,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_BRUSH_APPLICATION_MODE,
+                                                  PICMAN_BRUSH_HARD,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("method",
                                                   "method",
                                                   "The paint method to use",
-                                                  GIMP_TYPE_PAINT_APPLICATION_MODE,
-                                                  GIMP_PAINT_CONSTANT,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_PAINT_APPLICATION_MODE,
+                                                  PICMAN_PAINT_CONSTANT,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-eraser-default
+   * picman-eraser-default
    */
-  procedure = gimp_procedure_new (eraser_default_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-eraser-default");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-eraser-default",
+  procedure = picman_procedure_new (eraser_default_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-eraser-default");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-eraser-default",
                                      "Erase using the current brush.",
-                                     "This tool erases using the current brush mask. This function performs exactly the same as the 'gimp-eraser' function except that the tools arguments are obtained from the eraser option dialog. It this dialog has not been activated then the dialogs default values will be used.",
+                                     "This tool erases using the current brush mask. This function performs exactly the same as the 'picman-eraser' function except that the tools arguments are obtained from the eraser option dialog. It this dialog has not been activated then the dialogs default values will be used.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1999",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-heal
+   * picman-heal
    */
-  procedure = gimp_procedure_new (heal_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-heal");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-heal",
+  procedure = picman_procedure_new (heal_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-heal");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-heal",
                                      "Heal from the source to the dest drawable using the current brush",
                                      "This tool heals the source drawable starting at the specified source coordinates to the dest drawable. For image healing, if the sum of the src coordinates and subsequent stroke offsets exceeds the extents of the src drawable, then no paint is transferred. The healing tool is capable of transforming between any image types except RGB->Indexed.",
                                      "Kevin Sookocheff",
                                      "Kevin Sookocheff",
                                      "2006",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("src-drawable",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("src-drawable",
                                                             "src drawable",
                                                             "The source drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("src-x",
                                                     "src x",
                                                     "The x coordinate in the source image",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("src-y",
                                                     "src y",
                                                     "The y coordinate in the source image",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-heal-default
+   * picman-heal-default
    */
-  procedure = gimp_procedure_new (heal_default_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-heal-default");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-heal-default",
+  procedure = picman_procedure_new (heal_default_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-heal-default");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-heal-default",
                                      "Heal from the source to the dest drawable using the current brush",
-                                     "This tool heals from the source drawable starting at the specified source coordinates to the dest drawable. This function performs exactly the same as the 'gimp-heal' function except that the tools arguments are obtained from the healing option dialog. It this dialog has not been activated then the dialogs default values will be used.",
+                                     "This tool heals from the source drawable starting at the specified source coordinates to the dest drawable. This function performs exactly the same as the 'picman-heal' function except that the tools arguments are obtained from the healing option dialog. It this dialog has not been activated then the dialogs default values will be used.",
                                      "Kevin Sookocheff",
                                      "Kevin Sookocheff",
                                      "2006",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-paintbrush
+   * picman-paintbrush
    */
-  procedure = gimp_procedure_new (paintbrush_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-paintbrush");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-paintbrush",
+  procedure = picman_procedure_new (paintbrush_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-paintbrush");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-paintbrush",
                                      "Paint in the current brush with optional fade out parameter and pull colors from a gradient.",
                                      "This tool is the standard paintbrush. It draws linearly interpolated lines through the specified stroke coordinates. It operates on the specified drawable in the foreground color with the active brush. The 'fade-out' parameter is measured in pixels and allows the brush stroke to linearly fall off. The pressure is set to the maximum at the beginning of the stroke. As the distance of the stroke nears the fade-out value, the pressure will approach zero. The gradient-length is the distance to spread the gradient over. It is measured in pixels. If the gradient-length is 0, no gradient is used.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("fade-out",
                                                     "fade out",
                                                     "Fade out parameter",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("method",
                                                   "method",
                                                   "The paint method to use",
-                                                  GIMP_TYPE_PAINT_APPLICATION_MODE,
-                                                  GIMP_PAINT_CONSTANT,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                  PICMAN_TYPE_PAINT_APPLICATION_MODE,
+                                                  PICMAN_PAINT_CONSTANT,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("gradient-length",
                                                     "gradient length",
                                                     "Length of gradient to draw",
                                                     0, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-paintbrush-default
+   * picman-paintbrush-default
    */
-  procedure = gimp_procedure_new (paintbrush_default_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-paintbrush-default");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-paintbrush-default",
+  procedure = picman_procedure_new (paintbrush_default_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-paintbrush-default");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-paintbrush-default",
                                      "Paint in the current brush. The fade out parameter and pull colors from a gradient parameter are set from the paintbrush options dialog. If this dialog has not been activated then the dialog defaults will be used.",
                                      "This tool is similar to the standard paintbrush. It draws linearly interpolated lines through the specified stroke coordinates. It operates on the specified drawable in the foreground color with the active brush. The 'fade-out' parameter is measured in pixels and allows the brush stroke to linearly fall off (value obtained from the option dialog). The pressure is set to the maximum at the beginning of the stroke. As the distance of the stroke nears the fade-out value, the pressure will approach zero. The gradient-length (value obtained from the option dialog) is the distance to spread the gradient over. It is measured in pixels. If the gradient-length is 0, no gradient is used.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1999",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-pencil
+   * picman-pencil
    */
-  procedure = gimp_procedure_new (pencil_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-pencil");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-pencil",
+  procedure = picman_procedure_new (pencil_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-pencil");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-pencil",
                                      "Paint in the current brush without sub-pixel sampling.",
                                      "This tool is the standard pencil. It draws linearly interpolated lines through the specified stroke coordinates. It operates on the specified drawable in the foreground color with the active brush. The brush mask is treated as though it contains only black and white values. Any value below half is treated as black; any above half, as white.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-smudge
+   * picman-smudge
    */
-  procedure = gimp_procedure_new (smudge_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-smudge");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-smudge",
+  procedure = picman_procedure_new (smudge_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-smudge");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-smudge",
                                      "Smudge image with varying pressure.",
                                      "This tool simulates a smudge using the current brush. High pressure results in a greater smudge of paint while low pressure results in a lesser smudge.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("pressure",
                                                     "pressure",
                                                     "The pressure of the smudge strokes",
                                                     0, 100, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-smudge-default
+   * picman-smudge-default
    */
-  procedure = gimp_procedure_new (smudge_default_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-smudge-default");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-smudge-default",
+  procedure = picman_procedure_new (smudge_default_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-smudge-default");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-smudge-default",
                                      "Smudge image with varying pressure.",
-                                     "This tool simulates a smudge using the current brush. It behaves exactly the same as 'gimp-smudge' except that the pressure value is taken from the smudge tool options or the options default if the tools option dialog has not been activated.",
+                                     "This tool simulates a smudge using the current brush. It behaves exactly the same as 'picman-smudge' except that the pressure value is taken from the smudge tool options or the options default if the tools option dialog has not been activated.",
                                      "Andy Thomas",
                                      "Andy Thomas",
                                      "1999",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The affected drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-strokes",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("num-strokes",
                                                       "num strokes",
                                                       "Number of stroke control points (count each coordinate as 2 points)",
                                                       2, G_MAXINT32, 2,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_float_array ("strokes",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_float_array ("strokes",
                                                             "strokes",
                                                             "Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }",
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

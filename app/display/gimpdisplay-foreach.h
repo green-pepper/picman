@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,22 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_FOREACH_H__
-#define __GIMP_DISPLAY_FOREACH_H__
+#ifndef __PICMAN_DISPLAY_FOREACH_H__
+#define __PICMAN_DISPLAY_FOREACH_H__
 
 
-gboolean        gimp_displays_dirty            (Gimp      *gimp);
-GimpContainer * gimp_displays_get_dirty_images (Gimp      *gimp);
-void            gimp_displays_delete           (Gimp      *gimp);
-void            gimp_displays_close            (Gimp      *gimp);
-void            gimp_displays_reconnect        (Gimp      *gimp,
-                                                GimpImage *old,
-                                                GimpImage *new);
+gboolean        picman_displays_dirty            (Picman      *picman);
+PicmanContainer * picman_displays_get_dirty_images (Picman      *picman);
+void            picman_displays_delete           (Picman      *picman);
+void            picman_displays_close            (Picman      *picman);
+void            picman_displays_reconnect        (Picman      *picman,
+                                                PicmanImage *old,
+                                                PicmanImage *new);
 
-gint            gimp_displays_get_num_visible  (Gimp      *gimp);
+gint            picman_displays_get_num_visible  (Picman      *picman);
 
-void            gimp_displays_set_busy         (Gimp      *gimp);
-void            gimp_displays_unset_busy       (Gimp      *gimp);
+void            picman_displays_set_busy         (Picman      *picman);
+void            picman_displays_unset_busy       (Picman      *picman);
 
 
-#endif /*  __GIMP_DISPLAY_FOREACH_H__  */
+#endif /*  __PICMAN_DISPLAY_FOREACH_H__  */

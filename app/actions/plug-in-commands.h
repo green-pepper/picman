@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,13 +20,13 @@
 
 
 void   plug_in_run_cmd_callback       (GtkAction           *action,
-                                       GimpPlugInProcedure *proc,
+                                       PicmanPlugInProcedure *proc,
                                        gpointer             data);
 void   plug_in_repeat_cmd_callback    (GtkAction           *action,
                                        gint                 value,
                                        gpointer             data);
 void   plug_in_history_cmd_callback   (GtkAction           *action,
-                                       GimpPlugInProcedure *proc,
+                                       PicmanPlugInProcedure *proc,
                                        gpointer             data);
 
 void   plug_in_reset_all_cmd_callback (GtkAction           *action,

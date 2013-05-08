@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdockwindow.c
- * Copyright (C) 2001-2005 Michael Natterer <mitch@gimp.org>
+ * picmandockwindow.c
+ * Copyright (C) 2001-2005 Michael Natterer <mitch@picman.org>
  * Copyright (C)      2009 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
@@ -33,34 +33,34 @@
 
 #include "menus/menus.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontainer.h"
-#include "core/gimplist.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontainer.h"
+#include "core/picmanlist.h"
+#include "core/picmanimage.h"
 
-#include "gimpcontainercombobox.h"
-#include "gimpcontainerview.h"
-#include "gimpdialogfactory.h"
-#include "gimpdock.h"
-#include "gimpdockbook.h"
-#include "gimpdockcolumns.h"
-#include "gimpdockcontainer.h"
-#include "gimpdockwindow.h"
-#include "gimphelp-ids.h"
-#include "gimpmenufactory.h"
-#include "gimpsessioninfo-aux.h"
-#include "gimpsessioninfo.h"
-#include "gimpsessionmanaged.h"
-#include "gimptoolbox.h"
-#include "gimpuimanager.h"
-#include "gimpwidgets-utils.h"
-#include "gimpwindow.h"
+#include "picmancontainercombobox.h"
+#include "picmancontainerview.h"
+#include "picmandialogfactory.h"
+#include "picmandock.h"
+#include "picmandockbook.h"
+#include "picmandockcolumns.h"
+#include "picmandockcontainer.h"
+#include "picmandockwindow.h"
+#include "picmanhelp-ids.h"
+#include "picmanmenufactory.h"
+#include "picmansessioninfo-aux.h"
+#include "picmansessioninfo.h"
+#include "picmansessionmanaged.h"
+#include "picmantoolbox.h"
+#include "picmanuimanager.h"
+#include "picmanwidgets-utils.h"
+#include "picmanwindow.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define DEFAULT_DOCK_HEIGHT          300
@@ -81,17 +81,17 @@ enum
 };
 
 
-struct _GimpDockWindowPrivate
+struct _PicmanDockWindowPrivate
 {
-  GimpContext       *context;
+  PicmanContext       *context;
 
-  GimpDialogFactory *dialog_factory;
+  PicmanDialogFactory *dialog_factory;
 
   gchar             *ui_manager_name;
-  GimpUIManager     *ui_manager;
+  PicmanUIManager     *ui_manager;
   GQuark             image_flush_handler_id;
 
-  GimpDockColumns   *dock_columns;
+  PicmanDockColumns   *dock_columns;
 
   gboolean           allow_dockbook_absence;
 
@@ -99,8 +99,8 @@ struct _GimpDockWindowPrivate
 
   gint               ID;
 
-  GimpContainer     *image_container;
-  GimpContainer     *display_container;
+  PicmanContainer     *image_container;
+  PicmanContainer     *display_container;
 
   gboolean           show_image_menu;
   gboolean           auto_follow_active;
@@ -110,123 +110,123 @@ struct _GimpDockWindowPrivate
 };
 
 
-static void            gimp_dock_window_dock_container_iface_init (GimpDockContainerInterface *iface);
-static void            gimp_dock_window_session_managed_iface_init(GimpSessionManagedInterface*iface);
-static void            gimp_dock_window_constructed               (GObject                    *object);
-static void            gimp_dock_window_dispose                   (GObject                    *object);
-static void            gimp_dock_window_finalize                  (GObject                    *object);
-static void            gimp_dock_window_set_property              (GObject                    *object,
+static void            picman_dock_window_dock_container_iface_init (PicmanDockContainerInterface *iface);
+static void            picman_dock_window_session_managed_iface_init(PicmanSessionManagedInterface*iface);
+static void            picman_dock_window_constructed               (GObject                    *object);
+static void            picman_dock_window_dispose                   (GObject                    *object);
+static void            picman_dock_window_finalize                  (GObject                    *object);
+static void            picman_dock_window_set_property              (GObject                    *object,
                                                                    guint                       property_id,
                                                                    const GValue               *value,
                                                                    GParamSpec                 *pspec);
-static void            gimp_dock_window_get_property              (GObject                    *object,
+static void            picman_dock_window_get_property              (GObject                    *object,
                                                                    guint                       property_id,
                                                                    GValue                     *value,
                                                                    GParamSpec                 *pspec);
-static void            gimp_dock_window_style_set                 (GtkWidget                  *widget,
+static void            picman_dock_window_style_set                 (GtkWidget                  *widget,
                                                                    GtkStyle                   *prev_style);
-static gboolean        gimp_dock_window_delete_event              (GtkWidget                  *widget,
+static gboolean        picman_dock_window_delete_event              (GtkWidget                  *widget,
                                                                    GdkEventAny                *event);
-static GList         * gimp_dock_window_get_docks                 (GimpDockContainer          *dock_container);
-static GimpUIManager * gimp_dock_window_get_ui_manager            (GimpDockContainer          *dock_container);
-static void            gimp_dock_window_add_dock_from_session     (GimpDockContainer          *dock_container,
-                                                                   GimpDock                   *dock,
-                                                                   GimpSessionInfoDock        *dock_info);
-static GList         * gimp_dock_window_get_aux_info              (GimpSessionManaged         *session_managed);
-static void            gimp_dock_window_set_aux_info              (GimpSessionManaged         *session_managed,
+static GList         * picman_dock_window_get_docks                 (PicmanDockContainer          *dock_container);
+static PicmanUIManager * picman_dock_window_get_ui_manager            (PicmanDockContainer          *dock_container);
+static void            picman_dock_window_add_dock_from_session     (PicmanDockContainer          *dock_container,
+                                                                   PicmanDock                   *dock,
+                                                                   PicmanSessionInfoDock        *dock_info);
+static GList         * picman_dock_window_get_aux_info              (PicmanSessionManaged         *session_managed);
+static void            picman_dock_window_set_aux_info              (PicmanSessionManaged         *session_managed,
                                                                    GList                      *aux_info);
-static GimpAlignmentType
-                       gimp_dock_window_get_dock_side             (GimpDockContainer          *dock_container,
-                                                                   GimpDock                   *dock);
-static gboolean        gimp_dock_window_should_add_to_recent      (GimpDockWindow             *dock_window);
-static void            gimp_dock_window_display_changed           (GimpDockWindow             *dock_window,
-                                                                   GimpObject                 *display,
-                                                                   GimpContext                *context);
-static void            gimp_dock_window_image_changed             (GimpDockWindow             *dock_window,
-                                                                   GimpImage                  *image,
-                                                                   GimpContext                *context);
-static void            gimp_dock_window_image_flush               (GimpImage                  *image,
+static PicmanAlignmentType
+                       picman_dock_window_get_dock_side             (PicmanDockContainer          *dock_container,
+                                                                   PicmanDock                   *dock);
+static gboolean        picman_dock_window_should_add_to_recent      (PicmanDockWindow             *dock_window);
+static void            picman_dock_window_display_changed           (PicmanDockWindow             *dock_window,
+                                                                   PicmanObject                 *display,
+                                                                   PicmanContext                *context);
+static void            picman_dock_window_image_changed             (PicmanDockWindow             *dock_window,
+                                                                   PicmanImage                  *image,
+                                                                   PicmanContext                *context);
+static void            picman_dock_window_image_flush               (PicmanImage                  *image,
                                                                    gboolean                    invalidate_preview,
-                                                                   GimpDockWindow             *dock_window);
-static void            gimp_dock_window_update_title              (GimpDockWindow             *dock_window);
-static gboolean        gimp_dock_window_update_title_idle         (GimpDockWindow             *dock_window);
-static gchar         * gimp_dock_window_get_description           (GimpDockWindow             *dock_window,
+                                                                   PicmanDockWindow             *dock_window);
+static void            picman_dock_window_update_title              (PicmanDockWindow             *dock_window);
+static gboolean        picman_dock_window_update_title_idle         (PicmanDockWindow             *dock_window);
+static gchar         * picman_dock_window_get_description           (PicmanDockWindow             *dock_window,
                                                                    gboolean                    complete);
-static void            gimp_dock_window_dock_removed              (GimpDockWindow             *dock_window,
-                                                                   GimpDock                   *dock,
-                                                                   GimpDockColumns            *dock_columns);
-static void            gimp_dock_window_factory_display_changed   (GimpContext                *context,
-                                                                   GimpObject                 *display,
-                                                                   GimpDock                   *dock);
-static void            gimp_dock_window_factory_image_changed     (GimpContext                *context,
-                                                                   GimpImage                  *image,
-                                                                   GimpDock                   *dock);
-static void            gimp_dock_window_auto_clicked              (GtkWidget                  *widget,
-                                                                   GimpDock                   *dock);
+static void            picman_dock_window_dock_removed              (PicmanDockWindow             *dock_window,
+                                                                   PicmanDock                   *dock,
+                                                                   PicmanDockColumns            *dock_columns);
+static void            picman_dock_window_factory_display_changed   (PicmanContext                *context,
+                                                                   PicmanObject                 *display,
+                                                                   PicmanDock                   *dock);
+static void            picman_dock_window_factory_image_changed     (PicmanContext                *context,
+                                                                   PicmanImage                  *image,
+                                                                   PicmanDock                   *dock);
+static void            picman_dock_window_auto_clicked              (GtkWidget                  *widget,
+                                                                   PicmanDock                   *dock);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpDockWindow, gimp_dock_window, GIMP_TYPE_WINDOW,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_DOCK_CONTAINER,
-                                                gimp_dock_window_dock_container_iface_init)
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_SESSION_MANAGED,
-                                                gimp_dock_window_session_managed_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanDockWindow, picman_dock_window, PICMAN_TYPE_WINDOW,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_DOCK_CONTAINER,
+                                                picman_dock_window_dock_container_iface_init)
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_SESSION_MANAGED,
+                                                picman_dock_window_session_managed_iface_init))
 
-#define parent_class gimp_dock_window_parent_class
+#define parent_class picman_dock_window_parent_class
 
 static void
-gimp_dock_window_class_init (GimpDockWindowClass *klass)
+picman_dock_window_class_init (PicmanDockWindowClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->constructed  = gimp_dock_window_constructed;
-  object_class->dispose      = gimp_dock_window_dispose;
-  object_class->finalize     = gimp_dock_window_finalize;
-  object_class->set_property = gimp_dock_window_set_property;
-  object_class->get_property = gimp_dock_window_get_property;
+  object_class->constructed  = picman_dock_window_constructed;
+  object_class->dispose      = picman_dock_window_dispose;
+  object_class->finalize     = picman_dock_window_finalize;
+  object_class->set_property = picman_dock_window_set_property;
+  object_class->get_property = picman_dock_window_get_property;
 
-  widget_class->style_set    = gimp_dock_window_style_set;
-  widget_class->delete_event = gimp_dock_window_delete_event;
+  widget_class->style_set    = picman_dock_window_style_set;
+  widget_class->delete_event = picman_dock_window_delete_event;
 
   g_object_class_install_property (object_class, PROP_CONTEXT,
                                    g_param_spec_object ("context", NULL, NULL,
-                                                        GIMP_TYPE_CONTEXT,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_CONTEXT,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_DIALOG_FACTORY,
                                    g_param_spec_object ("dialog-factory",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_DIALOG_FACTORY,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_DIALOG_FACTORY,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_UI_MANAGER_NAME,
                                    g_param_spec_string ("ui-manager-name",
                                                         NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_IMAGE_CONTAINER,
                                    g_param_spec_object ("image-container",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_CONTAINER,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_CONTAINER,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_DISPLAY_CONTAINER,
                                    g_param_spec_object ("display-container",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_CONTAINER,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_CONTAINER,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_ALLOW_DOCKBOOK_ABSENCE,
                                    g_param_spec_boolean ("allow-dockbook-absence",
                                                          NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE |
+                                                         PICMAN_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT_ONLY));
 
 
@@ -235,33 +235,33 @@ gimp_dock_window_class_init (GimpDockWindowClass *klass)
                                                              NULL, NULL,
                                                              -1, G_MAXINT,
                                                              DEFAULT_DOCK_HEIGHT,
-                                                             GIMP_PARAM_READABLE));
+                                                             PICMAN_PARAM_READABLE));
 
   gtk_widget_class_install_style_property (widget_class,
                                            g_param_spec_enum ("menu-preview-size",
                                                               NULL, NULL,
                                                               GTK_TYPE_ICON_SIZE,
                                                               DEFAULT_MENU_VIEW_SIZE,
-                                                              GIMP_PARAM_READABLE));
+                                                              PICMAN_PARAM_READABLE));
 
-  g_type_class_add_private (klass, sizeof (GimpDockWindowPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanDockWindowPrivate));
 }
 
 static void
-gimp_dock_window_init (GimpDockWindow *dock_window)
+picman_dock_window_init (PicmanDockWindow *dock_window)
 {
   static gint  dock_window_ID = 1;
   gchar       *name           = NULL;
 
   /* Initialize members */
   dock_window->p = G_TYPE_INSTANCE_GET_PRIVATE (dock_window,
-                                                GIMP_TYPE_DOCK_WINDOW,
-                                                GimpDockWindowPrivate);
+                                                PICMAN_TYPE_DOCK_WINDOW,
+                                                PicmanDockWindowPrivate);
   dock_window->p->ID                 = dock_window_ID++;
   dock_window->p->auto_follow_active = TRUE;
 
   /* Initialize theming and style-setting stuff */
-  name = g_strdup_printf ("gimp-dock-%d", dock_window->p->ID);
+  name = g_strdup_printf ("picman-dock-%d", dock_window->p->ID);
   gtk_widget_set_name (GTK_WIDGET (dock_window), name);
   g_free (name);
 
@@ -271,58 +271,58 @@ gimp_dock_window_init (GimpDockWindow *dock_window)
 }
 
 static void
-gimp_dock_window_dock_container_iface_init (GimpDockContainerInterface *iface)
+picman_dock_window_dock_container_iface_init (PicmanDockContainerInterface *iface)
 {
-  iface->get_docks      = gimp_dock_window_get_docks;
-  iface->get_ui_manager = gimp_dock_window_get_ui_manager;
-  iface->add_dock       = gimp_dock_window_add_dock_from_session;
-  iface->get_dock_side  = gimp_dock_window_get_dock_side;
+  iface->get_docks      = picman_dock_window_get_docks;
+  iface->get_ui_manager = picman_dock_window_get_ui_manager;
+  iface->add_dock       = picman_dock_window_add_dock_from_session;
+  iface->get_dock_side  = picman_dock_window_get_dock_side;
 }
 
 static void
-gimp_dock_window_session_managed_iface_init (GimpSessionManagedInterface *iface)
+picman_dock_window_session_managed_iface_init (PicmanSessionManagedInterface *iface)
 {
-  iface->get_aux_info = gimp_dock_window_get_aux_info;
-  iface->set_aux_info = gimp_dock_window_set_aux_info;
+  iface->get_aux_info = picman_dock_window_get_aux_info;
+  iface->set_aux_info = picman_dock_window_set_aux_info;
 }
 
 static void
-gimp_dock_window_constructed (GObject *object)
+picman_dock_window_constructed (GObject *object)
 {
-  GimpDockWindow *dock_window = GIMP_DOCK_WINDOW (object);
-  GimpGuiConfig  *config;
-  GimpContext    *factory_context;
+  PicmanDockWindow *dock_window = PICMAN_DOCK_WINDOW (object);
+  PicmanGuiConfig  *config;
+  PicmanContext    *factory_context;
   GtkAccelGroup  *accel_group;
-  Gimp           *gimp;
+  Picman           *picman;
   GtkSettings    *settings;
   gint            menu_view_width  = -1;
   gint            menu_view_height = -1;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  gimp   = GIMP (dock_window->p->context->gimp);
-  config = GIMP_GUI_CONFIG (gimp->config);
+  picman   = PICMAN (dock_window->p->context->picman);
+  config = PICMAN_GUI_CONFIG (picman->config);
 
   /* Create a separate context per dock so that docks can be bound to
    * a specific image and does not necessarily have to follow the
    * active image in the user context
    */
   g_object_unref (dock_window->p->context);
-  dock_window->p->context           = gimp_context_new (gimp, "Dock Context", NULL);
-  dock_window->p->image_container   = gimp->images;
-  dock_window->p->display_container = gimp->displays;
+  dock_window->p->context           = picman_context_new (picman, "Dock Context", NULL);
+  dock_window->p->image_container   = picman->images;
+  dock_window->p->display_container = picman->displays;
 
   factory_context =
-    gimp_dialog_factory_get_context (dock_window->p->dialog_factory);
+    picman_dialog_factory_get_context (dock_window->p->dialog_factory);
 
   /* Setup hints */
-  gimp_window_set_hint (GTK_WINDOW (dock_window), config->dock_window_hint);
+  picman_window_set_hint (GTK_WINDOW (dock_window), config->dock_window_hint);
 
   /* Make image window related keyboard shortcuts work also when a
    * dock window is the focused window
    */
   dock_window->p->ui_manager =
-    gimp_menu_factory_manager_new (global_menu_factory,
+    picman_menu_factory_manager_new (global_menu_factory,
                                    dock_window->p->ui_manager_name,
                                    dock_window,
                                    config->tearoff_menus);
@@ -331,25 +331,25 @@ gimp_dock_window_constructed (GObject *object)
   gtk_window_add_accel_group (GTK_WINDOW (dock_window), accel_group);
 
   g_signal_connect_object (dock_window->p->context, "display-changed",
-                           G_CALLBACK (gimp_dock_window_display_changed),
+                           G_CALLBACK (picman_dock_window_display_changed),
                            dock_window,
                            G_CONNECT_SWAPPED);
   g_signal_connect_object (dock_window->p->context, "image-changed",
-                           G_CALLBACK (gimp_dock_window_image_changed),
+                           G_CALLBACK (picman_dock_window_image_changed),
                            dock_window,
                            G_CONNECT_SWAPPED);
 
   dock_window->p->image_flush_handler_id =
-    gimp_container_add_handler (gimp->images, "flush",
-                                G_CALLBACK (gimp_dock_window_image_flush),
+    picman_container_add_handler (picman->images, "flush",
+                                G_CALLBACK (picman_dock_window_image_flush),
                                 dock_window);
 
-  gimp_context_define_properties (dock_window->p->context,
-                                  GIMP_CONTEXT_ALL_PROPS_MASK &
-                                  ~(GIMP_CONTEXT_IMAGE_MASK |
-                                    GIMP_CONTEXT_DISPLAY_MASK),
+  picman_context_define_properties (dock_window->p->context,
+                                  PICMAN_CONTEXT_ALL_PROPS_MASK &
+                                  ~(PICMAN_CONTEXT_IMAGE_MASK |
+                                    PICMAN_CONTEXT_DISPLAY_MASK),
                                   FALSE);
-  gimp_context_set_parent (dock_window->p->context,
+  picman_context_set_parent (dock_window->p->context,
                            factory_context);
 
   /* Setup widget hierarchy */
@@ -372,13 +372,13 @@ gimp_dock_window_constructed (GObject *object)
         gtk_widget_show (hbox);
 
       /* Image combo */
-      dock_window->p->image_combo = gimp_container_combo_box_new (NULL, NULL, 16, 1);
+      dock_window->p->image_combo = picman_container_combo_box_new (NULL, NULL, 16, 1);
       gtk_box_pack_start (GTK_BOX (hbox), dock_window->p->image_combo, TRUE, TRUE, 0);
       g_signal_connect (dock_window->p->image_combo, "destroy",
                         G_CALLBACK (gtk_widget_destroyed),
                         &dock_window->p->image_combo);
-      gimp_help_set_help_data (dock_window->p->image_combo,
-                               NULL, GIMP_HELP_DOCK_IMAGE_MENU);
+      picman_help_set_help_data (dock_window->p->image_combo,
+                               NULL, PICMAN_HELP_DOCK_IMAGE_MENU);
       gtk_widget_show (dock_window->p->image_combo);
 
       /* Auto button */
@@ -389,60 +389,60 @@ gimp_dock_window_constructed (GObject *object)
       gtk_widget_show (dock_window->p->auto_button);
 
       g_signal_connect (dock_window->p->auto_button, "clicked",
-                        G_CALLBACK (gimp_dock_window_auto_clicked),
+                        G_CALLBACK (picman_dock_window_auto_clicked),
                         dock_window);
 
-      gimp_help_set_help_data (dock_window->p->auto_button,
+      picman_help_set_help_data (dock_window->p->auto_button,
                                _("When enabled the dialog automatically "
                                  "follows the image you are working on."),
-                               GIMP_HELP_DOCK_AUTO_BUTTON);
+                               PICMAN_HELP_DOCK_AUTO_BUTTON);
     }
 
-    /* GimpDockColumns */
-    /* Let the GimpDockColumns mirror the context so that a GimpDock can
+    /* PicmanDockColumns */
+    /* Let the PicmanDockColumns mirror the context so that a PicmanDock can
      * get it when inside a dock window. We do the same thing in the
-     * GimpImageWindow so docks can get the GimpContext there as well
+     * PicmanImageWindow so docks can get the PicmanContext there as well
      */
     dock_window->p->dock_columns =
-      GIMP_DOCK_COLUMNS (gimp_dock_columns_new (dock_window->p->context,
+      PICMAN_DOCK_COLUMNS (picman_dock_columns_new (dock_window->p->context,
                                                 dock_window->p->dialog_factory,
                                                 dock_window->p->ui_manager));
     gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (dock_window->p->dock_columns),
                         TRUE, TRUE, 0);
     gtk_widget_show (GTK_WIDGET (dock_window->p->dock_columns));
     g_signal_connect_object (dock_window->p->dock_columns, "dock-removed",
-                             G_CALLBACK (gimp_dock_window_dock_removed),
+                             G_CALLBACK (picman_dock_window_dock_removed),
                              dock_window,
                              G_CONNECT_SWAPPED);
 
     g_signal_connect_object (dock_window->p->dock_columns, "dock-added",
-                             G_CALLBACK (gimp_dock_window_update_title),
+                             G_CALLBACK (picman_dock_window_update_title),
                              dock_window,
                              G_CONNECT_SWAPPED);
     g_signal_connect_object (dock_window->p->dock_columns, "dock-removed",
-                             G_CALLBACK (gimp_dock_window_update_title),
+                             G_CALLBACK (picman_dock_window_update_title),
                              dock_window,
                              G_CONNECT_SWAPPED);
   }
 
   if (dock_window->p->auto_follow_active)
     {
-      if (gimp_context_get_display (factory_context))
-        gimp_context_copy_property (factory_context,
+      if (picman_context_get_display (factory_context))
+        picman_context_copy_property (factory_context,
                                     dock_window->p->context,
-                                    GIMP_CONTEXT_PROP_DISPLAY);
+                                    PICMAN_CONTEXT_PROP_DISPLAY);
       else
-        gimp_context_copy_property (factory_context,
+        picman_context_copy_property (factory_context,
                                     dock_window->p->context,
-                                    GIMP_CONTEXT_PROP_IMAGE);
+                                    PICMAN_CONTEXT_PROP_IMAGE);
     }
 
   g_signal_connect_object (factory_context, "display-changed",
-                           G_CALLBACK (gimp_dock_window_factory_display_changed),
+                           G_CALLBACK (picman_dock_window_factory_display_changed),
                            dock_window,
                            0);
   g_signal_connect_object (factory_context, "image-changed",
-                           G_CALLBACK (gimp_dock_window_factory_image_changed),
+                           G_CALLBACK (picman_dock_window_factory_image_changed),
                            dock_window,
                            0);
 
@@ -457,26 +457,26 @@ gimp_dock_window_constructed (GObject *object)
                 "context",   dock_window->p->context,
                 NULL);
 
-  gimp_help_connect (GTK_WIDGET (dock_window), gimp_standard_help_func,
-                     GIMP_HELP_DOCK, NULL);
+  picman_help_connect (GTK_WIDGET (dock_window), picman_standard_help_func,
+                     PICMAN_HELP_DOCK, NULL);
 
   if (dock_window->p->auto_follow_active)
     {
-      if (gimp_context_get_display (factory_context))
-        gimp_context_copy_property (factory_context,
+      if (picman_context_get_display (factory_context))
+        picman_context_copy_property (factory_context,
                                     dock_window->p->context,
-                                    GIMP_CONTEXT_PROP_DISPLAY);
+                                    PICMAN_CONTEXT_PROP_DISPLAY);
       else
-        gimp_context_copy_property (factory_context,
+        picman_context_copy_property (factory_context,
                                     dock_window->p->context,
-                                    GIMP_CONTEXT_PROP_IMAGE);
+                                    PICMAN_CONTEXT_PROP_IMAGE);
     }
 }
 
 static void
-gimp_dock_window_dispose (GObject *object)
+picman_dock_window_dispose (GObject *object)
 {
-  GimpDockWindow *dock_window = GIMP_DOCK_WINDOW (object);
+  PicmanDockWindow *dock_window = PICMAN_DOCK_WINDOW (object);
 
   if (dock_window->p->update_title_idle_id)
     {
@@ -486,7 +486,7 @@ gimp_dock_window_dispose (GObject *object)
 
   if (dock_window->p->image_flush_handler_id)
     {
-      gimp_container_remove_handler (dock_window->p->context->gimp->images,
+      picman_container_remove_handler (dock_window->p->context->picman->images,
                                      dock_window->p->image_flush_handler_id);
       dock_window->p->image_flush_handler_id = 0;
     }
@@ -513,9 +513,9 @@ gimp_dock_window_dispose (GObject *object)
 }
 
 static void
-gimp_dock_window_finalize (GObject *object)
+picman_dock_window_finalize (GObject *object)
 {
-  GimpDockWindow *dock_window = GIMP_DOCK_WINDOW (object);
+  PicmanDockWindow *dock_window = PICMAN_DOCK_WINDOW (object);
 
   if (dock_window->p->ui_manager_name)
     {
@@ -527,12 +527,12 @@ gimp_dock_window_finalize (GObject *object)
 }
 
 static void
-gimp_dock_window_set_property (GObject      *object,
+picman_dock_window_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpDockWindow *dock_window = GIMP_DOCK_WINDOW (object);
+  PicmanDockWindow *dock_window = PICMAN_DOCK_WINDOW (object);
 
   switch (property_id)
     {
@@ -568,12 +568,12 @@ gimp_dock_window_set_property (GObject      *object,
 }
 
 static void
-gimp_dock_window_get_property (GObject    *object,
+picman_dock_window_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpDockWindow *dock_window = GIMP_DOCK_WINDOW (object);
+  PicmanDockWindow *dock_window = PICMAN_DOCK_WINDOW (object);
 
   switch (property_id)
     {
@@ -608,10 +608,10 @@ gimp_dock_window_get_property (GObject    *object,
 }
 
 static void
-gimp_dock_window_style_set (GtkWidget *widget,
+picman_dock_window_style_set (GtkWidget *widget,
                             GtkStyle  *prev_style)
 {
-  GimpDockWindow *dock_window      = GIMP_DOCK_WINDOW (widget);
+  PicmanDockWindow *dock_window      = PICMAN_DOCK_WINDOW (widget);
   GtkStyle       *button_style;
   GtkIconSize     menu_view_size;
   GtkSettings    *settings;
@@ -646,7 +646,7 @@ gimp_dock_window_style_set (GtkWidget *widget,
   button_style = gtk_widget_get_style (widget);
   ythickness = button_style->ythickness;
 
-  gimp_container_view_set_view_size (GIMP_CONTAINER_VIEW (dock_window->p->image_combo),
+  picman_container_view_set_view_size (PICMAN_CONTAINER_VIEW (dock_window->p->image_combo),
                                      menu_view_height, 1);
 
   gtk_widget_set_size_request (dock_window->p->auto_button, -1,
@@ -658,7 +658,7 @@ gimp_dock_window_style_set (GtkWidget *widget,
 }
 
 /**
- * gimp_dock_window_delete_event:
+ * picman_dock_window_delete_event:
  * @widget:
  * @event:
  *
@@ -666,92 +666,92 @@ gimp_dock_window_style_set (GtkWidget *widget,
  * list of recently closed docks so that they are easy to bring back.
  **/
 static gboolean
-gimp_dock_window_delete_event (GtkWidget   *widget,
+picman_dock_window_delete_event (GtkWidget   *widget,
                                GdkEventAny *event)
 {
-  GimpDockWindow         *dock_window = GIMP_DOCK_WINDOW (widget);
-  GimpSessionInfo        *info        = NULL;
+  PicmanDockWindow         *dock_window = PICMAN_DOCK_WINDOW (widget);
+  PicmanSessionInfo        *info        = NULL;
   const gchar            *entry_name  = NULL;
-  GimpDialogFactoryEntry *entry       = NULL;
+  PicmanDialogFactoryEntry *entry       = NULL;
   gchar                  *name        = NULL;
 
   /* Don't add docks with just a singe dockable to the list of
    * recently closed dock since those can be brought back through the
    * normal Windows->Dockable Dialogs menu
    */
-  if (! gimp_dock_window_should_add_to_recent (dock_window))
+  if (! picman_dock_window_should_add_to_recent (dock_window))
     return FALSE;
 
-  info = gimp_session_info_new ();
+  info = picman_session_info_new ();
 
-  name = gimp_dock_window_get_description (dock_window, TRUE /*complete*/);
-  gimp_object_set_name (GIMP_OBJECT (info), name);
+  name = picman_dock_window_get_description (dock_window, TRUE /*complete*/);
+  picman_object_set_name (PICMAN_OBJECT (info), name);
   g_free (name);
 
-  gimp_session_info_get_info_with_widget (info, GTK_WIDGET (dock_window));
+  picman_session_info_get_info_with_widget (info, GTK_WIDGET (dock_window));
 
-  entry_name = (gimp_dock_window_has_toolbox (dock_window) ?
-                "gimp-toolbox-window" :
-                "gimp-dock-window");
-  entry = gimp_dialog_factory_find_entry (gimp_dialog_factory_get_singleton (), entry_name);
-  gimp_session_info_set_factory_entry (info, entry);
+  entry_name = (picman_dock_window_has_toolbox (dock_window) ?
+                "picman-toolbox-window" :
+                "picman-dock-window");
+  entry = picman_dialog_factory_find_entry (picman_dialog_factory_get_singleton (), entry_name);
+  picman_session_info_set_factory_entry (info, entry);
 
-  gimp_container_add (global_recent_docks, GIMP_OBJECT (info));
+  picman_container_add (global_recent_docks, PICMAN_OBJECT (info));
   g_object_unref (info);
 
   return FALSE;
 }
 
 static GList *
-gimp_dock_window_get_docks (GimpDockContainer *dock_container)
+picman_dock_window_get_docks (PicmanDockContainer *dock_container)
 {
-  GimpDockWindow *dock_window;
+  PicmanDockWindow *dock_window;
 
-  g_return_val_if_fail (GIMP_IS_DOCK_WINDOW (dock_container), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK_WINDOW (dock_container), NULL);
 
-  dock_window = GIMP_DOCK_WINDOW (dock_container);
+  dock_window = PICMAN_DOCK_WINDOW (dock_container);
 
-  return g_list_copy (gimp_dock_columns_get_docks (dock_window->p->dock_columns));
+  return g_list_copy (picman_dock_columns_get_docks (dock_window->p->dock_columns));
 }
 
-static GimpUIManager *
-gimp_dock_window_get_ui_manager (GimpDockContainer *dock_container)
+static PicmanUIManager *
+picman_dock_window_get_ui_manager (PicmanDockContainer *dock_container)
 {
-  GimpDockWindow *dock_window;
+  PicmanDockWindow *dock_window;
 
-  g_return_val_if_fail (GIMP_IS_DOCK_WINDOW (dock_container), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK_WINDOW (dock_container), NULL);
 
-  dock_window = GIMP_DOCK_WINDOW (dock_container);
+  dock_window = PICMAN_DOCK_WINDOW (dock_container);
 
   return dock_window->p->ui_manager;
 }
 
 static void
-gimp_dock_window_add_dock_from_session (GimpDockContainer   *dock_container,
-                                        GimpDock            *dock,
-                                        GimpSessionInfoDock *dock_info)
+picman_dock_window_add_dock_from_session (PicmanDockContainer   *dock_container,
+                                        PicmanDock            *dock,
+                                        PicmanSessionInfoDock *dock_info)
 {
-  GimpDockWindow *dock_window;
+  PicmanDockWindow *dock_window;
 
-  g_return_if_fail (GIMP_IS_DOCK_WINDOW (dock_container));
+  g_return_if_fail (PICMAN_IS_DOCK_WINDOW (dock_container));
 
-  dock_window = GIMP_DOCK_WINDOW (dock_container);
+  dock_window = PICMAN_DOCK_WINDOW (dock_container);
 
-  gimp_dock_window_add_dock (dock_window,
+  picman_dock_window_add_dock (dock_window,
                              dock,
                              -1 /*index*/);
 }
 
 static GList *
-gimp_dock_window_get_aux_info (GimpSessionManaged *session_managed)
+picman_dock_window_get_aux_info (PicmanSessionManaged *session_managed)
 {
-  GimpDockWindow     *dock_window;
+  PicmanDockWindow     *dock_window;
   GList              *aux_info = NULL;
-  GimpSessionInfoAux *aux;
+  PicmanSessionInfoAux *aux;
 
-  g_return_val_if_fail (GIMP_IS_DOCK_WINDOW (session_managed), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK_WINDOW (session_managed), NULL);
 
-  dock_window = GIMP_DOCK_WINDOW (session_managed);
+  dock_window = PICMAN_DOCK_WINDOW (session_managed);
 
   if (dock_window->p->allow_dockbook_absence)
     {
@@ -759,14 +759,14 @@ gimp_dock_window_get_aux_info (GimpSessionManaged *session_managed)
       return NULL;
     }
 
-  g_return_val_if_fail (GIMP_IS_DOCK_WINDOW (dock_window), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK_WINDOW (dock_window), NULL);
 
-  aux = gimp_session_info_aux_new (AUX_INFO_SHOW_IMAGE_MENU,
+  aux = picman_session_info_aux_new (AUX_INFO_SHOW_IMAGE_MENU,
                                    dock_window->p->show_image_menu ?
                                    "true" : "false");
   aux_info = g_list_append (aux_info, aux);
 
-  aux = gimp_session_info_aux_new (AUX_INFO_FOLLOW_ACTIVE_IMAGE,
+  aux = picman_session_info_aux_new (AUX_INFO_FOLLOW_ACTIVE_IMAGE,
                                    dock_window->p->auto_follow_active ?
                                    "true" : "false");
   aux_info = g_list_append (aux_info, aux);
@@ -775,23 +775,23 @@ gimp_dock_window_get_aux_info (GimpSessionManaged *session_managed)
 }
 
 static void
-gimp_dock_window_set_aux_info (GimpSessionManaged *session_managed,
+picman_dock_window_set_aux_info (PicmanSessionManaged *session_managed,
                                GList              *aux_info)
 {
-  GimpDockWindow *dock_window;
+  PicmanDockWindow *dock_window;
   GList          *list;
   gboolean        menu_shown;
   gboolean        auto_follow;
 
-  g_return_if_fail (GIMP_IS_DOCK_WINDOW (session_managed));
+  g_return_if_fail (PICMAN_IS_DOCK_WINDOW (session_managed));
 
-  dock_window = GIMP_DOCK_WINDOW (session_managed);
+  dock_window = PICMAN_DOCK_WINDOW (session_managed);
   menu_shown  = dock_window->p->show_image_menu;
   auto_follow = dock_window->p->auto_follow_active;
 
   for (list = aux_info; list; list = g_list_next (list))
     {
-      GimpSessionInfoAux *aux = list->data;
+      PicmanSessionInfoAux *aux = list->data;
 
       if (! strcmp (aux->name, AUX_INFO_SHOW_IMAGE_MENU))
         {
@@ -804,27 +804,27 @@ gimp_dock_window_set_aux_info (GimpSessionManaged *session_managed,
     }
 
   if (menu_shown != dock_window->p->show_image_menu)
-    gimp_dock_window_set_show_image_menu (dock_window, menu_shown);
+    picman_dock_window_set_show_image_menu (dock_window, menu_shown);
 
   if (auto_follow != dock_window->p->auto_follow_active)
-    gimp_dock_window_set_auto_follow_active (dock_window, auto_follow);
+    picman_dock_window_set_auto_follow_active (dock_window, auto_follow);
 }
 
-static GimpAlignmentType
-gimp_dock_window_get_dock_side (GimpDockContainer *dock_container,
-                                GimpDock          *dock)
+static PicmanAlignmentType
+picman_dock_window_get_dock_side (PicmanDockContainer *dock_container,
+                                PicmanDock          *dock)
 {
-  g_return_val_if_fail (GIMP_IS_DOCK_WINDOW (dock_container), -1);
-  g_return_val_if_fail (GIMP_IS_DOCK (dock), -1);
+  g_return_val_if_fail (PICMAN_IS_DOCK_WINDOW (dock_container), -1);
+  g_return_val_if_fail (PICMAN_IS_DOCK (dock), -1);
 
-  /* A GimpDockWindow don't have docks on different sides, it's just
+  /* A PicmanDockWindow don't have docks on different sides, it's just
    * one set of columns
    */
   return -1;
 }
 
 /**
- * gimp_dock_window_should_add_to_recent:
+ * picman_dock_window_should_add_to_recent:
  * @dock_window:
  *
  * Returns: %FALSE if the dock window can be recreated with one
@@ -833,12 +833,12 @@ gimp_dock_window_get_dock_side (GimpDockContainer *dock_container,
  *          then be added to the list of recently closed docks.
  **/
 static gboolean
-gimp_dock_window_should_add_to_recent (GimpDockWindow *dock_window)
+picman_dock_window_should_add_to_recent (PicmanDockWindow *dock_window)
 {
   GList    *docks;
   gboolean  should_add = TRUE;
 
-  docks = gimp_dock_container_get_docks (GIMP_DOCK_CONTAINER (dock_window));
+  docks = picman_dock_container_get_docks (PICMAN_DOCK_CONTAINER (dock_window));
 
   if (! docks)
     {
@@ -846,15 +846,15 @@ gimp_dock_window_should_add_to_recent (GimpDockWindow *dock_window)
     }
   else if (g_list_length (docks) == 1)
     {
-      GimpDock *dock = GIMP_DOCK (g_list_nth_data (docks, 0));
+      PicmanDock *dock = PICMAN_DOCK (g_list_nth_data (docks, 0));
 
-      if (GIMP_IS_TOOLBOX (dock) &&
-          gimp_dock_get_n_dockables (dock) == 0)
+      if (PICMAN_IS_TOOLBOX (dock) &&
+          picman_dock_get_n_dockables (dock) == 0)
         {
           should_add = FALSE;
         }
-      else if (! GIMP_IS_TOOLBOX (dock) &&
-               gimp_dock_get_n_dockables (dock) == 1)
+      else if (! PICMAN_IS_TOOLBOX (dock) &&
+               picman_dock_get_n_dockables (dock) == 1)
         {
           should_add = FALSE;
         }
@@ -866,34 +866,34 @@ gimp_dock_window_should_add_to_recent (GimpDockWindow *dock_window)
 }
 
 static void
-gimp_dock_window_image_flush (GimpImage      *image,
+picman_dock_window_image_flush (PicmanImage      *image,
                               gboolean        invalidate_preview,
-                              GimpDockWindow *dock_window)
+                              PicmanDockWindow *dock_window)
 {
-  if (image == gimp_context_get_image (dock_window->p->context))
+  if (image == picman_context_get_image (dock_window->p->context))
     {
-      GimpObject *display = gimp_context_get_display (dock_window->p->context);
+      PicmanObject *display = picman_context_get_display (dock_window->p->context);
 
       if (display)
-        gimp_ui_manager_update (dock_window->p->ui_manager, display);
+        picman_ui_manager_update (dock_window->p->ui_manager, display);
     }
 }
 
 static void
-gimp_dock_window_update_title (GimpDockWindow *dock_window)
+picman_dock_window_update_title (PicmanDockWindow *dock_window)
 {
   if (dock_window->p->update_title_idle_id)
     g_source_remove (dock_window->p->update_title_idle_id);
 
   dock_window->p->update_title_idle_id =
-    g_idle_add ((GSourceFunc) gimp_dock_window_update_title_idle,
+    g_idle_add ((GSourceFunc) picman_dock_window_update_title_idle,
                 dock_window);
 }
 
 static gboolean
-gimp_dock_window_update_title_idle (GimpDockWindow *dock_window)
+picman_dock_window_update_title_idle (PicmanDockWindow *dock_window)
 {
-  gchar *desc = gimp_dock_window_get_description (dock_window,
+  gchar *desc = picman_dock_window_get_description (dock_window,
                                                   FALSE /*complete*/);
   if (desc)
     {
@@ -907,25 +907,25 @@ gimp_dock_window_update_title_idle (GimpDockWindow *dock_window)
 }
 
 static gchar *
-gimp_dock_window_get_description (GimpDockWindow *dock_window,
+picman_dock_window_get_description (PicmanDockWindow *dock_window,
                                   gboolean        complete)
 {
   GString *complete_desc = g_string_new (NULL);
   GList   *docks         = NULL;
   GList   *iter          = NULL;
 
-  docks = gimp_dock_container_get_docks (GIMP_DOCK_CONTAINER (dock_window));
+  docks = picman_dock_container_get_docks (PICMAN_DOCK_CONTAINER (dock_window));
 
   for (iter = docks;
        iter;
        iter = g_list_next (iter))
     {
-      gchar *desc = gimp_dock_get_description (GIMP_DOCK (iter->data), complete);
+      gchar *desc = picman_dock_get_description (PICMAN_DOCK (iter->data), complete);
       g_string_append (complete_desc, desc);
       g_free (desc);
 
       if (g_list_next (iter))
-        g_string_append (complete_desc, GIMP_DOCK_COLUMN_SEPARATOR);
+        g_string_append (complete_desc, PICMAN_DOCK_COLUMN_SEPARATOR);
     }
 
   g_list_free (docks);
@@ -934,96 +934,96 @@ gimp_dock_window_get_description (GimpDockWindow *dock_window,
 }
 
 static void
-gimp_dock_window_dock_removed (GimpDockWindow  *dock_window,
-                               GimpDock        *dock,
-                               GimpDockColumns *dock_columns)
+picman_dock_window_dock_removed (PicmanDockWindow  *dock_window,
+                               PicmanDock        *dock,
+                               PicmanDockColumns *dock_columns)
 {
-  g_return_if_fail (GIMP_IS_DOCK (dock));
+  g_return_if_fail (PICMAN_IS_DOCK (dock));
 
-  if (gimp_dock_columns_get_docks (dock_columns) == NULL &&
+  if (picman_dock_columns_get_docks (dock_columns) == NULL &&
       ! dock_window->p->allow_dockbook_absence)
     gtk_widget_destroy (GTK_WIDGET (dock_window));
 }
 
 static void
-gimp_dock_window_factory_display_changed (GimpContext *context,
-                                          GimpObject  *display,
-                                          GimpDock    *dock)
+picman_dock_window_factory_display_changed (PicmanContext *context,
+                                          PicmanObject  *display,
+                                          PicmanDock    *dock)
 {
-  GimpDockWindow *dock_window = GIMP_DOCK_WINDOW (dock);
+  PicmanDockWindow *dock_window = PICMAN_DOCK_WINDOW (dock);
 
   if (display && dock_window->p->auto_follow_active)
-    gimp_context_set_display (dock_window->p->context, display);
+    picman_context_set_display (dock_window->p->context, display);
 }
 
 static void
-gimp_dock_window_factory_image_changed (GimpContext *context,
-                                        GimpImage   *image,
-                                        GimpDock    *dock)
+picman_dock_window_factory_image_changed (PicmanContext *context,
+                                        PicmanImage   *image,
+                                        PicmanDock    *dock)
 {
-  GimpDockWindow *dock_window = GIMP_DOCK_WINDOW (dock);
+  PicmanDockWindow *dock_window = PICMAN_DOCK_WINDOW (dock);
 
   /*  won't do anything if we already set the display above  */
   if (image && dock_window->p->auto_follow_active)
-    gimp_context_set_image (dock_window->p->context, image);
+    picman_context_set_image (dock_window->p->context, image);
 }
 
 static void
-gimp_dock_window_display_changed (GimpDockWindow *dock_window,
-                                  GimpObject     *display,
-                                  GimpContext    *context)
+picman_dock_window_display_changed (PicmanDockWindow *dock_window,
+                                  PicmanObject     *display,
+                                  PicmanContext    *context)
 {
   /*  make sure auto-follow-active works both ways  */
   if (display && dock_window->p->auto_follow_active)
     {
-      GimpContext *factory_context =
-        gimp_dialog_factory_get_context (dock_window->p->dialog_factory);
+      PicmanContext *factory_context =
+        picman_dialog_factory_get_context (dock_window->p->dialog_factory);
 
-      gimp_context_set_display (factory_context, display);
+      picman_context_set_display (factory_context, display);
     }
 
-  gimp_ui_manager_update (dock_window->p->ui_manager,
+  picman_ui_manager_update (dock_window->p->ui_manager,
                           display);
 }
 
 static void
-gimp_dock_window_image_changed (GimpDockWindow *dock_window,
-                                GimpImage      *image,
-                                GimpContext    *context)
+picman_dock_window_image_changed (PicmanDockWindow *dock_window,
+                                PicmanImage      *image,
+                                PicmanContext    *context)
 {
-  GimpContainer *image_container   = dock_window->p->image_container;
-  GimpContainer *display_container = dock_window->p->display_container;
+  PicmanContainer *image_container   = dock_window->p->image_container;
+  PicmanContainer *display_container = dock_window->p->display_container;
 
   /*  make sure auto-follow-active works both ways  */
   if (image && dock_window->p->auto_follow_active)
     {
-      GimpContext *factory_context =
-        gimp_dialog_factory_get_context (dock_window->p->dialog_factory);
+      PicmanContext *factory_context =
+        picman_dialog_factory_get_context (dock_window->p->dialog_factory);
 
-      gimp_context_set_image (factory_context, image);
+      picman_context_set_image (factory_context, image);
     }
 
-  if (image == NULL && ! gimp_container_is_empty (image_container))
+  if (image == NULL && ! picman_container_is_empty (image_container))
     {
-      image = GIMP_IMAGE (gimp_container_get_first_child (image_container));
+      image = PICMAN_IMAGE (picman_container_get_first_child (image_container));
 
       /*  this invokes this function recursively but we don't enter
        *  the if() branch the second time
        */
-      gimp_context_set_image (context, image);
+      picman_context_set_image (context, image);
 
       /*  stop the emission of the original signal (the emission of
        *  the recursive signal is finished)
        */
       g_signal_stop_emission_by_name (context, "image-changed");
     }
-  else if (image != NULL && ! gimp_container_is_empty (display_container))
+  else if (image != NULL && ! picman_container_is_empty (display_container))
     {
-      GimpObject *display;
-      GimpImage  *display_image;
+      PicmanObject *display;
+      PicmanImage  *display_image;
       gboolean    find_display = TRUE;
 
-      display = gimp_context_get_display (context);
+      display = picman_context_get_display (context);
 
       if (display)
         {
@@ -1042,11 +1042,11 @@ gimp_dock_window_image_changed (GimpDockWindow *dock_window,
         {
           GList *list;
 
-          for (list = GIMP_LIST (display_container)->list;
+          for (list = PICMAN_LIST (display_container)->list;
                list;
                list = g_list_next (list))
             {
-              display = GIMP_OBJECT (list->data);
+              display = PICMAN_OBJECT (list->data);
 
               g_object_get (display, "image", &display_image, NULL);
 
@@ -1060,7 +1060,7 @@ gimp_dock_window_image_changed (GimpDockWindow *dock_window,
                        *  don't enter the if(find_display) branch the
                        *  second time
                        */
-                      gimp_context_set_display (context, display);
+                      picman_context_set_display (context, display);
 
                       /*  don't stop signal emission here because the
                        *  context's image was not changed by the
@@ -1073,80 +1073,80 @@ gimp_dock_window_image_changed (GimpDockWindow *dock_window,
         }
     }
 
-  gimp_ui_manager_update (dock_window->p->ui_manager,
-                          gimp_context_get_display (context));
+  picman_ui_manager_update (dock_window->p->ui_manager,
+                          picman_context_get_display (context));
 }
 
 static void
-gimp_dock_window_auto_clicked (GtkWidget *widget,
-                               GimpDock  *dock)
+picman_dock_window_auto_clicked (GtkWidget *widget,
+                               PicmanDock  *dock)
 {
-  GimpDockWindow *dock_window = GIMP_DOCK_WINDOW (dock);
+  PicmanDockWindow *dock_window = PICMAN_DOCK_WINDOW (dock);
 
-  gimp_toggle_button_update (widget, &dock_window->p->auto_follow_active);
+  picman_toggle_button_update (widget, &dock_window->p->auto_follow_active);
 
   if (dock_window->p->auto_follow_active)
     {
-      gimp_context_copy_properties (gimp_dialog_factory_get_context (dock_window->p->dialog_factory),
+      picman_context_copy_properties (picman_dialog_factory_get_context (dock_window->p->dialog_factory),
                                     dock_window->p->context,
-                                    GIMP_CONTEXT_DISPLAY_MASK |
-                                    GIMP_CONTEXT_IMAGE_MASK);
+                                    PICMAN_CONTEXT_DISPLAY_MASK |
+                                    PICMAN_CONTEXT_IMAGE_MASK);
     }
 }
 
 
 void
-gimp_dock_window_add_dock (GimpDockWindow *dock_window,
-                           GimpDock       *dock,
+picman_dock_window_add_dock (PicmanDockWindow *dock_window,
+                           PicmanDock       *dock,
                            gint            index)
 {
-  g_return_if_fail (GIMP_IS_DOCK_WINDOW (dock_window));
-  g_return_if_fail (GIMP_IS_DOCK (dock));
+  g_return_if_fail (PICMAN_IS_DOCK_WINDOW (dock_window));
+  g_return_if_fail (PICMAN_IS_DOCK (dock));
 
-  gimp_dock_columns_add_dock (dock_window->p->dock_columns,
-                              GIMP_DOCK (dock),
+  picman_dock_columns_add_dock (dock_window->p->dock_columns,
+                              PICMAN_DOCK (dock),
                               index);
 
   g_signal_connect_object (dock, "description-invalidated",
-                           G_CALLBACK (gimp_dock_window_update_title),
+                           G_CALLBACK (picman_dock_window_update_title),
                            dock_window,
                            G_CONNECT_SWAPPED);
 
   /* Some docks like the toolbox dock needs to maintain special hints
    * on its container GtkWindow, allow those to do so
    */
-  gimp_dock_set_host_geometry_hints (dock, GTK_WINDOW (dock_window));
+  picman_dock_set_host_geometry_hints (dock, GTK_WINDOW (dock_window));
   g_signal_connect_object (dock, "geometry-invalidated",
-                           G_CALLBACK (gimp_dock_set_host_geometry_hints),
+                           G_CALLBACK (picman_dock_set_host_geometry_hints),
                            dock_window, 0);
 }
 
 void
-gimp_dock_window_remove_dock (GimpDockWindow *dock_window,
-                              GimpDock       *dock)
+picman_dock_window_remove_dock (PicmanDockWindow *dock_window,
+                              PicmanDock       *dock)
 {
-  gimp_dock_columns_remove_dock (dock_window->p->dock_columns,
-                                 GIMP_DOCK (dock));
+  picman_dock_columns_remove_dock (dock_window->p->dock_columns,
+                                 PICMAN_DOCK (dock));
 
   g_signal_handlers_disconnect_by_func (dock,
-                                        gimp_dock_window_update_title,
+                                        picman_dock_window_update_title,
                                         dock_window);
   g_signal_handlers_disconnect_by_func (dock,
-                                        gimp_dock_set_host_geometry_hints,
+                                        picman_dock_set_host_geometry_hints,
                                         dock_window);
 }
 
 GtkWidget *
-gimp_dock_window_new (const gchar       *role,
+picman_dock_window_new (const gchar       *role,
                       const gchar       *ui_manager_name,
                       gboolean           allow_dockbook_absence,
-                      GimpDialogFactory *factory,
-                      GimpContext       *context)
+                      PicmanDialogFactory *factory,
+                      PicmanContext       *context)
 {
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
-  return g_object_new (GIMP_TYPE_DOCK_WINDOW,
+  return g_object_new (PICMAN_TYPE_DOCK_WINDOW,
                        "role",                   role,
                        "ui-manager-name",        ui_manager_name,
                        "allow-dockbook-absence", allow_dockbook_absence,
@@ -1156,62 +1156,62 @@ gimp_dock_window_new (const gchar       *role,
 }
 
 gint
-gimp_dock_window_get_id (GimpDockWindow *dock_window)
+picman_dock_window_get_id (PicmanDockWindow *dock_window)
 {
-  g_return_val_if_fail (GIMP_IS_DOCK_WINDOW (dock_window), 0);
+  g_return_val_if_fail (PICMAN_IS_DOCK_WINDOW (dock_window), 0);
 
   return dock_window->p->ID;
 }
 
-GimpContext *
-gimp_dock_window_get_context (GimpDockWindow *dock_window)
+PicmanContext *
+picman_dock_window_get_context (PicmanDockWindow *dock_window)
 {
-  g_return_val_if_fail (GIMP_IS_DOCK_WINDOW (dock_window), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK_WINDOW (dock_window), NULL);
 
   return dock_window->p->context;
 }
 
-GimpDialogFactory *
-gimp_dock_window_get_dialog_factory (GimpDockWindow *dock_window)
+PicmanDialogFactory *
+picman_dock_window_get_dialog_factory (PicmanDockWindow *dock_window)
 {
-  g_return_val_if_fail (GIMP_IS_DOCK_WINDOW (dock_window), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK_WINDOW (dock_window), NULL);
 
   return dock_window->p->dialog_factory;
 }
 
 gboolean
-gimp_dock_window_get_auto_follow_active (GimpDockWindow *dock_window)
+picman_dock_window_get_auto_follow_active (PicmanDockWindow *dock_window)
 {
-  g_return_val_if_fail (GIMP_IS_DOCK_WINDOW (dock_window), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DOCK_WINDOW (dock_window), FALSE);
 
   return dock_window->p->auto_follow_active;
 }
 
 void
-gimp_dock_window_set_auto_follow_active (GimpDockWindow *dock_window,
+picman_dock_window_set_auto_follow_active (PicmanDockWindow *dock_window,
                                          gboolean        auto_follow_active)
 {
-  g_return_if_fail (GIMP_IS_DOCK_WINDOW (dock_window));
+  g_return_if_fail (PICMAN_IS_DOCK_WINDOW (dock_window));
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dock_window->p->auto_button),
                                 auto_follow_active ? TRUE : FALSE);
 }
 
 gboolean
-gimp_dock_window_get_show_image_menu (GimpDockWindow *dock_window)
+picman_dock_window_get_show_image_menu (PicmanDockWindow *dock_window)
 {
-  g_return_val_if_fail (GIMP_IS_DOCK_WINDOW (dock_window), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DOCK_WINDOW (dock_window), FALSE);
 
   return dock_window->p->show_image_menu;
 }
 
 void
-gimp_dock_window_set_show_image_menu (GimpDockWindow *dock_window,
+picman_dock_window_set_show_image_menu (PicmanDockWindow *dock_window,
                                       gboolean        show)
 {
   GtkWidget *parent;
 
-  g_return_if_fail (GIMP_IS_DOCK_WINDOW (dock_window));
+  g_return_if_fail (PICMAN_IS_DOCK_WINDOW (dock_window));
 
   parent = gtk_widget_get_parent (dock_window->p->image_combo);
 
@@ -1221,34 +1221,34 @@ gimp_dock_window_set_show_image_menu (GimpDockWindow *dock_window,
 }
 
 void
-gimp_dock_window_setup (GimpDockWindow *dock_window,
-                        GimpDockWindow *template)
+picman_dock_window_setup (PicmanDockWindow *dock_window,
+                        PicmanDockWindow *template)
 {
-  gimp_dock_window_set_auto_follow_active (GIMP_DOCK_WINDOW (dock_window),
+  picman_dock_window_set_auto_follow_active (PICMAN_DOCK_WINDOW (dock_window),
                                            template->p->auto_follow_active);
-  gimp_dock_window_set_show_image_menu (GIMP_DOCK_WINDOW (dock_window),
+  picman_dock_window_set_show_image_menu (PICMAN_DOCK_WINDOW (dock_window),
                                         template->p->show_image_menu);
 }
 
 /**
- * gimp_dock_window_has_toolbox:
+ * picman_dock_window_has_toolbox:
  * @dock_window:
  *
- * Returns: %TRUE if the dock window has a GimpToolbox dock, %FALSE
+ * Returns: %TRUE if the dock window has a PicmanToolbox dock, %FALSE
  * otherwise.
  **/
 gboolean
-gimp_dock_window_has_toolbox (GimpDockWindow *dock_window)
+picman_dock_window_has_toolbox (PicmanDockWindow *dock_window)
 {
   GList *iter = NULL;
 
-  g_return_val_if_fail (GIMP_IS_DOCK_WINDOW (dock_window), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DOCK_WINDOW (dock_window), FALSE);
 
-  for (iter = gimp_dock_columns_get_docks (dock_window->p->dock_columns);
+  for (iter = picman_dock_columns_get_docks (dock_window->p->dock_columns);
        iter;
        iter = g_list_next (iter))
     {
-      if (GIMP_IS_TOOLBOX (iter->data))
+      if (PICMAN_IS_TOOLBOX (iter->data))
         return TRUE;
     }
 
@@ -1257,25 +1257,25 @@ gimp_dock_window_has_toolbox (GimpDockWindow *dock_window)
 
 
 /**
- * gimp_dock_window_from_dock:
+ * picman_dock_window_from_dock:
  * @dock:
  *
  * For convenience.
  *
- * Returns: If the toplevel widget for the dock is a GimpDockWindow,
+ * Returns: If the toplevel widget for the dock is a PicmanDockWindow,
  * return that. Otherwise return %NULL.
  **/
-GimpDockWindow *
-gimp_dock_window_from_dock (GimpDock *dock)
+PicmanDockWindow *
+picman_dock_window_from_dock (PicmanDock *dock)
 {
   GtkWidget *toplevel = NULL;
 
-  g_return_val_if_fail (GIMP_IS_DOCK (dock), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK (dock), NULL);
 
   toplevel = gtk_widget_get_toplevel (GTK_WIDGET (dock));
 
-  if (GIMP_IS_DOCK_WINDOW (toplevel))
-    return GIMP_DOCK_WINDOW (toplevel);
+  if (PICMAN_IS_DOCK_WINDOW (toplevel))
+    return PICMAN_DOCK_WINDOW (toplevel);
   else
     return NULL;
 }

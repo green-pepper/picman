@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpthresholdconfig.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanthresholdconfig.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "operations-types.h"
 
-#include "gimpthresholdconfig.h"
+#include "picmanthresholdconfig.h"
 
 
 enum
@@ -37,57 +37,57 @@ enum
 };
 
 
-static void   gimp_threshold_config_get_property (GObject      *object,
+static void   picman_threshold_config_get_property (GObject      *object,
                                                   guint         property_id,
                                                   GValue       *value,
                                                   GParamSpec   *pspec);
-static void   gimp_threshold_config_set_property (GObject      *object,
+static void   picman_threshold_config_set_property (GObject      *object,
                                                   guint         property_id,
                                                   const GValue *value,
                                                   GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpThresholdConfig, gimp_threshold_config,
-                         GIMP_TYPE_IMAGE_MAP_CONFIG,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanThresholdConfig, picman_threshold_config,
+                         PICMAN_TYPE_IMAGE_MAP_CONFIG,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL))
 
-#define parent_class gimp_threshold_config_parent_class
+#define parent_class picman_threshold_config_parent_class
 
 
 static void
-gimp_threshold_config_class_init (GimpThresholdConfigClass *klass)
+picman_threshold_config_class_init (PicmanThresholdConfigClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->set_property       = gimp_threshold_config_set_property;
-  object_class->get_property       = gimp_threshold_config_get_property;
+  object_class->set_property       = picman_threshold_config_set_property;
+  object_class->get_property       = picman_threshold_config_get_property;
 
-  viewable_class->default_stock_id = "gimp-tool-threshold";
+  viewable_class->default_stock_id = "picman-tool-threshold";
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LOW,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LOW,
                                    "low",
                                    "Low threshold",
                                    0.0, 1.0, 0.5, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_HIGH,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_HIGH,
                                    "high",
                                    "High threshold",
                                    0.0, 1.0, 1.0, 0);
 }
 
 static void
-gimp_threshold_config_init (GimpThresholdConfig *self)
+picman_threshold_config_init (PicmanThresholdConfig *self)
 {
 }
 
 static void
-gimp_threshold_config_get_property (GObject    *object,
+picman_threshold_config_get_property (GObject    *object,
                                     guint       property_id,
                                     GValue     *value,
                                     GParamSpec *pspec)
 {
-  GimpThresholdConfig *self = GIMP_THRESHOLD_CONFIG (object);
+  PicmanThresholdConfig *self = PICMAN_THRESHOLD_CONFIG (object);
 
   switch (property_id)
     {
@@ -106,12 +106,12 @@ gimp_threshold_config_get_property (GObject    *object,
 }
 
 static void
-gimp_threshold_config_set_property (GObject      *object,
+picman_threshold_config_set_property (GObject      *object,
                                     guint         property_id,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
-  GimpThresholdConfig *self = GIMP_THRESHOLD_CONFIG (object);
+  PicmanThresholdConfig *self = PICMAN_THRESHOLD_CONFIG (object);
 
   switch (property_id)
     {

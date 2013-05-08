@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationhistogramsink.h
+ * picmanoperationhistogramsink.h
  * Copyright (C) 2012 Øyvind Kolås
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,39 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_HISTOGRAM_SINK_H__
-#define __GIMP_OPERATION_HISTOGRAM_SINK_H__
+#ifndef __PICMAN_OPERATION_HISTOGRAM_SINK_H__
+#define __PICMAN_OPERATION_HISTOGRAM_SINK_H__
 
 
 #include <gegl-plugin.h>
 #include <operation/gegl-operation-sink.h>
 
 
-#define GIMP_TYPE_OPERATION_HISTOGRAM_SINK            (gimp_operation_histogram_sink_get_type ())
-#define GIMP_OPERATION_HISTOGRAM_SINK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_HISTOGRAM_SINK, GimpOperationHistogramSink))
-#define GIMP_OPERATION_HISTOGRAM_SINK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_HISTOGRAM_SINK, GimpOperationHistogramSinkClass))
-#define GEGL_IS_OPERATION_HISTOGRAM_SINK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_HISTOGRAM_SINK))
-#define GEGL_IS_OPERATION_HISTOGRAM_SINK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_HISTOGRAM_SINK))
-#define GIMP_OPERATION_HISTOGRAM_SINK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_HISTOGRAM_SINK, GimpOperationHistogramSinkClass))
+#define PICMAN_TYPE_OPERATION_HISTOGRAM_SINK            (picman_operation_histogram_sink_get_type ())
+#define PICMAN_OPERATION_HISTOGRAM_SINK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_HISTOGRAM_SINK, PicmanOperationHistogramSink))
+#define PICMAN_OPERATION_HISTOGRAM_SINK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_HISTOGRAM_SINK, PicmanOperationHistogramSinkClass))
+#define GEGL_IS_OPERATION_HISTOGRAM_SINK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_HISTOGRAM_SINK))
+#define GEGL_IS_OPERATION_HISTOGRAM_SINK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_HISTOGRAM_SINK))
+#define PICMAN_OPERATION_HISTOGRAM_SINK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_HISTOGRAM_SINK, PicmanOperationHistogramSinkClass))
 
 
-typedef struct _GimpOperationHistogramSink      GimpOperationHistogramSink;
-typedef struct _GimpOperationHistogramSinkClass GimpOperationHistogramSinkClass;
+typedef struct _PicmanOperationHistogramSink      PicmanOperationHistogramSink;
+typedef struct _PicmanOperationHistogramSinkClass PicmanOperationHistogramSinkClass;
 
-struct _GimpOperationHistogramSink
+struct _PicmanOperationHistogramSink
 {
   GeglOperation  parent_instance;
 
-  GimpHistogram *histogram;
+  PicmanHistogram *histogram;
 };
 
-struct _GimpOperationHistogramSinkClass
+struct _PicmanOperationHistogramSinkClass
 {
   GeglOperationSinkClass  parent_class;
 };
 
 
-GType   gimp_operation_histogram_sink_get_type (void) G_GNUC_CONST;
+GType   picman_operation_histogram_sink_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_HISTOGRAM_SINK_C__ */
+#endif /* __PICMAN_OPERATION_HISTOGRAM_SINK_C__ */

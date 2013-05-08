@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpfonts_pdb.c
+ * picmanfonts_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpfonts
- * @title: gimpfonts
+ * SECTION: picmanfonts
+ * @title: picmanfonts
  * @short_description: Operations related to fonts.
  *
  * Operations related to fonts.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_fonts_refresh:
+ * picman_fonts_refresh:
  *
  * Refresh current fonts. This function always succeeds.
  *
@@ -45,25 +45,25 @@
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_fonts_refresh (void)
+picman_fonts_refresh (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-fonts-refresh",
+  return_vals = picman_run_procedure ("picman-fonts-refresh",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_fonts_get_list:
+ * picman_fonts_get_list:
  * @filter: An optional regular expression used to filter the list.
  * @num_fonts: The number of available fonts.
  *
@@ -76,22 +76,22 @@ gimp_fonts_refresh (void)
  * with g_strfreev().
  **/
 gchar **
-gimp_fonts_get_list (const gchar *filter,
+picman_fonts_get_list (const gchar *filter,
                      gint        *num_fonts)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar **font_list = NULL;
   gint i;
 
-  return_vals = gimp_run_procedure ("gimp-fonts-get-list",
+  return_vals = picman_run_procedure ("picman-fonts-get-list",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, filter,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, filter,
+                                    PICMAN_PDB_END);
 
   *num_fonts = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_fonts = return_vals[1].data.d_int32;
       font_list = g_new (gchar *, *num_fonts + 1);
@@ -100,7 +100,7 @@ gimp_fonts_get_list (const gchar *filter,
       font_list[i] = NULL;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return font_list;
 }

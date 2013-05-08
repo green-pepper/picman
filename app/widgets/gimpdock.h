@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdock.h
- * Copyright (C) 2001-2005 Michael Natterer <mitch@gimp.org>
+ * picmandock.h
+ * Copyright (C) 2001-2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,103 +18,103 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DOCK_H__
-#define __GIMP_DOCK_H__
+#ifndef __PICMAN_DOCK_H__
+#define __PICMAN_DOCK_H__
 
 
-#define GIMP_TYPE_DOCK            (gimp_dock_get_type ())
-#define GIMP_DOCK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DOCK, GimpDock))
-#define GIMP_DOCK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DOCK, GimpDockClass))
-#define GIMP_IS_DOCK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DOCK))
-#define GIMP_IS_DOCK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DOCK))
-#define GIMP_DOCK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DOCK, GimpDockClass))
+#define PICMAN_TYPE_DOCK            (picman_dock_get_type ())
+#define PICMAN_DOCK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DOCK, PicmanDock))
+#define PICMAN_DOCK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DOCK, PicmanDockClass))
+#define PICMAN_IS_DOCK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DOCK))
+#define PICMAN_IS_DOCK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DOCK))
+#define PICMAN_DOCK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DOCK, PicmanDockClass))
 
 
 /* String used to separate dockables, e.g. "Tool Options, Layers" */
-#define GIMP_DOCK_DOCKABLE_SEPARATOR C_("dock", ", ")
+#define PICMAN_DOCK_DOCKABLE_SEPARATOR C_("dock", ", ")
 
 /* String used to separate books (GtkNotebooks) within a dock,
    e.g. "Tool Options, Layers - Brushes"
  */
-#define GIMP_DOCK_BOOK_SEPARATOR C_("dock", " - ")
+#define PICMAN_DOCK_BOOK_SEPARATOR C_("dock", " - ")
 
 /* String used to separate dock columns,
    e.g. "Tool Options, Layers - Brushes | Gradients"
  */
-#define GIMP_DOCK_COLUMN_SEPARATOR C_("dock", " | ")
+#define PICMAN_DOCK_COLUMN_SEPARATOR C_("dock", " | ")
 
 
-typedef struct _GimpDockClass    GimpDockClass;
-typedef struct _GimpDockPrivate  GimpDockPrivate;
+typedef struct _PicmanDockClass    PicmanDockClass;
+typedef struct _PicmanDockPrivate  PicmanDockPrivate;
 
 /**
- * GimpDock:
+ * PicmanDock:
  *
- * Contains a column of GimpDockbooks.
+ * Contains a column of PicmanDockbooks.
  */
-struct _GimpDock
+struct _PicmanDock
 {
   GtkBox           parent_instance;
 
-  GimpDockPrivate *p;
+  PicmanDockPrivate *p;
 };
 
-struct _GimpDockClass
+struct _PicmanDockClass
 {
   GtkBoxClass  parent_class;
 
   /*  virtual functions  */
-  gchar * (* get_description)         (GimpDock       *dock,
+  gchar * (* get_description)         (PicmanDock       *dock,
                                        gboolean        complete);
-  void    (* set_host_geometry_hints) (GimpDock       *dock,
+  void    (* set_host_geometry_hints) (PicmanDock       *dock,
                                        GtkWindow      *window);
 
   /*  signals  */
-  void    (* book_added)              (GimpDock       *dock,
-                                       GimpDockbook   *dockbook);
-  void    (* book_removed)            (GimpDock       *dock,
-                                       GimpDockbook   *dockbook);
-  void    (* description_invalidated) (GimpDock       *dock);
-  void    (* geometry_invalidated)    (GimpDock       *dock);
+  void    (* book_added)              (PicmanDock       *dock,
+                                       PicmanDockbook   *dockbook);
+  void    (* book_removed)            (PicmanDock       *dock,
+                                       PicmanDockbook   *dockbook);
+  void    (* description_invalidated) (PicmanDock       *dock);
+  void    (* geometry_invalidated)    (PicmanDock       *dock);
 };
 
 
-GType               gimp_dock_get_type                (void) G_GNUC_CONST;
+GType               picman_dock_get_type                (void) G_GNUC_CONST;
 
-gchar             * gimp_dock_get_description         (GimpDock       *dock,
+gchar             * picman_dock_get_description         (PicmanDock       *dock,
                                                        gboolean        complete);
-void                gimp_dock_set_host_geometry_hints (GimpDock       *dock,
+void                picman_dock_set_host_geometry_hints (PicmanDock       *dock,
                                                        GtkWindow      *window);
-void                gimp_dock_invalidate_geometry     (GimpDock       *dock);
-void                gimp_dock_update_with_context     (GimpDock       *dock,
-                                                       GimpContext    *context);
-GimpContext       * gimp_dock_get_context             (GimpDock       *dock);
-GimpDialogFactory * gimp_dock_get_dialog_factory      (GimpDock       *dock);
-GimpUIManager     * gimp_dock_get_ui_manager          (GimpDock       *dock);
-GList             * gimp_dock_get_dockbooks           (GimpDock       *dock);
-gint                gimp_dock_get_n_dockables         (GimpDock       *dock);
-GtkWidget         * gimp_dock_get_main_vbox           (GimpDock       *dock);
-GtkWidget         * gimp_dock_get_vbox                (GimpDock       *dock);
-gint                gimp_dock_get_id                  (GimpDock       *dock);
-void                gimp_dock_set_id                  (GimpDock       *dock,
+void                picman_dock_invalidate_geometry     (PicmanDock       *dock);
+void                picman_dock_update_with_context     (PicmanDock       *dock,
+                                                       PicmanContext    *context);
+PicmanContext       * picman_dock_get_context             (PicmanDock       *dock);
+PicmanDialogFactory * picman_dock_get_dialog_factory      (PicmanDock       *dock);
+PicmanUIManager     * picman_dock_get_ui_manager          (PicmanDock       *dock);
+GList             * picman_dock_get_dockbooks           (PicmanDock       *dock);
+gint                picman_dock_get_n_dockables         (PicmanDock       *dock);
+GtkWidget         * picman_dock_get_main_vbox           (PicmanDock       *dock);
+GtkWidget         * picman_dock_get_vbox                (PicmanDock       *dock);
+gint                picman_dock_get_id                  (PicmanDock       *dock);
+void                picman_dock_set_id                  (PicmanDock       *dock,
                                                        gint            ID);
 
-void                gimp_dock_add                     (GimpDock       *dock,
-                                                       GimpDockable   *dockable,
+void                picman_dock_add                     (PicmanDock       *dock,
+                                                       PicmanDockable   *dockable,
                                                        gint            book,
                                                        gint            index);
-void                gimp_dock_remove                  (GimpDock       *dock,
-                                                       GimpDockable   *dockable);
+void                picman_dock_remove                  (PicmanDock       *dock,
+                                                       PicmanDockable   *dockable);
 
-void                gimp_dock_add_book                (GimpDock       *dock,
-                                                       GimpDockbook   *dockbook,
+void                picman_dock_add_book                (PicmanDock       *dock,
+                                                       PicmanDockbook   *dockbook,
                                                        gint            index);
-void                gimp_dock_remove_book             (GimpDock       *dock,
-                                                       GimpDockbook   *dockbook);
-void                gimp_dock_temp_add                (GimpDock       *dock,
+void                picman_dock_remove_book             (PicmanDock       *dock,
+                                                       PicmanDockbook   *dockbook);
+void                picman_dock_temp_add                (PicmanDock       *dock,
                                                        GtkWidget      *widget);
-void                gimp_dock_temp_remove             (GimpDock       *dock,
+void                picman_dock_temp_remove             (PicmanDock       *dock,
                                                        GtkWidget      *widget);
 
 
-#endif /* __GIMP_DOCK_H__ */
+#endif /* __PICMAN_DOCK_H__ */

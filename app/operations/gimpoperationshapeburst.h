@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationshapeburst.h
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picmanoperationshapeburst.h
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_SHAPEBURST_H__
-#define __GIMP_OPERATION_SHAPEBURST_H__
+#ifndef __PICMAN_OPERATION_SHAPEBURST_H__
+#define __PICMAN_OPERATION_SHAPEBURST_H__
 
 
 #include <gegl-plugin.h>
 
 
-#define GIMP_TYPE_OPERATION_SHAPEBURST            (gimp_operation_shapeburst_get_type ())
-#define GIMP_OPERATION_SHAPEBURST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_SHAPEBURST, GimpOperationShapeburst))
-#define GIMP_OPERATION_SHAPEBURST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_SHAPEBURST, GimpOperationShapeburstClass))
-#define GIMP_IS_OPERATION_SHAPEBURST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_SHAPEBURST))
-#define GIMP_IS_OPERATION_SHAPEBURST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_SHAPEBURST))
-#define GIMP_OPERATION_SHAPEBURST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_SHAPEBURST, GimpOperationShapeburstClass))
+#define PICMAN_TYPE_OPERATION_SHAPEBURST            (picman_operation_shapeburst_get_type ())
+#define PICMAN_OPERATION_SHAPEBURST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_SHAPEBURST, PicmanOperationShapeburst))
+#define PICMAN_OPERATION_SHAPEBURST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_SHAPEBURST, PicmanOperationShapeburstClass))
+#define PICMAN_IS_OPERATION_SHAPEBURST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_SHAPEBURST))
+#define PICMAN_IS_OPERATION_SHAPEBURST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_SHAPEBURST))
+#define PICMAN_OPERATION_SHAPEBURST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_SHAPEBURST, PicmanOperationShapeburstClass))
 
 
-typedef struct _GimpOperationShapeburst      GimpOperationShapeburst;
-typedef struct _GimpOperationShapeburstClass GimpOperationShapeburstClass;
+typedef struct _PicmanOperationShapeburst      PicmanOperationShapeburst;
+typedef struct _PicmanOperationShapeburstClass PicmanOperationShapeburstClass;
 
-struct _GimpOperationShapeburst
+struct _PicmanOperationShapeburst
 {
   GeglOperationFilter  parent_instance;
 
@@ -44,13 +44,13 @@ struct _GimpOperationShapeburst
   gdouble              progress;
 };
 
-struct _GimpOperationShapeburstClass
+struct _PicmanOperationShapeburstClass
 {
   GeglOperationFilterClass  parent_class;
 };
 
 
-GType   gimp_operation_shapeburst_get_type (void) G_GNUC_CONST;
+GType   picman_operation_shapeburst_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_SHAPEBURST_H__ */
+#endif /* __PICMAN_OPERATION_SHAPEBURST_H__ */

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Tileit - This plugin take an image and makes repeated copies of it.
  *
@@ -38,14 +38,14 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #define PLUG_IN_PROC   "plug-in-small-tiles"
 #define PLUG_IN_BINARY "tile-small"
-#define PLUG_IN_ROLE   "gimp-tile-small"
+#define PLUG_IN_ROLE   "picman-tile-small"
 
 /***** Magic numbers *****/
 
@@ -83,15 +83,15 @@ static TileItInterface tint =
   NULL
 };
 
-static GimpDrawable *tileitdrawable;
+static PicmanDrawable *tileitdrawable;
 static gint          img_bpp;
 
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
 static gboolean  tileit_dialog          (void);
 
@@ -129,7 +129,7 @@ static gboolean  tileit_preview_events  (GtkWidget     *widget,
                                          GdkEvent      *event);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -210,15 +210,15 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",     "Input image (unused)"         },
-    { GIMP_PDB_DRAWABLE, "drawable",  "Input drawable"               },
-    { GIMP_PDB_INT32,    "num-tiles", "Number of tiles to make"      }
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",     "Input image (unused)"         },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "Input drawable"               },
+    { PICMAN_PDB_INT32,    "num-tiles", "Number of tiles to make"      }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Tile image into smaller versions of the original"),
                           "More here later",
                           "Andy Thomas",
@@ -226,7 +226,7 @@ query (void)
                           "1997",
                           N_("_Small Tiles..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -234,14 +234,14 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   gint pwidth, pheight;
 
@@ -252,16 +252,16 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  tileitdrawable = drawable = gimp_drawable_get (param[2].data.d_drawable);
+  tileitdrawable = drawable = picman_drawable_get (param[2].data.d_drawable);
 
-  gimp_tile_cache_ntiles (drawable->ntile_cols + 1);
+  picman_tile_cache_ntiles (drawable->ntile_cols + 1);
 
-  has_alpha = gimp_drawable_has_alpha (tileitdrawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (tileitdrawable->drawable_id);
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &sel_x1,    &sel_y1,
                                       &sel_width, &sel_height))
     {
@@ -290,19 +290,19 @@ run (const gchar      *name,
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &itvals);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &itvals);
       if (! tileit_dialog ())
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams != 4)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -310,37 +310,37 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &itvals);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &itvals);
       break;
 
     default:
       break;
     }
 
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
       /* Set the tile cache size */
 
-      gimp_progress_init (_("Tiling"));
+      picman_progress_init (_("Tiling"));
 
       do_tiles ();
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &itvals, sizeof (TileItVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &itvals, sizeof (TileItVals));
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static gboolean
@@ -362,13 +362,13 @@ tileit_dialog (void)
   GSList    *orientation_group = NULL;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
   cache_preview (); /* Get the preview image */
 
-  dlg = gimp_dialog_new (_("Small Tiles"), PLUG_IN_ROLE,
+  dlg = picman_dialog_new (_("Small Tiles"), PLUG_IN_ROLE,
                          NULL, 0,
-                         gimp_standard_help_func, PLUG_IN_PROC,
+                         picman_standard_help_func, PLUG_IN_PROC,
 
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                          GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -380,7 +380,7 @@ tileit_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dlg));
+  picman_window_set_transient (GTK_WINDOW (dlg));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -401,7 +401,7 @@ tileit_dialog (void)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  tint.preview = gimp_preview_area_new ();
+  tint.preview = picman_preview_area_new ();
   gtk_widget_set_size_request (tint.preview, preview_width, preview_height);
   gtk_widget_set_events (GTK_WIDGET (tint.preview), PREVIEW_MASK);
   gtk_container_add (GTK_CONTAINER (frame), tint.preview);
@@ -416,7 +416,7 @@ tileit_dialog (void)
 
   /* Area for buttons etc */
 
-  frame = gimp_frame_new (_("Flip"));
+  frame = picman_frame_new (_("Flip"));
   gtk_box_pack_start (GTK_BOX (hbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -449,7 +449,7 @@ tileit_dialog (void)
 
   res_call.vtoggle = toggle;
 
-  button = gtk_button_new_from_stock (GIMP_STOCK_RESET);
+  button = gtk_button_new_from_stock (PICMAN_STOCK_RESET);
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
 
@@ -471,7 +471,7 @@ tileit_dialog (void)
                     GTK_FILL | GTK_EXPAND, GTK_FILL, 0, 0);
   gtk_widget_show (toggle);
 
-  g_object_set_data (G_OBJECT (toggle), "gimp-item-data",
+  g_object_set_data (G_OBJECT (toggle), "picman-item-data",
                      GINT_TO_POINTER (ALL));
 
   g_signal_connect (toggle, "toggled",
@@ -485,7 +485,7 @@ tileit_dialog (void)
                     GTK_FILL | GTK_EXPAND, GTK_FILL, 0, 0);
   gtk_widget_show (toggle);
 
-  g_object_set_data (G_OBJECT (toggle), "gimp-item-data",
+  g_object_set_data (G_OBJECT (toggle), "picman-item-data",
                      GINT_TO_POINTER (ALT));
 
   g_signal_connect (toggle, "toggled",
@@ -509,7 +509,7 @@ tileit_dialog (void)
                           label,  "sensitive",
                           G_BINDING_SYNC_CREATE);
 
-  spinbutton = gimp_spin_button_new (&adj, 2, 1, 6, 1, 1, 0, 1, 0);
+  spinbutton = picman_spin_button_new (&adj, 2, 1, 6, 1, 1, 0, 1, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), spinbutton);
   gtk_table_attach (GTK_TABLE (table), spinbutton, 2, 3, 2, 3,
                     GTK_FILL | GTK_SHRINK, GTK_FILL, 0, 0);
@@ -535,7 +535,7 @@ tileit_dialog (void)
                           label,  "sensitive",
                           G_BINDING_SYNC_CREATE);
 
-  spinbutton = gimp_spin_button_new (&adj, 2, 1, 6, 1, 1, 0, 1, 0);
+  spinbutton = picman_spin_button_new (&adj, 2, 1, 6, 1, 1, 0, 1, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), spinbutton);
   gtk_table_attach (GTK_TABLE (table), spinbutton, 2, 3, 3, 4,
                     GTK_FILL | GTK_EXPAND, GTK_FILL, 0, 0);
@@ -551,7 +551,7 @@ tileit_dialog (void)
                           spinbutton, "sensitive",
                           G_BINDING_SYNC_CREATE);
 
-  g_object_set_data (G_OBJECT (toggle), "gimp-item-data",
+  g_object_set_data (G_OBJECT (toggle), "picman-item-data",
                      GINT_TO_POINTER (EXPLICIT));
 
   g_signal_connect (toggle, "toggled",
@@ -579,7 +579,7 @@ tileit_dialog (void)
   gtk_box_pack_start (GTK_BOX (vbox), table2, FALSE, FALSE, 0);
   gtk_widget_show (table2);
 
-  scale = gimp_scale_entry_new (GTK_TABLE (table2), 0, 0,
+  scale = picman_scale_entry_new (GTK_TABLE (table2), 0, 0,
                                 _("O_pacity:"), SCALE_WIDTH, -1,
                                 opacity, 0, 100, 1, 10, 0,
                                 TRUE, 0, 0,
@@ -589,7 +589,7 @@ tileit_dialog (void)
                     &opacity);
 
   /* Lower frame saying howmany segments */
-  frame = gimp_frame_new (_("Number of Segments"));
+  frame = picman_frame_new (_("Number of Segments"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -600,7 +600,7 @@ tileit_dialog (void)
 
   gtk_widget_set_sensitive (table2, has_alpha);
 
-  scale = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  scale = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                 "_n²", SCALE_WIDTH, -1,
                                 itvals.numtiles, 2, MAX_SEGS, 1, 1, 0,
                                 TRUE, 0, 0,
@@ -612,7 +612,7 @@ tileit_dialog (void)
   gtk_widget_show (dlg);
   dialog_update_preview ();
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dlg)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dlg)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dlg);
 
@@ -623,7 +623,7 @@ static void
 tileit_hvtoggle_update (GtkWidget *widget,
                         gpointer   data)
 {
-  gimp_toggle_button_update (widget, data);
+  picman_toggle_button_update (widget, data);
 
   switch (exp_call.type)
     {
@@ -801,7 +801,7 @@ static void
 tileit_radio_update (GtkWidget *widget,
                      gpointer   data)
 {
-  gimp_radio_button_update (widget, data);
+  picman_radio_button_update (widget, data);
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
     {
@@ -833,7 +833,7 @@ static void
 tileit_scale_update (GtkAdjustment *adjustment,
                      gpointer       data)
 {
-  gimp_int_adjustment_update (adjustment, data);
+  picman_int_adjustment_update (adjustment, data);
 
   dialog_update_preview ();
 }
@@ -895,30 +895,30 @@ tileit_exp_update_f (GtkWidget *widget,
 static void
 cache_preview (void)
 {
-  GimpPixelRgn src_rgn;
+  PicmanPixelRgn src_rgn;
   gint y,x;
   guchar *src_rows;
   guchar *p;
   gboolean isgrey = FALSE;
 
-  gimp_pixel_rgn_init (&src_rgn, tileitdrawable,
+  picman_pixel_rgn_init (&src_rgn, tileitdrawable,
                        sel_x1, sel_y1, sel_width, sel_height, FALSE, FALSE);
 
   src_rows = g_new (guchar, sel_width * 4);
   p = tint.pv_cache = g_new (guchar, preview_width * preview_height * 4);
 
-  tint.img_bpp = gimp_drawable_bpp (tileitdrawable->drawable_id);
+  tint.img_bpp = picman_drawable_bpp (tileitdrawable->drawable_id);
 
   if (tint.img_bpp < 3)
     {
       tint.img_bpp = 3 + (has_alpha ? 1 : 0);
     }
 
-  isgrey = gimp_drawable_is_gray (tileitdrawable->drawable_id);
+  isgrey = picman_drawable_is_gray (tileitdrawable->drawable_id);
 
   for (y = 0; y < preview_height; y++)
     {
-      gimp_pixel_rgn_get_row (&src_rgn,
+      picman_pixel_rgn_get_row (&src_rgn,
                               src_rows,
                               sel_x1,
                               sel_y1 + (y * sel_height) / preview_height,
@@ -945,7 +945,7 @@ cache_preview (void)
 static void
 do_tiles(void)
 {
-  GimpPixelRgn      dest_rgn;
+  PicmanPixelRgn      dest_rgn;
   gpointer          pr;
   gint              progress, max_progress;
   guchar           *dest_row;
@@ -955,25 +955,25 @@ do_tiles(void)
   guchar            pixel[4];
   gint              nc, nr;
   gint              i;
-  GimpPixelFetcher *pft;
+  PicmanPixelFetcher *pft;
 
   /* Initialize pixel region */
 
-  pft = gimp_pixel_fetcher_new (tileitdrawable, FALSE);
+  pft = picman_pixel_fetcher_new (tileitdrawable, FALSE);
 
-  gimp_pixel_rgn_init (&dest_rgn, tileitdrawable,
+  picman_pixel_rgn_init (&dest_rgn, tileitdrawable,
                        sel_x1, sel_y1, sel_width, sel_height, TRUE, TRUE);
 
   progress     = 0;
   max_progress = sel_width * sel_height;
 
-  img_bpp = gimp_drawable_bpp (tileitdrawable->drawable_id);
+  img_bpp = picman_drawable_bpp (tileitdrawable->drawable_id);
 
   bpp = (has_alpha) ? img_bpp - 1 : img_bpp;
 
-  for (pr = gimp_pixel_rgns_register(1, &dest_rgn);
+  for (pr = picman_pixel_rgns_register(1, &dest_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process(pr))
+       pr = picman_pixel_rgns_process(pr))
     {
       dest_row = dest_rgn.data;
 
@@ -988,7 +988,7 @@ do_tiles(void)
                         col-sel_x1,row-sel_y1,
                         &nc,&nr);
 
-              gimp_pixel_fetcher_get_pixel (pft, nc + sel_x1, nr + sel_y1,
+              picman_pixel_fetcher_get_pixel (pft, nc + sel_x1, nr + sel_y1,
                                             pixel);
 
               for (i = 0; i < bpp; i++)
@@ -1002,15 +1002,15 @@ do_tiles(void)
         }
 
       progress += dest_rgn.w * dest_rgn.h;
-      gimp_progress_update ((double) progress / max_progress);
+      picman_progress_update ((double) progress / max_progress);
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
-  gimp_pixel_fetcher_destroy (pft);
+  picman_pixel_fetcher_destroy (pft);
 
-  gimp_drawable_flush (tileitdrawable);
-  gimp_drawable_merge_shadow (tileitdrawable->drawable_id, TRUE);
-  gimp_drawable_update (tileitdrawable->drawable_id,
+  picman_drawable_flush (tileitdrawable);
+  picman_drawable_merge_shadow (tileitdrawable->drawable_id, TRUE);
+  picman_drawable_update (tileitdrawable->drawable_id,
                         sel_x1, sel_y1, sel_width, sel_height);
 }
 
@@ -1137,9 +1137,9 @@ dialog_update_preview (void)
               preview_width * tint.img_bpp);
     }
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (tint.preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (tint.preview),
                           0, 0, preview_width, preview_height,
-                          (tint.img_bpp>3)?GIMP_RGBA_IMAGE:GIMP_RGB_IMAGE,
+                          (tint.img_bpp>3)?PICMAN_RGBA_IMAGE:PICMAN_RGB_IMAGE,
                           buffer,
                           preview_width * tint.img_bpp);
 

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,403 +22,403 @@
 #include <cairo.h>
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gegl/gimp-gegl-apply-operation.h"
-#include "gegl/gimp-gegl-mask-combine.h"
+#include "gegl/picman-gegl-apply-operation.h"
+#include "gegl/picman-gegl-mask-combine.h"
 
-#include "gimpchannel.h"
-#include "gimpchannel-select.h"
-#include "gimpchannel-combine.h"
-#include "gimpimage-contiguous-region.h"
-#include "gimpscanconvert.h"
+#include "picmanchannel.h"
+#include "picmanchannel-select.h"
+#include "picmanchannel-combine.h"
+#include "picmanimage-contiguous-region.h"
+#include "picmanscanconvert.h"
 
-#include "vectors/gimpstroke.h"
-#include "vectors/gimpvectors.h"
+#include "vectors/picmanstroke.h"
+#include "vectors/picmanvectors.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  basic selection functions  */
 
 void
-gimp_channel_select_rectangle (GimpChannel    *channel,
+picman_channel_select_rectangle (PicmanChannel    *channel,
                                gint            x,
                                gint            y,
                                gint            w,
                                gint            h,
-                               GimpChannelOps  op,
+                               PicmanChannelOps  op,
                                gboolean        feather,
                                gdouble         feather_radius_x,
                                gdouble         feather_radius_y,
                                gboolean        push_undo)
 {
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
 
   if (push_undo)
-    gimp_channel_push_undo (channel, C_("undo-type", "Rectangle Select"));
+    picman_channel_push_undo (channel, C_("undo-type", "Rectangle Select"));
 
   /*  if applicable, replace the current selection  */
-  if (op == GIMP_CHANNEL_OP_REPLACE)
-    gimp_channel_clear (channel, NULL, FALSE);
+  if (op == PICMAN_CHANNEL_OP_REPLACE)
+    picman_channel_clear (channel, NULL, FALSE);
 
   /*  if feathering for rect, make a new mask with the
    *  rectangle and feather that with the old mask
    */
-  if (feather || op == GIMP_CHANNEL_OP_INTERSECT)
+  if (feather || op == PICMAN_CHANNEL_OP_INTERSECT)
     {
-      GimpItem   *item = GIMP_ITEM (channel);
+      PicmanItem   *item = PICMAN_ITEM (channel);
       GeglBuffer *add_on;
 
       add_on = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
-                                                gimp_item_get_width  (item),
-                                                gimp_item_get_height (item)),
+                                                picman_item_get_width  (item),
+                                                picman_item_get_height (item)),
                                 babl_format ("Y float"));
 
-      gimp_gegl_mask_combine_rect (add_on, GIMP_CHANNEL_OP_ADD, x, y, w, h);
+      picman_gegl_mask_combine_rect (add_on, PICMAN_CHANNEL_OP_ADD, x, y, w, h);
 
       if (feather)
-        gimp_gegl_apply_feather (add_on, NULL, NULL, add_on,
+        picman_gegl_apply_feather (add_on, NULL, NULL, add_on,
                                  feather_radius_x,
                                  feather_radius_y);
 
-      gimp_channel_combine_buffer (channel, add_on, op, 0, 0);
+      picman_channel_combine_buffer (channel, add_on, op, 0, 0);
       g_object_unref (add_on);
     }
   else
     {
-      gimp_channel_combine_rect (channel, op, x, y, w, h);
+      picman_channel_combine_rect (channel, op, x, y, w, h);
     }
 }
 
 void
-gimp_channel_select_ellipse (GimpChannel    *channel,
+picman_channel_select_ellipse (PicmanChannel    *channel,
                              gint            x,
                              gint            y,
                              gint            w,
                              gint            h,
-                             GimpChannelOps  op,
+                             PicmanChannelOps  op,
                              gboolean        antialias,
                              gboolean        feather,
                              gdouble         feather_radius_x,
                              gdouble         feather_radius_y,
                              gboolean        push_undo)
 {
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
 
   if (push_undo)
-    gimp_channel_push_undo (channel, C_("undo-type", "Ellipse Select"));
+    picman_channel_push_undo (channel, C_("undo-type", "Ellipse Select"));
 
   /*  if applicable, replace the current selection  */
-  if (op == GIMP_CHANNEL_OP_REPLACE)
-    gimp_channel_clear (channel, NULL, FALSE);
+  if (op == PICMAN_CHANNEL_OP_REPLACE)
+    picman_channel_clear (channel, NULL, FALSE);
 
   /*  if feathering for rect, make a new mask with the
    *  rectangle and feather that with the old mask
    */
-  if (feather || op == GIMP_CHANNEL_OP_INTERSECT)
+  if (feather || op == PICMAN_CHANNEL_OP_INTERSECT)
     {
-      GimpItem   *item = GIMP_ITEM (channel);
+      PicmanItem   *item = PICMAN_ITEM (channel);
       GeglBuffer *add_on;
 
       add_on = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
-                                                gimp_item_get_width  (item),
-                                                gimp_item_get_height (item)),
+                                                picman_item_get_width  (item),
+                                                picman_item_get_height (item)),
                                 babl_format ("Y float"));
 
-      gimp_gegl_mask_combine_ellipse (add_on, GIMP_CHANNEL_OP_ADD,
+      picman_gegl_mask_combine_ellipse (add_on, PICMAN_CHANNEL_OP_ADD,
                                       x, y, w, h, antialias);
 
       if (feather)
-        gimp_gegl_apply_feather (add_on, NULL, NULL, add_on,
+        picman_gegl_apply_feather (add_on, NULL, NULL, add_on,
                                  feather_radius_x,
                                  feather_radius_y);
 
-      gimp_channel_combine_buffer (channel, add_on, op, 0, 0);
+      picman_channel_combine_buffer (channel, add_on, op, 0, 0);
       g_object_unref (add_on);
     }
   else
     {
-      gimp_channel_combine_ellipse (channel, op, x, y, w, h, antialias);
+      picman_channel_combine_ellipse (channel, op, x, y, w, h, antialias);
     }
 }
 
 void
-gimp_channel_select_round_rect (GimpChannel         *channel,
+picman_channel_select_round_rect (PicmanChannel         *channel,
                                 gint                 x,
                                 gint                 y,
                                 gint                 w,
                                 gint                 h,
                                 gdouble              corner_radius_x,
                                 gdouble              corner_radius_y,
-                                GimpChannelOps       op,
+                                PicmanChannelOps       op,
                                 gboolean             antialias,
                                 gboolean             feather,
                                 gdouble              feather_radius_x,
                                 gdouble              feather_radius_y,
                                 gboolean             push_undo)
 {
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
 
   if (push_undo)
-    gimp_channel_push_undo (channel, C_("undo-type", "Rounded Rectangle Select"));
+    picman_channel_push_undo (channel, C_("undo-type", "Rounded Rectangle Select"));
 
   /*  if applicable, replace the current selection  */
-  if (op == GIMP_CHANNEL_OP_REPLACE)
-    gimp_channel_clear (channel, NULL, FALSE);
+  if (op == PICMAN_CHANNEL_OP_REPLACE)
+    picman_channel_clear (channel, NULL, FALSE);
 
   /*  if feathering for rect, make a new mask with the
    *  rectangle and feather that with the old mask
    */
-  if (feather || op == GIMP_CHANNEL_OP_INTERSECT)
+  if (feather || op == PICMAN_CHANNEL_OP_INTERSECT)
     {
-      GimpItem   *item = GIMP_ITEM (channel);
+      PicmanItem   *item = PICMAN_ITEM (channel);
       GeglBuffer *add_on;
 
       add_on = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
-                                                gimp_item_get_width  (item),
-                                                gimp_item_get_height (item)),
+                                                picman_item_get_width  (item),
+                                                picman_item_get_height (item)),
                                 babl_format ("Y float"));
 
-      gimp_gegl_mask_combine_ellipse_rect (add_on, GIMP_CHANNEL_OP_ADD,
+      picman_gegl_mask_combine_ellipse_rect (add_on, PICMAN_CHANNEL_OP_ADD,
                                            x, y, w, h,
                                            corner_radius_x, corner_radius_y,
                                            antialias);
 
       if (feather)
-        gimp_gegl_apply_feather (add_on, NULL, NULL, add_on,
+        picman_gegl_apply_feather (add_on, NULL, NULL, add_on,
                                  feather_radius_x,
                                  feather_radius_y);
 
-      gimp_channel_combine_buffer (channel, add_on, op, 0, 0);
+      picman_channel_combine_buffer (channel, add_on, op, 0, 0);
       g_object_unref (add_on);
     }
   else
     {
-      gimp_channel_combine_ellipse_rect (channel, op, x, y, w, h,
+      picman_channel_combine_ellipse_rect (channel, op, x, y, w, h,
                                          corner_radius_x, corner_radius_y,
                                          antialias);
     }
 }
 
-/*  select by GimpScanConvert functions  */
+/*  select by PicmanScanConvert functions  */
 
 void
-gimp_channel_select_scan_convert (GimpChannel     *channel,
+picman_channel_select_scan_convert (PicmanChannel     *channel,
                                   const gchar     *undo_desc,
-                                  GimpScanConvert *scan_convert,
+                                  PicmanScanConvert *scan_convert,
                                   gint             offset_x,
                                   gint             offset_y,
-                                  GimpChannelOps   op,
+                                  PicmanChannelOps   op,
                                   gboolean         antialias,
                                   gboolean         feather,
                                   gdouble          feather_radius_x,
                                   gdouble          feather_radius_y,
                                   gboolean         push_undo)
 {
-  GimpItem   *item;
+  PicmanItem   *item;
   GeglBuffer *add_on;
 
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
   g_return_if_fail (undo_desc != NULL);
   g_return_if_fail (scan_convert != NULL);
 
   if (push_undo)
-    gimp_channel_push_undo (channel, undo_desc);
+    picman_channel_push_undo (channel, undo_desc);
 
   /*  if applicable, replace the current selection  */
-  if (op == GIMP_CHANNEL_OP_REPLACE)
-    gimp_channel_clear (channel, NULL, FALSE);
+  if (op == PICMAN_CHANNEL_OP_REPLACE)
+    picman_channel_clear (channel, NULL, FALSE);
 
-  item = GIMP_ITEM (channel);
+  item = PICMAN_ITEM (channel);
 
   add_on = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
-                                            gimp_item_get_width  (item),
-                                            gimp_item_get_height (item)),
+                                            picman_item_get_width  (item),
+                                            picman_item_get_height (item)),
                             babl_format ("Y float"));
 
-  gimp_scan_convert_render (scan_convert, add_on,
+  picman_scan_convert_render (scan_convert, add_on,
                             offset_x, offset_y, antialias);
 
   if (feather)
-    gimp_gegl_apply_feather (add_on, NULL, NULL, add_on,
+    picman_gegl_apply_feather (add_on, NULL, NULL, add_on,
                              feather_radius_x,
                              feather_radius_y);
 
-  gimp_channel_combine_buffer (channel, add_on, op, 0, 0);
+  picman_channel_combine_buffer (channel, add_on, op, 0, 0);
   g_object_unref (add_on);
 }
 
 void
-gimp_channel_select_polygon (GimpChannel    *channel,
+picman_channel_select_polygon (PicmanChannel    *channel,
                              const gchar    *undo_desc,
                              gint            n_points,
-                             GimpVector2    *points,
-                             GimpChannelOps  op,
+                             PicmanVector2    *points,
+                             PicmanChannelOps  op,
                              gboolean        antialias,
                              gboolean        feather,
                              gdouble         feather_radius_x,
                              gdouble         feather_radius_y,
                              gboolean        push_undo)
 {
-  GimpScanConvert *scan_convert;
+  PicmanScanConvert *scan_convert;
 
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
   g_return_if_fail (undo_desc != NULL);
 
-  scan_convert = gimp_scan_convert_new ();
+  scan_convert = picman_scan_convert_new ();
 
-  gimp_scan_convert_add_polyline (scan_convert, n_points, points, TRUE);
+  picman_scan_convert_add_polyline (scan_convert, n_points, points, TRUE);
 
-  gimp_channel_select_scan_convert (channel, undo_desc, scan_convert, 0, 0,
+  picman_channel_select_scan_convert (channel, undo_desc, scan_convert, 0, 0,
                                     op, antialias, feather,
                                     feather_radius_x, feather_radius_y,
                                     push_undo);
 
-  gimp_scan_convert_free (scan_convert);
+  picman_scan_convert_free (scan_convert);
 }
 
 void
-gimp_channel_select_vectors (GimpChannel    *channel,
+picman_channel_select_vectors (PicmanChannel    *channel,
                              const gchar    *undo_desc,
-                             GimpVectors    *vectors,
-                             GimpChannelOps  op,
+                             PicmanVectors    *vectors,
+                             PicmanChannelOps  op,
                              gboolean        antialias,
                              gboolean        feather,
                              gdouble         feather_radius_x,
                              gdouble         feather_radius_y,
                              gboolean        push_undo)
 {
-  const GimpBezierDesc *bezier;
+  const PicmanBezierDesc *bezier;
 
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
   g_return_if_fail (undo_desc != NULL);
-  g_return_if_fail (GIMP_IS_VECTORS (vectors));
+  g_return_if_fail (PICMAN_IS_VECTORS (vectors));
 
-  bezier = gimp_vectors_get_bezier (vectors);
+  bezier = picman_vectors_get_bezier (vectors);
 
   if (bezier && bezier->num_data > 4)
     {
-      GimpScanConvert *scan_convert;
+      PicmanScanConvert *scan_convert;
 
-      scan_convert = gimp_scan_convert_new ();
-      gimp_scan_convert_add_bezier (scan_convert, bezier);
+      scan_convert = picman_scan_convert_new ();
+      picman_scan_convert_add_bezier (scan_convert, bezier);
 
-      gimp_channel_select_scan_convert (channel, undo_desc, scan_convert, 0, 0,
+      picman_channel_select_scan_convert (channel, undo_desc, scan_convert, 0, 0,
                                         op, antialias, feather,
                                         feather_radius_x, feather_radius_y,
                                         push_undo);
 
-      gimp_scan_convert_free (scan_convert);
+      picman_scan_convert_free (scan_convert);
     }
 }
 
 
-/*  select by GimpChannel functions  */
+/*  select by PicmanChannel functions  */
 
 void
-gimp_channel_select_buffer (GimpChannel    *channel,
+picman_channel_select_buffer (PicmanChannel    *channel,
                             const gchar    *undo_desc,
                             GeglBuffer     *add_on,
                             gint            offset_x,
                             gint            offset_y,
-                            GimpChannelOps  op,
+                            PicmanChannelOps  op,
                             gboolean        feather,
                             gdouble         feather_radius_x,
                             gdouble         feather_radius_y)
 {
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
   g_return_if_fail (undo_desc != NULL);
   g_return_if_fail (GEGL_IS_BUFFER (add_on));
 
-  gimp_channel_push_undo (channel, undo_desc);
+  picman_channel_push_undo (channel, undo_desc);
 
   /*  if applicable, replace the current selection  */
-  if (op == GIMP_CHANNEL_OP_REPLACE)
-    gimp_channel_clear (channel, NULL, FALSE);
+  if (op == PICMAN_CHANNEL_OP_REPLACE)
+    picman_channel_clear (channel, NULL, FALSE);
 
-  if (feather || op == GIMP_CHANNEL_OP_INTERSECT)
+  if (feather || op == PICMAN_CHANNEL_OP_INTERSECT)
     {
-      GimpItem   *item = GIMP_ITEM (channel);
+      PicmanItem   *item = PICMAN_ITEM (channel);
       GeglBuffer *add_on2;
 
       add_on2 = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
-                                                 gimp_item_get_width  (item),
-                                                 gimp_item_get_height (item)),
+                                                 picman_item_get_width  (item),
+                                                 picman_item_get_height (item)),
                                  babl_format ("Y float"));
 
-      gimp_gegl_mask_combine_buffer (add_on2, add_on,
-                                     GIMP_CHANNEL_OP_ADD,
+      picman_gegl_mask_combine_buffer (add_on2, add_on,
+                                     PICMAN_CHANNEL_OP_ADD,
                                      offset_x, offset_y);
 
       if (feather)
-        gimp_gegl_apply_feather (add_on2, NULL, NULL, add_on2,
+        picman_gegl_apply_feather (add_on2, NULL, NULL, add_on2,
                                  feather_radius_x,
                                  feather_radius_y);
 
-      gimp_channel_combine_buffer (channel, add_on2, op, 0, 0);
+      picman_channel_combine_buffer (channel, add_on2, op, 0, 0);
       g_object_unref (add_on2);
     }
   else
     {
-      gimp_channel_combine_buffer (channel, add_on, op, offset_x, offset_y);
+      picman_channel_combine_buffer (channel, add_on, op, offset_x, offset_y);
     }
 }
 
 void
-gimp_channel_select_channel (GimpChannel    *channel,
+picman_channel_select_channel (PicmanChannel    *channel,
                              const gchar    *undo_desc,
-                             GimpChannel    *add_on,
+                             PicmanChannel    *add_on,
                              gint            offset_x,
                              gint            offset_y,
-                             GimpChannelOps  op,
+                             PicmanChannelOps  op,
                              gboolean        feather,
                              gdouble         feather_radius_x,
                              gdouble         feather_radius_y)
 {
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
   g_return_if_fail (undo_desc != NULL);
-  g_return_if_fail (GIMP_IS_CHANNEL (add_on));
+  g_return_if_fail (PICMAN_IS_CHANNEL (add_on));
 
-  gimp_channel_select_buffer (channel, undo_desc,
-                              gimp_drawable_get_buffer (GIMP_DRAWABLE (add_on)),
+  picman_channel_select_buffer (channel, undo_desc,
+                              picman_drawable_get_buffer (PICMAN_DRAWABLE (add_on)),
                               offset_x, offset_y, op,
                               feather,
                               feather_radius_x, feather_radius_y);
 }
 
 void
-gimp_channel_select_alpha (GimpChannel    *channel,
-                           GimpDrawable   *drawable,
-                           GimpChannelOps  op,
+picman_channel_select_alpha (PicmanChannel    *channel,
+                           PicmanDrawable   *drawable,
+                           PicmanChannelOps  op,
                            gboolean        feather,
                            gdouble         feather_radius_x,
                            gdouble         feather_radius_y)
 {
-  GimpItem    *item;
-  GimpChannel *add_on;
+  PicmanItem    *item;
+  PicmanChannel *add_on;
   gint         off_x, off_y;
 
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
 
-  item = GIMP_ITEM (channel);
+  item = PICMAN_ITEM (channel);
 
-  if (gimp_drawable_has_alpha (drawable))
+  if (picman_drawable_has_alpha (drawable))
     {
-      add_on = gimp_channel_new_from_alpha (gimp_item_get_image (item),
+      add_on = picman_channel_new_from_alpha (picman_item_get_image (item),
                                             drawable, NULL, NULL);
     }
   else
@@ -426,15 +426,15 @@ gimp_channel_select_alpha (GimpChannel    *channel,
       /*  no alpha is equivalent to completely opaque alpha,
        *  so simply select the whole layer's extents.  --mitch
        */
-      add_on = gimp_channel_new_mask (gimp_item_get_image (item),
-                                      gimp_item_get_width  (GIMP_ITEM (drawable)),
-                                      gimp_item_get_height (GIMP_ITEM (drawable)));
-      gimp_channel_all (add_on, FALSE);
+      add_on = picman_channel_new_mask (picman_item_get_image (item),
+                                      picman_item_get_width  (PICMAN_ITEM (drawable)),
+                                      picman_item_get_height (PICMAN_ITEM (drawable)));
+      picman_channel_all (add_on, FALSE);
     }
 
-  gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+  picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
 
-  gimp_channel_select_channel (channel, C_("undo-type", "Alpha to Selection"), add_on,
+  picman_channel_select_channel (channel, C_("undo-type", "Alpha to Selection"), add_on,
                                off_x, off_y,
                                op, feather,
                                feather_radius_x,
@@ -443,38 +443,38 @@ gimp_channel_select_alpha (GimpChannel    *channel,
 }
 
 void
-gimp_channel_select_component (GimpChannel     *channel,
-                               GimpChannelType  component,
-                               GimpChannelOps   op,
+picman_channel_select_component (PicmanChannel     *channel,
+                               PicmanChannelType  component,
+                               PicmanChannelOps   op,
                                gboolean         feather,
                                gdouble          feather_radius_x,
                                gdouble          feather_radius_y)
 {
-  GimpItem    *item;
-  GimpChannel *add_on;
+  PicmanItem    *item;
+  PicmanChannel *add_on;
   const gchar *desc;
   gchar       *undo_desc;
 
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
 
-  item = GIMP_ITEM (channel);
+  item = PICMAN_ITEM (channel);
 
-  add_on = gimp_channel_new_from_component (gimp_item_get_image (item),
+  add_on = picman_channel_new_from_component (picman_item_get_image (item),
                                             component, NULL, NULL);
 
   if (feather)
-    gimp_channel_feather (add_on,
+    picman_channel_feather (add_on,
                           feather_radius_x,
                           feather_radius_y,
                           FALSE /* no undo */);
 
-  gimp_enum_get_value (GIMP_TYPE_CHANNEL_TYPE, component,
+  picman_enum_get_value (PICMAN_TYPE_CHANNEL_TYPE, component,
                        NULL, NULL, &desc, NULL);
 
   undo_desc = g_strdup_printf (C_("undo-type", "%s Channel to Selection"), desc);
 
-  gimp_channel_select_channel (channel, undo_desc, add_on,
+  picman_channel_select_channel (channel, undo_desc, add_on,
                                0, 0, op,
                                FALSE, 0.0, 0.0);
 
@@ -483,32 +483,32 @@ gimp_channel_select_component (GimpChannel     *channel,
 }
 
 void
-gimp_channel_select_fuzzy (GimpChannel         *channel,
-                           GimpDrawable        *drawable,
+picman_channel_select_fuzzy (PicmanChannel         *channel,
+                           PicmanDrawable        *drawable,
                            gboolean             sample_merged,
                            gint                 x,
                            gint                 y,
                            gfloat               threshold,
                            gboolean             select_transparent,
-                           GimpSelectCriterion  select_criterion,
-                           GimpChannelOps       op,
+                           PicmanSelectCriterion  select_criterion,
+                           PicmanChannelOps       op,
                            gboolean             antialias,
                            gboolean             feather,
                            gdouble              feather_radius_x,
                            gdouble              feather_radius_y)
 {
-  GimpItem   *item;
+  PicmanItem   *item;
   GeglBuffer *add_on;
   gint        add_on_x = 0;
   gint        add_on_y = 0;
 
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
 
-  item = GIMP_ITEM (channel);
+  item = PICMAN_ITEM (channel);
 
-  add_on = gimp_image_contiguous_region_by_seed (gimp_item_get_image (item),
+  add_on = picman_image_contiguous_region_by_seed (picman_item_get_image (item),
                                                  drawable,
                                                  sample_merged,
                                                  antialias,
@@ -518,9 +518,9 @@ gimp_channel_select_fuzzy (GimpChannel         *channel,
                                                  x, y);
 
   if (! sample_merged)
-    gimp_item_get_offset (GIMP_ITEM (drawable), &add_on_x, &add_on_y);
+    picman_item_get_offset (PICMAN_ITEM (drawable), &add_on_x, &add_on_y);
 
-  gimp_channel_select_buffer (channel, C_("undo-type", "Fuzzy Select"),
+  picman_channel_select_buffer (channel, C_("undo-type", "Fuzzy Select"),
                               add_on, add_on_x, add_on_y,
                               op,
                               feather,
@@ -530,32 +530,32 @@ gimp_channel_select_fuzzy (GimpChannel         *channel,
 }
 
 void
-gimp_channel_select_by_color (GimpChannel         *channel,
-                              GimpDrawable        *drawable,
+picman_channel_select_by_color (PicmanChannel         *channel,
+                              PicmanDrawable        *drawable,
                               gboolean             sample_merged,
-                              const GimpRGB       *color,
+                              const PicmanRGB       *color,
                               gfloat               threshold,
                               gboolean             select_transparent,
-                              GimpSelectCriterion  select_criterion,
-                              GimpChannelOps       op,
+                              PicmanSelectCriterion  select_criterion,
+                              PicmanChannelOps       op,
                               gboolean             antialias,
                               gboolean             feather,
                               gdouble              feather_radius_x,
                               gdouble              feather_radius_y)
 {
-  GimpItem   *item;
+  PicmanItem   *item;
   GeglBuffer *add_on;
   gint        add_on_x = 0;
   gint        add_on_y = 0;
 
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
   g_return_if_fail (color != NULL);
 
-  item = GIMP_ITEM (channel);
+  item = PICMAN_ITEM (channel);
 
-  add_on = gimp_image_contiguous_region_by_color (gimp_item_get_image (item),
+  add_on = picman_image_contiguous_region_by_color (picman_item_get_image (item),
                                                   drawable,
                                                   sample_merged,
                                                   antialias,
@@ -565,9 +565,9 @@ gimp_channel_select_by_color (GimpChannel         *channel,
                                                   color);
 
   if (! sample_merged)
-    gimp_item_get_offset (GIMP_ITEM (drawable), &add_on_x, &add_on_y);
+    picman_item_get_offset (PICMAN_ITEM (drawable), &add_on_x, &add_on_y);
 
-  gimp_channel_select_buffer (channel, C_("undo-type", "Select by Color"),
+  picman_channel_select_buffer (channel, C_("undo-type", "Select by Color"),
                               add_on, add_on_x, add_on_y,
                               op,
                               feather,

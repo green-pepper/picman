@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpvectors-warp.h
+ * picmanvectors-warp.h
  * Copyright (C) 2005 Bill Skaggs  <weskaggs@primate.ucdavis.edu>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,18 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VECTORS_WARP_H__
-#define __GIMP_VECTORS_WARP_H__
+#ifndef __PICMAN_VECTORS_WARP_H__
+#define __PICMAN_VECTORS_WARP_H__
 
-void gimp_vectors_warp_point   (const GimpVectors *vectors,
-                                GimpCoords        *point,
-                                GimpCoords        *point_warped,
+void picman_vectors_warp_point   (const PicmanVectors *vectors,
+                                PicmanCoords        *point,
+                                PicmanCoords        *point_warped,
                                 gdouble            y_offset);
 
 
-void gimp_vectors_warp_vectors (const GimpVectors *vectors,
-                                GimpVectors       *vectors_in,
+void picman_vectors_warp_vectors (const PicmanVectors *vectors,
+                                PicmanVectors       *vectors_in,
                                 gdouble            yoffset);
 
-#endif /* __GIMP_VECTORS_WARP_H__ */
+#endif /* __PICMAN_VECTORS_WARP_H__ */
 

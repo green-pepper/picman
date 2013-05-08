@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginmanager-help-domain.c
+ * picmanpluginmanager-help-domain.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,13 +25,13 @@
 
 #include "plug-in-types.h"
 
-#include "gimppluginmanager.h"
-#include "gimppluginmanager-help-domain.h"
+#include "picmanpluginmanager.h"
+#include "picmanpluginmanager-help-domain.h"
 
 
-typedef struct _GimpPlugInHelpDomain GimpPlugInHelpDomain;
+typedef struct _PicmanPlugInHelpDomain PicmanPlugInHelpDomain;
 
-struct _GimpPlugInHelpDomain
+struct _PicmanPlugInHelpDomain
 {
   gchar *prog_name;
   gchar *domain_name;
@@ -40,20 +40,20 @@ struct _GimpPlugInHelpDomain
 
 
 void
-gimp_plug_in_manager_help_domain_exit (GimpPlugInManager *manager)
+picman_plug_in_manager_help_domain_exit (PicmanPlugInManager *manager)
 {
   GSList *list;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
 
   for (list = manager->help_domains; list; list = list->next)
     {
-      GimpPlugInHelpDomain *domain = list->data;
+      PicmanPlugInHelpDomain *domain = list->data;
 
       g_free (domain->prog_name);
       g_free (domain->domain_name);
       g_free (domain->domain_uri);
-      g_slice_free (GimpPlugInHelpDomain, domain);
+      g_slice_free (PicmanPlugInHelpDomain, domain);
     }
 
   g_slist_free (manager->help_domains);
@@ -61,18 +61,18 @@ gimp_plug_in_manager_help_domain_exit (GimpPlugInManager *manager)
 }
 
 void
-gimp_plug_in_manager_add_help_domain (GimpPlugInManager *manager,
+picman_plug_in_manager_add_help_domain (PicmanPlugInManager *manager,
                                       const gchar       *prog_name,
                                       const gchar       *domain_name,
                                       const gchar       *domain_uri)
 {
-  GimpPlugInHelpDomain *domain;
+  PicmanPlugInHelpDomain *domain;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
   g_return_if_fail (prog_name != NULL);
   g_return_if_fail (domain_name != NULL);
 
-  domain = g_slice_new (GimpPlugInHelpDomain);
+  domain = g_slice_new (PicmanPlugInHelpDomain);
 
   domain->prog_name   = g_strdup (prog_name);
   domain->domain_name = g_strdup (domain_name);
@@ -88,24 +88,24 @@ gimp_plug_in_manager_add_help_domain (GimpPlugInManager *manager,
 }
 
 const gchar *
-gimp_plug_in_manager_get_help_domain (GimpPlugInManager  *manager,
+picman_plug_in_manager_get_help_domain (PicmanPlugInManager  *manager,
                                       const gchar        *prog_name,
                                       const gchar       **domain_uri)
 {
   GSList *list;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager), NULL);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager), NULL);
 
   if (domain_uri)
     *domain_uri = NULL;
 
-  /*  A NULL prog_name is GIMP itself, return the default domain  */
+  /*  A NULL prog_name is PICMAN itself, return the default domain  */
   if (! prog_name)
     return NULL;
 
   for (list = manager->help_domains; list; list = list->next)
     {
-      GimpPlugInHelpDomain *domain = list->data;
+      PicmanPlugInHelpDomain *domain = list->data;
 
       if (domain && domain->prog_name &&
           ! strcmp (domain->prog_name, prog_name))
@@ -121,13 +121,13 @@ gimp_plug_in_manager_get_help_domain (GimpPlugInManager  *manager,
 }
 
 gint
-gimp_plug_in_manager_get_help_domains (GimpPlugInManager   *manager,
+picman_plug_in_manager_get_help_domains (PicmanPlugInManager   *manager,
                                        gchar             ***help_domains,
                                        gchar             ***help_uris)
 {
   gint n_domains;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager), 0);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager), 0);
   g_return_val_if_fail (help_domains != NULL, 0);
   g_return_val_if_fail (help_uris != NULL, 0);
 
@@ -143,7 +143,7 @@ gimp_plug_in_manager_get_help_domains (GimpPlugInManager   *manager,
 
       for (list = manager->help_domains, i = 0; list; list = list->next, i++)
         {
-          GimpPlugInHelpDomain *domain = list->data;
+          PicmanPlugInHelpDomain *domain = list->data;
 
           (*help_domains)[i] = g_strdup (domain->domain_name);
           (*help_uris)[i]    = g_strdup (domain->domain_uri);

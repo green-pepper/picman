@@ -1,4 +1,4 @@
-/* GIF saving file filter for GIMP
+/* GIF saving file filter for PICMAN
  *
  *    Copyright
  *    - Adam D. Moss
@@ -9,7 +9,7 @@
  *
  *
  * Version 4.1.0 - 2003-06-16
- *                        Adam D. Moss - <adam@gimp.org> <adam@foxbox.org>
+ *                        Adam D. Moss - <adam@picman.org> <adam@foxbox.org>
  */
 /*
  * This filter uses code taken from the "giftopnm" and "ppmtogif" programs
@@ -33,15 +33,15 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define SAVE_PROC      "file-gif-save"
 #define PLUG_IN_BINARY "file-gif-save"
-#define PLUG_IN_ROLE   "gimp-file-gif-save"
+#define PLUG_IN_ROLE   "picman-file-gif-save"
 
 
 /* Define only one of these to determine which kind of gif's you would like.
@@ -56,7 +56,7 @@
 /* uncomment the line below for a little debugging info */
 /* #define GIFDEBUG yesplease */
 
-/* Does the version of GIMP we're compiling for support
+/* Does the version of PICMAN we're compiling for support
    data attachments to images?  ('Parasites') */
 #define FACEHUGGERS aieee
 /* PS: I know that technically facehuggers aren't parasites,
@@ -93,9 +93,9 @@ typedef struct
 static void     query                  (void);
 static void     run                    (const gchar      *name,
                                         gint              nparams,
-                                        const GimpParam  *param,
+                                        const PicmanParam  *param,
                                         gint             *nreturn_vals,
-                                        GimpParam       **return_vals);
+                                        PicmanParam       **return_vals);
 
 static gboolean  save_image            (const gchar      *filename,
                                         gint32            image_ID,
@@ -103,7 +103,7 @@ static gboolean  save_image            (const gchar      *filename,
                                         gint32            orig_image_ID,
                                         GError          **error);
 
-static GimpPDBStatusType sanity_check  (const gchar      *filename,
+static PicmanPDBStatusType sanity_check  (const gchar      *filename,
                                         gint32           *image_ID,
                                         GError          **error);
 static gboolean bad_bounds_dialog      (void);
@@ -114,16 +114,16 @@ static void     comment_entry_callback (GtkTextBuffer    *buffer);
 
 static gboolean comment_was_edited = FALSE;
 
-static GimpRunMode run_mode;
+static PicmanRunMode run_mode;
 #ifdef FACEHUGGERS
-static GimpParasite * comment_parasite = NULL;
+static PicmanParasite * comment_parasite = NULL;
 #endif
 
 /* For compression code */
 static gint Interlace;
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -149,20 +149,20 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",        "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",           "Image to save" },
-    { GIMP_PDB_DRAWABLE, "drawable",        "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",        "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename",    "The name entered" },
-    { GIMP_PDB_INT32,    "interlace",       "Try to save as interlaced" },
-    { GIMP_PDB_INT32,    "loop",            "(animated gif) loop infinitely" },
-    { GIMP_PDB_INT32,    "default-delay",   "(animated gif) Default delay between framese in milliseconds" },
-    { GIMP_PDB_INT32,    "default-dispose", "(animated gif) Default disposal type (0=`don't care`, 1=combine, 2=replace)" }
+    { PICMAN_PDB_INT32,    "run-mode",        "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",           "Image to save" },
+    { PICMAN_PDB_DRAWABLE, "drawable",        "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",        "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename",    "The name entered" },
+    { PICMAN_PDB_INT32,    "interlace",       "Try to save as interlaced" },
+    { PICMAN_PDB_INT32,    "loop",            "(animated gif) loop infinitely" },
+    { PICMAN_PDB_INT32,    "default-delay",   "(animated gif) Default delay between framese in milliseconds" },
+    { PICMAN_PDB_INT32,    "default-dispose", "(animated gif) Default disposal type (0=`don't care`, 1=combine, 2=replace)" }
   };
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "saves files in Compuserve GIF file format",
                           "Save a file in Compuserve GIF format, with "
                           "possible animation, transparency, and comment.  "
@@ -170,30 +170,30 @@ query (void)
                           "file.  The plug-in will intrepret <50% alpha as "
                           "transparent.  When run non-interactively, the "
                           "value for the comment is taken from the "
-                          "'gimp-comment' parasite.  ",
+                          "'picman-comment' parasite.  ",
                           "Spencer Kimball, Peter Mattis, Adam Moss, David Koblas",
                           "Spencer Kimball, Peter Mattis, Adam Moss, David Koblas",
                           "1995-1997",
                           N_("GIF image"),
                           "INDEXED*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_file_handler_mime (SAVE_PROC, "image/gif");
-  gimp_register_save_handler (SAVE_PROC, "gif", "");
+  picman_register_file_handler_mime (SAVE_PROC, "image/gif");
+  picman_register_save_handler (SAVE_PROC, "gif", "");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[2];
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
-  GimpExportReturn  export = GIMP_EXPORT_CANCEL;
+  static PicmanParam  values[2];
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
+  PicmanExportReturn  export = PICMAN_EXPORT_CANCEL;
   GError           *error  = NULL;
 
   INIT_I18N ();
@@ -204,8 +204,8 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   if (strcmp (name, SAVE_PROC) == 0)
     {
@@ -218,14 +218,14 @@ run (const gchar      *name,
       drawable_ID = param[2].data.d_int32;
       filename    = param[3].data.d_string;
 
-      if (run_mode == GIMP_RUN_INTERACTIVE ||
-          run_mode == GIMP_RUN_WITH_LAST_VALS)
-        gimp_ui_init (PLUG_IN_BINARY, FALSE);
+      if (run_mode == PICMAN_RUN_INTERACTIVE ||
+          run_mode == PICMAN_RUN_WITH_LAST_VALS)
+        picman_ui_init (PLUG_IN_BINARY, FALSE);
 
       status = sanity_check (filename, &image_ID, &error);
 
       /* Get the export options */
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           /* If the sanity check succeeded, the image_ID will point to
            * a duplicate image to delete later. */
@@ -233,20 +233,20 @@ run (const gchar      *name,
 
           switch (run_mode)
             {
-            case GIMP_RUN_INTERACTIVE:
+            case PICMAN_RUN_INTERACTIVE:
               /*  Possibly retrieve data  */
-              gimp_get_data (SAVE_PROC, &gsvals);
+              picman_get_data (SAVE_PROC, &gsvals);
 
               /*  First acquire information with a dialog  */
               if (! save_dialog (image_ID))
-                status = GIMP_PDB_CANCEL;
+                status = PICMAN_PDB_CANCEL;
               break;
 
-            case GIMP_RUN_NONINTERACTIVE:
+            case PICMAN_RUN_NONINTERACTIVE:
               /*  Make sure all the arguments are there!  */
               if (nparams != 9)
                 {
-                  status = GIMP_PDB_CALLING_ERROR;
+                  status = PICMAN_PDB_CALLING_ERROR;
                 }
               else
                 {
@@ -258,9 +258,9 @@ run (const gchar      *name,
                 }
               break;
 
-            case GIMP_RUN_WITH_LAST_VALS:
+            case PICMAN_RUN_WITH_LAST_VALS:
               /*  Possibly retrieve data  */
-              gimp_get_data (SAVE_PROC, &gsvals);
+              picman_get_data (SAVE_PROC, &gsvals);
               break;
 
             default:
@@ -271,25 +271,25 @@ run (const gchar      *name,
       /* Create an exportable image based on the export options */
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
           {
-            GimpExportCapabilities capabilities =
-              GIMP_EXPORT_CAN_HANDLE_INDEXED |
-              GIMP_EXPORT_CAN_HANDLE_GRAY |
-              GIMP_EXPORT_CAN_HANDLE_ALPHA;
+            PicmanExportCapabilities capabilities =
+              PICMAN_EXPORT_CAN_HANDLE_INDEXED |
+              PICMAN_EXPORT_CAN_HANDLE_GRAY |
+              PICMAN_EXPORT_CAN_HANDLE_ALPHA;
 
             if (gsvals.as_animation)
-              capabilities |= GIMP_EXPORT_CAN_HANDLE_LAYERS;
+              capabilities |= PICMAN_EXPORT_CAN_HANDLE_LAYERS;
 
-            export = gimp_export_image (&image_ID, &drawable_ID, NULL,
+            export = picman_export_image (&image_ID, &drawable_ID, NULL,
                                         capabilities);
 
-            if (export == GIMP_EXPORT_CANCEL)
+            if (export == PICMAN_EXPORT_CANCEL)
               {
-                values[0].data.d_status = GIMP_PDB_CANCEL;
+                values[0].data.d_status = PICMAN_PDB_CANCEL;
                 if (sanitized_image_ID)
-                  gimp_image_delete (sanitized_image_ID);
+                  picman_image_delete (sanitized_image_ID);
                 return;
               }
           }
@@ -299,31 +299,31 @@ run (const gchar      *name,
         }
 
       /* Write the image to file */
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           if (save_image (param[3].data.d_string,
                           image_ID, drawable_ID, orig_image_ID,
                           &error))
             {
               /*  Store psvals data  */
-              gimp_set_data (SAVE_PROC, &gsvals, sizeof (GIFSaveVals));
+              picman_set_data (SAVE_PROC, &gsvals, sizeof (GIFSaveVals));
             }
           else
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
 
-          gimp_image_delete (sanitized_image_ID);
+          picman_image_delete (sanitized_image_ID);
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image_ID);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image_ID);
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -572,7 +572,7 @@ parse_disposal_tag (const gchar *str)
 }
 
 
-static GimpPDBStatusType
+static PicmanPDBStatusType
 sanity_check (const gchar  *filename,
               gint32       *image_ID,
               GError      **error)
@@ -583,8 +583,8 @@ sanity_check (const gchar  *filename,
   gint    image_height;
   gint    i;
 
-  image_width  = gimp_image_width (*image_ID);
-  image_height = gimp_image_height (*image_ID);
+  image_width  = picman_image_width (*image_ID);
+  image_height = picman_image_height (*image_ID);
 
   if (image_width > G_MAXUSHORT || image_height > G_MAXUSHORT)
     {
@@ -592,28 +592,28 @@ sanity_check (const gchar  *filename,
                    _("Unable to save '%s'.  "
                    "The GIF file format does not support images that are "
                    "more than %d pixels wide or tall."),
-                   gimp_filename_to_utf8 (filename), G_MAXUSHORT);
+                   picman_filename_to_utf8 (filename), G_MAXUSHORT);
 
-      return GIMP_PDB_EXECUTION_ERROR;
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
 
   /*** Iterate through the layers to make sure they're all ***/
   /*** within the bounds of the image                      ***/
 
-  *image_ID = gimp_image_duplicate (*image_ID);
-  layers = gimp_image_get_layers (*image_ID, &nlayers);
+  *image_ID = picman_image_duplicate (*image_ID);
+  layers = picman_image_get_layers (*image_ID, &nlayers);
 
   for (i = 0; i < nlayers; i++)
     {
       gint offset_x;
       gint offset_y;
 
-      gimp_drawable_offsets (layers[i], &offset_x, &offset_y);
+      picman_drawable_offsets (layers[i], &offset_x, &offset_y);
 
       if (offset_x < 0 ||
           offset_y < 0 ||
-          offset_x + gimp_drawable_width (layers[i]) > image_width ||
-          offset_y + gimp_drawable_height (layers[i]) > image_height)
+          offset_x + picman_drawable_width (layers[i]) > image_width ||
+          offset_y + picman_drawable_height (layers[i]) > image_height)
         {
           g_free (layers);
 
@@ -622,22 +622,22 @@ sanity_check (const gchar  *filename,
           /* Do the crop if we can't talk to the user, or if we asked
            * the user and they said yes.
            */
-          if ((run_mode == GIMP_RUN_NONINTERACTIVE) || bad_bounds_dialog ())
+          if ((run_mode == PICMAN_RUN_NONINTERACTIVE) || bad_bounds_dialog ())
             {
-              gimp_image_crop (*image_ID, image_width, image_height, 0, 0);
-              return GIMP_PDB_SUCCESS;
+              picman_image_crop (*image_ID, image_width, image_height, 0, 0);
+              return PICMAN_PDB_SUCCESS;
             }
           else
             {
-              gimp_image_delete (*image_ID);
-              return GIMP_PDB_CANCEL;
+              picman_image_delete (*image_ID);
+              return PICMAN_PDB_CANCEL;
             }
         }
     }
 
   g_free (layers);
 
-  return GIMP_PDB_SUCCESS;
+  return PICMAN_PDB_SUCCESS;
 }
 
 
@@ -649,7 +649,7 @@ save_image (const gchar *filename,
             GError     **error)
 {
   GeglBuffer    *buffer;
-  GimpImageType  drawable_type;
+  PicmanImageType  drawable_type;
   const Babl    *format = NULL;
   FILE          *outfile;
   gint           Red[MAXCOLORS];
@@ -672,7 +672,7 @@ save_image (const gchar *filename,
   gint           Disposal;
   gchar         *layer_name;
 
-  GimpRGB        background;
+  PicmanRGB        background;
   guchar         bgred, bggreen, bgblue;
   guchar         bgindex = 0;
   guint          best_error = 0xFFFFFFFF;
@@ -682,12 +682,12 @@ save_image (const gchar *filename,
   /* Save the comment back to the ImageID, if appropriate */
   if (globalcomment != NULL && comment_was_edited)
     {
-      comment_parasite = gimp_parasite_new ("gimp-comment",
-                                            GIMP_PARASITE_PERSISTENT,
+      comment_parasite = picman_parasite_new ("picman-comment",
+                                            PICMAN_PARASITE_PERSISTENT,
                                             strlen (globalcomment) + 1,
                                             (void*) globalcomment);
-      gimp_image_attach_parasite (orig_image_ID, comment_parasite);
-      gimp_parasite_free (comment_parasite);
+      picman_image_attach_parasite (orig_image_ID, comment_parasite);
+      picman_parasite_free (comment_parasite);
       comment_parasite = NULL;
     }
 #endif
@@ -714,9 +714,9 @@ save_image (const gchar *filename,
     }
 
   /* get a list of layers for this image_ID */
-  layers = gimp_image_get_layers (image_ID, &nlayers);
+  layers = picman_image_get_layers (image_ID, &nlayers);
 
-  drawable_type = gimp_drawable_type (layers[0]);
+  drawable_type = picman_drawable_type (layers[0]);
 
   /* If the image has multiple layers (i.e. will be animated), a comment,
      or transparency, then it must be encoded as a GIF89a file, not a vanilla
@@ -729,13 +729,13 @@ save_image (const gchar *filename,
 
   switch (drawable_type)
     {
-    case GIMP_INDEXEDA_IMAGE:
+    case PICMAN_INDEXEDA_IMAGE:
       is_gif89 = TRUE;
-    case GIMP_INDEXED_IMAGE:
-      cmap = gimp_image_get_colormap (image_ID, &colors);
+    case PICMAN_INDEXED_IMAGE:
+      cmap = picman_image_get_colormap (image_ID, &colors);
 
-      gimp_context_get_background (&background);
-      gimp_rgb_get_uchar (&background, &bgred, &bggreen, &bgblue);
+      picman_context_get_background (&background);
+      picman_rgb_get_uchar (&background, &bgred, &bggreen, &bgblue);
 
       for (i = 0; i < colors; i++)
         {
@@ -750,16 +750,16 @@ save_image (const gchar *filename,
           Blue[i]  = bgblue;
         }
       break;
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       is_gif89 = TRUE;
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       colors = 256;                   /* FIXME: Not ideal. */
       for ( i = 0;  i < 256; i++)
         {
           Red[i] = Green[i] = Blue[i] = i;
         }
 
-      if (drawable_type == GIMP_GRAYA_IMAGE)
+      if (drawable_type == PICMAN_GRAYA_IMAGE)
         format = babl_format ("Y'A u8");
       else
         format = babl_format ("Y' u8");
@@ -796,14 +796,14 @@ save_image (const gchar *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return FALSE;
     }
 
 
   /* init the progress meter */
-  gimp_progress_init_printf (_("Saving '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Saving '%s'"),
+                             picman_filename_to_utf8 (filename));
 
 
   /* write the GIFheader */
@@ -814,21 +814,21 @@ save_image (const gchar *filename,
          so that we don't accidentally come under this when doing
          clever transparency stuff where we can re-use wasted indices. */
       liberalBPP = BitsPerPixel =
-        colors_to_bpp (colors + ((drawable_type==GIMP_INDEXEDA_IMAGE) ? 1 : 0));
+        colors_to_bpp (colors + ((drawable_type==PICMAN_INDEXEDA_IMAGE) ? 1 : 0));
     }
   else
     {
       liberalBPP = BitsPerPixel =
         colors_to_bpp (256);
 
-      if (drawable_type == GIMP_INDEXEDA_IMAGE)
+      if (drawable_type == PICMAN_INDEXEDA_IMAGE)
         {
           g_printerr ("GIF: Too many colours?\n");
         }
     }
 
-  cols = gimp_image_width (image_ID);
-  rows = gimp_image_height (image_ID);
+  cols = picman_image_width (image_ID);
+  rows = picman_image_height (image_ID);
   Interlace = gsvals.interlace;
   gif_encode_header (outfile, is_gif89, cols, rows, bgindex,
                      BitsPerPixel, Red, Green, Blue, get_pixel);
@@ -854,24 +854,24 @@ save_image (const gchar *filename,
 
   for (i = nlayers - 1; i >= 0; i--, cur_progress = (nlayers - i) * rows)
     {
-      drawable_type = gimp_drawable_type (layers[i]);
-      buffer = gimp_drawable_get_buffer (layers[i]);
-      gimp_drawable_offsets (layers[i], &offset_x, &offset_y);
-      cols = gimp_drawable_width (layers[i]);
-      rows = gimp_drawable_height (layers[i]);
+      drawable_type = picman_drawable_type (layers[i]);
+      buffer = picman_drawable_get_buffer (layers[i]);
+      picman_drawable_offsets (layers[i], &offset_x, &offset_y);
+      cols = picman_drawable_width (layers[i]);
+      rows = picman_drawable_height (layers[i]);
       rowstride = cols;
 
       pixels = g_new (guchar, (cols * rows *
-                               (((drawable_type == GIMP_INDEXEDA_IMAGE) ||
-                                 (drawable_type == GIMP_GRAYA_IMAGE)) ? 2 : 1)));
+                               (((drawable_type == PICMAN_INDEXEDA_IMAGE) ||
+                                 (drawable_type == PICMAN_GRAYA_IMAGE)) ? 2 : 1)));
 
       gegl_buffer_get (buffer, GEGL_RECTANGLE (0, 0, cols, rows), 1.0,
                        format, pixels,
                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       /* sort out whether we need to do transparency jiggery-pokery */
-      if ((drawable_type == GIMP_INDEXEDA_IMAGE) ||
-          (drawable_type == GIMP_GRAYA_IMAGE))
+      if ((drawable_type == PICMAN_INDEXEDA_IMAGE) ||
+          (drawable_type == PICMAN_GRAYA_IMAGE))
         {
           /* Try to find an entry which isn't actually used in the
              image, for a transparency index. */
@@ -916,7 +916,7 @@ save_image (const gchar *filename,
         {
           if (i > 0 && ! gsvals.always_use_default_dispose)
             {
-              layer_name = gimp_item_get_name (layers[i - 1]);
+              layer_name = picman_item_get_name (layers[i - 1]);
               Disposal = parse_disposal_tag (layer_name);
               g_free (layer_name);
             }
@@ -925,7 +925,7 @@ save_image (const gchar *filename,
               Disposal = gsvals.default_dispose;
             }
 
-          layer_name = gimp_item_get_name (layers[i]);
+          layer_name = picman_item_get_name (layers[i]);
           Delay89 = parse_ms_tag (layer_name);
           g_free (layer_name);
 
@@ -960,7 +960,7 @@ save_image (const gchar *filename,
                              useBPP,
                              get_pixel,
                              offset_x, offset_y);
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
 
       g_object_unref (buffer);
 
@@ -988,7 +988,7 @@ bad_bounds_dialog (void)
 
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           GTK_STOCK_CANCEL,     GTK_RESPONSE_CANCEL,
-                          GIMP_STOCK_TOOL_CROP, GTK_RESPONSE_OK,
+                          PICMAN_STOCK_TOOL_CROP, GTK_RESPONSE_OK,
                           NULL);
 
   gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog),
@@ -996,7 +996,7 @@ bad_bounds_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
                                             _("The GIF file format does not "
@@ -1025,7 +1025,7 @@ file_gif_toggle_button_init (GtkBuilder  *builder,
   toggle = GTK_WIDGET (gtk_builder_get_object (builder, name));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle), initial_value);
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     value_pointer);
 
   return toggle;
@@ -1045,7 +1045,7 @@ file_gif_spin_button_int_init (GtkBuilder  *builder,
   adjustment = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (spin_button));
   gtk_adjustment_set_value (adjustment, initial_value);
   g_signal_connect (adjustment, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &gsvals.default_delay);
 
   return spin_button;
@@ -1126,20 +1126,20 @@ save_dialog (gint32 image_ID)
   GtkWidget     *toggle;
   GtkWidget     *frame;
 #ifdef FACEHUGGERS
-  GimpParasite  *GIF2_CMNT;
+  PicmanParasite  *GIF2_CMNT;
 #endif
   gint32         nlayers;
   gboolean       animation_supported = FALSE;
   gboolean       run;
 
-  gimp_image_get_layers (image_ID, &nlayers);
+  picman_image_get_layers (image_ID, &nlayers);
   animation_supported = nlayers > 1;
 
-  dialog = gimp_export_dialog_new (_("GIF"), PLUG_IN_BINARY, SAVE_PROC);
+  dialog = picman_export_dialog_new (_("GIF"), PLUG_IN_BINARY, SAVE_PROC);
 
   /* GtkBuilder init */
   builder = gtk_builder_new ();
-  ui_file = g_build_filename (gimp_data_directory (),
+  ui_file = g_build_filename (picman_data_directory (),
                               "ui/plug-ins/plug-in-file-gif.ui",
                               NULL);
   if (! gtk_builder_add_from_file (builder, ui_file, &error))
@@ -1148,7 +1148,7 @@ save_dialog (gint32 image_ID)
   g_free (ui_file);
 
   /* Main vbox */
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       GTK_WIDGET (gtk_builder_get_object (builder, "main-vbox")),
                       TRUE, TRUE, 0);
 
@@ -1167,16 +1167,16 @@ save_dialog (gint32 image_ID)
     g_free (globalcomment);
 
 #ifdef FACEHUGGERS
-  GIF2_CMNT = gimp_image_get_parasite (image_ID, "gimp-comment");
+  GIF2_CMNT = picman_image_get_parasite (image_ID, "picman-comment");
   if (GIF2_CMNT)
-    globalcomment = g_strndup (gimp_parasite_data (GIF2_CMNT),
-                               gimp_parasite_data_size (GIF2_CMNT));
+    globalcomment = g_strndup (picman_parasite_data (GIF2_CMNT),
+                               picman_parasite_data_size (GIF2_CMNT));
   else
 #endif
-    globalcomment = gimp_get_default_comment ();
+    globalcomment = picman_get_default_comment ();
 
 #ifdef FACEHUGGERS
-  gimp_parasite_free (GIF2_CMNT);
+  picman_parasite_free (GIF2_CMNT);
 #endif
 
   if (globalcomment)
@@ -1217,7 +1217,7 @@ save_dialog (gint32 image_ID)
   toggle = GTK_WIDGET (gtk_builder_get_object (builder, "as-animation"));
   gtk_widget_set_sensitive (toggle, animation_supported);
   if (! animation_supported)
-    gimp_help_set_help_data (toggle,
+    picman_help_set_help_data (toggle,
                              _("You can only export as animation when the "
                                "image has more than one layer. The image "
                                "you are trying to export only has one "
@@ -1230,7 +1230,7 @@ save_dialog (gint32 image_ID)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -1330,7 +1330,7 @@ bump_pixel (void)
       cur_progress++;
 
       if ((cur_progress % 20) == 0)
-        gimp_progress_update ((gdouble) cur_progress / (gdouble) max_progress);
+        picman_progress_update ((gdouble) cur_progress / (gdouble) max_progress);
 
       curx = 0;
 

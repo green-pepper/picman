@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpImagePropView
- * Copyright (C) 2005  Michael Natterer <mitch@gimp.org>
+ * PicmanImagePropView
+ * Copyright (C) 2005  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_PROP_VIEW_H__
-#define __GIMP_IMAGE_PROP_VIEW_H__
+#ifndef __PICMAN_IMAGE_PROP_VIEW_H__
+#define __PICMAN_IMAGE_PROP_VIEW_H__
 
 
-#define GIMP_TYPE_IMAGE_PROP_VIEW            (gimp_image_prop_view_get_type ())
-#define GIMP_IMAGE_PROP_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_IMAGE_PROP_VIEW, GimpImagePropView))
-#define GIMP_IMAGE_PROP_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_IMAGE_PROP_VIEW, GimpImagePropViewClass))
-#define GIMP_IS_IMAGE_PROP_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_IMAGE_PROP_VIEW))
-#define GIMP_IS_IMAGE_PROP_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_IMAGE_PROP_VIEW))
-#define GIMP_IMAGE_PROP_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_IMAGE_PROP_VIEW, GimpImagePropViewClass))
+#define PICMAN_TYPE_IMAGE_PROP_VIEW            (picman_image_prop_view_get_type ())
+#define PICMAN_IMAGE_PROP_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_IMAGE_PROP_VIEW, PicmanImagePropView))
+#define PICMAN_IMAGE_PROP_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_IMAGE_PROP_VIEW, PicmanImagePropViewClass))
+#define PICMAN_IS_IMAGE_PROP_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_IMAGE_PROP_VIEW))
+#define PICMAN_IS_IMAGE_PROP_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_IMAGE_PROP_VIEW))
+#define PICMAN_IMAGE_PROP_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_IMAGE_PROP_VIEW, PicmanImagePropViewClass))
 
 
-typedef struct _GimpImagePropViewClass GimpImagePropViewClass;
+typedef struct _PicmanImagePropViewClass PicmanImagePropViewClass;
 
-struct _GimpImagePropView
+struct _PicmanImagePropView
 {
   GtkTable   parent_instance;
 
-  GimpImage *image;
+  PicmanImage *image;
 
   GtkWidget *pixel_size_label;
   GtkWidget *print_size_label;
@@ -55,15 +55,15 @@ struct _GimpImagePropView
   GtkWidget *vectors_label;
 };
 
-struct _GimpImagePropViewClass
+struct _PicmanImagePropViewClass
 {
   GtkTableClass  parent_class;
 };
 
 
-GType       gimp_image_prop_view_get_type (void) G_GNUC_CONST;
+GType       picman_image_prop_view_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_image_prop_view_new      (GimpImage *image);
+GtkWidget * picman_image_prop_view_new      (PicmanImage *image);
 
 
-#endif /*  __GIMP_IMAGE_PROP_VIEW_H__  */
+#endif /*  __PICMAN_IMAGE_PROP_VIEW_H__  */

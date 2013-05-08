@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis, and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TRANSFORM_TOOL_H__
-#define __GIMP_TRANSFORM_TOOL_H__
+#ifndef __PICMAN_TRANSFORM_TOOL_H__
+#define __PICMAN_TRANSFORM_TOOL_H__
 
 
-#include "gimpdrawtool.h"
+#include "picmandrawtool.h"
 
 
 typedef enum
@@ -56,21 +56,21 @@ typedef enum
 typedef gdouble TransInfo[TRANS_INFO_SIZE];
 
 
-#define GIMP_TYPE_TRANSFORM_TOOL            (gimp_transform_tool_get_type ())
-#define GIMP_TRANSFORM_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TRANSFORM_TOOL, GimpTransformTool))
-#define GIMP_TRANSFORM_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TRANSFORM_TOOL, GimpTransformToolClass))
-#define GIMP_IS_TRANSFORM_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TRANSFORM_TOOL))
-#define GIMP_IS_TRANSFORM_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TRANSFORM_TOOL))
-#define GIMP_TRANSFORM_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TRANSFORM_TOOL, GimpTransformToolClass))
+#define PICMAN_TYPE_TRANSFORM_TOOL            (picman_transform_tool_get_type ())
+#define PICMAN_TRANSFORM_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TRANSFORM_TOOL, PicmanTransformTool))
+#define PICMAN_TRANSFORM_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TRANSFORM_TOOL, PicmanTransformToolClass))
+#define PICMAN_IS_TRANSFORM_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TRANSFORM_TOOL))
+#define PICMAN_IS_TRANSFORM_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TRANSFORM_TOOL))
+#define PICMAN_TRANSFORM_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TRANSFORM_TOOL, PicmanTransformToolClass))
 
-#define GIMP_TRANSFORM_TOOL_GET_OPTIONS(t)  (GIMP_TRANSFORM_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_TRANSFORM_TOOL_GET_OPTIONS(t)  (PICMAN_TRANSFORM_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpTransformToolClass GimpTransformToolClass;
+typedef struct _PicmanTransformToolClass PicmanTransformToolClass;
 
-struct _GimpTransformTool
+struct _PicmanTransformTool
 {
-  GimpDrawTool    parent_instance;
+  PicmanDrawTool    parent_instance;
 
   gdouble         curx;            /*  current x coord                   */
   gdouble         cury;            /*  current y coord                   */
@@ -97,7 +97,7 @@ struct _GimpTransformTool
   gdouble         tcx, tcy;
   gdouble         tpx, tpy;
 
-  GimpMatrix3     transform;       /*  transformation matrix             */
+  PicmanMatrix3     transform;       /*  transformation matrix             */
   TransInfo       trans_info;      /*  transformation info               */
   TransInfo      *old_trans_info;  /*  for resetting everything          */
   TransInfo      *prev_trans_info; /*  the current finished state        */
@@ -115,36 +115,36 @@ struct _GimpTransformTool
   gboolean        use_mid_handles; /*  use handles at midpoints of edges */
   gboolean        use_pivot;       /*  use pivot point                   */
 
-  GimpCanvasItem *handles[TRANSFORM_HANDLE_NUM];
+  PicmanCanvasItem *handles[TRANSFORM_HANDLE_NUM];
 
   const gchar    *progress_text;
 
   GtkWidget      *dialog;
 };
 
-struct _GimpTransformToolClass
+struct _PicmanTransformToolClass
 {
-  GimpDrawToolClass  parent_class;
+  PicmanDrawToolClass  parent_class;
 
   /*  virtual functions  */
-  void            (* dialog)        (GimpTransformTool *tool);
-  void            (* dialog_update) (GimpTransformTool *tool);
-  void            (* prepare)       (GimpTransformTool *tool);
-  void            (* motion)        (GimpTransformTool *tool);
-  void            (* recalc_matrix) (GimpTransformTool *tool);
-  gchar         * (* get_undo_desc) (GimpTransformTool *tool);
-  TransformAction (* pick_function) (GimpTransformTool *tool,
-                                     const GimpCoords  *coords,
+  void            (* dialog)        (PicmanTransformTool *tool);
+  void            (* dialog_update) (PicmanTransformTool *tool);
+  void            (* prepare)       (PicmanTransformTool *tool);
+  void            (* motion)        (PicmanTransformTool *tool);
+  void            (* recalc_matrix) (PicmanTransformTool *tool);
+  gchar         * (* get_undo_desc) (PicmanTransformTool *tool);
+  TransformAction (* pick_function) (PicmanTransformTool *tool,
+                                     const PicmanCoords  *coords,
                                      GdkModifierType    state,
-                                     GimpDisplay       *display);
-  void            (* cursor_update) (GimpTransformTool  *tr_tool,
-                                     GimpCursorType     *cursor,
-                                     GimpCursorModifier *modifier);
-  void            (* draw_gui)      (GimpTransformTool *tool,
+                                     PicmanDisplay       *display);
+  void            (* cursor_update) (PicmanTransformTool  *tr_tool,
+                                     PicmanCursorType     *cursor,
+                                     PicmanCursorModifier *modifier);
+  void            (* draw_gui)      (PicmanTransformTool *tool,
                                      gint               handle_w,
                                      gint               handle_h);
-  GeglBuffer    * (* transform)     (GimpTransformTool *tool,
-                                     GimpItem          *item,
+  GeglBuffer    * (* transform)     (PicmanTransformTool *tool,
+                                     PicmanItem          *item,
                                      GeglBuffer        *orig_buffer,
                                      gint               orig_offset_x,
                                      gint               orig_offset_y,
@@ -153,10 +153,10 @@ struct _GimpTransformToolClass
 };
 
 
-GType   gimp_transform_tool_get_type      (void) G_GNUC_CONST;
+GType   picman_transform_tool_get_type      (void) G_GNUC_CONST;
 
-void    gimp_transform_tool_recalc_matrix (GimpTransformTool *tr_tool);
-void    gimp_transform_tool_push_internal_undo (GimpTransformTool *tr_tool);
+void    picman_transform_tool_recalc_matrix (PicmanTransformTool *tr_tool);
+void    picman_transform_tool_push_internal_undo (PicmanTransformTool *tr_tool);
 
 
-#endif  /*  __GIMP_TRANSFORM_TOOL_H__  */
+#endif  /*  __PICMAN_TRANSFORM_TOOL_H__  */

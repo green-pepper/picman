@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,29 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_NEW_H__
-#define __GIMP_IMAGE_NEW_H__
+#ifndef __PICMAN_IMAGE_NEW_H__
+#define __PICMAN_IMAGE_NEW_H__
 
 
-GimpTemplate * gimp_image_new_get_last_template (Gimp            *gimp,
-                                                 GimpImage       *image);
-void           gimp_image_new_set_last_template (Gimp            *gimp,
-                                                 GimpTemplate    *template);
+PicmanTemplate * picman_image_new_get_last_template (Picman            *picman,
+                                                 PicmanImage       *image);
+void           picman_image_new_set_last_template (Picman            *picman,
+                                                 PicmanTemplate    *template);
 
-GimpImage    * gimp_image_new_from_template     (Gimp            *gimp,
-                                                 GimpTemplate    *template,
-                                                 GimpContext     *context);
-GimpImage    * gimp_image_new_from_drawable     (Gimp            *gimp,
-                                                 GimpDrawable    *drawable);
-GimpImage    * gimp_image_new_from_component    (Gimp            *gimp,
-                                                 GimpImage       *image,
-                                                 GimpChannelType  component);
-GimpImage    * gimp_image_new_from_buffer       (Gimp            *gimp,
-                                                 GimpImage       *invoke,
-                                                 GimpBuffer      *paste);
-GimpImage    * gimp_image_new_from_pixbuf       (Gimp            *gimp,
+PicmanImage    * picman_image_new_from_template     (Picman            *picman,
+                                                 PicmanTemplate    *template,
+                                                 PicmanContext     *context);
+PicmanImage    * picman_image_new_from_drawable     (Picman            *picman,
+                                                 PicmanDrawable    *drawable);
+PicmanImage    * picman_image_new_from_component    (Picman            *picman,
+                                                 PicmanImage       *image,
+                                                 PicmanChannelType  component);
+PicmanImage    * picman_image_new_from_buffer       (Picman            *picman,
+                                                 PicmanImage       *invoke,
+                                                 PicmanBuffer      *paste);
+PicmanImage    * picman_image_new_from_pixbuf       (Picman            *picman,
                                                  GdkPixbuf       *pixbuf,
                                                  const gchar     *layer_name);
 
 
-#endif /* __GIMP_IMAGE_NEW__ */
+#endif /* __PICMAN_IMAGE_NEW__ */

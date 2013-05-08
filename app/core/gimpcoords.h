@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcoords.h
- * Copyright (C) 2002 Simon Budig  <simon@gimp.org>
+ * picmancoords.h
+ * Copyright (C) 2002 Simon Budig  <simon@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,40 +18,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COORDS_H__
-#define __GIMP_COORDS_H__
+#ifndef __PICMAN_COORDS_H__
+#define __PICMAN_COORDS_H__
 
 
-void     gimp_coords_mix            (const gdouble     amul,
-                                     const GimpCoords *a,
+void     picman_coords_mix            (const gdouble     amul,
+                                     const PicmanCoords *a,
                                      const gdouble     bmul,
-                                     const GimpCoords *b,
-                                     GimpCoords       *ret_val);
-void     gimp_coords_average        (const GimpCoords *a,
-                                     const GimpCoords *b,
-                                     GimpCoords       *ret_average);
-void     gimp_coords_add            (const GimpCoords *a,
-                                     const GimpCoords *b,
-                                     GimpCoords       *ret_add);
-void     gimp_coords_difference     (const GimpCoords *a,
-                                     const GimpCoords *b,
-                                     GimpCoords       *difference);
-void     gimp_coords_scale          (const gdouble     f,
-                                     const GimpCoords *a,
-                                     GimpCoords       *ret_product);
+                                     const PicmanCoords *b,
+                                     PicmanCoords       *ret_val);
+void     picman_coords_average        (const PicmanCoords *a,
+                                     const PicmanCoords *b,
+                                     PicmanCoords       *ret_average);
+void     picman_coords_add            (const PicmanCoords *a,
+                                     const PicmanCoords *b,
+                                     PicmanCoords       *ret_add);
+void     picman_coords_difference     (const PicmanCoords *a,
+                                     const PicmanCoords *b,
+                                     PicmanCoords       *difference);
+void     picman_coords_scale          (const gdouble     f,
+                                     const PicmanCoords *a,
+                                     PicmanCoords       *ret_product);
 
-gdouble  gimp_coords_scalarprod     (const GimpCoords *a,
-                                     const GimpCoords *b);
-gdouble  gimp_coords_length         (const GimpCoords *a);
-gdouble  gimp_coords_length_squared (const GimpCoords *a);
-gdouble  gimp_coords_manhattan_dist (const GimpCoords *a,
-                                     const GimpCoords *b);
+gdouble  picman_coords_scalarprod     (const PicmanCoords *a,
+                                     const PicmanCoords *b);
+gdouble  picman_coords_length         (const PicmanCoords *a);
+gdouble  picman_coords_length_squared (const PicmanCoords *a);
+gdouble  picman_coords_manhattan_dist (const PicmanCoords *a,
+                                     const PicmanCoords *b);
 
-gboolean gimp_coords_equal          (const GimpCoords *a,
-                                     const GimpCoords *b);
+gboolean picman_coords_equal          (const PicmanCoords *a,
+                                     const PicmanCoords *b);
 
-gdouble  gimp_coords_direction      (const GimpCoords *a,
-                                     const GimpCoords *b);
+gdouble  picman_coords_direction      (const PicmanCoords *a,
+                                     const PicmanCoords *b);
 
 
-#endif /* __GIMP_COORDS_H__ */
+#endif /* __PICMAN_COORDS_H__ */

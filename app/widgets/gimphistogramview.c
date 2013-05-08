@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,14 +20,14 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "widgets-types.h"
 
-#include "core/gimphistogram.h"
-#include "core/gimpmarshal.h"
+#include "core/picmanhistogram.h"
+#include "core/picmanmarshal.h"
 
-#include "gimphistogramview.h"
+#include "picmanhistogramview.h"
 
 
 #define MIN_WIDTH  64
@@ -49,29 +49,29 @@ enum
 };
 
 
-static void  gimp_histogram_view_finalize          (GObject        *object);
-static void  gimp_histogram_view_set_property      (GObject        *object,
+static void  picman_histogram_view_finalize          (GObject        *object);
+static void  picman_histogram_view_set_property      (GObject        *object,
                                                     guint           property_id,
                                                     const GValue   *value,
                                                     GParamSpec     *pspec);
-static void  gimp_histogram_view_get_property      (GObject        *object,
+static void  picman_histogram_view_get_property      (GObject        *object,
                                                     guint           property_id,
                                                     GValue         *value,
                                                     GParamSpec     *pspec);
 
-static void  gimp_histogram_view_size_request      (GtkWidget      *widget,
+static void  picman_histogram_view_size_request      (GtkWidget      *widget,
                                                     GtkRequisition *requisition);
-static gboolean gimp_histogram_view_expose         (GtkWidget      *widget,
+static gboolean picman_histogram_view_expose         (GtkWidget      *widget,
                                                     GdkEventExpose *event);
-static gboolean gimp_histogram_view_button_press   (GtkWidget      *widget,
+static gboolean picman_histogram_view_button_press   (GtkWidget      *widget,
                                                     GdkEventButton *bevent);
-static gboolean gimp_histogram_view_button_release (GtkWidget      *widget,
+static gboolean picman_histogram_view_button_release (GtkWidget      *widget,
                                                     GdkEventButton *bevent);
-static gboolean gimp_histogram_view_motion_notify  (GtkWidget      *widget,
+static gboolean picman_histogram_view_motion_notify  (GtkWidget      *widget,
                                                     GdkEventMotion *bevent);
 
-static void     gimp_histogram_view_draw_spike (GimpHistogramView    *view,
-                                                GimpHistogramChannel  channel,
+static void     picman_histogram_view_draw_spike (PicmanHistogramView    *view,
+                                                PicmanHistogramChannel  channel,
                                                 cairo_t              *cr,
                                                 const GdkColor       *fg_color,
                                                 cairo_operator_t      fg_operator,
@@ -85,16 +85,16 @@ static void     gimp_histogram_view_draw_spike (GimpHistogramView    *view,
                                                 gint                  border);
 
 
-G_DEFINE_TYPE (GimpHistogramView, gimp_histogram_view,
+G_DEFINE_TYPE (PicmanHistogramView, picman_histogram_view,
                GTK_TYPE_DRAWING_AREA)
 
-#define parent_class gimp_histogram_view_parent_class
+#define parent_class picman_histogram_view_parent_class
 
 static guint histogram_view_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_histogram_view_class_init (GimpHistogramViewClass *klass)
+picman_histogram_view_class_init (PicmanHistogramViewClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
@@ -103,57 +103,57 @@ gimp_histogram_view_class_init (GimpHistogramViewClass *klass)
     g_signal_new ("range-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpHistogramViewClass, range_changed),
+                  G_STRUCT_OFFSET (PicmanHistogramViewClass, range_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__INT_INT,
+                  picman_marshal_VOID__INT_INT,
                   G_TYPE_NONE, 2,
                   G_TYPE_INT,
                   G_TYPE_INT);
 
-  object_class->finalize             = gimp_histogram_view_finalize;
-  object_class->get_property         = gimp_histogram_view_get_property;
-  object_class->set_property         = gimp_histogram_view_set_property;
+  object_class->finalize             = picman_histogram_view_finalize;
+  object_class->get_property         = picman_histogram_view_get_property;
+  object_class->set_property         = picman_histogram_view_set_property;
 
-  widget_class->size_request         = gimp_histogram_view_size_request;
-  widget_class->expose_event         = gimp_histogram_view_expose;
-  widget_class->button_press_event   = gimp_histogram_view_button_press;
-  widget_class->button_release_event = gimp_histogram_view_button_release;
-  widget_class->motion_notify_event  = gimp_histogram_view_motion_notify;
+  widget_class->size_request         = picman_histogram_view_size_request;
+  widget_class->expose_event         = picman_histogram_view_expose;
+  widget_class->button_press_event   = picman_histogram_view_button_press;
+  widget_class->button_release_event = picman_histogram_view_button_release;
+  widget_class->motion_notify_event  = picman_histogram_view_motion_notify;
 
   klass->range_changed               = NULL;
 
   g_object_class_install_property (object_class, PROP_CHANNEL,
                                    g_param_spec_enum ("histogram-channel",
                                                       NULL, NULL,
-                                                      GIMP_TYPE_HISTOGRAM_CHANNEL,
-                                                      GIMP_HISTOGRAM_VALUE,
-                                                      GIMP_PARAM_READWRITE |
+                                                      PICMAN_TYPE_HISTOGRAM_CHANNEL,
+                                                      PICMAN_HISTOGRAM_VALUE,
+                                                      PICMAN_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_SCALE,
                                    g_param_spec_enum ("histogram-scale",
                                                       NULL, NULL,
-                                                      GIMP_TYPE_HISTOGRAM_SCALE,
-                                                      GIMP_HISTOGRAM_SCALE_LINEAR,
-                                                      GIMP_PARAM_READWRITE |
+                                                      PICMAN_TYPE_HISTOGRAM_SCALE,
+                                                      PICMAN_HISTOGRAM_SCALE_LINEAR,
+                                                      PICMAN_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_BORDER_WIDTH,
                                    g_param_spec_int ("border-width", NULL, NULL,
                                                      0, 32, 1,
-                                                     GIMP_PARAM_READWRITE |
+                                                     PICMAN_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_SUBDIVISIONS,
                                    g_param_spec_int ("subdivisions",
                                                      NULL, NULL,
                                                      1, 64, 5,
-                                                     GIMP_PARAM_READWRITE |
+                                                     PICMAN_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_histogram_view_init (GimpHistogramView *view)
+picman_histogram_view_init (PicmanHistogramView *view)
 {
   view->histogram    = NULL;
   view->bg_histogram = NULL;
@@ -162,19 +162,19 @@ gimp_histogram_view_init (GimpHistogramView *view)
 }
 
 static void
-gimp_histogram_view_finalize (GObject *object)
+picman_histogram_view_finalize (GObject *object)
 {
-  GimpHistogramView *view = GIMP_HISTOGRAM_VIEW (object);
+  PicmanHistogramView *view = PICMAN_HISTOGRAM_VIEW (object);
 
   if (view->histogram)
     {
-      gimp_histogram_unref (view->histogram);
+      picman_histogram_unref (view->histogram);
       view->histogram = NULL;
     }
 
   if (view->bg_histogram)
     {
-      gimp_histogram_unref (view->bg_histogram);
+      picman_histogram_unref (view->bg_histogram);
       view->bg_histogram = NULL;
     }
 
@@ -182,12 +182,12 @@ gimp_histogram_view_finalize (GObject *object)
 }
 
 static void
-gimp_histogram_view_set_property (GObject      *object,
+picman_histogram_view_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  GimpHistogramView *view = GIMP_HISTOGRAM_VIEW (object);
+  PicmanHistogramView *view = PICMAN_HISTOGRAM_VIEW (object);
 
   switch (property_id)
     {
@@ -215,12 +215,12 @@ gimp_histogram_view_set_property (GObject      *object,
 }
 
 static void
-gimp_histogram_view_get_property (GObject      *object,
+picman_histogram_view_get_property (GObject      *object,
                                   guint         property_id,
                                   GValue       *value,
                                   GParamSpec   *pspec)
 {
-  GimpHistogramView *view = GIMP_HISTOGRAM_VIEW (object);
+  PicmanHistogramView *view = PICMAN_HISTOGRAM_VIEW (object);
 
   switch (property_id)
     {
@@ -244,28 +244,28 @@ gimp_histogram_view_get_property (GObject      *object,
 }
 
 static void
-gimp_histogram_view_size_request (GtkWidget      *widget,
+picman_histogram_view_size_request (GtkWidget      *widget,
                                   GtkRequisition *requisition)
 {
-  GimpHistogramView *view = GIMP_HISTOGRAM_VIEW (widget);
+  PicmanHistogramView *view = PICMAN_HISTOGRAM_VIEW (widget);
 
   requisition->width  = MIN_WIDTH  + 2 * view->border_width;
   requisition->height = MIN_HEIGHT + 2 * view->border_width;
 }
 
 static gdouble
-gimp_histogram_view_get_maximum (GimpHistogramView    *view,
-                                 GimpHistogram        *histogram,
-                                 GimpHistogramChannel  channel)
+picman_histogram_view_get_maximum (PicmanHistogramView    *view,
+                                 PicmanHistogram        *histogram,
+                                 PicmanHistogramChannel  channel)
 {
-  gdouble max = gimp_histogram_get_maximum (histogram, channel);
+  gdouble max = picman_histogram_get_maximum (histogram, channel);
 
   switch (view->scale)
     {
-    case GIMP_HISTOGRAM_SCALE_LINEAR:
+    case PICMAN_HISTOGRAM_SCALE_LINEAR:
       break;
 
-    case GIMP_HISTOGRAM_SCALE_LOGARITHMIC:
+    case PICMAN_HISTOGRAM_SCALE_LOGARITHMIC:
       if (max > 0.0)
         max = log (max);
       else
@@ -277,10 +277,10 @@ gimp_histogram_view_get_maximum (GimpHistogramView    *view,
 }
 
 static gboolean
-gimp_histogram_view_expose (GtkWidget      *widget,
+picman_histogram_view_expose (GtkWidget      *widget,
                             GdkEventExpose *event)
 {
-  GimpHistogramView *view  = GIMP_HISTOGRAM_VIEW (widget);
+  PicmanHistogramView *view  = PICMAN_HISTOGRAM_VIEW (widget);
   GtkStyle          *style = gtk_widget_get_style (widget);
   GtkAllocation      allocation;
   cairo_t           *cr;
@@ -332,11 +332,11 @@ gimp_histogram_view_expose (GtkWidget      *widget,
   x2 = CLAMP (MAX (view->start, view->end), 0, 255);
 
   if (view->histogram)
-    max = gimp_histogram_view_get_maximum (view, view->histogram,
+    max = picman_histogram_view_get_maximum (view, view->histogram,
                                            view->channel);
 
   if (view->bg_histogram)
-    bg_max = gimp_histogram_view_get_maximum (view, view->bg_histogram,
+    bg_max = picman_histogram_view_get_maximum (view, view->bg_histogram,
                                               view->channel);
 
   color_in  = &style->text[GTK_STATE_SELECTED];
@@ -345,7 +345,7 @@ gimp_histogram_view_expose (GtkWidget      *widget,
   bg_color_in  = &style->mid[GTK_STATE_SELECTED];
   bg_color_out = &style->mid[GTK_STATE_NORMAL];
 
-  if (view->channel == GIMP_HISTOGRAM_RGB)
+  if (view->channel == PICMAN_HISTOGRAM_RGB)
     {
       for (x = 0; x < 3; x++)
         {
@@ -391,25 +391,25 @@ gimp_histogram_view_expose (GtkWidget      *widget,
           cairo_stroke (cr);
         }
 
-      if (view->channel == GIMP_HISTOGRAM_RGB)
+      if (view->channel == PICMAN_HISTOGRAM_RGB)
         {
           gint c;
 
           for (c = 0; c < 3; c++)
-            gimp_histogram_view_draw_spike (view, GIMP_HISTOGRAM_RED + c, cr,
+            picman_histogram_view_draw_spike (view, PICMAN_HISTOGRAM_RED + c, cr,
                                             &style->black,
                                             CAIRO_OPERATOR_OVER,
                                             NULL,
                                             x, i, j, max, bg_max, height, border);
 
           for (c = 0; c < 3; c++)
-            gimp_histogram_view_draw_spike (view, GIMP_HISTOGRAM_RED + c, cr,
+            picman_histogram_view_draw_spike (view, PICMAN_HISTOGRAM_RED + c, cr,
                                             &rgb_color[c],
                                             CAIRO_OPERATOR_ADD,
                                             NULL,
                                             x, i, j, max, bg_max, height, border);
 
-          gimp_histogram_view_draw_spike (view, view->channel, cr,
+          picman_histogram_view_draw_spike (view, view->channel, cr,
                                           in_selection ? color_in : color_out,
                                           CAIRO_OPERATOR_OVER,
                                           NULL,
@@ -417,7 +417,7 @@ gimp_histogram_view_expose (GtkWidget      *widget,
         }
       else
         {
-          gimp_histogram_view_draw_spike (view, view->channel, cr,
+          picman_histogram_view_draw_spike (view, view->channel, cr,
                                           in_selection ? color_in : color_out,
                                           CAIRO_OPERATOR_OVER,
                                           in_selection ? bg_color_in : bg_color_out,
@@ -431,8 +431,8 @@ gimp_histogram_view_expose (GtkWidget      *widget,
 }
 
 static void
-gimp_histogram_view_draw_spike (GimpHistogramView    *view,
-                                GimpHistogramChannel  channel,
+picman_histogram_view_draw_spike (PicmanHistogramView    *view,
+                                PicmanHistogramChannel  channel,
                                 cairo_t              *cr,
                                 const GdkColor       *fg_color,
                                 cairo_operator_t      fg_operator,
@@ -454,7 +454,7 @@ gimp_histogram_view_draw_spike (GimpHistogramView    *view,
     {
       do
         {
-          gdouble v = gimp_histogram_get_value (view->histogram, channel, i++);
+          gdouble v = picman_histogram_get_value (view->histogram, channel, i++);
 
           if (v > value)
             value = v;
@@ -466,7 +466,7 @@ gimp_histogram_view_draw_spike (GimpHistogramView    *view,
     {
       do
         {
-          gdouble v = gimp_histogram_get_value (view->bg_histogram, channel, i++);
+          gdouble v = picman_histogram_get_value (view->bg_histogram, channel, i++);
 
           if (v > bg_value)
             bg_value = v;
@@ -479,12 +479,12 @@ gimp_histogram_view_draw_spike (GimpHistogramView    *view,
 
   switch (view->scale)
     {
-    case GIMP_HISTOGRAM_SCALE_LINEAR:
+    case PICMAN_HISTOGRAM_SCALE_LINEAR:
       y    = (gint) (((height - 2) * value)    / max);
       bg_y = (gint) (((height - 2) * bg_value) / bg_max);
       break;
 
-    case GIMP_HISTOGRAM_SCALE_LOGARITHMIC:
+    case PICMAN_HISTOGRAM_SCALE_LOGARITHMIC:
       y    = (gint) (((height - 2) * log (value))    / max);
       bg_y = (gint) (((height - 2) * log (bg_value)) / bg_max);
       break;
@@ -518,10 +518,10 @@ gimp_histogram_view_draw_spike (GimpHistogramView    *view,
 }
 
 static gboolean
-gimp_histogram_view_button_press (GtkWidget      *widget,
+picman_histogram_view_button_press (GtkWidget      *widget,
                                   GdkEventButton *bevent)
 {
-  GimpHistogramView *view = GIMP_HISTOGRAM_VIEW (widget);
+  PicmanHistogramView *view = PICMAN_HISTOGRAM_VIEW (widget);
 
   if (bevent->type == GDK_BUTTON_PRESS && bevent->button == 1)
     {
@@ -545,10 +545,10 @@ gimp_histogram_view_button_press (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_histogram_view_button_release (GtkWidget      *widget,
+picman_histogram_view_button_release (GtkWidget      *widget,
                                     GdkEventButton *bevent)
 {
-  GimpHistogramView *view = GIMP_HISTOGRAM_VIEW (widget);
+  PicmanHistogramView *view = PICMAN_HISTOGRAM_VIEW (widget);
 
   if (bevent->button == 1)
     {
@@ -570,10 +570,10 @@ gimp_histogram_view_button_release (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_histogram_view_motion_notify (GtkWidget      *widget,
+picman_histogram_view_motion_notify (GtkWidget      *widget,
                                    GdkEventMotion *mevent)
 {
-  GimpHistogramView *view = GIMP_HISTOGRAM_VIEW (widget);
+  PicmanHistogramView *view = PICMAN_HISTOGRAM_VIEW (widget);
   GtkAllocation      allocation;
   gint               width;
 
@@ -590,9 +590,9 @@ gimp_histogram_view_motion_notify (GtkWidget      *widget,
 }
 
 GtkWidget *
-gimp_histogram_view_new (gboolean range)
+picman_histogram_view_new (gboolean range)
 {
-  GtkWidget *view = g_object_new (GIMP_TYPE_HISTOGRAM_VIEW, NULL);
+  GtkWidget *view = g_object_new (PICMAN_TYPE_HISTOGRAM_VIEW, NULL);
 
   if (range)
     gtk_widget_add_events (view,
@@ -604,125 +604,125 @@ gimp_histogram_view_new (gboolean range)
 }
 
 void
-gimp_histogram_view_set_histogram (GimpHistogramView *view,
-                                   GimpHistogram     *histogram)
+picman_histogram_view_set_histogram (PicmanHistogramView *view,
+                                   PicmanHistogram     *histogram)
 {
-  g_return_if_fail (GIMP_IS_HISTOGRAM_VIEW (view));
+  g_return_if_fail (PICMAN_IS_HISTOGRAM_VIEW (view));
 #if 0
   g_return_if_fail (histogram == NULL ||
                     view->bg_histogram == NULL ||
-                    gimp_histogram_n_channels (view->bg_histogram) ==
-                    gimp_histogram_n_channels (histogram));
+                    picman_histogram_n_channels (view->bg_histogram) ==
+                    picman_histogram_n_channels (histogram));
 #endif
 
   if (view->histogram != histogram)
     {
       if (view->histogram)
-        gimp_histogram_unref (view->histogram);
+        picman_histogram_unref (view->histogram);
 
       view->histogram = histogram;
 
       if (histogram)
         {
-          gimp_histogram_ref (histogram);
+          picman_histogram_ref (histogram);
 
-          if (view->channel >= gimp_histogram_n_channels (histogram))
-            gimp_histogram_view_set_channel (view, GIMP_HISTOGRAM_VALUE);
+          if (view->channel >= picman_histogram_n_channels (histogram))
+            picman_histogram_view_set_channel (view, PICMAN_HISTOGRAM_VALUE);
         }
     }
 
   gtk_widget_queue_draw (GTK_WIDGET (view));
 }
 
-GimpHistogram *
-gimp_histogram_view_get_histogram (GimpHistogramView *view)
+PicmanHistogram *
+picman_histogram_view_get_histogram (PicmanHistogramView *view)
 {
-  g_return_val_if_fail (GIMP_IS_HISTOGRAM_VIEW (view), NULL);
+  g_return_val_if_fail (PICMAN_IS_HISTOGRAM_VIEW (view), NULL);
 
   return view->histogram;
 }
 
 void
-gimp_histogram_view_set_background (GimpHistogramView *view,
-                                    GimpHistogram     *histogram)
+picman_histogram_view_set_background (PicmanHistogramView *view,
+                                    PicmanHistogram     *histogram)
 {
-  g_return_if_fail (GIMP_IS_HISTOGRAM_VIEW (view));
+  g_return_if_fail (PICMAN_IS_HISTOGRAM_VIEW (view));
 #if 0
   g_return_if_fail (histogram == NULL ||
                     view->histogram == NULL ||
-                    gimp_histogram_n_channels (view->histogram) ==
-                    gimp_histogram_n_channels (histogram));
+                    picman_histogram_n_channels (view->histogram) ==
+                    picman_histogram_n_channels (histogram));
 #endif
 
   if (view->bg_histogram != histogram)
     {
       if (view->bg_histogram)
-        gimp_histogram_unref (view->bg_histogram);
+        picman_histogram_unref (view->bg_histogram);
 
       view->bg_histogram = histogram;
 
       if (histogram)
         {
-          gimp_histogram_ref (histogram);
+          picman_histogram_ref (histogram);
 
-          if (view->channel >= gimp_histogram_n_channels (histogram))
-            gimp_histogram_view_set_channel (view, GIMP_HISTOGRAM_VALUE);
+          if (view->channel >= picman_histogram_n_channels (histogram))
+            picman_histogram_view_set_channel (view, PICMAN_HISTOGRAM_VALUE);
         }
     }
 
   gtk_widget_queue_draw (GTK_WIDGET (view));
 }
 
-GimpHistogram *
-gimp_histogram_view_get_background (GimpHistogramView *view)
+PicmanHistogram *
+picman_histogram_view_get_background (PicmanHistogramView *view)
 {
-  g_return_val_if_fail (GIMP_IS_HISTOGRAM_VIEW (view), NULL);
+  g_return_val_if_fail (PICMAN_IS_HISTOGRAM_VIEW (view), NULL);
 
   return view->bg_histogram;
 }
 
 void
-gimp_histogram_view_set_channel (GimpHistogramView    *view,
-                                 GimpHistogramChannel  channel)
+picman_histogram_view_set_channel (PicmanHistogramView    *view,
+                                 PicmanHistogramChannel  channel)
 {
-  g_return_if_fail (GIMP_IS_HISTOGRAM_VIEW (view));
+  g_return_if_fail (PICMAN_IS_HISTOGRAM_VIEW (view));
 
   if (channel != view->channel)
     g_object_set (view, "histogram-channel", channel, NULL);
 }
 
-GimpHistogramChannel
-gimp_histogram_view_get_channel (GimpHistogramView *view)
+PicmanHistogramChannel
+picman_histogram_view_get_channel (PicmanHistogramView *view)
 {
-  g_return_val_if_fail (GIMP_IS_HISTOGRAM_VIEW (view), 0);
+  g_return_val_if_fail (PICMAN_IS_HISTOGRAM_VIEW (view), 0);
 
   return view->channel;
 }
 
 void
-gimp_histogram_view_set_scale (GimpHistogramView  *view,
-                               GimpHistogramScale  scale)
+picman_histogram_view_set_scale (PicmanHistogramView  *view,
+                               PicmanHistogramScale  scale)
 {
-  g_return_if_fail (GIMP_IS_HISTOGRAM_VIEW (view));
+  g_return_if_fail (PICMAN_IS_HISTOGRAM_VIEW (view));
 
   if (scale != view->scale)
     g_object_set (view, "histogram-scale", scale, NULL);
 }
 
-GimpHistogramScale
-gimp_histogram_view_get_scale (GimpHistogramView *view)
+PicmanHistogramScale
+picman_histogram_view_get_scale (PicmanHistogramView *view)
 {
-  g_return_val_if_fail (GIMP_IS_HISTOGRAM_VIEW (view), 0);
+  g_return_val_if_fail (PICMAN_IS_HISTOGRAM_VIEW (view), 0);
 
   return view->scale;
 }
 
 void
-gimp_histogram_view_set_range (GimpHistogramView *view,
+picman_histogram_view_set_range (PicmanHistogramView *view,
                                gint               start,
                                gint               end)
 {
-  g_return_if_fail (GIMP_IS_HISTOGRAM_VIEW (view));
+  g_return_if_fail (PICMAN_IS_HISTOGRAM_VIEW (view));
 
   if (view->start != MIN (start, end) ||
       view->end   != MAX (start, end))
@@ -738,11 +738,11 @@ gimp_histogram_view_set_range (GimpHistogramView *view,
 }
 
 void
-gimp_histogram_view_get_range (GimpHistogramView *view,
+picman_histogram_view_get_range (PicmanHistogramView *view,
                                gint              *start,
                                gint              *end)
 {
-  g_return_if_fail (GIMP_IS_HISTOGRAM_VIEW (view));
+  g_return_if_fail (PICMAN_IS_HISTOGRAM_VIEW (view));
 
   if (start) *start = view->start;
   if (end)   *end   = view->end;

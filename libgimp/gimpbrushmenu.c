@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpbrushmenu.c
+ * picmanbrushmenu.c
  * Copyright (C) 1998 Andy Thomas
  *
  * This library is free software: you can redistribute it and/or
@@ -23,16 +23,16 @@
 
 #include <gtk/gtk.h>
 
-#include "gimp.h"
+#include "picman.h"
 
-#include "gimpuitypes.h"
-#include "gimpbrushmenu.h"
-#include "gimpbrushselectbutton.h"
+#include "picmanuitypes.h"
+#include "picmanbrushmenu.h"
+#include "picmanbrushselectbutton.h"
 
 
 /**
- * SECTION: gimpbrushmenu
- * @title: gimpbrushmenu
+ * SECTION: picmanbrushmenu
+ * @title: picmanbrushmenu
  * @short_description: A widget for selecting brushes.
  *
  * A widget for selecting brushes.
@@ -41,16 +41,16 @@
 
 typedef struct
 {
-  GimpRunBrushCallback callback;
+  PicmanRunBrushCallback callback;
   gpointer             data;
 } CompatCallbackData;
 
 
-static void compat_callback           (GimpBrushSelectButton *brush_button,
+static void compat_callback           (PicmanBrushSelectButton *brush_button,
                                        const gchar           *brush_name,
                                        gdouble                opacity,
                                        gint                   spacing,
-                                       GimpLayerModeEffects   paint_mode,
+                                       PicmanLayerModeEffects   paint_mode,
                                        gint                   width,
                                        gint                   height,
                                        const guchar          *mask_data,
@@ -60,7 +60,7 @@ static void compat_callback_data_free (CompatCallbackData    *data);
 
 
 /**
- * gimp_brush_select_widget_new:
+ * picman_brush_select_widget_new:
  * @title:      Title of the dialog to use or %NULL to use the default title.
  * @brush_name: Initial brush name or %NULL to use current selection.
  * @opacity:    Initial opacity. -1 means to use current opacity.
@@ -70,18 +70,18 @@ static void compat_callback_data_free (CompatCallbackData    *data);
  * @data:       A pointer to arbitrary data to be used in the call to @callback.
  *
  * Creates a new #GtkWidget that completely controls the selection of
- * a #GimpBrush. This widget is suitable for placement in a table in
+ * a #PicmanBrush. This widget is suitable for placement in a table in
  * a plug-in dialog.
  *
  * Returns: A #GtkWidget that you can use in your UI.
  */
 GtkWidget *
-gimp_brush_select_widget_new (const gchar          *title,
+picman_brush_select_widget_new (const gchar          *title,
                               const gchar          *brush_name,
                               gdouble               opacity,
                               gint                  spacing,
-                              GimpLayerModeEffects  paint_mode,
-                              GimpRunBrushCallback  callback,
+                              PicmanLayerModeEffects  paint_mode,
+                              PicmanRunBrushCallback  callback,
                               gpointer              data)
 {
   GtkWidget          *brush_button;
@@ -89,7 +89,7 @@ gimp_brush_select_widget_new (const gchar          *title,
 
   g_return_val_if_fail (callback != NULL, NULL);
 
-  brush_button = gimp_brush_select_button_new (title, brush_name,
+  brush_button = picman_brush_select_button_new (title, brush_name,
                                                opacity, spacing, paint_mode);
 
   compat_data = g_slice_new (CompatCallbackData);
@@ -106,21 +106,21 @@ gimp_brush_select_widget_new (const gchar          *title,
 }
 
 /**
- * gimp_brush_select_widget_close:
+ * picman_brush_select_widget_close:
  * @widget: A brush select widget.
  *
  * Closes the popup window associated with @widget.
  */
 void
-gimp_brush_select_widget_close (GtkWidget *widget)
+picman_brush_select_widget_close (GtkWidget *widget)
 {
   g_return_if_fail (widget != NULL);
 
-  gimp_select_button_close_popup (GIMP_SELECT_BUTTON (widget));
+  picman_select_button_close_popup (PICMAN_SELECT_BUTTON (widget));
 }
 
 /**
- * gimp_brush_select_widget_set:
+ * picman_brush_select_widget_set:
  * @widget:     A brush select widget.
  * @brush_name: Brush name to set; %NULL means no change.
  * @opacity:    Opacity to set. -1.0 means no change.
@@ -129,28 +129,28 @@ gimp_brush_select_widget_close (GtkWidget *widget)
  *
  * Sets the current brush and other values for the brush select
  * widget.  Calls the callback function if one was supplied in the
- * call to gimp_brush_select_widget_new().
+ * call to picman_brush_select_widget_new().
  */
 void
-gimp_brush_select_widget_set (GtkWidget            *widget,
+picman_brush_select_widget_set (GtkWidget            *widget,
                               const gchar          *brush_name,
                               gdouble               opacity,
                               gint                  spacing,
-                              GimpLayerModeEffects  paint_mode)
+                              PicmanLayerModeEffects  paint_mode)
 {
   g_return_if_fail (widget != NULL);
 
-  gimp_brush_select_button_set_brush (GIMP_BRUSH_SELECT_BUTTON (widget),
+  picman_brush_select_button_set_brush (PICMAN_BRUSH_SELECT_BUTTON (widget),
                                       brush_name, opacity, spacing, paint_mode);
 }
 
 
 static void
-compat_callback (GimpBrushSelectButton *brush_button,
+compat_callback (PicmanBrushSelectButton *brush_button,
                  const gchar           *brush_name,
                  gdouble                opacity,
                  gint                   spacing,
-                 GimpLayerModeEffects   paint_mode,
+                 PicmanLayerModeEffects   paint_mode,
                  gint                   width,
                  gint                   height,
                  const guchar          *mask_data,

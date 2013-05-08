@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,37 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ERASER_OPTIONS_H__
-#define __GIMP_ERASER_OPTIONS_H__
+#ifndef __PICMAN_ERASER_OPTIONS_H__
+#define __PICMAN_ERASER_OPTIONS_H__
 
 
-#include "gimppaintoptions.h"
+#include "picmanpaintoptions.h"
 
 
-#define GIMP_TYPE_ERASER_OPTIONS            (gimp_eraser_options_get_type ())
-#define GIMP_ERASER_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ERASER_OPTIONS, GimpEraserOptions))
-#define GIMP_ERASER_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ERASER_OPTIONS, GimpEraserOptionsClass))
-#define GIMP_IS_ERASER_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ERASER_OPTIONS))
-#define GIMP_IS_ERASER_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ERASER_OPTIONS))
-#define GIMP_ERASER_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ERASER_OPTIONS, GimpEraserOptionsClass))
+#define PICMAN_TYPE_ERASER_OPTIONS            (picman_eraser_options_get_type ())
+#define PICMAN_ERASER_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ERASER_OPTIONS, PicmanEraserOptions))
+#define PICMAN_ERASER_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ERASER_OPTIONS, PicmanEraserOptionsClass))
+#define PICMAN_IS_ERASER_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ERASER_OPTIONS))
+#define PICMAN_IS_ERASER_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ERASER_OPTIONS))
+#define PICMAN_ERASER_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ERASER_OPTIONS, PicmanEraserOptionsClass))
 
 
-typedef struct _GimpEraserOptionsClass GimpEraserOptionsClass;
+typedef struct _PicmanEraserOptionsClass PicmanEraserOptionsClass;
 
-struct _GimpEraserOptions
+struct _PicmanEraserOptions
 {
-  GimpPaintOptions  parent_instance;
+  PicmanPaintOptions  parent_instance;
 
   gboolean          anti_erase;
 };
 
-struct _GimpEraserOptionsClass
+struct _PicmanEraserOptionsClass
 {
-  GimpPaintOptionsClass  parent_class;
+  PicmanPaintOptionsClass  parent_class;
 };
 
 
-GType   gimp_eraser_options_get_type (void) G_GNUC_CONST;
+GType   picman_eraser_options_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_ERASER_OPTIONS_H__  */
+#endif  /*  __PICMAN_ERASER_OPTIONS_H__  */

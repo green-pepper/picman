@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-gegl-utils.h
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picman-gegl-utils.h
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,20 +18,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GEGL_UTILS_H__
-#define __GIMP_GEGL_UTILS_H__
+#ifndef __PICMAN_GEGL_UTILS_H__
+#define __PICMAN_GEGL_UTILS_H__
 
 
-const gchar * gimp_interpolation_to_gegl_filter (GimpInterpolationType  interpolation) G_GNUC_CONST;
+const gchar * picman_interpolation_to_gegl_filter (PicmanInterpolationType  interpolation) G_GNUC_CONST;
 
-GType         gimp_gegl_get_op_enum_type        (const gchar           *operation,
+GType         picman_gegl_get_op_enum_type        (const gchar           *operation,
                                                  const gchar           *property);
 
-GeglColor   * gimp_gegl_color_new               (const GimpRGB         *rgb);
+GeglColor   * picman_gegl_color_new               (const PicmanRGB         *rgb);
 
-void          gimp_gegl_progress_connect        (GeglNode              *node,
-                                                 GimpProgress          *progress,
+void          picman_gegl_progress_connect        (GeglNode              *node,
+                                                 PicmanProgress          *progress,
                                                  const gchar           *text);
 
 
-#endif /* __GIMP_GEGL_UTILS_H__ */
+#endif /* __PICMAN_GEGL_UTILS_H__ */

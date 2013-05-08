@@ -7,7 +7,7 @@ SUBDIRS = \
 	cursors		\
 	themes		\
 	po		\
-	po-libgimp	\
+	po-libpicman	\
 	po-plug-ins	\
 	po-python	\
 	po-script-fu	\
@@ -15,18 +15,18 @@ SUBDIRS = \
 	data		\
 	desktop		\
 	menus		\
-	libgimpbase	\
+	libpicmanbase	\
 	tools		\
-	libgimpcolor	\
-	libgimpmath	\
-	libgimpconfig	\
-	libgimpmodule	\
-	libgimpthumb	\
-	libgimpwidgets	\
-	libgimp		\
+	libpicmancolor	\
+	libpicmanmath	\
+	libpicmanconfig	\
+	libpicmanmodule	\
+	libpicmanthumb	\
+	libpicmanwidgets	\
+	libpicman		\
 	app		\
-	$(GIMP_MODULES)	\
-	$(GIMP_PLUGINS)	\
+	$(PICMAN_MODULES)	\
+	$(PICMAN_PLUGINS)	\
 	etc		\
 	devel-docs	\
 	docs		\
@@ -34,9 +34,9 @@ SUBDIRS = \
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
-	gimp-@GIMP_PKGCONFIG_VERSION@.pc	\
-	gimpthumb-@GIMP_PKGCONFIG_VERSION@.pc	\
-	gimpui-@GIMP_PKGCONFIG_VERSION@.pc
+	picman-@PICMAN_PKGCONFIG_VERSION@.pc	\
+	picmanthumb-@PICMAN_PKGCONFIG_VERSION@.pc	\
+	picmanui-@PICMAN_PKGCONFIG_VERSION@.pc
 
 
 AUTHORS: authors.xml authors.xsl
@@ -70,7 +70,7 @@ EXTRA_DIST = \
 	authors.xml		\
 	authors.xsl		\
 	config.h.win32		\
-	gimp-zip.in
+	picman-zip.in
 
 
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc

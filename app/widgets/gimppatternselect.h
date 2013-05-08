@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppatternselect.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanpatternselect.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,38 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PATTERN_SELECT_H__
-#define __GIMP_PATTERN_SELECT_H__
+#ifndef __PICMAN_PATTERN_SELECT_H__
+#define __PICMAN_PATTERN_SELECT_H__
 
-#include "gimppdbdialog.h"
+#include "picmanpdbdialog.h"
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_PATTERN_SELECT            (gimp_pattern_select_get_type ())
-#define GIMP_PATTERN_SELECT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PATTERN_SELECT, GimpPatternSelect))
-#define GIMP_PATTERN_SELECT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PATTERN_SELECT, GimpPatternSelectClass))
-#define GIMP_IS_PATTERN_SELECT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PATTERN_SELECT))
-#define GIMP_IS_PATTERN_SELECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PATTERN_SELECT))
-#define GIMP_PATTERN_SELECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PATTERN_SELECT, GimpPatternSelectClass))
+#define PICMAN_TYPE_PATTERN_SELECT            (picman_pattern_select_get_type ())
+#define PICMAN_PATTERN_SELECT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PATTERN_SELECT, PicmanPatternSelect))
+#define PICMAN_PATTERN_SELECT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PATTERN_SELECT, PicmanPatternSelectClass))
+#define PICMAN_IS_PATTERN_SELECT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PATTERN_SELECT))
+#define PICMAN_IS_PATTERN_SELECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PATTERN_SELECT))
+#define PICMAN_PATTERN_SELECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PATTERN_SELECT, PicmanPatternSelectClass))
 
 
-typedef struct _GimpPatternSelectClass  GimpPatternSelectClass;
+typedef struct _PicmanPatternSelectClass  PicmanPatternSelectClass;
 
-struct _GimpPatternSelect
+struct _PicmanPatternSelect
 {
-  GimpPdbDialog  parent_instance;
+  PicmanPdbDialog  parent_instance;
 };
 
-struct _GimpPatternSelectClass
+struct _PicmanPatternSelectClass
 {
-  GimpPdbDialogClass  parent_class;
+  PicmanPdbDialogClass  parent_class;
 };
 
 
-GType  gimp_pattern_select_get_type (void) G_GNUC_CONST;
+GType  picman_pattern_select_get_type (void) G_GNUC_CONST;
 
 
 G_END_DECLS
 
-#endif /* __GIMP_PATTERN_SELECT_H__ */
+#endif /* __PICMAN_PATTERN_SELECT_H__ */

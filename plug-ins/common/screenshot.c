@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 
 /*
  *  Screenshot plug-in
- *  Copyright 1998-2007 Sven Neumann <sven@gimp.org>
- *  Copyright 2003      Henrik Brix Andersen <brix@gimp.org>
+ *  Copyright 1998-2007 Sven Neumann <sven@picman.org>
+ *  Copyright 2003      Henrik Brix Andersen <brix@picman.org>
  *  Copyright 2012      Simone Karin Lehmann - OS X patches
  *
  *  Any suggestions, bug-reports or patches are very welcome.
@@ -30,8 +30,8 @@
 #include <stdlib.h> /* for system() on OSX */
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include <gdk/gdkkeysyms.h>
 
@@ -54,7 +54,7 @@
 #include <windows.h>
 #endif
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* GdkPixbuf RGBA C-Source image dump 1-byte-run-length-encoded */
@@ -142,7 +142,7 @@ static const guint8 screenshot_icon[] =
 /* Defines */
 #define PLUG_IN_PROC   "plug-in-screenshot"
 #define PLUG_IN_BINARY "screenshot"
-#define PLUG_IN_ROLE   "gimp-screenshot"
+#define PLUG_IN_ROLE   "picman-screenshot"
 
 #ifdef __GNUC__
 #ifdef GDK_NATIVE_WINDOW_POINTER
@@ -193,9 +193,9 @@ static ScreenshotValues shootvals =
 static void       query                (void);
 static void       run                  (const gchar      *name,
                                         gint              nparams,
-                                        const GimpParam  *param,
+                                        const PicmanParam  *param,
                                         gint             *nreturn_vals,
-                                        GimpParam       **return_vals);
+                                        PicmanParam       **return_vals);
 
 static guint32    select_window        (GdkScreen        *screen);
 static gint32     create_image         (cairo_surface_t  *surface,
@@ -214,7 +214,7 @@ static gboolean   shoot_quit_timeout   (gpointer          data);
 
 
 /* Global Variables */
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -230,23 +230,23 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32, "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"     },
-    { GIMP_PDB_INT32, "root",      "Root window { TRUE, FALSE }"      },
-    { GIMP_PDB_INT32, "window-id", "Window id"                        },
-    { GIMP_PDB_INT32, "x1",        "(optional) Region left x coord"   },
-    { GIMP_PDB_INT32, "y1",        "(optional) Region top y coord"    },
-    { GIMP_PDB_INT32, "x2",        "(optional) Region right x coord"  },
-    { GIMP_PDB_INT32, "y2",        "(optional) Region bottom y coord" }
+    { PICMAN_PDB_INT32, "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"     },
+    { PICMAN_PDB_INT32, "root",      "Root window { TRUE, FALSE }"      },
+    { PICMAN_PDB_INT32, "window-id", "Window id"                        },
+    { PICMAN_PDB_INT32, "x1",        "(optional) Region left x coord"   },
+    { PICMAN_PDB_INT32, "y1",        "(optional) Region top y coord"    },
+    { PICMAN_PDB_INT32, "x2",        "(optional) Region right x coord"  },
+    { PICMAN_PDB_INT32, "y2",        "(optional) Region bottom y coord" }
   };
 
-  static const GimpParamDef return_vals[] =
+  static const PicmanParamDef return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "image", "Output image" }
+    { PICMAN_PDB_IMAGE, "image", "Output image" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Create an image from an area of the screen"),
                           "The plug-in takes screenshots of an "
                           "interactively selected window or of the desktop, "
@@ -264,33 +264,33 @@ query (void)
                           "window, you need to use the interactive mode."
 #endif
                           ,
-                          "Sven Neumann <sven@gimp.org>, "
-                          "Henrik Brix Andersen <brix@gimp.org>,"
+                          "Sven Neumann <sven@picman.org>, "
+                          "Henrik Brix Andersen <brix@picman.org>,"
                           "Simone Karin Lehmann",
                           "1998 - 2008",
                           "v1.1 (2008/04)",
                           N_("_Screenshot..."),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args),
                           G_N_ELEMENTS (return_vals),
                           args, return_vals);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/File/Create/Acquire");
-  gimp_plugin_icon_register (PLUG_IN_PROC, GIMP_ICON_TYPE_INLINE_PIXBUF,
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/File/Create/Acquire");
+  picman_plugin_icon_register (PLUG_IN_PROC, PICMAN_ICON_TYPE_INLINE_PIXBUF,
                              screenshot_icon);
 }
 
 static void
 run (const gchar      *name,
      gint             nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpPDBStatusType  status   = GIMP_PDB_SUCCESS;
-  GimpRunMode        run_mode;
+  static PicmanParam   values[2];
+  PicmanPDBStatusType  status   = PICMAN_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
   GdkScreen         *screen   = NULL;
   gint32             image_ID;
 
@@ -302,23 +302,23 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /* how are we running today? */
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /* Possibly retrieve data from a previous run */
-      gimp_get_data (PLUG_IN_PROC, &shootvals);
+      picman_get_data (PLUG_IN_PROC, &shootvals);
       shootvals.window_id = 0;
 
      /* Get information from the dialog */
       if (! shoot_dialog (&screen))
-        status = GIMP_PDB_CANCEL;
+        status = PICMAN_PDB_CANCEL;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams == 3)
         {
           gboolean do_root = param[1].data.d_int32;
@@ -339,22 +339,22 @@ run (const gchar      *name,
         }
       else
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
 
       if (! gdk_init_check (NULL, NULL))
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
 #ifdef PLATFORM_OSX
       if (shootvals.shoot_type == SHOOT_WINDOW ||
           shootvals.shoot_type == SHOOT_REGION)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 #endif
         break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /* Possibly retrieve data from a previous run */
-      gimp_get_data (PLUG_IN_PROC, &shootvals);
+      picman_get_data (PLUG_IN_PROC, &shootvals);
       break;
 
     default:
@@ -362,7 +362,7 @@ run (const gchar      *name,
     }
 
 #ifndef PLATFORM_OSX
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       if (shootvals.select_delay > 0)
         shoot_delay (shootvals.select_delay);
@@ -372,27 +372,27 @@ run (const gchar      *name,
           shootvals.window_id = select_window (screen);
 
           if (! shootvals.window_id)
-            status = GIMP_PDB_CANCEL;
+            status = PICMAN_PDB_CANCEL;
         }
     }
 #endif
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       image_ID = shoot (screen);
 
       if (image_ID == -1)
-        status = GIMP_PDB_EXECUTION_ERROR;
+        status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
           /* Store variable states for next run */
-          gimp_set_data (PLUG_IN_PROC, &shootvals, sizeof (ScreenshotValues));
+          picman_set_data (PLUG_IN_PROC, &shootvals, sizeof (ScreenshotValues));
 
-          gimp_display_new (image_ID);
+          picman_display_new (image_ID);
 
           /* Give some sort of feedback that the shot is done */
           if (shootvals.select_delay > 0)
@@ -405,7 +405,7 @@ run (const gchar      *name,
       /* set return values */
       *nreturn_vals = 2;
 
-      values[1].type         = GIMP_PDB_IMAGE;
+      values[1].type         = PICMAN_PDB_IMAGE;
       values[1].data.d_image = image_ID;
     }
 
@@ -786,7 +786,7 @@ image_select_shape (gint32          image,
   gint num_rects;
   gint i;
 
-  gimp_selection_none (image);
+  picman_selection_none (image);
 
   num_rects = cairo_region_num_rectangles (shape);
 
@@ -796,16 +796,16 @@ image_select_shape (gint32          image,
 
       cairo_region_get_rectangle (shape, i, &rect);
 
-      gimp_image_select_rectangle (image, GIMP_CHANNEL_OP_ADD,
+      picman_image_select_rectangle (image, PICMAN_CHANNEL_OP_ADD,
                                    rect.x, rect.y,
                                    rect.width, rect.height);
     }
 
-  gimp_selection_invert (image);
+  picman_selection_invert (image);
 }
 
 
-/* Create a GimpImage from a GdkPixbuf */
+/* Create a PicmanImage from a GdkPixbuf */
 
 static gint32
 create_image (cairo_surface_t *surface,
@@ -818,50 +818,50 @@ create_image (cairo_surface_t *surface,
   gchar     *comment;
   gint       width, height;
 
-  gimp_progress_init (_("Importing screenshot"));
+  picman_progress_init (_("Importing screenshot"));
 
   width  = cairo_image_surface_get_width (surface);
   height = cairo_image_surface_get_height (surface);
 
-  image = gimp_image_new (width, height, GIMP_RGB);
-  gimp_image_undo_disable (image);
+  image = picman_image_new (width, height, PICMAN_RGB);
+  picman_image_undo_disable (image);
 
-  gimp_get_monitor_resolution (&xres, &yres);
-  gimp_image_set_resolution (image, xres, yres);
+  picman_get_monitor_resolution (&xres, &yres);
+  picman_image_set_resolution (image, xres, yres);
 
-  comment = gimp_get_default_comment ();
+  comment = picman_get_default_comment ();
   if (comment)
     {
-      GimpParasite *parasite;
+      PicmanParasite *parasite;
 
-      parasite = gimp_parasite_new ("gimp-comment", GIMP_PARASITE_PERSISTENT,
+      parasite = picman_parasite_new ("picman-comment", PICMAN_PARASITE_PERSISTENT,
                                     strlen (comment) + 1, comment);
 
-      gimp_image_attach_parasite (image, parasite);
-      gimp_parasite_free (parasite);
+      picman_image_attach_parasite (image, parasite);
+      picman_parasite_free (parasite);
 
       g_free (comment);
     }
 
-  layer = gimp_layer_new_from_surface (image,
+  layer = picman_layer_new_from_surface (image,
                                        name ? name : _("Screenshot"),
                                        surface,
                                        0.0, 1.0);
-  gimp_image_insert_layer (image, layer, -1, 0);
+  picman_image_insert_layer (image, layer, -1, 0);
 
   if (shape && ! cairo_region_is_empty (shape))
     {
       image_select_shape (image, shape);
 
-      if (! gimp_selection_is_empty (image))
+      if (! picman_selection_is_empty (image))
         {
-          gimp_layer_add_alpha (layer);
-          gimp_edit_clear (layer);
-          gimp_selection_none (image);
+          picman_layer_add_alpha (layer);
+          picman_edit_clear (layer);
+          picman_selection_none (image);
         }
     }
 
-  gimp_image_undo_enable (image);
+  picman_image_undo_enable (image);
 
   return image;
 }
@@ -883,18 +883,18 @@ add_cursor_image (gint32      image,
   if (!cursor)
     return;
 
-  active = gimp_image_get_active_layer (image);
+  active = picman_image_get_active_layer (image);
 
-  layer = gimp_layer_new (image, _("Mouse Pointer"),
+  layer = picman_layer_new (image, _("Mouse Pointer"),
                           cursor->width, cursor->height,
-                          GIMP_RGBA_IMAGE, 100.0, GIMP_NORMAL_MODE);
+                          PICMAN_RGBA_IMAGE, 100.0, PICMAN_NORMAL_MODE);
 
-  buffer = gimp_drawable_get_buffer (layer);
+  buffer = picman_drawable_get_buffer (layer);
 
   iter = gegl_buffer_iterator_new (buffer,
                                    GEGL_RECTANGLE (0, 0,
-                                                   gimp_drawable_width  (layer),
-                                                   gimp_drawable_height (layer)),
+                                                   picman_drawable_width  (layer),
+                                                   picman_drawable_height (layer)),
                                    0, babl_format ("R'G'B'A u8"),
                                    GEGL_BUFFER_READWRITE, GEGL_ABYSS_NONE);
   roi = &iter->roi[0];
@@ -934,11 +934,11 @@ add_cursor_image (gint32      image,
 
   g_object_unref (buffer);
 
-  gimp_image_insert_layer (image, layer, -1, -1);
-  gimp_layer_set_offsets (layer,
+  picman_image_insert_layer (image, layer, -1, -1);
+  picman_layer_set_offsets (layer,
                           cursor->x - cursor->xhot, cursor->y - cursor->yhot);
 
-  gimp_image_set_active_layer (image, active);
+  picman_image_set_active_layer (image, active);
 #endif
 }
 
@@ -1091,7 +1091,7 @@ shoot_main (GdkScreen *screen)
  *
  * Since Mac OS X 10.2 a system utility for screencapturing is
  * included. We can safely use this, since it's available on every OS
- * X version GIMP is running on.
+ * X version PICMAN is running on.
  *
  * The main drawbacks are that it's not possible to shoot windows or
  * regions in scripts in noninteractive mode, and that windows always
@@ -1148,9 +1148,9 @@ shoot_osx (GdkScreen *screen)
   g_free (command);
   g_free (delay);
 
-  image = gimp_file_load (GIMP_RUN_NONINTERACTIVE,
+  image = picman_file_load (PICMAN_RUN_NONINTERACTIVE,
                           "/tmp/screenshot.png", "/tmp/screenshot.png");
-  gimp_image_set_filename (image, "screenshot.png");
+  picman_image_set_filename (image, "screenshot.png");
 
   return image;
 }
@@ -1173,7 +1173,7 @@ shoot_dialog_add_hint (GtkNotebook *notebook,
                         "xalign",  0.0,
                         "yalign",  0.0,
                         NULL);
-  gimp_label_set_attributes (GTK_LABEL (label),
+  picman_label_set_attributes (GTK_LABEL (label),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              -1);
 
@@ -1185,7 +1185,7 @@ static void
 shoot_radio_button_toggled (GtkWidget *widget,
                             GtkWidget *notebook)
 {
-  gimp_radio_button_update (widget, &shootvals.shoot_type);
+  picman_radio_button_update (widget, &shootvals.shoot_type);
 
   gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), shootvals.shoot_type);
 }
@@ -1210,11 +1210,11 @@ shoot_dialog (GdkScreen **screen)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Screenshot"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Screenshot"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 
@@ -1262,7 +1262,7 @@ shoot_dialog (GdkScreen **screen)
   gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), shootvals.shoot_type);
 
   /*  Area  */
-  frame = gimp_frame_new (_("Area"));
+  frame = picman_frame_new (_("Area"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1279,7 +1279,7 @@ shoot_dialog (GdkScreen **screen)
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
-  g_object_set_data (G_OBJECT (button), "gimp-item-data",
+  g_object_set_data (G_OBJECT (button), "picman-item-data",
                      GINT_TO_POINTER (SHOOT_WINDOW));
 
   g_signal_connect (button, "toggled",
@@ -1298,7 +1298,7 @@ shoot_dialog (GdkScreen **screen)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &shootvals.decorate);
 
   g_object_bind_property (button, "active",
@@ -1318,7 +1318,7 @@ shoot_dialog (GdkScreen **screen)
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
-  g_object_set_data (G_OBJECT (button), "gimp-item-data",
+  g_object_set_data (G_OBJECT (button), "picman-item-data",
                      GINT_TO_POINTER (SHOOT_ROOT));
 
   g_signal_connect (button, "toggled",
@@ -1338,7 +1338,7 @@ shoot_dialog (GdkScreen **screen)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &shootvals.show_cursor);
 
   g_object_bind_property (button, "active",
@@ -1359,7 +1359,7 @@ shoot_dialog (GdkScreen **screen)
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
-  g_object_set_data (G_OBJECT (button), "gimp-item-data",
+  g_object_set_data (G_OBJECT (button), "picman-item-data",
                      GINT_TO_POINTER (SHOOT_REGION));
 
   g_signal_connect (button, "toggled",
@@ -1367,7 +1367,7 @@ shoot_dialog (GdkScreen **screen)
                     notebook);
 
   /*  Delay  */
-  frame = gimp_frame_new (_("Delay"));
+  frame = picman_frame_new (_("Delay"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1379,13 +1379,13 @@ shoot_dialog (GdkScreen **screen)
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  spinner = gimp_spin_button_new (&adj, shootvals.select_delay,
+  spinner = picman_spin_button_new (&adj, shootvals.select_delay,
                                   0.0, 100.0, 1.0, 5.0, 0.0, 0, 0);
   gtk_box_pack_start (GTK_BOX (hbox), spinner, FALSE, FALSE, 0);
   gtk_widget_show (spinner);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &shootvals.select_delay);
 
   /* this is the unit label of a spinbutton */
@@ -1395,7 +1395,7 @@ shoot_dialog (GdkScreen **screen)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   if (run)
     {

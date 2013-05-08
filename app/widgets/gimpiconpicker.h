@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpiconpicker.h
- * Copyright (C) 2011 Michael Natterer <mitch@gimp.org>
+ * picmaniconpicker.h
+ * Copyright (C) 2011 Michael Natterer <mitch@picman.org>
  *               2012 Daniel Sabo
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,42 +19,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ICON_PICKER_H__
-#define __GIMP_ICON_PICKER_H__
+#ifndef __PICMAN_ICON_PICKER_H__
+#define __PICMAN_ICON_PICKER_H__
 
 
-#define GIMP_TYPE_ICON_PICKER            (gimp_icon_picker_get_type ())
-#define GIMP_ICON_PICKER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ICON_PICKER, GimpIconPicker))
-#define GIMP_ICON_PICKER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ICON_PICKER, GimpIconPickerClass))
-#define GIMP_IS_ICON_PICKER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ICON_PICKER))
-#define GIMP_IS_ICON_PICKER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ICON_PICKER))
-#define GIMP_ICON_PICKER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ICON_PICKER, GimpIconPickerClass))
+#define PICMAN_TYPE_ICON_PICKER            (picman_icon_picker_get_type ())
+#define PICMAN_ICON_PICKER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ICON_PICKER, PicmanIconPicker))
+#define PICMAN_ICON_PICKER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ICON_PICKER, PicmanIconPickerClass))
+#define PICMAN_IS_ICON_PICKER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ICON_PICKER))
+#define PICMAN_IS_ICON_PICKER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ICON_PICKER))
+#define PICMAN_ICON_PICKER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ICON_PICKER, PicmanIconPickerClass))
 
 
-typedef struct _GimpIconPickerClass GimpIconPickerClass;
+typedef struct _PicmanIconPickerClass PicmanIconPickerClass;
 
-struct _GimpIconPicker
+struct _PicmanIconPicker
 {
   GtkBox  parent_instance;
 };
 
-struct _GimpIconPickerClass
+struct _PicmanIconPickerClass
 {
   GtkBoxClass   parent_class;
 };
 
 
-GType          gimp_icon_picker_get_type    (void) G_GNUC_CONST;
+GType          picman_icon_picker_get_type    (void) G_GNUC_CONST;
 
-GtkWidget   * gimp_icon_picker_new          (Gimp           *gimp);
+GtkWidget   * picman_icon_picker_new          (Picman           *picman);
 
-const gchar * gimp_icon_picker_get_stock_id (GimpIconPicker *picker);
-void          gimp_icon_picker_set_stock_id (GimpIconPicker *picker,
+const gchar * picman_icon_picker_get_stock_id (PicmanIconPicker *picker);
+void          picman_icon_picker_set_stock_id (PicmanIconPicker *picker,
                                              const gchar    *stock_id);
 
-GdkPixbuf   * gimp_icon_picker_get_icon_pixbuf (GimpIconPicker *picker);
-void          gimp_icon_picker_set_icon_pixbuf (GimpIconPicker *picker,
+GdkPixbuf   * picman_icon_picker_get_icon_pixbuf (PicmanIconPicker *picker);
+void          picman_icon_picker_set_icon_pixbuf (PicmanIconPicker *picker,
                                                 GdkPixbuf      *value);
 
 
-#endif  /*  __GIMP_ICON_PICKER_H__  */
+#endif  /*  __PICMAN_ICON_PICKER_H__  */

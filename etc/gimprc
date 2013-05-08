@@ -1,44 +1,44 @@
-# This is the system-wide gimprc file.  Any change made in this file will
+# This is the system-wide picmanrc file.  Any change made in this file will
 # affect all users of this system, provided that they are not overriding the
-# default values in their personal gimprc file.
+# default values in their personal picmanrc file.
 # 
 # Lines that start with a '#' are comments. Blank lines are ignored.
 # 
 # By default everything in this file is commented out.  The file then
 # documents the default values and shows what changes are possible.
 # 
-# The variable ${gimp_dir} is set to the value of the environment variable
-# GIMP2_DIRECTORY or, if that is not set, the compiled-in default value is
-# used.  If GIMP2_DIRECTORY is not an absolute path, it is interpreted
+# The variable ${picman_dir} is set to the value of the environment variable
+# PICMAN2_DIRECTORY or, if that is not set, the compiled-in default value is
+# used.  If PICMAN2_DIRECTORY is not an absolute path, it is interpreted
 # relative to your home directory.
 
 # Sets the folder for temporary storage. Files will appear here during the
-# course of running GIMP.  Most files will disappear when GIMP exits, but
+# course of running PICMAN.  Most files will disappear when PICMAN exits, but
 # some files are likely to remain, so it is best if this folder not be one
 # that is shared by other users.  This is a single folder.
 # 
-# (temp-path "${gimp_dir}/tmp")
+# (temp-path "${picman_dir}/tmp")
 
-# Sets the swap file location. GIMP uses a tile based memory allocation
+# Sets the swap file location. PICMAN uses a tile based memory allocation
 # scheme. The swap file is used to quickly and easily swap tiles out to disk
-# and back in. Be aware that the swap file can easily get very large if GIMP
+# and back in. Be aware that the swap file can easily get very large if PICMAN
 # is used with large images. Also, things can get horribly slow if the swap
 # file is created on a folder that is mounted over NFS.  For these reasons,
 # it may be desirable to put your swap file in "/tmp".  This is a single
 # folder.
 # 
-# (swap-path "${gimp_dir}")
+# (swap-path "${picman_dir}")
 
-# Sets how many processors GIMP should try to use simultaneously.  This is an
+# Sets how many processors PICMAN should try to use simultaneously.  This is an
 # integer value.
 # 
 # (num-processors 1)
 
-# When the amount of pixel data exceeds this limit, GIMP will start to swap
+# When the amount of pixel data exceeds this limit, PICMAN will start to swap
 # tiles to disk.  This is a lot slower but it makes it possible to work on
 # images that wouldn't fit into memory otherwise.  If you have a lot of RAM,
 # you may want to set this to a higher value.  The integer size can contain a
-# suffix of 'B', 'K', 'M' or 'G' which makes GIMP interpret the size as being
+# suffix of 'B', 'K', 'M' or 'G' which makes PICMAN interpret the size as being
 # specified in bytes, kilobytes, megabytes or gigabytes. If no suffix is
 # specified the size defaults to being specified in kilobytes.
 # 
@@ -65,81 +65,81 @@
 # Sets the plug-in search path.  This is a colon-separated list of folders to
 # search.
 # 
-# (plug-in-path "${gimp_dir}/plug-ins:${gimp_plug_in_dir}/plug-ins")
+# (plug-in-path "${picman_dir}/plug-ins:${picman_plug_in_dir}/plug-ins")
 
 # Sets the module search path.  This is a colon-separated list of folders to
 # search.
 # 
-# (module-path "${gimp_dir}/modules:${gimp_plug_in_dir}/modules")
+# (module-path "${picman_dir}/modules:${picman_plug_in_dir}/modules")
 
 # Sets the interpreter search path.  This is a colon-separated list of
 # folders to search.
 # 
-# (interpreter-path "${gimp_dir}/interpreters:${gimp_plug_in_dir}/interpreters")
+# (interpreter-path "${picman_dir}/interpreters:${picman_plug_in_dir}/interpreters")
 
 # Sets the environ search path.  This is a colon-separated list of folders to
 # search.
 # 
-# (environ-path "${gimp_dir}/environ:${gimp_plug_in_dir}/environ")
+# (environ-path "${picman_dir}/environ:${picman_plug_in_dir}/environ")
 
 # Sets the brush search path.  This is a colon-separated list of folders to
 # search.
 # 
-# (brush-path "${gimp_dir}/brushes:${gimp_data_dir}/brushes")
+# (brush-path "${picman_dir}/brushes:${picman_data_dir}/brushes")
 
 # This is a colon-separated list of folders to search.
 # 
-# (brush-path-writable "${gimp_dir}/brushes")
+# (brush-path-writable "${picman_dir}/brushes")
 
 # Sets the dynamics search path.  This is a colon-separated list of folders
 # to search.
 # 
-# (dynamics-path "${gimp_dir}/dynamics:${gimp_data_dir}/dynamics")
+# (dynamics-path "${picman_dir}/dynamics:${picman_data_dir}/dynamics")
 
 # This is a colon-separated list of folders to search.
 # 
-# (dynamics-path-writable "${gimp_dir}/dynamics")
+# (dynamics-path-writable "${picman_dir}/dynamics")
 
 # Sets the pattern search path.  This is a colon-separated list of folders to
 # search.
 # 
-# (pattern-path "${gimp_dir}/patterns:${gimp_data_dir}/patterns")
+# (pattern-path "${picman_dir}/patterns:${picman_data_dir}/patterns")
 
 # This is a colon-separated list of folders to search.
 # 
-# (pattern-path-writable "${gimp_dir}/patterns")
+# (pattern-path-writable "${picman_dir}/patterns")
 
 # Sets the palette search path.  This is a colon-separated list of folders to
 # search.
 # 
-# (palette-path "${gimp_dir}/palettes:${gimp_data_dir}/palettes")
+# (palette-path "${picman_dir}/palettes:${picman_data_dir}/palettes")
 
 # This is a colon-separated list of folders to search.
 # 
-# (palette-path-writable "${gimp_dir}/palettes")
+# (palette-path-writable "${picman_dir}/palettes")
 
 # Sets the gradient search path.  This is a colon-separated list of folders
 # to search.
 # 
-# (gradient-path "${gimp_dir}/gradients:${gimp_data_dir}/gradients")
+# (gradient-path "${picman_dir}/gradients:${picman_data_dir}/gradients")
 
 # This is a colon-separated list of folders to search.
 # 
-# (gradient-path-writable "${gimp_dir}/gradients")
+# (gradient-path-writable "${picman_dir}/gradients")
 
 # Sets the dynamics search path.  This is a colon-separated list of folders
 # to search.
 # 
-# (tool-preset-path "${gimp_dir}/tool-presets:${gimp_data_dir}/tool-presets")
+# (tool-preset-path "${picman_dir}/tool-presets:${picman_data_dir}/tool-presets")
 
 # This is a colon-separated list of folders to search.
 # 
-# (tool-preset-path-writable "${gimp_dir}/tool-presets")
+# (tool-preset-path-writable "${picman_dir}/tool-presets")
 
 # Where to look for fonts in addition to the system-wide installed fonts. 
 # This is a colon-separated list of folders to search.
 # 
-# (font-path "${gimp_dir}/fonts:${gimp_data_dir}/fonts")
+# (font-path "${picman_dir}/fonts:${picman_data_dir}/fonts")
 
 # Specify a default brush.  The brush is searched for in the specified brush
 # path.  This is a string value.
@@ -213,7 +213,7 @@
 #     (resolution-unit inches)
 #     (image-type rgb)
 #     (fill-type background-fill)
-#     (comment "Created with GIMP"))
+#     (comment "Created with PICMAN"))
 
 # Specify a default image grid.  This is a parameter list.
 # 
@@ -237,7 +237,7 @@
 # Sets an upper limit to the memory that is used per image to keep operations
 # on the undo stack. Regardless of this setting, at least as many undo-levels
 # as configured can be undone.  The integer size can contain a suffix of 'B',
-# 'K', 'M' or 'G' which makes GIMP interpret the size as being specified in
+# 'K', 'M' or 'G' which makes PICMAN interpret the size as being specified in
 # bytes, kilobytes, megabytes or gigabytes. If no suffix is specified the
 # size defaults to being specified in kilobytes.
 # 
@@ -256,9 +256,9 @@
 
 # Sets the pluginrc search path.  This is a single filename.
 # 
-# (pluginrc-path "${gimp_dir}/pluginrc")
+# (pluginrc-path "${picman_dir}/pluginrc")
 
-# Sets whether GIMP should create previews of layers and channels. Previews
+# Sets whether PICMAN should create previews of layers and channels. Previews
 # in the layers and channels dialog are nice to have but they can slow things
 # down when working with large images.  Possible values are yes and no.
 # 
@@ -277,7 +277,7 @@
 
 # The thumbnail in the Open dialog will be automatically updated if the file
 # being previewed is smaller than the size set here.  The integer size can
-# contain a suffix of 'B', 'K', 'M' or 'G' which makes GIMP interpret the
+# contain a suffix of 'B', 'K', 'M' or 'G' which makes PICMAN interpret the
 # size as being specified in bytes, kilobytes, megabytes or gigabytes. If no
 # suffix is specified the size defaults to being specified in kilobytes.
 # 
@@ -464,7 +464,7 @@
 # 
 # (monitor-yresolution 96.000000)
 
-# When enabled, GIMP will use the monitor resolution from the windowing
+# When enabled, PICMAN will use the monitor resolution from the windowing
 # system.  Possible values are yes and no.
 # 
 # (monitor-resolution-from-windowing-system yes)
@@ -558,27 +558,27 @@
 # 
 # (image-map-tool-max-recent 10)
 
-# When enabled, GIMP will not save an image if it has not been changed since
+# When enabled, PICMAN will not save an image if it has not been changed since
 # it was opened.  Possible values are yes and no.
 # 
 # (trust-dirty-flag no)
 
-# Remember the current tool, pattern, color, and brush across GIMP sessions. 
+# Remember the current tool, pattern, color, and brush across PICMAN sessions. 
 # Possible values are yes and no.
 # 
 # (save-device-status no)
 
-# Save the positions and sizes of the main dialogs when GIMP exits.  Possible
+# Save the positions and sizes of the main dialogs when PICMAN exits.  Possible
 # values are yes and no.
 # 
 # (save-session-info yes)
 
-# Let GIMP try to restore your last saved session on each startup.  Possible
+# Let PICMAN try to restore your last saved session on each startup.  Possible
 # values are yes and no.
 # 
 # (restore-session yes)
 
-# Save the tool options when GIMP exits.  Possible values are yes and no.
+# Save the tool options when PICMAN exits.  Possible values are yes and no.
 # 
 # (save-tool-options no)
 
@@ -597,12 +597,12 @@
 # 
 # (can-change-accels no)
 
-# Save changed keyboard shortcuts when GIMP exits.  Possible values are yes
+# Save changed keyboard shortcuts when PICMAN exits.  Possible values are yes
 # and no.
 # 
 # (save-accels yes)
 
-# Restore saved keyboard shortcuts on each GIMP startup.  Possible values are
+# Restore saved keyboard shortcuts on each PICMAN startup.  Possible values are
 # yes and no.
 # 
 # (restore-accels yes)
@@ -612,9 +612,9 @@
 # 
 # (last-opened-size 10)
 
-# GIMP will warn the user if an attempt is made to create an image that would
+# PICMAN will warn the user if an attempt is made to create an image that would
 # take more memory than the size specified here.  The integer size can
-# contain a suffix of 'B', 'K', 'M' or 'G' which makes GIMP interpret the
+# contain a suffix of 'B', 'K', 'M' or 'G' which makes PICMAN interpret the
 # size as being specified in bytes, kilobytes, megabytes or gigabytes. If no
 # suffix is specified the size defaults to being specified in kilobytes.
 # 
@@ -635,7 +635,7 @@
 # 
 # (toolbox-image-area no)
 
-# Show the GIMP mascot at the top of the toolbox.  Possible values are yes
+# Show the PICMAN mascot at the top of the toolbox.  Possible values are yes
 # and no.
 # 
 # (toolbox-wilber yes)
@@ -643,7 +643,7 @@
 # Sets the theme search path.  This is a colon-separated list of folders to
 # search.
 # 
-# (theme-path "${gimp_dir}/themes:${gimp_data_dir}/themes")
+# (theme-path "${picman_dir}/themes:${picman_data_dir}/themes")
 
 # The name of the theme to use.  This is a string value.
 # 
@@ -667,10 +667,10 @@
 # 
 # (help-locales "")
 
-# Sets the browser used by the help system.  Possible values are gimp and
+# Sets the browser used by the help system.  Possible values are picman and
 # web-browser.
 # 
-# (help-browser gimp)
+# (help-browser picman)
 
 # When enabled, the online user manual will be used by the help system.
 # Otherwise the locally installed copy is used.  Possible values are yes and
@@ -681,7 +681,7 @@
 # The location of the online user manual. This is used if
 # 'user-manual-online' is enabled.  This is a string value.
 # 
-# (user-manual-online-uri "http://docs.gimp.org/2.8")
+# (user-manual-online-uri "http://docs.picman.org/2.8")
 
 # The window type hint that is set on dock windows and the toolbox window.
 # This may affect the way your window manager decorates and handles these
@@ -702,25 +702,25 @@
 # Where to search for fractals used by the Fractal Explorer plug-in.  This is
 # a colon-separated list of folders to search.
 # 
-# (fractalexplorer-path "${gimp_dir}/fractalexplorer:${gimp_data_dir}/fractalexplorer")
+# (fractalexplorer-path "${picman_dir}/fractalexplorer:${picman_data_dir}/fractalexplorer")
 
 # Where to search for Gfig figures used by the Gfig plug-in.  This is a
 # colon-separated list of folders to search.
 # 
-# (gfig-path "${gimp_dir}/gfig:${gimp_data_dir}/gfig")
+# (gfig-path "${picman_dir}/gfig:${picman_data_dir}/gfig")
 
 # Where to search for gflares used by the GFlare plug-in.  This is a
 # colon-separated list of folders to search.
 # 
-# (gflare-path "${gimp_dir}/gflare:${gimp_data_dir}/gflare")
+# (gflare-path "${picman_dir}/gflare:${picman_data_dir}/gflare")
 
-# Where to search for data used by the Gimpressionist plug-in.  This is a
+# Where to search for data used by the Picmanressionist plug-in.  This is a
 # colon-separated list of folders to search.
 # 
-# (gimpressionist-path "${gimp_dir}/gimpressionist:${gimp_data_dir}/gimpressionist")
+# (picmanressionist-path "${picman_dir}/picmanressionist:${picman_data_dir}/picmanressionist")
 
 # This path will be searched for scripts when the Script-Fu plug-in is run. 
 # This is a colon-separated list of folders to search.
 # 
-# (script-fu-path "${gimp_dir}/scripts:${gimp_data_dir}/scripts")
+# (script-fu-path "${picman_dir}/scripts:${picman_data_dir}/scripts")
 

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,33 +22,33 @@
 
 #include "display-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimplist.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanlist.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplay-foreach.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-cursor.h"
+#include "picmandisplay.h"
+#include "picmandisplay-foreach.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-cursor.h"
 
 
 gboolean
-gimp_displays_dirty (Gimp *gimp)
+picman_displays_dirty (Picman *picman)
 {
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
 
-  for (list = gimp_get_display_iter (gimp);
+  for (list = picman_get_display_iter (picman);
        list;
        list = g_list_next (list))
     {
-      GimpDisplay *display = list->data;
-      GimpImage   *image   = gimp_display_get_image (display);
+      PicmanDisplay *display = list->data;
+      PicmanImage   *image   = picman_display_get_image (display);
 
-      if (image && gimp_image_is_dirty (image))
+      if (image && picman_image_is_dirty (image))
         return TRUE;
     }
 
@@ -56,85 +56,85 @@ gimp_displays_dirty (Gimp *gimp)
 }
 
 static void
-gimp_displays_image_dirty_callback (GimpImage     *image,
-                                    GimpDirtyMask  dirty_mask,
-                                    GimpContainer *container)
+picman_displays_image_dirty_callback (PicmanImage     *image,
+                                    PicmanDirtyMask  dirty_mask,
+                                    PicmanContainer *container)
 {
-  if (gimp_image_is_dirty (image)              &&
-      gimp_image_get_display_count (image) > 0 &&
-      ! gimp_container_have (container, GIMP_OBJECT (image)))
-    gimp_container_add (container, GIMP_OBJECT (image));
+  if (picman_image_is_dirty (image)              &&
+      picman_image_get_display_count (image) > 0 &&
+      ! picman_container_have (container, PICMAN_OBJECT (image)))
+    picman_container_add (container, PICMAN_OBJECT (image));
 }
 
 static void
-gimp_displays_dirty_images_disconnect (GimpContainer *dirty_container,
-                                       GimpContainer *global_container)
+picman_displays_dirty_images_disconnect (PicmanContainer *dirty_container,
+                                       PicmanContainer *global_container)
 {
   GQuark handler;
 
   handler = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (dirty_container),
                                                 "clean-handler"));
-  gimp_container_remove_handler (global_container, handler);
+  picman_container_remove_handler (global_container, handler);
 
   handler = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (dirty_container),
                                                 "dirty-handler"));
-  gimp_container_remove_handler (global_container, handler);
+  picman_container_remove_handler (global_container, handler);
 }
 
 static void
-gimp_displays_image_clean_callback (GimpImage     *image,
-                                    GimpDirtyMask  dirty_mask,
-                                    GimpContainer *container)
+picman_displays_image_clean_callback (PicmanImage     *image,
+                                    PicmanDirtyMask  dirty_mask,
+                                    PicmanContainer *container)
 {
-  if (! gimp_image_is_dirty (image))
-    gimp_container_remove (container, GIMP_OBJECT (image));
+  if (! picman_image_is_dirty (image))
+    picman_container_remove (container, PICMAN_OBJECT (image));
 }
 
-GimpContainer *
-gimp_displays_get_dirty_images (Gimp *gimp)
+PicmanContainer *
+picman_displays_get_dirty_images (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  if (gimp_displays_dirty (gimp))
+  if (picman_displays_dirty (picman))
     {
-      GimpContainer *container = gimp_list_new_weak (GIMP_TYPE_IMAGE, FALSE);
+      PicmanContainer *container = picman_list_new_weak (PICMAN_TYPE_IMAGE, FALSE);
       GList         *list;
       GQuark         handler;
 
       handler =
-        gimp_container_add_handler (gimp->images, "clean",
-                                    G_CALLBACK (gimp_displays_image_dirty_callback),
+        picman_container_add_handler (picman->images, "clean",
+                                    G_CALLBACK (picman_displays_image_dirty_callback),
                                     container);
       g_object_set_data (G_OBJECT (container), "clean-handler",
                          GINT_TO_POINTER (handler));
 
       handler =
-        gimp_container_add_handler (gimp->images, "dirty",
-                                    G_CALLBACK (gimp_displays_image_dirty_callback),
+        picman_container_add_handler (picman->images, "dirty",
+                                    G_CALLBACK (picman_displays_image_dirty_callback),
                                     container);
       g_object_set_data (G_OBJECT (container), "dirty-handler",
                          GINT_TO_POINTER (handler));
 
       g_signal_connect_object (container, "disconnect",
-                               G_CALLBACK (gimp_displays_dirty_images_disconnect),
-                               G_OBJECT (gimp->images), 0);
+                               G_CALLBACK (picman_displays_dirty_images_disconnect),
+                               G_OBJECT (picman->images), 0);
 
-      gimp_container_add_handler (container, "clean",
-                                  G_CALLBACK (gimp_displays_image_clean_callback),
+      picman_container_add_handler (container, "clean",
+                                  G_CALLBACK (picman_displays_image_clean_callback),
                                   container);
-      gimp_container_add_handler (container, "dirty",
-                                  G_CALLBACK (gimp_displays_image_clean_callback),
+      picman_container_add_handler (container, "dirty",
+                                  G_CALLBACK (picman_displays_image_clean_callback),
                                   container);
 
-      for (list = gimp_get_image_iter (gimp);
+      for (list = picman_get_image_iter (picman);
            list;
            list = g_list_next (list))
         {
-          GimpImage *image = list->data;
+          PicmanImage *image = list->data;
 
-          if (gimp_image_is_dirty (image) &&
-              gimp_image_get_display_count (image) > 0)
-            gimp_container_add (container, GIMP_OBJECT (image));
+          if (picman_image_is_dirty (image) &&
+              picman_image_get_display_count (image) > 0)
+            picman_container_add (container, PICMAN_OBJECT (image));
         }
 
       return container;
@@ -144,72 +144,72 @@ gimp_displays_get_dirty_images (Gimp *gimp)
 }
 
 /**
- * gimp_displays_delete:
- * @gimp:
+ * picman_displays_delete:
+ * @picman:
  *
- * Calls gimp_display_delete() an all displays in the display list.
+ * Calls picman_display_delete() an all displays in the display list.
  * This closes all displays, including the first one which is usually
  * kept open.
  */
 void
-gimp_displays_delete (Gimp *gimp)
+picman_displays_delete (Picman *picman)
 {
-  /*  this removes the GimpDisplay from the list, so do a while loop
+  /*  this removes the PicmanDisplay from the list, so do a while loop
    *  "around" the first element to get them all
    */
-  while (! gimp_container_is_empty (gimp->displays))
+  while (! picman_container_is_empty (picman->displays))
     {
-      GimpDisplay *display = gimp_get_display_iter (gimp)->data;
+      PicmanDisplay *display = picman_get_display_iter (picman)->data;
 
-      gimp_display_delete (display);
+      picman_display_delete (display);
     }
 }
 
 /**
- * gimp_displays_close:
- * @gimp:
+ * picman_displays_close:
+ * @picman:
  *
- * Calls gimp_display_close() an all displays in the display list. The
+ * Calls picman_display_close() an all displays in the display list. The
  * first display will remain open without an image.
  */
 void
-gimp_displays_close (Gimp *gimp)
+picman_displays_close (Picman *picman)
 {
   GList *list;
   GList *iter;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  list = g_list_copy (gimp_get_display_iter (gimp));
+  list = g_list_copy (picman_get_display_iter (picman));
 
   for (iter = list; iter; iter = g_list_next (iter))
     {
-      GimpDisplay *display = iter->data;
+      PicmanDisplay *display = iter->data;
 
-      gimp_display_close (display);
+      picman_display_close (display);
     }
 
   g_list_free (list);
 }
 
 void
-gimp_displays_reconnect (Gimp      *gimp,
-                         GimpImage *old,
-                         GimpImage *new)
+picman_displays_reconnect (Picman      *picman,
+                         PicmanImage *old,
+                         PicmanImage *new)
 {
   GList *contexts = NULL;
   GList *list;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (GIMP_IS_IMAGE (old));
-  g_return_if_fail (GIMP_IS_IMAGE (new));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (PICMAN_IS_IMAGE (old));
+  g_return_if_fail (PICMAN_IS_IMAGE (new));
 
   /*  check which contexts refer to old_image  */
-  for (list = gimp->context_list; list; list = g_list_next (list))
+  for (list = picman->context_list; list; list = g_list_next (list))
     {
-      GimpContext *context = list->data;
+      PicmanContext *context = list->data;
 
-      if (gimp_context_get_image (context) == old)
+      if (picman_context_get_image (context) == old)
         contexts = g_list_prepend (contexts, list->data);
     }
 
@@ -221,34 +221,34 @@ gimp_displays_reconnect (Gimp      *gimp,
    *  inadvertently call actions as if the user had selected a menu
    *  item.
    */
-  g_list_foreach (contexts, (GFunc) gimp_context_set_image, new);
+  g_list_foreach (contexts, (GFunc) picman_context_set_image, new);
   g_list_free (contexts);
 
-  for (list = gimp_get_display_iter (gimp);
+  for (list = picman_get_display_iter (picman);
        list;
        list = g_list_next (list))
     {
-      GimpDisplay *display = list->data;
+      PicmanDisplay *display = list->data;
 
-      if (gimp_display_get_image (display) == old)
-        gimp_display_set_image (display, new);
+      if (picman_display_get_image (display) == old)
+        picman_display_set_image (display, new);
     }
 }
 
 gint
-gimp_displays_get_num_visible (Gimp *gimp)
+picman_displays_get_num_visible (Picman *picman)
 {
   GList *list;
   gint   visible = 0;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), 0);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), 0);
 
-  for (list = gimp_get_display_iter (gimp);
+  for (list = picman_get_display_iter (picman);
        list;
        list = g_list_next (list))
     {
-      GimpDisplay      *display = list->data;
-      GimpDisplayShell *shell   = gimp_display_get_shell (display);
+      PicmanDisplay      *display = list->data;
+      PicmanDisplayShell *shell   = picman_display_get_shell (display);
 
       if (gtk_widget_is_drawable (GTK_WIDGET (shell)))
         {
@@ -272,37 +272,37 @@ gimp_displays_get_num_visible (Gimp *gimp)
 }
 
 void
-gimp_displays_set_busy (Gimp *gimp)
+picman_displays_set_busy (Picman *picman)
 {
   GList *list;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  for (list = gimp_get_display_iter (gimp);
+  for (list = picman_get_display_iter (picman);
        list;
        list = g_list_next (list))
     {
-      GimpDisplayShell *shell =
-        gimp_display_get_shell (GIMP_DISPLAY (list->data));
+      PicmanDisplayShell *shell =
+        picman_display_get_shell (PICMAN_DISPLAY (list->data));
 
-      gimp_display_shell_set_override_cursor (shell, GDK_WATCH);
+      picman_display_shell_set_override_cursor (shell, GDK_WATCH);
     }
 }
 
 void
-gimp_displays_unset_busy (Gimp *gimp)
+picman_displays_unset_busy (Picman *picman)
 {
   GList *list;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  for (list = gimp_get_display_iter (gimp);
+  for (list = picman_get_display_iter (picman);
        list;
        list = g_list_next (list))
     {
-      GimpDisplayShell *shell =
-        gimp_display_get_shell (GIMP_DISPLAY (list->data));
+      PicmanDisplayShell *shell =
+        picman_display_get_shell (PICMAN_DISPLAY (list->data));
 
-      gimp_display_shell_unset_override_cursor (shell);
+      picman_display_shell_unset_override_cursor (shell);
     }
 }

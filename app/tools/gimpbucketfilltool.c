@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,127 +20,127 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimp.h"
-#include "core/gimp-edit.h"
-#include "core/gimpdrawable-bucket-fill.h"
-#include "core/gimperror.h"
-#include "core/gimpimage.h"
-#include "core/gimpitem.h"
-#include "core/gimppickable.h"
+#include "core/picman.h"
+#include "core/picman-edit.h"
+#include "core/picmandrawable-bucket-fill.h"
+#include "core/picmanerror.h"
+#include "core/picmanimage.h"
+#include "core/picmanitem.h"
+#include "core/picmanpickable.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimpbucketfilloptions.h"
-#include "gimpbucketfilltool.h"
-#include "gimptoolcontrol.h"
+#include "picmanbucketfilloptions.h"
+#include "picmanbucketfilltool.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static gboolean gimp_bucket_fill_tool_initialize   (GimpTool              *tool,
-                                                    GimpDisplay           *display,
+static gboolean picman_bucket_fill_tool_initialize   (PicmanTool              *tool,
+                                                    PicmanDisplay           *display,
                                                     GError               **error);
-static void   gimp_bucket_fill_tool_button_release (GimpTool              *tool,
-                                                    const GimpCoords      *coords,
+static void   picman_bucket_fill_tool_button_release (PicmanTool              *tool,
+                                                    const PicmanCoords      *coords,
                                                     guint32                time,
                                                     GdkModifierType        state,
-                                                    GimpButtonReleaseType  release_type,
-                                                    GimpDisplay           *display);
-static void   gimp_bucket_fill_tool_modifier_key   (GimpTool              *tool,
+                                                    PicmanButtonReleaseType  release_type,
+                                                    PicmanDisplay           *display);
+static void   picman_bucket_fill_tool_modifier_key   (PicmanTool              *tool,
                                                     GdkModifierType        key,
                                                     gboolean               press,
                                                     GdkModifierType        state,
-                                                    GimpDisplay           *display);
-static void   gimp_bucket_fill_tool_cursor_update  (GimpTool              *tool,
-                                                    const GimpCoords      *coords,
+                                                    PicmanDisplay           *display);
+static void   picman_bucket_fill_tool_cursor_update  (PicmanTool              *tool,
+                                                    const PicmanCoords      *coords,
                                                     GdkModifierType        state,
-                                                    GimpDisplay           *display);
+                                                    PicmanDisplay           *display);
 
 
-G_DEFINE_TYPE (GimpBucketFillTool, gimp_bucket_fill_tool, GIMP_TYPE_TOOL)
+G_DEFINE_TYPE (PicmanBucketFillTool, picman_bucket_fill_tool, PICMAN_TYPE_TOOL)
 
-#define parent_class gimp_bucket_fill_tool_parent_class
+#define parent_class picman_bucket_fill_tool_parent_class
 
 
 void
-gimp_bucket_fill_tool_register (GimpToolRegisterCallback  callback,
+picman_bucket_fill_tool_register (PicmanToolRegisterCallback  callback,
                                 gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_BUCKET_FILL_TOOL,
-                GIMP_TYPE_BUCKET_FILL_OPTIONS,
-                gimp_bucket_fill_options_gui,
-                GIMP_CONTEXT_FOREGROUND_MASK |
-                GIMP_CONTEXT_BACKGROUND_MASK |
-                GIMP_CONTEXT_OPACITY_MASK    |
-                GIMP_CONTEXT_PAINT_MODE_MASK |
-                GIMP_CONTEXT_PATTERN_MASK,
-                "gimp-bucket-fill-tool",
+  (* callback) (PICMAN_TYPE_BUCKET_FILL_TOOL,
+                PICMAN_TYPE_BUCKET_FILL_OPTIONS,
+                picman_bucket_fill_options_gui,
+                PICMAN_CONTEXT_FOREGROUND_MASK |
+                PICMAN_CONTEXT_BACKGROUND_MASK |
+                PICMAN_CONTEXT_OPACITY_MASK    |
+                PICMAN_CONTEXT_PAINT_MODE_MASK |
+                PICMAN_CONTEXT_PATTERN_MASK,
+                "picman-bucket-fill-tool",
                 _("Bucket Fill"),
                 _("Bucket Fill Tool: Fill selected area with a color or pattern"),
                 N_("_Bucket Fill"), "<shift>B",
-                NULL, GIMP_HELP_TOOL_BUCKET_FILL,
-                GIMP_STOCK_TOOL_BUCKET_FILL,
+                NULL, PICMAN_HELP_TOOL_BUCKET_FILL,
+                PICMAN_STOCK_TOOL_BUCKET_FILL,
                 data);
 }
 
 static void
-gimp_bucket_fill_tool_class_init (GimpBucketFillToolClass *klass)
+picman_bucket_fill_tool_class_init (PicmanBucketFillToolClass *klass)
 {
-  GimpToolClass *tool_class = GIMP_TOOL_CLASS (klass);
+  PicmanToolClass *tool_class = PICMAN_TOOL_CLASS (klass);
 
-  tool_class->initialize     = gimp_bucket_fill_tool_initialize;
-  tool_class->button_release = gimp_bucket_fill_tool_button_release;
-  tool_class->modifier_key   = gimp_bucket_fill_tool_modifier_key;
-  tool_class->cursor_update  = gimp_bucket_fill_tool_cursor_update;
+  tool_class->initialize     = picman_bucket_fill_tool_initialize;
+  tool_class->button_release = picman_bucket_fill_tool_button_release;
+  tool_class->modifier_key   = picman_bucket_fill_tool_modifier_key;
+  tool_class->cursor_update  = picman_bucket_fill_tool_cursor_update;
 }
 
 static void
-gimp_bucket_fill_tool_init (GimpBucketFillTool *bucket_fill_tool)
+picman_bucket_fill_tool_init (PicmanBucketFillTool *bucket_fill_tool)
 {
-  GimpTool *tool = GIMP_TOOL (bucket_fill_tool);
+  PicmanTool *tool = PICMAN_TOOL (bucket_fill_tool);
 
-  gimp_tool_control_set_scroll_lock     (tool->control, TRUE);
-  gimp_tool_control_set_wants_click     (tool->control, TRUE);
-  gimp_tool_control_set_tool_cursor     (tool->control,
-                                         GIMP_TOOL_CURSOR_BUCKET_FILL);
-  gimp_tool_control_set_action_value_1  (tool->control,
+  picman_tool_control_set_scroll_lock     (tool->control, TRUE);
+  picman_tool_control_set_wants_click     (tool->control, TRUE);
+  picman_tool_control_set_tool_cursor     (tool->control,
+                                         PICMAN_TOOL_CURSOR_BUCKET_FILL);
+  picman_tool_control_set_action_value_1  (tool->control,
                                          "context/context-opacity-set");
-  gimp_tool_control_set_action_object_1 (tool->control,
+  picman_tool_control_set_action_object_1 (tool->control,
                                          "context/context-pattern-select-set");
 }
 
 static gboolean
-gimp_bucket_fill_tool_initialize (GimpTool     *tool,
-                                  GimpDisplay  *display,
+picman_bucket_fill_tool_initialize (PicmanTool     *tool,
+                                  PicmanDisplay  *display,
                                   GError      **error)
 {
-  GimpImage    *image    = gimp_display_get_image (display);
-  GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+  PicmanImage    *image    = picman_display_get_image (display);
+  PicmanDrawable *drawable = picman_image_get_active_drawable (image);
 
-  if (! GIMP_TOOL_CLASS (parent_class)->initialize (tool, display, error))
+  if (! PICMAN_TOOL_CLASS (parent_class)->initialize (tool, display, error))
     {
       return FALSE;
     }
 
-  if (gimp_viewable_get_children (GIMP_VIEWABLE (drawable)))
+  if (picman_viewable_get_children (PICMAN_VIEWABLE (drawable)))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			   _("Cannot modify the pixels of layer groups."));
       return FALSE;
     }
 
-  if (gimp_item_is_content_locked (GIMP_ITEM (drawable)))
+  if (picman_item_is_content_locked (PICMAN_ITEM (drawable)))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			   _("The active layer's pixels are locked."));
       return FALSE;
     }
@@ -149,23 +149,23 @@ gimp_bucket_fill_tool_initialize (GimpTool     *tool,
 }
 
 static void
-gimp_bucket_fill_tool_button_release (GimpTool              *tool,
-                                      const GimpCoords      *coords,
+picman_bucket_fill_tool_button_release (PicmanTool              *tool,
+                                      const PicmanCoords      *coords,
                                       guint32                time,
                                       GdkModifierType        state,
-                                      GimpButtonReleaseType  release_type,
-                                      GimpDisplay           *display)
+                                      PicmanButtonReleaseType  release_type,
+                                      PicmanDisplay           *display)
 {
-  GimpBucketFillOptions *options = GIMP_BUCKET_FILL_TOOL_GET_OPTIONS (tool);
-  GimpImage             *image   = gimp_display_get_image (display);
+  PicmanBucketFillOptions *options = PICMAN_BUCKET_FILL_TOOL_GET_OPTIONS (tool);
+  PicmanImage             *image   = picman_display_get_image (display);
 
-  if ((release_type == GIMP_BUTTON_RELEASE_CLICK ||
-       release_type == GIMP_BUTTON_RELEASE_NO_MOTION) &&
-      gimp_image_coords_in_active_pickable (image, coords,
+  if ((release_type == PICMAN_BUTTON_RELEASE_CLICK ||
+       release_type == PICMAN_BUTTON_RELEASE_NO_MOTION) &&
+      picman_image_coords_in_active_pickable (image, coords,
                                             options->sample_merged, TRUE))
     {
-      GimpDrawable *drawable = gimp_image_get_active_drawable (image);
-      GimpContext  *context  = GIMP_CONTEXT (options);
+      PicmanDrawable *drawable = picman_image_get_active_drawable (image);
+      PicmanContext  *context  = PICMAN_CONTEXT (options);
       gint          x, y;
 
       x = coords->x;
@@ -175,7 +175,7 @@ gimp_bucket_fill_tool_button_release (GimpTool              *tool,
         {
           gint off_x, off_y;
 
-          gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+          picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
 
           x -= off_x;
           y -= off_y;
@@ -183,54 +183,54 @@ gimp_bucket_fill_tool_button_release (GimpTool              *tool,
 
       if (options->fill_selection)
         {
-          GimpFillType fill_type;
+          PicmanFillType fill_type;
 
           switch (options->fill_mode)
             {
             default:
-            case GIMP_FG_BUCKET_FILL:
-              fill_type = GIMP_FOREGROUND_FILL;
+            case PICMAN_FG_BUCKET_FILL:
+              fill_type = PICMAN_FOREGROUND_FILL;
               break;
-            case GIMP_BG_BUCKET_FILL:
-              fill_type = GIMP_BACKGROUND_FILL;
+            case PICMAN_BG_BUCKET_FILL:
+              fill_type = PICMAN_BACKGROUND_FILL;
               break;
-            case GIMP_PATTERN_BUCKET_FILL:
-              fill_type = GIMP_PATTERN_FILL;
+            case PICMAN_PATTERN_BUCKET_FILL:
+              fill_type = PICMAN_PATTERN_FILL;
               break;
             }
 
-          gimp_edit_fill (image, drawable, context, fill_type,
-                          gimp_context_get_opacity (context),
-                          gimp_context_get_paint_mode (context));
-          gimp_image_flush (image);
+          picman_edit_fill (image, drawable, context, fill_type,
+                          picman_context_get_opacity (context),
+                          picman_context_get_paint_mode (context));
+          picman_image_flush (image);
         }
       else
         {
           GError *error = NULL;
 
-          if (! gimp_drawable_bucket_fill (drawable,
+          if (! picman_drawable_bucket_fill (drawable,
                                            context,
                                            options->fill_mode,
-                                           gimp_context_get_paint_mode (context),
-                                           gimp_context_get_opacity (context),
+                                           picman_context_get_paint_mode (context),
+                                           picman_context_get_opacity (context),
                                            options->fill_transparent,
                                            options->fill_criterion,
                                            options->threshold / 255.0,
                                            options->sample_merged,
                                            x, y, &error))
             {
-              gimp_message_literal (display->gimp, G_OBJECT (display),
-                                    GIMP_MESSAGE_WARNING, error->message);
+              picman_message_literal (display->picman, G_OBJECT (display),
+                                    PICMAN_MESSAGE_WARNING, error->message);
               g_clear_error (&error);
             }
           else
             {
-              gimp_image_flush (image);
+              picman_image_flush (image);
             }
         }
     }
 
-  GIMP_TOOL_CLASS (parent_class)->button_release (tool, coords, time, state,
+  PICMAN_TOOL_CLASS (parent_class)->button_release (tool, coords, time, state,
                                                   release_type, display);
 
   tool->display  = NULL;
@@ -238,24 +238,24 @@ gimp_bucket_fill_tool_button_release (GimpTool              *tool,
 }
 
 static void
-gimp_bucket_fill_tool_modifier_key (GimpTool        *tool,
+picman_bucket_fill_tool_modifier_key (PicmanTool        *tool,
                                     GdkModifierType  key,
                                     gboolean         press,
                                     GdkModifierType  state,
-                                    GimpDisplay     *display)
+                                    PicmanDisplay     *display)
 {
-  GimpBucketFillOptions *options = GIMP_BUCKET_FILL_TOOL_GET_OPTIONS (tool);
+  PicmanBucketFillOptions *options = PICMAN_BUCKET_FILL_TOOL_GET_OPTIONS (tool);
 
-  if (key == gimp_get_toggle_behavior_mask ())
+  if (key == picman_get_toggle_behavior_mask ())
     {
       switch (options->fill_mode)
         {
-        case GIMP_FG_BUCKET_FILL:
-          g_object_set (options, "fill-mode", GIMP_BG_BUCKET_FILL, NULL);
+        case PICMAN_FG_BUCKET_FILL:
+          g_object_set (options, "fill-mode", PICMAN_BG_BUCKET_FILL, NULL);
           break;
 
-        case GIMP_BG_BUCKET_FILL:
-          g_object_set (options, "fill-mode", GIMP_FG_BUCKET_FILL, NULL);
+        case PICMAN_BG_BUCKET_FILL:
+          g_object_set (options, "fill-mode", PICMAN_FG_BUCKET_FILL, NULL);
           break;
 
         default:
@@ -269,41 +269,41 @@ gimp_bucket_fill_tool_modifier_key (GimpTool        *tool,
 }
 
 static void
-gimp_bucket_fill_tool_cursor_update (GimpTool         *tool,
-                                     const GimpCoords *coords,
+picman_bucket_fill_tool_cursor_update (PicmanTool         *tool,
+                                     const PicmanCoords *coords,
                                      GdkModifierType   state,
-                                     GimpDisplay      *display)
+                                     PicmanDisplay      *display)
 {
-  GimpBucketFillOptions *options  = GIMP_BUCKET_FILL_TOOL_GET_OPTIONS (tool);
-  GimpCursorModifier     modifier = GIMP_CURSOR_MODIFIER_BAD;
-  GimpImage             *image    = gimp_display_get_image (display);
+  PicmanBucketFillOptions *options  = PICMAN_BUCKET_FILL_TOOL_GET_OPTIONS (tool);
+  PicmanCursorModifier     modifier = PICMAN_CURSOR_MODIFIER_BAD;
+  PicmanImage             *image    = picman_display_get_image (display);
 
-  if (gimp_image_coords_in_active_pickable (image, coords,
+  if (picman_image_coords_in_active_pickable (image, coords,
                                             options->sample_merged, TRUE))
     {
-      GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+      PicmanDrawable *drawable = picman_image_get_active_drawable (image);
 
-      if (! gimp_viewable_get_children (GIMP_VIEWABLE (drawable)) &&
-          ! gimp_item_is_content_locked (GIMP_ITEM (drawable)))
+      if (! picman_viewable_get_children (PICMAN_VIEWABLE (drawable)) &&
+          ! picman_item_is_content_locked (PICMAN_ITEM (drawable)))
         {
           switch (options->fill_mode)
             {
-            case GIMP_FG_BUCKET_FILL:
-              modifier = GIMP_CURSOR_MODIFIER_FOREGROUND;
+            case PICMAN_FG_BUCKET_FILL:
+              modifier = PICMAN_CURSOR_MODIFIER_FOREGROUND;
               break;
 
-            case GIMP_BG_BUCKET_FILL:
-              modifier = GIMP_CURSOR_MODIFIER_BACKGROUND;
+            case PICMAN_BG_BUCKET_FILL:
+              modifier = PICMAN_CURSOR_MODIFIER_BACKGROUND;
               break;
 
-            case GIMP_PATTERN_BUCKET_FILL:
-              modifier = GIMP_CURSOR_MODIFIER_PATTERN;
+            case PICMAN_PATTERN_BUCKET_FILL:
+              modifier = PICMAN_CURSOR_MODIFIER_PATTERN;
               break;
             }
         }
     }
 
-  gimp_tool_control_set_cursor_modifier (tool->control, modifier);
+  picman_tool_control_set_cursor_modifier (tool->control, modifier);
 
-  GIMP_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
+  PICMAN_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * operations-types.h
@@ -21,32 +21,32 @@
 #define __OPERATIONS_TYPES_H__
 
 
-#include "gegl/gimp-gegl-types.h"
+#include "gegl/picman-gegl-types.h"
 
 
 /*  operations  */
 
-typedef struct _GimpOperationPointFilter        GimpOperationPointFilter;
-typedef struct _GimpOperationPointLayerMode     GimpOperationPointLayerMode;
+typedef struct _PicmanOperationPointFilter        PicmanOperationPointFilter;
+typedef struct _PicmanOperationPointLayerMode     PicmanOperationPointLayerMode;
 
 
 /*  operation config objects  */
 
-typedef struct _GimpBrightnessContrastConfig    GimpBrightnessContrastConfig;
-typedef struct _GimpCageConfig                  GimpCageConfig;
-typedef struct _GimpColorBalanceConfig          GimpColorBalanceConfig;
-typedef struct _GimpColorizeConfig              GimpColorizeConfig;
-typedef struct _GimpCurvesConfig                GimpCurvesConfig;
-typedef struct _GimpDesaturateConfig            GimpDesaturateConfig;
-typedef struct _GimpHueSaturationConfig         GimpHueSaturationConfig;
-typedef struct _GimpLevelsConfig                GimpLevelsConfig;
-typedef struct _GimpPosterizeConfig             GimpPosterizeConfig;
-typedef struct _GimpThresholdConfig             GimpThresholdConfig;
+typedef struct _PicmanBrightnessContrastConfig    PicmanBrightnessContrastConfig;
+typedef struct _PicmanCageConfig                  PicmanCageConfig;
+typedef struct _PicmanColorBalanceConfig          PicmanColorBalanceConfig;
+typedef struct _PicmanColorizeConfig              PicmanColorizeConfig;
+typedef struct _PicmanCurvesConfig                PicmanCurvesConfig;
+typedef struct _PicmanDesaturateConfig            PicmanDesaturateConfig;
+typedef struct _PicmanHueSaturationConfig         PicmanHueSaturationConfig;
+typedef struct _PicmanLevelsConfig                PicmanLevelsConfig;
+typedef struct _PicmanPosterizeConfig             PicmanPosterizeConfig;
+typedef struct _PicmanThresholdConfig             PicmanThresholdConfig;
 
 
 /*  non-object types  */
 
-typedef struct _GimpCagePoint                   GimpCagePoint;
+typedef struct _PicmanCagePoint                   PicmanCagePoint;
 
 
 #endif /* __OPERATIONS_TYPES_H__ */

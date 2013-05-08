@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,21 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_SHELL_SELECTION_H__
-#define __GIMP_DISPLAY_SHELL_SELECTION_H__
+#ifndef __PICMAN_DISPLAY_SHELL_SELECTION_H__
+#define __PICMAN_DISPLAY_SHELL_SELECTION_H__
 
 
-void   gimp_display_shell_selection_init     (GimpDisplayShell     *shell);
-void   gimp_display_shell_selection_free     (GimpDisplayShell     *shell);
+void   picman_display_shell_selection_init     (PicmanDisplayShell     *shell);
+void   picman_display_shell_selection_free     (PicmanDisplayShell     *shell);
 
-void   gimp_display_shell_selection_undraw   (GimpDisplayShell     *shell);
-void   gimp_display_shell_selection_restart  (GimpDisplayShell     *shell);
+void   picman_display_shell_selection_undraw   (PicmanDisplayShell     *shell);
+void   picman_display_shell_selection_restart  (PicmanDisplayShell     *shell);
 
-void   gimp_display_shell_selection_pause    (GimpDisplayShell     *shell);
-void   gimp_display_shell_selection_resume   (GimpDisplayShell     *shell);
+void   picman_display_shell_selection_pause    (PicmanDisplayShell     *shell);
+void   picman_display_shell_selection_resume   (PicmanDisplayShell     *shell);
 
-void   gimp_display_shell_selection_set_show (GimpDisplayShell     *shell,
+void   picman_display_shell_selection_set_show (PicmanDisplayShell     *shell,
                                               gboolean              show);
 
 
-#endif  /*  __GIMP_DISPLAY_SHELL_SELECTION_H__  */
+#endif  /*  __PICMAN_DISPLAY_SHELL_SELECTION_H__  */

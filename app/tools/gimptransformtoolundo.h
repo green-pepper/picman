@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,41 +15,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TRANSFORM_TOOL_UNDO_H__
-#define __GIMP_TRANSFORM_TOOL_UNDO_H__
+#ifndef __PICMAN_TRANSFORM_TOOL_UNDO_H__
+#define __PICMAN_TRANSFORM_TOOL_UNDO_H__
 
 
-#include "core/gimpundo.h"
+#include "core/picmanundo.h"
 
 
-#define GIMP_TYPE_TRANSFORM_TOOL_UNDO            (gimp_transform_tool_undo_get_type ())
-#define GIMP_TRANSFORM_TOOL_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TRANSFORM_TOOL_UNDO, GimpTransformToolUndo))
-#define GIMP_TRANSFORM_TOOL_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TRANSFORM_TOOL_UNDO, GimpTransformToolUndoClass))
-#define GIMP_IS_TRANSFORM_TOOL_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TRANSFORM_TOOL_UNDO))
-#define GIMP_IS_TRANSFORM_TOOL_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TRANSFORM_TOOL_UNDO))
-#define GIMP_TRANSFORM_TOOL_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TRANSFORM_TOOL_UNDO, GimpTransformToolUndoClass))
+#define PICMAN_TYPE_TRANSFORM_TOOL_UNDO            (picman_transform_tool_undo_get_type ())
+#define PICMAN_TRANSFORM_TOOL_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TRANSFORM_TOOL_UNDO, PicmanTransformToolUndo))
+#define PICMAN_TRANSFORM_TOOL_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TRANSFORM_TOOL_UNDO, PicmanTransformToolUndoClass))
+#define PICMAN_IS_TRANSFORM_TOOL_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TRANSFORM_TOOL_UNDO))
+#define PICMAN_IS_TRANSFORM_TOOL_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TRANSFORM_TOOL_UNDO))
+#define PICMAN_TRANSFORM_TOOL_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TRANSFORM_TOOL_UNDO, PicmanTransformToolUndoClass))
 
 
-typedef struct _GimpTransformToolUndoClass GimpTransformToolUndoClass;
+typedef struct _PicmanTransformToolUndoClass PicmanTransformToolUndoClass;
 
-struct _GimpTransformToolUndo
+struct _PicmanTransformToolUndo
 {
-  GimpUndo           parent_instance;
+  PicmanUndo           parent_instance;
 
-  GimpTransformTool *transform_tool;
+  PicmanTransformTool *transform_tool;
   TransInfo          trans_info;
 #if 0
   TileManager       *original;
 #endif
 };
 
-struct _GimpTransformToolUndoClass
+struct _PicmanTransformToolUndoClass
 {
-  GimpUndoClass  parent_class;
+  PicmanUndoClass  parent_class;
 };
 
 
-GType   gimp_transform_tool_undo_get_type (void) G_GNUC_CONST;
+GType   picman_transform_tool_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_TRANSFORM_TOOL_UNDO_H__ */
+#endif /* __PICMAN_TRANSFORM_TOOL_UNDO_H__ */

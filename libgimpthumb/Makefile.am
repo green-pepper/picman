@@ -10,43 +10,43 @@ framework_cocoa = -framework Cocoa
 endif
 
 if OS_WIN32
-gimpthumb_def = gimpthumb.def
-libgimpthumb_export_symbols = -export-symbols gimpthumb.def
+picmanthumb_def = picmanthumb.def
+libpicmanthumb_export_symbols = -export-symbols picmanthumb.def
 
 install-libtool-import-lib:
-	$(INSTALL) .libs/libgimpthumb-$(GIMP_API_VERSION).dll.a $(DESTDIR)$(libdir)
-	$(INSTALL) gimpthumb.def $(DESTDIR)$(libdir)
+	$(INSTALL) .libs/libpicmanthumb-$(PICMAN_API_VERSION).dll.a $(DESTDIR)$(libdir)
+	$(INSTALL) picmanthumb.def $(DESTDIR)$(libdir)
 
 uninstall-libtool-import-lib:
-	-rm $(DESTDIR)$(libdir)/libgimpthumb-$(GIMP_API_VERSION).dll.a
-	-rm $(DESTDIR)$(libdir)/gimpthumb.def
+	-rm $(DESTDIR)$(libdir)/libpicmanthumb-$(PICMAN_API_VERSION).dll.a
+	-rm $(DESTDIR)$(libdir)/picmanthumb.def
 else
 install-libtool-import-lib:
 uninstall-libtool-import-lib:
 endif
 
 if MS_LIB_AVAILABLE
-noinst_DATA = gimpthumb-$(GIMP_API_VERSION).lib
+noinst_DATA = picmanthumb-$(PICMAN_API_VERSION).lib
 
 install-ms-lib:
-	$(INSTALL) gimpthumb-$(GIMP_API_VERSION).lib $(DESTDIR)$(libdir)
+	$(INSTALL) picmanthumb-$(PICMAN_API_VERSION).lib $(DESTDIR)$(libdir)
 
 uninstall-ms-lib:
-	-rm $(DESTDIR)$(libdir)/gimpthumb-$(GIMP_API_VERSION).lib
+	-rm $(DESTDIR)$(libdir)/picmanthumb-$(PICMAN_API_VERSION).lib
 
-gimpthumb-@GIMP_API_VERSION@.lib: gimpthumb.def
-	lib -name:libgimpthumb-$(GIMP_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:gimpthumb.def -out:$@
+picmanthumb-@PICMAN_API_VERSION@.lib: picmanthumb.def
+	lib -name:libpicmanthumb-$(PICMAN_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:picmanthumb.def -out:$@
 
 else
 install-ms-lib:
 uninstall-ms-lib:
 endif
 
-libgimpthumbincludedir = $(includedir)/gimp-$(GIMP_API_VERSION)/libgimpthumb
+libpicmanthumbincludedir = $(includedir)/picman-$(PICMAN_API_VERSION)/libpicmanthumb
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"LibGimpThumb\"	\
-	-DGIMP_THUMB_COMPILATION
+	-DG_LOG_DOMAIN=\"LibPicmanThumb\"	\
+	-DPICMAN_THUMB_COMPILATION
 
 INCLUDES = \
 	-I$(top_srcdir)		\
@@ -56,47 +56,47 @@ INCLUDES = \
 	$(xobjective_c)
 
 EXTRA_DIST = \
-	gimpthumb.def
+	picmanthumb.def
 
-lib_LTLIBRARIES = libgimpthumb-@GIMP_API_VERSION@.la
+lib_LTLIBRARIES = libpicmanthumb-@PICMAN_API_VERSION@.la
 
-libgimpthumb_@GIMP_API_VERSION@_la_SOURCES = \
-	gimpthumb.h		\
-	gimpthumb-enums.c	\
-	gimpthumb-enums.h	\
-	gimpthumb-error.c	\
-	gimpthumb-error.h	\
-	gimpthumb-types.h	\
-	gimpthumb-utils.c	\
-	gimpthumb-utils.h	\
-	gimpthumbnail.c		\
-	gimpthumbnail.h
+libpicmanthumb_@PICMAN_API_VERSION@_la_SOURCES = \
+	picmanthumb.h		\
+	picmanthumb-enums.c	\
+	picmanthumb-enums.h	\
+	picmanthumb-error.c	\
+	picmanthumb-error.h	\
+	picmanthumb-types.h	\
+	picmanthumb-utils.c	\
+	picmanthumb-utils.h	\
+	picmanthumbnail.c		\
+	picmanthumbnail.h
 
-libgimpthumbinclude_HEADERS = \
-	gimpthumb.h		\
-	gimpthumb-enums.h	\
-	gimpthumb-error.h	\
-	gimpthumb-types.h	\
-	gimpthumb-utils.h	\
-	gimpthumbnail.h
+libpicmanthumbinclude_HEADERS = \
+	picmanthumb.h		\
+	picmanthumb-enums.h	\
+	picmanthumb-error.h	\
+	picmanthumb-types.h	\
+	picmanthumb-utils.h	\
+	picmanthumbnail.h
 
-libgimpthumb_@GIMP_API_VERSION@_la_LDFLAGS = \
+libpicmanthumb_@PICMAN_API_VERSION@_la_LDFLAGS = \
 	-version-info $(LT_VERSION_INFO)	\
 	$(no_undefined)				\
-	$(libgimpthumb_export_symbols)		\
+	$(libpicmanthumb_export_symbols)		\
 	$(framework_cocoa)
 
-libgimpthumb_@GIMP_API_VERSION@_la_LIBADD = \
+libpicmanthumb_@PICMAN_API_VERSION@_la_LIBADD = \
 	$(GDK_PIXBUF_LIBS)	\
 	$(GLIB_LIBS) 
 
 
-noinst_PROGRAMS = gimp-thumbnail-list
+noinst_PROGRAMS = picman-thumbnail-list
 
-gimp_thumbnail_list_SOURCES = gimp-thumbnail-list.c
+picman_thumbnail_list_SOURCES = picman-thumbnail-list.c
 
-gimp_thumbnail_list_LDADD = \
-	libgimpthumb-$(GIMP_API_VERSION).la \
+picman_thumbnail_list_LDADD = \
+	libpicmanthumb-$(PICMAN_API_VERSION).la \
 	$(GDK_PIXBUF_LIBS) \
 	$(GLIB_LIBS)
 
@@ -113,13 +113,13 @@ uninstall-local: uninstall-ms-lib uninstall-libtool-import-lib
 gen_sources = xgen-tec
 CLEANFILES = $(gen_sources)
 
-gimpthumb-enums.c: $(srcdir)/gimpthumb-enums.h $(GIMP_MKENUMS)
-	$(GIMP_MKENUMS) \
-		--fhead "#include \"config.h\"\n#include <glib-object.h>\n#include \"gimpthumb-enums.h\"" \
+picmanthumb-enums.c: $(srcdir)/picmanthumb-enums.h $(PICMAN_MKENUMS)
+	$(PICMAN_MKENUMS) \
+		--fhead "#include \"config.h\"\n#include <glib-object.h>\n#include \"picmanthumb-enums.h\"" \
 		--fprod "\n/* enumerations from \"@filename@\" */" \
 		--vhead "GType\n@enum_name@_get_type (void)\n{\n  static const G@Type@Value values[] =\n  {" \
 		--vprod "    { @VALUENAME@, @valuedesc@, \"@valuenick@\" }," \
 		--vtail "    { 0, NULL, NULL }\n  };\n\n  static GType type = 0;\n\n  if (G_UNLIKELY (! type))\n    type = g_@type@_register_static (\"@EnumName@\", values);\n\n  return type;\n}\n" \
-		$(srcdir)/gimpthumb-enums.h > xgen-tec \
+		$(srcdir)/picmanthumb-enums.h > xgen-tec \
 	&& cp xgen-tec $(@F) \
 	&& rm -f xgen-tec

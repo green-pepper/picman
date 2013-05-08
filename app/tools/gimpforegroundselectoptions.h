@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,44 +15,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FOREGROUND_SELECT_OPTIONS_H__
-#define __GIMP_FOREGROUND_SELECT_OPTIONS_H__
+#ifndef __PICMAN_FOREGROUND_SELECT_OPTIONS_H__
+#define __PICMAN_FOREGROUND_SELECT_OPTIONS_H__
 
 
-#include "gimpselectionoptions.h"
+#include "picmanselectionoptions.h"
 
 
-#define GIMP_TYPE_FOREGROUND_SELECT_OPTIONS            (gimp_foreground_select_options_get_type ())
-#define GIMP_FOREGROUND_SELECT_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FOREGROUND_SELECT_OPTIONS, GimpForegroundSelectOptions))
-#define GIMP_FOREGROUND_SELECT_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FOREGROUND_SELECT_OPTIONS, GimpForegroundSelectOptionsClass))
-#define GIMP_IS_FOREGROUND_SELECT_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FOREGROUND_SELECT_OPTIONS))
-#define GIMP_IS_FOREGROUND_SELECT_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FOREGROUND_SELECT_OPTIONS))
-#define GIMP_FOREGROUND_SELECT_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FOREGROUND_SELECT_OPTIONS, GimpForegroundSelectOptionsClass))
+#define PICMAN_TYPE_FOREGROUND_SELECT_OPTIONS            (picman_foreground_select_options_get_type ())
+#define PICMAN_FOREGROUND_SELECT_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FOREGROUND_SELECT_OPTIONS, PicmanForegroundSelectOptions))
+#define PICMAN_FOREGROUND_SELECT_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FOREGROUND_SELECT_OPTIONS, PicmanForegroundSelectOptionsClass))
+#define PICMAN_IS_FOREGROUND_SELECT_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FOREGROUND_SELECT_OPTIONS))
+#define PICMAN_IS_FOREGROUND_SELECT_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FOREGROUND_SELECT_OPTIONS))
+#define PICMAN_FOREGROUND_SELECT_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FOREGROUND_SELECT_OPTIONS, PicmanForegroundSelectOptionsClass))
 
 
-typedef struct _GimpForegroundSelectOptions  GimpForegroundSelectOptions;
-typedef GimpSelectionOptionsClass  GimpForegroundSelectOptionsClass;
+typedef struct _PicmanForegroundSelectOptions  PicmanForegroundSelectOptions;
+typedef PicmanSelectionOptionsClass  PicmanForegroundSelectOptionsClass;
 
-struct _GimpForegroundSelectOptions
+struct _PicmanForegroundSelectOptions
 {
-  GimpSelectionOptions  parent_instance;
+  PicmanSelectionOptions  parent_instance;
 
   gboolean              contiguous;
   gboolean              background;
   gint                  stroke_width;
   gint                  smoothness;
-  GimpChannelType       mask_color;
+  PicmanChannelType       mask_color;
   gboolean              expanded;
   gdouble               sensitivity[3];
 };
 
 
-GType       gimp_foreground_select_options_get_type       (void) G_GNUC_CONST;
+GType       picman_foreground_select_options_get_type       (void) G_GNUC_CONST;
 
-GtkWidget * gimp_foreground_select_options_gui            (GimpToolOptions             *tool_options);
+GtkWidget * picman_foreground_select_options_gui            (PicmanToolOptions             *tool_options);
 
-void        gimp_foreground_select_options_get_mask_color (GimpForegroundSelectOptions *options,
-                                                           GimpRGB                     *color);
+void        picman_foreground_select_options_get_mask_color (PicmanForegroundSelectOptions *options,
+                                                           PicmanRGB                     *color);
 
 
-#endif /* __GIMP_FOREGROUND_SELECT_OPTIONS_H__ */
+#endif /* __PICMAN_FOREGROUND_SELECT_OPTIONS_H__ */

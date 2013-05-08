@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpbrushselectbutton.c
+ * picmanbrushselectbutton.c
  * Copyright (C) 1998 Andy Thomas
  *
  * This library is free software: you can redistribute it and/or
@@ -23,20 +23,20 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "gimp.h"
+#include "picman.h"
 
-#include "gimpuitypes.h"
-#include "gimpbrushselectbutton.h"
-#include "gimpuimarshal.h"
+#include "picmanuitypes.h"
+#include "picmanbrushselectbutton.h"
+#include "picmanuimarshal.h"
 
-#include "libgimp-intl.h"
+#include "libpicman-intl.h"
 
 
 /**
- * SECTION: gimpbrushselectbutton
- * @title: gimpbrushselectbutton
+ * SECTION: picmanbrushselectbutton
+ * @title: picmanbrushselectbutton
  * @short_description: A button that pops up a brush selection dialog.
  *
  * A button that pops up a brush selection dialog.
@@ -46,18 +46,18 @@
 #define CELL_SIZE 20
 
 
-#define GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GIMP_TYPE_BRUSH_SELECT_BUTTON, GimpBrushSelectButtonPrivate))
+#define PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PICMAN_TYPE_BRUSH_SELECT_BUTTON, PicmanBrushSelectButtonPrivate))
 
-typedef struct _GimpBrushSelectButtonPrivate GimpBrushSelectButtonPrivate;
+typedef struct _PicmanBrushSelectButtonPrivate PicmanBrushSelectButtonPrivate;
 
-struct _GimpBrushSelectButtonPrivate
+struct _PicmanBrushSelectButtonPrivate
 {
   gchar                *title;
 
   gchar                *brush_name;      /* Local copy */
   gdouble               opacity;
   gint                  spacing;
-  GimpLayerModeEffects  paint_mode;
+  PicmanLayerModeEffects  paint_mode;
   gint                  width;
   gint                  height;
   guchar               *mask_data;       /* local copy */
@@ -86,51 +86,51 @@ enum
 
 /*  local function prototypes  */
 
-static void   gimp_brush_select_button_finalize     (GObject      *object);
+static void   picman_brush_select_button_finalize     (GObject      *object);
 
-static void   gimp_brush_select_button_set_property (GObject      *object,
+static void   picman_brush_select_button_set_property (GObject      *object,
                                                      guint         property_id,
                                                      const GValue *value,
                                                      GParamSpec   *pspec);
-static void   gimp_brush_select_button_get_property (GObject      *object,
+static void   picman_brush_select_button_get_property (GObject      *object,
                                                      guint         property_id,
                                                      GValue       *value,
                                                      GParamSpec   *pspec);
 
-static void   gimp_brush_select_button_clicked  (GimpBrushSelectButton *button);
+static void   picman_brush_select_button_clicked  (PicmanBrushSelectButton *button);
 
-static void   gimp_brush_select_button_callback (const gchar          *brush_name,
+static void   picman_brush_select_button_callback (const gchar          *brush_name,
                                                  gdouble               opacity,
                                                  gint                  spacing,
-                                                 GimpLayerModeEffects  paint_mode,
+                                                 PicmanLayerModeEffects  paint_mode,
                                                  gint                  width,
                                                  gint                  height,
                                                  const guchar         *mask_data,
                                                  gboolean              dialog_closing,
                                                  gpointer              user_data);
 
-static void     gimp_brush_select_preview_resize  (GimpBrushSelectButton *button);
-static gboolean gimp_brush_select_preview_events  (GtkWidget             *widget,
+static void     picman_brush_select_preview_resize  (PicmanBrushSelectButton *button);
+static gboolean picman_brush_select_preview_events  (GtkWidget             *widget,
                                                    GdkEvent              *event,
-                                                   GimpBrushSelectButton *button);
-static void     gimp_brush_select_preview_draw    (GimpPreviewArea       *area,
+                                                   PicmanBrushSelectButton *button);
+static void     picman_brush_select_preview_draw    (PicmanPreviewArea       *area,
                                                    gint                   x,
                                                    gint                   y,
                                                    gint                   width,
                                                    gint                   height,
                                                    const guchar          *mask_data,
                                                    gint                   rowstride);
-static void     gimp_brush_select_preview_update  (GtkWidget             *preview,
+static void     picman_brush_select_preview_update  (GtkWidget             *preview,
                                                    gint                   brush_width,
                                                    gint                   brush_height,
                                                    const guchar          *mask_data);
 
-static void     gimp_brush_select_button_open_popup  (GimpBrushSelectButton *button,
+static void     picman_brush_select_button_open_popup  (PicmanBrushSelectButton *button,
                                                       gint                   x,
                                                       gint                   y);
-static void     gimp_brush_select_button_close_popup (GimpBrushSelectButton *button);
+static void     picman_brush_select_button_close_popup (PicmanBrushSelectButton *button);
 
-static void   gimp_brush_select_drag_data_received (GimpBrushSelectButton *button,
+static void   picman_brush_select_drag_data_received (PicmanBrushSelectButton *button,
                                                     GdkDragContext        *context,
                                                     gint                   x,
                                                     gint                   y,
@@ -138,106 +138,106 @@ static void   gimp_brush_select_drag_data_received (GimpBrushSelectButton *butto
                                                     guint                  info,
                                                     guint                  time);
 
-static GtkWidget * gimp_brush_select_button_create_inside (GimpBrushSelectButton *button);
+static GtkWidget * picman_brush_select_button_create_inside (PicmanBrushSelectButton *button);
 
 
-static const GtkTargetEntry target = { "application/x-gimp-brush-name", 0 };
+static const GtkTargetEntry target = { "application/x-picman-brush-name", 0 };
 
 static guint brush_button_signals[LAST_SIGNAL] = { 0 };
 
 
-G_DEFINE_TYPE (GimpBrushSelectButton, gimp_brush_select_button,
-               GIMP_TYPE_SELECT_BUTTON)
+G_DEFINE_TYPE (PicmanBrushSelectButton, picman_brush_select_button,
+               PICMAN_TYPE_SELECT_BUTTON)
 
 
 static void
-gimp_brush_select_button_class_init (GimpBrushSelectButtonClass *klass)
+picman_brush_select_button_class_init (PicmanBrushSelectButtonClass *klass)
 {
   GObjectClass          *object_class        = G_OBJECT_CLASS (klass);
-  GimpSelectButtonClass *select_button_class = GIMP_SELECT_BUTTON_CLASS (klass);
+  PicmanSelectButtonClass *select_button_class = PICMAN_SELECT_BUTTON_CLASS (klass);
 
-  object_class->finalize     = gimp_brush_select_button_finalize;
-  object_class->set_property = gimp_brush_select_button_set_property;
-  object_class->get_property = gimp_brush_select_button_get_property;
+  object_class->finalize     = picman_brush_select_button_finalize;
+  object_class->set_property = picman_brush_select_button_set_property;
+  object_class->get_property = picman_brush_select_button_get_property;
 
-  select_button_class->select_destroy = gimp_brush_select_destroy;
+  select_button_class->select_destroy = picman_brush_select_destroy;
 
   klass->brush_set = NULL;
 
   /**
-   * GimpBrushSelectButton:title:
+   * PicmanBrushSelectButton:title:
    *
    * The title to be used for the brush selection popup dialog.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class, PROP_TITLE,
                                    g_param_spec_string ("title",
                                                         "Title",
                                                         "The title to be used for the brush selection popup dialog",
                                                         _("Brush Selection"),
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   /**
-   * GimpBrushSelectButton:brush-name:
+   * PicmanBrushSelectButton:brush-name:
    *
    * The name of the currently selected brush.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class, PROP_BRUSH_NAME,
                                    g_param_spec_string ("brush-name",
                                                         "Brush name",
                                                         "The name of the currently selected brush",
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   /**
-   * GimpBrushSelectButton:opacity:
+   * PicmanBrushSelectButton:opacity:
    *
    * The opacity of the currently selected brush.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class, PROP_BRUSH_OPACITY,
                                    g_param_spec_double ("brush-opacity",
                                                         "Brush opacity",
                                                         "The opacity of the currently selected brush",
                                                         -1.0, 100.0, -1.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   /**
-   * GimpBrushSelectButton:spacing:
+   * PicmanBrushSelectButton:spacing:
    *
    * The spacing of the currently selected brush.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class, PROP_BRUSH_SPACING,
                                    g_param_spec_int ("brush-spacing",
                                                      "Brush spacing",
                                                      "The spacing of the currently selected brush",
                                                      -G_MAXINT, 1000, -1,
-                                                     GIMP_PARAM_READWRITE));
+                                                     PICMAN_PARAM_READWRITE));
 
   /**
-   * GimpBrushSelectButton:paint-mode:
+   * PicmanBrushSelectButton:paint-mode:
    *
    * The name of the currently selected brush.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class, PROP_BRUSH_PAINT_MODE,
                                    g_param_spec_int ("brush-paint-mode",
                                                      "Brush paint mode",
                                                      "The paint mode of the currently selected brush",
-                                                     -1, GIMP_COLOR_ERASE_MODE,
+                                                     -1, PICMAN_COLOR_ERASE_MODE,
                                                      -1,
-                                                     GIMP_PARAM_READWRITE));
+                                                     PICMAN_PARAM_READWRITE));
 
   /**
-   * GimpBrushSelectButton::brush-set:
+   * PicmanBrushSelectButton::brush-set:
    * @widget: the object which received the signal.
    * @brush_name: the name of the currently selected brush.
    * @opacity: opacity of the brush
@@ -250,15 +250,15 @@ gimp_brush_select_button_class_init (GimpBrushSelectButtonClass *klass)
    *
    * The ::brush-set signal is emitted when the user selects a brush.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   brush_button_signals[BRUSH_SET] =
     g_signal_new ("brush-set",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpBrushSelectButtonClass, brush_set),
+                  G_STRUCT_OFFSET (PicmanBrushSelectButtonClass, brush_set),
                   NULL, NULL,
-                  _gimpui_marshal_VOID__STRING_DOUBLE_INT_INT_INT_INT_POINTER_BOOLEAN,
+                  _picmanui_marshal_VOID__STRING_DOUBLE_INT_INT_INT_INT_POINTER_BOOLEAN,
                   G_TYPE_NONE, 8,
                   G_TYPE_STRING,
                   G_TYPE_DOUBLE,
@@ -270,23 +270,23 @@ gimp_brush_select_button_class_init (GimpBrushSelectButtonClass *klass)
                   G_TYPE_BOOLEAN);
 
   g_type_class_add_private (object_class,
-                            sizeof (GimpBrushSelectButtonPrivate));
+                            sizeof (PicmanBrushSelectButtonPrivate));
 }
 
 static void
-gimp_brush_select_button_init (GimpBrushSelectButton *button)
+picman_brush_select_button_init (PicmanBrushSelectButton *button)
 {
-  GimpBrushSelectButtonPrivate *priv;
+  PicmanBrushSelectButtonPrivate *priv;
   gint                          mask_bpp;
   gint                          mask_data_size;
   gint                          color_bpp;
   gint                          color_data_size;
   guint8                       *color_data;
 
-  priv = GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
+  priv = PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
 
-  priv->brush_name = gimp_context_get_brush ();
-  gimp_brush_get_pixels (priv->brush_name,
+  priv->brush_name = picman_context_get_brush ();
+  picman_brush_get_pixels (priv->brush_name,
                          &priv->width,
                          &priv->height,
                          &mask_bpp,
@@ -299,14 +299,14 @@ gimp_brush_select_button_init (GimpBrushSelectButton *button)
   if (color_data)
     g_free (color_data);
 
-  priv->inside = gimp_brush_select_button_create_inside (button);
+  priv->inside = picman_brush_select_button_create_inside (button);
   gtk_container_add (GTK_CONTAINER (button), priv->inside);
 
   priv->popup = NULL;
 }
 
 /**
- * gimp_brush_select_button_new:
+ * picman_brush_select_button_new:
  * @title:      Title of the dialog to use or %NULL means to use the default
  *              title.
  * @brush_name: Initial brush name or %NULL to use current selection.
@@ -315,24 +315,24 @@ gimp_brush_select_button_init (GimpBrushSelectButton *button)
  * @paint_mode: Initial paint mode.  -1 means to use current paint mode.
  *
  * Creates a new #GtkWidget that completely controls the selection of
- * a #GimpBrush.  This widget is suitable for placement in a table in
+ * a #PicmanBrush.  This widget is suitable for placement in a table in
  * a plug-in dialog.
  *
  * Returns: A #GtkWidget that you can use in your UI.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 GtkWidget *
-gimp_brush_select_button_new (const gchar          *title,
+picman_brush_select_button_new (const gchar          *title,
                               const gchar          *brush_name,
                               gdouble               opacity,
                               gint                  spacing,
-                              GimpLayerModeEffects  paint_mode)
+                              PicmanLayerModeEffects  paint_mode)
 {
   GtkWidget *button;
 
   if (title)
-    button = g_object_new (GIMP_TYPE_BRUSH_SELECT_BUTTON,
+    button = g_object_new (PICMAN_TYPE_BRUSH_SELECT_BUTTON,
                            "title",            title,
                            "brush-name",       brush_name,
                            "brush-opacity",    opacity,
@@ -340,7 +340,7 @@ gimp_brush_select_button_new (const gchar          *title,
                            "brush-paint-mode", paint_mode,
                            NULL);
   else
-    button = g_object_new (GIMP_TYPE_BRUSH_SELECT_BUTTON,
+    button = g_object_new (PICMAN_TYPE_BRUSH_SELECT_BUTTON,
                            "brush-name",       brush_name,
                            "brush-opacity",    opacity,
                            "brush-spacing",    spacing,
@@ -351,8 +351,8 @@ gimp_brush_select_button_new (const gchar          *title,
 }
 
 /**
- * gimp_brush_select_button_get_brush:
- * @button: A #GimpBrushSelectButton
+ * picman_brush_select_button_get_brush:
+ * @button: A #PicmanBrushSelectButton
  * @opacity: Opacity of the selected brush.
  * @spacing: Spacing of the selected brush.
  * @paint_mode: Paint mode of the selected brush.
@@ -361,19 +361,19 @@ gimp_brush_select_button_new (const gchar          *title,
  *
  * Returns: an internal copy of the brush name which must not be freed.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 const gchar *
-gimp_brush_select_button_get_brush (GimpBrushSelectButton *button,
+picman_brush_select_button_get_brush (PicmanBrushSelectButton *button,
                                     gdouble               *opacity,
                                     gint                  *spacing,
-                                    GimpLayerModeEffects  *paint_mode)
+                                    PicmanLayerModeEffects  *paint_mode)
 {
-  GimpBrushSelectButtonPrivate *priv;
+  PicmanBrushSelectButtonPrivate *priv;
 
-  g_return_val_if_fail (GIMP_IS_BRUSH_SELECT_BUTTON (button), NULL);
+  g_return_val_if_fail (PICMAN_IS_BRUSH_SELECT_BUTTON (button), NULL);
 
-  priv = GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
+  priv = PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
 
   if (opacity)
     *opacity = priv->opacity;
@@ -388,8 +388,8 @@ gimp_brush_select_button_get_brush (GimpBrushSelectButton *button,
 }
 
 /**
- * gimp_brush_select_button_set_brush:
- * @button: A #GimpBrushSelectButton
+ * picman_brush_select_button_set_brush:
+ * @button: A #PicmanBrushSelectButton
  * @brush_name: Brush name to set; %NULL means no change.
  * @opacity:    Opacity to set. -1.0 means no change.
  * @spacing:    Spacing to set. -1 means no change.
@@ -398,24 +398,24 @@ gimp_brush_select_button_get_brush (GimpBrushSelectButton *button,
  * Sets the current brush and other values for the brush select
  * button.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 void
-gimp_brush_select_button_set_brush (GimpBrushSelectButton *button,
+picman_brush_select_button_set_brush (PicmanBrushSelectButton *button,
                                     const gchar           *brush_name,
                                     gdouble                opacity,
                                     gint                   spacing,
-                                    GimpLayerModeEffects   paint_mode)
+                                    PicmanLayerModeEffects   paint_mode)
 {
-  GimpSelectButton *select_button;
+  PicmanSelectButton *select_button;
 
-  g_return_if_fail (GIMP_IS_BRUSH_SELECT_BUTTON (button));
+  g_return_if_fail (PICMAN_IS_BRUSH_SELECT_BUTTON (button));
 
-  select_button = GIMP_SELECT_BUTTON (button);
+  select_button = PICMAN_SELECT_BUTTON (button);
 
   if (select_button->temp_callback)
     {
-      gimp_brushes_set_popup (select_button->temp_callback, brush_name,
+      picman_brushes_set_popup (select_button->temp_callback, brush_name,
                               opacity, spacing, paint_mode);
     }
   else
@@ -433,9 +433,9 @@ gimp_brush_select_button_set_brush (GimpBrushSelectButton *button,
       if (brush_name && *brush_name)
         name = g_strdup (brush_name);
       else
-        name = gimp_context_get_brush ();
+        name = picman_context_get_brush ();
 
-      if (gimp_brush_get_pixels (name,
+      if (picman_brush_get_pixels (name,
                                  &width,
                                  &height,
                                  &bytes,
@@ -449,15 +449,15 @@ gimp_brush_select_button_set_brush (GimpBrushSelectButton *button,
             g_free (color_data);
 
           if (opacity < 0.0)
-            opacity = gimp_context_get_opacity ();
+            opacity = picman_context_get_opacity ();
 
           if (spacing == -1)
-            gimp_brush_get_spacing (name, &spacing);
+            picman_brush_get_spacing (name, &spacing);
 
           if (paint_mode == -1)
-            paint_mode = gimp_context_get_paint_mode ();
+            paint_mode = picman_context_get_paint_mode ();
 
-          gimp_brush_select_button_callback (name,
+          picman_brush_select_button_callback (name,
                                              opacity, spacing, paint_mode,
                                              width, height, mask_data,
                                              FALSE, button);
@@ -473,11 +473,11 @@ gimp_brush_select_button_set_brush (GimpBrushSelectButton *button,
 /*  private functions  */
 
 static void
-gimp_brush_select_button_finalize (GObject *object)
+picman_brush_select_button_finalize (GObject *object)
 {
-  GimpBrushSelectButtonPrivate *priv;
+  PicmanBrushSelectButtonPrivate *priv;
 
-  priv = GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE (object);
+  priv = PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE (object);
 
   g_free (priv->brush_name);
   priv->brush_name = NULL;
@@ -488,22 +488,22 @@ gimp_brush_select_button_finalize (GObject *object)
   g_free (priv->title);
   priv->title = NULL;
 
-  G_OBJECT_CLASS (gimp_brush_select_button_parent_class)->finalize (object);
+  G_OBJECT_CLASS (picman_brush_select_button_parent_class)->finalize (object);
 }
 
 static void
-gimp_brush_select_button_set_property (GObject      *object,
+picman_brush_select_button_set_property (GObject      *object,
                                        guint         property_id,
                                        const GValue *value,
                                        GParamSpec   *pspec)
 {
-  GimpBrushSelectButton        *button = GIMP_BRUSH_SELECT_BUTTON (object);
-  GimpBrushSelectButtonPrivate *priv;
+  PicmanBrushSelectButton        *button = PICMAN_BRUSH_SELECT_BUTTON (object);
+  PicmanBrushSelectButtonPrivate *priv;
   gdouble opacity;
   gint32 spacing;
   gint32 paint_mode;
 
-  priv = GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
+  priv = PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
 
   switch (property_id)
     {
@@ -511,7 +511,7 @@ gimp_brush_select_button_set_property (GObject      *object,
       priv->title = g_value_dup_string (value);
       break;
     case PROP_BRUSH_NAME:
-      gimp_brush_select_button_set_brush (button,
+      picman_brush_select_button_set_brush (button,
                                           g_value_get_string (value),
                                           -1.0, -1, -1);
       break;
@@ -537,15 +537,15 @@ gimp_brush_select_button_set_property (GObject      *object,
 }
 
 static void
-gimp_brush_select_button_get_property (GObject    *object,
+picman_brush_select_button_get_property (GObject    *object,
                                        guint       property_id,
                                        GValue     *value,
                                        GParamSpec *pspec)
 {
-  GimpBrushSelectButton        *button = GIMP_BRUSH_SELECT_BUTTON (object);
-  GimpBrushSelectButtonPrivate *priv;
+  PicmanBrushSelectButton        *button = PICMAN_BRUSH_SELECT_BUTTON (object);
+  PicmanBrushSelectButtonPrivate *priv;
 
-  priv = GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
+  priv = PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
 
   switch (property_id)
     {
@@ -571,24 +571,24 @@ gimp_brush_select_button_get_property (GObject    *object,
 }
 
 static void
-gimp_brush_select_button_callback (const gchar          *name,
+picman_brush_select_button_callback (const gchar          *name,
                                    gdouble               opacity,
                                    gint                  spacing,
-                                   GimpLayerModeEffects  paint_mode,
+                                   PicmanLayerModeEffects  paint_mode,
                                    gint                  width,
                                    gint                  height,
                                    const guchar         *mask_data,
                                    gboolean              dialog_closing,
                                    gpointer              data)
 {
-  GimpBrushSelectButton        *button;
-  GimpBrushSelectButtonPrivate *priv;
-  GimpSelectButton             *select_button;
+  PicmanBrushSelectButton        *button;
+  PicmanBrushSelectButtonPrivate *priv;
+  PicmanSelectButton             *select_button;
 
-  button = GIMP_BRUSH_SELECT_BUTTON (data);
+  button = PICMAN_BRUSH_SELECT_BUTTON (data);
 
-  priv = GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
-  select_button = GIMP_SELECT_BUTTON (button);
+  priv = PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
+  select_button = PICMAN_SELECT_BUTTON (button);
 
   g_free (priv->brush_name);
   g_free (priv->mask_data);
@@ -601,7 +601,7 @@ gimp_brush_select_button_callback (const gchar          *name,
   priv->spacing    = spacing;
   priv->paint_mode = paint_mode;
 
-  gimp_brush_select_preview_update (priv->preview,
+  picman_brush_select_preview_update (priv->preview,
                                     width, height, mask_data);
 
   if (dialog_closing)
@@ -614,18 +614,18 @@ gimp_brush_select_button_callback (const gchar          *name,
 }
 
 static void
-gimp_brush_select_button_clicked (GimpBrushSelectButton *button)
+picman_brush_select_button_clicked (PicmanBrushSelectButton *button)
 {
-  GimpBrushSelectButtonPrivate *priv;
-  GimpSelectButton             *select_button;
+  PicmanBrushSelectButtonPrivate *priv;
+  PicmanSelectButton             *select_button;
 
-  priv = GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
-  select_button = GIMP_SELECT_BUTTON (button);
+  priv = PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
+  select_button = PICMAN_SELECT_BUTTON (button);
 
   if (select_button->temp_callback)
     {
-      /*  calling gimp_brushes_set_popup() raises the dialog  */
-      gimp_brushes_set_popup (select_button->temp_callback,
+      /*  calling picman_brushes_set_popup() raises the dialog  */
+      picman_brushes_set_popup (select_button->temp_callback,
                               priv->brush_name,
                               priv->opacity,
                               priv->spacing,
@@ -634,36 +634,36 @@ gimp_brush_select_button_clicked (GimpBrushSelectButton *button)
   else
     {
       select_button->temp_callback =
-        gimp_brush_select_new (priv->title, priv->brush_name,
+        picman_brush_select_new (priv->title, priv->brush_name,
                                priv->opacity, priv->spacing, priv->paint_mode,
-                               gimp_brush_select_button_callback,
+                               picman_brush_select_button_callback,
                                button);
     }
 }
 
 static void
-gimp_brush_select_preview_resize (GimpBrushSelectButton *button)
+picman_brush_select_preview_resize (PicmanBrushSelectButton *button)
 {
-  GimpBrushSelectButtonPrivate *priv;
+  PicmanBrushSelectButtonPrivate *priv;
 
-  priv = GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
+  priv = PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
 
   if (priv->width > 0 && priv->height > 0)
-    gimp_brush_select_preview_update (priv->preview,
+    picman_brush_select_preview_update (priv->preview,
                                       priv->width,
                                       priv->height,
                                       priv->mask_data);
 }
 
 static gboolean
-gimp_brush_select_preview_events (GtkWidget             *widget,
+picman_brush_select_preview_events (GtkWidget             *widget,
                                   GdkEvent              *event,
-                                  GimpBrushSelectButton *button)
+                                  PicmanBrushSelectButton *button)
 {
-  GimpBrushSelectButtonPrivate *priv;
+  PicmanBrushSelectButtonPrivate *priv;
   GdkEventButton               *bevent;
 
-  priv = GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
+  priv = PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
 
   if (priv->mask_data)
     {
@@ -675,7 +675,7 @@ gimp_brush_select_preview_events (GtkWidget             *widget,
           if (bevent->button == 1)
             {
               gtk_grab_add (widget);
-              gimp_brush_select_button_open_popup (button,
+              picman_brush_select_button_open_popup (button,
                                                    bevent->x, bevent->y);
             }
           break;
@@ -686,7 +686,7 @@ gimp_brush_select_preview_events (GtkWidget             *widget,
           if (bevent->button == 1)
             {
               gtk_grab_remove (widget);
-              gimp_brush_select_button_close_popup (button);
+              picman_brush_select_button_close_popup (button);
             }
           break;
 
@@ -699,7 +699,7 @@ gimp_brush_select_preview_events (GtkWidget             *widget,
 }
 
 static void
-gimp_brush_select_preview_draw (GimpPreviewArea *area,
+picman_brush_select_preview_draw (PicmanPreviewArea *area,
                                 gint             x,
                                 gint             y,
                                 gint             width,
@@ -727,9 +727,9 @@ gimp_brush_select_preview_draw (GimpPreviewArea *area,
       src += rowstride;
     }
 
-  gimp_preview_area_draw (area,
+  picman_preview_area_draw (area,
                           x, y, width, height,
-                          GIMP_GRAY_IMAGE,
+                          PICMAN_GRAY_IMAGE,
                           buf,
                           width);
 
@@ -737,12 +737,12 @@ gimp_brush_select_preview_draw (GimpPreviewArea *area,
 }
 
 static void
-gimp_brush_select_preview_update (GtkWidget    *preview,
+picman_brush_select_preview_update (GtkWidget    *preview,
                                   gint          brush_width,
                                   gint          brush_height,
                                   const guchar *mask_data)
 {
-  GimpPreviewArea *area = GIMP_PREVIEW_AREA (preview);
+  PicmanPreviewArea *area = PICMAN_PREVIEW_AREA (preview);
   GtkAllocation    allocation;
   gint             x, y;
   gint             width, height;
@@ -756,23 +756,23 @@ gimp_brush_select_preview_update (GtkWidget    *preview,
   y = ((allocation.height - height) / 2);
 
   if (x || y)
-    gimp_preview_area_fill (area,
+    picman_preview_area_fill (area,
                             0, 0,
                             allocation.width,
                             allocation.height,
                             0xFF, 0xFF, 0xFF);
 
-  gimp_brush_select_preview_draw (area,
+  picman_brush_select_preview_draw (area,
                                   x, y, width, height,
                                   mask_data, brush_width);
 }
 
 static void
-gimp_brush_select_button_open_popup (GimpBrushSelectButton *button,
+picman_brush_select_button_open_popup (PicmanBrushSelectButton *button,
                                      gint                   x,
                                      gint                   y)
 {
-  GimpBrushSelectButtonPrivate *priv;
+  PicmanBrushSelectButtonPrivate *priv;
   GtkWidget                    *frame;
   GtkWidget                    *preview;
   GdkScreen                    *screen;
@@ -781,10 +781,10 @@ gimp_brush_select_button_open_popup (GimpBrushSelectButton *button,
   gint                          scr_w;
   gint                          scr_h;
 
-  priv = GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
+  priv = PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
 
   if (priv->popup)
-    gimp_brush_select_button_close_popup (button);
+    picman_brush_select_button_close_popup (button);
 
   if (priv->width <= CELL_SIZE && priv->height <= CELL_SIZE)
     return;
@@ -800,7 +800,7 @@ gimp_brush_select_button_open_popup (GimpBrushSelectButton *button,
   gtk_container_add (GTK_CONTAINER (priv->popup), frame);
   gtk_widget_show (frame);
 
-  preview = gimp_preview_area_new ();
+  preview = picman_preview_area_new ();
   gtk_widget_set_size_request (preview, priv->width, priv->height);
   gtk_container_add (GTK_CONTAINER (frame), preview);
   gtk_widget_show (preview);
@@ -824,17 +824,17 @@ gimp_brush_select_button_open_popup (GimpBrushSelectButton *button,
   gtk_widget_show (priv->popup);
 
   /*  Draw the brush  */
-  gimp_brush_select_preview_draw (GIMP_PREVIEW_AREA (preview),
+  picman_brush_select_preview_draw (PICMAN_PREVIEW_AREA (preview),
                                   0, 0, priv->width, priv->height,
                                   priv->mask_data, priv->width);
 }
 
 static void
-gimp_brush_select_button_close_popup (GimpBrushSelectButton *button)
+picman_brush_select_button_close_popup (PicmanBrushSelectButton *button)
 {
-  GimpBrushSelectButtonPrivate *priv;
+  PicmanBrushSelectButtonPrivate *priv;
 
-  priv = GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
+  priv = PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE (button);
 
   if (priv->popup)
     {
@@ -844,7 +844,7 @@ gimp_brush_select_button_close_popup (GimpBrushSelectButton *button)
 }
 
 static void
-gimp_brush_select_drag_data_received (GimpBrushSelectButton *button,
+picman_brush_select_drag_data_received (PicmanBrushSelectButton *button,
                                       GdkDragContext        *context,
                                       gint                   x,
                                       gint                   y,
@@ -871,11 +871,11 @@ gimp_brush_select_drag_data_received (GimpBrushSelectButton *button,
       gint     name_offset = 0;
 
       if (sscanf (str, "%i:%p:%n", &pid, &unused, &name_offset) >= 2 &&
-          pid == gimp_getpid () && name_offset > 0)
+          pid == picman_getpid () && name_offset > 0)
         {
           gchar *name = str + name_offset;
 
-          gimp_brush_select_button_set_brush (button, name, -1.0, -1, -1);
+          picman_brush_select_button_set_brush (button, name, -1.0, -1, -1);
         }
     }
 
@@ -883,14 +883,14 @@ gimp_brush_select_drag_data_received (GimpBrushSelectButton *button,
 }
 
 static GtkWidget *
-gimp_brush_select_button_create_inside (GimpBrushSelectButton *brush_button)
+picman_brush_select_button_create_inside (PicmanBrushSelectButton *brush_button)
 {
   GtkWidget                    *hbox;
   GtkWidget                    *frame;
   GtkWidget                    *button;
-  GimpBrushSelectButtonPrivate *priv;
+  PicmanBrushSelectButtonPrivate *priv;
 
-  priv = GIMP_BRUSH_SELECT_BUTTON_GET_PRIVATE (brush_button);
+  priv = PICMAN_BRUSH_SELECT_BUTTON_GET_PRIVATE (brush_button);
 
   gtk_widget_push_composite_child ();
 
@@ -900,17 +900,17 @@ gimp_brush_select_button_create_inside (GimpBrushSelectButton *brush_button)
   gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
 
-  priv->preview = gimp_preview_area_new ();
+  priv->preview = picman_preview_area_new ();
   gtk_widget_add_events (priv->preview,
                          GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
   gtk_widget_set_size_request (priv->preview, CELL_SIZE, CELL_SIZE);
   gtk_container_add (GTK_CONTAINER (frame), priv->preview);
 
   g_signal_connect_swapped (priv->preview, "size-allocate",
-                            G_CALLBACK (gimp_brush_select_preview_resize),
+                            G_CALLBACK (picman_brush_select_preview_resize),
                             brush_button);
   g_signal_connect (priv->preview, "event",
-                    G_CALLBACK (gimp_brush_select_preview_events),
+                    G_CALLBACK (picman_brush_select_preview_events),
                     brush_button);
 
   gtk_drag_dest_set (GTK_WIDGET (priv->preview),
@@ -921,14 +921,14 @@ gimp_brush_select_button_create_inside (GimpBrushSelectButton *brush_button)
                      GDK_ACTION_COPY);
 
   g_signal_connect (priv->preview, "drag-data-received",
-                    G_CALLBACK (gimp_brush_select_drag_data_received),
+                    G_CALLBACK (picman_brush_select_drag_data_received),
                     hbox);
 
   button = gtk_button_new_with_mnemonic (_("_Browse..."));
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
 
   g_signal_connect_swapped (button, "clicked",
-                            G_CALLBACK (gimp_brush_select_button_clicked),
+                            G_CALLBACK (picman_brush_select_button_clicked),
                             brush_button);
 
   gtk_widget_show_all (hbox);

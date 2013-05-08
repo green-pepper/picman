@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimppainttools_pdb.c
+ * picmanpainttools_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimppainttools
- * @title: gimppainttools
+ * SECTION: picmanpainttools
+ * @title: picmanpainttools
  * @short_description: Access to toolbox paint tools.
  *
  * Functions giving access to toolbox paint tools.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_airbrush:
+ * picman_airbrush:
  * @drawable_ID: The affected drawable.
  * @pressure: The pressure of the airbrush strokes.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
@@ -52,32 +52,32 @@
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_airbrush (gint32         drawable_ID,
+picman_airbrush (gint32         drawable_ID,
                gdouble        pressure,
                gint           num_strokes,
                const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-airbrush",
+  return_vals = picman_run_procedure ("picman-airbrush",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, pressure,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_FLOAT, pressure,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_airbrush_default:
+ * picman_airbrush_default:
  * @drawable_ID: The affected drawable.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
  * @strokes: Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }.
@@ -86,37 +86,37 @@ gimp_airbrush (gint32         drawable_ID,
  * is time-dependent.
  *
  * This tool simulates the use of an airbrush. It is similar to
- * gimp_airbrush() except that the pressure is derived from the
+ * picman_airbrush() except that the pressure is derived from the
  * airbrush tools options box. It the option has not been set the
  * default for the option will be used.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_airbrush_default (gint32         drawable_ID,
+picman_airbrush_default (gint32         drawable_ID,
                        gint           num_strokes,
                        const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-airbrush-default",
+  return_vals = picman_run_procedure ("picman-airbrush-default",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_clone:
+ * picman_clone:
  * @drawable_ID: The affected drawable.
  * @src_drawable_ID: The source drawable.
  * @clone_type: The type of clone.
@@ -143,38 +143,38 @@ gimp_airbrush_default (gint32         drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_clone (gint32         drawable_ID,
+picman_clone (gint32         drawable_ID,
             gint32         src_drawable_ID,
-            GimpCloneType  clone_type,
+            PicmanCloneType  clone_type,
             gdouble        src_x,
             gdouble        src_y,
             gint           num_strokes,
             const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-clone",
+  return_vals = picman_run_procedure ("picman-clone",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_DRAWABLE, src_drawable_ID,
-                                    GIMP_PDB_INT32, clone_type,
-                                    GIMP_PDB_FLOAT, src_x,
-                                    GIMP_PDB_FLOAT, src_y,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_DRAWABLE, src_drawable_ID,
+                                    PICMAN_PDB_INT32, clone_type,
+                                    PICMAN_PDB_FLOAT, src_x,
+                                    PICMAN_PDB_FLOAT, src_y,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_clone_default:
+ * picman_clone_default:
  * @drawable_ID: The affected drawable.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
  * @strokes: Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }.
@@ -183,7 +183,7 @@ gimp_clone (gint32         drawable_ID,
  *
  * This tool clones (copies) from the source drawable starting at the
  * specified source coordinates to the dest drawable. This function
- * performs exactly the same as the gimp_clone() function except that
+ * performs exactly the same as the picman_clone() function except that
  * the tools arguments are obtained from the clones option dialog. It
  * this dialog has not been activated then the dialogs default values
  * will be used.
@@ -191,30 +191,30 @@ gimp_clone (gint32         drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_clone_default (gint32         drawable_ID,
+picman_clone_default (gint32         drawable_ID,
                     gint           num_strokes,
                     const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-clone-default",
+  return_vals = picman_run_procedure ("picman-clone-default",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_convolve:
+ * picman_convolve:
  * @drawable_ID: The affected drawable.
  * @pressure: The pressure.
  * @convolve_type: Convolve type.
@@ -231,34 +231,34 @@ gimp_clone_default (gint32         drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_convolve (gint32            drawable_ID,
+picman_convolve (gint32            drawable_ID,
                gdouble           pressure,
-               GimpConvolveType  convolve_type,
+               PicmanConvolveType  convolve_type,
                gint              num_strokes,
                const gdouble    *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-convolve",
+  return_vals = picman_run_procedure ("picman-convolve",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, pressure,
-                                    GIMP_PDB_INT32, convolve_type,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_FLOAT, pressure,
+                                    PICMAN_PDB_INT32, convolve_type,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_convolve_default:
+ * picman_convolve_default:
  * @drawable_ID: The affected drawable.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
  * @strokes: Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }.
@@ -267,37 +267,37 @@ gimp_convolve (gint32            drawable_ID,
  *
  * This tool convolves the specified drawable with either a sharpening
  * or blurring kernel. This function performs exactly the same as the
- * gimp_convolve() function except that the tools arguments are
+ * picman_convolve() function except that the tools arguments are
  * obtained from the convolve option dialog. It this dialog has not
  * been activated then the dialogs default values will be used.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_convolve_default (gint32         drawable_ID,
+picman_convolve_default (gint32         drawable_ID,
                        gint           num_strokes,
                        const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-convolve-default",
+  return_vals = picman_run_procedure ("picman-convolve-default",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_dodgeburn:
+ * picman_dodgeburn:
  * @drawable_ID: The affected drawable.
  * @exposure: The exposure of the strokes.
  * @dodgeburn_type: The type either dodge or burn.
@@ -312,42 +312,42 @@ gimp_convolve_default (gint32         drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_dodgeburn (gint32             drawable_ID,
+picman_dodgeburn (gint32             drawable_ID,
                 gdouble            exposure,
-                GimpDodgeBurnType  dodgeburn_type,
-                GimpTransferMode   dodgeburn_mode,
+                PicmanDodgeBurnType  dodgeburn_type,
+                PicmanTransferMode   dodgeburn_mode,
                 gint               num_strokes,
                 const gdouble     *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-dodgeburn",
+  return_vals = picman_run_procedure ("picman-dodgeburn",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, exposure,
-                                    GIMP_PDB_INT32, dodgeburn_type,
-                                    GIMP_PDB_INT32, dodgeburn_mode,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_FLOAT, exposure,
+                                    PICMAN_PDB_INT32, dodgeburn_type,
+                                    PICMAN_PDB_INT32, dodgeburn_mode,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_dodgeburn_default:
+ * picman_dodgeburn_default:
  * @drawable_ID: The affected drawable.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
  * @strokes: Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }.
  *
  * Dodgeburn image with varying exposure. This is the same as the
- * gimp_dodgeburn() function except that the exposure, type and mode
+ * picman_dodgeburn() function except that the exposure, type and mode
  * are taken from the tools option dialog. If the dialog has not been
  * activated then the defaults as used by the dialog will be used.
  *
@@ -356,30 +356,30 @@ gimp_dodgeburn (gint32             drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_dodgeburn_default (gint32         drawable_ID,
+picman_dodgeburn_default (gint32         drawable_ID,
                         gint           num_strokes,
                         const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-dodgeburn-default",
+  return_vals = picman_run_procedure ("picman-dodgeburn-default",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_eraser:
+ * picman_eraser:
  * @drawable_ID: The affected drawable.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
  * @strokes: Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }.
@@ -397,34 +397,34 @@ gimp_dodgeburn_default (gint32         drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_eraser (gint32                    drawable_ID,
+picman_eraser (gint32                    drawable_ID,
              gint                      num_strokes,
              const gdouble            *strokes,
-             GimpBrushApplicationMode  hardness,
-             GimpPaintApplicationMode  method)
+             PicmanBrushApplicationMode  hardness,
+             PicmanPaintApplicationMode  method)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-eraser",
+  return_vals = picman_run_procedure ("picman-eraser",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_INT32, hardness,
-                                    GIMP_PDB_INT32, method,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_INT32, hardness,
+                                    PICMAN_PDB_INT32, method,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_eraser_default:
+ * picman_eraser_default:
  * @drawable_ID: The affected drawable.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
  * @strokes: Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }.
@@ -432,7 +432,7 @@ gimp_eraser (gint32                    drawable_ID,
  * Erase using the current brush.
  *
  * This tool erases using the current brush mask. This function
- * performs exactly the same as the gimp_eraser() function except that
+ * performs exactly the same as the picman_eraser() function except that
  * the tools arguments are obtained from the eraser option dialog. It
  * this dialog has not been activated then the dialogs default values
  * will be used.
@@ -440,30 +440,30 @@ gimp_eraser (gint32                    drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_eraser_default (gint32         drawable_ID,
+picman_eraser_default (gint32         drawable_ID,
                      gint           num_strokes,
                      const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-eraser-default",
+  return_vals = picman_run_procedure ("picman-eraser-default",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_heal:
+ * picman_heal:
  * @drawable_ID: The affected drawable.
  * @src_drawable_ID: The source drawable.
  * @src_x: The x coordinate in the source image.
@@ -482,39 +482,39 @@ gimp_eraser_default (gint32         drawable_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_heal (gint32         drawable_ID,
+picman_heal (gint32         drawable_ID,
            gint32         src_drawable_ID,
            gdouble        src_x,
            gdouble        src_y,
            gint           num_strokes,
            const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-heal",
+  return_vals = picman_run_procedure ("picman-heal",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_DRAWABLE, src_drawable_ID,
-                                    GIMP_PDB_FLOAT, src_x,
-                                    GIMP_PDB_FLOAT, src_y,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_DRAWABLE, src_drawable_ID,
+                                    PICMAN_PDB_FLOAT, src_x,
+                                    PICMAN_PDB_FLOAT, src_y,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_heal_default:
+ * picman_heal_default:
  * @drawable_ID: The affected drawable.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
  * @strokes: Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }.
@@ -523,40 +523,40 @@ gimp_heal (gint32         drawable_ID,
  *
  * This tool heals from the source drawable starting at the specified
  * source coordinates to the dest drawable. This function performs
- * exactly the same as the gimp_heal() function except that the tools
+ * exactly the same as the picman_heal() function except that the tools
  * arguments are obtained from the healing option dialog. It this
  * dialog has not been activated then the dialogs default values will
  * be used.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_heal_default (gint32         drawable_ID,
+picman_heal_default (gint32         drawable_ID,
                    gint           num_strokes,
                    const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-heal-default",
+  return_vals = picman_run_procedure ("picman-heal-default",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_paintbrush:
+ * picman_paintbrush:
  * @drawable_ID: The affected drawable.
  * @fade_out: Fade out parameter.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
@@ -580,36 +580,36 @@ gimp_heal_default (gint32         drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_paintbrush (gint32                    drawable_ID,
+picman_paintbrush (gint32                    drawable_ID,
                  gdouble                   fade_out,
                  gint                      num_strokes,
                  const gdouble            *strokes,
-                 GimpPaintApplicationMode  method,
+                 PicmanPaintApplicationMode  method,
                  gdouble                   gradient_length)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-paintbrush",
+  return_vals = picman_run_procedure ("picman-paintbrush",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, fade_out,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_INT32, method,
-                                    GIMP_PDB_FLOAT, gradient_length,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_FLOAT, fade_out,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_INT32, method,
+                                    PICMAN_PDB_FLOAT, gradient_length,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_paintbrush_default:
+ * picman_paintbrush_default:
  * @drawable_ID: The affected drawable.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
  * @strokes: Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }.
@@ -634,30 +634,30 @@ gimp_paintbrush (gint32                    drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_paintbrush_default (gint32         drawable_ID,
+picman_paintbrush_default (gint32         drawable_ID,
                          gint           num_strokes,
                          const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-paintbrush-default",
+  return_vals = picman_run_procedure ("picman-paintbrush-default",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_pencil:
+ * picman_pencil:
  * @drawable_ID: The affected drawable.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
  * @strokes: Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }.
@@ -674,30 +674,30 @@ gimp_paintbrush_default (gint32         drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_pencil (gint32         drawable_ID,
+picman_pencil (gint32         drawable_ID,
              gint           num_strokes,
              const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-pencil",
+  return_vals = picman_run_procedure ("picman-pencil",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_smudge:
+ * picman_smudge:
  * @drawable_ID: The affected drawable.
  * @pressure: The pressure of the smudge strokes.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
@@ -712,32 +712,32 @@ gimp_pencil (gint32         drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_smudge (gint32         drawable_ID,
+picman_smudge (gint32         drawable_ID,
              gdouble        pressure,
              gint           num_strokes,
              const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-smudge",
+  return_vals = picman_run_procedure ("picman-smudge",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, pressure,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_FLOAT, pressure,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_smudge_default:
+ * picman_smudge_default:
  * @drawable_ID: The affected drawable.
  * @num_strokes: Number of stroke control points (count each coordinate as 2 points).
  * @strokes: Array of stroke coordinates: { s1.x, s1.y, s2.x, s2.y, ..., sn.x, sn.y }.
@@ -745,31 +745,31 @@ gimp_smudge (gint32         drawable_ID,
  * Smudge image with varying pressure.
  *
  * This tool simulates a smudge using the current brush. It behaves
- * exactly the same as gimp_smudge() except that the pressure value is
+ * exactly the same as picman_smudge() except that the pressure value is
  * taken from the smudge tool options or the options default if the
  * tools option dialog has not been activated.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_smudge_default (gint32         drawable_ID,
+picman_smudge_default (gint32         drawable_ID,
                      gint           num_strokes,
                      const gdouble *strokes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-smudge-default",
+  return_vals = picman_run_procedure ("picman-smudge-default",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, num_strokes,
-                                    GIMP_PDB_FLOATARRAY, strokes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, num_strokes,
+                                    PICMAN_PDB_FLOATARRAY, strokes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

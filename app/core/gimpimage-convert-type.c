@@ -1,6 +1,6 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
- * Copyright (C) 1997-2004 Adam D. Moss <adam@gimp.org>
+ * Copyright (C) 1997-2004 Adam D. Moss <adam@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
 /*
  * 2005-09-04 - Switch 'positional' dither matrix to a 32x32 Bayer,
  *  which generates results that compress somewhat better (and may look
- *  worse or better depending on what you enjoy...).  [adam@gimp.org]
+ *  worse or better depending on what you enjoy...).  [adam@picman.org]
  *
  * 2004-12-12 - Use a slower but much nicer technique for finding the
  *  two best colours to dither between when using fixed/positional
- *  dither methods.  Makes positional dither much less lame.  [adam@gimp.org]
+ *  dither methods.  Makes positional dither much less lame.  [adam@picman.org]
  *
  * 2002-02-10 - Quantizer version 3.0 (the rest of the commit started
  *  a year ago -- whoops).  Divide colours within CIE L*a*b* space using
@@ -33,7 +33,7 @@
  *  chooses a much richer colour set, especially for low numbers of
  *  colours.  n.b.: Less luminance-sloppy in straight remapping which is
  *  good for colour but a bit worse for high-frequency detail (that's
- *  partly what fs-dithering is for -- use it).  [adam@gimp.org]
+ *  partly what fs-dithering is for -- use it).  [adam@picman.org]
  *
  * 2001-03-25 - Define accessor function/macro for histogram reads and
  *  writes.  This slows us down a little because we avoid some of the
@@ -44,7 +44,7 @@
  *  than frumpy old RGB.  [Adam]
  *
  * 2000/01/30 - Use palette_selector instead of option_menu for custom
- *  palette. Use libgimp callback functions.  [Sven]
+ *  palette. Use libpicman callback functions.  [Sven]
  *
  * 99/09/01 - Created a low-bleed FS-dither option.  [Adam]
  *
@@ -98,7 +98,7 @@
  *
  * 97/07/01 - started todo/revision log.  Put code back in to
  *  eliminate full-alpha pixels from RGB histogram.
- *  [Adam D. Moss - adam@gimp.org]
+ *  [Adam D. Moss - adam@picman.org]
  */
 
   /* TODO for Convert:
@@ -136,32 +136,32 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimp.h"
-#include "gimpcontainer.h"
-#include "gimpdrawable.h"
-#include "gimperror.h"
-#include "gimpimage.h"
-#include "gimpimage-colormap.h"
-#include "gimpimage-undo.h"
-#include "gimpimage-undo-push.h"
-#include "gimplayer.h"
-#include "gimppalette.h"
-#include "gimpprogress.h"
+#include "picman.h"
+#include "picmancontainer.h"
+#include "picmandrawable.h"
+#include "picmanerror.h"
+#include "picmanimage.h"
+#include "picmanimage-colormap.h"
+#include "picmanimage-undo.h"
+#include "picmanimage-undo-push.h"
+#include "picmanlayer.h"
+#include "picmanpalette.h"
+#include "picmanprogress.h"
 
-#include "text/gimptextlayer.h"
+#include "text/picmantextlayer.h"
 
-#include "gimpimage-convert-fsdither.h"
-#include "gimpimage-convert-data.h"
-#include "gimpimage-convert-type.h"
+#include "picmanimage-convert-fsdither.h"
+#include "picmanimage-convert-data.h"
+#include "picmanimage-convert-type.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /* basic memory/quality tradeoff */
@@ -193,7 +193,7 @@ typedef struct _QuantizeObj QuantizeObj;
 typedef void (* Pass1_Func)   (QuantizeObj *quantize_obj);
 typedef void (* Pass2i_Func)  (QuantizeObj *quantize_obj);
 typedef void (* Pass2_Func)   (QuantizeObj *quantize_obj,
-                               GimpLayer   *layer,
+                               PicmanLayer   *layer,
                                GeglBuffer  *new_buffer);
 typedef void (* Cleanup_Func) (QuantizeObj *quantize_obj);
 typedef unsigned long ColorFreq;
@@ -472,7 +472,7 @@ struct _QuantizeObj
   gboolean want_alpha_dither;
   int      error_freedom;           /* 0=much bleed, 1=controlled bleed */
 
-  GimpProgress *progress;
+  PicmanProgress *progress;
   gint          nth_layer;
   gint          n_layers;
 };
@@ -506,22 +506,22 @@ typedef struct
 static void zero_histogram_gray     (CFHistogram   histogram);
 static void zero_histogram_rgb      (CFHistogram   histogram);
 static void generate_histogram_gray (CFHistogram   hostogram,
-                                     GimpLayer    *layer,
+                                     PicmanLayer    *layer,
                                      gboolean      alpha_dither);
 static void generate_histogram_rgb  (CFHistogram   histogram,
-                                     GimpLayer    *layer,
+                                     PicmanLayer    *layer,
                                      gint          col_limit,
                                      gboolean      alpha_dither,
-                                     GimpProgress *progress,
+                                     PicmanProgress *progress,
                                      gint          nth_layer,
                                      gint          n_layers);
 
-static QuantizeObj * initialize_median_cut (GimpImageBaseType      old_type,
+static QuantizeObj * initialize_median_cut (PicmanImageBaseType      old_type,
                                             gint                   num_cols,
-                                            GimpConvertDitherType  dither_type,
-                                            GimpConvertPaletteType palette_type,
+                                            PicmanConvertDitherType  dither_type,
+                                            PicmanConvertPaletteType palette_type,
                                             gboolean               alpha_dither,
-                                            GimpProgress          *progress);
+                                            PicmanProgress          *progress);
 
 static void          compute_color_lin8    (QuantizeObj           *quantobj,
                                             CFHistogram            histogram,
@@ -533,7 +533,7 @@ static guchar    found_cols[MAXNUMCOLORS][3];
 static gint      num_found_cols;
 static gboolean  needs_quantize;
 
-static GimpPalette *theCustomPalette = NULL;
+static PicmanPalette *theCustomPalette = NULL;
 
 
 /**********************************************************/
@@ -555,7 +555,7 @@ mapping_compare (const void *a,
 
 /* FWIW, the make_remap_table() and mapping_compare() function source
  * and palentryStruct may be re-used under the XFree86-style license.
- * <adam@gimp.org>
+ * <adam@picman.org>
  */
 static void
 make_remap_table (const unsigned char  old_palette[],
@@ -670,7 +670,7 @@ make_remap_table (const unsigned char  old_palette[],
 }
 
 static void
-remap_indexed_layer (GimpLayer    *layer,
+remap_indexed_layer (PicmanLayer    *layer,
                      const guchar *remap_table,
                      gint          num_entries)
 {
@@ -679,12 +679,12 @@ remap_indexed_layer (GimpLayer    *layer,
   gint                bpp;
   gboolean            has_alpha;
 
-  format  = gimp_drawable_get_format (GIMP_DRAWABLE (layer));
+  format  = picman_drawable_get_format (PICMAN_DRAWABLE (layer));
 
   bpp       = babl_format_get_bytes_per_pixel (format);
   has_alpha = babl_format_has_alpha (format);
 
-  iter = gegl_buffer_iterator_new (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
+  iter = gegl_buffer_iterator_new (picman_drawable_get_buffer (PICMAN_DRAWABLE (layer)),
                                    NULL, 0, NULL,
                                    GEGL_BUFFER_READWRITE, GEGL_ABYSS_NONE);
 
@@ -721,8 +721,8 @@ color_quicksort (const void *c1,
   Color *color1 = (Color *) c1;
   Color *color2 = (Color *) c2;
 
-  double v1 = GIMP_RGB_LUMINANCE (color1->red, color1->green, color1->blue);
-  double v2 = GIMP_RGB_LUMINANCE (color2->red, color2->green, color2->blue);
+  double v1 = PICMAN_RGB_LUMINANCE (color1->red, color1->green, color1->blue);
+  double v2 = PICMAN_RGB_LUMINANCE (color2->red, color2->green, color2->blue);
 
   if (v1 < v2)
     return -1;
@@ -733,47 +733,47 @@ color_quicksort (const void *c1,
 }
 
 gboolean
-gimp_image_convert_type (GimpImage               *image,
-                         GimpImageBaseType        new_type,
+picman_image_convert_type (PicmanImage               *image,
+                         PicmanImageBaseType        new_type,
                          /* The following are only used for
-                          * new_type == GIMP_INDEXED
+                          * new_type == PICMAN_INDEXED
                           */
                          gint                     num_cols,
-                         GimpConvertDitherType    dither,
+                         PicmanConvertDitherType    dither,
                          gboolean                 alpha_dither,
                          gboolean                 text_layer_dither,
                          gboolean                 remove_dups,
-                         GimpConvertPaletteType   palette_type,
-                         GimpPalette             *custom_palette,
-                         GimpProgress            *progress,
+                         PicmanConvertPaletteType   palette_type,
+                         PicmanPalette             *custom_palette,
+                         PicmanProgress            *progress,
                          GError                 **error)
 {
   QuantizeObj       *quantobj = NULL;
-  GimpImageBaseType  old_type;
+  PicmanImageBaseType  old_type;
   GList             *all_layers;
   GList             *list;
   const gchar       *undo_desc = NULL;
   gint               nth_layer, n_layers;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
-  g_return_val_if_fail (new_type != gimp_image_get_base_type (image), FALSE);
-  g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (new_type != picman_image_get_base_type (image), FALSE);
+  g_return_val_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  if (palette_type == GIMP_CUSTOM_PALETTE)
+  if (palette_type == PICMAN_CUSTOM_PALETTE)
     {
       g_return_val_if_fail (custom_palette == NULL ||
-                            GIMP_IS_PALETTE (custom_palette), FALSE);
+                            PICMAN_IS_PALETTE (custom_palette), FALSE);
       g_return_val_if_fail (custom_palette == NULL ||
-                            gimp_palette_get_n_colors (custom_palette) <= 256,
+                            picman_palette_get_n_colors (custom_palette) <= 256,
                             FALSE);
 
       if (! custom_palette)
-        palette_type = GIMP_MONO_PALETTE;
+        palette_type = PICMAN_MONO_PALETTE;
 
-      if (gimp_palette_get_n_colors (custom_palette) == 0)
+      if (picman_palette_get_n_colors (custom_palette) == 0)
         {
-          g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+          g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			       _("Cannot convert image: palette is empty."));
           return FALSE;
         }
@@ -781,42 +781,42 @@ gimp_image_convert_type (GimpImage               *image,
 
   theCustomPalette = custom_palette;
 
-  gimp_set_busy (image->gimp);
+  picman_set_busy (image->picman);
 
-  all_layers = gimp_image_get_layer_list (image);
+  all_layers = picman_image_get_layer_list (image);
 
   n_layers = g_list_length (all_layers);
 
   switch (new_type)
     {
-    case GIMP_RGB:
+    case PICMAN_RGB:
       undo_desc = C_("undo-type", "Convert Image to RGB");
       break;
 
-    case GIMP_GRAY:
+    case PICMAN_GRAY:
       undo_desc = C_("undo-type", "Convert Image to Grayscale");
       break;
 
-    case GIMP_INDEXED:
+    case PICMAN_INDEXED:
       undo_desc = C_("undo-type", "Convert Image to Indexed");
       break;
     }
 
   g_object_freeze_notify (G_OBJECT (image));
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_IMAGE_CONVERT,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_IMAGE_CONVERT,
                                undo_desc);
 
   /*  Push the image type to the stack  */
-  gimp_image_undo_push_image_type (image, NULL);
+  picman_image_undo_push_image_type (image, NULL);
 
   /*  Set the new base type  */
-  old_type = gimp_image_get_base_type (image);
+  old_type = picman_image_get_base_type (image);
 
   g_object_set (image, "base-type", new_type, NULL);
 
   /*  Convert to indexed?  Build histogram if necessary.  */
-  if (new_type == GIMP_INDEXED)
+  if (new_type == PICMAN_INDEXED)
     {
       gint i;
 
@@ -830,20 +830,20 @@ gimp_image_convert_type (GimpImage               *image,
       /* don't dither if the input is grayscale and we are simply
        * mapping every color
        */
-      if (old_type     == GIMP_GRAY &&
+      if (old_type     == PICMAN_GRAY &&
           num_cols     == 256       &&
-          palette_type == GIMP_MAKE_PALETTE)
+          palette_type == PICMAN_MAKE_PALETTE)
         {
-          dither = GIMP_NO_DITHER;
+          dither = PICMAN_NO_DITHER;
         }
 
       quantobj = initialize_median_cut (old_type, num_cols, dither,
                                         palette_type, alpha_dither,
                                         progress);
 
-      if (palette_type == GIMP_MAKE_PALETTE)
+      if (palette_type == PICMAN_MAKE_PALETTE)
         {
-          if (old_type == GIMP_GRAY)
+          if (old_type == PICMAN_GRAY)
             zero_histogram_gray (quantobj->histogram);
           else
             zero_histogram_rgb (quantobj->histogram);
@@ -860,9 +860,9 @@ gimp_image_convert_type (GimpImage               *image,
                list;
                list = g_list_next (list), nth_layer++)
             {
-              GimpLayer *layer = list->data;
+              PicmanLayer *layer = list->data;
 
-              if (old_type == GIMP_GRAY)
+              if (old_type == PICMAN_GRAY)
                 generate_histogram_gray (quantobj->histogram,
                                          layer, alpha_dither);
               else
@@ -878,12 +878,12 @@ gimp_image_convert_type (GimpImage               *image,
         }
 
       if (progress)
-        gimp_progress_set_text (progress,
+        picman_progress_set_text (progress,
                                 _("Converting to indexed colors (stage 2)"));
 
-      if (old_type == GIMP_RGB &&
+      if (old_type == PICMAN_RGB &&
           ! needs_quantize     &&
-          palette_type == GIMP_MAKE_PALETTE)
+          palette_type == PICMAN_MAKE_PALETTE)
         {
           /* If this is an RGB image, and the user wanted a custom-built
            *  generated palette, and this image has no more colours than
@@ -897,7 +897,7 @@ gimp_image_convert_type (GimpImage               *image,
 
           quantobj->delete_func (quantobj);
           quantobj = initialize_median_cut (old_type, num_cols,
-                                            GIMP_NODESTRUCT_DITHER,
+                                            PICMAN_NODESTRUCT_DITHER,
                                             palette_type,
                                             alpha_dither,
                                             progress);
@@ -916,20 +916,20 @@ gimp_image_convert_type (GimpImage               *image,
           quantobj->first_pass (quantobj);
         }
 
-      if (palette_type == GIMP_MAKE_PALETTE)
+      if (palette_type == PICMAN_MAKE_PALETTE)
         qsort (quantobj->cmap,
                quantobj->actual_number_of_colors, sizeof (Color),
                color_quicksort);
     }
 
   if (progress)
-    gimp_progress_set_text (progress,
+    picman_progress_set_text (progress,
                             _("Converting to indexed colors (stage 3)"));
 
   /* Initialise data which must persist across indexed layer iterations */
   switch (new_type)
     {
-    case GIMP_INDEXED:
+    case PICMAN_INDEXED:
       if (quantobj->second_pass_init)
         quantobj->second_pass_init (quantobj);
       break;
@@ -943,13 +943,13 @@ gimp_image_convert_type (GimpImage               *image,
    */
   switch (new_type)
     {
-    case GIMP_RGB:
-    case GIMP_GRAY:
+    case PICMAN_RGB:
+    case PICMAN_GRAY:
       break;
 
-    case GIMP_INDEXED:
+    case PICMAN_INDEXED:
       {
-        guchar colormap[GIMP_IMAGE_COLORMAP_SIZE];
+        guchar colormap[PICMAN_IMAGE_COLORMAP_SIZE];
         gint   i, j;
 
         for (i = 0, j = 0; i < quantobj->actual_number_of_colors; i++)
@@ -959,7 +959,7 @@ gimp_image_convert_type (GimpImage               *image,
             colormap[j++] = quantobj->cmap[i].blue;
           }
 
-        gimp_image_set_colormap (image, colormap,
+        picman_image_set_colormap (image, colormap,
                                  quantobj->actual_number_of_colors, TRUE);
       }
       break;
@@ -973,18 +973,18 @@ gimp_image_convert_type (GimpImage               *image,
        list;
        list = g_list_next (list), nth_layer++)
     {
-      GimpLayer *layer    = list->data;
+      PicmanLayer *layer    = list->data;
       gboolean   quantize = FALSE;
 
       switch (new_type)
         {
-        case GIMP_RGB:
-        case GIMP_GRAY:
+        case PICMAN_RGB:
+        case PICMAN_GRAY:
           quantize = FALSE;
           break;
 
-        case GIMP_INDEXED:
-          if (gimp_item_is_text_layer (GIMP_ITEM (layer)))
+        case PICMAN_INDEXED:
+          if (picman_item_is_text_layer (PICMAN_ITEM (layer)))
             quantize = text_layer_dither;
           else
             quantize = TRUE;
@@ -999,26 +999,26 @@ gimp_image_convert_type (GimpImage               *image,
           GeglBuffer *new_buffer;
           gboolean    has_alpha;
 
-          has_alpha = gimp_drawable_has_alpha (GIMP_DRAWABLE (layer));
+          has_alpha = picman_drawable_has_alpha (PICMAN_DRAWABLE (layer));
 
           new_buffer =
             gegl_buffer_new (GEGL_RECTANGLE (0, 0,
-                                             gimp_item_get_width  (GIMP_ITEM (layer)),
-                                             gimp_item_get_height (GIMP_ITEM (layer))),
-                             gimp_image_get_layer_format (image,
+                                             picman_item_get_width  (PICMAN_ITEM (layer)),
+                                             picman_item_get_height (PICMAN_ITEM (layer))),
+                             picman_image_get_layer_format (image,
                                                           has_alpha));
 
           quantobj->nth_layer = nth_layer;
           quantobj->second_pass (quantobj, layer, new_buffer);
 
-          gimp_drawable_set_buffer (GIMP_DRAWABLE (layer), TRUE, NULL,
+          picman_drawable_set_buffer (PICMAN_DRAWABLE (layer), TRUE, NULL,
                                     new_buffer);
           g_object_unref (new_buffer);
         }
       else
         {
-          gimp_drawable_convert_type (GIMP_DRAWABLE (layer), image, new_type,
-                                      gimp_drawable_get_precision (GIMP_DRAWABLE (layer)),
+          picman_drawable_convert_type (PICMAN_DRAWABLE (layer), image, new_type,
+                                      picman_drawable_get_precision (PICMAN_DRAWABLE (layer)),
                                       0, 0,
                                       TRUE);
         }
@@ -1027,16 +1027,16 @@ gimp_image_convert_type (GimpImage               *image,
   /*  Set the final palette on the image  */
   switch (new_type)
     {
-    case GIMP_RGB:
-    case GIMP_GRAY:
-      if (old_type == GIMP_INDEXED)
-        gimp_image_set_colormap (image, NULL, 0, TRUE);
+    case PICMAN_RGB:
+    case PICMAN_GRAY:
+      if (old_type == PICMAN_INDEXED)
+        picman_image_set_colormap (image, NULL, 0, TRUE);
       break;
 
-    case GIMP_INDEXED:
-      if (remove_dups && (palette_type != GIMP_MAKE_PALETTE))
+    case PICMAN_INDEXED:
+      if (remove_dups && (palette_type != PICMAN_MAKE_PALETTE))
         {
-          guchar colormap[GIMP_IMAGE_COLORMAP_SIZE];
+          guchar colormap[PICMAN_IMAGE_COLORMAP_SIZE];
           gint   i, j;
           guchar old_palette[256 * 3];
           guchar new_palette[256 * 3];
@@ -1070,7 +1070,7 @@ gimp_image_convert_type (GimpImage               *image,
               colormap[j] = new_palette[j]; j++;
             }
 
-          gimp_image_set_colormap (image, colormap, num_entries, TRUE);
+          picman_image_set_colormap (image, colormap, num_entries, TRUE);
         }
       break;
     }
@@ -1078,13 +1078,13 @@ gimp_image_convert_type (GimpImage               *image,
   /* TODO: attach or remove the ICC profile */
   switch (new_type)
     {
-    case GIMP_RGB:
-    case GIMP_INDEXED:
-      if (old_type == GIMP_GRAY)
-        gimp_image_parasite_detach (image, "icc-profile");
+    case PICMAN_RGB:
+    case PICMAN_INDEXED:
+      if (old_type == PICMAN_GRAY)
+        picman_image_parasite_detach (image, "icc-profile");
       break;
-    case GIMP_GRAY:
-      gimp_image_parasite_detach (image, "icc-profile");
+    case PICMAN_GRAY:
+      picman_image_parasite_detach (image, "icc-profile");
       break;
     default:
       break;
@@ -1094,14 +1094,14 @@ gimp_image_convert_type (GimpImage               *image,
   if (quantobj)
     quantobj->delete_func (quantobj);
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
-  gimp_image_mode_changed (image);
+  picman_image_mode_changed (image);
   g_object_thaw_notify (G_OBJECT (image));
 
   g_list_free (all_layers);
 
-  gimp_unset_busy (image->gimp);
+  picman_unset_busy (image->picman);
 
   return TRUE;
 }
@@ -1130,7 +1130,7 @@ zero_histogram_rgb (CFHistogram histogram)
 
 static void
 generate_histogram_gray (CFHistogram  histogram,
-                         GimpLayer   *layer,
+                         PicmanLayer   *layer,
                          gboolean     alpha_dither)
 {
   GeglBufferIterator *iter;
@@ -1138,7 +1138,7 @@ generate_histogram_gray (CFHistogram  histogram,
   gint                bpp;
   gboolean            has_alpha;
 
-  format = gimp_drawable_get_format (GIMP_DRAWABLE (layer));
+  format = picman_drawable_get_format (PICMAN_DRAWABLE (layer));
 
   g_return_if_fail (format == babl_format ("Y' u8") ||
                     format == babl_format ("Y'A u8"));
@@ -1146,7 +1146,7 @@ generate_histogram_gray (CFHistogram  histogram,
   bpp       = babl_format_get_bytes_per_pixel (format);
   has_alpha = babl_format_has_alpha (format);
 
-  iter = gegl_buffer_iterator_new (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
+  iter = gegl_buffer_iterator_new (picman_drawable_get_buffer (PICMAN_DRAWABLE (layer)),
                                    NULL, 0, format,
                                    GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
@@ -1179,10 +1179,10 @@ generate_histogram_gray (CFHistogram  histogram,
 
 static void
 generate_histogram_rgb (CFHistogram   histogram,
-                        GimpLayer    *layer,
+                        PicmanLayer    *layer,
                         gint          col_limit,
                         gboolean      alpha_dither,
-                        GimpProgress *progress,
+                        PicmanProgress *progress,
                         gint          nth_layer,
                         gint          n_layers)
 {
@@ -1199,7 +1199,7 @@ generate_histogram_rgb (CFHistogram   histogram,
   gint                bpp;
   gboolean            has_alpha;
 
-  format = gimp_drawable_get_format (GIMP_DRAWABLE (layer));
+  format = picman_drawable_get_format (PICMAN_DRAWABLE (layer));
 
   g_return_if_fail (format == babl_format ("R'G'B' u8") ||
                     format == babl_format ("R'G'B'A u8"));
@@ -1207,20 +1207,20 @@ generate_histogram_rgb (CFHistogram   histogram,
   bpp       = babl_format_get_bytes_per_pixel (format);
   has_alpha = babl_format_has_alpha (format);
 
-  gimp_item_get_offset (GIMP_ITEM (layer), &offsetx, &offsety);
+  picman_item_get_offset (PICMAN_ITEM (layer), &offsetx, &offsety);
 
-  layer_size = (gimp_item_get_width  (GIMP_ITEM (layer)) *
-                gimp_item_get_height (GIMP_ITEM (layer)));
+  layer_size = (picman_item_get_width  (PICMAN_ITEM (layer)) *
+                picman_item_get_height (PICMAN_ITEM (layer)));
 
   /*  g_printerr ("col_limit = %d, nfc = %d\n", col_limit, num_found_cols); */
 
-  iter = gegl_buffer_iterator_new (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
+  iter = gegl_buffer_iterator_new (picman_drawable_get_buffer (PICMAN_DRAWABLE (layer)),
                                    NULL, 0, format,
                                    GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
   roi = &iter->roi[0];
 
   if (progress)
-    gimp_progress_set_value (progress, 0.0);
+    picman_progress_set_value (progress, 0.0);
 
   while (gegl_buffer_iterator_next (iter))
     {
@@ -1374,7 +1374,7 @@ generate_histogram_rgb (CFHistogram   histogram,
         }
 
       if (progress && (count % 16 == 0))
-        gimp_progress_set_value (progress,
+        picman_progress_set_value (progress,
                                  (nth_layer + ((gdouble) total_size)/
                                   layer_size) / (gdouble) n_layers);
     }
@@ -2014,7 +2014,7 @@ median_cut_rgb (CFHistogram   histogram,
                 boxptr        boxlist,
                 int           numboxes,
                 int           desired_colors,
-                GimpProgress *progress)
+                PicmanProgress *progress)
 /* Repeatedly select and split the largest box until we have enough boxes */
 {
   int      lb;
@@ -2067,7 +2067,7 @@ median_cut_rgb (CFHistogram   histogram,
       numboxes++;
 
       if (progress && (numboxes % 16 == 0))
-        gimp_progress_set_value (progress, (gdouble) numboxes / desired_colors);
+        picman_progress_set_value (progress, (gdouble) numboxes / desired_colors);
 
       update_box_rgb (histogram, b1, desired_colors - numboxes);
       update_box_rgb (histogram, b2, desired_colors - numboxes);
@@ -2803,14 +2803,14 @@ custompal_pass1 (QuantizeObj *quantobj)
              "custompal_pass1: using (theCustomPalette %s) from (file %s)\n",
              theCustomPalette->name, theCustomPalette->filename); */
 
-  for (i = 0, list = gimp_palette_get_colors (theCustomPalette);
+  for (i = 0, list = picman_palette_get_colors (theCustomPalette);
        list;
        i++, list = g_list_next (list))
     {
-      GimpPaletteEntry *entry = list->data;
+      PicmanPaletteEntry *entry = list->data;
       guchar            r, g, b;
 
-      gimp_rgb_get_uchar (&entry->color, &r, &g, &b);
+      picman_rgb_get_uchar (&entry->color, &r, &g, &b);
 
       quantobj->cmap[i].red   = (gint) r;
       quantobj->cmap[i].green = (gint) g;
@@ -2826,7 +2826,7 @@ custompal_pass1 (QuantizeObj *quantobj)
 
 static void
 median_cut_pass2_no_dither_gray (QuantizeObj *quantobj,
-                                 GimpLayer   *layer,
+                                 PicmanLayer   *layer,
                                  GeglBuffer  *new_buffer)
 {
   GeglBufferIterator *iter;
@@ -2842,9 +2842,9 @@ median_cut_pass2_no_dither_gray (QuantizeObj *quantobj,
   gboolean            alpha_dither     = quantobj->want_alpha_dither;
   gint                offsetx, offsety;
 
-  gimp_item_get_offset (GIMP_ITEM (layer), &offsetx, &offsety);
+  picman_item_get_offset (PICMAN_ITEM (layer), &offsetx, &offsety);
 
-  src_format  = gimp_drawable_get_format (GIMP_DRAWABLE (layer));
+  src_format  = picman_drawable_get_format (PICMAN_DRAWABLE (layer));
   dest_format = gegl_buffer_get_format (new_buffer);
 
   src_bpp  = babl_format_get_bytes_per_pixel (src_format);
@@ -2852,7 +2852,7 @@ median_cut_pass2_no_dither_gray (QuantizeObj *quantobj,
 
   has_alpha = babl_format_has_alpha (src_format);
 
-  iter = gegl_buffer_iterator_new (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
+  iter = gegl_buffer_iterator_new (picman_drawable_get_buffer (PICMAN_DRAWABLE (layer)),
                                    NULL, 0, NULL,
                                    GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
   src_roi = &iter->roi[0];
@@ -2926,7 +2926,7 @@ median_cut_pass2_no_dither_gray (QuantizeObj *quantobj,
 
 static void
 median_cut_pass2_fixed_dither_gray (QuantizeObj *quantobj,
-                                    GimpLayer   *layer,
+                                    PicmanLayer   *layer,
                                     GeglBuffer  *new_buffer)
 {
   GeglBufferIterator *iter;
@@ -2948,9 +2948,9 @@ median_cut_pass2_fixed_dither_gray (QuantizeObj *quantobj,
   gboolean            alpha_dither     = quantobj->want_alpha_dither;
   gint                offsetx, offsety;
 
-  gimp_item_get_offset (GIMP_ITEM (layer), &offsetx, &offsety);
+  picman_item_get_offset (PICMAN_ITEM (layer), &offsetx, &offsety);
 
-  src_format  = gimp_drawable_get_format (GIMP_DRAWABLE (layer));
+  src_format  = picman_drawable_get_format (PICMAN_DRAWABLE (layer));
   dest_format = gegl_buffer_get_format (new_buffer);
 
   src_bpp  = babl_format_get_bytes_per_pixel (src_format);
@@ -2958,7 +2958,7 @@ median_cut_pass2_fixed_dither_gray (QuantizeObj *quantobj,
 
   has_alpha = babl_format_has_alpha (src_format);
 
-  iter = gegl_buffer_iterator_new (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
+  iter = gegl_buffer_iterator_new (picman_drawable_get_buffer (PICMAN_DRAWABLE (layer)),
                                    NULL, 0, NULL,
                                    GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
   src_roi = &iter->roi[0];
@@ -3090,7 +3090,7 @@ median_cut_pass2_fixed_dither_gray (QuantizeObj *quantobj,
 
 static void
 median_cut_pass2_no_dither_rgb (QuantizeObj *quantobj,
-                                GimpLayer   *layer,
+                                PicmanLayer   *layer,
                                 GeglBuffer  *new_buffer)
 {
   GeglBufferIterator *iter;
@@ -3116,9 +3116,9 @@ median_cut_pass2_no_dither_rgb (QuantizeObj *quantobj,
   gint                nth_layer        = quantobj->nth_layer;
   gint                n_layers         = quantobj->n_layers;
 
-  gimp_item_get_offset (GIMP_ITEM (layer), &offsetx, &offsety);
+  picman_item_get_offset (PICMAN_ITEM (layer), &offsetx, &offsety);
 
-  src_format  = gimp_drawable_get_format (GIMP_DRAWABLE (layer));
+  src_format  = picman_drawable_get_format (PICMAN_DRAWABLE (layer));
   dest_format = gegl_buffer_get_format (new_buffer);
 
   src_bpp  = babl_format_get_bytes_per_pixel (src_format);
@@ -3129,13 +3129,13 @@ median_cut_pass2_no_dither_rgb (QuantizeObj *quantobj,
   /*  In the case of web/mono palettes, we actually force
    *   grayscale drawables through the rgb pass2 functions
    */
-  if (gimp_drawable_is_gray (GIMP_DRAWABLE (layer)))
+  if (picman_drawable_is_gray (PICMAN_DRAWABLE (layer)))
     {
       red_pix = green_pix = blue_pix = GRAY;
       alpha_pix = ALPHA_G;
     }
 
-  iter = gegl_buffer_iterator_new (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
+  iter = gegl_buffer_iterator_new (picman_drawable_get_buffer (PICMAN_DRAWABLE (layer)),
                                    NULL, 0, NULL,
                                    GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
   src_roi = &iter->roi[0];
@@ -3144,8 +3144,8 @@ median_cut_pass2_no_dither_rgb (QuantizeObj *quantobj,
                             NULL, 0, NULL,
                             GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
 
-  layer_size = (gimp_item_get_width  (GIMP_ITEM (layer)) *
-                gimp_item_get_height (GIMP_ITEM (layer)));
+  layer_size = (picman_item_get_width  (PICMAN_ITEM (layer)) *
+                picman_item_get_height (PICMAN_ITEM (layer)));
 
   while (gegl_buffer_iterator_next (iter))
     {
@@ -3209,7 +3209,7 @@ median_cut_pass2_no_dither_rgb (QuantizeObj *quantobj,
         }
 
       if (quantobj->progress && (count % 16 == 0))
-         gimp_progress_set_value (quantobj->progress,
+         picman_progress_set_value (quantobj->progress,
                                   (nth_layer + ((gdouble) total_size)/
                                    layer_size) / (gdouble) n_layers);
     }
@@ -3217,7 +3217,7 @@ median_cut_pass2_no_dither_rgb (QuantizeObj *quantobj,
 
 static void
 median_cut_pass2_fixed_dither_rgb (QuantizeObj *quantobj,
-                                   GimpLayer   *layer,
+                                   PicmanLayer   *layer,
                                    GeglBuffer  *new_buffer)
 {
   GeglBufferIterator *iter;
@@ -3249,9 +3249,9 @@ median_cut_pass2_fixed_dither_rgb (QuantizeObj *quantobj,
   gint                nth_layer        = quantobj->nth_layer;
   gint                n_layers         = quantobj->n_layers;
 
-  gimp_item_get_offset (GIMP_ITEM (layer), &offsetx, &offsety);
+  picman_item_get_offset (PICMAN_ITEM (layer), &offsetx, &offsety);
 
-  src_format  = gimp_drawable_get_format (GIMP_DRAWABLE (layer));
+  src_format  = picman_drawable_get_format (PICMAN_DRAWABLE (layer));
   dest_format = gegl_buffer_get_format (new_buffer);
 
   src_bpp  = babl_format_get_bytes_per_pixel (src_format);
@@ -3262,13 +3262,13 @@ median_cut_pass2_fixed_dither_rgb (QuantizeObj *quantobj,
   /*  In the case of web/mono palettes, we actually force
    *   grayscale drawables through the rgb pass2 functions
    */
-  if (gimp_drawable_is_gray (GIMP_DRAWABLE (layer)))
+  if (picman_drawable_is_gray (PICMAN_DRAWABLE (layer)))
     {
       red_pix = green_pix = blue_pix = GRAY;
       alpha_pix = ALPHA_G;
     }
 
-  iter = gegl_buffer_iterator_new (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
+  iter = gegl_buffer_iterator_new (picman_drawable_get_buffer (PICMAN_DRAWABLE (layer)),
                                    NULL, 0, NULL,
                                    GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
   src_roi = &iter->roi[0];
@@ -3277,8 +3277,8 @@ median_cut_pass2_fixed_dither_rgb (QuantizeObj *quantobj,
                             NULL, 0, NULL,
                             GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
 
-  layer_size = (gimp_item_get_width  (GIMP_ITEM (layer)) *
-                gimp_item_get_height (GIMP_ITEM (layer)));
+  layer_size = (picman_item_get_width  (PICMAN_ITEM (layer)) *
+                picman_item_get_height (PICMAN_ITEM (layer)));
 
   while (gegl_buffer_iterator_next (iter))
     {
@@ -3440,7 +3440,7 @@ median_cut_pass2_fixed_dither_rgb (QuantizeObj *quantobj,
         }
 
       if (quantobj->progress && (count % 16 == 0))
-        gimp_progress_set_value (quantobj->progress,
+        picman_progress_set_value (quantobj->progress,
                                  (nth_layer + ((gdouble) total_size)/
                                   layer_size) / (gdouble) n_layers);
     }
@@ -3448,7 +3448,7 @@ median_cut_pass2_fixed_dither_rgb (QuantizeObj *quantobj,
 
 static void
 median_cut_pass2_nodestruct_dither_rgb (QuantizeObj *quantobj,
-                                        GimpLayer   *layer,
+                                        PicmanLayer   *layer,
                                         GeglBuffer  *new_buffer)
 {
   GeglBufferIterator *iter;
@@ -3469,9 +3469,9 @@ median_cut_pass2_nodestruct_dither_rgb (QuantizeObj *quantobj,
   gint                lastblue     = -1;
   gint                offsetx, offsety;
 
-  gimp_item_get_offset (GIMP_ITEM (layer), &offsetx, &offsety);
+  picman_item_get_offset (PICMAN_ITEM (layer), &offsetx, &offsety);
 
-  src_format  = gimp_drawable_get_format (GIMP_DRAWABLE (layer));
+  src_format  = picman_drawable_get_format (PICMAN_DRAWABLE (layer));
   dest_format = gegl_buffer_get_format (new_buffer);
 
   src_bpp  = babl_format_get_bytes_per_pixel (src_format);
@@ -3479,7 +3479,7 @@ median_cut_pass2_nodestruct_dither_rgb (QuantizeObj *quantobj,
 
   has_alpha = babl_format_has_alpha (src_format);
 
-  iter = gegl_buffer_iterator_new (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
+  iter = gegl_buffer_iterator_new (picman_drawable_get_buffer (PICMAN_DRAWABLE (layer)),
                                    NULL, 0, NULL,
                                    GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
   src_roi = &iter->roi[0];
@@ -3661,7 +3661,7 @@ init_error_limit (const int error_freedom)
 
 static void
 median_cut_pass2_fs_dither_gray (QuantizeObj *quantobj,
-                                 GimpLayer   *layer,
+                                 PicmanLayer   *layer,
                                  GeglBuffer  *new_buffer)
 {
   GeglBuffer   *src_buffer;
@@ -3692,11 +3692,11 @@ median_cut_pass2_fs_dither_gray (QuantizeObj *quantobj,
   gint          width, height;
   gulong       *index_used_count = quantobj->index_used_count;
 
-  src_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (layer));
+  src_buffer = picman_drawable_get_buffer (PICMAN_DRAWABLE (layer));
 
-  gimp_item_get_offset (GIMP_ITEM (layer), &offsetx, &offsety);
+  picman_item_get_offset (PICMAN_ITEM (layer), &offsetx, &offsety);
 
-  src_format  = gimp_drawable_get_format (GIMP_DRAWABLE (layer));
+  src_format  = picman_drawable_get_format (PICMAN_DRAWABLE (layer));
   dest_format = gegl_buffer_get_format (new_buffer);
 
   src_bpp  = babl_format_get_bytes_per_pixel (src_format);
@@ -3704,8 +3704,8 @@ median_cut_pass2_fs_dither_gray (QuantizeObj *quantobj,
 
   has_alpha = babl_format_has_alpha (src_format);
 
-  width  = gimp_item_get_width  (GIMP_ITEM (layer));
-  height = gimp_item_get_height (GIMP_ITEM (layer));
+  width  = picman_item_get_width  (PICMAN_ITEM (layer));
+  height = picman_item_get_height (PICMAN_ITEM (layer));
 
   error_limiter = init_error_limit (quantobj->error_freedom);
   range_limiter = range_array + 256;
@@ -3913,7 +3913,7 @@ median_cut_pass2_gray_init (QuantizeObj *quantobj)
 
 static void
 median_cut_pass2_fs_dither_rgb (QuantizeObj *quantobj,
-                                GimpLayer   *layer,
+                                PicmanLayer   *layer,
                                 GeglBuffer  *new_buffer)
 {
   GeglBuffer   *src_buffer;
@@ -3956,17 +3956,17 @@ median_cut_pass2_fs_dither_rgb (QuantizeObj *quantobj,
   gint          nth_layer = quantobj->nth_layer;
   gint          n_layers  = quantobj->n_layers;
 
-  src_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (layer));
+  src_buffer = picman_drawable_get_buffer (PICMAN_DRAWABLE (layer));
 
-  gimp_item_get_offset (GIMP_ITEM (layer), &offsetx, &offsety);
+  picman_item_get_offset (PICMAN_ITEM (layer), &offsetx, &offsety);
 
   /*  In the case of web/mono palettes, we actually force
    *   grayscale drawables through the rgb pass2 functions
    */
-  if (gimp_drawable_is_gray (GIMP_DRAWABLE (layer)))
+  if (picman_drawable_is_gray (PICMAN_DRAWABLE (layer)))
     red_pix = green_pix = blue_pix = GRAY;
 
-  src_format  = gimp_drawable_get_format (GIMP_DRAWABLE (layer));
+  src_format  = picman_drawable_get_format (PICMAN_DRAWABLE (layer));
   dest_format = gegl_buffer_get_format (new_buffer);
 
   src_bpp  = babl_format_get_bytes_per_pixel (src_format);
@@ -3974,8 +3974,8 @@ median_cut_pass2_fs_dither_rgb (QuantizeObj *quantobj,
 
   has_alpha = babl_format_has_alpha (src_format);
 
-  width  = gimp_item_get_width  (GIMP_ITEM (layer));
-  height = gimp_item_get_height (GIMP_ITEM (layer));
+  width  = picman_item_get_width  (PICMAN_ITEM (layer));
+  height = picman_item_get_height (PICMAN_ITEM (layer));
 
   error_limiter = init_error_limit (quantobj->error_freedom);
   range_limiter = range_array + 256;
@@ -4270,7 +4270,7 @@ median_cut_pass2_fs_dither_rgb (QuantizeObj *quantobj,
                        GEGL_AUTO_ROWSTRIDE);
 
       if (quantobj->progress && (row % 16 == 0))
-        gimp_progress_set_value (quantobj->progress,
+        picman_progress_set_value (quantobj->progress,
                                  (nth_layer + ((gdouble) row) /
                                   height) / (gdouble) n_layers);
     }
@@ -4296,7 +4296,7 @@ delete_median_cut (QuantizeObj *quantobj)
 
 
 void
-gimp_image_convert_type_set_dither_matrix (const guchar *matrix,
+picman_image_convert_type_set_dither_matrix (const guchar *matrix,
                                            gint          width,
                                            gint          height)
 {
@@ -4326,19 +4326,19 @@ gimp_image_convert_type_set_dither_matrix (const guchar *matrix,
 
 /**************************************************************/
 static QuantizeObj *
-initialize_median_cut (GimpImageBaseType       type,
+initialize_median_cut (PicmanImageBaseType       type,
                        gint                    num_colors,
-                       GimpConvertDitherType   dither_type,
-                       GimpConvertPaletteType  palette_type,
+                       PicmanConvertDitherType   dither_type,
+                       PicmanConvertPaletteType  palette_type,
                        gboolean                want_alpha_dither,
-                       GimpProgress           *progress)
+                       PicmanProgress           *progress)
 {
   QuantizeObj *quantobj;
 
   /* Initialize the data structures */
   quantobj = g_new (QuantizeObj, 1);
 
-  if (type == GIMP_GRAY && palette_type == GIMP_MAKE_PALETTE)
+  if (type == PICMAN_GRAY && palette_type == PICMAN_MAKE_PALETTE)
     quantobj->histogram = g_new (ColorFreq, 256);
   else
     quantobj->histogram = g_new (ColorFreq,
@@ -4350,47 +4350,47 @@ initialize_median_cut (GimpImageBaseType       type,
 
   switch (type)
     {
-    case GIMP_GRAY:
+    case PICMAN_GRAY:
       switch (palette_type)
         {
-        case GIMP_MAKE_PALETTE:
+        case PICMAN_MAKE_PALETTE:
           quantobj->first_pass = median_cut_pass1_gray;
           break;
-        case GIMP_WEB_PALETTE:
+        case PICMAN_WEB_PALETTE:
           quantobj->first_pass = webpal_pass1;
           break;
-        case GIMP_CUSTOM_PALETTE:
+        case PICMAN_CUSTOM_PALETTE:
           quantobj->first_pass = custompal_pass1;
           needs_quantize=TRUE;
           break;
-        case GIMP_MONO_PALETTE:
+        case PICMAN_MONO_PALETTE:
         default:
           quantobj->first_pass = monopal_pass1;
         }
 
-      if (palette_type == GIMP_WEB_PALETTE  ||
-          palette_type == GIMP_CUSTOM_PALETTE)
+      if (palette_type == PICMAN_WEB_PALETTE  ||
+          palette_type == PICMAN_CUSTOM_PALETTE)
         {
           switch (dither_type)
             {
-            case GIMP_NODESTRUCT_DITHER:
+            case PICMAN_NODESTRUCT_DITHER:
             default:
               g_warning("Uh-oh, bad dither type, W1");
-            case GIMP_NO_DITHER:
+            case PICMAN_NO_DITHER:
               quantobj->second_pass_init = median_cut_pass2_rgb_init;
               quantobj->second_pass = median_cut_pass2_no_dither_rgb;
               break;
-            case GIMP_FS_DITHER:
+            case PICMAN_FS_DITHER:
               quantobj->error_freedom = 0;
               quantobj->second_pass_init = median_cut_pass2_rgb_init;
               quantobj->second_pass = median_cut_pass2_fs_dither_rgb;
               break;
-            case GIMP_FSLOWBLEED_DITHER:
+            case PICMAN_FSLOWBLEED_DITHER:
               quantobj->error_freedom = 1;
               quantobj->second_pass_init = median_cut_pass2_rgb_init;
               quantobj->second_pass = median_cut_pass2_fs_dither_rgb;
               break;
-            case GIMP_FIXED_DITHER:
+            case PICMAN_FIXED_DITHER:
               quantobj->second_pass_init = median_cut_pass2_rgb_init;
               quantobj->second_pass = median_cut_pass2_fixed_dither_rgb;
               break;
@@ -4400,24 +4400,24 @@ initialize_median_cut (GimpImageBaseType       type,
         {
           switch (dither_type)
             {
-            case GIMP_NODESTRUCT_DITHER:
+            case PICMAN_NODESTRUCT_DITHER:
             default:
               g_warning("Uh-oh, bad dither type, W2");
-            case GIMP_NO_DITHER:
+            case PICMAN_NO_DITHER:
               quantobj->second_pass_init = median_cut_pass2_gray_init;
               quantobj->second_pass = median_cut_pass2_no_dither_gray;
               break;
-            case GIMP_FS_DITHER:
+            case PICMAN_FS_DITHER:
               quantobj->error_freedom = 0;
               quantobj->second_pass_init = median_cut_pass2_gray_init;
               quantobj->second_pass = median_cut_pass2_fs_dither_gray;
               break;
-            case GIMP_FSLOWBLEED_DITHER:
+            case PICMAN_FSLOWBLEED_DITHER:
               quantobj->error_freedom = 1;
               quantobj->second_pass_init = median_cut_pass2_gray_init;
               quantobj->second_pass = median_cut_pass2_fs_dither_gray;
               break;
-            case GIMP_FIXED_DITHER:
+            case PICMAN_FIXED_DITHER:
               quantobj->second_pass_init = median_cut_pass2_gray_init;
               quantobj->second_pass = median_cut_pass2_fixed_dither_gray;
               break;
@@ -4425,45 +4425,45 @@ initialize_median_cut (GimpImageBaseType       type,
         }
       break;
 
-    case GIMP_RGB:
+    case PICMAN_RGB:
       switch (palette_type)
         {
-        case GIMP_MAKE_PALETTE:
+        case PICMAN_MAKE_PALETTE:
           quantobj->first_pass = median_cut_pass1_rgb;
           break;
-        case GIMP_WEB_PALETTE:
+        case PICMAN_WEB_PALETTE:
           quantobj->first_pass = webpal_pass1;
           needs_quantize=TRUE;
           break;
-        case GIMP_CUSTOM_PALETTE:
+        case PICMAN_CUSTOM_PALETTE:
           quantobj->first_pass = custompal_pass1;
           needs_quantize=TRUE;
           break;
-        case GIMP_MONO_PALETTE:
+        case PICMAN_MONO_PALETTE:
         default:
           quantobj->first_pass = monopal_pass1;
         }
       switch (dither_type)
         {
-        case GIMP_NO_DITHER:
+        case PICMAN_NO_DITHER:
           quantobj->second_pass_init = median_cut_pass2_rgb_init;
           quantobj->second_pass = median_cut_pass2_no_dither_rgb;
           break;
-        case GIMP_FS_DITHER:
+        case PICMAN_FS_DITHER:
           quantobj->error_freedom = 0;
           quantobj->second_pass_init = median_cut_pass2_rgb_init;
           quantobj->second_pass = median_cut_pass2_fs_dither_rgb;
           break;
-        case GIMP_FSLOWBLEED_DITHER:
+        case PICMAN_FSLOWBLEED_DITHER:
           quantobj->error_freedom = 1;
           quantobj->second_pass_init = median_cut_pass2_rgb_init;
           quantobj->second_pass = median_cut_pass2_fs_dither_rgb;
           break;
-        case GIMP_NODESTRUCT_DITHER:
+        case PICMAN_NODESTRUCT_DITHER:
           quantobj->second_pass_init = NULL;
           quantobj->second_pass = median_cut_pass2_nodestruct_dither_rgb;
           break;
-        case GIMP_FIXED_DITHER:
+        case PICMAN_FIXED_DITHER:
           quantobj->second_pass_init = median_cut_pass2_rgb_init;
           quantobj->second_pass = median_cut_pass2_fixed_dither_rgb;
           break;

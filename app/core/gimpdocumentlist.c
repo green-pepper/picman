@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,82 +19,82 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "gimp.h"
-#include "gimpdocumentlist.h"
-#include "gimpimagefile.h"
+#include "picman.h"
+#include "picmandocumentlist.h"
+#include "picmanimagefile.h"
 
 
-G_DEFINE_TYPE (GimpDocumentList, gimp_document_list, GIMP_TYPE_LIST)
+G_DEFINE_TYPE (PicmanDocumentList, picman_document_list, PICMAN_TYPE_LIST)
 
 
 static void
-gimp_document_list_class_init (GimpDocumentListClass *klass)
+picman_document_list_class_init (PicmanDocumentListClass *klass)
 {
 }
 
 static void
-gimp_document_list_init (GimpDocumentList *list)
+picman_document_list_init (PicmanDocumentList *list)
 {
 }
 
-GimpContainer *
-gimp_document_list_new (Gimp *gimp)
+PicmanContainer *
+picman_document_list_new (Picman *picman)
 {
-  GimpDocumentList *document_list;
+  PicmanDocumentList *document_list;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  document_list = g_object_new (GIMP_TYPE_DOCUMENT_LIST,
+  document_list = g_object_new (PICMAN_TYPE_DOCUMENT_LIST,
                                 "name",          "document-list",
-                                "children-type", GIMP_TYPE_IMAGEFILE,
-                                "policy",        GIMP_CONTAINER_POLICY_STRONG,
+                                "children-type", PICMAN_TYPE_IMAGEFILE,
+                                "policy",        PICMAN_CONTAINER_POLICY_STRONG,
                                 NULL);
 
-  document_list->gimp = gimp;
+  document_list->picman = picman;
 
-  return GIMP_CONTAINER (document_list);
+  return PICMAN_CONTAINER (document_list);
 }
 
-GimpImagefile *
-gimp_document_list_add_uri (GimpDocumentList *document_list,
+PicmanImagefile *
+picman_document_list_add_uri (PicmanDocumentList *document_list,
                             const gchar      *uri,
                             const gchar      *mime_type)
 {
-  Gimp          *gimp;
-  GimpImagefile *imagefile;
-  GimpContainer *container;
+  Picman          *picman;
+  PicmanImagefile *imagefile;
+  PicmanContainer *container;
 
-  g_return_val_if_fail (GIMP_IS_DOCUMENT_LIST (document_list), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCUMENT_LIST (document_list), NULL);
   g_return_val_if_fail (uri != NULL, NULL);
 
-  gimp = document_list->gimp;
+  picman = document_list->picman;
 
-  container = GIMP_CONTAINER (document_list);
+  container = PICMAN_CONTAINER (document_list);
 
-  imagefile = (GimpImagefile *) gimp_container_get_child_by_name (container,
+  imagefile = (PicmanImagefile *) picman_container_get_child_by_name (container,
                                                                   uri);
 
   if (imagefile)
     {
-      gimp_container_reorder (container, GIMP_OBJECT (imagefile), 0);
+      picman_container_reorder (container, PICMAN_OBJECT (imagefile), 0);
     }
   else
     {
-      imagefile = gimp_imagefile_new (gimp, uri);
-      gimp_container_add (container, GIMP_OBJECT (imagefile));
+      imagefile = picman_imagefile_new (picman, uri);
+      picman_container_add (container, PICMAN_OBJECT (imagefile));
       g_object_unref (imagefile);
     }
 
-  gimp_imagefile_set_mime_type (imagefile, mime_type);
+  picman_imagefile_set_mime_type (imagefile, mime_type);
 
-  if (gimp->config->save_document_history)
-    gimp_recent_list_add_uri (gimp, uri, mime_type);
+  if (picman->config->save_document_history)
+    picman_recent_list_add_uri (picman, uri, mime_type);
 
   return imagefile;
 }

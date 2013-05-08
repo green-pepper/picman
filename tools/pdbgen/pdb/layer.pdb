@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub layer_new {
     $blurb = 'Create a new layer.';
@@ -23,7 +23,7 @@ sub layer_new {
 This procedure creates a new layer with the specified width, height,
 and type.  Name, opacity, and mode are also supplied parameters. The
 new layer still needs to be added to the image, as this is not
-automatic. Add the new layer with the gimp_image_insert_layer()
+automatic. Add the new layer with the picman_image_insert_layer()
 command. Other attributes such as layer mask modes, and offsets should
 be set with explicit procedure calls.
 HELP
@@ -33,17 +33,17 @@ HELP
     @inargs = (
 	{ name => 'image', type => 'image',
 	  desc => 'The image to which to add the layer' },
-	{ name => 'width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+	{ name => 'width', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
 	  desc => 'The layer width' },
-	{ name => 'height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+	{ name => 'height', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
 	  desc => 'The layer height' },
-	{ name => 'type', type => 'enum GimpImageType',
+	{ name => 'type', type => 'enum PicmanImageType',
 	  desc => 'The layer type' },
 	{ name => 'name', type => 'string',
 	  desc => 'The layer name', null_ok => 1 },
 	{ name => 'opacity', type => '0 <= float <= 100',
 	  desc => 'The layer opacity' },
-	{ name => 'mode', type => 'enum GimpLayerModeEffects',
+	{ name => 'mode', type => 'enum PicmanLayerModeEffects',
 	  desc => 'The layer combination mode' }
     );
 
@@ -55,51 +55,51 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpImageBaseType  base_type = GIMP_RGB;
+  PicmanImageBaseType  base_type = PICMAN_RGB;
   gboolean           has_alpha = FALSE;
   const Babl        *format;
 
   switch (type)
     {
-    case GIMP_RGB_IMAGE:
-      base_type = GIMP_RGB;
+    case PICMAN_RGB_IMAGE:
+      base_type = PICMAN_RGB;
       has_alpha = FALSE;
       break;
 
-    case GIMP_RGBA_IMAGE:
-      base_type = GIMP_RGB;
+    case PICMAN_RGBA_IMAGE:
+      base_type = PICMAN_RGB;
       has_alpha = TRUE;
       break;
 
-    case GIMP_GRAY_IMAGE:
-      base_type = GIMP_GRAY;
+    case PICMAN_GRAY_IMAGE:
+      base_type = PICMAN_GRAY;
       has_alpha = FALSE;
       break;
 
-    case GIMP_GRAYA_IMAGE:
-      base_type = GIMP_GRAY;
+    case PICMAN_GRAYA_IMAGE:
+      base_type = PICMAN_GRAY;
       has_alpha = TRUE;
       break;
 
-    case GIMP_INDEXED_IMAGE:
-      base_type = GIMP_INDEXED;
+    case PICMAN_INDEXED_IMAGE:
+      base_type = PICMAN_INDEXED;
       has_alpha = FALSE;
       break;
 
-    case GIMP_INDEXEDA_IMAGE:
-      base_type = GIMP_INDEXED;
+    case PICMAN_INDEXEDA_IMAGE:
+      base_type = PICMAN_INDEXED;
       has_alpha = TRUE;
       break;
     }
 
-  /* do not use gimp_image_get_layer_format() because it might
+  /* do not use picman_image_get_layer_format() because it might
    * be the floating selection of a channel or mask
    */
-  format = gimp_image_get_format (image, base_type,
-                                  gimp_image_get_precision (image),
+  format = picman_image_get_format (image, base_type,
+                                  picman_image_get_precision (image),
                                   has_alpha);
 
-  layer = gimp_layer_new (image, width, height,
+  layer = picman_layer_new (image, width, height,
                           format, name, opacity / 100.0, mode);
 
   if (! layer)
@@ -116,7 +116,7 @@ sub layer_new_from_visible {
 This procedure creates a new layer from what is visible in the given
 image.  The new layer still needs to be added to the destination
 image, as this is not automatic. Add the new layer with the
-gimp_image_insert_layer() command.  Other attributes such as layer
+picman_image_insert_layer() command.  Other attributes such as layer
 mask modes, and offsets should be set with explicit procedure calls.
 HELP
 
@@ -139,16 +139,16 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPickable *pickable = GIMP_PICKABLE (gimp_image_get_projection (image));
+  PicmanPickable *pickable = PICMAN_PICKABLE (picman_image_get_projection (image));
 
-  gimp_pickable_flush (pickable);
+  picman_pickable_flush (pickable);
 
-  layer = gimp_layer_new_from_buffer (gimp_pickable_get_buffer (pickable),
+  layer = picman_layer_new_from_buffer (picman_pickable_get_buffer (pickable),
                                       dest_image,
-                                      gimp_image_get_layer_format (dest_image,
+                                      picman_image_get_layer_format (dest_image,
                                                                    TRUE),
                                       name,
-                                      GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+                                      PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
 }
 CODE
     );
@@ -161,7 +161,7 @@ sub layer_new_from_drawable {
 This procedure creates a new layer as a copy of the specified
 drawable.  The new layer still needs to be added to the image, as this
 is not automatic.  Add the new layer with the
-gimp_image_insert_layer() command. Other attributes such as layer mask
+picman_image_insert_layer() command. Other attributes such as layer mask
 modes, and offsets should be set with explicit procedure calls.
 HELP
 
@@ -183,20 +183,20 @@ HELP
 	code => <<'CODE'
 {
   GType     new_type;
-  GimpItem *new_item;
+  PicmanItem *new_item;
 
-  if (GIMP_IS_LAYER (drawable))
+  if (PICMAN_IS_LAYER (drawable))
     new_type = G_TYPE_FROM_INSTANCE (drawable);
   else
-    new_type = GIMP_TYPE_LAYER;
+    new_type = PICMAN_TYPE_LAYER;
 
-  if (dest_image == gimp_item_get_image (GIMP_ITEM (drawable)))
-    new_item = gimp_item_duplicate (GIMP_ITEM (drawable), new_type);
+  if (dest_image == picman_item_get_image (PICMAN_ITEM (drawable)))
+    new_item = picman_item_duplicate (PICMAN_ITEM (drawable), new_type);
   else
-    new_item = gimp_item_convert (GIMP_ITEM (drawable), dest_image, new_type);
+    new_item = picman_item_convert (PICMAN_ITEM (drawable), dest_image, new_type);
 
   if (new_item)
-    layer_copy = GIMP_LAYER (new_item);
+    layer_copy = PICMAN_LAYER (new_item);
   else
     success = FALSE;
 }
@@ -211,7 +211,7 @@ sub layer_group_new {
 This procedure creates a new layer group. Attributes such as layer mode
 and opacity should be set with explicit procedure calls. Add the new
 layer group (which is a kind of layer) with the
-gimp_image_insert_layer() command.
+picman_image_insert_layer() command.
 HELP
 
     &barak_pdb_misc('2010', '2.8');
@@ -228,7 +228,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  layer_group = gimp_group_layer_new (image);
+  layer_group = picman_group_layer_new (image);
 
   if (! layer_group)
     success = FALSE;
@@ -265,12 +265,12 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  layer_copy = GIMP_LAYER (gimp_item_duplicate (GIMP_ITEM (layer),
+  layer_copy = PICMAN_LAYER (picman_item_duplicate (PICMAN_ITEM (layer),
                                                 G_TYPE_FROM_INSTANCE (layer)));
   if (layer_copy)
     {
       if (add_alpha)
-        gimp_layer_add_alpha (layer_copy);
+        picman_layer_add_alpha (layer_copy);
     }
   else
     {
@@ -293,7 +293,7 @@ layer complete transparency, the layer's already existing alpha channel
 (which will leave the layer fully visible, but which may be more useful than
 a white mask), the current selection or a grayscale copy of the layer. The
 layer mask still needs to be added to the layer. This can be done with a call
-to gimp_layer_add_mask().
+to picman_layer_add_mask().
 HELP
 
     &std_pdb_misc();
@@ -301,7 +301,7 @@ HELP
     @inargs = (
 	{ name => 'layer', type => 'layer',
 	  desc => 'The layer to which to add the mask' },
- 	{ name => 'mask_type', type => 'enum GimpAddMaskType',
+ 	{ name => 'mask_type', type => 'enum PicmanAddMaskType',
 	  desc => 'The type of mask' }
     );
 
@@ -313,11 +313,11 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpChannel *channel = NULL;
+  PicmanChannel *channel = NULL;
 
-  if (mask_type == GIMP_ADD_CHANNEL_MASK)
+  if (mask_type == PICMAN_ADD_CHANNEL_MASK)
     {
-      channel = gimp_image_get_active_channel (gimp_item_get_image (GIMP_ITEM (layer)));
+      channel = picman_image_get_active_channel (picman_item_get_image (PICMAN_ITEM (layer)));
 
       if (! channel)
         success = FALSE;
@@ -325,7 +325,7 @@ HELP
 
   if (success)
     {
-      mask = gimp_layer_create_mask (layer, mask_type, channel);
+      mask = picman_layer_create_mask (layer, mask_type, channel);
 
       if (! mask)
         success = FALSE;
@@ -342,7 +342,7 @@ sub layer_add_mask {
 This procedure adds a layer mask to the specified layer. Layer masks serve as
 an additional alpha channel for a layer. This procedure will fail if a number
 of prerequisites aren't met. The layer cannot already have a layer mask. The
-specified mask must exist and have the same dimensions as the layer. The layer must have been created for use with the specified image and the mask must have been created with the procedure 'gimp-layer-create-mask'.
+specified mask must exist and have the same dimensions as the layer. The layer must have been created for use with the specified image and the mask must have been created with the procedure 'picman-layer-create-mask'.
 HELP
 
     &std_pdb_misc;
@@ -357,11 +357,11 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_floating (GIMP_ITEM (mask),
-                                 gimp_item_get_image (GIMP_ITEM (layer)),
+  if (picman_pdb_item_is_floating (PICMAN_ITEM (mask),
+                                 picman_item_get_image (PICMAN_ITEM (layer)),
                                  error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (layer), error))
-    success = (gimp_layer_add_mask (layer, mask, TRUE, error) == mask);
+      picman_pdb_item_is_not_group (PICMAN_ITEM (layer), error))
+    success = (picman_layer_add_mask (layer, mask, TRUE, error) == mask);
   else
     success = FALSE;
 }
@@ -382,21 +382,21 @@ HELP
     @inargs = (
 	{ name => 'layer', type => 'layer',
 	  desc => 'The layer from which to remove mask' },
-	{ name => 'mode', type => 'enum GimpMaskApplyMode',
+	{ name => 'mode', type => 'enum PicmanMaskApplyMode',
 	  desc => 'Removal mode' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPDBItemModify modify = 0;
+  PicmanPDBItemModify modify = 0;
 
-  if (mode == GIMP_MASK_APPLY)
-    modify |= GIMP_PDB_ITEM_CONTENT;
+  if (mode == PICMAN_MASK_APPLY)
+    modify |= PICMAN_PDB_ITEM_CONTENT;
 
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL, modify, error) &&
-      gimp_layer_get_mask (layer))
-    gimp_layer_apply_mask (layer, mode, TRUE);
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), NULL, modify, error) &&
+      picman_layer_get_mask (layer))
+    picman_layer_apply_mask (layer, mode, TRUE);
   else
     success = FALSE;
 }
@@ -413,7 +413,7 @@ equal to the supplied parameters. The 'local-origin' parameter
 specifies whether to scale from the center of the layer, or from the
 image origin. This operation only works if the layer has been added to
 an image. The interpolation method used can be set with
-gimp_context_set_interpolation().
+picman_context_set_interpolation().
 HELP
 
     &std_pdb_misc;
@@ -421,9 +421,9 @@ HELP
     @inargs = (
 	{ name => 'layer', type => 'layer',
 	  desc => 'The layer' },
-	{ name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+	{ name => 'new_width', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
 	  desc => 'New layer width' },
-	{ name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+	{ name => 'new_height', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
 	  desc => 'New layer height' },
 	{ name => 'local_origin', type => 'boolean',
 	  desc => 'Use a local origin (as opposed to the image origin)' }
@@ -432,21 +432,21 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL,
-                                 GIMP_PDB_ITEM_CONTENT | GIMP_PDB_ITEM_POSITION,
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT | PICMAN_PDB_ITEM_POSITION,
                                  error))
     {
-      GimpPDBContext *pdb_context = GIMP_PDB_CONTEXT (context);
+      PicmanPDBContext *pdb_context = PICMAN_PDB_CONTEXT (context);
 
       if (progress)
-        gimp_progress_start (progress, _("Scaling"), FALSE);
+        picman_progress_start (progress, _("Scaling"), FALSE);
 
-      gimp_item_scale_by_origin (GIMP_ITEM (layer), new_width, new_height,
+      picman_item_scale_by_origin (PICMAN_ITEM (layer), new_width, new_height,
                                  pdb_context->interpolation, progress,
                                  local_origin);
 
       if (progress)
-        gimp_progress_end (progress);
+        picman_progress_end (progress);
     }
   else
     {
@@ -458,38 +458,38 @@ CODE
 }
 
 sub layer_scale_full {
-    &std_pdb_deprecated('gimp-layer-scale');
+    &std_pdb_deprecated('picman-layer-scale');
     &neo_pdb_misc('2008', '2.6');
 
     @inargs = (
 	{ name => 'layer', type => 'layer',
 	  desc => 'The layer' },
-	{ name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+	{ name => 'new_width', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
 	  desc => 'New layer width' },
-	{ name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+	{ name => 'new_height', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
 	  desc => 'New layer height' },
 	{ name => 'local_origin', type => 'boolean',
 	  desc => 'Use a local origin (as opposed to the image origin)' },
-	{ name => 'interpolation', type => 'enum GimpInterpolationType',
+	{ name => 'interpolation', type => 'enum PicmanInterpolationType',
 	  desc => 'Type of interpolation' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL,
-                                 GIMP_PDB_ITEM_CONTENT | GIMP_PDB_ITEM_POSITION,
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT | PICMAN_PDB_ITEM_POSITION,
                                  error))
     {
       if (progress)
-        gimp_progress_start (progress, _("Scaling"), FALSE);
+        picman_progress_start (progress, _("Scaling"), FALSE);
 
-      gimp_item_scale_by_origin (GIMP_ITEM (layer), new_width, new_height,
+      picman_item_scale_by_origin (PICMAN_ITEM (layer), new_width, new_height,
                                  interpolation, progress,
                                  local_origin);
 
       if (progress)
-        gimp_progress_end (progress);
+        picman_progress_end (progress);
     }
   else
     {
@@ -515,9 +515,9 @@ HELP
     @inargs = (
 	{ name => 'layer', type => 'layer',
 	  desc => 'The layer' },
-	{ name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+	{ name => 'new_width', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
 	  desc => 'New layer width' },
-	{ name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+	{ name => 'new_height', type => '1 <= int32 <= PICMAN_MAX_IMAGE_SIZE',
 	  desc => 'New layer height' },
 	{ name => 'offx', type => 'int32',
 	  desc => 'x offset between upper left corner of old and
@@ -530,10 +530,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL,
-                                 GIMP_PDB_ITEM_CONTENT | GIMP_PDB_ITEM_POSITION,
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT | PICMAN_PDB_ITEM_POSITION,
                                  error))
-    gimp_item_resize (GIMP_ITEM (layer), context,
+    picman_item_resize (PICMAN_ITEM (layer), context,
                       new_width, new_height, offx, offy);
   else
     success = FALSE;
@@ -560,10 +560,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL,
-                                 GIMP_PDB_ITEM_CONTENT | GIMP_PDB_ITEM_POSITION,
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT | PICMAN_PDB_ITEM_POSITION,
                                  error))
-    gimp_layer_resize_to_image (layer, context);
+    picman_layer_resize_to_image (layer, context);
   else
     success = FALSE;
 }
@@ -596,20 +596,20 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_modifyable (GIMP_ITEM (layer),
-                                   GIMP_PDB_ITEM_POSITION, error))
+  if (picman_pdb_item_is_modifyable (PICMAN_ITEM (layer),
+                                   PICMAN_PDB_ITEM_POSITION, error))
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (layer));
 
-      gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_ITEM_DISPLACE,
+      picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_ITEM_DISPLACE,
                                    _("Move Layer"));
 
-      gimp_item_translate (GIMP_ITEM (layer), offx, offy, TRUE);
+      picman_item_translate (PICMAN_ITEM (layer), offx, offy, TRUE);
 
-      if (gimp_item_get_linked (GIMP_ITEM (layer)))
-        gimp_item_linked_translate (GIMP_ITEM (layer), offx, offy, TRUE);
+      if (picman_item_get_linked (PICMAN_ITEM (layer)))
+        picman_item_linked_translate (PICMAN_ITEM (layer), offx, offy, TRUE);
 
-      gimp_image_undo_group_end (image);
+      picman_image_undo_group_end (image);
     }
   else
     success = FALSE;
@@ -641,10 +641,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_modifyable (GIMP_ITEM (layer),
-                                   GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (layer), error))
-    gimp_layer_add_alpha (layer);
+  if (picman_pdb_item_is_modifyable (PICMAN_ITEM (layer),
+                                   PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (layer), error))
+    picman_layer_add_alpha (layer);
   else
    success = FALSE;
 }
@@ -674,10 +674,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_modifyable (GIMP_ITEM (layer),
-                                   GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (layer), error))
-    gimp_layer_flatten (layer, context);
+  if (picman_pdb_item_is_modifyable (PICMAN_ITEM (layer),
+                                   PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (layer), error))
+    picman_layer_flatten (layer, context);
   else
    success = FALSE;
 }
@@ -708,26 +708,26 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_modifyable (GIMP_ITEM (layer),
-                                   GIMP_PDB_ITEM_POSITION, error))
+  if (picman_pdb_item_is_modifyable (PICMAN_ITEM (layer),
+                                   PICMAN_PDB_ITEM_POSITION, error))
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (layer));
       gint       offset_x;
       gint       offset_y;
 
-      gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_ITEM_DISPLACE,
+      picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_ITEM_DISPLACE,
                                    _("Move Layer"));
 
-      gimp_item_get_offset (GIMP_ITEM (layer), &offset_x, &offset_y);
+      picman_item_get_offset (PICMAN_ITEM (layer), &offset_x, &offset_y);
       offx -= offset_x;
       offy -= offset_y;
 
-      gimp_item_translate (GIMP_ITEM (layer), offx, offy, TRUE);
+      picman_item_translate (PICMAN_ITEM (layer), offx, offy, TRUE);
 
-      if (gimp_item_get_linked (GIMP_ITEM (layer)))
-        gimp_item_linked_translate (GIMP_ITEM (layer), offx, offy, TRUE);
+      if (picman_item_get_linked (PICMAN_ITEM (layer)))
+        picman_item_linked_translate (PICMAN_ITEM (layer), offx, offy, TRUE);
 
-      gimp_image_undo_group_end (image);
+      picman_image_undo_group_end (image);
     }
   else
     success = FALSE;
@@ -759,7 +759,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  mask = gimp_layer_get_mask (layer);
+  mask = picman_layer_get_mask (layer);
 }
 CODE
     );
@@ -790,7 +790,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  layer = gimp_layer_mask_get_layer (mask);
+  layer = picman_layer_mask_get_layer (mask);
 }
 CODE
     );
@@ -820,7 +820,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  is_floating_sel = gimp_layer_is_floating_sel (layer);
+  is_floating_sel = picman_layer_is_floating_sel (layer);
 }
 CODE
     );
@@ -848,7 +848,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  lock_alpha = gimp_layer_get_lock_alpha (layer);
+  lock_alpha = picman_layer_get_lock_alpha (layer);
 }
 CODE
     );
@@ -873,8 +873,8 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_layer_can_lock_alpha (layer))
-    gimp_layer_set_lock_alpha (layer, lock_alpha, TRUE);
+  if (picman_layer_can_lock_alpha (layer))
+    picman_layer_set_lock_alpha (layer, lock_alpha, TRUE);
   else
     success = FALSE;
 }
@@ -907,7 +907,7 @@ HELP
 	code => <<'CODE'
 {
   if (layer->mask)
-    apply_mask = gimp_layer_get_apply_mask (layer);
+    apply_mask = picman_layer_get_apply_mask (layer);
   else
     apply_mask = FALSE;
 }
@@ -938,7 +938,7 @@ HELP
 	code => <<'CODE'
 {
   if (layer->mask)
-    gimp_layer_set_apply_mask (layer, apply_mask, TRUE);
+    picman_layer_set_apply_mask (layer, apply_mask, TRUE);
   else
     success = FALSE;
 }
@@ -972,7 +972,7 @@ HELP
 	code => <<'CODE'
 {
   if (layer->mask)
-    show_mask = gimp_layer_get_show_mask (layer);
+    show_mask = picman_layer_get_show_mask (layer);
   else
     show_mask = FALSE;
 }
@@ -1003,7 +1003,7 @@ HELP
 	code => <<'CODE'
 {
   if (layer->mask)
-    gimp_layer_set_show_mask (layer, show_mask, TRUE);
+    picman_layer_set_show_mask (layer, show_mask, TRUE);
   else
     success = FALSE;
 }
@@ -1036,7 +1036,7 @@ HELP
 	code => <<'CODE'
 {
   if (layer->mask)
-    edit_mask = gimp_layer_get_edit_mask (layer);
+    edit_mask = picman_layer_get_edit_mask (layer);
   else
     edit_mask = FALSE;
 }
@@ -1067,7 +1067,7 @@ HELP
 	code => <<'CODE'
 {
   if (layer->mask)
-    gimp_layer_set_edit_mask (layer, edit_mask);
+    picman_layer_set_edit_mask (layer, edit_mask);
   else
     success = FALSE;
 }
@@ -1094,7 +1094,7 @@ sub layer_get_opacity {
     %invoke = (
 	code => <<'CODE'
 {
-  opacity = gimp_layer_get_opacity (layer) * 100.0;
+  opacity = picman_layer_get_opacity (layer) * 100.0;
 }
 CODE
     );
@@ -1116,7 +1116,7 @@ sub layer_set_opacity {
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_layer_set_opacity (layer, opacity / 100.0, TRUE);
+  picman_layer_set_opacity (layer, opacity / 100.0, TRUE);
 }
 CODE
     );
@@ -1134,14 +1134,14 @@ sub layer_get_mode {
     );
 
     @outargs = (
-	{ name => 'mode', type => 'enum GimpLayerModeEffects',
+	{ name => 'mode', type => 'enum PicmanLayerModeEffects',
 	  desc => 'The layer combination mode' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  mode = gimp_layer_get_mode (layer);
+  mode = picman_layer_get_mode (layer);
 }
 CODE
     );
@@ -1156,29 +1156,29 @@ sub layer_set_mode {
     @inargs = (
 	{ name => 'layer', type => 'layer',
 	  desc => 'The layer' },
-	{ name => 'mode', type => 'enum GimpLayerModeEffects',
+	{ name => 'mode', type => 'enum PicmanLayerModeEffects',
 	  desc => 'The new layer combination mode' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_layer_set_mode (layer, mode, TRUE);
+  picman_layer_set_mode (layer, mode, TRUE);
 }
 CODE
     );
 }
 
-@headers = qw("libgimpbase/gimpbase.h"
-              "core/gimp.h"
-              "core/gimpimage-undo.h"
-              "core/gimpitem-linked.h"
-              "core/gimpgrouplayer.h"
-              "core/gimppickable.h"
-              "core/gimpprogress.h"
-              "gimppdbcontext.h"
-              "gimppdb-utils.h"
-              "gimp-intl.h");
+@headers = qw("libpicmanbase/picmanbase.h"
+              "core/picman.h"
+              "core/picmanimage-undo.h"
+              "core/picmanitem-linked.h"
+              "core/picmangrouplayer.h"
+              "core/picmanpickable.h"
+              "core/picmanprogress.h"
+              "picmanpdbcontext.h"
+              "picmanpdb-utils.h"
+              "picman-intl.h");
 
 @procs = qw(layer_new
             layer_new_from_visible
@@ -1206,7 +1206,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Layer';
-$doc_title = 'gimplayer';
+$doc_title = 'picmanlayer';
 $doc_short_desc = 'Operations on a single layer.';
 $doc_long_desc = 'Operations on a single layer.';
 

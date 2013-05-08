@@ -17,7 +17,7 @@
 # We have the following line for use by intltoolize:
 # INTLTOOL_MAKEFILE
 
-GETTEXT_PACKAGE = @GETTEXT_PACKAGE@-libgimp
+GETTEXT_PACKAGE = @GETTEXT_PACKAGE@-libpicman
 XGETTEXT_KEYWORDS=--keyword=_ --keyword=N_ --keyword=Q_:1g --keyword=C_:1c,2 --keyword=NC_:1c,2
 
 PACKAGE = @PACKAGE@
@@ -37,7 +37,7 @@ datarootdir = @datarootdir@
 libdir = @libdir@
 DATADIRNAME = @DATADIRNAME@
 itlocaledir = $(prefix)/$(DATADIRNAME)/locale
-subdir = po-libgimp
+subdir = po-libpicman
 install_sh = @install_sh@
 # Automake >= 1.8 provides @mkdir_p@.
 # Until it can be supposed, use the safe fallback:

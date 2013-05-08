@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,30 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COLOR_BALANCE_TOOL_H__
-#define __GIMP_COLOR_BALANCE_TOOL_H__
+#ifndef __PICMAN_COLOR_BALANCE_TOOL_H__
+#define __PICMAN_COLOR_BALANCE_TOOL_H__
 
 
-#include "gimpimagemaptool.h"
+#include "picmanimagemaptool.h"
 
 
-#define GIMP_TYPE_COLOR_BALANCE_TOOL            (gimp_color_balance_tool_get_type ())
-#define GIMP_COLOR_BALANCE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_BALANCE_TOOL, GimpColorBalanceTool))
-#define GIMP_COLOR_BALANCE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_BALANCE_TOOL, GimpColorBalanceToolClass))
-#define GIMP_IS_COLOR_BALANCE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_BALANCE_TOOL))
-#define GIMP_COLOR_BALANCE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_BALANCE_TOOL, GimpColorBalanceToolClass))
-#define GIMP_IS_COLOR_BALANCE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_BALANCE_TOOL))
-#define GIMP_COLOR_BALANCE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_BALANCE_TOOL, GimpColorBalanceToolClass))
+#define PICMAN_TYPE_COLOR_BALANCE_TOOL            (picman_color_balance_tool_get_type ())
+#define PICMAN_COLOR_BALANCE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_BALANCE_TOOL, PicmanColorBalanceTool))
+#define PICMAN_COLOR_BALANCE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_BALANCE_TOOL, PicmanColorBalanceToolClass))
+#define PICMAN_IS_COLOR_BALANCE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_BALANCE_TOOL))
+#define PICMAN_COLOR_BALANCE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_BALANCE_TOOL, PicmanColorBalanceToolClass))
+#define PICMAN_IS_COLOR_BALANCE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_BALANCE_TOOL))
+#define PICMAN_COLOR_BALANCE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_BALANCE_TOOL, PicmanColorBalanceToolClass))
 
 
-typedef struct _GimpColorBalanceTool      GimpColorBalanceTool;
-typedef struct _GimpColorBalanceToolClass GimpColorBalanceToolClass;
+typedef struct _PicmanColorBalanceTool      PicmanColorBalanceTool;
+typedef struct _PicmanColorBalanceToolClass PicmanColorBalanceToolClass;
 
-struct _GimpColorBalanceTool
+struct _PicmanColorBalanceTool
 {
-  GimpImageMapTool        parent_instance;
+  PicmanImageMapTool        parent_instance;
 
-  GimpColorBalanceConfig *config;
+  PicmanColorBalanceConfig *config;
 
   /*  dialog  */
   GtkWidget              *range_radio;
@@ -48,16 +48,16 @@ struct _GimpColorBalanceTool
   GtkWidget              *preserve_toggle;
 };
 
-struct _GimpColorBalanceToolClass
+struct _PicmanColorBalanceToolClass
 {
-  GimpImageMapToolClass  parent_class;
+  PicmanImageMapToolClass  parent_class;
 };
 
 
-void    gimp_color_balance_tool_register (GimpToolRegisterCallback  callback,
+void    picman_color_balance_tool_register (PicmanToolRegisterCallback  callback,
                                           gpointer                  data);
 
-GType   gimp_color_balance_tool_get_type (void) G_GNUC_CONST;
+GType   picman_color_balance_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_COLOR_BALANCE_TOOL_H__  */
+#endif  /*  __PICMAN_COLOR_BALANCE_TOOL_H__  */

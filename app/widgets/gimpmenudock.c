@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpmenudock.c
- * Copyright (C) 2001-2004 Michael Natterer <mitch@gimp.org>
+ * picmanmenudock.c
+ * Copyright (C) 2001-2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,47 +25,47 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimplist.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanlist.h"
 
-#include "gimpdialogfactory.h"
-#include "gimpdockable.h"
-#include "gimpdockbook.h"
-#include "gimpmenudock.h"
+#include "picmandialogfactory.h"
+#include "picmandockable.h"
+#include "picmandockbook.h"
+#include "picmanmenudock.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define DEFAULT_MINIMAL_WIDTH  200
 
-struct _GimpMenuDockPrivate
+struct _PicmanMenuDockPrivate
 {
   gint make_sizeof_greater_than_zero;
 };
 
 
-static void   gimp_menu_dock_style_set               (GtkWidget      *widget,
+static void   picman_menu_dock_style_set               (GtkWidget      *widget,
                                                       GtkStyle       *prev_style);
 
 
-G_DEFINE_TYPE (GimpMenuDock, gimp_menu_dock, GIMP_TYPE_DOCK)
+G_DEFINE_TYPE (PicmanMenuDock, picman_menu_dock, PICMAN_TYPE_DOCK)
 
-#define parent_class gimp_menu_dock_parent_class
+#define parent_class picman_menu_dock_parent_class
 
 
 static void
-gimp_menu_dock_class_init (GimpMenuDockClass *klass)
+picman_menu_dock_class_init (PicmanMenuDockClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  widget_class->style_set = gimp_menu_dock_style_set;
+  widget_class->style_set = picman_menu_dock_style_set;
 
   gtk_widget_class_install_style_property (widget_class,
                                            g_param_spec_int ("minimal-width",
@@ -73,18 +73,18 @@ gimp_menu_dock_class_init (GimpMenuDockClass *klass)
                                                              0,
                                                              G_MAXINT,
                                                              DEFAULT_MINIMAL_WIDTH,
-                                                             GIMP_PARAM_READABLE));
+                                                             PICMAN_PARAM_READABLE));
 
-  g_type_class_add_private (klass, sizeof (GimpMenuDockPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanMenuDockPrivate));
 }
 
 static void
-gimp_menu_dock_init (GimpMenuDock *dock)
+picman_menu_dock_init (PicmanMenuDock *dock)
 {
 }
 
 static void
-gimp_menu_dock_style_set (GtkWidget *widget,
+picman_menu_dock_style_set (GtkWidget *widget,
                           GtkStyle  *prev_style)
 {
   gint minimal_width = -1;
@@ -99,7 +99,7 @@ gimp_menu_dock_style_set (GtkWidget *widget,
 }
 
 GtkWidget *
-gimp_menu_dock_new (void)
+picman_menu_dock_new (void)
 {
-  return g_object_new (GIMP_TYPE_MENU_DOCK, NULL);
+  return g_object_new (PICMAN_TYPE_MENU_DOCK, NULL);
 }

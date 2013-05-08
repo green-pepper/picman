@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2000 Peter Mattis and Spencer Kimball
  *
- * gimpselection.c
+ * picmanselection.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,10 +20,10 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 /**
- * gimp_selection_float:
+ * picman_selection_float:
  * @image_ID: ignored
  * @drawable_ID: The drawable from which to float selection.
  * @offx: x offset for translation.
@@ -41,26 +41,26 @@
  * Returns: The floated layer.
  */
 gint32
-gimp_selection_float (gint32 image_ID,
+picman_selection_float (gint32 image_ID,
                       gint32 drawable_ID,
                       gint   offx,
                       gint   offy)
 {
-  return _gimp_selection_float (drawable_ID,
+  return _picman_selection_float (drawable_ID,
                                 offx,
                                 offy);
 }
 
 /**
- * gimp_selection_clear:
+ * picman_selection_clear:
  * @image_ID: The image.
  *
- * This procedure is deprecated! Use gimp_selection_none() instead.
+ * This procedure is deprecated! Use picman_selection_none() instead.
  *
  * Returns: TRUE on success.
  */
 gboolean
-gimp_selection_clear (gint32 image_ID)
+picman_selection_clear (gint32 image_ID)
 {
-  return gimp_selection_none (image_ID);
+  return picman_selection_none (image_ID);
 }

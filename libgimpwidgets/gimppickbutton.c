@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppickbutton.c
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * picmanpickbutton.c
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * based on gtk+/gtk/gtkcolorsel.c
  *
@@ -22,26 +22,26 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpcairo-utils.h"
-#include "gimphelpui.h"
-#include "gimppickbutton.h"
-#include "gimpstock.h"
+#include "picmancairo-utils.h"
+#include "picmanhelpui.h"
+#include "picmanpickbutton.h"
+#include "picmanstock.h"
 
-#include "cursors/gimp-color-picker-cursors.h"
+#include "cursors/picman-color-picker-cursors.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimppickbutton
- * @title: GimpPickButton
+ * SECTION: picmanpickbutton
+ * @title: PicmanPickButton
  * @short_description: Widget to pick a color from screen.
  *
- * #GimpPickButton is a specialized button. When clicked, it changes
+ * #PicmanPickButton is a specialized button. When clicked, it changes
  * the cursor to a color-picker pipette and allows the user to pick a
  * color from any point on the screen.
  **/
@@ -54,46 +54,46 @@ enum
 };
 
 
-static void       gimp_pick_button_dispose       (GObject        *object);
+static void       picman_pick_button_dispose       (GObject        *object);
 
-static void       gimp_pick_button_clicked       (GtkButton      *button);
+static void       picman_pick_button_clicked       (GtkButton      *button);
 
-static gboolean   gimp_pick_button_mouse_press   (GtkWidget      *invisible,
+static gboolean   picman_pick_button_mouse_press   (GtkWidget      *invisible,
                                                   GdkEventButton *event,
-                                                  GimpPickButton *button);
-static gboolean   gimp_pick_button_key_press     (GtkWidget      *invisible,
+                                                  PicmanPickButton *button);
+static gboolean   picman_pick_button_key_press     (GtkWidget      *invisible,
                                                   GdkEventKey    *event,
-                                                  GimpPickButton *button);
-static gboolean   gimp_pick_button_mouse_motion  (GtkWidget      *invisible,
+                                                  PicmanPickButton *button);
+static gboolean   picman_pick_button_mouse_motion  (GtkWidget      *invisible,
                                                   GdkEventMotion *event,
-                                                  GimpPickButton *button);
-static gboolean   gimp_pick_button_mouse_release (GtkWidget      *invisible,
+                                                  PicmanPickButton *button);
+static gboolean   picman_pick_button_mouse_release (GtkWidget      *invisible,
                                                   GdkEventButton *event,
-                                                  GimpPickButton *button);
-static void       gimp_pick_button_shutdown      (GimpPickButton *button);
-static void       gimp_pick_button_pick          (GdkScreen      *screen,
+                                                  PicmanPickButton *button);
+static void       picman_pick_button_shutdown      (PicmanPickButton *button);
+static void       picman_pick_button_pick          (GdkScreen      *screen,
                                                   gint            x_root,
                                                   gint            y_root,
-                                                  GimpPickButton *button);
+                                                  PicmanPickButton *button);
 
 
-G_DEFINE_TYPE (GimpPickButton, gimp_pick_button, GTK_TYPE_BUTTON)
+G_DEFINE_TYPE (PicmanPickButton, picman_pick_button, GTK_TYPE_BUTTON)
 
-#define parent_class gimp_pick_button_parent_class
+#define parent_class picman_pick_button_parent_class
 
 static guint pick_button_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_pick_button_class_init (GimpPickButtonClass* klass)
+picman_pick_button_class_init (PicmanPickButtonClass* klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkButtonClass *button_class = GTK_BUTTON_CLASS (klass);
 
   /**
-   * GimpPickButton::color-picked:
-   * @gimppickbutton: the object which received the signal.
-   * @arg1: pointer to a #GimpRGB structure that holds the picked color
+   * PicmanPickButton::color-picked:
+   * @picmanpickbutton: the object which received the signal.
+   * @arg1: pointer to a #PicmanRGB structure that holds the picked color
    *
    * This signal is emitted when the user has picked a color.
    **/
@@ -101,39 +101,39 @@ gimp_pick_button_class_init (GimpPickButtonClass* klass)
     g_signal_new ("color-picked",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpPickButtonClass, color_picked),
+                  G_STRUCT_OFFSET (PicmanPickButtonClass, color_picked),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__POINTER,
                   G_TYPE_NONE, 1,
                   G_TYPE_POINTER);
 
-  object_class->dispose = gimp_pick_button_dispose;
+  object_class->dispose = picman_pick_button_dispose;
 
-  button_class->clicked = gimp_pick_button_clicked;
+  button_class->clicked = picman_pick_button_clicked;
 
   klass->color_picked   = NULL;
 }
 
 static void
-gimp_pick_button_init (GimpPickButton *button)
+picman_pick_button_init (PicmanPickButton *button)
 {
   GtkWidget *image;
 
-  image = gtk_image_new_from_stock (GIMP_STOCK_COLOR_PICK_FROM_SCREEN,
+  image = gtk_image_new_from_stock (PICMAN_STOCK_COLOR_PICK_FROM_SCREEN,
                                     GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (button), image);
   gtk_widget_show (image);
 
-  gimp_help_set_help_data (GTK_WIDGET (button),
+  picman_help_set_help_data (GTK_WIDGET (button),
                            _("Click the eyedropper, then click a color "
                              "anywhere on your screen to select that color."),
                            NULL);
 }
 
 static void
-gimp_pick_button_dispose (GObject *object)
+picman_pick_button_dispose (GObject *object)
 {
-  GimpPickButton *button = GIMP_PICK_BUTTON (object);
+  PicmanPickButton *button = PICMAN_PICK_BUTTON (object);
 
   if (button->cursor)
     {
@@ -154,16 +154,16 @@ gimp_pick_button_dispose (GObject *object)
 /*  public functions  */
 
 /**
- * gimp_pick_button_new:
+ * picman_pick_button_new:
  *
- * Creates a new #GimpPickButton widget.
+ * Creates a new #PicmanPickButton widget.
  *
- * Returns: A new #GimpPickButton widget.
+ * Returns: A new #PicmanPickButton widget.
  **/
 GtkWidget *
-gimp_pick_button_new (void)
+picman_pick_button_new (void)
 {
-  return g_object_new (GIMP_TYPE_PICK_BUTTON, NULL);
+  return g_object_new (PICMAN_TYPE_PICK_BUTTON, NULL);
 }
 
 
@@ -185,9 +185,9 @@ make_cursor (GdkDisplay *display)
 }
 
 static void
-gimp_pick_button_clicked (GtkButton *gtk_button)
+picman_pick_button_clicked (GtkButton *gtk_button)
 {
-  GimpPickButton *button = GIMP_PICK_BUTTON (gtk_button);
+  PicmanPickButton *button = PICMAN_PICK_BUTTON (gtk_button);
   GtkWidget      *widget;
   guint32         timestamp;
 
@@ -232,32 +232,32 @@ gimp_pick_button_clicked (GtkButton *gtk_button)
   gtk_grab_add (widget);
 
   g_signal_connect (widget, "button-press-event",
-                    G_CALLBACK (gimp_pick_button_mouse_press),
+                    G_CALLBACK (picman_pick_button_mouse_press),
                     button);
   g_signal_connect (widget, "key-press-event",
-                    G_CALLBACK (gimp_pick_button_key_press),
+                    G_CALLBACK (picman_pick_button_key_press),
                     button);
 }
 
 static gboolean
-gimp_pick_button_mouse_press (GtkWidget      *invisible,
+picman_pick_button_mouse_press (GtkWidget      *invisible,
                               GdkEventButton *event,
-                              GimpPickButton *button)
+                              PicmanPickButton *button)
 {
   if (event->type == GDK_BUTTON_PRESS && event->button == 1)
     {
       g_signal_connect (invisible, "motion-notify-event",
-                        G_CALLBACK (gimp_pick_button_mouse_motion),
+                        G_CALLBACK (picman_pick_button_mouse_motion),
                         button);
       g_signal_connect (invisible, "button-release-event",
-                        G_CALLBACK (gimp_pick_button_mouse_release),
+                        G_CALLBACK (picman_pick_button_mouse_release),
                         button);
 
       g_signal_handlers_disconnect_by_func (invisible,
-                                            gimp_pick_button_mouse_press,
+                                            picman_pick_button_mouse_press,
                                             button);
       g_signal_handlers_disconnect_by_func (invisible,
-                                            gimp_pick_button_key_press,
+                                            picman_pick_button_key_press,
                                             button);
 
       return TRUE;
@@ -267,19 +267,19 @@ gimp_pick_button_mouse_press (GtkWidget      *invisible,
 }
 
 static gboolean
-gimp_pick_button_key_press (GtkWidget      *invisible,
+picman_pick_button_key_press (GtkWidget      *invisible,
                             GdkEventKey    *event,
-                            GimpPickButton *button)
+                            PicmanPickButton *button)
 {
   if (event->keyval == GDK_KEY_Escape)
     {
-      gimp_pick_button_shutdown (button);
+      picman_pick_button_shutdown (button);
 
       g_signal_handlers_disconnect_by_func (invisible,
-                                            gimp_pick_button_mouse_press,
+                                            picman_pick_button_mouse_press,
                                             button);
       g_signal_handlers_disconnect_by_func (invisible,
-                                            gimp_pick_button_key_press,
+                                            picman_pick_button_key_press,
                                             button);
 
       return TRUE;
@@ -289,9 +289,9 @@ gimp_pick_button_key_press (GtkWidget      *invisible,
 }
 
 static gboolean
-gimp_pick_button_mouse_motion (GtkWidget      *invisible,
+picman_pick_button_mouse_motion (GtkWidget      *invisible,
                                GdkEventMotion *event,
-                               GimpPickButton *button)
+                               PicmanPickButton *button)
 {
   gint x_root;
   gint y_root;
@@ -300,16 +300,16 @@ gimp_pick_button_mouse_motion (GtkWidget      *invisible,
   x_root += event->x;
   y_root += event->y;
 
-  gimp_pick_button_pick (gdk_event_get_screen ((GdkEvent *) event),
+  picman_pick_button_pick (gdk_event_get_screen ((GdkEvent *) event),
                          x_root, y_root, button);
 
   return TRUE;
 }
 
 static gboolean
-gimp_pick_button_mouse_release (GtkWidget      *invisible,
+picman_pick_button_mouse_release (GtkWidget      *invisible,
                                 GdkEventButton *event,
-                                GimpPickButton *button)
+                                PicmanPickButton *button)
 {
   gint x_root;
   gint y_root;
@@ -321,23 +321,23 @@ gimp_pick_button_mouse_release (GtkWidget      *invisible,
   x_root += event->x;
   y_root += event->y;
 
-  gimp_pick_button_pick (gdk_event_get_screen ((GdkEvent *) event),
+  picman_pick_button_pick (gdk_event_get_screen ((GdkEvent *) event),
                          x_root, y_root, button);
 
-  gimp_pick_button_shutdown (button);
+  picman_pick_button_shutdown (button);
 
   g_signal_handlers_disconnect_by_func (invisible,
-                                        gimp_pick_button_mouse_motion,
+                                        picman_pick_button_mouse_motion,
                                         button);
   g_signal_handlers_disconnect_by_func (invisible,
-                                        gimp_pick_button_mouse_release,
+                                        picman_pick_button_mouse_release,
                                         button);
 
   return TRUE;
 }
 
 static void
-gimp_pick_button_shutdown (GimpPickButton *button)
+picman_pick_button_shutdown (PicmanPickButton *button)
 {
   GdkDisplay *display   = gtk_widget_get_display (button->grab_widget);
   guint32     timestamp = gtk_get_current_event_time ();
@@ -349,17 +349,17 @@ gimp_pick_button_shutdown (GimpPickButton *button)
 }
 
 static void
-gimp_pick_button_pick (GdkScreen      *screen,
+picman_pick_button_pick (GdkScreen      *screen,
                        gint            x_root,
                        gint            y_root,
-                       GimpPickButton *button)
+                       PicmanPickButton *button)
 {
   GdkWindow       *root_window = gdk_screen_get_root_window (screen);
   cairo_surface_t *image;
   cairo_t         *cr;
   guchar          *data;
   guchar           color[3];
-  GimpRGB          rgb;
+  PicmanRGB          rgb;
 
   image = cairo_image_surface_create (CAIRO_FORMAT_RGB24, 1, 1);
 
@@ -371,11 +371,11 @@ gimp_pick_button_pick (GdkScreen      *screen,
   cairo_destroy (cr);
 
   data = cairo_image_surface_get_data (image);
-  GIMP_CAIRO_RGB24_GET_PIXEL (data, color[0], color[1], color[2]);
+  PICMAN_CAIRO_RGB24_GET_PIXEL (data, color[0], color[1], color[2]);
 
   cairo_surface_destroy (image);
 
-  gimp_rgba_set_uchar (&rgb, color[0], color[1], color[2], 1.0);
+  picman_rgba_set_uchar (&rgb, color[0], color[1], color[2], 1.0);
 
   g_signal_emit (button, pick_button_signals[COLOR_PICKED], 0, &rgb);
 }

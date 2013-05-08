@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,18 +20,18 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "widgets/gimppropwidgets.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanpropwidgets.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimpselectionoptions.h"
-#include "gimptooloptions-gui.h"
+#include "picmanselectionoptions.h"
+#include "picmantooloptions-gui.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -44,67 +44,67 @@ enum
 };
 
 
-static void   gimp_selection_options_set_property (GObject      *object,
+static void   picman_selection_options_set_property (GObject      *object,
                                                    guint         property_id,
                                                    const GValue *value,
                                                    GParamSpec   *pspec);
-static void   gimp_selection_options_get_property (GObject      *object,
+static void   picman_selection_options_get_property (GObject      *object,
                                                    guint         property_id,
                                                    GValue       *value,
                                                    GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpSelectionOptions, gimp_selection_options,
-               GIMP_TYPE_TOOL_OPTIONS)
+G_DEFINE_TYPE (PicmanSelectionOptions, picman_selection_options,
+               PICMAN_TYPE_TOOL_OPTIONS)
 
-#define parent_class gimp_selection_options_parent_class
+#define parent_class picman_selection_options_parent_class
 
 
 static void
-gimp_selection_options_class_init (GimpSelectionOptionsClass *klass)
+picman_selection_options_class_init (PicmanSelectionOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_selection_options_set_property;
-  object_class->get_property = gimp_selection_options_get_property;
+  object_class->set_property = picman_selection_options_set_property;
+  object_class->get_property = picman_selection_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_OPERATION,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_OPERATION,
                                  "operation", NULL,
-                                 GIMP_TYPE_CHANNEL_OPS,
-                                 GIMP_CHANNEL_OP_REPLACE,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_CHANNEL_OPS,
+                                 PICMAN_CHANNEL_OP_REPLACE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ANTIALIAS,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ANTIALIAS,
                                     "antialias",
                                     N_("Smooth edges"),
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FEATHER,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FEATHER,
                                     "feather",
                                     N_("Enable feathering of selection edges"),
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_FEATHER_RADIUS,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_FEATHER_RADIUS,
                                    "feather-radius",
                                    N_("Radius of feathering"),
                                    0.0, 100.0, 10.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_selection_options_init (GimpSelectionOptions *options)
+picman_selection_options_init (PicmanSelectionOptions *options)
 {
 }
 
 static void
-gimp_selection_options_set_property (GObject      *object,
+picman_selection_options_set_property (GObject      *object,
                                      guint         property_id,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  GimpSelectionOptions *options = GIMP_SELECTION_OPTIONS (object);
+  PicmanSelectionOptions *options = PICMAN_SELECTION_OPTIONS (object);
 
   switch (property_id)
     {
@@ -131,12 +131,12 @@ gimp_selection_options_set_property (GObject      *object,
 }
 
 static void
-gimp_selection_options_get_property (GObject    *object,
+picman_selection_options_get_property (GObject    *object,
                                      guint       property_id,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  GimpSelectionOptions *options = GIMP_SELECTION_OPTIONS (object);
+  PicmanSelectionOptions *options = PICMAN_SELECTION_OPTIONS (object);
 
   switch (property_id)
     {
@@ -163,43 +163,43 @@ gimp_selection_options_get_property (GObject    *object,
 }
 
 static const gchar *
-gimp_selection_options_get_modifiers (GimpChannelOps operation)
+picman_selection_options_get_modifiers (PicmanChannelOps operation)
 {
   GdkModifierType extend_mask;
   GdkModifierType modify_mask;
   GdkModifierType modifiers = 0;
 
-  extend_mask = gimp_get_extend_selection_mask ();
-  modify_mask = gimp_get_modify_selection_mask ();
+  extend_mask = picman_get_extend_selection_mask ();
+  modify_mask = picman_get_modify_selection_mask ();
 
   switch (operation)
     {
-    case GIMP_CHANNEL_OP_ADD:
+    case PICMAN_CHANNEL_OP_ADD:
       modifiers = extend_mask;
       break;
 
-    case GIMP_CHANNEL_OP_SUBTRACT:
+    case PICMAN_CHANNEL_OP_SUBTRACT:
       modifiers = modify_mask;
       break;
 
-    case GIMP_CHANNEL_OP_REPLACE:
+    case PICMAN_CHANNEL_OP_REPLACE:
       modifiers = 0;
       break;
 
-    case GIMP_CHANNEL_OP_INTERSECT:
+    case PICMAN_CHANNEL_OP_INTERSECT:
       modifiers = extend_mask | modify_mask;
       break;
     }
 
-  return gimp_get_mod_string (modifiers);
+  return picman_get_mod_string (modifiers);
 }
 
 GtkWidget *
-gimp_selection_options_gui (GimpToolOptions *tool_options)
+picman_selection_options_gui (PicmanToolOptions *tool_options)
 {
   GObject              *config  = G_OBJECT (tool_options);
-  GimpSelectionOptions *options = GIMP_SELECTION_OPTIONS (tool_options);
-  GtkWidget            *vbox    = gimp_tool_options_gui (tool_options);
+  PicmanSelectionOptions *options = PICMAN_SELECTION_OPTIONS (tool_options);
+  GtkWidget            *vbox    = picman_tool_options_gui (tool_options);
   GtkWidget            *button;
 
   /*  the selection operation radio buttons  */
@@ -219,8 +219,8 @@ gimp_selection_options_gui (GimpToolOptions *tool_options)
     gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
     gtk_widget_show (label);
 
-    box = gimp_prop_enum_stock_box_new (config, "operation",
-                                        "gimp-selection", 0, 0);
+    box = picman_prop_enum_stock_box_new (config, "operation",
+                                        "picman-selection", 0, 0);
     gtk_box_pack_start (GTK_BOX (hbox), box, FALSE, FALSE, 0);
     gtk_widget_show (box);
 
@@ -230,7 +230,7 @@ gimp_selection_options_gui (GimpToolOptions *tool_options)
     for (list = children, i = 0; list; list = list->next, i++)
       {
         GtkWidget   *button   = list->data;
-        const gchar *modifier = gimp_selection_options_get_modifiers (i);
+        const gchar *modifier = picman_selection_options_get_modifiers (i);
         gchar       *tooltip;
 
         if (! modifier)
@@ -242,18 +242,18 @@ gimp_selection_options_gui (GimpToolOptions *tool_options)
           {
             gchar *tip = g_strdup_printf ("%s  <b>%s</b>", tooltip, modifier);
 
-            gimp_help_set_help_data_with_markup (button, tip, NULL);
+            picman_help_set_help_data_with_markup (button, tip, NULL);
 
             g_free (tip);
             g_free (tooltip);
           }
         else
           {
-            gimp_help_set_help_data (button, modifier, NULL);
+            picman_help_set_help_data (button, modifier, NULL);
           }
       }
 
-    /*  move GIMP_CHANNEL_OP_REPLACE to the front  */
+    /*  move PICMAN_CHANNEL_OP_REPLACE to the front  */
     gtk_box_reorder_child (GTK_BOX (box),
                            GTK_WIDGET (children->next->next->data), 0);
 
@@ -261,7 +261,7 @@ gimp_selection_options_gui (GimpToolOptions *tool_options)
   }
 
   /*  the antialias toggle button  */
-  button = gimp_prop_check_button_new (config, "antialias",
+  button = picman_prop_check_button_new (config, "antialias",
                                        _("Antialiasing"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
@@ -274,11 +274,11 @@ gimp_selection_options_gui (GimpToolOptions *tool_options)
     GtkWidget *scale;
 
     /*  the feather radius scale  */
-    scale = gimp_prop_spin_scale_new (config, "feather-radius",
+    scale = picman_prop_spin_scale_new (config, "feather-radius",
                                       _("Radius"),
                                       1.0, 10.0, 1);
 
-    frame = gimp_prop_expanding_frame_new (config, "feather",
+    frame = picman_prop_expanding_frame_new (config, "feather",
                                            _("Feather edges"),
                                            scale, NULL);
     gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);

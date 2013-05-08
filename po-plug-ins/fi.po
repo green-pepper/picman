@@ -1,4 +1,4 @@
-# Finnish translation for GIMP plug-ins
+# Finnish translation for PICMAN plug-ins
 # Copyright (C) 1999 Free Software Foundation, Inc.
 # Ville Hautamäki <villeh@cs.joensuu.fi>, 1998, 2000.
 # Tor Lillqvist <tml@íki.fi>, 1999, 2000.
@@ -8,9 +8,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-plug-ins\n"
+"Project-Id-Version: picman-plug-ins\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&component=general\n"
+"product=picman&component=general\n"
 "POT-Creation-Date: 2009-04-17 09:06+0000\n"
 "PO-Revision-Date: 2013-01-27 18:20+0200\n"
 "Last-Translator: Ville Skyttä <ville.skytta@iki.fi>\n"
@@ -55,15 +55,15 @@ msgstr "Sisältö"
 #. spinbutton 1
 #: ../plug-ins/color-rotate/color-rotate-dialog.c:299
 #: ../plug-ins/color-rotate/color-rotate-dialog.c:377
-#: ../plug-ins/common/color-to-alpha.c:410 ../plug-ins/file-fli/fli-gimp.c:875
-#: ../plug-ins/file-fli/fli-gimp.c:945
+#: ../plug-ins/common/color-to-alpha.c:410 ../plug-ins/file-fli/fli-picman.c:875
+#: ../plug-ins/file-fli/fli-picman.c:945
 msgid "From:"
 msgstr "Väristä:"
 
 #. spinbutton 2
 #: ../plug-ins/color-rotate/color-rotate-dialog.c:325
 #: ../plug-ins/color-rotate/color-rotate-dialog.c:378
-#: ../plug-ins/file-fli/fli-gimp.c:884 ../plug-ins/file-fli/fli-gimp.c:954
+#: ../plug-ins/file-fli/fli-picman.c:884 ../plug-ins/file-fli/fli-picman.c:954
 msgid "To:"
 msgstr ""
 
@@ -425,8 +425,8 @@ msgid "Optimizing animation"
 msgstr "Optimoidaan animaatiota"
 
 #: ../plug-ins/common/animation-play.c:163
-msgid "Preview a GIMP layer-based animation"
-msgstr "Gimpin tasoanimaation esikatselu"
+msgid "Preview a PICMAN layer-based animation"
+msgstr "Picmanin tasoanimaation esikatselu"
 
 #: ../plug-ins/common/animation-play.c:168
 msgid "_Playback..."
@@ -610,7 +610,7 @@ msgstr "_Pystysuora"
 #: ../plug-ins/file-psd/psd-image-res-load.c:995
 #: ../plug-ins/file-psd/psd-load.c:1526 ../plug-ins/file-sgi/sgi.c:384
 #: ../plug-ins/gfig/gfig-dialog.c:1284
-#: ../plug-ins/gimpressionist/general.c:140 ../plug-ins/twain/twain.c:568
+#: ../plug-ins/picmanressionist/general.c:140 ../plug-ins/twain/twain.c:568
 #: ../plug-ins/win-snap/winsnap.c:1155
 msgid "Background"
 msgstr "Tausta"
@@ -1020,8 +1020,8 @@ msgstr "Lataa kanava-asetukset"
 #: ../plug-ins/common/file-tiff-load.c:291 ../plug-ins/common/file-xbm.c:736
 #: ../plug-ins/common/file-xwd.c:433 ../plug-ins/common/sphere-designer.c:2002
 #: ../plug-ins/file-bmp/bmp-read.c:154 ../plug-ins/file-faxg3/faxg3.c:233
-#: ../plug-ins/file-fits/fits.c:358 ../plug-ins/file-fli/fli-gimp.c:460
-#: ../plug-ins/file-fli/fli-gimp.c:497 ../plug-ins/file-ico/ico-load.c:653
+#: ../plug-ins/file-fits/fits.c:358 ../plug-ins/file-fli/fli-picman.c:460
+#: ../plug-ins/file-fli/fli-picman.c:497 ../plug-ins/file-ico/ico-load.c:653
 #: ../plug-ins/file-ico/ico-load.c:732 ../plug-ins/file-jpeg/jpeg-load.c:109
 #: ../plug-ins/file-jpeg/jpeg-load.c:831 ../plug-ins/file-psd/psd-load.c:131
 #: ../plug-ins/file-psd/psd-thumb-load.c:80
@@ -1031,8 +1031,8 @@ msgstr "Lataa kanava-asetukset"
 #: ../plug-ins/flame/flame.c:412
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:1863
 #: ../plug-ins/fractal-explorer/fractal-explorer.c:929
-#: ../plug-ins/gfig/gfig.c:434 ../plug-ins/help/gimphelplocale.c:223
-#: ../plug-ins/help/gimphelplocale.c:239
+#: ../plug-ins/gfig/gfig.c:434 ../plug-ins/help/picmanhelplocale.c:223
+#: ../plug-ins/help/picmanhelplocale.c:239
 #: ../plug-ins/lighting/lighting-ui.c:1354
 #, c-format
 msgid "Could not open '%s' for reading: %s"
@@ -1060,7 +1060,7 @@ msgstr "Tallenna kanava-asetukset"
 #: ../plug-ins/common/file-tiff-save.c:683 ../plug-ins/common/file-xbm.c:1034
 #: ../plug-ins/common/file-xwd.c:614 ../plug-ins/common/sphere-designer.c:2112
 #: ../plug-ins/file-bmp/bmp-write.c:296 ../plug-ins/file-fits/fits.c:476
-#: ../plug-ins/file-fli/fli-gimp.c:750 ../plug-ins/file-ico/ico-save.c:1008
+#: ../plug-ins/file-fli/fli-picman.c:750 ../plug-ins/file-ico/ico-save.c:1008
 #: ../plug-ins/file-jpeg/jpeg-save.c:325 ../plug-ins/file-psd/psd-save.c:1635
 #: ../plug-ins/file-uri/uri-backend-gnomevfs.c:283
 #: ../plug-ins/file-uri/uri-backend-libcurl.c:163
@@ -1096,7 +1096,7 @@ msgid "Checkerboard"
 msgstr "Ruutukuvio"
 
 #: ../plug-ins/common/checkerboard.c:412
-#: ../plug-ins/gimpressionist/sizemap.c:511
+#: ../plug-ins/picmanressionist/sizemap.c:511
 msgid "_Size:"
 msgstr "_Koko:"
 
@@ -1294,8 +1294,8 @@ msgstr "Satunnaiset luvut siemenestä (jaettu)"
 
 #: ../plug-ins/common/cml-explorer.c:300 ../plug-ins/common/cml-explorer.c:308
 #: ../plug-ins/common/decompose.c:188
-#: ../plug-ins/gimpressionist/orientation.c:180
-#: ../plug-ins/gimpressionist/size.c:183
+#: ../plug-ins/picmanressionist/orientation.c:180
+#: ../plug-ins/picmanressionist/size.c:183
 msgid "Hue"
 msgstr "Sävy"
 
@@ -1306,8 +1306,8 @@ msgstr "Saturaatio"
 
 #: ../plug-ins/common/cml-explorer.c:302 ../plug-ins/common/cml-explorer.c:310
 #: ../plug-ins/common/decompose.c:190
-#: ../plug-ins/gimpressionist/orientation.c:156
-#: ../plug-ins/gimpressionist/size.c:159
+#: ../plug-ins/picmanressionist/orientation.c:156
+#: ../plug-ins/picmanressionist/size.c:159
 msgid "Value"
 msgstr "Arvo"
 
@@ -2203,8 +2203,8 @@ msgstr "Taivutus käyriin"
 #. Preview area, top of column
 #. preview
 #: ../plug-ins/common/curve-bend.c:1247
-#: ../plug-ins/gimpressionist/orientmap.c:592
-#: ../plug-ins/gimpressionist/sizemap.c:461
+#: ../plug-ins/picmanressionist/orientmap.c:592
+#: ../plug-ins/picmanressionist/sizemap.c:461
 #: ../plug-ins/print/print-page-layout.c:159
 msgid "Preview"
 msgstr "Esikatselu"
@@ -2788,7 +2788,7 @@ msgstr "Säde _1:"
 msgid "R_adius 2:"
 msgstr "Säde _2:"
 
-#: ../plug-ins/common/edge-dog.c:370 ../plug-ins/gimpressionist/paper.c:167
+#: ../plug-ins/common/edge-dog.c:370 ../plug-ins/picmanressionist/paper.c:167
 msgid "_Invert"
 msgstr "Käänteinen"
 
@@ -2994,7 +2994,7 @@ msgstr "Ladataan KISS paletti"
 #: ../plug-ins/common/file-wmf.c:994 ../plug-ins/common/file-xbm.c:741
 #: ../plug-ins/common/file-xpm.c:352 ../plug-ins/common/file-xwd.c:520
 #: ../plug-ins/file-bmp/bmp-read.c:159 ../plug-ins/file-faxg3/faxg3.c:217
-#: ../plug-ins/file-fli/fli-gimp.c:502 ../plug-ins/file-ico/ico-load.c:646
+#: ../plug-ins/file-fli/fli-picman.c:502 ../plug-ins/file-ico/ico-load.c:646
 #: ../plug-ins/file-jpeg/jpeg-load.c:115 ../plug-ins/file-psd/psd-load.c:136
 #: ../plug-ins/file-sgi/sgi.c:331 ../plug-ins/file-xjt/xjt.c:3363
 #, c-format
@@ -3021,7 +3021,7 @@ msgstr "Värejä on väärä määrä (%d)"
 #: ../plug-ins/common/file-tga.c:1175 ../plug-ins/common/file-tiff-save.c:693
 #: ../plug-ins/common/file-xbm.c:1039 ../plug-ins/common/file-xpm.c:637
 #: ../plug-ins/common/file-xwd.c:619 ../plug-ins/file-bmp/bmp-write.c:307
-#: ../plug-ins/file-fits/fits.c:481 ../plug-ins/file-fli/fli-gimp.c:718
+#: ../plug-ins/file-fits/fits.c:481 ../plug-ins/file-fli/fli-picman.c:718
 #: ../plug-ins/file-ico/ico-save.c:1002 ../plug-ins/file-jpeg/jpeg-save.c:282
 #: ../plug-ins/file-psd/psd-save.c:1640 ../plug-ins/file-sgi/sgi.c:554
 #: ../plug-ins/file-xjt/xjt.c:1710
@@ -3131,8 +3131,8 @@ msgid "Cannot operate on unknown image types."
 msgstr "Ei voi käsitellä tuntemattomia kuvatyyppejä."
 
 #: ../plug-ins/common/file-gbr.c:154 ../plug-ins/common/file-gbr.c:175
-msgid "GIMP brush"
-msgstr "GIMP sivellin"
+msgid "PICMAN brush"
+msgstr "PICMAN sivellin"
 
 #: ../plug-ins/common/file-gbr.c:401 ../plug-ins/common/file-gbr.c:413
 msgid "Unsupported brush format"
@@ -3140,7 +3140,7 @@ msgstr "Tuntematon siveltimen muoto"
 
 #: ../plug-ins/common/file-gbr.c:425
 #, c-format
-msgid "Error in GIMP brush file '%s'"
+msgid "Error in PICMAN brush file '%s'"
 msgstr "Virhe sivellintiedostossa \"%s\""
 
 #: ../plug-ins/common/file-gbr.c:433
@@ -3155,8 +3155,8 @@ msgid "Unnamed"
 msgstr "Nimeämätön"
 
 #: ../plug-ins/common/file-gbr.c:622
-msgid "GIMP brushes are either GRAYSCALE or RGBA"
-msgstr "GIMP siveltimet ovat harmaasävyisiä tai RGBA"
+msgid "PICMAN brushes are either GRAYSCALE or RGBA"
+msgstr "PICMAN siveltimet ovat harmaasävyisiä tai RGBA"
 
 #: ../plug-ins/common/file-gbr.c:720
 msgid "Save as Brush"
@@ -3168,7 +3168,7 @@ msgid "Spacing:"
 msgstr "Välistys:"
 
 #: ../plug-ins/common/file-gbr.c:758 ../plug-ins/common/file-gih.c:925
-#: ../plug-ins/common/file-pat.c:556 ../plug-ins/gimpressionist/presets.c:666
+#: ../plug-ins/common/file-pat.c:556 ../plug-ins/picmanressionist/presets.c:666
 msgid "Description:"
 msgstr "Kuvaus:"
 
@@ -3324,8 +3324,8 @@ msgid "The default comment is limited to %d characters."
 msgstr "Kommentti on rajattu %d merkkiin."
 
 #: ../plug-ins/common/file-gih.c:209 ../plug-ins/common/file-gih.c:230
-msgid "GIMP brush (animated)"
-msgstr "GIMP sivellin (animoitu)"
+msgid "PICMAN brush (animated)"
+msgstr "PICMAN sivellin (animoitu)"
 
 #: ../plug-ins/common/file-gih.c:324
 #, c-format
@@ -3333,12 +3333,12 @@ msgid "Layer %s doesn't have an alpha channel, skipped"
 msgstr "Tasolla %s ei ole alfa-kanavaa."
 
 #: ../plug-ins/common/file-gih.c:503
-msgid "Error in GIMP brush pipe file."
-msgstr "Virhe Gimpin sivellinputken tiedostossa."
+msgid "Error in PICMAN brush pipe file."
+msgstr "Virhe Picmanin sivellinputken tiedostossa."
 
 #: ../plug-ins/common/file-gih.c:569
-msgid "GIMP brush file appears to be corrupted."
-msgstr "Gimpin sivellintiedosto näyttää olevan vaurioitunut."
+msgid "PICMAN brush file appears to be corrupted."
+msgstr "Picmanin sivellintiedosto näyttää olevan vaurioitunut."
 
 #: ../plug-ins/common/file-gih.c:718
 msgid "Couldn't load one brush in the pipe, giving up."
@@ -3627,8 +3627,8 @@ msgid "MNG animation"
 msgstr "MNG animaatio"
 
 #: ../plug-ins/common/file-pat.c:123 ../plug-ins/common/file-pat.c:145
-msgid "GIMP pattern"
-msgstr "GIMP kuvio"
+msgid "PICMAN pattern"
+msgstr "PICMAN kuvio"
 
 #: ../plug-ins/common/file-pat.c:371
 #, c-format
@@ -3862,7 +3862,7 @@ msgid "Invalid X resolution."
 msgstr "Virheellinen X-tarkkuus."
 
 #: ../plug-ins/common/file-pnm.c:555
-msgid "Image width is larger than GIMP can handle."
+msgid "Image width is larger than PICMAN can handle."
 msgstr ""
 
 #: ../plug-ins/common/file-pnm.c:562
@@ -3870,7 +3870,7 @@ msgid "Invalid Y resolution."
 msgstr "Virheellinen Y-tarkkuus."
 
 #: ../plug-ins/common/file-pnm.c:564
-msgid "Image height is larger than GIMP can handle."
+msgid "Image height is larger than PICMAN can handle."
 msgstr ""
 
 #: ../plug-ins/common/file-pnm.c:576
@@ -3924,7 +3924,7 @@ msgstr "PostScript ei voi tallentaa kuvia joissa on läpinäkyvyys"
 #, c-format
 msgid ""
 "Error starting Ghostscript. Make sure that Ghostscript is installed and - if "
-"necessary - use the environment variable GS_PROG to tell GIMP about its "
+"necessary - use the environment variable GS_PROG to tell PICMAN about its "
 "location.\n"
 "(%s)"
 msgstr ""
@@ -3990,8 +3990,8 @@ msgid "B/W"
 msgstr "Mustavalko"
 
 #: ../plug-ins/common/file-ps.c:3232 ../plug-ins/common/file-xpm.c:479
-#: ../plug-ins/gimpressionist/color.c:66
-#: ../plug-ins/gimpressionist/general.c:170
+#: ../plug-ins/picmanressionist/color.c:66
+#: ../plug-ins/picmanressionist/general.c:170
 #: ../plug-ins/imagemap/imap_menu.c:213
 msgid "Color"
 msgstr "Väri"
@@ -4213,7 +4213,7 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image width is larger than GIMP can handle"
+"Image width is larger than PICMAN can handle"
 msgstr ""
 
 #: ../plug-ins/common/file-sunras.c:472 ../plug-ins/common/file-xbm.c:840
@@ -4229,7 +4229,7 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image height is larger than GIMP can handle"
+"Image height is larger than PICMAN can handle"
 msgstr ""
 
 #: ../plug-ins/common/file-sunras.c:518
@@ -4335,8 +4335,8 @@ msgstr "Tuo _polut"
 
 #: ../plug-ins/common/file-svg.c:948
 msgid ""
-"Import path elements of the SVG so they can be used with the GIMP path tool"
-msgstr "Tuo polut GIMPin polkutyökalun käyttöön"
+"Import path elements of the SVG so they can be used with the PICMAN path tool"
+msgstr "Tuo polut PICMANin polkutyökalun käyttöön"
 
 #: ../plug-ins/common/file-svg.c:961
 msgid "Merge imported paths"
@@ -4410,12 +4410,12 @@ msgstr "TIFF-kanava"
 #: ../plug-ins/file-psd/psd-load.c:325
 msgid ""
 "Warning:\n"
-"The image you are loading has 16 bits per channel. GIMP can only handle 8 "
+"The image you are loading has 16 bits per channel. PICMAN can only handle 8 "
 "bit, so it will be converted for you. Information will be lost because of "
 "this conversion."
 msgstr ""
 "Varoitus:\n"
-"Kuvassa on 16 bittiä värikanavaa kohti. GIMP voi käsitellä vain 8 bittiä per "
+"Kuvassa on 16 bittiä värikanavaa kohti. PICMAN voi käsitellä vain 8 bittiä per "
 "kanava. Tiedosto muunnetaan ja tarkkuutta katoaa tämän muutoksen vuoksi."
 
 #: ../plug-ins/common/file-tiff-save.c:887
@@ -4954,16 +4954,16 @@ msgid "Y_2:"
 msgstr "Y_2:"
 
 #: ../plug-ins/common/gee-zoom.c:121 ../plug-ins/common/gee.c:99
-msgid "A big hello from the GIMP team!"
-msgstr "Iso hali Gimp-tiimiltä!"
+msgid "A big hello from the PICMAN team!"
+msgstr "Iso hali Picman-tiimiltä!"
 
 #: ../plug-ins/common/gee-zoom.c:126 ../plug-ins/common/gee-zoom.c:186
 msgid "Gee Zoom"
 msgstr ""
 
 #: ../plug-ins/common/gee-zoom.c:192 ../plug-ins/common/gee.c:166
-msgid "Thank You for Choosing GIMP"
-msgstr "Kiitos että valitsit GIMPin"
+msgid "Thank You for Choosing PICMAN"
+msgstr "Kiitos että valitsit PICMANin"
 
 #: ../plug-ins/common/gee-zoom.c:200
 #, c-format
@@ -6938,7 +6938,7 @@ msgid "Use the background color"
 msgstr "Käytä taustaväriä"
 
 #: ../plug-ins/common/sphere-designer.c:291
-#: ../plug-ins/gimpressionist/general.c:166
+#: ../plug-ins/picmanressionist/general.c:166
 msgid "Solid"
 msgstr "Tasainen"
 
@@ -7034,7 +7034,7 @@ msgstr ""
 
 #. Scale
 #: ../plug-ins/common/sphere-designer.c:2748
-#: ../plug-ins/gimpressionist/paper.c:194
+#: ../plug-ins/picmanressionist/paper.c:194
 #: ../plug-ins/ifs-compose/ifs-compose.c:554
 msgid "Scale:"
 msgstr "Skaala:"
@@ -7328,7 +7328,7 @@ msgstr "Tallennettu"
 
 #: ../plug-ins/common/unit-editor.c:94
 msgid ""
-"A unit definition will only be saved before GIMP exits if this column is "
+"A unit definition will only be saved before PICMAN exits if this column is "
 "checked."
 msgstr "Määritelmä tallennetaan vain, jos tässä sarakkeessa on rasti."
 
@@ -7338,8 +7338,8 @@ msgstr "Tunniste"
 
 #: ../plug-ins/common/unit-editor.c:96
 msgid ""
-"This string will be used to identify a unit in GIMP's configuration files."
-msgstr "Tämä tunnistaa yksikön GIMPin konfiguraatiotiedostoissa."
+"This string will be used to identify a unit in PICMAN's configuration files."
+msgstr "Tämä tunnistaa yksikön PICMANin konfiguraatiotiedostoissa."
 
 #: ../plug-ins/common/unit-editor.c:98
 msgid "Factor"
@@ -7407,7 +7407,7 @@ msgid "Create a new unit using the currently selected unit as template"
 msgstr ""
 
 #: ../plug-ins/common/unit-editor.c:145
-msgid "Create or alter units used in GIMP"
+msgid "Create or alter units used in PICMAN"
 msgstr ""
 
 #: ../plug-ins/common/unit-editor.c:150
@@ -8002,7 +8002,7 @@ msgstr "Molemmat"
 msgid "Higher values restrict the effect to fewer areas of the image"
 msgstr "Suuremmat arvot rajoittavat efektin pienemmille alueille kuvasta"
 
-#: ../plug-ins/common/wind.c:1027 ../plug-ins/gimpressionist/orientmap.c:694
+#: ../plug-ins/common/wind.c:1027 ../plug-ins/picmanressionist/orientmap.c:694
 msgid "_Strength:"
 msgstr "_Voima:"
 
@@ -8124,24 +8124,24 @@ msgstr ""
 msgid "Image Composing"
 msgstr ""
 
-#: ../plug-ins/file-fli/fli-gimp.c:166 ../plug-ins/file-fli/fli-gimp.c:186
+#: ../plug-ins/file-fli/fli-picman.c:166 ../plug-ins/file-fli/fli-picman.c:186
 msgid "AutoDesk FLIC animation"
 msgstr ""
 
-#: ../plug-ins/file-fli/fli-gimp.c:562
+#: ../plug-ins/file-fli/fli-picman.c:562
 #, c-format
 msgid "Frame (%i)"
 msgstr "Ruutu (%i)"
 
-#: ../plug-ins/file-fli/fli-gimp.c:714
+#: ../plug-ins/file-fli/fli-picman.c:714
 msgid "Sorry, I can save only INDEXED and GRAY images."
 msgstr ""
 
-#: ../plug-ins/file-fli/fli-gimp.c:846
+#: ../plug-ins/file-fli/fli-picman.c:846
 msgid "GFLI 1.3 - Load framestack"
 msgstr ""
 
-#: ../plug-ins/file-fli/fli-gimp.c:914
+#: ../plug-ins/file-fli/fli-picman.c:914
 msgid "GFLI 1.3 - Save framestack"
 msgstr ""
 
@@ -8212,8 +8212,8 @@ msgid "According to the EXIF data, this image is rotated."
 msgstr "EXIF data perusteella tämä kuva on käännetty"
 
 #: ../plug-ins/file-jpeg/jpeg-exif.c:367
-msgid "Would you like GIMP to rotate it into the standard orientation?"
-msgstr "Haluatko että GIMP kääntää sen standardiin asentoon?"
+msgid "Would you like PICMAN to rotate it into the standard orientation?"
+msgstr "Haluatko että PICMAN kääntää sen standardiin asentoon?"
 
 #: ../plug-ins/file-jpeg/jpeg-load.c:241
 msgid "JPEG preview"
@@ -8428,7 +8428,7 @@ msgstr ""
 "tallennusliitännäinen ei tue sitä, käytetään normaalia tilaa."
 
 #: ../plug-ins/file-psd/psd-save.c:631
-msgid "Error: Can't convert GIMP base imagetype to PSD mode"
+msgid "Error: Can't convert PICMAN base imagetype to PSD mode"
 msgstr ""
 
 #: ../plug-ins/file-psd/psd-save.c:1605
@@ -8491,39 +8491,39 @@ msgstr ""
 "Aggressiivinen RLE\n"
 "(ei SGI:n tukema)"
 
-#: ../plug-ins/file-uri/gimpmountoperation.c:448
+#: ../plug-ins/file-uri/picmanmountoperation.c:448
 msgid "Co_nnect"
 msgstr "_Yhdistä"
 
-#: ../plug-ins/file-uri/gimpmountoperation.c:492
+#: ../plug-ins/file-uri/picmanmountoperation.c:492
 msgid "Connect _anonymously"
 msgstr "Yhdistä _anonyymisti"
 
-#: ../plug-ins/file-uri/gimpmountoperation.c:501
+#: ../plug-ins/file-uri/picmanmountoperation.c:501
 msgid "Connect as u_ser:"
 msgstr "Yhdistetään _käyttäjänä:"
 
-#: ../plug-ins/file-uri/gimpmountoperation.c:538
+#: ../plug-ins/file-uri/picmanmountoperation.c:538
 msgid "_Username:"
 msgstr "_Käyttäjätunnus:"
 
-#: ../plug-ins/file-uri/gimpmountoperation.c:542
+#: ../plug-ins/file-uri/picmanmountoperation.c:542
 msgid "_Domain:"
 msgstr "_Aluenimi:"
 
-#: ../plug-ins/file-uri/gimpmountoperation.c:547
+#: ../plug-ins/file-uri/picmanmountoperation.c:547
 msgid "_Password:"
 msgstr "_Salasana:"
 
-#: ../plug-ins/file-uri/gimpmountoperation.c:562
+#: ../plug-ins/file-uri/picmanmountoperation.c:562
 msgid "_Forget password immediately"
 msgstr "_Unohda salasana heti"
 
-#: ../plug-ins/file-uri/gimpmountoperation.c:570
+#: ../plug-ins/file-uri/picmanmountoperation.c:570
 msgid "_Remember password until you logout"
 msgstr "_Muista salasana istunnon ajan"
 
-#: ../plug-ins/file-uri/gimpmountoperation.c:578
+#: ../plug-ins/file-uri/picmanmountoperation.c:578
 msgid "_Remember forever"
 msgstr "Muista _aina"
 
@@ -8626,7 +8626,7 @@ msgid "URI"
 msgstr "URI"
 
 #: ../plug-ins/file-xjt/xjt.c:488 ../plug-ins/file-xjt/xjt.c:506
-msgid "GIMP compressed XJT image"
+msgid "PICMAN compressed XJT image"
 msgstr ""
 
 #: ../plug-ins/file-xjt/xjt.c:736
@@ -8739,8 +8739,8 @@ msgstr "Satunnaista"
 msgid "Same"
 msgstr "Sama"
 
-#: ../plug-ins/flame/flame.c:747 ../plug-ins/gimpressionist/orientation.c:164
-#: ../plug-ins/gimpressionist/size.c:167
+#: ../plug-ins/flame/flame.c:747 ../plug-ins/picmanressionist/orientation.c:164
+#: ../plug-ins/picmanressionist/size.c:167
 msgid "Random"
 msgstr "Satunnainen"
 
@@ -8889,16 +8889,16 @@ msgid "C_amera"
 msgstr "_Kamera"
 
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:547
-#: ../plug-ins/gfig/gfig-dialog.c:274 ../plug-ins/gimpressionist/utils.c:143
+#: ../plug-ins/gfig/gfig-dialog.c:274 ../plug-ins/picmanressionist/utils.c:143
 #: ../plug-ins/gradient-flare/gradient-flare.c:881
 #, c-format
 msgid ""
-"No %s in gimprc:\n"
+"No %s in picmanrc:\n"
 "You need to add an entry like\n"
 "(%s \"%s\")\n"
 "to your %s file."
 msgstr ""
-"gimprc-tiedostosta puuttuu %s\n"
+"picmanrc-tiedostosta puuttuu %s\n"
 "Lisää kohta:\n"
 "(%s \"%s\")\n"
 "tiedostoon %s."
@@ -9415,7 +9415,7 @@ msgid "Max undo:"
 msgstr "Perumisten enimmäismäärä:"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1283
-#: ../plug-ins/gimpressionist/general.c:185
+#: ../plug-ins/picmanressionist/general.c:185
 msgid "Transparent"
 msgstr "Läpinäkyvä"
 
@@ -9509,7 +9509,7 @@ msgid "Left"
 msgstr "Vasen"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1718
-#: ../plug-ins/gimpressionist/orientation.c:148
+#: ../plug-ins/picmanressionist/orientation.c:148
 msgid "Orientation:"
 msgstr "Suunta:"
 
@@ -9568,615 +9568,615 @@ msgstr ""
 msgid "Error trying to open temporary file '%s' for parasite loading: %s"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/brush.c:247
+#: ../plug-ins/picmanressionist/brush.c:247
 msgid "Can only save drawables!"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/brush.c:252
+#: ../plug-ins/picmanressionist/brush.c:252
 msgid "Save Brush"
 msgstr "Tallenna sivellin"
 
-#: ../plug-ins/gimpressionist/brush.c:507
+#: ../plug-ins/picmanressionist/brush.c:507
 msgid "_Brush"
 msgstr "Sivellin"
 
-#: ../plug-ins/gimpressionist/brush.c:544
+#: ../plug-ins/picmanressionist/brush.c:544
 msgid "Gamma:"
 msgstr "Gamma:"
 
-#: ../plug-ins/gimpressionist/brush.c:562
+#: ../plug-ins/picmanressionist/brush.c:562
 msgid "Changes the gamma (brightness) of the selected brush"
 msgstr "Muuta siveltimen gammaa (valoisuutta)"
 
-#: ../plug-ins/gimpressionist/brush.c:570
+#: ../plug-ins/picmanressionist/brush.c:570
 msgid "Select:"
 msgstr "Valitse:"
 
-#: ../plug-ins/gimpressionist/brush.c:599
+#: ../plug-ins/picmanressionist/brush.c:599
 msgid "Aspect ratio:"
 msgstr "Kuvasuhde:"
 
-#: ../plug-ins/gimpressionist/brush.c:603
+#: ../plug-ins/picmanressionist/brush.c:603
 msgid "Specifies the aspect ratio of the brush"
 msgstr "Määritä siveltimen kuvasuhde"
 
-#: ../plug-ins/gimpressionist/brush.c:612
-#: ../plug-ins/gimpressionist/paper.c:206
+#: ../plug-ins/picmanressionist/brush.c:612
+#: ../plug-ins/picmanressionist/paper.c:206
 msgid "Relief:"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/brush.c:616
-#: ../plug-ins/gimpressionist/paper.c:210
+#: ../plug-ins/picmanressionist/brush.c:616
+#: ../plug-ins/picmanressionist/paper.c:210
 msgid "Specifies the amount of embossing to apply to the image (in percent)"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/color.c:60
+#: ../plug-ins/picmanressionist/color.c:60
 msgid "Co_lor"
 msgstr "_Väri"
 
-#: ../plug-ins/gimpressionist/color.c:70
+#: ../plug-ins/picmanressionist/color.c:70
 msgid "A_verage under brush"
 msgstr "Keskiarvo siveltimen alta"
 
-#: ../plug-ins/gimpressionist/color.c:72
+#: ../plug-ins/picmanressionist/color.c:72
 msgid "C_enter of brush"
 msgstr "Siveltimen keskeltä"
 
-#: ../plug-ins/gimpressionist/color.c:79
+#: ../plug-ins/picmanressionist/color.c:79
 msgid "Color is computed from the average of all pixels under the brush"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/color.c:83
+#: ../plug-ins/picmanressionist/color.c:83
 msgid "Samples the color from the pixel in the center of the brush"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/color.c:94
+#: ../plug-ins/picmanressionist/color.c:94
 msgid "Color _noise:"
 msgstr "Värikohina:"
 
-#: ../plug-ins/gimpressionist/color.c:98
+#: ../plug-ins/picmanressionist/color.c:98
 msgid "Adds random noise to the color"
 msgstr "Lisää satunnaisuutta väriin"
 
-#: ../plug-ins/gimpressionist/general.c:134
+#: ../plug-ins/picmanressionist/general.c:134
 #: ../plug-ins/gradient-flare/gradient-flare.c:3529
 msgid "_General"
 msgstr "_Yleiset"
 
-#: ../plug-ins/gimpressionist/general.c:150
+#: ../plug-ins/picmanressionist/general.c:150
 msgid "Keep original"
 msgstr "Säilytä alkuperäinen"
 
-#: ../plug-ins/gimpressionist/general.c:151
+#: ../plug-ins/picmanressionist/general.c:151
 msgid "Preserve the original image as a background"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/general.c:156
+#: ../plug-ins/picmanressionist/general.c:156
 msgid "From paper"
 msgstr "Paperista"
 
-#: ../plug-ins/gimpressionist/general.c:157
+#: ../plug-ins/picmanressionist/general.c:157
 msgid "Copy the texture of the selected paper as a background"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/general.c:167
+#: ../plug-ins/picmanressionist/general.c:167
 msgid "Solid colored background"
 msgstr "Tasainen värillinen tausta"
 
-#: ../plug-ins/gimpressionist/general.c:186
+#: ../plug-ins/picmanressionist/general.c:186
 msgid "Use a transparent background; Only the strokes painted will be visible"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/general.c:203
+#: ../plug-ins/picmanressionist/general.c:203
 msgid "Paint edges"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/general.c:208
+#: ../plug-ins/picmanressionist/general.c:208
 msgid "Selects if to place strokes all the way out to the edges of the image"
 msgstr ""
 
 #. Tileable checkbox
-#: ../plug-ins/gimpressionist/general.c:213 ../plug-ins/maze/maze-dialog.c:278
+#: ../plug-ins/picmanressionist/general.c:213 ../plug-ins/maze/maze-dialog.c:278
 msgid "Tileable"
 msgstr "Saumaton"
 
-#: ../plug-ins/gimpressionist/general.c:217
+#: ../plug-ins/picmanressionist/general.c:217
 msgid "Selects if the resulting image should be seamlessly tileable"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/general.c:222
+#: ../plug-ins/picmanressionist/general.c:222
 msgid "Drop shadow"
 msgstr "Varjo"
 
-#: ../plug-ins/gimpressionist/general.c:227
+#: ../plug-ins/picmanressionist/general.c:227
 msgid "Adds a shadow effect to each brush stroke"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/general.c:240
+#: ../plug-ins/picmanressionist/general.c:240
 msgid "Edge darken:"
 msgstr "Reunan tummennus"
 
-#: ../plug-ins/gimpressionist/general.c:244
+#: ../plug-ins/picmanressionist/general.c:244
 msgid "How much to \"darken\" the edges of each brush stroke"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/general.c:249
+#: ../plug-ins/picmanressionist/general.c:249
 msgid "Shadow darken:"
 msgstr "Varjon tummennus:"
 
-#: ../plug-ins/gimpressionist/general.c:253
+#: ../plug-ins/picmanressionist/general.c:253
 msgid "How much to \"darken\" the drop shadow"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/general.c:258
+#: ../plug-ins/picmanressionist/general.c:258
 msgid "Shadow depth:"
 msgstr "Varjon syvyys:"
 
-#: ../plug-ins/gimpressionist/general.c:262
+#: ../plug-ins/picmanressionist/general.c:262
 msgid ""
 "The depth of the drop shadow, i.e. how far apart from the object it should be"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/general.c:267
+#: ../plug-ins/picmanressionist/general.c:267
 msgid "Shadow blur:"
 msgstr "Varjon epäterävyys:"
 
-#: ../plug-ins/gimpressionist/general.c:271
+#: ../plug-ins/picmanressionist/general.c:271
 msgid "How much to blur the drop shadow"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/general.c:276
+#: ../plug-ins/picmanressionist/general.c:276
 msgid "Deviation threshold:"
 msgstr "Poikkeamaraja:"
 
-#: ../plug-ins/gimpressionist/general.c:280
+#: ../plug-ins/picmanressionist/general.c:280
 msgid "A bailout-value for adaptive selections"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/gimp.c:90
+#: ../plug-ins/picmanressionist/picman.c:90
 msgid "Performs various artistic operations"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/gimp.c:95
-msgid "_GIMPressionist..."
-msgstr "_GIMPressionisti..."
+#: ../plug-ins/picmanressionist/picman.c:95
+msgid "_PICMANressionist..."
+msgstr "_PICMANressionisti..."
 
-#: ../plug-ins/gimpressionist/gimp.c:371
+#: ../plug-ins/picmanressionist/picman.c:371
 msgid "Painting"
 msgstr "Maalataan"
 
-#: ../plug-ins/gimpressionist/gimpressionist.c:139
-msgid "GIMPressionist"
-msgstr "GIMPressionisti"
+#: ../plug-ins/picmanressionist/picmanressionist.c:139
+msgid "PICMANressionist"
+msgstr "PICMANressionisti"
 
-#: ../plug-ins/gimpressionist/orientation.c:92
+#: ../plug-ins/picmanressionist/orientation.c:92
 msgid "Or_ientation"
 msgstr "_Asento"
 
-#: ../plug-ins/gimpressionist/orientation.c:106
+#: ../plug-ins/picmanressionist/orientation.c:106
 msgid "Directions:"
 msgstr "Suunnat:"
 
-#: ../plug-ins/gimpressionist/orientation.c:110
+#: ../plug-ins/picmanressionist/orientation.c:110
 msgid "The number of directions (i.e. brushes) to use"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:118
+#: ../plug-ins/picmanressionist/orientation.c:118
 msgid "Start angle:"
 msgstr "Aloituskulma:"
 
-#: ../plug-ins/gimpressionist/orientation.c:122
+#: ../plug-ins/picmanressionist/orientation.c:122
 msgid "The starting angle of the first brush to create"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:130
+#: ../plug-ins/picmanressionist/orientation.c:130
 msgid "Angle span:"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:134
+#: ../plug-ins/picmanressionist/orientation.c:134
 msgid "The angle span of the first brush to create"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:157
+#: ../plug-ins/picmanressionist/orientation.c:157
 msgid ""
 "Let the value (brightness) of the region determine the direction of the "
 "stroke"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:160
-#: ../plug-ins/gimpressionist/size.c:163
+#: ../plug-ins/picmanressionist/orientation.c:160
+#: ../plug-ins/picmanressionist/size.c:163
 msgid "Radius"
 msgstr "Säde"
 
-#: ../plug-ins/gimpressionist/orientation.c:161
+#: ../plug-ins/picmanressionist/orientation.c:161
 msgid ""
 "The distance from the center of the image determines the direction of the "
 "stroke"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:165
+#: ../plug-ins/picmanressionist/orientation.c:165
 msgid "Selects a random direction of each stroke"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:168
-#: ../plug-ins/gimpressionist/size.c:171
+#: ../plug-ins/picmanressionist/orientation.c:168
+#: ../plug-ins/picmanressionist/size.c:171
 msgid "Radial"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:169
+#: ../plug-ins/picmanressionist/orientation.c:169
 msgid "Let the direction from the center determine the direction of the stroke"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:176
-#: ../plug-ins/gimpressionist/size.c:179
+#: ../plug-ins/picmanressionist/orientation.c:176
+#: ../plug-ins/picmanressionist/size.c:179
 msgid "Flowing"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:177
-#: ../plug-ins/gimpressionist/size.c:180
+#: ../plug-ins/picmanressionist/orientation.c:177
+#: ../plug-ins/picmanressionist/size.c:180
 msgid "The strokes follow a \"flowing\" pattern"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:181
+#: ../plug-ins/picmanressionist/orientation.c:181
 msgid "The hue of the region determines the direction of the stroke"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:184
-#: ../plug-ins/gimpressionist/size.c:187
+#: ../plug-ins/picmanressionist/orientation.c:184
+#: ../plug-ins/picmanressionist/size.c:187
 msgid "Adaptive"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:185
+#: ../plug-ins/picmanressionist/orientation.c:185
 msgid "The direction that matches the original image the closest is selected"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:192
-#: ../plug-ins/gimpressionist/size.c:196
+#: ../plug-ins/picmanressionist/orientation.c:192
+#: ../plug-ins/picmanressionist/size.c:196
 msgid "Manual"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:193
+#: ../plug-ins/picmanressionist/orientation.c:193
 msgid "Manually specify the stroke orientation"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientation.c:204
+#: ../plug-ins/picmanressionist/orientation.c:204
 msgid "Opens up the Orientation Map Editor"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:526
+#: ../plug-ins/picmanressionist/orientmap.c:526
 msgid "Orientation Map Editor"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:555
+#: ../plug-ins/picmanressionist/orientmap.c:555
 msgid "Vectors"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:567
+#: ../plug-ins/picmanressionist/orientmap.c:567
 msgid ""
 "The vector-field. Left-click to move selected vector, Right-click to point "
 "it towards mouse, Middle-click to add a new vector."
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:590
-#: ../plug-ins/gimpressionist/sizemap.c:459
+#: ../plug-ins/picmanressionist/orientmap.c:590
+#: ../plug-ins/picmanressionist/sizemap.c:459
 msgid "Adjust the preview's brightness"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:612
+#: ../plug-ins/picmanressionist/orientmap.c:612
 msgid "Select previous vector"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:618
+#: ../plug-ins/picmanressionist/orientmap.c:618
 msgid "Select next vector"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:620
-#: ../plug-ins/gimpressionist/sizemap.c:490
+#: ../plug-ins/picmanressionist/orientmap.c:620
+#: ../plug-ins/picmanressionist/sizemap.c:490
 msgid "A_dd"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:624
+#: ../plug-ins/picmanressionist/orientmap.c:624
 msgid "Add new vector"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:626
-#: ../plug-ins/gimpressionist/sizemap.c:497
+#: ../plug-ins/picmanressionist/orientmap.c:626
+#: ../plug-ins/picmanressionist/sizemap.c:497
 msgid "_Kill"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:630
+#: ../plug-ins/picmanressionist/orientmap.c:630
 msgid "Delete selected vector"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:641
+#: ../plug-ins/picmanressionist/orientmap.c:641
 msgid "Type"
 msgstr "Tyyppi"
 
-#: ../plug-ins/gimpressionist/orientmap.c:645
+#: ../plug-ins/picmanressionist/orientmap.c:645
 msgid "_Normal"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:646
+#: ../plug-ins/picmanressionist/orientmap.c:646
 msgid "Vorte_x"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:647
+#: ../plug-ins/picmanressionist/orientmap.c:647
 msgid "Vortex_2"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:648
+#: ../plug-ins/picmanressionist/orientmap.c:648
 msgid "Vortex_3"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:654
-#: ../plug-ins/gimpressionist/sizemap.c:542
+#: ../plug-ins/picmanressionist/orientmap.c:654
+#: ../plug-ins/picmanressionist/sizemap.c:542
 msgid "_Voronoi"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:662
+#: ../plug-ins/picmanressionist/orientmap.c:662
 msgid ""
 "Voronoi-mode makes only the vector closest to the given point have any "
 "influence"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:672
+#: ../plug-ins/picmanressionist/orientmap.c:672
 msgid "A_ngle:"
 msgstr "Kulma:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:676
+#: ../plug-ins/picmanressionist/orientmap.c:676
 msgid "Change the angle of the selected vector"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:683
+#: ../plug-ins/picmanressionist/orientmap.c:683
 msgid "Ang_le offset:"
 msgstr "Kulmasiirtymä:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:687
+#: ../plug-ins/picmanressionist/orientmap.c:687
 msgid "Offset all vectors with a given angle"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:698
+#: ../plug-ins/picmanressionist/orientmap.c:698
 msgid "Change the strength of the selected vector"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/orientmap.c:705
+#: ../plug-ins/picmanressionist/orientmap.c:705
 msgid "S_trength exp.:"
 msgstr "Voima exp.:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:709
-#: ../plug-ins/gimpressionist/sizemap.c:537
+#: ../plug-ins/picmanressionist/orientmap.c:709
+#: ../plug-ins/picmanressionist/sizemap.c:537
 msgid "Change the exponent of the strength"
 msgstr "Vaihda voiman eksponenttia"
 
-#: ../plug-ins/gimpressionist/paper.c:138
+#: ../plug-ins/picmanressionist/paper.c:138
 msgid "P_aper"
 msgstr "Paperi"
 
-#: ../plug-ins/gimpressionist/paper.c:173
+#: ../plug-ins/picmanressionist/paper.c:173
 msgid "Inverts the Papers texture"
 msgstr "Kääntää paperin tekstuurin"
 
-#: ../plug-ins/gimpressionist/paper.c:177
+#: ../plug-ins/picmanressionist/paper.c:177
 msgid "O_verlay"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/paper.c:182
+#: ../plug-ins/picmanressionist/paper.c:182
 msgid "Applies the paper as it is (without embossing it)"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/paper.c:198
+#: ../plug-ins/picmanressionist/paper.c:198
 msgid "Specifies the scale of the texture (in percent of original file)"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/placement.c:67
+#: ../plug-ins/picmanressionist/placement.c:67
 msgid "Pl_acement"
 msgstr "Sijoittelu"
 
-#: ../plug-ins/gimpressionist/placement.c:73
+#: ../plug-ins/picmanressionist/placement.c:73
 msgid "Placement"
 msgstr "Sijoittelu"
 
-#: ../plug-ins/gimpressionist/placement.c:77
+#: ../plug-ins/picmanressionist/placement.c:77
 msgid "Randomly"
 msgstr "Satunnaisesti"
 
-#: ../plug-ins/gimpressionist/placement.c:81
+#: ../plug-ins/picmanressionist/placement.c:81
 msgid "Evenly distributed"
 msgstr "Tasaisesti jaettu"
 
-#: ../plug-ins/gimpressionist/placement.c:89
+#: ../plug-ins/picmanressionist/placement.c:89
 msgid "Place strokes randomly around the image"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/placement.c:93
+#: ../plug-ins/picmanressionist/placement.c:93
 msgid "The strokes are evenly distributed across the image"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/placement.c:102
+#: ../plug-ins/picmanressionist/placement.c:102
 msgid "Centered"
 msgstr "Keskitetty"
 
-#: ../plug-ins/gimpressionist/placement.c:108
+#: ../plug-ins/picmanressionist/placement.c:108
 msgid "Focus the brush strokes around the center of the image"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/placement.c:120
+#: ../plug-ins/picmanressionist/placement.c:120
 msgid "Stroke _density:"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/placement.c:124
+#: ../plug-ins/picmanressionist/placement.c:124
 msgid "The relative density of the brush strokes"
 msgstr ""
 
 #.
-#. * gimp_filename_to_utf8 () and g_strerror () return temporary strings
+#. * picman_filename_to_utf8 () and g_strerror () return temporary strings
 #. * that need not and should not be freed. So this call is OK.
 #. *
-#: ../plug-ins/gimpressionist/ppmtool.c:650
+#: ../plug-ins/picmanressionist/ppmtool.c:650
 #, c-format
 msgid "Failed to save PPM file '%s': %s"
 msgstr "PPM-tiedoston '%s' kirjoittaminen epäonnistui: %s"
 
-#: ../plug-ins/gimpressionist/presets.c:640
+#: ../plug-ins/picmanressionist/presets.c:640
 msgid "Save Current"
 msgstr "Tallenna nykyinen"
 
-#: ../plug-ins/gimpressionist/presets.c:894
-msgid "Gimpressionist Defaults"
-msgstr "Gimpressionistin oletukset"
+#: ../plug-ins/picmanressionist/presets.c:894
+msgid "Picmanressionist Defaults"
+msgstr "Picmanressionistin oletukset"
 
-#: ../plug-ins/gimpressionist/presets.c:1015
+#: ../plug-ins/picmanressionist/presets.c:1015
 msgid "_Presets"
 msgstr "_Esiasetukset"
 
-#: ../plug-ins/gimpressionist/presets.c:1030
+#: ../plug-ins/picmanressionist/presets.c:1030
 msgid "Save Current..."
 msgstr "Tallenna nykyinen..."
 
-#: ../plug-ins/gimpressionist/presets.c:1038
+#: ../plug-ins/picmanressionist/presets.c:1038
 msgid "Save the current settings to the specified file"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/presets.c:1066
+#: ../plug-ins/picmanressionist/presets.c:1066
 msgid "Reads the selected Preset into memory"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/presets.c:1072
+#: ../plug-ins/picmanressionist/presets.c:1072
 msgid "Deletes the selected Preset"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/presets.c:1078
+#: ../plug-ins/picmanressionist/presets.c:1078
 msgid "Reread the folder of Presets"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/preview.c:174
-#: ../plug-ins/gimpressionist/repaint.c:1184
+#: ../plug-ins/picmanressionist/preview.c:174
+#: ../plug-ins/picmanressionist/repaint.c:1184
 #: ../plug-ins/imagemap/imap_polygon.c:515
 #: ../plug-ins/lighting/lighting-ui.c:1075
 msgid "_Update"
 msgstr "Virkistä"
 
-#: ../plug-ins/gimpressionist/preview.c:180
+#: ../plug-ins/picmanressionist/preview.c:180
 msgid "Refresh the Preview window"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/preview.c:188
+#: ../plug-ins/picmanressionist/preview.c:188
 msgid "Revert to the original image"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/size.c:95
+#: ../plug-ins/picmanressionist/size.c:95
 msgid "_Size"
 msgstr "_Koko"
 
-#: ../plug-ins/gimpressionist/size.c:109
+#: ../plug-ins/picmanressionist/size.c:109
 msgid "Sizes:"
 msgstr "Koot:"
 
-#: ../plug-ins/gimpressionist/size.c:113
+#: ../plug-ins/picmanressionist/size.c:113
 msgid "The number of sizes of brushes to use"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/size.c:121
+#: ../plug-ins/picmanressionist/size.c:121
 msgid "Minimum size:"
 msgstr "Minimikorkeus:"
 
-#: ../plug-ins/gimpressionist/size.c:125
+#: ../plug-ins/picmanressionist/size.c:125
 msgid "The smallest brush to create"
 msgstr "Pienin luotava sivellin"
 
-#: ../plug-ins/gimpressionist/size.c:133
+#: ../plug-ins/picmanressionist/size.c:133
 msgid "Maximum size:"
 msgstr "Maksimikorkeus:"
 
-#: ../plug-ins/gimpressionist/size.c:137
+#: ../plug-ins/picmanressionist/size.c:137
 msgid "The largest brush to create"
 msgstr "Suurin luotava sivellin"
 
-#: ../plug-ins/gimpressionist/size.c:151
+#: ../plug-ins/picmanressionist/size.c:151
 msgid "Size:"
 msgstr "Koko:"
 
-#: ../plug-ins/gimpressionist/size.c:160
+#: ../plug-ins/picmanressionist/size.c:160
 msgid ""
 "Let the value (brightness) of the region determine the size of the stroke"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/size.c:164
+#: ../plug-ins/picmanressionist/size.c:164
 msgid ""
 "The distance from the center of the image determines the size of the stroke"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/size.c:168
+#: ../plug-ins/picmanressionist/size.c:168
 msgid "Selects a random size for each stroke"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/size.c:172
+#: ../plug-ins/picmanressionist/size.c:172
 msgid "Let the direction from the center determine the size of the stroke"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/size.c:184
+#: ../plug-ins/picmanressionist/size.c:184
 msgid "The hue of the region determines the size of the stroke"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/size.c:188
+#: ../plug-ins/picmanressionist/size.c:188
 msgid "The brush-size that matches the original image the closest is selected"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/size.c:197
+#: ../plug-ins/picmanressionist/size.c:197
 msgid "Manually specify the stroke size"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/size.c:208
+#: ../plug-ins/picmanressionist/size.c:208
 msgid "Opens up the Size Map Editor"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/sizemap.c:401
+#: ../plug-ins/picmanressionist/sizemap.c:401
 msgid "Size Map Editor"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/sizemap.c:429
+#: ../plug-ins/picmanressionist/sizemap.c:429
 msgid "Smvectors"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/sizemap.c:439
+#: ../plug-ins/picmanressionist/sizemap.c:439
 msgid ""
 "The smvector-field. Left-click to move selected smvector, Right-click to "
 "point it towards mouse, Middle-click to add a new smvector."
 msgstr ""
 
-#: ../plug-ins/gimpressionist/sizemap.c:481
+#: ../plug-ins/picmanressionist/sizemap.c:481
 msgid "Select previous smvector"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/sizemap.c:488
+#: ../plug-ins/picmanressionist/sizemap.c:488
 msgid "Select next smvector"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/sizemap.c:495
+#: ../plug-ins/picmanressionist/sizemap.c:495
 msgid "Add new smvector"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/sizemap.c:502
+#: ../plug-ins/picmanressionist/sizemap.c:502
 msgid "Delete selected smvector"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/sizemap.c:515
+#: ../plug-ins/picmanressionist/sizemap.c:515
 msgid "Change the angle of the selected smvector"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/sizemap.c:522
+#: ../plug-ins/picmanressionist/sizemap.c:522
 msgid "S_trength:"
 msgstr "Voimakkuus:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:526
+#: ../plug-ins/picmanressionist/sizemap.c:526
 msgid "Change the strength of the selected smvector"
 msgstr ""
 
-#: ../plug-ins/gimpressionist/sizemap.c:533
+#: ../plug-ins/picmanressionist/sizemap.c:533
 msgid "St_rength exp.:"
 msgstr "Voiman exp.:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:549
+#: ../plug-ins/picmanressionist/sizemap.c:549
 msgid ""
 "Voronoi-mode makes only the smvector closest to the given point have any "
 "influence"
@@ -10459,8 +10459,8 @@ msgstr "Toissijainen liekki"
 
 #: ../plug-ins/help-browser/dialog.c:186
 #: ../plug-ins/help-browser/dialog.c:1134
-msgid "GIMP Help Browser"
-msgstr "GIMPin ohjeselain"
+msgid "PICMAN Help Browser"
+msgstr "PICMANin ohjeselain"
 
 #: ../plug-ins/help-browser/dialog.c:566
 msgid "Go back one page"
@@ -10515,7 +10515,7 @@ msgid "Toggle the visibility of the sidebar"
 msgstr ""
 
 #: ../plug-ins/help-browser/dialog.c:658
-msgid "Visit the GIMP documentation website"
+msgid "Visit the PICMAN documentation website"
 msgstr ""
 
 #: ../plug-ins/help-browser/dialog.c:1175
@@ -10532,36 +10532,36 @@ msgctxt "search"
 msgid "_Next"
 msgstr "_Seuraava"
 
-#: ../plug-ins/help/gimphelpdomain.c:181
+#: ../plug-ins/help/picmanhelpdomain.c:181
 #, c-format
 msgid "The help pages for '%s' are not available."
 msgstr ""
 
-#: ../plug-ins/help/gimphelpdomain.c:187
-msgid "The GIMP user manual is not available."
+#: ../plug-ins/help/picmanhelpdomain.c:187
+msgid "The PICMAN user manual is not available."
 msgstr ""
 
-#: ../plug-ins/help/gimphelpdomain.c:188
+#: ../plug-ins/help/picmanhelpdomain.c:188
 msgid ""
 "Please install the additional help package or use the online user manual at "
-"http://docs.gimp.org/."
+"http://docs.picman.org/."
 msgstr ""
 
-#: ../plug-ins/help/gimphelpdomain.c:197
+#: ../plug-ins/help/picmanhelpdomain.c:197
 msgid "Perhaps you are missing GIO backends and need to install GVFS?"
 msgstr ""
 
-#: ../plug-ins/help/gimphelpdomain.c:216
+#: ../plug-ins/help/picmanhelpdomain.c:216
 #, c-format
 msgid "Help ID '%s' unknown"
 msgstr "Avustus: koodi '%s' on tuntematon"
 
-#: ../plug-ins/help/gimphelplocale.c:209
+#: ../plug-ins/help/picmanhelplocale.c:209
 #, c-format
 msgid "Loading index from '%s'"
 msgstr "Ladataan indeksiä tiedostosta \"%s\""
 
-#: ../plug-ins/help/gimphelplocale.c:267
+#: ../plug-ins/help/picmanhelplocale.c:267
 #, c-format
 msgid ""
 "Parse error in '%s':\n"
@@ -10788,7 +10788,7 @@ msgid "Clear"
 msgstr "Tyhjennä"
 
 #: ../plug-ins/imagemap/imap_cmd_create.c:58
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:151
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:151
 msgid "Create"
 msgstr "Luo"
 
@@ -10813,41 +10813,41 @@ msgid "Edit Object"
 msgstr "Muokkaa objekti"
 
 #. Create the areas
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:117
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:147
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:251
-msgid "Use Gimp Guides"
-msgstr "Käytä GIMP apulinjoja"
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:117
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:147
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:251
+msgid "Use Picman Guides"
+msgstr "Käytä PICMAN apulinjoja"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:160
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:160
 msgid "Al_ternate"
 msgstr "Vaihtoehtoinen"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:165
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:165
 msgid "A_ll"
 msgstr "_Kaikki"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:169
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:169
 msgid "Add Additional Guides"
 msgstr "Lisää apulinjoja"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:177
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:177
 msgid "L_eft border"
 msgstr "Vas_en reuna"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:181
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:181
 msgid "_Right border"
 msgstr "_Oikea reuna"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:185
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:185
 msgid "_Upper border"
 msgstr "_Yläreuna"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:189
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:189
 msgid "Lo_wer border"
 msgstr "_Alareuna"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:197
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:197
 msgid "_Base URL:"
 msgstr "URL juuri:"
 
@@ -11274,8 +11274,8 @@ msgid "Grid Settings..."
 msgstr "Apuviivaston asetukset..."
 
 #: ../plug-ins/imagemap/imap_menu.c:194
-msgid "Use GIMP Guides..."
-msgstr "Käytä Gimpin-apulinjoja..."
+msgid "Use PICMAN Guides..."
+msgstr "Käytä Picmanin-apulinjoja..."
 
 #: ../plug-ins/imagemap/imap_menu.c:196
 msgid "Create Guides..."
@@ -12339,11 +12339,11 @@ msgstr "Ei dataa"
 #~ msgid "Or_igin at bottom left"
 #~ msgstr "Alkukohta alhaalla vasemmalla"
 
-#~ msgid "The GIMP help files are not found."
-#~ msgstr "Gimp ohjetiedostoja ei löydy."
+#~ msgid "The PICMAN help files are not found."
+#~ msgstr "Picman ohjetiedostoja ei löydy."
 
-#~ msgid "There is a problem with the GIMP help files."
-#~ msgstr "GIMP avustustiedosto ongelma."
+#~ msgid "There is a problem with the PICMAN help files."
+#~ msgstr "PICMAN avustustiedosto ongelma."
 
 #~ msgid "Please check your installation."
 #~ msgstr "Tarkista asennuksesi."

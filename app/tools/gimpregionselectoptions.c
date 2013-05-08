@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,23 +20,23 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmantoolinfo.h"
 
-#include "widgets/gimppropwidgets.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanpropwidgets.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimpregionselectoptions.h"
-#include "gimpregionselecttool.h"
+#include "picmanregionselectoptions.h"
+#include "picmanregionselecttool.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -49,74 +49,74 @@ enum
 };
 
 
-static void   gimp_region_select_options_set_property (GObject         *object,
+static void   picman_region_select_options_set_property (GObject         *object,
                                                        guint            property_id,
                                                        const GValue    *value,
                                                        GParamSpec      *pspec);
-static void   gimp_region_select_options_get_property (GObject         *object,
+static void   picman_region_select_options_get_property (GObject         *object,
                                                        guint            property_id,
                                                        GValue          *value,
                                                        GParamSpec      *pspec);
 
-static void   gimp_region_select_options_reset        (GimpToolOptions *tool_options);
+static void   picman_region_select_options_reset        (PicmanToolOptions *tool_options);
 
 
-G_DEFINE_TYPE (GimpRegionSelectOptions, gimp_region_select_options,
-               GIMP_TYPE_SELECTION_OPTIONS)
+G_DEFINE_TYPE (PicmanRegionSelectOptions, picman_region_select_options,
+               PICMAN_TYPE_SELECTION_OPTIONS)
 
-#define parent_class gimp_region_select_options_parent_class
+#define parent_class picman_region_select_options_parent_class
 
 
 static void
-gimp_region_select_options_class_init (GimpRegionSelectOptionsClass *klass)
+picman_region_select_options_class_init (PicmanRegionSelectOptionsClass *klass)
 {
   GObjectClass         *object_class  = G_OBJECT_CLASS (klass);
-  GimpToolOptionsClass *options_class = GIMP_TOOL_OPTIONS_CLASS (klass);
+  PicmanToolOptionsClass *options_class = PICMAN_TOOL_OPTIONS_CLASS (klass);
 
-  object_class->set_property = gimp_region_select_options_set_property;
-  object_class->get_property = gimp_region_select_options_get_property;
+  object_class->set_property = picman_region_select_options_set_property;
+  object_class->get_property = picman_region_select_options_get_property;
 
-  options_class->reset       = gimp_region_select_options_reset;
+  options_class->reset       = picman_region_select_options_reset;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SELECT_TRANSPARENT,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SELECT_TRANSPARENT,
                                     "select-transparent",
                                     N_("Allow completely transparent regions "
                                        "to be selected"),
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_MERGED,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_MERGED,
                                     "sample-merged",
                                     N_("Base selection on all visible layers"),
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_THRESHOLD,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_THRESHOLD,
                                    "threshold",
                                    N_("Maximum color difference"),
                                    0.0, 255.0, 15.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_SELECT_CRITERION,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_SELECT_CRITERION,
                                  "select-criterion",
                                  N_("Selection criterion"),
-                                 GIMP_TYPE_SELECT_CRITERION,
-                                 GIMP_SELECT_CRITERION_COMPOSITE,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_SELECT_CRITERION,
+                                 PICMAN_SELECT_CRITERION_COMPOSITE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_region_select_options_init (GimpRegionSelectOptions *options)
+picman_region_select_options_init (PicmanRegionSelectOptions *options)
 {
 }
 
 static void
-gimp_region_select_options_set_property (GObject      *object,
+picman_region_select_options_set_property (GObject      *object,
                                          guint         property_id,
                                          const GValue *value,
                                          GParamSpec   *pspec)
 {
-  GimpRegionSelectOptions *options = GIMP_REGION_SELECT_OPTIONS (object);
+  PicmanRegionSelectOptions *options = PICMAN_REGION_SELECT_OPTIONS (object);
 
   switch (property_id)
     {
@@ -143,12 +143,12 @@ gimp_region_select_options_set_property (GObject      *object,
 }
 
 static void
-gimp_region_select_options_get_property (GObject    *object,
+picman_region_select_options_get_property (GObject    *object,
                                          guint       property_id,
                                          GValue     *value,
                                          GParamSpec *pspec)
 {
-  GimpRegionSelectOptions *options = GIMP_REGION_SELECT_OPTIONS (object);
+  PicmanRegionSelectOptions *options = PICMAN_REGION_SELECT_OPTIONS (object);
 
   switch (property_id)
     {
@@ -175,7 +175,7 @@ gimp_region_select_options_get_property (GObject    *object,
 }
 
 static void
-gimp_region_select_options_reset (GimpToolOptions *tool_options)
+picman_region_select_options_reset (PicmanToolOptions *tool_options)
 {
   GParamSpec *pspec;
 
@@ -184,16 +184,16 @@ gimp_region_select_options_reset (GimpToolOptions *tool_options)
 
   if (pspec)
     G_PARAM_SPEC_DOUBLE (pspec)->default_value =
-      tool_options->tool_info->gimp->config->default_threshold;
+      tool_options->tool_info->picman->config->default_threshold;
 
-  GIMP_TOOL_OPTIONS_CLASS (parent_class)->reset (tool_options);
+  PICMAN_TOOL_OPTIONS_CLASS (parent_class)->reset (tool_options);
 }
 
 GtkWidget *
-gimp_region_select_options_gui (GimpToolOptions *tool_options)
+picman_region_select_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config  = G_OBJECT (tool_options);
-  GtkWidget *vbox    = gimp_selection_options_gui (tool_options);
+  GtkWidget *vbox    = picman_selection_options_gui (tool_options);
   GtkWidget *button;
   GtkWidget *scale;
   GtkWidget *hbox;
@@ -201,19 +201,19 @@ gimp_region_select_options_gui (GimpToolOptions *tool_options)
   GtkWidget *combo;
 
   /*  the select transparent areas toggle  */
-  button = gimp_prop_check_button_new (config, "select-transparent",
+  button = picman_prop_check_button_new (config, "select-transparent",
                                        _("Select transparent areas"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   /*  the sample merged toggle  */
-  button = gimp_prop_check_button_new (config, "sample-merged",
+  button = picman_prop_check_button_new (config, "sample-merged",
                                        _("Sample merged"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   /*  the threshold scale  */
-  scale = gimp_prop_spin_scale_new (config, "threshold",
+  scale = picman_prop_spin_scale_new (config, "threshold",
                                     _("Threshold"),
                                     1.0, 16.0, 1);
   gtk_box_pack_start (GTK_BOX (vbox), scale, FALSE, FALSE, 0);
@@ -228,7 +228,7 @@ gimp_region_select_options_gui (GimpToolOptions *tool_options)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  combo = gimp_prop_enum_combo_box_new (config, "select-criterion", 0, 0);
+  combo = picman_prop_enum_combo_box_new (config, "select-criterion", 0, 0);
   gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
   gtk_widget_show (combo);
 

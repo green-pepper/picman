@@ -6,23 +6,23 @@ else
 libm = -lm
 endif
 
-libgimpui = $(top_builddir)/libgimp/libgimpui-$(GIMP_API_VERSION).la
-libgimpconfig = $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la
-libgimpwidgets = $(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la
-libgimp = $(top_builddir)/libgimp/libgimp-$(GIMP_API_VERSION).la
-libgimpcolor = $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
-libgimpmath = $(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la
+libpicmanui = $(top_builddir)/libpicman/libpicmanui-$(PICMAN_API_VERSION).la
+libpicmanconfig = $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la
+libpicmanwidgets = $(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la
+libpicman = $(top_builddir)/libpicman/libpicman-$(PICMAN_API_VERSION).la
+libpicmancolor = $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
+libpicmanmath = $(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la
 
 SUBDIRS = Brushes Paper Presets
 
 if HAVE_WINDRES
-include $(top_srcdir)/build/windows/gimprc-plug-ins.rule
-gimpressionist_RC = gimpressionist.rc.o
+include $(top_srcdir)/build/windows/picmanrc-plug-ins.rule
+picmanressionist_RC = picmanressionist.rc.o
 endif
 
 AM_CPPFLAGS = \
-	-DDEFAULTPATH=\""~/$(gimpdir)/gimpressionist:$(gimpdatadir)/gimpressionist"\"
+	-DDEFAULTPATH=\""~/$(picmandir)/picmanressionist:$(picmandatadir)/picmanressionist"\"
 
 AM_LDFLAGS = $(mwindows)
 
@@ -32,20 +32,20 @@ INCLUDES = \
 	$(GEGL_CFLAGS) \
 	-I$(includedir)
 
-libexecdir = $(gimpplugindir)/plug-ins
+libexecdir = $(picmanplugindir)/plug-ins
 
-libexec_PROGRAMS = gimpressionist
+libexec_PROGRAMS = picmanressionist
 
-gimpressionist_SOURCES = \
+picmanressionist_SOURCES = \
 	brush.c			\
 	brush.h			\
 	color.c			\
 	color.h			\
 	general.c		\
 	general.h		\
-	gimp.c			\
-	gimpressionist.c	\
-	gimpressionist.h	\
+	picman.c			\
+	picmanressionist.c	\
+	picmanressionist.h	\
 	globals.c		\
 	infile.h        	\
 	orientation.h		\
@@ -72,16 +72,16 @@ gimpressionist_SOURCES = \
 
 LDADD = \
 	$(libm)			\
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpconfig)	\
-	$(libgimp)		\
-	$(libgimpcolor)		\
-	$(libgimpmath)		\
-	$(libgimpbase)		\
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanconfig)	\
+	$(libpicman)		\
+	$(libpicmancolor)		\
+	$(libpicmanmath)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
-	$(gimpressionist_RC)
+	$(picmanressionist_RC)
 
 EXTRA_DIST = README

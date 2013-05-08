@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-pluginexecdir = $(gimpplugindir)/plug-ins
+pluginexecdir = $(picmanplugindir)/plug-ins
 
 scripts = \
 	colorxhtml.py		\

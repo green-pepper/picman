@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -22,17 +22,17 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpruler.h"
+#include "picmanruler.h"
 
 
 /**
- * SECTION: gimpruler
- * @title: GimpRuler
+ * SECTION: picmanruler
+ * @title: PicmanRuler
  * @short_description: A ruler widget with configurable unit and orientation.
  *
  * A ruler widget with configurable unit and orientation.
@@ -61,7 +61,7 @@ enum
 typedef struct
 {
   GtkOrientation   orientation;
-  GimpUnit         unit;
+  PicmanUnit         unit;
   gdouble          lower;
   gdouble          upper;
   gdouble          position;
@@ -76,10 +76,10 @@ typedef struct
   gint             ysrc;
 
   GList           *track_widgets;
-} GimpRulerPrivate;
+} PicmanRulerPrivate;
 
-#define GIMP_RULER_GET_PRIVATE(ruler) \
-  G_TYPE_INSTANCE_GET_PRIVATE (ruler, GIMP_TYPE_RULER, GimpRulerPrivate)
+#define PICMAN_RULER_GET_PRIVATE(ruler) \
+  G_TYPE_INSTANCE_GET_PRIVATE (ruler, PICMAN_TYPE_RULER, PicmanRulerPrivate)
 
 
 static const struct
@@ -93,65 +93,65 @@ static const struct
 };
 
 
-static void          gimp_ruler_dispose       (GObject        *object);
-static void          gimp_ruler_set_property  (GObject        *object,
+static void          picman_ruler_dispose       (GObject        *object);
+static void          picman_ruler_set_property  (GObject        *object,
                                                guint            prop_id,
                                                const GValue   *value,
                                                GParamSpec     *pspec);
-static void          gimp_ruler_get_property  (GObject        *object,
+static void          picman_ruler_get_property  (GObject        *object,
                                                guint           prop_id,
                                                GValue         *value,
                                                GParamSpec     *pspec);
 
-static void          gimp_ruler_realize       (GtkWidget      *widget);
-static void          gimp_ruler_unrealize     (GtkWidget      *widget);
-static void          gimp_ruler_map           (GtkWidget      *widget);
-static void          gimp_ruler_unmap         (GtkWidget      *widget);
-static void          gimp_ruler_size_allocate (GtkWidget      *widget,
+static void          picman_ruler_realize       (GtkWidget      *widget);
+static void          picman_ruler_unrealize     (GtkWidget      *widget);
+static void          picman_ruler_map           (GtkWidget      *widget);
+static void          picman_ruler_unmap         (GtkWidget      *widget);
+static void          picman_ruler_size_allocate (GtkWidget      *widget,
                                                GtkAllocation  *allocation);
-static void          gimp_ruler_size_request  (GtkWidget      *widget,
+static void          picman_ruler_size_request  (GtkWidget      *widget,
                                                GtkRequisition *requisition);
-static void          gimp_ruler_style_set     (GtkWidget      *widget,
+static void          picman_ruler_style_set     (GtkWidget      *widget,
                                                GtkStyle       *prev_style);
-static gboolean      gimp_ruler_motion_notify (GtkWidget      *widget,
+static gboolean      picman_ruler_motion_notify (GtkWidget      *widget,
                                                GdkEventMotion *event);
-static gboolean      gimp_ruler_expose        (GtkWidget      *widget,
+static gboolean      picman_ruler_expose        (GtkWidget      *widget,
                                                GdkEventExpose *event);
 
-static void          gimp_ruler_draw_ticks    (GimpRuler      *ruler);
-static void          gimp_ruler_draw_pos      (GimpRuler      *ruler);
-static void          gimp_ruler_make_pixmap   (GimpRuler      *ruler);
+static void          picman_ruler_draw_ticks    (PicmanRuler      *ruler);
+static void          picman_ruler_draw_pos      (PicmanRuler      *ruler);
+static void          picman_ruler_make_pixmap   (PicmanRuler      *ruler);
 
-static PangoLayout * gimp_ruler_get_layout    (GtkWidget      *widget,
+static PangoLayout * picman_ruler_get_layout    (GtkWidget      *widget,
                                                const gchar    *text);
 
 
-G_DEFINE_TYPE (GimpRuler, gimp_ruler, GTK_TYPE_WIDGET)
+G_DEFINE_TYPE (PicmanRuler, picman_ruler, GTK_TYPE_WIDGET)
 
-#define parent_class gimp_ruler_parent_class
+#define parent_class picman_ruler_parent_class
 
 
 static void
-gimp_ruler_class_init (GimpRulerClass *klass)
+picman_ruler_class_init (PicmanRulerClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->dispose             = gimp_ruler_dispose;
-  object_class->set_property        = gimp_ruler_set_property;
-  object_class->get_property        = gimp_ruler_get_property;
+  object_class->dispose             = picman_ruler_dispose;
+  object_class->set_property        = picman_ruler_set_property;
+  object_class->get_property        = picman_ruler_get_property;
 
-  widget_class->realize             = gimp_ruler_realize;
-  widget_class->unrealize           = gimp_ruler_unrealize;
-  widget_class->map                 = gimp_ruler_map;
-  widget_class->unmap               = gimp_ruler_unmap;
-  widget_class->size_allocate       = gimp_ruler_size_allocate;
-  widget_class->size_request        = gimp_ruler_size_request;
-  widget_class->style_set           = gimp_ruler_style_set;
-  widget_class->motion_notify_event = gimp_ruler_motion_notify;
-  widget_class->expose_event        = gimp_ruler_expose;
+  widget_class->realize             = picman_ruler_realize;
+  widget_class->unrealize           = picman_ruler_unrealize;
+  widget_class->map                 = picman_ruler_map;
+  widget_class->unmap               = picman_ruler_unmap;
+  widget_class->size_allocate       = picman_ruler_size_allocate;
+  widget_class->size_request        = picman_ruler_size_request;
+  widget_class->style_set           = picman_ruler_style_set;
+  widget_class->motion_notify_event = picman_ruler_motion_notify;
+  widget_class->expose_event        = picman_ruler_expose;
 
-  g_type_class_add_private (object_class, sizeof (GimpRulerPrivate));
+  g_type_class_add_private (object_class, sizeof (PicmanRulerPrivate));
 
   g_object_class_install_property (object_class,
                                    PROP_ORIENTATION,
@@ -160,16 +160,16 @@ gimp_ruler_class_init (GimpRulerClass *klass)
                                                       "The orientation of the ruler",
                                                       GTK_TYPE_ORIENTATION,
                                                       GTK_ORIENTATION_HORIZONTAL,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class,
                                    PROP_LOWER,
-                                   gimp_param_spec_unit ("unit",
+                                   picman_param_spec_unit ("unit",
                                                          "Unit",
                                                          "Unit of ruler",
                                                          TRUE, TRUE,
-                                                         GIMP_UNIT_PIXEL,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_UNIT_PIXEL,
+                                                         PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class,
                                    PROP_LOWER,
@@ -179,7 +179,7 @@ gimp_ruler_class_init (GimpRulerClass *klass)
                                                         -G_MAXDOUBLE,
                                                         G_MAXDOUBLE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class,
                                    PROP_UPPER,
@@ -189,7 +189,7 @@ gimp_ruler_class_init (GimpRulerClass *klass)
                                                         -G_MAXDOUBLE,
                                                         G_MAXDOUBLE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class,
                                    PROP_POSITION,
@@ -199,7 +199,7 @@ gimp_ruler_class_init (GimpRulerClass *klass)
                                                         -G_MAXDOUBLE,
                                                         G_MAXDOUBLE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class,
                                    PROP_MAX_SIZE,
@@ -209,7 +209,7 @@ gimp_ruler_class_init (GimpRulerClass *klass)
                                                         -G_MAXDOUBLE,
                                                         G_MAXDOUBLE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   gtk_widget_class_install_style_property (widget_class,
                                            g_param_spec_double ("font-scale",
@@ -217,18 +217,18 @@ gimp_ruler_class_init (GimpRulerClass *klass)
                                                                 0.0,
                                                                 G_MAXDOUBLE,
                                                                 DEFAULT_RULER_FONT_SCALE,
-                                                                GIMP_PARAM_READABLE));
+                                                                PICMAN_PARAM_READABLE));
 }
 
 static void
-gimp_ruler_init (GimpRuler *ruler)
+picman_ruler_init (PicmanRuler *ruler)
 {
-  GimpRulerPrivate *priv = GIMP_RULER_GET_PRIVATE (ruler);
+  PicmanRulerPrivate *priv = PICMAN_RULER_GET_PRIVATE (ruler);
 
   gtk_widget_set_has_window (GTK_WIDGET (ruler), FALSE);
 
   priv->orientation   = GTK_ORIENTATION_HORIZONTAL;
-  priv->unit          = GIMP_PIXELS;
+  priv->unit          = PICMAN_PIXELS;
   priv->lower         = 0;
   priv->upper         = 0;
   priv->position      = 0;
@@ -238,25 +238,25 @@ gimp_ruler_init (GimpRuler *ruler)
 }
 
 static void
-gimp_ruler_dispose (GObject *object)
+picman_ruler_dispose (GObject *object)
 {
-  GimpRuler        *ruler = GIMP_RULER (object);
-  GimpRulerPrivate *priv  = GIMP_RULER_GET_PRIVATE (ruler);
+  PicmanRuler        *ruler = PICMAN_RULER (object);
+  PicmanRulerPrivate *priv  = PICMAN_RULER_GET_PRIVATE (ruler);
 
   while (priv->track_widgets)
-    gimp_ruler_remove_track_widget (ruler, priv->track_widgets->data);
+    picman_ruler_remove_track_widget (ruler, priv->track_widgets->data);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_ruler_set_property (GObject      *object,
+picman_ruler_set_property (GObject      *object,
                          guint         prop_id,
                          const GValue *value,
                          GParamSpec   *pspec)
 {
-  GimpRuler        *ruler = GIMP_RULER (object);
-  GimpRulerPrivate *priv  = GIMP_RULER_GET_PRIVATE (ruler);
+  PicmanRuler        *ruler = PICMAN_RULER (object);
+  PicmanRulerPrivate *priv  = PICMAN_RULER_GET_PRIVATE (ruler);
 
   switch (prop_id)
     {
@@ -266,28 +266,28 @@ gimp_ruler_set_property (GObject      *object,
       break;
 
     case PROP_UNIT:
-      gimp_ruler_set_unit (ruler, g_value_get_int (value));
+      picman_ruler_set_unit (ruler, g_value_get_int (value));
       break;
 
     case PROP_LOWER:
-      gimp_ruler_set_range (ruler,
+      picman_ruler_set_range (ruler,
                             g_value_get_double (value),
                             priv->upper,
                             priv->max_size);
       break;
     case PROP_UPPER:
-      gimp_ruler_set_range (ruler,
+      picman_ruler_set_range (ruler,
                             priv->lower,
                             g_value_get_double (value),
                             priv->max_size);
       break;
 
     case PROP_POSITION:
-      gimp_ruler_set_position (ruler, g_value_get_double (value));
+      picman_ruler_set_position (ruler, g_value_get_double (value));
       break;
 
     case PROP_MAX_SIZE:
-      gimp_ruler_set_range (ruler,
+      picman_ruler_set_range (ruler,
                             priv->lower,
                             priv->upper,
                             g_value_get_double (value));
@@ -300,13 +300,13 @@ gimp_ruler_set_property (GObject      *object,
 }
 
 static void
-gimp_ruler_get_property (GObject    *object,
+picman_ruler_get_property (GObject    *object,
                          guint       prop_id,
                          GValue     *value,
                          GParamSpec *pspec)
 {
-  GimpRuler        *ruler = GIMP_RULER (object);
-  GimpRulerPrivate *priv  = GIMP_RULER_GET_PRIVATE (ruler);
+  PicmanRuler        *ruler = PICMAN_RULER (object);
+  PicmanRulerPrivate *priv  = PICMAN_RULER_GET_PRIVATE (ruler);
 
   switch (prop_id)
     {
@@ -341,45 +341,45 @@ gimp_ruler_get_property (GObject    *object,
 }
 
 /**
- * gimp_ruler_new:
+ * picman_ruler_new:
  * @orientation: the ruler's orientation.
  *
  * Creates a new ruler.
  *
- * Return value: a new #GimpRuler widget.
+ * Return value: a new #PicmanRuler widget.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 GtkWidget *
-gimp_ruler_new (GtkOrientation orientation)
+picman_ruler_new (GtkOrientation orientation)
 {
-  return g_object_new (GIMP_TYPE_RULER,
+  return g_object_new (PICMAN_TYPE_RULER,
                        "orientation", orientation,
                        NULL);
 }
 
 static void
-gimp_ruler_update_position (GimpRuler *ruler,
+picman_ruler_update_position (PicmanRuler *ruler,
                             gdouble    x,
                             gdouble    y)
 {
-  GimpRulerPrivate *priv = GIMP_RULER_GET_PRIVATE (ruler);
+  PicmanRulerPrivate *priv = PICMAN_RULER_GET_PRIVATE (ruler);
   GtkAllocation     allocation;
   gdouble           lower;
   gdouble           upper;
 
   gtk_widget_get_allocation (GTK_WIDGET (ruler), &allocation);
-  gimp_ruler_get_range (ruler, &lower, &upper, NULL);
+  picman_ruler_get_range (ruler, &lower, &upper, NULL);
 
   if (priv->orientation == GTK_ORIENTATION_HORIZONTAL)
     {
-      gimp_ruler_set_position (ruler,
+      picman_ruler_set_position (ruler,
                                lower +
                                (upper - lower) * x / allocation.width);
     }
   else
     {
-      gimp_ruler_set_position (ruler,
+      picman_ruler_set_position (ruler,
                                lower +
                                (upper - lower) * y / allocation.height);
     }
@@ -434,7 +434,7 @@ gtk_widget_get_translation_to_window (GtkWidget *widget,
 }
 
 static void
-gimp_ruler_event_to_widget_coords (GtkWidget *widget,
+picman_ruler_event_to_widget_coords (GtkWidget *widget,
                                    GdkWindow *window,
                                    gdouble    event_x,
                                    gdouble    event_y,
@@ -454,9 +454,9 @@ gimp_ruler_event_to_widget_coords (GtkWidget *widget,
 }
 
 static gboolean
-gimp_ruler_track_widget_motion_notify (GtkWidget      *widget,
+picman_ruler_track_widget_motion_notify (GtkWidget      *widget,
                                        GdkEventMotion *mevent,
-                                       GimpRuler      *ruler)
+                                       PicmanRuler      *ruler)
 {
   gint widget_x;
   gint widget_y;
@@ -465,7 +465,7 @@ gimp_ruler_track_widget_motion_notify (GtkWidget      *widget,
 
   widget = gtk_get_event_widget ((GdkEvent *) mevent);
 
-  gimp_ruler_event_to_widget_coords (widget, mevent->window,
+  picman_ruler_event_to_widget_coords (widget, mevent->window,
                                      mevent->x, mevent->y,
                                      &widget_x, &widget_y);
 
@@ -473,15 +473,15 @@ gimp_ruler_track_widget_motion_notify (GtkWidget      *widget,
                                         widget_x, widget_y,
                                         &ruler_x, &ruler_y))
     {
-      gimp_ruler_update_position (ruler, ruler_x, ruler_y);
+      picman_ruler_update_position (ruler, ruler_x, ruler_y);
     }
 
   return FALSE;
 }
 
 /**
- * gimp_ruler_add_track_widget:
- * @ruler: a #GimpRuler
+ * picman_ruler_add_track_widget:
+ * @ruler: a #PicmanRuler
  * @widget: the track widget to add
  *
  * Adds a "track widget" to the ruler. The ruler will connect to
@@ -490,82 +490,82 @@ gimp_ruler_track_widget_motion_notify (GtkWidget      *widget,
  * for the track widget's children, regardless of whether they are
  * ordinary children of off-screen children.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  */
 void
-gimp_ruler_add_track_widget (GimpRuler *ruler,
+picman_ruler_add_track_widget (PicmanRuler *ruler,
                              GtkWidget *widget)
 {
-  GimpRulerPrivate *priv;
+  PicmanRulerPrivate *priv;
 
-  g_return_if_fail (GIMP_IS_RULER (ruler));
+  g_return_if_fail (PICMAN_IS_RULER (ruler));
   g_return_if_fail (GTK_IS_WIDGET (ruler));
 
-  priv = GIMP_RULER_GET_PRIVATE (ruler);
+  priv = PICMAN_RULER_GET_PRIVATE (ruler);
 
   g_return_if_fail (g_list_find (priv->track_widgets, widget) == NULL);
 
   priv->track_widgets = g_list_prepend (priv->track_widgets, widget);
 
   g_signal_connect (widget, "motion-notify-event",
-                    G_CALLBACK (gimp_ruler_track_widget_motion_notify),
+                    G_CALLBACK (picman_ruler_track_widget_motion_notify),
                     ruler);
   g_signal_connect_swapped (widget, "destroy",
-                            G_CALLBACK (gimp_ruler_remove_track_widget),
+                            G_CALLBACK (picman_ruler_remove_track_widget),
                             ruler);
 }
 
 /**
- * gimp_ruler_remove_track_widget:
- * @ruler: a #GimpRuler
+ * picman_ruler_remove_track_widget:
+ * @ruler: a #PicmanRuler
  * @widget: the track widget to remove
  *
  * Removes a previously added track widget from the ruler. See
- * gimp_ruler_add_track_widget().
+ * picman_ruler_add_track_widget().
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  */
 void
-gimp_ruler_remove_track_widget (GimpRuler *ruler,
+picman_ruler_remove_track_widget (PicmanRuler *ruler,
                                 GtkWidget *widget)
 {
-  GimpRulerPrivate *priv;
+  PicmanRulerPrivate *priv;
 
-  g_return_if_fail (GIMP_IS_RULER (ruler));
+  g_return_if_fail (PICMAN_IS_RULER (ruler));
   g_return_if_fail (GTK_IS_WIDGET (ruler));
 
-  priv = GIMP_RULER_GET_PRIVATE (ruler);
+  priv = PICMAN_RULER_GET_PRIVATE (ruler);
 
   g_return_if_fail (g_list_find (priv->track_widgets, widget) != NULL);
 
   priv->track_widgets = g_list_remove (priv->track_widgets, widget);
 
   g_signal_handlers_disconnect_by_func (widget,
-                                        gimp_ruler_track_widget_motion_notify,
+                                        picman_ruler_track_widget_motion_notify,
                                         ruler);
   g_signal_handlers_disconnect_by_func (widget,
-                                        gimp_ruler_remove_track_widget,
+                                        picman_ruler_remove_track_widget,
                                         ruler);
 }
 
 /**
- * gimp_ruler_set_unit:
- * @ruler: a #GimpRuler
- * @unit:  the #GimpUnit to set the ruler to
+ * picman_ruler_set_unit:
+ * @ruler: a #PicmanRuler
+ * @unit:  the #PicmanUnit to set the ruler to
  *
  * This sets the unit of the ruler.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  */
 void
-gimp_ruler_set_unit (GimpRuler *ruler,
-                     GimpUnit   unit)
+picman_ruler_set_unit (PicmanRuler *ruler,
+                     PicmanUnit   unit)
 {
-  GimpRulerPrivate *priv;
+  PicmanRulerPrivate *priv;
 
-  g_return_if_fail (GIMP_IS_RULER (ruler));
+  g_return_if_fail (PICMAN_IS_RULER (ruler));
 
-  priv = GIMP_RULER_GET_PRIVATE (ruler);
+  priv = PICMAN_RULER_GET_PRIVATE (ruler);
 
   if (priv->unit != unit)
     {
@@ -577,68 +577,68 @@ gimp_ruler_set_unit (GimpRuler *ruler,
 }
 
 /**
- * gimp_ruler_get_unit:
- * @ruler: a #GimpRuler
+ * picman_ruler_get_unit:
+ * @ruler: a #PicmanRuler
  *
  * Return value: the unit currently used in the @ruler widget.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
-GimpUnit
-gimp_ruler_get_unit (GimpRuler *ruler)
+PicmanUnit
+picman_ruler_get_unit (PicmanRuler *ruler)
 {
-  g_return_val_if_fail (GIMP_IS_RULER (ruler), 0);
+  g_return_val_if_fail (PICMAN_IS_RULER (ruler), 0);
 
-  return GIMP_RULER_GET_PRIVATE (ruler)->unit;
+  return PICMAN_RULER_GET_PRIVATE (ruler)->unit;
 }
 
 /**
- * gimp_ruler_set_position:
- * @ruler: a #GimpRuler
+ * picman_ruler_set_position:
+ * @ruler: a #PicmanRuler
  * @position: the position to set the ruler to
  *
  * This sets the position of the ruler.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  */
 void
-gimp_ruler_set_position (GimpRuler *ruler,
+picman_ruler_set_position (PicmanRuler *ruler,
                          gdouble    position)
 {
-  GimpRulerPrivate *priv;
+  PicmanRulerPrivate *priv;
 
-  g_return_if_fail (GIMP_IS_RULER (ruler));
+  g_return_if_fail (PICMAN_IS_RULER (ruler));
 
-  priv = GIMP_RULER_GET_PRIVATE (ruler);
+  priv = PICMAN_RULER_GET_PRIVATE (ruler);
 
   if (priv->position != position)
     {
       priv->position = position;
       g_object_notify (G_OBJECT (ruler), "position");
 
-      gimp_ruler_draw_pos (ruler);
+      picman_ruler_draw_pos (ruler);
     }
 }
 
 /**
- * gimp_ruler_get_position:
- * @ruler: a #GimpRuler
+ * picman_ruler_get_position:
+ * @ruler: a #PicmanRuler
  *
  * Return value: the current position of the @ruler widget.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gdouble
-gimp_ruler_get_position (GimpRuler *ruler)
+picman_ruler_get_position (PicmanRuler *ruler)
 {
-  g_return_val_if_fail (GIMP_IS_RULER (ruler), 0.0);
+  g_return_val_if_fail (PICMAN_IS_RULER (ruler), 0.0);
 
-  return GIMP_RULER_GET_PRIVATE (ruler)->position;
+  return PICMAN_RULER_GET_PRIVATE (ruler)->position;
 }
 
 /**
- * gimp_ruler_set_range:
- * @ruler: a #GimpRuler
+ * picman_ruler_set_range:
+ * @ruler: a #PicmanRuler
  * @lower: the lower limit of the ruler
  * @upper: the upper limit of the ruler
  * @max_size: the maximum size of the ruler used when calculating the space to
@@ -646,19 +646,19 @@ gimp_ruler_get_position (GimpRuler *ruler)
  *
  * This sets the range of the ruler.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  */
 void
-gimp_ruler_set_range (GimpRuler *ruler,
+picman_ruler_set_range (PicmanRuler *ruler,
                       gdouble    lower,
                       gdouble    upper,
                       gdouble    max_size)
 {
-  GimpRulerPrivate *priv;
+  PicmanRulerPrivate *priv;
 
-  g_return_if_fail (GIMP_IS_RULER (ruler));
+  g_return_if_fail (PICMAN_IS_RULER (ruler));
 
-  priv = GIMP_RULER_GET_PRIVATE (ruler);
+  priv = PICMAN_RULER_GET_PRIVATE (ruler);
 
   g_object_freeze_notify (G_OBJECT (ruler));
   if (priv->lower != lower)
@@ -682,29 +682,29 @@ gimp_ruler_set_range (GimpRuler *ruler,
 }
 
 /**
- * gimp_ruler_get_range:
- * @ruler: a #GimpRuler
+ * picman_ruler_get_range:
+ * @ruler: a #PicmanRuler
  * @lower: location to store lower limit of the ruler, or %NULL
  * @upper: location to store upper limit of the ruler, or %NULL
  * @max_size: location to store the maximum size of the ruler used when
  *            calculating the space to leave for the text, or %NULL.
  *
- * Retrieves values indicating the range and current position of a #GimpRuler.
- * See gimp_ruler_set_range().
+ * Retrieves values indicating the range and current position of a #PicmanRuler.
+ * See picman_ruler_set_range().
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 void
-gimp_ruler_get_range (GimpRuler *ruler,
+picman_ruler_get_range (PicmanRuler *ruler,
                       gdouble   *lower,
                       gdouble   *upper,
                       gdouble   *max_size)
 {
-  GimpRulerPrivate *priv;
+  PicmanRulerPrivate *priv;
 
-  g_return_if_fail (GIMP_IS_RULER (ruler));
+  g_return_if_fail (PICMAN_IS_RULER (ruler));
 
-  priv = GIMP_RULER_GET_PRIVATE (ruler);
+  priv = PICMAN_RULER_GET_PRIVATE (ruler);
 
   if (lower)
     *lower = priv->lower;
@@ -715,15 +715,15 @@ gimp_ruler_get_range (GimpRuler *ruler,
 }
 
 static void
-gimp_ruler_realize (GtkWidget *widget)
+picman_ruler_realize (GtkWidget *widget)
 {
-  GimpRuler        *ruler = GIMP_RULER (widget);
-  GimpRulerPrivate *priv  = GIMP_RULER_GET_PRIVATE (ruler);
+  PicmanRuler        *ruler = PICMAN_RULER (widget);
+  PicmanRulerPrivate *priv  = PICMAN_RULER_GET_PRIVATE (ruler);
   GtkAllocation     allocation;
   GdkWindowAttr     attributes;
   gint              attributes_mask;
 
-  GTK_WIDGET_CLASS (gimp_ruler_parent_class)->realize (widget);
+  GTK_WIDGET_CLASS (picman_ruler_parent_class)->realize (widget);
 
   gtk_widget_get_allocation (widget, &allocation);
 
@@ -743,14 +743,14 @@ gimp_ruler_realize (GtkWidget *widget)
                                        &attributes, attributes_mask);
   gdk_window_set_user_data (priv->input_window, ruler);
 
-  gimp_ruler_make_pixmap (ruler);
+  picman_ruler_make_pixmap (ruler);
 }
 
 static void
-gimp_ruler_unrealize (GtkWidget *widget)
+picman_ruler_unrealize (GtkWidget *widget)
 {
-  GimpRuler        *ruler = GIMP_RULER (widget);
-  GimpRulerPrivate *priv  = GIMP_RULER_GET_PRIVATE (ruler);
+  PicmanRuler        *ruler = PICMAN_RULER (widget);
+  PicmanRulerPrivate *priv  = PICMAN_RULER_GET_PRIVATE (ruler);
 
   if (priv->backing_store)
     {
@@ -770,13 +770,13 @@ gimp_ruler_unrealize (GtkWidget *widget)
       priv->input_window = NULL;
     }
 
-  GTK_WIDGET_CLASS (gimp_ruler_parent_class)->unrealize (widget);
+  GTK_WIDGET_CLASS (picman_ruler_parent_class)->unrealize (widget);
 }
 
 static void
-gimp_ruler_map (GtkWidget *widget)
+picman_ruler_map (GtkWidget *widget)
 {
-  GimpRulerPrivate *priv = GIMP_RULER_GET_PRIVATE (widget);
+  PicmanRulerPrivate *priv = PICMAN_RULER_GET_PRIVATE (widget);
 
   GTK_WIDGET_CLASS (parent_class)->map (widget);
 
@@ -785,9 +785,9 @@ gimp_ruler_map (GtkWidget *widget)
 }
 
 static void
-gimp_ruler_unmap (GtkWidget *widget)
+picman_ruler_unmap (GtkWidget *widget)
 {
-  GimpRulerPrivate *priv = GIMP_RULER_GET_PRIVATE (widget);
+  PicmanRulerPrivate *priv = PICMAN_RULER_GET_PRIVATE (widget);
 
   if (priv->input_window)
     gdk_window_hide (priv->input_window);
@@ -796,11 +796,11 @@ gimp_ruler_unmap (GtkWidget *widget)
 }
 
 static void
-gimp_ruler_size_allocate (GtkWidget     *widget,
+picman_ruler_size_allocate (GtkWidget     *widget,
                           GtkAllocation *allocation)
 {
-  GimpRuler        *ruler = GIMP_RULER (widget);
-  GimpRulerPrivate *priv  = GIMP_RULER_GET_PRIVATE (ruler);
+  PicmanRuler        *ruler = PICMAN_RULER (widget);
+  PicmanRulerPrivate *priv  = PICMAN_RULER_GET_PRIVATE (ruler);
 
   gtk_widget_set_allocation (widget, allocation);
 
@@ -810,21 +810,21 @@ gimp_ruler_size_allocate (GtkWidget     *widget,
                               allocation->x, allocation->y,
                               allocation->width, allocation->height);
 
-      gimp_ruler_make_pixmap (ruler);
+      picman_ruler_make_pixmap (ruler);
     }
 }
 
 static void
-gimp_ruler_size_request (GtkWidget      *widget,
+picman_ruler_size_request (GtkWidget      *widget,
                          GtkRequisition *requisition)
 {
-  GimpRulerPrivate *priv  = GIMP_RULER_GET_PRIVATE (widget);
+  PicmanRulerPrivate *priv  = PICMAN_RULER_GET_PRIVATE (widget);
   GtkStyle         *style = gtk_widget_get_style (widget);
   PangoLayout      *layout;
   PangoRectangle    ink_rect;
   gint              size;
 
-  layout = gimp_ruler_get_layout (widget, "0123456789");
+  layout = picman_ruler_get_layout (widget, "0123456789");
   pango_layout_get_pixel_extents (layout, &ink_rect, NULL);
 
   size = 2 + ink_rect.height * 1.7;
@@ -842,12 +842,12 @@ gimp_ruler_size_request (GtkWidget      *widget,
 }
 
 static void
-gimp_ruler_style_set (GtkWidget *widget,
+picman_ruler_style_set (GtkWidget *widget,
                       GtkStyle  *prev_style)
 {
-  GimpRulerPrivate *priv = GIMP_RULER_GET_PRIVATE (widget);
+  PicmanRulerPrivate *priv = PICMAN_RULER_GET_PRIVATE (widget);
 
-  GTK_WIDGET_CLASS (gimp_ruler_parent_class)->style_set (widget, prev_style);
+  GTK_WIDGET_CLASS (picman_ruler_parent_class)->style_set (widget, prev_style);
 
   gtk_widget_style_get (widget,
                         "font-scale", &priv->font_scale,
@@ -861,28 +861,28 @@ gimp_ruler_style_set (GtkWidget *widget,
 }
 
 static gboolean
-gimp_ruler_motion_notify (GtkWidget      *widget,
+picman_ruler_motion_notify (GtkWidget      *widget,
                           GdkEventMotion *event)
 {
-  GimpRuler *ruler = GIMP_RULER (widget);
+  PicmanRuler *ruler = PICMAN_RULER (widget);
 
-  gimp_ruler_update_position (ruler, event->x, event->y);
+  picman_ruler_update_position (ruler, event->x, event->y);
 
   return FALSE;
 }
 
 static gboolean
-gimp_ruler_expose (GtkWidget      *widget,
+picman_ruler_expose (GtkWidget      *widget,
                    GdkEventExpose *event)
 {
   if (gtk_widget_is_drawable (widget))
     {
-      GimpRuler        *ruler = GIMP_RULER (widget);
-      GimpRulerPrivate *priv  = GIMP_RULER_GET_PRIVATE (ruler);
+      PicmanRuler        *ruler = PICMAN_RULER (widget);
+      PicmanRulerPrivate *priv  = PICMAN_RULER_GET_PRIVATE (ruler);
       GtkAllocation     allocation;
       cairo_t          *cr;
 
-      gimp_ruler_draw_ticks (ruler);
+      picman_ruler_draw_ticks (ruler);
 
       cr = gdk_cairo_create (gtk_widget_get_window (widget));
       gdk_cairo_region (cr, event->region);
@@ -894,7 +894,7 @@ gimp_ruler_expose (GtkWidget      *widget,
       cairo_set_source_surface (cr, priv->backing_store, 0, 0);
       cairo_paint (cr);
 
-      gimp_ruler_draw_pos (ruler);
+      picman_ruler_draw_pos (ruler);
 
       cairo_destroy (cr);
     }
@@ -903,11 +903,11 @@ gimp_ruler_expose (GtkWidget      *widget,
 }
 
 static void
-gimp_ruler_draw_ticks (GimpRuler *ruler)
+picman_ruler_draw_ticks (PicmanRuler *ruler)
 {
   GtkWidget        *widget = GTK_WIDGET (ruler);
   GtkStyle         *style  = gtk_widget_get_style (widget);
-  GimpRulerPrivate *priv   = GIMP_RULER_GET_PRIVATE (ruler);
+  PicmanRulerPrivate *priv   = PICMAN_RULER_GET_PRIVATE (ruler);
   GtkStateType      state  = gtk_widget_get_state (widget);
   GtkAllocation     allocation;
   cairo_t          *cr;
@@ -926,7 +926,7 @@ gimp_ruler_draw_ticks (GimpRuler *ruler)
   gint              text_size;
   gint              pos;
   gdouble           max_size;
-  GimpUnit          unit;
+  PicmanUnit          unit;
   PangoLayout      *layout;
   PangoRectangle    logical_rect, ink_rect;
 
@@ -938,7 +938,7 @@ gimp_ruler_draw_ticks (GimpRuler *ruler)
   xthickness = style->xthickness;
   ythickness = style->ythickness;
 
-  layout = gimp_ruler_get_layout (widget, "0123456789");
+  layout = picman_ruler_get_layout (widget, "0123456789");
   pango_layout_get_extents (layout, &ink_rect, &logical_rect);
 
   digit_height = PANGO_PIXELS (ink_rect.height) + 2;
@@ -989,7 +989,7 @@ gimp_ruler_draw_ticks (GimpRuler *ruler)
                        allocation.height - 2 * ythickness);
     }
 
-  gimp_ruler_get_range (ruler, &lower, &upper, &max_size);
+  picman_ruler_get_range (ruler, &lower, &upper, &max_size);
 
   if ((upper - lower) == 0)
     goto out;
@@ -1017,7 +1017,7 @@ gimp_ruler_draw_ticks (GimpRuler *ruler)
   if (scale == G_N_ELEMENTS (ruler_metric.ruler_scale))
     scale = G_N_ELEMENTS (ruler_metric.ruler_scale) - 1;
 
-  unit = gimp_ruler_get_unit (ruler);
+  unit = picman_ruler_get_unit (ruler);
 
   /* drawing starts here */
   length = 0;
@@ -1026,7 +1026,7 @@ gimp_ruler_draw_ticks (GimpRuler *ruler)
       gdouble subd_incr;
 
       /* hack to get proper subdivisions at full pixels */
-      if (unit == GIMP_UNIT_PIXEL && scale == 1 && i == 1)
+      if (unit == PICMAN_UNIT_PIXEL && scale == 1 && i == 1)
         subd_incr = 1.0;
       else
         subd_incr = ((gdouble) ruler_metric.ruler_scale[scale] /
@@ -1036,7 +1036,7 @@ gimp_ruler_draw_ticks (GimpRuler *ruler)
         continue;
 
       /* don't subdivide pixels */
-      if (unit == GIMP_UNIT_PIXEL && subd_incr < 1.0)
+      if (unit == PICMAN_UNIT_PIXEL && subd_incr < 1.0)
         continue;
 
       /* Calculate the length of the tickmarks. Make sure that
@@ -1141,11 +1141,11 @@ out:
 }
 
 static void
-gimp_ruler_draw_pos (GimpRuler *ruler)
+picman_ruler_draw_pos (PicmanRuler *ruler)
 {
   GtkWidget        *widget = GTK_WIDGET (ruler);
   GtkStyle         *style  = gtk_widget_get_style (widget);
-  GimpRulerPrivate *priv   = GIMP_RULER_GET_PRIVATE (ruler);
+  PicmanRulerPrivate *priv   = PICMAN_RULER_GET_PRIVATE (ruler);
   GtkStateType      state  = gtk_widget_get_state (widget);
   GtkAllocation     allocation;
   gint              x, y;
@@ -1204,9 +1204,9 @@ gimp_ruler_draw_pos (GimpRuler *ruler)
           cairo_fill (cr);
         }
 
-      position = gimp_ruler_get_position (ruler);
+      position = picman_ruler_get_position (ruler);
 
-      gimp_ruler_get_range (ruler, &lower, &upper, NULL);
+      picman_ruler_get_range (ruler, &lower, &upper, NULL);
 
       if (priv->orientation == GTK_ORIENTATION_HORIZONTAL)
         {
@@ -1248,10 +1248,10 @@ gimp_ruler_draw_pos (GimpRuler *ruler)
 }
 
 static void
-gimp_ruler_make_pixmap (GimpRuler *ruler)
+picman_ruler_make_pixmap (PicmanRuler *ruler)
 {
   GtkWidget        *widget = GTK_WIDGET (ruler);
-  GimpRulerPrivate *priv   = GIMP_RULER_GET_PRIVATE (ruler);
+  PicmanRulerPrivate *priv   = PICMAN_RULER_GET_PRIVATE (ruler);
   GtkAllocation     allocation;
 
   gtk_widget_get_allocation (widget, &allocation);
@@ -1268,10 +1268,10 @@ gimp_ruler_make_pixmap (GimpRuler *ruler)
 
 
 static PangoLayout *
-gimp_ruler_create_layout (GtkWidget   *widget,
+picman_ruler_create_layout (GtkWidget   *widget,
                           const gchar *text)
 {
-  GimpRulerPrivate *priv = GIMP_RULER_GET_PRIVATE (widget);
+  PicmanRulerPrivate *priv = PICMAN_RULER_GET_PRIVATE (widget);
   PangoLayout      *layout;
   PangoAttrList    *attrs;
   PangoAttribute   *attr;
@@ -1292,10 +1292,10 @@ gimp_ruler_create_layout (GtkWidget   *widget,
 }
 
 static PangoLayout *
-gimp_ruler_get_layout (GtkWidget   *widget,
+picman_ruler_get_layout (GtkWidget   *widget,
                        const gchar *text)
 {
-  GimpRulerPrivate *priv = GIMP_RULER_GET_PRIVATE (widget);
+  PicmanRulerPrivate *priv = PICMAN_RULER_GET_PRIVATE (widget);
 
   if (priv->layout)
     {
@@ -1303,7 +1303,7 @@ gimp_ruler_get_layout (GtkWidget   *widget,
       return priv->layout;
     }
 
-  priv->layout = gimp_ruler_create_layout (widget, text);
+  priv->layout = picman_ruler_create_layout (widget, text);
 
   return priv->layout;
 }

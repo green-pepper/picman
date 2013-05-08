@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpmodules.h
- * (C) 1999 Austin Donnelly <austin@gimp.org>
+ * picmanmodules.h
+ * (C) 1999 Austin Donnelly <austin@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_MODULES_H__
-#define __GIMP_MODULES_H__
+#ifndef __PICMAN_MODULES_H__
+#define __PICMAN_MODULES_H__
 
 
-void   gimp_modules_init    (Gimp *gimp);
-void   gimp_modules_exit    (Gimp *gimp);
+void   picman_modules_init    (Picman *picman);
+void   picman_modules_exit    (Picman *picman);
 
-void   gimp_modules_load    (Gimp *gimp);
-void   gimp_modules_unload  (Gimp *gimp);
+void   picman_modules_load    (Picman *picman);
+void   picman_modules_unload  (Picman *picman);
 
-void   gimp_modules_refresh (Gimp *gimp);
+void   picman_modules_refresh (Picman *picman);
 
 
-#endif  /* __GIMP_MODULES_H__ */
+#endif  /* __PICMAN_MODULES_H__ */

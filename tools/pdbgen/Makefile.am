@@ -19,8 +19,8 @@ pdb_sources = \
 	pdb/floating_sel.pdb		\
 	pdb/font_select.pdb		\
 	pdb/fonts.pdb			\
-	pdb/gimp.pdb			\
-	pdb/gimprc.pdb			\
+	pdb/picman.pdb			\
+	pdb/picmanrc.pdb			\
 	pdb/gradient.pdb		\
 	pdb/gradient_select.pdb		\
 	pdb/gradients.pdb		\
@@ -70,7 +70,7 @@ EXTRA_DIST = \
 	$(pdb_sources)
 
 enum_headers = \
-	../../libgimpbase/gimpbaseenums.h	\
+	../../libpicmanbase/picmanbaseenums.h	\
 	../../app/core/core-enums.h		\
 	../../app/text/text-enums.h		\
 	../../app/paint/paint-enums.h		\

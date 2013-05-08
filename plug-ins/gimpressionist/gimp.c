@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include "ppmtool.h"
 #include "infile.h"
-#include "gimpressionist.h"
+#include "picmanressionist.h"
 #include "preview.h"
 #include "brush.h"
 #include "presets.h"
@@ -34,25 +34,25 @@
 #include "size.h"
 
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 static void query               (void);
 static void run                 (const gchar      *name,
                                  gint              nparams,
-                                 const GimpParam  *param,
+                                 const PicmanParam  *param,
                                  gint             *nreturn_vals,
-                                 GimpParam       **return_vals);
-static void gimpressionist_main (void);
+                                 PicmanParam       **return_vals);
+static void picmanressionist_main (void);
 
 
-const GimpPlugInInfo PLUG_IN_INFO = {
+const PicmanPlugInInfo PLUG_IN_INFO = {
         NULL,   /* init_proc */
         NULL,   /* quit_proc */
         query,  /* query_proc */
         run     /* run_proc */
 }; /* PLUG_IN_INFO */
 
-static GimpDrawable *drawable;
+static PicmanDrawable *drawable;
 static ppm_t         infile =  {0, 0, NULL};
 static ppm_t         inalpha = {0, 0, NULL};
 
@@ -77,48 +77,48 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0) }"    },
-    { GIMP_PDB_IMAGE,    "image",     "Input image"    },
-    { GIMP_PDB_DRAWABLE, "drawable",  "Input drawable" },
-    { GIMP_PDB_STRING,   "preset",    "Preset Name"    },
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0) }"    },
+    { PICMAN_PDB_IMAGE,    "image",     "Input image"    },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "Input drawable" },
+    { PICMAN_PDB_STRING,   "preset",    "Preset Name"    },
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Performs various artistic operations"),
                           "Performs various artistic operations on an image",
                           "Vidar Madsen <vidar@prosalg.no>",
                           "Vidar Madsen",
                           PLUG_IN_VERSION,
-                          N_("_GIMPressionist..."),
+                          N_("_PICMANressionist..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
 
 static void
-gimpressionist_get_data (void)
+picmanressionist_get_data (void)
 {
   restore_default_values ();
-  gimp_get_data (PLUG_IN_PROC, &pcvals);
+  picman_get_data (PLUG_IN_PROC, &pcvals);
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status;
   gboolean           with_specified_preset;
   gchar             *preset_name = NULL;
 
-  status   = GIMP_PDB_SUCCESS;
+  status   = PICMAN_PDB_SUCCESS;
   run_mode = param[0].data.d_int32;
   with_specified_preset = FALSE;
 
@@ -131,7 +131,7 @@ run (const gchar      *name,
         }
     }
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   *nreturn_vals = 1;
@@ -141,8 +141,8 @@ run (const gchar      *name,
 
   /* Get the active drawable info */
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
-  img_has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
+  img_has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   random_generator = g_rand_new ();
 
@@ -153,16 +153,16 @@ run (const gchar      *name,
   {
     gint x1, y1, width, height; /* Not used. */
 
-    if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+    if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                         &x1, &y1, &width, &height))
       {
-        values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+        values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
         *nreturn_vals           = 2;
-        values[1].type          = GIMP_PDB_STRING;
+        values[1].type          = PICMAN_PDB_STRING;
         values[1].data.d_string = _("The selection does not intersect "
                                     "the active layer or mask.");
 
-        gimp_drawable_detach (drawable);
+        picman_drawable_detach (drawable);
 
         return;
       }
@@ -176,23 +176,23 @@ run (const gchar      *name,
          * interactive plug-in was run will cause it to crash, because the
          * data is uninitialized.
          * */
-    case GIMP_RUN_INTERACTIVE:
-    case GIMP_RUN_NONINTERACTIVE:
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimpressionist_get_data ();
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+    case PICMAN_RUN_INTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picmanressionist_get_data ();
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
-          if (!create_gimpressionist ())
+          if (!create_picmanressionist ())
               return;
         }
       break;
     default:
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
       break;
     }
-  if ((status == GIMP_PDB_SUCCESS) &&
-      (gimp_drawable_is_rgb (drawable->drawable_id) ||
-       gimp_drawable_is_gray (drawable->drawable_id)))
+  if ((status == PICMAN_PDB_SUCCESS) &&
+      (picman_drawable_is_rgb (drawable->drawable_id) ||
+       picman_drawable_is_gray (drawable->drawable_id)))
     {
 
       if (with_specified_preset)
@@ -200,7 +200,7 @@ run (const gchar      *name,
           /* If select_preset fails - set to an error */
           if (select_preset (preset_name))
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
       /* It seems that the value of the run variable is stored in
@@ -213,25 +213,25 @@ run (const gchar      *name,
        * is always set to TRUE upon a non-interactive run.
        *        -- Shlomi Fish
        * */
-      if (run_mode == GIMP_RUN_NONINTERACTIVE)
+      if (run_mode == PICMAN_RUN_NONINTERACTIVE)
         {
           pcvals.run = TRUE;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
-          gimpressionist_main ();
-          gimp_displays_flush ();
+          picmanressionist_main ();
+          picman_displays_flush ();
 
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC,
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC,
                            &pcvals,
-                           sizeof (gimpressionist_vals_t));
+                           sizeof (picmanressionist_vals_t));
         }
     }
-  else if (status == GIMP_PDB_SUCCESS)
+  else if (status == PICMAN_PDB_SUCCESS)
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   /* Resources Cleanup */
@@ -246,13 +246,13 @@ run (const gchar      *name,
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 void
 grabarea (void)
 {
-  GimpPixelRgn  src_rgn;
+  PicmanPixelRgn  src_rgn;
   ppm_t        *p;
   gint          x1, y1;
   gint          x, y;
@@ -261,24 +261,24 @@ grabarea (void)
   gint          rowstride;
   gpointer      pr;
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &x1, &y1, &width, &height))
     return;
 
   ppm_new (&infile, width, height);
   p = &infile;
 
-  if (gimp_drawable_has_alpha (drawable->drawable_id))
+  if (picman_drawable_has_alpha (drawable->drawable_id))
     ppm_new (&inalpha, width, height);
 
   rowstride = p->width * 3;
 
-  gimp_pixel_rgn_init (&src_rgn,
+  picman_pixel_rgn_init (&src_rgn,
                        drawable, x1, y1, width, height, FALSE, FALSE);
 
-  for (pr = gimp_pixel_rgns_register (1, &src_rgn);
+  for (pr = picman_pixel_rgns_register (1, &src_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       const guchar *src = src_rgn.data;
 
@@ -366,9 +366,9 @@ grabarea (void)
 }
 
 static void
-gimpressionist_main (void)
+picmanressionist_main (void)
 {
-  GimpPixelRgn  dest_rgn;
+  PicmanPixelRgn  dest_rgn;
   ppm_t        *p;
   gint          x1, y1;
   gint          x, y;
@@ -380,13 +380,13 @@ gimpressionist_main (void)
   glong         total;
   gpointer      pr;
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &x1, &y1, &width, &height))
     return;
 
   total = width * height;
 
-  gimp_progress_init (_("Painting"));
+  picman_progress_init (_("Painting"));
 
   if (! PPM_IS_INITED (&infile))
     grabarea ();
@@ -397,12 +397,12 @@ gimpressionist_main (void)
 
   rowstride = p->width * 3;
 
-  gimp_pixel_rgn_init (&dest_rgn,
+  picman_pixel_rgn_init (&dest_rgn,
                        drawable, x1, y1, width, height, TRUE, TRUE);
 
-  for (pr = gimp_pixel_rgns_register (1, &dest_rgn), count = 0, done = 0;
+  for (pr = picman_pixel_rgns_register (1, &dest_rgn), count = 0, done = 0;
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr), count++)
+       pr = picman_pixel_rgns_process (pr), count++)
     {
       guchar *dest = dest_rgn.data;
 
@@ -418,7 +418,7 @@ gimpressionist_main (void)
                 {
                   gint k = col * 3;
 
-                  *d++ = GIMP_RGB_LUMINANCE (tmprow[k + 0],
+                  *d++ = PICMAN_RGB_LUMINANCE (tmprow[k + 0],
                                              tmprow[k + 1],
                                              tmprow[k + 2]);
                 }
@@ -437,7 +437,7 @@ gimpressionist_main (void)
               for (x = 0, col = dest_rgn.x - x1; x < dest_rgn.w; x++, col++)
                 {
                   gint k     = col * 3;
-                  gint value = GIMP_RGB_LUMINANCE (tmprow[k + 0],
+                  gint value = PICMAN_RGB_LUMINANCE (tmprow[k + 0],
                                                    tmprow[k + 1],
                                                    tmprow[k + 2]);
 
@@ -489,11 +489,11 @@ gimpressionist_main (void)
       done += dest_rgn.w * dest_rgn.h;
 
       if (count % 16 == 0)
-        gimp_progress_update (0.8 + 0.2 * done / total);
+        picman_progress_update (0.8 + 0.2 * done / total);
     }
 
-  gimp_progress_update (1.0);
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, width, height);
+  picman_progress_update (1.0);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, width, height);
 }

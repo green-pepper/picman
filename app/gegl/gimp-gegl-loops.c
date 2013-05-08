@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-gegl-loops.c
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picman-gegl-loops.c
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,23 +22,23 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "gimp-gegl-types.h"
+#include "picman-gegl-types.h"
 
-#include "gimp-babl.h"
-#include "gimp-gegl-loops.h"
+#include "picman-babl.h"
+#include "picman-gegl-loops.h"
 
 
 void
-gimp_gegl_convolve (GeglBuffer          *src_buffer,
+picman_gegl_convolve (GeglBuffer          *src_buffer,
                     const GeglRectangle *src_rect,
                     GeglBuffer          *dest_buffer,
                     const GeglRectangle *dest_rect,
                     const gfloat        *kernel,
                     gint                 kernel_size,
                     gdouble              divisor,
-                    GimpConvolutionType  mode,
+                    PicmanConvolutionType  mode,
                     gboolean             alpha_weighting)
 {
   GeglBufferIterator *iter;
@@ -52,21 +52,21 @@ gimp_gegl_convolve (GeglBuffer          *src_buffer,
   src_format = gegl_buffer_get_format (src_buffer);
 
   if (babl_format_is_palette (src_format))
-    src_format = gimp_babl_format (GIMP_RGB, GIMP_PRECISION_FLOAT,
+    src_format = picman_babl_format (PICMAN_RGB, PICMAN_PRECISION_FLOAT,
                                    babl_format_has_alpha (src_format));
   else
-    src_format = gimp_babl_format (gimp_babl_format_get_base_type (src_format),
-                                   GIMP_PRECISION_FLOAT,
+    src_format = picman_babl_format (picman_babl_format_get_base_type (src_format),
+                                   PICMAN_PRECISION_FLOAT,
                                    babl_format_has_alpha (src_format));
 
   dest_format = gegl_buffer_get_format (dest_buffer);
 
   if (babl_format_is_palette (dest_format))
-    dest_format = gimp_babl_format (GIMP_RGB, GIMP_PRECISION_FLOAT,
+    dest_format = picman_babl_format (PICMAN_RGB, PICMAN_PRECISION_FLOAT,
                                     babl_format_has_alpha (dest_format));
   else
-    dest_format = gimp_babl_format (gimp_babl_format_get_base_type (dest_format),
-                                    GIMP_PRECISION_FLOAT,
+    dest_format = picman_babl_format (picman_babl_format_get_base_type (dest_format),
+                                    PICMAN_PRECISION_FLOAT,
                                     babl_format_has_alpha (dest_format));
 
   src_components  = babl_format_get_n_components (src_format);
@@ -99,10 +99,10 @@ gimp_gegl_convolve (GeglBuffer          *src_buffer,
       gfloat        offset;
 
       /*  If the mode is NEGATIVE_CONVOL, the offset should be 128  */
-      if (mode == GIMP_NEGATIVE_CONVOL)
+      if (mode == PICMAN_NEGATIVE_CONVOL)
         {
           offset = 0.5;
-          mode = GIMP_NORMAL_CONVOL;
+          mode = PICMAN_NORMAL_CONVOL;
         }
       else
         {
@@ -157,7 +157,7 @@ gimp_gegl_convolve (GeglBuffer          *src_buffer,
                     {
                       total[b] += offset;
 
-                      if (mode != GIMP_NORMAL_CONVOL && total[b] < 0.0)
+                      if (mode != PICMAN_NORMAL_CONVOL && total[b] < 0.0)
                         total[b] = - total[b];
 
                       *d++ = CLAMP (total[b], 0.0, 1.0);
@@ -189,7 +189,7 @@ gimp_gegl_convolve (GeglBuffer          *src_buffer,
                     {
                       total[b] = total[b] / divisor + offset;
 
-                      if (mode != GIMP_NORMAL_CONVOL && total[b] < 0.0)
+                      if (mode != PICMAN_NORMAL_CONVOL && total[b] < 0.0)
                         total[b] = - total[b];
 
                       total[b] = CLAMP (total[b], 0.0, 1.0);
@@ -203,17 +203,17 @@ gimp_gegl_convolve (GeglBuffer          *src_buffer,
 }
 
 void
-gimp_gegl_dodgeburn (GeglBuffer          *src_buffer,
+picman_gegl_dodgeburn (GeglBuffer          *src_buffer,
                      const GeglRectangle *src_rect,
                      GeglBuffer          *dest_buffer,
                      const GeglRectangle *dest_rect,
                      gdouble              exposure,
-                     GimpDodgeBurnType    type,
-                     GimpTransferMode     mode)
+                     PicmanDodgeBurnType    type,
+                     PicmanTransferMode     mode)
 {
   GeglBufferIterator *iter;
 
-  if (type == GIMP_BURN)
+  if (type == PICMAN_BURN)
     exposure = -exposure;
 
   iter = gegl_buffer_iterator_new (src_buffer, src_rect, 0,
@@ -228,7 +228,7 @@ gimp_gegl_dodgeburn (GeglBuffer          *src_buffer,
     {
       gfloat factor;
 
-    case GIMP_HIGHLIGHTS:
+    case PICMAN_HIGHLIGHTS:
       factor = 1.0 + exposure * (0.333333);
 
       while (gegl_buffer_iterator_next (iter))
@@ -247,7 +247,7 @@ gimp_gegl_dodgeburn (GeglBuffer          *src_buffer,
         }
       break;
 
-    case GIMP_MIDTONES:
+    case PICMAN_MIDTONES:
       if (exposure < 0)
         factor = 1.0 - exposure * (0.333333);
       else
@@ -269,7 +269,7 @@ gimp_gegl_dodgeburn (GeglBuffer          *src_buffer,
         }
       break;
 
-    case GIMP_SHADOWS:
+    case PICMAN_SHADOWS:
       if (exposure >= 0)
         factor = 0.333333 * exposure;
       else
@@ -328,7 +328,7 @@ gimp_gegl_dodgeburn (GeglBuffer          *src_buffer,
  * else, caveat emptor.
  */
 void
-gimp_gegl_smudge_blend (GeglBuffer          *top_buffer,
+picman_gegl_smudge_blend (GeglBuffer          *top_buffer,
                         const GeglRectangle *top_rect,
                         GeglBuffer          *bottom_buffer,
                         const GeglRectangle *bottom_rect,
@@ -387,7 +387,7 @@ gimp_gegl_smudge_blend (GeglBuffer          *top_buffer,
 }
 
 void
-gimp_gegl_apply_mask (GeglBuffer          *mask_buffer,
+picman_gegl_apply_mask (GeglBuffer          *mask_buffer,
                       const GeglRectangle *mask_rect,
                       GeglBuffer          *dest_buffer,
                       const GeglRectangle *dest_rect,
@@ -419,7 +419,7 @@ gimp_gegl_apply_mask (GeglBuffer          *mask_buffer,
 }
 
 void
-gimp_gegl_combine_mask (GeglBuffer          *mask_buffer,
+picman_gegl_combine_mask (GeglBuffer          *mask_buffer,
                         const GeglRectangle *mask_rect,
                         GeglBuffer          *dest_buffer,
                         const GeglRectangle *dest_rect,
@@ -451,7 +451,7 @@ gimp_gegl_combine_mask (GeglBuffer          *mask_buffer,
 }
 
 void
-gimp_gegl_combine_mask_weird (GeglBuffer          *mask_buffer,
+picman_gegl_combine_mask_weird (GeglBuffer          *mask_buffer,
                               const GeglRectangle *mask_rect,
                               GeglBuffer          *dest_buffer,
                               const GeglRectangle *dest_rect,
@@ -498,7 +498,7 @@ gimp_gegl_combine_mask_weird (GeglBuffer          *mask_buffer,
 }
 
 void
-gimp_gegl_replace (GeglBuffer          *top_buffer,
+picman_gegl_replace (GeglBuffer          *top_buffer,
                    const GeglRectangle *top_rect,
                    GeglBuffer          *bottom_buffer,
                    const GeglRectangle *bottom_rect,

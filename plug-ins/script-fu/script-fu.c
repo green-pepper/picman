@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "tinyscheme/scheme.h"
 
@@ -43,19 +43,19 @@
 static void    script_fu_query          (void);
 static void    script_fu_run            (const gchar      *name,
                                          gint              nparams,
-                                         const GimpParam  *params,
+                                         const PicmanParam  *params,
                                          gint             *nreturn_vals,
-                                         GimpParam       **return_vals);
+                                         PicmanParam       **return_vals);
 static gchar * script_fu_search_path    (void);
 static void    script_fu_extension_init (void);
 static void    script_fu_refresh_proc   (const gchar      *name,
                                          gint              nparams,
-                                         const GimpParam  *params,
+                                         const PicmanParam  *params,
                                          gint             *nreturn_vals,
-                                         GimpParam       **return_vals);
+                                         PicmanParam       **return_vals);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,             /* init_proc  */
   NULL,             /* quit_proc  */
@@ -70,43 +70,43 @@ MAIN ()
 static void
 script_fu_query (void)
 {
-  static const GimpParamDef console_args[] =
+  static const PicmanParamDef console_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode", "The run mode { RUN-INTERACTIVE (0) }" }
+    { PICMAN_PDB_INT32,  "run-mode", "The run mode { RUN-INTERACTIVE (0) }" }
   };
 
-  static const GimpParamDef textconsole_args[] =
+  static const PicmanParamDef textconsole_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode", "The run mode { RUN-INTERACTIVE (0) }" }
+    { PICMAN_PDB_INT32,  "run-mode", "The run mode { RUN-INTERACTIVE (0) }" }
   };
 
-  static const GimpParamDef eval_args[] =
+  static const PicmanParamDef eval_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode", "The run mode { RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "code",     "The code to evaluate"                    }
+    { PICMAN_PDB_INT32,  "run-mode", "The run mode { RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "code",     "The code to evaluate"                    }
   };
 
-  static const GimpParamDef server_args[] =
+  static const PicmanParamDef server_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode", "The run mode { RUN-NONINTERACTIVE (1) }"  },
-    { GIMP_PDB_INT32,  "port",     "The port on which to listen for requests" },
-    { GIMP_PDB_STRING, "logfile",  "The file to log server activity to"       }
+    { PICMAN_PDB_INT32,  "run-mode", "The run mode { RUN-NONINTERACTIVE (1) }"  },
+    { PICMAN_PDB_INT32,  "port",     "The port on which to listen for requests" },
+    { PICMAN_PDB_STRING, "logfile",  "The file to log server activity to"       }
   };
 
-  gimp_plugin_domain_register (GETTEXT_PACKAGE "-script-fu", NULL);
+  picman_plugin_domain_register (GETTEXT_PACKAGE "-script-fu", NULL);
 
-  gimp_install_procedure ("extension-script-fu",
-                          "A scheme interpreter for scripting GIMP operations",
+  picman_install_procedure ("extension-script-fu",
+                          "A scheme interpreter for scripting PICMAN operations",
                           "More help here later",
                           "Spencer Kimball & Peter Mattis",
                           "Spencer Kimball & Peter Mattis",
                           "1997",
                           NULL,
                           NULL,
-                          GIMP_EXTENSION,
+                          PICMAN_EXTENSION,
                           0, 0, NULL, NULL);
 
-  gimp_install_procedure ("plug-in-script-fu-console",
+  picman_install_procedure ("plug-in-script-fu-console",
                           N_("Interactive console for Script-Fu development"),
                           "Provides an interface which allows interactive "
                                       "scheme development.",
@@ -115,14 +115,14 @@ script_fu_query (void)
                           "1997",
                           N_("_Console"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (console_args), 0,
                           console_args, NULL);
 
-  gimp_plugin_menu_register ("plug-in-script-fu-console",
+  picman_plugin_menu_register ("plug-in-script-fu-console",
                              "<Image>/Filters/Languages/Script-Fu");
 
-  gimp_install_procedure ("plug-in-script-fu-text-console",
+  picman_install_procedure ("plug-in-script-fu-text-console",
                           "Provides a text console mode for script-fu "
                           "development",
                           "Provides an interface which allows interactive "
@@ -132,11 +132,11 @@ script_fu_query (void)
                           "1997",
                           NULL,
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (textconsole_args), 0,
                           textconsole_args, NULL);
 
-  gimp_install_procedure ("plug-in-script-fu-server",
+  picman_install_procedure ("plug-in-script-fu-server",
                           N_("Server for remote Script-Fu operation"),
                           "Provides a server for remote script-fu operation",
                           "Spencer Kimball & Peter Mattis",
@@ -144,14 +144,14 @@ script_fu_query (void)
                           "1997",
                           N_("_Start Server..."),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (server_args), 0,
                           server_args, NULL);
 
-  gimp_plugin_menu_register ("plug-in-script-fu-server",
+  picman_plugin_menu_register ("plug-in-script-fu-server",
                              "<Image>/Filters/Languages/Script-Fu");
 
-  gimp_install_procedure ("plug-in-script-fu-eval",
+  picman_install_procedure ("plug-in-script-fu-eval",
                           "Evaluate scheme code",
                           "Evaluate the code under the scheme interpreter "
                                       "(primarily for batch mode)",
@@ -160,7 +160,7 @@ script_fu_query (void)
                           "1998",
                           NULL,
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (eval_args), 0,
                           eval_args, NULL);
 }
@@ -168,9 +168,9 @@ script_fu_query (void)
 static void
 script_fu_run (const gchar      *name,
                gint              nparams,
-               const GimpParam  *param,
+               const PicmanParam  *param,
                gint             *nreturn_vals,
-               GimpParam       **return_vals)
+               PicmanParam       **return_vals)
 {
   gchar *path;
 
@@ -196,7 +196,7 @@ script_fu_run (const gchar      *name,
     }
 
   if (param != NULL)
-    ts_set_run_mode ((GimpRunMode) param[0].data.d_int32);
+    ts_set_run_mode ((PicmanRunMode) param[0].data.d_int32);
 
   /*  Load all of the available scripts  */
   script_fu_find_scripts (path);
@@ -209,21 +209,21 @@ script_fu_run (const gchar      *name,
        *  The main script-fu extension.
        */
 
-      static GimpParam  values[1];
+      static PicmanParam  values[1];
 
       /*  Acknowledge that the extension is properly initialized  */
-      gimp_extension_ack ();
+      picman_extension_ack ();
 
       /*  Go into an endless loop  */
       while (TRUE)
-        gimp_extension_process (0);
+        picman_extension_process (0);
 
       /*  Set return values; pointless because we never get out of the loop  */
       *nreturn_vals = 1;
       *return_vals  = values;
 
-      values[0].type          = GIMP_PDB_STATUS;
-      values[0].data.d_status = GIMP_PDB_SUCCESS;
+      values[0].type          = PICMAN_PDB_STATUS;
+      values[0].data.d_status = PICMAN_PDB_SUCCESS;
     }
   else if (strcmp (name, "plug-in-script-fu-text-console") == 0)
     {
@@ -269,7 +269,7 @@ script_fu_search_path (void)
   gchar  *path_str;
   gchar  *path  = NULL;
 
-  path_str = gimp_gimprc_query ("script-fu-path");
+  path_str = picman_picmanrc_query ("script-fu-path");
 
   if (path_str)
     {
@@ -293,39 +293,39 @@ script_fu_search_path (void)
 static void
 script_fu_extension_init (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32, "run-mode", "[Interactive], non-interactive" }
+    { PICMAN_PDB_INT32, "run-mode", "[Interactive], non-interactive" }
   };
 
-  gimp_plugin_menu_branch_register ("<Image>/Help", N_("_GIMP Online"));
-  gimp_plugin_menu_branch_register ("<Image>/Help", N_("_User Manual"));
+  picman_plugin_menu_branch_register ("<Image>/Help", N_("_PICMAN Online"));
+  picman_plugin_menu_branch_register ("<Image>/Help", N_("_User Manual"));
 
-  gimp_plugin_menu_branch_register ("<Image>/Filters/Languages",
+  picman_plugin_menu_branch_register ("<Image>/Filters/Languages",
                                     N_("_Script-Fu"));
-  gimp_plugin_menu_branch_register ("<Image>/Filters/Languages/Script-Fu",
+  picman_plugin_menu_branch_register ("<Image>/Filters/Languages/Script-Fu",
                                     N_("_Test"));
 
-  gimp_plugin_menu_branch_register ("<Image>/File/Create",
+  picman_plugin_menu_branch_register ("<Image>/File/Create",
                                     N_("_Buttons"));
-  gimp_plugin_menu_branch_register ("<Image>/File/Create",
+  picman_plugin_menu_branch_register ("<Image>/File/Create",
                                     N_("_Logos"));
-  gimp_plugin_menu_branch_register ("<Image>/File/Create",
+  picman_plugin_menu_branch_register ("<Image>/File/Create",
                                     N_("_Patterns"));
 
-  gimp_plugin_menu_branch_register ("<Image>/File/Create",
+  picman_plugin_menu_branch_register ("<Image>/File/Create",
                                     N_("_Web Page Themes"));
-  gimp_plugin_menu_branch_register ("<Image>/File/Create/Web Page Themes",
+  picman_plugin_menu_branch_register ("<Image>/File/Create/Web Page Themes",
                                     N_("_Alien Glow"));
-  gimp_plugin_menu_branch_register ("<Image>/File/Create/Web Page Themes",
+  picman_plugin_menu_branch_register ("<Image>/File/Create/Web Page Themes",
                                     N_("_Beveled Pattern"));
-  gimp_plugin_menu_branch_register ("<Image>/File/Create/Web Page Themes",
-                                    N_("_Classic.Gimp.Org"));
+  picman_plugin_menu_branch_register ("<Image>/File/Create/Web Page Themes",
+                                    N_("_Classic.Picman.Org"));
 
-  gimp_plugin_menu_branch_register ("<Image>/Filters",
+  picman_plugin_menu_branch_register ("<Image>/Filters",
                                     N_("Alpha to _Logo"));
 
-  gimp_install_temp_proc ("script-fu-refresh",
+  picman_install_temp_proc ("script-fu-refresh",
                           N_("Re-read all available Script-Fu scripts"),
                           "Re-read all available Script-Fu scripts",
                           "Spencer Kimball & Peter Mattis",
@@ -333,24 +333,24 @@ script_fu_extension_init (void)
                           "1997",
                           N_("_Refresh Scripts"),
                           NULL,
-                          GIMP_TEMPORARY,
+                          PICMAN_TEMPORARY,
                           G_N_ELEMENTS (args), 0,
                           args, NULL,
                           script_fu_refresh_proc);
 
-  gimp_plugin_menu_register ("script-fu-refresh",
+  picman_plugin_menu_register ("script-fu-refresh",
                              "<Image>/Filters/Languages/Script-Fu");
 }
 
 static void
 script_fu_refresh_proc (const gchar      *name,
                         gint              nparams,
-                        const GimpParam  *params,
+                        const PicmanParam  *params,
                         gint             *nreturn_vals,
-                        GimpParam       **return_vals)
+                        PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
-  GimpPDBStatusType status;
+  static PicmanParam  values[1];
+  PicmanPDBStatusType status;
 
   if (script_fu_interface_is_active ())
     {
@@ -358,7 +358,7 @@ script_fu_refresh_proc (const gchar      *name,
                    "Script-Fu dialog box is open.  Please close "
                    "all Script-Fu windows and try again."));
 
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
   else
     {
@@ -369,12 +369,12 @@ script_fu_refresh_proc (const gchar      *name,
 
       g_free (path);
 
-      status = GIMP_PDB_SUCCESS;
+      status = PICMAN_PDB_SUCCESS;
     }
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 }

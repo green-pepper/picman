@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationreplacemode.h
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanoperationreplacemode.h
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,39 +19,39 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GIMP_OPERATION_REPLACE_MODE_H__
-#define __GIMP_OPERATION_REPLACE_MODE_H__
+#ifndef __PICMAN_OPERATION_REPLACE_MODE_H__
+#define __PICMAN_OPERATION_REPLACE_MODE_H__
 
 
-#include "gimpoperationpointlayermode.h"
+#include "picmanoperationpointlayermode.h"
 
 
-#define GIMP_TYPE_OPERATION_REPLACE_MODE            (gimp_operation_replace_mode_get_type ())
-#define GIMP_OPERATION_REPLACE_MODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_REPLACE_MODE, GimpOperationReplaceMode))
-#define GIMP_OPERATION_REPLACE_MODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_REPLACE_MODE, GimpOperationReplaceModeClass))
-#define GIMP_IS_OPERATION_REPLACE_MODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_REPLACE_MODE))
-#define GIMP_IS_OPERATION_REPLACE_MODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_REPLACE_MODE))
-#define GIMP_OPERATION_REPLACE_MODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_REPLACE_MODE, GimpOperationReplaceModeClass))
+#define PICMAN_TYPE_OPERATION_REPLACE_MODE            (picman_operation_replace_mode_get_type ())
+#define PICMAN_OPERATION_REPLACE_MODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_REPLACE_MODE, PicmanOperationReplaceMode))
+#define PICMAN_OPERATION_REPLACE_MODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_REPLACE_MODE, PicmanOperationReplaceModeClass))
+#define PICMAN_IS_OPERATION_REPLACE_MODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_REPLACE_MODE))
+#define PICMAN_IS_OPERATION_REPLACE_MODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_REPLACE_MODE))
+#define PICMAN_OPERATION_REPLACE_MODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_REPLACE_MODE, PicmanOperationReplaceModeClass))
 
 
-typedef struct _GimpOperationReplaceMode      GimpOperationReplaceMode;
-typedef struct _GimpOperationReplaceModeClass GimpOperationReplaceModeClass;
+typedef struct _PicmanOperationReplaceMode      PicmanOperationReplaceMode;
+typedef struct _PicmanOperationReplaceModeClass PicmanOperationReplaceModeClass;
 
-struct _GimpOperationReplaceMode
+struct _PicmanOperationReplaceMode
 {
-  GimpOperationPointLayerMode parent_instance;
+  PicmanOperationPointLayerMode parent_instance;
 
   gdouble  opacity;
   gboolean premultiplied;
 };
 
-struct _GimpOperationReplaceModeClass
+struct _PicmanOperationReplaceModeClass
 {
-  GimpOperationPointLayerModeClass parent_class;
+  PicmanOperationPointLayerModeClass parent_class;
 };
 
 
-GType   gimp_operation_replace_mode_get_type (void) G_GNUC_CONST;
+GType   picman_operation_replace_mode_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_REPLACE_MODE_H__ */
+#endif /* __PICMAN_OPERATION_REPLACE_MODE_H__ */

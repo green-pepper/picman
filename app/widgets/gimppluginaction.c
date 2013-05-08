@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginaction.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanpluginaction.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,11 @@
 
 #include "widgets-types.h"
 
-#include "core/gimpmarshal.h"
+#include "core/picmanmarshal.h"
 
-#include "plug-in/gimppluginprocedure.h"
+#include "plug-in/picmanpluginprocedure.h"
 
-#include "gimppluginaction.h"
+#include "picmanpluginaction.h"
 
 
 enum
@@ -44,68 +44,68 @@ enum
 };
 
 
-static void   gimp_plug_in_action_finalize      (GObject      *object);
-static void   gimp_plug_in_action_set_property  (GObject      *object,
+static void   picman_plug_in_action_finalize      (GObject      *object);
+static void   picman_plug_in_action_set_property  (GObject      *object,
                                                  guint         prop_id,
                                                  const GValue *value,
                                                  GParamSpec   *pspec);
-static void   gimp_plug_in_action_get_property  (GObject      *object,
+static void   picman_plug_in_action_get_property  (GObject      *object,
                                                  guint         prop_id,
                                                  GValue       *value,
                                                  GParamSpec   *pspec);
 
-static void   gimp_plug_in_action_activate      (GtkAction    *action);
-static void   gimp_plug_in_action_connect_proxy (GtkAction    *action,
+static void   picman_plug_in_action_activate      (GtkAction    *action);
+static void   picman_plug_in_action_connect_proxy (GtkAction    *action,
                                                  GtkWidget    *proxy);
 
 
-G_DEFINE_TYPE (GimpPlugInAction, gimp_plug_in_action, GIMP_TYPE_ACTION)
+G_DEFINE_TYPE (PicmanPlugInAction, picman_plug_in_action, PICMAN_TYPE_ACTION)
 
-#define parent_class gimp_plug_in_action_parent_class
+#define parent_class picman_plug_in_action_parent_class
 
 static guint action_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_plug_in_action_class_init (GimpPlugInActionClass *klass)
+picman_plug_in_action_class_init (PicmanPlugInActionClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkActionClass *action_class = GTK_ACTION_CLASS (klass);
 
-  object_class->finalize      = gimp_plug_in_action_finalize;
-  object_class->set_property  = gimp_plug_in_action_set_property;
-  object_class->get_property  = gimp_plug_in_action_get_property;
+  object_class->finalize      = picman_plug_in_action_finalize;
+  object_class->set_property  = picman_plug_in_action_set_property;
+  object_class->get_property  = picman_plug_in_action_get_property;
 
-  action_class->activate      = gimp_plug_in_action_activate;
-  action_class->connect_proxy = gimp_plug_in_action_connect_proxy;
+  action_class->activate      = picman_plug_in_action_activate;
+  action_class->connect_proxy = picman_plug_in_action_connect_proxy;
 
   g_object_class_install_property (object_class, PROP_PROCEDURE,
                                    g_param_spec_object ("procedure",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_PLUG_IN_PROCEDURE,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_PLUG_IN_PROCEDURE,
+                                                        PICMAN_PARAM_READWRITE));
 
   action_signals[SELECTED] =
     g_signal_new ("selected",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpPlugInActionClass, selected),
+                  G_STRUCT_OFFSET (PicmanPlugInActionClass, selected),
                   NULL, NULL,
-                  gimp_marshal_VOID__OBJECT,
+                  picman_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_PLUG_IN_PROCEDURE);
+                  PICMAN_TYPE_PLUG_IN_PROCEDURE);
 }
 
 static void
-gimp_plug_in_action_init (GimpPlugInAction *action)
+picman_plug_in_action_init (PicmanPlugInAction *action)
 {
   action->procedure = NULL;
 }
 
 static void
-gimp_plug_in_action_finalize (GObject *object)
+picman_plug_in_action_finalize (GObject *object)
 {
-  GimpPlugInAction *action = GIMP_PLUG_IN_ACTION (object);
+  PicmanPlugInAction *action = PICMAN_PLUG_IN_ACTION (object);
 
   if (action->procedure)
     {
@@ -117,12 +117,12 @@ gimp_plug_in_action_finalize (GObject *object)
 }
 
 static void
-gimp_plug_in_action_get_property (GObject    *object,
+picman_plug_in_action_get_property (GObject    *object,
                                   guint       prop_id,
                                   GValue     *value,
                                   GParamSpec *pspec)
 {
-  GimpPlugInAction *action = GIMP_PLUG_IN_ACTION (object);
+  PicmanPlugInAction *action = PICMAN_PLUG_IN_ACTION (object);
 
   switch (prop_id)
     {
@@ -137,12 +137,12 @@ gimp_plug_in_action_get_property (GObject    *object,
 }
 
 static void
-gimp_plug_in_action_set_property (GObject      *object,
+picman_plug_in_action_set_property (GObject      *object,
                                   guint         prop_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  GimpPlugInAction *action = GIMP_PLUG_IN_ACTION (object);
+  PicmanPlugInAction *action = PICMAN_PLUG_IN_ACTION (object);
 
   switch (prop_id)
     {
@@ -159,23 +159,23 @@ gimp_plug_in_action_set_property (GObject      *object,
 }
 
 static void
-gimp_plug_in_action_activate (GtkAction *action)
+picman_plug_in_action_activate (GtkAction *action)
 {
-  GimpPlugInAction *plug_in_action = GIMP_PLUG_IN_ACTION (action);
+  PicmanPlugInAction *plug_in_action = PICMAN_PLUG_IN_ACTION (action);
 
   /* Not all actions have procedures associated with them, for example
    * unused "plug-in-recent-[N]" actions, so check for NULL before we
    * invoke the plug-in action
    */
   if (plug_in_action->procedure)
-    gimp_plug_in_action_selected (plug_in_action, plug_in_action->procedure);
+    picman_plug_in_action_selected (plug_in_action, plug_in_action->procedure);
 }
 
 static void
-gimp_plug_in_action_connect_proxy (GtkAction *action,
+picman_plug_in_action_connect_proxy (GtkAction *action,
                                    GtkWidget *proxy)
 {
-  GimpPlugInAction *plug_in_action = GIMP_PLUG_IN_ACTION (action);
+  PicmanPlugInAction *plug_in_action = PICMAN_PLUG_IN_ACTION (action);
 
   GTK_ACTION_CLASS (parent_class)->connect_proxy (action, proxy);
 
@@ -183,7 +183,7 @@ gimp_plug_in_action_connect_proxy (GtkAction *action,
     {
       GdkPixbuf *pixbuf;
 
-      pixbuf = gimp_plug_in_procedure_get_pixbuf (plug_in_action->procedure);
+      pixbuf = picman_plug_in_procedure_get_pixbuf (plug_in_action->procedure);
 
       if (pixbuf)
         {
@@ -216,14 +216,14 @@ gimp_plug_in_action_connect_proxy (GtkAction *action,
 
 /*  public functions  */
 
-GimpPlugInAction *
-gimp_plug_in_action_new (const gchar         *name,
+PicmanPlugInAction *
+picman_plug_in_action_new (const gchar         *name,
                          const gchar         *label,
                          const gchar         *tooltip,
                          const gchar         *stock_id,
-                         GimpPlugInProcedure *procedure)
+                         PicmanPlugInProcedure *procedure)
 {
-  return g_object_new (GIMP_TYPE_PLUG_IN_ACTION,
+  return g_object_new (PICMAN_TYPE_PLUG_IN_ACTION,
                        "name",      name,
                        "label",     label,
                        "tooltip",   tooltip,
@@ -233,10 +233,10 @@ gimp_plug_in_action_new (const gchar         *name,
 }
 
 void
-gimp_plug_in_action_selected (GimpPlugInAction    *action,
-                              GimpPlugInProcedure *procedure)
+picman_plug_in_action_selected (PicmanPlugInAction    *action,
+                              PicmanPlugInProcedure *procedure)
 {
-  g_return_if_fail (GIMP_IS_PLUG_IN_ACTION (action));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_ACTION (action));
 
   g_signal_emit (action, action_signals[SELECTED], 0, procedure);
 }

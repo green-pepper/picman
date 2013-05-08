@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"Gimp-File\"
+	-DG_LOG_DOMAIN=\"Picman-File\"
 
 INCLUDES = \
 	-I$(top_builddir)	\
@@ -23,4 +23,4 @@ libappfile_a_SOURCES = \
 	file-save.h		\
 	file-utils.c		\
 	file-utils.h		\
-	gimp-file.h
+	picman-file.h

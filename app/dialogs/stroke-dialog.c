@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * Copyright (C) 2003  Henrik Brix Andersen <brix@gimp.org>
+ * Copyright (C) 2003  Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,26 +22,26 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimppaintinfo.h"
-#include "core/gimpstrokeoptions.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picmanpaintinfo.h"
+#include "core/picmanstrokeoptions.h"
+#include "core/picmantoolinfo.h"
 
-#include "widgets/gimpcontainercombobox.h"
-#include "widgets/gimpcontainerview.h"
-#include "widgets/gimpviewabledialog.h"
-#include "widgets/gimpstrokeeditor.h"
+#include "widgets/picmancontainercombobox.h"
+#include "widgets/picmancontainerview.h"
+#include "widgets/picmanviewabledialog.h"
+#include "widgets/picmanstrokeeditor.h"
 
 #include "stroke-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define RESPONSE_RESET 1
@@ -57,16 +57,16 @@ static void  stroke_dialog_response (GtkWidget *widget,
 /*  public function  */
 
 GtkWidget *
-stroke_dialog_new (GimpItem    *item,
-                   GimpContext *context,
+stroke_dialog_new (PicmanItem    *item,
+                   PicmanContext *context,
                    const gchar *title,
                    const gchar *stock_id,
                    const gchar *help_id,
                    GtkWidget   *parent)
 {
-  GimpStrokeOptions *options;
-  GimpStrokeOptions *saved_options;
-  GimpImage         *image;
+  PicmanStrokeOptions *options;
+  PicmanStrokeOptions *saved_options;
+  PicmanImage         *image;
   GtkWidget         *dialog;
   GtkWidget         *main_vbox;
   GtkWidget         *radio_box;
@@ -75,31 +75,31 @@ stroke_dialog_new (GimpItem    *item,
   GSList            *group;
   GtkWidget         *frame;
 
-  g_return_val_if_fail (GIMP_IS_ITEM (item), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_ITEM (item), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (stock_id != NULL, NULL);
   g_return_val_if_fail (help_id != NULL, NULL);
   g_return_val_if_fail (parent == NULL || GTK_IS_WIDGET (parent), NULL);
 
-  image = gimp_item_get_image (item);
+  image = picman_item_get_image (item);
 
-  options = gimp_stroke_options_new (context->gimp, context, TRUE);
+  options = picman_stroke_options_new (context->picman, context, TRUE);
 
-  saved_options = g_object_get_data (G_OBJECT (context->gimp),
+  saved_options = g_object_get_data (G_OBJECT (context->picman),
                                      "saved-stroke-options");
 
   if (saved_options)
-    gimp_config_sync (G_OBJECT (saved_options), G_OBJECT (options), 0);
+    picman_config_sync (G_OBJECT (saved_options), G_OBJECT (options), 0);
 
-  dialog = gimp_viewable_dialog_new (GIMP_VIEWABLE (item), context,
-                                     title, "gimp-stroke-options",
+  dialog = picman_viewable_dialog_new (PICMAN_VIEWABLE (item), context,
+                                     title, "picman-stroke-options",
                                      stock_id,
                                      _("Choose Stroke Style"),
                                      parent,
-                                     gimp_standard_help_func,
+                                     picman_standard_help_func,
                                      help_id,
 
-                                     GIMP_STOCK_RESET, RESPONSE_RESET,
+                                     PICMAN_STOCK_RESET, RESPONSE_RESET,
                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                      stock_id,         GTK_RESPONSE_OK,
 
@@ -117,8 +117,8 @@ stroke_dialog_new (GimpItem    *item,
                     G_CALLBACK (stroke_dialog_response),
                     dialog);
 
-  g_object_set_data (G_OBJECT (dialog), "gimp-item", item);
-  g_object_set_data_full (G_OBJECT (dialog), "gimp-stroke-options", options,
+  g_object_set_data (G_OBJECT (dialog), "picman-item", item);
+  g_object_set_data_full (G_OBJECT (dialog), "picman-stroke-options", options,
                           (GDestroyNotify) g_object_unref);
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
@@ -127,7 +127,7 @@ stroke_dialog_new (GimpItem    *item,
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  radio_box = gimp_prop_enum_radio_box_new (G_OBJECT (options), "method",
+  radio_box = picman_prop_enum_radio_box_new (G_OBJECT (options), "method",
                                             -1, -1);
 
   group = gtk_radio_button_get_group (g_object_get_data (G_OBJECT (radio_box),
@@ -159,7 +159,7 @@ stroke_dialog_new (GimpItem    *item,
 
   /*  the stroke frame  */
 
-  frame = gimp_frame_new (NULL);
+  frame = picman_frame_new (NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -171,9 +171,9 @@ stroke_dialog_new (GimpItem    *item,
     gdouble    xres;
     gdouble    yres;
 
-    gimp_image_get_resolution (image, &xres, &yres);
+    picman_image_get_resolution (image, &xres, &yres);
 
-    stroke_editor = gimp_stroke_editor_new (options, yres, FALSE);
+    stroke_editor = picman_stroke_editor_new (options, yres, FALSE);
     gtk_container_add (GTK_CONTAINER (frame), stroke_editor);
     gtk_widget_show (stroke_editor);
 
@@ -185,7 +185,7 @@ stroke_dialog_new (GimpItem    *item,
 
   /*  the paint tool frame  */
 
-  frame = gimp_frame_new (NULL);
+  frame = picman_frame_new (NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -215,15 +215,15 @@ stroke_dialog_new (GimpItem    *item,
     gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
     gtk_widget_show (label);
 
-    combo = gimp_container_combo_box_new (image->gimp->paint_info_list,
-                                          GIMP_CONTEXT (options),
+    combo = picman_container_combo_box_new (image->picman->paint_info_list,
+                                          PICMAN_CONTEXT (options),
                                           16, 0);
     gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
     gtk_widget_show (combo);
 
-    g_object_set_data (G_OBJECT (dialog), "gimp-tool-menu", combo);
+    g_object_set_data (G_OBJECT (dialog), "picman-tool-menu", combo);
 
-    button = gimp_prop_check_button_new (G_OBJECT (options),
+    button = picman_prop_check_button_new (G_OBJECT (options),
                                          "emulate-brush-dynamics",
                                          _("_Emulate brush dynamics"));
     gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
@@ -241,75 +241,75 @@ stroke_dialog_response (GtkWidget  *widget,
                         gint        response_id,
                         GtkWidget  *dialog)
 {
-  GimpStrokeOptions *options;
-  GimpItem          *item;
-  GimpImage         *image;
-  GimpContext       *context;
+  PicmanStrokeOptions *options;
+  PicmanItem          *item;
+  PicmanImage         *image;
+  PicmanContext       *context;
   GtkWidget         *combo;
 
-  item    = g_object_get_data (G_OBJECT (dialog), "gimp-item");
-  options = g_object_get_data (G_OBJECT (dialog), "gimp-stroke-options");
-  combo   = g_object_get_data (G_OBJECT (dialog), "gimp-tool-menu");
+  item    = g_object_get_data (G_OBJECT (dialog), "picman-item");
+  options = g_object_get_data (G_OBJECT (dialog), "picman-stroke-options");
+  combo   = g_object_get_data (G_OBJECT (dialog), "picman-tool-menu");
 
-  image   = gimp_item_get_image (item);
-  context = GIMP_VIEWABLE_DIALOG (dialog)->context;
+  image   = picman_item_get_image (item);
+  context = PICMAN_VIEWABLE_DIALOG (dialog)->context;
 
   switch (response_id)
     {
     case RESPONSE_RESET:
       {
-        GimpToolInfo *tool_info = gimp_context_get_tool (context);
+        PicmanToolInfo *tool_info = picman_context_get_tool (context);
 
-        gimp_config_reset (GIMP_CONFIG (options));
+        picman_config_reset (PICMAN_CONFIG (options));
 
-        gimp_container_view_select_item (GIMP_CONTAINER_VIEW (combo),
-                                         GIMP_VIEWABLE (tool_info->paint_info));
+        picman_container_view_select_item (PICMAN_CONTAINER_VIEW (combo),
+                                         PICMAN_VIEWABLE (tool_info->paint_info));
 
       }
       break;
 
     case GTK_RESPONSE_OK:
       {
-        GimpDrawable      *drawable = gimp_image_get_active_drawable (image);
-        GimpStrokeOptions *saved_options;
+        PicmanDrawable      *drawable = picman_image_get_active_drawable (image);
+        PicmanStrokeOptions *saved_options;
         GError            *error    = NULL;
 
         if (! drawable)
           {
-            gimp_message_literal (context->gimp, G_OBJECT (widget),
-				  GIMP_MESSAGE_WARNING,
+            picman_message_literal (context->picman, G_OBJECT (widget),
+				  PICMAN_MESSAGE_WARNING,
 				  _("There is no active layer or channel "
 				    "to stroke to."));
             return;
           }
 
-        saved_options = g_object_get_data (G_OBJECT (context->gimp),
+        saved_options = g_object_get_data (G_OBJECT (context->picman),
                                            "saved-stroke-options");
 
         if (saved_options)
           g_object_ref (saved_options);
         else
-          saved_options = gimp_stroke_options_new (context->gimp, context, TRUE);
+          saved_options = picman_stroke_options_new (context->picman, context, TRUE);
 
-        gimp_config_sync (G_OBJECT (options), G_OBJECT (saved_options), 0);
+        picman_config_sync (G_OBJECT (options), G_OBJECT (saved_options), 0);
 
-        g_object_set_data_full (G_OBJECT (context->gimp), "saved-stroke-options",
+        g_object_set_data_full (G_OBJECT (context->picman), "saved-stroke-options",
                                 saved_options,
                                 (GDestroyNotify) g_object_unref);
 
-        if (! gimp_item_stroke (item, drawable, context, options, FALSE, TRUE,
+        if (! picman_item_stroke (item, drawable, context, options, FALSE, TRUE,
                                 NULL, &error))
           {
-            gimp_message_literal (context->gimp,
+            picman_message_literal (context->picman,
                                   G_OBJECT (widget),
-                                  GIMP_MESSAGE_WARNING,
+                                  PICMAN_MESSAGE_WARNING,
                                   error ? error->message : "NULL");
 
             g_clear_error (&error);
             return;
           }
 
-        gimp_image_flush (image);
+        picman_image_flush (image);
       }
       /* fallthrough */
 

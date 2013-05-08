@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewrendererdrawable.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmanviewrendererdrawable.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,49 +23,49 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpdrawable.h"
-#include "core/gimpdrawable-preview.h"
-#include "core/gimpimage.h"
-#include "core/gimptempbuf.h"
+#include "core/picmandrawable.h"
+#include "core/picmandrawable-preview.h"
+#include "core/picmanimage.h"
+#include "core/picmantempbuf.h"
 
-#include "gimpviewrendererdrawable.h"
+#include "picmanviewrendererdrawable.h"
 
 
-static void   gimp_view_renderer_drawable_render (GimpViewRenderer *renderer,
+static void   picman_view_renderer_drawable_render (PicmanViewRenderer *renderer,
                                                   GtkWidget        *widget);
 
 
-G_DEFINE_TYPE (GimpViewRendererDrawable, gimp_view_renderer_drawable,
-               GIMP_TYPE_VIEW_RENDERER)
+G_DEFINE_TYPE (PicmanViewRendererDrawable, picman_view_renderer_drawable,
+               PICMAN_TYPE_VIEW_RENDERER)
 
-#define parent_class gimp_view_renderer_drawable_parent_class
+#define parent_class picman_view_renderer_drawable_parent_class
 
 
 static void
-gimp_view_renderer_drawable_class_init (GimpViewRendererDrawableClass *klass)
+picman_view_renderer_drawable_class_init (PicmanViewRendererDrawableClass *klass)
 {
-  GimpViewRendererClass *renderer_class = GIMP_VIEW_RENDERER_CLASS (klass);
+  PicmanViewRendererClass *renderer_class = PICMAN_VIEW_RENDERER_CLASS (klass);
 
-  renderer_class->render = gimp_view_renderer_drawable_render;
+  renderer_class->render = picman_view_renderer_drawable_render;
 }
 
 static void
-gimp_view_renderer_drawable_init (GimpViewRendererDrawable *renderer)
+picman_view_renderer_drawable_init (PicmanViewRendererDrawable *renderer)
 {
 }
 
 static void
-gimp_view_renderer_drawable_render (GimpViewRenderer *renderer,
+picman_view_renderer_drawable_render (PicmanViewRenderer *renderer,
                                     GtkWidget        *widget)
 {
-  GimpDrawable *drawable;
-  GimpItem     *item;
-  GimpImage    *image;
+  PicmanDrawable *drawable;
+  PicmanItem     *item;
+  PicmanImage    *image;
   gint          offset_x;
   gint          offset_y;
   gint          width;
@@ -75,31 +75,31 @@ gimp_view_renderer_drawable_render (GimpViewRenderer *renderer,
   gdouble       xres       = 1.0;
   gdouble       yres       = 1.0;
   gboolean      scaling_up;
-  GimpTempBuf  *render_buf = NULL;
+  PicmanTempBuf  *render_buf = NULL;
 
-  drawable = GIMP_DRAWABLE (renderer->viewable);
-  item     = GIMP_ITEM (drawable);
-  image    = gimp_item_get_image (item);
+  drawable = PICMAN_DRAWABLE (renderer->viewable);
+  item     = PICMAN_ITEM (drawable);
+  image    = picman_item_get_image (item);
 
-  gimp_item_get_offset (item, &offset_x, &offset_y);
+  picman_item_get_offset (item, &offset_x, &offset_y);
 
   width  = renderer->width;
   height = renderer->height;
 
   if (image)
-    gimp_image_get_resolution (image, &xres, &yres);
+    picman_image_get_resolution (image, &xres, &yres);
 
   if (image && ! renderer->is_popup)
     {
       width  = MAX (1, ROUND ((((gdouble) width /
-                                (gdouble) gimp_image_get_width (image)) *
-                               (gdouble) gimp_item_get_width (item))));
+                                (gdouble) picman_image_get_width (image)) *
+                               (gdouble) picman_item_get_width (item))));
       height = MAX (1, ROUND ((((gdouble) height /
-                                (gdouble) gimp_image_get_height (image)) *
-                               (gdouble) gimp_item_get_height (item))));
+                                (gdouble) picman_image_get_height (image)) *
+                               (gdouble) picman_item_get_height (item))));
 
-      gimp_viewable_calc_preview_size (gimp_item_get_width  (item),
-                                       gimp_item_get_height (item),
+      picman_viewable_calc_preview_size (picman_item_get_width  (item),
+                                       picman_item_get_height (item),
                                        width,
                                        height,
                                        renderer->dot_for_dot,
@@ -111,8 +111,8 @@ gimp_view_renderer_drawable_render (GimpViewRenderer *renderer,
     }
   else
     {
-      gimp_viewable_calc_preview_size (gimp_item_get_width  (item),
-                                       gimp_item_get_height (item),
+      picman_viewable_calc_preview_size (picman_item_get_width  (item),
+                                       picman_item_get_height (item),
                                        width,
                                        height,
                                        renderer->dot_for_dot,
@@ -124,7 +124,7 @@ gimp_view_renderer_drawable_render (GimpViewRenderer *renderer,
     }
 
   if ((view_width * view_height) <
-      (gimp_item_get_width (item) * gimp_item_get_height (item) * 4))
+      (picman_item_get_width (item) * picman_item_get_height (item) * 4))
     scaling_up = FALSE;
 
   if (scaling_up)
@@ -134,12 +134,12 @@ gimp_view_renderer_drawable_render (GimpViewRenderer *renderer,
           gint src_x, src_y;
           gint src_width, src_height;
 
-          if (gimp_rectangle_intersect (0, 0,
-                                        gimp_item_get_width  (item),
-                                        gimp_item_get_height (item),
+          if (picman_rectangle_intersect (0, 0,
+                                        picman_item_get_width  (item),
+                                        picman_item_get_height (item),
                                         -offset_x, -offset_y,
-                                        gimp_image_get_width  (image),
-                                        gimp_image_get_height (image),
+                                        picman_image_get_width  (image),
+                                        picman_image_get_height (image),
                                         &src_x, &src_y,
                                         &src_width, &src_height))
             {
@@ -147,48 +147,48 @@ gimp_view_renderer_drawable_render (GimpViewRenderer *renderer,
               gint dest_height;
 
               dest_width  = ROUND (((gdouble) renderer->width /
-                                    (gdouble) gimp_image_get_width (image)) *
+                                    (gdouble) picman_image_get_width (image)) *
                                    (gdouble) src_width);
               dest_height = ROUND (((gdouble) renderer->height /
-                                    (gdouble) gimp_image_get_height (image)) *
+                                    (gdouble) picman_image_get_height (image)) *
                                    (gdouble) src_height);
 
               if (dest_width  < 1) dest_width  = 1;
               if (dest_height < 1) dest_height = 1;
 
-              render_buf = gimp_drawable_get_sub_preview (drawable,
+              render_buf = picman_drawable_get_sub_preview (drawable,
                                                           src_x, src_y,
                                                           src_width, src_height,
                                                           dest_width, dest_height);
             }
           else
             {
-              const Babl *format = gimp_drawable_get_preview_format (drawable);
+              const Babl *format = picman_drawable_get_preview_format (drawable);
 
-              render_buf = gimp_temp_buf_new (1, 1, format);
-              gimp_temp_buf_data_clear (render_buf);
+              render_buf = picman_temp_buf_new (1, 1, format);
+              picman_temp_buf_data_clear (render_buf);
             }
         }
       else
         {
-          GimpTempBuf *temp_buf;
+          PicmanTempBuf *temp_buf;
 
-          temp_buf = gimp_viewable_get_new_preview (renderer->viewable,
+          temp_buf = picman_viewable_get_new_preview (renderer->viewable,
                                                     renderer->context,
-                                                    gimp_item_get_width  (item),
-                                                    gimp_item_get_height (item));
+                                                    picman_item_get_width  (item),
+                                                    picman_item_get_height (item));
 
           if (temp_buf)
             {
-              render_buf = gimp_temp_buf_scale (temp_buf,
+              render_buf = picman_temp_buf_scale (temp_buf,
                                                 view_width, view_height);
-              gimp_temp_buf_unref (temp_buf);
+              picman_temp_buf_unref (temp_buf);
             }
         }
     }
   else
     {
-      render_buf = gimp_viewable_get_new_preview (renderer->viewable,
+      render_buf = picman_viewable_get_new_preview (renderer->viewable,
                                                   renderer->context,
                                                   view_width,
                                                   view_height);
@@ -204,13 +204,13 @@ gimp_view_renderer_drawable_render (GimpViewRenderer *renderer,
           if (offset_x != 0)
             render_buf_x =
               ROUND ((((gdouble) renderer->width /
-                       (gdouble) gimp_image_get_width (image)) *
+                       (gdouble) picman_image_get_width (image)) *
                       (gdouble) offset_x));
 
           if (offset_y != 0)
             render_buf_y =
               ROUND ((((gdouble) renderer->height /
-                       (gdouble) gimp_image_get_height (image)) *
+                       (gdouble) picman_image_get_height (image)) *
                       (gdouble) offset_y));
 
           if (scaling_up)
@@ -228,19 +228,19 @@ gimp_view_renderer_drawable_render (GimpViewRenderer *renderer,
             render_buf_y = (height - view_height) / 2;
         }
 
-      gimp_view_renderer_render_temp_buf (renderer, render_buf,
+      picman_view_renderer_render_temp_buf (renderer, render_buf,
                                           render_buf_x, render_buf_y,
                                           -1,
-                                          GIMP_VIEW_BG_CHECKS,
-                                          GIMP_VIEW_BG_CHECKS);
-      gimp_temp_buf_unref (render_buf);
+                                          PICMAN_VIEW_BG_CHECKS,
+                                          PICMAN_VIEW_BG_CHECKS);
+      picman_temp_buf_unref (render_buf);
     }
   else
     {
       const gchar *stock_id;
 
-      stock_id = gimp_viewable_get_stock_id (renderer->viewable);
+      stock_id = picman_viewable_get_stock_id (renderer->viewable);
 
-      gimp_view_renderer_render_stock (renderer, widget, stock_id);
+      picman_view_renderer_render_stock (renderer, widget, stock_id);
     }
 }

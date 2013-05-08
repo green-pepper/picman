@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,51 +15,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SOURCE_TOOL_H__
-#define __GIMP_SOURCE_TOOL_H__
+#ifndef __PICMAN_SOURCE_TOOL_H__
+#define __PICMAN_SOURCE_TOOL_H__
 
 
-#include "gimpbrushtool.h"
+#include "picmanbrushtool.h"
 
 
-#define GIMP_TYPE_SOURCE_TOOL            (gimp_source_tool_get_type ())
-#define GIMP_SOURCE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SOURCE_TOOL, GimpSourceTool))
-#define GIMP_SOURCE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SOURCE_TOOL, GimpSourceToolClass))
-#define GIMP_IS_SOURCE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SOURCE_TOOL))
-#define GIMP_IS_SOURCE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SOURCE_TOOL))
-#define GIMP_SOURCE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SOURCE_TOOL, GimpSourceToolClass))
+#define PICMAN_TYPE_SOURCE_TOOL            (picman_source_tool_get_type ())
+#define PICMAN_SOURCE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SOURCE_TOOL, PicmanSourceTool))
+#define PICMAN_SOURCE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SOURCE_TOOL, PicmanSourceToolClass))
+#define PICMAN_IS_SOURCE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SOURCE_TOOL))
+#define PICMAN_IS_SOURCE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SOURCE_TOOL))
+#define PICMAN_SOURCE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SOURCE_TOOL, PicmanSourceToolClass))
 
-#define GIMP_SOURCE_TOOL_GET_OPTIONS(t)  (GIMP_SOURCE_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_SOURCE_TOOL_GET_OPTIONS(t)  (PICMAN_SOURCE_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpSourceTool      GimpSourceTool;
-typedef struct _GimpSourceToolClass GimpSourceToolClass;
+typedef struct _PicmanSourceTool      PicmanSourceTool;
+typedef struct _PicmanSourceToolClass PicmanSourceToolClass;
 
-struct _GimpSourceTool
+struct _PicmanSourceTool
 {
-  GimpBrushTool   parent_instance;
+  PicmanBrushTool   parent_instance;
 
-  GimpDisplay    *src_display;
+  PicmanDisplay    *src_display;
   gint            src_x;
   gint            src_y;
 
   gboolean        show_source_outline;
 
-  GimpCanvasItem *src_handle;
-  GimpCanvasItem *src_outline;
+  PicmanCanvasItem *src_handle;
+  PicmanCanvasItem *src_outline;
 
   const gchar    *status_paint;
   const gchar    *status_set_source;
   const gchar    *status_set_source_ctrl;
 };
 
-struct _GimpSourceToolClass
+struct _PicmanSourceToolClass
 {
-  GimpBrushToolClass  parent_class;
+  PicmanBrushToolClass  parent_class;
 };
 
 
-GType   gimp_source_tool_get_type (void) G_GNUC_CONST;
+GType   picman_source_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_SOURCE_TOOL_H__  */
+#endif  /*  __PICMAN_SOURCE_TOOL_H__  */

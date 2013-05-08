@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,39 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_LAYER_UNDO_H__
-#define __GIMP_LAYER_UNDO_H__
+#ifndef __PICMAN_LAYER_UNDO_H__
+#define __PICMAN_LAYER_UNDO_H__
 
 
-#include "gimpitemundo.h"
+#include "picmanitemundo.h"
 
 
-#define GIMP_TYPE_LAYER_UNDO            (gimp_layer_undo_get_type ())
-#define GIMP_LAYER_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_LAYER_UNDO, GimpLayerUndo))
-#define GIMP_LAYER_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_LAYER_UNDO, GimpLayerUndoClass))
-#define GIMP_IS_LAYER_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_LAYER_UNDO))
-#define GIMP_IS_LAYER_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_LAYER_UNDO))
-#define GIMP_LAYER_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_LAYER_UNDO, GimpLayerUndoClass))
+#define PICMAN_TYPE_LAYER_UNDO            (picman_layer_undo_get_type ())
+#define PICMAN_LAYER_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_LAYER_UNDO, PicmanLayerUndo))
+#define PICMAN_LAYER_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_LAYER_UNDO, PicmanLayerUndoClass))
+#define PICMAN_IS_LAYER_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_LAYER_UNDO))
+#define PICMAN_IS_LAYER_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_LAYER_UNDO))
+#define PICMAN_LAYER_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_LAYER_UNDO, PicmanLayerUndoClass))
 
 
-typedef struct _GimpLayerUndoClass GimpLayerUndoClass;
+typedef struct _PicmanLayerUndoClass PicmanLayerUndoClass;
 
-struct _GimpLayerUndo
+struct _PicmanLayerUndo
 {
-  GimpItemUndo  parent_instance;
+  PicmanItemUndo  parent_instance;
 
-  GimpLayer    *prev_parent;
+  PicmanLayer    *prev_parent;
   gint          prev_position;   /*  former position in list  */
-  GimpLayer    *prev_layer;      /*  previous active layer    */
+  PicmanLayer    *prev_layer;      /*  previous active layer    */
 };
 
-struct _GimpLayerUndoClass
+struct _PicmanLayerUndoClass
 {
-  GimpItemUndoClass  parent_class;
+  PicmanItemUndoClass  parent_class;
 };
 
 
-GType   gimp_layer_undo_get_type (void) G_GNUC_CONST;
+GType   picman_layer_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_LAYER_UNDO_H__ */
+#endif /* __PICMAN_LAYER_UNDO_H__ */

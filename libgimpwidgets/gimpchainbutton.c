@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpchainbutton.c
- * Copyright (C) 1999-2000 Sven Neumann <sven@gimp.org>
+ * picmanchainbutton.c
+ * Copyright (C) 1999-2000 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,19 +23,19 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpchainbutton.h"
-#include "gimpstock.h"
+#include "picmanchainbutton.h"
+#include "picmanstock.h"
 
 
 /**
- * SECTION: gimpchainbutton
- * @title: GimpChainButton
+ * SECTION: picmanchainbutton
+ * @title: PicmanChainButton
  * @short_description: Widget to visually connect two entry widgets.
  * @see_also: You may want to use the convenience function
- *            gimp_coordinates_new() to set up two GimpSizeEntries
- *            (see #GimpSizeEntry) linked with a #GimpChainButton.
+ *            picman_coordinates_new() to set up two PicmanSizeEntries
+ *            (see #PicmanSizeEntry) linked with a #PicmanChainButton.
  *
  * This widget provides a button showing either a linked or a broken
  * chain that can be used to link two entries, spinbuttons, colors or
@@ -43,9 +43,9 @@
  * example to connect X and Y ratios to provide the possibility of a
  * constrained aspect ratio.
  *
- * The #GimpChainButton only gives visual feedback, it does not really
+ * The #PicmanChainButton only gives visual feedback, it does not really
  * connect widgets. You have to take care of locking the values
- * yourself by checking the state of the #GimpChainButton whenever a
+ * yourself by checking the state of the #PicmanChainButton whenever a
  * value changes in one of the connected widgets and adjusting the
  * other value if necessary.
  **/
@@ -63,53 +63,53 @@ enum
   LAST_SIGNAL
 };
 
-static void      gimp_chain_button_constructed      (GObject         *object);
-static void      gimp_chain_button_set_property     (GObject         *object,
+static void      picman_chain_button_constructed      (GObject         *object);
+static void      picman_chain_button_set_property     (GObject         *object,
                                                      guint            property_id,
                                                      const GValue    *value,
                                                      GParamSpec      *pspec);
-static void      gimp_chain_button_get_property     (GObject         *object,
+static void      picman_chain_button_get_property     (GObject         *object,
                                                      guint            property_id,
                                                      GValue          *value,
                                                      GParamSpec      *pspec);
 
-static void      gimp_chain_button_clicked_callback (GtkWidget       *widget,
-                                                     GimpChainButton *button);
-static void      gimp_chain_button_update_image     (GimpChainButton *button);
+static void      picman_chain_button_clicked_callback (GtkWidget       *widget,
+                                                     PicmanChainButton *button);
+static void      picman_chain_button_update_image     (PicmanChainButton *button);
 
-static GtkWidget * gimp_chain_line_new            (GimpChainPosition  position,
+static GtkWidget * picman_chain_line_new            (PicmanChainPosition  position,
                                                    gint               which);
 
 
-G_DEFINE_TYPE (GimpChainButton, gimp_chain_button, GTK_TYPE_TABLE)
+G_DEFINE_TYPE (PicmanChainButton, picman_chain_button, GTK_TYPE_TABLE)
 
-#define parent_class gimp_chain_button_parent_class
+#define parent_class picman_chain_button_parent_class
 
-static guint gimp_chain_button_signals[LAST_SIGNAL] = { 0 };
+static guint picman_chain_button_signals[LAST_SIGNAL] = { 0 };
 
-static const gchar * const gimp_chain_stock_items[] =
+static const gchar * const picman_chain_stock_items[] =
 {
-  GIMP_STOCK_HCHAIN,
-  GIMP_STOCK_HCHAIN_BROKEN,
-  GIMP_STOCK_VCHAIN,
-  GIMP_STOCK_VCHAIN_BROKEN
+  PICMAN_STOCK_HCHAIN,
+  PICMAN_STOCK_HCHAIN_BROKEN,
+  PICMAN_STOCK_VCHAIN,
+  PICMAN_STOCK_VCHAIN_BROKEN
 };
 
 
 static void
-gimp_chain_button_class_init (GimpChainButtonClass *klass)
+picman_chain_button_class_init (PicmanChainButtonClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_chain_button_constructed;
-  object_class->set_property = gimp_chain_button_set_property;
-  object_class->get_property = gimp_chain_button_get_property;
+  object_class->constructed  = picman_chain_button_constructed;
+  object_class->set_property = picman_chain_button_set_property;
+  object_class->get_property = picman_chain_button_get_property;
 
-  gimp_chain_button_signals[TOGGLED] =
+  picman_chain_button_signals[TOGGLED] =
     g_signal_new ("toggled",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpChainButtonClass, toggled),
+                  G_STRUCT_OFFSET (PicmanChainButtonClass, toggled),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
@@ -117,24 +117,24 @@ gimp_chain_button_class_init (GimpChainButtonClass *klass)
   klass->toggled = NULL;
 
   /**
-   * GimpChainButton:position:
+   * PicmanChainButton:position:
    *
    * The position in which the chain button will be used.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class, PROP_POSITION,
                                    g_param_spec_enum ("position", NULL, NULL,
-                                                      GIMP_TYPE_CHAIN_POSITION,
-                                                      GIMP_CHAIN_TOP,
+                                                      PICMAN_TYPE_CHAIN_POSITION,
+                                                      PICMAN_CHAIN_TOP,
                                                       G_PARAM_CONSTRUCT_ONLY |
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_chain_button_init (GimpChainButton *button)
+picman_chain_button_init (PicmanChainButton *button)
 {
-  button->position = GIMP_CHAIN_TOP;
+  button->position = PICMAN_CHAIN_TOP;
   button->active   = FALSE;
   button->image    = gtk_image_new ();
   button->button   = gtk_button_new ();
@@ -144,23 +144,23 @@ gimp_chain_button_init (GimpChainButton *button)
   gtk_widget_show (button->image);
 
   g_signal_connect (button->button, "clicked",
-                    G_CALLBACK (gimp_chain_button_clicked_callback),
+                    G_CALLBACK (picman_chain_button_clicked_callback),
                     button);
 }
 
 static void
-gimp_chain_button_constructed (GObject *object)
+picman_chain_button_constructed (GObject *object)
 {
-  GimpChainButton *button = GIMP_CHAIN_BUTTON (object);
+  PicmanChainButton *button = PICMAN_CHAIN_BUTTON (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  button->line1 = gimp_chain_line_new (button->position, 1);
-  button->line2 = gimp_chain_line_new (button->position, -1);
+  button->line1 = picman_chain_line_new (button->position, 1);
+  button->line2 = picman_chain_line_new (button->position, -1);
 
-  gimp_chain_button_update_image (button);
+  picman_chain_button_update_image (button);
 
-  if (button->position & GIMP_CHAIN_LEFT) /* are we a vertical chainbutton? */
+  if (button->position & PICMAN_CHAIN_LEFT) /* are we a vertical chainbutton? */
     {
       gtk_table_resize (GTK_TABLE (button), 3, 1);
       gtk_table_attach (GTK_TABLE (button), button->button, 0, 1, 1, 2,
@@ -187,12 +187,12 @@ gimp_chain_button_constructed (GObject *object)
 }
 
 static void
-gimp_chain_button_set_property (GObject      *object,
+picman_chain_button_set_property (GObject      *object,
                                 guint         property_id,
                                 const GValue *value,
                                 GParamSpec   *pspec)
 {
-  GimpChainButton *button = GIMP_CHAIN_BUTTON (object);
+  PicmanChainButton *button = PICMAN_CHAIN_BUTTON (object);
 
   switch (property_id)
     {
@@ -207,12 +207,12 @@ gimp_chain_button_set_property (GObject      *object,
 }
 
 static void
-gimp_chain_button_get_property (GObject    *object,
+picman_chain_button_get_property (GObject    *object,
                                 guint       property_id,
                                 GValue     *value,
                                 GParamSpec *pspec)
 {
-  GimpChainButton *button = GIMP_CHAIN_BUTTON (object);
+  PicmanChainButton *button = PICMAN_CHAIN_BUTTON (object);
 
   switch (property_id)
     {
@@ -227,11 +227,11 @@ gimp_chain_button_get_property (GObject    *object,
 }
 
 /**
- * gimp_chain_button_new:
+ * picman_chain_button_new:
  * @position: The position you are going to use for the button
  *            with respect to the widgets you want to chain.
  *
- * Creates a new #GimpChainButton widget.
+ * Creates a new #PicmanChainButton widget.
  *
  * This returns a button showing either a broken or a linked chain and
  * small clamps attached to both sides that visually group the two widgets
@@ -240,122 +240,122 @@ gimp_chain_button_get_property (GObject    *object,
  * to the widgets that it is supposed to connect. It may work
  * for more than two widgets, but the look is optimized for two.
  *
- * Returns: Pointer to the new #GimpChainButton, which is inactive
- *          by default. Use gimp_chain_button_set_active() to
+ * Returns: Pointer to the new #PicmanChainButton, which is inactive
+ *          by default. Use picman_chain_button_set_active() to
  *          change its state.
  */
 GtkWidget *
-gimp_chain_button_new (GimpChainPosition position)
+picman_chain_button_new (PicmanChainPosition position)
 {
-  return g_object_new (GIMP_TYPE_CHAIN_BUTTON,
+  return g_object_new (PICMAN_TYPE_CHAIN_BUTTON,
                        "position", position,
                        NULL);
 }
 
 /**
- * gimp_chain_button_set_active:
- * @button: Pointer to a #GimpChainButton.
+ * picman_chain_button_set_active:
+ * @button: Pointer to a #PicmanChainButton.
  * @active: The new state.
  *
- * Sets the state of the #GimpChainButton to be either locked (%TRUE) or
+ * Sets the state of the #PicmanChainButton to be either locked (%TRUE) or
  * unlocked (%FALSE) and changes the showed pixmap to reflect the new state.
  */
 void
-gimp_chain_button_set_active (GimpChainButton  *button,
+picman_chain_button_set_active (PicmanChainButton  *button,
                               gboolean          active)
 {
-  g_return_if_fail (GIMP_IS_CHAIN_BUTTON (button));
+  g_return_if_fail (PICMAN_IS_CHAIN_BUTTON (button));
 
   if (button->active != active)
     {
       button->active = active ? TRUE : FALSE;
 
-      gimp_chain_button_update_image (button);
+      picman_chain_button_update_image (button);
     }
 }
 
 /**
- * gimp_chain_button_get_active
- * @button: Pointer to a #GimpChainButton.
+ * picman_chain_button_get_active
+ * @button: Pointer to a #PicmanChainButton.
  *
- * Checks the state of the #GimpChainButton.
+ * Checks the state of the #PicmanChainButton.
  *
- * Returns: %TRUE if the #GimpChainButton is active (locked).
+ * Returns: %TRUE if the #PicmanChainButton is active (locked).
  */
 gboolean
-gimp_chain_button_get_active (GimpChainButton *button)
+picman_chain_button_get_active (PicmanChainButton *button)
 {
-  g_return_val_if_fail (GIMP_IS_CHAIN_BUTTON (button), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CHAIN_BUTTON (button), FALSE);
 
   return button->active;
 }
 
 static void
-gimp_chain_button_clicked_callback (GtkWidget       *widget,
-                                    GimpChainButton *button)
+picman_chain_button_clicked_callback (GtkWidget       *widget,
+                                    PicmanChainButton *button)
 {
-  g_return_if_fail (GIMP_IS_CHAIN_BUTTON (button));
+  g_return_if_fail (PICMAN_IS_CHAIN_BUTTON (button));
 
-  gimp_chain_button_set_active (button, ! button->active);
+  picman_chain_button_set_active (button, ! button->active);
 
-  g_signal_emit (button, gimp_chain_button_signals[TOGGLED], 0);
+  g_signal_emit (button, picman_chain_button_signals[TOGGLED], 0);
 }
 
 static void
-gimp_chain_button_update_image (GimpChainButton *button)
+picman_chain_button_update_image (PicmanChainButton *button)
 {
   guint i;
 
-  i = ((button->position & GIMP_CHAIN_LEFT) << 1) + (button->active ? 0 : 1);
+  i = ((button->position & PICMAN_CHAIN_LEFT) << 1) + (button->active ? 0 : 1);
 
   gtk_image_set_from_stock (GTK_IMAGE (button->image),
-                            gimp_chain_stock_items[i],
+                            picman_chain_stock_items[i],
                             GTK_ICON_SIZE_BUTTON);
 }
 
 
-/* GimpChainLine is a simple no-window widget for drawing the lines.
+/* PicmanChainLine is a simple no-window widget for drawing the lines.
  *
  * Originally this used to be a GtkDrawingArea but this turned out to
  * be a bad idea. We don't need an extra window to draw on and we also
  * don't need any input events.
  */
 
-static GType     gimp_chain_line_get_type     (void) G_GNUC_CONST;
-static gboolean  gimp_chain_line_expose_event (GtkWidget       *widget,
+static GType     picman_chain_line_get_type     (void) G_GNUC_CONST;
+static gboolean  picman_chain_line_expose_event (GtkWidget       *widget,
                                                GdkEventExpose  *event);
 
-struct _GimpChainLine
+struct _PicmanChainLine
 {
   GtkWidget          parent_instance;
-  GimpChainPosition  position;
+  PicmanChainPosition  position;
   gint               which;
 };
 
-typedef struct _GimpChainLine  GimpChainLine;
-typedef GtkWidgetClass         GimpChainLineClass;
+typedef struct _PicmanChainLine  PicmanChainLine;
+typedef GtkWidgetClass         PicmanChainLineClass;
 
-G_DEFINE_TYPE (GimpChainLine, gimp_chain_line, GTK_TYPE_WIDGET)
+G_DEFINE_TYPE (PicmanChainLine, picman_chain_line, GTK_TYPE_WIDGET)
 
 static void
-gimp_chain_line_class_init (GimpChainLineClass *klass)
+picman_chain_line_class_init (PicmanChainLineClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  widget_class->expose_event = gimp_chain_line_expose_event;
+  widget_class->expose_event = picman_chain_line_expose_event;
 }
 
 static void
-gimp_chain_line_init (GimpChainLine *line)
+picman_chain_line_init (PicmanChainLine *line)
 {
   gtk_widget_set_has_window (GTK_WIDGET (line), FALSE);
 }
 
 static GtkWidget *
-gimp_chain_line_new (GimpChainPosition  position,
+picman_chain_line_new (PicmanChainPosition  position,
                      gint               which)
 {
-  GimpChainLine *line = g_object_new (gimp_chain_line_get_type (), NULL);
+  PicmanChainLine *line = g_object_new (picman_chain_line_get_type (), NULL);
 
   line->position = position;
   line->which    = which;
@@ -364,14 +364,14 @@ gimp_chain_line_new (GimpChainPosition  position,
 }
 
 static gboolean
-gimp_chain_line_expose_event (GtkWidget      *widget,
+picman_chain_line_expose_event (GtkWidget      *widget,
                               GdkEventExpose *event)
 {
   GtkStyle          *style = gtk_widget_get_style (widget);
-  GimpChainLine     *line  = ((GimpChainLine *) widget);
+  PicmanChainLine     *line  = ((PicmanChainLine *) widget);
   GtkAllocation      allocation;
   GdkPoint           points[3];
-  GimpChainPosition  position;
+  PicmanChainPosition  position;
   cairo_t           *cr;
 
   gtk_widget_get_allocation (widget, &allocation);
@@ -391,23 +391,23 @@ gimp_chain_line_expose_event (GtkWidget      *widget,
     {
       switch (position)
         {
-        case GIMP_CHAIN_TOP:
-        case GIMP_CHAIN_BOTTOM:
+        case PICMAN_CHAIN_TOP:
+        case PICMAN_CHAIN_BOTTOM:
           break;
 
-        case GIMP_CHAIN_LEFT:
-          position = GIMP_CHAIN_RIGHT;
+        case PICMAN_CHAIN_LEFT:
+          position = PICMAN_CHAIN_RIGHT;
           break;
 
-        case GIMP_CHAIN_RIGHT:
-          position = GIMP_CHAIN_LEFT;
+        case PICMAN_CHAIN_RIGHT:
+          position = PICMAN_CHAIN_LEFT;
           break;
         }
     }
 
   switch (position)
     {
-    case GIMP_CHAIN_LEFT:
+    case PICMAN_CHAIN_LEFT:
       points[0].x += SHORT_LINE;
       points[1].x = points[0].x - SHORT_LINE;
       points[1].y = points[0].y;
@@ -415,7 +415,7 @@ gimp_chain_line_expose_event (GtkWidget      *widget,
       points[2].y = (line->which == 1 ? allocation.height - 1 : 0);
       break;
 
-    case GIMP_CHAIN_RIGHT:
+    case PICMAN_CHAIN_RIGHT:
       points[0].x -= SHORT_LINE;
       points[1].x = points[0].x + SHORT_LINE;
       points[1].y = points[0].y;
@@ -423,7 +423,7 @@ gimp_chain_line_expose_event (GtkWidget      *widget,
       points[2].y = (line->which == 1 ? allocation.height - 1 : 0);
       break;
 
-    case GIMP_CHAIN_TOP:
+    case PICMAN_CHAIN_TOP:
       points[0].y += SHORT_LINE;
       points[1].x = points[0].x;
       points[1].y = points[0].y - SHORT_LINE;
@@ -431,7 +431,7 @@ gimp_chain_line_expose_event (GtkWidget      *widget,
       points[2].y = points[1].y;
       break;
 
-    case GIMP_CHAIN_BOTTOM:
+    case PICMAN_CHAIN_BOTTOM:
       points[0].y -= SHORT_LINE;
       points[1].x = points[0].x;
       points[1].y = points[0].y + SHORT_LINE;

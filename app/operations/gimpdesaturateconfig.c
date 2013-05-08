@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdesaturateconfig.c
- * Copyright (C) 2008 Sven Neumann <sven@gimp.org>
+ * picmandesaturateconfig.c
+ * Copyright (C) 2008 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "operations-types.h"
 
-#include "gimpdesaturateconfig.h"
+#include "picmandesaturateconfig.h"
 
 
 enum
@@ -36,54 +36,54 @@ enum
 };
 
 
-static void   gimp_desaturate_config_get_property (GObject      *object,
+static void   picman_desaturate_config_get_property (GObject      *object,
                                                    guint         property_id,
                                                    GValue       *value,
                                                    GParamSpec   *pspec);
-static void   gimp_desaturate_config_set_property (GObject      *object,
+static void   picman_desaturate_config_set_property (GObject      *object,
                                                    guint         property_id,
                                                    const GValue *value,
                                                    GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpDesaturateConfig, gimp_desaturate_config,
-                         GIMP_TYPE_IMAGE_MAP_CONFIG,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanDesaturateConfig, picman_desaturate_config,
+                         PICMAN_TYPE_IMAGE_MAP_CONFIG,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL))
 
-#define parent_class gimp_desaturate_config_parent_class
+#define parent_class picman_desaturate_config_parent_class
 
 
 static void
-gimp_desaturate_config_class_init (GimpDesaturateConfigClass *klass)
+picman_desaturate_config_class_init (PicmanDesaturateConfigClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->set_property       = gimp_desaturate_config_set_property;
-  object_class->get_property       = gimp_desaturate_config_get_property;
+  object_class->set_property       = picman_desaturate_config_set_property;
+  object_class->get_property       = picman_desaturate_config_get_property;
 
   /*FIXME: change string when a desaturate icon gets added */
-  viewable_class->default_stock_id = "gimp-convert-grayscale";
+  viewable_class->default_stock_id = "picman-convert-grayscale";
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_MODE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_MODE,
                                  "mode",
                                  "Desaturate mode",
-                                 GIMP_TYPE_DESATURATE_MODE,
-                                 GIMP_DESATURATE_LIGHTNESS, 0);
+                                 PICMAN_TYPE_DESATURATE_MODE,
+                                 PICMAN_DESATURATE_LIGHTNESS, 0);
 }
 
 static void
-gimp_desaturate_config_init (GimpDesaturateConfig *self)
+picman_desaturate_config_init (PicmanDesaturateConfig *self)
 {
 }
 
 static void
-gimp_desaturate_config_get_property (GObject    *object,
+picman_desaturate_config_get_property (GObject    *object,
                                      guint       property_id,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  GimpDesaturateConfig *self = GIMP_DESATURATE_CONFIG (object);
+  PicmanDesaturateConfig *self = PICMAN_DESATURATE_CONFIG (object);
 
   switch (property_id)
     {
@@ -98,12 +98,12 @@ gimp_desaturate_config_get_property (GObject    *object,
 }
 
 static void
-gimp_desaturate_config_set_property (GObject      *object,
+picman_desaturate_config_set_property (GObject      *object,
                                      guint         property_id,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  GimpDesaturateConfig *self = GIMP_DESATURATE_CONFIG (object);
+  PicmanDesaturateConfig *self = PICMAN_DESATURATE_CONFIG (object);
 
   switch (property_id)
     {

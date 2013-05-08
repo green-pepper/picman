@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2005 Peter Mattis and Spencer Kimball
  *
- * gimpgimprc.c
+ * picmanpicmanrc.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,33 +20,33 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * gimp_get_color_configuration:
+ * picman_get_color_configuration:
  *
  * Retrieve a copy of the current color management configuration.
  *
- * Returns: A copy of the core's #GimpColorConfig. You should unref
+ * Returns: A copy of the core's #PicmanColorConfig. You should unref
  *          this copy if you don't need it any longer.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
-GimpColorConfig *
-gimp_get_color_configuration (void)
+PicmanColorConfig *
+picman_get_color_configuration (void)
 {
-  GimpColorConfig *config;
+  PicmanColorConfig *config;
   gchar           *text;
   GError          *error = NULL;
 
-  text = _gimp_get_color_configuration ();
+  text = _picman_get_color_configuration ();
 
   g_return_val_if_fail (text != NULL, NULL);
 
-  config = g_object_new (GIMP_TYPE_COLOR_CONFIG, NULL);
+  config = g_object_new (PICMAN_TYPE_COLOR_CONFIG, NULL);
 
-  if (! gimp_config_deserialize_string (GIMP_CONFIG (config), text, -1, NULL,
+  if (! picman_config_deserialize_string (PICMAN_CONFIG (config), text, -1, NULL,
                                         &error))
     {
       g_warning ("failed to deserialize color configuration: %s",

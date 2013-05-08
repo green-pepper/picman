@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpproceduraldb_pdb.c
+ * picmanproceduraldb_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,12 @@
 
 #include <string.h>
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpproceduraldb
- * @title: gimpproceduraldb
+ * SECTION: picmanproceduraldb
+ * @title: picmanproceduraldb
  * @short_description: Functions for querying and changing procedural database (PDB) entries.
  *
  * Functions for querying and changing procedural database (PDB)
@@ -38,7 +38,7 @@
 
 
 /**
- * gimp_procedural_db_temp_name:
+ * picman_procedural_db_temp_name:
  *
  * Generates a unique temporary PDB name.
  *
@@ -48,26 +48,26 @@
  * Returns: A unique temporary name for a temporary PDB entry.
  **/
 gchar *
-gimp_procedural_db_temp_name (void)
+picman_procedural_db_temp_name (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *temp_name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-procedural-db-temp-name",
+  return_vals = picman_run_procedure ("picman-procedural-db-temp-name",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     temp_name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return temp_name;
 }
 
 /**
- * gimp_procedural_db_dump:
+ * picman_procedural_db_dump:
  * @filename: The dump filename.
  *
  * Dumps the current contents of the procedural database
@@ -79,33 +79,33 @@ gimp_procedural_db_temp_name (void)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_procedural_db_dump (const gchar *filename)
+picman_procedural_db_dump (const gchar *filename)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-procedural-db-dump",
+  return_vals = picman_run_procedure ("picman-procedural-db-dump",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, filename,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, filename,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_procedural_db_query:
+ * picman_procedural_db_query:
  * @name: The regex for procedure name.
  * @blurb: The regex for procedure blurb.
  * @help: The regex for procedure help.
  * @author: The regex for procedure author.
  * @copyright: The regex for procedure copyright.
  * @date: The regex for procedure date.
- * @proc_type: The regex for procedure type: { 'Internal GIMP procedure', 'GIMP Plug-In', 'GIMP Extension', 'Temporary Procedure' }.
+ * @proc_type: The regex for procedure type: { 'Internal PICMAN procedure', 'PICMAN Plug-In', 'PICMAN Extension', 'Temporary Procedure' }.
  * @num_matches: The number of matching procedures.
  * @procedure_names: The list of procedure names.
  *
@@ -128,7 +128,7 @@ gimp_procedural_db_dump (const gchar *filename)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_procedural_db_query (const gchar   *name,
+picman_procedural_db_query (const gchar   *name,
                           const gchar   *blurb,
                           const gchar   *help,
                           const gchar   *author,
@@ -138,26 +138,26 @@ gimp_procedural_db_query (const gchar   *name,
                           gint          *num_matches,
                           gchar       ***procedure_names)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
   gint i;
 
-  return_vals = gimp_run_procedure ("gimp-procedural-db-query",
+  return_vals = picman_run_procedure ("picman-procedural-db-query",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_STRING, blurb,
-                                    GIMP_PDB_STRING, help,
-                                    GIMP_PDB_STRING, author,
-                                    GIMP_PDB_STRING, copyright,
-                                    GIMP_PDB_STRING, date,
-                                    GIMP_PDB_STRING, proc_type,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_STRING, blurb,
+                                    PICMAN_PDB_STRING, help,
+                                    PICMAN_PDB_STRING, author,
+                                    PICMAN_PDB_STRING, copyright,
+                                    PICMAN_PDB_STRING, date,
+                                    PICMAN_PDB_STRING, proc_type,
+                                    PICMAN_PDB_END);
 
   *num_matches = 0;
   *procedure_names = NULL;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -168,13 +168,13 @@ gimp_procedural_db_query (const gchar   *name,
       (*procedure_names)[i] = NULL;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_procedural_db_proc_exists:
+ * picman_procedural_db_proc_exists:
  * @procedure_name: The procedure name.
  *
  * Checks if the specified procedure exists in the procedural database
@@ -184,30 +184,30 @@ gimp_procedural_db_query (const gchar   *name,
  *
  * Returns: Whether a procedure of that name is registered.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_procedural_db_proc_exists (const gchar *procedure_name)
+picman_procedural_db_proc_exists (const gchar *procedure_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean exists = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-procedural-db-proc-exists",
+  return_vals = picman_run_procedure ("picman-procedural-db-proc-exists",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, procedure_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, procedure_name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     exists = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return exists;
 }
 
 /**
- * _gimp_procedural_db_proc_info:
+ * _picman_procedural_db_proc_info:
  * @procedure_name: The procedure name.
  * @blurb: A short blurb.
  * @help: Detailed procedure help.
@@ -225,30 +225,30 @@ gimp_procedural_db_proc_exists (const gchar *procedure_name)
  * short blurb, detailed help, author(s), copyright information,
  * procedure type, number of input, and number of return values are
  * returned. For specific information on each input argument and return
- * value, use the gimp_procedural_db_proc_arg() and
- * gimp_procedural_db_proc_val() procedures.
+ * value, use the picman_procedural_db_proc_arg() and
+ * picman_procedural_db_proc_val() procedures.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-_gimp_procedural_db_proc_info (const gchar      *procedure_name,
+_picman_procedural_db_proc_info (const gchar      *procedure_name,
                                gchar           **blurb,
                                gchar           **help,
                                gchar           **author,
                                gchar           **copyright,
                                gchar           **date,
-                               GimpPDBProcType  *proc_type,
+                               PicmanPDBProcType  *proc_type,
                                gint             *num_args,
                                gint             *num_values)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-procedural-db-proc-info",
+  return_vals = picman_run_procedure ("picman-procedural-db-proc-info",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, procedure_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, procedure_name,
+                                    PICMAN_PDB_END);
 
   *blurb = NULL;
   *help = NULL;
@@ -259,7 +259,7 @@ _gimp_procedural_db_proc_info (const gchar      *procedure_name,
   *num_args = 0;
   *num_values = 0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -273,13 +273,13 @@ _gimp_procedural_db_proc_info (const gchar      *procedure_name,
       *num_values = return_vals[8].data.d_int32;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_procedural_db_proc_arg:
+ * picman_procedural_db_proc_arg:
  * @procedure_name: The procedure name.
  * @arg_num: The argument number.
  * @arg_type: The type of argument.
@@ -295,27 +295,27 @@ _gimp_procedural_db_proc_info (const gchar      *procedure_name,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_procedural_db_proc_arg (const gchar     *procedure_name,
+picman_procedural_db_proc_arg (const gchar     *procedure_name,
                              gint             arg_num,
-                             GimpPDBArgType  *arg_type,
+                             PicmanPDBArgType  *arg_type,
                              gchar          **arg_name,
                              gchar          **arg_desc)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-procedural-db-proc-arg",
+  return_vals = picman_run_procedure ("picman-procedural-db-proc-arg",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, procedure_name,
-                                    GIMP_PDB_INT32, arg_num,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, procedure_name,
+                                    PICMAN_PDB_INT32, arg_num,
+                                    PICMAN_PDB_END);
 
   *arg_type = 0;
   *arg_name = NULL;
   *arg_desc = NULL;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -324,13 +324,13 @@ gimp_procedural_db_proc_arg (const gchar     *procedure_name,
       *arg_desc = g_strdup (return_vals[3].data.d_string);
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_procedural_db_proc_val:
+ * picman_procedural_db_proc_val:
  * @procedure_name: The procedure name.
  * @val_num: The return value number.
  * @val_type: The type of return value.
@@ -347,27 +347,27 @@ gimp_procedural_db_proc_arg (const gchar     *procedure_name,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_procedural_db_proc_val (const gchar     *procedure_name,
+picman_procedural_db_proc_val (const gchar     *procedure_name,
                              gint             val_num,
-                             GimpPDBArgType  *val_type,
+                             PicmanPDBArgType  *val_type,
                              gchar          **val_name,
                              gchar          **val_desc)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-procedural-db-proc-val",
+  return_vals = picman_run_procedure ("picman-procedural-db-proc-val",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, procedure_name,
-                                    GIMP_PDB_INT32, val_num,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, procedure_name,
+                                    PICMAN_PDB_INT32, val_num,
+                                    PICMAN_PDB_END);
 
   *val_type = 0;
   *val_name = NULL;
   *val_desc = NULL;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -376,13 +376,13 @@ gimp_procedural_db_proc_val (const gchar     *procedure_name,
       *val_desc = g_strdup (return_vals[3].data.d_string);
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * _gimp_procedural_db_get_data:
+ * _picman_procedural_db_get_data:
  * @identifier: The identifier associated with data.
  * @bytes: The number of bytes in the data.
  * @data: A byte array containing data.
@@ -397,23 +397,23 @@ gimp_procedural_db_proc_val (const gchar     *procedure_name,
  * Returns: TRUE on success.
  **/
 gboolean
-_gimp_procedural_db_get_data (const gchar  *identifier,
+_picman_procedural_db_get_data (const gchar  *identifier,
                               gint         *bytes,
                               guint8      **data)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-procedural-db-get-data",
+  return_vals = picman_run_procedure ("picman-procedural-db-get-data",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, identifier,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, identifier,
+                                    PICMAN_PDB_END);
 
   *bytes = 0;
   *data = NULL;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -424,13 +424,13 @@ _gimp_procedural_db_get_data (const gchar  *identifier,
               *bytes * sizeof (guint8));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_procedural_db_get_data_size:
+ * picman_procedural_db_get_data_size:
  * @identifier: The identifier associated with data.
  *
  * Returns size of data associated with the specified identifier.
@@ -442,27 +442,27 @@ _gimp_procedural_db_get_data (const gchar  *identifier,
  * Returns: The number of bytes in the data.
  **/
 gint
-gimp_procedural_db_get_data_size (const gchar *identifier)
+picman_procedural_db_get_data_size (const gchar *identifier)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint bytes = 0;
 
-  return_vals = gimp_run_procedure ("gimp-procedural-db-get-data-size",
+  return_vals = picman_run_procedure ("picman-procedural-db-get-data-size",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, identifier,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, identifier,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     bytes = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return bytes;
 }
 
 /**
- * _gimp_procedural_db_set_data:
+ * _picman_procedural_db_set_data:
  * @identifier: The identifier associated with data.
  * @bytes: The number of bytes in the data.
  * @data: A byte array containing data.
@@ -476,24 +476,24 @@ gimp_procedural_db_get_data_size (const gchar *identifier)
  * Returns: TRUE on success.
  **/
 gboolean
-_gimp_procedural_db_set_data (const gchar  *identifier,
+_picman_procedural_db_set_data (const gchar  *identifier,
                               gint          bytes,
                               const guint8 *data)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-procedural-db-set-data",
+  return_vals = picman_run_procedure ("picman-procedural-db-set-data",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, identifier,
-                                    GIMP_PDB_INT32, bytes,
-                                    GIMP_PDB_INT8ARRAY, data,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, identifier,
+                                    PICMAN_PDB_INT32, bytes,
+                                    PICMAN_PDB_INT8ARRAY, data,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

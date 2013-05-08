@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-babl-compat.h
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picman-babl-compat.h
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,14 @@
 
 #include <gegl.h>
 
-#include "gimp-gegl-types.h"
+#include "picman-gegl-types.h"
 
-#include "gimp-babl.h"
-#include "gimp-babl-compat.h"
+#include "picman-babl.h"
+#include "picman-babl-compat.h"
 
 
-GimpImageType
-gimp_babl_format_get_image_type (const Babl *format)
+PicmanImageType
+picman_babl_format_get_image_type (const Babl *format)
 {
   const Babl *model;
 
@@ -40,36 +40,36 @@ gimp_babl_format_get_image_type (const Babl *format)
   if (model == babl_model ("Y") ||
       model == babl_model ("Y'"))
     {
-      return GIMP_GRAY_IMAGE;
+      return PICMAN_GRAY_IMAGE;
     }
   else if (model == babl_model ("YA") ||
            model == babl_model ("Y'A"))
     {
-      return GIMP_GRAYA_IMAGE;
+      return PICMAN_GRAYA_IMAGE;
     }
   else if (model == babl_model ("RGB") ||
            model == babl_model ("R'G'B'"))
     {
-      return GIMP_RGB_IMAGE;
+      return PICMAN_RGB_IMAGE;
     }
   else if (model == babl_model ("RGBA") ||
            model == babl_model ("R'G'B'A"))
     {
-      return GIMP_RGBA_IMAGE;
+      return PICMAN_RGBA_IMAGE;
     }
   else if (babl_format_is_palette (format))
     {
       if (babl_format_has_alpha (format))
-        return GIMP_INDEXEDA_IMAGE;
+        return PICMAN_INDEXEDA_IMAGE;
       else
-        return GIMP_INDEXED_IMAGE;
+        return PICMAN_INDEXED_IMAGE;
     }
 
   g_return_val_if_reached (-1);
 }
 
 const Babl *
-gimp_babl_compat_u8_format (const Babl *format)
+picman_babl_compat_u8_format (const Babl *format)
 {
   g_return_val_if_fail (format != NULL, NULL);
 
@@ -77,7 +77,7 @@ gimp_babl_compat_u8_format (const Babl *format)
   if (babl_format_is_palette (format))
     return format;
 
-  return gimp_babl_format (gimp_babl_format_get_base_type (format),
-                           GIMP_PRECISION_U8,
+  return picman_babl_format (picman_babl_format_get_base_type (format),
+                           PICMAN_PRECISION_U8,
                            babl_format_has_alpha (format));
 }

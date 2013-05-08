@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpText
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * PicmanText
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEXT_LAYER_XCF_H__
-#define __GIMP_TEXT_LAYER_XCF_H__
+#ifndef __PICMAN_TEXT_LAYER_XCF_H__
+#define __PICMAN_TEXT_LAYER_XCF_H__
 
 
-gboolean  gimp_text_layer_xcf_load_hack    (GimpLayer     **layer);
+gboolean  picman_text_layer_xcf_load_hack    (PicmanLayer     **layer);
 
-void      gimp_text_layer_xcf_save_prepare (GimpTextLayer  *text_layer);
+void      picman_text_layer_xcf_save_prepare (PicmanTextLayer  *text_layer);
 
-guint32   gimp_text_layer_get_xcf_flags    (GimpTextLayer  *text_layer);
-void      gimp_text_layer_set_xcf_flags    (GimpTextLayer  *text_layer,
+guint32   picman_text_layer_get_xcf_flags    (PicmanTextLayer  *text_layer);
+void      picman_text_layer_set_xcf_flags    (PicmanTextLayer  *text_layer,
                                             guint32         flags);
 
 
-#endif /* __GIMP_TEXT_LAYER_XCF_H__ */
+#endif /* __PICMAN_TEXT_LAYER_XCF_H__ */

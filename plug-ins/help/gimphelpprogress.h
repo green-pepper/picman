@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * The GIMP Help plug-in
- * Copyright (C) 1999-2008 Sven Neumann <sven@gimp.org>
- *                         Michael Natterer <mitch@gimp.org>
- *                         Henrik Brix Andersen <brix@gimp.org>
+ * The PICMAN Help plug-in
+ * Copyright (C) 1999-2008 Sven Neumann <sven@picman.org>
+ *                         Michael Natterer <mitch@picman.org>
+ *                         Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_HELP_PROGRESS_H__
-#define __GIMP_HELP_PROGRESS_H__
+#ifndef __PICMAN_HELP_PROGRESS_H__
+#define __PICMAN_HELP_PROGRESS_H__
 
 
 typedef struct
@@ -34,18 +34,18 @@ typedef struct
                              gpointer     user_data);
 
   /* Padding for future expansion. Must be initialized with NULL! */
-  void  (* _gimp_reserved1) (void);
-  void  (* _gimp_reserved2) (void);
-  void  (* _gimp_reserved3) (void);
-  void  (* _gimp_reserved4) (void);
-} GimpHelpProgressVTable;
+  void  (* _picman_reserved1) (void);
+  void  (* _picman_reserved2) (void);
+  void  (* _picman_reserved3) (void);
+  void  (* _picman_reserved4) (void);
+} PicmanHelpProgressVTable;
 
 
-GimpHelpProgress * gimp_help_progress_new    (const GimpHelpProgressVTable *vtable,
+PicmanHelpProgress * picman_help_progress_new    (const PicmanHelpProgressVTable *vtable,
                                               gpointer                      user_data);
-void               gimp_help_progress_free   (GimpHelpProgress *progress);
+void               picman_help_progress_free   (PicmanHelpProgress *progress);
 
-void               gimp_help_progress_cancel (GimpHelpProgress *progress);
+void               picman_help_progress_cancel (PicmanHelpProgress *progress);
 
 
-#endif /* ! __GIMP_HELP_PROGRESS_H__ */
+#endif /* ! __PICMAN_HELP_PROGRESS_H__ */

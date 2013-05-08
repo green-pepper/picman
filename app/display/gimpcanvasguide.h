@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasguide.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasguide.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,45 +18,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_GUIDE_H__
-#define __GIMP_CANVAS_GUIDE_H__
+#ifndef __PICMAN_CANVAS_GUIDE_H__
+#define __PICMAN_CANVAS_GUIDE_H__
 
 
-#include "gimpcanvasitem.h"
+#include "picmancanvasitem.h"
 
 
-#define GIMP_TYPE_CANVAS_GUIDE            (gimp_canvas_guide_get_type ())
-#define GIMP_CANVAS_GUIDE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_GUIDE, GimpCanvasGuide))
-#define GIMP_CANVAS_GUIDE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_GUIDE, GimpCanvasGuideClass))
-#define GIMP_IS_CANVAS_GUIDE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_GUIDE))
-#define GIMP_IS_CANVAS_GUIDE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_GUIDE))
-#define GIMP_CANVAS_GUIDE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_GUIDE, GimpCanvasGuideClass))
+#define PICMAN_TYPE_CANVAS_GUIDE            (picman_canvas_guide_get_type ())
+#define PICMAN_CANVAS_GUIDE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_GUIDE, PicmanCanvasGuide))
+#define PICMAN_CANVAS_GUIDE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_GUIDE, PicmanCanvasGuideClass))
+#define PICMAN_IS_CANVAS_GUIDE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_GUIDE))
+#define PICMAN_IS_CANVAS_GUIDE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_GUIDE))
+#define PICMAN_CANVAS_GUIDE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_GUIDE, PicmanCanvasGuideClass))
 
 
-typedef struct _GimpCanvasGuide      GimpCanvasGuide;
-typedef struct _GimpCanvasGuideClass GimpCanvasGuideClass;
+typedef struct _PicmanCanvasGuide      PicmanCanvasGuide;
+typedef struct _PicmanCanvasGuideClass PicmanCanvasGuideClass;
 
-struct _GimpCanvasGuide
+struct _PicmanCanvasGuide
 {
-  GimpCanvasItem  parent_instance;
+  PicmanCanvasItem  parent_instance;
 };
 
-struct _GimpCanvasGuideClass
+struct _PicmanCanvasGuideClass
 {
-  GimpCanvasItemClass  parent_class;
+  PicmanCanvasItemClass  parent_class;
 };
 
 
-GType            gimp_canvas_guide_get_type (void) G_GNUC_CONST;
+GType            picman_canvas_guide_get_type (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_canvas_guide_new      (GimpDisplayShell    *shell,
-                                             GimpOrientationType  orientation,
+PicmanCanvasItem * picman_canvas_guide_new      (PicmanDisplayShell    *shell,
+                                             PicmanOrientationType  orientation,
                                              gint                 position,
                                              gboolean             guide_style);
 
-void             gimp_canvas_guide_set      (GimpCanvasItem      *guide,
-                                             GimpOrientationType  orientation,
+void             picman_canvas_guide_set      (PicmanCanvasItem      *guide,
+                                             PicmanOrientationType  orientation,
                                              gint                 position);
 
 
-#endif /* __GIMP_CANVAS_GUIDE_H__ */
+#endif /* __PICMAN_CANVAS_GUIDE_H__ */

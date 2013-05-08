@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,40 +15,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DOCUMENT_LIST_H__
-#define __GIMP_DOCUMENT_LIST_H__
+#ifndef __PICMAN_DOCUMENT_LIST_H__
+#define __PICMAN_DOCUMENT_LIST_H__
 
-#include "core/gimplist.h"
-
-
-#define GIMP_TYPE_DOCUMENT_LIST           (gimp_document_list_get_type ())
-#define GIMP_DOCUMENT_LIST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DOCUMENT_LIST, GimpDocumentList))
-#define GIMP_DOCUMENT_LIST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DOCUMENT_LIST, GimpDocumentListClass))
-#define GIMP_IS_DOCUMENT_LIST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DOCUMENT_LIST))
-#define GIMP_IS_DOCUMENT_LIST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DOCUMENT_LIST))
+#include "core/picmanlist.h"
 
 
-typedef struct _GimpDocumentListClass GimpDocumentListClass;
+#define PICMAN_TYPE_DOCUMENT_LIST           (picman_document_list_get_type ())
+#define PICMAN_DOCUMENT_LIST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DOCUMENT_LIST, PicmanDocumentList))
+#define PICMAN_DOCUMENT_LIST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DOCUMENT_LIST, PicmanDocumentListClass))
+#define PICMAN_IS_DOCUMENT_LIST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DOCUMENT_LIST))
+#define PICMAN_IS_DOCUMENT_LIST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DOCUMENT_LIST))
 
-struct _GimpDocumentList
+
+typedef struct _PicmanDocumentListClass PicmanDocumentListClass;
+
+struct _PicmanDocumentList
 {
-  GimpList  parent_instance;
+  PicmanList  parent_instance;
 
-  Gimp     *gimp;
+  Picman     *picman;
 };
 
-struct _GimpDocumentListClass
+struct _PicmanDocumentListClass
 {
-  GimpListClass  parent_class;
+  PicmanListClass  parent_class;
 };
 
 
-GType           gimp_document_list_get_type (void) G_GNUC_CONST;
-GimpContainer * gimp_document_list_new      (Gimp             *gimp);
+GType           picman_document_list_get_type (void) G_GNUC_CONST;
+PicmanContainer * picman_document_list_new      (Picman             *picman);
 
-GimpImagefile * gimp_document_list_add_uri  (GimpDocumentList *document_list,
+PicmanImagefile * picman_document_list_add_uri  (PicmanDocumentList *document_list,
                                              const gchar      *uri,
                                              const gchar      *mime_type);
 
 
-#endif  /*  __GIMP_DOCUMENT_LIST_H__  */
+#endif  /*  __PICMAN_DOCUMENT_LIST_H__  */

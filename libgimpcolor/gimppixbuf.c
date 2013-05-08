@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimppixbuf.c
- * Copyright (C) 2012  Michael Natterer <mitch@gimp.org>
+ * picmanpixbuf.c
+ * Copyright (C) 2012  Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,23 +24,23 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "gimpcolortypes.h"
+#include "picmancolortypes.h"
 
-#include "gimppixbuf.h"
+#include "picmanpixbuf.h"
 
 
 /**
- * gimp_pixbuf_get_format:
+ * picman_pixbuf_get_format:
  * @pixbuf: a #GdkPixbuf
  *
  * Returns the Babl format that corresponds to the @pixbuf's pixel format.
  *
  * Return value: the @pixbuf's pixel format
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 const Babl *
-gimp_pixbuf_get_format (GdkPixbuf *pixbuf)
+picman_pixbuf_get_format (GdkPixbuf *pixbuf)
 {
   g_return_val_if_fail (GDK_IS_PIXBUF (pixbuf), NULL);
 
@@ -54,7 +54,7 @@ gimp_pixbuf_get_format (GdkPixbuf *pixbuf)
 }
 
 /**
- * gimp_pixbuf_create_buffer:
+ * picman_pixbuf_create_buffer:
  * @pixbuf: a #GdkPixbuf
  *
  * Returns a #GeglBuffer that's backed by the @pixbuf's pixels, without
@@ -63,10 +63,10 @@ gimp_pixbuf_get_format (GdkPixbuf *pixbuf)
  *
  * Return value: a new #GeglBuffer as a wrapper around @pixbuf.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 GeglBuffer *
-gimp_pixbuf_create_buffer (GdkPixbuf *pixbuf)
+picman_pixbuf_create_buffer (GdkPixbuf *pixbuf)
 {
   gint width;
   gint height;
@@ -79,7 +79,7 @@ gimp_pixbuf_create_buffer (GdkPixbuf *pixbuf)
   rowstride = gdk_pixbuf_get_rowstride (pixbuf);
 
   return gegl_buffer_linear_new_from_data (gdk_pixbuf_get_pixels (pixbuf),
-                                           gimp_pixbuf_get_format (pixbuf),
+                                           picman_pixbuf_get_format (pixbuf),
                                            GEGL_RECTANGLE (0, 0, width, height),
                                            rowstride,
                                            (GDestroyNotify) g_object_unref,

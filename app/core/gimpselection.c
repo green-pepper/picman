@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,158 +23,158 @@
 
 #include "core-types.h"
 
-#include "gegl/gimp-babl.h"
-#include "gegl/gimp-gegl-apply-operation.h"
+#include "gegl/picman-babl.h"
+#include "gegl/picman-gegl-apply-operation.h"
 
-#include "gimp.h"
-#include "gimp-edit.h"
-#include "gimpcontext.h"
-#include "gimpdrawable-private.h"
-#include "gimperror.h"
-#include "gimpimage.h"
-#include "gimpimage-undo.h"
-#include "gimpimage-undo-push.h"
-#include "gimplayer.h"
-#include "gimplayermask.h"
-#include "gimplayer-floating-sel.h"
-#include "gimppickable.h"
-#include "gimpselection.h"
+#include "picman.h"
+#include "picman-edit.h"
+#include "picmancontext.h"
+#include "picmandrawable-private.h"
+#include "picmanerror.h"
+#include "picmanimage.h"
+#include "picmanimage-undo.h"
+#include "picmanimage-undo-push.h"
+#include "picmanlayer.h"
+#include "picmanlayermask.h"
+#include "picmanlayer-floating-sel.h"
+#include "picmanpickable.h"
+#include "picmanselection.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static gboolean   gimp_selection_is_attached   (const GimpItem      *item);
-static GimpItemTree * gimp_selection_get_tree  (GimpItem            *item);
-static void       gimp_selection_translate     (GimpItem            *item,
+static gboolean   picman_selection_is_attached   (const PicmanItem      *item);
+static PicmanItemTree * picman_selection_get_tree  (PicmanItem            *item);
+static void       picman_selection_translate     (PicmanItem            *item,
                                                 gint                 offset_x,
                                                 gint                 offset_y,
                                                 gboolean             push_undo);
-static void       gimp_selection_scale         (GimpItem            *item,
+static void       picman_selection_scale         (PicmanItem            *item,
                                                 gint                 new_width,
                                                 gint                 new_height,
                                                 gint                 new_offset_x,
                                                 gint                 new_offset_y,
-                                                GimpInterpolationType interp_type,
-                                                GimpProgress        *progress);
-static void       gimp_selection_resize        (GimpItem            *item,
-                                                GimpContext         *context,
+                                                PicmanInterpolationType interp_type,
+                                                PicmanProgress        *progress);
+static void       picman_selection_resize        (PicmanItem            *item,
+                                                PicmanContext         *context,
                                                 gint                 new_width,
                                                 gint                 new_height,
                                                 gint                 offset_x,
                                                 gint                 offset_y);
-static void       gimp_selection_flip          (GimpItem            *item,
-                                                GimpContext         *context,
-                                                GimpOrientationType  flip_type,
+static void       picman_selection_flip          (PicmanItem            *item,
+                                                PicmanContext         *context,
+                                                PicmanOrientationType  flip_type,
                                                 gdouble              axis,
                                                 gboolean             clip_result);
-static void       gimp_selection_rotate        (GimpItem            *item,
-                                                GimpContext         *context,
-                                                GimpRotationType     rotation_type,
+static void       picman_selection_rotate        (PicmanItem            *item,
+                                                PicmanContext         *context,
+                                                PicmanRotationType     rotation_type,
                                                 gdouble              center_x,
                                                 gdouble              center_y,
                                                 gboolean             clip_result);
-static gboolean   gimp_selection_stroke        (GimpItem            *item,
-                                                GimpDrawable        *drawable,
-                                                GimpStrokeOptions   *stroke_options,
+static gboolean   picman_selection_stroke        (PicmanItem            *item,
+                                                PicmanDrawable        *drawable,
+                                                PicmanStrokeOptions   *stroke_options,
                                                 gboolean             push_undo,
-                                                GimpProgress        *progress,
+                                                PicmanProgress        *progress,
                                                 GError             **error);
-static void       gimp_selection_convert_type  (GimpDrawable        *drawable,
-                                                GimpImage           *dest_image,
+static void       picman_selection_convert_type  (PicmanDrawable        *drawable,
+                                                PicmanImage           *dest_image,
                                                 const Babl          *new_format,
-                                                GimpImageBaseType    new_base_type,
-                                                GimpPrecision        new_precision,
+                                                PicmanImageBaseType    new_base_type,
+                                                PicmanPrecision        new_precision,
                                                 gint                 layer_dither_type,
                                                 gint                 mask_dither_type,
                                                 gboolean             push_undo);
-static void gimp_selection_invalidate_boundary (GimpDrawable        *drawable);
+static void picman_selection_invalidate_boundary (PicmanDrawable        *drawable);
 
-static gboolean   gimp_selection_boundary      (GimpChannel         *channel,
-                                                const GimpBoundSeg **segs_in,
-                                                const GimpBoundSeg **segs_out,
+static gboolean   picman_selection_boundary      (PicmanChannel         *channel,
+                                                const PicmanBoundSeg **segs_in,
+                                                const PicmanBoundSeg **segs_out,
                                                 gint                *num_segs_in,
                                                 gint                *num_segs_out,
                                                 gint                 x1,
                                                 gint                 y1,
                                                 gint                 x2,
                                                 gint                 y2);
-static gboolean   gimp_selection_bounds        (GimpChannel         *channel,
+static gboolean   picman_selection_bounds        (PicmanChannel         *channel,
                                                 gint                *x1,
                                                 gint                *y1,
                                                 gint                *x2,
                                                 gint                *y2);
-static gboolean   gimp_selection_is_empty      (GimpChannel         *channel);
-static void       gimp_selection_feather       (GimpChannel         *channel,
+static gboolean   picman_selection_is_empty      (PicmanChannel         *channel);
+static void       picman_selection_feather       (PicmanChannel         *channel,
                                                 gdouble              radius_x,
                                                 gdouble              radius_y,
                                                 gboolean             push_undo);
-static void       gimp_selection_sharpen       (GimpChannel         *channel,
+static void       picman_selection_sharpen       (PicmanChannel         *channel,
                                                 gboolean             push_undo);
-static void       gimp_selection_clear         (GimpChannel         *channel,
+static void       picman_selection_clear         (PicmanChannel         *channel,
                                                 const gchar         *undo_desc,
                                                 gboolean             push_undo);
-static void       gimp_selection_all           (GimpChannel         *channel,
+static void       picman_selection_all           (PicmanChannel         *channel,
                                                 gboolean             push_undo);
-static void       gimp_selection_invert        (GimpChannel         *channel,
+static void       picman_selection_invert        (PicmanChannel         *channel,
                                                 gboolean             push_undo);
-static void       gimp_selection_border        (GimpChannel         *channel,
+static void       picman_selection_border        (PicmanChannel         *channel,
                                                 gint                 radius_x,
                                                 gint                 radius_y,
                                                 gboolean             feather,
                                                 gboolean             edge_lock,
                                                 gboolean             push_undo);
-static void       gimp_selection_grow          (GimpChannel         *channel,
+static void       picman_selection_grow          (PicmanChannel         *channel,
                                                 gint                 radius_x,
                                                 gint                 radius_y,
                                                 gboolean             push_undo);
-static void       gimp_selection_shrink        (GimpChannel         *channel,
+static void       picman_selection_shrink        (PicmanChannel         *channel,
                                                 gint                 radius_x,
                                                 gint                 radius_y,
                                                 gboolean             edge_lock,
                                                 gboolean             push_undo);
 
 
-G_DEFINE_TYPE (GimpSelection, gimp_selection, GIMP_TYPE_CHANNEL)
+G_DEFINE_TYPE (PicmanSelection, picman_selection, PICMAN_TYPE_CHANNEL)
 
-#define parent_class gimp_selection_parent_class
+#define parent_class picman_selection_parent_class
 
 
 static void
-gimp_selection_class_init (GimpSelectionClass *klass)
+picman_selection_class_init (PicmanSelectionClass *klass)
 {
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
-  GimpItemClass     *item_class     = GIMP_ITEM_CLASS (klass);
-  GimpDrawableClass *drawable_class = GIMP_DRAWABLE_CLASS (klass);
-  GimpChannelClass  *channel_class  = GIMP_CHANNEL_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
+  PicmanItemClass     *item_class     = PICMAN_ITEM_CLASS (klass);
+  PicmanDrawableClass *drawable_class = PICMAN_DRAWABLE_CLASS (klass);
+  PicmanChannelClass  *channel_class  = PICMAN_CHANNEL_CLASS (klass);
 
-  viewable_class->default_stock_id    = "gimp-selection";
+  viewable_class->default_stock_id    = "picman-selection";
 
-  item_class->is_attached             = gimp_selection_is_attached;
-  item_class->get_tree                = gimp_selection_get_tree;
-  item_class->translate               = gimp_selection_translate;
-  item_class->scale                   = gimp_selection_scale;
-  item_class->resize                  = gimp_selection_resize;
-  item_class->flip                    = gimp_selection_flip;
-  item_class->rotate                  = gimp_selection_rotate;
-  item_class->stroke                  = gimp_selection_stroke;
+  item_class->is_attached             = picman_selection_is_attached;
+  item_class->get_tree                = picman_selection_get_tree;
+  item_class->translate               = picman_selection_translate;
+  item_class->scale                   = picman_selection_scale;
+  item_class->resize                  = picman_selection_resize;
+  item_class->flip                    = picman_selection_flip;
+  item_class->rotate                  = picman_selection_rotate;
+  item_class->stroke                  = picman_selection_stroke;
   item_class->default_name            = _("Selection Mask");
   item_class->translate_desc          = C_("undo-type", "Move Selection");
   item_class->stroke_desc             = C_("undo-type", "Stroke Selection");
 
-  drawable_class->convert_type        = gimp_selection_convert_type;
-  drawable_class->invalidate_boundary = gimp_selection_invalidate_boundary;
+  drawable_class->convert_type        = picman_selection_convert_type;
+  drawable_class->invalidate_boundary = picman_selection_invalidate_boundary;
 
-  channel_class->boundary             = gimp_selection_boundary;
-  channel_class->bounds               = gimp_selection_bounds;
-  channel_class->is_empty             = gimp_selection_is_empty;
-  channel_class->feather              = gimp_selection_feather;
-  channel_class->sharpen              = gimp_selection_sharpen;
-  channel_class->clear                = gimp_selection_clear;
-  channel_class->all                  = gimp_selection_all;
-  channel_class->invert               = gimp_selection_invert;
-  channel_class->border               = gimp_selection_border;
-  channel_class->grow                 = gimp_selection_grow;
-  channel_class->shrink               = gimp_selection_shrink;
+  channel_class->boundary             = picman_selection_boundary;
+  channel_class->bounds               = picman_selection_bounds;
+  channel_class->is_empty             = picman_selection_is_empty;
+  channel_class->feather              = picman_selection_feather;
+  channel_class->sharpen              = picman_selection_sharpen;
+  channel_class->clear                = picman_selection_clear;
+  channel_class->all                  = picman_selection_all;
+  channel_class->invert               = picman_selection_invert;
+  channel_class->border               = picman_selection_border;
+  channel_class->grow                 = picman_selection_grow;
+  channel_class->shrink               = picman_selection_shrink;
 
   channel_class->feather_desc         = C_("undo-type", "Feather Selection");
   channel_class->sharpen_desc         = C_("undo-type", "Sharpen Selection");
@@ -187,137 +187,137 @@ gimp_selection_class_init (GimpSelectionClass *klass)
 }
 
 static void
-gimp_selection_init (GimpSelection *selection)
+picman_selection_init (PicmanSelection *selection)
 {
   selection->stroking_count = 0;
 }
 
 static gboolean
-gimp_selection_is_attached (const GimpItem *item)
+picman_selection_is_attached (const PicmanItem *item)
 {
-  return (GIMP_IS_IMAGE (gimp_item_get_image (item)) &&
-          gimp_image_get_mask (gimp_item_get_image (item)) ==
-          GIMP_CHANNEL (item));
+  return (PICMAN_IS_IMAGE (picman_item_get_image (item)) &&
+          picman_image_get_mask (picman_item_get_image (item)) ==
+          PICMAN_CHANNEL (item));
 }
 
-static GimpItemTree *
-gimp_selection_get_tree (GimpItem *item)
+static PicmanItemTree *
+picman_selection_get_tree (PicmanItem *item)
 {
   return NULL;
 }
 
 static void
-gimp_selection_translate (GimpItem *item,
+picman_selection_translate (PicmanItem *item,
                           gint      offset_x,
                           gint      offset_y,
                           gboolean  push_undo)
 {
-  GIMP_ITEM_CLASS (parent_class)->translate (item, offset_x, offset_y,
+  PICMAN_ITEM_CLASS (parent_class)->translate (item, offset_x, offset_y,
                                              push_undo);
 }
 
 static void
-gimp_selection_scale (GimpItem              *item,
+picman_selection_scale (PicmanItem              *item,
                       gint                   new_width,
                       gint                   new_height,
                       gint                   new_offset_x,
                       gint                   new_offset_y,
-                      GimpInterpolationType  interp_type,
-                      GimpProgress          *progress)
+                      PicmanInterpolationType  interp_type,
+                      PicmanProgress          *progress)
 {
-  GIMP_ITEM_CLASS (parent_class)->scale (item, new_width, new_height,
+  PICMAN_ITEM_CLASS (parent_class)->scale (item, new_width, new_height,
                                          new_offset_x, new_offset_y,
                                          interp_type, progress);
 
-  gimp_item_set_offset (item, 0, 0);
+  picman_item_set_offset (item, 0, 0);
 }
 
 static void
-gimp_selection_resize (GimpItem    *item,
-                       GimpContext *context,
+picman_selection_resize (PicmanItem    *item,
+                       PicmanContext *context,
                        gint         new_width,
                        gint         new_height,
                        gint         offset_x,
                        gint         offset_y)
 {
-  GIMP_ITEM_CLASS (parent_class)->resize (item, context, new_width, new_height,
+  PICMAN_ITEM_CLASS (parent_class)->resize (item, context, new_width, new_height,
                                           offset_x, offset_y);
 
-  gimp_item_set_offset (item, 0, 0);
+  picman_item_set_offset (item, 0, 0);
 }
 
 static void
-gimp_selection_flip (GimpItem            *item,
-                     GimpContext         *context,
-                     GimpOrientationType  flip_type,
+picman_selection_flip (PicmanItem            *item,
+                     PicmanContext         *context,
+                     PicmanOrientationType  flip_type,
                      gdouble              axis,
                      gboolean             clip_result)
 {
-  GIMP_ITEM_CLASS (parent_class)->flip (item, context, flip_type, axis, TRUE);
+  PICMAN_ITEM_CLASS (parent_class)->flip (item, context, flip_type, axis, TRUE);
 }
 
 static void
-gimp_selection_rotate (GimpItem         *item,
-                       GimpContext      *context,
-                       GimpRotationType  rotation_type,
+picman_selection_rotate (PicmanItem         *item,
+                       PicmanContext      *context,
+                       PicmanRotationType  rotation_type,
                        gdouble           center_x,
                        gdouble           center_y,
                        gboolean          clip_result)
 {
-  GIMP_ITEM_CLASS (parent_class)->rotate (item, context, rotation_type,
+  PICMAN_ITEM_CLASS (parent_class)->rotate (item, context, rotation_type,
                                           center_x, center_y,
                                           clip_result);
 }
 
 static gboolean
-gimp_selection_stroke (GimpItem           *item,
-                       GimpDrawable       *drawable,
-                       GimpStrokeOptions  *stroke_options,
+picman_selection_stroke (PicmanItem           *item,
+                       PicmanDrawable       *drawable,
+                       PicmanStrokeOptions  *stroke_options,
                        gboolean            push_undo,
-                       GimpProgress       *progress,
+                       PicmanProgress       *progress,
                        GError            **error)
 {
-  GimpSelection      *selection = GIMP_SELECTION (item);
-  const GimpBoundSeg *dummy_in;
-  const GimpBoundSeg *dummy_out;
+  PicmanSelection      *selection = PICMAN_SELECTION (item);
+  const PicmanBoundSeg *dummy_in;
+  const PicmanBoundSeg *dummy_out;
   gint                num_dummy_in;
   gint                num_dummy_out;
   gboolean            retval;
 
-  if (! gimp_channel_boundary (GIMP_CHANNEL (selection),
+  if (! picman_channel_boundary (PICMAN_CHANNEL (selection),
                                &dummy_in, &dummy_out,
                                &num_dummy_in, &num_dummy_out,
                                0, 0, 0, 0))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			   _("There is no selection to stroke."));
       return FALSE;
     }
 
-  gimp_selection_push_stroking (selection);
+  picman_selection_push_stroking (selection);
 
-  retval = GIMP_ITEM_CLASS (parent_class)->stroke (item, drawable,
+  retval = PICMAN_ITEM_CLASS (parent_class)->stroke (item, drawable,
                                                    stroke_options,
                                                    push_undo, progress, error);
 
-  gimp_selection_pop_stroking (selection);
+  picman_selection_pop_stroking (selection);
 
   return retval;
 }
 
 static void
-gimp_selection_convert_type (GimpDrawable      *drawable,
-                             GimpImage         *dest_image,
+picman_selection_convert_type (PicmanDrawable      *drawable,
+                             PicmanImage         *dest_image,
                              const Babl        *new_format,
-                             GimpImageBaseType  new_base_type,
-                             GimpPrecision      new_precision,
+                             PicmanImageBaseType  new_base_type,
+                             PicmanPrecision      new_precision,
                              gint               layer_dither_type,
                              gint               mask_dither_type,
                              gboolean           push_undo)
 {
-  new_format = gimp_babl_mask_format (new_precision);
+  new_format = picman_babl_mask_format (new_precision);
 
-  GIMP_DRAWABLE_CLASS (parent_class)->convert_type (drawable, dest_image,
+  PICMAN_DRAWABLE_CLASS (parent_class)->convert_type (drawable, dest_image,
                                                     new_format,
                                                     new_base_type,
                                                     new_precision,
@@ -327,27 +327,27 @@ gimp_selection_convert_type (GimpDrawable      *drawable,
 }
 
 static void
-gimp_selection_invalidate_boundary (GimpDrawable *drawable)
+picman_selection_invalidate_boundary (PicmanDrawable *drawable)
 {
-  GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
-  GimpLayer *layer;
+  PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
+  PicmanLayer *layer;
 
   /*  Turn the current selection off  */
-  gimp_image_selection_invalidate (image);
+  picman_image_selection_invalidate (image);
 
-  GIMP_DRAWABLE_CLASS (parent_class)->invalidate_boundary (drawable);
+  PICMAN_DRAWABLE_CLASS (parent_class)->invalidate_boundary (drawable);
 
   /*  If there is a floating selection, update it's area...
    *  we need to do this since this selection mask can act as an additional
    *  mask in the composition of the floating selection
    */
-  layer = gimp_image_get_active_layer (image);
+  layer = picman_image_get_active_layer (image);
 
-  if (layer && gimp_layer_is_floating_sel (layer))
-    gimp_drawable_update (GIMP_DRAWABLE (layer),
+  if (layer && picman_layer_is_floating_sel (layer))
+    picman_drawable_update (PICMAN_DRAWABLE (layer),
                           0, 0,
-                          gimp_item_get_width  (GIMP_ITEM (layer)),
-                          gimp_item_get_height (GIMP_ITEM (layer)));
+                          picman_item_get_width  (PICMAN_ITEM (layer)),
+                          picman_item_get_height (PICMAN_ITEM (layer)));
 
 #ifdef __GNUC__
 #warning FIXME is this still needed?
@@ -359,9 +359,9 @@ gimp_selection_invalidate_boundary (GimpDrawable *drawable)
 }
 
 static gboolean
-gimp_selection_boundary (GimpChannel         *channel,
-                         const GimpBoundSeg **segs_in,
-                         const GimpBoundSeg **segs_out,
+picman_selection_boundary (PicmanChannel         *channel,
+                         const PicmanBoundSeg **segs_in,
+                         const PicmanBoundSeg **segs_out,
                          gint                *num_segs_in,
                          gint                *num_segs_out,
                          gint                 unused1,
@@ -369,11 +369,11 @@ gimp_selection_boundary (GimpChannel         *channel,
                          gint                 unused3,
                          gint                 unused4)
 {
-  GimpImage    *image = gimp_item_get_image (GIMP_ITEM (channel));
-  GimpDrawable *drawable;
-  GimpLayer    *layer;
+  PicmanImage    *image = picman_item_get_image (PICMAN_ITEM (channel));
+  PicmanDrawable *drawable;
+  PicmanLayer    *layer;
 
-  if ((layer = gimp_image_get_floating_selection (image)))
+  if ((layer = picman_image_get_floating_selection (image)))
     {
       /*  If there is a floating selection, then
        *  we need to do some slightly different boundaries.
@@ -385,7 +385,7 @@ gimp_selection_boundary (GimpChannel         *channel,
        */
 
       /*  Find the selection mask boundary  */
-      GIMP_CHANNEL_CLASS (parent_class)->boundary (channel,
+      PICMAN_CHANNEL_CLASS (parent_class)->boundary (channel,
                                                    segs_in, segs_out,
                                                    num_segs_in, num_segs_out,
                                                    0, 0, 0, 0);
@@ -395,20 +395,20 @@ gimp_selection_boundary (GimpChannel         *channel,
 
       return TRUE;
     }
-  else if ((drawable = gimp_image_get_active_drawable (image)) &&
-           GIMP_IS_CHANNEL (drawable))
+  else if ((drawable = picman_image_get_active_drawable (image)) &&
+           PICMAN_IS_CHANNEL (drawable))
     {
       /*  Otherwise, return the boundary...if a channel is active  */
 
-      return GIMP_CHANNEL_CLASS (parent_class)->boundary (channel,
+      return PICMAN_CHANNEL_CLASS (parent_class)->boundary (channel,
                                                           segs_in, segs_out,
                                                           num_segs_in,
                                                           num_segs_out,
                                                           0, 0,
-                                                          gimp_image_get_width  (image),
-                                                          gimp_image_get_height (image));
+                                                          picman_image_get_width  (image),
+                                                          picman_image_get_height (image));
     }
-  else if ((layer = gimp_image_get_active_layer (image)))
+  else if ((layer = picman_image_get_active_layer (image)))
     {
       /*  If a layer is active, we return multiple boundaries based
        *  on the extents
@@ -419,16 +419,16 @@ gimp_selection_boundary (GimpChannel         *channel,
       gint offset_x;
       gint offset_y;
 
-      gimp_item_get_offset (GIMP_ITEM (layer), &offset_x, &offset_y);
+      picman_item_get_offset (PICMAN_ITEM (layer), &offset_x, &offset_y);
 
-      x1 = CLAMP (offset_x, 0, gimp_image_get_width  (image));
-      y1 = CLAMP (offset_y, 0, gimp_image_get_height (image));
-      x2 = CLAMP (offset_x + gimp_item_get_width (GIMP_ITEM (layer)),
-                  0, gimp_image_get_width (image));
-      y2 = CLAMP (offset_y + gimp_item_get_height (GIMP_ITEM (layer)),
-                  0, gimp_image_get_height (image));
+      x1 = CLAMP (offset_x, 0, picman_image_get_width  (image));
+      y1 = CLAMP (offset_y, 0, picman_image_get_height (image));
+      x2 = CLAMP (offset_x + picman_item_get_width (PICMAN_ITEM (layer)),
+                  0, picman_image_get_width (image));
+      y2 = CLAMP (offset_y + picman_item_get_height (PICMAN_ITEM (layer)),
+                  0, picman_image_get_height (image));
 
-      return GIMP_CHANNEL_CLASS (parent_class)->boundary (channel,
+      return PICMAN_CHANNEL_CLASS (parent_class)->boundary (channel,
                                                           segs_in, segs_out,
                                                           num_segs_in,
                                                           num_segs_out,
@@ -444,19 +444,19 @@ gimp_selection_boundary (GimpChannel         *channel,
 }
 
 static gboolean
-gimp_selection_bounds (GimpChannel *channel,
+picman_selection_bounds (PicmanChannel *channel,
                        gint        *x1,
                        gint        *y1,
                        gint        *x2,
                        gint        *y2)
 {
-  return GIMP_CHANNEL_CLASS (parent_class)->bounds (channel, x1, y1, x2, y2);
+  return PICMAN_CHANNEL_CLASS (parent_class)->bounds (channel, x1, y1, x2, y2);
 }
 
 static gboolean
-gimp_selection_is_empty (GimpChannel *channel)
+picman_selection_is_empty (PicmanChannel *channel)
 {
-  GimpSelection *selection = GIMP_SELECTION (channel);
+  PicmanSelection *selection = PICMAN_SELECTION (channel);
 
   /*  in order to allow stroking of selections, we need to pretend here
    *  that the selection mask is empty so that it doesn't mask the paint
@@ -465,81 +465,81 @@ gimp_selection_is_empty (GimpChannel *channel)
   if (selection->stroking_count > 0)
     return TRUE;
 
-  return GIMP_CHANNEL_CLASS (parent_class)->is_empty (channel);
+  return PICMAN_CHANNEL_CLASS (parent_class)->is_empty (channel);
 }
 
 static void
-gimp_selection_feather (GimpChannel *channel,
+picman_selection_feather (PicmanChannel *channel,
                         gdouble      radius_x,
                         gdouble      radius_y,
                         gboolean     push_undo)
 {
-  GIMP_CHANNEL_CLASS (parent_class)->feather (channel, radius_x, radius_y,
+  PICMAN_CHANNEL_CLASS (parent_class)->feather (channel, radius_x, radius_y,
                                               push_undo);
 }
 
 static void
-gimp_selection_sharpen (GimpChannel *channel,
+picman_selection_sharpen (PicmanChannel *channel,
                         gboolean     push_undo)
 {
-  GIMP_CHANNEL_CLASS (parent_class)->sharpen (channel, push_undo);
+  PICMAN_CHANNEL_CLASS (parent_class)->sharpen (channel, push_undo);
 }
 
 static void
-gimp_selection_clear (GimpChannel *channel,
+picman_selection_clear (PicmanChannel *channel,
                       const gchar *undo_desc,
                       gboolean     push_undo)
 {
-  GIMP_CHANNEL_CLASS (parent_class)->clear (channel, undo_desc, push_undo);
+  PICMAN_CHANNEL_CLASS (parent_class)->clear (channel, undo_desc, push_undo);
 }
 
 static void
-gimp_selection_all (GimpChannel *channel,
+picman_selection_all (PicmanChannel *channel,
                     gboolean     push_undo)
 {
-  GIMP_CHANNEL_CLASS (parent_class)->all (channel, push_undo);
+  PICMAN_CHANNEL_CLASS (parent_class)->all (channel, push_undo);
 }
 
 static void
-gimp_selection_invert (GimpChannel *channel,
+picman_selection_invert (PicmanChannel *channel,
                        gboolean     push_undo)
 {
-  GIMP_CHANNEL_CLASS (parent_class)->invert (channel, push_undo);
+  PICMAN_CHANNEL_CLASS (parent_class)->invert (channel, push_undo);
 }
 
 static void
-gimp_selection_border (GimpChannel *channel,
+picman_selection_border (PicmanChannel *channel,
                        gint         radius_x,
                        gint         radius_y,
                        gboolean     feather,
                        gboolean     edge_lock,
                        gboolean     push_undo)
 {
-  GIMP_CHANNEL_CLASS (parent_class)->border (channel,
+  PICMAN_CHANNEL_CLASS (parent_class)->border (channel,
                                              radius_x, radius_y,
                                              feather, edge_lock,
                                              push_undo);
 }
 
 static void
-gimp_selection_grow (GimpChannel *channel,
+picman_selection_grow (PicmanChannel *channel,
                      gint         radius_x,
                      gint         radius_y,
                      gboolean     push_undo)
 {
-  GIMP_CHANNEL_CLASS (parent_class)->grow (channel,
+  PICMAN_CHANNEL_CLASS (parent_class)->grow (channel,
 					   radius_x, radius_y,
                                            push_undo);
 }
 
 static void
-gimp_selection_shrink (GimpChannel *channel,
+picman_selection_shrink (PicmanChannel *channel,
                        gint         radius_x,
                        gint         radius_y,
                        gboolean     edge_lock,
                        gboolean     push_undo)
 {
-  GIMP_CHANNEL_CLASS (parent_class)->shrink (channel,
+  PICMAN_CHANNEL_CLASS (parent_class)->shrink (channel,
 					     radius_x, radius_y, edge_lock,
 					     push_undo);
 }
@@ -547,24 +547,24 @@ gimp_selection_shrink (GimpChannel *channel,
 
 /*  public functions  */
 
-GimpChannel *
-gimp_selection_new (GimpImage *image,
+PicmanChannel *
+picman_selection_new (PicmanImage *image,
                     gint       width,
                     gint       height)
 {
-  GimpRGB      black = { 0.0, 0.0, 0.0, 0.5 };
-  GimpChannel *channel;
+  PicmanRGB      black = { 0.0, 0.0, 0.0, 0.5 };
+  PicmanChannel *channel;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (width > 0 && height > 0, NULL);
 
-  channel = GIMP_CHANNEL (gimp_drawable_new (GIMP_TYPE_SELECTION,
+  channel = PICMAN_CHANNEL (picman_drawable_new (PICMAN_TYPE_SELECTION,
                                              image, NULL,
                                              0, 0, width, height,
-                                             gimp_image_get_mask_format (image)));
+                                             picman_image_get_mask_format (image)));
 
-  gimp_channel_set_color (channel, &black, FALSE);
-  gimp_channel_set_show_masked (channel, TRUE);
+  picman_channel_set_color (channel, &black, FALSE);
+  picman_channel_set_show_masked (channel, TRUE);
 
   channel->x2 = width;
   channel->y2 = height;
@@ -573,9 +573,9 @@ gimp_selection_new (GimpImage *image,
 }
 
 gint
-gimp_selection_push_stroking (GimpSelection *selection)
+picman_selection_push_stroking (PicmanSelection *selection)
 {
-  g_return_val_if_fail (GIMP_IS_SELECTION (selection), 0);
+  g_return_val_if_fail (PICMAN_IS_SELECTION (selection), 0);
 
   selection->stroking_count++;
 
@@ -583,9 +583,9 @@ gimp_selection_push_stroking (GimpSelection *selection)
 }
 
 gint
-gimp_selection_pop_stroking (GimpSelection *selection)
+picman_selection_pop_stroking (PicmanSelection *selection)
 {
-  g_return_val_if_fail (GIMP_IS_SELECTION (selection), 0);
+  g_return_val_if_fail (PICMAN_IS_SELECTION (selection), 0);
   g_return_val_if_fail (selection->stroking_count > 0, 0);
 
   selection->stroking_count--;
@@ -594,62 +594,62 @@ gimp_selection_pop_stroking (GimpSelection *selection)
 }
 
 void
-gimp_selection_load (GimpSelection *selection,
-                     GimpChannel   *channel)
+picman_selection_load (PicmanSelection *selection,
+                     PicmanChannel   *channel)
 {
   gint width;
   gint height;
 
-  g_return_if_fail (GIMP_IS_SELECTION (selection));
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
+  g_return_if_fail (PICMAN_IS_SELECTION (selection));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
 
-  width  = gimp_item_get_width  (GIMP_ITEM (selection));
-  height = gimp_item_get_height (GIMP_ITEM (selection));
+  width  = picman_item_get_width  (PICMAN_ITEM (selection));
+  height = picman_item_get_height (PICMAN_ITEM (selection));
 
-  g_return_if_fail (width  == gimp_item_get_width  (GIMP_ITEM (channel)));
-  g_return_if_fail (height == gimp_item_get_height (GIMP_ITEM (channel)));
+  g_return_if_fail (width  == picman_item_get_width  (PICMAN_ITEM (channel)));
+  g_return_if_fail (height == picman_item_get_height (PICMAN_ITEM (channel)));
 
-  gimp_channel_push_undo (GIMP_CHANNEL (selection),
+  picman_channel_push_undo (PICMAN_CHANNEL (selection),
                           C_("undo-type", "Channel to Selection"));
 
   /*  copy the channel to the mask  */
-  gegl_buffer_copy (gimp_drawable_get_buffer (GIMP_DRAWABLE (channel)),
+  gegl_buffer_copy (picman_drawable_get_buffer (PICMAN_DRAWABLE (channel)),
                     NULL,
-                    gimp_drawable_get_buffer (GIMP_DRAWABLE (selection)),
+                    picman_drawable_get_buffer (PICMAN_DRAWABLE (selection)),
                     NULL);
 
-  GIMP_CHANNEL (selection)->bounds_known = FALSE;
+  PICMAN_CHANNEL (selection)->bounds_known = FALSE;
 
-  gimp_drawable_update (GIMP_DRAWABLE (selection),
+  picman_drawable_update (PICMAN_DRAWABLE (selection),
                         0, 0, width, height);
 }
 
-GimpChannel *
-gimp_selection_save (GimpSelection *selection)
+PicmanChannel *
+picman_selection_save (PicmanSelection *selection)
 {
-  GimpImage   *image;
-  GimpChannel *new_channel;
+  PicmanImage   *image;
+  PicmanChannel *new_channel;
 
-  g_return_val_if_fail (GIMP_IS_SELECTION (selection), NULL);
+  g_return_val_if_fail (PICMAN_IS_SELECTION (selection), NULL);
 
-  image = gimp_item_get_image (GIMP_ITEM (selection));
+  image = picman_item_get_image (PICMAN_ITEM (selection));
 
-  new_channel = GIMP_CHANNEL (gimp_item_duplicate (GIMP_ITEM (selection),
-                                                   GIMP_TYPE_CHANNEL));
+  new_channel = PICMAN_CHANNEL (picman_item_duplicate (PICMAN_ITEM (selection),
+                                                   PICMAN_TYPE_CHANNEL));
 
   /*  saved selections are not visible by default  */
-  gimp_item_set_visible (GIMP_ITEM (new_channel), FALSE, FALSE);
+  picman_item_set_visible (PICMAN_ITEM (new_channel), FALSE, FALSE);
 
-  gimp_image_add_channel (image, new_channel,
-                          GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+  picman_image_add_channel (image, new_channel,
+                          PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
   return new_channel;
 }
 
 GeglBuffer *
-gimp_selection_extract (GimpSelection *selection,
-                        GimpPickable  *pickable,
-                        GimpContext   *context,
+picman_selection_extract (PicmanSelection *selection,
+                        PicmanPickable  *pickable,
+                        PicmanContext   *context,
                         gboolean       cut_image,
                         gboolean       keep_indexed,
                         gboolean       add_alpha,
@@ -657,7 +657,7 @@ gimp_selection_extract (GimpSelection *selection,
                         gint          *offset_y,
                         GError       **error)
 {
-  GimpImage  *image;
+  PicmanImage  *image;
   GeglBuffer *src_buffer;
   GeglBuffer *dest_buffer;
   const Babl *src_format;
@@ -666,14 +666,14 @@ gimp_selection_extract (GimpSelection *selection,
   gboolean    non_empty;
   gint        off_x, off_y;
 
-  g_return_val_if_fail (GIMP_IS_SELECTION (selection), NULL);
-  g_return_val_if_fail (GIMP_IS_PICKABLE (pickable), NULL);
-  if (GIMP_IS_ITEM (pickable))
-    g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (pickable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_SELECTION (selection), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICKABLE (pickable), NULL);
+  if (PICMAN_IS_ITEM (pickable))
+    g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (pickable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  image = gimp_pickable_get_image (pickable);
+  image = picman_pickable_get_image (pickable);
 
   /*  If there are no bounds, then just extract the entire image
    *  This may not be the correct behavior, but after getting rid
@@ -681,16 +681,16 @@ gimp_selection_extract (GimpSelection *selection,
    *  a small layer and expect it to work, even though there is no
    *  actual selection mask
    */
-  if (GIMP_IS_DRAWABLE (pickable))
-    non_empty = gimp_item_mask_bounds (GIMP_ITEM (pickable),
+  if (PICMAN_IS_DRAWABLE (pickable))
+    non_empty = picman_item_mask_bounds (PICMAN_ITEM (pickable),
                                        &x1, &y1, &x2, &y2);
   else
-    non_empty = gimp_channel_bounds (GIMP_CHANNEL (selection),
+    non_empty = picman_channel_bounds (PICMAN_CHANNEL (selection),
                                      &x1, &y1, &x2, &y2);
 
   if (non_empty && ((x1 == x2) || (y1 == y2)))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			   _("Unable to cut or copy because the "
 			     "selected region is empty."));
       return NULL;
@@ -702,36 +702,36 @@ gimp_selection_extract (GimpSelection *selection,
   if (non_empty)
     add_alpha = TRUE;
 
-  src_format = gimp_pickable_get_format (pickable);
+  src_format = picman_pickable_get_format (pickable);
 
   /*  How many bytes in the temp buffer?  */
   if (babl_format_is_palette (src_format) && ! keep_indexed)
     {
-      dest_format = gimp_image_get_format (image, GIMP_RGB,
-                                           gimp_image_get_precision (image),
+      dest_format = picman_image_get_format (image, PICMAN_RGB,
+                                           picman_image_get_precision (image),
                                            add_alpha ||
                                            babl_format_has_alpha (src_format));
     }
   else
     {
       if (add_alpha)
-        dest_format = gimp_pickable_get_format_with_alpha (pickable);
+        dest_format = picman_pickable_get_format_with_alpha (pickable);
       else
         dest_format = src_format;
     }
 
-  if (GIMP_IS_DRAWABLE (pickable))
+  if (PICMAN_IS_DRAWABLE (pickable))
     {
-      gimp_item_get_offset (GIMP_ITEM (pickable), &off_x, &off_y);
+      picman_item_get_offset (PICMAN_ITEM (pickable), &off_x, &off_y);
     }
   else
     {
       off_x = off_y = 0;
     }
 
-  gimp_pickable_flush (pickable);
+  picman_pickable_flush (pickable);
 
-  src_buffer = gimp_pickable_get_buffer (pickable);
+  src_buffer = picman_pickable_get_buffer (pickable);
 
   /*  Allocate the temp buffer  */
   dest_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0, x2 - x1, y2 - y1),
@@ -747,39 +747,39 @@ gimp_selection_extract (GimpSelection *selection,
 
       GeglBuffer *mask_buffer;
 
-      mask_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (selection));
+      mask_buffer = picman_drawable_get_buffer (PICMAN_DRAWABLE (selection));
 
-      gimp_gegl_apply_opacity (dest_buffer, NULL, NULL, dest_buffer,
+      picman_gegl_apply_opacity (dest_buffer, NULL, NULL, dest_buffer,
                                mask_buffer,
                                - (off_x + x1),
                                - (off_y + y1),
                                1.0);
 
-      if (cut_image && GIMP_IS_DRAWABLE (pickable))
+      if (cut_image && PICMAN_IS_DRAWABLE (pickable))
         {
-          gimp_edit_clear (image, GIMP_DRAWABLE (pickable), context);
+          picman_edit_clear (image, PICMAN_DRAWABLE (pickable), context);
         }
     }
-  else if (cut_image && GIMP_IS_DRAWABLE (pickable))
+  else if (cut_image && PICMAN_IS_DRAWABLE (pickable))
     {
       /*  If we're cutting without selection, remove either the layer
        *  (or floating selection), the layer mask, or the channel
        */
-      if (cut_image && GIMP_IS_DRAWABLE (pickable))
+      if (cut_image && PICMAN_IS_DRAWABLE (pickable))
         {
-          if (GIMP_IS_LAYER (pickable))
+          if (PICMAN_IS_LAYER (pickable))
             {
-              gimp_image_remove_layer (image, GIMP_LAYER (pickable),
+              picman_image_remove_layer (image, PICMAN_LAYER (pickable),
                                        TRUE, NULL);
             }
-          else if (GIMP_IS_LAYER_MASK (pickable))
+          else if (PICMAN_IS_LAYER_MASK (pickable))
             {
-              gimp_layer_apply_mask (gimp_layer_mask_get_layer (GIMP_LAYER_MASK (pickable)),
-                                     GIMP_MASK_DISCARD, TRUE);
+              picman_layer_apply_mask (picman_layer_mask_get_layer (PICMAN_LAYER_MASK (pickable)),
+                                     PICMAN_MASK_DISCARD, TRUE);
             }
-          else if (GIMP_IS_CHANNEL (pickable))
+          else if (PICMAN_IS_CHANNEL (pickable))
             {
-              gimp_image_remove_channel (image, GIMP_CHANNEL (pickable),
+              picman_image_remove_channel (image, PICMAN_CHANNEL (pickable),
                                          TRUE, NULL);
             }
         }
@@ -791,62 +791,62 @@ gimp_selection_extract (GimpSelection *selection,
   return dest_buffer;
 }
 
-GimpLayer *
-gimp_selection_float (GimpSelection *selection,
-                      GimpDrawable  *drawable,
-                      GimpContext   *context,
+PicmanLayer *
+picman_selection_float (PicmanSelection *selection,
+                      PicmanDrawable  *drawable,
+                      PicmanContext   *context,
                       gboolean       cut_image,
                       gint           off_x,
                       gint           off_y,
                       GError       **error)
 {
-  GimpImage  *image;
-  GimpLayer  *layer;
+  PicmanImage  *image;
+  PicmanLayer  *layer;
   GeglBuffer *buffer;
   gint        x1, y1;
   gint        x2, y2;
 
-  g_return_val_if_fail (GIMP_IS_SELECTION (selection), NULL);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_SELECTION (selection), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  image = gimp_item_get_image (GIMP_ITEM (selection));
+  image = picman_item_get_image (PICMAN_ITEM (selection));
 
   /*  Make sure there is a region to float...  */
-  if (! gimp_item_mask_bounds (GIMP_ITEM (drawable), &x1, &y1, &x2, &y2) ||
+  if (! picman_item_mask_bounds (PICMAN_ITEM (drawable), &x1, &y1, &x2, &y2) ||
       (x1 == x2 || y1 == y2))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			   _("Cannot float selection because the selected "
 			     "region is empty."));
       return NULL;
     }
 
   /*  Start an undo group  */
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_FS_FLOAT,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_FS_FLOAT,
                                C_("undo-type", "Float Selection"));
 
   /*  Cut or copy the selected region  */
-  buffer = gimp_selection_extract (selection, GIMP_PICKABLE (drawable), context,
+  buffer = picman_selection_extract (selection, PICMAN_PICKABLE (drawable), context,
                                    cut_image, FALSE, TRUE,
                                    &x1, &y1, NULL);
 
   /*  Clear the selection  */
-  gimp_channel_clear (GIMP_CHANNEL (selection), NULL, TRUE);
+  picman_channel_clear (PICMAN_CHANNEL (selection), NULL, TRUE);
 
   /* Create a new layer from the buffer, using the drawable's type
    *  because it may be different from the image's type if we cut from
    *  a channel or layer mask
    */
-  layer = gimp_layer_new_from_buffer (buffer, image,
-                                      gimp_drawable_get_format_with_alpha (drawable),
+  layer = picman_layer_new_from_buffer (buffer, image,
+                                      picman_drawable_get_format_with_alpha (drawable),
                                       _("Floated Layer"),
-                                      GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+                                      PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
 
   /*  Set the offsets  */
-  gimp_item_set_offset (GIMP_ITEM (layer), x1 + off_x, y1 + off_y);
+  picman_item_set_offset (PICMAN_ITEM (layer), x1 + off_x, y1 + off_y);
 
   /*  Free the temp buffer  */
   g_object_unref (buffer);
@@ -855,10 +855,10 @@ gimp_selection_float (GimpSelection *selection,
   floating_sel_attach (layer, drawable);
 
   /*  End an undo group  */
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
   /*  invalidate the image's boundary variables  */
-  GIMP_CHANNEL (selection)->boundary_known = FALSE;
+  PICMAN_CHANNEL (selection)->boundary_known = FALSE;
 
   return layer;
 }

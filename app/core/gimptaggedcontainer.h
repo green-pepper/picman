@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimptaggedcontainer.h
+ * picmantaggedcontainer.h
  * Copyright (C) 2008 Aurimas Juška <aurisj@svn.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,50 +18,50 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TAGGED_CONTAINER_H__
-#define __GIMP_TAGGED_CONTAINER_H__
+#ifndef __PICMAN_TAGGED_CONTAINER_H__
+#define __PICMAN_TAGGED_CONTAINER_H__
 
 
-#include "gimpfilteredcontainer.h"
+#include "picmanfilteredcontainer.h"
 
 
-#define GIMP_TYPE_TAGGED_CONTAINER            (gimp_tagged_container_get_type ())
-#define GIMP_TAGGED_CONTAINER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TAGGED_CONTAINER, GimpTaggedContainer))
-#define GIMP_TAGGED_CONTAINER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TAGGED_CONTAINER, GimpTaggedContainerClass))
-#define GIMP_IS_TAGGED_CONTAINER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TAGGED_CONTAINER))
-#define GIMP_IS_TAGGED_CONTAINER_CLASS(class) (G_TYPE_CHECK_CLASS_TYPE ((class), GIMP_TYPE_TAGGED_CONTAINER))
-#define GIMP_TAGGED_CONTAINER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TAGGED_CONTAINER, GimpTaggedContainerClass))
+#define PICMAN_TYPE_TAGGED_CONTAINER            (picman_tagged_container_get_type ())
+#define PICMAN_TAGGED_CONTAINER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TAGGED_CONTAINER, PicmanTaggedContainer))
+#define PICMAN_TAGGED_CONTAINER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TAGGED_CONTAINER, PicmanTaggedContainerClass))
+#define PICMAN_IS_TAGGED_CONTAINER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TAGGED_CONTAINER))
+#define PICMAN_IS_TAGGED_CONTAINER_CLASS(class) (G_TYPE_CHECK_CLASS_TYPE ((class), PICMAN_TYPE_TAGGED_CONTAINER))
+#define PICMAN_TAGGED_CONTAINER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TAGGED_CONTAINER, PicmanTaggedContainerClass))
 
 
-typedef struct _GimpTaggedContainerClass GimpTaggedContainerClass;
+typedef struct _PicmanTaggedContainerClass PicmanTaggedContainerClass;
 
-struct _GimpTaggedContainer
+struct _PicmanTaggedContainer
 {
-  GimpFilteredContainer  parent_instance;
+  PicmanFilteredContainer  parent_instance;
 
   GList                 *filter;
   GHashTable            *tag_ref_counts;
   gint                   tag_count;
 };
 
-struct _GimpTaggedContainerClass
+struct _PicmanTaggedContainerClass
 {
-  GimpFilteredContainerClass  parent_class;
+  PicmanFilteredContainerClass  parent_class;
 
-  void (* tag_count_changed) (GimpTaggedContainer *container,
+  void (* tag_count_changed) (PicmanTaggedContainer *container,
                               gint                 count);
 };
 
 
-GType           gimp_tagged_container_get_type      (void) G_GNUC_CONST;
+GType           picman_tagged_container_get_type      (void) G_GNUC_CONST;
 
-GimpContainer * gimp_tagged_container_new           (GimpContainer       *src_container);
+PicmanContainer * picman_tagged_container_new           (PicmanContainer       *src_container);
 
-void            gimp_tagged_container_set_filter    (GimpTaggedContainer *tagged_container,
+void            picman_tagged_container_set_filter    (PicmanTaggedContainer *tagged_container,
                                                      GList               *tags);
-const GList   * gimp_tagged_container_get_filter    (GimpTaggedContainer *tagged_container);
+const GList   * picman_tagged_container_get_filter    (PicmanTaggedContainer *tagged_container);
 
-gint            gimp_tagged_container_get_tag_count (GimpTaggedContainer *container);
+gint            picman_tagged_container_get_tag_count (PicmanTaggedContainer *container);
 
 
-#endif  /* __GIMP_TAGGED_CONTAINER_H__ */
+#endif  /* __PICMAN_TAGGED_CONTAINER_H__ */

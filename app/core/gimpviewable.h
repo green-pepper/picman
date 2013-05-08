@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpviewable.h
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmanviewable.h
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,98 +18,98 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VIEWABLE_H__
-#define __GIMP_VIEWABLE_H__
+#ifndef __PICMAN_VIEWABLE_H__
+#define __PICMAN_VIEWABLE_H__
 
 
-#include "gimpobject.h"
+#include "picmanobject.h"
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 
-#define GIMP_VIEWABLE_MAX_PREVIEW_SIZE 2048
-#define GIMP_VIEWABLE_MAX_POPUP_SIZE    256
-#define GIMP_VIEWABLE_MAX_BUTTON_SIZE    64
-#define GIMP_VIEWABLE_MAX_MENU_SIZE      48
+#define PICMAN_VIEWABLE_MAX_PREVIEW_SIZE 2048
+#define PICMAN_VIEWABLE_MAX_POPUP_SIZE    256
+#define PICMAN_VIEWABLE_MAX_BUTTON_SIZE    64
+#define PICMAN_VIEWABLE_MAX_MENU_SIZE      48
 
-#define GIMP_VIEWABLE_PRIORITY_IDLE    G_PRIORITY_LOW
-
-
-#define GIMP_TYPE_VIEWABLE            (gimp_viewable_get_type ())
-#define GIMP_VIEWABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_VIEWABLE, GimpViewable))
-#define GIMP_VIEWABLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_VIEWABLE, GimpViewableClass))
-#define GIMP_IS_VIEWABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_VIEWABLE))
-#define GIMP_IS_VIEWABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_VIEWABLE))
-#define GIMP_VIEWABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_VIEWABLE, GimpViewableClass))
+#define PICMAN_VIEWABLE_PRIORITY_IDLE    G_PRIORITY_LOW
 
 
-typedef struct _GimpViewableClass GimpViewableClass;
+#define PICMAN_TYPE_VIEWABLE            (picman_viewable_get_type ())
+#define PICMAN_VIEWABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_VIEWABLE, PicmanViewable))
+#define PICMAN_VIEWABLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_VIEWABLE, PicmanViewableClass))
+#define PICMAN_IS_VIEWABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_VIEWABLE))
+#define PICMAN_IS_VIEWABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_VIEWABLE))
+#define PICMAN_VIEWABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_VIEWABLE, PicmanViewableClass))
 
-struct _GimpViewable
+
+typedef struct _PicmanViewableClass PicmanViewableClass;
+
+struct _PicmanViewable
 {
-  GimpObject  parent_instance;
+  PicmanObject  parent_instance;
 };
 
-struct _GimpViewableClass
+struct _PicmanViewableClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 
   const gchar     *default_stock_id;
   const gchar     *name_changed_signal;
 
   /*  signals  */
-  void            (* invalidate_preview) (GimpViewable  *viewable);
-  void            (* size_changed)       (GimpViewable  *viewable);
+  void            (* invalidate_preview) (PicmanViewable  *viewable);
+  void            (* size_changed)       (PicmanViewable  *viewable);
 
   /*  virtual functions  */
-  gboolean        (* get_size)           (GimpViewable  *viewable,
+  gboolean        (* get_size)           (PicmanViewable  *viewable,
                                           gint          *width,
                                           gint          *height);
-  void            (* get_preview_size)   (GimpViewable  *viewable,
+  void            (* get_preview_size)   (PicmanViewable  *viewable,
                                           gint           size,
                                           gboolean       is_popup,
                                           gboolean       dot_for_dot,
                                           gint          *width,
                                           gint          *height);
-  gboolean        (* get_popup_size)     (GimpViewable  *viewable,
+  gboolean        (* get_popup_size)     (PicmanViewable  *viewable,
                                           gint           width,
                                           gint           height,
                                           gboolean       dot_for_dot,
                                           gint          *popup_width,
                                           gint          *popup_height);
-  GimpTempBuf   * (* get_preview)        (GimpViewable  *viewable,
-                                          GimpContext   *context,
+  PicmanTempBuf   * (* get_preview)        (PicmanViewable  *viewable,
+                                          PicmanContext   *context,
                                           gint           width,
                                           gint           height);
-  GimpTempBuf   * (* get_new_preview)    (GimpViewable  *viewable,
-                                          GimpContext   *context,
+  PicmanTempBuf   * (* get_new_preview)    (PicmanViewable  *viewable,
+                                          PicmanContext   *context,
                                           gint           width,
                                           gint           height);
-  GdkPixbuf     * (* get_pixbuf)         (GimpViewable  *viewable,
-                                          GimpContext   *context,
+  GdkPixbuf     * (* get_pixbuf)         (PicmanViewable  *viewable,
+                                          PicmanContext   *context,
                                           gint           width,
                                           gint           height);
-  GdkPixbuf     * (* get_new_pixbuf)     (GimpViewable  *viewable,
-                                          GimpContext   *context,
+  GdkPixbuf     * (* get_new_pixbuf)     (PicmanViewable  *viewable,
+                                          PicmanContext   *context,
                                           gint           width,
                                           gint           height);
-  gchar         * (* get_description)    (GimpViewable  *viewable,
+  gchar         * (* get_description)    (PicmanViewable  *viewable,
                                           gchar        **tooltip);
 
-  GimpContainer * (* get_children)       (GimpViewable  *viewable);
+  PicmanContainer * (* get_children)       (PicmanViewable  *viewable);
 
-  void            (* set_expanded)       (GimpViewable  *viewable,
+  void            (* set_expanded)       (PicmanViewable  *viewable,
                                           gboolean       expand);
-  gboolean        (* get_expanded)       (GimpViewable  *viewable);
+  gboolean        (* get_expanded)       (PicmanViewable  *viewable);
 };
 
 
-GType           gimp_viewable_get_type           (void) G_GNUC_CONST;
+GType           picman_viewable_get_type           (void) G_GNUC_CONST;
 
-void            gimp_viewable_invalidate_preview (GimpViewable  *viewable);
-void            gimp_viewable_size_changed       (GimpViewable  *viewable);
+void            picman_viewable_invalidate_preview (PicmanViewable  *viewable);
+void            picman_viewable_size_changed       (PicmanViewable  *viewable);
 
-void            gimp_viewable_calc_preview_size  (gint           aspect_width,
+void            picman_viewable_calc_preview_size  (gint           aspect_width,
                                                   gint           aspect_height,
                                                   gint           width,
                                                   gint           height,
@@ -120,72 +120,72 @@ void            gimp_viewable_calc_preview_size  (gint           aspect_width,
                                                   gint          *return_height,
                                                   gboolean      *scaling_up);
 
-gboolean        gimp_viewable_get_size           (GimpViewable  *viewable,
+gboolean        picman_viewable_get_size           (PicmanViewable  *viewable,
                                                   gint          *width,
                                                   gint          *height);
-void            gimp_viewable_get_preview_size   (GimpViewable  *viewable,
+void            picman_viewable_get_preview_size   (PicmanViewable  *viewable,
                                                   gint           size,
                                                   gboolean       popup,
                                                   gboolean       dot_for_dot,
                                                   gint          *width,
                                                   gint          *height);
-gboolean        gimp_viewable_get_popup_size     (GimpViewable  *viewable,
+gboolean        picman_viewable_get_popup_size     (PicmanViewable  *viewable,
                                                   gint           width,
                                                   gint           height,
                                                   gboolean       dot_for_dot,
                                                   gint          *popup_width,
                                                   gint          *popup_height);
 
-GimpTempBuf   * gimp_viewable_get_preview        (GimpViewable  *viewable,
-                                                  GimpContext   *context,
+PicmanTempBuf   * picman_viewable_get_preview        (PicmanViewable  *viewable,
+                                                  PicmanContext   *context,
                                                   gint           width,
                                                   gint           height);
-GimpTempBuf   * gimp_viewable_get_new_preview    (GimpViewable  *viewable,
-                                                  GimpContext   *context,
+PicmanTempBuf   * picman_viewable_get_new_preview    (PicmanViewable  *viewable,
+                                                  PicmanContext   *context,
                                                   gint           width,
                                                   gint           height);
 
-GimpTempBuf   * gimp_viewable_get_dummy_preview  (GimpViewable  *viewable,
+PicmanTempBuf   * picman_viewable_get_dummy_preview  (PicmanViewable  *viewable,
                                                   gint           width,
                                                   gint           height,
                                                   const Babl    *format);
 
-GdkPixbuf     * gimp_viewable_get_pixbuf         (GimpViewable  *viewable,
-                                                  GimpContext   *context,
+GdkPixbuf     * picman_viewable_get_pixbuf         (PicmanViewable  *viewable,
+                                                  PicmanContext   *context,
                                                   gint           width,
                                                   gint           height);
-GdkPixbuf     * gimp_viewable_get_new_pixbuf     (GimpViewable  *viewable,
-                                                  GimpContext   *context,
+GdkPixbuf     * picman_viewable_get_new_pixbuf     (PicmanViewable  *viewable,
+                                                  PicmanContext   *context,
                                                   gint           width,
                                                   gint           height);
 
-GdkPixbuf     * gimp_viewable_get_dummy_pixbuf   (GimpViewable  *viewable,
+GdkPixbuf     * picman_viewable_get_dummy_pixbuf   (PicmanViewable  *viewable,
                                                   gint           width,
                                                   gint           height,
                                                   gboolean       with_alpha);
 
-gchar         * gimp_viewable_get_description    (GimpViewable  *viewable,
+gchar         * picman_viewable_get_description    (PicmanViewable  *viewable,
                                                   gchar        **tooltip);
 
-const gchar   * gimp_viewable_get_stock_id       (GimpViewable  *viewable);
-void            gimp_viewable_set_stock_id       (GimpViewable  *viewable,
+const gchar   * picman_viewable_get_stock_id       (PicmanViewable  *viewable);
+void            picman_viewable_set_stock_id       (PicmanViewable  *viewable,
                                                   const gchar   *stock_id);
 
-void            gimp_viewable_preview_freeze     (GimpViewable  *viewable);
-void            gimp_viewable_preview_thaw       (GimpViewable  *viewable);
-gboolean        gimp_viewable_preview_is_frozen  (GimpViewable  *viewable);
+void            picman_viewable_preview_freeze     (PicmanViewable  *viewable);
+void            picman_viewable_preview_thaw       (PicmanViewable  *viewable);
+gboolean        picman_viewable_preview_is_frozen  (PicmanViewable  *viewable);
 
-GimpViewable  * gimp_viewable_get_parent         (GimpViewable  *viewable);
-void            gimp_viewable_set_parent         (GimpViewable  *viewable,
-                                                  GimpViewable  *parent);
+PicmanViewable  * picman_viewable_get_parent         (PicmanViewable  *viewable);
+void            picman_viewable_set_parent         (PicmanViewable  *viewable,
+                                                  PicmanViewable  *parent);
 
-GimpContainer * gimp_viewable_get_children       (GimpViewable  *viewable);
-gboolean        gimp_viewable_get_expanded       (GimpViewable  *viewable);
-void            gimp_viewable_set_expanded       (GimpViewable  *viewable,
+PicmanContainer * picman_viewable_get_children       (PicmanViewable  *viewable);
+gboolean        picman_viewable_get_expanded       (PicmanViewable  *viewable);
+void            picman_viewable_set_expanded       (PicmanViewable  *viewable,
                                                   gboolean       expanded);
 
-gboolean        gimp_viewable_is_ancestor        (GimpViewable  *ancestor,
-                                                  GimpViewable  *descendant);
+gboolean        picman_viewable_is_ancestor        (PicmanViewable  *ancestor,
+                                                  PicmanViewable  *descendant);
 
 
-#endif  /* __GIMP_VIEWABLE_H__ */
+#endif  /* __PICMAN_VIEWABLE_H__ */

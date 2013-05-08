@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpTextTool
- * Copyright (C) 2002-2010  Sven Neumann <sven@gimp.org>
+ * PicmanTextTool
+ * Copyright (C) 2002-2010  Sven Neumann <sven@picman.org>
  *                          Daniel Eddeland <danedde@svn.gnome.org>
- *                          Michael Natterer <mitch@gimp.org>
+ *                          Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,35 +20,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEXT_TOOL_EDITOR_H__
-#define __GIMP_TEXT_TOOL_EDITOR_H__
+#ifndef __PICMAN_TEXT_TOOL_EDITOR_H__
+#define __PICMAN_TEXT_TOOL_EDITOR_H__
 
 
-void       gimp_text_tool_editor_init            (GimpTextTool        *text_tool);
-void       gimp_text_tool_editor_finalize        (GimpTextTool        *text_tool);
+void       picman_text_tool_editor_init            (PicmanTextTool        *text_tool);
+void       picman_text_tool_editor_finalize        (PicmanTextTool        *text_tool);
 
-void       gimp_text_tool_editor_start           (GimpTextTool        *text_tool);
-void       gimp_text_tool_editor_position        (GimpTextTool        *text_tool);
-void       gimp_text_tool_editor_halt            (GimpTextTool        *text_tool);
+void       picman_text_tool_editor_start           (PicmanTextTool        *text_tool);
+void       picman_text_tool_editor_position        (PicmanTextTool        *text_tool);
+void       picman_text_tool_editor_halt            (PicmanTextTool        *text_tool);
 
-void       gimp_text_tool_editor_button_press    (GimpTextTool        *text_tool,
+void       picman_text_tool_editor_button_press    (PicmanTextTool        *text_tool,
                                                   gdouble              x,
                                                   gdouble              y,
-                                                  GimpButtonPressType  press_type);
-void       gimp_text_tool_editor_button_release  (GimpTextTool        *text_tool);
-void       gimp_text_tool_editor_motion          (GimpTextTool        *text_tool,
+                                                  PicmanButtonPressType  press_type);
+void       picman_text_tool_editor_button_release  (PicmanTextTool        *text_tool);
+void       picman_text_tool_editor_motion          (PicmanTextTool        *text_tool,
                                                   gdouble              x,
                                                   gdouble              y);
-gboolean   gimp_text_tool_editor_key_press       (GimpTextTool        *text_tool,
+gboolean   picman_text_tool_editor_key_press       (PicmanTextTool        *text_tool,
                                                   GdkEventKey         *kevent);
-gboolean   gimp_text_tool_editor_key_release     (GimpTextTool        *text_tool,
+gboolean   picman_text_tool_editor_key_release     (PicmanTextTool        *text_tool,
                                                   GdkEventKey         *kevent);
 
-void       gimp_text_tool_reset_im_context       (GimpTextTool        *text_tool);
+void       picman_text_tool_reset_im_context       (PicmanTextTool        *text_tool);
 
-void       gimp_text_tool_editor_get_cursor_rect (GimpTextTool        *text_tool,
+void       picman_text_tool_editor_get_cursor_rect (PicmanTextTool        *text_tool,
                                                   gboolean             overwrite,
                                                   PangoRectangle      *cursor_rect);
 
 
-#endif /* __GIMP_TEXT_TOOL_EDITOR_H__ */
+#endif /* __PICMAN_TEXT_TOOL_EDITOR_H__ */

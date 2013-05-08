@@ -1,6 +1,6 @@
 /******************************************************************************
 
-  fractaltrace.c  -- This is a plug-in for GIMP 1.0
+  fractaltrace.c  -- This is a plug-in for PICMAN 1.0
 
   Copyright (C) 1997  Hirotsuna Mizuno
                       s1041150@u-aizu.ac.jp
@@ -22,30 +22,30 @@
 
 #define PLUG_IN_PROC     "plug-in-fractal-trace"
 #define PLUG_IN_BINARY   "fractal-trace"
-#define PLUG_IN_ROLE     "gimp-fractal-trace"
+#define PLUG_IN_ROLE     "picman-fractal-trace"
 #define PLUG_IN_VERSION  "v0.4 test version (Dec. 25 1997)"
 
 /*****************************************************************************/
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 /******************************************************************************/
 
 static void query  (void);
 static void run    (const gchar      *name,
                     gint              nparams,
-                    const GimpParam  *param,
+                    const PicmanParam  *param,
                     gint             *nreturn_vals,
-                    GimpParam       **return_vals);
+                    PicmanParam       **return_vals);
 
-static void filter      (GimpDrawable *drawable);
+static void filter      (PicmanDrawable *drawable);
 
-static void pixels_init (GimpDrawable *drawable);
+static void pixels_init (PicmanDrawable *drawable);
 static void pixels_free (void);
 
 static int  dialog_show         (void);
@@ -53,7 +53,7 @@ static void dialog_preview_draw (void);
 
 /******************************************************************************/
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -98,21 +98,21 @@ static parameter_t parameters =
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image (unused)"             },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Input drawable"                   },
-    { GIMP_PDB_FLOAT,    "xmin",         "xmin fractal image delimiter"     },
-    { GIMP_PDB_FLOAT,    "xmax",         "xmax fractal image delimiter"     },
-    { GIMP_PDB_FLOAT,    "ymin",         "ymin fractal image delimiter"     },
-    { GIMP_PDB_FLOAT,    "ymax",         "ymax fractal image delimiter"     },
-    { GIMP_PDB_INT32,    "depth",        "Trace depth"                      },
-    { GIMP_PDB_INT32,    "outside-type", "Outside type "
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image (unused)"             },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Input drawable"                   },
+    { PICMAN_PDB_FLOAT,    "xmin",         "xmin fractal image delimiter"     },
+    { PICMAN_PDB_FLOAT,    "xmax",         "xmax fractal image delimiter"     },
+    { PICMAN_PDB_FLOAT,    "ymin",         "ymin fractal image delimiter"     },
+    { PICMAN_PDB_FLOAT,    "ymax",         "ymax fractal image delimiter"     },
+    { PICMAN_PDB_INT32,    "depth",        "Trace depth"                      },
+    { PICMAN_PDB_INT32,    "outside-type", "Outside type "
                                          "{ WRAP (0), TRANS (1), BLACK (2), WHITE (3) }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Transform image with the Mandelbrot Fractal"),
                           "transform image with the Mandelbrot Fractal",
                           "Hirotsuna Mizuno <s1041150@u-aizu.ac.jp>",
@@ -120,11 +120,11 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("_Fractal Trace..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Map");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Map");
 }
 
 /******************************************************************************/
@@ -157,26 +157,26 @@ static image_t     image;
 static void
 run (const gchar      *name,
      gint              argc,
-     const GimpParam  *args,
+     const PicmanParam  *args,
      gint             *retc,
-     GimpParam       **rets)
+     PicmanParam       **rets)
 {
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status;
-  static GimpParam   returns[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status;
+  static PicmanParam   returns[1];
 
   run_mode = args[0].data.d_int32;
-  status   = GIMP_PDB_SUCCESS;
+  status   = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
 
-  drawable     = gimp_drawable_get (args[2].data.d_drawable);
-  image.width  = gimp_drawable_width( drawable->drawable_id);
-  image.height = gimp_drawable_height (drawable->drawable_id);
-  image.bpp    = gimp_drawable_bpp (drawable->drawable_id);
-  image.alpha  = gimp_drawable_has_alpha (drawable->drawable_id);
-  gimp_drawable_mask_bounds (drawable->drawable_id,
+  drawable     = picman_drawable_get (args[2].data.d_drawable);
+  image.width  = picman_drawable_width( drawable->drawable_id);
+  image.height = picman_drawable_height (drawable->drawable_id);
+  image.bpp    = picman_drawable_bpp (drawable->drawable_id);
+  image.alpha  = picman_drawable_has_alpha (drawable->drawable_id);
+  picman_drawable_mask_bounds (drawable->drawable_id,
                              &selection.x1, &selection.y1,
                              &selection.x2, &selection.y2);
   selection.width    = selection.x2 - selection.y1;
@@ -186,32 +186,32 @@ run (const gchar      *name,
 
   pixels_init (drawable);
 
-  if (!gimp_drawable_is_rgb(drawable->drawable_id) &&
-      !gimp_drawable_is_gray(drawable->drawable_id))
+  if (!picman_drawable_is_rgb(drawable->drawable_id) &&
+      !picman_drawable_is_gray(drawable->drawable_id))
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   switch (run_mode)
     {
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &parameters);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &parameters);
       break;
 
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &parameters);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &parameters);
       if (!dialog_show ())
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
           break;
         }
-      gimp_set_data (PLUG_IN_PROC, &parameters, sizeof (parameter_t));
+      picman_set_data (PLUG_IN_PROC, &parameters, sizeof (parameter_t));
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (argc != 9)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -225,19 +225,19 @@ run (const gchar      *name,
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      gimp_tile_cache_ntiles(2 * (drawable->width / gimp_tile_width() + 1));
+      picman_tile_cache_ntiles(2 * (drawable->width / picman_tile_width() + 1));
       filter (drawable);
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush();
     }
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   pixels_free ();
 
-  returns[0].type          = GIMP_PDB_STATUS;
+  returns[0].type          = PICMAN_PDB_STATUS;
   returns[0].data.d_status = status;
   *retc = 1;
   *rets = returns;
@@ -247,8 +247,8 @@ run (const gchar      *name,
 
 static guchar    **spixels;
 static guchar    **dpixels;
-static GimpPixelRgn   sPR;
-static GimpPixelRgn   dPR;
+static PicmanPixelRgn   sPR;
+static PicmanPixelRgn   dPR;
 
 typedef struct
 {
@@ -259,13 +259,13 @@ typedef struct
 } pixel_t;
 
 static void
-pixels_init (GimpDrawable *drawable)
+pixels_init (PicmanDrawable *drawable)
 {
   gint y;
 
-  gimp_pixel_rgn_init (&sPR, drawable,
+  picman_pixel_rgn_init (&sPR, drawable,
                        0, 0, image.width, image.height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dPR, drawable,
+  picman_pixel_rgn_init (&dPR, drawable,
                        0, 0, image.width, image.height, TRUE, TRUE);
 
   spixels = g_new (guchar *, image.height);
@@ -275,7 +275,7 @@ pixels_init (GimpDrawable *drawable)
     {
       spixels[y] = g_new (guchar, image.width * image.bpp);
       dpixels[y] = g_new (guchar, image.width * image.bpp);
-      gimp_pixel_rgn_get_row (&sPR, spixels[y], 0, y, image.width);
+      picman_pixel_rgn_get_row (&sPR, spixels[y], 0, y, image.width);
     }
 }
 
@@ -414,7 +414,7 @@ pixels_store (void)
 
   for (y = selection.y1; y < selection.y2; y++)
     {
-      gimp_pixel_rgn_set_row (&dPR, dpixels[y], 0, y, image.width);
+      picman_pixel_rgn_set_row (&dPR, dpixels[y], 0, y, image.width);
     }
 }
 
@@ -449,7 +449,7 @@ mandelbrot (gdouble  x,
 /******************************************************************************/
 
 static void
-filter (GimpDrawable *drawable)
+filter (PicmanDrawable *drawable)
 {
   gint    x, y;
   pixel_t pixel;
@@ -457,7 +457,7 @@ filter (GimpDrawable *drawable)
   gdouble cx, cy;
   gdouble px, py;
 
-  gimp_progress_init (_("Fractal Trace"));
+  picman_progress_init (_("Fractal Trace"));
 
   scale_x = (parameters.x2 - parameters.x1) / selection.width;
   scale_y = (parameters.y2 - parameters.y1) / selection.height;
@@ -504,16 +504,16 @@ filter (GimpDrawable *drawable)
         }
 
       if (((y - selection.y1) % (selection.height / 100)) == 0)
-        gimp_progress_update ((gdouble) (y-selection.y1) / selection.height);
+        picman_progress_update ((gdouble) (y-selection.y1) / selection.height);
     }
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   pixels_store ();
 
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id,
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id,
                         selection.x1, selection.y1,
                         selection.width, selection.height);
 }
@@ -559,7 +559,7 @@ dialog_preview_init (void)
   preview.width  = (gdouble)selection.width / preview.scale;
   preview.height = (gdouble)selection.height / preview.scale;
 
-  preview.preview = gimp_preview_area_new ();
+  preview.preview = picman_preview_area_new ();
   gtk_widget_set_size_request (preview.preview,
                                preview.width, preview.height);
 
@@ -575,9 +575,9 @@ dialog_preview_init (void)
           dialog_preview_setpixel (x, y, &pixel);
         }
     }
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview.preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview.preview),
                           0, 0, preview.width, preview.height,
-                          GIMP_RGBA_IMAGE,
+                          PICMAN_RGBA_IMAGE,
                           preview.pixels,
                           preview.width *4);
 }
@@ -635,9 +635,9 @@ dialog_preview_draw (void)
           dialog_preview_setpixel (x, y, &pixel);
         }
     }
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview.preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview.preview),
                           0, 0, preview.width, preview.height,
-                          GIMP_RGBA_IMAGE,
+                          PICMAN_RGBA_IMAGE,
                           preview.pixels,
                           preview.width *4);
 }
@@ -648,7 +648,7 @@ static void
 dialog_int_adjustment_update (GtkAdjustment *adjustment,
                               gpointer       data)
 {
-  gimp_int_adjustment_update (adjustment, data);
+  picman_int_adjustment_update (adjustment, data);
 
   dialog_preview_draw ();
 }
@@ -657,7 +657,7 @@ static void
 dialog_double_adjustment_update (GtkAdjustment *adjustment,
                                  gpointer       data)
 {
-  gimp_double_adjustment_update (adjustment, data);
+  picman_double_adjustment_update (adjustment, data);
 
   dialog_preview_draw ();
 }
@@ -666,7 +666,7 @@ static void
 dialog_outside_type_callback (GtkWidget *widget,
                               gpointer  *data)
 {
-  gimp_radio_button_update (widget, data);
+  picman_radio_button_update (widget, data);
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
     dialog_preview_draw ();
@@ -686,11 +686,11 @@ dialog_show (void)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Fractal Trace"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Fractal Trace"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -702,7 +702,7 @@ dialog_show (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   mainbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (mainbox), 12);
@@ -729,7 +729,7 @@ dialog_show (void)
   gtk_widget_show (preview.preview);
 
   /*  Settings  */
-  frame = gimp_int_radio_group_new (TRUE, _("Outside Type"),
+  frame = picman_int_radio_group_new (TRUE, _("Outside Type"),
                                     G_CALLBACK (dialog_outside_type_callback),
                                     &parameters.outside_type,
                                     parameters.outside_type,
@@ -747,7 +747,7 @@ dialog_show (void)
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  frame = gimp_frame_new (_("Mandelbrot Parameters"));
+  frame = picman_frame_new (_("Mandelbrot Parameters"));
   gtk_box_pack_start (GTK_BOX (mainbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -757,7 +757,7 @@ dialog_show (void)
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("X_1:"), 0, 6,
                               parameters.x1, -50, 50, 0.1, 0.5, 2,
                               TRUE, 0, 0,
@@ -766,7 +766,7 @@ dialog_show (void)
                     G_CALLBACK (dialog_double_adjustment_update),
                     &parameters.x1);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("X_2:"), 0, 6,
                               parameters.x2, -50, 50, 0.1, 0.5, 2,
                               TRUE, 0, 0,
@@ -775,7 +775,7 @@ dialog_show (void)
                     G_CALLBACK (dialog_double_adjustment_update),
                     &parameters.x2);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("Y_1:"), 0, 6,
                               parameters.y1, -50, 50, 0.1, 0.5, 2,
                               TRUE, 0, 0,
@@ -784,7 +784,7 @@ dialog_show (void)
                     G_CALLBACK (dialog_double_adjustment_update),
                     &parameters.y1);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 3,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 3,
                               _("Y_2:"), 0, 6,
                               parameters.y2, -50, 50, 0.1, 0.5, 2,
                               TRUE, 0, 0,
@@ -793,7 +793,7 @@ dialog_show (void)
                     G_CALLBACK (dialog_double_adjustment_update),
                     &parameters.y2);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 4,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 4,
                               _("_Depth:"), 0, 6,
                               parameters.depth, 1, 50, 1, 5, 0,
                               TRUE, 0, 0,
@@ -805,7 +805,7 @@ dialog_show (void)
   gtk_widget_show (dialog);
   dialog_preview_draw ();
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppatheditor.h
- * Copyright (C) 1999-2004 Michael Natterer <mitch@gimp.org>
+ * picmanpatheditor.h
+ * Copyright (C) 1999-2004 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,29 +19,29 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_PATH_EDITOR_H__
-#define __GIMP_PATH_EDITOR_H__
+#ifndef __PICMAN_PATH_EDITOR_H__
+#define __PICMAN_PATH_EDITOR_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_PATH_EDITOR            (gimp_path_editor_get_type ())
-#define GIMP_PATH_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PATH_EDITOR, GimpPathEditor))
-#define GIMP_PATH_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PATH_EDITOR, GimpPathEditorClass))
-#define GIMP_IS_PATH_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, GIMP_TYPE_PATH_EDITOR))
-#define GIMP_IS_PATH_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PATH_EDITOR))
-#define GIMP_PATH_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PATH_EDITOR, GimpPathEditorClass))
+#define PICMAN_TYPE_PATH_EDITOR            (picman_path_editor_get_type ())
+#define PICMAN_PATH_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PATH_EDITOR, PicmanPathEditor))
+#define PICMAN_PATH_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PATH_EDITOR, PicmanPathEditorClass))
+#define PICMAN_IS_PATH_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, PICMAN_TYPE_PATH_EDITOR))
+#define PICMAN_IS_PATH_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PATH_EDITOR))
+#define PICMAN_PATH_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PATH_EDITOR, PicmanPathEditorClass))
 
 
-typedef struct _GimpPathEditorClass  GimpPathEditorClass;
+typedef struct _PicmanPathEditorClass  PicmanPathEditorClass;
 
-struct _GimpPathEditor
+struct _PicmanPathEditor
 {
   GtkBox             parent_instance;
 
@@ -64,42 +64,42 @@ struct _GimpPathEditor
   gint               num_items;
 };
 
-struct _GimpPathEditorClass
+struct _PicmanPathEditorClass
 {
   GtkBoxClass  parent_class;
 
-  void (* path_changed)     (GimpPathEditor *editor);
-  void (* writable_changed) (GimpPathEditor *editor);
+  void (* path_changed)     (PicmanPathEditor *editor);
+  void (* writable_changed) (PicmanPathEditor *editor);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
 /* For information look into the C source or the html documentation */
 
-GType       gimp_path_editor_get_type          (void) G_GNUC_CONST;
+GType       picman_path_editor_get_type          (void) G_GNUC_CONST;
 
-GtkWidget * gimp_path_editor_new               (const gchar    *title,
+GtkWidget * picman_path_editor_new               (const gchar    *title,
                                                 const gchar    *path);
 
-gchar     * gimp_path_editor_get_path          (GimpPathEditor *editor);
-void        gimp_path_editor_set_path          (GimpPathEditor *editor,
+gchar     * picman_path_editor_get_path          (PicmanPathEditor *editor);
+void        picman_path_editor_set_path          (PicmanPathEditor *editor,
                                                 const gchar    *path);
 
-gchar     * gimp_path_editor_get_writable_path (GimpPathEditor *editor);
-void        gimp_path_editor_set_writable_path (GimpPathEditor *editor,
+gchar     * picman_path_editor_get_writable_path (PicmanPathEditor *editor);
+void        picman_path_editor_set_writable_path (PicmanPathEditor *editor,
                                                 const gchar    *path);
 
-gboolean    gimp_path_editor_get_dir_writable  (GimpPathEditor *editor,
+gboolean    picman_path_editor_get_dir_writable  (PicmanPathEditor *editor,
                                                 const gchar    *directory);
-void        gimp_path_editor_set_dir_writable  (GimpPathEditor *editor,
+void        picman_path_editor_set_dir_writable  (PicmanPathEditor *editor,
                                                 const gchar    *directory,
                                                 gboolean        writable);
 
 G_END_DECLS
 
-#endif /* __GIMP_PATH_EDITOR_H__ */
+#endif /* __PICMAN_PATH_EDITOR_H__ */

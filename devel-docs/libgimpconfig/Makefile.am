@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 # The name of the module.
-DOC_MODULE = libgimpconfig
+DOC_MODULE = libpicmanconfig
 
 # The top-level SGML file.
 DOC_MAIN_SGML_FILE = $(DOC_MODULE)-docs.sgml
@@ -13,13 +13,13 @@ DOC_SOURCE_DIR = $(top_srcdir)/$(DOC_MODULE)
 SCANGOBJ_OPTIONS =
 
 # Extra options to supply to gtkdoc-scan
-SCAN_OPTIONS = --deprecated-guards="GIMP_DISABLE_DEPRECATED"
+SCAN_OPTIONS = --deprecated-guards="PICMAN_DISABLE_DEPRECATED"
 
 # Extra options to supply to gtkdoc-mkdb
-MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=gimp
+MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=picman
 
 # Extra options to supply to gtkdoc-fixref
-FIXXREF_OPTIONS = --extra-dir=../libgimpbase/html --extra-dir=../libgimpcolor/html --extra-dir=../libgimpmath/html
+FIXXREF_OPTIONS = --extra-dir=../libpicmanbase/html --extra-dir=../libpicmancolor/html --extra-dir=../libpicmanmath/html
 
 # Used for dependencies
 HFILE_GLOB = $(DOC_SOURCE_DIR)/*.h
@@ -27,7 +27,7 @@ CFILE_GLOB = $(DOC_SOURCE_DIR)/*.c
 
 # Header files to ignore when scanning
 IGNORE_HFILES = \
-	gimpconfig.h
+	picmanconfig.h
 
 # Images to copy into HTML directory
 HTML_IMAGES=
@@ -47,10 +47,10 @@ GTKDOC_CFLAGS = \
 	@GLIB_CFLAGS@
 
 GTKDOC_LIBS = \
-        $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la \
-        $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la \
-        $(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la \
-        $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la \
+        $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la \
+        $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la \
+        $(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la \
+        $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la \
 	@GLIB_LIBS@
 
 

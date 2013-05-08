@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorarea.h
- * Copyright (C) 2001-2002  Sven Neumann <sven@gimp.org>
+ * picmancolorarea.h
+ * Copyright (C) 2001-2002  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,27 +24,27 @@
  * handles drag'n'drop.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_COLOR_AREA_H__
-#define __GIMP_COLOR_AREA_H__
+#ifndef __PICMAN_COLOR_AREA_H__
+#define __PICMAN_COLOR_AREA_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_COLOR_AREA            (gimp_color_area_get_type ())
-#define GIMP_COLOR_AREA(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_AREA, GimpColorArea))
-#define GIMP_COLOR_AREA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_AREA, GimpColorAreaClass))
-#define GIMP_IS_COLOR_AREA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_AREA))
-#define GIMP_IS_COLOR_AREA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_AREA))
-#define GIMP_COLOR_AREA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_AREA, GimpColorAreaClass))
+#define PICMAN_TYPE_COLOR_AREA            (picman_color_area_get_type ())
+#define PICMAN_COLOR_AREA(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_AREA, PicmanColorArea))
+#define PICMAN_COLOR_AREA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_AREA, PicmanColorAreaClass))
+#define PICMAN_IS_COLOR_AREA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_AREA))
+#define PICMAN_IS_COLOR_AREA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_AREA))
+#define PICMAN_COLOR_AREA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_AREA, PicmanColorAreaClass))
 
 
-typedef struct _GimpColorAreaClass  GimpColorAreaClass;
+typedef struct _PicmanColorAreaClass  PicmanColorAreaClass;
 
-struct _GimpColorArea
+struct _PicmanColorArea
 {
   GtkDrawingArea       parent_instance;
 
@@ -54,43 +54,43 @@ struct _GimpColorArea
   guint                height;
   guint                rowstride;
 
-  GimpColorAreaType    type;
-  GimpRGB              color;
+  PicmanColorAreaType    type;
+  PicmanRGB              color;
   guint                draw_border  : 1;
   guint                needs_render : 1;
 };
 
-struct _GimpColorAreaClass
+struct _PicmanColorAreaClass
 {
   GtkDrawingAreaClass  parent_class;
 
-  void (* color_changed) (GimpColorArea *area);
+  void (* color_changed) (PicmanColorArea *area);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType       gimp_color_area_get_type        (void) G_GNUC_CONST;
+GType       picman_color_area_get_type        (void) G_GNUC_CONST;
 
-GtkWidget * gimp_color_area_new             (const GimpRGB     *color,
-                                             GimpColorAreaType  type,
+GtkWidget * picman_color_area_new             (const PicmanRGB     *color,
+                                             PicmanColorAreaType  type,
                                              GdkModifierType    drag_mask);
 
-void        gimp_color_area_set_color       (GimpColorArea     *area,
-                                             const GimpRGB     *color);
-void        gimp_color_area_get_color       (GimpColorArea     *area,
-                                             GimpRGB           *color);
-gboolean    gimp_color_area_has_alpha       (GimpColorArea     *area);
-void        gimp_color_area_set_type        (GimpColorArea     *area,
-                                             GimpColorAreaType  type);
-void        gimp_color_area_set_draw_border (GimpColorArea     *area,
+void        picman_color_area_set_color       (PicmanColorArea     *area,
+                                             const PicmanRGB     *color);
+void        picman_color_area_get_color       (PicmanColorArea     *area,
+                                             PicmanRGB           *color);
+gboolean    picman_color_area_has_alpha       (PicmanColorArea     *area);
+void        picman_color_area_set_type        (PicmanColorArea     *area,
+                                             PicmanColorAreaType  type);
+void        picman_color_area_set_draw_border (PicmanColorArea     *area,
                                              gboolean           draw_border);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_COLOR_AREA_H__ */
+#endif /* __PICMAN_COLOR_AREA_H__ */

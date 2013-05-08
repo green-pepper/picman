@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_H__
-#define __GIMP_CANVAS_H__
+#ifndef __PICMAN_CANVAS_H__
+#define __PICMAN_CANVAS_H__
 
 
-#include "widgets/gimpoverlaybox.h"
+#include "widgets/picmanoverlaybox.h"
 
 
-#define GIMP_CANVAS_EVENT_MASK (GDK_EXPOSURE_MASK            | \
+#define PICMAN_CANVAS_EVENT_MASK (GDK_EXPOSURE_MASK            | \
                                 GDK_POINTER_MOTION_MASK      | \
                                 GDK_BUTTON_PRESS_MASK        | \
                                 GDK_BUTTON_RELEASE_MASK      | \
@@ -35,40 +35,40 @@
                                 GDK_PROXIMITY_OUT_MASK)
 
 
-#define GIMP_TYPE_CANVAS            (gimp_canvas_get_type ())
-#define GIMP_CANVAS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS, GimpCanvas))
-#define GIMP_CANVAS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS, GimpCanvasClass))
-#define GIMP_IS_CANVAS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS))
-#define GIMP_IS_CANVAS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS))
-#define GIMP_CANVAS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS, GimpCanvasClass))
+#define PICMAN_TYPE_CANVAS            (picman_canvas_get_type ())
+#define PICMAN_CANVAS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS, PicmanCanvas))
+#define PICMAN_CANVAS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS, PicmanCanvasClass))
+#define PICMAN_IS_CANVAS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS))
+#define PICMAN_IS_CANVAS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS))
+#define PICMAN_CANVAS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS, PicmanCanvasClass))
 
 
-typedef struct _GimpCanvasClass GimpCanvasClass;
+typedef struct _PicmanCanvasClass PicmanCanvasClass;
 
-struct _GimpCanvas
+struct _PicmanCanvas
 {
-  GimpOverlayBox     parent_instance;
+  PicmanOverlayBox     parent_instance;
 
-  GimpDisplayConfig *config;
+  PicmanDisplayConfig *config;
   PangoLayout       *layout;
 };
 
-struct _GimpCanvasClass
+struct _PicmanCanvasClass
 {
-  GimpOverlayBoxClass  parent_class;
+  PicmanOverlayBoxClass  parent_class;
 };
 
 
-GType         gimp_canvas_get_type     (void) G_GNUC_CONST;
+GType         picman_canvas_get_type     (void) G_GNUC_CONST;
 
-GtkWidget   * gimp_canvas_new          (GimpDisplayConfig *config);
+GtkWidget   * picman_canvas_new          (PicmanDisplayConfig *config);
 
-PangoLayout * gimp_canvas_get_layout   (GimpCanvas        *canvas,
+PangoLayout * picman_canvas_get_layout   (PicmanCanvas        *canvas,
                                         const gchar       *format,
                                         ...) G_GNUC_PRINTF (2, 3);
 
-void          gimp_canvas_set_bg_color (GimpCanvas        *canvas,
-                                        GimpRGB           *color);
+void          picman_canvas_set_bg_color (PicmanCanvas        *canvas,
+                                        PicmanRGB           *color);
 
 
-#endif /*  __GIMP_CANVAS_H__  */
+#endif /*  __PICMAN_CANVAS_H__  */

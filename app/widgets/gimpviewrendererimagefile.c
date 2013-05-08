@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewrendererimagefile.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanviewrendererimagefile.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,57 +25,57 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpthumb/gimpthumb.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanthumb/picmanthumb.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpimagefile.h"
+#include "core/picmanimagefile.h"
 
-#include "gimpviewrendererimagefile.h"
-#include "gimpviewrenderer-frame.h"
+#include "picmanviewrendererimagefile.h"
+#include "picmanviewrenderer-frame.h"
 
 
-static void        gimp_view_renderer_imagefile_render   (GimpViewRenderer *renderer,
+static void        picman_view_renderer_imagefile_render   (PicmanViewRenderer *renderer,
                                                           GtkWidget        *widget);
 
-static GdkPixbuf * gimp_view_renderer_imagefile_get_icon (GimpImagefile    *imagefile,
+static GdkPixbuf * picman_view_renderer_imagefile_get_icon (PicmanImagefile    *imagefile,
                                                           GtkWidget        *widget,
                                                           gint              size);
 
 
-G_DEFINE_TYPE (GimpViewRendererImagefile, gimp_view_renderer_imagefile,
-               GIMP_TYPE_VIEW_RENDERER)
+G_DEFINE_TYPE (PicmanViewRendererImagefile, picman_view_renderer_imagefile,
+               PICMAN_TYPE_VIEW_RENDERER)
 
-#define parent_class gimp_view_renderer_imagefile_parent_class
+#define parent_class picman_view_renderer_imagefile_parent_class
 
 
 static void
-gimp_view_renderer_imagefile_class_init (GimpViewRendererImagefileClass *klass)
+picman_view_renderer_imagefile_class_init (PicmanViewRendererImagefileClass *klass)
 {
-  GimpViewRendererClass *renderer_class = GIMP_VIEW_RENDERER_CLASS (klass);
+  PicmanViewRendererClass *renderer_class = PICMAN_VIEW_RENDERER_CLASS (klass);
 
-  renderer_class->render = gimp_view_renderer_imagefile_render;
+  renderer_class->render = picman_view_renderer_imagefile_render;
 }
 
 static void
-gimp_view_renderer_imagefile_init (GimpViewRendererImagefile *renderer)
+picman_view_renderer_imagefile_init (PicmanViewRendererImagefile *renderer)
 {
 }
 
 static void
-gimp_view_renderer_imagefile_render (GimpViewRenderer *renderer,
+picman_view_renderer_imagefile_render (PicmanViewRenderer *renderer,
                                      GtkWidget        *widget)
 {
-  GdkPixbuf *pixbuf = gimp_view_renderer_get_frame_pixbuf (renderer, widget,
+  GdkPixbuf *pixbuf = picman_view_renderer_get_frame_pixbuf (renderer, widget,
                                                            renderer->width,
                                                            renderer->height);
 
   if (! pixbuf)
     {
-      GimpImagefile *imagefile = GIMP_IMAGEFILE (renderer->viewable);
+      PicmanImagefile *imagefile = PICMAN_IMAGEFILE (renderer->viewable);
 
-      pixbuf = gimp_view_renderer_imagefile_get_icon (imagefile,
+      pixbuf = picman_view_renderer_imagefile_get_icon (imagefile,
                                                       widget,
                                                       MIN (renderer->width,
                                                            renderer->height));
@@ -83,14 +83,14 @@ gimp_view_renderer_imagefile_render (GimpViewRenderer *renderer,
 
   if (pixbuf)
     {
-      gimp_view_renderer_render_pixbuf (renderer, pixbuf);
+      picman_view_renderer_render_pixbuf (renderer, pixbuf);
       g_object_unref (pixbuf);
     }
   else
     {
-      const gchar *stock_id = gimp_viewable_get_stock_id (renderer->viewable);
+      const gchar *stock_id = picman_viewable_get_stock_id (renderer->viewable);
 
-      gimp_view_renderer_render_stock (renderer, widget, stock_id);
+      picman_view_renderer_render_stock (renderer, widget, stock_id);
     }
 }
 
@@ -153,21 +153,21 @@ get_icon_for_mime_type (const char *mime_type,
 }
 
 static GdkPixbuf *
-gimp_view_renderer_imagefile_get_icon (GimpImagefile *imagefile,
+picman_view_renderer_imagefile_get_icon (PicmanImagefile *imagefile,
                                        GtkWidget     *widget,
                                        gint           size)
 {
   GdkScreen     *screen     = gtk_widget_get_screen (widget);
   GtkIconTheme  *icon_theme = gtk_icon_theme_get_for_screen (screen);
-  GimpThumbnail *thumbnail  = gimp_imagefile_get_thumbnail (imagefile);
+  PicmanThumbnail *thumbnail  = picman_imagefile_get_thumbnail (imagefile);
   GdkPixbuf     *pixbuf     = NULL;
 
-  if (! gimp_object_get_name (imagefile))
+  if (! picman_object_get_name (imagefile))
     return NULL;
 
   if (! pixbuf)
     {
-      GIcon *icon = gimp_imagefile_get_gicon (imagefile);
+      GIcon *icon = picman_imagefile_get_gicon (imagefile);
 
       if (icon)
         {
@@ -194,7 +194,7 @@ gimp_view_renderer_imagefile_get_icon (GimpImagefile *imagefile,
     {
       const gchar *icon_name = GTK_STOCK_FILE;
 
-      if (thumbnail->image_state == GIMP_THUMB_STATE_FOLDER)
+      if (thumbnail->image_state == PICMAN_THUMB_STATE_FOLDER)
         icon_name = GTK_STOCK_DIRECTORY;
 
       pixbuf = gtk_icon_theme_load_icon (icon_theme,

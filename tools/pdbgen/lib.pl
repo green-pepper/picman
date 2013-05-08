@@ -1,5 +1,5 @@
-# GIMP - The GNU Image Manipulation Program
-# Copyright (C) 1998-2003 Manish Singh <yosh@gimp.org>
+# PICMAN - The GNU Image Manipulation Program
+# Copyright (C) 1998-2003 Manish Singh <yosh@picman.org>
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,19 +14,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Gimp::CodeGen::lib;
+package Picman::CodeGen::lib;
 
-# Generates all the libgimp C wrappers (used by plugins)
-$destdir  = "$main::destdir/libgimp";
-$builddir = "$main::builddir/libgimp";
+# Generates all the libpicman C wrappers (used by plugins)
+$destdir  = "$main::destdir/libpicman";
+$builddir = "$main::builddir/libpicman";
 
-*arg_types = \%Gimp::CodeGen::pdb::arg_types;
-*arg_parse = \&Gimp::CodeGen::pdb::arg_parse;
+*arg_types = \%Picman::CodeGen::pdb::arg_types;
+*arg_parse = \&Picman::CodeGen::pdb::arg_parse;
 
-*enums = \%Gimp::CodeGen::enums::enums;
+*enums = \%Picman::CodeGen::enums::enums;
 
-*write_file = \&Gimp::CodeGen::util::write_file;
-*FILE_EXT   = \$Gimp::CodeGen::util::FILE_EXT;
+*write_file = \&Picman::CodeGen::util::write_file;
+*FILE_EXT   = \$Picman::CodeGen::util::FILE_EXT;
 
 use Text::Wrap qw(wrap);
 
@@ -81,19 +81,19 @@ sub generate {
 	my @inargs = @{$proc->{inargs}} if exists $proc->{inargs};
 	my @outargs = @{$proc->{outargs}} if exists $proc->{outargs};
 
-	my $funcname = "gimp_$name"; my $wrapped = "";
+	my $funcname = "picman_$name"; my $wrapped = "";
 	my %usednames;
 	my $retdesc = "Returns: ";
 
 	if ($proc->{deprecated}) {
 	    if ($proc->{deprecated} eq 'NONE') {
-		push @{$out->{protos}}, "GIMP_DEPRECATED\n";
+		push @{$out->{protos}}, "PICMAN_DEPRECATED\n";
 	    }
 	    else {
 		my $underscores = $proc->{deprecated};
 		$underscores =~ s/-/_/g;
 
-		push @{$out->{protos}}, "GIMP_DEPRECATED_FOR($underscores)\n";
+		push @{$out->{protos}}, "PICMAN_DEPRECATED_FOR($underscores)\n";
 	    }
 	}
 
@@ -152,9 +152,9 @@ sub generate {
 	    $argdesc .= '_ID' if $arg->{id};
 	    $argdesc .= ": $desc";
 
-	    # This is what's passed into gimp_run_procedure
+	    # This is what's passed into picman_run_procedure
 	    $argpass .= "\n" . ' ' x 36;
-	    $argpass .= "GIMP_PDB_$arg->{name}, ";
+	    $argpass .= "PICMAN_PDB_$arg->{name}, ";
 
 	    $argpass .= "$_->{name}";
 	    $argpass .= '_ID' if $arg->{id};
@@ -167,7 +167,7 @@ sub generate {
 
 	# This marshals the return value(s)
 	my $return_args = "";
-	my $return_marshal = "gimp_destroy_params (return_vals, nreturn_vals);";
+	my $return_marshal = "picman_destroy_params (return_vals, nreturn_vals);";
 
 	# return success/failure boolean if we don't have anything else
 	if ($rettype eq 'void') {
@@ -249,14 +249,14 @@ sub generate {
 
 	    if ($rettype eq 'void') {
 		$return_marshal .= <<CODE;
-success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
 CODE
 	    }
 	    else {
 		$return_marshal .= <<CODE;
-if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
 CODE
 	    }
 
@@ -278,7 +278,7 @@ CODE
 		    $cf = ')';
 		}
 		elsif ($type =~ /parasite/) {
-		    $ch = 'gimp_parasite_copy (&';
+		    $ch = 'picman_parasite_copy (&';
 		    $cf = ')';
 		}
 		elsif ($type =~ /boolean|enum|guide/) {
@@ -373,7 +373,7 @@ CODE
 
 	    $return_marshal .= <<'CODE';
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
 CODE
 	    unless ($retvoid) {
@@ -385,7 +385,7 @@ CODE
 	}
 	else {
 	    $return_marshal = <<CODE;
-success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   $return_marshal
 
@@ -443,7 +443,7 @@ CODE
         unless ($retdesc =~ /[\.\!\?]$/) { $retdesc .= '.' }
 
         if ($proc->{since}) {
-	    $sincedesc = "\n *\n * Since: GIMP $proc->{since}";
+	    $sincedesc = "\n *\n * Since: PICMAN $proc->{since}";
 	}
 
 	if ($proc->{deprecated}) {
@@ -478,12 +478,12 @@ $retdesc$sincedesc
 $rettype
 $wrapped$funcname ($clist)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;$return_args
 
-  return_vals = gimp_run_procedure ("gimp-$proc->{canonical_name}",
+  return_vals = picman_run_procedure ("picman-$proc->{canonical_name}",
                                     \&nreturn_vals,$argpass
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
   $return_marshal
 }
@@ -491,7 +491,7 @@ CODE
     }
 
     my $lgpl_top = <<'LGPL';
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
 LGPL
@@ -522,9 +522,9 @@ LGPL
     while (my($group, $out) = each %out) {
         my $hname = "${group}pdb.h"; 
         my $cname = "${group}pdb.c";
-        if ($group ne 'gimp') {
-	    $hname = "gimp${hname}"; 
-	    $cname = "gimp${cname}";
+        if ($group ne 'picman') {
+	    $hname = "picman${hname}"; 
+	    $cname = "picman${cname}";
         }
         $hname =~ s/_//g; $hname =~ s/pdb\./_pdb./;
         $cname =~ s/_//g; $cname =~ s/pdb\./_pdb./;
@@ -558,7 +558,7 @@ LGPL
 	foreach (@{$out->{protos}}) {
 	    my $arglist;
 
-	    if (!/^GIMP_DEPRECATED/) {
+	    if (!/^PICMAN_DEPRECATED/) {
 		my $len;
 
 		$arglist = [ split(' ', $_, 3) ];
@@ -632,7 +632,7 @@ LGPL
 	$body = $extra->{decls} if exists $extra->{decls};
 	foreach (@{$out->{protos}}) { $body .= $_ }
         if ($out->{deprecated}) {
-	    $body .= "#endif /* GIMP_DISABLE_DEPRECATED */\n";
+	    $body .= "#endif /* PICMAN_DISABLE_DEPRECATED */\n";
 	}
 	chomp $body;
 
@@ -640,10 +640,10 @@ LGPL
         print HFILE $lgpl_top;
         print HFILE " * $hname\n";
         print HFILE $lgpl_bottom;
- 	my $guard = "__GIMP_\U$group\E_PDB_H__";
+ 	my $guard = "__PICMAN_\U$group\E_PDB_H__";
 	print HFILE <<HEADER;
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
 #ifndef $guard
@@ -670,7 +670,7 @@ HEADER
         print CFILE $lgpl_bottom;
         print CFILE qq/#include "config.h"\n\n/;
 	print CFILE $out->{headers}, "\n" if exists $out->{headers};
-	print CFILE qq/#include "gimp.h"\n/;
+	print CFILE qq/#include "picman.h"\n/;
 	$long_desc = &desc_wrap($main::grp{$group}->{doc_long_desc});
 	print CFILE <<SECTION_DOCS;
 
@@ -691,15 +691,15 @@ SECTION_DOCS
     }
 
     if (! $ENV{PDBGEN_GROUPS}) {
-        my $gimp_pdb_headers = "$builddir/gimp_pdb_headers.h$FILE_EXT";
-	open PFILE, "> $gimp_pdb_headers" or die "Can't open $gimp_pdb_headers: $!\n";
+        my $picman_pdb_headers = "$builddir/picman_pdb_headers.h$FILE_EXT";
+	open PFILE, "> $picman_pdb_headers" or die "Can't open $picman_pdb_headers: $!\n";
         print PFILE $lgpl_top;
-        print PFILE " * gimp_pdb_headers.h\n";
+        print PFILE " * picman_pdb_headers.h\n";
         print PFILE $lgpl_bottom;
-	my $guard = "__GIMP_PDB_HEADERS_H__";
+	my $guard = "__PICMAN_PDB_HEADERS_H__";
 	print PFILE <<HEADER;
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
 #ifndef $guard
@@ -709,20 +709,20 @@ HEADER
 	my @groups;
 	foreach $group (keys %out) {
 	    my $hname = "${group}pdb.h";
-	    if ($group ne 'gimp') {
-		$hname = "gimp${hname}";
+	    if ($group ne 'picman') {
+		$hname = "picman${hname}";
 	    }
 	    $hname =~ s/_//g; $hname =~ s/pdb\./_pdb./;
 	    push @groups, $hname;
 	}
 	foreach $group (sort @groups) {
-	    print PFILE "#include <libgimp/$group>\n";
+	    print PFILE "#include <libpicman/$group>\n";
 	}
 	print PFILE <<HEADER;
 
 #endif /* $guard */
 HEADER
 	close PFILE;
-	&write_file($gimp_pdb_headers, $destdir);
+	&write_file($picman_pdb_headers, $destdir);
     }
 }

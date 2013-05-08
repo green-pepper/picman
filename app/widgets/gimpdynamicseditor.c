@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  *
@@ -21,45 +21,45 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpdynamics.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmandynamics.h"
 
-#include "gimpdocked.h"
-#include "gimpdynamicseditor.h"
-#include "gimpdynamicsoutputeditor.h"
-#include "gimpmenufactory.h"
-#include "gimppropwidgets.h"
+#include "picmandocked.h"
+#include "picmandynamicseditor.h"
+#include "picmandynamicsoutputeditor.h"
+#include "picmanmenufactory.h"
+#include "picmanpropwidgets.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   gimp_dynamics_editor_constructed     (GObject            *object);
-static void   gimp_dynamics_editor_finalize        (GObject            *object);
+static void   picman_dynamics_editor_constructed     (GObject            *object);
+static void   picman_dynamics_editor_finalize        (GObject            *object);
 
-static void   gimp_dynamics_editor_set_data        (GimpDataEditor     *editor,
-                                                    GimpData           *data);
+static void   picman_dynamics_editor_set_data        (PicmanDataEditor     *editor,
+                                                    PicmanData           *data);
 
-static void   gimp_dynamics_editor_notify_model    (GimpDynamics       *options,
+static void   picman_dynamics_editor_notify_model    (PicmanDynamics       *options,
                                                     const GParamSpec   *pspec,
-                                                    GimpDynamicsEditor *editor);
-static void   gimp_dynamics_editor_notify_data     (GimpDynamics       *options,
+                                                    PicmanDynamicsEditor *editor);
+static void   picman_dynamics_editor_notify_data     (PicmanDynamics       *options,
                                                     const GParamSpec   *pspec,
-                                                    GimpDynamicsEditor *editor);
+                                                    PicmanDynamicsEditor *editor);
 
-static void   gimp_dynamics_editor_add_output_row  (GObject     *config,
+static void   picman_dynamics_editor_add_output_row  (GObject     *config,
                                                     const gchar *row_label,
                                                     GtkTable    *table,
                                                     gint         row);
 
-static void gimp_dynamics_editor_init_output_editors (GimpDynamics *dynamics,
+static void picman_dynamics_editor_init_output_editors (PicmanDynamics *dynamics,
                                                       GtkWidget    *view_selector,
                                                       GtkWidget    *notebook,
                                                       GtkWidget    *check_grid);
@@ -70,46 +70,46 @@ static GtkWidget * dynamics_check_button_new       (GObject     *config,
                                                     gint         column,
                                                     gint         row);
 
-static void      gimp_dynamics_editor_view_changed (GtkComboBox *combo,
+static void      picman_dynamics_editor_view_changed (GtkComboBox *combo,
                                                     GtkWidget   *notebook);
 
-G_DEFINE_TYPE_WITH_CODE (GimpDynamicsEditor, gimp_dynamics_editor,
-                         GIMP_TYPE_DATA_EDITOR,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_DOCKED, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanDynamicsEditor, picman_dynamics_editor,
+                         PICMAN_TYPE_DATA_EDITOR,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_DOCKED, NULL))
 
-#define parent_class gimp_dynamics_editor_parent_class
+#define parent_class picman_dynamics_editor_parent_class
 
 
 static void
-gimp_dynamics_editor_class_init (GimpDynamicsEditorClass *klass)
+picman_dynamics_editor_class_init (PicmanDynamicsEditorClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpDataEditorClass *editor_class = GIMP_DATA_EDITOR_CLASS (klass);
+  PicmanDataEditorClass *editor_class = PICMAN_DATA_EDITOR_CLASS (klass);
 
-  object_class->constructed = gimp_dynamics_editor_constructed;
-  object_class->finalize    = gimp_dynamics_editor_finalize;
+  object_class->constructed = picman_dynamics_editor_constructed;
+  object_class->finalize    = picman_dynamics_editor_finalize;
 
-  editor_class->set_data    = gimp_dynamics_editor_set_data;
+  editor_class->set_data    = picman_dynamics_editor_set_data;
   editor_class->title       = _("Paint Dynamics Editor");
 }
 
 static void
-gimp_dynamics_editor_init (GimpDynamicsEditor *editor)
+picman_dynamics_editor_init (PicmanDynamicsEditor *editor)
 {
-  GimpDataEditor *data_editor = GIMP_DATA_EDITOR (editor);
-  GimpDynamics   *dynamics;
+  PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (editor);
+  PicmanDynamics   *dynamics;
   GtkWidget      *input_labels[7];
   gint            n_inputs    = G_N_ELEMENTS (input_labels);
   gint            i;
 
-  dynamics = editor->dynamics_model = g_object_new (GIMP_TYPE_DYNAMICS, NULL);
+  dynamics = editor->dynamics_model = g_object_new (PICMAN_TYPE_DYNAMICS, NULL);
 
   g_signal_connect (dynamics, "notify",
-                    G_CALLBACK (gimp_dynamics_editor_notify_model),
+                    G_CALLBACK (picman_dynamics_editor_notify_model),
                     editor);
 
   editor->view_selector =
-    gimp_enum_combo_box_new (GIMP_TYPE_DYNAMICS_OUTPUT_TYPE);
+    picman_enum_combo_box_new (PICMAN_TYPE_DYNAMICS_OUTPUT_TYPE);
   gtk_box_pack_start (GTK_BOX (data_editor), editor->view_selector,
                       FALSE, FALSE, 0);
   gtk_widget_show (editor->view_selector);
@@ -122,7 +122,7 @@ gimp_dynamics_editor_init (GimpDynamicsEditor *editor)
 
   editor->check_grid = gtk_table_new (10, n_inputs + 2, FALSE);
 
-  gimp_dynamics_editor_init_output_editors (dynamics,
+  picman_dynamics_editor_init_output_editors (dynamics,
                                             editor->view_selector,
                                             editor->notebook,
                                             editor->check_grid);
@@ -131,13 +131,13 @@ gimp_dynamics_editor_init (GimpDynamicsEditor *editor)
                             editor->check_grid, NULL);
   gtk_widget_show (editor->check_grid);
 
-  gimp_int_combo_box_prepend (GIMP_INT_COMBO_BOX (editor->view_selector),
-                              GIMP_INT_STORE_VALUE,     -1,
-                              GIMP_INT_STORE_LABEL,     _("Mapping matrix"),
-                              GIMP_INT_STORE_USER_DATA, editor->check_grid,
+  picman_int_combo_box_prepend (PICMAN_INT_COMBO_BOX (editor->view_selector),
+                              PICMAN_INT_STORE_VALUE,     -1,
+                              PICMAN_INT_STORE_LABEL,     _("Mapping matrix"),
+                              PICMAN_INT_STORE_USER_DATA, editor->check_grid,
                               -1);
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (editor->view_selector), -1);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (editor->view_selector), -1);
 
   input_labels[0] = gtk_label_new (_("Pressure"));
   input_labels[1] = gtk_label_new (_("Velocity"));
@@ -160,17 +160,17 @@ gimp_dynamics_editor_init (GimpDynamicsEditor *editor)
 }
 
 static void
-gimp_dynamics_editor_constructed (GObject *object)
+picman_dynamics_editor_constructed (GObject *object)
 {
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  gimp_docked_set_show_button_bar (GIMP_DOCKED (object), FALSE);
+  picman_docked_set_show_button_bar (PICMAN_DOCKED (object), FALSE);
 }
 
 static void
-gimp_dynamics_editor_finalize (GObject *object)
+picman_dynamics_editor_finalize (GObject *object)
 {
-  GimpDynamicsEditor *editor = GIMP_DYNAMICS_EDITOR (object);
+  PicmanDynamicsEditor *editor = PICMAN_DYNAMICS_EDITOR (object);
 
   if (editor->dynamics_model)
     {
@@ -182,37 +182,37 @@ gimp_dynamics_editor_finalize (GObject *object)
 }
 
 static void
-gimp_dynamics_editor_set_data (GimpDataEditor *editor,
-                               GimpData       *data)
+picman_dynamics_editor_set_data (PicmanDataEditor *editor,
+                               PicmanData       *data)
 {
-  GimpDynamicsEditor *dynamics_editor = GIMP_DYNAMICS_EDITOR (editor);
+  PicmanDynamicsEditor *dynamics_editor = PICMAN_DYNAMICS_EDITOR (editor);
   GtkTreeModel       *model;
   GtkTreeIter         iter;
   gboolean            iter_valid;
 
   if (editor->data)
     g_signal_handlers_disconnect_by_func (editor->data,
-                                          gimp_dynamics_editor_notify_data,
+                                          picman_dynamics_editor_notify_data,
                                           editor);
 
-  GIMP_DATA_EDITOR_CLASS (parent_class)->set_data (editor, data);
+  PICMAN_DATA_EDITOR_CLASS (parent_class)->set_data (editor, data);
 
   if (editor->data)
     {
       g_signal_handlers_block_by_func (dynamics_editor->dynamics_model,
-                                       gimp_dynamics_editor_notify_model,
+                                       picman_dynamics_editor_notify_model,
                                        editor);
 
-      gimp_config_copy (GIMP_CONFIG (editor->data),
-                        GIMP_CONFIG (dynamics_editor->dynamics_model),
-                        GIMP_CONFIG_PARAM_SERIALIZE);
+      picman_config_copy (PICMAN_CONFIG (editor->data),
+                        PICMAN_CONFIG (dynamics_editor->dynamics_model),
+                        PICMAN_CONFIG_PARAM_SERIALIZE);
 
       g_signal_handlers_unblock_by_func (dynamics_editor->dynamics_model,
-                                         gimp_dynamics_editor_notify_model,
+                                         picman_dynamics_editor_notify_model,
                                          editor);
 
       g_signal_connect (editor->data, "notify",
-                        G_CALLBACK (gimp_dynamics_editor_notify_data),
+                        G_CALLBACK (picman_dynamics_editor_notify_data),
                         editor);
     }
 
@@ -225,7 +225,7 @@ gimp_dynamics_editor_set_data (GimpDataEditor *editor,
       gpointer widget;
 
       gtk_tree_model_get (model, &iter,
-                          GIMP_INT_STORE_USER_DATA, &widget,
+                          PICMAN_INT_STORE_USER_DATA, &widget,
                           -1);
 
       gtk_widget_set_sensitive (widget, editor->data_editable);
@@ -236,19 +236,19 @@ gimp_dynamics_editor_set_data (GimpDataEditor *editor,
 /*  public functions  */
 
 GtkWidget *
-gimp_dynamics_editor_new (GimpContext     *context,
-                          GimpMenuFactory *menu_factory)
+picman_dynamics_editor_new (PicmanContext     *context,
+                          PicmanMenuFactory *menu_factory)
 {
-  g_return_val_if_fail (GIMP_IS_MENU_FACTORY (menu_factory), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_MENU_FACTORY (menu_factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
-  return g_object_new (GIMP_TYPE_DYNAMICS_EDITOR,
+  return g_object_new (PICMAN_TYPE_DYNAMICS_EDITOR,
                        "menu-factory",    menu_factory,
                        "menu-identifier", "<DynamicsEditor>",
                        "ui-path",         "/dynamics-editor-popup",
-                       "data-factory",    context->gimp->dynamics_factory,
+                       "data-factory",    context->picman->dynamics_factory,
                        "context",         context,
-                       "data",            gimp_context_get_dynamics (context),
+                       "data",            picman_context_get_dynamics (context),
                        NULL);
 }
 
@@ -256,50 +256,50 @@ gimp_dynamics_editor_new (GimpContext     *context,
 /*  private functions  */
 
 static void
-gimp_dynamics_editor_notify_model (GimpDynamics       *options,
+picman_dynamics_editor_notify_model (PicmanDynamics       *options,
                                    const GParamSpec   *pspec,
-                                   GimpDynamicsEditor *editor)
+                                   PicmanDynamicsEditor *editor)
 {
-  GimpDataEditor *data_editor = GIMP_DATA_EDITOR (editor);
+  PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (editor);
 
   if (data_editor->data)
     {
       g_signal_handlers_block_by_func (data_editor->data,
-                                       gimp_dynamics_editor_notify_data,
+                                       picman_dynamics_editor_notify_data,
                                        editor);
 
-      gimp_config_copy (GIMP_CONFIG (editor->dynamics_model),
-                        GIMP_CONFIG (data_editor->data),
-                        GIMP_CONFIG_PARAM_SERIALIZE);
+      picman_config_copy (PICMAN_CONFIG (editor->dynamics_model),
+                        PICMAN_CONFIG (data_editor->data),
+                        PICMAN_CONFIG_PARAM_SERIALIZE);
 
       g_signal_handlers_unblock_by_func (data_editor->data,
-                                         gimp_dynamics_editor_notify_data,
+                                         picman_dynamics_editor_notify_data,
                                          editor);
     }
 }
 
 static void
-gimp_dynamics_editor_notify_data (GimpDynamics       *options,
+picman_dynamics_editor_notify_data (PicmanDynamics       *options,
                                   const GParamSpec   *pspec,
-                                  GimpDynamicsEditor *editor)
+                                  PicmanDynamicsEditor *editor)
 {
-  GimpDataEditor *data_editor = GIMP_DATA_EDITOR (editor);
+  PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (editor);
 
   g_signal_handlers_block_by_func (editor->dynamics_model,
-                                   gimp_dynamics_editor_notify_model,
+                                   picman_dynamics_editor_notify_model,
                                    editor);
 
-  gimp_config_copy (GIMP_CONFIG (data_editor->data),
-                    GIMP_CONFIG (editor->dynamics_model),
-                    GIMP_CONFIG_PARAM_SERIALIZE);
+  picman_config_copy (PICMAN_CONFIG (data_editor->data),
+                    PICMAN_CONFIG (editor->dynamics_model),
+                    PICMAN_CONFIG_PARAM_SERIALIZE);
 
   g_signal_handlers_unblock_by_func (editor->dynamics_model,
-                                     gimp_dynamics_editor_notify_model,
+                                     picman_dynamics_editor_notify_model,
                                      editor);
 }
 
 static void
-gimp_dynamics_editor_add_output_row (GObject     *config,
+picman_dynamics_editor_add_output_row (GObject     *config,
                                      const gchar *row_label,
                                      GtkTable    *table,
                                      gint         row)
@@ -351,7 +351,7 @@ dynamics_check_button_new (GObject     *config,
 {
   GtkWidget *button;
 
-  button = gimp_prop_check_button_new (config, property_name, NULL);
+  button = picman_prop_check_button_new (config, property_name, NULL);
   gtk_table_attach (table, button, column, column + 1, row, row + 1,
                     GTK_SHRINK, GTK_SHRINK, 0, 0);
   gtk_widget_show (button);
@@ -360,13 +360,13 @@ dynamics_check_button_new (GObject     *config,
 }
 
 static void
-gimp_dynamics_editor_init_output_editors (GimpDynamics *dynamics,
+picman_dynamics_editor_init_output_editors (PicmanDynamics *dynamics,
                                           GtkWidget    *view_selector,
                                           GtkWidget    *notebook,
                                           GtkWidget    *check_grid)
 {
   GtkTreeModel *model = gtk_combo_box_get_model (GTK_COMBO_BOX (view_selector));
-  GimpIntStore *list  = GIMP_INT_STORE (model);
+  PicmanIntStore *list  = PICMAN_INT_STORE (model);
   GtkTreeIter   iter;
   gboolean      iter_valid;
   gint          i;
@@ -377,26 +377,26 @@ gimp_dynamics_editor_init_output_editors (GimpDynamics *dynamics,
     {
       gint                output_type;
       gchar              *label;
-      GimpDynamicsOutput *output;
+      PicmanDynamicsOutput *output;
       GtkWidget          *output_editor;
 
       gtk_tree_model_get (GTK_TREE_MODEL (model), &iter,
-                          GIMP_INT_STORE_VALUE, &output_type,
-                          GIMP_INT_STORE_LABEL, &label,
+                          PICMAN_INT_STORE_VALUE, &output_type,
+                          PICMAN_INT_STORE_LABEL, &label,
                           -1);
 
-      output = gimp_dynamics_get_output (dynamics, output_type);
+      output = picman_dynamics_get_output (dynamics, output_type);
 
-      output_editor = gimp_dynamics_output_editor_new (output);
+      output_editor = picman_dynamics_output_editor_new (output);
 
       gtk_notebook_append_page (GTK_NOTEBOOK (notebook), output_editor, NULL);
       gtk_widget_show (output_editor);
 
       gtk_list_store_set (GTK_LIST_STORE (list), &iter,
-                          GIMP_INT_STORE_USER_DATA, output_editor,
+                          PICMAN_INT_STORE_USER_DATA, output_editor,
                           -1);
 
-      gimp_dynamics_editor_add_output_row (G_OBJECT (output),
+      picman_dynamics_editor_add_output_row (G_OBJECT (output),
                                            label,
                                            GTK_TABLE (check_grid),
                                            i);
@@ -405,12 +405,12 @@ gimp_dynamics_editor_init_output_editors (GimpDynamics *dynamics,
   }
 
   g_signal_connect (G_OBJECT (view_selector), "changed",
-                    G_CALLBACK (gimp_dynamics_editor_view_changed),
+                    G_CALLBACK (picman_dynamics_editor_view_changed),
                     notebook);
 }
 
 static void
-gimp_dynamics_editor_view_changed (GtkComboBox *combo,
+picman_dynamics_editor_view_changed (GtkComboBox *combo,
                                    GtkWidget   *notebook)
 {
   GtkTreeModel *model = gtk_combo_box_get_model (combo);
@@ -421,7 +421,7 @@ gimp_dynamics_editor_view_changed (GtkComboBox *combo,
   gtk_combo_box_get_active_iter (GTK_COMBO_BOX (combo), &iter);
 
   gtk_tree_model_get (model, &iter,
-                      GIMP_INT_STORE_USER_DATA, &widget,
+                      PICMAN_INT_STORE_USER_DATA, &widget,
                       -1);
   page = gtk_notebook_page_num (GTK_NOTEBOOK (notebook), widget);
 

@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * test-eevl.c
@@ -28,13 +28,13 @@
 
 #include <glib-object.h>
 
-#include "gimpeevl.h"
+#include "picmaneevl.h"
 
 
 typedef struct
 {
   const gchar      *string;
-  GimpEevlQuantity  result;
+  PicmanEevlQuantity  result;
   gboolean          should_succeed;
 } TestCase;
 
@@ -75,7 +75,7 @@ static TestCase cases[] =
 
 static gboolean
 test_units (const gchar      *ident,
-            GimpEevlQuantity *result,
+            PicmanEevlQuantity *result,
             gpointer          data)
 {
   gboolean resolved     = FALSE;
@@ -113,14 +113,14 @@ main(void)
   for (i = 0; cases[i].string; i++)
     {
       const gchar     *test           = cases[i].string;
-      GimpEevlQuantity should         = cases[i].result;
+      PicmanEevlQuantity should         = cases[i].result;
       gboolean         success        = FALSE;
-      GimpEevlQuantity result         = { 0, -1 };
+      PicmanEevlQuantity result         = { 0, -1 };
       gboolean         should_succeed = cases[i].should_succeed;
       GError          *error          = NULL;
       const gchar     *error_pos      = 0;
 
-      success = gimp_eevl_evaluate (test,
+      success = picman_eevl_evaluate (test,
                                     test_units,
                                     &result,
                                     NULL,

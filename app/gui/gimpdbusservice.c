@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpDBusService
- * Copyright (C) 2007, 2008 Sven Neumann <sven@gimp.org>
+ * PicmanDBusService
+ * Copyright (C) 2007, 2008 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,16 +28,16 @@
 
 #include "gui-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
 
 #include "file/file-open.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
 
-#include "gimpdbusservice.h"
-#include "gimpdbusservice-glue.h"
+#include "picmandbusservice.h"
+#include "picmandbusservice-glue.h"
 
 
 enum
@@ -53,83 +53,83 @@ typedef struct
 } OpenData;
 
 
-static void       gimp_dbus_service_class_init (GimpDBusServiceClass *klass);
+static void       picman_dbus_service_class_init (PicmanDBusServiceClass *klass);
 
-static void       gimp_dbus_service_init           (GimpDBusService  *service);
-static void       gimp_dbus_service_dispose        (GObject          *object);
-static void       gimp_dbus_service_finalize       (GObject          *object);
+static void       picman_dbus_service_init           (PicmanDBusService  *service);
+static void       picman_dbus_service_dispose        (GObject          *object);
+static void       picman_dbus_service_finalize       (GObject          *object);
 
-static void       gimp_dbus_service_gimp_opened    (Gimp             *gimp,
+static void       picman_dbus_service_picman_opened    (Picman             *picman,
 						    const gchar      *uri,
-						    GimpDBusService  *service);
+						    PicmanDBusService  *service);
 
-static gboolean   gimp_dbus_service_queue_open     (GimpDBusService  *service,
+static gboolean   picman_dbus_service_queue_open     (PicmanDBusService  *service,
                                                     const gchar      *uri,
                                                     gboolean          as_new);
 
-static gboolean   gimp_dbus_service_open_idle      (GimpDBusService  *service);
-static OpenData * gimp_dbus_service_open_data_new  (GimpDBusService  *service,
+static gboolean   picman_dbus_service_open_idle      (PicmanDBusService  *service);
+static OpenData * picman_dbus_service_open_data_new  (PicmanDBusService  *service,
                                                     const gchar      *uri,
                                                     gboolean          as_new);
-static void       gimp_dbus_service_open_data_free (OpenData         *data);
+static void       picman_dbus_service_open_data_free (OpenData         *data);
 
 
-G_DEFINE_TYPE (GimpDBusService, gimp_dbus_service, G_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanDBusService, picman_dbus_service, G_TYPE_OBJECT)
 
-#define parent_class gimp_dbus_service_parent_class
+#define parent_class picman_dbus_service_parent_class
 
-static guint gimp_dbus_service_signals[LAST_SIGNAL] = { 0 };
+static guint picman_dbus_service_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_dbus_service_class_init (GimpDBusServiceClass *klass)
+picman_dbus_service_class_init (PicmanDBusServiceClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  gimp_dbus_service_signals[OPENED] =
+  picman_dbus_service_signals[OPENED] =
     g_signal_new ("opened",
 		  G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpDBusServiceClass, opened),
+                  G_STRUCT_OFFSET (PicmanDBusServiceClass, opened),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__STRING,
                   G_TYPE_NONE, 1, G_TYPE_STRING);
 
-  object_class->dispose  = gimp_dbus_service_dispose;
-  object_class->finalize = gimp_dbus_service_finalize;
+  object_class->dispose  = picman_dbus_service_dispose;
+  object_class->finalize = picman_dbus_service_finalize;
 
   dbus_g_object_type_install_info (G_TYPE_FROM_CLASS (klass),
-                                   &dbus_glib_gimp_object_info);
+                                   &dbus_glib_picman_object_info);
 }
 
 static void
-gimp_dbus_service_init (GimpDBusService *service)
+picman_dbus_service_init (PicmanDBusService *service)
 {
   service->queue = g_queue_new ();
 }
 
 GObject *
-gimp_dbus_service_new (Gimp *gimp)
+picman_dbus_service_new (Picman *picman)
 {
-  GimpDBusService *service;
+  PicmanDBusService *service;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  service = g_object_new (GIMP_TYPE_DBUS_SERVICE, NULL);
+  service = g_object_new (PICMAN_TYPE_DBUS_SERVICE, NULL);
 
-  service->gimp = gimp;
+  service->picman = picman;
 
-  g_signal_connect_object (gimp, "image-opened",
-			   G_CALLBACK (gimp_dbus_service_gimp_opened),
+  g_signal_connect_object (picman, "image-opened",
+			   G_CALLBACK (picman_dbus_service_picman_opened),
 			   service, 0);
 
   return G_OBJECT (service);
 }
 
 static void
-gimp_dbus_service_dispose (GObject *object)
+picman_dbus_service_dispose (GObject *object)
 {
-  GimpDBusService *service = GIMP_DBUS_SERVICE (object);
+  PicmanDBusService *service = PICMAN_DBUS_SERVICE (object);
 
   if (service->source)
     {
@@ -139,16 +139,16 @@ gimp_dbus_service_dispose (GObject *object)
 
   while (! g_queue_is_empty (service->queue))
     {
-      gimp_dbus_service_open_data_free (g_queue_pop_head (service->queue));
+      picman_dbus_service_open_data_free (g_queue_pop_head (service->queue));
     }
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_dbus_service_finalize (GObject *object)
+picman_dbus_service_finalize (GObject *object)
 {
-  GimpDBusService *service = GIMP_DBUS_SERVICE (object);
+  PicmanDBusService *service = PICMAN_DBUS_SERVICE (object);
 
   if (service->queue)
     {
@@ -160,63 +160,63 @@ gimp_dbus_service_finalize (GObject *object)
 }
 
 gboolean
-gimp_dbus_service_open (GimpDBusService  *service,
+picman_dbus_service_open (PicmanDBusService  *service,
                         const gchar      *uri,
                         gboolean         *success,
                         GError          **dbus_error)
 {
-  g_return_val_if_fail (GIMP_IS_DBUS_SERVICE (service), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DBUS_SERVICE (service), FALSE);
   g_return_val_if_fail (uri != NULL, FALSE);
   g_return_val_if_fail (success != NULL, FALSE);
 
-  *success = gimp_dbus_service_queue_open (service, uri, FALSE);
+  *success = picman_dbus_service_queue_open (service, uri, FALSE);
 
   return TRUE;
 }
 
 gboolean
-gimp_dbus_service_open_as_new (GimpDBusService  *service,
+picman_dbus_service_open_as_new (PicmanDBusService  *service,
                                const gchar      *uri,
                                gboolean         *success,
                                GError          **dbus_error)
 {
-  g_return_val_if_fail (GIMP_IS_DBUS_SERVICE (service), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DBUS_SERVICE (service), FALSE);
   g_return_val_if_fail (uri != NULL, FALSE);
   g_return_val_if_fail (success != NULL, FALSE);
 
-  *success = gimp_dbus_service_queue_open (service, uri, TRUE);
+  *success = picman_dbus_service_queue_open (service, uri, TRUE);
 
   return TRUE;
 }
 
 gboolean
-gimp_dbus_service_activate (GimpDBusService  *service,
+picman_dbus_service_activate (PicmanDBusService  *service,
                             GError          **dbus_error)
 {
-  GimpObject *display;
+  PicmanObject *display;
 
-  g_return_val_if_fail (GIMP_IS_DBUS_SERVICE (service), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DBUS_SERVICE (service), FALSE);
 
-  /*  We want to be called again later in case that GIMP is not fully
+  /*  We want to be called again later in case that PICMAN is not fully
    *  started yet.
    */
-  if (! gimp_is_restored (service->gimp))
+  if (! picman_is_restored (service->picman))
     return TRUE;
 
-  display = gimp_container_get_first_child (service->gimp->displays);
+  display = picman_container_get_first_child (service->picman->displays);
 
   if (display)
-    gimp_display_shell_present (gimp_display_get_shell (GIMP_DISPLAY (display)));
+    picman_display_shell_present (picman_display_get_shell (PICMAN_DISPLAY (display)));
 
   return TRUE;
 }
 
 static void
-gimp_dbus_service_gimp_opened (Gimp            *gimp,
+picman_dbus_service_picman_opened (Picman            *picman,
 			       const gchar     *uri,
-			       GimpDBusService *service)
+			       PicmanDBusService *service)
 {
-  g_signal_emit (service, gimp_dbus_service_signals[OPENED], 0, uri);
+  g_signal_emit (service, picman_dbus_service_signals[OPENED], 0, uri);
 }
 
 /*
@@ -224,12 +224,12 @@ gimp_dbus_service_gimp_opened (Gimp            *gimp,
  * starts an idle source if it is not already running.
  */
 static gboolean
-gimp_dbus_service_queue_open (GimpDBusService *service,
+picman_dbus_service_queue_open (PicmanDBusService *service,
                               const gchar     *uri,
                               gboolean         as_new)
 {
   g_queue_push_tail (service->queue,
-                     gimp_dbus_service_open_data_new (service, uri, as_new));
+                     picman_dbus_service_open_data_new (service, uri, as_new));
 
   if (! service->source)
     {
@@ -237,7 +237,7 @@ gimp_dbus_service_queue_open (GimpDBusService *service,
 
       g_source_set_priority (service->source, G_PRIORITY_LOW);
       g_source_set_callback (service->source,
-                             (GSourceFunc) gimp_dbus_service_open_idle, service,
+                             (GSourceFunc) picman_dbus_service_open_idle, service,
                              NULL);
       g_source_attach (service->source, NULL);
       g_source_unref (service->source);
@@ -255,20 +255,20 @@ gimp_dbus_service_queue_open (GimpDBusService *service,
  * removed.
  */
 static gboolean
-gimp_dbus_service_open_idle (GimpDBusService *service)
+picman_dbus_service_open_idle (PicmanDBusService *service)
 {
   OpenData *data;
 
-  if (! service->gimp->restored)
+  if (! service->picman->restored)
     return TRUE;
 
   data = g_queue_pop_tail (service->queue);
 
   if (data)
     {
-      file_open_from_command_line (service->gimp, data->uri, data->as_new);
+      file_open_from_command_line (service->picman, data->uri, data->as_new);
 
-      gimp_dbus_service_open_data_free (data);
+      picman_dbus_service_open_data_free (data);
 
       return TRUE;
     }
@@ -279,7 +279,7 @@ gimp_dbus_service_open_idle (GimpDBusService *service)
 }
 
 static OpenData *
-gimp_dbus_service_open_data_new (GimpDBusService *service,
+picman_dbus_service_open_data_new (PicmanDBusService *service,
                                  const gchar     *uri,
                                  gboolean         as_new)
 {
@@ -292,7 +292,7 @@ gimp_dbus_service_open_data_new (GimpDBusService *service,
 }
 
 static void
-gimp_dbus_service_open_data_free (OpenData *data)
+picman_dbus_service_open_data_free (OpenData *data)
 {
   g_free (data->uri);
   g_slice_free (OpenData, data);

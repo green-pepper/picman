@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpitemtransform_pdb.c
+ * picmanitemtransform_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpitemtransform
- * @title: gimpitemtransform
+ * SECTION: picmanitemtransform
+ * @title: picmanitemtransform
  * @short_description: Functions to perform transformations on items.
  *
  * Functions to perform transformations on items.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_item_transform_flip_simple:
+ * picman_item_transform_flip_simple:
  * @item_ID: The affected item.
  * @flip_type: Type of flip.
  * @auto_center: Whether to automatically position the axis in the selection center.
@@ -53,40 +53,40 @@
  * drawable, this will be equal to the item ID supplied as input.
  * Otherwise, this will be the newly created and flipped drawable. This
  * procedure is affected by the following context setters:
- * gimp_context_set_transform_resize().
+ * picman_context_set_transform_resize().
  *
  * Returns: The flipped item.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gint32
-gimp_item_transform_flip_simple (gint32              item_ID,
-                                 GimpOrientationType flip_type,
+picman_item_transform_flip_simple (gint32              item_ID,
+                                 PicmanOrientationType flip_type,
                                  gboolean            auto_center,
                                  gdouble             axis)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_item_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-item-transform-flip-simple",
+  return_vals = picman_run_procedure ("picman-item-transform-flip-simple",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_INT32, flip_type,
-                                    GIMP_PDB_INT32, auto_center,
-                                    GIMP_PDB_FLOAT, axis,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_INT32, flip_type,
+                                    PICMAN_PDB_INT32, auto_center,
+                                    PICMAN_PDB_FLOAT, axis,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_item_ID = return_vals[1].data.d_item;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_item_ID;
 }
 
 /**
- * gimp_item_transform_flip:
+ * picman_item_transform_flip:
  * @item_ID: The affected item.
  * @x0: horz. coord. of one end of axis.
  * @y0: vert. coord. of one end of axis.
@@ -104,45 +104,45 @@ gimp_item_transform_flip_simple (gint32              item_ID,
  * is not a drawable, this will be equal to the item ID supplied as
  * input. Otherwise, this will be the newly created and flipped
  * drawable. This procedure is affected by the following context
- * setters: gimp_context_set_interpolation(),
- * gimp_context_set_transform_direction(),
- * gimp_context_set_transform_resize(),
- * gimp_context_set_transform_recursion().
+ * setters: picman_context_set_interpolation(),
+ * picman_context_set_transform_direction(),
+ * picman_context_set_transform_resize(),
+ * picman_context_set_transform_recursion().
  *
  * Returns: The flipped item.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_item_transform_flip (gint32  item_ID,
+picman_item_transform_flip (gint32  item_ID,
                           gdouble x0,
                           gdouble y0,
                           gdouble x1,
                           gdouble y1)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_item_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-item-transform-flip",
+  return_vals = picman_run_procedure ("picman-item-transform-flip",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_FLOAT, x0,
-                                    GIMP_PDB_FLOAT, y0,
-                                    GIMP_PDB_FLOAT, x1,
-                                    GIMP_PDB_FLOAT, y1,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_FLOAT, x0,
+                                    PICMAN_PDB_FLOAT, y0,
+                                    PICMAN_PDB_FLOAT, x1,
+                                    PICMAN_PDB_FLOAT, y1,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_item_ID = return_vals[1].data.d_item;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_item_ID;
 }
 
 /**
- * gimp_item_transform_perspective:
+ * picman_item_transform_perspective:
  * @item_ID: The affected item.
  * @x0: The new x coordinate of upper-left corner of original bounding box.
  * @y0: The new y coordinate of upper-left corner of original bounding box.
@@ -171,17 +171,17 @@ gimp_item_transform_flip (gint32  item_ID,
  * can be affected. Additionally, these values can be specified such
  * that the resulting transformed item will appear to have been
  * projected via a perspective transform. This procedure is affected by
- * the following context setters: gimp_context_set_interpolation(),
- * gimp_context_set_transform_direction(),
- * gimp_context_set_transform_resize(),
- * gimp_context_set_transform_recursion().
+ * the following context setters: picman_context_set_interpolation(),
+ * picman_context_set_transform_direction(),
+ * picman_context_set_transform_resize(),
+ * picman_context_set_transform_recursion().
  *
  * Returns: The newly mapped item.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_item_transform_perspective (gint32  item_ID,
+picman_item_transform_perspective (gint32  item_ID,
                                  gdouble x0,
                                  gdouble y0,
                                  gdouble x1,
@@ -191,33 +191,33 @@ gimp_item_transform_perspective (gint32  item_ID,
                                  gdouble x3,
                                  gdouble y3)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_item_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-item-transform-perspective",
+  return_vals = picman_run_procedure ("picman-item-transform-perspective",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_FLOAT, x0,
-                                    GIMP_PDB_FLOAT, y0,
-                                    GIMP_PDB_FLOAT, x1,
-                                    GIMP_PDB_FLOAT, y1,
-                                    GIMP_PDB_FLOAT, x2,
-                                    GIMP_PDB_FLOAT, y2,
-                                    GIMP_PDB_FLOAT, x3,
-                                    GIMP_PDB_FLOAT, y3,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_FLOAT, x0,
+                                    PICMAN_PDB_FLOAT, y0,
+                                    PICMAN_PDB_FLOAT, x1,
+                                    PICMAN_PDB_FLOAT, y1,
+                                    PICMAN_PDB_FLOAT, x2,
+                                    PICMAN_PDB_FLOAT, y2,
+                                    PICMAN_PDB_FLOAT, x3,
+                                    PICMAN_PDB_FLOAT, y3,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_item_ID = return_vals[1].data.d_item;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_item_ID;
 }
 
 /**
- * gimp_item_transform_rotate_simple:
+ * picman_item_transform_rotate_simple:
  * @item_ID: The affected item.
  * @rotate_type: Type of rotation.
  * @auto_center: Whether to automatically rotate around the selection center.
@@ -235,42 +235,42 @@ gimp_item_transform_perspective (gint32  item_ID,
  * the item is not a drawable, this will be equal to the item ID
  * supplied as input. Otherwise, this will be the newly created and
  * rotated drawable. This procedure is affected by the following
- * context setters: gimp_context_set_transform_resize().
+ * context setters: picman_context_set_transform_resize().
  *
  * Returns: The rotated item.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_item_transform_rotate_simple (gint32           item_ID,
-                                   GimpRotationType rotate_type,
+picman_item_transform_rotate_simple (gint32           item_ID,
+                                   PicmanRotationType rotate_type,
                                    gboolean         auto_center,
                                    gdouble          center_x,
                                    gdouble          center_y)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_item_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-item-transform-rotate-simple",
+  return_vals = picman_run_procedure ("picman-item-transform-rotate-simple",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_INT32, rotate_type,
-                                    GIMP_PDB_INT32, auto_center,
-                                    GIMP_PDB_FLOAT, center_x,
-                                    GIMP_PDB_FLOAT, center_y,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_INT32, rotate_type,
+                                    PICMAN_PDB_INT32, auto_center,
+                                    PICMAN_PDB_FLOAT, center_x,
+                                    PICMAN_PDB_FLOAT, center_y,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_item_ID = return_vals[1].data.d_item;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_item_ID;
 }
 
 /**
- * gimp_item_transform_rotate:
+ * picman_item_transform_rotate:
  * @item_ID: The affected item.
  * @angle: The angle of rotation (radians).
  * @auto_center: Whether to automatically rotate around the selection center.
@@ -288,45 +288,45 @@ gimp_item_transform_rotate_simple (gint32           item_ID,
  * the item is not a drawable, this will be equal to the item ID
  * supplied as input. Otherwise, this will be the newly created and
  * rotated drawable. This procedure is affected by the following
- * context setters: gimp_context_set_interpolation(),
- * gimp_context_set_transform_direction(),
- * gimp_context_set_transform_resize(),
- * gimp_context_set_transform_recursion().
+ * context setters: picman_context_set_interpolation(),
+ * picman_context_set_transform_direction(),
+ * picman_context_set_transform_resize(),
+ * picman_context_set_transform_recursion().
  *
  * Returns: The rotated item.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_item_transform_rotate (gint32   item_ID,
+picman_item_transform_rotate (gint32   item_ID,
                             gdouble  angle,
                             gboolean auto_center,
                             gdouble  center_x,
                             gdouble  center_y)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_item_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-item-transform-rotate",
+  return_vals = picman_run_procedure ("picman-item-transform-rotate",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_FLOAT, angle,
-                                    GIMP_PDB_INT32, auto_center,
-                                    GIMP_PDB_FLOAT, center_x,
-                                    GIMP_PDB_FLOAT, center_y,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_FLOAT, angle,
+                                    PICMAN_PDB_INT32, auto_center,
+                                    PICMAN_PDB_FLOAT, center_x,
+                                    PICMAN_PDB_FLOAT, center_y,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_item_ID = return_vals[1].data.d_item;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_item_ID;
 }
 
 /**
- * gimp_item_transform_scale:
+ * picman_item_transform_scale:
  * @item_ID: The affected item.
  * @x0: The new x coordinate of the upper-left corner of the scaled region.
  * @y0: The new y coordinate of the upper-left corner of the scaled region.
@@ -343,45 +343,45 @@ gimp_item_transform_rotate (gint32   item_ID,
  * item is not a drawable, this will be equal to the item ID supplied
  * as input. Otherwise, this will be the newly created and scaled
  * drawable. This procedure is affected by the following context
- * setters: gimp_context_set_interpolation(),
- * gimp_context_set_transform_direction(),
- * gimp_context_set_transform_resize(),
- * gimp_context_set_transform_recursion().
+ * setters: picman_context_set_interpolation(),
+ * picman_context_set_transform_direction(),
+ * picman_context_set_transform_resize(),
+ * picman_context_set_transform_recursion().
  *
  * Returns: The scaled item.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_item_transform_scale (gint32  item_ID,
+picman_item_transform_scale (gint32  item_ID,
                            gdouble x0,
                            gdouble y0,
                            gdouble x1,
                            gdouble y1)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_item_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-item-transform-scale",
+  return_vals = picman_run_procedure ("picman-item-transform-scale",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_FLOAT, x0,
-                                    GIMP_PDB_FLOAT, y0,
-                                    GIMP_PDB_FLOAT, x1,
-                                    GIMP_PDB_FLOAT, y1,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_FLOAT, x0,
+                                    PICMAN_PDB_FLOAT, y0,
+                                    PICMAN_PDB_FLOAT, x1,
+                                    PICMAN_PDB_FLOAT, y1,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_item_ID = return_vals[1].data.d_item;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_item_ID;
 }
 
 /**
- * gimp_item_transform_shear:
+ * picman_item_transform_shear:
  * @item_ID: The affected item.
  * @shear_type: Type of shear.
  * @magnitude: The magnitude of the shear.
@@ -400,41 +400,41 @@ gimp_item_transform_scale (gint32  item_ID,
  * be applied horizontally or vertically. The magnitude can be either
  * positive or negative and indicates the extent (in pixels) to shear
  * by. This procedure is affected by the following context setters:
- * gimp_context_set_interpolation(),
- * gimp_context_set_transform_direction(),
- * gimp_context_set_transform_resize(),
- * gimp_context_set_transform_recursion().
+ * picman_context_set_interpolation(),
+ * picman_context_set_transform_direction(),
+ * picman_context_set_transform_resize(),
+ * picman_context_set_transform_recursion().
  *
  * Returns: The sheared item.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_item_transform_shear (gint32              item_ID,
-                           GimpOrientationType shear_type,
+picman_item_transform_shear (gint32              item_ID,
+                           PicmanOrientationType shear_type,
                            gdouble             magnitude)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_item_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-item-transform-shear",
+  return_vals = picman_run_procedure ("picman-item-transform-shear",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_INT32, shear_type,
-                                    GIMP_PDB_FLOAT, magnitude,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_INT32, shear_type,
+                                    PICMAN_PDB_FLOAT, magnitude,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_item_ID = return_vals[1].data.d_item;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_item_ID;
 }
 
 /**
- * gimp_item_transform_2d:
+ * picman_item_transform_2d:
  * @item_ID: The affected item.
  * @source_x: X coordinate of the transformation center.
  * @source_y: Y coordinate of the transformation center.
@@ -457,17 +457,17 @@ gimp_item_transform_shear (gint32              item_ID,
  * selection or the item is not a drawable, this will be equal to the
  * item ID supplied as input. Otherwise, this will be the newly created
  * and transformed drawable. This procedure is affected by the
- * following context setters: gimp_context_set_interpolation(),
- * gimp_context_set_transform_direction(),
- * gimp_context_set_transform_resize(),
- * gimp_context_set_transform_recursion().
+ * following context setters: picman_context_set_interpolation(),
+ * picman_context_set_transform_direction(),
+ * picman_context_set_transform_resize(),
+ * picman_context_set_transform_recursion().
  *
  * Returns: The transformed item.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_item_transform_2d (gint32  item_ID,
+picman_item_transform_2d (gint32  item_ID,
                         gdouble source_x,
                         gdouble source_y,
                         gdouble scale_x,
@@ -476,32 +476,32 @@ gimp_item_transform_2d (gint32  item_ID,
                         gdouble dest_x,
                         gdouble dest_y)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_item_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-item-transform-2d",
+  return_vals = picman_run_procedure ("picman-item-transform-2d",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_FLOAT, source_x,
-                                    GIMP_PDB_FLOAT, source_y,
-                                    GIMP_PDB_FLOAT, scale_x,
-                                    GIMP_PDB_FLOAT, scale_y,
-                                    GIMP_PDB_FLOAT, angle,
-                                    GIMP_PDB_FLOAT, dest_x,
-                                    GIMP_PDB_FLOAT, dest_y,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_FLOAT, source_x,
+                                    PICMAN_PDB_FLOAT, source_y,
+                                    PICMAN_PDB_FLOAT, scale_x,
+                                    PICMAN_PDB_FLOAT, scale_y,
+                                    PICMAN_PDB_FLOAT, angle,
+                                    PICMAN_PDB_FLOAT, dest_x,
+                                    PICMAN_PDB_FLOAT, dest_y,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_item_ID = return_vals[1].data.d_item;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_item_ID;
 }
 
 /**
- * gimp_item_transform_matrix:
+ * picman_item_transform_matrix:
  * @item_ID: The affected item.
  * @coeff_0_0: coefficient (0,0) of the transformation matrix.
  * @coeff_0_1: coefficient (0,1) of the transformation matrix.
@@ -524,17 +524,17 @@ gimp_item_transform_2d (gint32  item_ID,
  * selection or the item is not a drawable, this will be equal to the
  * item ID supplied as input. Otherwise, this will be the newly created
  * and transformed drawable. This procedure is affected by the
- * following context setters: gimp_context_set_interpolation(),
- * gimp_context_set_transform_direction(),
- * gimp_context_set_transform_resize(),
- * gimp_context_set_transform_recursion().
+ * following context setters: picman_context_set_interpolation(),
+ * picman_context_set_transform_direction(),
+ * picman_context_set_transform_resize(),
+ * picman_context_set_transform_recursion().
  *
  * Returns: The transformed item.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_item_transform_matrix (gint32  item_ID,
+picman_item_transform_matrix (gint32  item_ID,
                             gdouble coeff_0_0,
                             gdouble coeff_0_1,
                             gdouble coeff_0_2,
@@ -545,28 +545,28 @@ gimp_item_transform_matrix (gint32  item_ID,
                             gdouble coeff_2_1,
                             gdouble coeff_2_2)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 ret_item_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-item-transform-matrix",
+  return_vals = picman_run_procedure ("picman-item-transform-matrix",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_FLOAT, coeff_0_0,
-                                    GIMP_PDB_FLOAT, coeff_0_1,
-                                    GIMP_PDB_FLOAT, coeff_0_2,
-                                    GIMP_PDB_FLOAT, coeff_1_0,
-                                    GIMP_PDB_FLOAT, coeff_1_1,
-                                    GIMP_PDB_FLOAT, coeff_1_2,
-                                    GIMP_PDB_FLOAT, coeff_2_0,
-                                    GIMP_PDB_FLOAT, coeff_2_1,
-                                    GIMP_PDB_FLOAT, coeff_2_2,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_FLOAT, coeff_0_0,
+                                    PICMAN_PDB_FLOAT, coeff_0_1,
+                                    PICMAN_PDB_FLOAT, coeff_0_2,
+                                    PICMAN_PDB_FLOAT, coeff_1_0,
+                                    PICMAN_PDB_FLOAT, coeff_1_1,
+                                    PICMAN_PDB_FLOAT, coeff_1_2,
+                                    PICMAN_PDB_FLOAT, coeff_2_0,
+                                    PICMAN_PDB_FLOAT, coeff_2_1,
+                                    PICMAN_PDB_FLOAT, coeff_2_2,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     ret_item_ID = return_vals[1].data.d_item;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return ret_item_ID;
 }

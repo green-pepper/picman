@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattisbvf
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,34 +15,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_RESIZE_H__
-#define __GIMP_IMAGE_RESIZE_H__
+#ifndef __PICMAN_IMAGE_RESIZE_H__
+#define __PICMAN_IMAGE_RESIZE_H__
 
 
-void   gimp_image_resize              (GimpImage    *image,
-                                       GimpContext  *context,
+void   picman_image_resize              (PicmanImage    *image,
+                                       PicmanContext  *context,
                                        gint          new_width,
                                        gint          new_height,
                                        gint          offset_x,
                                        gint          offset_y,
-                                       GimpProgress *progress);
+                                       PicmanProgress *progress);
 
-void   gimp_image_resize_with_layers  (GimpImage    *image,
-                                       GimpContext  *context,
+void   picman_image_resize_with_layers  (PicmanImage    *image,
+                                       PicmanContext  *context,
                                        gint          new_width,
                                        gint          new_height,
                                        gint          offset_x,
                                        gint          offset_y,
-                                       GimpItemSet   layer_set,
+                                       PicmanItemSet   layer_set,
                                        gboolean      resize_text_layers,
-                                       GimpProgress *progress);
+                                       PicmanProgress *progress);
 
-void   gimp_image_resize_to_layers    (GimpImage    *image,
-                                       GimpContext  *context,
-                                       GimpProgress *progress);
-void   gimp_image_resize_to_selection (GimpImage    *image,
-                                       GimpContext  *context,
-                                       GimpProgress *progress);
+void   picman_image_resize_to_layers    (PicmanImage    *image,
+                                       PicmanContext  *context,
+                                       PicmanProgress *progress);
+void   picman_image_resize_to_selection (PicmanImage    *image,
+                                       PicmanContext  *context,
+                                       PicmanProgress *progress);
 
 
-#endif /* __GIMP_IMAGE_RESIZE_H__ */
+#endif /* __PICMAN_IMAGE_RESIZE_H__ */

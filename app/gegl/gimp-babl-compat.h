@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-babl-compat.h
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picman-babl-compat.h
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BABL_COMPAT_H__
-#define __GIMP_BABL_COMPAT_H__
+#ifndef __PICMAN_BABL_COMPAT_H__
+#define __PICMAN_BABL_COMPAT_H__
 
 
-GimpImageType   gimp_babl_format_get_image_type (const Babl *format);
+PicmanImageType   picman_babl_format_get_image_type (const Babl *format);
 
-const Babl    * gimp_babl_compat_u8_format      (const Babl *format);
+const Babl    * picman_babl_compat_u8_format      (const Babl *format);
 
 
-#endif /* __GIMP_BABL_COMPAT_H__ */
+#endif /* __PICMAN_BABL_COMPAT_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,20 +22,20 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimptemplate.h"
+#include "core/picman.h"
+#include "core/picmantemplate.h"
 
-#include "gimppropwidgets.h"
-#include "gimptemplateeditor.h"
+#include "picmanpropwidgets.h"
+#include "picmantemplateeditor.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define SB_WIDTH            8
@@ -49,11 +49,11 @@ enum
 };
 
 
-typedef struct _GimpTemplateEditorPrivate GimpTemplateEditorPrivate;
+typedef struct _PicmanTemplateEditorPrivate PicmanTemplateEditorPrivate;
 
-struct _GimpTemplateEditorPrivate
+struct _PicmanTemplateEditorPrivate
 {
-  GimpTemplate  *template;
+  PicmanTemplate  *template;
 
   GtkWidget     *aspect_button;
   gboolean       block_aspect;
@@ -68,54 +68,54 @@ struct _GimpTemplateEditorPrivate
 
 #define GET_PRIVATE(editor) \
         G_TYPE_INSTANCE_GET_PRIVATE (editor, \
-                                     GIMP_TYPE_TEMPLATE_EDITOR, \
-                                     GimpTemplateEditorPrivate)
+                                     PICMAN_TYPE_TEMPLATE_EDITOR, \
+                                     PicmanTemplateEditorPrivate)
 
 
-static void    gimp_template_editor_constructed  (GObject            *object);
-static void    gimp_template_editor_finalize     (GObject            *object);
-static void    gimp_template_editor_set_property (GObject            *object,
+static void    picman_template_editor_constructed  (GObject            *object);
+static void    picman_template_editor_finalize     (GObject            *object);
+static void    picman_template_editor_set_property (GObject            *object,
                                                   guint               property_id,
                                                   const GValue       *value,
                                                   GParamSpec         *pspec);
-static void    gimp_template_editor_get_property (GObject            *object,
+static void    picman_template_editor_get_property (GObject            *object,
                                                   guint               property_id,
                                                   GValue             *value,
                                                   GParamSpec         *pspec);
 
-static void gimp_template_editor_aspect_callback (GtkWidget          *widget,
-                                                  GimpTemplateEditor *editor);
-static void gimp_template_editor_template_notify (GimpTemplate       *template,
+static void picman_template_editor_aspect_callback (GtkWidget          *widget,
+                                                  PicmanTemplateEditor *editor);
+static void picman_template_editor_template_notify (PicmanTemplate       *template,
                                                   GParamSpec         *param_spec,
-                                                  GimpTemplateEditor *editor);
+                                                  PicmanTemplateEditor *editor);
 
 
-G_DEFINE_TYPE (GimpTemplateEditor, gimp_template_editor, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanTemplateEditor, picman_template_editor, GTK_TYPE_BOX)
 
-#define parent_class gimp_template_editor_parent_class
+#define parent_class picman_template_editor_parent_class
 
 
 static void
-gimp_template_editor_class_init (GimpTemplateEditorClass *klass)
+picman_template_editor_class_init (PicmanTemplateEditorClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_template_editor_constructed;
-  object_class->finalize     = gimp_template_editor_finalize;
-  object_class->set_property = gimp_template_editor_set_property;
-  object_class->get_property = gimp_template_editor_get_property;
+  object_class->constructed  = picman_template_editor_constructed;
+  object_class->finalize     = picman_template_editor_finalize;
+  object_class->set_property = picman_template_editor_set_property;
+  object_class->get_property = picman_template_editor_get_property;
 
   g_object_class_install_property (object_class, PROP_TEMPLATE,
                                    g_param_spec_object ("template", NULL, NULL,
-                                                        GIMP_TYPE_TEMPLATE,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_TEMPLATE,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
-  g_type_class_add_private (object_class, sizeof (GimpTemplateEditorPrivate));
+  g_type_class_add_private (object_class, sizeof (PicmanTemplateEditorPrivate));
 }
 
 static void
-gimp_template_editor_init (GimpTemplateEditor *editor)
+picman_template_editor_init (PicmanTemplateEditor *editor)
 {
   gtk_orientable_set_orientation (GTK_ORIENTABLE (editor),
                                   GTK_ORIENTATION_VERTICAL);
@@ -124,11 +124,11 @@ gimp_template_editor_init (GimpTemplateEditor *editor)
 }
 
 static void
-gimp_template_editor_constructed (GObject *object)
+picman_template_editor_constructed (GObject *object)
 {
-  GimpTemplateEditor        *editor  = GIMP_TEMPLATE_EDITOR (object);
-  GimpTemplateEditorPrivate *private = GET_PRIVATE (object);
-  GimpTemplate              *template;
+  PicmanTemplateEditor        *editor  = PICMAN_TEMPLATE_EDITOR (object);
+  PicmanTemplateEditorPrivate *private = GET_PRIVATE (object);
+  PicmanTemplate              *template;
   GtkWidget                 *aspect_box;
   GtkWidget                 *frame;
   GtkWidget                 *hbox;
@@ -155,7 +155,7 @@ gimp_template_editor_constructed (GObject *object)
   template = private->template;
 
   /*  Image size frame  */
-  frame = gimp_frame_new (_("Image Size"));
+  frame = picman_frame_new (_("Image Size"));
   gtk_box_pack_start (GTK_BOX (editor), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -166,12 +166,12 @@ gimp_template_editor_constructed (GObject *object)
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  width = gimp_spin_button_new (&adjustment,
+  width = picman_spin_button_new (&adjustment,
                                 1, 1, 1, 1, 10, 0,
                                 1, 2);
   gtk_entry_set_width_chars (GTK_ENTRY (width), SB_WIDTH);
 
-  height = gimp_spin_button_new (&adjustment,
+  height = picman_spin_button_new (&adjustment,
                                  1, 1, 1, 1, 10, 0,
                                  1, 2);
   gtk_entry_set_width_chars (GTK_ENTRY (height), SB_WIDTH);
@@ -196,11 +196,11 @@ gimp_template_editor_constructed (GObject *object)
   gtk_table_attach_defaults (GTK_TABLE (table), hbox, 1, 2, 0, 2);
   gtk_widget_show (hbox);
 
-  private->size_se = gimp_size_entry_new (0,
-                                          gimp_template_get_unit (template),
+  private->size_se = picman_size_entry_new (0,
+                                          picman_template_get_unit (template),
                                           _("%p"),
                                           TRUE, FALSE, FALSE, SB_WIDTH,
-                                          GIMP_SIZE_ENTRY_UPDATE_SIZE);
+                                          PICMAN_SIZE_ENTRY_UPDATE_SIZE);
 
   gtk_table_set_row_spacing (GTK_TABLE (private->size_se), 0, 2);
   gtk_table_set_col_spacing (GTK_TABLE (private->size_se), 1, 6);
@@ -208,21 +208,21 @@ gimp_template_editor_constructed (GObject *object)
   gtk_box_pack_start (GTK_BOX (hbox), private->size_se, FALSE, FALSE, 0);
   gtk_widget_show (private->size_se);
 
-  gimp_size_entry_add_field (GIMP_SIZE_ENTRY (private->size_se),
+  picman_size_entry_add_field (PICMAN_SIZE_ENTRY (private->size_se),
                              GTK_SPIN_BUTTON (height), NULL);
   gtk_table_attach_defaults (GTK_TABLE (private->size_se), height, 0, 1, 1, 2);
   gtk_widget_show (height);
 
-  gimp_size_entry_add_field (GIMP_SIZE_ENTRY (private->size_se),
+  picman_size_entry_add_field (PICMAN_SIZE_ENTRY (private->size_se),
                              GTK_SPIN_BUTTON (width), NULL);
   gtk_table_attach_defaults (GTK_TABLE (private->size_se), width, 0, 1, 0, 1);
   gtk_widget_show (width);
 
-  gimp_prop_coordinates_connect (G_OBJECT (template),
+  picman_prop_coordinates_connect (G_OBJECT (template),
                                  "width", "height", "unit",
                                  private->size_se, NULL,
-                                 gimp_template_get_resolution_x (template),
-                                 gimp_template_get_resolution_y (template));
+                                 picman_template_get_resolution_x (template),
+                                 picman_template_get_resolution_y (template));
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_table_attach_defaults (GTK_TABLE (table), hbox, 1, 3, 2, 3);
@@ -232,9 +232,9 @@ gimp_template_editor_constructed (GObject *object)
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
   gtk_widget_show (vbox);
 
-  aspect_box = gimp_enum_stock_box_new (GIMP_TYPE_ASPECT_TYPE,
-                                        "gimp", GTK_ICON_SIZE_MENU,
-                                        G_CALLBACK (gimp_template_editor_aspect_callback),
+  aspect_box = picman_enum_stock_box_new (PICMAN_TYPE_ASPECT_TYPE,
+                                        "picman", GTK_ICON_SIZE_MENU,
+                                        G_CALLBACK (picman_template_editor_aspect_callback),
                                         editor,
                                         &private->aspect_button);
   gtk_widget_hide (private->aspect_button); /* hide "square" */
@@ -247,7 +247,7 @@ gimp_template_editor_constructed (GObject *object)
   gtk_widget_show (vbox);
 
   private->pixel_label = gtk_label_new (NULL);
-  gimp_label_set_attributes (GTK_LABEL (private->pixel_label),
+  picman_label_set_attributes (GTK_LABEL (private->pixel_label),
                              PANGO_ATTR_SCALE,  PANGO_SCALE_SMALL,
                              -1);
   gtk_misc_set_alignment (GTK_MISC (private->pixel_label), 0.0, 0.0);
@@ -255,7 +255,7 @@ gimp_template_editor_constructed (GObject *object)
   gtk_widget_show (private->pixel_label);
 
   private->more_label = gtk_label_new (NULL);
-  gimp_label_set_attributes (GTK_LABEL (private->more_label),
+  picman_label_set_attributes (GTK_LABEL (private->more_label),
                              PANGO_ATTR_SCALE,  PANGO_SCALE_SMALL,
                              -1);
   gtk_misc_set_alignment (GTK_MISC (private->more_label), 0.0, 0.0);
@@ -264,7 +264,7 @@ gimp_template_editor_constructed (GObject *object)
 
 #ifdef ENABLE_MEMSIZE_LABEL
   private->memsize_label = gtk_label_new (NULL);
-  gimp_label_set_attributes (GTK_LABEL (private->memsize_label),
+  picman_label_set_attributes (GTK_LABEL (private->memsize_label),
                              PANGO_ATTR_SCALE,  PANGO_SCALE_SMALL,
                              PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                              -1);
@@ -284,7 +284,7 @@ gimp_template_editor_constructed (GObject *object)
   gtk_box_pack_start (GTK_BOX (editor), private->expander, TRUE, TRUE, 0);
   gtk_widget_show (private->expander);
 
-  frame = gimp_frame_new ("<expander>");
+  frame = picman_frame_new ("<expander>");
   gtk_container_add (GTK_CONTAINER (private->expander), frame);
   gtk_widget_show (frame);
 
@@ -295,12 +295,12 @@ gimp_template_editor_constructed (GObject *object)
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  xres = gimp_spin_button_new (&adjustment,
+  xres = picman_spin_button_new (&adjustment,
                                1, 1, 1, 1, 10, 0,
                                1, 2);
   gtk_entry_set_width_chars (GTK_ENTRY (xres), SB_WIDTH);
 
-  yres = gimp_spin_button_new (&adjustment,
+  yres = picman_spin_button_new (&adjustment,
                                1, 1, 1, 1, 10, 0,
                                1, 2);
   gtk_entry_set_width_chars (GTK_ENTRY (yres), SB_WIDTH);
@@ -326,11 +326,11 @@ gimp_template_editor_constructed (GObject *object)
   gtk_widget_show (hbox);
 
   private->resolution_se =
-    gimp_size_entry_new (0,
-                         gimp_template_get_resolution_unit (template),
+    picman_size_entry_new (0,
+                         picman_template_get_resolution_unit (template),
                          _("pixels/%s"),
                          FALSE, FALSE, FALSE, SB_WIDTH,
-                         GIMP_SIZE_ENTRY_UPDATE_RESOLUTION);
+                         PICMAN_SIZE_ENTRY_UPDATE_RESOLUTION);
 
   gtk_table_set_row_spacing (GTK_TABLE (private->resolution_se), 0, 2);
   gtk_table_set_col_spacing (GTK_TABLE (private->resolution_se), 1, 2);
@@ -339,39 +339,39 @@ gimp_template_editor_constructed (GObject *object)
   gtk_box_pack_start (GTK_BOX (hbox), private->resolution_se, FALSE, FALSE, 0);
   gtk_widget_show (private->resolution_se);
 
-  gimp_size_entry_add_field (GIMP_SIZE_ENTRY (private->resolution_se),
+  picman_size_entry_add_field (PICMAN_SIZE_ENTRY (private->resolution_se),
                              GTK_SPIN_BUTTON (yres), NULL);
   gtk_table_attach_defaults (GTK_TABLE (private->resolution_se), yres,
                              0, 1, 1, 2);
   gtk_widget_show (yres);
 
-  gimp_size_entry_add_field (GIMP_SIZE_ENTRY (private->resolution_se),
+  picman_size_entry_add_field (PICMAN_SIZE_ENTRY (private->resolution_se),
                              GTK_SPIN_BUTTON (xres), NULL);
   gtk_table_attach_defaults (GTK_TABLE (private->resolution_se), xres,
                              0, 1, 0, 1);
   gtk_widget_show (xres);
 
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (private->size_se), 0,
-                                  gimp_template_get_resolution_x (template),
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (private->size_se), 0,
+                                  picman_template_get_resolution_x (template),
                                   FALSE);
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (private->size_se), 1,
-                                  gimp_template_get_resolution_y (template),
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (private->size_se), 1,
+                                  picman_template_get_resolution_y (template),
                                   FALSE);
 
   /*  the resolution chainbutton  */
-  chainbutton = gimp_chain_button_new (GIMP_CHAIN_RIGHT);
+  chainbutton = picman_chain_button_new (PICMAN_CHAIN_RIGHT);
   gtk_table_attach_defaults (GTK_TABLE (private->resolution_se), chainbutton,
                              1, 2, 0, 2);
   gtk_widget_show (chainbutton);
 
-  gimp_prop_coordinates_connect (G_OBJECT (template),
+  picman_prop_coordinates_connect (G_OBJECT (template),
                                  "xresolution", "yresolution",
                                  "resolution-unit",
                                  private->resolution_se, chainbutton,
                                  1.0, 1.0);
 
   focus_chain = g_list_prepend (focus_chain,
-                                GIMP_SIZE_ENTRY (private->resolution_se)->unitmenu);
+                                PICMAN_SIZE_ENTRY (private->resolution_se)->unitmenu);
   focus_chain = g_list_prepend (focus_chain, chainbutton);
   focus_chain = g_list_prepend (focus_chain, yres);
   focus_chain = g_list_prepend (focus_chain, xres);
@@ -380,24 +380,24 @@ gimp_template_editor_constructed (GObject *object)
                                  focus_chain);
   g_list_free (focus_chain);
 
-  combo = gimp_prop_enum_combo_box_new (G_OBJECT (template),
+  combo = picman_prop_enum_combo_box_new (G_OBJECT (template),
                                         "image-type",
-                                        GIMP_RGB, GIMP_GRAY);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 2,
+                                        PICMAN_RGB, PICMAN_GRAY);
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 2,
                              _("Color _space:"), 0.0, 0.5,
                              combo, 1, FALSE);
 
-  combo = gimp_prop_enum_combo_box_new (G_OBJECT (template),
+  combo = picman_prop_enum_combo_box_new (G_OBJECT (template),
                                         "precision", 0, 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 3,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 3,
                              _("_Precision:"), 0.0, 0.5,
                              combo, 1, FALSE);
 
-  combo = gimp_prop_enum_combo_box_new (G_OBJECT (template),
+  combo = picman_prop_enum_combo_box_new (G_OBJECT (template),
                                         "fill-type",
-                                        GIMP_FOREGROUND_FILL,
-                                        GIMP_PATTERN_FILL);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 4,
+                                        PICMAN_FOREGROUND_FILL,
+                                        PICMAN_PATTERN_FILL);
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 4,
                              _("_Fill with:"), 0.0, 0.5,
                              combo, 1, FALSE);
 
@@ -407,11 +407,11 @@ gimp_template_editor_constructed (GObject *object)
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                   GTK_POLICY_AUTOMATIC,
                                   GTK_POLICY_AUTOMATIC);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 5,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 5,
                              _("Comme_nt:"), 0.0, 0.0,
                              scrolled_window, 1, FALSE);
 
-  text_buffer = gimp_prop_text_buffer_new (G_OBJECT (template),
+  text_buffer = picman_prop_text_buffer_new (G_OBJECT (template),
                                            "comment", MAX_COMMENT_LENGTH);
 
   text_view = gtk_text_view_new_with_buffer (text_buffer);
@@ -422,17 +422,17 @@ gimp_template_editor_constructed (GObject *object)
   gtk_widget_show (text_view);
 
   g_signal_connect_object (template, "notify",
-                           G_CALLBACK (gimp_template_editor_template_notify),
+                           G_CALLBACK (picman_template_editor_template_notify),
                            editor, 0);
 
   /*  call the notify callback once to get the labels set initially  */
-  gimp_template_editor_template_notify (template, NULL, editor);
+  picman_template_editor_template_notify (template, NULL, editor);
 }
 
 static void
-gimp_template_editor_finalize (GObject *object)
+picman_template_editor_finalize (GObject *object)
 {
-  GimpTemplateEditorPrivate *private = GET_PRIVATE (object);
+  PicmanTemplateEditorPrivate *private = GET_PRIVATE (object);
 
   if (private->template)
     {
@@ -444,12 +444,12 @@ gimp_template_editor_finalize (GObject *object)
 }
 
 static void
-gimp_template_editor_set_property (GObject      *object,
+picman_template_editor_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpTemplateEditorPrivate *private = GET_PRIVATE (object);
+  PicmanTemplateEditorPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -464,12 +464,12 @@ gimp_template_editor_set_property (GObject      *object,
 }
 
 static void
-gimp_template_editor_get_property (GObject      *object,
+picman_template_editor_get_property (GObject      *object,
                                    guint         property_id,
                                    GValue       *value,
                                    GParamSpec   *pspec)
 {
-  GimpTemplateEditorPrivate *private = GET_PRIVATE (object);
+  PicmanTemplateEditorPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -484,16 +484,16 @@ gimp_template_editor_get_property (GObject      *object,
 }
 
 GtkWidget *
-gimp_template_editor_new (GimpTemplate *template,
-                          Gimp         *gimp,
+picman_template_editor_new (PicmanTemplate *template,
+                          Picman         *picman,
                           gboolean      edit_template)
 {
-  GimpTemplateEditor        *editor;
-  GimpTemplateEditorPrivate *private;
+  PicmanTemplateEditor        *editor;
+  PicmanTemplateEditorPrivate *private;
 
-  g_return_val_if_fail (!edit_template || GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (!edit_template || PICMAN_IS_PICMAN (picman), NULL);
 
-  editor = g_object_new (GIMP_TYPE_TEMPLATE_EDITOR,
+  editor = g_object_new (PICMAN_TYPE_TEMPLATE_EDITOR,
                          "template", template,
                          NULL);
 
@@ -512,15 +512,15 @@ gimp_template_editor_new (GimpTemplate *template,
       gtk_box_reorder_child (GTK_BOX (editor), table, 0);
       gtk_widget_show (table);
 
-      entry = gimp_prop_entry_new (G_OBJECT (private->template), "name", 128);
+      entry = picman_prop_entry_new (G_OBJECT (private->template), "name", 128);
 
-      gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+      picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                                  _("_Name:"), 1.0, 0.5,
                                  entry, 1, FALSE);
 
-      icon_picker = gimp_prop_icon_picker_new (GIMP_VIEWABLE (private->template),
-                                               gimp);
-      gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+      icon_picker = picman_prop_icon_picker_new (PICMAN_VIEWABLE (private->template),
+                                               picman);
+      picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                                  _("_Icon:"), 1.0, 0.5,
                                  icon_picker, 1, TRUE);
     }
@@ -528,21 +528,21 @@ gimp_template_editor_new (GimpTemplate *template,
   return GTK_WIDGET (editor);
 }
 
-GimpTemplate *
-gimp_template_editor_get_template (GimpTemplateEditor *editor)
+PicmanTemplate *
+picman_template_editor_get_template (PicmanTemplateEditor *editor)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE_EDITOR (editor), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE_EDITOR (editor), NULL);
 
   return GET_PRIVATE (editor)->template;
 }
 
 void
-gimp_template_editor_show_advanced (GimpTemplateEditor *editor,
+picman_template_editor_show_advanced (PicmanTemplateEditor *editor,
                                     gboolean            expanded)
 {
-  GimpTemplateEditorPrivate *private;
+  PicmanTemplateEditorPrivate *private;
 
-  g_return_if_fail (GIMP_IS_TEMPLATE_EDITOR (editor));
+  g_return_if_fail (PICMAN_IS_TEMPLATE_EDITOR (editor));
 
   private = GET_PRIVATE (editor);
 
@@ -550,9 +550,9 @@ gimp_template_editor_show_advanced (GimpTemplateEditor *editor,
 }
 
 GtkWidget *
-gimp_template_editor_get_size_se (GimpTemplateEditor *editor)
+picman_template_editor_get_size_se (PicmanTemplateEditor *editor)
 {
-  g_return_val_if_fail (GIMP_IS_TEMPLATE_EDITOR (editor), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE_EDITOR (editor), NULL);
 
   return GET_PRIVATE (editor)->size_se;
 }
@@ -561,52 +561,52 @@ gimp_template_editor_get_size_se (GimpTemplateEditor *editor)
 /*  private functions  */
 
 static void
-gimp_template_editor_set_pixels (GimpTemplateEditor *editor,
-                                 GimpTemplate       *template)
+picman_template_editor_set_pixels (PicmanTemplateEditor *editor,
+                                 PicmanTemplate       *template)
 {
-  GimpTemplateEditorPrivate *private = GET_PRIVATE (editor);
+  PicmanTemplateEditorPrivate *private = GET_PRIVATE (editor);
   gchar                     *text;
 
   text = g_strdup_printf (ngettext ("%d × %d pixel",
                                     "%d × %d pixels",
-                                    gimp_template_get_height (template)),
-                          gimp_template_get_width (template),
-                          gimp_template_get_height (template));
+                                    picman_template_get_height (template)),
+                          picman_template_get_width (template),
+                          picman_template_get_height (template));
   gtk_label_set_text (GTK_LABEL (private->pixel_label), text);
   g_free (text);
 }
 
 static void
-gimp_template_editor_aspect_callback (GtkWidget          *widget,
-                                      GimpTemplateEditor *editor)
+picman_template_editor_aspect_callback (GtkWidget          *widget,
+                                      PicmanTemplateEditor *editor)
 {
-  GimpTemplateEditorPrivate *private = GET_PRIVATE (editor);
+  PicmanTemplateEditorPrivate *private = GET_PRIVATE (editor);
 
   if (! private->block_aspect &&
       gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
     {
-      GimpTemplate *template    = private->template;
-      gint          width       = gimp_template_get_width (template);
-      gint          height      = gimp_template_get_height (template);
-      gdouble       xresolution = gimp_template_get_resolution_x (template);
-      gdouble       yresolution = gimp_template_get_resolution_y (template);
+      PicmanTemplate *template    = private->template;
+      gint          width       = picman_template_get_width (template);
+      gint          height      = picman_template_get_height (template);
+      gdouble       xresolution = picman_template_get_resolution_x (template);
+      gdouble       yresolution = picman_template_get_resolution_y (template);
 
       if (width == height)
         {
           private->block_aspect = TRUE;
-          gimp_int_radio_group_set_active (GTK_RADIO_BUTTON (private->aspect_button),
-                                           GIMP_ASPECT_SQUARE);
+          picman_int_radio_group_set_active (GTK_RADIO_BUTTON (private->aspect_button),
+                                           PICMAN_ASPECT_SQUARE);
           private->block_aspect = FALSE;
           return;
        }
 
       g_signal_handlers_block_by_func (template,
-                                       gimp_template_editor_template_notify,
+                                       picman_template_editor_template_notify,
                                        editor);
 
-      gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (private->size_se), 0,
+      picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (private->size_se), 0,
                                       yresolution, FALSE);
-      gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (private->size_se), 1,
+      picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (private->size_se), 1,
                                       xresolution, FALSE);
 
       g_object_set (template,
@@ -617,20 +617,20 @@ gimp_template_editor_aspect_callback (GtkWidget          *widget,
                     NULL);
 
       g_signal_handlers_unblock_by_func (template,
-                                         gimp_template_editor_template_notify,
+                                         picman_template_editor_template_notify,
                                          editor);
 
-      gimp_template_editor_set_pixels (editor, template);
+      picman_template_editor_set_pixels (editor, template);
     }
 }
 
 static void
-gimp_template_editor_template_notify (GimpTemplate       *template,
+picman_template_editor_template_notify (PicmanTemplate       *template,
                                       GParamSpec         *param_spec,
-                                      GimpTemplateEditor *editor)
+                                      PicmanTemplateEditor *editor)
 {
-  GimpTemplateEditorPrivate *private = GET_PRIVATE (editor);
-  GimpAspectType             aspect;
+  PicmanTemplateEditorPrivate *private = GET_PRIVATE (editor);
+  PicmanAspectType             aspect;
   const gchar               *desc;
   gchar                     *text;
   gint                       width;
@@ -642,47 +642,47 @@ gimp_template_editor_template_notify (GimpTemplate       *template,
     {
       if (! strcmp (param_spec->name, "xresolution"))
         {
-          gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (private->size_se), 0,
-                                          gimp_template_get_resolution_x (template),
+          picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (private->size_se), 0,
+                                          picman_template_get_resolution_x (template),
                                           FALSE);
         }
       else if (! strcmp (param_spec->name, "yresolution"))
         {
-          gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (private->size_se), 1,
-                                          gimp_template_get_resolution_y (template),
+          picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (private->size_se), 1,
+                                          picman_template_get_resolution_y (template),
                                           FALSE);
         }
     }
 
 #ifdef ENABLE_MEMSIZE_LABEL
-  text = g_format_size (gimp_template_get_initial_size (template));
+  text = g_format_size (picman_template_get_initial_size (template));
   gtk_label_set_text (GTK_LABEL (private->memsize_label), text);
   g_free (text);
 #endif
 
-  gimp_template_editor_set_pixels (editor, template);
+  picman_template_editor_set_pixels (editor, template);
 
-  width  = gimp_template_get_width (template);
-  height = gimp_template_get_height (template);
+  width  = picman_template_get_width (template);
+  height = picman_template_get_height (template);
 
   if (width > height)
-    aspect = GIMP_ASPECT_LANDSCAPE;
+    aspect = PICMAN_ASPECT_LANDSCAPE;
   else if (height > width)
-    aspect = GIMP_ASPECT_PORTRAIT;
+    aspect = PICMAN_ASPECT_PORTRAIT;
   else
-    aspect = GIMP_ASPECT_SQUARE;
+    aspect = PICMAN_ASPECT_SQUARE;
 
   private->block_aspect = TRUE;
-  gimp_int_radio_group_set_active (GTK_RADIO_BUTTON (private->aspect_button),
+  picman_int_radio_group_set_active (GTK_RADIO_BUTTON (private->aspect_button),
                                    aspect);
   private->block_aspect = FALSE;
 
-  gimp_enum_get_value (GIMP_TYPE_IMAGE_BASE_TYPE,
-                       gimp_template_get_base_type (template),
+  picman_enum_get_value (PICMAN_TYPE_IMAGE_BASE_TYPE,
+                       picman_template_get_base_type (template),
                        NULL, NULL, &desc, NULL);
 
-  xres = ROUND (gimp_template_get_resolution_x (template));
-  yres = ROUND (gimp_template_get_resolution_y (template));
+  xres = ROUND (picman_template_get_resolution_x (template));
+  yres = ROUND (picman_template_get_resolution_y (template));
 
   if (xres != yres)
     text = g_strdup_printf (_("%d × %d ppi, %s"), xres, yres, desc);

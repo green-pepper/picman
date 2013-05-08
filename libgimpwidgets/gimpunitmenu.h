@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpunitmenu.h
- * Copyright (C) 1999 Michael Natterer <mitch@gimp.org>
+ * picmanunitmenu.h
+ * Copyright (C) 1999 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,14 +19,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GIMP_DISABLE_DEPRECATED
+#ifndef PICMAN_DISABLE_DEPRECATED
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_UNIT_MENU_H__
-#define __GIMP_UNIT_MENU_H__
+#ifndef __PICMAN_UNIT_MENU_H__
+#define __PICMAN_UNIT_MENU_H__
 
 #ifdef GTK_DISABLE_DEPRECATED
 #undef GTK_DISABLE_DEPRECATED
@@ -39,23 +39,23 @@ G_BEGIN_DECLS
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_UNIT_MENU            (gimp_unit_menu_get_type ())
-#define GIMP_UNIT_MENU(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_UNIT_MENU, GimpUnitMenu))
-#define GIMP_UNIT_MENU_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_UNIT_MENU, GimpUnitMenuClass))
-#define GIMP_IS_UNIT_MENU(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, GIMP_TYPE_UNIT_MENU))
-#define GIMP_IS_UNIT_MENU_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_UNIT_MENU))
-#define GIMP_UNIT_MENU_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_UNIT_MENU, GimpUnitMenuClass))
+#define PICMAN_TYPE_UNIT_MENU            (picman_unit_menu_get_type ())
+#define PICMAN_UNIT_MENU(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_UNIT_MENU, PicmanUnitMenu))
+#define PICMAN_UNIT_MENU_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_UNIT_MENU, PicmanUnitMenuClass))
+#define PICMAN_IS_UNIT_MENU(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, PICMAN_TYPE_UNIT_MENU))
+#define PICMAN_IS_UNIT_MENU_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_UNIT_MENU))
+#define PICMAN_UNIT_MENU_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_UNIT_MENU, PicmanUnitMenuClass))
 
 
-typedef struct _GimpUnitMenuClass  GimpUnitMenuClass;
+typedef struct _PicmanUnitMenuClass  PicmanUnitMenuClass;
 
-struct _GimpUnitMenu
+struct _PicmanUnitMenu
 {
   GtkOptionMenu  parent_instance;
 
   /* public (read only) */
   gchar         *format;
-  GimpUnit       unit;
+  PicmanUnit       unit;
   gint           pixel_digits;
 
   gboolean       show_pixels;
@@ -66,40 +66,40 @@ struct _GimpUnitMenu
   GtkWidget     *tv;
 };
 
-struct _GimpUnitMenuClass
+struct _PicmanUnitMenuClass
 {
   GtkOptionMenuClass  parent_class;
 
-  void (* unit_changed) (GimpUnitMenu *menu);
+  void (* unit_changed) (PicmanUnitMenu *menu);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType       gimp_unit_menu_get_type         (void) G_GNUC_CONST;
+GType       picman_unit_menu_get_type         (void) G_GNUC_CONST;
 
-GtkWidget * gimp_unit_menu_new              (const gchar  *format,
-                                             GimpUnit      unit,
+GtkWidget * picman_unit_menu_new              (const gchar  *format,
+                                             PicmanUnit      unit,
                                              gboolean      show_pixels,
                                              gboolean      show_percent,
                                              gboolean      show_custom);
 
-void        gimp_unit_menu_set_unit         (GimpUnitMenu *menu,
-                                             GimpUnit      unit);
+void        picman_unit_menu_set_unit         (PicmanUnitMenu *menu,
+                                             PicmanUnit      unit);
 
-GimpUnit    gimp_unit_menu_get_unit         (GimpUnitMenu *menu);
+PicmanUnit    picman_unit_menu_get_unit         (PicmanUnitMenu *menu);
 
-void        gimp_unit_menu_set_pixel_digits (GimpUnitMenu *menu,
+void        picman_unit_menu_set_pixel_digits (PicmanUnitMenu *menu,
                                              gint          digits);
-gint        gimp_unit_menu_get_pixel_digits (GimpUnitMenu *menu);
+gint        picman_unit_menu_get_pixel_digits (PicmanUnitMenu *menu);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_UNIT_MENU_H__ */
+#endif /* __PICMAN_UNIT_MENU_H__ */
 
-#endif /* GIMP_DISABLE_DEPRECATED */
+#endif /* PICMAN_DISABLE_DEPRECATED */

@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-contexts.h
+ * picman-contexts.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,20 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTEXTS_H__
-#define __GIMP_CONTEXTS_H__
+#ifndef __PICMAN_CONTEXTS_H__
+#define __PICMAN_CONTEXTS_H__
 
 
-void       gimp_contexts_init  (Gimp    *gimp);
-void       gimp_contexts_exit  (Gimp    *gimp);
+void       picman_contexts_init  (Picman    *picman);
+void       picman_contexts_exit  (Picman    *picman);
 
-gboolean   gimp_contexts_load  (Gimp    *gimp,
+gboolean   picman_contexts_load  (Picman    *picman,
                                 GError **error);
-gboolean   gimp_contexts_save  (Gimp    *gimp,
-                                GError **error);
-
-gboolean   gimp_contexts_clear (Gimp    *gimp,
+gboolean   picman_contexts_save  (Picman    *picman,
                                 GError **error);
 
+gboolean   picman_contexts_clear (Picman    *picman,
+                                GError **error);
 
-#endif  /*  __GIMP_CONTEXTS_H__  */
+
+#endif  /*  __PICMAN_CONTEXTS_H__  */

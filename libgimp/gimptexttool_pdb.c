@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimptexttool_pdb.c
+ * picmantexttool_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimptexttool
- * @title: gimptexttool
+ * SECTION: picmantexttool
+ * @title: picmantexttool
  * @short_description: Functions for controlling the text tool.
  *
  * Functions for controlling the text tool.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_text_fontname:
+ * picman_text_fontname:
  * @image_ID: The image.
  * @drawable_ID: The affected drawable: (-1 for a new text layer).
  * @x: The x coordinate for the left of the text bounding box.
@@ -67,7 +67,7 @@
  * Returns: The new text layer or -1 if no layer was created.
  **/
 gint32
-gimp_text_fontname (gint32        image_ID,
+picman_text_fontname (gint32        image_ID,
                     gint32        drawable_ID,
                     gdouble       x,
                     gdouble       y,
@@ -75,37 +75,37 @@ gimp_text_fontname (gint32        image_ID,
                     gint          border,
                     gboolean      antialias,
                     gdouble       size,
-                    GimpSizeType  size_type,
+                    PicmanSizeType  size_type,
                     const gchar  *fontname)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 text_layer_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-text-fontname",
+  return_vals = picman_run_procedure ("picman-text-fontname",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, x,
-                                    GIMP_PDB_FLOAT, y,
-                                    GIMP_PDB_STRING, text,
-                                    GIMP_PDB_INT32, border,
-                                    GIMP_PDB_INT32, antialias,
-                                    GIMP_PDB_FLOAT, size,
-                                    GIMP_PDB_INT32, size_type,
-                                    GIMP_PDB_STRING, fontname,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_FLOAT, x,
+                                    PICMAN_PDB_FLOAT, y,
+                                    PICMAN_PDB_STRING, text,
+                                    PICMAN_PDB_INT32, border,
+                                    PICMAN_PDB_INT32, antialias,
+                                    PICMAN_PDB_FLOAT, size,
+                                    PICMAN_PDB_INT32, size_type,
+                                    PICMAN_PDB_STRING, fontname,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     text_layer_ID = return_vals[1].data.d_layer;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return text_layer_ID;
 }
 
 /**
- * gimp_text_get_extents_fontname:
+ * picman_text_get_extents_fontname:
  * @text: The text to generate (in UTF-8 encoding).
  * @size: The size of text in either pixels or points.
  * @size_type: The units of specified size.
@@ -128,33 +128,33 @@ gimp_text_fontname (gint32        image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_text_get_extents_fontname (const gchar  *text,
+picman_text_get_extents_fontname (const gchar  *text,
                                 gdouble       size,
-                                GimpSizeType  size_type,
+                                PicmanSizeType  size_type,
                                 const gchar  *fontname,
                                 gint         *width,
                                 gint         *height,
                                 gint         *ascent,
                                 gint         *descent)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-get-extents-fontname",
+  return_vals = picman_run_procedure ("picman-text-get-extents-fontname",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, text,
-                                    GIMP_PDB_FLOAT, size,
-                                    GIMP_PDB_INT32, size_type,
-                                    GIMP_PDB_STRING, fontname,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, text,
+                                    PICMAN_PDB_FLOAT, size,
+                                    PICMAN_PDB_INT32, size_type,
+                                    PICMAN_PDB_STRING, fontname,
+                                    PICMAN_PDB_END);
 
   *width = 0;
   *height = 0;
   *ascent = 0;
   *descent = 0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -164,13 +164,13 @@ gimp_text_get_extents_fontname (const gchar  *text,
       *descent = return_vals[4].data.d_int32;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text:
+ * picman_text:
  * @image_ID: The image.
  * @drawable_ID: The affected drawable: (-1 for a new text layer).
  * @x: The x coordinate for the left of the text bounding box.
@@ -189,12 +189,12 @@ gimp_text_get_extents_fontname (const gchar  *text,
  * @registry: The font registry.
  * @encoding: The font encoding.
  *
- * Deprecated: Use gimp_text_fontname() instead.
+ * Deprecated: Use picman_text_fontname() instead.
  *
  * Returns: The new text layer or -1 if no layer was created.
  **/
 gint32
-gimp_text (gint32        image_ID,
+picman_text (gint32        image_ID,
            gint32        drawable_ID,
            gdouble       x,
            gdouble       y,
@@ -202,7 +202,7 @@ gimp_text (gint32        image_ID,
            gint          border,
            gboolean      antialias,
            gdouble       size,
-           GimpSizeType  size_type,
+           PicmanSizeType  size_type,
            const gchar  *foundry,
            const gchar  *family,
            const gchar  *weight,
@@ -212,41 +212,41 @@ gimp_text (gint32        image_ID,
            const gchar  *registry,
            const gchar  *encoding)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 text_layer_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-text",
+  return_vals = picman_run_procedure ("picman-text",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, x,
-                                    GIMP_PDB_FLOAT, y,
-                                    GIMP_PDB_STRING, text,
-                                    GIMP_PDB_INT32, border,
-                                    GIMP_PDB_INT32, antialias,
-                                    GIMP_PDB_FLOAT, size,
-                                    GIMP_PDB_INT32, size_type,
-                                    GIMP_PDB_STRING, foundry,
-                                    GIMP_PDB_STRING, family,
-                                    GIMP_PDB_STRING, weight,
-                                    GIMP_PDB_STRING, slant,
-                                    GIMP_PDB_STRING, set_width,
-                                    GIMP_PDB_STRING, spacing,
-                                    GIMP_PDB_STRING, registry,
-                                    GIMP_PDB_STRING, encoding,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_FLOAT, x,
+                                    PICMAN_PDB_FLOAT, y,
+                                    PICMAN_PDB_STRING, text,
+                                    PICMAN_PDB_INT32, border,
+                                    PICMAN_PDB_INT32, antialias,
+                                    PICMAN_PDB_FLOAT, size,
+                                    PICMAN_PDB_INT32, size_type,
+                                    PICMAN_PDB_STRING, foundry,
+                                    PICMAN_PDB_STRING, family,
+                                    PICMAN_PDB_STRING, weight,
+                                    PICMAN_PDB_STRING, slant,
+                                    PICMAN_PDB_STRING, set_width,
+                                    PICMAN_PDB_STRING, spacing,
+                                    PICMAN_PDB_STRING, registry,
+                                    PICMAN_PDB_STRING, encoding,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     text_layer_ID = return_vals[1].data.d_layer;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return text_layer_ID;
 }
 
 /**
- * gimp_text_get_extents:
+ * picman_text_get_extents:
  * @text: The text to generate (in UTF-8 encoding).
  * @size: The size of text in either pixels or points.
  * @size_type: The units of specified size.
@@ -263,14 +263,14 @@ gimp_text (gint32        image_ID,
  * @ascent: The ascent of the specified font.
  * @descent: The descent of the specified font.
  *
- * Deprecated: Use gimp_text_get_extents_fontname() instead.
+ * Deprecated: Use picman_text_get_extents_fontname() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_text_get_extents (const gchar  *text,
+picman_text_get_extents (const gchar  *text,
                        gdouble       size,
-                       GimpSizeType  size_type,
+                       PicmanSizeType  size_type,
                        const gchar  *foundry,
                        const gchar  *family,
                        const gchar  *weight,
@@ -284,31 +284,31 @@ gimp_text_get_extents (const gchar  *text,
                        gint         *ascent,
                        gint         *descent)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-get-extents",
+  return_vals = picman_run_procedure ("picman-text-get-extents",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, text,
-                                    GIMP_PDB_FLOAT, size,
-                                    GIMP_PDB_INT32, size_type,
-                                    GIMP_PDB_STRING, foundry,
-                                    GIMP_PDB_STRING, family,
-                                    GIMP_PDB_STRING, weight,
-                                    GIMP_PDB_STRING, slant,
-                                    GIMP_PDB_STRING, set_width,
-                                    GIMP_PDB_STRING, spacing,
-                                    GIMP_PDB_STRING, registry,
-                                    GIMP_PDB_STRING, encoding,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, text,
+                                    PICMAN_PDB_FLOAT, size,
+                                    PICMAN_PDB_INT32, size_type,
+                                    PICMAN_PDB_STRING, foundry,
+                                    PICMAN_PDB_STRING, family,
+                                    PICMAN_PDB_STRING, weight,
+                                    PICMAN_PDB_STRING, slant,
+                                    PICMAN_PDB_STRING, set_width,
+                                    PICMAN_PDB_STRING, spacing,
+                                    PICMAN_PDB_STRING, registry,
+                                    PICMAN_PDB_STRING, encoding,
+                                    PICMAN_PDB_END);
 
   *width = 0;
   *height = 0;
   *ascent = 0;
   *descent = 0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -318,7 +318,7 @@ gimp_text_get_extents (const gchar  *text,
       *descent = return_vals[4].data.d_int32;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

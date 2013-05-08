@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,12 +16,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_COLOR_H_INSIDE__) && !defined (GIMP_COLOR_COMPILATION)
-#error "Only <libgimpcolor/gimpcolor.h> can be included directly."
+#if !defined (__PICMAN_COLOR_H_INSIDE__) && !defined (PICMAN_COLOR_COMPILATION)
+#error "Only <libpicmancolor/picmancolor.h> can be included directly."
 #endif
 
-#ifndef __GIMP_BILINEAR_H__
-#define __GIMP_BILINEAR_H__
+#ifndef __PICMAN_BILINEAR_H__
+#define __PICMAN_BILINEAR_H__
 
 G_BEGIN_DECLS
 
@@ -31,25 +31,25 @@ G_BEGIN_DECLS
 /*  bilinear interpolation functions taken from LibGCK  */
 
 
-gdouble   gimp_bilinear          (gdouble    x,
+gdouble   picman_bilinear          (gdouble    x,
                                   gdouble    y,
                                   gdouble   *values);
-guchar    gimp_bilinear_8        (gdouble    x,
+guchar    picman_bilinear_8        (gdouble    x,
                                   gdouble    y,
                                   guchar    *values);
-guint16   gimp_bilinear_16       (gdouble    x,
+guint16   picman_bilinear_16       (gdouble    x,
                                   gdouble    y,
                                   guint16   *values);
-guint32   gimp_bilinear_32       (gdouble    x,
+guint32   picman_bilinear_32       (gdouble    x,
                                   gdouble    y,
                                   guint32   *values);
-GimpRGB   gimp_bilinear_rgb      (gdouble    x,
+PicmanRGB   picman_bilinear_rgb      (gdouble    x,
                                   gdouble    y,
-                                  GimpRGB   *values);
-GimpRGB   gimp_bilinear_rgba     (gdouble    x,
+                                  PicmanRGB   *values);
+PicmanRGB   picman_bilinear_rgba     (gdouble    x,
                                   gdouble    y,
-                                  GimpRGB   *values);
-void      gimp_bilinear_pixels_8 (guchar    *dest,
+                                  PicmanRGB   *values);
+void      picman_bilinear_pixels_8 (guchar    *dest,
                                   gdouble    x,
                                   gdouble    y,
                                   guint      bpp,
@@ -58,4 +58,4 @@ void      gimp_bilinear_pixels_8 (guchar    *dest,
 
 G_END_DECLS
 
-#endif  /* __GIMP_BILINEAR_H__ */
+#endif  /* __PICMAN_BILINEAR_H__ */

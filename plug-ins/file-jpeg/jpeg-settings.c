@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * jpeg-settings.c
- * Copyright (C) 2007 Raphaël Quinet <raphael@gimp.org>
+ * Copyright (C) 2007 Raphaël Quinet <raphael@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,9 +54,9 @@
 #include <libexif/exif-data.h>
 #endif /* HAVE_LIBEXIF */
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #include "jpeg.h"
 #include "jpeg-quality.h"
@@ -83,7 +83,7 @@ jpeg_detect_original_settings (struct jpeg_decompress_struct *cinfo,
 {
   guint         parasite_size;
   guchar       *parasite_data;
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   guchar       *dest;
   gint          quality;
   gint          num_quant_tables = 0;
@@ -131,20 +131,20 @@ jpeg_detect_original_settings (struct jpeg_decompress_struct *cinfo,
             }
     }
 
-  parasite = gimp_parasite_new ("jpeg-settings",
-                                GIMP_PARASITE_PERSISTENT,
+  parasite = picman_parasite_new ("jpeg-settings",
+                                PICMAN_PARASITE_PERSISTENT,
                                 parasite_size,
                                 parasite_data);
   g_free (parasite_data);
-  gimp_image_attach_parasite (image_ID, parasite);
-  gimp_parasite_free (parasite);
+  picman_image_attach_parasite (image_ID, parasite);
+  picman_parasite_free (parasite);
   return TRUE;
 }
 
 
 /*
  * TODO: compare the JPEG color space found in the parasite with the
- * GIMP color space of the drawable to be saved.  If one of them is
+ * PICMAN color space of the drawable to be saved.  If one of them is
  * grayscale and the other isn't, then the quality setting may be used
  * but the subsampling parameters and quantization tables should be
  * ignored.  The drawable_ID needs to be passed around because the
@@ -173,7 +173,7 @@ jpeg_restore_original_settings (gint32           image_ID,
                                 JpegSubsampling *subsmp,
                                 gint            *num_quant_tables)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   const guchar *src;
   glong         src_size;
   gint          color_space;
@@ -187,11 +187,11 @@ jpeg_restore_original_settings (gint32           image_ID,
   g_return_val_if_fail (subsmp != NULL, FALSE);
   g_return_val_if_fail (num_quant_tables != NULL, FALSE);
 
-  parasite = gimp_image_get_parasite (image_ID, "jpeg-settings");
+  parasite = picman_image_get_parasite (image_ID, "jpeg-settings");
   if (parasite)
     {
-      src = gimp_parasite_data (parasite);
-      src_size = gimp_parasite_data_size (parasite);
+      src = picman_parasite_data (parasite);
+      src_size = picman_parasite_data_size (parasite);
       if (src_size >= 4)
         {
           color_space      = *src++;
@@ -234,12 +234,12 @@ jpeg_restore_original_settings (gint32           image_ID,
                     }
                 }
 
-              gimp_parasite_free (parasite);
+              picman_parasite_free (parasite);
               return TRUE;
             }
         }
 
-      gimp_parasite_free (parasite);
+      picman_parasite_free (parasite);
     }
 
   *quality = -1;
@@ -274,7 +274,7 @@ guint **
 jpeg_restore_original_tables (gint32    image_ID,
                               gint      num_quant_tables)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   const guchar *src;
   glong         src_size;
   gint          num_components;
@@ -283,13 +283,13 @@ jpeg_restore_original_tables (gint32    image_ID,
   gint          t;
   gint          i;
 
-  parasite = gimp_image_get_parasite (image_ID, "jpeg-settings");
+  parasite = picman_image_get_parasite (image_ID, "jpeg-settings");
   if (parasite)
     {
-      src_size = gimp_parasite_data_size (parasite);
+      src_size = picman_parasite_data_size (parasite);
       if (src_size >= 4)
         {
-          src = gimp_parasite_data (parasite);
+          src = picman_parasite_data (parasite);
           num_components = src[2];
           num_tables     = src[3];
 
@@ -311,11 +311,11 @@ jpeg_restore_original_tables (gint32    image_ID,
                       quant_tables[t][i] = c;
                     }
                 }
-              gimp_parasite_free (parasite);
+              picman_parasite_free (parasite);
               return quant_tables;
             }
         }
-      gimp_parasite_free (parasite);
+      picman_parasite_free (parasite);
     }
   return NULL;
 }
@@ -333,7 +333,7 @@ jpeg_restore_original_tables (gint32    image_ID,
 void
 jpeg_swap_original_settings (gint32 image_ID)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   const guchar *src;
   glong         src_size;
   gint          num_components;
@@ -344,13 +344,13 @@ jpeg_swap_original_settings (gint32 image_ID)
   gint          i;
   gint          j;
 
-  parasite = gimp_image_get_parasite (image_ID, "jpeg-settings");
+  parasite = picman_image_get_parasite (image_ID, "jpeg-settings");
   if (parasite)
     {
-      src_size = gimp_parasite_data_size (parasite);
+      src_size = picman_parasite_data_size (parasite);
       if (src_size >= 4)
         {
-          src = gimp_parasite_data (parasite);
+          src = picman_parasite_data (parasite);
           num_components = src[2];
           num_tables     = src[3];
 
@@ -387,15 +387,15 @@ jpeg_swap_original_settings (gint32 image_ID)
                                                      + num_tables * 128));
                     }
                 }
-              gimp_parasite_free (parasite);
-              parasite = gimp_parasite_new ("jpeg-settings",
-                                            GIMP_PARASITE_PERSISTENT,
+              picman_parasite_free (parasite);
+              parasite = picman_parasite_new ("jpeg-settings",
+                                            PICMAN_PARASITE_PERSISTENT,
                                             src_size,
                                             new_data);
               g_free (new_data);
-              gimp_image_attach_parasite (image_ID, parasite);
+              picman_image_attach_parasite (image_ID, parasite);
             }
         }
-      gimp_parasite_free (parasite);
+      picman_parasite_free (parasite);
     }
 }

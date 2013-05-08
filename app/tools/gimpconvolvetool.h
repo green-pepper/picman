@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,43 +15,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONVOLVE_TOOL_H__
-#define __GIMP_CONVOLVE_TOOL_H__
+#ifndef __PICMAN_CONVOLVE_TOOL_H__
+#define __PICMAN_CONVOLVE_TOOL_H__
 
 
-#include "gimpbrushtool.h"
+#include "picmanbrushtool.h"
 
 
-#define GIMP_TYPE_CONVOLVE_TOOL            (gimp_convolve_tool_get_type ())
-#define GIMP_CONVOLVE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CONVOLVE_TOOL, GimpConvolveTool))
-#define GIMP_CONVOLVE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CONVOLVE_TOOL, GimpConvolveToolClass))
-#define GIMP_IS_CONVOLVE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CONVOLVE_TOOL))
-#define GIMP_IS_CONVOLVE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CONVOLVE_TOOL))
-#define GIMP_CONVOLVE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CONVOLVE_TOOL, GimpConvolveToolClass))
+#define PICMAN_TYPE_CONVOLVE_TOOL            (picman_convolve_tool_get_type ())
+#define PICMAN_CONVOLVE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CONVOLVE_TOOL, PicmanConvolveTool))
+#define PICMAN_CONVOLVE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CONVOLVE_TOOL, PicmanConvolveToolClass))
+#define PICMAN_IS_CONVOLVE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CONVOLVE_TOOL))
+#define PICMAN_IS_CONVOLVE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CONVOLVE_TOOL))
+#define PICMAN_CONVOLVE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CONVOLVE_TOOL, PicmanConvolveToolClass))
 
-#define GIMP_CONVOLVE_TOOL_GET_OPTIONS(t)  (GIMP_CONVOLVE_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_CONVOLVE_TOOL_GET_OPTIONS(t)  (PICMAN_CONVOLVE_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpConvolveTool      GimpConvolveTool;
-typedef struct _GimpConvolveToolClass GimpConvolveToolClass;
+typedef struct _PicmanConvolveTool      PicmanConvolveTool;
+typedef struct _PicmanConvolveToolClass PicmanConvolveToolClass;
 
-struct _GimpConvolveTool
+struct _PicmanConvolveTool
 {
-  GimpBrushTool parent_instance;
+  PicmanBrushTool parent_instance;
 
   gboolean      toggled;
 };
 
-struct _GimpConvolveToolClass
+struct _PicmanConvolveToolClass
 {
-  GimpBrushToolClass parent_class;
+  PicmanBrushToolClass parent_class;
 };
 
 
-void    gimp_convolve_tool_register (GimpToolRegisterCallback  callback,
+void    picman_convolve_tool_register (PicmanToolRegisterCallback  callback,
                                      gpointer                  data);
 
-GType   gimp_convolve_tool_get_type (void) G_GNUC_CONST;
+GType   picman_convolve_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_CONVOLVE_TOOL_H__  */
+#endif  /*  __PICMAN_CONVOLVE_TOOL_H__  */

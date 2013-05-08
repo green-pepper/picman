@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpwin32-io.h
+ * picmanwin32-io.h
  * Compatibilty defines, you mostly need this as unistd.h replacement
  *
  * This library is free software: you can redistribute it and/or
@@ -19,8 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_WIN32_IO_H__
-#define __GIMP_WIN32_IO_H__
+#ifndef __PICMAN_WIN32_IO_H__
+#define __PICMAN_WIN32_IO_H__
 
 #include <io.h>
 #include <direct.h>
@@ -96,4 +96,4 @@ G_BEGIN_DECLS
 
 G_END_DECLS
 
-#endif /* __GIMP_WIN32_IO_H__ */
+#endif /* __PICMAN_WIN32_IO_H__ */

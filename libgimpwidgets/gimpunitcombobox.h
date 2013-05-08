@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1999 Peter Mattis and Spencer Kimball
  *
- * gimpunitcombobox.h
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanunitcombobox.h
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,53 +19,53 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_UNIT_COMBO_BOX_H__
-#define __GIMP_UNIT_COMBO_BOX_H__
+#ifndef __PICMAN_UNIT_COMBO_BOX_H__
+#define __PICMAN_UNIT_COMBO_BOX_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_UNIT_COMBO_BOX            (gimp_unit_combo_box_get_type ())
-#define GIMP_UNIT_COMBO_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_UNIT_COMBO_BOX, GimpUnitComboBox))
-#define GIMP_UNIT_COMBO_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_UNIT_COMBO_BOX, GimpUnitComboBoxClass))
-#define GIMP_IS_UNIT_COMBO_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_UNIT_COMBO_BOX))
-#define GIMP_IS_UNIT_COMBO_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_UNIT_COMBO_BOX))
-#define GIMP_UNIT_COMBO_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_UNIT_COMBO_BOX, GimpUnitComboBoxClass))
+#define PICMAN_TYPE_UNIT_COMBO_BOX            (picman_unit_combo_box_get_type ())
+#define PICMAN_UNIT_COMBO_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_UNIT_COMBO_BOX, PicmanUnitComboBox))
+#define PICMAN_UNIT_COMBO_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_UNIT_COMBO_BOX, PicmanUnitComboBoxClass))
+#define PICMAN_IS_UNIT_COMBO_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_UNIT_COMBO_BOX))
+#define PICMAN_IS_UNIT_COMBO_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_UNIT_COMBO_BOX))
+#define PICMAN_UNIT_COMBO_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_UNIT_COMBO_BOX, PicmanUnitComboBoxClass))
 
 
-typedef struct _GimpUnitComboBoxClass  GimpUnitComboBoxClass;
+typedef struct _PicmanUnitComboBoxClass  PicmanUnitComboBoxClass;
 
-struct _GimpUnitComboBox
+struct _PicmanUnitComboBox
 {
   GtkComboBox       parent_instance;
 };
 
-struct _GimpUnitComboBoxClass
+struct _PicmanUnitComboBoxClass
 {
   GtkComboBoxClass  parent_class;
 
   /* Padding for future expansion */
-  void (*_gimp_reserved1) (void);
-  void (*_gimp_reserved2) (void);
-  void (*_gimp_reserved3) (void);
-  void (*_gimp_reserved4) (void);
+  void (*_picman_reserved1) (void);
+  void (*_picman_reserved2) (void);
+  void (*_picman_reserved3) (void);
+  void (*_picman_reserved4) (void);
 };
 
 
-GType       gimp_unit_combo_box_get_type       (void) G_GNUC_CONST;
+GType       picman_unit_combo_box_get_type       (void) G_GNUC_CONST;
 
-GtkWidget * gimp_unit_combo_box_new            (void);
-GtkWidget * gimp_unit_combo_box_new_with_model (GimpUnitStore    *model);
+GtkWidget * picman_unit_combo_box_new            (void);
+GtkWidget * picman_unit_combo_box_new_with_model (PicmanUnitStore    *model);
 
-GimpUnit    gimp_unit_combo_box_get_active     (GimpUnitComboBox *combo);
-void        gimp_unit_combo_box_set_active     (GimpUnitComboBox *combo,
-                                                GimpUnit          unit);
+PicmanUnit    picman_unit_combo_box_get_active     (PicmanUnitComboBox *combo);
+void        picman_unit_combo_box_set_active     (PicmanUnitComboBox *combo,
+                                                PicmanUnit          unit);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_UNIT_COMBO_BOX_H__ */
+#endif  /* __PICMAN_UNIT_COMBO_BOX_H__ */

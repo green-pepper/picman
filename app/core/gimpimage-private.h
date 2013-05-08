@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_PRIVATE_H__
-#define __GIMP_IMAGE_PRIVATE_H__
+#ifndef __PICMAN_IMAGE_PRIVATE_H__
+#define __PICMAN_IMAGE_PRIVATE_H__
 
 
-typedef struct _GimpImageFlushAccumulator GimpImageFlushAccumulator;
+typedef struct _PicmanImageFlushAccumulator PicmanImageFlushAccumulator;
 
-struct _GimpImageFlushAccumulator
+struct _PicmanImageFlushAccumulator
 {
   gboolean alpha_changed;
   gboolean mask_changed;
@@ -30,14 +30,14 @@ struct _GimpImageFlushAccumulator
 };
 
 
-typedef struct _GimpImagePrivate GimpImagePrivate;
+typedef struct _PicmanImagePrivate PicmanImagePrivate;
 
-struct _GimpImagePrivate
+struct _PicmanImagePrivate
 {
   gint               ID;                    /*  provides a unique ID         */
 
-  GimpPlugInProcedure *load_proc;           /*  procedure used for loading   */
-  GimpPlugInProcedure *save_proc;           /*  last save procedure used     */
+  PicmanPlugInProcedure *load_proc;           /*  procedure used for loading   */
+  PicmanPlugInProcedure *save_proc;           /*  last save procedure used     */
 
   gchar             *display_name;          /*  display basename             */
   gchar             *display_path;          /*  display full path            */
@@ -45,13 +45,13 @@ struct _GimpImagePrivate
   gint               height;                /*  height in pixels             */
   gdouble            xresolution;           /*  image x-res, in dpi          */
   gdouble            yresolution;           /*  image y-res, in dpi          */
-  GimpUnit           resolution_unit;       /*  resolution unit              */
-  GimpImageBaseType  base_type;             /*  base gimp_image type         */
-  GimpPrecision      precision;             /*  image's precision            */
+  PicmanUnit           resolution_unit;       /*  resolution unit              */
+  PicmanImageBaseType  base_type;             /*  base picman_image type         */
+  PicmanPrecision      precision;             /*  image's precision            */
 
   guchar            *colormap;              /*  colormap (for indexed)       */
   gint               n_colors;              /*  # of colors (for indexed)    */
-  GimpPalette       *palette;               /*  palette of colormap          */
+  PicmanPalette       *palette;               /*  palette of colormap          */
   const Babl        *babl_palette_rgb;      /*  palette's RGB Babl format    */
   const Babl        *babl_palette_rgba;     /*  palette's RGBA Babl format   */
 
@@ -64,55 +64,55 @@ struct _GimpImagePrivate
   gint               instance_count;        /*  number of instances          */
   gint               disp_count;            /*  number of displays           */
 
-  GimpTattoo         tattoo_state;          /*  the last used tattoo         */
+  PicmanTattoo         tattoo_state;          /*  the last used tattoo         */
 
-  GimpProjection    *projection;            /*  projection layers & channels */
+  PicmanProjection    *projection;            /*  projection layers & channels */
   GeglNode          *graph;                 /*  GEGL projection graph        */
   GeglNode          *visible_mask;          /*  component visibility node    */
 
   GList             *guides;                /*  guides                       */
-  GimpGrid          *grid;                  /*  grid                         */
+  PicmanGrid          *grid;                  /*  grid                         */
   GList             *sample_points;         /*  color sample points          */
 
   /*  Layer/Channel attributes  */
-  GimpItemTree      *layers;                /*  the tree of layers           */
-  GimpItemTree      *channels;              /*  the tree of masks            */
-  GimpItemTree      *vectors;               /*  the tree of vectors          */
+  PicmanItemTree      *layers;                /*  the tree of layers           */
+  PicmanItemTree      *channels;              /*  the tree of masks            */
+  PicmanItemTree      *vectors;               /*  the tree of vectors          */
   GSList            *layer_stack;           /*  the layers in MRU order      */
 
   GQuark             layer_alpha_handler;
   GQuark             channel_name_changed_handler;
   GQuark             channel_color_changed_handler;
 
-  GimpLayer         *floating_sel;          /*  the FS layer                 */
-  GimpChannel       *selection_mask;        /*  the selection mask channel   */
+  PicmanLayer         *floating_sel;          /*  the FS layer                 */
+  PicmanChannel       *selection_mask;        /*  the selection mask channel   */
 
-  GimpParasiteList  *parasites;             /*  Plug-in parasite data        */
+  PicmanParasiteList  *parasites;             /*  Plug-in parasite data        */
 
   gboolean           visible[MAX_CHANNELS]; /*  visible channels             */
   gboolean           active[MAX_CHANNELS];  /*  active channels              */
 
   gboolean           quick_mask_state;      /*  TRUE if quick mask is on       */
   gboolean           quick_mask_inverted;   /*  TRUE if quick mask is inverted */
-  GimpRGB            quick_mask_color;      /*  rgba triplet of the color      */
+  PicmanRGB            quick_mask_color;      /*  rgba triplet of the color      */
 
   /*  Undo apparatus  */
-  GimpUndoStack     *undo_stack;            /*  stack for undo operations    */
-  GimpUndoStack     *redo_stack;            /*  stack for redo operations    */
+  PicmanUndoStack     *undo_stack;            /*  stack for undo operations    */
+  PicmanUndoStack     *redo_stack;            /*  stack for redo operations    */
   gint               group_count;           /*  nested undo groups           */
-  GimpUndoType       pushing_undo_group;    /*  undo group status flag       */
+  PicmanUndoType       pushing_undo_group;    /*  undo group status flag       */
 
   /*  Signal emission accumulator  */
-  GimpImageFlushAccumulator  flush_accum;
+  PicmanImageFlushAccumulator  flush_accum;
 };
 
-#define GIMP_IMAGE_GET_PRIVATE(image) \
+#define PICMAN_IMAGE_GET_PRIVATE(image) \
         G_TYPE_INSTANCE_GET_PRIVATE (image, \
-                                     GIMP_TYPE_IMAGE, \
-                                     GimpImagePrivate)
+                                     PICMAN_TYPE_IMAGE, \
+                                     PicmanImagePrivate)
 
-void   gimp_image_take_mask (GimpImage   *image,
-                             GimpChannel *mask);
+void   picman_image_take_mask (PicmanImage   *image,
+                             PicmanChannel *mask);
 
 
-#endif  /* __GIMP_IMAGE_PRIVATE_H__ */
+#endif  /* __PICMAN_IMAGE_PRIVATE_H__ */

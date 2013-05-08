@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpTextProxy
- * Copyright (C) 2009-2010  Michael Natterer <mitch@gimp.org>
+ * PicmanTextProxy
+ * Copyright (C) 2009-2010  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
 
 #include "widgets-types.h"
 
-#include "core/gimpmarshal.h"
+#include "core/picmanmarshal.h"
 
-#include "gimptextproxy.h"
+#include "picmantextproxy.h"
 
 
 enum
@@ -39,49 +39,49 @@ enum
 };
 
 
-static void   gimp_text_proxy_move_cursor        (GtkTextView     *text_view,
+static void   picman_text_proxy_move_cursor        (GtkTextView     *text_view,
                                                   GtkMovementStep  step,
                                                   gint             count,
                                                   gboolean         extend_selection);
-static void   gimp_text_proxy_insert_at_cursor   (GtkTextView     *text_view,
+static void   picman_text_proxy_insert_at_cursor   (GtkTextView     *text_view,
                                                   const gchar     *str);
-static void   gimp_text_proxy_delete_from_cursor (GtkTextView     *text_view,
+static void   picman_text_proxy_delete_from_cursor (GtkTextView     *text_view,
                                                   GtkDeleteType    type,
                                                   gint             count);
-static void   gimp_text_proxy_backspace          (GtkTextView     *text_view);
-static void   gimp_text_proxy_cut_clipboard      (GtkTextView     *text_view);
-static void   gimp_text_proxy_copy_clipboard     (GtkTextView     *text_view);
-static void   gimp_text_proxy_paste_clipboard    (GtkTextView     *text_view);
-static void   gimp_text_proxy_toggle_overwrite   (GtkTextView     *text_view);
+static void   picman_text_proxy_backspace          (GtkTextView     *text_view);
+static void   picman_text_proxy_cut_clipboard      (GtkTextView     *text_view);
+static void   picman_text_proxy_copy_clipboard     (GtkTextView     *text_view);
+static void   picman_text_proxy_paste_clipboard    (GtkTextView     *text_view);
+static void   picman_text_proxy_toggle_overwrite   (GtkTextView     *text_view);
 
 
-G_DEFINE_TYPE (GimpTextProxy, gimp_text_proxy, GTK_TYPE_TEXT_VIEW)
+G_DEFINE_TYPE (PicmanTextProxy, picman_text_proxy, GTK_TYPE_TEXT_VIEW)
 
 static guint proxy_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_text_proxy_class_init (GimpTextProxyClass *klass)
+picman_text_proxy_class_init (PicmanTextProxyClass *klass)
 {
   GtkTextViewClass *tv_class = GTK_TEXT_VIEW_CLASS (klass);
   GtkBindingSet    *binding_set;
 
-  tv_class->move_cursor        = gimp_text_proxy_move_cursor;
-  tv_class->insert_at_cursor   = gimp_text_proxy_insert_at_cursor;
-  tv_class->delete_from_cursor = gimp_text_proxy_delete_from_cursor;
-  tv_class->backspace          = gimp_text_proxy_backspace;
-  tv_class->cut_clipboard      = gimp_text_proxy_cut_clipboard;
-  tv_class->copy_clipboard     = gimp_text_proxy_copy_clipboard;
-  tv_class->paste_clipboard    = gimp_text_proxy_paste_clipboard;
-  tv_class->toggle_overwrite   = gimp_text_proxy_toggle_overwrite;
+  tv_class->move_cursor        = picman_text_proxy_move_cursor;
+  tv_class->insert_at_cursor   = picman_text_proxy_insert_at_cursor;
+  tv_class->delete_from_cursor = picman_text_proxy_delete_from_cursor;
+  tv_class->backspace          = picman_text_proxy_backspace;
+  tv_class->cut_clipboard      = picman_text_proxy_cut_clipboard;
+  tv_class->copy_clipboard     = picman_text_proxy_copy_clipboard;
+  tv_class->paste_clipboard    = picman_text_proxy_paste_clipboard;
+  tv_class->toggle_overwrite   = picman_text_proxy_toggle_overwrite;
 
   proxy_signals[CHANGE_SIZE] =
     g_signal_new ("change-size",
 		  G_TYPE_FROM_CLASS (klass),
 		  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-		  G_STRUCT_OFFSET (GimpTextProxyClass, change_size),
+		  G_STRUCT_OFFSET (PicmanTextProxyClass, change_size),
 		  NULL, NULL,
-		  gimp_marshal_VOID__DOUBLE,
+		  picman_marshal_VOID__DOUBLE,
 		  G_TYPE_NONE, 1,
 		  G_TYPE_DOUBLE);
 
@@ -89,9 +89,9 @@ gimp_text_proxy_class_init (GimpTextProxyClass *klass)
     g_signal_new ("change-baseline",
 		  G_TYPE_FROM_CLASS (klass),
 		  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-		  G_STRUCT_OFFSET (GimpTextProxyClass, change_baseline),
+		  G_STRUCT_OFFSET (PicmanTextProxyClass, change_baseline),
 		  NULL, NULL,
-		  gimp_marshal_VOID__DOUBLE,
+		  picman_marshal_VOID__DOUBLE,
 		  G_TYPE_NONE, 1,
 		  G_TYPE_DOUBLE);
 
@@ -99,9 +99,9 @@ gimp_text_proxy_class_init (GimpTextProxyClass *klass)
     g_signal_new ("change-kerning",
 		  G_TYPE_FROM_CLASS (klass),
 		  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-		  G_STRUCT_OFFSET (GimpTextProxyClass, change_kerning),
+		  G_STRUCT_OFFSET (PicmanTextProxyClass, change_kerning),
 		  NULL, NULL,
-		  gimp_marshal_VOID__DOUBLE,
+		  picman_marshal_VOID__DOUBLE,
 		  G_TYPE_NONE, 1,
 		  G_TYPE_DOUBLE);
 
@@ -130,12 +130,12 @@ gimp_text_proxy_class_init (GimpTextProxyClass *klass)
 }
 
 static void
-gimp_text_proxy_init (GimpTextProxy *text_proxy)
+picman_text_proxy_init (PicmanTextProxy *text_proxy)
 {
 }
 
 static void
-gimp_text_proxy_move_cursor (GtkTextView     *text_view,
+picman_text_proxy_move_cursor (GtkTextView     *text_view,
                              GtkMovementStep  step,
                              gint             count,
                              gboolean         extend_selection)
@@ -143,40 +143,40 @@ gimp_text_proxy_move_cursor (GtkTextView     *text_view,
 }
 
 static void
-gimp_text_proxy_insert_at_cursor (GtkTextView *text_view,
+picman_text_proxy_insert_at_cursor (GtkTextView *text_view,
                                   const gchar *str)
 {
 }
 
 static void
-gimp_text_proxy_delete_from_cursor (GtkTextView   *text_view,
+picman_text_proxy_delete_from_cursor (GtkTextView   *text_view,
                                     GtkDeleteType  type,
                                     gint           count)
 {
 }
 
 static void
-gimp_text_proxy_backspace (GtkTextView *text_view)
+picman_text_proxy_backspace (GtkTextView *text_view)
 {
 }
 
 static void
-gimp_text_proxy_cut_clipboard (GtkTextView *text_view)
+picman_text_proxy_cut_clipboard (GtkTextView *text_view)
 {
 }
 
 static void
-gimp_text_proxy_copy_clipboard (GtkTextView *text_view)
+picman_text_proxy_copy_clipboard (GtkTextView *text_view)
 {
 }
 
 static void
-gimp_text_proxy_paste_clipboard (GtkTextView *text_view)
+picman_text_proxy_paste_clipboard (GtkTextView *text_view)
 {
 }
 
 static void
-gimp_text_proxy_toggle_overwrite (GtkTextView *text_view)
+picman_text_proxy_toggle_overwrite (GtkTextView *text_view)
 {
 }
 
@@ -184,12 +184,12 @@ gimp_text_proxy_toggle_overwrite (GtkTextView *text_view)
 /*  public functions  */
 
 GtkWidget *
-gimp_text_proxy_new (void)
+picman_text_proxy_new (void)
 {
   GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
   GtkWidget     *proxy;
 
-  proxy = g_object_new (GIMP_TYPE_TEXT_PROXY,
+  proxy = g_object_new (PICMAN_TYPE_TEXT_PROXY,
                         "buffer", buffer,
                         NULL);
 

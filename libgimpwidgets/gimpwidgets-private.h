@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpwidgets-private.h
- * Copyright (C) 2003 Sven Neumann <sven@gimp.org>
+ * picmanwidgets-private.h
+ * Copyright (C) 2003 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,29 +19,29 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_WIDGETS_PRIVATE_H__
-#define __GIMP_WIDGETS_PRIVATE_H__
+#ifndef __PICMAN_WIDGETS_PRIVATE_H__
+#define __PICMAN_WIDGETS_PRIVATE_H__
 
 
-typedef gboolean (* GimpGetColorFunc)      (GimpRGB *color);
-typedef void     (* GimpEnsureModulesFunc) (void);
+typedef gboolean (* PicmanGetColorFunc)      (PicmanRGB *color);
+typedef void     (* PicmanEnsureModulesFunc) (void);
 
 
-extern GimpHelpFunc          _gimp_standard_help_func;
-extern GimpGetColorFunc      _gimp_get_foreground_func;
-extern GimpGetColorFunc      _gimp_get_background_func;
-extern GimpEnsureModulesFunc _gimp_ensure_modules_func;
+extern PicmanHelpFunc          _picman_standard_help_func;
+extern PicmanGetColorFunc      _picman_get_foreground_func;
+extern PicmanGetColorFunc      _picman_get_background_func;
+extern PicmanEnsureModulesFunc _picman_ensure_modules_func;
 
 
 G_BEGIN_DECLS
 
 
-void  gimp_widgets_init (GimpHelpFunc          standard_help_func,
-                         GimpGetColorFunc      get_foreground_func,
-                         GimpGetColorFunc      get_background_func,
-                         GimpEnsureModulesFunc ensure_modules_func);
+void  picman_widgets_init (PicmanHelpFunc          standard_help_func,
+                         PicmanGetColorFunc      get_foreground_func,
+                         PicmanGetColorFunc      get_background_func,
+                         PicmanEnsureModulesFunc ensure_modules_func);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_WIDGETS_PRIVATE_H__ */
+#endif /* __PICMAN_WIDGETS_PRIVATE_H__ */

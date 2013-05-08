@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,39 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_RECTANGLE_SELECT_TOOL_H__
-#define  __GIMP_RECTANGLE_SELECT_TOOL_H__
+#ifndef  __PICMAN_RECTANGLE_SELECT_TOOL_H__
+#define  __PICMAN_RECTANGLE_SELECT_TOOL_H__
 
 
-#include "gimpselectiontool.h"
+#include "picmanselectiontool.h"
 
 
-#define GIMP_TYPE_RECTANGLE_SELECT_TOOL            (gimp_rectangle_select_tool_get_type ())
-#define GIMP_RECTANGLE_SELECT_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_RECTANGLE_SELECT_TOOL, GimpRectangleSelectTool))
-#define GIMP_RECTANGLE_SELECT_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_RECTANGLE_SELECT_TOOL, GimpRectangleSelectToolClass))
-#define GIMP_IS_RECTANGLE_SELECT_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_RECTANGLE_SELECT_TOOL))
-#define GIMP_IS_RECTANGLE_SELECT_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_RECTANGLE_SELECT_TOOL))
-#define GIMP_RECTANGLE_SELECT_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_RECTANGLE_SELECT_TOOL, GimpRectangleSelectToolClass))
+#define PICMAN_TYPE_RECTANGLE_SELECT_TOOL            (picman_rectangle_select_tool_get_type ())
+#define PICMAN_RECTANGLE_SELECT_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_RECTANGLE_SELECT_TOOL, PicmanRectangleSelectTool))
+#define PICMAN_RECTANGLE_SELECT_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_RECTANGLE_SELECT_TOOL, PicmanRectangleSelectToolClass))
+#define PICMAN_IS_RECTANGLE_SELECT_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_RECTANGLE_SELECT_TOOL))
+#define PICMAN_IS_RECTANGLE_SELECT_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_RECTANGLE_SELECT_TOOL))
+#define PICMAN_RECTANGLE_SELECT_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_RECTANGLE_SELECT_TOOL, PicmanRectangleSelectToolClass))
 
-#define GIMP_RECTANGLE_SELECT_TOOL_GET_OPTIONS(t)  (GIMP_RECTANGLE_SELECT_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_RECTANGLE_SELECT_TOOL_GET_OPTIONS(t)  (PICMAN_RECTANGLE_SELECT_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpRectangleSelectTool      GimpRectangleSelectTool;
-typedef struct _GimpRectangleSelectToolClass GimpRectangleSelectToolClass;
+typedef struct _PicmanRectangleSelectTool      PicmanRectangleSelectTool;
+typedef struct _PicmanRectangleSelectToolClass PicmanRectangleSelectToolClass;
 
-struct _GimpRectangleSelectTool
+struct _PicmanRectangleSelectTool
 {
-  GimpSelectionTool  parent_instance;
+  PicmanSelectionTool  parent_instance;
 
   gpointer           priv;
 };
 
-struct _GimpRectangleSelectToolClass
+struct _PicmanRectangleSelectToolClass
 {
-  GimpSelectionToolClass  parent_class;
+  PicmanSelectionToolClass  parent_class;
 
-  void (* select) (GimpRectangleSelectTool *rect_select,
-                   GimpChannelOps           operation,
+  void (* select) (PicmanRectangleSelectTool *rect_select,
+                   PicmanChannelOps           operation,
                    gint                     x,
                    gint                     y,
                    gint                     w,
@@ -55,10 +55,10 @@ struct _GimpRectangleSelectToolClass
 };
 
 
-void    gimp_rectangle_select_tool_register (GimpToolRegisterCallback  callback,
+void    picman_rectangle_select_tool_register (PicmanToolRegisterCallback  callback,
                                              gpointer                  data);
 
-GType   gimp_rectangle_select_tool_get_type (void) G_GNUC_CONST;
+GType   picman_rectangle_select_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_RECTANGLE_SELECT_TOOL_H__  */
+#endif  /*  __PICMAN_RECTANGLE_SELECT_TOOL_H__  */

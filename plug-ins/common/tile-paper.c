@@ -1,6 +1,6 @@
 /*============================================================================*
 
-  Paper Tile 1.0  -- A GIMP PLUG-IN
+  Paper Tile 1.0  -- A PICMAN PLUG-IN
 
   Copyright (C) 1997-1999 Hirotsuna Mizuno <s1041150@u-aizu.ac.jp>
 
@@ -23,10 +23,10 @@
 
 #include <stdlib.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /*===========================================================================*/
@@ -35,7 +35,7 @@
 
 #define PLUG_IN_PROC   "plug-in-papertile"
 #define PLUG_IN_BINARY "tile-paper"
-#define PLUG_IN_ROLE   "gimp-tile-paper"
+#define PLUG_IN_ROLE   "picman-tile-paper"
 
 /*===========================================================================*/
 /* TYPES                                                                     */
@@ -70,7 +70,7 @@ struct _PluginParams
   gboolean        centering;
   gboolean        wrap_around;
   BackgroundType  background_type;
-  GimpRGB         background_color;
+  PicmanRGB         background_color;
 };
 
 /*===========================================================================*/
@@ -82,7 +82,7 @@ static struct
   PluginParams  params;
 
   gint32        image;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gboolean      drawable_has_alpha;
 
   struct
@@ -95,7 +95,7 @@ static struct
     gint        height;
   } selection;
 
-  GimpRunMode  run_mode;
+  PicmanRunMode  run_mode;
   gboolean         run;
 } p =
 {
@@ -118,22 +118,22 @@ static struct
 
   { 0, 0, 0, 0, 0, 0 },         /* selection             */
 
-  GIMP_RUN_INTERACTIVE,         /* run_mode              */
+  PICMAN_RUN_INTERACTIVE,         /* run_mode              */
   FALSE                         /* run                   */
 };
 
 /*---------------------------------------------------------------------------*/
 
 static void
-params_save_to_gimp (void)
+params_save_to_picman (void)
 {
-  gimp_set_data (PLUG_IN_PROC, &p.params, sizeof p.params);
+  picman_set_data (PLUG_IN_PROC, &p.params, sizeof p.params);
 }
 
 static void
-params_load_from_gimp (void)
+params_load_from_picman (void)
 {
-  gimp_get_data (PLUG_IN_PROC, &p.params);
+  picman_get_data (PLUG_IN_PROC, &p.params);
 
   if (0 < p.params.division_x)
     {
@@ -162,7 +162,7 @@ params_load_from_gimp (void)
           p.params.background_type = BACKGROUND_TYPE_INVERTED;
         }
 
-      gimp_rgb_set_alpha (&p.params.background_color, 1.0);
+      picman_rgb_set_alpha (&p.params.background_color, 1.0);
     }
 }
 
@@ -238,11 +238,11 @@ open_dialog (void)
   GtkWidget *frame;
   GtkWidget *color_button;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Paper Tile"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Paper Tile"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -254,7 +254,7 @@ open_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_hbox), 12);
@@ -267,7 +267,7 @@ open_dialog (void)
   gtk_box_pack_start (GTK_BOX (main_hbox), vbox, FALSE, FALSE, 0);
   gtk_widget_show (vbox);
 
-  frame = gimp_frame_new (_("Division"));
+  frame = picman_frame_new (_("Division"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -277,48 +277,48 @@ open_dialog (void)
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  button = gimp_spin_button_new (&w.division_x_adj, p.params.division_x,
+  button = picman_spin_button_new (&w.division_x_adj, p.params.division_x,
                                  1.0, p.drawable->width, 1.0, 5.0, 0, 1, 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("_X:"), 0.0, 0.5,
                              button, 1, TRUE);
   g_signal_connect (w.division_x_adj, "value-changed",
                     G_CALLBACK (division_x_adj_changed),
                     NULL);
 
-  button = gimp_spin_button_new (&w.division_y_adj, p.params.division_y,
+  button = picman_spin_button_new (&w.division_y_adj, p.params.division_y,
                                  1.0, p.drawable->width, 1.0, 5.0, 0, 1, 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("_Y:"), 0.0, 0.5,
                              button, 1, TRUE);
   g_signal_connect (w.division_y_adj, "value-changed",
                     G_CALLBACK (division_y_adj_changed),
                     NULL);
 
-  button = gimp_spin_button_new (&w.tile_width_adj, p.params.tile_width,
+  button = picman_spin_button_new (&w.tile_width_adj, p.params.tile_width,
                                  1.0, MAX (p.drawable->width,
                                            p.drawable->height),
                                  1.0, 5.0, 0, 1, 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 2,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 2,
                              _("_Width:"), 0.0, 0.5,
                              button, 1, TRUE);
   g_signal_connect (w.tile_width_adj, "value-changed",
                     G_CALLBACK (tile_width_adj_changed),
                     NULL);
 
-  button = gimp_spin_button_new (&w.tile_height_adj, p.params.tile_height,
+  button = picman_spin_button_new (&w.tile_height_adj, p.params.tile_height,
                                  1.0, MAX (p.drawable->width,
                                  p.drawable->height),
                                  1.0, 5.0, 0, 1, 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 3,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 3,
                              _("_Height:"), 0.0, 0.5,
                              button, 1, TRUE);
   g_signal_connect (w.tile_height_adj, "value-changed",
                     G_CALLBACK (tile_height_adj_changed),
                     NULL);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Fractional Pixels"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Fractional Pixels"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &p.params.fractional_type,
                                     p.params.fractional_type,
 
@@ -340,7 +340,7 @@ open_dialog (void)
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &p.params.centering);
 
   /* Right */
@@ -348,7 +348,7 @@ open_dialog (void)
   gtk_box_pack_start (GTK_BOX (main_hbox), vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  frame = gimp_frame_new (_("Movement"));
+  frame = picman_frame_new (_("Movement"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -358,13 +358,13 @@ open_dialog (void)
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  button = gimp_spin_button_new (&adjustment, p.params.move_max_rate,
+  button = picman_spin_button_new (&adjustment, p.params.move_max_rate,
                                  0.0, 100.0, 1.0, 10.0, 0, 1, 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("_Max (%):"), 0.0, 0.5,
                              button, 1, TRUE);
   g_signal_connect (adjustment, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &p.params.move_max_rate);
 
   button = gtk_check_button_new_with_mnemonic (_("_Wrap around"));
@@ -374,11 +374,11 @@ open_dialog (void)
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &p.params.wrap_around);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Background Type"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Background Type"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &p.params.background_type,
                                     p.params.background_type,
 
@@ -399,17 +399,17 @@ open_dialog (void)
   gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
-  color_button = gimp_color_button_new (_("Background Color"), 100, 16,
+  color_button = picman_color_button_new (_("Background Color"), 100, 16,
                                         &p.params.background_color,
                                         p.drawable_has_alpha ?
-                                        GIMP_COLOR_AREA_SMALL_CHECKS :
-                                        GIMP_COLOR_AREA_FLAT);
+                                        PICMAN_COLOR_AREA_SMALL_CHECKS :
+                                        PICMAN_COLOR_AREA_FLAT);
   gtk_box_pack_start (GTK_BOX (gtk_bin_get_child (GTK_BIN (frame))),
                       color_button, TRUE, TRUE, 0);
   gtk_widget_show (color_button);
 
   g_signal_connect (color_button, "color-changed",
-                    G_CALLBACK (gimp_color_button_get_color),
+                    G_CALLBACK (picman_color_button_get_color),
                     &p.params.background_color);
 
   g_object_bind_property (button,       "active",
@@ -418,7 +418,7 @@ open_dialog (void)
 
   gtk_widget_show (dialog);
 
-  p.run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  p.run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 }
@@ -512,9 +512,9 @@ static inline void
 filter (void)
 {
   static void (* overlap)(guchar *, const guchar *);
-  GimpPixelRgn  src;
-  GimpPixelRgn  dst;
-  GimpRGB       color;
+  PicmanPixelRgn  src;
+  PicmanPixelRgn  dst;
+  PicmanRGB       color;
   guchar     pixel[4];
   gint       division_x;
   gint       division_y;
@@ -543,9 +543,9 @@ filter (void)
   gr = g_rand_new ();
 
   /* INITIALIZE */
-  gimp_pixel_rgn_init (&src, p.drawable, 0, 0,
+  picman_pixel_rgn_init (&src, p.drawable, 0, 0,
                        p.drawable->width, p.drawable->height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dst, p.drawable, 0, 0,
+  picman_pixel_rgn_init (&dst, p.drawable, 0, 0,
                        p.drawable->width, p.drawable->height, TRUE, TRUE);
   pixels = g_new (guchar,
                   p.drawable->bpp * p.drawable->width * p.drawable->height);
@@ -554,15 +554,15 @@ filter (void)
 
   overlap = p.drawable_has_alpha ? overlap_RGBA : overlap_RGB;
 
-  gimp_progress_init (_("Paper Tile"));
+  picman_progress_init (_("Paper Tile"));
 
-  gimp_drawable_mask_bounds (p.drawable->drawable_id,
+  picman_drawable_mask_bounds (p.drawable->drawable_id,
                              &p.selection.x0, &p.selection.y0,
                              &p.selection.x1, &p.selection.y1);
   p.selection.width  = p.selection.x1 - p.selection.x0;
   p.selection.height = p.selection.y1 - p.selection.y0;
 
-  gimp_tile_cache_ntiles (2 * (p.selection.width / gimp_tile_width () + 1));
+  picman_tile_cache_ntiles (2 * (p.selection.width / picman_tile_width () + 1));
 
   /* TILES */
   division_x = p.params.division_x;
@@ -668,7 +668,7 @@ filter (void)
 
   qsort (tiles, numof_tiles, sizeof *tiles, tile_compare);
 
-  gimp_pixel_rgn_get_rect (&src, pixels, 0, 0, p.drawable->width,
+  picman_pixel_rgn_get_rect (&src, pixels, 0, 0, p.drawable->width,
                            p.drawable->height);
 
   if (p.params.fractional_type == FRACTIONAL_TYPE_IGNORE)
@@ -722,8 +722,8 @@ filter (void)
       break;
 
     case BACKGROUND_TYPE_FOREGROUND:
-      gimp_context_get_foreground (&color);
-      gimp_rgb_get_uchar (&color, &pixel[0], &pixel[1], &pixel[2]);
+      picman_context_get_foreground (&color);
+      picman_rgb_get_uchar (&color, &pixel[0], &pixel[1], &pixel[2]);
       pixel[3] = 255;
       for (y = clear_y0; y < clear_y1; y++)
         {
@@ -739,8 +739,8 @@ filter (void)
       break;
 
     case BACKGROUND_TYPE_BACKGROUND:
-      gimp_context_get_background (&color);
-      gimp_rgb_get_uchar (&color, &pixel[0], &pixel[1], &pixel[2]);
+      picman_context_get_background (&color);
+      picman_rgb_get_uchar (&color, &pixel[0], &pixel[1], &pixel[2]);
       pixel[3] = 255;
       for (y = clear_y0; y < clear_y1; y++)
         {
@@ -756,7 +756,7 @@ filter (void)
       break;
 
     case BACKGROUND_TYPE_COLOR:
-      gimp_rgba_get_uchar (&p.params.background_color,
+      picman_rgba_get_uchar (&p.params.background_color,
                            pixel, pixel + 1, pixel + 2, pixel + 3);
       for (y = clear_y0; y < clear_y1; y++)
         {
@@ -778,7 +778,7 @@ filter (void)
       gint x0 = t->x + t->move_x;
       gint y0 = t->y + t->move_y;
 
-      gimp_pixel_rgn_get_rect (&src, buffer, t->x, t->y, t->width, t->height);
+      picman_pixel_rgn_get_rect (&src, buffer, t->x, t->y, t->width, t->height);
 
       for (y = 0; y < t->height; y++)
         {
@@ -803,16 +803,16 @@ filter (void)
             }
         }
 
-      gimp_progress_update ((gdouble) i / (gdouble) numof_tiles);
+      picman_progress_update ((gdouble) i / (gdouble) numof_tiles);
     }
 
-  gimp_pixel_rgn_set_rect (&dst, pixels, 0, 0, p.drawable->width,
+  picman_pixel_rgn_set_rect (&dst, pixels, 0, 0, p.drawable->width,
                            p.drawable->height);
 
-  gimp_progress_update (1.0);
-  gimp_drawable_flush (p.drawable);
-  gimp_drawable_merge_shadow (p.drawable->drawable_id, TRUE);
-  gimp_drawable_update (p.drawable->drawable_id,
+  picman_progress_update (1.0);
+  picman_drawable_flush (p.drawable);
+  picman_drawable_merge_shadow (p.drawable->drawable_id, TRUE);
+  picman_drawable_update (p.drawable->drawable_id,
                         p.selection.x0, p.selection.y0,
                         p.selection.width, p.selection.height);
 
@@ -829,22 +829,22 @@ filter (void)
 static void
 plugin_query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",         "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",            "Input image"                    },
-    { GIMP_PDB_DRAWABLE, "drawable",         "Input drawable"                 },
-    { GIMP_PDB_INT32,    "tile-size",        "Tile size (pixels)"             },
-    { GIMP_PDB_FLOAT,    "move-max",         "Max move rate (%)"              },
-    { GIMP_PDB_INT32,    "fractional-type",  "0:Background 1:Ignore 2:Force"  },
-    { GIMP_PDB_INT32,    "wrap-around",      "Wrap around (bool)"             },
-    { GIMP_PDB_INT32,    "centering",        "Centering (bool)"               },
-    { GIMP_PDB_INT32,    "background-type",  "0:Transparent 1:Inverted 2:Image? 3:FG 4:BG 5:Color"                  },
-    { GIMP_PDB_INT32,    "background-color", "Background color (for bg-type 5)" },
-    { GIMP_PDB_INT32,    "background-alpha", "Opacity (for bg-type 5)"        }
+    { PICMAN_PDB_INT32,    "run-mode",         "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",            "Input image"                    },
+    { PICMAN_PDB_DRAWABLE, "drawable",         "Input drawable"                 },
+    { PICMAN_PDB_INT32,    "tile-size",        "Tile size (pixels)"             },
+    { PICMAN_PDB_FLOAT,    "move-max",         "Max move rate (%)"              },
+    { PICMAN_PDB_INT32,    "fractional-type",  "0:Background 1:Ignore 2:Force"  },
+    { PICMAN_PDB_INT32,    "wrap-around",      "Wrap around (bool)"             },
+    { PICMAN_PDB_INT32,    "centering",        "Centering (bool)"               },
+    { PICMAN_PDB_INT32,    "background-type",  "0:Transparent 1:Inverted 2:Image? 3:FG 4:BG 5:Color"                  },
+    { PICMAN_PDB_INT32,    "background-color", "Background color (for bg-type 5)" },
+    { PICMAN_PDB_INT32,    "background-alpha", "Opacity (for bg-type 5)"        }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Cut image into paper tiles, and slide them"),
                           "This plug-in cuts an image into paper tiles and "
                           "slides each paper tile.",
@@ -853,7 +853,7 @@ plugin_query (void)
                           _("September 31, 1999"),
                           N_("_Paper Tile..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -861,30 +861,30 @@ plugin_query (void)
 static void
 plugin_run (const gchar      *name,
             gint              numof_params,
-            const GimpParam  *params,
+            const PicmanParam  *params,
             gint             *numof_return_vals,
-            GimpParam       **return_vals)
+            PicmanParam       **return_vals)
 {
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
 
   p.run                = FALSE;
   p.run_mode           = params[0].data.d_int32;
   p.image              = params[1].data.d_image;
-  p.drawable           = gimp_drawable_get(params[2].data.d_drawable);
-  p.drawable_has_alpha = gimp_drawable_has_alpha(p.drawable->drawable_id);
+  p.drawable           = picman_drawable_get(params[2].data.d_drawable);
+  p.drawable_has_alpha = picman_drawable_has_alpha(p.drawable->drawable_id);
 
-  if (gimp_drawable_is_rgb (p.drawable->drawable_id))
+  if (picman_drawable_is_rgb (p.drawable->drawable_id))
     {
       switch (p.run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-          params_load_from_gimp ();
+        case PICMAN_RUN_INTERACTIVE:
+          params_load_from_picman ();
           open_dialog ();
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           if (numof_params == 11)
             {
               p.params.tile_width       = params[3].data.d_int32;
@@ -905,43 +905,43 @@ plugin_run (const gchar      *name,
             }
           else
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
-          params_load_from_gimp ();
+        case PICMAN_RUN_WITH_LAST_VALS:
+          params_load_from_picman ();
           p.run = TRUE;
           break;
         }
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
-  if (status == GIMP_PDB_SUCCESS && p.run)
+  if (status == PICMAN_PDB_SUCCESS && p.run)
     {
-      params_save_to_gimp ();
+      params_save_to_picman ();
 
       filter ();
 
-      if (p.run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (p.run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
     }
 
-  gimp_drawable_detach (p.drawable);
+  picman_drawable_detach (p.drawable);
 
   {
-    static GimpParam return_value[1];
-    return_value[0].type          = GIMP_PDB_STATUS;
+    static PicmanParam return_value[1];
+    return_value[0].type          = PICMAN_PDB_STATUS;
     return_value[0].data.d_status = status;
     *numof_return_vals            = 1;
     *return_vals                  = return_value;
   }
 }
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,
   NULL,

@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorbutton.c
+ * picmancolorbutton.c
  * Copyright (C) 1999-2001 Sven Neumann
  *
  * This library is free software: you can redistribute it and/or
@@ -26,28 +26,28 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpcolorarea.h"
-#include "gimpcolorbutton.h"
-#include "gimpcolornotebook.h"
-#include "gimpcolorselection.h"
-#include "gimpdialog.h"
-#include "gimphelpui.h"
-#include "gimpstock.h"
-#include "gimpwidgets-private.h"
-#include "gimp3migration.h"
+#include "picmancolorarea.h"
+#include "picmancolorbutton.h"
+#include "picmancolornotebook.h"
+#include "picmancolorselection.h"
+#include "picmandialog.h"
+#include "picmanhelpui.h"
+#include "picmanstock.h"
+#include "picmanwidgets-private.h"
+#include "picman3migration.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpcolorbutton
- * @title: GimpColorButton
+ * SECTION: picmancolorbutton
+ * @title: PicmanColorButton
  * @short_description: Widget for selecting a color from a simple button.
- * @see_also: #libgimpcolor-gimpcolorspace
+ * @see_also: #libpicmancolor-picmancolorspace
  *
  * This widget provides a simple button with a preview showing the
  * color.
@@ -59,17 +59,17 @@
  **/
 
 
-#define COLOR_SELECTION_KEY "gimp-color-selection"
+#define COLOR_SELECTION_KEY "picman-color-selection"
 #define RESPONSE_RESET      1
 
 #define TODOUBLE(i) (i / 65535.0)
 #define TOUINT16(d) ((guint16) (d * 65535 + 0.5))
 
 
-#define GIMP_COLOR_BUTTON_COLOR_FG    "color-button-use-foreground"
-#define GIMP_COLOR_BUTTON_COLOR_BG    "color-button-use-background"
-#define GIMP_COLOR_BUTTON_COLOR_BLACK "color-button-use-black"
-#define GIMP_COLOR_BUTTON_COLOR_WHITE "color-button-use-white"
+#define PICMAN_COLOR_BUTTON_COLOR_FG    "color-button-use-foreground"
+#define PICMAN_COLOR_BUTTON_COLOR_BG    "color-button-use-background"
+#define PICMAN_COLOR_BUTTON_COLOR_BLACK "color-button-use-black"
+#define PICMAN_COLOR_BUTTON_COLOR_WHITE "color-button-use-white"
 
 
 enum
@@ -90,38 +90,38 @@ enum
 };
 
 
-static void     gimp_color_button_class_init   (GimpColorButtonClass *klass);
-static void     gimp_color_button_init         (GimpColorButton      *button,
-                                                GimpColorButtonClass *klass);
+static void     picman_color_button_class_init   (PicmanColorButtonClass *klass);
+static void     picman_color_button_init         (PicmanColorButton      *button,
+                                                PicmanColorButtonClass *klass);
 
-static void     gimp_color_button_finalize          (GObject         *object);
-static void     gimp_color_button_dispose           (GObject         *object);
-static void     gimp_color_button_get_property      (GObject         *object,
+static void     picman_color_button_finalize          (GObject         *object);
+static void     picman_color_button_dispose           (GObject         *object);
+static void     picman_color_button_get_property      (GObject         *object,
                                                      guint            property_id,
                                                      GValue          *value,
                                                      GParamSpec      *pspec);
-static void     gimp_color_button_set_property      (GObject         *object,
+static void     picman_color_button_set_property      (GObject         *object,
                                                      guint            property_id,
                                                      const GValue    *value,
                                                      GParamSpec      *pspec);
 
-static gboolean gimp_color_button_button_press      (GtkWidget       *widget,
+static gboolean picman_color_button_button_press      (GtkWidget       *widget,
                                                      GdkEventButton  *bevent);
-static void     gimp_color_button_state_changed     (GtkWidget       *widget,
+static void     picman_color_button_state_changed     (GtkWidget       *widget,
                                                      GtkStateType     prev_state);
-static void     gimp_color_button_clicked           (GtkButton       *button);
-static GType    gimp_color_button_get_action_type   (GimpColorButton *button);
+static void     picman_color_button_clicked           (GtkButton       *button);
+static GType    picman_color_button_get_action_type   (PicmanColorButton *button);
 
-static void     gimp_color_button_dialog_response   (GtkWidget       *dialog,
+static void     picman_color_button_dialog_response   (GtkWidget       *dialog,
                                                      gint             response_id,
-                                                     GimpColorButton *button);
-static void     gimp_color_button_use_color         (GtkAction       *action,
-                                                     GimpColorButton *button);
-static void     gimp_color_button_area_changed      (GtkWidget       *color_area,
-                                                     GimpColorButton *button);
-static void     gimp_color_button_selection_changed (GtkWidget       *selection,
-                                                     GimpColorButton *button);
-static void     gimp_color_button_help_func         (const gchar     *help_id,
+                                                     PicmanColorButton *button);
+static void     picman_color_button_use_color         (GtkAction       *action,
+                                                     PicmanColorButton *button);
+static void     picman_color_button_area_changed      (GtkWidget       *color_area,
+                                                     PicmanColorButton *button);
+static void     picman_color_button_selection_changed (GtkWidget       *selection,
+                                                     PicmanColorButton *button);
+static void     picman_color_button_help_func         (const gchar     *help_id,
                                                      gpointer         help_data);
 
 
@@ -132,31 +132,31 @@ static const GtkActionEntry actions[] =
     NULL
   },
 
-  { GIMP_COLOR_BUTTON_COLOR_FG, NULL,
+  { PICMAN_COLOR_BUTTON_COLOR_FG, NULL,
     N_("_Foreground Color"), NULL, NULL,
-    G_CALLBACK (gimp_color_button_use_color)
+    G_CALLBACK (picman_color_button_use_color)
   },
-  { GIMP_COLOR_BUTTON_COLOR_BG, NULL,
+  { PICMAN_COLOR_BUTTON_COLOR_BG, NULL,
     N_("_Background Color"), NULL, NULL,
-    G_CALLBACK (gimp_color_button_use_color)
+    G_CALLBACK (picman_color_button_use_color)
   },
-  { GIMP_COLOR_BUTTON_COLOR_BLACK, NULL,
+  { PICMAN_COLOR_BUTTON_COLOR_BLACK, NULL,
     N_("Blac_k"), NULL, NULL,
-    G_CALLBACK (gimp_color_button_use_color)
+    G_CALLBACK (picman_color_button_use_color)
   },
-  { GIMP_COLOR_BUTTON_COLOR_WHITE, NULL,
+  { PICMAN_COLOR_BUTTON_COLOR_WHITE, NULL,
     N_("_White"), NULL, NULL,
-    G_CALLBACK (gimp_color_button_use_color)
+    G_CALLBACK (picman_color_button_use_color)
   }
 };
 
-static guint   gimp_color_button_signals[LAST_SIGNAL] = { 0 };
+static guint   picman_color_button_signals[LAST_SIGNAL] = { 0 };
 
-static GimpButtonClass * parent_class = NULL;
+static PicmanButtonClass * parent_class = NULL;
 
 
 GType
-gimp_color_button_get_type (void)
+picman_color_button_get_type (void)
 {
   static GType button_type = 0;
 
@@ -164,19 +164,19 @@ gimp_color_button_get_type (void)
     {
       const GTypeInfo button_info =
       {
-        sizeof (GimpColorButtonClass),
+        sizeof (PicmanColorButtonClass),
         (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) gimp_color_button_class_init,
+        (GClassInitFunc) picman_color_button_class_init,
         NULL,           /* class_finalize */
         NULL,           /* class_data     */
-        sizeof (GimpColorButton),
+        sizeof (PicmanColorButton),
         0,              /* n_preallocs    */
-        (GInstanceInitFunc) gimp_color_button_init,
+        (GInstanceInitFunc) picman_color_button_init,
       };
 
-      button_type = g_type_register_static (GIMP_TYPE_BUTTON,
-                                            "GimpColorButton",
+      button_type = g_type_register_static (PICMAN_TYPE_BUTTON,
+                                            "PicmanColorButton",
                                             &button_info, 0);
     }
 
@@ -184,82 +184,82 @@ gimp_color_button_get_type (void)
 }
 
 static void
-gimp_color_button_class_init (GimpColorButtonClass *klass)
+picman_color_button_class_init (PicmanColorButtonClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   GtkButtonClass *button_class = GTK_BUTTON_CLASS (klass);
-  GimpRGB         color;
+  PicmanRGB         color;
 
   parent_class = g_type_class_peek_parent (klass);
 
-  gimp_color_button_signals[COLOR_CHANGED] =
+  picman_color_button_signals[COLOR_CHANGED] =
     g_signal_new ("color-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpColorButtonClass, color_changed),
+                  G_STRUCT_OFFSET (PicmanColorButtonClass, color_changed),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->finalize           = gimp_color_button_finalize;
-  object_class->dispose            = gimp_color_button_dispose;
-  object_class->get_property       = gimp_color_button_get_property;
-  object_class->set_property       = gimp_color_button_set_property;
+  object_class->finalize           = picman_color_button_finalize;
+  object_class->dispose            = picman_color_button_dispose;
+  object_class->get_property       = picman_color_button_get_property;
+  object_class->set_property       = picman_color_button_set_property;
 
-  widget_class->button_press_event = gimp_color_button_button_press;
-  widget_class->state_changed      = gimp_color_button_state_changed;
+  widget_class->button_press_event = picman_color_button_button_press;
+  widget_class->state_changed      = picman_color_button_state_changed;
 
-  button_class->clicked            = gimp_color_button_clicked;
+  button_class->clicked            = picman_color_button_clicked;
 
   klass->color_changed             = NULL;
-  klass->get_action_type           = gimp_color_button_get_action_type;
+  klass->get_action_type           = picman_color_button_get_action_type;
 
-  gimp_rgba_set (&color, 0.0, 0.0, 0.0, 1.0);
+  picman_rgba_set (&color, 0.0, 0.0, 0.0, 1.0);
 
   /**
-   * GimpColorButton:title:
+   * PicmanColorButton:title:
    *
    * The title to be used for the color selection dialog.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class, PROP_TITLE,
                                    g_param_spec_string ("title", NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
   /**
-   * GimpColorButton:color:
+   * PicmanColorButton:color:
    *
    * The color displayed in the button's color area.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class, PROP_COLOR,
-                                   gimp_param_spec_rgb ("color", NULL, NULL,
+                                   picman_param_spec_rgb ("color", NULL, NULL,
                                                         TRUE, &color,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
   /**
-   * GimpColorButton:type:
+   * PicmanColorButton:type:
    *
    * The type of the button's color area.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class, PROP_TYPE,
                                    g_param_spec_enum ("type", NULL, NULL,
-                                                      GIMP_TYPE_COLOR_AREA_TYPE,
-                                                      GIMP_COLOR_AREA_FLAT,
-                                                      GIMP_PARAM_READWRITE |
+                                                      PICMAN_TYPE_COLOR_AREA_TYPE,
+                                                      PICMAN_COLOR_AREA_FLAT,
+                                                      PICMAN_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
   /**
-   * GimpColorButton:continuous-update:
+   * PicmanColorButton:continuous-update:
    *
    * The update policy of the color button.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class, PROP_UPDATE,
                                    g_param_spec_boolean ("continuous-update",
@@ -269,11 +269,11 @@ gimp_color_button_class_init (GimpColorButtonClass *klass)
                                                          G_PARAM_CONSTRUCT));
 
   /**
-   * GimpColorButton:area-width:
+   * PicmanColorButton:area-width:
    *
-   * The minimum width of the button's #GimpColorArea.
+   * The minimum width of the button's #PicmanColorArea.
    *
-   * Since: GIMP 2.8
+   * Since: PICMAN 2.8
    */
   g_object_class_install_property (object_class, PROP_AREA_WIDTH,
                                    g_param_spec_int ("area-width",
@@ -283,11 +283,11 @@ gimp_color_button_class_init (GimpColorButtonClass *klass)
                                                      G_PARAM_CONSTRUCT));
 
   /**
-   * GimpColorButton:area-height:
+   * PicmanColorButton:area-height:
    *
-   * The minimum height of the button's #GimpColorArea.
+   * The minimum height of the button's #PicmanColorArea.
    *
-   * Since: GIMP 2.8
+   * Since: PICMAN 2.8
    */
   g_object_class_install_property (object_class, PROP_AREA_HEIGHT,
                                    g_param_spec_int ("area-height",
@@ -298,8 +298,8 @@ gimp_color_button_class_init (GimpColorButtonClass *klass)
 }
 
 static void
-gimp_color_button_init (GimpColorButton      *button,
-                        GimpColorButtonClass *klass)
+picman_color_button_init (PicmanColorButton      *button,
+                        PicmanColorButtonClass *klass)
 {
   GtkActionGroup *group;
   GtkUIManager   *ui_manager;
@@ -308,12 +308,12 @@ gimp_color_button_init (GimpColorButton      *button,
   button->title  = NULL;
   button->dialog = NULL;
 
-  button->color_area = g_object_new (GIMP_TYPE_COLOR_AREA,
+  button->color_area = g_object_new (PICMAN_TYPE_COLOR_AREA,
                                      "drag-mask", GDK_BUTTON1_MASK,
                                      NULL);
 
   g_signal_connect (button->color_area, "color-changed",
-                    G_CALLBACK (gimp_color_button_area_changed),
+                    G_CALLBACK (picman_color_button_area_changed),
                     button);
 
   gtk_container_add (GTK_CONTAINER (button), button->color_area);
@@ -355,20 +355,20 @@ gimp_color_button_init (GimpColorButton      *button,
     (ui_manager,
      "<ui>\n"
      "  <popup action=\"color-button-popup\">\n"
-     "    <menuitem action=\"" GIMP_COLOR_BUTTON_COLOR_FG "\" />\n"
-     "    <menuitem action=\"" GIMP_COLOR_BUTTON_COLOR_BG "\" />\n"
+     "    <menuitem action=\"" PICMAN_COLOR_BUTTON_COLOR_FG "\" />\n"
+     "    <menuitem action=\"" PICMAN_COLOR_BUTTON_COLOR_BG "\" />\n"
      "    <separator />\n"
-     "    <menuitem action=\"" GIMP_COLOR_BUTTON_COLOR_BLACK "\" />\n"
-     "    <menuitem action=\"" GIMP_COLOR_BUTTON_COLOR_WHITE "\" />\n"
+     "    <menuitem action=\"" PICMAN_COLOR_BUTTON_COLOR_BLACK "\" />\n"
+     "    <menuitem action=\"" PICMAN_COLOR_BUTTON_COLOR_WHITE "\" />\n"
      "  </popup>\n"
      "</ui>\n",
      -1, NULL);
 }
 
 static void
-gimp_color_button_finalize (GObject *object)
+picman_color_button_finalize (GObject *object)
 {
-  GimpColorButton *button = GIMP_COLOR_BUTTON (object);
+  PicmanColorButton *button = PICMAN_COLOR_BUTTON (object);
 
   if (button->title)
     {
@@ -380,9 +380,9 @@ gimp_color_button_finalize (GObject *object)
 }
 
 static void
-gimp_color_button_dispose (GObject *object)
+picman_color_button_dispose (GObject *object)
 {
-  GimpColorButton *button = GIMP_COLOR_BUTTON (object);
+  PicmanColorButton *button = PICMAN_COLOR_BUTTON (object);
 
   if (button->dialog)
     {
@@ -406,12 +406,12 @@ gimp_color_button_dispose (GObject *object)
 }
 
 static void
-gimp_color_button_get_property (GObject    *object,
+picman_color_button_get_property (GObject    *object,
                                 guint       property_id,
                                 GValue     *value,
                                 GParamSpec *pspec)
 {
-  GimpColorButton *button = GIMP_COLOR_BUTTON (object);
+  PicmanColorButton *button = PICMAN_COLOR_BUTTON (object);
 
   switch (property_id)
     {
@@ -438,12 +438,12 @@ gimp_color_button_get_property (GObject    *object,
 }
 
 static void
-gimp_color_button_set_property (GObject      *object,
+picman_color_button_set_property (GObject      *object,
                                 guint         property_id,
                                 const GValue *value,
                                 GParamSpec   *pspec)
 {
-  GimpColorButton *button = GIMP_COLOR_BUTTON (object);
+  PicmanColorButton *button = PICMAN_COLOR_BUTTON (object);
   gint             other;
 
   switch (property_id)
@@ -462,7 +462,7 @@ gimp_color_button_set_property (GObject      *object,
       break;
 
     case PROP_UPDATE:
-      gimp_color_button_set_update (button, g_value_get_boolean (value));
+      picman_color_button_set_update (button, g_value_get_boolean (value));
       break;
 
     case PROP_AREA_WIDTH:
@@ -484,10 +484,10 @@ gimp_color_button_set_property (GObject      *object,
 }
 
 static gboolean
-gimp_color_button_button_press (GtkWidget      *widget,
+picman_color_button_button_press (GtkWidget      *widget,
                                 GdkEventButton *bevent)
 {
-  GimpColorButton *button = GIMP_COLOR_BUTTON (widget);
+  PicmanColorButton *button = PICMAN_COLOR_BUTTON (widget);
 
   if (gdk_event_triggers_context_menu ((GdkEvent *) bevent))
     {
@@ -508,37 +508,37 @@ gimp_color_button_button_press (GtkWidget      *widget,
 }
 
 static void
-gimp_color_button_state_changed (GtkWidget    *widget,
+picman_color_button_state_changed (GtkWidget    *widget,
                                  GtkStateType  prev_state)
 {
-  g_return_if_fail (GIMP_IS_COLOR_BUTTON (widget));
+  g_return_if_fail (PICMAN_IS_COLOR_BUTTON (widget));
 
-  if (! gtk_widget_is_sensitive (widget) && GIMP_COLOR_BUTTON (widget)->dialog)
-    gtk_widget_hide (GIMP_COLOR_BUTTON (widget)->dialog);
+  if (! gtk_widget_is_sensitive (widget) && PICMAN_COLOR_BUTTON (widget)->dialog)
+    gtk_widget_hide (PICMAN_COLOR_BUTTON (widget)->dialog);
 
   if (GTK_WIDGET_CLASS (parent_class)->state_changed)
     GTK_WIDGET_CLASS (parent_class)->state_changed (widget, prev_state);
 }
 
 static void
-gimp_color_button_clicked (GtkButton *button)
+picman_color_button_clicked (GtkButton *button)
 {
-  GimpColorButton *color_button = GIMP_COLOR_BUTTON (button);
+  PicmanColorButton *color_button = PICMAN_COLOR_BUTTON (button);
 
   if (! color_button->dialog)
     {
       GtkWidget *dialog;
       GtkWidget *selection;
-      GimpRGB    color;
+      PicmanRGB    color;
 
-      gimp_color_button_get_color (color_button, &color);
+      picman_color_button_get_color (color_button, &color);
 
       dialog = color_button->dialog =
-        gimp_dialog_new (color_button->title, COLOR_SELECTION_KEY,
+        picman_dialog_new (color_button->title, COLOR_SELECTION_KEY,
                          gtk_widget_get_toplevel (GTK_WIDGET (button)), 0,
-                         gimp_color_button_help_func, NULL,
+                         picman_color_button_help_func, NULL,
 
-                         GIMP_STOCK_RESET, RESPONSE_RESET,
+                         PICMAN_STOCK_RESET, RESPONSE_RESET,
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                          GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -551,25 +551,25 @@ gimp_color_button_clicked (GtkButton *button)
                                                -1);
 
       g_signal_connect (dialog, "response",
-                        G_CALLBACK (gimp_color_button_dialog_response),
+                        G_CALLBACK (picman_color_button_dialog_response),
                         color_button);
       g_signal_connect (dialog, "destroy",
                         G_CALLBACK (gtk_widget_destroyed),
                         &color_button->dialog);
 
-      selection = gimp_color_selection_new ();
+      selection = picman_color_selection_new ();
       gtk_container_set_border_width (GTK_CONTAINER (selection), 6);
-      gimp_color_selection_set_show_alpha (GIMP_COLOR_SELECTION (selection),
-                                           gimp_color_button_has_alpha (color_button));
-      gimp_color_selection_set_color (GIMP_COLOR_SELECTION (selection), &color);
-      gimp_color_selection_set_old_color (GIMP_COLOR_SELECTION (selection),
+      picman_color_selection_set_show_alpha (PICMAN_COLOR_SELECTION (selection),
+                                           picman_color_button_has_alpha (color_button));
+      picman_color_selection_set_color (PICMAN_COLOR_SELECTION (selection), &color);
+      picman_color_selection_set_old_color (PICMAN_COLOR_SELECTION (selection),
                                           &color);
       gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))),
                           selection, TRUE, TRUE, 0);
       gtk_widget_show (selection);
 
       g_signal_connect (selection, "color-changed",
-                        G_CALLBACK (gimp_color_button_selection_changed),
+                        G_CALLBACK (picman_color_button_selection_changed),
                         button);
 
       g_object_set_data (G_OBJECT (color_button->dialog), COLOR_SELECTION_KEY,
@@ -580,7 +580,7 @@ gimp_color_button_clicked (GtkButton *button)
 }
 
 static GType
-gimp_color_button_get_action_type (GimpColorButton *button)
+picman_color_button_get_action_type (PicmanColorButton *button)
 {
   return GTK_TYPE_ACTION;
 }
@@ -589,14 +589,14 @@ gimp_color_button_get_action_type (GimpColorButton *button)
 /*  public functions  */
 
 /**
- * gimp_color_button_new:
+ * picman_color_button_new:
  * @title:  String that will be used as title for the color_selector.
  * @width:  Width of the colorpreview in pixels.
  * @height: Height of the colorpreview in pixels.
- * @color:  A pointer to a #GimpRGB color.
+ * @color:  A pointer to a #PicmanRGB color.
  * @type:   The type of transparency to be displayed.
  *
- * Creates a new #GimpColorButton widget.
+ * Creates a new #PicmanColorButton widget.
  *
  * This returns a button with a preview showing the color.
  * When the button is clicked a GtkColorSelectionDialog is opened.
@@ -604,20 +604,20 @@ gimp_color_button_get_action_type (GimpColorButton *button)
  * array that was used to pass the initial color and the "color-changed"
  * signal is emitted.
  *
- * Returns: Pointer to the new #GimpColorButton widget.
+ * Returns: Pointer to the new #PicmanColorButton widget.
  **/
 GtkWidget *
-gimp_color_button_new (const gchar       *title,
+picman_color_button_new (const gchar       *title,
                        gint               width,
                        gint               height,
-                       const GimpRGB     *color,
-                       GimpColorAreaType  type)
+                       const PicmanRGB     *color,
+                       PicmanColorAreaType  type)
 {
   g_return_val_if_fail (color != NULL, NULL);
   g_return_val_if_fail (width > 0, NULL);
   g_return_val_if_fail (height > 0, NULL);
 
-  return g_object_new (GIMP_TYPE_COLOR_BUTTON,
+  return g_object_new (PICMAN_TYPE_COLOR_BUTTON,
                        "title",       title,
                        "type",        type,
                        "color",       color,
@@ -627,44 +627,44 @@ gimp_color_button_new (const gchar       *title,
 }
 
 /**
- * gimp_color_button_set_color:
- * @button: Pointer to a #GimpColorButton.
- * @color:  Pointer to the new #GimpRGB color.
+ * picman_color_button_set_color:
+ * @button: Pointer to a #PicmanColorButton.
+ * @color:  Pointer to the new #PicmanRGB color.
  *
  * Sets the @button to the given @color.
  **/
 void
-gimp_color_button_set_color (GimpColorButton *button,
-                             const GimpRGB   *color)
+picman_color_button_set_color (PicmanColorButton *button,
+                             const PicmanRGB   *color)
 {
-  g_return_if_fail (GIMP_IS_COLOR_BUTTON (button));
+  g_return_if_fail (PICMAN_IS_COLOR_BUTTON (button));
   g_return_if_fail (color != NULL);
 
-  gimp_color_area_set_color (GIMP_COLOR_AREA (button->color_area), color);
+  picman_color_area_set_color (PICMAN_COLOR_AREA (button->color_area), color);
 
   g_object_notify (G_OBJECT (button), "color");
 }
 
 /**
- * gimp_color_button_get_color:
- * @button: Pointer to a #GimpColorButton.
- * @color:  Pointer to a #GimpRGB struct used to return the color.
+ * picman_color_button_get_color:
+ * @button: Pointer to a #PicmanColorButton.
+ * @color:  Pointer to a #PicmanRGB struct used to return the color.
  *
  * Retrieves the currently set color from the @button.
  **/
 void
-gimp_color_button_get_color (GimpColorButton *button,
-                             GimpRGB         *color)
+picman_color_button_get_color (PicmanColorButton *button,
+                             PicmanRGB         *color)
 {
-  g_return_if_fail (GIMP_IS_COLOR_BUTTON (button));
+  g_return_if_fail (PICMAN_IS_COLOR_BUTTON (button));
   g_return_if_fail (color != NULL);
 
-  gimp_color_area_get_color (GIMP_COLOR_AREA (button->color_area), color);
+  picman_color_area_get_color (PICMAN_COLOR_AREA (button->color_area), color);
 }
 
 /**
- * gimp_color_button_has_alpha:
- * @button: Pointer to a #GimpColorButton.
+ * picman_color_button_has_alpha:
+ * @button: Pointer to a #PicmanColorButton.
  *
  * Checks whether the @buttons shows transparency information.
  *
@@ -672,50 +672,50 @@ gimp_color_button_get_color (GimpColorButton *button,
  * otherwise.
  **/
 gboolean
-gimp_color_button_has_alpha (GimpColorButton *button)
+picman_color_button_has_alpha (PicmanColorButton *button)
 {
-  g_return_val_if_fail (GIMP_IS_COLOR_BUTTON (button), FALSE);
+  g_return_val_if_fail (PICMAN_IS_COLOR_BUTTON (button), FALSE);
 
-  return gimp_color_area_has_alpha (GIMP_COLOR_AREA (button->color_area));
+  return picman_color_area_has_alpha (PICMAN_COLOR_AREA (button->color_area));
 }
 
 /**
- * gimp_color_button_set_type:
- * @button: Pointer to a #GimpColorButton.
- * @type: the new #GimpColorAreaType
+ * picman_color_button_set_type:
+ * @button: Pointer to a #PicmanColorButton.
+ * @type: the new #PicmanColorAreaType
  *
- * Sets the @button to the given @type. See also gimp_color_area_set_type().
+ * Sets the @button to the given @type. See also picman_color_area_set_type().
  **/
 void
-gimp_color_button_set_type (GimpColorButton   *button,
-                            GimpColorAreaType  type)
+picman_color_button_set_type (PicmanColorButton   *button,
+                            PicmanColorAreaType  type)
 {
-  g_return_if_fail (GIMP_IS_COLOR_BUTTON (button));
+  g_return_if_fail (PICMAN_IS_COLOR_BUTTON (button));
 
-  gimp_color_area_set_type (GIMP_COLOR_AREA (button->color_area), type);
+  picman_color_area_set_type (PICMAN_COLOR_AREA (button->color_area), type);
 
   g_object_notify (G_OBJECT (button), "type");
 }
 
 /**
- * gimp_color_button_get_update:
- * @button: A #GimpColorButton widget.
+ * picman_color_button_get_update:
+ * @button: A #PicmanColorButton widget.
  *
  * Returns the color button's @continuous_update property.
  *
  * Return value: the @continuous_update property.
  **/
 gboolean
-gimp_color_button_get_update (GimpColorButton *button)
+picman_color_button_get_update (PicmanColorButton *button)
 {
-  g_return_val_if_fail (GIMP_IS_COLOR_BUTTON (button), FALSE);
+  g_return_val_if_fail (PICMAN_IS_COLOR_BUTTON (button), FALSE);
 
   return button->continuous_update;
 }
 
 /**
- * gimp_color_button_set_update:
- * @button:     A #GimpColorButton widget.
+ * picman_color_button_set_update:
+ * @button:     A #PicmanColorButton widget.
  * @continuous: The new setting of the @continuous_update property.
  *
  * When set to #TRUE, the @button will emit the "color-changed"
@@ -723,10 +723,10 @@ gimp_color_button_get_update (GimpColorButton *button)
  * dialog.
  **/
 void
-gimp_color_button_set_update (GimpColorButton *button,
+picman_color_button_set_update (PicmanColorButton *button,
                               gboolean         continuous)
 {
-  g_return_if_fail (GIMP_IS_COLOR_BUTTON (button));
+  g_return_if_fail (PICMAN_IS_COLOR_BUTTON (button));
 
   if (continuous != button->continuous_update)
     {
@@ -734,21 +734,21 @@ gimp_color_button_set_update (GimpColorButton *button,
 
       if (button->dialog)
         {
-          GimpColorSelection *selection;
-          GimpRGB             color;
+          PicmanColorSelection *selection;
+          PicmanRGB             color;
 
           selection = g_object_get_data (G_OBJECT (button->dialog),
                                          COLOR_SELECTION_KEY);
 
           if (button->continuous_update)
             {
-              gimp_color_selection_get_color (selection, &color);
-              gimp_color_button_set_color (button, &color);
+              picman_color_selection_get_color (selection, &color);
+              picman_color_button_set_color (button, &color);
             }
           else
             {
-              gimp_color_selection_get_old_color (selection, &color);
-              gimp_color_button_set_color (button, &color);
+              picman_color_selection_get_old_color (selection, &color);
+              picman_color_button_set_color (button, &color);
             }
         }
 
@@ -760,27 +760,27 @@ gimp_color_button_set_update (GimpColorButton *button,
 /*  private functions  */
 
 static void
-gimp_color_button_dialog_response (GtkWidget       *dialog,
+picman_color_button_dialog_response (GtkWidget       *dialog,
                                    gint             response_id,
-                                   GimpColorButton *button)
+                                   PicmanColorButton *button)
 {
   GtkWidget *selection;
-  GimpRGB    color;
+  PicmanRGB    color;
 
   selection = g_object_get_data (G_OBJECT (dialog), COLOR_SELECTION_KEY);
 
   switch (response_id)
     {
     case RESPONSE_RESET:
-      gimp_color_selection_reset (GIMP_COLOR_SELECTION (selection));
+      picman_color_selection_reset (PICMAN_COLOR_SELECTION (selection));
       break;
 
     case GTK_RESPONSE_OK:
       if (! button->continuous_update)
         {
-          gimp_color_selection_get_color (GIMP_COLOR_SELECTION (selection),
+          picman_color_selection_get_color (PICMAN_COLOR_SELECTION (selection),
                                           &color);
-          gimp_color_button_set_color (button, &color);
+          picman_color_button_set_color (button, &color);
         }
 
       gtk_widget_hide (dialog);
@@ -789,9 +789,9 @@ gimp_color_button_dialog_response (GtkWidget       *dialog,
     default:
       if (button->continuous_update)
         {
-          gimp_color_selection_get_old_color (GIMP_COLOR_SELECTION (selection),
+          picman_color_selection_get_old_color (PICMAN_COLOR_SELECTION (selection),
                                               &color);
-          gimp_color_button_set_color (button, &color);
+          picman_color_button_set_color (button, &color);
         }
 
       gtk_widget_hide (dialog);
@@ -800,105 +800,105 @@ gimp_color_button_dialog_response (GtkWidget       *dialog,
 }
 
 static void
-gimp_color_button_use_color (GtkAction       *action,
-                             GimpColorButton *button)
+picman_color_button_use_color (GtkAction       *action,
+                             PicmanColorButton *button)
 {
   const gchar *name;
-  GimpRGB      color;
+  PicmanRGB      color;
 
   name = gtk_action_get_name (action);
-  gimp_color_button_get_color (button, &color);
+  picman_color_button_get_color (button, &color);
 
-  if (! strcmp (name, GIMP_COLOR_BUTTON_COLOR_FG))
+  if (! strcmp (name, PICMAN_COLOR_BUTTON_COLOR_FG))
     {
-      if (_gimp_get_foreground_func)
-        _gimp_get_foreground_func (&color);
+      if (_picman_get_foreground_func)
+        _picman_get_foreground_func (&color);
       else
-        gimp_rgba_set (&color, 0.0, 0.0, 0.0, 1.0);
+        picman_rgba_set (&color, 0.0, 0.0, 0.0, 1.0);
     }
-  else if (! strcmp (name, GIMP_COLOR_BUTTON_COLOR_BG))
+  else if (! strcmp (name, PICMAN_COLOR_BUTTON_COLOR_BG))
     {
-      if (_gimp_get_background_func)
-        _gimp_get_background_func (&color);
+      if (_picman_get_background_func)
+        _picman_get_background_func (&color);
       else
-        gimp_rgba_set (&color, 1.0, 1.0, 1.0, 1.0);
+        picman_rgba_set (&color, 1.0, 1.0, 1.0, 1.0);
     }
-  else if (! strcmp (name, GIMP_COLOR_BUTTON_COLOR_BLACK))
+  else if (! strcmp (name, PICMAN_COLOR_BUTTON_COLOR_BLACK))
     {
-      gimp_rgba_set (&color, 0.0, 0.0, 0.0, 1.0);
+      picman_rgba_set (&color, 0.0, 0.0, 0.0, 1.0);
     }
-  else if (! strcmp (name, GIMP_COLOR_BUTTON_COLOR_WHITE))
+  else if (! strcmp (name, PICMAN_COLOR_BUTTON_COLOR_WHITE))
     {
-      gimp_rgba_set (&color, 1.0, 1.0, 1.0, 1.0);
+      picman_rgba_set (&color, 1.0, 1.0, 1.0, 1.0);
     }
 
-  gimp_color_button_set_color (button, &color);
+  picman_color_button_set_color (button, &color);
 }
 
 static void
-gimp_color_button_area_changed (GtkWidget       *color_area,
-                                GimpColorButton *button)
+picman_color_button_area_changed (GtkWidget       *color_area,
+                                PicmanColorButton *button)
 {
   if (button->dialog)
     {
-      GimpColorSelection *selection;
-      GimpRGB             color;
+      PicmanColorSelection *selection;
+      PicmanRGB             color;
 
       selection = g_object_get_data (G_OBJECT (button->dialog),
                                      COLOR_SELECTION_KEY);
 
-      gimp_color_button_get_color (button, &color);
+      picman_color_button_get_color (button, &color);
 
       g_signal_handlers_block_by_func (selection,
-                                       gimp_color_button_selection_changed,
+                                       picman_color_button_selection_changed,
                                        button);
 
-      gimp_color_selection_set_color (selection, &color);
+      picman_color_selection_set_color (selection, &color);
 
       g_signal_handlers_unblock_by_func (selection,
-                                         gimp_color_button_selection_changed,
+                                         picman_color_button_selection_changed,
                                          button);
     }
 
-  g_signal_emit (button, gimp_color_button_signals[COLOR_CHANGED], 0);
+  g_signal_emit (button, picman_color_button_signals[COLOR_CHANGED], 0);
 }
 
 static void
-gimp_color_button_selection_changed (GtkWidget       *selection,
-                                     GimpColorButton *button)
+picman_color_button_selection_changed (GtkWidget       *selection,
+                                     PicmanColorButton *button)
 {
   if (button->continuous_update)
     {
-      GimpRGB color;
+      PicmanRGB color;
 
-      gimp_color_selection_get_color (GIMP_COLOR_SELECTION (selection), &color);
+      picman_color_selection_get_color (PICMAN_COLOR_SELECTION (selection), &color);
 
       g_signal_handlers_block_by_func (button->color_area,
-                                       gimp_color_button_area_changed,
+                                       picman_color_button_area_changed,
                                        button);
 
-      gimp_color_area_set_color (GIMP_COLOR_AREA (button->color_area), &color);
+      picman_color_area_set_color (PICMAN_COLOR_AREA (button->color_area), &color);
 
       g_signal_handlers_unblock_by_func (button->color_area,
-                                         gimp_color_button_area_changed,
+                                         picman_color_button_area_changed,
                                          button);
 
-      g_signal_emit (button, gimp_color_button_signals[COLOR_CHANGED], 0);
+      g_signal_emit (button, picman_color_button_signals[COLOR_CHANGED], 0);
     }
 }
 
 static void
-gimp_color_button_help_func (const gchar *help_id,
+picman_color_button_help_func (const gchar *help_id,
                              gpointer     help_data)
 {
-  GimpColorSelection *selection;
-  GimpColorNotebook  *notebook;
+  PicmanColorSelection *selection;
+  PicmanColorNotebook  *notebook;
 
   selection = g_object_get_data (G_OBJECT (help_data), COLOR_SELECTION_KEY);
 
-  notebook = GIMP_COLOR_NOTEBOOK (selection->notebook);
+  notebook = PICMAN_COLOR_NOTEBOOK (selection->notebook);
 
-  help_id = GIMP_COLOR_SELECTOR_GET_CLASS (notebook->cur_page)->help_id;
+  help_id = PICMAN_COLOR_SELECTOR_GET_CLASS (notebook->cur_page)->help_id;
 
-  gimp_standard_help_func (help_id, NULL);
+  picman_standard_help_func (help_id, NULL);
 }

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpparamspecs-duplicate.h
- * Copyright (C) 2008-2009 Michael Natterer <mitch@gimp.org>
+ * picmanparamspecs-duplicate.h
+ * Copyright (C) 2008-2009 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PARAM_SPECS_DUPLICATE_H__
-#define __GIMP_PARAM_SPECS_DUPLICATE_H__
+#ifndef __PICMAN_PARAM_SPECS_DUPLICATE_H__
+#define __PICMAN_PARAM_SPECS_DUPLICATE_H__
 
 
-GParamSpec * gimp_param_spec_duplicate (GParamSpec *pspec);
+GParamSpec * picman_param_spec_duplicate (GParamSpec *pspec);
 
 
-#endif  /*  __GIMP_PARAM_SPECS_DUPLICATE_H__  */
+#endif  /*  __PICMAN_PARAM_SPECS_DUPLICATE_H__  */

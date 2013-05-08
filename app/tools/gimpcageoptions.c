@@ -1,6 +1,6 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  *
- * gimpcageoptions.c
+ * picmancageoptions.c
  * Copyright (C) 2010 Michael Muré <batolettre@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,15 +22,15 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "gimpcageoptions.h"
-#include "gimptooloptions-gui.h"
+#include "picmancageoptions.h"
+#include "picmantooloptions-gui.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -41,54 +41,54 @@ enum
 };
 
 
-static void   gimp_cage_options_set_property (GObject      *object,
+static void   picman_cage_options_set_property (GObject      *object,
                                               guint         property_id,
                                               const GValue *value,
                                               GParamSpec   *pspec);
-static void   gimp_cage_options_get_property (GObject      *object,
+static void   picman_cage_options_get_property (GObject      *object,
                                               guint         property_id,
                                               GValue       *value,
                                               GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpCageOptions, gimp_cage_options,
-               GIMP_TYPE_TOOL_OPTIONS)
+G_DEFINE_TYPE (PicmanCageOptions, picman_cage_options,
+               PICMAN_TYPE_TOOL_OPTIONS)
 
-#define parent_class gimp_cage_options_parent_class
+#define parent_class picman_cage_options_parent_class
 
 
 static void
-gimp_cage_options_class_init (GimpCageOptionsClass *klass)
+picman_cage_options_class_init (PicmanCageOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_cage_options_set_property;
-  object_class->get_property = gimp_cage_options_get_property;
+  object_class->set_property = picman_cage_options_set_property;
+  object_class->get_property = picman_cage_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CAGE_MODE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CAGE_MODE,
                                  "cage-mode", NULL,
-                                 GIMP_TYPE_CAGE_MODE,
-                                 GIMP_CAGE_MODE_CAGE_CHANGE,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_CAGE_MODE,
+                                 PICMAN_CAGE_MODE_CAGE_CHANGE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FILL_PLAIN_COLOR,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FILL_PLAIN_COLOR,
                                     "fill-plain-color", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_cage_options_init (GimpCageOptions *options)
+picman_cage_options_init (PicmanCageOptions *options)
 {
 }
 
 static void
-gimp_cage_options_set_property (GObject      *object,
+picman_cage_options_set_property (GObject      *object,
                                 guint         property_id,
                                 const GValue *value,
                                 GParamSpec   *pspec)
 {
-  GimpCageOptions *options = GIMP_CAGE_OPTIONS (object);
+  PicmanCageOptions *options = PICMAN_CAGE_OPTIONS (object);
 
   switch (property_id)
     {
@@ -106,12 +106,12 @@ gimp_cage_options_set_property (GObject      *object,
 }
 
 static void
-gimp_cage_options_get_property (GObject    *object,
+picman_cage_options_get_property (GObject    *object,
                                 guint       property_id,
                                 GValue     *value,
                                 GParamSpec *pspec)
 {
-  GimpCageOptions *options = GIMP_CAGE_OPTIONS (object);
+  PicmanCageOptions *options = PICMAN_CAGE_OPTIONS (object);
 
   switch (property_id)
     {
@@ -129,18 +129,18 @@ gimp_cage_options_get_property (GObject    *object,
 }
 
 GtkWidget *
-gimp_cage_options_gui (GimpToolOptions *tool_options)
+picman_cage_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config = G_OBJECT (tool_options);
-  GtkWidget *vbox   = gimp_tool_options_gui (tool_options);
+  GtkWidget *vbox   = picman_tool_options_gui (tool_options);
   GtkWidget *mode;
   GtkWidget *button;
 
-  mode = gimp_prop_enum_radio_box_new (config, "cage-mode", 0, 0);
+  mode = picman_prop_enum_radio_box_new (config, "cage-mode", 0, 0);
   gtk_box_pack_start (GTK_BOX (vbox), mode, FALSE, FALSE, 0);
   gtk_widget_show (mode);
 
-  button = gimp_prop_check_button_new (config, "fill-plain-color",
+  button = picman_prop_check_button_new (config, "fill-plain-color",
                                        _("Fill the original position\n"
                                          "of the cage with a color"));
   gtk_box_pack_start (GTK_BOX (vbox),  button, FALSE, FALSE, 0);

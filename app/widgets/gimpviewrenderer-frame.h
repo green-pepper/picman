@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewrenderer-frame.h
- * Copyright (C) 2004 Sven Neumann <sven@gimp.org>
+ * picmanviewrenderer-frame.h
+ * Copyright (C) 2004 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VIEW_RENDERER_FRAME_H__
-#define __GIMP_VIEW_RENDERER_FRAME_H__
+#ifndef __PICMAN_VIEW_RENDERER_FRAME_H__
+#define __PICMAN_VIEW_RENDERER_FRAME_H__
 
 
-GdkPixbuf * gimp_view_renderer_get_frame_pixbuf (GimpViewRenderer *renderer,
+GdkPixbuf * picman_view_renderer_get_frame_pixbuf (PicmanViewRenderer *renderer,
                                                  GtkWidget        *widget,
                                                  gint              width,
                                                  gint              height);
 
-void        gimp_view_renderer_get_frame_size   (gint             *width,
+void        picman_view_renderer_get_frame_size   (gint             *width,
                                                  gint             *height);
 
 
-#endif /* __GIMP_VIEW_RENDERER_FRAME_H__ */
+#endif /* __PICMAN_VIEW_RENDERER_FRAME_H__ */

@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimprectangle.c
+ * picmanrectangle.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include <glib.h>
 
-#include "gimprectangle.h"
+#include "picmanrectangle.h"
 
 
 /**
- * SECTION: gimprectangle
- * @title: gimprectangle
+ * SECTION: picmanrectangle
+ * @title: picmanrectangle
  * @short_description: Utility functions dealing with rectangle extents.
  *
  * Utility functions dealing with rectangle extents.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_rectangle_intersect:
+ * picman_rectangle_intersect:
  * @x1:          origin of first rectangle
  * @y1:          origin of first rectangle
  * @width1:      width of first rectangle
@@ -53,10 +53,10 @@
  *
  * Return value: %TRUE if the intersection is non-empty, %FALSE otherwise
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_rectangle_intersect (gint  x1,
+picman_rectangle_intersect (gint  x1,
                           gint  y1,
                           gint  width1,
                           gint  height1,
@@ -86,7 +86,7 @@ gimp_rectangle_intersect (gint  x1,
 }
 
 /**
- * gimp_rectangle_union:
+ * picman_rectangle_union:
  * @x1:          origin of first rectangle
  * @y1:          origin of first rectangle
  * @width1:      width of first rectangle
@@ -102,10 +102,10 @@ gimp_rectangle_intersect (gint  x1,
  *
  * Calculates the union of two rectangles.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 void
-gimp_rectangle_union (gint  x1,
+picman_rectangle_union (gint  x1,
                       gint  y1,
                       gint  width1,
                       gint  height1,

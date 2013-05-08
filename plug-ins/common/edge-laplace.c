@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,14 +23,14 @@
 
 #include <stdlib.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-laplace"
 #define PLUG_IN_BINARY "edge-laplace"
-#define PLUG_IN_ROLE   "gimp-edge-laplace"
+#define PLUG_IN_ROLE   "picman-edge-laplace"
 
 
 /* Declare local functions.
@@ -38,19 +38,19 @@
 static void   query  (void);
 static void   run    (const gchar      *name,
                       gint              nparams,
-                      const GimpParam  *param,
+                      const PicmanParam  *param,
                       gint             *nreturn_vals,
-                      GimpParam       **return_vals);
+                      PicmanParam       **return_vals);
 
-static void   laplace             (GimpDrawable *drawable);
-static void   laplace_prepare_row (GimpPixelRgn *pixel_rgn,
+static void   laplace             (PicmanDrawable *drawable);
+static void   laplace_prepare_row (PicmanPixelRgn *pixel_rgn,
                                    guchar       *data,
                                    gint          x,
                                    gint          y,
                                    gint          w);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -64,14 +64,14 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"       }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"       }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("High-resolution edge detection"),
                           "This plugin creates one-pixel wide edges from the "
                           "image, with the value proportional to the gradient. "
@@ -84,7 +84,7 @@ query (void)
                           "1997",
                           N_("_Laplace"),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -92,49 +92,49 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
   INIT_I18N();
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*  Make sure that the drawable is gray or RGB color  */
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
-      gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width () + 1));
+      picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width () + 1));
       laplace (drawable);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
     }
   else
     {
-      /* gimp_message ("laplace: cannot operate on indexed color images"); */
-      status = GIMP_PDB_EXECUTION_ERROR;
+      /* picman_message ("laplace: cannot operate on indexed color images"); */
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static void
-laplace_prepare_row (GimpPixelRgn *pixel_rgn,
+laplace_prepare_row (PicmanPixelRgn *pixel_rgn,
                      guchar       *data,
                      gint          x,
                      gint          y,
@@ -145,15 +145,15 @@ laplace_prepare_row (GimpPixelRgn *pixel_rgn,
 
   if (y < 0)
     {
-      gimp_pixel_rgn_get_row (pixel_rgn, data, x, (y + 1), w);
+      picman_pixel_rgn_get_row (pixel_rgn, data, x, (y + 1), w);
     }
   else if (y == pixel_rgn->h)
     {
-      gimp_pixel_rgn_get_row (pixel_rgn, data, x, (y - 1), w);
+      picman_pixel_rgn_get_row (pixel_rgn, data, x, (y - 1), w);
     }
   else
     {
-      gimp_pixel_rgn_get_row (pixel_rgn, data, x, y, w);
+      picman_pixel_rgn_get_row (pixel_rgn, data, x, y, w);
     }
 
   /*  Fill in edge pixels  */
@@ -212,9 +212,9 @@ minmax  (gint  x1,
 }
 
 static void
-laplace (GimpDrawable *drawable)
+laplace (PicmanDrawable *drawable)
 {
-  GimpPixelRgn srcPR, destPR;
+  PicmanPixelRgn srcPR, destPR;
   gint         width, height;
   gint         bytes;
   gint         current;
@@ -237,8 +237,8 @@ laplace (GimpDrawable *drawable)
    *  faster, since fewer pixels need to be operated on).
    */
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
-  gimp_progress_init (_("Laplace"));
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_progress_init (_("Laplace"));
 
   /* Get the size of the input image. (This will/must be the same
    *  as the size of the output image.
@@ -246,7 +246,7 @@ laplace (GimpDrawable *drawable)
   width  = drawable->width;
   height = drawable->height;
   bytes  = drawable->bpp;
-  alpha  = gimp_drawable_has_alpha (drawable->drawable_id);
+  alpha  = picman_drawable_has_alpha (drawable->drawable_id);
 
   /*  allocate row buffers  */
   prev_row = g_new (guchar, (x2 - x1 + 2) * bytes);
@@ -255,8 +255,8 @@ laplace (GimpDrawable *drawable)
   dest     = g_new (guchar, (x2 - x1) * bytes);
 
   /*  initialize the pixel regions  */
-  gimp_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&destPR, drawable, 0, 0, width, height, TRUE, TRUE);
+  picman_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&destPR, drawable, 0, 0, width, height, TRUE, TRUE);
 
   pr = prev_row + bytes;
   cr = cur_row + bytes;
@@ -291,7 +291,7 @@ laplace (GimpDrawable *drawable)
           }
 
       /*  store the dest  */
-      gimp_pixel_rgn_set_row (&destPR, dest, x1, row, (x2 - x1));
+      picman_pixel_rgn_set_row (&destPR, dest, x1, row, (x2 - x1));
 
       /*  shuffle the row pointers  */
       tmp = pr;
@@ -300,14 +300,14 @@ laplace (GimpDrawable *drawable)
       nr = tmp;
 
       if ((row % 20) == 0)
-        gimp_progress_update ((gdouble) row / (gdouble) (y2 - y1));
+        picman_progress_update ((gdouble) row / (gdouble) (y2 - y1));
     }
 
 
   /* now clean up: leave only edges, but keep gradient value */
 
 
-  gimp_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, TRUE);
+  picman_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, TRUE);
 
   pr = prev_row + bytes;
   cr = cur_row + bytes;
@@ -316,7 +316,7 @@ laplace (GimpDrawable *drawable)
   laplace_prepare_row (&srcPR, pr, x1, y1 - 1, (x2 - x1));
   laplace_prepare_row (&srcPR, cr, x1, y1, (x2 - x1));
 
-  gimp_progress_init (_("Cleanup"));
+  picman_progress_init (_("Cleanup"));
   counter =0;
 
   /*  loop through the rows, applying the laplace convolution  */
@@ -355,7 +355,7 @@ laplace (GimpDrawable *drawable)
         }
 
       /*  store the dest  */
-      gimp_pixel_rgn_set_row (&destPR, dest, x1, row, (x2 - x1));
+      picman_pixel_rgn_set_row (&destPR, dest, x1, row, (x2 - x1));
 
       /*  shuffle the row pointers  */
       tmp = pr;
@@ -364,14 +364,14 @@ laplace (GimpDrawable *drawable)
       nr = tmp;
 
       if ((row % 20) == 0)
-        gimp_progress_update ((gdouble) row / (gdouble) (y2 - y1));
+        picman_progress_update ((gdouble) row / (gdouble) (y2 - y1));
     }
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
   /*  update the laplaced region  */
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
 
   g_free (prev_row);
   g_free (cur_row);

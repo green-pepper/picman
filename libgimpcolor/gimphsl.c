@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -20,51 +20,51 @@
 
 #include <glib-object.h>
 
-#include "gimpcolortypes.h"
+#include "picmancolortypes.h"
 
-#include "gimphsl.h"
+#include "picmanhsl.h"
 
 
 /*
- * GIMP_TYPE_HSL
+ * PICMAN_TYPE_HSL
  */
 
-static GimpHSL * gimp_hsl_copy (const GimpHSL *hsl);
+static PicmanHSL * picman_hsl_copy (const PicmanHSL *hsl);
 
 
 GType
-gimp_hsl_get_type (void)
+picman_hsl_get_type (void)
 {
   static GType hsl_type = 0;
 
   if (!hsl_type)
-    hsl_type = g_boxed_type_register_static ("GimpHSL",
-                                              (GBoxedCopyFunc) gimp_hsl_copy,
+    hsl_type = g_boxed_type_register_static ("PicmanHSL",
+                                              (GBoxedCopyFunc) picman_hsl_copy,
                                               (GBoxedFreeFunc) g_free);
 
   return hsl_type;
 }
 
-static GimpHSL *
-gimp_hsl_copy (const GimpHSL *hsl)
+static PicmanHSL *
+picman_hsl_copy (const PicmanHSL *hsl)
 {
-  return g_memdup (hsl, sizeof (GimpHSL));
+  return g_memdup (hsl, sizeof (PicmanHSL));
 }
 
 
 /*  HSL functions  */
 
 /**
- * gimp_hsl_set:
+ * picman_hsl_set:
  * @hsl:
  * @h:
  * @s:
  * @l:
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 void
-gimp_hsl_set (GimpHSL *hsl,
+picman_hsl_set (PicmanHSL *hsl,
               gdouble  h,
               gdouble  s,
               gdouble  l)

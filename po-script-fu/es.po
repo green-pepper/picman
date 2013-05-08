@@ -1,7 +1,7 @@
-# translation of gimp-script-fu.master.po to Español
-# Spanish translation for gimp-script-fu.
+# translation of picman-script-fu.master.po to Español
+# Spanish translation for picman-script-fu.
 # Copyright © 1998-2000,2003, 2006, 2007, 2008, 2009, 2011 Free Software Foundation, Inc.
-# This file is distributed under the same license as the gimp package.
+# This file is distributed under the same license as the picman package.
 #
 # Pablo G. del Campo <pablodc@bigfoot.com>, 2003, 2004.
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2004, 2005, 2006.
@@ -12,9 +12,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu.master\n"
+"Project-Id-Version: picman-script-fu.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-06-04 20:29+0000\n"
 "PO-Revision-Date: 2012-06-05 10:58+0200\n"
 "Last-Translator: Francisco Vila <francisco.vila@hispalinux.es>\n"
@@ -43,8 +43,8 @@ msgid "_Start Server..."
 msgstr "_Iniciar servidor…"
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
-msgstr "El _GIMP en línea"
+msgid "_PICMAN Online"
+msgstr "El _PICMAN en línea"
 
 #: ../plug-ins/script-fu/script-fu.c:302
 msgid "_User Manual"
@@ -83,8 +83,8 @@ msgid "_Beveled Pattern"
 msgstr "Patrón _biselado"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Classic.Picman.Org"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -251,19 +251,19 @@ msgstr "Horizontal"
 msgid "Wrap"
 msgstr "Desformar"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:323
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:323
 msgid "Spyrograph"
 msgstr "Espirógrafo"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:326
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:326
 msgid "Circle"
 msgstr "Circulo"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:342
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:342
 msgid "Pencil"
 msgstr "Lápiz"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:347
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:347
 msgid "Solid Color"
 msgstr "Color liso"
 
@@ -1175,8 +1175,8 @@ msgstr "IIR"
 #~ msgid "_Fuzzy Border..."
 #~ msgstr "_Difuminar borde…"
 
-#~ msgid "Bookmark to the GIMP web site"
-#~ msgstr "Marcador al sitio web de GIMP"
+#~ msgid "Bookmark to the PICMAN web site"
+#~ msgstr "Marcador al sitio web de PICMAN"
 
 #~ msgid "Bookmark to the user manual"
 #~ msgstr "Marcador al manual de usuario"
@@ -1859,8 +1859,8 @@ msgstr "IIR"
 #~ msgid "Type"
 #~ msgstr "Tipo"
 
-#~ msgid "_Spyrogimp..."
-#~ msgstr "_Espirógrafo del GIMP…"
+#~ msgid "_Spyropicman..."
+#~ msgstr "_Espirógrafo del PICMAN…"
 
 #~ msgid "Create a logo using a rock-like texture, a nova glow, and shadow"
 #~ msgstr ""

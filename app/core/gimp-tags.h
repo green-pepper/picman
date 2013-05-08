@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TAGS_H__
-#define __GIMP_TAGS_H__
+#ifndef __PICMAN_TAGS_H__
+#define __PICMAN_TAGS_H__
 
 
-gboolean gimp_tags_user_install (void);
+gboolean picman_tags_user_install (void);
 
 
-#endif  /*  __GIMP_TAGS_H__  */
+#endif  /*  __PICMAN_TAGS_H__  */

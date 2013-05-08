@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpregionselecttool.c
+ * picmanregionselecttool.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,88 +22,88 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimpboundary.h"
-#include "core/gimpchannel.h"
-#include "core/gimpchannel-select.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer-floating-sel.h"
+#include "core/picmanboundary.h"
+#include "core/picmanchannel.h"
+#include "core/picmanchannel-select.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer-floating-sel.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-cursor.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-cursor.h"
 
-#include "gimpregionselectoptions.h"
-#include "gimpregionselecttool.h"
-#include "gimptoolcontrol.h"
+#include "picmanregionselectoptions.h"
+#include "picmanregionselecttool.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void   gimp_region_select_tool_finalize       (GObject               *object);
+static void   picman_region_select_tool_finalize       (GObject               *object);
 
-static void   gimp_region_select_tool_button_press   (GimpTool              *tool,
-                                                      const GimpCoords      *coords,
+static void   picman_region_select_tool_button_press   (PicmanTool              *tool,
+                                                      const PicmanCoords      *coords,
                                                       guint32                time,
                                                       GdkModifierType        state,
-                                                      GimpButtonPressType    press_type,
-                                                      GimpDisplay           *display);
-static void   gimp_region_select_tool_button_release (GimpTool              *tool,
-                                                      const GimpCoords      *coords,
+                                                      PicmanButtonPressType    press_type,
+                                                      PicmanDisplay           *display);
+static void   picman_region_select_tool_button_release (PicmanTool              *tool,
+                                                      const PicmanCoords      *coords,
                                                       guint32                time,
                                                       GdkModifierType        state,
-                                                      GimpButtonReleaseType  release_type,
-                                                      GimpDisplay           *display);
-static void   gimp_region_select_tool_motion         (GimpTool              *tool,
-                                                      const GimpCoords      *coords,
+                                                      PicmanButtonReleaseType  release_type,
+                                                      PicmanDisplay           *display);
+static void   picman_region_select_tool_motion         (PicmanTool              *tool,
+                                                      const PicmanCoords      *coords,
                                                       guint32                time,
                                                       GdkModifierType        state,
-                                                      GimpDisplay           *display);
-static void   gimp_region_select_tool_cursor_update  (GimpTool              *tool,
-                                                      const GimpCoords      *coords,
+                                                      PicmanDisplay           *display);
+static void   picman_region_select_tool_cursor_update  (PicmanTool              *tool,
+                                                      const PicmanCoords      *coords,
                                                       GdkModifierType        state,
-                                                      GimpDisplay           *display);
+                                                      PicmanDisplay           *display);
 
-static void   gimp_region_select_tool_draw           (GimpDrawTool          *draw_tool);
+static void   picman_region_select_tool_draw           (PicmanDrawTool          *draw_tool);
 
-static GimpBoundSeg * gimp_region_select_tool_calculate (GimpRegionSelectTool *region_sel,
-                                                         GimpDisplay          *display,
+static PicmanBoundSeg * picman_region_select_tool_calculate (PicmanRegionSelectTool *region_sel,
+                                                         PicmanDisplay          *display,
                                                          gint                 *n_segs);
 
 
-G_DEFINE_TYPE (GimpRegionSelectTool, gimp_region_select_tool,
-               GIMP_TYPE_SELECTION_TOOL)
+G_DEFINE_TYPE (PicmanRegionSelectTool, picman_region_select_tool,
+               PICMAN_TYPE_SELECTION_TOOL)
 
-#define parent_class gimp_region_select_tool_parent_class
+#define parent_class picman_region_select_tool_parent_class
 
 
 static void
-gimp_region_select_tool_class_init (GimpRegionSelectToolClass *klass)
+picman_region_select_tool_class_init (PicmanRegionSelectToolClass *klass)
 {
   GObjectClass      *object_class    = G_OBJECT_CLASS (klass);
-  GimpToolClass     *tool_class      = GIMP_TOOL_CLASS (klass);
-  GimpDrawToolClass *draw_tool_class = GIMP_DRAW_TOOL_CLASS (klass);
+  PicmanToolClass     *tool_class      = PICMAN_TOOL_CLASS (klass);
+  PicmanDrawToolClass *draw_tool_class = PICMAN_DRAW_TOOL_CLASS (klass);
 
-  object_class->finalize     = gimp_region_select_tool_finalize;
+  object_class->finalize     = picman_region_select_tool_finalize;
 
-  tool_class->button_press   = gimp_region_select_tool_button_press;
-  tool_class->button_release = gimp_region_select_tool_button_release;
-  tool_class->motion         = gimp_region_select_tool_motion;
-  tool_class->cursor_update  = gimp_region_select_tool_cursor_update;
+  tool_class->button_press   = picman_region_select_tool_button_press;
+  tool_class->button_release = picman_region_select_tool_button_release;
+  tool_class->motion         = picman_region_select_tool_motion;
+  tool_class->cursor_update  = picman_region_select_tool_cursor_update;
 
-  draw_tool_class->draw      = gimp_region_select_tool_draw;
+  draw_tool_class->draw      = picman_region_select_tool_draw;
 }
 
 static void
-gimp_region_select_tool_init (GimpRegionSelectTool *region_select)
+picman_region_select_tool_init (PicmanRegionSelectTool *region_select)
 {
-  GimpTool *tool = GIMP_TOOL (region_select);
+  PicmanTool *tool = PICMAN_TOOL (region_select);
 
-  gimp_tool_control_set_scroll_lock (tool->control, TRUE);
-  gimp_tool_control_set_motion_mode (tool->control, GIMP_MOTION_MODE_COMPRESS);
+  picman_tool_control_set_scroll_lock (tool->control, TRUE);
+  picman_tool_control_set_motion_mode (tool->control, PICMAN_MOTION_MODE_COMPRESS);
 
   region_select->x               = 0;
   region_select->y               = 0;
@@ -115,9 +115,9 @@ gimp_region_select_tool_init (GimpRegionSelectTool *region_select)
 }
 
 static void
-gimp_region_select_tool_finalize (GObject *object)
+picman_region_select_tool_finalize (GObject *object)
 {
-  GimpRegionSelectTool *region_sel = GIMP_REGION_SELECT_TOOL (object);
+  PicmanRegionSelectTool *region_sel = PICMAN_REGION_SELECT_TOOL (object);
 
   if (region_sel->region_mask)
     {
@@ -136,74 +136,74 @@ gimp_region_select_tool_finalize (GObject *object)
 }
 
 static void
-gimp_region_select_tool_button_press (GimpTool            *tool,
-                                      const GimpCoords    *coords,
+picman_region_select_tool_button_press (PicmanTool            *tool,
+                                      const PicmanCoords    *coords,
                                       guint32              time,
                                       GdkModifierType      state,
-                                      GimpButtonPressType  press_type,
-                                      GimpDisplay         *display)
+                                      PicmanButtonPressType  press_type,
+                                      PicmanDisplay         *display)
 {
-  GimpRegionSelectTool    *region_sel = GIMP_REGION_SELECT_TOOL (tool);
-  GimpRegionSelectOptions *options    = GIMP_REGION_SELECT_TOOL_GET_OPTIONS (tool);
+  PicmanRegionSelectTool    *region_sel = PICMAN_REGION_SELECT_TOOL (tool);
+  PicmanRegionSelectOptions *options    = PICMAN_REGION_SELECT_TOOL_GET_OPTIONS (tool);
 
   region_sel->x               = coords->x;
   region_sel->y               = coords->y;
   region_sel->saved_threshold = options->threshold;
 
-  if (gimp_selection_tool_start_edit (GIMP_SELECTION_TOOL (region_sel),
+  if (picman_selection_tool_start_edit (PICMAN_SELECTION_TOOL (region_sel),
                                       display, coords))
     {
       return;
     }
 
-  gimp_tool_control_activate (tool->control);
+  picman_tool_control_activate (tool->control);
   tool->display = display;
 
-  gimp_tool_push_status (tool, display,
+  picman_tool_push_status (tool, display,
                          _("Move the mouse to change threshold"));
 
   /*  calculate the region boundary  */
-  region_sel->segs = gimp_region_select_tool_calculate (region_sel, display,
+  region_sel->segs = picman_region_select_tool_calculate (region_sel, display,
                                                         &region_sel->n_segs);
 
-  gimp_draw_tool_start (GIMP_DRAW_TOOL (tool), display);
+  picman_draw_tool_start (PICMAN_DRAW_TOOL (tool), display);
 }
 
 static void
-gimp_region_select_tool_button_release (GimpTool              *tool,
-                                        const GimpCoords      *coords,
+picman_region_select_tool_button_release (PicmanTool              *tool,
+                                        const PicmanCoords      *coords,
                                         guint32                time,
                                         GdkModifierType        state,
-                                        GimpButtonReleaseType  release_type,
-                                        GimpDisplay           *display)
+                                        PicmanButtonReleaseType  release_type,
+                                        PicmanDisplay           *display)
 {
-  GimpRegionSelectTool    *region_sel  = GIMP_REGION_SELECT_TOOL (tool);
-  GimpSelectionOptions    *sel_options = GIMP_SELECTION_TOOL_GET_OPTIONS (tool);
-  GimpRegionSelectOptions *options     = GIMP_REGION_SELECT_TOOL_GET_OPTIONS (tool);
-  GimpImage               *image       = gimp_display_get_image (display);
+  PicmanRegionSelectTool    *region_sel  = PICMAN_REGION_SELECT_TOOL (tool);
+  PicmanSelectionOptions    *sel_options = PICMAN_SELECTION_TOOL_GET_OPTIONS (tool);
+  PicmanRegionSelectOptions *options     = PICMAN_REGION_SELECT_TOOL_GET_OPTIONS (tool);
+  PicmanImage               *image       = picman_display_get_image (display);
 
-  gimp_tool_pop_status (tool, display);
+  picman_tool_pop_status (tool, display);
 
-  gimp_draw_tool_stop (GIMP_DRAW_TOOL (tool));
+  picman_draw_tool_stop (PICMAN_DRAW_TOOL (tool));
 
-  gimp_tool_control_halt (tool->control);
+  picman_tool_control_halt (tool->control);
 
-  if (release_type != GIMP_BUTTON_RELEASE_CANCEL)
+  if (release_type != PICMAN_BUTTON_RELEASE_CANCEL)
     {
-      if (GIMP_SELECTION_TOOL (tool)->function == SELECTION_ANCHOR)
+      if (PICMAN_SELECTION_TOOL (tool)->function == SELECTION_ANCHOR)
         {
-          if (gimp_image_get_floating_selection (image))
+          if (picman_image_get_floating_selection (image))
             {
               /*  If there is a floating selection, anchor it  */
-              floating_sel_anchor (gimp_image_get_floating_selection (image));
+              floating_sel_anchor (picman_image_get_floating_selection (image));
             }
           else
             {
               /*  Otherwise, clear the selection mask  */
-              gimp_channel_clear (gimp_image_get_mask (image), NULL, TRUE);
+              picman_channel_clear (picman_image_get_mask (image), NULL, TRUE);
             }
 
-          gimp_image_flush (image);
+          picman_image_flush (image);
         }
       else if (region_sel->region_mask)
         {
@@ -212,13 +212,13 @@ gimp_region_select_tool_button_release (GimpTool              *tool,
 
           if (! options->sample_merged)
             {
-              GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+              PicmanDrawable *drawable = picman_image_get_active_drawable (image);
 
-              gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+              picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
             }
 
-          gimp_channel_select_buffer (gimp_image_get_mask (image),
-                                      GIMP_REGION_SELECT_TOOL_GET_CLASS (tool)->undo_desc,
+          picman_channel_select_buffer (picman_image_get_mask (image),
+                                      PICMAN_REGION_SELECT_TOOL_GET_CLASS (tool)->undo_desc,
                                       region_sel->region_mask,
                                       off_x,
                                       off_y,
@@ -228,7 +228,7 @@ gimp_region_select_tool_button_release (GimpTool              *tool,
                                       sel_options->feather_radius);
 
 
-          gimp_image_flush (image);
+          picman_image_flush (image);
         }
     }
 
@@ -252,14 +252,14 @@ gimp_region_select_tool_button_release (GimpTool              *tool,
 }
 
 static void
-gimp_region_select_tool_motion (GimpTool         *tool,
-                                const GimpCoords *coords,
+picman_region_select_tool_motion (PicmanTool         *tool,
+                                const PicmanCoords *coords,
                                 guint32           time,
                                 GdkModifierType   state,
-                                GimpDisplay      *display)
+                                PicmanDisplay      *display)
 {
-  GimpRegionSelectTool    *region_sel = GIMP_REGION_SELECT_TOOL (tool);
-  GimpRegionSelectOptions *options    = GIMP_REGION_SELECT_TOOL_GET_OPTIONS (tool);
+  PicmanRegionSelectTool    *region_sel = PICMAN_REGION_SELECT_TOOL (tool);
+  PicmanRegionSelectOptions *options    = PICMAN_REGION_SELECT_TOOL_GET_OPTIONS (tool);
   gint                     diff_x, diff_y;
   gdouble                  diff;
 
@@ -280,41 +280,41 @@ gimp_region_select_tool_motion (GimpTool         *tool,
                 "threshold", CLAMP (region_sel->saved_threshold + diff, 0, 255),
                 NULL);
 
-  gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
+  picman_draw_tool_pause (PICMAN_DRAW_TOOL (tool));
 
   if (region_sel->segs)
     g_free (region_sel->segs);
 
-  region_sel->segs = gimp_region_select_tool_calculate (region_sel, display,
+  region_sel->segs = picman_region_select_tool_calculate (region_sel, display,
                                                         &region_sel->n_segs);
 
-  gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
+  picman_draw_tool_resume (PICMAN_DRAW_TOOL (tool));
 }
 
 static void
-gimp_region_select_tool_cursor_update (GimpTool         *tool,
-                                       const GimpCoords *coords,
+picman_region_select_tool_cursor_update (PicmanTool         *tool,
+                                       const PicmanCoords *coords,
                                        GdkModifierType   state,
-                                       GimpDisplay      *display)
+                                       PicmanDisplay      *display)
 {
-  GimpRegionSelectOptions *options  = GIMP_REGION_SELECT_TOOL_GET_OPTIONS (tool);
-  GimpCursorModifier       modifier = GIMP_CURSOR_MODIFIER_NONE;
-  GimpImage               *image    = gimp_display_get_image (display);
+  PicmanRegionSelectOptions *options  = PICMAN_REGION_SELECT_TOOL_GET_OPTIONS (tool);
+  PicmanCursorModifier       modifier = PICMAN_CURSOR_MODIFIER_NONE;
+  PicmanImage               *image    = picman_display_get_image (display);
 
-  if (! gimp_image_coords_in_active_pickable (image, coords,
+  if (! picman_image_coords_in_active_pickable (image, coords,
                                               options->sample_merged, FALSE))
-    modifier = GIMP_CURSOR_MODIFIER_BAD;
+    modifier = PICMAN_CURSOR_MODIFIER_BAD;
 
-  gimp_tool_control_set_cursor_modifier (tool->control, modifier);
+  picman_tool_control_set_cursor_modifier (tool->control, modifier);
 
-  GIMP_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
+  PICMAN_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
 }
 
 static void
-gimp_region_select_tool_draw (GimpDrawTool *draw_tool)
+picman_region_select_tool_draw (PicmanDrawTool *draw_tool)
 {
-  GimpRegionSelectTool    *region_sel = GIMP_REGION_SELECT_TOOL (draw_tool);
-  GimpRegionSelectOptions *options    = GIMP_REGION_SELECT_TOOL_GET_OPTIONS (draw_tool);
+  PicmanRegionSelectTool    *region_sel = PICMAN_REGION_SELECT_TOOL (draw_tool);
+  PicmanRegionSelectOptions *options    = PICMAN_REGION_SELECT_TOOL_GET_OPTIONS (draw_tool);
 
   if (region_sel->segs)
     {
@@ -323,13 +323,13 @@ gimp_region_select_tool_draw (GimpDrawTool *draw_tool)
 
       if (! options->sample_merged)
         {
-          GimpImage    *image    = gimp_display_get_image (draw_tool->display);
-          GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+          PicmanImage    *image    = picman_display_get_image (draw_tool->display);
+          PicmanDrawable *drawable = picman_image_get_active_drawable (image);
 
-          gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+          picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
         }
 
-      gimp_draw_tool_add_boundary (draw_tool,
+      picman_draw_tool_add_boundary (draw_tool,
                                    region_sel->segs,
                                    region_sel->n_segs,
                                    NULL,
@@ -337,26 +337,26 @@ gimp_region_select_tool_draw (GimpDrawTool *draw_tool)
     }
 }
 
-static GimpBoundSeg *
-gimp_region_select_tool_calculate (GimpRegionSelectTool *region_sel,
-                                   GimpDisplay          *display,
+static PicmanBoundSeg *
+picman_region_select_tool_calculate (PicmanRegionSelectTool *region_sel,
+                                   PicmanDisplay          *display,
                                    gint                 *n_segs)
 {
-  GimpDisplayShell *shell = gimp_display_get_shell (display);
-  GimpBoundSeg     *segs;
+  PicmanDisplayShell *shell = picman_display_get_shell (display);
+  PicmanBoundSeg     *segs;
 
-  gimp_display_shell_set_override_cursor (shell, GDK_WATCH);
+  picman_display_shell_set_override_cursor (shell, GDK_WATCH);
 
   if (region_sel->region_mask)
     g_object_unref (region_sel->region_mask);
 
   region_sel->region_mask =
-    GIMP_REGION_SELECT_TOOL_GET_CLASS (region_sel)->get_mask (region_sel,
+    PICMAN_REGION_SELECT_TOOL_GET_CLASS (region_sel)->get_mask (region_sel,
                                                               display);
 
   if (! region_sel->region_mask)
     {
-      gimp_display_shell_unset_override_cursor (shell);
+      picman_display_shell_unset_override_cursor (shell);
 
       *n_segs = 0;
       return NULL;
@@ -365,16 +365,16 @@ gimp_region_select_tool_calculate (GimpRegionSelectTool *region_sel,
   /*  calculate and allocate a new segment array which represents the
    *  boundary of the contiguous region
    */
-  segs = gimp_boundary_find (region_sel->region_mask, NULL,
+  segs = picman_boundary_find (region_sel->region_mask, NULL,
                              babl_format ("Y float"),
-                             GIMP_BOUNDARY_WITHIN_BOUNDS,
+                             PICMAN_BOUNDARY_WITHIN_BOUNDS,
                              0, 0,
                              gegl_buffer_get_width  (region_sel->region_mask),
                              gegl_buffer_get_height (region_sel->region_mask),
-                             GIMP_BOUNDARY_HALF_WAY,
+                             PICMAN_BOUNDARY_HALF_WAY,
                              n_segs);
 
-  gimp_display_shell_unset_override_cursor (shell);
+  picman_display_shell_unset_override_cursor (shell);
 
   return segs;
 }

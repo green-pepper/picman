@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpsessioninfo-dock.c
- * Copyright (C) 2001-2007 Michael Natterer <mitch@gimp.org>
+ * picmansessioninfo-dock.c
+ * Copyright (C) 2001-2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,22 +24,22 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "widgets-types.h"
 
-#include "gimpdialogfactory.h"
-#include "gimpdock.h"
-#include "gimpdockbook.h"
-#include "gimpdockcontainer.h"
-#include "gimpdockwindow.h"
-#include "gimpsessioninfo.h"
-#include "gimpsessioninfo-aux.h"
-#include "gimpsessioninfo-book.h"
-#include "gimpsessioninfo-dock.h"
-#include "gimpsessioninfo-private.h"
-#include "gimptoolbox.h"
-#include "gimpwidgets-utils.h"
+#include "picmandialogfactory.h"
+#include "picmandock.h"
+#include "picmandockbook.h"
+#include "picmandockcontainer.h"
+#include "picmandockwindow.h"
+#include "picmansessioninfo.h"
+#include "picmansessioninfo-aux.h"
+#include "picmansessioninfo-book.h"
+#include "picmansessioninfo-dock.h"
+#include "picmansessioninfo-private.h"
+#include "picmantoolbox.h"
+#include "picmanwidgets-utils.h"
 
 
 enum
@@ -50,20 +50,20 @@ enum
 };
 
 
-static GimpAlignmentType gimp_session_info_dock_get_side (GimpDock *dock);
+static PicmanAlignmentType picman_session_info_dock_get_side (PicmanDock *dock);
 
 
-static GimpAlignmentType
-gimp_session_info_dock_get_side (GimpDock *dock)
+static PicmanAlignmentType
+picman_session_info_dock_get_side (PicmanDock *dock)
 {
-  GimpAlignmentType result   = -1;
+  PicmanAlignmentType result   = -1;
   GtkWidget        *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (dock));
 
-  if (GIMP_IS_DOCK_CONTAINER (toplevel))
+  if (PICMAN_IS_DOCK_CONTAINER (toplevel))
     {
-      GimpDockContainer *container = GIMP_DOCK_CONTAINER (toplevel);
+      PicmanDockContainer *container = PICMAN_DOCK_CONTAINER (toplevel);
 
-      result = gimp_dock_container_get_dock_side (container, dock);
+      result = picman_dock_container_get_dock_side (container, dock);
     }
 
   return result;
@@ -72,12 +72,12 @@ gimp_session_info_dock_get_side (GimpDock *dock)
 
 /*  public functions  */
 
-GimpSessionInfoDock *
-gimp_session_info_dock_new (const gchar *dock_type)
+PicmanSessionInfoDock *
+picman_session_info_dock_new (const gchar *dock_type)
 {
-  GimpSessionInfoDock *dock_info = NULL;
+  PicmanSessionInfoDock *dock_info = NULL;
 
-  dock_info = g_slice_new0 (GimpSessionInfoDock);
+  dock_info = g_slice_new0 (PicmanSessionInfoDock);
   dock_info->dock_type = g_strdup (dock_type);
   dock_info->side      = -1;
 
@@ -85,7 +85,7 @@ gimp_session_info_dock_new (const gchar *dock_type)
 }
 
 void
-gimp_session_info_dock_free (GimpSessionInfoDock *dock_info)
+picman_session_info_dock_free (PicmanSessionInfoDock *dock_info)
 {
   g_return_if_fail (dock_info != NULL);
 
@@ -98,47 +98,47 @@ gimp_session_info_dock_free (GimpSessionInfoDock *dock_info)
   if (dock_info->books)
     {
       g_list_free_full (dock_info->books,
-                        (GDestroyNotify) gimp_session_info_book_free);
+                        (GDestroyNotify) picman_session_info_book_free);
       dock_info->books = NULL;
     }
 
-  g_slice_free (GimpSessionInfoDock, dock_info);
+  g_slice_free (PicmanSessionInfoDock, dock_info);
 }
 
 void
-gimp_session_info_dock_serialize (GimpConfigWriter    *writer,
-                                  GimpSessionInfoDock *dock_info)
+picman_session_info_dock_serialize (PicmanConfigWriter    *writer,
+                                  PicmanSessionInfoDock *dock_info)
 {
   GList *list;
 
   g_return_if_fail (writer != NULL);
   g_return_if_fail (dock_info != NULL);
 
-  gimp_config_writer_open (writer, dock_info->dock_type);
+  picman_config_writer_open (writer, dock_info->dock_type);
 
   if (dock_info->side != -1)
     {
       const char *side_text =
-        dock_info->side == GIMP_ALIGN_LEFT ? "left" : "right";
+        dock_info->side == PICMAN_ALIGN_LEFT ? "left" : "right";
       
-      gimp_config_writer_open (writer, "side");
-      gimp_config_writer_print (writer, side_text, strlen (side_text));
-      gimp_config_writer_close (writer);
+      picman_config_writer_open (writer, "side");
+      picman_config_writer_print (writer, side_text, strlen (side_text));
+      picman_config_writer_close (writer);
     }
 
   if (dock_info->position != 0)
-    gimp_session_write_position (writer, dock_info->position);
+    picman_session_write_position (writer, dock_info->position);
 
   for (list = dock_info->books; list; list = g_list_next (list))
-    gimp_session_info_book_serialize (writer, list->data);
+    picman_session_info_book_serialize (writer, list->data);
 
-  gimp_config_writer_close (writer);
+  picman_config_writer_close (writer);
 }
 
 GTokenType
-gimp_session_info_dock_deserialize (GScanner             *scanner,
+picman_session_info_dock_deserialize (GScanner             *scanner,
                                     gint                  scope,
-                                    GimpSessionInfoDock **dock_info,
+                                    PicmanSessionInfoDock **dock_info,
                                     const gchar          *dock_type)
 {
   GTokenType token;
@@ -153,7 +153,7 @@ gimp_session_info_dock_deserialize (GScanner             *scanner,
   g_scanner_scope_add_symbol (scanner, scope, "book",
                               GINT_TO_POINTER (SESSION_INFO_BOOK));
 
-  *dock_info = gimp_session_info_dock_new (dock_type);
+  *dock_info = picman_session_info_dock_new (dock_type);
 
   token = G_TOKEN_LEFT_PAREN;
 
@@ -170,7 +170,7 @@ gimp_session_info_dock_deserialize (GScanner             *scanner,
         case G_TOKEN_SYMBOL:
           switch (GPOINTER_TO_INT (scanner->value.v_symbol))
             {
-              GimpSessionInfoBook *book;
+              PicmanSessionInfoBook *book;
 
             case SESSION_INFO_SIDE:
               token = G_TOKEN_IDENTIFIER;
@@ -180,20 +180,20 @@ gimp_session_info_dock_deserialize (GScanner             *scanner,
               g_scanner_get_next_token (scanner);
 
               if (strcmp ("left", scanner->value.v_identifier) == 0)
-                (*dock_info)->side = GIMP_ALIGN_LEFT;
+                (*dock_info)->side = PICMAN_ALIGN_LEFT;
               else
-                (*dock_info)->side = GIMP_ALIGN_RIGHT;
+                (*dock_info)->side = PICMAN_ALIGN_RIGHT;
               break;
 
             case SESSION_INFO_POSITION:
               token = G_TOKEN_INT;
-              if (! gimp_scanner_parse_int (scanner, &((*dock_info)->position)))
+              if (! picman_scanner_parse_int (scanner, &((*dock_info)->position)))
                 (*dock_info)->position = 0;
               break;
 
             case SESSION_INFO_BOOK:
               g_scanner_set_scope (scanner, scope + 1);
-              token = gimp_session_info_book_deserialize (scanner, scope + 1,
+              token = picman_session_info_book_deserialize (scanner, scope + 1,
                                                           &book);
 
               if (token == G_TOKEN_LEFT_PAREN)
@@ -228,30 +228,30 @@ gimp_session_info_dock_deserialize (GScanner             *scanner,
   return token;
 }
 
-GimpSessionInfoDock *
-gimp_session_info_dock_from_widget (GimpDock *dock)
+PicmanSessionInfoDock *
+picman_session_info_dock_from_widget (PicmanDock *dock)
 {
-  GimpSessionInfoDock *dock_info;
+  PicmanSessionInfoDock *dock_info;
   GList               *list;
   GtkWidget           *parent;
 
-  g_return_val_if_fail (GIMP_IS_DOCK (dock), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK (dock), NULL);
 
-  dock_info = gimp_session_info_dock_new (GIMP_IS_TOOLBOX (dock) ?
-                                          "gimp-toolbox" :
-                                          "gimp-dock");
+  dock_info = picman_session_info_dock_new (PICMAN_IS_TOOLBOX (dock) ?
+                                          "picman-toolbox" :
+                                          "picman-dock");
 
-  for (list = gimp_dock_get_dockbooks (dock); list; list = g_list_next (list))
+  for (list = picman_dock_get_dockbooks (dock); list; list = g_list_next (list))
     {
-      GimpSessionInfoBook *book;
+      PicmanSessionInfoBook *book;
 
-      book = gimp_session_info_book_from_widget (list->data);
+      book = picman_session_info_book_from_widget (list->data);
 
       dock_info->books = g_list_prepend (dock_info->books, book);
     }
 
   dock_info->books = g_list_reverse (dock_info->books);
-  dock_info->side  = gimp_session_info_dock_get_side (dock);
+  dock_info->side  = picman_session_info_dock_get_side (dock);
 
   parent = gtk_widget_get_parent (GTK_WIDGET (dock));
 
@@ -266,35 +266,35 @@ gimp_session_info_dock_from_widget (GimpDock *dock)
   return dock_info;
 }
 
-GimpDock *
-gimp_session_info_dock_restore (GimpSessionInfoDock *dock_info,
-                                GimpDialogFactory   *factory,
+PicmanDock *
+picman_session_info_dock_restore (PicmanSessionInfoDock *dock_info,
+                                PicmanDialogFactory   *factory,
                                 GdkScreen           *screen,
-                                GimpDockContainer   *dock_container)
+                                PicmanDockContainer   *dock_container)
 {
   gint           n_books = 0;
   GtkWidget     *dock;
   GList         *iter;
-  GimpUIManager *ui_manager;
+  PicmanUIManager *ui_manager;
 
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
   g_return_val_if_fail (GDK_IS_SCREEN (screen), NULL);
 
-  ui_manager = gimp_dock_container_get_ui_manager (dock_container);
-  dock       = gimp_dialog_factory_dialog_new (factory,
+  ui_manager = picman_dock_container_get_ui_manager (dock_container);
+  dock       = picman_dialog_factory_dialog_new (factory,
                                                screen,
                                                ui_manager,
                                                dock_info->dock_type,
                                                -1 /*view_size*/,
                                                FALSE /*present*/);
 
-  g_return_val_if_fail (GIMP_IS_DOCK (dock), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK (dock), NULL);
 
   /* Add the dock to the dock window immediately so the stuff in the
    * dock has access to e.g. a dialog factory
    */
-  gimp_dock_container_add_dock (dock_container,
-                                GIMP_DOCK (dock),
+  picman_dock_container_add_dock (dock_container,
+                                PICMAN_DOCK (dock),
                                 dock_info);
 
   /* Note that if it is a toolbox, we will get here even though we
@@ -304,11 +304,11 @@ gimp_session_info_dock_restore (GimpSessionInfoDock *dock_info,
        iter;
        iter = g_list_next (iter))
     {
-      GimpSessionInfoBook *book_info = iter->data;
+      PicmanSessionInfoBook *book_info = iter->data;
       GtkWidget           *dockbook;
 
-      dockbook = GTK_WIDGET (gimp_session_info_book_restore (book_info,
-                                                             GIMP_DOCK (dock)));
+      dockbook = GTK_WIDGET (picman_session_info_book_restore (book_info,
+                                                             PICMAN_DOCK (dock)));
 
       if (dockbook)
         {
@@ -327,14 +327,14 @@ gimp_session_info_dock_restore (GimpSessionInfoDock *dock_info,
     }
 
   /* Now remove empty dockbooks from the list, check the comment in
-   * gimp_session_info_book_restore() which explains why the dock
+   * picman_session_info_book_restore() which explains why the dock
    * can contain empty dockbooks at all
    */
   if (dock_info && dock_info->books)
     {
       GList *books;
 
-      books = g_list_copy (gimp_dock_get_dockbooks (GIMP_DOCK (dock)));
+      books = g_list_copy (picman_dock_get_dockbooks (PICMAN_DOCK (dock)));
 
       while (books)
         {
@@ -348,7 +348,7 @@ gimp_session_info_dock_restore (GimpSessionInfoDock *dock_info,
           else
             {
               g_object_ref (dockbook);
-              gimp_dock_remove_book (GIMP_DOCK (dock), GIMP_DOCKBOOK (dockbook));
+              picman_dock_remove_book (PICMAN_DOCK (dock), PICMAN_DOCKBOOK (dockbook));
               gtk_widget_destroy (GTK_WIDGET (dockbook));
               g_object_unref (dockbook);
 
@@ -367,5 +367,5 @@ gimp_session_info_dock_restore (GimpSessionInfoDock *dock_info,
 
   gtk_widget_show (dock);
 
-  return GIMP_DOCK (dock);
+  return PICMAN_DOCK (dock);
 }

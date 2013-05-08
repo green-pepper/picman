@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,27 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CROP_OPTIONS_H__
-#define __GIMP_CROP_OPTIONS_H__
+#ifndef __PICMAN_CROP_OPTIONS_H__
+#define __PICMAN_CROP_OPTIONS_H__
 
 
-#include "core/gimptooloptions.h"
+#include "core/picmantooloptions.h"
 
 
-#define GIMP_TYPE_CROP_OPTIONS            (gimp_crop_options_get_type ())
-#define GIMP_CROP_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CROP_OPTIONS, GimpCropOptions))
-#define GIMP_CROP_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CROP_OPTIONS, GimpCropOptionsClass))
-#define GIMP_IS_CROP_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CROP_OPTIONS))
-#define GIMP_IS_CROP_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CROP_OPTIONS))
-#define GIMP_CROP_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CROP_OPTIONS, GimpCropOptionsClass))
+#define PICMAN_TYPE_CROP_OPTIONS            (picman_crop_options_get_type ())
+#define PICMAN_CROP_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CROP_OPTIONS, PicmanCropOptions))
+#define PICMAN_CROP_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CROP_OPTIONS, PicmanCropOptionsClass))
+#define PICMAN_IS_CROP_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CROP_OPTIONS))
+#define PICMAN_IS_CROP_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CROP_OPTIONS))
+#define PICMAN_CROP_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CROP_OPTIONS, PicmanCropOptionsClass))
 
 
-typedef struct _GimpCropOptions      GimpCropOptions;
-typedef struct _GimpToolOptionsClass GimpCropOptionsClass;
+typedef struct _PicmanCropOptions      PicmanCropOptions;
+typedef struct _PicmanToolOptionsClass PicmanCropOptionsClass;
 
-struct _GimpCropOptions
+struct _PicmanCropOptions
 {
-  GimpToolOptions  parent_instence;
+  PicmanToolOptions  parent_instence;
 
   /* Work on the current layer rather than the image. */
   gboolean         layer_only;
@@ -47,9 +47,9 @@ struct _GimpCropOptions
 };
 
 
-GType       gimp_crop_options_get_type (void) G_GNUC_CONST;
+GType       picman_crop_options_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_crop_options_gui      (GimpToolOptions *tool_options);
+GtkWidget * picman_crop_options_gui      (PicmanToolOptions *tool_options);
 
 
-#endif /* __GIMP_CROP_OPTIONS_H__ */
+#endif /* __PICMAN_CROP_OPTIONS_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 #define __CORE_TYPES_H__
 
 
-#include "libgimpbase/gimpbasetypes.h"
-#include "libgimpmath/gimpmathtypes.h"
-#include "libgimpcolor/gimpcolortypes.h"
-#include "libgimpmodule/gimpmoduletypes.h"
-#include "libgimpthumb/gimpthumb-types.h"
+#include "libpicmanbase/picmanbasetypes.h"
+#include "libpicmanmath/picmanmathtypes.h"
+#include "libpicmancolor/picmancolortypes.h"
+#include "libpicmanmodule/picmanmoduletypes.h"
+#include "libpicmanthumb/picmanthumb-types.h"
 
 #include "config/config-types.h"
 
@@ -48,164 +48,164 @@
 
 /*  defines  */
 
-#define GIMP_COORDS_MIN_PRESSURE      0.0
-#define GIMP_COORDS_MAX_PRESSURE      1.0
-#define GIMP_COORDS_DEFAULT_PRESSURE  1.0
+#define PICMAN_COORDS_MIN_PRESSURE      0.0
+#define PICMAN_COORDS_MAX_PRESSURE      1.0
+#define PICMAN_COORDS_DEFAULT_PRESSURE  1.0
 
-#define GIMP_COORDS_MIN_TILT         -1.0
-#define GIMP_COORDS_MAX_TILT          1.0
-#define GIMP_COORDS_DEFAULT_TILT      0.0
+#define PICMAN_COORDS_MIN_TILT         -1.0
+#define PICMAN_COORDS_MAX_TILT          1.0
+#define PICMAN_COORDS_DEFAULT_TILT      0.0
 
-#define GIMP_COORDS_MIN_WHEEL         0.0
-#define GIMP_COORDS_MAX_WHEEL         1.0
-#define GIMP_COORDS_DEFAULT_WHEEL     0.5
+#define PICMAN_COORDS_MIN_WHEEL         0.0
+#define PICMAN_COORDS_MAX_WHEEL         1.0
+#define PICMAN_COORDS_DEFAULT_WHEEL     0.5
 
-#define GIMP_COORDS_DEFAULT_VELOCITY  0.0
+#define PICMAN_COORDS_DEFAULT_VELOCITY  0.0
 
-#define GIMP_COORDS_DEFAULT_DIRECTION 0.0
+#define PICMAN_COORDS_DEFAULT_DIRECTION 0.0
 
-#define GIMP_COORDS_DEFAULT_VALUES    { 0.0, 0.0, \
-                                        GIMP_COORDS_DEFAULT_PRESSURE, \
-                                        GIMP_COORDS_DEFAULT_TILT,     \
-                                        GIMP_COORDS_DEFAULT_TILT,     \
-                                        GIMP_COORDS_DEFAULT_WHEEL,    \
-                                        GIMP_COORDS_DEFAULT_VELOCITY, \
-                                        GIMP_COORDS_DEFAULT_DIRECTION }
+#define PICMAN_COORDS_DEFAULT_VALUES    { 0.0, 0.0, \
+                                        PICMAN_COORDS_DEFAULT_PRESSURE, \
+                                        PICMAN_COORDS_DEFAULT_TILT,     \
+                                        PICMAN_COORDS_DEFAULT_TILT,     \
+                                        PICMAN_COORDS_DEFAULT_WHEEL,    \
+                                        PICMAN_COORDS_DEFAULT_VELOCITY, \
+                                        PICMAN_COORDS_DEFAULT_DIRECTION }
 
 
 /*  base classes  */
 
-typedef struct _GimpObject          GimpObject;
-typedef struct _GimpViewable        GimpViewable;
-typedef struct _GimpFilter          GimpFilter;
-typedef struct _GimpItem            GimpItem;
+typedef struct _PicmanObject          PicmanObject;
+typedef struct _PicmanViewable        PicmanViewable;
+typedef struct _PicmanFilter          PicmanFilter;
+typedef struct _PicmanItem            PicmanItem;
 
-typedef struct _Gimp                Gimp;
-typedef struct _GimpImage           GimpImage;
+typedef struct _Picman                Picman;
+typedef struct _PicmanImage           PicmanImage;
 
 
 /*  containers  */
 
-typedef struct _GimpContainer         GimpContainer;
-typedef struct _GimpList              GimpList;
-typedef struct _GimpDocumentList      GimpDocumentList;
-typedef struct _GimpDrawableStack     GimpDrawableStack;
-typedef struct _GimpFilteredContainer GimpFilteredContainer;
-typedef struct _GimpFilterStack       GimpFilterStack;
-typedef struct _GimpItemStack         GimpItemStack;
-typedef struct _GimpTaggedContainer   GimpTaggedContainer;
+typedef struct _PicmanContainer         PicmanContainer;
+typedef struct _PicmanList              PicmanList;
+typedef struct _PicmanDocumentList      PicmanDocumentList;
+typedef struct _PicmanDrawableStack     PicmanDrawableStack;
+typedef struct _PicmanFilteredContainer PicmanFilteredContainer;
+typedef struct _PicmanFilterStack       PicmanFilterStack;
+typedef struct _PicmanItemStack         PicmanItemStack;
+typedef struct _PicmanTaggedContainer   PicmanTaggedContainer;
 
 
 /*  not really a container  */
 
-typedef struct _GimpItemTree          GimpItemTree;
+typedef struct _PicmanItemTree          PicmanItemTree;
 
 
 /*  context objects  */
 
-typedef struct _GimpContext         GimpContext;
-typedef struct _GimpFillOptions     GimpFillOptions;
-typedef struct _GimpStrokeOptions   GimpStrokeOptions;
-typedef struct _GimpToolOptions     GimpToolOptions;
+typedef struct _PicmanContext         PicmanContext;
+typedef struct _PicmanFillOptions     PicmanFillOptions;
+typedef struct _PicmanStrokeOptions   PicmanStrokeOptions;
+typedef struct _PicmanToolOptions     PicmanToolOptions;
 
 
 /*  info objects  */
 
-typedef struct _GimpPaintInfo       GimpPaintInfo;
-typedef struct _GimpToolInfo        GimpToolInfo;
+typedef struct _PicmanPaintInfo       PicmanPaintInfo;
+typedef struct _PicmanToolInfo        PicmanToolInfo;
 
 
 /*  data objects  */
 
-typedef struct _GimpDataFactory      GimpDataFactory;
-typedef struct _GimpData             GimpData;
-typedef struct _GimpBrush            GimpBrush;
-typedef struct _GimpBrushCache       GimpBrushCache;
-typedef struct _GimpBrushClipboard   GimpBrushClipboard;
-typedef struct _GimpBrushGenerated   GimpBrushGenerated;
-typedef struct _GimpBrushPipe        GimpBrushPipe;
-typedef struct _GimpCurve            GimpCurve;
-typedef struct _GimpDynamics         GimpDynamics;
-typedef struct _GimpDynamicsOutput   GimpDynamicsOutput;
-typedef struct _GimpGradient         GimpGradient;
-typedef struct _GimpPalette          GimpPalette;
-typedef struct _GimpPattern          GimpPattern;
-typedef struct _GimpPatternClipboard GimpPatternClipboard;
-typedef struct _GimpToolPreset       GimpToolPreset;
-typedef struct _GimpTagCache         GimpTagCache;
+typedef struct _PicmanDataFactory      PicmanDataFactory;
+typedef struct _PicmanData             PicmanData;
+typedef struct _PicmanBrush            PicmanBrush;
+typedef struct _PicmanBrushCache       PicmanBrushCache;
+typedef struct _PicmanBrushClipboard   PicmanBrushClipboard;
+typedef struct _PicmanBrushGenerated   PicmanBrushGenerated;
+typedef struct _PicmanBrushPipe        PicmanBrushPipe;
+typedef struct _PicmanCurve            PicmanCurve;
+typedef struct _PicmanDynamics         PicmanDynamics;
+typedef struct _PicmanDynamicsOutput   PicmanDynamicsOutput;
+typedef struct _PicmanGradient         PicmanGradient;
+typedef struct _PicmanPalette          PicmanPalette;
+typedef struct _PicmanPattern          PicmanPattern;
+typedef struct _PicmanPatternClipboard PicmanPatternClipboard;
+typedef struct _PicmanToolPreset       PicmanToolPreset;
+typedef struct _PicmanTagCache         PicmanTagCache;
 
 
 /*  drawable objects  */
 
-typedef struct _GimpDrawable        GimpDrawable;
-typedef struct _GimpChannel         GimpChannel;
-typedef struct _GimpLayerMask       GimpLayerMask;
-typedef struct _GimpSelection       GimpSelection;
-typedef struct _GimpLayer           GimpLayer;
-typedef struct _GimpGroupLayer      GimpGroupLayer;
+typedef struct _PicmanDrawable        PicmanDrawable;
+typedef struct _PicmanChannel         PicmanChannel;
+typedef struct _PicmanLayerMask       PicmanLayerMask;
+typedef struct _PicmanSelection       PicmanSelection;
+typedef struct _PicmanLayer           PicmanLayer;
+typedef struct _PicmanGroupLayer      PicmanGroupLayer;
 
 
 /*  undo objects  */
 
-typedef struct _GimpUndo              GimpUndo;
-typedef struct _GimpImageUndo         GimpImageUndo;
-typedef struct _GimpItemUndo          GimpItemUndo;
-typedef struct _GimpItemPropUndo      GimpItemPropUndo;
-typedef struct _GimpChannelUndo       GimpChannelUndo;
-typedef struct _GimpChannelPropUndo   GimpChannelPropUndo;
-typedef struct _GimpDrawableUndo      GimpDrawableUndo;
-typedef struct _GimpDrawableModUndo   GimpDrawableModUndo;
-typedef struct _GimpLayerMaskUndo     GimpLayerMaskUndo;
-typedef struct _GimpLayerMaskPropUndo GimpLayerMaskPropUndo;
-typedef struct _GimpLayerUndo         GimpLayerUndo;
-typedef struct _GimpLayerPropUndo     GimpLayerPropUndo;
-typedef struct _GimpGroupLayerUndo    GimpGroupLayerUndo;
-typedef struct _GimpMaskUndo          GimpMaskUndo;
-typedef struct _GimpGuideUndo         GimpGuideUndo;
-typedef struct _GimpSamplePointUndo   GimpSamplePointUndo;
-typedef struct _GimpFloatingSelUndo   GimpFloatingSelUndo;
-typedef struct _GimpUndoStack         GimpUndoStack;
-typedef struct _GimpUndoAccumulator   GimpUndoAccumulator;
+typedef struct _PicmanUndo              PicmanUndo;
+typedef struct _PicmanImageUndo         PicmanImageUndo;
+typedef struct _PicmanItemUndo          PicmanItemUndo;
+typedef struct _PicmanItemPropUndo      PicmanItemPropUndo;
+typedef struct _PicmanChannelUndo       PicmanChannelUndo;
+typedef struct _PicmanChannelPropUndo   PicmanChannelPropUndo;
+typedef struct _PicmanDrawableUndo      PicmanDrawableUndo;
+typedef struct _PicmanDrawableModUndo   PicmanDrawableModUndo;
+typedef struct _PicmanLayerMaskUndo     PicmanLayerMaskUndo;
+typedef struct _PicmanLayerMaskPropUndo PicmanLayerMaskPropUndo;
+typedef struct _PicmanLayerUndo         PicmanLayerUndo;
+typedef struct _PicmanLayerPropUndo     PicmanLayerPropUndo;
+typedef struct _PicmanGroupLayerUndo    PicmanGroupLayerUndo;
+typedef struct _PicmanMaskUndo          PicmanMaskUndo;
+typedef struct _PicmanGuideUndo         PicmanGuideUndo;
+typedef struct _PicmanSamplePointUndo   PicmanSamplePointUndo;
+typedef struct _PicmanFloatingSelUndo   PicmanFloatingSelUndo;
+typedef struct _PicmanUndoStack         PicmanUndoStack;
+typedef struct _PicmanUndoAccumulator   PicmanUndoAccumulator;
 
 
 /*  misc objects  */
 
-typedef struct _GimpBuffer          GimpBuffer;
-typedef struct _GimpEnvironTable    GimpEnvironTable;
-typedef struct _GimpGuide           GimpGuide;
-typedef struct _GimpHistogram       GimpHistogram;
-typedef struct _GimpIdTable         GimpIdTable;
-typedef struct _GimpImageMap        GimpImageMap;
-typedef struct _GimpImageMapConfig  GimpImageMapConfig;
-typedef struct _GimpImagefile       GimpImagefile;
-typedef struct _GimpInterpreterDB   GimpInterpreterDB;
-typedef struct _GimpParasiteList    GimpParasiteList;
-typedef struct _GimpPdbProgress     GimpPdbProgress;
-typedef struct _GimpProjection      GimpProjection;
-typedef struct _GimpSubProgress     GimpSubProgress;
-typedef struct _GimpTag             GimpTag;
-typedef struct _GimpTreeHandler     GimpTreeHandler;
+typedef struct _PicmanBuffer          PicmanBuffer;
+typedef struct _PicmanEnvironTable    PicmanEnvironTable;
+typedef struct _PicmanGuide           PicmanGuide;
+typedef struct _PicmanHistogram       PicmanHistogram;
+typedef struct _PicmanIdTable         PicmanIdTable;
+typedef struct _PicmanImageMap        PicmanImageMap;
+typedef struct _PicmanImageMapConfig  PicmanImageMapConfig;
+typedef struct _PicmanImagefile       PicmanImagefile;
+typedef struct _PicmanInterpreterDB   PicmanInterpreterDB;
+typedef struct _PicmanParasiteList    PicmanParasiteList;
+typedef struct _PicmanPdbProgress     PicmanPdbProgress;
+typedef struct _PicmanProjection      PicmanProjection;
+typedef struct _PicmanSubProgress     PicmanSubProgress;
+typedef struct _PicmanTag             PicmanTag;
+typedef struct _PicmanTreeHandler     PicmanTreeHandler;
 
 
 /*  interfaces  */
 
-typedef struct _GimpPickable        GimpPickable;    /* dummy typedef */
-typedef struct _GimpProgress        GimpProgress;    /* dummy typedef */
-typedef struct _GimpProjectable     GimpProjectable; /* dummy typedef */
-typedef struct _GimpTagged          GimpTagged;      /* dummy typedef */
+typedef struct _PicmanPickable        PicmanPickable;    /* dummy typedef */
+typedef struct _PicmanProgress        PicmanProgress;    /* dummy typedef */
+typedef struct _PicmanProjectable     PicmanProjectable; /* dummy typedef */
+typedef struct _PicmanTagged          PicmanTagged;      /* dummy typedef */
 
 
 /*  non-object types  */
 
-typedef struct _GimpArea            GimpArea;
-typedef struct _GimpBoundSeg        GimpBoundSeg;
-typedef struct _GimpCoords          GimpCoords;
-typedef struct _GimpGradientSegment GimpGradientSegment;
-typedef struct _GimpPaletteEntry    GimpPaletteEntry;
-typedef struct _GimpSamplePoint     GimpSamplePoint;
-typedef struct _GimpScanConvert     GimpScanConvert;
-typedef struct _GimpTempBuf         GimpTempBuf;
-typedef         guint32             GimpTattoo;
+typedef struct _PicmanArea            PicmanArea;
+typedef struct _PicmanBoundSeg        PicmanBoundSeg;
+typedef struct _PicmanCoords          PicmanCoords;
+typedef struct _PicmanGradientSegment PicmanGradientSegment;
+typedef struct _PicmanPaletteEntry    PicmanPaletteEntry;
+typedef struct _PicmanSamplePoint     PicmanSamplePoint;
+typedef struct _PicmanScanConvert     PicmanScanConvert;
+typedef struct _PicmanTempBuf         PicmanTempBuf;
+typedef         guint32             PicmanTattoo;
 
 /* The following hack is made so that we can reuse the definition
  * the cairo definition of cairo_path_t without having to translate
@@ -215,32 +215,32 @@ typedef         guint32             GimpTattoo;
  * including this file we only use the "real" definition when cairo.h
  * already has been included and use something else.
  *
- * Note that if you really want to work with GimpBezierDesc (except just
+ * Note that if you really want to work with PicmanBezierDesc (except just
  * passing pointers to it around) you also need to include <cairo.h>.
  */
 #ifdef CAIRO_VERSION
-typedef cairo_path_t GimpBezierDesc;
+typedef cairo_path_t PicmanBezierDesc;
 #else
-typedef void * GimpBezierDesc;
+typedef void * PicmanBezierDesc;
 #endif
 
 
 /*  functions  */
 
-typedef void     (* GimpInitStatusFunc)    (const gchar      *text1,
+typedef void     (* PicmanInitStatusFunc)    (const gchar      *text1,
                                             const gchar      *text2,
                                             gdouble           percentage);
 
-typedef gboolean (* GimpObjectFilterFunc)  (const GimpObject *object,
+typedef gboolean (* PicmanObjectFilterFunc)  (const PicmanObject *object,
                                             gpointer          user_data);
 
-typedef gint64   (* GimpMemsizeFunc)       (gpointer          instance,
+typedef gint64   (* PicmanMemsizeFunc)       (gpointer          instance,
                                             gint64           *gui_size);
 
 
 /*  structs  */
 
-struct _GimpCoords
+struct _PicmanCoords
 {
   gdouble x;
   gdouble y;
@@ -254,9 +254,9 @@ struct _GimpCoords
 
 /*  temp hack as replacement for GdkSegment  */
 
-typedef struct _GimpSegment GimpSegment;
+typedef struct _PicmanSegment PicmanSegment;
 
-struct _GimpSegment
+struct _PicmanSegment
 {
   gint x1;
   gint y1;
@@ -265,7 +265,7 @@ struct _GimpSegment
 };
 
 
-#include "gegl/gimp-gegl-types.h"
+#include "gegl/picman-gegl-types.h"
 #include "paint/paint-types.h"
 #include "text/text-types.h"
 #include "vectors/vectors-types.h"

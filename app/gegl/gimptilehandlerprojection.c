@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 #include <cairo.h>
 #include <gegl.h>
 
-#include "gimp-gegl-types.h"
+#include "picman-gegl-types.h"
 
-#include "gimptilehandlerprojection.h"
+#include "picmantilehandlerprojection.h"
 
 
 enum
@@ -34,72 +34,72 @@ enum
 };
 
 
-static void     gimp_tile_handler_projection_finalize     (GObject         *object);
-static void     gimp_tile_handler_projection_set_property (GObject         *object,
+static void     picman_tile_handler_projection_finalize     (GObject         *object);
+static void     picman_tile_handler_projection_set_property (GObject         *object,
                                                            guint            property_id,
                                                            const GValue    *value,
                                                            GParamSpec      *pspec);
-static void     gimp_tile_handler_projection_get_property (GObject         *object,
+static void     picman_tile_handler_projection_get_property (GObject         *object,
                                                            guint            property_id,
                                                            GValue          *value,
                                                            GParamSpec      *pspec);
 
-static gpointer gimp_tile_handler_projection_command      (GeglTileSource  *source,
+static gpointer picman_tile_handler_projection_command      (GeglTileSource  *source,
                                                            GeglTileCommand  command,
                                                            gint             x,
                                                            gint             y,
                                                            gint             z,
                                                            gpointer         data);
 
-static void     gimp_tile_handler_projection_update_max_z (GimpTileHandlerProjection *projection);
+static void     picman_tile_handler_projection_update_max_z (PicmanTileHandlerProjection *projection);
 
 
-G_DEFINE_TYPE (GimpTileHandlerProjection, gimp_tile_handler_projection,
+G_DEFINE_TYPE (PicmanTileHandlerProjection, picman_tile_handler_projection,
                GEGL_TYPE_TILE_HANDLER)
 
-#define parent_class gimp_tile_handler_projection_parent_class
+#define parent_class picman_tile_handler_projection_parent_class
 
 
 static void
-gimp_tile_handler_projection_class_init (GimpTileHandlerProjectionClass *klass)
+picman_tile_handler_projection_class_init (PicmanTileHandlerProjectionClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize     = gimp_tile_handler_projection_finalize;
-  object_class->set_property = gimp_tile_handler_projection_set_property;
-  object_class->get_property = gimp_tile_handler_projection_get_property;
+  object_class->finalize     = picman_tile_handler_projection_finalize;
+  object_class->set_property = picman_tile_handler_projection_set_property;
+  object_class->get_property = picman_tile_handler_projection_get_property;
 
   g_object_class_install_property (object_class, PROP_FORMAT,
                                    g_param_spec_pointer ("format", NULL, NULL,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_TILE_WIDTH,
                                    g_param_spec_int ("tile-width", NULL, NULL,
                                                      1, G_MAXINT, 1,
-                                                     GIMP_PARAM_READWRITE |
+                                                     PICMAN_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_TILE_HEIGHT,
                                    g_param_spec_int ("tile-height", NULL, NULL,
                                                      1, G_MAXINT, 1,
-                                                     GIMP_PARAM_READWRITE |
+                                                     PICMAN_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_tile_handler_projection_init (GimpTileHandlerProjection *projection)
+picman_tile_handler_projection_init (PicmanTileHandlerProjection *projection)
 {
   GeglTileSource *source = GEGL_TILE_SOURCE (projection);
 
-  source->command = gimp_tile_handler_projection_command;
+  source->command = picman_tile_handler_projection_command;
 
   projection->dirty_region = cairo_region_create ();
 }
 
 static void
-gimp_tile_handler_projection_finalize (GObject *object)
+picman_tile_handler_projection_finalize (GObject *object)
 {
-  GimpTileHandlerProjection *projection = GIMP_TILE_HANDLER_PROJECTION (object);
+  PicmanTileHandlerProjection *projection = PICMAN_TILE_HANDLER_PROJECTION (object);
 
   if (projection->graph)
     {
@@ -114,12 +114,12 @@ gimp_tile_handler_projection_finalize (GObject *object)
 }
 
 static void
-gimp_tile_handler_projection_set_property (GObject      *object,
+picman_tile_handler_projection_set_property (GObject      *object,
                                            guint         property_id,
                                            const GValue *value,
                                            GParamSpec   *pspec)
 {
-  GimpTileHandlerProjection *projection = GIMP_TILE_HANDLER_PROJECTION (object);
+  PicmanTileHandlerProjection *projection = PICMAN_TILE_HANDLER_PROJECTION (object);
 
   switch (property_id)
     {
@@ -128,11 +128,11 @@ gimp_tile_handler_projection_set_property (GObject      *object,
       break;
     case PROP_TILE_WIDTH:
       projection->tile_width = g_value_get_int (value);
-      gimp_tile_handler_projection_update_max_z (projection);
+      picman_tile_handler_projection_update_max_z (projection);
       break;
     case PROP_TILE_HEIGHT:
       projection->tile_height = g_value_get_int (value);
-      gimp_tile_handler_projection_update_max_z (projection);
+      picman_tile_handler_projection_update_max_z (projection);
       break;
 
     default:
@@ -142,12 +142,12 @@ gimp_tile_handler_projection_set_property (GObject      *object,
 }
 
 static void
-gimp_tile_handler_projection_get_property (GObject    *object,
+picman_tile_handler_projection_get_property (GObject    *object,
                                            guint       property_id,
                                            GValue     *value,
                                            GParamSpec *pspec)
 {
-  GimpTileHandlerProjection *projection = GIMP_TILE_HANDLER_PROJECTION (object);
+  PicmanTileHandlerProjection *projection = PICMAN_TILE_HANDLER_PROJECTION (object);
 
   switch (property_id)
     {
@@ -168,16 +168,16 @@ gimp_tile_handler_projection_get_property (GObject    *object,
 }
 
 static GeglTile *
-gimp_tile_handler_projection_validate (GeglTileSource *source,
+picman_tile_handler_projection_validate (GeglTileSource *source,
                                        GeglTile       *tile,
                                        gint            x,
                                        gint            y)
 {
-  GimpTileHandlerProjection *projection;
+  PicmanTileHandlerProjection *projection;
   cairo_region_t            *tile_region;
   cairo_rectangle_int_t      tile_rect;
 
-  projection = GIMP_TILE_HANDLER_PROJECTION (source);
+  projection = PICMAN_TILE_HANDLER_PROJECTION (source);
 
   if (cairo_region_is_empty (projection->dirty_region))
     return tile;
@@ -251,7 +251,7 @@ gimp_tile_handler_projection_validate (GeglTileSource *source,
 }
 
 static gpointer
-gimp_tile_handler_projection_command (GeglTileSource  *source,
+picman_tile_handler_projection_command (GeglTileSource  *source,
                                       GeglTileCommand  command,
                                       gint             x,
                                       gint             y,
@@ -263,13 +263,13 @@ gimp_tile_handler_projection_command (GeglTileSource  *source,
   retval = gegl_tile_handler_source_command (source, command, x, y, z, data);
 
   if (command == GEGL_TILE_GET && z == 0)
-    retval = gimp_tile_handler_projection_validate (source, retval, x, y);
+    retval = picman_tile_handler_projection_validate (source, retval, x, y);
 
   return retval;
 }
 
 static void
-gimp_tile_handler_projection_update_max_z (GimpTileHandlerProjection *projection)
+picman_tile_handler_projection_update_max_z (PicmanTileHandlerProjection *projection)
 {
   projection->max_z = 0;
 
@@ -287,15 +287,15 @@ gimp_tile_handler_projection_update_max_z (GimpTileHandlerProjection *projection
 }
 
 GeglTileHandler *
-gimp_tile_handler_projection_new (GeglNode *graph,
+picman_tile_handler_projection_new (GeglNode *graph,
                                   gint      proj_width,
                                   gint      proj_height)
 {
-  GimpTileHandlerProjection *projection;
+  PicmanTileHandlerProjection *projection;
 
   g_return_val_if_fail (GEGL_IS_NODE (graph), NULL);
 
-  projection = g_object_new (GIMP_TYPE_TILE_HANDLER_PROJECTION, NULL);
+  projection = g_object_new (PICMAN_TYPE_TILE_HANDLER_PROJECTION, NULL);
 
   projection->graph       = g_object_ref (graph);
   projection->proj_width  = proj_width;
@@ -305,7 +305,7 @@ gimp_tile_handler_projection_new (GeglNode *graph,
 }
 
 static void
-gimp_tile_handler_projection_void_pyramid (GeglTileSource *source,
+picman_tile_handler_projection_void_pyramid (GeglTileSource *source,
                                            gint            x,
                                            gint            y,
                                            gint            z,
@@ -314,12 +314,12 @@ gimp_tile_handler_projection_void_pyramid (GeglTileSource *source,
   gegl_tile_source_void (source, x, y, z);
 
   if (z < max_z)
-    gimp_tile_handler_projection_void_pyramid (source, x / 2, y / 2, z + 1,
+    picman_tile_handler_projection_void_pyramid (source, x / 2, y / 2, z + 1,
                                                max_z);
 }
 
 void
-gimp_tile_handler_projection_invalidate (GimpTileHandlerProjection *projection,
+picman_tile_handler_projection_invalidate (PicmanTileHandlerProjection *projection,
                                          gint                       x,
                                          gint                       y,
                                          gint                       width,
@@ -327,7 +327,7 @@ gimp_tile_handler_projection_invalidate (GimpTileHandlerProjection *projection,
 {
   cairo_rectangle_int_t rect = { x, y, width, height };
 
-  g_return_if_fail (GIMP_IS_TILE_HANDLER_PROJECTION (projection));
+  g_return_if_fail (PICMAN_IS_TILE_HANDLER_PROJECTION (projection));
 
   cairo_region_union_rectangle (projection->dirty_region, &rect);
 
@@ -344,7 +344,7 @@ gimp_tile_handler_projection_invalidate (GimpTileHandlerProjection *projection,
         {
           for (tile_x = tile_x1; tile_x <= tile_x2; tile_x++)
             {
-              gimp_tile_handler_projection_void_pyramid (GEGL_TILE_SOURCE (projection),
+              picman_tile_handler_projection_void_pyramid (GEGL_TILE_SOURCE (projection),
                                                          tile_x / 2,
                                                          tile_y / 2,
                                                          1,

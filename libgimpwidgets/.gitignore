@@ -5,9 +5,9 @@
 /Makefile
 /Makefile.in
 /_libs
-/gimp-wilber-pixbufs.h
-/gimpwidgetsmarshal.c
-/gimpwidgetsmarshal.h
+/picman-wilber-pixbufs.h
+/picmanwidgetsmarshal.c
+/picmanwidgetsmarshal.h
 /makefile.mingw
 /test-eevl*
 /test-preview-area

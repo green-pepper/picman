@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpDisplayOptions
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * PicmanDisplayOptions
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,55 +18,55 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_OPTIONS_H__
-#define __GIMP_DISPLAY_OPTIONS_H__
+#ifndef __PICMAN_DISPLAY_OPTIONS_H__
+#define __PICMAN_DISPLAY_OPTIONS_H__
 
 
-#define GIMP_TYPE_DISPLAY_OPTIONS            (gimp_display_options_get_type ())
-#define GIMP_TYPE_DISPLAY_OPTIONS_FULLSCREEN (gimp_display_options_fullscreen_get_type ())
-#define GIMP_TYPE_DISPLAY_OPTIONS_NO_IMAGE   (gimp_display_options_no_image_get_type ())
+#define PICMAN_TYPE_DISPLAY_OPTIONS            (picman_display_options_get_type ())
+#define PICMAN_TYPE_DISPLAY_OPTIONS_FULLSCREEN (picman_display_options_fullscreen_get_type ())
+#define PICMAN_TYPE_DISPLAY_OPTIONS_NO_IMAGE   (picman_display_options_no_image_get_type ())
 
-#define GIMP_DISPLAY_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DISPLAY_OPTIONS, GimpDisplayOptions))
-#define GIMP_DISPLAY_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DISPLAY_OPTIONS, GimpDisplayOptionsClass))
-#define GIMP_IS_DISPLAY_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DISPLAY_OPTIONS))
-#define GIMP_IS_DISPLAY_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DISPLAY_OPTIONS))
-#define GIMP_DISPLAY_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DISPLAY_OPTIONS, GimpDisplayOptionsClass))
+#define PICMAN_DISPLAY_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DISPLAY_OPTIONS, PicmanDisplayOptions))
+#define PICMAN_DISPLAY_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DISPLAY_OPTIONS, PicmanDisplayOptionsClass))
+#define PICMAN_IS_DISPLAY_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DISPLAY_OPTIONS))
+#define PICMAN_IS_DISPLAY_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DISPLAY_OPTIONS))
+#define PICMAN_DISPLAY_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DISPLAY_OPTIONS, PicmanDisplayOptionsClass))
 
 
-typedef struct _GimpDisplayOptionsClass GimpDisplayOptionsClass;
+typedef struct _PicmanDisplayOptionsClass PicmanDisplayOptionsClass;
 
-struct _GimpDisplayOptions
+struct _PicmanDisplayOptions
 {
   GObject                parent_instance;
 
-  /*  GimpImageWindow options  */
+  /*  PicmanImageWindow options  */
   gboolean               show_menubar;
   gboolean               show_statusbar;
 
-  /*  GimpDisplayShell options  */
+  /*  PicmanDisplayShell options  */
   gboolean               show_rulers;
   gboolean               show_scrollbars;
 
-  /*  GimpCanvas options  */
+  /*  PicmanCanvas options  */
   gboolean               show_selection;
   gboolean               show_layer_boundary;
   gboolean               show_guides;
   gboolean               show_grid;
   gboolean               show_sample_points;
-  GimpCanvasPaddingMode  padding_mode;
-  GimpRGB                padding_color;
+  PicmanCanvasPaddingMode  padding_mode;
+  PicmanRGB                padding_color;
   gboolean               padding_mode_set;
 };
 
-struct _GimpDisplayOptionsClass
+struct _PicmanDisplayOptionsClass
 {
   GObjectClass           parent_class;
 };
 
 
-GType  gimp_display_options_get_type            (void) G_GNUC_CONST;
-GType  gimp_display_options_fullscreen_get_type (void) G_GNUC_CONST;
-GType  gimp_display_options_no_image_get_type   (void) G_GNUC_CONST;
+GType  picman_display_options_get_type            (void) G_GNUC_CONST;
+GType  picman_display_options_fullscreen_get_type (void) G_GNUC_CONST;
+GType  picman_display_options_no_image_get_type   (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_DISPLAY_OPTIONS_H__ */
+#endif /* __PICMAN_DISPLAY_OPTIONS_H__ */

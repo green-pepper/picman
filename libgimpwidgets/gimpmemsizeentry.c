@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpmemsizeentry.c
- * Copyright (C) 2000-2003  Sven Neumann <sven@gimp.org>
+ * picmanmemsizeentry.c
+ * Copyright (C) 2000-2003  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,22 +23,22 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpmemsizeentry.h"
-#include "gimpwidgets.h"
+#include "picmanmemsizeentry.h"
+#include "picmanwidgets.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpmemsizeentry
- * @title: GimpMemSizeEntry
+ * SECTION: picmanmemsizeentry
+ * @title: PicmanMemSizeEntry
  * @short_description: A composite widget to enter a memory size.
  *
- * Similar to a #GimpSizeEntry but instead of lengths, this widget is
+ * Similar to a #PicmanSizeEntry but instead of lengths, this widget is
  * used to let the user enter memory sizes. A combo box allows one to
- * switch between Kilobytes, Megabytes and Gigabytes. Used in the GIMP
+ * switch between Kilobytes, Megabytes and Gigabytes. Used in the PICMAN
  * preferences dialog.
  **/
 
@@ -50,42 +50,42 @@ enum
 };
 
 
-static void  gimp_memsize_entry_finalize      (GObject          *object);
+static void  picman_memsize_entry_finalize      (GObject          *object);
 
-static void  gimp_memsize_entry_adj_callback  (GtkAdjustment    *adj,
-                                               GimpMemsizeEntry *entry);
-static void  gimp_memsize_entry_unit_callback (GtkWidget        *widget,
-                                               GimpMemsizeEntry *entry);
+static void  picman_memsize_entry_adj_callback  (GtkAdjustment    *adj,
+                                               PicmanMemsizeEntry *entry);
+static void  picman_memsize_entry_unit_callback (GtkWidget        *widget,
+                                               PicmanMemsizeEntry *entry);
 
 
-G_DEFINE_TYPE (GimpMemsizeEntry, gimp_memsize_entry, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanMemsizeEntry, picman_memsize_entry, GTK_TYPE_BOX)
 
-#define parent_class gimp_memsize_entry_parent_class
+#define parent_class picman_memsize_entry_parent_class
 
-static guint gimp_memsize_entry_signals[LAST_SIGNAL] = { 0 };
+static guint picman_memsize_entry_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_memsize_entry_class_init (GimpMemsizeEntryClass *klass)
+picman_memsize_entry_class_init (PicmanMemsizeEntryClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize = gimp_memsize_entry_finalize;
+  object_class->finalize = picman_memsize_entry_finalize;
 
   klass->value_changed   = NULL;
 
-  gimp_memsize_entry_signals[VALUE_CHANGED] =
+  picman_memsize_entry_signals[VALUE_CHANGED] =
     g_signal_new ("value-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpMemsizeEntryClass, value_changed),
+                  G_STRUCT_OFFSET (PicmanMemsizeEntryClass, value_changed),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 }
 
 static void
-gimp_memsize_entry_init (GimpMemsizeEntry *entry)
+picman_memsize_entry_init (PicmanMemsizeEntry *entry)
 {
   gtk_orientable_set_orientation (GTK_ORIENTABLE (entry),
                                   GTK_ORIENTATION_HORIZONTAL);
@@ -101,9 +101,9 @@ gimp_memsize_entry_init (GimpMemsizeEntry *entry)
 }
 
 static void
-gimp_memsize_entry_finalize (GObject *object)
+picman_memsize_entry_finalize (GObject *object)
 {
-  GimpMemsizeEntry *entry = (GimpMemsizeEntry *) object;
+  PicmanMemsizeEntry *entry = (PicmanMemsizeEntry *) object;
 
   if (entry->adjustment)
     {
@@ -115,23 +115,23 @@ gimp_memsize_entry_finalize (GObject *object)
 }
 
 static void
-gimp_memsize_entry_adj_callback (GtkAdjustment    *adj,
-                                 GimpMemsizeEntry *entry)
+picman_memsize_entry_adj_callback (GtkAdjustment    *adj,
+                                 PicmanMemsizeEntry *entry)
 {
   guint64 size = gtk_adjustment_get_value (adj);
 
   entry->value = size << entry->shift;
 
-  g_signal_emit (entry, gimp_memsize_entry_signals[VALUE_CHANGED], 0);
+  g_signal_emit (entry, picman_memsize_entry_signals[VALUE_CHANGED], 0);
 }
 
 static void
-gimp_memsize_entry_unit_callback (GtkWidget        *widget,
-                                  GimpMemsizeEntry *entry)
+picman_memsize_entry_unit_callback (GtkWidget        *widget,
+                                  PicmanMemsizeEntry *entry)
 {
   guint  shift;
 
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), (gint *) &shift);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), (gint *) &shift);
 
 #if _MSC_VER < 1300
 #  define CAST (gint64)
@@ -157,22 +157,22 @@ gimp_memsize_entry_unit_callback (GtkWidget        *widget,
 
 
 /**
- * gimp_memsize_entry_new:
+ * picman_memsize_entry_new:
  * @value: the initial value (in Bytes)
  * @lower: the lower limit for the value (in Bytes)
  * @upper: the upper limit for the value (in Bytes)
  *
- * Creates a new #GimpMemsizeEntry which is a #GtkHBox with a #GtkSpinButton
+ * Creates a new #PicmanMemsizeEntry which is a #GtkHBox with a #GtkSpinButton
  * and a #GtkOptionMenu all setup to allow the user to enter memory sizes.
  *
- * Returns: Pointer to the new #GimpMemsizeEntry.
+ * Returns: Pointer to the new #PicmanMemsizeEntry.
  **/
 GtkWidget *
-gimp_memsize_entry_new (guint64  value,
+picman_memsize_entry_new (guint64  value,
                         guint64  lower,
                         guint64  upper)
 {
-  GimpMemsizeEntry *entry;
+  PicmanMemsizeEntry *entry;
   GtkObject        *adj;
   guint             shift;
 
@@ -184,7 +184,7 @@ gimp_memsize_entry_new (guint64  value,
 
   g_return_val_if_fail (value >= lower && value <= upper, NULL);
 
-  entry = g_object_new (GIMP_TYPE_MEMSIZE_ENTRY, NULL);
+  entry = g_object_new (PICMAN_TYPE_MEMSIZE_ENTRY, NULL);
 
   for (shift = 30; shift > 10; shift -= 10)
     {
@@ -198,7 +198,7 @@ gimp_memsize_entry_new (guint64  value,
   entry->upper = upper;
   entry->shift = shift;
 
-  entry->spinbutton = gimp_spin_button_new (&adj,
+  entry->spinbutton = picman_spin_button_new (&adj,
                                             CAST (value >> shift),
                                             CAST (lower >> shift),
                                             CAST (upper >> shift),
@@ -214,18 +214,18 @@ gimp_memsize_entry_new (guint64  value,
   gtk_widget_show (entry->spinbutton);
 
   g_signal_connect (entry->adjustment, "value-changed",
-                    G_CALLBACK (gimp_memsize_entry_adj_callback),
+                    G_CALLBACK (picman_memsize_entry_adj_callback),
                     entry);
 
-  entry->menu = gimp_int_combo_box_new (_("Kilobytes"), 10,
+  entry->menu = picman_int_combo_box_new (_("Kilobytes"), 10,
                                         _("Megabytes"), 20,
                                         _("Gigabytes"), 30,
                                         NULL);
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (entry->menu), shift);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (entry->menu), shift);
 
   g_signal_connect (entry->menu, "changed",
-                    G_CALLBACK (gimp_memsize_entry_unit_callback),
+                    G_CALLBACK (picman_memsize_entry_unit_callback),
                     entry);
 
   gtk_box_pack_start (GTK_BOX (entry), entry->menu, FALSE, FALSE, 0);
@@ -235,20 +235,20 @@ gimp_memsize_entry_new (guint64  value,
 }
 
 /**
- * gimp_memsize_entry_set_value:
- * @entry: a #GimpMemsizeEntry
+ * picman_memsize_entry_set_value:
+ * @entry: a #PicmanMemsizeEntry
  * @value: the new value (in Bytes)
  *
- * Sets the @entry's value. Please note that the #GimpMemsizeEntry rounds
+ * Sets the @entry's value. Please note that the #PicmanMemsizeEntry rounds
  * the value to full Kilobytes.
  **/
 void
-gimp_memsize_entry_set_value (GimpMemsizeEntry *entry,
+picman_memsize_entry_set_value (PicmanMemsizeEntry *entry,
                               guint64           value)
 {
   guint shift;
 
-  g_return_if_fail (GIMP_IS_MEMSIZE_ENTRY (entry));
+  g_return_if_fail (PICMAN_IS_MEMSIZE_ENTRY (entry));
   g_return_if_fail (value >= entry->lower && value <= entry->upper);
 
   for (shift = 30; shift > 10; shift -= 10)
@@ -263,7 +263,7 @@ gimp_memsize_entry_set_value (GimpMemsizeEntry *entry,
       entry->shift = shift;
       entry->value = value;
 
-      gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (entry->menu), shift);
+      picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (entry->menu), shift);
     }
 
 #if _MSC_VER < 1300
@@ -278,17 +278,17 @@ gimp_memsize_entry_set_value (GimpMemsizeEntry *entry,
 }
 
 /**
- * gimp_memsize_entry_get_value:
- * @entry: a #GimpMemsizeEntry
+ * picman_memsize_entry_get_value:
+ * @entry: a #PicmanMemsizeEntry
  *
- * Retrieves the current value from a #GimpMemsizeEntry.
+ * Retrieves the current value from a #PicmanMemsizeEntry.
  *
  * Returns: the current value of @entry (in Bytes).
  **/
 guint64
-gimp_memsize_entry_get_value (GimpMemsizeEntry *entry)
+picman_memsize_entry_get_value (PicmanMemsizeEntry *entry)
 {
-  g_return_val_if_fail (GIMP_IS_MEMSIZE_ENTRY (entry), 0);
+  g_return_val_if_fail (PICMAN_IS_MEMSIZE_ENTRY (entry), 0);
 
   return entry->value;
 }

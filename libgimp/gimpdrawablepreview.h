@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpdrawablepreview.h
+ * picmandrawablepreview.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,12 +18,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_UI_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimpui.h> can be included directly."
+#if !defined (__PICMAN_UI_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picmanui.h> can be included directly."
 #endif
 
-#ifndef __GIMP_DRAWABLE_PREVIEW_H__
-#define __GIMP_DRAWABLE_PREVIEW_H__
+#ifndef __PICMAN_DRAWABLE_PREVIEW_H__
+#define __PICMAN_DRAWABLE_PREVIEW_H__
 
 G_BEGIN_DECLS
 
@@ -31,50 +31,50 @@ G_BEGIN_DECLS
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_DRAWABLE_PREVIEW            (gimp_drawable_preview_get_type ())
-#define GIMP_DRAWABLE_PREVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DRAWABLE_PREVIEW, GimpDrawablePreview))
-#define GIMP_DRAWABLE_PREVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DRAWABLE_PREVIEW, GimpDrawablePreviewClass))
-#define GIMP_IS_DRAWABLE_PREVIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DRAWABLE_PREVIEW))
-#define GIMP_IS_DRAWABLE_PREVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DRAWABLE_PREVIEW))
-#define GIMP_DRAWABLE_PREVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DRAWABLE_PREVIEW, GimpDrawablePreviewClass))
+#define PICMAN_TYPE_DRAWABLE_PREVIEW            (picman_drawable_preview_get_type ())
+#define PICMAN_DRAWABLE_PREVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DRAWABLE_PREVIEW, PicmanDrawablePreview))
+#define PICMAN_DRAWABLE_PREVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DRAWABLE_PREVIEW, PicmanDrawablePreviewClass))
+#define PICMAN_IS_DRAWABLE_PREVIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DRAWABLE_PREVIEW))
+#define PICMAN_IS_DRAWABLE_PREVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DRAWABLE_PREVIEW))
+#define PICMAN_DRAWABLE_PREVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DRAWABLE_PREVIEW, PicmanDrawablePreviewClass))
 
 
-typedef struct _GimpDrawablePreviewClass  GimpDrawablePreviewClass;
+typedef struct _PicmanDrawablePreviewClass  PicmanDrawablePreviewClass;
 
-struct _GimpDrawablePreview
+struct _PicmanDrawablePreview
 {
-  GimpScrolledPreview  parent_instance;
+  PicmanScrolledPreview  parent_instance;
 
-  GimpDrawable        *drawable;
+  PicmanDrawable        *drawable;
 };
 
-struct _GimpDrawablePreviewClass
+struct _PicmanDrawablePreviewClass
 {
-  GimpScrolledPreviewClass parent_class;
+  PicmanScrolledPreviewClass parent_class;
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType          gimp_drawable_preview_get_type     (void) G_GNUC_CONST;
+GType          picman_drawable_preview_get_type     (void) G_GNUC_CONST;
 
-GtkWidget    * gimp_drawable_preview_new          (GimpDrawable        *drawable,
+GtkWidget    * picman_drawable_preview_new          (PicmanDrawable        *drawable,
                                                    gboolean            *toggle);
-GimpDrawable * gimp_drawable_preview_get_drawable (GimpDrawablePreview *preview);
+PicmanDrawable * picman_drawable_preview_get_drawable (PicmanDrawablePreview *preview);
 
-void           gimp_drawable_preview_draw_region  (GimpDrawablePreview *preview,
-                                                   const GimpPixelRgn  *region);
+void           picman_drawable_preview_draw_region  (PicmanDrawablePreview *preview,
+                                                   const PicmanPixelRgn  *region);
 
 /*  for internal use only  */
-G_GNUC_INTERNAL void      _gimp_drawable_preview_area_draw_thumb (GimpPreviewArea *area,
-                                                                  GimpDrawable    *drawable,
+G_GNUC_INTERNAL void      _picman_drawable_preview_area_draw_thumb (PicmanPreviewArea *area,
+                                                                  PicmanDrawable    *drawable,
                                                                   gint             width,
                                                                   gint             height);
-G_GNUC_INTERNAL gboolean  _gimp_drawable_preview_get_bounds      (GimpDrawable    *drawable,
+G_GNUC_INTERNAL gboolean  _picman_drawable_preview_get_bounds      (PicmanDrawable    *drawable,
                                                                   gint            *xmin,
                                                                   gint            *ymin,
                                                                   gint            *xmax,
@@ -83,5 +83,5 @@ G_GNUC_INTERNAL gboolean  _gimp_drawable_preview_get_bounds      (GimpDrawable  
 
 G_END_DECLS
 
-#endif /* __GIMP_DRAWABLE_PREVIEW_H__ */
+#endif /* __PICMAN_DRAWABLE_PREVIEW_H__ */
 

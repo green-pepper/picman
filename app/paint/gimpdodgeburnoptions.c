@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,15 +19,15 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "paint-types.h"
 
-#include "gimpdodgeburnoptions.h"
+#include "picmandodgeburnoptions.h"
 
 
-#define DODGE_BURN_DEFAULT_TYPE     GIMP_DODGE
-#define DODGE_BURN_DEFAULT_MODE     GIMP_MIDTONES
+#define DODGE_BURN_DEFAULT_TYPE     PICMAN_DODGE
+#define DODGE_BURN_DEFAULT_MODE     PICMAN_MIDTONES
 #define DODGE_BURN_DEFAULT_EXPOSURE 50.0
 
 
@@ -40,56 +40,56 @@ enum
 };
 
 
-static void   gimp_dodge_burn_options_set_property (GObject      *object,
+static void   picman_dodge_burn_options_set_property (GObject      *object,
                                                     guint         property_id,
                                                     const GValue *value,
                                                     GParamSpec   *pspec);
-static void   gimp_dodge_burn_options_get_property (GObject      *object,
+static void   picman_dodge_burn_options_get_property (GObject      *object,
                                                     guint         property_id,
                                                     GValue       *value,
                                                     GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpDodgeBurnOptions, gimp_dodge_burn_options,
-               GIMP_TYPE_PAINT_OPTIONS)
+G_DEFINE_TYPE (PicmanDodgeBurnOptions, picman_dodge_burn_options,
+               PICMAN_TYPE_PAINT_OPTIONS)
 
 
 static void
-gimp_dodge_burn_options_class_init (GimpDodgeBurnOptionsClass *klass)
+picman_dodge_burn_options_class_init (PicmanDodgeBurnOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_dodge_burn_options_set_property;
-  object_class->get_property = gimp_dodge_burn_options_get_property;
+  object_class->set_property = picman_dodge_burn_options_set_property;
+  object_class->get_property = picman_dodge_burn_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TYPE,
                                  "type", NULL,
-                                 GIMP_TYPE_DODGE_BURN_TYPE,
+                                 PICMAN_TYPE_DODGE_BURN_TYPE,
                                  DODGE_BURN_DEFAULT_TYPE,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_MODE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_MODE,
                                  "mode", NULL,
-                                 GIMP_TYPE_TRANSFER_MODE,
+                                 PICMAN_TYPE_TRANSFER_MODE,
                                  DODGE_BURN_DEFAULT_MODE,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_EXPOSURE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_EXPOSURE,
                                    "exposure", NULL,
                                    0.0, 100.0, DODGE_BURN_DEFAULT_EXPOSURE,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_dodge_burn_options_init (GimpDodgeBurnOptions *options)
+picman_dodge_burn_options_init (PicmanDodgeBurnOptions *options)
 {
 }
 
 static void
-gimp_dodge_burn_options_set_property (GObject      *object,
+picman_dodge_burn_options_set_property (GObject      *object,
                                       guint         property_id,
                                       const GValue *value,
                                       GParamSpec   *pspec)
 {
-  GimpDodgeBurnOptions *options = GIMP_DODGE_BURN_OPTIONS (object);
+  PicmanDodgeBurnOptions *options = PICMAN_DODGE_BURN_OPTIONS (object);
 
   switch (property_id)
     {
@@ -109,12 +109,12 @@ gimp_dodge_burn_options_set_property (GObject      *object,
 }
 
 static void
-gimp_dodge_burn_options_get_property (GObject    *object,
+picman_dodge_burn_options_get_property (GObject    *object,
                                       guint       property_id,
                                       GValue     *value,
                                       GParamSpec *pspec)
 {
-  GimpDodgeBurnOptions *options = GIMP_DODGE_BURN_OPTIONS (object);
+  PicmanDodgeBurnOptions *options = PICMAN_DODGE_BURN_OPTIONS (object);
 
   switch (property_id)
     {

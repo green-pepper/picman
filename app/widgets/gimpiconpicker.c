@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimpiconpicker.c
- * Copyright (C) 2011 Michael Natterer <mitch@gimp.org>
+ * picmaniconpicker.c
+ * Copyright (C) 2011 Michael Natterer <mitch@picman.org>
  *               2012 Daniel Sabo
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,47 +24,47 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimplist.h"
-#include "core/gimpcontext.h"
-#include "core/gimptemplate.h"
-#include "core/gimpviewable.h"
+#include "core/picman.h"
+#include "core/picmanlist.h"
+#include "core/picmancontext.h"
+#include "core/picmantemplate.h"
+#include "core/picmanviewable.h"
 
-#include "gimpcontainerpopup.h"
-#include "gimpiconpicker.h"
-#include "gimpview.h"
-#include "gimpviewablebutton.h"
-#include "gimpwidgets-utils.h"
+#include "picmancontainerpopup.h"
+#include "picmaniconpicker.h"
+#include "picmanview.h"
+#include "picmanviewablebutton.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 enum
 {
   PROP_0,
-  PROP_GIMP,
+  PROP_PICMAN,
   PROP_STOCK_ID,
   PROP_ICON_PIXBUF
 };
 
 
-typedef struct _GimpIconPickerPrivate GimpIconPickerPrivate;
+typedef struct _PicmanIconPickerPrivate PicmanIconPickerPrivate;
 
-struct _GimpIconPickerPrivate
+struct _PicmanIconPickerPrivate
 {
-  Gimp          *gimp;
+  Picman          *picman;
 
   gchar         *stock_id;
   GdkPixbuf     *icon_pixbuf;
 
-  GimpViewable  *preview;
+  PicmanViewable  *preview;
 
-  GimpContainer *stock_id_container;
-  GimpContext   *stock_id_context;
-  GimpObject    *null_template_object;
+  PicmanContainer *stock_id_container;
+  PicmanContext   *stock_id_context;
+  PicmanObject    *null_template_object;
 
   GtkWidget     *right_click_menu;
   GtkWidget     *menu_item_file_icon;
@@ -75,96 +75,96 @@ struct _GimpIconPickerPrivate
 
 #define GET_PRIVATE(picker) \
         G_TYPE_INSTANCE_GET_PRIVATE (picker, \
-                                     GIMP_TYPE_ICON_PICKER, \
-                                     GimpIconPickerPrivate)
+                                     PICMAN_TYPE_ICON_PICKER, \
+                                     PicmanIconPickerPrivate)
 
 
-static void    gimp_icon_picker_constructed     (GObject        *object);
-static void    gimp_icon_picker_finalize        (GObject        *object);
-static void    gimp_icon_picker_set_property    (GObject        *object,
+static void    picman_icon_picker_constructed     (GObject        *object);
+static void    picman_icon_picker_finalize        (GObject        *object);
+static void    picman_icon_picker_set_property    (GObject        *object,
                                                  guint           property_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void    gimp_icon_picker_get_property    (GObject        *object,
+static void    picman_icon_picker_get_property    (GObject        *object,
                                                  guint           property_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
 
-static void    gimp_icon_picker_icon_changed    (GimpContext    *context,
-                                                 GimpTemplate   *template,
-                                                 GimpIconPicker *picker);
-static void    gimp_icon_picker_clicked         (GtkWidget      *widget,
+static void    picman_icon_picker_icon_changed    (PicmanContext    *context,
+                                                 PicmanTemplate   *template,
+                                                 PicmanIconPicker *picker);
+static void    picman_icon_picker_clicked         (GtkWidget      *widget,
                                                  GdkEventButton *event,
                                                  gpointer        data);
 
-static void    gimp_icon_picker_menu_from_file  (GtkWidget      *widget,
+static void    picman_icon_picker_menu_from_file  (GtkWidget      *widget,
                                                  GdkEventButton *event,
                                                  gpointer        data);
-static void    gimp_icon_picker_menu_from_stock (GtkWidget      *widget,
+static void    picman_icon_picker_menu_from_stock (GtkWidget      *widget,
                                                  GdkEventButton *event,
                                                  gpointer        data);
-static void    gimp_icon_picker_menu_paste      (GtkWidget      *widget,
+static void    picman_icon_picker_menu_paste      (GtkWidget      *widget,
                                                  GdkEventButton *event,
                                                  gpointer        data);
-static void    gimp_icon_picker_menu_copy       (GtkWidget      *widget,
+static void    picman_icon_picker_menu_copy       (GtkWidget      *widget,
                                                  GdkEventButton *event,
                                                  gpointer        data);
 
 
-G_DEFINE_TYPE (GimpIconPicker, gimp_icon_picker, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanIconPicker, picman_icon_picker, GTK_TYPE_BOX)
 
-#define parent_class gimp_icon_picker_parent_class
+#define parent_class picman_icon_picker_parent_class
 
 
 static void
-gimp_icon_picker_class_init (GimpIconPickerClass *klass)
+picman_icon_picker_class_init (PicmanIconPickerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_icon_picker_constructed;
-  object_class->finalize     = gimp_icon_picker_finalize;
-  object_class->set_property = gimp_icon_picker_set_property;
-  object_class->get_property = gimp_icon_picker_get_property;
+  object_class->constructed  = picman_icon_picker_constructed;
+  object_class->finalize     = picman_icon_picker_finalize;
+  object_class->set_property = picman_icon_picker_set_property;
+  object_class->get_property = picman_icon_picker_get_property;
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp", NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman", NULL, NULL,
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_STOCK_ID,
                                    g_param_spec_string ("stock-id", NULL, NULL,
-                                                        "gimp-toilet-paper",
-                                                        GIMP_PARAM_READWRITE |
+                                                        "picman-toilet-paper",
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_ICON_PIXBUF,
                                    g_param_spec_object ("icon-pixbuf", NULL, NULL,
                                                         GDK_TYPE_PIXBUF,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (object_class, sizeof (GimpIconPickerPrivate));
+  g_type_class_add_private (object_class, sizeof (PicmanIconPickerPrivate));
 }
 
 static void
-gimp_icon_picker_init (GimpIconPicker *picker)
+picman_icon_picker_init (PicmanIconPicker *picker)
 {
-  GimpIconPickerPrivate *private = GET_PRIVATE (picker);
+  PicmanIconPickerPrivate *private = GET_PRIVATE (picker);
 
   gtk_orientable_set_orientation (GTK_ORIENTABLE (picker),
                                   GTK_ORIENTATION_HORIZONTAL);
 
-  private->preview = g_object_new (GIMP_TYPE_VIEWABLE,
+  private->preview = g_object_new (PICMAN_TYPE_VIEWABLE,
                                    "stock-id", private->stock_id,
                                    "icon-pixbuf", private->icon_pixbuf,
                                    NULL);
 }
 
 static void
-gimp_icon_picker_constructed (GObject *object)
+picman_icon_picker_constructed (GObject *object)
 {
-  GimpIconPicker         *picker  = GIMP_ICON_PICKER (object);
-  GimpIconPickerPrivate  *private = GET_PRIVATE (object);
+  PicmanIconPicker         *picker  = PICMAN_ICON_PICKER (object);
+  PicmanIconPickerPrivate  *private = GET_PRIVATE (object);
   GtkWidget              *button;
   GtkWidget              *viewable_view;
   GSList                 *stock_list;
@@ -172,45 +172,45 @@ gimp_icon_picker_constructed (GObject *object)
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_GIMP (private->gimp));
+  g_assert (PICMAN_IS_PICMAN (private->picman));
 
   /* Set up the stock icon picker */
-  private->stock_id_container = gimp_list_new (GIMP_TYPE_TEMPLATE, FALSE);
-  private->stock_id_context = gimp_context_new (private->gimp, "foo", NULL);
+  private->stock_id_container = picman_list_new (PICMAN_TYPE_TEMPLATE, FALSE);
+  private->stock_id_context = picman_context_new (private->picman, "foo", NULL);
 
   g_signal_connect (private->stock_id_context, "template-changed",
-                    G_CALLBACK (gimp_icon_picker_icon_changed),
+                    G_CALLBACK (picman_icon_picker_icon_changed),
                     picker);
 
   stock_list = gtk_stock_list_ids ();
 
   for (list = stock_list; list; list = g_slist_next (list))
     {
-      GimpObject *object = g_object_new (GIMP_TYPE_TEMPLATE,
+      PicmanObject *object = g_object_new (PICMAN_TYPE_TEMPLATE,
                                          "name",     list->data,
                                          "stock-id", list->data,
                                          NULL);
 
-      gimp_container_add (private->stock_id_container, object);
+      picman_container_add (private->stock_id_container, object);
       g_object_unref (object);
 
       if (private->stock_id && strcmp (list->data, private->stock_id) == 0)
-        gimp_context_set_template (private->stock_id_context,
-                                   GIMP_TEMPLATE (object));
+        picman_context_set_template (private->stock_id_context,
+                                   PICMAN_TEMPLATE (object));
     }
 
   /* An extra template object, use to make all stock icons clickable
    * when a pixbuf icon is set.
    */
-  private->null_template_object = g_object_new (GIMP_TYPE_TEMPLATE,
+  private->null_template_object = g_object_new (PICMAN_TYPE_TEMPLATE,
                                                 "name",     "",
                                                 "stock-id", "",
                                                 NULL);
 
   if (private->icon_pixbuf)
     {
-      gimp_context_set_template (private->stock_id_context,
-                                 GIMP_TEMPLATE (private->null_template_object));
+      picman_context_set_template (private->stock_id_context,
+                                 PICMAN_TEMPLATE (private->null_template_object));
     }
 
   g_slist_free_full (stock_list, (GDestroyNotify) g_free);
@@ -222,13 +222,13 @@ gimp_icon_picker_constructed (GObject *object)
   gtk_widget_show (button);
 
   g_signal_connect (button, "button-press-event",
-                    G_CALLBACK (gimp_icon_picker_clicked),
+                    G_CALLBACK (picman_icon_picker_clicked),
                     object);
 
 
-  viewable_view = gimp_view_new (private->stock_id_context,
+  viewable_view = picman_view_new (private->stock_id_context,
                                  private->preview,
-                                 GIMP_VIEW_SIZE_SMALL,
+                                 PICMAN_VIEW_SIZE_SMALL,
                                  0,
                                  FALSE);
   gtk_container_add (GTK_CONTAINER (button), GTK_WIDGET (viewable_view));
@@ -244,7 +244,7 @@ gimp_icon_picker_constructed (GObject *object)
                          GTK_WIDGET (private->menu_item_file_icon));
 
   g_signal_connect (private->menu_item_file_icon, "button-press-event",
-                    G_CALLBACK (gimp_icon_picker_menu_from_file),
+                    G_CALLBACK (picman_icon_picker_menu_from_file),
                     object);
 
   private->menu_item_stock_icon =
@@ -253,7 +253,7 @@ gimp_icon_picker_constructed (GObject *object)
                          GTK_WIDGET (private->menu_item_stock_icon));
 
   g_signal_connect (private->menu_item_stock_icon, "button-press-event",
-                    G_CALLBACK (gimp_icon_picker_menu_from_stock),
+                    G_CALLBACK (picman_icon_picker_menu_from_stock),
                     object);
 
   private->menu_item_copy =
@@ -262,7 +262,7 @@ gimp_icon_picker_constructed (GObject *object)
                          GTK_WIDGET (private->menu_item_copy));
 
   g_signal_connect (private->menu_item_copy, "button-press-event",
-                    G_CALLBACK (gimp_icon_picker_menu_copy),
+                    G_CALLBACK (picman_icon_picker_menu_copy),
                     object);
 
   private->menu_item_paste =
@@ -271,16 +271,16 @@ gimp_icon_picker_constructed (GObject *object)
                          GTK_WIDGET (private->menu_item_paste));
 
   g_signal_connect (private->menu_item_paste, "button-press-event",
-                    G_CALLBACK (gimp_icon_picker_menu_paste),
+                    G_CALLBACK (picman_icon_picker_menu_paste),
                     object);
 
   gtk_widget_show_all (GTK_WIDGET (private->right_click_menu));
 }
 
 static void
-gimp_icon_picker_finalize (GObject *object)
+picman_icon_picker_finalize (GObject *object)
 {
-  GimpIconPickerPrivate *private = GET_PRIVATE (object);
+  PicmanIconPickerPrivate *private = GET_PRIVATE (object);
 
   if (private->stock_id)
     {
@@ -322,26 +322,26 @@ gimp_icon_picker_finalize (GObject *object)
 }
 
 static void
-gimp_icon_picker_set_property (GObject      *object,
+picman_icon_picker_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpIconPickerPrivate *private = GET_PRIVATE (object);
+  PicmanIconPickerPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      private->gimp = g_value_get_object (value); /* don't ref */
+    case PROP_PICMAN:
+      private->picman = g_value_get_object (value); /* don't ref */
       break;
 
     case PROP_STOCK_ID:
-      gimp_icon_picker_set_stock_id (GIMP_ICON_PICKER (object),
+      picman_icon_picker_set_stock_id (PICMAN_ICON_PICKER (object),
                                      g_value_get_string (value));
       break;
 
     case PROP_ICON_PIXBUF:
-      gimp_icon_picker_set_icon_pixbuf (GIMP_ICON_PICKER (object),
+      picman_icon_picker_set_icon_pixbuf (PICMAN_ICON_PICKER (object),
                                         g_value_get_object (value));
       break;
 
@@ -352,17 +352,17 @@ gimp_icon_picker_set_property (GObject      *object,
 }
 
 static void
-gimp_icon_picker_get_property (GObject    *object,
+picman_icon_picker_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpIconPickerPrivate *private = GET_PRIVATE (object);
+  PicmanIconPickerPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      g_value_set_object (value, private->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, private->picman);
       break;
 
     case PROP_STOCK_ID:
@@ -380,30 +380,30 @@ gimp_icon_picker_get_property (GObject    *object,
 }
 
 GtkWidget *
-gimp_icon_picker_new (Gimp *gimp)
+picman_icon_picker_new (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  return g_object_new (GIMP_TYPE_ICON_PICKER,
-                       "gimp", gimp,
+  return g_object_new (PICMAN_TYPE_ICON_PICKER,
+                       "picman", picman,
                        NULL);
 }
 
 const gchar *
-gimp_icon_picker_get_stock_id (GimpIconPicker *picker)
+picman_icon_picker_get_stock_id (PicmanIconPicker *picker)
 {
-  g_return_val_if_fail (GIMP_IS_ICON_PICKER (picker), NULL);
+  g_return_val_if_fail (PICMAN_IS_ICON_PICKER (picker), NULL);
 
   return GET_PRIVATE (picker)->stock_id;
 }
 
 void
-gimp_icon_picker_set_stock_id (GimpIconPicker *picker,
+picman_icon_picker_set_stock_id (PicmanIconPicker *picker,
                                const gchar    *stock_id)
 {
-  GimpIconPickerPrivate *private;
+  PicmanIconPickerPrivate *private;
 
-  g_return_if_fail (GIMP_IS_ICON_PICKER (picker));
+  g_return_if_fail (PICMAN_IS_ICON_PICKER (picker));
   g_return_if_fail (stock_id != NULL);
 
   private = GET_PRIVATE (picker);
@@ -413,14 +413,14 @@ gimp_icon_picker_set_stock_id (GimpIconPicker *picker,
 
   if (private->stock_id_container)
     {
-      GimpObject *object;
+      PicmanObject *object;
 
-      object = gimp_container_get_child_by_name (private->stock_id_container,
+      object = picman_container_get_child_by_name (private->stock_id_container,
                                                  stock_id);
 
       if (object)
-        gimp_context_set_template (private->stock_id_context,
-                                   GIMP_TEMPLATE (object));
+        picman_context_set_template (private->stock_id_context,
+                                   PICMAN_TEMPLATE (object));
     }
 
   g_object_set (private->preview,
@@ -431,20 +431,20 @@ gimp_icon_picker_set_stock_id (GimpIconPicker *picker,
 }
 
 GdkPixbuf  *
-gimp_icon_picker_get_icon_pixbuf (GimpIconPicker *picker)
+picman_icon_picker_get_icon_pixbuf (PicmanIconPicker *picker)
 {
-  g_return_val_if_fail (GIMP_IS_ICON_PICKER (picker), NULL);
+  g_return_val_if_fail (PICMAN_IS_ICON_PICKER (picker), NULL);
 
   return GET_PRIVATE (picker)->icon_pixbuf;
 }
 
 void
-gimp_icon_picker_set_icon_pixbuf (GimpIconPicker *picker,
+picman_icon_picker_set_icon_pixbuf (PicmanIconPicker *picker,
                                   GdkPixbuf      *value)
 {
-  GimpIconPickerPrivate *private;
+  PicmanIconPickerPrivate *private;
 
-  g_return_if_fail (GIMP_IS_ICON_PICKER (picker));
+  g_return_if_fail (PICMAN_IS_ICON_PICKER (picker));
   g_return_if_fail (value == NULL || GDK_IS_PIXBUF (value));
 
   private = GET_PRIVATE (picker);
@@ -458,19 +458,19 @@ gimp_icon_picker_set_icon_pixbuf (GimpIconPicker *picker,
     {
       g_object_ref (private->icon_pixbuf);
 
-      gimp_context_set_template (private->stock_id_context,
-                                 GIMP_TEMPLATE (private->null_template_object));
+      picman_context_set_template (private->stock_id_context,
+                                 PICMAN_TEMPLATE (private->null_template_object));
     }
   else
     {
-      GimpObject *object;
+      PicmanObject *object;
 
-      object = gimp_container_get_child_by_name (private->stock_id_container,
+      object = picman_container_get_child_by_name (private->stock_id_container,
                                                  private->stock_id);
 
       if (object)
-        gimp_context_set_template (private->stock_id_context,
-                                   GIMP_TEMPLATE (object));
+        picman_context_set_template (private->stock_id_context,
+                                   PICMAN_TEMPLATE (object));
     }
 
   g_object_set (private->preview,
@@ -484,25 +484,25 @@ gimp_icon_picker_set_icon_pixbuf (GimpIconPicker *picker,
 /*  private functions  */
 
 static void
-gimp_icon_picker_icon_changed (GimpContext    *context,
-                               GimpTemplate   *template,
-                               GimpIconPicker *picker)
+picman_icon_picker_icon_changed (PicmanContext    *context,
+                               PicmanTemplate   *template,
+                               PicmanIconPicker *picker)
 {
-  GimpIconPickerPrivate *private = GET_PRIVATE (picker);
+  PicmanIconPickerPrivate *private = GET_PRIVATE (picker);
 
-  if (GIMP_OBJECT (template) != private->null_template_object)
+  if (PICMAN_OBJECT (template) != private->null_template_object)
     {
-      gimp_icon_picker_set_icon_pixbuf (picker, NULL);
-      gimp_icon_picker_set_stock_id (picker, gimp_object_get_name (template));
+      picman_icon_picker_set_icon_pixbuf (picker, NULL);
+      picman_icon_picker_set_stock_id (picker, picman_object_get_name (template));
     }
 }
 
 static void
-gimp_icon_picker_menu_from_file (GtkWidget      *widget,
+picman_icon_picker_menu_from_file (GtkWidget      *widget,
                                  GdkEventButton *event,
                                  gpointer        object)
 {
-  GimpIconPicker *picker = GIMP_ICON_PICKER (object);
+  PicmanIconPicker *picker = PICMAN_ICON_PICKER (object);
   GtkWidget      *dialog;
   GtkFileFilter  *filter;
 
@@ -528,7 +528,7 @@ gimp_icon_picker_menu_from_file (GtkWidget      *widget,
 
       if (icon_pixbuf)
         {
-          gimp_icon_picker_set_icon_pixbuf (picker, icon_pixbuf);
+          picman_icon_picker_set_icon_pixbuf (picker, icon_pixbuf);
           g_object_unref (icon_pixbuf);
         }
       g_free (filename);
@@ -537,12 +537,12 @@ gimp_icon_picker_menu_from_file (GtkWidget      *widget,
 }
 
 static void
-gimp_icon_picker_menu_copy (GtkWidget      *widget,
+picman_icon_picker_menu_copy (GtkWidget      *widget,
                             GdkEventButton *event,
                             gpointer        object)
 {
-  GimpIconPicker        *picker    = GIMP_ICON_PICKER (object);
-  GimpIconPickerPrivate *private   = GET_PRIVATE (picker);
+  PicmanIconPicker        *picker    = PICMAN_ICON_PICKER (object);
+  PicmanIconPickerPrivate *private   = GET_PRIVATE (picker);
   GtkClipboard          *clipboard = NULL;
 
   clipboard = gtk_clipboard_get_for_display (gtk_widget_get_display (widget),
@@ -555,11 +555,11 @@ gimp_icon_picker_menu_copy (GtkWidget      *widget,
 }
 
 static void
-gimp_icon_picker_menu_paste (GtkWidget      *widget,
+picman_icon_picker_menu_paste (GtkWidget      *widget,
                              GdkEventButton *event,
                              gpointer        object)
 {
-  GimpIconPicker *picker           = GIMP_ICON_PICKER (object);
+  PicmanIconPicker *picker           = PICMAN_ICON_PICKER (object);
   GtkClipboard   *clipboard        = NULL;
   GdkPixbuf      *clipboard_pixbuf = NULL;
 
@@ -570,28 +570,28 @@ gimp_icon_picker_menu_paste (GtkWidget      *widget,
 
   if (clipboard_pixbuf)
     {
-      gimp_icon_picker_set_icon_pixbuf (picker, clipboard_pixbuf);
+      picman_icon_picker_set_icon_pixbuf (picker, clipboard_pixbuf);
       g_object_unref (clipboard_pixbuf);
     }
 }
 
 static void
-gimp_icon_picker_menu_position (GtkMenu  *menu,
+picman_icon_picker_menu_position (GtkMenu  *menu,
                                 gint     *x,
                                 gint     *y,
                                 gboolean *push_in,
                                 gpointer  user_data)
 {
-  gimp_button_menu_position (user_data, menu, GTK_POS_RIGHT, x, y);
+  picman_button_menu_position (user_data, menu, GTK_POS_RIGHT, x, y);
 }
 
 static void
-gimp_icon_picker_clicked (GtkWidget      *widget,
+picman_icon_picker_clicked (GtkWidget      *widget,
                           GdkEventButton *event,
                           gpointer        object)
 {
-  GimpIconPicker        *picker    = GIMP_ICON_PICKER (object);
-  GimpIconPickerPrivate *private   = GET_PRIVATE (picker);
+  PicmanIconPicker        *picker    = PICMAN_ICON_PICKER (object);
+  PicmanIconPickerPrivate *private   = GET_PRIVATE (picker);
   GtkClipboard          *clipboard = NULL;
 
   clipboard = gtk_clipboard_get_for_display (gtk_widget_get_display (widget),
@@ -609,34 +609,34 @@ gimp_icon_picker_clicked (GtkWidget      *widget,
 
   gtk_menu_popup (GTK_MENU (private->right_click_menu),
                   NULL, NULL,
-                  gimp_icon_picker_menu_position, widget,
+                  picman_icon_picker_menu_position, widget,
                   event->button, event->time);
 }
 
 static void
-gimp_icon_picker_menu_from_stock (GtkWidget      *widget,
+picman_icon_picker_menu_from_stock (GtkWidget      *widget,
                                   GdkEventButton *event,
                                   gpointer        object)
 {
-  GimpIconPicker        *picker  = GIMP_ICON_PICKER (object);
-  GimpIconPickerPrivate *private = GET_PRIVATE (picker);
+  PicmanIconPicker        *picker  = PICMAN_ICON_PICKER (object);
+  PicmanIconPickerPrivate *private = GET_PRIVATE (picker);
   GtkWidget             *popup;
 
   /* FIXME: Right clicking on this popup can cause a crash */
-  popup = gimp_container_popup_new (private->stock_id_container,
+  popup = picman_container_popup_new (private->stock_id_container,
                                     private->stock_id_context,
-                                    GIMP_VIEW_TYPE_LIST,
-                                    GIMP_VIEW_SIZE_SMALL,
-                                    GIMP_VIEW_SIZE_SMALL,
+                                    PICMAN_VIEW_TYPE_LIST,
+                                    PICMAN_VIEW_SIZE_SMALL,
+                                    PICMAN_VIEW_SIZE_SMALL,
                                     0,
                                     NULL,
                                     NULL,
                                     NULL,
                                     NULL);
 
-  gimp_container_popup_set_view_type (GIMP_CONTAINER_POPUP (popup),
-                                      GIMP_VIEW_TYPE_GRID);
+  picman_container_popup_set_view_type (PICMAN_CONTAINER_POPUP (popup),
+                                      PICMAN_VIEW_TYPE_GRID);
 
-  gimp_container_popup_show (GIMP_CONTAINER_POPUP (popup),
+  picman_container_popup_show (PICMAN_CONTAINER_POPUP (popup),
                              GTK_WIDGET (picker));
 }

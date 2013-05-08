@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,10 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimpmath/gimpmath.h>
-#include <libgimp/gimp.h>
+#include <libpicmanmath/picmanmath.h>
+#include <libpicman/picman.h>
 
-#include "gimpressionist.h"
+#include "picmanressionist.h"
 #include "ppmtool.h"
 #include "random.h"
 

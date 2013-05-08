@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdatafactory.c
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmandatafactory.c
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,96 +25,96 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimpcontext.h"
-#include "gimpdata.h"
-#include "gimpdatafactory.h"
-#include "gimplist.h"
+#include "picman.h"
+#include "picmancontext.h"
+#include "picmandata.h"
+#include "picmandatafactory.h"
+#include "picmanlist.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-#define WRITABLE_PATH_KEY "gimp-data-factory-writable-path"
+#define WRITABLE_PATH_KEY "picman-data-factory-writable-path"
 
 /* Data files that have this string in their path are considered
  * obsolete and are only kept around for backwards compatibility
  */
-#define GIMP_OBSOLETE_DATA_DIR_NAME "gimp-obsolete-files"
+#define PICMAN_OBSOLETE_DATA_DIR_NAME "picman-obsolete-files"
 
 
-typedef void (* GimpDataForeachFunc) (GimpDataFactory *factory,
-                                      GimpData        *data,
+typedef void (* PicmanDataForeachFunc) (PicmanDataFactory *factory,
+                                      PicmanData        *data,
                                       gpointer         user_data);
 
 
-struct _GimpDataFactoryPriv
+struct _PicmanDataFactoryPriv
 {
-  Gimp                             *gimp;
-  GimpContainer                    *container;
+  Picman                             *picman;
+  PicmanContainer                    *container;
 
-  GimpContainer                    *container_obsolete;
+  PicmanContainer                    *container_obsolete;
 
   gchar                            *path_property_name;
   gchar                            *writable_property_name;
 
-  const GimpDataFactoryLoaderEntry *loader_entries;
+  const PicmanDataFactoryLoaderEntry *loader_entries;
   gint                              n_loader_entries;
 
-  GimpDataNewFunc                   data_new_func;
-  GimpDataGetStandardFunc           data_get_standard_func;
+  PicmanDataNewFunc                   data_new_func;
+  PicmanDataGetStandardFunc           data_get_standard_func;
 };
 
 
-static void    gimp_data_factory_finalize     (GObject              *object);
+static void    picman_data_factory_finalize     (GObject              *object);
 
-static void    gimp_data_factory_data_load    (GimpDataFactory      *factory,
-                                               GimpContext          *context,
+static void    picman_data_factory_data_load    (PicmanDataFactory      *factory,
+                                               PicmanContext          *context,
                                                GHashTable           *cache);
 
-static gint64  gimp_data_factory_get_memsize  (GimpObject           *object,
+static gint64  picman_data_factory_get_memsize  (PicmanObject           *object,
                                                gint64               *gui_size);
 
-static gchar * gimp_data_factory_get_save_dir (GimpDataFactory      *factory,
+static gchar * picman_data_factory_get_save_dir (PicmanDataFactory      *factory,
                                                GError              **error);
 
-static void    gimp_data_factory_load_data  (const GimpDatafileData *file_data,
+static void    picman_data_factory_load_data  (const PicmanDatafileData *file_data,
                                              gpointer                data);
 
-static void    gimp_data_factory_load_data_recursive (const GimpDatafileData *file_data,
+static void    picman_data_factory_load_data_recursive (const PicmanDatafileData *file_data,
                                                       gpointer                data);
 
-G_DEFINE_TYPE (GimpDataFactory, gimp_data_factory, GIMP_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanDataFactory, picman_data_factory, PICMAN_TYPE_OBJECT)
 
-#define parent_class gimp_data_factory_parent_class
+#define parent_class picman_data_factory_parent_class
 
 
 static void
-gimp_data_factory_class_init (GimpDataFactoryClass *klass)
+picman_data_factory_class_init (PicmanDataFactoryClass *klass)
 {
   GObjectClass    *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass *gimp_object_class = GIMP_OBJECT_CLASS (klass);
+  PicmanObjectClass *picman_object_class = PICMAN_OBJECT_CLASS (klass);
 
-  object_class->finalize         = gimp_data_factory_finalize;
+  object_class->finalize         = picman_data_factory_finalize;
 
-  gimp_object_class->get_memsize = gimp_data_factory_get_memsize;
+  picman_object_class->get_memsize = picman_data_factory_get_memsize;
 
-  g_type_class_add_private (klass, sizeof (GimpDataFactoryPriv));
+  g_type_class_add_private (klass, sizeof (PicmanDataFactoryPriv));
 }
 
 static void
-gimp_data_factory_init (GimpDataFactory *factory)
+picman_data_factory_init (PicmanDataFactory *factory)
 {
   factory->priv = G_TYPE_INSTANCE_GET_PRIVATE (factory,
-                                               GIMP_TYPE_DATA_FACTORY,
-                                               GimpDataFactoryPriv);
+                                               PICMAN_TYPE_DATA_FACTORY,
+                                               PicmanDataFactoryPriv);
 
-  factory->priv->gimp                   = NULL;
+  factory->priv->picman                   = NULL;
   factory->priv->container              = NULL;
   factory->priv->container_obsolete     = NULL;
   factory->priv->path_property_name     = NULL;
@@ -126,9 +126,9 @@ gimp_data_factory_init (GimpDataFactory *factory)
 }
 
 static void
-gimp_data_factory_finalize (GObject *object)
+picman_data_factory_finalize (GObject *object)
 {
-  GimpDataFactory *factory = GIMP_DATA_FACTORY (object);
+  PicmanDataFactory *factory = PICMAN_DATA_FACTORY (object);
 
   if (factory->priv->container)
     {
@@ -158,49 +158,49 @@ gimp_data_factory_finalize (GObject *object)
 }
 
 static gint64
-gimp_data_factory_get_memsize (GimpObject *object,
+picman_data_factory_get_memsize (PicmanObject *object,
                                gint64     *gui_size)
 {
-  GimpDataFactory *factory = GIMP_DATA_FACTORY (object);
+  PicmanDataFactory *factory = PICMAN_DATA_FACTORY (object);
   gint64           memsize = 0;
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (factory->priv->container),
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (factory->priv->container),
                                       gui_size);
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (factory->priv->container_obsolete),
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (factory->priv->container_obsolete),
                                       gui_size);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
-GimpDataFactory *
-gimp_data_factory_new (Gimp                             *gimp,
+PicmanDataFactory *
+picman_data_factory_new (Picman                             *picman,
                        GType                             data_type,
                        const gchar                      *path_property_name,
                        const gchar                      *writable_property_name,
-                       const GimpDataFactoryLoaderEntry *loader_entries,
+                       const PicmanDataFactoryLoaderEntry *loader_entries,
                        gint                              n_loader_entries,
-                       GimpDataNewFunc                   new_func,
-                       GimpDataGetStandardFunc           get_standard_func)
+                       PicmanDataNewFunc                   new_func,
+                       PicmanDataGetStandardFunc           get_standard_func)
 {
-  GimpDataFactory *factory;
+  PicmanDataFactory *factory;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (g_type_is_a (data_type, GIMP_TYPE_DATA), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (g_type_is_a (data_type, PICMAN_TYPE_DATA), NULL);
   g_return_val_if_fail (path_property_name != NULL, NULL);
   g_return_val_if_fail (writable_property_name != NULL, NULL);
   g_return_val_if_fail (loader_entries != NULL, NULL);
   g_return_val_if_fail (n_loader_entries > 0, NULL);
 
-  factory = g_object_new (GIMP_TYPE_DATA_FACTORY, NULL);
+  factory = g_object_new (PICMAN_TYPE_DATA_FACTORY, NULL);
 
-  factory->priv->gimp                   = gimp;
-  factory->priv->container              = gimp_list_new (data_type, TRUE);
-  gimp_list_set_sort_func (GIMP_LIST (factory->priv->container),
-			   (GCompareFunc) gimp_data_compare);
-  factory->priv->container_obsolete     = gimp_list_new (data_type, TRUE);
-  gimp_list_set_sort_func (GIMP_LIST (factory->priv->container_obsolete),
-			   (GCompareFunc) gimp_data_compare);
+  factory->priv->picman                   = picman;
+  factory->priv->container              = picman_list_new (data_type, TRUE);
+  picman_list_set_sort_func (PICMAN_LIST (factory->priv->container),
+			   (GCompareFunc) picman_data_compare);
+  factory->priv->container_obsolete     = picman_list_new (data_type, TRUE);
+  picman_list_set_sort_func (PICMAN_LIST (factory->priv->container_obsolete),
+			   (GCompareFunc) picman_data_compare);
 
   factory->priv->path_property_name     = g_strdup (path_property_name);
   factory->priv->writable_property_name = g_strdup (writable_property_name);
@@ -215,39 +215,39 @@ gimp_data_factory_new (Gimp                             *gimp,
 }
 
 void
-gimp_data_factory_data_init (GimpDataFactory *factory,
-                             GimpContext     *context,
+picman_data_factory_data_init (PicmanDataFactory *factory,
+                             PicmanContext     *context,
                              gboolean         no_data)
 {
-  g_return_if_fail (GIMP_IS_DATA_FACTORY (factory));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_DATA_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
 
   /*  Freeze and thaw the container even if no_data,
    *  this creates the standard data that serves as fallback.
    */
-  gimp_container_freeze (factory->priv->container);
+  picman_container_freeze (factory->priv->container);
 
   if (! no_data)
     {
-      if (factory->priv->gimp->be_verbose)
+      if (factory->priv->picman->be_verbose)
         {
-          const gchar *name = gimp_object_get_name (factory);
+          const gchar *name = picman_object_get_name (factory);
 
           g_print ("Loading '%s' data\n", name ? name : "???");
         }
 
-      gimp_data_factory_data_load (factory, context, NULL);
+      picman_data_factory_data_load (factory, context, NULL);
     }
 
-  gimp_container_thaw (factory->priv->container);
+  picman_container_thaw (factory->priv->container);
 }
 
 static void
-gimp_data_factory_refresh_cache_add (GimpDataFactory *factory,
-                                     GimpData        *data,
+picman_data_factory_refresh_cache_add (PicmanDataFactory *factory,
+                                     PicmanData        *data,
                                      gpointer         user_data)
 {
-  const gchar *filename = gimp_data_get_filename (data);
+  const gchar *filename = picman_data_get_filename (data);
 
   if (filename)
     {
@@ -256,7 +256,7 @@ gimp_data_factory_refresh_cache_add (GimpDataFactory *factory,
 
       g_object_ref (data);
 
-      gimp_container_remove (factory->priv->container, GIMP_OBJECT (data));
+      picman_container_remove (factory->priv->container, PICMAN_OBJECT (data));
 
       list = g_hash_table_lookup (cache, filename);
       list = g_list_prepend (list, data);
@@ -266,7 +266,7 @@ gimp_data_factory_refresh_cache_add (GimpDataFactory *factory,
 }
 
 static gboolean
-gimp_data_factory_refresh_cache_remove (gpointer key,
+picman_data_factory_refresh_cache_remove (gpointer key,
                                         gpointer value,
                                         gpointer user_data)
 {
@@ -281,16 +281,16 @@ gimp_data_factory_refresh_cache_remove (gpointer key,
 }
 
 static void
-gimp_data_factory_data_foreach (GimpDataFactory     *factory,
+picman_data_factory_data_foreach (PicmanDataFactory     *factory,
                                 gboolean             skip_internal,
-                                GimpDataForeachFunc  callback,
+                                PicmanDataForeachFunc  callback,
                                 gpointer             user_data)
 {
-  GList *list = GIMP_LIST (factory->priv->container)->list;
+  GList *list = PICMAN_LIST (factory->priv->container)->list;
 
   if (skip_internal)
     {
-      while (list && gimp_data_is_internal (GIMP_DATA (list->data)))
+      while (list && picman_data_is_internal (PICMAN_DATA (list->data)))
         list = g_list_next (list);
     }
 
@@ -306,21 +306,21 @@ gimp_data_factory_data_foreach (GimpDataFactory     *factory,
 
 typedef struct
 {
-  GimpDataFactory *factory;
-  GimpContext     *context;
+  PicmanDataFactory *factory;
+  PicmanContext     *context;
   GHashTable      *cache;
   const gchar     *top_directory;
-} GimpDataLoadContext;
+} PicmanDataLoadContext;
 
 static void
-gimp_data_factory_data_load (GimpDataFactory *factory,
-                             GimpContext     *context,
+picman_data_factory_data_load (PicmanDataFactory *factory,
+                             PicmanContext     *context,
                              GHashTable      *cache)
 {
   gchar *path;
   gchar *writable_path;
 
-  g_object_get (factory->priv->gimp->config,
+  g_object_get (factory->priv->picman->config,
                 factory->priv->path_property_name,     &path,
                 factory->priv->writable_property_name, &writable_path,
                 NULL);
@@ -329,39 +329,39 @@ gimp_data_factory_data_load (GimpDataFactory *factory,
     {
       GList               *writable_list = NULL;
       gchar               *tmp;
-      GimpDataLoadContext  load_context = { 0, };
+      PicmanDataLoadContext  load_context = { 0, };
 
       load_context.factory = factory;
       load_context.context = context;
       load_context.cache   = cache;
 
-      tmp = gimp_config_path_expand (path, TRUE, NULL);
+      tmp = picman_config_path_expand (path, TRUE, NULL);
       g_free (path);
       path = tmp;
 
       if (writable_path)
         {
-          tmp = gimp_config_path_expand (writable_path, TRUE, NULL);
+          tmp = picman_config_path_expand (writable_path, TRUE, NULL);
           g_free (writable_path);
           writable_path = tmp;
 
-          writable_list = gimp_path_parse (writable_path, 256, TRUE, NULL);
+          writable_list = picman_path_parse (writable_path, 256, TRUE, NULL);
 
           g_object_set_data (G_OBJECT (factory),
                              WRITABLE_PATH_KEY, writable_list);
         }
 
-      gimp_datafiles_read_directories (path, G_FILE_TEST_IS_REGULAR,
-                                       gimp_data_factory_load_data,
+      picman_datafiles_read_directories (path, G_FILE_TEST_IS_REGULAR,
+                                       picman_data_factory_load_data,
                                        &load_context);
 
-      gimp_datafiles_read_directories (path, G_FILE_TEST_IS_DIR,
-                                       gimp_data_factory_load_data_recursive,
+      picman_datafiles_read_directories (path, G_FILE_TEST_IS_DIR,
+                                       picman_data_factory_load_data_recursive,
                                        &load_context);
 
       if (writable_path)
         {
-          gimp_path_free (writable_list);
+          picman_path_free (writable_list);
           g_object_set_data (G_OBJECT (factory), WRITABLE_PATH_KEY, NULL);
         }
     }
@@ -371,23 +371,23 @@ gimp_data_factory_data_load (GimpDataFactory *factory,
 }
 
 void
-gimp_data_factory_data_refresh (GimpDataFactory *factory,
-                                GimpContext     *context)
+picman_data_factory_data_refresh (PicmanDataFactory *factory,
+                                PicmanContext     *context)
 {
   GHashTable *cache;
 
-  g_return_if_fail (GIMP_IS_DATA_FACTORY (factory));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_DATA_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
 
-  gimp_container_freeze (factory->priv->container);
+  picman_container_freeze (factory->priv->container);
 
   /*  First, save all dirty data objects  */
-  gimp_data_factory_data_save (factory);
+  picman_data_factory_data_save (factory);
 
   cache = g_hash_table_new (g_str_hash, g_str_equal);
 
-  gimp_data_factory_data_foreach (factory, TRUE,
-                                  gimp_data_factory_refresh_cache_add, cache);
+  picman_data_factory_data_foreach (factory, TRUE,
+                                  picman_data_factory_refresh_cache_add, cache);
 
   /*  Now the cache contains a filename => list-of-objects mapping of
    *  the old objects. So we should now traverse the directory and for
@@ -397,34 +397,34 @@ gimp_data_factory_data_refresh (GimpDataFactory *factory,
    *  objects remaining there will be those that are not present on
    *  the disk (that have to be destroyed)
    */
-  gimp_data_factory_data_load (factory, context, cache);
+  picman_data_factory_data_load (factory, context, cache);
 
   /*  Now all the data is loaded. Free what remains in the cache  */
   g_hash_table_foreach_remove (cache,
-                               gimp_data_factory_refresh_cache_remove, NULL);
+                               picman_data_factory_refresh_cache_remove, NULL);
 
   g_hash_table_destroy (cache);
 
-  gimp_container_thaw (factory->priv->container);
+  picman_container_thaw (factory->priv->container);
 }
 
 void
-gimp_data_factory_data_save (GimpDataFactory *factory)
+picman_data_factory_data_save (PicmanDataFactory *factory)
 {
   GList  *list;
   gchar  *writable_dir;
   GError *error = NULL;
 
-  g_return_if_fail (GIMP_IS_DATA_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_DATA_FACTORY (factory));
 
-  if (gimp_container_is_empty (factory->priv->container))
+  if (picman_container_is_empty (factory->priv->container))
     return;
 
-  writable_dir = gimp_data_factory_get_save_dir (factory, &error);
+  writable_dir = picman_data_factory_get_save_dir (factory, &error);
 
   if (! writable_dir)
     {
-      gimp_message (factory->priv->gimp, NULL, GIMP_MESSAGE_ERROR,
+      picman_message (factory->priv->picman, NULL, PICMAN_MESSAGE_ERROR,
                     _("Failed to save data:\n\n%s"),
                     error->message);
       g_clear_error (&error);
@@ -432,28 +432,28 @@ gimp_data_factory_data_save (GimpDataFactory *factory)
       return;
     }
 
-  for (list = GIMP_LIST (factory->priv->container)->list;
+  for (list = PICMAN_LIST (factory->priv->container)->list;
        list;
        list = g_list_next (list))
     {
-      GimpData *data = list->data;
+      PicmanData *data = list->data;
 
-      if (! gimp_data_get_filename (data))
-        gimp_data_create_filename (data, writable_dir);
+      if (! picman_data_get_filename (data))
+        picman_data_create_filename (data, writable_dir);
 
-      if (gimp_data_is_dirty (data) &&
-          gimp_data_is_writable (data))
+      if (picman_data_is_dirty (data) &&
+          picman_data_is_writable (data))
         {
           GError *error = NULL;
 
-          if (! gimp_data_save (data, &error))
+          if (! picman_data_save (data, &error))
             {
               /*  check if there actually was an error (no error
                *  means the data class does not implement save)
                */
               if (error)
                 {
-                  gimp_message (factory->priv->gimp, NULL, GIMP_MESSAGE_ERROR,
+                  picman_message (factory->priv->picman, NULL, PICMAN_MESSAGE_ERROR,
                                 _("Failed to save data:\n\n%s"),
                                 error->message);
                   g_clear_error (&error);
@@ -466,43 +466,43 @@ gimp_data_factory_data_save (GimpDataFactory *factory)
 }
 
 static void
-gimp_data_factory_remove_cb (GimpDataFactory *factory,
-                             GimpData        *data,
+picman_data_factory_remove_cb (PicmanDataFactory *factory,
+                             PicmanData        *data,
                              gpointer         user_data)
 {
-  gimp_container_remove (factory->priv->container, GIMP_OBJECT (data));
+  picman_container_remove (factory->priv->container, PICMAN_OBJECT (data));
 }
 
 void
-gimp_data_factory_data_free (GimpDataFactory *factory)
+picman_data_factory_data_free (PicmanDataFactory *factory)
 {
-  g_return_if_fail (GIMP_IS_DATA_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_DATA_FACTORY (factory));
 
-  gimp_container_freeze (factory->priv->container);
+  picman_container_freeze (factory->priv->container);
 
-  gimp_data_factory_data_foreach (factory, TRUE,
-                                  gimp_data_factory_remove_cb, NULL);
+  picman_data_factory_data_foreach (factory, TRUE,
+                                  picman_data_factory_remove_cb, NULL);
 
-  gimp_container_thaw (factory->priv->container);
+  picman_container_thaw (factory->priv->container);
 }
 
-GimpData *
-gimp_data_factory_data_new (GimpDataFactory *factory,
-                            GimpContext     *context,
+PicmanData *
+picman_data_factory_data_new (PicmanDataFactory *factory,
+                            PicmanContext     *context,
                             const gchar     *name)
 {
-  g_return_val_if_fail (GIMP_IS_DATA_FACTORY (factory), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DATA_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (name != NULL, NULL);
   g_return_val_if_fail (*name != '\0', NULL);
 
   if (factory->priv->data_new_func)
     {
-      GimpData *data = factory->priv->data_new_func (context, name);
+      PicmanData *data = factory->priv->data_new_func (context, name);
 
       if (data)
         {
-          gimp_container_add (factory->priv->container, GIMP_OBJECT (data));
+          picman_container_add (factory->priv->container, PICMAN_OBJECT (data));
           g_object_unref (data);
 
           return data;
@@ -514,20 +514,20 @@ gimp_data_factory_data_new (GimpDataFactory *factory,
   return NULL;
 }
 
-GimpData *
-gimp_data_factory_data_duplicate (GimpDataFactory *factory,
-                                  GimpData        *data)
+PicmanData *
+picman_data_factory_data_duplicate (PicmanDataFactory *factory,
+                                  PicmanData        *data)
 {
-  GimpData *new_data;
+  PicmanData *new_data;
 
-  g_return_val_if_fail (GIMP_IS_DATA_FACTORY (factory), NULL);
-  g_return_val_if_fail (GIMP_IS_DATA (data), NULL);
+  g_return_val_if_fail (PICMAN_IS_DATA_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DATA (data), NULL);
 
-  new_data = gimp_data_duplicate (data);
+  new_data = picman_data_duplicate (data);
 
   if (new_data)
     {
-      const gchar *name = gimp_object_get_name (data);
+      const gchar *name = picman_object_get_name (data);
       gchar       *ext;
       gint         copy_len;
       gint         number;
@@ -549,9 +549,9 @@ gimp_data_factory_data_duplicate (GimpDataFactory *factory,
           new_name = g_strdup_printf (_("%s copy"), name);
         }
 
-      gimp_object_take_name (GIMP_OBJECT (new_data), new_name);
+      picman_object_take_name (PICMAN_OBJECT (new_data), new_name);
 
-      gimp_container_add (factory->priv->container, GIMP_OBJECT (new_data));
+      picman_container_add (factory->priv->container, PICMAN_OBJECT (new_data));
       g_object_unref (new_data);
     }
 
@@ -559,25 +559,25 @@ gimp_data_factory_data_duplicate (GimpDataFactory *factory,
 }
 
 gboolean
-gimp_data_factory_data_delete (GimpDataFactory  *factory,
-                               GimpData         *data,
+picman_data_factory_data_delete (PicmanDataFactory  *factory,
+                               PicmanData         *data,
                                gboolean          delete_from_disk,
                                GError          **error)
 {
   gboolean retval = TRUE;
 
-  g_return_val_if_fail (GIMP_IS_DATA_FACTORY (factory), FALSE);
-  g_return_val_if_fail (GIMP_IS_DATA (data), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DATA_FACTORY (factory), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DATA (data), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  if (gimp_container_have (factory->priv->container, GIMP_OBJECT (data)))
+  if (picman_container_have (factory->priv->container, PICMAN_OBJECT (data)))
     {
       g_object_ref (data);
 
-      gimp_container_remove (factory->priv->container, GIMP_OBJECT (data));
+      picman_container_remove (factory->priv->container, PICMAN_OBJECT (data));
 
-      if (delete_from_disk && gimp_data_get_filename (data))
-        retval = gimp_data_delete_from_disk (data, error);
+      if (delete_from_disk && picman_data_get_filename (data))
+        retval = picman_data_delete_from_disk (data, error);
 
       g_object_unref (data);
     }
@@ -585,12 +585,12 @@ gimp_data_factory_data_delete (GimpDataFactory  *factory,
   return retval;
 }
 
-GimpData *
-gimp_data_factory_data_get_standard (GimpDataFactory *factory,
-                                     GimpContext     *context)
+PicmanData *
+picman_data_factory_data_get_standard (PicmanDataFactory *factory,
+                                     PicmanContext     *context)
 {
-  g_return_val_if_fail (GIMP_IS_DATA_FACTORY (factory), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DATA_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   if (factory->priv->data_get_standard_func)
     return factory->priv->data_get_standard_func (context);
@@ -599,27 +599,27 @@ gimp_data_factory_data_get_standard (GimpDataFactory *factory,
 }
 
 gboolean
-gimp_data_factory_data_save_single (GimpDataFactory  *factory,
-                                    GimpData         *data,
+picman_data_factory_data_save_single (PicmanDataFactory  *factory,
+                                    PicmanData         *data,
                                     GError          **error)
 {
-  g_return_val_if_fail (GIMP_IS_DATA_FACTORY (factory), FALSE);
-  g_return_val_if_fail (GIMP_IS_DATA (data), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DATA_FACTORY (factory), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DATA (data), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  if (! gimp_data_is_dirty (data))
+  if (! picman_data_is_dirty (data))
     return TRUE;
 
-  if (! gimp_data_get_filename (data))
+  if (! picman_data_get_filename (data))
     {
       gchar  *writable_dir;
       GError *my_error = NULL;
 
-      writable_dir = gimp_data_factory_get_save_dir (factory, &my_error);
+      writable_dir = picman_data_factory_get_save_dir (factory, &my_error);
 
       if (! writable_dir)
         {
-          g_set_error (error, GIMP_DATA_ERROR, 0,
+          g_set_error (error, PICMAN_DATA_ERROR, 0,
                        _("Failed to save data:\n\n%s"),
                        my_error->message);
           g_clear_error (&my_error);
@@ -627,21 +627,21 @@ gimp_data_factory_data_save_single (GimpDataFactory  *factory,
           return FALSE;
         }
 
-      gimp_data_create_filename (data, writable_dir);
+      picman_data_create_filename (data, writable_dir);
 
       g_free (writable_dir);
     }
 
-  if (! gimp_data_is_writable (data))
+  if (! picman_data_is_writable (data))
     return FALSE;
 
-  if (! gimp_data_save (data, error))
+  if (! picman_data_save (data, error))
     {
       /*  check if there actually was an error (no error
        *  means the data class does not implement save)
        */
       if (! error)
-        g_set_error (error, GIMP_DATA_ERROR, 0,
+        g_set_error (error, PICMAN_DATA_ERROR, 0,
                      _("Failed to save data:\n\n%s"),
                      "Data class does not implement saving");
 
@@ -652,41 +652,41 @@ gimp_data_factory_data_save_single (GimpDataFactory  *factory,
 }
 
 GType
-gimp_data_factory_get_data_type (GimpDataFactory *factory)
+picman_data_factory_get_data_type (PicmanDataFactory *factory)
 {
-  g_return_val_if_fail (GIMP_IS_DATA_FACTORY (factory), G_TYPE_NONE);
+  g_return_val_if_fail (PICMAN_IS_DATA_FACTORY (factory), G_TYPE_NONE);
 
-  return gimp_container_get_children_type (factory->priv->container);
+  return picman_container_get_children_type (factory->priv->container);
 }
 
-GimpContainer *
-gimp_data_factory_get_container (GimpDataFactory *factory)
+PicmanContainer *
+picman_data_factory_get_container (PicmanDataFactory *factory)
 {
-  g_return_val_if_fail (GIMP_IS_DATA_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DATA_FACTORY (factory), NULL);
 
   return factory->priv->container;
 }
 
-GimpContainer *
-gimp_data_factory_get_container_obsolete (GimpDataFactory *factory)
+PicmanContainer *
+picman_data_factory_get_container_obsolete (PicmanDataFactory *factory)
 {
-  g_return_val_if_fail (GIMP_IS_DATA_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DATA_FACTORY (factory), NULL);
 
   return factory->priv->container_obsolete;
 }
 
-Gimp *
-gimp_data_factory_get_gimp (GimpDataFactory *factory)
+Picman *
+picman_data_factory_get_picman (PicmanDataFactory *factory)
 {
-  g_return_val_if_fail (GIMP_IS_DATA_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DATA_FACTORY (factory), NULL);
 
-  return factory->priv->gimp;
+  return factory->priv->picman;
 }
 
 gboolean
-gimp_data_factory_has_data_new_func (GimpDataFactory *factory)
+picman_data_factory_has_data_new_func (PicmanDataFactory *factory)
 {
-  g_return_val_if_fail (GIMP_IS_DATA_FACTORY (factory), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DATA_FACTORY (factory), FALSE);
 
   return factory->priv->data_new_func != NULL;
 }
@@ -695,7 +695,7 @@ gimp_data_factory_has_data_new_func (GimpDataFactory *factory)
 /*  private functions  */
 
 static gchar *
-gimp_data_factory_get_save_dir (GimpDataFactory  *factory,
+picman_data_factory_get_save_dir (PicmanDataFactory  *factory,
                                 GError          **error)
 {
   gchar *path;
@@ -706,21 +706,21 @@ gimp_data_factory_get_save_dir (GimpDataFactory  *factory,
   GList *list;
   gchar *writable_dir = NULL;
 
-  g_object_get (factory->priv->gimp->config,
+  g_object_get (factory->priv->picman->config,
                 factory->priv->path_property_name,     &path,
                 factory->priv->writable_property_name, &writable_path,
                 NULL);
 
-  tmp = gimp_config_path_expand (path, TRUE, NULL);
+  tmp = picman_config_path_expand (path, TRUE, NULL);
   g_free (path);
   path = tmp;
 
-  tmp = gimp_config_path_expand (writable_path, TRUE, NULL);
+  tmp = picman_config_path_expand (writable_path, TRUE, NULL);
   g_free (writable_path);
   writable_path = tmp;
 
-  path_list     = gimp_path_parse (path,          256, FALSE, NULL);
-  writable_list = gimp_path_parse (writable_path, 256, FALSE, NULL);
+  path_list     = picman_path_parse (path,          256, FALSE, NULL);
+  writable_list = picman_path_parse (writable_path, 256, FALSE, NULL);
 
   g_free (path);
   g_free (writable_path);
@@ -746,7 +746,7 @@ gimp_data_factory_get_save_dir (GimpDataFactory  *factory,
                     {
                       gchar *display_name = g_filename_display_name (dir);
 
-                      g_set_error (error, GIMP_DATA_ERROR, 0,
+                      g_set_error (error, PICMAN_DATA_ERROR, 0,
                                    _("You have a writable data folder "
                                      "configured (%s), but this folder does "
                                      "not exist. Please create the folder or "
@@ -767,28 +767,28 @@ gimp_data_factory_get_save_dir (GimpDataFactory  *factory,
 
       if (! writable_dir && ! found_any)
         {
-          g_set_error (error, GIMP_DATA_ERROR, 0,
+          g_set_error (error, PICMAN_DATA_ERROR, 0,
                        _("You have a writable data folder configured, but this "
                          "folder is not part of your data search path. You "
-                         "probably edited the gimprc file manually, "
+                         "probably edited the picmanrc file manually, "
                          "please fix it in the Preferences dialog's 'Folders' "
                          "section."));
         }
     }
   else
     {
-      g_set_error (error, GIMP_DATA_ERROR, 0,
+      g_set_error (error, PICMAN_DATA_ERROR, 0,
                    _("You don't have any writable data folder configured."));
     }
 
-  gimp_path_free (path_list);
-  gimp_path_free (writable_list);
+  picman_path_free (path_list);
+  picman_path_free (writable_list);
 
   return writable_dir;
 }
 
 static gboolean
-gimp_data_factory_is_dir_writable (const gchar *dirname,
+picman_data_factory_is_dir_writable (const gchar *dirname,
                                    GList       *writable_path)
 {
   GList *list;
@@ -803,14 +803,14 @@ gimp_data_factory_is_dir_writable (const gchar *dirname,
 }
 
 static void
-gimp_data_factory_load_data_recursive (const GimpDatafileData *file_data,
+picman_data_factory_load_data_recursive (const PicmanDatafileData *file_data,
                                        gpointer                data)
 {
-  GimpDataLoadContext *context = data;
+  PicmanDataLoadContext *context = data;
   gboolean             top_set = FALSE;
 
   /*  When processing subdirectories, set the top_directory if it's
-   *  unset. This way me make sure gimp_data_set_folder_tags()'
+   *  unset. This way me make sure picman_data_set_folder_tags()'
    *  calling convention is honored: pass NULL when processing the
    *  toplevel directory itself, and pass the toplevel directory when
    *  processing any folder inside.
@@ -821,11 +821,11 @@ gimp_data_factory_load_data_recursive (const GimpDatafileData *file_data,
       top_set = TRUE;
     }
 
-  gimp_datafiles_read_directories (file_data->filename, G_FILE_TEST_IS_REGULAR,
-                                   gimp_data_factory_load_data, context);
+  picman_datafiles_read_directories (file_data->filename, G_FILE_TEST_IS_REGULAR,
+                                   picman_data_factory_load_data, context);
 
-  gimp_datafiles_read_directories (file_data->filename, G_FILE_TEST_IS_DIR,
-                                   gimp_data_factory_load_data_recursive,
+  picman_datafiles_read_directories (file_data->filename, G_FILE_TEST_IS_DIR,
+                                   picman_data_factory_load_data_recursive,
                                    context);
 
   /*  Unset, the string is only valid within this function, and will
@@ -836,13 +836,13 @@ gimp_data_factory_load_data_recursive (const GimpDatafileData *file_data,
 }
 
 static void
-gimp_data_factory_load_data (const GimpDatafileData *file_data,
+picman_data_factory_load_data (const PicmanDatafileData *file_data,
                              gpointer                data)
 {
-  GimpDataLoadContext              *context = data;
-  GimpDataFactory                  *factory = context->factory;
+  PicmanDataLoadContext              *context = data;
+  PicmanDataFactory                  *factory = context->factory;
   GHashTable                       *cache   = context->cache;
-  const GimpDataFactoryLoaderEntry *loader  = NULL;
+  const PicmanDataFactoryLoaderEntry *loader  = NULL;
   GError                           *error   = NULL;
   GList                            *data_list;
   gint                              i;
@@ -856,7 +856,7 @@ gimp_data_factory_load_data (const GimpDatafileData *file_data,
        * which must be last in the loader array
        */
       if (! loader->extension ||
-          gimp_datafiles_check_extension (file_data->filename,
+          picman_datafiles_check_extension (file_data->filename,
                                           loader->extension))
         goto insert;
     }
@@ -871,13 +871,13 @@ gimp_data_factory_load_data (const GimpDatafileData *file_data,
       cached_data = g_hash_table_lookup (cache, file_data->filename);
 
       if (cached_data &&
-          gimp_data_get_mtime (cached_data->data) != 0 &&
-          gimp_data_get_mtime (cached_data->data) == file_data->mtime)
+          picman_data_get_mtime (cached_data->data) != 0 &&
+          picman_data_get_mtime (cached_data->data) == file_data->mtime)
         {
           GList *list;
 
           for (list = cached_data; list; list = g_list_next (list))
-            gimp_container_add (factory->priv->container, list->data);
+            picman_container_add (factory->priv->container, list->data);
 
           return;
         }
@@ -893,7 +893,7 @@ gimp_data_factory_load_data (const GimpDatafileData *file_data,
       gboolean  deletable = FALSE;
 
       obsolete = (strstr (file_data->dirname,
-                          GIMP_OBSOLETE_DATA_DIR_NAME) != 0);
+                          PICMAN_OBSOLETE_DATA_DIR_NAME) != 0);
 
       /* obsolete files are immutable, don't check their writability */
       if (! obsolete)
@@ -904,7 +904,7 @@ gimp_data_factory_load_data (const GimpDatafileData *file_data,
                                              WRITABLE_PATH_KEY);
 
           deletable = (g_list_length (data_list) == 1 &&
-                       gimp_data_factory_is_dir_writable (file_data->dirname,
+                       picman_data_factory_is_dir_writable (file_data->dirname,
                                                           writable_list));
 
           writable = (deletable && loader->writable);
@@ -912,25 +912,25 @@ gimp_data_factory_load_data (const GimpDatafileData *file_data,
 
       for (list = data_list; list; list = g_list_next (list))
         {
-          GimpData *data = list->data;
+          PicmanData *data = list->data;
 
-          gimp_data_set_filename (data, file_data->filename,
+          picman_data_set_filename (data, file_data->filename,
                                   writable, deletable);
-          gimp_data_set_mtime (data, file_data->mtime);
+          picman_data_set_mtime (data, file_data->mtime);
 
-          gimp_data_clean (data);
+          picman_data_clean (data);
 
           if (obsolete)
             {
-              gimp_container_add (factory->priv->container_obsolete,
-                                  GIMP_OBJECT (data));
+              picman_container_add (factory->priv->container_obsolete,
+                                  PICMAN_OBJECT (data));
             }
           else
             {
-              gimp_data_set_folder_tags (data, context->top_directory);
+              picman_data_set_folder_tags (data, context->top_directory);
 
-              gimp_container_add (factory->priv->container,
-                                  GIMP_OBJECT (data));
+              picman_container_add (factory->priv->container,
+                                  PICMAN_OBJECT (data));
             }
 
           g_object_unref (data);
@@ -941,7 +941,7 @@ gimp_data_factory_load_data (const GimpDatafileData *file_data,
 
   if (G_UNLIKELY (error))
     {
-      gimp_message (factory->priv->gimp, NULL, GIMP_MESSAGE_ERROR,
+      picman_message (factory->priv->picman, NULL, PICMAN_MESSAGE_ERROR,
                     _("Failed to load data:\n\n%s"), error->message);
       g_clear_error (&error);
     }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,57 +20,57 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "paint/gimpsmudgeoptions.h"
+#include "paint/picmansmudgeoptions.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimppropwidgets.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanpropwidgets.h"
 
-#include "gimpsmudgetool.h"
-#include "gimppaintoptions-gui.h"
-#include "gimptoolcontrol.h"
+#include "picmansmudgetool.h"
+#include "picmanpaintoptions-gui.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
-
-
-static GtkWidget * gimp_smudge_options_gui (GimpToolOptions *tool_options);
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpSmudgeTool, gimp_smudge_tool, GIMP_TYPE_BRUSH_TOOL)
+static GtkWidget * picman_smudge_options_gui (PicmanToolOptions *tool_options);
+
+
+G_DEFINE_TYPE (PicmanSmudgeTool, picman_smudge_tool, PICMAN_TYPE_BRUSH_TOOL)
 
 
 void
-gimp_smudge_tool_register (GimpToolRegisterCallback  callback,
+picman_smudge_tool_register (PicmanToolRegisterCallback  callback,
                            gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_SMUDGE_TOOL,
-                GIMP_TYPE_SMUDGE_OPTIONS,
-                gimp_smudge_options_gui,
-                GIMP_PAINT_OPTIONS_CONTEXT_MASK,
-                "gimp-smudge-tool",
+  (* callback) (PICMAN_TYPE_SMUDGE_TOOL,
+                PICMAN_TYPE_SMUDGE_OPTIONS,
+                picman_smudge_options_gui,
+                PICMAN_PAINT_OPTIONS_CONTEXT_MASK,
+                "picman-smudge-tool",
                 _("Smudge"),
                 _("Smudge Tool: Smudge selectively using a brush"),
                 N_("_Smudge"), "S",
-                NULL, GIMP_HELP_TOOL_SMUDGE,
-                GIMP_STOCK_TOOL_SMUDGE,
+                NULL, PICMAN_HELP_TOOL_SMUDGE,
+                PICMAN_STOCK_TOOL_SMUDGE,
                 data);
 }
 
 static void
-gimp_smudge_tool_class_init (GimpSmudgeToolClass *klass)
+picman_smudge_tool_class_init (PicmanSmudgeToolClass *klass)
 {
 }
 
 static void
-gimp_smudge_tool_init (GimpSmudgeTool *smudge)
+picman_smudge_tool_init (PicmanSmudgeTool *smudge)
 {
-  GimpTool      *tool       = GIMP_TOOL (smudge);
-  GimpPaintTool *paint_tool = GIMP_PAINT_TOOL (smudge);
+  PicmanTool      *tool       = PICMAN_TOOL (smudge);
+  PicmanPaintTool *paint_tool = PICMAN_PAINT_TOOL (smudge);
 
-  gimp_tool_control_set_tool_cursor (tool->control, GIMP_TOOL_CURSOR_SMUDGE);
+  picman_tool_control_set_tool_cursor (tool->control, PICMAN_TOOL_CURSOR_SMUDGE);
 
   paint_tool->status      = _("Click to smudge");
   paint_tool->status_line = _("Click to smudge the line");
@@ -81,14 +81,14 @@ gimp_smudge_tool_init (GimpSmudgeTool *smudge)
 /*  tool options stuff  */
 
 static GtkWidget *
-gimp_smudge_options_gui (GimpToolOptions *tool_options)
+picman_smudge_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config = G_OBJECT (tool_options);
-  GtkWidget *vbox   = gimp_paint_options_gui (tool_options);
+  GtkWidget *vbox   = picman_paint_options_gui (tool_options);
   GtkWidget *scale;
 
   /*  the rate scale  */
-  scale = gimp_prop_spin_scale_new (config, "rate",
+  scale = picman_prop_spin_scale_new (config, "rate",
                                     C_("smudge-tool", "Rate"),
                                     1.0, 10.0, 1);
   gtk_box_pack_start (GTK_BOX (vbox), scale, FALSE, FALSE, 0);

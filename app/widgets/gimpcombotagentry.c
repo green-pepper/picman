@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcombotagentry.c
+ * picmancombotagentry.c
  * Copyright (C) 2008 Aurimas Juška <aurisj@svn.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,59 +27,59 @@
 
 #include "widgets-types.h"
 
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimptag.h"
-#include "core/gimptagged.h"
-#include "core/gimptaggedcontainer.h"
-#include "core/gimpviewable.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmantag.h"
+#include "core/picmantagged.h"
+#include "core/picmantaggedcontainer.h"
+#include "core/picmanviewable.h"
 
-#include "gimptagentry.h"
-#include "gimptagpopup.h"
-#include "gimpcombotagentry.h"
+#include "picmantagentry.h"
+#include "picmantagpopup.h"
+#include "picmancombotagentry.h"
 
 
-static void     gimp_combo_tag_entry_constructed       (GObject              *object);
-static void     gimp_combo_tag_entry_dispose           (GObject              *object);
+static void     picman_combo_tag_entry_constructed       (GObject              *object);
+static void     picman_combo_tag_entry_dispose           (GObject              *object);
 
-static gboolean gimp_combo_tag_entry_expose            (GtkWidget            *widget,
+static gboolean picman_combo_tag_entry_expose            (GtkWidget            *widget,
                                                         GdkEventExpose       *event);
-static void     gimp_combo_tag_entry_style_set         (GtkWidget            *widget,
+static void     picman_combo_tag_entry_style_set         (GtkWidget            *widget,
                                                         GtkStyle             *previous_style);
 
-static void     gimp_combo_tag_entry_icon_press        (GtkWidget            *widget,
+static void     picman_combo_tag_entry_icon_press        (GtkWidget            *widget,
                                                         GtkEntryIconPosition  icon_pos,
                                                         GdkEvent             *event,
                                                         gpointer              user_data);
 
-static void     gimp_combo_tag_entry_popup_destroy     (GtkObject            *object,
-                                                        GimpComboTagEntry    *entry);
+static void     picman_combo_tag_entry_popup_destroy     (GtkObject            *object,
+                                                        PicmanComboTagEntry    *entry);
 
-static void     gimp_combo_tag_entry_tag_count_changed (GimpTaggedContainer  *container,
+static void     picman_combo_tag_entry_tag_count_changed (PicmanTaggedContainer  *container,
                                                         gint                  tag_count,
-                                                        GimpComboTagEntry    *entry);
+                                                        PicmanComboTagEntry    *entry);
 
 
-G_DEFINE_TYPE (GimpComboTagEntry, gimp_combo_tag_entry, GIMP_TYPE_TAG_ENTRY);
+G_DEFINE_TYPE (PicmanComboTagEntry, picman_combo_tag_entry, PICMAN_TYPE_TAG_ENTRY);
 
-#define parent_class gimp_combo_tag_entry_parent_class
+#define parent_class picman_combo_tag_entry_parent_class
 
 
 static void
-gimp_combo_tag_entry_class_init (GimpComboTagEntryClass *klass)
+picman_combo_tag_entry_class_init (PicmanComboTagEntryClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->constructed  = gimp_combo_tag_entry_constructed;
-  object_class->dispose      = gimp_combo_tag_entry_dispose;
+  object_class->constructed  = picman_combo_tag_entry_constructed;
+  object_class->dispose      = picman_combo_tag_entry_dispose;
 
-  widget_class->expose_event = gimp_combo_tag_entry_expose;
-  widget_class->style_set    = gimp_combo_tag_entry_style_set;
+  widget_class->expose_event = picman_combo_tag_entry_expose;
+  widget_class->style_set    = picman_combo_tag_entry_style_set;
 }
 
 static void
-gimp_combo_tag_entry_init (GimpComboTagEntry *entry)
+picman_combo_tag_entry_init (PicmanComboTagEntry *entry)
 {
   entry->popup                 = NULL;
   entry->normal_item_attr      = NULL;
@@ -95,27 +95,27 @@ gimp_combo_tag_entry_init (GimpComboTagEntry *entry)
                                  GTK_STOCK_GO_DOWN);
 
   g_signal_connect (entry, "icon-press",
-                    G_CALLBACK (gimp_combo_tag_entry_icon_press),
+                    G_CALLBACK (picman_combo_tag_entry_icon_press),
                     NULL);
 }
 
 static void
-gimp_combo_tag_entry_constructed (GObject *object)
+picman_combo_tag_entry_constructed (GObject *object)
 {
-  GimpComboTagEntry *entry = GIMP_COMBO_TAG_ENTRY (object);
+  PicmanComboTagEntry *entry = PICMAN_COMBO_TAG_ENTRY (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_signal_connect_object (GIMP_TAG_ENTRY (entry)->container,
+  g_signal_connect_object (PICMAN_TAG_ENTRY (entry)->container,
                            "tag-count-changed",
-                           G_CALLBACK (gimp_combo_tag_entry_tag_count_changed),
+                           G_CALLBACK (picman_combo_tag_entry_tag_count_changed),
                            entry, 0);
 }
 
 static void
-gimp_combo_tag_entry_dispose (GObject *object)
+picman_combo_tag_entry_dispose (GObject *object)
 {
-  GimpComboTagEntry *combo_entry = GIMP_COMBO_TAG_ENTRY (object);
+  PicmanComboTagEntry *combo_entry = PICMAN_COMBO_TAG_ENTRY (object);
 
   if (combo_entry->arrow_pixbuf)
     {
@@ -145,10 +145,10 @@ gimp_combo_tag_entry_dispose (GObject *object)
 }
 
 static gboolean
-gimp_combo_tag_entry_expose (GtkWidget      *widget,
+picman_combo_tag_entry_expose (GtkWidget      *widget,
                              GdkEventExpose *event)
 {
-  GimpComboTagEntry *entry = GIMP_COMBO_TAG_ENTRY (widget);
+  PicmanComboTagEntry *entry = PICMAN_COMBO_TAG_ENTRY (widget);
 
   if (! entry->arrow_pixbuf)
     {
@@ -183,10 +183,10 @@ gimp_combo_tag_entry_expose (GtkWidget      *widget,
 }
 
 static void
-gimp_combo_tag_entry_style_set (GtkWidget *widget,
+picman_combo_tag_entry_style_set (GtkWidget *widget,
                                 GtkStyle  *previous_style)
 {
-  GimpComboTagEntry *entry = GIMP_COMBO_TAG_ENTRY (widget);
+  PicmanComboTagEntry *entry = PICMAN_COMBO_TAG_ENTRY (widget);
   GtkStyle          *style = gtk_widget_get_style (widget);
   GdkColor           color;
   PangoAttribute    *attribute;
@@ -239,49 +239,49 @@ gimp_combo_tag_entry_style_set (GtkWidget *widget,
 }
 
 /**
- * gimp_combo_tag_entry_new:
+ * picman_combo_tag_entry_new:
  * @container: a tagged container to be used.
  * @mode:      tag entry mode to work in.
  *
- * Creates a new #GimpComboTagEntry widget which extends #GimpTagEntry by
+ * Creates a new #PicmanComboTagEntry widget which extends #PicmanTagEntry by
  * adding ability to pick tags using popup window (similar to combo box).
  *
- * Return value: a new #GimpComboTagEntry widget.
+ * Return value: a new #PicmanComboTagEntry widget.
  **/
 GtkWidget *
-gimp_combo_tag_entry_new (GimpTaggedContainer *container,
-                          GimpTagEntryMode     mode)
+picman_combo_tag_entry_new (PicmanTaggedContainer *container,
+                          PicmanTagEntryMode     mode)
 {
-  g_return_val_if_fail (GIMP_IS_TAGGED_CONTAINER (container), NULL);
+  g_return_val_if_fail (PICMAN_IS_TAGGED_CONTAINER (container), NULL);
 
-  return g_object_new (GIMP_TYPE_COMBO_TAG_ENTRY,
+  return g_object_new (PICMAN_TYPE_COMBO_TAG_ENTRY,
                        "container", container,
                        "mode",      mode,
                        NULL);
 }
 
 static void
-gimp_combo_tag_entry_icon_press (GtkWidget            *widget,
+picman_combo_tag_entry_icon_press (GtkWidget            *widget,
                                  GtkEntryIconPosition  icon_pos,
                                  GdkEvent             *event,
                                  gpointer              user_data)
 {
-  GimpComboTagEntry *entry = GIMP_COMBO_TAG_ENTRY (widget);
+  PicmanComboTagEntry *entry = PICMAN_COMBO_TAG_ENTRY (widget);
 
   if (! entry->popup)
     {
-      GimpTaggedContainer *container = GIMP_TAG_ENTRY (entry)->container;
+      PicmanTaggedContainer *container = PICMAN_TAG_ENTRY (entry)->container;
       gint                 tag_count;
 
-      tag_count = gimp_tagged_container_get_tag_count (container);
+      tag_count = picman_tagged_container_get_tag_count (container);
 
-      if (tag_count > 0 && ! GIMP_TAG_ENTRY (entry)->has_invalid_tags)
+      if (tag_count > 0 && ! PICMAN_TAG_ENTRY (entry)->has_invalid_tags)
         {
-          entry->popup = gimp_tag_popup_new (entry);
+          entry->popup = picman_tag_popup_new (entry);
           g_signal_connect (entry->popup, "destroy",
-                            G_CALLBACK (gimp_combo_tag_entry_popup_destroy),
+                            G_CALLBACK (picman_combo_tag_entry_popup_destroy),
                             entry);
-          gimp_tag_popup_show (GIMP_TAG_POPUP (entry->popup));
+          picman_tag_popup_show (PICMAN_TAG_POPUP (entry->popup));
         }
     }
   else
@@ -291,21 +291,21 @@ gimp_combo_tag_entry_icon_press (GtkWidget            *widget,
 }
 
 static void
-gimp_combo_tag_entry_popup_destroy (GtkObject         *object,
-                                    GimpComboTagEntry *entry)
+picman_combo_tag_entry_popup_destroy (GtkObject         *object,
+                                    PicmanComboTagEntry *entry)
 {
   entry->popup = NULL;
   gtk_widget_grab_focus (GTK_WIDGET (entry));
 }
 
 static void
-gimp_combo_tag_entry_tag_count_changed (GimpTaggedContainer *container,
+picman_combo_tag_entry_tag_count_changed (PicmanTaggedContainer *container,
                                         gint                 tag_count,
-                                        GimpComboTagEntry   *entry)
+                                        PicmanComboTagEntry   *entry)
 {
   gboolean sensitive;
 
-  sensitive = tag_count > 0 && ! GIMP_TAG_ENTRY (entry)->has_invalid_tags;
+  sensitive = tag_count > 0 && ! PICMAN_TAG_ENTRY (entry)->has_invalid_tags;
 
   gtk_entry_set_icon_sensitive (GTK_ENTRY (entry),
                                 GTK_ENTRY_ICON_SECONDARY,

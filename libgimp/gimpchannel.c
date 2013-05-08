@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpchannel.c
+ * picmanchannel.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,11 +20,11 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * gimp_channel_new:
+ * picman_channel_new:
  * @image_ID: The image to which to add the channel.
  * @name: The channel name.
  * @width: The channel width.
@@ -37,7 +37,7 @@
  * This procedure creates a new channel with the specified width and
  * height. Name, opacity, and color are also supplied parameters. The
  * new channel still needs to be added to the image, as this is not
- * automatic. Add the new channel with the gimp_image_insert_channel()
+ * automatic. Add the new channel with the picman_image_insert_channel()
  * command. Other attributes such as channel show masked, should be
  * set with explicit procedure calls. The channel's contents are
  * undefined initially.
@@ -45,14 +45,14 @@
  * Returns: The newly created channel.
  */
 gint32
-gimp_channel_new (gint32         image_ID,
+picman_channel_new (gint32         image_ID,
                   const gchar   *name,
                   guint          width,
                   guint          height,
                   gdouble        opacity,
-                  const GimpRGB *color)
+                  const PicmanRGB *color)
 {
-  return _gimp_channel_new (image_ID,
+  return _picman_channel_new (image_ID,
                             width,
                             height,
                             name,

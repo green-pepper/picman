@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates clickable image maps.
  *
@@ -24,7 +24,7 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "imap_commands.h"
 #include "imap_default_dialog.h"
@@ -32,7 +32,7 @@
 #include "imap_rectangle.h"
 #include "imap_table.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 typedef struct {
    DefaultDialog_t      *dialog;
@@ -139,7 +139,7 @@ make_guides_dialog (void)
    dialog = data->dialog = make_default_dialog(_("Create Guides"));
    default_dialog_set_ok_cb (dialog, guides_ok_cb, data);
 
-   hbox = gimp_hint_box_new (
+   hbox = picman_hint_box_new (
       _("Guides are pre-defined rectangles covering the image. You define "
         "them by their width, height, and spacing from each other. This "
         "allows you to rapidly create the most common image map type - "

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,38 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ERASER_H__
-#define __GIMP_ERASER_H__
+#ifndef __PICMAN_ERASER_H__
+#define __PICMAN_ERASER_H__
 
 
-#include "gimpbrushcore.h"
+#include "picmanbrushcore.h"
 
 
-#define GIMP_TYPE_ERASER            (gimp_eraser_get_type ())
-#define GIMP_ERASER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ERASER, GimpEraser))
-#define GIMP_ERASER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ERASER, GimpEraserClass))
-#define GIMP_IS_ERASER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ERASER))
-#define GIMP_IS_ERASER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ERASER))
-#define GIMP_ERASER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ERASER, GimpEraserClass))
+#define PICMAN_TYPE_ERASER            (picman_eraser_get_type ())
+#define PICMAN_ERASER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ERASER, PicmanEraser))
+#define PICMAN_ERASER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ERASER, PicmanEraserClass))
+#define PICMAN_IS_ERASER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ERASER))
+#define PICMAN_IS_ERASER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ERASER))
+#define PICMAN_ERASER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ERASER, PicmanEraserClass))
 
 
-typedef struct _GimpEraserClass GimpEraserClass;
+typedef struct _PicmanEraserClass PicmanEraserClass;
 
-struct _GimpEraser
+struct _PicmanEraser
 {
-  GimpBrushCore  parent_instance;
+  PicmanBrushCore  parent_instance;
 };
 
-struct _GimpEraserClass
+struct _PicmanEraserClass
 {
-  GimpBrushCoreClass  parent_class;
+  PicmanBrushCoreClass  parent_class;
 };
 
 
-void    gimp_eraser_register (Gimp                      *gimp,
-                              GimpPaintRegisterCallback  callback);
+void    picman_eraser_register (Picman                      *picman,
+                              PicmanPaintRegisterCallback  callback);
 
-GType   gimp_eraser_get_type (void) G_GNUC_CONST;
+GType   picman_eraser_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_ERASER_H__  */
+#endif  /*  __PICMAN_ERASER_H__  */

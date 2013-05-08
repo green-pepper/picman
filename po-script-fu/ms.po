@@ -1,11 +1,11 @@
-# Malay Translation of Gimp-script-fu HEAD.
+# Malay Translation of Picman-script-fu HEAD.
 # Copyright (C) 2003 MIMOS Open Source Developement Group
 # This file is distributed under the same license as the PACKAGE package.
 # MIMOS Open Source Development Group <opensource@mimos.my>, 2003.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gimp-script-fu HEAD\n"
+"Project-Id-Version: Picman-script-fu HEAD\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-12-28 15:42+0100\n"
 "PO-Revision-Date: 2003-10-30 09:35+0800\n"
@@ -117,17 +117,17 @@ msgid "(none)"
 msgstr ""
 
 #: plug-ins/script-fu/script-fu-interface.c:1058
-#: plug-ins/dbbrowser/gimpprocview.c:198
+#: plug-ins/dbbrowser/picmanprocview.c:198
 msgid "Author:"
 msgstr "Pengarang"
 
 #: plug-ins/script-fu/script-fu-interface.c:1065
-#: plug-ins/dbbrowser/gimpprocview.c:220
+#: plug-ins/dbbrowser/picmanprocview.c:220
 msgid "Copyright:"
 msgstr "Hak cipta"
 
 #: plug-ins/script-fu/script-fu-interface.c:1072
-#: plug-ins/dbbrowser/gimpprocview.c:209
+#: plug-ins/dbbrowser/picmanprocview.c:209
 msgid "Date:"
 msgstr "Tarikh"
 
@@ -177,76 +177,76 @@ msgstr ""
 msgid "_Refresh Scripts"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:128
-#: plug-ins/dbbrowser/gimpprocbrowser.c:142
+#: plug-ins/dbbrowser/picmanprocbrowser.c:128
+#: plug-ins/dbbrowser/picmanprocbrowser.c:142
 msgid "Procedure Browser"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:132
-#: plug-ins/dbbrowser/gimpprocbrowser.c:146
+#: plug-ins/dbbrowser/picmanprocbrowser.c:132
+#: plug-ins/dbbrowser/picmanprocbrowser.c:146
 msgid "Search by _Name"
 msgstr "Cari dengan _Nama"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:133
-#: plug-ins/dbbrowser/gimpprocbrowser.c:147
+#: plug-ins/dbbrowser/picmanprocbrowser.c:133
+#: plug-ins/dbbrowser/picmanprocbrowser.c:147
 msgid "Search by _Blurb"
 msgstr "Cari dengan -Blurb"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:224
+#: plug-ins/dbbrowser/picmanprocbrowser.c:224
 msgid "_Search:"
 msgstr "_Cari:"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:386
+#: plug-ins/dbbrowser/picmanprocbrowser.c:386
 msgid "Searching by name - please wait"
 msgstr "Mencari dengan menggunakan nama - sila tunggu"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:410
+#: plug-ins/dbbrowser/picmanprocbrowser.c:410
 msgid "Searching by blurb - please wait"
 msgstr "Mencari dengan menggunakan blurb - sila tunggu"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:421
+#: plug-ins/dbbrowser/picmanprocbrowser.c:421
 msgid "Searching - please wait"
 msgstr "Mencari - sila tunggu"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:428
+#: plug-ins/dbbrowser/picmanprocbrowser.c:428
 msgid "1 Procedure"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:430
+#: plug-ins/dbbrowser/picmanprocbrowser.c:430
 #, c-format
 msgid "%d Procedures"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:476
+#: plug-ins/dbbrowser/picmanprocbrowser.c:476
 msgid "No matches"
 msgstr "Tiada padanan"
 
-#: plug-ins/dbbrowser/gimpprocview.c:133
+#: plug-ins/dbbrowser/picmanprocview.c:133
 #, fuzzy
 msgid "Parameters"
 msgstr "Garis pusat"
 
-#: plug-ins/dbbrowser/gimpprocview.c:146
+#: plug-ins/dbbrowser/picmanprocview.c:146
 msgid "Return Values"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:159
+#: plug-ins/dbbrowser/picmanprocview.c:159
 msgid "Additional Information"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:319
-msgid "Internal GIMP procedure"
+#: plug-ins/dbbrowser/picmanprocview.c:319
+msgid "Internal PICMAN procedure"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:320
-msgid "GIMP Plug-In"
+#: plug-ins/dbbrowser/picmanprocview.c:320
+msgid "PICMAN Plug-In"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:321
-msgid "GIMP Extension"
+#: plug-ins/dbbrowser/picmanprocview.c:321
+msgid "PICMAN Extension"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:322
+#: plug-ins/dbbrowser/picmanprocview.c:322
 msgid "Temporary Procedure"
 msgstr ""
 
@@ -342,8 +342,8 @@ msgstr "Seting Piawai Bumpmap"
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm.h:6
 #: plug-ins/script-fu/scripts/crystal-logo.scm.h:6
 #: plug-ins/script-fu/scripts/frosty-logo.scm.h:5
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:4
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:3
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:4
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:3
 #: plug-ins/script-fu/scripts/glossy.scm.h:8
 #: plug-ins/script-fu/scripts/glowing-logo.scm.h:5
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:8
@@ -382,8 +382,8 @@ msgstr "Fon"
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm.h:7
 #: plug-ins/script-fu/scripts/crystal-logo.scm.h:7
 #: plug-ins/script-fu/scripts/frosty-logo.scm.h:6
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:5
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:4
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:5
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:4
 #: plug-ins/script-fu/scripts/glossy.scm.h:9
 #: plug-ins/script-fu/scripts/glowing-logo.scm.h:6
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:9
@@ -457,8 +457,8 @@ msgstr "Jejari Kabur Bayang"
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm.h:10
 #: plug-ins/script-fu/scripts/crystal-logo.scm.h:8
 #: plug-ins/script-fu/scripts/frosty-logo.scm.h:7
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:12
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:14
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:12
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:14
 #: plug-ins/script-fu/scripts/glossy.scm.h:19
 #: plug-ins/script-fu/scripts/glowing-logo.scm.h:8
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:11
@@ -509,7 +509,7 @@ msgstr "<Toolbox>/Xtns/Script-Fu/Corak/_Tanah..."
 #: plug-ins/script-fu/scripts/comic-logo.scm.h:3
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm.h:3
 #: plug-ins/script-fu/scripts/frosty-logo.scm.h:3
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:2
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:2
 #: plug-ins/script-fu/scripts/glossy.scm.h:3
 #: plug-ins/script-fu/scripts/glowing-logo.scm.h:3
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:3
@@ -740,8 +740,8 @@ msgstr "Pad"
 #: plug-ins/script-fu/scripts/beveled-button.scm.h:10
 #: plug-ins/script-fu/scripts/beveled-pattern-button.scm.h:8
 #: plug-ins/script-fu/scripts/blended-logo.scm.h:18
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:13
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:15
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:13
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:15
 #: plug-ins/script-fu/scripts/i26-gunya2.scm.h:8
 #: plug-ins/script-fu/scripts/news-text.scm.h:11
 #: plug-ins/script-fu/scripts/pupi-button.scm.h:14
@@ -850,7 +850,7 @@ msgid "H_eading..."
 msgstr ""
 
 #: plug-ins/script-fu/scripts/beveled-pattern-hrule.scm.h:2
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:5
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:5
 #: plug-ins/script-fu/scripts/gradient-example.scm.h:4
 #: plug-ins/script-fu/scripts/mkbrush.scm.h:4
 #: plug-ins/script-fu/scripts/swirltile.scm.h:7
@@ -923,7 +923,7 @@ msgstr "EG-Lut sinar"
 #: plug-ins/script-fu/scripts/land.scm.h:3
 #: plug-ins/script-fu/scripts/lava.scm.h:2
 #: plug-ins/script-fu/scripts/rendermap.scm.h:4
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient"
 msgstr "Kecerunan"
 
@@ -1171,7 +1171,7 @@ msgstr "Ofset (piksel * 2)"
 #: plug-ins/script-fu/scripts/grid-system.scm.h:1
 #: plug-ins/script-fu/scripts/lava.scm.h:1
 #: plug-ins/script-fu/scripts/line-nova.scm.h:1
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:1
 #, fuzzy
 msgid "<Image>/Script-Fu/Render"
 msgstr "<Image>/Script-Fu/Render/_Lava..."
@@ -1361,17 +1361,17 @@ msgstr "Jejari Kabur"
 #: plug-ins/script-fu/scripts/drop-shadow.scm.h:4
 #: plug-ins/script-fu/scripts/fuzzyborder.scm.h:5
 #: plug-ins/script-fu/scripts/perspective-shadow.scm.h:5
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:5
 msgid "Color"
 msgstr "Warna"
 
 #: plug-ins/script-fu/scripts/drop-shadow.scm.h:5
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:8
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:8
 msgid "Offset X"
 msgstr "Ofset X"
 
 #: plug-ins/script-fu/scripts/drop-shadow.scm.h:6
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:9
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:9
 msgid "Offset Y"
 msgstr "Ofset Y"
 
@@ -1582,79 +1582,79 @@ msgstr "Tinggi Bayang (%)"
 msgid "_Fuzzy Border..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:1
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:1
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:1
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:1
 #, fuzzy
-msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org"
-msgstr "<Toolbox>/Xtns/Script-Fu/Tema Laman Web/Gimp.Org/Tajuk _Besar..."
+msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org"
+msgstr "<Toolbox>/Xtns/Script-Fu/Tema Laman Web/Picman.Org/Tajuk _Besar..."
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:2
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:2
 #, fuzzy
 msgid "Autocrop"
 msgstr "AutoCrop"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:3
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:3
 #, fuzzy
 msgid "Dark color"
 msgstr "Warna Gelap"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:6
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:6
 #: plug-ins/script-fu/scripts/xach-effect.scm.h:9
 #, fuzzy
 msgid "Highlight color"
 msgstr "Tonjolkan Warna"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:7
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:6
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:7
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:6
 #, fuzzy
 msgid "Index image"
 msgstr "Imej Indeks"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:8
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:7
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:8
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:7
 #, fuzzy
 msgid "Number of colors"
 msgstr "Bilangan Warna"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:9
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:10
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:9
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:10
 #, fuzzy
 msgid "Remove background"
 msgstr "Keluarkan Latar Belakang"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:10
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:11
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:10
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:11
 #, fuzzy
 msgid "Select-by-color threshold"
 msgstr "Ambang Pilih Ikut Warna"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:11
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:12
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:11
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:12
 #, fuzzy
 msgid "Shadow color"
 msgstr "Warna Bayang"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:14
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:14
 msgid "_Big Header..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:15
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:15
 msgid "_Small Header..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:13
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:13
 msgid "T_ube Sub-Button Label..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:16
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:16
 msgid "Tub_e Sub-Sub-Button Label..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:17
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:17
 msgid "_General Tube Labels..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:18
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:18
 msgid "_Tube Button Label..."
 msgstr ""
 
@@ -2346,135 +2346,135 @@ msgstr "Pusingkan dari Kiri ke Kanan"
 msgid "_Spinning Globe..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Airbrush"
 msgstr "Penyembur"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Brush"
 msgstr "Berus"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Circle"
 msgstr "Bulatan"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:6
 #, fuzzy
 msgid "Color method"
 msgstr "Kaedah Warna"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid ""
 "Draws Spirographs, Epitrochoids and Lissajous Curves. More info at http://"
-"netword.com/*spyrogimp"
+"netword.com/*spyropicman"
 msgstr ""
 "Melukis Spirographs, Epitrochoids and Lengkung Lissajous. Lebih banyak "
-"maklumat di http://netword.com*spyrogimp"
+"maklumat di http://netword.com*spyropicman"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Epitrochoid"
 msgstr "Epitrochoid"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Frame"
 msgstr "Bingkai"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: Loop Sawtooth"
 msgstr "Kecerunan: Gelung Sawtooth"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Gradient: Loop Triangle"
 msgstr "Kecerunan: Segi tiga Gelung"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hexagon"
 msgstr "Heksagon"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:14
 #, fuzzy
 msgid "Hole ratio"
 msgstr "Nisbah Lubang"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:15
 #, fuzzy
 msgid "Inner teeth"
 msgstr "Gigi Dalam"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:16
 msgid "Lissajous"
 msgstr "Lissajous"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Margin (pixels)"
 msgstr "Jidar (piksel)"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:18
 #, fuzzy
 msgid "Outer teeth"
 msgstr "Gigi Luar"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pencil"
 msgstr "Pensel"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:20
 msgid "Pentagon"
 msgstr "Pentagon"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:21
 msgid "Polygon: 10 sides"
 msgstr "Poligon: 10 sisi"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:22
 msgid "Polygon: 7 sides"
 msgstr "Poligon: 7 sisi"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:23
 msgid "Polygon: 8 sides"
 msgstr "Poligon: 8 sisi"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Polygon: 9 sides"
 msgstr "Poligon: 9 sisi"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Shape"
 msgstr "Bentuk"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Solid Color"
 msgstr "Warna Pejal"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Spyrograph"
 msgstr "Spyrograf"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:28
 msgid "Square"
 msgstr "Segi empat sama"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:29
 #: plug-ins/script-fu/scripts/text-circle.scm.h:7
 #, fuzzy
 msgid "Start angle"
 msgstr "Sudut Mula"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Tool"
 msgstr "Alat"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Triangle"
 msgstr "Segi tiga"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:32
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:32
 msgid "Type"
 msgstr "Jenis"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:33
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:33
 #, fuzzy
-msgid "_Spyrogimp..."
+msgid "_Spyropicman..."
 msgstr "Spyrograf"
 
 #: plug-ins/script-fu/scripts/starburst-logo.scm.h:4
@@ -2715,8 +2715,8 @@ msgstr ""
 
 #: plug-ins/script-fu/scripts/web-browser.scm.h:1
 #, fuzzy
-msgid "<Toolbox>/Help/The GIMP Online"
-msgstr "<Toolbox>/Bantuan/GIMP dalam talian/Laman Web _Utama"
+msgid "<Toolbox>/Help/The PICMAN Online"
+msgstr "<Toolbox>/Bantuan/PICMAN dalam talian/Laman Web _Utama"
 
 #: plug-ins/script-fu/scripts/web-browser.scm.h:2
 msgid "Plug-in _Registry"
@@ -2942,36 +2942,36 @@ msgstr ""
 
 #, fuzzy
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/_Small Header..."
-#~ msgstr "<Toolbox>/Xtns/Script-Fu/Tema Laman Web/Gimp.Org/Tajuk _Kecil..."
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/_Small Header..."
+#~ msgstr "<Toolbox>/Xtns/Script-Fu/Tema Laman Web/Picman.Org/Tajuk _Kecil..."
 
 #, fuzzy
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/T_ube Sub-"
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/T_ube Sub-"
 #~ "Button Label..."
 #~ msgstr ""
-#~ "<Toolbox>/Xtns/Script-Fu/Tema Laman Web/Gimp.Org/Label Sub-Butang T_iub..."
+#~ "<Toolbox>/Xtns/Script-Fu/Tema Laman Web/Picman.Org/Label Sub-Butang T_iub..."
 
 #, fuzzy
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/Tub_e Sub-Sub-"
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/Tub_e Sub-Sub-"
 #~ "Button Label..."
 #~ msgstr ""
-#~ "<Toolbox>/Xtns/Script-Fu/Tema Laman Web/Gimp.Org/Sub-Sub-Butang T_iub..."
+#~ "<Toolbox>/Xtns/Script-Fu/Tema Laman Web/Picman.Org/Sub-Sub-Butang T_iub..."
 #~ "Label..."
 
 #, fuzzy
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/_General Tube "
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/_General Tube "
 #~ "Labels..."
-#~ msgstr "<Toolbox>/Xtns/Script-Fu/Tema Laman Web/Gimp.Org/Label Tiub _Am..."
+#~ msgstr "<Toolbox>/Xtns/Script-Fu/Tema Laman Web/Picman.Org/Label Tiub _Am..."
 
 #, fuzzy
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/_Tube Button "
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/_Tube Button "
 #~ "Label..."
 #~ msgstr ""
-#~ "<Toolbox>/Xtns/Script-Fu/Tema Laman Web/Gimp.Org/Label Butang _Tiub..."
+#~ "<Toolbox>/Xtns/Script-Fu/Tema Laman Web/Picman.Org/Label Butang _Tiub..."
 
 #~ msgid "<Image>/Script-Fu/Alpha to Logo/Glo_ssy..."
 #~ msgstr "<Image>/Script-Fu/Alfa ke Logo/Ber_kilat..."
@@ -3064,8 +3064,8 @@ msgstr ""
 #~ msgid "<Image>/Script-Fu/Animators/_Spinning Globe..."
 #~ msgstr "<Image>/Script-Fu/Juruanimasi/Glob _Berputar..."
 
-#~ msgid "<Image>/Script-Fu/Render/_Spyrogimp..."
-#~ msgstr "<Image>/Script-Fu/Render/_Spyrogimp..."
+#~ msgid "<Image>/Script-Fu/Render/_Spyropicman..."
+#~ msgstr "<Image>/Script-Fu/Render/_Spyropicman..."
 
 #~ msgid "<Image>/Script-Fu/Alpha to Logo/Starb_urst..."
 #~ msgstr "<Image>/Script-Fu/Alfa ke Logo/Bintang _Bertaburan..."
@@ -3112,11 +3112,11 @@ msgstr ""
 #~ msgid "<Image>/Script-Fu/Animators/_Waves..."
 #~ msgstr "<Image>/Script-Fu/Juruanimasi/_Gelombang..."
 
-#~ msgid "<Toolbox>/Help/The GIMP Online/Plug-in _Registry"
+#~ msgid "<Toolbox>/Help/The PICMAN Online/Plug-in _Registry"
 #~ msgstr "<Toolbox>/Xtns/Pelayar Web/_Pendaftaran Plug-In"
 
-#~ msgid "<Toolbox>/Help/The GIMP Online/_Developer Web Site"
-#~ msgstr "<Toolbox>/Bantuan/GIMP dalam talian/Laman Web _Pembangun"
+#~ msgid "<Toolbox>/Help/The PICMAN Online/_Developer Web Site"
+#~ msgstr "<Toolbox>/Bantuan/PICMAN dalam talian/Laman Web _Pembangun"
 
 #~ msgid "<Image>/Script-Fu/Shadow/_Xach-Effect..."
 #~ msgstr "<Image>/Script-Fu/Bayang/Kesan _Xach..."
@@ -3241,47 +3241,47 @@ msgstr ""
 #~ msgid "<Toolbox>/Xtns/Web Browser/Developer FAQ"
 #~ msgstr "<Toolbox>/Xtns/Pelayar Web/FAQ Pembangun"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP Bugs"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/Pepijat GIMP"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN Bugs"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/Pepijat PICMAN"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP Manual"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/Manual GIMP"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN Manual"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/Manual PICMAN"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP News"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/Berita GIMP"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN News"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/Berita PICMAN"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP Tutorials"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/Tutorial GIMP"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN Tutorials"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/Tutorial PICMAN"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Documenation"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/GIMP.ORG/Dokumentasi"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Documenation"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/PICMAN.ORG/Dokumentasi"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Download"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/GIMP.ORG/Muat turun "
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Download"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/PICMAN.ORG/Muat turun "
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/GIMP Art"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/GIMP.ORG/Seni GIMP"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/PICMAN Art"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/PICMAN.ORG/Seni PICMAN"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/GTK"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/GIMP.ORG/GTK"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/GTK"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/PICMAN.ORG/GTK"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Links"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/GIMP.ORG/Pautan"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Links"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/PICMAN.ORG/Pautan"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Mailing Lists"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/GIMP.ORG/Pautan"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Mailing Lists"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/PICMAN.ORG/Pautan"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/Resources"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/GIMP.ORG/Sumber"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/Resources"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/PICMAN.ORG/Sumber"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/GIMP.ORG/The GIMP"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/GIMP.ORG/GIMP"
+#~ msgid "<Toolbox>/Xtns/Web Browser/PICMAN.ORG/The PICMAN"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/PICMAN.ORG/PICMAN"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/Gimp-Savvy.com"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/Gimp-Savvy.com"
+#~ msgid "<Toolbox>/Xtns/Web Browser/Picman-Savvy.com"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/Picman-Savvy.com"
 
-#~ msgid "<Toolbox>/Xtns/Web Browser/Grokking the GIMP"
-#~ msgstr "<Toolbox>/Xtns/Pelayar Web/Memahamkan GIMP"
+#~ msgid "<Toolbox>/Xtns/Web Browser/Grokking the PICMAN"
+#~ msgstr "<Toolbox>/Xtns/Pelayar Web/Memahamkan PICMAN"
 
 #~ msgid "<Toolbox>/Xtns/Web Browser/User FAQ"
 #~ msgstr "<Toolbox>/Xtns/Pelayar Web/FAQ Pengguna"

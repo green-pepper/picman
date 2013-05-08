@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,24 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DRAWABLE_PRIVATE_H__
-#define __GIMP_DRAWABLE_PRIVATE_H__
+#ifndef __PICMAN_DRAWABLE_PRIVATE_H__
+#define __PICMAN_DRAWABLE_PRIVATE_H__
 
-struct _GimpDrawablePrivate
+struct _PicmanDrawablePrivate
 {
   GeglBuffer     *buffer; /* buffer for drawable data */
   GeglBuffer     *shadow; /* shadow buffer            */
 
   GeglNode       *source_node;
   GeglNode       *buffer_source_node;
-  GimpContainer  *filter_stack;
+  PicmanContainer  *filter_stack;
 
-  GimpLayer      *floating_selection;
-  GimpFilter     *fs_filter;
+  PicmanLayer      *floating_selection;
+  PicmanFilter     *fs_filter;
   GeglNode       *fs_crop_node;
-  GimpApplicator *fs_applicator;
+  PicmanApplicator *fs_applicator;
 
   GeglNode       *mode_node;
 };
 
-#endif /* __GIMP_DRAWABLE_PRIVATE_H__ */
+#endif /* __PICMAN_DRAWABLE_PRIVATE_H__ */

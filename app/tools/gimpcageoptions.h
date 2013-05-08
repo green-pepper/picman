@@ -1,6 +1,6 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  *
- * gimpcageoptions.h
+ * picmancageoptions.h
  * Copyright (C) 2010 Michael Muré <batolettre@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,41 +17,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CAGE_OPTIONS_H__
-#define __GIMP_CAGE_OPTIONS_H__
+#ifndef __PICMAN_CAGE_OPTIONS_H__
+#define __PICMAN_CAGE_OPTIONS_H__
 
 
-#include "core/gimptooloptions.h"
+#include "core/picmantooloptions.h"
 
 
-#define GIMP_TYPE_CAGE_OPTIONS            (gimp_cage_options_get_type ())
-#define GIMP_CAGE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CAGE_OPTIONS, GimpCageOptions))
-#define GIMP_CAGE_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CAGE_OPTIONS, GimpCageOptionsClass))
-#define GIMP_IS_CAGE_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CAGE_OPTIONS))
-#define GIMP_IS_CAGE_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CAGE_OPTIONS))
-#define GIMP_CAGE_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CAGE_OPTIONS, GimpCageOptionsClass))
+#define PICMAN_TYPE_CAGE_OPTIONS            (picman_cage_options_get_type ())
+#define PICMAN_CAGE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CAGE_OPTIONS, PicmanCageOptions))
+#define PICMAN_CAGE_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CAGE_OPTIONS, PicmanCageOptionsClass))
+#define PICMAN_IS_CAGE_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CAGE_OPTIONS))
+#define PICMAN_IS_CAGE_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CAGE_OPTIONS))
+#define PICMAN_CAGE_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CAGE_OPTIONS, PicmanCageOptionsClass))
 
 
-typedef struct _GimpCageOptions      GimpCageOptions;
-typedef struct _GimpCageOptionsClass GimpCageOptionsClass;
+typedef struct _PicmanCageOptions      PicmanCageOptions;
+typedef struct _PicmanCageOptionsClass PicmanCageOptionsClass;
 
-struct _GimpCageOptions
+struct _PicmanCageOptions
 {
-  GimpToolOptions  parent_instance;
+  PicmanToolOptions  parent_instance;
 
-  GimpCageMode     cage_mode;
+  PicmanCageMode     cage_mode;
   gboolean         fill_plain_color;
 };
 
-struct _GimpCageOptionsClass
+struct _PicmanCageOptionsClass
 {
-  GimpToolOptionsClass  parent_class;
+  PicmanToolOptionsClass  parent_class;
 };
 
 
-GType       gimp_cage_options_get_type (void) G_GNUC_CONST;
+GType       picman_cage_options_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_cage_options_gui      (GimpToolOptions *tool_options);
+GtkWidget * picman_cage_options_gui      (PicmanToolOptions *tool_options);
 
 
-#endif  /*  __GIMP_CAGE_OPTIONS_H__  */
+#endif  /*  __PICMAN_CAGE_OPTIONS_H__  */

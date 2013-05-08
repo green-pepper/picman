@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpGeglConfig class
- * Copyright (C) 2001  Sven Neumann <sven@gimp.org>
+ * PicmanGeglConfig class
+ * Copyright (C) 2001  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,20 +18,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GEGL_CONFIG_H__
-#define __GIMP_GEGL_CONFIG_H__
+#ifndef __PICMAN_GEGL_CONFIG_H__
+#define __PICMAN_GEGL_CONFIG_H__
 
 
-#define GIMP_TYPE_GEGL_CONFIG            (gimp_gegl_config_get_type ())
-#define GIMP_GEGL_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_GEGL_CONFIG, GimpGeglConfig))
-#define GIMP_GEGL_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_GEGL_CONFIG, GimpGeglConfigClass))
-#define GIMP_IS_GEGL_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_GEGL_CONFIG))
-#define GIMP_IS_GEGL_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_GEGL_CONFIG))
+#define PICMAN_TYPE_GEGL_CONFIG            (picman_gegl_config_get_type ())
+#define PICMAN_GEGL_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_GEGL_CONFIG, PicmanGeglConfig))
+#define PICMAN_GEGL_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_GEGL_CONFIG, PicmanGeglConfigClass))
+#define PICMAN_IS_GEGL_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_GEGL_CONFIG))
+#define PICMAN_IS_GEGL_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_GEGL_CONFIG))
 
 
-typedef struct _GimpGeglConfigClass GimpGeglConfigClass;
+typedef struct _PicmanGeglConfigClass PicmanGeglConfigClass;
 
-struct _GimpGeglConfig
+struct _PicmanGeglConfig
 {
   GObject   parent_instance;
 
@@ -41,13 +41,13 @@ struct _GimpGeglConfig
   guint64   tile_cache_size;
 };
 
-struct _GimpGeglConfigClass
+struct _PicmanGeglConfigClass
 {
   GObjectClass           parent_class;
 };
 
 
-GType  gimp_gegl_config_get_type (void) G_GNUC_CONST;
+GType  picman_gegl_config_get_type (void) G_GNUC_CONST;
 
 
-#endif /* GIMP_GEGL_CONFIG_H__ */
+#endif /* PICMAN_GEGL_CONFIG_H__ */

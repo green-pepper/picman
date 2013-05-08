@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,17 +19,17 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "gimpressionist.h"
+#include "picmanressionist.h"
 #include "ppmtool.h"
 #include "size.h"
 #include "infile.h"
 
 #include "preview.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define RESPONSE_APPLY 1
@@ -93,9 +93,9 @@ updatesmpreviewprev (void)
     }
 
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (smpreviewprev),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (smpreviewprev),
                           0, 0, OMWIDTH, OMHEIGHT,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           nsbuffer.col,
                           OMWIDTH * 3);
 }
@@ -156,9 +156,9 @@ updatesmvectorprev (void)
       ppm_put_rgb (&update_vector_preview_sbuffer, x, y, white);
   }
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (smvectorprev),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (smvectorprev),
                           0, 0, OMWIDTH, OMHEIGHT,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           update_vector_preview_sbuffer.col,
                           OMWIDTH * 3);
 
@@ -394,9 +394,9 @@ create_sizemap_dialog (GtkWidget *parent)
     }
 
   smwindow =
-    gimp_dialog_new (_("Size Map Editor"), PLUG_IN_ROLE,
+    picman_dialog_new (_("Size Map Editor"), PLUG_IN_ROLE,
                      gtk_widget_get_toplevel (parent), 0,
-                     gimp_standard_help_func, PLUG_IN_PROC,
+                     picman_standard_help_func, PLUG_IN_PROC,
 
                      GTK_STOCK_APPLY,  RESPONSE_APPLY,
                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -433,11 +433,11 @@ create_sizemap_dialog (GtkWidget *parent)
   gtk_widget_show (tmpw);
 
   tmpw = gtk_event_box_new ();
-  gimp_help_set_help_data (tmpw, _("The smvector-field. Left-click to move selected smvector, Right-click to point it towards mouse, Middle-click to add a new smvector."), NULL);
+  picman_help_set_help_data (tmpw, _("The smvector-field. Left-click to move selected smvector, Right-click to point it towards mouse, Middle-click to add a new smvector."), NULL);
   gtk_box_pack_start (GTK_BOX (hbox), tmpw, FALSE, FALSE, 0);
   tmpw2 = tmpw;
 
-  tmpw = smvectorprev = gimp_preview_area_new ();
+  tmpw = smvectorprev = picman_preview_area_new ();
   gtk_widget_set_size_request (tmpw, OMWIDTH, OMHEIGHT);
   gtk_container_add (GTK_CONTAINER (tmpw2), tmpw);
   gtk_widget_show (tmpw);
@@ -454,14 +454,14 @@ create_sizemap_dialog (GtkWidget *parent)
   gtk_widget_show (tmpw);
   g_signal_connect (smvectprevbrightadjust, "value-changed",
                     G_CALLBACK (updatesmvectorprev), NULL);
-  gimp_help_set_help_data (tmpw, _("Adjust the preview's brightness"), NULL);
+  picman_help_set_help_data (tmpw, _("Adjust the preview's brightness"), NULL);
 
   tmpw2 = tmpw = gtk_frame_new (_("Preview"));
   gtk_container_set_border_width (GTK_CONTAINER (tmpw), 2);
   gtk_table_attach (GTK_TABLE (table1), tmpw, 1,2,0,1,GTK_EXPAND,GTK_EXPAND,0,0);
   gtk_widget_show (tmpw);
 
-  tmpw = smpreviewprev = gimp_preview_area_new ();
+  tmpw = smpreviewprev = picman_preview_area_new ();
   gtk_widget_set_size_request (tmpw, OMWIDTH, OMHEIGHT);
   gtk_container_add (GTK_CONTAINER (tmpw2), tmpw);
   gtk_widget_show (tmpw);
@@ -477,28 +477,28 @@ create_sizemap_dialog (GtkWidget *parent)
   gtk_widget_show (tmpw);
   g_signal_connect (tmpw, "clicked",
                     G_CALLBACK (smprevclick), NULL);
-  gimp_help_set_help_data (tmpw, _("Select previous smvector"), NULL);
+  picman_help_set_help_data (tmpw, _("Select previous smvector"), NULL);
 
   next_button = tmpw = gtk_button_new_with_mnemonic ("_>>");
   gtk_box_pack_start (GTK_BOX (hbox),tmpw,FALSE,TRUE,0);
   gtk_widget_show (tmpw);
   g_signal_connect (tmpw, "clicked",
                     G_CALLBACK (smnextclick), NULL);
-  gimp_help_set_help_data (tmpw, _("Select next smvector"), NULL);
+  picman_help_set_help_data (tmpw, _("Select next smvector"), NULL);
 
   add_button = tmpw = gtk_button_new_with_mnemonic ( _("A_dd"));
   gtk_box_pack_start (GTK_BOX (hbox),tmpw,FALSE,TRUE,0);
   gtk_widget_show (tmpw);
   g_signal_connect (tmpw, "clicked",
                     G_CALLBACK (smaddclick), NULL);
-  gimp_help_set_help_data (tmpw, _("Add new smvector"), NULL);
+  picman_help_set_help_data (tmpw, _("Add new smvector"), NULL);
 
   kill_button = tmpw = gtk_button_new_with_mnemonic (_("_Kill"));
   gtk_box_pack_start (GTK_BOX (hbox),tmpw,FALSE,TRUE,0);
   gtk_widget_show (tmpw);
   g_signal_connect (tmpw, "clicked",
                     G_CALLBACK (smdeleteclick), NULL);
-  gimp_help_set_help_data (tmpw, _("Delete selected smvector"), NULL);
+  picman_help_set_help_data (tmpw, _("Delete selected smvector"), NULL);
 
   table2 = gtk_table_new (3, 4, FALSE);
   gtk_table_set_col_spacings (GTK_TABLE (table2), 4);
@@ -506,7 +506,7 @@ create_sizemap_dialog (GtkWidget *parent)
   gtk_widget_show (table2);
 
   sizadjust = (GtkAdjustment *)
-    gimp_scale_entry_new (GTK_TABLE (table2), 0, 0,
+    picman_scale_entry_new (GTK_TABLE (table2), 0, 0,
                           _("_Size:"),
                           150, 6, 50.0,
                           0.0, 100.0, 1.0, 10.0, 1,
@@ -517,7 +517,7 @@ create_sizemap_dialog (GtkWidget *parent)
                     G_CALLBACK (angsmadjmove), NULL);
 
   smstradjust = (GtkAdjustment *)
-    gimp_scale_entry_new (GTK_TABLE (table2), 0, 1,
+    picman_scale_entry_new (GTK_TABLE (table2), 0, 1,
                           _("S_trength:"),
                           150, 6, 1.0,
                           0.1, 5.0, 0.1, 0.5, 1,
@@ -528,7 +528,7 @@ create_sizemap_dialog (GtkWidget *parent)
                     G_CALLBACK (strsmadjmove), NULL);
 
   smstrexpadjust = (GtkAdjustment *)
-    gimp_scale_entry_new (GTK_TABLE (table2), 0, 2,
+    picman_scale_entry_new (GTK_TABLE (table2), 0, 2,
                           _("St_rength exp.:"),
                           150, 6, 1.0,
                           0.1, 10.9, 0.1, 0.5, 1,
@@ -545,7 +545,7 @@ create_sizemap_dialog (GtkWidget *parent)
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (tmpw), pcvals.size_voronoi);
   g_signal_connect (tmpw, "clicked",
                     G_CALLBACK (smstrexpsmadjmove), NULL);
-  gimp_help_set_help_data (tmpw, _("Voronoi-mode makes only the smvector closest to the given point have any influence"), NULL);
+  picman_help_set_help_data (tmpw, _("Voronoi-mode makes only the smvector closest to the given point have any influence"), NULL);
 
   gtk_widget_show (smwindow);
 

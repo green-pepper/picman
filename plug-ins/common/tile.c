@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,15 +22,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-tile"
 #define PLUG_IN_BINARY "tile"
-#define PLUG_IN_ROLE   "gimp-tile"
+#define PLUG_IN_ROLE   "picman-tile"
 
 
 typedef struct
@@ -47,9 +47,9 @@ typedef struct
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
 static gint32    tile          (gint32     image_id,
                                 gint32     drawable_id,
@@ -59,7 +59,7 @@ static gboolean  tile_dialog   (gint32     image_ID,
                                 gint32     drawable_ID);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -81,23 +81,23 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",      "Input image (unused)"        },
-    { GIMP_PDB_DRAWABLE, "drawable",   "Input drawable"              },
-    { GIMP_PDB_INT32,    "new-width",  "New (tiled) image width"     },
-    { GIMP_PDB_INT32,    "new-height", "New (tiled) image height"    },
-    { GIMP_PDB_INT32,    "new-image",  "Create a new image?"         }
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",      "Input image (unused)"        },
+    { PICMAN_PDB_DRAWABLE, "drawable",   "Input drawable"              },
+    { PICMAN_PDB_INT32,    "new-width",  "New (tiled) image width"     },
+    { PICMAN_PDB_INT32,    "new-height", "New (tiled) image height"    },
+    { PICMAN_PDB_INT32,    "new-image",  "Create a new image?"         }
   };
 
-  static const GimpParamDef return_vals[] =
+  static const PicmanParamDef return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "new-image", "Output image (-1 if new-image == FALSE)" },
-    { GIMP_PDB_LAYER, "new-layer", "Output layer (-1 if new-image == FALSE)" }
+    { PICMAN_PDB_IMAGE, "new-image", "Output image (-1 if new-image == FALSE)" },
+    { PICMAN_PDB_LAYER, "new-layer", "Output layer (-1 if new-image == FALSE)" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Create an array of copies of the image"),
                           "This function creates a new image with a single "
                           "layer sized to the specified 'new_width' and "
@@ -110,24 +110,24 @@ query (void)
                           "1996-1997",
                           N_("_Tile..."),
                           "RGB*, GRAY*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args),
                           G_N_ELEMENTS (return_vals),
                           args, return_vals);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Map");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Map");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[3];
-  GimpRunMode       run_mode;
-  GimpPDBStatusType status    = GIMP_PDB_SUCCESS;
+  static PicmanParam  values[3];
+  PicmanRunMode       run_mode;
+  PicmanPDBStatusType status    = PICMAN_PDB_SUCCESS;
   gint32            new_layer = -1;
 
   run_mode = param[0].data.d_int32;
@@ -137,16 +137,16 @@ run (const gchar      *name,
   *nreturn_vals = 3;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
-  values[1].type          = GIMP_PDB_IMAGE;
-  values[2].type          = GIMP_PDB_LAYER;
+  values[1].type          = PICMAN_PDB_IMAGE;
+  values[2].type          = PICMAN_PDB_LAYER;
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &tvals);
+      picman_get_data (PLUG_IN_PROC, &tvals);
 
       /*  First acquire information with a dialog  */
       if (! tile_dialog (param[1].data.d_image,
@@ -154,11 +154,11 @@ run (const gchar      *name,
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 6)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -167,22 +167,22 @@ run (const gchar      *name,
           tvals.new_image  = param[5].data.d_int32 ? TRUE : FALSE;
 
           if (tvals.new_width < 0 || tvals.new_height < 0)
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &tvals);
+      picman_get_data (PLUG_IN_PROC, &tvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      gimp_progress_init (_("Tiling"));
+      picman_progress_init (_("Tiling"));
 
       values[1].data.d_image = tile (param[1].data.d_image,
                                      param[2].data.d_drawable,
@@ -190,15 +190,15 @@ run (const gchar      *name,
       values[2].data.d_layer = new_layer;
 
       /*  Store data  */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &tvals, sizeof (TileVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &tvals, sizeof (TileVals));
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
         {
           if (tvals.new_image)
-            gimp_display_new (values[1].data.d_image);
+            picman_display_new (values[1].data.d_image);
           else
-            gimp_displays_flush ();
+            picman_displays_flush ();
         }
     }
 
@@ -210,11 +210,11 @@ tile (gint32  image_id,
       gint32  drawable_id,
       gint32 *layer_id)
 {
-  GimpPixelRgn       src_rgn;
-  GimpPixelRgn       dest_rgn;
-  GimpDrawable      *drawable;
-  GimpDrawable      *new_layer;
-  GimpImageBaseType  image_type   = GIMP_RGB;
+  PicmanPixelRgn       src_rgn;
+  PicmanPixelRgn       dest_rgn;
+  PicmanDrawable      *drawable;
+  PicmanDrawable      *new_layer;
+  PicmanImageBaseType  image_type   = PICMAN_RGB;
   gint32             new_image_id = 0;
   gint               old_width;
   gint               old_height;
@@ -231,63 +231,63 @@ tile (gint32  image_id,
     }
 
   /* initialize */
-  old_width  = gimp_drawable_width  (drawable_id);
-  old_height = gimp_drawable_height (drawable_id);
+  old_width  = picman_drawable_width  (drawable_id);
+  old_height = picman_drawable_height (drawable_id);
 
   if (tvals.new_image)
     {
       /*  create  a new image  */
-      switch (gimp_drawable_type (drawable_id))
+      switch (picman_drawable_type (drawable_id))
         {
-        case GIMP_RGB_IMAGE:
-        case GIMP_RGBA_IMAGE:
-          image_type = GIMP_RGB;
+        case PICMAN_RGB_IMAGE:
+        case PICMAN_RGBA_IMAGE:
+          image_type = PICMAN_RGB;
           break;
 
-        case GIMP_GRAY_IMAGE:
-        case GIMP_GRAYA_IMAGE:
-          image_type = GIMP_GRAY;
+        case PICMAN_GRAY_IMAGE:
+        case PICMAN_GRAYA_IMAGE:
+          image_type = PICMAN_GRAY;
           break;
 
-        case GIMP_INDEXED_IMAGE:
-        case GIMP_INDEXEDA_IMAGE:
-          image_type = GIMP_INDEXED;
+        case PICMAN_INDEXED_IMAGE:
+        case PICMAN_INDEXEDA_IMAGE:
+          image_type = PICMAN_INDEXED;
           break;
         }
 
-      new_image_id = gimp_image_new (tvals.new_width, tvals.new_height,
+      new_image_id = picman_image_new (tvals.new_width, tvals.new_height,
                                      image_type);
-      gimp_image_undo_disable (new_image_id);
+      picman_image_undo_disable (new_image_id);
 
-      *layer_id = gimp_layer_new (new_image_id, _("Background"),
+      *layer_id = picman_layer_new (new_image_id, _("Background"),
                                   tvals.new_width, tvals.new_height,
-                                  gimp_drawable_type (drawable_id),
-                                  100, GIMP_NORMAL_MODE);
+                                  picman_drawable_type (drawable_id),
+                                  100, PICMAN_NORMAL_MODE);
 
       if (*layer_id == -1)
         return -1;
 
-      gimp_image_insert_layer (new_image_id, *layer_id, -1, 0);
-      new_layer = gimp_drawable_get (*layer_id);
+      picman_image_insert_layer (new_image_id, *layer_id, -1, 0);
+      new_layer = picman_drawable_get (*layer_id);
 
       /*  Get the source drawable  */
-      drawable = gimp_drawable_get (drawable_id);
+      drawable = picman_drawable_get (drawable_id);
     }
   else
     {
-      gimp_image_undo_group_start (image_id);
+      picman_image_undo_group_start (image_id);
 
-      gimp_image_resize (image_id,
+      picman_image_resize (image_id,
                          tvals.new_width, tvals.new_height,
                          0, 0);
 
-      if (gimp_item_is_layer (drawable_id))
-        gimp_layer_resize (drawable_id,
+      if (picman_item_is_layer (drawable_id))
+        picman_layer_resize (drawable_id,
                            tvals.new_width, tvals.new_height,
                            0, 0);
 
       /*  Get the source drawable  */
-      drawable = gimp_drawable_get (drawable_id);
+      drawable = picman_drawable_get (drawable_id);
       new_layer = drawable;
     }
 
@@ -311,14 +311,14 @@ tile (gint32  image_id,
           if (width + j > tvals.new_width)
             width = tvals.new_width - j;
 
-          gimp_pixel_rgn_init (&src_rgn, drawable,
+          picman_pixel_rgn_init (&src_rgn, drawable,
                                0, 0, width, height, FALSE, FALSE);
-          gimp_pixel_rgn_init (&dest_rgn, new_layer,
+          picman_pixel_rgn_init (&dest_rgn, new_layer,
                                j, i, width, height, TRUE, FALSE);
 
-          for (pr = gimp_pixel_rgns_register (2, &src_rgn, &dest_rgn), c = 0;
+          for (pr = picman_pixel_rgns_register (2, &src_rgn, &dest_rgn), c = 0;
                pr != NULL;
-               pr = gimp_pixel_rgns_process (pr), c++)
+               pr = picman_pixel_rgns_process (pr), c++)
             {
               gint k;
 
@@ -330,38 +330,38 @@ tile (gint32  image_id,
               progress += src_rgn.w * src_rgn.h;
 
               if (c % 16 == 0)
-                gimp_progress_update ((gdouble) progress /
+                picman_progress_update ((gdouble) progress /
                                       (gdouble) max_progress);
             }
         }
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
-  gimp_drawable_update (new_layer->drawable_id,
+  picman_drawable_update (new_layer->drawable_id,
                         0, 0, new_layer->width, new_layer->height);
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   if (tvals.new_image)
     {
-      gimp_drawable_detach (new_layer);
+      picman_drawable_detach (new_layer);
 
       /*  copy the colormap, if necessary  */
-      if (image_type == GIMP_INDEXED)
+      if (image_type == PICMAN_INDEXED)
         {
           guchar *cmap;
           gint    ncols;
 
-          cmap = gimp_image_get_colormap (image_id, &ncols);
-          gimp_image_set_colormap (new_image_id, cmap, ncols);
+          cmap = picman_image_get_colormap (image_id, &ncols);
+          picman_image_set_colormap (new_image_id, cmap, ncols);
           g_free (cmap);
         }
 
-      gimp_image_undo_enable (new_image_id);
+      picman_image_undo_enable (new_image_id);
     }
   else
     {
-      gimp_image_undo_group_end (image_id);
+      picman_image_undo_group_end (image_id);
     }
 
   return new_image_id;
@@ -381,22 +381,22 @@ tile_dialog (gint32 image_ID,
   gint       height;
   gdouble    xres;
   gdouble    yres;
-  GimpUnit   unit;
+  PicmanUnit   unit;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  width  = gimp_drawable_width (drawable_ID);
-  height = gimp_drawable_height (drawable_ID);
-  unit   = gimp_image_get_unit (image_ID);
-  gimp_image_get_resolution (image_ID, &xres, &yres);
+  width  = picman_drawable_width (drawable_ID);
+  height = picman_drawable_height (drawable_ID);
+  unit   = picman_image_get_unit (image_ID);
+  picman_image_get_resolution (image_ID, &xres, &yres);
 
   tvals.new_width  = width;
   tvals.new_height = height;
 
-  dlg = gimp_dialog_new (_("Tile"), PLUG_IN_ROLE,
+  dlg = picman_dialog_new (_("Tile"), PLUG_IN_ROLE,
                          NULL, 0,
-                         gimp_standard_help_func, PLUG_IN_PROC,
+                         picman_standard_help_func, PLUG_IN_PROC,
 
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                          GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -408,7 +408,7 @@ tile_dialog (gint32 image_ID,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dlg));
+  picman_window_set_transient (GTK_WINDOW (dlg));
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
@@ -416,27 +416,27 @@ tile_dialog (gint32 image_ID,
                       vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  frame = gimp_frame_new (_("Tile to New Size"));
+  frame = picman_frame_new (_("Tile to New Size"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  sizeentry = gimp_coordinates_new (unit, "%a", TRUE, TRUE, 8,
-                                    GIMP_SIZE_ENTRY_UPDATE_SIZE,
+  sizeentry = picman_coordinates_new (unit, "%a", TRUE, TRUE, 8,
+                                    PICMAN_SIZE_ENTRY_UPDATE_SIZE,
 
                                     tvals.constrain, TRUE,
 
                                     _("_Width:"), width, xres,
-                                    1, GIMP_MAX_IMAGE_SIZE,
+                                    1, PICMAN_MAX_IMAGE_SIZE,
                                     0, width,
 
                                     _("_Height:"), height, yres,
-                                    1, GIMP_MAX_IMAGE_SIZE,
+                                    1, PICMAN_MAX_IMAGE_SIZE,
                                     0, height);
   gtk_container_add (GTK_CONTAINER (frame), sizeentry);
   gtk_table_set_row_spacing (GTK_TABLE (sizeentry), 1, 6);
   gtk_widget_show (sizeentry);
 
-  chainbutton = GTK_WIDGET (GIMP_COORDINATES_CHAINBUTTON (sizeentry));
+  chainbutton = GTK_WIDGET (PICMAN_COORDINATES_CHAINBUTTON (sizeentry));
 
   toggle = gtk_check_button_new_with_mnemonic (_("C_reate new image"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle), tvals.new_image);
@@ -444,22 +444,22 @@ tile_dialog (gint32 image_ID,
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &tvals.new_image);
 
   gtk_widget_show (dlg);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dlg)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dlg)) == GTK_RESPONSE_OK);
 
   if (run)
     {
       tvals.new_width =
-        RINT (gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (sizeentry), 0));
+        RINT (picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (sizeentry), 0));
       tvals.new_height =
-        RINT (gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (sizeentry), 1));
+        RINT (picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (sizeentry), 1));
 
       tvals.constrain =
-        gimp_chain_button_get_active (GIMP_CHAIN_BUTTON (chainbutton));
+        picman_chain_button_get_active (PICMAN_CHAIN_BUTTON (chainbutton));
     }
 
   gtk_widget_destroy (dlg);

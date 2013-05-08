@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpcontext_pdb.c
+ * picmancontext_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpcontext
- * @title: gimpcontext
+ * SECTION: picmancontext
+ * @title: picmancontext
  * @short_description: Functions to manipulate a plug-in's context.
  *
  * Functions to manipulate a plug-in's context.
@@ -35,70 +35,70 @@
 
 
 /**
- * gimp_context_push:
+ * picman_context_push:
  *
  * Pushes a context to the top of the plug-in's context stack.
  *
  * This procedure creates a new context by copying the current context.
  * This copy becomes the new current context for the calling plug-in
- * until it is popped again using gimp_context_pop().
+ * until it is popped again using picman_context_pop().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_push (void)
+picman_context_push (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-push",
+  return_vals = picman_run_procedure ("picman-context-push",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_pop:
+ * picman_context_pop:
  *
  * Pops the topmost context from the plug-in's context stack.
  *
  * This procedure removes the topmost context from the plug-in's
  * context stack. The context that was active before the corresponding
- * call to gimp_context_push() becomes the new current context of the
+ * call to picman_context_push() becomes the new current context of the
  * plug-in.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_pop (void)
+picman_context_pop (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-pop",
+  return_vals = picman_run_procedure ("picman-context-pop",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_set_defaults:
+ * picman_context_set_defaults:
  *
  * Reset context settings to their default values.
  *
@@ -110,57 +110,57 @@ gimp_context_pop (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_defaults (void)
+picman_context_set_defaults (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-defaults",
+  return_vals = picman_run_procedure ("picman-context-set-defaults",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_list_paint_methods:
+ * picman_context_list_paint_methods:
  * @num_paint_methods: The number of the available paint methods.
  * @paint_methods: The names of the available paint methods.
  *
  * Lists the available paint methods.
  *
  * This procedure lists the names of the available paint methods. Any
- * of the results can be used for gimp_context_set_paint_method().
+ * of the results can be used for picman_context_set_paint_method().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_context_list_paint_methods (gint    *num_paint_methods,
+picman_context_list_paint_methods (gint    *num_paint_methods,
                                  gchar ***paint_methods)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
   gint i;
 
-  return_vals = gimp_run_procedure ("gimp-context-list-paint-methods",
+  return_vals = picman_run_procedure ("picman-context-list-paint-methods",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
   *num_paint_methods = 0;
   *paint_methods = NULL;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -171,13 +171,13 @@ gimp_context_list_paint_methods (gint    *num_paint_methods,
       (*paint_methods)[i] = NULL;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_paint_method:
+ * picman_context_get_paint_method:
  *
  * Retrieve the currently active paint method.
  *
@@ -186,29 +186,29 @@ gimp_context_list_paint_methods (gint    *num_paint_methods,
  *
  * Returns: The name of the active paint method.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gchar *
-gimp_context_get_paint_method (void)
+picman_context_get_paint_method (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-paint-method",
+  return_vals = picman_run_procedure ("picman-context-get-paint-method",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return name;
 }
 
 /**
- * gimp_context_set_paint_method:
+ * picman_context_set_paint_method:
  * @name: The name of the paint method.
  *
  * Set the specified paint method as the active paint method.
@@ -222,228 +222,228 @@ gimp_context_get_paint_method (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_context_set_paint_method (const gchar *name)
+picman_context_set_paint_method (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-paint-method",
+  return_vals = picman_run_procedure ("picman-context-set-paint-method",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_foreground:
+ * picman_context_get_foreground:
  * @foreground: The foreground color.
  *
- * Get the current GIMP foreground color.
+ * Get the current PICMAN foreground color.
  *
- * This procedure returns the current GIMP foreground color. The
+ * This procedure returns the current PICMAN foreground color. The
  * foreground color is used in a variety of tools such as paint tools,
  * blending, and bucket fill.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_get_foreground (GimpRGB *foreground)
+picman_context_get_foreground (PicmanRGB *foreground)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-foreground",
+  return_vals = picman_run_procedure ("picman-context-get-foreground",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     *foreground = return_vals[1].data.d_color;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_set_foreground:
+ * picman_context_set_foreground:
  * @foreground: The foreground color.
  *
- * Set the current GIMP foreground color.
+ * Set the current PICMAN foreground color.
  *
- * This procedure sets the current GIMP foreground color. After this is
+ * This procedure sets the current PICMAN foreground color. After this is
  * set, operations which use foreground such as paint tools, blending,
  * and bucket fill will use the new value.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_set_foreground (const GimpRGB *foreground)
+picman_context_set_foreground (const PicmanRGB *foreground)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-foreground",
+  return_vals = picman_run_procedure ("picman-context-set-foreground",
                                     &nreturn_vals,
-                                    GIMP_PDB_COLOR, foreground,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_COLOR, foreground,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_background:
+ * picman_context_get_background:
  * @background: The background color.
  *
- * Get the current GIMP background color.
+ * Get the current PICMAN background color.
  *
- * This procedure returns the current GIMP background color. The
+ * This procedure returns the current PICMAN background color. The
  * background color is used in a variety of tools such as blending,
  * erasing (with non-alpha images), and image filling.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_get_background (GimpRGB *background)
+picman_context_get_background (PicmanRGB *background)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-background",
+  return_vals = picman_run_procedure ("picman-context-get-background",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     *background = return_vals[1].data.d_color;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_set_background:
+ * picman_context_set_background:
  * @background: The background color.
  *
- * Set the current GIMP background color.
+ * Set the current PICMAN background color.
  *
- * This procedure sets the current GIMP background color. After this is
+ * This procedure sets the current PICMAN background color. After this is
  * set, operations which use background such as blending, filling
  * images, clearing, and erasing (in non-alpha images) will use the new
  * value.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_set_background (const GimpRGB *background)
+picman_context_set_background (const PicmanRGB *background)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-background",
+  return_vals = picman_run_procedure ("picman-context-set-background",
                                     &nreturn_vals,
-                                    GIMP_PDB_COLOR, background,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_COLOR, background,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_set_default_colors:
+ * picman_context_set_default_colors:
  *
- * Set the current GIMP foreground and background colors to black and
+ * Set the current PICMAN foreground and background colors to black and
  * white.
  *
- * This procedure sets the current GIMP foreground and background
+ * This procedure sets the current PICMAN foreground and background
  * colors to their initial default values, black and white.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_set_default_colors (void)
+picman_context_set_default_colors (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-default-colors",
+  return_vals = picman_run_procedure ("picman-context-set-default-colors",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_swap_colors:
+ * picman_context_swap_colors:
  *
- * Swap the current GIMP foreground and background colors.
+ * Swap the current PICMAN foreground and background colors.
  *
- * This procedure swaps the current GIMP foreground and background
+ * This procedure swaps the current PICMAN foreground and background
  * colors, so that the new foreground color becomes the old background
  * color and vice versa.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_swap_colors (void)
+picman_context_swap_colors (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-swap-colors",
+  return_vals = picman_run_procedure ("picman-context-swap-colors",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_opacity:
+ * picman_context_get_opacity:
  *
  * Get the opacity.
  *
@@ -452,29 +452,29 @@ gimp_context_swap_colors (void)
  *
  * Returns: The opacity.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gdouble
-gimp_context_get_opacity (void)
+picman_context_get_opacity (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble opacity = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-opacity",
+  return_vals = picman_run_procedure ("picman-context-get-opacity",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     opacity = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return opacity;
 }
 
 /**
- * gimp_context_set_opacity:
+ * picman_context_set_opacity:
  * @opacity: The opacity.
  *
  * Set the opacity.
@@ -484,29 +484,29 @@ gimp_context_get_opacity (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_set_opacity (gdouble opacity)
+picman_context_set_opacity (gdouble opacity)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-opacity",
+  return_vals = picman_run_procedure ("picman-context-set-opacity",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, opacity,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, opacity,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_paint_mode:
+ * picman_context_get_paint_mode:
  *
  * Get the paint mode.
  *
@@ -516,29 +516,29 @@ gimp_context_set_opacity (gdouble opacity)
  *
  * Returns: The paint mode.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
-GimpLayerModeEffects
-gimp_context_get_paint_mode (void)
+PicmanLayerModeEffects
+picman_context_get_paint_mode (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpLayerModeEffects paint_mode = 0;
+  PicmanLayerModeEffects paint_mode = 0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-paint-mode",
+  return_vals = picman_run_procedure ("picman-context-get-paint-mode",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     paint_mode = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return paint_mode;
 }
 
 /**
- * gimp_context_set_paint_mode:
+ * picman_context_set_paint_mode:
  * @paint_mode: The paint mode.
  *
  * Set the paint mode.
@@ -547,29 +547,29 @@ gimp_context_get_paint_mode (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_set_paint_mode (GimpLayerModeEffects paint_mode)
+picman_context_set_paint_mode (PicmanLayerModeEffects paint_mode)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-paint-mode",
+  return_vals = picman_run_procedure ("picman-context-set-paint-mode",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, paint_mode,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, paint_mode,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_brush:
+ * picman_context_get_brush:
  *
  * Retrieve the currently active brush.
  *
@@ -579,29 +579,29 @@ gimp_context_set_paint_mode (GimpLayerModeEffects paint_mode)
  *
  * Returns: The name of the active brush.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_context_get_brush (void)
+picman_context_get_brush (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-brush",
+  return_vals = picman_run_procedure ("picman-context-get-brush",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return name;
 }
 
 /**
- * gimp_context_set_brush:
+ * picman_context_set_brush:
  * @name: The name of the brush.
  *
  * Set the specified brush as the active brush.
@@ -614,29 +614,29 @@ gimp_context_get_brush (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_set_brush (const gchar *name)
+picman_context_set_brush (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-brush",
+  return_vals = picman_run_procedure ("picman-context-set-brush",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_brush_size:
+ * picman_context_get_brush_size:
  *
  * Get brush size in pixels.
  *
@@ -644,29 +644,29 @@ gimp_context_set_brush (const gchar *name)
  *
  * Returns: brush size in pixels.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gdouble
-gimp_context_get_brush_size (void)
+picman_context_get_brush_size (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble size = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-brush-size",
+  return_vals = picman_run_procedure ("picman-context-get-brush-size",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     size = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return size;
 }
 
 /**
- * gimp_context_set_brush_size:
+ * picman_context_set_brush_size:
  * @size: brush size in pixels.
  *
  * Set brush size in pixels.
@@ -675,29 +675,29 @@ gimp_context_get_brush_size (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_brush_size (gdouble size)
+picman_context_set_brush_size (gdouble size)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-brush-size",
+  return_vals = picman_run_procedure ("picman-context-set-brush-size",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, size,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, size,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_set_brush_default_size:
+ * picman_context_set_brush_default_size:
  *
  * Set brush size to its default.
  *
@@ -706,28 +706,28 @@ gimp_context_set_brush_size (gdouble size)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_brush_default_size (void)
+picman_context_set_brush_default_size (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-brush-default-size",
+  return_vals = picman_run_procedure ("picman-context-set-brush-default-size",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_brush_aspect_ratio:
+ * picman_context_get_brush_aspect_ratio:
  *
  * Get brush aspect ratio.
  *
@@ -735,29 +735,29 @@ gimp_context_set_brush_default_size (void)
  *
  * Returns: aspect ratio.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gdouble
-gimp_context_get_brush_aspect_ratio (void)
+picman_context_get_brush_aspect_ratio (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble aspect = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-brush-aspect-ratio",
+  return_vals = picman_run_procedure ("picman-context-get-brush-aspect-ratio",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     aspect = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return aspect;
 }
 
 /**
- * gimp_context_set_brush_aspect_ratio:
+ * picman_context_set_brush_aspect_ratio:
  * @aspect: aspect ratio.
  *
  * Set brush aspect ratio.
@@ -766,29 +766,29 @@ gimp_context_get_brush_aspect_ratio (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_brush_aspect_ratio (gdouble aspect)
+picman_context_set_brush_aspect_ratio (gdouble aspect)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-brush-aspect-ratio",
+  return_vals = picman_run_procedure ("picman-context-set-brush-aspect-ratio",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, aspect,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, aspect,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_brush_angle:
+ * picman_context_get_brush_angle:
  *
  * Get brush angle in degrees.
  *
@@ -796,29 +796,29 @@ gimp_context_set_brush_aspect_ratio (gdouble aspect)
  *
  * Returns: angle in degrees.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gdouble
-gimp_context_get_brush_angle (void)
+picman_context_get_brush_angle (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble angle = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-brush-angle",
+  return_vals = picman_run_procedure ("picman-context-get-brush-angle",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     angle = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return angle;
 }
 
 /**
- * gimp_context_set_brush_angle:
+ * picman_context_set_brush_angle:
  * @angle: angle in degrees.
  *
  * Set brush angle in degrees.
@@ -827,29 +827,29 @@ gimp_context_get_brush_angle (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_brush_angle (gdouble angle)
+picman_context_set_brush_angle (gdouble angle)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-brush-angle",
+  return_vals = picman_run_procedure ("picman-context-set-brush-angle",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, angle,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, angle,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_dynamics:
+ * picman_context_get_dynamics:
  *
  * Retrieve the currently active paint dynamics.
  *
@@ -859,29 +859,29 @@ gimp_context_set_brush_angle (gdouble angle)
  *
  * Returns: The name of the active paint dynamics.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gchar *
-gimp_context_get_dynamics (void)
+picman_context_get_dynamics (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-dynamics",
+  return_vals = picman_run_procedure ("picman-context-get-dynamics",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return name;
 }
 
 /**
- * gimp_context_set_dynamics:
+ * picman_context_set_dynamics:
  * @name: The name of the paint dynamics.
  *
  * Set the specified paint dynamics as the active paint dynamics.
@@ -895,29 +895,29 @@ gimp_context_get_dynamics (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_dynamics (const gchar *name)
+picman_context_set_dynamics (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-dynamics",
+  return_vals = picman_run_procedure ("picman-context-set-dynamics",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_pattern:
+ * picman_context_get_pattern:
  *
  * Retrieve the currently active pattern.
  *
@@ -927,29 +927,29 @@ gimp_context_set_dynamics (const gchar *name)
  *
  * Returns: The name of the active pattern.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_context_get_pattern (void)
+picman_context_get_pattern (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-pattern",
+  return_vals = picman_run_procedure ("picman-context-get-pattern",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return name;
 }
 
 /**
- * gimp_context_set_pattern:
+ * picman_context_set_pattern:
  * @name: The name of the pattern.
  *
  * Set the specified pattern as the active pattern.
@@ -963,29 +963,29 @@ gimp_context_get_pattern (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_set_pattern (const gchar *name)
+picman_context_set_pattern (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-pattern",
+  return_vals = picman_run_procedure ("picman-context-set-pattern",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_gradient:
+ * picman_context_get_gradient:
  *
  * Retrieve the currently active gradient.
  *
@@ -993,29 +993,29 @@ gimp_context_set_pattern (const gchar *name)
  *
  * Returns: The name of the active gradient.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_context_get_gradient (void)
+picman_context_get_gradient (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-gradient",
+  return_vals = picman_run_procedure ("picman-context-get-gradient",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return name;
 }
 
 /**
- * gimp_context_set_gradient:
+ * picman_context_set_gradient:
  * @name: The name of the gradient.
  *
  * Sets the specified gradient as the active gradient.
@@ -1029,29 +1029,29 @@ gimp_context_get_gradient (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_set_gradient (const gchar *name)
+picman_context_set_gradient (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-gradient",
+  return_vals = picman_run_procedure ("picman-context-set-gradient",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_palette:
+ * picman_context_get_palette:
  *
  * Retrieve the currently active palette.
  *
@@ -1059,29 +1059,29 @@ gimp_context_set_gradient (const gchar *name)
  *
  * Returns: The name of the active palette.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_context_get_palette (void)
+picman_context_get_palette (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-palette",
+  return_vals = picman_run_procedure ("picman-context-get-palette",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return name;
 }
 
 /**
- * gimp_context_set_palette:
+ * picman_context_set_palette:
  * @name: The name of the palette.
  *
  * Set the specified palette as the active palette.
@@ -1095,29 +1095,29 @@ gimp_context_get_palette (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_set_palette (const gchar *name)
+picman_context_set_palette (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-palette",
+  return_vals = picman_run_procedure ("picman-context-set-palette",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_font:
+ * picman_context_get_font:
  *
  * Retrieve the currently active font.
  *
@@ -1125,29 +1125,29 @@ gimp_context_set_palette (const gchar *name)
  *
  * Returns: The name of the active font.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_context_get_font (void)
+picman_context_get_font (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-font",
+  return_vals = picman_run_procedure ("picman-context-get-font",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return name;
 }
 
 /**
- * gimp_context_set_font:
+ * picman_context_set_font:
  * @name: The name of the font.
  *
  * Set the specified font as the active font.
@@ -1160,29 +1160,29 @@ gimp_context_get_font (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_context_set_font (const gchar *name)
+picman_context_set_font (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-font",
+  return_vals = picman_run_procedure ("picman-context-set-font",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_antialias:
+ * picman_context_get_antialias:
  *
  * Get the antialias setting.
  *
@@ -1190,29 +1190,29 @@ gimp_context_set_font (const gchar *name)
  *
  * Returns: The antialias setting.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_get_antialias (void)
+picman_context_get_antialias (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean antialias = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-antialias",
+  return_vals = picman_run_procedure ("picman-context-get-antialias",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     antialias = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return antialias;
 }
 
 /**
- * gimp_context_set_antialias:
+ * picman_context_set_antialias:
  * @antialias: The antialias setting.
  *
  * Set the antialias setting.
@@ -1222,35 +1222,35 @@ gimp_context_get_antialias (void)
  * values which give the appearance of a sharper, less pixelized edge.
  * This should be set as TRUE most of the time unless a binary-only
  * selection is wanted. This settings affects the following procedures:
- * gimp_image_select_color(), gimp_image_select_contiguous_color(),
- * gimp_image_select_round_rectangle(), gimp_image_select_ellipse(),
- * gimp_image_select_polygon(), gimp_image_select_item().
+ * picman_image_select_color(), picman_image_select_contiguous_color(),
+ * picman_image_select_round_rectangle(), picman_image_select_ellipse(),
+ * picman_image_select_polygon(), picman_image_select_item().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_antialias (gboolean antialias)
+picman_context_set_antialias (gboolean antialias)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-antialias",
+  return_vals = picman_run_procedure ("picman-context-set-antialias",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, antialias,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, antialias,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_feather:
+ * picman_context_get_feather:
  *
  * Get the feather setting.
  *
@@ -1258,29 +1258,29 @@ gimp_context_set_antialias (gboolean antialias)
  *
  * Returns: The feather setting.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_get_feather (void)
+picman_context_get_feather (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean feather = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-feather",
+  return_vals = picman_run_procedure ("picman-context-get-feather",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     feather = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return feather;
 }
 
 /**
- * gimp_context_set_feather:
+ * picman_context_set_feather:
  * @feather: The feather setting.
  *
  * Set the feather setting.
@@ -1288,37 +1288,37 @@ gimp_context_get_feather (void)
  * This procedure modifies the feather setting. If the feather option
  * is enabled, selections will be blurred before combining. The blur is
  * a gaussian blur; its radii can be controlled using
- * gimp_context_set_feather_radius(). This setting affects the
- * following procedures: gimp_image_select_color(),
- * gimp_image_select_contiguous_color(), gimp_image_select_rectangle(),
- * gimp_image_select_round_rectangle(), gimp_image_select_ellipse(),
- * gimp_image_select_polygon(), gimp_image_select_item().
+ * picman_context_set_feather_radius(). This setting affects the
+ * following procedures: picman_image_select_color(),
+ * picman_image_select_contiguous_color(), picman_image_select_rectangle(),
+ * picman_image_select_round_rectangle(), picman_image_select_ellipse(),
+ * picman_image_select_polygon(), picman_image_select_item().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_feather (gboolean feather)
+picman_context_set_feather (gboolean feather)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-feather",
+  return_vals = picman_run_procedure ("picman-context-set-feather",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, feather,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, feather,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_feather_radius:
+ * picman_context_get_feather_radius:
  * @feather_radius_x: The horizontal feather radius.
  * @feather_radius_y: The vertical feather radius.
  *
@@ -1328,24 +1328,24 @@ gimp_context_set_feather (gboolean feather)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_get_feather_radius (gdouble *feather_radius_x,
+picman_context_get_feather_radius (gdouble *feather_radius_x,
                                  gdouble *feather_radius_y)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-feather-radius",
+  return_vals = picman_run_procedure ("picman-context-get-feather-radius",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
   *feather_radius_x = 0.0;
   *feather_radius_y = 0.0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -1353,13 +1353,13 @@ gimp_context_get_feather_radius (gdouble *feather_radius_x,
       *feather_radius_y = return_vals[2].data.d_float;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_set_feather_radius:
+ * picman_context_set_feather_radius:
  * @feather_radius_x: The horizontal feather radius.
  * @feather_radius_y: The vertical feather radius.
  *
@@ -1367,35 +1367,35 @@ gimp_context_get_feather_radius (gdouble *feather_radius_x,
  *
  * This procedure modifies the feather radius setting. This setting
  * affects all procedures that are affected by
- * gimp_context_set_feather().
+ * picman_context_set_feather().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_feather_radius (gdouble feather_radius_x,
+picman_context_set_feather_radius (gdouble feather_radius_x,
                                  gdouble feather_radius_y)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-feather-radius",
+  return_vals = picman_run_procedure ("picman-context-set-feather-radius",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, feather_radius_x,
-                                    GIMP_PDB_FLOAT, feather_radius_y,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, feather_radius_x,
+                                    PICMAN_PDB_FLOAT, feather_radius_y,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_sample_merged:
+ * picman_context_get_sample_merged:
  *
  * Get the sample merged setting.
  *
@@ -1403,29 +1403,29 @@ gimp_context_set_feather_radius (gdouble feather_radius_x,
  *
  * Returns: The sample merged setting.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_get_sample_merged (void)
+picman_context_get_sample_merged (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean sample_merged = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-sample-merged",
+  return_vals = picman_run_procedure ("picman-context-get-sample-merged",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     sample_merged = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return sample_merged;
 }
 
 /**
- * gimp_context_set_sample_merged:
+ * picman_context_set_sample_merged:
  * @sample_merged: The sample merged setting.
  *
  * Set the sample merged setting.
@@ -1437,33 +1437,33 @@ gimp_context_get_sample_merged (void)
  * pixel data from the composite image ('sample-merged' is TRUE. This
  * is equivalent to sampling for colors after merging all visible
  * layers). This setting affects the following procedures:
- * gimp_image_select_color(), gimp_image_select_contiguous_color().
+ * picman_image_select_color(), picman_image_select_contiguous_color().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_sample_merged (gboolean sample_merged)
+picman_context_set_sample_merged (gboolean sample_merged)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-sample-merged",
+  return_vals = picman_run_procedure ("picman-context-set-sample-merged",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, sample_merged,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, sample_merged,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_sample_criterion:
+ * picman_context_get_sample_criterion:
  *
  * Get the sample criterion setting.
  *
@@ -1471,29 +1471,29 @@ gimp_context_set_sample_merged (gboolean sample_merged)
  *
  * Returns: The sample criterion setting.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
-GimpSelectCriterion
-gimp_context_get_sample_criterion (void)
+PicmanSelectCriterion
+picman_context_get_sample_criterion (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpSelectCriterion sample_criterion = 0;
+  PicmanSelectCriterion sample_criterion = 0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-sample-criterion",
+  return_vals = picman_run_procedure ("picman-context-get-sample-criterion",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     sample_criterion = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return sample_criterion;
 }
 
 /**
- * gimp_context_set_sample_criterion:
+ * picman_context_set_sample_criterion:
  * @sample_criterion: The sample criterion setting.
  *
  * Set the sample criterion setting.
@@ -1503,33 +1503,33 @@ gimp_context_get_sample_criterion (void)
  * like when doing a seed fill, this setting controls how color
  * similarity is determined. SELECT_CRITERION_COMPOSITE is the default
  * value. This setting affects the following procedures:
- * gimp_image_select_color(), gimp_image_select_contiguous_color().
+ * picman_image_select_color(), picman_image_select_contiguous_color().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_sample_criterion (GimpSelectCriterion sample_criterion)
+picman_context_set_sample_criterion (PicmanSelectCriterion sample_criterion)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-sample-criterion",
+  return_vals = picman_run_procedure ("picman-context-set-sample-criterion",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, sample_criterion,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, sample_criterion,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_sample_threshold:
+ * picman_context_get_sample_threshold:
  *
  * Get the sample threshold setting.
  *
@@ -1537,29 +1537,29 @@ gimp_context_set_sample_criterion (GimpSelectCriterion sample_criterion)
  *
  * Returns: The sample threshold setting.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gdouble
-gimp_context_get_sample_threshold (void)
+picman_context_get_sample_threshold (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble sample_threshold = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-sample-threshold",
+  return_vals = picman_run_procedure ("picman-context-get-sample-threshold",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     sample_threshold = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return sample_threshold;
 }
 
 /**
- * gimp_context_set_sample_threshold:
+ * picman_context_set_sample_threshold:
  * @sample_threshold: The sample threshold setting.
  *
  * Set the sample threshold setting.
@@ -1569,98 +1569,98 @@ gimp_context_get_sample_threshold (void)
  * like when doing a seed fill, this setting controls what is
  * \"sufficiently close\" to be considered a similar color. If the
  * sample threshold has not been set explicitly, the default threshold
- * set in gimprc will be used. This setting affects the following
- * procedures: gimp_image_select_color(),
- * gimp_image_select_contiguous_color().
+ * set in picmanrc will be used. This setting affects the following
+ * procedures: picman_image_select_color(),
+ * picman_image_select_contiguous_color().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_sample_threshold (gdouble sample_threshold)
+picman_context_set_sample_threshold (gdouble sample_threshold)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-sample-threshold",
+  return_vals = picman_run_procedure ("picman-context-set-sample-threshold",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, sample_threshold,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, sample_threshold,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_sample_threshold_int:
+ * picman_context_get_sample_threshold_int:
  *
  * Get the sample threshold setting as an integer value.
  *
  * This procedure returns the sample threshold setting as an integer
- * value. See gimp_context_get_sample_threshold().
+ * value. See picman_context_get_sample_threshold().
  *
  * Returns: The sample threshold setting.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint
-gimp_context_get_sample_threshold_int (void)
+picman_context_get_sample_threshold_int (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint sample_threshold = 0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-sample-threshold-int",
+  return_vals = picman_run_procedure ("picman-context-get-sample-threshold-int",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     sample_threshold = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return sample_threshold;
 }
 
 /**
- * gimp_context_set_sample_threshold_int:
+ * picman_context_set_sample_threshold_int:
  * @sample_threshold: The sample threshold setting.
  *
  * Set the sample threshold setting as an integer value.
  *
  * This procedure modifies the sample threshold setting as an integer
- * value. See gimp_context_set_sample_threshold().
+ * value. See picman_context_set_sample_threshold().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_sample_threshold_int (gint sample_threshold)
+picman_context_set_sample_threshold_int (gint sample_threshold)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-sample-threshold-int",
+  return_vals = picman_run_procedure ("picman-context-set-sample-threshold-int",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, sample_threshold,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, sample_threshold,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_sample_transparent:
+ * picman_context_get_sample_transparent:
  *
  * Get the sample transparent setting.
  *
@@ -1668,29 +1668,29 @@ gimp_context_set_sample_threshold_int (gint sample_threshold)
  *
  * Returns: The sample transparent setting.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_get_sample_transparent (void)
+picman_context_get_sample_transparent (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean sample_transparent = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-sample-transparent",
+  return_vals = picman_run_procedure ("picman-context-get-sample-transparent",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     sample_transparent = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return sample_transparent;
 }
 
 /**
- * gimp_context_set_sample_transparent:
+ * picman_context_set_sample_transparent:
  * @sample_transparent: The sample transparent setting.
  *
  * Set the sample transparent setting.
@@ -1701,104 +1701,104 @@ gimp_context_get_sample_transparent (void)
  * transparency is considered to be a unique selectable color. When
  * this setting is TRUE, transparent areas can be selected or filled.
  * This setting affects the following procedures:
- * gimp_image_select_color(), gimp_image_select_contiguous_color().
+ * picman_image_select_color(), picman_image_select_contiguous_color().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_sample_transparent (gboolean sample_transparent)
+picman_context_set_sample_transparent (gboolean sample_transparent)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-sample-transparent",
+  return_vals = picman_run_procedure ("picman-context-set-sample-transparent",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, sample_transparent,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, sample_transparent,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_interpolation:
+ * picman_context_get_interpolation:
  *
  * Get the interpolation type.
  *
  * This procedure returns the interpolation setting. The return value
  * is an integer which corresponds to the values listed in the argument
  * description. If the interpolation has not been set explicitly by
- * gimp_context_set_interpolation(), the default interpolation set in
- * gimprc will be used.
+ * picman_context_set_interpolation(), the default interpolation set in
+ * picmanrc will be used.
  *
  * Returns: The interpolation type.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
-GimpInterpolationType
-gimp_context_get_interpolation (void)
+PicmanInterpolationType
+picman_context_get_interpolation (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpInterpolationType interpolation = 0;
+  PicmanInterpolationType interpolation = 0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-interpolation",
+  return_vals = picman_run_procedure ("picman-context-get-interpolation",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     interpolation = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return interpolation;
 }
 
 /**
- * gimp_context_set_interpolation:
+ * picman_context_set_interpolation:
  * @interpolation: The interpolation type.
  *
  * Set the interpolation type.
  *
  * This procedure modifies the interpolation setting. This setting
  * affects affects the following procedures:
- * gimp_item_transform_flip(), gimp_item_transform_perspective(),
- * gimp_item_transform_rotate(), gimp_item_transform_scale(),
- * gimp_item_transform_shear(), gimp_item_transform_2d(),
- * gimp_item_transform_matrix(), gimp_image_scale(),
- * gimp_layer_scale().
+ * picman_item_transform_flip(), picman_item_transform_perspective(),
+ * picman_item_transform_rotate(), picman_item_transform_scale(),
+ * picman_item_transform_shear(), picman_item_transform_2d(),
+ * picman_item_transform_matrix(), picman_image_scale(),
+ * picman_layer_scale().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_interpolation (GimpInterpolationType interpolation)
+picman_context_set_interpolation (PicmanInterpolationType interpolation)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-interpolation",
+  return_vals = picman_run_procedure ("picman-context-set-interpolation",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, interpolation,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, interpolation,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_transform_direction:
+ * picman_context_get_transform_direction:
  *
  * Get the transform direction.
  *
@@ -1808,65 +1808,65 @@ gimp_context_set_interpolation (GimpInterpolationType interpolation)
  *
  * Returns: The transform direction.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
-GimpTransformDirection
-gimp_context_get_transform_direction (void)
+PicmanTransformDirection
+picman_context_get_transform_direction (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpTransformDirection transform_direction = 0;
+  PicmanTransformDirection transform_direction = 0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-transform-direction",
+  return_vals = picman_run_procedure ("picman-context-get-transform-direction",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     transform_direction = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return transform_direction;
 }
 
 /**
- * gimp_context_set_transform_direction:
+ * picman_context_set_transform_direction:
  * @transform_direction: The transform direction.
  *
  * Set the transform direction.
  *
  * This procedure modifies the transform direction setting. This
  * setting affects affects the following procedures:
- * gimp_item_transform_flip(), gimp_item_transform_perspective(),
- * gimp_item_transform_rotate(), gimp_item_transform_scale(),
- * gimp_item_transform_shear(), gimp_item_transform_2d(),
- * gimp_item_transform_matrix().
+ * picman_item_transform_flip(), picman_item_transform_perspective(),
+ * picman_item_transform_rotate(), picman_item_transform_scale(),
+ * picman_item_transform_shear(), picman_item_transform_2d(),
+ * picman_item_transform_matrix().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_transform_direction (GimpTransformDirection transform_direction)
+picman_context_set_transform_direction (PicmanTransformDirection transform_direction)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-transform-direction",
+  return_vals = picman_run_procedure ("picman-context-set-transform-direction",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, transform_direction,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, transform_direction,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_transform_resize:
+ * picman_context_get_transform_resize:
  *
  * Get the transform resize type.
  *
@@ -1876,29 +1876,29 @@ gimp_context_set_transform_direction (GimpTransformDirection transform_direction
  *
  * Returns: The transform resize type.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
-GimpTransformResize
-gimp_context_get_transform_resize (void)
+PicmanTransformResize
+picman_context_get_transform_resize (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpTransformResize transform_resize = 0;
+  PicmanTransformResize transform_resize = 0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-transform-resize",
+  return_vals = picman_run_procedure ("picman-context-get-transform-resize",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     transform_resize = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return transform_resize;
 }
 
 /**
- * gimp_context_set_transform_resize:
+ * picman_context_set_transform_resize:
  * @transform_resize: The transform resize type.
  *
  * Set the transform resize type.
@@ -1907,38 +1907,38 @@ gimp_context_get_transform_resize (void)
  * transforming pixels, if the result of a transform operation has a
  * different size than the original area, this setting determines how
  * the resulting area is sized. This setting affects affects the
- * following procedures: gimp_item_transform_flip(),
- * gimp_item_transform_flip_simple(),
- * gimp_item_transform_perspective(), gimp_item_transform_rotate(),
- * gimp_item_transform_rotate_simple(), gimp_item_transform_scale(),
- * gimp_item_transform_shear(), gimp_item_transform_2d(),
- * gimp_item_transform_matrix().
+ * following procedures: picman_item_transform_flip(),
+ * picman_item_transform_flip_simple(),
+ * picman_item_transform_perspective(), picman_item_transform_rotate(),
+ * picman_item_transform_rotate_simple(), picman_item_transform_scale(),
+ * picman_item_transform_shear(), picman_item_transform_2d(),
+ * picman_item_transform_matrix().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_transform_resize (GimpTransformResize transform_resize)
+picman_context_set_transform_resize (PicmanTransformResize transform_resize)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-transform-resize",
+  return_vals = picman_run_procedure ("picman-context-set-transform-resize",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, transform_resize,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, transform_resize,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_transform_recursion:
+ * picman_context_get_transform_recursion:
  *
  * Get the transform supersampling recursion.
  *
@@ -1946,29 +1946,29 @@ gimp_context_set_transform_resize (GimpTransformResize transform_resize)
  *
  * Returns: The transform recursion level.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint
-gimp_context_get_transform_recursion (void)
+picman_context_get_transform_recursion (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint transform_recursion = 0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-transform-recursion",
+  return_vals = picman_run_procedure ("picman-context-get-transform-recursion",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     transform_recursion = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return transform_recursion;
 }
 
 /**
- * gimp_context_set_transform_recursion:
+ * picman_context_set_transform_recursion:
  * @transform_recursion: The transform recursion level.
  *
  * Set the transform supersampling recursion.
@@ -1977,36 +1977,36 @@ gimp_context_get_transform_recursion (void)
  * setting. Whether or not a transformation does supersampling is
  * determined by the interplolation type. The recursion level defaults
  * to 3, which is a nice default value. This setting affects affects
- * the following procedures: gimp_item_transform_flip(),
- * gimp_item_transform_perspective(), gimp_item_transform_rotate(),
- * gimp_item_transform_scale(), gimp_item_transform_shear(),
- * gimp_item_transform_2d(), gimp_item_transform_matrix().
+ * the following procedures: picman_item_transform_flip(),
+ * picman_item_transform_perspective(), picman_item_transform_rotate(),
+ * picman_item_transform_scale(), picman_item_transform_shear(),
+ * picman_item_transform_2d(), picman_item_transform_matrix().
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_transform_recursion (gint transform_recursion)
+picman_context_set_transform_recursion (gint transform_recursion)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-transform-recursion",
+  return_vals = picman_run_procedure ("picman-context-set-transform-recursion",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, transform_recursion,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, transform_recursion,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_ink_size:
+ * picman_context_get_ink_size:
  *
  * Get ink blob size in pixels.
  *
@@ -2014,29 +2014,29 @@ gimp_context_set_transform_recursion (gint transform_recursion)
  *
  * Returns: ink blob size in pixels.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gdouble
-gimp_context_get_ink_size (void)
+picman_context_get_ink_size (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble size = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-ink-size",
+  return_vals = picman_run_procedure ("picman-context-get-ink-size",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     size = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return size;
 }
 
 /**
- * gimp_context_set_ink_size:
+ * picman_context_set_ink_size:
  * @size: ink blob size in pixels.
  *
  * Set ink blob size in pixels.
@@ -2045,29 +2045,29 @@ gimp_context_get_ink_size (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_ink_size (gdouble size)
+picman_context_set_ink_size (gdouble size)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-ink-size",
+  return_vals = picman_run_procedure ("picman-context-set-ink-size",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, size,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, size,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_ink_angle:
+ * picman_context_get_ink_angle:
  *
  * Get ink angle in degrees.
  *
@@ -2075,29 +2075,29 @@ gimp_context_set_ink_size (gdouble size)
  *
  * Returns: ink angle in degrees.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gdouble
-gimp_context_get_ink_angle (void)
+picman_context_get_ink_angle (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble angle = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-ink-angle",
+  return_vals = picman_run_procedure ("picman-context-get-ink-angle",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     angle = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return angle;
 }
 
 /**
- * gimp_context_set_ink_angle:
+ * picman_context_set_ink_angle:
  * @angle: ink angle in degrees.
  *
  * Set ink angle in degrees.
@@ -2106,29 +2106,29 @@ gimp_context_get_ink_angle (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_ink_angle (gdouble angle)
+picman_context_set_ink_angle (gdouble angle)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-ink-angle",
+  return_vals = picman_run_procedure ("picman-context-set-ink-angle",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, angle,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, angle,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_ink_size_sensitivity:
+ * picman_context_get_ink_size_sensitivity:
  *
  * Get ink size sensitivity.
  *
@@ -2136,29 +2136,29 @@ gimp_context_set_ink_angle (gdouble angle)
  *
  * Returns: ink size sensitivity.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gdouble
-gimp_context_get_ink_size_sensitivity (void)
+picman_context_get_ink_size_sensitivity (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble size = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-ink-size-sensitivity",
+  return_vals = picman_run_procedure ("picman-context-get-ink-size-sensitivity",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     size = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return size;
 }
 
 /**
- * gimp_context_set_ink_size_sensitivity:
+ * picman_context_set_ink_size_sensitivity:
  * @size: ink size sensitivity.
  *
  * Set ink size sensitivity.
@@ -2167,29 +2167,29 @@ gimp_context_get_ink_size_sensitivity (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_ink_size_sensitivity (gdouble size)
+picman_context_set_ink_size_sensitivity (gdouble size)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-ink-size-sensitivity",
+  return_vals = picman_run_procedure ("picman-context-set-ink-size-sensitivity",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, size,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, size,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_ink_tilt_sensitivity:
+ * picman_context_get_ink_tilt_sensitivity:
  *
  * Get ink tilt sensitivity.
  *
@@ -2197,29 +2197,29 @@ gimp_context_set_ink_size_sensitivity (gdouble size)
  *
  * Returns: ink tilt sensitivity.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gdouble
-gimp_context_get_ink_tilt_sensitivity (void)
+picman_context_get_ink_tilt_sensitivity (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble tilt = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-ink-tilt-sensitivity",
+  return_vals = picman_run_procedure ("picman-context-get-ink-tilt-sensitivity",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     tilt = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return tilt;
 }
 
 /**
- * gimp_context_set_ink_tilt_sensitivity:
+ * picman_context_set_ink_tilt_sensitivity:
  * @tilt: ink tilt sensitivity.
  *
  * Set ink tilt sensitivity.
@@ -2228,29 +2228,29 @@ gimp_context_get_ink_tilt_sensitivity (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_ink_tilt_sensitivity (gdouble tilt)
+picman_context_set_ink_tilt_sensitivity (gdouble tilt)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-ink-tilt-sensitivity",
+  return_vals = picman_run_procedure ("picman-context-set-ink-tilt-sensitivity",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, tilt,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, tilt,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_ink_speed_sensitivity:
+ * picman_context_get_ink_speed_sensitivity:
  *
  * Get ink speed sensitivity.
  *
@@ -2258,29 +2258,29 @@ gimp_context_set_ink_tilt_sensitivity (gdouble tilt)
  *
  * Returns: ink speed sensitivity.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gdouble
-gimp_context_get_ink_speed_sensitivity (void)
+picman_context_get_ink_speed_sensitivity (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble speed = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-ink-speed-sensitivity",
+  return_vals = picman_run_procedure ("picman-context-get-ink-speed-sensitivity",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     speed = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return speed;
 }
 
 /**
- * gimp_context_set_ink_speed_sensitivity:
+ * picman_context_set_ink_speed_sensitivity:
  * @speed: ink speed sensitivity.
  *
  * Set ink speed sensitivity.
@@ -2289,29 +2289,29 @@ gimp_context_get_ink_speed_sensitivity (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_ink_speed_sensitivity (gdouble speed)
+picman_context_set_ink_speed_sensitivity (gdouble speed)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-ink-speed-sensitivity",
+  return_vals = picman_run_procedure ("picman-context-set-ink-speed-sensitivity",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, speed,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, speed,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_ink_blob_type:
+ * picman_context_get_ink_blob_type:
  *
  * Get ink blob type.
  *
@@ -2319,29 +2319,29 @@ gimp_context_set_ink_speed_sensitivity (gdouble speed)
  *
  * Returns: Ink blob type.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
-GimpInkBlobType
-gimp_context_get_ink_blob_type (void)
+PicmanInkBlobType
+picman_context_get_ink_blob_type (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpInkBlobType type = 0;
+  PicmanInkBlobType type = 0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-ink-blob-type",
+  return_vals = picman_run_procedure ("picman-context-get-ink-blob-type",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     type = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return type;
 }
 
 /**
- * gimp_context_set_ink_blob_type:
+ * picman_context_set_ink_blob_type:
  * @type: Ink blob type.
  *
  * Set ink blob type.
@@ -2350,29 +2350,29 @@ gimp_context_get_ink_blob_type (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_ink_blob_type (GimpInkBlobType type)
+picman_context_set_ink_blob_type (PicmanInkBlobType type)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-ink-blob-type",
+  return_vals = picman_run_procedure ("picman-context-set-ink-blob-type",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, type,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, type,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_ink_blob_aspect_ratio:
+ * picman_context_get_ink_blob_aspect_ratio:
  *
  * Get ink blob aspect ratio.
  *
@@ -2380,29 +2380,29 @@ gimp_context_set_ink_blob_type (GimpInkBlobType type)
  *
  * Returns: ink blob aspect ratio.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gdouble
-gimp_context_get_ink_blob_aspect_ratio (void)
+picman_context_get_ink_blob_aspect_ratio (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble aspect = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-ink-blob-aspect-ratio",
+  return_vals = picman_run_procedure ("picman-context-get-ink-blob-aspect-ratio",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     aspect = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return aspect;
 }
 
 /**
- * gimp_context_set_ink_blob_aspect_ratio:
+ * picman_context_set_ink_blob_aspect_ratio:
  * @aspect: ink blob aspect ratio.
  *
  * Set ink blob aspect ratio.
@@ -2411,29 +2411,29 @@ gimp_context_get_ink_blob_aspect_ratio (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_ink_blob_aspect_ratio (gdouble aspect)
+picman_context_set_ink_blob_aspect_ratio (gdouble aspect)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-ink-blob-aspect-ratio",
+  return_vals = picman_run_procedure ("picman-context-set-ink-blob-aspect-ratio",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, aspect,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, aspect,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_context_get_ink_blob_angle:
+ * picman_context_get_ink_blob_angle:
  *
  * Get ink blob angle in degrees.
  *
@@ -2441,29 +2441,29 @@ gimp_context_set_ink_blob_aspect_ratio (gdouble aspect)
  *
  * Returns: ink blob angle in degrees.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gdouble
-gimp_context_get_ink_blob_angle (void)
+picman_context_get_ink_blob_angle (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble angle = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-context-get-ink-blob-angle",
+  return_vals = picman_run_procedure ("picman-context-get-ink-blob-angle",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     angle = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return angle;
 }
 
 /**
- * gimp_context_set_ink_blob_angle:
+ * picman_context_set_ink_blob_angle:
  * @angle: ink blob angle in degrees.
  *
  * Set ink blob angle in degrees.
@@ -2472,23 +2472,23 @@ gimp_context_get_ink_blob_angle (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_context_set_ink_blob_angle (gdouble angle)
+picman_context_set_ink_blob_angle (gdouble angle)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-context-set-ink-blob-angle",
+  return_vals = picman_run_procedure ("picman-context-set-ink-blob-angle",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, angle,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, angle,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

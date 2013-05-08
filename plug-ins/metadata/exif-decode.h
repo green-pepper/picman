@@ -1,6 +1,6 @@
 /* exif-decode.h - decode exif data and convert it to XMP
  *
- * Copyright (C) 2008, Róman Joost <romanofski@gimp.org>
+ * Copyright (C) 2008, Róman Joost <romanofski@picman.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

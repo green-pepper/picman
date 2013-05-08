@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpTextProxy
- * Copyright (C) 2009-2010  Michael Natterer <mitch@gimp.org>
+ * PicmanTextProxy
+ * Copyright (C) 2009-2010  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,41 +18,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEXT_PROXY_H__
-#define __GIMP_TEXT_PROXY_H__
+#ifndef __PICMAN_TEXT_PROXY_H__
+#define __PICMAN_TEXT_PROXY_H__
 
 
-#define GIMP_TYPE_TEXT_PROXY            (gimp_text_proxy_get_type ())
-#define GIMP_TEXT_PROXY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TEXT_PROXY, GimpTextProxy))
-#define GIMP_IS_TEXT_PROXY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TEXT_PROXY))
-#define GIMP_TEXT_PROXY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TEXT_PROXY, GimpTextProxyClass))
-#define GIMP_IS_TEXT_PROXY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TEXT_PROXY))
+#define PICMAN_TYPE_TEXT_PROXY            (picman_text_proxy_get_type ())
+#define PICMAN_TEXT_PROXY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TEXT_PROXY, PicmanTextProxy))
+#define PICMAN_IS_TEXT_PROXY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TEXT_PROXY))
+#define PICMAN_TEXT_PROXY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TEXT_PROXY, PicmanTextProxyClass))
+#define PICMAN_IS_TEXT_PROXY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TEXT_PROXY))
 
 
-typedef struct _GimpTextProxy       GimpTextProxy;
-typedef struct _GimpTextProxyClass  GimpTextProxyClass;
+typedef struct _PicmanTextProxy       PicmanTextProxy;
+typedef struct _PicmanTextProxyClass  PicmanTextProxyClass;
 
-struct _GimpTextProxy
+struct _PicmanTextProxy
 {
   GtkTextView  parent_instance;
 };
 
-struct _GimpTextProxyClass
+struct _PicmanTextProxyClass
 {
   GtkTextViewClass  parent_class;
 
-  void (* change_size)     (GimpTextProxy *proxy,
+  void (* change_size)     (PicmanTextProxy *proxy,
                             gdouble        amount);
-  void (* change_baseline) (GimpTextProxy *proxy,
+  void (* change_baseline) (PicmanTextProxy *proxy,
                             gdouble        amount);
-  void (* change_kerning)  (GimpTextProxy *proxy,
+  void (* change_kerning)  (PicmanTextProxy *proxy,
                             gdouble        amount);
 };
 
 
-GType       gimp_text_proxy_get_type (void) G_GNUC_CONST;
+GType       picman_text_proxy_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_text_proxy_new      (void);
+GtkWidget * picman_text_proxy_new      (void);
 
 
-#endif /* __GIMP_TEXT_PROXY_H__ */
+#endif /* __PICMAN_TEXT_PROXY_H__ */

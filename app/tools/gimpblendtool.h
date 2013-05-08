@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,29 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_BLEND_TOOL_H__
-#define  __GIMP_BLEND_TOOL_H__
+#ifndef  __PICMAN_BLEND_TOOL_H__
+#define  __PICMAN_BLEND_TOOL_H__
 
 
-#include "gimpdrawtool.h"
+#include "picmandrawtool.h"
 
 
-#define GIMP_TYPE_BLEND_TOOL            (gimp_blend_tool_get_type ())
-#define GIMP_BLEND_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BLEND_TOOL, GimpBlendTool))
-#define GIMP_BLEND_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BLEND_TOOL, GimpBlendToolClass))
-#define GIMP_IS_BLEND_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BLEND_TOOL))
-#define GIMP_IS_BLEND_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BLEND_TOOL))
-#define GIMP_BLEND_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BLEND_TOOL, GimpBlendToolClass))
+#define PICMAN_TYPE_BLEND_TOOL            (picman_blend_tool_get_type ())
+#define PICMAN_BLEND_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BLEND_TOOL, PicmanBlendTool))
+#define PICMAN_BLEND_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BLEND_TOOL, PicmanBlendToolClass))
+#define PICMAN_IS_BLEND_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BLEND_TOOL))
+#define PICMAN_IS_BLEND_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BLEND_TOOL))
+#define PICMAN_BLEND_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BLEND_TOOL, PicmanBlendToolClass))
 
-#define GIMP_BLEND_TOOL_GET_OPTIONS(t)  (GIMP_BLEND_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_BLEND_TOOL_GET_OPTIONS(t)  (PICMAN_BLEND_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpBlendTool      GimpBlendTool;
-typedef struct _GimpBlendToolClass GimpBlendToolClass;
+typedef struct _PicmanBlendTool      PicmanBlendTool;
+typedef struct _PicmanBlendToolClass PicmanBlendToolClass;
 
-struct _GimpBlendTool
+struct _PicmanBlendTool
 {
-  GimpDrawTool    parent_instance;
+  PicmanDrawTool    parent_instance;
 
   gdouble         start_x;    /*  starting x coord  */
   gdouble         start_y;    /*  starting y coord  */
@@ -49,21 +49,21 @@ struct _GimpBlendTool
   gdouble         mouse_x;    /*  pointer x coord   */
   gdouble         mouse_y;    /*  pointer y coord   */
 
-  GimpCanvasItem *start_handle;
-  GimpCanvasItem *line;
-  GimpCanvasItem *end_handle;
+  PicmanCanvasItem *start_handle;
+  PicmanCanvasItem *line;
+  PicmanCanvasItem *end_handle;
 };
 
-struct _GimpBlendToolClass
+struct _PicmanBlendToolClass
 {
-  GimpDrawToolClass  parent_class;
+  PicmanDrawToolClass  parent_class;
 };
 
 
-void    gimp_blend_tool_register (GimpToolRegisterCallback  callback,
+void    picman_blend_tool_register (PicmanToolRegisterCallback  callback,
                                   gpointer                  data);
 
-GType   gimp_blend_tool_get_type (void) G_GNUC_CONST;
+GType   picman_blend_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_BLEND_TOOL_H__  */
+#endif  /*  __PICMAN_BLEND_TOOL_H__  */

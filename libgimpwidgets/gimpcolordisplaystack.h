@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolordisplaystack.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmancolordisplaystack.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,76 +19,76 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_COLOR_DISPLAY_STACK_H__
-#define __GIMP_COLOR_DISPLAY_STACK_H__
+#ifndef __PICMAN_COLOR_DISPLAY_STACK_H__
+#define __PICMAN_COLOR_DISPLAY_STACK_H__
 
 G_BEGIN_DECLS
 
 /* For information look at the html documentation */
 
 
-#define GIMP_TYPE_COLOR_DISPLAY_STACK            (gimp_color_display_stack_get_type ())
-#define GIMP_COLOR_DISPLAY_STACK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_DISPLAY_STACK, GimpColorDisplayStack))
-#define GIMP_COLOR_DISPLAY_STACK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_DISPLAY_STACK, GimpColorDisplayStackClass))
-#define GIMP_IS_COLOR_DISPLAY_STACK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_DISPLAY_STACK))
-#define GIMP_IS_COLOR_DISPLAY_STACK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_DISPLAY_STACK))
-#define GIMP_COLOR_DISPLAY_STACK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_DISPLAY_STACK, GimpColorDisplayStackClass))
+#define PICMAN_TYPE_COLOR_DISPLAY_STACK            (picman_color_display_stack_get_type ())
+#define PICMAN_COLOR_DISPLAY_STACK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_DISPLAY_STACK, PicmanColorDisplayStack))
+#define PICMAN_COLOR_DISPLAY_STACK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_DISPLAY_STACK, PicmanColorDisplayStackClass))
+#define PICMAN_IS_COLOR_DISPLAY_STACK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_DISPLAY_STACK))
+#define PICMAN_IS_COLOR_DISPLAY_STACK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_DISPLAY_STACK))
+#define PICMAN_COLOR_DISPLAY_STACK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_DISPLAY_STACK, PicmanColorDisplayStackClass))
 
 
-typedef struct _GimpColorDisplayStackClass GimpColorDisplayStackClass;
+typedef struct _PicmanColorDisplayStackClass PicmanColorDisplayStackClass;
 
-struct _GimpColorDisplayStack
+struct _PicmanColorDisplayStack
 {
   GObject  parent_instance;
 
   GList   *filters;
 };
 
-struct _GimpColorDisplayStackClass
+struct _PicmanColorDisplayStackClass
 {
   GObjectClass  parent_class;
 
-  void (* changed)   (GimpColorDisplayStack *stack);
+  void (* changed)   (PicmanColorDisplayStack *stack);
 
-  void (* added)     (GimpColorDisplayStack *stack,
-                      GimpColorDisplay      *display,
+  void (* added)     (PicmanColorDisplayStack *stack,
+                      PicmanColorDisplay      *display,
                       gint                   position);
-  void (* removed)   (GimpColorDisplayStack *stack,
-                      GimpColorDisplay      *display);
-  void (* reordered) (GimpColorDisplayStack *stack,
-                      GimpColorDisplay      *display,
+  void (* removed)   (PicmanColorDisplayStack *stack,
+                      PicmanColorDisplay      *display);
+  void (* reordered) (PicmanColorDisplayStack *stack,
+                      PicmanColorDisplay      *display,
                       gint                   position);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType                   gimp_color_display_stack_get_type (void) G_GNUC_CONST;
-GimpColorDisplayStack * gimp_color_display_stack_new      (void);
-GimpColorDisplayStack * gimp_color_display_stack_clone    (GimpColorDisplayStack *stack);
+GType                   picman_color_display_stack_get_type (void) G_GNUC_CONST;
+PicmanColorDisplayStack * picman_color_display_stack_new      (void);
+PicmanColorDisplayStack * picman_color_display_stack_clone    (PicmanColorDisplayStack *stack);
 
-void   gimp_color_display_stack_changed         (GimpColorDisplayStack *stack);
+void   picman_color_display_stack_changed         (PicmanColorDisplayStack *stack);
 
-void   gimp_color_display_stack_add             (GimpColorDisplayStack *stack,
-                                                 GimpColorDisplay      *display);
-void   gimp_color_display_stack_remove          (GimpColorDisplayStack *stack,
-                                                 GimpColorDisplay      *display);
-void   gimp_color_display_stack_reorder_up      (GimpColorDisplayStack *stack,
-                                                 GimpColorDisplay      *display);
-void   gimp_color_display_stack_reorder_down    (GimpColorDisplayStack *stack,
-                                                 GimpColorDisplay      *display);
-void   gimp_color_display_stack_convert_surface (GimpColorDisplayStack *stack,
+void   picman_color_display_stack_add             (PicmanColorDisplayStack *stack,
+                                                 PicmanColorDisplay      *display);
+void   picman_color_display_stack_remove          (PicmanColorDisplayStack *stack,
+                                                 PicmanColorDisplay      *display);
+void   picman_color_display_stack_reorder_up      (PicmanColorDisplayStack *stack,
+                                                 PicmanColorDisplay      *display);
+void   picman_color_display_stack_reorder_down    (PicmanColorDisplayStack *stack,
+                                                 PicmanColorDisplay      *display);
+void   picman_color_display_stack_convert_surface (PicmanColorDisplayStack *stack,
                                                  cairo_surface_t       *surface);
-GIMP_DEPRECATED_FOR(gimp_color_display_stack_convert_surface)
-void   gimp_color_display_stack_convert         (GimpColorDisplayStack *stack,
+PICMAN_DEPRECATED_FOR(picman_color_display_stack_convert_surface)
+void   picman_color_display_stack_convert         (PicmanColorDisplayStack *stack,
                                                  guchar                *buf,
                                                  gint                   width,
                                                  gint                   height,
@@ -97,4 +97,4 @@ void   gimp_color_display_stack_convert         (GimpColorDisplayStack *stack,
 
 G_END_DECLS
 
-#endif /* __GIMP_COLOR_DISPLAY_STACK_H__ */
+#endif /* __PICMAN_COLOR_DISPLAY_STACK_H__ */

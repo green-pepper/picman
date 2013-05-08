@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,56 +19,56 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimpcontainer.h"
-#include "gimpchannel.h"
-#include "gimpcontext.h"
-#include "gimpguide.h"
-#include "gimpimage.h"
-#include "gimpimage-guides.h"
-#include "gimpimage-item-list.h"
-#include "gimpimage-resize.h"
-#include "gimpimage-sample-points.h"
-#include "gimpimage-undo.h"
-#include "gimpimage-undo-push.h"
-#include "gimplayer.h"
-#include "gimpprogress.h"
-#include "gimpsamplepoint.h"
+#include "picman.h"
+#include "picmancontainer.h"
+#include "picmanchannel.h"
+#include "picmancontext.h"
+#include "picmanguide.h"
+#include "picmanimage.h"
+#include "picmanimage-guides.h"
+#include "picmanimage-item-list.h"
+#include "picmanimage-resize.h"
+#include "picmanimage-sample-points.h"
+#include "picmanimage-undo.h"
+#include "picmanimage-undo-push.h"
+#include "picmanlayer.h"
+#include "picmanprogress.h"
+#include "picmansamplepoint.h"
 
-#include "text/gimptextlayer.h"
+#include "text/picmantextlayer.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 void
-gimp_image_resize (GimpImage    *image,
-                   GimpContext  *context,
+picman_image_resize (PicmanImage    *image,
+                   PicmanContext  *context,
                    gint          new_width,
                    gint          new_height,
                    gint          offset_x,
                    gint          offset_y,
-                   GimpProgress *progress)
+                   PicmanProgress *progress)
 {
-  gimp_image_resize_with_layers (image, context,
+  picman_image_resize_with_layers (image, context,
                                  new_width, new_height, offset_x, offset_y,
-                                 GIMP_ITEM_SET_NONE, TRUE,
+                                 PICMAN_ITEM_SET_NONE, TRUE,
                                  progress);
 }
 
 void
-gimp_image_resize_with_layers (GimpImage    *image,
-                               GimpContext  *context,
+picman_image_resize_with_layers (PicmanImage    *image,
+                               PicmanContext  *context,
                                gint          new_width,
                                gint          new_height,
                                gint          offset_x,
                                gint          offset_y,
-                               GimpItemSet   layer_set,
+                               PicmanItemSet   layer_set,
                                gboolean      resize_text_layers,
-                               GimpProgress *progress)
+                               PicmanProgress *progress)
 {
   GList   *list;
   GList   *resize_layers;
@@ -76,33 +76,33 @@ gimp_image_resize_with_layers (GimpImage    *image,
   gdouble  progress_current = 1.0;
   gint     old_width, old_height;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
   g_return_if_fail (new_width > 0 && new_height > 0);
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
-  gimp_set_busy (image->gimp);
+  picman_set_busy (image->picman);
 
   g_object_freeze_notify (G_OBJECT (image));
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_IMAGE_RESIZE,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_IMAGE_RESIZE,
                                C_("undo-type", "Resize Image"));
 
-  resize_layers = gimp_image_item_list_get_list (image, NULL,
-                                                 GIMP_ITEM_TYPE_LAYERS,
+  resize_layers = picman_image_item_list_get_list (image, NULL,
+                                                 PICMAN_ITEM_TYPE_LAYERS,
                                                  layer_set);
 
-  progress_max = (gimp_container_get_n_children (gimp_image_get_layers (image))   +
-                  gimp_container_get_n_children (gimp_image_get_channels (image)) +
-                  gimp_container_get_n_children (gimp_image_get_vectors (image))  +
+  progress_max = (picman_container_get_n_children (picman_image_get_layers (image))   +
+                  picman_container_get_n_children (picman_image_get_channels (image)) +
+                  picman_container_get_n_children (picman_image_get_vectors (image))  +
                   g_list_length (resize_layers)                                   +
                   1 /* selection */);
 
-  old_width  = gimp_image_get_width  (image);
-  old_height = gimp_image_get_height (image);
+  old_width  = picman_image_get_width  (image);
+  old_height = picman_image_get_height (image);
 
   /*  Push the image size to the stack  */
-  gimp_image_undo_push_image_size (image, NULL,
+  picman_image_undo_push_image_size (image, NULL,
                                    -offset_x, -offset_y,
                                    new_width, new_height);
 
@@ -113,97 +113,97 @@ gimp_image_resize_with_layers (GimpImage    *image,
                 NULL);
 
   /*  Resize all channels  */
-  for (list = gimp_image_get_channel_iter (image);
+  for (list = picman_image_get_channel_iter (image);
        list;
        list = g_list_next (list))
     {
-      GimpItem *item = list->data;
+      PicmanItem *item = list->data;
 
-      gimp_item_resize (item, context,
+      picman_item_resize (item, context,
                         new_width, new_height, offset_x, offset_y);
 
       if (progress)
-        gimp_progress_set_value (progress, progress_current++ / progress_max);
+        picman_progress_set_value (progress, progress_current++ / progress_max);
     }
 
   /*  Resize all vectors  */
-  for (list = gimp_image_get_vectors_iter (image);
+  for (list = picman_image_get_vectors_iter (image);
        list;
        list = g_list_next (list))
     {
-      GimpItem *item = list->data;
+      PicmanItem *item = list->data;
 
-      gimp_item_resize (item, context,
+      picman_item_resize (item, context,
                         new_width, new_height, offset_x, offset_y);
 
       if (progress)
-        gimp_progress_set_value (progress, progress_current++ / progress_max);
+        picman_progress_set_value (progress, progress_current++ / progress_max);
     }
 
   /*  Don't forget the selection mask!  */
-  gimp_item_resize (GIMP_ITEM (gimp_image_get_mask (image)), context,
+  picman_item_resize (PICMAN_ITEM (picman_image_get_mask (image)), context,
                     new_width, new_height, offset_x, offset_y);
 
   if (progress)
-    gimp_progress_set_value (progress, progress_current++ / progress_max);
+    picman_progress_set_value (progress, progress_current++ / progress_max);
 
   /*  Reposition all layers  */
-  for (list = gimp_image_get_layer_iter (image);
+  for (list = picman_image_get_layer_iter (image);
        list;
        list = g_list_next (list))
     {
-      GimpItem *item = list->data;
+      PicmanItem *item = list->data;
 
-      gimp_item_translate (item, offset_x, offset_y, TRUE);
+      picman_item_translate (item, offset_x, offset_y, TRUE);
 
       if (progress)
-        gimp_progress_set_value (progress, progress_current++ / progress_max);
+        picman_progress_set_value (progress, progress_current++ / progress_max);
     }
 
   /*  Resize all resize_layers to image size  */
   for (list = resize_layers; list; list = g_list_next (list))
     {
-      GimpItem *item = list->data;
+      PicmanItem *item = list->data;
       gint      old_offset_x;
       gint      old_offset_y;
 
       /*  group layers can't be resized here  */
-      if (gimp_viewable_get_children (GIMP_VIEWABLE (item)))
+      if (picman_viewable_get_children (PICMAN_VIEWABLE (item)))
         continue;
 
-      if (! resize_text_layers && gimp_item_is_text_layer (item))
+      if (! resize_text_layers && picman_item_is_text_layer (item))
         continue;
 
-      gimp_item_get_offset (item, &old_offset_x, &old_offset_y);
+      picman_item_get_offset (item, &old_offset_x, &old_offset_y);
 
-      gimp_item_resize (item, context,
+      picman_item_resize (item, context,
                         new_width, new_height,
                         old_offset_x, old_offset_y);
 
       if (progress)
-        gimp_progress_set_value (progress, progress_current++ / progress_max);
+        picman_progress_set_value (progress, progress_current++ / progress_max);
     }
 
   g_list_free (resize_layers);
 
   /*  Reposition or remove all guides  */
-  for (list = gimp_image_get_guides (image);
+  for (list = picman_image_get_guides (image);
        list;
        list = g_list_next (list))
     {
-      GimpGuide *guide        = list->data;
+      PicmanGuide *guide        = list->data;
       gboolean   remove_guide = FALSE;
-      gint       new_position = gimp_guide_get_position (guide);
+      gint       new_position = picman_guide_get_position (guide);
 
-      switch (gimp_guide_get_orientation (guide))
+      switch (picman_guide_get_orientation (guide))
         {
-        case GIMP_ORIENTATION_HORIZONTAL:
+        case PICMAN_ORIENTATION_HORIZONTAL:
           new_position += offset_y;
           if (new_position < 0 || new_position > new_height)
             remove_guide = TRUE;
           break;
 
-        case GIMP_ORIENTATION_VERTICAL:
+        case PICMAN_ORIENTATION_VERTICAL:
           new_position += offset_x;
           if (new_position < 0 || new_position > new_width)
             remove_guide = TRUE;
@@ -214,17 +214,17 @@ gimp_image_resize_with_layers (GimpImage    *image,
         }
 
       if (remove_guide)
-        gimp_image_remove_guide (image, guide, TRUE);
-      else if (new_position != gimp_guide_get_position (guide))
-        gimp_image_move_guide (image, guide, new_position, TRUE);
+        picman_image_remove_guide (image, guide, TRUE);
+      else if (new_position != picman_guide_get_position (guide))
+        picman_image_move_guide (image, guide, new_position, TRUE);
     }
 
   /*  Reposition or remove sample points  */
-  for (list = gimp_image_get_sample_points (image);
+  for (list = picman_image_get_sample_points (image);
        list;
        list = g_list_next (list))
     {
-      GimpSamplePoint *sample_point        = list->data;
+      PicmanSamplePoint *sample_point        = list->data;
       gboolean         remove_sample_point = FALSE;
       gint             new_x               = sample_point->x;
       gint             new_y               = sample_point->y;
@@ -238,38 +238,38 @@ gimp_image_resize_with_layers (GimpImage    *image,
         remove_sample_point = TRUE;
 
       if (remove_sample_point)
-        gimp_image_remove_sample_point (image, sample_point, TRUE);
+        picman_image_remove_sample_point (image, sample_point, TRUE);
       else if (new_x != sample_point->x || new_y != sample_point->y)
-        gimp_image_move_sample_point (image, sample_point,
+        picman_image_move_sample_point (image, sample_point,
                                       new_x, new_y, TRUE);
     }
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
-  gimp_image_size_changed_detailed (image,
+  picman_image_size_changed_detailed (image,
                                     offset_x, offset_y,
                                     old_width, old_height);
 
   g_object_thaw_notify (G_OBJECT (image));
 
-  gimp_unset_busy (image->gimp);
+  picman_unset_busy (image->picman);
 }
 
 void
-gimp_image_resize_to_layers (GimpImage    *image,
-                             GimpContext  *context,
-                             GimpProgress *progress)
+picman_image_resize_to_layers (PicmanImage    *image,
+                             PicmanContext  *context,
+                             PicmanProgress *progress)
 {
   GList    *list;
-  GimpItem *item;
+  PicmanItem *item;
   gint      x, y;
   gint      width, height;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
-  list = gimp_image_get_layer_iter (image);
+  list = picman_image_get_layer_iter (image);
 
   if (! list)
     return;
@@ -277,46 +277,46 @@ gimp_image_resize_to_layers (GimpImage    *image,
   /* figure out starting values */
   item = list->data;
 
-  x      = gimp_item_get_offset_x (item);
-  y      = gimp_item_get_offset_y (item);
-  width  = gimp_item_get_width  (item);
-  height = gimp_item_get_height (item);
+  x      = picman_item_get_offset_x (item);
+  y      = picman_item_get_offset_y (item);
+  width  = picman_item_get_width  (item);
+  height = picman_item_get_height (item);
 
   /*  Respect all layers  */
   for (list = g_list_next (list); list; list = g_list_next (list))
     {
       item = list->data;
 
-      gimp_rectangle_union (x, y,
+      picman_rectangle_union (x, y,
                             width, height,
-                            gimp_item_get_offset_x (item),
-                            gimp_item_get_offset_y (item),
-                            gimp_item_get_width  (item),
-                            gimp_item_get_height (item),
+                            picman_item_get_offset_x (item),
+                            picman_item_get_offset_y (item),
+                            picman_item_get_width  (item),
+                            picman_item_get_height (item),
                             &x, &y,
                             &width, &height);
     }
 
-  gimp_image_resize (image, context,
+  picman_image_resize (image, context,
                      width, height, -x, -y,
                      progress);
 }
 
 void
-gimp_image_resize_to_selection (GimpImage    *image,
-                                GimpContext  *context,
-                                GimpProgress *progress)
+picman_image_resize_to_selection (PicmanImage    *image,
+                                PicmanContext  *context,
+                                PicmanProgress *progress)
 {
-  GimpChannel *selection = gimp_image_get_mask (image);
+  PicmanChannel *selection = picman_image_get_mask (image);
   gint         x1, y1;
   gint         x2, y2;
 
-  if (gimp_channel_is_empty (selection))
+  if (picman_channel_is_empty (selection))
     return;
 
-  gimp_channel_bounds (selection, &x1, &y1, &x2, &y2);
+  picman_channel_bounds (selection, &x1, &y1, &x2, &y2);
 
-  gimp_image_resize (image, context,
+  picman_image_resize (image, context,
                      x2 - x1, y2 - y1,
                      - x1, - y1,
                      progress);

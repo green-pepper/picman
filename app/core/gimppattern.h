@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,44 +15,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PATTERN_H__
-#define __GIMP_PATTERN_H__
+#ifndef __PICMAN_PATTERN_H__
+#define __PICMAN_PATTERN_H__
 
 
-#include "gimpdata.h"
+#include "picmandata.h"
 
 
-#define GIMP_TYPE_PATTERN            (gimp_pattern_get_type ())
-#define GIMP_PATTERN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PATTERN, GimpPattern))
-#define GIMP_PATTERN_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PATTERN, GimpPatternClass))
-#define GIMP_IS_PATTERN(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PATTERN))
-#define GIMP_IS_PATTERN_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PATTERN))
-#define GIMP_PATTERN_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PATTERN, GimpPatternClass))
+#define PICMAN_TYPE_PATTERN            (picman_pattern_get_type ())
+#define PICMAN_PATTERN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PATTERN, PicmanPattern))
+#define PICMAN_PATTERN_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PATTERN, PicmanPatternClass))
+#define PICMAN_IS_PATTERN(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PATTERN))
+#define PICMAN_IS_PATTERN_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PATTERN))
+#define PICMAN_PATTERN_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PATTERN, PicmanPatternClass))
 
 
-typedef struct _GimpPatternClass GimpPatternClass;
+typedef struct _PicmanPatternClass PicmanPatternClass;
 
-struct _GimpPattern
+struct _PicmanPattern
 {
-  GimpData     parent_instance;
+  PicmanData     parent_instance;
 
-  GimpTempBuf *mask;
+  PicmanTempBuf *mask;
 };
 
-struct _GimpPatternClass
+struct _PicmanPatternClass
 {
-  GimpDataClass  parent_class;
+  PicmanDataClass  parent_class;
 };
 
 
-GType         gimp_pattern_get_type      (void) G_GNUC_CONST;
+GType         picman_pattern_get_type      (void) G_GNUC_CONST;
 
-GimpData    * gimp_pattern_new           (GimpContext       *context,
+PicmanData    * picman_pattern_new           (PicmanContext       *context,
                                           const gchar       *name);
-GimpData    * gimp_pattern_get_standard  (GimpContext       *context);
+PicmanData    * picman_pattern_get_standard  (PicmanContext       *context);
 
-GimpTempBuf * gimp_pattern_get_mask      (const GimpPattern *pattern);
-GeglBuffer  * gimp_pattern_create_buffer (const GimpPattern *pattern);
+PicmanTempBuf * picman_pattern_get_mask      (const PicmanPattern *pattern);
+GeglBuffer  * picman_pattern_create_buffer (const PicmanPattern *pattern);
 
 
-#endif /* __GIMP_PATTERN_H__ */
+#endif /* __PICMAN_PATTERN_H__ */

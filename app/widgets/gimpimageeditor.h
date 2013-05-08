@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,46 +15,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_EDITOR_H__
-#define __GIMP_IMAGE_EDITOR_H__
+#ifndef __PICMAN_IMAGE_EDITOR_H__
+#define __PICMAN_IMAGE_EDITOR_H__
 
 
-#include "gimpeditor.h"
+#include "picmaneditor.h"
 
 
-#define GIMP_TYPE_IMAGE_EDITOR            (gimp_image_editor_get_type ())
-#define GIMP_IMAGE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_IMAGE_EDITOR, GimpImageEditor))
-#define GIMP_IMAGE_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_IMAGE_EDITOR, GimpImageEditorClass))
-#define GIMP_IS_IMAGE_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_IMAGE_EDITOR))
-#define GIMP_IS_IMAGE_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_IMAGE_EDITOR))
-#define GIMP_IMAGE_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_IMAGE_EDITOR, GimpImageEditorClass))
+#define PICMAN_TYPE_IMAGE_EDITOR            (picman_image_editor_get_type ())
+#define PICMAN_IMAGE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_IMAGE_EDITOR, PicmanImageEditor))
+#define PICMAN_IMAGE_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_IMAGE_EDITOR, PicmanImageEditorClass))
+#define PICMAN_IS_IMAGE_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_IMAGE_EDITOR))
+#define PICMAN_IS_IMAGE_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_IMAGE_EDITOR))
+#define PICMAN_IMAGE_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_IMAGE_EDITOR, PicmanImageEditorClass))
 
 
-typedef struct _GimpImageEditorClass GimpImageEditorClass;
+typedef struct _PicmanImageEditorClass PicmanImageEditorClass;
 
-struct _GimpImageEditor
+struct _PicmanImageEditor
 {
-  GimpEditor   parent_instance;
+  PicmanEditor   parent_instance;
 
-  GimpContext *context;
-  GimpImage   *image;
+  PicmanContext *context;
+  PicmanImage   *image;
 };
 
-struct _GimpImageEditorClass
+struct _PicmanImageEditorClass
 {
-  GimpEditorClass  parent_class;
+  PicmanEditorClass  parent_class;
 
   /*  virtual function  */
-  void (* set_image) (GimpImageEditor *editor,
-                      GimpImage       *image);
+  void (* set_image) (PicmanImageEditor *editor,
+                      PicmanImage       *image);
 };
 
 
-GType       gimp_image_editor_get_type  (void) G_GNUC_CONST;
+GType       picman_image_editor_get_type  (void) G_GNUC_CONST;
 
-void        gimp_image_editor_set_image (GimpImageEditor *editor,
-                                         GimpImage       *image);
-GimpImage * gimp_image_editor_get_image (GimpImageEditor *editor);
+void        picman_image_editor_set_image (PicmanImageEditor *editor,
+                                         PicmanImage       *image);
+PicmanImage * picman_image_editor_get_image (PicmanImageEditor *editor);
 
 
-#endif /* __GIMP_IMAGE_EDITOR_H__ */
+#endif /* __PICMAN_IMAGE_EDITOR_H__ */

@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpzoompreview.h
- * Copyright (C) 2005  David Odin <dindinx@gimp.org>
+ * picmanzoompreview.h
+ * Copyright (C) 2005  David Odin <dindinx@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_UI_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimpui.h> can be included directly."
+#if !defined (__PICMAN_UI_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picmanui.h> can be included directly."
 #endif
 
-#ifndef __GIMP_ZOOM_PREVIEW_H__
-#define __GIMP_ZOOM_PREVIEW_H__
+#ifndef __PICMAN_ZOOM_PREVIEW_H__
+#define __PICMAN_ZOOM_PREVIEW_H__
 
 G_BEGIN_DECLS
 
@@ -32,51 +32,51 @@ G_BEGIN_DECLS
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_ZOOM_PREVIEW            (gimp_zoom_preview_get_type ())
-#define GIMP_ZOOM_PREVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ZOOM_PREVIEW, GimpZoomPreview))
-#define GIMP_ZOOM_PREVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ZOOM_PREVIEW, GimpZoomPreviewClass))
-#define GIMP_IS_ZOOM_PREVIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ZOOM_PREVIEW))
-#define GIMP_IS_ZOOM_PREVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ZOOM_PREVIEW))
-#define GIMP_ZOOM_PREVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ZOOM_PREVIEW, GimpZoomPreviewClass))
+#define PICMAN_TYPE_ZOOM_PREVIEW            (picman_zoom_preview_get_type ())
+#define PICMAN_ZOOM_PREVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ZOOM_PREVIEW, PicmanZoomPreview))
+#define PICMAN_ZOOM_PREVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ZOOM_PREVIEW, PicmanZoomPreviewClass))
+#define PICMAN_IS_ZOOM_PREVIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ZOOM_PREVIEW))
+#define PICMAN_IS_ZOOM_PREVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ZOOM_PREVIEW))
+#define PICMAN_ZOOM_PREVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ZOOM_PREVIEW, PicmanZoomPreviewClass))
 
 
-typedef struct _GimpZoomPreviewClass  GimpZoomPreviewClass;
+typedef struct _PicmanZoomPreviewClass  PicmanZoomPreviewClass;
 
-struct _GimpZoomPreview
+struct _PicmanZoomPreview
 {
-  GimpScrolledPreview  parent_instance;
+  PicmanScrolledPreview  parent_instance;
 
   /*< private >*/
   gpointer             priv;
 };
 
-struct _GimpZoomPreviewClass
+struct _PicmanZoomPreviewClass
 {
-  GimpScrolledPreviewClass  parent_class;
+  PicmanScrolledPreviewClass  parent_class;
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType           gimp_zoom_preview_get_type       (void) G_GNUC_CONST;
+GType           picman_zoom_preview_get_type       (void) G_GNUC_CONST;
 
-GtkWidget     * gimp_zoom_preview_new            (GimpDrawable    *drawable);
-GtkWidget     * gimp_zoom_preview_new_with_model (GimpDrawable    *drawable,
-                                                  GimpZoomModel   *model);
+GtkWidget     * picman_zoom_preview_new            (PicmanDrawable    *drawable);
+GtkWidget     * picman_zoom_preview_new_with_model (PicmanDrawable    *drawable,
+                                                  PicmanZoomModel   *model);
 
-guchar        * gimp_zoom_preview_get_source     (GimpZoomPreview *preview,
+guchar        * picman_zoom_preview_get_source     (PicmanZoomPreview *preview,
                                                   gint            *width,
                                                   gint            *height,
                                                   gint            *bpp);
 
-GimpDrawable  * gimp_zoom_preview_get_drawable   (GimpZoomPreview *preview);
-GimpZoomModel * gimp_zoom_preview_get_model      (GimpZoomPreview *preview);
-gdouble         gimp_zoom_preview_get_factor     (GimpZoomPreview *preview);
+PicmanDrawable  * picman_zoom_preview_get_drawable   (PicmanZoomPreview *preview);
+PicmanZoomModel * picman_zoom_preview_get_model      (PicmanZoomPreview *preview);
+gdouble         picman_zoom_preview_get_factor     (PicmanZoomPreview *preview);
 
 G_END_DECLS
 
-#endif /* __GIMP_ZOOM_PREVIEW_H__ */
+#endif /* __PICMAN_ZOOM_PREVIEW_H__ */

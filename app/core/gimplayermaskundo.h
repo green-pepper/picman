@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,37 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_LAYER_MASK_UNDO_H__
-#define __GIMP_LAYER_MASK_UNDO_H__
+#ifndef __PICMAN_LAYER_MASK_UNDO_H__
+#define __PICMAN_LAYER_MASK_UNDO_H__
 
 
-#include "gimpitemundo.h"
+#include "picmanitemundo.h"
 
 
-#define GIMP_TYPE_LAYER_MASK_UNDO            (gimp_layer_mask_undo_get_type ())
-#define GIMP_LAYER_MASK_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_LAYER_MASK_UNDO, GimpLayerMaskUndo))
-#define GIMP_LAYER_MASK_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_LAYER_MASK_UNDO, GimpLayerMaskUndoClass))
-#define GIMP_IS_LAYER_MASK_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_LAYER_MASK_UNDO))
-#define GIMP_IS_LAYER_MASK_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_LAYER_MASK_UNDO))
-#define GIMP_LAYER_MASK_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_LAYER_MASK_UNDO, GimpLayerMaskUndoClass))
+#define PICMAN_TYPE_LAYER_MASK_UNDO            (picman_layer_mask_undo_get_type ())
+#define PICMAN_LAYER_MASK_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_LAYER_MASK_UNDO, PicmanLayerMaskUndo))
+#define PICMAN_LAYER_MASK_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_LAYER_MASK_UNDO, PicmanLayerMaskUndoClass))
+#define PICMAN_IS_LAYER_MASK_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_LAYER_MASK_UNDO))
+#define PICMAN_IS_LAYER_MASK_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_LAYER_MASK_UNDO))
+#define PICMAN_LAYER_MASK_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_LAYER_MASK_UNDO, PicmanLayerMaskUndoClass))
 
 
-typedef struct _GimpLayerMaskUndoClass GimpLayerMaskUndoClass;
+typedef struct _PicmanLayerMaskUndoClass PicmanLayerMaskUndoClass;
 
-struct _GimpLayerMaskUndo
+struct _PicmanLayerMaskUndo
 {
-  GimpItemUndo   parent_instance;
+  PicmanItemUndo   parent_instance;
 
-  GimpLayerMask *layer_mask;
+  PicmanLayerMask *layer_mask;
 };
 
-struct _GimpLayerMaskUndoClass
+struct _PicmanLayerMaskUndoClass
 {
-  GimpItemUndoClass  parent_class;
+  PicmanItemUndoClass  parent_class;
 };
 
 
-GType   gimp_layer_mask_undo_get_type (void) G_GNUC_CONST;
+GType   picman_layer_mask_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_LAYER_MASK_UNDO_H__ */
+#endif /* __PICMAN_LAYER_MASK_UNDO_H__ */

@@ -1,139 +1,139 @@
 
-typedef GType (* GimpGetTypeFunc) (void);
+typedef GType (* PicmanGetTypeFunc) (void);
 
-static const GimpGetTypeFunc get_type_funcs[] =
+static const PicmanGetTypeFunc get_type_funcs[] =
 {
-  gimp_add_mask_type_get_type,
-  gimp_blend_mode_get_type,
-  gimp_brush_application_mode_get_type,
-  gimp_brush_generated_shape_get_type,
-  gimp_bucket_fill_mode_get_type,
-  gimp_channel_ops_get_type,
-  gimp_channel_type_get_type,
-  gimp_clone_type_get_type,
-  gimp_convert_dither_type_get_type,
-  gimp_convert_palette_type_get_type,
-  gimp_convolution_type_get_type,
-  gimp_convolve_type_get_type,
-  gimp_desaturate_mode_get_type,
-  gimp_dodge_burn_type_get_type,
-  gimp_fill_type_get_type,
-  gimp_foreground_extract_mode_get_type,
-  gimp_gradient_segment_color_get_type,
-  gimp_gradient_segment_type_get_type,
-  gimp_gradient_type_get_type,
-  gimp_grid_style_get_type,
-  gimp_histogram_channel_get_type,
-  gimp_hue_range_get_type,
-  gimp_icon_type_get_type,
-  gimp_image_base_type_get_type,
-  gimp_image_type_get_type,
-  gimp_ink_blob_type_get_type,
-  gimp_interpolation_type_get_type,
-  gimp_layer_mode_effects_get_type,
-  gimp_mask_apply_mode_get_type,
-  gimp_merge_type_get_type,
-  gimp_message_handler_type_get_type,
-  gimp_offset_type_get_type,
-  gimp_orientation_type_get_type,
-  gimp_pdb_arg_type_get_type,
-  gimp_pdb_error_handler_get_type,
-  gimp_pdb_proc_type_get_type,
-  gimp_pdb_status_type_get_type,
-  gimp_paint_application_mode_get_type,
-  gimp_precision_get_type,
-  gimp_progress_command_get_type,
-  gimp_repeat_mode_get_type,
-  gimp_rotation_type_get_type,
-  gimp_run_mode_get_type,
-  gimp_select_criterion_get_type,
-  gimp_size_type_get_type,
-  gimp_stack_trace_mode_get_type,
-  gimp_text_direction_get_type,
-  gimp_text_hint_style_get_type,
-  gimp_text_justification_get_type,
-  gimp_transfer_mode_get_type,
-  gimp_transform_direction_get_type,
-  gimp_transform_resize_get_type,
-  gimp_user_directory_get_type,
-  gimp_vectors_stroke_type_get_type
+  picman_add_mask_type_get_type,
+  picman_blend_mode_get_type,
+  picman_brush_application_mode_get_type,
+  picman_brush_generated_shape_get_type,
+  picman_bucket_fill_mode_get_type,
+  picman_channel_ops_get_type,
+  picman_channel_type_get_type,
+  picman_clone_type_get_type,
+  picman_convert_dither_type_get_type,
+  picman_convert_palette_type_get_type,
+  picman_convolution_type_get_type,
+  picman_convolve_type_get_type,
+  picman_desaturate_mode_get_type,
+  picman_dodge_burn_type_get_type,
+  picman_fill_type_get_type,
+  picman_foreground_extract_mode_get_type,
+  picman_gradient_segment_color_get_type,
+  picman_gradient_segment_type_get_type,
+  picman_gradient_type_get_type,
+  picman_grid_style_get_type,
+  picman_histogram_channel_get_type,
+  picman_hue_range_get_type,
+  picman_icon_type_get_type,
+  picman_image_base_type_get_type,
+  picman_image_type_get_type,
+  picman_ink_blob_type_get_type,
+  picman_interpolation_type_get_type,
+  picman_layer_mode_effects_get_type,
+  picman_mask_apply_mode_get_type,
+  picman_merge_type_get_type,
+  picman_message_handler_type_get_type,
+  picman_offset_type_get_type,
+  picman_orientation_type_get_type,
+  picman_pdb_arg_type_get_type,
+  picman_pdb_error_handler_get_type,
+  picman_pdb_proc_type_get_type,
+  picman_pdb_status_type_get_type,
+  picman_paint_application_mode_get_type,
+  picman_precision_get_type,
+  picman_progress_command_get_type,
+  picman_repeat_mode_get_type,
+  picman_rotation_type_get_type,
+  picman_run_mode_get_type,
+  picman_select_criterion_get_type,
+  picman_size_type_get_type,
+  picman_stack_trace_mode_get_type,
+  picman_text_direction_get_type,
+  picman_text_hint_style_get_type,
+  picman_text_justification_get_type,
+  picman_transfer_mode_get_type,
+  picman_transform_direction_get_type,
+  picman_transform_resize_get_type,
+  picman_user_directory_get_type,
+  picman_vectors_stroke_type_get_type
 };
 
 static const gchar * const type_names[] =
 {
-  "GimpAddMaskType",
-  "GimpBlendMode",
-  "GimpBrushApplicationMode",
-  "GimpBrushGeneratedShape",
-  "GimpBucketFillMode",
-  "GimpChannelOps",
-  "GimpChannelType",
-  "GimpCloneType",
-  "GimpConvertDitherType",
-  "GimpConvertPaletteType",
-  "GimpConvolutionType",
-  "GimpConvolveType",
-  "GimpDesaturateMode",
-  "GimpDodgeBurnType",
-  "GimpFillType",
-  "GimpForegroundExtractMode",
-  "GimpGradientSegmentColor",
-  "GimpGradientSegmentType",
-  "GimpGradientType",
-  "GimpGridStyle",
-  "GimpHistogramChannel",
-  "GimpHueRange",
-  "GimpIconType",
-  "GimpImageBaseType",
-  "GimpImageType",
-  "GimpInkBlobType",
-  "GimpInterpolationType",
-  "GimpLayerModeEffects",
-  "GimpMaskApplyMode",
-  "GimpMergeType",
-  "GimpMessageHandlerType",
-  "GimpOffsetType",
-  "GimpOrientationType",
-  "GimpPDBArgType",
-  "GimpPDBErrorHandler",
-  "GimpPDBProcType",
-  "GimpPDBStatusType",
-  "GimpPaintApplicationMode",
-  "GimpPrecision",
-  "GimpProgressCommand",
-  "GimpRepeatMode",
-  "GimpRotationType",
-  "GimpRunMode",
-  "GimpSelectCriterion",
-  "GimpSizeType",
-  "GimpStackTraceMode",
-  "GimpTextDirection",
-  "GimpTextHintStyle",
-  "GimpTextJustification",
-  "GimpTransferMode",
-  "GimpTransformDirection",
-  "GimpTransformResize",
-  "GimpUserDirectory",
-  "GimpVectorsStrokeType"
+  "PicmanAddMaskType",
+  "PicmanBlendMode",
+  "PicmanBrushApplicationMode",
+  "PicmanBrushGeneratedShape",
+  "PicmanBucketFillMode",
+  "PicmanChannelOps",
+  "PicmanChannelType",
+  "PicmanCloneType",
+  "PicmanConvertDitherType",
+  "PicmanConvertPaletteType",
+  "PicmanConvolutionType",
+  "PicmanConvolveType",
+  "PicmanDesaturateMode",
+  "PicmanDodgeBurnType",
+  "PicmanFillType",
+  "PicmanForegroundExtractMode",
+  "PicmanGradientSegmentColor",
+  "PicmanGradientSegmentType",
+  "PicmanGradientType",
+  "PicmanGridStyle",
+  "PicmanHistogramChannel",
+  "PicmanHueRange",
+  "PicmanIconType",
+  "PicmanImageBaseType",
+  "PicmanImageType",
+  "PicmanInkBlobType",
+  "PicmanInterpolationType",
+  "PicmanLayerModeEffects",
+  "PicmanMaskApplyMode",
+  "PicmanMergeType",
+  "PicmanMessageHandlerType",
+  "PicmanOffsetType",
+  "PicmanOrientationType",
+  "PicmanPDBArgType",
+  "PicmanPDBErrorHandler",
+  "PicmanPDBProcType",
+  "PicmanPDBStatusType",
+  "PicmanPaintApplicationMode",
+  "PicmanPrecision",
+  "PicmanProgressCommand",
+  "PicmanRepeatMode",
+  "PicmanRotationType",
+  "PicmanRunMode",
+  "PicmanSelectCriterion",
+  "PicmanSizeType",
+  "PicmanStackTraceMode",
+  "PicmanTextDirection",
+  "PicmanTextHintStyle",
+  "PicmanTextJustification",
+  "PicmanTransferMode",
+  "PicmanTransformDirection",
+  "PicmanTransformResize",
+  "PicmanUserDirectory",
+  "PicmanVectorsStrokeType"
 };
 
 static gboolean enums_initialized = FALSE;
 
 /**
- * gimp_enums_init:
+ * picman_enums_init:
  *
  * This function makes sure all the enum types are registered
  * with the #GType system. This is intended for use by language
- * bindings that need the symbols early, before gimp_main is run.
+ * bindings that need the symbols early, before picman_main is run.
  * It's not necessary for plug-ins to call this directly, because
  * the normal plug-in initialization code will handle it implicitly.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_enums_init (void)
+picman_enums_init (void)
 {
-  const GimpGetTypeFunc *funcs = get_type_funcs;
+  const PicmanGetTypeFunc *funcs = get_type_funcs;
   gint                   i;
 
   if (enums_initialized)
@@ -150,18 +150,18 @@ gimp_enums_init (void)
 }
 
 /**
- * gimp_enums_get_type_names:
+ * picman_enums_get_type_names:
  * @n_type_names: return location for the number of names
  *
- * This function gives access to the list of enums registered by libgimp.
+ * This function gives access to the list of enums registered by libpicman.
  * The returned array is static and must not be modified.
  *
  * Return value: an array with type names
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 const gchar **
-gimp_enums_get_type_names (gint *n_type_names)
+picman_enums_get_type_names (gint *n_type_names)
 {
   g_return_val_if_fail (n_type_names != NULL, NULL);
 

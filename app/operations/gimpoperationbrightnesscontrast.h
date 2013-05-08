@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationbrightnesscontrast.h
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picmanoperationbrightnesscontrast.h
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_BRIGHTNESS_CONTRAST_H__
-#define __GIMP_OPERATION_BRIGHTNESS_CONTRAST_H__
+#ifndef __PICMAN_OPERATION_BRIGHTNESS_CONTRAST_H__
+#define __PICMAN_OPERATION_BRIGHTNESS_CONTRAST_H__
 
 
-#include "gimpoperationpointfilter.h"
+#include "picmanoperationpointfilter.h"
 
 
-#define GIMP_TYPE_OPERATION_BRIGHTNESS_CONTRAST            (gimp_operation_brightness_contrast_get_type ())
-#define GIMP_OPERATION_BRIGHTNESS_CONTRAST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_BRIGHTNESS_CONTRAST, GimpOperationBrightnessContrast))
-#define GIMP_OPERATION_BRIGHTNESS_CONTRAST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_BRIGHTNESS_CONTRAST, GimpOperationBrightnessContrastClass))
-#define GIMP_IS_OPERATION_BRIGHTNESS_CONTRAST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_BRIGHTNESS_CONTRAST))
-#define GIMP_IS_OPERATION_BRIGHTNESS_CONTRAST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_BRIGHTNESS_CONTRAST))
-#define GIMP_OPERATION_BRIGHTNESS_CONTRAST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_BRIGHTNESS_CONTRAST, GimpOperationBrightnessContrastClass))
+#define PICMAN_TYPE_OPERATION_BRIGHTNESS_CONTRAST            (picman_operation_brightness_contrast_get_type ())
+#define PICMAN_OPERATION_BRIGHTNESS_CONTRAST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_BRIGHTNESS_CONTRAST, PicmanOperationBrightnessContrast))
+#define PICMAN_OPERATION_BRIGHTNESS_CONTRAST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_BRIGHTNESS_CONTRAST, PicmanOperationBrightnessContrastClass))
+#define PICMAN_IS_OPERATION_BRIGHTNESS_CONTRAST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_BRIGHTNESS_CONTRAST))
+#define PICMAN_IS_OPERATION_BRIGHTNESS_CONTRAST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_BRIGHTNESS_CONTRAST))
+#define PICMAN_OPERATION_BRIGHTNESS_CONTRAST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_BRIGHTNESS_CONTRAST, PicmanOperationBrightnessContrastClass))
 
 
-typedef struct _GimpOperationBrightnessContrast      GimpOperationBrightnessContrast;
-typedef struct _GimpOperationBrightnessContrastClass GimpOperationBrightnessContrastClass;
+typedef struct _PicmanOperationBrightnessContrast      PicmanOperationBrightnessContrast;
+typedef struct _PicmanOperationBrightnessContrastClass PicmanOperationBrightnessContrastClass;
 
-struct _GimpOperationBrightnessContrast
+struct _PicmanOperationBrightnessContrast
 {
-  GimpOperationPointFilter  parent_instance;
+  PicmanOperationPointFilter  parent_instance;
 };
 
-struct _GimpOperationBrightnessContrastClass
+struct _PicmanOperationBrightnessContrastClass
 {
-  GimpOperationPointFilterClass  parent_class;
+  PicmanOperationPointFilterClass  parent_class;
 };
 
 
-GType   gimp_operation_brightness_contrast_get_type (void) G_GNUC_CONST;
+GType   picman_operation_brightness_contrast_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_BRIGHTNESS_CONTRAST_H__ */
+#endif /* __PICMAN_OPERATION_BRIGHTNESS_CONTRAST_H__ */

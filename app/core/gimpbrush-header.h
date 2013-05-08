@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_HEADER_H__
-#define __GIMP_BRUSH_HEADER_H__
+#ifndef __PICMAN_BRUSH_HEADER_H__
+#define __PICMAN_BRUSH_HEADER_H__
 
 #define GBRUSH_FILE_VERSION    2
 #define GBRUSH_MAGIC    (('G' << 24) + ('I' << 16) + ('M' << 8) + ('P' << 0))
@@ -32,7 +32,7 @@ struct _BrushHeader
   guint32   width;        /*  width of brush  */
   guint32   height;       /*  height of brush  */
   guint32   bytes;        /*  depth of brush in bytes--always 1 */
-  guint32   magic_number; /*  GIMP brush magic number  */
+  guint32   magic_number; /*  PICMAN brush magic number  */
   guint32   spacing;      /*  brush spacing  */
 };
 
@@ -40,4 +40,4 @@ struct _BrushHeader
  *  comes the brush data--width * height * bytes bytes of it...
  */
 
-#endif  /*  __GIMP_BRUSH_HEADER_H__  */
+#endif  /*  __PICMAN_BRUSH_HEADER_H__  */

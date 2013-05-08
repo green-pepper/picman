@@ -1,4 +1,4 @@
-# Greek translation for gimp-script-fu.
+# Greek translation for picman-script-fu.
 # Copyright (C) 2001, 2002 Free Software Foundation.
 # Simos Xenitellis <simos@hellug.gr>, 2001, 2002.
 # Vasilis Kontogiannis <vasilisk@ics.forth.gr>, 2009
@@ -6,9 +6,9 @@
 # Dimitris Spingos (Δημήτρης  Σπίγγος) <dmtrs32@gmail.com>, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu 1.0\n"
+"Project-Id-Version: picman-script-fu 1.0\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-04-16 18:55+0000\n"
 "PO-Revision-Date: 2012-04-16 20:36+0300\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης  Σπίγγος) <dmtrs32@gmail.com>\n"
@@ -40,8 +40,8 @@ msgid "_Start Server..."
 msgstr "_Εκκίνηση εξυπηρετητή..."
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
-msgstr "Το _GIMP στο διαδίκτυο"
+msgid "_PICMAN Online"
+msgstr "Το _PICMAN στο διαδίκτυο"
 
 #: ../plug-ins/script-fu/script-fu.c:302
 msgid "_User Manual"
@@ -81,8 +81,8 @@ msgid "_Beveled Pattern"
 msgstr "Υπόδειγμα λοξό_τμησης"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Classic.Picman.Org"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -268,19 +268,19 @@ msgstr "Παράθεση"
 msgid "Wrap"
 msgstr "Αναδίπλωση"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:323
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:323
 msgid "Spyrograph"
 msgstr "Σπειρογράφημα"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:326
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:326
 msgid "Circle"
 msgstr "Κύκλος"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:342
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:342
 msgid "Pencil"
 msgstr "Μολύβι"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:347
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:347
 msgid "Solid Color"
 msgstr "Συμπαγές χρώμα"
 
@@ -1200,8 +1200,8 @@ msgstr "IIR"
 #~ msgid "_Fuzzy Border..."
 #~ msgstr "Ασα_φές περίγραμμα..."
 
-#~ msgid "Bookmark to the GIMP web site"
-#~ msgstr "Σελιδοδείκτης στην ιστοσελίδα GIMP"
+#~ msgid "Bookmark to the PICMAN web site"
+#~ msgstr "Σελιδοδείκτης στην ιστοσελίδα PICMAN"
 
 #~ msgid "Bookmark to the user manual"
 #~ msgstr "Σελιδοδείκτης στο εγχειρίδιο χρήστη"
@@ -1893,8 +1893,8 @@ msgstr "IIR"
 #~ msgid "Type"
 #~ msgstr "Τύπος"
 
-#~ msgid "_Spyrogimp..."
-#~ msgstr "_Σπειρογράφημα gimp..."
+#~ msgid "_Spyropicman..."
+#~ msgstr "_Σπειρογράφημα picman..."
 
 #~ msgid "Create a logo using a rock-like texture, a nova glow, and shadow"
 #~ msgstr ""
@@ -2131,15 +2131,15 @@ msgstr "IIR"
 #~ msgid "Autocrop"
 #~ msgstr "Αυτοπερικοπή"
 
-#~ msgid "Create an image of a large header using the gimp.org webpage theme"
+#~ msgid "Create an image of a large header using the picman.org webpage theme"
 #~ msgstr ""
 #~ "Δημιουργήστε μία εικόνα μεγάλης κεφαλίδας με τη χρήση του θέματος "
-#~ "ιστοσελίδας gimp.org"
+#~ "ιστοσελίδας picman.org"
 
-#~ msgid "Create an image of a small header using the gimp.org webpage theme"
+#~ msgid "Create an image of a small header using the picman.org webpage theme"
 #~ msgstr ""
 #~ "Δημιουργήστε μία εικόνα μικρής κεφαλίδας με τη χρήση του θέματος "
-#~ "ιστοσελίδας gimp.org"
+#~ "ιστοσελίδας picman.org"
 
 #, fuzzy
 #~ msgid "Dark color"
@@ -2309,7 +2309,7 @@ msgstr "IIR"
 #~ msgstr "Κονσόλα Script-Fu"
 
 #, fuzzy
-#~ msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org"
+#~ msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org"
 #~ msgstr "Κονσόλα Script-Fu"
 
 #, fuzzy
@@ -2629,7 +2629,7 @@ msgstr "IIR"
 
 #
 #, fuzzy
-#~ msgid "<Image>/Script-Fu/Render/_Spyrogimp..."
+#~ msgid "<Image>/Script-Fu/Render/_Spyropicman..."
 #~ msgstr "Επιλογή Γραμματοσειράς"
 
 #

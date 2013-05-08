@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,18 +19,18 @@
 
 #include <glib-object.h>
 
-#include "gimppdberror.h"
+#include "picmanpdberror.h"
 
 
 /**
- * gimp_pdb_error_quark:
+ * picman_pdb_error_quark:
  *
- * This function is never called directly. Use GIMP_PDB_ERROR() instead.
+ * This function is never called directly. Use PICMAN_PDB_ERROR() instead.
  *
- * Return value: the #GQuark that defines the GimpPlugIn error domain.
+ * Return value: the #GQuark that defines the PicmanPlugIn error domain.
  **/
 GQuark
-gimp_pdb_error_quark (void)
+picman_pdb_error_quark (void)
 {
-  return g_quark_from_static_string ("gimp-pdb-error-quark");
+  return g_quark_from_static_string ("picman-pdb-error-quark");
 }

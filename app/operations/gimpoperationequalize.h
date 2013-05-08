@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationequalize.h
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picmanoperationequalize.h
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,39 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_EQUALIZE_H__
-#define __GIMP_OPERATION_EQUALIZE_H__
+#ifndef __PICMAN_OPERATION_EQUALIZE_H__
+#define __PICMAN_OPERATION_EQUALIZE_H__
 
 
-#include "gimpoperationpointfilter.h"
+#include "picmanoperationpointfilter.h"
 
 
-#define GIMP_TYPE_OPERATION_EQUALIZE            (gimp_operation_equalize_get_type ())
-#define GIMP_OPERATION_EQUALIZE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_EQUALIZE, GimpOperationEqualize))
-#define GIMP_OPERATION_EQUALIZE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_EQUALIZE, GimpOperationEqualizeClass))
-#define GIMP_IS_OPERATION_EQUALIZE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_EQUALIZE))
-#define GIMP_IS_OPERATION_EQUALIZE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_EQUALIZE))
-#define GIMP_OPERATION_EQUALIZE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_EQUALIZE, GimpOperationEqualizeClass))
+#define PICMAN_TYPE_OPERATION_EQUALIZE            (picman_operation_equalize_get_type ())
+#define PICMAN_OPERATION_EQUALIZE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_EQUALIZE, PicmanOperationEqualize))
+#define PICMAN_OPERATION_EQUALIZE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_EQUALIZE, PicmanOperationEqualizeClass))
+#define PICMAN_IS_OPERATION_EQUALIZE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_EQUALIZE))
+#define PICMAN_IS_OPERATION_EQUALIZE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_EQUALIZE))
+#define PICMAN_OPERATION_EQUALIZE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_EQUALIZE, PicmanOperationEqualizeClass))
 
 
-typedef struct _GimpOperationEqualize      GimpOperationEqualize;
-typedef struct _GimpOperationEqualizeClass GimpOperationEqualizeClass;
+typedef struct _PicmanOperationEqualize      PicmanOperationEqualize;
+typedef struct _PicmanOperationEqualizeClass PicmanOperationEqualizeClass;
 
-struct _GimpOperationEqualize
+struct _PicmanOperationEqualize
 {
-  GimpOperationPointFilter  parent_instance;
+  PicmanOperationPointFilter  parent_instance;
 
-  GimpHistogram            *histogram;
+  PicmanHistogram            *histogram;
   gfloat                    part[5][256];
 };
 
-struct _GimpOperationEqualizeClass
+struct _PicmanOperationEqualizeClass
 {
-  GimpOperationPointFilterClass  parent_class;
+  PicmanOperationPointFilterClass  parent_class;
 };
 
 
-GType   gimp_operation_equalize_get_type (void) G_GNUC_CONST;
+GType   picman_operation_equalize_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_EQUALIZE_H__ */
+#endif /* __PICMAN_OPERATION_EQUALIZE_H__ */

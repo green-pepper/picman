@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimplevelsconfig.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanlevelsconfig.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,20 +28,20 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <glib/gstdio.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "operations-types.h"
 
-#include "core/gimpcurve.h"
-#include "core/gimphistogram.h"
+#include "core/picmancurve.h"
+#include "core/picmanhistogram.h"
 
-#include "gimpcurvesconfig.h"
-#include "gimplevelsconfig.h"
-#include "gimpoperationlevels.h"
+#include "picmancurvesconfig.h"
+#include "picmanlevelsconfig.h"
+#include "picmanoperationlevels.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -56,106 +56,106 @@ enum
 };
 
 
-static void     gimp_levels_config_iface_init   (GimpConfigInterface *iface);
+static void     picman_levels_config_iface_init   (PicmanConfigInterface *iface);
 
-static void     gimp_levels_config_get_property (GObject          *object,
+static void     picman_levels_config_get_property (GObject          *object,
                                                  guint             property_id,
                                                  GValue           *value,
                                                  GParamSpec       *pspec);
-static void     gimp_levels_config_set_property (GObject          *object,
+static void     picman_levels_config_set_property (GObject          *object,
                                                  guint             property_id,
                                                  const GValue     *value,
                                                  GParamSpec       *pspec);
 
-static gboolean gimp_levels_config_serialize    (GimpConfig       *config,
-                                                 GimpConfigWriter *writer,
+static gboolean picman_levels_config_serialize    (PicmanConfig       *config,
+                                                 PicmanConfigWriter *writer,
                                                  gpointer          data);
-static gboolean gimp_levels_config_deserialize  (GimpConfig       *config,
+static gboolean picman_levels_config_deserialize  (PicmanConfig       *config,
                                                  GScanner         *scanner,
                                                  gint              nest_level,
                                                  gpointer          data);
-static gboolean gimp_levels_config_equal        (GimpConfig       *a,
-                                                 GimpConfig       *b);
-static void     gimp_levels_config_reset        (GimpConfig       *config);
-static gboolean gimp_levels_config_copy         (GimpConfig       *src,
-                                                 GimpConfig       *dest,
+static gboolean picman_levels_config_equal        (PicmanConfig       *a,
+                                                 PicmanConfig       *b);
+static void     picman_levels_config_reset        (PicmanConfig       *config);
+static gboolean picman_levels_config_copy         (PicmanConfig       *src,
+                                                 PicmanConfig       *dest,
                                                  GParamFlags       flags);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpLevelsConfig, gimp_levels_config,
-                         GIMP_TYPE_IMAGE_MAP_CONFIG,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG,
-                                                gimp_levels_config_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanLevelsConfig, picman_levels_config,
+                         PICMAN_TYPE_IMAGE_MAP_CONFIG,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG,
+                                                picman_levels_config_iface_init))
 
-#define parent_class gimp_levels_config_parent_class
+#define parent_class picman_levels_config_parent_class
 
 
 static void
-gimp_levels_config_class_init (GimpLevelsConfigClass *klass)
+picman_levels_config_class_init (PicmanLevelsConfigClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->set_property       = gimp_levels_config_set_property;
-  object_class->get_property       = gimp_levels_config_get_property;
+  object_class->set_property       = picman_levels_config_set_property;
+  object_class->get_property       = picman_levels_config_get_property;
 
-  viewable_class->default_stock_id = "gimp-tool-levels";
+  viewable_class->default_stock_id = "picman-tool-levels";
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CHANNEL,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CHANNEL,
                                  "channel",
                                  "The affected channel",
-                                 GIMP_TYPE_HISTOGRAM_CHANNEL,
-                                 GIMP_HISTOGRAM_VALUE, 0);
+                                 PICMAN_TYPE_HISTOGRAM_CHANNEL,
+                                 PICMAN_HISTOGRAM_VALUE, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_GAMMA,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_GAMMA,
                                    "gamma",
                                    "Gamma",
                                    0.1, 10.0, 1.0, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LOW_INPUT,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LOW_INPUT,
                                    "low-input",
                                    "Low Input",
                                    0.0, 1.0, 0.0, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_HIGH_INPUT,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_HIGH_INPUT,
                                    "high-input",
                                    "High Input",
                                    0.0, 1.0, 1.0, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LOW_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LOW_OUTPUT,
                                    "low-output",
                                    "Low Output",
                                    0.0, 1.0, 0.0, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_HIGH_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_HIGH_OUTPUT,
                                    "high-output",
                                    "High Output",
                                    0.0, 1.0, 1.0, 0);
 }
 
 static void
-gimp_levels_config_iface_init (GimpConfigInterface *iface)
+picman_levels_config_iface_init (PicmanConfigInterface *iface)
 {
-  iface->serialize   = gimp_levels_config_serialize;
-  iface->deserialize = gimp_levels_config_deserialize;
-  iface->equal       = gimp_levels_config_equal;
-  iface->reset       = gimp_levels_config_reset;
-  iface->copy        = gimp_levels_config_copy;
+  iface->serialize   = picman_levels_config_serialize;
+  iface->deserialize = picman_levels_config_deserialize;
+  iface->equal       = picman_levels_config_equal;
+  iface->reset       = picman_levels_config_reset;
+  iface->copy        = picman_levels_config_copy;
 }
 
 static void
-gimp_levels_config_init (GimpLevelsConfig *self)
+picman_levels_config_init (PicmanLevelsConfig *self)
 {
-  gimp_config_reset (GIMP_CONFIG (self));
+  picman_config_reset (PICMAN_CONFIG (self));
 }
 
 static void
-gimp_levels_config_get_property (GObject    *object,
+picman_levels_config_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  GimpLevelsConfig *self = GIMP_LEVELS_CONFIG (object);
+  PicmanLevelsConfig *self = PICMAN_LEVELS_CONFIG (object);
 
   switch (property_id)
     {
@@ -190,12 +190,12 @@ gimp_levels_config_get_property (GObject    *object,
 }
 
 static void
-gimp_levels_config_set_property (GObject      *object,
+picman_levels_config_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  GimpLevelsConfig *self = GIMP_LEVELS_CONFIG (object);
+  PicmanLevelsConfig *self = PICMAN_LEVELS_CONFIG (object);
 
   switch (property_id)
     {
@@ -235,27 +235,27 @@ gimp_levels_config_set_property (GObject      *object,
 }
 
 static gboolean
-gimp_levels_config_serialize (GimpConfig       *config,
-                              GimpConfigWriter *writer,
+picman_levels_config_serialize (PicmanConfig       *config,
+                              PicmanConfigWriter *writer,
                               gpointer          data)
 {
-  GimpLevelsConfig     *l_config = GIMP_LEVELS_CONFIG (config);
-  GimpHistogramChannel  channel;
-  GimpHistogramChannel  old_channel;
+  PicmanLevelsConfig     *l_config = PICMAN_LEVELS_CONFIG (config);
+  PicmanHistogramChannel  channel;
+  PicmanHistogramChannel  old_channel;
   gboolean              success = TRUE;
 
-  if (! gimp_config_serialize_property_by_name (config, "time", writer))
+  if (! picman_config_serialize_property_by_name (config, "time", writer))
     return FALSE;
 
   old_channel = l_config->channel;
 
-  for (channel = GIMP_HISTOGRAM_VALUE;
-       channel <= GIMP_HISTOGRAM_ALPHA;
+  for (channel = PICMAN_HISTOGRAM_VALUE;
+       channel <= PICMAN_HISTOGRAM_ALPHA;
        channel++)
     {
       l_config->channel = channel;
 
-      success = gimp_config_serialize_properties (config, writer);
+      success = picman_config_serialize_properties (config, writer);
 
       if (! success)
         break;
@@ -267,18 +267,18 @@ gimp_levels_config_serialize (GimpConfig       *config,
 }
 
 static gboolean
-gimp_levels_config_deserialize (GimpConfig *config,
+picman_levels_config_deserialize (PicmanConfig *config,
                                 GScanner   *scanner,
                                 gint        nest_level,
                                 gpointer    data)
 {
-  GimpLevelsConfig     *l_config = GIMP_LEVELS_CONFIG (config);
-  GimpHistogramChannel  old_channel;
+  PicmanLevelsConfig     *l_config = PICMAN_LEVELS_CONFIG (config);
+  PicmanHistogramChannel  old_channel;
   gboolean              success = TRUE;
 
   old_channel = l_config->channel;
 
-  success = gimp_config_deserialize_properties (config, scanner, nest_level);
+  success = picman_config_deserialize_properties (config, scanner, nest_level);
 
   g_object_set (config, "channel", old_channel, NULL);
 
@@ -286,15 +286,15 @@ gimp_levels_config_deserialize (GimpConfig *config,
 }
 
 static gboolean
-gimp_levels_config_equal (GimpConfig *a,
-                          GimpConfig *b)
+picman_levels_config_equal (PicmanConfig *a,
+                          PicmanConfig *b)
 {
-  GimpLevelsConfig     *config_a = GIMP_LEVELS_CONFIG (a);
-  GimpLevelsConfig     *config_b = GIMP_LEVELS_CONFIG (b);
-  GimpHistogramChannel  channel;
+  PicmanLevelsConfig     *config_a = PICMAN_LEVELS_CONFIG (a);
+  PicmanLevelsConfig     *config_b = PICMAN_LEVELS_CONFIG (b);
+  PicmanHistogramChannel  channel;
 
-  for (channel = GIMP_HISTOGRAM_VALUE;
-       channel <= GIMP_HISTOGRAM_ALPHA;
+  for (channel = PICMAN_HISTOGRAM_VALUE;
+       channel <= PICMAN_HISTOGRAM_ALPHA;
        channel++)
     {
       if (config_a->gamma[channel]       != config_b->gamma[channel]      ||
@@ -311,33 +311,33 @@ gimp_levels_config_equal (GimpConfig *a,
 }
 
 static void
-gimp_levels_config_reset (GimpConfig *config)
+picman_levels_config_reset (PicmanConfig *config)
 {
-  GimpLevelsConfig     *l_config = GIMP_LEVELS_CONFIG (config);
-  GimpHistogramChannel  channel;
+  PicmanLevelsConfig     *l_config = PICMAN_LEVELS_CONFIG (config);
+  PicmanHistogramChannel  channel;
 
-  for (channel = GIMP_HISTOGRAM_VALUE;
-       channel <= GIMP_HISTOGRAM_ALPHA;
+  for (channel = PICMAN_HISTOGRAM_VALUE;
+       channel <= PICMAN_HISTOGRAM_ALPHA;
        channel++)
     {
       l_config->channel = channel;
-      gimp_levels_config_reset_channel (l_config);
+      picman_levels_config_reset_channel (l_config);
     }
 
-  gimp_config_reset_property (G_OBJECT (config), "channel");
+  picman_config_reset_property (G_OBJECT (config), "channel");
 }
 
 static gboolean
-gimp_levels_config_copy (GimpConfig  *src,
-                         GimpConfig  *dest,
+picman_levels_config_copy (PicmanConfig  *src,
+                         PicmanConfig  *dest,
                          GParamFlags  flags)
 {
-  GimpLevelsConfig     *src_config  = GIMP_LEVELS_CONFIG (src);
-  GimpLevelsConfig     *dest_config = GIMP_LEVELS_CONFIG (dest);
-  GimpHistogramChannel  channel;
+  PicmanLevelsConfig     *src_config  = PICMAN_LEVELS_CONFIG (src);
+  PicmanLevelsConfig     *dest_config = PICMAN_LEVELS_CONFIG (dest);
+  PicmanHistogramChannel  channel;
 
-  for (channel = GIMP_HISTOGRAM_VALUE;
-       channel <= GIMP_HISTOGRAM_ALPHA;
+  for (channel = PICMAN_HISTOGRAM_VALUE;
+       channel <= PICMAN_HISTOGRAM_ALPHA;
        channel++)
     {
       dest_config->gamma[channel]       = src_config->gamma[channel];
@@ -364,66 +364,66 @@ gimp_levels_config_copy (GimpConfig  *src,
 /*  public functions  */
 
 void
-gimp_levels_config_reset_channel (GimpLevelsConfig *config)
+picman_levels_config_reset_channel (PicmanLevelsConfig *config)
 {
-  g_return_if_fail (GIMP_IS_LEVELS_CONFIG (config));
+  g_return_if_fail (PICMAN_IS_LEVELS_CONFIG (config));
 
   g_object_freeze_notify (G_OBJECT (config));
 
-  gimp_config_reset_property (G_OBJECT (config), "gamma");
-  gimp_config_reset_property (G_OBJECT (config), "low-input");
-  gimp_config_reset_property (G_OBJECT (config), "high-input");
-  gimp_config_reset_property (G_OBJECT (config), "low-output");
-  gimp_config_reset_property (G_OBJECT (config), "high-output");
+  picman_config_reset_property (G_OBJECT (config), "gamma");
+  picman_config_reset_property (G_OBJECT (config), "low-input");
+  picman_config_reset_property (G_OBJECT (config), "high-input");
+  picman_config_reset_property (G_OBJECT (config), "low-output");
+  picman_config_reset_property (G_OBJECT (config), "high-output");
 
   g_object_thaw_notify (G_OBJECT (config));
 }
 
 void
-gimp_levels_config_stretch (GimpLevelsConfig *config,
-                            GimpHistogram    *histogram,
+picman_levels_config_stretch (PicmanLevelsConfig *config,
+                            PicmanHistogram    *histogram,
                             gboolean          is_color)
 {
-  g_return_if_fail (GIMP_IS_LEVELS_CONFIG (config));
+  g_return_if_fail (PICMAN_IS_LEVELS_CONFIG (config));
   g_return_if_fail (histogram != NULL);
 
   g_object_freeze_notify (G_OBJECT (config));
 
   if (is_color)
     {
-      GimpHistogramChannel channel;
+      PicmanHistogramChannel channel;
 
       /*  Set the overall value to defaults  */
       channel = config->channel;
-      config->channel = GIMP_HISTOGRAM_VALUE;
-      gimp_levels_config_reset_channel (config);
+      config->channel = PICMAN_HISTOGRAM_VALUE;
+      picman_levels_config_reset_channel (config);
       config->channel = channel;
 
-      for (channel = GIMP_HISTOGRAM_RED;
-           channel <= GIMP_HISTOGRAM_BLUE;
+      for (channel = PICMAN_HISTOGRAM_RED;
+           channel <= PICMAN_HISTOGRAM_BLUE;
            channel++)
         {
-          gimp_levels_config_stretch_channel (config, histogram, channel);
+          picman_levels_config_stretch_channel (config, histogram, channel);
         }
     }
   else
     {
-      gimp_levels_config_stretch_channel (config, histogram,
-                                          GIMP_HISTOGRAM_VALUE);
+      picman_levels_config_stretch_channel (config, histogram,
+                                          PICMAN_HISTOGRAM_VALUE);
     }
 
   g_object_thaw_notify (G_OBJECT (config));
 }
 
 void
-gimp_levels_config_stretch_channel (GimpLevelsConfig     *config,
-                                    GimpHistogram        *histogram,
-                                    GimpHistogramChannel  channel)
+picman_levels_config_stretch_channel (PicmanLevelsConfig     *config,
+                                    PicmanHistogram        *histogram,
+                                    PicmanHistogramChannel  channel)
 {
   gdouble count;
   gint    i;
 
-  g_return_if_fail (GIMP_IS_LEVELS_CONFIG (config));
+  g_return_if_fail (PICMAN_IS_LEVELS_CONFIG (config));
   g_return_if_fail (histogram != NULL);
 
   g_object_freeze_notify (G_OBJECT (config));
@@ -432,7 +432,7 @@ gimp_levels_config_stretch_channel (GimpLevelsConfig     *config,
   config->low_output[channel]  = 0.0;
   config->high_output[channel] = 1.0;
 
-  count = gimp_histogram_get_count (histogram, channel, 0, 255);
+  count = picman_histogram_get_count (histogram, channel, 0, 255);
 
   if (count == 0.0)
     {
@@ -450,10 +450,10 @@ gimp_levels_config_stretch_channel (GimpLevelsConfig     *config,
 
       for (i = 0; i < 255; i++)
         {
-          new_count += gimp_histogram_get_value (histogram, channel, i);
+          new_count += picman_histogram_get_value (histogram, channel, i);
           percentage = new_count / count;
           next_percentage = (new_count +
-                             gimp_histogram_get_value (histogram,
+                             picman_histogram_get_value (histogram,
                                                        channel,
                                                        i + 1)) / count;
 
@@ -469,10 +469,10 @@ gimp_levels_config_stretch_channel (GimpLevelsConfig     *config,
 
       for (i = 255; i > 0; i--)
         {
-          new_count += gimp_histogram_get_value (histogram, channel, i);
+          new_count += picman_histogram_get_value (histogram, channel, i);
           percentage = new_count / count;
           next_percentage = (new_count +
-                             gimp_histogram_get_value (histogram,
+                             picman_histogram_get_value (histogram,
                                                        channel,
                                                        i - 1)) / count;
 
@@ -494,27 +494,27 @@ gimp_levels_config_stretch_channel (GimpLevelsConfig     *config,
 }
 
 static gdouble
-gimp_levels_config_input_from_color (GimpHistogramChannel  channel,
-                                     const GimpRGB        *color)
+picman_levels_config_input_from_color (PicmanHistogramChannel  channel,
+                                     const PicmanRGB        *color)
 {
   switch (channel)
     {
-    case GIMP_HISTOGRAM_VALUE:
+    case PICMAN_HISTOGRAM_VALUE:
       return MAX (MAX (color->r, color->g), color->b);
 
-    case GIMP_HISTOGRAM_RED:
+    case PICMAN_HISTOGRAM_RED:
       return color->r;
 
-    case GIMP_HISTOGRAM_GREEN:
+    case PICMAN_HISTOGRAM_GREEN:
       return color->g;
 
-    case GIMP_HISTOGRAM_BLUE:
+    case PICMAN_HISTOGRAM_BLUE:
       return color->b;
 
-    case GIMP_HISTOGRAM_ALPHA:
+    case PICMAN_HISTOGRAM_ALPHA:
       return color->a;
 
-    case GIMP_HISTOGRAM_RGB:
+    case PICMAN_HISTOGRAM_RGB:
       return MIN (MIN (color->r, color->g), color->b);
     }
 
@@ -522,19 +522,19 @@ gimp_levels_config_input_from_color (GimpHistogramChannel  channel,
 }
 
 void
-gimp_levels_config_adjust_by_colors (GimpLevelsConfig     *config,
-                                     GimpHistogramChannel  channel,
-                                     const GimpRGB        *black,
-                                     const GimpRGB        *gray,
-                                     const GimpRGB        *white)
+picman_levels_config_adjust_by_colors (PicmanLevelsConfig     *config,
+                                     PicmanHistogramChannel  channel,
+                                     const PicmanRGB        *black,
+                                     const PicmanRGB        *gray,
+                                     const PicmanRGB        *white)
 {
-  g_return_if_fail (GIMP_IS_LEVELS_CONFIG (config));
+  g_return_if_fail (PICMAN_IS_LEVELS_CONFIG (config));
 
   g_object_freeze_notify (G_OBJECT (config));
 
   if (black)
     {
-      config->low_input[channel] = gimp_levels_config_input_from_color (channel,
+      config->low_input[channel] = picman_levels_config_input_from_color (channel,
                                                                         black);
       g_object_notify (G_OBJECT (config), "low-input");
     }
@@ -542,7 +542,7 @@ gimp_levels_config_adjust_by_colors (GimpLevelsConfig     *config,
 
   if (white)
     {
-      config->high_input[channel] = gimp_levels_config_input_from_color (channel,
+      config->high_input[channel] = picman_levels_config_input_from_color (channel,
                                                                          white);
       g_object_notify (G_OBJECT (config), "high-input");
     }
@@ -556,9 +556,9 @@ gimp_levels_config_adjust_by_colors (GimpLevelsConfig     *config,
       gdouble lightness;
 
       /* Calculate lightness value */
-      lightness = GIMP_RGB_LUMINANCE (gray->r, gray->g, gray->b);
+      lightness = PICMAN_RGB_LUMINANCE (gray->r, gray->g, gray->b);
 
-      input = gimp_levels_config_input_from_color (channel, gray);
+      input = picman_levels_config_input_from_color (channel, gray);
 
       range = config->high_input[channel] - config->low_input[channel];
       if (range <= 0)
@@ -594,22 +594,22 @@ gimp_levels_config_adjust_by_colors (GimpLevelsConfig     *config,
   g_object_thaw_notify (G_OBJECT (config));
 }
 
-GimpCurvesConfig *
-gimp_levels_config_to_curves_config (GimpLevelsConfig *config)
+PicmanCurvesConfig *
+picman_levels_config_to_curves_config (PicmanLevelsConfig *config)
 {
-  GimpCurvesConfig     *curves;
-  GimpHistogramChannel  channel;
+  PicmanCurvesConfig     *curves;
+  PicmanHistogramChannel  channel;
 
-  g_return_val_if_fail (GIMP_IS_LEVELS_CONFIG (config), NULL);
+  g_return_val_if_fail (PICMAN_IS_LEVELS_CONFIG (config), NULL);
 
-  curves = g_object_new (GIMP_TYPE_CURVES_CONFIG, NULL);
+  curves = g_object_new (PICMAN_TYPE_CURVES_CONFIG, NULL);
 
-  for (channel = GIMP_HISTOGRAM_VALUE;
-       channel <= GIMP_HISTOGRAM_ALPHA;
+  for (channel = PICMAN_HISTOGRAM_VALUE;
+       channel <= PICMAN_HISTOGRAM_ALPHA;
        channel++)
     {
-      GimpCurve  *curve    = curves->curve[channel];
-      const gint  n_points = gimp_curve_get_n_points (curve);
+      PicmanCurve  *curve    = curves->curve[channel];
+      const gint  n_points = picman_curve_get_n_points (curve);
       static const gint n  = 4;
       gint        point    = -1;
       gdouble     gamma    = config->gamma[channel];
@@ -618,8 +618,8 @@ gimp_levels_config_to_curves_config (GimpLevelsConfig *config)
       gdouble     x, y;
 
       /* clear the points set by default */
-      gimp_curve_set_point (curve, 0, -1, -1);
-      gimp_curve_set_point (curve, n_points - 1, -1, -1);
+      picman_curve_set_point (curve, 0, -1, -1);
+      picman_curve_set_point (curve, n_points - 1, -1, -1);
 
       delta_in  = config->high_input[channel] - config->low_input[channel];
       delta_out = config->high_output[channel] - config->low_output[channel];
@@ -628,7 +628,7 @@ gimp_levels_config_to_curves_config (GimpLevelsConfig *config)
       y = config->low_output[channel];
 
       point = CLAMP (n_points * x, point + 1, n_points - 1 - n);
-      gimp_curve_set_point (curve, point, x, y);
+      picman_curve_set_point (curve, point, x, y);
 
       if (delta_out != 0 && gamma != 1.0)
         {
@@ -667,9 +667,9 @@ gimp_levels_config_to_curves_config (GimpLevelsConfig *config)
                   dx = dx * gamma + x0;
                   x = config->low_input[channel] + dx;
                   y = config->low_output[channel] + delta_out *
-                      gimp_operation_levels_map_input (config, channel, x);
+                      picman_operation_levels_map_input (config, channel, x);
                   point = CLAMP (n_points * x, point + 1, n_points - 1 - n + i);
-                  gimp_curve_set_point (curve, point, x, y);
+                  picman_curve_set_point (curve, point, x, y);
                 }
             }
           else
@@ -681,12 +681,12 @@ gimp_levels_config_to_curves_config (GimpLevelsConfig *config)
                * if we invert γ and swap the x and y axes we can use
                * the same method as in case no. 1.
                */
-              GimpLevelsConfig *config_inv;
+              PicmanLevelsConfig *config_inv;
               gdouble           dy = 0;
               gdouble           y0;
               const gdouble     gamma_inv = 1 / gamma;
 
-              config_inv = gimp_config_duplicate (GIMP_CONFIG (config));
+              config_inv = picman_config_duplicate (PICMAN_CONFIG (config));
 
               config_inv->gamma[channel]       = gamma_inv;
               config_inv->low_input[channel]   = config->low_output[channel];
@@ -704,9 +704,9 @@ gimp_levels_config_to_curves_config (GimpLevelsConfig *config)
                   dy = dy * gamma_inv + y0;
                   y = config->low_output[channel] + dy;
                   x = config->low_input[channel] + delta_in *
-                      gimp_operation_levels_map_input (config_inv, channel, y);
+                      picman_operation_levels_map_input (config_inv, channel, y);
                   point = CLAMP (n_points * x, point + 1, n_points - 1 - n + i);
-                  gimp_curve_set_point (curve, point, x, y);
+                  picman_curve_set_point (curve, point, x, y);
                 }
 
               g_object_unref (config_inv);
@@ -717,14 +717,14 @@ gimp_levels_config_to_curves_config (GimpLevelsConfig *config)
       y = config->high_output[channel];
 
       point = CLAMP (n_points * x, point + 1, n_points - 1);
-      gimp_curve_set_point (curve, point, x, y);
+      picman_curve_set_point (curve, point, x, y);
     }
 
   return curves;
 }
 
 gboolean
-gimp_levels_config_load_cruft (GimpLevelsConfig  *config,
+picman_levels_config_load_cruft (PicmanLevelsConfig  *config,
                                gpointer           fp,
                                GError           **error)
 {
@@ -739,15 +739,15 @@ gimp_levels_config_load_cruft (GimpLevelsConfig  *config,
   gchar    buf[50];
   gchar   *nptr;
 
-  g_return_val_if_fail (GIMP_IS_LEVELS_CONFIG (config), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LEVELS_CONFIG (config), FALSE);
   g_return_val_if_fail (file != NULL, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   if (! fgets (buf, sizeof (buf), file) ||
-      strcmp (buf, "# GIMP Levels File\n") != 0)
+      strcmp (buf, "# PICMAN Levels File\n") != 0)
     {
-      g_set_error_literal (error, GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_PARSE,
-			   _("not a GIMP Levels file"));
+      g_set_error_literal (error, PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_PARSE,
+			   _("not a PICMAN Levels file"));
       return FALSE;
     }
 
@@ -793,24 +793,24 @@ gimp_levels_config_load_cruft (GimpLevelsConfig  *config,
   return TRUE;
 
  error:
-  g_set_error_literal (error, GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_PARSE,
+  g_set_error_literal (error, PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_PARSE,
 		       _("parse error"));
   return FALSE;
 }
 
 gboolean
-gimp_levels_config_save_cruft (GimpLevelsConfig  *config,
+picman_levels_config_save_cruft (PicmanLevelsConfig  *config,
                                gpointer           fp,
                                GError           **error)
 {
   FILE *file = fp;
   gint  i;
 
-  g_return_val_if_fail (GIMP_IS_LEVELS_CONFIG (config), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LEVELS_CONFIG (config), FALSE);
   g_return_val_if_fail (file != NULL, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  fprintf (file, "# GIMP Levels File\n");
+  fprintf (file, "# PICMAN Levels File\n");
 
   for (i = 0; i < 5; i++)
     {

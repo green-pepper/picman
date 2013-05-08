@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * cdisplay_colorblind.c
- * Copyright (C) 2002-2003 Michael Natterer <mitch@gimp.org>,
- *                         Sven Neumann <sven@gimp.org>,
+ * Copyright (C) 2002-2003 Michael Natterer <mitch@picman.org>,
+ *                         Sven Neumann <sven@picman.org>,
  *                         Robert Dougherty <bob@vischeck.com> and
  *                         Alex Wade <alex@vischeck.com>
  *
@@ -32,13 +32,13 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 typedef enum
@@ -62,7 +62,7 @@ static const GEnumValue enum_values[] =
   { 0, NULL, NULL }
 };
 
-static const GimpEnumDesc enum_descs[] =
+static const PicmanEnumDesc enum_descs[] =
   {
     { COLORBLIND_DEFICIENCY_PROTANOPIA,
       N_("Protanopia (insensitivity to red)"), NULL },
@@ -89,7 +89,7 @@ typedef struct _CdisplayColorblindClass CdisplayColorblindClass;
 
 struct _CdisplayColorblind
 {
-  GimpColorDisplay      parent_instance;
+  PicmanColorDisplay      parent_instance;
 
   ColorblindDeficiency  deficiency;
 
@@ -103,7 +103,7 @@ struct _CdisplayColorblind
 
 struct _CdisplayColorblindClass
 {
-  GimpColorDisplayClass  parent_instance;
+  PicmanColorDisplayClass  parent_instance;
 };
 
 
@@ -125,10 +125,10 @@ static void        cdisplay_colorblind_get_property    (GObject               *o
                                                         GValue                *value,
                                                         GParamSpec            *pspec);
 
-static void        cdisplay_colorblind_convert_surface (GimpColorDisplay      *display,
+static void        cdisplay_colorblind_convert_surface (PicmanColorDisplay      *display,
                                                         cairo_surface_t       *surface);
-static GtkWidget * cdisplay_colorblind_configure       (GimpColorDisplay      *display);
-static void        cdisplay_colorblind_changed         (GimpColorDisplay      *display);
+static GtkWidget * cdisplay_colorblind_configure       (PicmanColorDisplay      *display);
+static void        cdisplay_colorblind_changed         (PicmanColorDisplay      *display);
 
 static void        cdisplay_colorblind_set_deficiency  (CdisplayColorblind    *colorblind,
                                                         ColorblindDeficiency   value);
@@ -189,11 +189,11 @@ static const gfloat lms2rgb[9] =
 };
 
 
-static const GimpModuleInfo cdisplay_colorblind_info =
+static const PicmanModuleInfo cdisplay_colorblind_info =
 {
-  GIMP_MODULE_ABI_VERSION,
+  PICMAN_MODULE_ABI_VERSION,
   N_("Color deficit simulation filter (Brettel-Vienot-Mollon algorithm)"),
-  "Michael Natterer <mitch@gimp.org>, Bob Dougherty <bob@vischeck.com>, "
+  "Michael Natterer <mitch@picman.org>, Bob Dougherty <bob@vischeck.com>, "
   "Alex Wade <alex@vischeck.com>",
   "v0.2",
   "(c) 2002-2004, released under the GPL",
@@ -202,19 +202,19 @@ static const GimpModuleInfo cdisplay_colorblind_info =
 
 
 G_DEFINE_DYNAMIC_TYPE (CdisplayColorblind, cdisplay_colorblind,
-                       GIMP_TYPE_COLOR_DISPLAY)
+                       PICMAN_TYPE_COLOR_DISPLAY)
 
 static GType cdisplay_colorblind_deficiency_type = 0;
 
 
-G_MODULE_EXPORT const GimpModuleInfo *
-gimp_module_query (GTypeModule *module)
+G_MODULE_EXPORT const PicmanModuleInfo *
+picman_module_query (GTypeModule *module)
 {
   return &cdisplay_colorblind_info;
 }
 
 G_MODULE_EXPORT gboolean
-gimp_module_register (GTypeModule *module)
+picman_module_register (GTypeModule *module)
 {
   cdisplay_colorblind_register_type (module);
   cdisplay_colorblind_deficiency_register_type (module);
@@ -231,9 +231,9 @@ cdisplay_colorblind_deficiency_register_type (GTypeModule *module)
         g_type_module_register_enum (module, "CDisplayColorblindDeficiency",
                                      enum_values);
 
-      gimp_type_set_translation_domain (cdisplay_colorblind_deficiency_type,
-                                        GETTEXT_PACKAGE "-libgimp");
-      gimp_enum_set_value_descriptions (cdisplay_colorblind_deficiency_type,
+      picman_type_set_translation_domain (cdisplay_colorblind_deficiency_type,
+                                        GETTEXT_PACKAGE "-libpicman");
+      picman_enum_set_value_descriptions (cdisplay_colorblind_deficiency_type,
                                         enum_descs);
     }
 
@@ -244,20 +244,20 @@ static void
 cdisplay_colorblind_class_init (CdisplayColorblindClass *klass)
 {
   GObjectClass          *object_class  = G_OBJECT_CLASS (klass);
-  GimpColorDisplayClass *display_class = GIMP_COLOR_DISPLAY_CLASS (klass);
+  PicmanColorDisplayClass *display_class = PICMAN_COLOR_DISPLAY_CLASS (klass);
 
   object_class->get_property     = cdisplay_colorblind_get_property;
   object_class->set_property     = cdisplay_colorblind_set_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_DEFICIENCY,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_DEFICIENCY,
                                  "deficiency", NULL,
                                  CDISPLAY_TYPE_COLORBLIND_DEFICIENCY,
                                  DEFAULT_DEFICIENCY,
                                  0);
 
   display_class->name            = _("Color Deficient Vision");
-  display_class->help_id         = "gimp-colordisplay-colorblind";
-  display_class->stock_id        = GIMP_STOCK_DISPLAY_FILTER_COLORBLIND;
+  display_class->help_id         = "picman-colordisplay-colorblind";
+  display_class->stock_id        = PICMAN_STOCK_DISPLAY_FILTER_COLORBLIND;
 
   display_class->convert_surface = cdisplay_colorblind_convert_surface;
   display_class->configure       = cdisplay_colorblind_configure;
@@ -357,7 +357,7 @@ lut_lookup (gfloat        value,
 }
 
 static void
-cdisplay_colorblind_convert_surface (GimpColorDisplay *display,
+cdisplay_colorblind_convert_surface (PicmanColorDisplay *display,
                                      cairo_surface_t  *surface)
 {
   CdisplayColorblind *colorblind = CDISPLAY_COLORBLIND (display);
@@ -391,7 +391,7 @@ cdisplay_colorblind_convert_surface (GimpColorDisplay *display,
         guint   index;
 
         /* First check our cache */
-        GIMP_CAIRO_ARGB32_GET_PIXEL (buf, r, g, b, a);
+        PICMAN_CAIRO_ARGB32_GET_PIXEL (buf, r, g, b, a);
         pixel = r << 16 | g << 8 | b;
         index = pixel % COLOR_CACHE_SIZE;
 
@@ -403,7 +403,7 @@ cdisplay_colorblind_convert_surface (GimpColorDisplay *display,
             g = pixel & 0xFF; pixel >>= 8;
             r = pixel & 0xFF;
 
-            GIMP_CAIRO_ARGB32_SET_PIXEL (buf, r, g, b, a);
+            PICMAN_CAIRO_ARGB32_SET_PIXEL (buf, r, g, b, a);
 
             continue;
           }
@@ -466,7 +466,7 @@ cdisplay_colorblind_convert_surface (GimpColorDisplay *display,
         r = lut_lookup (red,   colorblind->gamma_lut);
         g = lut_lookup (green, colorblind->gamma_lut);
         b = lut_lookup (blue,  colorblind->gamma_lut);
-        GIMP_CAIRO_ARGB32_SET_PIXEL (buf, r, g, b, a);
+        PICMAN_CAIRO_ARGB32_SET_PIXEL (buf, r, g, b, a);
 
         /* Put the result into our cache */
         colorblind->cache[2 * index]     = pixel;
@@ -475,7 +475,7 @@ cdisplay_colorblind_convert_surface (GimpColorDisplay *display,
 }
 
 static GtkWidget *
-cdisplay_colorblind_configure (GimpColorDisplay *display)
+cdisplay_colorblind_configure (PicmanColorDisplay *display)
 {
   CdisplayColorblind *colorblind = CDISPLAY_COLORBLIND (display);
   GtkWidget          *hbox;
@@ -489,7 +489,7 @@ cdisplay_colorblind_configure (GimpColorDisplay *display)
   gtk_widget_show (label);
 
   combo =
-    gimp_prop_enum_combo_box_new (G_OBJECT (colorblind), "deficiency", 0, 0);
+    picman_prop_enum_combo_box_new (G_OBJECT (colorblind), "deficiency", 0, 0);
 
   gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
   gtk_widget_show (combo);
@@ -500,7 +500,7 @@ cdisplay_colorblind_configure (GimpColorDisplay *display)
 }
 
 static void
-cdisplay_colorblind_changed (GimpColorDisplay *display)
+cdisplay_colorblind_changed (PicmanColorDisplay *display)
 {
   CdisplayColorblind *colorblind = CDISPLAY_COLORBLIND (display);
   gfloat              anchor_e[3];
@@ -587,6 +587,6 @@ cdisplay_colorblind_set_deficiency (CdisplayColorblind   *colorblind,
       colorblind->deficiency = value;
 
       g_object_notify (G_OBJECT (colorblind), "deficiency");
-      gimp_color_display_changed (GIMP_COLOR_DISPLAY (colorblind));
+      picman_color_display_changed (PICMAN_COLOR_DISPLAY (colorblind));
     }
 }

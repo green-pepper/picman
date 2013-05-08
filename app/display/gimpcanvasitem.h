@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasitem.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasitem.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,94 +18,94 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_ITEM_H__
-#define __GIMP_CANVAS_ITEM_H__
+#ifndef __PICMAN_CANVAS_ITEM_H__
+#define __PICMAN_CANVAS_ITEM_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-#define GIMP_TYPE_CANVAS_ITEM            (gimp_canvas_item_get_type ())
-#define GIMP_CANVAS_ITEM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_ITEM, GimpCanvasItem))
-#define GIMP_CANVAS_ITEM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_ITEM, GimpCanvasItemClass))
-#define GIMP_IS_CANVAS_ITEM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_ITEM))
-#define GIMP_IS_CANVAS_ITEM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_ITEM))
-#define GIMP_CANVAS_ITEM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_ITEM, GimpCanvasItemClass))
+#define PICMAN_TYPE_CANVAS_ITEM            (picman_canvas_item_get_type ())
+#define PICMAN_CANVAS_ITEM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_ITEM, PicmanCanvasItem))
+#define PICMAN_CANVAS_ITEM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_ITEM, PicmanCanvasItemClass))
+#define PICMAN_IS_CANVAS_ITEM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_ITEM))
+#define PICMAN_IS_CANVAS_ITEM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_ITEM))
+#define PICMAN_CANVAS_ITEM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_ITEM, PicmanCanvasItemClass))
 
 
-typedef struct _GimpCanvasItemClass GimpCanvasItemClass;
+typedef struct _PicmanCanvasItemClass PicmanCanvasItemClass;
 
-struct _GimpCanvasItem
+struct _PicmanCanvasItem
 {
-  GimpObject       parent_instance;
+  PicmanObject       parent_instance;
 };
 
-struct _GimpCanvasItemClass
+struct _PicmanCanvasItemClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 
   /*  signals  */
-  void             (* update)      (GimpCanvasItem   *item,
+  void             (* update)      (PicmanCanvasItem   *item,
                                     cairo_region_t   *region);
 
   /*  virtual functions  */
-  void             (* draw)        (GimpCanvasItem   *item,
+  void             (* draw)        (PicmanCanvasItem   *item,
                                     cairo_t          *cr);
-  cairo_region_t * (* get_extents) (GimpCanvasItem   *item);
+  cairo_region_t * (* get_extents) (PicmanCanvasItem   *item);
 
-  void             (* stroke)      (GimpCanvasItem   *item,
+  void             (* stroke)      (PicmanCanvasItem   *item,
                                     cairo_t          *cr);
-  void             (* fill)        (GimpCanvasItem   *item,
+  void             (* fill)        (PicmanCanvasItem   *item,
                                     cairo_t          *cr);
 
-  gboolean         (* hit)         (GimpCanvasItem   *item,
+  gboolean         (* hit)         (PicmanCanvasItem   *item,
                                     gdouble           x,
                                     gdouble           y);
 };
 
 
-GType            gimp_canvas_item_get_type         (void) G_GNUC_CONST;
+GType            picman_canvas_item_get_type         (void) G_GNUC_CONST;
 
-GimpDisplayShell * gimp_canvas_item_get_shell      (GimpCanvasItem   *item);
-GimpImage      * gimp_canvas_item_get_image        (GimpCanvasItem   *item);
-GtkWidget      * gimp_canvas_item_get_canvas       (GimpCanvasItem   *item);
+PicmanDisplayShell * picman_canvas_item_get_shell      (PicmanCanvasItem   *item);
+PicmanImage      * picman_canvas_item_get_image        (PicmanCanvasItem   *item);
+GtkWidget      * picman_canvas_item_get_canvas       (PicmanCanvasItem   *item);
 
-void             gimp_canvas_item_draw             (GimpCanvasItem   *item,
+void             picman_canvas_item_draw             (PicmanCanvasItem   *item,
                                                     cairo_t          *cr);
-cairo_region_t * gimp_canvas_item_get_extents      (GimpCanvasItem   *item);
+cairo_region_t * picman_canvas_item_get_extents      (PicmanCanvasItem   *item);
 
-gboolean         gimp_canvas_item_hit              (GimpCanvasItem   *item,
+gboolean         picman_canvas_item_hit              (PicmanCanvasItem   *item,
                                                     gdouble           x,
                                                     gdouble           y);
 
-void             gimp_canvas_item_set_visible      (GimpCanvasItem   *item,
+void             picman_canvas_item_set_visible      (PicmanCanvasItem   *item,
                                                     gboolean          visible);
-gboolean         gimp_canvas_item_get_visible      (GimpCanvasItem   *item);
+gboolean         picman_canvas_item_get_visible      (PicmanCanvasItem   *item);
 
-void             gimp_canvas_item_set_line_cap     (GimpCanvasItem   *item,
+void             picman_canvas_item_set_line_cap     (PicmanCanvasItem   *item,
                                                     cairo_line_cap_t  line_cap);
 
-void             gimp_canvas_item_set_highlight    (GimpCanvasItem   *item,
+void             picman_canvas_item_set_highlight    (PicmanCanvasItem   *item,
                                                     gboolean          highlight);
-gboolean         gimp_canvas_item_get_highlight    (GimpCanvasItem   *item);
+gboolean         picman_canvas_item_get_highlight    (PicmanCanvasItem   *item);
 
-void             gimp_canvas_item_begin_change     (GimpCanvasItem   *item);
-void             gimp_canvas_item_end_change       (GimpCanvasItem   *item);
+void             picman_canvas_item_begin_change     (PicmanCanvasItem   *item);
+void             picman_canvas_item_end_change       (PicmanCanvasItem   *item);
 
-void             gimp_canvas_item_suspend_stroking (GimpCanvasItem   *item);
-void             gimp_canvas_item_resume_stroking  (GimpCanvasItem   *item);
+void             picman_canvas_item_suspend_stroking (PicmanCanvasItem   *item);
+void             picman_canvas_item_resume_stroking  (PicmanCanvasItem   *item);
 
-void             gimp_canvas_item_suspend_filling  (GimpCanvasItem   *item);
-void             gimp_canvas_item_resume_filling   (GimpCanvasItem   *item);
+void             picman_canvas_item_suspend_filling  (PicmanCanvasItem   *item);
+void             picman_canvas_item_resume_filling   (PicmanCanvasItem   *item);
 
-void             gimp_canvas_item_transform        (GimpCanvasItem   *item,
+void             picman_canvas_item_transform        (PicmanCanvasItem   *item,
                                                     cairo_t          *cr);
-void             gimp_canvas_item_transform_xy     (GimpCanvasItem   *item,
+void             picman_canvas_item_transform_xy     (PicmanCanvasItem   *item,
                                                     gdouble           x,
                                                     gdouble           y,
                                                     gint             *tx,
                                                     gint             *ty);
-void             gimp_canvas_item_transform_xy_f   (GimpCanvasItem   *item,
+void             picman_canvas_item_transform_xy_f   (PicmanCanvasItem   *item,
                                                     gdouble           x,
                                                     gdouble           y,
                                                     gdouble          *tx,
@@ -114,13 +114,13 @@ void             gimp_canvas_item_transform_xy_f   (GimpCanvasItem   *item,
 
 /*  protected  */
 
-void             _gimp_canvas_item_update          (GimpCanvasItem   *item,
+void             _picman_canvas_item_update          (PicmanCanvasItem   *item,
                                                     cairo_region_t   *region);
-gboolean         _gimp_canvas_item_needs_update    (GimpCanvasItem   *item);
-void             _gimp_canvas_item_stroke          (GimpCanvasItem   *item,
+gboolean         _picman_canvas_item_needs_update    (PicmanCanvasItem   *item);
+void             _picman_canvas_item_stroke          (PicmanCanvasItem   *item,
                                                     cairo_t          *cr);
-void             _gimp_canvas_item_fill            (GimpCanvasItem   *item,
+void             _picman_canvas_item_fill            (PicmanCanvasItem   *item,
                                                     cairo_t          *cr);
 
 
-#endif /* __GIMP_CANVAS_ITEM_H__ */
+#endif /* __PICMAN_CANVAS_ITEM_H__ */

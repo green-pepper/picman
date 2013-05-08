@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolornotebook.h
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * picmancolornotebook.h
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * based on color_notebook module
  * Copyright (C) 1998 Austin Donnelly <austin@greenend.org.uk>
@@ -22,57 +22,57 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_COLOR_NOTEBOOK_H__
-#define __GIMP_COLOR_NOTEBOOK_H__
+#ifndef __PICMAN_COLOR_NOTEBOOK_H__
+#define __PICMAN_COLOR_NOTEBOOK_H__
 
-#include <libgimpwidgets/gimpcolorselector.h>
+#include <libpicmanwidgets/picmancolorselector.h>
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_COLOR_NOTEBOOK            (gimp_color_notebook_get_type ())
-#define GIMP_COLOR_NOTEBOOK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_NOTEBOOK, GimpColorNotebook))
-#define GIMP_COLOR_NOTEBOOK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_NOTEBOOK, GimpColorNotebookClass))
-#define GIMP_IS_COLOR_NOTEBOOK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_NOTEBOOK))
-#define GIMP_IS_COLOR_NOTEBOOK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_NOTEBOOK))
-#define GIMP_COLOR_NOTEBOOK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_NOTEBOOK, GimpColorNotebookClass))
+#define PICMAN_TYPE_COLOR_NOTEBOOK            (picman_color_notebook_get_type ())
+#define PICMAN_COLOR_NOTEBOOK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_NOTEBOOK, PicmanColorNotebook))
+#define PICMAN_COLOR_NOTEBOOK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_NOTEBOOK, PicmanColorNotebookClass))
+#define PICMAN_IS_COLOR_NOTEBOOK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_NOTEBOOK))
+#define PICMAN_IS_COLOR_NOTEBOOK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_NOTEBOOK))
+#define PICMAN_COLOR_NOTEBOOK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_NOTEBOOK, PicmanColorNotebookClass))
 
 
-typedef struct _GimpColorNotebookClass GimpColorNotebookClass;
+typedef struct _PicmanColorNotebookClass PicmanColorNotebookClass;
 
-struct _GimpColorNotebook
+struct _PicmanColorNotebook
 {
-  GimpColorSelector  parent_instance;
+  PicmanColorSelector  parent_instance;
 
   GtkWidget         *notebook;
 
   GList             *selectors;
-  GimpColorSelector *cur_page;
+  PicmanColorSelector *cur_page;
 };
 
-struct _GimpColorNotebookClass
+struct _PicmanColorNotebookClass
 {
-  GimpColorSelectorClass  parent_class;
+  PicmanColorSelectorClass  parent_class;
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType       gimp_color_notebook_get_type     (void) G_GNUC_CONST;
+GType       picman_color_notebook_get_type     (void) G_GNUC_CONST;
 
-GtkWidget * gimp_color_notebook_set_has_page (GimpColorNotebook *notebook,
+GtkWidget * picman_color_notebook_set_has_page (PicmanColorNotebook *notebook,
                                               GType              page_type,
                                               gboolean           has_page);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_COLOR_NOTEBOOK_H__ */
+#endif /* __PICMAN_COLOR_NOTEBOOK_H__ */

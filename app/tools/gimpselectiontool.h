@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,48 +15,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SELECTION_TOOL_H__
-#define __GIMP_SELECTION_TOOL_H__
+#ifndef __PICMAN_SELECTION_TOOL_H__
+#define __PICMAN_SELECTION_TOOL_H__
 
 
-#include "gimpdrawtool.h"
+#include "picmandrawtool.h"
 
 
-#define GIMP_TYPE_SELECTION_TOOL            (gimp_selection_tool_get_type ())
-#define GIMP_SELECTION_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SELECTION_TOOL, GimpSelectionTool))
-#define GIMP_SELECTION_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SELECTION_TOOL, GimpSelectionToolClass))
-#define GIMP_IS_SELECTION_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SELECTION_TOOL))
-#define GIMP_IS_SELECTION_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SELECTION_TOOL))
-#define GIMP_SELECTION_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SELECTION_TOOL, GimpSelectionToolClass))
+#define PICMAN_TYPE_SELECTION_TOOL            (picman_selection_tool_get_type ())
+#define PICMAN_SELECTION_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SELECTION_TOOL, PicmanSelectionTool))
+#define PICMAN_SELECTION_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SELECTION_TOOL, PicmanSelectionToolClass))
+#define PICMAN_IS_SELECTION_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SELECTION_TOOL))
+#define PICMAN_IS_SELECTION_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SELECTION_TOOL))
+#define PICMAN_SELECTION_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SELECTION_TOOL, PicmanSelectionToolClass))
 
-#define GIMP_SELECTION_TOOL_GET_OPTIONS(t)  (GIMP_SELECTION_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_SELECTION_TOOL_GET_OPTIONS(t)  (PICMAN_SELECTION_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpSelectionTool      GimpSelectionTool;
-typedef struct _GimpSelectionToolClass GimpSelectionToolClass;
+typedef struct _PicmanSelectionTool      PicmanSelectionTool;
+typedef struct _PicmanSelectionToolClass PicmanSelectionToolClass;
 
-struct _GimpSelectionTool
+struct _PicmanSelectionTool
 {
-  GimpDrawTool   parent_instance;
+  PicmanDrawTool   parent_instance;
 
   SelectFunction function;         /*  selection function        */
-  GimpChannelOps saved_operation;  /*  saved tool options state  */
+  PicmanChannelOps saved_operation;  /*  saved tool options state  */
 
   gboolean       allow_move;
 };
 
-struct _GimpSelectionToolClass
+struct _PicmanSelectionToolClass
 {
-  GimpDrawToolClass  parent_class;
+  PicmanDrawToolClass  parent_class;
 };
 
 
-GType      gimp_selection_tool_get_type   (void) G_GNUC_CONST;
+GType      picman_selection_tool_get_type   (void) G_GNUC_CONST;
 
 /*  protected function  */
-gboolean   gimp_selection_tool_start_edit (GimpSelectionTool *sel_tool,
-                                           GimpDisplay       *display,
-                                           const GimpCoords  *coords);
+gboolean   picman_selection_tool_start_edit (PicmanSelectionTool *sel_tool,
+                                           PicmanDisplay       *display,
+                                           const PicmanCoords  *coords);
 
 
-#endif  /* __GIMP_SELECTION_TOOL_H__ */
+#endif  /* __PICMAN_SELECTION_TOOL_H__ */

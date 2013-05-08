@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdeviceeditor.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmandeviceeditor.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,34 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DEVICE_EDITOR_H__
-#define __GIMP_DEVICE_EDITOR_H__
+#ifndef __PICMAN_DEVICE_EDITOR_H__
+#define __PICMAN_DEVICE_EDITOR_H__
 
 
-#define GIMP_TYPE_DEVICE_EDITOR            (gimp_device_editor_get_type ())
-#define GIMP_DEVICE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DEVICE_EDITOR, GimpDeviceEditor))
-#define GIMP_DEVICE_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DEVICE_EDITOR, GimpDeviceEditorClass))
-#define GIMP_IS_DEVICE_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DEVICE_EDITOR))
-#define GIMP_IS_DEVICE_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DEVICE_EDITOR))
-#define GIMP_DEVICE_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DEVICE_EDITOR, GimpDeviceEditorClass))
+#define PICMAN_TYPE_DEVICE_EDITOR            (picman_device_editor_get_type ())
+#define PICMAN_DEVICE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DEVICE_EDITOR, PicmanDeviceEditor))
+#define PICMAN_DEVICE_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DEVICE_EDITOR, PicmanDeviceEditorClass))
+#define PICMAN_IS_DEVICE_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DEVICE_EDITOR))
+#define PICMAN_IS_DEVICE_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DEVICE_EDITOR))
+#define PICMAN_DEVICE_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DEVICE_EDITOR, PicmanDeviceEditorClass))
 
 
-typedef struct _GimpDeviceEditorClass GimpDeviceEditorClass;
+typedef struct _PicmanDeviceEditorClass PicmanDeviceEditorClass;
 
-struct _GimpDeviceEditor
+struct _PicmanDeviceEditor
 {
   GtkPaned  parent_instance;
 };
 
-struct _GimpDeviceEditorClass
+struct _PicmanDeviceEditorClass
 {
   GtkPanedClass  parent_class;
 };
 
 
-GType       gimp_device_editor_get_type (void) G_GNUC_CONST;
+GType       picman_device_editor_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_device_editor_new      (Gimp *gimp);
+GtkWidget * picman_device_editor_new      (Picman *picman);
 
 
-#endif /* __GIMP_DEVICE_EDITOR_H__ */
+#endif /* __PICMAN_DEVICE_EDITOR_H__ */

@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpvectors-warp.c
+ * picmanvectors-warp.c
  * Copyright (C) 2005 Bill Skaggs  <weskaggs@primate.ucdavis.edu>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,49 +24,49 @@
 
 #include "vectors-types.h"
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "core/gimp-utils.h"
-#include "core/gimpcoords.h"
+#include "core/picman-utils.h"
+#include "core/picmancoords.h"
 
-#include "gimpanchor.h"
-#include "gimpstroke.h"
-#include "gimpvectors.h"
-#include "gimpvectors-warp.h"
+#include "picmananchor.h"
+#include "picmanstroke.h"
+#include "picmanvectors.h"
+#include "picmanvectors-warp.h"
 
 
 #define EPSILON 0.2
 #define DX      2.0
 
 
-static void gimp_stroke_warp_point   (const GimpStroke  *stroke,
+static void picman_stroke_warp_point   (const PicmanStroke  *stroke,
                                       gdouble            x,
                                       gdouble            y,
-                                      GimpCoords        *point_warped,
+                                      PicmanCoords        *point_warped,
                                       gdouble            y_offset);
 
-static void gimp_vectors_warp_stroke (const GimpVectors *vectors,
-                                      GimpStroke        *stroke,
+static void picman_vectors_warp_stroke (const PicmanVectors *vectors,
+                                      PicmanStroke        *stroke,
                                       gdouble            y_offset);
 
 
 void
-gimp_vectors_warp_point (const GimpVectors *vectors,
-                         GimpCoords        *point,
-                         GimpCoords        *point_warped,
+picman_vectors_warp_point (const PicmanVectors *vectors,
+                         PicmanCoords        *point,
+                         PicmanCoords        *point_warped,
                          gdouble            y_offset)
 {
   gdouble     x      = point->x;
   gdouble     y      = point->y;
   gdouble     len;
   GList      *list;
-  GimpStroke *stroke;
+  PicmanStroke *stroke;
 
   for (list = vectors->strokes; list; list = g_list_next (list))
     {
       stroke = list->data;
 
-      len = gimp_vectors_stroke_get_length (vectors, stroke);
+      len = picman_vectors_stroke_get_length (vectors, stroke);
 
       if (x < len)
         break;
@@ -81,23 +81,23 @@ gimp_vectors_warp_point (const GimpVectors *vectors,
       return;
     }
 
-  gimp_stroke_warp_point (stroke, x, y, point_warped, y_offset);
+  picman_stroke_warp_point (stroke, x, y, point_warped, y_offset);
 }
 
 static void
-gimp_stroke_warp_point (const GimpStroke *stroke,
+picman_stroke_warp_point (const PicmanStroke *stroke,
                         gdouble           x,
                         gdouble           y,
-                        GimpCoords       *point_warped,
+                        PicmanCoords       *point_warped,
                         gdouble           y_offset)
 {
-  GimpCoords point_zero  = { 0, };
-  GimpCoords point_minus = { 0, };
-  GimpCoords point_plus  = { 0, };
+  PicmanCoords point_zero  = { 0, };
+  PicmanCoords point_minus = { 0, };
+  PicmanCoords point_plus  = { 0, };
   gdouble    slope;
   gdouble    dx, dy, nx, ny, len;
 
-  if (! gimp_stroke_get_point_at_dist (stroke, x, EPSILON,
+  if (! picman_stroke_get_point_at_dist (stroke, x, EPSILON,
                                        &point_zero, &slope))
     {
       point_warped->x = 0;
@@ -108,11 +108,11 @@ gimp_stroke_warp_point (const GimpStroke *stroke,
   point_warped->x = point_zero.x;
   point_warped->y = point_zero.y;
 
-  if (! gimp_stroke_get_point_at_dist (stroke, x - DX, EPSILON,
+  if (! picman_stroke_get_point_at_dist (stroke, x - DX, EPSILON,
                                        &point_minus, &slope))
     return;
 
-  if (! gimp_stroke_get_point_at_dist (stroke, x + DX, EPSILON,
+  if (! picman_stroke_get_point_at_dist (stroke, x + DX, EPSILON,
                                        &point_plus, &slope))
     return;
 
@@ -132,33 +132,33 @@ gimp_stroke_warp_point (const GimpStroke *stroke,
 }
 
 static void
-gimp_vectors_warp_stroke (const GimpVectors *vectors,
-                          GimpStroke        *stroke,
+picman_vectors_warp_stroke (const PicmanVectors *vectors,
+                          PicmanStroke        *stroke,
                           gdouble            y_offset)
 {
   GList *list;
 
   for (list = stroke->anchors; list; list = g_list_next (list))
     {
-      GimpAnchor *anchor = list->data;
+      PicmanAnchor *anchor = list->data;
 
-      gimp_vectors_warp_point (vectors,
+      picman_vectors_warp_point (vectors,
                                &anchor->position, &anchor->position,
                                y_offset);
     }
 }
 
 void
-gimp_vectors_warp_vectors (const GimpVectors *vectors,
-                           GimpVectors       *vectors_in,
+picman_vectors_warp_vectors (const PicmanVectors *vectors,
+                           PicmanVectors       *vectors_in,
                            gdouble            y_offset)
 {
   GList *list;
 
   for (list = vectors_in->strokes; list; list = g_list_next (list))
     {
-      GimpStroke *stroke = list->data;
+      PicmanStroke *stroke = list->data;
 
-      gimp_vectors_warp_stroke (vectors, stroke, y_offset);
+      picman_vectors_warp_stroke (vectors, stroke, y_offset);
     }
 }

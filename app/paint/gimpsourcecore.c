@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,23 +19,23 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "paint-types.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "core/gimp.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdynamics.h"
-#include "core/gimperror.h"
-#include "core/gimpimage.h"
-#include "core/gimppickable.h"
+#include "core/picman.h"
+#include "core/picmandrawable.h"
+#include "core/picmandynamics.h"
+#include "core/picmanerror.h"
+#include "core/picmanimage.h"
+#include "core/picmanpickable.h"
 
-#include "gimpsourcecore.h"
-#include "gimpsourceoptions.h"
+#include "picmansourcecore.h"
+#include "picmansourceoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -47,41 +47,41 @@ enum
 };
 
 
-static void     gimp_source_core_set_property    (GObject           *object,
+static void     picman_source_core_set_property    (GObject           *object,
                                                   guint              property_id,
                                                   const GValue      *value,
                                                   GParamSpec        *pspec);
-static void     gimp_source_core_get_property    (GObject           *object,
+static void     picman_source_core_get_property    (GObject           *object,
                                                   guint              property_id,
                                                   GValue            *value,
                                                   GParamSpec        *pspec);
 
-static gboolean gimp_source_core_start           (GimpPaintCore     *paint_core,
-                                                  GimpDrawable      *drawable,
-                                                  GimpPaintOptions  *paint_options,
-                                                  const GimpCoords  *coords,
+static gboolean picman_source_core_start           (PicmanPaintCore     *paint_core,
+                                                  PicmanDrawable      *drawable,
+                                                  PicmanPaintOptions  *paint_options,
+                                                  const PicmanCoords  *coords,
                                                   GError           **error);
-static void     gimp_source_core_paint           (GimpPaintCore     *paint_core,
-                                                  GimpDrawable      *drawable,
-                                                  GimpPaintOptions  *paint_options,
-                                                  const GimpCoords  *coords,
-                                                  GimpPaintState     paint_state,
+static void     picman_source_core_paint           (PicmanPaintCore     *paint_core,
+                                                  PicmanDrawable      *drawable,
+                                                  PicmanPaintOptions  *paint_options,
+                                                  const PicmanCoords  *coords,
+                                                  PicmanPaintState     paint_state,
                                                   guint32            time);
 
 #if 0
-static void     gimp_source_core_motion          (GimpSourceCore    *source_core,
-                                                  GimpDrawable      *drawable,
-                                                  GimpPaintOptions  *paint_options,
-                                                  const GimpCoords  *coords);
+static void     picman_source_core_motion          (PicmanSourceCore    *source_core,
+                                                  PicmanDrawable      *drawable,
+                                                  PicmanPaintOptions  *paint_options,
+                                                  const PicmanCoords  *coords);
 #endif
 
-static gboolean gimp_source_core_real_use_source (GimpSourceCore    *source_core,
-                                                  GimpSourceOptions *options);
+static gboolean picman_source_core_real_use_source (PicmanSourceCore    *source_core,
+                                                  PicmanSourceOptions *options);
 static GeglBuffer *
-                gimp_source_core_real_get_source (GimpSourceCore    *source_core,
-                                                  GimpDrawable      *drawable,
-                                                  GimpPaintOptions  *paint_options,
-                                                  GimpPickable      *src_pickable,
+                picman_source_core_real_get_source (PicmanSourceCore    *source_core,
+                                                  PicmanDrawable      *drawable,
+                                                  PicmanPaintOptions  *paint_options,
+                                                  PicmanPickable      *src_pickable,
                                                   gint               src_offset_x,
                                                   gint               src_offset_y,
                                                   GeglBuffer        *paint_buffer,
@@ -93,55 +93,55 @@ static GeglBuffer *
                                                   gint              *paint_area_height,
                                                   GeglRectangle     *src_rect);
 
-static void    gimp_source_core_set_src_drawable (GimpSourceCore    *source_core,
-                                                  GimpDrawable      *drawable);
+static void    picman_source_core_set_src_drawable (PicmanSourceCore    *source_core,
+                                                  PicmanDrawable      *drawable);
 
 
-G_DEFINE_TYPE (GimpSourceCore, gimp_source_core, GIMP_TYPE_BRUSH_CORE)
+G_DEFINE_TYPE (PicmanSourceCore, picman_source_core, PICMAN_TYPE_BRUSH_CORE)
 
-#define parent_class gimp_source_core_parent_class
+#define parent_class picman_source_core_parent_class
 
 
 static void
-gimp_source_core_class_init (GimpSourceCoreClass *klass)
+picman_source_core_class_init (PicmanSourceCoreClass *klass)
 {
   GObjectClass       *object_class     = G_OBJECT_CLASS (klass);
-  GimpPaintCoreClass *paint_core_class = GIMP_PAINT_CORE_CLASS (klass);
-  GimpBrushCoreClass *brush_core_class = GIMP_BRUSH_CORE_CLASS (klass);
+  PicmanPaintCoreClass *paint_core_class = PICMAN_PAINT_CORE_CLASS (klass);
+  PicmanBrushCoreClass *brush_core_class = PICMAN_BRUSH_CORE_CLASS (klass);
 
-  object_class->set_property               = gimp_source_core_set_property;
-  object_class->get_property               = gimp_source_core_get_property;
+  object_class->set_property               = picman_source_core_set_property;
+  object_class->get_property               = picman_source_core_get_property;
 
-  paint_core_class->start                  = gimp_source_core_start;
-  paint_core_class->paint                  = gimp_source_core_paint;
+  paint_core_class->start                  = picman_source_core_start;
+  paint_core_class->paint                  = picman_source_core_paint;
 
   brush_core_class->handles_changing_brush = TRUE;
 
-  klass->use_source                        = gimp_source_core_real_use_source;
-  klass->get_source                        = gimp_source_core_real_get_source;
+  klass->use_source                        = picman_source_core_real_use_source;
+  klass->get_source                        = picman_source_core_real_get_source;
   klass->motion                            = NULL;
 
   g_object_class_install_property (object_class, PROP_SRC_DRAWABLE,
                                    g_param_spec_object ("src-drawable",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_DRAWABLE,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_DRAWABLE,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_SRC_X,
                                    g_param_spec_double ("src-x", NULL, NULL,
-                                                        0, GIMP_MAX_IMAGE_SIZE,
+                                                        0, PICMAN_MAX_IMAGE_SIZE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_SRC_Y,
                                    g_param_spec_double ("src-y", NULL, NULL,
-                                                        0, GIMP_MAX_IMAGE_SIZE,
+                                                        0, PICMAN_MAX_IMAGE_SIZE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_source_core_init (GimpSourceCore *source_core)
+picman_source_core_init (PicmanSourceCore *source_core)
 {
   source_core->set_source   = FALSE;
 
@@ -158,17 +158,17 @@ gimp_source_core_init (GimpSourceCore *source_core)
 }
 
 static void
-gimp_source_core_set_property (GObject      *object,
+picman_source_core_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpSourceCore *source_core = GIMP_SOURCE_CORE (object);
+  PicmanSourceCore *source_core = PICMAN_SOURCE_CORE (object);
 
   switch (property_id)
     {
     case PROP_SRC_DRAWABLE:
-      gimp_source_core_set_src_drawable (source_core,
+      picman_source_core_set_src_drawable (source_core,
                                          g_value_get_object (value));
       break;
     case PROP_SRC_X:
@@ -184,12 +184,12 @@ gimp_source_core_set_property (GObject      *object,
 }
 
 static void
-gimp_source_core_get_property (GObject    *object,
+picman_source_core_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpSourceCore *source_core = GIMP_SOURCE_CORE (object);
+  PicmanSourceCore *source_core = PICMAN_SOURCE_CORE (object);
 
   switch (property_id)
     {
@@ -209,16 +209,16 @@ gimp_source_core_get_property (GObject    *object,
 }
 
 static gboolean
-gimp_source_core_start (GimpPaintCore     *paint_core,
-                        GimpDrawable      *drawable,
-                        GimpPaintOptions  *paint_options,
-                        const GimpCoords  *coords,
+picman_source_core_start (PicmanPaintCore     *paint_core,
+                        PicmanDrawable      *drawable,
+                        PicmanPaintOptions  *paint_options,
+                        const PicmanCoords  *coords,
                         GError           **error)
 {
-  GimpSourceCore    *source_core = GIMP_SOURCE_CORE (paint_core);
-  GimpSourceOptions *options     = GIMP_SOURCE_OPTIONS (paint_options);
+  PicmanSourceCore    *source_core = PICMAN_SOURCE_CORE (paint_core);
+  PicmanSourceOptions *options     = PICMAN_SOURCE_OPTIONS (paint_options);
 
-  if (! GIMP_PAINT_CORE_CLASS (parent_class)->start (paint_core, drawable,
+  if (! PICMAN_PAINT_CORE_CLASS (parent_class)->start (paint_core, drawable,
                                                      paint_options, coords,
                                                      error))
     {
@@ -228,18 +228,18 @@ gimp_source_core_start (GimpPaintCore     *paint_core,
   paint_core->use_saved_proj = FALSE;
 
   if (! source_core->set_source &&
-      gimp_source_core_use_source (source_core, options))
+      picman_source_core_use_source (source_core, options))
     {
       if (! source_core->src_drawable)
         {
-          g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+          g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			       _("Set a source image first."));
           return FALSE;
         }
 
       if (options->sample_merged &&
-          gimp_item_get_image (GIMP_ITEM (source_core->src_drawable)) ==
-          gimp_item_get_image (GIMP_ITEM (drawable)))
+          picman_item_get_image (PICMAN_ITEM (source_core->src_drawable)) ==
+          picman_item_get_image (PICMAN_ITEM (drawable)))
         {
           paint_core->use_saved_proj = TRUE;
         }
@@ -249,29 +249,29 @@ gimp_source_core_start (GimpPaintCore     *paint_core,
 }
 
 static void
-gimp_source_core_paint (GimpPaintCore    *paint_core,
-                        GimpDrawable     *drawable,
-                        GimpPaintOptions *paint_options,
-                        const GimpCoords *coords,
-                        GimpPaintState    paint_state,
+picman_source_core_paint (PicmanPaintCore    *paint_core,
+                        PicmanDrawable     *drawable,
+                        PicmanPaintOptions *paint_options,
+                        const PicmanCoords *coords,
+                        PicmanPaintState    paint_state,
                         guint32           time)
 {
-  GimpSourceCore    *source_core = GIMP_SOURCE_CORE (paint_core);
-  GimpSourceOptions *options     = GIMP_SOURCE_OPTIONS (paint_options);
+  PicmanSourceCore    *source_core = PICMAN_SOURCE_CORE (paint_core);
+  PicmanSourceOptions *options     = PICMAN_SOURCE_OPTIONS (paint_options);
 
   switch (paint_state)
     {
-    case GIMP_PAINT_STATE_INIT:
+    case PICMAN_PAINT_STATE_INIT:
       if (source_core->set_source)
         {
-          gimp_source_core_set_src_drawable (source_core, drawable);
+          picman_source_core_set_src_drawable (source_core, drawable);
 
           source_core->src_x = coords->x;
           source_core->src_y = coords->y;
 
           source_core->first_stroke = TRUE;
         }
-      else if (options->align_mode == GIMP_SOURCE_ALIGN_NO)
+      else if (options->align_mode == PICMAN_SOURCE_ALIGN_NO)
         {
           source_core->orig_src_x = source_core->src_x;
           source_core->orig_src_y = source_core->src_y;
@@ -280,7 +280,7 @@ gimp_source_core_paint (GimpPaintCore    *paint_core,
         }
       break;
 
-    case GIMP_PAINT_STATE_MOTION:
+    case PICMAN_PAINT_STATE_MOTION:
       if (source_core->set_source)
         {
           /*  If the control key is down, move the src target and return */
@@ -300,12 +300,12 @@ gimp_source_core_paint (GimpPaintCore    *paint_core,
           dest_x = coords->x;
           dest_y = coords->y;
 
-          if (options->align_mode == GIMP_SOURCE_ALIGN_REGISTERED)
+          if (options->align_mode == PICMAN_SOURCE_ALIGN_REGISTERED)
             {
               source_core->offset_x = 0;
               source_core->offset_y = 0;
             }
-          else if (options->align_mode == GIMP_SOURCE_ALIGN_FIXED)
+          else if (options->align_mode == PICMAN_SOURCE_ALIGN_FIXED)
             {
               source_core->offset_x = source_core->src_x - dest_x;
               source_core->offset_y = source_core->src_y - dest_y;
@@ -321,12 +321,12 @@ gimp_source_core_paint (GimpPaintCore    *paint_core,
           source_core->src_x = dest_x + source_core->offset_x;
           source_core->src_y = dest_y + source_core->offset_y;
 
-          gimp_source_core_motion (source_core, drawable, paint_options, coords);
+          picman_source_core_motion (source_core, drawable, paint_options, coords);
         }
       break;
 
-    case GIMP_PAINT_STATE_FINISH:
-      if (options->align_mode == GIMP_SOURCE_ALIGN_NO &&
+    case PICMAN_PAINT_STATE_FINISH:
+      if (options->align_mode == PICMAN_SOURCE_ALIGN_NO &&
           ! source_core->first_stroke)
         {
           source_core->src_x = source_core->orig_src_x;
@@ -343,17 +343,17 @@ gimp_source_core_paint (GimpPaintCore    *paint_core,
 }
 
 void
-gimp_source_core_motion (GimpSourceCore   *source_core,
-                         GimpDrawable     *drawable,
-                         GimpPaintOptions *paint_options,
-                         const GimpCoords *coords)
+picman_source_core_motion (PicmanSourceCore   *source_core,
+                         PicmanDrawable     *drawable,
+                         PicmanPaintOptions *paint_options,
+                         const PicmanCoords *coords)
 
 {
-  GimpPaintCore     *paint_core   = GIMP_PAINT_CORE (source_core);
-  GimpSourceOptions *options      = GIMP_SOURCE_OPTIONS (paint_options);
-  GimpDynamics      *dynamics     = GIMP_BRUSH_CORE (paint_core)->dynamics;
-  GimpImage         *image        = gimp_item_get_image (GIMP_ITEM (drawable));
-  GimpPickable      *src_pickable = NULL;
+  PicmanPaintCore     *paint_core   = PICMAN_PAINT_CORE (source_core);
+  PicmanSourceOptions *options      = PICMAN_SOURCE_OPTIONS (paint_options);
+  PicmanDynamics      *dynamics     = PICMAN_BRUSH_CORE (paint_core)->dynamics;
+  PicmanImage         *image        = picman_item_get_image (PICMAN_ITEM (drawable));
+  PicmanPickable      *src_pickable = NULL;
   GeglBuffer        *src_buffer   = NULL;
   GeglRectangle      src_rect;
   gint               src_offset_x;
@@ -368,11 +368,11 @@ gimp_source_core_motion (GimpSourceCore   *source_core,
   gdouble            fade_point;
   gdouble            opacity;
 
-  fade_point = gimp_paint_options_get_fade (paint_options, image,
+  fade_point = picman_paint_options_get_fade (paint_options, image,
                                             paint_core->pixel_dist);
 
-  opacity = gimp_dynamics_get_linear_value (dynamics,
-                                            GIMP_DYNAMICS_OUTPUT_OPACITY,
+  opacity = picman_dynamics_get_linear_value (dynamics,
+                                            PICMAN_DYNAMICS_OUTPUT_OPACITY,
                                             coords,
                                             paint_options,
                                             fade_point);
@@ -382,28 +382,28 @@ gimp_source_core_motion (GimpSourceCore   *source_core,
   src_offset_x = source_core->offset_x;
   src_offset_y = source_core->offset_y;
 
-  if (gimp_source_core_use_source (source_core, options))
+  if (picman_source_core_use_source (source_core, options))
     {
-      src_pickable = GIMP_PICKABLE (source_core->src_drawable);
+      src_pickable = PICMAN_PICKABLE (source_core->src_drawable);
 
       if (options->sample_merged)
         {
-          GimpImage *src_image = gimp_pickable_get_image (src_pickable);
+          PicmanImage *src_image = picman_pickable_get_image (src_pickable);
           gint       off_x, off_y;
 
-          src_pickable = GIMP_PICKABLE (gimp_image_get_projection (src_image));
+          src_pickable = PICMAN_PICKABLE (picman_image_get_projection (src_image));
 
-          gimp_item_get_offset (GIMP_ITEM (source_core->src_drawable),
+          picman_item_get_offset (PICMAN_ITEM (source_core->src_drawable),
                                 &off_x, &off_y);
 
           src_offset_x += off_x;
           src_offset_y += off_y;
         }
 
-      gimp_pickable_flush (src_pickable);
+      picman_pickable_flush (src_pickable);
     }
 
-  paint_buffer = gimp_paint_core_get_paint_buffer (paint_core, drawable,
+  paint_buffer = picman_paint_core_get_paint_buffer (paint_core, drawable,
                                                    paint_options, coords,
                                                    &paint_buffer_x,
                                                    &paint_buffer_y);
@@ -415,10 +415,10 @@ gimp_source_core_motion (GimpSourceCore   *source_core,
   paint_area_width    = gegl_buffer_get_width  (paint_buffer);
   paint_area_height   = gegl_buffer_get_height (paint_buffer);
 
-  if (gimp_source_core_use_source (source_core, options))
+  if (picman_source_core_use_source (source_core, options))
     {
       src_buffer =
-        GIMP_SOURCE_CORE_GET_CLASS (source_core)->get_source (source_core,
+        PICMAN_SOURCE_CORE_GET_CLASS (source_core)->get_source (source_core,
                                                               drawable,
                                                               paint_options,
                                                               src_pickable,
@@ -439,7 +439,7 @@ gimp_source_core_motion (GimpSourceCore   *source_core,
   /*  Set the paint buffer to transparent  */
   gegl_buffer_clear (paint_buffer, NULL);
 
-  GIMP_SOURCE_CORE_GET_CLASS (source_core)->motion (source_core,
+  PICMAN_SOURCE_CORE_GET_CLASS (source_core)->motion (source_core,
                                                     drawable,
                                                     paint_options,
                                                     coords,
@@ -462,25 +462,25 @@ gimp_source_core_motion (GimpSourceCore   *source_core,
 }
 
 gboolean
-gimp_source_core_use_source (GimpSourceCore    *source_core,
-                             GimpSourceOptions *options)
+picman_source_core_use_source (PicmanSourceCore    *source_core,
+                             PicmanSourceOptions *options)
 {
-  return GIMP_SOURCE_CORE_GET_CLASS (source_core)->use_source (source_core,
+  return PICMAN_SOURCE_CORE_GET_CLASS (source_core)->use_source (source_core,
                                                                options);
 }
 
 static gboolean
-gimp_source_core_real_use_source (GimpSourceCore    *source_core,
-                                  GimpSourceOptions *options)
+picman_source_core_real_use_source (PicmanSourceCore    *source_core,
+                                  PicmanSourceOptions *options)
 {
   return TRUE;
 }
 
 static GeglBuffer *
-gimp_source_core_real_get_source (GimpSourceCore   *source_core,
-                                  GimpDrawable     *drawable,
-                                  GimpPaintOptions *paint_options,
-                                  GimpPickable     *src_pickable,
+picman_source_core_real_get_source (PicmanSourceCore   *source_core,
+                                  PicmanDrawable     *drawable,
+                                  PicmanPaintOptions *paint_options,
+                                  PicmanPickable     *src_pickable,
                                   gint              src_offset_x,
                                   gint              src_offset_y,
                                   GeglBuffer       *paint_buffer,
@@ -492,15 +492,15 @@ gimp_source_core_real_get_source (GimpSourceCore   *source_core,
                                   gint             *paint_area_height,
                                   GeglRectangle    *src_rect)
 {
-  GimpSourceOptions *options    = GIMP_SOURCE_OPTIONS (paint_options);
-  GimpImage         *image      = gimp_item_get_image (GIMP_ITEM (drawable));
-  GimpImage         *src_image  = gimp_pickable_get_image (src_pickable);
-  GeglBuffer        *src_buffer = gimp_pickable_get_buffer (src_pickable);
+  PicmanSourceOptions *options    = PICMAN_SOURCE_OPTIONS (paint_options);
+  PicmanImage         *image      = picman_item_get_image (PICMAN_ITEM (drawable));
+  PicmanImage         *src_image  = picman_pickable_get_image (src_pickable);
+  GeglBuffer        *src_buffer = picman_pickable_get_buffer (src_pickable);
   GeglBuffer        *dest_buffer;
   gint               x, y;
   gint               width, height;
 
-  if (! gimp_rectangle_intersect (paint_buffer_x + src_offset_x,
+  if (! picman_rectangle_intersect (paint_buffer_x + src_offset_x,
                                   paint_buffer_y + src_offset_y,
                                   gegl_buffer_get_width  (paint_buffer),
                                   gegl_buffer_get_height (paint_buffer),
@@ -528,9 +528,9 @@ gimp_source_core_real_get_source (GimpSourceCore   *source_core,
     {
       /*  get the original image  */
       if (options->sample_merged)
-        dest_buffer = gimp_paint_core_get_orig_proj (GIMP_PAINT_CORE (source_core));
+        dest_buffer = picman_paint_core_get_orig_proj (PICMAN_PAINT_CORE (source_core));
       else
-        dest_buffer = gimp_paint_core_get_orig_image (GIMP_PAINT_CORE (source_core));
+        dest_buffer = picman_paint_core_get_orig_image (PICMAN_PAINT_CORE (source_core));
     }
 
   *paint_area_offset_x = x - (paint_buffer_x + src_offset_x);
@@ -544,8 +544,8 @@ gimp_source_core_real_get_source (GimpSourceCore   *source_core,
 }
 
 static void
-gimp_source_core_src_drawable_removed (GimpDrawable   *drawable,
-                                       GimpSourceCore *source_core)
+picman_source_core_src_drawable_removed (PicmanDrawable   *drawable,
+                                       PicmanSourceCore *source_core)
 {
   if (drawable == source_core->src_drawable)
     {
@@ -553,27 +553,27 @@ gimp_source_core_src_drawable_removed (GimpDrawable   *drawable,
     }
 
   g_signal_handlers_disconnect_by_func (drawable,
-                                        gimp_source_core_src_drawable_removed,
+                                        picman_source_core_src_drawable_removed,
                                         source_core);
 }
 
 static void
-gimp_source_core_set_src_drawable (GimpSourceCore *source_core,
-                                   GimpDrawable   *drawable)
+picman_source_core_set_src_drawable (PicmanSourceCore *source_core,
+                                   PicmanDrawable   *drawable)
 {
   if (source_core->src_drawable == drawable)
     return;
 
   if (source_core->src_drawable)
     g_signal_handlers_disconnect_by_func (source_core->src_drawable,
-                                          gimp_source_core_src_drawable_removed,
+                                          picman_source_core_src_drawable_removed,
                                           source_core);
 
   source_core->src_drawable = drawable;
 
   if (source_core->src_drawable)
     g_signal_connect (source_core->src_drawable, "removed",
-                      G_CALLBACK (gimp_source_core_src_drawable_removed),
+                      G_CALLBACK (picman_source_core_src_drawable_removed),
                       source_core);
 
   g_object_notify (G_OBJECT (source_core), "src-drawable");

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationborder.c
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picmanoperationborder.c
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,12 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "operations-types.h"
 
-#include "gimpoperationborder.h"
+#include "picmanoperationborder.h"
 
 
 enum
@@ -42,57 +42,57 @@ enum
 };
 
 
-static void     gimp_operation_border_get_property (GObject      *object,
+static void     picman_operation_border_get_property (GObject      *object,
                                                     guint         property_id,
                                                     GValue       *value,
                                                     GParamSpec   *pspec);
-static void     gimp_operation_border_set_property (GObject      *object,
+static void     picman_operation_border_set_property (GObject      *object,
                                                     guint         property_id,
                                                     const GValue *value,
                                                     GParamSpec   *pspec);
 
 static GeglRectangle
-gimp_operation_border_get_required_for_output (GeglOperation       *self,
+picman_operation_border_get_required_for_output (GeglOperation       *self,
                                                const gchar         *input_pad,
                                                const GeglRectangle *roi);
 static GeglRectangle
-      gimp_operation_border_get_cached_region (GeglOperation       *self,
+      picman_operation_border_get_cached_region (GeglOperation       *self,
                                                const GeglRectangle *roi);
-static void     gimp_operation_border_prepare (GeglOperation       *operation);
-static gboolean gimp_operation_border_process (GeglOperation       *operation,
+static void     picman_operation_border_prepare (GeglOperation       *operation);
+static gboolean picman_operation_border_process (GeglOperation       *operation,
                                                GeglBuffer          *input,
                                                GeglBuffer          *output,
                                                const GeglRectangle *roi,
                                                gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationBorder, gimp_operation_border,
+G_DEFINE_TYPE (PicmanOperationBorder, picman_operation_border,
                GEGL_TYPE_OPERATION_FILTER)
 
-#define parent_class gimp_operation_border_parent_class
+#define parent_class picman_operation_border_parent_class
 
 
 static void
-gimp_operation_border_class_init (GimpOperationBorderClass *klass)
+picman_operation_border_class_init (PicmanOperationBorderClass *klass)
 {
   GObjectClass             *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass       *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationFilterClass *filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  object_class->set_property   = gimp_operation_border_set_property;
-  object_class->get_property   = gimp_operation_border_get_property;
+  object_class->set_property   = picman_operation_border_set_property;
+  object_class->get_property   = picman_operation_border_get_property;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:border",
-                                 "categories",  "gimp",
-                                 "description", "GIMP Border operation",
+                                 "name",        "picman:border",
+                                 "categories",  "picman",
+                                 "description", "PICMAN Border operation",
                                  NULL);
 
-  operation_class->prepare                 = gimp_operation_border_prepare;
-  operation_class->get_required_for_output = gimp_operation_border_get_required_for_output;
-  operation_class->get_cached_region       = gimp_operation_border_get_cached_region;
+  operation_class->prepare                 = picman_operation_border_prepare;
+  operation_class->get_required_for_output = picman_operation_border_get_required_for_output;
+  operation_class->get_cached_region       = picman_operation_border_get_cached_region;
 
-  filter_class->process                    = gimp_operation_border_process;
+  filter_class->process                    = picman_operation_border_process;
 
   g_object_class_install_property (object_class, PROP_RADIUS_X,
                                    g_param_spec_int ("radius-x",
@@ -128,17 +128,17 @@ gimp_operation_border_class_init (GimpOperationBorderClass *klass)
 }
 
 static void
-gimp_operation_border_init (GimpOperationBorder *self)
+picman_operation_border_init (PicmanOperationBorder *self)
 {
 }
 
 static void
-gimp_operation_border_get_property (GObject    *object,
+picman_operation_border_get_property (GObject    *object,
                                     guint       property_id,
                                     GValue     *value,
                                     GParamSpec *pspec)
 {
- GimpOperationBorder *self = GIMP_OPERATION_BORDER (object);
+ PicmanOperationBorder *self = PICMAN_OPERATION_BORDER (object);
 
   switch (property_id)
     {
@@ -165,12 +165,12 @@ gimp_operation_border_get_property (GObject    *object,
 }
 
 static void
-gimp_operation_border_set_property (GObject      *object,
+picman_operation_border_set_property (GObject      *object,
                                     guint         property_id,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
-  GimpOperationBorder *self = GIMP_OPERATION_BORDER (object);
+  PicmanOperationBorder *self = PICMAN_OPERATION_BORDER (object);
 
   switch (property_id)
     {
@@ -197,14 +197,14 @@ gimp_operation_border_set_property (GObject      *object,
 }
 
 static void
-gimp_operation_border_prepare (GeglOperation *operation)
+picman_operation_border_prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input",  babl_format ("Y u8"));
   gegl_operation_set_format (operation, "output", babl_format ("Y u8"));
 }
 
 static GeglRectangle
-gimp_operation_border_get_required_for_output (GeglOperation       *self,
+picman_operation_border_get_required_for_output (GeglOperation       *self,
                                                const gchar         *input_pad,
                                                const GeglRectangle *roi)
 {
@@ -212,7 +212,7 @@ gimp_operation_border_get_required_for_output (GeglOperation       *self,
 }
 
 static GeglRectangle
-gimp_operation_border_get_cached_region (GeglOperation       *self,
+picman_operation_border_get_cached_region (GeglOperation       *self,
                                          const GeglRectangle *roi)
 {
   return *gegl_operation_source_get_bounding_box (self, "input");
@@ -327,16 +327,16 @@ compute_transition (guchar    *transition,
 }
 
 static gboolean
-gimp_operation_border_process (GeglOperation       *operation,
+picman_operation_border_process (GeglOperation       *operation,
                                GeglBuffer          *input,
                                GeglBuffer          *output,
                                const GeglRectangle *roi,
                                gint                 level)
 {
   /* This function has no bugs, but if you imagine some you can blame
-   * them on jaycox@gimp.org
+   * them on jaycox@picman.org
    */
-  GimpOperationBorder *self          = GIMP_OPERATION_BORDER (operation);
+  PicmanOperationBorder *self          = PICMAN_OPERATION_BORDER (operation);
   const Babl          *input_format  = babl_format ("Y u8");
   const Babl          *output_format = babl_format ("Y u8");
 

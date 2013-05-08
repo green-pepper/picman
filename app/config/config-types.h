@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpConfig typedefs
- * Copyright (C) 2001-2002  Sven Neumann <sven@gimp.org>
+ * PicmanConfig typedefs
+ * Copyright (C) 2001-2002  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,29 +22,29 @@
 #define __CONFIG_TYPES_H__
 
 
-#include "libgimpconfig/gimpconfigtypes.h"
+#include "libpicmanconfig/picmanconfigtypes.h"
 
 #include "config/config-enums.h"
 
 
-#define GIMP_OPACITY_TRANSPARENT      0.0
-#define GIMP_OPACITY_OPAQUE           1.0
+#define PICMAN_OPACITY_TRANSPARENT      0.0
+#define PICMAN_OPACITY_OPAQUE           1.0
 
 
-typedef struct _GimpGeglConfig       GimpGeglConfig;
-typedef struct _GimpCoreConfig       GimpCoreConfig;
-typedef struct _GimpDisplayConfig    GimpDisplayConfig;
-typedef struct _GimpGuiConfig        GimpGuiConfig;
-typedef struct _GimpPluginConfig     GimpPluginConfig;
-typedef struct _GimpRc               GimpRc;
+typedef struct _PicmanGeglConfig       PicmanGeglConfig;
+typedef struct _PicmanCoreConfig       PicmanCoreConfig;
+typedef struct _PicmanDisplayConfig    PicmanDisplayConfig;
+typedef struct _PicmanGuiConfig        PicmanGuiConfig;
+typedef struct _PicmanPluginConfig     PicmanPluginConfig;
+typedef struct _PicmanRc               PicmanRc;
 
-typedef struct _GimpXmlParser        GimpXmlParser;
+typedef struct _PicmanXmlParser        PicmanXmlParser;
 
-typedef struct _GimpDisplayOptions   GimpDisplayOptions;
+typedef struct _PicmanDisplayOptions   PicmanDisplayOptions;
 
 /* should be in core/core-types.h */
-typedef struct _GimpGrid             GimpGrid;
-typedef struct _GimpTemplate         GimpTemplate;
+typedef struct _PicmanGrid             PicmanGrid;
+typedef struct _PicmanTemplate         PicmanTemplate;
 
 
 #endif /* __CONFIG_TYPES_H__ */

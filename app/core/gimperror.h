@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,19 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ERROR_H__
-#define __GIMP_ERROR_H__
+#ifndef __PICMAN_ERROR_H__
+#define __PICMAN_ERROR_H__
 
 
 typedef enum
 {
-  GIMP_FAILED,  /* generic error condition */
-} GimpErrorCode;
+  PICMAN_FAILED,  /* generic error condition */
+} PicmanErrorCode;
 
 
-#define GIMP_ERROR (gimp_error_quark ())
+#define PICMAN_ERROR (picman_error_quark ())
 
-GQuark  gimp_error_quark (void) G_GNUC_CONST;
+GQuark  picman_error_quark (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_ERROR_H__ */
+#endif /* __PICMAN_ERROR_H__ */

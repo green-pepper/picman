@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TOOLBOX_INDICATOR_AREA_H__
-#define __GIMP_TOOLBOX_INDICATOR_AREA_H__
+#ifndef __PICMAN_TOOLBOX_INDICATOR_AREA_H__
+#define __PICMAN_TOOLBOX_INDICATOR_AREA_H__
 
 
-GtkWidget * gimp_toolbox_indicator_area_create (GimpToolbox *toolbox);
+GtkWidget * picman_toolbox_indicator_area_create (PicmanToolbox *toolbox);
 
 
-#endif  /*  __GIMP_TOOLBOX_INDICATOR_AREA_H__  */
+#endif  /*  __PICMAN_TOOLBOX_INDICATOR_AREA_H__  */

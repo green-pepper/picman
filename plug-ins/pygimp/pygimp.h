@@ -1,5 +1,5 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
+ * Picman-Python - allows the writing of Picman plugins in Python.
  * Copyright (C) 1997-2002  James Henstridge <james@daa.com.au>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,15 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PYGIMP_H_
-#define _PYGIMP_H_
+#ifndef _PYPICMAN_H_
+#define _PYPICMAN_H_
 
 #include <Python.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#define _INSIDE_PYGIMP_
-#include "pygimp-api.h"
+#define _INSIDE_PYPICMAN_
+#include "pypicman-api.h"
 
 #if PY_VERSION_HEX < 0x02050000 && !defined(PY_SSIZE_T_MIN)
 typedef int Py_ssize_t;
@@ -35,104 +35,104 @@ typedef int Py_ssize_t;
 
 G_BEGIN_DECLS
 
-extern PyObject *pygimp_error;
+extern PyObject *pypicman_error;
 
-PyObject *pygimp_param_to_tuple(int nparams, const GimpParam *params);
-GimpParam *pygimp_param_from_tuple(PyObject *args, const GimpParamDef *ptype,
+PyObject *pypicman_param_to_tuple(int nparams, const PicmanParam *params);
+PicmanParam *pypicman_param_from_tuple(PyObject *args, const PicmanParamDef *ptype,
                                    int nparams);
 
 
-extern PyTypeObject PyGimpPDB_Type;
-#define pygimp_pdb_check(v) (PyObject_TypeCheck(v, &PyGimpPDB_Type))
-PyObject *pygimp_pdb_new(void);
+extern PyTypeObject PyPicmanPDB_Type;
+#define pypicman_pdb_check(v) (PyObject_TypeCheck(v, &PyPicmanPDB_Type))
+PyObject *pypicman_pdb_new(void);
 
-extern PyTypeObject PyGimpPDBFunction_Type;
-#define pygimp_pdb_function_check(v) (PyObject_TypeCheck(v, &PyGimpPDBFunction_Type))
-PyObject *pygimp_pdb_function_new(const char *name, const char *blurb,
+extern PyTypeObject PyPicmanPDBFunction_Type;
+#define pypicman_pdb_function_check(v) (PyObject_TypeCheck(v, &PyPicmanPDBFunction_Type))
+PyObject *pypicman_pdb_function_new(const char *name, const char *blurb,
                                   const char *help, const char *author,
                                   const char *copyright, const char *date,
-                                  GimpPDBProcType proc_type,
+                                  PicmanPDBProcType proc_type,
                                   int n_params, int n_return_vals,
-                                  GimpParamDef *params,
-                                  GimpParamDef *return_vals);
+                                  PicmanParamDef *params,
+                                  PicmanParamDef *return_vals);
 
-extern PyTypeObject PyGimpImage_Type;
-#define pygimp_image_check(v) (PyObject_TypeCheck(v, &PyGimpImage_Type))
-PyObject *pygimp_image_new(gint32 ID);
+extern PyTypeObject PyPicmanImage_Type;
+#define pypicman_image_check(v) (PyObject_TypeCheck(v, &PyPicmanImage_Type))
+PyObject *pypicman_image_new(gint32 ID);
 
-extern PyTypeObject PyGimpDisplay_Type;
-#define pygimp_display_check(v) (PyObject_TypeCheck(v, &PyGimpDisplay_Type))
-PyObject *pygimp_display_new(gint32 ID);
+extern PyTypeObject PyPicmanDisplay_Type;
+#define pypicman_display_check(v) (PyObject_TypeCheck(v, &PyPicmanDisplay_Type))
+PyObject *pypicman_display_new(gint32 ID);
 
-extern PyTypeObject PyGimpItem_Type;
-#define pygimp_item_check(v) (PyObject_TypeCheck(v, &PyGimpItem_Type))
-PyObject *pygimp_item_new(gint32 ID);
+extern PyTypeObject PyPicmanItem_Type;
+#define pypicman_item_check(v) (PyObject_TypeCheck(v, &PyPicmanItem_Type))
+PyObject *pypicman_item_new(gint32 ID);
 
-extern PyTypeObject PyGimpDrawable_Type;
-#define pygimp_drawable_check(v) (PyObject_TypeCheck(v, &PyGimpDrawable_Type))
-PyObject *pygimp_drawable_new(GimpDrawable *drawable, gint32 ID);
+extern PyTypeObject PyPicmanDrawable_Type;
+#define pypicman_drawable_check(v) (PyObject_TypeCheck(v, &PyPicmanDrawable_Type))
+PyObject *pypicman_drawable_new(PicmanDrawable *drawable, gint32 ID);
 
-extern PyTypeObject PyGimpLayer_Type;
-#define pygimp_layer_check(v) (PyObject_TypeCheck(v, &PyGimpLayer_Type))
-PyObject *pygimp_layer_new(gint32 ID);
+extern PyTypeObject PyPicmanLayer_Type;
+#define pypicman_layer_check(v) (PyObject_TypeCheck(v, &PyPicmanLayer_Type))
+PyObject *pypicman_layer_new(gint32 ID);
 
-extern PyTypeObject PyGimpGroupLayer_Type;
-#define pygimp_layer__group_check(v) (PyObject_TypeCheck(v, &PyGimpGroupLayer_Type))
-PyObject *pygimp_group_layer_new(gint32 ID);
+extern PyTypeObject PyPicmanGroupLayer_Type;
+#define pypicman_layer__group_check(v) (PyObject_TypeCheck(v, &PyPicmanGroupLayer_Type))
+PyObject *pypicman_group_layer_new(gint32 ID);
 
-extern PyTypeObject PyGimpChannel_Type;
-#define pygimp_channel_check(v) (PyObject_TypeCheck(v, &PyGimpChannel_Type))
-PyObject *pygimp_channel_new(gint32 ID);
-
-typedef struct {
-    PyObject_HEAD
-    GimpTile *tile;
-    PyGimpDrawable *drawable; /* we keep a reference to the drawable */
-} PyGimpTile;
-
-extern PyTypeObject PyGimpTile_Type;
-#define pygimp_tile_check(v) (PyObject_TypeCheck(v, &PyGimpTile_Type))
-PyObject *pygimp_tile_new(GimpTile *tile, PyGimpDrawable *drw);
+extern PyTypeObject PyPicmanChannel_Type;
+#define pypicman_channel_check(v) (PyObject_TypeCheck(v, &PyPicmanChannel_Type))
+PyObject *pypicman_channel_new(gint32 ID);
 
 typedef struct {
     PyObject_HEAD
-    GimpPixelRgn pr;
-    PyGimpDrawable *drawable; /* keep the drawable around */
-} PyGimpPixelRgn;
+    PicmanTile *tile;
+    PyPicmanDrawable *drawable; /* we keep a reference to the drawable */
+} PyPicmanTile;
 
-extern PyTypeObject PyGimpPixelRgn_Type;
-#define pygimp_pixel_rgn_check(v) (PyObject_TypeCheck(v, &PyGimpPixelRgn_Type))
-PyObject *pygimp_pixel_rgn_new(PyGimpDrawable *drw, int x, int y,
+extern PyTypeObject PyPicmanTile_Type;
+#define pypicman_tile_check(v) (PyObject_TypeCheck(v, &PyPicmanTile_Type))
+PyObject *pypicman_tile_new(PicmanTile *tile, PyPicmanDrawable *drw);
+
+typedef struct {
+    PyObject_HEAD
+    PicmanPixelRgn pr;
+    PyPicmanDrawable *drawable; /* keep the drawable around */
+} PyPicmanPixelRgn;
+
+extern PyTypeObject PyPicmanPixelRgn_Type;
+#define pypicman_pixel_rgn_check(v) (PyObject_TypeCheck(v, &PyPicmanPixelRgn_Type))
+PyObject *pypicman_pixel_rgn_new(PyPicmanDrawable *drw, int x, int y,
                                int w, int h, int dirty, int shadow);
 
 typedef struct {
     PyObject_HEAD
-    GimpParasite *para;
-} PyGimpParasite;
+    PicmanParasite *para;
+} PyPicmanParasite;
 
-extern PyTypeObject PyGimpParasite_Type;
-#define pygimp_parasite_check(v) (PyObject_TypeCheck(v, &PyGimpParasite_Type))
-PyObject *pygimp_parasite_new(GimpParasite *para);
+extern PyTypeObject PyPicmanParasite_Type;
+#define pypicman_parasite_check(v) (PyObject_TypeCheck(v, &PyPicmanParasite_Type))
+PyObject *pypicman_parasite_new(PicmanParasite *para);
 
-extern PyTypeObject PyGimpVectors_Type;
-#define pygimp_vectors_check(v) (PyObject_TypeCheck(v, &PyGimpVectors_Type))
-PyObject *pygimp_vectors_new(gint32 vectors_ID);
+extern PyTypeObject PyPicmanVectors_Type;
+#define pypicman_vectors_check(v) (PyObject_TypeCheck(v, &PyPicmanVectors_Type))
+PyObject *pypicman_vectors_new(gint32 vectors_ID);
 
-extern PyTypeObject PyGimpVectorsStroke_Type;
-extern PyTypeObject PyGimpVectorsBezierStroke_Type;
+extern PyTypeObject PyPicmanVectorsStroke_Type;
+extern PyTypeObject PyPicmanVectorsBezierStroke_Type;
 
 typedef struct {
     PyObject_HEAD
-    GimpPixelFetcher *pf;
-    PyGimpDrawable *drawable; /* keep the drawable around */
+    PicmanPixelFetcher *pf;
+    PyPicmanDrawable *drawable; /* keep the drawable around */
     gboolean shadow;
-    GimpRGB bg_color;
-    GimpPixelFetcherEdgeMode edge_mode;
+    PicmanRGB bg_color;
+    PicmanPixelFetcherEdgeMode edge_mode;
     int bpp;
-} PyGimpPixelFetcher;
+} PyPicmanPixelFetcher;
 
-extern PyTypeObject PyGimpPixelFetcher_Type;
-#define pygimp_pixel_fetcher_check(v) (PyObject_TypeCheck(v, &PyGimpPixelFetcher_Type))
+extern PyTypeObject PyPicmanPixelFetcher_Type;
+#define pypicman_pixel_fetcher_check(v) (PyObject_TypeCheck(v, &PyPicmanPixelFetcher_Type))
 
 G_END_DECLS
 

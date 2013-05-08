@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimphelpui.c
- * Copyright (C) 2000-2003 Michael Natterer <mitch@gimp.org>
+ * picmanhelpui.c
+ * Copyright (C) 2000-2003 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,29 +24,29 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "gimpwidgets.h"
-#include "gimpwidgets-private.h"
+#include "picmanwidgets.h"
+#include "picmanwidgets-private.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimphelpui
- * @title: GimpHelpUI
+ * SECTION: picmanhelpui
+ * @title: PicmanHelpUI
  * @short_description: Functions for setting tooltip and help identifier
- *                     used by the GIMP help system.
+ *                     used by the PICMAN help system.
  *
- * Functions for setting tooltip and help identifier used by the GIMP
+ * Functions for setting tooltip and help identifier used by the PICMAN
  * help system.
  **/
 
 
 typedef enum
 {
-  GIMP_WIDGET_HELP_TOOLTIP    = GTK_WIDGET_HELP_TOOLTIP,
-  GIMP_WIDGET_HELP_WHATS_THIS = GTK_WIDGET_HELP_WHATS_THIS,
-  GIMP_WIDGET_HELP_TYPE_HELP  = 0xff
-} GimpWidgetHelpType;
+  PICMAN_WIDGET_HELP_TOOLTIP    = GTK_WIDGET_HELP_TOOLTIP,
+  PICMAN_WIDGET_HELP_WHATS_THIS = GTK_WIDGET_HELP_WHATS_THIS,
+  PICMAN_WIDGET_HELP_TYPE_HELP  = 0xff
+} PicmanWidgetHelpType;
 
 
 /*  local variables  */
@@ -57,45 +57,45 @@ static gboolean tooltips_enable_called = FALSE;
 
 /*  local function prototypes  */
 
-static const gchar * gimp_help_get_help_data        (GtkWidget      *widget,
+static const gchar * picman_help_get_help_data        (GtkWidget      *widget,
                                                      GtkWidget     **help_widget,
                                                      gpointer       *ret_data);
-static gboolean   gimp_help_callback                (GtkWidget      *widget,
-                                                     GimpWidgetHelpType help_type,
-                                                     GimpHelpFunc    help_func);
+static gboolean   picman_help_callback                (GtkWidget      *widget,
+                                                     PicmanWidgetHelpType help_type,
+                                                     PicmanHelpFunc    help_func);
 
-static void       gimp_help_menu_item_set_tooltip   (GtkWidget      *widget,
+static void       picman_help_menu_item_set_tooltip   (GtkWidget      *widget,
                                                      const gchar    *tooltip,
                                                      const gchar    *help_id);
-static gboolean   gimp_help_menu_item_query_tooltip (GtkWidget      *widget,
+static gboolean   picman_help_menu_item_query_tooltip (GtkWidget      *widget,
                                                      gint            x,
                                                      gint            y,
                                                      gboolean        keyboard_mode,
                                                      GtkTooltip     *tooltip);
-static gboolean   gimp_context_help_idle_start      (gpointer        widget);
-static gboolean   gimp_context_help_button_press    (GtkWidget      *widget,
+static gboolean   picman_context_help_idle_start      (gpointer        widget);
+static gboolean   picman_context_help_button_press    (GtkWidget      *widget,
                                                      GdkEventButton *bevent,
                                                      gpointer        data);
-static gboolean   gimp_context_help_key_press       (GtkWidget      *widget,
+static gboolean   picman_context_help_key_press       (GtkWidget      *widget,
                                                      GdkEventKey    *kevent,
                                                      gpointer        data);
-static gboolean   gimp_context_help_idle_show_help  (gpointer        data);
+static gboolean   picman_context_help_idle_show_help  (gpointer        data);
 
 
 /*  public functions  */
 
 /**
- * gimp_help_enable_tooltips:
+ * picman_help_enable_tooltips:
  *
- * Enable tooltips to be shown in the GIMP user interface.
+ * Enable tooltips to be shown in the PICMAN user interface.
  *
  * As a plug-in author, you don't need to care about this as this
- * function is called for you from gimp_ui_init(). This ensures that
- * the user setting from the GIMP preferences dialog is respected in
+ * function is called for you from picman_ui_init(). This ensures that
+ * the user setting from the PICMAN preferences dialog is respected in
  * all plug-in dialogs.
  **/
 void
-gimp_help_enable_tooltips (void)
+picman_help_enable_tooltips (void)
 {
   if (! tooltips_enable_called)
     {
@@ -105,17 +105,17 @@ gimp_help_enable_tooltips (void)
 }
 
 /**
- * gimp_help_disable_tooltips:
+ * picman_help_disable_tooltips:
  *
- * Disable tooltips to be shown in the GIMP user interface.
+ * Disable tooltips to be shown in the PICMAN user interface.
  *
  * As a plug-in author, you don't need to care about this as this
- * function is called for you from gimp_ui_init(). This ensures that
- * the user setting from the GIMP preferences dialog is respected in
+ * function is called for you from picman_ui_init(). This ensures that
+ * the user setting from the PICMAN preferences dialog is respected in
  * all plug-in dialogs.
  **/
 void
-gimp_help_disable_tooltips (void)
+picman_help_disable_tooltips (void)
 {
   if (! tooltips_enable_called)
     {
@@ -125,42 +125,42 @@ gimp_help_disable_tooltips (void)
 }
 
 /**
- * gimp_standard_help_func:
+ * picman_standard_help_func:
  * @help_id:   A unique help identifier.
- * @help_data: The @help_data passed to gimp_help_connect().
+ * @help_data: The @help_data passed to picman_help_connect().
  *
- * This is the standard GIMP help function which does nothing but calling
- * gimp_help(). It is the right function to use in almost all cases.
+ * This is the standard PICMAN help function which does nothing but calling
+ * picman_help(). It is the right function to use in almost all cases.
  **/
 void
-gimp_standard_help_func (const gchar *help_id,
+picman_standard_help_func (const gchar *help_id,
                          gpointer     help_data)
 {
-  if (! _gimp_standard_help_func)
+  if (! _picman_standard_help_func)
     {
-      g_warning ("%s: you must call gimp_widgets_init() before using "
+      g_warning ("%s: you must call picman_widgets_init() before using "
                  "the help system", G_STRFUNC);
       return;
     }
 
-  (* _gimp_standard_help_func) (help_id, help_data);
+  (* _picman_standard_help_func) (help_id, help_data);
 }
 
 /**
- * gimp_help_connect:
+ * picman_help_connect:
  * @widget: The widget you want to connect the help accelerator for. Will
  *          be a #GtkWindow in most cases.
  * @help_func: The function which will be called if the user presses "F1".
  * @help_id:   The @help_id which will be passed to @help_func.
  * @help_data: The @help_data pointer which will be passed to @help_func.
  *
- * Note that this function is automatically called by all libgimp dialog
+ * Note that this function is automatically called by all libpicman dialog
  * constructors. You only have to call it for windows/dialogs you created
  * "manually".
  **/
 void
-gimp_help_connect (GtkWidget    *widget,
-                   GimpHelpFunc  help_func,
+picman_help_connect (GtkWidget    *widget,
+                   PicmanHelpFunc  help_func,
                    const gchar  *help_id,
                    gpointer      help_data)
 {
@@ -181,34 +181,34 @@ gimp_help_connect (GtkWidget    *widget,
       gtk_binding_entry_add_signal (binding_set, GDK_KEY_F1, 0,
                                     "show-help", 1,
                                     GTK_TYPE_WIDGET_HELP_TYPE,
-                                    GIMP_WIDGET_HELP_TYPE_HELP);
+                                    PICMAN_WIDGET_HELP_TYPE_HELP);
       gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_F1, 0,
                                     "show-help", 1,
                                     GTK_TYPE_WIDGET_HELP_TYPE,
-                                    GIMP_WIDGET_HELP_TYPE_HELP);
+                                    PICMAN_WIDGET_HELP_TYPE_HELP);
 
       initialized = TRUE;
     }
 
-  gimp_help_set_help_data (widget, NULL, help_id);
+  picman_help_set_help_data (widget, NULL, help_id);
 
-  g_object_set_data (G_OBJECT (widget), "gimp-help-data", help_data);
+  g_object_set_data (G_OBJECT (widget), "picman-help-data", help_data);
 
   g_signal_connect (widget, "show-help",
-                    G_CALLBACK (gimp_help_callback),
+                    G_CALLBACK (picman_help_callback),
                     help_func);
 
   gtk_widget_add_events (widget, GDK_BUTTON_PRESS_MASK);
 }
 
 /**
- * gimp_help_set_help_data:
+ * picman_help_set_help_data:
  * @widget:  The #GtkWidget you want to set a @tooltip and/or @help_id for.
  * @tooltip: The text for this widget's tooltip (or %NULL).
  * @help_id: The @help_id for the #GtkTipsQuery tooltips inspector.
  *
  * The reason why we don't use gtk_widget_set_tooltip_text() is that
- * elements in the GIMP user interface should, if possible, also have
+ * elements in the PICMAN user interface should, if possible, also have
  * a @help_id set for context-sensitive help.
  *
  * This function can be called with #NULL for @tooltip. Use this feature
@@ -216,7 +216,7 @@ gimp_help_connect (GtkWidget    *widget,
  * a visible tooltip.
  **/
 void
-gimp_help_set_help_data (GtkWidget   *widget,
+picman_help_set_help_data (GtkWidget   *widget,
                          const gchar *tooltip,
                          const gchar *help_id)
 {
@@ -227,26 +227,26 @@ gimp_help_set_help_data (GtkWidget   *widget,
       gtk_widget_set_tooltip_text (widget, tooltip);
 
       if (GTK_IS_MENU_ITEM (widget))
-        gimp_help_menu_item_set_tooltip (widget, tooltip, help_id);
+        picman_help_menu_item_set_tooltip (widget, tooltip, help_id);
     }
 
-  g_object_set_qdata (G_OBJECT (widget), GIMP_HELP_ID, (gpointer) help_id);
+  g_object_set_qdata (G_OBJECT (widget), PICMAN_HELP_ID, (gpointer) help_id);
 }
 
 /**
- * gimp_help_set_help_data_with_markup:
+ * picman_help_set_help_data_with_markup:
  * @widget:  The #GtkWidget you want to set a @tooltip and/or @help_id for.
  * @tooltip: The markup for this widget's tooltip (or %NULL).
  * @help_id: The @help_id for the #GtkTipsQuery tooltips inspector.
  *
- * Just like gimp_help_set_help_data(), but supports to pass text
+ * Just like picman_help_set_help_data(), but supports to pass text
  * which is marked up with <link linkend="PangoMarkupFormat">Pango
  * text markup language</link>.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 void
-gimp_help_set_help_data_with_markup (GtkWidget   *widget,
+picman_help_set_help_data_with_markup (GtkWidget   *widget,
                                      const gchar *tooltip,
                                      const gchar *help_id)
 {
@@ -257,14 +257,14 @@ gimp_help_set_help_data_with_markup (GtkWidget   *widget,
       gtk_widget_set_tooltip_markup (widget, tooltip);
 
       if (GTK_IS_MENU_ITEM (widget))
-        gimp_help_menu_item_set_tooltip (widget, tooltip, help_id);
+        picman_help_menu_item_set_tooltip (widget, tooltip, help_id);
     }
 
-  g_object_set_qdata (G_OBJECT (widget), GIMP_HELP_ID, (gpointer) help_id);
+  g_object_set_qdata (G_OBJECT (widget), PICMAN_HELP_ID, (gpointer) help_id);
 }
 
 /**
- * gimp_context_help:
+ * picman_context_help:
  * @widget: Any #GtkWidget on the screen.
  *
  * This function invokes the context help inspector.
@@ -273,36 +273,36 @@ gimp_help_set_help_data_with_markup (GtkWidget   *widget,
  * click on any widget of the application which started the inspector.
  *
  * If the widget the user clicked on has a @help_id string attached
- * (see gimp_help_set_help_data()), the corresponding help page will
+ * (see picman_help_set_help_data()), the corresponding help page will
  * be displayed. Otherwise the help system will ascend the widget hierarchy
  * until it finds an attached @help_id string (which should be the
  * case at least for every window/dialog).
  **/
 void
-gimp_context_help (GtkWidget *widget)
+picman_context_help (GtkWidget *widget)
 {
   g_return_if_fail (GTK_IS_WIDGET (widget));
 
-  gimp_help_callback (widget, GIMP_WIDGET_HELP_WHATS_THIS, NULL);
+  picman_help_callback (widget, PICMAN_WIDGET_HELP_WHATS_THIS, NULL);
 }
 
 /**
- * gimp_help_id_quark:
+ * picman_help_id_quark:
  *
  * This function returns the #GQuark which should be used as key when
  * attaching help IDs to widgets and objects.
  *
  * Return value: The #GQuark.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 GQuark
-gimp_help_id_quark (void)
+picman_help_id_quark (void)
 {
   static GQuark quark = 0;
 
   if (! quark)
-    quark = g_quark_from_static_string ("gimp-help-id");
+    quark = g_quark_from_static_string ("picman-help-id");
 
   return quark;
 }
@@ -311,7 +311,7 @@ gimp_help_id_quark (void)
 /*  private functions  */
 
 static const gchar *
-gimp_help_get_help_data (GtkWidget  *widget,
+picman_help_get_help_data (GtkWidget  *widget,
                          GtkWidget **help_widget,
                          gpointer   *ret_data)
 {
@@ -320,8 +320,8 @@ gimp_help_get_help_data (GtkWidget  *widget,
 
   for (; widget; widget = gtk_widget_get_parent (widget))
     {
-      help_id   = g_object_get_qdata (G_OBJECT (widget), GIMP_HELP_ID);
-      help_data = g_object_get_data (G_OBJECT (widget), "gimp-help-data");
+      help_id   = g_object_get_qdata (G_OBJECT (widget), PICMAN_HELP_ID);
+      help_data = g_object_get_data (G_OBJECT (widget), "picman-help-data");
 
       if (help_id)
         {
@@ -345,22 +345,22 @@ gimp_help_get_help_data (GtkWidget  *widget,
 }
 
 static gboolean
-gimp_help_callback (GtkWidget          *widget,
-                    GimpWidgetHelpType  help_type,
-                    GimpHelpFunc        help_func)
+picman_help_callback (GtkWidget          *widget,
+                    PicmanWidgetHelpType  help_type,
+                    PicmanHelpFunc        help_func)
 {
   switch (help_type)
     {
-    case GIMP_WIDGET_HELP_TYPE_HELP:
+    case PICMAN_WIDGET_HELP_TYPE_HELP:
       if (help_func)
         {
-          help_func (g_object_get_qdata (G_OBJECT (widget), GIMP_HELP_ID),
-                     g_object_get_data (G_OBJECT (widget), "gimp-help-data"));
+          help_func (g_object_get_qdata (G_OBJECT (widget), PICMAN_HELP_ID),
+                     g_object_get_data (G_OBJECT (widget), "picman-help-data"));
         }
       return TRUE;
 
-    case GIMP_WIDGET_HELP_WHATS_THIS:
-      g_idle_add (gimp_context_help_idle_start, widget);
+    case PICMAN_WIDGET_HELP_WHATS_THIS:
+      g_idle_add (picman_context_help_idle_start, widget);
       return TRUE;
 
     default:
@@ -371,7 +371,7 @@ gimp_help_callback (GtkWidget          *widget,
 }
 
 static void
-gimp_help_menu_item_set_tooltip (GtkWidget   *widget,
+picman_help_menu_item_set_tooltip (GtkWidget   *widget,
                                  const gchar *tooltip,
                                  const gchar *help_id)
 {
@@ -382,7 +382,7 @@ gimp_help_menu_item_set_tooltip (GtkWidget   *widget,
       g_object_set (widget, "has-tooltip", TRUE, NULL);
 
       g_signal_connect (widget, "query-tooltip",
-                        G_CALLBACK (gimp_help_menu_item_query_tooltip),
+                        G_CALLBACK (picman_help_menu_item_query_tooltip),
                         NULL);
     }
   else if (! tooltip)
@@ -390,13 +390,13 @@ gimp_help_menu_item_set_tooltip (GtkWidget   *widget,
       g_object_set (widget, "has-tooltip", FALSE, NULL);
 
       g_signal_handlers_disconnect_by_func (widget,
-                                            gimp_help_menu_item_query_tooltip,
+                                            picman_help_menu_item_query_tooltip,
                                             NULL);
     }
 }
 
 static gboolean
-gimp_help_menu_item_query_tooltip (GtkWidget  *widget,
+picman_help_menu_item_query_tooltip (GtkWidget  *widget,
                                    gint        x,
                                    gint        y,
                                    gboolean    keyboard_mode,
@@ -430,7 +430,7 @@ gimp_help_menu_item_query_tooltip (GtkWidget  *widget,
   g_free (text);
 
   label = gtk_label_new (_("Press F1 for more help"));
-  gimp_label_set_attributes (GTK_LABEL (label),
+  picman_label_set_attributes (GTK_LABEL (label),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              PANGO_ATTR_SCALE, PANGO_SCALE_SMALL,
                              -1);
@@ -448,11 +448,11 @@ gimp_help_menu_item_query_tooltip (GtkWidget  *widget,
  *  some widget holding a grab before starting the query because strange
  *  things happen if (1) the help browser pops up while the query has
  *  grabbed the pointer or (2) the query grabs the pointer while some
- *  other part of GIMP has grabbed it (e.g. a tool, eek)
+ *  other part of PICMAN has grabbed it (e.g. a tool, eek)
  */
 
 static gboolean
-gimp_context_help_idle_start (gpointer widget)
+picman_context_help_idle_start (gpointer widget)
 {
   if (! gtk_grab_get_current ())
     {
@@ -494,10 +494,10 @@ gimp_context_help_idle_start (gpointer widget)
       gtk_grab_add (invisible);
 
       g_signal_connect (invisible, "button-press-event",
-                        G_CALLBACK (gimp_context_help_button_press),
+                        G_CALLBACK (picman_context_help_button_press),
                         NULL);
       g_signal_connect (invisible, "key-press-event",
-                        G_CALLBACK (gimp_context_help_key_press),
+                        G_CALLBACK (picman_context_help_key_press),
                         NULL);
     }
 
@@ -505,7 +505,7 @@ gimp_context_help_idle_start (gpointer widget)
 }
 
 static gboolean
-gimp_context_help_button_press (GtkWidget      *widget,
+picman_context_help_button_press (GtkWidget      *widget,
                                 GdkEventButton *bevent,
                                 gpointer        data)
 {
@@ -521,14 +521,14 @@ gimp_context_help_button_press (GtkWidget      *widget,
       gtk_widget_destroy (widget);
 
       if (event_widget != widget)
-        g_idle_add (gimp_context_help_idle_show_help, event_widget);
+        g_idle_add (picman_context_help_idle_show_help, event_widget);
     }
 
   return TRUE;
 }
 
 static gboolean
-gimp_context_help_key_press (GtkWidget   *widget,
+picman_context_help_key_press (GtkWidget   *widget,
                              GdkEventKey *kevent,
                              gpointer     data)
 {
@@ -546,17 +546,17 @@ gimp_context_help_key_press (GtkWidget   *widget,
 }
 
 static gboolean
-gimp_context_help_idle_show_help (gpointer data)
+picman_context_help_idle_show_help (gpointer data)
 {
   GtkWidget   *help_widget;
   const gchar *help_id   = NULL;
   gpointer     help_data = NULL;
 
-  help_id = gimp_help_get_help_data (GTK_WIDGET (data), &help_widget,
+  help_id = picman_help_get_help_data (GTK_WIDGET (data), &help_widget,
                                      &help_data);
 
   if (help_id)
-    gimp_standard_help_func (help_id, help_data);
+    picman_standard_help_func (help_id, help_data);
 
   return FALSE;
 }

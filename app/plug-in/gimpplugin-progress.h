@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpplugin-progress.h
+ * picmanplugin-progress.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,31 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_PROGRESS_H__
-#define __GIMP_PLUG_IN_PROGRESS_H__
+#ifndef __PICMAN_PLUG_IN_PROGRESS_H__
+#define __PICMAN_PLUG_IN_PROGRESS_H__
 
 
-gint       gimp_plug_in_progress_attach        (GimpProgress        *progress);
-gint       gimp_plug_in_progress_detach        (GimpProgress        *progress);
+gint       picman_plug_in_progress_attach        (PicmanProgress        *progress);
+gint       picman_plug_in_progress_detach        (PicmanProgress        *progress);
 
-void       gimp_plug_in_progress_start         (GimpPlugIn          *plug_in,
+void       picman_plug_in_progress_start         (PicmanPlugIn          *plug_in,
                                                 const gchar         *message,
-                                                GimpObject          *display);
-void       gimp_plug_in_progress_end           (GimpPlugIn          *plug_in,
-                                                GimpPlugInProcFrame *proc_frame);
-void       gimp_plug_in_progress_set_text      (GimpPlugIn          *plug_in,
+                                                PicmanObject          *display);
+void       picman_plug_in_progress_end           (PicmanPlugIn          *plug_in,
+                                                PicmanPlugInProcFrame *proc_frame);
+void       picman_plug_in_progress_set_text      (PicmanPlugIn          *plug_in,
                                                 const gchar         *message);
-void       gimp_plug_in_progress_set_value     (GimpPlugIn          *plug_in,
+void       picman_plug_in_progress_set_value     (PicmanPlugIn          *plug_in,
                                                 gdouble              percentage);
-void       gimp_plug_in_progress_pulse         (GimpPlugIn          *plug_in);
-guint32    gimp_plug_in_progress_get_window_id (GimpPlugIn          *plug_in);
+void       picman_plug_in_progress_pulse         (PicmanPlugIn          *plug_in);
+guint32    picman_plug_in_progress_get_window_id (PicmanPlugIn          *plug_in);
 
-gboolean   gimp_plug_in_progress_install       (GimpPlugIn          *plug_in,
+gboolean   picman_plug_in_progress_install       (PicmanPlugIn          *plug_in,
                                                 const gchar         *progress_callback);
-gboolean   gimp_plug_in_progress_uninstall     (GimpPlugIn          *plug_in,
+gboolean   picman_plug_in_progress_uninstall     (PicmanPlugIn          *plug_in,
                                                 const gchar         *progress_callback);
-gboolean   gimp_plug_in_progress_cancel        (GimpPlugIn          *plug_in,
+gboolean   picman_plug_in_progress_cancel        (PicmanPlugIn          *plug_in,
                                                 const gchar         *progress_callback);
 
 
-#endif /* __GIMP_PLUG_IN_PROGRESS_H__ */
+#endif /* __PICMAN_PLUG_IN_PROGRESS_H__ */

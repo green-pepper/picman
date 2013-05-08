@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2002 Spencer Kimball, Peter Mattis, and others
  *
- * gimp-gradients.c
- * Copyright (C) 2002 Michael Natterer  <mitch@gimp.org>
+ * picman-gradients.c
+ * Copyright (C) 2002 Michael Natterer  <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,26 +24,26 @@
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimp-gradients.h"
-#include "gimpcontext.h"
-#include "gimpcontainer.h"
-#include "gimpdatafactory.h"
-#include "gimpgradient.h"
+#include "picman.h"
+#include "picman-gradients.h"
+#include "picmancontext.h"
+#include "picmancontainer.h"
+#include "picmandatafactory.h"
+#include "picmangradient.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-#define FG_BG_RGB_KEY      "gimp-gradient-fg-bg-rgb"
-#define FG_BG_HARDEDGE_KEY "gimp-gradient-fg-bg-rgb"
-#define FG_BG_HSV_CCW_KEY  "gimp-gradient-fg-bg-hsv-ccw"
-#define FG_BG_HSV_CW_KEY   "gimp-gradient-fg-bg-hsv-cw"
-#define FG_TRANSPARENT_KEY "gimp-gradient-fg-transparent"
+#define FG_BG_RGB_KEY      "picman-gradient-fg-bg-rgb"
+#define FG_BG_HARDEDGE_KEY "picman-gradient-fg-bg-rgb"
+#define FG_BG_HSV_CCW_KEY  "picman-gradient-fg-bg-hsv-ccw"
+#define FG_BG_HSV_CW_KEY   "picman-gradient-fg-bg-hsv-cw"
+#define FG_TRANSPARENT_KEY "picman-gradient-fg-transparent"
 
 
 /*  local function prototypes  */
 
-static GimpGradient * gimp_gradients_add_gradient (Gimp        *gimp,
+static PicmanGradient * picman_gradients_add_gradient (Picman        *picman,
                                                    const gchar *name,
                                                    const gchar *id);
 
@@ -51,81 +51,81 @@ static GimpGradient * gimp_gradients_add_gradient (Gimp        *gimp,
 /*  public functions  */
 
 void
-gimp_gradients_init (Gimp *gimp)
+picman_gradients_init (Picman *picman)
 {
-  GimpGradient *gradient;
+  PicmanGradient *gradient;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
   /* FG to BG (RGB) */
-  gradient = gimp_gradients_add_gradient (gimp,
+  gradient = picman_gradients_add_gradient (picman,
                                           _("FG to BG (RGB)"),
                                           FG_BG_RGB_KEY);
-  gradient->segments->left_color_type  = GIMP_GRADIENT_COLOR_FOREGROUND;
-  gradient->segments->right_color_type = GIMP_GRADIENT_COLOR_BACKGROUND;
-  gimp_context_set_gradient (gimp->user_context, gradient);
+  gradient->segments->left_color_type  = PICMAN_GRADIENT_COLOR_FOREGROUND;
+  gradient->segments->right_color_type = PICMAN_GRADIENT_COLOR_BACKGROUND;
+  picman_context_set_gradient (picman->user_context, gradient);
 
   /* FG to BG (Hardedge) */
-  gradient = gimp_gradients_add_gradient (gimp,
+  gradient = picman_gradients_add_gradient (picman,
                                           _("FG to BG (Hardedge)"),
                                           FG_BG_HARDEDGE_KEY);
   gradient->segments->left                   = 0.00;
   gradient->segments->middle                 = 0.25;
   gradient->segments->right                  = 0.50;
-  gradient->segments->left_color_type        = GIMP_GRADIENT_COLOR_FOREGROUND;
-  gradient->segments->right_color_type       = GIMP_GRADIENT_COLOR_FOREGROUND;
-  gradient->segments->next                   = gimp_gradient_segment_new ();
+  gradient->segments->left_color_type        = PICMAN_GRADIENT_COLOR_FOREGROUND;
+  gradient->segments->right_color_type       = PICMAN_GRADIENT_COLOR_FOREGROUND;
+  gradient->segments->next                   = picman_gradient_segment_new ();
   gradient->segments->next->prev             = gradient->segments;
   gradient->segments->next->left             = 0.50;
   gradient->segments->next->middle           = 0.75;
   gradient->segments->next->right            = 1.00;
-  gradient->segments->next->left_color_type  = GIMP_GRADIENT_COLOR_BACKGROUND;
-  gradient->segments->next->right_color_type = GIMP_GRADIENT_COLOR_BACKGROUND;
+  gradient->segments->next->left_color_type  = PICMAN_GRADIENT_COLOR_BACKGROUND;
+  gradient->segments->next->right_color_type = PICMAN_GRADIENT_COLOR_BACKGROUND;
 
   /* FG to BG (HSV counter-clockwise) */
-  gradient = gimp_gradients_add_gradient (gimp,
+  gradient = picman_gradients_add_gradient (picman,
                                           _("FG to BG (HSV counter-clockwise)"),
                                           FG_BG_HSV_CCW_KEY);
-  gradient->segments->left_color_type  = GIMP_GRADIENT_COLOR_FOREGROUND;
-  gradient->segments->right_color_type = GIMP_GRADIENT_COLOR_BACKGROUND;
-  gradient->segments->color            = GIMP_GRADIENT_SEGMENT_HSV_CCW;
+  gradient->segments->left_color_type  = PICMAN_GRADIENT_COLOR_FOREGROUND;
+  gradient->segments->right_color_type = PICMAN_GRADIENT_COLOR_BACKGROUND;
+  gradient->segments->color            = PICMAN_GRADIENT_SEGMENT_HSV_CCW;
 
   /* FG to BG (HSV clockwise hue) */
-  gradient = gimp_gradients_add_gradient (gimp,
+  gradient = picman_gradients_add_gradient (picman,
                                           _("FG to BG (HSV clockwise hue)"),
                                           FG_BG_HSV_CW_KEY);
-  gradient->segments->left_color_type  = GIMP_GRADIENT_COLOR_FOREGROUND;
-  gradient->segments->right_color_type = GIMP_GRADIENT_COLOR_BACKGROUND;
-  gradient->segments->color            = GIMP_GRADIENT_SEGMENT_HSV_CW;
+  gradient->segments->left_color_type  = PICMAN_GRADIENT_COLOR_FOREGROUND;
+  gradient->segments->right_color_type = PICMAN_GRADIENT_COLOR_BACKGROUND;
+  gradient->segments->color            = PICMAN_GRADIENT_SEGMENT_HSV_CW;
 
   /* FG to Transparent */
-  gradient = gimp_gradients_add_gradient (gimp,
+  gradient = picman_gradients_add_gradient (picman,
                                           _("FG to Transparent"),
                                           FG_TRANSPARENT_KEY);
-  gradient->segments->left_color_type  = GIMP_GRADIENT_COLOR_FOREGROUND;
-  gradient->segments->right_color_type = GIMP_GRADIENT_COLOR_FOREGROUND_TRANSPARENT;
+  gradient->segments->left_color_type  = PICMAN_GRADIENT_COLOR_FOREGROUND;
+  gradient->segments->right_color_type = PICMAN_GRADIENT_COLOR_FOREGROUND_TRANSPARENT;
 }
 
 
 /*  private functions  */
 
-static GimpGradient *
-gimp_gradients_add_gradient (Gimp        *gimp,
+static PicmanGradient *
+picman_gradients_add_gradient (Picman        *picman,
                              const gchar *name,
                              const gchar *id)
 {
-  GimpGradient *gradient;
+  PicmanGradient *gradient;
 
-  gradient = GIMP_GRADIENT (gimp_gradient_new (gimp_get_user_context (gimp),
+  gradient = PICMAN_GRADIENT (picman_gradient_new (picman_get_user_context (picman),
                                                name));
 
-  gimp_data_make_internal (GIMP_DATA (gradient), id);
+  picman_data_make_internal (PICMAN_DATA (gradient), id);
 
-  gimp_container_add (gimp_data_factory_get_container (gimp->gradient_factory),
-                      GIMP_OBJECT (gradient));
+  picman_container_add (picman_data_factory_get_container (picman->gradient_factory),
+                      PICMAN_OBJECT (gradient));
   g_object_unref (gradient);
 
-  g_object_set_data (G_OBJECT (gimp), id, gradient);
+  g_object_set_data (G_OBJECT (picman), id, gradient);
 
   return gradient;
 }

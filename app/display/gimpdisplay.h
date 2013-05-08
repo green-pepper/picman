@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,81 +15,81 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_H__
-#define __GIMP_DISPLAY_H__
+#ifndef __PICMAN_DISPLAY_H__
+#define __PICMAN_DISPLAY_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-#define GIMP_TYPE_DISPLAY            (gimp_display_get_type ())
-#define GIMP_DISPLAY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DISPLAY, GimpDisplay))
-#define GIMP_DISPLAY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DISPLAY, GimpDisplayClass))
-#define GIMP_IS_DISPLAY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DISPLAY))
-#define GIMP_IS_DISPLAY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DISPLAY))
-#define GIMP_DISPLAY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DISPLAY, GimpDisplayClass))
+#define PICMAN_TYPE_DISPLAY            (picman_display_get_type ())
+#define PICMAN_DISPLAY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DISPLAY, PicmanDisplay))
+#define PICMAN_DISPLAY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DISPLAY, PicmanDisplayClass))
+#define PICMAN_IS_DISPLAY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DISPLAY))
+#define PICMAN_IS_DISPLAY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DISPLAY))
+#define PICMAN_DISPLAY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DISPLAY, PicmanDisplayClass))
 
 
-typedef struct _GimpDisplayClass GimpDisplayClass;
+typedef struct _PicmanDisplayClass PicmanDisplayClass;
 
-struct _GimpDisplay
+struct _PicmanDisplay
 {
-  GimpObject         parent_instance;
+  PicmanObject         parent_instance;
 
-  Gimp              *gimp;
-  GimpDisplayConfig *config;
+  Picman              *picman;
+  PicmanDisplayConfig *config;
 
 };
 
-struct _GimpDisplayClass
+struct _PicmanDisplayClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType              gimp_display_get_type        (void) G_GNUC_CONST;
+GType              picman_display_get_type        (void) G_GNUC_CONST;
 
-GimpDisplay      * gimp_display_new             (Gimp              *gimp,
-                                                 GimpImage         *image,
-                                                 GimpUnit           unit,
+PicmanDisplay      * picman_display_new             (Picman              *picman,
+                                                 PicmanImage         *image,
+                                                 PicmanUnit           unit,
                                                  gdouble            scale,
-                                                 GimpMenuFactory   *menu_factory,
-                                                 GimpUIManager     *popup_manager,
-                                                 GimpDialogFactory *dialog_factory);
-void               gimp_display_delete          (GimpDisplay       *display);
-void               gimp_display_close           (GimpDisplay       *display);
+                                                 PicmanMenuFactory   *menu_factory,
+                                                 PicmanUIManager     *popup_manager,
+                                                 PicmanDialogFactory *dialog_factory);
+void               picman_display_delete          (PicmanDisplay       *display);
+void               picman_display_close           (PicmanDisplay       *display);
 
-gint               gimp_display_get_ID          (GimpDisplay       *display);
-GimpDisplay      * gimp_display_get_by_ID       (Gimp              *gimp,
+gint               picman_display_get_ID          (PicmanDisplay       *display);
+PicmanDisplay      * picman_display_get_by_ID       (Picman              *picman,
                                                  gint               ID);
 
-gchar            * gimp_display_get_action_name (GimpDisplay       *display);
+gchar            * picman_display_get_action_name (PicmanDisplay       *display);
 
-Gimp             * gimp_display_get_gimp        (GimpDisplay       *display);
+Picman             * picman_display_get_picman        (PicmanDisplay       *display);
 
-GimpImage        * gimp_display_get_image       (GimpDisplay       *display);
-void               gimp_display_set_image       (GimpDisplay       *display,
-                                                 GimpImage         *image);
+PicmanImage        * picman_display_get_image       (PicmanDisplay       *display);
+void               picman_display_set_image       (PicmanDisplay       *display,
+                                                 PicmanImage         *image);
 
-gint               gimp_display_get_instance    (GimpDisplay       *display);
+gint               picman_display_get_instance    (PicmanDisplay       *display);
 
-GimpDisplayShell * gimp_display_get_shell       (GimpDisplay       *display);
+PicmanDisplayShell * picman_display_get_shell       (PicmanDisplay       *display);
 
-void               gimp_display_empty           (GimpDisplay       *display);
-void               gimp_display_fill            (GimpDisplay       *display,
-                                                 GimpImage         *image,
-                                                 GimpUnit           unit,
+void               picman_display_empty           (PicmanDisplay       *display);
+void               picman_display_fill            (PicmanDisplay       *display,
+                                                 PicmanImage         *image,
+                                                 PicmanUnit           unit,
                                                  gdouble            scale);
 
-void               gimp_display_update_area     (GimpDisplay       *display,
+void               picman_display_update_area     (PicmanDisplay       *display,
                                                  gboolean           now,
                                                  gint               x,
                                                  gint               y,
                                                  gint               w,
                                                  gint               h);
 
-void               gimp_display_flush           (GimpDisplay       *display);
-void               gimp_display_flush_now       (GimpDisplay       *display);
+void               picman_display_flush           (PicmanDisplay       *display);
+void               picman_display_flush_now       (PicmanDisplay       *display);
 
 
-#endif /*  __GIMP_DISPLAY_H__  */
+#endif /*  __PICMAN_DISPLAY_H__  */

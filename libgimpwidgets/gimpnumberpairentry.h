@@ -1,9 +1,9 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpratioentry.h
- * Copyright (C) 2006  Simon Budig       <simon@gimp.org>
- * Copyright (C) 2007  Sven Neumann      <sven@gimp.org>
+ * picmanratioentry.h
+ * Copyright (C) 2006  Simon Budig       <simon@picman.org>
+ * Copyright (C) 2007  Sven Neumann      <sven@picman.org>
  * Copyright (C) 2007  Martin Nordholts  <martin@svn.gnome.org>
  *
  * This library is free software: you can redistribute it and/or
@@ -21,84 +21,84 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_NUMBER_PAIR_ENTRY_H__
-#define __GIMP_NUMBER_PAIR_ENTRY_H__
+#ifndef __PICMAN_NUMBER_PAIR_ENTRY_H__
+#define __PICMAN_NUMBER_PAIR_ENTRY_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_NUMBER_PAIR_ENTRY            (gimp_number_pair_entry_get_type ())
-#define GIMP_NUMBER_PAIR_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_NUMBER_PAIR_ENTRY, GimpNumberPairEntry))
-#define GIMP_NUMBER_PAIR_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_NUMBER_PAIR_ENTRY, GimpNumberPairEntryClass))
-#define GIMP_IS_NUMBER_PAIR_ENTRY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_NUMBER_PAIR_ENTRY))
-#define GIMP_IS_NUMBER_PAIR_ENTRY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_NUMBER_PAIR_ENTRY))
-#define GIMP_NUMBER_PAIR_ENTRY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_NUMBER_PAIR_AREA, GimpNumberPairEntryClass))
+#define PICMAN_TYPE_NUMBER_PAIR_ENTRY            (picman_number_pair_entry_get_type ())
+#define PICMAN_NUMBER_PAIR_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_NUMBER_PAIR_ENTRY, PicmanNumberPairEntry))
+#define PICMAN_NUMBER_PAIR_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_NUMBER_PAIR_ENTRY, PicmanNumberPairEntryClass))
+#define PICMAN_IS_NUMBER_PAIR_ENTRY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_NUMBER_PAIR_ENTRY))
+#define PICMAN_IS_NUMBER_PAIR_ENTRY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_NUMBER_PAIR_ENTRY))
+#define PICMAN_NUMBER_PAIR_ENTRY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_NUMBER_PAIR_AREA, PicmanNumberPairEntryClass))
 
 
-typedef struct _GimpNumberPairEntryClass   GimpNumberPairEntryClass;
+typedef struct _PicmanNumberPairEntryClass   PicmanNumberPairEntryClass;
 
 
-struct _GimpNumberPairEntry
+struct _PicmanNumberPairEntry
 {
   GtkEntry   parent_instance;
 
   gpointer   priv;
 };
 
-struct _GimpNumberPairEntryClass
+struct _PicmanNumberPairEntryClass
 {
   GtkEntryClass  parent_class;
 
-  void (* numbers_changed) (GimpNumberPairEntry *entry);
-  void (* ratio_changed)   (GimpNumberPairEntry *entry);
+  void (* numbers_changed) (PicmanNumberPairEntry *entry);
+  void (* ratio_changed)   (PicmanNumberPairEntry *entry);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType          gimp_number_pair_entry_get_type           (void) G_GNUC_CONST;
-GtkWidget *    gimp_number_pair_entry_new                (const gchar         *separators,
+GType          picman_number_pair_entry_get_type           (void) G_GNUC_CONST;
+GtkWidget *    picman_number_pair_entry_new                (const gchar         *separators,
                                                           gboolean             allow_simplification,
                                                           gdouble              min_valid_value,
                                                           gdouble              max_valid_value);
-void           gimp_number_pair_entry_set_default_values (GimpNumberPairEntry *entry,
+void           picman_number_pair_entry_set_default_values (PicmanNumberPairEntry *entry,
                                                           gdouble              left,
                                                           gdouble              right);
-void           gimp_number_pair_entry_get_default_values (GimpNumberPairEntry *entry,
+void           picman_number_pair_entry_get_default_values (PicmanNumberPairEntry *entry,
                                                           gdouble             *left,
                                                           gdouble             *right);
-void           gimp_number_pair_entry_set_values         (GimpNumberPairEntry *entry,
+void           picman_number_pair_entry_set_values         (PicmanNumberPairEntry *entry,
                                                           gdouble              left,
                                                           gdouble              right);
-void           gimp_number_pair_entry_get_values         (GimpNumberPairEntry *entry,
+void           picman_number_pair_entry_get_values         (PicmanNumberPairEntry *entry,
                                                           gdouble             *left,
                                                           gdouble             *right);
 
-void           gimp_number_pair_entry_set_default_text   (GimpNumberPairEntry *entry,
+void           picman_number_pair_entry_set_default_text   (PicmanNumberPairEntry *entry,
                                                           const gchar         *string);
-const gchar *  gimp_number_pair_entry_get_default_text   (GimpNumberPairEntry *entry);
+const gchar *  picman_number_pair_entry_get_default_text   (PicmanNumberPairEntry *entry);
 
-void           gimp_number_pair_entry_set_ratio          (GimpNumberPairEntry *entry,
+void           picman_number_pair_entry_set_ratio          (PicmanNumberPairEntry *entry,
                                                           gdouble              ratio);
-gdouble        gimp_number_pair_entry_get_ratio          (GimpNumberPairEntry *entry);
+gdouble        picman_number_pair_entry_get_ratio          (PicmanNumberPairEntry *entry);
 
-void           gimp_number_pair_entry_set_aspect         (GimpNumberPairEntry *entry,
-                                                          GimpAspectType       aspect);
-GimpAspectType gimp_number_pair_entry_get_aspect         (GimpNumberPairEntry *entry);
+void           picman_number_pair_entry_set_aspect         (PicmanNumberPairEntry *entry,
+                                                          PicmanAspectType       aspect);
+PicmanAspectType picman_number_pair_entry_get_aspect         (PicmanNumberPairEntry *entry);
 
-void           gimp_number_pair_entry_set_user_override  (GimpNumberPairEntry *entry,
+void           picman_number_pair_entry_set_user_override  (PicmanNumberPairEntry *entry,
                                                           gboolean             user_override);
-gboolean       gimp_number_pair_entry_get_user_override  (GimpNumberPairEntry *entry);
+gboolean       picman_number_pair_entry_get_user_override  (PicmanNumberPairEntry *entry);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_NUMBER_PAIR_ENTRY_H__ */
+#endif /* __PICMAN_NUMBER_PAIR_ENTRY_H__ */

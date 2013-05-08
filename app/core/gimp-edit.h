@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,65 +15,65 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_EDIT_H__
-#define __GIMP_EDIT_H__
+#ifndef __PICMAN_EDIT_H__
+#define __PICMAN_EDIT_H__
 
 
-const GimpBuffer * gimp_edit_cut                (GimpImage     *image,
-                                                 GimpDrawable  *drawable,
-                                                 GimpContext   *context,
+const PicmanBuffer * picman_edit_cut                (PicmanImage     *image,
+                                                 PicmanDrawable  *drawable,
+                                                 PicmanContext   *context,
                                                  GError       **error);
-const GimpBuffer * gimp_edit_copy               (GimpImage     *image,
-                                                 GimpDrawable  *drawable,
-                                                 GimpContext   *context,
+const PicmanBuffer * picman_edit_copy               (PicmanImage     *image,
+                                                 PicmanDrawable  *drawable,
+                                                 PicmanContext   *context,
                                                  GError       **error);
-const GimpBuffer * gimp_edit_copy_visible       (GimpImage     *image,
-                                                 GimpContext   *context,
+const PicmanBuffer * picman_edit_copy_visible       (PicmanImage     *image,
+                                                 PicmanContext   *context,
                                                  GError       **error);
-GimpLayer        * gimp_edit_paste              (GimpImage     *image,
-                                                 GimpDrawable  *drawable,
-                                                 GimpBuffer    *paste,
+PicmanLayer        * picman_edit_paste              (PicmanImage     *image,
+                                                 PicmanDrawable  *drawable,
+                                                 PicmanBuffer    *paste,
                                                  gboolean       paste_into,
                                                  gint           viewport_x,
                                                  gint           viewport_y,
                                                  gint           viewport_width,
                                                  gint           viewport_height);
 
-const gchar      * gimp_edit_named_cut          (GimpImage     *image,
+const gchar      * picman_edit_named_cut          (PicmanImage     *image,
                                                  const gchar   *name,
-                                                 GimpDrawable  *drawable,
-                                                 GimpContext   *context,
+                                                 PicmanDrawable  *drawable,
+                                                 PicmanContext   *context,
                                                  GError       **error);
-const gchar      * gimp_edit_named_copy         (GimpImage     *image,
+const gchar      * picman_edit_named_copy         (PicmanImage     *image,
                                                  const gchar   *name,
-                                                 GimpDrawable  *drawable,
-                                                 GimpContext   *context,
+                                                 PicmanDrawable  *drawable,
+                                                 PicmanContext   *context,
                                                  GError       **error);
-const gchar      * gimp_edit_named_copy_visible (GimpImage     *image,
+const gchar      * picman_edit_named_copy_visible (PicmanImage     *image,
                                                  const gchar   *name,
-                                                 GimpContext   *context,
+                                                 PicmanContext   *context,
                                                  GError       **error);
 
-gboolean           gimp_edit_clear              (GimpImage     *image,
-                                                 GimpDrawable  *drawable,
-                                                 GimpContext   *context);
-gboolean           gimp_edit_fill               (GimpImage     *image,
-                                                 GimpDrawable  *drawable,
-                                                 GimpContext   *context,
-                                                 GimpFillType   fill_type,
+gboolean           picman_edit_clear              (PicmanImage     *image,
+                                                 PicmanDrawable  *drawable,
+                                                 PicmanContext   *context);
+gboolean           picman_edit_fill               (PicmanImage     *image,
+                                                 PicmanDrawable  *drawable,
+                                                 PicmanContext   *context,
+                                                 PicmanFillType   fill_type,
                                                  gdouble        opacity,
-                                                 GimpLayerModeEffects  paint_mode);
+                                                 PicmanLayerModeEffects  paint_mode);
 
-gboolean           gimp_edit_fill_full          (GimpImage     *image,
-                                                 GimpDrawable  *drawable,
-                                                 const GimpRGB *color,
-                                                 GimpPattern   *pattern,
+gboolean           picman_edit_fill_full          (PicmanImage     *image,
+                                                 PicmanDrawable  *drawable,
+                                                 const PicmanRGB *color,
+                                                 PicmanPattern   *pattern,
                                                  gdouble        opacity,
-                                                 GimpLayerModeEffects  paint_mode,
+                                                 PicmanLayerModeEffects  paint_mode,
                                                  const gchar   *undo_desc);
 
-gboolean           gimp_edit_fade               (GimpImage     *image,
-                                                 GimpContext   *context);
+gboolean           picman_edit_fade               (PicmanImage     *image,
+                                                 PicmanContext   *context);
 
 
-#endif  /*  __GIMP_EDIT_H__  */
+#endif  /*  __PICMAN_EDIT_H__  */

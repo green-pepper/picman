@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,37 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VECTORS_MOD_UNDO_H__
-#define __GIMP_VECTORS_MOD_UNDO_H__
+#ifndef __PICMAN_VECTORS_MOD_UNDO_H__
+#define __PICMAN_VECTORS_MOD_UNDO_H__
 
 
-#include "core/gimpitemundo.h"
+#include "core/picmanitemundo.h"
 
 
-#define GIMP_TYPE_VECTORS_MOD_UNDO            (gimp_vectors_mod_undo_get_type ())
-#define GIMP_VECTORS_MOD_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_VECTORS_MOD_UNDO, GimpVectorsModUndo))
-#define GIMP_VECTORS_MOD_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_VECTORS_MOD_UNDO, GimpVectorsModUndoClass))
-#define GIMP_IS_VECTORS_MOD_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_VECTORS_MOD_UNDO))
-#define GIMP_IS_VECTORS_MOD_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_VECTORS_MOD_UNDO))
-#define GIMP_VECTORS_MOD_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_VECTORS_MOD_UNDO, GimpVectorsModUndoClass))
+#define PICMAN_TYPE_VECTORS_MOD_UNDO            (picman_vectors_mod_undo_get_type ())
+#define PICMAN_VECTORS_MOD_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_VECTORS_MOD_UNDO, PicmanVectorsModUndo))
+#define PICMAN_VECTORS_MOD_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_VECTORS_MOD_UNDO, PicmanVectorsModUndoClass))
+#define PICMAN_IS_VECTORS_MOD_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_VECTORS_MOD_UNDO))
+#define PICMAN_IS_VECTORS_MOD_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_VECTORS_MOD_UNDO))
+#define PICMAN_VECTORS_MOD_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_VECTORS_MOD_UNDO, PicmanVectorsModUndoClass))
 
 
-typedef struct _GimpVectorsModUndoClass GimpVectorsModUndoClass;
+typedef struct _PicmanVectorsModUndoClass PicmanVectorsModUndoClass;
 
-struct _GimpVectorsModUndo
+struct _PicmanVectorsModUndo
 {
-  GimpItemUndo  parent_instance;
+  PicmanItemUndo  parent_instance;
 
-  GimpVectors  *vectors;
+  PicmanVectors  *vectors;
 };
 
-struct _GimpVectorsModUndoClass
+struct _PicmanVectorsModUndoClass
 {
-  GimpItemUndoClass  parent_class;
+  PicmanItemUndoClass  parent_class;
 };
 
 
-GType   gimp_vectors_mod_undo_get_type (void) G_GNUC_CONST;
+GType   picman_vectors_mod_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_VECTORS_MOD_UNDO_H__ */
+#endif /* __PICMAN_VECTORS_MOD_UNDO_H__ */

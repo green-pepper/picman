@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpwidgets-error.c
+ * picmanwidgets-error.c
  * Copyright (C) 2008 Martin Nordholts <martinn@svn.gnome.org>
  *
  * This library is free software: you can redistribute it and/or
@@ -23,18 +23,18 @@
 
 #include <glib.h>
 
-#include "gimpwidgets-error.h"
+#include "picmanwidgets-error.h"
 
 
 /**
- * gimp_widgets_error_quark:
+ * picman_widgets_error_quark:
  *
- * This function is never called directly. Use GIMP_WIDGETS_ERROR() instead.
+ * This function is never called directly. Use PICMAN_WIDGETS_ERROR() instead.
  *
- * Return value: the #GQuark that defines the GIMP widgets error domain.
+ * Return value: the #GQuark that defines the PICMAN widgets error domain.
  **/
 GQuark
-gimp_widgets_error_quark (void)
+picman_widgets_error_quark (void)
 {
-  return g_quark_from_static_string ("gimp-widgets-error-quark");
+  return g_quark_from_static_string ("picman-widgets-error-quark");
 }

@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * Datafiles module copyight (C) 1996 Federico Mena Quintero
@@ -33,21 +33,21 @@
 #include <glib/gstdio.h>
 
 #ifdef G_OS_WIN32
-#include "gimpwin32-io.h"
+#include "picmanwin32-io.h"
 #endif /* G_OS_WIN32 */
 
-#include "gimpbasetypes.h"
+#include "picmanbasetypes.h"
 
-#include "gimpdatafiles.h"
-#include "gimpenv.h"
+#include "picmandatafiles.h"
+#include "picmanenv.h"
 
 
 /**
- * SECTION: gimpdatafiles
- * @title: gimpdatafiles
- * @short_description: Functions to handle GIMP data files.
+ * SECTION: picmandatafiles
+ * @title: picmandatafiles
+ * @short_description: Functions to handle PICMAN data files.
  *
- * Functions to handle GIMP data files.
+ * Functions to handle PICMAN data files.
  **/
 
 
@@ -58,7 +58,7 @@ static inline gboolean   is_hidden (const gchar *filename);
 /*  public functions  */
 
 gboolean
-gimp_datafiles_check_extension (const gchar *filename,
+picman_datafiles_check_extension (const gchar *filename,
                                 const gchar *extension)
 {
   gint name_len;
@@ -77,9 +77,9 @@ gimp_datafiles_check_extension (const gchar *filename,
 }
 
 void
-gimp_datafiles_read_directories (const gchar            *path_str,
+picman_datafiles_read_directories (const gchar            *path_str,
                                  GFileTest               flags,
-                                 GimpDatafileLoaderFunc  loader_func,
+                                 PicmanDatafileLoaderFunc  loader_func,
                                  gpointer                user_data)
 {
   gchar *local_path;
@@ -91,7 +91,7 @@ gimp_datafiles_read_directories (const gchar            *path_str,
 
   local_path = g_strdup (path_str);
 
-  path = gimp_path_parse (local_path, 256, TRUE, NULL);
+  path = picman_path_parse (local_path, 256, TRUE, NULL);
 
   for (list = path; list; list = g_list_next (list))
     {
@@ -116,7 +116,7 @@ gimp_datafiles_read_directories (const gchar            *path_str,
 
               if (! g_stat (filename, &filestat))
                 {
-                  GimpDatafileData  file_data;
+                  PicmanDatafileData  file_data;
 
                   file_data.filename = filename;
                   file_data.dirname  = dirname;
@@ -163,7 +163,7 @@ gimp_datafiles_read_directories (const gchar            *path_str,
         }
     }
 
-  gimp_path_free (path);
+  picman_path_free (path);
   g_free (local_path);
 }
 

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattisbvf
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,25 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_SNAP_H__
-#define __GIMP_IMAGE_SNAP_H__
+#ifndef __PICMAN_IMAGE_SNAP_H__
+#define __PICMAN_IMAGE_SNAP_H__
 
 
-gboolean    gimp_image_snap_x         (GimpImage *image,
+gboolean    picman_image_snap_x         (PicmanImage *image,
                                        gdouble    x,
                                        gdouble   *tx,
                                        gdouble    epsilon_x,
                                        gboolean   snap_to_guides,
                                        gboolean   snap_to_grid,
                                        gboolean   snap_to_canvas);
-gboolean    gimp_image_snap_y         (GimpImage *image,
+gboolean    picman_image_snap_y         (PicmanImage *image,
                                        gdouble    y,
                                        gdouble   *ty,
                                        gdouble    epsilon_y,
                                        gboolean   snap_to_guides,
                                        gboolean   snap_to_grid,
                                        gboolean   snap_to_canvas);
-gboolean    gimp_image_snap_point     (GimpImage *image,
+gboolean    picman_image_snap_point     (PicmanImage *image,
                                        gdouble    x,
                                        gdouble    y,
                                        gdouble   *tx,
@@ -44,7 +44,7 @@ gboolean    gimp_image_snap_point     (GimpImage *image,
                                        gboolean   snap_to_grid,
                                        gboolean   snap_to_canvas,
                                        gboolean   snap_to_vectors);
-gboolean    gimp_image_snap_rectangle (GimpImage *image,
+gboolean    picman_image_snap_rectangle (PicmanImage *image,
                                        gdouble    x1,
                                        gdouble    y1,
                                        gdouble    x2,
@@ -59,4 +59,4 @@ gboolean    gimp_image_snap_rectangle (GimpImage *image,
                                        gboolean   snap_to_vectors);
 
 
-#endif /* __GIMP_IMAGE_SNAP_H__ */
+#endif /* __PICMAN_IMAGE_SNAP_H__ */

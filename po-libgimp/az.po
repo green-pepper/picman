@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-libgimp\n"
+"Project-Id-Version: picman-libpicman\n"
 "POT-Creation-Date: 2001-09-23 20:11-0400\n"
 "PO-Revision-Date: 2001-11-28 16:53GMT+0200\n"
 "Last-Translator: Vasif İsmayıloğlu MD <azerb_linux@hotmail.com>\n"
@@ -14,59 +14,59 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 0.9.5\n"
 
-#: libgimp/gimpcolorbutton.c:121
+#: libpicman/picmancolorbutton.c:121
 msgid "/Use Foreground Color"
 msgstr "/Ön plan Rəngini İşlət"
 
-#: libgimp/gimpcolorbutton.c:122
+#: libpicman/picmancolorbutton.c:122
 msgid "/Use Background Color"
 msgstr "/Arxa plan Rəngini İşlət"
 
-#: libgimp/gimpexport.c:160 libgimp/gimpexport.c:187
+#: libpicman/picmanexport.c:160 libpicman/picmanexport.c:187
 msgid "can't handle layers"
 msgstr "laylar dəstəklənmir"
 
-#: libgimp/gimpexport.c:161 libgimp/gimpexport.c:170
+#: libpicman/picmanexport.c:161 libpicman/picmanexport.c:170
 msgid "Merge Visible Layers"
 msgstr "Görünən Layları Birləşdir"
 
-#: libgimp/gimpexport.c:169 libgimp/gimpexport.c:178
+#: libpicman/picmanexport.c:169 libpicman/picmanexport.c:178
 msgid "can only handle layers as animation frames"
 msgstr "layları təkcə animasiya çərçivələri olaraq dəstəkləyir"
 
-#: libgimp/gimpexport.c:170 libgimp/gimpexport.c:179
+#: libpicman/picmanexport.c:170 libpicman/picmanexport.c:179
 msgid "Save as Animation"
 msgstr "Animasiya olaraq qeyd et"
 
-#: libgimp/gimpexport.c:179 libgimp/gimpexport.c:188 libgimp/gimpexport.c:197
+#: libpicman/picmanexport.c:179 libpicman/picmanexport.c:188 libpicman/picmanexport.c:197
 msgid "Flatten Image"
 msgstr "Rəsmi Sər"
 
-#: libgimp/gimpexport.c:196
+#: libpicman/picmanexport.c:196
 msgid "can't handle transparency"
 msgstr "şəffaflığı dəstəklımir"
 
-#: libgimp/gimpexport.c:205
+#: libpicman/picmanexport.c:205
 msgid "can only handle RGB images"
 msgstr "təkcə RGB rəsmləri dəstəkləyir"
 
-#: libgimp/gimpexport.c:206 libgimp/gimpexport.c:234 libgimp/gimpexport.c:243
+#: libpicman/picmanexport.c:206 libpicman/picmanexport.c:234 libpicman/picmanexport.c:243
 msgid "Convert to RGB"
 msgstr "RGB-yə dönüşdür"
 
-#: libgimp/gimpexport.c:214
+#: libpicman/picmanexport.c:214
 msgid "can only handle grayscale images"
 msgstr "təkcə ağ-qara rəsmləri dəstəkləyir"
 
-#: libgimp/gimpexport.c:215 libgimp/gimpexport.c:234 libgimp/gimpexport.c:255
+#: libpicman/picmanexport.c:215 libpicman/picmanexport.c:234 libpicman/picmanexport.c:255
 msgid "Convert to Grayscale"
 msgstr "Ağ-qaraya Dönüşdür"
 
-#: libgimp/gimpexport.c:223
+#: libpicman/picmanexport.c:223
 msgid "can only handle indexed images"
 msgstr "təkcə indeksli rəsmləri dəstəkləyir"
 
-#: libgimp/gimpexport.c:224 libgimp/gimpexport.c:243 libgimp/gimpexport.c:253
+#: libpicman/picmanexport.c:224 libpicman/picmanexport.c:243 libpicman/picmanexport.c:253
 msgid ""
 "Convert to Indexed using default settings\n"
 "(Do it manually to tune the result)"
@@ -74,50 +74,50 @@ msgstr ""
 "Əsas qurğular işlədilərək İndeksliyə çevir\n"
 "(Nəticələri yaxşılaşdırmaq üçün əllə aparın)"
 
-#: libgimp/gimpexport.c:233
+#: libpicman/picmanexport.c:233
 msgid "can only handle RGB or grayscale images"
 msgstr "təkcə RGB və ağ-qara rəsmlər dəstəklənir"
 
-#: libgimp/gimpexport.c:242
+#: libpicman/picmanexport.c:242
 msgid "can only handle RGB or indexed images"
 msgstr "təkcə RGB və indeksli rəsmlər dəstəklənir"
 
-#: libgimp/gimpexport.c:252
+#: libpicman/picmanexport.c:252
 msgid "can only handle grayscale or indexed images"
 msgstr "təkcə ağ-qara və indeksli rəsmlər dəstəklənir"
 
-#: libgimp/gimpexport.c:263
+#: libpicman/picmanexport.c:263
 msgid "needs an alpha channel"
 msgstr "alfa kanlına ehtiyacı var"
 
-#: libgimp/gimpexport.c:264
+#: libpicman/picmanexport.c:264
 msgid "Add Alpha Channel"
 msgstr "Alfa Kanalı Əlavə Et"
 
 #.
-#. *  Plug-ins have called gtk_init () before calling gimp_export ().
+#. *  Plug-ins have called gtk_init () before calling picman_export ().
 #. *  Otherwise bad things will happen now!!
 #.
 #. the dialog
-#: libgimp/gimpexport.c:333
+#: libpicman/picmanexport.c:333
 msgid "Export File"
 msgstr "Fayl İxrac Et"
 
-#: libgimp/gimpexport.c:338
+#: libpicman/picmanexport.c:338
 msgid "Export"
 msgstr "İxrac Et"
 
-#: libgimp/gimpexport.c:340
+#: libpicman/picmanexport.c:340
 msgid "Ignore"
 msgstr "Nəzərə Alma"
 
-#: libgimp/gimpexport.c:342 libgimp/gimpquerybox.c:204
-#: libgimp/gimpquerybox.c:260 libgimp/gimpquerybox.c:318
-#: libgimp/gimpquerybox.c:383 libgimp/gimpunitmenu.c:505
+#: libpicman/picmanexport.c:342 libpicman/picmanquerybox.c:204
+#: libpicman/picmanquerybox.c:260 libpicman/picmanquerybox.c:318
+#: libpicman/picmanquerybox.c:383 libpicman/picmanunitmenu.c:505
 msgid "Cancel"
 msgstr "Ləğv Et"
 
-#: libgimp/gimpexport.c:357
+#: libpicman/picmanexport.c:357
 msgid ""
 "Your image should be exported before it can be saved for the following "
 "reasons:"
@@ -126,84 +126,84 @@ msgstr ""
 "göndərilməlidir:"
 
 #. the footline
-#: libgimp/gimpexport.c:420
+#: libpicman/picmanexport.c:420
 msgid "The export conversion won't modify your original image."
 msgstr "Göndərmə dialoqu sizin əsl rəsminiz üstündə oynamayacaqdır."
 
-#: libgimp/gimpfileselection.c:388
+#: libpicman/picmanfileselection.c:388
 msgid "Select File"
 msgstr "Fayl Seç"
 
-#: libgimp/gimpquerybox.c:204 libgimp/gimpquerybox.c:260
-#: libgimp/gimpquerybox.c:318 libgimp/gimpquerybox.c:383
-#: libgimp/gimpunitmenu.c:503
+#: libpicman/picmanquerybox.c:204 libpicman/picmanquerybox.c:260
+#: libpicman/picmanquerybox.c:318 libpicman/picmanquerybox.c:383
+#: libpicman/picmanunitmenu.c:503
 msgid "OK"
 msgstr "Oldu"
 
-#: libgimp/gimpunitmenu.c:241
+#: libpicman/picmanunitmenu.c:241
 msgid "More..."
 msgstr "Ətraflı..."
 
-#: libgimp/gimpunitmenu.c:498
+#: libpicman/picmanunitmenu.c:498
 msgid "Unit Selection"
 msgstr "Vahid Seçkisi"
 
-#: libgimp/gimpunitmenu.c:535
+#: libpicman/picmanunitmenu.c:535
 msgid "Unit"
 msgstr "Vahid"
 
-#: libgimp/gimpunitmenu.c:536
+#: libpicman/picmanunitmenu.c:536
 msgid "Factor"
 msgstr "Faktor"
 
 #. pseudo unit
-#: libgimp/gimpunit.c:49
+#: libpicman/picmanunit.c:49
 msgid "pixel"
 msgstr "piksel"
 
-#: libgimp/gimpunit.c:49
+#: libpicman/picmanunit.c:49
 msgid "pixels"
 msgstr "piksel"
 
 #. standard units
-#: libgimp/gimpunit.c:52
+#: libpicman/picmanunit.c:52
 msgid "inch"
 msgstr "inç"
 
-#: libgimp/gimpunit.c:52
+#: libpicman/picmanunit.c:52
 msgid "inches"
 msgstr "inç"
 
-#: libgimp/gimpunit.c:53
+#: libpicman/picmanunit.c:53
 msgid "millimeter"
 msgstr "milimetr"
 
-#: libgimp/gimpunit.c:53
+#: libpicman/picmanunit.c:53
 msgid "millimeters"
 msgstr "milimetr"
 
 #. professional units
-#: libgimp/gimpunit.c:56
+#: libpicman/picmanunit.c:56
 msgid "point"
 msgstr "nöqtə"
 
-#: libgimp/gimpunit.c:56
+#: libpicman/picmanunit.c:56
 msgid "points"
 msgstr "nöqtə"
 
-#: libgimp/gimpunit.c:57
+#: libpicman/picmanunit.c:57
 msgid "pica"
 msgstr "pica"
 
-#: libgimp/gimpunit.c:57
+#: libpicman/picmanunit.c:57
 msgid "picas"
 msgstr "pica"
 
-#: libgimp/gimpunit.c:64
+#: libpicman/picmanunit.c:64
 msgid "percent"
 msgstr "faiz"
 
-#: libgimp/gimpwidgets.c:715
+#: libpicman/picmanwidgets.c:715
 msgid ""
 "If the \"Time\" button is not pressed, use this value for random number "
 "generator seed - this allows you to repeat a given \"random\" operation"
@@ -211,11 +211,11 @@ msgstr ""
 "\"Vaxt\" düyməsi basılı deyilsə, təsadüfə rəqəm yaradıcısının qiymətini "
 "işlət - bununla verilən \"təsadüfi\" əməliyyatı təkrarlaya bilərsiniz"
 
-#: libgimp/gimpwidgets.c:720
+#: libpicman/picmanwidgets.c:720
 msgid "Time"
 msgstr "Vaxt"
 
-#: libgimp/gimpwidgets.c:729
+#: libpicman/picmanwidgets.c:729
 msgid ""
 "Seed random number generator from the current time - this guarantees a "
 "reasonable randomization"
@@ -223,15 +223,15 @@ msgstr ""
 "Cari vaxtdan təsadüfi rəqəm yaradıcısı ək - bu, uyğun təsadüfləşdirmə "
 "vəd edir"
 
-#: libgimp/gimpwidgets.c:1042
+#: libpicman/picmanwidgets.c:1042
 msgid "Bytes"
 msgstr "Bayt"
 
-#: libgimp/gimpwidgets.c:1043
+#: libpicman/picmanwidgets.c:1043
 msgid "KiloBytes"
 msgstr "Kilobayt"
 
-#: libgimp/gimpwidgets.c:1044
+#: libpicman/picmanwidgets.c:1044
 msgid "MegaBytes"
 msgstr "Meqabayt"
 

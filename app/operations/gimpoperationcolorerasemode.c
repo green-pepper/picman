@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationcolorerasemode.c
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanoperationcolorerasemode.c
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *               2012 Ville Sokk <ville.sokk@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,14 +26,14 @@
 #include <gegl-plugin.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "operations-types.h"
 
-#include "gimpoperationcolorerasemode.h"
+#include "picmanoperationcolorerasemode.h"
 
 
-static gboolean gimp_operation_color_erase_mode_process (GeglOperation       *operation,
+static gboolean picman_operation_color_erase_mode_process (GeglOperation       *operation,
                                                          void                *in_buf,
                                                          void                *aux_buf,
                                                          void                *aux2_buf,
@@ -43,12 +43,12 @@ static gboolean gimp_operation_color_erase_mode_process (GeglOperation       *op
                                                          gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationColorEraseMode, gimp_operation_color_erase_mode,
-               GIMP_TYPE_OPERATION_POINT_LAYER_MODE)
+G_DEFINE_TYPE (PicmanOperationColorEraseMode, picman_operation_color_erase_mode,
+               PICMAN_TYPE_OPERATION_POINT_LAYER_MODE)
 
 
 static void
-gimp_operation_color_erase_mode_class_init (GimpOperationColorEraseModeClass *klass)
+picman_operation_color_erase_mode_class_init (PicmanOperationColorEraseModeClass *klass)
 {
   GeglOperationClass               *operation_class;
   GeglOperationPointComposer3Class *point_class;
@@ -57,20 +57,20 @@ gimp_operation_color_erase_mode_class_init (GimpOperationColorEraseModeClass *kl
   point_class     = GEGL_OPERATION_POINT_COMPOSER3_CLASS (klass);
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:color-erase-mode",
-                                 "description", "GIMP color erase mode operation",
+                                 "name",        "picman:color-erase-mode",
+                                 "description", "PICMAN color erase mode operation",
                                  NULL);
 
-  point_class->process = gimp_operation_color_erase_mode_process;
+  point_class->process = picman_operation_color_erase_mode_process;
 }
 
 static void
-gimp_operation_color_erase_mode_init (GimpOperationColorEraseMode *self)
+picman_operation_color_erase_mode_init (PicmanOperationColorEraseMode *self)
 {
 }
 
 static gboolean
-gimp_operation_color_erase_mode_process (GeglOperation       *operation,
+picman_operation_color_erase_mode_process (GeglOperation       *operation,
                                          void                *in_buf,
                                          void                *aux_buf,
                                          void                *aux2_buf,
@@ -79,7 +79,7 @@ gimp_operation_color_erase_mode_process (GeglOperation       *operation,
                                          const GeglRectangle *roi,
                                          gint                 level)
 {
-  gdouble         opacity  = GIMP_OPERATION_POINT_LAYER_MODE (operation)->opacity;
+  gdouble         opacity  = PICMAN_OPERATION_POINT_LAYER_MODE (operation)->opacity;
   gfloat         *in       = in_buf;
   gfloat         *layer    = aux_buf;
   gfloat         *mask     = aux2_buf;
@@ -89,14 +89,14 @@ gimp_operation_color_erase_mode_process (GeglOperation       *operation,
   while (samples--)
     {
       gfloat  layer_alpha;
-      GimpRGB bgcolor, color, alpha;
+      PicmanRGB bgcolor, color, alpha;
 
       layer_alpha = layer[ALPHA] * opacity;
       if (has_mask)
         layer_alpha *= *mask;
 
-      gimp_rgba_set (&color, in[0], in[1], in[2], in[3]);
-      gimp_rgba_set (&bgcolor, layer[0], layer[1], layer[2], layer_alpha);
+      picman_rgba_set (&color, in[0], in[1], in[2], in[3]);
+      picman_rgba_set (&bgcolor, layer[0], layer[1], layer[2], layer_alpha);
 
       /* start of helper function copied from legacy 8-bit blending code */
       alpha.a = color.a;

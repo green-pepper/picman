@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpdrawablestack.c
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmandrawablestack.c
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
 
 #include "core-types.h"
 
-#include "gimpdrawable.h"
-#include "gimpdrawablestack.h"
-#include "gimpmarshal.h"
+#include "picmandrawable.h"
+#include "picmandrawablestack.h"
+#include "picmanmarshal.h"
 
 
 enum
@@ -38,136 +38,136 @@ enum
 
 /*  local function prototypes  */
 
-static void   gimp_drawable_stack_constructed      (GObject           *object);
+static void   picman_drawable_stack_constructed      (GObject           *object);
 
-static void   gimp_drawable_stack_add              (GimpContainer     *container,
-                                                    GimpObject        *object);
-static void   gimp_drawable_stack_remove           (GimpContainer     *container,
-                                                    GimpObject        *object);
-static void   gimp_drawable_stack_reorder          (GimpContainer     *container,
-                                                    GimpObject        *object,
+static void   picman_drawable_stack_add              (PicmanContainer     *container,
+                                                    PicmanObject        *object);
+static void   picman_drawable_stack_remove           (PicmanContainer     *container,
+                                                    PicmanObject        *object);
+static void   picman_drawable_stack_reorder          (PicmanContainer     *container,
+                                                    PicmanObject        *object,
                                                     gint               new_index);
 
-static void   gimp_drawable_stack_update           (GimpDrawableStack *stack,
+static void   picman_drawable_stack_update           (PicmanDrawableStack *stack,
                                                     gint               x,
                                                     gint               y,
                                                     gint               width,
                                                     gint               height);
-static void   gimp_drawable_stack_drawable_update  (GimpItem          *item,
+static void   picman_drawable_stack_drawable_update  (PicmanItem          *item,
                                                     gint               x,
                                                     gint               y,
                                                     gint               width,
                                                     gint               height,
-                                                    GimpDrawableStack *stack);
-static void   gimp_drawable_stack_drawable_visible (GimpItem          *item,
-                                                    GimpDrawableStack *stack);
+                                                    PicmanDrawableStack *stack);
+static void   picman_drawable_stack_drawable_visible (PicmanItem          *item,
+                                                    PicmanDrawableStack *stack);
 
 
-G_DEFINE_TYPE (GimpDrawableStack, gimp_drawable_stack, GIMP_TYPE_ITEM_STACK)
+G_DEFINE_TYPE (PicmanDrawableStack, picman_drawable_stack, PICMAN_TYPE_ITEM_STACK)
 
-#define parent_class gimp_drawable_stack_parent_class
+#define parent_class picman_drawable_stack_parent_class
 
 static guint stack_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_drawable_stack_class_init (GimpDrawableStackClass *klass)
+picman_drawable_stack_class_init (PicmanDrawableStackClass *klass)
 {
   GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
-  GimpContainerClass *container_class = GIMP_CONTAINER_CLASS (klass);
+  PicmanContainerClass *container_class = PICMAN_CONTAINER_CLASS (klass);
 
   stack_signals[UPDATE] =
     g_signal_new ("update",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpDrawableStackClass, update),
+                  G_STRUCT_OFFSET (PicmanDrawableStackClass, update),
                   NULL, NULL,
-                  gimp_marshal_VOID__INT_INT_INT_INT,
+                  picman_marshal_VOID__INT_INT_INT_INT,
                   G_TYPE_NONE, 4,
                   G_TYPE_INT,
                   G_TYPE_INT,
                   G_TYPE_INT,
                   G_TYPE_INT);
 
-  object_class->constructed = gimp_drawable_stack_constructed;
+  object_class->constructed = picman_drawable_stack_constructed;
 
-  container_class->add      = gimp_drawable_stack_add;
-  container_class->remove   = gimp_drawable_stack_remove;
-  container_class->reorder  = gimp_drawable_stack_reorder;
+  container_class->add      = picman_drawable_stack_add;
+  container_class->remove   = picman_drawable_stack_remove;
+  container_class->reorder  = picman_drawable_stack_reorder;
 }
 
 static void
-gimp_drawable_stack_init (GimpDrawableStack *stack)
+picman_drawable_stack_init (PicmanDrawableStack *stack)
 {
 }
 
 static void
-gimp_drawable_stack_constructed (GObject *object)
+picman_drawable_stack_constructed (GObject *object)
 {
-  GimpContainer *container = GIMP_CONTAINER (object);
+  PicmanContainer *container = PICMAN_CONTAINER (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (g_type_is_a (gimp_container_get_children_type (container),
-                         GIMP_TYPE_DRAWABLE));
+  g_assert (g_type_is_a (picman_container_get_children_type (container),
+                         PICMAN_TYPE_DRAWABLE));
 
-  gimp_container_add_handler (container, "update",
-                              G_CALLBACK (gimp_drawable_stack_drawable_update),
+  picman_container_add_handler (container, "update",
+                              G_CALLBACK (picman_drawable_stack_drawable_update),
                               container);
-  gimp_container_add_handler (container, "visibility-changed",
-                              G_CALLBACK (gimp_drawable_stack_drawable_visible),
+  picman_container_add_handler (container, "visibility-changed",
+                              G_CALLBACK (picman_drawable_stack_drawable_visible),
                               container);
 }
 
 static void
-gimp_drawable_stack_add (GimpContainer *container,
-                         GimpObject    *object)
+picman_drawable_stack_add (PicmanContainer *container,
+                         PicmanObject    *object)
 {
-  GimpDrawableStack *stack = GIMP_DRAWABLE_STACK (container);
+  PicmanDrawableStack *stack = PICMAN_DRAWABLE_STACK (container);
 
-  GIMP_CONTAINER_CLASS (parent_class)->add (container, object);
+  PICMAN_CONTAINER_CLASS (parent_class)->add (container, object);
 
-  if (gimp_item_get_visible (GIMP_ITEM (object)))
-    gimp_drawable_stack_drawable_visible (GIMP_ITEM (object), stack);
+  if (picman_item_get_visible (PICMAN_ITEM (object)))
+    picman_drawable_stack_drawable_visible (PICMAN_ITEM (object), stack);
 }
 
 static void
-gimp_drawable_stack_remove (GimpContainer *container,
-                            GimpObject    *object)
+picman_drawable_stack_remove (PicmanContainer *container,
+                            PicmanObject    *object)
 {
-  GimpDrawableStack *stack = GIMP_DRAWABLE_STACK (container);
+  PicmanDrawableStack *stack = PICMAN_DRAWABLE_STACK (container);
 
-  GIMP_CONTAINER_CLASS (parent_class)->remove (container, object);
+  PICMAN_CONTAINER_CLASS (parent_class)->remove (container, object);
 
-  if (gimp_item_get_visible (GIMP_ITEM (object)))
-    gimp_drawable_stack_drawable_visible (GIMP_ITEM (object), stack);
+  if (picman_item_get_visible (PICMAN_ITEM (object)))
+    picman_drawable_stack_drawable_visible (PICMAN_ITEM (object), stack);
 }
 
 static void
-gimp_drawable_stack_reorder (GimpContainer *container,
-                             GimpObject    *object,
+picman_drawable_stack_reorder (PicmanContainer *container,
+                             PicmanObject    *object,
                              gint           new_index)
 {
-  GimpDrawableStack *stack  = GIMP_DRAWABLE_STACK (container);
+  PicmanDrawableStack *stack  = PICMAN_DRAWABLE_STACK (container);
 
-  GIMP_CONTAINER_CLASS (parent_class)->reorder (container, object, new_index);
+  PICMAN_CONTAINER_CLASS (parent_class)->reorder (container, object, new_index);
 
-  if (gimp_item_get_visible (GIMP_ITEM (object)))
-    gimp_drawable_stack_drawable_visible (GIMP_ITEM (object), stack);
+  if (picman_item_get_visible (PICMAN_ITEM (object)))
+    picman_drawable_stack_drawable_visible (PICMAN_ITEM (object), stack);
 }
 
 
 /*  public functions  */
 
-GimpContainer *
-gimp_drawable_stack_new (GType drawable_type)
+PicmanContainer *
+picman_drawable_stack_new (GType drawable_type)
 {
-  g_return_val_if_fail (g_type_is_a (drawable_type, GIMP_TYPE_DRAWABLE), NULL);
+  g_return_val_if_fail (g_type_is_a (drawable_type, PICMAN_TYPE_DRAWABLE), NULL);
 
-  return g_object_new (GIMP_TYPE_DRAWABLE_STACK,
+  return g_object_new (PICMAN_TYPE_DRAWABLE_STACK,
                        "name",          g_type_name (drawable_type),
                        "children-type", drawable_type,
-                       "policy",        GIMP_CONTAINER_POLICY_STRONG,
+                       "policy",        PICMAN_CONTAINER_POLICY_STRONG,
                        NULL);
 }
 
@@ -175,7 +175,7 @@ gimp_drawable_stack_new (GType drawable_type)
 /*  private functions  */
 
 static void
-gimp_drawable_stack_update (GimpDrawableStack *stack,
+picman_drawable_stack_update (PicmanDrawableStack *stack,
                             gint               x,
                             gint               y,
                             gint               width,
@@ -186,37 +186,37 @@ gimp_drawable_stack_update (GimpDrawableStack *stack,
 }
 
 static void
-gimp_drawable_stack_drawable_update (GimpItem          *item,
+picman_drawable_stack_drawable_update (PicmanItem          *item,
                                      gint               x,
                                      gint               y,
                                      gint               width,
                                      gint               height,
-                                     GimpDrawableStack *stack)
+                                     PicmanDrawableStack *stack)
 {
-  if (gimp_item_get_visible (item))
+  if (picman_item_get_visible (item))
     {
       gint offset_x;
       gint offset_y;
 
-      gimp_item_get_offset (item, &offset_x, &offset_y);
+      picman_item_get_offset (item, &offset_x, &offset_y);
 
-      gimp_drawable_stack_update (stack,
+      picman_drawable_stack_update (stack,
                                   x + offset_x, y + offset_y,
                                   width, height);
     }
 }
 
 static void
-gimp_drawable_stack_drawable_visible (GimpItem          *item,
-                                      GimpDrawableStack *stack)
+picman_drawable_stack_drawable_visible (PicmanItem          *item,
+                                      PicmanDrawableStack *stack)
 {
   gint offset_x;
   gint offset_y;
 
-  gimp_item_get_offset (item, &offset_x, &offset_y);
+  picman_item_get_offset (item, &offset_x, &offset_y);
 
-  gimp_drawable_stack_update (stack,
+  picman_drawable_stack_update (stack,
                               offset_x, offset_y,
-                              gimp_item_get_width  (item),
-                              gimp_item_get_height (item));
+                              picman_item_get_width  (item),
+                              picman_item_get_height (item));
 }

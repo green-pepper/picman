@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,42 +15,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DODGE_BURN_TOOL_H__
-#define __GIMP_DODGE_BURN_TOOL_H__
+#ifndef __PICMAN_DODGE_BURN_TOOL_H__
+#define __PICMAN_DODGE_BURN_TOOL_H__
 
 
-#include "gimpbrushtool.h"
+#include "picmanbrushtool.h"
 
 
-#define GIMP_TYPE_DODGE_BURN_TOOL            (gimp_dodge_burn_tool_get_type ())
-#define GIMP_DODGE_BURN_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DODGE_BURN_TOOL, GimpDodgeBurnTool))
-#define GIMP_IS_DODGE_BURN_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DODGE_BURN_TOOL))
-#define GIMP_DODGE_BURN_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DODGE_BURN_TOOL, GimpDodgeBurnToolClass))
-#define GIMP_IS_DODGE_BURN_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DODGE_BURN_TOOL))
+#define PICMAN_TYPE_DODGE_BURN_TOOL            (picman_dodge_burn_tool_get_type ())
+#define PICMAN_DODGE_BURN_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DODGE_BURN_TOOL, PicmanDodgeBurnTool))
+#define PICMAN_IS_DODGE_BURN_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DODGE_BURN_TOOL))
+#define PICMAN_DODGE_BURN_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DODGE_BURN_TOOL, PicmanDodgeBurnToolClass))
+#define PICMAN_IS_DODGE_BURN_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DODGE_BURN_TOOL))
 
-#define GIMP_DODGE_BURN_TOOL_GET_OPTIONS(t)  (GIMP_DODGE_BURN_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_DODGE_BURN_TOOL_GET_OPTIONS(t)  (PICMAN_DODGE_BURN_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpDodgeBurnTool      GimpDodgeBurnTool;
-typedef struct _GimpDodgeBurnToolClass GimpDodgeBurnToolClass;
+typedef struct _PicmanDodgeBurnTool      PicmanDodgeBurnTool;
+typedef struct _PicmanDodgeBurnToolClass PicmanDodgeBurnToolClass;
 
-struct _GimpDodgeBurnTool
+struct _PicmanDodgeBurnTool
 {
-  GimpBrushTool parent_instance;
+  PicmanBrushTool parent_instance;
 
   gboolean      toggled;
 };
 
-struct _GimpDodgeBurnToolClass
+struct _PicmanDodgeBurnToolClass
 {
-  GimpBrushToolClass parent_class;
+  PicmanBrushToolClass parent_class;
 };
 
 
-void    gimp_dodge_burn_tool_register (GimpToolRegisterCallback  callback,
+void    picman_dodge_burn_tool_register (PicmanToolRegisterCallback  callback,
                                        gpointer                  data);
 
-GType   gimp_dodge_burn_tool_get_type (void) G_GNUC_CONST;
+GType   picman_dodge_burn_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_DODGEBURN_TOOL_H__  */
+#endif  /*  __PICMAN_DODGEBURN_TOOL_H__  */

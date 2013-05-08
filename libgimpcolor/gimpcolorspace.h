@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,12 +16,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_COLOR_H_INSIDE__) && !defined (GIMP_COLOR_COMPILATION)
-#error "Only <libgimpcolor/gimpcolor.h> can be included directly."
+#if !defined (__PICMAN_COLOR_H_INSIDE__) && !defined (PICMAN_COLOR_COMPILATION)
+#error "Only <libpicmancolor/picmancolor.h> can be included directly."
 #endif
 
-#ifndef __GIMP_COLOR_SPACE_H__
-#define __GIMP_COLOR_SPACE_H__
+#ifndef __PICMAN_COLOR_SPACE_H__
+#define __PICMAN_COLOR_SPACE_H__
 
 G_BEGIN_DECLS
 
@@ -31,69 +31,69 @@ G_BEGIN_DECLS
 /*  Color conversion routines  */
 
 
-/*  GimpRGB function  */
+/*  PicmanRGB function  */
 
-void   gimp_rgb_to_hsv          (const GimpRGB  *rgb,
-                                 GimpHSV        *hsv);
-void   gimp_rgb_to_hsl          (const GimpRGB  *rgb,
-                                 GimpHSL        *hsl);
-void   gimp_rgb_to_cmyk         (const GimpRGB  *rgb,
+void   picman_rgb_to_hsv          (const PicmanRGB  *rgb,
+                                 PicmanHSV        *hsv);
+void   picman_rgb_to_hsl          (const PicmanRGB  *rgb,
+                                 PicmanHSL        *hsl);
+void   picman_rgb_to_cmyk         (const PicmanRGB  *rgb,
                                  gdouble         pullout,
-                                 GimpCMYK       *cmyk);
+                                 PicmanCMYK       *cmyk);
 
-void   gimp_hsv_to_rgb          (const GimpHSV  *hsv,
-                                 GimpRGB        *rgb);
-void   gimp_hsl_to_rgb          (const GimpHSL  *hsl,
-                                 GimpRGB        *rgb);
-void   gimp_cmyk_to_rgb         (const GimpCMYK *cmyk,
-                                 GimpRGB        *rgb);
+void   picman_hsv_to_rgb          (const PicmanHSV  *hsv,
+                                 PicmanRGB        *rgb);
+void   picman_hsl_to_rgb          (const PicmanHSL  *hsl,
+                                 PicmanRGB        *rgb);
+void   picman_cmyk_to_rgb         (const PicmanCMYK *cmyk,
+                                 PicmanRGB        *rgb);
 
-void   gimp_rgb_to_hwb          (const GimpRGB  *rgb,
+void   picman_rgb_to_hwb          (const PicmanRGB  *rgb,
                                  gdouble        *hue,
                                  gdouble        *whiteness,
                                  gdouble        *blackness);
-void   gimp_hwb_to_rgb          (gdouble         hue,
+void   picman_hwb_to_rgb          (gdouble         hue,
                                  gdouble         whiteness,
                                  gdouble         blackness,
-                                 GimpRGB        *rgb);
+                                 PicmanRGB        *rgb);
 
 
 /*  gint functions  */
 
-void    gimp_rgb_to_hsv_int     (gint    *red         /* returns hue        */,
+void    picman_rgb_to_hsv_int     (gint    *red         /* returns hue        */,
                                  gint    *green       /* returns saturation */,
                                  gint    *blue        /* returns value      */);
-void    gimp_hsv_to_rgb_int     (gint    *hue         /* returns red        */,
+void    picman_hsv_to_rgb_int     (gint    *hue         /* returns red        */,
                                  gint    *saturation  /* returns green      */,
                                  gint    *value       /* returns blue       */);
 
-void    gimp_rgb_to_cmyk_int    (gint    *red         /* returns cyan       */,
+void    picman_rgb_to_cmyk_int    (gint    *red         /* returns cyan       */,
                                  gint    *green       /* returns magenta    */,
                                  gint    *blue        /* returns yellow     */,
                                  gint    *pullout     /* returns black      */);
-void    gimp_cmyk_to_rgb_int    (gint    *cyan        /* returns red        */,
+void    picman_cmyk_to_rgb_int    (gint    *cyan        /* returns red        */,
                                  gint    *magenta     /* returns green      */,
                                  gint    *yellow      /* returns blue       */,
                                  gint    *black       /* not changed        */);
 
-void    gimp_rgb_to_hsl_int     (gint    *red         /* returns hue        */,
+void    picman_rgb_to_hsl_int     (gint    *red         /* returns hue        */,
                                  gint    *green       /* returns saturation */,
                                  gint    *blue        /* returns lightness  */);
-gint    gimp_rgb_to_l_int       (gint     red,
+gint    picman_rgb_to_l_int       (gint     red,
                                  gint     green,
                                  gint     blue);
-void    gimp_hsl_to_rgb_int     (gint    *hue         /* returns red        */,
+void    picman_hsl_to_rgb_int     (gint    *hue         /* returns red        */,
                                  gint    *saturation  /* returns green      */,
                                  gint    *lightness   /* returns blue       */);
 
 
 /*  gdouble functions  */
 
-void    gimp_rgb_to_hsv4        (const guchar *rgb,
+void    picman_rgb_to_hsv4        (const guchar *rgb,
                                  gdouble      *hue,
                                  gdouble      *saturation,
                                  gdouble      *value);
-void    gimp_hsv_to_rgb4        (guchar       *rgb,
+void    picman_hsv_to_rgb4        (guchar       *rgb,
                                  gdouble       hue,
                                  gdouble       saturation,
                                  gdouble       value);
@@ -101,4 +101,4 @@ void    gimp_hsv_to_rgb4        (guchar       *rgb,
 
 G_END_DECLS
 
-#endif  /* __GIMP_COLOR_SPACE_H__ */
+#endif  /* __PICMAN_COLOR_SPACE_H__ */

@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpidtable.c
+ * picmanidtable.c
  * Copyright (C) 2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,61 +24,61 @@
 
 #include "core-types.h"
 
-#include "gimpidtable.h"
-#include "gimp-utils.h"
+#include "picmanidtable.h"
+#include "picman-utils.h"
 
 
-#define GIMP_ID_TABLE_START_ID 1
-#define GIMP_ID_TABLE_END_ID   G_MAXINT
+#define PICMAN_ID_TABLE_START_ID 1
+#define PICMAN_ID_TABLE_END_ID   G_MAXINT
 
 
-struct _GimpIdTablePriv
+struct _PicmanIdTablePriv
 {
   GHashTable *id_table;
   gint        next_id;
 };
 
 
-static void    gimp_id_table_finalize    (GObject    *object);
-static gint64  gimp_id_table_get_memsize (GimpObject *object,
+static void    picman_id_table_finalize    (GObject    *object);
+static gint64  picman_id_table_get_memsize (PicmanObject *object,
                                           gint64     *gui_size);
 
 
-G_DEFINE_TYPE (GimpIdTable, gimp_id_table, GIMP_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanIdTable, picman_id_table, PICMAN_TYPE_OBJECT)
 
-#define parent_class gimp_id_table_parent_class
+#define parent_class picman_id_table_parent_class
 
 
 static void
-gimp_id_table_class_init (GimpIdTableClass *klass)
+picman_id_table_class_init (PicmanIdTableClass *klass)
 {
   GObjectClass     *object_class        = G_OBJECT_CLASS (klass);
-  GimpObjectClass  *gimp_object_class   = GIMP_OBJECT_CLASS (klass);
-  GimpIdTableClass *gimp_id_table_class = GIMP_ID_TABLE_CLASS (klass);
+  PicmanObjectClass  *picman_object_class   = PICMAN_OBJECT_CLASS (klass);
+  PicmanIdTableClass *picman_id_table_class = PICMAN_ID_TABLE_CLASS (klass);
 
-  object_class->finalize         = gimp_id_table_finalize;
+  object_class->finalize         = picman_id_table_finalize;
 
-  gimp_object_class->get_memsize = gimp_id_table_get_memsize;
+  picman_object_class->get_memsize = picman_id_table_get_memsize;
 
-  g_type_class_add_private (gimp_id_table_class,
-                            sizeof (GimpIdTablePriv));
+  g_type_class_add_private (picman_id_table_class,
+                            sizeof (PicmanIdTablePriv));
 }
 
 static void
-gimp_id_table_init (GimpIdTable *id_table)
+picman_id_table_init (PicmanIdTable *id_table)
 {
   id_table->priv = G_TYPE_INSTANCE_GET_PRIVATE (id_table,
-                                                GIMP_TYPE_ID_TABLE,
-                                                GimpIdTablePriv);
+                                                PICMAN_TYPE_ID_TABLE,
+                                                PicmanIdTablePriv);
 
   id_table->priv->id_table = g_hash_table_new (g_direct_hash, NULL);
-  id_table->priv->next_id  = GIMP_ID_TABLE_START_ID;
+  id_table->priv->next_id  = PICMAN_ID_TABLE_START_ID;
 }
 
 static void
-gimp_id_table_finalize (GObject *object)
+picman_id_table_finalize (GObject *object)
 {
-  GimpIdTable *id_table = GIMP_ID_TABLE (object);
+  PicmanIdTable *id_table = PICMAN_ID_TABLE (object);
 
   if (id_table->priv->id_table)
     {
@@ -90,32 +90,32 @@ gimp_id_table_finalize (GObject *object)
 }
 
 static gint64
-gimp_id_table_get_memsize (GimpObject *object,
+picman_id_table_get_memsize (PicmanObject *object,
                            gint64     *gui_size)
 {
-  GimpIdTable *id_table = GIMP_ID_TABLE (object);
+  PicmanIdTable *id_table = PICMAN_ID_TABLE (object);
   gint64       memsize  = 0;
 
-  memsize += gimp_g_hash_table_get_memsize (id_table->priv->id_table, 0);
+  memsize += picman_g_hash_table_get_memsize (id_table->priv->id_table, 0);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 /**
- * gimp_id_table_new:
+ * picman_id_table_new:
  *
- * Returns: A new #GimpIdTable.
+ * Returns: A new #PicmanIdTable.
  **/
-GimpIdTable *
-gimp_id_table_new (void)
+PicmanIdTable *
+picman_id_table_new (void)
 {
-  return g_object_new (GIMP_TYPE_ID_TABLE, NULL);
+  return g_object_new (PICMAN_TYPE_ID_TABLE, NULL);
 }
 
 /**
- * gimp_id_table_insert:
- * @id_table: A #GimpIdTable
+ * picman_id_table_insert:
+ * @id_table: A #PicmanIdTable
  * @data: Data to insert and assign an id to
  *
  * Insert data in the id table. The data will get an, in this table,
@@ -124,27 +124,27 @@ gimp_id_table_new (void)
  * Returns: The assigned ID.
  **/
 gint
-gimp_id_table_insert (GimpIdTable *id_table, gpointer data)
+picman_id_table_insert (PicmanIdTable *id_table, gpointer data)
 {
   gint new_id;
 
-  g_return_val_if_fail (GIMP_IS_ID_TABLE (id_table), 0);
+  g_return_val_if_fail (PICMAN_IS_ID_TABLE (id_table), 0);
 
   do
     {
       new_id = id_table->priv->next_id++;
 
-      if (id_table->priv->next_id == GIMP_ID_TABLE_END_ID)
-        id_table->priv->next_id = GIMP_ID_TABLE_START_ID;
+      if (id_table->priv->next_id == PICMAN_ID_TABLE_END_ID)
+        id_table->priv->next_id = PICMAN_ID_TABLE_START_ID;
     }
-  while (gimp_id_table_lookup (id_table, new_id));
+  while (picman_id_table_lookup (id_table, new_id));
 
-  return gimp_id_table_insert_with_id (id_table, new_id, data);
+  return picman_id_table_insert_with_id (id_table, new_id, data);
 }
 
 /**
- * gimp_id_table_insert_with_id:
- * @id_table: An #GimpIdTable
+ * picman_id_table_insert_with_id:
+ * @id_table: An #PicmanIdTable
  * @id: The ID to use. Must be greater than 0.
  * @data: The data to associate with the id
  *
@@ -154,12 +154,12 @@ gimp_id_table_insert (GimpIdTable *id_table, gpointer data)
  * Returns: The used ID if successful, -1 if it was already in use.
  **/
 gint
-gimp_id_table_insert_with_id (GimpIdTable *id_table, gint id, gpointer data)
+picman_id_table_insert_with_id (PicmanIdTable *id_table, gint id, gpointer data)
 {
-  g_return_val_if_fail (GIMP_IS_ID_TABLE (id_table), 0);
+  g_return_val_if_fail (PICMAN_IS_ID_TABLE (id_table), 0);
   g_return_val_if_fail (id > 0, 0);
 
-  if (gimp_id_table_lookup (id_table, id))
+  if (picman_id_table_lookup (id_table, id))
     return -1;
 
   g_hash_table_insert (id_table->priv->id_table, GINT_TO_POINTER (id), data);
@@ -168,8 +168,8 @@ gimp_id_table_insert_with_id (GimpIdTable *id_table, gint id, gpointer data)
 }
 
 /**
- * gimp_id_table_replace:
- * @id_table: An #GimpIdTable
+ * picman_id_table_replace:
+ * @id_table: An #PicmanIdTable
  * @id: The ID to use. Must be greater than 0.
  * @data: The data to insert/replace
  *
@@ -177,17 +177,17 @@ gimp_id_table_insert_with_id (GimpIdTable *id_table, gint id, gpointer data)
  * entry in the id table.
  **/
 void
-gimp_id_table_replace (GimpIdTable *id_table, gint id, gpointer data)
+picman_id_table_replace (PicmanIdTable *id_table, gint id, gpointer data)
 {
-  g_return_if_fail (GIMP_IS_ID_TABLE (id_table));
+  g_return_if_fail (PICMAN_IS_ID_TABLE (id_table));
   g_return_if_fail (id > 0);
 
   g_hash_table_replace (id_table->priv->id_table, GINT_TO_POINTER (id), data);
 }
 
 /**
- * gimp_id_table_lookup:
- * @id_table: An #GimpIdTable
+ * picman_id_table_lookup:
+ * @id_table: An #PicmanIdTable
  * @id: The ID of the data to lookup
  *
  * Lookup data based on ID.
@@ -195,17 +195,17 @@ gimp_id_table_replace (GimpIdTable *id_table, gint id, gpointer data)
  * Returns: The data, or NULL if no data with the given ID was found.
  **/
 gpointer
-gimp_id_table_lookup (GimpIdTable *id_table, gint id)
+picman_id_table_lookup (PicmanIdTable *id_table, gint id)
 {
-  g_return_val_if_fail (GIMP_IS_ID_TABLE (id_table), NULL);
+  g_return_val_if_fail (PICMAN_IS_ID_TABLE (id_table), NULL);
 
   return g_hash_table_lookup (id_table->priv->id_table, GINT_TO_POINTER (id));
 }
 
 
 /**
- * gimp_id_table_remove:
- * @id_table: An #GimpIdTable
+ * picman_id_table_remove:
+ * @id_table: An #PicmanIdTable
  * @id: The ID of the data to remove.
  *
  * Remove the data from the table with the given ID.
@@ -214,9 +214,9 @@ gimp_id_table_lookup (GimpIdTable *id_table, gint id)
  *          removed, %FALSE otherwise.
  **/
 gboolean
-gimp_id_table_remove (GimpIdTable *id_table, gint id)
+picman_id_table_remove (PicmanIdTable *id_table, gint id)
 {
-  g_return_val_if_fail (GIMP_IS_ID_TABLE (id_table), FALSE);
+  g_return_val_if_fail (PICMAN_IS_ID_TABLE (id_table), FALSE);
 
   g_return_val_if_fail (id_table != NULL, FALSE);
 

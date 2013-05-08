@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpText
- * Copyright (C) 2002-2003  Sven Neumann <sven@gimp.org>
+ * PicmanText
+ * Copyright (C) 2002-2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEXT_LAYOUT_RENDER_H__
-#define __GIMP_TEXT_LAYOUT_RENDER_H__
+#ifndef __PICMAN_TEXT_LAYOUT_RENDER_H__
+#define __PICMAN_TEXT_LAYOUT_RENDER_H__
 
 
-void  gimp_text_layout_render (GimpTextLayout    *layout,
+void  picman_text_layout_render (PicmanTextLayout    *layout,
                                cairo_t           *cr,
-                               GimpTextDirection  base_dir,
+                               PicmanTextDirection  base_dir,
                                gboolean           path);
 
 
-#endif /* __GIMP_TEXT_LAYOUT_RENDER_H__ */
+#endif /* __PICMAN_TEXT_LAYOUT_RENDER_H__ */

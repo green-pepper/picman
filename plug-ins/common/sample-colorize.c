@@ -1,8 +1,8 @@
 /* sample_colorize.c
- *      A GIMP Plug-In by Wolfgang Hofer
+ *      A PICMAN Plug-In by Wolfgang Hofer
  */
 
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,10 +26,10 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Some useful macros */
@@ -38,7 +38,7 @@
 
 #define PLUG_IN_PROC        "plug-in-sample-colorize"
 #define PLUG_IN_BINARY      "sample-colorize"
-#define PLUG_IN_ROLE        "gimp-sample-colorize"
+#define PLUG_IN_ROLE        "picman-sample-colorize"
 #define NUMBER_IN_ARGS      13
 
 #define TILE_CACHE_SIZE      32
@@ -150,16 +150,16 @@ typedef struct
 
 typedef struct
 {
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   void         *sel_gdrw;
-  GimpPixelRgn  pr;
+  PicmanPixelRgn  pr;
   gint          x1;
   gint          y1;
   gint          x2;
   gint          y2;
   gint          index_alpha;   /* 0 == no alpha, 1 == GREYA, 3 == RGBA */
   gint          bpp;
-  GimpTile     *tile;
+  PicmanTile     *tile;
   gint          tile_row;
   gint          tile_col;
   gint          tile_width;
@@ -193,9 +193,9 @@ static gint    g_show_progress = FALSE;
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint            *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
 static gint   main_colorize             (gint          mc_flags);
 static void   get_filevalues            (void);
@@ -216,7 +216,7 @@ static void   get_pixel                 (t_GDRW       *gdrw,
                                          gint32        y,
                                          guchar       *pixel);
 static void   init_gdrw                 (t_GDRW       *gdrw,
-                                         GimpDrawable *drawable,
+                                         PicmanDrawable *drawable,
                                          gboolean      dirty,
                                          gboolean      shadow);
 static void   end_gdrw                  (t_GDRW       *gdrw);
@@ -230,7 +230,7 @@ static void   smp_get_colors            (GtkWidget *dialog);
 static void   get_gradient              (gint mode);
 static void   clear_preview             (GtkWidget *preview);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -243,21 +243,21 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[]=
+  static const PicmanParamDef args[]=
   {
-    { GIMP_PDB_INT32, "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE, "image", "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "dst-drawable", "The drawable to be colorized (Type GRAY* or RGB*)" },
-    { GIMP_PDB_DRAWABLE, "sample-drawable", "Sample drawable (should be of Type RGB or RGBA)" },
-    { GIMP_PDB_INT32, "hold-inten", "hold brightness intensity levels (TRUE, FALSE)" },
-    { GIMP_PDB_INT32, "orig-inten", "TRUE: hold brightness of original intensity levels. FALSE: Hold Intensity of input levels" },
-    { GIMP_PDB_INT32, "rnd-subcolors", "TRUE: Use all subcolors of same intensity, FALSE: use only one color per intensity" },
-    { GIMP_PDB_INT32, "guess-missing", "TRUE: guess samplecolors for the missing intensity values FALSE: use only colors found in the sample" },
-    { GIMP_PDB_INT32, "in-low",   "intensity of lowest input (0 <= in_low <= 254)" },
-    { GIMP_PDB_INT32, "in-high",  "intensity of highest input (1 <= in_high <= 255)" },
-    { GIMP_PDB_FLOAT, "gamma",  "gamma correction factor (0.1 <= gamma <= 10) where 1.0 is linear" },
-    { GIMP_PDB_INT32, "out-low",   "lowest sample color intensity (0 <= out_low <= 254)" },
-    { GIMP_PDB_INT32, "out-high",  "highest sample color intensity (1 <= out_high <= 255)" }
+    { PICMAN_PDB_INT32, "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE, "image", "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "dst-drawable", "The drawable to be colorized (Type GRAY* or RGB*)" },
+    { PICMAN_PDB_DRAWABLE, "sample-drawable", "Sample drawable (should be of Type RGB or RGBA)" },
+    { PICMAN_PDB_INT32, "hold-inten", "hold brightness intensity levels (TRUE, FALSE)" },
+    { PICMAN_PDB_INT32, "orig-inten", "TRUE: hold brightness of original intensity levels. FALSE: Hold Intensity of input levels" },
+    { PICMAN_PDB_INT32, "rnd-subcolors", "TRUE: Use all subcolors of same intensity, FALSE: use only one color per intensity" },
+    { PICMAN_PDB_INT32, "guess-missing", "TRUE: guess samplecolors for the missing intensity values FALSE: use only colors found in the sample" },
+    { PICMAN_PDB_INT32, "in-low",   "intensity of lowest input (0 <= in_low <= 254)" },
+    { PICMAN_PDB_INT32, "in-high",  "intensity of highest input (1 <= in_high <= 255)" },
+    { PICMAN_PDB_FLOAT, "gamma",  "gamma correction factor (0.1 <= gamma <= 10) where 1.0 is linear" },
+    { PICMAN_PDB_INT32, "out-low",   "lowest sample color intensity (0 <= out_low <= 254)" },
+    { PICMAN_PDB_INT32, "out-high",  "highest sample color intensity (1 <= out_high <= 255)" }
   };
 
   static gchar *help_string =
@@ -294,7 +294,7 @@ query (void)
     " (the image with the dst_drawable is converted to RGB if necessary)"
     " The sample_drawable should be of type RGB or RGBA";
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Colorize image using a sample image as a guide"),
                           help_string,
                           "Wolfgang Hofer",
@@ -302,25 +302,25 @@ query (void)
                           "02/2000",
                           N_("_Sample Colorize..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Map");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Map");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *dst_drawable;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *dst_drawable;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   const gchar       *env;
-  GimpRunMode        run_mode;
+  PicmanRunMode        run_mode;
 
   INIT_I18N ();
 
@@ -337,7 +337,7 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   g_values.lvl_out_min = 0;
@@ -347,7 +347,7 @@ run (const gchar      *name,
   g_values.lvl_in_gamma = 1.0;
 
   /* Possibly retrieve data from a previous run */
-  gimp_get_data (PLUG_IN_PROC, &g_values);
+  picman_get_data (PLUG_IN_PROC, &g_values);
   if (g_values.sample_id == SMP_GRADIENT ||
       g_values.sample_id == SMP_INV_GRADIENT)
     g_values.sample_id = -1;
@@ -357,26 +357,26 @@ run (const gchar      *name,
 
   /*  Get the specified dst_drawable  */
   g_values.dst_id = param[2].data.d_drawable;
-  dst_drawable = gimp_drawable_get (g_values.dst_id );
+  dst_drawable = picman_drawable_get (g_values.dst_id );
 
   clear_tables ();
 
   /*  Make sure that the dst_drawable is gray or RGB color        */
-  if (gimp_drawable_is_rgb (dst_drawable->drawable_id) ||
-      gimp_drawable_is_gray (dst_drawable->drawable_id))
+  if (picman_drawable_is_rgb (dst_drawable->drawable_id) ||
+      picman_drawable_is_gray (dst_drawable->drawable_id))
     {
-      gimp_tile_cache_ntiles (TILE_CACHE_SIZE);
+      picman_tile_cache_ntiles (TILE_CACHE_SIZE);
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           smp_dialog ();
           free_colors ();
-          gimp_set_data (PLUG_IN_PROC, &g_values, sizeof (t_values));
-          gimp_displays_flush ();
+          picman_set_data (PLUG_IN_PROC, &g_values, sizeof (t_values));
+          picman_displays_flush ();
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           if (nparams == NUMBER_IN_ARGS)
             {
               g_values.sample_id     = param[3].data.d_drawable;
@@ -392,31 +392,31 @@ run (const gchar      *name,
               if (main_colorize (MC_GET_SAMPLE_COLORS) >= 0)
                 {
                   main_colorize (MC_DST_REMAP);
-                  status = GIMP_PDB_SUCCESS;
+                  status = PICMAN_PDB_SUCCESS;
                 }
               else 
                 {
-                  status = GIMP_PDB_EXECUTION_ERROR;
+                  status = PICMAN_PDB_EXECUTION_ERROR;
                 }
             }
           else
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           break;
         }
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (dst_drawable);
+  picman_drawable_detach (dst_drawable);
 }
 
 /* ============================================================================
@@ -448,7 +448,7 @@ smp_response_callback (GtkWidget *widget,
       g_show_progress = TRUE;
       if (main_colorize (MC_DST_REMAP) == 0)
         {
-          gimp_displays_flush ();
+          picman_displays_flush ();
           g_show_progress = FALSE;
           return;
         }
@@ -509,7 +509,7 @@ smp_sample_combo_callback (GtkWidget *widget)
 {
   gint value;
 
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &value);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &value);
 
   g_values.sample_id = value;
 
@@ -538,7 +538,7 @@ smp_sample_combo_callback (GtkWidget *widget)
 static void
 smp_dest_combo_callback (GtkWidget *widget)
 {
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget),
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget),
                                  &g_values.dst_id);
 
   update_preview (&g_values.dst_id);
@@ -556,7 +556,7 @@ smp_constrain (gint32   image_id,
     return FALSE;
 
   /* dont accept layers from indexed images */
-  if (gimp_drawable_is_indexed (drawable_id))
+  if (picman_drawable_is_indexed (drawable_id))
     return FALSE;
 
   return TRUE;
@@ -725,9 +725,9 @@ refresh_dst_preview (GtkWidget *preview,
           src_ptr += src_bpp;
         }
     }
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                           0, 0, PREVIEW_SIZE_X, PREVIEW_SIZE_Y,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           allrowsbuf,
                           PREVIEW_SIZE_X * 3);
 }
@@ -735,7 +735,7 @@ refresh_dst_preview (GtkWidget *preview,
 static void
 clear_preview (GtkWidget *preview)
 {
-  gimp_preview_area_fill (GIMP_PREVIEW_AREA (preview),
+  picman_preview_area_fill (PICMAN_PREVIEW_AREA (preview),
                           0, 0, PREVIEW_SIZE_X, PREVIEW_SIZE_Y,
                           170, 170, 170);
 }
@@ -876,9 +876,9 @@ update_pv (GtkWidget *preview,
 
   if (dst_buffer == NULL)
     {
-      gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+      picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                               0, 0, PREVIEW_SIZE_X, PREVIEW_SIZE_Y,
-                              GIMP_RGBA_IMAGE,
+                              PICMAN_RGBA_IMAGE,
                               allrowsbuf,
                               PREVIEW_SIZE_X * 4);
       gtk_widget_queue_draw (preview);
@@ -888,7 +888,7 @@ update_pv (GtkWidget *preview,
 static void
 update_preview (gint32 *id_ptr)
 {
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   t_GDRW        gdrw;
 
   if (g_Sdebug)
@@ -909,7 +909,7 @@ update_preview (gint32 *id_ptr)
       return;
     }
 
-  drawable = gimp_drawable_get (*id_ptr);
+  drawable = picman_drawable_get (*id_ptr);
 
   if (id_ptr == &g_values.sample_id)
     {
@@ -963,9 +963,9 @@ smp_get_colors (GtkWidget *dialog)
 
   update_preview (&g_values.dst_id);
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (g_di.sample_colortab_preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (g_di.sample_colortab_preview),
                           0, 0, DA_WIDTH, GRADIENT_HEIGHT,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           buffer,
                           DA_WIDTH * 3);
 }
@@ -1005,9 +1005,9 @@ levels_update (gint update)
       guchar buffer[DA_WIDTH * GRADIENT_HEIGHT];
       for (i = 0; i < GRADIENT_HEIGHT; i++)
         memcpy (buffer + DA_WIDTH * i, g_lvl_trans_tab, DA_WIDTH);
-      gimp_preview_area_draw (GIMP_PREVIEW_AREA (g_di.in_lvl_gray_preview),
+      picman_preview_area_draw (PICMAN_PREVIEW_AREA (g_di.in_lvl_gray_preview),
                               0, 0, DA_WIDTH, GRADIENT_HEIGHT,
-                              GIMP_GRAY_IMAGE,
+                              PICMAN_GRAY_IMAGE,
                               buffer,
                               DA_WIDTH);
     }
@@ -1318,15 +1318,15 @@ smp_dialog (void)
   g_di.orig_inten_button     = NULL;
 
   /* Init GTK  */
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
   /* Main Dialog */
   g_di.dialog = dialog =
-    gimp_dialog_new (_("Sample Colorize"), PLUG_IN_ROLE,
+    picman_dialog_new (_("Sample Colorize"), PLUG_IN_ROLE,
                      NULL, 0,
-                     gimp_standard_help_func, PLUG_IN_PROC,
+                     picman_standard_help_func, PLUG_IN_PROC,
 
-                     GIMP_STOCK_RESET,        RESPONSE_RESET,
+                     PICMAN_STOCK_RESET,        RESPONSE_RESET,
                      _("Get _Sample Colors"), RESPONSE_GET_COLORS,
                      GTK_STOCK_CLOSE,         GTK_RESPONSE_CLOSE,
                      GTK_STOCK_APPLY,         GTK_RESPONSE_APPLY,
@@ -1340,7 +1340,7 @@ smp_dialog (void)
                                            GTK_RESPONSE_CLOSE,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   g_signal_connect (dialog, "response",
                     G_CALLBACK (smp_response_callback),
@@ -1362,8 +1362,8 @@ smp_dialog (void)
                     GTK_FILL, GTK_FILL, 4, 0);
   gtk_widget_show (label);
 
-  combo = gimp_layer_combo_box_new (smp_constrain, NULL);
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo), g_values.dst_id,
+  combo = picman_layer_combo_box_new (smp_constrain, NULL);
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo), g_values.dst_id,
                               G_CALLBACK (smp_dest_combo_callback),
                               NULL);
 
@@ -1378,20 +1378,20 @@ smp_dialog (void)
                     GTK_FILL, GTK_FILL, 4, 0);
   gtk_widget_show (label);
 
-  combo = gimp_layer_combo_box_new (smp_constrain, NULL);
+  combo = picman_layer_combo_box_new (smp_constrain, NULL);
 
-  gimp_int_combo_box_prepend (GIMP_INT_COMBO_BOX (combo),
-                              GIMP_INT_STORE_VALUE,    SMP_INV_GRADIENT,
-                              GIMP_INT_STORE_LABEL,    _("From reverse gradient"),
-                              GIMP_INT_STORE_STOCK_ID, GIMP_STOCK_GRADIENT,
+  picman_int_combo_box_prepend (PICMAN_INT_COMBO_BOX (combo),
+                              PICMAN_INT_STORE_VALUE,    SMP_INV_GRADIENT,
+                              PICMAN_INT_STORE_LABEL,    _("From reverse gradient"),
+                              PICMAN_INT_STORE_STOCK_ID, PICMAN_STOCK_GRADIENT,
                               -1);
-  gimp_int_combo_box_prepend (GIMP_INT_COMBO_BOX (combo),
-                              GIMP_INT_STORE_VALUE,    SMP_GRADIENT,
-                              GIMP_INT_STORE_LABEL,    _("From gradient"),
-                              GIMP_INT_STORE_STOCK_ID, GIMP_STOCK_GRADIENT,
+  picman_int_combo_box_prepend (PICMAN_INT_COMBO_BOX (combo),
+                              PICMAN_INT_STORE_VALUE,    SMP_GRADIENT,
+                              PICMAN_INT_STORE_LABEL,    _("From gradient"),
+                              PICMAN_INT_STORE_STOCK_ID, PICMAN_STOCK_GRADIENT,
                               -1);
 
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo), g_values.sample_id,
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo), g_values.sample_id,
                               G_CALLBACK (smp_sample_combo_callback),
                               NULL);
 
@@ -1466,7 +1466,7 @@ smp_dialog (void)
                     frame, 0, 2, ty, ty + 1, 0, 0, 0, 0);
   gtk_widget_show (frame);
 
-  g_di.dst_preview = gimp_preview_area_new ();
+  g_di.dst_preview = picman_preview_area_new ();
   gtk_widget_set_size_request (g_di.dst_preview,
                                PREVIEW_SIZE_X, PREVIEW_SIZE_Y);
   gtk_container_add (GTK_CONTAINER (frame), g_di.dst_preview);
@@ -1480,7 +1480,7 @@ smp_dialog (void)
                     frame, 3, 5, ty, ty + 1, 0, 0, 0, 0);
   gtk_widget_show (frame);
 
-  g_di.sample_preview = gimp_preview_area_new ();
+  g_di.sample_preview = picman_preview_area_new ();
   gtk_widget_set_size_request (g_di.sample_preview,
                                PREVIEW_SIZE_X, PREVIEW_SIZE_Y);
   gtk_container_add (GTK_CONTAINER (frame), g_di.sample_preview);
@@ -1496,7 +1496,7 @@ smp_dialog (void)
   gtk_table_attach (GTK_TABLE (table),
                     frame, 0, 2, ty, ty + 1, 0, 0, 0, 0);
 
-  g_di.in_lvl_gray_preview = gimp_preview_area_new ();
+  g_di.in_lvl_gray_preview = picman_preview_area_new ();
   gtk_widget_set_size_request (g_di.in_lvl_gray_preview,
                                DA_WIDTH, GRADIENT_HEIGHT);
   gtk_widget_set_events (g_di.in_lvl_gray_preview, LEVELS_DA_MASK);
@@ -1530,7 +1530,7 @@ smp_dialog (void)
   gtk_table_attach (GTK_TABLE (table),
                     frame, 3, 5, ty, ty + 1, 0, 0, 0, 0);
 
-  g_di.sample_colortab_preview = gimp_preview_area_new ();
+  g_di.sample_colortab_preview = picman_preview_area_new ();
   gtk_widget_set_size_request (g_di.sample_colortab_preview,
                                DA_WIDTH, GRADIENT_HEIGHT);
   gtk_box_pack_start (GTK_BOX (vbox2), g_di.sample_colortab_preview, FALSE, TRUE, 0);
@@ -1739,7 +1739,7 @@ print_ppm (const gchar *ppm_name)
   fp = g_fopen (ppm_name, "w");
   if (fp)
     {
-      fprintf (fp, "P3\n# CREATOR: Gimp sample coloros\n256 256\n255\n");
+      fprintf (fp, "P3\n# CREATOR: Picman sample coloros\n256 256\n255\n");
       for (idx = 0; idx < 256; idx++)
         {
           col_ptr = g_lum_tab[idx].col_ptr;
@@ -1920,15 +1920,15 @@ provide_tile (t_GDRW *gdrw,
     {
       if (gdrw->tile)
         {
-          gimp_tile_unref (gdrw->tile, gdrw->tile_dirty);
+          picman_tile_unref (gdrw->tile, gdrw->tile_dirty);
         }
 
       gdrw->tile_col = col;
       gdrw->tile_row = row;
-      gdrw->tile = gimp_drawable_get_tile (gdrw->drawable, shadow,
+      gdrw->tile = picman_drawable_get_tile (gdrw->drawable, shadow,
                                            gdrw->tile_row, gdrw->tile_col);
       gdrw->tile_dirty = FALSE;
-      gimp_tile_ref (gdrw->tile);
+      picman_tile_ref (gdrw->tile);
 
       gdrw->tile_swapcount++;
 
@@ -2035,7 +2035,7 @@ free_colors (void)
 }
 
 /* setup lum transformer table according to input_levels, gamma and output levels
- * (uses sam algorithm as GIMP Level Tool)
+ * (uses sam algorithm as PICMAN Level Tool)
  */
 static void
 calculate_level_transfers (void)
@@ -2469,9 +2469,9 @@ get_gradient (gint mode)
 
   free_colors ();
 
-  name = gimp_context_get_gradient ();
+  name = picman_context_get_gradient ();
 
-  gimp_gradient_get_uniform_samples (name, 256 /* n_samples */,
+  picman_gradient_get_uniform_samples (name, 256 /* n_samples */,
                                      mode == SMP_INV_GRADIENT,
                                      &n_f_samples, &f_samples);
 
@@ -2501,7 +2501,7 @@ is_layer_alive (gint32 drawable_id)
   if (drawable_id < 0)
     return -1;
 
-  if (gimp_item_get_image (drawable_id) < 0)
+  if (picman_item_get_image (drawable_id) < 0)
     {
       printf ("sample colorize: unknown layer_id %d (Image closed?)\n",
               (int)drawable_id);
@@ -2518,7 +2518,7 @@ end_gdrw (t_GDRW *gdrw)
 
   if (gdrw->tile)
     {
-      gimp_tile_unref (gdrw->tile, gdrw->tile_dirty);
+      picman_tile_unref (gdrw->tile, gdrw->tile_dirty);
       gdrw->tile = NULL;
     }
 
@@ -2527,7 +2527,7 @@ end_gdrw (t_GDRW *gdrw)
     {
       if (sel_gdrw->tile)
         {
-          gimp_tile_unref (sel_gdrw->tile, sel_gdrw->tile_dirty);
+          picman_tile_unref (sel_gdrw->tile, sel_gdrw->tile_dirty);
           sel_gdrw->tile = NULL;
         }
       gdrw->sel_gdrw = NULL;
@@ -2536,7 +2536,7 @@ end_gdrw (t_GDRW *gdrw)
 
 static void
 init_gdrw (t_GDRW         *gdrw,
-           GimpDrawable *drawable,
+           PicmanDrawable *drawable,
            gboolean      dirty,
            gboolean      shadow)
 {
@@ -2555,20 +2555,20 @@ init_gdrw (t_GDRW         *gdrw,
   gdrw->drawable = drawable;
   gdrw->tile = NULL;
   gdrw->tile_dirty = FALSE;
-  gdrw->tile_width = gimp_tile_width ();
-  gdrw->tile_height = gimp_tile_height ();
+  gdrw->tile_width = picman_tile_width ();
+  gdrw->tile_height = picman_tile_height ();
   gdrw->shadow = shadow;
   gdrw->tile_swapcount = 0;
   gdrw->seldeltax = 0;
   gdrw->seldeltay = 0;
   /* get offsets within the image */
-  gimp_drawable_offsets (drawable->drawable_id, &offsetx, &offsety);
+  picman_drawable_offsets (drawable->drawable_id, &offsetx, &offsety);
 
-  gimp_drawable_mask_bounds (drawable->drawable_id,
+  picman_drawable_mask_bounds (drawable->drawable_id,
                              &gdrw->x1, &gdrw->y1, &gdrw->x2, &gdrw->y2);
 
   gdrw->bpp = drawable->bpp;
-  if (gimp_drawable_has_alpha (drawable->drawable_id))
+  if (picman_drawable_has_alpha (drawable->drawable_id))
     {
       /* index of the alpha channelbyte {1|3} */
       gdrw->index_alpha = gdrw->bpp -1;
@@ -2578,10 +2578,10 @@ init_gdrw (t_GDRW         *gdrw,
       gdrw->index_alpha = 0;      /* there is no alpha channel */
     }
 
-  image_id = gimp_item_get_image (drawable->drawable_id);
+  image_id = picman_item_get_image (drawable->drawable_id);
 
   /* check and see if we have a selection mask */
-  sel_channel_id  = gimp_image_get_selection (image_id);
+  sel_channel_id  = picman_image_get_selection (image_id);
 
   if (g_Sdebug)
     {
@@ -2593,18 +2593,18 @@ init_gdrw (t_GDRW         *gdrw,
               (int)offsetx, (int)offsety );
     }
 
-  gimp_selection_bounds (image_id, &non_empty, &x1, &y1, &x2, &y2);
+  picman_selection_bounds (image_id, &non_empty, &x1, &y1, &x2, &y2);
 
   if (non_empty && (sel_channel_id >= 0))
     {
       /* selection is TRUE */
       sel_gdrw = g_new0 (t_GDRW, 1);
-      sel_gdrw->drawable = gimp_drawable_get (sel_channel_id);
+      sel_gdrw->drawable = picman_drawable_get (sel_channel_id);
 
       sel_gdrw->tile = NULL;
       sel_gdrw->tile_dirty = FALSE;
-      sel_gdrw->tile_width = gimp_tile_width ();
-      sel_gdrw->tile_height = gimp_tile_height ();
+      sel_gdrw->tile_width = picman_tile_width ();
+      sel_gdrw->tile_height = picman_tile_height ();
       sel_gdrw->shadow = shadow;
       sel_gdrw->tile_swapcount = 0;
       sel_gdrw->x1 = x1;
@@ -2620,7 +2620,7 @@ init_gdrw (t_GDRW         *gdrw,
       /* offset delta between drawable and selection
        * (selection always has image size and should always have offsets of 0 )
        */
-      gimp_drawable_offsets (sel_channel_id, &sel_offsetx, &sel_offsety);
+      picman_drawable_offsets (sel_channel_id, &sel_offsetx, &sel_offsety);
       gdrw->seldeltax = offsetx - sel_offsetx;
       gdrw->seldeltay = offsety - sel_offsety;
 
@@ -2663,7 +2663,7 @@ sample_analyze (t_GDRW *sample_gdrw)
   progress_step = 1.0 / progress_max;
   progress = 0.0;
   if (g_show_progress)
-    gimp_progress_init (_("Sample analyze"));
+    picman_progress_init (_("Sample analyze"));
 
   prot_fp = NULL;
   if (g_Sdebug)
@@ -2734,12 +2734,12 @@ sample_analyze (t_GDRW *sample_gdrw)
                     }
                 }
               if (g_show_progress)
-                gimp_progress_update (progress += progress_step);
+                picman_progress_update (progress += progress_step);
             }
         }
     }
   if (g_show_progress)
-    gimp_progress_update (1.0);
+    picman_progress_update (1.0);
 
   if (g_Sdebug)
     printf ("ROWS: %d - %d  COLS: %d - %d\n",
@@ -3036,28 +3036,28 @@ colorize_func (const guchar *src,
 static void
 colorize_drawable (gint32 drawable_id)
 {
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gboolean      has_alpha;
 
-  drawable = gimp_drawable_get (drawable_id);
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  drawable = picman_drawable_get (drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   if (g_show_progress)
-    gimp_progress_init (_("Remap colorized"));
+    picman_progress_init (_("Remap colorized"));
 
-  gimp_rgn_iterate2 (drawable, 0 /* unused */, colorize_func,
+  picman_rgn_iterate2 (drawable, 0 /* unused */, colorize_func,
                      GINT_TO_POINTER (has_alpha));
 
   if (g_show_progress)
-    gimp_progress_update (0.0);
+    picman_progress_update (0.0);
 }
 
 /* colorize dst_drawable like sample_drawable */
 static int
 main_colorize (gint mc_flags)
 {
-  GimpDrawable *dst_drawable;
-  GimpDrawable *sample_drawable;
+  PicmanDrawable *dst_drawable;
+  PicmanDrawable *sample_drawable;
   t_GDRW        sample_gdrw;
   gint32        max;
   gint32        id;
@@ -3085,7 +3085,7 @@ main_colorize (gint mc_flags)
           if (is_layer_alive (id) < 0)
             return -1;
 
-          sample_drawable = gimp_drawable_get (id);
+          sample_drawable = picman_drawable_get (id);
           init_gdrw (&sample_gdrw, sample_drawable, FALSE, FALSE);
           free_colors ();
           rc = sample_analyze (&sample_gdrw);
@@ -3096,10 +3096,10 @@ main_colorize (gint mc_flags)
     {
       if (is_layer_alive (g_values.dst_id) < 0)
         return -1;
-      dst_drawable = gimp_drawable_get (g_values.dst_id);
-      if (gimp_drawable_is_gray (g_values.dst_id) &&
+      dst_drawable = picman_drawable_get (g_values.dst_id);
+      if (picman_drawable_is_gray (g_values.dst_id) &&
           (mc_flags & MC_DST_REMAP))
-        gimp_image_convert_rgb (gimp_item_get_image (g_values.dst_id));
+        picman_image_convert_rgb (picman_item_get_image (g_values.dst_id));
       colorize_drawable (dst_drawable->drawable_id);
     }
 

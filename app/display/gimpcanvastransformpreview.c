@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvastransformpreview.c
- * Copyright (C) 2011 Michael Natterer <mitch@gimp.org>
+ * picmancanvastransformpreview.c
+ * Copyright (C) 2011 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,21 +23,21 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "display/display-types.h"
 
-#include "core/gimpchannel.h"
-#include "core/gimpimage.h"
-#include "core/gimp-transform-utils.h"
-#include "core/gimp-utils.h"
+#include "core/picmanchannel.h"
+#include "core/picmanimage.h"
+#include "core/picman-transform-utils.h"
+#include "core/picman-utils.h"
 
-#include "gimpcanvas.h"
-#include "gimpcanvastransformpreview.h"
-#include "gimpdisplayshell.h"
+#include "picmancanvas.h"
+#include "picmancanvastransformpreview.h"
+#include "picmandisplayshell.h"
 
 
 #define INT_MULT(a,b,t)    ((t) = (a) * (b) + 0x80, ((((t) >> 8) + (t)) >> 8))
@@ -62,12 +62,12 @@ enum
 };
 
 
-typedef struct _GimpCanvasTransformPreviewPrivate GimpCanvasTransformPreviewPrivate;
+typedef struct _PicmanCanvasTransformPreviewPrivate PicmanCanvasTransformPreviewPrivate;
 
-struct _GimpCanvasTransformPreviewPrivate
+struct _PicmanCanvasTransformPreviewPrivate
 {
-  GimpDrawable      *drawable;
-  GimpMatrix3        transform;
+  PicmanDrawable      *drawable;
+  PicmanMatrix3        transform;
   gdouble            x1, y1;
   gdouble            x2, y2;
   gboolean           perspective;
@@ -76,28 +76,28 @@ struct _GimpCanvasTransformPreviewPrivate
 
 #define GET_PRIVATE(transform_preview) \
         G_TYPE_INSTANCE_GET_PRIVATE (transform_preview, \
-                                     GIMP_TYPE_CANVAS_TRANSFORM_PREVIEW, \
-                                     GimpCanvasTransformPreviewPrivate)
+                                     PICMAN_TYPE_CANVAS_TRANSFORM_PREVIEW, \
+                                     PicmanCanvasTransformPreviewPrivate)
 
 
 /*  local function prototypes  */
 
-static void             gimp_canvas_transform_preview_set_property (GObject        *object,
+static void             picman_canvas_transform_preview_set_property (GObject        *object,
                                                                     guint           property_id,
                                                                     const GValue   *value,
                                                                     GParamSpec     *pspec);
-static void             gimp_canvas_transform_preview_get_property (GObject        *object,
+static void             picman_canvas_transform_preview_get_property (GObject        *object,
                                                                     guint           property_id,
                                                                     GValue         *value,
                                                                     GParamSpec     *pspec);
 
-static void             gimp_canvas_transform_preview_draw         (GimpCanvasItem *item,
+static void             picman_canvas_transform_preview_draw         (PicmanCanvasItem *item,
                                                                     cairo_t        *cr);
-static cairo_region_t * gimp_canvas_transform_preview_get_extents  (GimpCanvasItem *item);
+static cairo_region_t * picman_canvas_transform_preview_get_extents  (PicmanCanvasItem *item);
 
-static void   gimp_canvas_transform_preview_draw_quad         (GimpDrawable    *texture,
+static void   picman_canvas_transform_preview_draw_quad         (PicmanDrawable    *texture,
                                                                cairo_t         *cr,
-                                                               GimpChannel     *mask,
+                                                               PicmanChannel     *mask,
                                                                gint             mask_offx,
                                                                gint             mask_offy,
                                                                gint            *x,
@@ -105,12 +105,12 @@ static void   gimp_canvas_transform_preview_draw_quad         (GimpDrawable    *
                                                                gfloat          *u,
                                                                gfloat          *v,
                                                                guchar           opacity);
-static void   gimp_canvas_transform_preview_draw_tri          (GimpDrawable    *texture,
+static void   picman_canvas_transform_preview_draw_tri          (PicmanDrawable    *texture,
                                                                cairo_t         *cr,
                                                                cairo_surface_t *area,
                                                                gint             area_offx,
                                                                gint             area_offy,
-                                                               GimpChannel     *mask,
+                                                               PicmanChannel     *mask,
                                                                gint             mask_offx,
                                                                gint             mask_offy,
                                                                gint            *x,
@@ -118,7 +118,7 @@ static void   gimp_canvas_transform_preview_draw_tri          (GimpDrawable    *
                                                                gfloat          *u,
                                                                gfloat          *v,
                                                                guchar           opacity);
-static void   gimp_canvas_transform_preview_draw_tri_row      (GimpDrawable    *texture,
+static void   picman_canvas_transform_preview_draw_tri_row      (PicmanDrawable    *texture,
                                                                cairo_t         *cr,
                                                                cairo_surface_t *area,
                                                                gint             area_offx,
@@ -131,12 +131,12 @@ static void   gimp_canvas_transform_preview_draw_tri_row      (GimpDrawable    *
                                                                gfloat           v2,
                                                                gint             y,
                                                                guchar           opacity);
-static void   gimp_canvas_transform_preview_draw_tri_row_mask (GimpDrawable    *texture,
+static void   picman_canvas_transform_preview_draw_tri_row_mask (PicmanDrawable    *texture,
                                                                cairo_t         *cr,
                                                                cairo_surface_t *area,
                                                                gint             area_offx,
                                                                gint             area_offy,
-                                                               GimpChannel     *mask,
+                                                               PicmanChannel     *mask,
                                                                gint             mask_offx,
                                                                gint             mask_offy,
                                                                gint             x1,
@@ -147,102 +147,102 @@ static void   gimp_canvas_transform_preview_draw_tri_row_mask (GimpDrawable    *
                                                                gfloat           v2,
                                                                gint             y,
                                                                guchar           opacity);
-static void   gimp_canvas_transform_preview_trace_tri_edge    (gint            *dest,
+static void   picman_canvas_transform_preview_trace_tri_edge    (gint            *dest,
                                                                gint             x1,
                                                                gint             y1,
                                                                gint             x2,
                                                                gint             y2);
 
 
-G_DEFINE_TYPE (GimpCanvasTransformPreview, gimp_canvas_transform_preview,
-               GIMP_TYPE_CANVAS_ITEM)
+G_DEFINE_TYPE (PicmanCanvasTransformPreview, picman_canvas_transform_preview,
+               PICMAN_TYPE_CANVAS_ITEM)
 
-#define parent_class gimp_canvas_transform_preview_parent_class
+#define parent_class picman_canvas_transform_preview_parent_class
 
 
 static void
-gimp_canvas_transform_preview_class_init (GimpCanvasTransformPreviewClass *klass)
+picman_canvas_transform_preview_class_init (PicmanCanvasTransformPreviewClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpCanvasItemClass *item_class   = GIMP_CANVAS_ITEM_CLASS (klass);
+  PicmanCanvasItemClass *item_class   = PICMAN_CANVAS_ITEM_CLASS (klass);
 
-  object_class->set_property = gimp_canvas_transform_preview_set_property;
-  object_class->get_property = gimp_canvas_transform_preview_get_property;
+  object_class->set_property = picman_canvas_transform_preview_set_property;
+  object_class->get_property = picman_canvas_transform_preview_get_property;
 
-  item_class->draw           = gimp_canvas_transform_preview_draw;
-  item_class->get_extents    = gimp_canvas_transform_preview_get_extents;
+  item_class->draw           = picman_canvas_transform_preview_draw;
+  item_class->get_extents    = picman_canvas_transform_preview_get_extents;
 
   g_object_class_install_property (object_class, PROP_DRAWABLE,
                                    g_param_spec_object ("drawable",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_DRAWABLE,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_DRAWABLE,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_TRANSFORM,
-                                   gimp_param_spec_matrix3 ("transform",
+                                   picman_param_spec_matrix3 ("transform",
                                                             NULL, NULL,
                                                             NULL,
-                                                            GIMP_PARAM_READWRITE));
+                                                            PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_X1,
                                    g_param_spec_double ("x1",
                                                         NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE,
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_Y1,
                                    g_param_spec_double ("y1",
                                                         NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE,
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_X2,
                                    g_param_spec_double ("x2",
                                                         NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE,
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_Y2,
                                    g_param_spec_double ("y2",
                                                         NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE,
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_PERSPECTIVE,
                                    g_param_spec_boolean ("perspective",
                                                          NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_OPACITY,
                                    g_param_spec_double ("opacity",
                                                         NULL, NULL,
                                                         0.0, 1.0, 1.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpCanvasTransformPreviewPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanCanvasTransformPreviewPrivate));
 }
 
 static void
-gimp_canvas_transform_preview_init (GimpCanvasTransformPreview *transform_preview)
+picman_canvas_transform_preview_init (PicmanCanvasTransformPreview *transform_preview)
 {
 }
 
 static void
-gimp_canvas_transform_preview_set_property (GObject      *object,
+picman_canvas_transform_preview_set_property (GObject      *object,
                                             guint         property_id,
                                             const GValue *value,
                                             GParamSpec   *pspec)
 {
-  GimpCanvasTransformPreviewPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasTransformPreviewPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -252,12 +252,12 @@ gimp_canvas_transform_preview_set_property (GObject      *object,
 
     case PROP_TRANSFORM:
       {
-        GimpMatrix3 *transform = g_value_get_boxed (value);
+        PicmanMatrix3 *transform = g_value_get_boxed (value);
 
         if (transform)
           private->transform = *transform;
         else
-          gimp_matrix3_identity (&private->transform);
+          picman_matrix3_identity (&private->transform);
       }
       break;
 
@@ -292,12 +292,12 @@ gimp_canvas_transform_preview_set_property (GObject      *object,
 }
 
 static void
-gimp_canvas_transform_preview_get_property (GObject    *object,
+picman_canvas_transform_preview_get_property (GObject    *object,
                                             guint       property_id,
                                             GValue     *value,
                                             GParamSpec *pspec)
 {
-  GimpCanvasTransformPreviewPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasTransformPreviewPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -340,29 +340,29 @@ gimp_canvas_transform_preview_get_property (GObject    *object,
 }
 
 static gboolean
-gimp_canvas_transform_preview_transform (GimpCanvasItem        *item,
+picman_canvas_transform_preview_transform (PicmanCanvasItem        *item,
                                          cairo_rectangle_int_t *extents)
 {
-  GimpCanvasTransformPreviewPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasTransformPreviewPrivate *private = GET_PRIVATE (item);
   gdouble                            tx1, ty1;
   gdouble                            tx2, ty2;
   gdouble                            tx3, ty3;
   gdouble                            tx4, ty4;
 
-  gimp_matrix3_transform_point (&private->transform,
+  picman_matrix3_transform_point (&private->transform,
                                 private->x1, private->y1,
                                 &tx1, &ty1);
-  gimp_matrix3_transform_point (&private->transform,
+  picman_matrix3_transform_point (&private->transform,
                                 private->x2, private->y1,
                                 &tx2, &ty2);
-  gimp_matrix3_transform_point (&private->transform,
+  picman_matrix3_transform_point (&private->transform,
                                 private->x1, private->y2,
                                 &tx3, &ty3);
-  gimp_matrix3_transform_point (&private->transform,
+  picman_matrix3_transform_point (&private->transform,
                                 private->x2, private->y2,
                                 &tx4, &ty4);
 
-  if (! gimp_transform_polygon_is_convex (tx1, ty1,
+  if (! picman_transform_polygon_is_convex (tx1, ty1,
                                           tx2, ty2,
                                           tx3, ty3,
                                           tx4, ty4))
@@ -375,16 +375,16 @@ gimp_canvas_transform_preview_transform (GimpCanvasItem        *item,
       gdouble dx3, dy3;
       gdouble dx4, dy4;
 
-      gimp_canvas_item_transform_xy_f (item,
+      picman_canvas_item_transform_xy_f (item,
                                        tx1, ty1,
                                        &dx1, &dy1);
-      gimp_canvas_item_transform_xy_f (item,
+      picman_canvas_item_transform_xy_f (item,
                                        tx2, ty2,
                                        &dx2, &dy2);
-      gimp_canvas_item_transform_xy_f (item,
+      picman_canvas_item_transform_xy_f (item,
                                        tx3, ty3,
                                        &dx3, &dy3);
-      gimp_canvas_item_transform_xy_f (item,
+      picman_canvas_item_transform_xy_f (item,
                                        tx4, ty4,
                                        &dx4, &dy4);
 
@@ -401,11 +401,11 @@ gimp_canvas_transform_preview_transform (GimpCanvasItem        *item,
 }
 
 static void
-gimp_canvas_transform_preview_draw (GimpCanvasItem *item,
+picman_canvas_transform_preview_draw (PicmanCanvasItem *item,
                                     cairo_t        *cr)
 {
-  GimpCanvasTransformPreviewPrivate *private = GET_PRIVATE (item);
-  GimpChannel                       *mask;
+  PicmanCanvasTransformPreviewPrivate *private = GET_PRIVATE (item);
+  PicmanChannel                       *mask;
   gint                               mask_x1, mask_y1;
   gint                               mask_x2, mask_y2;
   gint                               mask_offx, mask_offy;
@@ -426,22 +426,22 @@ gimp_canvas_transform_preview_draw (GimpCanvasItem *item,
   opacity = private->opacity * 255.999;
 
   /* only draw convex polygons */
-  if (! gimp_canvas_transform_preview_transform (item, NULL))
+  if (! picman_canvas_transform_preview_transform (item, NULL))
     return;
 
   mask      = NULL;
   mask_offx = 0;
   mask_offy = 0;
 
-  if (gimp_item_mask_bounds (GIMP_ITEM (private->drawable),
+  if (picman_item_mask_bounds (PICMAN_ITEM (private->drawable),
                              &mask_x1, &mask_y1,
                              &mask_x2, &mask_y2))
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (private->drawable));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (private->drawable));
 
-      mask = gimp_image_get_mask (image);
+      mask = picman_image_get_mask (image);
 
-      gimp_item_get_offset (GIMP_ITEM (private->drawable),
+      picman_item_get_offset (PICMAN_ITEM (private->drawable),
                             &mask_offx, &mask_offy);
     }
 
@@ -476,11 +476,11 @@ gimp_canvas_transform_preview_draw (GimpCanvasItem *item,
     tx2 = private->x1 + (dx * (col + (index & 1)));             \
     ty2 = private->y1 + (dy * (row + (index >> 1)));            \
                                                                 \
-    gimp_matrix3_transform_point (&private->transform,          \
+    picman_matrix3_transform_point (&private->transform,          \
                                   tx2, ty2,                     \
                                   &tx1, &ty1);                  \
                                                                 \
-    gimp_canvas_item_transform_xy_f (item,                      \
+    picman_canvas_item_transform_xy_f (item,                      \
                                      tx1, ty1,                  \
                                      &tx2, &ty2);               \
     x[sub][index] = (gint) tx2;                                 \
@@ -551,27 +551,27 @@ gimp_canvas_transform_preview_draw (GimpCanvasItem *item,
 
   k = columns * rows;
   for (j = 0; j < k; j++)
-    gimp_canvas_transform_preview_draw_quad (private->drawable, cr,
+    picman_canvas_transform_preview_draw_quad (private->drawable, cr,
                                              mask, mask_offx, mask_offy,
                                              x[j], y[j], u[j], v[j],
                                              opacity);
 }
 
 static cairo_region_t *
-gimp_canvas_transform_preview_get_extents (GimpCanvasItem *item)
+picman_canvas_transform_preview_get_extents (PicmanCanvasItem *item)
 {
   cairo_rectangle_int_t rectangle;
 
-  if (gimp_canvas_transform_preview_transform (item, &rectangle))
+  if (picman_canvas_transform_preview_transform (item, &rectangle))
     return cairo_region_create_rectangle (&rectangle);
 
   return NULL;
 }
 
-GimpCanvasItem *
-gimp_canvas_transform_preview_new (GimpDisplayShell  *shell,
-                                   GimpDrawable      *drawable,
-                                   const GimpMatrix3 *transform,
+PicmanCanvasItem *
+picman_canvas_transform_preview_new (PicmanDisplayShell  *shell,
+                                   PicmanDrawable      *drawable,
+                                   const PicmanMatrix3 *transform,
                                    gdouble            x1,
                                    gdouble            y1,
                                    gdouble            x2,
@@ -579,11 +579,11 @@ gimp_canvas_transform_preview_new (GimpDisplayShell  *shell,
                                    gboolean           perspective,
                                    gdouble            opacity)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
   g_return_val_if_fail (transform != NULL, NULL);
 
-  return g_object_new (GIMP_TYPE_CANVAS_TRANSFORM_PREVIEW,
+  return g_object_new (PICMAN_TYPE_CANVAS_TRANSFORM_PREVIEW,
                        "shell",       shell,
                        "drawable",    drawable,
                        "transform",   transform,
@@ -600,19 +600,19 @@ gimp_canvas_transform_preview_new (GimpDisplayShell  *shell,
 /*  private functions  */
 
 /**
- * gimp_canvas_transform_preview_draw_quad:
- * @texture:   the #GimpDrawable to be previewed
+ * picman_canvas_transform_preview_draw_quad:
+ * @texture:   the #PicmanDrawable to be previewed
  * @cr:        the #cairo_t to draw to
- * @mask:      a #GimpChannel
+ * @mask:      a #PicmanChannel
  * @opacity:   the opacity of the preview
  *
  * Take a quadrilateral, divide it into two triangles, and draw those
- * with gimp_canvas_transform_preview_draw_tri().
+ * with picman_canvas_transform_preview_draw_tri().
  **/
 static void
-gimp_canvas_transform_preview_draw_quad (GimpDrawable *texture,
+picman_canvas_transform_preview_draw_quad (PicmanDrawable *texture,
                                          cairo_t      *cr,
-                                         GimpChannel  *mask,
+                                         PicmanChannel  *mask,
                                          gint          mask_offx,
                                          gint          mask_offy,
                                          gint         *x,
@@ -664,10 +664,10 @@ gimp_canvas_transform_preview_draw_quad (GimpDrawable *texture,
 
       g_return_if_fail (area != NULL);
 
-      gimp_canvas_transform_preview_draw_tri (texture, cr, area, minx, miny,
+      picman_canvas_transform_preview_draw_tri (texture, cr, area, minx, miny,
                                               mask, mask_offx, mask_offy,
                                               x, y, u, v, opacity);
-      gimp_canvas_transform_preview_draw_tri (texture, cr, area, minx, miny,
+      picman_canvas_transform_preview_draw_tri (texture, cr, area, minx, miny,
                                               mask, mask_offx, mask_offy,
                                               x2, y2, u2, v2, opacity);
 
@@ -676,7 +676,7 @@ gimp_canvas_transform_preview_draw_quad (GimpDrawable *texture,
 }
 
 /**
- * gimp_canvas_transform_preview_draw_tri:
+ * picman_canvas_transform_preview_draw_tri:
  * @texture:   the thing being transformed
  * @cr:        the #cairo_t to draw to
  * @area:      has prefetched pixel data of dest
@@ -686,17 +686,17 @@ gimp_canvas_transform_preview_draw_quad (GimpDrawable *texture,
  * @y:         Array of the three y coords of triangle
  *
  * This draws a triangle onto dest by breaking it down into pixel
- * rows, and then calling gimp_canvas_transform_preview_draw_tri_row()
- * and gimp_canvas_transform_preview_draw_tri_row_mask() to do the
+ * rows, and then calling picman_canvas_transform_preview_draw_tri_row()
+ * and picman_canvas_transform_preview_draw_tri_row_mask() to do the
  * actual pixel changing.
  **/
 static void
-gimp_canvas_transform_preview_draw_tri (GimpDrawable    *texture,
+picman_canvas_transform_preview_draw_tri (PicmanDrawable    *texture,
                                         cairo_t         *cr,
                                         cairo_surface_t *area,
                                         gint             area_offx,
                                         gint             area_offy,
-                                        GimpChannel     *mask,
+                                        PicmanChannel     *mask,
                                         gint             mask_offx,
                                         gint             mask_offy,
                                         gint            *x,
@@ -713,7 +713,7 @@ gimp_canvas_transform_preview_draw_tri (GimpDrawable    *texture,
   gfloat       dul, dvl, dur, dvr; /* left and right texture coord deltas  */
   gfloat       u_l, v_l, u_r, v_r; /* left and right texture coord pairs  */
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (texture));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (texture));
   g_return_if_fail (area != NULL);
 
   g_return_if_fail (x != NULL && y != NULL && u != NULL && v != NULL);
@@ -743,7 +743,7 @@ gimp_canvas_transform_preview_draw_tri (GimpDrawable    *texture,
 
   /* draw the triangle */
 
-  gimp_canvas_transform_preview_trace_tri_edge (l_edge, x[0], y[0], x[2], y[2]);
+  picman_canvas_transform_preview_trace_tri_edge (l_edge, x[0], y[0], x[2], y[2]);
 
   left = l_edge;
   dul  = (u[2] - u[0]) / (y[2] - y[0]);
@@ -753,7 +753,7 @@ gimp_canvas_transform_preview_draw_tri (GimpDrawable    *texture,
 
   if (y[0] != y[1])
     {
-      gimp_canvas_transform_preview_trace_tri_edge (r_edge, x[0], y[0], x[1], y[1]);
+      picman_canvas_transform_preview_trace_tri_edge (r_edge, x[0], y[0], x[1], y[1]);
 
       right = r_edge;
       dur   = (u[1] - u[0]) / (y[1] - y[0]);
@@ -765,7 +765,7 @@ gimp_canvas_transform_preview_draw_tri (GimpDrawable    *texture,
         for (ry = y[0]; ry < y[1]; ry++)
           {
             if (ry >= clip_y1 && ry < clip_y2)
-              gimp_canvas_transform_preview_draw_tri_row_mask (texture, cr,
+              picman_canvas_transform_preview_draw_tri_row_mask (texture, cr,
                                                                area, area_offx, area_offy,
                                                                mask, mask_offx, mask_offy,
                                                                *left, u_l, v_l,
@@ -780,7 +780,7 @@ gimp_canvas_transform_preview_draw_tri (GimpDrawable    *texture,
         for (ry = y[0]; ry < y[1]; ry++)
           {
             if (ry >= clip_y1 && ry < clip_y2)
-              gimp_canvas_transform_preview_draw_tri_row (texture, cr,
+              picman_canvas_transform_preview_draw_tri_row (texture, cr,
                                                           area, area_offx, area_offy,
                                                           *left, u_l, v_l,
                                                           *right, u_r, v_r,
@@ -794,7 +794,7 @@ gimp_canvas_transform_preview_draw_tri (GimpDrawable    *texture,
 
   if (y[1] != y[2])
     {
-      gimp_canvas_transform_preview_trace_tri_edge (r_edge, x[1], y[1], x[2], y[2]);
+      picman_canvas_transform_preview_trace_tri_edge (r_edge, x[1], y[1], x[2], y[2]);
 
       right = r_edge;
       dur   = (u[2] - u[1]) / (y[2] - y[1]);
@@ -806,7 +806,7 @@ gimp_canvas_transform_preview_draw_tri (GimpDrawable    *texture,
         for (ry = y[1]; ry < y[2]; ry++)
           {
             if (ry >= clip_y1 && ry < clip_y2)
-              gimp_canvas_transform_preview_draw_tri_row_mask (texture, cr,
+              picman_canvas_transform_preview_draw_tri_row_mask (texture, cr,
                                                                area, area_offx, area_offy,
                                                                mask, mask_offx, mask_offy,
                                                                *left,  u_l, v_l,
@@ -821,7 +821,7 @@ gimp_canvas_transform_preview_draw_tri (GimpDrawable    *texture,
         for (ry = y[1]; ry < y[2]; ry++)
           {
             if (ry >= clip_y1 && ry < clip_y2)
-              gimp_canvas_transform_preview_draw_tri_row (texture, cr,
+              picman_canvas_transform_preview_draw_tri_row (texture, cr,
                                                           area, area_offx, area_offy,
                                                           *left,  u_l, v_l,
                                                           *right, u_r, v_r,
@@ -838,18 +838,18 @@ gimp_canvas_transform_preview_draw_tri (GimpDrawable    *texture,
 }
 
 /**
- * gimp_canvas_transform_preview_draw_tri_row:
+ * picman_canvas_transform_preview_draw_tri_row:
  * @texture: the thing being transformed
  * @cr:      the #cairo_t to draw to
  * @area:    has prefetched pixel data of dest
  *
- * Called from gimp_canvas_transform_preview_draw_tri(), this draws a
+ * Called from picman_canvas_transform_preview_draw_tri(), this draws a
  * single row of a triangle onto dest when there is not a mask. The
  * run (x1,y) to (x2,y) in dest corresponds to the run (u1,v1) to
  * (u2,v2) in texture.
  **/
 static void
-gimp_canvas_transform_preview_draw_tri_row (GimpDrawable    *texture,
+picman_canvas_transform_preview_draw_tri_row (PicmanDrawable    *texture,
                                             cairo_t         *cr,
                                             cairo_surface_t *area,
                                             gint             area_offx,
@@ -877,7 +877,7 @@ gimp_canvas_transform_preview_draw_tri_row (GimpDrawable    *texture,
   if (x2 == x1)
     return;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (texture));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (texture));
   g_return_if_fail (area != NULL);
   g_return_if_fail (cairo_image_surface_get_format (area) == CAIRO_FORMAT_ARGB32);
 
@@ -927,7 +927,7 @@ gimp_canvas_transform_preview_draw_tri_row (GimpDrawable    *texture,
           + (y - area_offy) * cairo_image_surface_get_stride (area)
           + (x1 - area_offx) * 4);
 
-  buffer = gimp_drawable_get_buffer (texture);
+  buffer = picman_drawable_get_buffer (texture);
 
   format = gegl_buffer_get_format (buffer);
   bpp    = babl_format_get_bytes_per_pixel (format);
@@ -988,18 +988,18 @@ gimp_canvas_transform_preview_draw_tri_row (GimpDrawable    *texture,
 }
 
 /**
- * gimp_canvas_transform_preview_draw_tri_row_mask:
+ * picman_canvas_transform_preview_draw_tri_row_mask:
  *
- * Called from gimp_canvas_transform_preview_draw_tri(), this draws a
+ * Called from picman_canvas_transform_preview_draw_tri(), this draws a
  * single row of a triangle onto dest, when there is a mask.
  **/
 static void
-gimp_canvas_transform_preview_draw_tri_row_mask (GimpDrawable    *texture,
+picman_canvas_transform_preview_draw_tri_row_mask (PicmanDrawable    *texture,
                                                  cairo_t         *cr,
                                                  cairo_surface_t *area,
                                                  gint             area_offx,
                                                  gint             area_offy,
-                                                 GimpChannel     *mask,
+                                                 PicmanChannel     *mask,
                                                  gint             mask_offx,
                                                  gint             mask_offy,
                                                  gint             x1,
@@ -1031,8 +1031,8 @@ gimp_canvas_transform_preview_draw_tri_row_mask (GimpDrawable    *texture,
   if (x2 == x1)
     return;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (texture));
-  g_return_if_fail (GIMP_IS_CHANNEL (mask));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (texture));
+  g_return_if_fail (PICMAN_IS_CHANNEL (mask));
   g_return_if_fail (area != NULL);
   g_return_if_fail (cairo_image_surface_get_format (area) == CAIRO_FORMAT_ARGB32);
 
@@ -1085,8 +1085,8 @@ gimp_canvas_transform_preview_draw_tri_row_mask (GimpDrawable    *texture,
           + (y - area_offy) * cairo_image_surface_get_stride (area)
           + (x1 - area_offx) * 4);
 
-  buffer      = gimp_drawable_get_buffer (texture);
-  mask_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (mask));
+  buffer      = picman_drawable_get_buffer (texture);
+  mask_buffer = picman_drawable_get_buffer (PICMAN_DRAWABLE (mask));
 
   format      = gegl_buffer_get_format (buffer);
   mask_format = gegl_buffer_get_format (mask_buffer);
@@ -1157,7 +1157,7 @@ gimp_canvas_transform_preview_draw_tri_row_mask (GimpDrawable    *texture,
 }
 
 /**
- * gimp_canvas_transform_preview_trace_tri_edge:
+ * picman_canvas_transform_preview_trace_tri_edge:
  * @dest: x coordinates are placed in this array
  *
  * Find the x coordinates for a line that runs from (x1,y1) to
@@ -1165,7 +1165,7 @@ gimp_canvas_transform_preview_draw_tri_row_mask (GimpDrawable    *texture,
  * must be large enough to hold y2-y1 values.
  **/
 static void
-gimp_canvas_transform_preview_trace_tri_edge (gint *dest,
+picman_canvas_transform_preview_trace_tri_edge (gint *dest,
                                               gint  x1,
                                               gint  y1,
                                               gint  x2,

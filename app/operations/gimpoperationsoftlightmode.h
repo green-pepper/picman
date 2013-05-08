@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationsoftlightmode.h
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanoperationsoftlightmode.h
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,36 +19,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GIMP_OPERATION_SOFTLIGHT_MODE_H__
-#define __GIMP_OPERATION_SOFTLIGHT_MODE_H__
+#ifndef __PICMAN_OPERATION_SOFTLIGHT_MODE_H__
+#define __PICMAN_OPERATION_SOFTLIGHT_MODE_H__
 
 
-#include "gimpoperationpointlayermode.h"
+#include "picmanoperationpointlayermode.h"
 
 
-#define GIMP_TYPE_OPERATION_SOFTLIGHT_MODE            (gimp_operation_softlight_mode_get_type ())
-#define GIMP_OPERATION_SOFTLIGHT_MODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_SOFTLIGHT_MODE, GimpOperationSoftlightMode))
-#define GIMP_OPERATION_SOFTLIGHT_MODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_SOFTLIGHT_MODE, GimpOperationSoftlightModeClass))
-#define GIMP_IS_OPERATION_SOFTLIGHT_MODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_SOFTLIGHT_MODE))
-#define GIMP_IS_OPERATION_SOFTLIGHT_MODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_SOFTLIGHT_MODE))
-#define GIMP_OPERATION_SOFTLIGHT_MODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_SOFTLIGHT_MODE, GimpOperationSoftlightModeClass))
+#define PICMAN_TYPE_OPERATION_SOFTLIGHT_MODE            (picman_operation_softlight_mode_get_type ())
+#define PICMAN_OPERATION_SOFTLIGHT_MODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_SOFTLIGHT_MODE, PicmanOperationSoftlightMode))
+#define PICMAN_OPERATION_SOFTLIGHT_MODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_SOFTLIGHT_MODE, PicmanOperationSoftlightModeClass))
+#define PICMAN_IS_OPERATION_SOFTLIGHT_MODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_SOFTLIGHT_MODE))
+#define PICMAN_IS_OPERATION_SOFTLIGHT_MODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_SOFTLIGHT_MODE))
+#define PICMAN_OPERATION_SOFTLIGHT_MODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_SOFTLIGHT_MODE, PicmanOperationSoftlightModeClass))
 
 
-typedef struct _GimpOperationSoftlightMode      GimpOperationSoftlightMode;
-typedef struct _GimpOperationSoftlightModeClass GimpOperationSoftlightModeClass;
+typedef struct _PicmanOperationSoftlightMode      PicmanOperationSoftlightMode;
+typedef struct _PicmanOperationSoftlightModeClass PicmanOperationSoftlightModeClass;
 
-struct _GimpOperationSoftlightMode
+struct _PicmanOperationSoftlightMode
 {
-  GimpOperationPointLayerMode  parent_instance;
+  PicmanOperationPointLayerMode  parent_instance;
 };
 
-struct _GimpOperationSoftlightModeClass
+struct _PicmanOperationSoftlightModeClass
 {
-  GimpOperationPointLayerModeClass  parent_class;
+  PicmanOperationPointLayerModeClass  parent_class;
 };
 
 
-GType   gimp_operation_softlight_mode_get_type (void) G_GNUC_CONST;
+GType   picman_operation_softlight_mode_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_SOFTLIGHT_MODE_H__ */
+#endif /* __PICMAN_OPERATION_SOFTLIGHT_MODE_H__ */

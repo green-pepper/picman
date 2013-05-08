@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,31 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_CONVERT_TYPE_H__
-#define __GIMP_IMAGE_CONVERT_TYPE_H__
+#ifndef __PICMAN_IMAGE_CONVERT_TYPE_H__
+#define __PICMAN_IMAGE_CONVERT_TYPE_H__
 
 
 #define MAXNUMCOLORS 256
 
 
-gboolean   gimp_image_convert_type      (GimpImage               *image,
-                                         GimpImageBaseType        new_type,
+gboolean   picman_image_convert_type      (PicmanImage               *image,
+                                         PicmanImageBaseType        new_type,
                                          /* The following params used only for
-                                          * new_type == GIMP_INDEXED
+                                          * new_type == PICMAN_INDEXED
                                           */
                                          gint                     num_cols,
-                                         GimpConvertDitherType    dither,
+                                         PicmanConvertDitherType    dither,
                                          gboolean                 alpha_dither,
                                          gboolean                 text_layer_dither,
                                          gboolean                 remove_dups,
-                                         GimpConvertPaletteType   palette_type,
-                                         GimpPalette             *custom_palette,
-                                         GimpProgress            *progress,
+                                         PicmanConvertPaletteType   palette_type,
+                                         PicmanPalette             *custom_palette,
+                                         PicmanProgress            *progress,
                                          GError                 **error);
 
-void  gimp_image_convert_type_set_dither_matrix (const guchar *matrix,
+void  picman_image_convert_type_set_dither_matrix (const guchar *matrix,
                                                  gint          width,
                                                  gint          height);
 
 
-#endif  /*  __GIMP_IMAGE_CONVERT_TYPE_H__  */
+#endif  /*  __PICMAN_IMAGE_CONVERT_TYPE_H__  */

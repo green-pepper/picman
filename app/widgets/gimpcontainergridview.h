@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcontainergridview.h
- * Copyright (C) 2001-2004 Michael Natterer <mitch@gimp.org>
+ * picmancontainergridview.h
+ * Copyright (C) 2001-2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTAINER_GRID_VIEW_H__
-#define __GIMP_CONTAINER_GRID_VIEW_H__
+#ifndef __PICMAN_CONTAINER_GRID_VIEW_H__
+#define __PICMAN_CONTAINER_GRID_VIEW_H__
 
 
-#include "gimpcontainerbox.h"
+#include "picmancontainerbox.h"
 
 
-#define GIMP_TYPE_CONTAINER_GRID_VIEW            (gimp_container_grid_view_get_type ())
-#define GIMP_CONTAINER_GRID_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CONTAINER_GRID_VIEW, GimpContainerGridView))
-#define GIMP_CONTAINER_GRID_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CONTAINER_GRID_VIEW, GimpContainerGridViewClass))
-#define GIMP_IS_CONTAINER_GRID_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CONTAINER_GRID_VIEW))
-#define GIMP_IS_CONTAINER_GRID_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CONTAINER_GRID_VIEW))
-#define GIMP_CONTAINER_GRID_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CONTAINER_GRID_VIEW, GimpContainerGridViewClass))
+#define PICMAN_TYPE_CONTAINER_GRID_VIEW            (picman_container_grid_view_get_type ())
+#define PICMAN_CONTAINER_GRID_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CONTAINER_GRID_VIEW, PicmanContainerGridView))
+#define PICMAN_CONTAINER_GRID_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CONTAINER_GRID_VIEW, PicmanContainerGridViewClass))
+#define PICMAN_IS_CONTAINER_GRID_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CONTAINER_GRID_VIEW))
+#define PICMAN_IS_CONTAINER_GRID_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CONTAINER_GRID_VIEW))
+#define PICMAN_CONTAINER_GRID_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CONTAINER_GRID_VIEW, PicmanContainerGridViewClass))
 
 
-typedef struct _GimpContainerGridViewClass GimpContainerGridViewClass;
+typedef struct _PicmanContainerGridViewClass PicmanContainerGridViewClass;
 
-struct _GimpContainerGridView
+struct _PicmanContainerGridView
 {
-  GimpContainerBox  parent_instance;
+  PicmanContainerBox  parent_instance;
 
   GtkWidget        *wrap_box;
 
@@ -45,25 +45,25 @@ struct _GimpContainerGridView
   gint              columns;
   gint              visible_rows;
 
-  GimpView         *selected_item;
+  PicmanView         *selected_item;
 };
 
-struct _GimpContainerGridViewClass
+struct _PicmanContainerGridViewClass
 {
-  GimpContainerBoxClass  parent_class;
+  PicmanContainerBoxClass  parent_class;
 
-  gboolean (* move_cursor) (GimpContainerGridView *grid_view,
+  gboolean (* move_cursor) (PicmanContainerGridView *grid_view,
                             GtkMovementStep        step,
                             gint                   count);
 };
 
 
-GType       gimp_container_grid_view_get_type (void) G_GNUC_CONST;
+GType       picman_container_grid_view_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_container_grid_view_new      (GimpContainer *container,
-                                               GimpContext   *context,
+GtkWidget * picman_container_grid_view_new      (PicmanContainer *container,
+                                               PicmanContext   *context,
                                                gint           view_size,
                                                gint           view_border_width);
 
 
-#endif  /*  __GIMP_CONTAINER_GRID_VIEW_H__  */
+#endif  /*  __PICMAN_CONTAINER_GRID_VIEW_H__  */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimpdeviceinfoeditor.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmandeviceinfoeditor.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,17 +23,17 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcurve.h"
+#include "core/picmancurve.h"
 
-#include "gimpcurveview.h"
-#include "gimpdeviceinfo.h"
-#include "gimpdeviceinfoeditor.h"
+#include "picmancurveview.h"
+#include "picmandeviceinfo.h"
+#include "picmandeviceinfoeditor.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define CURVE_SIZE   256
@@ -71,11 +71,11 @@ enum
 };
 
 
-typedef struct _GimpDeviceInfoEditorPrivate GimpDeviceInfoEditorPrivate;
+typedef struct _PicmanDeviceInfoEditorPrivate PicmanDeviceInfoEditorPrivate;
 
-struct _GimpDeviceInfoEditorPrivate
+struct _PicmanDeviceInfoEditorPrivate
 {
-  GimpDeviceInfo *info;
+  PicmanDeviceInfo *info;
 
   GtkWidget      *vbox;
 
@@ -89,49 +89,49 @@ struct _GimpDeviceInfoEditorPrivate
   GtkWidget      *notebook;
 };
 
-#define GIMP_DEVICE_INFO_EDITOR_GET_PRIVATE(editor) \
+#define PICMAN_DEVICE_INFO_EDITOR_GET_PRIVATE(editor) \
         G_TYPE_INSTANCE_GET_PRIVATE (editor, \
-                                     GIMP_TYPE_DEVICE_INFO_EDITOR, \
-                                     GimpDeviceInfoEditorPrivate)
+                                     PICMAN_TYPE_DEVICE_INFO_EDITOR, \
+                                     PicmanDeviceInfoEditorPrivate)
 
 
-static void   gimp_device_info_editor_constructed   (GObject              *object);
-static void   gimp_device_info_editor_finalize      (GObject              *object);
-static void   gimp_device_info_editor_set_property  (GObject              *object,
+static void   picman_device_info_editor_constructed   (GObject              *object);
+static void   picman_device_info_editor_finalize      (GObject              *object);
+static void   picman_device_info_editor_set_property  (GObject              *object,
                                                      guint                 property_id,
                                                      const GValue         *value,
                                                      GParamSpec           *pspec);
-static void   gimp_device_info_editor_get_property  (GObject              *object,
+static void   picman_device_info_editor_get_property  (GObject              *object,
                                                      guint                 property_id,
                                                      GValue               *value,
                                                      GParamSpec           *pspec);
 
-static void   gimp_device_info_editor_set_axes      (GimpDeviceInfoEditor *editor);
+static void   picman_device_info_editor_set_axes      (PicmanDeviceInfoEditor *editor);
 
-static void   gimp_device_info_editor_axis_changed  (GtkCellRendererCombo *combo,
+static void   picman_device_info_editor_axis_changed  (GtkCellRendererCombo *combo,
                                                      const gchar          *path_string,
                                                      GtkTreeIter          *new_iter,
-                                                     GimpDeviceInfoEditor *editor);
-static void   gimp_device_info_editor_axis_selected (GtkTreeSelection     *selection,
-                                                     GimpDeviceInfoEditor *editor);
+                                                     PicmanDeviceInfoEditor *editor);
+static void   picman_device_info_editor_axis_selected (GtkTreeSelection     *selection,
+                                                     PicmanDeviceInfoEditor *editor);
 
-static void   gimp_device_info_editor_key_edited    (GtkCellRendererAccel *accel,
+static void   picman_device_info_editor_key_edited    (GtkCellRendererAccel *accel,
                                                      const char           *path_string,
                                                      guint                 accel_key,
                                                      GdkModifierType       accel_mask,
                                                      guint                 hardware_keycode,
-                                                     GimpDeviceInfoEditor *editor);
-static void   gimp_device_info_editor_key_cleared   (GtkCellRendererAccel *accel,
+                                                     PicmanDeviceInfoEditor *editor);
+static void   picman_device_info_editor_key_cleared   (GtkCellRendererAccel *accel,
                                                      const char           *path_string,
-                                                     GimpDeviceInfoEditor *editor);
+                                                     PicmanDeviceInfoEditor *editor);
 
-static void   gimp_device_info_editor_curve_reset   (GtkWidget            *button,
-                                                     GimpCurve            *curve);
+static void   picman_device_info_editor_curve_reset   (GtkWidget            *button,
+                                                     PicmanCurve            *curve);
 
 
-G_DEFINE_TYPE (GimpDeviceInfoEditor, gimp_device_info_editor, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanDeviceInfoEditor, picman_device_info_editor, GTK_TYPE_BOX)
 
-#define parent_class gimp_device_info_editor_parent_class
+#define parent_class picman_device_info_editor_parent_class
 
 
 static const gchar *const axis_use_strings[] =
@@ -147,29 +147,29 @@ static const gchar *const axis_use_strings[] =
 
 
 static void
-gimp_device_info_editor_class_init (GimpDeviceInfoEditorClass *klass)
+picman_device_info_editor_class_init (PicmanDeviceInfoEditorClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_device_info_editor_constructed;
-  object_class->finalize     = gimp_device_info_editor_finalize;
-  object_class->set_property = gimp_device_info_editor_set_property;
-  object_class->get_property = gimp_device_info_editor_get_property;
+  object_class->constructed  = picman_device_info_editor_constructed;
+  object_class->finalize     = picman_device_info_editor_finalize;
+  object_class->set_property = picman_device_info_editor_set_property;
+  object_class->get_property = picman_device_info_editor_get_property;
 
   g_object_class_install_property (object_class, PROP_INFO,
                                    g_param_spec_object ("info",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_DEVICE_INFO,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_DEVICE_INFO,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
-  g_type_class_add_private (object_class, sizeof (GimpDeviceInfoEditorPrivate));
+  g_type_class_add_private (object_class, sizeof (PicmanDeviceInfoEditorPrivate));
 }
 
 static void
-gimp_device_info_editor_init (GimpDeviceInfoEditor *editor)
+picman_device_info_editor_init (PicmanDeviceInfoEditor *editor)
 {
-  GimpDeviceInfoEditorPrivate *private;
+  PicmanDeviceInfoEditorPrivate *private;
   GtkWidget                   *frame;
   GtkWidget                   *frame2;
   GtkWidget                   *view;
@@ -179,7 +179,7 @@ gimp_device_info_editor_init (GimpDeviceInfoEditor *editor)
   GtkCellRenderer             *cell;
   gint                         i;
 
-  private = GIMP_DEVICE_INFO_EDITOR_GET_PRIVATE (editor);
+  private = PICMAN_DEVICE_INFO_EDITOR_GET_PRIVATE (editor);
 
   gtk_orientable_set_orientation (GTK_ORIENTABLE (editor),
                                   GTK_ORIENTATION_HORIZONTAL);
@@ -193,7 +193,7 @@ gimp_device_info_editor_init (GimpDeviceInfoEditor *editor)
   /*  the axes  */
 
   /* The axes of an input device */
-  frame = gimp_frame_new (_("Axes"));
+  frame = picman_frame_new (_("Axes"));
   gtk_box_pack_start (GTK_BOX (private->vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -245,7 +245,7 @@ gimp_device_info_editor_init (GimpDeviceInfoEditor *editor)
   g_object_unref (private->input_store);
 
   g_signal_connect (cell, "changed",
-                    G_CALLBACK (gimp_device_info_editor_axis_changed),
+                    G_CALLBACK (picman_device_info_editor_axis_changed),
                     editor);
 
   gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
@@ -262,12 +262,12 @@ gimp_device_info_editor_init (GimpDeviceInfoEditor *editor)
   gtk_tree_selection_select_iter (sel, &private->axis_iters[0]);
 
   g_signal_connect (sel, "changed",
-                    G_CALLBACK (gimp_device_info_editor_axis_selected),
+                    G_CALLBACK (picman_device_info_editor_axis_selected),
                     editor);
 
   /*  the keys  */
 
-  frame = gimp_frame_new (_("Keys"));
+  frame = picman_frame_new (_("Keys"));
   gtk_box_pack_end (GTK_BOX (private->vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -300,10 +300,10 @@ gimp_device_info_editor_init (GimpDeviceInfoEditor *editor)
                                                NULL);
 
   g_signal_connect (cell, "accel-edited",
-                    G_CALLBACK (gimp_device_info_editor_key_edited),
+                    G_CALLBACK (picman_device_info_editor_key_edited),
                     editor);
   g_signal_connect (cell, "accel-cleared",
-                    G_CALLBACK (gimp_device_info_editor_key_cleared),
+                    G_CALLBACK (picman_device_info_editor_key_cleared),
                     editor);
 
   scrolled_win = gtk_scrolled_window_new (NULL, NULL);
@@ -319,10 +319,10 @@ gimp_device_info_editor_init (GimpDeviceInfoEditor *editor)
 }
 
 static void
-gimp_device_info_editor_constructed (GObject *object)
+picman_device_info_editor_constructed (GObject *object)
 {
-  GimpDeviceInfoEditor        *editor  = GIMP_DEVICE_INFO_EDITOR (object);
-  GimpDeviceInfoEditorPrivate *private;
+  PicmanDeviceInfoEditor        *editor  = PICMAN_DEVICE_INFO_EDITOR (object);
+  PicmanDeviceInfoEditorPrivate *private;
   GtkWidget                   *hbox;
   GtkWidget                   *label;
   GtkWidget                   *combo;
@@ -330,11 +330,11 @@ gimp_device_info_editor_constructed (GObject *object)
   gint                         n_keys;
   gint                         i;
 
-  private = GIMP_DEVICE_INFO_EDITOR_GET_PRIVATE (object);
+  private = PICMAN_DEVICE_INFO_EDITOR_GET_PRIVATE (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_DEVICE_INFO (private->info));
+  g_assert (PICMAN_IS_DEVICE_INFO (private->info));
 
   /*  the mode menu  */
 
@@ -347,7 +347,7 @@ gimp_device_info_editor_constructed (GObject *object)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  combo = gimp_prop_enum_combo_box_new (G_OBJECT (private->info), "mode",
+  combo = picman_prop_enum_combo_box_new (G_OBJECT (private->info), "mode",
                                         0, 0);
   gtk_box_pack_start (GTK_BOX (hbox), combo, FALSE, FALSE, 0);
   gtk_widget_show (combo);
@@ -356,7 +356,7 @@ gimp_device_info_editor_constructed (GObject *object)
 
   /*  the axes  */
 
-  n_axes = gimp_device_info_get_n_axes (private->info);
+  n_axes = picman_device_info_get_n_axes (private->info);
 
   for (i = -1; i < n_axes; i++)
     {
@@ -373,11 +373,11 @@ gimp_device_info_editor_constructed (GObject *object)
                                          -1);
     }
 
-  gimp_device_info_editor_set_axes (editor);
+  picman_device_info_editor_set_axes (editor);
 
   /*  the keys  */
 
-  n_keys = gimp_device_info_get_n_keys (private->info);
+  n_keys = picman_device_info_get_n_keys (private->info);
 
   for (i = 0; i < n_keys; i++)
     {
@@ -387,7 +387,7 @@ gimp_device_info_editor_constructed (GObject *object)
 
       g_snprintf (string, sizeof (string), "%d", i + 1);
 
-      gimp_device_info_get_key (private->info, i, &keyval, &modifiers);
+      picman_device_info_get_key (private->info, i, &keyval, &modifiers);
 
       gtk_list_store_insert_with_values (private->key_store, NULL, -1,
                                          KEY_COLUMN_INDEX, i,
@@ -408,19 +408,19 @@ gimp_device_info_editor_constructed (GObject *object)
   for (i = GDK_AXIS_X; i < GDK_AXIS_LAST; i++)
     {
       GtkWidget *frame;
-      GimpCurve *curve;
+      PicmanCurve *curve;
       gchar     *title;
 
       /* e.g. "Pressure Curve" for mapping input device axes */
       title = g_strdup_printf (_("%s Curve"), axis_use_strings[i - 1]);
 
-      frame = gimp_frame_new (title);
+      frame = picman_frame_new (title);
       gtk_notebook_append_page (GTK_NOTEBOOK (private->notebook), frame, NULL);
       gtk_widget_show (frame);
 
       g_free (title);
 
-      curve = gimp_device_info_get_curve (private->info, i);
+      curve = picman_device_info_get_curve (private->info, i);
 
       if (curve)
         {
@@ -440,9 +440,9 @@ gimp_device_info_editor_constructed (GObject *object)
           gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
           gtk_widget_show (frame);
 
-          view = gimp_curve_view_new ();
+          view = picman_curve_view_new ();
           g_object_set (view,
-                        "gimp",         GIMP_CONTEXT (private->info)->gimp,
+                        "picman",         PICMAN_CONTEXT (private->info)->picman,
                         "border-width", CURVE_BORDER,
                         NULL);
           gtk_widget_set_size_request (view,
@@ -451,7 +451,7 @@ gimp_device_info_editor_constructed (GObject *object)
           gtk_container_add (GTK_CONTAINER (frame), view);
           gtk_widget_show (view);
 
-          gimp_curve_view_set_curve (GIMP_CURVE_VIEW (view), curve, NULL);
+          picman_curve_view_set_curve (PICMAN_CURVE_VIEW (view), curve, NULL);
 
           hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
           gtk_box_set_spacing (GTK_BOX (hbox), 6);
@@ -462,10 +462,10 @@ gimp_device_info_editor_constructed (GObject *object)
           gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
           gtk_widget_show (label);
 
-          combo = gimp_prop_enum_combo_box_new (G_OBJECT (curve),
+          combo = picman_prop_enum_combo_box_new (G_OBJECT (curve),
                                                 "curve-type", 0, 0);
-          gimp_enum_combo_box_set_stock_prefix (GIMP_ENUM_COMBO_BOX (combo),
-                                                "gimp-curve");
+          picman_enum_combo_box_set_stock_prefix (PICMAN_ENUM_COMBO_BOX (combo),
+                                                "picman-curve");
           gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
           gtk_widget_show (combo);
 
@@ -476,7 +476,7 @@ gimp_device_info_editor_constructed (GObject *object)
           gtk_widget_show (button);
 
           g_signal_connect (button, "clicked",
-                            G_CALLBACK (gimp_device_info_editor_curve_reset),
+                            G_CALLBACK (picman_device_info_editor_curve_reset),
                             curve);
         }
       else
@@ -497,11 +497,11 @@ gimp_device_info_editor_constructed (GObject *object)
 }
 
 static void
-gimp_device_info_editor_finalize (GObject *object)
+picman_device_info_editor_finalize (GObject *object)
 {
-  GimpDeviceInfoEditorPrivate *private;
+  PicmanDeviceInfoEditorPrivate *private;
 
-  private = GIMP_DEVICE_INFO_EDITOR_GET_PRIVATE (object);
+  private = PICMAN_DEVICE_INFO_EDITOR_GET_PRIVATE (object);
 
   if (private->info)
     {
@@ -513,14 +513,14 @@ gimp_device_info_editor_finalize (GObject *object)
 }
 
 static void
-gimp_device_info_editor_set_property (GObject      *object,
+picman_device_info_editor_set_property (GObject      *object,
                                       guint         property_id,
                                       const GValue *value,
                                       GParamSpec   *pspec)
 {
-  GimpDeviceInfoEditorPrivate *private;
+  PicmanDeviceInfoEditorPrivate *private;
 
-  private = GIMP_DEVICE_INFO_EDITOR_GET_PRIVATE (object);
+  private = PICMAN_DEVICE_INFO_EDITOR_GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -535,14 +535,14 @@ gimp_device_info_editor_set_property (GObject      *object,
 }
 
 static void
-gimp_device_info_editor_get_property (GObject    *object,
+picman_device_info_editor_get_property (GObject    *object,
                                       guint       property_id,
                                       GValue     *value,
                                       GParamSpec *pspec)
 {
-  GimpDeviceInfoEditorPrivate *private;
+  PicmanDeviceInfoEditorPrivate *private;
 
-  private = GIMP_DEVICE_INFO_EDITOR_GET_PRIVATE (object);
+  private = PICMAN_DEVICE_INFO_EDITOR_GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -557,15 +557,15 @@ gimp_device_info_editor_get_property (GObject    *object,
 }
 
 static void
-gimp_device_info_editor_set_axes (GimpDeviceInfoEditor *editor)
+picman_device_info_editor_set_axes (PicmanDeviceInfoEditor *editor)
 {
-  GimpDeviceInfoEditorPrivate *private;
+  PicmanDeviceInfoEditorPrivate *private;
   gint                         n_axes;
   gint                         i;
 
-  private = GIMP_DEVICE_INFO_EDITOR_GET_PRIVATE (editor);
+  private = PICMAN_DEVICE_INFO_EDITOR_GET_PRIVATE (editor);
 
-  n_axes = gimp_device_info_get_n_axes (private->info);
+  n_axes = picman_device_info_get_n_axes (private->info);
 
   for (i = GDK_AXIS_X; i < GDK_AXIS_LAST; i++)
     {
@@ -574,7 +574,7 @@ gimp_device_info_editor_set_axes (GimpDeviceInfoEditor *editor)
 
       for (j = 0; j < n_axes; j++)
         {
-          if (gimp_device_info_get_axis_use (private->info, j) == i)
+          if (picman_device_info_get_axis_use (private->info, j) == i)
             break;
         }
 
@@ -594,16 +594,16 @@ gimp_device_info_editor_set_axes (GimpDeviceInfoEditor *editor)
 }
 
 static void
-gimp_device_info_editor_axis_changed (GtkCellRendererCombo  *combo,
+picman_device_info_editor_axis_changed (GtkCellRendererCombo  *combo,
                                       const gchar           *path_string,
                                       GtkTreeIter           *new_iter,
-                                      GimpDeviceInfoEditor  *editor)
+                                      PicmanDeviceInfoEditor  *editor)
 {
-  GimpDeviceInfoEditorPrivate *private;
+  PicmanDeviceInfoEditorPrivate *private;
   GtkTreePath                 *path;
   GtkTreeIter                  new_use_iter;
 
-  private = GIMP_DEVICE_INFO_EDITOR_GET_PRIVATE (editor);
+  private = PICMAN_DEVICE_INFO_EDITOR_GET_PRIVATE (editor);
 
   path = gtk_tree_path_new_from_string (path_string);
 
@@ -625,10 +625,10 @@ gimp_device_info_editor_axis_changed (GtkCellRendererCombo  *combo,
                           INPUT_COLUMN_INDEX, &new_axis,
                           -1);
 
-      n_axes = gimp_device_info_get_n_axes (private->info);
+      n_axes = picman_device_info_get_n_axes (private->info);
 
       for (i = 0; i < n_axes; i++)
-        if (gimp_device_info_get_axis_use (private->info, i) == new_use)
+        if (picman_device_info_get_axis_use (private->info, i) == new_use)
           {
             old_axis = i;
             break;
@@ -638,7 +638,7 @@ gimp_device_info_editor_axis_changed (GtkCellRendererCombo  *combo,
         goto out;
 
       if (new_axis != -1)
-        old_use = gimp_device_info_get_axis_use (private->info, new_axis);
+        old_use = picman_device_info_get_axis_use (private->info, new_axis);
 
       /* we must always have an x and a y axis */
       if ((new_axis == -1 && (new_use == GDK_AXIS_X ||
@@ -651,12 +651,12 @@ gimp_device_info_editor_axis_changed (GtkCellRendererCombo  *combo,
       else
         {
           if (new_axis != -1)
-            gimp_device_info_set_axis_use (private->info, new_axis, new_use);
+            picman_device_info_set_axis_use (private->info, new_axis, new_use);
 
           if (old_axis != -1)
-            gimp_device_info_set_axis_use (private->info, old_axis, old_use);
+            picman_device_info_set_axis_use (private->info, old_axis, old_use);
 
-          gimp_device_info_editor_set_axes (editor);
+          picman_device_info_editor_set_axes (editor);
         }
     }
 
@@ -665,13 +665,13 @@ gimp_device_info_editor_axis_changed (GtkCellRendererCombo  *combo,
 }
 
 static void
-gimp_device_info_editor_axis_selected (GtkTreeSelection     *selection,
-                                       GimpDeviceInfoEditor *editor)
+picman_device_info_editor_axis_selected (GtkTreeSelection     *selection,
+                                       PicmanDeviceInfoEditor *editor)
 {
-  GimpDeviceInfoEditorPrivate *private;
+  PicmanDeviceInfoEditorPrivate *private;
   GtkTreeIter                  iter;
 
-  private = GIMP_DEVICE_INFO_EDITOR_GET_PRIVATE (editor);
+  private = PICMAN_DEVICE_INFO_EDITOR_GET_PRIVATE (editor);
 
   if (gtk_tree_selection_get_selected (selection, NULL, &iter))
     {
@@ -687,18 +687,18 @@ gimp_device_info_editor_axis_selected (GtkTreeSelection     *selection,
 }
 
 static void
-gimp_device_info_editor_key_edited (GtkCellRendererAccel *accel,
+picman_device_info_editor_key_edited (GtkCellRendererAccel *accel,
                                     const char           *path_string,
                                     guint                 accel_key,
                                     GdkModifierType       accel_mask,
                                     guint                 hardware_keycode,
-                                    GimpDeviceInfoEditor *editor)
+                                    PicmanDeviceInfoEditor *editor)
 {
-  GimpDeviceInfoEditorPrivate *private;
+  PicmanDeviceInfoEditorPrivate *private;
   GtkTreePath                 *path;
   GtkTreeIter                  iter;
 
-  private = GIMP_DEVICE_INFO_EDITOR_GET_PRIVATE (editor);
+  private = PICMAN_DEVICE_INFO_EDITOR_GET_PRIVATE (editor);
 
   path = gtk_tree_path_new_from_string (path_string);
 
@@ -715,22 +715,22 @@ gimp_device_info_editor_key_edited (GtkCellRendererAccel *accel,
                           KEY_COLUMN_MASK, accel_mask,
                           -1);
 
-      gimp_device_info_set_key (private->info, index, accel_key, accel_mask);
+      picman_device_info_set_key (private->info, index, accel_key, accel_mask);
     }
 
   gtk_tree_path_free (path);
 }
 
 static void
-gimp_device_info_editor_key_cleared (GtkCellRendererAccel *accel,
+picman_device_info_editor_key_cleared (GtkCellRendererAccel *accel,
                                      const char           *path_string,
-                                     GimpDeviceInfoEditor *editor)
+                                     PicmanDeviceInfoEditor *editor)
 {
-  GimpDeviceInfoEditorPrivate *private;
+  PicmanDeviceInfoEditorPrivate *private;
   GtkTreePath                 *path;
   GtkTreeIter                  iter;
 
-  private = GIMP_DEVICE_INFO_EDITOR_GET_PRIVATE (editor);
+  private = PICMAN_DEVICE_INFO_EDITOR_GET_PRIVATE (editor);
 
   path = gtk_tree_path_new_from_string (path_string);
 
@@ -747,28 +747,28 @@ gimp_device_info_editor_key_cleared (GtkCellRendererAccel *accel,
                           KEY_COLUMN_MASK, 0,
                           -1);
 
-      gimp_device_info_set_key (private->info, index, 0, 0);
+      picman_device_info_set_key (private->info, index, 0, 0);
     }
 
   gtk_tree_path_free (path);
 }
 
 static void
-gimp_device_info_editor_curve_reset (GtkWidget *button,
-                                     GimpCurve *curve)
+picman_device_info_editor_curve_reset (GtkWidget *button,
+                                     PicmanCurve *curve)
 {
-  gimp_curve_reset (curve, TRUE);
+  picman_curve_reset (curve, TRUE);
 }
 
 
 /*  public functions  */
 
 GtkWidget *
-gimp_device_info_editor_new (GimpDeviceInfo *info)
+picman_device_info_editor_new (PicmanDeviceInfo *info)
 {
-  g_return_val_if_fail (GIMP_IS_DEVICE_INFO (info), NULL);
+  g_return_val_if_fail (PICMAN_IS_DEVICE_INFO (info), NULL);
 
-  return g_object_new (GIMP_TYPE_DEVICE_INFO_EDITOR,
+  return g_object_new (PICMAN_TYPE_DEVICE_INFO_EDITOR,
                        "info", info,
                        NULL);
 }

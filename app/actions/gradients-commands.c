@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,28 +20,28 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpgradient-save.h"
-#include "core/gimpcontext.h"
+#include "core/picman.h"
+#include "core/picmangradient-save.h"
+#include "core/picmancontext.h"
 
-#include "widgets/gimpcontainereditor.h"
-#include "widgets/gimpcontainerview.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmancontainereditor.h"
+#include "widgets/picmancontainerview.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "gradients-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
 static void   gradients_save_as_pov_ray_response (GtkWidget    *dialog,
                                                   gint          response_id,
-                                                  GimpGradient *gradient);
+                                                  PicmanGradient *gradient);
 
 
 /*  public functions  */
@@ -50,21 +50,21 @@ void
 gradients_save_as_pov_ray_cmd_callback (GtkAction *action,
                                         gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContext         *context;
-  GimpGradient        *gradient;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContext         *context;
+  PicmanGradient        *gradient;
   GtkFileChooser      *chooser;
   gchar               *title;
 
-  context = gimp_container_view_get_context (editor->view);
+  context = picman_container_view_get_context (editor->view);
 
-  gradient = gimp_context_get_gradient (context);
+  gradient = picman_context_get_gradient (context);
 
   if (! gradient)
     return;
 
   title = g_strdup_printf (_("Save '%s' as POV-Ray"),
-                           gimp_object_get_name (gradient));
+                           picman_object_get_name (gradient));
 
   chooser = GTK_FILE_CHOOSER
     (gtk_file_chooser_dialog_new (title, NULL,
@@ -80,14 +80,14 @@ gradients_save_as_pov_ray_cmd_callback (GtkAction *action,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  g_object_set_data (G_OBJECT (chooser), "gimp", context->gimp);
+  g_object_set_data (G_OBJECT (chooser), "picman", context->picman);
 
   g_free (title);
 
   gtk_window_set_screen (GTK_WINDOW (chooser),
                          gtk_widget_get_screen (GTK_WIDGET (editor)));
 
-  gtk_window_set_role (GTK_WINDOW (chooser), "gimp-gradient-save-pov");
+  gtk_window_set_role (GTK_WINDOW (chooser), "picman-gradient-save-pov");
   gtk_window_set_position (GTK_WINDOW (chooser), GTK_WIN_POS_MOUSE);
 
   gtk_dialog_set_default_response (GTK_DIALOG (chooser), GTK_RESPONSE_OK);
@@ -107,8 +107,8 @@ gradients_save_as_pov_ray_cmd_callback (GtkAction *action,
                            gradient,
                            G_CONNECT_SWAPPED);
 
-  gimp_help_connect (GTK_WIDGET (chooser), gimp_standard_help_func,
-                     GIMP_HELP_GRADIENT_SAVE_AS_POV, NULL);
+  picman_help_connect (GTK_WIDGET (chooser), picman_standard_help_func,
+                     PICMAN_HELP_GRADIENT_SAVE_AS_POV, NULL);
 
   gtk_widget_show (GTK_WIDGET (chooser));
 }
@@ -119,7 +119,7 @@ gradients_save_as_pov_ray_cmd_callback (GtkAction *action,
 static void
 gradients_save_as_pov_ray_response (GtkWidget    *dialog,
                                     gint          response_id,
-                                    GimpGradient *gradient)
+                                    PicmanGradient *gradient)
 {
   if (response_id == GTK_RESPONSE_OK)
     {
@@ -128,10 +128,10 @@ gradients_save_as_pov_ray_response (GtkWidget    *dialog,
 
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 
-      if (! gimp_gradient_save_pov (gradient, filename, &error))
+      if (! picman_gradient_save_pov (gradient, filename, &error))
         {
-          gimp_message_literal (g_object_get_data (G_OBJECT (dialog), "gimp"),
-				G_OBJECT (dialog), GIMP_MESSAGE_ERROR,
+          picman_message_literal (g_object_get_data (G_OBJECT (dialog), "picman"),
+				G_OBJECT (dialog), PICMAN_MESSAGE_ERROR,
 				error->message);
           g_clear_error (&error);
           return;

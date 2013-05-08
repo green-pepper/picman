@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,83 +15,83 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_RECTANGLE_OPTIONS_H__
-#define __GIMP_RECTANGLE_OPTIONS_H__
+#ifndef __PICMAN_RECTANGLE_OPTIONS_H__
+#define __PICMAN_RECTANGLE_OPTIONS_H__
 
 
 typedef enum
 {
-  GIMP_RECTANGLE_OPTIONS_PROP_0,
+  PICMAN_RECTANGLE_OPTIONS_PROP_0,
 
-  GIMP_RECTANGLE_OPTIONS_PROP_AUTO_SHRINK,
-  GIMP_RECTANGLE_OPTIONS_PROP_SHRINK_MERGED,
-  GIMP_RECTANGLE_OPTIONS_PROP_HIGHLIGHT,
-  GIMP_RECTANGLE_OPTIONS_PROP_GUIDE,
+  PICMAN_RECTANGLE_OPTIONS_PROP_AUTO_SHRINK,
+  PICMAN_RECTANGLE_OPTIONS_PROP_SHRINK_MERGED,
+  PICMAN_RECTANGLE_OPTIONS_PROP_HIGHLIGHT,
+  PICMAN_RECTANGLE_OPTIONS_PROP_GUIDE,
 
-  GIMP_RECTANGLE_OPTIONS_PROP_X,
-  GIMP_RECTANGLE_OPTIONS_PROP_Y,
-  GIMP_RECTANGLE_OPTIONS_PROP_WIDTH,
-  GIMP_RECTANGLE_OPTIONS_PROP_HEIGHT,
-  GIMP_RECTANGLE_OPTIONS_PROP_POSITION_UNIT,
-  GIMP_RECTANGLE_OPTIONS_PROP_SIZE_UNIT,
+  PICMAN_RECTANGLE_OPTIONS_PROP_X,
+  PICMAN_RECTANGLE_OPTIONS_PROP_Y,
+  PICMAN_RECTANGLE_OPTIONS_PROP_WIDTH,
+  PICMAN_RECTANGLE_OPTIONS_PROP_HEIGHT,
+  PICMAN_RECTANGLE_OPTIONS_PROP_POSITION_UNIT,
+  PICMAN_RECTANGLE_OPTIONS_PROP_SIZE_UNIT,
 
-  GIMP_RECTANGLE_OPTIONS_PROP_FIXED_RULE_ACTIVE,
-  GIMP_RECTANGLE_OPTIONS_PROP_FIXED_RULE,
-  GIMP_RECTANGLE_OPTIONS_PROP_DESIRED_FIXED_WIDTH,
-  GIMP_RECTANGLE_OPTIONS_PROP_DESIRED_FIXED_HEIGHT,
-  GIMP_RECTANGLE_OPTIONS_PROP_DESIRED_FIXED_SIZE_WIDTH,
-  GIMP_RECTANGLE_OPTIONS_PROP_DESIRED_FIXED_SIZE_HEIGHT,
-  GIMP_RECTANGLE_OPTIONS_PROP_DEFAULT_FIXED_SIZE_WIDTH,
-  GIMP_RECTANGLE_OPTIONS_PROP_DEFAULT_FIXED_SIZE_HEIGHT,
-  GIMP_RECTANGLE_OPTIONS_PROP_OVERRIDDEN_FIXED_SIZE,
-  GIMP_RECTANGLE_OPTIONS_PROP_ASPECT_NUMERATOR,
-  GIMP_RECTANGLE_OPTIONS_PROP_ASPECT_DENOMINATOR,
-  GIMP_RECTANGLE_OPTIONS_PROP_DEFAULT_ASPECT_NUMERATOR,
-  GIMP_RECTANGLE_OPTIONS_PROP_DEFAULT_ASPECT_DENOMINATOR,
-  GIMP_RECTANGLE_OPTIONS_PROP_OVERRIDDEN_FIXED_ASPECT,
-  GIMP_RECTANGLE_OPTIONS_PROP_USE_STRING_CURRENT,
-  GIMP_RECTANGLE_OPTIONS_PROP_FIXED_UNIT,
-  GIMP_RECTANGLE_OPTIONS_PROP_FIXED_CENTER,
+  PICMAN_RECTANGLE_OPTIONS_PROP_FIXED_RULE_ACTIVE,
+  PICMAN_RECTANGLE_OPTIONS_PROP_FIXED_RULE,
+  PICMAN_RECTANGLE_OPTIONS_PROP_DESIRED_FIXED_WIDTH,
+  PICMAN_RECTANGLE_OPTIONS_PROP_DESIRED_FIXED_HEIGHT,
+  PICMAN_RECTANGLE_OPTIONS_PROP_DESIRED_FIXED_SIZE_WIDTH,
+  PICMAN_RECTANGLE_OPTIONS_PROP_DESIRED_FIXED_SIZE_HEIGHT,
+  PICMAN_RECTANGLE_OPTIONS_PROP_DEFAULT_FIXED_SIZE_WIDTH,
+  PICMAN_RECTANGLE_OPTIONS_PROP_DEFAULT_FIXED_SIZE_HEIGHT,
+  PICMAN_RECTANGLE_OPTIONS_PROP_OVERRIDDEN_FIXED_SIZE,
+  PICMAN_RECTANGLE_OPTIONS_PROP_ASPECT_NUMERATOR,
+  PICMAN_RECTANGLE_OPTIONS_PROP_ASPECT_DENOMINATOR,
+  PICMAN_RECTANGLE_OPTIONS_PROP_DEFAULT_ASPECT_NUMERATOR,
+  PICMAN_RECTANGLE_OPTIONS_PROP_DEFAULT_ASPECT_DENOMINATOR,
+  PICMAN_RECTANGLE_OPTIONS_PROP_OVERRIDDEN_FIXED_ASPECT,
+  PICMAN_RECTANGLE_OPTIONS_PROP_USE_STRING_CURRENT,
+  PICMAN_RECTANGLE_OPTIONS_PROP_FIXED_UNIT,
+  PICMAN_RECTANGLE_OPTIONS_PROP_FIXED_CENTER,
 
-  GIMP_RECTANGLE_OPTIONS_PROP_LAST = GIMP_RECTANGLE_OPTIONS_PROP_FIXED_CENTER
-} GimpRectangleOptionsProp;
-
-
-#define GIMP_TYPE_RECTANGLE_OPTIONS               (gimp_rectangle_options_interface_get_type ())
-#define GIMP_IS_RECTANGLE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_RECTANGLE_OPTIONS))
-#define GIMP_RECTANGLE_OPTIONS(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_RECTANGLE_OPTIONS, GimpRectangleOptions))
-#define GIMP_RECTANGLE_OPTIONS_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GIMP_TYPE_RECTANGLE_OPTIONS, GimpRectangleOptionsInterface))
-
-#define GIMP_RECTANGLE_OPTIONS_GET_PRIVATE(obj)   (gimp_rectangle_options_get_private (GIMP_RECTANGLE_OPTIONS (obj)))
+  PICMAN_RECTANGLE_OPTIONS_PROP_LAST = PICMAN_RECTANGLE_OPTIONS_PROP_FIXED_CENTER
+} PicmanRectangleOptionsProp;
 
 
-typedef struct _GimpRectangleOptions          GimpRectangleOptions;
-typedef struct _GimpRectangleOptionsInterface GimpRectangleOptionsInterface;
-typedef struct _GimpRectangleOptionsPrivate   GimpRectangleOptionsPrivate;
+#define PICMAN_TYPE_RECTANGLE_OPTIONS               (picman_rectangle_options_interface_get_type ())
+#define PICMAN_IS_RECTANGLE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_RECTANGLE_OPTIONS))
+#define PICMAN_RECTANGLE_OPTIONS(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_RECTANGLE_OPTIONS, PicmanRectangleOptions))
+#define PICMAN_RECTANGLE_OPTIONS_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), PICMAN_TYPE_RECTANGLE_OPTIONS, PicmanRectangleOptionsInterface))
 
-struct _GimpRectangleOptionsInterface
+#define PICMAN_RECTANGLE_OPTIONS_GET_PRIVATE(obj)   (picman_rectangle_options_get_private (PICMAN_RECTANGLE_OPTIONS (obj)))
+
+
+typedef struct _PicmanRectangleOptions          PicmanRectangleOptions;
+typedef struct _PicmanRectangleOptionsInterface PicmanRectangleOptionsInterface;
+typedef struct _PicmanRectangleOptionsPrivate   PicmanRectangleOptionsPrivate;
+
+struct _PicmanRectangleOptionsInterface
 {
   GTypeInterface base_iface;
 };
 
-struct _GimpRectangleOptionsPrivate
+struct _PicmanRectangleOptionsPrivate
 {
   gboolean                    auto_shrink;
   gboolean                    shrink_merged;
 
   gboolean                    highlight;
-  GimpGuidesType              guide;
+  PicmanGuidesType              guide;
 
   gdouble                     x;
   gdouble                     y;
   gdouble                     width;
   gdouble                     height;
 
-  GimpUnit                    position_unit;
-  GimpUnit                    size_unit;
+  PicmanUnit                    position_unit;
+  PicmanUnit                    size_unit;
 
   gboolean                    fixed_rule_active;
-  GimpRectangleToolFixedRule  fixed_rule;
+  PicmanRectangleToolFixedRule  fixed_rule;
 
   gdouble                     desired_fixed_width;
   gdouble                     desired_fixed_height;
@@ -117,7 +117,7 @@ struct _GimpRectangleOptionsPrivate
    */
   gboolean                    use_string_current;
 
-  GimpUnit                    fixed_unit;
+  PicmanUnit                    fixed_unit;
 
   /* options gui */
 
@@ -141,25 +141,25 @@ struct _GimpRectangleOptionsPrivate
 };
 
 
-GType       gimp_rectangle_options_interface_get_type (void) G_GNUC_CONST;
+GType       picman_rectangle_options_interface_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_rectangle_options_gui                (GimpToolOptions      *tool_options);
+GtkWidget * picman_rectangle_options_gui                (PicmanToolOptions      *tool_options);
 
-gboolean    gimp_rectangle_options_fixed_rule_active  (GimpRectangleOptions *rectangle_options,
-                                                       GimpRectangleToolFixedRule fixed_rule);
+gboolean    picman_rectangle_options_fixed_rule_active  (PicmanRectangleOptions *rectangle_options,
+                                                       PicmanRectangleToolFixedRule fixed_rule);
 
-GimpRectangleOptionsPrivate *
-            gimp_rectangle_options_get_private        (GimpRectangleOptions *options);
+PicmanRectangleOptionsPrivate *
+            picman_rectangle_options_get_private        (PicmanRectangleOptions *options);
 
 
 /*  convenience functions  */
 
-void        gimp_rectangle_options_install_properties (GObjectClass *klass);
-void        gimp_rectangle_options_set_property       (GObject      *object,
+void        picman_rectangle_options_install_properties (GObjectClass *klass);
+void        picman_rectangle_options_set_property       (GObject      *object,
                                                        guint         property_id,
                                                        const GValue *value,
                                                        GParamSpec   *pspec);
-void        gimp_rectangle_options_get_property       (GObject      *object,
+void        picman_rectangle_options_get_property       (GObject      *object,
                                                        guint         property_id,
                                                        GValue       *value,
                                                        GParamSpec   *pspec);
@@ -167,7 +167,7 @@ void        gimp_rectangle_options_get_property       (GObject      *object,
 
 /*  testing helper functions  */
 
-GtkWidget * gimp_rectangle_options_get_width_entry    (GimpRectangleOptions *rectangle_options);
+GtkWidget * picman_rectangle_options_get_width_entry    (PicmanRectangleOptions *rectangle_options);
 
 
-#endif  /* __GIMP_RECTANGLE_OPTIONS_H__ */
+#endif  /* __PICMAN_RECTANGLE_OPTIONS_H__ */

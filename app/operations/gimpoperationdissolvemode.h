@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationdissolvemode.h
+ * picmanoperationdissolvemode.h
  * Copyright (C) 2012 Ville Sokk <ville.sokk@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,36 +19,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GIMP_OPERATION_DISSOLVE_MODE_H__
-#define __GIMP_OPERATION_DISSOLVE_MODE_H__
+#ifndef __PICMAN_OPERATION_DISSOLVE_MODE_H__
+#define __PICMAN_OPERATION_DISSOLVE_MODE_H__
 
 
-#include "gimpoperationpointlayermode.h"
+#include "picmanoperationpointlayermode.h"
 
 
-#define GIMP_TYPE_OPERATION_DISSOLVE_MODE            (gimp_operation_dissolve_mode_get_type ())
-#define GIMP_OPERATION_DISSOLVE_MODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_DISSOLVE_MODE, GimpOperationDissolveMode))
-#define GIMP_OPERATION_DISSOLVE_MODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_DISSOLVE_MODE, GimpOperationDissolveModeClass))
-#define GIMP_IS_OPERATION_DISSOLVE_MODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_DISSOLVE_MODE))
-#define GIMP_IS_OPERATION_DISSOLVE_MODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_DISSOLVE_MODE))
-#define GIMP_OPERATION_DISSOLVE_MODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_DISSOLVE_MODE, GimpOperationDissolveModeClass))
+#define PICMAN_TYPE_OPERATION_DISSOLVE_MODE            (picman_operation_dissolve_mode_get_type ())
+#define PICMAN_OPERATION_DISSOLVE_MODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_DISSOLVE_MODE, PicmanOperationDissolveMode))
+#define PICMAN_OPERATION_DISSOLVE_MODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_DISSOLVE_MODE, PicmanOperationDissolveModeClass))
+#define PICMAN_IS_OPERATION_DISSOLVE_MODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_DISSOLVE_MODE))
+#define PICMAN_IS_OPERATION_DISSOLVE_MODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_DISSOLVE_MODE))
+#define PICMAN_OPERATION_DISSOLVE_MODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_DISSOLVE_MODE, PicmanOperationDissolveModeClass))
 
 
-typedef struct _GimpOperationDissolveMode      GimpOperationDissolveMode;
-typedef struct _GimpOperationDissolveModeClass GimpOperationDissolveModeClass;
+typedef struct _PicmanOperationDissolveMode      PicmanOperationDissolveMode;
+typedef struct _PicmanOperationDissolveModeClass PicmanOperationDissolveModeClass;
 
-struct _GimpOperationDissolveModeClass
+struct _PicmanOperationDissolveModeClass
 {
-  GimpOperationPointLayerModeClass parent_class;
+  PicmanOperationPointLayerModeClass parent_class;
 };
 
-struct _GimpOperationDissolveMode
+struct _PicmanOperationDissolveMode
 {
-  GimpOperationPointLayerMode parent_instance;
+  PicmanOperationPointLayerMode parent_instance;
 };
 
 
-GType   gimp_operation_dissolve_mode_get_type (void) G_GNUC_CONST;
+GType   picman_operation_dissolve_mode_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_DISSOLVE_MODE_H__ */
+#endif /* __PICMAN_OPERATION_DISSOLVE_MODE_H__ */

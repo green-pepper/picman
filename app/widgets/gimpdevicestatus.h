@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdevicestatus.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmandevicestatus.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,30 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DEVICE_STATUS_H__
-#define __GIMP_DEVICE_STATUS_H__
+#ifndef __PICMAN_DEVICE_STATUS_H__
+#define __PICMAN_DEVICE_STATUS_H__
 
 
-#include "gimpeditor.h"
+#include "picmaneditor.h"
 
 
-#define GIMP_TYPE_DEVICE_STATUS            (gimp_device_status_get_type ())
-#define GIMP_DEVICE_STATUS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DEVICE_STATUS, GimpDeviceStatus))
-#define GIMP_DEVICE_STATUS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DEVICE_STATUS, GimpDeviceStatusClass))
-#define GIMP_IS_DEVICE_STATUS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DEVICE_STATUS))
-#define GIMP_IS_DEVICE_STATUS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DEVICE_STATUS))
-#define GIMP_DEVICE_STATUS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DEVICE_STATUS, GimpDeviceStatusClass))
+#define PICMAN_TYPE_DEVICE_STATUS            (picman_device_status_get_type ())
+#define PICMAN_DEVICE_STATUS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DEVICE_STATUS, PicmanDeviceStatus))
+#define PICMAN_DEVICE_STATUS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DEVICE_STATUS, PicmanDeviceStatusClass))
+#define PICMAN_IS_DEVICE_STATUS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DEVICE_STATUS))
+#define PICMAN_IS_DEVICE_STATUS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DEVICE_STATUS))
+#define PICMAN_DEVICE_STATUS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DEVICE_STATUS, PicmanDeviceStatusClass))
 
 
-typedef struct _GimpDeviceStatusEntry GimpDeviceStatusEntry;
-typedef struct _GimpDeviceStatusClass GimpDeviceStatusClass;
+typedef struct _PicmanDeviceStatusEntry PicmanDeviceStatusEntry;
+typedef struct _PicmanDeviceStatusClass PicmanDeviceStatusClass;
 
-struct _GimpDeviceStatus
+struct _PicmanDeviceStatus
 {
-  GimpEditor      parent_instance;
+  PicmanEditor      parent_instance;
 
-  Gimp           *gimp;
-  GimpDeviceInfo *current_device;
+  Picman           *picman;
+  PicmanDeviceInfo *current_device;
 
   GList          *devices;
 
@@ -51,15 +51,15 @@ struct _GimpDeviceStatus
   GtkWidget      *edit_button;
 };
 
-struct _GimpDeviceStatusClass
+struct _PicmanDeviceStatusClass
 {
-  GimpEditorClass  parent_class;
+  PicmanEditorClass  parent_class;
 };
 
 
-GType       gimp_device_status_get_type (void) G_GNUC_CONST;
+GType       picman_device_status_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_device_status_new      (Gimp *gimp);
+GtkWidget * picman_device_status_new      (Picman *picman);
 
 
-#endif  /*  __GIMP_DEVICE_STATUS_H__  */
+#endif  /*  __PICMAN_DEVICE_STATUS_H__  */

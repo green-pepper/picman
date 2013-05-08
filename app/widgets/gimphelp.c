@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimphelp.c
- * Copyright (C) 1999-2004 Michael Natterer <mitch@gimp.org>
- *                         Henrik Brix Andersen <brix@gimp.org>
+ * picmanhelp.c
+ * Copyright (C) 1999-2004 Michael Natterer <mitch@picman.org>
+ *                         Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,42 +26,42 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimpprogress.h"
-#include "core/gimp-utils.h"
+#include "core/picman.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanprogress.h"
+#include "core/picman-utils.h"
 
-#include "pdb/gimppdb.h"
-#include "pdb/gimpprocedure.h"
+#include "pdb/picmanpdb.h"
+#include "pdb/picmanprocedure.h"
 
-#include "plug-in/gimpplugin.h"
-#include "plug-in/gimppluginmanager-help-domain.h"
-#include "plug-in/gimptemporaryprocedure.h"
+#include "plug-in/picmanplugin.h"
+#include "plug-in/picmanpluginmanager-help-domain.h"
+#include "plug-in/picmantemporaryprocedure.h"
 
-#include "gimphelp.h"
-#include "gimphelp-ids.h"
-#include "gimpmessagebox.h"
-#include "gimpmessagedialog.h"
-#include "gimpmessagedialog.h"
-#include "gimpwidgets-utils.h"
+#include "picmanhelp.h"
+#include "picmanhelp-ids.h"
+#include "picmanmessagebox.h"
+#include "picmanmessagedialog.h"
+#include "picmanmessagedialog.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-log.h"
-#include "gimp-intl.h"
+#include "picman-log.h"
+#include "picman-intl.h"
 
 
-typedef struct _GimpIdleHelp GimpIdleHelp;
+typedef struct _PicmanIdleHelp PicmanIdleHelp;
 
-struct _GimpIdleHelp
+struct _PicmanIdleHelp
 {
-  Gimp         *gimp;
-  GimpProgress *progress;
+  Picman         *picman;
+  PicmanProgress *progress;
   gchar        *help_domain;
   gchar        *help_locales;
   gchar        *help_id;
@@ -70,90 +70,90 @@ struct _GimpIdleHelp
 
 /*  local function prototypes  */
 
-static gboolean   gimp_idle_help          (GimpIdleHelp  *idle_help);
-static void       gimp_idle_help_free     (GimpIdleHelp  *idle_help);
+static gboolean   picman_idle_help          (PicmanIdleHelp  *idle_help);
+static void       picman_idle_help_free     (PicmanIdleHelp  *idle_help);
 
-static gboolean   gimp_help_browser       (Gimp          *gimp,
-					   GimpProgress  *progress);
-static void       gimp_help_browser_error (Gimp          *gimp,
-					   GimpProgress  *progress,
+static gboolean   picman_help_browser       (Picman          *picman,
+					   PicmanProgress  *progress);
+static void       picman_help_browser_error (Picman          *picman,
+					   PicmanProgress  *progress,
                                            const gchar   *title,
                                            const gchar   *primary,
                                            const gchar   *text);
 
-static void       gimp_help_call          (Gimp          *gimp,
-                                           GimpProgress  *progress,
+static void       picman_help_call          (Picman          *picman,
+                                           PicmanProgress  *progress,
                                            const gchar   *procedure_name,
                                            const gchar   *help_domain,
                                            const gchar   *help_locales,
                                            const gchar   *help_id);
 
-static gint       gimp_help_get_help_domains         (Gimp    *gimp,
+static gint       picman_help_get_help_domains         (Picman    *picman,
                                                       gchar ***domain_names,
                                                       gchar ***domain_uris);
-static gchar    * gimp_help_get_default_domain_uri   (Gimp    *gimp);
-static gchar    * gimp_help_get_locales              (Gimp    *gimp);
+static gchar    * picman_help_get_default_domain_uri   (Picman    *picman);
+static gchar    * picman_help_get_locales              (Picman    *picman);
 
-static gchar    * gimp_help_get_user_manual_basedir  (void);
+static gchar    * picman_help_get_user_manual_basedir  (void);
 
-static void       gimp_help_query_user_manual_online (GimpIdleHelp *idle_help);
+static void       picman_help_query_user_manual_online (PicmanIdleHelp *idle_help);
 
 
 /*  public functions  */
 
 void
-gimp_help_show (Gimp         *gimp,
-                GimpProgress *progress,
+picman_help_show (Picman         *picman,
+                PicmanProgress *progress,
                 const gchar  *help_domain,
                 const gchar  *help_id)
 {
-  GimpGuiConfig *config;
+  PicmanGuiConfig *config;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
-  config = GIMP_GUI_CONFIG (gimp->config);
+  config = PICMAN_GUI_CONFIG (picman->config);
 
   if (config->use_help)
     {
-      GimpIdleHelp *idle_help = g_slice_new0 (GimpIdleHelp);
+      PicmanIdleHelp *idle_help = g_slice_new0 (PicmanIdleHelp);
 
-      idle_help->gimp     = gimp;
+      idle_help->picman     = picman;
       idle_help->progress = progress;
 
       if (help_domain && strlen (help_domain))
         idle_help->help_domain = g_strdup (help_domain);
 
-      idle_help->help_locales = gimp_help_get_locales (gimp);
+      idle_help->help_locales = picman_help_get_locales (picman);
 
       if (help_id && strlen (help_id))
         idle_help->help_id = g_strdup (help_id);
 
-      GIMP_LOG (HELP, "request for help-id '%s' from help-domain '%s'",
+      PICMAN_LOG (HELP, "request for help-id '%s' from help-domain '%s'",
                 help_id     ? help_id      : "(null)",
                 help_domain ? help_domain  : "(null)");
 
-      g_idle_add ((GSourceFunc) gimp_idle_help, idle_help);
+      g_idle_add ((GSourceFunc) picman_idle_help, idle_help);
     }
 }
 
 gboolean
-gimp_help_user_manual_is_installed (Gimp *gimp)
+picman_help_user_manual_is_installed (Picman *picman)
 {
   gchar    *basedir;
   gboolean  found = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
 
-  /*  if GIMP2_HELP_URI is set, assume that the manual can be found there  */
-  if (g_getenv ("GIMP2_HELP_URI"))
+  /*  if PICMAN2_HELP_URI is set, assume that the manual can be found there  */
+  if (g_getenv ("PICMAN2_HELP_URI"))
     return TRUE;
 
-  basedir = gimp_help_get_user_manual_basedir ();
+  basedir = picman_help_get_user_manual_basedir ();
 
   if (g_file_test (basedir, G_FILE_TEST_IS_DIR))
     {
-      gchar       *locales = gimp_help_get_locales (gimp);
+      gchar       *locales = picman_help_get_locales (picman);
       const gchar *s       = locales;
       const gchar *p;
 
@@ -162,7 +162,7 @@ gimp_help_user_manual_is_installed (Gimp *gimp)
           gchar *locale = g_strndup (s, p - s);
           gchar *path;
 
-          path = g_build_filename (basedir, locale, "gimp-help.xml", NULL);
+          path = g_build_filename (basedir, locale, "picman-help.xml", NULL);
 
           found = g_file_test (path, G_FILE_TEST_IS_REGULAR);
 
@@ -176,7 +176,7 @@ gimp_help_user_manual_is_installed (Gimp *gimp)
 
       if (! found)
         {
-          gchar *path = g_build_filename (basedir, "en", "gimp-help.xml", NULL);
+          gchar *path = g_build_filename (basedir, "en", "picman-help.xml", NULL);
 
           found = g_file_test (path, G_FILE_TEST_IS_REGULAR);
 
@@ -190,18 +190,18 @@ gimp_help_user_manual_is_installed (Gimp *gimp)
 }
 
 void
-gimp_help_user_manual_changed (Gimp *gimp)
+picman_help_user_manual_changed (Picman *picman)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
   /*  Check if a help parser is running  */
-  procedure = gimp_pdb_lookup_procedure (gimp->pdb, "extension-gimp-help-temp");
+  procedure = picman_pdb_lookup_procedure (picman->pdb, "extension-picman-help-temp");
 
-  if (GIMP_IS_TEMPORARY_PROCEDURE (procedure))
+  if (PICMAN_IS_TEMPORARY_PROCEDURE (procedure))
     {
-      gimp_plug_in_close (GIMP_TEMPORARY_PROCEDURE (procedure)->plug_in, TRUE);
+      picman_plug_in_close (PICMAN_TEMPORARY_PROCEDURE (procedure)->plug_in, TRUE);
     }
 }
 
@@ -209,64 +209,64 @@ gimp_help_user_manual_changed (Gimp *gimp)
 /*  private functions  */
 
 static gboolean
-gimp_idle_help (GimpIdleHelp *idle_help)
+picman_idle_help (PicmanIdleHelp *idle_help)
 {
-  GimpGuiConfig *config         = GIMP_GUI_CONFIG (idle_help->gimp->config);
+  PicmanGuiConfig *config         = PICMAN_GUI_CONFIG (idle_help->picman->config);
   const gchar   *procedure_name = NULL;
 
   if (! idle_help->help_domain       &&
       ! config->user_manual_online   &&
-      ! gimp_help_user_manual_is_installed (idle_help->gimp))
+      ! picman_help_user_manual_is_installed (idle_help->picman))
     {
       /*  The user manual is not installed locally, ask the user
        *  if the online version should be used instead.
        */
-      gimp_help_query_user_manual_online (idle_help);
+      picman_help_query_user_manual_online (idle_help);
 
       return FALSE;
     }
 
-  if (config->help_browser == GIMP_HELP_BROWSER_GIMP)
+  if (config->help_browser == PICMAN_HELP_BROWSER_PICMAN)
     {
-      if (gimp_help_browser (idle_help->gimp, idle_help->progress))
-        procedure_name = "extension-gimp-help-browser-temp";
+      if (picman_help_browser (idle_help->picman, idle_help->progress))
+        procedure_name = "extension-picman-help-browser-temp";
     }
 
-  if (config->help_browser == GIMP_HELP_BROWSER_WEB_BROWSER)
+  if (config->help_browser == PICMAN_HELP_BROWSER_WEB_BROWSER)
     {
       /*  FIXME: should check for procedure availability  */
       procedure_name = "plug-in-web-browser";
     }
 
   if (procedure_name)
-    gimp_help_call (idle_help->gimp,
+    picman_help_call (idle_help->picman,
                     idle_help->progress,
                     procedure_name,
                     idle_help->help_domain,
                     idle_help->help_locales,
                     idle_help->help_id);
 
-  gimp_idle_help_free (idle_help);
+  picman_idle_help_free (idle_help);
 
   return FALSE;
 }
 
 static void
-gimp_idle_help_free (GimpIdleHelp *idle_help)
+picman_idle_help_free (PicmanIdleHelp *idle_help)
 {
   g_free (idle_help->help_domain);
   g_free (idle_help->help_locales);
   g_free (idle_help->help_id);
 
-  g_slice_free (GimpIdleHelp, idle_help);
+  g_slice_free (PicmanIdleHelp, idle_help);
 }
 
 static gboolean
-gimp_help_browser (Gimp         *gimp,
-		   GimpProgress *progress)
+picman_help_browser (Picman         *picman,
+		   PicmanProgress *progress)
 {
   static gboolean  busy = FALSE;
-  GimpProcedure   *procedure;
+  PicmanProcedure   *procedure;
 
   if (busy)
     return TRUE;
@@ -274,26 +274,26 @@ gimp_help_browser (Gimp         *gimp,
   busy = TRUE;
 
   /*  Check if a help browser is already running  */
-  procedure = gimp_pdb_lookup_procedure (gimp->pdb,
-                                         "extension-gimp-help-browser-temp");
+  procedure = picman_pdb_lookup_procedure (picman->pdb,
+                                         "extension-picman-help-browser-temp");
 
   if (! procedure)
     {
-      GimpValueArray *args         = NULL;
+      PicmanValueArray *args         = NULL;
       gint            n_domains    = 0;
       gchar         **help_domains = NULL;
       gchar         **help_uris    = NULL;
       GError         *error        = NULL;
 
-      procedure = gimp_pdb_lookup_procedure (gimp->pdb,
-                                             "extension-gimp-help-browser");
+      procedure = picman_pdb_lookup_procedure (picman->pdb,
+                                             "extension-picman-help-browser");
 
       if (! procedure)
         {
-          gimp_help_browser_error (gimp, progress,
+          picman_help_browser_error (picman, progress,
                                    _("Help browser is missing"),
-                                   _("The GIMP help browser is not available."),
-                                   _("The GIMP help browser plug-in appears "
+                                   _("The PICMAN help browser is not available."),
+                                   _("The PICMAN help browser plug-in appears "
                                      "to be missing from your installation. "
 				     "You may instead use the web browser "
 				     "for reading the help pages."));
@@ -302,45 +302,45 @@ gimp_help_browser (Gimp         *gimp,
           return FALSE;
         }
 
-      n_domains = gimp_help_get_help_domains (gimp, &help_domains, &help_uris);
+      n_domains = picman_help_get_help_domains (picman, &help_domains, &help_uris);
 
-      args = gimp_procedure_get_arguments (procedure);
-      gimp_value_array_truncate (args, 5);
+      args = picman_procedure_get_arguments (procedure);
+      picman_value_array_truncate (args, 5);
 
-      g_value_set_int             (gimp_value_array_index (args, 0),
-                                   GIMP_RUN_INTERACTIVE);
-      g_value_set_int             (gimp_value_array_index (args, 1),
+      g_value_set_int             (picman_value_array_index (args, 0),
+                                   PICMAN_RUN_INTERACTIVE);
+      g_value_set_int             (picman_value_array_index (args, 1),
                                    n_domains);
-      gimp_value_take_stringarray (gimp_value_array_index (args, 2),
+      picman_value_take_stringarray (picman_value_array_index (args, 2),
                                    help_domains, n_domains);
-      g_value_set_int             (gimp_value_array_index (args, 3),
+      g_value_set_int             (picman_value_array_index (args, 3),
                                    n_domains);
-      gimp_value_take_stringarray (gimp_value_array_index (args, 4),
+      picman_value_take_stringarray (picman_value_array_index (args, 4),
                                    help_uris, n_domains);
 
-      gimp_procedure_execute_async (procedure, gimp,
-                                    gimp_get_user_context (gimp),
+      picman_procedure_execute_async (procedure, picman,
+                                    picman_get_user_context (picman),
                                     NULL, args, NULL, &error);
 
-      gimp_value_array_unref (args);
+      picman_value_array_unref (args);
 
       if (error)
         {
-          gimp_message_literal (gimp, G_OBJECT (progress), GIMP_MESSAGE_ERROR,
+          picman_message_literal (picman, G_OBJECT (progress), PICMAN_MESSAGE_ERROR,
 				error->message);
           g_error_free (error);
         }
      }
 
   /*  Check if the help browser started properly  */
-  procedure = gimp_pdb_lookup_procedure (gimp->pdb,
-                                         "extension-gimp-help-browser-temp");
+  procedure = picman_pdb_lookup_procedure (picman->pdb,
+                                         "extension-picman-help-browser-temp");
 
   if (! procedure)
     {
-      gimp_help_browser_error (gimp, progress,
+      picman_help_browser_error (picman, progress,
                                _("Help browser doesn't start"),
-                               _("Could not start the GIMP help browser "
+                               _("Could not start the PICMAN help browser "
                                  "plug-in."),
                                NULL);
       busy = FALSE;
@@ -354,15 +354,15 @@ gimp_help_browser (Gimp         *gimp,
 }
 
 static void
-gimp_help_browser_error (Gimp         *gimp,
-			 GimpProgress *progress,
+picman_help_browser_error (Picman         *picman,
+			 PicmanProgress *progress,
                          const gchar  *title,
                          const gchar  *primary,
                          const gchar  *text)
 {
   GtkWidget *dialog;
 
-  dialog = gimp_message_dialog_new (title, GIMP_STOCK_USER_MANUAL,
+  dialog = picman_message_dialog_new (title, PICMAN_STOCK_USER_MANUAL,
 				    NULL, 0,
 				    NULL, NULL,
 
@@ -378,20 +378,20 @@ gimp_help_browser_error (Gimp         *gimp,
 
   if (progress)
     {
-      guint32 window_id = gimp_progress_get_window_id (progress);
+      guint32 window_id = picman_progress_get_window_id (progress);
 
       if (window_id)
-        gimp_window_set_transient_for (GTK_WINDOW (dialog), window_id);
+        picman_window_set_transient_for (GTK_WINDOW (dialog), window_id);
     }
 
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                      "%s", primary);
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box, "%s", text);
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box, "%s", text);
 
-  if (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK)
+  if (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK)
     {
-      g_object_set (gimp->config,
-                    "help-browser", GIMP_HELP_BROWSER_WEB_BROWSER,
+      g_object_set (picman->config,
+                    "help-browser", PICMAN_HELP_BROWSER_WEB_BROWSER,
                     NULL);
     }
 
@@ -399,30 +399,30 @@ gimp_help_browser_error (Gimp         *gimp,
 }
 
 static void
-gimp_help_call (Gimp         *gimp,
-                GimpProgress *progress,
+picman_help_call (Picman         *picman,
+                PicmanProgress *progress,
                 const gchar  *procedure_name,
                 const gchar  *help_domain,
                 const gchar  *help_locales,
                 const gchar  *help_id)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*  Special case the help browser  */
-  if (! strcmp (procedure_name, "extension-gimp-help-browser-temp"))
+  if (! strcmp (procedure_name, "extension-picman-help-browser-temp"))
     {
-      GimpValueArray *return_vals;
+      PicmanValueArray *return_vals;
       GError         *error = NULL;
 
-      GIMP_LOG (HELP, "Calling help via %s: %s %s %s",
+      PICMAN_LOG (HELP, "Calling help via %s: %s %s %s",
                 procedure_name,
                 help_domain  ? help_domain  : "(null)",
                 help_locales ? help_locales : "(null)",
                 help_id      ? help_id      : "(null)");
 
       return_vals =
-        gimp_pdb_execute_procedure_by_name (gimp->pdb,
-                                            gimp_get_user_context (gimp),
+        picman_pdb_execute_procedure_by_name (picman->pdb,
+                                            picman_get_user_context (picman),
                                             progress, &error,
                                             procedure_name,
                                             G_TYPE_STRING, help_domain,
@@ -430,11 +430,11 @@ gimp_help_call (Gimp         *gimp,
                                             G_TYPE_STRING, help_id,
                                             G_TYPE_NONE);
 
-      gimp_value_array_unref (return_vals);
+      picman_value_array_unref (return_vals);
 
       if (error)
         {
-          gimp_message_literal (gimp, NULL, GIMP_MESSAGE_ERROR, error->message);
+          picman_message_literal (picman, NULL, PICMAN_MESSAGE_ERROR, error->message);
           g_error_free (error);
         }
 
@@ -442,86 +442,86 @@ gimp_help_call (Gimp         *gimp,
     }
 
   /*  Check if a help parser is already running  */
-  procedure = gimp_pdb_lookup_procedure (gimp->pdb, "extension-gimp-help-temp");
+  procedure = picman_pdb_lookup_procedure (picman->pdb, "extension-picman-help-temp");
 
   if (! procedure)
     {
-      GimpValueArray  *args         = NULL;
+      PicmanValueArray  *args         = NULL;
       gint             n_domains    = 0;
       gchar          **help_domains = NULL;
       gchar          **help_uris    = NULL;
       GError          *error        = NULL;
 
-      procedure = gimp_pdb_lookup_procedure (gimp->pdb, "extension-gimp-help");
+      procedure = picman_pdb_lookup_procedure (picman->pdb, "extension-picman-help");
 
       if (! procedure)
         /*  FIXME: error msg  */
         return;
 
-      n_domains = gimp_help_get_help_domains (gimp, &help_domains, &help_uris);
+      n_domains = picman_help_get_help_domains (picman, &help_domains, &help_uris);
 
-      args = gimp_procedure_get_arguments (procedure);
-      gimp_value_array_truncate (args, 4);
+      args = picman_procedure_get_arguments (procedure);
+      picman_value_array_truncate (args, 4);
 
-      g_value_set_int             (gimp_value_array_index (args, 0),
+      g_value_set_int             (picman_value_array_index (args, 0),
                                    n_domains);
-      gimp_value_take_stringarray (gimp_value_array_index (args, 1),
+      picman_value_take_stringarray (picman_value_array_index (args, 1),
                                    help_domains, n_domains);
-      g_value_set_int             (gimp_value_array_index (args, 2),
+      g_value_set_int             (picman_value_array_index (args, 2),
                                    n_domains);
-      gimp_value_take_stringarray (gimp_value_array_index (args, 3),
+      picman_value_take_stringarray (picman_value_array_index (args, 3),
                                    help_uris, n_domains);
 
-      gimp_procedure_execute_async (procedure, gimp,
-                                    gimp_get_user_context (gimp), progress,
+      picman_procedure_execute_async (procedure, picman,
+                                    picman_get_user_context (picman), progress,
                                     args, NULL, &error);
 
-      gimp_value_array_unref (args);
+      picman_value_array_unref (args);
 
       if (error)
         {
-          gimp_message_literal (gimp, NULL, GIMP_MESSAGE_ERROR, error->message);
+          picman_message_literal (picman, NULL, PICMAN_MESSAGE_ERROR, error->message);
           g_error_free (error);
         }
     }
 
   /*  Check if the help parser started properly  */
-  procedure = gimp_pdb_lookup_procedure (gimp->pdb, "extension-gimp-help-temp");
+  procedure = picman_pdb_lookup_procedure (picman->pdb, "extension-picman-help-temp");
 
   if (procedure)
     {
-      GimpValueArray *return_vals;
+      PicmanValueArray *return_vals;
       GError         *error = NULL;
 
-      GIMP_LOG (HELP, "Calling help via %s: %s %s %s",
+      PICMAN_LOG (HELP, "Calling help via %s: %s %s %s",
                 procedure_name,
                 help_domain  ? help_domain  : "(null)",
                 help_locales ? help_locales : "(null)",
                 help_id      ? help_id      : "(null)");
 
       return_vals =
-        gimp_pdb_execute_procedure_by_name (gimp->pdb,
-                                            gimp_get_user_context (gimp),
+        picman_pdb_execute_procedure_by_name (picman->pdb,
+                                            picman_get_user_context (picman),
                                             progress, &error,
-                                            "extension-gimp-help-temp",
+                                            "extension-picman-help-temp",
                                             G_TYPE_STRING, procedure_name,
                                             G_TYPE_STRING, help_domain,
                                             G_TYPE_STRING, help_locales,
                                             G_TYPE_STRING, help_id,
                                             G_TYPE_NONE);
 
-      gimp_value_array_unref (return_vals);
+      picman_value_array_unref (return_vals);
 
       if (error)
         {
-          gimp_message_literal (gimp, NULL, GIMP_MESSAGE_ERROR, error->message);
+          picman_message_literal (picman, NULL, PICMAN_MESSAGE_ERROR, error->message);
           g_error_free (error);
         }
     }
 }
 
 static gint
-gimp_help_get_help_domains (Gimp    *gimp,
+picman_help_get_help_domains (Picman    *picman,
                             gchar ***domain_names,
                             gchar ***domain_uris)
 {
@@ -529,15 +529,15 @@ gimp_help_get_help_domains (Gimp    *gimp,
   gchar **plug_in_uris    = NULL;
   gint    i, n_domains;
 
-  n_domains = gimp_plug_in_manager_get_help_domains (gimp->plug_in_manager,
+  n_domains = picman_plug_in_manager_get_help_domains (picman->plug_in_manager,
                                                      &plug_in_domains,
                                                      &plug_in_uris);
 
   *domain_names = g_new0 (gchar *, n_domains + 1);
   *domain_uris  = g_new0 (gchar *, n_domains + 1);
 
-  (*domain_names)[0] = g_strdup ("http://www.gimp.org/help");
-  (*domain_uris)[0]  = gimp_help_get_default_domain_uri (gimp);
+  (*domain_names)[0] = g_strdup ("http://www.picman.org/help");
+  (*domain_uris)[0]  = picman_help_get_default_domain_uri (picman);
 
   for (i = 0; i < n_domains; i++)
     {
@@ -552,19 +552,19 @@ gimp_help_get_help_domains (Gimp    *gimp,
 }
 
 static gchar *
-gimp_help_get_default_domain_uri (Gimp *gimp)
+picman_help_get_default_domain_uri (Picman *picman)
 {
-  GimpGuiConfig *config = GIMP_GUI_CONFIG (gimp->config);
+  PicmanGuiConfig *config = PICMAN_GUI_CONFIG (picman->config);
   gchar         *dir;
   gchar         *uri;
 
-  if (g_getenv ("GIMP2_HELP_URI"))
-    return g_strdup (g_getenv ("GIMP2_HELP_URI"));
+  if (g_getenv ("PICMAN2_HELP_URI"))
+    return g_strdup (g_getenv ("PICMAN2_HELP_URI"));
 
   if (config->user_manual_online)
     return g_strdup (config->user_manual_online_uri);
 
-  dir = gimp_help_get_user_manual_basedir ();
+  dir = picman_help_get_user_manual_basedir ();
   uri = g_filename_to_uri (dir, NULL, NULL);
   g_free (dir);
 
@@ -572,9 +572,9 @@ gimp_help_get_default_domain_uri (Gimp *gimp)
 }
 
 static gchar *
-gimp_help_get_locales (Gimp *gimp)
+picman_help_get_locales (Picman *picman)
 {
-  GimpGuiConfig *config = GIMP_GUI_CONFIG (gimp->config);
+  PicmanGuiConfig *config = PICMAN_GUI_CONFIG (picman->config);
 
   if (config->help_locales && strlen (config->help_locales))
     return g_strdup (config->help_locales);
@@ -583,42 +583,42 @@ gimp_help_get_locales (Gimp *gimp)
 }
 
 static gchar *
-gimp_help_get_user_manual_basedir (void)
+picman_help_get_user_manual_basedir (void)
 {
-  return g_build_filename (gimp_data_directory (), "help", NULL);
+  return g_build_filename (picman_data_directory (), "help", NULL);
 }
 
 
 static void
-gimp_help_query_online_response (GtkWidget    *dialog,
+picman_help_query_online_response (GtkWidget    *dialog,
                                  gint          response,
-                                 GimpIdleHelp *idle_help)
+                                 PicmanIdleHelp *idle_help)
 {
   gtk_widget_destroy (dialog);
 
   if (response == GTK_RESPONSE_ACCEPT)
     {
-      g_object_set (idle_help->gimp->config,
+      g_object_set (idle_help->picman->config,
                     "user-manual-online", TRUE,
                     NULL);
 
-      gimp_help_show (idle_help->gimp,
+      picman_help_show (idle_help->picman,
                       idle_help->progress,
                       idle_help->help_domain,
                       idle_help->help_id);
     }
 
-  gimp_idle_help_free (idle_help);
+  picman_idle_help_free (idle_help);
 }
 
 static void
-gimp_help_query_user_manual_online (GimpIdleHelp *idle_help)
+picman_help_query_user_manual_online (PicmanIdleHelp *idle_help)
 {
   GtkWidget *dialog;
   GtkWidget *button;
 
-  dialog = gimp_message_dialog_new (_("GIMP user manual is missing"),
-                                    GIMP_STOCK_USER_MANUAL,
+  dialog = picman_message_dialog_new (_("PICMAN user manual is missing"),
+                                    PICMAN_STOCK_USER_MANUAL,
                                     NULL, 0, NULL, NULL,
                                     GTK_STOCK_CANCEL,  GTK_RESPONSE_CANCEL,
                                     NULL);
@@ -626,7 +626,7 @@ gimp_help_query_user_manual_online (GimpIdleHelp *idle_help)
   button = gtk_dialog_add_button (GTK_DIALOG (dialog),
                                   _("_Read Online"), GTK_RESPONSE_ACCEPT);
   gtk_button_set_image (GTK_BUTTON (button),
-                        gtk_image_new_from_stock (GIMP_STOCK_WEB,
+                        gtk_image_new_from_stock (PICMAN_STOCK_WEB,
                                                   GTK_ICON_SIZE_BUTTON));
 
   gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog),
@@ -637,20 +637,20 @@ gimp_help_query_user_manual_online (GimpIdleHelp *idle_help)
 
   if (idle_help->progress)
     {
-      guint32 window_id = gimp_progress_get_window_id (idle_help->progress);
+      guint32 window_id = picman_progress_get_window_id (idle_help->progress);
 
       if (window_id)
-        gimp_window_set_transient_for (GTK_WINDOW (dialog), window_id);
+        picman_window_set_transient_for (GTK_WINDOW (dialog), window_id);
     }
 
   g_signal_connect (dialog, "response",
-                    G_CALLBACK (gimp_help_query_online_response),
+                    G_CALLBACK (picman_help_query_online_response),
                     idle_help);
 
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
-                                     _("The GIMP user manual is not installed "
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
+                                     _("The PICMAN user manual is not installed "
                                        "on your computer."));
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                              _("You may either install the additional help "
                                "package or change your preferences to use "
                                "the online version."));

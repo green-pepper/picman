@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpdrawable.c
+ * picmandrawable.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,22 +20,22 @@
 
 #include "config.h"
 
-#define GIMP_DISABLE_DEPRECATION_WARNINGS
+#define PICMAN_DISABLE_DEPRECATION_WARNINGS
 
-#include "gimp.h"
+#include "picman.h"
 
-#include "gimptilebackendplugin.h"
+#include "picmantilebackendplugin.h"
 
 
-#define TILE_WIDTH  gimp_tile_width()
-#define TILE_HEIGHT gimp_tile_height()
+#define TILE_WIDTH  picman_tile_width()
+#define TILE_HEIGHT picman_tile_height()
 
 
 /**
- * gimp_drawable_get:
+ * picman_drawable_get:
  * @drawable_ID: the ID of the drawable
  *
- * This function creates a #GimpDrawable structure for the core
+ * This function creates a #PicmanDrawable structure for the core
  * drawable identified by @drawable_ID. The returned structure
  * contains some basic information about the drawable and can also
  * hold tile data for transfer to and from the core.
@@ -46,26 +46,26 @@
  * lists each time, which will usually produce undesired results.
  *
  * When a plug-in has finished working with a drawable, before exiting
- * it should call gimp_drawable_detach() to make sure that all tile data is
+ * it should call picman_drawable_detach() to make sure that all tile data is
  * transferred back to the core.
  *
- * Return value: a new #GimpDrawable wrapper
+ * Return value: a new #PicmanDrawable wrapper
  **/
-GimpDrawable *
-gimp_drawable_get (gint32 drawable_ID)
+PicmanDrawable *
+picman_drawable_get (gint32 drawable_ID)
 {
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint          width;
   gint          height;
   gint          bpp;
 
-  width  = gimp_drawable_width  (drawable_ID);
-  height = gimp_drawable_height (drawable_ID);
-  bpp    = gimp_drawable_bpp    (drawable_ID);
+  width  = picman_drawable_width  (drawable_ID);
+  height = picman_drawable_height (drawable_ID);
+  bpp    = picman_drawable_bpp    (drawable_ID);
 
   g_return_val_if_fail (width > 0 && height > 0 && bpp > 0, NULL);
 
-  drawable = g_slice_new0 (GimpDrawable);
+  drawable = g_slice_new0 (PicmanDrawable);
 
   drawable->drawable_id  = drawable_ID;
   drawable->width        = width;
@@ -78,21 +78,21 @@ gimp_drawable_get (gint32 drawable_ID)
 }
 
 /**
- * gimp_drawable_detach:
- * @drawable: The #GimpDrawable to detach from the core
+ * picman_drawable_detach:
+ * @drawable: The #PicmanDrawable to detach from the core
  *
  * This function is called when a plug-in is finished working
  * with a drawable.  It forces all tile data held in the tile
- * list of the #GimpDrawable to be transferred to the core, and
+ * list of the #PicmanDrawable to be transferred to the core, and
  * then frees all associated memory. You must not access the
- * @drawable after having called gimp_drawable_detach().
+ * @drawable after having called picman_drawable_detach().
  **/
 void
-gimp_drawable_detach (GimpDrawable *drawable)
+picman_drawable_detach (PicmanDrawable *drawable)
 {
   g_return_if_fail (drawable != NULL);
 
-  gimp_drawable_flush (drawable);
+  picman_drawable_flush (drawable);
 
   if (drawable->tiles)
     g_free (drawable->tiles);
@@ -100,24 +100,24 @@ gimp_drawable_detach (GimpDrawable *drawable)
   if (drawable->shadow_tiles)
     g_free (drawable->shadow_tiles);
 
-  g_slice_free (GimpDrawable, drawable);
+  g_slice_free (PicmanDrawable, drawable);
 }
 
 /**
- * gimp_drawable_flush:
- * @drawable: The #GimpDrawable whose tile data is to be transferred
+ * picman_drawable_flush:
+ * @drawable: The #PicmanDrawable whose tile data is to be transferred
  * to the core.
  *
  * This function causes all tile data in the tile list of @drawable to be
  * transferred to the core.  It is usually called in situations where a
  * plug-in acts on a drawable, and then needs to read the results of its
  * actions.  Data transferred back from the core will not generally be valid
- * unless gimp_drawable_flush() has been called beforehand.
+ * unless picman_drawable_flush() has been called beforehand.
  **/
 void
-gimp_drawable_flush (GimpDrawable *drawable)
+picman_drawable_flush (PicmanDrawable *drawable)
 {
-  GimpTile *tiles;
+  PicmanTile *tiles;
   gint      n_tiles;
   gint      i;
 
@@ -130,7 +130,7 @@ gimp_drawable_flush (GimpDrawable *drawable)
 
       for (i = 0; i < n_tiles; i++)
         if ((tiles[i].ref_count > 0) && tiles[i].dirty)
-          gimp_tile_flush (&tiles[i]);
+          picman_tile_flush (&tiles[i]);
     }
 
   if (drawable->shadow_tiles)
@@ -140,20 +140,20 @@ gimp_drawable_flush (GimpDrawable *drawable)
 
       for (i = 0; i < n_tiles; i++)
         if ((tiles[i].ref_count > 0) && tiles[i].dirty)
-          gimp_tile_flush (&tiles[i]);
+          picman_tile_flush (&tiles[i]);
     }
 
   /*  nuke all references to this drawable from the cache  */
-  _gimp_tile_cache_flush_drawable (drawable);
+  _picman_tile_cache_flush_drawable (drawable);
 }
 
-GimpTile *
-gimp_drawable_get_tile (GimpDrawable *drawable,
+PicmanTile *
+picman_drawable_get_tile (PicmanDrawable *drawable,
                         gboolean      shadow,
                         gint          row,
                         gint          col)
 {
-  GimpTile *tiles;
+  PicmanTile *tiles;
   guint     right_tile;
   guint     bottom_tile;
   gint      n_tiles;
@@ -170,7 +170,7 @@ gimp_drawable_get_tile (GimpDrawable *drawable,
   if (! tiles)
     {
       n_tiles = drawable->ntile_rows * drawable->ntile_cols;
-      tiles = g_new (GimpTile, n_tiles);
+      tiles = g_new (PicmanTile, n_tiles);
 
       right_tile  = (drawable->width  -
                      ((drawable->ntile_cols - 1) * TILE_WIDTH));
@@ -212,8 +212,8 @@ gimp_drawable_get_tile (GimpDrawable *drawable,
   return &tiles[tile_num];
 }
 
-GimpTile *
-gimp_drawable_get_tile2 (GimpDrawable *drawable,
+PicmanTile *
+picman_drawable_get_tile2 (PicmanDrawable *drawable,
                          gboolean      shadow,
                          gint          x,
                          gint          y)
@@ -226,39 +226,39 @@ gimp_drawable_get_tile2 (GimpDrawable *drawable,
   col = x / TILE_WIDTH;
   row = y / TILE_HEIGHT;
 
-  return gimp_drawable_get_tile (drawable, shadow, row, col);
+  return picman_drawable_get_tile (drawable, shadow, row, col);
 }
 
 void
-gimp_drawable_get_color_uchar (gint32         drawable_ID,
-                               const GimpRGB *color,
+picman_drawable_get_color_uchar (gint32         drawable_ID,
+                               const PicmanRGB *color,
                                guchar        *color_uchar)
 {
   g_return_if_fail (color != NULL);
   g_return_if_fail (color_uchar != NULL);
 
-  switch (gimp_drawable_type (drawable_ID))
+  switch (picman_drawable_type (drawable_ID))
     {
-    case GIMP_RGB_IMAGE:
-      gimp_rgb_get_uchar (color,
+    case PICMAN_RGB_IMAGE:
+      picman_rgb_get_uchar (color,
                           &color_uchar[0], &color_uchar[1], &color_uchar[2]);
       color_uchar[3] = 255;
       break;
 
-    case GIMP_RGBA_IMAGE:
-      gimp_rgba_get_uchar (color,
+    case PICMAN_RGBA_IMAGE:
+      picman_rgba_get_uchar (color,
                            &color_uchar[0], &color_uchar[1], &color_uchar[2],
                            &color_uchar[3]);
       break;
 
-    case GIMP_GRAY_IMAGE:
-      color_uchar[0] = gimp_rgb_luminance_uchar (color);
+    case PICMAN_GRAY_IMAGE:
+      color_uchar[0] = picman_rgb_luminance_uchar (color);
       color_uchar[1] = 255;
       break;
 
-    case GIMP_GRAYA_IMAGE:
-      color_uchar[0] = gimp_rgb_luminance_uchar (color);
-      gimp_rgba_get_uchar (color, NULL, NULL, NULL, &color_uchar[1]);
+    case PICMAN_GRAYA_IMAGE:
+      color_uchar[0] = picman_rgb_luminance_uchar (color);
+      picman_rgba_get_uchar (color, NULL, NULL, NULL, &color_uchar[1]);
       break;
 
     default:
@@ -267,7 +267,7 @@ gimp_drawable_get_color_uchar (gint32         drawable_ID,
 }
 
 guchar *
-gimp_drawable_get_thumbnail_data (gint32  drawable_ID,
+picman_drawable_get_thumbnail_data (gint32  drawable_ID,
                                   gint   *width,
                                   gint   *height,
                                   gint   *bpp)
@@ -277,7 +277,7 @@ gimp_drawable_get_thumbnail_data (gint32  drawable_ID,
   guchar *image_data;
   gint    data_size;
 
-  _gimp_drawable_thumbnail (drawable_ID,
+  _picman_drawable_thumbnail (drawable_ID,
                             *width,
                             *height,
                             &ret_width,
@@ -293,7 +293,7 @@ gimp_drawable_get_thumbnail_data (gint32  drawable_ID,
 }
 
 guchar *
-gimp_drawable_get_sub_thumbnail_data (gint32  drawable_ID,
+picman_drawable_get_sub_thumbnail_data (gint32  drawable_ID,
                                       gint    src_x,
                                       gint    src_y,
                                       gint    src_width,
@@ -307,7 +307,7 @@ gimp_drawable_get_sub_thumbnail_data (gint32  drawable_ID,
   guchar *image_data;
   gint    data_size;
 
-  _gimp_drawable_sub_thumbnail (drawable_ID,
+  _picman_drawable_sub_thumbnail (drawable_ID,
                                 src_x, src_y,
                                 src_width, src_height,
                                 *dest_width,
@@ -325,333 +325,333 @@ gimp_drawable_get_sub_thumbnail_data (gint32  drawable_ID,
 }
 
 /**
- * gimp_drawable_is_valid:
+ * picman_drawable_is_valid:
  * @drawable_ID: The drawable to check.
  *
- * Deprecated: Use gimp_item_is_valid() instead.
+ * Deprecated: Use picman_item_is_valid() instead.
  *
  * Returns: Whether the drawable ID is valid.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 gboolean
-gimp_drawable_is_valid (gint32 drawable_ID)
+picman_drawable_is_valid (gint32 drawable_ID)
 {
-  return gimp_item_is_valid (drawable_ID);
+  return picman_item_is_valid (drawable_ID);
 }
 
 /**
- * gimp_drawable_is_layer:
+ * picman_drawable_is_layer:
  * @drawable_ID: The drawable.
  *
- * Deprecated: Use gimp_item_is_layer() instead.
+ * Deprecated: Use picman_item_is_layer() instead.
  *
  * Returns: TRUE if the drawable is a layer, FALSE otherwise.
  */
 gboolean
-gimp_drawable_is_layer (gint32 drawable_ID)
+picman_drawable_is_layer (gint32 drawable_ID)
 {
-  return gimp_item_is_layer (drawable_ID);
+  return picman_item_is_layer (drawable_ID);
 }
 
 /**
- * gimp_drawable_is_text_layer:
+ * picman_drawable_is_text_layer:
  * @drawable_ID: The drawable.
  *
- * Deprecated: Use gimp_item_is_text_layer() instead.
+ * Deprecated: Use picman_item_is_text_layer() instead.
  *
  * Returns: TRUE if the drawable is a text layer, FALSE otherwise.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  */
 gboolean
-gimp_drawable_is_text_layer (gint32 drawable_ID)
+picman_drawable_is_text_layer (gint32 drawable_ID)
 {
-  return gimp_item_is_text_layer (drawable_ID);
+  return picman_item_is_text_layer (drawable_ID);
 }
 
 /**
- * gimp_drawable_is_layer_mask:
+ * picman_drawable_is_layer_mask:
  * @drawable_ID: The drawable.
  *
- * Deprecated: Use gimp_item_is_layer_mask() instead.
+ * Deprecated: Use picman_item_is_layer_mask() instead.
  *
  * Returns: TRUE if the drawable is a layer mask, FALSE otherwise.
  */
 gboolean
-gimp_drawable_is_layer_mask (gint32 drawable_ID)
+picman_drawable_is_layer_mask (gint32 drawable_ID)
 {
-  return gimp_item_is_layer_mask (drawable_ID);
+  return picman_item_is_layer_mask (drawable_ID);
 }
 
 /**
- * gimp_drawable_is_channel:
+ * picman_drawable_is_channel:
  * @drawable_ID: The drawable.
  *
- * Deprecated: Use gimp_item_is_channel() instead.
+ * Deprecated: Use picman_item_is_channel() instead.
  *
  * Returns: TRUE if the drawable is a channel, FALSE otherwise.
  */
 gboolean
-gimp_drawable_is_channel (gint32 drawable_ID)
+picman_drawable_is_channel (gint32 drawable_ID)
 {
-  return gimp_item_is_channel (drawable_ID);
+  return picman_item_is_channel (drawable_ID);
 }
 
 /**
- * gimp_drawable_delete:
+ * picman_drawable_delete:
  * @drawable_ID: The drawable to delete.
  *
- * Deprecated: Use gimp_item_delete() instead.
+ * Deprecated: Use picman_item_delete() instead.
  *
  * Returns: TRUE on success.
  */
 gboolean
-gimp_drawable_delete (gint32 drawable_ID)
+picman_drawable_delete (gint32 drawable_ID)
 {
-  return gimp_item_delete (drawable_ID);
+  return picman_item_delete (drawable_ID);
 }
 
 /**
- * gimp_drawable_get_image:
+ * picman_drawable_get_image:
  * @drawable_ID: The drawable.
  *
- * Deprecated: Use gimp_item_get_image() instead.
+ * Deprecated: Use picman_item_get_image() instead.
  *
  * Returns: The drawable's image.
  */
 gint32
-gimp_drawable_get_image (gint32 drawable_ID)
+picman_drawable_get_image (gint32 drawable_ID)
 {
-  return gimp_item_get_image (drawable_ID);
+  return picman_item_get_image (drawable_ID);
 }
 
 /**
- * gimp_drawable_get_name:
+ * picman_drawable_get_name:
  * @drawable_ID: The drawable.
  *
- * Deprecated: Use gimp_item_get_name() instead.
+ * Deprecated: Use picman_item_get_name() instead.
  *
  * Returns: The drawable name.
  */
 gchar *
-gimp_drawable_get_name (gint32 drawable_ID)
+picman_drawable_get_name (gint32 drawable_ID)
 {
-  return gimp_item_get_name (drawable_ID);
+  return picman_item_get_name (drawable_ID);
 }
 
 /**
- * gimp_drawable_set_name:
+ * picman_drawable_set_name:
  * @drawable_ID: The drawable.
  * @name: The new drawable name.
  *
- * Deprecated: Use gimp_item_set_name() instead.
+ * Deprecated: Use picman_item_set_name() instead.
  *
  * Returns: TRUE on success.
  */
 gboolean
-gimp_drawable_set_name (gint32       drawable_ID,
+picman_drawable_set_name (gint32       drawable_ID,
                         const gchar *name)
 {
-  return gimp_item_set_name (drawable_ID, name);
+  return picman_item_set_name (drawable_ID, name);
 }
 
 /**
- * gimp_drawable_get_visible:
+ * picman_drawable_get_visible:
  * @drawable_ID: The drawable.
  *
- * Deprecated: Use gimp_item_get_visible() instead.
+ * Deprecated: Use picman_item_get_visible() instead.
  *
  * Returns: The drawable visibility.
  */
 gboolean
-gimp_drawable_get_visible (gint32 drawable_ID)
+picman_drawable_get_visible (gint32 drawable_ID)
 {
-  return gimp_item_get_visible (drawable_ID);
+  return picman_item_get_visible (drawable_ID);
 }
 
 /**
- * gimp_drawable_set_visible:
+ * picman_drawable_set_visible:
  * @drawable_ID: The drawable.
  * @visible: The new drawable visibility.
  *
- * Deprecated: Use gimp_item_set_visible() instead.
+ * Deprecated: Use picman_item_set_visible() instead.
  *
  * Returns: TRUE on success.
  */
 gboolean
-gimp_drawable_set_visible (gint32   drawable_ID,
+picman_drawable_set_visible (gint32   drawable_ID,
                            gboolean visible)
 {
-  return gimp_item_set_visible (drawable_ID, visible);
+  return picman_item_set_visible (drawable_ID, visible);
 }
 
 /**
- * gimp_drawable_get_linked:
+ * picman_drawable_get_linked:
  * @drawable_ID: The drawable.
  *
- * Deprecated: Use gimp_item_get_linked() instead.
+ * Deprecated: Use picman_item_get_linked() instead.
  *
  * Returns: The drawable linked state (for moves).
  */
 gboolean
-gimp_drawable_get_linked (gint32 drawable_ID)
+picman_drawable_get_linked (gint32 drawable_ID)
 {
-  return gimp_item_get_linked (drawable_ID);
+  return picman_item_get_linked (drawable_ID);
 }
 
 /**
- * gimp_drawable_set_linked:
+ * picman_drawable_set_linked:
  * @drawable_ID: The drawable.
  * @linked: The new drawable linked state.
  *
- * Deprecated: Use gimp_item_set_linked() instead.
+ * Deprecated: Use picman_item_set_linked() instead.
  *
  * Returns: TRUE on success.
  */
 gboolean
-gimp_drawable_set_linked (gint32   drawable_ID,
+picman_drawable_set_linked (gint32   drawable_ID,
                           gboolean linked)
 {
-  return gimp_item_set_linked (drawable_ID, linked);
+  return picman_item_set_linked (drawable_ID, linked);
 }
 
 /**
- * gimp_drawable_get_tattoo:
+ * picman_drawable_get_tattoo:
  * @drawable_ID: The drawable.
  *
- * Deprecated: Use gimp_item_get_tattoo() instead.
+ * Deprecated: Use picman_item_get_tattoo() instead.
  *
  * Returns: The drawable tattoo.
  */
 gint
-gimp_drawable_get_tattoo (gint32 drawable_ID)
+picman_drawable_get_tattoo (gint32 drawable_ID)
 {
-  return gimp_item_get_tattoo (drawable_ID);
+  return picman_item_get_tattoo (drawable_ID);
 }
 
 /**
- * gimp_drawable_set_tattoo:
+ * picman_drawable_set_tattoo:
  * @drawable_ID: The drawable.
  * @tattoo: The new drawable tattoo.
  *
- * Deprecated: Use gimp_item_set_tattoo() instead.
+ * Deprecated: Use picman_item_set_tattoo() instead.
  *
  * Returns: TRUE on success.
  */
 gboolean
-gimp_drawable_set_tattoo (gint32 drawable_ID,
+picman_drawable_set_tattoo (gint32 drawable_ID,
                           gint   tattoo)
 {
-  return gimp_item_set_tattoo (drawable_ID, tattoo);
+  return picman_item_set_tattoo (drawable_ID, tattoo);
 }
 
 /**
- * gimp_drawable_parasite_find:
+ * picman_drawable_parasite_find:
  * @drawable_ID: The drawable.
  * @name: The name of the parasite to find.
  *
- * Deprecated: Use gimp_item_get_parasite() instead.
+ * Deprecated: Use picman_item_get_parasite() instead.
  *
  * Returns: The found parasite.
  **/
-GimpParasite *
-gimp_drawable_parasite_find (gint32       drawable_ID,
+PicmanParasite *
+picman_drawable_parasite_find (gint32       drawable_ID,
                              const gchar *name)
 {
-  return gimp_item_get_parasite (drawable_ID, name);
+  return picman_item_get_parasite (drawable_ID, name);
 }
 
 /**
- * gimp_drawable_parasite_attach:
+ * picman_drawable_parasite_attach:
  * @drawable_ID: The drawable.
  * @parasite: The parasite to attach to a drawable.
  *
- * Deprecated: Use gimp_item_attach_parasite() instead.
+ * Deprecated: Use picman_item_attach_parasite() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_drawable_parasite_attach (gint32              drawable_ID,
-                               const GimpParasite *parasite)
+picman_drawable_parasite_attach (gint32              drawable_ID,
+                               const PicmanParasite *parasite)
 {
-  return gimp_item_attach_parasite (drawable_ID, parasite);
+  return picman_item_attach_parasite (drawable_ID, parasite);
 }
 
 /**
- * gimp_drawable_parasite_detach:
+ * picman_drawable_parasite_detach:
  * @drawable_ID: The drawable.
  * @name: The name of the parasite to detach from a drawable.
  *
- * Deprecated: Use gimp_item_detach_parasite() instead.
+ * Deprecated: Use picman_item_detach_parasite() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_drawable_parasite_detach (gint32       drawable_ID,
+picman_drawable_parasite_detach (gint32       drawable_ID,
                                const gchar *name)
 {
-  return gimp_item_detach_parasite (drawable_ID, name);
+  return picman_item_detach_parasite (drawable_ID, name);
 }
 
 /**
- * gimp_drawable_parasite_list:
+ * picman_drawable_parasite_list:
  * @drawable_ID: The drawable.
  * @num_parasites: The number of attached parasites.
  * @parasites: The names of currently attached parasites.
  *
- * Deprecated: Use gimp_item_get_parasite_list() instead.
+ * Deprecated: Use picman_item_get_parasite_list() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_drawable_parasite_list (gint32    drawable_ID,
+picman_drawable_parasite_list (gint32    drawable_ID,
                              gint     *num_parasites,
                              gchar  ***parasites)
 {
-  *parasites = gimp_item_get_parasite_list (drawable_ID, num_parasites);
+  *parasites = picman_item_get_parasite_list (drawable_ID, num_parasites);
 
   return *parasites != NULL;
 }
 
 /**
- * gimp_drawable_attach_new_parasite:
- * @drawable_ID: the ID of the #GimpDrawable to attach the #GimpParasite to.
- * @name: the name of the #GimpParasite to create and attach.
- * @flags: the flags set on the #GimpParasite.
+ * picman_drawable_attach_new_parasite:
+ * @drawable_ID: the ID of the #PicmanDrawable to attach the #PicmanParasite to.
+ * @name: the name of the #PicmanParasite to create and attach.
+ * @flags: the flags set on the #PicmanParasite.
  * @size: the size of the parasite data in bytes.
- * @data: a pointer to the data attached with the #GimpParasite.
+ * @data: a pointer to the data attached with the #PicmanParasite.
  *
  * Convenience function that creates a parasite and attaches it
- * to GIMP.
+ * to PICMAN.
  *
- * Deprecated: use gimp_item_attach_parasite() instead.
+ * Deprecated: use picman_item_attach_parasite() instead.
  *
  * Return value: TRUE on successful creation and attachment of
  * the new parasite.
  *
- * See Also: gimp_drawable_parasite_attach()
+ * See Also: picman_drawable_parasite_attach()
  */
 gboolean
-gimp_drawable_attach_new_parasite (gint32          drawable_ID,
+picman_drawable_attach_new_parasite (gint32          drawable_ID,
                                    const gchar    *name,
                                    gint            flags,
                                    gint            size,
                                    gconstpointer   data)
 {
-  GimpParasite *parasite = gimp_parasite_new (name, flags, size, data);
+  PicmanParasite *parasite = picman_parasite_new (name, flags, size, data);
   gboolean      success;
 
-  success = gimp_item_attach_parasite (drawable_ID, parasite);
+  success = picman_item_attach_parasite (drawable_ID, parasite);
 
-  gimp_parasite_free (parasite);
+  picman_parasite_free (parasite);
 
   return success;
 }
 
 /**
- * gimp_drawable_get_buffer:
- * @drawable_ID: the ID of the #GimpDrawable to get the buffer for.
+ * picman_drawable_get_buffer:
+ * @drawable_ID: the ID of the #PicmanDrawable to get the buffer for.
  *
  * Returns a #GeglBuffer of a specified drawable. The buffer can be used
  * like any other GEGL buffer. Its data will we synced back with the core
@@ -660,27 +660,27 @@ gimp_drawable_attach_new_parasite (gint32          drawable_ID,
  *
  * Return value: The #GeglBuffer.
  *
- * See Also: gimp_drawable_get_shadow_buffer()
+ * See Also: picman_drawable_get_shadow_buffer()
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  */
 GeglBuffer *
-gimp_drawable_get_buffer (gint32 drawable_ID)
+picman_drawable_get_buffer (gint32 drawable_ID)
 {
-  gimp_plugin_enable_precision ();
+  picman_plugin_enable_precision ();
 
-  if (gimp_item_is_valid (drawable_ID))
+  if (picman_item_is_valid (drawable_ID))
     {
-      GimpDrawable *drawable;
+      PicmanDrawable *drawable;
 
-      drawable = gimp_drawable_get (drawable_ID);
+      drawable = picman_drawable_get (drawable_ID);
 
       if (drawable)
         {
           GeglTileBackend *backend;
           GeglBuffer      *buffer;
 
-          backend = _gimp_tile_backend_plugin_new (drawable, FALSE);
+          backend = _picman_tile_backend_plugin_new (drawable, FALSE);
           buffer = gegl_buffer_new_for_backend (NULL, backend);
           g_object_unref (backend);
 
@@ -692,8 +692,8 @@ gimp_drawable_get_buffer (gint32 drawable_ID)
 }
 
 /**
- * gimp_drawable_get_shadow_buffer:
- * @drawable_ID: the ID of the #GimpDrawable to get the buffer for.
+ * picman_drawable_get_shadow_buffer:
+ * @drawable_ID: the ID of the #PicmanDrawable to get the buffer for.
  *
  * Returns a #GeglBuffer of a specified drawable's shadow tiles. The
  * buffer can be used like any other GEGL buffer. Its data will we
@@ -702,25 +702,25 @@ gimp_drawable_get_buffer (gint32 drawable_ID)
  *
  * Return value: The #GeglBuffer.
  *
- * See Also: gimp_drawable_get_shadow_buffer()
+ * See Also: picman_drawable_get_shadow_buffer()
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  */
 GeglBuffer *
-gimp_drawable_get_shadow_buffer (gint32 drawable_ID)
+picman_drawable_get_shadow_buffer (gint32 drawable_ID)
 {
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
 
-  gimp_plugin_enable_precision ();
+  picman_plugin_enable_precision ();
 
-  drawable = gimp_drawable_get (drawable_ID);
+  drawable = picman_drawable_get (drawable_ID);
 
   if (drawable)
     {
       GeglTileBackend *backend;
       GeglBuffer      *buffer;
 
-      backend = _gimp_tile_backend_plugin_new (drawable, TRUE);
+      backend = _picman_tile_backend_plugin_new (drawable, TRUE);
       buffer = gegl_buffer_new_for_backend (NULL, backend);
       g_object_unref (backend);
 
@@ -731,31 +731,31 @@ gimp_drawable_get_shadow_buffer (gint32 drawable_ID)
 }
 
 /**
- * gimp_drawable_get_format:
- * @drawable_ID: the ID of the #GimpDrawable to get the format for.
+ * picman_drawable_get_format:
+ * @drawable_ID: the ID of the #PicmanDrawable to get the format for.
  *
  * Returns the #Babl format of the drawable.
  *
  * Return value: The #Babl format.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  */
 const Babl *
-gimp_drawable_get_format (gint32 drawable_ID)
+picman_drawable_get_format (gint32 drawable_ID)
 {
   static GHashTable *palette_formats = NULL;
   const Babl *format     = NULL;
-  gchar      *format_str = _gimp_drawable_get_format (drawable_ID);
+  gchar      *format_str = _picman_drawable_get_format (drawable_ID);
 
   if (format_str)
     {
-      if (gimp_drawable_is_indexed (drawable_ID))
+      if (picman_drawable_is_indexed (drawable_ID))
         {
-          gint32      image_ID = gimp_item_get_image (drawable_ID);
+          gint32      image_ID = picman_item_get_image (drawable_ID);
           guchar     *colormap;
           gint        n_colors;
 
-          colormap = gimp_image_get_colormap (image_ID, &n_colors);
+          colormap = picman_image_get_colormap (image_ID, &n_colors);
 
           if (!palette_formats)
             palette_formats = g_hash_table_new (g_str_hash, g_str_equal);
@@ -775,7 +775,7 @@ gimp_drawable_get_format (gint32 drawable_ID)
                                    (gpointer) babl_get_name (palette_alpha),
                                    (gpointer) palette_alpha);
 
-              if (gimp_drawable_has_alpha (drawable_ID))
+              if (picman_drawable_has_alpha (drawable_ID))
                 format = palette_alpha;
               else
                 format = palette;

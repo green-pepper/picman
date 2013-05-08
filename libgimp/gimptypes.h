@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimptypes.h
+ * picmantypes.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,25 +18,25 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TYPES_H__
-#define __GIMP_TYPES_H__
+#ifndef __PICMAN_TYPES_H__
+#define __PICMAN_TYPES_H__
 
-#include <libgimpbase/gimpbasetypes.h>
+#include <libpicmanbase/picmanbasetypes.h>
 
 G_BEGIN_DECLS
 
 /* For information look into the html documentation */
 
 
-typedef struct _GimpPlugInInfo  GimpPlugInInfo;
-typedef struct _GimpTile        GimpTile;
-typedef struct _GimpDrawable    GimpDrawable;
-typedef struct _GimpPixelRgn    GimpPixelRgn;
-typedef struct _GimpParamDef    GimpParamDef;
-typedef struct _GimpParamRegion GimpParamRegion;
-typedef union  _GimpParamData   GimpParamData;
-typedef struct _GimpParam       GimpParam;
+typedef struct _PicmanPlugInInfo  PicmanPlugInInfo;
+typedef struct _PicmanTile        PicmanTile;
+typedef struct _PicmanDrawable    PicmanDrawable;
+typedef struct _PicmanPixelRgn    PicmanPixelRgn;
+typedef struct _PicmanParamDef    PicmanParamDef;
+typedef struct _PicmanParamRegion PicmanParamRegion;
+typedef union  _PicmanParamData   PicmanParamData;
+typedef struct _PicmanParam       PicmanParam;
 
 G_END_DECLS
 
-#endif /* __GIMP_TYPES_H__ */
+#endif /* __PICMAN_TYPES_H__ */

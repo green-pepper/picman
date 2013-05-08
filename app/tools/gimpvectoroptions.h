@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,29 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VECTOR_OPTIONS_H__
-#define __GIMP_VECTOR_OPTIONS_H__
+#ifndef __PICMAN_VECTOR_OPTIONS_H__
+#define __PICMAN_VECTOR_OPTIONS_H__
 
 
-#include "core/gimptooloptions.h"
+#include "core/picmantooloptions.h"
 
 
-#define GIMP_TYPE_VECTOR_OPTIONS            (gimp_vector_options_get_type ())
-#define GIMP_VECTOR_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_VECTOR_OPTIONS, GimpVectorOptions))
-#define GIMP_VECTOR_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_VECTOR_OPTIONS, GimpVectorOptionsClass))
-#define GIMP_IS_VECTOR_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_VECTOR_OPTIONS))
-#define GIMP_IS_VECTOR_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_VECTOR_OPTIONS))
-#define GIMP_VECTOR_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_VECTOR_OPTIONS, GimpVectorOptionsClass))
+#define PICMAN_TYPE_VECTOR_OPTIONS            (picman_vector_options_get_type ())
+#define PICMAN_VECTOR_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_VECTOR_OPTIONS, PicmanVectorOptions))
+#define PICMAN_VECTOR_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_VECTOR_OPTIONS, PicmanVectorOptionsClass))
+#define PICMAN_IS_VECTOR_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_VECTOR_OPTIONS))
+#define PICMAN_IS_VECTOR_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_VECTOR_OPTIONS))
+#define PICMAN_VECTOR_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_VECTOR_OPTIONS, PicmanVectorOptionsClass))
 
 
-typedef struct _GimpVectorOptions    GimpVectorOptions;
-typedef struct _GimpToolOptionsClass GimpVectorOptionsClass;
+typedef struct _PicmanVectorOptions    PicmanVectorOptions;
+typedef struct _PicmanToolOptionsClass PicmanVectorOptionsClass;
 
-struct _GimpVectorOptions
+struct _PicmanVectorOptions
 {
-  GimpToolOptions  parent_instance;
+  PicmanToolOptions  parent_instance;
 
-  GimpVectorMode   edit_mode;
+  PicmanVectorMode   edit_mode;
   gboolean         polygonal;
 
   /*  options gui  */
@@ -46,9 +46,9 @@ struct _GimpVectorOptions
 };
 
 
-GType       gimp_vector_options_get_type (void) G_GNUC_CONST;
+GType       picman_vector_options_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_vector_options_gui      (GimpToolOptions *tool_options);
+GtkWidget * picman_vector_options_gui      (PicmanToolOptions *tool_options);
 
 
-#endif  /*  __GIMP_VECTOR_OPTIONS_H__  */
+#endif  /*  __PICMAN_VECTOR_OPTIONS_H__  */

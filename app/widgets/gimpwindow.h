@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpwindow.h
+ * picmanwindow.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,38 +17,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_WINDOW_H__
-#define __GIMP_WINDOW_H__
+#ifndef __PICMAN_WINDOW_H__
+#define __PICMAN_WINDOW_H__
 
 
-#define GIMP_TYPE_WINDOW            (gimp_window_get_type ())
-#define GIMP_WINDOW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_WINDOW, GimpWindow))
-#define GIMP_WINDOW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_WINDOW, GimpWindowClass))
-#define GIMP_IS_WINDOW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_WINDOW))
-#define GIMP_IS_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_WINDOW))
-#define GIMP_WINDOW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_WINDOW, GimpWindowClass))
+#define PICMAN_TYPE_WINDOW            (picman_window_get_type ())
+#define PICMAN_WINDOW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_WINDOW, PicmanWindow))
+#define PICMAN_WINDOW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_WINDOW, PicmanWindowClass))
+#define PICMAN_IS_WINDOW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_WINDOW))
+#define PICMAN_IS_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_WINDOW))
+#define PICMAN_WINDOW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_WINDOW, PicmanWindowClass))
 
 
-typedef struct _GimpWindowClass GimpWindowClass;
+typedef struct _PicmanWindowClass PicmanWindowClass;
 
-struct _GimpWindow
+struct _PicmanWindow
 {
   GtkWindow  parent_instance;
 
   GtkWidget *primary_focus_widget;
 };
 
-struct _GimpWindowClass
+struct _PicmanWindowClass
 {
   GtkWindowClass  parent_class;
 };
 
 
-GType       gimp_window_get_type                 (void) G_GNUC_CONST;
+GType       picman_window_get_type                 (void) G_GNUC_CONST;
 
-void        gimp_window_set_primary_focus_widget (GimpWindow *window,
+void        picman_window_set_primary_focus_widget (PicmanWindow *window,
                                                   GtkWidget  *primary_focus);
-GtkWidget * gimp_window_get_primary_focus_widget (GimpWindow *window);
+GtkWidget * picman_window_get_primary_focus_widget (PicmanWindow *window);
 
 
-#endif /* __GIMP_WINDOW_H__ */
+#endif /* __PICMAN_WINDOW_H__ */

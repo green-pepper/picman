@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpscalebutton.c
- * Copyright (C) 2008 Sven Neumann <sven@gimp.org>
+ * picmanscalebutton.c
+ * Copyright (C) 2008 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,32 +24,32 @@
 
 #include "widgets-types.h"
 
-#include "gimpscalebutton.h"
+#include "picmanscalebutton.h"
 
 
-static void      gimp_scale_button_value_changed  (GtkScaleButton  *button,
+static void      picman_scale_button_value_changed  (GtkScaleButton  *button,
                                                    gdouble          value);
-static void      gimp_scale_button_update_tooltip (GimpScaleButton *button);
-static gboolean  gimp_scale_button_image_expose   (GtkWidget       *widget,
+static void      picman_scale_button_update_tooltip (PicmanScaleButton *button);
+static gboolean  picman_scale_button_image_expose   (GtkWidget       *widget,
                                                    GdkEventExpose  *event,
-                                                   GimpScaleButton *button);
+                                                   PicmanScaleButton *button);
 
 
-G_DEFINE_TYPE (GimpScaleButton, gimp_scale_button, GTK_TYPE_SCALE_BUTTON)
+G_DEFINE_TYPE (PicmanScaleButton, picman_scale_button, GTK_TYPE_SCALE_BUTTON)
 
-#define parent_class gimp_scale_button_parent_class
+#define parent_class picman_scale_button_parent_class
 
 
 static void
-gimp_scale_button_class_init (GimpScaleButtonClass *klass)
+picman_scale_button_class_init (PicmanScaleButtonClass *klass)
 {
   GtkScaleButtonClass *button_class = GTK_SCALE_BUTTON_CLASS (klass);
 
-  button_class->value_changed = gimp_scale_button_value_changed;
+  button_class->value_changed = picman_scale_button_value_changed;
 }
 
 static void
-gimp_scale_button_init (GimpScaleButton *button)
+picman_scale_button_init (PicmanScaleButton *button)
 {
   GtkWidget *image = gtk_bin_get_child (GTK_BIN (button));
   GtkWidget *plusminus;
@@ -63,29 +63,29 @@ gimp_scale_button_init (GimpScaleButton *button)
   gtk_widget_set_no_show_all (plusminus, TRUE);
 
   g_signal_connect (image, "expose-event",
-                    G_CALLBACK (gimp_scale_button_image_expose),
+                    G_CALLBACK (picman_scale_button_image_expose),
                     button);
 
   /* GtkScaleButton doesn't emit "value-changed" when the adjustment changes */
   g_signal_connect (button, "notify::adjustment",
-                    G_CALLBACK (gimp_scale_button_update_tooltip),
+                    G_CALLBACK (picman_scale_button_update_tooltip),
                     NULL);
 
-  gimp_scale_button_update_tooltip (button);
+  picman_scale_button_update_tooltip (button);
 }
 
 static void
-gimp_scale_button_value_changed (GtkScaleButton *button,
+picman_scale_button_value_changed (GtkScaleButton *button,
                                  gdouble         value)
 {
   if (GTK_SCALE_BUTTON_CLASS (parent_class)->value_changed)
     GTK_SCALE_BUTTON_CLASS (parent_class)->value_changed (button, value);
 
-  gimp_scale_button_update_tooltip (GIMP_SCALE_BUTTON (button));
+  picman_scale_button_update_tooltip (PICMAN_SCALE_BUTTON (button));
 }
 
 static void
-gimp_scale_button_update_tooltip (GimpScaleButton *button)
+picman_scale_button_update_tooltip (PicmanScaleButton *button)
 {
   GtkAdjustment *adj;
   gchar         *text;
@@ -110,9 +110,9 @@ gimp_scale_button_update_tooltip (GimpScaleButton *button)
 }
 
 static gboolean
-gimp_scale_button_image_expose (GtkWidget       *widget,
+picman_scale_button_image_expose (GtkWidget       *widget,
                                 GdkEventExpose  *event,
-                                GimpScaleButton *button)
+                                PicmanScaleButton *button)
 {
   GtkStyle      *style = gtk_widget_get_style (widget);
   GtkAllocation  allocation;
@@ -182,7 +182,7 @@ gimp_scale_button_image_expose (GtkWidget       *widget,
 }
 
 GtkWidget *
-gimp_scale_button_new (gdouble value,
+picman_scale_button_new (gdouble value,
                        gdouble min,
                        gdouble max)
 {
@@ -194,7 +194,7 @@ gimp_scale_button_new (gdouble value,
   step = (max - min) / 10.0;
   adj  = gtk_adjustment_new (value, min, max, step, step, 0);
 
-  return g_object_new (GIMP_TYPE_SCALE_BUTTON,
+  return g_object_new (PICMAN_TYPE_SCALE_BUTTON,
                        "orientation", GTK_ORIENTATION_HORIZONTAL,
                        "adjustment",  adj,
                        "size",        GTK_ICON_SIZE_MENU,

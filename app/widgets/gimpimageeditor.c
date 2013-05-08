@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,47 +22,47 @@
 
 #include "widgets-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
 
-#include "gimpdocked.h"
-#include "gimpimageeditor.h"
-#include "gimpuimanager.h"
+#include "picmandocked.h"
+#include "picmanimageeditor.h"
+#include "picmanuimanager.h"
 
 
-static void   gimp_image_editor_docked_iface_init (GimpDockedInterface *iface);
+static void   picman_image_editor_docked_iface_init (PicmanDockedInterface *iface);
 
-static void   gimp_image_editor_set_context    (GimpDocked       *docked,
-                                                GimpContext      *context);
+static void   picman_image_editor_set_context    (PicmanDocked       *docked,
+                                                PicmanContext      *context);
 
-static void   gimp_image_editor_dispose        (GObject          *object);
+static void   picman_image_editor_dispose        (GObject          *object);
 
-static void   gimp_image_editor_real_set_image (GimpImageEditor  *editor,
-                                                GimpImage        *image);
-static void   gimp_image_editor_image_flush    (GimpImage        *image,
+static void   picman_image_editor_real_set_image (PicmanImageEditor  *editor,
+                                                PicmanImage        *image);
+static void   picman_image_editor_image_flush    (PicmanImage        *image,
                                                 gboolean          invalidate_preview,
-                                                GimpImageEditor  *editor);
+                                                PicmanImageEditor  *editor);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpImageEditor, gimp_image_editor, GIMP_TYPE_EDITOR,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_DOCKED,
-                                                gimp_image_editor_docked_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanImageEditor, picman_image_editor, PICMAN_TYPE_EDITOR,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_DOCKED,
+                                                picman_image_editor_docked_iface_init))
 
-#define parent_class gimp_image_editor_parent_class
+#define parent_class picman_image_editor_parent_class
 
 
 static void
-gimp_image_editor_class_init (GimpImageEditorClass *klass)
+picman_image_editor_class_init (PicmanImageEditorClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->dispose = gimp_image_editor_dispose;
+  object_class->dispose = picman_image_editor_dispose;
 
-  klass->set_image      = gimp_image_editor_real_set_image;
+  klass->set_image      = picman_image_editor_real_set_image;
 }
 
 static void
-gimp_image_editor_init (GimpImageEditor *editor)
+picman_image_editor_init (PicmanImageEditor *editor)
 {
   editor->image = NULL;
 
@@ -70,22 +70,22 @@ gimp_image_editor_init (GimpImageEditor *editor)
 }
 
 static void
-gimp_image_editor_docked_iface_init (GimpDockedInterface *iface)
+picman_image_editor_docked_iface_init (PicmanDockedInterface *iface)
 {
-  iface->set_context = gimp_image_editor_set_context;
+  iface->set_context = picman_image_editor_set_context;
 }
 
 static void
-gimp_image_editor_set_context (GimpDocked  *docked,
-                               GimpContext *context)
+picman_image_editor_set_context (PicmanDocked  *docked,
+                               PicmanContext *context)
 {
-  GimpImageEditor *editor = GIMP_IMAGE_EDITOR (docked);
-  GimpImage       *image  = NULL;
+  PicmanImageEditor *editor = PICMAN_IMAGE_EDITOR (docked);
+  PicmanImage       *image  = NULL;
 
   if (editor->context)
     {
       g_signal_handlers_disconnect_by_func (editor->context,
-                                            gimp_image_editor_set_image,
+                                            picman_image_editor_set_image,
                                             editor);
 
       g_object_unref (editor->context);
@@ -98,40 +98,40 @@ gimp_image_editor_set_context (GimpDocked  *docked,
       g_object_ref (editor->context);
 
       g_signal_connect_swapped (context, "image-changed",
-                                G_CALLBACK (gimp_image_editor_set_image),
+                                G_CALLBACK (picman_image_editor_set_image),
                                 editor);
 
-      image = gimp_context_get_image (context);
+      image = picman_context_get_image (context);
     }
 
-  gimp_image_editor_set_image (editor, image);
+  picman_image_editor_set_image (editor, image);
 }
 
 static void
-gimp_image_editor_dispose (GObject *object)
+picman_image_editor_dispose (GObject *object)
 {
-  GimpImageEditor *editor = GIMP_IMAGE_EDITOR (object);
+  PicmanImageEditor *editor = PICMAN_IMAGE_EDITOR (object);
 
   if (editor->image)
-    gimp_image_editor_set_image (editor, NULL);
+    picman_image_editor_set_image (editor, NULL);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_image_editor_real_set_image (GimpImageEditor *editor,
-                                  GimpImage       *image)
+picman_image_editor_real_set_image (PicmanImageEditor *editor,
+                                  PicmanImage       *image)
 {
   if (editor->image)
     g_signal_handlers_disconnect_by_func (editor->image,
-                                          gimp_image_editor_image_flush,
+                                          picman_image_editor_image_flush,
                                           editor);
 
   editor->image = image;
 
   if (editor->image)
     g_signal_connect (editor->image, "flush",
-                      G_CALLBACK (gimp_image_editor_image_flush),
+                      G_CALLBACK (picman_image_editor_image_flush),
                       editor);
 
   gtk_widget_set_sensitive (GTK_WIDGET (editor), image != NULL);
@@ -141,26 +141,26 @@ gimp_image_editor_real_set_image (GimpImageEditor *editor,
 /*  public functions  */
 
 void
-gimp_image_editor_set_image (GimpImageEditor *editor,
-                             GimpImage       *image)
+picman_image_editor_set_image (PicmanImageEditor *editor,
+                             PicmanImage       *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE_EDITOR (editor));
-  g_return_if_fail (image == NULL || GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE_EDITOR (editor));
+  g_return_if_fail (image == NULL || PICMAN_IS_IMAGE (image));
 
   if (image != editor->image)
     {
-      GIMP_IMAGE_EDITOR_GET_CLASS (editor)->set_image (editor, image);
+      PICMAN_IMAGE_EDITOR_GET_CLASS (editor)->set_image (editor, image);
 
-      if (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)))
-        gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                                gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+      if (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)))
+        picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                                picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
     }
 }
 
-GimpImage *
-gimp_image_editor_get_image (GimpImageEditor *editor)
+PicmanImage *
+picman_image_editor_get_image (PicmanImageEditor *editor)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE_EDITOR (editor), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE_EDITOR (editor), NULL);
 
   return editor->image;
 }
@@ -169,11 +169,11 @@ gimp_image_editor_get_image (GimpImageEditor *editor)
 /*  private functions  */
 
 static void
-gimp_image_editor_image_flush (GimpImage       *image,
+picman_image_editor_image_flush (PicmanImage       *image,
                                gboolean         invalidate_preview,
-                               GimpImageEditor *editor)
+                               PicmanImageEditor *editor)
 {
-  if (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)))
-    gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                            gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+  if (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)))
+    picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                            picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
 }

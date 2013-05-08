@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpenumlabel.c
- * Copyright (C) 2005  Sven Neumann <sven@gimp.org>
+ * picmanenumlabel.c
+ * Copyright (C) 2005  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,16 +23,16 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpenumlabel.h"
+#include "picmanenumlabel.h"
 
 
 /**
- * SECTION: gimpenumlabel
- * @title: GimpEnumLabel
+ * SECTION: picmanenumlabel
+ * @title: PicmanEnumLabel
  * @short_description: A #GtkLabel subclass that displays an enum value.
  *
  * A #GtkLabel subclass that displays an enum value.
@@ -47,67 +47,67 @@ enum
 };
 
 
-static void   gimp_enum_label_finalize     (GObject      *object);
-static void   gimp_enum_label_get_property (GObject      *object,
+static void   picman_enum_label_finalize     (GObject      *object);
+static void   picman_enum_label_get_property (GObject      *object,
                                             guint         property_id,
                                             GValue       *value,
                                             GParamSpec   *pspec);
-static void   gimp_enum_label_set_property (GObject      *object,
+static void   picman_enum_label_set_property (GObject      *object,
                                             guint         property_id,
                                             const GValue *value,
                                             GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpEnumLabel, gimp_enum_label, GTK_TYPE_LABEL)
+G_DEFINE_TYPE (PicmanEnumLabel, picman_enum_label, GTK_TYPE_LABEL)
 
-#define parent_class gimp_enum_label_parent_class
+#define parent_class picman_enum_label_parent_class
 
 
 static void
-gimp_enum_label_class_init (GimpEnumLabelClass *klass)
+picman_enum_label_class_init (PicmanEnumLabelClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize     = gimp_enum_label_finalize;
-  object_class->get_property = gimp_enum_label_get_property;
-  object_class->set_property = gimp_enum_label_set_property;
+  object_class->finalize     = picman_enum_label_finalize;
+  object_class->get_property = picman_enum_label_get_property;
+  object_class->set_property = picman_enum_label_set_property;
 
   /**
-   * GimpEnumLabel:enum-type:
+   * PicmanEnumLabel:enum-type:
    *
    * The #GType of the enum.
    *
-   * Since: GIMP 2.8
+   * Since: PICMAN 2.8
    **/
   g_object_class_install_property (object_class, PROP_ENUM_TYPE,
                                    g_param_spec_gtype ("enum-type", NULL, NULL,
                                                        G_TYPE_NONE,
-                                                       GIMP_PARAM_READWRITE |
+                                                       PICMAN_PARAM_READWRITE |
                                                        G_PARAM_CONSTRUCT_ONLY));
 
   /**
-   * GimpEnumLabel:enum-value:
+   * PicmanEnumLabel:enum-value:
    *
    * The value to display.
    *
-   * Since: GIMP 2.8
+   * Since: PICMAN 2.8
    **/
   g_object_class_install_property (object_class, PROP_ENUM_VALUE,
                                    g_param_spec_int ("enum-value", NULL, NULL,
                                                      G_MININT, G_MAXINT, 0,
-                                                     GIMP_PARAM_WRITABLE |
+                                                     PICMAN_PARAM_WRITABLE |
                                                      G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_enum_label_init (GimpEnumLabel *enum_label)
+picman_enum_label_init (PicmanEnumLabel *enum_label)
 {
 }
 
 static void
-gimp_enum_label_finalize (GObject *object)
+picman_enum_label_finalize (GObject *object)
 {
-  GimpEnumLabel *enum_label = GIMP_ENUM_LABEL (object);
+  PicmanEnumLabel *enum_label = PICMAN_ENUM_LABEL (object);
 
   if (enum_label->enum_class)
     g_type_class_unref (enum_label->enum_class);
@@ -116,12 +116,12 @@ gimp_enum_label_finalize (GObject *object)
 }
 
 static void
-gimp_enum_label_get_property (GObject    *object,
+picman_enum_label_get_property (GObject    *object,
                               guint       property_id,
                               GValue     *value,
                               GParamSpec *pspec)
 {
-  GimpEnumLabel *label = GIMP_ENUM_LABEL (object);
+  PicmanEnumLabel *label = PICMAN_ENUM_LABEL (object);
 
   switch (property_id)
     {
@@ -139,12 +139,12 @@ gimp_enum_label_get_property (GObject    *object,
 }
 
 static void
-gimp_enum_label_set_property (GObject      *object,
+picman_enum_label_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  GimpEnumLabel *label = GIMP_ENUM_LABEL (object);
+  PicmanEnumLabel *label = PICMAN_ENUM_LABEL (object);
 
   switch (property_id)
     {
@@ -153,7 +153,7 @@ gimp_enum_label_set_property (GObject      *object,
       break;
 
     case PROP_ENUM_VALUE:
-      gimp_enum_label_set_value (label, g_value_get_int (value));
+      picman_enum_label_set_value (label, g_value_get_int (value));
       break;
 
     default:
@@ -163,42 +163,42 @@ gimp_enum_label_set_property (GObject      *object,
 }
 
 /**
- * gimp_enum_label_new:
+ * picman_enum_label_new:
  * @enum_type: the #GType of an enum.
  * @value:
  *
- * Return value: a new #GimpEnumLabel.
+ * Return value: a new #PicmanEnumLabel.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_enum_label_new (GType enum_type,
+picman_enum_label_new (GType enum_type,
                      gint  value)
 {
   g_return_val_if_fail (G_TYPE_IS_ENUM (enum_type), NULL);
 
-  return g_object_new (GIMP_TYPE_ENUM_LABEL,
+  return g_object_new (PICMAN_TYPE_ENUM_LABEL,
                        "enum-type",  enum_type,
                        "enum-value", value,
                        NULL);
 }
 
 /**
- * gimp_enum_label_set_value
- * @label: a #GimpEnumLabel
+ * picman_enum_label_set_value
+ * @label: a #PicmanEnumLabel
  * @value:
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_enum_label_set_value (GimpEnumLabel *label,
+picman_enum_label_set_value (PicmanEnumLabel *label,
                            gint           value)
 {
   const gchar *desc;
 
-  g_return_if_fail (GIMP_IS_ENUM_LABEL (label));
+  g_return_if_fail (PICMAN_IS_ENUM_LABEL (label));
 
-  if (! gimp_enum_get_value (G_TYPE_FROM_CLASS (label->enum_class), value,
+  if (! picman_enum_get_value (G_TYPE_FROM_CLASS (label->enum_class), value,
                              NULL, NULL, &desc, NULL))
     {
       g_warning ("%s: %d is not valid for enum of type '%s'",

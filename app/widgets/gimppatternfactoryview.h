@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppatternfactoryview.h
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmanpatternfactoryview.h
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,41 +18,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PATTERN_FACTORY_VIEW_H__
-#define __GIMP_PATTERN_FACTORY_VIEW_H__
+#ifndef __PICMAN_PATTERN_FACTORY_VIEW_H__
+#define __PICMAN_PATTERN_FACTORY_VIEW_H__
 
-#include "gimpdatafactoryview.h"
-
-
-#define GIMP_TYPE_PATTERN_FACTORY_VIEW            (gimp_pattern_factory_view_get_type ())
-#define GIMP_PATTERN_FACTORY_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PATTERN_FACTORY_VIEW, GimpPatternFactoryView))
-#define GIMP_PATTERN_FACTORY_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PATTERN_FACTORY_VIEW, GimpPatternFactoryViewClass))
-#define GIMP_IS_PATTERN_FACTORY_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PATTERN_FACTORY_VIEW))
-#define GIMP_IS_PATTERN_FACTORY_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PATTERN_FACTORY_VIEW))
-#define GIMP_PATTERN_FACTORY_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PATTERN_FACTORY_VIEW, GimpPatternFactoryViewClass))
+#include "picmandatafactoryview.h"
 
 
-typedef struct _GimpPatternFactoryViewClass  GimpPatternFactoryViewClass;
+#define PICMAN_TYPE_PATTERN_FACTORY_VIEW            (picman_pattern_factory_view_get_type ())
+#define PICMAN_PATTERN_FACTORY_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PATTERN_FACTORY_VIEW, PicmanPatternFactoryView))
+#define PICMAN_PATTERN_FACTORY_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PATTERN_FACTORY_VIEW, PicmanPatternFactoryViewClass))
+#define PICMAN_IS_PATTERN_FACTORY_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PATTERN_FACTORY_VIEW))
+#define PICMAN_IS_PATTERN_FACTORY_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PATTERN_FACTORY_VIEW))
+#define PICMAN_PATTERN_FACTORY_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PATTERN_FACTORY_VIEW, PicmanPatternFactoryViewClass))
 
-struct _GimpPatternFactoryView
+
+typedef struct _PicmanPatternFactoryViewClass  PicmanPatternFactoryViewClass;
+
+struct _PicmanPatternFactoryView
 {
-  GimpDataFactoryView  parent_instance;
+  PicmanDataFactoryView  parent_instance;
 };
 
-struct _GimpPatternFactoryViewClass
+struct _PicmanPatternFactoryViewClass
 {
-  GimpDataFactoryViewClass  parent_class;
+  PicmanDataFactoryViewClass  parent_class;
 };
 
 
-GType       gimp_pattern_factory_view_get_type (void) G_GNUC_CONST;
+GType       picman_pattern_factory_view_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_pattern_factory_view_new      (GimpViewType     view_type,
-                                                GimpDataFactory *factory,
-                                                GimpContext     *context,
+GtkWidget * picman_pattern_factory_view_new      (PicmanViewType     view_type,
+                                                PicmanDataFactory *factory,
+                                                PicmanContext     *context,
                                                 gint             view_size,
                                                 gint             view_border_width,
-                                                GimpMenuFactory *menu_factory);
+                                                PicmanMenuFactory *menu_factory);
 
 
-#endif  /*  __GIMP_PATTERN_FACTORY_VIEW_H__  */
+#endif  /*  __PICMAN_PATTERN_FACTORY_VIEW_H__  */

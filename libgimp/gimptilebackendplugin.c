@@ -1,5 +1,5 @@
-/* gimptilebackendtilemanager.c
- * Copyright (C) 2012 Øyvind Kolås <pippin@gimp.org>
+/* picmantilebackendtilemanager.c
+ * Copyright (C) 2012 Øyvind Kolås <pippin@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,26 +22,26 @@
 
 #include <gegl.h>
 
-#define GIMP_DISABLE_DEPRECATION_WARNINGS
+#define PICMAN_DISABLE_DEPRECATION_WARNINGS
 
-#include "gimp.h"
-#include "gimptilebackendplugin.h"
-
-
-#define TILE_WIDTH  gimp_tile_width()
-#define TILE_HEIGHT gimp_tile_width()
+#include "picman.h"
+#include "picmantilebackendplugin.h"
 
 
-struct _GimpTileBackendPluginPrivate
+#define TILE_WIDTH  picman_tile_width()
+#define TILE_HEIGHT picman_tile_width()
+
+
+struct _PicmanTileBackendPluginPrivate
 {
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gboolean      shadow;
   gint          mul;
 };
 
 
 static gint
-gimp_gegl_tile_mul (void)
+picman_gegl_tile_mul (void)
 {
   static gint     mul    = 2;
   static gboolean inited = FALSE;
@@ -51,8 +51,8 @@ gimp_gegl_tile_mul (void)
 
   inited = TRUE;
 
-  if (g_getenv ("GIMP_GEGL_TILE_MUL"))
-    mul = atoi (g_getenv ("GIMP_GEGL_TILE_MUL"));
+  if (g_getenv ("PICMAN_GEGL_TILE_MUL"))
+    mul = atoi (g_getenv ("PICMAN_GEGL_TILE_MUL"));
 
   if (mul < 1)
     mul = 1;
@@ -60,87 +60,87 @@ gimp_gegl_tile_mul (void)
   return mul;
 }
 
-static void     gimp_tile_backend_plugin_finalize (GObject         *object);
-static gpointer gimp_tile_backend_plugin_command  (GeglTileSource  *tile_store,
+static void     picman_tile_backend_plugin_finalize (GObject         *object);
+static gpointer picman_tile_backend_plugin_command  (GeglTileSource  *tile_store,
                                                    GeglTileCommand  command,
                                                    gint             x,
                                                    gint             y,
                                                    gint             z,
                                                    gpointer         data);
 
-static void       gimp_tile_write_mul (GimpTileBackendPlugin *backend_plugin,
+static void       picman_tile_write_mul (PicmanTileBackendPlugin *backend_plugin,
                                        gint                   x,
                                        gint                   y,
                                        guchar                *source);
 
-static GeglTile * gimp_tile_read_mul (GimpTileBackendPlugin *backend_plugin,
+static GeglTile * picman_tile_read_mul (PicmanTileBackendPlugin *backend_plugin,
                                       gint                   x,
                                       gint                   y);
 
 
-G_DEFINE_TYPE (GimpTileBackendPlugin, _gimp_tile_backend_plugin,
+G_DEFINE_TYPE (PicmanTileBackendPlugin, _picman_tile_backend_plugin,
                GEGL_TYPE_TILE_BACKEND)
 
-#define parent_class _gimp_tile_backend_plugin_parent_class
+#define parent_class _picman_tile_backend_plugin_parent_class
 
 
 static void
-_gimp_tile_backend_plugin_class_init (GimpTileBackendPluginClass *klass)
+_picman_tile_backend_plugin_class_init (PicmanTileBackendPluginClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize = gimp_tile_backend_plugin_finalize;
+  object_class->finalize = picman_tile_backend_plugin_finalize;
 
-  g_type_class_add_private (klass, sizeof (GimpTileBackendPluginPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanTileBackendPluginPrivate));
 
-  gimp_tile_cache_ntiles (64);
+  picman_tile_cache_ntiles (64);
 }
 
 static void
-_gimp_tile_backend_plugin_init (GimpTileBackendPlugin *backend)
+_picman_tile_backend_plugin_init (PicmanTileBackendPlugin *backend)
 {
   GeglTileSource *source = GEGL_TILE_SOURCE (backend);
 
   backend->priv = G_TYPE_INSTANCE_GET_PRIVATE (backend,
-                                               GIMP_TYPE_TILE_BACKEND_PLUGIN,
-                                               GimpTileBackendPluginPrivate);
+                                               PICMAN_TYPE_TILE_BACKEND_PLUGIN,
+                                               PicmanTileBackendPluginPrivate);
 
-  source->command = gimp_tile_backend_plugin_command;
+  source->command = picman_tile_backend_plugin_command;
 }
 
 static void
-gimp_tile_backend_plugin_finalize (GObject *object)
+picman_tile_backend_plugin_finalize (GObject *object)
 {
-  GimpTileBackendPlugin *backend = GIMP_TILE_BACKEND_PLUGIN (object);
+  PicmanTileBackendPlugin *backend = PICMAN_TILE_BACKEND_PLUGIN (object);
 
   if (backend->priv->drawable) /* This also causes a flush */
-    gimp_drawable_detach (backend->priv->drawable);
+    picman_drawable_detach (backend->priv->drawable);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static gpointer
-gimp_tile_backend_plugin_command (GeglTileSource  *tile_store,
+picman_tile_backend_plugin_command (GeglTileSource  *tile_store,
                                   GeglTileCommand  command,
                                   gint             x,
                                   gint             y,
                                   gint             z,
                                   gpointer         data)
 {
-  GimpTileBackendPlugin *backend_plugin = GIMP_TILE_BACKEND_PLUGIN (tile_store);
+  PicmanTileBackendPlugin *backend_plugin = PICMAN_TILE_BACKEND_PLUGIN (tile_store);
 
   switch (command)
     {
     case GEGL_TILE_GET:
-      return gimp_tile_read_mul (backend_plugin, x, y);
+      return picman_tile_read_mul (backend_plugin, x, y);
 
     case GEGL_TILE_SET:
-      gimp_tile_write_mul (backend_plugin, x, y, gegl_tile_get_data (data));
+      picman_tile_write_mul (backend_plugin, x, y, gegl_tile_get_data (data));
       gegl_tile_mark_as_stored (data);
       break;
 
     case GEGL_TILE_FLUSH:
-      gimp_drawable_flush (backend_plugin->priv->drawable);
+      picman_drawable_flush (backend_plugin->priv->drawable);
       break;
 
     default:
@@ -151,11 +151,11 @@ gimp_tile_backend_plugin_command (GeglTileSource  *tile_store,
 }
 
 static GeglTile *
-gimp_tile_read_mul (GimpTileBackendPlugin *backend_plugin,
+picman_tile_read_mul (PicmanTileBackendPlugin *backend_plugin,
                     gint                   x,
                     gint                   y)
 {
-  GimpTileBackendPluginPrivate *priv    = backend_plugin->priv;
+  PicmanTileBackendPluginPrivate *priv    = backend_plugin->priv;
   GeglTileBackend              *backend = GEGL_TILE_BACKEND (backend_plugin);
   GeglTile                     *tile;
   gint                          tile_size;
@@ -174,35 +174,35 @@ gimp_tile_read_mul (GimpTileBackendPlugin *backend_plugin,
     {
       for (v = 0; v < mul; v++)
         {
-          GimpTile *gimp_tile;
+          PicmanTile *picman_tile;
 
           if (x + u >= priv->drawable->ntile_cols ||
               y + v >= priv->drawable->ntile_rows)
             continue;
 
-          gimp_tile = gimp_drawable_get_tile (priv->drawable,
+          picman_tile = picman_drawable_get_tile (priv->drawable,
                                               priv->shadow,
                                               y + v, x + u);
-          gimp_tile_ref (gimp_tile);
+          picman_tile_ref (picman_tile);
 
           {
-            gint ewidth           = gimp_tile->ewidth;
-            gint eheight          = gimp_tile->eheight;
-            gint bpp              = gimp_tile->bpp;
+            gint ewidth           = picman_tile->ewidth;
+            gint eheight          = picman_tile->eheight;
+            gint bpp              = picman_tile->bpp;
             gint tile_stride      = mul * TILE_WIDTH * bpp;
-            gint gimp_tile_stride = ewidth * bpp;
+            gint picman_tile_stride = ewidth * bpp;
             gint row;
 
             for (row = 0; row < eheight; row++)
               {
                 memcpy (tile_data + (row + TILE_HEIGHT * v) *
                         tile_stride + u * TILE_WIDTH * bpp,
-                        ((gchar *) gimp_tile->data) + row * gimp_tile_stride,
-                        gimp_tile_stride);
+                        ((gchar *) picman_tile->data) + row * picman_tile_stride,
+                        picman_tile_stride);
               }
           }
 
-          gimp_tile_unref (gimp_tile, FALSE);
+          picman_tile_unref (picman_tile, FALSE);
         }
     }
 
@@ -210,12 +210,12 @@ gimp_tile_read_mul (GimpTileBackendPlugin *backend_plugin,
 }
 
 static void
-gimp_tile_write_mul (GimpTileBackendPlugin *backend_plugin,
+picman_tile_write_mul (PicmanTileBackendPlugin *backend_plugin,
                      gint                   x,
                      gint                   y,
                      guchar                *source)
 {
-  GimpTileBackendPluginPrivate *priv = backend_plugin->priv;
+  PicmanTileBackendPluginPrivate *priv = backend_plugin->priv;
   gint                          u, v;
   gint                          mul = priv->mul;
 
@@ -226,57 +226,57 @@ gimp_tile_write_mul (GimpTileBackendPlugin *backend_plugin,
     {
       for (u = 0; u < mul; u++)
         {
-          GimpTile *gimp_tile;
+          PicmanTile *picman_tile;
 
           if (x + u >= priv->drawable->ntile_cols ||
               y + v >= priv->drawable->ntile_rows)
             continue;
 
-          gimp_tile = gimp_drawable_get_tile (priv->drawable,
+          picman_tile = picman_drawable_get_tile (priv->drawable,
                                               priv->shadow,
                                               y+v, x+u);
-          gimp_tile_ref (gimp_tile);
+          picman_tile_ref (picman_tile);
 
           {
-            gint ewidth           = gimp_tile->ewidth;
-            gint eheight          = gimp_tile->eheight;
-            gint bpp              = gimp_tile->bpp;
+            gint ewidth           = picman_tile->ewidth;
+            gint eheight          = picman_tile->eheight;
+            gint bpp              = picman_tile->bpp;
             gint tile_stride      = mul * TILE_WIDTH * bpp;
-            gint gimp_tile_stride = ewidth * bpp;
+            gint picman_tile_stride = ewidth * bpp;
             gint row;
 
             for (row = 0; row < eheight; row++)
-              memcpy (((gchar *)gimp_tile->data) + row * gimp_tile_stride,
+              memcpy (((gchar *)picman_tile->data) + row * picman_tile_stride,
                       source + (row + v * TILE_HEIGHT) *
                       tile_stride + u * TILE_WIDTH * bpp,
-                      gimp_tile_stride);
+                      picman_tile_stride);
           }
 
-          gimp_tile_unref (gimp_tile, TRUE);
+          picman_tile_unref (picman_tile, TRUE);
         }
     }
 }
 
 GeglTileBackend *
-_gimp_tile_backend_plugin_new (GimpDrawable *drawable,
+_picman_tile_backend_plugin_new (PicmanDrawable *drawable,
                                gint          shadow)
 {
   GeglTileBackend       *backend;
-  GimpTileBackendPlugin *backend_plugin;
+  PicmanTileBackendPlugin *backend_plugin;
   const Babl            *format;
-  gint                   width  = gimp_drawable_width (drawable->drawable_id);
-  gint                   height = gimp_drawable_height (drawable->drawable_id);
-  gint                   mul    = gimp_gegl_tile_mul ();
+  gint                   width  = picman_drawable_width (drawable->drawable_id);
+  gint                   height = picman_drawable_height (drawable->drawable_id);
+  gint                   mul    = picman_gegl_tile_mul ();
 
-  format = gimp_drawable_get_format (drawable->drawable_id);
+  format = picman_drawable_get_format (drawable->drawable_id);
 
-  backend = g_object_new (GIMP_TYPE_TILE_BACKEND_PLUGIN,
+  backend = g_object_new (PICMAN_TYPE_TILE_BACKEND_PLUGIN,
                           "tile-width",  TILE_WIDTH  * mul,
                           "tile-height", TILE_HEIGHT * mul,
                           "format",      format,
                           NULL);
 
-  backend_plugin = GIMP_TILE_BACKEND_PLUGIN (backend);
+  backend_plugin = PICMAN_TILE_BACKEND_PLUGIN (backend);
 
   backend_plugin->priv->drawable = drawable;
   backend_plugin->priv->mul      = mul;

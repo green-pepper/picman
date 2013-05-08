@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,12 +16,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_COLOR_H_INSIDE__) && !defined (GIMP_COLOR_COMPILATION)
-#error "Only <libgimpcolor/gimpcolor.h> can be included directly."
+#if !defined (__PICMAN_COLOR_H_INSIDE__) && !defined (PICMAN_COLOR_COMPILATION)
+#error "Only <libpicmancolor/picmancolor.h> can be included directly."
 #endif
 
-#ifndef __GIMP_CMYK_H__
-#define __GIMP_CMYK_H__
+#ifndef __PICMAN_CMYK_H__
+#define __PICMAN_CMYK_H__
 
 G_BEGIN_DECLS
 
@@ -30,42 +30,42 @@ G_BEGIN_DECLS
 
 
 /*
- * GIMP_TYPE_CMYK
+ * PICMAN_TYPE_CMYK
  */
 
-#define GIMP_TYPE_CMYK       (gimp_cmyk_get_type ())
+#define PICMAN_TYPE_CMYK       (picman_cmyk_get_type ())
 
-GType   gimp_cmyk_get_type   (void) G_GNUC_CONST;
+GType   picman_cmyk_get_type   (void) G_GNUC_CONST;
 
-void    gimp_cmyk_set        (GimpCMYK       *cmyk,
+void    picman_cmyk_set        (PicmanCMYK       *cmyk,
                               gdouble         cyan,
                               gdouble         magenta,
                               gdouble         yellow,
                               gdouble         black);
-void    gimp_cmyk_set_uchar  (GimpCMYK       *cmyk,
+void    picman_cmyk_set_uchar  (PicmanCMYK       *cmyk,
                               guchar          cyan,
                               guchar          magenta,
                               guchar          yellow,
                               guchar          black);
-void    gimp_cmyk_get_uchar  (const GimpCMYK *cmyk,
+void    picman_cmyk_get_uchar  (const PicmanCMYK *cmyk,
                               guchar         *cyan,
                               guchar         *magenta,
                               guchar         *yellow,
                               guchar         *black);
 
-void    gimp_cmyka_set       (GimpCMYK       *cmyka,
+void    picman_cmyka_set       (PicmanCMYK       *cmyka,
                               gdouble         cyan,
                               gdouble         magenta,
                               gdouble         yellow,
                               gdouble         black,
                               gdouble         alpha);
-void    gimp_cmyka_set_uchar (GimpCMYK       *cmyka,
+void    picman_cmyka_set_uchar (PicmanCMYK       *cmyka,
                               guchar          cyan,
                               guchar          magenta,
                               guchar          yellow,
                               guchar          black,
                               guchar          alpha);
-void    gimp_cmyka_get_uchar (const GimpCMYK *cmyka,
+void    picman_cmyka_get_uchar (const PicmanCMYK *cmyka,
                               guchar         *cyan,
                               guchar         *magenta,
                               guchar         *yellow,
@@ -75,4 +75,4 @@ void    gimp_cmyka_get_uchar (const GimpCMYK *cmyka,
 
 G_END_DECLS
 
-#endif  /* __GIMP_CMYK_H__ */
+#endif  /* __PICMAN_CMYK_H__ */

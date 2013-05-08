@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpstroke-new.c
- * Copyright (C) 2006 Simon Budig  <simon@gimp.org>
+ * picmanstroke-new.c
+ * Copyright (C) 2006 Simon Budig  <simon@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VECTORS_NEW_H__
-#define __GIMP_VECTORS_NEW_H__
+#ifndef __PICMAN_VECTORS_NEW_H__
+#define __PICMAN_VECTORS_NEW_H__
 
 
-GimpStroke * gimp_stroke_new_from_coords (GimpVectorsStrokeType  type,
-                                          const GimpCoords      *coords,
+PicmanStroke * picman_stroke_new_from_coords (PicmanVectorsStrokeType  type,
+                                          const PicmanCoords      *coords,
                                           gint                   n_coords,
                                           gboolean               closed);
 
 
-#endif /* __GIMP_VECTORS_NEW_H__ */
+#endif /* __PICMAN_VECTORS_NEW_H__ */

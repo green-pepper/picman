@@ -1,9 +1,9 @@
-# Translation of gimp-script-fu to Croatiann
+# Translation of picman-script-fu to Croatiann
 # Copyright (C) Croatiann team
 # Translators: Automatski Prijevod <>,Denis Lackovic <delacko@fly.srk.fer.hr>,Ivan Jankovic <rbrrneck@gmx.net>,Nikola Planinac <>,pr pr <delacko@192.168.0.1>,Robert Sedak <robert.sedak@sk.tel.hr>,
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu 0\n"
+"Project-Id-Version: picman-script-fu 0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-12-28 15:42+0100\n"
 "PO-Revision-Date: 2004-03-20 14:50+CET\n"
@@ -116,17 +116,17 @@ msgid "(none)"
 msgstr ""
 
 #: plug-ins/script-fu/script-fu-interface.c:1058
-#: plug-ins/dbbrowser/gimpprocview.c:198
+#: plug-ins/dbbrowser/picmanprocview.c:198
 msgid "Author:"
 msgstr "Autor:"
 
 #: plug-ins/script-fu/script-fu-interface.c:1065
-#: plug-ins/dbbrowser/gimpprocview.c:220
+#: plug-ins/dbbrowser/picmanprocview.c:220
 msgid "Copyright:"
 msgstr "Autorska prava:"
 
 #: plug-ins/script-fu/script-fu-interface.c:1072
-#: plug-ins/dbbrowser/gimpprocview.c:209
+#: plug-ins/dbbrowser/picmanprocview.c:209
 msgid "Date:"
 msgstr "Datum:"
 
@@ -176,76 +176,76 @@ msgstr ""
 msgid "_Refresh Scripts"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:128
-#: plug-ins/dbbrowser/gimpprocbrowser.c:142
+#: plug-ins/dbbrowser/picmanprocbrowser.c:128
+#: plug-ins/dbbrowser/picmanprocbrowser.c:142
 msgid "Procedure Browser"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:132
-#: plug-ins/dbbrowser/gimpprocbrowser.c:146
+#: plug-ins/dbbrowser/picmanprocbrowser.c:132
+#: plug-ins/dbbrowser/picmanprocbrowser.c:146
 msgid "Search by _Name"
 msgstr "_Traži po imenu"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:133
-#: plug-ins/dbbrowser/gimpprocbrowser.c:147
+#: plug-ins/dbbrowser/picmanprocbrowser.c:133
+#: plug-ins/dbbrowser/picmanprocbrowser.c:147
 msgid "Search by _Blurb"
 msgstr "_Traži po Opisu"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:224
+#: plug-ins/dbbrowser/picmanprocbrowser.c:224
 msgid "_Search:"
 msgstr "Traži :"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:386
+#: plug-ins/dbbrowser/picmanprocbrowser.c:386
 msgid "Searching by name - please wait"
 msgstr "Tražim po imenu — molim, pričekajte"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:410
+#: plug-ins/dbbrowser/picmanprocbrowser.c:410
 msgid "Searching by blurb - please wait"
 msgstr "Tražim  — molim, pričekajte"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:421
+#: plug-ins/dbbrowser/picmanprocbrowser.c:421
 msgid "Searching - please wait"
 msgstr "Tražim — molim pričekajte"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:428
+#: plug-ins/dbbrowser/picmanprocbrowser.c:428
 msgid "1 Procedure"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:430
+#: plug-ins/dbbrowser/picmanprocbrowser.c:430
 #, c-format
 msgid "%d Procedures"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:476
+#: plug-ins/dbbrowser/picmanprocbrowser.c:476
 msgid "No matches"
 msgstr "Bez rezultata"
 
-#: plug-ins/dbbrowser/gimpprocview.c:133
+#: plug-ins/dbbrowser/picmanprocview.c:133
 #, fuzzy
 msgid "Parameters"
 msgstr "Promjer"
 
-#: plug-ins/dbbrowser/gimpprocview.c:146
+#: plug-ins/dbbrowser/picmanprocview.c:146
 msgid "Return Values"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:159
+#: plug-ins/dbbrowser/picmanprocview.c:159
 msgid "Additional Information"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:319
-msgid "Internal GIMP procedure"
+#: plug-ins/dbbrowser/picmanprocview.c:319
+msgid "Internal PICMAN procedure"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:320
-msgid "GIMP Plug-In"
+#: plug-ins/dbbrowser/picmanprocview.c:320
+msgid "PICMAN Plug-In"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:321
-msgid "GIMP Extension"
+#: plug-ins/dbbrowser/picmanprocview.c:321
+msgid "PICMAN Extension"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:322
+#: plug-ins/dbbrowser/picmanprocview.c:322
 msgid "Temporary Procedure"
 msgstr ""
 
@@ -341,8 +341,8 @@ msgstr "Standardne postavke Bumpmap"
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm.h:6
 #: plug-ins/script-fu/scripts/crystal-logo.scm.h:6
 #: plug-ins/script-fu/scripts/frosty-logo.scm.h:5
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:4
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:3
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:4
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:3
 #: plug-ins/script-fu/scripts/glossy.scm.h:8
 #: plug-ins/script-fu/scripts/glowing-logo.scm.h:5
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:8
@@ -381,8 +381,8 @@ msgstr "Pismo"
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm.h:7
 #: plug-ins/script-fu/scripts/crystal-logo.scm.h:7
 #: plug-ins/script-fu/scripts/frosty-logo.scm.h:6
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:5
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:4
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:5
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:4
 #: plug-ins/script-fu/scripts/glossy.scm.h:9
 #: plug-ins/script-fu/scripts/glowing-logo.scm.h:6
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:9
@@ -456,8 +456,8 @@ msgstr "Polumjer Sjene Zamućenja"
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm.h:10
 #: plug-ins/script-fu/scripts/crystal-logo.scm.h:8
 #: plug-ins/script-fu/scripts/frosty-logo.scm.h:7
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:12
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:14
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:12
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:14
 #: plug-ins/script-fu/scripts/glossy.scm.h:19
 #: plug-ins/script-fu/scripts/glowing-logo.scm.h:8
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:11
@@ -508,7 +508,7 @@ msgstr "<Toolbox>/Proširenja/Script-Fu/Uzorci/Zemlja..."
 #: plug-ins/script-fu/scripts/comic-logo.scm.h:3
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm.h:3
 #: plug-ins/script-fu/scripts/frosty-logo.scm.h:3
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:2
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:2
 #: plug-ins/script-fu/scripts/glossy.scm.h:3
 #: plug-ins/script-fu/scripts/glowing-logo.scm.h:3
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:3
@@ -739,8 +739,8 @@ msgstr "Popunjavanje"
 #: plug-ins/script-fu/scripts/beveled-button.scm.h:10
 #: plug-ins/script-fu/scripts/beveled-pattern-button.scm.h:8
 #: plug-ins/script-fu/scripts/blended-logo.scm.h:18
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:13
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:15
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:13
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:15
 #: plug-ins/script-fu/scripts/i26-gunya2.scm.h:8
 #: plug-ins/script-fu/scripts/news-text.scm.h:11
 #: plug-ins/script-fu/scripts/pupi-button.scm.h:14
@@ -849,7 +849,7 @@ msgid "H_eading..."
 msgstr ""
 
 #: plug-ins/script-fu/scripts/beveled-pattern-hrule.scm.h:2
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:5
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:5
 #: plug-ins/script-fu/scripts/gradient-example.scm.h:4
 #: plug-ins/script-fu/scripts/mkbrush.scm.h:4
 #: plug-ins/script-fu/scripts/swirltile.scm.h:7
@@ -922,7 +922,7 @@ msgstr "Prozirna Pozadina"
 #: plug-ins/script-fu/scripts/land.scm.h:3
 #: plug-ins/script-fu/scripts/lava.scm.h:2
 #: plug-ins/script-fu/scripts/rendermap.scm.h:4
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient"
 msgstr "Gradijent"
 
@@ -1170,7 +1170,7 @@ msgstr "Ofseti (pikseli * 2)"
 #: plug-ins/script-fu/scripts/grid-system.scm.h:1
 #: plug-ins/script-fu/scripts/lava.scm.h:1
 #: plug-ins/script-fu/scripts/line-nova.scm.h:1
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:1
 #, fuzzy
 msgid "<Image>/Script-Fu/Render"
 msgstr "<Image>/Script-Fu/Iscrtavanje/Lava..."
@@ -1360,17 +1360,17 @@ msgstr "Polumjer Zamućenja"
 #: plug-ins/script-fu/scripts/drop-shadow.scm.h:4
 #: plug-ins/script-fu/scripts/fuzzyborder.scm.h:5
 #: plug-ins/script-fu/scripts/perspective-shadow.scm.h:5
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:5
 msgid "Color"
 msgstr "Boja"
 
 #: plug-ins/script-fu/scripts/drop-shadow.scm.h:5
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:8
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:8
 msgid "Offset X"
 msgstr "Ofset X"
 
 #: plug-ins/script-fu/scripts/drop-shadow.scm.h:6
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:9
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:9
 msgid "Offset Y"
 msgstr "Ofset Y"
 
@@ -1581,79 +1581,79 @@ msgstr "Težina Sjene (%)"
 msgid "_Fuzzy Border..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:1
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:1
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:1
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:1
 #, fuzzy
-msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org"
-msgstr "<Toolbox>/Proširenja/Script-Fu/Web teme/Gimp.org/Veliko zaglavlje..."
+msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org"
+msgstr "<Toolbox>/Proširenja/Script-Fu/Web teme/Picman.org/Veliko zaglavlje..."
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:2
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:2
 #, fuzzy
 msgid "Autocrop"
 msgstr "AutoCrop"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:3
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:3
 #, fuzzy
 msgid "Dark color"
 msgstr "Tamna Boja"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:6
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:6
 #: plug-ins/script-fu/scripts/xach-effect.scm.h:9
 #, fuzzy
 msgid "Highlight color"
 msgstr "Boja Osvjetljenog"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:7
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:6
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:7
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:6
 #, fuzzy
 msgid "Index image"
 msgstr "Indeksiraj Sliku"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:8
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:7
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:8
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:7
 #, fuzzy
 msgid "Number of colors"
 msgstr "Broj Boja"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:9
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:10
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:9
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:10
 #, fuzzy
 msgid "Remove background"
 msgstr "Ukloni Pozadinu"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:10
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:11
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:10
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:11
 #, fuzzy
 msgid "Select-by-color threshold"
 msgstr "Odaberi po Pragu boje"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:11
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:12
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:11
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:12
 #, fuzzy
 msgid "Shadow color"
 msgstr "Boja Sjene"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:14
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:14
 msgid "_Big Header..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:15
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:15
 msgid "_Small Header..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:13
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:13
 msgid "T_ube Sub-Button Label..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:16
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:16
 msgid "Tub_e Sub-Sub-Button Label..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:17
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:17
 msgid "_General Tube Labels..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:18
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:18
 msgid "_Tube Button Label..."
 msgstr ""
 
@@ -2345,135 +2345,135 @@ msgstr "Ajde s lijeva na Desno"
 msgid "_Spinning Globe..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Airbrush"
 msgstr "Zračni kist"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Brush"
 msgstr "Kist"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Circle"
 msgstr "Krug"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:6
 #, fuzzy
 msgid "Color method"
 msgstr "Metoda boje"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid ""
 "Draws Spirographs, Epitrochoids and Lissajous Curves. More info at http://"
-"netword.com/*spyrogimp"
+"netword.com/*spyropicman"
 msgstr ""
 "Iscrtaj spirografe, epitrohoide i Lissajousove krivulje. Više podataka na "
-"http://netword.com/*spyrogimp"
+"http://netword.com/*spyropicman"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Epitrochoid"
 msgstr "Epitrohoid"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Frame"
 msgstr "Okvir"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: Loop Sawtooth"
 msgstr "Preljevanje: ponavljaj sawtooth"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Gradient: Loop Triangle"
 msgstr "Preljevanje: ponavljajući trokut"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hexagon"
 msgstr "Šesterokut"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:14
 #, fuzzy
 msgid "Hole ratio"
 msgstr "Razmjer rupe"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:15
 #, fuzzy
 msgid "Inner teeth"
 msgstr "Unutrašnji zubi"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:16
 msgid "Lissajous"
 msgstr "Lissajouve krivulje"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Margin (pixels)"
 msgstr "Margina (piksela)"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:18
 #, fuzzy
 msgid "Outer teeth"
 msgstr "Vanjski zubi"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pencil"
 msgstr "Olovka"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:20
 msgid "Pentagon"
 msgstr "Pentagon"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:21
 msgid "Polygon: 10 sides"
 msgstr "Poligon: 10 stranica"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:22
 msgid "Polygon: 7 sides"
 msgstr "Poligon: 7 stranica"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:23
 msgid "Polygon: 8 sides"
 msgstr "Poligon: 8 stranica"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Polygon: 9 sides"
 msgstr "Poligon: 9 stranica"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Shape"
 msgstr "Oblik"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Solid Color"
 msgstr "Boja Podloge"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Spyrograph"
 msgstr "Spirograf"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:28
 msgid "Square"
 msgstr "Kvadrat"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:29
 #: plug-ins/script-fu/scripts/text-circle.scm.h:7
 #, fuzzy
 msgid "Start angle"
 msgstr "Početni Kut"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Tool"
 msgstr "Alat"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Triangle"
 msgstr "Trokut"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:32
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:32
 msgid "Type"
 msgstr "Tip"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:33
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:33
 #, fuzzy
-msgid "_Spyrogimp..."
+msgid "_Spyropicman..."
 msgstr "Spirograf"
 
 #: plug-ins/script-fu/scripts/starburst-logo.scm.h:4
@@ -2714,8 +2714,8 @@ msgstr ""
 
 #: plug-ins/script-fu/scripts/web-browser.scm.h:1
 #, fuzzy
-msgid "<Toolbox>/Help/The GIMP Online"
-msgstr "<Toolbox>/Pomoć/Gimp na mreži/Glavna _web stranica"
+msgid "<Toolbox>/Help/The PICMAN Online"
+msgstr "<Toolbox>/Pomoć/Picman na mreži/Glavna _web stranica"
 
 #: plug-ins/script-fu/scripts/web-browser.scm.h:2
 msgid "Plug-in _Registry"
@@ -2945,37 +2945,37 @@ msgstr ""
 
 #, fuzzy
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/_Small Header..."
-#~ msgstr "<Toolbox>/Proširenja/Script-Fu/Web teme/Gimp.org/Malo zaglavlje..."
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/_Small Header..."
+#~ msgstr "<Toolbox>/Proširenja/Script-Fu/Web teme/Picman.org/Malo zaglavlje..."
 
 #, fuzzy
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/T_ube Sub-"
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/T_ube Sub-"
 #~ "Button Label..."
 #~ msgstr ""
-#~ "<Toolbox>/Proširenja/Script-Fu/Web teme/Gimp.org/Oznaka drugog gumba...."
+#~ "<Toolbox>/Proširenja/Script-Fu/Web teme/Picman.org/Oznaka drugog gumba...."
 
 #, fuzzy
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/Tub_e Sub-Sub-"
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/Tub_e Sub-Sub-"
 #~ "Button Label..."
 #~ msgstr ""
-#~ "<Toolbox>/Proširenja/Script-Fu/Web Teme/Gimp.Org/Oznaka trećeg gumba..."
+#~ "<Toolbox>/Proširenja/Script-Fu/Web Teme/Picman.Org/Oznaka trećeg gumba..."
 
 #, fuzzy
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/_General Tube "
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/_General Tube "
 #~ "Labels..."
 #~ msgstr ""
-#~ "<Toolbox>/Proširenja/Script-Fu/Web teme/Gimp.org/Općte oznake za "
+#~ "<Toolbox>/Proširenja/Script-Fu/Web teme/Picman.org/Općte oznake za "
 #~ "valjkove..."
 
 #, fuzzy
 #~ msgid ""
-#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org/_Tube Button "
+#~ "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org/_Tube Button "
 #~ "Label..."
 #~ msgstr ""
-#~ "<Toolbox>/Proširenja/Script-Fu/Web teme/Gimp.org/Oznaka valjkastog "
+#~ "<Toolbox>/Proširenja/Script-Fu/Web teme/Picman.org/Oznaka valjkastog "
 #~ "gumba..."
 
 #~ msgid "<Image>/Script-Fu/Alpha to Logo/Glo_ssy..."
@@ -3067,8 +3067,8 @@ msgstr ""
 #~ msgid "<Image>/Script-Fu/Animators/_Spinning Globe..."
 #~ msgstr "<Image>/Script-Fu/Animatori/Rotirajući globus..."
 
-#~ msgid "<Image>/Script-Fu/Render/_Spyrogimp..."
-#~ msgstr "<Image>/Script-Fu/Iscrtavanje/_Spirogimp..."
+#~ msgid "<Image>/Script-Fu/Render/_Spyropicman..."
+#~ msgstr "<Image>/Script-Fu/Iscrtavanje/_Spiropicman..."
 
 #~ msgid "<Image>/Script-Fu/Alpha to Logo/Starb_urst..."
 #~ msgstr "<Image>/Script-Fu/Alfa u logo/Eksplozija zvijezde..."
@@ -3115,11 +3115,11 @@ msgstr ""
 #~ msgid "<Image>/Script-Fu/Animators/_Waves..."
 #~ msgstr "<Image>/Script-Fu/Animatori/Valovi..."
 
-#~ msgid "<Toolbox>/Help/The GIMP Online/Plug-in _Registry"
-#~ msgstr "<Toolbox>/Pomoć/Gimp na mreži/_Registar dodataka"
+#~ msgid "<Toolbox>/Help/The PICMAN Online/Plug-in _Registry"
+#~ msgstr "<Toolbox>/Pomoć/Picman na mreži/_Registar dodataka"
 
-#~ msgid "<Toolbox>/Help/The GIMP Online/_Developer Web Site"
-#~ msgstr "<Toolbox>/Pomoć/Gimp na mreži/Web stranica za _programere"
+#~ msgid "<Toolbox>/Help/The PICMAN Online/_Developer Web Site"
+#~ msgstr "<Toolbox>/Pomoć/Picman na mreži/Web stranica za _programere"
 
 #~ msgid "<Image>/Script-Fu/Shadow/_Xach-Effect..."
 #~ msgstr "<Image>/Script-Fu/Senka/_Xach-effect..."

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "tinyscheme/scheme-private.h"
 
@@ -39,7 +39,7 @@
 
 static gboolean   script_fu_script_param_init (SFScript        *script,
                                                gint             nparams,
-                                               const GimpParam *params,
+                                               const PicmanParam *params,
                                                SFArgType        type,
                                                gint             n);
 
@@ -168,10 +168,10 @@ script_fu_script_free (SFScript *script)
 
 void
 script_fu_script_install_proc (SFScript    *script,
-                               GimpRunProc  run_proc)
+                               PicmanRunProc  run_proc)
 {
   const gchar  *menu_label = NULL;
-  GimpParamDef *args;
+  PicmanParamDef *args;
   gint          i;
 
   g_return_if_fail (script != NULL);
@@ -181,117 +181,117 @@ script_fu_script_install_proc (SFScript    *script,
   if (strncmp (script->menu_label, "<None>", 6) != 0)
     menu_label = script->menu_label;
 
-  args = g_new0 (GimpParamDef, script->n_args + 1);
+  args = g_new0 (PicmanParamDef, script->n_args + 1);
 
-  args[0].type        = GIMP_PDB_INT32;
+  args[0].type        = PICMAN_PDB_INT32;
   args[0].name        = "run-mode";
   args[0].description = "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }";
 
   for (i = 0; i < script->n_args; i++)
     {
-      GimpPDBArgType  type = 0;
+      PicmanPDBArgType  type = 0;
       const gchar    *name = NULL;
 
       switch (script->args[i].type)
         {
         case SF_IMAGE:
-          type = GIMP_PDB_IMAGE;
+          type = PICMAN_PDB_IMAGE;
           name = "image";
           break;
 
         case SF_DRAWABLE:
-          type = GIMP_PDB_DRAWABLE;
+          type = PICMAN_PDB_DRAWABLE;
           name = "drawable";
           break;
 
         case SF_LAYER:
-          type = GIMP_PDB_LAYER;
+          type = PICMAN_PDB_LAYER;
           name = "layer";
           break;
 
         case SF_CHANNEL:
-          type = GIMP_PDB_CHANNEL;
+          type = PICMAN_PDB_CHANNEL;
           name = "channel";
           break;
 
         case SF_VECTORS:
-          type = GIMP_PDB_VECTORS;
+          type = PICMAN_PDB_VECTORS;
           name = "vectors";
           break;
 
         case SF_DISPLAY:
-          type = GIMP_PDB_DISPLAY;
+          type = PICMAN_PDB_DISPLAY;
           name = "display";
           break;
 
         case SF_COLOR:
-          type = GIMP_PDB_COLOR;
+          type = PICMAN_PDB_COLOR;
           name = "color";
           break;
 
         case SF_TOGGLE:
-          type = GIMP_PDB_INT32;
+          type = PICMAN_PDB_INT32;
           name = "toggle";
           break;
 
         case SF_VALUE:
-          type = GIMP_PDB_STRING;
+          type = PICMAN_PDB_STRING;
           name = "value";
           break;
 
         case SF_STRING:
         case SF_TEXT:
-          type = GIMP_PDB_STRING;
+          type = PICMAN_PDB_STRING;
           name = "string";
           break;
 
         case SF_ADJUSTMENT:
-          type = GIMP_PDB_FLOAT;
+          type = PICMAN_PDB_FLOAT;
           name = "value";
           break;
 
         case SF_FILENAME:
-          type = GIMP_PDB_STRING;
+          type = PICMAN_PDB_STRING;
           name = "filename";
           break;
 
         case SF_DIRNAME:
-          type = GIMP_PDB_STRING;
+          type = PICMAN_PDB_STRING;
           name = "dirname";
           break;
 
         case SF_FONT:
-          type = GIMP_PDB_STRING;
+          type = PICMAN_PDB_STRING;
           name = "font";
           break;
 
         case SF_PALETTE:
-          type = GIMP_PDB_STRING;
+          type = PICMAN_PDB_STRING;
           name = "palette";
           break;
 
         case SF_PATTERN:
-          type = GIMP_PDB_STRING;
+          type = PICMAN_PDB_STRING;
           name = "pattern";
           break;
 
         case SF_BRUSH:
-          type = GIMP_PDB_STRING;
+          type = PICMAN_PDB_STRING;
           name = "brush";
           break;
 
         case SF_GRADIENT:
-          type = GIMP_PDB_STRING;
+          type = PICMAN_PDB_STRING;
           name = "gradient";
           break;
 
         case SF_OPTION:
-          type = GIMP_PDB_INT32;
+          type = PICMAN_PDB_INT32;
           name = "option";
           break;
 
         case SF_ENUM:
-          type = GIMP_PDB_INT32;
+          type = PICMAN_PDB_INT32;
           name = "enum";
           break;
         }
@@ -301,7 +301,7 @@ script_fu_script_install_proc (SFScript    *script,
       args[i + 1].description = script->args[i].label;
     }
 
-  gimp_install_temp_proc (script->name,
+  picman_install_temp_proc (script->name,
                           script->blurb,
                           "",
                           script->author,
@@ -309,7 +309,7 @@ script_fu_script_install_proc (SFScript    *script,
                           script->date,
                           menu_label,
                           script->image_types,
-                          GIMP_TEMPORARY,
+                          PICMAN_TEMPORARY,
                           script->n_args + 1, 0,
                           args, NULL,
                           run_proc);
@@ -322,7 +322,7 @@ script_fu_script_uninstall_proc (SFScript *script)
 {
   g_return_if_fail (script != NULL);
 
-  gimp_uninstall_temp_proc (script->name);
+  picman_uninstall_temp_proc (script->name);
 }
 
 gchar *
@@ -334,7 +334,7 @@ script_fu_script_get_title (SFScript *script)
   g_return_val_if_fail (script != NULL, NULL);
 
   /* strip mnemonics from the menupath */
-  title = gimp_strip_uline (script->menu_label);
+  title = picman_strip_uline (script->menu_label);
 
   /* if this looks like a full menu path, use only the last part */
   if (title[0] == '<' && (tmp = strrchr (title, '/')) && tmp[1])
@@ -449,7 +449,7 @@ script_fu_script_reset (SFScript *script,
 gint
 script_fu_script_collect_standard_args (SFScript        *script,
                                         gint             n_params,
-                                        const GimpParam *params)
+                                        const PicmanParam *params)
 {
   gint params_consumed = 0;
 
@@ -525,7 +525,7 @@ script_fu_script_get_command (SFScript *script)
           {
             guchar r, g, b;
 
-            gimp_rgb_get_uchar (&arg_value->sfa_color, &r, &g, &b);
+            picman_rgb_get_uchar (&arg_value->sfa_color, &r, &g, &b);
             g_string_append_printf (s, "'(%d %d %d)",
                                     (gint) r, (gint) g, (gint) b);
           }
@@ -618,7 +618,7 @@ script_fu_script_get_command (SFScript *script)
 
 gchar *
 script_fu_script_get_command_from_params (SFScript        *script,
-                                          const GimpParam *params)
+                                          const PicmanParam *params)
 {
   GString *s;
   gint     i;
@@ -630,7 +630,7 @@ script_fu_script_get_command_from_params (SFScript        *script,
 
   for (i = 0; i < script->n_args; i++)
     {
-      const GimpParam *param = &params[i + 1];
+      const PicmanParam *param = &params[i + 1];
 
       g_string_append_c (s, ' ');
 
@@ -649,7 +649,7 @@ script_fu_script_get_command_from_params (SFScript        *script,
           {
             guchar r, g, b;
 
-            gimp_rgb_get_uchar (&param->data.d_color, &r, &g, &b);
+            picman_rgb_get_uchar (&param->data.d_color, &r, &g, &b);
             g_string_append_printf (s, "'(%d %d %d)",
                                     (gint) r, (gint) g, (gint) b);
           }
@@ -713,7 +713,7 @@ script_fu_script_get_command_from_params (SFScript        *script,
 static gboolean
 script_fu_script_param_init (SFScript        *script,
                              gint             nparams,
-                             const GimpParam *params,
+                             const PicmanParam *params,
                              SFArgType        type,
                              gint             n)
 {
@@ -724,7 +724,7 @@ script_fu_script_param_init (SFScript        *script,
       switch (type)
         {
         case SF_IMAGE:
-          if (params[n + 1].type == GIMP_PDB_IMAGE)
+          if (params[n + 1].type == PICMAN_PDB_IMAGE)
             {
               arg->value.sfa_image = params[n + 1].data.d_image;
               return TRUE;
@@ -732,7 +732,7 @@ script_fu_script_param_init (SFScript        *script,
           break;
 
         case SF_DRAWABLE:
-          if (params[n + 1].type == GIMP_PDB_DRAWABLE)
+          if (params[n + 1].type == PICMAN_PDB_DRAWABLE)
             {
               arg->value.sfa_drawable = params[n + 1].data.d_drawable;
               return TRUE;
@@ -740,7 +740,7 @@ script_fu_script_param_init (SFScript        *script,
           break;
 
         case SF_LAYER:
-          if (params[n + 1].type == GIMP_PDB_LAYER)
+          if (params[n + 1].type == PICMAN_PDB_LAYER)
             {
               arg->value.sfa_layer = params[n + 1].data.d_layer;
               return TRUE;
@@ -748,7 +748,7 @@ script_fu_script_param_init (SFScript        *script,
           break;
 
         case SF_CHANNEL:
-          if (params[n + 1].type == GIMP_PDB_CHANNEL)
+          if (params[n + 1].type == PICMAN_PDB_CHANNEL)
             {
               arg->value.sfa_channel = params[n + 1].data.d_channel;
               return TRUE;
@@ -756,7 +756,7 @@ script_fu_script_param_init (SFScript        *script,
           break;
 
         case SF_VECTORS:
-          if (params[n + 1].type == GIMP_PDB_VECTORS)
+          if (params[n + 1].type == PICMAN_PDB_VECTORS)
             {
               arg->value.sfa_vectors = params[n + 1].data.d_vectors;
               return TRUE;
@@ -764,7 +764,7 @@ script_fu_script_param_init (SFScript        *script,
           break;
 
         case SF_DISPLAY:
-          if (params[n + 1].type == GIMP_PDB_DISPLAY)
+          if (params[n + 1].type == PICMAN_PDB_DISPLAY)
             {
               arg->value.sfa_display = params[n + 1].data.d_display;
               return TRUE;

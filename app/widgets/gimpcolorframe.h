@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,33 +15,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COLOR_FRAME_H__
-#define __GIMP_COLOR_FRAME_H__
+#ifndef __PICMAN_COLOR_FRAME_H__
+#define __PICMAN_COLOR_FRAME_H__
 
 
-#define GIMP_COLOR_FRAME_ROWS 5
+#define PICMAN_COLOR_FRAME_ROWS 5
 
 
-#define GIMP_TYPE_COLOR_FRAME            (gimp_color_frame_get_type ())
-#define GIMP_COLOR_FRAME(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_FRAME, GimpColorFrame))
-#define GIMP_COLOR_FRAME_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_FRAME, GimpColorFrameClass))
-#define GIMP_IS_COLOR_FRAME(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_FRAME))
-#define GIMP_IS_COLOR_FRAME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_FRAME))
-#define GIMP_COLOR_FRAME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_FRAME, GimpColorFrameClass))
+#define PICMAN_TYPE_COLOR_FRAME            (picman_color_frame_get_type ())
+#define PICMAN_COLOR_FRAME(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_FRAME, PicmanColorFrame))
+#define PICMAN_COLOR_FRAME_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_FRAME, PicmanColorFrameClass))
+#define PICMAN_IS_COLOR_FRAME(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_FRAME))
+#define PICMAN_IS_COLOR_FRAME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_FRAME))
+#define PICMAN_COLOR_FRAME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_FRAME, PicmanColorFrameClass))
 
 
-typedef struct _GimpColorFrameClass GimpColorFrameClass;
+typedef struct _PicmanColorFrameClass PicmanColorFrameClass;
 
-struct _GimpColorFrame
+struct _PicmanColorFrame
 {
-  GimpFrame           parent_instance;
+  PicmanFrame           parent_instance;
 
   gboolean            sample_valid;
   const Babl         *sample_format;
-  GimpRGB             color;
+  PicmanRGB             color;
   gint                color_index;
 
-  GimpColorFrameMode  frame_mode;
+  PicmanColorFrameMode  frame_mode;
 
   gboolean            has_number;
   gint                number;
@@ -50,38 +50,38 @@ struct _GimpColorFrame
 
   GtkWidget          *menu;
   GtkWidget          *color_area;
-  GtkWidget          *name_labels[GIMP_COLOR_FRAME_ROWS];
-  GtkWidget          *value_labels[GIMP_COLOR_FRAME_ROWS];
+  GtkWidget          *name_labels[PICMAN_COLOR_FRAME_ROWS];
+  GtkWidget          *value_labels[PICMAN_COLOR_FRAME_ROWS];
 
   PangoLayout        *number_layout;
 };
 
-struct _GimpColorFrameClass
+struct _PicmanColorFrameClass
 {
-  GimpFrameClass      parent_class;
+  PicmanFrameClass      parent_class;
 };
 
 
-GType       gimp_color_frame_get_type    (void) G_GNUC_CONST;
+GType       picman_color_frame_get_type    (void) G_GNUC_CONST;
 
-GtkWidget * gimp_color_frame_new         (void);
+GtkWidget * picman_color_frame_new         (void);
 
-void        gimp_color_frame_set_mode           (GimpColorFrame     *frame,
-                                                 GimpColorFrameMode  mode);
-void        gimp_color_frame_set_has_number     (GimpColorFrame     *frame,
+void        picman_color_frame_set_mode           (PicmanColorFrame     *frame,
+                                                 PicmanColorFrameMode  mode);
+void        picman_color_frame_set_has_number     (PicmanColorFrame     *frame,
                                                  gboolean            has_number);
-void        gimp_color_frame_set_number         (GimpColorFrame     *frame,
+void        picman_color_frame_set_number         (PicmanColorFrame     *frame,
                                                  gint                number);
 
 
-void        gimp_color_frame_set_has_color_area (GimpColorFrame     *frame,
+void        picman_color_frame_set_has_color_area (PicmanColorFrame     *frame,
                                                  gboolean            has_color_area);
 
-void        gimp_color_frame_set_color          (GimpColorFrame     *frame,
+void        picman_color_frame_set_color          (PicmanColorFrame     *frame,
                                                  const Babl         *format,
-                                                 const GimpRGB      *color,
+                                                 const PicmanRGB      *color,
                                                  gint                color_index);
-void        gimp_color_frame_set_invalid        (GimpColorFrame     *frame);
+void        picman_color_frame_set_invalid        (PicmanColorFrame     *frame);
 
 
-#endif  /*  __GIMP_COLOR_FRAME_H__  */
+#endif  /*  __PICMAN_COLOR_FRAME_H__  */

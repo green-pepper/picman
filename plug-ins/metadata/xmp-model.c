@@ -1,6 +1,6 @@
 /* xmp-model.c - treeview model for XMP metadata
  *
- * Copyright (C) 2004-2005, Raphaël Quinet <raphael@gimp.org>
+ * Copyright (C) 2004-2005, Raphaël Quinet <raphael@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,9 +23,9 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #include "xmp-schemas.h"
 #include "xmp-parse.h"
@@ -68,7 +68,7 @@ xmp_model_class_init (XMPModelClass *klass)
 
   xmp_model_signals[PROPERTY_CHANGED] =
     g_signal_new ("property-changed",
-                  GIMP_TYPE_XMP_MODEL,
+                  PICMAN_TYPE_XMP_MODEL,
                   G_SIGNAL_DETAILED,
                   G_STRUCT_OFFSET (XMPModelClass, property_changed),
                   NULL, NULL,
@@ -163,7 +163,7 @@ xmp_model_finalize (GObject *object)
 XMPModel *
 xmp_model_new (void)
 {
-  return g_object_new (GIMP_TYPE_XMP_MODEL, NULL);
+  return g_object_new (PICMAN_TYPE_XMP_MODEL, NULL);
 }
 
 /**
@@ -1054,7 +1054,7 @@ xmp_model_property_changed (XMPModel     *xmp_model,
   gchar         *joined;
   const gchar   *property_name;
 
-  g_return_if_fail (GIMP_IS_XMP_MODEL (xmp_model));
+  g_return_if_fail (PICMAN_IS_XMP_MODEL (xmp_model));
   g_return_if_fail (iter != NULL);
 
   gtk_tree_model_get (GTK_TREE_MODEL (xmp_model), iter,

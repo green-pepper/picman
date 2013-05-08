@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2002 Spencer Kimball, Peter Mattis, and others
  *
- * gimppluginmanager-restore.c
+ * picmanpluginmanager-restore.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,116 +23,116 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "plug-in-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "pdb/gimppdb.h"
-#include "pdb/gimppdbcontext.h"
+#include "pdb/picmanpdb.h"
+#include "pdb/picmanpdbcontext.h"
 
-#include "gimpinterpreterdb.h"
-#include "gimpplugindef.h"
-#include "gimppluginmanager.h"
-#define __YES_I_NEED_GIMP_PLUG_IN_MANAGER_CALL__
-#include "gimppluginmanager-call.h"
-#include "gimppluginmanager-help-domain.h"
-#include "gimppluginmanager-locale-domain.h"
-#include "gimppluginmanager-restore.h"
-#include "gimppluginprocedure.h"
+#include "picmaninterpreterdb.h"
+#include "picmanplugindef.h"
+#include "picmanpluginmanager.h"
+#define __YES_I_NEED_PICMAN_PLUG_IN_MANAGER_CALL__
+#include "picmanpluginmanager-call.h"
+#include "picmanpluginmanager-help-domain.h"
+#include "picmanpluginmanager-locale-domain.h"
+#include "picmanpluginmanager-restore.h"
+#include "picmanpluginprocedure.h"
 #include "plug-in-rc.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void    gimp_plug_in_manager_search            (GimpPlugInManager      *manager,
-                                                       GimpInitStatusFunc      status_callback);
-static gchar * gimp_plug_in_manager_get_pluginrc      (GimpPlugInManager      *manager);
-static void    gimp_plug_in_manager_read_pluginrc     (GimpPlugInManager      *manager,
+static void    picman_plug_in_manager_search            (PicmanPlugInManager      *manager,
+                                                       PicmanInitStatusFunc      status_callback);
+static gchar * picman_plug_in_manager_get_pluginrc      (PicmanPlugInManager      *manager);
+static void    picman_plug_in_manager_read_pluginrc     (PicmanPlugInManager      *manager,
                                                        const gchar            *pluginrc,
-                                                       GimpInitStatusFunc      status_callback);
-static void    gimp_plug_in_manager_query_new         (GimpPlugInManager      *manager,
-                                                       GimpContext            *context,
-                                                       GimpInitStatusFunc      status_callback);
-static void    gimp_plug_in_manager_init_plug_ins     (GimpPlugInManager      *manager,
-                                                       GimpContext            *context,
-                                                       GimpInitStatusFunc      status_callback);
-static void    gimp_plug_in_manager_run_extensions    (GimpPlugInManager      *manager,
-                                                       GimpContext            *context,
-                                                       GimpInitStatusFunc      status_callback);
-static void    gimp_plug_in_manager_bind_text_domains (GimpPlugInManager      *manager);
-static void    gimp_plug_in_manager_add_from_file     (const GimpDatafileData *file_data,
+                                                       PicmanInitStatusFunc      status_callback);
+static void    picman_plug_in_manager_query_new         (PicmanPlugInManager      *manager,
+                                                       PicmanContext            *context,
+                                                       PicmanInitStatusFunc      status_callback);
+static void    picman_plug_in_manager_init_plug_ins     (PicmanPlugInManager      *manager,
+                                                       PicmanContext            *context,
+                                                       PicmanInitStatusFunc      status_callback);
+static void    picman_plug_in_manager_run_extensions    (PicmanPlugInManager      *manager,
+                                                       PicmanContext            *context,
+                                                       PicmanInitStatusFunc      status_callback);
+static void    picman_plug_in_manager_bind_text_domains (PicmanPlugInManager      *manager);
+static void    picman_plug_in_manager_add_from_file     (const PicmanDatafileData *file_data,
                                                        gpointer                data);
-static void    gimp_plug_in_manager_add_from_rc       (GimpPlugInManager      *manager,
-                                                       GimpPlugInDef          *plug_in_def);
-static void     gimp_plug_in_manager_add_to_db         (GimpPlugInManager      *manager,
-                                                        GimpContext            *context,
-                                                        GimpPlugInProcedure    *proc);
-static gint     gimp_plug_in_manager_file_proc_compare (gconstpointer           a,
+static void    picman_plug_in_manager_add_from_rc       (PicmanPlugInManager      *manager,
+                                                       PicmanPlugInDef          *plug_in_def);
+static void     picman_plug_in_manager_add_to_db         (PicmanPlugInManager      *manager,
+                                                        PicmanContext            *context,
+                                                        PicmanPlugInProcedure    *proc);
+static gint     picman_plug_in_manager_file_proc_compare (gconstpointer           a,
                                                         gconstpointer           b,
                                                         gpointer                data);
 
 
 
 void
-gimp_plug_in_manager_restore (GimpPlugInManager  *manager,
-                              GimpContext        *context,
-                              GimpInitStatusFunc  status_callback)
+picman_plug_in_manager_restore (PicmanPlugInManager  *manager,
+                              PicmanContext        *context,
+                              PicmanInitStatusFunc  status_callback)
 {
-  Gimp   *gimp;
+  Picman   *picman;
   gchar  *pluginrc;
   GSList *list;
   GError *error = NULL;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
   g_return_if_fail (status_callback != NULL);
 
-  gimp = manager->gimp;
+  picman = manager->picman;
 
-  /* need a GimpPDBContext for calling gimp_plug_in_manager_run_foo() */
-  context = gimp_pdb_context_new (gimp, context, TRUE);
+  /* need a PicmanPDBContext for calling picman_plug_in_manager_run_foo() */
+  context = picman_pdb_context_new (picman, context, TRUE);
 
   /* search for binaries in the plug-in directory path */
-  gimp_plug_in_manager_search (manager, status_callback);
+  picman_plug_in_manager_search (manager, status_callback);
 
   /* read the pluginrc file for cached data */
-  pluginrc = gimp_plug_in_manager_get_pluginrc (manager);
+  pluginrc = picman_plug_in_manager_get_pluginrc (manager);
 
-  gimp_plug_in_manager_read_pluginrc (manager, pluginrc, status_callback);
+  picman_plug_in_manager_read_pluginrc (manager, pluginrc, status_callback);
 
   /* query any plug-ins that changed since we last wrote out pluginrc */
-  gimp_plug_in_manager_query_new (manager, context, status_callback);
+  picman_plug_in_manager_query_new (manager, context, status_callback);
 
   /* initialize the plug-ins */
-  gimp_plug_in_manager_init_plug_ins (manager, context, status_callback);
+  picman_plug_in_manager_init_plug_ins (manager, context, status_callback);
 
   /* add the procedures to manager->plug_in_procedures */
   for (list = manager->plug_in_defs; list; list = list->next)
     {
-      GimpPlugInDef *plug_in_def = list->data;
+      PicmanPlugInDef *plug_in_def = list->data;
       GSList        *list2;
 
       for (list2 = plug_in_def->procedures; list2; list2 = list2->next)
         {
-          gimp_plug_in_manager_add_procedure (manager, list2->data);
+          picman_plug_in_manager_add_procedure (manager, list2->data);
         }
     }
 
   /* write the pluginrc file if necessary */
   if (manager->write_pluginrc)
     {
-      if (gimp->be_verbose)
-        g_print ("Writing '%s'\n", gimp_filename_to_utf8 (pluginrc));
+      if (picman->be_verbose)
+        g_print ("Writing '%s'\n", picman_filename_to_utf8 (pluginrc));
 
       if (! plug_in_rc_write (manager->plug_in_defs, pluginrc, &error))
         {
-          gimp_message_literal (gimp,
-				NULL, GIMP_MESSAGE_ERROR, error->message);
+          picman_message_literal (picman,
+				NULL, PICMAN_MESSAGE_ERROR, error->message);
           g_clear_error (&error);
         }
 
@@ -144,23 +144,23 @@ gimp_plug_in_manager_restore (GimpPlugInManager  *manager,
   /* create locale and help domain lists */
   for (list = manager->plug_in_defs; list; list = list->next)
     {
-      GimpPlugInDef *plug_in_def = list->data;
+      PicmanPlugInDef *plug_in_def = list->data;
 
       if (plug_in_def->locale_domain_name)
-        gimp_plug_in_manager_add_locale_domain (manager,
+        picman_plug_in_manager_add_locale_domain (manager,
                                                 plug_in_def->prog,
                                                 plug_in_def->locale_domain_name,
                                                 plug_in_def->locale_domain_path);
       else
         /* set the default plug-in locale domain */
-        gimp_plug_in_def_set_locale_domain (plug_in_def,
-                                            gimp_plug_in_manager_get_locale_domain (manager,
+        picman_plug_in_def_set_locale_domain (plug_in_def,
+                                            picman_plug_in_manager_get_locale_domain (manager,
                                                                                     plug_in_def->prog,
                                                                                     NULL),
                                             NULL);
 
       if (plug_in_def->help_domain_name)
-        gimp_plug_in_manager_add_help_domain (manager,
+        picman_plug_in_manager_add_help_domain (manager,
                                               plug_in_def->prog,
                                               plug_in_def->help_domain_name,
                                               plug_in_def->help_domain_uri);
@@ -171,26 +171,26 @@ gimp_plug_in_manager_restore (GimpPlugInManager  *manager,
   manager->plug_in_defs = NULL;
 
   /* bind plug-in text domains  */
-  gimp_plug_in_manager_bind_text_domains (manager);
+  picman_plug_in_manager_bind_text_domains (manager);
 
   /* add the plug-in procs to the procedure database */
   for (list = manager->plug_in_procedures; list; list = list->next)
     {
-      gimp_plug_in_manager_add_to_db (manager, context, list->data);
+      picman_plug_in_manager_add_to_db (manager, context, list->data);
     }
 
   /* sort the load, save and export procedures  */
   manager->load_procs =
     g_slist_sort_with_data (manager->load_procs,
-                            gimp_plug_in_manager_file_proc_compare, manager);
+                            picman_plug_in_manager_file_proc_compare, manager);
   manager->save_procs =
     g_slist_sort_with_data (manager->save_procs,
-                            gimp_plug_in_manager_file_proc_compare, manager);
+                            picman_plug_in_manager_file_proc_compare, manager);
   manager->export_procs =
     g_slist_sort_with_data (manager->export_procs,
-                            gimp_plug_in_manager_file_proc_compare, manager);
+                            picman_plug_in_manager_file_proc_compare, manager);
 
-  gimp_plug_in_manager_run_extensions (manager, context, status_callback);
+  picman_plug_in_manager_run_extensions (manager, context, status_callback);
 
   g_object_unref (context);
 }
@@ -198,8 +198,8 @@ gimp_plug_in_manager_restore (GimpPlugInManager  *manager,
 
 /* search for binaries in the plug-in directory path */
 static void
-gimp_plug_in_manager_search (GimpPlugInManager  *manager,
-                             GimpInitStatusFunc  status_callback)
+picman_plug_in_manager_search (PicmanPlugInManager  *manager,
+                             PicmanInitStatusFunc  status_callback)
 {
   gchar       *path;
   const gchar *pathext = g_getenv ("PATHEXT");
@@ -211,7 +211,7 @@ gimp_plug_in_manager_search (GimpPlugInManager  *manager,
     {
       gchar *exts;
 
-      exts = gimp_interpreter_db_get_extensions (manager->interpreter_db);
+      exts = picman_interpreter_db_get_extensions (manager->interpreter_db);
 
       if (exts)
         {
@@ -231,34 +231,34 @@ gimp_plug_in_manager_search (GimpPlugInManager  *manager,
   /* Give automatic tests a chance to use plug-ins from the build
    * dir
    */
-  path = g_strdup(g_getenv("GIMP_TESTING_PLUGINDIRS"));
+  path = g_strdup(g_getenv("PICMAN_TESTING_PLUGINDIRS"));
 
   if (! path) 
-    path = gimp_config_path_expand (manager->gimp->config->plug_in_path,
+    path = picman_config_path_expand (manager->picman->config->plug_in_path,
                                     TRUE, NULL);
 
-  gimp_datafiles_read_directories (path,
+  picman_datafiles_read_directories (path,
                                    G_FILE_TEST_IS_EXECUTABLE,
-                                   gimp_plug_in_manager_add_from_file,
+                                   picman_plug_in_manager_add_from_file,
                                    manager);
 
   g_free (path);
 }
 
 static gchar *
-gimp_plug_in_manager_get_pluginrc (GimpPlugInManager *manager)
+picman_plug_in_manager_get_pluginrc (PicmanPlugInManager *manager)
 {
-  Gimp  *gimp = manager->gimp;
+  Picman  *picman = manager->picman;
   gchar *pluginrc;
 
-  if (gimp->config->plug_in_rc_path)
+  if (picman->config->plug_in_rc_path)
     {
-      pluginrc = gimp_config_path_expand (gimp->config->plug_in_rc_path,
+      pluginrc = picman_config_path_expand (picman->config->plug_in_rc_path,
                                           TRUE, NULL);
 
       if (! g_path_is_absolute (pluginrc))
         {
-          gchar *str = g_build_filename (gimp_directory (), pluginrc, NULL);
+          gchar *str = g_build_filename (picman_directory (), pluginrc, NULL);
 
           g_free (pluginrc);
           pluginrc = str;
@@ -266,7 +266,7 @@ gimp_plug_in_manager_get_pluginrc (GimpPlugInManager *manager)
     }
   else
     {
-      pluginrc = gimp_personal_rc_file ("pluginrc");
+      pluginrc = picman_personal_rc_file ("pluginrc");
     }
 
   return pluginrc;
@@ -274,34 +274,34 @@ gimp_plug_in_manager_get_pluginrc (GimpPlugInManager *manager)
 
 /* read the pluginrc file for cached data */
 static void
-gimp_plug_in_manager_read_pluginrc (GimpPlugInManager  *manager,
+picman_plug_in_manager_read_pluginrc (PicmanPlugInManager  *manager,
                                     const gchar        *pluginrc,
-                                    GimpInitStatusFunc  status_callback)
+                                    PicmanInitStatusFunc  status_callback)
 {
   GSList *rc_defs;
   GError *error = NULL;
 
   status_callback (_("Resource configuration"),
-                   gimp_filename_to_utf8 (pluginrc), 0.0);
+                   picman_filename_to_utf8 (pluginrc), 0.0);
 
-  if (manager->gimp->be_verbose)
-    g_print ("Parsing '%s'\n", gimp_filename_to_utf8 (pluginrc));
+  if (manager->picman->be_verbose)
+    g_print ("Parsing '%s'\n", picman_filename_to_utf8 (pluginrc));
 
-  rc_defs = plug_in_rc_parse (manager->gimp, pluginrc, &error);
+  rc_defs = plug_in_rc_parse (manager->picman, pluginrc, &error);
 
   if (rc_defs)
     {
       GSList *list;
 
       for (list = rc_defs; list; list = g_slist_next (list))
-        gimp_plug_in_manager_add_from_rc (manager, list->data); /* consumes list->data */
+        picman_plug_in_manager_add_from_rc (manager, list->data); /* consumes list->data */
 
       g_slist_free (rc_defs);
     }
   else if (error)
     {
-      if (error->code != GIMP_CONFIG_ERROR_OPEN_ENOENT)
-        gimp_message_literal (manager->gimp, NULL, GIMP_MESSAGE_ERROR,
+      if (error->code != PICMAN_CONFIG_ERROR_OPEN_ENOENT)
+        picman_message_literal (manager->picman, NULL, PICMAN_MESSAGE_ERROR,
 			      error->message);
 
       g_clear_error (&error);
@@ -310,9 +310,9 @@ gimp_plug_in_manager_read_pluginrc (GimpPlugInManager  *manager,
 
 /* query any plug-ins that changed since we last wrote out pluginrc */
 static void
-gimp_plug_in_manager_query_new (GimpPlugInManager  *manager,
-                                GimpContext        *context,
-                                GimpInitStatusFunc  status_callback)
+picman_plug_in_manager_query_new (PicmanPlugInManager  *manager,
+                                PicmanContext        *context,
+                                PicmanInitStatusFunc  status_callback)
 {
   GSList *list;
   gint    n_plugins;
@@ -321,7 +321,7 @@ gimp_plug_in_manager_query_new (GimpPlugInManager  *manager,
 
   for (list = manager->plug_in_defs, n_plugins = 0; list; list = list->next)
     {
-      GimpPlugInDef *plug_in_def = list->data;
+      PicmanPlugInDef *plug_in_def = list->data;
 
       if (plug_in_def->needs_query)
         n_plugins++;
@@ -335,7 +335,7 @@ gimp_plug_in_manager_query_new (GimpPlugInManager  *manager,
 
       for (list = manager->plug_in_defs, nth = 0; list; list = list->next)
         {
-          GimpPlugInDef *plug_in_def = list->data;
+          PicmanPlugInDef *plug_in_def = list->data;
 
           if (plug_in_def->needs_query)
             {
@@ -346,11 +346,11 @@ gimp_plug_in_manager_query_new (GimpPlugInManager  *manager,
                                (gdouble) nth++ / (gdouble) n_plugins);
               g_free (basename);
 
-              if (manager->gimp->be_verbose)
+              if (manager->picman->be_verbose)
                 g_print ("Querying plug-in: '%s'\n",
-                         gimp_filename_to_utf8 (plug_in_def->prog));
+                         picman_filename_to_utf8 (plug_in_def->prog));
 
-              gimp_plug_in_manager_call_query (manager, context, plug_in_def);
+              picman_plug_in_manager_call_query (manager, context, plug_in_def);
             }
         }
     }
@@ -360,9 +360,9 @@ gimp_plug_in_manager_query_new (GimpPlugInManager  *manager,
 
 /* initialize the plug-ins */
 static void
-gimp_plug_in_manager_init_plug_ins (GimpPlugInManager  *manager,
-                                    GimpContext        *context,
-                                    GimpInitStatusFunc  status_callback)
+picman_plug_in_manager_init_plug_ins (PicmanPlugInManager  *manager,
+                                    PicmanContext        *context,
+                                    PicmanInitStatusFunc  status_callback)
 {
   GSList *list;
   gint    n_plugins;
@@ -371,7 +371,7 @@ gimp_plug_in_manager_init_plug_ins (GimpPlugInManager  *manager,
 
   for (list = manager->plug_in_defs, n_plugins = 0; list; list = list->next)
     {
-      GimpPlugInDef *plug_in_def = list->data;
+      PicmanPlugInDef *plug_in_def = list->data;
 
       if (plug_in_def->has_init)
         n_plugins++;
@@ -383,7 +383,7 @@ gimp_plug_in_manager_init_plug_ins (GimpPlugInManager  *manager,
 
       for (list = manager->plug_in_defs, nth = 0; list; list = list->next)
         {
-          GimpPlugInDef *plug_in_def = list->data;
+          PicmanPlugInDef *plug_in_def = list->data;
 
           if (plug_in_def->has_init)
             {
@@ -394,11 +394,11 @@ gimp_plug_in_manager_init_plug_ins (GimpPlugInManager  *manager,
                                (gdouble) nth++ / (gdouble) n_plugins);
               g_free (basename);
 
-              if (manager->gimp->be_verbose)
+              if (manager->picman->be_verbose)
                 g_print ("Initializing plug-in: '%s'\n",
-                         gimp_filename_to_utf8 (plug_in_def->prog));
+                         picman_filename_to_utf8 (plug_in_def->prog));
 
-              gimp_plug_in_manager_call_init (manager, context, plug_in_def);
+              picman_plug_in_manager_call_init (manager, context, plug_in_def);
             }
         }
     }
@@ -408,11 +408,11 @@ gimp_plug_in_manager_init_plug_ins (GimpPlugInManager  *manager,
 
 /* run automatically started extensions */
 static void
-gimp_plug_in_manager_run_extensions (GimpPlugInManager  *manager,
-                                     GimpContext        *context,
-                                     GimpInitStatusFunc  status_callback)
+picman_plug_in_manager_run_extensions (PicmanPlugInManager  *manager,
+                                     PicmanContext        *context,
+                                     PicmanInitStatusFunc  status_callback)
 {
-  Gimp   *gimp = manager->gimp;
+  Picman   *picman = manager->picman;
   GSList *list;
   GList  *extensions = NULL;
   gint    n_extensions;
@@ -420,11 +420,11 @@ gimp_plug_in_manager_run_extensions (GimpPlugInManager  *manager,
   /* build list of automatically started extensions */
   for (list = manager->plug_in_procedures; list; list = list->next)
     {
-      GimpPlugInProcedure *proc = list->data;
+      PicmanPlugInProcedure *proc = list->data;
 
       if (proc->prog                                         &&
-          GIMP_PROCEDURE (proc)->proc_type == GIMP_EXTENSION &&
-          GIMP_PROCEDURE (proc)->num_args  == 0)
+          PICMAN_PROCEDURE (proc)->proc_type == PICMAN_EXTENSION &&
+          PICMAN_PROCEDURE (proc)->num_args  == 0)
         {
           extensions = g_list_prepend (extensions, proc);
         }
@@ -443,27 +443,27 @@ gimp_plug_in_manager_run_extensions (GimpPlugInManager  *manager,
 
       for (list = extensions, nth = 0; list; list = g_list_next (list), nth++)
         {
-          GimpPlugInProcedure *proc = list->data;
-          GimpValueArray      *args;
+          PicmanPlugInProcedure *proc = list->data;
+          PicmanValueArray      *args;
           GError              *error = NULL;
 
-          if (gimp->be_verbose)
-            g_print ("Starting extension: '%s'\n", gimp_object_get_name (proc));
+          if (picman->be_verbose)
+            g_print ("Starting extension: '%s'\n", picman_object_get_name (proc));
 
-          status_callback (NULL, gimp_object_get_name (proc),
+          status_callback (NULL, picman_object_get_name (proc),
                            (gdouble) nth / (gdouble) n_extensions);
 
-          args = gimp_value_array_new (0);
+          args = picman_value_array_new (0);
 
-          gimp_procedure_execute_async (GIMP_PROCEDURE (proc),
-                                        gimp, context, NULL,
+          picman_procedure_execute_async (PICMAN_PROCEDURE (proc),
+                                        picman, context, NULL,
                                         args, NULL, &error);
 
-          gimp_value_array_unref (args);
+          picman_value_array_unref (args);
 
           if (error)
             {
-              gimp_message_literal (gimp, NULL, GIMP_MESSAGE_ERROR,
+              picman_message_literal (picman, NULL, PICMAN_MESSAGE_ERROR,
 				    error->message);
               g_clear_error (&error);
             }
@@ -476,14 +476,14 @@ gimp_plug_in_manager_run_extensions (GimpPlugInManager  *manager,
 }
 
 static void
-gimp_plug_in_manager_bind_text_domains (GimpPlugInManager *manager)
+picman_plug_in_manager_bind_text_domains (PicmanPlugInManager *manager)
 {
   gchar **locale_domains;
   gchar **locale_paths;
   gint    n_domains;
   gint    i;
 
-  n_domains = gimp_plug_in_manager_get_locale_domains (manager,
+  n_domains = picman_plug_in_manager_get_locale_domains (manager,
                                                        &locale_domains,
                                                        &locale_paths);
 
@@ -500,24 +500,24 @@ gimp_plug_in_manager_bind_text_domains (GimpPlugInManager *manager)
 }
 
 /**
- * gimp_plug_in_manager_ignore_plugin_basename:
+ * picman_plug_in_manager_ignore_plugin_basename:
  * @basename: Basename to test with
  *
  * Checks the environment variable
- * GIMP_TESTING_PLUGINDIRS_BASENAME_IGNORES for file basenames.
+ * PICMAN_TESTING_PLUGINDIRS_BASENAME_IGNORES for file basenames.
  *
- * Returns: %TRUE if @basename was in GIMP_TESTING_PLUGINDIRS_BASENAME_IGNORES
+ * Returns: %TRUE if @basename was in PICMAN_TESTING_PLUGINDIRS_BASENAME_IGNORES
  **/
 static gboolean
-gimp_plug_in_manager_ignore_plugin_basename (const gchar *plugin_basename)
+picman_plug_in_manager_ignore_plugin_basename (const gchar *plugin_basename)
 {
   const gchar *ignore_basenames_string;
   GList       *ignore_basenames;
   GList       *iter;
   gboolean     ignore = FALSE;
 
-  ignore_basenames_string = g_getenv("GIMP_TESTING_PLUGINDIRS_BASENAME_IGNORES");
-  ignore_basenames        = gimp_path_parse (ignore_basenames_string,
+  ignore_basenames_string = g_getenv("PICMAN_TESTING_PLUGINDIRS_BASENAME_IGNORES");
+  ignore_basenames        = picman_path_parse (ignore_basenames_string,
                                              256 /*max_paths*/,
                                              FALSE /*check*/,
                                              NULL /*check_failed*/);
@@ -533,25 +533,25 @@ gimp_plug_in_manager_ignore_plugin_basename (const gchar *plugin_basename)
         }
     }
   
-  gimp_path_free (ignore_basenames);
+  picman_path_free (ignore_basenames);
 
   return ignore;
 }
 
 static void
-gimp_plug_in_manager_add_from_file (const GimpDatafileData *file_data,
+picman_plug_in_manager_add_from_file (const PicmanDatafileData *file_data,
                                     gpointer                data)
 {
-  GimpPlugInManager *manager = data;
-  GimpPlugInDef     *plug_in_def;
+  PicmanPlugInManager *manager = data;
+  PicmanPlugInDef     *plug_in_def;
   GSList            *list;
 
   /* When we scan build dirs for plug-ins, there will be some
    * executable files that are not plug-ins that we want to ignore,
    * for example plug-ins/common/mkgen.pl if
-   * GIMP_TESTING_PLUGINDIRS=plug-ins/common
+   * PICMAN_TESTING_PLUGINDIRS=plug-ins/common
    */
-  if (gimp_plug_in_manager_ignore_plugin_basename (file_data->basename))
+  if (picman_plug_in_manager_ignore_plugin_basename (file_data->basename))
       return;
 
   for (list = manager->plug_in_defs; list; list = list->next)
@@ -564,7 +564,7 @@ gimp_plug_in_manager_add_from_file (const GimpDatafileData *file_data,
       if (g_ascii_strcasecmp (file_data->basename, plug_in_name) == 0)
         {
           g_printerr ("Skipping duplicate plug-in: '%s'\n",
-                      gimp_filename_to_utf8 (file_data->filename));
+                      picman_filename_to_utf8 (file_data->filename));
 
           g_free (plug_in_name);
 
@@ -574,22 +574,22 @@ gimp_plug_in_manager_add_from_file (const GimpDatafileData *file_data,
       g_free (plug_in_name);
     }
 
-  plug_in_def = gimp_plug_in_def_new (file_data->filename);
+  plug_in_def = picman_plug_in_def_new (file_data->filename);
 
-  gimp_plug_in_def_set_mtime (plug_in_def, file_data->mtime);
-  gimp_plug_in_def_set_needs_query (plug_in_def, TRUE);
+  picman_plug_in_def_set_mtime (plug_in_def, file_data->mtime);
+  picman_plug_in_def_set_needs_query (plug_in_def, TRUE);
 
   manager->plug_in_defs = g_slist_prepend (manager->plug_in_defs, plug_in_def);
 }
 
 static void
-gimp_plug_in_manager_add_from_rc (GimpPlugInManager *manager,
-                                  GimpPlugInDef     *plug_in_def)
+picman_plug_in_manager_add_from_rc (PicmanPlugInManager *manager,
+                                  PicmanPlugInDef     *plug_in_def)
 {
   GSList *list;
   gchar  *basename1;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
   g_return_if_fail (plug_in_def != NULL);
   g_return_if_fail (plug_in_def->prog != NULL);
 
@@ -610,7 +610,7 @@ gimp_plug_in_manager_add_from_rc (GimpPlugInManager *manager,
    */
   for (list = plug_in_def->procedures; list; list = list->next)
     {
-      GimpPlugInProcedure *proc = list->data;
+      PicmanPlugInProcedure *proc = list->data;
 
       if (! proc->extensions &&
           ! proc->prefixes   &&
@@ -628,7 +628,7 @@ gimp_plug_in_manager_add_from_rc (GimpPlugInManager *manager,
    */
   for (list = manager->plug_in_defs; list; list = list->next)
     {
-      GimpPlugInDef *ondisk_plug_in_def = list->data;
+      PicmanPlugInDef *ondisk_plug_in_def = list->data;
       gchar         *basename2;
 
       basename2 = g_path_get_basename (ondisk_plug_in_def->prog);
@@ -662,10 +662,10 @@ gimp_plug_in_manager_add_from_rc (GimpPlugInManager *manager,
 
   manager->write_pluginrc = TRUE;
 
-  if (manager->gimp->be_verbose)
+  if (manager->picman->be_verbose)
     {
       g_printerr ("pluginrc lists '%s', but it wasn't found\n",
-                  gimp_filename_to_utf8 (plug_in_def->prog));
+                  picman_filename_to_utf8 (plug_in_def->prog));
     }
 
   g_object_unref (plug_in_def);
@@ -673,24 +673,24 @@ gimp_plug_in_manager_add_from_rc (GimpPlugInManager *manager,
 
 
 static void
-gimp_plug_in_manager_add_to_db (GimpPlugInManager   *manager,
-                                GimpContext         *context,
-                                GimpPlugInProcedure *proc)
+picman_plug_in_manager_add_to_db (PicmanPlugInManager   *manager,
+                                PicmanContext         *context,
+                                PicmanPlugInProcedure *proc)
 {
-  gimp_pdb_register_procedure (manager->gimp->pdb, GIMP_PROCEDURE (proc));
+  picman_pdb_register_procedure (manager->picman->pdb, PICMAN_PROCEDURE (proc));
 
   if (proc->file_proc)
     {
-      GimpValueArray *return_vals;
+      PicmanValueArray *return_vals;
       GError         *error = NULL;
 
       if (proc->image_types)
         {
           return_vals =
-            gimp_pdb_execute_procedure_by_name (manager->gimp->pdb,
+            picman_pdb_execute_procedure_by_name (manager->picman->pdb,
                                                 context, NULL, &error,
-                                                "gimp-register-save-handler",
-                                                G_TYPE_STRING, gimp_object_get_name (proc),
+                                                "picman-register-save-handler",
+                                                G_TYPE_STRING, picman_object_get_name (proc),
                                                 G_TYPE_STRING, proc->extensions,
                                                 G_TYPE_STRING, proc->prefixes,
                                                 G_TYPE_NONE);
@@ -698,21 +698,21 @@ gimp_plug_in_manager_add_to_db (GimpPlugInManager   *manager,
       else
         {
           return_vals =
-            gimp_pdb_execute_procedure_by_name (manager->gimp->pdb,
+            picman_pdb_execute_procedure_by_name (manager->picman->pdb,
                                                 context, NULL, &error,
-                                                "gimp-register-magic-load-handler",
-                                                G_TYPE_STRING, gimp_object_get_name (proc),
+                                                "picman-register-magic-load-handler",
+                                                G_TYPE_STRING, picman_object_get_name (proc),
                                                 G_TYPE_STRING, proc->extensions,
                                                 G_TYPE_STRING, proc->prefixes,
                                                 G_TYPE_STRING, proc->magics,
                                                 G_TYPE_NONE);
         }
 
-      gimp_value_array_unref (return_vals);
+      picman_value_array_unref (return_vals);
 
       if (error)
         {
-          gimp_message_literal (manager->gimp, NULL, GIMP_MESSAGE_ERROR,
+          picman_message_literal (manager->picman, NULL, PICMAN_MESSAGE_ERROR,
 			        error->message);
           g_error_free (error);
         }
@@ -720,24 +720,24 @@ gimp_plug_in_manager_add_to_db (GimpPlugInManager   *manager,
 }
 
 static gint
-gimp_plug_in_manager_file_proc_compare (gconstpointer a,
+picman_plug_in_manager_file_proc_compare (gconstpointer a,
                                         gconstpointer b,
                                         gpointer      data)
 {
-  GimpPlugInProcedure *proc_a = GIMP_PLUG_IN_PROCEDURE (a);
-  GimpPlugInProcedure *proc_b = GIMP_PLUG_IN_PROCEDURE (b);
+  PicmanPlugInProcedure *proc_a = PICMAN_PLUG_IN_PROCEDURE (a);
+  PicmanPlugInProcedure *proc_b = PICMAN_PLUG_IN_PROCEDURE (b);
   const gchar         *label_a;
   const gchar         *label_b;
   gint                 retval = 0;
 
-  if (g_str_has_prefix (proc_a->prog, "gimp-xcf"))
+  if (g_str_has_prefix (proc_a->prog, "picman-xcf"))
     return -1;
 
-  if (g_str_has_prefix (proc_b->prog, "gimp-xcf"))
+  if (g_str_has_prefix (proc_b->prog, "picman-xcf"))
     return 1;
 
-  label_a = gimp_plug_in_procedure_get_label (proc_a);
-  label_b = gimp_plug_in_procedure_get_label (proc_b);
+  label_a = picman_plug_in_procedure_get_label (proc_a);
+  label_b = picman_plug_in_procedure_get_label (proc_b);
 
   if (label_a && label_b)
     retval = g_utf8_collate (label_a, label_b);

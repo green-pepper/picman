@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimppalettes.c
+ * picmanpalettes.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,19 +20,19 @@
 
 #include "config.h"
 
-#include "gimp.h"
-#include "gimppalettes.h"
+#include "picman.h"
+#include "picmanpalettes.h"
 
 /**
- * gimp_palettes_set_palette:
+ * picman_palettes_set_palette:
  * @name: The palette name.
  *
- * This procedure is deprecated! Use gimp_context_set_palette() instead.
+ * This procedure is deprecated! Use picman_context_set_palette() instead.
  *
  * Returns: TRUE on success.
  */
 gboolean
-gimp_palettes_set_palette (const gchar *name)
+picman_palettes_set_palette (const gchar *name)
 {
-  return gimp_context_set_palette (name);
+  return picman_context_set_palette (name);
 }

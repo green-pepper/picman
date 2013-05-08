@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpstock.h
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmanstock.h
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_STOCK_H__
-#define __GIMP_STOCK_H__
+#ifndef __PICMAN_STOCK_H__
+#define __PICMAN_STOCK_H__
 
 G_BEGIN_DECLS
 
@@ -33,264 +33,264 @@ G_BEGIN_DECLS
 
 /*  in button size:  */
 
-#define GIMP_STOCK_ANCHOR                   "gimp-anchor"
-#define GIMP_STOCK_CENTER                   "gimp-center"
-#define GIMP_STOCK_DUPLICATE                "gimp-duplicate"
-#define GIMP_STOCK_EDIT                     "gimp-edit"
-#define GIMP_STOCK_LINKED                   "gimp-linked"
-#define GIMP_STOCK_PASTE_AS_NEW             "gimp-paste-as-new"
-#define GIMP_STOCK_PASTE_INTO               "gimp-paste-into"
-#define GIMP_STOCK_RESET                    "gimp-reset"
-#define GIMP_STOCK_VISIBLE                  "gimp-visible"
+#define PICMAN_STOCK_ANCHOR                   "picman-anchor"
+#define PICMAN_STOCK_CENTER                   "picman-center"
+#define PICMAN_STOCK_DUPLICATE                "picman-duplicate"
+#define PICMAN_STOCK_EDIT                     "picman-edit"
+#define PICMAN_STOCK_LINKED                   "picman-linked"
+#define PICMAN_STOCK_PASTE_AS_NEW             "picman-paste-as-new"
+#define PICMAN_STOCK_PASTE_INTO               "picman-paste-into"
+#define PICMAN_STOCK_RESET                    "picman-reset"
+#define PICMAN_STOCK_VISIBLE                  "picman-visible"
 
-#define GIMP_STOCK_GRADIENT_LINEAR               "gimp-gradient-linear"
-#define GIMP_STOCK_GRADIENT_BILINEAR             "gimp-gradient-bilinear"
-#define GIMP_STOCK_GRADIENT_RADIAL               "gimp-gradient-radial"
-#define GIMP_STOCK_GRADIENT_SQUARE               "gimp-gradient-square"
-#define GIMP_STOCK_GRADIENT_CONICAL_SYMMETRIC    "gimp-gradient-conical-symmetric"
-#define GIMP_STOCK_GRADIENT_CONICAL_ASYMMETRIC   "gimp-gradient-conical-asymmetric"
-#define GIMP_STOCK_GRADIENT_SHAPEBURST_ANGULAR   "gimp-gradient-shapeburst-angular"
-#define GIMP_STOCK_GRADIENT_SHAPEBURST_SPHERICAL "gimp-gradient-shapeburst-spherical"
-#define GIMP_STOCK_GRADIENT_SHAPEBURST_DIMPLED   "gimp-gradient-shapeburst-dimpled"
-#define GIMP_STOCK_GRADIENT_SPIRAL_CLOCKWISE     "gimp-gradient-spiral-clockwise"
-#define GIMP_STOCK_GRADIENT_SPIRAL_ANTICLOCKWISE "gimp-gradient-spiral-anticlockwise"
+#define PICMAN_STOCK_GRADIENT_LINEAR               "picman-gradient-linear"
+#define PICMAN_STOCK_GRADIENT_BILINEAR             "picman-gradient-bilinear"
+#define PICMAN_STOCK_GRADIENT_RADIAL               "picman-gradient-radial"
+#define PICMAN_STOCK_GRADIENT_SQUARE               "picman-gradient-square"
+#define PICMAN_STOCK_GRADIENT_CONICAL_SYMMETRIC    "picman-gradient-conical-symmetric"
+#define PICMAN_STOCK_GRADIENT_CONICAL_ASYMMETRIC   "picman-gradient-conical-asymmetric"
+#define PICMAN_STOCK_GRADIENT_SHAPEBURST_ANGULAR   "picman-gradient-shapeburst-angular"
+#define PICMAN_STOCK_GRADIENT_SHAPEBURST_SPHERICAL "picman-gradient-shapeburst-spherical"
+#define PICMAN_STOCK_GRADIENT_SHAPEBURST_DIMPLED   "picman-gradient-shapeburst-dimpled"
+#define PICMAN_STOCK_GRADIENT_SPIRAL_CLOCKWISE     "picman-gradient-spiral-clockwise"
+#define PICMAN_STOCK_GRADIENT_SPIRAL_ANTICLOCKWISE "picman-gradient-spiral-anticlockwise"
 
-#define GIMP_STOCK_GRAVITY_EAST             "gimp-gravity-east"
-#define GIMP_STOCK_GRAVITY_NORTH            "gimp-gravity-north"
-#define GIMP_STOCK_GRAVITY_NORTH_EAST       "gimp-gravity-north-east"
-#define GIMP_STOCK_GRAVITY_NORTH_WEST       "gimp-gravity-north-west"
-#define GIMP_STOCK_GRAVITY_SOUTH            "gimp-gravity-south"
-#define GIMP_STOCK_GRAVITY_SOUTH_EAST       "gimp-gravity-south-east"
-#define GIMP_STOCK_GRAVITY_SOUTH_WEST       "gimp-gravity-south-west"
-#define GIMP_STOCK_GRAVITY_WEST             "gimp-gravity-west"
+#define PICMAN_STOCK_GRAVITY_EAST             "picman-gravity-east"
+#define PICMAN_STOCK_GRAVITY_NORTH            "picman-gravity-north"
+#define PICMAN_STOCK_GRAVITY_NORTH_EAST       "picman-gravity-north-east"
+#define PICMAN_STOCK_GRAVITY_NORTH_WEST       "picman-gravity-north-west"
+#define PICMAN_STOCK_GRAVITY_SOUTH            "picman-gravity-south"
+#define PICMAN_STOCK_GRAVITY_SOUTH_EAST       "picman-gravity-south-east"
+#define PICMAN_STOCK_GRAVITY_SOUTH_WEST       "picman-gravity-south-west"
+#define PICMAN_STOCK_GRAVITY_WEST             "picman-gravity-west"
 
-#define GIMP_STOCK_HCENTER                  "gimp-hcenter"
-#define GIMP_STOCK_VCENTER                  "gimp-vcenter"
+#define PICMAN_STOCK_HCENTER                  "picman-hcenter"
+#define PICMAN_STOCK_VCENTER                  "picman-vcenter"
 
-#define GIMP_STOCK_HCHAIN                   "gimp-hchain"
-#define GIMP_STOCK_HCHAIN_BROKEN            "gimp-hchain-broken"
-#define GIMP_STOCK_VCHAIN                   "gimp-vchain"
-#define GIMP_STOCK_VCHAIN_BROKEN            "gimp-vchain-broken"
+#define PICMAN_STOCK_HCHAIN                   "picman-hchain"
+#define PICMAN_STOCK_HCHAIN_BROKEN            "picman-hchain-broken"
+#define PICMAN_STOCK_VCHAIN                   "picman-vchain"
+#define PICMAN_STOCK_VCHAIN_BROKEN            "picman-vchain-broken"
 
-#define GIMP_STOCK_SELECTION                "gimp-selection"
-#define GIMP_STOCK_SELECTION_REPLACE        "gimp-selection-replace"
-#define GIMP_STOCK_SELECTION_ADD            "gimp-selection-add"
-#define GIMP_STOCK_SELECTION_SUBTRACT       "gimp-selection-subtract"
-#define GIMP_STOCK_SELECTION_INTERSECT      "gimp-selection-intersect"
-#define GIMP_STOCK_SELECTION_STROKE         "gimp-selection-stroke"
-#define GIMP_STOCK_SELECTION_TO_CHANNEL     "gimp-selection-to-channel"
-#define GIMP_STOCK_SELECTION_TO_PATH        "gimp-selection-to-path"
+#define PICMAN_STOCK_SELECTION                "picman-selection"
+#define PICMAN_STOCK_SELECTION_REPLACE        "picman-selection-replace"
+#define PICMAN_STOCK_SELECTION_ADD            "picman-selection-add"
+#define PICMAN_STOCK_SELECTION_SUBTRACT       "picman-selection-subtract"
+#define PICMAN_STOCK_SELECTION_INTERSECT      "picman-selection-intersect"
+#define PICMAN_STOCK_SELECTION_STROKE         "picman-selection-stroke"
+#define PICMAN_STOCK_SELECTION_TO_CHANNEL     "picman-selection-to-channel"
+#define PICMAN_STOCK_SELECTION_TO_PATH        "picman-selection-to-path"
 
-#define GIMP_STOCK_PATH_STROKE              "gimp-path-stroke"
+#define PICMAN_STOCK_PATH_STROKE              "picman-path-stroke"
 
-#define GIMP_STOCK_CURVE_FREE               "gimp-curve-free"
-#define GIMP_STOCK_CURVE_SMOOTH             "gimp-curve-smooth"
+#define PICMAN_STOCK_CURVE_FREE               "picman-curve-free"
+#define PICMAN_STOCK_CURVE_SMOOTH             "picman-curve-smooth"
 
-#define GIMP_STOCK_COLOR_PICKER_BLACK       "gimp-color-picker-black"
-#define GIMP_STOCK_COLOR_PICKER_GRAY        "gimp-color-picker-gray"
-#define GIMP_STOCK_COLOR_PICKER_WHITE       "gimp-color-picker-white"
-#define GIMP_STOCK_COLOR_TRIANGLE           "gimp-color-triangle"
-#define GIMP_STOCK_COLOR_PICK_FROM_SCREEN   "gimp-color-pick-from-screen"
+#define PICMAN_STOCK_COLOR_PICKER_BLACK       "picman-color-picker-black"
+#define PICMAN_STOCK_COLOR_PICKER_GRAY        "picman-color-picker-gray"
+#define PICMAN_STOCK_COLOR_PICKER_WHITE       "picman-color-picker-white"
+#define PICMAN_STOCK_COLOR_TRIANGLE           "picman-color-triangle"
+#define PICMAN_STOCK_COLOR_PICK_FROM_SCREEN   "picman-color-pick-from-screen"
 
-#define GIMP_STOCK_CHAR_PICKER              "gimp-char-picker"
-#define GIMP_STOCK_LETTER_SPACING           "gimp-letter-spacing"
-#define GIMP_STOCK_LINE_SPACING             "gimp-line-spacing"
-#define GIMP_STOCK_PRINT_RESOLUTION         "gimp-print-resolution"
+#define PICMAN_STOCK_CHAR_PICKER              "picman-char-picker"
+#define PICMAN_STOCK_LETTER_SPACING           "picman-letter-spacing"
+#define PICMAN_STOCK_LINE_SPACING             "picman-line-spacing"
+#define PICMAN_STOCK_PRINT_RESOLUTION         "picman-print-resolution"
 
-#define GIMP_STOCK_TEXT_DIR_LTR             "gimp-text-dir-ltr"
-#define GIMP_STOCK_TEXT_DIR_RTL             "gimp-text-dir-rtl"
+#define PICMAN_STOCK_TEXT_DIR_LTR             "picman-text-dir-ltr"
+#define PICMAN_STOCK_TEXT_DIR_RTL             "picman-text-dir-rtl"
 
-#define GIMP_STOCK_TOOL_AIRBRUSH            "gimp-tool-airbrush"
-#define GIMP_STOCK_TOOL_ALIGN               "gimp-tool-align"
-#define GIMP_STOCK_TOOL_BLEND               "gimp-tool-blend"
-#define GIMP_STOCK_TOOL_BLUR                "gimp-tool-blur"
-#define GIMP_STOCK_TOOL_BRIGHTNESS_CONTRAST "gimp-tool-brightness-contrast"
-#define GIMP_STOCK_TOOL_BUCKET_FILL         "gimp-tool-bucket-fill"
-#define GIMP_STOCK_TOOL_BY_COLOR_SELECT     "gimp-tool-by-color-select"
-#define GIMP_STOCK_TOOL_CAGE                "gimp-tool-cage"
-#define GIMP_STOCK_TOOL_CLONE               "gimp-tool-clone"
-#define GIMP_STOCK_TOOL_COLOR_BALANCE       "gimp-tool-color-balance"
-#define GIMP_STOCK_TOOL_COLOR_PICKER        "gimp-tool-color-picker"
-#define GIMP_STOCK_TOOL_COLORIZE            "gimp-tool-colorize"
-#define GIMP_STOCK_TOOL_CROP                "gimp-tool-crop"
-#define GIMP_STOCK_TOOL_CURVES              "gimp-tool-curves"
-#define GIMP_STOCK_TOOL_DESATURATE          "gimp-tool-desaturate"
-#define GIMP_STOCK_TOOL_DODGE               "gimp-tool-dodge"
-#define GIMP_STOCK_TOOL_ELLIPSE_SELECT      "gimp-tool-ellipse-select"
-#define GIMP_STOCK_TOOL_ERASER              "gimp-tool-eraser"
-#define GIMP_STOCK_TOOL_FLIP                "gimp-tool-flip"
-#define GIMP_STOCK_TOOL_FREE_SELECT         "gimp-tool-free-select"
-#define GIMP_STOCK_TOOL_FOREGROUND_SELECT   "gimp-tool-foreground-select"
-#define GIMP_STOCK_TOOL_FUZZY_SELECT        "gimp-tool-fuzzy-select"
-#define GIMP_STOCK_TOOL_HEAL                "gimp-tool-heal"
-#define GIMP_STOCK_TOOL_HUE_SATURATION      "gimp-tool-hue-saturation"
-#define GIMP_STOCK_TOOL_INK                 "gimp-tool-ink"
-#define GIMP_STOCK_TOOL_ISCISSORS           "gimp-tool-iscissors"
-#define GIMP_STOCK_TOOL_LEVELS              "gimp-tool-levels"
-#define GIMP_STOCK_TOOL_MEASURE             "gimp-tool-measure"
-#define GIMP_STOCK_TOOL_MOVE                "gimp-tool-move"
-#define GIMP_STOCK_TOOL_PAINTBRUSH          "gimp-tool-paintbrush"
-#define GIMP_STOCK_TOOL_PATH                "gimp-tool-path"
-#define GIMP_STOCK_TOOL_PENCIL              "gimp-tool-pencil"
-#define GIMP_STOCK_TOOL_PERSPECTIVE         "gimp-tool-perspective"
-#define GIMP_STOCK_TOOL_PERSPECTIVE_CLONE   "gimp-tool-perspective-clone"
-#define GIMP_STOCK_TOOL_POSTERIZE           "gimp-tool-posterize"
-#define GIMP_STOCK_TOOL_RECT_SELECT         "gimp-tool-rect-select"
-#define GIMP_STOCK_TOOL_ROTATE              "gimp-tool-rotate"
-#define GIMP_STOCK_TOOL_SCALE               "gimp-tool-scale"
-#define GIMP_STOCK_TOOL_SHEAR               "gimp-tool-shear"
-#define GIMP_STOCK_TOOL_SMUDGE              "gimp-tool-smudge"
-#define GIMP_STOCK_TOOL_TEXT                "gimp-tool-text"
-#define GIMP_STOCK_TOOL_THRESHOLD           "gimp-tool-threshold"
-#define GIMP_STOCK_TOOL_UNIFIED_TRANSFORM   "gimp-tool-unified-transform"
-#define GIMP_STOCK_TOOL_ZOOM                "gimp-tool-zoom"
+#define PICMAN_STOCK_TOOL_AIRBRUSH            "picman-tool-airbrush"
+#define PICMAN_STOCK_TOOL_ALIGN               "picman-tool-align"
+#define PICMAN_STOCK_TOOL_BLEND               "picman-tool-blend"
+#define PICMAN_STOCK_TOOL_BLUR                "picman-tool-blur"
+#define PICMAN_STOCK_TOOL_BRIGHTNESS_CONTRAST "picman-tool-brightness-contrast"
+#define PICMAN_STOCK_TOOL_BUCKET_FILL         "picman-tool-bucket-fill"
+#define PICMAN_STOCK_TOOL_BY_COLOR_SELECT     "picman-tool-by-color-select"
+#define PICMAN_STOCK_TOOL_CAGE                "picman-tool-cage"
+#define PICMAN_STOCK_TOOL_CLONE               "picman-tool-clone"
+#define PICMAN_STOCK_TOOL_COLOR_BALANCE       "picman-tool-color-balance"
+#define PICMAN_STOCK_TOOL_COLOR_PICKER        "picman-tool-color-picker"
+#define PICMAN_STOCK_TOOL_COLORIZE            "picman-tool-colorize"
+#define PICMAN_STOCK_TOOL_CROP                "picman-tool-crop"
+#define PICMAN_STOCK_TOOL_CURVES              "picman-tool-curves"
+#define PICMAN_STOCK_TOOL_DESATURATE          "picman-tool-desaturate"
+#define PICMAN_STOCK_TOOL_DODGE               "picman-tool-dodge"
+#define PICMAN_STOCK_TOOL_ELLIPSE_SELECT      "picman-tool-ellipse-select"
+#define PICMAN_STOCK_TOOL_ERASER              "picman-tool-eraser"
+#define PICMAN_STOCK_TOOL_FLIP                "picman-tool-flip"
+#define PICMAN_STOCK_TOOL_FREE_SELECT         "picman-tool-free-select"
+#define PICMAN_STOCK_TOOL_FOREGROUND_SELECT   "picman-tool-foreground-select"
+#define PICMAN_STOCK_TOOL_FUZZY_SELECT        "picman-tool-fuzzy-select"
+#define PICMAN_STOCK_TOOL_HEAL                "picman-tool-heal"
+#define PICMAN_STOCK_TOOL_HUE_SATURATION      "picman-tool-hue-saturation"
+#define PICMAN_STOCK_TOOL_INK                 "picman-tool-ink"
+#define PICMAN_STOCK_TOOL_ISCISSORS           "picman-tool-iscissors"
+#define PICMAN_STOCK_TOOL_LEVELS              "picman-tool-levels"
+#define PICMAN_STOCK_TOOL_MEASURE             "picman-tool-measure"
+#define PICMAN_STOCK_TOOL_MOVE                "picman-tool-move"
+#define PICMAN_STOCK_TOOL_PAINTBRUSH          "picman-tool-paintbrush"
+#define PICMAN_STOCK_TOOL_PATH                "picman-tool-path"
+#define PICMAN_STOCK_TOOL_PENCIL              "picman-tool-pencil"
+#define PICMAN_STOCK_TOOL_PERSPECTIVE         "picman-tool-perspective"
+#define PICMAN_STOCK_TOOL_PERSPECTIVE_CLONE   "picman-tool-perspective-clone"
+#define PICMAN_STOCK_TOOL_POSTERIZE           "picman-tool-posterize"
+#define PICMAN_STOCK_TOOL_RECT_SELECT         "picman-tool-rect-select"
+#define PICMAN_STOCK_TOOL_ROTATE              "picman-tool-rotate"
+#define PICMAN_STOCK_TOOL_SCALE               "picman-tool-scale"
+#define PICMAN_STOCK_TOOL_SHEAR               "picman-tool-shear"
+#define PICMAN_STOCK_TOOL_SMUDGE              "picman-tool-smudge"
+#define PICMAN_STOCK_TOOL_TEXT                "picman-tool-text"
+#define PICMAN_STOCK_TOOL_THRESHOLD           "picman-tool-threshold"
+#define PICMAN_STOCK_TOOL_UNIFIED_TRANSFORM   "picman-tool-unified-transform"
+#define PICMAN_STOCK_TOOL_ZOOM                "picman-tool-zoom"
 
 
 /*  in menu size:  */
 
-#define GIMP_STOCK_CONVERT_RGB              "gimp-convert-rgb"
-#define GIMP_STOCK_CONVERT_GRAYSCALE        "gimp-convert-grayscale"
-#define GIMP_STOCK_CONVERT_INDEXED          "gimp-convert-indexed"
-#define GIMP_STOCK_INVERT                   "gimp-invert"
-#define GIMP_STOCK_MERGE_DOWN               "gimp-merge-down"
-#define GIMP_STOCK_LAYER_TO_IMAGESIZE       "gimp-layer-to-imagesize"
-#define GIMP_STOCK_PLUGIN                   "gimp-plugin"
-#define GIMP_STOCK_UNDO_HISTORY             "gimp-undo-history"
-#define GIMP_STOCK_RESHOW_FILTER            "gimp-reshow-filter"
-#define GIMP_STOCK_ROTATE_90                "gimp-rotate-90"
-#define GIMP_STOCK_ROTATE_180               "gimp-rotate-180"
-#define GIMP_STOCK_ROTATE_270               "gimp-rotate-270"
-#define GIMP_STOCK_RESIZE                   "gimp-resize"
-#define GIMP_STOCK_SCALE                    "gimp-scale"
-#define GIMP_STOCK_FLIP_HORIZONTAL          "gimp-flip-horizontal"
-#define GIMP_STOCK_FLIP_VERTICAL            "gimp-flip-vertical"
+#define PICMAN_STOCK_CONVERT_RGB              "picman-convert-rgb"
+#define PICMAN_STOCK_CONVERT_GRAYSCALE        "picman-convert-grayscale"
+#define PICMAN_STOCK_CONVERT_INDEXED          "picman-convert-indexed"
+#define PICMAN_STOCK_INVERT                   "picman-invert"
+#define PICMAN_STOCK_MERGE_DOWN               "picman-merge-down"
+#define PICMAN_STOCK_LAYER_TO_IMAGESIZE       "picman-layer-to-imagesize"
+#define PICMAN_STOCK_PLUGIN                   "picman-plugin"
+#define PICMAN_STOCK_UNDO_HISTORY             "picman-undo-history"
+#define PICMAN_STOCK_RESHOW_FILTER            "picman-reshow-filter"
+#define PICMAN_STOCK_ROTATE_90                "picman-rotate-90"
+#define PICMAN_STOCK_ROTATE_180               "picman-rotate-180"
+#define PICMAN_STOCK_ROTATE_270               "picman-rotate-270"
+#define PICMAN_STOCK_RESIZE                   "picman-resize"
+#define PICMAN_STOCK_SCALE                    "picman-scale"
+#define PICMAN_STOCK_FLIP_HORIZONTAL          "picman-flip-horizontal"
+#define PICMAN_STOCK_FLIP_VERTICAL            "picman-flip-vertical"
 
-#define GIMP_STOCK_IMAGE                    "gimp-image"
-#define GIMP_STOCK_LAYER                    "gimp-layer"
-#define GIMP_STOCK_TEXT_LAYER               "gimp-text-layer"
-#define GIMP_STOCK_FLOATING_SELECTION       "gimp-floating-selection"
-#define GIMP_STOCK_CHANNEL                  "gimp-channel"
-#define GIMP_STOCK_CHANNEL_RED              "gimp-channel-red"
-#define GIMP_STOCK_CHANNEL_GREEN            "gimp-channel-green"
-#define GIMP_STOCK_CHANNEL_BLUE             "gimp-channel-blue"
-#define GIMP_STOCK_CHANNEL_GRAY             "gimp-channel-gray"
-#define GIMP_STOCK_CHANNEL_INDEXED          "gimp-channel-indexed"
-#define GIMP_STOCK_CHANNEL_ALPHA            "gimp-channel-alpha"
-#define GIMP_STOCK_LAYER_MASK               "gimp-layer-mask"
-#define GIMP_STOCK_PATH                     "gimp-path"
-#define GIMP_STOCK_TEMPLATE                 "gimp-template"
-#define GIMP_STOCK_TRANSPARENCY             "gimp-transparency"
-#define GIMP_STOCK_COLORMAP                 "gimp-colormap"
+#define PICMAN_STOCK_IMAGE                    "picman-image"
+#define PICMAN_STOCK_LAYER                    "picman-layer"
+#define PICMAN_STOCK_TEXT_LAYER               "picman-text-layer"
+#define PICMAN_STOCK_FLOATING_SELECTION       "picman-floating-selection"
+#define PICMAN_STOCK_CHANNEL                  "picman-channel"
+#define PICMAN_STOCK_CHANNEL_RED              "picman-channel-red"
+#define PICMAN_STOCK_CHANNEL_GREEN            "picman-channel-green"
+#define PICMAN_STOCK_CHANNEL_BLUE             "picman-channel-blue"
+#define PICMAN_STOCK_CHANNEL_GRAY             "picman-channel-gray"
+#define PICMAN_STOCK_CHANNEL_INDEXED          "picman-channel-indexed"
+#define PICMAN_STOCK_CHANNEL_ALPHA            "picman-channel-alpha"
+#define PICMAN_STOCK_LAYER_MASK               "picman-layer-mask"
+#define PICMAN_STOCK_PATH                     "picman-path"
+#define PICMAN_STOCK_TEMPLATE                 "picman-template"
+#define PICMAN_STOCK_TRANSPARENCY             "picman-transparency"
+#define PICMAN_STOCK_COLORMAP                 "picman-colormap"
 
-#ifndef GIMP_DISABLE_DEPRECATED
-#define GIMP_STOCK_INDEXED_PALETTE          "gimp-colormap"
-#endif /* GIMP_DISABLE_DEPRECATED */
+#ifndef PICMAN_DISABLE_DEPRECATED
+#define PICMAN_STOCK_INDEXED_PALETTE          "picman-colormap"
+#endif /* PICMAN_DISABLE_DEPRECATED */
 
-#define GIMP_STOCK_IMAGES                   "gimp-images"
-#define GIMP_STOCK_LAYERS                   "gimp-layers"
-#define GIMP_STOCK_CHANNELS                 "gimp-channels"
-#define GIMP_STOCK_PATHS                    "gimp-paths"
+#define PICMAN_STOCK_IMAGES                   "picman-images"
+#define PICMAN_STOCK_LAYERS                   "picman-layers"
+#define PICMAN_STOCK_CHANNELS                 "picman-channels"
+#define PICMAN_STOCK_PATHS                    "picman-paths"
 
-#define GIMP_STOCK_SELECTION_ALL            "gimp-selection-all"
-#define GIMP_STOCK_SELECTION_NONE           "gimp-selection-none"
-#define GIMP_STOCK_SELECTION_GROW           "gimp-selection-grow"
-#define GIMP_STOCK_SELECTION_SHRINK         "gimp-selection-shrink"
-#define GIMP_STOCK_SELECTION_BORDER         "gimp-selection-border"
+#define PICMAN_STOCK_SELECTION_ALL            "picman-selection-all"
+#define PICMAN_STOCK_SELECTION_NONE           "picman-selection-none"
+#define PICMAN_STOCK_SELECTION_GROW           "picman-selection-grow"
+#define PICMAN_STOCK_SELECTION_SHRINK         "picman-selection-shrink"
+#define PICMAN_STOCK_SELECTION_BORDER         "picman-selection-border"
 
-#define GIMP_STOCK_NAVIGATION               "gimp-navigation"
-#define GIMP_STOCK_QUICK_MASK_OFF           "gimp-quick-mask-off"
-#define GIMP_STOCK_QUICK_MASK_ON            "gimp-quick-mask-on"
+#define PICMAN_STOCK_NAVIGATION               "picman-navigation"
+#define PICMAN_STOCK_QUICK_MASK_OFF           "picman-quick-mask-off"
+#define PICMAN_STOCK_QUICK_MASK_ON            "picman-quick-mask-on"
 
-#ifndef GIMP_DISABLE_DEPRECATED
-#define GIMP_STOCK_QMASK_OFF                "gimp-quick-mask-off"
-#define GIMP_STOCK_QMASK_ON                 "gimp-quick-mask-on"
-#endif /* GIMP_DISABLE_DEPRECATED */
+#ifndef PICMAN_DISABLE_DEPRECATED
+#define PICMAN_STOCK_QMASK_OFF                "picman-quick-mask-off"
+#define PICMAN_STOCK_QMASK_ON                 "picman-quick-mask-on"
+#endif /* PICMAN_DISABLE_DEPRECATED */
 
-#define GIMP_STOCK_HISTOGRAM                "gimp-histogram"
-#define GIMP_STOCK_HISTOGRAM_LINEAR         "gimp-histogram-linear"
-#define GIMP_STOCK_HISTOGRAM_LOGARITHMIC    "gimp-histogram-logarithmic"
+#define PICMAN_STOCK_HISTOGRAM                "picman-histogram"
+#define PICMAN_STOCK_HISTOGRAM_LINEAR         "picman-histogram-linear"
+#define PICMAN_STOCK_HISTOGRAM_LOGARITHMIC    "picman-histogram-logarithmic"
 
-#define GIMP_STOCK_CLOSE                    "gimp-close"
-#define GIMP_STOCK_MENU_LEFT                "gimp-menu-left"
-#define GIMP_STOCK_MENU_RIGHT               "gimp-menu-right"
-#define GIMP_STOCK_MOVE_TO_SCREEN           "gimp-move-to-screen"
-#define GIMP_STOCK_DEFAULT_COLORS           "gimp-default-colors"
-#define GIMP_STOCK_SWAP_COLORS              "gimp-swap-colors"
-#define GIMP_STOCK_ZOOM_FOLLOW_WINDOW       "gimp-zoom-follow-window"
+#define PICMAN_STOCK_CLOSE                    "picman-close"
+#define PICMAN_STOCK_MENU_LEFT                "picman-menu-left"
+#define PICMAN_STOCK_MENU_RIGHT               "picman-menu-right"
+#define PICMAN_STOCK_MOVE_TO_SCREEN           "picman-move-to-screen"
+#define PICMAN_STOCK_DEFAULT_COLORS           "picman-default-colors"
+#define PICMAN_STOCK_SWAP_COLORS              "picman-swap-colors"
+#define PICMAN_STOCK_ZOOM_FOLLOW_WINDOW       "picman-zoom-follow-window"
 
-#define GIMP_STOCK_TOOLS                    "gimp-tools"
-#define GIMP_STOCK_TOOL_OPTIONS             "gimp-tool-options"
-#define GIMP_STOCK_DEVICE_STATUS            "gimp-device-status"
-#define GIMP_STOCK_INPUT_DEVICE             "gimp-input-device"
-#define GIMP_STOCK_CURSOR                   "gimp-cursor"
-#define GIMP_STOCK_SAMPLE_POINT             "gimp-sample-point"
-#define GIMP_STOCK_DYNAMICS                 "gimp-dynamics"
-#define GIMP_STOCK_TOOL_PRESET              "gimp-tool-preset"
+#define PICMAN_STOCK_TOOLS                    "picman-tools"
+#define PICMAN_STOCK_TOOL_OPTIONS             "picman-tool-options"
+#define PICMAN_STOCK_DEVICE_STATUS            "picman-device-status"
+#define PICMAN_STOCK_INPUT_DEVICE             "picman-input-device"
+#define PICMAN_STOCK_CURSOR                   "picman-cursor"
+#define PICMAN_STOCK_SAMPLE_POINT             "picman-sample-point"
+#define PICMAN_STOCK_DYNAMICS                 "picman-dynamics"
+#define PICMAN_STOCK_TOOL_PRESET              "picman-tool-preset"
 
-#define GIMP_STOCK_CONTROLLER               "gimp-controller"
-#define GIMP_STOCK_CONTROLLER_KEYBOARD      "gimp-controller-keyboard"
-#define GIMP_STOCK_CONTROLLER_LINUX_INPUT   "gimp-controller-linux-input"
-#define GIMP_STOCK_CONTROLLER_MIDI          "gimp-controller-midi"
-#define GIMP_STOCK_CONTROLLER_WHEEL         "gimp-controller-wheel"
+#define PICMAN_STOCK_CONTROLLER               "picman-controller"
+#define PICMAN_STOCK_CONTROLLER_KEYBOARD      "picman-controller-keyboard"
+#define PICMAN_STOCK_CONTROLLER_LINUX_INPUT   "picman-controller-linux-input"
+#define PICMAN_STOCK_CONTROLLER_MIDI          "picman-controller-midi"
+#define PICMAN_STOCK_CONTROLLER_WHEEL         "picman-controller-wheel"
 
-#define GIMP_STOCK_DISPLAY_FILTER           "gimp-display-filter"
-#define GIMP_STOCK_DISPLAY_FILTER_COLORBLIND "gimp-display-filter-colorblind"
-#define GIMP_STOCK_DISPLAY_FILTER_CONTRAST  "gimp-display-filter-contrast"
-#define GIMP_STOCK_DISPLAY_FILTER_GAMMA     "gimp-display-filter-gamma"
-#define GIMP_STOCK_DISPLAY_FILTER_LCMS      "gimp-display-filter-lcms"
-#define GIMP_STOCK_DISPLAY_FILTER_PROOF     "gimp-display-filter-proof"
+#define PICMAN_STOCK_DISPLAY_FILTER           "picman-display-filter"
+#define PICMAN_STOCK_DISPLAY_FILTER_COLORBLIND "picman-display-filter-colorblind"
+#define PICMAN_STOCK_DISPLAY_FILTER_CONTRAST  "picman-display-filter-contrast"
+#define PICMAN_STOCK_DISPLAY_FILTER_GAMMA     "picman-display-filter-gamma"
+#define PICMAN_STOCK_DISPLAY_FILTER_LCMS      "picman-display-filter-lcms"
+#define PICMAN_STOCK_DISPLAY_FILTER_PROOF     "picman-display-filter-proof"
 
-#define GIMP_STOCK_LIST                     "gimp-list"
-#define GIMP_STOCK_GRID                     "gimp-grid"
+#define PICMAN_STOCK_LIST                     "picman-list"
+#define PICMAN_STOCK_GRID                     "picman-grid"
 
-#define GIMP_STOCK_PORTRAIT                 "gimp-portrait"
-#define GIMP_STOCK_LANDSCAPE                "gimp-landscape"
+#define PICMAN_STOCK_PORTRAIT                 "picman-portrait"
+#define PICMAN_STOCK_LANDSCAPE                "picman-landscape"
 
-#define GIMP_STOCK_WEB                      "gimp-web"
-#define GIMP_STOCK_VIDEO                    "gimp-video"
-#define GIMP_STOCK_GEGL                     "gimp-gegl"
+#define PICMAN_STOCK_WEB                      "picman-web"
+#define PICMAN_STOCK_VIDEO                    "picman-video"
+#define PICMAN_STOCK_GEGL                     "picman-gegl"
 
-#define GIMP_STOCK_SHAPE_CIRCLE             "gimp-shape-circle"
-#define GIMP_STOCK_SHAPE_DIAMOND            "gimp-shape-diamond"
-#define GIMP_STOCK_SHAPE_SQUARE             "gimp-shape-square"
+#define PICMAN_STOCK_SHAPE_CIRCLE             "picman-shape-circle"
+#define PICMAN_STOCK_SHAPE_DIAMOND            "picman-shape-diamond"
+#define PICMAN_STOCK_SHAPE_SQUARE             "picman-shape-square"
 
-#define GIMP_STOCK_CAP_BUTT                 "gimp-cap-butt"
-#define GIMP_STOCK_CAP_ROUND                "gimp-cap-round"
-#define GIMP_STOCK_CAP_SQUARE               "gimp-cap-square"
+#define PICMAN_STOCK_CAP_BUTT                 "picman-cap-butt"
+#define PICMAN_STOCK_CAP_ROUND                "picman-cap-round"
+#define PICMAN_STOCK_CAP_SQUARE               "picman-cap-square"
 
-#define GIMP_STOCK_JOIN_MITER               "gimp-join-miter"
-#define GIMP_STOCK_JOIN_ROUND               "gimp-join-round"
-#define GIMP_STOCK_JOIN_BEVEL               "gimp-join-bevel"
+#define PICMAN_STOCK_JOIN_MITER               "picman-join-miter"
+#define PICMAN_STOCK_JOIN_ROUND               "picman-join-round"
+#define PICMAN_STOCK_JOIN_BEVEL               "picman-join-bevel"
 
 /*  in dialog size:  */
 
-#define GIMP_STOCK_ERROR                    "gimp-error"
-#define GIMP_STOCK_INFO                     "gimp-info"
-#define GIMP_STOCK_QUESTION                 "gimp-question"
-#define GIMP_STOCK_WARNING                  "gimp-warning"
-#define GIMP_STOCK_WILBER                   "gimp-wilber"
-#define GIMP_STOCK_WILBER_EEK               "gimp-wilber-eek"
-#define GIMP_STOCK_FRAME                    "gimp-frame"
-#define GIMP_STOCK_TEXTURE                  "gimp-texture"
-#define GIMP_STOCK_USER_MANUAL              "gimp-user-manual"
+#define PICMAN_STOCK_ERROR                    "picman-error"
+#define PICMAN_STOCK_INFO                     "picman-info"
+#define PICMAN_STOCK_QUESTION                 "picman-question"
+#define PICMAN_STOCK_WARNING                  "picman-warning"
+#define PICMAN_STOCK_WILBER                   "picman-wilber"
+#define PICMAN_STOCK_WILBER_EEK               "picman-wilber-eek"
+#define PICMAN_STOCK_FRAME                    "picman-frame"
+#define PICMAN_STOCK_TEXTURE                  "picman-texture"
+#define PICMAN_STOCK_USER_MANUAL              "picman-user-manual"
 
 
 /*  missing icons:  */
 
-#define GIMP_STOCK_BRUSH                    GIMP_STOCK_TOOL_PAINTBRUSH
-#define GIMP_STOCK_BUFFER                   GTK_STOCK_PASTE
-#define GIMP_STOCK_DETACH                   GTK_STOCK_CONVERT
-#define GIMP_STOCK_FONT                     GTK_STOCK_SELECT_FONT
-#define GIMP_STOCK_GRADIENT                 GIMP_STOCK_TOOL_BLEND
-#define GIMP_STOCK_PALETTE                  GTK_STOCK_SELECT_COLOR
-#define GIMP_STOCK_PATTERN                  GIMP_STOCK_TOOL_BUCKET_FILL
-#define GIMP_STOCK_CONTROLLER_MOUSE         GIMP_STOCK_CURSOR
-#define GIMP_STOCK_CONVERT_PRECISION        GIMP_STOCK_CONVERT_RGB
+#define PICMAN_STOCK_BRUSH                    PICMAN_STOCK_TOOL_PAINTBRUSH
+#define PICMAN_STOCK_BUFFER                   GTK_STOCK_PASTE
+#define PICMAN_STOCK_DETACH                   GTK_STOCK_CONVERT
+#define PICMAN_STOCK_FONT                     GTK_STOCK_SELECT_FONT
+#define PICMAN_STOCK_GRADIENT                 PICMAN_STOCK_TOOL_BLEND
+#define PICMAN_STOCK_PALETTE                  GTK_STOCK_SELECT_COLOR
+#define PICMAN_STOCK_PATTERN                  PICMAN_STOCK_TOOL_BUCKET_FILL
+#define PICMAN_STOCK_CONTROLLER_MOUSE         PICMAN_STOCK_CURSOR
+#define PICMAN_STOCK_CONVERT_PRECISION        PICMAN_STOCK_CONVERT_RGB
 
 
-void   gimp_stock_init (void);
+void   picman_stock_init (void);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_STOCK_H__ */
+#endif /* __PICMAN_STOCK_H__ */

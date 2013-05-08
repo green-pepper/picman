@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpsessionmanaged.h
+ * picmansessionmanaged.h
  * Copyright (C) 2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,33 +18,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SESSION_MANAGED_H__
-#define __GIMP_SESSION_MANAGED_H__
+#ifndef __PICMAN_SESSION_MANAGED_H__
+#define __PICMAN_SESSION_MANAGED_H__
 
 
-#define GIMP_TYPE_SESSION_MANAGED               (gimp_session_managed_interface_get_type ())
-#define GIMP_SESSION_MANAGED(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SESSION_MANAGED, GimpSessionManaged))
-#define GIMP_IS_SESSION_MANAGED(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SESSION_MANAGED))
-#define GIMP_SESSION_MANAGED_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GIMP_TYPE_SESSION_MANAGED, GimpSessionManagedInterface))
+#define PICMAN_TYPE_SESSION_MANAGED               (picman_session_managed_interface_get_type ())
+#define PICMAN_SESSION_MANAGED(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SESSION_MANAGED, PicmanSessionManaged))
+#define PICMAN_IS_SESSION_MANAGED(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SESSION_MANAGED))
+#define PICMAN_SESSION_MANAGED_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), PICMAN_TYPE_SESSION_MANAGED, PicmanSessionManagedInterface))
 
 
-typedef struct _GimpSessionManagedInterface GimpSessionManagedInterface;
+typedef struct _PicmanSessionManagedInterface PicmanSessionManagedInterface;
 
-struct _GimpSessionManagedInterface
+struct _PicmanSessionManagedInterface
 {
   GTypeInterface base_iface;
 
   /*  virtual functions  */
-  GList           * (* get_aux_info)      (GimpSessionManaged *session_managed);
-  void              (* set_aux_info)      (GimpSessionManaged *session_managed,
+  GList           * (* get_aux_info)      (PicmanSessionManaged *session_managed);
+  void              (* set_aux_info)      (PicmanSessionManaged *session_managed,
                                            GList              *aux_info);
 };
 
 
-GType              gimp_session_managed_interface_get_type  (void) G_GNUC_CONST;
-GList            * gimp_session_managed_get_aux_info        (GimpSessionManaged *session_managed);
-void               gimp_session_managed_set_aux_info        (GimpSessionManaged *session_managed,
+GType              picman_session_managed_interface_get_type  (void) G_GNUC_CONST;
+GList            * picman_session_managed_get_aux_info        (PicmanSessionManaged *session_managed);
+void               picman_session_managed_set_aux_info        (PicmanSessionManaged *session_managed,
                                                              GList              *aux_info);
 
 
-#endif  /*  __GIMP_SESSION_MANAGED_H__  */
+#endif  /*  __PICMAN_SESSION_MANAGED_H__  */

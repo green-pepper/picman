@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,12 +16,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_COLOR_H_INSIDE__) && !defined (GIMP_COLOR_COMPILATION)
-#error "Only <libgimpcolor/gimpcolor.h> can be included directly."
+#if !defined (__PICMAN_COLOR_H_INSIDE__) && !defined (PICMAN_COLOR_COMPILATION)
+#error "Only <libpicmancolor/picmancolor.h> can be included directly."
 #endif
 
-#ifndef __GIMP_HSL_H__
-#define __GIMP_HSL_H__
+#ifndef __PICMAN_HSL_H__
+#define __PICMAN_HSL_H__
 
 G_BEGIN_DECLS
 
@@ -29,14 +29,14 @@ G_BEGIN_DECLS
 
 
 /*
- * GIMP_TYPE_HSL
+ * PICMAN_TYPE_HSL
  */
 
-#define GIMP_TYPE_HSL       (gimp_hsl_get_type ())
+#define PICMAN_TYPE_HSL       (picman_hsl_get_type ())
 
-GType   gimp_hsl_get_type   (void) G_GNUC_CONST;
+GType   picman_hsl_get_type   (void) G_GNUC_CONST;
 
-void    gimp_hsl_set        (GimpHSL *hsl,
+void    picman_hsl_set        (PicmanHSL *hsl,
                              gdouble  h,
                              gdouble  s,
                              gdouble  l);
@@ -44,4 +44,4 @@ void    gimp_hsl_set        (GimpHSL *hsl,
 
 G_END_DECLS
 
-#endif  /* __GIMP_HSL_H__ */
+#endif  /* __PICMAN_HSL_H__ */

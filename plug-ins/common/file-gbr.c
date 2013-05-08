@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,15 +17,15 @@
 
 /*
  * gbr plug-in version 1.00
- * Loads/saves version 2 GIMP .gbr files, by Tim Newsome <drz@frody.bloke.com>
+ * Loads/saves version 2 PICMAN .gbr files, by Tim Newsome <drz@frody.bloke.com>
  * Some bits stolen from the .99.7 source tree.
  *
  * Added in GBR version 1 support after learning that there wasn't a
  * tool to read them.
- * July 6, 1998 by Seth Burgess <sjburges@gimp.org>
+ * July 6, 1998 by Seth Burgess <sjburges@picman.org>
  *
  * Dec 17, 2000
- * Load and save GIMP brushes in GRAY or RGBA.  jtl + neo
+ * Load and save PICMAN brushes in GRAY or RGBA.  jtl + neo
  *
  *
  * TODO: Give some better error reporting on not opening files/bad headers
@@ -34,19 +34,19 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "app/core/gimpbrush-header.h"
-#include "app/core/gimppattern-header.h"
+#include "app/core/picmanbrush-header.h"
+#include "app/core/picmanpattern-header.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define LOAD_PROC      "file-gbr-load"
 #define SAVE_PROC      "file-gbr-save"
 #define PLUG_IN_BINARY "file-gbr"
-#define PLUG_IN_ROLE   "gimp-file-gbr"
+#define PLUG_IN_ROLE   "picman-file-gbr"
 
 
 typedef struct
@@ -61,9 +61,9 @@ typedef struct
 static void       query          (void);
 static void       run            (const gchar      *name,
                                   gint              nparams,
-                                  const GimpParam  *param,
+                                  const PicmanParam  *param,
                                   gint             *nreturn_vals,
-                                  GimpParam       **return_vals);
+                                  PicmanParam       **return_vals);
 
 static gint32     load_image     (GFile            *file,
                                   GError          **error);
@@ -77,7 +77,7 @@ static void       entry_callback (GtkWidget        *widget,
                                   gpointer          data);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -90,7 +90,7 @@ const GimpPlugInInfo PLUG_IN_INFO =
 
 static BrushInfo info =
 {
-  "GIMP Brush",
+  "PICMAN Brush",
   10
 };
 
@@ -100,82 +100,82 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "uri",      "The URI of the file to load" },
-    { GIMP_PDB_STRING, "raw-uri",  "The URI of the file to load" }
+    { PICMAN_PDB_INT32,  "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "uri",      "The URI of the file to load" },
+    { PICMAN_PDB_STRING, "raw-uri",  "The URI of the file to load" }
   };
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,  "image",        "Output image" }
-  };
-
-  static const GimpParamDef save_args[] =
-  {
-    { GIMP_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",       "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",    "Drawable to save" },
-    { GIMP_PDB_STRING,   "uri",         "The URI of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-uri",     "The URI of the file to save the image in" },
-    { GIMP_PDB_INT32,    "spacing",     "Spacing of the brush" },
-    { GIMP_PDB_STRING,   "description", "Short description of the brush" }
+    { PICMAN_PDB_IMAGE,  "image",        "Output image" }
   };
 
-  gimp_install_procedure (LOAD_PROC,
-                          "Loads GIMP brushes",
-                          "Loads GIMP brushes (1 or 4 bpp and old .gpb format)",
+  static const PicmanParamDef save_args[] =
+  {
+    { PICMAN_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",       "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",    "Drawable to save" },
+    { PICMAN_PDB_STRING,   "uri",         "The URI of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-uri",     "The URI of the file to save the image in" },
+    { PICMAN_PDB_INT32,    "spacing",     "Spacing of the brush" },
+    { PICMAN_PDB_STRING,   "description", "Short description of the brush" }
+  };
+
+  picman_install_procedure (LOAD_PROC,
+                          "Loads PICMAN brushes",
+                          "Loads PICMAN brushes (1 or 4 bpp and old .gpb format)",
                           "Tim Newsome, Jens Lautenbacher, Sven Neumann",
                           "Tim Newsome, Jens Lautenbacher, Sven Neumann",
                           "1997-2005",
-                          N_("GIMP brush"),
+                          N_("PICMAN brush"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_plugin_icon_register (LOAD_PROC, GIMP_ICON_TYPE_STOCK_ID,
-                             (const guint8 *) GIMP_STOCK_BRUSH);
-  gimp_register_file_handler_mime (LOAD_PROC, "image/x-gimp-gbr");
-  gimp_register_file_handler_uri (LOAD_PROC);
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_plugin_icon_register (LOAD_PROC, PICMAN_ICON_TYPE_STOCK_ID,
+                             (const guint8 *) PICMAN_STOCK_BRUSH);
+  picman_register_file_handler_mime (LOAD_PROC, "image/x-picman-gbr");
+  picman_register_file_handler_uri (LOAD_PROC);
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "gbr, gpb",
                                     "",
-                                    "20, string, GIMP");
+                                    "20, string, PICMAN");
 
-  gimp_install_procedure (SAVE_PROC,
-                          "Saves files in the GIMP brush file format",
-                          "Saves files in the GIMP brush file format",
+  picman_install_procedure (SAVE_PROC,
+                          "Saves files in the PICMAN brush file format",
+                          "Saves files in the PICMAN brush file format",
                           "Tim Newsome, Jens Lautenbacher, Sven Neumann",
                           "Tim Newsome, Jens Lautenbacher, Sven Neumann",
                           "1997-2000",
-                          N_("GIMP brush"),
+                          N_("PICMAN brush"),
                           "RGB*, GRAY*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_plugin_icon_register (SAVE_PROC, GIMP_ICON_TYPE_STOCK_ID,
-                             (const guint8 *) GIMP_STOCK_BRUSH);
-  gimp_register_file_handler_mime (SAVE_PROC, "image/x-gimp-gbr");
-  gimp_register_file_handler_uri (SAVE_PROC);
-  gimp_register_save_handler (SAVE_PROC, "gbr", "");
+  picman_plugin_icon_register (SAVE_PROC, PICMAN_ICON_TYPE_STOCK_ID,
+                             (const guint8 *) PICMAN_STOCK_BRUSH);
+  picman_register_file_handler_mime (SAVE_PROC, "image/x-picman-gbr");
+  picman_register_file_handler_uri (SAVE_PROC);
+  picman_register_save_handler (SAVE_PROC, "gbr", "");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint32             image_ID;
   gint32             drawable_ID;
-  GimpExportReturn   export = GIMP_EXPORT_CANCEL;
+  PicmanExportReturn   export = PICMAN_EXPORT_CANCEL;
   GError            *error  = NULL;
 
   INIT_I18N ();
@@ -186,8 +186,8 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   if (strcmp (name, LOAD_PROC) == 0)
     {
@@ -197,17 +197,17 @@ run (const gchar      *name,
       if (image_ID != -1)
         {
           *nreturn_vals = 2;
-          values[1].type         = GIMP_PDB_IMAGE;
+          values[1].type         = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_ID;
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
   else if (strcmp (name, SAVE_PROC) == 0)
     {
-      GimpParasite *parasite;
+      PicmanParasite *parasite;
       gint32        orig_image_ID;
 
       image_ID    = param[1].data.d_int32;
@@ -217,34 +217,34 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
-          export = gimp_export_image (&image_ID, &drawable_ID, NULL,
-                                      GIMP_EXPORT_CAN_HANDLE_GRAY    |
-                                      GIMP_EXPORT_CAN_HANDLE_RGB     |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
-                                      GIMP_EXPORT_CAN_HANDLE_ALPHA);
-          if (export == GIMP_EXPORT_CANCEL)
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
+          export = picman_export_image (&image_ID, &drawable_ID, NULL,
+                                      PICMAN_EXPORT_CAN_HANDLE_GRAY    |
+                                      PICMAN_EXPORT_CAN_HANDLE_RGB     |
+                                      PICMAN_EXPORT_CAN_HANDLE_INDEXED |
+                                      PICMAN_EXPORT_CAN_HANDLE_ALPHA);
+          if (export == PICMAN_EXPORT_CANCEL)
             {
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
             }
 
           /*  Possibly retrieve data  */
-          gimp_get_data (SAVE_PROC, &info);
+          picman_get_data (SAVE_PROC, &info);
           break;
 
         default:
           break;
         }
 
-      parasite = gimp_image_get_parasite (orig_image_ID, "gimp-brush-name");
+      parasite = picman_image_get_parasite (orig_image_ID, "picman-brush-name");
       if (parasite)
         {
-          gchar *name = g_strndup (gimp_parasite_data (parasite),
-                                   gimp_parasite_data_size (parasite));
-          gimp_parasite_free (parasite);
+          gchar *name = g_strndup (picman_parasite_data (parasite),
+                                   picman_parasite_data_size (parasite));
+          picman_parasite_free (parasite);
 
           strncpy (info.description, name, sizeof (info.description));
           info.description[sizeof (info.description) - 1] = '\0';
@@ -254,15 +254,15 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           if (! save_dialog ())
-            status = GIMP_PDB_CANCEL;
+            status = PICMAN_PDB_CANCEL;
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           if (nparams != 7)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
@@ -277,47 +277,47 @@ run (const gchar      *name,
           break;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           if (save_image (g_file_new_for_uri (param[3].data.d_string),
                           image_ID, drawable_ID, &error))
             {
-              gimp_set_data (SAVE_PROC, &info, sizeof (info));
+              picman_set_data (SAVE_PROC, &info, sizeof (info));
             }
           else
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image_ID);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image_ID);
 
       if (info.description && strlen (info.description))
         {
-          GimpParasite *parasite;
+          PicmanParasite *parasite;
 
-          parasite = gimp_parasite_new ("gimp-brush-name",
-                                        GIMP_PARASITE_PERSISTENT,
+          parasite = picman_parasite_new ("picman-brush-name",
+                                        PICMAN_PARASITE_PERSISTENT,
                                         strlen (info.description) + 1,
                                         info.description);
-          gimp_image_attach_parasite (orig_image_ID, parasite);
-          gimp_parasite_free (parasite);
+          picman_image_attach_parasite (orig_image_ID, parasite);
+          picman_parasite_free (parasite);
         }
       else
         {
-          gimp_image_detach_parasite (orig_image_ID, "gimp-brush-name");
+          picman_image_detach_parasite (orig_image_ID, "picman-brush-name");
         }
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -334,11 +334,11 @@ load_image (GFile   *file,
   guchar            *brush_buf = NULL;
   gint32             image_ID;
   gint32             layer_ID;
-  GimpParasite      *parasite;
+  PicmanParasite      *parasite;
   GeglBuffer        *buffer;
   const Babl        *format;
-  GimpImageBaseType  base_type;
-  GimpImageType      image_type;
+  PicmanImageBaseType  base_type;
+  PicmanImageType      image_type;
   gsize              bytes_read;
   gsize              size;
   gint               i;
@@ -347,7 +347,7 @@ load_image (GFile   *file,
   if (! input)
     return -1;
 
-  gimp_progress_init_printf (_("Opening '%s'"),
+  picman_progress_init_printf (_("Opening '%s'"),
                              g_file_get_parse_name (file));
 
   size = G_STRUCT_OFFSET (BrushHeader, magic_number);
@@ -368,8 +368,8 @@ load_image (GFile   *file,
   bh.bytes        = g_ntohl (bh.bytes);
 
   /* Sanitize values */
-  if ((bh.width  == 0) || (bh.width  > GIMP_MAX_IMAGE_SIZE) ||
-      (bh.height == 0) || (bh.height > GIMP_MAX_IMAGE_SIZE) ||
+  if ((bh.width  == 0) || (bh.width  > PICMAN_MAX_IMAGE_SIZE) ||
+      (bh.height == 0) || (bh.height > PICMAN_MAX_IMAGE_SIZE) ||
       ((bh.bytes != 1) && (bh.bytes != 2) && (bh.bytes != 4) &&
        (bh.bytes != 18)) ||
       (G_MAXSIZE / bh.width / bh.height / bh.bytes < 1))
@@ -441,14 +441,14 @@ load_image (GFile   *file,
           bytes_read != size)
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
-                       _("Error in GIMP brush file '%s'"),
+                       _("Error in PICMAN brush file '%s'"),
                        g_file_get_parse_name (file));
           g_object_unref (input);
           g_free (temp);
           return -1;
         }
 
-      name = gimp_any_to_utf8 (temp, -1,
+      name = picman_any_to_utf8 (temp, -1,
                                _("Invalid UTF-8 string in brush file '%s'."),
                                g_file_get_parse_name (file));
       g_free (temp);
@@ -573,44 +573,44 @@ load_image (GFile   *file,
   switch (bh.bytes)
     {
     case 1:
-      base_type = GIMP_GRAY;
-      image_type = GIMP_GRAY_IMAGE;
+      base_type = PICMAN_GRAY;
+      image_type = PICMAN_GRAY_IMAGE;
       format = babl_format ("Y' u8");
       break;
 
     case 4:
-      base_type = GIMP_RGB;
-      image_type = GIMP_RGBA_IMAGE;
+      base_type = PICMAN_RGB;
+      image_type = PICMAN_RGBA_IMAGE;
       format = babl_format ("R'G'B'A u8");
       break;
 
     default:
       g_message ("Unsupported brush depth: %d\n"
-                 "GIMP Brushes must be GRAY or RGBA\n",
+                 "PICMAN Brushes must be GRAY or RGBA\n",
                  bh.bytes);
       g_free (name);
       return -1;
     }
 
-  image_ID = gimp_image_new (bh.width, bh.height, base_type);
-  gimp_image_set_filename (image_ID, g_file_get_uri (file));
+  image_ID = picman_image_new (bh.width, bh.height, base_type);
+  picman_image_set_filename (image_ID, g_file_get_uri (file));
 
-  parasite = gimp_parasite_new ("gimp-brush-name",
-                                GIMP_PARASITE_PERSISTENT,
+  parasite = picman_parasite_new ("picman-brush-name",
+                                PICMAN_PARASITE_PERSISTENT,
                                 strlen (name) + 1, name);
-  gimp_image_attach_parasite (image_ID, parasite);
-  gimp_parasite_free (parasite);
+  picman_image_attach_parasite (image_ID, parasite);
+  picman_parasite_free (parasite);
 
-  layer_ID = gimp_layer_new (image_ID, name, bh.width, bh.height,
-                             image_type, 100, GIMP_NORMAL_MODE);
-  gimp_image_insert_layer (image_ID, layer_ID, -1, 0);
+  layer_ID = picman_layer_new (image_ID, name, bh.width, bh.height,
+                             image_type, 100, PICMAN_NORMAL_MODE);
+  picman_image_insert_layer (image_ID, layer_ID, -1, 0);
 
   g_free (name);
 
-  buffer = gimp_drawable_get_buffer (layer_ID);
+  buffer = picman_drawable_get_buffer (layer_ID);
 
   /*  invert  */
-  if (image_type == GIMP_GRAY_IMAGE)
+  if (image_type == PICMAN_GRAY_IMAGE)
     for (i = 0; i < bh.width * bh.height; i++)
       brush_buf[i] = 255 - brush_buf[i];
 
@@ -621,7 +621,7 @@ load_image (GFile   *file,
   g_object_unref (buffer);
   g_object_unref (input);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   return image_ID;
 }
@@ -643,19 +643,19 @@ save_image (GFile   *file,
   gint           file_bpp;
   gint           width;
   gint           height;
-  GimpRGB        gray, white;
+  PicmanRGB        gray, white;
   gsize          bytes_written;
 
-  gimp_rgba_set_uchar (&white, 255, 255, 255, 255);
+  picman_rgba_set_uchar (&white, 255, 255, 255, 255);
 
-  switch (gimp_drawable_type (drawable_ID))
+  switch (picman_drawable_type (drawable_ID))
     {
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       file_bpp = 1;
       format = babl_format ("Y' u8");
       break;
 
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       file_bpp = 1;
       format = babl_format ("Y'A u8");
       break;
@@ -672,13 +672,13 @@ save_image (GFile   *file,
   if (! output)
     return FALSE;
 
-  gimp_progress_init_printf (_("Saving '%s'"),
+  picman_progress_init_printf (_("Saving '%s'"),
                              g_file_get_parse_name (file));
 
-  buffer = gimp_drawable_get_buffer (drawable_ID);
+  buffer = picman_drawable_get_buffer (drawable_ID);
 
-  width  = gimp_drawable_width  (drawable_ID);
-  height = gimp_drawable_height (drawable_ID);
+  width  = picman_drawable_width  (drawable_ID);
+  height = picman_drawable_height (drawable_ID);
 
   bh.header_size  = g_htonl (sizeof (BrushHeader) +
                              strlen (info.description) + 1);
@@ -727,13 +727,13 @@ save_image (GFile   *file,
           for (x = 0; x < width; x++)
             {
               /*  apply alpha channel  */
-              gimp_rgba_set_uchar (&gray,
+              picman_rgba_set_uchar (&gray,
                                    brush_buf[2 * x],
                                    brush_buf[2 * x],
                                    brush_buf[2 * x],
                                    brush_buf[2 * x + 1]);
-              gimp_rgb_composite (&gray, &white, GIMP_RGB_COMPOSITE_BEHIND);
-              gimp_rgba_get_uchar (&gray, &brush_buf[x], NULL, NULL, NULL);
+              picman_rgb_composite (&gray, &white, PICMAN_RGB_COMPOSITE_BEHIND);
+              picman_rgba_get_uchar (&gray, &brush_buf[x], NULL, NULL, NULL);
               /* invert */
               brush_buf[x] = 255 - brush_buf[x];
             }
@@ -749,14 +749,14 @@ save_image (GFile   *file,
           return FALSE;
         }
 
-      gimp_progress_update ((gdouble) line / (gdouble) height);
+      picman_progress_update ((gdouble) line / (gdouble) height);
     }
 
   g_free (brush_buf);
   g_object_unref (buffer);
   g_object_unref (output);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   return TRUE;
 }
@@ -771,31 +771,31 @@ save_dialog (void)
   GtkObject *adj;
   gboolean   run;
 
-  dialog = gimp_export_dialog_new (_("Brush"), PLUG_IN_BINARY, SAVE_PROC);
+  dialog = picman_export_dialog_new (_("Brush"), PLUG_IN_BINARY, SAVE_PROC);
 
   /* The main table */
   table = gtk_table_new (2, 2, FALSE);
   gtk_container_set_border_width (GTK_CONTAINER (table), 12);
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);
   gtk_table_set_col_spacings (GTK_TABLE (table), 6);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       table, TRUE, TRUE, 0);
   gtk_widget_show (table);
 
-  spinbutton = gimp_spin_button_new (&adj,
+  spinbutton = picman_spin_button_new (&adj,
                                      info.spacing, 1, 1000, 1, 10, 0, 1, 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("Spacing:"), 1.0, 0.5,
                              spinbutton, 1, TRUE);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &info.spacing);
 
   entry = gtk_entry_new ();
   gtk_widget_set_size_request (entry, 200, -1);
   gtk_entry_set_text (GTK_ENTRY (entry), info.description);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("Description:"), 1.0, 0.5,
                              entry, 1, FALSE);
 
@@ -805,7 +805,7 @@ save_dialog (void)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

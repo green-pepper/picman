@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1999 Manish Singh
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,32 +19,32 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "display-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-expose.h"
-#include "gimpdisplayshell-filter.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-expose.h"
+#include "picmandisplayshell-filter.h"
 
 
 /*  local function prototypes  */
 
-static void   gimp_display_shell_filter_changed (GimpColorDisplayStack *stack,
-                                                 GimpDisplayShell      *shell);
+static void   picman_display_shell_filter_changed (PicmanColorDisplayStack *stack,
+                                                 PicmanDisplayShell      *shell);
 
 
 /*  public functions  */
 
 void
-gimp_display_shell_filter_set (GimpDisplayShell      *shell,
-                               GimpColorDisplayStack *stack)
+picman_display_shell_filter_set (PicmanDisplayShell      *shell,
+                               PicmanColorDisplayStack *stack)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
-  g_return_if_fail (stack == NULL || GIMP_IS_COLOR_DISPLAY_STACK (stack));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (stack == NULL || PICMAN_IS_COLOR_DISPLAY_STACK (stack));
 
   if (stack == shell->filter_stack)
     return;
@@ -52,7 +52,7 @@ gimp_display_shell_filter_set (GimpDisplayShell      *shell,
   if (shell->filter_stack)
     {
       g_signal_handlers_disconnect_by_func (shell->filter_stack,
-                                            gimp_display_shell_filter_changed,
+                                            picman_display_shell_filter_changed,
                                             shell);
 
       g_object_unref (shell->filter_stack);
@@ -65,37 +65,37 @@ gimp_display_shell_filter_set (GimpDisplayShell      *shell,
       g_object_ref (shell->filter_stack);
 
       g_signal_connect (shell->filter_stack, "changed",
-                        G_CALLBACK (gimp_display_shell_filter_changed),
+                        G_CALLBACK (picman_display_shell_filter_changed),
                         shell);
     }
 
-  gimp_display_shell_filter_changed (NULL, shell);
+  picman_display_shell_filter_changed (NULL, shell);
 }
 
-GimpColorDisplayStack *
-gimp_display_shell_filter_new (GimpDisplayShell *shell,
-                               GimpColorConfig  *config)
+PicmanColorDisplayStack *
+picman_display_shell_filter_new (PicmanDisplayShell *shell,
+                               PicmanColorConfig  *config)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
-  g_return_val_if_fail (GIMP_IS_COLOR_CONFIG (config), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_COLOR_CONFIG (config), NULL);
 
   if (config->display_module)
     {
       GType type = g_type_from_name (config->display_module);
 
-      if (g_type_is_a (type, GIMP_TYPE_COLOR_DISPLAY))
+      if (g_type_is_a (type, PICMAN_TYPE_COLOR_DISPLAY))
         {
-          GimpColorDisplay      *display;
-          GimpColorDisplayStack *stack;
+          PicmanColorDisplay      *display;
+          PicmanColorDisplayStack *stack;
 
           display = g_object_new (type,
                                   "color-config",  config,
                                   "color-managed", shell,
                                   NULL);
 
-          stack = gimp_color_display_stack_new ();
+          stack = picman_color_display_stack_new ();
 
-          gimp_color_display_stack_add (stack, display);
+          picman_color_display_stack_add (stack, display);
           g_object_unref (display);
 
           return stack;
@@ -109,25 +109,25 @@ gimp_display_shell_filter_new (GimpDisplayShell *shell,
 /*  private functions  */
 
 static gboolean
-gimp_display_shell_filter_changed_idle (gpointer data)
+picman_display_shell_filter_changed_idle (gpointer data)
 {
-  GimpDisplayShell *shell = data;
+  PicmanDisplayShell *shell = data;
 
-  gimp_display_shell_expose_full (shell);
+  picman_display_shell_expose_full (shell);
   shell->filter_idle_id = 0;
 
   return FALSE;
 }
 
 static void
-gimp_display_shell_filter_changed (GimpColorDisplayStack *stack,
-                                   GimpDisplayShell      *shell)
+picman_display_shell_filter_changed (PicmanColorDisplayStack *stack,
+                                   PicmanDisplayShell      *shell)
 {
   if (shell->filter_idle_id)
     g_source_remove (shell->filter_idle_id);
 
   shell->filter_idle_id =
     g_idle_add_full (G_PRIORITY_LOW,
-                     gimp_display_shell_filter_changed_idle,
+                     picman_display_shell_filter_changed_idle,
                      shell, NULL);
 }

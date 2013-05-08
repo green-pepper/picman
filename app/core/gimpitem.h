@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,97 +15,97 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ITEM_H__
-#define __GIMP_ITEM_H__
+#ifndef __PICMAN_ITEM_H__
+#define __PICMAN_ITEM_H__
 
 
-#include "gimpfilter.h"
+#include "picmanfilter.h"
 
 
-#define GIMP_TYPE_ITEM            (gimp_item_get_type ())
-#define GIMP_ITEM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ITEM, GimpItem))
-#define GIMP_ITEM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ITEM, GimpItemClass))
-#define GIMP_IS_ITEM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ITEM))
-#define GIMP_IS_ITEM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ITEM))
-#define GIMP_ITEM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ITEM, GimpItemClass))
+#define PICMAN_TYPE_ITEM            (picman_item_get_type ())
+#define PICMAN_ITEM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ITEM, PicmanItem))
+#define PICMAN_ITEM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ITEM, PicmanItemClass))
+#define PICMAN_IS_ITEM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ITEM))
+#define PICMAN_IS_ITEM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ITEM))
+#define PICMAN_ITEM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ITEM, PicmanItemClass))
 
 
-typedef struct _GimpItemClass GimpItemClass;
+typedef struct _PicmanItemClass PicmanItemClass;
 
-struct _GimpItem
+struct _PicmanItem
 {
-  GimpFilter  parent_instance;
+  PicmanFilter  parent_instance;
 };
 
-struct _GimpItemClass
+struct _PicmanItemClass
 {
-  GimpFilterClass  parent_class;
+  PicmanFilterClass  parent_class;
 
   /*  signals  */
-  void            (* removed)               (GimpItem            *item);
-  void            (* visibility_changed)    (GimpItem            *item);
-  void            (* linked_changed)        (GimpItem            *item);
-  void            (* lock_content_changed)  (GimpItem            *item);
-  void            (* lock_position_changed) (GimpItem            *item);
+  void            (* removed)               (PicmanItem            *item);
+  void            (* visibility_changed)    (PicmanItem            *item);
+  void            (* linked_changed)        (PicmanItem            *item);
+  void            (* lock_content_changed)  (PicmanItem            *item);
+  void            (* lock_position_changed) (PicmanItem            *item);
 
   /*  virtual functions  */
-  void            (* unset_removed)      (GimpItem               *item);
-  gboolean        (* is_attached)        (const GimpItem         *item);
-  gboolean        (* is_content_locked)  (const GimpItem         *item);
-  gboolean        (* is_position_locked) (const GimpItem         *item);
-  GimpItemTree  * (* get_tree)           (GimpItem               *item);
-  GimpItem      * (* duplicate)          (GimpItem               *item,
+  void            (* unset_removed)      (PicmanItem               *item);
+  gboolean        (* is_attached)        (const PicmanItem         *item);
+  gboolean        (* is_content_locked)  (const PicmanItem         *item);
+  gboolean        (* is_position_locked) (const PicmanItem         *item);
+  PicmanItemTree  * (* get_tree)           (PicmanItem               *item);
+  PicmanItem      * (* duplicate)          (PicmanItem               *item,
                                           GType                   new_type);
-  void            (* convert)            (GimpItem               *item,
-                                          GimpImage              *dest_image);
-  gboolean        (* rename)             (GimpItem               *item,
+  void            (* convert)            (PicmanItem               *item,
+                                          PicmanImage              *dest_image);
+  gboolean        (* rename)             (PicmanItem               *item,
                                           const gchar            *new_name,
                                           const gchar            *undo_desc,
                                           GError                **error);
-  void            (* translate)          (GimpItem               *item,
+  void            (* translate)          (PicmanItem               *item,
                                           gint                    offset_x,
                                           gint                    offset_y,
                                           gboolean                push_undo);
-  void            (* scale)              (GimpItem               *item,
+  void            (* scale)              (PicmanItem               *item,
                                           gint                    new_width,
                                           gint                    new_height,
                                           gint                    new_offset_x,
                                           gint                    new_offset_y,
-                                          GimpInterpolationType   interpolation_type,
-                                          GimpProgress           *progress);
-  void            (* resize)             (GimpItem               *item,
-                                          GimpContext            *context,
+                                          PicmanInterpolationType   interpolation_type,
+                                          PicmanProgress           *progress);
+  void            (* resize)             (PicmanItem               *item,
+                                          PicmanContext            *context,
                                           gint                    new_width,
                                           gint                    new_height,
                                           gint                    offset_x,
                                           gint                    offset_y);
-  void            (* flip)               (GimpItem               *item,
-                                          GimpContext            *context,
-                                          GimpOrientationType     flip_type,
+  void            (* flip)               (PicmanItem               *item,
+                                          PicmanContext            *context,
+                                          PicmanOrientationType     flip_type,
                                           gdouble                 axis,
                                           gboolean                clip_result);
-  void            (* rotate)             (GimpItem               *item,
-                                          GimpContext            *context,
-                                          GimpRotationType        rotate_type,
+  void            (* rotate)             (PicmanItem               *item,
+                                          PicmanContext            *context,
+                                          PicmanRotationType        rotate_type,
                                           gdouble                 center_x,
                                           gdouble                 center_y,
                                           gboolean                clip_result);
-  void            (* transform)          (GimpItem               *item,
-                                          GimpContext            *context,
-                                          const GimpMatrix3      *matrix,
-                                          GimpTransformDirection  direction,
-                                          GimpInterpolationType   interpolation_type,
+  void            (* transform)          (PicmanItem               *item,
+                                          PicmanContext            *context,
+                                          const PicmanMatrix3      *matrix,
+                                          PicmanTransformDirection  direction,
+                                          PicmanInterpolationType   interpolation_type,
                                           gint                    recursion_level,
-                                          GimpTransformResize     clip_result,
-                                          GimpProgress           *progress);
-  gboolean        (* stroke)             (GimpItem               *item,
-                                          GimpDrawable           *drawable,
-                                          GimpStrokeOptions      *stroke_options,
+                                          PicmanTransformResize     clip_result,
+                                          PicmanProgress           *progress);
+  gboolean        (* stroke)             (PicmanItem               *item,
+                                          PicmanDrawable           *drawable,
+                                          PicmanStrokeOptions      *stroke_options,
                                           gboolean                push_undo,
-                                          GimpProgress           *progress,
+                                          PicmanProgress           *progress,
                                           GError                **error);
-  void            (* to_selection)       (GimpItem               *item,
-                                          GimpChannelOps          op,
+  void            (* to_selection)       (PicmanItem               *item,
+                                          PicmanChannelOps          op,
                                           gboolean                antialias,
                                           gboolean                feather,
                                           gdouble                 feather_radius_x,
@@ -133,198 +133,198 @@ struct _GimpItemClass
 };
 
 
-GType           gimp_item_get_type           (void) G_GNUC_CONST;
+GType           picman_item_get_type           (void) G_GNUC_CONST;
 
-GimpItem      * gimp_item_new                (GType               type,
-                                              GimpImage          *image,
+PicmanItem      * picman_item_new                (GType               type,
+                                              PicmanImage          *image,
                                               const gchar        *name,
                                               gint                offset_x,
                                               gint                offset_y,
                                               gint                width,
                                               gint                height);
 
-void            gimp_item_removed            (GimpItem           *item);
-gboolean        gimp_item_is_removed         (const GimpItem     *item);
-void            gimp_item_unset_removed      (GimpItem           *item);
+void            picman_item_removed            (PicmanItem           *item);
+gboolean        picman_item_is_removed         (const PicmanItem     *item);
+void            picman_item_unset_removed      (PicmanItem           *item);
 
-gboolean        gimp_item_is_attached        (const GimpItem     *item);
+gboolean        picman_item_is_attached        (const PicmanItem     *item);
 
-GimpItem      * gimp_item_get_parent         (const GimpItem     *item);
+PicmanItem      * picman_item_get_parent         (const PicmanItem     *item);
 
-GimpItemTree  * gimp_item_get_tree           (GimpItem           *item);
-GimpContainer * gimp_item_get_container      (GimpItem           *item);
-GList         * gimp_item_get_container_iter (GimpItem           *item);
-gint            gimp_item_get_index          (GimpItem           *item);
-GList         * gimp_item_get_path           (GimpItem           *item);
+PicmanItemTree  * picman_item_get_tree           (PicmanItem           *item);
+PicmanContainer * picman_item_get_container      (PicmanItem           *item);
+GList         * picman_item_get_container_iter (PicmanItem           *item);
+gint            picman_item_get_index          (PicmanItem           *item);
+GList         * picman_item_get_path           (PicmanItem           *item);
 
-GimpItem      * gimp_item_duplicate          (GimpItem           *item,
+PicmanItem      * picman_item_duplicate          (PicmanItem           *item,
                                               GType               new_type);
-GimpItem      * gimp_item_convert            (GimpItem           *item,
-                                              GimpImage          *dest_image,
+PicmanItem      * picman_item_convert            (PicmanItem           *item,
+                                              PicmanImage          *dest_image,
                                               GType               new_type);
 
-gboolean        gimp_item_rename             (GimpItem           *item,
+gboolean        picman_item_rename             (PicmanItem           *item,
                                               const gchar        *new_name,
                                               GError            **error);
 
-gint            gimp_item_get_width          (const GimpItem     *item);
-gint            gimp_item_get_height         (const GimpItem     *item);
-void            gimp_item_set_size           (GimpItem           *item,
+gint            picman_item_get_width          (const PicmanItem     *item);
+gint            picman_item_get_height         (const PicmanItem     *item);
+void            picman_item_set_size           (PicmanItem           *item,
                                               gint                width,
                                               gint                height);
 
-void            gimp_item_get_offset         (const GimpItem     *item,
+void            picman_item_get_offset         (const PicmanItem     *item,
                                               gint               *offset_x,
                                               gint               *offset_y);
-void            gimp_item_set_offset         (GimpItem           *item,
+void            picman_item_set_offset         (PicmanItem           *item,
                                               gint                offset_x,
                                               gint                offset_y);
-gint            gimp_item_get_offset_x       (GimpItem           *item);
-gint            gimp_item_get_offset_y       (GimpItem           *item);
+gint            picman_item_get_offset_x       (PicmanItem           *item);
+gint            picman_item_get_offset_y       (PicmanItem           *item);
 
-void            gimp_item_translate          (GimpItem           *item,
+void            picman_item_translate          (PicmanItem           *item,
                                               gint                offset_x,
                                               gint                offset_y,
                                               gboolean            push_undo);
 
-gboolean        gimp_item_check_scaling      (const GimpItem     *item,
+gboolean        picman_item_check_scaling      (const PicmanItem     *item,
                                               gint                new_width,
                                               gint                new_height);
-void            gimp_item_scale              (GimpItem           *item,
+void            picman_item_scale              (PicmanItem           *item,
                                               gint                new_width,
                                               gint                new_height,
                                               gint                new_offset_x,
                                               gint                new_offset_y,
-                                              GimpInterpolationType interpolation,
-                                              GimpProgress       *progress);
-gboolean        gimp_item_scale_by_factors   (GimpItem           *item,
+                                              PicmanInterpolationType interpolation,
+                                              PicmanProgress       *progress);
+gboolean        picman_item_scale_by_factors   (PicmanItem           *item,
                                               gdouble             w_factor,
                                               gdouble             h_factor,
-                                              GimpInterpolationType interpolation,
-                                              GimpProgress       *progress);
-void            gimp_item_scale_by_origin    (GimpItem           *item,
+                                              PicmanInterpolationType interpolation,
+                                              PicmanProgress       *progress);
+void            picman_item_scale_by_origin    (PicmanItem           *item,
                                               gint                new_width,
                                               gint                new_height,
-                                              GimpInterpolationType interpolation,
-                                              GimpProgress       *progress,
+                                              PicmanInterpolationType interpolation,
+                                              PicmanProgress       *progress,
                                               gboolean            local_origin);
-void            gimp_item_resize             (GimpItem           *item,
-                                              GimpContext        *context,
+void            picman_item_resize             (PicmanItem           *item,
+                                              PicmanContext        *context,
                                               gint                new_width,
                                               gint                new_height,
                                               gint                offset_x,
                                               gint                offset_y);
-void            gimp_item_resize_to_image    (GimpItem           *item);
+void            picman_item_resize_to_image    (PicmanItem           *item);
 
-void            gimp_item_flip               (GimpItem           *item,
-                                              GimpContext        *context,
-                                              GimpOrientationType flip_type,
+void            picman_item_flip               (PicmanItem           *item,
+                                              PicmanContext        *context,
+                                              PicmanOrientationType flip_type,
                                               gdouble             axis,
                                               gboolean            flip_result);
-void            gimp_item_rotate             (GimpItem           *item,
-                                              GimpContext        *context,
-                                              GimpRotationType    rotate_type,
+void            picman_item_rotate             (PicmanItem           *item,
+                                              PicmanContext        *context,
+                                              PicmanRotationType    rotate_type,
                                               gdouble             center_x,
                                               gdouble             center_y,
                                               gboolean            flip_result);
-void            gimp_item_transform          (GimpItem           *item,
-                                              GimpContext        *context,
-                                              const GimpMatrix3  *matrix,
-                                              GimpTransformDirection direction,
-                                              GimpInterpolationType interpolation_type,
+void            picman_item_transform          (PicmanItem           *item,
+                                              PicmanContext        *context,
+                                              const PicmanMatrix3  *matrix,
+                                              PicmanTransformDirection direction,
+                                              PicmanInterpolationType interpolation_type,
                                               gint                recursion_level,
-                                              GimpTransformResize clip_result,
-                                              GimpProgress       *progress);
+                                              PicmanTransformResize clip_result,
+                                              PicmanProgress       *progress);
 
-gboolean        gimp_item_stroke             (GimpItem           *item,
-                                              GimpDrawable       *drawable,
-                                              GimpContext        *context,
-                                              GimpStrokeOptions  *stroke_options,
+gboolean        picman_item_stroke             (PicmanItem           *item,
+                                              PicmanDrawable       *drawable,
+                                              PicmanContext        *context,
+                                              PicmanStrokeOptions  *stroke_options,
                                               gboolean            use_default_values,
                                               gboolean            push_undo,
-                                              GimpProgress       *progress,
+                                              PicmanProgress       *progress,
                                               GError            **error);
 
-void            gimp_item_to_selection       (GimpItem           *item,
-                                              GimpChannelOps      op,
+void            picman_item_to_selection       (PicmanItem           *item,
+                                              PicmanChannelOps      op,
                                               gboolean            antialias,
                                               gboolean            feather,
                                               gdouble             feather_radius_x,
                                               gdouble             feather_radius_y);
 
-void            gimp_item_add_offset_node    (GimpItem           *item,
+void            picman_item_add_offset_node    (PicmanItem           *item,
                                               GeglNode           *node);
-void            gimp_item_remove_offset_node (GimpItem           *item,
+void            picman_item_remove_offset_node (PicmanItem           *item,
                                               GeglNode           *node);
 
-gint            gimp_item_get_ID             (GimpItem           *item);
-GimpItem      * gimp_item_get_by_ID          (Gimp               *gimp,
+gint            picman_item_get_ID             (PicmanItem           *item);
+PicmanItem      * picman_item_get_by_ID          (Picman               *picman,
                                               gint                id);
 
-GimpTattoo      gimp_item_get_tattoo         (const GimpItem     *item);
-void            gimp_item_set_tattoo         (GimpItem           *item,
-                                              GimpTattoo          tattoo);
+PicmanTattoo      picman_item_get_tattoo         (const PicmanItem     *item);
+void            picman_item_set_tattoo         (PicmanItem           *item,
+                                              PicmanTattoo          tattoo);
 
-GimpImage     * gimp_item_get_image          (const GimpItem     *item);
-void            gimp_item_set_image          (GimpItem           *item,
-                                              GimpImage          *image);
+PicmanImage     * picman_item_get_image          (const PicmanItem     *item);
+void            picman_item_set_image          (PicmanItem           *item,
+                                              PicmanImage          *image);
 
-void            gimp_item_replace_item       (GimpItem           *item,
-                                              GimpItem           *replace);
+void            picman_item_replace_item       (PicmanItem           *item,
+                                              PicmanItem           *replace);
 
-void               gimp_item_set_parasites   (GimpItem           *item,
-                                              GimpParasiteList   *parasites);
-GimpParasiteList * gimp_item_get_parasites   (const GimpItem     *item);
+void               picman_item_set_parasites   (PicmanItem           *item,
+                                              PicmanParasiteList   *parasites);
+PicmanParasiteList * picman_item_get_parasites   (const PicmanItem     *item);
 
-void            gimp_item_parasite_attach    (GimpItem           *item,
-                                              const GimpParasite *parasite,
+void            picman_item_parasite_attach    (PicmanItem           *item,
+                                              const PicmanParasite *parasite,
                                               gboolean            push_undo);
-void            gimp_item_parasite_detach    (GimpItem           *item,
+void            picman_item_parasite_detach    (PicmanItem           *item,
                                               const gchar        *name,
                                               gboolean            push_undo);
-const GimpParasite * gimp_item_parasite_find (const GimpItem     *item,
+const PicmanParasite * picman_item_parasite_find (const PicmanItem     *item,
                                               const gchar        *name);
-gchar        ** gimp_item_parasite_list      (const GimpItem     *item,
+gchar        ** picman_item_parasite_list      (const PicmanItem     *item,
                                               gint               *count);
 
-void            gimp_item_set_visible        (GimpItem           *item,
+void            picman_item_set_visible        (PicmanItem           *item,
                                               gboolean            visible,
                                               gboolean            push_undo);
-gboolean        gimp_item_get_visible        (const GimpItem     *item);
-gboolean        gimp_item_is_visible         (const GimpItem     *item);
+gboolean        picman_item_get_visible        (const PicmanItem     *item);
+gboolean        picman_item_is_visible         (const PicmanItem     *item);
 
-void            gimp_item_set_linked         (GimpItem           *item,
+void            picman_item_set_linked         (PicmanItem           *item,
                                               gboolean            linked,
                                               gboolean            push_undo);
-gboolean        gimp_item_get_linked         (const GimpItem     *item);
+gboolean        picman_item_get_linked         (const PicmanItem     *item);
 
-void            gimp_item_set_lock_content   (GimpItem           *item,
+void            picman_item_set_lock_content   (PicmanItem           *item,
                                               gboolean            lock_content,
                                               gboolean            push_undo);
-gboolean        gimp_item_get_lock_content   (const GimpItem     *item);
-gboolean        gimp_item_can_lock_content   (const GimpItem     *item);
-gboolean        gimp_item_is_content_locked  (const GimpItem     *item);
+gboolean        picman_item_get_lock_content   (const PicmanItem     *item);
+gboolean        picman_item_can_lock_content   (const PicmanItem     *item);
+gboolean        picman_item_is_content_locked  (const PicmanItem     *item);
 
-void            gimp_item_set_lock_position  (GimpItem          *item,
+void            picman_item_set_lock_position  (PicmanItem          *item,
                                               gboolean           lock_position,
                                               gboolean           push_undo);
-gboolean        gimp_item_get_lock_position  (const GimpItem    *item);
-gboolean        gimp_item_can_lock_position  (const GimpItem    *item);
-gboolean        gimp_item_is_position_locked (const GimpItem    *item);
+gboolean        picman_item_get_lock_position  (const PicmanItem    *item);
+gboolean        picman_item_can_lock_position  (const PicmanItem    *item);
+gboolean        picman_item_is_position_locked (const PicmanItem    *item);
 
-gboolean        gimp_item_mask_bounds        (GimpItem           *item,
+gboolean        picman_item_mask_bounds        (PicmanItem           *item,
                                               gint               *x1,
                                               gint               *y1,
                                               gint               *x2,
                                               gint               *y2);
-gboolean        gimp_item_mask_intersect     (GimpItem           *item,
+gboolean        picman_item_mask_intersect     (PicmanItem           *item,
                                               gint               *x,
                                               gint               *y,
                                               gint               *width,
                                               gint               *height);
 
-gboolean        gimp_item_is_in_set          (GimpItem           *item,
-                                              GimpItemSet         set);
+gboolean        picman_item_is_in_set          (PicmanItem           *item,
+                                              PicmanItemSet         set);
 
 
-#endif /* __GIMP_ITEM_H__ */
+#endif /* __PICMAN_ITEM_H__ */

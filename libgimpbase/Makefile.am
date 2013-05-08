@@ -11,54 +11,54 @@ endif
 
 if OS_WIN32
 ole32_lib = -lole32
-gimpbase_def = gimpbase.def
-libgimpbase_export_symbols = -export-symbols gimpbase.def
+picmanbase_def = picmanbase.def
+libpicmanbase_export_symbols = -export-symbols picmanbase.def
 
 install-libtool-import-lib:
-	$(INSTALL) .libs/libgimpbase-$(GIMP_API_VERSION).dll.a $(DESTDIR)$(libdir)
-	$(INSTALL) gimpbase.def $(DESTDIR)$(libdir)
+	$(INSTALL) .libs/libpicmanbase-$(PICMAN_API_VERSION).dll.a $(DESTDIR)$(libdir)
+	$(INSTALL) picmanbase.def $(DESTDIR)$(libdir)
 
 uninstall-libtool-import-lib:
-	-rm $(DESTDIR)$(libdir)/libgimpbase-$(GIMP_API_VERSION).dll.a
-	-rm $(DESTDIR)$(libdir)/gimpbase.def
+	-rm $(DESTDIR)$(libdir)/libpicmanbase-$(PICMAN_API_VERSION).dll.a
+	-rm $(DESTDIR)$(libdir)/picmanbase.def
 else
 install-libtool-import-lib:
 uninstall-libtool-import-lib:
 endif
 
 if MS_LIB_AVAILABLE
-noinst_DATA = gimpbase-$(GIMP_API_VERSION).lib
+noinst_DATA = picmanbase-$(PICMAN_API_VERSION).lib
 
 install-ms-lib:
-	$(INSTALL) gimpbase-$(GIMP_API_VERSION).lib $(DESTDIR)$(libdir)
+	$(INSTALL) picmanbase-$(PICMAN_API_VERSION).lib $(DESTDIR)$(libdir)
 
 uninstall-ms-lib:
-	-rm $(DESTDIR)$(libdir)/gimpbase-$(GIMP_API_VERSION).lib
+	-rm $(DESTDIR)$(libdir)/picmanbase-$(PICMAN_API_VERSION).lib
 
-gimpbase-@GIMP_API_VERSION@.lib: gimpbase.def
-	lib -name:libgimpbase-$(GIMP_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:gimpbase.def -out:$@
+picmanbase-@PICMAN_API_VERSION@.lib: picmanbase.def
+	lib -name:libpicmanbase-$(PICMAN_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:picmanbase.def -out:$@
 
 else
 install-ms-lib:
 uninstall-ms-lib:
 endif
 
-libgimpbaseincludedir = $(includedir)/gimp-$(GIMP_API_VERSION)/libgimpbase
+libpicmanbaseincludedir = $(includedir)/picman-$(PICMAN_API_VERSION)/libpicmanbase
 
 AM_CPPFLAGS = \
 	-DPREFIX=\""$(prefix)"\"				\
-	-DGIMPDIR=\""$(gimpdir)"\"				\
-	-DDATADIR=\""$(gimpdatadir)"\"				\
-	-DLOCALEDIR=\""$(gimplocaledir)"\"			\
-	-DPLUGINDIR=\""$(gimpplugindir)"\"			\
-	-DSYSCONFDIR=\""$(gimpsysconfdir)"\"			\
-	-DGIMP_PACKAGE=\""@PACKAGE@"\"				\
-	-DGIMP_DATA_VERSION=\"$(GIMP_DATA_VERSION)\"		\
-	-DGIMP_USER_VERSION=\"$(GIMP_USER_VERSION)\"		\
-	-DGIMP_SYSCONF_VERSION=\"$(GIMP_SYSCONF_VERSION)\"	\
-	-DGIMP_PLUGIN_VERSION=\"$(GIMP_PLUGIN_VERSION)\"	\
-	-DG_LOG_DOMAIN=\"LibGimpBase\"				\
-	-DGIMP_BASE_COMPILATION
+	-DPICMANDIR=\""$(picmandir)"\"				\
+	-DDATADIR=\""$(picmandatadir)"\"				\
+	-DLOCALEDIR=\""$(picmanlocaledir)"\"			\
+	-DPLUGINDIR=\""$(picmanplugindir)"\"			\
+	-DSYSCONFDIR=\""$(picmansysconfdir)"\"			\
+	-DPICMAN_PACKAGE=\""@PACKAGE@"\"				\
+	-DPICMAN_DATA_VERSION=\"$(PICMAN_DATA_VERSION)\"		\
+	-DPICMAN_USER_VERSION=\"$(PICMAN_USER_VERSION)\"		\
+	-DPICMAN_SYSCONF_VERSION=\"$(PICMAN_SYSCONF_VERSION)\"	\
+	-DPICMAN_PLUGIN_VERSION=\"$(PICMAN_PLUGIN_VERSION)\"	\
+	-DG_LOG_DOMAIN=\"LibPicmanBase\"				\
+	-DPICMAN_BASE_COMPILATION
 
 AM_CCASFLAGS = \
 	-I$(top_builddir)	\
@@ -72,98 +72,98 @@ INCLUDES = \
 	$(xobjective_c)
 
 EXTRA_DIST = \
-	gimpbase.def
+	picmanbase.def
 
-lib_LTLIBRARIES = libgimpbase-@GIMP_API_VERSION@.la
+lib_LTLIBRARIES = libpicmanbase-@PICMAN_API_VERSION@.la
 
 # help `make' along by giving another name for the file, which it knows
 # how to build
-../libgimpbase/gimpversion.h: gimpversion.h
+../libpicmanbase/picmanversion.h: picmanversion.h
 	@:
 
 
-libgimpbase_sources = \
-	gimpbase.h		\
-	gimpbaseenums.h		\
-	gimpbasetypes.h		\
-	gimpbasetypes.c		\
-	gimplimits.h		\
-	gimpparam.h		\
-	gimpversion.h		\
+libpicmanbase_sources = \
+	picmanbase.h		\
+	picmanbaseenums.h		\
+	picmanbasetypes.h		\
+	picmanbasetypes.c		\
+	picmanlimits.h		\
+	picmanparam.h		\
+	picmanversion.h		\
 	\
-	gimpbase-private.c	\
-	gimpbase-private.h	\
-	gimpchecks.c           	\
-	gimpchecks.h           	\
-	gimpcpuaccel.c		\
-	gimpcpuaccel.h		\
-	gimpdatafiles.c		\
-	gimpdatafiles.h		\
-	gimpenv.c		\
-	gimpenv.h		\
-	gimpmemsize.c		\
-	gimpmemsize.h		\
-	gimpparasite.c		\
-	gimpparasite.h		\
-	gimpparasiteio.c	\
-	gimpparasiteio.h	\
-	gimpprotocol.c		\
-	gimpprotocol.h		\
-	gimprectangle.c		\
-	gimprectangle.h		\
-	gimpreloc.c		\
-	gimpreloc.h		\
-	gimpsignal.c            \
-	gimpsignal.h            \
-	gimpunit.c		\
-	gimpunit.h		\
-	gimputils.c            	\
-	gimputils.h            	\
-	gimpvaluearray.c	\
-	gimpvaluearray.h	\
-	gimpwin32-io.h		\
-	gimpwire.c		\
-	gimpwire.h
+	picmanbase-private.c	\
+	picmanbase-private.h	\
+	picmanchecks.c           	\
+	picmanchecks.h           	\
+	picmancpuaccel.c		\
+	picmancpuaccel.h		\
+	picmandatafiles.c		\
+	picmandatafiles.h		\
+	picmanenv.c		\
+	picmanenv.h		\
+	picmanmemsize.c		\
+	picmanmemsize.h		\
+	picmanparasite.c		\
+	picmanparasite.h		\
+	picmanparasiteio.c	\
+	picmanparasiteio.h	\
+	picmanprotocol.c		\
+	picmanprotocol.h		\
+	picmanrectangle.c		\
+	picmanrectangle.h		\
+	picmanreloc.c		\
+	picmanreloc.h		\
+	picmansignal.c            \
+	picmansignal.h            \
+	picmanunit.c		\
+	picmanunit.h		\
+	picmanutils.c            	\
+	picmanutils.h            	\
+	picmanvaluearray.c	\
+	picmanvaluearray.h	\
+	picmanwin32-io.h		\
+	picmanwire.c		\
+	picmanwire.h
 
-libgimpbase_built_sources = \
-	gimpbaseenums.c
+libpicmanbase_built_sources = \
+	picmanbaseenums.c
 
-libgimpbase_@GIMP_API_VERSION@_la_SOURCES = \
-	$(libgimpbase_sources)	\
-	$(libgimpbase_built_sources)
+libpicmanbase_@PICMAN_API_VERSION@_la_SOURCES = \
+	$(libpicmanbase_sources)	\
+	$(libpicmanbase_built_sources)
 
 
-libgimpbaseinclude_HEADERS = \
-	gimpbase.h		\
-	gimpbaseenums.h		\
-	gimpbasetypes.h		\
-	gimpcpuaccel.h		\
-	gimplimits.h		\
-	gimpparam.h		\
-	gimpversion.h		\
+libpicmanbaseinclude_HEADERS = \
+	picmanbase.h		\
+	picmanbaseenums.h		\
+	picmanbasetypes.h		\
+	picmancpuaccel.h		\
+	picmanlimits.h		\
+	picmanparam.h		\
+	picmanversion.h		\
 	\
-	gimpchecks.h		\
-	gimpdatafiles.h		\
-	gimpenv.h		\
-	gimpmemsize.h		\
-	gimpparasite.h		\
-	gimpparasiteio.h	\
-	gimprectangle.h		\
-	gimpsignal.h		\
-	gimpunit.h		\
-	gimputils.h		\
-	gimpvaluearray.h
+	picmanchecks.h		\
+	picmandatafiles.h		\
+	picmanenv.h		\
+	picmanmemsize.h		\
+	picmanparasite.h		\
+	picmanparasiteio.h	\
+	picmanrectangle.h		\
+	picmansignal.h		\
+	picmanunit.h		\
+	picmanutils.h		\
+	picmanvaluearray.h
 
 
-libgimpbase_@GIMP_API_VERSION@_la_LDFLAGS = \
+libpicmanbase_@PICMAN_API_VERSION@_la_LDFLAGS = \
 	-version-info $(LT_VERSION_INFO)	\
 	$(no_undefined) 			\
-	$(libgimpbase_export_symbols)		\
+	$(libpicmanbase_export_symbols)		\
 	$(framework_cocoa)
 
-libgimpbase_@GIMP_API_VERSION@_la_DEPENDENCIES = $(gimpbase_def)
+libpicmanbase_@PICMAN_API_VERSION@_la_DEPENDENCIES = $(picmanbase_def)
 
-libgimpbase_@GIMP_API_VERSION@_la_LIBADD = \
+libpicmanbase_@PICMAN_API_VERSION@_la_LIBADD = \
 	$(GLIB_LIBS)	\
 	$(ole32_lib)
 
@@ -181,7 +181,7 @@ TESTS = test-cpu-accel
 test_cpu_accel_SOURCES = test-cpu-accel.c
 
 test_cpu_accel_DEPENDENCIES = \
-	$(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
+	$(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
 
 test_cpu_accel_LDADD = \
 	$(GLIB_LIBS)	\
@@ -198,19 +198,19 @@ EXTRA_PROGRAMS = test-cpu-accel
 gen_sources = xgen-bec
 CLEANFILES = $(EXTRA_PROGRAMS) $(gen_sources)
 
-$(srcdir)/gimpbaseenums.c: $(srcdir)/gimpbaseenums.h $(GIMP_MKENUMS)
-	$(GIMP_MKENUMS) \
-		--fhead "#include \"config.h\"\n#include <glib-object.h>\n#undef GIMP_DISABLE_DEPRECATED\n#include \"gimpbasetypes.h\"\n#include \"libgimp/libgimp-intl.h\"" \
+$(srcdir)/picmanbaseenums.c: $(srcdir)/picmanbaseenums.h $(PICMAN_MKENUMS)
+	$(PICMAN_MKENUMS) \
+		--fhead "#include \"config.h\"\n#include <glib-object.h>\n#undef PICMAN_DISABLE_DEPRECATED\n#include \"picmanbasetypes.h\"\n#include \"libpicman/libpicman-intl.h\"" \
 		--fprod "\n/* enumerations from \"@filename@\" */" \
 		--vhead "GType\n@enum_name@_get_type (void)\n{\n  static const G@Type@Value values[] =\n  {" \
 		--vprod "    { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
 		--vtail "    { 0, NULL, NULL }\n  };\n" \
-		--dhead "  static const Gimp@Type@Desc descs[] =\n  {" \
+		--dhead "  static const Picman@Type@Desc descs[] =\n  {" \
 		--dprod "    { @VALUENAME@, @valuedesc@, @valuehelp@ }," \
-		--dtail "    { 0, NULL, NULL }\n  };\n\n  static GType type = 0;\n\n  if (G_UNLIKELY (! type))\n    {\n      type = g_@type@_register_static (\"@EnumName@\", values);\n      gimp_type_set_translation_domain (type, GETTEXT_PACKAGE \"-libgimp\");\n      gimp_type_set_translation_context (type, \"@enumnick@\");\n      gimp_@type@_set_value_descriptions (type, descs);\n    }\n\n  return type;\n}\n" \
-		$(srcdir)/gimpbaseenums.h > xgen-bec \
+		--dtail "    { 0, NULL, NULL }\n  };\n\n  static GType type = 0;\n\n  if (G_UNLIKELY (! type))\n    {\n      type = g_@type@_register_static (\"@EnumName@\", values);\n      picman_type_set_translation_domain (type, GETTEXT_PACKAGE \"-libpicman\");\n      picman_type_set_translation_context (type, \"@enumnick@\");\n      picman_@type@_set_value_descriptions (type, descs);\n    }\n\n  return type;\n}\n" \
+		$(srcdir)/picmanbaseenums.h > xgen-bec \
 	&& cp xgen-bec $(@F) \
 	&& rm -f xgen-bec
 
 
-DISTCLEANFILES = gimpversion.h
+DISTCLEANFILES = picmanversion.h

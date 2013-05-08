@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpprojectable.h
- * Copyright (C) 2008  Michael Natterer <mitch@gimp.org>
+ * picmanprojectable.h
+ * Copyright (C) 2008  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,67 +18,67 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PROJECTABLE_H__
-#define __GIMP_PROJECTABLE_H__
+#ifndef __PICMAN_PROJECTABLE_H__
+#define __PICMAN_PROJECTABLE_H__
 
 
-#define GIMP_TYPE_PROJECTABLE               (gimp_projectable_interface_get_type ())
-#define GIMP_IS_PROJECTABLE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PROJECTABLE))
-#define GIMP_PROJECTABLE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PROJECTABLE, GimpProjectable))
-#define GIMP_PROJECTABLE_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GIMP_TYPE_PROJECTABLE, GimpProjectableInterface))
+#define PICMAN_TYPE_PROJECTABLE               (picman_projectable_interface_get_type ())
+#define PICMAN_IS_PROJECTABLE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PROJECTABLE))
+#define PICMAN_PROJECTABLE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PROJECTABLE, PicmanProjectable))
+#define PICMAN_PROJECTABLE_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), PICMAN_TYPE_PROJECTABLE, PicmanProjectableInterface))
 
 
-typedef struct _GimpProjectableInterface GimpProjectableInterface;
+typedef struct _PicmanProjectableInterface PicmanProjectableInterface;
 
-struct _GimpProjectableInterface
+struct _PicmanProjectableInterface
 {
   GTypeInterface base_iface;
 
   /*  signals  */
-  void         (* invalidate)         (GimpProjectable *projectable,
+  void         (* invalidate)         (PicmanProjectable *projectable,
                                        gint             x,
                                        gint             y,
                                        gint             width,
                                        gint             height);
-  void         (* flush)              (GimpProjectable *projectable,
+  void         (* flush)              (PicmanProjectable *projectable,
                                        gboolean         invalidate_preview);
-  void         (* structure_changed)  (GimpProjectable *projectable);
+  void         (* structure_changed)  (PicmanProjectable *projectable);
 
   /*  virtual functions  */
-  GimpImage  * (* get_image)          (GimpProjectable *projectable);
-  const Babl * (* get_format)         (GimpProjectable *projectable);
-  void         (* get_offset)         (GimpProjectable *projectable,
+  PicmanImage  * (* get_image)          (PicmanProjectable *projectable);
+  const Babl * (* get_format)         (PicmanProjectable *projectable);
+  void         (* get_offset)         (PicmanProjectable *projectable,
                                        gint            *x,
                                        gint            *y);
-  void         (* get_size)           (GimpProjectable *projectable,
+  void         (* get_size)           (PicmanProjectable *projectable,
                                        gint            *width,
                                        gint            *height);
-  GeglNode   * (* get_graph)          (GimpProjectable *projectable);
-  void         (* invalidate_preview) (GimpProjectable *projectable);
+  GeglNode   * (* get_graph)          (PicmanProjectable *projectable);
+  void         (* invalidate_preview) (PicmanProjectable *projectable);
 };
 
 
-GType        gimp_projectable_interface_get_type (void) G_GNUC_CONST;
+GType        picman_projectable_interface_get_type (void) G_GNUC_CONST;
 
-void         gimp_projectable_invalidate         (GimpProjectable *projectable,
+void         picman_projectable_invalidate         (PicmanProjectable *projectable,
                                                   gint             x,
                                                   gint             y,
                                                   gint             width,
                                                   gint             height);
-void         gimp_projectable_flush              (GimpProjectable *projectable,
+void         picman_projectable_flush              (PicmanProjectable *projectable,
                                                   gboolean         preview_invalidated);
-void         gimp_projectable_structure_changed  (GimpProjectable *projectable);
+void         picman_projectable_structure_changed  (PicmanProjectable *projectable);
 
-GimpImage  * gimp_projectable_get_image          (GimpProjectable *projectable);
-const Babl * gimp_projectable_get_format         (GimpProjectable *projectable);
-void         gimp_projectable_get_offset         (GimpProjectable *projectable,
+PicmanImage  * picman_projectable_get_image          (PicmanProjectable *projectable);
+const Babl * picman_projectable_get_format         (PicmanProjectable *projectable);
+void         picman_projectable_get_offset         (PicmanProjectable *projectable,
                                                   gint            *x,
                                                   gint            *y);
-void         gimp_projectable_get_size           (GimpProjectable *projectable,
+void         picman_projectable_get_size           (PicmanProjectable *projectable,
                                                   gint            *width,
                                                   gint            *height);
-GeglNode   * gimp_projectable_get_graph          (GimpProjectable *projectable);
-void         gimp_projectable_invalidate_preview (GimpProjectable *projectable);
+GeglNode   * picman_projectable_get_graph          (PicmanProjectable *projectable);
+void         picman_projectable_invalidate_preview (PicmanProjectable *projectable);
 
 
-#endif  /* __GIMP_PROJECTABLE_H__ */
+#endif  /* __PICMAN_PROJECTABLE_H__ */

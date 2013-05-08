@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-babl.c
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picman-babl.c
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,15 +22,15 @@
 
 #include <gegl.h>
 
-#include "gimp-gegl-types.h"
+#include "picman-gegl-types.h"
 
-#include "gimp-babl.h"
+#include "picman-babl.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 void
-gimp_babl_init (void)
+picman_babl_init (void)
 {
   babl_format_new ("name", "R' u8",
                    babl_model ("R'G'B'A"),
@@ -206,7 +206,7 @@ babl_descriptions[] =
 static GHashTable *babl_description_hash = NULL;
 
 const gchar *
-gimp_babl_get_description (const Babl *babl)
+picman_babl_get_description (const Babl *babl)
 {
   const gchar *description;
 
@@ -243,8 +243,8 @@ gimp_babl_get_description (const Babl *babl)
                       babl_get_name (babl), NULL);
 }
 
-GimpImageBaseType
-gimp_babl_format_get_base_type (const Babl *format)
+PicmanImageBaseType
+picman_babl_format_get_base_type (const Babl *format)
 {
   const Babl *model;
 
@@ -257,25 +257,25 @@ gimp_babl_format_get_base_type (const Babl *format)
       model == babl_model ("YA") ||
       model == babl_model ("Y'A"))
     {
-      return GIMP_GRAY;
+      return PICMAN_GRAY;
     }
   else if (model == babl_model ("RGB")    ||
            model == babl_model ("R'G'B'") ||
            model == babl_model ("RGBA")   ||
            model == babl_model ("R'G'B'A"))
     {
-      return GIMP_RGB;
+      return PICMAN_RGB;
     }
   else if (babl_format_is_palette (format))
     {
-      return GIMP_INDEXED;
+      return PICMAN_INDEXED;
     }
 
   g_return_val_if_reached (-1);
 }
 
-GimpPrecision
-gimp_babl_format_get_precision (const Babl *format)
+PicmanPrecision
+picman_babl_format_get_precision (const Babl *format)
 {
   const Babl *type;
 
@@ -284,21 +284,21 @@ gimp_babl_format_get_precision (const Babl *format)
   type = babl_format_get_type (format, 0);
 
   if (type == babl_type ("u8"))
-    return GIMP_PRECISION_U8;
+    return PICMAN_PRECISION_U8;
   else if (type == babl_type ("u16"))
-    return GIMP_PRECISION_U16;
+    return PICMAN_PRECISION_U16;
   else if (type == babl_type ("u32"))
-    return GIMP_PRECISION_U32;
+    return PICMAN_PRECISION_U32;
   else if (type == babl_type ("half"))
-    return GIMP_PRECISION_HALF;
+    return PICMAN_PRECISION_HALF;
   else if (type == babl_type ("float"))
-    return GIMP_PRECISION_FLOAT;
+    return PICMAN_PRECISION_FLOAT;
 
   g_return_val_if_reached (-1);
 }
 
 gboolean
-gimp_babl_format_get_linear (const Babl *format)
+picman_babl_format_get_linear (const Babl *format)
 {
   const Babl *model;
 
@@ -329,40 +329,40 @@ gimp_babl_format_get_linear (const Babl *format)
 }
 
 const Babl *
-gimp_babl_format (GimpImageBaseType  base_type,
-                  GimpPrecision      precision,
+picman_babl_format (PicmanImageBaseType  base_type,
+                  PicmanPrecision      precision,
                   gboolean           with_alpha)
 {
   switch (base_type)
     {
-    case GIMP_RGB:
+    case PICMAN_RGB:
       switch (precision)
         {
-        case GIMP_PRECISION_U8:
+        case PICMAN_PRECISION_U8:
           if (with_alpha)
             return babl_format ("R'G'B'A u8");
           else
             return babl_format ("R'G'B' u8");
 
-        case GIMP_PRECISION_U16:
+        case PICMAN_PRECISION_U16:
           if (with_alpha)
             return babl_format ("R'G'B'A u16");
           else
             return babl_format ("R'G'B' u16");
 
-        case GIMP_PRECISION_U32:
+        case PICMAN_PRECISION_U32:
           if (with_alpha)
             return babl_format ("RGBA u32");
           else
             return babl_format ("RGB u32");
 
-        case GIMP_PRECISION_HALF:
+        case PICMAN_PRECISION_HALF:
           if (with_alpha)
             return babl_format ("RGBA half");
           else
             return babl_format ("RGB half");
 
-        case GIMP_PRECISION_FLOAT:
+        case PICMAN_PRECISION_FLOAT:
           if (with_alpha)
             return babl_format ("RGBA float");
           else
@@ -373,34 +373,34 @@ gimp_babl_format (GimpImageBaseType  base_type,
         }
       break;
 
-    case GIMP_GRAY:
+    case PICMAN_GRAY:
       switch (precision)
         {
-        case GIMP_PRECISION_U8:
+        case PICMAN_PRECISION_U8:
           if (with_alpha)
             return babl_format ("Y'A u8");
           else
             return babl_format ("Y' u8");
 
-        case GIMP_PRECISION_U16:
+        case PICMAN_PRECISION_U16:
           if (with_alpha)
             return babl_format ("Y'A u16");
           else
             return babl_format ("Y' u16");
 
-        case GIMP_PRECISION_U32:
+        case PICMAN_PRECISION_U32:
           if (with_alpha)
             return babl_format ("YA u32");
           else
             return babl_format ("Y u32");
 
-        case GIMP_PRECISION_HALF:
+        case PICMAN_PRECISION_HALF:
           if (with_alpha)
             return babl_format ("YA half");
           else
             return babl_format ("Y half");
 
-        case GIMP_PRECISION_FLOAT:
+        case PICMAN_PRECISION_FLOAT:
           if (with_alpha)
             return babl_format ("YA float");
           else
@@ -411,7 +411,7 @@ gimp_babl_format (GimpImageBaseType  base_type,
         }
       break;
 
-    case GIMP_INDEXED:
+    case PICMAN_INDEXED:
       /* need to use the image's api for this */
       break;
     }
@@ -420,31 +420,31 @@ gimp_babl_format (GimpImageBaseType  base_type,
 }
 
 const Babl *
-gimp_babl_mask_format (GimpPrecision precision)
+picman_babl_mask_format (PicmanPrecision precision)
 {
   switch (precision)
     {
-    case GIMP_PRECISION_U8:    return babl_format ("Y u8");
-    case GIMP_PRECISION_U16:   return babl_format ("Y u16");
-    case GIMP_PRECISION_U32:   return babl_format ("Y u32");
-    case GIMP_PRECISION_HALF:  return babl_format ("Y half");
-    case GIMP_PRECISION_FLOAT: return babl_format ("Y float");
+    case PICMAN_PRECISION_U8:    return babl_format ("Y u8");
+    case PICMAN_PRECISION_U16:   return babl_format ("Y u16");
+    case PICMAN_PRECISION_U32:   return babl_format ("Y u32");
+    case PICMAN_PRECISION_HALF:  return babl_format ("Y half");
+    case PICMAN_PRECISION_FLOAT: return babl_format ("Y float");
     }
 
   g_return_val_if_reached (NULL);
 }
 
 const Babl *
-gimp_babl_component_format (GimpImageBaseType base_type,
-                            GimpPrecision     precision,
+picman_babl_component_format (PicmanImageBaseType base_type,
+                            PicmanPrecision     precision,
                             gint              index)
 {
   switch (base_type)
     {
-    case GIMP_RGB:
+    case PICMAN_RGB:
       switch (precision)
         {
-        case GIMP_PRECISION_U8:
+        case PICMAN_PRECISION_U8:
           switch (index)
             {
             case 0: return babl_format ("R' u8");
@@ -456,7 +456,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        case GIMP_PRECISION_U16:
+        case PICMAN_PRECISION_U16:
           switch (index)
             {
             case 0: return babl_format ("R' u16");
@@ -468,7 +468,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        case GIMP_PRECISION_U32:
+        case PICMAN_PRECISION_U32:
           switch (index)
             {
             case 0: return babl_format ("R u32");
@@ -480,7 +480,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        case GIMP_PRECISION_HALF:
+        case PICMAN_PRECISION_HALF:
           switch (index)
             {
             case 0: return babl_format ("R half");
@@ -492,7 +492,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        case GIMP_PRECISION_FLOAT:
+        case PICMAN_PRECISION_FLOAT:
           switch (index)
             {
             case 0: return babl_format ("R float");
@@ -509,10 +509,10 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         }
       break;
 
-    case GIMP_GRAY:
+    case PICMAN_GRAY:
       switch (precision)
         {
-        case GIMP_PRECISION_U8:
+        case PICMAN_PRECISION_U8:
           switch (index)
             {
             case 0: return babl_format ("Y' u8");
@@ -522,7 +522,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        case GIMP_PRECISION_U16:
+        case PICMAN_PRECISION_U16:
           switch (index)
             {
             case 0: return babl_format ("Y' u16");
@@ -532,7 +532,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        case GIMP_PRECISION_U32:
+        case PICMAN_PRECISION_U32:
           switch (index)
             {
             case 0: return babl_format ("Y u32");
@@ -542,7 +542,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        case GIMP_PRECISION_HALF:
+        case PICMAN_PRECISION_HALF:
           switch (index)
             {
             case 0: return babl_format ("Y half");
@@ -552,7 +552,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        case GIMP_PRECISION_FLOAT:
+        case PICMAN_PRECISION_FLOAT:
           switch (index)
             {
             case 0: return babl_format ("Y float");
@@ -567,7 +567,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         }
       break;
 
-    case GIMP_INDEXED:
+    case PICMAN_INDEXED:
       /* need to use the image's api for this */
       break;
     }

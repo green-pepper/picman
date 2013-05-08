@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2000 Peter Mattis and Spencer Kimball
  *
- * gimpproceduraldb.c
+ * picmanproceduraldb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,10 +22,10 @@
 
 #include <string.h> /* memcmp */
 
-#include "gimp.h"
+#include "picman.h"
 
 /**
- * gimp_procedural_db_proc_info:
+ * picman_procedural_db_proc_info:
  * @procedure: The procedure name.
  * @blurb: A short blurb.
  * @help: Detailed procedure help.
@@ -50,22 +50,22 @@
  * Returns: TRUE on success.
  */
 gboolean
-gimp_procedural_db_proc_info (const gchar      *procedure,
+picman_procedural_db_proc_info (const gchar      *procedure,
                               gchar           **blurb,
                               gchar           **help,
                               gchar           **author,
                               gchar           **copyright,
                               gchar           **date,
-                              GimpPDBProcType  *proc_type,
+                              PicmanPDBProcType  *proc_type,
                               gint             *num_args,
                               gint             *num_values,
-                              GimpParamDef    **args,
-                              GimpParamDef    **return_vals)
+                              PicmanParamDef    **args,
+                              PicmanParamDef    **return_vals)
 {
   gint i;
   gboolean success = TRUE;
 
-  success = _gimp_procedural_db_proc_info (procedure,
+  success = _picman_procedural_db_proc_info (procedure,
                                            blurb,
                                            help,
                                            author,
@@ -77,12 +77,12 @@ gimp_procedural_db_proc_info (const gchar      *procedure,
 
   if (success)
     {
-      *args        = g_new (GimpParamDef, *num_args);
-      *return_vals = g_new (GimpParamDef, *num_values);
+      *args        = g_new (PicmanParamDef, *num_args);
+      *return_vals = g_new (PicmanParamDef, *num_values);
 
       for (i = 0; i < *num_args; i++)
         {
-          if (! gimp_procedural_db_proc_arg (procedure,
+          if (! picman_procedural_db_proc_arg (procedure,
                                              i,
                                              &(*args)[i].type,
                                              &(*args)[i].name,
@@ -97,7 +97,7 @@ gimp_procedural_db_proc_info (const gchar      *procedure,
 
       for (i = 0; i < *num_values; i++)
         {
-          if (! gimp_procedural_db_proc_val (procedure,
+          if (! picman_procedural_db_proc_val (procedure,
                                              i,
                                              &(*return_vals)[i].type,
                                              &(*return_vals)[i].name,
@@ -115,7 +115,7 @@ gimp_procedural_db_proc_info (const gchar      *procedure,
 }
 
 /**
- * gimp_procedural_db_get_data:
+ * picman_procedural_db_get_data:
  * @identifier: The identifier associated with data.
  * @data: A byte array containing data.
  *
@@ -129,14 +129,14 @@ gimp_procedural_db_proc_info (const gchar      *procedure,
  * the identifier
  */
 gboolean
-gimp_procedural_db_get_data (const gchar *identifier,
+picman_procedural_db_get_data (const gchar *identifier,
                              gpointer     data)
 {
   gint      size;
   guint8   *hack;
   gboolean  success;
 
-  success = _gimp_procedural_db_get_data (identifier,
+  success = _picman_procedural_db_get_data (identifier,
                                           &size,
                                           &hack);
   if (hack)
@@ -149,7 +149,7 @@ gimp_procedural_db_get_data (const gchar *identifier,
 }
 
 /**
- * gimp_procedural_db_set_data:
+ * picman_procedural_db_set_data:
  * @identifier: The identifier associated with data.
  * @data: A byte array containing data.
  * @bytes: The number of bytes in the data
@@ -163,11 +163,11 @@ gimp_procedural_db_get_data (const gchar *identifier,
  * Returns: TRUE on success.
  */
 gboolean
-gimp_procedural_db_set_data (const gchar   *identifier,
+picman_procedural_db_set_data (const gchar   *identifier,
                              gconstpointer  data,
                              guint32        bytes)
 {
-  return _gimp_procedural_db_set_data (identifier,
+  return _picman_procedural_db_set_data (identifier,
                                        bytes,
                                        data);
 }

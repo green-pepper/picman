@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdeviceeditor.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmandeviceeditor.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,40 +23,40 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimplist.h"
-#include "core/gimpmarshal.h"
+#include "core/picman.h"
+#include "core/picmanlist.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpcontainerview.h"
-#include "gimpcontainertreestore.h"
-#include "gimpcontainertreeview.h"
-#include "gimpdeviceeditor.h"
-#include "gimpdeviceinfo.h"
-#include "gimpdeviceinfoeditor.h"
-#include "gimpdevicemanager.h"
-#include "gimpdevices.h"
-#include "gimpmessagebox.h"
-#include "gimpmessagedialog.h"
+#include "picmancontainerview.h"
+#include "picmancontainertreestore.h"
+#include "picmancontainertreeview.h"
+#include "picmandeviceeditor.h"
+#include "picmandeviceinfo.h"
+#include "picmandeviceinfoeditor.h"
+#include "picmandevicemanager.h"
+#include "picmandevices.h"
+#include "picmanmessagebox.h"
+#include "picmanmessagedialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
 {
   PROP_0,
-  PROP_GIMP
+  PROP_PICMAN
 };
 
 
-typedef struct _GimpDeviceEditorPrivate GimpDeviceEditorPrivate;
+typedef struct _PicmanDeviceEditorPrivate PicmanDeviceEditorPrivate;
 
-struct _GimpDeviceEditorPrivate
+struct _PicmanDeviceEditorPrivate
 {
-  Gimp      *gimp;
+  Picman      *picman;
 
   GQuark     name_changed_handler;
 
@@ -70,74 +70,74 @@ struct _GimpDeviceEditorPrivate
 };
 
 
-#define GIMP_DEVICE_EDITOR_GET_PRIVATE(editor) \
+#define PICMAN_DEVICE_EDITOR_GET_PRIVATE(editor) \
         G_TYPE_INSTANCE_GET_PRIVATE (editor, \
-                                     GIMP_TYPE_DEVICE_EDITOR, \
-                                     GimpDeviceEditorPrivate)
+                                     PICMAN_TYPE_DEVICE_EDITOR, \
+                                     PicmanDeviceEditorPrivate)
 
 
-static void   gimp_device_editor_constructed    (GObject           *object);
-static void   gimp_device_editor_dispose        (GObject           *object);
-static void   gimp_device_editor_set_property   (GObject           *object,
+static void   picman_device_editor_constructed    (GObject           *object);
+static void   picman_device_editor_dispose        (GObject           *object);
+static void   picman_device_editor_set_property   (GObject           *object,
                                                  guint              property_id,
                                                  const GValue      *value,
                                                  GParamSpec        *pspec);
-static void   gimp_device_editor_get_property   (GObject           *object,
+static void   picman_device_editor_get_property   (GObject           *object,
                                                  guint              property_id,
                                                  GValue            *value,
                                                  GParamSpec        *pspec);
 
-static void   gimp_device_editor_add_device     (GimpContainer     *container,
-                                                 GimpDeviceInfo    *info,
-                                                 GimpDeviceEditor  *editor);
-static void   gimp_device_editor_remove_device  (GimpContainer     *container,
-                                                 GimpDeviceInfo    *info,
-                                                 GimpDeviceEditor  *editor);
-static void   gimp_device_editor_device_changed (GimpDeviceInfo    *info,
-                                                 GimpDeviceEditor  *editor);
+static void   picman_device_editor_add_device     (PicmanContainer     *container,
+                                                 PicmanDeviceInfo    *info,
+                                                 PicmanDeviceEditor  *editor);
+static void   picman_device_editor_remove_device  (PicmanContainer     *container,
+                                                 PicmanDeviceInfo    *info,
+                                                 PicmanDeviceEditor  *editor);
+static void   picman_device_editor_device_changed (PicmanDeviceInfo    *info,
+                                                 PicmanDeviceEditor  *editor);
 
-static void   gimp_device_editor_select_device  (GimpContainerView *view,
-                                                 GimpViewable      *viewable,
+static void   picman_device_editor_select_device  (PicmanContainerView *view,
+                                                 PicmanViewable      *viewable,
                                                  gpointer           insert_data,
-                                                 GimpDeviceEditor  *editor);
+                                                 PicmanDeviceEditor  *editor);
 
-static void   gimp_device_editor_switch_page    (GtkNotebook       *notebook,
+static void   picman_device_editor_switch_page    (GtkNotebook       *notebook,
                                                  gpointer           page,
                                                  guint              page_num,
-                                                 GimpDeviceEditor  *editor);
-static void   gimp_device_editor_delete_clicked (GtkWidget         *button,
-                                                 GimpDeviceEditor  *editor);
+                                                 PicmanDeviceEditor  *editor);
+static void   picman_device_editor_delete_clicked (GtkWidget         *button,
+                                                 PicmanDeviceEditor  *editor);
 
 
-G_DEFINE_TYPE (GimpDeviceEditor, gimp_device_editor, GTK_TYPE_PANED)
+G_DEFINE_TYPE (PicmanDeviceEditor, picman_device_editor, GTK_TYPE_PANED)
 
-#define parent_class gimp_device_editor_parent_class
+#define parent_class picman_device_editor_parent_class
 
 
 static void
-gimp_device_editor_class_init (GimpDeviceEditorClass *klass)
+picman_device_editor_class_init (PicmanDeviceEditorClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_device_editor_constructed;
-  object_class->dispose      = gimp_device_editor_dispose;
-  object_class->set_property = gimp_device_editor_set_property;
-  object_class->get_property = gimp_device_editor_get_property;
+  object_class->constructed  = picman_device_editor_constructed;
+  object_class->dispose      = picman_device_editor_dispose;
+  object_class->set_property = picman_device_editor_set_property;
+  object_class->get_property = picman_device_editor_get_property;
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp",
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
-  g_type_class_add_private (object_class, sizeof (GimpDeviceEditorPrivate));
+  g_type_class_add_private (object_class, sizeof (PicmanDeviceEditorPrivate));
 }
 
 static void
-gimp_device_editor_init (GimpDeviceEditor *editor)
+picman_device_editor_init (PicmanDeviceEditor *editor)
 {
-  GimpDeviceEditorPrivate *private = GIMP_DEVICE_EDITOR_GET_PRIVATE (editor);
+  PicmanDeviceEditorPrivate *private = PICMAN_DEVICE_EDITOR_GET_PRIVATE (editor);
   GtkWidget               *vbox;
   GtkWidget               *ebox;
   GtkWidget               *hbox;
@@ -151,21 +151,21 @@ gimp_device_editor_init (GimpDeviceEditor *editor)
                                      GTK_ICON_SIZE_BUTTON,
                                      &icon_width, &icon_height);
 
-  private->treeview = gimp_container_tree_view_new (NULL, NULL, icon_height, 0);
+  private->treeview = picman_container_tree_view_new (NULL, NULL, icon_height, 0);
   gtk_widget_set_size_request (private->treeview, 200, -1);
   gtk_paned_pack1 (GTK_PANED (editor), private->treeview, TRUE, FALSE);
   gtk_widget_show (private->treeview);
 
   g_signal_connect_object (private->treeview, "select-item",
-                           G_CALLBACK (gimp_device_editor_select_device),
+                           G_CALLBACK (picman_device_editor_select_device),
                            G_OBJECT (editor), 0);
 
   private->delete_button =
-    gimp_editor_add_button (GIMP_EDITOR (private->treeview),
+    picman_editor_add_button (PICMAN_EDITOR (private->treeview),
                             GTK_STOCK_DELETE,
                             _("Delete the selected device"),
                             NULL,
-                            G_CALLBACK (gimp_device_editor_delete_clicked),
+                            G_CALLBACK (picman_device_editor_delete_clicked),
                             NULL,
                             editor);
 
@@ -188,7 +188,7 @@ gimp_device_editor_init (GimpDeviceEditor *editor)
   private->label = gtk_label_new (NULL);
   gtk_misc_set_alignment (GTK_MISC (private->label), 0.0, 0.5);
   gtk_label_set_ellipsize (GTK_LABEL (private->label), PANGO_ELLIPSIZE_END);
-  gimp_label_set_attributes (GTK_LABEL (private->label),
+  picman_label_set_attributes (GTK_LABEL (private->label),
                              PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                              -1);
   gtk_box_pack_start (GTK_BOX (hbox), private->label, TRUE, TRUE, 0);
@@ -206,73 +206,73 @@ gimp_device_editor_init (GimpDeviceEditor *editor)
   gtk_widget_show (private->notebook);
 
   g_signal_connect (private->notebook, "switch-page",
-                    G_CALLBACK (gimp_device_editor_switch_page),
+                    G_CALLBACK (picman_device_editor_switch_page),
                     editor);
 }
 
 static void
-gimp_device_editor_constructed (GObject *object)
+picman_device_editor_constructed (GObject *object)
 {
-  GimpDeviceEditor        *editor  = GIMP_DEVICE_EDITOR (object);
-  GimpDeviceEditorPrivate *private = GIMP_DEVICE_EDITOR_GET_PRIVATE (editor);
-  GimpContainer           *devices;
+  PicmanDeviceEditor        *editor  = PICMAN_DEVICE_EDITOR (object);
+  PicmanDeviceEditorPrivate *private = PICMAN_DEVICE_EDITOR_GET_PRIVATE (editor);
+  PicmanContainer           *devices;
   GList                   *list;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_GIMP (private->gimp));
+  g_assert (PICMAN_IS_PICMAN (private->picman));
 
-  devices = GIMP_CONTAINER (gimp_devices_get_manager (private->gimp));
+  devices = PICMAN_CONTAINER (picman_devices_get_manager (private->picman));
 
   /*  connect to "remove" before the container view does so we can get
    *  the notebook child stored in its model
    */
   g_signal_connect (devices, "remove",
-                    G_CALLBACK (gimp_device_editor_remove_device),
+                    G_CALLBACK (picman_device_editor_remove_device),
                     editor);
 
-  gimp_container_view_set_container (GIMP_CONTAINER_VIEW (private->treeview),
+  picman_container_view_set_container (PICMAN_CONTAINER_VIEW (private->treeview),
                                      devices);
 
-  gimp_container_view_set_context (GIMP_CONTAINER_VIEW (private->treeview),
-                                   gimp_get_user_context (private->gimp));
+  picman_container_view_set_context (PICMAN_CONTAINER_VIEW (private->treeview),
+                                   picman_get_user_context (private->picman));
 
   g_signal_connect (devices, "add",
-                    G_CALLBACK (gimp_device_editor_add_device),
+                    G_CALLBACK (picman_device_editor_add_device),
                     editor);
 
   private->name_changed_handler =
-    gimp_container_add_handler (devices, "name-changed",
-                                G_CALLBACK (gimp_device_editor_device_changed),
+    picman_container_add_handler (devices, "name-changed",
+                                G_CALLBACK (picman_device_editor_device_changed),
                                 editor);
 
-  for (list = GIMP_LIST (devices)->list;
+  for (list = PICMAN_LIST (devices)->list;
        list;
        list = g_list_next (list))
     {
-      gimp_device_editor_add_device (devices, list->data, editor);
+      picman_device_editor_add_device (devices, list->data, editor);
     }
 }
 
 static void
-gimp_device_editor_dispose (GObject *object)
+picman_device_editor_dispose (GObject *object)
 {
-  GimpDeviceEditorPrivate *private = GIMP_DEVICE_EDITOR_GET_PRIVATE (object);
-  GimpContainer           *devices;
+  PicmanDeviceEditorPrivate *private = PICMAN_DEVICE_EDITOR_GET_PRIVATE (object);
+  PicmanContainer           *devices;
 
-  devices = GIMP_CONTAINER (gimp_devices_get_manager (private->gimp));
+  devices = PICMAN_CONTAINER (picman_devices_get_manager (private->picman));
 
   g_signal_handlers_disconnect_by_func (devices,
-                                        gimp_device_editor_add_device,
+                                        picman_device_editor_add_device,
                                         object);
 
   g_signal_handlers_disconnect_by_func (devices,
-                                        gimp_device_editor_remove_device,
+                                        picman_device_editor_remove_device,
                                         object);
 
   if (private->name_changed_handler)
     {
-      gimp_container_remove_handler (devices, private->name_changed_handler);
+      picman_container_remove_handler (devices, private->name_changed_handler);
       private->name_changed_handler = 0;
     }
 
@@ -280,17 +280,17 @@ gimp_device_editor_dispose (GObject *object)
 }
 
 static void
-gimp_device_editor_set_property (GObject      *object,
+picman_device_editor_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  GimpDeviceEditorPrivate *private = GIMP_DEVICE_EDITOR_GET_PRIVATE (object);
+  PicmanDeviceEditorPrivate *private = PICMAN_DEVICE_EDITOR_GET_PRIVATE (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      private->gimp = g_value_get_object (value); /* don't ref */
+    case PROP_PICMAN:
+      private->picman = g_value_get_object (value); /* don't ref */
       break;
 
     default:
@@ -300,17 +300,17 @@ gimp_device_editor_set_property (GObject      *object,
 }
 
 static void
-gimp_device_editor_get_property (GObject    *object,
+picman_device_editor_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  GimpDeviceEditorPrivate *private = GIMP_DEVICE_EDITOR_GET_PRIVATE (object);
+  PicmanDeviceEditorPrivate *private = PICMAN_DEVICE_EDITOR_GET_PRIVATE (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      g_value_set_object (value, private->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, private->picman);
       break;
 
     default:
@@ -320,55 +320,55 @@ gimp_device_editor_get_property (GObject    *object,
 }
 
 static void
-gimp_device_editor_add_device (GimpContainer    *container,
-                               GimpDeviceInfo   *info,
-                               GimpDeviceEditor *editor)
+picman_device_editor_add_device (PicmanContainer    *container,
+                               PicmanDeviceInfo   *info,
+                               PicmanDeviceEditor *editor)
 {
-  GimpDeviceEditorPrivate *private = GIMP_DEVICE_EDITOR_GET_PRIVATE (editor);
+  PicmanDeviceEditorPrivate *private = PICMAN_DEVICE_EDITOR_GET_PRIVATE (editor);
   GtkWidget               *widget;
   GtkTreeIter             *iter;
 
-  widget = gimp_device_info_editor_new (info);
+  widget = picman_device_info_editor_new (info);
   gtk_notebook_append_page (GTK_NOTEBOOK (private->notebook), widget, NULL);
   gtk_widget_show (widget);
 
-  iter = gimp_container_view_lookup (GIMP_CONTAINER_VIEW (private->treeview),
-                                     GIMP_VIEWABLE (info));
+  iter = picman_container_view_lookup (PICMAN_CONTAINER_VIEW (private->treeview),
+                                     PICMAN_VIEWABLE (info));
 
   if (iter)
     {
-      GimpContainerTreeView *treeview;
+      PicmanContainerTreeView *treeview;
 
-      treeview = GIMP_CONTAINER_TREE_VIEW (private->treeview);
+      treeview = PICMAN_CONTAINER_TREE_VIEW (private->treeview);
 
       gtk_tree_store_set (GTK_TREE_STORE (treeview->model), iter,
-                          GIMP_CONTAINER_TREE_STORE_COLUMN_USER_DATA, widget,
-                          GIMP_CONTAINER_TREE_STORE_COLUMN_NAME_SENSITIVE,
-                          gimp_device_info_get_device (info, NULL) != NULL,
+                          PICMAN_CONTAINER_TREE_STORE_COLUMN_USER_DATA, widget,
+                          PICMAN_CONTAINER_TREE_STORE_COLUMN_NAME_SENSITIVE,
+                          picman_device_info_get_device (info, NULL) != NULL,
                           -1);
     }
 }
 
 static void
-gimp_device_editor_remove_device (GimpContainer    *container,
-                                  GimpDeviceInfo   *info,
-                                  GimpDeviceEditor *editor)
+picman_device_editor_remove_device (PicmanContainer    *container,
+                                  PicmanDeviceInfo   *info,
+                                  PicmanDeviceEditor *editor)
 {
-  GimpDeviceEditorPrivate *private = GIMP_DEVICE_EDITOR_GET_PRIVATE (editor);
+  PicmanDeviceEditorPrivate *private = PICMAN_DEVICE_EDITOR_GET_PRIVATE (editor);
   GtkTreeIter             *iter;
 
-  iter = gimp_container_view_lookup (GIMP_CONTAINER_VIEW (private->treeview),
-                                     GIMP_VIEWABLE (info));
+  iter = picman_container_view_lookup (PICMAN_CONTAINER_VIEW (private->treeview),
+                                     PICMAN_VIEWABLE (info));
 
   if (iter)
     {
-      GimpContainerTreeView *treeview;
+      PicmanContainerTreeView *treeview;
       GtkWidget             *widget;
 
-      treeview = GIMP_CONTAINER_TREE_VIEW (private->treeview);
+      treeview = PICMAN_CONTAINER_TREE_VIEW (private->treeview);
 
       gtk_tree_model_get (treeview->model, iter,
-                          GIMP_CONTAINER_TREE_STORE_COLUMN_USER_DATA, &widget,
+                          PICMAN_CONTAINER_TREE_STORE_COLUMN_USER_DATA, &widget,
                           -1);
 
       if (widget)
@@ -377,45 +377,45 @@ gimp_device_editor_remove_device (GimpContainer    *container,
 }
 
 static void
-gimp_device_editor_device_changed (GimpDeviceInfo   *info,
-                                   GimpDeviceEditor *editor)
+picman_device_editor_device_changed (PicmanDeviceInfo   *info,
+                                   PicmanDeviceEditor *editor)
 {
-  GimpDeviceEditorPrivate *private = GIMP_DEVICE_EDITOR_GET_PRIVATE (editor);
+  PicmanDeviceEditorPrivate *private = PICMAN_DEVICE_EDITOR_GET_PRIVATE (editor);
   GtkTreeIter             *iter;
 
-  iter = gimp_container_view_lookup (GIMP_CONTAINER_VIEW (private->treeview),
-                                     GIMP_VIEWABLE (info));
+  iter = picman_container_view_lookup (PICMAN_CONTAINER_VIEW (private->treeview),
+                                     PICMAN_VIEWABLE (info));
 
   if (iter)
     {
-      GimpContainerTreeView *treeview;
+      PicmanContainerTreeView *treeview;
 
-      treeview = GIMP_CONTAINER_TREE_VIEW (private->treeview);
+      treeview = PICMAN_CONTAINER_TREE_VIEW (private->treeview);
 
       gtk_tree_store_set (GTK_TREE_STORE (treeview->model), iter,
-                          GIMP_CONTAINER_TREE_STORE_COLUMN_NAME_SENSITIVE,
-                          gimp_device_info_get_device (info, NULL) != NULL,
+                          PICMAN_CONTAINER_TREE_STORE_COLUMN_NAME_SENSITIVE,
+                          picman_device_info_get_device (info, NULL) != NULL,
                           -1);
     }
 }
 
 static void
-gimp_device_editor_select_device (GimpContainerView *view,
-                                  GimpViewable      *viewable,
+picman_device_editor_select_device (PicmanContainerView *view,
+                                  PicmanViewable      *viewable,
                                   gpointer           insert_data,
-                                  GimpDeviceEditor  *editor)
+                                  PicmanDeviceEditor  *editor)
 {
-  GimpDeviceEditorPrivate *private = GIMP_DEVICE_EDITOR_GET_PRIVATE (editor);
+  PicmanDeviceEditorPrivate *private = PICMAN_DEVICE_EDITOR_GET_PRIVATE (editor);
 
   if (viewable && insert_data)
     {
-      GimpContainerTreeView *treeview;
+      PicmanContainerTreeView *treeview;
       GtkWidget             *widget;
 
-      treeview = GIMP_CONTAINER_TREE_VIEW (private->treeview);
+      treeview = PICMAN_CONTAINER_TREE_VIEW (private->treeview);
 
       gtk_tree_model_get (treeview->model, insert_data,
-                          GIMP_CONTAINER_TREE_STORE_COLUMN_USER_DATA, &widget,
+                          PICMAN_CONTAINER_TREE_STORE_COLUMN_USER_DATA, &widget,
                           -1);
 
       if (widget)
@@ -430,14 +430,14 @@ gimp_device_editor_select_device (GimpContainerView *view,
 }
 
 static void
-gimp_device_editor_switch_page (GtkNotebook      *notebook,
+picman_device_editor_switch_page (GtkNotebook      *notebook,
                                 gpointer          page,
                                 guint             page_num,
-                                GimpDeviceEditor *editor)
+                                PicmanDeviceEditor *editor)
 {
-  GimpDeviceEditorPrivate *private = GIMP_DEVICE_EDITOR_GET_PRIVATE (editor);
+  PicmanDeviceEditorPrivate *private = PICMAN_DEVICE_EDITOR_GET_PRIVATE (editor);
   GtkWidget               *widget;
-  GimpDeviceInfo          *info;
+  PicmanDeviceInfo          *info;
   gboolean                 delete_sensitive = FALSE;
 
   widget = gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), page_num);
@@ -445,12 +445,12 @@ gimp_device_editor_switch_page (GtkNotebook      *notebook,
   g_object_get (widget ,"info", &info, NULL);
 
   gtk_label_set_text (GTK_LABEL (private->label),
-                      gimp_object_get_name (info));
+                      picman_object_get_name (info));
   gtk_image_set_from_stock (GTK_IMAGE (private->image),
-                            gimp_viewable_get_stock_id (GIMP_VIEWABLE (info)),
+                            picman_viewable_get_stock_id (PICMAN_VIEWABLE (info)),
                             GTK_ICON_SIZE_BUTTON);
 
-  if (! gimp_device_info_get_device (info, NULL))
+  if (! picman_device_info_get_device (info, NULL))
     delete_sensitive = TRUE;
 
   gtk_widget_set_sensitive (private->delete_button, delete_sensitive);
@@ -459,11 +459,11 @@ gimp_device_editor_switch_page (GtkNotebook      *notebook,
 }
 
 static void
-gimp_device_editor_delete_response (GtkWidget        *dialog,
+picman_device_editor_delete_response (GtkWidget        *dialog,
                                     gint              response_id,
-                                    GimpDeviceEditor *editor)
+                                    PicmanDeviceEditor *editor)
 {
-  GimpDeviceEditorPrivate *private = GIMP_DEVICE_EDITOR_GET_PRIVATE (editor);
+  PicmanDeviceEditorPrivate *private = PICMAN_DEVICE_EDITOR_GET_PRIVATE (editor);
 
   gtk_widget_destroy (dialog);
 
@@ -471,14 +471,14 @@ gimp_device_editor_delete_response (GtkWidget        *dialog,
     {
       GList *selected;
 
-      if (gimp_container_view_get_selected (GIMP_CONTAINER_VIEW (private->treeview),
+      if (picman_container_view_get_selected (PICMAN_CONTAINER_VIEW (private->treeview),
                                             &selected))
         {
-          GimpContainer *devices;
+          PicmanContainer *devices;
 
-          devices = GIMP_CONTAINER (gimp_devices_get_manager (private->gimp));
+          devices = PICMAN_CONTAINER (picman_devices_get_manager (private->picman));
 
-          gimp_container_remove (devices, selected->data);
+          picman_container_remove (devices, selected->data);
 
           g_list_free (selected);
         }
@@ -488,22 +488,22 @@ gimp_device_editor_delete_response (GtkWidget        *dialog,
 }
 
 static void
-gimp_device_editor_delete_clicked (GtkWidget        *button,
-                                   GimpDeviceEditor *editor)
+picman_device_editor_delete_clicked (GtkWidget        *button,
+                                   PicmanDeviceEditor *editor)
 {
-  GimpDeviceEditorPrivate *private = GIMP_DEVICE_EDITOR_GET_PRIVATE (editor);
+  PicmanDeviceEditorPrivate *private = PICMAN_DEVICE_EDITOR_GET_PRIVATE (editor);
   GtkWidget               *dialog;
   GList                   *selected;
 
-  if (! gimp_container_view_get_selected (GIMP_CONTAINER_VIEW (private->treeview),
+  if (! picman_container_view_get_selected (PICMAN_CONTAINER_VIEW (private->treeview),
                                           &selected))
     return;
 
-  dialog = gimp_message_dialog_new (_("Delete Device Settings"),
-                                    GIMP_STOCK_QUESTION,
+  dialog = picman_message_dialog_new (_("Delete Device Settings"),
+                                    PICMAN_STOCK_QUESTION,
                                     gtk_widget_get_toplevel (GTK_WIDGET (editor)),
                                     GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    gimp_standard_help_func, NULL,
+                                    picman_standard_help_func, NULL,
 
                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                     GTK_STOCK_DELETE, GTK_RESPONSE_OK,
@@ -516,13 +516,13 @@ gimp_device_editor_delete_clicked (GtkWidget        *button,
                                            -1);
 
   g_signal_connect (dialog, "response",
-                    G_CALLBACK (gimp_device_editor_delete_response),
+                    G_CALLBACK (picman_device_editor_delete_response),
                     editor);
 
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                      _("Delete \"%s\"?"),
-                                     gimp_object_get_name (selected->data));
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+                                     picman_object_get_name (selected->data));
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                              _("You are about to delete this device's "
                                "stored settings.\n"
                                "The next time this device is plugged, "
@@ -539,11 +539,11 @@ gimp_device_editor_delete_clicked (GtkWidget        *button,
 /*  public functions  */
 
 GtkWidget *
-gimp_device_editor_new (Gimp *gimp)
+picman_device_editor_new (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  return g_object_new (GIMP_TYPE_DEVICE_EDITOR,
-                       "gimp", gimp,
+  return g_object_new (PICMAN_TYPE_DEVICE_EDITOR,
+                       "picman", picman,
                        NULL);
 }

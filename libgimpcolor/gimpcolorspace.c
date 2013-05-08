@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -21,42 +21,42 @@
 #include <babl/babl.h>
 #include <glib-object.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "gimpcolortypes.h"
+#include "picmancolortypes.h"
 
-#include "gimpcolorspace.h"
-#include "gimprgb.h"
-#include "gimphsv.h"
+#include "picmancolorspace.h"
+#include "picmanrgb.h"
+#include "picmanhsv.h"
 
 
 
 /**
- * SECTION: gimpcolorspace
- * @title: GimpColorSpace
+ * SECTION: picmancolorspace
+ * @title: PicmanColorSpace
  * @short_description: Utility functions which convert colors between
  *                     different color models.
  *
  * When programming pixel data manipulation functions you will often
  * use algorithms operating on a color model different from the one
- * GIMP uses.  This file provides utility functions to convert colors
+ * PICMAN uses.  This file provides utility functions to convert colors
  * between different color spaces.
  **/
 
 
-#define GIMP_HSV_UNDEFINED -1.0
-#define GIMP_HSL_UNDEFINED -1.0
+#define PICMAN_HSV_UNDEFINED -1.0
+#define PICMAN_HSL_UNDEFINED -1.0
 
 /*********************************
  *   color conversion routines   *
  *********************************/
 
 
-/*  GimpRGB functions  */
+/*  PicmanRGB functions  */
 
 
 /**
- * gimp_rgb_to_hsv:
+ * picman_rgb_to_hsv:
  * @rgb: A color value in the RGB colorspace
  * @hsv: The value converted to the HSV colorspace
  *
@@ -64,16 +64,16 @@
  * Value) colorspace.
  **/
 void
-gimp_rgb_to_hsv (const GimpRGB *rgb,
-                 GimpHSV       *hsv)
+picman_rgb_to_hsv (const PicmanRGB *rgb,
+                 PicmanHSV       *hsv)
 {
   gdouble max, min, delta;
 
   g_return_if_fail (rgb != NULL);
   g_return_if_fail (hsv != NULL);
 
-  max = gimp_rgb_max (rgb);
-  min = gimp_rgb_min (rgb);
+  max = picman_rgb_max (rgb);
+  min = picman_rgb_min (rgb);
 
   hsv->v = max;
   delta = max - min;
@@ -109,15 +109,15 @@ gimp_rgb_to_hsv (const GimpRGB *rgb,
 }
 
 /**
- * gimp_hsv_to_rgb:
+ * picman_hsv_to_rgb:
  * @hsv: A color value in the HSV colorspace
  * @rgb: The returned RGB value.
  *
  * Converts a color value from HSV to RGB colorspace
  **/
 void
-gimp_hsv_to_rgb (const GimpHSV *hsv,
-                 GimpRGB       *rgb)
+picman_hsv_to_rgb (const PicmanHSV *hsv,
+                 PicmanRGB       *rgb)
 {
   gint    i;
   gdouble f, w, q, t;
@@ -188,7 +188,7 @@ gimp_hsv_to_rgb (const GimpHSV *hsv,
 
 
 /**
- * gimp_rgb_to_hsl:
+ * picman_rgb_to_hsl:
  * @rgb: A color value in the RGB colorspace
  * @hsl: The value converted to HSL
  *
@@ -196,23 +196,23 @@ gimp_hsv_to_rgb (const GimpHSV *hsv,
  * color value.
  **/
 void
-gimp_rgb_to_hsl (const GimpRGB *rgb,
-                 GimpHSL       *hsl)
+picman_rgb_to_hsl (const PicmanRGB *rgb,
+                 PicmanHSL       *hsl)
 {
   gdouble max, min, delta;
 
   g_return_if_fail (rgb != NULL);
   g_return_if_fail (hsl != NULL);
 
-  max = gimp_rgb_max (rgb);
-  min = gimp_rgb_min (rgb);
+  max = picman_rgb_max (rgb);
+  min = picman_rgb_min (rgb);
 
   hsl->l = (max + min) / 2.0;
 
   if (max == min)
     {
       hsl->s = 0.0;
-      hsl->h = GIMP_HSL_UNDEFINED;
+      hsl->h = PICMAN_HSL_UNDEFINED;
     }
   else
     {
@@ -249,7 +249,7 @@ gimp_rgb_to_hsl (const GimpRGB *rgb,
 }
 
 static inline gdouble
-gimp_hsl_value (gdouble n1,
+picman_hsl_value (gdouble n1,
                 gdouble n2,
                 gdouble hue)
 {
@@ -274,15 +274,15 @@ gimp_hsl_value (gdouble n1,
 
 
 /**
- * gimp_hsl_to_rgb:
+ * picman_hsl_to_rgb:
  * @hsl: A color value in the HSL colorspace
  * @rgb: The value converted to a value in the RGB colorspace
  *
  * Convert a HSL color value to an RGB color value.
  **/
 void
-gimp_hsl_to_rgb (const GimpHSL *hsl,
-                 GimpRGB       *rgb)
+picman_hsl_to_rgb (const PicmanHSL *hsl,
+                 PicmanRGB       *rgb)
 {
   g_return_if_fail (hsl != NULL);
   g_return_if_fail (rgb != NULL);
@@ -305,9 +305,9 @@ gimp_hsl_to_rgb (const GimpHSL *hsl,
 
       m1 = 2.0 * hsl->l - m2;
 
-      rgb->r = gimp_hsl_value (m1, m2, hsl->h * 6.0 + 2.0);
-      rgb->g = gimp_hsl_value (m1, m2, hsl->h * 6.0);
-      rgb->b = gimp_hsl_value (m1, m2, hsl->h * 6.0 - 2.0);
+      rgb->r = picman_hsl_value (m1, m2, hsl->h * 6.0 + 2.0);
+      rgb->g = picman_hsl_value (m1, m2, hsl->h * 6.0);
+      rgb->b = picman_hsl_value (m1, m2, hsl->h * 6.0 - 2.0);
     }
 
   rgb->a = hsl->a;
@@ -315,7 +315,7 @@ gimp_hsl_to_rgb (const GimpHSL *hsl,
 
 
 /**
- * gimp_rgb_to_cmyk:
+ * picman_rgb_to_cmyk:
  * @rgb: A value in the RGB colorspace
  * @pullout: A scaling value (0-1) indicating how much black should be
  *           pulled out
@@ -328,9 +328,9 @@ gimp_hsl_to_rgb (const GimpHSL *hsl,
  * A value of 1 causes the maximum amount of black to be pulled out.
  **/
 void
-gimp_rgb_to_cmyk (const GimpRGB  *rgb,
+picman_rgb_to_cmyk (const PicmanRGB  *rgb,
                   gdouble         pullout,
-                  GimpCMYK       *cmyk)
+                  PicmanCMYK       *cmyk)
 {
   gdouble c, m, y, k;
 
@@ -366,7 +366,7 @@ gimp_rgb_to_cmyk (const GimpRGB  *rgb,
 }
 
 /**
- * gimp_cmyk_to_rgb:
+ * picman_cmyk_to_rgb:
  * @cmyk: A color value in the CMYK colorspace
  * @rgb: The value converted to the RGB colorspace
  *
@@ -374,8 +374,8 @@ gimp_rgb_to_cmyk (const GimpRGB  *rgb,
  * colorspace, without taking color profiles into account.
  **/
 void
-gimp_cmyk_to_rgb (const GimpCMYK *cmyk,
-                  GimpRGB        *rgb)
+picman_cmyk_to_rgb (const PicmanCMYK *cmyk,
+                  PicmanRGB        *rgb)
 {
   gdouble c, m, y, k;
 
@@ -404,7 +404,7 @@ gimp_cmyk_to_rgb (const GimpCMYK *cmyk,
 }
 
 
-#define GIMP_RETURN_RGB(x, y, z) { rgb->r = x; rgb->g = y; rgb->b = z; return; }
+#define PICMAN_RETURN_RGB(x, y, z) { rgb->r = x; rgb->g = y; rgb->b = z; return; }
 
 /****************************************************************************
  * Theoretically, hue 0 (pure red) is identical to hue 6 in these transforms.
@@ -413,7 +413,7 @@ gimp_cmyk_to_rgb (const GimpCMYK *cmyk,
  ****************************************************************************/
 
 /**
- * gimp_rgb_to_hwb:
+ * picman_rgb_to_hwb:
  * @rgb: A color value in the RGB colorspace
  * @hue: The hue value of the above color, in the range 0 to 6
  * @whiteness: The whiteness value of the above color, in the range 0 to 1
@@ -428,7 +428,7 @@ gimp_cmyk_to_rgb (const GimpCMYK *cmyk,
  * undefined.
  **/
 void
-gimp_rgb_to_hwb (const GimpRGB *rgb,
+picman_rgb_to_hwb (const PicmanRGB *rgb,
                  gdouble       *hue,
                  gdouble       *whiteness,
                  gdouble       *blackness)
@@ -440,13 +440,13 @@ gimp_rgb_to_hwb (const GimpRGB *rgb,
   gdouble R = rgb->r, G = rgb->g, B = rgb->b, w, v, b, f;
   gint i;
 
-  w = gimp_rgb_min (rgb);
-  v = gimp_rgb_max (rgb);
+  w = picman_rgb_min (rgb);
+  v = picman_rgb_max (rgb);
   b = 1.0 - v;
 
   if (v == w)
     {
-      *hue = GIMP_HSV_UNDEFINED;
+      *hue = PICMAN_HSV_UNDEFINED;
       *whiteness = w;
       *blackness = b;
     }
@@ -462,7 +462,7 @@ gimp_rgb_to_hwb (const GimpRGB *rgb,
 }
 
 /**
- * gimp_hwb_to_rgb:
+ * picman_hwb_to_rgb:
  * @hue: A hue value, in the range 0 to 6
  * @whiteness: A whiteness value, in the range 0 to 1
  * @blackness: A blackness value, in the range 0 to 1
@@ -472,10 +472,10 @@ gimp_rgb_to_hwb (const GimpRGB *rgb,
  * range [0, 1]. The returned RGB values are all in the range [0, 1].
  **/
 void
-gimp_hwb_to_rgb (gdouble  hue,
+picman_hwb_to_rgb (gdouble  hue,
                  gdouble  whiteness,
                  gdouble  blackness,
-                 GimpRGB *rgb)
+                 PicmanRGB *rgb)
 {
   /* H is given on [0, 6] or UNDEFINED. whiteness and
    * blackness are given on [0, 1].
@@ -488,7 +488,7 @@ gimp_hwb_to_rgb (gdouble  hue,
   h = 6.0 * h/ 360.0;
 
   v = 1.0 - b;
-  if (h == GIMP_HSV_UNDEFINED)
+  if (h == PICMAN_HSV_UNDEFINED)
     {
       rgb->r = v;
       rgb->g = v;
@@ -507,17 +507,17 @@ gimp_hwb_to_rgb (gdouble  hue,
       switch (i)
         {
           case 6:
-          case 0: GIMP_RETURN_RGB (v, n, w);
+          case 0: PICMAN_RETURN_RGB (v, n, w);
             break;
-          case 1: GIMP_RETURN_RGB (n, v, w);
+          case 1: PICMAN_RETURN_RGB (n, v, w);
             break;
-          case 2: GIMP_RETURN_RGB (w, v, n);
+          case 2: PICMAN_RETURN_RGB (w, v, n);
             break;
-          case 3: GIMP_RETURN_RGB (w, n, v);
+          case 3: PICMAN_RETURN_RGB (w, n, v);
             break;
-          case 4: GIMP_RETURN_RGB (n, w, v);
+          case 4: PICMAN_RETURN_RGB (n, w, v);
             break;
-          case 5: GIMP_RETURN_RGB (v, w, n);
+          case 5: PICMAN_RETURN_RGB (v, w, n);
             break;
         }
     }
@@ -528,7 +528,7 @@ gimp_hwb_to_rgb (gdouble  hue,
 /*  gint functions  */
 
 /**
- * gimp_rgb_to_hsv_int:
+ * picman_rgb_to_hsv_int:
  * @red: The red channel value, returns the Hue channel
  * @green: The green channel value, returns the Saturation channel
  * @blue: The blue channel value, returns the Value channel
@@ -542,7 +542,7 @@ gimp_hwb_to_rgb (gdouble  hue,
  * ranges: H [0, 359], S [0, 255], V [0, 255].
  **/
 void
-gimp_rgb_to_hsv_int (gint *red,
+picman_rgb_to_hsv_int (gint *red,
                      gint *green,
                      gint *blue)
 {
@@ -603,7 +603,7 @@ gimp_rgb_to_hsv_int (gint *red,
 }
 
 /**
- * gimp_hsv_to_rgb_int:
+ * picman_hsv_to_rgb_int:
  * @hue: The hue channel, returns the red channel
  * @saturation: The saturation channel, returns the green channel
  * @value: The value channel, returns the blue channel
@@ -615,7 +615,7 @@ gimp_rgb_to_hsv_int (gint *red,
  * corresponding, with the returned values all in the range [0, 255].
  **/
 void
-gimp_hsv_to_rgb_int (gint *hue,
+picman_hsv_to_rgb_int (gint *hue,
                      gint *saturation,
                      gint *value)
 {
@@ -689,7 +689,7 @@ gimp_hsv_to_rgb_int (gint *hue,
 }
 
 /**
- * gimp_rgb_to_hsl_int:
+ * picman_rgb_to_hsl_int:
  * @red: Red channel, returns Hue channel
  * @green: Green channel, returns Lightness channel
  * @blue: Blue channel, returns Saturation channel
@@ -702,7 +702,7 @@ gimp_hsv_to_rgb_int (gint *hue,
  * L [0, 255], S [0, 255].
  **/
 void
-gimp_rgb_to_hsl_int (gint *red,
+picman_rgb_to_hsl_int (gint *red,
                      gint *green,
                      gint *blue)
 {
@@ -763,7 +763,7 @@ gimp_rgb_to_hsl_int (gint *red,
 }
 
 /**
- * gimp_rgb_to_l_int:
+ * picman_rgb_to_l_int:
  * @red: Red channel
  * @green: Green channel
  * @blue: Blue channel
@@ -774,7 +774,7 @@ gimp_rgb_to_hsl_int (gint *red,
  * Return value: Luminance vaue corresponding to the input RGB value
  **/
 gint
-gimp_rgb_to_l_int (gint red,
+picman_rgb_to_l_int (gint red,
                    gint green,
                    gint blue)
 {
@@ -795,7 +795,7 @@ gimp_rgb_to_l_int (gint red,
 }
 
 static inline gint
-gimp_hsl_value_int (gdouble n1,
+picman_hsl_value_int (gdouble n1,
                     gdouble n2,
                     gdouble hue)
 {
@@ -819,7 +819,7 @@ gimp_hsl_value_int (gdouble n1,
 }
 
 /**
- * gimp_hsl_to_rgb_int:
+ * picman_hsl_to_rgb_int:
  * @hue: Hue channel, returns Red channel
  * @saturation: Saturation channel, returns Green channel
  * @lightness: Lightness channel, returns Blue channel
@@ -831,7 +831,7 @@ gimp_hsl_value_int (gdouble n1,
  * corresponding, with the returned values all in the range [0, 255].
  **/
 void
-gimp_hsl_to_rgb_int (gint *hue,
+picman_hsl_to_rgb_int (gint *hue,
                      gint *saturation,
                      gint *lightness)
 {
@@ -860,14 +860,14 @@ gimp_hsl_to_rgb_int (gint *hue,
       m1 = (l / 127.5) - m2;
 
       /*  chromatic case  */
-      *hue        = gimp_hsl_value_int (m1, m2, h + 85);
-      *saturation = gimp_hsl_value_int (m1, m2, h);
-      *lightness  = gimp_hsl_value_int (m1, m2, h - 85);
+      *hue        = picman_hsl_value_int (m1, m2, h + 85);
+      *saturation = picman_hsl_value_int (m1, m2, h);
+      *lightness  = picman_hsl_value_int (m1, m2, h - 85);
     }
 }
 
 /**
- * gimp_rgb_to_cmyk_int:
+ * picman_rgb_to_cmyk_int:
  * @red:     the red channel; returns the cyan value (0-255)
  * @green:   the green channel; returns the magenta value (0-255)
  * @blue:    the blue channel; returns the yellow value (0-255)
@@ -881,7 +881,7 @@ gimp_hsl_to_rgb_int (gint *hue,
  * A value of 100 causes the maximum amount of black to be pulled out.
  **/
 void
-gimp_rgb_to_cmyk_int (gint *red,
+picman_rgb_to_cmyk_int (gint *red,
                       gint *green,
                       gint *blue,
                       gint *pullout)
@@ -916,7 +916,7 @@ gimp_rgb_to_cmyk_int (gint *red,
 }
 
 /**
- * gimp_cmyk_to_rgb_int:
+ * picman_cmyk_to_rgb_int:
  * @cyan:    the cyan channel; returns the red value (0-255)
  * @magenta: the magenta channel; returns the green value (0-255)
  * @yellow:  the yellow channel; returns the blue value (0-255)
@@ -926,7 +926,7 @@ gimp_rgb_to_cmyk_int (gint *red,
  * formula that doesn't take any color-profiles into account is used.
  **/
 void
-gimp_cmyk_to_rgb_int (gint *cyan,
+picman_cmyk_to_rgb_int (gint *cyan,
                       gint *magenta,
                       gint *yellow,
                       gint *black)
@@ -951,7 +951,7 @@ gimp_cmyk_to_rgb_int (gint *cyan,
 }
 
 /**
- * gimp_rgb_to_hsv4:
+ * picman_rgb_to_hsv4:
  * @rgb:        RGB triplet, rgb[0] is red channel, rgb[1] is green,
  *              rgb[2] is blue (0..255)
  * @hue:        Pointer to hue channel (0..1)
@@ -959,7 +959,7 @@ gimp_cmyk_to_rgb_int (gint *cyan,
  * @value:      Pointer to value channel (0..1)
  **/
 void
-gimp_rgb_to_hsv4 (const guchar *rgb,
+picman_rgb_to_hsv4 (const guchar *rgb,
                   gdouble      *hue,
                   gdouble      *saturation,
                   gdouble      *value)
@@ -1021,7 +1021,7 @@ gimp_rgb_to_hsv4 (const guchar *rgb,
 }
 
 /**
- * gimp_hsv_to_rgb4:
+ * picman_hsv_to_rgb4:
  * @rgb:        RGB triplet, rgb[0] is red channel, rgb[1] is green,
  *              rgb[2] is blue (0..255)
  * @hue:        Hue channel (0..1)
@@ -1029,7 +1029,7 @@ gimp_rgb_to_hsv4 (const guchar *rgb,
  * @value:      Value channel (0..1)
  **/
 void
-gimp_hsv_to_rgb4 (guchar  *rgb,
+picman_hsv_to_rgb4 (guchar  *rgb,
                   gdouble  hue,
                   gdouble  saturation,
                   gdouble  value)

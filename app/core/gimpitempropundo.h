@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,28 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ITEM_PROP_UNDO_H__
-#define __GIMP_ITEM_PROP_UNDO_H__
+#ifndef __PICMAN_ITEM_PROP_UNDO_H__
+#define __PICMAN_ITEM_PROP_UNDO_H__
 
 
-#include "gimpitemundo.h"
+#include "picmanitemundo.h"
 
 
-#define GIMP_TYPE_ITEM_PROP_UNDO            (gimp_item_prop_undo_get_type ())
-#define GIMP_ITEM_PROP_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ITEM_PROP_UNDO, GimpItemPropUndo))
-#define GIMP_ITEM_PROP_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ITEM_PROP_UNDO, GimpItemPropUndoClass))
-#define GIMP_IS_ITEM_PROP_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ITEM_PROP_UNDO))
-#define GIMP_IS_ITEM_PROP_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ITEM_PROP_UNDO))
-#define GIMP_ITEM_PROP_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ITEM_PROP_UNDO, GimpItemPropUndoClass))
+#define PICMAN_TYPE_ITEM_PROP_UNDO            (picman_item_prop_undo_get_type ())
+#define PICMAN_ITEM_PROP_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ITEM_PROP_UNDO, PicmanItemPropUndo))
+#define PICMAN_ITEM_PROP_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ITEM_PROP_UNDO, PicmanItemPropUndoClass))
+#define PICMAN_IS_ITEM_PROP_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ITEM_PROP_UNDO))
+#define PICMAN_IS_ITEM_PROP_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ITEM_PROP_UNDO))
+#define PICMAN_ITEM_PROP_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ITEM_PROP_UNDO, PicmanItemPropUndoClass))
 
 
-typedef struct _GimpItemPropUndoClass GimpItemPropUndoClass;
+typedef struct _PicmanItemPropUndoClass PicmanItemPropUndoClass;
 
-struct _GimpItemPropUndo
+struct _PicmanItemPropUndo
 {
-  GimpItemUndo  parent_instance;
+  PicmanItemUndo  parent_instance;
 
-  GimpItem     *parent;
+  PicmanItem     *parent;
   gint          position;
   gchar        *name;
   gint          offset_x;
@@ -46,16 +46,16 @@ struct _GimpItemPropUndo
   guint         lock_content  : 1;
   guint         lock_position : 1;
   gchar        *parasite_name;
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
 };
 
-struct _GimpItemPropUndoClass
+struct _PicmanItemPropUndoClass
 {
-  GimpItemUndoClass  parent_class;
+  PicmanItemUndoClass  parent_class;
 };
 
 
-GType   gimp_item_prop_undo_get_type (void) G_GNUC_CONST;
+GType   picman_item_prop_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_ITEM_PROP_UNDO_H__ */
+#endif /* __PICMAN_ITEM_PROP_UNDO_H__ */

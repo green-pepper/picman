@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpProfileChooserDialog
- * Copyright (C) 2006 Sven Neumann <sven@gimp.org>
+ * PicmanProfileChooserDialog
+ * Copyright (C) 2006 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,82 +26,82 @@
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
 #include "plug-in/plug-in-icc-profile.h"
 
-#include "gimpprofilechooserdialog.h"
+#include "picmanprofilechooserdialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
 {
   PROP_0,
-  PROP_GIMP
+  PROP_PICMAN
 };
 
 
-static void   gimp_profile_chooser_dialog_constructed    (GObject                  *object);
-static void   gimp_profile_chooser_dialog_dispose        (GObject                  *object);
-static void   gimp_profile_chooser_dialog_finalize       (GObject                  *object);
-static void   gimp_profile_chooser_dialog_set_property   (GObject                  *object,
+static void   picman_profile_chooser_dialog_constructed    (GObject                  *object);
+static void   picman_profile_chooser_dialog_dispose        (GObject                  *object);
+static void   picman_profile_chooser_dialog_finalize       (GObject                  *object);
+static void   picman_profile_chooser_dialog_set_property   (GObject                  *object,
                                                           guint                     prop_id,
                                                           const GValue             *value,
                                                           GParamSpec               *pspec);
-static void   gimp_profile_chooser_dialog_get_property   (GObject                  *object,
+static void   picman_profile_chooser_dialog_get_property   (GObject                  *object,
                                                           guint                     prop_id,
                                                           GValue                   *value,
                                                           GParamSpec               *pspec);
 
-static void   gimp_profile_chooser_dialog_add_shortcut   (GimpProfileChooserDialog *dialog);
-static void   gimp_profile_chooser_dialog_update_preview (GimpProfileChooserDialog *dialog);
+static void   picman_profile_chooser_dialog_add_shortcut   (PicmanProfileChooserDialog *dialog);
+static void   picman_profile_chooser_dialog_update_preview (PicmanProfileChooserDialog *dialog);
 
-static GtkWidget * gimp_profile_view_new                 (GtkTextBuffer            *buffer);
-static gboolean    gimp_profile_view_query               (GimpProfileChooserDialog *dialog);
+static GtkWidget * picman_profile_view_new                 (GtkTextBuffer            *buffer);
+static gboolean    picman_profile_view_query               (PicmanProfileChooserDialog *dialog);
 
 
-G_DEFINE_TYPE (GimpProfileChooserDialog, gimp_profile_chooser_dialog,
+G_DEFINE_TYPE (PicmanProfileChooserDialog, picman_profile_chooser_dialog,
                GTK_TYPE_FILE_CHOOSER_DIALOG);
 
-#define parent_class gimp_profile_chooser_dialog_parent_class
+#define parent_class picman_profile_chooser_dialog_parent_class
 
 
 static void
-gimp_profile_chooser_dialog_class_init (GimpProfileChooserDialogClass *klass)
+picman_profile_chooser_dialog_class_init (PicmanProfileChooserDialogClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_profile_chooser_dialog_constructed;
-  object_class->dispose      = gimp_profile_chooser_dialog_dispose;
-  object_class->finalize     = gimp_profile_chooser_dialog_finalize;
-  object_class->get_property = gimp_profile_chooser_dialog_get_property;
-  object_class->set_property = gimp_profile_chooser_dialog_set_property;
+  object_class->constructed  = picman_profile_chooser_dialog_constructed;
+  object_class->dispose      = picman_profile_chooser_dialog_dispose;
+  object_class->finalize     = picman_profile_chooser_dialog_finalize;
+  object_class->get_property = picman_profile_chooser_dialog_get_property;
+  object_class->set_property = picman_profile_chooser_dialog_set_property;
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp",
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_profile_chooser_dialog_init (GimpProfileChooserDialog *dialog)
+picman_profile_chooser_dialog_init (PicmanProfileChooserDialog *dialog)
 {
   dialog->idle_id = 0;
   dialog->buffer  = gtk_text_buffer_new (NULL);
 }
 
 static void
-gimp_profile_chooser_dialog_constructed (GObject *object)
+picman_profile_chooser_dialog_constructed (GObject *object)
 {
-  GimpProfileChooserDialog *dialog = GIMP_PROFILE_CHOOSER_DIALOG (object);
+  PicmanProfileChooserDialog *dialog = PICMAN_PROFILE_CHOOSER_DIALOG (object);
   GtkFileFilter            *filter;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  gtk_window_set_role (GTK_WINDOW (dialog), "gimp-profile-chooser-dialog");
+  gtk_window_set_role (GTK_WINDOW (dialog), "picman-profile-chooser-dialog");
 
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -115,7 +115,7 @@ gimp_profile_chooser_dialog_constructed (GObject *object)
 
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
 
-  gimp_profile_chooser_dialog_add_shortcut (dialog);
+  picman_profile_chooser_dialog_add_shortcut (dialog);
 
   filter = gtk_file_filter_new ();
   gtk_file_filter_set_name (filter, _("All files (*.*)"));
@@ -131,17 +131,17 @@ gimp_profile_chooser_dialog_constructed (GObject *object)
   gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dialog), filter);
 
   gtk_file_chooser_set_preview_widget (GTK_FILE_CHOOSER (dialog),
-                                       gimp_profile_view_new (dialog->buffer));
+                                       picman_profile_view_new (dialog->buffer));
 
   g_signal_connect (dialog, "update-preview",
-                    G_CALLBACK (gimp_profile_chooser_dialog_update_preview),
+                    G_CALLBACK (picman_profile_chooser_dialog_update_preview),
                     NULL);
 }
 
 static void
-gimp_profile_chooser_dialog_dispose (GObject *object)
+picman_profile_chooser_dialog_dispose (GObject *object)
 {
-  GimpProfileChooserDialog *dialog = GIMP_PROFILE_CHOOSER_DIALOG (object);
+  PicmanProfileChooserDialog *dialog = PICMAN_PROFILE_CHOOSER_DIALOG (object);
 
   if (dialog->idle_id)
     {
@@ -153,9 +153,9 @@ gimp_profile_chooser_dialog_dispose (GObject *object)
 }
 
 static void
-gimp_profile_chooser_dialog_finalize (GObject *object)
+picman_profile_chooser_dialog_finalize (GObject *object)
 {
-  GimpProfileChooserDialog *dialog = GIMP_PROFILE_CHOOSER_DIALOG (object);
+  PicmanProfileChooserDialog *dialog = PICMAN_PROFILE_CHOOSER_DIALOG (object);
 
   if (dialog->buffer)
     {
@@ -167,17 +167,17 @@ gimp_profile_chooser_dialog_finalize (GObject *object)
 }
 
 static void
-gimp_profile_chooser_dialog_set_property (GObject      *object,
+picman_profile_chooser_dialog_set_property (GObject      *object,
                                           guint         prop_id,
                                           const GValue *value,
                                           GParamSpec   *pspec)
 {
-  GimpProfileChooserDialog *dialog = GIMP_PROFILE_CHOOSER_DIALOG (object);
+  PicmanProfileChooserDialog *dialog = PICMAN_PROFILE_CHOOSER_DIALOG (object);
 
   switch (prop_id)
     {
-    case PROP_GIMP:
-      dialog->gimp = g_value_get_object (value);
+    case PROP_PICMAN:
+      dialog->picman = g_value_get_object (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -186,17 +186,17 @@ gimp_profile_chooser_dialog_set_property (GObject      *object,
 }
 
 static void
-gimp_profile_chooser_dialog_get_property (GObject    *object,
+picman_profile_chooser_dialog_get_property (GObject    *object,
                                           guint       prop_id,
                                           GValue     *value,
                                           GParamSpec *pspec)
 {
-  GimpProfileChooserDialog *dialog = GIMP_PROFILE_CHOOSER_DIALOG (object);
+  PicmanProfileChooserDialog *dialog = PICMAN_PROFILE_CHOOSER_DIALOG (object);
 
   switch (prop_id)
     {
-    case PROP_GIMP:
-      g_value_set_object (value, dialog->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, dialog->picman);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -205,22 +205,22 @@ gimp_profile_chooser_dialog_get_property (GObject    *object,
 }
 
 GtkWidget *
-gimp_profile_chooser_dialog_new (Gimp        *gimp,
+picman_profile_chooser_dialog_new (Picman        *picman,
                                  const gchar *title)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  return g_object_new (GIMP_TYPE_PROFILE_CHOOSER_DIALOG,
-                       "gimp",  gimp,
+  return g_object_new (PICMAN_TYPE_PROFILE_CHOOSER_DIALOG,
+                       "picman",  picman,
                        "title", title,
                        NULL);
 }
 
 gchar *
-gimp_profile_chooser_dialog_get_desc (GimpProfileChooserDialog *dialog,
+picman_profile_chooser_dialog_get_desc (PicmanProfileChooserDialog *dialog,
                                       const gchar              *filename)
 {
-  g_return_val_if_fail (GIMP_IS_PROFILE_CHOOSER_DIALOG (dialog), NULL);
+  g_return_val_if_fail (PICMAN_IS_PROFILE_CHOOSER_DIALOG (dialog), NULL);
 
   if (filename && dialog->filename && strcmp (filename, dialog->filename) == 0)
     return g_strdup (dialog->desc);
@@ -230,7 +230,7 @@ gimp_profile_chooser_dialog_get_desc (GimpProfileChooserDialog *dialog,
 
 /* Add shortcut for default ICC profile location */
 static void
-gimp_profile_chooser_dialog_add_shortcut (GimpProfileChooserDialog *dialog)
+picman_profile_chooser_dialog_add_shortcut (PicmanProfileChooserDialog *dialog)
 {
 #ifdef G_OS_WIN32
   {
@@ -260,7 +260,7 @@ gimp_profile_chooser_dialog_add_shortcut (GimpProfileChooserDialog *dialog)
 }
 
 static void
-gimp_profile_chooser_dialog_update_preview (GimpProfileChooserDialog *dialog)
+picman_profile_chooser_dialog_update_preview (PicmanProfileChooserDialog *dialog)
 {
   gtk_text_buffer_set_text (dialog->buffer, "", 0);
 
@@ -273,12 +273,12 @@ gimp_profile_chooser_dialog_update_preview (GimpProfileChooserDialog *dialog)
   if (dialog->idle_id)
     g_source_remove (dialog->idle_id);
 
-  dialog->idle_id = g_idle_add ((GSourceFunc) gimp_profile_view_query,
+  dialog->idle_id = g_idle_add ((GSourceFunc) picman_profile_view_query,
                                 dialog);
 }
 
 static GtkWidget *
-gimp_profile_view_new (GtkTextBuffer *buffer)
+picman_profile_view_new (GtkTextBuffer *buffer)
 {
   GtkWidget *frame;
   GtkWidget *scrolled_window;
@@ -312,7 +312,7 @@ gimp_profile_view_new (GtkTextBuffer *buffer)
 }
 
 static gboolean
-gimp_profile_view_query (GimpProfileChooserDialog *dialog)
+picman_profile_view_query (PicmanProfileChooserDialog *dialog)
 {
   gchar *filename;
 
@@ -324,8 +324,8 @@ gimp_profile_view_query (GimpProfileChooserDialog *dialog)
       gchar *desc = NULL;
       gchar *info = NULL;
 
-      if (plug_in_icc_profile_file_info (dialog->gimp,
-                                         gimp_get_user_context (dialog->gimp),
+      if (plug_in_icc_profile_file_info (dialog->picman,
+                                         picman_get_user_context (dialog->picman),
                                          NULL,
                                          filename,
                                          &name, &desc, &info,

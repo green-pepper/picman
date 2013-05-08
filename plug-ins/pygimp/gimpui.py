@@ -1,4 +1,4 @@
-#   Gimp-Python - allows the writing of Gimp plugins in Python.
+#   Picman-Python - allows the writing of Picman plugins in Python.
 #   Copyright (C) 1997  James Henstridge <james@daa.com.au>
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-'''This module implements the UI items found in the libgimpui library.
+'''This module implements the UI items found in the libpicmanui library.
 It requires pygtk to work.  These functions take use to callbacks -- one
 is a constraint function, and the other is the callback object.  The
 constraint function takes an image object as its first argument, and
@@ -23,23 +23,23 @@ get the selected object as their first argument, and the user data as
 the second.
 
 It also implements a number of selector widgets, which can be used to select
-various gimp data types.  Each of these selectors takes default as an argument
+various picman data types.  Each of these selectors takes default as an argument
 to the constructor, and has a get_value() method for retrieving the result.
 '''
 
 import pygtk
 pygtk.require('2.0')
 
-import gtk, gobject, gimp, gimpcolor
+import gtk, gobject, picman, picmancolor
 
-from _gimpui import *
+from _picmanui import *
 
 import gettext
-t = gettext.translation('gimp20-python', gimp.locale_directory, fallback=True)
+t = gettext.translation('picman20-python', picman.locale_directory, fallback=True)
 _ = t.ugettext
 
 def _callbackWrapper(menu_item, callback, data):
-    callback(menu_item.get_data("Gimp-ID"), data)
+    callback(menu_item.get_data("Picman-ID"), data)
 
 def _createMenu(items, callback, data):
     menu = gtk.Menu()
@@ -47,7 +47,7 @@ def _createMenu(items, callback, data):
         items = [("(none)", None)]
     for label, id in items:
         menu_item = gtk.MenuItem(label)
-        menu_item.set_data("Gimp-ID", id)
+        menu_item.set_data("Picman-ID", id)
         menu.add(menu_item)
         if callback:
             menu_item.connect("activate", _callbackWrapper,
@@ -58,7 +58,7 @@ def _createMenu(items, callback, data):
 
 def ImageMenu(constraint=None, callback=None, data=None):
     items = []
-    for img in gimp.image_list():
+    for img in picman.image_list():
         if constraint and not constraint(img):
             continue
         if not img.filename:
@@ -71,7 +71,7 @@ def ImageMenu(constraint=None, callback=None, data=None):
 
 def LayerMenu(constraint=None, callback=None, data=None):
     items = []
-    for img in gimp.image_list():
+    for img in picman.image_list():
         filename = img.filename
         if not filename:
             filename = img.name
@@ -85,7 +85,7 @@ def LayerMenu(constraint=None, callback=None, data=None):
 
 def ChannelMenu(constraint=None, callback=None, data=None):
     items = []
-    for img in gimp.image_list():
+    for img in picman.image_list():
         filename = img.filename
         if not filename:
             filename = img.name
@@ -99,7 +99,7 @@ def ChannelMenu(constraint=None, callback=None, data=None):
 
 def DrawableMenu(constraint=None, callback=None, data=None):
     items = []
-    for img in gimp.image_list():
+    for img in picman.image_list():
         filename = img.filename
         if not filename:
             filename = img.name
@@ -113,7 +113,7 @@ def DrawableMenu(constraint=None, callback=None, data=None):
 
 def VectorsMenu(constraint=None, callback=None, data=None):
     items = []
-    for img in gimp.image_list():
+    for img in picman.image_list():
         filename = img.filename
         if not filename:
             filename = img.name
@@ -166,13 +166,13 @@ class VectorsSelector(VectorsComboBox):
         return self.get_active_vectors()
 
 class ColorSelector(ColorButton):
-    def __init__(self, default=gimpcolor.RGB(1.0, 0, 0)):
-        if isinstance(default, gimpcolor.RGB):
+    def __init__(self, default=picmancolor.RGB(1.0, 0, 0)):
+        if isinstance(default, picmancolor.RGB):
             color = default
         elif isinstance(default, tuple):
-            color = apply(gimpcolor.RGB, default)
+            color = apply(picmancolor.RGB, default)
         elif isinstance(default, str):
-            color = gimpcolor.rgb_parse_css(default)
+            color = picmancolor.rgb_parse_css(default)
         ColorButton.__init__(self, _("Python-Fu Color Selection"), 100, 20,
                              color, COLOR_AREA_FLAT)
     def get_value(self):

@@ -1,4 +1,4 @@
-# Esperanto translation for GIMP Script-Fu.
+# Esperanto translation for PICMAN Script-Fu.
 # Copyright (C) 2006 - 2012 Free Software Foundation, Inc.
 #
 # bullet = laŭvorte "kuglo", tamen estas bli bone traduki kiel la itala versio: "nito"
@@ -8,9 +8,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp 2.0\n"
+"Project-Id-Version: picman 2.0\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-03-10 17:32+0000\n"
 "PO-Revision-Date: 2012-04-06 21:24+0200\n"
 "Last-Translator: Kristjan SCHMIDT <kristjan.schmidt@googlemail.com>\n"
@@ -40,8 +40,8 @@ msgid "_Start Server..."
 msgstr "_Starti servilon..."
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
-msgstr "_GIMPo interrete"
+msgid "_PICMAN Online"
+msgstr "_PICMANo interrete"
 
 #: ../plug-ins/script-fu/script-fu.c:302
 msgid "_User Manual"
@@ -80,8 +80,8 @@ msgid "_Beveled Pattern"
 msgstr "_Bareliefa modelo"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "_Klasika gimp.org"
+msgid "_Classic.Picman.Org"
+msgstr "_Klasika picman.org"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -260,19 +260,19 @@ msgstr "Kahelo"
 msgid "Wrap"
 msgstr "Ĉirkaŭfluo"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:323
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:323
 msgid "Spyrograph"
 msgstr "Spiralilo"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:326
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:326
 msgid "Circle"
 msgstr "Cirklo"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:342
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:342
 msgid "Pencil"
 msgstr "Krajono"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:347
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:347
 msgid "Solid Color"
 msgstr "Solida koloro"
 
@@ -1126,8 +1126,8 @@ msgstr "IIR"
 #~ msgid "_Fuzzy Border..."
 #~ msgstr "_Svaga rando..."
 
-#~ msgid "Bookmark to the GIMP web site"
-#~ msgstr "Ligilo al la retpaĝaro de GIMPo"
+#~ msgid "Bookmark to the PICMAN web site"
+#~ msgstr "Ligilo al la retpaĝaro de PICMANo"
 
 #~ msgid "Bookmark to the user manual"
 #~ msgstr "Ligilo al la manlibro de la uzanto"
@@ -1724,8 +1724,8 @@ msgstr "IIR"
 #~ msgid "Type"
 #~ msgstr "Tipo"
 
-#~ msgid "_Spyrogimp..."
-#~ msgstr "_SpiralGIMPo..."
+#~ msgid "_Spyropicman..."
+#~ msgstr "_SpiralPICMANo..."
 
 #~ msgid "Create a logo using a rock-like texture, a nova glow, and shadow"
 #~ msgstr "Krei emblemon per rok-stila teksturo, nova brilo kaj ombro"
@@ -1945,11 +1945,11 @@ msgstr "IIR"
 #~ msgid "Autocrop"
 #~ msgstr "Aŭtomate stuci"
 
-#~ msgid "Create an image of a large header using the gimp.org webpage theme"
-#~ msgstr "Krei bildon de granda titolado uzante retpaĝan etoson de gimp.org"
+#~ msgid "Create an image of a large header using the picman.org webpage theme"
+#~ msgstr "Krei bildon de granda titolado uzante retpaĝan etoson de picman.org"
 
-#~ msgid "Create an image of a small header using the gimp.org webpage theme"
-#~ msgstr "Krei bildon de eta titolado uzante retpaĝan etoson de gimp.org"
+#~ msgid "Create an image of a small header using the picman.org webpage theme"
+#~ msgstr "Krei bildon de eta titolado uzante retpaĝan etoson de picman.org"
 
 #~ msgid "Dark color"
 #~ msgstr "Malhela koloro"
@@ -1976,27 +1976,27 @@ msgstr "IIR"
 #~ msgstr "_Eta titolado..."
 
 #~ msgid ""
-#~ "Create an image of a Tube Button Label Header using the gimp.org webpage "
+#~ "Create an image of a Tube Button Label Header using the picman.org webpage "
 #~ "theme"
 #~ msgstr ""
-#~ "Krei bildon de Tubobutona Slipotitolado uzante retpaĝan etoson de gimp.org"
+#~ "Krei bildon de Tubobutona Slipotitolado uzante retpaĝan etoson de picman.org"
 
 #~ msgid ""
-#~ "Create an image of a Tube Button Label using the gimp.org webpage theme"
-#~ msgstr "Krei bildon de Tubobutona Slipo uzante retpaĝan etoson de gimp.org"
+#~ "Create an image of a Tube Button Label using the picman.org webpage theme"
+#~ msgstr "Krei bildon de Tubobutona Slipo uzante retpaĝan etoson de picman.org"
 
 #~ msgid ""
-#~ "Create an image of a second level Tube Button Label using the gimp.org "
+#~ "Create an image of a second level Tube Button Label using the picman.org "
 #~ "webpage theme"
 #~ msgstr ""
-#~ "Krei bildon de dua nivela Tubobutonslipo uzante retpaĝan etoson de gimp."
+#~ "Krei bildon de dua nivela Tubobutonslipo uzante retpaĝan etoson de picman."
 #~ "org"
 
 #~ msgid ""
-#~ "Create an image of a third level Tube Button Label using the gimp.org "
+#~ "Create an image of a third level Tube Button Label using the picman.org "
 #~ "webpage theme"
 #~ msgstr ""
-#~ "Krei bildon de tria nivela Tubobutonslipo uzante retpaĝan etoson de gimp."
+#~ "Krei bildon de tria nivela Tubobutonslipo uzante retpaĝan etoson de picman."
 #~ "org"
 
 #~ msgid "T_ube Sub-Button Label..."

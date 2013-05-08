@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdesaturateconfig.h
- * Copyright (C) 2008 Sven Neumann <sven@gimp.org>
+ * picmandesaturateconfig.h
+ * Copyright (C) 2008 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,37 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DESATURATE_CONFIG_H__
-#define __GIMP_DESATURATE_CONFIG_H__
+#ifndef __PICMAN_DESATURATE_CONFIG_H__
+#define __PICMAN_DESATURATE_CONFIG_H__
 
 
-#include "core/gimpimagemapconfig.h"
+#include "core/picmanimagemapconfig.h"
 
 
-#define GIMP_TYPE_DESATURATE_CONFIG            (gimp_desaturate_config_get_type ())
-#define GIMP_DESATURATE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DESATURATE_CONFIG, GimpDesaturateConfig))
-#define GIMP_DESATURATE_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_DESATURATE_CONFIG, GimpDesaturateConfigClass))
-#define GIMP_IS_DESATURATE_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DESATURATE_CONFIG))
-#define GIMP_IS_DESATURATE_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_DESATURATE_CONFIG))
-#define GIMP_DESATURATE_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_DESATURATE_CONFIG, GimpDesaturateConfigClass))
+#define PICMAN_TYPE_DESATURATE_CONFIG            (picman_desaturate_config_get_type ())
+#define PICMAN_DESATURATE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DESATURATE_CONFIG, PicmanDesaturateConfig))
+#define PICMAN_DESATURATE_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_DESATURATE_CONFIG, PicmanDesaturateConfigClass))
+#define PICMAN_IS_DESATURATE_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DESATURATE_CONFIG))
+#define PICMAN_IS_DESATURATE_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_DESATURATE_CONFIG))
+#define PICMAN_DESATURATE_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_DESATURATE_CONFIG, PicmanDesaturateConfigClass))
 
 
-typedef struct _GimpDesaturateConfigClass GimpDesaturateConfigClass;
+typedef struct _PicmanDesaturateConfigClass PicmanDesaturateConfigClass;
 
-struct _GimpDesaturateConfig
+struct _PicmanDesaturateConfig
 {
-  GimpImageMapConfig  parent_instance;
+  PicmanImageMapConfig  parent_instance;
 
-  GimpDesaturateMode  mode;
+  PicmanDesaturateMode  mode;
 };
 
-struct _GimpDesaturateConfigClass
+struct _PicmanDesaturateConfigClass
 {
-  GimpImageMapConfigClass  parent_class;
+  PicmanImageMapConfigClass  parent_class;
 };
 
 
-GType   gimp_desaturate_config_get_type (void) G_GNUC_CONST;
+GType   picman_desaturate_config_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_DESATURATE_CONFIG_H__ */
+#endif /* __PICMAN_DESATURATE_CONFIG_H__ */

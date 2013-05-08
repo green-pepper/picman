@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpguides_pdb.c
+ * picmanguides_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpguides
- * @title: gimpguides
+ * SECTION: picmanguides
+ * @title: picmanguides
  * @short_description: Functions for manipulating guides.
  *
  * Functions for manipulating guides.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_image_add_hguide:
+ * picman_image_add_hguide:
  * @image_ID: The image.
  * @yposition: The guide's y-offset from top of image.
  *
@@ -48,29 +48,29 @@
  * Returns: The new guide.
  **/
 gint32
-gimp_image_add_hguide (gint32 image_ID,
+picman_image_add_hguide (gint32 image_ID,
                        gint   yposition)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 guide_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-add-hguide",
+  return_vals = picman_run_procedure ("picman-image-add-hguide",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, yposition,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, yposition,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     guide_ID = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return guide_ID;
 }
 
 /**
- * gimp_image_add_vguide:
+ * picman_image_add_vguide:
  * @image_ID: The image.
  * @xposition: The guide's x-offset from left of image.
  *
@@ -83,29 +83,29 @@ gimp_image_add_hguide (gint32 image_ID,
  * Returns: The new guide.
  **/
 gint32
-gimp_image_add_vguide (gint32 image_ID,
+picman_image_add_vguide (gint32 image_ID,
                        gint   xposition)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 guide_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-add-vguide",
+  return_vals = picman_run_procedure ("picman-image-add-vguide",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, xposition,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, xposition,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     guide_ID = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return guide_ID;
 }
 
 /**
- * gimp_image_delete_guide:
+ * picman_image_delete_guide:
  * @image_ID: The image.
  * @guide_ID: The ID of the guide to be removed.
  *
@@ -117,28 +117,28 @@ gimp_image_add_vguide (gint32 image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_delete_guide (gint32 image_ID,
+picman_image_delete_guide (gint32 image_ID,
                          gint32 guide_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-delete-guide",
+  return_vals = picman_run_procedure ("picman-image-delete-guide",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, guide_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, guide_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_find_next_guide:
+ * picman_image_find_next_guide:
  * @image_ID: The image.
  * @guide_ID: The ID of the current guide (0 if first invocation).
  *
@@ -153,29 +153,29 @@ gimp_image_delete_guide (gint32 image_ID,
  * Returns: The next guide's ID.
  **/
 gint32
-gimp_image_find_next_guide (gint32 image_ID,
+picman_image_find_next_guide (gint32 image_ID,
                             gint32 guide_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 next_guide_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-find-next-guide",
+  return_vals = picman_run_procedure ("picman-image-find-next-guide",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, guide_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, guide_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     next_guide_ID = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return next_guide_ID;
 }
 
 /**
- * gimp_image_get_guide_orientation:
+ * picman_image_get_guide_orientation:
  * @image_ID: The image.
  * @guide_ID: The guide.
  *
@@ -186,30 +186,30 @@ gimp_image_find_next_guide (gint32 image_ID,
  *
  * Returns: The guide's orientation.
  **/
-GimpOrientationType
-gimp_image_get_guide_orientation (gint32 image_ID,
+PicmanOrientationType
+picman_image_get_guide_orientation (gint32 image_ID,
                                   gint32 guide_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpOrientationType orientation = GIMP_ORIENTATION_UNKNOWN;
+  PicmanOrientationType orientation = PICMAN_ORIENTATION_UNKNOWN;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-guide-orientation",
+  return_vals = picman_run_procedure ("picman-image-get-guide-orientation",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, guide_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, guide_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     orientation = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return orientation;
 }
 
 /**
- * gimp_image_get_guide_position:
+ * picman_image_get_guide_position:
  * @image_ID: The image.
  * @guide_ID: The guide.
  *
@@ -221,23 +221,23 @@ gimp_image_get_guide_orientation (gint32 image_ID,
  * Returns: The guide's position relative to top or left of image.
  **/
 gint
-gimp_image_get_guide_position (gint32 image_ID,
+picman_image_get_guide_position (gint32 image_ID,
                                gint32 guide_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint position = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-guide-position",
+  return_vals = picman_run_procedure ("picman-image-get-guide-position",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, guide_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, guide_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     position = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return position;
 }

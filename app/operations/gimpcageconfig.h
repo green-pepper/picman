@@ -1,6 +1,6 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  *
- * gimpcageconfig.h
+ * picmancageconfig.h
  * Copyright (C) 2010 Michael Muré <batolettre@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,92 +17,92 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CAGE_CONFIG_H__
-#define __GIMP_CAGE_CONFIG_H__
+#ifndef __PICMAN_CAGE_CONFIG_H__
+#define __PICMAN_CAGE_CONFIG_H__
 
 
-#include "core/gimpimagemapconfig.h"
+#include "core/picmanimagemapconfig.h"
 
 
-struct _GimpCagePoint
+struct _PicmanCagePoint
 {
-  GimpVector2 src_point;
-  GimpVector2 dest_point;
-  GimpVector2 edge_normal;
+  PicmanVector2 src_point;
+  PicmanVector2 dest_point;
+  PicmanVector2 edge_normal;
   gdouble     edge_scaling_factor;
   gboolean    selected;
 };
 
 
-#define GIMP_TYPE_CAGE_CONFIG            (gimp_cage_config_get_type ())
-#define GIMP_CAGE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CAGE_CONFIG, GimpCageConfig))
-#define GIMP_CAGE_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CAGE_CONFIG, GimpCageConfigClass))
-#define GIMP_IS_CAGE_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CAGE_CONFIG))
-#define GIMP_IS_CAGE_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CAGE_CONFIG))
-#define GIMP_CAGE_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CAGE_CONFIG, GimpCageConfigClass))
+#define PICMAN_TYPE_CAGE_CONFIG            (picman_cage_config_get_type ())
+#define PICMAN_CAGE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CAGE_CONFIG, PicmanCageConfig))
+#define PICMAN_CAGE_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CAGE_CONFIG, PicmanCageConfigClass))
+#define PICMAN_IS_CAGE_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CAGE_CONFIG))
+#define PICMAN_IS_CAGE_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CAGE_CONFIG))
+#define PICMAN_CAGE_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CAGE_CONFIG, PicmanCageConfigClass))
 
 
-typedef struct _GimpCageConfigClass GimpCageConfigClass;
+typedef struct _PicmanCageConfigClass PicmanCageConfigClass;
 
-struct _GimpCageConfig
+struct _PicmanCageConfig
 {
-  GimpImageMapConfig  parent_instance;
+  PicmanImageMapConfig  parent_instance;
 
   GArray             *cage_points;
 
   gdouble             displacement_x;
   gdouble             displacement_y;
-  GimpCageMode        cage_mode;  /* Cage mode, used to commit displacement */
+  PicmanCageMode        cage_mode;  /* Cage mode, used to commit displacement */
 };
 
-struct _GimpCageConfigClass
+struct _PicmanCageConfigClass
 {
-  GimpImageMapConfigClass  parent_class;
+  PicmanImageMapConfigClass  parent_class;
 };
 
 
-GType           gimp_cage_config_get_type               (void) G_GNUC_CONST;
+GType           picman_cage_config_get_type               (void) G_GNUC_CONST;
 
-guint           gimp_cage_config_get_n_points           (GimpCageConfig  *gcc);
-void            gimp_cage_config_add_cage_point         (GimpCageConfig  *gcc,
+guint           picman_cage_config_get_n_points           (PicmanCageConfig  *gcc);
+void            picman_cage_config_add_cage_point         (PicmanCageConfig  *gcc,
                                                          gdouble          x,
                                                          gdouble          y);
-void            gimp_cage_config_insert_cage_point      (GimpCageConfig  *gcc,
+void            picman_cage_config_insert_cage_point      (PicmanCageConfig  *gcc,
                                                          gint             point_number,
                                                          gdouble          x,
                                                          gdouble          y);
-void            gimp_cage_config_remove_last_cage_point (GimpCageConfig  *gcc);
-void            gimp_cage_config_remove_cage_point      (GimpCageConfig  *gcc,
+void            picman_cage_config_remove_last_cage_point (PicmanCageConfig  *gcc);
+void            picman_cage_config_remove_cage_point      (PicmanCageConfig  *gcc,
                                                          gint             point_number);
-void            gimp_cage_config_remove_selected_points (GimpCageConfig  *gcc);
-GimpVector2     gimp_cage_config_get_point_coordinate   (GimpCageConfig  *gcc,
-                                                         GimpCageMode     mode,
+void            picman_cage_config_remove_selected_points (PicmanCageConfig  *gcc);
+PicmanVector2     picman_cage_config_get_point_coordinate   (PicmanCageConfig  *gcc,
+                                                         PicmanCageMode     mode,
                                                          gint             point_number);
-void            gimp_cage_config_add_displacement       (GimpCageConfig  *gcc,
-                                                         GimpCageMode     mode,
+void            picman_cage_config_add_displacement       (PicmanCageConfig  *gcc,
+                                                         PicmanCageMode     mode,
                                                          gdouble          x,
                                                          gdouble          y);
-void            gimp_cage_config_commit_displacement    (GimpCageConfig  *gcc);
-void            gimp_cage_config_reset_displacement     (GimpCageConfig  *gcc);
-GeglRectangle   gimp_cage_config_get_bounding_box       (GimpCageConfig  *gcc);
-void            gimp_cage_config_reverse_cage_if_needed (GimpCageConfig  *gcc);
-void            gimp_cage_config_reverse_cage           (GimpCageConfig  *gcc);
-gboolean        gimp_cage_config_point_inside           (GimpCageConfig  *gcc,
+void            picman_cage_config_commit_displacement    (PicmanCageConfig  *gcc);
+void            picman_cage_config_reset_displacement     (PicmanCageConfig  *gcc);
+GeglRectangle   picman_cage_config_get_bounding_box       (PicmanCageConfig  *gcc);
+void            picman_cage_config_reverse_cage_if_needed (PicmanCageConfig  *gcc);
+void            picman_cage_config_reverse_cage           (PicmanCageConfig  *gcc);
+gboolean        picman_cage_config_point_inside           (PicmanCageConfig  *gcc,
                                                          gfloat           x,
                                                          gfloat           y);
-void            gimp_cage_config_select_point           (GimpCageConfig  *gcc,
+void            picman_cage_config_select_point           (PicmanCageConfig  *gcc,
                                                          gint             point_number);
-void            gimp_cage_config_select_area            (GimpCageConfig  *gcc,
-                                                         GimpCageMode     mode,
+void            picman_cage_config_select_area            (PicmanCageConfig  *gcc,
+                                                         PicmanCageMode     mode,
                                                          GeglRectangle    area);
-void            gimp_cage_config_select_add_area        (GimpCageConfig  *gcc,
-                                                         GimpCageMode     mode,
+void            picman_cage_config_select_add_area        (PicmanCageConfig  *gcc,
+                                                         PicmanCageMode     mode,
                                                          GeglRectangle    area);
-void            gimp_cage_config_toggle_point_selection (GimpCageConfig  *gcc,
+void            picman_cage_config_toggle_point_selection (PicmanCageConfig  *gcc,
                                                          gint             point_number);
-void            gimp_cage_config_deselect_points        (GimpCageConfig  *gcc);
-gboolean        gimp_cage_config_point_is_selected      (GimpCageConfig  *gcc,
+void            picman_cage_config_deselect_points        (PicmanCageConfig  *gcc);
+gboolean        picman_cage_config_point_is_selected      (PicmanCageConfig  *gcc,
                                                          gint             point_number);
 
 
-#endif /* __GIMP_CAGE_CONFIG_H__ */
+#endif /* __PICMAN_CAGE_CONFIG_H__ */

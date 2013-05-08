@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpimagefile.c
+ * picmanimagefile.c
  *
- * Copyright (C) 2001-2004  Sven Neumann <sven@gimp.org>
- *                          Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2001-2004  Sven Neumann <sven@picman.org>
+ *                          Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,29 +27,29 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpthumb/gimpthumb.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanthumb/picmanthumb.h"
 
 #include "core-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "gegl/gimp-babl.h"
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-babl.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimp.h"
-#include "gimpcontainer.h"
-#include "gimpcontext.h"
-#include "gimpimage.h"
-#include "gimpimagefile.h"
-#include "gimpmarshal.h"
-#include "gimppickable.h"
-#include "gimpprogress.h"
+#include "picman.h"
+#include "picmancontainer.h"
+#include "picmancontext.h"
+#include "picmanimage.h"
+#include "picmanimagefile.h"
+#include "picmanmarshal.h"
+#include "picmanpickable.h"
+#include "picmanprogress.h"
 
 #include "file/file-open.h"
 #include "file/file-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -59,13 +59,13 @@ enum
 };
 
 
-typedef struct _GimpImagefilePrivate GimpImagefilePrivate;
+typedef struct _PicmanImagefilePrivate PicmanImagefilePrivate;
 
-struct _GimpImagefilePrivate
+struct _PicmanImagefilePrivate
 {
-  Gimp          *gimp;
+  Picman          *picman;
 
-  GimpThumbnail *thumbnail;
+  PicmanThumbnail *thumbnail;
   GIcon         *icon;
   GCancellable  *icon_cancellable;
 
@@ -74,43 +74,43 @@ struct _GimpImagefilePrivate
 };
 
 #define GET_PRIVATE(imagefile) G_TYPE_INSTANCE_GET_PRIVATE (imagefile, \
-                                                            GIMP_TYPE_IMAGEFILE, \
-                                                            GimpImagefilePrivate)
+                                                            PICMAN_TYPE_IMAGEFILE, \
+                                                            PicmanImagefilePrivate)
 
 
-static void        gimp_imagefile_dispose          (GObject        *object);
-static void        gimp_imagefile_finalize         (GObject        *object);
+static void        picman_imagefile_dispose          (GObject        *object);
+static void        picman_imagefile_finalize         (GObject        *object);
 
-static void        gimp_imagefile_name_changed     (GimpObject     *object);
+static void        picman_imagefile_name_changed     (PicmanObject     *object);
 
-static void        gimp_imagefile_info_changed     (GimpImagefile  *imagefile);
-static void        gimp_imagefile_notify_thumbnail (GimpImagefile  *imagefile,
+static void        picman_imagefile_info_changed     (PicmanImagefile  *imagefile);
+static void        picman_imagefile_notify_thumbnail (PicmanImagefile  *imagefile,
                                                     GParamSpec     *pspec);
 
-static GdkPixbuf * gimp_imagefile_get_new_pixbuf   (GimpViewable   *viewable,
-                                                    GimpContext    *context,
+static GdkPixbuf * picman_imagefile_get_new_pixbuf   (PicmanViewable   *viewable,
+                                                    PicmanContext    *context,
                                                     gint            width,
                                                     gint            height);
-static GdkPixbuf * gimp_imagefile_load_thumb       (GimpImagefile  *imagefile,
+static GdkPixbuf * picman_imagefile_load_thumb       (PicmanImagefile  *imagefile,
                                                     gint            width,
                                                     gint            height);
-static gboolean    gimp_imagefile_save_thumb       (GimpImagefile  *imagefile,
-                                                    GimpImage      *image,
+static gboolean    picman_imagefile_save_thumb       (PicmanImagefile  *imagefile,
+                                                    PicmanImage      *image,
                                                     gint            size,
                                                     gboolean        replace,
                                                     GError        **error);
 
-static gchar     * gimp_imagefile_get_description  (GimpViewable   *viewable,
+static gchar     * picman_imagefile_get_description  (PicmanViewable   *viewable,
                                                     gchar         **tooltip);
 
-static void        gimp_imagefile_icon_callback    (GObject        *source_object,
+static void        picman_imagefile_icon_callback    (GObject        *source_object,
                                                     GAsyncResult   *result,
                                                     gpointer        data);
 
-static void     gimp_thumbnail_set_info_from_image (GimpThumbnail  *thumbnail,
+static void     picman_thumbnail_set_info_from_image (PicmanThumbnail  *thumbnail,
                                                     const gchar    *mime_type,
-                                                    GimpImage      *image);
-static void     gimp_thumbnail_set_info            (GimpThumbnail  *thumbnail,
+                                                    PicmanImage      *image);
+static void     picman_thumbnail_set_info            (PicmanThumbnail  *thumbnail,
                                                     const gchar    *mime_type,
                                                     gint            width,
                                                     gint            height,
@@ -118,67 +118,67 @@ static void     gimp_thumbnail_set_info            (GimpThumbnail  *thumbnail,
                                                     gint            num_layers);
 
 
-G_DEFINE_TYPE (GimpImagefile, gimp_imagefile, GIMP_TYPE_VIEWABLE)
+G_DEFINE_TYPE (PicmanImagefile, picman_imagefile, PICMAN_TYPE_VIEWABLE)
 
-#define parent_class gimp_imagefile_parent_class
+#define parent_class picman_imagefile_parent_class
 
-static guint gimp_imagefile_signals[LAST_SIGNAL] = { 0 };
+static guint picman_imagefile_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_imagefile_class_init (GimpImagefileClass *klass)
+picman_imagefile_class_init (PicmanImagefileClass *klass)
 {
   GObjectClass      *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass   *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class    = GIMP_VIEWABLE_CLASS (klass);
+  PicmanObjectClass   *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanViewableClass *viewable_class    = PICMAN_VIEWABLE_CLASS (klass);
   gchar             *creator;
 
-  gimp_imagefile_signals[INFO_CHANGED] =
+  picman_imagefile_signals[INFO_CHANGED] =
     g_signal_new ("info-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImagefileClass, info_changed),
+                  G_STRUCT_OFFSET (PicmanImagefileClass, info_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->dispose               = gimp_imagefile_dispose;
-  object_class->finalize              = gimp_imagefile_finalize;
+  object_class->dispose               = picman_imagefile_dispose;
+  object_class->finalize              = picman_imagefile_finalize;
 
-  gimp_object_class->name_changed     = gimp_imagefile_name_changed;
+  picman_object_class->name_changed     = picman_imagefile_name_changed;
 
   viewable_class->name_changed_signal = "info-changed";
-  viewable_class->get_new_pixbuf      = gimp_imagefile_get_new_pixbuf;
-  viewable_class->get_description     = gimp_imagefile_get_description;
+  viewable_class->get_new_pixbuf      = picman_imagefile_get_new_pixbuf;
+  viewable_class->get_description     = picman_imagefile_get_description;
 
-  g_type_class_ref (GIMP_TYPE_IMAGE_TYPE);
+  g_type_class_ref (PICMAN_TYPE_IMAGE_TYPE);
 
-  creator = g_strdup_printf ("gimp-%d.%d",
-                             GIMP_MAJOR_VERSION, GIMP_MINOR_VERSION);
+  creator = g_strdup_printf ("picman-%d.%d",
+                             PICMAN_MAJOR_VERSION, PICMAN_MINOR_VERSION);
 
-  gimp_thumb_init (creator, NULL);
+  picman_thumb_init (creator, NULL);
 
   g_free (creator);
 
-  g_type_class_add_private (klass, sizeof (GimpImagefilePrivate));
+  g_type_class_add_private (klass, sizeof (PicmanImagefilePrivate));
 }
 
 static void
-gimp_imagefile_init (GimpImagefile *imagefile)
+picman_imagefile_init (PicmanImagefile *imagefile)
 {
-  GimpImagefilePrivate *private = GET_PRIVATE (imagefile);
+  PicmanImagefilePrivate *private = GET_PRIVATE (imagefile);
 
-  private->thumbnail = gimp_thumbnail_new ();
+  private->thumbnail = picman_thumbnail_new ();
 
   g_signal_connect_object (private->thumbnail, "notify",
-                           G_CALLBACK (gimp_imagefile_notify_thumbnail),
+                           G_CALLBACK (picman_imagefile_notify_thumbnail),
                            imagefile, G_CONNECT_SWAPPED);
 }
 
 static void
-gimp_imagefile_dispose (GObject *object)
+picman_imagefile_dispose (GObject *object)
 {
-  GimpImagefilePrivate *private = GET_PRIVATE (object);
+  PicmanImagefilePrivate *private = GET_PRIVATE (object);
 
   if (private->icon_cancellable)
     {
@@ -191,9 +191,9 @@ gimp_imagefile_dispose (GObject *object)
 }
 
 static void
-gimp_imagefile_finalize (GObject *object)
+picman_imagefile_finalize (GObject *object)
 {
-  GimpImagefilePrivate *private = GET_PRIVATE (object);
+  PicmanImagefilePrivate *private = GET_PRIVATE (object);
 
   if (private->description)
     {
@@ -218,38 +218,38 @@ gimp_imagefile_finalize (GObject *object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
-GimpImagefile *
-gimp_imagefile_new (Gimp        *gimp,
+PicmanImagefile *
+picman_imagefile_new (Picman        *picman,
                     const gchar *uri)
 {
-  GimpImagefile *imagefile;
+  PicmanImagefile *imagefile;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  imagefile = g_object_new (GIMP_TYPE_IMAGEFILE, NULL);
+  imagefile = g_object_new (PICMAN_TYPE_IMAGEFILE, NULL);
 
-  GET_PRIVATE (imagefile)->gimp = gimp;
+  GET_PRIVATE (imagefile)->picman = picman;
 
   if (uri)
-    gimp_object_set_name (GIMP_OBJECT (imagefile), uri);
+    picman_object_set_name (PICMAN_OBJECT (imagefile), uri);
 
   return imagefile;
 }
 
-GimpThumbnail *
-gimp_imagefile_get_thumbnail (GimpImagefile *imagefile)
+PicmanThumbnail *
+picman_imagefile_get_thumbnail (PicmanImagefile *imagefile)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGEFILE (imagefile), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGEFILE (imagefile), NULL);
 
   return GET_PRIVATE (imagefile)->thumbnail;
 }
 
 GIcon *
-gimp_imagefile_get_gicon (GimpImagefile *imagefile)
+picman_imagefile_get_gicon (PicmanImagefile *imagefile)
 {
-  GimpImagefilePrivate *private;
+  PicmanImagefilePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGEFILE (imagefile), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGEFILE (imagefile), NULL);
 
   private = GET_PRIVATE (imagefile);
 
@@ -260,7 +260,7 @@ gimp_imagefile_get_gicon (GimpImagefile *imagefile)
     {
       GFile *file;
 
-      file = g_file_new_for_uri (gimp_object_get_name (imagefile));
+      file = g_file_new_for_uri (picman_object_get_name (imagefile));
 
       private->icon_cancellable = g_cancellable_new ();
 
@@ -268,7 +268,7 @@ gimp_imagefile_get_gicon (GimpImagefile *imagefile)
                                G_FILE_QUERY_INFO_NONE,
                                G_PRIORITY_DEFAULT,
                                private->icon_cancellable,
-                               gimp_imagefile_icon_callback,
+                               picman_imagefile_icon_callback,
                                imagefile);
 
       g_object_unref (file);
@@ -278,10 +278,10 @@ gimp_imagefile_get_gicon (GimpImagefile *imagefile)
 }
 
 void
-gimp_imagefile_set_mime_type (GimpImagefile *imagefile,
+picman_imagefile_set_mime_type (PicmanImagefile *imagefile,
                               const gchar   *mime_type)
 {
-  g_return_if_fail (GIMP_IS_IMAGEFILE (imagefile));
+  g_return_if_fail (PICMAN_IS_IMAGEFILE (imagefile));
 
   g_object_set (GET_PRIVATE (imagefile)->thumbnail,
                 "image-mimetype", mime_type,
@@ -289,16 +289,16 @@ gimp_imagefile_set_mime_type (GimpImagefile *imagefile,
 }
 
 void
-gimp_imagefile_update (GimpImagefile *imagefile)
+picman_imagefile_update (PicmanImagefile *imagefile)
 {
-  GimpImagefilePrivate *private;
+  PicmanImagefilePrivate *private;
   gchar                *uri;
 
-  g_return_if_fail (GIMP_IS_IMAGEFILE (imagefile));
+  g_return_if_fail (PICMAN_IS_IMAGEFILE (imagefile));
 
   private = GET_PRIVATE (imagefile);
 
-  gimp_viewable_invalidate_preview (GIMP_VIEWABLE (imagefile));
+  picman_viewable_invalidate_preview (PICMAN_VIEWABLE (imagefile));
 
   g_object_get (private->thumbnail,
                 "image-uri", &uri,
@@ -306,31 +306,31 @@ gimp_imagefile_update (GimpImagefile *imagefile)
 
   if (uri)
     {
-      GimpImagefile *documents_imagefile = (GimpImagefile *)
-        gimp_container_get_child_by_name (private->gimp->documents, uri);
+      PicmanImagefile *documents_imagefile = (PicmanImagefile *)
+        picman_container_get_child_by_name (private->picman->documents, uri);
 
       if (documents_imagefile != imagefile &&
-          GIMP_IS_IMAGEFILE (documents_imagefile))
-        gimp_viewable_invalidate_preview (GIMP_VIEWABLE (documents_imagefile));
+          PICMAN_IS_IMAGEFILE (documents_imagefile))
+        picman_viewable_invalidate_preview (PICMAN_VIEWABLE (documents_imagefile));
 
       g_free (uri);
     }
 }
 
 void
-gimp_imagefile_create_thumbnail (GimpImagefile *imagefile,
-                                 GimpContext   *context,
-                                 GimpProgress  *progress,
+picman_imagefile_create_thumbnail (PicmanImagefile *imagefile,
+                                 PicmanContext   *context,
+                                 PicmanProgress  *progress,
                                  gint           size,
                                  gboolean       replace)
 {
-  GimpImagefilePrivate *private;
-  GimpThumbnail        *thumbnail;
-  GimpThumbState        image_state;
+  PicmanImagefilePrivate *private;
+  PicmanThumbnail        *thumbnail;
+  PicmanThumbState        image_state;
 
-  g_return_if_fail (GIMP_IS_IMAGEFILE (imagefile));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_IMAGEFILE (imagefile));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
   if (size < 1)
     return;
@@ -339,15 +339,15 @@ gimp_imagefile_create_thumbnail (GimpImagefile *imagefile,
 
   thumbnail = private->thumbnail;
 
-  gimp_thumbnail_set_uri (thumbnail,
-                          gimp_object_get_name (imagefile));
+  picman_thumbnail_set_uri (thumbnail,
+                          picman_object_get_name (imagefile));
 
-  image_state = gimp_thumbnail_peek_image (thumbnail);
+  image_state = picman_thumbnail_peek_image (thumbnail);
 
-  if (image_state == GIMP_THUMB_STATE_REMOTE ||
-      image_state >= GIMP_THUMB_STATE_EXISTS)
+  if (image_state == PICMAN_THUMB_STATE_REMOTE ||
+      image_state >= PICMAN_THUMB_STATE_EXISTS)
     {
-      GimpImage     *image;
+      PicmanImage     *image;
       gboolean       success;
       gint           width      = 0;
       gint           height     = 0;
@@ -358,35 +358,35 @@ gimp_imagefile_create_thumbnail (GimpImagefile *imagefile,
 
       g_object_ref (imagefile);
 
-      image = file_open_thumbnail (private->gimp, context, progress,
+      image = file_open_thumbnail (private->picman, context, progress,
                                    thumbnail->image_uri, size,
                                    &mime_type, &width, &height,
                                    &format, &num_layers, NULL);
 
       if (image)
         {
-          gimp_thumbnail_set_info (private->thumbnail,
+          picman_thumbnail_set_info (private->thumbnail,
                                    mime_type, width, height,
                                    format, num_layers);
         }
       else
         {
-          GimpPDBStatusType  status;
+          PicmanPDBStatusType  status;
 
-          image = file_open_image (private->gimp, context, progress,
+          image = file_open_image (private->picman, context, progress,
                                    thumbnail->image_uri,
                                    thumbnail->image_uri,
-                                   FALSE, NULL, GIMP_RUN_NONINTERACTIVE,
+                                   FALSE, NULL, PICMAN_RUN_NONINTERACTIVE,
                                    &status, &mime_type, NULL);
 
           if (image)
-            gimp_thumbnail_set_info_from_image (private->thumbnail,
+            picman_thumbnail_set_info_from_image (private->thumbnail,
                                                 mime_type, image);
         }
 
       if (image)
         {
-          success = gimp_imagefile_save_thumb (imagefile,
+          success = picman_imagefile_save_thumb (imagefile,
                                                image, size, replace,
                                                &error);
 
@@ -394,18 +394,18 @@ gimp_imagefile_create_thumbnail (GimpImagefile *imagefile,
         }
       else
         {
-          success = gimp_thumbnail_save_failure (thumbnail,
-                                                 "GIMP " GIMP_VERSION,
+          success = picman_thumbnail_save_failure (thumbnail,
+                                                 "PICMAN " PICMAN_VERSION,
                                                  &error);
-          gimp_imagefile_update (imagefile);
+          picman_imagefile_update (imagefile);
         }
 
       g_object_unref (imagefile);
 
       if (! success)
         {
-          gimp_message_literal (private->gimp,
-				G_OBJECT (progress), GIMP_MESSAGE_ERROR,
+          picman_message_literal (private->picman,
+				G_OBJECT (progress), PICMAN_MESSAGE_ERROR,
 				error->message);
           g_clear_error (&error);
         }
@@ -418,41 +418,41 @@ gimp_imagefile_create_thumbnail (GimpImagefile *imagefile,
  *  block the user interface.
  */
 void
-gimp_imagefile_create_thumbnail_weak (GimpImagefile *imagefile,
-                                      GimpContext   *context,
-                                      GimpProgress  *progress,
+picman_imagefile_create_thumbnail_weak (PicmanImagefile *imagefile,
+                                      PicmanContext   *context,
+                                      PicmanProgress  *progress,
                                       gint           size,
                                       gboolean       replace)
 {
-  GimpImagefilePrivate *private;
-  GimpImagefile        *local;
+  PicmanImagefilePrivate *private;
+  PicmanImagefile        *local;
   const gchar          *uri;
 
-  g_return_if_fail (GIMP_IS_IMAGEFILE (imagefile));
+  g_return_if_fail (PICMAN_IS_IMAGEFILE (imagefile));
 
   if (size < 1)
     return;
 
   private = GET_PRIVATE (imagefile);
 
-  uri = gimp_object_get_name (imagefile);
+  uri = picman_object_get_name (imagefile);
   if (! uri)
     return;
 
-  local = gimp_imagefile_new (private->gimp, uri);
+  local = picman_imagefile_new (private->picman, uri);
 
   g_object_add_weak_pointer (G_OBJECT (imagefile), (gpointer) &imagefile);
 
-  gimp_imagefile_create_thumbnail (local, context, progress, size, replace);
+  picman_imagefile_create_thumbnail (local, context, progress, size, replace);
 
   if (imagefile)
     {
-      uri = gimp_object_get_name (imagefile);
+      uri = picman_object_get_name (imagefile);
 
       if (uri &&
-          strcmp (uri, gimp_object_get_name (local)) == 0)
+          strcmp (uri, picman_object_get_name (local)) == 0)
         {
-          gimp_imagefile_update (imagefile);
+          picman_imagefile_update (imagefile);
         }
 
       g_object_remove_weak_pointer (G_OBJECT (imagefile),
@@ -463,57 +463,57 @@ gimp_imagefile_create_thumbnail_weak (GimpImagefile *imagefile,
 }
 
 gboolean
-gimp_imagefile_check_thumbnail (GimpImagefile *imagefile)
+picman_imagefile_check_thumbnail (PicmanImagefile *imagefile)
 {
-  GimpImagefilePrivate *private;
+  PicmanImagefilePrivate *private;
   gint                  size;
 
-  g_return_val_if_fail (GIMP_IS_IMAGEFILE (imagefile), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGEFILE (imagefile), FALSE);
 
   private = GET_PRIVATE (imagefile);
 
-  size = private->gimp->config->thumbnail_size;
+  size = private->picman->config->thumbnail_size;
 
   if (size > 0)
     {
-      GimpThumbState  state;
+      PicmanThumbState  state;
 
-      state = gimp_thumbnail_check_thumb (private->thumbnail, size);
+      state = picman_thumbnail_check_thumb (private->thumbnail, size);
 
-      return (state == GIMP_THUMB_STATE_OK);
+      return (state == PICMAN_THUMB_STATE_OK);
     }
 
   return TRUE;
 }
 
 gboolean
-gimp_imagefile_save_thumbnail (GimpImagefile *imagefile,
+picman_imagefile_save_thumbnail (PicmanImagefile *imagefile,
                                const gchar   *mime_type,
-                               GimpImage     *image)
+                               PicmanImage     *image)
 {
-  GimpImagefilePrivate *private;
+  PicmanImagefilePrivate *private;
   gint                  size;
   gboolean              success = TRUE;
   GError               *error   = NULL;
 
-  g_return_val_if_fail (GIMP_IS_IMAGEFILE (imagefile), FALSE);
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGEFILE (imagefile), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
   private = GET_PRIVATE (imagefile);
 
-  size = private->gimp->config->thumbnail_size;
+  size = private->picman->config->thumbnail_size;
 
   if (size > 0)
     {
-      gimp_thumbnail_set_info_from_image (private->thumbnail,
+      picman_thumbnail_set_info_from_image (private->thumbnail,
                                           mime_type, image);
 
-      success = gimp_imagefile_save_thumb (imagefile,
+      success = picman_imagefile_save_thumb (imagefile,
                                            image, size, FALSE,
                                            &error);
       if (! success)
         {
-          gimp_message_literal (private->gimp, NULL, GIMP_MESSAGE_ERROR,
+          picman_message_literal (private->picman, NULL, PICMAN_MESSAGE_ERROR,
 				error->message);
           g_clear_error (&error);
         }
@@ -526,20 +526,20 @@ gimp_imagefile_save_thumbnail (GimpImagefile *imagefile,
 /*  private functions  */
 
 static void
-gimp_imagefile_name_changed (GimpObject *object)
+picman_imagefile_name_changed (PicmanObject *object)
 {
-  GimpImagefilePrivate *private = GET_PRIVATE (object);
+  PicmanImagefilePrivate *private = GET_PRIVATE (object);
 
-  if (GIMP_OBJECT_CLASS (parent_class)->name_changed)
-    GIMP_OBJECT_CLASS (parent_class)->name_changed (object);
+  if (PICMAN_OBJECT_CLASS (parent_class)->name_changed)
+    PICMAN_OBJECT_CLASS (parent_class)->name_changed (object);
 
-  gimp_thumbnail_set_uri (private->thumbnail, gimp_object_get_name (object));
+  picman_thumbnail_set_uri (private->thumbnail, picman_object_get_name (object));
 }
 
 static void
-gimp_imagefile_info_changed (GimpImagefile *imagefile)
+picman_imagefile_info_changed (PicmanImagefile *imagefile)
 {
-  GimpImagefilePrivate *private = GET_PRIVATE (imagefile);
+  PicmanImagefilePrivate *private = GET_PRIVATE (imagefile);
 
   if (private->description)
     {
@@ -549,41 +549,41 @@ gimp_imagefile_info_changed (GimpImagefile *imagefile)
       private->description = NULL;
     }
 
-  g_signal_emit (imagefile, gimp_imagefile_signals[INFO_CHANGED], 0);
+  g_signal_emit (imagefile, picman_imagefile_signals[INFO_CHANGED], 0);
 }
 
 static void
-gimp_imagefile_notify_thumbnail (GimpImagefile *imagefile,
+picman_imagefile_notify_thumbnail (PicmanImagefile *imagefile,
                                  GParamSpec    *pspec)
 {
   if (strcmp (pspec->name, "image-state") == 0 ||
       strcmp (pspec->name, "thumb-state") == 0)
     {
-      gimp_imagefile_info_changed (imagefile);
+      picman_imagefile_info_changed (imagefile);
     }
 }
 
 static GdkPixbuf *
-gimp_imagefile_get_new_pixbuf (GimpViewable *viewable,
-                               GimpContext  *context,
+picman_imagefile_get_new_pixbuf (PicmanViewable *viewable,
+                               PicmanContext  *context,
                                gint          width,
                                gint          height)
 {
-  GimpImagefile *imagefile = GIMP_IMAGEFILE (viewable);
+  PicmanImagefile *imagefile = PICMAN_IMAGEFILE (viewable);
 
-  if (! gimp_object_get_name (imagefile))
+  if (! picman_object_get_name (imagefile))
     return NULL;
 
-  return gimp_imagefile_load_thumb (imagefile, width, height);
+  return picman_imagefile_load_thumb (imagefile, width, height);
 }
 
 static gchar *
-gimp_imagefile_get_description (GimpViewable   *viewable,
+picman_imagefile_get_description (PicmanViewable   *viewable,
                                 gchar         **tooltip)
 {
-  GimpImagefile        *imagefile = GIMP_IMAGEFILE (viewable);
-  GimpImagefilePrivate *private   = GET_PRIVATE (imagefile);
-  GimpThumbnail        *thumbnail = private->thumbnail;
+  PicmanImagefile        *imagefile = PICMAN_IMAGEFILE (viewable);
+  PicmanImagefilePrivate *private   = GET_PRIVATE (imagefile);
+  PicmanThumbnail        *thumbnail = private->thumbnail;
   gchar                *basename;
 
   if (! thumbnail->image_uri)
@@ -595,7 +595,7 @@ gimp_imagefile_get_description (GimpViewable   *viewable,
       const gchar *desc;
 
       filename = file_utils_uri_display_name (thumbnail->image_uri);
-      desc     = gimp_imagefile_get_desc_string (imagefile);
+      desc     = picman_imagefile_get_desc_string (imagefile);
 
       if (desc)
         {
@@ -625,12 +625,12 @@ gimp_imagefile_get_description (GimpViewable   *viewable,
 }
 
 static void
-gimp_imagefile_icon_callback (GObject      *source_object,
+picman_imagefile_icon_callback (GObject      *source_object,
                               GAsyncResult *result,
                               gpointer      data)
 {
-  GimpImagefile        *imagefile;
-  GimpImagefilePrivate *private;
+  PicmanImagefile        *imagefile;
+  PicmanImagefilePrivate *private;
   GFile                *file  = G_FILE (source_object);
   GError               *error = NULL;
   GFileInfo            *file_info;
@@ -648,14 +648,14 @@ gimp_imagefile_icon_callback (GObject      *source_object,
           return;
         }
 
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
       g_printerr ("%s: %s\n", G_STRFUNC, error->message);
 #endif
 
       g_clear_error (&error);
     }
 
-  imagefile = GIMP_IMAGEFILE (data);
+  imagefile = PICMAN_IMAGEFILE (data);
   private   = GET_PRIVATE (imagefile);
 
   if (file_info)
@@ -671,16 +671,16 @@ gimp_imagefile_icon_callback (GObject      *source_object,
     }
 
   if (private->icon)
-    gimp_viewable_invalidate_preview (GIMP_VIEWABLE (imagefile));
+    picman_viewable_invalidate_preview (PICMAN_VIEWABLE (imagefile));
 }
 
 const gchar *
-gimp_imagefile_get_desc_string (GimpImagefile *imagefile)
+picman_imagefile_get_desc_string (PicmanImagefile *imagefile)
 {
-  GimpImagefilePrivate *private;
-  GimpThumbnail        *thumbnail;
+  PicmanImagefilePrivate *private;
+  PicmanThumbnail        *thumbnail;
 
-  g_return_val_if_fail (GIMP_IS_IMAGEFILE (imagefile), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGEFILE (imagefile), NULL);
 
   private = GET_PRIVATE (imagefile);
 
@@ -691,22 +691,22 @@ gimp_imagefile_get_desc_string (GimpImagefile *imagefile)
 
   switch (thumbnail->image_state)
     {
-    case GIMP_THUMB_STATE_UNKNOWN:
+    case PICMAN_THUMB_STATE_UNKNOWN:
       private->description = NULL;
       private->static_desc = TRUE;
       break;
 
-    case GIMP_THUMB_STATE_FOLDER:
+    case PICMAN_THUMB_STATE_FOLDER:
       private->description = (gchar *) _("Folder");
       private->static_desc = TRUE;
       break;
 
-    case GIMP_THUMB_STATE_SPECIAL:
+    case PICMAN_THUMB_STATE_SPECIAL:
       private->description = (gchar *) _("Special File");
       private->static_desc = TRUE;
       break;
 
-    case GIMP_THUMB_STATE_NOT_FOUND:
+    case PICMAN_THUMB_STATE_NOT_FOUND:
       private->description =
         (gchar *) g_strerror (thumbnail->image_not_found_errno);
       private->static_desc = TRUE;
@@ -716,7 +716,7 @@ gimp_imagefile_get_desc_string (GimpImagefile *imagefile)
       {
         GString *str = g_string_new (NULL);
 
-        if (thumbnail->image_state == GIMP_THUMB_STATE_REMOTE)
+        if (thumbnail->image_state == PICMAN_THUMB_STATE_REMOTE)
           {
             g_string_append (str, _("Remote File"));
           }
@@ -734,33 +734,33 @@ gimp_imagefile_get_desc_string (GimpImagefile *imagefile)
 
         switch (thumbnail->thumb_state)
           {
-          case GIMP_THUMB_STATE_NOT_FOUND:
+          case PICMAN_THUMB_STATE_NOT_FOUND:
             if (str->len > 0)
               g_string_append_c (str, '\n');
             g_string_append (str, _("Click to create preview"));
             break;
 
-          case GIMP_THUMB_STATE_EXISTS:
+          case PICMAN_THUMB_STATE_EXISTS:
             if (str->len > 0)
               g_string_append_c (str, '\n');
             g_string_append (str, _("Loading preview..."));
             break;
 
-          case GIMP_THUMB_STATE_OLD:
+          case PICMAN_THUMB_STATE_OLD:
             if (str->len > 0)
               g_string_append_c (str, '\n');
             g_string_append (str, _("Preview is out of date"));
             break;
 
-          case GIMP_THUMB_STATE_FAILED:
+          case PICMAN_THUMB_STATE_FAILED:
             if (str->len > 0)
               g_string_append_c (str, '\n');
             g_string_append (str, _("Cannot create preview"));
             break;
 
-          case GIMP_THUMB_STATE_OK:
+          case PICMAN_THUMB_STATE_OK:
             {
-              if (thumbnail->image_state == GIMP_THUMB_STATE_REMOTE)
+              if (thumbnail->image_state == PICMAN_THUMB_STATE_REMOTE)
                 {
                   if (str->len > 0)
                     g_string_append_c (str, '\n');
@@ -818,12 +818,12 @@ gimp_imagefile_get_desc_string (GimpImagefile *imagefile)
 }
 
 static GdkPixbuf *
-gimp_imagefile_load_thumb (GimpImagefile *imagefile,
+picman_imagefile_load_thumb (PicmanImagefile *imagefile,
                            gint           width,
                            gint           height)
 {
-  GimpImagefilePrivate *private   = GET_PRIVATE (imagefile);
-  GimpThumbnail        *thumbnail = private->thumbnail;
+  PicmanImagefilePrivate *private   = GET_PRIVATE (imagefile);
+  PicmanThumbnail        *thumbnail = private->thumbnail;
   GdkPixbuf            *pixbuf    = NULL;
   GError               *error     = NULL;
   gint                  size      = MAX (width, height);
@@ -832,19 +832,19 @@ gimp_imagefile_load_thumb (GimpImagefile *imagefile,
   gint                  preview_width;
   gint                  preview_height;
 
-  if (gimp_thumbnail_peek_thumb (thumbnail, size) < GIMP_THUMB_STATE_EXISTS)
+  if (picman_thumbnail_peek_thumb (thumbnail, size) < PICMAN_THUMB_STATE_EXISTS)
     return NULL;
 
-  if (thumbnail->image_state == GIMP_THUMB_STATE_NOT_FOUND)
+  if (thumbnail->image_state == PICMAN_THUMB_STATE_NOT_FOUND)
     return NULL;
 
-  pixbuf = gimp_thumbnail_load_thumb (thumbnail, size, &error);
+  pixbuf = picman_thumbnail_load_thumb (thumbnail, size, &error);
 
   if (! pixbuf)
     {
       if (error)
         {
-          gimp_message (private->gimp, NULL, GIMP_MESSAGE_ERROR,
+          picman_message (private->picman, NULL, PICMAN_MESSAGE_ERROR,
                         _("Could not open thumbnail '%s': %s"),
                         thumbnail->thumb_filename, error->message);
           g_clear_error (&error);
@@ -856,7 +856,7 @@ gimp_imagefile_load_thumb (GimpImagefile *imagefile,
   pixbuf_width  = gdk_pixbuf_get_width  (pixbuf);
   pixbuf_height = gdk_pixbuf_get_height (pixbuf);
 
-  gimp_viewable_calc_preview_size (pixbuf_width,
+  picman_viewable_calc_preview_size (pixbuf_width,
                                    pixbuf_height,
                                    width,
                                    height,
@@ -887,7 +887,7 @@ gimp_imagefile_load_thumb (GimpImagefile *imagefile,
                                   0, 0, pixbuf_width, pixbuf_height,
                                   0.0, 0.0, 1.0, 1.0,
                                   GDK_INTERP_NEAREST, 255,
-                                  0, 0, GIMP_CHECK_SIZE_SM,
+                                  0, 0, PICMAN_CHECK_SIZE_SM,
                                   0x66666666, 0x99999999);
 
       g_object_unref (pixbuf);
@@ -898,14 +898,14 @@ gimp_imagefile_load_thumb (GimpImagefile *imagefile,
 }
 
 static gboolean
-gimp_imagefile_save_thumb (GimpImagefile  *imagefile,
-                           GimpImage      *image,
+picman_imagefile_save_thumb (PicmanImagefile  *imagefile,
+                           PicmanImage      *image,
                            gint            size,
                            gboolean        replace,
                            GError        **error)
 {
-  GimpImagefilePrivate *private   = GET_PRIVATE (imagefile);
-  GimpThumbnail        *thumbnail = private->thumbnail;
+  PicmanImagefilePrivate *private   = GET_PRIVATE (imagefile);
+  PicmanThumbnail        *thumbnail = private->thumbnail;
   GdkPixbuf            *pixbuf;
   gint                  width, height;
   gboolean              success = FALSE;
@@ -913,45 +913,45 @@ gimp_imagefile_save_thumb (GimpImagefile  *imagefile,
   if (size < 1)
     return TRUE;
 
-  if (gimp_image_get_width  (image) <= size &&
-      gimp_image_get_height (image) <= size)
+  if (picman_image_get_width  (image) <= size &&
+      picman_image_get_height (image) <= size)
     {
-      width  = gimp_image_get_width  (image);
-      height = gimp_image_get_height (image);
+      width  = picman_image_get_width  (image);
+      height = picman_image_get_height (image);
 
       size = MAX (width, height);
     }
   else
     {
-      if (gimp_image_get_width (image) < gimp_image_get_height (image))
+      if (picman_image_get_width (image) < picman_image_get_height (image))
         {
           height = size;
-          width  = MAX (1, (size * gimp_image_get_width (image) /
-                            gimp_image_get_height (image)));
+          width  = MAX (1, (size * picman_image_get_width (image) /
+                            picman_image_get_height (image)));
         }
       else
         {
           width  = size;
-          height = MAX (1, (size * gimp_image_get_height (image) /
-                            gimp_image_get_width (image)));
+          height = MAX (1, (size * picman_image_get_height (image) /
+                            picman_image_get_width (image)));
         }
     }
 
   /*  we need the projection constructed NOW, not some time later  */
-  gimp_pickable_flush (GIMP_PICKABLE (gimp_image_get_projection (image)));
+  picman_pickable_flush (PICMAN_PICKABLE (picman_image_get_projection (image)));
 
-  pixbuf = gimp_viewable_get_new_pixbuf (GIMP_VIEWABLE (image),
+  pixbuf = picman_viewable_get_new_pixbuf (PICMAN_VIEWABLE (image),
                                          /* random context, unused */
-                                         gimp_get_user_context (image->gimp),
+                                         picman_get_user_context (image->picman),
                                          width, height);
 
   /*  when layer previews are disabled, we won't get a pixbuf  */
   if (! pixbuf)
     return TRUE;
 
-  success = gimp_thumbnail_save_thumb (thumbnail,
+  success = picman_thumbnail_save_thumb (thumbnail,
                                        pixbuf,
-                                       "GIMP " GIMP_VERSION,
+                                       "PICMAN " PICMAN_VERSION,
                                        error);
 
   g_object_unref (pixbuf);
@@ -959,41 +959,41 @@ gimp_imagefile_save_thumb (GimpImagefile  *imagefile,
   if (success)
     {
       if (replace)
-        gimp_thumbnail_delete_others (thumbnail, size);
+        picman_thumbnail_delete_others (thumbnail, size);
       else
-        gimp_thumbnail_delete_failure (thumbnail);
+        picman_thumbnail_delete_failure (thumbnail);
 
-      gimp_imagefile_update (imagefile);
+      picman_imagefile_update (imagefile);
     }
 
   return success;
 }
 
 static void
-gimp_thumbnail_set_info_from_image (GimpThumbnail *thumbnail,
+picman_thumbnail_set_info_from_image (PicmanThumbnail *thumbnail,
                                     const gchar   *mime_type,
-                                    GimpImage     *image)
+                                    PicmanImage     *image)
 {
   const Babl *format;
 
   /*  peek the thumbnail to make sure that mtime and filesize are set  */
-  gimp_thumbnail_peek_image (thumbnail);
+  picman_thumbnail_peek_image (thumbnail);
 
-  format = gimp_image_get_layer_format (image,
-                                        gimp_image_has_alpha (image));
+  format = picman_image_get_layer_format (image,
+                                        picman_image_has_alpha (image));
 
   g_object_set (thumbnail,
                 "image-mimetype",   mime_type,
-                "image-width",      gimp_image_get_width  (image),
-                "image-height",     gimp_image_get_height (image),
-                "image-type",       gimp_babl_get_description (format),
-                "image-num-layers", gimp_image_get_n_layers (image),
+                "image-width",      picman_image_get_width  (image),
+                "image-height",     picman_image_get_height (image),
+                "image-type",       picman_babl_get_description (format),
+                "image-num-layers", picman_image_get_n_layers (image),
                 NULL);
 }
 
 /**
- * gimp_thumbnail_set_info:
- * @thumbnail: #GimpThumbnail object
+ * picman_thumbnail_set_info:
+ * @thumbnail: #PicmanThumbnail object
  * @mime_type:  MIME type of the image associated with this thumbnail
  * @width:      width of the image associated with this thumbnail
  * @height:     height of the image associated with this thumbnail
@@ -1004,7 +1004,7 @@ gimp_thumbnail_set_info_from_image (GimpThumbnail *thumbnail,
  * Set information about the image associated with the @thumbnail object.
  */
 static void
-gimp_thumbnail_set_info (GimpThumbnail *thumbnail,
+picman_thumbnail_set_info (PicmanThumbnail *thumbnail,
                          const gchar   *mime_type,
                          gint           width,
                          gint           height,
@@ -1012,7 +1012,7 @@ gimp_thumbnail_set_info (GimpThumbnail *thumbnail,
                          gint           num_layers)
 {
   /*  peek the thumbnail to make sure that mtime and filesize are set  */
-  gimp_thumbnail_peek_image (thumbnail);
+  picman_thumbnail_peek_image (thumbnail);
 
   g_object_set (thumbnail,
                 "image-mimetype", mime_type,
@@ -1022,7 +1022,7 @@ gimp_thumbnail_set_info (GimpThumbnail *thumbnail,
 
   if (format)
     g_object_set (thumbnail,
-                  "image-type", gimp_babl_get_description (format),
+                  "image-type", picman_babl_get_description (format),
                   NULL);
 
   if (num_layers != -1)

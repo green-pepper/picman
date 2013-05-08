@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,13 +26,13 @@ struct _TemplateOptionsDialog
   GtkWidget    *dialog;
   GtkWidget    *editor;
 
-  Gimp         *gimp;
-  GimpTemplate *template;
+  Picman         *picman;
+  PicmanTemplate *template;
 };
 
 
-TemplateOptionsDialog * template_options_dialog_new (GimpTemplate *template,
-                                                     GimpContext  *context,
+TemplateOptionsDialog * template_options_dialog_new (PicmanTemplate *template,
+                                                     PicmanContext  *context,
                                                      GtkWidget    *parent,
                                                      const gchar  *title,
                                                      const gchar  *role,

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,31 +23,31 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimp.h"
-#include "gimpcontext.h"
-#include "gimpdrawable.h"
-#include "gimpdrawable-offset.h"
-#include "gimpimage.h"
+#include "picman.h"
+#include "picmancontext.h"
+#include "picmandrawable.h"
+#include "picmandrawable-offset.h"
+#include "picmanimage.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 void
-gimp_drawable_offset (GimpDrawable   *drawable,
-                      GimpContext    *context,
+picman_drawable_offset (PicmanDrawable   *drawable,
+                      PicmanContext    *context,
                       gboolean        wrap_around,
-                      GimpOffsetType  fill_type,
+                      PicmanOffsetType  fill_type,
                       gint            offset_x,
                       gint            offset_y)
 {
-  GimpItem      *item;
+  PicmanItem      *item;
   GeglBuffer    *src_buffer;
   GeglBuffer    *new_buffer;
   GeglRectangle  src_rect;
@@ -56,13 +56,13 @@ gimp_drawable_offset (GimpDrawable   *drawable,
   gint           src_x, src_y;
   gint           dest_x, dest_y;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
 
-  item = GIMP_ITEM (drawable);
+  item = PICMAN_ITEM (drawable);
 
-  width  = gimp_item_get_width  (item);
-  height = gimp_item_get_height (item);
+  width  = picman_item_get_width  (item);
+  height = picman_item_get_height (item);
 
   if (wrap_around)
     {
@@ -84,21 +84,21 @@ gimp_drawable_offset (GimpDrawable   *drawable,
   if (offset_x == 0 && offset_y == 0)
     return;
 
-  src_buffer = gimp_drawable_get_buffer (drawable);
+  src_buffer = picman_drawable_get_buffer (drawable);
 
   new_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0, width, height),
-                                gimp_drawable_get_format (drawable));
+                                picman_drawable_get_format (drawable));
 
   if (! wrap_around)
     {
-      if (fill_type == GIMP_OFFSET_BACKGROUND)
+      if (fill_type == PICMAN_OFFSET_BACKGROUND)
         {
-          GimpRGB    bg;
+          PicmanRGB    bg;
           GeglColor *color;
 
-          gimp_context_get_background (context, &bg);
+          picman_context_get_background (context, &bg);
 
-          color = gimp_gegl_color_new (&bg);
+          color = picman_gegl_color_new (&bg);
           gegl_buffer_set_color (new_buffer, NULL, color);
           g_object_unref (color);
         }
@@ -145,18 +145,18 @@ gimp_drawable_offset (GimpDrawable   *drawable,
 
       if (offset_x >= 0 && offset_y >= 0)
         {
-          src_x = gimp_item_get_width  (item) - offset_x;
-          src_y = gimp_item_get_height (item) - offset_y;
+          src_x = picman_item_get_width  (item) - offset_x;
+          src_y = picman_item_get_height (item) - offset_y;
         }
       else if (offset_x >= 0 && offset_y < 0)
         {
-          src_x = gimp_item_get_width (item) - offset_x;
+          src_x = picman_item_get_width (item) - offset_x;
           src_y = 0;
         }
       else if (offset_x < 0 && offset_y >= 0)
         {
           src_x = 0;
-          src_y = gimp_item_get_height (item) - offset_y;
+          src_y = picman_item_get_height (item) - offset_y;
         }
       else if (offset_x < 0 && offset_y < 0)
         {
@@ -164,13 +164,13 @@ gimp_drawable_offset (GimpDrawable   *drawable,
           src_y = 0;
         }
 
-      dest_x = (src_x + offset_x) % gimp_item_get_width (item);
+      dest_x = (src_x + offset_x) % picman_item_get_width (item);
       if (dest_x < 0)
-        dest_x = gimp_item_get_width (item) + dest_x;
+        dest_x = picman_item_get_width (item) + dest_x;
 
-      dest_y = (src_y + offset_y) % gimp_item_get_height (item);
+      dest_y = (src_y + offset_y) % picman_item_get_height (item);
       if (dest_y < 0)
-        dest_y = gimp_item_get_height (item) + dest_y;
+        dest_y = picman_item_get_height (item) + dest_y;
 
       /*  intersecting region  */
       if (offset_x != 0 && offset_y != 0)
@@ -190,7 +190,7 @@ gimp_drawable_offset (GimpDrawable   *drawable,
               src_rect.x      = src_x;
               src_rect.y      = 0;
               src_rect.width  = ABS (offset_x);
-              src_rect.height = gimp_item_get_height (item) - ABS (offset_y);
+              src_rect.height = picman_item_get_height (item) - ABS (offset_y);
 
               dest_rect.x = dest_x;
               dest_rect.y = dest_y + offset_y;
@@ -200,7 +200,7 @@ gimp_drawable_offset (GimpDrawable   *drawable,
               src_rect.x      = src_x;
               src_rect.y      = src_y - offset_y;
               src_rect.width  = ABS (offset_x);
-              src_rect.height = gimp_item_get_height (item) - ABS (offset_y);
+              src_rect.height = picman_item_get_height (item) - ABS (offset_y);
 
               dest_rect.x = dest_x;
               dest_rect.y = 0;
@@ -216,7 +216,7 @@ gimp_drawable_offset (GimpDrawable   *drawable,
             {
               src_rect.x      = 0;
               src_rect.y      = src_y;
-              src_rect.width  = gimp_item_get_width (item) - ABS (offset_x);
+              src_rect.width  = picman_item_get_width (item) - ABS (offset_x);
               src_rect.height = ABS (offset_y);
 
               dest_rect.x = dest_x + offset_x;
@@ -226,7 +226,7 @@ gimp_drawable_offset (GimpDrawable   *drawable,
             {
               src_rect.x      = src_x - offset_x;
               src_rect.y      = src_y;
-              src_rect.width  = gimp_item_get_width (item) - ABS (offset_x);
+              src_rect.width  = picman_item_get_width (item) - ABS (offset_x);
               src_rect.height = ABS (offset_y);
 
               dest_rect.x = 0;
@@ -237,8 +237,8 @@ gimp_drawable_offset (GimpDrawable   *drawable,
         }
     }
 
-  gimp_drawable_set_buffer (drawable,
-                            gimp_item_is_attached (item),
+  picman_drawable_set_buffer (drawable,
+                            picman_item_is_attached (item),
                             C_("undo-type", "Offset Drawable"),
                             new_buffer);
   g_object_unref (new_buffer);

@@ -1,4 +1,4 @@
-## Makefile.am for gimp/data/tool-presets
+## Makefile.am for picman/data/tool-presets
 
 SUBDIRS = \
 	FX		\

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __APP_GIMP_UNIT_H__
-#define __APP_GIMP_UNIT_H__
+#ifndef __APP_PICMAN_UNIT_H__
+#define __APP_PICMAN_UNIT_H__
 
 
-gint          _gimp_unit_get_number_of_units          (Gimp        *gimp);
-gint          _gimp_unit_get_number_of_built_in_units (Gimp        *gimp) G_GNUC_CONST;
+gint          _picman_unit_get_number_of_units          (Picman        *picman);
+gint          _picman_unit_get_number_of_built_in_units (Picman        *picman) G_GNUC_CONST;
 
-GimpUnit      _gimp_unit_new                          (Gimp        *gimp,
+PicmanUnit      _picman_unit_new                          (Picman        *picman,
                                                        const gchar *identifier,
                                                        gdouble      factor,
                                                        gint         digits,
@@ -31,31 +31,31 @@ GimpUnit      _gimp_unit_new                          (Gimp        *gimp,
                                                        const gchar *singular,
                                                        const gchar *plural);
 
-gboolean      _gimp_unit_get_deletion_flag            (Gimp        *gimp,
-                                                       GimpUnit     unit);
-void          _gimp_unit_set_deletion_flag            (Gimp        *gimp,
-                                                       GimpUnit     unit,
+gboolean      _picman_unit_get_deletion_flag            (Picman        *picman,
+                                                       PicmanUnit     unit);
+void          _picman_unit_set_deletion_flag            (Picman        *picman,
+                                                       PicmanUnit     unit,
                                                        gboolean     deletion_flag);
 
-gdouble       _gimp_unit_get_factor                   (Gimp        *gimp,
-                                                       GimpUnit     unit);
+gdouble       _picman_unit_get_factor                   (Picman        *picman,
+                                                       PicmanUnit     unit);
 
-gint          _gimp_unit_get_digits                   (Gimp        *gimp,
-                                                       GimpUnit     unit);
+gint          _picman_unit_get_digits                   (Picman        *picman,
+                                                       PicmanUnit     unit);
 
-const gchar * _gimp_unit_get_identifier               (Gimp        *gimp,
-                                                       GimpUnit     unit);
+const gchar * _picman_unit_get_identifier               (Picman        *picman,
+                                                       PicmanUnit     unit);
 
-const gchar * _gimp_unit_get_symbol                   (Gimp        *gimp,
-                                                       GimpUnit     unit);
-const gchar * _gimp_unit_get_abbreviation             (Gimp        *gimp,
-                                                       GimpUnit     unit);
-const gchar * _gimp_unit_get_singular                 (Gimp        *gimp,
-                                                       GimpUnit     unit);
-const gchar * _gimp_unit_get_plural                   (Gimp        *gimp,
-                                                       GimpUnit     unit);
+const gchar * _picman_unit_get_symbol                   (Picman        *picman,
+                                                       PicmanUnit     unit);
+const gchar * _picman_unit_get_abbreviation             (Picman        *picman,
+                                                       PicmanUnit     unit);
+const gchar * _picman_unit_get_singular                 (Picman        *picman,
+                                                       PicmanUnit     unit);
+const gchar * _picman_unit_get_plural                   (Picman        *picman,
+                                                       PicmanUnit     unit);
 
-void           gimp_user_units_free                   (Gimp        *gimp);
+void           picman_user_units_free                   (Picman        *picman);
 
 
-#endif  /*  __APP_GIMP_UNIT_H__  */
+#endif  /*  __APP_PICMAN_UNIT_H__  */

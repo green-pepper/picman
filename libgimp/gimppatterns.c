@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimppatterns.c
+ * picmanpatterns.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,19 +22,19 @@
 
 #include <string.h>
 
-#include "gimp.h"
-#include "gimppatterns.h"
+#include "picman.h"
+#include "picmanpatterns.h"
 
 /**
- * gimp_patterns_set_pattern:
+ * picman_patterns_set_pattern:
  * @name: The pattern name.
  *
- * This procedure is deprecated! Use gimp_context_set_pattern() instead.
+ * This procedure is deprecated! Use picman_context_set_pattern() instead.
  *
  * Returns: TRUE on success.
  */
 gboolean
-gimp_patterns_set_pattern (const gchar *name)
+picman_patterns_set_pattern (const gchar *name)
 {
-  return gimp_context_set_pattern (name);
+  return picman_context_set_pattern (name);
 }

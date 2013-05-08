@@ -1,7 +1,7 @@
-/* gimpxmpmodelwidget.c - interface definition for XMPModel bound
+/* picmanxmpmodelwidget.c - interface definition for XMPModel bound
  *                        GTKWidgets
  *
- * Copyright (C) 2010, Róman Joost <romanofski@gimp.org>
+ * Copyright (C) 2010, Róman Joost <romanofski@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,22 +20,22 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "xmp-schemas.h"
 #include "xmp-model.h"
 
-#include "gimpxmpmodelwidget.h"
+#include "picmanxmpmodelwidget.h"
 
 
-#define GIMP_XMP_MODEL_WIDGET_GET_PRIVATE(obj) \
-  (gimp_xmp_model_widget_get_private (GIMP_XMP_MODEL_WIDGET (obj)))
+#define PICMAN_XMP_MODEL_WIDGET_GET_PRIVATE(obj) \
+  (picman_xmp_model_widget_get_private (PICMAN_XMP_MODEL_WIDGET (obj)))
 
 
-typedef struct _GimpXmpModelWidgetPrivate GimpXmpModelWidgetPrivate;
+typedef struct _PicmanXmpModelWidgetPrivate PicmanXmpModelWidgetPrivate;
 
-struct _GimpXmpModelWidgetPrivate
+struct _PicmanXmpModelWidgetPrivate
 {
   const gchar *schema_uri;
   const gchar *property_name;
@@ -43,12 +43,12 @@ struct _GimpXmpModelWidgetPrivate
 };
 
 
-static void     gimp_xmp_model_widget_iface_base_init   (GimpXmpModelWidgetInterface *iface);
+static void     picman_xmp_model_widget_iface_base_init   (PicmanXmpModelWidgetInterface *iface);
 
-static GimpXmpModelWidgetPrivate *
-                gimp_xmp_model_widget_get_private       (GimpXmpModelWidget *widget);
+static PicmanXmpModelWidgetPrivate *
+                picman_xmp_model_widget_get_private       (PicmanXmpModelWidget *widget);
 
-static void     gimp_xmp_model_widget_xmpmodel_changed  (XMPModel           *xmp_model,
+static void     picman_xmp_model_widget_xmpmodel_changed  (XMPModel           *xmp_model,
                                                          GtkTreeIter        *iter,
                                                          gpointer           *user_data);
 
@@ -60,7 +60,7 @@ void            set_property_edit_icon                  (GtkWidget          *wid
 
 
 GType
-gimp_xmp_model_widget_interface_get_type (void)
+picman_xmp_model_widget_interface_get_type (void)
 {
   static GType iface_type = 0;
 
@@ -68,13 +68,13 @@ gimp_xmp_model_widget_interface_get_type (void)
    {
     const GTypeInfo iface_info =
      {
-      sizeof (GimpXmpModelWidgetInterface),
-      (GBaseInitFunc)     gimp_xmp_model_widget_iface_base_init,
+      sizeof (PicmanXmpModelWidgetInterface),
+      (GBaseInitFunc)     picman_xmp_model_widget_iface_base_init,
       (GBaseFinalizeFunc) NULL,
      };
 
     iface_type = g_type_register_static (G_TYPE_INTERFACE,
-                                         "GimpXmpModelWidgetInterface",
+                                         "PicmanXmpModelWidgetInterface",
                                          &iface_info, 0);
    }
 
@@ -82,7 +82,7 @@ gimp_xmp_model_widget_interface_get_type (void)
 }
 
 static void
-gimp_xmp_model_widget_iface_base_init (GimpXmpModelWidgetInterface *iface)
+picman_xmp_model_widget_iface_base_init (PicmanXmpModelWidgetInterface *iface)
 {
    static gboolean initialized = FALSE;
 
@@ -103,9 +103,9 @@ gimp_xmp_model_widget_iface_base_init (GimpXmpModelWidgetInterface *iface)
       g_object_interface_install_property (iface,
                                            g_param_spec_object ("xmp-model",
                                                                 NULL, NULL,
-                                                                GIMP_TYPE_XMP_MODEL,
+                                                                PICMAN_TYPE_XMP_MODEL,
                                                                 G_PARAM_CONSTRUCT_ONLY |
-                                                                GIMP_PARAM_READWRITE));
+                                                                PICMAN_PARAM_READWRITE));
       iface->widget_set_text = NULL;
       initialized = TRUE;
     }
@@ -113,69 +113,69 @@ gimp_xmp_model_widget_iface_base_init (GimpXmpModelWidgetInterface *iface)
 }
 
 /**
- * gimp_xmp_model_widget_install_properties:
+ * picman_xmp_model_widget_install_properties:
  * @klass: the class structure for a type deriving from #GObject
  *
  * Installs the necessary properties for a class implementing
- * #GimpXmpModelWidgetInterface. A #GimpXmpModelWidgetProp property is
+ * #PicmanXmpModelWidgetInterface. A #PicmanXmpModelWidgetProp property is
  * installed for each property, using the values from the
- * #GimpXmpModelWidgetProp enumeration.
+ * #PicmanXmpModelWidgetProp enumeration.
  **/
 void
-gimp_xmp_model_widget_install_properties (GObjectClass *klass)
+picman_xmp_model_widget_install_properties (GObjectClass *klass)
 {
   g_object_class_override_property (klass,
-                                    GIMP_XMP_MODEL_WIDGET_PROP_SCHEMA_URI,
+                                    PICMAN_XMP_MODEL_WIDGET_PROP_SCHEMA_URI,
                                     "schema-uri");
 
   g_object_class_override_property (klass,
-                                    GIMP_XMP_MODEL_WIDGET_PROP_XMPMODEL,
+                                    PICMAN_XMP_MODEL_WIDGET_PROP_XMPMODEL,
                                     "xmp-model");
 
   g_object_class_override_property (klass,
-                                    GIMP_XMP_MODEL_WIDGET_PROP_PROPERTY_NAME,
+                                    PICMAN_XMP_MODEL_WIDGET_PROP_PROPERTY_NAME,
                                     "property-name");
 }
 
 void
-gimp_xmp_model_widget_constructor (GObject *object)
+picman_xmp_model_widget_constructor (GObject *object)
 {
-  GimpXmpModelWidget        *widget = GIMP_XMP_MODEL_WIDGET (object);
-  GimpXmpModelWidgetPrivate *priv;
+  PicmanXmpModelWidget        *widget = PICMAN_XMP_MODEL_WIDGET (object);
+  PicmanXmpModelWidgetPrivate *priv;
   gchar                     *signal;
 
-  priv = GIMP_XMP_MODEL_WIDGET_GET_PRIVATE (object);
+  priv = PICMAN_XMP_MODEL_WIDGET_GET_PRIVATE (object);
 
   signal = g_strdup_printf ("property-changed::%s:%s",
                             find_schema_prefix (priv->schema_uri),
                             priv->property_name);
 
   g_signal_connect (priv->xmp_model, signal,
-                    G_CALLBACK (gimp_xmp_model_widget_xmpmodel_changed),
+                    G_CALLBACK (picman_xmp_model_widget_xmpmodel_changed),
                     widget);
 
   g_free (signal);
 }
 
 void
-gimp_xmp_model_widget_set_property (GObject      *object,
+picman_xmp_model_widget_set_property (GObject      *object,
                                     guint         property_id,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
-  GimpXmpModelWidgetPrivate *priv = GIMP_XMP_MODEL_WIDGET_GET_PRIVATE (object);
+  PicmanXmpModelWidgetPrivate *priv = PICMAN_XMP_MODEL_WIDGET_GET_PRIVATE (object);
 
   switch (property_id)
     {
-    case GIMP_XMP_MODEL_WIDGET_PROP_SCHEMA_URI:
+    case PICMAN_XMP_MODEL_WIDGET_PROP_SCHEMA_URI:
       priv->schema_uri = g_value_dup_string (value);
       break;
 
-    case GIMP_XMP_MODEL_WIDGET_PROP_PROPERTY_NAME:
+    case PICMAN_XMP_MODEL_WIDGET_PROP_PROPERTY_NAME:
       priv->property_name = g_value_dup_string (value);
       break;
 
-    case GIMP_XMP_MODEL_WIDGET_PROP_XMPMODEL:
+    case PICMAN_XMP_MODEL_WIDGET_PROP_XMPMODEL:
       priv->xmp_model = g_value_dup_object (value);
       break;
 
@@ -186,24 +186,24 @@ gimp_xmp_model_widget_set_property (GObject      *object,
 }
 
 void
-gimp_xmp_model_widget_get_property (GObject      *object,
+picman_xmp_model_widget_get_property (GObject      *object,
                                     guint         property_id,
                                     GValue       *value,
                                     GParamSpec   *pspec)
 {
-  GimpXmpModelWidgetPrivate *priv = GIMP_XMP_MODEL_WIDGET_GET_PRIVATE (object);
+  PicmanXmpModelWidgetPrivate *priv = PICMAN_XMP_MODEL_WIDGET_GET_PRIVATE (object);
 
   switch (property_id)
     {
-    case GIMP_XMP_MODEL_WIDGET_PROP_SCHEMA_URI:
+    case PICMAN_XMP_MODEL_WIDGET_PROP_SCHEMA_URI:
       g_value_set_string (value, priv->schema_uri);
       break;
 
-    case GIMP_XMP_MODEL_WIDGET_PROP_PROPERTY_NAME:
+    case PICMAN_XMP_MODEL_WIDGET_PROP_PROPERTY_NAME:
       g_value_set_string (value, priv->property_name);
       break;
 
-    case GIMP_XMP_MODEL_WIDGET_PROP_XMPMODEL:
+    case PICMAN_XMP_MODEL_WIDGET_PROP_XMPMODEL:
       g_value_set_object (value, priv->xmp_model);
       break;
 
@@ -214,33 +214,33 @@ gimp_xmp_model_widget_get_property (GObject      *object,
 }
 
 static void
-gimp_xmp_model_widget_private_finalize (GimpXmpModelWidgetPrivate *private)
+picman_xmp_model_widget_private_finalize (PicmanXmpModelWidgetPrivate *private)
 {
-  g_slice_free (GimpXmpModelWidgetPrivate, private);
+  g_slice_free (PicmanXmpModelWidgetPrivate, private);
 }
 
-static GimpXmpModelWidgetPrivate *
-gimp_xmp_model_widget_get_private (GimpXmpModelWidget *widget)
+static PicmanXmpModelWidgetPrivate *
+picman_xmp_model_widget_get_private (PicmanXmpModelWidget *widget)
 {
-  const gchar *private_key = "gimp-xmp-model-widget-private";
+  const gchar *private_key = "picman-xmp-model-widget-private";
 
-  GimpXmpModelWidgetPrivate *private;
+  PicmanXmpModelWidgetPrivate *private;
 
   private = g_object_get_data (G_OBJECT (widget), private_key);
 
   if (! private)
    {
-     private = g_slice_new0 (GimpXmpModelWidgetPrivate);
+     private = g_slice_new0 (PicmanXmpModelWidgetPrivate);
 
      g_object_set_data_full (G_OBJECT (widget), private_key, private,
-                             (GDestroyNotify) gimp_xmp_model_widget_private_finalize);
+                             (GDestroyNotify) picman_xmp_model_widget_private_finalize);
    }
 
   return private;
 }
 
 /**
- * gimp_xmp_model_widget_xmpmodel_changed:
+ * picman_xmp_model_widget_xmpmodel_changed:
  * @xmp_model: XMPModel this widget is bound to.
  * @iter: The iter which points to the last change in the XMPModel
  * @user_data: which should be the GtkWidget displaying the value.
@@ -250,12 +250,12 @@ gimp_xmp_model_widget_get_private (GimpXmpModelWidget *widget)
  * from the XMPModel.
  **/
 static void
-gimp_xmp_model_widget_xmpmodel_changed (XMPModel     *xmp_model,
+picman_xmp_model_widget_xmpmodel_changed (XMPModel     *xmp_model,
                                         GtkTreeIter  *iter,
                                         gpointer     *user_data)
 {
-  GimpXmpModelWidget        *widget = GIMP_XMP_MODEL_WIDGET (user_data);
-  GimpXmpModelWidgetPrivate *priv  = GIMP_XMP_MODEL_WIDGET_GET_PRIVATE (widget);
+  PicmanXmpModelWidget        *widget = PICMAN_XMP_MODEL_WIDGET (user_data);
+  PicmanXmpModelWidgetPrivate *priv  = PICMAN_XMP_MODEL_WIDGET_GET_PRIVATE (widget);
   const gchar               *tree_value;
   const gchar               *property_name;
   GdkPixbuf                 *icon;
@@ -267,7 +267,7 @@ gimp_xmp_model_widget_xmpmodel_changed (XMPModel     *xmp_model,
                       -1);
 
   if (! strcmp (priv->property_name, property_name))
-    gimp_xmp_model_widget_set_text (widget, tree_value);
+    picman_xmp_model_widget_set_text (widget, tree_value);
 
   if (icon == NULL)
     set_property_edit_icon (GTK_WIDGET (widget), priv->xmp_model, iter);
@@ -276,37 +276,37 @@ gimp_xmp_model_widget_xmpmodel_changed (XMPModel     *xmp_model,
 }
 
 /**
- * gimp_xmp_model_widget_set_text:
+ * picman_xmp_model_widget_set_text:
  * @widget: The GtkWidget where the new value is set.
  * @tree_value: The new string which will be set on the widget.
  *
  * This method sets the new value on the GtkWidget implementing the
- * #GimpXmpModelWidgetInterface.
+ * #PicmanXmpModelWidgetInterface.
  **/
 void
-gimp_xmp_model_widget_set_text (GimpXmpModelWidget  *widget,
+picman_xmp_model_widget_set_text (PicmanXmpModelWidget  *widget,
                                 const gchar         *tree_value)
 {
-  GimpXmpModelWidgetInterface *iface;
+  PicmanXmpModelWidgetInterface *iface;
 
-  iface = GIMP_XMP_MODEL_WIDGET_GET_INTERFACE (widget);
+  iface = PICMAN_XMP_MODEL_WIDGET_GET_INTERFACE (widget);
 
   if (iface->widget_set_text)
     iface->widget_set_text (widget, tree_value);
 }
 
 /**
- * gimp_xmp_model_widget_changed:
+ * picman_xmp_model_widget_changed:
  * @widget: The GtkWidget which was changed.
  * @value: The new string from the GtkWidget.
  *
  * If the GtkWidget was changed, a new value is set in the #XMPModel.
  **/
 void
-gimp_xmp_model_widget_changed (GimpXmpModelWidget *widget,
+picman_xmp_model_widget_changed (PicmanXmpModelWidget *widget,
                                const gchar        *value)
 {
-  GimpXmpModelWidgetPrivate *priv = GIMP_XMP_MODEL_WIDGET_GET_PRIVATE (widget);
+  PicmanXmpModelWidgetPrivate *priv = PICMAN_XMP_MODEL_WIDGET_GET_PRIVATE (widget);
 
   xmp_model_set_scalar_property (priv->xmp_model,
                                  priv->schema_uri,
@@ -347,7 +347,7 @@ set_property_edit_icon (GtkWidget       *widget,
 
   if (editable == XMP_AUTO_UPDATE)
     {
-      icon = gtk_widget_render_icon (GTK_WIDGET (widget), GIMP_STOCK_WILBER,
+      icon = gtk_widget_render_icon (GTK_WIDGET (widget), PICMAN_STOCK_WILBER,
                                      GTK_ICON_SIZE_MENU, NULL);
       gtk_tree_store_set (GTK_TREE_STORE (xmp_model), iter,
                           COL_XMP_EDIT_ICON, icon,

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,23 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DRAWABLE__PREVIEW_H__
-#define __GIMP_DRAWABLE__PREVIEW_H__
+#ifndef __PICMAN_DRAWABLE__PREVIEW_H__
+#define __PICMAN_DRAWABLE__PREVIEW_H__
 
 
 /*
- *  virtual function of GimpDrawable -- dont't call directly
+ *  virtual function of PicmanDrawable -- dont't call directly
  */
-GimpTempBuf * gimp_drawable_get_new_preview    (GimpViewable *viewable,
-                                                GimpContext  *context,
+PicmanTempBuf * picman_drawable_get_new_preview    (PicmanViewable *viewable,
+                                                PicmanContext  *context,
                                                 gint          width,
                                                 gint          height);
 
 /*
  *  normal functions (no virtuals)
  */
-const Babl  * gimp_drawable_get_preview_format (GimpDrawable *drawable);
-GimpTempBuf * gimp_drawable_get_sub_preview    (GimpDrawable *drawable,
+const Babl  * picman_drawable_get_preview_format (PicmanDrawable *drawable);
+PicmanTempBuf * picman_drawable_get_sub_preview    (PicmanDrawable *drawable,
                                                 gint          src_x,
                                                 gint          src_y,
                                                 gint          src_width,
@@ -40,4 +40,4 @@ GimpTempBuf * gimp_drawable_get_sub_preview    (GimpDrawable *drawable,
                                                 gint          dest_height);
 
 
-#endif /* __GIMP_DRAWABLE__PREVIEW_H__ */
+#endif /* __PICMAN_DRAWABLE__PREVIEW_H__ */

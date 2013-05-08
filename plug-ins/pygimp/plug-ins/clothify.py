@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#   Gimp-Python - allows the writing of Gimp plugins in Python.
+#   Picman-Python - allows the writing of Picman plugins in Python.
 #   Copyright (C) 1997  James Henstridge <james@daa.com.au>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,19 +17,19 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import math
-from gimpfu import *
+from picmanfu import *
 
 def clothify(timg, tdrawable, bx=9, by=9, azimuth=135, elevation=45, depth=3):
     width = tdrawable.width
     height = tdrawable.height
 
-    img = gimp.Image(width, height, RGB)
+    img = picman.Image(width, height, RGB)
     img.disable_undo()
 
-    layer_one = gimp.Layer(img, "X Dots", width, height, RGB_IMAGE,
+    layer_one = picman.Layer(img, "X Dots", width, height, RGB_IMAGE,
                            100, NORMAL_MODE)
     img.insert_layer(layer_one)
-    pdb.gimp_edit_fill(layer_one, BACKGROUND_FILL)
+    pdb.picman_edit_fill(layer_one, BACKGROUND_FILL)
 
     pdb.plug_in_noisify(img, layer_one, 0, 0.7, 0.7, 0.7, 0.7)
 
@@ -50,7 +50,7 @@ def clothify(timg, tdrawable, bx=9, by=9, azimuth=135, elevation=45, depth=3):
     pdb.plug_in_bump_map(img, tdrawable, bump_layer, azimuth,
                          elevation, depth, 0, 0, 0, 0, True, False, 0)
 
-    gimp.delete(img)
+    picman.delete(img)
 
 register(
         "python-fu-clothify",

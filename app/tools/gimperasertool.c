@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,79 +20,79 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "paint/gimperaseroptions.h"
+#include "paint/picmaneraseroptions.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimperasertool.h"
-#include "gimppaintoptions-gui.h"
-#include "gimptoolcontrol.h"
+#include "picmanerasertool.h"
+#include "picmanpaintoptions-gui.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void   gimp_eraser_tool_modifier_key  (GimpTool         *tool,
+static void   picman_eraser_tool_modifier_key  (PicmanTool         *tool,
                                               GdkModifierType   key,
                                               gboolean          press,
                                               GdkModifierType   state,
-                                              GimpDisplay      *display);
-static void   gimp_eraser_tool_cursor_update (GimpTool         *tool,
-                                              const GimpCoords *coords,
+                                              PicmanDisplay      *display);
+static void   picman_eraser_tool_cursor_update (PicmanTool         *tool,
+                                              const PicmanCoords *coords,
                                               GdkModifierType   state,
-                                              GimpDisplay      *display);
+                                              PicmanDisplay      *display);
 
-static GtkWidget * gimp_eraser_options_gui   (GimpToolOptions *tool_options);
+static GtkWidget * picman_eraser_options_gui   (PicmanToolOptions *tool_options);
 
 
-G_DEFINE_TYPE (GimpEraserTool, gimp_eraser_tool, GIMP_TYPE_BRUSH_TOOL)
+G_DEFINE_TYPE (PicmanEraserTool, picman_eraser_tool, PICMAN_TYPE_BRUSH_TOOL)
 
-#define parent_class gimp_eraser_tool_parent_class
+#define parent_class picman_eraser_tool_parent_class
 
 
 void
-gimp_eraser_tool_register (GimpToolRegisterCallback  callback,
+picman_eraser_tool_register (PicmanToolRegisterCallback  callback,
                            gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_ERASER_TOOL,
-                GIMP_TYPE_ERASER_OPTIONS,
-                gimp_eraser_options_gui,
-                GIMP_PAINT_OPTIONS_CONTEXT_MASK,
-                "gimp-eraser-tool",
+  (* callback) (PICMAN_TYPE_ERASER_TOOL,
+                PICMAN_TYPE_ERASER_OPTIONS,
+                picman_eraser_options_gui,
+                PICMAN_PAINT_OPTIONS_CONTEXT_MASK,
+                "picman-eraser-tool",
                 _("Eraser"),
                 _("Eraser Tool: Erase to background or transparency using a brush"),
                 N_("_Eraser"), "<shift>E",
-                NULL, GIMP_HELP_TOOL_ERASER,
-                GIMP_STOCK_TOOL_ERASER,
+                NULL, PICMAN_HELP_TOOL_ERASER,
+                PICMAN_STOCK_TOOL_ERASER,
                 data);
 }
 
 static void
-gimp_eraser_tool_class_init (GimpEraserToolClass *klass)
+picman_eraser_tool_class_init (PicmanEraserToolClass *klass)
 {
-  GimpToolClass *tool_class = GIMP_TOOL_CLASS (klass);
+  PicmanToolClass *tool_class = PICMAN_TOOL_CLASS (klass);
 
-  tool_class->modifier_key  = gimp_eraser_tool_modifier_key;
-  tool_class->cursor_update = gimp_eraser_tool_cursor_update;
+  tool_class->modifier_key  = picman_eraser_tool_modifier_key;
+  tool_class->cursor_update = picman_eraser_tool_cursor_update;
 }
 
 static void
-gimp_eraser_tool_init (GimpEraserTool *eraser)
+picman_eraser_tool_init (PicmanEraserTool *eraser)
 {
-  GimpTool      *tool       = GIMP_TOOL (eraser);
-  GimpPaintTool *paint_tool = GIMP_PAINT_TOOL (eraser);
+  PicmanTool      *tool       = PICMAN_TOOL (eraser);
+  PicmanPaintTool *paint_tool = PICMAN_PAINT_TOOL (eraser);
 
-  gimp_tool_control_set_tool_cursor            (tool->control,
-                                                GIMP_TOOL_CURSOR_ERASER);
-  gimp_tool_control_set_toggle_cursor_modifier (tool->control,
-                                                GIMP_CURSOR_MODIFIER_MINUS);
+  picman_tool_control_set_tool_cursor            (tool->control,
+                                                PICMAN_TOOL_CURSOR_ERASER);
+  picman_tool_control_set_toggle_cursor_modifier (tool->control,
+                                                PICMAN_CURSOR_MODIFIER_MINUS);
 
-  gimp_paint_tool_enable_color_picker (paint_tool,
-                                       GIMP_COLOR_PICK_MODE_BACKGROUND);
+  picman_paint_tool_enable_color_picker (paint_tool,
+                                       PICMAN_COLOR_PICK_MODE_BACKGROUND);
 
   paint_tool->status      = _("Click to erase");
   paint_tool->status_line = _("Click to erase the line");
@@ -100,53 +100,53 @@ gimp_eraser_tool_init (GimpEraserTool *eraser)
 }
 
 static void
-gimp_eraser_tool_modifier_key (GimpTool        *tool,
+picman_eraser_tool_modifier_key (PicmanTool        *tool,
                                GdkModifierType  key,
                                gboolean         press,
                                GdkModifierType  state,
-                               GimpDisplay     *display)
+                               PicmanDisplay     *display)
 {
   if (key == GDK_MOD1_MASK)
     {
-      GimpEraserOptions *options = GIMP_ERASER_TOOL_GET_OPTIONS (tool);
+      PicmanEraserOptions *options = PICMAN_ERASER_TOOL_GET_OPTIONS (tool);
 
       g_object_set (options,
                     "anti-erase", ! options->anti_erase,
                     NULL);
     }
 
-  GIMP_TOOL_CLASS (parent_class)->modifier_key (tool, key, press, state, display);
+  PICMAN_TOOL_CLASS (parent_class)->modifier_key (tool, key, press, state, display);
 }
 
 static void
-gimp_eraser_tool_cursor_update (GimpTool         *tool,
-                                const GimpCoords *coords,
+picman_eraser_tool_cursor_update (PicmanTool         *tool,
+                                const PicmanCoords *coords,
                                 GdkModifierType   state,
-                                GimpDisplay      *display)
+                                PicmanDisplay      *display)
 {
-  GimpEraserOptions *options = GIMP_ERASER_TOOL_GET_OPTIONS (tool);
+  PicmanEraserOptions *options = PICMAN_ERASER_TOOL_GET_OPTIONS (tool);
 
-  gimp_tool_control_set_toggled (tool->control, options->anti_erase);
+  picman_tool_control_set_toggled (tool->control, options->anti_erase);
 
-  GIMP_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
+  PICMAN_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
 }
 
 
 /*  tool options stuff  */
 
 static GtkWidget *
-gimp_eraser_options_gui (GimpToolOptions *tool_options)
+picman_eraser_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config = G_OBJECT (tool_options);
-  GtkWidget *vbox   = gimp_paint_options_gui (tool_options);
+  GtkWidget *vbox   = picman_paint_options_gui (tool_options);
   GtkWidget *button;
   gchar     *str;
 
   /* the anti_erase toggle */
   str = g_strdup_printf (_("Anti erase  (%s)"),
-                         gimp_get_mod_string (GDK_MOD1_MASK));
+                         picman_get_mod_string (GDK_MOD1_MASK));
 
-  button = gimp_prop_check_button_new (config, "anti-erase", str);
+  button = picman_prop_check_button_new (config, "anti-erase", str);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 

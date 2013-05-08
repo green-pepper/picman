@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcursorview.h
- * Copyright (C) 2005 Michael Natterer <mitch@gimp.org>
+ * picmancursorview.h
+ * Copyright (C) 2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,51 +18,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CURSOR_VIEW_H__
-#define __GIMP_CURSOR_VIEW_H__
+#ifndef __PICMAN_CURSOR_VIEW_H__
+#define __PICMAN_CURSOR_VIEW_H__
 
 
-#include "widgets/gimpeditor.h"
+#include "widgets/picmaneditor.h"
 
 
-#define GIMP_TYPE_CURSOR_VIEW            (gimp_cursor_view_get_type ())
-#define GIMP_CURSOR_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CURSOR_VIEW, GimpCursorView))
-#define GIMP_CURSOR_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CURSOR_VIEW, GimpCursorViewClass))
-#define GIMP_IS_CURSOR_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CURSOR_VIEW))
-#define GIMP_IS_CURSOR_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CURSOR_VIEW))
-#define GIMP_CURSOR_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CURSOR_VIEW, GimpCursorViewClass))
+#define PICMAN_TYPE_CURSOR_VIEW            (picman_cursor_view_get_type ())
+#define PICMAN_CURSOR_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CURSOR_VIEW, PicmanCursorView))
+#define PICMAN_CURSOR_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CURSOR_VIEW, PicmanCursorViewClass))
+#define PICMAN_IS_CURSOR_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CURSOR_VIEW))
+#define PICMAN_IS_CURSOR_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CURSOR_VIEW))
+#define PICMAN_CURSOR_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CURSOR_VIEW, PicmanCursorViewClass))
 
 
-typedef struct _GimpCursorViewClass GimpCursorViewClass;
-typedef struct _GimpCursorViewPriv  GimpCursorViewPriv;
+typedef struct _PicmanCursorViewClass PicmanCursorViewClass;
+typedef struct _PicmanCursorViewPriv  PicmanCursorViewPriv;
 
-struct _GimpCursorView
+struct _PicmanCursorView
 {
-  GimpEditor          parent_instance;
+  PicmanEditor          parent_instance;
 
-  GimpCursorViewPriv *priv;
+  PicmanCursorViewPriv *priv;
 };
 
-struct _GimpCursorViewClass
+struct _PicmanCursorViewClass
 {
-  GimpEditorClass  parent_class;
+  PicmanEditorClass  parent_class;
 };
 
 
-GType       gimp_cursor_view_get_type          (void) G_GNUC_CONST;
+GType       picman_cursor_view_get_type          (void) G_GNUC_CONST;
 
-GtkWidget * gimp_cursor_view_new               (GimpMenuFactory *menu_factory);
+GtkWidget * picman_cursor_view_new               (PicmanMenuFactory *menu_factory);
 
-void        gimp_cursor_view_set_sample_merged (GimpCursorView  *view,
+void        picman_cursor_view_set_sample_merged (PicmanCursorView  *view,
                                                 gboolean         sample_merged);
-gboolean    gimp_cursor_view_get_sample_merged (GimpCursorView  *view);
+gboolean    picman_cursor_view_get_sample_merged (PicmanCursorView  *view);
 
-void        gimp_cursor_view_update_cursor     (GimpCursorView  *view,
-                                                GimpImage       *image,
-                                                GimpUnit         shell_unit,
+void        picman_cursor_view_update_cursor     (PicmanCursorView  *view,
+                                                PicmanImage       *image,
+                                                PicmanUnit         shell_unit,
                                                 gdouble          x,
                                                 gdouble          y);
-void        gimp_cursor_view_clear_cursor      (GimpCursorView  *view);
+void        picman_cursor_view_clear_cursor      (PicmanCursorView  *view);
 
 
-#endif /* __GIMP_CURSOR_VIEW_H__ */
+#endif /* __PICMAN_CURSOR_VIEW_H__ */

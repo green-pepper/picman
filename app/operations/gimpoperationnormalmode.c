@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationnormalmode.c
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picmanoperationnormalmode.c
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,15 +25,15 @@
 
 #include "operations-types.h"
 
-#include "gimpoperationnormalmode.h"
+#include "picmanoperationnormalmode.h"
 
 
-static gboolean gimp_operation_normal_parent_process (GeglOperation        *operation,
+static gboolean picman_operation_normal_parent_process (GeglOperation        *operation,
                                                       GeglOperationContext *context,
                                                       const gchar          *output_prop,
                                                       const GeglRectangle  *result,
                                                       gint                  level);
-static gboolean gimp_operation_normal_mode_process   (GeglOperation        *operation,
+static gboolean picman_operation_normal_mode_process   (GeglOperation        *operation,
                                                       void                 *in_buf,
                                                       void                 *aux_buf,
                                                       void                 *aux2_buf,
@@ -43,14 +43,14 @@ static gboolean gimp_operation_normal_mode_process   (GeglOperation        *oper
                                                       gint                  level);
 
 
-G_DEFINE_TYPE (GimpOperationNormalMode, gimp_operation_normal_mode,
-               GIMP_TYPE_OPERATION_POINT_LAYER_MODE)
+G_DEFINE_TYPE (PicmanOperationNormalMode, picman_operation_normal_mode,
+               PICMAN_TYPE_OPERATION_POINT_LAYER_MODE)
 
-#define parent_class gimp_operation_normal_mode_parent_class
+#define parent_class picman_operation_normal_mode_parent_class
 
 static const gchar* reference_xml = "<?xml version='1.0' encoding='UTF-8'?>"
 "<gegl>"
-"<node operation='gimp:normal-mode'>"
+"<node operation='picman:normal-mode'>"
 "  <node operation='gegl:load'>"
 "    <params>"
 "      <param name='path'>blending-test-B.png</param>"
@@ -66,7 +66,7 @@ static const gchar* reference_xml = "<?xml version='1.0' encoding='UTF-8'?>"
 
 
 static void
-gimp_operation_normal_mode_class_init (GimpOperationNormalModeClass *klass)
+picman_operation_normal_mode_class_init (PicmanOperationNormalModeClass *klass)
 {
   GeglOperationClass               *operation_class;
   GeglOperationPointComposer3Class *point_class;
@@ -75,32 +75,32 @@ gimp_operation_normal_mode_class_init (GimpOperationNormalModeClass *klass)
   point_class     = GEGL_OPERATION_POINT_COMPOSER3_CLASS (klass);
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",                  "gimp:normal-mode",
-                                 "description",           "GIMP normal mode operation",
+                                 "name",                  "picman:normal-mode",
+                                 "description",           "PICMAN normal mode operation",
                                  "reference-image",       "normal-mode.png",
                                  "reference-composition", reference_xml,
                                  NULL);
 
-  operation_class->process     = gimp_operation_normal_parent_process;
+  operation_class->process     = picman_operation_normal_parent_process;
 
-  point_class->process         = gimp_operation_normal_mode_process;
+  point_class->process         = picman_operation_normal_mode_process;
 }
 
 static void
-gimp_operation_normal_mode_init (GimpOperationNormalMode *self)
+picman_operation_normal_mode_init (PicmanOperationNormalMode *self)
 {
 }
 
 static gboolean
-gimp_operation_normal_parent_process (GeglOperation        *operation,
+picman_operation_normal_parent_process (GeglOperation        *operation,
                                       GeglOperationContext *context,
                                       const gchar          *output_prop,
                                       const GeglRectangle  *result,
                                       gint                  level)
 {
-  GimpOperationPointLayerMode *point;
+  PicmanOperationPointLayerMode *point;
 
-  point = GIMP_OPERATION_POINT_LAYER_MODE (operation);
+  point = PICMAN_OPERATION_POINT_LAYER_MODE (operation);
 
   if (point->opacity == 1.0 &&
       ! gegl_operation_context_get_object (context, "aux2"))
@@ -147,7 +147,7 @@ gimp_operation_normal_parent_process (GeglOperation        *operation,
 }
 
 static gboolean
-gimp_operation_normal_mode_process (GeglOperation       *operation,
+picman_operation_normal_mode_process (GeglOperation       *operation,
                                     void                *in_buf,
                                     void                *aux_buf,
                                     void                *aux2_buf,
@@ -156,7 +156,7 @@ gimp_operation_normal_mode_process (GeglOperation       *operation,
                                     const GeglRectangle *roi,
                                     gint                 level)
 {
-  GimpOperationPointLayerMode *point    = GIMP_OPERATION_POINT_LAYER_MODE (operation);
+  PicmanOperationPointLayerMode *point    = PICMAN_OPERATION_POINT_LAYER_MODE (operation);
   gdouble                      opacity  = point->opacity;
   gfloat                      *in       = in_buf;
   gfloat                      *aux      = aux_buf;

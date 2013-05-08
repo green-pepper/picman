@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -45,25 +45,25 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "gimppattern.h"
-#include "gimppattern-header.h"
-#include "gimppattern-load.h"
-#include "gimptempbuf.h"
+#include "picmanpattern.h"
+#include "picmanpattern-header.h"
+#include "picmanpattern-load.h"
+#include "picmantempbuf.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 GList *
-gimp_pattern_load (GimpContext  *context,
+picman_pattern_load (PicmanContext  *context,
                    const gchar  *filename,
                    GError      **error)
 {
-  GimpPattern   *pattern = NULL;
+  PicmanPattern   *pattern = NULL;
   const Babl    *format  = NULL;
   gint           fd;
   PatternHeader  header;
@@ -77,19 +77,19 @@ gimp_pattern_load (GimpContext  *context,
   fd = g_open (filename, O_RDONLY | _O_BINARY, 0);
   if (fd == -1)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
   /*  Read in the header size  */
   if (read (fd, &header, sizeof (header)) != sizeof (header))
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in pattern file '%s': "
                      "File appears truncated."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       goto error;
     }
 
@@ -105,21 +105,21 @@ gimp_pattern_load (GimpContext  *context,
   if (header.magic_number != GPATTERN_MAGIC || header.version != 1 ||
       header.header_size <= sizeof (header))
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in pattern file '%s': "
                      "Unknown pattern format version %d."),
-                   gimp_filename_to_utf8 (filename), header.version);
+                   picman_filename_to_utf8 (filename), header.version);
       goto error;
     }
 
   /*  Check for supported bit depths  */
   if (header.bytes < 1 || header.bytes > 4)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in pattern file '%s: "
                      "Unsupported pattern depth %d.\n"
-                     "GIMP Patterns must be GRAY or RGB."),
-                   gimp_filename_to_utf8 (filename), header.bytes);
+                     "PICMAN Patterns must be GRAY or RGB."),
+                   picman_filename_to_utf8 (filename), header.bytes);
       goto error;
     }
 
@@ -132,17 +132,17 @@ gimp_pattern_load (GimpContext  *context,
 
       if ((read (fd, name, bn_size)) < bn_size)
         {
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Fatal parse error in pattern file '%s': "
                          "File appears truncated."),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           g_free (name);
           goto error;
         }
 
-      utf8 = gimp_any_to_utf8 (name, -1,
+      utf8 = picman_any_to_utf8 (name, -1,
                                _("Invalid UTF-8 string in pattern file '%s'."),
-                               gimp_filename_to_utf8 (filename));
+                               picman_filename_to_utf8 (filename));
       g_free (name);
       name = utf8;
     }
@@ -150,9 +150,9 @@ gimp_pattern_load (GimpContext  *context,
   if (! name)
     name = g_strdup (_("Unnamed"));
 
-  pattern = g_object_new (GIMP_TYPE_PATTERN,
+  pattern = g_object_new (PICMAN_TYPE_PATTERN,
                           "name",      name,
-                          "mime-type", "image/x-gimp-pat",
+                          "mime-type", "image/x-picman-pat",
                           NULL);
 
   g_free (name);
@@ -165,16 +165,16 @@ gimp_pattern_load (GimpContext  *context,
     case 4: format = babl_format ("R'G'B'A u8"); break;
     }
 
-  pattern->mask = gimp_temp_buf_new (header.width, header.height, format);
+  pattern->mask = picman_temp_buf_new (header.width, header.height, format);
 
-  if (read (fd, gimp_temp_buf_get_data (pattern->mask),
+  if (read (fd, picman_temp_buf_get_data (pattern->mask),
             header.width * header.height * header.bytes) <
       header.width * header.height * header.bytes)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in pattern file '%s': "
                      "File appears truncated."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       goto error;
     }
 
@@ -192,11 +192,11 @@ gimp_pattern_load (GimpContext  *context,
 }
 
 GList *
-gimp_pattern_load_pixbuf (GimpContext  *context,
+picman_pattern_load_pixbuf (PicmanContext  *context,
                           const gchar  *filename,
                           GError      **error)
 {
-  GimpPattern *pattern;
+  PicmanPattern *pattern;
   GdkPixbuf   *pixbuf;
   GeglBuffer  *src_buffer;
   GeglBuffer  *dest_buffer;
@@ -219,18 +219,18 @@ gimp_pattern_load_pixbuf (GimpContext  *context,
   if (! name)
     name = g_filename_display_basename (filename);
 
-  pattern = g_object_new (GIMP_TYPE_PATTERN,
+  pattern = g_object_new (PICMAN_TYPE_PATTERN,
                           "name",      name,
                           "mime-type", NULL, /* FIXME!! */
                           NULL);
   g_free (name);
 
-  pattern->mask = gimp_temp_buf_new (gdk_pixbuf_get_width (pixbuf),
+  pattern->mask = picman_temp_buf_new (gdk_pixbuf_get_width (pixbuf),
                                      gdk_pixbuf_get_height (pixbuf),
-                                     gimp_pixbuf_get_format (pixbuf));
+                                     picman_pixbuf_get_format (pixbuf));
 
-  src_buffer  = gimp_pixbuf_create_buffer (pixbuf);
-  dest_buffer = gimp_temp_buf_create_buffer (pattern->mask);
+  src_buffer  = picman_pixbuf_create_buffer (pixbuf);
+  dest_buffer = picman_temp_buf_create_buffer (pattern->mask);
 
   gegl_buffer_copy (src_buffer, NULL, dest_buffer, NULL);
 

@@ -8,7 +8,7 @@
 /* Alexander.Schulz@stud.uni-karlsruhe.de                        */
 
 /*
- * GIMP - The GNU Image Manipulation Program
+ * PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,12 +33,12 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "bmp.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 typedef enum
 {
@@ -130,7 +130,7 @@ warning_dialog (const gchar *primary,
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
                                             "%s", secondary);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   ok = (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
@@ -139,7 +139,7 @@ warning_dialog (const gchar *primary,
   return ok;
 }
 
-GimpPDBStatusType
+PicmanPDBStatusType
 WriteBMP (const gchar  *filename,
           gint32        image,
           gint32        drawable_ID,
@@ -156,7 +156,7 @@ WriteBMP (const gchar  *filename,
   guchar        *pixels;
   GeglBuffer    *buffer;
   const Babl    *format;
-  GimpImageType  drawable_type;
+  PicmanImageType  drawable_type;
   gint           drawable_width;
   gint           drawable_height;
   guchar         puffer[128];
@@ -165,15 +165,15 @@ WriteBMP (const gchar  *filename,
   gint           color_space_size;
   guint32        Mask[4];
 
-  buffer = gimp_drawable_get_buffer (drawable_ID);
+  buffer = picman_drawable_get_buffer (drawable_ID);
 
-  drawable_type   = gimp_drawable_type   (drawable_ID);
-  drawable_width  = gimp_drawable_width  (drawable_ID);
-  drawable_height = gimp_drawable_height (drawable_ID);
+  drawable_type   = picman_drawable_type   (drawable_ID);
+  drawable_width  = picman_drawable_width  (drawable_ID);
+  drawable_height = picman_drawable_height (drawable_ID);
 
   switch (drawable_type)
     {
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       format       = babl_format ("R'G'B'A u8");
       colors       = 0;
       BitsPerPixel = 32;
@@ -182,7 +182,7 @@ WriteBMP (const gchar  *filename,
       BMPSaveData.rgb_format = RGBA_8888;
       break;
 
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       format       = babl_format ("R'G'B' u8");
       colors       = 0;
       BitsPerPixel = 24;
@@ -191,20 +191,20 @@ WriteBMP (const gchar  *filename,
       BMPSaveData.rgb_format = RGB_888;
       break;
 
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       if (interactive && !warning_dialog (_("Cannot save indexed image with "
                                             "transparency in BMP file format."),
                                           _("Alpha channel will be ignored.")))
-        return GIMP_PDB_CANCEL;
+        return PICMAN_PDB_CANCEL;
 
      /* fallthrough */
 
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       colors       = 256;
       BitsPerPixel = 8;
       MapSize      = 1024;
 
-      if (drawable_type == GIMP_GRAYA_IMAGE)
+      if (drawable_type == PICMAN_GRAYA_IMAGE)
         {
           format   = babl_format ("Y'A u8");
           channels = 2;
@@ -223,20 +223,20 @@ WriteBMP (const gchar  *filename,
         }
       break;
 
-    case GIMP_INDEXEDA_IMAGE:
+    case PICMAN_INDEXEDA_IMAGE:
       if (interactive && !warning_dialog (_("Cannot save indexed image with "
                                             "transparency in BMP file format."),
                                           _("Alpha channel will be ignored.")))
-        return GIMP_PDB_CANCEL;
+        return PICMAN_PDB_CANCEL;
 
      /* fallthrough */
 
-    case GIMP_INDEXED_IMAGE:
-      format   = gimp_drawable_get_format (drawable_ID);
-      cmap     = gimp_image_get_colormap (image, &colors);
+    case PICMAN_INDEXED_IMAGE:
+      format   = picman_drawable_get_format (drawable_ID);
+      cmap     = picman_image_get_colormap (image, &colors);
       MapSize  = 4 * colors;
 
-      if (drawable_type == GIMP_INDEXEDA_IMAGE)
+      if (drawable_type == PICMAN_INDEXEDA_IMAGE)
         channels = 2;
       else
         channels = 1;
@@ -266,18 +266,18 @@ WriteBMP (const gchar  *filename,
 
   if (interactive || lastvals)
     {
-      gimp_get_data (SAVE_PROC, &BMPSaveData);
+      picman_get_data (SAVE_PROC, &BMPSaveData);
     }
 
   if ((BitsPerPixel == 8 || BitsPerPixel == 4) && interactive)
     {
       if (! save_dialog (1))
-        return GIMP_PDB_CANCEL;
+        return PICMAN_PDB_CANCEL;
     }
   else if ((BitsPerPixel == 24 || BitsPerPixel == 32))
     {
       if (interactive && !save_dialog (channels))
-        return GIMP_PDB_CANCEL;
+        return PICMAN_PDB_CANCEL;
 
       /* mask_info_size is only set to non-zero for 16- and 32-bpp */
       switch (BMPSaveData.rgb_format)
@@ -306,11 +306,11 @@ WriteBMP (const gchar  *filename,
           mask_info_size = 16;
           break;
         default:
-          g_return_val_if_reached (GIMP_PDB_EXECUTION_ERROR);
+          g_return_val_if_reached (PICMAN_PDB_EXECUTION_ERROR);
         }
     }
 
-  gimp_set_data (SAVE_PROC, &BMPSaveData, sizeof (BMPSaveData));
+  picman_set_data (SAVE_PROC, &BMPSaveData, sizeof (BMPSaveData));
 
   /* Let's take some file */
   outfile = g_fopen (filename, "wb");
@@ -318,8 +318,8 @@ WriteBMP (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
-      return GIMP_PDB_EXECUTION_ERROR;
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
 
   /* fetch the image */
@@ -333,8 +333,8 @@ WriteBMP (const gchar  *filename,
   g_object_unref (buffer);
 
   /* And let's begin the progress */
-  gimp_progress_init_printf (_("Saving '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Saving '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   cur_progress = 0;
   max_progress = drawable_height;
@@ -390,10 +390,10 @@ WriteBMP (const gchar  *filename,
   {
     gdouble xresolution;
     gdouble yresolution;
-    gimp_image_get_resolution (image, &xresolution, &yresolution);
+    picman_image_get_resolution (image, &xresolution, &yresolution);
 
-    if (xresolution > GIMP_MIN_RESOLUTION &&
-        yresolution > GIMP_MIN_RESOLUTION)
+    if (xresolution > PICMAN_MIN_RESOLUTION &&
+        yresolution > PICMAN_MIN_RESOLUTION)
       {
         /*
          * xresolution and yresolution are in dots per inch.
@@ -548,7 +548,7 @@ WriteBMP (const gchar  *filename,
   fclose (outfile);
   g_free (pixels);
 
-  return GIMP_PDB_SUCCESS;
+  return PICMAN_PDB_SUCCESS;
 }
 
 static inline void Make565(guchar r, guchar g, guchar b, guchar *buf)
@@ -670,7 +670,7 @@ write_image (FILE   *f,
 
           cur_progress++;
           if ((cur_progress % 5) == 0)
-            gimp_progress_update ((gdouble) cur_progress /
+            picman_progress_update ((gdouble) cur_progress /
                                   (gdouble) max_progress);
 
           xpos = 0;
@@ -706,7 +706,7 @@ write_image (FILE   *f,
 
                 cur_progress++;
                 if ((cur_progress % 5) == 0)
-                  gimp_progress_update ((gdouble) cur_progress /
+                  picman_progress_update ((gdouble) cur_progress /
                                         (gdouble) max_progress);
               }
             break;
@@ -820,7 +820,7 @@ write_image (FILE   *f,
 
                 cur_progress++;
                 if ((cur_progress % 5) == 0)
-                  gimp_progress_update ((gdouble) cur_progress /
+                  picman_progress_update ((gdouble) cur_progress /
                                         (gdouble) max_progress);
               }
             fseek (f, -2, SEEK_CUR);     /* Overwrite last End of row ... */
@@ -840,7 +840,7 @@ write_image (FILE   *f,
         }
     }
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 }
 
 static void
@@ -865,13 +865,13 @@ save_dialog (gint channels)
   gboolean   run;
 
   /* Dialog init */
-  dialog = gimp_export_dialog_new ("BMP", PLUG_IN_BINARY, SAVE_PROC);
+  dialog = picman_export_dialog_new ("BMP", PLUG_IN_BINARY, SAVE_PROC);
 
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
 
   vbox_main = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox_main), 12);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       vbox_main, TRUE, TRUE, 0);
   gtk_widget_show (vbox_main);
 
@@ -885,7 +885,7 @@ save_dialog (gint channels)
     gtk_widget_set_sensitive (toggle, FALSE);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &BMPSaveData.use_run_length_encoding);
 
   /* Compatibility Options */
@@ -900,11 +900,11 @@ save_dialog (gint channels)
   gtk_widget_show (vbox2);
 
   toggle = gtk_check_button_new_with_mnemonic (_("_Do not write color space information"));
-  gimp_help_set_help_data (toggle,
+  picman_help_set_help_data (toggle,
                            _("Some applications can not read BMP images that "
-                             "include color space information. GIMP writes "
+                             "include color space information. PICMAN writes "
                              "color space information by default. Enabling "
-                             "this option will cause GIMP to not write color "
+                             "this option will cause PICMAN to not write color "
                              "space information to the file."),
                            NULL);
   gtk_box_pack_start (GTK_BOX (vbox2), toggle, FALSE, FALSE, 0);
@@ -913,7 +913,7 @@ save_dialog (gint channels)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &BMPSaveData.dont_write_color_space_data);
 
   /* Advanced Options */
@@ -932,7 +932,7 @@ save_dialog (gint channels)
 
   group = NULL;
 
-  frame = gimp_frame_new (_("16 bits"));
+  frame = picman_frame_new (_("16 bits"));
   gtk_box_pack_start (GTK_BOX (vbox2), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -968,7 +968,7 @@ save_dialog (gint channels)
                     G_CALLBACK (format_callback),
                     GINT_TO_POINTER (RGB_555));
 
-  frame = gimp_frame_new (_("24 bits"));
+  frame = picman_frame_new (_("24 bits"));
   gtk_box_pack_start (GTK_BOX (vbox2), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -985,7 +985,7 @@ save_dialog (gint channels)
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle), TRUE);
     }
 
-  frame = gimp_frame_new (_("32 bits"));
+  frame = picman_frame_new (_("32 bits"));
   gtk_box_pack_start (GTK_BOX (vbox2), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1023,7 +1023,7 @@ save_dialog (gint channels)
   /* Dialog show */
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

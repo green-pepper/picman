@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gimpfu import *
+from picmanfu import *
 from colorsys import rgb_to_yiq
 from random import randint
 
-gettext.install("gimp20-python", gimp.locale_directory, unicode=True)
+gettext.install("picman20-python", picman.locale_directory, unicode=True)
 
 AVAILABLE_CHANNELS = (_("Red"), _("Green"), _("Blue"),
                       _("Luma (Y)"),
@@ -184,24 +184,24 @@ def palette_sort (palette, selection, slice_expr, channel, quantize,
     pgrain = quantization_grain(pchannel, pquantize)
 
     #If palette is read only, work on a copy:
-    editable = pdb.gimp_palette_is_editable(palette)
+    editable = pdb.picman_palette_is_editable(palette)
     if not editable:
-        palette = pdb.gimp_palette_duplicate (palette)
+        palette = pdb.picman_palette_duplicate (palette)
 
-    num_colors = pdb.gimp_palette_get_info (palette)
+    num_colors = pdb.picman_palette_get_info (palette)
 
     start, nrows, length = None, None, None
     if selection == SELECT_AUTOSLICE:
         def find_index(color, startindex=0):
             for i in range(startindex, num_colors):
-                c = pdb.gimp_palette_entry_get_color (palette, i)
+                c = pdb.picman_palette_entry_get_color (palette, i)
                 if c == color:
                     return i
             return None
         def hexcolor(c):
             return "#%02x%02x%02x" % tuple(c[:-1])
-        fg = pdb.gimp_context_get_foreground()
-        bg = pdb.gimp_context_get_background()
+        fg = pdb.picman_context_get_foreground()
+        bg = pdb.picman_context_get_background()
         start = find_index(fg)
         end = find_index(bg)
         if start is None:
@@ -239,8 +239,8 @@ def palette_sort (palette, selection, slice_expr, channel, quantize,
     def get_colors (start, end):
         result = []
         for i in range (start, end):
-            entry =  (pdb.gimp_palette_entry_get_name (palette, i),
-                      pdb.gimp_palette_entry_get_color (palette, i))
+            entry =  (pdb.picman_palette_entry_get_name (palette, i),
+                      pdb.picman_palette_entry_get_color (palette, i))
             index = channels_getter(entry[1], i)[channel_index]
             index = (index - (index % grain))
             result.append((index, entry))
@@ -250,8 +250,8 @@ def palette_sort (palette, selection, slice_expr, channel, quantize,
         entry_list = get_colors(0, num_colors)
         entry_list.sort(key=lambda v:v[0], reverse=not ascending)
         for i in range(num_colors):
-            pdb.gimp_palette_entry_set_name (palette, i, entry_list[i][1][0])
-            pdb.gimp_palette_entry_set_color (palette, i, entry_list[i][1][1])
+            pdb.picman_palette_entry_set_name (palette, i, entry_list[i][1][0])
+            pdb.picman_palette_entry_set_color (palette, i, entry_list[i][1][1])
 
     elif selection == SELECT_PARTITIONED:
         if num_colors < (start + length * nrows) - 1:
@@ -261,12 +261,12 @@ def palette_sort (palette, selection, slice_expr, channel, quantize,
         for row in range(nrows):
             partition_spans = [1]
             rowstart = start + (row * length)
-            old_color = pdb.gimp_palette_entry_get_color (palette,
+            old_color = pdb.picman_palette_entry_get_color (palette,
                                                           rowstart)
             old_partition = pchannels_getter(old_color, rowstart)[pchannel_index]
             old_partition = old_partition - (old_partition % pgrain)
             for i in range(rowstart + 1, rowstart + length):
-                this_color = pdb.gimp_palette_entry_get_color (palette, i)
+                this_color = pdb.picman_palette_entry_get_color (palette, i)
                 this_partition = pchannels_getter(this_color, i)[pchannel_index]
                 this_partition = this_partition - (this_partition % pgrain)
                 if this_partition == old_partition:
@@ -289,8 +289,8 @@ def palette_sort (palette, selection, slice_expr, channel, quantize,
             sublist = get_colors(row_start, row_start + stride)
             sublist.sort(key=lambda v:v[0], reverse=not ascending)
             for i, entry in zip(range(row_start, row_start + stride), sublist):
-                pdb.gimp_palette_entry_set_name (palette, i, entry[1][0])
-                pdb.gimp_palette_entry_set_color (palette, i, entry[1][1])
+                pdb.picman_palette_entry_set_name (palette, i, entry[1][0])
+                pdb.picman_palette_entry_set_color (palette, i, entry[1][1])
 
     return palette
 
@@ -321,7 +321,7 @@ register(
     [],
     palette_sort,
     menu="<Palettes>",
-    domain=("gimp20-python", gimp.locale_directory)
+    domain=("picman20-python", picman.locale_directory)
     )
 
 

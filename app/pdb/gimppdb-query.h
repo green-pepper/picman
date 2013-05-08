@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PDB_QUERY_H__
-#define __GIMP_PDB_QUERY_H__
+#ifndef __PICMAN_PDB_QUERY_H__
+#define __PICMAN_PDB_QUERY_H__
 
 
-gboolean   gimp_pdb_dump      (GimpPDB          *pdb,
+gboolean   picman_pdb_dump      (PicmanPDB          *pdb,
                                const gchar      *filename);
-gboolean   gimp_pdb_query     (GimpPDB          *pdb,
+gboolean   picman_pdb_query     (PicmanPDB          *pdb,
                                const gchar      *name,
                                const gchar      *blurb,
                                const gchar      *help,
@@ -32,17 +32,17 @@ gboolean   gimp_pdb_query     (GimpPDB          *pdb,
                                gint             *num_procs,
                                gchar          ***procs,
                                GError          **error);
-gboolean   gimp_pdb_proc_info (GimpPDB          *pdb,
+gboolean   picman_pdb_proc_info (PicmanPDB          *pdb,
                                const gchar      *proc_name,
                                gchar           **blurb,
                                gchar           **help,
                                gchar           **author,
                                gchar           **copyright,
                                gchar           **date,
-                               GimpPDBProcType  *proc_type,
+                               PicmanPDBProcType  *proc_type,
                                gint             *num_args,
                                gint             *num_values,
                                GError          **error);
 
 
-#endif /* __GIMP_PDB_QUERY_H__ */
+#endif /* __PICMAN_PDB_QUERY_H__ */

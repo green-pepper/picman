@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpmenufactory.c
- * Copyright (C) 2001-2004 Michael Natterer <mitch@gimp.org>
+ * picmanmenufactory.c
+ * Copyright (C) 2001-2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,60 +24,60 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "gimpactionfactory.h"
-#include "gimpmenufactory.h"
-#include "gimpuimanager.h"
+#include "picmanactionfactory.h"
+#include "picmanmenufactory.h"
+#include "picmanuimanager.h"
 
 
-struct _GimpMenuFactoryPrivate
+struct _PicmanMenuFactoryPrivate
 {
-  Gimp              *gimp;
-  GimpActionFactory *action_factory;
+  Picman              *picman;
+  PicmanActionFactory *action_factory;
   GList             *registered_menus;
 };
 
 
-static void   gimp_menu_factory_finalize (GObject *object);
+static void   picman_menu_factory_finalize (GObject *object);
 
 
-G_DEFINE_TYPE (GimpMenuFactory, gimp_menu_factory, GIMP_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanMenuFactory, picman_menu_factory, PICMAN_TYPE_OBJECT)
 
-#define parent_class gimp_menu_factory_parent_class
+#define parent_class picman_menu_factory_parent_class
 
 
 static void
-gimp_menu_factory_class_init (GimpMenuFactoryClass *klass)
+picman_menu_factory_class_init (PicmanMenuFactoryClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize = gimp_menu_factory_finalize;
+  object_class->finalize = picman_menu_factory_finalize;
 
-  g_type_class_add_private (klass, sizeof (GimpMenuFactoryPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanMenuFactoryPrivate));
 }
 
 static void
-gimp_menu_factory_init (GimpMenuFactory *factory)
+picman_menu_factory_init (PicmanMenuFactory *factory)
 {
   factory->p = G_TYPE_INSTANCE_GET_PRIVATE (factory,
-                                            GIMP_TYPE_MENU_FACTORY,
-                                            GimpMenuFactoryPrivate);
+                                            PICMAN_TYPE_MENU_FACTORY,
+                                            PicmanMenuFactoryPrivate);
 }
 
 static void
-gimp_menu_factory_finalize (GObject *object)
+picman_menu_factory_finalize (GObject *object)
 {
-  GimpMenuFactory *factory = GIMP_MENU_FACTORY (object);
+  PicmanMenuFactory *factory = PICMAN_MENU_FACTORY (object);
   GList           *list;
 
   for (list = factory->p->registered_menus; list; list = g_list_next (list))
     {
-      GimpMenuFactoryEntry *entry = list->data;
+      PicmanMenuFactoryEntry *entry = list->data;
       GList                *uis;
 
       g_free (entry->identifier);
@@ -86,17 +86,17 @@ gimp_menu_factory_finalize (GObject *object)
 
       for (uis = entry->managed_uis; uis; uis = g_list_next (uis))
         {
-          GimpUIManagerUIEntry *ui_entry = uis->data;
+          PicmanUIManagerUIEntry *ui_entry = uis->data;
 
           g_free (ui_entry->ui_path);
           g_free (ui_entry->basename);
 
-          g_slice_free (GimpUIManagerUIEntry, ui_entry);
+          g_slice_free (PicmanUIManagerUIEntry, ui_entry);
         }
 
       g_list_free (entry->managed_uis);
 
-      g_slice_free (GimpMenuFactoryEntry, entry);
+      g_slice_free (PicmanMenuFactoryEntry, entry);
     }
 
   g_list_free (factory->p->registered_menus);
@@ -105,39 +105,39 @@ gimp_menu_factory_finalize (GObject *object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
-GimpMenuFactory *
-gimp_menu_factory_new (Gimp              *gimp,
-                       GimpActionFactory *action_factory)
+PicmanMenuFactory *
+picman_menu_factory_new (Picman              *picman,
+                       PicmanActionFactory *action_factory)
 {
-  GimpMenuFactory *factory;
+  PicmanMenuFactory *factory;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (GIMP_IS_ACTION_FACTORY (action_factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (PICMAN_IS_ACTION_FACTORY (action_factory), NULL);
 
-  factory = g_object_new (GIMP_TYPE_MENU_FACTORY, NULL);
+  factory = g_object_new (PICMAN_TYPE_MENU_FACTORY, NULL);
 
-  factory->p->gimp           = gimp;
+  factory->p->picman           = picman;
   factory->p->action_factory = action_factory;
 
   return factory;
 }
 
 void
-gimp_menu_factory_manager_register (GimpMenuFactory *factory,
+picman_menu_factory_manager_register (PicmanMenuFactory *factory,
                                     const gchar     *identifier,
                                     const gchar     *first_group,
                                     ...)
 {
-  GimpMenuFactoryEntry *entry;
+  PicmanMenuFactoryEntry *entry;
   const gchar          *group;
   const gchar          *ui_path;
   va_list               args;
 
-  g_return_if_fail (GIMP_IS_MENU_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_MENU_FACTORY (factory));
   g_return_if_fail (identifier != NULL);
   g_return_if_fail (first_group != NULL);
 
-  entry = g_slice_new0 (GimpMenuFactoryEntry);
+  entry = g_slice_new0 (PicmanMenuFactoryEntry);
 
   entry->identifier = g_strdup (identifier);
 
@@ -160,13 +160,13 @@ gimp_menu_factory_manager_register (GimpMenuFactory *factory,
   while (ui_path)
     {
       const gchar            *ui_basename;
-      GimpUIManagerSetupFunc  setup_func;
-      GimpUIManagerUIEntry   *ui_entry;
+      PicmanUIManagerSetupFunc  setup_func;
+      PicmanUIManagerUIEntry   *ui_entry;
 
       ui_basename = va_arg (args, const gchar *);
-      setup_func  = va_arg (args, GimpUIManagerSetupFunc);
+      setup_func  = va_arg (args, PicmanUIManagerSetupFunc);
 
-      ui_entry = g_slice_new0 (GimpUIManagerUIEntry);
+      ui_entry = g_slice_new0 (PicmanUIManagerUIEntry);
 
       ui_entry->ui_path    = g_strdup (ui_path);
       ui_entry->basename   = g_strdup (ui_basename);
@@ -183,35 +183,35 @@ gimp_menu_factory_manager_register (GimpMenuFactory *factory,
 }
 
 GList *
-gimp_menu_factory_get_registered_menus (GimpMenuFactory *factory)
+picman_menu_factory_get_registered_menus (PicmanMenuFactory *factory)
 {
-  g_return_val_if_fail (GIMP_IS_MENU_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_MENU_FACTORY (factory), NULL);
 
   return factory->p->registered_menus;
 }
 
-GimpUIManager *
-gimp_menu_factory_manager_new (GimpMenuFactory *factory,
+PicmanUIManager *
+picman_menu_factory_manager_new (PicmanMenuFactory *factory,
                                const gchar     *identifier,
                                gpointer         callback_data,
                                gboolean         create_tearoff)
 {
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_MENU_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_MENU_FACTORY (factory), NULL);
   g_return_val_if_fail (identifier != NULL, NULL);
 
   for (list = factory->p->registered_menus; list; list = g_list_next (list))
     {
-      GimpMenuFactoryEntry *entry = list->data;
+      PicmanMenuFactoryEntry *entry = list->data;
 
       if (! strcmp (entry->identifier, identifier))
         {
-          GimpUIManager *manager;
+          PicmanUIManager *manager;
           GtkAccelGroup *accel_group;
           GList         *list;
 
-          manager = gimp_ui_manager_new (factory->p->gimp, entry->identifier);
+          manager = picman_ui_manager_new (factory->p->picman, entry->identifier);
           gtk_ui_manager_set_add_tearoffs (GTK_UI_MANAGER (manager),
                                            create_tearoff);
 
@@ -219,11 +219,11 @@ gimp_menu_factory_manager_new (GimpMenuFactory *factory,
 
           for (list = entry->action_groups; list; list = g_list_next (list))
             {
-              GimpActionGroup *group;
+              PicmanActionGroup *group;
               GList           *actions;
               GList           *list2;
 
-              group = gimp_action_factory_group_new (factory->p->action_factory,
+              group = picman_action_factory_group_new (factory->p->action_factory,
                                                      (const gchar *) list->data,
                                                      callback_data);
 
@@ -248,9 +248,9 @@ gimp_menu_factory_manager_new (GimpMenuFactory *factory,
 
           for (list = entry->managed_uis; list; list = g_list_next (list))
             {
-              GimpUIManagerUIEntry *ui_entry = list->data;
+              PicmanUIManagerUIEntry *ui_entry = list->data;
 
-              gimp_ui_manager_ui_register (manager,
+              picman_ui_manager_ui_register (manager,
                                            ui_entry->ui_path,
                                            ui_entry->basename,
                                            ui_entry->setup_func);

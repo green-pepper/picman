@@ -1,4 +1,4 @@
-/* gimpparasite.c: Copyright 1998 Jay Cox <jaycox@gimp.org>
+/* picmanparasite.c: Copyright 1998 Jay Cox <jaycox@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,69 +18,69 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimp-parasites.h"
-#include "gimpparasitelist.h"
+#include "picman.h"
+#include "picman-parasites.h"
+#include "picmanparasitelist.h"
 
 
 void
-gimp_parasite_attach (Gimp               *gimp,
-                      const GimpParasite *parasite)
+picman_parasite_attach (Picman               *picman,
+                      const PicmanParasite *parasite)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
   g_return_if_fail (parasite != NULL);
 
-  gimp_parasite_list_add (gimp->parasites, parasite);
+  picman_parasite_list_add (picman->parasites, parasite);
 }
 
 void
-gimp_parasite_detach (Gimp        *gimp,
+picman_parasite_detach (Picman        *picman,
                       const gchar *name)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
   g_return_if_fail (name != NULL);
 
-  gimp_parasite_list_remove (gimp->parasites, name);
+  picman_parasite_list_remove (picman->parasites, name);
 }
 
-const GimpParasite *
-gimp_parasite_find (Gimp        *gimp,
+const PicmanParasite *
+picman_parasite_find (Picman        *picman,
                     const gchar *name)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (name != NULL, NULL);
 
-  return gimp_parasite_list_find (gimp->parasites, name);
+  return picman_parasite_list_find (picman->parasites, name);
 }
 
 static void
 list_func (const gchar    *key,
-           GimpParasite   *parasite,
+           PicmanParasite   *parasite,
            gchar        ***current)
 {
   *(*current)++ = g_strdup (key);
 }
 
 gchar **
-gimp_parasite_list (Gimp *gimp,
+picman_parasite_list (Picman *picman,
                     gint *count)
 {
   gchar **list;
   gchar **current;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (count != NULL, NULL);
 
-  *count = gimp_parasite_list_length (gimp->parasites);
+  *count = picman_parasite_list_length (picman->parasites);
 
   list = current = g_new (gchar *, *count);
 
-  gimp_parasite_list_foreach (gimp->parasites, (GHFunc) list_func, &current);
+  picman_parasite_list_foreach (picman->parasites, (GHFunc) list_func, &current);
 
   return list;
 }
@@ -89,7 +89,7 @@ gimp_parasite_list (Gimp *gimp,
 /*  FIXME: this doesn't belong here  */
 
 void
-gimp_parasite_shift_parent (GimpParasite *parasite)
+picman_parasite_shift_parent (PicmanParasite *parasite)
 {
   g_return_if_fail (parasite != NULL);
 
@@ -100,23 +100,23 @@ gimp_parasite_shift_parent (GimpParasite *parasite)
 /*  parasiterc functions  */
 
 void
-gimp_parasiterc_load (Gimp *gimp)
+picman_parasiterc_load (Picman *picman)
 {
   gchar  *filename;
   GError *error = NULL;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  filename = gimp_personal_rc_file ("parasiterc");
+  filename = picman_personal_rc_file ("parasiterc");
 
-  if (gimp->be_verbose)
-    g_print ("Parsing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Parsing '%s'\n", picman_filename_to_utf8 (filename));
 
-  if (! gimp_config_deserialize_file (GIMP_CONFIG (gimp->parasites),
+  if (! picman_config_deserialize_file (PICMAN_CONFIG (picman->parasites),
                                       filename, NULL, &error))
     {
-      if (error->code != GIMP_CONFIG_ERROR_OPEN_ENOENT)
-        gimp_message_literal (gimp, NULL, GIMP_MESSAGE_ERROR, error->message);
+      if (error->code != PICMAN_CONFIG_ERROR_OPEN_ENOENT)
+        picman_message_literal (picman, NULL, PICMAN_MESSAGE_ERROR, error->message);
 
       g_error_free (error);
     }
@@ -125,10 +125,10 @@ gimp_parasiterc_load (Gimp *gimp)
 }
 
 void
-gimp_parasiterc_save (Gimp *gimp)
+picman_parasiterc_save (Picman *picman)
 {
   const gchar *header =
-    "GIMP parasiterc\n"
+    "PICMAN parasiterc\n"
     "\n"
     "This file will be entirely rewritten each time you exit.";
   const gchar *footer =
@@ -137,20 +137,20 @@ gimp_parasiterc_save (Gimp *gimp)
   gchar  *filename;
   GError *error = NULL;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (GIMP_IS_PARASITE_LIST (gimp->parasites));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (PICMAN_IS_PARASITE_LIST (picman->parasites));
 
-  filename = gimp_personal_rc_file ("parasiterc");
+  filename = picman_personal_rc_file ("parasiterc");
 
-  if (gimp->be_verbose)
-    g_print ("Writing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Writing '%s'\n", picman_filename_to_utf8 (filename));
 
-  if (! gimp_config_serialize_to_file (GIMP_CONFIG (gimp->parasites),
+  if (! picman_config_serialize_to_file (PICMAN_CONFIG (picman->parasites),
                                        filename,
                                        header, footer, NULL,
                                        &error))
     {
-      gimp_message_literal (gimp, NULL, GIMP_MESSAGE_ERROR, error->message);
+      picman_message_literal (picman, NULL, PICMAN_MESSAGE_ERROR, error->message);
       g_error_free (error);
     }
 

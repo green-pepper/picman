@@ -1,57 +1,57 @@
-  GIMP UI Framework
+  PICMAN UI Framework
   =================
 
-This document describes how the GIMP UI framework functions and is
+This document describes how the PICMAN UI framework functions and is
 implemented. Here, "UI framework" refers to the system that saves the
-UI layout between GIMP sessions, i.e. how docks, dockable dialogs etc
+UI layout between PICMAN sessions, i.e. how docks, dockable dialogs etc
 are setup.
 
 
   Key Classes
   -----------
 
-GimpDockable      - Represents a dockable dialog.
-GimpDockbook      - A GtkNotebook of GimpDockables
-GimpDock          - A columns of GimpDockbooks
-GimpToolbox       - Subclasses GimpDock, contains the toolbox.
+PicmanDockable      - Represents a dockable dialog.
+PicmanDockbook      - A GtkNotebook of PicmanDockables
+PicmanDock          - A columns of PicmanDockbooks
+PicmanToolbox       - Subclasses PicmanDock, contains the toolbox.
                     Dockables are added at the bottom
-GimpMenuDock      - Subclasses GimpDock, contains dockables, should
-                    probably be merged with GimpDock. The name
+PicmanMenuDock      - Subclasses PicmanDock, contains dockables, should
+                    probably be merged with PicmanDock. The name
                     contains "menu" from the time when it hosted the
                     Image Selection Menu that is now in the
-                    GimpDockWindow
-GimpDockColumns   - A set of GimpDocks arranged side by side.
-GimpDockWindow    - A toplevel window containing a GimpDockColumns.
-GimpImageWindow   - A toplevel window containing images and one
-                    GimpDockColumns to the left and to the right.
-GimpDialogFactory - A factory to create and position toplevel windows
-GimpSessionInfo   - Contains session info for one toplevel
-GimpUIConfigurer  - Configures the UI when switching between
+                    PicmanDockWindow
+PicmanDockColumns   - A set of PicmanDocks arranged side by side.
+PicmanDockWindow    - A toplevel window containing a PicmanDockColumns.
+PicmanImageWindow   - A toplevel window containing images and one
+                    PicmanDockColumns to the left and to the right.
+PicmanDialogFactory - A factory to create and position toplevel windows
+PicmanSessionInfo   - Contains session info for one toplevel
+PicmanUIConfigurer  - Configures the UI when switching between
                     single-window and multi-window mode
 
 
-  GimpDialogFactory
+  PicmanDialogFactory
   -----------------
 
-The GimpDialogFactory can be considered to solve two distinct
+The PicmanDialogFactory can be considered to solve two distinct
 problems:
 
 1. Create widgets from text, in particular from text in sessionrc
 2. Session manage toplevel windows so their position is remebered
-   across GIMP sessions
+   across PICMAN sessions
 
-One possible design adjustment would be to have GimpWidgetFactory that
-takes care of 1), and then have GimpDialogFactory inherit from
-GtkWidgetFactory and implementing 2). GimpWidgetFactory could possibly
+One possible design adjustment would be to have PicmanWidgetFactory that
+takes care of 1), and then have PicmanDialogFactory inherit from
+GtkWidgetFactory and implementing 2). PicmanWidgetFactory could possibly
 use GtkBuilder.
 
 
   sessionrc
   ---------
-When GIMP starts, the sessionrc file is parsed. This step puts
-GimpSessionInfo:s into GimpDialogFactories. Later when dialogs are
+When PICMAN starts, the sessionrc file is parsed. This step puts
+PicmanSessionInfo:s into PicmanDialogFactories. Later when dialogs are
 created, the dialog factory looks up existing session info entries. If
 one exists, it uses the session info to set e.g. the position of the
 created dialog. If it doesn't exist, it creates a new session info
-object for the dialog. When GIMP exists, the current session infos are
+object for the dialog. When PICMAN exists, the current session infos are
 then written back to sessionrc.

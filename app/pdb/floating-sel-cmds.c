@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,344 +23,344 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer-floating-sel.h"
-#include "core/gimplayer.h"
-#include "core/gimpparamspecs.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer-floating-sel.h"
+#include "core/picmanlayer.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimppdberror.h"
-#include "gimppdb-utils.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdberror.h"
+#include "picmanpdb-utils.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GimpValueArray *
-floating_sel_remove_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+floating_sel_remove_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *floating_sel;
+  PicmanLayer *floating_sel;
 
-  floating_sel = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  floating_sel = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp_layer_is_floating_sel (floating_sel))
+      if (picman_layer_is_floating_sel (floating_sel))
         {
-          gimp_image_remove_layer (gimp_item_get_image (GIMP_ITEM (floating_sel)),
+          picman_image_remove_layer (picman_item_get_image (PICMAN_ITEM (floating_sel)),
                                    floating_sel, TRUE, NULL);
         }
       else
         {
-          g_set_error_literal (error, GIMP_PDB_ERROR,
-                               GIMP_PDB_ERROR_INVALID_ARGUMENT,
+          g_set_error_literal (error, PICMAN_PDB_ERROR,
+                               PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                                _("Cannot remove this layer because "
                                  "it is not a floating selection."));
           success = FALSE;
         }
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-floating_sel_anchor_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+floating_sel_anchor_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *floating_sel;
+  PicmanLayer *floating_sel;
 
-  floating_sel = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  floating_sel = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp_layer_is_floating_sel (floating_sel))
+      if (picman_layer_is_floating_sel (floating_sel))
         {
           floating_sel_anchor (floating_sel);
         }
       else
         {
-          g_set_error_literal (error, GIMP_PDB_ERROR,
-                               GIMP_PDB_ERROR_INVALID_ARGUMENT,
+          g_set_error_literal (error, PICMAN_PDB_ERROR,
+                               PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                                _("Cannot anchor this layer because "
                                  "it is not a floating selection."));
           success = FALSE;
         }
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-floating_sel_to_layer_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+floating_sel_to_layer_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *floating_sel;
+  PicmanLayer *floating_sel;
 
-  floating_sel = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  floating_sel = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp_layer_is_floating_sel (floating_sel))
+      if (picman_layer_is_floating_sel (floating_sel))
         {
           success = floating_sel_to_layer (floating_sel, error);
         }
       else
         {
-          g_set_error_literal (error, GIMP_PDB_ERROR,
-                               GIMP_PDB_ERROR_INVALID_ARGUMENT,
+          g_set_error_literal (error, PICMAN_PDB_ERROR,
+                               PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                                _("Cannot convert this layer to a normal layer "
                                  "because it is not a floating selection."));
           success = FALSE;
         }
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-floating_sel_attach_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+floating_sel_attach_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
-  GimpDrawable *drawable;
+  PicmanLayer *layer;
+  PicmanDrawable *drawable;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 1), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 1), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         floating_sel_attach (layer, drawable);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-floating_sel_rigor_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+floating_sel_rigor_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
   if (success)
     {
     }
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-floating_sel_relax_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+floating_sel_relax_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
   if (success)
     {
     }
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_floating_sel_procs (GimpPDB *pdb)
+register_floating_sel_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-floating-sel-remove
+   * picman-floating-sel-remove
    */
-  procedure = gimp_procedure_new (floating_sel_remove_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-floating-sel-remove");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-floating-sel-remove",
+  procedure = picman_procedure_new (floating_sel_remove_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-floating-sel-remove");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-floating-sel-remove",
                                      "Remove the specified floating selection from its associated drawable.",
                                      "This procedure removes the floating selection completely, without any side effects. The associated drawable is then set to active.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("floating-sel",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("floating-sel",
                                                          "floating sel",
                                                          "The floating selection",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-floating-sel-anchor
+   * picman-floating-sel-anchor
    */
-  procedure = gimp_procedure_new (floating_sel_anchor_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-floating-sel-anchor");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-floating-sel-anchor",
+  procedure = picman_procedure_new (floating_sel_anchor_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-floating-sel-anchor");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-floating-sel-anchor",
                                      "Anchor the specified floating selection to its associated drawable.",
                                      "This procedure anchors the floating selection to its associated drawable. This is similar to merging with a merge type of ClipToBottomLayer. The floating selection layer is no longer valid after this operation.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("floating-sel",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("floating-sel",
                                                          "floating sel",
                                                          "The floating selection",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-floating-sel-to-layer
+   * picman-floating-sel-to-layer
    */
-  procedure = gimp_procedure_new (floating_sel_to_layer_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-floating-sel-to-layer");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-floating-sel-to-layer",
+  procedure = picman_procedure_new (floating_sel_to_layer_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-floating-sel-to-layer");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-floating-sel-to-layer",
                                      "Transforms the specified floating selection into a layer.",
                                      "This procedure transforms the specified floating selection into a layer with the same offsets and extents. The composited image will look precisely the same, but the floating selection layer will no longer be clipped to the extents of the drawable it was attached to. The floating selection will become the active layer. This procedure will not work if the floating selection has a different base type from the underlying image. This might be the case if the floating selection is above an auxiliary channel or a layer mask.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("floating-sel",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("floating-sel",
                                                          "floating sel",
                                                          "The floating selection",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-floating-sel-attach
+   * picman-floating-sel-attach
    */
-  procedure = gimp_procedure_new (floating_sel_attach_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-floating-sel-attach");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-floating-sel-attach",
+  procedure = picman_procedure_new (floating_sel_attach_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-floating-sel-attach");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-floating-sel-attach",
                                      "Attach the specified layer as floating to the specified drawable.",
                                      "This procedure attaches the layer as floating selection to the drawable.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer (is attached as floating selection)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The drawable (where to attach the floating selection)",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-floating-sel-rigor
+   * picman-floating-sel-rigor
    */
-  procedure = gimp_procedure_new (floating_sel_rigor_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-floating-sel-rigor");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-floating-sel-rigor",
+  procedure = picman_procedure_new (floating_sel_rigor_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-floating-sel-rigor");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-floating-sel-rigor",
                                      "Deprecated: There is no replacement for this procedure.",
                                      "Deprecated: There is no replacement for this procedure.",
                                      "",
                                      "",
                                      "",
                                      "NONE");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("floating-sel",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("floating-sel",
                                                          "floating sel",
                                                          "The floating selection",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("undo",
                                                      "undo",
                                                      "",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-floating-sel-relax
+   * picman-floating-sel-relax
    */
-  procedure = gimp_procedure_new (floating_sel_relax_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-floating-sel-relax");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-floating-sel-relax",
+  procedure = picman_procedure_new (floating_sel_relax_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-floating-sel-relax");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-floating-sel-relax",
                                      "Deprecated: There is no replacement for this procedure.",
                                      "Deprecated: There is no replacement for this procedure.",
                                      "",
                                      "",
                                      "",
                                      "NONE");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("floating-sel",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("floating-sel",
                                                          "floating sel",
                                                          "The floating selection",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("undo",
                                                      "undo",
                                                      "",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

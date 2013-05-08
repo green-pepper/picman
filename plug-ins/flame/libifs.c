@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <string.h> /* strcmp */
 
-#include "libgimp/gimp.h"
+#include "libpicman/picman.h"
 
 #include "libifs.h"
 

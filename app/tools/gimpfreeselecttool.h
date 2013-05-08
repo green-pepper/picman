@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,51 +15,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FREE_SELECT_TOOL_H__
-#define __GIMP_FREE_SELECT_TOOL_H__
+#ifndef __PICMAN_FREE_SELECT_TOOL_H__
+#define __PICMAN_FREE_SELECT_TOOL_H__
 
 
-#include "gimpselectiontool.h"
+#include "picmanselectiontool.h"
 
 
-#define GIMP_TYPE_FREE_SELECT_TOOL            (gimp_free_select_tool_get_type ())
-#define GIMP_FREE_SELECT_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FREE_SELECT_TOOL, GimpFreeSelectTool))
-#define GIMP_FREE_SELECT_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FREE_SELECT_TOOL, GimpFreeSelectToolClass))
-#define GIMP_IS_FREE_SELECT_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FREE_SELECT_TOOL))
-#define GIMP_IS_FREE_SELECT_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FREE_SELECT_TOOL))
-#define GIMP_FREE_SELECT_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FREE_SELECT_TOOL, GimpFreeSelectToolClass))
+#define PICMAN_TYPE_FREE_SELECT_TOOL            (picman_free_select_tool_get_type ())
+#define PICMAN_FREE_SELECT_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FREE_SELECT_TOOL, PicmanFreeSelectTool))
+#define PICMAN_FREE_SELECT_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FREE_SELECT_TOOL, PicmanFreeSelectToolClass))
+#define PICMAN_IS_FREE_SELECT_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FREE_SELECT_TOOL))
+#define PICMAN_IS_FREE_SELECT_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FREE_SELECT_TOOL))
+#define PICMAN_FREE_SELECT_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FREE_SELECT_TOOL, PicmanFreeSelectToolClass))
 
 
-typedef struct _GimpFreeSelectTool      GimpFreeSelectTool;
-typedef struct _GimpFreeSelectToolClass GimpFreeSelectToolClass;
+typedef struct _PicmanFreeSelectTool      PicmanFreeSelectTool;
+typedef struct _PicmanFreeSelectToolClass PicmanFreeSelectToolClass;
 
-struct _GimpFreeSelectTool
+struct _PicmanFreeSelectTool
 {
-  GimpSelectionTool  parent_instance;
+  PicmanSelectionTool  parent_instance;
 };
 
-struct _GimpFreeSelectToolClass
+struct _PicmanFreeSelectToolClass
 {
-  GimpSelectionToolClass  parent_class;
+  PicmanSelectionToolClass  parent_class;
 
   /*  virtual function  */
 
-  void (* select) (GimpFreeSelectTool *free_select_tool,
-                   GimpDisplay        *display);
+  void (* select) (PicmanFreeSelectTool *free_select_tool,
+                   PicmanDisplay        *display);
 };
 
 
-void    gimp_free_select_tool_register   (GimpToolRegisterCallback  callback,
+void    picman_free_select_tool_register   (PicmanToolRegisterCallback  callback,
                                           gpointer                  data);
 
-GType   gimp_free_select_tool_get_type   (void) G_GNUC_CONST;
+GType   picman_free_select_tool_get_type   (void) G_GNUC_CONST;
 
-void    gimp_free_select_tool_select     (GimpFreeSelectTool       *free_sel,
-                                          GimpDisplay              *display);
+void    picman_free_select_tool_select     (PicmanFreeSelectTool       *free_sel,
+                                          PicmanDisplay              *display);
 
-void    gimp_free_select_tool_get_points (GimpFreeSelectTool       *free_sel,
-                                          const GimpVector2       **points,
+void    picman_free_select_tool_get_points (PicmanFreeSelectTool       *free_sel,
+                                          const PicmanVector2       **points,
                                           gint                     *n_points);
 
 
-#endif  /*  __GIMP_FREE_SELECT_TOOL_H__  */
+#endif  /*  __PICMAN_FREE_SELECT_TOOL_H__  */

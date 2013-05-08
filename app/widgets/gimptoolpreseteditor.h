@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,41 +15,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TOOL_PRESET_EDITOR_H__
-#define __GIMP_TOOL_PRESET_EDITOR_H__
+#ifndef __PICMAN_TOOL_PRESET_EDITOR_H__
+#define __PICMAN_TOOL_PRESET_EDITOR_H__
 
 
-#include "gimpdataeditor.h"
+#include "picmandataeditor.h"
 
 
-#define GIMP_TYPE_TOOL_PRESET_EDITOR            (gimp_tool_preset_editor_get_type ())
-#define GIMP_TOOL_PRESET_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TOOL_PRESET_EDITOR, GimpToolPresetEditor))
-#define GIMP_TOOL_PRESET_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TOOL_PRESET_EDITOR, GimpToolPresetEditorClass))
-#define GIMP_IS_TOOL_PRESET_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TOOL_PRESET_EDITOR))
-#define GIMP_IS_TOOL_PRESET_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TOOL_PRESET_EDITOR))
-#define GIMP_TOOL_PRESET_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TOOL_PRESET_EDITOR, GimpToolPresetEditorClass))
+#define PICMAN_TYPE_TOOL_PRESET_EDITOR            (picman_tool_preset_editor_get_type ())
+#define PICMAN_TOOL_PRESET_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TOOL_PRESET_EDITOR, PicmanToolPresetEditor))
+#define PICMAN_TOOL_PRESET_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TOOL_PRESET_EDITOR, PicmanToolPresetEditorClass))
+#define PICMAN_IS_TOOL_PRESET_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TOOL_PRESET_EDITOR))
+#define PICMAN_IS_TOOL_PRESET_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TOOL_PRESET_EDITOR))
+#define PICMAN_TOOL_PRESET_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TOOL_PRESET_EDITOR, PicmanToolPresetEditorClass))
 
 
-typedef struct _GimpToolPresetEditorPrivate GimpToolPresetEditorPrivate;
-typedef struct _GimpToolPresetEditorClass   GimpToolPresetEditorClass;
+typedef struct _PicmanToolPresetEditorPrivate PicmanToolPresetEditorPrivate;
+typedef struct _PicmanToolPresetEditorClass   PicmanToolPresetEditorClass;
 
-struct _GimpToolPresetEditor
+struct _PicmanToolPresetEditor
 {
-  GimpDataEditor               parent_instance;
+  PicmanDataEditor               parent_instance;
 
-  GimpToolPresetEditorPrivate *priv;
+  PicmanToolPresetEditorPrivate *priv;
 };
 
-struct _GimpToolPresetEditorClass
+struct _PicmanToolPresetEditorClass
 {
-  GimpDataEditorClass  parent_class;
+  PicmanDataEditorClass  parent_class;
 };
 
 
-GType       gimp_tool_preset_editor_get_type (void) G_GNUC_CONST;
+GType       picman_tool_preset_editor_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_tool_preset_editor_new      (GimpContext     *context,
-                                              GimpMenuFactory *menu_factory);
+GtkWidget * picman_tool_preset_editor_new      (PicmanContext     *context,
+                                              PicmanMenuFactory *menu_factory);
 
 
-#endif /* __GIMP_TOOL_PRESET_EDITOR_H__ */
+#endif /* __PICMAN_TOOL_PRESET_EDITOR_H__ */

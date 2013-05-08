@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,164 +25,164 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpparamspecs.h"
-#include "plug-in/gimpplugin.h"
-#include "plug-in/gimppluginmanager.h"
+#include "core/picman.h"
+#include "core/picmanparamspecs.h"
+#include "plug-in/picmanplugin.h"
+#include "plug-in/picmanpluginmanager.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GimpValueArray *
-message_invoker (GimpProcedure         *procedure,
-                 Gimp                  *gimp,
-                 GimpContext           *context,
-                 GimpProgress          *progress,
-                 const GimpValueArray  *args,
+static PicmanValueArray *
+message_invoker (PicmanProcedure         *procedure,
+                 Picman                  *picman,
+                 PicmanContext           *context,
+                 PicmanProgress          *progress,
+                 const PicmanValueArray  *args,
                  GError               **error)
 {
   gboolean success = TRUE;
   const gchar *message;
 
-  message = g_value_get_string (gimp_value_array_index (args, 0));
+  message = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
       const gchar *domain = NULL;
 
-      if (gimp->plug_in_manager->current_plug_in)
-        domain = gimp_plug_in_get_undo_desc (gimp->plug_in_manager->current_plug_in);
-      gimp_show_message (gimp, G_OBJECT (progress), GIMP_MESSAGE_WARNING,
+      if (picman->plug_in_manager->current_plug_in)
+        domain = picman_plug_in_get_undo_desc (picman->plug_in_manager->current_plug_in);
+      picman_show_message (picman, G_OBJECT (progress), PICMAN_MESSAGE_WARNING,
                          domain, message);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-message_get_handler_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+message_get_handler_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 handler = 0;
 
-  handler = gimp->message_handler;
+  handler = picman->message_handler;
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_enum (gimp_value_array_index (return_vals, 1), handler);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_enum (picman_value_array_index (return_vals, 1), handler);
 
   return return_vals;
 }
 
-static GimpValueArray *
-message_set_handler_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+message_set_handler_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
   gint32 handler;
 
-  handler = g_value_get_enum (gimp_value_array_index (args, 0));
+  handler = g_value_get_enum (picman_value_array_index (args, 0));
 
   if (success)
     {
-      gimp->message_handler = handler;
+      picman->message_handler = handler;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_message_procs (GimpPDB *pdb)
+register_message_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-message
+   * picman-message
    */
-  procedure = gimp_procedure_new (message_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-message");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-message",
+  procedure = picman_procedure_new (message_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-message");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-message",
                                      "Displays a dialog box with a message.",
                                      "Displays a dialog box with a message. Useful for status or error reporting. The message must be in UTF-8 encoding.",
                                      "Manish Singh",
                                      "Manish Singh",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("message",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("message",
                                                        "message",
                                                        "Message to display in the dialog",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-message-get-handler
+   * picman-message-get-handler
    */
-  procedure = gimp_procedure_new (message_get_handler_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-message-get-handler");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-message-get-handler",
+  procedure = picman_procedure_new (message_get_handler_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-message-get-handler");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-message-get-handler",
                                      "Returns the current state of where warning messages are displayed.",
-                                     "This procedure returns the way g_message warnings are displayed. They can be shown in a dialog box or printed on the console where gimp was started.",
+                                     "This procedure returns the way g_message warnings are displayed. They can be shown in a dialog box or printed on the console where picman was started.",
                                      "Manish Singh",
                                      "Manish Singh",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("handler",
                                                       "handler",
                                                       "The current handler type",
-                                                      GIMP_TYPE_MESSAGE_HANDLER_TYPE,
-                                                      GIMP_MESSAGE_BOX,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_TYPE_MESSAGE_HANDLER_TYPE,
+                                                      PICMAN_MESSAGE_BOX,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-message-set-handler
+   * picman-message-set-handler
    */
-  procedure = gimp_procedure_new (message_set_handler_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-message-set-handler");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-message-set-handler",
+  procedure = picman_procedure_new (message_set_handler_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-message-set-handler");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-message-set-handler",
                                      "Controls where warning messages are displayed.",
-                                     "This procedure controls how g_message warnings are displayed. They can be shown in a dialog box or printed on the console where gimp was started.",
+                                     "This procedure controls how g_message warnings are displayed. They can be shown in a dialog box or printed on the console where picman was started.",
                                      "Manish Singh",
                                      "Manish Singh",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("handler",
                                                   "handler",
                                                   "The new handler type",
-                                                  GIMP_TYPE_MESSAGE_HANDLER_TYPE,
-                                                  GIMP_MESSAGE_BOX,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_MESSAGE_HANDLER_TYPE,
+                                                  PICMAN_MESSAGE_BOX,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

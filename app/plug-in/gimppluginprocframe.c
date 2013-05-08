@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginprocframe.c
+ * picmanpluginprocframe.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,56 +23,56 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "plug-in-types.h"
 
-#include "core/gimpprogress.h"
+#include "core/picmanprogress.h"
 
-#include "pdb/gimppdbcontext.h"
-#include "pdb/gimppdberror.h"
+#include "pdb/picmanpdbcontext.h"
+#include "pdb/picmanpdberror.h"
 
-#include "gimpplugin.h"
-#include "gimpplugin-cleanup.h"
-#include "gimpplugin-progress.h"
-#include "gimppluginprocedure.h"
+#include "picmanplugin.h"
+#include "picmanplugin-cleanup.h"
+#include "picmanplugin-progress.h"
+#include "picmanpluginprocedure.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  public functions  */
 
-GimpPlugInProcFrame *
-gimp_plug_in_proc_frame_new (GimpContext         *context,
-                             GimpProgress        *progress,
-                             GimpPlugInProcedure *procedure)
+PicmanPlugInProcFrame *
+picman_plug_in_proc_frame_new (PicmanContext         *context,
+                             PicmanProgress        *progress,
+                             PicmanPlugInProcedure *procedure)
 {
-  GimpPlugInProcFrame *proc_frame;
+  PicmanPlugInProcFrame *proc_frame;
 
-  g_return_val_if_fail (GIMP_IS_PDB_CONTEXT (context), NULL);
-  g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress), NULL);
-  g_return_val_if_fail (GIMP_IS_PLUG_IN_PROCEDURE (procedure), NULL);
+  g_return_val_if_fail (PICMAN_IS_PDB_CONTEXT (context), NULL);
+  g_return_val_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress), NULL);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN_PROCEDURE (procedure), NULL);
 
-  proc_frame = g_slice_new0 (GimpPlugInProcFrame);
+  proc_frame = g_slice_new0 (PicmanPlugInProcFrame);
 
   proc_frame->ref_count = 1;
 
-  gimp_plug_in_proc_frame_init (proc_frame, context, progress, procedure);
+  picman_plug_in_proc_frame_init (proc_frame, context, progress, procedure);
 
   return proc_frame;
 }
 
 void
-gimp_plug_in_proc_frame_init (GimpPlugInProcFrame *proc_frame,
-                              GimpContext         *context,
-                              GimpProgress        *progress,
-                              GimpPlugInProcedure *procedure)
+picman_plug_in_proc_frame_init (PicmanPlugInProcFrame *proc_frame,
+                              PicmanContext         *context,
+                              PicmanProgress        *progress,
+                              PicmanPlugInProcedure *procedure)
 {
   g_return_if_fail (proc_frame != NULL);
-  g_return_if_fail (GIMP_IS_PDB_CONTEXT (context));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_PDB_CONTEXT (context));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (procedure == NULL ||
-                    GIMP_IS_PLUG_IN_PROCEDURE (procedure));
+                    PICMAN_IS_PLUG_IN_PROCEDURE (procedure));
 
   proc_frame->main_context       = g_object_ref (context);
   proc_frame->context_stack      = NULL;
@@ -82,22 +82,22 @@ gimp_plug_in_proc_frame_init (GimpPlugInProcFrame *proc_frame,
   proc_frame->progress           = progress ? g_object_ref (progress) : NULL;
   proc_frame->progress_created   = FALSE;
   proc_frame->progress_cancel_id = 0;
-  proc_frame->error_handler      = GIMP_PDB_ERROR_HANDLER_INTERNAL;
+  proc_frame->error_handler      = PICMAN_PDB_ERROR_HANDLER_INTERNAL;
 
   if (progress)
-    gimp_plug_in_progress_attach (progress);
+    picman_plug_in_progress_attach (progress);
 }
 
 void
-gimp_plug_in_proc_frame_dispose (GimpPlugInProcFrame *proc_frame,
-                                 GimpPlugIn          *plug_in)
+picman_plug_in_proc_frame_dispose (PicmanPlugInProcFrame *proc_frame,
+                                 PicmanPlugIn          *plug_in)
 {
   g_return_if_fail (proc_frame != NULL);
-  g_return_if_fail (GIMP_IS_PLUG_IN (plug_in));
+  g_return_if_fail (PICMAN_IS_PLUG_IN (plug_in));
 
   if (proc_frame->progress)
     {
-      gimp_plug_in_progress_end (plug_in, proc_frame);
+      picman_plug_in_progress_end (plug_in, proc_frame);
 
       if (proc_frame->progress)
         {
@@ -121,7 +121,7 @@ gimp_plug_in_proc_frame_dispose (GimpPlugInProcFrame *proc_frame,
 
   if (proc_frame->return_vals)
     {
-      gimp_value_array_unref (proc_frame->return_vals);
+      picman_value_array_unref (proc_frame->return_vals);
       proc_frame->return_vals = NULL;
     }
 
@@ -132,7 +132,7 @@ gimp_plug_in_proc_frame_dispose (GimpPlugInProcFrame *proc_frame,
     }
 
   if (proc_frame->image_cleanups || proc_frame->item_cleanups)
-    gimp_plug_in_cleanup (plug_in, proc_frame);
+    picman_plug_in_cleanup (plug_in, proc_frame);
 
   if (proc_frame->procedure)
     {
@@ -141,8 +141,8 @@ gimp_plug_in_proc_frame_dispose (GimpPlugInProcFrame *proc_frame,
     }
 }
 
-GimpPlugInProcFrame *
-gimp_plug_in_proc_frame_ref (GimpPlugInProcFrame *proc_frame)
+PicmanPlugInProcFrame *
+picman_plug_in_proc_frame_ref (PicmanPlugInProcFrame *proc_frame)
 {
   g_return_val_if_fail (proc_frame != NULL, NULL);
 
@@ -152,31 +152,31 @@ gimp_plug_in_proc_frame_ref (GimpPlugInProcFrame *proc_frame)
 }
 
 void
-gimp_plug_in_proc_frame_unref (GimpPlugInProcFrame *proc_frame,
-                               GimpPlugIn          *plug_in)
+picman_plug_in_proc_frame_unref (PicmanPlugInProcFrame *proc_frame,
+                               PicmanPlugIn          *plug_in)
 {
   g_return_if_fail (proc_frame != NULL);
-  g_return_if_fail (GIMP_IS_PLUG_IN (plug_in));
+  g_return_if_fail (PICMAN_IS_PLUG_IN (plug_in));
 
   proc_frame->ref_count--;
 
   if (proc_frame->ref_count < 1)
     {
-      gimp_plug_in_proc_frame_dispose (proc_frame, plug_in);
-      g_slice_free (GimpPlugInProcFrame, proc_frame);
+      picman_plug_in_proc_frame_dispose (proc_frame, plug_in);
+      g_slice_free (PicmanPlugInProcFrame, proc_frame);
     }
 }
 
-GimpValueArray *
-gimp_plug_in_proc_frame_get_return_values (GimpPlugInProcFrame *proc_frame)
+PicmanValueArray *
+picman_plug_in_proc_frame_get_return_values (PicmanPlugInProcFrame *proc_frame)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
 
   g_return_val_if_fail (proc_frame != NULL, NULL);
 
   if (proc_frame->return_vals)
     {
-      if (gimp_value_array_length (proc_frame->return_vals) >=
+      if (picman_value_array_length (proc_frame->return_vals) >=
           proc_frame->procedure->num_values + 1)
         {
           return_vals = proc_frame->return_vals;
@@ -184,20 +184,20 @@ gimp_plug_in_proc_frame_get_return_values (GimpPlugInProcFrame *proc_frame)
       else
         {
           /* Allocate new return values of the correct size. */
-          return_vals = gimp_procedure_get_return_values (proc_frame->procedure,
+          return_vals = picman_procedure_get_return_values (proc_frame->procedure,
                                                           TRUE, NULL);
 
           /* Copy all of the arguments we can. */
-          memcpy (gimp_value_array_index (return_vals, 0),
-                  gimp_value_array_index (proc_frame->return_vals, 0),
+          memcpy (picman_value_array_index (return_vals, 0),
+                  picman_value_array_index (proc_frame->return_vals, 0),
                   sizeof (GValue) *
-                  gimp_value_array_length (proc_frame->return_vals));
+                  picman_value_array_length (proc_frame->return_vals));
 
           /* Free the old arguments. */
-          memset (gimp_value_array_index (proc_frame->return_vals, 0), 0,
+          memset (picman_value_array_index (proc_frame->return_vals, 0), 0,
                   sizeof (GValue) *
-                  gimp_value_array_length (proc_frame->return_vals));
-          gimp_value_array_unref (proc_frame->return_vals);
+                  picman_value_array_length (proc_frame->return_vals));
+          picman_value_array_unref (proc_frame->return_vals);
         }
 
       /* We have consumed any saved values, so clear them. */
@@ -205,14 +205,14 @@ gimp_plug_in_proc_frame_get_return_values (GimpPlugInProcFrame *proc_frame)
     }
   else
     {
-      GimpProcedure *procedure = proc_frame->procedure;
+      PicmanProcedure *procedure = proc_frame->procedure;
       GError        *error;
 
-      error = g_error_new (GIMP_PDB_ERROR, GIMP_PDB_ERROR_INVALID_RETURN_VALUE,
+      error = g_error_new (PICMAN_PDB_ERROR, PICMAN_PDB_ERROR_INVALID_RETURN_VALUE,
                            _("Procedure '%s' returned no return values"),
-                           gimp_object_get_name (procedure));
+                           picman_object_get_name (procedure));
 
-      return_vals = gimp_procedure_get_return_values (procedure, FALSE,
+      return_vals = picman_procedure_get_return_values (procedure, FALSE,
                                                       error);
       g_error_free (error);
     }

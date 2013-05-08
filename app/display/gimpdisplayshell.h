@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_SHELL_H__
-#define __GIMP_DISPLAY_SHELL_H__
+#ifndef __PICMAN_DISPLAY_SHELL_H__
+#define __PICMAN_DISPLAY_SHELL_H__
 
 
 /* Apply to a float the same rounding mode used in the renderer */
@@ -35,34 +35,34 @@
 #define  FUNSCALEY(s,y)   ((y) / (s)->scale_y)
 
 
-#define GIMP_TYPE_DISPLAY_SHELL            (gimp_display_shell_get_type ())
-#define GIMP_DISPLAY_SHELL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DISPLAY_SHELL, GimpDisplayShell))
-#define GIMP_DISPLAY_SHELL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DISPLAY_SHELL, GimpDisplayShellClass))
-#define GIMP_IS_DISPLAY_SHELL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DISPLAY_SHELL))
-#define GIMP_IS_DISPLAY_SHELL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DISPLAY_SHELL))
-#define GIMP_DISPLAY_SHELL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DISPLAY_SHELL, GimpDisplayShellClass))
+#define PICMAN_TYPE_DISPLAY_SHELL            (picman_display_shell_get_type ())
+#define PICMAN_DISPLAY_SHELL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DISPLAY_SHELL, PicmanDisplayShell))
+#define PICMAN_DISPLAY_SHELL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DISPLAY_SHELL, PicmanDisplayShellClass))
+#define PICMAN_IS_DISPLAY_SHELL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DISPLAY_SHELL))
+#define PICMAN_IS_DISPLAY_SHELL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DISPLAY_SHELL))
+#define PICMAN_DISPLAY_SHELL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DISPLAY_SHELL, PicmanDisplayShellClass))
 
 
-typedef struct _GimpDisplayShellClass  GimpDisplayShellClass;
+typedef struct _PicmanDisplayShellClass  PicmanDisplayShellClass;
 
-struct _GimpDisplayShell
+struct _PicmanDisplayShell
 {
   GtkBox             parent_instance;
 
-  GimpDisplay       *display;
+  PicmanDisplay       *display;
 
-  GimpUIManager     *popup_manager;
+  PicmanUIManager     *popup_manager;
 
-  GimpDisplayOptions *options;
-  GimpDisplayOptions *fullscreen_options;
-  GimpDisplayOptions *no_image_options;
+  PicmanDisplayOptions *options;
+  PicmanDisplayOptions *fullscreen_options;
+  PicmanDisplayOptions *no_image_options;
 
   gboolean           snap_to_guides;   /*  should the guides be snapped to?   */
   gboolean           snap_to_grid;     /*  should the grid be snapped to?     */
   gboolean           snap_to_canvas;   /*  should the canvas be snapped to?   */
   gboolean           snap_to_vectors;  /*  should the active path be snapped  */
 
-  GimpUnit           unit;
+  PicmanUnit           unit;
 
   gint               offset_x;         /*  offset of display image            */
   gint               offset_y;
@@ -78,7 +78,7 @@ struct _GimpDisplayShell
   gdouble            monitor_yres;
   gboolean           dot_for_dot;      /*  ignore monitor resolution          */
 
-  GimpZoomModel     *zoom;
+  PicmanZoomModel     *zoom;
 
   gdouble            last_scale;       /*  scale used when reverting zoom     */
   guint              last_scale_time;  /*  time when last_scale was set       */
@@ -96,7 +96,7 @@ struct _GimpDisplayShell
 
   GList             *children;
 
-  GtkWidget         *canvas;           /*  GimpCanvas widget                  */
+  GtkWidget         *canvas;           /*  PicmanCanvas widget                  */
 
   GtkAdjustment     *hsbdata;          /*  adjustments                        */
   GtkAdjustment     *vsbdata;
@@ -113,21 +113,21 @@ struct _GimpDisplayShell
 
   GtkWidget         *statusbar;        /*  statusbar                          */
 
-  GimpDisplayXfer   *xfer;             /*  managers image buffer transfers    */
+  PicmanDisplayXfer   *xfer;             /*  managers image buffer transfers    */
   cairo_surface_t   *mask_surface;     /*  buffer for rendering the mask      */
   cairo_pattern_t   *checkerboard;     /*  checkerboard pattern               */
 
-  GimpCanvasItem    *canvas_item;      /*  items drawn on the canvas          */
-  GimpCanvasItem    *unrotated_item;   /*  unrotated items for e.g. cursor    */
-  GimpCanvasItem    *passe_partout;    /*  item for the highlight             */
-  GimpCanvasItem    *preview_items;    /*  item for previews                  */
-  GimpCanvasItem    *vectors;          /*  item proxy of vectors              */
-  GimpCanvasItem    *grid;             /*  item proxy of the grid             */
-  GimpCanvasItem    *guides;           /*  item proxies of guides             */
-  GimpCanvasItem    *sample_points;    /*  item proxies of sample points      */
-  GimpCanvasItem    *layer_boundary;   /*  item for the layer boundary        */
-  GimpCanvasItem    *tool_items;       /*  tools items, below the cursor      */
-  GimpCanvasItem    *cursor;           /*  item for the software cursor       */
+  PicmanCanvasItem    *canvas_item;      /*  items drawn on the canvas          */
+  PicmanCanvasItem    *unrotated_item;   /*  unrotated items for e.g. cursor    */
+  PicmanCanvasItem    *passe_partout;    /*  item for the highlight             */
+  PicmanCanvasItem    *preview_items;    /*  item for previews                  */
+  PicmanCanvasItem    *vectors;          /*  item proxy of vectors              */
+  PicmanCanvasItem    *grid;             /*  item proxy of the grid             */
+  PicmanCanvasItem    *guides;           /*  item proxies of guides             */
+  PicmanCanvasItem    *sample_points;    /*  item proxies of sample points      */
+  PicmanCanvasItem    *layer_boundary;   /*  item for the layer boundary        */
+  PicmanCanvasItem    *tool_items;       /*  tools items, below the cursor      */
+  PicmanCanvasItem    *cursor;           /*  item for the software cursor       */
 
   guint              title_idle_id;    /*  title update idle ID               */
   gchar             *title;            /*  current title                      */
@@ -139,12 +139,12 @@ struct _GimpDisplayShell
 
   guint              fill_idle_id;     /*  display_shell_fill() idle ID       */
 
-  GimpHandedness     cursor_handedness;/*  Handedness for cursor display      */
-  GimpCursorType     current_cursor;   /*  Currently installed main cursor    */
-  GimpToolCursorType tool_cursor;      /*  Current Tool cursor                */
-  GimpCursorModifier cursor_modifier;  /*  Cursor modifier (plus, minus, ...) */
+  PicmanHandedness     cursor_handedness;/*  Handedness for cursor display      */
+  PicmanCursorType     current_cursor;   /*  Currently installed main cursor    */
+  PicmanToolCursorType tool_cursor;      /*  Current Tool cursor                */
+  PicmanCursorModifier cursor_modifier;  /*  Cursor modifier (plus, minus, ...) */
 
-  GimpCursorType     override_cursor;  /*  Overriding cursor                  */
+  PicmanCursorType     override_cursor;  /*  Overriding cursor                  */
   gboolean           using_override_cursor;
   gboolean           draw_cursor;      /* should we draw software cursor ?    */
 
@@ -154,21 +154,21 @@ struct _GimpDisplayShell
   GtkWidget         *nav_popup;        /*  navigation popup                   */
   GtkWidget         *grid_dialog;      /*  grid configuration dialog          */
 
-  GimpColorDisplayStack *filter_stack;   /* color display conversion stuff    */
+  PicmanColorDisplayStack *filter_stack;   /* color display conversion stuff    */
   guint                  filter_idle_id;
   GtkWidget             *filters_dialog; /* color display filter dialog       */
 
   gint               paused_count;
 
-  GimpTreeHandler   *vectors_freeze_handler;
-  GimpTreeHandler   *vectors_thaw_handler;
-  GimpTreeHandler   *vectors_visible_handler;
+  PicmanTreeHandler   *vectors_freeze_handler;
+  PicmanTreeHandler   *vectors_thaw_handler;
+  PicmanTreeHandler   *vectors_visible_handler;
 
   gboolean           zoom_on_resize;
 
   gboolean           size_allocate_from_configure_event;
 
-  /*  the state of gimp_display_shell_tool_events()  */
+  /*  the state of picman_display_shell_tool_events()  */
   gboolean           pointer_grabbed;
   guint32            pointer_grab_time;
 
@@ -186,94 +186,94 @@ struct _GimpDisplayShell
   gdouble            rotate_drag_angle;
   gpointer           scroll_info;
 
-  GimpDrawable      *mask;
-  GimpRGB            mask_color;
+  PicmanDrawable      *mask;
+  PicmanRGB            mask_color;
 
-  GimpMotionBuffer  *motion_buffer;
+  PicmanMotionBuffer  *motion_buffer;
 
   GQueue            *zoom_focus_pointer_queue;
 };
 
-struct _GimpDisplayShellClass
+struct _PicmanDisplayShellClass
 {
   GtkBoxClass  parent_class;
 
-  void (* scaled)    (GimpDisplayShell *shell);
-  void (* scrolled)  (GimpDisplayShell *shell);
-  void (* rotated)   (GimpDisplayShell *shell);
-  void (* reconnect) (GimpDisplayShell *shell);
+  void (* scaled)    (PicmanDisplayShell *shell);
+  void (* scrolled)  (PicmanDisplayShell *shell);
+  void (* rotated)   (PicmanDisplayShell *shell);
+  void (* reconnect) (PicmanDisplayShell *shell);
 };
 
 
-GType             gimp_display_shell_get_type      (void) G_GNUC_CONST;
+GType             picman_display_shell_get_type      (void) G_GNUC_CONST;
 
-GtkWidget       * gimp_display_shell_new           (GimpDisplay        *display,
-                                                    GimpUnit            unit,
+GtkWidget       * picman_display_shell_new           (PicmanDisplay        *display,
+                                                    PicmanUnit            unit,
                                                     gdouble             scale,
-                                                    GimpUIManager      *popup_manager);
+                                                    PicmanUIManager      *popup_manager);
 
-void              gimp_display_shell_add_overlay   (GimpDisplayShell   *shell,
+void              picman_display_shell_add_overlay   (PicmanDisplayShell   *shell,
                                                     GtkWidget          *child,
                                                     gdouble             image_x,
                                                     gdouble             image_y,
-                                                    GimpHandleAnchor    anchor,
+                                                    PicmanHandleAnchor    anchor,
                                                     gint                spacing_x,
                                                     gint                spacing_y);
-void              gimp_display_shell_move_overlay  (GimpDisplayShell   *shell,
+void              picman_display_shell_move_overlay  (PicmanDisplayShell   *shell,
                                                     GtkWidget          *child,
                                                     gdouble             image_x,
                                                     gdouble             image_y,
-                                                    GimpHandleAnchor    anchor,
+                                                    PicmanHandleAnchor    anchor,
                                                     gint                spacing_x,
                                                     gint                spacing_y);
 
-GimpImageWindow * gimp_display_shell_get_window    (GimpDisplayShell   *shell);
-GimpStatusbar   * gimp_display_shell_get_statusbar (GimpDisplayShell   *shell);
+PicmanImageWindow * picman_display_shell_get_window    (PicmanDisplayShell   *shell);
+PicmanStatusbar   * picman_display_shell_get_statusbar (PicmanDisplayShell   *shell);
 
-void              gimp_display_shell_present       (GimpDisplayShell   *shell);
+void              picman_display_shell_present       (PicmanDisplayShell   *shell);
 
-void              gimp_display_shell_reconnect     (GimpDisplayShell   *shell);
+void              picman_display_shell_reconnect     (PicmanDisplayShell   *shell);
 
-void              gimp_display_shell_empty         (GimpDisplayShell   *shell);
-void              gimp_display_shell_fill          (GimpDisplayShell   *shell,
-                                                    GimpImage          *image,
-                                                    GimpUnit            unit,
+void              picman_display_shell_empty         (PicmanDisplayShell   *shell);
+void              picman_display_shell_fill          (PicmanDisplayShell   *shell,
+                                                    PicmanImage          *image,
+                                                    PicmanUnit            unit,
                                                     gdouble             scale);
 
-void              gimp_display_shell_scale_changed (GimpDisplayShell   *shell);
+void              picman_display_shell_scale_changed (PicmanDisplayShell   *shell);
 
-void              gimp_display_shell_scaled        (GimpDisplayShell   *shell);
-void              gimp_display_shell_scrolled      (GimpDisplayShell   *shell);
-void              gimp_display_shell_rotated       (GimpDisplayShell   *shell);
+void              picman_display_shell_scaled        (PicmanDisplayShell   *shell);
+void              picman_display_shell_scrolled      (PicmanDisplayShell   *shell);
+void              picman_display_shell_rotated       (PicmanDisplayShell   *shell);
 
-void              gimp_display_shell_set_unit      (GimpDisplayShell   *shell,
-                                                    GimpUnit            unit);
-GimpUnit          gimp_display_shell_get_unit      (GimpDisplayShell   *shell);
+void              picman_display_shell_set_unit      (PicmanDisplayShell   *shell,
+                                                    PicmanUnit            unit);
+PicmanUnit          picman_display_shell_get_unit      (PicmanDisplayShell   *shell);
 
-gboolean          gimp_display_shell_snap_coords   (GimpDisplayShell   *shell,
-                                                    GimpCoords         *coords,
+gboolean          picman_display_shell_snap_coords   (PicmanDisplayShell   *shell,
+                                                    PicmanCoords         *coords,
                                                     gint                snap_offset_x,
                                                     gint                snap_offset_y,
                                                     gint                snap_width,
                                                     gint                snap_height);
 
-gboolean          gimp_display_shell_mask_bounds   (GimpDisplayShell   *shell,
+gboolean          picman_display_shell_mask_bounds   (PicmanDisplayShell   *shell,
                                                     gint               *x1,
                                                     gint               *y1,
                                                     gint               *x2,
                                                     gint               *y2);
 
-void              gimp_display_shell_flush         (GimpDisplayShell   *shell,
+void              picman_display_shell_flush         (PicmanDisplayShell   *shell,
                                                     gboolean            now);
 
-void              gimp_display_shell_pause         (GimpDisplayShell   *shell);
-void              gimp_display_shell_resume        (GimpDisplayShell   *shell);
+void              picman_display_shell_pause         (PicmanDisplayShell   *shell);
+void              picman_display_shell_resume        (PicmanDisplayShell   *shell);
 
-void              gimp_display_shell_set_highlight (GimpDisplayShell   *shell,
+void              picman_display_shell_set_highlight (PicmanDisplayShell   *shell,
                                                     const GdkRectangle *highlight);
-void              gimp_display_shell_set_mask      (GimpDisplayShell   *shell,
-                                                    GimpDrawable       *mask,
-                                                    const GimpRGB      *color);
+void              picman_display_shell_set_mask      (PicmanDisplayShell   *shell,
+                                                    PicmanDrawable       *mask,
+                                                    const PicmanRGB      *color);
 
 
-#endif /* __GIMP_DISPLAY_SHELL_H__ */
+#endif /* __PICMAN_DISPLAY_SHELL_H__ */

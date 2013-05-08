@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbrushcache.h
- * Copyright (C) 2011 Michael Natterer <mitch@gimp.org>
+ * picmanbrushcache.h
+ * Copyright (C) 2011 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_CACHE_H__
-#define __GIMP_BRUSH_CACHE_H__
+#ifndef __PICMAN_BRUSH_CACHE_H__
+#define __PICMAN_BRUSH_CACHE_H__
 
 
-#include "gimpobject.h"
+#include "picmanobject.h"
 
 
-#define GIMP_TYPE_BRUSH_CACHE            (gimp_brush_cache_get_type ())
-#define GIMP_BRUSH_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BRUSH_CACHE, GimpBrushCache))
-#define GIMP_BRUSH_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BRUSH_CACHE, GimpBrushCacheClass))
-#define GIMP_IS_BRUSH_CACHE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BRUSH_CACHE))
-#define GIMP_IS_BRUSH_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BRUSH_CACHE))
-#define GIMP_BRUSH_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BRUSH_CACHE, GimpBrushCacheClass))
+#define PICMAN_TYPE_BRUSH_CACHE            (picman_brush_cache_get_type ())
+#define PICMAN_BRUSH_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BRUSH_CACHE, PicmanBrushCache))
+#define PICMAN_BRUSH_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BRUSH_CACHE, PicmanBrushCacheClass))
+#define PICMAN_IS_BRUSH_CACHE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BRUSH_CACHE))
+#define PICMAN_IS_BRUSH_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BRUSH_CACHE))
+#define PICMAN_BRUSH_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BRUSH_CACHE, PicmanBrushCacheClass))
 
 
-typedef struct _GimpBrushCacheClass GimpBrushCacheClass;
+typedef struct _PicmanBrushCacheClass PicmanBrushCacheClass;
 
-struct _GimpBrushCache
+struct _PicmanBrushCache
 {
-  GimpObject      parent_instance;
+  PicmanObject      parent_instance;
 
   GDestroyNotify  data_destroy;
 
@@ -53,28 +53,28 @@ struct _GimpBrushCache
   gchar           debug_miss;
 };
 
-struct _GimpBrushCacheClass
+struct _PicmanBrushCacheClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType            gimp_brush_cache_get_type (void) G_GNUC_CONST;
+GType            picman_brush_cache_get_type (void) G_GNUC_CONST;
 
-GimpBrushCache * gimp_brush_cache_new      (GDestroyNotify  data_destory,
+PicmanBrushCache * picman_brush_cache_new      (GDestroyNotify  data_destory,
                                             gchar           debug_hit,
                                             gchar           debug_miss);
 
-void             gimp_brush_cache_clear    (GimpBrushCache *cache);
+void             picman_brush_cache_clear    (PicmanBrushCache *cache);
 
-gconstpointer    gimp_brush_cache_get      (GimpBrushCache *cache,
+gconstpointer    picman_brush_cache_get      (PicmanBrushCache *cache,
                                             gint            width,
                                             gint            height,
                                             gdouble         scale,
                                             gdouble         aspect_ratio,
                                             gdouble         angle,
                                             gdouble         hardness);
-void             gimp_brush_cache_add      (GimpBrushCache *cache,
+void             picman_brush_cache_add      (PicmanBrushCache *cache,
                                             gpointer        data,
                                             gint            width,
                                             gint            height,
@@ -84,4 +84,4 @@ void             gimp_brush_cache_add      (GimpBrushCache *cache,
                                             gdouble         hardness);
 
 
-#endif  /*  __GIMP_BRUSH_CACHE_H__  */
+#endif  /*  __PICMAN_BRUSH_CACHE_H__  */

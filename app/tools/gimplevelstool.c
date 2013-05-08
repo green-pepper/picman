@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,36 +23,36 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "gegl/gimp-babl.h"
+#include "gegl/picman-babl.h"
 
-#include "operations/gimplevelsconfig.h"
-#include "operations/gimpoperationlevels.h"
+#include "operations/picmanlevelsconfig.h"
+#include "operations/picmanoperationlevels.h"
 
-#include "core/gimpdrawable.h"
-#include "core/gimpdrawable-histogram.h"
-#include "core/gimperror.h"
-#include "core/gimphistogram.h"
-#include "core/gimpimage.h"
+#include "core/picmandrawable.h"
+#include "core/picmandrawable-histogram.h"
+#include "core/picmanerror.h"
+#include "core/picmanhistogram.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimpcolorbar.h"
-#include "widgets/gimphandlebar.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimphistogramview.h"
-#include "widgets/gimpwidgets-constructors.h"
+#include "widgets/picmancolorbar.h"
+#include "widgets/picmanhandlebar.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanhistogramview.h"
+#include "widgets/picmanwidgets-constructors.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimphistogramoptions.h"
-#include "gimplevelstool.h"
+#include "picmanhistogramoptions.h"
+#include "picmanlevelstool.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define PICK_LOW_INPUT    (1 << 0)
@@ -67,125 +67,125 @@
 
 /*  local function prototypes  */
 
-static void       gimp_levels_tool_finalize       (GObject           *object);
+static void       picman_levels_tool_finalize       (GObject           *object);
 
-static gboolean   gimp_levels_tool_initialize     (GimpTool          *tool,
-                                                   GimpDisplay       *display,
+static gboolean   picman_levels_tool_initialize     (PicmanTool          *tool,
+                                                   PicmanDisplay       *display,
                                                    GError           **error);
 
-static GeglNode * gimp_levels_tool_get_operation  (GimpImageMapTool  *im_tool,
+static GeglNode * picman_levels_tool_get_operation  (PicmanImageMapTool  *im_tool,
                                                    GObject          **config,
                                                    gchar            **undo_desc);
-static void       gimp_levels_tool_dialog         (GimpImageMapTool  *im_tool);
-static void       gimp_levels_tool_reset          (GimpImageMapTool  *im_tool);
-static gboolean   gimp_levels_tool_settings_import(GimpImageMapTool  *im_tool,
+static void       picman_levels_tool_dialog         (PicmanImageMapTool  *im_tool);
+static void       picman_levels_tool_reset          (PicmanImageMapTool  *im_tool);
+static gboolean   picman_levels_tool_settings_import(PicmanImageMapTool  *im_tool,
                                                    const gchar       *filename,
                                                    GError           **error);
-static gboolean   gimp_levels_tool_settings_export(GimpImageMapTool  *im_tool,
+static gboolean   picman_levels_tool_settings_export(PicmanImageMapTool  *im_tool,
                                                    const gchar       *filename,
                                                    GError           **error);
-static void       gimp_levels_tool_color_picked   (GimpImageMapTool  *im_tool,
+static void       picman_levels_tool_color_picked   (PicmanImageMapTool  *im_tool,
                                                    gpointer           identifier,
                                                    const Babl        *sample_format,
-                                                   const GimpRGB     *color);
+                                                   const PicmanRGB     *color);
 
-static void       gimp_levels_tool_export_setup   (GimpSettingsBox   *settings_box,
+static void       picman_levels_tool_export_setup   (PicmanSettingsBox   *settings_box,
                                                    GtkFileChooserDialog *dialog,
                                                    gboolean           export,
-                                                   GimpLevelsTool    *tool);
-static void       gimp_levels_tool_config_notify  (GObject           *object,
+                                                   PicmanLevelsTool    *tool);
+static void       picman_levels_tool_config_notify  (GObject           *object,
                                                    GParamSpec        *pspec,
-                                                   GimpLevelsTool    *tool);
+                                                   PicmanLevelsTool    *tool);
 
-static void       levels_update_input_bar         (GimpLevelsTool    *tool);
+static void       levels_update_input_bar         (PicmanLevelsTool    *tool);
 
 static void       levels_channel_callback         (GtkWidget         *widget,
-                                                   GimpLevelsTool    *tool);
+                                                   PicmanLevelsTool    *tool);
 static void       levels_channel_reset_callback   (GtkWidget         *widget,
-                                                   GimpLevelsTool    *tool);
+                                                   PicmanLevelsTool    *tool);
 
 static gboolean   levels_menu_sensitivity         (gint               value,
                                                    gpointer           data);
 
 static void       levels_stretch_callback         (GtkWidget         *widget,
-                                                   GimpLevelsTool    *tool);
+                                                   PicmanLevelsTool    *tool);
 static void       levels_low_input_changed        (GtkAdjustment     *adjustment,
-                                                   GimpLevelsTool    *tool);
+                                                   PicmanLevelsTool    *tool);
 static void       levels_gamma_changed            (GtkAdjustment     *adjustment,
-                                                   GimpLevelsTool    *tool);
+                                                   PicmanLevelsTool    *tool);
 static void       levels_linear_gamma_changed     (GtkAdjustment     *adjustment,
-                                                   GimpLevelsTool    *tool);
+                                                   PicmanLevelsTool    *tool);
 static void       levels_high_input_changed       (GtkAdjustment     *adjustment,
-                                                   GimpLevelsTool    *tool);
+                                                   PicmanLevelsTool    *tool);
 static void       levels_low_output_changed       (GtkAdjustment     *adjustment,
-                                                   GimpLevelsTool    *tool);
+                                                   PicmanLevelsTool    *tool);
 static void       levels_high_output_changed      (GtkAdjustment     *adjustment,
-                                                   GimpLevelsTool    *tool);
+                                                   PicmanLevelsTool    *tool);
 
 static void       levels_to_curves_callback       (GtkWidget         *widget,
-                                                   GimpLevelsTool    *tool);
+                                                   PicmanLevelsTool    *tool);
 
 
-G_DEFINE_TYPE (GimpLevelsTool, gimp_levels_tool, GIMP_TYPE_IMAGE_MAP_TOOL)
+G_DEFINE_TYPE (PicmanLevelsTool, picman_levels_tool, PICMAN_TYPE_IMAGE_MAP_TOOL)
 
-#define parent_class gimp_levels_tool_parent_class
+#define parent_class picman_levels_tool_parent_class
 
 
 void
-gimp_levels_tool_register (GimpToolRegisterCallback  callback,
+picman_levels_tool_register (PicmanToolRegisterCallback  callback,
                            gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_LEVELS_TOOL,
-                GIMP_TYPE_HISTOGRAM_OPTIONS,
-                gimp_color_options_gui,
+  (* callback) (PICMAN_TYPE_LEVELS_TOOL,
+                PICMAN_TYPE_HISTOGRAM_OPTIONS,
+                picman_color_options_gui,
                 0,
-                "gimp-levels-tool",
+                "picman-levels-tool",
                 _("Levels"),
                 _("Levels Tool: Adjust color levels"),
                 N_("_Levels..."), NULL,
-                NULL, GIMP_HELP_TOOL_LEVELS,
-                GIMP_STOCK_TOOL_LEVELS,
+                NULL, PICMAN_HELP_TOOL_LEVELS,
+                PICMAN_STOCK_TOOL_LEVELS,
                 data);
 }
 
 static void
-gimp_levels_tool_class_init (GimpLevelsToolClass *klass)
+picman_levels_tool_class_init (PicmanLevelsToolClass *klass)
 {
   GObjectClass          *object_class  = G_OBJECT_CLASS (klass);
-  GimpToolClass         *tool_class    = GIMP_TOOL_CLASS (klass);
-  GimpImageMapToolClass *im_tool_class = GIMP_IMAGE_MAP_TOOL_CLASS (klass);
+  PicmanToolClass         *tool_class    = PICMAN_TOOL_CLASS (klass);
+  PicmanImageMapToolClass *im_tool_class = PICMAN_IMAGE_MAP_TOOL_CLASS (klass);
 
-  object_class->finalize             = gimp_levels_tool_finalize;
+  object_class->finalize             = picman_levels_tool_finalize;
 
-  tool_class->initialize             = gimp_levels_tool_initialize;
+  tool_class->initialize             = picman_levels_tool_initialize;
 
   im_tool_class->dialog_desc         = _("Adjust Color Levels");
   im_tool_class->settings_name       = "levels";
   im_tool_class->import_dialog_title = _("Import Levels");
   im_tool_class->export_dialog_title = _("Export Levels");
 
-  im_tool_class->get_operation       = gimp_levels_tool_get_operation;
-  im_tool_class->dialog              = gimp_levels_tool_dialog;
-  im_tool_class->reset               = gimp_levels_tool_reset;
-  im_tool_class->settings_import     = gimp_levels_tool_settings_import;
-  im_tool_class->settings_export     = gimp_levels_tool_settings_export;
-  im_tool_class->color_picked        = gimp_levels_tool_color_picked;
+  im_tool_class->get_operation       = picman_levels_tool_get_operation;
+  im_tool_class->dialog              = picman_levels_tool_dialog;
+  im_tool_class->reset               = picman_levels_tool_reset;
+  im_tool_class->settings_import     = picman_levels_tool_settings_import;
+  im_tool_class->settings_export     = picman_levels_tool_settings_export;
+  im_tool_class->color_picked        = picman_levels_tool_color_picked;
 }
 
 static void
-gimp_levels_tool_init (GimpLevelsTool *tool)
+picman_levels_tool_init (PicmanLevelsTool *tool)
 {
-  tool->histogram = gimp_histogram_new ();
+  tool->histogram = picman_histogram_new ();
 }
 
 static void
-gimp_levels_tool_finalize (GObject *object)
+picman_levels_tool_finalize (GObject *object)
 {
-  GimpLevelsTool *tool = GIMP_LEVELS_TOOL (object);
+  PicmanLevelsTool *tool = PICMAN_LEVELS_TOOL (object);
 
   if (tool->histogram)
     {
-      gimp_histogram_unref (tool->histogram);
+      picman_histogram_unref (tool->histogram);
       tool->histogram = NULL;
     }
 
@@ -193,31 +193,31 @@ gimp_levels_tool_finalize (GObject *object)
 }
 
 static gboolean
-gimp_levels_tool_initialize (GimpTool     *tool,
-                             GimpDisplay  *display,
+picman_levels_tool_initialize (PicmanTool     *tool,
+                             PicmanDisplay  *display,
                              GError      **error)
 {
-  GimpLevelsTool   *l_tool   = GIMP_LEVELS_TOOL (tool);
-  GimpImage        *image    = gimp_display_get_image (display);
-  GimpDrawable     *drawable = gimp_image_get_active_drawable (image);
-  GimpLevelsConfig *config   = l_tool->config;
+  PicmanLevelsTool   *l_tool   = PICMAN_LEVELS_TOOL (tool);
+  PicmanImage        *image    = picman_display_get_image (display);
+  PicmanDrawable     *drawable = picman_image_get_active_drawable (image);
+  PicmanLevelsConfig *config   = l_tool->config;
   gdouble           scale_factor;
   gdouble           step;
   gint              digits;
 
-  if (! GIMP_TOOL_CLASS (parent_class)->initialize (tool, display, error))
+  if (! PICMAN_TOOL_CLASS (parent_class)->initialize (tool, display, error))
     {
       return FALSE;
     }
 
-  gimp_int_combo_box_set_sensitivity (GIMP_INT_COMBO_BOX (l_tool->channel_menu),
+  picman_int_combo_box_set_sensitivity (PICMAN_INT_COMBO_BOX (l_tool->channel_menu),
                                       levels_menu_sensitivity, drawable, NULL);
 
-  gimp_drawable_calculate_histogram (drawable, l_tool->histogram);
-  gimp_histogram_view_set_histogram (GIMP_HISTOGRAM_VIEW (l_tool->histogram_view),
+  picman_drawable_calculate_histogram (drawable, l_tool->histogram);
+  picman_histogram_view_set_histogram (PICMAN_HISTOGRAM_VIEW (l_tool->histogram_view),
                                      l_tool->histogram);
 
-  if (gimp_drawable_get_precision (drawable) == GIMP_PRECISION_U8)
+  if (picman_drawable_get_precision (drawable) == PICMAN_PRECISION_U8)
     {
       scale_factor = 255.0;
       step         = 1.0;
@@ -277,22 +277,22 @@ gimp_levels_tool_initialize (GimpTool     *tool,
 }
 
 static GeglNode *
-gimp_levels_tool_get_operation (GimpImageMapTool  *im_tool,
+picman_levels_tool_get_operation (PicmanImageMapTool  *im_tool,
                                 GObject          **config,
                                 gchar            **undo_desc)
 {
-  GimpLevelsTool *tool = GIMP_LEVELS_TOOL (im_tool);
+  PicmanLevelsTool *tool = PICMAN_LEVELS_TOOL (im_tool);
 
-  tool->config = g_object_new (GIMP_TYPE_LEVELS_CONFIG, NULL);
+  tool->config = g_object_new (PICMAN_TYPE_LEVELS_CONFIG, NULL);
 
   g_signal_connect_object (tool->config, "notify",
-                           G_CALLBACK (gimp_levels_tool_config_notify),
+                           G_CALLBACK (picman_levels_tool_config_notify),
                            G_OBJECT (tool), 0);
 
   *config = G_OBJECT (tool->config);
 
   return gegl_node_new_child (NULL,
-                              "operation", "gimp:levels",
+                              "operation", "picman:levels",
                               "config",    tool->config,
                               NULL);
 }
@@ -303,7 +303,7 @@ gimp_levels_tool_get_operation (GimpImageMapTool  *im_tool,
 /*******************/
 
 static GtkWidget *
-gimp_levels_tool_color_picker_new (GimpLevelsTool *tool,
+picman_levels_tool_color_picker_new (PicmanLevelsTool *tool,
                                    guint           value)
 {
   const gchar *stock_id;
@@ -312,33 +312,33 @@ gimp_levels_tool_color_picker_new (GimpLevelsTool *tool,
   switch (value & 0xF)
     {
     case PICK_LOW_INPUT:
-      stock_id = GIMP_STOCK_COLOR_PICKER_BLACK;
+      stock_id = PICMAN_STOCK_COLOR_PICKER_BLACK;
       help     = _("Pick black point");
       break;
     case PICK_GAMMA:
-      stock_id = GIMP_STOCK_COLOR_PICKER_GRAY;
+      stock_id = PICMAN_STOCK_COLOR_PICKER_GRAY;
       help     = _("Pick gray point");
       break;
     case PICK_HIGH_INPUT:
-      stock_id = GIMP_STOCK_COLOR_PICKER_WHITE;
+      stock_id = PICMAN_STOCK_COLOR_PICKER_WHITE;
       help     = _("Pick white point");
       break;
     default:
       return NULL;
     }
 
-  return gimp_image_map_tool_add_color_picker (GIMP_IMAGE_MAP_TOOL (tool),
+  return picman_image_map_tool_add_color_picker (PICMAN_IMAGE_MAP_TOOL (tool),
                                                GUINT_TO_POINTER (value),
                                                stock_id,
                                                help);
 }
 
 static void
-gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
+picman_levels_tool_dialog (PicmanImageMapTool *image_map_tool)
 {
-  GimpLevelsTool   *tool         = GIMP_LEVELS_TOOL (image_map_tool);
-  GimpToolOptions  *tool_options = GIMP_TOOL_GET_OPTIONS (image_map_tool);
-  GimpLevelsConfig *config       = tool->config;
+  PicmanLevelsTool   *tool         = PICMAN_LEVELS_TOOL (image_map_tool);
+  PicmanToolOptions  *tool_options = PICMAN_TOOL_GET_OPTIONS (image_map_tool);
+  PicmanLevelsConfig *config       = tool->config;
   GtkListStore     *store;
   GtkSizeGroup     *label_group;
   GtkWidget        *main_vbox;
@@ -358,11 +358,11 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
   gint              border;
 
   g_signal_connect (image_map_tool->settings_box, "file-dialog-setup",
-                    G_CALLBACK (gimp_levels_tool_export_setup),
+                    G_CALLBACK (picman_levels_tool_export_setup),
                     image_map_tool);
 
-  main_vbox   = gimp_image_map_tool_dialog_get_vbox (image_map_tool);
-  label_group = gimp_image_map_tool_dialog_get_label_group (image_map_tool);
+  main_vbox   = picman_image_map_tool_dialog_get_vbox (image_map_tool);
+  label_group = picman_image_map_tool_dialog_get_label_group (image_map_tool);
 
   /*  The option menu for selecting channels  */
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
@@ -375,17 +375,17 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
 
   gtk_size_group_add_widget (label_group, label);
 
-  store = gimp_enum_store_new_with_range (GIMP_TYPE_HISTOGRAM_CHANNEL,
-                                          GIMP_HISTOGRAM_VALUE,
-                                          GIMP_HISTOGRAM_ALPHA);
-  menu = gimp_enum_combo_box_new_with_model (GIMP_ENUM_STORE (store));
+  store = picman_enum_store_new_with_range (PICMAN_TYPE_HISTOGRAM_CHANNEL,
+                                          PICMAN_HISTOGRAM_VALUE,
+                                          PICMAN_HISTOGRAM_ALPHA);
+  menu = picman_enum_combo_box_new_with_model (PICMAN_ENUM_STORE (store));
   g_object_unref (store);
 
   g_signal_connect (menu, "changed",
                     G_CALLBACK (levels_channel_callback),
                     tool);
-  gimp_enum_combo_box_set_stock_prefix (GIMP_ENUM_COMBO_BOX (menu),
-                                        "gimp-channel");
+  picman_enum_combo_box_set_stock_prefix (PICMAN_ENUM_COMBO_BOX (menu),
+                                        "picman-channel");
   gtk_box_pack_start (GTK_BOX (hbox), menu, FALSE, FALSE, 0);
   gtk_widget_show (menu);
 
@@ -401,14 +401,14 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
                     G_CALLBACK (levels_channel_reset_callback),
                     tool);
 
-  menu = gimp_prop_enum_stock_box_new (G_OBJECT (tool_options),
-                                       "histogram-scale", "gimp-histogram",
+  menu = picman_prop_enum_stock_box_new (G_OBJECT (tool_options),
+                                       "histogram-scale", "picman-histogram",
                                        0, 0);
   gtk_box_pack_end (GTK_BOX (hbox), menu, FALSE, FALSE, 0);
   gtk_widget_show (menu);
 
   /*  Input levels frame  */
-  frame = gimp_frame_new (_("Input Levels"));
+  frame = picman_frame_new (_("Input Levels"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -425,12 +425,12 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
   gtk_container_add (GTK_CONTAINER (frame), vbox2);
   gtk_widget_show (vbox2);
 
-  tool->histogram_view = gimp_histogram_view_new (FALSE);
+  tool->histogram_view = picman_histogram_view_new (FALSE);
   gtk_box_pack_start (GTK_BOX (vbox2), tool->histogram_view, TRUE, TRUE, 0);
   gtk_widget_show (GTK_WIDGET (tool->histogram_view));
 
-  gimp_histogram_options_connect_view (GIMP_HISTOGRAM_OPTIONS (tool_options),
-                                       GIMP_HISTOGRAM_VIEW (tool->histogram_view));
+  picman_histogram_options_connect_view (PICMAN_HISTOGRAM_OPTIONS (tool_options),
+                                       PICMAN_HISTOGRAM_VIEW (tool->histogram_view));
 
   g_object_get (tool->histogram_view, "border-width", &border, NULL);
 
@@ -439,17 +439,17 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
   gtk_box_pack_start (GTK_BOX (vbox2), vbox3, FALSE, FALSE, 0);
   gtk_widget_show (vbox3);
 
-  tool->input_bar = g_object_new (GIMP_TYPE_COLOR_BAR, NULL);
+  tool->input_bar = g_object_new (PICMAN_TYPE_COLOR_BAR, NULL);
   gtk_widget_set_size_request (tool->input_bar, -1, GRADIENT_HEIGHT / 2);
   gtk_box_pack_start (GTK_BOX (vbox3), tool->input_bar, FALSE, FALSE, 0);
   gtk_widget_show (tool->input_bar);
 
-  bar = g_object_new (GIMP_TYPE_COLOR_BAR, NULL);
+  bar = g_object_new (PICMAN_TYPE_COLOR_BAR, NULL);
   gtk_widget_set_size_request (bar, -1, GRADIENT_HEIGHT / 2);
   gtk_box_pack_start (GTK_BOX (vbox3), bar, FALSE, FALSE, 0);
   gtk_widget_show (bar);
 
-  tool->input_sliders = g_object_new (GIMP_TYPE_HANDLE_BAR, NULL);
+  tool->input_sliders = g_object_new (PICMAN_TYPE_HANDLE_BAR, NULL);
   gtk_widget_set_size_request (tool->input_sliders, -1, CONTROL_HEIGHT);
   gtk_box_pack_start (GTK_BOX (vbox3), tool->input_sliders, FALSE, FALSE, 0);
   gtk_widget_show (tool->input_sliders);
@@ -488,11 +488,11 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
   gtk_box_pack_start (GTK_BOX (hbox), hbox2, FALSE, FALSE, 0);
   gtk_widget_show (hbox2);
 
-  button = gimp_levels_tool_color_picker_new (tool, PICK_LOW_INPUT);
+  button = picman_levels_tool_color_picker_new (tool, PICK_LOW_INPUT);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
-  spinbutton = gimp_spin_button_new (&data,
+  spinbutton = picman_spin_button_new (&data,
                                      config->low_input[config->channel] * 255.0,
                                      0, 255, 1, 10, 0, 0.5, 0);
   gtk_box_pack_start (GTK_BOX (hbox2), spinbutton, FALSE, FALSE, 0);
@@ -504,15 +504,15 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
                     G_CALLBACK (levels_low_input_changed),
                     tool);
 
-  gimp_handle_bar_set_adjustment (GIMP_HANDLE_BAR (tool->input_sliders), 0,
+  picman_handle_bar_set_adjustment (PICMAN_HANDLE_BAR (tool->input_sliders), 0,
                                   tool->low_input);
 
   /*  input gamma spin  */
-  spinbutton = gimp_spin_button_new (&data,
+  spinbutton = picman_spin_button_new (&data,
                                      config->gamma[config->channel],
                                      0.1, 10, 0.01, 0.1, 0, 0.5, 2);
   gtk_box_pack_start (GTK_BOX (hbox), spinbutton, TRUE, FALSE, 0);
-  gimp_help_set_help_data (spinbutton, _("Gamma"), NULL);
+  picman_help_set_help_data (spinbutton, _("Gamma"), NULL);
   gtk_widget_show (spinbutton);
 
   tool->gamma = GTK_ADJUSTMENT (data);
@@ -526,7 +526,7 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
                     G_CALLBACK (levels_linear_gamma_changed),
                     tool);
 
-  gimp_handle_bar_set_adjustment (GIMP_HANDLE_BAR (tool->input_sliders), 1,
+  picman_handle_bar_set_adjustment (PICMAN_HANDLE_BAR (tool->input_sliders), 1,
                                   tool->gamma_linear);
   g_object_unref (tool->gamma_linear);
 
@@ -535,11 +535,11 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
   gtk_box_pack_end (GTK_BOX (hbox), hbox2, FALSE, FALSE, 0);
   gtk_widget_show (hbox2);
 
-  button = gimp_levels_tool_color_picker_new (tool, PICK_HIGH_INPUT);
+  button = picman_levels_tool_color_picker_new (tool, PICK_HIGH_INPUT);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
-  spinbutton = gimp_spin_button_new (&data,
+  spinbutton = picman_spin_button_new (&data,
                                      config->high_input[config->channel] * 255.0,
                                      0, 255, 1, 10, 0, 0.5, 0);
   gtk_box_pack_start (GTK_BOX (hbox2), spinbutton, FALSE, FALSE, 0);
@@ -551,11 +551,11 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
                     G_CALLBACK (levels_high_input_changed),
                     tool);
 
-  gimp_handle_bar_set_adjustment (GIMP_HANDLE_BAR (tool->input_sliders), 2,
+  picman_handle_bar_set_adjustment (PICMAN_HANDLE_BAR (tool->input_sliders), 2,
                                   tool->high_input);
 
   /*  Output levels frame  */
-  frame = gimp_frame_new (_("Output Levels"));
+  frame = picman_frame_new (_("Output Levels"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -573,12 +573,12 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
   gtk_container_add (GTK_CONTAINER (frame), vbox2);
   gtk_widget_show (vbox2);
 
-  tool->output_bar = g_object_new (GIMP_TYPE_COLOR_BAR, NULL);
+  tool->output_bar = g_object_new (PICMAN_TYPE_COLOR_BAR, NULL);
   gtk_widget_set_size_request (tool->output_bar, -1, GRADIENT_HEIGHT);
   gtk_box_pack_start (GTK_BOX (vbox2), tool->output_bar, FALSE, FALSE, 0);
   gtk_widget_show (tool->output_bar);
 
-  tool->output_sliders = g_object_new (GIMP_TYPE_HANDLE_BAR, NULL);
+  tool->output_sliders = g_object_new (PICMAN_TYPE_HANDLE_BAR, NULL);
   gtk_widget_set_size_request (tool->output_sliders, -1, CONTROL_HEIGHT);
   gtk_box_pack_start (GTK_BOX (vbox2), tool->output_sliders, FALSE, FALSE, 0);
   gtk_widget_show (tool->output_sliders);
@@ -601,7 +601,7 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
   gtk_widget_show (hbox);
 
   /*  low output spin  */
-  spinbutton = gimp_spin_button_new (&data,
+  spinbutton = picman_spin_button_new (&data,
                                      config->low_output[config->channel] * 255.0,
                                      0, 255, 1, 10, 0, 0.5, 0);
   gtk_box_pack_start (GTK_BOX (hbox), spinbutton, FALSE, FALSE, 0);
@@ -613,11 +613,11 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
                     G_CALLBACK (levels_low_output_changed),
                     tool);
 
-  gimp_handle_bar_set_adjustment (GIMP_HANDLE_BAR (tool->output_sliders), 0,
+  picman_handle_bar_set_adjustment (PICMAN_HANDLE_BAR (tool->output_sliders), 0,
                                   tool->low_output);
 
   /*  high output spin  */
-  spinbutton = gimp_spin_button_new (&data,
+  spinbutton = picman_spin_button_new (&data,
                                      config->high_output[config->channel] * 255.0,
                                      0, 255, 1, 10, 0, 0.5, 0);
   gtk_box_pack_end (GTK_BOX (hbox), spinbutton, FALSE, FALSE, 0);
@@ -629,12 +629,12 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
                     G_CALLBACK (levels_high_output_changed),
                     tool);
 
-  gimp_handle_bar_set_adjustment (GIMP_HANDLE_BAR (tool->output_sliders), 2,
+  picman_handle_bar_set_adjustment (PICMAN_HANDLE_BAR (tool->output_sliders), 2,
                                   tool->high_output);
 
 
   /*  all channels frame  */
-  frame = gimp_frame_new (_("All Channels"));
+  frame = picman_frame_new (_("All Channels"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -648,29 +648,29 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
 
   button = gtk_button_new_with_mnemonic (_("_Auto"));
   gtk_box_pack_start (GTK_BOX (hbbox), button, FALSE, FALSE, 0);
-  gimp_help_set_help_data (button, _("Adjust levels automatically"), NULL);
+  picman_help_set_help_data (button, _("Adjust levels automatically"), NULL);
   gtk_widget_show (button);
 
   g_signal_connect (button, "clicked",
                     G_CALLBACK (levels_stretch_callback),
                     tool);
 
-  button = gimp_levels_tool_color_picker_new (tool,
+  button = picman_levels_tool_color_picker_new (tool,
                                               PICK_LOW_INPUT | PICK_ALL_CHANNELS);
   gtk_box_pack_start (GTK_BOX (hbbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
-  button = gimp_levels_tool_color_picker_new (tool,
+  button = picman_levels_tool_color_picker_new (tool,
                                               PICK_GAMMA | PICK_ALL_CHANNELS);
   gtk_box_pack_start (GTK_BOX (hbbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
-  button = gimp_levels_tool_color_picker_new (tool,
+  button = picman_levels_tool_color_picker_new (tool,
                                               PICK_HIGH_INPUT | PICK_ALL_CHANNELS);
   gtk_box_pack_start (GTK_BOX (hbbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
-  button = gimp_stock_button_new (GIMP_STOCK_TOOL_CURVES,
+  button = picman_stock_button_new (PICMAN_STOCK_TOOL_CURVES,
                                   _("Edit these Settings as Curves"));
   gtk_box_pack_start (GTK_BOX (main_vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
@@ -679,27 +679,27 @@ gimp_levels_tool_dialog (GimpImageMapTool *image_map_tool)
                     G_CALLBACK (levels_to_curves_callback),
                     tool);
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (tool->channel_menu),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (tool->channel_menu),
                                  config->channel);
 }
 
 static void
-gimp_levels_tool_reset (GimpImageMapTool *image_map_tool)
+picman_levels_tool_reset (PicmanImageMapTool *image_map_tool)
 {
-  GimpLevelsTool       *tool    = GIMP_LEVELS_TOOL (image_map_tool);
-  GimpHistogramChannel  channel = tool->config->channel;
+  PicmanLevelsTool       *tool    = PICMAN_LEVELS_TOOL (image_map_tool);
+  PicmanHistogramChannel  channel = tool->config->channel;
 
   g_object_freeze_notify (image_map_tool->config);
 
   if (image_map_tool->default_config)
     {
-      gimp_config_copy (GIMP_CONFIG (image_map_tool->default_config),
-                        GIMP_CONFIG (image_map_tool->config),
+      picman_config_copy (PICMAN_CONFIG (image_map_tool->default_config),
+                        PICMAN_CONFIG (image_map_tool->config),
                         0);
     }
   else
     {
-      gimp_config_reset (GIMP_CONFIG (image_map_tool->config));
+      picman_config_reset (PICMAN_CONFIG (image_map_tool->config));
     }
 
   g_object_set (tool->config,
@@ -710,11 +710,11 @@ gimp_levels_tool_reset (GimpImageMapTool *image_map_tool)
 }
 
 static gboolean
-gimp_levels_tool_settings_import (GimpImageMapTool  *image_map_tool,
+picman_levels_tool_settings_import (PicmanImageMapTool  *image_map_tool,
                                   const gchar       *filename,
                                   GError           **error)
 {
-  GimpLevelsTool *tool = GIMP_LEVELS_TOOL (image_map_tool);
+  PicmanLevelsTool *tool = PICMAN_LEVELS_TOOL (image_map_tool);
   FILE           *file;
   gchar           header[64];
 
@@ -724,7 +724,7 @@ gimp_levels_tool_settings_import (GimpImageMapTool  *image_map_tool,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename),
+                   picman_filename_to_utf8 (filename),
                    g_strerror (errno));
       return FALSE;
     }
@@ -733,19 +733,19 @@ gimp_levels_tool_settings_import (GimpImageMapTool  *image_map_tool,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not read header from '%s': %s"),
-                   gimp_filename_to_utf8 (filename),
+                   picman_filename_to_utf8 (filename),
                    g_strerror (errno));
       fclose (file);
       return FALSE;
     }
 
-  if (g_str_has_prefix (header, "# GIMP Levels File\n"))
+  if (g_str_has_prefix (header, "# PICMAN Levels File\n"))
     {
       gboolean success;
 
       rewind (file);
 
-      success = gimp_levels_config_load_cruft (tool->config, file, error);
+      success = picman_levels_config_load_cruft (tool->config, file, error);
 
       fclose (file);
 
@@ -754,17 +754,17 @@ gimp_levels_tool_settings_import (GimpImageMapTool  *image_map_tool,
 
   fclose (file);
 
-  return GIMP_IMAGE_MAP_TOOL_CLASS (parent_class)->settings_import (image_map_tool,
+  return PICMAN_IMAGE_MAP_TOOL_CLASS (parent_class)->settings_import (image_map_tool,
                                                                     filename,
                                                                     error);
 }
 
 static gboolean
-gimp_levels_tool_settings_export (GimpImageMapTool  *image_map_tool,
+picman_levels_tool_settings_export (PicmanImageMapTool  *image_map_tool,
                                   const gchar       *filename,
                                   GError           **error)
 {
-  GimpLevelsTool *tool = GIMP_LEVELS_TOOL (image_map_tool);
+  PicmanLevelsTool *tool = PICMAN_LEVELS_TOOL (image_map_tool);
 
   if (tool->export_old_format)
     {
@@ -777,28 +777,28 @@ gimp_levels_tool_settings_export (GimpImageMapTool  *image_map_tool,
         {
           g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                        _("Could not open '%s' for writing: %s"),
-                       gimp_filename_to_utf8 (filename),
+                       picman_filename_to_utf8 (filename),
                        g_strerror (errno));
           return FALSE;
         }
 
-      success = gimp_levels_config_save_cruft (tool->config, file, error);
+      success = picman_levels_config_save_cruft (tool->config, file, error);
 
       fclose (file);
 
       return success;
     }
 
-  return GIMP_IMAGE_MAP_TOOL_CLASS (parent_class)->settings_export (image_map_tool,
+  return PICMAN_IMAGE_MAP_TOOL_CLASS (parent_class)->settings_export (image_map_tool,
                                                                     filename,
                                                                     error);
 }
 
 static void
-gimp_levels_tool_export_setup (GimpSettingsBox      *settings_box,
+picman_levels_tool_export_setup (PicmanSettingsBox      *settings_box,
                                GtkFileChooserDialog *dialog,
                                gboolean              export,
-                               GimpLevelsTool       *tool)
+                               PicmanLevelsTool       *tool)
 {
   GtkWidget *button;
 
@@ -812,16 +812,16 @@ gimp_levels_tool_export_setup (GimpSettingsBox      *settings_box,
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &tool->export_old_format);
 }
 
 static void
-gimp_levels_tool_config_notify (GObject        *object,
+picman_levels_tool_config_notify (GObject        *object,
                                 GParamSpec     *pspec,
-                                GimpLevelsTool *tool)
+                                PicmanLevelsTool *tool)
 {
-  GimpLevelsConfig *config       = GIMP_LEVELS_CONFIG (object);
+  PicmanLevelsConfig *config       = PICMAN_LEVELS_CONFIG (object);
   gdouble           scale_factor = tool->ui_scale_factor;
 
   if (! tool->low_input)
@@ -829,11 +829,11 @@ gimp_levels_tool_config_notify (GObject        *object,
 
   if (! strcmp (pspec->name, "channel"))
     {
-      gimp_histogram_view_set_channel (GIMP_HISTOGRAM_VIEW (tool->histogram_view),
+      picman_histogram_view_set_channel (PICMAN_HISTOGRAM_VIEW (tool->histogram_view),
                                        config->channel);
-      gimp_color_bar_set_channel (GIMP_COLOR_BAR (tool->output_bar),
+      picman_color_bar_set_channel (PICMAN_COLOR_BAR (tool->output_bar),
                                   config->channel);
-      gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (tool->channel_menu),
+      picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (tool->channel_menu),
                                      config->channel);
     }
   else if (! strcmp (pspec->name, "gamma")     ||
@@ -890,37 +890,37 @@ gimp_levels_tool_config_notify (GObject        *object,
 }
 
 static void
-levels_update_input_bar (GimpLevelsTool *tool)
+levels_update_input_bar (PicmanLevelsTool *tool)
 {
-  GimpLevelsConfig *config = tool->config;
+  PicmanLevelsConfig *config = tool->config;
 
   switch (config->channel)
     {
       gdouble value;
 
-    case GIMP_HISTOGRAM_VALUE:
-    case GIMP_HISTOGRAM_ALPHA:
-    case GIMP_HISTOGRAM_RGB:
+    case PICMAN_HISTOGRAM_VALUE:
+    case PICMAN_HISTOGRAM_ALPHA:
+    case PICMAN_HISTOGRAM_RGB:
       {
         guchar v[256];
         gint   i;
 
         for (i = 0; i < 256; i++)
           {
-            value = gimp_operation_levels_map_input (config,
+            value = picman_operation_levels_map_input (config,
                                                      config->channel,
                                                      i / 255.0);
             v[i] = CLAMP (value, 0.0, 1.0) * 255.999;
           }
 
-        gimp_color_bar_set_buffers (GIMP_COLOR_BAR (tool->input_bar),
+        picman_color_bar_set_buffers (PICMAN_COLOR_BAR (tool->input_bar),
                                     v, v, v);
       }
       break;
 
-    case GIMP_HISTOGRAM_RED:
-    case GIMP_HISTOGRAM_GREEN:
-    case GIMP_HISTOGRAM_BLUE:
+    case PICMAN_HISTOGRAM_RED:
+    case PICMAN_HISTOGRAM_GREEN:
+    case PICMAN_HISTOGRAM_BLUE:
       {
         guchar r[256];
         guchar g[256];
@@ -929,23 +929,23 @@ levels_update_input_bar (GimpLevelsTool *tool)
 
         for (i = 0; i < 256; i++)
           {
-            value = gimp_operation_levels_map_input (config,
-                                                     GIMP_HISTOGRAM_RED,
+            value = picman_operation_levels_map_input (config,
+                                                     PICMAN_HISTOGRAM_RED,
                                                      i / 255.0);
             r[i] = CLAMP (value, 0.0, 1.0) * 255.999;
 
-            value = gimp_operation_levels_map_input (config,
-                                                     GIMP_HISTOGRAM_GREEN,
+            value = picman_operation_levels_map_input (config,
+                                                     PICMAN_HISTOGRAM_GREEN,
                                                      i / 255.0);
             g[i] = CLAMP (value, 0.0, 1.0) * 255.999;
 
-            value = gimp_operation_levels_map_input (config,
-                                                     GIMP_HISTOGRAM_BLUE,
+            value = picman_operation_levels_map_input (config,
+                                                     PICMAN_HISTOGRAM_BLUE,
                                                      i / 255.0);
             b[i] = CLAMP (value, 0.0, 1.0) * 255.999;
           }
 
-        gimp_color_bar_set_buffers (GIMP_COLOR_BAR (tool->input_bar),
+        picman_color_bar_set_buffers (PICMAN_COLOR_BAR (tool->input_bar),
                                     r, g, b);
       }
       break;
@@ -954,11 +954,11 @@ levels_update_input_bar (GimpLevelsTool *tool)
 
 static void
 levels_channel_callback (GtkWidget      *widget,
-                         GimpLevelsTool *tool)
+                         PicmanLevelsTool *tool)
 {
   gint value;
 
-  if (gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &value) &&
+  if (picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &value) &&
       tool->config->channel != value)
     {
       g_object_set (tool->config,
@@ -969,32 +969,32 @@ levels_channel_callback (GtkWidget      *widget,
 
 static void
 levels_channel_reset_callback (GtkWidget      *widget,
-                               GimpLevelsTool *tool)
+                               PicmanLevelsTool *tool)
 {
-  gimp_levels_config_reset_channel (tool->config);
+  picman_levels_config_reset_channel (tool->config);
 }
 
 static gboolean
 levels_menu_sensitivity (gint      value,
                          gpointer  data)
 {
-  GimpDrawable         *drawable = GIMP_DRAWABLE (data);
-  GimpHistogramChannel  channel  = value;
+  PicmanDrawable         *drawable = PICMAN_DRAWABLE (data);
+  PicmanHistogramChannel  channel  = value;
 
   switch (channel)
     {
-    case GIMP_HISTOGRAM_VALUE:
+    case PICMAN_HISTOGRAM_VALUE:
       return TRUE;
 
-    case GIMP_HISTOGRAM_RED:
-    case GIMP_HISTOGRAM_GREEN:
-    case GIMP_HISTOGRAM_BLUE:
-      return gimp_drawable_is_rgb (drawable);
+    case PICMAN_HISTOGRAM_RED:
+    case PICMAN_HISTOGRAM_GREEN:
+    case PICMAN_HISTOGRAM_BLUE:
+      return picman_drawable_is_rgb (drawable);
 
-    case GIMP_HISTOGRAM_ALPHA:
-      return gimp_drawable_has_alpha (drawable);
+    case PICMAN_HISTOGRAM_ALPHA:
+      return picman_drawable_has_alpha (drawable);
 
-    case GIMP_HISTOGRAM_RGB:
+    case PICMAN_HISTOGRAM_RGB:
       return FALSE;
     }
 
@@ -1003,16 +1003,16 @@ levels_menu_sensitivity (gint      value,
 
 static void
 levels_stretch_callback (GtkWidget      *widget,
-                         GimpLevelsTool *tool)
+                         PicmanLevelsTool *tool)
 {
-  GimpDrawable *drawable = GIMP_IMAGE_MAP_TOOL (tool)->drawable;
+  PicmanDrawable *drawable = PICMAN_IMAGE_MAP_TOOL (tool)->drawable;
 
-  gimp_levels_config_stretch (tool->config, tool->histogram,
-                              gimp_drawable_is_rgb (drawable));
+  picman_levels_config_stretch (tool->config, tool->histogram,
+                              picman_drawable_is_rgb (drawable));
 }
 
 static void
-levels_linear_gamma_update (GimpLevelsTool *tool)
+levels_linear_gamma_update (PicmanLevelsTool *tool)
 {
   gdouble low_input  = gtk_adjustment_get_value (tool->low_input);
   gdouble high_input = gtk_adjustment_get_value (tool->high_input);
@@ -1028,7 +1028,7 @@ levels_linear_gamma_update (GimpLevelsTool *tool)
 
 static void
 levels_linear_gamma_changed (GtkAdjustment  *adjustment,
-                             GimpLevelsTool *tool)
+                             PicmanLevelsTool *tool)
 {
   gdouble low_input  = gtk_adjustment_get_value (tool->low_input);
   gdouble high_input = gtk_adjustment_get_value (tool->high_input);
@@ -1051,9 +1051,9 @@ levels_linear_gamma_changed (GtkAdjustment  *adjustment,
 
 static void
 levels_low_input_changed (GtkAdjustment  *adjustment,
-                          GimpLevelsTool *tool)
+                          PicmanLevelsTool *tool)
 {
-  GimpLevelsConfig *config = tool->config;
+  PicmanLevelsConfig *config = tool->config;
   gint              value  = ROUND (gtk_adjustment_get_value (adjustment));
 
   gtk_adjustment_set_lower (tool->high_input, value);
@@ -1071,9 +1071,9 @@ levels_low_input_changed (GtkAdjustment  *adjustment,
 
 static void
 levels_gamma_changed (GtkAdjustment  *adjustment,
-                      GimpLevelsTool *tool)
+                      PicmanLevelsTool *tool)
 {
-  GimpLevelsConfig *config = tool->config;
+  PicmanLevelsConfig *config = tool->config;
   gdouble           value  = gtk_adjustment_get_value (adjustment);
 
   if (config->gamma[config->channel] != value)
@@ -1088,9 +1088,9 @@ levels_gamma_changed (GtkAdjustment  *adjustment,
 
 static void
 levels_high_input_changed (GtkAdjustment  *adjustment,
-                           GimpLevelsTool *tool)
+                           PicmanLevelsTool *tool)
 {
-  GimpLevelsConfig *config = tool->config;
+  PicmanLevelsConfig *config = tool->config;
   gint              value  = ROUND (gtk_adjustment_get_value (adjustment));
 
   gtk_adjustment_set_upper (tool->low_input, value);
@@ -1108,9 +1108,9 @@ levels_high_input_changed (GtkAdjustment  *adjustment,
 
 static void
 levels_low_output_changed (GtkAdjustment  *adjustment,
-                           GimpLevelsTool *tool)
+                           PicmanLevelsTool *tool)
 {
-  GimpLevelsConfig *config = tool->config;
+  PicmanLevelsConfig *config = tool->config;
   gint              value  = ROUND (gtk_adjustment_get_value (adjustment));
 
   if (config->low_output[config->channel] != value / tool->ui_scale_factor)
@@ -1123,9 +1123,9 @@ levels_low_output_changed (GtkAdjustment  *adjustment,
 
 static void
 levels_high_output_changed (GtkAdjustment  *adjustment,
-                            GimpLevelsTool *tool)
+                            PicmanLevelsTool *tool)
 {
-  GimpLevelsConfig *config = tool->config;
+  PicmanLevelsConfig *config = tool->config;
   gint              value  = ROUND (gtk_adjustment_get_value (adjustment));
 
   if (config->high_output[config->channel] != value / tool->ui_scale_factor)
@@ -1137,21 +1137,21 @@ levels_high_output_changed (GtkAdjustment  *adjustment,
 }
 
 static void
-levels_input_adjust_by_color (GimpLevelsConfig     *config,
+levels_input_adjust_by_color (PicmanLevelsConfig     *config,
                               guint                 value,
-                              GimpHistogramChannel  channel,
-                              const GimpRGB        *color)
+                              PicmanHistogramChannel  channel,
+                              const PicmanRGB        *color)
 {
   switch (value & 0xF)
     {
     case PICK_LOW_INPUT:
-      gimp_levels_config_adjust_by_colors (config, channel, color, NULL, NULL);
+      picman_levels_config_adjust_by_colors (config, channel, color, NULL, NULL);
       break;
     case PICK_GAMMA:
-      gimp_levels_config_adjust_by_colors (config, channel, NULL, color, NULL);
+      picman_levels_config_adjust_by_colors (config, channel, NULL, color, NULL);
       break;
     case PICK_HIGH_INPUT:
-      gimp_levels_config_adjust_by_colors (config, channel, NULL, NULL, color);
+      picman_levels_config_adjust_by_colors (config, channel, NULL, NULL, color);
       break;
     default:
       break;
@@ -1159,38 +1159,38 @@ levels_input_adjust_by_color (GimpLevelsConfig     *config,
 }
 
 static void
-gimp_levels_tool_color_picked (GimpImageMapTool *color_tool,
+picman_levels_tool_color_picked (PicmanImageMapTool *color_tool,
                                gpointer          identifier,
                                const Babl       *sample_format,
-                               const GimpRGB    *color)
+                               const PicmanRGB    *color)
 {
-  GimpLevelsTool *tool  = GIMP_LEVELS_TOOL (color_tool);
+  PicmanLevelsTool *tool  = PICMAN_LEVELS_TOOL (color_tool);
   guint           value = GPOINTER_TO_UINT (identifier);
 
   if (value & PICK_ALL_CHANNELS &&
-      gimp_babl_format_get_base_type (sample_format) == GIMP_RGB)
+      picman_babl_format_get_base_type (sample_format) == PICMAN_RGB)
     {
-      GimpHistogramChannel  channel;
+      PicmanHistogramChannel  channel;
 
       /*  first reset the value channel  */
       switch (value & 0xF)
         {
         case PICK_LOW_INPUT:
-          tool->config->low_input[GIMP_HISTOGRAM_VALUE] = 0.0;
+          tool->config->low_input[PICMAN_HISTOGRAM_VALUE] = 0.0;
           break;
         case PICK_GAMMA:
-          tool->config->gamma[GIMP_HISTOGRAM_VALUE] = 1.0;
+          tool->config->gamma[PICMAN_HISTOGRAM_VALUE] = 1.0;
           break;
         case PICK_HIGH_INPUT:
-          tool->config->high_input[GIMP_HISTOGRAM_VALUE] = 1.0;
+          tool->config->high_input[PICMAN_HISTOGRAM_VALUE] = 1.0;
           break;
         default:
           break;
         }
 
       /*  then adjust all color channels  */
-      for (channel = GIMP_HISTOGRAM_RED;
-           channel <= GIMP_HISTOGRAM_BLUE;
+      for (channel = PICMAN_HISTOGRAM_RED;
+           channel <= PICMAN_HISTOGRAM_BLUE;
            channel++)
         {
           levels_input_adjust_by_color (tool->config,
@@ -1206,15 +1206,15 @@ gimp_levels_tool_color_picked (GimpImageMapTool *color_tool,
 
 static void
 levels_to_curves_callback (GtkWidget      *widget,
-                           GimpLevelsTool *tool)
+                           PicmanLevelsTool *tool)
 {
-  GimpCurvesConfig *curves;
+  PicmanCurvesConfig *curves;
 
-  curves = gimp_levels_config_to_curves_config (tool->config);
+  curves = picman_levels_config_to_curves_config (tool->config);
 
-  gimp_image_map_tool_edit_as (GIMP_IMAGE_MAP_TOOL (tool),
-                               "gimp-curves-tool",
-                               GIMP_CONFIG (curves));
+  picman_image_map_tool_edit_as (PICMAN_IMAGE_MAP_TOOL (tool),
+                               "picman-curves-tool",
+                               PICMAN_CONFIG (curves));
 
   g_object_unref (curves);
 }

@@ -1,11 +1,11 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * Thumbnail handling according to the Thumbnail Managing Standard.
  * http://triq.net/~pearl/thumbnail-spec/
  *
- * Copyright (C) 2001-2004  Sven Neumann <sven@gimp.org>
- *                          Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2001-2004  Sven Neumann <sven@picman.org>
+ *                          Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,40 +35,40 @@
 #include <glib/gstdio.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpparam.h"
+#include "libpicmanbase/picmanparam.h"
 
 #ifdef G_OS_WIN32
-#include "libgimpbase/gimpwin32-io.h"
+#include "libpicmanbase/picmanwin32-io.h"
 #include <process.h>
 #define _getpid getpid
 #endif
 
-#include "gimpthumb-types.h"
-#include "gimpthumb-error.h"
-#include "gimpthumb-utils.h"
-#include "gimpthumbnail.h"
+#include "picmanthumb-types.h"
+#include "picmanthumb-error.h"
+#include "picmanthumb-utils.h"
+#include "picmanthumbnail.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpthumbnail
- * @title: GimpThumbnail
- * @short_description: The GimpThumbnail object
+ * SECTION: picmanthumbnail
+ * @title: PicmanThumbnail
+ * @short_description: The PicmanThumbnail object
  *
- * The GimpThumbnail object
+ * The PicmanThumbnail object
  **/
 
 
-/*  #define GIMP_THUMB_DEBUG  */
+/*  #define PICMAN_THUMB_DEBUG  */
 
 
-#if defined (GIMP_THUMB_DEBUG) && defined (__GNUC__)
-#define GIMP_THUMB_DEBUG_CALL(t) \
+#if defined (PICMAN_THUMB_DEBUG) && defined (__GNUC__)
+#define PICMAN_THUMB_DEBUG_CALL(t) \
         g_printerr ("%s: %s\n", \
                      __FUNCTION__, t->image_uri ? t->image_uri : "(null)")
 #else
-#define GIMP_THUMB_DEBUG_CALL(t) ((void)(0))
+#define PICMAN_THUMB_DEBUG_CALL(t) ((void)(0))
 #endif
 
 
@@ -80,8 +80,8 @@
 #define TAG_THUMB_MIMETYPE        "tEXt::Thumb::Mimetype"
 #define TAG_THUMB_IMAGE_WIDTH     "tEXt::Thumb::Image::Width"
 #define TAG_THUMB_IMAGE_HEIGHT    "tEXt::Thumb::Image::Height"
-#define TAG_THUMB_GIMP_TYPE       "tEXt::Thumb::X-GIMP::Type"
-#define TAG_THUMB_GIMP_LAYERS     "tEXt::Thumb::X-GIMP::Layers"
+#define TAG_THUMB_PICMAN_TYPE       "tEXt::Thumb::X-PICMAN::Type"
+#define TAG_THUMB_PICMAN_LAYERS     "tEXt::Thumb::X-PICMAN::Layers"
 
 
 enum
@@ -100,122 +100,122 @@ enum
 };
 
 
-static void      gimp_thumbnail_finalize     (GObject        *object);
-static void      gimp_thumbnail_set_property (GObject        *object,
+static void      picman_thumbnail_finalize     (GObject        *object);
+static void      picman_thumbnail_set_property (GObject        *object,
                                               guint           property_id,
                                               const GValue   *value,
                                               GParamSpec     *pspec);
-static void      gimp_thumbnail_get_property (GObject        *object,
+static void      picman_thumbnail_get_property (GObject        *object,
                                               guint           property_id,
                                               GValue         *value,
                                               GParamSpec     *pspec);
-static void      gimp_thumbnail_reset_info   (GimpThumbnail  *thumbnail);
+static void      picman_thumbnail_reset_info   (PicmanThumbnail  *thumbnail);
 
-static void      gimp_thumbnail_update_image (GimpThumbnail  *thumbnail);
-static void      gimp_thumbnail_update_thumb (GimpThumbnail  *thumbnail,
-                                              GimpThumbSize   size);
+static void      picman_thumbnail_update_image (PicmanThumbnail  *thumbnail);
+static void      picman_thumbnail_update_thumb (PicmanThumbnail  *thumbnail,
+                                              PicmanThumbSize   size);
 
-static gboolean  gimp_thumbnail_save         (GimpThumbnail  *thumbnail,
-                                              GimpThumbSize   size,
+static gboolean  picman_thumbnail_save         (PicmanThumbnail  *thumbnail,
+                                              PicmanThumbSize   size,
                                               const gchar    *filename,
                                               GdkPixbuf      *pixbuf,
                                               const gchar    *software,
                                               GError        **error);
-#ifdef GIMP_THUMB_DEBUG
-static void      gimp_thumbnail_debug_notify (GObject        *object,
+#ifdef PICMAN_THUMB_DEBUG
+static void      picman_thumbnail_debug_notify (GObject        *object,
                                               GParamSpec     *pspec);
 #endif
 
 
-G_DEFINE_TYPE (GimpThumbnail, gimp_thumbnail, G_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanThumbnail, picman_thumbnail, G_TYPE_OBJECT)
 
-#define parent_class gimp_thumbnail_parent_class
+#define parent_class picman_thumbnail_parent_class
 
 
 static void
-gimp_thumbnail_class_init (GimpThumbnailClass *klass)
+picman_thumbnail_class_init (PicmanThumbnailClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize     = gimp_thumbnail_finalize;
-  object_class->set_property = gimp_thumbnail_set_property;
-  object_class->get_property = gimp_thumbnail_get_property;
+  object_class->finalize     = picman_thumbnail_finalize;
+  object_class->set_property = picman_thumbnail_set_property;
+  object_class->get_property = picman_thumbnail_get_property;
 
   g_object_class_install_property (object_class,
                                    PROP_IMAGE_STATE,
                                    g_param_spec_enum ("image-state", NULL,
                                                       "State of the image associated to the thumbnail object",
-                                                      GIMP_TYPE_THUMB_STATE,
-                                                      GIMP_THUMB_STATE_UNKNOWN,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_TYPE_THUMB_STATE,
+                                                      PICMAN_THUMB_STATE_UNKNOWN,
+                                                      PICMAN_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_IMAGE_URI,
                                    g_param_spec_string ("image-uri", NULL,
                                                        "URI of the image file",
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_IMAGE_MTIME,
                                    g_param_spec_int64 ("image-mtime", NULL,
                                                        "Modification time of the image file in seconds since the Epoch",
                                                        G_MININT64, G_MAXINT64, 0,
-                                                       GIMP_PARAM_READWRITE));
+                                                       PICMAN_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_IMAGE_FILESIZE,
                                    g_param_spec_int64 ("image-filesize", NULL,
                                                        "Size of the image file in bytes",
                                                        0, G_MAXINT64, 0,
-                                                       GIMP_PARAM_READWRITE));
+                                                       PICMAN_PARAM_READWRITE));
   /**
-   * GimpThumbnail::image-mimetype:
+   * PicmanThumbnail::image-mimetype:
    *
    * Image mimetype
    *
-   * Since: GIMP 2.2
+   * Since: PICMAN 2.2
    **/
   g_object_class_install_property (object_class,
                                    PROP_IMAGE_MIMETYPE,
                                    g_param_spec_string ("image-mimetype", NULL,
                                                         "Image mimetype",
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_IMAGE_WIDTH,
                                    g_param_spec_int ("image-width", NULL,
                                                      "Width of the image in pixels",
                                                      0, G_MAXINT, 0,
-                                                     GIMP_PARAM_READWRITE));
+                                                     PICMAN_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_IMAGE_HEIGHT,
                                    g_param_spec_int ("image-height", NULL,
                                                      "Height of the image in pixels",
                                                      0, G_MAXINT, 0,
-                                                     GIMP_PARAM_READWRITE));
+                                                     PICMAN_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_IMAGE_TYPE,
                                    g_param_spec_string ("image-type", NULL,
                                                         "String describing the type of the image format",
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_IMAGE_NUM_LAYERS,
                                    g_param_spec_int ("image-num-layers", NULL,
                                                      "The number of layers in the image",
                                                      0, G_MAXINT, 0,
-                                                     GIMP_PARAM_READWRITE));
+                                                     PICMAN_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_THUMB_STATE,
                                    g_param_spec_enum ("thumb-state", NULL,
                                                       "State of the thumbnail file",
-                                                      GIMP_TYPE_THUMB_STATE,
-                                                      GIMP_THUMB_STATE_UNKNOWN,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_TYPE_THUMB_STATE,
+                                                      PICMAN_THUMB_STATE_UNKNOWN,
+                                                      PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_thumbnail_init (GimpThumbnail *thumbnail)
+picman_thumbnail_init (PicmanThumbnail *thumbnail)
 {
-  thumbnail->image_state      = GIMP_THUMB_STATE_UNKNOWN;
+  thumbnail->image_state      = PICMAN_THUMB_STATE_UNKNOWN;
   thumbnail->image_uri        = NULL;
   thumbnail->image_filename   = NULL;
   thumbnail->image_mtime      = 0;
@@ -226,23 +226,23 @@ gimp_thumbnail_init (GimpThumbnail *thumbnail)
   thumbnail->image_type       = NULL;
   thumbnail->image_num_layers = 0;
 
-  thumbnail->thumb_state      = GIMP_THUMB_STATE_UNKNOWN;
+  thumbnail->thumb_state      = PICMAN_THUMB_STATE_UNKNOWN;
   thumbnail->thumb_size       = -1;
   thumbnail->thumb_filename   = NULL;
   thumbnail->thumb_mtime      = 0;
   thumbnail->thumb_filesize   = 0;
 
-#ifdef GIMP_THUMB_DEBUG
+#ifdef PICMAN_THUMB_DEBUG
   g_signal_connect (thumbnail, "notify",
-                    G_CALLBACK (gimp_thumbnail_debug_notify),
+                    G_CALLBACK (picman_thumbnail_debug_notify),
                     NULL);
 #endif
 }
 
 static void
-gimp_thumbnail_finalize (GObject *object)
+picman_thumbnail_finalize (GObject *object)
 {
-  GimpThumbnail *thumbnail = GIMP_THUMBNAIL (object);
+  PicmanThumbnail *thumbnail = PICMAN_THUMBNAIL (object);
 
   if (thumbnail->image_uri)
     {
@@ -274,12 +274,12 @@ gimp_thumbnail_finalize (GObject *object)
 }
 
 static void
-gimp_thumbnail_set_property (GObject      *object,
+picman_thumbnail_set_property (GObject      *object,
                              guint         property_id,
                              const GValue *value,
                              GParamSpec   *pspec)
 {
-  GimpThumbnail *thumbnail = GIMP_THUMBNAIL (object);
+  PicmanThumbnail *thumbnail = PICMAN_THUMBNAIL (object);
 
   switch (property_id)
     {
@@ -287,7 +287,7 @@ gimp_thumbnail_set_property (GObject      *object,
       thumbnail->image_state = g_value_get_enum (value);
       break;
     case PROP_IMAGE_URI:
-      gimp_thumbnail_set_uri (GIMP_THUMBNAIL (object),
+      picman_thumbnail_set_uri (PICMAN_THUMBNAIL (object),
                               g_value_get_string (value));
       break;
     case PROP_IMAGE_MTIME:
@@ -324,12 +324,12 @@ gimp_thumbnail_set_property (GObject      *object,
 }
 
 static void
-gimp_thumbnail_get_property (GObject    *object,
+picman_thumbnail_get_property (GObject    *object,
                              guint       property_id,
                              GValue     *value,
                              GParamSpec *pspec)
 {
-  GimpThumbnail *thumbnail = GIMP_THUMBNAIL (object);
+  PicmanThumbnail *thumbnail = PICMAN_THUMBNAIL (object);
 
   switch (property_id)
     {
@@ -371,34 +371,34 @@ gimp_thumbnail_get_property (GObject    *object,
 }
 
 /**
- * gimp_thumbnail_new:
+ * picman_thumbnail_new:
  *
- * Creates a new #GimpThumbnail object.
+ * Creates a new #PicmanThumbnail object.
  *
- * Return value: a newly allocated GimpThumbnail object
+ * Return value: a newly allocated PicmanThumbnail object
  **/
-GimpThumbnail *
-gimp_thumbnail_new (void)
+PicmanThumbnail *
+picman_thumbnail_new (void)
 {
-  return g_object_new (GIMP_TYPE_THUMBNAIL, NULL);
+  return g_object_new (PICMAN_TYPE_THUMBNAIL, NULL);
 }
 
 /**
- * gimp_thumbnail_set_uri:
- * @thumbnail: a #GimpThumbnail object
+ * picman_thumbnail_set_uri:
+ * @thumbnail: a #PicmanThumbnail object
  * @uri: an escaped URI
  *
  * Sets the location of the image file associated with the #thumbnail.
  *
- * All informations stored in the #GimpThumbnail are reset.
+ * All informations stored in the #PicmanThumbnail are reset.
  **/
 void
-gimp_thumbnail_set_uri (GimpThumbnail *thumbnail,
+picman_thumbnail_set_uri (PicmanThumbnail *thumbnail,
                         const gchar   *uri)
 {
-  g_return_if_fail (GIMP_IS_THUMBNAIL (thumbnail));
+  g_return_if_fail (PICMAN_IS_THUMBNAIL (thumbnail));
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
   if (thumbnail->image_uri)
     g_free (thumbnail->image_uri);
@@ -422,7 +422,7 @@ gimp_thumbnail_set_uri (GimpThumbnail *thumbnail,
   thumbnail->thumb_mtime    = 0;
 
   g_object_set (thumbnail,
-                "image-state",      GIMP_THUMB_STATE_UNKNOWN,
+                "image-state",      PICMAN_THUMB_STATE_UNKNOWN,
                 "image-filesize",   (gint64) 0,
                 "image-mtime",      (gint64) 0,
                 "image-mimetype",   NULL,
@@ -430,13 +430,13 @@ gimp_thumbnail_set_uri (GimpThumbnail *thumbnail,
                 "image-height",     0,
                 "image-type",       NULL,
                 "image-num-layers", 0,
-                "thumb-state",      GIMP_THUMB_STATE_UNKNOWN,
+                "thumb-state",      PICMAN_THUMB_STATE_UNKNOWN,
                 NULL);
 }
 
 /**
- * gimp_thumbnail_set_filename:
- * @thumbnail: a #GimpThumbnail object
+ * picman_thumbnail_set_filename:
+ * @thumbnail: a #PicmanThumbnail object
  * @filename: a local filename in the encoding of the filesystem
  * @error: return location for possible errors
  *
@@ -446,21 +446,21 @@ gimp_thumbnail_set_uri (GimpThumbnail *thumbnail,
  *               %FALSE otherwise
  **/
 gboolean
-gimp_thumbnail_set_filename (GimpThumbnail  *thumbnail,
+picman_thumbnail_set_filename (PicmanThumbnail  *thumbnail,
                              const gchar    *filename,
                              GError        **error)
 {
   gchar *uri = NULL;
 
-  g_return_val_if_fail (GIMP_IS_THUMBNAIL (thumbnail), FALSE);
+  g_return_val_if_fail (PICMAN_IS_THUMBNAIL (thumbnail), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
   if (filename)
     uri = g_filename_to_uri (filename, NULL, error);
 
-  gimp_thumbnail_set_uri (thumbnail, uri);
+  picman_thumbnail_set_uri (thumbnail, uri);
 
   g_free (uri);
 
@@ -468,8 +468,8 @@ gimp_thumbnail_set_filename (GimpThumbnail  *thumbnail,
 }
 
 /**
- * gimp_thumbnail_set_from_thumb:
- * @thumbnail: a #GimpThumbnail object
+ * picman_thumbnail_set_from_thumb:
+ * @thumbnail: a #PicmanThumbnail object
  * @filename: filename of a local thumbnail file
  * @error: return location for possible errors
  *
@@ -484,18 +484,18 @@ gimp_thumbnail_set_filename (GimpThumbnail  *thumbnail,
  * Return value: %TRUE if the pixbuf could be loaded, %FALSE otherwise
  **/
 gboolean
-gimp_thumbnail_set_from_thumb (GimpThumbnail  *thumbnail,
+picman_thumbnail_set_from_thumb (PicmanThumbnail  *thumbnail,
                                const gchar    *filename,
                                GError        **error)
 {
   GdkPixbuf   *pixbuf;
   const gchar *uri;
 
-  g_return_val_if_fail (GIMP_IS_THUMBNAIL (thumbnail), FALSE);
+  g_return_val_if_fail (PICMAN_IS_THUMBNAIL (thumbnail), FALSE);
   g_return_val_if_fail (filename != NULL, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
   pixbuf = gdk_pixbuf_new_from_file (filename, error);
   if (! pixbuf)
@@ -504,38 +504,38 @@ gimp_thumbnail_set_from_thumb (GimpThumbnail  *thumbnail,
   uri = gdk_pixbuf_get_option (pixbuf, TAG_THUMB_URI);
   if (! uri)
     {
-      g_set_error (error, GIMP_THUMB_ERROR, 0,
+      g_set_error (error, PICMAN_THUMB_ERROR, 0,
                    _("Thumbnail contains no Thumb::URI tag"));
       g_object_unref (pixbuf);
       return FALSE;
     }
 
-  gimp_thumbnail_set_uri (thumbnail, uri);
+  picman_thumbnail_set_uri (thumbnail, uri);
   g_object_unref (pixbuf);
 
   return TRUE;
 }
 
 /**
- * gimp_thumbnail_peek_image:
- * @thumbnail: a #GimpThumbnail object
+ * picman_thumbnail_peek_image:
+ * @thumbnail: a #PicmanThumbnail object
  *
  * Checks the image file associated with the @thumbnail and updates
  * information such as state, filesize and modification time.
  *
- * Return value: the image's #GimpThumbState after the update
+ * Return value: the image's #PicmanThumbState after the update
  **/
-GimpThumbState
-gimp_thumbnail_peek_image (GimpThumbnail *thumbnail)
+PicmanThumbState
+picman_thumbnail_peek_image (PicmanThumbnail *thumbnail)
 {
-  g_return_val_if_fail (GIMP_IS_THUMBNAIL (thumbnail),
-                        GIMP_THUMB_STATE_UNKNOWN);
+  g_return_val_if_fail (PICMAN_IS_THUMBNAIL (thumbnail),
+                        PICMAN_THUMB_STATE_UNKNOWN);
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
   g_object_freeze_notify (G_OBJECT (thumbnail));
 
-  gimp_thumbnail_update_image (thumbnail);
+  picman_thumbnail_update_image (thumbnail);
 
   g_object_thaw_notify (G_OBJECT (thumbnail));
 
@@ -543,8 +543,8 @@ gimp_thumbnail_peek_image (GimpThumbnail *thumbnail)
 }
 
 /**
- * gimp_thumbnail_peek_thumb:
- * @thumbnail: a #GimpThumbnail object
+ * picman_thumbnail_peek_thumb:
+ * @thumbnail: a #PicmanThumbnail object
  * @size: the preferred size of the thumbnail image
  *
  * Checks if a thumbnail file for the @thumbnail exists. It doesn't
@@ -553,24 +553,24 @@ gimp_thumbnail_peek_image (GimpThumbnail *thumbnail)
  * @thumbnail.
  *
  * If you want to check the thumbnail, either attempt to load it using
- * gimp_thumbnail_load_thumb(), or, if you don't need the resulting
- * thumbnail pixbuf, use gimp_thumbnail_check_thumb().
+ * picman_thumbnail_load_thumb(), or, if you don't need the resulting
+ * thumbnail pixbuf, use picman_thumbnail_check_thumb().
  *
- * Return value: the thumbnail's #GimpThumbState after the update
+ * Return value: the thumbnail's #PicmanThumbState after the update
  **/
-GimpThumbState
-gimp_thumbnail_peek_thumb (GimpThumbnail *thumbnail,
-                           GimpThumbSize  size)
+PicmanThumbState
+picman_thumbnail_peek_thumb (PicmanThumbnail *thumbnail,
+                           PicmanThumbSize  size)
 {
-  g_return_val_if_fail (GIMP_IS_THUMBNAIL (thumbnail),
-                        GIMP_THUMB_STATE_UNKNOWN);
+  g_return_val_if_fail (PICMAN_IS_THUMBNAIL (thumbnail),
+                        PICMAN_THUMB_STATE_UNKNOWN);
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
   g_object_freeze_notify (G_OBJECT (thumbnail));
 
-  gimp_thumbnail_update_image (thumbnail);
-  gimp_thumbnail_update_thumb (thumbnail, size);
+  picman_thumbnail_update_image (thumbnail);
+  picman_thumbnail_update_thumb (thumbnail, size);
 
   g_object_thaw_notify (G_OBJECT (thumbnail));
 
@@ -578,32 +578,32 @@ gimp_thumbnail_peek_thumb (GimpThumbnail *thumbnail,
 }
 
 /**
- * gimp_thumbnail_check_thumb:
- * @thumbnail: a #GimpThumbnail object
+ * picman_thumbnail_check_thumb:
+ * @thumbnail: a #PicmanThumbnail object
  * @size: the preferred size of the thumbnail image
  *
  * Checks if a thumbnail file for the @thumbnail exists, loads it and
  * verifies it is valid and uptodate for the image file asosciated
  * with the @thumbnail.
  *
- * Return value: the thumbnail's #GimpThumbState after the update
+ * Return value: the thumbnail's #PicmanThumbState after the update
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
-GimpThumbState
-gimp_thumbnail_check_thumb (GimpThumbnail *thumbnail,
-                            GimpThumbSize  size)
+PicmanThumbState
+picman_thumbnail_check_thumb (PicmanThumbnail *thumbnail,
+                            PicmanThumbSize  size)
 {
   GdkPixbuf *pixbuf;
 
-  g_return_val_if_fail (GIMP_IS_THUMBNAIL (thumbnail), FALSE);
+  g_return_val_if_fail (PICMAN_IS_THUMBNAIL (thumbnail), FALSE);
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
-  if (gimp_thumbnail_peek_thumb (thumbnail, size) == GIMP_THUMB_STATE_OK)
-    return GIMP_THUMB_STATE_OK;
+  if (picman_thumbnail_peek_thumb (thumbnail, size) == PICMAN_THUMB_STATE_OK)
+    return PICMAN_THUMB_STATE_OK;
 
-  pixbuf = gimp_thumbnail_load_thumb (thumbnail, size, NULL);
+  pixbuf = picman_thumbnail_load_thumb (thumbnail, size, NULL);
 
   if (pixbuf)
     g_object_unref (pixbuf);
@@ -612,9 +612,9 @@ gimp_thumbnail_check_thumb (GimpThumbnail *thumbnail,
 }
 
 static void
-gimp_thumbnail_update_image (GimpThumbnail *thumbnail)
+picman_thumbnail_update_image (PicmanThumbnail *thumbnail)
 {
-  GimpThumbState  state;
+  PicmanThumbState  state;
   gint64          mtime    = 0;
   gint64          filesize = 0;
 
@@ -625,18 +625,18 @@ gimp_thumbnail_update_image (GimpThumbnail *thumbnail)
 
   switch (state)
     {
-    case GIMP_THUMB_STATE_UNKNOWN:
+    case PICMAN_THUMB_STATE_UNKNOWN:
       g_return_if_fail (thumbnail->image_filename == NULL);
 
       thumbnail->image_filename =
-        _gimp_thumb_filename_from_uri (thumbnail->image_uri);
+        _picman_thumb_filename_from_uri (thumbnail->image_uri);
 
       if (! thumbnail->image_filename)
-        state = GIMP_THUMB_STATE_REMOTE;
+        state = PICMAN_THUMB_STATE_REMOTE;
 
       break;
 
-    case GIMP_THUMB_STATE_REMOTE:
+    case PICMAN_THUMB_STATE_REMOTE:
       break;
 
     default:
@@ -646,28 +646,28 @@ gimp_thumbnail_update_image (GimpThumbnail *thumbnail)
 
   switch (state)
     {
-    case GIMP_THUMB_STATE_REMOTE:
+    case PICMAN_THUMB_STATE_REMOTE:
       break;
 
     default:
-      switch (gimp_thumb_file_test (thumbnail->image_filename,
+      switch (picman_thumb_file_test (thumbnail->image_filename,
                                     &mtime, &filesize,
                                     &thumbnail->image_not_found_errno))
         {
-        case GIMP_THUMB_FILE_TYPE_REGULAR:
-          state = GIMP_THUMB_STATE_EXISTS;
+        case PICMAN_THUMB_FILE_TYPE_REGULAR:
+          state = PICMAN_THUMB_STATE_EXISTS;
           break;
 
-        case GIMP_THUMB_FILE_TYPE_FOLDER:
-          state = GIMP_THUMB_STATE_FOLDER;
+        case PICMAN_THUMB_FILE_TYPE_FOLDER:
+          state = PICMAN_THUMB_STATE_FOLDER;
           break;
 
-        case GIMP_THUMB_FILE_TYPE_SPECIAL:
-          state = GIMP_THUMB_STATE_SPECIAL;
+        case PICMAN_THUMB_FILE_TYPE_SPECIAL:
+          state = PICMAN_THUMB_STATE_SPECIAL;
           break;
 
         default:
-          state = GIMP_THUMB_STATE_NOT_FOUND;
+          state = PICMAN_THUMB_STATE_NOT_FOUND;
           break;
         }
       break;
@@ -687,19 +687,19 @@ gimp_thumbnail_update_image (GimpThumbnail *thumbnail)
                     "image-filesize", filesize,
                     NULL);
 
-      if (thumbnail->thumb_state == GIMP_THUMB_STATE_OK)
+      if (thumbnail->thumb_state == PICMAN_THUMB_STATE_OK)
         g_object_set (thumbnail,
-                      "thumb-state", GIMP_THUMB_STATE_OLD,
+                      "thumb-state", PICMAN_THUMB_STATE_OLD,
                       NULL);
     }
 }
 
 static void
-gimp_thumbnail_update_thumb (GimpThumbnail *thumbnail,
-                             GimpThumbSize  size)
+picman_thumbnail_update_thumb (PicmanThumbnail *thumbnail,
+                             PicmanThumbSize  size)
 {
   gchar          *filename;
-  GimpThumbState  state;
+  PicmanThumbState  state;
   gint64          filesize = 0;
   gint64          mtime    = 0;
 
@@ -708,17 +708,17 @@ gimp_thumbnail_update_thumb (GimpThumbnail *thumbnail,
 
   state = thumbnail->thumb_state;
 
-  filename = gimp_thumb_find_thumb (thumbnail->image_uri, &size);
+  filename = picman_thumb_find_thumb (thumbnail->image_uri, &size);
 
   if (! filename)
-    state = GIMP_THUMB_STATE_NOT_FOUND;
+    state = PICMAN_THUMB_STATE_NOT_FOUND;
 
   switch (state)
     {
-    case GIMP_THUMB_STATE_EXISTS:
-    case GIMP_THUMB_STATE_OLD:
-    case GIMP_THUMB_STATE_FAILED:
-    case GIMP_THUMB_STATE_OK:
+    case PICMAN_THUMB_STATE_EXISTS:
+    case PICMAN_THUMB_STATE_OLD:
+    case PICMAN_THUMB_STATE_FAILED:
+    case PICMAN_THUMB_STATE_OK:
       g_return_if_fail (thumbnail->thumb_filename != NULL);
 
       if (thumbnail->thumb_size     == size     &&
@@ -739,8 +739,8 @@ gimp_thumbnail_update_thumb (GimpThumbnail *thumbnail,
   thumbnail->thumb_filename = filename;
 
   if (filename)
-    state = (size > GIMP_THUMB_SIZE_FAIL ?
-             GIMP_THUMB_STATE_EXISTS : GIMP_THUMB_STATE_FAILED);
+    state = (size > PICMAN_THUMB_SIZE_FAIL ?
+             PICMAN_THUMB_STATE_EXISTS : PICMAN_THUMB_STATE_FAILED);
 
   thumbnail->thumb_size     = size;
   thumbnail->thumb_filesize = filesize;
@@ -751,14 +751,14 @@ gimp_thumbnail_update_thumb (GimpThumbnail *thumbnail,
       g_object_freeze_notify (G_OBJECT (thumbnail));
 
       g_object_set (thumbnail, "thumb-state", state, NULL);
-      gimp_thumbnail_reset_info (thumbnail);
+      picman_thumbnail_reset_info (thumbnail);
 
       g_object_thaw_notify (G_OBJECT (thumbnail));
     }
 }
 
 static void
-gimp_thumbnail_reset_info (GimpThumbnail *thumbnail)
+picman_thumbnail_reset_info (PicmanThumbnail *thumbnail)
 {
   g_object_set (thumbnail,
                 "image-width",      0,
@@ -769,7 +769,7 @@ gimp_thumbnail_reset_info (GimpThumbnail *thumbnail)
 }
 
 static void
-gimp_thumbnail_set_info_from_pixbuf (GimpThumbnail *thumbnail,
+picman_thumbnail_set_info_from_pixbuf (PicmanThumbnail *thumbnail,
                                      GdkPixbuf     *pixbuf)
 {
   const gchar  *option;
@@ -777,7 +777,7 @@ gimp_thumbnail_set_info_from_pixbuf (GimpThumbnail *thumbnail,
 
   g_object_freeze_notify (G_OBJECT (thumbnail));
 
-  gimp_thumbnail_reset_info (thumbnail);
+  picman_thumbnail_reset_info (thumbnail);
 
   g_free (thumbnail->image_mimetype);
   thumbnail->image_mimetype =
@@ -792,9 +792,9 @@ gimp_thumbnail_set_info_from_pixbuf (GimpThumbnail *thumbnail,
     thumbnail->image_height = num;
 
   thumbnail->image_type =
-    g_strdup (gdk_pixbuf_get_option (pixbuf, TAG_THUMB_GIMP_TYPE));
+    g_strdup (gdk_pixbuf_get_option (pixbuf, TAG_THUMB_PICMAN_TYPE));
 
-  option = gdk_pixbuf_get_option (pixbuf, TAG_THUMB_GIMP_LAYERS);
+  option = gdk_pixbuf_get_option (pixbuf, TAG_THUMB_PICMAN_LAYERS);
   if (option && sscanf (option, "%d", &num) == 1)
     thumbnail->image_num_layers = num;
 
@@ -802,8 +802,8 @@ gimp_thumbnail_set_info_from_pixbuf (GimpThumbnail *thumbnail,
 }
 
 static gboolean
-gimp_thumbnail_save (GimpThumbnail  *thumbnail,
-                     GimpThumbSize   size,
+picman_thumbnail_save (PicmanThumbnail  *thumbnail,
+                     PicmanThumbSize   size,
                      const gchar    *filename,
                      GdkPixbuf      *pixbuf,
                      const gchar    *software,
@@ -860,14 +860,14 @@ gimp_thumbnail_save (GimpThumbnail  *thumbnail,
 
   if (thumbnail->image_type)
     {
-      keys[i]   = TAG_THUMB_GIMP_TYPE;
+      keys[i]   = TAG_THUMB_PICMAN_TYPE;
       values[i] = g_strdup (thumbnail->image_type);
       i++;
     }
 
   if (thumbnail->image_num_layers > 0)
     {
-      keys[i]   = TAG_THUMB_GIMP_LAYERS;
+      keys[i]   = TAG_THUMB_PICMAN_LAYERS;
       values[i] = g_strdup_printf ("%d", thumbnail->image_num_layers);
       i++;
     }
@@ -878,7 +878,7 @@ gimp_thumbnail_save (GimpThumbnail  *thumbnail,
   basename = g_path_get_basename (filename);
   dirname  = g_path_get_dirname (filename);
 
-  tmpname = g_strdup_printf ("%s%cgimp-thumb-%d-%.8s",
+  tmpname = g_strdup_printf ("%s%cpicman-thumb-%d-%.8s",
                              dirname, G_DIR_SEPARATOR, getpid (), basename);
 
   g_free (dirname);
@@ -893,7 +893,7 @@ gimp_thumbnail_save (GimpThumbnail  *thumbnail,
 
   if (success)
     {
-#ifdef GIMP_THUMB_DEBUG
+#ifdef PICMAN_THUMB_DEBUG
       g_printerr ("thumbnail saved to temporary file %s\n", tmpname);
 #endif
 
@@ -907,7 +907,7 @@ gimp_thumbnail_save (GimpThumbnail  *thumbnail,
 
   if (success)
     {
-#ifdef GIMP_THUMB_DEBUG
+#ifdef PICMAN_THUMB_DEBUG
       g_printerr ("temporary thumbnail file renamed to %s\n", filename);
 #endif
 
@@ -920,13 +920,13 @@ gimp_thumbnail_save (GimpThumbnail  *thumbnail,
 
       g_object_freeze_notify (G_OBJECT (thumbnail));
 
-      gimp_thumbnail_update_thumb (thumbnail, size);
+      picman_thumbnail_update_thumb (thumbnail, size);
 
       if (success &&
-          thumbnail->thumb_state == GIMP_THUMB_STATE_EXISTS &&
+          thumbnail->thumb_state == PICMAN_THUMB_STATE_EXISTS &&
           strcmp (filename, thumbnail->thumb_filename) == 0)
         {
-          thumbnail->thumb_state = GIMP_THUMB_STATE_OK;
+          thumbnail->thumb_state = PICMAN_THUMB_STATE_OK;
         }
 
       g_object_thaw_notify (G_OBJECT (thumbnail));
@@ -938,9 +938,9 @@ gimp_thumbnail_save (GimpThumbnail  *thumbnail,
   return success;
 }
 
-#ifdef GIMP_THUMB_DEBUG
+#ifdef PICMAN_THUMB_DEBUG
 static void
-gimp_thumbnail_debug_notify (GObject    *object,
+picman_thumbnail_debug_notify (GObject    *object,
                              GParamSpec *pspec)
 {
   GValue       value = { 0, };
@@ -968,9 +968,9 @@ gimp_thumbnail_debug_notify (GObject    *object,
 
   g_value_unset (&value);
 
-  name = GIMP_THUMBNAIL (object)->image_uri;
+  name = PICMAN_THUMBNAIL (object)->image_uri;
 
-  g_printerr (" GimpThumb (%s) %s: %s\n",
+  g_printerr (" PicmanThumb (%s) %s: %s\n",
               name ? name : "(null)", pspec->name, str);
 
   g_free (str);
@@ -979,16 +979,16 @@ gimp_thumbnail_debug_notify (GObject    *object,
 
 
 /**
- * gimp_thumbnail_load_thumb:
- * @thumbnail: a #GimpThumbnail object
- * @size: the preferred #GimpThumbSize for the preview
+ * picman_thumbnail_load_thumb:
+ * @thumbnail: a #PicmanThumbnail object
+ * @size: the preferred #PicmanThumbSize for the preview
  * @error: return location for possible errors
  *
  * Attempts to load a thumbnail preview for the image associated with
  * @thumbnail. Before you use this function you need need to set an
- * image location using gimp_thumbnail_set_uri() or
- * gimp_thumbnail_set_filename(). You can also peek at the thumb
- * before loading it using gimp_thumbnail_peek_thumb.
+ * image location using picman_thumbnail_set_uri() or
+ * picman_thumbnail_set_filename(). You can also peek at the thumb
+ * before loading it using picman_thumbnail_peek_thumb.
  *
  * This function will return the best matching pixbuf for the
  * specified @size. It returns the pixbuf as loaded from disk. It is
@@ -1000,33 +1000,33 @@ gimp_thumbnail_debug_notify (GObject    *object,
  * Return value: a preview pixbuf or %NULL if no thumbnail was found
  **/
 GdkPixbuf *
-gimp_thumbnail_load_thumb (GimpThumbnail  *thumbnail,
-                           GimpThumbSize   size,
+picman_thumbnail_load_thumb (PicmanThumbnail  *thumbnail,
+                           PicmanThumbSize   size,
                            GError        **error)
 {
-  GimpThumbState  state;
+  PicmanThumbState  state;
   GdkPixbuf      *pixbuf;
   const gchar    *option;
   gint64          image_mtime;
   gint64          image_size;
 
-  g_return_val_if_fail (GIMP_IS_THUMBNAIL (thumbnail), NULL);
+  g_return_val_if_fail (PICMAN_IS_THUMBNAIL (thumbnail), NULL);
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
   if (! thumbnail->image_uri)
     return NULL;
 
-  state = gimp_thumbnail_peek_thumb (thumbnail, size);
+  state = picman_thumbnail_peek_thumb (thumbnail, size);
 
-  if (state < GIMP_THUMB_STATE_EXISTS || state == GIMP_THUMB_STATE_FAILED)
+  if (state < PICMAN_THUMB_STATE_EXISTS || state == PICMAN_THUMB_STATE_FAILED)
     return NULL;
 
   pixbuf = gdk_pixbuf_new_from_file (thumbnail->thumb_filename, NULL);
   if (! pixbuf)
     return NULL;
 
-#ifdef GIMP_THUMB_DEBUG
+#ifdef PICMAN_THUMB_DEBUG
   g_printerr ("thumbnail loaded from %s\n", thumbnail->thumb_filename);
 #endif
 
@@ -1046,7 +1046,7 @@ gimp_thumbnail_load_thumb (GimpThumbnail  *thumbnail,
         goto finish;
     }
 
-  state = GIMP_THUMB_STATE_OLD;
+  state = PICMAN_THUMB_STATE_OLD;
 
   option = gdk_pixbuf_get_option (pixbuf, TAG_THUMB_MTIME);
   if (!option || sscanf (option, "%" G_GINT64_FORMAT, &image_mtime) != 1)
@@ -1060,20 +1060,20 @@ gimp_thumbnail_load_thumb (GimpThumbnail  *thumbnail,
   if (image_mtime == thumbnail->image_mtime &&
       (option == NULL || image_size == thumbnail->image_filesize))
     {
-      if (thumbnail->thumb_size == GIMP_THUMB_SIZE_FAIL)
-        state = GIMP_THUMB_STATE_FAILED;
+      if (thumbnail->thumb_size == PICMAN_THUMB_SIZE_FAIL)
+        state = PICMAN_THUMB_STATE_FAILED;
       else
-        state = GIMP_THUMB_STATE_OK;
+        state = PICMAN_THUMB_STATE_OK;
     }
 
-  if (state == GIMP_THUMB_STATE_FAILED)
-    gimp_thumbnail_reset_info (thumbnail);
+  if (state == PICMAN_THUMB_STATE_FAILED)
+    picman_thumbnail_reset_info (thumbnail);
   else
-    gimp_thumbnail_set_info_from_pixbuf (thumbnail, pixbuf);
+    picman_thumbnail_set_info_from_pixbuf (thumbnail, pixbuf);
 
  finish:
-  if (thumbnail->thumb_size == GIMP_THUMB_SIZE_FAIL ||
-      (state != GIMP_THUMB_STATE_OLD && state != GIMP_THUMB_STATE_OK))
+  if (thumbnail->thumb_size == PICMAN_THUMB_SIZE_FAIL ||
+      (state != PICMAN_THUMB_STATE_OLD && state != PICMAN_THUMB_STATE_OK))
     {
       g_object_unref (pixbuf);
       pixbuf = NULL;
@@ -1089,8 +1089,8 @@ gimp_thumbnail_load_thumb (GimpThumbnail  *thumbnail,
 }
 
 /**
- * gimp_thumbnail_save_thumb:
- * @thumbnail: a #GimpThumbnail object
+ * picman_thumbnail_save_thumb:
+ * @thumbnail: a #PicmanThumbnail object
  * @pixbuf: a #GdkPixbuf representing the preview thumbnail
  * @software: a string describing the software saving the thumbnail
  * @error: return location for possible errors
@@ -1100,9 +1100,9 @@ gimp_thumbnail_load_thumb (GimpThumbnail  *thumbnail,
  *
  * The caller is responsible for setting the image file location, it's
  * filesize, modification time. One way to set this info is to is to
- * call gimp_thumbnail_set_uri() followed by gimp_thumbnail_peek_image().
+ * call picman_thumbnail_set_uri() followed by picman_thumbnail_peek_image().
  * Since this won't work for remote images, it is left to the user of
- * gimp_thumbnail_save_thumb() to do this or to set the information
+ * picman_thumbnail_save_thumb() to do this or to set the information
  * using the @thumbnail object properties.
  *
  * The image format type and the number of layers can optionally be
@@ -1112,38 +1112,38 @@ gimp_thumbnail_load_thumb (GimpThumbnail  *thumbnail,
  *               %FALSE otherwise
  **/
 gboolean
-gimp_thumbnail_save_thumb (GimpThumbnail  *thumbnail,
+picman_thumbnail_save_thumb (PicmanThumbnail  *thumbnail,
                            GdkPixbuf      *pixbuf,
                            const gchar    *software,
                            GError        **error)
 {
-  GimpThumbSize  size;
+  PicmanThumbSize  size;
   gchar         *name;
   gboolean       success;
 
-  g_return_val_if_fail (GIMP_IS_THUMBNAIL (thumbnail), FALSE);
+  g_return_val_if_fail (PICMAN_IS_THUMBNAIL (thumbnail), FALSE);
   g_return_val_if_fail (thumbnail->image_uri != NULL, FALSE);
   g_return_val_if_fail (GDK_IS_PIXBUF (pixbuf), FALSE);
   g_return_val_if_fail (software != NULL, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
   size = MAX (gdk_pixbuf_get_width (pixbuf), gdk_pixbuf_get_height (pixbuf));
   if (size < 1)
     return TRUE;
 
-  name = gimp_thumb_name_from_uri (thumbnail->image_uri, size);
+  name = picman_thumb_name_from_uri (thumbnail->image_uri, size);
   if (! name)
     return TRUE;
 
-  if (! gimp_thumb_ensure_thumb_dir (size, error))
+  if (! picman_thumb_ensure_thumb_dir (size, error))
     {
       g_free (name);
       return FALSE;
     }
 
-  success = gimp_thumbnail_save (thumbnail,
+  success = picman_thumbnail_save (thumbnail,
                                  size, name, pixbuf, software,
                                  error);
   g_free (name);
@@ -1152,8 +1152,8 @@ gimp_thumbnail_save_thumb (GimpThumbnail  *thumbnail,
 }
 
 /**
- * gimp_thumbnail_save_thumb_local:
- * @thumbnail: a #GimpThumbnail object
+ * picman_thumbnail_save_thumb_local:
+ * @thumbnail: a #PicmanThumbnail object
  * @pixbuf: a #GdkPixbuf representing the preview thumbnail
  * @software: a string describing the software saving the thumbnail
  * @error: return location for possible errors
@@ -1162,53 +1162,53 @@ gimp_thumbnail_save_thumb (GimpThumbnail  *thumbnail,
  * to the local thumbnail repository. Local thumbnails have been added
  * with version 0.7 of the spec.
  *
- * Please see also gimp_thumbnail_save_thumb(). The notes made there
+ * Please see also picman_thumbnail_save_thumb(). The notes made there
  * apply here as well.
  *
  * Return value: %TRUE if a thumbnail was successfully written,
  *               %FALSE otherwise
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_thumbnail_save_thumb_local (GimpThumbnail  *thumbnail,
+picman_thumbnail_save_thumb_local (PicmanThumbnail  *thumbnail,
                                  GdkPixbuf      *pixbuf,
                                  const gchar    *software,
                                  GError        **error)
 {
-  GimpThumbSize  size;
+  PicmanThumbSize  size;
   gchar         *name;
   gchar         *filename;
   gchar         *dirname;
   gboolean       success;
 
-  g_return_val_if_fail (GIMP_IS_THUMBNAIL (thumbnail), FALSE);
+  g_return_val_if_fail (PICMAN_IS_THUMBNAIL (thumbnail), FALSE);
   g_return_val_if_fail (thumbnail->image_uri != NULL, FALSE);
   g_return_val_if_fail (GDK_IS_PIXBUF (pixbuf), FALSE);
   g_return_val_if_fail (software != NULL, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
   size = MAX (gdk_pixbuf_get_width (pixbuf), gdk_pixbuf_get_height (pixbuf));
   if (size < 1)
     return TRUE;
 
-  filename = _gimp_thumb_filename_from_uri (thumbnail->image_uri);
+  filename = _picman_thumb_filename_from_uri (thumbnail->image_uri);
   if (! filename)
     return TRUE;
 
   dirname = g_path_get_dirname (filename);
   g_free (filename);
 
-  name = gimp_thumb_name_from_uri_local (thumbnail->image_uri, size);
+  name = picman_thumb_name_from_uri_local (thumbnail->image_uri, size);
   if (! name)
     {
       g_free (dirname);
       return TRUE;
     }
 
-  if (! gimp_thumb_ensure_thumb_dir_local (dirname, size, error))
+  if (! picman_thumb_ensure_thumb_dir_local (dirname, size, error))
     {
       g_free (name);
       g_free (dirname);
@@ -1217,7 +1217,7 @@ gimp_thumbnail_save_thumb_local (GimpThumbnail  *thumbnail,
 
   g_free (dirname);
 
-  success = gimp_thumbnail_save (thumbnail,
+  success = picman_thumbnail_save (thumbnail,
                                  size, name, pixbuf, software,
                                  error);
   g_free (name);
@@ -1226,8 +1226,8 @@ gimp_thumbnail_save_thumb_local (GimpThumbnail  *thumbnail,
 }
 
 /**
- * gimp_thumbnail_save_failure:
- * @thumbnail: a #GimpThumbnail object
+ * picman_thumbnail_save_failure:
+ * @thumbnail: a #PicmanThumbnail object
  * @software: a string describing the software saving the thumbnail
  * @error: return location for possible errors
  *
@@ -1240,7 +1240,7 @@ gimp_thumbnail_save_thumb_local (GimpThumbnail  *thumbnail,
  *               %FALSE otherwise
  **/
 gboolean
-gimp_thumbnail_save_failure (GimpThumbnail  *thumbnail,
+picman_thumbnail_save_failure (PicmanThumbnail  *thumbnail,
                              const gchar    *software,
                              GError        **error)
 {
@@ -1251,17 +1251,17 @@ gimp_thumbnail_save_failure (GimpThumbnail  *thumbnail,
   gchar     *size_str;
   gboolean   success;
 
-  g_return_val_if_fail (GIMP_IS_THUMBNAIL (thumbnail), FALSE);
+  g_return_val_if_fail (PICMAN_IS_THUMBNAIL (thumbnail), FALSE);
   g_return_val_if_fail (thumbnail->image_uri != NULL, FALSE);
   g_return_val_if_fail (software != NULL, FALSE);
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
-  name = gimp_thumb_name_from_uri (thumbnail->image_uri, GIMP_THUMB_SIZE_FAIL);
+  name = picman_thumb_name_from_uri (thumbnail->image_uri, PICMAN_THUMB_SIZE_FAIL);
   if (! name)
     return TRUE;
 
-  if (! gimp_thumb_ensure_thumb_dir (GIMP_THUMB_SIZE_FAIL, error))
+  if (! picman_thumb_ensure_thumb_dir (PICMAN_THUMB_SIZE_FAIL, error))
     {
       g_free (name);
       return FALSE;
@@ -1285,7 +1285,7 @@ gimp_thumbnail_save_failure (GimpThumbnail  *thumbnail,
       success = (g_chmod (name, 0600) == 0);
 
       if (success)
-        gimp_thumbnail_update_thumb (thumbnail, GIMP_THUMB_SIZE_NORMAL);
+        picman_thumbnail_update_thumb (thumbnail, PICMAN_THUMB_SIZE_NORMAL);
       else
         g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                      "Could not set permissions of thumbnail '%s': %s",
@@ -1303,26 +1303,26 @@ gimp_thumbnail_save_failure (GimpThumbnail  *thumbnail,
 }
 
 /**
- * gimp_thumbnail_delete_failure:
- * @thumbnail: a #GimpThumbnail object
+ * picman_thumbnail_delete_failure:
+ * @thumbnail: a #PicmanThumbnail object
  *
  * Removes a failure thumbnail if one exists. This function should be
  * used after a thumbnail has been successfully created.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_thumbnail_delete_failure (GimpThumbnail *thumbnail)
+picman_thumbnail_delete_failure (PicmanThumbnail *thumbnail)
 {
   gchar *filename;
 
-  g_return_if_fail (GIMP_IS_THUMBNAIL (thumbnail));
+  g_return_if_fail (PICMAN_IS_THUMBNAIL (thumbnail));
   g_return_if_fail (thumbnail->image_uri != NULL);
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
-  filename = gimp_thumb_name_from_uri (thumbnail->image_uri,
-                                       GIMP_THUMB_SIZE_FAIL);
+  filename = picman_thumb_name_from_uri (thumbnail->image_uri,
+                                       PICMAN_THUMB_SIZE_FAIL);
   if (filename)
     {
       g_unlink (filename);
@@ -1331,8 +1331,8 @@ gimp_thumbnail_delete_failure (GimpThumbnail *thumbnail)
 }
 
 /**
- * gimp_thumbnail_delete_others:
- * @thumbnail: a #GimpThumbnail object
+ * picman_thumbnail_delete_others:
+ * @thumbnail: a #PicmanThumbnail object
  * @size: the thumbnail size which should not be deleted
  *
  * Removes all other thumbnails from the global thumbnail
@@ -1341,27 +1341,27 @@ gimp_thumbnail_delete_failure (GimpThumbnail *thumbnail)
  * updated. See the spec for a more detailed description on when to
  * delete thumbnails.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_thumbnail_delete_others (GimpThumbnail *thumbnail,
-                              GimpThumbSize  size)
+picman_thumbnail_delete_others (PicmanThumbnail *thumbnail,
+                              PicmanThumbSize  size)
 {
-  g_return_if_fail (GIMP_IS_THUMBNAIL (thumbnail));
+  g_return_if_fail (PICMAN_IS_THUMBNAIL (thumbnail));
   g_return_if_fail (thumbnail->image_uri != NULL);
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
-  _gimp_thumbs_delete_others (thumbnail->image_uri, size);
+  _picman_thumbs_delete_others (thumbnail->image_uri, size);
 }
 
 /**
- * gimp_thumbnail_has_failed:
- * @thumbnail: a #GimpThumbnail object
+ * picman_thumbnail_has_failed:
+ * @thumbnail: a #PicmanThumbnail object
  *
  * Checks if a valid failure thumbnail for the given thumbnail exists
  * in the global thumbnail repository. This may be the case even if
- * gimp_thumbnail_peek_thumb() doesn't return %GIMP_THUMB_STATE_FAILED
+ * picman_thumbnail_peek_thumb() doesn't return %PICMAN_THUMB_STATE_FAILED
  * since there might be a real thumbnail and a failure thumbnail for
  * the same image file.
  *
@@ -1370,10 +1370,10 @@ gimp_thumbnail_delete_others (GimpThumbnail *thumbnail,
  *
  * Return value: %TRUE if a failure thumbnail exists or
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_thumbnail_has_failed (GimpThumbnail *thumbnail)
+picman_thumbnail_has_failed (PicmanThumbnail *thumbnail)
 {
   GdkPixbuf   *pixbuf;
   const gchar *option;
@@ -1382,13 +1382,13 @@ gimp_thumbnail_has_failed (GimpThumbnail *thumbnail)
   gint64       image_size;
   gboolean     failed = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_THUMBNAIL (thumbnail), FALSE);
+  g_return_val_if_fail (PICMAN_IS_THUMBNAIL (thumbnail), FALSE);
   g_return_val_if_fail (thumbnail->image_uri != NULL, FALSE);
 
-  GIMP_THUMB_DEBUG_CALL (thumbnail);
+  PICMAN_THUMB_DEBUG_CALL (thumbnail);
 
-  filename = gimp_thumb_name_from_uri (thumbnail->image_uri,
-                                       GIMP_THUMB_SIZE_FAIL);
+  filename = picman_thumb_name_from_uri (thumbnail->image_uri,
+                                       PICMAN_THUMB_SIZE_FAIL);
   if (! filename)
     return FALSE;
 
@@ -1398,7 +1398,7 @@ gimp_thumbnail_has_failed (GimpThumbnail *thumbnail)
   if (! pixbuf)
     return FALSE;
 
-  if (gimp_thumbnail_peek_image (thumbnail) < GIMP_THUMB_STATE_EXISTS)
+  if (picman_thumbnail_peek_image (thumbnail) < PICMAN_THUMB_STATE_EXISTS)
     goto finish;
 
   /* URI and mtime from the thumbnail need to match our file */

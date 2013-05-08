@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "paint-types.h"
 
-#include "gimpairbrushoptions.h"
+#include "picmanairbrushoptions.h"
 
 
 #define AIRBRUSH_DEFAULT_RATE        80.0
@@ -40,63 +40,63 @@ enum
 };
 
 
-static void   gimp_airbrush_options_set_property (GObject      *object,
+static void   picman_airbrush_options_set_property (GObject      *object,
                                                   guint         property_id,
                                                   const GValue *value,
                                                   GParamSpec   *pspec);
-static void   gimp_airbrush_options_get_property (GObject      *object,
+static void   picman_airbrush_options_get_property (GObject      *object,
                                                   guint         property_id,
                                                   GValue       *value,
                                                   GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpAirbrushOptions, gimp_airbrush_options,
-               GIMP_TYPE_PAINT_OPTIONS)
+G_DEFINE_TYPE (PicmanAirbrushOptions, picman_airbrush_options,
+               PICMAN_TYPE_PAINT_OPTIONS)
 
 
 static void
-gimp_airbrush_options_class_init (GimpAirbrushOptionsClass *klass)
+picman_airbrush_options_class_init (PicmanAirbrushOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_airbrush_options_set_property;
-  object_class->get_property = gimp_airbrush_options_get_property;
+  object_class->set_property = picman_airbrush_options_set_property;
+  object_class->get_property = picman_airbrush_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_RATE,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_RATE,
                                    "rate", NULL,
                                    0.0, 150.0, AIRBRUSH_DEFAULT_RATE,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_MOTION_ONLY,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_MOTION_ONLY,
                                     "motion-only", NULL,
                                     AIRBRUSH_DEFAULT_MOTION_ONLY,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_FLOW,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_FLOW,
                                    "flow", NULL,
                                    0.0, 100.0, AIRBRUSH_DEFAULT_FLOW,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
   /*backwads-compadibility prop for flow fomerly known as pressure*/
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_PRESSURE,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_PRESSURE,
                                    "pressure", NULL,
                                    0.0, 100.0, AIRBRUSH_DEFAULT_FLOW,
-                                   GIMP_CONFIG_PARAM_IGNORE);
+                                   PICMAN_CONFIG_PARAM_IGNORE);
 }
 
 static void
-gimp_airbrush_options_init (GimpAirbrushOptions *options)
+picman_airbrush_options_init (PicmanAirbrushOptions *options)
 {
 }
 
 static void
-gimp_airbrush_options_set_property (GObject      *object,
+picman_airbrush_options_set_property (GObject      *object,
                                     guint         property_id,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
-  GimpAirbrushOptions *options = GIMP_AIRBRUSH_OPTIONS (object);
+  PicmanAirbrushOptions *options = PICMAN_AIRBRUSH_OPTIONS (object);
 
   switch (property_id)
     {
@@ -118,12 +118,12 @@ gimp_airbrush_options_set_property (GObject      *object,
 }
 
 static void
-gimp_airbrush_options_get_property (GObject    *object,
+picman_airbrush_options_get_property (GObject    *object,
                                     guint       property_id,
                                     GValue     *value,
                                     GParamSpec *pspec)
 {
-  GimpAirbrushOptions *options = GIMP_AIRBRUSH_OPTIONS (object);
+  PicmanAirbrushOptions *options = PICMAN_AIRBRUSH_OPTIONS (object);
 
   switch (property_id)
     {

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,18 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_DRAWABLE_BLEND_H__
-#define  __GIMP_DRAWABLE_BLEND_H__
+#ifndef  __PICMAN_DRAWABLE_BLEND_H__
+#define  __PICMAN_DRAWABLE_BLEND_H__
 
 
-void   gimp_drawable_blend (GimpDrawable         *drawable,
-                            GimpContext          *context,
-                            GimpBlendMode         blend_mode,
-                            GimpLayerModeEffects  paint_mode,
-                            GimpGradientType      gradient_type,
+void   picman_drawable_blend (PicmanDrawable         *drawable,
+                            PicmanContext          *context,
+                            PicmanBlendMode         blend_mode,
+                            PicmanLayerModeEffects  paint_mode,
+                            PicmanGradientType      gradient_type,
                             gdouble               opacity,
                             gdouble               offset,
-                            GimpRepeatMode        repeat,
+                            PicmanRepeatMode        repeat,
                             gboolean              reverse,
                             gboolean              supersample,
                             gint                  max_depth,
@@ -36,7 +36,7 @@ void   gimp_drawable_blend (GimpDrawable         *drawable,
                             gdouble               starty,
                             gdouble               endx,
                             gdouble               endy,
-                            GimpProgress         *progress);
+                            PicmanProgress         *progress);
 
 
-#endif /* __GIMP_DRAWABLE_BLEND_H__ */
+#endif /* __PICMAN_DRAWABLE_BLEND_H__ */

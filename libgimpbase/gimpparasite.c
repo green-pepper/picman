@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpparasite.c
- * Copyright (C) 1998 Jay Cox <jaycox@gimp.org>
+ * picmanparasite.c
+ * Copyright (C) 1998 Jay Cox <jaycox@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,65 +33,65 @@
 #include <process.h>                /* For _getpid() */
 #endif
 
-#include "gimpbasetypes.h"
+#include "picmanbasetypes.h"
 
-#include "gimpparasite.h"
+#include "picmanparasite.h"
 
 
 /**
- * SECTION: gimpparasite
- * @title: gimpparasite
+ * SECTION: picmanparasite
+ * @title: picmanparasite
  * @short_description: Arbitrary pieces of data which can be attached
- *                     to various GIMP objects.
- * @see_also: gimp_image_parasite_attach(),
- *            gimp_drawable_parasite_attach(), gimp_parasite_attach()
+ *                     to various PICMAN objects.
+ * @see_also: picman_image_parasite_attach(),
+ *            picman_drawable_parasite_attach(), picman_parasite_attach()
  *            and their related functions.
  *
- * Arbitrary pieces of data which can be attached to various GIMP objects.
+ * Arbitrary pieces of data which can be attached to various PICMAN objects.
  **/
 
 
 /*
- * GIMP_TYPE_PARASITE
+ * PICMAN_TYPE_PARASITE
  */
 
 GType
-gimp_parasite_get_type (void)
+picman_parasite_get_type (void)
 {
   static GType type = 0;
 
   if (! type)
-    type = g_boxed_type_register_static ("GimpParasite",
-                                         (GBoxedCopyFunc) gimp_parasite_copy,
-                                         (GBoxedFreeFunc) gimp_parasite_free);
+    type = g_boxed_type_register_static ("PicmanParasite",
+                                         (GBoxedCopyFunc) picman_parasite_copy,
+                                         (GBoxedFreeFunc) picman_parasite_free);
 
   return type;
 }
 
 
 /*
- * GIMP_TYPE_PARAM_PARASITE
+ * PICMAN_TYPE_PARAM_PARASITE
  */
 
-#define GIMP_PARAM_SPEC_PARASITE(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GIMP_TYPE_PARAM_PARASITE, GimpParamSpecParasite))
+#define PICMAN_PARAM_SPEC_PARASITE(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), PICMAN_TYPE_PARAM_PARASITE, PicmanParamSpecParasite))
 
-typedef struct _GimpParamSpecParasite GimpParamSpecParasite;
+typedef struct _PicmanParamSpecParasite PicmanParamSpecParasite;
 
-struct _GimpParamSpecParasite
+struct _PicmanParamSpecParasite
 {
   GParamSpecBoxed parent_instance;
 };
 
-static void       gimp_param_parasite_class_init  (GParamSpecClass *class);
-static void       gimp_param_parasite_init        (GParamSpec      *pspec);
-static gboolean   gimp_param_parasite_validate    (GParamSpec      *pspec,
+static void       picman_param_parasite_class_init  (GParamSpecClass *class);
+static void       picman_param_parasite_init        (GParamSpec      *pspec);
+static gboolean   picman_param_parasite_validate    (GParamSpec      *pspec,
                                                    GValue          *value);
-static gint       gimp_param_parasite_values_cmp  (GParamSpec      *pspec,
+static gint       picman_param_parasite_values_cmp  (GParamSpec      *pspec,
                                                    const GValue    *value1,
                                                    const GValue    *value2);
 
 GType
-gimp_param_parasite_get_type (void)
+picman_param_parasite_get_type (void)
 {
   static GType type = 0;
 
@@ -101,15 +101,15 @@ gimp_param_parasite_get_type (void)
       {
         sizeof (GParamSpecClass),
         NULL, NULL,
-        (GClassInitFunc) gimp_param_parasite_class_init,
+        (GClassInitFunc) picman_param_parasite_class_init,
         NULL, NULL,
-        sizeof (GimpParamSpecParasite),
+        sizeof (PicmanParamSpecParasite),
         0,
-        (GInstanceInitFunc) gimp_param_parasite_init
+        (GInstanceInitFunc) picman_param_parasite_init
       };
 
       type = g_type_register_static (G_TYPE_PARAM_BOXED,
-                                     "GimpParamParasite",
+                                     "PicmanParamParasite",
                                      &type_info, 0);
     }
 
@@ -117,23 +117,23 @@ gimp_param_parasite_get_type (void)
 }
 
 static void
-gimp_param_parasite_class_init (GParamSpecClass *class)
+picman_param_parasite_class_init (GParamSpecClass *class)
 {
-  class->value_type     = GIMP_TYPE_PARASITE;
-  class->value_validate = gimp_param_parasite_validate;
-  class->values_cmp     = gimp_param_parasite_values_cmp;
+  class->value_type     = PICMAN_TYPE_PARASITE;
+  class->value_validate = picman_param_parasite_validate;
+  class->values_cmp     = picman_param_parasite_values_cmp;
 }
 
 static void
-gimp_param_parasite_init (GParamSpec *pspec)
+picman_param_parasite_init (GParamSpec *pspec)
 {
 }
 
 static gboolean
-gimp_param_parasite_validate (GParamSpec *pspec,
+picman_param_parasite_validate (GParamSpec *pspec,
                               GValue     *value)
 {
-  GimpParasite *parasite = value->data[0].v_pointer;
+  PicmanParasite *parasite = value->data[0].v_pointer;
 
   if (! parasite)
     {
@@ -152,12 +152,12 @@ gimp_param_parasite_validate (GParamSpec *pspec,
 }
 
 static gint
-gimp_param_parasite_values_cmp (GParamSpec   *pspec,
+picman_param_parasite_values_cmp (GParamSpec   *pspec,
                                 const GValue *value1,
                                 const GValue *value2)
 {
-  GimpParasite *parasite1 = value1->data[0].v_pointer;
-  GimpParasite *parasite2 = value2->data[0].v_pointer;
+  PicmanParasite *parasite1 = value1->data[0].v_pointer;
+  PicmanParasite *parasite2 = value2->data[0].v_pointer;
 
   /*  try to return at least *something*, it's useless anyway...  */
 
@@ -166,18 +166,18 @@ gimp_param_parasite_values_cmp (GParamSpec   *pspec,
   else if (! parasite2)
     return parasite1 != NULL;
   else
-    return gimp_parasite_compare (parasite1, parasite2);
+    return picman_parasite_compare (parasite1, parasite2);
 }
 
 GParamSpec *
-gimp_param_spec_parasite (const gchar *name,
+picman_param_spec_parasite (const gchar *name,
                           const gchar *nick,
                           const gchar *blurb,
                           GParamFlags  flags)
 {
-  GimpParamSpecParasite *parasite_spec;
+  PicmanParamSpecParasite *parasite_spec;
 
-  parasite_spec = g_param_spec_internal (GIMP_TYPE_PARAM_PARASITE,
+  parasite_spec = g_param_spec_internal (PICMAN_TYPE_PARAM_PARASITE,
                                          name, nick, blurb, flags);
 
   return G_PARAM_SPEC (parasite_spec);
@@ -186,7 +186,7 @@ gimp_param_spec_parasite (const gchar *name,
 
 #ifdef DEBUG
 static void
-gimp_parasite_print (GimpParasite *parasite)
+picman_parasite_print (PicmanParasite *parasite)
 {
   if (parasite == NULL)
     {
@@ -208,18 +208,18 @@ gimp_parasite_print (GimpParasite *parasite)
 }
 #endif
 
-GimpParasite *
-gimp_parasite_new (const gchar    *name,
+PicmanParasite *
+picman_parasite_new (const gchar    *name,
                    guint32         flags,
                    guint32         size,
                    gconstpointer   data)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
 
   if (!name)
     return NULL;
 
-  parasite = g_slice_new (GimpParasite);
+  parasite = g_slice_new (PicmanParasite);
   parasite->name  = g_strdup (name);
   parasite->flags = (flags & 0xFF);
   parasite->size  = size;
@@ -233,7 +233,7 @@ gimp_parasite_new (const gchar    *name,
 }
 
 void
-gimp_parasite_free (GimpParasite *parasite)
+picman_parasite_free (PicmanParasite *parasite)
 {
   if (parasite == NULL)
     return;
@@ -244,11 +244,11 @@ gimp_parasite_free (GimpParasite *parasite)
   if (parasite->data)
     g_free (parasite->data);
 
-  g_slice_free (GimpParasite, parasite);
+  g_slice_free (PicmanParasite, parasite);
 }
 
 gboolean
-gimp_parasite_is_type (const GimpParasite *parasite,
+picman_parasite_is_type (const PicmanParasite *parasite,
                        const gchar        *name)
 {
   if (!parasite || !parasite->name)
@@ -257,19 +257,19 @@ gimp_parasite_is_type (const GimpParasite *parasite,
   return (strcmp (parasite->name, name) == 0);
 }
 
-GimpParasite *
-gimp_parasite_copy (const GimpParasite *parasite)
+PicmanParasite *
+picman_parasite_copy (const PicmanParasite *parasite)
 {
   if (parasite == NULL)
     return NULL;
 
-  return gimp_parasite_new (parasite->name, parasite->flags,
+  return picman_parasite_new (parasite->name, parasite->flags,
                             parasite->size, parasite->data);
 }
 
 gboolean
-gimp_parasite_compare (const GimpParasite *a,
-                       const GimpParasite *b)
+picman_parasite_compare (const PicmanParasite *a,
+                       const PicmanParasite *b)
 {
   if (a && b &&
       a->name && b->name &&
@@ -287,7 +287,7 @@ gimp_parasite_compare (const GimpParasite *a,
 }
 
 gulong
-gimp_parasite_flags (const GimpParasite *parasite)
+picman_parasite_flags (const PicmanParasite *parasite)
 {
   if (parasite == NULL)
     return 0;
@@ -296,25 +296,25 @@ gimp_parasite_flags (const GimpParasite *parasite)
 }
 
 gboolean
-gimp_parasite_is_persistent (const GimpParasite *parasite)
+picman_parasite_is_persistent (const PicmanParasite *parasite)
 {
   if (parasite == NULL)
     return FALSE;
 
-  return (parasite->flags & GIMP_PARASITE_PERSISTENT);
+  return (parasite->flags & PICMAN_PARASITE_PERSISTENT);
 }
 
 gboolean
-gimp_parasite_is_undoable (const GimpParasite *parasite)
+picman_parasite_is_undoable (const PicmanParasite *parasite)
 {
   if (parasite == NULL)
     return FALSE;
 
-  return (parasite->flags & GIMP_PARASITE_UNDOABLE);
+  return (parasite->flags & PICMAN_PARASITE_UNDOABLE);
 }
 
 gboolean
-gimp_parasite_has_flag (const GimpParasite *parasite,
+picman_parasite_has_flag (const PicmanParasite *parasite,
                         gulong              flag)
 {
   if (parasite == NULL)
@@ -324,7 +324,7 @@ gimp_parasite_has_flag (const GimpParasite *parasite,
 }
 
 const gchar *
-gimp_parasite_name (const GimpParasite *parasite)
+picman_parasite_name (const PicmanParasite *parasite)
 {
   if (parasite)
     return parasite->name;
@@ -333,7 +333,7 @@ gimp_parasite_name (const GimpParasite *parasite)
 }
 
 gconstpointer
-gimp_parasite_data (const GimpParasite *parasite)
+picman_parasite_data (const PicmanParasite *parasite)
 {
   if (parasite)
     return parasite->data;
@@ -342,7 +342,7 @@ gimp_parasite_data (const GimpParasite *parasite)
 }
 
 glong
-gimp_parasite_data_size (const GimpParasite *parasite)
+picman_parasite_data_size (const PicmanParasite *parasite)
 {
   if (parasite)
     return parasite->size;

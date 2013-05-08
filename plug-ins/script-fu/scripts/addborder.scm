@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -97,62 +97,62 @@
       n_array)
   )
 
-  (let* ((img (car (gimp-item-get-image adraw)))
-         (owidth (car (gimp-image-width img)))
-         (oheight (car (gimp-image-height img)))
+  (let* ((img (car (picman-item-get-image adraw)))
+         (owidth (car (picman-image-width img)))
+         (oheight (car (picman-image-height img)))
          (width (+ owidth (* 2 xsize)))
          (height (+ oheight (* 2 ysize)))
-         (layer (car (gimp-layer-new img
+         (layer (car (picman-layer-new img
                                      width height
-                                     (car (gimp-drawable-type-with-alpha adraw))
+                                     (car (picman-drawable-type-with-alpha adraw))
                                      _"Border Layer" 100 NORMAL-MODE))))
 
-    (gimp-context-push)
-    (gimp-context-set-antialias FALSE)
-    (gimp-context-set-feather FALSE)
+    (picman-context-push)
+    (picman-context-set-antialias FALSE)
+    (picman-context-set-feather FALSE)
 
-    (gimp-image-undo-group-start img)
+    (picman-image-undo-group-start img)
 
-    (gimp-image-resize img
+    (picman-image-resize img
                        width
                        height
                        xsize
                        ysize)
 
-    (gimp-image-insert-layer img layer 0 0)
-    (gimp-drawable-fill layer TRANSPARENT-FILL)
+    (picman-image-insert-layer img layer 0 0)
+    (picman-drawable-fill layer TRANSPARENT-FILL)
 
-    (gimp-context-set-background (adjcolour colour dvalue))
-    (gimp-image-select-polygon img
+    (picman-context-set-background (adjcolour colour dvalue))
+    (picman-image-select-polygon img
                                CHANNEL-OP-REPLACE
                                10
                                (gen_top_array xsize ysize owidth oheight width height))
-    (gimp-edit-fill layer BACKGROUND-FILL)
-    (gimp-context-set-background (adjcolour colour (/ dvalue 2)))
-    (gimp-image-select-polygon img
+    (picman-edit-fill layer BACKGROUND-FILL)
+    (picman-context-set-background (adjcolour colour (/ dvalue 2)))
+    (picman-image-select-polygon img
                                CHANNEL-OP-REPLACE
                                10
                                (gen_left_array xsize ysize owidth oheight width height))
-    (gimp-edit-fill layer BACKGROUND-FILL)
-    (gimp-context-set-background (adjcolour colour (- 0 (/ dvalue 2))))
-    (gimp-image-select-polygon img
+    (picman-edit-fill layer BACKGROUND-FILL)
+    (picman-context-set-background (adjcolour colour (- 0 (/ dvalue 2))))
+    (picman-image-select-polygon img
                                CHANNEL-OP-REPLACE
                                10
                                (gen_right_array xsize ysize owidth oheight width height))
 
-    (gimp-edit-fill layer BACKGROUND-FILL)
-    (gimp-context-set-background (adjcolour colour (- 0 dvalue)))
-    (gimp-image-select-polygon img
+    (picman-edit-fill layer BACKGROUND-FILL)
+    (picman-context-set-background (adjcolour colour (- 0 dvalue)))
+    (picman-image-select-polygon img
                                CHANNEL-OP-REPLACE
                                10
                                (gen_bottom_array xsize ysize owidth oheight width height))
 
-    (gimp-edit-fill layer BACKGROUND-FILL)
-    (gimp-selection-none img)
-    (gimp-image-undo-group-end img)
-    (gimp-displays-flush)
+    (picman-edit-fill layer BACKGROUND-FILL)
+    (picman-selection-none img)
+    (picman-image-undo-group-end img)
+    (picman-displays-flush)
 
-    (gimp-context-pop)
+    (picman-context-pop)
     )
 )
 

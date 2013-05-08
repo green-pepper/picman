@@ -1,11 +1,11 @@
 ## Process this file with automake to produce Makefile.in
 
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
-libgimpcolor = $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
-libgimpconfig = $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la
-libgimpmodule = $(top_builddir)/libgimpmodule/libgimpmodule-$(GIMP_API_VERSION).la
-libgimpwidgets = $(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la
-libgimp = ./libgimp-$(GIMP_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
+libpicmancolor = $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
+libpicmanconfig = $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la
+libpicmanmodule = $(top_builddir)/libpicmanmodule/libpicmanmodule-$(PICMAN_API_VERSION).la
+libpicmanwidgets = $(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la
+libpicman = ./libpicman-$(PICMAN_API_VERSION).la
 
 if PLATFORM_WIN32
 no_undefined = -no-undefined
@@ -17,54 +17,54 @@ framework_cocoa = -framework Cocoa
 endif
 
 if OS_WIN32
-gimp_def = gimp.def
-gimpui_def = gimpui.def
-libgimp_export_symbols = -export-symbols gimp.def
-libgimpui_export_symbols = -export-symbols gimpui.def
+picman_def = picman.def
+picmanui_def = picmanui.def
+libpicman_export_symbols = -export-symbols picman.def
+libpicmanui_export_symbols = -export-symbols picmanui.def
 
 install-libtool-import-lib:
-	$(INSTALL) .libs/libgimp-$(GIMP_API_VERSION).dll.a $(DESTDIR)$(libdir)
-	$(INSTALL) .libs/libgimpui-$(GIMP_API_VERSION).dll.a $(DESTDIR)$(libdir)
-	$(INSTALL) gimp.def $(DESTDIR)$(libdir)
-	$(INSTALL) gimpui.def $(DESTDIR)$(libdir)
+	$(INSTALL) .libs/libpicman-$(PICMAN_API_VERSION).dll.a $(DESTDIR)$(libdir)
+	$(INSTALL) .libs/libpicmanui-$(PICMAN_API_VERSION).dll.a $(DESTDIR)$(libdir)
+	$(INSTALL) picman.def $(DESTDIR)$(libdir)
+	$(INSTALL) picmanui.def $(DESTDIR)$(libdir)
 
 uninstall-libtool-import-lib:
-	-rm $(DESTDIR)$(libdir)/libgimp-$(GIMP_API_VERSION).dll.a
-	-rm $(DESTDIR)$(libdir)/libgimpui-$(GIMP_API_VERSION).dll.a
-	-rm $(DESTDIR)$(libdir)/gimp.def
-	-rm $(DESTDIR)$(libdir)/gimpui.def
+	-rm $(DESTDIR)$(libdir)/libpicman-$(PICMAN_API_VERSION).dll.a
+	-rm $(DESTDIR)$(libdir)/libpicmanui-$(PICMAN_API_VERSION).dll.a
+	-rm $(DESTDIR)$(libdir)/picman.def
+	-rm $(DESTDIR)$(libdir)/picmanui.def
 else
 install-libtool-import-lib:
 uninstall-libtool-import-lib:
 endif
 
 if MS_LIB_AVAILABLE
-noinst_DATA = gimp-$(GIMP_API_VERSION).lib gimpui-$(GIMP_API_VERSION).lib 
+noinst_DATA = picman-$(PICMAN_API_VERSION).lib picmanui-$(PICMAN_API_VERSION).lib 
 
 install-ms-lib:
-	$(INSTALL) gimp-$(GIMP_API_VERSION).lib $(DESTDIR)$(libdir)
-	$(INSTALL) gimpui-$(GIMP_API_VERSION).lib $(DESTDIR)$(libdir)
+	$(INSTALL) picman-$(PICMAN_API_VERSION).lib $(DESTDIR)$(libdir)
+	$(INSTALL) picmanui-$(PICMAN_API_VERSION).lib $(DESTDIR)$(libdir)
 
 uninstall-ms-lib:
-	-rm $(DESTDIR)$(libdir)/gimp-$(GIMP_API_VERSION).lib
-	-rm $(DESTDIR)$(libdir)/gimpui-$(GIMP_API_VERSION).lib
+	-rm $(DESTDIR)$(libdir)/picman-$(PICMAN_API_VERSION).lib
+	-rm $(DESTDIR)$(libdir)/picmanui-$(PICMAN_API_VERSION).lib
 
-gimp-@GIMP_API_VERSION@.lib: gimp.def
-	lib -name:libgimp-$(GIMP_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:gimp.def -out:$@
+picman-@PICMAN_API_VERSION@.lib: picman.def
+	lib -name:libpicman-$(PICMAN_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:picman.def -out:$@
 
-gimpui-@GIMP_API_VERSION@.lib: gimpui.def
-	lib -name:libgimpui-$(GIMP_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:gimpui.def -out:$@
+picmanui-@PICMAN_API_VERSION@.lib: picmanui.def
+	lib -name:libpicmanui-$(PICMAN_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:picmanui.def -out:$@
 
 else
 install-ms-lib:
 uninstall-ms-lib:
 endif
 
-gimpincludedir = $(includedir)/gimp-$(GIMP_API_VERSION)/libgimp
+picmanincludedir = $(includedir)/picman-$(PICMAN_API_VERSION)/libpicman
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"LibGimp\"	\
-	-DGIMP_COMPILATION
+	-DG_LOG_DOMAIN=\"LibPicman\"	\
+	-DPICMAN_COMPILATION
 
 INCLUDES = \
 	-I$(top_srcdir)	\
@@ -73,348 +73,348 @@ INCLUDES = \
 	-I$(includedir)	\
 	$(xobjective_c)
 
-lib_LTLIBRARIES = libgimp-@GIMP_API_VERSION@.la libgimpui-@GIMP_API_VERSION@.la
+lib_LTLIBRARIES = libpicman-@PICMAN_API_VERSION@.la libpicmanui-@PICMAN_API_VERSION@.la
 
 PDB_WRAPPERS_C = \
-	gimp_pdb.c			\
-	gimpbrush_pdb.c			\
-	gimpbrushes_pdb.c		\
-	gimpbrushselect_pdb.c		\
-	gimpbuffer_pdb.c		\
-	gimpchannel_pdb.c		\
-	gimpcolor_pdb.c			\
-	gimpcontext_pdb.c		\
-	gimpconvert_pdb.c		\
-	gimpdisplay_pdb.c		\
-	gimpdrawable_pdb.c		\
-	gimpdrawabletransform_pdb.c	\
-	gimpdynamics_pdb.c		\
-	gimpedit_pdb.c			\
-	gimpfileops_pdb.c		\
-	gimpfloatingsel_pdb.c		\
-	gimpfonts_pdb.c			\
-	gimpfontselect_pdb.c		\
-	gimpgimprc_pdb.c		\
-	gimpgradient_pdb.c		\
-	gimpgradients_pdb.c		\
-	gimpgradientselect_pdb.c	\
-	gimpguides_pdb.c		\
-	gimpgrid_pdb.c			\
-	gimphelp_pdb.c			\
-	gimpimage_pdb.c			\
-	gimpimageselect_pdb.c		\
-	gimpitem_pdb.c			\
-	gimpitemtransform_pdb.c		\
-	gimplayer_pdb.c			\
-	gimpmessage_pdb.c		\
-	gimppainttools_pdb.c		\
-	gimppalette_pdb.c		\
-	gimppalettes_pdb.c		\
-	gimppaletteselect_pdb.c		\
-	gimppaths_pdb.c			\
-	gimppattern_pdb.c		\
-	gimppatterns_pdb.c		\
-	gimppatternselect_pdb.c		\
-	gimpplugin_pdb.c		\
-	gimpproceduraldb_pdb.c		\
-	gimpprogress_pdb.c		\
-	gimpselection_pdb.c		\
-	gimpselectiontools_pdb.c	\
-	gimptextlayer_pdb.c		\
-	gimptexttool_pdb.c		\
-	gimptransformtools_pdb.c	\
-	gimpundo_pdb.c			\
-	gimpunit_pdb.c			\
-	gimpvectors_pdb.c
+	picman_pdb.c			\
+	picmanbrush_pdb.c			\
+	picmanbrushes_pdb.c		\
+	picmanbrushselect_pdb.c		\
+	picmanbuffer_pdb.c		\
+	picmanchannel_pdb.c		\
+	picmancolor_pdb.c			\
+	picmancontext_pdb.c		\
+	picmanconvert_pdb.c		\
+	picmandisplay_pdb.c		\
+	picmandrawable_pdb.c		\
+	picmandrawabletransform_pdb.c	\
+	picmandynamics_pdb.c		\
+	picmanedit_pdb.c			\
+	picmanfileops_pdb.c		\
+	picmanfloatingsel_pdb.c		\
+	picmanfonts_pdb.c			\
+	picmanfontselect_pdb.c		\
+	picmanpicmanrc_pdb.c		\
+	picmangradient_pdb.c		\
+	picmangradients_pdb.c		\
+	picmangradientselect_pdb.c	\
+	picmanguides_pdb.c		\
+	picmangrid_pdb.c			\
+	picmanhelp_pdb.c			\
+	picmanimage_pdb.c			\
+	picmanimageselect_pdb.c		\
+	picmanitem_pdb.c			\
+	picmanitemtransform_pdb.c		\
+	picmanlayer_pdb.c			\
+	picmanmessage_pdb.c		\
+	picmanpainttools_pdb.c		\
+	picmanpalette_pdb.c		\
+	picmanpalettes_pdb.c		\
+	picmanpaletteselect_pdb.c		\
+	picmanpaths_pdb.c			\
+	picmanpattern_pdb.c		\
+	picmanpatterns_pdb.c		\
+	picmanpatternselect_pdb.c		\
+	picmanplugin_pdb.c		\
+	picmanproceduraldb_pdb.c		\
+	picmanprogress_pdb.c		\
+	picmanselection_pdb.c		\
+	picmanselectiontools_pdb.c	\
+	picmantextlayer_pdb.c		\
+	picmantexttool_pdb.c		\
+	picmantransformtools_pdb.c	\
+	picmanundo_pdb.c			\
+	picmanunit_pdb.c			\
+	picmanvectors_pdb.c
 
 PDB_WRAPPERS_H = \
-	gimp_pdb_headers.h		\
-	gimp_pdb.h			\
-	gimpbrush_pdb.h			\
-	gimpbrushes_pdb.h		\
-	gimpbrushselect_pdb.h		\
-	gimpbuffer_pdb.h		\
-	gimpchannel_pdb.h		\
-	gimpcolor_pdb.h			\
-	gimpcontext_pdb.h		\
-	gimpconvert_pdb.h		\
-	gimpdisplay_pdb.h		\
-	gimpdrawable_pdb.h		\
-	gimpdrawabletransform_pdb.h	\
-	gimpdynamics_pdb.h		\
-	gimpedit_pdb.h			\
-	gimpfileops_pdb.h		\
-	gimpfloatingsel_pdb.h		\
-	gimpfonts_pdb.h			\
-	gimpfontselect_pdb.h		\
-	gimpgimprc_pdb.h		\
-	gimpgradient_pdb.h		\
-	gimpgradients_pdb.h		\
-	gimpgradientselect_pdb.h	\
-	gimpgrid_pdb.h			\
-	gimpguides_pdb.h		\
-	gimphelp_pdb.h			\
-	gimpimage_pdb.h			\
-	gimpimageselect_pdb.h		\
-	gimpitem_pdb.h			\
-	gimpitemtransform_pdb.h		\
-	gimplayer_pdb.h			\
-	gimpmessage_pdb.h		\
-	gimppainttools_pdb.h		\
-	gimppalette_pdb.h		\
-	gimppalettes_pdb.h		\
-	gimppaletteselect_pdb.h		\
-	gimppaths_pdb.h			\
-	gimppattern_pdb.h		\
-	gimppatterns_pdb.h		\
-	gimppatternselect_pdb.h		\
-	gimpplugin_pdb.h		\
-	gimpproceduraldb_pdb.h		\
-	gimpprogress_pdb.h		\
-	gimpselection_pdb.h		\
-	gimpselectiontools_pdb.h	\
-	gimptextlayer_pdb.h		\
-	gimptexttool_pdb.h		\
-	gimptransformtools_pdb.h	\
-	gimpundo_pdb.h			\
-	gimpunit_pdb.h			\
-	gimpvectors_pdb.h
+	picman_pdb_headers.h		\
+	picman_pdb.h			\
+	picmanbrush_pdb.h			\
+	picmanbrushes_pdb.h		\
+	picmanbrushselect_pdb.h		\
+	picmanbuffer_pdb.h		\
+	picmanchannel_pdb.h		\
+	picmancolor_pdb.h			\
+	picmancontext_pdb.h		\
+	picmanconvert_pdb.h		\
+	picmandisplay_pdb.h		\
+	picmandrawable_pdb.h		\
+	picmandrawabletransform_pdb.h	\
+	picmandynamics_pdb.h		\
+	picmanedit_pdb.h			\
+	picmanfileops_pdb.h		\
+	picmanfloatingsel_pdb.h		\
+	picmanfonts_pdb.h			\
+	picmanfontselect_pdb.h		\
+	picmanpicmanrc_pdb.h		\
+	picmangradient_pdb.h		\
+	picmangradients_pdb.h		\
+	picmangradientselect_pdb.h	\
+	picmangrid_pdb.h			\
+	picmanguides_pdb.h		\
+	picmanhelp_pdb.h			\
+	picmanimage_pdb.h			\
+	picmanimageselect_pdb.h		\
+	picmanitem_pdb.h			\
+	picmanitemtransform_pdb.h		\
+	picmanlayer_pdb.h			\
+	picmanmessage_pdb.h		\
+	picmanpainttools_pdb.h		\
+	picmanpalette_pdb.h		\
+	picmanpalettes_pdb.h		\
+	picmanpaletteselect_pdb.h		\
+	picmanpaths_pdb.h			\
+	picmanpattern_pdb.h		\
+	picmanpatterns_pdb.h		\
+	picmanpatternselect_pdb.h		\
+	picmanplugin_pdb.h		\
+	picmanproceduraldb_pdb.h		\
+	picmanprogress_pdb.h		\
+	picmanselection_pdb.h		\
+	picmanselectiontools_pdb.h	\
+	picmantextlayer_pdb.h		\
+	picmantexttool_pdb.h		\
+	picmantransformtools_pdb.h	\
+	picmanundo_pdb.h			\
+	picmanunit_pdb.h			\
+	picmanvectors_pdb.h
 
-libgimp_sources = \
-	gimp.c			\
-	gimp.h			\
-	gimpcompat.h		\
-	gimptypes.h		\
-	gimpenums.h		\
+libpicman_sources = \
+	picman.c			\
+	picman.h			\
+	picmancompat.h		\
+	picmantypes.h		\
+	picmanenums.h		\
 	${PDB_WRAPPERS_C}	\
 	${PDB_WRAPPERS_H}	\
-	gimpbrushes.c		\
-	gimpbrushes.h		\
-	gimpbrushselect.c	\
-	gimpbrushselect.h	\
-	gimpchannel.c		\
-	gimpchannel.h		\
-	gimpdrawable.c		\
-	gimpdrawable.h		\
-	gimpfontselect.c	\
-	gimpfontselect.h	\
-	gimpgimprc.c		\
-	gimpgimprc.h		\
-	gimpgradients.c		\
-	gimpgradients.h		\
-	gimpgradientselect.c	\
-	gimpgradientselect.h	\
-	gimpimage.c		\
-	gimpimage.h		\
-	gimplayer.c		\
-	gimplayer.h		\
-	gimppalette.c		\
-	gimppalette.h		\
-	gimppalettes.c		\
-	gimppalettes.h		\
-	gimppaletteselect.c	\
-	gimppaletteselect.h	\
-	gimppatterns.c		\
-	gimppatterns.h		\
-	gimppatternselect.c	\
-	gimppatternselect.h	\
-	gimppixbuf.c		\
-	gimppixbuf.h		\
-	gimppixelfetcher.c	\
-	gimppixelfetcher.h	\
-	gimppixelrgn.c		\
-	gimppixelrgn.h		\
-	gimpplugin.c		\
-	gimpplugin.h		\
-	gimpproceduraldb.c	\
-	gimpproceduraldb.h	\
-	gimpprogress.c		\
-	gimpprogress.h		\
-	gimpregioniterator.c	\
-	gimpregioniterator.h	\
-	gimpselection.c		\
-	gimpselection.h		\
-	gimptile.c		\
-	gimptile.h		\
-	gimptilebackendplugin.c \
-	gimptilebackendplugin.h \
-	gimpunitcache.c		\
-	gimpunitcache.h		\
-	gimpvectors.c		\
-	gimpvectors.h		\
+	picmanbrushes.c		\
+	picmanbrushes.h		\
+	picmanbrushselect.c	\
+	picmanbrushselect.h	\
+	picmanchannel.c		\
+	picmanchannel.h		\
+	picmandrawable.c		\
+	picmandrawable.h		\
+	picmanfontselect.c	\
+	picmanfontselect.h	\
+	picmanpicmanrc.c		\
+	picmanpicmanrc.h		\
+	picmangradients.c		\
+	picmangradients.h		\
+	picmangradientselect.c	\
+	picmangradientselect.h	\
+	picmanimage.c		\
+	picmanimage.h		\
+	picmanlayer.c		\
+	picmanlayer.h		\
+	picmanpalette.c		\
+	picmanpalette.h		\
+	picmanpalettes.c		\
+	picmanpalettes.h		\
+	picmanpaletteselect.c	\
+	picmanpaletteselect.h	\
+	picmanpatterns.c		\
+	picmanpatterns.h		\
+	picmanpatternselect.c	\
+	picmanpatternselect.h	\
+	picmanpixbuf.c		\
+	picmanpixbuf.h		\
+	picmanpixelfetcher.c	\
+	picmanpixelfetcher.h	\
+	picmanpixelrgn.c		\
+	picmanpixelrgn.h		\
+	picmanplugin.c		\
+	picmanplugin.h		\
+	picmanproceduraldb.c	\
+	picmanproceduraldb.h	\
+	picmanprogress.c		\
+	picmanprogress.h		\
+	picmanregioniterator.c	\
+	picmanregioniterator.h	\
+	picmanselection.c		\
+	picmanselection.h		\
+	picmantile.c		\
+	picmantile.h		\
+	picmantilebackendplugin.c \
+	picmantilebackendplugin.h \
+	picmanunitcache.c		\
+	picmanunitcache.h		\
+	picmanvectors.c		\
+	picmanvectors.h		\
 	stdplugins-intl.h	\
-	libgimp-intl.h
+	libpicman-intl.h
 
-libgimp_built_sources = \
-	gimpenums.c
+libpicman_built_sources = \
+	picmanenums.c
 
-libgimp_extra_sources = gimpenums.c.tail
+libpicman_extra_sources = picmanenums.c.tail
 
-libgimp_@GIMP_API_VERSION@_la_SOURCES = \
-	$(libgimp_built_sources)	\
-	$(libgimp_sources)
+libpicman_@PICMAN_API_VERSION@_la_SOURCES = \
+	$(libpicman_built_sources)	\
+	$(libpicman_sources)
 
-libgimpui_sources = \
-	gimpui.c			\
-	gimpui.h			\
-	gimpuitypes.h			\
-	gimpaspectpreview.c     	\
-	gimpaspectpreview.h     	\
-	gimpbrushmenu.c			\
-	gimpbrushmenu.h			\
-	gimpbrushselectbutton.c		\
-	gimpbrushselectbutton.h		\
-	gimpdrawablepreview.c		\
-	gimpdrawablepreview.h		\
-	gimpexport.c			\
-	gimpexport.h			\
-	gimpfontmenu.c			\
-	gimpfontmenu.h			\
-	gimpfontselectbutton.c		\
-	gimpfontselectbutton.h		\
-	gimpgradientmenu.c 		\
-	gimpgradientmenu.h 		\
-	gimpgradientselectbutton.c	\
-	gimpgradientselectbutton.h	\
-	gimpimagecombobox.c		\
-	gimpimagecombobox.h		\
-	gimpitemcombobox.c		\
-	gimpitemcombobox.h		\
-	gimpmenu.c			\
-	gimpmenu.h			\
-	gimppalettemenu.c		\
-	gimppalettemenu.h		\
-	gimppaletteselectbutton.c	\
-	gimppaletteselectbutton.h	\
-	gimppatternmenu.c		\
-	gimppatternmenu.h		\
-	gimppatternselectbutton.c	\
-	gimppatternselectbutton.h	\
-	gimpprocbrowserdialog.c		\
-	gimpprocbrowserdialog.h		\
-	gimpprocview.c			\
-	gimpprocview.h			\
-	gimpprogressbar.c		\
-	gimpprogressbar.h		\
-	gimpselectbutton.c		\
-	gimpselectbutton.h		\
-	gimpzoompreview.c		\
-	gimpzoompreview.h
+libpicmanui_sources = \
+	picmanui.c			\
+	picmanui.h			\
+	picmanuitypes.h			\
+	picmanaspectpreview.c     	\
+	picmanaspectpreview.h     	\
+	picmanbrushmenu.c			\
+	picmanbrushmenu.h			\
+	picmanbrushselectbutton.c		\
+	picmanbrushselectbutton.h		\
+	picmandrawablepreview.c		\
+	picmandrawablepreview.h		\
+	picmanexport.c			\
+	picmanexport.h			\
+	picmanfontmenu.c			\
+	picmanfontmenu.h			\
+	picmanfontselectbutton.c		\
+	picmanfontselectbutton.h		\
+	picmangradientmenu.c 		\
+	picmangradientmenu.h 		\
+	picmangradientselectbutton.c	\
+	picmangradientselectbutton.h	\
+	picmanimagecombobox.c		\
+	picmanimagecombobox.h		\
+	picmanitemcombobox.c		\
+	picmanitemcombobox.h		\
+	picmanmenu.c			\
+	picmanmenu.h			\
+	picmanpalettemenu.c		\
+	picmanpalettemenu.h		\
+	picmanpaletteselectbutton.c	\
+	picmanpaletteselectbutton.h	\
+	picmanpatternmenu.c		\
+	picmanpatternmenu.h		\
+	picmanpatternselectbutton.c	\
+	picmanpatternselectbutton.h	\
+	picmanprocbrowserdialog.c		\
+	picmanprocbrowserdialog.h		\
+	picmanprocview.c			\
+	picmanprocview.h			\
+	picmanprogressbar.c		\
+	picmanprogressbar.h		\
+	picmanselectbutton.c		\
+	picmanselectbutton.h		\
+	picmanzoompreview.c		\
+	picmanzoompreview.h
 
-libgimpui_built_sources = \
-	gimpuimarshal.c			\
-	gimpuimarshal.h
+libpicmanui_built_sources = \
+	picmanuimarshal.c			\
+	picmanuimarshal.h
 
-libgimpui_extra_sources = gimpuimarshal.list
+libpicmanui_extra_sources = picmanuimarshal.list
 
-libgimpui_@GIMP_API_VERSION@_la_SOURCES = \
-	$(libgimpui_built_sources)	\
-	$(libgimpui_sources)
+libpicmanui_@PICMAN_API_VERSION@_la_SOURCES = \
+	$(libpicmanui_built_sources)	\
+	$(libpicmanui_sources)
 
-gimpinclude_HEADERS = \
-	gimp.h				\
-	gimpcompat.h			\
-	gimptypes.h			\
-	gimpenums.h			\
+picmaninclude_HEADERS = \
+	picman.h				\
+	picmancompat.h			\
+	picmantypes.h			\
+	picmanenums.h			\
 	${PDB_WRAPPERS_H}		\
-	gimpbrushes.h			\
-	gimpbrushselect.h		\
-	gimpchannel.h			\
-	gimpdrawable.h			\
-	gimpfontselect.h		\
-	gimpgimprc.h			\
-	gimpgradients.h			\
-	gimpgradientselect.h		\
-	gimpimage.h			\
-	gimplayer.h			\
-	gimppalette.h			\
-	gimppalettes.h			\
-	gimppaletteselect.h		\
-	gimppatterns.h			\
-	gimppatternselect.h		\
-	gimppixelfetcher.h		\
-	gimppixelrgn.h			\
-	gimpplugin.h			\
-	gimpproceduraldb.h		\
-	gimpprogress.h			\
-	gimpregioniterator.h		\
-	gimpselection.h			\
-	gimptile.h			\
-	gimpvectors.h			\
+	picmanbrushes.h			\
+	picmanbrushselect.h		\
+	picmanchannel.h			\
+	picmandrawable.h			\
+	picmanfontselect.h		\
+	picmanpicmanrc.h			\
+	picmangradients.h			\
+	picmangradientselect.h		\
+	picmanimage.h			\
+	picmanlayer.h			\
+	picmanpalette.h			\
+	picmanpalettes.h			\
+	picmanpaletteselect.h		\
+	picmanpatterns.h			\
+	picmanpatternselect.h		\
+	picmanpixelfetcher.h		\
+	picmanpixelrgn.h			\
+	picmanplugin.h			\
+	picmanproceduraldb.h		\
+	picmanprogress.h			\
+	picmanregioniterator.h		\
+	picmanselection.h			\
+	picmantile.h			\
+	picmanvectors.h			\
 	\
-	gimpui.h			\
-	gimpuitypes.h			\
-	gimpaspectpreview.h		\
-	gimpbrushmenu.h			\
-	gimpbrushselectbutton.h		\
-	gimpdrawablepreview.h   	\
-	gimpexport.h			\
-	gimpfontmenu.h			\
-	gimpfontselectbutton.h		\
-	gimpgradientmenu.h		\
-	gimpgradientselectbutton.h	\
-	gimpimagecombobox.h		\
-	gimpitemcombobox.h		\
-	gimpmenu.h			\
-	gimppalettemenu.h		\
-	gimppaletteselectbutton.h	\
-	gimppatternmenu.h		\
-	gimppatternselectbutton.h	\
-	gimppixbuf.h			\
-	gimpprocbrowserdialog.h		\
-	gimpprocview.h			\
-	gimpprogressbar.h		\
-	gimpselectbutton.h		\
-	gimpzoompreview.h
+	picmanui.h			\
+	picmanuitypes.h			\
+	picmanaspectpreview.h		\
+	picmanbrushmenu.h			\
+	picmanbrushselectbutton.h		\
+	picmandrawablepreview.h   	\
+	picmanexport.h			\
+	picmanfontmenu.h			\
+	picmanfontselectbutton.h		\
+	picmangradientmenu.h		\
+	picmangradientselectbutton.h	\
+	picmanimagecombobox.h		\
+	picmanitemcombobox.h		\
+	picmanmenu.h			\
+	picmanpalettemenu.h		\
+	picmanpaletteselectbutton.h	\
+	picmanpatternmenu.h		\
+	picmanpatternselectbutton.h	\
+	picmanpixbuf.h			\
+	picmanprocbrowserdialog.h		\
+	picmanprocview.h			\
+	picmanprogressbar.h		\
+	picmanselectbutton.h		\
+	picmanzoompreview.h
 
-libgimp_@GIMP_API_VERSION@_la_LDFLAGS = \
+libpicman_@PICMAN_API_VERSION@_la_LDFLAGS = \
 	-version-info $(LT_VERSION_INFO)	\
 	$(no_undefined)				\
-	$(libgimp_export_symbols)		\
+	$(libpicman_export_symbols)		\
 	$(framework_cocoa)
 
-libgimp_@GIMP_API_VERSION@_la_LIBADD = \
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+libpicman_@PICMAN_API_VERSION@_la_LIBADD = \
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(CAIRO_LIBS)		\
 	$(GEGL_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(RT_LIBS)
 
-libgimp_@GIMP_API_VERSION@_la_DEPENDENCIES = \
-	$(gimp_def)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)
+libpicman_@PICMAN_API_VERSION@_la_DEPENDENCIES = \
+	$(picman_def)		\
+	$(libpicmanconfig)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)
 
-libgimpui_@GIMP_API_VERSION@_la_LDFLAGS = \
+libpicmanui_@PICMAN_API_VERSION@_la_LDFLAGS = \
 	-version-info $(LT_VERSION_INFO)	\
 	$(no_undefined)				\
-	$(libgimpui_export_symbols)		\
+	$(libpicmanui_export_symbols)		\
 	$(framework_cocoa)
 
-libgimpui_@GIMP_API_VERSION@_la_LIBADD = \
-	$(libgimp)		\
-	$(libgimpwidgets)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(libgimpmodule)	\
+libpicmanui_@PICMAN_API_VERSION@_la_LIBADD = \
+	$(libpicman)		\
+	$(libpicmanwidgets)	\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
+	$(libpicmanmodule)	\
 	$(GTK_LIBS)		\
 	$(RT_LIBS)
 
-libgimpui_@GIMP_API_VERSION@_la_DEPENDENCIES = \
-	$(gimpui_def)		\
-	$(libgimp)		\
-	$(libgimpwidgets)	\
-	$(libgimpbase)
+libpicmanui_@PICMAN_API_VERSION@_la_DEPENDENCIES = \
+	$(picmanui_def)		\
+	$(libpicman)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanbase)
 
 EXTRA_DIST = \
 	COPYING				\
-	gimp.def			\
-	gimpui.def			\
-	$(libgimp_extra_sources)	\
-	$(libgimpui_extra_sources)
+	picman.def			\
+	picmanui.def			\
+	$(libpicman_extra_sources)	\
+	$(libpicmanui_extra_sources)
 
 install-data-local: install-ms-lib install-libtool-import-lib
 
@@ -427,28 +427,28 @@ uninstall-local: uninstall-ms-lib uninstall-libtool-import-lib
 gen_sources = xgen-cec xgen-umh xgen-umc
 CLEANFILES = $(gen_sources)
 
-gimpenums.c: $(srcdir)/gimpenums.h $(srcdir)/gimpenums.c.tail $(GIMP_MKENUMS)
-	$(GIMP_MKENUMS) \
-		--fhead "#include \"config.h\"\n#include <glib-object.h>\n#undef GIMP_DISABLE_DEPRECATED\n#include \"libgimpbase/gimpbase.h\"\n#include \"gimpenums.h\"" \
+picmanenums.c: $(srcdir)/picmanenums.h $(srcdir)/picmanenums.c.tail $(PICMAN_MKENUMS)
+	$(PICMAN_MKENUMS) \
+		--fhead "#include \"config.h\"\n#include <glib-object.h>\n#undef PICMAN_DISABLE_DEPRECATED\n#include \"libpicmanbase/picmanbase.h\"\n#include \"picmanenums.h\"" \
 		--fprod "\n/* enumerations from \"@filename@\" */" \
 		--vhead "GType\n@enum_name@_get_type (void)\n{\n  static const G@Type@Value values[] =\n  {" \
 		--vprod "    { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
 		--vtail "    { 0, NULL, NULL }\n  };\n" \
-		--dhead "  static const Gimp@Type@Desc descs[] =\n  {" \
+		--dhead "  static const Picman@Type@Desc descs[] =\n  {" \
 		--dprod "    { @VALUENAME@, @valuedesc@, @valuehelp@ }," \
-		--dtail "    { 0, NULL, NULL }\n  };\n\n  static GType type = 0;\n\n  if (G_UNLIKELY (! type))\n    {\n      type = g_@type@_register_static (\"@EnumName@\", values);\n      gimp_type_set_translation_domain (type, GETTEXT_PACKAGE \"-libgimp\");\n      gimp_type_set_translation_context (type, \"@enumnick@\");\n      gimp_@type@_set_value_descriptions (type, descs);\n    }\n\n  return type;\n}\n" \
-		$(srcdir)/gimpenums.h > xgen-cec \
-	&& cat $(srcdir)/gimpenums.c.tail >> xgen-cec \
+		--dtail "    { 0, NULL, NULL }\n  };\n\n  static GType type = 0;\n\n  if (G_UNLIKELY (! type))\n    {\n      type = g_@type@_register_static (\"@EnumName@\", values);\n      picman_type_set_translation_domain (type, GETTEXT_PACKAGE \"-libpicman\");\n      picman_type_set_translation_context (type, \"@enumnick@\");\n      picman_@type@_set_value_descriptions (type, descs);\n    }\n\n  return type;\n}\n" \
+		$(srcdir)/picmanenums.h > xgen-cec \
+	&& cat $(srcdir)/picmanenums.c.tail >> xgen-cec \
 	&& cp xgen-cec $(@F) \
 	&& rm -f xgen-cec
 
-gimpuimarshal.h: $(srcdir)/gimpuimarshal.list
-	$(GLIB_GENMARSHAL) --prefix=_gimpui_marshal $(srcdir)/gimpuimarshal.list --header >> xgen-umh \
+picmanuimarshal.h: $(srcdir)/picmanuimarshal.list
+	$(GLIB_GENMARSHAL) --prefix=_picmanui_marshal $(srcdir)/picmanuimarshal.list --header >> xgen-umh \
 	&& (cmp -s xgen-umh $(@F) || cp xgen-umh $(@F)) \
 	&& rm -f xgen-umh xgen-umh~
 
-gimpuimarshal.c: gimpuimarshal.h
-	echo "#include \"gimpuimarshal.h\"" >> xgen-umc \
-	&& $(GLIB_GENMARSHAL) --prefix=_gimpui_marshal $(srcdir)/gimpuimarshal.list --body >> xgen-umc \
+picmanuimarshal.c: picmanuimarshal.h
+	echo "#include \"picmanuimarshal.h\"" >> xgen-umc \
+	&& $(GLIB_GENMARSHAL) --prefix=_picmanui_marshal $(srcdir)/picmanuimarshal.list --body >> xgen-umc \
 	&& cp xgen-umc $(@F) \
 	&& rm -f xgen-umc xgen-umc~

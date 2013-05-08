@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,21 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ITEM__PREVIEW_H__
-#define __GIMP_ITEM__PREVIEW_H__
+#ifndef __PICMAN_ITEM__PREVIEW_H__
+#define __PICMAN_ITEM__PREVIEW_H__
 
 
 /*
- *  virtual functions of GimpItem -- dont't call directly
+ *  virtual functions of PicmanItem -- dont't call directly
  */
 
-void      gimp_item_get_preview_size (GimpViewable *viewable,
+void      picman_item_get_preview_size (PicmanViewable *viewable,
                                       gint          size,
                                       gboolean      is_popup,
                                       gboolean      dot_for_dot,
                                       gint         *width,
                                       gint         *height);
-gboolean  gimp_item_get_popup_size   (GimpViewable *viewable,
+gboolean  picman_item_get_popup_size   (PicmanViewable *viewable,
                                       gint          width,
                                       gint          height,
                                       gboolean      dot_for_dot,
@@ -37,4 +37,4 @@ gboolean  gimp_item_get_popup_size   (GimpViewable *viewable,
                                       gint         *popup_height);
 
 
-#endif /* __GIMP_ITEM__PREVIEW_H__ */
+#endif /* __PICMAN_ITEM__PREVIEW_H__ */

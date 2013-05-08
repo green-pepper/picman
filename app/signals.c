@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core/core-types.h"
 
@@ -30,12 +30,12 @@
 
 
 #ifndef G_OS_WIN32
-static void  gimp_sigfatal_handler (gint sig_num) G_GNUC_NORETURN;
+static void  picman_sigfatal_handler (gint sig_num) G_GNUC_NORETURN;
 #endif
 
 
 void
-gimp_init_signal_handlers (GimpStackTraceMode stack_trace_mode)
+picman_init_signal_handlers (PicmanStackTraceMode stack_trace_mode)
 {
 #ifndef G_OS_WIN32
   /* No use catching these on Win32, the user won't get any stack
@@ -47,26 +47,26 @@ gimp_init_signal_handlers (GimpStackTraceMode stack_trace_mode)
 
   /* Handle fatal signals */
 
-  /* these are handled by gimp_terminate() */
-  gimp_signal_private (SIGHUP,  gimp_sigfatal_handler, 0);
-  gimp_signal_private (SIGINT,  gimp_sigfatal_handler, 0);
-  gimp_signal_private (SIGQUIT, gimp_sigfatal_handler, 0);
-  gimp_signal_private (SIGABRT, gimp_sigfatal_handler, 0);
-  gimp_signal_private (SIGTERM, gimp_sigfatal_handler, 0);
+  /* these are handled by picman_terminate() */
+  picman_signal_private (SIGHUP,  picman_sigfatal_handler, 0);
+  picman_signal_private (SIGINT,  picman_sigfatal_handler, 0);
+  picman_signal_private (SIGQUIT, picman_sigfatal_handler, 0);
+  picman_signal_private (SIGABRT, picman_sigfatal_handler, 0);
+  picman_signal_private (SIGTERM, picman_sigfatal_handler, 0);
 
-  if (stack_trace_mode != GIMP_STACK_TRACE_NEVER)
+  if (stack_trace_mode != PICMAN_STACK_TRACE_NEVER)
     {
-      /* these are handled by gimp_fatal_error() */
-      gimp_signal_private (SIGBUS,  gimp_sigfatal_handler, 0);
-      gimp_signal_private (SIGSEGV, gimp_sigfatal_handler, 0);
-      gimp_signal_private (SIGFPE,  gimp_sigfatal_handler, 0);
+      /* these are handled by picman_fatal_error() */
+      picman_signal_private (SIGBUS,  picman_sigfatal_handler, 0);
+      picman_signal_private (SIGSEGV, picman_sigfatal_handler, 0);
+      picman_signal_private (SIGFPE,  picman_sigfatal_handler, 0);
     }
 
   /* Ignore SIGPIPE because plug_in.c handles broken pipes */
-  gimp_signal_private (SIGPIPE, SIG_IGN, 0);
+  picman_signal_private (SIGPIPE, SIG_IGN, 0);
 
   /* Restart syscalls on SIGCHLD */
-  gimp_signal_private (SIGCHLD, SIG_DFL, SA_RESTART);
+  picman_signal_private (SIGCHLD, SIG_DFL, SA_RESTART);
 
 #endif /* ! G_OS_WIN32 */
 }
@@ -74,10 +74,10 @@ gimp_init_signal_handlers (GimpStackTraceMode stack_trace_mode)
 
 #ifndef G_OS_WIN32
 
-/* gimp core signal handler for fatal signals */
+/* picman core signal handler for fatal signals */
 
 static void
-gimp_sigfatal_handler (gint sig_num)
+picman_sigfatal_handler (gint sig_num)
 {
   switch (sig_num)
     {
@@ -86,14 +86,14 @@ gimp_sigfatal_handler (gint sig_num)
     case SIGQUIT:
     case SIGABRT:
     case SIGTERM:
-      gimp_terminate (g_strsignal (sig_num));
+      picman_terminate (g_strsignal (sig_num));
       break;
 
     case SIGBUS:
     case SIGSEGV:
     case SIGFPE:
     default:
-      gimp_fatal_error (g_strsignal (sig_num));
+      picman_fatal_error (g_strsignal (sig_num));
       break;
     }
 }

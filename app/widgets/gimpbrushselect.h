@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbrushselect.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanbrushselect.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,45 +18,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_SELECT_H__
-#define __GIMP_BRUSH_SELECT_H__
+#ifndef __PICMAN_BRUSH_SELECT_H__
+#define __PICMAN_BRUSH_SELECT_H__
 
-#include "gimppdbdialog.h"
+#include "picmanpdbdialog.h"
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_BRUSH_SELECT            (gimp_brush_select_get_type ())
-#define GIMP_BRUSH_SELECT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BRUSH_SELECT, GimpBrushSelect))
-#define GIMP_BRUSH_SELECT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BRUSH_SELECT, GimpBrushSelectClass))
-#define GIMP_IS_BRUSH_SELECT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BRUSH_SELECT))
-#define GIMP_IS_BRUSH_SELECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BRUSH_SELECT))
-#define GIMP_BRUSH_SELECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BRUSH_SELECT, GimpBrushSelectClass))
+#define PICMAN_TYPE_BRUSH_SELECT            (picman_brush_select_get_type ())
+#define PICMAN_BRUSH_SELECT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BRUSH_SELECT, PicmanBrushSelect))
+#define PICMAN_BRUSH_SELECT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BRUSH_SELECT, PicmanBrushSelectClass))
+#define PICMAN_IS_BRUSH_SELECT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BRUSH_SELECT))
+#define PICMAN_IS_BRUSH_SELECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BRUSH_SELECT))
+#define PICMAN_BRUSH_SELECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BRUSH_SELECT, PicmanBrushSelectClass))
 
 
-typedef struct _GimpBrushSelectClass  GimpBrushSelectClass;
+typedef struct _PicmanBrushSelectClass  PicmanBrushSelectClass;
 
-struct _GimpBrushSelect
+struct _PicmanBrushSelect
 {
-  GimpPdbDialog         parent_instance;
+  PicmanPdbDialog         parent_instance;
 
   gdouble               initial_opacity;
-  GimpLayerModeEffects  initial_mode;
+  PicmanLayerModeEffects  initial_mode;
 
   gint                  spacing;
   GtkAdjustment        *opacity_data;
   GtkWidget            *paint_mode_menu;
 };
 
-struct _GimpBrushSelectClass
+struct _PicmanBrushSelectClass
 {
-  GimpPdbDialogClass  parent_class;
+  PicmanPdbDialogClass  parent_class;
 };
 
 
-GType  gimp_brush_select_get_type (void) G_GNUC_CONST;
+GType  picman_brush_select_get_type (void) G_GNUC_CONST;
 
 
 G_END_DECLS
 
-#endif /* __GIMP_BRUSH_SELECT_H__ */
+#endif /* __PICMAN_BRUSH_SELECT_H__ */

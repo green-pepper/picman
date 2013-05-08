@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvaspath.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvaspath.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,17 +23,17 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "core/gimpbezierdesc.h"
-#include "core/gimpparamspecs.h"
+#include "core/picmanbezierdesc.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimpcanvas-style.h"
-#include "gimpcanvaspath.h"
-#include "gimpdisplayshell.h"
+#include "picmancanvas-style.h"
+#include "picmancanvaspath.h"
+#include "picmandisplayshell.h"
 
 
 enum
@@ -47,105 +47,105 @@ enum
 };
 
 
-typedef struct _GimpCanvasPathPrivate GimpCanvasPathPrivate;
+typedef struct _PicmanCanvasPathPrivate PicmanCanvasPathPrivate;
 
-struct _GimpCanvasPathPrivate
+struct _PicmanCanvasPathPrivate
 {
   cairo_path_t *path;
   gdouble       x;
   gdouble       y;
   gboolean      filled;
-  GimpPathStyle path_style;
+  PicmanPathStyle path_style;
 };
 
 #define GET_PRIVATE(path) \
         G_TYPE_INSTANCE_GET_PRIVATE (path, \
-                                     GIMP_TYPE_CANVAS_PATH, \
-                                     GimpCanvasPathPrivate)
+                                     PICMAN_TYPE_CANVAS_PATH, \
+                                     PicmanCanvasPathPrivate)
 
 /*  local function prototypes  */
 
-static void             gimp_canvas_path_finalize     (GObject        *object);
-static void             gimp_canvas_path_set_property (GObject        *object,
+static void             picman_canvas_path_finalize     (GObject        *object);
+static void             picman_canvas_path_set_property (GObject        *object,
                                                        guint           property_id,
                                                        const GValue   *value,
                                                        GParamSpec     *pspec);
-static void             gimp_canvas_path_get_property (GObject        *object,
+static void             picman_canvas_path_get_property (GObject        *object,
                                                        guint           property_id,
                                                        GValue         *value,
                                                        GParamSpec     *pspec);
-static void             gimp_canvas_path_draw         (GimpCanvasItem *item,
+static void             picman_canvas_path_draw         (PicmanCanvasItem *item,
                                                        cairo_t        *cr);
-static cairo_region_t * gimp_canvas_path_get_extents  (GimpCanvasItem *item);
-static void             gimp_canvas_path_stroke       (GimpCanvasItem *item,
+static cairo_region_t * picman_canvas_path_get_extents  (PicmanCanvasItem *item);
+static void             picman_canvas_path_stroke       (PicmanCanvasItem *item,
                                                        cairo_t        *cr);
 
 
-G_DEFINE_TYPE (GimpCanvasPath, gimp_canvas_path,
-               GIMP_TYPE_CANVAS_ITEM)
+G_DEFINE_TYPE (PicmanCanvasPath, picman_canvas_path,
+               PICMAN_TYPE_CANVAS_ITEM)
 
-#define parent_class gimp_canvas_path_parent_class
+#define parent_class picman_canvas_path_parent_class
 
 
 static void
-gimp_canvas_path_class_init (GimpCanvasPathClass *klass)
+picman_canvas_path_class_init (PicmanCanvasPathClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpCanvasItemClass *item_class   = GIMP_CANVAS_ITEM_CLASS (klass);
+  PicmanCanvasItemClass *item_class   = PICMAN_CANVAS_ITEM_CLASS (klass);
 
-  object_class->finalize     = gimp_canvas_path_finalize;
-  object_class->set_property = gimp_canvas_path_set_property;
-  object_class->get_property = gimp_canvas_path_get_property;
+  object_class->finalize     = picman_canvas_path_finalize;
+  object_class->set_property = picman_canvas_path_set_property;
+  object_class->get_property = picman_canvas_path_get_property;
 
-  item_class->draw           = gimp_canvas_path_draw;
-  item_class->get_extents    = gimp_canvas_path_get_extents;
-  item_class->stroke         = gimp_canvas_path_stroke;
+  item_class->draw           = picman_canvas_path_draw;
+  item_class->get_extents    = picman_canvas_path_get_extents;
+  item_class->stroke         = picman_canvas_path_stroke;
 
   g_object_class_install_property (object_class, PROP_PATH,
                                    g_param_spec_boxed ("path", NULL, NULL,
-                                                       GIMP_TYPE_BEZIER_DESC,
-                                                       GIMP_PARAM_READWRITE));
+                                                       PICMAN_TYPE_BEZIER_DESC,
+                                                       PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_X,
                                    g_param_spec_double ("x", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_Y,
                                    g_param_spec_double ("y", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_FILLED,
                                    g_param_spec_boolean ("filled", NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_PARAM_READWRITE));
 
 
   g_object_class_install_property (object_class, PROP_PATH_STYLE,
                                    g_param_spec_enum ("path-style", NULL, NULL,
-                                                      GIMP_TYPE_PATH_STYLE,
-                                                      GIMP_PATH_STYLE_DEFAULT,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_TYPE_PATH_STYLE,
+                                                      PICMAN_PATH_STYLE_DEFAULT,
+                                                      PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpCanvasPathPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanCanvasPathPrivate));
 }
 
 static void
-gimp_canvas_path_init (GimpCanvasPath *path)
+picman_canvas_path_init (PicmanCanvasPath *path)
 {
 }
 
 static void
-gimp_canvas_path_finalize (GObject *object)
+picman_canvas_path_finalize (GObject *object)
 {
-  GimpCanvasPathPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasPathPrivate *private = GET_PRIVATE (object);
 
   if (private->path)
     {
-      gimp_bezier_desc_free (private->path);
+      picman_bezier_desc_free (private->path);
       private->path = NULL;
     }
 
@@ -153,18 +153,18 @@ gimp_canvas_path_finalize (GObject *object)
 }
 
 static void
-gimp_canvas_path_set_property (GObject      *object,
+picman_canvas_path_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpCanvasPathPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasPathPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
     case PROP_PATH:
       if (private->path)
-        gimp_bezier_desc_free (private->path);
+        picman_bezier_desc_free (private->path);
       private->path = g_value_dup_boxed (value);
       break;
     case PROP_X:
@@ -187,12 +187,12 @@ gimp_canvas_path_set_property (GObject      *object,
 }
 
 static void
-gimp_canvas_path_get_property (GObject    *object,
+picman_canvas_path_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpCanvasPathPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasPathPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -219,32 +219,32 @@ gimp_canvas_path_get_property (GObject    *object,
 }
 
 static void
-gimp_canvas_path_draw (GimpCanvasItem *item,
+picman_canvas_path_draw (PicmanCanvasItem *item,
                        cairo_t        *cr)
 {
-  GimpCanvasPathPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasPathPrivate *private = GET_PRIVATE (item);
 
   if (private->path)
     {
       cairo_save (cr);
-      gimp_canvas_item_transform (item, cr);
+      picman_canvas_item_transform (item, cr);
       cairo_translate (cr, private->x, private->y);
 
       cairo_append_path (cr, private->path);
       cairo_restore (cr);
 
       if (private->filled)
-        _gimp_canvas_item_fill (item, cr);
+        _picman_canvas_item_fill (item, cr);
       else
-        _gimp_canvas_item_stroke (item, cr);
+        _picman_canvas_item_stroke (item, cr);
     }
 }
 
 static cairo_region_t *
-gimp_canvas_path_get_extents (GimpCanvasItem *item)
+picman_canvas_path_get_extents (PicmanCanvasItem *item)
 {
-  GimpCanvasPathPrivate *private = GET_PRIVATE (item);
-  GtkWidget             *canvas  = gimp_canvas_item_get_canvas (item);
+  PicmanCanvasPathPrivate *private = GET_PRIVATE (item);
+  GtkWidget             *canvas  = picman_canvas_item_get_canvas (item);
 
   if (private->path && gtk_widget_get_realized (canvas))
     {
@@ -255,7 +255,7 @@ gimp_canvas_path_get_extents (GimpCanvasItem *item)
       cr = gdk_cairo_create (gtk_widget_get_window (canvas));
 
       cairo_save (cr);
-      gimp_canvas_item_transform (item, cr);
+      picman_canvas_item_transform (item, cr);
       cairo_translate (cr, private->x, private->y);
 
       cairo_append_path (cr, private->path);
@@ -287,50 +287,50 @@ gimp_canvas_path_get_extents (GimpCanvasItem *item)
 }
 
 static void
-gimp_canvas_path_stroke (GimpCanvasItem *item,
+picman_canvas_path_stroke (PicmanCanvasItem *item,
                          cairo_t        *cr)
 {
-  GimpCanvasPathPrivate *private = GET_PRIVATE (item);
-  GtkWidget             *canvas  = gimp_canvas_item_get_canvas (item);
+  PicmanCanvasPathPrivate *private = GET_PRIVATE (item);
+  GtkWidget             *canvas  = picman_canvas_item_get_canvas (item);
   gboolean               active;
 
   switch (private->path_style)
     {
-    case GIMP_PATH_STYLE_VECTORS:
-      active = gimp_canvas_item_get_highlight (item);
+    case PICMAN_PATH_STYLE_VECTORS:
+      active = picman_canvas_item_get_highlight (item);
 
-      gimp_canvas_set_vectors_bg_style (canvas, cr, active);
+      picman_canvas_set_vectors_bg_style (canvas, cr, active);
       cairo_stroke_preserve (cr);
 
-      gimp_canvas_set_vectors_fg_style (canvas, cr, active);
+      picman_canvas_set_vectors_fg_style (canvas, cr, active);
       cairo_stroke (cr);
       break;
 
-    case GIMP_PATH_STYLE_OUTLINE:
-      gimp_canvas_set_outline_bg_style (canvas, cr);
+    case PICMAN_PATH_STYLE_OUTLINE:
+      picman_canvas_set_outline_bg_style (canvas, cr);
       cairo_stroke_preserve (cr);
 
-      gimp_canvas_set_outline_fg_style (canvas, cr);
+      picman_canvas_set_outline_fg_style (canvas, cr);
       cairo_stroke (cr);
       break;
 
-    case GIMP_PATH_STYLE_DEFAULT:
-      GIMP_CANVAS_ITEM_CLASS (parent_class)->stroke (item, cr);
+    case PICMAN_PATH_STYLE_DEFAULT:
+      PICMAN_CANVAS_ITEM_CLASS (parent_class)->stroke (item, cr);
       break;
     }
 }
 
-GimpCanvasItem *
-gimp_canvas_path_new (GimpDisplayShell     *shell,
-                      const GimpBezierDesc *bezier,
+PicmanCanvasItem *
+picman_canvas_path_new (PicmanDisplayShell     *shell,
+                      const PicmanBezierDesc *bezier,
                       gdouble               x,
                       gdouble               y,
                       gboolean              filled,
-                      GimpPathStyle         style)
+                      PicmanPathStyle         style)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
 
-  return g_object_new (GIMP_TYPE_CANVAS_PATH,
+  return g_object_new (PICMAN_TYPE_CANVAS_PATH,
                        "shell",      shell,
                        "path",       bezier,
                        "x",          x,
@@ -341,16 +341,16 @@ gimp_canvas_path_new (GimpDisplayShell     *shell,
 }
 
 void
-gimp_canvas_path_set (GimpCanvasItem       *path,
-                      const GimpBezierDesc *bezier)
+picman_canvas_path_set (PicmanCanvasItem       *path,
+                      const PicmanBezierDesc *bezier)
 {
-  g_return_if_fail (GIMP_IS_CANVAS_PATH (path));
+  g_return_if_fail (PICMAN_IS_CANVAS_PATH (path));
 
-  gimp_canvas_item_begin_change (path);
+  picman_canvas_item_begin_change (path);
 
   g_object_set (path,
                 "path", bezier,
                 NULL);
 
-  gimp_canvas_item_end_change (path);
+  picman_canvas_item_end_change (path);
 }

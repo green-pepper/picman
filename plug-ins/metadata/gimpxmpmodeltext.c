@@ -1,6 +1,6 @@
-/* gimpxmpmodeltext.c - custom text widget linked to the xmp model
+/* picmanxmpmodeltext.c - custom text widget linked to the xmp model
  *
- * Copyright (C) 2010, Róman Joost <romanofski@gimp.org>
+ * Copyright (C) 2010, Róman Joost <romanofski@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,77 +19,77 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "xmp-schemas.h"
 #include "xmp-model.h"
 
-#include "gimpxmpmodelwidget.h"
-#include "gimpxmpmodeltext.h"
+#include "picmanxmpmodelwidget.h"
+#include "picmanxmpmodeltext.h"
 
 
-static void   gimp_xmp_model_text_iface_init    (GimpXmpModelWidgetInterface *iface);
+static void   picman_xmp_model_text_iface_init    (PicmanXmpModelWidgetInterface *iface);
 
-static void   gimp_xmp_model_text_constructed (GObject *object);
+static void   picman_xmp_model_text_constructed (GObject *object);
 
-static void   gimp_xmp_model_text_changed       (GtkTextBuffer               *text_buffer,
+static void   picman_xmp_model_text_changed       (GtkTextBuffer               *text_buffer,
                                                  gpointer                    *user_data);
 
-void          gimp_xmp_model_text_set_text      (GimpXmpModelWidget          *widget,
+void          picman_xmp_model_text_set_text      (PicmanXmpModelWidget          *widget,
                                                  const gchar                 *tree_value);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpXmpModelText, gimp_xmp_model_text,
+G_DEFINE_TYPE_WITH_CODE (PicmanXmpModelText, picman_xmp_model_text,
                          GTK_TYPE_TEXT_VIEW,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_XMP_MODEL_WIDGET,
-                                                gimp_xmp_model_text_iface_init))
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_XMP_MODEL_WIDGET,
+                                                picman_xmp_model_text_iface_init))
 
-#define parent_class gimp_xmp_model_text_parent_class
+#define parent_class picman_xmp_model_text_parent_class
 
 
 static void
-gimp_xmp_model_text_class_init (GimpXmpModelTextClass *klass)
+picman_xmp_model_text_class_init (PicmanXmpModelTextClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_xmp_model_text_constructed;
-  object_class->set_property = gimp_xmp_model_widget_set_property;
-  object_class->get_property = gimp_xmp_model_widget_get_property;
+  object_class->constructed  = picman_xmp_model_text_constructed;
+  object_class->set_property = picman_xmp_model_widget_set_property;
+  object_class->get_property = picman_xmp_model_widget_get_property;
 
-  gimp_xmp_model_widget_install_properties (object_class);
+  picman_xmp_model_widget_install_properties (object_class);
 }
 
 static void
-gimp_xmp_model_text_iface_init (GimpXmpModelWidgetInterface *iface)
+picman_xmp_model_text_iface_init (PicmanXmpModelWidgetInterface *iface)
 {
-  iface->widget_set_text = gimp_xmp_model_text_set_text;
+  iface->widget_set_text = picman_xmp_model_text_set_text;
 }
 
 static void
-gimp_xmp_model_text_init (GimpXmpModelText *text)
+picman_xmp_model_text_init (PicmanXmpModelText *text)
 {
   GtkTextBuffer *text_buffer;
 
   text_buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (text));
   g_signal_connect (text_buffer, "end-user-action",
-                    G_CALLBACK (gimp_xmp_model_text_changed),
+                    G_CALLBACK (picman_xmp_model_text_changed),
                     text);
 }
 
 static void
-gimp_xmp_model_text_constructed (GObject *object)
+picman_xmp_model_text_constructed (GObject *object)
 {
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  gimp_xmp_model_widget_constructor (object);
+  picman_xmp_model_widget_constructor (object);
 }
 
 static void
-gimp_xmp_model_text_changed (GtkTextBuffer *text_buffer,
+picman_xmp_model_text_changed (GtkTextBuffer *text_buffer,
                              gpointer      *user_data)
 {
-  GimpXmpModelText *text = GIMP_XMP_MODEL_TEXT (user_data);
+  PicmanXmpModelText *text = PICMAN_XMP_MODEL_TEXT (user_data);
   GtkTextIter       start;
   GtkTextIter       end;
   const gchar      *value;
@@ -97,11 +97,11 @@ gimp_xmp_model_text_changed (GtkTextBuffer *text_buffer,
   gtk_text_buffer_get_bounds (text_buffer, &start, &end);
   value = gtk_text_buffer_get_text (text_buffer, &start, &end, FALSE);
 
-  gimp_xmp_model_widget_changed (GIMP_XMP_MODEL_WIDGET (text), value);
+  picman_xmp_model_widget_changed (PICMAN_XMP_MODEL_WIDGET (text), value);
 }
 
 void
-gimp_xmp_model_text_set_text (GimpXmpModelWidget *widget,
+picman_xmp_model_text_set_text (PicmanXmpModelWidget *widget,
                               const gchar        *tree_value)
 {
   GtkTextBuffer *text_buffer;

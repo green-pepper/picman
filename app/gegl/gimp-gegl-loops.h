@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-gegl-loops.h
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picman-gegl-loops.h
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,32 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GEGL_LOOPS_H__
-#define __GIMP_GEGL_LOOPS_H__
+#ifndef __PICMAN_GEGL_LOOPS_H__
+#define __PICMAN_GEGL_LOOPS_H__
 
 
 /*  this is a pretty stupid port of concolve_region() that only works
  *  on a linear source buffer
  */
-void   gimp_gegl_convolve           (GeglBuffer          *src_buffer,
+void   picman_gegl_convolve           (GeglBuffer          *src_buffer,
                                      const GeglRectangle *src_rect,
                                      GeglBuffer          *dest_buffer,
                                      const GeglRectangle *dest_rect,
                                      const gfloat        *kernel,
                                      gint                 kernel_size,
                                      gdouble              divisor,
-                                     GimpConvolutionType  mode,
+                                     PicmanConvolutionType  mode,
                                      gboolean             alpha_weighting);
 
-void   gimp_gegl_dodgeburn          (GeglBuffer          *src_buffer,
+void   picman_gegl_dodgeburn          (GeglBuffer          *src_buffer,
                                      const GeglRectangle *src_rect,
                                      GeglBuffer          *dest_buffer,
                                      const GeglRectangle *dest_rect,
                                      gdouble              exposure,
-                                     GimpDodgeBurnType    type,
-                                     GimpTransferMode     mode);
+                                     PicmanDodgeBurnType    type,
+                                     PicmanTransferMode     mode);
 
-void   gimp_gegl_smudge_blend       (GeglBuffer          *top_buffer,
+void   picman_gegl_smudge_blend       (GeglBuffer          *top_buffer,
                                      const GeglRectangle *top_rect,
                                      GeglBuffer          *bottom_buffer,
                                      const GeglRectangle *bottom_rect,
@@ -51,26 +51,26 @@ void   gimp_gegl_smudge_blend       (GeglBuffer          *top_buffer,
                                      const GeglRectangle *dest_rect,
                                      gdouble              blend);
 
-void   gimp_gegl_apply_mask         (GeglBuffer          *mask_buffer,
+void   picman_gegl_apply_mask         (GeglBuffer          *mask_buffer,
                                      const GeglRectangle *mask_rect,
                                      GeglBuffer          *dest_buffer,
                                      const GeglRectangle *dest_rect,
                                      gdouble              opacity);
 
-void   gimp_gegl_combine_mask       (GeglBuffer          *mask_buffer,
+void   picman_gegl_combine_mask       (GeglBuffer          *mask_buffer,
                                      const GeglRectangle *mask_rect,
                                      GeglBuffer          *dest_buffer,
                                      const GeglRectangle *dest_rect,
                                      gdouble              opacity);
 
-void   gimp_gegl_combine_mask_weird (GeglBuffer          *mask_buffer,
+void   picman_gegl_combine_mask_weird (GeglBuffer          *mask_buffer,
                                      const GeglRectangle *mask_rect,
                                      GeglBuffer          *dest_buffer,
                                      const GeglRectangle *dest_rect,
                                      gdouble              opacity,
                                      gboolean             stipple);
 
-void   gimp_gegl_replace            (GeglBuffer          *top_buffer,
+void   picman_gegl_replace            (GeglBuffer          *top_buffer,
                                      const GeglRectangle *top_rect,
                                      GeglBuffer          *bottom_buffer,
                                      const GeglRectangle *bottom_rect,
@@ -82,4 +82,4 @@ void   gimp_gegl_replace            (GeglBuffer          *top_buffer,
                                      const gboolean      *affect);
 
 
-#endif /* __GIMP_GEGL_LOOPS_H__ */
+#endif /* __PICMAN_GEGL_LOOPS_H__ */

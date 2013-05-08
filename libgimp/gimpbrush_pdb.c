@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpbrush_pdb.c
+ * picmanbrush_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,12 @@
 
 #include <string.h>
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpbrush
- * @title: gimpbrush
+ * SECTION: picmanbrush
+ * @title: picmanbrush
  * @short_description: Functions operating on a single brush.
  *
  * Functions operating on a single brush.
@@ -37,7 +37,7 @@
 
 
 /**
- * gimp_brush_new:
+ * picman_brush_new:
  * @name: The requested name of the new brush.
  *
  * Creates a new brush
@@ -46,30 +46,30 @@
  *
  * Returns: The actual new brush name.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_brush_new (const gchar *name)
+picman_brush_new (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *actual_name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-brush-new",
+  return_vals = picman_run_procedure ("picman-brush-new",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     actual_name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return actual_name;
 }
 
 /**
- * gimp_brush_duplicate:
+ * picman_brush_duplicate:
  * @name: The brush name.
  *
  * Duplicates a brush
@@ -78,30 +78,30 @@ gimp_brush_new (const gchar *name)
  *
  * Returns: The name of the brush's copy.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_brush_duplicate (const gchar *name)
+picman_brush_duplicate (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *copy_name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-brush-duplicate",
+  return_vals = picman_run_procedure ("picman-brush-duplicate",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     copy_name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return copy_name;
 }
 
 /**
- * gimp_brush_is_generated:
+ * picman_brush_is_generated:
  * @name: The brush name.
  *
  * Tests if brush is generated
@@ -110,30 +110,30 @@ gimp_brush_duplicate (const gchar *name)
  *
  * Returns: TRUE if the brush is generated.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_brush_is_generated (const gchar *name)
+picman_brush_is_generated (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean generated = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-brush-is-generated",
+  return_vals = picman_run_procedure ("picman-brush-is-generated",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     generated = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return generated;
 }
 
 /**
- * gimp_brush_rename:
+ * picman_brush_rename:
  * @name: The brush name.
  * @new_name: The new name of the brush.
  *
@@ -143,32 +143,32 @@ gimp_brush_is_generated (const gchar *name)
  *
  * Returns: The actual new name of the brush.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_brush_rename (const gchar *name,
+picman_brush_rename (const gchar *name,
                    const gchar *new_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *actual_name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-brush-rename",
+  return_vals = picman_run_procedure ("picman-brush-rename",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_STRING, new_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_STRING, new_name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     actual_name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return actual_name;
 }
 
 /**
- * gimp_brush_delete:
+ * picman_brush_delete:
  * @name: The brush name.
  *
  * Deletes a brush
@@ -177,29 +177,29 @@ gimp_brush_rename (const gchar *name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_brush_delete (const gchar *name)
+picman_brush_delete (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-brush-delete",
+  return_vals = picman_run_procedure ("picman-brush-delete",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_brush_is_editable:
+ * picman_brush_is_editable:
  * @name: The brush name.
  *
  * Tests if brush can be edited
@@ -208,30 +208,30 @@ gimp_brush_delete (const gchar *name)
  *
  * Returns: TRUE if the brush can be edited.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_brush_is_editable (const gchar *name)
+picman_brush_is_editable (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean editable = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-brush-is-editable",
+  return_vals = picman_run_procedure ("picman-brush-is-editable",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     editable = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return editable;
 }
 
 /**
- * gimp_brush_get_info:
+ * picman_brush_get_info:
  * @name: The brush name.
  * @width: The brush width.
  * @height: The brush height.
@@ -245,30 +245,30 @@ gimp_brush_is_editable (const gchar *name)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_brush_get_info (const gchar *name,
+picman_brush_get_info (const gchar *name,
                      gint        *width,
                      gint        *height,
                      gint        *mask_bpp,
                      gint        *color_bpp)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-brush-get-info",
+  return_vals = picman_run_procedure ("picman-brush-get-info",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
   *width = 0;
   *height = 0;
   *mask_bpp = 0;
   *color_bpp = 0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -278,13 +278,13 @@ gimp_brush_get_info (const gchar *name,
       *color_bpp = return_vals[4].data.d_int32;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_brush_get_pixels:
+ * picman_brush_get_pixels:
  * @name: The brush name.
  * @width: The brush width.
  * @height: The brush height.
@@ -302,10 +302,10 @@ gimp_brush_get_info (const gchar *name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_brush_get_pixels (const gchar  *name,
+picman_brush_get_pixels (const gchar  *name,
                        gint         *width,
                        gint         *height,
                        gint         *mask_bpp,
@@ -315,14 +315,14 @@ gimp_brush_get_pixels (const gchar  *name,
                        gint         *num_color_bytes,
                        guint8      **color_bytes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-brush-get-pixels",
+  return_vals = picman_run_procedure ("picman-brush-get-pixels",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
   *width = 0;
   *height = 0;
@@ -333,7 +333,7 @@ gimp_brush_get_pixels (const gchar  *name,
   *num_color_bytes = 0;
   *color_bytes = NULL;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -353,13 +353,13 @@ gimp_brush_get_pixels (const gchar  *name,
               *num_color_bytes * sizeof (guint8));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_brush_get_spacing:
+ * picman_brush_get_spacing:
  * @name: The brush name.
  * @spacing: The brush spacing.
  *
@@ -371,35 +371,35 @@ gimp_brush_get_pixels (const gchar  *name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_brush_get_spacing (const gchar *name,
+picman_brush_get_spacing (const gchar *name,
                         gint        *spacing)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-brush-get-spacing",
+  return_vals = picman_run_procedure ("picman-brush-get-spacing",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
   *spacing = 0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     *spacing = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_brush_set_spacing:
+ * picman_brush_set_spacing:
  * @name: The brush name.
  * @spacing: The brush spacing.
  *
@@ -410,68 +410,68 @@ gimp_brush_get_spacing (const gchar *name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_brush_set_spacing (const gchar *name,
+picman_brush_set_spacing (const gchar *name,
                         gint         spacing)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-brush-set-spacing",
+  return_vals = picman_run_procedure ("picman-brush-set-spacing",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_INT32, spacing,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_INT32, spacing,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_brush_get_shape:
+ * picman_brush_get_shape:
  * @name: The brush name.
  *
  * Get the shape of a generated brush.
  *
  * This procedure gets the shape value for a generated brush. If called
  * for any other type of brush, it does not succeed. The current
- * possibilities are Circle (GIMP_BRUSH_GENERATED_CIRCLE), Square
- * (GIMP_BRUSH_GENERATED_SQUARE), and Diamond
- * (GIMP_BRUSH_GENERATED_DIAMOND). Other shapes are likely to be added
+ * possibilities are Circle (PICMAN_BRUSH_GENERATED_CIRCLE), Square
+ * (PICMAN_BRUSH_GENERATED_SQUARE), and Diamond
+ * (PICMAN_BRUSH_GENERATED_DIAMOND). Other shapes are likely to be added
  * in the future.
  *
  * Returns: The brush shape.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
-GimpBrushGeneratedShape
-gimp_brush_get_shape (const gchar *name)
+PicmanBrushGeneratedShape
+picman_brush_get_shape (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpBrushGeneratedShape shape = 0;
+  PicmanBrushGeneratedShape shape = 0;
 
-  return_vals = gimp_run_procedure ("gimp-brush-get-shape",
+  return_vals = picman_run_procedure ("picman-brush-get-shape",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     shape = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return shape;
 }
 
 /**
- * gimp_brush_set_shape:
+ * picman_brush_set_shape:
  * @name: The brush name.
  * @shape_in: The brush shape.
  *
@@ -479,39 +479,39 @@ gimp_brush_get_shape (const gchar *name)
  *
  * This procedure sets the shape value for a generated brush. If called
  * for any other type of brush, it does not succeed. The current
- * possibilities are Circle (GIMP_BRUSH_GENERATED_CIRCLE), Square
- * (GIMP_BRUSH_GENERATED_SQUARE), and Diamond
- * (GIMP_BRUSH_GENERATED_DIAMOND). Other shapes are likely to be added
+ * possibilities are Circle (PICMAN_BRUSH_GENERATED_CIRCLE), Square
+ * (PICMAN_BRUSH_GENERATED_SQUARE), and Diamond
+ * (PICMAN_BRUSH_GENERATED_DIAMOND). Other shapes are likely to be added
  * in the future.
  *
  * Returns: The brush shape actually assigned.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
-GimpBrushGeneratedShape
-gimp_brush_set_shape (const gchar             *name,
-                      GimpBrushGeneratedShape  shape_in)
+PicmanBrushGeneratedShape
+picman_brush_set_shape (const gchar             *name,
+                      PicmanBrushGeneratedShape  shape_in)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpBrushGeneratedShape shape_out = 0;
+  PicmanBrushGeneratedShape shape_out = 0;
 
-  return_vals = gimp_run_procedure ("gimp-brush-set-shape",
+  return_vals = picman_run_procedure ("picman-brush-set-shape",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_INT32, shape_in,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_INT32, shape_in,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     shape_out = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return shape_out;
 }
 
 /**
- * gimp_brush_get_radius:
+ * picman_brush_get_radius:
  * @name: The brush name.
  *
  * Get the radius of a generated brush.
@@ -521,30 +521,30 @@ gimp_brush_set_shape (const gchar             *name,
  *
  * Returns: The radius of the brush in pixels.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gdouble
-gimp_brush_get_radius (const gchar *name)
+picman_brush_get_radius (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble radius = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-brush-get-radius",
+  return_vals = picman_run_procedure ("picman-brush-get-radius",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     radius = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return radius;
 }
 
 /**
- * gimp_brush_set_radius:
+ * picman_brush_set_radius:
  * @name: The brush name.
  * @radius_in: The desired brush radius.
  *
@@ -555,32 +555,32 @@ gimp_brush_get_radius (const gchar *name)
  *
  * Returns: The brush radius actually assigned.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gdouble
-gimp_brush_set_radius (const gchar *name,
+picman_brush_set_radius (const gchar *name,
                        gdouble      radius_in)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble radius_out = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-brush-set-radius",
+  return_vals = picman_run_procedure ("picman-brush-set-radius",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_FLOAT, radius_in,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_FLOAT, radius_in,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     radius_out = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return radius_out;
 }
 
 /**
- * gimp_brush_get_spikes:
+ * picman_brush_get_spikes:
  * @name: The brush name.
  *
  * Get the number of spikes for a generated brush.
@@ -590,30 +590,30 @@ gimp_brush_set_radius (const gchar *name,
  *
  * Returns: The number of spikes on the brush.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint
-gimp_brush_get_spikes (const gchar *name)
+picman_brush_get_spikes (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint spikes = 0;
 
-  return_vals = gimp_run_procedure ("gimp-brush-get-spikes",
+  return_vals = picman_run_procedure ("picman-brush-get-spikes",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     spikes = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return spikes;
 }
 
 /**
- * gimp_brush_set_spikes:
+ * picman_brush_set_spikes:
  * @name: The brush name.
  * @spikes_in: The desired number of spikes.
  *
@@ -624,32 +624,32 @@ gimp_brush_get_spikes (const gchar *name)
  *
  * Returns: The number of spikes actually assigned.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint
-gimp_brush_set_spikes (const gchar *name,
+picman_brush_set_spikes (const gchar *name,
                        gint         spikes_in)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint spikes_out = 0;
 
-  return_vals = gimp_run_procedure ("gimp-brush-set-spikes",
+  return_vals = picman_run_procedure ("picman-brush-set-spikes",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_INT32, spikes_in,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_INT32, spikes_in,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     spikes_out = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return spikes_out;
 }
 
 /**
- * gimp_brush_get_hardness:
+ * picman_brush_get_hardness:
  * @name: The brush name.
  *
  * Get the hardness of a generated brush.
@@ -660,30 +660,30 @@ gimp_brush_set_spikes (const gchar *name,
  *
  * Returns: The hardness of the brush.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gdouble
-gimp_brush_get_hardness (const gchar *name)
+picman_brush_get_hardness (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble hardness = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-brush-get-hardness",
+  return_vals = picman_run_procedure ("picman-brush-get-hardness",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     hardness = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return hardness;
 }
 
 /**
- * gimp_brush_set_hardness:
+ * picman_brush_set_hardness:
  * @name: The brush name.
  * @hardness_in: The desired brush hardness.
  *
@@ -694,32 +694,32 @@ gimp_brush_get_hardness (const gchar *name)
  *
  * Returns: The brush hardness actually assigned.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gdouble
-gimp_brush_set_hardness (const gchar *name,
+picman_brush_set_hardness (const gchar *name,
                          gdouble      hardness_in)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble hardness_out = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-brush-set-hardness",
+  return_vals = picman_run_procedure ("picman-brush-set-hardness",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_FLOAT, hardness_in,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_FLOAT, hardness_in,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     hardness_out = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return hardness_out;
 }
 
 /**
- * gimp_brush_get_aspect_ratio:
+ * picman_brush_get_aspect_ratio:
  * @name: The brush name.
  *
  * Get the aspect ratio of a generated brush.
@@ -729,30 +729,30 @@ gimp_brush_set_hardness (const gchar *name,
  *
  * Returns: The aspect ratio of the brush.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gdouble
-gimp_brush_get_aspect_ratio (const gchar *name)
+picman_brush_get_aspect_ratio (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble aspect_ratio = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-brush-get-aspect-ratio",
+  return_vals = picman_run_procedure ("picman-brush-get-aspect-ratio",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     aspect_ratio = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return aspect_ratio;
 }
 
 /**
- * gimp_brush_set_aspect_ratio:
+ * picman_brush_set_aspect_ratio:
  * @name: The brush name.
  * @aspect_ratio_in: The desired brush aspect ratio.
  *
@@ -763,32 +763,32 @@ gimp_brush_get_aspect_ratio (const gchar *name)
  *
  * Returns: The brush aspect ratio actually assigned.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gdouble
-gimp_brush_set_aspect_ratio (const gchar *name,
+picman_brush_set_aspect_ratio (const gchar *name,
                              gdouble      aspect_ratio_in)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble aspect_ratio_out = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-brush-set-aspect-ratio",
+  return_vals = picman_run_procedure ("picman-brush-set-aspect-ratio",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_FLOAT, aspect_ratio_in,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_FLOAT, aspect_ratio_in,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     aspect_ratio_out = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return aspect_ratio_out;
 }
 
 /**
- * gimp_brush_get_angle:
+ * picman_brush_get_angle:
  * @name: The brush name.
  *
  * Get the rotation angle of a generated brush.
@@ -798,30 +798,30 @@ gimp_brush_set_aspect_ratio (const gchar *name,
  *
  * Returns: The rotation angle of the brush.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gdouble
-gimp_brush_get_angle (const gchar *name)
+picman_brush_get_angle (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble angle = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-brush-get-angle",
+  return_vals = picman_run_procedure ("picman-brush-get-angle",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     angle = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return angle;
 }
 
 /**
- * gimp_brush_set_angle:
+ * picman_brush_set_angle:
  * @name: The brush name.
  * @angle_in: The desired brush rotation angle.
  *
@@ -832,26 +832,26 @@ gimp_brush_get_angle (const gchar *name)
  *
  * Returns: The brush rotation angle actually assigned.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gdouble
-gimp_brush_set_angle (const gchar *name,
+picman_brush_set_angle (const gchar *name,
                       gdouble      angle_in)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble angle_out = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-brush-set-angle",
+  return_vals = picman_run_procedure ("picman-brush-set-angle",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_FLOAT, angle_in,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_FLOAT, angle_in,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     angle_out = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return angle_out;
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * brush_generated module Copyright 1998 Jay Cox <jaycox@earthlink.net>
@@ -17,16 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_GENERATED_LOAD_H__
-#define __GIMP_BRUSH_GENERATED_LOAD_H__
+#ifndef __PICMAN_BRUSH_GENERATED_LOAD_H__
+#define __PICMAN_BRUSH_GENERATED_LOAD_H__
 
 
-#define GIMP_BRUSH_GENERATED_FILE_EXTENSION ".vbr"
+#define PICMAN_BRUSH_GENERATED_FILE_EXTENSION ".vbr"
 
 
-GList * gimp_brush_generated_load (GimpContext  *context,
+GList * picman_brush_generated_load (PicmanContext  *context,
                                    const gchar  *filename,
                                    GError      **error);
 
 
-#endif  /*  __GIMP_BRUSH_GENERATED_LOAD_H__  */
+#endif  /*  __PICMAN_BRUSH_GENERATED_LOAD_H__  */

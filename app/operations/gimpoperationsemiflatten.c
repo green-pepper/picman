@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationsemiflatten.c
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picmanoperationsemiflatten.c
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,11 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "operations-types.h"
 
-#include "gimpoperationsemiflatten.h"
+#include "picmanoperationsemiflatten.h"
 
 
 enum
@@ -41,17 +41,17 @@ enum
 };
 
 
-static void       gimp_operation_semi_flatten_get_property (GObject             *object,
+static void       picman_operation_semi_flatten_get_property (GObject             *object,
                                                             guint                property_id,
                                                             GValue              *value,
                                                             GParamSpec          *pspec);
-static void       gimp_operation_semi_flatten_set_property (GObject             *object,
+static void       picman_operation_semi_flatten_set_property (GObject             *object,
                                                             guint                property_id,
                                                             const GValue        *value,
                                                             GParamSpec          *pspec);
 
-static void       gimp_operation_semi_flatten_prepare      (GeglOperation       *operation);
-static gboolean   gimp_operation_semi_flatten_process      (GeglOperation       *operation,
+static void       picman_operation_semi_flatten_prepare      (GeglOperation       *operation);
+static gboolean   picman_operation_semi_flatten_process      (GeglOperation       *operation,
                                                             void                *in_buf,
                                                             void                *out_buf,
                                                             glong                samples,
@@ -59,37 +59,37 @@ static gboolean   gimp_operation_semi_flatten_process      (GeglOperation       
                                                             gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationSemiFlatten, gimp_operation_semi_flatten,
+G_DEFINE_TYPE (PicmanOperationSemiFlatten, picman_operation_semi_flatten,
                GEGL_TYPE_OPERATION_POINT_FILTER)
 
-#define parent_class gimp_operation_semi_flatten_parent_class
+#define parent_class picman_operation_semi_flatten_parent_class
 
 
 static void
-gimp_operation_semi_flatten_class_init (GimpOperationSemiFlattenClass *klass)
+picman_operation_semi_flatten_class_init (PicmanOperationSemiFlattenClass *klass)
 {
   GObjectClass                  *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass            *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationPointFilterClass *point_class     = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
-  GimpRGB                        white;
+  PicmanRGB                        white;
 
-  object_class->set_property = gimp_operation_semi_flatten_set_property;
-  object_class->get_property = gimp_operation_semi_flatten_get_property;
+  object_class->set_property = picman_operation_semi_flatten_set_property;
+  object_class->get_property = picman_operation_semi_flatten_get_property;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:semi-flatten",
+                                 "name",        "picman:semi-flatten",
                                  "categories",  "color",
                                  "description", "Replace partial transparency with  a color",
                                  NULL);
 
-  operation_class->prepare = gimp_operation_semi_flatten_prepare;
+  operation_class->prepare = picman_operation_semi_flatten_prepare;
 
-  point_class->process     = gimp_operation_semi_flatten_process;
+  point_class->process     = picman_operation_semi_flatten_process;
 
-  gimp_rgba_set (&white, 1.0, 1.0, 1.0, 1.0);
+  picman_rgba_set (&white, 1.0, 1.0, 1.0, 1.0);
 
   g_object_class_install_property (object_class, PROP_COLOR,
-                                   gimp_param_spec_rgb ("color",
+                                   picman_param_spec_rgb ("color",
                                                         "Color",
                                                         "The color",
                                                         FALSE, &white,
@@ -98,22 +98,22 @@ gimp_operation_semi_flatten_class_init (GimpOperationSemiFlattenClass *klass)
 }
 
 static void
-gimp_operation_semi_flatten_init (GimpOperationSemiFlatten *self)
+picman_operation_semi_flatten_init (PicmanOperationSemiFlatten *self)
 {
 }
 
 static void
-gimp_operation_semi_flatten_get_property (GObject    *object,
+picman_operation_semi_flatten_get_property (GObject    *object,
                                           guint       property_id,
                                           GValue     *value,
                                           GParamSpec *pspec)
 {
-  GimpOperationSemiFlatten *self = GIMP_OPERATION_SEMI_FLATTEN (object);
+  PicmanOperationSemiFlatten *self = PICMAN_OPERATION_SEMI_FLATTEN (object);
 
   switch (property_id)
     {
     case PROP_COLOR:
-      gimp_value_set_rgb (value, &self->color);
+      picman_value_set_rgb (value, &self->color);
       break;
 
     default:
@@ -123,17 +123,17 @@ gimp_operation_semi_flatten_get_property (GObject    *object,
 }
 
 static void
-gimp_operation_semi_flatten_set_property (GObject      *object,
+picman_operation_semi_flatten_set_property (GObject      *object,
                                           guint         property_id,
                                           const GValue *value,
                                           GParamSpec   *pspec)
 {
-  GimpOperationSemiFlatten *self = GIMP_OPERATION_SEMI_FLATTEN (object);
+  PicmanOperationSemiFlatten *self = PICMAN_OPERATION_SEMI_FLATTEN (object);
 
   switch (property_id)
     {
     case PROP_COLOR:
-      gimp_value_get_rgb (value, &self->color);
+      picman_value_get_rgb (value, &self->color);
       break;
 
    default:
@@ -143,21 +143,21 @@ gimp_operation_semi_flatten_set_property (GObject      *object,
 }
 
 static void
-gimp_operation_semi_flatten_prepare (GeglOperation *operation)
+picman_operation_semi_flatten_prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input",  babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static gboolean
-gimp_operation_semi_flatten_process (GeglOperation       *operation,
+picman_operation_semi_flatten_process (GeglOperation       *operation,
                                      void                *in_buf,
                                      void                *out_buf,
                                      glong                samples,
                                      const GeglRectangle *roi,
                                      gint                 level)
 {
-  GimpOperationSemiFlatten *self = GIMP_OPERATION_SEMI_FLATTEN (operation);
+  PicmanOperationSemiFlatten *self = PICMAN_OPERATION_SEMI_FLATTEN (operation);
   gfloat                   *src  = in_buf;
   gfloat                   *dest = out_buf;
 

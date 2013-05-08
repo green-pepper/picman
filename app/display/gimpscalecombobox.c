@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpscalecombobox.c
- * Copyright (C) 2004, 2008  Sven Neumann <sven@gimp.org>
+ * picmanscalecombobox.c
+ * Copyright (C) 2004, 2008  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,14 +25,14 @@
 #include <gtk/gtk.h>
 #include "gdk/gdkkeysyms.h"
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "core/gimpmarshal.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpscalecombobox.h"
+#include "picmanscalecombobox.h"
 
 
 #define MAX_ITEMS  10
@@ -52,35 +52,35 @@ enum
 };
 
 
-static void      gimp_scale_combo_box_constructed     (GObject           *object);
-static void      gimp_scale_combo_box_finalize        (GObject           *object);
+static void      picman_scale_combo_box_constructed     (GObject           *object);
+static void      picman_scale_combo_box_finalize        (GObject           *object);
 
-static void      gimp_scale_combo_box_style_set       (GtkWidget         *widget,
+static void      picman_scale_combo_box_style_set       (GtkWidget         *widget,
                                                        GtkStyle          *prev_style);
 
-static void      gimp_scale_combo_box_changed         (GimpScaleComboBox *combo_box);
-static void      gimp_scale_combo_box_entry_activate  (GtkWidget         *entry,
-                                                       GimpScaleComboBox *combo_box);
-static gboolean  gimp_scale_combo_box_entry_key_press (GtkWidget         *entry,
+static void      picman_scale_combo_box_changed         (PicmanScaleComboBox *combo_box);
+static void      picman_scale_combo_box_entry_activate  (GtkWidget         *entry,
+                                                       PicmanScaleComboBox *combo_box);
+static gboolean  picman_scale_combo_box_entry_key_press (GtkWidget         *entry,
                                                        GdkEventKey       *event,
-                                                       GimpScaleComboBox *combo_box);
+                                                       PicmanScaleComboBox *combo_box);
 
-static void      gimp_scale_combo_box_scale_iter_set  (GtkListStore      *store,
+static void      picman_scale_combo_box_scale_iter_set  (GtkListStore      *store,
                                                        GtkTreeIter       *iter,
                                                        gdouble            scale,
                                                        gboolean           persistent);
 
 
-G_DEFINE_TYPE (GimpScaleComboBox, gimp_scale_combo_box,
+G_DEFINE_TYPE (PicmanScaleComboBox, picman_scale_combo_box,
                GTK_TYPE_COMBO_BOX)
 
-#define parent_class gimp_scale_combo_box_parent_class
+#define parent_class picman_scale_combo_box_parent_class
 
 static guint scale_combo_box_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_scale_combo_box_class_init (GimpScaleComboBoxClass *klass)
+picman_scale_combo_box_class_init (PicmanScaleComboBoxClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
@@ -89,15 +89,15 @@ gimp_scale_combo_box_class_init (GimpScaleComboBoxClass *klass)
     g_signal_new ("entry-activated",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpScaleComboBoxClass, entry_activated),
+                  G_STRUCT_OFFSET (PicmanScaleComboBoxClass, entry_activated),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->constructed = gimp_scale_combo_box_constructed;
-  object_class->finalize    = gimp_scale_combo_box_finalize;
+  object_class->constructed = picman_scale_combo_box_constructed;
+  object_class->finalize    = picman_scale_combo_box_finalize;
 
-  widget_class->style_set   = gimp_scale_combo_box_style_set;
+  widget_class->style_set   = picman_scale_combo_box_style_set;
 
   klass->entry_activated    = NULL;
 
@@ -107,20 +107,20 @@ gimp_scale_combo_box_class_init (GimpScaleComboBoxClass *klass)
                                                                 0.0,
                                                                 G_MAXDOUBLE,
                                                                 1.0,
-                                                                GIMP_PARAM_READABLE));
+                                                                PICMAN_PARAM_READABLE));
 }
 
 static void
-gimp_scale_combo_box_init (GimpScaleComboBox *combo_box)
+picman_scale_combo_box_init (PicmanScaleComboBox *combo_box)
 {
   combo_box->scale     = 1.0;
   combo_box->last_path = NULL;
 }
 
 static void
-gimp_scale_combo_box_constructed (GObject *object)
+picman_scale_combo_box_constructed (GObject *object)
 {
-  GimpScaleComboBox *combo_box = GIMP_SCALE_COMBO_BOX (object);
+  PicmanScaleComboBox *combo_box = PICMAN_SCALE_COMBO_BOX (object);
   GtkWidget         *entry;
   GtkListStore      *store;
   GtkCellLayout     *layout;
@@ -166,31 +166,31 @@ gimp_scale_combo_box_constructed (GObject *object)
   for (i = 8; i > 0; i /= 2)
     {
       gtk_list_store_append (store, &iter);
-      gimp_scale_combo_box_scale_iter_set (store, &iter, i, TRUE);
+      picman_scale_combo_box_scale_iter_set (store, &iter, i, TRUE);
     }
 
   for (i = 2; i <= 8; i *= 2)
     {
       gtk_list_store_append (store, &iter);
-      gimp_scale_combo_box_scale_iter_set (store, &iter, 1.0 / i, TRUE);
+      picman_scale_combo_box_scale_iter_set (store, &iter, 1.0 / i, TRUE);
     }
 
   g_signal_connect (combo_box, "changed",
-                    G_CALLBACK (gimp_scale_combo_box_changed),
+                    G_CALLBACK (picman_scale_combo_box_changed),
                     NULL);
 
   g_signal_connect (entry, "activate",
-                    G_CALLBACK (gimp_scale_combo_box_entry_activate),
+                    G_CALLBACK (picman_scale_combo_box_entry_activate),
                     combo_box);
   g_signal_connect (entry, "key-press-event",
-                    G_CALLBACK (gimp_scale_combo_box_entry_key_press),
+                    G_CALLBACK (picman_scale_combo_box_entry_key_press),
                     combo_box);
 }
 
 static void
-gimp_scale_combo_box_finalize (GObject *object)
+picman_scale_combo_box_finalize (GObject *object)
 {
-  GimpScaleComboBox *combo_box = GIMP_SCALE_COMBO_BOX (object);
+  PicmanScaleComboBox *combo_box = PICMAN_SCALE_COMBO_BOX (object);
 
   if (combo_box->last_path)
     {
@@ -209,7 +209,7 @@ gimp_scale_combo_box_finalize (GObject *object)
 }
 
 static void
-gimp_scale_combo_box_style_set (GtkWidget *widget,
+picman_scale_combo_box_style_set (GtkWidget *widget,
                                 GtkStyle  *prev_style)
 {
   GtkWidget  *entry;
@@ -243,7 +243,7 @@ gimp_scale_combo_box_style_set (GtkWidget *widget,
 }
 
 static void
-gimp_scale_combo_box_changed (GimpScaleComboBox *combo_box)
+picman_scale_combo_box_changed (PicmanScaleComboBox *combo_box)
 {
   GtkTreeIter iter;
 
@@ -268,7 +268,7 @@ gimp_scale_combo_box_changed (GimpScaleComboBox *combo_box)
 }
 
 static gboolean
-gimp_scale_combo_box_parse_text (const gchar *text,
+picman_scale_combo_box_parse_text (const gchar *text,
                                  gdouble     *scale)
 {
   gchar   *end;
@@ -320,36 +320,36 @@ gimp_scale_combo_box_parse_text (const gchar *text,
 }
 
 static void
-gimp_scale_combo_box_entry_activate (GtkWidget         *entry,
-                                     GimpScaleComboBox *combo_box)
+picman_scale_combo_box_entry_activate (GtkWidget         *entry,
+                                     PicmanScaleComboBox *combo_box)
 {
   const gchar *text = gtk_entry_get_text (GTK_ENTRY (entry));
   gdouble      scale;
 
-  if (gimp_scale_combo_box_parse_text (text, &scale) &&
+  if (picman_scale_combo_box_parse_text (text, &scale) &&
       scale >= 1.0 / 256.0                           &&
       scale <= 256.0)
     {
-      gimp_scale_combo_box_set_scale (combo_box, scale);
+      picman_scale_combo_box_set_scale (combo_box, scale);
     }
   else
     {
       gtk_widget_error_bell (entry);
 
-      gimp_scale_combo_box_set_scale (combo_box, combo_box->scale);
+      picman_scale_combo_box_set_scale (combo_box, combo_box->scale);
     }
 
   g_signal_emit (combo_box, scale_combo_box_signals[ENTRY_ACTIVATED], 0);
 }
 
 static gboolean
-gimp_scale_combo_box_entry_key_press (GtkWidget         *entry,
+picman_scale_combo_box_entry_key_press (GtkWidget         *entry,
                                       GdkEventKey       *event,
-                                      GimpScaleComboBox *combo_box)
+                                      PicmanScaleComboBox *combo_box)
 {
   if (event->keyval == GDK_KEY_Escape)
     {
-      gimp_scale_combo_box_set_scale (combo_box, combo_box->scale);
+      picman_scale_combo_box_set_scale (combo_box, combo_box->scale);
 
       g_signal_emit (combo_box, scale_combo_box_signals[ENTRY_ACTIVATED], 0);
 
@@ -360,7 +360,7 @@ gimp_scale_combo_box_entry_key_press (GtkWidget         *entry,
       event->keyval == GDK_KEY_KP_Tab ||
       event->keyval == GDK_KEY_ISO_Left_Tab)
     {
-      gimp_scale_combo_box_entry_activate (entry, combo_box);
+      picman_scale_combo_box_entry_activate (entry, combo_box);
 
       return TRUE;
     }
@@ -369,7 +369,7 @@ gimp_scale_combo_box_entry_key_press (GtkWidget         *entry,
 }
 
 static void
-gimp_scale_combo_box_scale_iter_set (GtkListStore *store,
+picman_scale_combo_box_scale_iter_set (GtkListStore *store,
                                      GtkTreeIter  *iter,
                                      gdouble       scale,
                                      gboolean      persistent)
@@ -393,7 +393,7 @@ gimp_scale_combo_box_scale_iter_set (GtkListStore *store,
 }
 
 static void
-gimp_scale_combo_box_mru_add (GimpScaleComboBox *combo_box,
+picman_scale_combo_box_mru_add (PicmanScaleComboBox *combo_box,
                               GtkTreeIter       *iter)
 {
   GtkTreeModel *model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo_box));
@@ -427,7 +427,7 @@ gimp_scale_combo_box_mru_add (GimpScaleComboBox *combo_box,
 }
 
 static void
-gimp_scale_combo_box_mru_remove_last (GimpScaleComboBox *combo_box)
+picman_scale_combo_box_mru_remove_last (PicmanScaleComboBox *combo_box)
 {
   GtkTreeModel *model;
   GtkTreePath  *path;
@@ -454,20 +454,20 @@ gimp_scale_combo_box_mru_remove_last (GimpScaleComboBox *combo_box)
 
 
 /**
- * gimp_scale_combo_box_new:
+ * picman_scale_combo_box_new:
  *
- * Return value: a new #GimpScaleComboBox.
+ * Return value: a new #PicmanScaleComboBox.
  **/
 GtkWidget *
-gimp_scale_combo_box_new (void)
+picman_scale_combo_box_new (void)
 {
-  return g_object_new (GIMP_TYPE_SCALE_COMBO_BOX,
+  return g_object_new (PICMAN_TYPE_SCALE_COMBO_BOX,
                        "has-entry", TRUE,
                        NULL);
 }
 
 void
-gimp_scale_combo_box_set_scale (GimpScaleComboBox *combo_box,
+picman_scale_combo_box_set_scale (PicmanScaleComboBox *combo_box,
                                 gdouble            scale)
 {
   GtkTreeModel *model;
@@ -476,7 +476,7 @@ gimp_scale_combo_box_set_scale (GimpScaleComboBox *combo_box,
   gboolean      iter_valid;
   gboolean      persistent;
 
-  g_return_if_fail (GIMP_IS_SCALE_COMBO_BOX (combo_box));
+  g_return_if_fail (PICMAN_IS_SCALE_COMBO_BOX (combo_box));
   g_return_if_fail (scale > 0.0);
 
   model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo_box));
@@ -515,7 +515,7 @@ gimp_scale_combo_box_set_scale (GimpScaleComboBox *combo_box,
         }
 
       gtk_list_store_insert_before (store, &iter, iter_valid ? &sibling : NULL);
-      gimp_scale_combo_box_scale_iter_set (store, &iter, scale, FALSE);
+      picman_scale_combo_box_scale_iter_set (store, &iter, scale, FALSE);
     }
 
   gtk_combo_box_set_active_iter (GTK_COMBO_BOX (combo_box), &iter);
@@ -525,17 +525,17 @@ gimp_scale_combo_box_set_scale (GimpScaleComboBox *combo_box,
                       -1);
   if (! persistent)
     {
-      gimp_scale_combo_box_mru_add (combo_box, &iter);
+      picman_scale_combo_box_mru_add (combo_box, &iter);
 
       if (gtk_tree_model_iter_n_children (model, NULL) > MAX_ITEMS)
-        gimp_scale_combo_box_mru_remove_last (combo_box);
+        picman_scale_combo_box_mru_remove_last (combo_box);
     }
 }
 
 gdouble
-gimp_scale_combo_box_get_scale (GimpScaleComboBox *combo_box)
+picman_scale_combo_box_get_scale (PicmanScaleComboBox *combo_box)
 {
-  g_return_val_if_fail (GIMP_IS_SCALE_COMBO_BOX (combo_box), 1.0);
+  g_return_val_if_fail (PICMAN_IS_SCALE_COMBO_BOX (combo_box), 1.0);
 
   return combo_box->scale;
 }

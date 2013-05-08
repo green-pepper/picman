@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,30 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_BLEND_OPTIONS_H__
-#define  __GIMP_BLEND_OPTIONS_H__
+#ifndef  __PICMAN_BLEND_OPTIONS_H__
+#define  __PICMAN_BLEND_OPTIONS_H__
 
 
-#include "paint/gimppaintoptions.h"
+#include "paint/picmanpaintoptions.h"
 
 
-#define GIMP_TYPE_BLEND_OPTIONS            (gimp_blend_options_get_type ())
-#define GIMP_BLEND_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BLEND_OPTIONS, GimpBlendOptions))
-#define GIMP_BLEND_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BLEND_OPTIONS, GimpBlendOptionsClass))
-#define GIMP_IS_BLEND_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BLEND_OPTIONS))
-#define GIMP_IS_BLEND_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BLEND_OPTIONS))
-#define GIMP_BLEND_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BLEND_OPTIONS, GimpBlendOptionsClass))
+#define PICMAN_TYPE_BLEND_OPTIONS            (picman_blend_options_get_type ())
+#define PICMAN_BLEND_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BLEND_OPTIONS, PicmanBlendOptions))
+#define PICMAN_BLEND_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BLEND_OPTIONS, PicmanBlendOptionsClass))
+#define PICMAN_IS_BLEND_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BLEND_OPTIONS))
+#define PICMAN_IS_BLEND_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BLEND_OPTIONS))
+#define PICMAN_BLEND_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BLEND_OPTIONS, PicmanBlendOptionsClass))
 
 
-typedef struct _GimpBlendOptions      GimpBlendOptions;
-typedef struct _GimpPaintOptionsClass GimpBlendOptionsClass;
+typedef struct _PicmanBlendOptions      PicmanBlendOptions;
+typedef struct _PicmanPaintOptionsClass PicmanBlendOptionsClass;
 
-struct _GimpBlendOptions
+struct _PicmanBlendOptions
 {
-  GimpPaintOptions  paint_options;
+  PicmanPaintOptions  paint_options;
 
   gdouble           offset;
-  GimpGradientType  gradient_type;
+  PicmanGradientType  gradient_type;
 
   gboolean          supersample;
   gint              supersample_depth;
@@ -48,9 +48,9 @@ struct _GimpBlendOptions
 };
 
 
-GType       gimp_blend_options_get_type (void) G_GNUC_CONST;
+GType       picman_blend_options_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_blend_options_gui      (GimpToolOptions *tool_options);
+GtkWidget * picman_blend_options_gui      (PicmanToolOptions *tool_options);
 
 
-#endif  /*  __GIMP_BLEND_OPTIONS_H__  */
+#endif  /*  __PICMAN_BLEND_OPTIONS_H__  */

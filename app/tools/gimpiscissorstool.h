@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,11 +17,11 @@
 
 #if 0
 
-#ifndef __GIMP_ISCISSORS_TOOL_H__
-#define __GIMP_ISCISSORS_TOOL_H__
+#ifndef __PICMAN_ISCISSORS_TOOL_H__
+#define __PICMAN_ISCISSORS_TOOL_H__
 
 
-#include "gimpselectiontool.h"
+#include "picmanselectiontool.h"
 
 
 /*  The possible states...  */
@@ -47,22 +47,22 @@ typedef enum
 typedef struct _ICurve ICurve;
 
 
-#define GIMP_TYPE_ISCISSORS_TOOL            (gimp_iscissors_tool_get_type ())
-#define GIMP_ISCISSORS_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ISCISSORS_TOOL, GimpIscissorsTool))
-#define GIMP_ISCISSORS_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ISCISSORS_TOOL, GimpIscissorsToolClass))
-#define GIMP_IS_ISCISSORS_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ISCISSORS_TOOL))
-#define GIMP_IS_ISCISSORS_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ISCISSORS_TOOL))
-#define GIMP_ISCISSORS_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ISCISSORS_TOOL, GimpIscissorsToolClass))
+#define PICMAN_TYPE_ISCISSORS_TOOL            (picman_iscissors_tool_get_type ())
+#define PICMAN_ISCISSORS_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ISCISSORS_TOOL, PicmanIscissorsTool))
+#define PICMAN_ISCISSORS_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ISCISSORS_TOOL, PicmanIscissorsToolClass))
+#define PICMAN_IS_ISCISSORS_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ISCISSORS_TOOL))
+#define PICMAN_IS_ISCISSORS_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ISCISSORS_TOOL))
+#define PICMAN_ISCISSORS_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ISCISSORS_TOOL, PicmanIscissorsToolClass))
 
-#define GIMP_ISCISSORS_TOOL_GET_OPTIONS(t)  (GIMP_ISCISSORS_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_ISCISSORS_TOOL_GET_OPTIONS(t)  (PICMAN_ISCISSORS_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpIscissorsTool      GimpIscissorsTool;
-typedef struct _GimpIscissorsToolClass GimpIscissorsToolClass;
+typedef struct _PicmanIscissorsTool      PicmanIscissorsTool;
+typedef struct _PicmanIscissorsToolClass PicmanIscissorsToolClass;
 
-struct _GimpIscissorsTool
+struct _PicmanIscissorsTool
 {
-  GimpSelectionTool  parent_instance;
+  PicmanSelectionTool  parent_instance;
 
   IscissorsOps    op;
 
@@ -70,7 +70,7 @@ struct _GimpIscissorsTool
   gint            ix, iy;       /*  initial coordinates                   */
   gint            nx, ny;       /*  new coordinates                       */
 
-  GimpTempBuf    *dp_buf;       /*  dynamic programming buffer            */
+  PicmanTempBuf    *dp_buf;       /*  dynamic programming buffer            */
 
   ICurve         *livewire;     /*  livewire boundary curve               */
 
@@ -85,22 +85,22 @@ struct _GimpIscissorsTool
   IscissorsState  state;        /*  state of iscissors                    */
 
   /* XXX might be useful */
-  GimpChannel    *mask;         /*  selection mask                        */
+  PicmanChannel    *mask;         /*  selection mask                        */
   TileManager    *gradient_map; /*  lazily filled gradient map            */
 };
 
-struct _GimpIscissorsToolClass
+struct _PicmanIscissorsToolClass
 {
-  GimpSelectionToolClass parent_class;
+  PicmanSelectionToolClass parent_class;
 };
 
 
-void    gimp_iscissors_tool_register (GimpToolRegisterCallback  callback,
+void    picman_iscissors_tool_register (PicmanToolRegisterCallback  callback,
                                       gpointer                  data);
 
-GType   gimp_iscissors_tool_get_type (void) G_GNUC_CONST;
+GType   picman_iscissors_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_ISCISSORS_TOOL_H__  */
+#endif  /*  __PICMAN_ISCISSORS_TOOL_H__  */
 
 #endif

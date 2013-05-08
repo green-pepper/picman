@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,27 +23,27 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimp-utils.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
-#include "core/gimppickable.h"
-#include "core/gimpprojectable.h"
+#include "core/picman.h"
+#include "core/picman-utils.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
+#include "core/picmanpickable.h"
+#include "core/picmanprojectable.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpimagewindow.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmanimagewindow.h"
 
-#include "widgets/gimpaction.h"
-#include "widgets/gimpmenufactory.h"
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmanaction.h"
+#include "widgets/picmanmenufactory.h"
+#include "widgets/picmanuimanager.h"
 
 #include "menus/menus.h"
 
@@ -55,13 +55,13 @@
 
 /*  local function prototypes  */
 
-static gboolean  debug_show_image_graph        (GimpImage   *source_image);
+static gboolean  debug_show_image_graph        (PicmanImage   *source_image);
 
 static void      debug_dump_menus_recurse_menu (GtkWidget   *menu,
                                                 gint         depth,
                                                 gchar       *path);
 
-static void      debug_print_qdata             (GimpObject  *object);
+static void      debug_print_qdata             (PicmanObject  *object);
 static void      debug_print_qdata_foreach     (GQuark       key_id,
                                                 gpointer     data,
                                                 gpointer     user_data);
@@ -77,22 +77,22 @@ void
 debug_mem_profile_cmd_callback (GtkAction *action,
                                 gpointer   data)
 {
-  extern gboolean  gimp_debug_memsize;
-  Gimp            *gimp;
-  return_if_no_gimp (gimp, data);
+  extern gboolean  picman_debug_memsize;
+  Picman            *picman;
+  return_if_no_picman (picman, data);
 
-  gimp_debug_memsize = TRUE;
+  picman_debug_memsize = TRUE;
 
-  gimp_object_get_memsize (GIMP_OBJECT (gimp), NULL);
+  picman_object_get_memsize (PICMAN_OBJECT (picman), NULL);
 
-  gimp_debug_memsize = FALSE;
+  picman_debug_memsize = FALSE;
 }
 
 void
 debug_show_image_graph_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
-  GimpImage *source_image = NULL;
+  PicmanImage *source_image = NULL;
   return_if_no_image (source_image, data);
 
   g_idle_add ((GSourceFunc) debug_show_image_graph, g_object_ref (source_image));
@@ -104,23 +104,23 @@ debug_dump_menus_cmd_callback (GtkAction *action,
 {
   GList *list;
 
-  for (list = gimp_menu_factory_get_registered_menus (global_menu_factory);
+  for (list = picman_menu_factory_get_registered_menus (global_menu_factory);
        list;
        list = g_list_next (list))
     {
-      GimpMenuFactoryEntry *entry = list->data;
+      PicmanMenuFactoryEntry *entry = list->data;
       GList                *managers;
 
-      managers = gimp_ui_managers_from_name (entry->identifier);
+      managers = picman_ui_managers_from_name (entry->identifier);
 
       if (managers)
         {
-          GimpUIManager *manager = managers->data;
+          PicmanUIManager *manager = managers->data;
           GList         *list;
 
           for (list = manager->registered_uis; list; list = g_list_next (list))
             {
-              GimpUIManagerUIEntry *ui_entry = list->data;
+              PicmanUIManagerUIEntry *ui_entry = list->data;
 
               if (GTK_IS_MENU_SHELL (ui_entry->widget))
                 {
@@ -145,14 +145,14 @@ debug_dump_managers_cmd_callback (GtkAction *action,
 {
   GList *list;
 
-  for (list = gimp_menu_factory_get_registered_menus (global_menu_factory);
+  for (list = picman_menu_factory_get_registered_menus (global_menu_factory);
        list;
        list = g_list_next (list))
     {
-      GimpMenuFactoryEntry *entry = list->data;
+      PicmanMenuFactoryEntry *entry = list->data;
       GList                *managers;
 
-      managers = gimp_ui_managers_from_name (entry->identifier);
+      managers = picman_ui_managers_from_name (entry->identifier);
 
       if (managers)
         {
@@ -171,16 +171,16 @@ void
 debug_dump_keyboard_shortcuts_cmd_callback (GtkAction *action,
                                             gpointer   data)
 {
-  GimpDisplay      *display;
-  GimpImageWindow  *window;
+  PicmanDisplay      *display;
+  PicmanImageWindow  *window;
   GtkUIManager     *manager;
   GtkAccelGroup    *accel_group;
   GList            *group_it;
   GList            *strings = NULL;
   return_if_no_display (display, data);
 
-  window  = gimp_display_shell_get_window (gimp_display_get_shell (display));
-  manager = GTK_UI_MANAGER (gimp_image_window_get_ui_manager (window));
+  window  = picman_display_shell_get_window (picman_display_get_shell (display));
+  manager = GTK_UI_MANAGER (picman_image_window_get_ui_manager (window));
 
   accel_group = gtk_ui_manager_get_accel_group (manager);
 
@@ -189,12 +189,12 @@ debug_dump_keyboard_shortcuts_cmd_callback (GtkAction *action,
        group_it;
        group_it = g_list_next (group_it))
     {
-      GimpActionGroup *group     = group_it->data;
+      PicmanActionGroup *group     = group_it->data;
       GList           *actions   = NULL;
       GList           *action_it = NULL;
 
       actions = gtk_action_group_list_actions (GTK_ACTION_GROUP (group));
-      actions = g_list_sort (actions, (GCompareFunc) gimp_action_name_compare);
+      actions = g_list_sort (actions, (GCompareFunc) picman_action_name_compare);
 
       for (action_it = actions; action_it; action_it = g_list_next (action_it))
         {
@@ -223,7 +223,7 @@ debug_dump_keyboard_shortcuts_cmd_callback (GtkAction *action,
                   gchar       *key_string;
 
                   label_tmp  = gtk_action_get_label (action);
-                  label      = gimp_strip_uline (label_tmp);
+                  label      = picman_strip_uline (label_tmp);
                   key_string = gtk_accelerator_get_label (key->accel_key,
                                                           key->accel_mods);
 
@@ -260,25 +260,25 @@ void
 debug_dump_attached_data_cmd_callback (GtkAction *action,
                                        gpointer   data)
 {
-  Gimp        *gimp         = action_data_get_gimp (data);
-  GimpContext *user_context = gimp_get_user_context (gimp);
+  Picman        *picman         = action_data_get_picman (data);
+  PicmanContext *user_context = picman_get_user_context (picman);
 
-  debug_print_qdata (GIMP_OBJECT (gimp));
-  debug_print_qdata (GIMP_OBJECT (user_context));
+  debug_print_qdata (PICMAN_OBJECT (picman));
+  debug_print_qdata (PICMAN_OBJECT (user_context));
 }
 
 
 /*  private functions  */
 
 static gboolean
-debug_show_image_graph (GimpImage *source_image)
+debug_show_image_graph (PicmanImage *source_image)
 {
-  Gimp            *gimp        = source_image->gimp;
-  GimpProjectable *projectable = GIMP_PROJECTABLE (source_image);
-  GeglNode        *image_graph = gimp_projectable_get_graph (projectable);
+  Picman            *picman        = source_image->picman;
+  PicmanProjectable *projectable = PICMAN_PROJECTABLE (source_image);
+  GeglNode        *image_graph = picman_projectable_get_graph (projectable);
   GeglNode        *output_node = gegl_node_get_output_proxy (image_graph, "output");
-  GimpImage       *new_image   = NULL;
-  GimpLayer       *layer       = NULL;
+  PicmanImage       *new_image   = NULL;
+  PicmanLayer       *layer       = NULL;
   GeglNode        *introspect  = NULL;
   GeglNode        *sink        = NULL;
   GeglBuffer      *buffer      = NULL;
@@ -298,23 +298,23 @@ debug_show_image_graph (GimpImage *source_image)
 
   /* Create a new image of the result */
   new_name = g_strdup_printf ("%s GEGL graph",
-                              gimp_image_get_display_name (source_image));
-  new_image = gimp_create_image (gimp,
+                              picman_image_get_display_name (source_image));
+  new_image = picman_create_image (picman,
                                  gegl_buffer_get_width (buffer),
                                  gegl_buffer_get_height (buffer),
-                                 GIMP_RGB,
-                                 GIMP_PRECISION_U8,
+                                 PICMAN_RGB,
+                                 PICMAN_PRECISION_U8,
                                  FALSE);
-  gimp_image_set_uri (new_image, new_name);
-  layer = gimp_layer_new_from_buffer (buffer,
+  picman_image_set_uri (new_image, new_name);
+  layer = picman_layer_new_from_buffer (buffer,
                                       new_image,
-                                      gimp_image_get_layer_format (new_image,
+                                      picman_image_get_layer_format (new_image,
                                                                    TRUE),
                                       new_name,
                                       1.0,
-                                      GIMP_NORMAL_MODE);
-  gimp_image_add_layer (new_image, layer, NULL, 0, FALSE);
-  gimp_create_display (gimp, new_image, GIMP_UNIT_PIXEL, 1.0);
+                                      PICMAN_NORMAL_MODE);
+  picman_image_add_layer (new_image, layer, NULL, 0, FALSE);
+  picman_create_display (picman, new_image, PICMAN_UNIT_PIXEL, 1.0);
 
   /* Cleanup */
   g_object_unref (new_image);
@@ -353,7 +353,7 @@ debug_dump_menus_recurse_menu (GtkWidget *menu,
           label = gtk_label_get_text (GTK_LABEL (child));
           full_path = g_strconcat (path, "/", label, NULL);
 
-          help_page = g_object_get_data (G_OBJECT (menu_item), "gimp-help-id");
+          help_page = g_object_get_data (G_OBJECT (menu_item), "picman-help-id");
           help_page = g_strdup (help_page);
 
           format_str = g_strdup_printf ("%%%ds%%%ds %%-20s %%s\n",
@@ -376,9 +376,9 @@ debug_dump_menus_recurse_menu (GtkWidget *menu,
 }
 
 static void
-debug_print_qdata (GimpObject *object)
+debug_print_qdata (PicmanObject *object)
 {
-  g_print ("\nData attached to '%s':\n\n", gimp_object_get_name (object));
+  g_print ("\nData attached to '%s':\n\n", picman_object_get_name (object));
   g_datalist_foreach (&G_OBJECT (object)->qdata,
                       debug_print_qdata_foreach,
                       NULL);

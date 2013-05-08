@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimperrorconsole.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmanerrorconsole.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ERROR_CONSOLE_H__
-#define __GIMP_ERROR_CONSOLE_H__
+#ifndef __PICMAN_ERROR_CONSOLE_H__
+#define __PICMAN_ERROR_CONSOLE_H__
 
 
-#include "gimpeditor.h"
+#include "picmaneditor.h"
 
 
-#define GIMP_TYPE_ERROR_CONSOLE            (gimp_error_console_get_type ())
-#define GIMP_ERROR_CONSOLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ERROR_CONSOLE, GimpErrorConsole))
-#define GIMP_ERROR_CONSOLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ERROR_CONSOLE, GimpErrorConsoleClass))
-#define GIMP_IS_ERROR_CONSOLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ERROR_CONSOLE))
-#define GIMP_IS_ERROR_CONSOLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ERROR_CONSOLE))
-#define GIMP_ERROR_CONSOLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ERROR_CONSOLE, GimpErrorConsoleClass))
+#define PICMAN_TYPE_ERROR_CONSOLE            (picman_error_console_get_type ())
+#define PICMAN_ERROR_CONSOLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ERROR_CONSOLE, PicmanErrorConsole))
+#define PICMAN_ERROR_CONSOLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ERROR_CONSOLE, PicmanErrorConsoleClass))
+#define PICMAN_IS_ERROR_CONSOLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ERROR_CONSOLE))
+#define PICMAN_IS_ERROR_CONSOLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ERROR_CONSOLE))
+#define PICMAN_ERROR_CONSOLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ERROR_CONSOLE, PicmanErrorConsoleClass))
 
 
-typedef struct _GimpErrorConsoleClass GimpErrorConsoleClass;
+typedef struct _PicmanErrorConsoleClass PicmanErrorConsoleClass;
 
-struct _GimpErrorConsole
+struct _PicmanErrorConsole
 {
-  GimpEditor     parent_instance;
+  PicmanEditor     parent_instance;
 
-  Gimp          *gimp;
+  Picman          *picman;
 
   GtkTextBuffer *text_buffer;
   GtkWidget     *text_view;
@@ -51,21 +51,21 @@ struct _GimpErrorConsole
   gboolean       save_selection;
 };
 
-struct _GimpErrorConsoleClass
+struct _PicmanErrorConsoleClass
 {
-  GimpEditorClass  parent_class;
+  PicmanEditorClass  parent_class;
 };
 
 
-GType       gimp_error_console_get_type (void) G_GNUC_CONST;
+GType       picman_error_console_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_error_console_new      (Gimp                *gimp,
-                                         GimpMenuFactory     *menu_factory);
+GtkWidget * picman_error_console_new      (Picman                *picman,
+                                         PicmanMenuFactory     *menu_factory);
 
-void        gimp_error_console_add      (GimpErrorConsole    *console,
-                                         GimpMessageSeverity  severity,
+void        picman_error_console_add      (PicmanErrorConsole    *console,
+                                         PicmanMessageSeverity  severity,
                                          const gchar         *domain,
                                          const gchar         *message);
 
 
-#endif  /*  __GIMP_ERROR_CONSOLE_H__  */
+#endif  /*  __PICMAN_ERROR_CONSOLE_H__  */

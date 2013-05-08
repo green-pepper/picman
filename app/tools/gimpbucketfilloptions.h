@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,40 +15,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_BUCKET_FILL_OPTIONS_H__
-#define  __GIMP_BUCKET_FILL_OPTIONS_H__
+#ifndef  __PICMAN_BUCKET_FILL_OPTIONS_H__
+#define  __PICMAN_BUCKET_FILL_OPTIONS_H__
 
 
-#include "paint/gimppaintoptions.h"
+#include "paint/picmanpaintoptions.h"
 
 
-#define GIMP_TYPE_BUCKET_FILL_OPTIONS            (gimp_bucket_fill_options_get_type ())
-#define GIMP_BUCKET_FILL_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BUCKET_FILL_OPTIONS, GimpBucketFillOptions))
-#define GIMP_BUCKET_FILL_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BUCKET_FILL_OPTIONS, GimpBucketFillOptionsClass))
-#define GIMP_IS_BUCKET_FILL_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BUCKET_FILL_OPTIONS))
-#define GIMP_IS_BUCKET_FILL_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BUCKET_FILL_OPTIONS))
-#define GIMP_BUCKET_FILL_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BUCKET_FILL_OPTIONS, GimpBucketFillOptionsClass))
+#define PICMAN_TYPE_BUCKET_FILL_OPTIONS            (picman_bucket_fill_options_get_type ())
+#define PICMAN_BUCKET_FILL_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BUCKET_FILL_OPTIONS, PicmanBucketFillOptions))
+#define PICMAN_BUCKET_FILL_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BUCKET_FILL_OPTIONS, PicmanBucketFillOptionsClass))
+#define PICMAN_IS_BUCKET_FILL_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BUCKET_FILL_OPTIONS))
+#define PICMAN_IS_BUCKET_FILL_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BUCKET_FILL_OPTIONS))
+#define PICMAN_BUCKET_FILL_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BUCKET_FILL_OPTIONS, PicmanBucketFillOptionsClass))
 
 
-typedef struct _GimpBucketFillOptions GimpBucketFillOptions;
-typedef struct _GimpPaintOptionsClass GimpBucketFillOptionsClass;
+typedef struct _PicmanBucketFillOptions PicmanBucketFillOptions;
+typedef struct _PicmanPaintOptionsClass PicmanBucketFillOptionsClass;
 
-struct _GimpBucketFillOptions
+struct _PicmanBucketFillOptions
 {
-  GimpPaintOptions    paint_options;
+  PicmanPaintOptions    paint_options;
 
-  GimpBucketFillMode  fill_mode;
+  PicmanBucketFillMode  fill_mode;
   gboolean            fill_selection;
   gboolean            fill_transparent;
   gboolean            sample_merged;
   gdouble             threshold;
-  GimpSelectCriterion fill_criterion;
+  PicmanSelectCriterion fill_criterion;
 };
 
 
-GType       gimp_bucket_fill_options_get_type (void) G_GNUC_CONST;
+GType       picman_bucket_fill_options_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_bucket_fill_options_gui      (GimpToolOptions *tool_options);
+GtkWidget * picman_bucket_fill_options_gui      (PicmanToolOptions *tool_options);
 
 
-#endif  /*  __GIMP_BUCKET_FILL_OPTIONS_H__  */
+#endif  /*  __PICMAN_BUCKET_FILL_OPTIONS_H__  */

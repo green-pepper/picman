@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; Predator effect
@@ -31,9 +31,9 @@
                             keep-selection
                             separate-layer)
   (let* (
-        (type (car (gimp-drawable-type-with-alpha drawable)))
-        (image-width (car (gimp-image-width image)))
-        (image-height (car (gimp-image-height image)))
+        (type (car (picman-drawable-type-with-alpha drawable)))
+        (image-width (car (picman-image-width image)))
+        (image-height (car (picman-image-height image)))
         (active-selection 0)
         (from-selection 0)
         (selection-bounds 0)
@@ -45,24 +45,24 @@
         (active-layer 0)
         )
 
-    (gimp-context-push)
-    (gimp-context-set-defaults)
-    (gimp-image-undo-group-start image)
-    (gimp-layer-add-alpha drawable)
+    (picman-context-push)
+    (picman-context-set-defaults)
+    (picman-image-undo-group-start image)
+    (picman-layer-add-alpha drawable)
 
-    (if (= (car (gimp-selection-is-empty image)) TRUE)
+    (if (= (car (picman-selection-is-empty image)) TRUE)
         (begin
-          (gimp-image-select-item image CHANNEL-OP-REPLACE drawable)
-          (set! active-selection (car (gimp-selection-save image)))
+          (picman-image-select-item image CHANNEL-OP-REPLACE drawable)
+          (set! active-selection (car (picman-selection-save image)))
           (set! from-selection FALSE)
         )
         (begin
           (set! from-selection TRUE)
-          (set! active-selection (car (gimp-selection-save image)))
+          (set! active-selection (car (picman-selection-save image)))
         )
     )
 
-    (set! selection-bounds (gimp-selection-bounds image))
+    (set! selection-bounds (picman-selection-bounds image))
     (set! select-offset-x (cadr selection-bounds))
     (set! select-offset-y (caddr selection-bounds))
     (set! select-width (- (cadr (cddr selection-bounds)) select-offset-x))
@@ -70,7 +70,7 @@
 
     (if (= separate-layer TRUE)
         (begin
-          (set! effect-layer (car (gimp-layer-new image
+          (set! effect-layer (car (picman-layer-new image
                                                   select-width
                                                   select-height
                                                   type
@@ -79,17 +79,17 @@
                                                   NORMAL-MODE))
           )
 
-          (gimp-layer-set-offsets effect-layer select-offset-x select-offset-y)
-          (gimp-image-insert-layer image effect-layer 0 -1)
-          (gimp-selection-none image)
-          (gimp-edit-clear effect-layer)
+          (picman-layer-set-offsets effect-layer select-offset-x select-offset-y)
+          (picman-image-insert-layer image effect-layer 0 -1)
+          (picman-selection-none image)
+          (picman-edit-clear effect-layer)
 
-          (gimp-image-select-item image CHANNEL-OP-REPLACE active-selection)
-          (gimp-edit-copy drawable)
-          (let ((floating-sel (car (gimp-edit-paste effect-layer FALSE))))
-            (gimp-floating-sel-anchor floating-sel)
+          (picman-image-select-item image CHANNEL-OP-REPLACE active-selection)
+          (picman-edit-copy drawable)
+          (let ((floating-sel (car (picman-edit-paste effect-layer FALSE))))
+            (picman-floating-sel-anchor floating-sel)
           )
-          (gimp-image-set-active-layer image effect-layer)
+          (picman-image-set-active-layer image effect-layer)
         )
         (set! effect-layer drawable)
     )
@@ -103,24 +103,24 @@
     (plug-in-edge RUN-NONINTERACTIVE image active-layer edge-amount 1 0)
 
     ; clean up the selection copy
-    (gimp-image-select-item image CHANNEL-OP-REPLACE active-selection)
+    (picman-image-select-item image CHANNEL-OP-REPLACE active-selection)
 
     (if (= keep-selection FALSE)
-        (gimp-selection-none image)
+        (picman-selection-none image)
     )
 
-    (gimp-image-set-active-layer image drawable)
-    (gimp-image-remove-channel image active-selection)
-    (gimp-image-undo-group-end image)
-    (gimp-displays-flush)
-    (gimp-context-pop)
+    (picman-image-set-active-layer image drawable)
+    (picman-image-remove-channel image active-selection)
+    (picman-image-undo-group-end image)
+    (picman-displays-flush)
+    (picman-context-pop)
   )
 )
 
 (script-fu-register "script-fu-predator"
   _"_Predator..."
   _"Add a 'Predator' effect to the selected region (or alpha)"
-  "Adrian Likins <adrian@gimp.org>"
+  "Adrian Likins <adrian@picman.org>"
   "Adrian Likins"
   "10/12/97"
   "RGB*"

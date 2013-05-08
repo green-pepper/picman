@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * pygimp-intl.h
+ * pypicman-intl.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,11 +18,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __PYGIMP_INTL_H__
-#define __PYGIMP_INTL_H__
+#ifndef __PYPICMAN_INTL_H__
+#define __PYPICMAN_INTL_H__
 
 #ifndef GETTEXT_PACKAGE
-#error "config.h must be included prior to pygimp-intl.h"
+#error "config.h must be included prior to pypicman-intl.h"
 #endif
 
 #include <libintl.h>
@@ -45,4 +45,4 @@
 #endif
 
 
-#endif /* __PYGIMP_INTL_H__ */
+#endif /* __PYPICMAN_INTL_H__ */

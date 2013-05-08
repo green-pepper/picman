@@ -82,16 +82,16 @@ COLOR_PICKER_IMAGES = \
 
 EXTRA_DIST = \
 	$(CURSOR_IMAGES)			\
-	gimp-tool-cursors.xcf
+	picman-tool-cursors.xcf
 
 noinst_DATA = \
-	gimp-tool-cursors.h			\
-	gimp-color-picker-cursors.h
+	picman-tool-cursors.h			\
+	picman-color-picker-cursors.h
 
 CLEANFILES = \
-	gimp-tool-cursors.h			\
+	picman-tool-cursors.h			\
 	tool-cursors.list			\
-	gimp-color-picker-cursors.h		\
+	picman-color-picker-cursors.h		\
 	color-picker-cursors.list
 
 tool-cursors.list: $(CURSOR_IMAGES) Makefile.am
@@ -110,8 +110,8 @@ color-picker-cursors.list: $(COLOR_PICKER_IMAGES) Makefile.am
 	    echo "  $(srcdir)/$$image" >> $@; \
 	  done )
 
-$(srcdir)/gimp-tool-cursors.h: tool-cursors.list
+$(srcdir)/picman-tool-cursors.h: tool-cursors.list
 	$(AM_V_GEN) $(GDK_PIXBUF_CSOURCE) --raw --build-list `cat tool-cursors.list` > $(@F)
 
-$(srcdir)/gimp-color-picker-cursors.h: color-picker-cursors.list
+$(srcdir)/picman-color-picker-cursors.h: color-picker-cursors.list
 	$(AM_V_GEN) $(GDK_PIXBUF_CSOURCE) --raw --build-list `cat color-picker-cursors.list` > $(@F)

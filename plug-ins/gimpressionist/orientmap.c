@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "gimpressionist.h"
+#include "picmanressionist.h"
 #include "ppmtool.h"
 #include "infile.h"
 
@@ -30,7 +30,7 @@
 
 #include "orientmap.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #define NUMVECTYPES 4
 
@@ -166,7 +166,7 @@ double get_direction (double x, double y, int from)
   dx = dx / sum;
   dy = dy / sum;
 
-  return 90 - (gimp_rad_to_deg (atan2 (dy, dx)) + angoff);
+  return 90 - (picman_rad_to_deg (atan2 (dy, dx)) + angoff);
 }
 
 static void
@@ -186,7 +186,7 @@ update_orient_map_preview_prev (void)
     for (x = 6; x < OMWIDTH-4; x += 10)
       {
         double dir =
-          gimp_deg_to_rad (get_direction (x / (double)OMWIDTH,
+          picman_deg_to_rad (get_direction (x / (double)OMWIDTH,
                                           y / (double)OMHEIGHT,0));
         double xo = sin (dir) * 4.0;
         double yo = cos (dir) * 4.0;
@@ -198,9 +198,9 @@ update_orient_map_preview_prev (void)
                      white);
       }
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (orient_map_preview_prev),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (orient_map_preview_prev),
                           0, 0, OMWIDTH, OMHEIGHT,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           (guchar *)update_om_preview_nbuffer.col,
                           OMWIDTH * 3);
 
@@ -247,8 +247,8 @@ update_vector_prev (void)
 
       x = vector[i].x * OMWIDTH;
       y = vector[i].y * OMHEIGHT;
-      dir = gimp_deg_to_rad (vector[i].dir);
-      s = gimp_deg_to_rad (vector[i].str);
+      dir = picman_deg_to_rad (vector[i].dir);
+      s = picman_deg_to_rad (vector[i].str);
       xo = sin (dir) * (6.0+100*s);
       yo = cos (dir) * (6.0+100*s);
 
@@ -265,9 +265,9 @@ update_vector_prev (void)
       ppm_put_rgb (&update_vector_preview_buffer, x - xo, y - yo, white);
   }
 
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (vector_preview),
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (vector_preview),
                           0, 0, OMWIDTH, OMHEIGHT,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           (guchar *)update_vector_preview_buffer.col,
                           OMWIDTH * 3);
 }
@@ -318,8 +318,8 @@ add_new_vector (gdouble x, gdouble y)
   vector[num_vectors].x = x;
   vector[num_vectors].y = y;
   vector[num_vectors].dir = 0.0;
-  vector[num_vectors].dx = sin (gimp_deg_to_rad (0.0));
-  vector[num_vectors].dy = cos (gimp_deg_to_rad (0.0));
+  vector[num_vectors].dx = sin (picman_deg_to_rad (0.0));
+  vector[num_vectors].dy = cos (picman_deg_to_rad (0.0));
   vector[num_vectors].str = 1.0;
   vector[num_vectors].type = 0;
   selectedvector = num_vectors;
@@ -374,7 +374,7 @@ map_click_callback (GtkWidget *w, GdkEventButton *event)
 
       d = atan2 (OMWIDTH * vector[selectedvector].x - event->x,
                 OMHEIGHT * vector[selectedvector].y - event->y);
-      vector[selectedvector].dir = gimp_rad_to_deg (d);
+      vector[selectedvector].dir = picman_rad_to_deg (d);
       vector[selectedvector].dx = sin (d);
       vector[selectedvector].dy = cos (d);
       update_slides ();
@@ -390,9 +390,9 @@ angle_adjust_move_callback (GtkWidget *w, gpointer data)
     return;
   vector[selectedvector].dir = gtk_adjustment_get_value (angle_adjust);
   vector[selectedvector].dx =
-    sin (gimp_deg_to_rad (vector[selectedvector].dir));
+    sin (picman_deg_to_rad (vector[selectedvector].dir));
   vector[selectedvector].dy =
-    cos (gimp_deg_to_rad (vector[selectedvector].dir));
+    cos (picman_deg_to_rad (vector[selectedvector].dir));
   update_vector_prev ();
   update_orient_map_preview_prev ();
 }
@@ -431,7 +431,7 @@ vector_type_click_callback (GtkWidget *w, gpointer data)
   if (adjignore)
     return;
 
-  gimp_radio_button_update (w, data);
+  picman_radio_button_update (w, data);
   vector[selectedvector].type = vector_type;
   update_vector_prev ();
   update_orient_map_preview_prev ();
@@ -520,9 +520,9 @@ create_orientmap_dialog (GtkWidget *parent)
     }
 
   orient_map_window =
-    gimp_dialog_new (_("Orientation Map Editor"), PLUG_IN_ROLE,
+    picman_dialog_new (_("Orientation Map Editor"), PLUG_IN_ROLE,
                      gtk_widget_get_toplevel (parent), 0,
-                     gimp_standard_help_func, PLUG_IN_PROC,
+                     picman_standard_help_func, PLUG_IN_PROC,
 
                      GTK_STOCK_APPLY,  GTK_RESPONSE_APPLY,
                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -560,14 +560,14 @@ create_orientmap_dialog (GtkWidget *parent)
   gtk_widget_show (hbox);
 
   ebox = gtk_event_box_new ();
-  gimp_help_set_help_data (ebox,
+  picman_help_set_help_data (ebox,
                            _("The vector-field. "
                              "Left-click to move selected vector, "
                              "Right-click to point it towards mouse, "
                              "Middle-click to add a new vector."), NULL);
   gtk_box_pack_start (GTK_BOX (hbox), ebox, FALSE, FALSE, 0);
 
-  tmpw = vector_preview = gimp_preview_area_new ();
+  tmpw = vector_preview = picman_preview_area_new ();
   gtk_widget_set_size_request (tmpw, OMWIDTH, OMHEIGHT);
   gtk_container_add (GTK_CONTAINER (ebox), tmpw);
   gtk_widget_show (tmpw);
@@ -585,7 +585,7 @@ create_orientmap_dialog (GtkWidget *parent)
   gtk_widget_show (tmpw);
   g_signal_connect (vector_preview_brightness_adjust, "value-changed",
                     G_CALLBACK (update_vector_prev), NULL);
-  gimp_help_set_help_data (tmpw, _("Adjust the preview's brightness"), NULL);
+  picman_help_set_help_data (tmpw, _("Adjust the preview's brightness"), NULL);
 
   tmpw2 = tmpw = gtk_frame_new (_("Preview"));
   gtk_container_set_border_width (GTK_CONTAINER (tmpw), 2);
@@ -593,7 +593,7 @@ create_orientmap_dialog (GtkWidget *parent)
                     GTK_EXPAND, GTK_EXPAND, 0, 0);
   gtk_widget_show (tmpw);
 
-  tmpw = orient_map_preview_prev = gimp_preview_area_new ();
+  tmpw = orient_map_preview_prev = picman_preview_area_new ();
   gtk_widget_set_size_request (tmpw, OMWIDTH, OMHEIGHT);
   gtk_container_add (GTK_CONTAINER (tmpw2), tmpw);
   gtk_widget_show (tmpw);
@@ -608,25 +608,25 @@ create_orientmap_dialog (GtkWidget *parent)
   gtk_box_pack_start (GTK_BOX (hbox), tmpw, FALSE, TRUE, 0);
   gtk_widget_show (tmpw);
   g_signal_connect (tmpw, "clicked", G_CALLBACK (prev_click_callback), NULL);
-  gimp_help_set_help_data (tmpw, _("Select previous vector"), NULL);
+  picman_help_set_help_data (tmpw, _("Select previous vector"), NULL);
 
   next_button = tmpw = gtk_button_new_with_mnemonic ("_>>");
   gtk_box_pack_start (GTK_BOX (hbox),tmpw,FALSE,TRUE,0);
   gtk_widget_show (tmpw);
   g_signal_connect (tmpw, "clicked", G_CALLBACK (next_click_callback), NULL);
-  gimp_help_set_help_data (tmpw, _("Select next vector"), NULL);
+  picman_help_set_help_data (tmpw, _("Select next vector"), NULL);
 
   add_button = tmpw = gtk_button_new_with_mnemonic ( _("A_dd"));
   gtk_box_pack_start (GTK_BOX (hbox), tmpw, FALSE, TRUE, 0);
   gtk_widget_show (tmpw);
   g_signal_connect (tmpw, "clicked", G_CALLBACK (add_click_callback), NULL);
-  gimp_help_set_help_data (tmpw, _("Add new vector"), NULL);
+  picman_help_set_help_data (tmpw, _("Add new vector"), NULL);
 
   kill_button = tmpw = gtk_button_new_with_mnemonic ( _("_Kill"));
   gtk_box_pack_start (GTK_BOX (hbox), tmpw, FALSE, TRUE, 0);
   gtk_widget_show (tmpw);
   g_signal_connect (tmpw, "clicked", G_CALLBACK (delete_click_callback), NULL);
-  gimp_help_set_help_data (tmpw, _("Delete selected vector"), NULL);
+  picman_help_set_help_data (tmpw, _("Delete selected vector"), NULL);
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_set_spacing (GTK_BOX (hbox), 12);
@@ -637,7 +637,7 @@ create_orientmap_dialog (GtkWidget *parent)
   gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Type"),
+  frame = picman_int_radio_group_new (TRUE, _("Type"),
                                     G_CALLBACK (vector_type_click_callback),
                                     &vector_type, 0,
 
@@ -657,7 +657,7 @@ create_orientmap_dialog (GtkWidget *parent)
                                 pcvals.orient_voronoi);
   g_signal_connect (tmpw, "clicked",
                     G_CALLBACK (angle_offset_adjust_move_callback), NULL);
-  gimp_help_set_help_data (tmpw,
+  picman_help_set_help_data (tmpw,
                           _("Voronoi-mode makes only the vector closest to the given point have any influence"),
                           NULL);
 
@@ -667,7 +667,7 @@ create_orientmap_dialog (GtkWidget *parent)
   gtk_widget_show (table2);
 
   angle_adjust = (GtkAdjustment *)
-    gimp_scale_entry_new (GTK_TABLE (table2), 0, 0,
+    picman_scale_entry_new (GTK_TABLE (table2), 0, 0,
                           _("A_ngle:"),
                           150, 6, 0.0,
                           0.0, 360.0, 1.0, 10.0, 1,
@@ -678,7 +678,7 @@ create_orientmap_dialog (GtkWidget *parent)
                     G_CALLBACK (angle_adjust_move_callback), NULL);
 
   angle_offset_adjust = (GtkAdjustment *)
-    gimp_scale_entry_new (GTK_TABLE (table2), 0, 1,
+    picman_scale_entry_new (GTK_TABLE (table2), 0, 1,
                           _("Ang_le offset:"),
                           150, 6, 0.0,
                           0.0, 360.0, 1.0, 10.0, 1,
@@ -689,7 +689,7 @@ create_orientmap_dialog (GtkWidget *parent)
                     G_CALLBACK (angle_offset_adjust_move_callback), NULL);
 
   strength_adjust = (GtkAdjustment *)
-    gimp_scale_entry_new (GTK_TABLE (table2), 0, 2,
+    picman_scale_entry_new (GTK_TABLE (table2), 0, 2,
                           _("_Strength:"),
                           150, 6, 1.0,
                           0.1, 5.0, 0.1, 1.0, 1,
@@ -700,7 +700,7 @@ create_orientmap_dialog (GtkWidget *parent)
                     G_CALLBACK (strength_adjust_move_callback), NULL);
 
   orient_map_str_exp_adjust = (GtkAdjustment *)
-    gimp_scale_entry_new (GTK_TABLE (table2), 0, 3,
+    picman_scale_entry_new (GTK_TABLE (table2), 0, 3,
                           _("S_trength exp.:"),
                           150, 6, 1.0,
                           0.1, 10.9, 0.1, 1.0, 1,

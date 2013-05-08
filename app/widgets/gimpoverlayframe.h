@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoverlayframe.h
- * Copyright (C) 2010  Michael Natterer <mitch@gimp.org>
+ * picmanoverlayframe.h
+ * Copyright (C) 2010  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,35 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OVERLAY_FRAME_H__
-#define __GIMP_OVERLAY_FRAME_H__
+#ifndef __PICMAN_OVERLAY_FRAME_H__
+#define __PICMAN_OVERLAY_FRAME_H__
 
 
-#define GIMP_TYPE_OVERLAY_FRAME            (gimp_overlay_frame_get_type ())
-#define GIMP_OVERLAY_FRAME(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OVERLAY_FRAME, GimpOverlayFrame))
-#define GIMP_OVERLAY_FRAME_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_OVERLAY_FRAME, GimpOverlayFrameClass))
-#define GIMP_IS_OVERLAY_FRAME(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OVERLAY_FRAME))
-#define GIMP_IS_OVERLAY_FRAME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_OVERLAY_FRAME))
-#define GIMP_OVERLAY_FRAME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_OVERLAY_FRAME, GimpOverlayFrameClass))
+#define PICMAN_TYPE_OVERLAY_FRAME            (picman_overlay_frame_get_type ())
+#define PICMAN_OVERLAY_FRAME(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OVERLAY_FRAME, PicmanOverlayFrame))
+#define PICMAN_OVERLAY_FRAME_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_OVERLAY_FRAME, PicmanOverlayFrameClass))
+#define PICMAN_IS_OVERLAY_FRAME(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OVERLAY_FRAME))
+#define PICMAN_IS_OVERLAY_FRAME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_OVERLAY_FRAME))
+#define PICMAN_OVERLAY_FRAME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_OVERLAY_FRAME, PicmanOverlayFrameClass))
 
 
-typedef struct _GimpOverlayFrame      GimpOverlayFrame;
-typedef struct _GimpOverlayFrameClass GimpOverlayFrameClass;
+typedef struct _PicmanOverlayFrame      PicmanOverlayFrame;
+typedef struct _PicmanOverlayFrameClass PicmanOverlayFrameClass;
 
-struct _GimpOverlayFrame
+struct _PicmanOverlayFrame
 {
   GtkBin  parent_instance;
 };
 
-struct _GimpOverlayFrameClass
+struct _PicmanOverlayFrameClass
 {
   GtkBinClass  parent_class;
 };
 
 
-GType       gimp_overlay_frame_get_type (void) G_GNUC_CONST;
+GType       picman_overlay_frame_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_overlay_frame_new      (void);
+GtkWidget * picman_overlay_frame_new      (void);
 
 
-#endif /* __GIMP_OVERLAY_FRAME_H__ */
+#endif /* __PICMAN_OVERLAY_FRAME_H__ */

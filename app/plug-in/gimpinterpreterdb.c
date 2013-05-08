@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpinterpreterdb.c
- * (C) 2005 Manish Singh <yosh@gimp.org>
+ * picmaninterpreterdb.c
+ * (C) 2005 Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,21 +55,21 @@
 #define _O_BINARY 0
 #endif
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "plug-in-types.h"
 
-#include "gimpinterpreterdb.h"
+#include "picmaninterpreterdb.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define BUFSIZE 4096
 
 
-typedef struct _GimpInterpreterMagic GimpInterpreterMagic;
+typedef struct _PicmanInterpreterMagic PicmanInterpreterMagic;
 
-struct _GimpInterpreterMagic
+struct _PicmanInterpreterMagic
 {
   gulong    offset;
   gchar    *magic;
@@ -79,43 +79,43 @@ struct _GimpInterpreterMagic
 };
 
 
-static void     gimp_interpreter_db_finalize         (GObject                 *object);
+static void     picman_interpreter_db_finalize         (GObject                 *object);
 
-static void     gimp_interpreter_db_load_interp_file (const GimpDatafileData  *file_data,
+static void     picman_interpreter_db_load_interp_file (const PicmanDatafileData  *file_data,
                                                       gpointer                 user_data);
 
-static void     gimp_interpreter_db_add_program      (GimpInterpreterDB       *db,
-                                                      const GimpDatafileData  *file_data,
+static void     picman_interpreter_db_add_program      (PicmanInterpreterDB       *db,
+                                                      const PicmanDatafileData  *file_data,
                                                       gchar                   *buffer);
-static void     gimp_interpreter_db_add_binfmt_misc  (GimpInterpreterDB       *db,
-                                                      const GimpDatafileData  *file_data,
+static void     picman_interpreter_db_add_binfmt_misc  (PicmanInterpreterDB       *db,
+                                                      const PicmanDatafileData  *file_data,
                                                       gchar                   *buffer);
 
-static gboolean gimp_interpreter_db_add_extension    (GimpInterpreterDB       *db,
+static gboolean picman_interpreter_db_add_extension    (PicmanInterpreterDB       *db,
                                                       gchar                  **tokens);
-static gboolean gimp_interpreter_db_add_magic        (GimpInterpreterDB       *db,
+static gboolean picman_interpreter_db_add_magic        (PicmanInterpreterDB       *db,
                                                       gchar                  **tokens);
 
-static void     gimp_interpreter_db_clear_magics     (GimpInterpreterDB       *db);
+static void     picman_interpreter_db_clear_magics     (PicmanInterpreterDB       *db);
 
-static void     gimp_interpreter_db_resolve_programs (GimpInterpreterDB       *db);
+static void     picman_interpreter_db_resolve_programs (PicmanInterpreterDB       *db);
 
 
-G_DEFINE_TYPE (GimpInterpreterDB, gimp_interpreter_db, G_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanInterpreterDB, picman_interpreter_db, G_TYPE_OBJECT)
 
-#define parent_class gimp_interpreter_db_parent_class
+#define parent_class picman_interpreter_db_parent_class
 
 
 static void
-gimp_interpreter_db_class_init (GimpInterpreterDBClass *class)
+picman_interpreter_db_class_init (PicmanInterpreterDBClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-  object_class->finalize = gimp_interpreter_db_finalize;
+  object_class->finalize = picman_interpreter_db_finalize;
 }
 
 static void
-gimp_interpreter_db_init (GimpInterpreterDB *db)
+picman_interpreter_db_init (PicmanInterpreterDB *db)
 {
   db->programs        = NULL;
 
@@ -127,28 +127,28 @@ gimp_interpreter_db_init (GimpInterpreterDB *db)
 }
 
 static void
-gimp_interpreter_db_finalize (GObject *object)
+picman_interpreter_db_finalize (GObject *object)
 {
-  GimpInterpreterDB *db = GIMP_INTERPRETER_DB (object);
+  PicmanInterpreterDB *db = PICMAN_INTERPRETER_DB (object);
 
-  gimp_interpreter_db_clear (db);
+  picman_interpreter_db_clear (db);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
-GimpInterpreterDB *
-gimp_interpreter_db_new (void)
+PicmanInterpreterDB *
+picman_interpreter_db_new (void)
 {
-  return g_object_new (GIMP_TYPE_INTERPRETER_DB, NULL);
+  return g_object_new (PICMAN_TYPE_INTERPRETER_DB, NULL);
 }
 
 void
-gimp_interpreter_db_load (GimpInterpreterDB *db,
+picman_interpreter_db_load (PicmanInterpreterDB *db,
                           const gchar       *interp_path)
 {
-  g_return_if_fail (GIMP_IS_INTERPRETER_DB (db));
+  g_return_if_fail (PICMAN_IS_INTERPRETER_DB (db));
 
-  gimp_interpreter_db_clear (db);
+  picman_interpreter_db_clear (db);
 
   db->programs = g_hash_table_new_full (g_str_hash, g_str_equal,
                                         g_free, g_free);
@@ -162,18 +162,18 @@ gimp_interpreter_db_load (GimpInterpreterDB *db,
   db->extension_names = g_hash_table_new_full (g_str_hash, g_str_equal,
                                                g_free, NULL);
 
-  gimp_datafiles_read_directories (interp_path,
+  picman_datafiles_read_directories (interp_path,
                                    G_FILE_TEST_EXISTS,
-                                   gimp_interpreter_db_load_interp_file,
+                                   picman_interpreter_db_load_interp_file,
                                    db);
 
-  gimp_interpreter_db_resolve_programs (db);
+  picman_interpreter_db_resolve_programs (db);
 }
 
 void
-gimp_interpreter_db_clear (GimpInterpreterDB *db)
+picman_interpreter_db_clear (PicmanInterpreterDB *db)
 {
-  g_return_if_fail (GIMP_IS_INTERPRETER_DB (db));
+  g_return_if_fail (PICMAN_IS_INTERPRETER_DB (db));
 
   if (db->magic_names)
     {
@@ -199,19 +199,19 @@ gimp_interpreter_db_clear (GimpInterpreterDB *db)
       db->extensions = NULL;
     }
 
-  gimp_interpreter_db_clear_magics (db);
+  picman_interpreter_db_clear_magics (db);
 }
 
 static void
-gimp_interpreter_db_load_interp_file (const GimpDatafileData *file_data,
+picman_interpreter_db_load_interp_file (const PicmanDatafileData *file_data,
                                       gpointer                user_data)
 {
-  GimpInterpreterDB *db;
+  PicmanInterpreterDB *db;
   FILE              *interp_file;
   gchar              buffer[4096];
   gsize              len;
 
-  db = GIMP_INTERPRETER_DB (user_data);
+  db = PICMAN_INTERPRETER_DB (user_data);
 
   interp_file = g_fopen (file_data->filename, "r");
   if (! interp_file)
@@ -232,17 +232,17 @@ gimp_interpreter_db_load_interp_file (const GimpDatafileData *file_data,
       buffer[len] = '\0';
 
       if (g_ascii_isalnum (buffer[0]) || (buffer[0] == '/'))
-        gimp_interpreter_db_add_program (db, file_data, buffer);
+        picman_interpreter_db_add_program (db, file_data, buffer);
       else if (! g_ascii_isspace (buffer[0]) && (buffer[0] != '\0'))
-        gimp_interpreter_db_add_binfmt_misc (db, file_data, buffer);
+        picman_interpreter_db_add_binfmt_misc (db, file_data, buffer);
     }
 
   fclose (interp_file);
 }
 
 static void
-gimp_interpreter_db_add_program (GimpInterpreterDB      *db,
-                                 const GimpDatafileData *file_data,
+picman_interpreter_db_add_program (PicmanInterpreterDB      *db,
+                                 const PicmanDatafileData *file_data,
                                  gchar                  *buffer)
 {
   gchar *name;
@@ -261,8 +261,8 @@ gimp_interpreter_db_add_program (GimpInterpreterDB      *db,
   if (! g_file_test (program, G_FILE_TEST_IS_EXECUTABLE))
     {
       g_message (_("Bad interpreter referenced in interpreter file %s: %s"),
-                 gimp_filename_to_utf8 (file_data->filename),
-                 gimp_filename_to_utf8 (program));
+                 picman_filename_to_utf8 (file_data->filename),
+                 picman_filename_to_utf8 (program));
       return;
     }
 
@@ -271,8 +271,8 @@ gimp_interpreter_db_add_program (GimpInterpreterDB      *db,
 }
 
 static void
-gimp_interpreter_db_add_binfmt_misc (GimpInterpreterDB      *db,
-                                     const GimpDatafileData *file_data,
+picman_interpreter_db_add_binfmt_misc (PicmanInterpreterDB      *db,
+                                     const PicmanDatafileData *file_data,
                                      gchar                  *buffer)
 {
   gchar **tokens = NULL;
@@ -303,12 +303,12 @@ gimp_interpreter_db_add_binfmt_misc (GimpInterpreterDB      *db,
   switch (type[0])
     {
     case 'E':
-      if (! gimp_interpreter_db_add_extension (db, tokens))
+      if (! picman_interpreter_db_add_extension (db, tokens))
         goto bail;
       break;
 
     case 'M':
-      if (! gimp_interpreter_db_add_magic (db, tokens))
+      if (! picman_interpreter_db_add_magic (db, tokens))
         goto bail;
       break;
 
@@ -320,14 +320,14 @@ gimp_interpreter_db_add_binfmt_misc (GimpInterpreterDB      *db,
 
 bail:
   g_message (_("Bad binary format string in interpreter file %s"),
-             gimp_filename_to_utf8 (file_data->filename));
+             picman_filename_to_utf8 (file_data->filename));
 
 out:
   g_strfreev (tokens);
 }
 
 static gboolean
-gimp_interpreter_db_add_extension (GimpInterpreterDB  *db,
+picman_interpreter_db_add_extension (PicmanInterpreterDB  *db,
                                    gchar             **tokens)
 {
   const gchar *name      = tokens[0];
@@ -396,10 +396,10 @@ unquote (gchar *from)
 }
 
 static gboolean
-gimp_interpreter_db_add_magic (GimpInterpreterDB  *db,
+picman_interpreter_db_add_magic (PicmanInterpreterDB  *db,
                                gchar             **tokens)
 {
-  GimpInterpreterMagic *interp_magic;
+  PicmanInterpreterMagic *interp_magic;
   gchar                *name, *num, *magic, *mask, *program;
   gulong                offset;
   guint                 size;
@@ -443,7 +443,7 @@ gimp_interpreter_db_add_magic (GimpInterpreterDB  *db,
       else if (unquote (mask) != size)
         return FALSE;
 
-      interp_magic = g_slice_new (GimpInterpreterMagic);
+      interp_magic = g_slice_new (PicmanInterpreterMagic);
 
       interp_magic->offset  = offset;
       interp_magic->magic   = g_memdup (magic, size);
@@ -460,9 +460,9 @@ gimp_interpreter_db_add_magic (GimpInterpreterDB  *db,
 }
 
 static void
-gimp_interpreter_db_clear_magics (GimpInterpreterDB *db)
+picman_interpreter_db_clear_magics (PicmanInterpreterDB *db)
 {
-  GimpInterpreterMagic *magic;
+  PicmanInterpreterMagic *magic;
   GSList               *list, *last;
 
   list = db->magics;
@@ -476,7 +476,7 @@ gimp_interpreter_db_clear_magics (GimpInterpreterDB *db)
       g_free (magic->mask);
       g_free (magic->program);
 
-      g_slice_free (GimpInterpreterMagic, magic);
+      g_slice_free (PicmanInterpreterMagic, magic);
 
       last = list;
       list = list->next;
@@ -518,7 +518,7 @@ resolve_program (gpointer key,
                  gpointer value,
                  gpointer user_data)
 {
-  GimpInterpreterDB *db = user_data;
+  PicmanInterpreterDB *db = user_data;
   gchar             *program;
 
   program = g_hash_table_lookup (db->programs, value);
@@ -535,14 +535,14 @@ resolve_program (gpointer key,
 }
 
 static void
-gimp_interpreter_db_resolve_programs (GimpInterpreterDB *db)
+picman_interpreter_db_resolve_programs (PicmanInterpreterDB *db)
 {
   GSList     *list;
   GHashTable *extensions;
 
   for (list = db->magics; list; list = list->next)
     {
-      GimpInterpreterMagic *magic = list->data;
+      PicmanInterpreterMagic *magic = list->data;
       const gchar          *program;
 
       program = g_hash_table_lookup (db->programs, magic->program);
@@ -575,7 +575,7 @@ gimp_interpreter_db_resolve_programs (GimpInterpreterDB *db)
 
   while (list)
     {
-      GimpInterpreterMagic *magic;
+      PicmanInterpreterMagic *magic;
 
       magic = list->data;
       g_print ("program: %s, offset: %lu, magic: %s, mask: %s\n",
@@ -591,7 +591,7 @@ gimp_interpreter_db_resolve_programs (GimpInterpreterDB *db)
 }
 
 static gchar *
-resolve_extension (GimpInterpreterDB *db,
+resolve_extension (PicmanInterpreterDB *db,
                    const gchar       *program_path)
 {
   gchar       *filename;
@@ -615,7 +615,7 @@ resolve_extension (GimpInterpreterDB *db,
 }
 
 static gchar *
-resolve_sh_bang (GimpInterpreterDB  *db,
+resolve_sh_bang (PicmanInterpreterDB  *db,
                  const gchar        *program_path,
                  gchar              *buffer,
                  gssize              len,
@@ -673,12 +673,12 @@ resolve_sh_bang (GimpInterpreterDB  *db,
 }
 
 static gchar *
-resolve_magic (GimpInterpreterDB *db,
+resolve_magic (PicmanInterpreterDB *db,
                const gchar       *program_path,
                gchar             *buffer)
 {
   GSList                *list;
-  GimpInterpreterMagic  *magic;
+  PicmanInterpreterMagic  *magic;
   gchar                 *s;
   guint                  i;
 
@@ -713,7 +713,7 @@ resolve_magic (GimpInterpreterDB *db,
 }
 
 gchar *
-gimp_interpreter_db_resolve (GimpInterpreterDB  *db,
+picman_interpreter_db_resolve (PicmanInterpreterDB  *db,
                              const gchar        *program_path,
                              gchar             **interp_arg)
 {
@@ -721,7 +721,7 @@ gimp_interpreter_db_resolve (GimpInterpreterDB  *db,
   gssize  len;
   gchar   buffer[BUFSIZE];
 
-  g_return_val_if_fail (GIMP_IS_INTERPRETER_DB (db), NULL);
+  g_return_val_if_fail (PICMAN_IS_INTERPRETER_DB (db), NULL);
   g_return_val_if_fail (program_path != NULL, NULL);
   g_return_val_if_fail (interp_arg != NULL, NULL);
 
@@ -758,7 +758,7 @@ collect_extensions (const gchar *ext,
 }
 
 /**
- * gimp_interpreter_db_get_extensions:
+ * picman_interpreter_db_get_extensions:
  * @db:
  *
  * Return value: a newly allocated string with all registered file
@@ -766,11 +766,11 @@ collect_extensions (const gchar *ext,
  *               or %NULL if no extensions are registered
  **/
 gchar *
-gimp_interpreter_db_get_extensions (GimpInterpreterDB *db)
+picman_interpreter_db_get_extensions (PicmanInterpreterDB *db)
 {
   GString *str;
 
-  g_return_val_if_fail (GIMP_IS_INTERPRETER_DB (db), NULL);
+  g_return_val_if_fail (PICMAN_IS_INTERPRETER_DB (db), NULL);
 
   if (g_hash_table_size (db->extensions) == 0)
     return NULL;

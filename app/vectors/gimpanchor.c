@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpanchor.c
- * Copyright (C) 2002 Simon Budig  <simon@gimp.org>
+ * picmananchor.c
+ * Copyright (C) 2002 Simon Budig  <simon@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,27 +24,27 @@
 
 #include "vectors-types.h"
 
-#include "gimpanchor.h"
+#include "picmananchor.h"
 
 
 GType
-gimp_anchor_get_type (void)
+picman_anchor_get_type (void)
 {
   static GType anchor_type = 0;
 
   if (!anchor_type)
-    anchor_type = g_boxed_type_register_static ("GimpAnchor",
-                                                (GBoxedCopyFunc) gimp_anchor_copy,
-                                                (GBoxedFreeFunc) gimp_anchor_free);
+    anchor_type = g_boxed_type_register_static ("PicmanAnchor",
+                                                (GBoxedCopyFunc) picman_anchor_copy,
+                                                (GBoxedFreeFunc) picman_anchor_free);
 
   return anchor_type;
 }
 
-GimpAnchor *
-gimp_anchor_new (GimpAnchorType    type,
-                 const GimpCoords *position)
+PicmanAnchor *
+picman_anchor_new (PicmanAnchorType    type,
+                 const PicmanCoords *position)
 {
-  GimpAnchor *anchor = g_slice_new0 (GimpAnchor);
+  PicmanAnchor *anchor = g_slice_new0 (PicmanAnchor);
 
   anchor->type = type;
 
@@ -54,18 +54,18 @@ gimp_anchor_new (GimpAnchorType    type,
   return anchor;
 }
 
-GimpAnchor *
-gimp_anchor_copy (const GimpAnchor *anchor)
+PicmanAnchor *
+picman_anchor_copy (const PicmanAnchor *anchor)
 {
   g_return_val_if_fail (anchor != NULL, NULL);
 
-  return g_slice_dup (GimpAnchor, anchor);
+  return g_slice_dup (PicmanAnchor, anchor);
 }
 
 void
-gimp_anchor_free (GimpAnchor *anchor)
+picman_anchor_free (PicmanAnchor *anchor)
 {
   g_return_if_fail (anchor != NULL);
 
-  g_slice_free (GimpAnchor, anchor);
+  g_slice_free (PicmanAnchor, anchor);
 }

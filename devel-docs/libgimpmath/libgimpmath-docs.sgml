@@ -5,33 +5,33 @@
 <book id="index" xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <bookinfo>
-    <title>GIMP Math Library Reference Manual</title>
+    <title>PICMAN Math Library Reference Manual</title>
     <releaseinfo>
-      for GIMP <xi:include href="version" parse="text"/>
+      for PICMAN <xi:include href="version" parse="text"/>
     </releaseinfo>
   </bookinfo>
 
-  <part id="libgimpmath">
-    <title>GIMP Math Library</title>
-    <xi:include href="xml/gimpmath.xml" />
-    <xi:include href="xml/gimpmatrix.xml" />
-    <xi:include href="xml/gimpvector.xml" />
-    <xi:include href="xml/gimpmd5.xml" />
+  <part id="libpicmanmath">
+    <title>PICMAN Math Library</title>
+    <xi:include href="xml/picmanmath.xml" />
+    <xi:include href="xml/picmanmatrix.xml" />
+    <xi:include href="xml/picmanvector.xml" />
+    <xi:include href="xml/picmanmd5.xml" />
   </part>
 
-  <index id="libgimpmath-index">
+  <index id="libpicmanmath-index">
     <title>Index</title>
   </index>
-  <index role="GIMP 2.2" id="libgimpmath-index-new-in-2-2">
-    <title>Index of new symbols in GIMP 2.2</title>
+  <index role="PICMAN 2.2" id="libpicmanmath-index-new-in-2-2">
+    <title>Index of new symbols in PICMAN 2.2</title>
   </index>
-  <index role="GIMP 2.4" id="libgimpmath-index-new-in-2-4">
-    <title>Index of new symbols in GIMP 2.4</title>
+  <index role="PICMAN 2.4" id="libpicmanmath-index-new-in-2-4">
+    <title>Index of new symbols in PICMAN 2.4</title>
   </index>
-  <index role="GIMP 2.6" id="libgimpmath-index-new-in-2-6">
-    <title>Index of new symbols in GIMP 2.6</title>
+  <index role="PICMAN 2.6" id="libpicmanmath-index-new-in-2-6">
+    <title>Index of new symbols in PICMAN 2.6</title>
   </index>
-  <index role="deprecated" id="libgimpmath-index-deprecated">
+  <index role="deprecated" id="libpicmanmath-index-deprecated">
     <title>Index of deprecated symbols</title>
   </index>
 

@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,40 +16,40 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_BASE_H_INSIDE__) && !defined (GIMP_BASE_COMPILATION)
-#error "Only <libgimpbase/gimpbase.h> can be included directly."
+#if !defined (__PICMAN_BASE_H_INSIDE__) && !defined (PICMAN_BASE_COMPILATION)
+#error "Only <libpicmanbase/picmanbase.h> can be included directly."
 #endif
 
-#ifndef __GIMP_CPU_ACCEL_H__
-#define __GIMP_CPU_ACCEL_H__
+#ifndef __PICMAN_CPU_ACCEL_H__
+#define __PICMAN_CPU_ACCEL_H__
 
 G_BEGIN_DECLS
 
 
 typedef enum
 {
-  GIMP_CPU_ACCEL_NONE        = 0x0,
+  PICMAN_CPU_ACCEL_NONE        = 0x0,
 
   /* x86 accelerations */
-  GIMP_CPU_ACCEL_X86_MMX     = 0x80000000,
-  GIMP_CPU_ACCEL_X86_3DNOW   = 0x40000000,
-  GIMP_CPU_ACCEL_X86_MMXEXT  = 0x20000000,
-  GIMP_CPU_ACCEL_X86_SSE     = 0x10000000,
-  GIMP_CPU_ACCEL_X86_SSE2    = 0x08000000,
-  GIMP_CPU_ACCEL_X86_SSE3    = 0x02000000,
+  PICMAN_CPU_ACCEL_X86_MMX     = 0x80000000,
+  PICMAN_CPU_ACCEL_X86_3DNOW   = 0x40000000,
+  PICMAN_CPU_ACCEL_X86_MMXEXT  = 0x20000000,
+  PICMAN_CPU_ACCEL_X86_SSE     = 0x10000000,
+  PICMAN_CPU_ACCEL_X86_SSE2    = 0x08000000,
+  PICMAN_CPU_ACCEL_X86_SSE3    = 0x02000000,
 
   /* powerpc accelerations */
-  GIMP_CPU_ACCEL_PPC_ALTIVEC = 0x04000000
-} GimpCpuAccelFlags;
+  PICMAN_CPU_ACCEL_PPC_ALTIVEC = 0x04000000
+} PicmanCpuAccelFlags;
 
 
-GimpCpuAccelFlags  gimp_cpu_accel_get_support (void);
+PicmanCpuAccelFlags  picman_cpu_accel_get_support (void);
 
 
 /* for internal use only */
-void               gimp_cpu_accel_set_use     (gboolean use);
+void               picman_cpu_accel_set_use     (gboolean use);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_CPU_ACCEL_H__ */
+#endif  /* __PICMAN_CPU_ACCEL_H__ */

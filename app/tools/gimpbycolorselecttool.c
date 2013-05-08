@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbycolorselecttool.c
+ * picmanbycolorselecttool.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,84 +24,84 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimpimage.h"
-#include "core/gimpimage-contiguous-region.h"
-#include "core/gimpitem.h"
-#include "core/gimppickable.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-contiguous-region.h"
+#include "core/picmanitem.h"
+#include "core/picmanpickable.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimpbycolorselecttool.h"
-#include "gimpregionselectoptions.h"
-#include "gimptoolcontrol.h"
+#include "picmanbycolorselecttool.h"
+#include "picmanregionselectoptions.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
-
-
-static GeglBuffer * gimp_by_color_select_tool_get_mask (GimpRegionSelectTool *region_select,
-                                                        GimpDisplay          *display);
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpByColorSelectTool, gimp_by_color_select_tool,
-               GIMP_TYPE_REGION_SELECT_TOOL)
+static GeglBuffer * picman_by_color_select_tool_get_mask (PicmanRegionSelectTool *region_select,
+                                                        PicmanDisplay          *display);
 
-#define parent_class gimp_by_color_select_tool_parent_class
+
+G_DEFINE_TYPE (PicmanByColorSelectTool, picman_by_color_select_tool,
+               PICMAN_TYPE_REGION_SELECT_TOOL)
+
+#define parent_class picman_by_color_select_tool_parent_class
 
 
 void
-gimp_by_color_select_tool_register (GimpToolRegisterCallback  callback,
+picman_by_color_select_tool_register (PicmanToolRegisterCallback  callback,
                                     gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_BY_COLOR_SELECT_TOOL,
-                GIMP_TYPE_REGION_SELECT_OPTIONS,
-                gimp_region_select_options_gui,
+  (* callback) (PICMAN_TYPE_BY_COLOR_SELECT_TOOL,
+                PICMAN_TYPE_REGION_SELECT_OPTIONS,
+                picman_region_select_options_gui,
                 0,
-                "gimp-by-color-select-tool",
+                "picman-by-color-select-tool",
                 _("Select by Color"),
                 _("Select by Color Tool: Select regions with similar colors"),
                 N_("_By Color Select"), "<shift>O",
-                NULL, GIMP_HELP_TOOL_BY_COLOR_SELECT,
-                GIMP_STOCK_TOOL_BY_COLOR_SELECT,
+                NULL, PICMAN_HELP_TOOL_BY_COLOR_SELECT,
+                PICMAN_STOCK_TOOL_BY_COLOR_SELECT,
                 data);
 }
 
 static void
-gimp_by_color_select_tool_class_init (GimpByColorSelectToolClass *klass)
+picman_by_color_select_tool_class_init (PicmanByColorSelectToolClass *klass)
 {
-  GimpRegionSelectToolClass *region_class;
+  PicmanRegionSelectToolClass *region_class;
 
-  region_class = GIMP_REGION_SELECT_TOOL_CLASS (klass);
+  region_class = PICMAN_REGION_SELECT_TOOL_CLASS (klass);
 
   region_class->undo_desc = C_("command", "Select by Color");
-  region_class->get_mask  = gimp_by_color_select_tool_get_mask;
+  region_class->get_mask  = picman_by_color_select_tool_get_mask;
 }
 
 static void
-gimp_by_color_select_tool_init (GimpByColorSelectTool *by_color_select)
+picman_by_color_select_tool_init (PicmanByColorSelectTool *by_color_select)
 {
-  GimpTool *tool = GIMP_TOOL (by_color_select);
+  PicmanTool *tool = PICMAN_TOOL (by_color_select);
 
-  gimp_tool_control_set_tool_cursor (tool->control, GIMP_TOOL_CURSOR_HAND);
+  picman_tool_control_set_tool_cursor (tool->control, PICMAN_TOOL_CURSOR_HAND);
 }
 
 static GeglBuffer *
-gimp_by_color_select_tool_get_mask (GimpRegionSelectTool *region_select,
-                                    GimpDisplay          *display)
+picman_by_color_select_tool_get_mask (PicmanRegionSelectTool *region_select,
+                                    PicmanDisplay          *display)
 {
-  GimpTool                *tool        = GIMP_TOOL (region_select);
-  GimpSelectionOptions    *sel_options = GIMP_SELECTION_TOOL_GET_OPTIONS (tool);
-  GimpRegionSelectOptions *options     = GIMP_REGION_SELECT_TOOL_GET_OPTIONS (tool);
-  GimpImage               *image       = gimp_display_get_image (display);
-  GimpDrawable            *drawable    = gimp_image_get_active_drawable (image);
-  GimpPickable            *pickable;
-  GimpRGB                  color;
+  PicmanTool                *tool        = PICMAN_TOOL (region_select);
+  PicmanSelectionOptions    *sel_options = PICMAN_SELECTION_TOOL_GET_OPTIONS (tool);
+  PicmanRegionSelectOptions *options     = PICMAN_REGION_SELECT_TOOL_GET_OPTIONS (tool);
+  PicmanImage               *image       = picman_display_get_image (display);
+  PicmanDrawable            *drawable    = picman_image_get_active_drawable (image);
+  PicmanPickable            *pickable;
+  PicmanRGB                  color;
   gint                     x, y;
 
   x = region_select->x;
@@ -111,22 +111,22 @@ gimp_by_color_select_tool_get_mask (GimpRegionSelectTool *region_select,
     {
       gint off_x, off_y;
 
-      gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+      picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
 
       x -= off_x;
       y -= off_y;
 
-      pickable = GIMP_PICKABLE (drawable);
+      pickable = PICMAN_PICKABLE (drawable);
     }
   else
     {
-      pickable = GIMP_PICKABLE (gimp_image_get_projection (image));
+      pickable = PICMAN_PICKABLE (picman_image_get_projection (image));
     }
 
-  gimp_pickable_flush (pickable);
+  picman_pickable_flush (pickable);
 
-  if (gimp_pickable_get_color_at (pickable, x, y, &color))
-    return gimp_image_contiguous_region_by_color (image, drawable,
+  if (picman_pickable_get_color_at (pickable, x, y, &color))
+    return picman_image_contiguous_region_by_color (image, drawable,
                                                   options->sample_merged,
                                                   sel_options->antialias,
                                                   options->threshold / 255.0,

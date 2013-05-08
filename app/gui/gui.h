@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 void               gui_libs_init (GOptionContext *context);
 void               gui_abort     (const gchar    *abort_message);
 
-GimpInitStatusFunc gui_init      (Gimp           *gimp,
+PicmanInitStatusFunc gui_init      (Picman           *picman,
                                   gboolean        no_splash);
 
 

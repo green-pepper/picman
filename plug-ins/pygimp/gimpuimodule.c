@@ -1,6 +1,6 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
- * Copyright (C) 2005  Manish Singh <yosh@gimp.org>
+ * Picman-Python - allows the writing of Picman plugins in Python.
+ * Copyright (C) 2005  Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,31 +25,31 @@
 #include <pygobject.h>
 #include <pygtk/pygtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "pygimpcolor-api.h"
-#include "pygimp-api.h"
-#include "pygimp-util.h"
-
-
-void gimpui_register_classes(PyObject *d);
-void gimpui_add_constants(PyObject *module, const gchar *strip_prefix);
-extern PyMethodDef gimpui_functions[];
+#include "pypicmancolor-api.h"
+#include "pypicman-api.h"
+#include "pypicman-util.h"
 
 
-static char gimpui_doc[] =
-"This module provides interfaces to allow you to write gimp plugins"
+void picmanui_register_classes(PyObject *d);
+void picmanui_add_constants(PyObject *module, const gchar *strip_prefix);
+extern PyMethodDef picmanui_functions[];
+
+
+static char picmanui_doc[] =
+"This module provides interfaces to allow you to write picman plugins"
 ;
 
-void init_gimpui(void);
+void init_picmanui(void);
 
 PyMODINIT_FUNC
-init_gimpui(void)
+init_picmanui(void)
 {
     PyObject *m, *d;
     PyObject *av;
-    char *prog_name = "pygimp";
+    char *prog_name = "pypicman";
 
     av = PySys_GetObject("argv");
     if (av != NULL) {
@@ -61,20 +61,20 @@ init_gimpui(void)
 		       "ignoring sys.argv: it must be a list of strings");
     }
 
-    gimp_ui_init(prog_name, FALSE);
+    picman_ui_init(prog_name, FALSE);
 
-    pygimp_init_pygobject();
+    pypicman_init_pygobject();
 
     init_pygtk();
-    init_pygimpcolor();
-    init_pygimp();
+    init_pypicmancolor();
+    init_pypicman();
 
-    m = Py_InitModule3("_gimpui", gimpui_functions, gimpui_doc);
+    m = Py_InitModule3("_picmanui", picmanui_functions, picmanui_doc);
     d = PyModule_GetDict(m);
 
-    gimpui_register_classes(d);
-    gimpui_add_constants(m, "GIMP_");
+    picmanui_register_classes(d);
+    picmanui_add_constants(m, "PICMAN_");
 
     if (PyErr_Occurred())
-	Py_FatalError("can't initialize module _gimpui");
+	Py_FatalError("can't initialize module _picmanui");
 }

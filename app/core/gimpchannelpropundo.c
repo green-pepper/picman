@@ -1,4 +1,4 @@
-/* Gimp - The GNU Image Manipulation Program
+/* Picman - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,59 +19,59 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
-#include "gimpimage.h"
-#include "gimpchannel.h"
-#include "gimpchannelpropundo.h"
+#include "picmanimage.h"
+#include "picmanchannel.h"
+#include "picmanchannelpropundo.h"
 
 
-static void   gimp_channel_prop_undo_constructed (GObject             *object);
+static void   picman_channel_prop_undo_constructed (GObject             *object);
 
-static void   gimp_channel_prop_undo_pop         (GimpUndo            *undo,
-                                                  GimpUndoMode         undo_mode,
-                                                  GimpUndoAccumulator *accum);
+static void   picman_channel_prop_undo_pop         (PicmanUndo            *undo,
+                                                  PicmanUndoMode         undo_mode,
+                                                  PicmanUndoAccumulator *accum);
 
 
-G_DEFINE_TYPE (GimpChannelPropUndo, gimp_channel_prop_undo, GIMP_TYPE_ITEM_UNDO)
+G_DEFINE_TYPE (PicmanChannelPropUndo, picman_channel_prop_undo, PICMAN_TYPE_ITEM_UNDO)
 
-#define parent_class gimp_channel_prop_undo_parent_class
+#define parent_class picman_channel_prop_undo_parent_class
 
 
 static void
-gimp_channel_prop_undo_class_init (GimpChannelPropUndoClass *klass)
+picman_channel_prop_undo_class_init (PicmanChannelPropUndoClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
-  GimpUndoClass *undo_class   = GIMP_UNDO_CLASS (klass);
+  PicmanUndoClass *undo_class   = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed = gimp_channel_prop_undo_constructed;
+  object_class->constructed = picman_channel_prop_undo_constructed;
 
-  undo_class->pop           = gimp_channel_prop_undo_pop;
+  undo_class->pop           = picman_channel_prop_undo_pop;
 }
 
 static void
-gimp_channel_prop_undo_init (GimpChannelPropUndo *undo)
+picman_channel_prop_undo_init (PicmanChannelPropUndo *undo)
 {
 }
 
 static void
-gimp_channel_prop_undo_constructed (GObject *object)
+picman_channel_prop_undo_constructed (GObject *object)
 {
-  GimpChannelPropUndo *channel_prop_undo = GIMP_CHANNEL_PROP_UNDO (object);
-  GimpChannel         *channel;
+  PicmanChannelPropUndo *channel_prop_undo = PICMAN_CHANNEL_PROP_UNDO (object);
+  PicmanChannel         *channel;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_CHANNEL (GIMP_ITEM_UNDO (object)->item));
+  g_assert (PICMAN_IS_CHANNEL (PICMAN_ITEM_UNDO (object)->item));
 
-  channel = GIMP_CHANNEL (GIMP_ITEM_UNDO (object)->item);
+  channel = PICMAN_CHANNEL (PICMAN_ITEM_UNDO (object)->item);
 
-  switch (GIMP_UNDO (object)->undo_type)
+  switch (PICMAN_UNDO (object)->undo_type)
     {
-    case GIMP_UNDO_CHANNEL_COLOR:
-      gimp_channel_get_color (channel, &channel_prop_undo->color);
+    case PICMAN_UNDO_CHANNEL_COLOR:
+      picman_channel_get_color (channel, &channel_prop_undo->color);
       break;
 
     default:
@@ -80,23 +80,23 @@ gimp_channel_prop_undo_constructed (GObject *object)
 }
 
 static void
-gimp_channel_prop_undo_pop (GimpUndo            *undo,
-                            GimpUndoMode         undo_mode,
-                            GimpUndoAccumulator *accum)
+picman_channel_prop_undo_pop (PicmanUndo            *undo,
+                            PicmanUndoMode         undo_mode,
+                            PicmanUndoAccumulator *accum)
 {
-  GimpChannelPropUndo *channel_prop_undo = GIMP_CHANNEL_PROP_UNDO (undo);
-  GimpChannel         *channel           = GIMP_CHANNEL (GIMP_ITEM_UNDO (undo)->item);
+  PicmanChannelPropUndo *channel_prop_undo = PICMAN_CHANNEL_PROP_UNDO (undo);
+  PicmanChannel         *channel           = PICMAN_CHANNEL (PICMAN_ITEM_UNDO (undo)->item);
 
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 
   switch (undo->undo_type)
     {
-    case GIMP_UNDO_CHANNEL_COLOR:
+    case PICMAN_UNDO_CHANNEL_COLOR:
       {
-        GimpRGB color;
+        PicmanRGB color;
 
-        gimp_channel_get_color (channel, &color);
-        gimp_channel_set_color (channel, &channel_prop_undo->color, FALSE);
+        picman_channel_get_color (channel, &color);
+        picman_channel_set_color (channel, &channel_prop_undo->color, FALSE);
         channel_prop_undo->color = color;
       }
       break;

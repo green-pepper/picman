@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,35 +20,35 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 #include "tools/tools-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimparea.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmanarea.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanprogress.h"
 
-#include "widgets/gimpdialogfactory.h"
+#include "widgets/picmandialogfactory.h"
 
-#include "tools/gimptool.h"
+#include "tools/picmantool.h"
 #include "tools/tool_manager.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplay-handlers.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-expose.h"
-#include "gimpdisplayshell-handlers.h"
-#include "gimpdisplayshell-icon.h"
-#include "gimpdisplayshell-transform.h"
-#include "gimpimagewindow.h"
+#include "picmandisplay.h"
+#include "picmandisplay-handlers.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-expose.h"
+#include "picmandisplayshell-handlers.h"
+#include "picmandisplayshell-icon.h"
+#include "picmandisplayshell-transform.h"
+#include "picmanimagewindow.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define FLUSH_NOW_INTERVAL 20000 /* 20 ms in microseconds */
@@ -58,19 +58,19 @@ enum
 {
   PROP_0,
   PROP_ID,
-  PROP_GIMP,
+  PROP_PICMAN,
   PROP_IMAGE,
   PROP_SHELL
 };
 
 
-typedef struct _GimpDisplayPrivate GimpDisplayPrivate;
+typedef struct _PicmanDisplayPrivate PicmanDisplayPrivate;
 
-struct _GimpDisplayPrivate
+struct _PicmanDisplayPrivate
 {
   gint       ID;           /*  unique identifier for this display  */
 
-  GimpImage *image;        /*  pointer to the associated image     */
+  PicmanImage *image;        /*  pointer to the associated image     */
   gint       instance;     /*  the instance # of this display as
                             *  taken from the image at creation    */
 
@@ -80,142 +80,142 @@ struct _GimpDisplayPrivate
   guint64    last_flush_now;
 };
 
-#define GIMP_DISPLAY_GET_PRIVATE(display) \
+#define PICMAN_DISPLAY_GET_PRIVATE(display) \
         G_TYPE_INSTANCE_GET_PRIVATE (display, \
-                                     GIMP_TYPE_DISPLAY, \
-                                     GimpDisplayPrivate)
+                                     PICMAN_TYPE_DISPLAY, \
+                                     PicmanDisplayPrivate)
 
 
 /*  local function prototypes  */
 
-static void     gimp_display_progress_iface_init  (GimpProgressInterface *iface);
+static void     picman_display_progress_iface_init  (PicmanProgressInterface *iface);
 
-static void     gimp_display_set_property           (GObject             *object,
+static void     picman_display_set_property           (GObject             *object,
                                                      guint                property_id,
                                                      const GValue        *value,
                                                      GParamSpec          *pspec);
-static void     gimp_display_get_property           (GObject             *object,
+static void     picman_display_get_property           (GObject             *object,
                                                      guint                property_id,
                                                      GValue              *value,
                                                      GParamSpec          *pspec);
 
-static GimpProgress * gimp_display_progress_start   (GimpProgress        *progress,
+static PicmanProgress * picman_display_progress_start   (PicmanProgress        *progress,
                                                      const gchar         *message,
                                                      gboolean             cancelable);
-static void     gimp_display_progress_end           (GimpProgress        *progress);
-static gboolean gimp_display_progress_is_active     (GimpProgress        *progress);
-static void     gimp_display_progress_set_text      (GimpProgress        *progress,
+static void     picman_display_progress_end           (PicmanProgress        *progress);
+static gboolean picman_display_progress_is_active     (PicmanProgress        *progress);
+static void     picman_display_progress_set_text      (PicmanProgress        *progress,
                                                      const gchar         *message);
-static void     gimp_display_progress_set_value     (GimpProgress        *progress,
+static void     picman_display_progress_set_value     (PicmanProgress        *progress,
                                                      gdouble              percentage);
-static gdouble  gimp_display_progress_get_value     (GimpProgress        *progress);
-static void     gimp_display_progress_pulse         (GimpProgress        *progress);
-static guint32  gimp_display_progress_get_window_id (GimpProgress        *progress);
-static gboolean gimp_display_progress_message       (GimpProgress        *progress,
-                                                     Gimp                *gimp,
-                                                     GimpMessageSeverity  severity,
+static gdouble  picman_display_progress_get_value     (PicmanProgress        *progress);
+static void     picman_display_progress_pulse         (PicmanProgress        *progress);
+static guint32  picman_display_progress_get_window_id (PicmanProgress        *progress);
+static gboolean picman_display_progress_message       (PicmanProgress        *progress,
+                                                     Picman                *picman,
+                                                     PicmanMessageSeverity  severity,
                                                      const gchar         *domain,
                                                      const gchar         *message);
-static void     gimp_display_progress_canceled      (GimpProgress        *progress,
-                                                     GimpDisplay         *display);
+static void     picman_display_progress_canceled      (PicmanProgress        *progress,
+                                                     PicmanDisplay         *display);
 
-static void     gimp_display_flush_whenever         (GimpDisplay         *display,
+static void     picman_display_flush_whenever         (PicmanDisplay         *display,
                                                      gboolean             now);
-static void     gimp_display_paint_area             (GimpDisplay         *display,
+static void     picman_display_paint_area             (PicmanDisplay         *display,
                                                      gint                 x,
                                                      gint                 y,
                                                      gint                 w,
                                                      gint                 h);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpDisplay, gimp_display, GIMP_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PROGRESS,
-                                                gimp_display_progress_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanDisplay, picman_display, PICMAN_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PROGRESS,
+                                                picman_display_progress_iface_init))
 
-#define parent_class gimp_display_parent_class
+#define parent_class picman_display_parent_class
 
 
 static void
-gimp_display_class_init (GimpDisplayClass *klass)
+picman_display_class_init (PicmanDisplayClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_display_set_property;
-  object_class->get_property = gimp_display_get_property;
+  object_class->set_property = picman_display_set_property;
+  object_class->get_property = picman_display_get_property;
 
   g_object_class_install_property (object_class, PROP_ID,
                                    g_param_spec_int ("id",
                                                      NULL, NULL,
                                                      0, G_MAXINT, 0,
-                                                     GIMP_PARAM_READABLE));
+                                                     PICMAN_PARAM_READABLE));
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp",
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_IMAGE,
                                    g_param_spec_object ("image",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_IMAGE,
-                                                        GIMP_PARAM_READABLE));
+                                                        PICMAN_TYPE_IMAGE,
+                                                        PICMAN_PARAM_READABLE));
 
   g_object_class_install_property (object_class, PROP_SHELL,
                                    g_param_spec_object ("shell",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_DISPLAY_SHELL,
-                                                        GIMP_PARAM_READABLE));
+                                                        PICMAN_TYPE_DISPLAY_SHELL,
+                                                        PICMAN_PARAM_READABLE));
 
-  g_type_class_add_private (klass, sizeof (GimpDisplayPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanDisplayPrivate));
 }
 
 static void
-gimp_display_init (GimpDisplay *display)
+picman_display_init (PicmanDisplay *display)
 {
 }
 
 static void
-gimp_display_progress_iface_init (GimpProgressInterface *iface)
+picman_display_progress_iface_init (PicmanProgressInterface *iface)
 {
-  iface->start         = gimp_display_progress_start;
-  iface->end           = gimp_display_progress_end;
-  iface->is_active     = gimp_display_progress_is_active;
-  iface->set_text      = gimp_display_progress_set_text;
-  iface->set_value     = gimp_display_progress_set_value;
-  iface->get_value     = gimp_display_progress_get_value;
-  iface->pulse         = gimp_display_progress_pulse;
-  iface->get_window_id = gimp_display_progress_get_window_id;
-  iface->message       = gimp_display_progress_message;
+  iface->start         = picman_display_progress_start;
+  iface->end           = picman_display_progress_end;
+  iface->is_active     = picman_display_progress_is_active;
+  iface->set_text      = picman_display_progress_set_text;
+  iface->set_value     = picman_display_progress_set_value;
+  iface->get_value     = picman_display_progress_get_value;
+  iface->pulse         = picman_display_progress_pulse;
+  iface->get_window_id = picman_display_progress_get_window_id;
+  iface->message       = picman_display_progress_message;
 }
 
 static void
-gimp_display_set_property (GObject      *object,
+picman_display_set_property (GObject      *object,
                            guint         property_id,
                            const GValue *value,
                            GParamSpec   *pspec)
 {
-  GimpDisplay        *display = GIMP_DISPLAY (object);
-  GimpDisplayPrivate *private = GIMP_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplay        *display = PICMAN_DISPLAY (object);
+  PicmanDisplayPrivate *private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   switch (property_id)
     {
-    case PROP_GIMP:
+    case PROP_PICMAN:
       {
         gint ID;
 
-        display->gimp = g_value_get_object (value); /* don't ref the gimp */
-        display->config = GIMP_DISPLAY_CONFIG (display->gimp->config);
+        display->picman = g_value_get_object (value); /* don't ref the picman */
+        display->config = PICMAN_DISPLAY_CONFIG (display->picman->config);
 
         do
           {
-            ID = display->gimp->next_display_ID++;
+            ID = display->picman->next_display_ID++;
 
-            if (display->gimp->next_display_ID == G_MAXINT)
-              display->gimp->next_display_ID = 1;
+            if (display->picman->next_display_ID == G_MAXINT)
+              display->picman->next_display_ID = 1;
           }
-        while (gimp_display_get_by_ID (display->gimp, ID));
+        while (picman_display_get_by_ID (display->picman, ID));
 
         private->ID = ID;
       }
@@ -234,13 +234,13 @@ gimp_display_set_property (GObject      *object,
 }
 
 static void
-gimp_display_get_property (GObject    *object,
+picman_display_get_property (GObject    *object,
                            guint       property_id,
                            GValue     *value,
                            GParamSpec *pspec)
 {
-  GimpDisplay        *display = GIMP_DISPLAY (object);
-  GimpDisplayPrivate *private = GIMP_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplay        *display = PICMAN_DISPLAY (object);
+  PicmanDisplayPrivate *private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   switch (property_id)
     {
@@ -248,8 +248,8 @@ gimp_display_get_property (GObject    *object,
       g_value_set_int (value, private->ID);
       break;
 
-    case PROP_GIMP:
-      g_value_set_object (value, display->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, display->picman);
       break;
 
     case PROP_IMAGE:
@@ -266,267 +266,267 @@ gimp_display_get_property (GObject    *object,
     }
 }
 
-static GimpProgress *
-gimp_display_progress_start (GimpProgress *progress,
+static PicmanProgress *
+picman_display_progress_start (PicmanProgress *progress,
                              const gchar  *message,
                              gboolean      cancelable)
 {
-  GimpDisplay        *display = GIMP_DISPLAY (progress);
-  GimpDisplayPrivate *private = GIMP_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplay        *display = PICMAN_DISPLAY (progress);
+  PicmanDisplayPrivate *private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   if (private->shell)
-    return gimp_progress_start (GIMP_PROGRESS (private->shell),
+    return picman_progress_start (PICMAN_PROGRESS (private->shell),
                                 message, cancelable);
 
   return NULL;
 }
 
 static void
-gimp_display_progress_end (GimpProgress *progress)
+picman_display_progress_end (PicmanProgress *progress)
 {
-  GimpDisplay        *display = GIMP_DISPLAY (progress);
-  GimpDisplayPrivate *private = GIMP_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplay        *display = PICMAN_DISPLAY (progress);
+  PicmanDisplayPrivate *private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   if (private->shell)
-    gimp_progress_end (GIMP_PROGRESS (private->shell));
+    picman_progress_end (PICMAN_PROGRESS (private->shell));
 }
 
 static gboolean
-gimp_display_progress_is_active (GimpProgress *progress)
+picman_display_progress_is_active (PicmanProgress *progress)
 {
-  GimpDisplay        *display = GIMP_DISPLAY (progress);
-  GimpDisplayPrivate *private = GIMP_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplay        *display = PICMAN_DISPLAY (progress);
+  PicmanDisplayPrivate *private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   if (private->shell)
-    return gimp_progress_is_active (GIMP_PROGRESS (private->shell));
+    return picman_progress_is_active (PICMAN_PROGRESS (private->shell));
 
   return FALSE;
 }
 
 static void
-gimp_display_progress_set_text (GimpProgress *progress,
+picman_display_progress_set_text (PicmanProgress *progress,
                                 const gchar  *message)
 {
-  GimpDisplay        *display = GIMP_DISPLAY (progress);
-  GimpDisplayPrivate *private = GIMP_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplay        *display = PICMAN_DISPLAY (progress);
+  PicmanDisplayPrivate *private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   if (private->shell)
-    gimp_progress_set_text (GIMP_PROGRESS (private->shell), message);
+    picman_progress_set_text (PICMAN_PROGRESS (private->shell), message);
 }
 
 static void
-gimp_display_progress_set_value (GimpProgress *progress,
+picman_display_progress_set_value (PicmanProgress *progress,
                                  gdouble       percentage)
 {
-  GimpDisplay        *display = GIMP_DISPLAY (progress);
-  GimpDisplayPrivate *private = GIMP_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplay        *display = PICMAN_DISPLAY (progress);
+  PicmanDisplayPrivate *private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   if (private->shell)
-    gimp_progress_set_value (GIMP_PROGRESS (private->shell), percentage);
+    picman_progress_set_value (PICMAN_PROGRESS (private->shell), percentage);
 }
 
 static gdouble
-gimp_display_progress_get_value (GimpProgress *progress)
+picman_display_progress_get_value (PicmanProgress *progress)
 {
-  GimpDisplay        *display = GIMP_DISPLAY (progress);
-  GimpDisplayPrivate *private = GIMP_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplay        *display = PICMAN_DISPLAY (progress);
+  PicmanDisplayPrivate *private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   if (private->shell)
-    return gimp_progress_get_value (GIMP_PROGRESS (private->shell));
+    return picman_progress_get_value (PICMAN_PROGRESS (private->shell));
 
   return 0.0;
 }
 
 static void
-gimp_display_progress_pulse (GimpProgress *progress)
+picman_display_progress_pulse (PicmanProgress *progress)
 {
-  GimpDisplay        *display = GIMP_DISPLAY (progress);
-  GimpDisplayPrivate *private = GIMP_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplay        *display = PICMAN_DISPLAY (progress);
+  PicmanDisplayPrivate *private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   if (private->shell)
-    gimp_progress_pulse (GIMP_PROGRESS (private->shell));
+    picman_progress_pulse (PICMAN_PROGRESS (private->shell));
 }
 
 static guint32
-gimp_display_progress_get_window_id (GimpProgress *progress)
+picman_display_progress_get_window_id (PicmanProgress *progress)
 {
-  GimpDisplay        *display = GIMP_DISPLAY (progress);
-  GimpDisplayPrivate *private = GIMP_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplay        *display = PICMAN_DISPLAY (progress);
+  PicmanDisplayPrivate *private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   if (private->shell)
-    return gimp_progress_get_window_id (GIMP_PROGRESS (private->shell));
+    return picman_progress_get_window_id (PICMAN_PROGRESS (private->shell));
 
   return 0;
 }
 
 static gboolean
-gimp_display_progress_message (GimpProgress        *progress,
-                               Gimp                *gimp,
-                               GimpMessageSeverity  severity,
+picman_display_progress_message (PicmanProgress        *progress,
+                               Picman                *picman,
+                               PicmanMessageSeverity  severity,
                                const gchar         *domain,
                                const gchar         *message)
 {
-  GimpDisplay        *display = GIMP_DISPLAY (progress);
-  GimpDisplayPrivate *private = GIMP_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplay        *display = PICMAN_DISPLAY (progress);
+  PicmanDisplayPrivate *private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   if (private->shell)
-    return gimp_progress_message (GIMP_PROGRESS (private->shell), gimp,
+    return picman_progress_message (PICMAN_PROGRESS (private->shell), picman,
                                   severity, domain, message);
 
   return FALSE;
 }
 
 static void
-gimp_display_progress_canceled (GimpProgress *progress,
-                                GimpDisplay  *display)
+picman_display_progress_canceled (PicmanProgress *progress,
+                                PicmanDisplay  *display)
 {
-  gimp_progress_cancel (GIMP_PROGRESS (display));
+  picman_progress_cancel (PICMAN_PROGRESS (display));
 }
 
 
 /*  public functions  */
 
-GimpDisplay *
-gimp_display_new (Gimp              *gimp,
-                  GimpImage         *image,
-                  GimpUnit           unit,
+PicmanDisplay *
+picman_display_new (Picman              *picman,
+                  PicmanImage         *image,
+                  PicmanUnit           unit,
                   gdouble            scale,
-                  GimpMenuFactory   *menu_factory,
-                  GimpUIManager     *popup_manager,
-                  GimpDialogFactory *dialog_factory)
+                  PicmanMenuFactory   *menu_factory,
+                  PicmanUIManager     *popup_manager,
+                  PicmanDialogFactory *dialog_factory)
 {
-  GimpDisplay        *display;
-  GimpDisplayPrivate *private;
-  GimpImageWindow    *window = NULL;
-  GimpDisplayShell   *shell;
+  PicmanDisplay        *display;
+  PicmanDisplayPrivate *private;
+  PicmanImageWindow    *window = NULL;
+  PicmanDisplayShell   *shell;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (image == NULL || GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (image == NULL || PICMAN_IS_IMAGE (image), NULL);
 
   /*  If there isn't an interface, never create a display  */
-  if (gimp->no_interface)
+  if (picman->no_interface)
     return NULL;
 
-  display = g_object_new (GIMP_TYPE_DISPLAY,
-                          "gimp", gimp,
+  display = g_object_new (PICMAN_TYPE_DISPLAY,
+                          "picman", picman,
                           NULL);
 
-  private = GIMP_DISPLAY_GET_PRIVATE (display);
+  private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   /*  refs the image  */
   if (image)
-    gimp_display_set_image (display, image);
+    picman_display_set_image (display, image);
 
   /*  get an image window  */
-  if (GIMP_GUI_CONFIG (display->config)->single_window_mode)
+  if (PICMAN_GUI_CONFIG (display->config)->single_window_mode)
     {
-      GimpDisplay *active_display;
+      PicmanDisplay *active_display;
 
-      active_display = gimp_context_get_display (gimp_get_user_context (gimp));
+      active_display = picman_context_get_display (picman_get_user_context (picman));
 
       if (! active_display)
         {
           active_display =
-            GIMP_DISPLAY (gimp_container_get_first_child (gimp->displays));
+            PICMAN_DISPLAY (picman_container_get_first_child (picman->displays));
         }
 
       if (active_display)
         {
-          GimpDisplayShell *shell = gimp_display_get_shell (active_display);
+          PicmanDisplayShell *shell = picman_display_get_shell (active_display);
 
-          window = gimp_display_shell_get_window (shell);
+          window = picman_display_shell_get_window (shell);
         }
     }
 
   if (! window)
     {
-      window = gimp_image_window_new (gimp,
+      window = picman_image_window_new (picman,
                                       private->image,
                                       menu_factory,
                                       dialog_factory);
     }
 
   /*  create the shell for the image  */
-  private->shell = gimp_display_shell_new (display, unit, scale,
+  private->shell = picman_display_shell_new (display, unit, scale,
                                            popup_manager);
 
-  shell = gimp_display_get_shell (display);
+  shell = picman_display_get_shell (display);
 
-  gimp_image_window_add_shell (window, shell);
-  gimp_display_shell_present (shell);
+  picman_image_window_add_shell (window, shell);
+  picman_display_shell_present (shell);
 
   /* make sure the docks are visible, in case all other image windows
    * are iconified, see bug #686544.
    */
-  gimp_dialog_factory_show_with_display (dialog_factory);
+  picman_dialog_factory_show_with_display (dialog_factory);
 
-  g_signal_connect (gimp_display_shell_get_statusbar (shell), "cancel",
-                    G_CALLBACK (gimp_display_progress_canceled),
+  g_signal_connect (picman_display_shell_get_statusbar (shell), "cancel",
+                    G_CALLBACK (picman_display_progress_canceled),
                     display);
 
   /* add the display to the list */
-  gimp_container_add (gimp->displays, GIMP_OBJECT (display));
+  picman_container_add (picman->displays, PICMAN_OBJECT (display));
 
   return display;
 }
 
 /**
- * gimp_display_delete:
+ * picman_display_delete:
  * @display:
  *
  * Closes the display and removes it from the display list. You should
- * not call this function directly, use gimp_display_close() instead.
+ * not call this function directly, use picman_display_close() instead.
  */
 void
-gimp_display_delete (GimpDisplay *display)
+picman_display_delete (PicmanDisplay *display)
 {
-  GimpDisplayPrivate *private;
-  GimpTool           *active_tool;
+  PicmanDisplayPrivate *private;
+  PicmanTool           *active_tool;
 
-  g_return_if_fail (GIMP_IS_DISPLAY (display));
+  g_return_if_fail (PICMAN_IS_DISPLAY (display));
 
-  private = GIMP_DISPLAY_GET_PRIVATE (display);
+  private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   /* remove the display from the list */
-  gimp_container_remove (display->gimp->displays, GIMP_OBJECT (display));
+  picman_container_remove (display->picman->displays, PICMAN_OBJECT (display));
 
   /*  unrefs the image  */
-  gimp_display_set_image (display, NULL);
+  picman_display_set_image (display, NULL);
 
-  active_tool = tool_manager_get_active (display->gimp);
+  active_tool = tool_manager_get_active (display->picman);
 
   if (active_tool && active_tool->focus_display == display)
-    tool_manager_focus_display_active (display->gimp, NULL);
+    tool_manager_focus_display_active (display->picman, NULL);
 
   /*  free the update area lists  */
-  gimp_area_list_free (private->update_areas);
+  picman_area_list_free (private->update_areas);
   private->update_areas = NULL;
 
   if (private->shell)
     {
-      GimpDisplayShell *shell  = gimp_display_get_shell (display);
-      GimpImageWindow  *window = gimp_display_shell_get_window (shell);
+      PicmanDisplayShell *shell  = picman_display_get_shell (display);
+      PicmanImageWindow  *window = picman_display_shell_get_window (shell);
 
       /*  set private->shell to NULL *before* destroying the shell.
-       *  all callbacks in gimpdisplayshell-callbacks.c will check
+       *  all callbacks in picmandisplayshell-callbacks.c will check
        *  this pointer and do nothing if the shell is in destruction.
        */
       private->shell = NULL;
 
       if (window)
         {
-          if (gimp_image_window_get_n_shells (window) > 1)
+          if (picman_image_window_get_n_shells (window) > 1)
             {
               g_object_ref (shell);
 
-              gimp_image_window_remove_shell (window, shell);
+              picman_image_window_remove_shell (window, shell);
               gtk_widget_destroy (GTK_WIDGET (shell));
 
               g_object_unref (shell);
             }
           else
             {
-              gimp_image_window_destroy (window);
+              picman_image_window_destroy (window);
             }
         }
       else
@@ -539,54 +539,54 @@ gimp_display_delete (GimpDisplay *display)
 }
 
 /**
- * gimp_display_close:
+ * picman_display_close:
  * @display:
  *
  * Closes the display. If this is the last display, it will remain
  * open, but without an image.
  */
 void
-gimp_display_close (GimpDisplay *display)
+picman_display_close (PicmanDisplay *display)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY (display));
+  g_return_if_fail (PICMAN_IS_DISPLAY (display));
 
-  if (gimp_container_get_n_children (display->gimp->displays) > 1)
+  if (picman_container_get_n_children (display->picman->displays) > 1)
     {
-      gimp_display_delete (display);
+      picman_display_delete (display);
     }
   else
     {
-      gimp_display_empty (display);
+      picman_display_empty (display);
     }
 }
 
 gint
-gimp_display_get_ID (GimpDisplay *display)
+picman_display_get_ID (PicmanDisplay *display)
 {
-  GimpDisplayPrivate *private;
+  PicmanDisplayPrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_DISPLAY (display), -1);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY (display), -1);
 
-  private = GIMP_DISPLAY_GET_PRIVATE (display);
+  private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   return private->ID;
 }
 
-GimpDisplay *
-gimp_display_get_by_ID (Gimp *gimp,
+PicmanDisplay *
+picman_display_get_by_ID (Picman *picman,
                         gint  ID)
 {
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  for (list = gimp_get_display_iter (gimp);
+  for (list = picman_get_display_iter (picman);
        list;
        list = g_list_next (list))
     {
-      GimpDisplay *display = list->data;
+      PicmanDisplay *display = list->data;
 
-      if (gimp_display_get_ID (display) == ID)
+      if (picman_display_get_ID (display) == ID)
         return display;
     }
 
@@ -594,63 +594,63 @@ gimp_display_get_by_ID (Gimp *gimp,
 }
 
 /**
- * gimp_display_get_action_name:
+ * picman_display_get_action_name:
  * @display:
  *
  * Returns: The action name for the given display. The action name
  * depends on the display ID. The result must be freed with g_free().
  **/
 gchar *
-gimp_display_get_action_name (GimpDisplay *display)
+picman_display_get_action_name (PicmanDisplay *display)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY (display), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY (display), NULL);
 
   return g_strdup_printf ("windows-display-%04d",
-                          gimp_display_get_ID (display));
+                          picman_display_get_ID (display));
 }
 
-Gimp *
-gimp_display_get_gimp (GimpDisplay *display)
+Picman *
+picman_display_get_picman (PicmanDisplay *display)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY (display), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY (display), NULL);
 
-  return display->gimp;
+  return display->picman;
 }
 
-GimpImage *
-gimp_display_get_image (GimpDisplay *display)
+PicmanImage *
+picman_display_get_image (PicmanDisplay *display)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY (display), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY (display), NULL);
 
-  return GIMP_DISPLAY_GET_PRIVATE (display)->image;
+  return PICMAN_DISPLAY_GET_PRIVATE (display)->image;
 }
 
 void
-gimp_display_set_image (GimpDisplay *display,
-                        GimpImage   *image)
+picman_display_set_image (PicmanDisplay *display,
+                        PicmanImage   *image)
 {
-  GimpDisplayPrivate *private;
-  GimpImage          *old_image = NULL;
-  GimpDisplayShell   *shell;
+  PicmanDisplayPrivate *private;
+  PicmanImage          *old_image = NULL;
+  PicmanDisplayShell   *shell;
 
-  g_return_if_fail (GIMP_IS_DISPLAY (display));
-  g_return_if_fail (image == NULL || GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_DISPLAY (display));
+  g_return_if_fail (image == NULL || PICMAN_IS_IMAGE (image));
 
-  private = GIMP_DISPLAY_GET_PRIVATE (display);
+  private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
-  shell = gimp_display_get_shell (display);
+  shell = picman_display_get_shell (display);
 
   if (private->image)
     {
       /*  stop any active tool  */
-      tool_manager_control_active (display->gimp, GIMP_TOOL_ACTION_HALT,
+      tool_manager_control_active (display->picman, PICMAN_TOOL_ACTION_HALT,
                                    display);
 
-      gimp_display_shell_disconnect (shell);
+      picman_display_shell_disconnect (shell);
 
-      gimp_display_disconnect (display);
+      picman_display_disconnect (display);
 
-      gimp_image_dec_display_count (private->image);
+      picman_image_dec_display_count (private->image);
 
       /*  set private->image before unrefing because there may be code
        *  that listens for image removals and then iterates the
@@ -675,15 +675,15 @@ gimp_display_set_image (GimpDisplay *display,
 
       g_object_ref (image);
 
-      private->instance = gimp_image_get_instance_count (image);
-      gimp_image_inc_instance_count (image);
+      private->instance = picman_image_get_instance_count (image);
+      picman_image_inc_instance_count (image);
 
-      gimp_image_inc_display_count (image);
+      picman_image_inc_display_count (image);
 
-      gimp_display_connect (display);
+      picman_display_connect (display);
 
       if (shell)
-        gimp_display_shell_connect (shell);
+        picman_display_shell_connect (shell);
     }
 
   if (old_image)
@@ -692,9 +692,9 @@ gimp_display_set_image (GimpDisplay *display,
   if (shell)
     {
       if (image)
-        gimp_display_shell_reconnect (shell);
+        picman_display_shell_reconnect (shell);
       else
-        gimp_display_shell_icon_update (shell);
+        picman_display_shell_icon_update (shell);
     }
 
   if (old_image != image)
@@ -702,124 +702,124 @@ gimp_display_set_image (GimpDisplay *display,
 }
 
 gint
-gimp_display_get_instance (GimpDisplay *display)
+picman_display_get_instance (PicmanDisplay *display)
 {
-  GimpDisplayPrivate *private;
+  PicmanDisplayPrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_DISPLAY (display), 0);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY (display), 0);
 
-  private = GIMP_DISPLAY_GET_PRIVATE (display);
+  private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   return private->instance;
 }
 
-GimpDisplayShell *
-gimp_display_get_shell (GimpDisplay *display)
+PicmanDisplayShell *
+picman_display_get_shell (PicmanDisplay *display)
 {
-  GimpDisplayPrivate *private;
+  PicmanDisplayPrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_DISPLAY (display), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY (display), NULL);
 
-  private = GIMP_DISPLAY_GET_PRIVATE (display);
+  private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
-  return GIMP_DISPLAY_SHELL (private->shell);
+  return PICMAN_DISPLAY_SHELL (private->shell);
 }
 
 void
-gimp_display_empty (GimpDisplay *display)
+picman_display_empty (PicmanDisplay *display)
 {
-  GimpDisplayPrivate *private;
+  PicmanDisplayPrivate *private;
 
-  g_return_if_fail (GIMP_IS_DISPLAY (display));
+  g_return_if_fail (PICMAN_IS_DISPLAY (display));
 
-  private = GIMP_DISPLAY_GET_PRIVATE (display);
+  private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
-  g_return_if_fail (GIMP_IS_IMAGE (private->image));
+  g_return_if_fail (PICMAN_IS_IMAGE (private->image));
 
-  gimp_display_set_image (display, NULL);
+  picman_display_set_image (display, NULL);
 
-  gimp_display_shell_empty (gimp_display_get_shell (display));
+  picman_display_shell_empty (picman_display_get_shell (display));
 }
 
 void
-gimp_display_fill (GimpDisplay *display,
-                   GimpImage   *image,
-                   GimpUnit     unit,
+picman_display_fill (PicmanDisplay *display,
+                   PicmanImage   *image,
+                   PicmanUnit     unit,
                    gdouble      scale)
 {
-  GimpDisplayPrivate *private;
+  PicmanDisplayPrivate *private;
 
-  g_return_if_fail (GIMP_IS_DISPLAY (display));
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_DISPLAY (display));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  private = GIMP_DISPLAY_GET_PRIVATE (display);
+  private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   g_return_if_fail (private->image == NULL);
 
-  gimp_display_set_image (display, image);
+  picman_display_set_image (display, image);
 
-  gimp_display_shell_fill (gimp_display_get_shell (display),
+  picman_display_shell_fill (picman_display_get_shell (display),
                            image, unit, scale);
 }
 
 void
-gimp_display_update_area (GimpDisplay *display,
+picman_display_update_area (PicmanDisplay *display,
                           gboolean     now,
                           gint         x,
                           gint         y,
                           gint         w,
                           gint         h)
 {
-  GimpDisplayPrivate *private;
+  PicmanDisplayPrivate *private;
 
-  g_return_if_fail (GIMP_IS_DISPLAY (display));
+  g_return_if_fail (PICMAN_IS_DISPLAY (display));
 
-  private = GIMP_DISPLAY_GET_PRIVATE (display);
+  private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   if (now)
     {
-      gimp_display_paint_area (display, x, y, w, h);
+      picman_display_paint_area (display, x, y, w, h);
     }
   else
     {
-      GimpArea *area;
-      gint      image_width  = gimp_image_get_width  (private->image);
-      gint      image_height = gimp_image_get_height (private->image);
+      PicmanArea *area;
+      gint      image_width  = picman_image_get_width  (private->image);
+      gint      image_height = picman_image_get_height (private->image);
 
-      area = gimp_area_new (CLAMP (x,     0, image_width),
+      area = picman_area_new (CLAMP (x,     0, image_width),
                             CLAMP (y,     0, image_height),
                             CLAMP (x + w, 0, image_width),
                             CLAMP (y + h, 0, image_height));
 
-      private->update_areas = gimp_area_list_process (private->update_areas,
+      private->update_areas = picman_area_list_process (private->update_areas,
                                                       area);
     }
 }
 
 void
-gimp_display_flush (GimpDisplay *display)
+picman_display_flush (PicmanDisplay *display)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY (display));
+  g_return_if_fail (PICMAN_IS_DISPLAY (display));
 
-  gimp_display_flush_whenever (display, FALSE);
+  picman_display_flush_whenever (display, FALSE);
 }
 
 void
-gimp_display_flush_now (GimpDisplay *display)
+picman_display_flush_now (PicmanDisplay *display)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY (display));
+  g_return_if_fail (PICMAN_IS_DISPLAY (display));
 
-  gimp_display_flush_whenever (display, TRUE);
+  picman_display_flush_whenever (display, TRUE);
 }
 
 
 /*  private functions  */
 
 static void
-gimp_display_flush_whenever (GimpDisplay *display,
+picman_display_flush_whenever (PicmanDisplay *display,
                              gboolean     now)
 {
-  GimpDisplayPrivate *private = GIMP_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplayPrivate *private = PICMAN_DISPLAY_GET_PRIVATE (display);
 
   if (private->update_areas)
     {
@@ -827,11 +827,11 @@ gimp_display_flush_whenever (GimpDisplay *display,
 
       for (list = private->update_areas; list; list = g_slist_next (list))
         {
-          GimpArea *area = list->data;
+          PicmanArea *area = list->data;
 
           if ((area->x1 != area->x2) && (area->y1 != area->y2))
             {
-              gimp_display_paint_area (display,
+              picman_display_paint_area (display,
                                        area->x1,
                                        area->y1,
                                        (area->x2 - area->x1),
@@ -839,7 +839,7 @@ gimp_display_flush_whenever (GimpDisplay *display,
             }
         }
 
-      gimp_area_list_free (private->update_areas);
+      picman_area_list_free (private->update_areas);
       private->update_areas = NULL;
     }
 
@@ -849,28 +849,28 @@ gimp_display_flush_whenever (GimpDisplay *display,
 
       if ((now - private->last_flush_now) > FLUSH_NOW_INTERVAL)
         {
-          gimp_display_shell_flush (gimp_display_get_shell (display), now);
+          picman_display_shell_flush (picman_display_get_shell (display), now);
 
           private->last_flush_now = now;
         }
     }
   else
     {
-      gimp_display_shell_flush (gimp_display_get_shell (display), now);
+      picman_display_shell_flush (picman_display_get_shell (display), now);
     }
 }
 
 static void
-gimp_display_paint_area (GimpDisplay *display,
+picman_display_paint_area (PicmanDisplay *display,
                          gint         x,
                          gint         y,
                          gint         w,
                          gint         h)
 {
-  GimpDisplayPrivate *private      = GIMP_DISPLAY_GET_PRIVATE (display);
-  GimpDisplayShell   *shell        = gimp_display_get_shell (display);
-  gint                image_width  = gimp_image_get_width  (private->image);
-  gint                image_height = gimp_image_get_height (private->image);
+  PicmanDisplayPrivate *private      = PICMAN_DISPLAY_GET_PRIVATE (display);
+  PicmanDisplayShell   *shell        = picman_display_get_shell (display);
+  gint                image_width  = picman_image_get_width  (private->image);
+  gint                image_height = picman_image_get_height (private->image);
   gint                x1, y1, x2, y2;
   gdouble             x1_f, y1_f, x2_f, y2_f;
 
@@ -886,7 +886,7 @@ gimp_display_paint_area (GimpDisplay *display,
   h = (y2 - y1);
 
   /*  display the area  */
-  gimp_display_shell_transform_bounds (shell,
+  picman_display_shell_transform_bounds (shell,
                                        x, y, x + w, y + h,
                                        &x1_f, &y1_f, &x2_f, &y2_f);
 
@@ -901,5 +901,5 @@ gimp_display_paint_area (GimpDisplay *display,
   x2 = ceil (x2_f + 0.5);
   y2 = ceil (y2_f + 0.5);
 
-  gimp_display_shell_expose_area (shell, x1, y1, x2 - x1, y2 - y1);
+  picman_display_shell_expose_area (shell, x1, y1, x2 - x1, y2 - y1);
 }

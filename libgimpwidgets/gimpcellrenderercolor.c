@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcellrenderercolor.c
- * Copyright (C) 2004,2007  Sven Neuman <sven1@gimp.org>
+ * picmancellrenderercolor.c
+ * Copyright (C) 2004,2007  Sven Neuman <sven1@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,21 +24,21 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpcairo-utils.h"
-#include "gimpcellrenderercolor.h"
+#include "picmancairo-utils.h"
+#include "picmancellrenderercolor.h"
 
 
 /**
- * SECTION: gimpcellrenderercolor
- * @title: GimpCellRendererColor
- * @short_description: A #GtkCellRenderer to display a #GimpRGB color.
+ * SECTION: picmancellrenderercolor
+ * @title: PicmanCellRendererColor
+ * @short_description: A #GtkCellRenderer to display a #PicmanRGB color.
  *
- * A #GtkCellRenderer to display a #GimpRGB color.
+ * A #GtkCellRenderer to display a #PicmanRGB color.
  **/
 
 
@@ -54,22 +54,22 @@ enum
 };
 
 
-static void gimp_cell_renderer_color_get_property (GObject         *object,
+static void picman_cell_renderer_color_get_property (GObject         *object,
                                                    guint            param_id,
                                                    GValue          *value,
                                                    GParamSpec      *pspec);
-static void gimp_cell_renderer_color_set_property (GObject         *object,
+static void picman_cell_renderer_color_set_property (GObject         *object,
                                                    guint            param_id,
                                                    const GValue    *value,
                                                    GParamSpec      *pspec);
-static void gimp_cell_renderer_color_get_size     (GtkCellRenderer *cell,
+static void picman_cell_renderer_color_get_size     (GtkCellRenderer *cell,
                                                    GtkWidget       *widget,
                                                    GdkRectangle    *rectangle,
                                                    gint            *x_offset,
                                                    gint            *y_offset,
                                                    gint            *width,
                                                    gint            *height);
-static void gimp_cell_renderer_color_render       (GtkCellRenderer *cell,
+static void picman_cell_renderer_color_render       (GtkCellRenderer *cell,
                                                    GdkWindow       *window,
                                                    GtkWidget       *widget,
                                                    GdkRectangle    *background_area,
@@ -79,57 +79,57 @@ static void gimp_cell_renderer_color_render       (GtkCellRenderer *cell,
 
 
 
-G_DEFINE_TYPE (GimpCellRendererColor, gimp_cell_renderer_color,
+G_DEFINE_TYPE (PicmanCellRendererColor, picman_cell_renderer_color,
                GTK_TYPE_CELL_RENDERER)
 
-#define parent_class gimp_cell_renderer_color_parent_class
+#define parent_class picman_cell_renderer_color_parent_class
 
 
 static void
-gimp_cell_renderer_color_class_init (GimpCellRendererColorClass *klass)
+picman_cell_renderer_color_class_init (PicmanCellRendererColorClass *klass)
 {
   GObjectClass         *object_class = G_OBJECT_CLASS (klass);
   GtkCellRendererClass *cell_class   = GTK_CELL_RENDERER_CLASS (klass);
 
-  object_class->get_property = gimp_cell_renderer_color_get_property;
-  object_class->set_property = gimp_cell_renderer_color_set_property;
+  object_class->get_property = picman_cell_renderer_color_get_property;
+  object_class->set_property = picman_cell_renderer_color_set_property;
 
-  cell_class->get_size       = gimp_cell_renderer_color_get_size;
-  cell_class->render         = gimp_cell_renderer_color_render;
+  cell_class->get_size       = picman_cell_renderer_color_get_size;
+  cell_class->render         = picman_cell_renderer_color_render;
 
   g_object_class_install_property (object_class,
                                    PROP_COLOR,
                                    g_param_spec_boxed ("color", NULL, NULL,
-                                                       GIMP_TYPE_RGB,
-                                                       GIMP_PARAM_READWRITE));
+                                                       PICMAN_TYPE_RGB,
+                                                       PICMAN_PARAM_READWRITE));
   g_object_class_install_property (object_class,
                                    PROP_OPAQUE,
                                    g_param_spec_boolean ("opaque", NULL, NULL,
                                                          TRUE,
-                                                         GIMP_PARAM_READWRITE |
+                                                         PICMAN_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT));
   g_object_class_install_property (object_class,
                                    PROP_SIZE,
                                    g_param_spec_int ("icon-size", NULL, NULL,
                                                      0, G_MAXINT,
                                                      DEFAULT_ICON_SIZE,
-                                                     GIMP_PARAM_READWRITE |
+                                                     PICMAN_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_cell_renderer_color_init (GimpCellRendererColor *cell)
+picman_cell_renderer_color_init (PicmanCellRendererColor *cell)
 {
-  gimp_rgba_set (&cell->color, 0.0, 0.0, 0.0, 1.0);
+  picman_rgba_set (&cell->color, 0.0, 0.0, 0.0, 1.0);
 }
 
 static void
-gimp_cell_renderer_color_get_property (GObject    *object,
+picman_cell_renderer_color_get_property (GObject    *object,
                                        guint       param_id,
                                        GValue     *value,
                                        GParamSpec *pspec)
 {
-  GimpCellRendererColor *cell = GIMP_CELL_RENDERER_COLOR (object);
+  PicmanCellRendererColor *cell = PICMAN_CELL_RENDERER_COLOR (object);
 
   switch (param_id)
     {
@@ -149,13 +149,13 @@ gimp_cell_renderer_color_get_property (GObject    *object,
 }
 
 static void
-gimp_cell_renderer_color_set_property (GObject      *object,
+picman_cell_renderer_color_set_property (GObject      *object,
                                        guint         param_id,
                                        const GValue *value,
                                        GParamSpec   *pspec)
 {
-  GimpCellRendererColor *cell = GIMP_CELL_RENDERER_COLOR (object);
-  GimpRGB               *color;
+  PicmanCellRendererColor *cell = PICMAN_CELL_RENDERER_COLOR (object);
+  PicmanRGB               *color;
 
   switch (param_id)
     {
@@ -176,7 +176,7 @@ gimp_cell_renderer_color_set_property (GObject      *object,
 }
 
 static void
-gimp_cell_renderer_color_get_size (GtkCellRenderer *cell,
+picman_cell_renderer_color_get_size (GtkCellRenderer *cell,
                                    GtkWidget       *widget,
                                    GdkRectangle    *cell_area,
                                    gint            *x_offset,
@@ -184,7 +184,7 @@ gimp_cell_renderer_color_get_size (GtkCellRenderer *cell,
                                    gint            *width,
                                    gint            *height)
 {
-  GimpCellRendererColor *color = GIMP_CELL_RENDERER_COLOR (cell);
+  PicmanCellRendererColor *color = PICMAN_CELL_RENDERER_COLOR (cell);
   gint                   calc_width;
   gint                   calc_height;
   gfloat                 xalign;
@@ -227,7 +227,7 @@ gimp_cell_renderer_color_get_size (GtkCellRenderer *cell,
 }
 
 static void
-gimp_cell_renderer_color_render (GtkCellRenderer      *cell,
+picman_cell_renderer_color_render (GtkCellRenderer      *cell,
                                  GdkWindow            *window,
                                  GtkWidget            *widget,
                                  GdkRectangle         *background_area,
@@ -235,12 +235,12 @@ gimp_cell_renderer_color_render (GtkCellRenderer      *cell,
                                  GdkRectangle         *expose_area,
                                  GtkCellRendererState  flags)
 {
-  GimpCellRendererColor *color = GIMP_CELL_RENDERER_COLOR (cell);
+  PicmanCellRendererColor *color = PICMAN_CELL_RENDERER_COLOR (cell);
   GdkRectangle           rect;
   gint                   xpad;
   gint                   ypad;
 
-  gimp_cell_renderer_color_get_size (cell, widget, cell_area,
+  picman_cell_renderer_color_get_size (cell, widget, cell_area,
                                      &rect.x,
                                      &rect.y,
                                      &rect.width,
@@ -263,7 +263,7 @@ gimp_cell_renderer_color_render (GtkCellRenderer      *cell,
                        rect.x + 1, rect.y + 1,
                        rect.width - 2, rect.height - 2);
 
-      gimp_cairo_set_source_rgb (cr, &color->color);
+      picman_cairo_set_source_rgb (cr, &color->color);
       cairo_fill (cr);
 
       if (! color->opaque && color->color.a < 1.0)
@@ -275,15 +275,15 @@ gimp_cell_renderer_color_render (GtkCellRenderer      *cell,
           cairo_line_to (cr, rect.x + rect.width - 1, rect.y + 1);
           cairo_close_path (cr);
 
-          pattern = gimp_cairo_checkerboard_create (cr,
-                                                    GIMP_CHECK_SIZE_SM,
+          pattern = picman_cairo_checkerboard_create (cr,
+                                                    PICMAN_CHECK_SIZE_SM,
                                                     NULL, NULL);
           cairo_set_source (cr, pattern);
           cairo_pattern_destroy (pattern);
 
           cairo_fill_preserve (cr);
 
-          gimp_cairo_set_source_rgba (cr, &color->color);
+          picman_cairo_set_source_rgba (cr, &color->color);
           cairo_fill (cr);
         }
 
@@ -312,16 +312,16 @@ gimp_cell_renderer_color_render (GtkCellRenderer      *cell,
 }
 
 /**
- * gimp_cell_renderer_color_new:
+ * picman_cell_renderer_color_new:
  *
  * Creates a #GtkCellRenderer that displays a color.
  *
- * Return value: a new #GimpCellRendererColor
+ * Return value: a new #PicmanCellRendererColor
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 GtkCellRenderer *
-gimp_cell_renderer_color_new (void)
+picman_cell_renderer_color_new (void)
 {
-  return g_object_new (GIMP_TYPE_CELL_RENDERER_COLOR, NULL);
+  return g_object_new (PICMAN_TYPE_CELL_RENDERER_COLOR, NULL);
 }

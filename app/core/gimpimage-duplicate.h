@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_DUPLICATE_H__
-#define __GIMP_IMAGE_DUPLICATE_H__
+#ifndef __PICMAN_IMAGE_DUPLICATE_H__
+#define __PICMAN_IMAGE_DUPLICATE_H__
 
 
-GimpImage * gimp_image_duplicate (GimpImage *image);
+PicmanImage * picman_image_duplicate (PicmanImage *image);
 
 
-#endif  /*  __GIMP_IMAGE_DUPLICATE_H__  */
+#endif  /*  __PICMAN_IMAGE_DUPLICATE_H__  */

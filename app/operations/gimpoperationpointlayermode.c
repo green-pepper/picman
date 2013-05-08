@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationpointlayermode.c
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanoperationpointlayermode.c
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  * Copyright (C) 2008 Martin Nordholts <martinn@svn.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,11 +25,11 @@
 #include <gegl-plugin.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "operations-types.h"
 
-#include "gimpoperationpointlayermode.h"
+#include "picmanoperationpointlayermode.h"
 
 
 enum
@@ -40,36 +40,36 @@ enum
 };
 
 
-static void     gimp_operation_point_layer_mode_set_property (GObject       *object,
+static void     picman_operation_point_layer_mode_set_property (GObject       *object,
                                                               guint          property_id,
                                                               const GValue  *value,
                                                               GParamSpec    *pspec);
-static void     gimp_operation_point_layer_mode_get_property (GObject       *object,
+static void     picman_operation_point_layer_mode_get_property (GObject       *object,
                                                               guint          property_id,
                                                               GValue        *value,
                                                               GParamSpec    *pspec);
 
-static void     gimp_operation_point_layer_mode_prepare      (GeglOperation *operation);
+static void     picman_operation_point_layer_mode_prepare      (GeglOperation *operation);
 
 
-G_DEFINE_TYPE (GimpOperationPointLayerMode, gimp_operation_point_layer_mode,
+G_DEFINE_TYPE (PicmanOperationPointLayerMode, picman_operation_point_layer_mode,
                GEGL_TYPE_OPERATION_POINT_COMPOSER3)
 
 
 static void
-gimp_operation_point_layer_mode_class_init (GimpOperationPointLayerModeClass *klass)
+picman_operation_point_layer_mode_class_init (PicmanOperationPointLayerModeClass *klass)
 {
   GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  object_class->set_property = gimp_operation_point_layer_mode_set_property;
-  object_class->get_property = gimp_operation_point_layer_mode_get_property;
+  object_class->set_property = picman_operation_point_layer_mode_set_property;
+  object_class->get_property = picman_operation_point_layer_mode_get_property;
 
-  operation_class->prepare   = gimp_operation_point_layer_mode_prepare;
+  operation_class->prepare   = picman_operation_point_layer_mode_prepare;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:point-layer-mode",
-                                 "description", "GIMP point layer mode operation",
+                                 "name",        "picman:point-layer-mode",
+                                 "description", "PICMAN point layer mode operation",
                                  "categories",  "compositors",
                                  NULL);
 
@@ -77,29 +77,29 @@ gimp_operation_point_layer_mode_class_init (GimpOperationPointLayerModeClass *kl
                                    g_param_spec_boolean ("linear",
                                                          NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE |
+                                                         PICMAN_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_OPACITY,
                                    g_param_spec_double ("opacity",
                                                         NULL, NULL,
                                                         0.0, 1.0, 1.0,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_operation_point_layer_mode_init (GimpOperationPointLayerMode *self)
+picman_operation_point_layer_mode_init (PicmanOperationPointLayerMode *self)
 {
 }
 
 static void
-gimp_operation_point_layer_mode_set_property (GObject      *object,
+picman_operation_point_layer_mode_set_property (GObject      *object,
                                               guint         property_id,
                                               const GValue *value,
                                               GParamSpec   *pspec)
 {
-  GimpOperationPointLayerMode *self = GIMP_OPERATION_POINT_LAYER_MODE (object);
+  PicmanOperationPointLayerMode *self = PICMAN_OPERATION_POINT_LAYER_MODE (object);
 
   switch (property_id)
     {
@@ -118,12 +118,12 @@ gimp_operation_point_layer_mode_set_property (GObject      *object,
 }
 
 static void
-gimp_operation_point_layer_mode_get_property (GObject    *object,
+picman_operation_point_layer_mode_get_property (GObject    *object,
                                               guint       property_id,
                                               GValue     *value,
                                               GParamSpec *pspec)
 {
-  GimpOperationPointLayerMode *self = GIMP_OPERATION_POINT_LAYER_MODE (object);
+  PicmanOperationPointLayerMode *self = PICMAN_OPERATION_POINT_LAYER_MODE (object);
 
   switch (property_id)
     {
@@ -142,9 +142,9 @@ gimp_operation_point_layer_mode_get_property (GObject    *object,
 }
 
 static void
-gimp_operation_point_layer_mode_prepare (GeglOperation *operation)
+picman_operation_point_layer_mode_prepare (GeglOperation *operation)
 {
-  GimpOperationPointLayerMode *self = GIMP_OPERATION_POINT_LAYER_MODE (operation);
+  PicmanOperationPointLayerMode *self = PICMAN_OPERATION_POINT_LAYER_MODE (operation);
   const Babl                  *format;
 
   if (self->linear)

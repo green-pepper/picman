@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include "tw_platform.h"
 #include "tw_func.h"
@@ -40,7 +40,7 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 int twainMessageLoop(pTW_SESSION);
 int TwainProcessMessage(LPMSG lpMsg, pTW_SESSION twSession);
 
-extern GimpPlugInInfo PLUG_IN_INFO;
+extern PicmanPlugInInfo PLUG_IN_INFO;
 extern pTW_SESSION initializeTwain ();
 #ifdef _DEBUG
 extern void setRunMode(char *argv[]);
@@ -266,7 +266,7 @@ void twainQuitApplication ()
 /*
  * WinMain
  *
- * The standard gimp entry point won't quite cut it for
+ * The standard picman entry point won't quite cut it for
  * this plug-in.  This plug-in requires creation of a
  * standard Win32 window (hidden) in order to receive
  * and process window messages on behalf of the TWAIN
@@ -298,10 +298,10 @@ WinMain(HINSTANCE hInstance,
 #endif /* _DEBUG */
 
   /*
-   * Now, call gimp_main... This is what the MAIN() macro
+   * Now, call picman_main... This is what the MAIN() macro
    * would usually do.
    */
-  return gimp_main(&PLUG_IN_INFO, __argc, __argv);
+  return picman_main(&PLUG_IN_INFO, __argc, __argv);
 }
 
 /*
@@ -319,10 +319,10 @@ int main (int argc, char *argv[])
 #endif /* _DEBUG */
 
   /*
-   * Now, call gimp_main... This is what the MAIN() macro
+   * Now, call picman_main... This is what the MAIN() macro
    * would usually do.
    */
-  return gimp_main(&PLUG_IN_INFO, __argc, __argv);
+  return picman_main(&PLUG_IN_INFO, __argc, __argv);
 }
 
 /*

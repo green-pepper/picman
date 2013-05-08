@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpbase-private.c
- * Copyright (C) 2003 Sven Neumann <sven@gimp.org>
+ * picmanbase-private.c
+ * Copyright (C) 2003 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,27 +23,27 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpbasetypes.h"
+#include "picmanbasetypes.h"
 
-#include "gimpbase-private.h"
+#include "picmanbase-private.h"
 
 
-GimpUnitVtable _gimp_unit_vtable = { NULL, };
+PicmanUnitVtable _picman_unit_vtable = { NULL, };
 
 
 void
-gimp_base_init (GimpUnitVtable *vtable)
+picman_base_init (PicmanUnitVtable *vtable)
 {
-  static gboolean gimp_base_initialized = FALSE;
+  static gboolean picman_base_initialized = FALSE;
 
   g_return_if_fail (vtable != NULL);
 
-  if (gimp_base_initialized)
-    g_error ("gimp_base_init() must only be called once!");
+  if (picman_base_initialized)
+    g_error ("picman_base_init() must only be called once!");
 
-  _gimp_unit_vtable = *vtable;
+  _picman_unit_vtable = *vtable;
 
-  gimp_base_initialized = TRUE;
+  picman_base_initialized = TRUE;
 }

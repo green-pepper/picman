@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,11 +16,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COLOR_TYPES_H__
-#define __GIMP_COLOR_TYPES_H__
+#ifndef __PICMAN_COLOR_TYPES_H__
+#define __PICMAN_COLOR_TYPES_H__
 
 
-#include <libgimpbase/gimpbasetypes.h>
+#include <libpicmanbase/picmanbasetypes.h>
 
 
 G_BEGIN_DECLS
@@ -28,19 +28,19 @@ G_BEGIN_DECLS
 /* For information look into the C source or the html documentation */
 
 
-typedef struct _GimpColorManaged GimpColorManaged;  /* dummy typedef */
+typedef struct _PicmanColorManaged PicmanColorManaged;  /* dummy typedef */
 
 /*  usually we don't keep the structure definitions in the types file
- *  but GimpRGB appears in too many header files...
+ *  but PicmanRGB appears in too many header files...
  */
 
-typedef struct _GimpRGB  GimpRGB;
-typedef struct _GimpHSV  GimpHSV;
-typedef struct _GimpHSL  GimpHSL;
-typedef struct _GimpCMYK GimpCMYK;
+typedef struct _PicmanRGB  PicmanRGB;
+typedef struct _PicmanHSV  PicmanHSV;
+typedef struct _PicmanHSL  PicmanHSL;
+typedef struct _PicmanCMYK PicmanCMYK;
 
 /**
- * GimpRGB:
+ * PicmanRGB:
  * @r: the red component
  * @g: the green component
  * @b: the blue component
@@ -49,13 +49,13 @@ typedef struct _GimpCMYK GimpCMYK;
  * Used to keep RGB and RGBA colors. All components are in a range of
  * [0.0..1.0].
  **/
-struct _GimpRGB
+struct _PicmanRGB
 {
   gdouble r, g, b, a;
 };
 
 /**
- * GimpHSV:
+ * PicmanHSV:
  * @h: the hue component
  * @s: the saturation component
  * @v: the value component
@@ -64,13 +64,13 @@ struct _GimpRGB
  * Used to keep HSV and HSVA colors. All components are in a range of
  * [0.0..1.0].
  **/
-struct _GimpHSV
+struct _PicmanHSV
 {
   gdouble h, s, v, a;
 };
 
 /**
- * GimpHSL:
+ * PicmanHSL:
  * @h: the hue component
  * @s: the saturation component
  * @l: the lightness component
@@ -79,13 +79,13 @@ struct _GimpHSV
  * Used to keep HSL and HSLA colors. All components are in a range of
  * [0.0..1.0].
  **/
-struct _GimpHSL
+struct _PicmanHSL
 {
   gdouble h, s, l, a;
 };
 
 /**
- * GimpCMYK:
+ * PicmanCMYK:
  * @c: the cyan component
  * @m: the magenta component
  * @y: the yellow component
@@ -97,21 +97,21 @@ struct _GimpHSL
  * colorspace, but we keep one around anyway so color conversions
  * going to CMYK and back can preserve alpha.
  **/
-struct _GimpCMYK
+struct _PicmanCMYK
 {
   gdouble c, m, y, k, a;
 };
 
 
-typedef void (* GimpRenderFunc)   (gdouble   x,
+typedef void (* PicmanRenderFunc)   (gdouble   x,
                                    gdouble   y,
-                                   GimpRGB  *color,
+                                   PicmanRGB  *color,
                                    gpointer  data);
-typedef void (* GimpPutPixelFunc) (gint      x,
+typedef void (* PicmanPutPixelFunc) (gint      x,
                                    gint      y,
-                                   GimpRGB  *color,
+                                   PicmanRGB  *color,
                                    gpointer  data);
-typedef void (* GimpProgressFunc) (gint      min,
+typedef void (* PicmanProgressFunc) (gint      min,
                                    gint      max,
                                    gint      current,
                                    gpointer  data);
@@ -119,4 +119,4 @@ typedef void (* GimpProgressFunc) (gint      min,
 
 G_END_DECLS
 
-#endif  /* __GIMP_COLOR_TYPES_H__ */
+#endif  /* __PICMAN_COLOR_TYPES_H__ */

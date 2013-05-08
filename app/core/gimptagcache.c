@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptagcache.c
+ * picmantagcache.c
  * Copyright (C) 2008 Aurimas Juška <aurisj@svn.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,34 +25,34 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "config/gimpxmlparser.h"
+#include "config/picmanxmlparser.h"
 
-#include "gimp-utils.h"
-#include "gimpcontext.h"
-#include "gimpdata.h"
-#include "gimplist.h"
-#include "gimptag.h"
-#include "gimptagcache.h"
-#include "gimptagged.h"
+#include "picman-utils.h"
+#include "picmancontext.h"
+#include "picmandata.h"
+#include "picmanlist.h"
+#include "picmantag.h"
+#include "picmantagcache.h"
+#include "picmantagged.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-#define GIMP_TAG_CACHE_FILE  "tags.xml"
+#define PICMAN_TAG_CACHE_FILE  "tags.xml"
 
-/* #define DEBUG_GIMP_TAG_CACHE  1 */
+/* #define DEBUG_PICMAN_TAG_CACHE  1 */
 
 
 enum
 {
   PROP_0,
-  PROP_GIMP
+  PROP_PICMAN
 };
 
 
@@ -62,92 +62,92 @@ typedef struct
   GQuark  checksum;
   GList  *tags;
   guint   referenced : 1;
-} GimpTagCacheRecord;
+} PicmanTagCacheRecord;
 
 typedef struct
 {
   GArray             *records;
-  GimpTagCacheRecord  current_record;
-} GimpTagCacheParseData;
+  PicmanTagCacheRecord  current_record;
+} PicmanTagCacheParseData;
 
-struct _GimpTagCachePriv
+struct _PicmanTagCachePriv
 {
   GArray *records;
   GList  *containers;
 };
 
 
-static void          gimp_tag_cache_finalize           (GObject                *object);
+static void          picman_tag_cache_finalize           (GObject                *object);
 
-static gint64        gimp_tag_cache_get_memsize        (GimpObject             *object,
+static gint64        picman_tag_cache_get_memsize        (PicmanObject             *object,
                                                         gint64                 *gui_size);
-static void          gimp_tag_cache_object_initialize  (GimpTagged             *tagged,
-                                                        GimpTagCache           *cache);
-static void          gimp_tag_cache_add_object         (GimpTagCache           *cache,
-                                                        GimpTagged             *tagged);
+static void          picman_tag_cache_object_initialize  (PicmanTagged             *tagged,
+                                                        PicmanTagCache           *cache);
+static void          picman_tag_cache_add_object         (PicmanTagCache           *cache,
+                                                        PicmanTagged             *tagged);
 
-static void          gimp_tag_cache_load_start_element (GMarkupParseContext    *context,
+static void          picman_tag_cache_load_start_element (GMarkupParseContext    *context,
                                                         const gchar            *element_name,
                                                         const gchar           **attribute_names,
                                                         const gchar           **attribute_values,
                                                         gpointer                user_data,
                                                         GError                **error);
-static void          gimp_tag_cache_load_end_element   (GMarkupParseContext    *context,
+static void          picman_tag_cache_load_end_element   (GMarkupParseContext    *context,
                                                         const gchar            *element_name,
                                                         gpointer                user_data,
                                                         GError                **error);
-static void          gimp_tag_cache_load_text          (GMarkupParseContext    *context,
+static void          picman_tag_cache_load_text          (GMarkupParseContext    *context,
                                                         const gchar            *text,
                                                         gsize                   text_len,
                                                         gpointer                user_data,
                                                         GError                **error);
-static  void         gimp_tag_cache_load_error         (GMarkupParseContext    *context,
+static  void         picman_tag_cache_load_error         (GMarkupParseContext    *context,
                                                         GError                 *error,
                                                         gpointer                user_data);
-static const gchar * gimp_tag_cache_attribute_name_to_value
+static const gchar * picman_tag_cache_attribute_name_to_value
                                                        (const gchar           **attribute_names,
                                                         const gchar           **attribute_values,
                                                         const gchar            *name);
 
-static GQuark        gimp_tag_cache_get_error_domain   (void);
+static GQuark        picman_tag_cache_get_error_domain   (void);
 
 
-G_DEFINE_TYPE (GimpTagCache, gimp_tag_cache, GIMP_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanTagCache, picman_tag_cache, PICMAN_TYPE_OBJECT)
 
-#define parent_class gimp_tag_cache_parent_class
+#define parent_class picman_tag_cache_parent_class
 
 
 static void
-gimp_tag_cache_class_init (GimpTagCacheClass *klass)
+picman_tag_cache_class_init (PicmanTagCacheClass *klass)
 {
   GObjectClass      *object_class         = G_OBJECT_CLASS (klass);
-  GimpObjectClass   *gimp_object_class    = GIMP_OBJECT_CLASS (klass);
-  GimpTagCacheClass *gimp_tag_cache_class = GIMP_TAG_CACHE_CLASS (klass);
+  PicmanObjectClass   *picman_object_class    = PICMAN_OBJECT_CLASS (klass);
+  PicmanTagCacheClass *picman_tag_cache_class = PICMAN_TAG_CACHE_CLASS (klass);
 
-  object_class->finalize         = gimp_tag_cache_finalize;
+  object_class->finalize         = picman_tag_cache_finalize;
 
-  gimp_object_class->get_memsize = gimp_tag_cache_get_memsize;
+  picman_object_class->get_memsize = picman_tag_cache_get_memsize;
 
-  g_type_class_add_private (gimp_tag_cache_class,
-                            sizeof (GimpTagCachePriv));
+  g_type_class_add_private (picman_tag_cache_class,
+                            sizeof (PicmanTagCachePriv));
 }
 
 static void
-gimp_tag_cache_init (GimpTagCache *cache)
+picman_tag_cache_init (PicmanTagCache *cache)
 {
   cache->priv = G_TYPE_INSTANCE_GET_PRIVATE (cache,
-                                             GIMP_TYPE_TAG_CACHE,
-                                             GimpTagCachePriv);
+                                             PICMAN_TYPE_TAG_CACHE,
+                                             PicmanTagCachePriv);
 
   cache->priv->records    = g_array_new (FALSE, FALSE,
-                                         sizeof (GimpTagCacheRecord));
+                                         sizeof (PicmanTagCacheRecord));
   cache->priv->containers = NULL;
 }
 
 static void
-gimp_tag_cache_finalize (GObject *object)
+picman_tag_cache_finalize (GObject *object)
 {
-  GimpTagCache *cache = GIMP_TAG_CACHE (object);
+  PicmanTagCache *cache = PICMAN_TAG_CACHE (object);
 
   if (cache->priv->records)
     {
@@ -155,8 +155,8 @@ gimp_tag_cache_finalize (GObject *object)
 
       for (i = 0; i < cache->priv->records->len; i++)
         {
-          GimpTagCacheRecord *rec = &g_array_index (cache->priv->records,
-                                                    GimpTagCacheRecord, i);
+          PicmanTagCacheRecord *rec = &g_array_index (cache->priv->records,
+                                                    PicmanTagCacheRecord, i);
 
           g_list_free_full (rec->tags, (GDestroyNotify) g_object_unref);
         }
@@ -175,66 +175,66 @@ gimp_tag_cache_finalize (GObject *object)
 }
 
 static gint64
-gimp_tag_cache_get_memsize (GimpObject *object,
+picman_tag_cache_get_memsize (PicmanObject *object,
                             gint64     *gui_size)
 {
-  GimpTagCache *cache   = GIMP_TAG_CACHE (object);
+  PicmanTagCache *cache   = PICMAN_TAG_CACHE (object);
   gint64        memsize = 0;
 
-  memsize += gimp_g_list_get_memsize (cache->priv->containers, 0);
-  memsize += cache->priv->records->len * sizeof (GimpTagCacheRecord);
+  memsize += picman_g_list_get_memsize (cache->priv->containers, 0);
+  memsize += cache->priv->records->len * sizeof (PicmanTagCacheRecord);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 /**
- * gimp_tag_cache_new:
+ * picman_tag_cache_new:
  *
- * Return value: creates new GimpTagCache object.
+ * Return value: creates new PicmanTagCache object.
  **/
-GimpTagCache *
-gimp_tag_cache_new (void)
+PicmanTagCache *
+picman_tag_cache_new (void)
 {
-  return g_object_new (GIMP_TYPE_TAG_CACHE, NULL);
+  return g_object_new (PICMAN_TYPE_TAG_CACHE, NULL);
 }
 
 static void
-gimp_tag_cache_container_add_callback (GimpTagCache  *cache,
-                                       GimpTagged    *tagged,
-                                       GimpContainer *not_used)
+picman_tag_cache_container_add_callback (PicmanTagCache  *cache,
+                                       PicmanTagged    *tagged,
+                                       PicmanContainer *not_used)
 {
-  gimp_tag_cache_add_object (cache, tagged);
+  picman_tag_cache_add_object (cache, tagged);
 }
 
 /**
- * gimp_tag_cache_add_container:
- * @cache:      a GimpTagCache object.
- * @container:  container containing GimpTagged objects.
+ * picman_tag_cache_add_container:
+ * @cache:      a PicmanTagCache object.
+ * @container:  container containing PicmanTagged objects.
  *
- * Adds container of GimpTagged objects to tag cache. Before calling this
- * function tag cache must be loaded using gimp_tag_cache_load(). When tag
+ * Adds container of PicmanTagged objects to tag cache. Before calling this
+ * function tag cache must be loaded using picman_tag_cache_load(). When tag
  * cache is saved to file, tags are collected from objects in priv->containers.
  **/
 void
-gimp_tag_cache_add_container (GimpTagCache  *cache,
-                              GimpContainer *container)
+picman_tag_cache_add_container (PicmanTagCache  *cache,
+                              PicmanContainer *container)
 {
-  g_return_if_fail (GIMP_IS_TAG_CACHE (cache));
-  g_return_if_fail (GIMP_IS_CONTAINER (container));
+  g_return_if_fail (PICMAN_IS_TAG_CACHE (cache));
+  g_return_if_fail (PICMAN_IS_CONTAINER (container));
 
   cache->priv->containers = g_list_append (cache->priv->containers, container);
-  gimp_container_foreach (container, (GFunc) gimp_tag_cache_object_initialize,
+  picman_container_foreach (container, (GFunc) picman_tag_cache_object_initialize,
                           cache);
 
   g_signal_connect_swapped (container, "add",
-                            G_CALLBACK (gimp_tag_cache_container_add_callback),
+                            G_CALLBACK (picman_tag_cache_container_add_callback),
                             cache);
 }
 
 static void
-gimp_tag_cache_add_object (GimpTagCache *cache,
-                           GimpTagged   *tagged)
+picman_tag_cache_add_object (PicmanTagCache *cache,
+                           PicmanTagged   *tagged)
 {
   gchar  *identifier;
   GQuark  identifier_quark = 0;
@@ -243,7 +243,7 @@ gimp_tag_cache_add_object (GimpTagCache *cache,
   GList  *list;
   gint    i;
 
-  identifier = gimp_tagged_get_identifier (tagged);
+  identifier = picman_tagged_get_identifier (tagged);
 
   if (identifier)
     {
@@ -255,14 +255,14 @@ gimp_tag_cache_add_object (GimpTagCache *cache,
     {
       for (i = 0; i < cache->priv->records->len; i++)
         {
-          GimpTagCacheRecord *rec = &g_array_index (cache->priv->records,
-                                                    GimpTagCacheRecord, i);
+          PicmanTagCacheRecord *rec = &g_array_index (cache->priv->records,
+                                                    PicmanTagCacheRecord, i);
 
           if (rec->identifier == identifier_quark)
             {
               for (list = rec->tags; list; list = g_list_next (list))
                 {
-                  gimp_tagged_add_tag (tagged, GIMP_TAG (list->data));
+                  picman_tagged_add_tag (tagged, PICMAN_TAG (list->data));
                 }
 
               rec->referenced = TRUE;
@@ -271,7 +271,7 @@ gimp_tag_cache_add_object (GimpTagCache *cache,
         }
     }
 
-  checksum = gimp_tagged_get_checksum (tagged);
+  checksum = picman_tagged_get_checksum (tagged);
 
   if (checksum)
     {
@@ -283,12 +283,12 @@ gimp_tag_cache_add_object (GimpTagCache *cache,
     {
       for (i = 0; i < cache->priv->records->len; i++)
         {
-          GimpTagCacheRecord *rec = &g_array_index (cache->priv->records,
-                                                    GimpTagCacheRecord, i);
+          PicmanTagCacheRecord *rec = &g_array_index (cache->priv->records,
+                                                    PicmanTagCacheRecord, i);
 
           if (rec->checksum == checksum_quark)
             {
-#if DEBUG_GIMP_TAG_CACHE
+#if DEBUG_PICMAN_TAG_CACHE
               g_printerr ("remapping identifier: %s ==> %s\n",
                           rec->identifier ? g_quark_to_string (rec->identifier) : "(NULL)",
                           identifier_quark ? g_quark_to_string (identifier_quark) : "(NULL)");
@@ -298,7 +298,7 @@ gimp_tag_cache_add_object (GimpTagCache *cache,
 
               for (list = rec->tags; list; list = g_list_next (list))
                 {
-                  gimp_tagged_add_tag (tagged, GIMP_TAG (list->data));
+                  picman_tagged_add_tag (tagged, PICMAN_TAG (list->data));
                 }
 
               rec->referenced = TRUE;
@@ -310,28 +310,28 @@ gimp_tag_cache_add_object (GimpTagCache *cache,
 }
 
 static void
-gimp_tag_cache_object_initialize (GimpTagged   *tagged,
-                                  GimpTagCache *cache)
+picman_tag_cache_object_initialize (PicmanTagged   *tagged,
+                                  PicmanTagCache *cache)
 {
-  gimp_tag_cache_add_object (cache, tagged);
+  picman_tag_cache_add_object (cache, tagged);
 }
 
 static void
-gimp_tag_cache_tagged_to_cache_record_foreach (GimpTagged  *tagged,
+picman_tag_cache_tagged_to_cache_record_foreach (PicmanTagged  *tagged,
                                                GList      **cache_records)
 {
-  gchar *identifier = gimp_tagged_get_identifier (tagged);
+  gchar *identifier = picman_tagged_get_identifier (tagged);
 
   if (identifier)
     {
-      GimpTagCacheRecord *cache_rec = g_new (GimpTagCacheRecord, 1);
+      PicmanTagCacheRecord *cache_rec = g_new (PicmanTagCacheRecord, 1);
       gchar              *checksum;
 
-      checksum = gimp_tagged_get_checksum (tagged);
+      checksum = picman_tagged_get_checksum (tagged);
 
       cache_rec->identifier = g_quark_from_string (identifier);
       cache_rec->checksum   = g_quark_from_string (checksum);
-      cache_rec->tags       = g_list_copy (gimp_tagged_get_tags (tagged));
+      cache_rec->tags       = g_list_copy (picman_tagged_get_tags (tagged));
 
       g_free (checksum);
 
@@ -342,13 +342,13 @@ gimp_tag_cache_tagged_to_cache_record_foreach (GimpTagged  *tagged,
 }
 
 /**
- * gimp_tag_cache_save:
- * @cache:      a GimpTagCache object.
+ * picman_tag_cache_save:
+ * @cache:      a PicmanTagCache object.
  *
  * Saves tag cache to cache file.
  **/
 void
-gimp_tag_cache_save (GimpTagCache *cache)
+picman_tag_cache_save (PicmanTagCache *cache)
 {
   GString *buf;
   GList   *saved_records;
@@ -357,20 +357,20 @@ gimp_tag_cache_save (GimpTagCache *cache)
   GError  *error = NULL;
   gint     i;
 
-  g_return_if_fail (GIMP_IS_TAG_CACHE (cache));
+  g_return_if_fail (PICMAN_IS_TAG_CACHE (cache));
 
   saved_records = NULL;
   for (i = 0; i < cache->priv->records->len; i++)
     {
-      GimpTagCacheRecord *current_record = &g_array_index (cache->priv->records,
-                                                           GimpTagCacheRecord, i);
+      PicmanTagCacheRecord *current_record = &g_array_index (cache->priv->records,
+                                                           PicmanTagCacheRecord, i);
 
       if (! current_record->referenced && current_record->tags)
         {
           /* keep tagged objects which have tags assigned
            * but were not loaded.
            */
-          GimpTagCacheRecord *record_copy = g_new (GimpTagCacheRecord, 1);
+          PicmanTagCacheRecord *record_copy = g_new (PicmanTagCacheRecord, 1);
 
           record_copy->identifier = current_record->identifier;
           record_copy->checksum   = current_record->checksum;
@@ -384,8 +384,8 @@ gimp_tag_cache_save (GimpTagCache *cache)
        iterator;
        iterator = g_list_next (iterator))
     {
-      gimp_container_foreach (GIMP_CONTAINER (iterator->data),
-                              (GFunc) gimp_tag_cache_tagged_to_cache_record_foreach,
+      picman_container_foreach (PICMAN_CONTAINER (iterator->data),
+                              (GFunc) picman_tag_cache_tagged_to_cache_record_foreach,
                               &saved_records);
     }
 
@@ -397,7 +397,7 @@ gimp_tag_cache_save (GimpTagCache *cache)
 
   for (iterator = saved_records; iterator; iterator = g_list_next (iterator))
     {
-      GimpTagCacheRecord *cache_rec = iterator->data;
+      PicmanTagCacheRecord *cache_rec = iterator->data;
       GList              *tag_iterator;
       gchar              *identifier_string;
       gchar              *tag_string;
@@ -412,11 +412,11 @@ gimp_tag_cache_save (GimpTagCache *cache)
            tag_iterator;
            tag_iterator = g_list_next (tag_iterator))
         {
-          GimpTag *tag = GIMP_TAG (tag_iterator->data);
+          PicmanTag *tag = PICMAN_TAG (tag_iterator->data);
 
-          if (! gimp_tag_get_internal (tag))
+          if (! picman_tag_get_internal (tag))
             {
-              tag_string = g_markup_escape_text (gimp_tag_get_name (tag), -1);
+              tag_string = g_markup_escape_text (picman_tag_get_name (tag), -1);
               g_string_append_printf (buf, "    <tag>%s</tag>\n", tag_string);
               g_free (tag_string);
             }
@@ -427,7 +427,7 @@ gimp_tag_cache_save (GimpTagCache *cache)
 
   g_string_append (buf, "</tags>\n");
 
-  filename = g_build_filename (gimp_directory (), GIMP_TAG_CACHE_FILE, NULL);
+  filename = g_build_filename (picman_directory (), PICMAN_TAG_CACHE_FILE, NULL);
 
   if (! g_file_set_contents (filename, buf->str, buf->len, &error))
     {
@@ -443,7 +443,7 @@ gimp_tag_cache_save (GimpTagCache *cache)
        iterator;
        iterator = g_list_next (iterator))
     {
-      GimpTagCacheRecord *cache_rec = iterator->data;
+      PicmanTagCacheRecord *cache_rec = iterator->data;
 
       g_list_free (cache_rec->tags);
       g_free (cache_rec);
@@ -453,39 +453,39 @@ gimp_tag_cache_save (GimpTagCache *cache)
 }
 
 /**
- * gimp_tag_cache_load:
- * @cache:      a GimpTagCache object.
+ * picman_tag_cache_load:
+ * @cache:      a PicmanTagCache object.
  *
  * Loads tag cache from file.
  **/
 void
-gimp_tag_cache_load (GimpTagCache *cache)
+picman_tag_cache_load (PicmanTagCache *cache)
 {
   gchar                 *filename;
   GError                *error = NULL;
   GMarkupParser          markup_parser;
-  GimpXmlParser         *xml_parser;
-  GimpTagCacheParseData  parse_data;
+  PicmanXmlParser         *xml_parser;
+  PicmanTagCacheParseData  parse_data;
 
-  g_return_if_fail (GIMP_IS_TAG_CACHE (cache));
+  g_return_if_fail (PICMAN_IS_TAG_CACHE (cache));
 
   /* clear any previous priv->records */
   cache->priv->records = g_array_set_size (cache->priv->records, 0);
 
-  filename = g_build_filename (gimp_directory (), GIMP_TAG_CACHE_FILE, NULL);
+  filename = g_build_filename (picman_directory (), PICMAN_TAG_CACHE_FILE, NULL);
 
-  parse_data.records = g_array_new (FALSE, FALSE, sizeof (GimpTagCacheRecord));
-  memset (&parse_data.current_record, 0, sizeof (GimpTagCacheRecord));
+  parse_data.records = g_array_new (FALSE, FALSE, sizeof (PicmanTagCacheRecord));
+  memset (&parse_data.current_record, 0, sizeof (PicmanTagCacheRecord));
 
-  markup_parser.start_element = gimp_tag_cache_load_start_element;
-  markup_parser.end_element   = gimp_tag_cache_load_end_element;
-  markup_parser.text          = gimp_tag_cache_load_text;
+  markup_parser.start_element = picman_tag_cache_load_start_element;
+  markup_parser.end_element   = picman_tag_cache_load_end_element;
+  markup_parser.text          = picman_tag_cache_load_text;
   markup_parser.passthrough   = NULL;
-  markup_parser.error         = gimp_tag_cache_load_error;
+  markup_parser.error         = picman_tag_cache_load_error;
 
-  xml_parser = gimp_xml_parser_new (&markup_parser, &parse_data);
+  xml_parser = picman_xml_parser_new (&markup_parser, &parse_data);
 
-  if (gimp_xml_parser_parse_file (xml_parser, filename, &error))
+  if (picman_xml_parser_parse_file (xml_parser, filename, &error))
     {
       cache->priv->records = g_array_append_vals (cache->priv->records,
                                                   parse_data.records->data,
@@ -498,42 +498,42 @@ gimp_tag_cache_load (GimpTagCache *cache)
     }
 
   g_free (filename);
-  gimp_xml_parser_free (xml_parser);
+  picman_xml_parser_free (xml_parser);
   g_array_free (parse_data.records, TRUE);
 }
 
 static  void
-gimp_tag_cache_load_start_element (GMarkupParseContext *context,
+picman_tag_cache_load_start_element (GMarkupParseContext *context,
                                    const gchar         *element_name,
                                    const gchar        **attribute_names,
                                    const gchar        **attribute_values,
                                    gpointer             user_data,
                                    GError             **error)
 {
-  GimpTagCacheParseData *parse_data = user_data;
+  PicmanTagCacheParseData *parse_data = user_data;
 
   if (! strcmp (element_name, "resource"))
     {
       const gchar *identifier;
       const gchar *checksum;
 
-      identifier = gimp_tag_cache_attribute_name_to_value (attribute_names,
+      identifier = picman_tag_cache_attribute_name_to_value (attribute_names,
                                                            attribute_values,
                                                            "identifier");
-      checksum   = gimp_tag_cache_attribute_name_to_value (attribute_names,
+      checksum   = picman_tag_cache_attribute_name_to_value (attribute_names,
                                                            attribute_values,
                                                            "checksum");
 
       if (! identifier)
         {
           g_set_error (error,
-                       gimp_tag_cache_get_error_domain (),
+                       picman_tag_cache_get_error_domain (),
                        1001,
                        "Resource tag does not contain required attribute identifier.");
           return;
         }
 
-      memset (&parse_data->current_record, 0, sizeof (GimpTagCacheRecord));
+      memset (&parse_data->current_record, 0, sizeof (PicmanTagCacheRecord));
 
       parse_data->current_record.identifier = g_quark_from_string (identifier);
       parse_data->current_record.checksum   = g_quark_from_string (checksum);
@@ -541,32 +541,32 @@ gimp_tag_cache_load_start_element (GMarkupParseContext *context,
 }
 
 static void
-gimp_tag_cache_load_end_element (GMarkupParseContext *context,
+picman_tag_cache_load_end_element (GMarkupParseContext *context,
                                  const gchar         *element_name,
                                  gpointer             user_data,
                                  GError             **error)
 {
-  GimpTagCacheParseData *parse_data = user_data;
+  PicmanTagCacheParseData *parse_data = user_data;
 
   if (strcmp (element_name, "resource") == 0)
     {
       parse_data->records = g_array_append_val (parse_data->records,
                                                 parse_data->current_record);
-      memset (&parse_data->current_record, 0, sizeof (GimpTagCacheRecord));
+      memset (&parse_data->current_record, 0, sizeof (PicmanTagCacheRecord));
     }
 }
 
 static void
-gimp_tag_cache_load_text (GMarkupParseContext  *context,
+picman_tag_cache_load_text (GMarkupParseContext  *context,
                           const gchar          *text,
                           gsize                 text_len,
                           gpointer              user_data,
                           GError              **error)
 {
-  GimpTagCacheParseData *parse_data = user_data;
+  PicmanTagCacheParseData *parse_data = user_data;
   const gchar           *current_element;
   gchar                  buffer[2048];
-  GimpTag               *tag;
+  PicmanTag               *tag;
 
   current_element = g_markup_parse_context_get_element (context);
 
@@ -574,7 +574,7 @@ gimp_tag_cache_load_text (GMarkupParseContext  *context,
     {
       if (text_len >= sizeof (buffer))
         {
-          g_set_error (error, gimp_tag_cache_get_error_domain (), 1002,
+          g_set_error (error, picman_tag_cache_get_error_domain (), 1002,
                        "Tag value is too long.");
           return;
         }
@@ -582,7 +582,7 @@ gimp_tag_cache_load_text (GMarkupParseContext  *context,
       memcpy (buffer, text, text_len);
       buffer[text_len] = '\0';
 
-      tag = gimp_tag_new (buffer);
+      tag = picman_tag_new (buffer);
       if (tag)
         {
           parse_data->current_record.tags = g_list_append (parse_data->current_record.tags,
@@ -597,7 +597,7 @@ gimp_tag_cache_load_text (GMarkupParseContext  *context,
 }
 
 static  void
-gimp_tag_cache_load_error (GMarkupParseContext *context,
+picman_tag_cache_load_error (GMarkupParseContext *context,
                            GError              *error,
                            gpointer             user_data)
 {
@@ -605,7 +605,7 @@ gimp_tag_cache_load_error (GMarkupParseContext *context,
 }
 
 static const gchar*
-gimp_tag_cache_attribute_name_to_value (const gchar **attribute_names,
+picman_tag_cache_attribute_name_to_value (const gchar **attribute_names,
                                         const gchar **attribute_values,
                                         const gchar  *name)
 {
@@ -624,7 +624,7 @@ gimp_tag_cache_attribute_name_to_value (const gchar **attribute_names,
 }
 
 static GQuark
-gimp_tag_cache_get_error_domain (void)
+picman_tag_cache_get_error_domain (void)
 {
-  return g_quark_from_static_string ("gimp-tag-cache-error-quark");
+  return g_quark_from_static_string ("picman-tag-cache-error-quark");
 }

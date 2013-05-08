@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewrendererlayer.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmanviewrendererlayer.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,64 +23,64 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcontainer.h"
+#include "core/picmancontainer.h"
 
-#include "text/gimptextlayer.h"
+#include "text/picmantextlayer.h"
 
-#include "gimpviewrendererlayer.h"
+#include "picmanviewrendererlayer.h"
 
 
-static void   gimp_view_renderer_layer_render (GimpViewRenderer *renderer,
+static void   picman_view_renderer_layer_render (PicmanViewRenderer *renderer,
                                                GtkWidget        *widget);
 
 
-G_DEFINE_TYPE (GimpViewRendererLayer, gimp_view_renderer_layer,
-               GIMP_TYPE_VIEW_RENDERER_DRAWABLE)
+G_DEFINE_TYPE (PicmanViewRendererLayer, picman_view_renderer_layer,
+               PICMAN_TYPE_VIEW_RENDERER_DRAWABLE)
 
-#define parent_class gimp_view_renderer_layer_parent_class
+#define parent_class picman_view_renderer_layer_parent_class
 
 
 static void
-gimp_view_renderer_layer_class_init (GimpViewRendererLayerClass *klass)
+picman_view_renderer_layer_class_init (PicmanViewRendererLayerClass *klass)
 {
-  GimpViewRendererClass *renderer_class = GIMP_VIEW_RENDERER_CLASS (klass);
+  PicmanViewRendererClass *renderer_class = PICMAN_VIEW_RENDERER_CLASS (klass);
 
-  renderer_class->render = gimp_view_renderer_layer_render;
+  renderer_class->render = picman_view_renderer_layer_render;
 }
 
 static void
-gimp_view_renderer_layer_init (GimpViewRendererLayer *renderer)
+picman_view_renderer_layer_init (PicmanViewRendererLayer *renderer)
 {
 }
 
 static void
-gimp_view_renderer_layer_render (GimpViewRenderer *renderer,
+picman_view_renderer_layer_render (PicmanViewRenderer *renderer,
                                  GtkWidget        *widget)
 {
   const gchar *stock_id = NULL;
 
-  if (gimp_layer_is_floating_sel (GIMP_LAYER (renderer->viewable)))
+  if (picman_layer_is_floating_sel (PICMAN_LAYER (renderer->viewable)))
     {
-      stock_id = GIMP_STOCK_FLOATING_SELECTION;
+      stock_id = PICMAN_STOCK_FLOATING_SELECTION;
     }
-  else if (gimp_item_is_text_layer (GIMP_ITEM (renderer->viewable)))
+  else if (picman_item_is_text_layer (PICMAN_ITEM (renderer->viewable)))
     {
-      stock_id = gimp_viewable_get_stock_id (renderer->viewable);
+      stock_id = picman_viewable_get_stock_id (renderer->viewable);
     }
   else
     {
-      GimpContainer *children = gimp_viewable_get_children (renderer->viewable);
+      PicmanContainer *children = picman_viewable_get_children (renderer->viewable);
 
-      if (children && gimp_container_get_n_children (children) == 0)
+      if (children && picman_container_get_n_children (children) == 0)
         stock_id = GTK_STOCK_DIRECTORY;
     }
 
   if (stock_id)
-    gimp_view_renderer_render_stock (renderer, widget, stock_id);
+    picman_view_renderer_render_stock (renderer, widget, stock_id);
   else
-    GIMP_VIEW_RENDERER_CLASS (parent_class)->render (renderer, widget);
+    PICMAN_VIEW_RENDERER_CLASS (parent_class)->render (renderer, widget);
 }

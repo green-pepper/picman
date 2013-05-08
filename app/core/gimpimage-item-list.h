@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,47 +15,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_ITEM_LIST_H__
-#define __GIMP_IMAGE_ITEM_LIST_H__
+#ifndef __PICMAN_IMAGE_ITEM_LIST_H__
+#define __PICMAN_IMAGE_ITEM_LIST_H__
 
 
-void    gimp_image_item_list_translate (GimpImage              *image,
+void    picman_image_item_list_translate (PicmanImage              *image,
                                         GList                  *list,
                                         gint                    offset_x,
                                         gint                    offset_y,
                                         gboolean                push_undo);
-void    gimp_image_item_list_flip      (GimpImage              *image,
+void    picman_image_item_list_flip      (PicmanImage              *image,
                                         GList                  *list,
-                                        GimpContext            *context,
-                                        GimpOrientationType     flip_type,
+                                        PicmanContext            *context,
+                                        PicmanOrientationType     flip_type,
                                         gdouble                 axis,
                                         gboolean                clip_result);
-void    gimp_image_item_list_rotate    (GimpImage              *image,
+void    picman_image_item_list_rotate    (PicmanImage              *image,
                                         GList                  *list,
-                                        GimpContext            *context,
-                                        GimpRotationType        rotate_type,
+                                        PicmanContext            *context,
+                                        PicmanRotationType        rotate_type,
                                         gdouble                 center_x,
                                         gdouble                 center_y,
                                         gboolean                clip_result);
-void    gimp_image_item_list_transform (GimpImage              *image,
+void    picman_image_item_list_transform (PicmanImage              *image,
                                         GList                  *list,
-                                        GimpContext            *context,
-                                        const GimpMatrix3      *matrix,
-                                        GimpTransformDirection  direction,
-                                        GimpInterpolationType   interpolation_type,
+                                        PicmanContext            *context,
+                                        const PicmanMatrix3      *matrix,
+                                        PicmanTransformDirection  direction,
+                                        PicmanInterpolationType   interpolation_type,
                                         gint                    recursion_level,
-                                        GimpTransformResize     clip_result,
-                                        GimpProgress           *progress);
+                                        PicmanTransformResize     clip_result,
+                                        PicmanProgress           *progress);
 
-GList * gimp_image_item_list_get_list  (const GimpImage        *image,
-                                        const GimpItem         *exclude,
-                                        GimpItemTypeMask        type,
-                                        GimpItemSet             set);
+GList * picman_image_item_list_get_list  (const PicmanImage        *image,
+                                        const PicmanItem         *exclude,
+                                        PicmanItemTypeMask        type,
+                                        PicmanItemSet             set);
 
-GList * gimp_image_item_list_filter    (const GimpItem         *exclude,
+GList * picman_image_item_list_filter    (const PicmanItem         *exclude,
                                         GList                  *list,
                                         gboolean                remove_children,
                                         gboolean                remove_locked);
 
 
-#endif /* __GIMP_IMAGE_ITEM_LIST_H__ */
+#endif /* __PICMAN_IMAGE_ITEM_LIST_H__ */

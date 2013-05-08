@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvashandle.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvashandle.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,51 +18,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_HANDLE_H__
-#define __GIMP_CANVAS_HANDLE_H__
+#ifndef __PICMAN_CANVAS_HANDLE_H__
+#define __PICMAN_CANVAS_HANDLE_H__
 
 
-#include "gimpcanvasitem.h"
+#include "picmancanvasitem.h"
 
 
-#define GIMP_TYPE_CANVAS_HANDLE            (gimp_canvas_handle_get_type ())
-#define GIMP_CANVAS_HANDLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_HANDLE, GimpCanvasHandle))
-#define GIMP_CANVAS_HANDLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_HANDLE, GimpCanvasHandleClass))
-#define GIMP_IS_CANVAS_HANDLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_HANDLE))
-#define GIMP_IS_CANVAS_HANDLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_HANDLE))
-#define GIMP_CANVAS_HANDLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_HANDLE, GimpCanvasHandleClass))
+#define PICMAN_TYPE_CANVAS_HANDLE            (picman_canvas_handle_get_type ())
+#define PICMAN_CANVAS_HANDLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_HANDLE, PicmanCanvasHandle))
+#define PICMAN_CANVAS_HANDLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_HANDLE, PicmanCanvasHandleClass))
+#define PICMAN_IS_CANVAS_HANDLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_HANDLE))
+#define PICMAN_IS_CANVAS_HANDLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_HANDLE))
+#define PICMAN_CANVAS_HANDLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_HANDLE, PicmanCanvasHandleClass))
 
 
-typedef struct _GimpCanvasHandle      GimpCanvasHandle;
-typedef struct _GimpCanvasHandleClass GimpCanvasHandleClass;
+typedef struct _PicmanCanvasHandle      PicmanCanvasHandle;
+typedef struct _PicmanCanvasHandleClass PicmanCanvasHandleClass;
 
-struct _GimpCanvasHandle
+struct _PicmanCanvasHandle
 {
-  GimpCanvasItem  parent_instance;
+  PicmanCanvasItem  parent_instance;
 };
 
-struct _GimpCanvasHandleClass
+struct _PicmanCanvasHandleClass
 {
-  GimpCanvasItemClass  parent_class;
+  PicmanCanvasItemClass  parent_class;
 };
 
 
-GType            gimp_canvas_handle_get_type     (void) G_GNUC_CONST;
+GType            picman_canvas_handle_get_type     (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_canvas_handle_new          (GimpDisplayShell *shell,
-                                                  GimpHandleType    type,
-                                                  GimpHandleAnchor  anchor,
+PicmanCanvasItem * picman_canvas_handle_new          (PicmanDisplayShell *shell,
+                                                  PicmanHandleType    type,
+                                                  PicmanHandleAnchor  anchor,
                                                   gdouble           x,
                                                   gdouble           y,
                                                   gint              width,
                                                   gint              height);
 
-void             gimp_canvas_handle_set_position (GimpCanvasItem   *handle,
+void             picman_canvas_handle_set_position (PicmanCanvasItem   *handle,
                                                   gdouble           x,
                                                   gdouble           y);
-void             gimp_canvas_handle_set_angles   (GimpCanvasItem   *handle,
+void             picman_canvas_handle_set_angles   (PicmanCanvasItem   *handle,
                                                   gdouble           start_handle,
                                                   gdouble           slice_handle);
 
 
-#endif /* __GIMP_CANVAS_HANDLE_H__ */
+#endif /* __PICMAN_CANVAS_HANDLE_H__ */

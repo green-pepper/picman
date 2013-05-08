@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,29 +22,29 @@
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimp-edit.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-new.h"
+#include "core/picman.h"
+#include "core/picman-edit.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-new.h"
 
-#include "widgets/gimpbufferview.h"
-#include "widgets/gimpcontainerview.h"
-#include "widgets/gimpcontainerview-utils.h"
+#include "widgets/picmanbufferview.h"
+#include "widgets/picmancontainerview.h"
+#include "widgets/picmancontainerview-utils.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-transform.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-transform.h"
 
 #include "buffers-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   buffers_paste (GimpBufferView *view,
+static void   buffers_paste (PicmanBufferView *view,
                              gboolean        paste_into);
 
 
@@ -54,41 +54,41 @@ void
 buffers_paste_cmd_callback (GtkAction *action,
                             gpointer   data)
 {
-  buffers_paste (GIMP_BUFFER_VIEW (data), FALSE);
+  buffers_paste (PICMAN_BUFFER_VIEW (data), FALSE);
 }
 
 void
 buffers_paste_into_cmd_callback (GtkAction *action,
                                  gpointer   data)
 {
-  buffers_paste (GIMP_BUFFER_VIEW (data), TRUE);
+  buffers_paste (PICMAN_BUFFER_VIEW (data), TRUE);
 }
 
 void
 buffers_paste_as_new_cmd_callback (GtkAction *action,
                                    gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContainer       *container;
-  GimpContext         *context;
-  GimpBuffer          *buffer;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContainer       *container;
+  PicmanContext         *context;
+  PicmanBuffer          *buffer;
 
-  container = gimp_container_view_get_container (editor->view);
-  context   = gimp_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
 
-  buffer = gimp_context_get_buffer (context);
+  buffer = picman_context_get_buffer (context);
 
-  if (buffer && gimp_container_have (container, GIMP_OBJECT (buffer)))
+  if (buffer && picman_container_have (container, PICMAN_OBJECT (buffer)))
     {
-      GimpImage *image = gimp_context_get_image (context);
+      PicmanImage *image = picman_context_get_image (context);
 
       if (image)
         {
-          GimpImage *new_image;
+          PicmanImage *new_image;
 
-          new_image = gimp_image_new_from_buffer (image->gimp, image, buffer);
-          gimp_create_display (image->gimp, new_image,
-                               GIMP_UNIT_PIXEL, 1.0);
+          new_image = picman_image_new_from_buffer (image->picman, image, buffer);
+          picman_create_display (image->picman, new_image,
+                               PICMAN_UNIT_PIXEL, 1.0);
           g_object_unref (new_image);
         }
     }
@@ -98,32 +98,32 @@ void
 buffers_delete_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
 
-  gimp_container_view_remove_active (editor->view);
+  picman_container_view_remove_active (editor->view);
 }
 
 
 /*  private functions  */
 
 static void
-buffers_paste (GimpBufferView *view,
+buffers_paste (PicmanBufferView *view,
                gboolean        paste_into)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (view);
-  GimpContainer       *container;
-  GimpContext         *context;
-  GimpBuffer          *buffer;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (view);
+  PicmanContainer       *container;
+  PicmanContext         *context;
+  PicmanBuffer          *buffer;
 
-  container = gimp_container_view_get_container (editor->view);
-  context   = gimp_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
 
-  buffer = gimp_context_get_buffer (context);
+  buffer = picman_context_get_buffer (context);
 
-  if (buffer && gimp_container_have (container, GIMP_OBJECT (buffer)))
+  if (buffer && picman_container_have (container, PICMAN_OBJECT (buffer)))
     {
-      GimpDisplay *display = gimp_context_get_display (context);
-      GimpImage   *image   = NULL;
+      PicmanDisplay *display = picman_context_get_display (context);
+      PicmanImage   *image   = NULL;
       gint         x       = -1;
       gint         y       = -1;
       gint         width   = -1;
@@ -131,24 +131,24 @@ buffers_paste (GimpBufferView *view,
 
       if (display)
         {
-          GimpDisplayShell *shell = gimp_display_get_shell (display);
+          PicmanDisplayShell *shell = picman_display_get_shell (display);
 
-          gimp_display_shell_untransform_viewport (shell,
+          picman_display_shell_untransform_viewport (shell,
                                                    &x, &y, &width, &height);
 
-          image = gimp_display_get_image (display);
+          image = picman_display_get_image (display);
         }
       else
         {
-          image = gimp_context_get_image (context);
+          image = picman_context_get_image (context);
         }
 
       if (image)
         {
-          gimp_edit_paste (image, gimp_image_get_active_drawable (image),
+          picman_edit_paste (image, picman_image_get_active_drawable (image),
                            buffer, paste_into, x, y, width, height);
 
-          gimp_image_flush (image);
+          picman_image_flush (image);
         }
     }
 }

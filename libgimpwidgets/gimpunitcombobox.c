@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1999 Peter Mattis and Spencer Kimball
  *
- * gimpunitcombobox.c
- * Copyright (C) 2004, 2008  Sven Neumann <sven@gimp.org>
+ * picmanunitcombobox.c
+ * Copyright (C) 2004, 2008  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,38 +23,38 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpunitcombobox.h"
-#include "gimpunitstore.h"
+#include "picmanunitcombobox.h"
+#include "picmanunitstore.h"
 
 
 /**
- * SECTION: gimpunitcombobox
- * @title: GimpUnitComboBox
- * @short_description: A #GtkComboBox to select a #GimpUnit.
- * @see_also: #GimpUnit, #GimpUnitStore
+ * SECTION: picmanunitcombobox
+ * @title: PicmanUnitComboBox
+ * @short_description: A #GtkComboBox to select a #PicmanUnit.
+ * @see_also: #PicmanUnit, #PicmanUnitStore
  *
- * #GimpUnitComboBox selects units stored in a #GimpUnitStore.
- * It replaces the deprecated #GimpUnitMenu.
+ * #PicmanUnitComboBox selects units stored in a #PicmanUnitStore.
+ * It replaces the deprecated #PicmanUnitMenu.
  **/
 
 
-static void  gimp_unit_combo_box_style_set (GtkWidget *widget,
+static void  picman_unit_combo_box_style_set (GtkWidget *widget,
                                             GtkStyle  *prev_style);
 
 
-G_DEFINE_TYPE (GimpUnitComboBox, gimp_unit_combo_box, GTK_TYPE_COMBO_BOX)
+G_DEFINE_TYPE (PicmanUnitComboBox, picman_unit_combo_box, GTK_TYPE_COMBO_BOX)
 
-#define parent_class gimp_unit_combo_box_parent_class
+#define parent_class picman_unit_combo_box_parent_class
 
 
 static void
-gimp_unit_combo_box_class_init (GimpUnitComboBoxClass *klass)
+picman_unit_combo_box_class_init (PicmanUnitComboBoxClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  widget_class->style_set = gimp_unit_combo_box_style_set;
+  widget_class->style_set = picman_unit_combo_box_style_set;
 
   gtk_widget_class_install_style_property (widget_class,
                                            g_param_spec_double ("label-scale",
@@ -62,11 +62,11 @@ gimp_unit_combo_box_class_init (GimpUnitComboBoxClass *klass)
                                                                 0.0,
                                                                 G_MAXDOUBLE,
                                                                 1.0,
-                                                                GIMP_PARAM_READABLE));
+                                                                PICMAN_PARAM_READABLE));
 }
 
 static void
-gimp_unit_combo_box_init (GimpUnitComboBox *combo)
+picman_unit_combo_box_init (PicmanUnitComboBox *combo)
 {
   GtkCellLayout   *layout = GTK_CELL_LAYOUT (combo);
   GtkCellRenderer *cell;
@@ -74,12 +74,12 @@ gimp_unit_combo_box_init (GimpUnitComboBox *combo)
   cell = gtk_cell_renderer_text_new ();
   gtk_cell_layout_pack_start (layout, cell, TRUE);
   gtk_cell_layout_set_attributes (layout, cell,
-                                  "text", GIMP_UNIT_STORE_UNIT_LONG_FORMAT,
+                                  "text", PICMAN_UNIT_STORE_UNIT_LONG_FORMAT,
                                   NULL);
 }
 
 static void
-gimp_unit_combo_box_style_set (GtkWidget *widget,
+picman_unit_combo_box_style_set (GtkWidget *widget,
                                GtkStyle  *prev_style)
 {
   GtkCellLayout   *layout;
@@ -99,24 +99,24 @@ gimp_unit_combo_box_style_set (GtkWidget *widget,
                        NULL);
   gtk_cell_layout_pack_start (layout, cell, TRUE);
   gtk_cell_layout_set_attributes (layout, cell,
-                                  "text",  GIMP_UNIT_STORE_UNIT_SHORT_FORMAT,
+                                  "text",  PICMAN_UNIT_STORE_UNIT_SHORT_FORMAT,
                                   NULL);
 }
 
 /**
- * gimp_unit_combo_box_new:
+ * picman_unit_combo_box_new:
  *
- * Return value: a new #GimpUnitComboBox.
+ * Return value: a new #PicmanUnitComboBox.
  **/
 GtkWidget *
-gimp_unit_combo_box_new (void)
+picman_unit_combo_box_new (void)
 {
   GtkWidget     *combo_box;
-  GimpUnitStore *store;
+  PicmanUnitStore *store;
 
-  store = gimp_unit_store_new (0);
+  store = picman_unit_store_new (0);
 
-  combo_box = g_object_new (GIMP_TYPE_UNIT_COMBO_BOX,
+  combo_box = g_object_new (PICMAN_TYPE_UNIT_COMBO_BOX,
                             "model", store,
                             NULL);
 
@@ -126,45 +126,45 @@ gimp_unit_combo_box_new (void)
 }
 
 /**
- * gimp_unit_combo_box_new_with_model:
- * @model: a GimpUnitStore
+ * picman_unit_combo_box_new_with_model:
+ * @model: a PicmanUnitStore
  *
- * Return value: a new #GimpUnitComboBox.
+ * Return value: a new #PicmanUnitComboBox.
  **/
 GtkWidget *
-gimp_unit_combo_box_new_with_model (GimpUnitStore *model)
+picman_unit_combo_box_new_with_model (PicmanUnitStore *model)
 {
-  return g_object_new (GIMP_TYPE_UNIT_COMBO_BOX,
+  return g_object_new (PICMAN_TYPE_UNIT_COMBO_BOX,
                        "model", model,
                        NULL);
 }
 
-GimpUnit
-gimp_unit_combo_box_get_active (GimpUnitComboBox *combo)
+PicmanUnit
+picman_unit_combo_box_get_active (PicmanUnitComboBox *combo)
 {
   GtkTreeIter iter;
   gint        unit;
 
-  g_return_val_if_fail (GIMP_IS_UNIT_COMBO_BOX (combo), -1);
+  g_return_val_if_fail (PICMAN_IS_UNIT_COMBO_BOX (combo), -1);
 
   gtk_combo_box_get_active_iter (GTK_COMBO_BOX (combo), &iter);
 
   gtk_tree_model_get (gtk_combo_box_get_model (GTK_COMBO_BOX (combo)), &iter,
-                      GIMP_UNIT_STORE_UNIT, &unit,
+                      PICMAN_UNIT_STORE_UNIT, &unit,
                       -1);
 
-  return (GimpUnit) unit;
+  return (PicmanUnit) unit;
 }
 
 void
-gimp_unit_combo_box_set_active (GimpUnitComboBox *combo,
-                                GimpUnit          unit)
+picman_unit_combo_box_set_active (PicmanUnitComboBox *combo,
+                                PicmanUnit          unit)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
   gboolean      iter_valid;
 
-  g_return_if_fail (GIMP_IS_UNIT_COMBO_BOX (combo));
+  g_return_if_fail (PICMAN_IS_UNIT_COMBO_BOX (combo));
 
   model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo));
 
@@ -175,10 +175,10 @@ gimp_unit_combo_box_set_active (GimpUnitComboBox *combo,
       gint iter_unit;
 
       gtk_tree_model_get (model, &iter,
-                          GIMP_UNIT_STORE_UNIT, &iter_unit,
+                          PICMAN_UNIT_STORE_UNIT, &iter_unit,
                           -1);
 
-      if (unit == (GimpUnit) iter_unit)
+      if (unit == (PicmanUnit) iter_unit)
         {
           gtk_combo_box_set_active_iter (GTK_COMBO_BOX (combo), &iter);
           break;

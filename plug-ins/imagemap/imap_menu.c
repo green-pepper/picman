@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates clickable image maps.
  *
@@ -24,7 +24,7 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "imap_about.h"
 #include "imap_circle.h"
@@ -40,7 +40,7 @@
 #include "imap_stock.h"
 #include "imap_source.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 static Menu_t _menu;
 static GtkUIManager *ui_manager;
@@ -190,8 +190,8 @@ static const GtkActionEntry entries[] = {
   { "ToolsMenu", NULL, N_("_Tools") },
   { "GridSettings", NULL, N_("Grid Settings..."), NULL, NULL,
     do_grid_settings_dialog},
-  { "UseGimpGuides", NULL, N_("Use GIMP Guides..."), NULL, NULL,
-    do_use_gimp_guides_dialog},
+  { "UsePicmanGuides", NULL, N_("Use PICMAN Guides..."), NULL, NULL,
+    do_use_picman_guides_dialog},
   { "CreateGuides", NULL, N_("Create Guides..."), NULL, NULL,
     do_create_guides_dialog},
 
@@ -205,7 +205,7 @@ static const GtkActionEntry entries[] = {
 /* Toggle items */
 static const GtkToggleActionEntry toggle_entries[] = {
   { "AreaList", NULL, N_("Area List"), NULL, NULL, NULL, TRUE },
-  { "Grid", GIMP_STOCK_GRID, N_("_Grid"), NULL, N_("Grid"), toggle_grid, FALSE }
+  { "Grid", PICMAN_STOCK_GRID, N_("_Grid"), NULL, N_("Grid"), toggle_grid, FALSE }
 };
 
 static const GtkRadioActionEntry color_entries[] = {
@@ -214,7 +214,7 @@ static const GtkRadioActionEntry color_entries[] = {
 };
 
 static const GtkRadioActionEntry mapping_entries[] = {
-  { "Arrow", GIMP_STOCK_CURSOR, N_("Arrow"), NULL,
+  { "Arrow", PICMAN_STOCK_CURSOR, N_("Arrow"), NULL,
     N_("Select existing area"), 0},
   { "Rectangle", IMAP_STOCK_RECTANGLE, N_("Rectangle"), NULL,
     N_("Define Rectangle area"), 1},
@@ -293,7 +293,7 @@ static const gchar ui_description[] =
 "      <menuitem action='Grid'/>"
 "      <menuitem action='GridSettings'/>"
 "      <separator/>"
-"      <menuitem action='UseGimpGuides'/>"
+"      <menuitem action='UsePicmanGuides'/>"
 "      <menuitem action='CreateGuides'/>"
 "    </menu>"
 "    <menu action='HelpMenu'>"

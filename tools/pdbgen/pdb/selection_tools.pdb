@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,10 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub by_color_select {
-    &std_pdb_deprecated ('gimp-image-select-color');
+    &std_pdb_deprecated ('picman-image-select-color');
 
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
@@ -26,7 +26,7 @@ sub by_color_select {
 	  desc => 'The color to select' },
 	{ name => 'threshold', type => '0 <= int32 <= 255',
 	  desc => 'Threshold in intensity levels' },
-	{ name => 'operation', type => 'enum GimpChannelOps',
+	{ name => 'operation', type => 'enum PicmanChannelOps',
 	  desc => 'The selection operation' },
 	{ name => 'antialias', type => 'boolean',
 	  desc => 'Antialiasing' },
@@ -41,14 +41,14 @@ sub by_color_select {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+  PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-  gimp_channel_select_by_color (gimp_image_get_mask (image), drawable,
+  picman_channel_select_by_color (picman_image_get_mask (image), drawable,
                                 sample_merged,
                                 &color,
                                 threshold / 255.0,
                                 FALSE /* don't select transparent */,
-                                GIMP_SELECT_CRITERION_COMPOSITE,
+                                PICMAN_SELECT_CRITERION_COMPOSITE,
                                 operation,
                                 antialias,
                                 feather,
@@ -61,7 +61,7 @@ CODE
 
 
 sub by_color_select_full {
-    &std_pdb_deprecated ('gimp-image-select-color');
+    &std_pdb_deprecated ('picman-image-select-color');
     &david_pdb_misc('2006','2.4');
 
     @inargs = (
@@ -71,7 +71,7 @@ sub by_color_select_full {
 	  desc => 'The color to select' },
 	{ name => 'threshold', type => '0 <= int32 <= 255',
 	  desc => 'Threshold in intensity levels' },
-	{ name => 'operation', type => 'enum GimpChannelOps',
+	{ name => 'operation', type => 'enum PicmanChannelOps',
 	  desc => 'The selection operation' },
 	{ name => 'antialias', type => 'boolean',
 	  desc => 'Antialiasing' },
@@ -87,7 +87,7 @@ sub by_color_select_full {
           desc => "Whether to consider transparent pixels for selection.
                    If TRUE, transparency is considered as a unique selectable
                    color." },
-        { name => 'select_criterion', type => 'enum GimpSelectCriterion',
+        { name => 'select_criterion', type => 'enum PicmanSelectCriterion',
           desc => "The criterion used to determine color similarity.
                    SELECT_CRITERION_COMPOSITE is the standard choice.
 		   " },
@@ -96,9 +96,9 @@ sub by_color_select_full {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+  PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-  gimp_channel_select_by_color (gimp_image_get_mask (image), drawable,
+  picman_channel_select_by_color (picman_image_get_mask (image), drawable,
                                 sample_merged,
                                 &color,
                                 threshold / 255.0,
@@ -116,7 +116,7 @@ CODE
 
 
 sub ellipse_select {
-    &std_pdb_deprecated ('gimp-image-select-ellipse');
+    &std_pdb_deprecated ('picman-image-select-ellipse');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -129,7 +129,7 @@ sub ellipse_select {
 	  desc => 'The width of the ellipse' },
 	{ name => 'height', type => '0 < float',
 	  desc => 'The height of the ellipse' },
-	{ name => 'operation', type => 'enum GimpChannelOps',
+	{ name => 'operation', type => 'enum PicmanChannelOps',
 	  desc => 'The selection operation' },
 	{ name => 'antialias', type => 'boolean',
 	  desc => 'Antialiasing' },
@@ -142,7 +142,7 @@ sub ellipse_select {
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_select_ellipse (gimp_image_get_mask (image),
+  picman_channel_select_ellipse (picman_image_get_mask (image),
                                (gint) x, (gint) y,
                                (gint) width, (gint) height,
                                operation,
@@ -158,7 +158,7 @@ CODE
 
 
 sub free_select {
-    &std_pdb_deprecated ('gimp-image-select-polygon');
+    &std_pdb_deprecated ('picman-image-select-polygon');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -169,7 +169,7 @@ sub free_select {
           array => { type => '2 <= int32',
                      desc => 'Number of points (count 1 coordinate as two
                               points)' } },
-	{ name => 'operation', type => 'enum GimpChannelOps',
+	{ name => 'operation', type => 'enum PicmanChannelOps',
 	  desc => 'The selection operation' },
 	{ name => 'antialias', type => 'boolean',
 	  desc => 'Antialiasing' },
@@ -182,10 +182,10 @@ sub free_select {
     %invoke = (
         code => <<'CODE'
 {
-  gimp_channel_select_polygon (gimp_image_get_mask (image),
+  picman_channel_select_polygon (picman_image_get_mask (image),
                                _("Free Select"),
                                num_segs / 2,
-                               (GimpVector2 *) segs,
+                               (PicmanVector2 *) segs,
                                operation,
                                antialias,
                                feather,
@@ -199,7 +199,7 @@ CODE
 
 
 sub fuzzy_select {
-    &std_pdb_deprecated ('gimp-image-select-contiguous-color');
+    &std_pdb_deprecated ('picman-image-select-contiguous-color');
 
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
@@ -212,7 +212,7 @@ sub fuzzy_select {
 	  	   coordinates)' },
 	{ name => 'threshold', type => '0 <= int32 <= 255',
 	  desc => 'Threshold in intensity levels' },
-	{ name => 'operation', type => 'enum GimpChannelOps',
+	{ name => 'operation', type => 'enum PicmanChannelOps',
 	  desc => 'The selection operation' },
 	{ name => 'antialias', type => 'boolean',
 	  desc => 'Antialiasing' },
@@ -227,15 +227,15 @@ sub fuzzy_select {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+  PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-  gimp_channel_select_fuzzy (gimp_image_get_mask (image),
+  picman_channel_select_fuzzy (picman_image_get_mask (image),
                              drawable,
                              sample_merged,
                              x, y,
                              threshold / 255.0,
                              FALSE /* don't select transparent */,
-                             GIMP_SELECT_CRITERION_COMPOSITE,
+                             PICMAN_SELECT_CRITERION_COMPOSITE,
                              operation,
                              antialias,
                              feather,
@@ -248,7 +248,7 @@ CODE
 
 
 sub fuzzy_select_full {
-    &std_pdb_deprecated ('gimp-image-select-contiguous-color');
+    &std_pdb_deprecated ('picman-image-select-contiguous-color');
     &david_pdb_misc("2006","2.4");
 
     @inargs = (
@@ -262,7 +262,7 @@ sub fuzzy_select_full {
 	  	   coordinates)' },
 	{ name => 'threshold', type => '0 <= int32 <= 255',
 	  desc => 'Threshold in intensity levels' },
-	{ name => 'operation', type => 'enum GimpChannelOps',
+	{ name => 'operation', type => 'enum PicmanChannelOps',
 	  desc => 'The selection operation' },
 	{ name => 'antialias', type => 'boolean',
 	  desc => 'Antialiasing' },
@@ -278,7 +278,7 @@ sub fuzzy_select_full {
           desc => "Whether to consider transparent pixels for selection.
                    If TRUE, transparency is considered as a unique selectable
                    color." },
-        { name => 'select_criterion', type => 'enum GimpSelectCriterion',
+        { name => 'select_criterion', type => 'enum PicmanSelectCriterion',
           desc => "The criterion used to determine color similarity.
                    SELECT_CRITERION_COMPOSITE is the standard choice.
 		   " },
@@ -287,9 +287,9 @@ sub fuzzy_select_full {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+  PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-  gimp_channel_select_fuzzy (gimp_image_get_mask (image),
+  picman_channel_select_fuzzy (picman_image_get_mask (image),
                              drawable,
                              sample_merged,
                              x, y,
@@ -308,7 +308,7 @@ CODE
 
 
 sub rect_select {
-    &std_pdb_deprecated ('gimp-image-select-rectangle');
+    &std_pdb_deprecated ('picman-image-select-rectangle');
 
     @inargs = (
 	{ name => 'image', type => 'image',
@@ -321,7 +321,7 @@ sub rect_select {
 	  desc => 'The width of the rectangle' },
 	{ name => 'height', type => '0 < float',
 	  desc => 'The height of the rectangle' },
-	{ name => 'operation', type => 'enum GimpChannelOps',
+	{ name => 'operation', type => 'enum PicmanChannelOps',
 	  desc => 'The selection operation' },
 	{ name => 'feather', type => 'boolean',
 	  desc => 'Feather option for selections' },
@@ -332,7 +332,7 @@ sub rect_select {
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_select_rectangle (gimp_image_get_mask (image),
+  picman_channel_select_rectangle (picman_image_get_mask (image),
                                  (gint) x, (gint) y,
                                  (gint) width, (gint) height,
                                  operation,
@@ -347,7 +347,7 @@ CODE
 
 
 sub round_rect_select {
-    &std_pdb_deprecated ('gimp-image-select-round-rectangle');
+    &std_pdb_deprecated ('picman-image-select-round-rectangle');
     &martin_pdb_misc("2006","2.4");
 
     @inargs = (
@@ -361,11 +361,11 @@ sub round_rect_select {
 	  desc => 'The width of the rectangle' },
 	{ name => 'height', type => '0 < float',
 	  desc => 'The height of the rectangle' },
-        { name => 'corner_radius_x', type => '0 < float < GIMP_MAX_IMAGE_SIZE',
+        { name => 'corner_radius_x', type => '0 < float < PICMAN_MAX_IMAGE_SIZE',
           desc => 'The corner radius in X direction' },
-        { name => 'corner_radius_y', type => '0 < float < GIMP_MAX_IMAGE_SIZE',
+        { name => 'corner_radius_y', type => '0 < float < PICMAN_MAX_IMAGE_SIZE',
           desc => 'The corner radius in Y direction' },
-	{ name => 'operation', type => 'enum GimpChannelOps',
+	{ name => 'operation', type => 'enum PicmanChannelOps',
 	  desc => 'The selection operation' },
 	{ name => 'antialias', type => 'boolean',
 	  desc => 'Antialiasing' },
@@ -380,7 +380,7 @@ sub round_rect_select {
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_channel_select_round_rect (gimp_image_get_mask (image),
+  picman_channel_select_round_rect (picman_image_get_mask (image),
                                   (gint) x, (gint) y,
                                   (gint) width, (gint) height,
                                   corner_radius_x,
@@ -397,9 +397,9 @@ CODE
 }
 
 
-@headers = qw("libgimpbase/gimpbase.h"
-              "core/gimpchannel-select.h"
-              "gimp-intl.h");
+@headers = qw("libpicmanbase/picmanbase.h"
+              "core/picmanchannel-select.h"
+              "picman-intl.h");
 
 @procs = qw(by_color_select by_color_select_full
             ellipse_select
@@ -410,7 +410,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Selection Tool procedures';
-$doc_title = 'gimpselectiontools';
+$doc_title = 'picmanselectiontools';
 $doc_short_desc = 'Access to toolbox selection tools.';
 $doc_long_desc = 'Functions giving access to toolbox selection tools.';
 

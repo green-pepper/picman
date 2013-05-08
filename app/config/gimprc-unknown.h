@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * GimpRc serialization and deserialization helpers
- * Copyright (C) 2001-2005  Sven Neumann <sven@gimp.org>
+ * PicmanRc serialization and deserialization helpers
+ * Copyright (C) 2001-2005  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,23 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_RC_UNKNOWN_H__
-#define __GIMP_RC_UNKNOWN_H__
+#ifndef __PICMAN_RC_UNKNOWN_H__
+#define __PICMAN_RC_UNKNOWN_H__
 
 
-typedef void  (* GimpConfigForeachFunc) (const gchar *key,
+typedef void  (* PicmanConfigForeachFunc) (const gchar *key,
                                          const gchar *value,
                                          gpointer     user_data);
 
 
-void          gimp_rc_add_unknown_token     (GimpConfig            *config,
+void          picman_rc_add_unknown_token     (PicmanConfig            *config,
                                              const gchar           *key,
                                              const gchar           *value);
-const gchar * gimp_rc_lookup_unknown_token  (GimpConfig            *config,
+const gchar * picman_rc_lookup_unknown_token  (PicmanConfig            *config,
                                              const gchar           *key);
-void          gimp_rc_foreach_unknown_token (GimpConfig            *config,
-                                             GimpConfigForeachFunc  func,
+void          picman_rc_foreach_unknown_token (PicmanConfig            *config,
+                                             PicmanConfigForeachFunc  func,
                                              gpointer               user_data);
 
 
-#endif  /* __GIMP_RC_UNKNOWN_H__ */
+#endif  /* __PICMAN_RC_UNKNOWN_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,19 +20,19 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "gegl/gimp-babl.h"
+#include "gegl/picman-babl.h"
 
-#include "core/gimpimage.h"
+#include "core/picmanimage.h"
 
-#include "gimpcolorframe.h"
+#include "picmancolorframe.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -47,72 +47,72 @@ enum
 
 /*  local function prototypes  */
 
-static void       gimp_color_frame_finalize      (GObject        *object);
-static void       gimp_color_frame_get_property  (GObject        *object,
+static void       picman_color_frame_finalize      (GObject        *object);
+static void       picman_color_frame_get_property  (GObject        *object,
                                                   guint           property_id,
                                                   GValue         *value,
                                                   GParamSpec     *pspec);
-static void       gimp_color_frame_set_property  (GObject        *object,
+static void       picman_color_frame_set_property  (GObject        *object,
                                                   guint           property_id,
                                                   const GValue   *value,
                                                   GParamSpec     *pspec);
 
-static void       gimp_color_frame_style_set     (GtkWidget      *widget,
+static void       picman_color_frame_style_set     (GtkWidget      *widget,
                                                   GtkStyle       *prev_style);
-static gboolean   gimp_color_frame_expose        (GtkWidget      *widget,
+static gboolean   picman_color_frame_expose        (GtkWidget      *widget,
                                                   GdkEventExpose *eevent);
 
-static void       gimp_color_frame_menu_callback (GtkWidget      *widget,
-                                                  GimpColorFrame *frame);
-static void       gimp_color_frame_update        (GimpColorFrame *frame);
+static void       picman_color_frame_menu_callback (GtkWidget      *widget,
+                                                  PicmanColorFrame *frame);
+static void       picman_color_frame_update        (PicmanColorFrame *frame);
 
 
-G_DEFINE_TYPE (GimpColorFrame, gimp_color_frame, GIMP_TYPE_FRAME)
+G_DEFINE_TYPE (PicmanColorFrame, picman_color_frame, PICMAN_TYPE_FRAME)
 
-#define parent_class gimp_color_frame_parent_class
+#define parent_class picman_color_frame_parent_class
 
 
 static void
-gimp_color_frame_class_init (GimpColorFrameClass *klass)
+picman_color_frame_class_init (PicmanColorFrameClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize     = gimp_color_frame_finalize;
-  object_class->get_property = gimp_color_frame_get_property;
-  object_class->set_property = gimp_color_frame_set_property;
+  object_class->finalize     = picman_color_frame_finalize;
+  object_class->get_property = picman_color_frame_get_property;
+  object_class->set_property = picman_color_frame_set_property;
 
-  widget_class->style_set    = gimp_color_frame_style_set;
-  widget_class->expose_event = gimp_color_frame_expose;
+  widget_class->style_set    = picman_color_frame_style_set;
+  widget_class->expose_event = picman_color_frame_expose;
 
   g_object_class_install_property (object_class, PROP_MODE,
                                    g_param_spec_enum ("mode",
                                                       NULL, NULL,
-                                                      GIMP_TYPE_COLOR_FRAME_MODE,
-                                                      GIMP_COLOR_FRAME_MODE_PIXEL,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_TYPE_COLOR_FRAME_MODE,
+                                                      PICMAN_COLOR_FRAME_MODE_PIXEL,
+                                                      PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_HAS_NUMBER,
                                    g_param_spec_boolean ("has-number",
                                                          NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_NUMBER,
                                    g_param_spec_int ("number",
                                                      NULL, NULL,
                                                      0, 256, 0,
-                                                     GIMP_PARAM_READWRITE));
+                                                     PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_HAS_COLOR_AREA,
                                    g_param_spec_boolean ("has-color-area",
                                                          NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_color_frame_init (GimpColorFrame *frame)
+picman_color_frame_init (PicmanColorFrame *frame)
 {
   GtkWidget *vbox;
   GtkWidget *vbox2;
@@ -121,14 +121,14 @@ gimp_color_frame_init (GimpColorFrame *frame)
   frame->sample_valid  = FALSE;
   frame->sample_format = babl_format ("R'G'B' u8");
 
-  gimp_rgba_set (&frame->color, 0.0, 0.0, 0.0, GIMP_OPACITY_OPAQUE);
+  picman_rgba_set (&frame->color, 0.0, 0.0, 0.0, PICMAN_OPACITY_OPAQUE);
 
-  frame->menu = gimp_enum_combo_box_new (GIMP_TYPE_COLOR_FRAME_MODE);
+  frame->menu = picman_enum_combo_box_new (PICMAN_TYPE_COLOR_FRAME_MODE);
   gtk_frame_set_label_widget (GTK_FRAME (frame), frame->menu);
   gtk_widget_show (frame->menu);
 
   g_signal_connect (frame->menu, "changed",
-                    G_CALLBACK (gimp_color_frame_menu_callback),
+                    G_CALLBACK (picman_color_frame_menu_callback),
                     frame);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
@@ -136,9 +136,9 @@ gimp_color_frame_init (GimpColorFrame *frame)
   gtk_widget_show (vbox);
 
   frame->color_area =
-    g_object_new (GIMP_TYPE_COLOR_AREA,
+    g_object_new (PICMAN_TYPE_COLOR_AREA,
                   "color",          &frame->color,
-                  "type",           GIMP_COLOR_AREA_SMALL_CHECKS,
+                  "type",           PICMAN_COLOR_AREA_SMALL_CHECKS,
                   "drag-mask",      GDK_BUTTON1_MASK,
                   "draw-border",    TRUE,
                   "height-request", 20,
@@ -150,7 +150,7 @@ gimp_color_frame_init (GimpColorFrame *frame)
   gtk_box_pack_start (GTK_BOX (vbox), vbox2, FALSE, FALSE, 0);
   gtk_widget_show (vbox2);
 
-  for (i = 0; i < GIMP_COLOR_FRAME_ROWS; i++)
+  for (i = 0; i < PICMAN_COLOR_FRAME_ROWS; i++)
     {
       GtkWidget *hbox;
 
@@ -174,9 +174,9 @@ gimp_color_frame_init (GimpColorFrame *frame)
 }
 
 static void
-gimp_color_frame_finalize (GObject *object)
+picman_color_frame_finalize (GObject *object)
 {
-  GimpColorFrame *frame = GIMP_COLOR_FRAME (object);
+  PicmanColorFrame *frame = PICMAN_COLOR_FRAME (object);
 
   if (frame->number_layout)
     {
@@ -188,12 +188,12 @@ gimp_color_frame_finalize (GObject *object)
 }
 
 static void
-gimp_color_frame_get_property (GObject    *object,
+picman_color_frame_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpColorFrame *frame = GIMP_COLOR_FRAME (object);
+  PicmanColorFrame *frame = PICMAN_COLOR_FRAME (object);
 
   switch (property_id)
     {
@@ -220,29 +220,29 @@ gimp_color_frame_get_property (GObject    *object,
 }
 
 static void
-gimp_color_frame_set_property (GObject      *object,
+picman_color_frame_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpColorFrame *frame = GIMP_COLOR_FRAME (object);
+  PicmanColorFrame *frame = PICMAN_COLOR_FRAME (object);
 
   switch (property_id)
     {
     case PROP_MODE:
-      gimp_color_frame_set_mode (frame, g_value_get_enum (value));
+      picman_color_frame_set_mode (frame, g_value_get_enum (value));
       break;
 
     case PROP_HAS_NUMBER:
-      gimp_color_frame_set_has_number (frame, g_value_get_boolean (value));
+      picman_color_frame_set_has_number (frame, g_value_get_boolean (value));
       break;
 
     case PROP_NUMBER:
-      gimp_color_frame_set_number (frame, g_value_get_int (value));
+      picman_color_frame_set_number (frame, g_value_get_int (value));
       break;
 
     case PROP_HAS_COLOR_AREA:
-      gimp_color_frame_set_has_color_area (frame, g_value_get_boolean (value));
+      picman_color_frame_set_has_color_area (frame, g_value_get_boolean (value));
       break;
 
     default:
@@ -252,10 +252,10 @@ gimp_color_frame_set_property (GObject      *object,
 }
 
 static void
-gimp_color_frame_style_set (GtkWidget *widget,
+picman_color_frame_style_set (GtkWidget *widget,
                             GtkStyle  *prev_style)
 {
-  GimpColorFrame *frame = GIMP_COLOR_FRAME (widget);
+  PicmanColorFrame *frame = PICMAN_COLOR_FRAME (widget);
 
   GTK_WIDGET_CLASS (parent_class)->style_set (widget, prev_style);
 
@@ -267,10 +267,10 @@ gimp_color_frame_style_set (GtkWidget *widget,
 }
 
 static gboolean
-gimp_color_frame_expose (GtkWidget      *widget,
+picman_color_frame_expose (GtkWidget      *widget,
                          GdkEventExpose *eevent)
 {
-  GimpColorFrame *frame = GIMP_COLOR_FRAME (widget);
+  PicmanColorFrame *frame = PICMAN_COLOR_FRAME (widget);
 
   if (frame->has_number)
     {
@@ -327,43 +327,43 @@ gimp_color_frame_expose (GtkWidget      *widget,
 /*  public functions  */
 
 /**
- * gimp_color_frame_new:
+ * picman_color_frame_new:
  *
- * Creates a new #GimpColorFrame widget.
+ * Creates a new #PicmanColorFrame widget.
  *
- * Return value: The new #GimpColorFrame widget.
+ * Return value: The new #PicmanColorFrame widget.
  **/
 GtkWidget *
-gimp_color_frame_new (void)
+picman_color_frame_new (void)
 {
-  return g_object_new (GIMP_TYPE_COLOR_FRAME, NULL);
+  return g_object_new (PICMAN_TYPE_COLOR_FRAME, NULL);
 }
 
 
 /**
- * gimp_color_frame_set_mode:
- * @frame: The #GimpColorFrame.
+ * picman_color_frame_set_mode:
+ * @frame: The #PicmanColorFrame.
  * @mode:  The new @mode.
  *
- * Sets the #GimpColorFrame's color @mode. Calling this function does
+ * Sets the #PicmanColorFrame's color @mode. Calling this function does
  * the same as selecting the @mode from the frame's #GtkOptionMenu.
  **/
 void
-gimp_color_frame_set_mode (GimpColorFrame     *frame,
-                           GimpColorFrameMode  mode)
+picman_color_frame_set_mode (PicmanColorFrame     *frame,
+                           PicmanColorFrameMode  mode)
 {
-  g_return_if_fail (GIMP_IS_COLOR_FRAME (frame));
+  g_return_if_fail (PICMAN_IS_COLOR_FRAME (frame));
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (frame->menu), mode);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (frame->menu), mode);
 
   g_object_notify (G_OBJECT (frame), "mode");
 }
 
 void
-gimp_color_frame_set_has_number (GimpColorFrame *frame,
+picman_color_frame_set_has_number (PicmanColorFrame *frame,
                                  gboolean        has_number)
 {
-  g_return_if_fail (GIMP_IS_COLOR_FRAME (frame));
+  g_return_if_fail (PICMAN_IS_COLOR_FRAME (frame));
 
   if (has_number != frame->has_number)
     {
@@ -376,10 +376,10 @@ gimp_color_frame_set_has_number (GimpColorFrame *frame,
 }
 
 void
-gimp_color_frame_set_number (GimpColorFrame *frame,
+picman_color_frame_set_number (PicmanColorFrame *frame,
                              gint            number)
 {
-  g_return_if_fail (GIMP_IS_COLOR_FRAME (frame));
+  g_return_if_fail (PICMAN_IS_COLOR_FRAME (frame));
 
   if (number != frame->number)
     {
@@ -392,10 +392,10 @@ gimp_color_frame_set_number (GimpColorFrame *frame,
 }
 
 void
-gimp_color_frame_set_has_color_area (GimpColorFrame *frame,
+picman_color_frame_set_has_color_area (PicmanColorFrame *frame,
                                      gboolean        has_color_area)
 {
-  g_return_if_fail (GIMP_IS_COLOR_FRAME (frame));
+  g_return_if_fail (PICMAN_IS_COLOR_FRAME (frame));
 
   if (has_color_area != frame->has_color_area)
     {
@@ -408,29 +408,29 @@ gimp_color_frame_set_has_color_area (GimpColorFrame *frame,
 }
 
 /**
- * gimp_color_frame_set_color:
- * @frame:         The #GimpColorFrame.
- * @sample_format: The format of the #GimpDrawable or #GimpImage the @color
+ * picman_color_frame_set_color:
+ * @frame:         The #PicmanColorFrame.
+ * @sample_format: The format of the #PicmanDrawable or #PicmanImage the @color
  *                 was picked from.
  * @color:         The @color to set.
  * @color_index:   The @color's index. This value is ignored unless
  *                 @sample_format is an indexed format.
  *
- * Sets the color sample to display in the #GimpColorFrame.
+ * Sets the color sample to display in the #PicmanColorFrame.
  **/
 void
-gimp_color_frame_set_color (GimpColorFrame *frame,
+picman_color_frame_set_color (PicmanColorFrame *frame,
                             const Babl     *sample_format,
-                            const GimpRGB  *color,
+                            const PicmanRGB  *color,
                             gint            color_index)
 {
-  g_return_if_fail (GIMP_IS_COLOR_FRAME (frame));
+  g_return_if_fail (PICMAN_IS_COLOR_FRAME (frame));
   g_return_if_fail (color != NULL);
 
   if (frame->sample_valid                   &&
       frame->sample_format == sample_format &&
       frame->color_index == color_index     &&
-      gimp_rgba_distance (&frame->color, color) < 0.0001)
+      picman_rgba_distance (&frame->color, color) < 0.0001)
     {
       frame->color = *color;
       return;
@@ -441,53 +441,53 @@ gimp_color_frame_set_color (GimpColorFrame *frame,
   frame->color         = *color;
   frame->color_index   = color_index;
 
-  gimp_color_frame_update (frame);
+  picman_color_frame_update (frame);
 }
 
 /**
- * gimp_color_frame_set_invalid:
- * @frame: The #GimpColorFrame.
+ * picman_color_frame_set_invalid:
+ * @frame: The #PicmanColorFrame.
  *
- * Tells the #GimpColorFrame that the current sample is invalid. All labels
+ * Tells the #PicmanColorFrame that the current sample is invalid. All labels
  * visible for the current color space will show "n/a" (not available).
  *
  * There is no special API for setting the frame to "valid" again because
- * this happens automatically when calling gimp_color_frame_set_color().
+ * this happens automatically when calling picman_color_frame_set_color().
  **/
 void
-gimp_color_frame_set_invalid (GimpColorFrame *frame)
+picman_color_frame_set_invalid (PicmanColorFrame *frame)
 {
-  g_return_if_fail (GIMP_IS_COLOR_FRAME (frame));
+  g_return_if_fail (PICMAN_IS_COLOR_FRAME (frame));
 
   if (! frame->sample_valid)
     return;
 
   frame->sample_valid = FALSE;
 
-  gimp_color_frame_update (frame);
+  picman_color_frame_update (frame);
 }
 
 
 /*  private functions  */
 
 static void
-gimp_color_frame_menu_callback (GtkWidget      *widget,
-                                GimpColorFrame *frame)
+picman_color_frame_menu_callback (GtkWidget      *widget,
+                                PicmanColorFrame *frame)
 {
   gint value;
 
-  if (gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &value))
+  if (picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &value))
     {
       frame->frame_mode = value;
-      gimp_color_frame_update (frame);
+      picman_color_frame_update (frame);
     }
 }
 
 static void
-gimp_color_frame_update (GimpColorFrame *frame)
+picman_color_frame_update (PicmanColorFrame *frame)
 {
-  const gchar *names[GIMP_COLOR_FRAME_ROWS]  = { NULL, };
-  gchar       *values[GIMP_COLOR_FRAME_ROWS] = { NULL, };
+  const gchar *names[PICMAN_COLOR_FRAME_ROWS]  = { NULL, };
+  gchar       *values[PICMAN_COLOR_FRAME_ROWS] = { NULL, };
   gboolean     has_alpha;
   gint         alpha_row = 3;
   guchar       r, g, b, a;
@@ -497,16 +497,16 @@ gimp_color_frame_update (GimpColorFrame *frame)
 
   if (frame->sample_valid)
     {
-      gimp_rgba_get_uchar (&frame->color, &r, &g, &b, &a);
+      picman_rgba_get_uchar (&frame->color, &r, &g, &b, &a);
 
-      gimp_color_area_set_color (GIMP_COLOR_AREA (frame->color_area),
+      picman_color_area_set_color (PICMAN_COLOR_AREA (frame->color_area),
                                  &frame->color);
     }
 
   switch (frame->frame_mode)
     {
-    case GIMP_COLOR_FRAME_MODE_PIXEL:
-      if (gimp_babl_format_get_base_type (frame->sample_format) == GIMP_GRAY)
+    case PICMAN_COLOR_FRAME_MODE_PIXEL:
+      if (picman_babl_format_get_base_type (frame->sample_format) == PICMAN_GRAY)
         {
           names[0]  = _("Value:");
 
@@ -546,7 +546,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
         }
       break;
 
-    case GIMP_COLOR_FRAME_MODE_RGB:
+    case PICMAN_COLOR_FRAME_MODE_RGB:
       names[0] = _("Red:");
       names[1] = _("Green:");
       names[2] = _("Blue:");
@@ -566,16 +566,16 @@ gimp_color_frame_update (GimpColorFrame *frame)
         values[4] = g_strdup_printf ("%.2x%.2x%.2x", r, g, b);
       break;
 
-    case GIMP_COLOR_FRAME_MODE_HSV:
+    case PICMAN_COLOR_FRAME_MODE_HSV:
       names[0] = _("Hue:");
       names[1] = _("Sat.:");
       names[2] = _("Value:");
 
       if (frame->sample_valid)
         {
-          GimpHSV hsv;
+          PicmanHSV hsv;
 
-          gimp_rgb_to_hsv (&frame->color, &hsv);
+          picman_rgb_to_hsv (&frame->color, &hsv);
 
           values[0] = g_strdup_printf ("%d \302\260", ROUND (hsv.h * 360.0));
           values[1] = g_strdup_printf ("%d %%",       ROUND (hsv.s * 100.0));
@@ -585,7 +585,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
       alpha_row = 3;
       break;
 
-    case GIMP_COLOR_FRAME_MODE_CMYK:
+    case PICMAN_COLOR_FRAME_MODE_CMYK:
       names[0] = _("Cyan:");
       names[1] = _("Magenta:");
       names[2] = _("Yellow:");
@@ -593,9 +593,9 @@ gimp_color_frame_update (GimpColorFrame *frame)
 
       if (frame->sample_valid)
         {
-          GimpCMYK cmyk;
+          PicmanCMYK cmyk;
 
-          gimp_rgb_to_cmyk (&frame->color, 1.0, &cmyk);
+          picman_rgb_to_cmyk (&frame->color, 1.0, &cmyk);
 
           values[0] = g_strdup_printf ("%d %%", ROUND (cmyk.c * 100.0));
           values[1] = g_strdup_printf ("%d %%", ROUND (cmyk.m * 100.0));
@@ -613,7 +613,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
 
       if (frame->sample_valid)
         {
-          if (frame->frame_mode == GIMP_COLOR_FRAME_MODE_PIXEL)
+          if (frame->frame_mode == PICMAN_COLOR_FRAME_MODE_PIXEL)
             values[alpha_row] = g_strdup_printf ("%d", a);
           else
             values[alpha_row] = g_strdup_printf ("%d %%",
@@ -621,7 +621,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
         }
     }
 
-  for (i = 0; i < GIMP_COLOR_FRAME_ROWS; i++)
+  for (i = 0; i < PICMAN_COLOR_FRAME_ROWS; i++)
     {
       if (names[i])
         {

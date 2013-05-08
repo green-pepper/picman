@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewrenderer-utils.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmanviewrenderer-utils.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VIEW_RENDERER_UTILS_H__
-#define __GIMP_VIEW_RENDERER_UTILS_H__
+#ifndef __PICMAN_VIEW_RENDERER_UTILS_H__
+#define __PICMAN_VIEW_RENDERER_UTILS_H__
 
 
-GType   gimp_view_renderer_type_from_viewable_type (GType viewable_type);
+GType   picman_view_renderer_type_from_viewable_type (GType viewable_type);
 
 
-#endif /* __GIMP_VIEW_RENDERER_UTILS_H__ */
+#endif /* __PICMAN_VIEW_RENDERER_UTILS_H__ */

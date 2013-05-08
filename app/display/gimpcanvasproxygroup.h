@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasproxygroup.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasproxygroup.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,46 +18,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_PROXY_GROUP_H__
-#define __GIMP_CANVAS_PROXY_GROUP_H__
+#ifndef __PICMAN_CANVAS_PROXY_GROUP_H__
+#define __PICMAN_CANVAS_PROXY_GROUP_H__
 
 
-#include "gimpcanvasgroup.h"
+#include "picmancanvasgroup.h"
 
 
-#define GIMP_TYPE_CANVAS_PROXY_GROUP            (gimp_canvas_proxy_group_get_type ())
-#define GIMP_CANVAS_PROXY_GROUP(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_PROXY_GROUP, GimpCanvasProxyGroup))
-#define GIMP_CANVAS_PROXY_GROUP_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_PROXY_GROUP, GimpCanvasProxyGroupClass))
-#define GIMP_IS_CANVAS_PROXY_GROUP(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_PROXY_GROUP))
-#define GIMP_IS_CANVAS_PROXY_GROUP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_PROXY_GROUP))
-#define GIMP_CANVAS_PROXY_GROUP_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_PROXY_GROUP, GimpCanvasProxyGroupClass))
+#define PICMAN_TYPE_CANVAS_PROXY_GROUP            (picman_canvas_proxy_group_get_type ())
+#define PICMAN_CANVAS_PROXY_GROUP(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_PROXY_GROUP, PicmanCanvasProxyGroup))
+#define PICMAN_CANVAS_PROXY_GROUP_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_PROXY_GROUP, PicmanCanvasProxyGroupClass))
+#define PICMAN_IS_CANVAS_PROXY_GROUP(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_PROXY_GROUP))
+#define PICMAN_IS_CANVAS_PROXY_GROUP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_PROXY_GROUP))
+#define PICMAN_CANVAS_PROXY_GROUP_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_PROXY_GROUP, PicmanCanvasProxyGroupClass))
 
 
-typedef struct _GimpCanvasProxyGroup      GimpCanvasProxyGroup;
-typedef struct _GimpCanvasProxyGroupClass GimpCanvasProxyGroupClass;
+typedef struct _PicmanCanvasProxyGroup      PicmanCanvasProxyGroup;
+typedef struct _PicmanCanvasProxyGroupClass PicmanCanvasProxyGroupClass;
 
-struct _GimpCanvasProxyGroup
+struct _PicmanCanvasProxyGroup
 {
-  GimpCanvasGroup  parent_instance;
+  PicmanCanvasGroup  parent_instance;
 };
 
-struct _GimpCanvasProxyGroupClass
+struct _PicmanCanvasProxyGroupClass
 {
-  GimpCanvasGroupClass  parent_class;
+  PicmanCanvasGroupClass  parent_class;
 };
 
 
-GType            gimp_canvas_proxy_group_get_type    (void) G_GNUC_CONST;
+GType            picman_canvas_proxy_group_get_type    (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_canvas_proxy_group_new         (GimpDisplayShell     *shell);
+PicmanCanvasItem * picman_canvas_proxy_group_new         (PicmanDisplayShell     *shell);
 
-void             gimp_canvas_proxy_group_add_item    (GimpCanvasProxyGroup *group,
+void             picman_canvas_proxy_group_add_item    (PicmanCanvasProxyGroup *group,
                                                       gpointer              object,
-                                                      GimpCanvasItem       *proxy_item);
-void             gimp_canvas_proxy_group_remove_item (GimpCanvasProxyGroup *group,
+                                                      PicmanCanvasItem       *proxy_item);
+void             picman_canvas_proxy_group_remove_item (PicmanCanvasProxyGroup *group,
                                                       gpointer              object);
-GimpCanvasItem * gimp_canvas_proxy_group_get_item    (GimpCanvasProxyGroup *group,
+PicmanCanvasItem * picman_canvas_proxy_group_get_item    (PicmanCanvasProxyGroup *group,
                                                       gpointer              object);
 
 
-#endif /* __GIMP_CANVAS_PROXY_GROUP_H__ */
+#endif /* __PICMAN_CANVAS_PROXY_GROUP_H__ */

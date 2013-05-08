@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpwindowstrategy.h
+ * picmanwindowstrategy.h
  * Copyright (C) 2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,37 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_WINDOW_STRATEGY_H__
-#define __GIMP_WINDOW_STRATEGY_H__
+#ifndef __PICMAN_WINDOW_STRATEGY_H__
+#define __PICMAN_WINDOW_STRATEGY_H__
 
 
-#define GIMP_TYPE_WINDOW_STRATEGY               (gimp_window_strategy_interface_get_type ())
-#define GIMP_WINDOW_STRATEGY(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_WINDOW_STRATEGY, GimpWindowStrategy))
-#define GIMP_IS_WINDOW_STRATEGY(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_WINDOW_STRATEGY))
-#define GIMP_WINDOW_STRATEGY_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GIMP_TYPE_WINDOW_STRATEGY, GimpWindowStrategyInterface))
+#define PICMAN_TYPE_WINDOW_STRATEGY               (picman_window_strategy_interface_get_type ())
+#define PICMAN_WINDOW_STRATEGY(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_WINDOW_STRATEGY, PicmanWindowStrategy))
+#define PICMAN_IS_WINDOW_STRATEGY(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_WINDOW_STRATEGY))
+#define PICMAN_WINDOW_STRATEGY_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), PICMAN_TYPE_WINDOW_STRATEGY, PicmanWindowStrategyInterface))
 
 
-typedef struct _GimpWindowStrategyInterface GimpWindowStrategyInterface;
+typedef struct _PicmanWindowStrategyInterface PicmanWindowStrategyInterface;
 
-struct _GimpWindowStrategyInterface
+struct _PicmanWindowStrategyInterface
 {
   GTypeInterface base_iface;
 
   /*  virtual functions  */
-  GtkWidget * (* show_dockable_dialog) (GimpWindowStrategy *strategy,
-                                        Gimp               *gimp,
-                                        GimpDialogFactory  *factory,
+  GtkWidget * (* show_dockable_dialog) (PicmanWindowStrategy *strategy,
+                                        Picman               *picman,
+                                        PicmanDialogFactory  *factory,
                                         GdkScreen          *screen,
                                         const gchar        *identifiers);
 };
 
 
-GType       gimp_window_strategy_interface_get_type   (void) G_GNUC_CONST;
-GtkWidget * gimp_window_strategy_show_dockable_dialog (GimpWindowStrategy *strategy,
-                                                       Gimp               *gimp,
-                                                       GimpDialogFactory  *factory,
+GType       picman_window_strategy_interface_get_type   (void) G_GNUC_CONST;
+GtkWidget * picman_window_strategy_show_dockable_dialog (PicmanWindowStrategy *strategy,
+                                                       Picman               *picman,
+                                                       PicmanDialogFactory  *factory,
                                                        GdkScreen          *screen,
                                                        const gchar        *identifiers);
 
 
-#endif  /*  __GIMP_WINDOW_STRATEGY_H__  */
+#endif  /*  __PICMAN_WINDOW_STRATEGY_H__  */

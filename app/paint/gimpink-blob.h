@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimpink-blob.h: routines for manipulating scan converted convex polygons.
+ * picmanink-blob.h: routines for manipulating scan converted convex polygons.
  * Copyright 1998, Owen Taylor <otaylor@gtk.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,69 +19,69 @@
  *
 */
 
-#ifndef __GIMP_INK_BLOB_H__
-#define __GIMP_INK_BLOB_H__
+#ifndef __PICMAN_INK_BLOB_H__
+#define __PICMAN_INK_BLOB_H__
 
 
-typedef struct _GimpBlobPoint GimpBlobPoint;
-typedef struct _GimpBlobSpan  GimpBlobSpan;
-typedef struct _GimpBlob      GimpBlob;
+typedef struct _PicmanBlobPoint PicmanBlobPoint;
+typedef struct _PicmanBlobSpan  PicmanBlobSpan;
+typedef struct _PicmanBlob      PicmanBlob;
 
-typedef GimpBlob * (* GimpBlobFunc) (gdouble xc,
+typedef PicmanBlob * (* PicmanBlobFunc) (gdouble xc,
                                      gdouble yc,
                                      gdouble xp,
                                      gdouble yp,
                                      gdouble xq,
                                      gdouble yq);
 
-struct _GimpBlobPoint
+struct _PicmanBlobPoint
 {
   gint x;
   gint y;
 };
 
-struct _GimpBlobSpan
+struct _PicmanBlobSpan
 {
   gint left;
   gint right;
 };
 
-struct _GimpBlob
+struct _PicmanBlob
 {
   gint         y;
   gint         height;
-  GimpBlobSpan data[1];
+  PicmanBlobSpan data[1];
 };
 
 
-GimpBlob * gimp_blob_polygon      (GimpBlobPoint *points,
+PicmanBlob * picman_blob_polygon      (PicmanBlobPoint *points,
                                    gint           n_points);
-GimpBlob * gimp_blob_square       (gdouble        xc,
+PicmanBlob * picman_blob_square       (gdouble        xc,
                                    gdouble        yc,
                                    gdouble        xp,
                                    gdouble        yp,
                                    gdouble        xq,
                                    gdouble        yq);
-GimpBlob * gimp_blob_diamond      (gdouble        xc,
+PicmanBlob * picman_blob_diamond      (gdouble        xc,
                                    gdouble        yc,
                                    gdouble        xp,
                                    gdouble        yp,
                                    gdouble        xq,
                                    gdouble        yq);
-GimpBlob * gimp_blob_ellipse      (gdouble        xc,
+PicmanBlob * picman_blob_ellipse      (gdouble        xc,
                                    gdouble        yc,
                                    gdouble        xp,
                                    gdouble        yp,
                                    gdouble        xq,
                                    gdouble        yq);
-void       gimp_blob_bounds       (GimpBlob      *b,
+void       picman_blob_bounds       (PicmanBlob      *b,
                                    gint          *x,
                                    gint          *y,
                                    gint          *width,
                                    gint          *height);
-GimpBlob * gimp_blob_convex_union (GimpBlob      *b1,
-                                   GimpBlob      *b2);
-GimpBlob * gimp_blob_duplicate    (GimpBlob      *b);
+PicmanBlob * picman_blob_convex_union (PicmanBlob      *b1,
+                                   PicmanBlob      *b2);
+PicmanBlob * picman_blob_duplicate    (PicmanBlob      *b);
 
 
-#endif /* __GIMP_INK_BLOB_H__ */
+#endif /* __PICMAN_INK_BLOB_H__ */

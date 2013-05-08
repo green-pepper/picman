@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorselect.c
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * picmancolorselect.c
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * based on color_notebook module
  * Copyright (C) 1998 Austin Donnelly <austin@greenend.org.uk>
@@ -27,32 +27,32 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpcolorselector.h"
-#include "gimpcolorselect.h"
-#include "gimphelpui.h"
-#include "gimppreviewarea.h"
-#include "gimpstock.h"
-#include "gimp3migration.h"
+#include "picmancolorselector.h"
+#include "picmancolorselect.h"
+#include "picmanhelpui.h"
+#include "picmanpreviewarea.h"
+#include "picmanstock.h"
+#include "picman3migration.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpcolorselect
- * @title: GimpColorSelect
- * @short_description: A #GimpColorSelector implementation.
+ * SECTION: picmancolorselect
+ * @title: PicmanColorSelect
+ * @short_description: A #PicmanColorSelector implementation.
  *
- * The #GimpColorSelect widget is an implementation of a
- * #GimpColorSelector. It shows a square area that supports
+ * The #PicmanColorSelect widget is an implementation of a
+ * #PicmanColorSelector. It shows a square area that supports
  * interactively changing two color channels and a smaller area to
  * change the third channel. You can select which channel should be
- * the third by calling gimp_color_selector_set_channel(). The widget
+ * the third by calling picman_color_selector_set_channel(). The widget
  * will then change the other two channels accordingly.
  **/
 
@@ -98,16 +98,16 @@ typedef enum
 } ColorSelectDragMode;
 
 
-#define GIMP_COLOR_SELECT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_SELECT, GimpColorSelectClass))
-#define GIMP_IS_COLOR_SELECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_SELECT))
-#define GIMP_COLOR_SELECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_SELECT, GimpColorSelectClass))
+#define PICMAN_COLOR_SELECT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_SELECT, PicmanColorSelectClass))
+#define PICMAN_IS_COLOR_SELECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_SELECT))
+#define PICMAN_COLOR_SELECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_SELECT, PicmanColorSelectClass))
 
 
-typedef struct _GimpColorSelectClass GimpColorSelectClass;
+typedef struct _PicmanColorSelectClass PicmanColorSelectClass;
 
-struct _GimpColorSelect
+struct _PicmanColorSelect
 {
-  GimpColorSelector    parent_instance;
+  PicmanColorSelector    parent_instance;
 
   GtkWidget           *toggle_box;
 
@@ -122,9 +122,9 @@ struct _GimpColorSelect
   ColorSelectDragMode  drag_mode;
 };
 
-struct _GimpColorSelectClass
+struct _PicmanColorSelectClass
 {
-  GimpColorSelectorClass  parent_class;
+  PicmanColorSelectorClass  parent_class;
 };
 
 
@@ -138,62 +138,62 @@ struct _ColorSelectFill
   gint     y;
   gint     width;
   gint     height;
-  GimpRGB  rgb;
-  GimpHSV  hsv;
+  PicmanRGB  rgb;
+  PicmanHSV  hsv;
 
   ColorSelectFillUpdateProc update;
 };
 
 
-static void   gimp_color_select_togg_visible    (GimpColorSelector  *selector,
+static void   picman_color_select_togg_visible    (PicmanColorSelector  *selector,
                                                  gboolean            visible);
-static void   gimp_color_select_togg_sensitive  (GimpColorSelector  *selector,
+static void   picman_color_select_togg_sensitive  (PicmanColorSelector  *selector,
                                                  gboolean            sensitive);
-static void   gimp_color_select_set_color       (GimpColorSelector  *selector,
-                                                 const GimpRGB      *rgb,
-                                                 const GimpHSV      *hsv);
-static void   gimp_color_select_set_channel     (GimpColorSelector  *selector,
-                                                 GimpColorSelectorChannel  channel);
+static void   picman_color_select_set_color       (PicmanColorSelector  *selector,
+                                                 const PicmanRGB      *rgb,
+                                                 const PicmanHSV      *hsv);
+static void   picman_color_select_set_channel     (PicmanColorSelector  *selector,
+                                                 PicmanColorSelectorChannel  channel);
 
-static void   gimp_color_select_channel_toggled (GtkWidget          *widget,
-                                                 GimpColorSelect    *select);
+static void   picman_color_select_channel_toggled (GtkWidget          *widget,
+                                                 PicmanColorSelect    *select);
 
-static void   gimp_color_select_update          (GimpColorSelect    *select,
+static void   picman_color_select_update          (PicmanColorSelect    *select,
                                                  ColorSelectUpdateType  type);
-static void   gimp_color_select_update_values   (GimpColorSelect    *select);
-static void   gimp_color_select_update_pos      (GimpColorSelect    *select);
+static void   picman_color_select_update_values   (PicmanColorSelect    *select);
+static void   picman_color_select_update_pos      (PicmanColorSelect    *select);
 
 #if 0
-static void   gimp_color_select_drop_color      (GtkWidget          *widget,
+static void   picman_color_select_drop_color      (GtkWidget          *widget,
                                                  gint                x,
                                                  gint                y,
-                                                 const GimpRGB      *color,
+                                                 const PicmanRGB      *color,
                                                  gpointer            data);
 #endif
 
-static void  gimp_color_select_xy_size_allocate (GtkWidget          *widget,
+static void  picman_color_select_xy_size_allocate (GtkWidget          *widget,
                                                  GtkAllocation      *allocation,
-                                                 GimpColorSelect    *select);
-static gboolean   gimp_color_select_xy_expose   (GtkWidget          *widget,
+                                                 PicmanColorSelect    *select);
+static gboolean   picman_color_select_xy_expose   (GtkWidget          *widget,
                                                  GdkEventExpose     *eevent,
-                                                 GimpColorSelect    *select);
-static gboolean   gimp_color_select_xy_events   (GtkWidget          *widget,
+                                                 PicmanColorSelect    *select);
+static gboolean   picman_color_select_xy_events   (GtkWidget          *widget,
                                                  GdkEvent           *event,
-                                                 GimpColorSelect    *select);
-static void   gimp_color_select_z_size_allocate (GtkWidget          *widget,
+                                                 PicmanColorSelect    *select);
+static void   picman_color_select_z_size_allocate (GtkWidget          *widget,
                                                  GtkAllocation      *allocation,
-                                                 GimpColorSelect    *select);
-static gboolean   gimp_color_select_z_expose    (GtkWidget          *widget,
+                                                 PicmanColorSelect    *select);
+static gboolean   picman_color_select_z_expose    (GtkWidget          *widget,
                                                  GdkEventExpose     *eevent,
-                                                 GimpColorSelect    *select);
-static gboolean   gimp_color_select_z_events    (GtkWidget          *widet,
+                                                 PicmanColorSelect    *select);
+static gboolean   picman_color_select_z_events    (GtkWidget          *widet,
                                                  GdkEvent           *event,
-                                                 GimpColorSelect    *select);
+                                                 PicmanColorSelect    *select);
 
-static void   gimp_color_select_image_fill      (GtkWidget          *widget,
+static void   picman_color_select_image_fill      (GtkWidget          *widget,
                                                  ColorSelectFillType fill_type,
-                                                 const GimpHSV      *hsv,
-                                                 const GimpRGB      *rgb);
+                                                 const PicmanHSV      *hsv,
+                                                 const PicmanRGB      *rgb);
 
 static void   color_select_update_red              (ColorSelectFill *csf);
 static void   color_select_update_green            (ColorSelectFill *csf);
@@ -209,9 +209,9 @@ static void   color_select_update_hue_value        (ColorSelectFill *csf);
 static void   color_select_update_saturation_value (ColorSelectFill *csf);
 
 
-G_DEFINE_TYPE (GimpColorSelect, gimp_color_select, GIMP_TYPE_COLOR_SELECTOR)
+G_DEFINE_TYPE (PicmanColorSelect, picman_color_select, PICMAN_TYPE_COLOR_SELECTOR)
 
-#define parent_class gimp_color_select_parent_class
+#define parent_class picman_color_select_parent_class
 
 static const ColorSelectFillUpdateProc update_procs[] =
 {
@@ -232,21 +232,21 @@ static const ColorSelectFillUpdateProc update_procs[] =
 
 
 static void
-gimp_color_select_class_init (GimpColorSelectClass *klass)
+picman_color_select_class_init (PicmanColorSelectClass *klass)
 {
-  GimpColorSelectorClass *selector_class = GIMP_COLOR_SELECTOR_CLASS (klass);
+  PicmanColorSelectorClass *selector_class = PICMAN_COLOR_SELECTOR_CLASS (klass);
 
-  selector_class->name                  = "GIMP";
-  selector_class->help_id               = "gimp-colorselector-gimp";
-  selector_class->stock_id              = GIMP_STOCK_WILBER;
-  selector_class->set_toggles_visible   = gimp_color_select_togg_visible;
-  selector_class->set_toggles_sensitive = gimp_color_select_togg_sensitive;
-  selector_class->set_color             = gimp_color_select_set_color;
-  selector_class->set_channel           = gimp_color_select_set_channel;
+  selector_class->name                  = "PICMAN";
+  selector_class->help_id               = "picman-colorselector-picman";
+  selector_class->stock_id              = PICMAN_STOCK_WILBER;
+  selector_class->set_toggles_visible   = picman_color_select_togg_visible;
+  selector_class->set_toggles_sensitive = picman_color_select_togg_sensitive;
+  selector_class->set_color             = picman_color_select_set_color;
+  selector_class->set_channel           = picman_color_select_set_channel;
 }
 
 static void
-gimp_color_select_init (GimpColorSelect *select)
+picman_color_select_init (PicmanColorSelect *select)
 {
   GtkWidget *hbox;
   GtkWidget *frame;
@@ -265,26 +265,26 @@ gimp_color_select_init (GimpColorSelect *select)
   gtk_box_pack_start (GTK_BOX (hbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
-  select->xy_color = gimp_preview_area_new ();
+  select->xy_color = picman_preview_area_new ();
   gtk_widget_set_size_request (select->xy_color,
-                               GIMP_COLOR_SELECTOR_SIZE,
-                               GIMP_COLOR_SELECTOR_SIZE);
+                               PICMAN_COLOR_SELECTOR_SIZE,
+                               PICMAN_COLOR_SELECTOR_SIZE);
   gtk_widget_set_events (select->xy_color, COLOR_AREA_EVENT_MASK);
   gtk_container_add (GTK_CONTAINER (frame), select->xy_color);
   gtk_widget_show (select->xy_color);
 
   g_signal_connect (select->xy_color, "size-allocate",
-                    G_CALLBACK (gimp_color_select_xy_size_allocate),
+                    G_CALLBACK (picman_color_select_xy_size_allocate),
                     select);
   g_signal_connect_after (select->xy_color, "expose-event",
-                          G_CALLBACK (gimp_color_select_xy_expose),
+                          G_CALLBACK (picman_color_select_xy_expose),
                           select);
   g_signal_connect (select->xy_color, "event",
-                    G_CALLBACK (gimp_color_select_xy_events),
+                    G_CALLBACK (picman_color_select_xy_events),
                     select);
 
 #if 0
-  gimp_dnd_color_dest_add (select->xy_color, gimp_color_select_drop_color,
+  picman_dnd_color_dest_add (select->xy_color, picman_color_select_drop_color,
                            select);
 #endif
 
@@ -294,21 +294,21 @@ gimp_color_select_init (GimpColorSelect *select)
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  select->z_color = gimp_preview_area_new ();
+  select->z_color = picman_preview_area_new ();
   gtk_widget_set_size_request (select->z_color,
-                               GIMP_COLOR_SELECTOR_BAR_SIZE, -1);
+                               PICMAN_COLOR_SELECTOR_BAR_SIZE, -1);
   gtk_widget_set_events (select->z_color, COLOR_AREA_EVENT_MASK);
   gtk_container_add (GTK_CONTAINER (frame), select->z_color);
   gtk_widget_show (select->z_color);
 
   g_signal_connect (select->z_color, "size-allocate",
-                    G_CALLBACK (gimp_color_select_z_size_allocate),
+                    G_CALLBACK (picman_color_select_z_size_allocate),
                     select);
   g_signal_connect_after (select->z_color, "expose-event",
-                          G_CALLBACK (gimp_color_select_z_expose),
+                          G_CALLBACK (picman_color_select_z_expose),
                           select);
   g_signal_connect (select->z_color, "event",
-                    G_CALLBACK (gimp_color_select_z_events),
+                    G_CALLBACK (picman_color_select_z_events),
                     select);
 
   select->toggle_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
@@ -317,20 +317,20 @@ gimp_color_select_init (GimpColorSelect *select)
 
   /*  channel toggles  */
   {
-    GimpColorSelectorChannel  channel;
+    PicmanColorSelectorChannel  channel;
     GEnumClass               *enum_class;
     GSList                   *group = NULL;
 
-    enum_class = g_type_class_ref (GIMP_TYPE_COLOR_SELECTOR_CHANNEL);
+    enum_class = g_type_class_ref (PICMAN_TYPE_COLOR_SELECTOR_CHANNEL);
 
-    for (channel = GIMP_COLOR_SELECTOR_HUE;
-         channel < GIMP_COLOR_SELECTOR_ALPHA;
+    for (channel = PICMAN_COLOR_SELECTOR_HUE;
+         channel < PICMAN_COLOR_SELECTOR_ALPHA;
          channel++)
       {
-        GimpEnumDesc *enum_desc;
+        PicmanEnumDesc *enum_desc;
         GtkWidget    *button;
 
-        enum_desc = gimp_enum_get_desc (enum_class, channel);
+        enum_desc = picman_enum_get_desc (enum_class, channel);
 
         button = gtk_radio_button_new_with_mnemonic (group,
                                                      gettext (enum_desc->value_desc));
@@ -343,13 +343,13 @@ gimp_color_select_init (GimpColorSelect *select)
         g_object_set_data (G_OBJECT (button), "channel",
                            GINT_TO_POINTER (channel));
 
-        if (channel == GIMP_COLOR_SELECTOR_HUE)
+        if (channel == PICMAN_COLOR_SELECTOR_HUE)
           gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
 
-        gimp_help_set_help_data (button, gettext (enum_desc->value_help), NULL);
+        picman_help_set_help_data (button, gettext (enum_desc->value_help), NULL);
 
         g_signal_connect (button, "toggled",
-                          G_CALLBACK (gimp_color_select_channel_toggled),
+                          G_CALLBACK (picman_color_select_channel_toggled),
                           select);
       }
 
@@ -358,39 +358,39 @@ gimp_color_select_init (GimpColorSelect *select)
 }
 
 static void
-gimp_color_select_togg_visible (GimpColorSelector *selector,
+picman_color_select_togg_visible (PicmanColorSelector *selector,
                                 gboolean           visible)
 {
-  GimpColorSelect *select = GIMP_COLOR_SELECT (selector);
+  PicmanColorSelect *select = PICMAN_COLOR_SELECT (selector);
 
   gtk_widget_set_visible (select->toggle_box, visible);
 }
 
 static void
-gimp_color_select_togg_sensitive (GimpColorSelector *selector,
+picman_color_select_togg_sensitive (PicmanColorSelector *selector,
                                   gboolean           sensitive)
 {
-  GimpColorSelect *select = GIMP_COLOR_SELECT (selector);
+  PicmanColorSelect *select = PICMAN_COLOR_SELECT (selector);
 
   gtk_widget_set_sensitive (select->toggle_box, sensitive);
 }
 
 static void
-gimp_color_select_set_color (GimpColorSelector *selector,
-                             const GimpRGB     *rgb,
-                             const GimpHSV     *hsv)
+picman_color_select_set_color (PicmanColorSelector *selector,
+                             const PicmanRGB     *rgb,
+                             const PicmanHSV     *hsv)
 {
-  GimpColorSelect *select = GIMP_COLOR_SELECT (selector);
+  PicmanColorSelect *select = PICMAN_COLOR_SELECT (selector);
 
-  gimp_color_select_update (select,
+  picman_color_select_update (select,
                             UPDATE_POS | UPDATE_XY_COLOR | UPDATE_Z_COLOR);
 }
 
 static void
-gimp_color_select_set_channel (GimpColorSelector        *selector,
-                               GimpColorSelectorChannel  channel)
+picman_color_select_set_channel (PicmanColorSelector        *selector,
+                               PicmanColorSelectorChannel  channel)
 {
-  GimpColorSelect *select = GIMP_COLOR_SELECT (selector);
+  PicmanColorSelect *select = PICMAN_COLOR_SELECT (selector);
 
   switch ((ColorSelectFillType) channel)
     {
@@ -428,63 +428,63 @@ gimp_color_select_set_channel (GimpColorSelector        *selector,
       break;
     }
 
-  gimp_color_select_update (select,
+  picman_color_select_update (select,
                             UPDATE_POS | UPDATE_Z_COLOR | UPDATE_XY_COLOR);
 }
 
 static void
-gimp_color_select_channel_toggled (GtkWidget       *widget,
-                                   GimpColorSelect *select)
+picman_color_select_channel_toggled (GtkWidget       *widget,
+                                   PicmanColorSelect *select)
 {
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
     {
-      GimpColorSelector        *selector = GIMP_COLOR_SELECTOR (select);
-      GimpColorSelectorChannel  channel;
+      PicmanColorSelector        *selector = PICMAN_COLOR_SELECTOR (select);
+      PicmanColorSelectorChannel  channel;
 
       channel = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (widget),
                                                     "channel"));
 
       selector->channel = channel;
-      gimp_color_select_set_channel (selector, channel);
+      picman_color_select_set_channel (selector, channel);
 
-      gimp_color_selector_channel_changed (selector);
+      picman_color_selector_channel_changed (selector);
     }
 }
 
 static void
-gimp_color_select_update (GimpColorSelect       *select,
+picman_color_select_update (PicmanColorSelect       *select,
                           ColorSelectUpdateType  update)
 {
-  GimpColorSelector *selector = GIMP_COLOR_SELECTOR (select);
+  PicmanColorSelector *selector = PICMAN_COLOR_SELECTOR (select);
 
   if (update & UPDATE_POS)
-    gimp_color_select_update_pos (select);
+    picman_color_select_update_pos (select);
 
   if (update & UPDATE_VALUES)
-    gimp_color_select_update_values (select);
+    picman_color_select_update_values (select);
 
   if (update & UPDATE_XY_COLOR)
     {
-      gimp_color_select_image_fill (select->xy_color, select->xy_color_fill,
+      picman_color_select_image_fill (select->xy_color, select->xy_color_fill,
                                     &selector->hsv, &selector->rgb);
       gtk_widget_queue_draw (select->xy_color);
     }
 
   if (update & UPDATE_Z_COLOR)
     {
-      gimp_color_select_image_fill (select->z_color, select->z_color_fill,
+      picman_color_select_image_fill (select->z_color, select->z_color_fill,
                                     &selector->hsv, &selector->rgb);
       gtk_widget_queue_draw (select->z_color);
     }
 
   if (update & UPDATE_CALLER)
-    gimp_color_selector_color_changed (GIMP_COLOR_SELECTOR (select));
+    picman_color_selector_color_changed (PICMAN_COLOR_SELECTOR (select));
 }
 
 static void
-gimp_color_select_update_values (GimpColorSelect *select)
+picman_color_select_update_values (PicmanColorSelect *select)
 {
-  GimpColorSelector *selector = GIMP_COLOR_SELECTOR (select);
+  PicmanColorSelector *selector = PICMAN_COLOR_SELECTOR (select);
 
   switch (select->z_color_fill)
     {
@@ -529,13 +529,13 @@ gimp_color_select_update_values (GimpColorSelect *select)
     case COLOR_SELECT_RED:
     case COLOR_SELECT_GREEN:
     case COLOR_SELECT_BLUE:
-      gimp_rgb_to_hsv (&selector->rgb, &selector->hsv);
+      picman_rgb_to_hsv (&selector->rgb, &selector->hsv);
       break;
 
     case COLOR_SELECT_HUE:
     case COLOR_SELECT_SATURATION:
     case COLOR_SELECT_VALUE:
-      gimp_hsv_to_rgb (&selector->hsv, &selector->rgb);
+      picman_hsv_to_rgb (&selector->hsv, &selector->rgb);
       break;
 
     default:
@@ -544,9 +544,9 @@ gimp_color_select_update_values (GimpColorSelect *select)
 }
 
 static void
-gimp_color_select_update_pos (GimpColorSelect *select)
+picman_color_select_update_pos (PicmanColorSelect *select)
 {
-  GimpColorSelector *selector = GIMP_COLOR_SELECTOR (select);
+  PicmanColorSelector *selector = PICMAN_COLOR_SELECTOR (select);
 
   switch (select->z_color_fill)
     {
@@ -589,36 +589,36 @@ gimp_color_select_update_pos (GimpColorSelect *select)
 
 #if 0
 static void
-gimp_color_select_drop_color (GtkWidget     *widget,
+picman_color_select_drop_color (GtkWidget     *widget,
                               gint           x,
                               gint           y,
-                              const GimpRGB *color,
+                              const PicmanRGB *color,
                               gpointer       data)
 {
-  GimpColorSelect *select = GIMP_COLOR_SELECT (data);
+  PicmanColorSelect *select = PICMAN_COLOR_SELECT (data);
 
   select->rgb = *color;
 
-  gimp_color_select_update_hsv_values (select);
+  picman_color_select_update_hsv_values (select);
 
-  gimp_color_select_update (select,
+  picman_color_select_update (select,
                             UPDATE_POS | UPDATE_XY_COLOR | UPDATE_Z_COLOR |
                             UPDATE_CALLER);
 }
 #endif
 
 static void
-gimp_color_select_xy_size_allocate (GtkWidget       *widget,
+picman_color_select_xy_size_allocate (GtkWidget       *widget,
                                     GtkAllocation   *allocation,
-                                    GimpColorSelect *select)
+                                    PicmanColorSelect *select)
 {
-  gimp_color_select_update (select, UPDATE_XY_COLOR);
+  picman_color_select_update (select, UPDATE_XY_COLOR);
 }
 
 static gboolean
-gimp_color_select_xy_expose (GtkWidget       *widget,
+picman_color_select_xy_expose (GtkWidget       *widget,
                              GdkEventExpose  *event,
-                             GimpColorSelect *select)
+                             PicmanColorSelect *select)
 {
   GtkAllocation  allocation;
   cairo_t       *cr;
@@ -653,9 +653,9 @@ gimp_color_select_xy_expose (GtkWidget       *widget,
 }
 
 static gboolean
-gimp_color_select_xy_events (GtkWidget       *widget,
+picman_color_select_xy_events (GtkWidget       *widget,
                              GdkEvent        *event,
-                             GimpColorSelect *select)
+                             PicmanColorSelect *select)
 {
   GtkAllocation allocation;
   gint          x, y;
@@ -721,7 +721,7 @@ gimp_color_select_xy_events (GtkWidget       *widget,
 
   gtk_widget_queue_draw (select->xy_color);
 
-  gimp_color_select_update (select, UPDATE_VALUES | UPDATE_CALLER);
+  picman_color_select_update (select, UPDATE_VALUES | UPDATE_CALLER);
 
   /* Ask for more motion events in case the event was a hint */
   gdk_event_request_motions ((GdkEventMotion *) event);
@@ -730,17 +730,17 @@ gimp_color_select_xy_events (GtkWidget       *widget,
 }
 
 static void
-gimp_color_select_z_size_allocate (GtkWidget       *widget,
+picman_color_select_z_size_allocate (GtkWidget       *widget,
                                    GtkAllocation   *allocation,
-                                   GimpColorSelect *select)
+                                   PicmanColorSelect *select)
 {
-  gimp_color_select_update (select, UPDATE_Z_COLOR);
+  picman_color_select_update (select, UPDATE_Z_COLOR);
 }
 
 static gboolean
-gimp_color_select_z_expose (GtkWidget       *widget,
+picman_color_select_z_expose (GtkWidget       *widget,
                             GdkEventExpose  *event,
-                            GimpColorSelect *select)
+                            PicmanColorSelect *select)
 {
   GtkAllocation  allocation;
   cairo_t       *cr;
@@ -771,9 +771,9 @@ gimp_color_select_z_expose (GtkWidget       *widget,
 }
 
 static gboolean
-gimp_color_select_z_events (GtkWidget       *widget,
+picman_color_select_z_events (GtkWidget       *widget,
                             GdkEvent        *event,
-                            GimpColorSelect *select)
+                            PicmanColorSelect *select)
 {
   GtkAllocation allocation;
   gint          z;
@@ -832,7 +832,7 @@ gimp_color_select_z_events (GtkWidget       *widget,
 
   gtk_widget_queue_draw (select->z_color);
 
-  gimp_color_select_update (select,
+  picman_color_select_update (select,
                             UPDATE_VALUES | UPDATE_XY_COLOR | UPDATE_CALLER);
 
   /* Ask for more motion events in case the event was a hint */
@@ -842,10 +842,10 @@ gimp_color_select_z_events (GtkWidget       *widget,
 }
 
 static void
-gimp_color_select_image_fill (GtkWidget           *preview,
+picman_color_select_image_fill (GtkWidget           *preview,
                               ColorSelectFillType  fill_type,
-                              const GimpHSV       *hsv,
-                              const GimpRGB       *rgb)
+                              const PicmanHSV       *hsv,
+                              const PicmanRGB       *rgb)
 {
   GtkAllocation   allocation;
   ColorSelectFill csf;
@@ -867,9 +867,9 @@ gimp_color_select_image_fill (GtkWidget           *preview,
         if (csf.update)
           (* csf.update) (&csf);
 
-        gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+        picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                                 0, csf.y, csf.width, 1,
-                                GIMP_RGB_IMAGE,
+                                PICMAN_RGB_IMAGE,
                                 csf.buffer, csf.width * 3);
       }
     }

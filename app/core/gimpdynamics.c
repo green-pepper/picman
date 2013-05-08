@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,18 +19,18 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimpcurve.h"
-#include "gimpdynamics.h"
-#include "gimpdynamics-load.h"
-#include "gimpdynamics-save.h"
-#include "gimpdynamicsoutput.h"
+#include "picmancurve.h"
+#include "picmandynamics.h"
+#include "picmandynamics-load.h"
+#include "picmandynamics-save.h"
+#include "picmandynamicsoutput.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define DEFAULT_NAME "Nameless dynamics"
@@ -55,207 +55,207 @@ enum
 };
 
 
-typedef struct _GimpDynamicsPrivate GimpDynamicsPrivate;
+typedef struct _PicmanDynamicsPrivate PicmanDynamicsPrivate;
 
-struct _GimpDynamicsPrivate
+struct _PicmanDynamicsPrivate
 {
-  GimpDynamicsOutput *opacity_output;
-  GimpDynamicsOutput *hardness_output;
-  GimpDynamicsOutput *force_output;
-  GimpDynamicsOutput *rate_output;
-  GimpDynamicsOutput *flow_output;
-  GimpDynamicsOutput *size_output;
-  GimpDynamicsOutput *aspect_ratio_output;
-  GimpDynamicsOutput *color_output;
-  GimpDynamicsOutput *angle_output;
-  GimpDynamicsOutput *jitter_output;
-  GimpDynamicsOutput *spacing_output;
+  PicmanDynamicsOutput *opacity_output;
+  PicmanDynamicsOutput *hardness_output;
+  PicmanDynamicsOutput *force_output;
+  PicmanDynamicsOutput *rate_output;
+  PicmanDynamicsOutput *flow_output;
+  PicmanDynamicsOutput *size_output;
+  PicmanDynamicsOutput *aspect_ratio_output;
+  PicmanDynamicsOutput *color_output;
+  PicmanDynamicsOutput *angle_output;
+  PicmanDynamicsOutput *jitter_output;
+  PicmanDynamicsOutput *spacing_output;
 };
 
 #define GET_PRIVATE(output) \
         G_TYPE_INSTANCE_GET_PRIVATE (output, \
-                                     GIMP_TYPE_DYNAMICS, \
-                                     GimpDynamicsPrivate)
+                                     PICMAN_TYPE_DYNAMICS, \
+                                     PicmanDynamicsPrivate)
 
 
-static void          gimp_dynamics_finalize      (GObject      *object);
-static void          gimp_dynamics_set_property  (GObject      *object,
+static void          picman_dynamics_finalize      (GObject      *object);
+static void          picman_dynamics_set_property  (GObject      *object,
                                                   guint         property_id,
                                                   const GValue *value,
                                                   GParamSpec   *pspec);
-static void          gimp_dynamics_get_property  (GObject      *object,
+static void          picman_dynamics_get_property  (GObject      *object,
                                                   guint         property_id,
                                                   GValue       *value,
                                                   GParamSpec   *pspec);
 static void
-       gimp_dynamics_dispatch_properties_changed (GObject      *object,
+       picman_dynamics_dispatch_properties_changed (GObject      *object,
                                                   guint         n_pspecs,
                                                   GParamSpec  **pspecs);
 
-static const gchar * gimp_dynamics_get_extension (GimpData     *data);
-static GimpData *    gimp_dynamics_duplicate     (GimpData     *data);
+static const gchar * picman_dynamics_get_extension (PicmanData     *data);
+static PicmanData *    picman_dynamics_duplicate     (PicmanData     *data);
 
-static GimpDynamicsOutput *
-                     gimp_dynamics_create_output (GimpDynamics           *dynamics,
+static PicmanDynamicsOutput *
+                     picman_dynamics_create_output (PicmanDynamics           *dynamics,
                                                   const gchar            *name,
-                                                  GimpDynamicsOutputType  type);
-static void          gimp_dynamics_output_notify (GObject          *output,
+                                                  PicmanDynamicsOutputType  type);
+static void          picman_dynamics_output_notify (GObject          *output,
                                                   const GParamSpec *pspec,
-                                                  GimpDynamics     *dynamics);
+                                                  PicmanDynamics     *dynamics);
 
 
-G_DEFINE_TYPE (GimpDynamics, gimp_dynamics,
-               GIMP_TYPE_DATA)
+G_DEFINE_TYPE (PicmanDynamics, picman_dynamics,
+               PICMAN_TYPE_DATA)
 
-#define parent_class gimp_dynamics_parent_class
+#define parent_class picman_dynamics_parent_class
 
 
 static void
-gimp_dynamics_class_init (GimpDynamicsClass *klass)
+picman_dynamics_class_init (PicmanDynamicsClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpDataClass     *data_class     = GIMP_DATA_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanDataClass     *data_class     = PICMAN_DATA_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->finalize                    = gimp_dynamics_finalize;
-  object_class->set_property                = gimp_dynamics_set_property;
-  object_class->get_property                = gimp_dynamics_get_property;
-  object_class->dispatch_properties_changed = gimp_dynamics_dispatch_properties_changed;
+  object_class->finalize                    = picman_dynamics_finalize;
+  object_class->set_property                = picman_dynamics_set_property;
+  object_class->get_property                = picman_dynamics_get_property;
+  object_class->dispatch_properties_changed = picman_dynamics_dispatch_properties_changed;
 
-  viewable_class->default_stock_id          = "gimp-dynamics";
+  viewable_class->default_stock_id          = "picman-dynamics";
 
-  data_class->save                          = gimp_dynamics_save;
-  data_class->get_extension                 = gimp_dynamics_get_extension;
-  data_class->duplicate                     = gimp_dynamics_duplicate;
+  data_class->save                          = picman_dynamics_save;
+  data_class->get_extension                 = picman_dynamics_get_extension;
+  data_class->duplicate                     = picman_dynamics_duplicate;
 
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_NAME,
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_NAME,
                                    "name", NULL,
                                    DEFAULT_NAME,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_OPACITY_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_OPACITY_OUTPUT,
                                    "opacity-output", NULL,
-                                   GIMP_TYPE_DYNAMICS_OUTPUT,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_DYNAMICS_OUTPUT,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_FORCE_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_FORCE_OUTPUT,
                                    "force-output", NULL,
-                                   GIMP_TYPE_DYNAMICS_OUTPUT,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_DYNAMICS_OUTPUT,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_HARDNESS_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_HARDNESS_OUTPUT,
                                    "hardness-output", NULL,
-                                   GIMP_TYPE_DYNAMICS_OUTPUT,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_DYNAMICS_OUTPUT,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_RATE_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_RATE_OUTPUT,
                                    "rate-output", NULL,
-                                   GIMP_TYPE_DYNAMICS_OUTPUT,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_DYNAMICS_OUTPUT,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_FLOW_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_FLOW_OUTPUT,
                                    "flow-output", NULL,
-                                   GIMP_TYPE_DYNAMICS_OUTPUT,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_DYNAMICS_OUTPUT,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_SIZE_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_SIZE_OUTPUT,
                                    "size-output", NULL,
-                                   GIMP_TYPE_DYNAMICS_OUTPUT,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_DYNAMICS_OUTPUT,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_ASPECT_RATIO_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_ASPECT_RATIO_OUTPUT,
                                    "aspect-ratio-output", NULL,
-                                   GIMP_TYPE_DYNAMICS_OUTPUT,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_DYNAMICS_OUTPUT,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_COLOR_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_COLOR_OUTPUT,
                                    "color-output", NULL,
-                                   GIMP_TYPE_DYNAMICS_OUTPUT,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_DYNAMICS_OUTPUT,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_ANGLE_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_ANGLE_OUTPUT,
                                    "angle-output", NULL,
-                                   GIMP_TYPE_DYNAMICS_OUTPUT,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_DYNAMICS_OUTPUT,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_JITTER_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_JITTER_OUTPUT,
                                    "jitter-output", NULL,
-                                   GIMP_TYPE_DYNAMICS_OUTPUT,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_DYNAMICS_OUTPUT,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_SPACING_OUTPUT,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_SPACING_OUTPUT,
                                    "spacing-output", NULL,
-                                   GIMP_TYPE_DYNAMICS_OUTPUT,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_DYNAMICS_OUTPUT,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  g_type_class_add_private (klass, sizeof (GimpDynamicsPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanDynamicsPrivate));
 }
 
 static void
-gimp_dynamics_init (GimpDynamics *dynamics)
+picman_dynamics_init (PicmanDynamics *dynamics)
 {
-  GimpDynamicsPrivate *private = GET_PRIVATE (dynamics);
+  PicmanDynamicsPrivate *private = GET_PRIVATE (dynamics);
 
   private->opacity_output =
-    gimp_dynamics_create_output (dynamics,
+    picman_dynamics_create_output (dynamics,
                                  "opacity-output",
-                                 GIMP_DYNAMICS_OUTPUT_OPACITY);
+                                 PICMAN_DYNAMICS_OUTPUT_OPACITY);
 
   private->force_output =
-    gimp_dynamics_create_output (dynamics,
+    picman_dynamics_create_output (dynamics,
                                  "force-output",
-                                 GIMP_DYNAMICS_OUTPUT_FORCE);
+                                 PICMAN_DYNAMICS_OUTPUT_FORCE);
 
   private->hardness_output =
-    gimp_dynamics_create_output (dynamics,
+    picman_dynamics_create_output (dynamics,
                                  "hardness-output",
-                                 GIMP_DYNAMICS_OUTPUT_HARDNESS);
+                                 PICMAN_DYNAMICS_OUTPUT_HARDNESS);
 
   private->rate_output =
-    gimp_dynamics_create_output (dynamics,
+    picman_dynamics_create_output (dynamics,
                                  "rate-output",
-                                 GIMP_DYNAMICS_OUTPUT_RATE);
+                                 PICMAN_DYNAMICS_OUTPUT_RATE);
 
   private->flow_output =
-    gimp_dynamics_create_output (dynamics,
+    picman_dynamics_create_output (dynamics,
                                  "flow-output",
-                                 GIMP_DYNAMICS_OUTPUT_RATE);
+                                 PICMAN_DYNAMICS_OUTPUT_RATE);
 
   private->size_output =
-    gimp_dynamics_create_output (dynamics,
+    picman_dynamics_create_output (dynamics,
                                  "size-output",
-                                 GIMP_DYNAMICS_OUTPUT_SIZE);
+                                 PICMAN_DYNAMICS_OUTPUT_SIZE);
 
   private->aspect_ratio_output =
-    gimp_dynamics_create_output (dynamics,
+    picman_dynamics_create_output (dynamics,
                                  "aspect-ratio-output",
-                                 GIMP_DYNAMICS_OUTPUT_ASPECT_RATIO);
+                                 PICMAN_DYNAMICS_OUTPUT_ASPECT_RATIO);
 
   private->color_output =
-    gimp_dynamics_create_output (dynamics,
+    picman_dynamics_create_output (dynamics,
                                  "color-output",
-                                 GIMP_DYNAMICS_OUTPUT_COLOR);
+                                 PICMAN_DYNAMICS_OUTPUT_COLOR);
 
   private->angle_output =
-    gimp_dynamics_create_output (dynamics,
+    picman_dynamics_create_output (dynamics,
                                  "angle-output",
-                                 GIMP_DYNAMICS_OUTPUT_ANGLE);
+                                 PICMAN_DYNAMICS_OUTPUT_ANGLE);
 
   private->jitter_output =
-    gimp_dynamics_create_output (dynamics,
+    picman_dynamics_create_output (dynamics,
                                  "jitter-output",
-                                 GIMP_DYNAMICS_OUTPUT_JITTER);
+                                 PICMAN_DYNAMICS_OUTPUT_JITTER);
 
   private->spacing_output =
-    gimp_dynamics_create_output (dynamics,
+    picman_dynamics_create_output (dynamics,
                                  "spacing-output",
-                                 GIMP_DYNAMICS_OUTPUT_SPACING);
+                                 PICMAN_DYNAMICS_OUTPUT_SPACING);
 }
 
 static void
-gimp_dynamics_finalize (GObject *object)
+picman_dynamics_finalize (GObject *object)
 {
-  GimpDynamicsPrivate *private = GET_PRIVATE (object);
+  PicmanDynamicsPrivate *private = GET_PRIVATE (object);
 
   g_object_unref (private->opacity_output);
   g_object_unref (private->force_output);
@@ -273,19 +273,19 @@ gimp_dynamics_finalize (GObject *object)
 }
 
 static void
-gimp_dynamics_set_property (GObject      *object,
+picman_dynamics_set_property (GObject      *object,
                             guint         property_id,
                             const GValue *value,
                             GParamSpec   *pspec)
 {
-  GimpDynamicsPrivate *private     = GET_PRIVATE (object);
-  GimpDynamicsOutput  *src_output  = NULL;
-  GimpDynamicsOutput  *dest_output = NULL;
+  PicmanDynamicsPrivate *private     = GET_PRIVATE (object);
+  PicmanDynamicsOutput  *src_output  = NULL;
+  PicmanDynamicsOutput  *dest_output = NULL;
 
   switch (property_id)
     {
     case PROP_NAME:
-      gimp_object_set_name (GIMP_OBJECT (object), g_value_get_string (value));
+      picman_object_set_name (PICMAN_OBJECT (object), g_value_get_string (value));
       break;
 
     case PROP_OPACITY_OUTPUT:
@@ -350,24 +350,24 @@ gimp_dynamics_set_property (GObject      *object,
 
   if (src_output && dest_output)
     {
-      gimp_config_copy (GIMP_CONFIG (src_output),
-                        GIMP_CONFIG (dest_output),
-                        GIMP_CONFIG_PARAM_SERIALIZE);
+      picman_config_copy (PICMAN_CONFIG (src_output),
+                        PICMAN_CONFIG (dest_output),
+                        PICMAN_CONFIG_PARAM_SERIALIZE);
     }
 }
 
 static void
-gimp_dynamics_get_property (GObject    *object,
+picman_dynamics_get_property (GObject    *object,
                             guint       property_id,
                             GValue     *value,
                             GParamSpec *pspec)
 {
-  GimpDynamicsPrivate *private = GET_PRIVATE (object);
+  PicmanDynamicsPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
     case PROP_NAME:
-      g_value_set_string (value, gimp_object_get_name (object));
+      g_value_set_string (value, picman_object_get_name (object));
       break;
 
     case PROP_OPACITY_OUTPUT:
@@ -421,7 +421,7 @@ gimp_dynamics_get_property (GObject    *object,
 }
 
 static void
-gimp_dynamics_dispatch_properties_changed (GObject     *object,
+picman_dynamics_dispatch_properties_changed (GObject     *object,
                                            guint        n_pspecs,
                                            GParamSpec **pspecs)
 {
@@ -432,57 +432,57 @@ gimp_dynamics_dispatch_properties_changed (GObject     *object,
 
   for (i = 0; i < n_pspecs; i++)
     {
-      if (pspecs[i]->flags & GIMP_CONFIG_PARAM_SERIALIZE)
+      if (pspecs[i]->flags & PICMAN_CONFIG_PARAM_SERIALIZE)
         {
-          gimp_data_dirty (GIMP_DATA (object));
+          picman_data_dirty (PICMAN_DATA (object));
           break;
         }
     }
 }
 
 static const gchar *
-gimp_dynamics_get_extension (GimpData *data)
+picman_dynamics_get_extension (PicmanData *data)
 {
-  return GIMP_DYNAMICS_FILE_EXTENSION;
+  return PICMAN_DYNAMICS_FILE_EXTENSION;
 }
 
-static GimpData *
-gimp_dynamics_duplicate (GimpData *data)
+static PicmanData *
+picman_dynamics_duplicate (PicmanData *data)
 {
-  GimpData *dest = g_object_new (GIMP_TYPE_DYNAMICS, NULL);
+  PicmanData *dest = g_object_new (PICMAN_TYPE_DYNAMICS, NULL);
 
-  gimp_config_copy (GIMP_CONFIG (data),
-                    GIMP_CONFIG (dest), 0);
+  picman_config_copy (PICMAN_CONFIG (data),
+                    PICMAN_CONFIG (dest), 0);
 
-  return GIMP_DATA (dest);
+  return PICMAN_DATA (dest);
 }
 
 
 /*  public functions  */
 
-GimpData *
-gimp_dynamics_new (GimpContext *context,
+PicmanData *
+picman_dynamics_new (PicmanContext *context,
                    const gchar *name)
 {
   g_return_val_if_fail (name != NULL, NULL);
   g_return_val_if_fail (name[0] != '\0', NULL);
 
-  return g_object_new (GIMP_TYPE_DYNAMICS,
+  return g_object_new (PICMAN_TYPE_DYNAMICS,
                        "name", name,
                        NULL);
 }
 
-GimpData *
-gimp_dynamics_get_standard (GimpContext *context)
+PicmanData *
+picman_dynamics_get_standard (PicmanContext *context)
 {
-  static GimpData *standard_dynamics = NULL;
+  static PicmanData *standard_dynamics = NULL;
 
   if (! standard_dynamics)
     {
-      standard_dynamics = gimp_dynamics_new (context, "Standard dynamics");
+      standard_dynamics = picman_dynamics_new (context, "Standard dynamics");
 
-      gimp_data_clean (standard_dynamics);
-      gimp_data_make_internal (standard_dynamics, "gimp-dynamics-standard");
+      picman_data_clean (standard_dynamics);
+      picman_data_make_internal (standard_dynamics, "picman-dynamics-standard");
 
       g_object_add_weak_pointer (G_OBJECT (standard_dynamics),
                                  (gpointer *) &standard_dynamics);
@@ -491,59 +491,59 @@ gimp_dynamics_get_standard (GimpContext *context)
   return standard_dynamics;
 }
 
-GimpDynamicsOutput *
-gimp_dynamics_get_output (GimpDynamics           *dynamics,
-                          GimpDynamicsOutputType  type_id)
+PicmanDynamicsOutput *
+picman_dynamics_get_output (PicmanDynamics           *dynamics,
+                          PicmanDynamicsOutputType  type_id)
 {
-  GimpDynamicsPrivate *private;
+  PicmanDynamicsPrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_DYNAMICS (dynamics), NULL);
+  g_return_val_if_fail (PICMAN_IS_DYNAMICS (dynamics), NULL);
 
   private = GET_PRIVATE (dynamics);
 
   switch (type_id)
     {
-    case GIMP_DYNAMICS_OUTPUT_OPACITY:
+    case PICMAN_DYNAMICS_OUTPUT_OPACITY:
       return private->opacity_output;
       break;
 
-    case GIMP_DYNAMICS_OUTPUT_FORCE:
+    case PICMAN_DYNAMICS_OUTPUT_FORCE:
       return private->force_output;
       break;
 
-    case GIMP_DYNAMICS_OUTPUT_HARDNESS:
+    case PICMAN_DYNAMICS_OUTPUT_HARDNESS:
       return private->hardness_output;
       break;
 
-    case GIMP_DYNAMICS_OUTPUT_RATE:
+    case PICMAN_DYNAMICS_OUTPUT_RATE:
       return private->rate_output;
       break;
 
-    case GIMP_DYNAMICS_OUTPUT_FLOW:
+    case PICMAN_DYNAMICS_OUTPUT_FLOW:
       return private->flow_output;
       break;
 
-    case GIMP_DYNAMICS_OUTPUT_SIZE:
+    case PICMAN_DYNAMICS_OUTPUT_SIZE:
       return private->size_output;
       break;
 
-    case GIMP_DYNAMICS_OUTPUT_ASPECT_RATIO:
+    case PICMAN_DYNAMICS_OUTPUT_ASPECT_RATIO:
       return private->aspect_ratio_output;
       break;
 
-    case GIMP_DYNAMICS_OUTPUT_COLOR:
+    case PICMAN_DYNAMICS_OUTPUT_COLOR:
       return private->color_output;
       break;
 
-    case GIMP_DYNAMICS_OUTPUT_ANGLE:
+    case PICMAN_DYNAMICS_OUTPUT_ANGLE:
       return private->angle_output;
       break;
 
-    case GIMP_DYNAMICS_OUTPUT_JITTER:
+    case PICMAN_DYNAMICS_OUTPUT_JITTER:
       return private->jitter_output;
       break;
 
-    case GIMP_DYNAMICS_OUTPUT_SPACING:
+    case PICMAN_DYNAMICS_OUTPUT_SPACING:
       return private->spacing_output;
       break;
 
@@ -554,77 +554,77 @@ gimp_dynamics_get_output (GimpDynamics           *dynamics,
 }
 
 gdouble
-gimp_dynamics_get_linear_value (GimpDynamics           *dynamics,
-                                GimpDynamicsOutputType  type,
-                                const GimpCoords       *coords,
-                                GimpPaintOptions       *options,
+picman_dynamics_get_linear_value (PicmanDynamics           *dynamics,
+                                PicmanDynamicsOutputType  type,
+                                const PicmanCoords       *coords,
+                                PicmanPaintOptions       *options,
                                 gdouble                 fade_point)
 {
-  GimpDynamicsOutput *output;
+  PicmanDynamicsOutput *output;
 
-  g_return_val_if_fail (GIMP_IS_DYNAMICS (dynamics), 0.0);
+  g_return_val_if_fail (PICMAN_IS_DYNAMICS (dynamics), 0.0);
 
-  output = gimp_dynamics_get_output (dynamics, type);
+  output = picman_dynamics_get_output (dynamics, type);
 
-  return gimp_dynamics_output_get_linear_value (output, coords,
+  return picman_dynamics_output_get_linear_value (output, coords,
                                                 options, fade_point);
 }
 
 gdouble
-gimp_dynamics_get_angular_value (GimpDynamics           *dynamics,
-                                 GimpDynamicsOutputType  type,
-                                 const GimpCoords       *coords,
-                                 GimpPaintOptions       *options,
+picman_dynamics_get_angular_value (PicmanDynamics           *dynamics,
+                                 PicmanDynamicsOutputType  type,
+                                 const PicmanCoords       *coords,
+                                 PicmanPaintOptions       *options,
                                  gdouble                 fade_point)
 {
-  GimpDynamicsOutput *output;
+  PicmanDynamicsOutput *output;
 
-  g_return_val_if_fail (GIMP_IS_DYNAMICS (dynamics), 0.0);
+  g_return_val_if_fail (PICMAN_IS_DYNAMICS (dynamics), 0.0);
 
-  output = gimp_dynamics_get_output (dynamics, type);
+  output = picman_dynamics_get_output (dynamics, type);
 
-  return gimp_dynamics_output_get_angular_value (output, coords,
+  return picman_dynamics_output_get_angular_value (output, coords,
                                                  options, fade_point);
 }
 
 gdouble
-gimp_dynamics_get_aspect_value (GimpDynamics           *dynamics,
-                                GimpDynamicsOutputType  type,
-                                const GimpCoords       *coords,
-                                GimpPaintOptions       *options,
+picman_dynamics_get_aspect_value (PicmanDynamics           *dynamics,
+                                PicmanDynamicsOutputType  type,
+                                const PicmanCoords       *coords,
+                                PicmanPaintOptions       *options,
                                 gdouble                 fade_point)
 {
-  GimpDynamicsOutput *output;
+  PicmanDynamicsOutput *output;
 
-  g_return_val_if_fail (GIMP_IS_DYNAMICS (dynamics), 0.0);
+  g_return_val_if_fail (PICMAN_IS_DYNAMICS (dynamics), 0.0);
 
-  output = gimp_dynamics_get_output (dynamics, type);
+  output = picman_dynamics_get_output (dynamics, type);
 
-  return gimp_dynamics_output_get_aspect_value (output, coords,
+  return picman_dynamics_output_get_aspect_value (output, coords,
                                                 options, fade_point);
 }
 
 
 /*  private functions  */
 
-static GimpDynamicsOutput *
-gimp_dynamics_create_output (GimpDynamics           *dynamics,
+static PicmanDynamicsOutput *
+picman_dynamics_create_output (PicmanDynamics           *dynamics,
                              const gchar            *name,
-                             GimpDynamicsOutputType  type)
+                             PicmanDynamicsOutputType  type)
 {
-  GimpDynamicsOutput *output = gimp_dynamics_output_new (name, type);
+  PicmanDynamicsOutput *output = picman_dynamics_output_new (name, type);
 
   g_signal_connect (output, "notify",
-                    G_CALLBACK (gimp_dynamics_output_notify),
+                    G_CALLBACK (picman_dynamics_output_notify),
                     dynamics);
 
   return output;
 }
 
 static void
-gimp_dynamics_output_notify (GObject          *output,
+picman_dynamics_output_notify (GObject          *output,
                              const GParamSpec *pspec,
-                             GimpDynamics     *dynamics)
+                             PicmanDynamics     *dynamics)
 {
-  g_object_notify (G_OBJECT (dynamics), gimp_object_get_name (output));
+  g_object_notify (G_OBJECT (dynamics), picman_object_get_name (output));
 }

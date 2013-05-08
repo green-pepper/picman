@@ -1,11 +1,11 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * Thumbnail handling according to the Thumbnail Managing Standard.
  * http://triq.net/~pearl/thumbnail-spec/
  *
- * Copyright (C) 2001-2003  Sven Neumann <sven@gimp.org>
- *                          Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2001-2003  Sven Neumann <sven@picman.org>
+ *                          Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,50 +22,50 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_THUMB_H_INSIDE__) && !defined (GIMP_THUMB_COMPILATION)
-#error "Only <libgimpthumb/gimpthumb.h> can be included directly."
+#if !defined (__PICMAN_THUMB_H_INSIDE__) && !defined (PICMAN_THUMB_COMPILATION)
+#error "Only <libpicmanthumb/picmanthumb.h> can be included directly."
 #endif
 
-#ifndef __GIMP_THUMB_UTILS_H__
-#define __GIMP_THUMB_UTILS_H__
+#ifndef __PICMAN_THUMB_UTILS_H__
+#define __PICMAN_THUMB_UTILS_H__
 
 G_BEGIN_DECLS
 
 
-gboolean            gimp_thumb_init                   (const gchar    *creator,
+gboolean            picman_thumb_init                   (const gchar    *creator,
                                                        const gchar    *thumb_basedir);
 
-gchar             * gimp_thumb_find_thumb             (const gchar    *uri,
-                                                       GimpThumbSize  *size) G_GNUC_MALLOC;
+gchar             * picman_thumb_find_thumb             (const gchar    *uri,
+                                                       PicmanThumbSize  *size) G_GNUC_MALLOC;
 
-GimpThumbFileType   gimp_thumb_file_test              (const gchar    *filename,
+PicmanThumbFileType   picman_thumb_file_test              (const gchar    *filename,
                                                        gint64         *mtime,
                                                        gint64         *size,
                                                        gint           *err_no);
 
-gchar             * gimp_thumb_name_from_uri          (const gchar    *uri,
-                                                       GimpThumbSize   size) G_GNUC_MALLOC;
-const gchar       * gimp_thumb_get_thumb_dir          (GimpThumbSize   size);
-gboolean            gimp_thumb_ensure_thumb_dir       (GimpThumbSize   size,
+gchar             * picman_thumb_name_from_uri          (const gchar    *uri,
+                                                       PicmanThumbSize   size) G_GNUC_MALLOC;
+const gchar       * picman_thumb_get_thumb_dir          (PicmanThumbSize   size);
+gboolean            picman_thumb_ensure_thumb_dir       (PicmanThumbSize   size,
                                                        GError        **error);
-void                gimp_thumbs_delete_for_uri        (const gchar    *uri);
+void                picman_thumbs_delete_for_uri        (const gchar    *uri);
 
-gchar             * gimp_thumb_name_from_uri_local    (const gchar    *uri,
-                                                       GimpThumbSize   size) G_GNUC_MALLOC;
-gchar             * gimp_thumb_get_thumb_dir_local    (const gchar    *dirname,
-                                                       GimpThumbSize   size) G_GNUC_MALLOC;
-gboolean            gimp_thumb_ensure_thumb_dir_local (const gchar    *dirname,
-                                                       GimpThumbSize   size,
+gchar             * picman_thumb_name_from_uri_local    (const gchar    *uri,
+                                                       PicmanThumbSize   size) G_GNUC_MALLOC;
+gchar             * picman_thumb_get_thumb_dir_local    (const gchar    *dirname,
+                                                       PicmanThumbSize   size) G_GNUC_MALLOC;
+gboolean            picman_thumb_ensure_thumb_dir_local (const gchar    *dirname,
+                                                       PicmanThumbSize   size,
                                                        GError        **error);
-void                gimp_thumbs_delete_for_uri_local  (const gchar    *uri);
+void                picman_thumbs_delete_for_uri_local  (const gchar    *uri);
 
 
 /*  for internal use only   */
-G_GNUC_INTERNAL void    _gimp_thumbs_delete_others    (const gchar    *uri,
-                                                       GimpThumbSize   size);
-G_GNUC_INTERNAL gchar * _gimp_thumb_filename_from_uri (const gchar    *uri);
+G_GNUC_INTERNAL void    _picman_thumbs_delete_others    (const gchar    *uri,
+                                                       PicmanThumbSize   size);
+G_GNUC_INTERNAL gchar * _picman_thumb_filename_from_uri (const gchar    *uri);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_THUMB_UTILS_H__ */
+#endif /* __PICMAN_THUMB_UTILS_H__ */

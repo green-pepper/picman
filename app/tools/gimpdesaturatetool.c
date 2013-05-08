@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,132 +20,132 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "operations/gimpdesaturateconfig.h"
+#include "operations/picmandesaturateconfig.h"
 
-#include "core/gimpdrawable.h"
-#include "core/gimperror.h"
-#include "core/gimpimage.h"
+#include "core/picmandrawable.h"
+#include "core/picmanerror.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimpimagemapoptions.h"
-#include "gimpdesaturatetool.h"
+#include "picmanimagemapoptions.h"
+#include "picmandesaturatetool.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static gboolean   gimp_desaturate_tool_initialize    (GimpTool           *tool,
-                                                      GimpDisplay        *display,
+static gboolean   picman_desaturate_tool_initialize    (PicmanTool           *tool,
+                                                      PicmanDisplay        *display,
                                                       GError            **error);
 
-static GeglNode * gimp_desaturate_tool_get_operation (GimpImageMapTool   *im_tool,
+static GeglNode * picman_desaturate_tool_get_operation (PicmanImageMapTool   *im_tool,
                                                       GObject           **config,
                                                       gchar             **undo_desc);
-static void       gimp_desaturate_tool_dialog        (GimpImageMapTool   *im_tool);
+static void       picman_desaturate_tool_dialog        (PicmanImageMapTool   *im_tool);
 
-static void       gimp_desaturate_tool_config_notify (GObject            *object,
+static void       picman_desaturate_tool_config_notify (GObject            *object,
                                                       GParamSpec         *pspec,
-                                                      GimpDesaturateTool *desaturate_tool);
-static void       gimp_desaturate_tool_mode_changed  (GtkWidget          *button,
-                                                      GimpDesaturateTool *desaturate_tool);
+                                                      PicmanDesaturateTool *desaturate_tool);
+static void       picman_desaturate_tool_mode_changed  (GtkWidget          *button,
+                                                      PicmanDesaturateTool *desaturate_tool);
 
 
-G_DEFINE_TYPE (GimpDesaturateTool, gimp_desaturate_tool,
-               GIMP_TYPE_IMAGE_MAP_TOOL)
+G_DEFINE_TYPE (PicmanDesaturateTool, picman_desaturate_tool,
+               PICMAN_TYPE_IMAGE_MAP_TOOL)
 
-#define parent_class gimp_desaturate_tool_parent_class
+#define parent_class picman_desaturate_tool_parent_class
 
 
 void
-gimp_desaturate_tool_register (GimpToolRegisterCallback  callback,
+picman_desaturate_tool_register (PicmanToolRegisterCallback  callback,
                                gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_DESATURATE_TOOL,
-                GIMP_TYPE_IMAGE_MAP_OPTIONS, NULL,
+  (* callback) (PICMAN_TYPE_DESATURATE_TOOL,
+                PICMAN_TYPE_IMAGE_MAP_OPTIONS, NULL,
                 0,
-                "gimp-desaturate-tool",
+                "picman-desaturate-tool",
                 _("Desaturate"),
                 _("Desaturate Tool: Turn colors into shades of gray"),
                 N_("_Desaturate..."), NULL,
-                NULL, GIMP_HELP_TOOL_DESATURATE,
-                GIMP_STOCK_TOOL_DESATURATE,
+                NULL, PICMAN_HELP_TOOL_DESATURATE,
+                PICMAN_STOCK_TOOL_DESATURATE,
                 data);
 }
 
 static void
-gimp_desaturate_tool_class_init (GimpDesaturateToolClass *klass)
+picman_desaturate_tool_class_init (PicmanDesaturateToolClass *klass)
 {
-  GimpToolClass         *tool_class    = GIMP_TOOL_CLASS (klass);
-  GimpImageMapToolClass *im_tool_class = GIMP_IMAGE_MAP_TOOL_CLASS (klass);
+  PicmanToolClass         *tool_class    = PICMAN_TOOL_CLASS (klass);
+  PicmanImageMapToolClass *im_tool_class = PICMAN_IMAGE_MAP_TOOL_CLASS (klass);
 
-  tool_class->initialize       = gimp_desaturate_tool_initialize;
+  tool_class->initialize       = picman_desaturate_tool_initialize;
 
   im_tool_class->dialog_desc   = _("Desaturate (Remove Colors)");
 
-  im_tool_class->get_operation = gimp_desaturate_tool_get_operation;
-  im_tool_class->dialog        = gimp_desaturate_tool_dialog;
+  im_tool_class->get_operation = picman_desaturate_tool_get_operation;
+  im_tool_class->dialog        = picman_desaturate_tool_dialog;
 }
 
 static void
-gimp_desaturate_tool_init (GimpDesaturateTool *desaturate_tool)
+picman_desaturate_tool_init (PicmanDesaturateTool *desaturate_tool)
 {
 }
 
 static gboolean
-gimp_desaturate_tool_initialize (GimpTool     *tool,
-                                GimpDisplay  *display,
+picman_desaturate_tool_initialize (PicmanTool     *tool,
+                                PicmanDisplay  *display,
                                 GError      **error)
 {
-  GimpDesaturateTool *desaturate_tool = GIMP_DESATURATE_TOOL (tool);
-  GimpImage          *image           = gimp_display_get_image (display);
-  GimpDrawable       *drawable        = gimp_image_get_active_drawable (image);
+  PicmanDesaturateTool *desaturate_tool = PICMAN_DESATURATE_TOOL (tool);
+  PicmanImage          *image           = picman_display_get_image (display);
+  PicmanDrawable       *drawable        = picman_image_get_active_drawable (image);
 
   if (! drawable)
     return FALSE;
 
-  if (! gimp_drawable_is_rgb (drawable))
+  if (! picman_drawable_is_rgb (drawable))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			   _("Desaturate only operates on RGB layers."));
       return FALSE;
     }
 
-  if (! GIMP_TOOL_CLASS (parent_class)->initialize (tool, display, error))
+  if (! PICMAN_TOOL_CLASS (parent_class)->initialize (tool, display, error))
     {
       return FALSE;
     }
 
-  gimp_int_radio_group_set_active (GTK_RADIO_BUTTON (desaturate_tool->button),
+  picman_int_radio_group_set_active (GTK_RADIO_BUTTON (desaturate_tool->button),
                                    desaturate_tool->config->mode);
 
   return TRUE;
 }
 
 static GeglNode *
-gimp_desaturate_tool_get_operation (GimpImageMapTool  *image_map_tool,
+picman_desaturate_tool_get_operation (PicmanImageMapTool  *image_map_tool,
                                     GObject          **config,
                                     gchar            **undo_desc)
 {
-  GimpDesaturateTool *desaturate_tool = GIMP_DESATURATE_TOOL (image_map_tool);
+  PicmanDesaturateTool *desaturate_tool = PICMAN_DESATURATE_TOOL (image_map_tool);
 
-  desaturate_tool->config = g_object_new (GIMP_TYPE_DESATURATE_CONFIG, NULL);
+  desaturate_tool->config = g_object_new (PICMAN_TYPE_DESATURATE_CONFIG, NULL);
 
   g_signal_connect_object (desaturate_tool->config, "notify",
-                           G_CALLBACK (gimp_desaturate_tool_config_notify),
+                           G_CALLBACK (picman_desaturate_tool_config_notify),
                            G_OBJECT (desaturate_tool), 0);
 
   *config = G_OBJECT (desaturate_tool->config);
 
   return gegl_node_new_child (NULL,
-                              "operation", "gimp:desaturate",
+                              "operation", "picman:desaturate",
                               "config",    desaturate_tool->config,
                               NULL);
 }
@@ -156,18 +156,18 @@ gimp_desaturate_tool_get_operation (GimpImageMapTool  *image_map_tool,
 /***********************/
 
 static void
-gimp_desaturate_tool_dialog (GimpImageMapTool *image_map_tool)
+picman_desaturate_tool_dialog (PicmanImageMapTool *image_map_tool)
 {
-  GimpDesaturateTool *desaturate_tool = GIMP_DESATURATE_TOOL (image_map_tool);
+  PicmanDesaturateTool *desaturate_tool = PICMAN_DESATURATE_TOOL (image_map_tool);
   GtkWidget          *main_vbox;
   GtkWidget          *frame;
 
-  main_vbox = gimp_image_map_tool_dialog_get_vbox (image_map_tool);
+  main_vbox = picman_image_map_tool_dialog_get_vbox (image_map_tool);
 
   /*  The table containing sliders  */
-  frame = gimp_enum_radio_frame_new (GIMP_TYPE_DESATURATE_MODE,
+  frame = picman_enum_radio_frame_new (PICMAN_TYPE_DESATURATE_MODE,
                                      gtk_label_new (_("Choose shade of gray based on:")),
-                                     G_CALLBACK (gimp_desaturate_tool_mode_changed),
+                                     G_CALLBACK (picman_desaturate_tool_mode_changed),
                                      desaturate_tool,
                                      &desaturate_tool->button);
 
@@ -176,28 +176,28 @@ gimp_desaturate_tool_dialog (GimpImageMapTool *image_map_tool)
 }
 
 static void
-gimp_desaturate_tool_config_notify (GObject            *object,
+picman_desaturate_tool_config_notify (GObject            *object,
                                     GParamSpec         *pspec,
-                                    GimpDesaturateTool *desaturate_tool)
+                                    PicmanDesaturateTool *desaturate_tool)
 {
-  GimpDesaturateConfig *config = GIMP_DESATURATE_CONFIG (object);
+  PicmanDesaturateConfig *config = PICMAN_DESATURATE_CONFIG (object);
 
   if (! desaturate_tool->button)
     return;
 
-  gimp_int_radio_group_set_active (GTK_RADIO_BUTTON (desaturate_tool->button),
+  picman_int_radio_group_set_active (GTK_RADIO_BUTTON (desaturate_tool->button),
                                    config->mode);
 }
 
 static void
-gimp_desaturate_tool_mode_changed (GtkWidget          *button,
-                                   GimpDesaturateTool *desaturate_tool)
+picman_desaturate_tool_mode_changed (GtkWidget          *button,
+                                   PicmanDesaturateTool *desaturate_tool)
 {
-  GimpDesaturateConfig *config = desaturate_tool->config;
-  GimpDesaturateMode    mode;
+  PicmanDesaturateConfig *config = desaturate_tool->config;
+  PicmanDesaturateMode    mode;
 
   mode = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
-                                             "gimp-item-data"));
+                                             "picman-item-data"));
 
   if (config->mode != mode)
     {

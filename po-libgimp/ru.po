@@ -1,4 +1,4 @@
-# translation of libgimp.pot to Russian
+# translation of libpicman.pot to Russian
 # Copyright (C) 1999-2002, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
 #
 # Valek Filippov <frob@df.ru>, 1999-2002.
@@ -9,8 +9,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: libgimp trunk\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gimp&keywords=I18N+L10N&component=general\n"
+"Project-Id-Version: libpicman trunk\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2011-11-09 20:56+0000\n"
 "PO-Revision-Date: 2011-11-15 00:23+0300\n"
 "Last-Translator: Yuri Myasoedov <omerta13@yandex.ru>\n"
@@ -22,84 +22,84 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2); 10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #. procedure executed successfully
-#: ../libgimp/gimp.c:1077
+#: ../libpicman/picman.c:1077
 msgid "success"
 msgstr "успешно"
 
 #. procedure execution failed
-#: ../libgimp/gimp.c:1081
+#: ../libpicman/picman.c:1081
 msgid "execution error"
 msgstr "ошибка выполнения"
 
 #. procedure called incorrectly
-#: ../libgimp/gimp.c:1085
+#: ../libpicman/picman.c:1085
 msgid "calling error"
 msgstr "ошибка вызова"
 
 #. procedure execution cancelled
-#: ../libgimp/gimp.c:1089
+#: ../libpicman/picman.c:1089
 msgid "cancelled"
 msgstr "отменено"
 
-#: ../libgimp/gimpbrushselectbutton.c:178
+#: ../libpicman/picmanbrushselectbutton.c:178
 msgid "Brush Selection"
 msgstr "Выбор кисти"
 
-#: ../libgimp/gimpbrushselectbutton.c:927
-#: ../libgimp/gimppatternselectbutton.c:725
+#: ../libpicman/picmanbrushselectbutton.c:927
+#: ../libpicman/picmanpatternselectbutton.c:725
 msgid "_Browse..."
 msgstr "_Просмотреть..."
 
-#: ../libgimp/gimpexport.c:243
-#: ../libgimp/gimpexport.c:279
+#: ../libpicman/picmanexport.c:243
+#: ../libpicman/picmanexport.c:279
 #, c-format
 msgid "%s plug-in can't handle layers"
 msgstr "Расширение %s не может работать со слоями"
 
-#: ../libgimp/gimpexport.c:244
-#: ../libgimp/gimpexport.c:253
-#: ../libgimp/gimpexport.c:262
-#: ../libgimp/gimpexport.c:280
+#: ../libpicman/picmanexport.c:244
+#: ../libpicman/picmanexport.c:253
+#: ../libpicman/picmanexport.c:262
+#: ../libpicman/picmanexport.c:280
 msgid "Merge Visible Layers"
 msgstr "Объединить видимые слои"
 
-#: ../libgimp/gimpexport.c:252
+#: ../libpicman/picmanexport.c:252
 #, c-format
 msgid "%s plug-in can't handle layer offsets, size or opacity"
 msgstr "Расширение %s не может обрабатывать смещение, размер или непрозрачность слоя"
 
-#: ../libgimp/gimpexport.c:261
-#: ../libgimp/gimpexport.c:270
+#: ../libpicman/picmanexport.c:261
+#: ../libpicman/picmanexport.c:270
 #, c-format
 msgid "%s plug-in can only handle layers as animation frames"
 msgstr "Расширение %s может обрабатывать слои только как кадры анимации"
 
-#: ../libgimp/gimpexport.c:262
-#: ../libgimp/gimpexport.c:271
+#: ../libpicman/picmanexport.c:262
+#: ../libpicman/picmanexport.c:271
 msgid "Save as Animation"
 msgstr "Сохранить как анимацию"
 
-#: ../libgimp/gimpexport.c:271
-#: ../libgimp/gimpexport.c:280
-#: ../libgimp/gimpexport.c:289
+#: ../libpicman/picmanexport.c:271
+#: ../libpicman/picmanexport.c:280
+#: ../libpicman/picmanexport.c:289
 msgid "Flatten Image"
 msgstr "Свести изображение"
 
-#: ../libgimp/gimpexport.c:288
+#: ../libpicman/picmanexport.c:288
 #, c-format
 msgid "%s plug-in can't handle transparency"
 msgstr "Расширение %s не может обрабатывать прозрачность"
 
-#: ../libgimp/gimpexport.c:297
+#: ../libpicman/picmanexport.c:297
 #, c-format
 msgid "%s plug-in can't handle layer masks"
 msgstr "Расширение %s не может обрабатывать маски слоя"
 
-#: ../libgimp/gimpexport.c:298
+#: ../libpicman/picmanexport.c:298
 msgid "Apply Layer Masks"
 msgstr "Применить маски слоя"
 
-#: ../libgimp/gimpexport.c:306
+#: ../libpicman/picmanexport.c:306
 #, c-format
 msgid "%s plug-in can only handle RGB images"
 msgstr ""
@@ -107,13 +107,13 @@ msgstr ""
 "\n"
 "только RGB-изображения"
 
-#: ../libgimp/gimpexport.c:307
-#: ../libgimp/gimpexport.c:345
-#: ../libgimp/gimpexport.c:354
+#: ../libpicman/picmanexport.c:307
+#: ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:354
 msgid "Convert to RGB"
 msgstr "Преобразовать в RGB"
 
-#: ../libgimp/gimpexport.c:315
+#: ../libpicman/picmanexport.c:315
 #, c-format
 msgid "%s plug-in can only handle grayscale images"
 msgstr ""
@@ -121,13 +121,13 @@ msgstr ""
 "\n"
 "только изображения в градациях серого"
 
-#: ../libgimp/gimpexport.c:316
-#: ../libgimp/gimpexport.c:345
-#: ../libgimp/gimpexport.c:366
+#: ../libpicman/picmanexport.c:316
+#: ../libpicman/picmanexport.c:345
+#: ../libpicman/picmanexport.c:366
 msgid "Convert to Grayscale"
 msgstr "Преобразовать в оттенки серого"
 
-#: ../libgimp/gimpexport.c:324
+#: ../libpicman/picmanexport.c:324
 #, c-format
 msgid "%s plug-in can only handle indexed images"
 msgstr ""
@@ -135,9 +135,9 @@ msgstr ""
 "\n"
 "только индексированные изображения"
 
-#: ../libgimp/gimpexport.c:325
-#: ../libgimp/gimpexport.c:354
-#: ../libgimp/gimpexport.c:364
+#: ../libpicman/picmanexport.c:325
+#: ../libpicman/picmanexport.c:354
+#: ../libpicman/picmanexport.c:364
 msgid ""
 "Convert to Indexed using default settings\n"
 "(Do it manually to tune the result)"
@@ -146,7 +146,7 @@ msgstr ""
 "\n"
 "параметры по умолчанию (изменяемо вручную)"
 
-#: ../libgimp/gimpexport.c:334
+#: ../libpicman/picmanexport.c:334
 #, c-format
 msgid "%s plug-in can only handle bitmap (two color) indexed images"
 msgstr ""
@@ -154,7 +154,7 @@ msgstr ""
 "\n"
 "двухцветные или индексированные изображения"
 
-#: ../libgimp/gimpexport.c:335
+#: ../libpicman/picmanexport.c:335
 msgid ""
 "Convert to Indexed using bitmap default settings\n"
 "(Do it manually to tune the result)"
@@ -163,7 +163,7 @@ msgstr ""
 "\n"
 "параметры по умолчанию для растра (изменяемо вручную)"
 
-#: ../libgimp/gimpexport.c:344
+#: ../libpicman/picmanexport.c:344
 #, c-format
 msgid "%s plug-in can only handle RGB or grayscale images"
 msgstr ""
@@ -171,7 +171,7 @@ msgstr ""
 "\n"
 "изображения в градациях серого или RGB"
 
-#: ../libgimp/gimpexport.c:353
+#: ../libpicman/picmanexport.c:353
 #, c-format
 msgid "%s plug-in  can only handle RGB or indexed images"
 msgstr ""
@@ -179,7 +179,7 @@ msgstr ""
 "\n"
 "RGB- или индексированные изображения"
 
-#: ../libgimp/gimpexport.c:363
+#: ../libpicman/picmanexport.c:363
 #, c-format
 msgid "%s plug-in can only handle grayscale or indexed images"
 msgstr ""
@@ -187,48 +187,48 @@ msgstr ""
 "\n"
 "в градациях серого или индексированные изображения"
 
-#: ../libgimp/gimpexport.c:374
+#: ../libpicman/picmanexport.c:374
 #, c-format
 msgid "%s plug-in needs an alpha channel"
 msgstr "Расширению %s требуется альфа-канал"
 
-#: ../libgimp/gimpexport.c:375
+#: ../libpicman/picmanexport.c:375
 msgid "Add Alpha Channel"
 msgstr "Добавить альфа-канал"
 
-#: ../libgimp/gimpexport.c:430
+#: ../libpicman/picmanexport.c:430
 msgid "Confirm Save"
 msgstr "Подтвердить сохранение"
 
-#: ../libgimp/gimpexport.c:436
+#: ../libpicman/picmanexport.c:436
 msgid "Confirm"
 msgstr "Подтвердить"
 
-#: ../libgimp/gimpexport.c:512
+#: ../libpicman/picmanexport.c:512
 msgid "Export File"
 msgstr "Экспортировать файл"
 
-#: ../libgimp/gimpexport.c:516
+#: ../libpicman/picmanexport.c:516
 msgid "_Ignore"
 msgstr "_Игнорировать"
 
-#: ../libgimp/gimpexport.c:518
-#: ../libgimp/gimpexport.c:988
+#: ../libpicman/picmanexport.c:518
+#: ../libpicman/picmanexport.c:988
 msgid "_Export"
 msgstr "_Экспорт"
 
 #. the headline
-#: ../libgimp/gimpexport.c:548
+#: ../libpicman/picmanexport.c:548
 #, c-format
 msgid "Your image should be exported before it can be saved as %s for the following reasons:"
 msgstr "Ваше изображение должно быть экспортировано до того, как оно будет сохранено %s по следующим причинам:"
 
 #. the footline
-#: ../libgimp/gimpexport.c:622
+#: ../libpicman/picmanexport.c:622
 msgid "The export conversion won't modify your original image."
 msgstr "Экспортное преобразование не изменит ваше исходное изображение."
 
-#: ../libgimp/gimpexport.c:725
+#: ../libpicman/picmanexport.c:725
 #, c-format
 msgid ""
 "You are about to save a layer mask as %s.\n"
@@ -238,7 +238,7 @@ msgstr ""
 " в файл формата %s.\n"
 "Видимые слои не будут сохранены."
 
-#: ../libgimp/gimpexport.c:731
+#: ../libpicman/picmanexport.c:731
 #, c-format
 msgid ""
 "You are about to save a channel (saved selection) as %s.\n"
@@ -249,110 +249,110 @@ msgstr ""
 "в файл формата %s.\n"
 "Видимые слои не будут сохранены."
 
-#: ../libgimp/gimpexport.c:979
+#: ../libpicman/picmanexport.c:979
 msgid "Export Image as "
 msgstr "Экспортировать изображение как "
 
-#: ../libgimp/gimpfontselectbutton.c:138
+#: ../libpicman/picmanfontselectbutton.c:138
 msgid "Font Selection"
 msgstr "Выбор шрифта"
 
-#: ../libgimp/gimpfontselectbutton.c:153
+#: ../libpicman/picmanfontselectbutton.c:153
 msgid "Sans"
 msgstr "Sans"
 
-#: ../libgimp/gimpgradientselectbutton.c:156
+#: ../libpicman/picmangradientselectbutton.c:156
 msgid "Gradient Selection"
 msgstr "Выбор градиента"
 
 #. This string appears in an empty menu as in
 #. * "nothing selected and nothing to select"
 #.
-#: ../libgimp/gimpmenu.c:461
-#: ../libgimpwidgets/gimpintstore.c:241
+#: ../libpicman/picmanmenu.c:461
+#: ../libpicmanwidgets/picmanintstore.c:241
 msgid "(Empty)"
 msgstr "(Пусто)"
 
-#: ../libgimp/gimppaletteselectbutton.c:138
+#: ../libpicman/picmanpaletteselectbutton.c:138
 msgid "Palette Selection"
 msgstr "Выбор палитры"
 
-#: ../libgimp/gimppatternselectbutton.c:164
+#: ../libpicman/picmanpatternselectbutton.c:164
 msgid "Pattern Selection"
 msgstr "Выбор текстуры"
 
-#: ../libgimp/gimpprocbrowserdialog.c:149
+#: ../libpicman/picmanprocbrowserdialog.c:149
 msgid "by name"
 msgstr "по имени"
 
-#: ../libgimp/gimpprocbrowserdialog.c:150
+#: ../libpicman/picmanprocbrowserdialog.c:150
 msgid "by description"
 msgstr "по описанию"
 
-#: ../libgimp/gimpprocbrowserdialog.c:151
+#: ../libpicman/picmanprocbrowserdialog.c:151
 msgid "by help"
 msgstr "по справке"
 
-#: ../libgimp/gimpprocbrowserdialog.c:152
+#: ../libpicman/picmanprocbrowserdialog.c:152
 msgid "by author"
 msgstr "по автору"
 
-#: ../libgimp/gimpprocbrowserdialog.c:153
+#: ../libpicman/picmanprocbrowserdialog.c:153
 msgid "by copyright"
 msgstr "по авторскому праву"
 
-#: ../libgimp/gimpprocbrowserdialog.c:154
+#: ../libpicman/picmanprocbrowserdialog.c:154
 msgid "by date"
 msgstr "по дате"
 
-#: ../libgimp/gimpprocbrowserdialog.c:155
+#: ../libpicman/picmanprocbrowserdialog.c:155
 msgid "by type"
 msgstr "по типу"
 
 #. count label
-#: ../libgimp/gimpprocbrowserdialog.c:394
-#: ../libgimp/gimpprocbrowserdialog.c:545
-#: ../libgimpwidgets/gimpbrowser.c:139
+#: ../libpicman/picmanprocbrowserdialog.c:394
+#: ../libpicman/picmanprocbrowserdialog.c:545
+#: ../libpicmanwidgets/picmanbrowser.c:139
 msgid "No matches"
 msgstr "Совпадений нет"
 
-#: ../libgimp/gimpprocbrowserdialog.c:397
+#: ../libpicman/picmanprocbrowserdialog.c:397
 msgid "Search term invalid or incomplete"
 msgstr "Искомое слово введено неправильно или не полностью"
 
-#: ../libgimp/gimpprocbrowserdialog.c:406
+#: ../libpicman/picmanprocbrowserdialog.c:406
 msgid "Searching"
 msgstr "Выполняется поиск"
 
-#: ../libgimp/gimpprocbrowserdialog.c:417
+#: ../libpicman/picmanprocbrowserdialog.c:417
 msgid "Searching by name"
 msgstr "Выполняется поиск по имени"
 
-#: ../libgimp/gimpprocbrowserdialog.c:438
+#: ../libpicman/picmanprocbrowserdialog.c:438
 msgid "Searching by description"
 msgstr "Выполняется поиск по описанию"
 
-#: ../libgimp/gimpprocbrowserdialog.c:445
+#: ../libpicman/picmanprocbrowserdialog.c:445
 msgid "Searching by help"
 msgstr "Выполняется поиск по справке"
 
-#: ../libgimp/gimpprocbrowserdialog.c:452
+#: ../libpicman/picmanprocbrowserdialog.c:452
 msgid "Searching by author"
 msgstr "Выполняется поиск по автору"
 
-#: ../libgimp/gimpprocbrowserdialog.c:459
+#: ../libpicman/picmanprocbrowserdialog.c:459
 msgid "Searching by copyright"
 msgstr "Выполняется поиск по авторскому праву"
 
-#: ../libgimp/gimpprocbrowserdialog.c:466
+#: ../libpicman/picmanprocbrowserdialog.c:466
 msgid "Searching by date"
 msgstr "Выполняется поиск по дате"
 
-#: ../libgimp/gimpprocbrowserdialog.c:473
+#: ../libpicman/picmanprocbrowserdialog.c:473
 msgid "Searching by type"
 msgstr "Выполняется поиск по типу"
 
-#: ../libgimp/gimpprocbrowserdialog.c:483
+#: ../libpicman/picmanprocbrowserdialog.c:483
 #, c-format
 msgid "%d procedure"
 msgid_plural "%d procedures"
@@ -360,11 +360,11 @@ msgstr[0] "%d процедура"
 msgstr[1] "%d процедуры"
 msgstr[2] "%d процедур"
 
-#: ../libgimp/gimpprocbrowserdialog.c:492
+#: ../libpicman/picmanprocbrowserdialog.c:492
 msgid "No matches for your query"
 msgstr "Совпадений с запросом нет"
 
-#: ../libgimp/gimpprocbrowserdialog.c:496
+#: ../libpicman/picmanprocbrowserdialog.c:496
 #, c-format
 msgid "%d procedure matches your query"
 msgid_plural "%d procedures match your query"
@@ -372,561 +372,561 @@ msgstr[0] "%d процедура совпадает с запросом"
 msgstr[1] "%d процедуры совпадают с запросом"
 msgstr[2] "%d процедур совпадает с запросом"
 
-#: ../libgimp/gimpprocview.c:172
+#: ../libpicman/picmanprocview.c:172
 msgid "Parameters"
 msgstr "Параметры"
 
-#: ../libgimp/gimpprocview.c:185
+#: ../libpicman/picmanprocview.c:185
 msgid "Return Values"
 msgstr "Возвращаемые значения"
 
-#: ../libgimp/gimpprocview.c:198
+#: ../libpicman/picmanprocview.c:198
 msgid "Additional Information"
 msgstr "Дополнительная информация"
 
-#: ../libgimp/gimpprocview.c:238
+#: ../libpicman/picmanprocview.c:238
 msgid "Author:"
 msgstr "Автор:"
 
-#: ../libgimp/gimpprocview.c:250
+#: ../libpicman/picmanprocview.c:250
 msgid "Date:"
 msgstr "Дата:"
 
-#: ../libgimp/gimpprocview.c:262
+#: ../libpicman/picmanprocview.c:262
 msgid "Copyright:"
 msgstr "Авторские права:"
 
-#: ../libgimp/gimpunitcache.c:54
+#: ../libpicman/picmanunitcache.c:54
 msgid "percent"
 msgstr "процент"
 
-#: ../libgimpbase/gimpbaseenums.c:28
+#: ../libpicmanbase/picmanbaseenums.c:28
 msgctxt "add-mask-type"
 msgid "_White (full opacity)"
 msgstr "_Белый цвет (полная непрозрачность)"
 
-#: ../libgimpbase/gimpbaseenums.c:29
+#: ../libpicmanbase/picmanbaseenums.c:29
 msgctxt "add-mask-type"
 msgid "_Black (full transparency)"
 msgstr "_Черный цвет (полная прозрачность)"
 
-#: ../libgimpbase/gimpbaseenums.c:30
+#: ../libpicmanbase/picmanbaseenums.c:30
 msgctxt "add-mask-type"
 msgid "Layer's _alpha channel"
 msgstr "_Альфа-канал слоя"
 
-#: ../libgimpbase/gimpbaseenums.c:31
+#: ../libpicmanbase/picmanbaseenums.c:31
 msgctxt "add-mask-type"
 msgid "_Transfer layer's alpha channel"
 msgstr "_Передать альфа-канал слоя"
 
-#: ../libgimpbase/gimpbaseenums.c:32
+#: ../libpicmanbase/picmanbaseenums.c:32
 msgctxt "add-mask-type"
 msgid "_Selection"
 msgstr "_Выделение"
 
-#: ../libgimpbase/gimpbaseenums.c:33
+#: ../libpicmanbase/picmanbaseenums.c:33
 msgctxt "add-mask-type"
 msgid "_Grayscale copy of layer"
 msgstr "_Копия слоя в градациях серого"
 
-#: ../libgimpbase/gimpbaseenums.c:34
+#: ../libpicmanbase/picmanbaseenums.c:34
 msgctxt "add-mask-type"
 msgid "C_hannel"
 msgstr "_Канал"
 
-#: ../libgimpbase/gimpbaseenums.c:65
+#: ../libpicmanbase/picmanbaseenums.c:65
 msgctxt "blend-mode"
 msgid "FG to BG (RGB)"
 msgstr "Передний план до фона (RGB)"
 
-#: ../libgimpbase/gimpbaseenums.c:66
+#: ../libpicmanbase/picmanbaseenums.c:66
 msgctxt "blend-mode"
 msgid "FG to BG (HSV)"
 msgstr "Передний план до фона (HSV)"
 
-#: ../libgimpbase/gimpbaseenums.c:67
+#: ../libpicmanbase/picmanbaseenums.c:67
 msgctxt "blend-mode"
 msgid "FG to transparent"
 msgstr "Передний план до прозрачности"
 
-#: ../libgimpbase/gimpbaseenums.c:68
+#: ../libpicmanbase/picmanbaseenums.c:68
 msgctxt "blend-mode"
 msgid "Custom gradient"
 msgstr "Собственный градиент"
 
-#: ../libgimpbase/gimpbaseenums.c:98
+#: ../libpicmanbase/picmanbaseenums.c:98
 msgctxt "bucket-fill-mode"
 msgid "FG color fill"
 msgstr "Цветом переднего плана"
 
-#: ../libgimpbase/gimpbaseenums.c:99
+#: ../libpicmanbase/picmanbaseenums.c:99
 msgctxt "bucket-fill-mode"
 msgid "BG color fill"
 msgstr "Цветом фона"
 
-#: ../libgimpbase/gimpbaseenums.c:100
+#: ../libpicmanbase/picmanbaseenums.c:100
 msgctxt "bucket-fill-mode"
 msgid "Pattern fill"
 msgstr "Текстурой"
 
-#: ../libgimpbase/gimpbaseenums.c:131
+#: ../libpicmanbase/picmanbaseenums.c:131
 msgctxt "channel-ops"
 msgid "Add to the current selection"
 msgstr "Добавить в текущее выделение"
 
-#: ../libgimpbase/gimpbaseenums.c:132
+#: ../libpicmanbase/picmanbaseenums.c:132
 msgctxt "channel-ops"
 msgid "Subtract from the current selection"
 msgstr "Вычесть из текущего выделения"
 
-#: ../libgimpbase/gimpbaseenums.c:133
+#: ../libpicmanbase/picmanbaseenums.c:133
 msgctxt "channel-ops"
 msgid "Replace the current selection"
 msgstr "Заменить текущее выделение"
 
-#: ../libgimpbase/gimpbaseenums.c:134
+#: ../libpicmanbase/picmanbaseenums.c:134
 msgctxt "channel-ops"
 msgid "Intersect with the current selection"
 msgstr "Пересечь с текущим выделением"
 
-#: ../libgimpbase/gimpbaseenums.c:167
+#: ../libpicmanbase/picmanbaseenums.c:167
 msgctxt "channel-type"
 msgid "Red"
 msgstr "Красный"
 
-#: ../libgimpbase/gimpbaseenums.c:168
+#: ../libpicmanbase/picmanbaseenums.c:168
 msgctxt "channel-type"
 msgid "Green"
 msgstr "Зелёный"
 
-#: ../libgimpbase/gimpbaseenums.c:169
+#: ../libpicmanbase/picmanbaseenums.c:169
 msgctxt "channel-type"
 msgid "Blue"
 msgstr "Синий"
 
-#: ../libgimpbase/gimpbaseenums.c:170
+#: ../libpicmanbase/picmanbaseenums.c:170
 msgctxt "channel-type"
 msgid "Gray"
 msgstr "Серый"
 
-#: ../libgimpbase/gimpbaseenums.c:171
+#: ../libpicmanbase/picmanbaseenums.c:171
 msgctxt "channel-type"
 msgid "Indexed"
 msgstr "Индексированный"
 
-#: ../libgimpbase/gimpbaseenums.c:172
+#: ../libpicmanbase/picmanbaseenums.c:172
 msgctxt "channel-type"
 msgid "Alpha"
 msgstr "Альфа"
 
-#: ../libgimpbase/gimpbaseenums.c:202
+#: ../libpicmanbase/picmanbaseenums.c:202
 msgctxt "check-size"
 msgid "Small"
 msgstr "Маленький"
 
-#: ../libgimpbase/gimpbaseenums.c:203
+#: ../libpicmanbase/picmanbaseenums.c:203
 msgctxt "check-size"
 msgid "Medium"
 msgstr "Средний"
 
-#: ../libgimpbase/gimpbaseenums.c:204
+#: ../libpicmanbase/picmanbaseenums.c:204
 msgctxt "check-size"
 msgid "Large"
 msgstr "Большой"
 
-#: ../libgimpbase/gimpbaseenums.c:237
+#: ../libpicmanbase/picmanbaseenums.c:237
 msgctxt "check-type"
 msgid "Light checks"
 msgstr "Белые клетки"
 
-#: ../libgimpbase/gimpbaseenums.c:238
+#: ../libpicmanbase/picmanbaseenums.c:238
 msgctxt "check-type"
 msgid "Mid-tone checks"
 msgstr "Серые клетки"
 
-#: ../libgimpbase/gimpbaseenums.c:239
+#: ../libpicmanbase/picmanbaseenums.c:239
 msgctxt "check-type"
 msgid "Dark checks"
 msgstr "Темные клетки"
 
-#: ../libgimpbase/gimpbaseenums.c:240
+#: ../libpicmanbase/picmanbaseenums.c:240
 msgctxt "check-type"
 msgid "White only"
 msgstr "Только белый"
 
-#: ../libgimpbase/gimpbaseenums.c:241
+#: ../libpicmanbase/picmanbaseenums.c:241
 msgctxt "check-type"
 msgid "Gray only"
 msgstr "Только серый"
 
-#: ../libgimpbase/gimpbaseenums.c:242
+#: ../libpicmanbase/picmanbaseenums.c:242
 msgctxt "check-type"
 msgid "Black only"
 msgstr "Только чёрный"
 
-#: ../libgimpbase/gimpbaseenums.c:271
+#: ../libpicmanbase/picmanbaseenums.c:271
 msgctxt "clone-type"
 msgid "Image"
 msgstr "Изображение"
 
-#: ../libgimpbase/gimpbaseenums.c:272
+#: ../libpicmanbase/picmanbaseenums.c:272
 msgctxt "clone-type"
 msgid "Pattern"
 msgstr "Текстура"
 
-#: ../libgimpbase/gimpbaseenums.c:302
+#: ../libpicmanbase/picmanbaseenums.c:302
 msgctxt "desaturate-mode"
 msgid "Lightness"
 msgstr "Освещенность"
 
-#: ../libgimpbase/gimpbaseenums.c:303
+#: ../libpicmanbase/picmanbaseenums.c:303
 msgctxt "desaturate-mode"
 msgid "Luminosity"
 msgstr "Светимость"
 
-#: ../libgimpbase/gimpbaseenums.c:304
+#: ../libpicmanbase/picmanbaseenums.c:304
 msgctxt "desaturate-mode"
 msgid "Average"
 msgstr "Среднее"
 
-#: ../libgimpbase/gimpbaseenums.c:333
+#: ../libpicmanbase/picmanbaseenums.c:333
 msgctxt "dodge-burn-type"
 msgid "Dodge"
 msgstr "Осветлить"
 
-#: ../libgimpbase/gimpbaseenums.c:334
+#: ../libpicmanbase/picmanbaseenums.c:334
 msgctxt "dodge-burn-type"
 msgid "Burn"
 msgstr "Затемнить"
 
-#: ../libgimpbase/gimpbaseenums.c:400
+#: ../libpicmanbase/picmanbaseenums.c:400
 msgctxt "gradient-type"
 msgid "Linear"
 msgstr "Линейная"
 
-#: ../libgimpbase/gimpbaseenums.c:401
+#: ../libpicmanbase/picmanbaseenums.c:401
 msgctxt "gradient-type"
 msgid "Bi-linear"
 msgstr "Билинейная"
 
-#: ../libgimpbase/gimpbaseenums.c:402
+#: ../libpicmanbase/picmanbaseenums.c:402
 msgctxt "gradient-type"
 msgid "Radial"
 msgstr "Радиальная"
 
-#: ../libgimpbase/gimpbaseenums.c:403
+#: ../libpicmanbase/picmanbaseenums.c:403
 msgctxt "gradient-type"
 msgid "Square"
 msgstr "Квадратная"
 
-#: ../libgimpbase/gimpbaseenums.c:404
+#: ../libpicmanbase/picmanbaseenums.c:404
 msgctxt "gradient-type"
 msgid "Conical (sym)"
 msgstr "Коническая (симм.)"
 
-#: ../libgimpbase/gimpbaseenums.c:405
+#: ../libpicmanbase/picmanbaseenums.c:405
 msgctxt "gradient-type"
 msgid "Conical (asym)"
 msgstr "Коническая (асимм.)"
 
-#: ../libgimpbase/gimpbaseenums.c:406
+#: ../libpicmanbase/picmanbaseenums.c:406
 msgctxt "gradient-type"
 msgid "Shaped (angular)"
 msgstr "Очертания (угловая)"
 
-#: ../libgimpbase/gimpbaseenums.c:407
+#: ../libpicmanbase/picmanbaseenums.c:407
 msgctxt "gradient-type"
 msgid "Shaped (spherical)"
 msgstr "Очертания (сфера)"
 
-#: ../libgimpbase/gimpbaseenums.c:408
+#: ../libpicmanbase/picmanbaseenums.c:408
 msgctxt "gradient-type"
 msgid "Shaped (dimpled)"
 msgstr "Очертания (рябь)"
 
-#: ../libgimpbase/gimpbaseenums.c:409
+#: ../libpicmanbase/picmanbaseenums.c:409
 msgctxt "gradient-type"
 msgid "Spiral (cw)"
 msgstr "Спираль (CW)"
 
-#: ../libgimpbase/gimpbaseenums.c:410
+#: ../libpicmanbase/picmanbaseenums.c:410
 msgctxt "gradient-type"
 msgid "Spiral (ccw)"
 msgstr "Спираль (CCW)"
 
-#: ../libgimpbase/gimpbaseenums.c:442
+#: ../libpicmanbase/picmanbaseenums.c:442
 msgctxt "grid-style"
 msgid "Intersections (dots)"
 msgstr "Пересечения (точки)"
 
-#: ../libgimpbase/gimpbaseenums.c:443
+#: ../libpicmanbase/picmanbaseenums.c:443
 msgctxt "grid-style"
 msgid "Intersections (crosshairs)"
 msgstr "Пересечения (перекрестья)"
 
-#: ../libgimpbase/gimpbaseenums.c:444
+#: ../libpicmanbase/picmanbaseenums.c:444
 msgctxt "grid-style"
 msgid "Dashed"
 msgstr "Пунктир"
 
-#: ../libgimpbase/gimpbaseenums.c:445
+#: ../libpicmanbase/picmanbaseenums.c:445
 msgctxt "grid-style"
 msgid "Double dashed"
 msgstr "Двойной пунктир"
 
-#: ../libgimpbase/gimpbaseenums.c:446
+#: ../libpicmanbase/picmanbaseenums.c:446
 msgctxt "grid-style"
 msgid "Solid"
 msgstr "Цельная линия"
 
-#: ../libgimpbase/gimpbaseenums.c:476
+#: ../libpicmanbase/picmanbaseenums.c:476
 msgctxt "icon-type"
 msgid "Stock ID"
 msgstr "Stock ID"
 
-#: ../libgimpbase/gimpbaseenums.c:477
+#: ../libpicmanbase/picmanbaseenums.c:477
 msgctxt "icon-type"
 msgid "Inline pixbuf"
 msgstr "Внутристрочное изображение"
 
-#: ../libgimpbase/gimpbaseenums.c:478
+#: ../libpicmanbase/picmanbaseenums.c:478
 msgctxt "icon-type"
 msgid "Image file"
 msgstr "Файл изображения"
 
-#: ../libgimpbase/gimpbaseenums.c:508
+#: ../libpicmanbase/picmanbaseenums.c:508
 msgctxt "image-base-type"
 msgid "RGB color"
 msgstr "Цвета RGB"
 
-#: ../libgimpbase/gimpbaseenums.c:509
+#: ../libpicmanbase/picmanbaseenums.c:509
 msgctxt "image-base-type"
 msgid "Grayscale"
 msgstr "Градации серого"
 
-#: ../libgimpbase/gimpbaseenums.c:510
+#: ../libpicmanbase/picmanbaseenums.c:510
 msgctxt "image-base-type"
 msgid "Indexed color"
 msgstr "Индексированный цвет"
 
-#: ../libgimpbase/gimpbaseenums.c:543
+#: ../libpicmanbase/picmanbaseenums.c:543
 msgctxt "image-type"
 msgid "RGB"
 msgstr "RGB"
 
-#: ../libgimpbase/gimpbaseenums.c:544
+#: ../libpicmanbase/picmanbaseenums.c:544
 msgctxt "image-type"
 msgid "RGB-alpha"
 msgstr "RGB + альфа"
 
-#: ../libgimpbase/gimpbaseenums.c:545
+#: ../libpicmanbase/picmanbaseenums.c:545
 msgctxt "image-type"
 msgid "Grayscale"
 msgstr "Градации серого"
 
-#: ../libgimpbase/gimpbaseenums.c:546
+#: ../libpicmanbase/picmanbaseenums.c:546
 msgctxt "image-type"
 msgid "Grayscale-alpha"
 msgstr "Градации серого + альфа"
 
-#: ../libgimpbase/gimpbaseenums.c:547
+#: ../libpicmanbase/picmanbaseenums.c:547
 msgctxt "image-type"
 msgid "Indexed"
 msgstr "Индексированный"
 
-#: ../libgimpbase/gimpbaseenums.c:548
+#: ../libpicmanbase/picmanbaseenums.c:548
 msgctxt "image-type"
 msgid "Indexed-alpha"
 msgstr "Индексированный + альфа"
 
-#: ../libgimpbase/gimpbaseenums.c:579
+#: ../libpicmanbase/picmanbaseenums.c:579
 msgctxt "interpolation-type"
 msgid "None"
 msgstr "Нет"
 
-#: ../libgimpbase/gimpbaseenums.c:580
+#: ../libpicmanbase/picmanbaseenums.c:580
 msgctxt "interpolation-type"
 msgid "Linear"
 msgstr "Линейная"
 
-#: ../libgimpbase/gimpbaseenums.c:581
+#: ../libpicmanbase/picmanbaseenums.c:581
 msgctxt "interpolation-type"
 msgid "Cubic"
 msgstr "Кубическая"
 
-#: ../libgimpbase/gimpbaseenums.c:582
+#: ../libpicmanbase/picmanbaseenums.c:582
 msgctxt "interpolation-type"
 msgid "Sinc (Lanczos3)"
 msgstr "Sinc (Lanczos3)"
 
-#: ../libgimpbase/gimpbaseenums.c:611
+#: ../libpicmanbase/picmanbaseenums.c:611
 msgctxt "paint-application-mode"
 msgid "Constant"
 msgstr "Константа"
 
-#: ../libgimpbase/gimpbaseenums.c:612
+#: ../libpicmanbase/picmanbaseenums.c:612
 msgctxt "paint-application-mode"
 msgid "Incremental"
 msgstr "Постепенная"
 
-#: ../libgimpbase/gimpbaseenums.c:642
+#: ../libpicmanbase/picmanbaseenums.c:642
 msgctxt "repeat-mode"
 msgid "None"
 msgstr "Нет"
 
-#: ../libgimpbase/gimpbaseenums.c:643
+#: ../libpicmanbase/picmanbaseenums.c:643
 msgctxt "repeat-mode"
 msgid "Sawtooth wave"
 msgstr "Зубцевидная волна"
 
-#: ../libgimpbase/gimpbaseenums.c:644
+#: ../libpicmanbase/picmanbaseenums.c:644
 msgctxt "repeat-mode"
 msgid "Triangular wave"
 msgstr "Треугольная волна"
 
-#: ../libgimpbase/gimpbaseenums.c:674
+#: ../libpicmanbase/picmanbaseenums.c:674
 msgctxt "run-mode"
 msgid "Run interactively"
 msgstr "Запустить интерактивно"
 
-#: ../libgimpbase/gimpbaseenums.c:675
+#: ../libpicmanbase/picmanbaseenums.c:675
 msgctxt "run-mode"
 msgid "Run non-interactively"
 msgstr "Запустить неинтерактивно"
 
-#: ../libgimpbase/gimpbaseenums.c:676
+#: ../libpicmanbase/picmanbaseenums.c:676
 msgctxt "run-mode"
 msgid "Run with last used values"
 msgstr "Запустить с последними введёнными значениями"
 
-#: ../libgimpbase/gimpbaseenums.c:705
+#: ../libpicmanbase/picmanbaseenums.c:705
 msgctxt "size-type"
 msgid "Pixels"
 msgstr "Точек растра"
 
-#: ../libgimpbase/gimpbaseenums.c:706
+#: ../libpicmanbase/picmanbaseenums.c:706
 msgctxt "size-type"
 msgid "Points"
 msgstr "Пунктов"
 
-#: ../libgimpbase/gimpbaseenums.c:736
+#: ../libpicmanbase/picmanbaseenums.c:736
 msgctxt "transfer-mode"
 msgid "Shadows"
 msgstr "Тени"
 
-#: ../libgimpbase/gimpbaseenums.c:737
+#: ../libpicmanbase/picmanbaseenums.c:737
 msgctxt "transfer-mode"
 msgid "Midtones"
 msgstr "Полутона"
 
-#: ../libgimpbase/gimpbaseenums.c:738
+#: ../libpicmanbase/picmanbaseenums.c:738
 msgctxt "transfer-mode"
 msgid "Highlights"
 msgstr "Светлые части"
 
-#: ../libgimpbase/gimpbaseenums.c:767
+#: ../libpicmanbase/picmanbaseenums.c:767
 msgctxt "transform-direction"
 msgid "Normal (Forward)"
 msgstr "Обычное (вперед)"
 
-#: ../libgimpbase/gimpbaseenums.c:768
+#: ../libpicmanbase/picmanbaseenums.c:768
 msgctxt "transform-direction"
 msgid "Corrective (Backward)"
 msgstr "Корректирующее (назад)"
 
-#: ../libgimpbase/gimpbaseenums.c:799
+#: ../libpicmanbase/picmanbaseenums.c:799
 msgctxt "transform-resize"
 msgid "Adjust"
 msgstr "С полями"
 
-#: ../libgimpbase/gimpbaseenums.c:800
+#: ../libpicmanbase/picmanbaseenums.c:800
 msgctxt "transform-resize"
 msgid "Clip"
 msgstr "Без полей"
 
-#: ../libgimpbase/gimpbaseenums.c:801
+#: ../libpicmanbase/picmanbaseenums.c:801
 msgctxt "transform-resize"
 msgid "Crop to result"
 msgstr "В прямоугольник"
 
-#: ../libgimpbase/gimpbaseenums.c:802
+#: ../libpicmanbase/picmanbaseenums.c:802
 msgctxt "transform-resize"
 msgid "Crop with aspect"
 msgstr "Пропорциональная"
 
-#: ../libgimpbase/gimpbaseenums.c:935
+#: ../libpicmanbase/picmanbaseenums.c:935
 msgctxt "pdb-proc-type"
-msgid "Internal GIMP procedure"
-msgstr "Внутренняя процедура GIMP"
+msgid "Internal PICMAN procedure"
+msgstr "Внутренняя процедура PICMAN"
 
-#: ../libgimpbase/gimpbaseenums.c:936
+#: ../libpicmanbase/picmanbaseenums.c:936
 msgctxt "pdb-proc-type"
-msgid "GIMP Plug-In"
-msgstr "Модуль GIMP"
+msgid "PICMAN Plug-In"
+msgstr "Модуль PICMAN"
 
-#: ../libgimpbase/gimpbaseenums.c:937
+#: ../libpicmanbase/picmanbaseenums.c:937
 msgctxt "pdb-proc-type"
-msgid "GIMP Extension"
-msgstr "Расширение GIMP"
+msgid "PICMAN Extension"
+msgstr "Расширение PICMAN"
 
-#: ../libgimpbase/gimpbaseenums.c:938
+#: ../libpicmanbase/picmanbaseenums.c:938
 msgctxt "pdb-proc-type"
 msgid "Temporary Procedure"
 msgstr "Временная процедура"
 
-#: ../libgimpbase/gimpbaseenums.c:1105
+#: ../libpicmanbase/picmanbaseenums.c:1105
 msgctxt "text-direction"
 msgid "From left to right"
 msgstr "Слева направо"
 
-#: ../libgimpbase/gimpbaseenums.c:1106
+#: ../libpicmanbase/picmanbaseenums.c:1106
 msgctxt "text-direction"
 msgid "From right to left"
 msgstr "Справа налево"
 
-#: ../libgimpbase/gimpbaseenums.c:1137
+#: ../libpicmanbase/picmanbaseenums.c:1137
 msgctxt "text-hint-style"
 msgid "None"
 msgstr "Без"
 
-#: ../libgimpbase/gimpbaseenums.c:1138
+#: ../libpicmanbase/picmanbaseenums.c:1138
 msgctxt "text-hint-style"
 msgid "Slight"
 msgstr "Слабое"
 
-#: ../libgimpbase/gimpbaseenums.c:1139
+#: ../libpicmanbase/picmanbaseenums.c:1139
 msgctxt "text-hint-style"
 msgid "Medium"
 msgstr "Среднее"
 
-#: ../libgimpbase/gimpbaseenums.c:1140
+#: ../libpicmanbase/picmanbaseenums.c:1140
 msgctxt "text-hint-style"
 msgid "Full"
 msgstr "Полное"
 
-#: ../libgimpbase/gimpbaseenums.c:1171
+#: ../libpicmanbase/picmanbaseenums.c:1171
 msgctxt "text-justification"
 msgid "Left justified"
 msgstr "Выключка влево"
 
-#: ../libgimpbase/gimpbaseenums.c:1172
+#: ../libpicmanbase/picmanbaseenums.c:1172
 msgctxt "text-justification"
 msgid "Right justified"
 msgstr "Выключка вправо"
 
-#: ../libgimpbase/gimpbaseenums.c:1173
+#: ../libpicmanbase/picmanbaseenums.c:1173
 msgctxt "text-justification"
 msgid "Centered"
 msgstr "Выключка по центру"
 
-#: ../libgimpbase/gimpbaseenums.c:1174
+#: ../libpicmanbase/picmanbaseenums.c:1174
 msgctxt "text-justification"
 msgid "Filled"
 msgstr "Полная выключка"
 
-#: ../libgimpbase/gimputils.c:178
-#: ../libgimpbase/gimputils.c:183
+#: ../libpicmanbase/picmanutils.c:178
+#: ../libpicmanbase/picmanutils.c:183
 #: ../modules/color-selector-cmyk-lcms.c:424
 #: ../modules/color-selector-cmyk-lcms.c:430
 #: ../modules/display-filter-lcms.c:178
@@ -934,144 +934,144 @@ msgid "(invalid UTF-8 string)"
 msgstr "(неверная строка UTF-8)"
 
 #. *
-#. * SECTION: gimpcolorconfig
-#. * @title: GimpColorConfig
+#. * SECTION: picmancolorconfig
+#. * @title: PicmanColorConfig
 #. * @short_description: Color management settings.
 #. *
 #. * Color management settings.
 #. *
-#: ../libgimpconfig/gimpcolorconfig.c:52
+#: ../libpicmanconfig/picmancolorconfig.c:52
 msgid "Mode of operation for color management."
 msgstr "Способ управления цветом"
 
-#: ../libgimpconfig/gimpcolorconfig.c:54
+#: ../libpicmanconfig/picmancolorconfig.c:54
 msgid "The color profile of your (primary) monitor."
 msgstr "Цветовой профиль (основного) монитора."
 
-#: ../libgimpconfig/gimpcolorconfig.c:56
-msgid "When enabled, GIMP will try to use the display color profile from the windowing system.  The configured monitor profile is then only used as a fallback."
-msgstr "Если профиль указан, GIMP попытается получить цветовой профиль монитора от оконной системы. Указанный выше профиль монитора в таком случае используется для отката."
+#: ../libpicmanconfig/picmancolorconfig.c:56
+msgid "When enabled, PICMAN will try to use the display color profile from the windowing system.  The configured monitor profile is then only used as a fallback."
+msgstr "Если профиль указан, PICMAN попытается получить цветовой профиль монитора от оконной системы. Указанный выше профиль монитора в таком случае используется для отката."
 
-#: ../libgimpconfig/gimpcolorconfig.c:60
+#: ../libpicmanconfig/picmancolorconfig.c:60
 msgid "The default RGB working space color profile."
 msgstr "Используемый по умолчанию ICC-профиль для работы в цветовом пространстве RGB."
 
-#: ../libgimpconfig/gimpcolorconfig.c:62
+#: ../libpicmanconfig/picmancolorconfig.c:62
 msgid "The CMYK color profile used to convert between RGB and CMYK."
 msgstr "CMYK-профиль для преобразований между RGB и CMYK."
 
-#: ../libgimpconfig/gimpcolorconfig.c:64
+#: ../libpicmanconfig/picmancolorconfig.c:64
 msgid "The color profile used for simulating a printed version (softproof)."
 msgstr "Цветовой профиль для имитации печатной версии (цветопроба)."
 
-#: ../libgimpconfig/gimpcolorconfig.c:66
+#: ../libpicmanconfig/picmancolorconfig.c:66
 msgid "Sets how colors are mapped for your display."
 msgstr "Определяет способ переноса цветов на монитор"
 
-#: ../libgimpconfig/gimpcolorconfig.c:68
+#: ../libpicmanconfig/picmancolorconfig.c:68
 msgid "Sets how colors are converted from RGB working space to the print simulation device."
 msgstr "Определяет способ преобразования цветов из рабочего пространства RGB в пространство имитируемого печатающего устройства."
 
-#: ../libgimpconfig/gimpcolorconfig.c:71
+#: ../libpicmanconfig/picmancolorconfig.c:71
 msgid "When enabled, the print simulation will mark colors which can not be represented in the target color space."
 msgstr "Если включено, при экранной цветопробе все цвета, не попадающие в цветовой охват, будут заменены на указанный здесь цвет."
 
-#: ../libgimpconfig/gimpcolorconfig.c:74
+#: ../libpicmanconfig/picmancolorconfig.c:74
 msgid "The color to use for marking colors which are out of gamut."
 msgstr "Цвет, используемый для пометки цветов вне цветового охвата."
 
-#: ../libgimpconfig/gimpcolorconfig-enums.c:24
+#: ../libpicmanconfig/picmancolorconfig-enums.c:24
 msgctxt "color-management-mode"
 msgid "No color management"
 msgstr "Без управления цветом"
 
-#: ../libgimpconfig/gimpcolorconfig-enums.c:25
+#: ../libpicmanconfig/picmancolorconfig-enums.c:25
 msgctxt "color-management-mode"
 msgid "Color managed display"
 msgstr "Цветоуправляемый монитор"
 
-#: ../libgimpconfig/gimpcolorconfig-enums.c:26
+#: ../libpicmanconfig/picmancolorconfig-enums.c:26
 msgctxt "color-management-mode"
 msgid "Print simulation"
 msgstr "Имитация принтера"
 
-#: ../libgimpconfig/gimpcolorconfig-enums.c:57
+#: ../libpicmanconfig/picmancolorconfig-enums.c:57
 msgctxt "color-rendering-intent"
 msgid "Perceptual"
 msgstr "Воспринимаемая"
 
-#: ../libgimpconfig/gimpcolorconfig-enums.c:58
+#: ../libpicmanconfig/picmancolorconfig-enums.c:58
 msgctxt "color-rendering-intent"
 msgid "Relative colorimetric"
 msgstr "Относительная колориметрическая"
 
-#: ../libgimpconfig/gimpcolorconfig-enums.c:59
+#: ../libpicmanconfig/picmancolorconfig-enums.c:59
 msgctxt "color-rendering-intent"
 msgid "Saturation"
 msgstr "Насыщенная"
 
-#: ../libgimpconfig/gimpcolorconfig-enums.c:60
+#: ../libpicmanconfig/picmancolorconfig-enums.c:60
 msgctxt "color-rendering-intent"
 msgid "Absolute colorimetric"
 msgstr "Абсолютная колориметрическая"
 
-#: ../libgimpconfig/gimpconfig-deserialize.c:106
+#: ../libpicmanconfig/picmanconfig-deserialize.c:106
 #, c-format
 msgid "value for token %s is not a valid UTF-8 string"
 msgstr "значение для маркёра %s не является корректной строкой в UTF-8"
 
 #. please don't translate 'yes' and 'no'
-#: ../libgimpconfig/gimpconfig-deserialize.c:444
+#: ../libpicmanconfig/picmanconfig-deserialize.c:444
 #, c-format
 msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
 msgstr "ожидалось 'yes' или 'no' для булевого маркёра %s, получено '%s'"
 
-#: ../libgimpconfig/gimpconfig-deserialize.c:518
+#: ../libpicmanconfig/picmanconfig-deserialize.c:518
 #, c-format
 msgid "invalid value '%s' for token %s"
 msgstr "неверное значение '%s' для маркёра %s"
 
-#: ../libgimpconfig/gimpconfig-deserialize.c:533
+#: ../libpicmanconfig/picmanconfig-deserialize.c:533
 #, c-format
 msgid "invalid value '%ld' for token %s"
 msgstr "неверное значение '%ld' для маркёра %s"
 
-#: ../libgimpconfig/gimpconfig-deserialize.c:602
+#: ../libpicmanconfig/picmanconfig-deserialize.c:602
 #, c-format
 msgid "while parsing token '%s': %s"
 msgstr "при синтаксическом разборе маркёра '%s': %s"
 
-#: ../libgimpconfig/gimpconfig-iface.c:482
-#: ../libgimpconfig/gimpconfig-iface.c:495
-#: ../libgimpconfig/gimpscanner.c:559
-#: ../libgimpconfig/gimpscanner.c:641
-#: ../libgimpwidgets/gimpcolorprofilestore.c:656
+#: ../libpicmanconfig/picmanconfig-iface.c:482
+#: ../libpicmanconfig/picmanconfig-iface.c:495
+#: ../libpicmanconfig/picmanscanner.c:559
+#: ../libpicmanconfig/picmanscanner.c:641
+#: ../libpicmanwidgets/picmancolorprofilestore.c:656
 msgid "fatal parse error"
 msgstr "критическая ошибка при синтаксическом разборе"
 
-#: ../libgimpconfig/gimpconfig-path.c:387
+#: ../libpicmanconfig/picmanconfig-path.c:387
 #, c-format
 msgid "Cannot expand ${%s}"
 msgstr "Невозможно расширить ${%s}"
 
-#: ../libgimpconfig/gimpconfigwriter.c:87
-#: ../libgimpconfig/gimpconfigwriter.c:728
+#: ../libpicmanconfig/picmanconfigwriter.c:87
+#: ../libpicmanconfig/picmanconfigwriter.c:728
 #, c-format
 msgid "Error writing to '%s': %s"
 msgstr "Ошибка записи в '%s': %s"
 
-#: ../libgimpconfig/gimpconfigwriter.c:145
+#: ../libpicmanconfig/picmanconfigwriter.c:145
 #, c-format
 msgid "Could not create temporary file for '%s': %s"
 msgstr "Не удалось создать временный файл для '%s': %s"
 
-#: ../libgimpconfig/gimpconfigwriter.c:158
+#: ../libpicmanconfig/picmanconfigwriter.c:158
 #, c-format
 msgid "Could not open '%s' for writing: %s"
 msgstr "Не удалось открыть '%s' для записи: %s"
 
-#: ../libgimpconfig/gimpconfigwriter.c:689
-#: ../libgimpconfig/gimpconfigwriter.c:709
+#: ../libpicmanconfig/picmanconfigwriter.c:689
+#: ../libpicmanconfig/picmanconfigwriter.c:709
 #, c-format
 msgid ""
 "Error writing to temporary file for '%s': %s\n"
@@ -1080,7 +1080,7 @@ msgstr ""
 "Ошибка записи во временный файл для '%s': %s\n"
 "Исходный файл не был изменён."
 
-#: ../libgimpconfig/gimpconfigwriter.c:717
+#: ../libpicmanconfig/picmanconfigwriter.c:717
 #, c-format
 msgid ""
 "Error writing to temporary file for '%s': %s\n"
@@ -1089,56 +1089,56 @@ msgstr ""
 "Ошибка записи во временный файл для '%s': %s\n"
 "Файл не был создан."
 
-#: ../libgimpconfig/gimpconfigwriter.c:741
+#: ../libpicmanconfig/picmanconfigwriter.c:741
 #, c-format
 msgid "Could not create '%s': %s"
 msgstr "Не удалось создать '%s': %s"
 
-#: ../libgimpconfig/gimpscanner.c:268
+#: ../libpicmanconfig/picmanscanner.c:268
 #, c-format
 msgid "invalid UTF-8 string"
 msgstr "неверная строка UTF-8"
 
 #. please don't translate 'yes' and 'no'
-#: ../libgimpconfig/gimpscanner.c:431
+#: ../libpicmanconfig/picmanscanner.c:431
 #, c-format
 #| msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
 msgid "expected 'yes' or 'no' for boolean token, got '%s'"
 msgstr "ожидалось 'yes' или 'no' для булевого маркера, получено '%s'"
 
-#: ../libgimpconfig/gimpscanner.c:668
+#: ../libpicmanconfig/picmanscanner.c:668
 #, c-format
 msgid "Error while parsing '%s' in line %d: %s"
 msgstr "Ошибка при синтаксическом разборе '%s' в строке %d: %s"
 
-#: ../libgimpmodule/gimpmodule.c:163
-#: ../libgimpmodule/gimpmodule.c:181
-#: ../libgimpmodule/gimpmodule.c:290
-#: ../libgimpmodule/gimpmodule.c:317
-#: ../libgimpmodule/gimpmodule.c:443
+#: ../libpicmanmodule/picmanmodule.c:163
+#: ../libpicmanmodule/picmanmodule.c:181
+#: ../libpicmanmodule/picmanmodule.c:290
+#: ../libpicmanmodule/picmanmodule.c:317
+#: ../libpicmanmodule/picmanmodule.c:443
 #, c-format
 msgid "Module '%s' load error: %s"
 msgstr ""
 "Ошибка загрузки модуля \"%s\":\n"
 "%s"
 
-#: ../libgimpmodule/gimpmodule.c:385
+#: ../libpicmanmodule/picmanmodule.c:385
 msgid "Module error"
 msgstr "Ошибка модуля"
 
-#: ../libgimpmodule/gimpmodule.c:386
+#: ../libpicmanmodule/picmanmodule.c:386
 msgid "Loaded"
 msgstr "Загружен"
 
-#: ../libgimpmodule/gimpmodule.c:387
+#: ../libpicmanmodule/picmanmodule.c:387
 msgid "Load failed"
 msgstr "Сбой при загрузке"
 
-#: ../libgimpmodule/gimpmodule.c:388
+#: ../libpicmanmodule/picmanmodule.c:388
 msgid "Not loaded"
 msgstr "Не загружен"
 
-#: ../libgimpthumb/gimpthumb-utils.c:131
+#: ../libpicmanthumb/picmanthumb-utils.c:131
 #, c-format
 msgid ""
 "Cannot determine a valid home directory.\n"
@@ -1147,137 +1147,137 @@ msgstr ""
 "Невозможно определить домашний каталог.\n"
 "Файлы предварительного просмотра будут храниться в каталоге для временных файлов (%s)."
 
-#: ../libgimpthumb/gimpthumb-utils.c:255
-#: ../libgimpthumb/gimpthumb-utils.c:323
+#: ../libpicmanthumb/picmanthumb-utils.c:255
+#: ../libpicmanthumb/picmanthumb-utils.c:323
 #, c-format
 msgid "Failed to create thumbnail folder '%s'."
 msgstr "Не удалось создать каталог файлов предварительного просмотра '%s'."
 
-#: ../libgimpthumb/gimpthumbnail.c:508
+#: ../libpicmanthumb/picmanthumbnail.c:508
 #, c-format
 msgid "Thumbnail contains no Thumb::URI tag"
 msgstr "В эскизе нет тэга Thumb::URI"
 
-#: ../libgimpthumb/gimpthumbnail.c:904
+#: ../libpicmanthumb/picmanthumbnail.c:904
 #, c-format
 msgid "Could not create thumbnail for %s: %s"
 msgstr "Не удалось создать файлы предварительного просмотра  %s:  %s."
 
-#: ../libgimpwidgets/gimpbrowser.c:112
+#: ../libpicmanwidgets/picmanbrowser.c:112
 msgid "_Search:"
 msgstr "_Искать:"
 
-#: ../libgimpwidgets/gimpcolorbutton.c:135
+#: ../libpicmanwidgets/picmancolorbutton.c:135
 msgid "_Foreground Color"
 msgstr "Цвет _переднего плана"
 
-#: ../libgimpwidgets/gimpcolorbutton.c:139
+#: ../libpicmanwidgets/picmancolorbutton.c:139
 msgid "_Background Color"
 msgstr "Цвет _фона"
 
-#: ../libgimpwidgets/gimpcolorbutton.c:143
+#: ../libpicmanwidgets/picmancolorbutton.c:143
 msgid "Blac_k"
 msgstr "_Чёрный"
 
-#: ../libgimpwidgets/gimpcolorbutton.c:147
+#: ../libpicmanwidgets/picmancolorbutton.c:147
 msgid "_White"
 msgstr "_Белый"
 
-#: ../libgimpwidgets/gimpcolorprofilestore.c:146
+#: ../libpicmanwidgets/picmancolorprofilestore.c:146
 msgid "Select color profile from disk..."
 msgstr "Выберите цветовой профиль с диска..."
 
-#: ../libgimpwidgets/gimpcolorprofilestore.c:280
+#: ../libpicmanwidgets/picmancolorprofilestore.c:280
 msgctxt "profile"
 msgid "None"
 msgstr "Нет"
 
-#: ../libgimpwidgets/gimpcolorscales.c:108
+#: ../libpicmanwidgets/picmancolorscales.c:108
 msgid "Scales"
 msgstr "Шкала"
 
-#: ../libgimpwidgets/gimpcolorselection.c:220
+#: ../libpicmanwidgets/picmancolorselection.c:220
 msgid "Current:"
 msgstr "Текущий:"
 
-#: ../libgimpwidgets/gimpcolorselection.c:229
+#: ../libpicmanwidgets/picmancolorselection.c:229
 msgid "Old:"
 msgstr "Прежний:"
 
-#: ../libgimpwidgets/gimpcolorselection.c:314
+#: ../libpicmanwidgets/picmancolorselection.c:314
 msgid "Hexadecimal color notation as used in HTML and CSS.  This entry also accepts CSS color names."
 msgstr "Шестнадцатеричная запись цвета, используемая в HTML и CSS. Также можно вводить имена цветов в нотации CSS."
 
-#: ../libgimpwidgets/gimpcolorselection.c:320
+#: ../libpicmanwidgets/picmancolorselection.c:320
 msgid "HTML _notation:"
 msgstr "HTML-р_азметка:"
 
-#: ../libgimpwidgets/gimpfileentry.c:200
+#: ../libpicmanwidgets/picmanfileentry.c:200
 msgid "Open a file selector to browse your folders"
 msgstr "Откройте диалог для просмотра папок"
 
-#: ../libgimpwidgets/gimpfileentry.c:201
+#: ../libpicmanwidgets/picmanfileentry.c:201
 msgid "Open a file selector to browse your files"
 msgstr "Откройте диалог для просмотра файлов"
 
-#: ../libgimpwidgets/gimpfileentry.c:361
+#: ../libpicmanwidgets/picmanfileentry.c:361
 msgid "Select Folder"
 msgstr "Выбрать каталог"
 
-#: ../libgimpwidgets/gimpfileentry.c:363
+#: ../libpicmanwidgets/picmanfileentry.c:363
 msgid "Select File"
 msgstr "Выбрать файл"
 
-#: ../libgimpwidgets/gimphelpui.c:432
+#: ../libpicmanwidgets/picmanhelpui.c:432
 msgid "Press F1 for more help"
 msgstr "Нажмите F1 для получения полной справки"
 
-#: ../libgimpwidgets/gimpmemsizeentry.c:220
+#: ../libpicmanwidgets/picmanmemsizeentry.c:220
 msgid "Kilobytes"
 msgstr "Килобайты"
 
-#: ../libgimpwidgets/gimpmemsizeentry.c:221
+#: ../libpicmanwidgets/picmanmemsizeentry.c:221
 msgid "Megabytes"
 msgstr "Мегабайты"
 
-#: ../libgimpwidgets/gimpmemsizeentry.c:222
+#: ../libpicmanwidgets/picmanmemsizeentry.c:222
 msgid "Gigabytes"
 msgstr "Гигабайты"
 
 #. Count label
-#: ../libgimpwidgets/gimppageselector.c:282
-#: ../libgimpwidgets/gimppageselector.c:1178
+#: ../libpicmanwidgets/picmanpageselector.c:282
+#: ../libpicmanwidgets/picmanpageselector.c:1178
 msgid "Nothing selected"
 msgstr "Ничего не выбрано"
 
-#: ../libgimpwidgets/gimppageselector.c:300
+#: ../libpicmanwidgets/picmanpageselector.c:300
 msgid "Select _All"
 msgstr "Выбрать в_се"
 
-#: ../libgimpwidgets/gimppageselector.c:320
+#: ../libpicmanwidgets/picmanpageselector.c:320
 msgid "Select _range:"
 msgstr "Выбрать _диапазон:"
 
-#: ../libgimpwidgets/gimppageselector.c:332
+#: ../libpicmanwidgets/picmanpageselector.c:332
 msgid "Open _pages as"
 msgstr "Открыть страницы _как"
 
-#: ../libgimpwidgets/gimppageselector.c:433
+#: ../libpicmanwidgets/picmanpageselector.c:433
 msgid "Page 000"
 msgstr "Страница 000"
 
-#: ../libgimpwidgets/gimppageselector.c:521
-#: ../libgimpwidgets/gimppageselector.c:758
+#: ../libpicmanwidgets/picmanpageselector.c:521
+#: ../libpicmanwidgets/picmanpageselector.c:758
 #, c-format
 msgid "Page %d"
 msgstr "Страница %d"
 
-#: ../libgimpwidgets/gimppageselector.c:1183
+#: ../libpicmanwidgets/picmanpageselector.c:1183
 msgid "One page selected"
 msgstr "Выбрана одна страница"
 
-#: ../libgimpwidgets/gimppageselector.c:1190
-#: ../libgimpwidgets/gimppageselector.c:1194
+#: ../libpicmanwidgets/picmanpageselector.c:1190
+#: ../libpicmanwidgets/picmanpageselector.c:1194
 #, c-format
 msgid "%d page selected"
 msgid_plural "All %d pages selected"
@@ -1285,32 +1285,32 @@ msgstr[0] "Выбрана %d страница"
 msgstr[1] "Выбраны %d страницы"
 msgstr[2] "Выбрано %d страниц"
 
-#: ../libgimpwidgets/gimppatheditor.c:239
+#: ../libpicmanwidgets/picmanpatheditor.c:239
 msgid "Writable"
 msgstr "Перезаписываемый"
 
-#: ../libgimpwidgets/gimppatheditor.c:248
+#: ../libpicmanwidgets/picmanpatheditor.c:248
 msgid "Folder"
 msgstr "Папка"
 
-#: ../libgimpwidgets/gimppickbutton.c:127
+#: ../libpicmanwidgets/picmanpickbutton.c:127
 msgid "Click the eyedropper, then click a color anywhere on your screen to select that color."
 msgstr "Выберите пипетку, затем укажите цвет где-нибудь на экране, чтобы выбрать его."
 
 #. toggle button to (de)activate the instant preview
-#: ../libgimpwidgets/gimppreview.c:290
+#: ../libpicmanwidgets/picmanpreview.c:290
 msgid "_Preview"
 msgstr "_Просмотр"
 
-#: ../libgimpwidgets/gimppreviewarea.c:103
+#: ../libpicmanwidgets/picmanpreviewarea.c:103
 msgid "Check Size"
 msgstr "Размер клеток"
 
-#: ../libgimpwidgets/gimppreviewarea.c:110
+#: ../libpicmanwidgets/picmanpreviewarea.c:110
 msgid "Check Style"
 msgstr "Стиль клеток"
 
-#: ../libgimpwidgets/gimppropwidgets.c:1878
+#: ../libpicmanwidgets/picmanpropwidgets.c:1878
 #, c-format
 msgid "This text input field is limited to %d character."
 msgid_plural "This text input field is limited to %d characters."
@@ -1318,221 +1318,221 @@ msgstr[0] "Ввод текста в это поле ограничен %d сим
 msgstr[1] "Ввод текста в это поле ограничен %d символами."
 msgstr[2] "Ввод текста в это поле ограничен %d символами."
 
-#: ../libgimpwidgets/gimpstock.c:127
+#: ../libpicmanwidgets/picmanstock.c:127
 msgid "Anchor"
 msgstr "Прикрепить"
 
-#: ../libgimpwidgets/gimpstock.c:128
+#: ../libpicmanwidgets/picmanstock.c:128
 msgid "C_enter"
 msgstr "Центр"
 
-#: ../libgimpwidgets/gimpstock.c:129
+#: ../libpicmanwidgets/picmanstock.c:129
 msgid "_Duplicate"
 msgstr "Сделать копию"
 
-#: ../libgimpwidgets/gimpstock.c:130
+#: ../libpicmanwidgets/picmanstock.c:130
 msgid "_Edit"
 msgstr "Исправить"
 
-#: ../libgimpwidgets/gimpstock.c:131
+#: ../libpicmanwidgets/picmanstock.c:131
 msgid "Linked"
 msgstr "Связанные"
 
-#: ../libgimpwidgets/gimpstock.c:132
+#: ../libpicmanwidgets/picmanstock.c:132
 msgid "Paste as New"
 msgstr "Вставить как новое"
 
-#: ../libgimpwidgets/gimpstock.c:133
+#: ../libpicmanwidgets/picmanstock.c:133
 msgid "Paste Into"
 msgstr "Вставить в"
 
-#: ../libgimpwidgets/gimpstock.c:134
+#: ../libpicmanwidgets/picmanstock.c:134
 msgid "_Reset"
 msgstr "_Сбросить"
 
-#: ../libgimpwidgets/gimpstock.c:135
+#: ../libpicmanwidgets/picmanstock.c:135
 msgid "Visible"
 msgstr "Видимый"
 
-#: ../libgimpwidgets/gimpstock.c:171
-#: ../libgimpwidgets/gimpstock.c:175
+#: ../libpicmanwidgets/picmanstock.c:171
+#: ../libpicmanwidgets/picmanstock.c:175
 msgid "_Stroke"
 msgstr "_Обвести"
 
-#: ../libgimpwidgets/gimpstock.c:187
+#: ../libpicmanwidgets/picmanstock.c:187
 msgid "L_etter Spacing"
 msgstr "М_ежбуквенное расстояние"
 
-#: ../libgimpwidgets/gimpstock.c:188
+#: ../libpicmanwidgets/picmanstock.c:188
 msgid "L_ine Spacing"
 msgstr "_Интерлиньяж"
 
-#: ../libgimpwidgets/gimpstock.c:204
+#: ../libpicmanwidgets/picmanstock.c:204
 msgid "_Resize"
 msgstr "_Изменить размер"
 
-#: ../libgimpwidgets/gimpstock.c:205
-#: ../libgimpwidgets/gimpstock.c:340
+#: ../libpicmanwidgets/picmanstock.c:205
+#: ../libpicmanwidgets/picmanstock.c:340
 msgid "_Scale"
 msgstr "Из_менить"
 
-#: ../libgimpwidgets/gimpstock.c:315
+#: ../libpicmanwidgets/picmanstock.c:315
 msgid "Cr_op"
 msgstr "_Обрезать"
 
-#: ../libgimpwidgets/gimpstock.c:335
+#: ../libpicmanwidgets/picmanstock.c:335
 msgid "_Transform"
 msgstr "_Преобразовать"
 
-#: ../libgimpwidgets/gimpstock.c:339
+#: ../libpicmanwidgets/picmanstock.c:339
 msgid "_Rotate"
 msgstr "_Повернуть"
 
-#: ../libgimpwidgets/gimpstock.c:341
+#: ../libpicmanwidgets/picmanstock.c:341
 msgid "_Shear"
 msgstr "Н_аклонить"
 
-#: ../libgimpwidgets/gimpunitmenu.c:264
+#: ../libpicmanwidgets/picmanunitmenu.c:264
 msgid "More..."
 msgstr "Ещё..."
 
-#: ../libgimpwidgets/gimpunitmenu.c:490
+#: ../libpicmanwidgets/picmanunitmenu.c:490
 msgid "Unit Selection"
 msgstr "Выбор единиц"
 
-#: ../libgimpwidgets/gimpunitmenu.c:539
+#: ../libpicmanwidgets/picmanunitmenu.c:539
 msgid "Unit"
 msgstr "Единица"
 
-#: ../libgimpwidgets/gimpunitmenu.c:543
+#: ../libpicmanwidgets/picmanunitmenu.c:543
 msgid "Factor"
 msgstr "Множитель"
 
-#: ../libgimpwidgets/gimpwidgets.c:516
+#: ../libpicmanwidgets/picmanwidgets.c:516
 msgid "Use this value for random number generator seed - this allows you to repeat a given \"random\" operation"
 msgstr "Используйте это значение для инициализации генератора случайных чисел - это даст возможность повторить заданную \"случайную\" операцию"
 
-#: ../libgimpwidgets/gimpwidgets.c:520
+#: ../libpicmanwidgets/picmanwidgets.c:520
 msgid "_New Seed"
 msgstr "Новое зерно"
 
-#: ../libgimpwidgets/gimpwidgets.c:533
+#: ../libpicmanwidgets/picmanwidgets.c:533
 msgid "Seed random number generator with a generated random number"
 msgstr "Инициализировать генератор случайных чисел сгенерированным случайным числом"
 
-#: ../libgimpwidgets/gimpwidgets.c:537
+#: ../libpicmanwidgets/picmanwidgets.c:537
 msgid "_Randomize"
 msgstr "Перемешать"
 
-#: ../libgimpwidgets/gimpwidgets-private.c:49
+#: ../libpicmanwidgets/picmanwidgets-private.c:49
 msgctxt "input-mode"
 msgid "Disabled"
 msgstr "Отключено"
 
-#: ../libgimpwidgets/gimpwidgets-private.c:50
+#: ../libpicmanwidgets/picmanwidgets-private.c:50
 msgctxt "input-mode"
 msgid "Screen"
 msgstr "Экран"
 
-#: ../libgimpwidgets/gimpwidgets-private.c:51
+#: ../libpicmanwidgets/picmanwidgets-private.c:51
 msgctxt "input-mode"
 msgid "Window"
 msgstr "Окно"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:24
+#: ../libpicmanwidgets/picmanwidgetsenums.c:24
 msgctxt "aspect-type"
 msgid "Square"
 msgstr "Квадрат"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:25
+#: ../libpicmanwidgets/picmanwidgetsenums.c:25
 msgctxt "aspect-type"
 msgid "Portrait"
 msgstr "Портрет"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:26
+#: ../libpicmanwidgets/picmanwidgetsenums.c:26
 msgctxt "aspect-type"
 msgid "Landscape"
 msgstr "Альбом"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:126
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
 msgctxt "color-selector-channel"
 msgid "_H"
 msgstr "_H"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:126
+#: ../libpicmanwidgets/picmanwidgetsenums.c:126
 msgid "Hue"
 msgstr "Тон"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:127
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
 msgctxt "color-selector-channel"
 msgid "_S"
 msgstr "_S"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:127
+#: ../libpicmanwidgets/picmanwidgetsenums.c:127
 msgid "Saturation"
 msgstr "Насыщенность"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:128
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
 msgctxt "color-selector-channel"
 msgid "_V"
 msgstr "_V"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:128
+#: ../libpicmanwidgets/picmanwidgetsenums.c:128
 msgid "Value"
 msgstr "Значение"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:129
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
 msgctxt "color-selector-channel"
 msgid "_R"
 msgstr "_R"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:129
+#: ../libpicmanwidgets/picmanwidgetsenums.c:129
 msgid "Red"
 msgstr "Красный"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:130
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
 msgctxt "color-selector-channel"
 msgid "_G"
 msgstr "_G"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:130
+#: ../libpicmanwidgets/picmanwidgetsenums.c:130
 msgid "Green"
 msgstr "Зеленый"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:131
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
 msgctxt "color-selector-channel"
 msgid "_B"
 msgstr "_B"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:131
+#: ../libpicmanwidgets/picmanwidgetsenums.c:131
 msgid "Blue"
 msgstr "Синий"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:132
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
 msgctxt "color-selector-channel"
 msgid "_A"
 msgstr "_A"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:132
+#: ../libpicmanwidgets/picmanwidgetsenums.c:132
 msgid "Alpha"
 msgstr "Альфа"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:161
+#: ../libpicmanwidgets/picmanwidgetsenums.c:161
 msgctxt "page-selector-target"
 msgid "Layers"
 msgstr "Слои"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:162
+#: ../libpicmanwidgets/picmanwidgetsenums.c:162
 msgctxt "page-selector-target"
 msgid "Images"
 msgstr "Изображения"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:223
+#: ../libpicmanwidgets/picmanwidgetsenums.c:223
 msgctxt "zoom-type"
 msgid "Zoom in"
 msgstr "Приблизить"
 
-#: ../libgimpwidgets/gimpwidgetsenums.c:224
+#: ../libpicmanwidgets/picmanwidgetsenums.c:224
 msgctxt "zoom-type"
 msgid "Zoom out"
 msgstr "Отдалить"
@@ -1969,11 +1969,11 @@ msgid "MIDI Events"
 msgstr "MIDI-события"
 
 #: ../modules/controller-midi.c:425
-msgid "GIMP"
-msgstr "GIMP"
+msgid "PICMAN"
+msgstr "PICMAN"
 
 #: ../modules/controller-midi.c:427
-msgid "GIMP MIDI Input Controller"
+msgid "PICMAN MIDI Input Controller"
 msgstr "Контроллер входящих MIDI-событий"
 
 #: ../modules/display-filter-color-blind.c:67

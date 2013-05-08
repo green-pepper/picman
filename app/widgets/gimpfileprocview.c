@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfileprocview.c
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanfileprocview.c
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +26,14 @@
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpmarshal.h"
+#include "core/picman.h"
+#include "core/picmanmarshal.h"
 
-#include "plug-in/gimppluginprocedure.h"
+#include "plug-in/picmanpluginprocedure.h"
 
-#include "gimpfileprocview.h"
+#include "picmanfileprocview.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -52,47 +52,47 @@ enum
 };
 
 
-static void  gimp_file_proc_view_finalize          (GObject          *object);
+static void  picman_file_proc_view_finalize          (GObject          *object);
 
-static void  gimp_file_proc_view_selection_changed (GtkTreeSelection *selection,
-                                                    GimpFileProcView *view);
+static void  picman_file_proc_view_selection_changed (GtkTreeSelection *selection,
+                                                    PicmanFileProcView *view);
 
 
-G_DEFINE_TYPE (GimpFileProcView, gimp_file_proc_view, GTK_TYPE_TREE_VIEW)
+G_DEFINE_TYPE (PicmanFileProcView, picman_file_proc_view, GTK_TYPE_TREE_VIEW)
 
-#define parent_class gimp_file_proc_view_parent_class
+#define parent_class picman_file_proc_view_parent_class
 
 static guint view_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_file_proc_view_class_init (GimpFileProcViewClass *klass)
+picman_file_proc_view_class_init (PicmanFileProcViewClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize = gimp_file_proc_view_finalize;
+  object_class->finalize = picman_file_proc_view_finalize;
 
   klass->changed         = NULL;
 
   view_signals[CHANGED] = g_signal_new ("changed",
                                         G_TYPE_FROM_CLASS (klass),
                                         G_SIGNAL_RUN_LAST,
-                                        G_STRUCT_OFFSET (GimpFileProcViewClass,
+                                        G_STRUCT_OFFSET (PicmanFileProcViewClass,
                                                          changed),
                                         NULL, NULL,
-                                        gimp_marshal_VOID__VOID,
+                                        picman_marshal_VOID__VOID,
                                         G_TYPE_NONE, 0);
 }
 
 static void
-gimp_file_proc_view_init (GimpFileProcView *view)
+picman_file_proc_view_init (PicmanFileProcView *view)
 {
 }
 
 static void
-gimp_file_proc_view_finalize (GObject *object)
+picman_file_proc_view_finalize (GObject *object)
 {
-  GimpFileProcView *view = GIMP_FILE_PROC_VIEW (object);
+  PicmanFileProcView *view = PICMAN_FILE_PROC_VIEW (object);
 
   if (view->meta_extensions)
     {
@@ -104,7 +104,7 @@ gimp_file_proc_view_finalize (GObject *object)
 }
 
 GtkWidget *
-gimp_file_proc_view_new (Gimp        *gimp,
+picman_file_proc_view_new (Picman        *picman,
                          GSList      *procedures,
                          const gchar *automatic,
                          const gchar *automatic_help_id)
@@ -116,15 +116,15 @@ gimp_file_proc_view_new (Gimp        *gimp,
   GSList            *list;
   GtkTreeIter        iter;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
   store = gtk_list_store_new (N_COLUMNS,
-                              GIMP_TYPE_PLUG_IN_PROCEDURE, /*  COLUMN_PROC   */
+                              PICMAN_TYPE_PLUG_IN_PROCEDURE, /*  COLUMN_PROC   */
                               G_TYPE_STRING,          /*  COLUMN_LABEL       */
                               G_TYPE_STRING,          /*  COLUMN_EXTENSIONS  */
                               G_TYPE_STRING);         /*  COLUMN_HELP_ID     */
 
-  view = g_object_new (GIMP_TYPE_FILE_PROC_VIEW,
+  view = g_object_new (PICMAN_TYPE_FILE_PROC_VIEW,
                        "model",      store,
                        "rules-hint", TRUE,
                        NULL);
@@ -133,12 +133,12 @@ gimp_file_proc_view_new (Gimp        *gimp,
 
   for (list = procedures; list; list = g_slist_next (list))
     {
-      GimpPlugInProcedure *proc = list->data;
+      PicmanPlugInProcedure *proc = list->data;
 
       if (! proc->prefixes_list) /*  skip URL loaders  */
         {
-          const gchar *label   = gimp_plug_in_procedure_get_label (proc);
-          gchar       *help_id = gimp_plug_in_procedure_get_help_id (proc);
+          const gchar *label   = picman_plug_in_procedure_get_label (proc);
+          gchar       *help_id = picman_plug_in_procedure_get_help_id (proc);
           GSList      *list2;
 
           if (label)
@@ -158,7 +158,7 @@ gimp_file_proc_view_new (Gimp        *gimp,
                list2;
                list2 = g_slist_next (list2))
             {
-              GimpFileProcView *proc_view = GIMP_FILE_PROC_VIEW (view);
+              PicmanFileProcView *proc_view = PICMAN_FILE_PROC_VIEW (view);
               const gchar      *ext       = list2->data;
               const gchar      *dot       = strchr (ext, '.');
 
@@ -205,27 +205,27 @@ gimp_file_proc_view_new (Gimp        *gimp,
   gtk_tree_view_append_column (view, column);
 
   g_signal_connect (gtk_tree_view_get_selection (view), "changed",
-                    G_CALLBACK (gimp_file_proc_view_selection_changed),
+                    G_CALLBACK (picman_file_proc_view_selection_changed),
                     view);
 
   return GTK_WIDGET (view);
 }
 
-GimpPlugInProcedure *
-gimp_file_proc_view_get_proc (GimpFileProcView  *view,
+PicmanPlugInProcedure *
+picman_file_proc_view_get_proc (PicmanFileProcView  *view,
                               gchar            **label)
 {
   GtkTreeModel     *model;
   GtkTreeSelection *selection;
   GtkTreeIter       iter;
 
-  g_return_val_if_fail (GIMP_IS_FILE_PROC_VIEW (view), NULL);
+  g_return_val_if_fail (PICMAN_IS_FILE_PROC_VIEW (view), NULL);
 
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
 
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
-      GimpPlugInProcedure *proc;
+      PicmanPlugInProcedure *proc;
 
       if (label)
         gtk_tree_model_get (model, &iter,
@@ -250,14 +250,14 @@ gimp_file_proc_view_get_proc (GimpFileProcView  *view,
 }
 
 gboolean
-gimp_file_proc_view_set_proc (GimpFileProcView    *view,
-                              GimpPlugInProcedure *proc)
+picman_file_proc_view_set_proc (PicmanFileProcView    *view,
+                              PicmanPlugInProcedure *proc)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
   gboolean      iter_valid;
 
-  g_return_val_if_fail (GIMP_IS_FILE_PROC_VIEW (view), FALSE);
+  g_return_val_if_fail (PICMAN_IS_FILE_PROC_VIEW (view), FALSE);
 
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
 
@@ -265,7 +265,7 @@ gimp_file_proc_view_set_proc (GimpFileProcView    *view,
        iter_valid;
        iter_valid = gtk_tree_model_iter_next (model, &iter))
     {
-      GimpPlugInProcedure *this;
+      PicmanPlugInProcedure *this;
 
       gtk_tree_model_get (model, &iter,
                           COLUMN_PROC, &this,
@@ -291,13 +291,13 @@ gimp_file_proc_view_set_proc (GimpFileProcView    *view,
 }
 
 gchar *
-gimp_file_proc_view_get_help_id (GimpFileProcView *view)
+picman_file_proc_view_get_help_id (PicmanFileProcView *view)
 {
   GtkTreeModel     *model;
   GtkTreeSelection *selection;
   GtkTreeIter       iter;
 
-  g_return_val_if_fail (GIMP_IS_FILE_PROC_VIEW (view), NULL);
+  g_return_val_if_fail (PICMAN_IS_FILE_PROC_VIEW (view), NULL);
 
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
 
@@ -316,8 +316,8 @@ gimp_file_proc_view_get_help_id (GimpFileProcView *view)
 }
 
 static void
-gimp_file_proc_view_selection_changed (GtkTreeSelection *selection,
-                                       GimpFileProcView *view)
+picman_file_proc_view_selection_changed (GtkTreeSelection *selection,
+                                       PicmanFileProcView *view)
 {
   g_signal_emit (view, view_signals[CHANGED], 0);
 }

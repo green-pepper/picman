@@ -664,5 +664,5 @@ def _make_window():
     return console
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2 or sys.argv[1] != '-gimp':
+    if len(sys.argv) < 2 or sys.argv[1] != '-picman':
         _make_window()

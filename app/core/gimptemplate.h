@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimptemplate.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmantemplate.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,73 +18,73 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEMPLATE_H__
-#define __GIMP_TEMPLATE_H__
+#ifndef __PICMAN_TEMPLATE_H__
+#define __PICMAN_TEMPLATE_H__
 
 
-#include "gimpviewable.h"
+#include "picmanviewable.h"
 
 
-#define GIMP_TEMPLATE_PARAM_COPY_FIRST (1 << (8 + G_PARAM_USER_SHIFT))
+#define PICMAN_TEMPLATE_PARAM_COPY_FIRST (1 << (8 + G_PARAM_USER_SHIFT))
 
 /*  The default image aspect ratio is the golden mean. We use
  *  two adjacent fibonacci numbers for the unstable series and
  *  some less odd values for the stable version.
  */
 
-#ifdef GIMP_UNSTABLE
-#define GIMP_DEFAULT_IMAGE_WIDTH   610
-#define GIMP_DEFAULT_IMAGE_HEIGHT  377
+#ifdef PICMAN_UNSTABLE
+#define PICMAN_DEFAULT_IMAGE_WIDTH   610
+#define PICMAN_DEFAULT_IMAGE_HEIGHT  377
 #else
-#define GIMP_DEFAULT_IMAGE_WIDTH   640
-#define GIMP_DEFAULT_IMAGE_HEIGHT  400
+#define PICMAN_DEFAULT_IMAGE_WIDTH   640
+#define PICMAN_DEFAULT_IMAGE_HEIGHT  400
 #endif
 
 
-#define GIMP_TYPE_TEMPLATE            (gimp_template_get_type ())
-#define GIMP_TEMPLATE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TEMPLATE, GimpTemplate))
-#define GIMP_TEMPLATE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TEMPLATE, GimpTemplateClass))
-#define GIMP_IS_TEMPLATE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TEMPLATE))
-#define GIMP_IS_TEMPLATE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TEMPLATE))
-#define GIMP_TEMPLATE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TEMPLATE, GimpTemplateClass))
+#define PICMAN_TYPE_TEMPLATE            (picman_template_get_type ())
+#define PICMAN_TEMPLATE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TEMPLATE, PicmanTemplate))
+#define PICMAN_TEMPLATE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TEMPLATE, PicmanTemplateClass))
+#define PICMAN_IS_TEMPLATE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TEMPLATE))
+#define PICMAN_IS_TEMPLATE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TEMPLATE))
+#define PICMAN_TEMPLATE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TEMPLATE, PicmanTemplateClass))
 
 
-typedef struct _GimpTemplateClass GimpTemplateClass;
+typedef struct _PicmanTemplateClass PicmanTemplateClass;
 
-struct _GimpTemplate
+struct _PicmanTemplate
 {
-  GimpViewable  parent_instance;
+  PicmanViewable  parent_instance;
 };
 
-struct _GimpTemplateClass
+struct _PicmanTemplateClass
 {
-  GimpViewableClass  parent_instance;
+  PicmanViewableClass  parent_instance;
 };
 
 
-GType               gimp_template_get_type            (void) G_GNUC_CONST;
+GType               picman_template_get_type            (void) G_GNUC_CONST;
 
-GimpTemplate      * gimp_template_new                 (const gchar  *name);
+PicmanTemplate      * picman_template_new                 (const gchar  *name);
 
-void                gimp_template_set_from_image      (GimpTemplate *template,
-                                                       GimpImage    *image);
+void                picman_template_set_from_image      (PicmanTemplate *template,
+                                                       PicmanImage    *image);
 
-gint                gimp_template_get_width           (GimpTemplate *template);
-gint                gimp_template_get_height          (GimpTemplate *template);
-GimpUnit            gimp_template_get_unit            (GimpTemplate *template);
+gint                picman_template_get_width           (PicmanTemplate *template);
+gint                picman_template_get_height          (PicmanTemplate *template);
+PicmanUnit            picman_template_get_unit            (PicmanTemplate *template);
 
-gdouble             gimp_template_get_resolution_x    (GimpTemplate *template);
-gdouble             gimp_template_get_resolution_y    (GimpTemplate *template);
-GimpUnit            gimp_template_get_resolution_unit (GimpTemplate *template);
+gdouble             picman_template_get_resolution_x    (PicmanTemplate *template);
+gdouble             picman_template_get_resolution_y    (PicmanTemplate *template);
+PicmanUnit            picman_template_get_resolution_unit (PicmanTemplate *template);
 
-GimpImageBaseType   gimp_template_get_base_type       (GimpTemplate *template);
-GimpPrecision       gimp_template_get_precision       (GimpTemplate *template);
+PicmanImageBaseType   picman_template_get_base_type       (PicmanTemplate *template);
+PicmanPrecision       picman_template_get_precision       (PicmanTemplate *template);
 
-GimpFillType        gimp_template_get_fill_type       (GimpTemplate *template);
+PicmanFillType        picman_template_get_fill_type       (PicmanTemplate *template);
 
-const gchar       * gimp_template_get_comment         (GimpTemplate *template);
+const gchar       * picman_template_get_comment         (PicmanTemplate *template);
 
-guint64             gimp_template_get_initial_size    (GimpTemplate *template);
+guint64             picman_template_get_initial_size    (PicmanTemplate *template);
 
 
-#endif /* __GIMP_TEMPLATE__ */
+#endif /* __PICMAN_TEMPLATE__ */

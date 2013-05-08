@@ -1,6 +1,6 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
- * Copyright (C) 2005-2006  Manish Singh <yosh@gimp.org>
+ * Picman-Python - allows the writing of Picman plugins in Python.
+ * Copyright (C) 2005-2006  Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,69 +16,69 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PYGIMPCOLOR_API_H_
-#define _PYGIMPCOLOR_API_H_
+#ifndef _PYPICMANCOLOR_API_H_
+#define _PYPICMANCOLOR_API_H_
 
 #include <Python.h>
 
-#include <libgimpcolor/gimpcolor.h>
+#include <libpicmancolor/picmancolor.h>
 
-struct _PyGimpColor_Functions {
+struct _PyPicmanColor_Functions {
     PyTypeObject *RGB_Type;
-    PyObject *(* rgb_new)(const GimpRGB *rgb);
+    PyObject *(* rgb_new)(const PicmanRGB *rgb);
     PyTypeObject *HSV_Type;
-    PyObject *(* hsv_new)(const GimpHSV *hsv);
+    PyObject *(* hsv_new)(const PicmanHSV *hsv);
     PyTypeObject *HSL_Type;
-    PyObject *(* hsl_new)(const GimpHSL *hsl);
+    PyObject *(* hsl_new)(const PicmanHSL *hsl);
     PyTypeObject *CMYK_Type;
-    PyObject *(* cmyk_new)(const GimpCMYK *cmyk);
-    int (* rgb_from_pyobject)(PyObject *object, GimpRGB *color);
+    PyObject *(* cmyk_new)(const PicmanCMYK *cmyk);
+    int (* rgb_from_pyobject)(PyObject *object, PicmanRGB *color);
 };
 
-#ifndef _INSIDE_PYGIMPCOLOR_
+#ifndef _INSIDE_PYPICMANCOLOR_
 
-#if defined(NO_IMPORT) || defined(NO_IMPORT_PYGIMPCOLOR)
-extern struct _PyGimpColor_Functions *_PyGimpColor_API;
+#if defined(NO_IMPORT) || defined(NO_IMPORT_PYPICMANCOLOR)
+extern struct _PyPicmanColor_Functions *_PyPicmanColor_API;
 #else
-struct _PyGimpColor_Functions *_PyGimpColor_API;
+struct _PyPicmanColor_Functions *_PyPicmanColor_API;
 #endif
 
-#define PyGimpRGB_Type (_PyGimpColor_API->RGB_Type)
-#define PyGimpHSV_Type (_PyGimpColor_API->HSV_Type)
-#define PyGimpHSL_Type (_PyGimpColor_API->HSL_Type)
-#define PyGimpCMYK_Type (_PyGimpColor_API->CMYK_Type)
+#define PyPicmanRGB_Type (_PyPicmanColor_API->RGB_Type)
+#define PyPicmanHSV_Type (_PyPicmanColor_API->HSV_Type)
+#define PyPicmanHSL_Type (_PyPicmanColor_API->HSL_Type)
+#define PyPicmanCMYK_Type (_PyPicmanColor_API->CMYK_Type)
 
-#define pygimp_rgb_check(v) (pyg_boxed_check((v), GIMP_TYPE_RGB))
-#define pygimp_hsv_check(v) (pyg_boxed_check((v), GIMP_TYPE_HSV))
-#define pygimp_hsl_check(v) (pyg_boxed_check((v), GIMP_TYPE_HSL))
-#define pygimp_cmyk_check(v) (pyg_boxed_check((v), GIMP_TYPE_CMYK))
+#define pypicman_rgb_check(v) (pyg_boxed_check((v), PICMAN_TYPE_RGB))
+#define pypicman_hsv_check(v) (pyg_boxed_check((v), PICMAN_TYPE_HSV))
+#define pypicman_hsl_check(v) (pyg_boxed_check((v), PICMAN_TYPE_HSL))
+#define pypicman_cmyk_check(v) (pyg_boxed_check((v), PICMAN_TYPE_CMYK))
 
-#define pygimp_rgb_new (_PyGimpColor_API->rgb_new)
-#define pygimp_hsv_new (_PyGimpColor_API->hsv_new)
-#define pygimp_hsl_new (_PyGimpColor_API->hsl_new)
-#define pygimp_cmyk_new (_PyGimpColor_API->cmyk_new)
+#define pypicman_rgb_new (_PyPicmanColor_API->rgb_new)
+#define pypicman_hsv_new (_PyPicmanColor_API->hsv_new)
+#define pypicman_hsl_new (_PyPicmanColor_API->hsl_new)
+#define pypicman_cmyk_new (_PyPicmanColor_API->cmyk_new)
 
-#define pygimp_rgb_from_pyobject (_PyGimpColor_API->rgb_from_pyobject)
+#define pypicman_rgb_from_pyobject (_PyPicmanColor_API->rgb_from_pyobject)
 
-#define init_pygimpcolor() G_STMT_START { \
-    PyObject *gimpcolormodule = PyImport_ImportModule("gimpcolor"); \
-    if (gimpcolormodule != NULL) { \
-	PyObject *mdict = PyModule_GetDict(gimpcolormodule); \
-	PyObject *cobject = PyDict_GetItemString(mdict, "_PyGimpColor_API"); \
+#define init_pypicmancolor() G_STMT_START { \
+    PyObject *picmancolormodule = PyImport_ImportModule("picmancolor"); \
+    if (picmancolormodule != NULL) { \
+	PyObject *mdict = PyModule_GetDict(picmancolormodule); \
+	PyObject *cobject = PyDict_GetItemString(mdict, "_PyPicmanColor_API"); \
 	if (PyCObject_Check(cobject)) \
-	    _PyGimpColor_API = PyCObject_AsVoidPtr(cobject); \
+	    _PyPicmanColor_API = PyCObject_AsVoidPtr(cobject); \
 	else { \
 	    PyErr_SetString(PyExc_RuntimeError, \
-		            "could not find _PyGimpColor_API object"); \
+		            "could not find _PyPicmanColor_API object"); \
 	    return; \
 	} \
     } else { \
 	PyErr_SetString(PyExc_ImportError, \
-	                "could not import gimpcolor"); \
+	                "could not import picmancolor"); \
 	return; \
     } \
 } G_STMT_END
 
-#endif /* ! _INSIDE_PYGIMPCOLOR_ */
+#endif /* ! _INSIDE_PYPICMANCOLOR_ */
 
-#endif /* _PYGIMPCOLOR_API_H_ */
+#endif /* _PYPICMANCOLOR_API_H_ */

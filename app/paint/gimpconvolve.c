@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,20 +21,20 @@
 
 #include "paint-types.h"
 
-#include "gegl/gimp-gegl-loops.h"
+#include "gegl/picman-gegl-loops.h"
 
-#include "core/gimp.h"
-#include "core/gimpbrush.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdynamics.h"
-#include "core/gimpimage.h"
-#include "core/gimppickable.h"
-#include "core/gimptempbuf.h"
+#include "core/picman.h"
+#include "core/picmanbrush.h"
+#include "core/picmandrawable.h"
+#include "core/picmandynamics.h"
+#include "core/picmanimage.h"
+#include "core/picmanpickable.h"
+#include "core/picmantempbuf.h"
 
-#include "gimpconvolve.h"
-#include "gimpconvolveoptions.h"
+#include "picmanconvolve.h"
+#include "picmanconvolveoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define FIELD_COLS    4
@@ -44,50 +44,50 @@
 #define MAX_SHARPEN   -64
 
 
-static void    gimp_convolve_paint            (GimpPaintCore    *paint_core,
-                                               GimpDrawable     *drawable,
-                                               GimpPaintOptions *paint_options,
-                                               const GimpCoords *coords,
-                                               GimpPaintState    paint_state,
+static void    picman_convolve_paint            (PicmanPaintCore    *paint_core,
+                                               PicmanDrawable     *drawable,
+                                               PicmanPaintOptions *paint_options,
+                                               const PicmanCoords *coords,
+                                               PicmanPaintState    paint_state,
                                                guint32           time);
-static void    gimp_convolve_motion           (GimpPaintCore    *paint_core,
-                                               GimpDrawable     *drawable,
-                                               GimpPaintOptions *paint_options,
-                                               const GimpCoords *coords);
+static void    picman_convolve_motion           (PicmanPaintCore    *paint_core,
+                                               PicmanDrawable     *drawable,
+                                               PicmanPaintOptions *paint_options,
+                                               const PicmanCoords *coords);
 
-static void    gimp_convolve_calculate_matrix (GimpConvolve     *convolve,
-                                               GimpConvolveType  type,
+static void    picman_convolve_calculate_matrix (PicmanConvolve     *convolve,
+                                               PicmanConvolveType  type,
                                                gint              radius_x,
                                                gint              radius_y,
                                                gdouble           rate);
-static gdouble gimp_convolve_sum_matrix       (const gfloat     *matrix);
+static gdouble picman_convolve_sum_matrix       (const gfloat     *matrix);
 
 
-G_DEFINE_TYPE (GimpConvolve, gimp_convolve, GIMP_TYPE_BRUSH_CORE)
+G_DEFINE_TYPE (PicmanConvolve, picman_convolve, PICMAN_TYPE_BRUSH_CORE)
 
 
 void
-gimp_convolve_register (Gimp                      *gimp,
-                        GimpPaintRegisterCallback  callback)
+picman_convolve_register (Picman                      *picman,
+                        PicmanPaintRegisterCallback  callback)
 {
-  (* callback) (gimp,
-                GIMP_TYPE_CONVOLVE,
-                GIMP_TYPE_CONVOLVE_OPTIONS,
-                "gimp-convolve",
+  (* callback) (picman,
+                PICMAN_TYPE_CONVOLVE,
+                PICMAN_TYPE_CONVOLVE_OPTIONS,
+                "picman-convolve",
                 _("Convolve"),
-                "gimp-tool-blur");
+                "picman-tool-blur");
 }
 
 static void
-gimp_convolve_class_init (GimpConvolveClass *klass)
+picman_convolve_class_init (PicmanConvolveClass *klass)
 {
-  GimpPaintCoreClass *paint_core_class = GIMP_PAINT_CORE_CLASS (klass);
+  PicmanPaintCoreClass *paint_core_class = PICMAN_PAINT_CORE_CLASS (klass);
 
-  paint_core_class->paint = gimp_convolve_paint;
+  paint_core_class->paint = picman_convolve_paint;
 }
 
 static void
-gimp_convolve_init (GimpConvolve *convolve)
+picman_convolve_init (PicmanConvolve *convolve)
 {
   gint i;
 
@@ -98,17 +98,17 @@ gimp_convolve_init (GimpConvolve *convolve)
 }
 
 static void
-gimp_convolve_paint (GimpPaintCore    *paint_core,
-                     GimpDrawable     *drawable,
-                     GimpPaintOptions *paint_options,
-                     const GimpCoords *coords,
-                     GimpPaintState    paint_state,
+picman_convolve_paint (PicmanPaintCore    *paint_core,
+                     PicmanDrawable     *drawable,
+                     PicmanPaintOptions *paint_options,
+                     const PicmanCoords *coords,
+                     PicmanPaintState    paint_state,
                      guint32           time)
 {
   switch (paint_state)
     {
-    case GIMP_PAINT_STATE_MOTION:
-      gimp_convolve_motion (paint_core, drawable, paint_options, coords);
+    case PICMAN_PAINT_STATE_MOTION:
+      picman_convolve_motion (paint_core, drawable, paint_options, coords);
       break;
 
     default:
@@ -117,38 +117,38 @@ gimp_convolve_paint (GimpPaintCore    *paint_core,
 }
 
 static void
-gimp_convolve_motion (GimpPaintCore    *paint_core,
-                      GimpDrawable     *drawable,
-                      GimpPaintOptions *paint_options,
-                      const GimpCoords *coords)
+picman_convolve_motion (PicmanPaintCore    *paint_core,
+                      PicmanDrawable     *drawable,
+                      PicmanPaintOptions *paint_options,
+                      const PicmanCoords *coords)
 {
-  GimpConvolve        *convolve   = GIMP_CONVOLVE (paint_core);
-  GimpBrushCore       *brush_core = GIMP_BRUSH_CORE (paint_core);
-  GimpConvolveOptions *options    = GIMP_CONVOLVE_OPTIONS (paint_options);
-  GimpContext         *context    = GIMP_CONTEXT (paint_options);
-  GimpDynamics        *dynamics   = GIMP_BRUSH_CORE (paint_core)->dynamics;
-  GimpImage           *image      = gimp_item_get_image (GIMP_ITEM (drawable));
+  PicmanConvolve        *convolve   = PICMAN_CONVOLVE (paint_core);
+  PicmanBrushCore       *brush_core = PICMAN_BRUSH_CORE (paint_core);
+  PicmanConvolveOptions *options    = PICMAN_CONVOLVE_OPTIONS (paint_options);
+  PicmanContext         *context    = PICMAN_CONTEXT (paint_options);
+  PicmanDynamics        *dynamics   = PICMAN_BRUSH_CORE (paint_core)->dynamics;
+  PicmanImage           *image      = picman_item_get_image (PICMAN_ITEM (drawable));
   GeglBuffer          *paint_buffer;
   gint                 paint_buffer_x;
   gint                 paint_buffer_y;
-  GimpTempBuf         *temp_buf;
+  PicmanTempBuf         *temp_buf;
   GeglBuffer          *convolve_buffer;
   gdouble              fade_point;
   gdouble              opacity;
   gdouble              rate;
 
-  fade_point = gimp_paint_options_get_fade (paint_options, image,
+  fade_point = picman_paint_options_get_fade (paint_options, image,
                                             paint_core->pixel_dist);
 
-  opacity = gimp_dynamics_get_linear_value (dynamics,
-                                            GIMP_DYNAMICS_OUTPUT_OPACITY,
+  opacity = picman_dynamics_get_linear_value (dynamics,
+                                            PICMAN_DYNAMICS_OUTPUT_OPACITY,
                                             coords,
                                             paint_options,
                                             fade_point);
   if (opacity == 0.0)
     return;
 
-  paint_buffer = gimp_paint_core_get_paint_buffer (paint_core, drawable,
+  paint_buffer = picman_paint_core_get_paint_buffer (paint_core, drawable,
                                                    paint_options, coords,
                                                    &paint_buffer_x,
                                                    &paint_buffer_y);
@@ -156,25 +156,25 @@ gimp_convolve_motion (GimpPaintCore    *paint_core,
     return;
 
   rate = (options->rate *
-          gimp_dynamics_get_linear_value (dynamics,
-                                          GIMP_DYNAMICS_OUTPUT_RATE,
+          picman_dynamics_get_linear_value (dynamics,
+                                          PICMAN_DYNAMICS_OUTPUT_RATE,
                                           coords,
                                           paint_options,
                                           fade_point));
 
-  gimp_convolve_calculate_matrix (convolve, options->type,
-                                  gimp_temp_buf_get_width  (brush_core->brush->mask) / 2,
-                                  gimp_temp_buf_get_height (brush_core->brush->mask) / 2,
+  picman_convolve_calculate_matrix (convolve, options->type,
+                                  picman_temp_buf_get_width  (brush_core->brush->mask) / 2,
+                                  picman_temp_buf_get_height (brush_core->brush->mask) / 2,
                                   rate);
 
-  /*  need a linear buffer for gimp_gegl_convolve()  */
-  temp_buf = gimp_temp_buf_new (gegl_buffer_get_width  (paint_buffer),
+  /*  need a linear buffer for picman_gegl_convolve()  */
+  temp_buf = picman_temp_buf_new (gegl_buffer_get_width  (paint_buffer),
                                 gegl_buffer_get_height (paint_buffer),
                                 gegl_buffer_get_format (paint_buffer));
-  convolve_buffer = gimp_temp_buf_create_buffer (temp_buf);
-  gimp_temp_buf_unref (temp_buf);
+  convolve_buffer = picman_temp_buf_create_buffer (temp_buf);
+  picman_temp_buf_unref (temp_buf);
 
-  gegl_buffer_copy (gimp_drawable_get_buffer (drawable),
+  gegl_buffer_copy (picman_drawable_get_buffer (drawable),
                     GEGL_RECTANGLE (paint_buffer_x,
                                     paint_buffer_y,
                                     gegl_buffer_get_width  (paint_buffer),
@@ -182,7 +182,7 @@ gimp_convolve_motion (GimpPaintCore    *paint_core,
                     convolve_buffer,
                     GEGL_RECTANGLE (0, 0, 0, 0));
 
-  gimp_gegl_convolve (convolve_buffer,
+  picman_gegl_convolve (convolve_buffer,
                       GEGL_RECTANGLE (0, 0,
                                       gegl_buffer_get_width  (convolve_buffer),
                                       gegl_buffer_get_height (convolve_buffer)),
@@ -191,22 +191,22 @@ gimp_convolve_motion (GimpPaintCore    *paint_core,
                                       gegl_buffer_get_width  (paint_buffer),
                                       gegl_buffer_get_height (paint_buffer)),
                       convolve->matrix, 3, convolve->matrix_divisor,
-                      GIMP_NORMAL_CONVOL, TRUE);
+                      PICMAN_NORMAL_CONVOL, TRUE);
 
   g_object_unref (convolve_buffer);
 
-  gimp_brush_core_replace_canvas (brush_core, drawable,
+  picman_brush_core_replace_canvas (brush_core, drawable,
                                   coords,
-                                  MIN (opacity, GIMP_OPACITY_OPAQUE),
-                                  gimp_context_get_opacity (context),
-                                  gimp_paint_options_get_brush_mode (paint_options),
+                                  MIN (opacity, PICMAN_OPACITY_OPAQUE),
+                                  picman_context_get_opacity (context),
+                                  picman_paint_options_get_brush_mode (paint_options),
                                   1.0,
-                                  GIMP_PAINT_INCREMENTAL);
+                                  PICMAN_PAINT_INCREMENTAL);
 }
 
 static void
-gimp_convolve_calculate_matrix (GimpConvolve    *convolve,
-                                GimpConvolveType type,
+picman_convolve_calculate_matrix (PicmanConvolve    *convolve,
+                                PicmanConvolveType type,
                                 gint             radius_x,
                                 gint             radius_y,
                                 gdouble          rate)
@@ -222,15 +222,15 @@ gimp_convolve_calculate_matrix (GimpConvolve    *convolve,
   /*  get the appropriate convolution matrix and size and divisor  */
   switch (type)
     {
-    case GIMP_BLUR_CONVOLVE:
+    case PICMAN_BLUR_CONVOLVE:
       convolve->matrix[4] = MIN_BLUR + percent * (MAX_BLUR - MIN_BLUR);
       break;
 
-    case GIMP_SHARPEN_CONVOLVE:
+    case PICMAN_SHARPEN_CONVOLVE:
       convolve->matrix[4] = MIN_SHARPEN + percent * (MAX_SHARPEN - MIN_SHARPEN);
       break;
 
-    case GIMP_CUSTOM_CONVOLVE:
+    case PICMAN_CUSTOM_CONVOLVE:
       break;
     }
 
@@ -239,11 +239,11 @@ gimp_convolve_calculate_matrix (GimpConvolve    *convolve,
   convolve->matrix[7] = (radius_y)             ? 1.0 : 0.0;
   convolve->matrix[8] = (radius_x && radius_y) ? 1.0 : 0.0;
 
-  convolve->matrix_divisor = gimp_convolve_sum_matrix (convolve->matrix);
+  convolve->matrix_divisor = picman_convolve_sum_matrix (convolve->matrix);
 }
 
 static gdouble
-gimp_convolve_sum_matrix (const gfloat *matrix)
+picman_convolve_sum_matrix (const gfloat *matrix)
 {
   gdouble sum = 0.0;
   gint    i;

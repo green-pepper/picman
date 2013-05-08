@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppropwidgets.h
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * picmanpropwidgets.h
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,90 +19,90 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_PROP_WIDGETS_H__
-#define __GIMP_PROP_WIDGETS_H__
+#ifndef __PICMAN_PROP_WIDGETS_H__
+#define __PICMAN_PROP_WIDGETS_H__
 
 G_BEGIN_DECLS
 
 
 /*  GParamBoolean  */
 
-GtkWidget     * gimp_prop_check_button_new        (GObject      *config,
+GtkWidget     * picman_prop_check_button_new        (GObject      *config,
                                                    const gchar  *property_name,
                                                    const gchar  *label);
-GtkWidget     * gimp_prop_boolean_combo_box_new   (GObject      *config,
+GtkWidget     * picman_prop_boolean_combo_box_new   (GObject      *config,
                                                    const gchar  *property_name,
                                                    const gchar  *true_text,
                                                    const gchar  *false_text);
-GtkWidget     * gimp_prop_boolean_radio_frame_new (GObject      *config,
+GtkWidget     * picman_prop_boolean_radio_frame_new (GObject      *config,
                                                    const gchar  *property_name,
                                                    const gchar  *title,
                                                    const gchar  *true_text,
                                                    const gchar  *false_text);
 
-GtkWidget     * gimp_prop_expander_new            (GObject      *config,
+GtkWidget     * picman_prop_expander_new            (GObject      *config,
                                                    const gchar  *property_name,
                                                    const gchar  *label);
 
 
 /*  GParamInt  */
 
-GtkWidget     * gimp_prop_int_combo_box_new       (GObject      *config,
+GtkWidget     * picman_prop_int_combo_box_new       (GObject      *config,
                                                    const gchar  *property_name,
-                                                   GimpIntStore *store);
+                                                   PicmanIntStore *store);
 
 
 /*  GParamEnum  */
 
-GtkWidget     * gimp_prop_enum_combo_box_new      (GObject      *config,
+GtkWidget     * picman_prop_enum_combo_box_new      (GObject      *config,
                                                    const gchar  *property_name,
                                                    gint          minimum,
                                                    gint          maximum);
 
-GtkWidget     * gimp_prop_enum_check_button_new   (GObject      *config,
+GtkWidget     * picman_prop_enum_check_button_new   (GObject      *config,
                                                    const gchar  *property_name,
                                                    const gchar  *label,
                                                    gint          false_value,
                                                    gint          true_value);
 
-GtkWidget     * gimp_prop_enum_radio_frame_new    (GObject      *config,
+GtkWidget     * picman_prop_enum_radio_frame_new    (GObject      *config,
                                                    const gchar  *property_name,
                                                    const gchar  *title,
                                                    gint          minimum,
                                                    gint          maximum);
-GtkWidget     * gimp_prop_enum_radio_box_new      (GObject      *config,
+GtkWidget     * picman_prop_enum_radio_box_new      (GObject      *config,
                                                    const gchar  *property_name,
                                                    gint          minimum,
                                                    gint          maximum);
-GtkWidget     * gimp_prop_enum_stock_box_new      (GObject      *config,
+GtkWidget     * picman_prop_enum_stock_box_new      (GObject      *config,
                                                    const gchar  *property_name,
                                                    const gchar  *stock_prefix,
                                                    gint          minimum,
                                                    gint          maximum);
 
-GtkWidget     * gimp_prop_enum_label_new          (GObject      *config,
+GtkWidget     * picman_prop_enum_label_new          (GObject      *config,
                                                    const gchar  *property_name);
 
 
 /*  GParamInt, GParamUInt, GParamLong, GParamULong, GParamDouble  */
 
-GtkWidget     * gimp_prop_spin_button_new         (GObject      *config,
+GtkWidget     * picman_prop_spin_button_new         (GObject      *config,
                                                    const gchar  *property_name,
                                                    gdouble       step_increment,
                                                    gdouble       page_increment,
                                                    gint          digits);
 
-GtkWidget     * gimp_prop_hscale_new              (GObject      *config,
+GtkWidget     * picman_prop_hscale_new              (GObject      *config,
                                                    const gchar  *property_name,
                                                    gdouble       step_increment,
                                                    gdouble       page_increment,
                                                    gint          digits);
 
-GtkObject     * gimp_prop_scale_entry_new         (GObject      *config,
+GtkObject     * picman_prop_scale_entry_new         (GObject      *config,
                                                    const gchar  *property_name,
                                                    GtkTable     *table,
                                                    gint          column,
@@ -115,9 +115,9 @@ GtkObject     * gimp_prop_scale_entry_new         (GObject      *config,
                                                    gdouble       lower_limit,
                                                    gdouble       upper_limit);
 
-/*  special form of gimp_prop_scale_entry_new() for GParamDouble  */
+/*  special form of picman_prop_scale_entry_new() for GParamDouble  */
 
-GtkObject     * gimp_prop_opacity_entry_new       (GObject       *config,
+GtkObject     * picman_prop_opacity_entry_new       (GObject       *config,
                                                    const gchar   *property_name,
                                                    GtkTable      *table,
                                                    gint           column,
@@ -125,68 +125,68 @@ GtkObject     * gimp_prop_opacity_entry_new       (GObject       *config,
                                                    const gchar   *label);
 
 
-/*  GimpParamMemsize  */
+/*  PicmanParamMemsize  */
 
-GtkWidget     * gimp_prop_memsize_entry_new       (GObject       *config,
+GtkWidget     * picman_prop_memsize_entry_new       (GObject       *config,
                                                    const gchar   *property_name);
 
 
 /*  GParamString  */
 
-GtkWidget     * gimp_prop_label_new               (GObject       *config,
+GtkWidget     * picman_prop_label_new               (GObject       *config,
                                                    const gchar   *property_name);
-GtkWidget     * gimp_prop_entry_new               (GObject       *config,
+GtkWidget     * picman_prop_entry_new               (GObject       *config,
                                                    const gchar   *property_name,
                                                    gint           max_len);
-GtkTextBuffer * gimp_prop_text_buffer_new         (GObject       *config,
+GtkTextBuffer * picman_prop_text_buffer_new         (GObject       *config,
                                                    const gchar   *property_name,
                                                    gint           max_len);
-GtkWidget     * gimp_prop_string_combo_box_new    (GObject       *config,
+GtkWidget     * picman_prop_string_combo_box_new    (GObject       *config,
                                                    const gchar   *property_name,
                                                    GtkTreeModel  *model,
                                                    gint           id_column,
                                                    gint           label_column);
 
 
-/*  GimpParamPath  */
+/*  PicmanParamPath  */
 
-GtkWidget     * gimp_prop_file_chooser_button_new (GObject              *config,
+GtkWidget     * picman_prop_file_chooser_button_new (GObject              *config,
                                                    const gchar          *property_name,
                                                    const gchar          *title,
                                                    GtkFileChooserAction  action);
-GtkWidget     * gimp_prop_file_chooser_button_new_with_dialog (GObject     *config,
+GtkWidget     * picman_prop_file_chooser_button_new_with_dialog (GObject     *config,
                                                                const gchar *property_name,
 
                                                                GtkWidget   *dialog);
-GtkWidget     * gimp_prop_path_editor_new         (GObject       *config,
+GtkWidget     * picman_prop_path_editor_new         (GObject       *config,
                                                    const gchar   *path_property_name,
                                                    const gchar   *writable_property_name,
                                                    const gchar   *filesel_title);
 
 
-/*  GParamInt, GParamUInt, GParamDouble   unit: GimpParamUnit  */
+/*  GParamInt, GParamUInt, GParamDouble   unit: PicmanParamUnit  */
 
-GtkWidget     * gimp_prop_size_entry_new          (GObject       *config,
+GtkWidget     * picman_prop_size_entry_new          (GObject       *config,
                                                    const gchar   *property_name,
                                                    gboolean       property_is_pixel,
                                                    const gchar   *unit_property_name,
                                                    const gchar   *unit_format,
-                                                   GimpSizeEntryUpdatePolicy  update_policy,
+                                                   PicmanSizeEntryUpdatePolicy  update_policy,
                                                    gdouble        resolution);
 
 
-/*  x,y: GParamInt, GParamDouble   unit: GimpParamUnit  */
+/*  x,y: GParamInt, GParamDouble   unit: PicmanParamUnit  */
 
-GtkWidget     * gimp_prop_coordinates_new         (GObject       *config,
+GtkWidget     * picman_prop_coordinates_new         (GObject       *config,
                                                    const gchar   *x_property_name,
                                                    const gchar   *y_property_name,
                                                    const gchar   *unit_property_name,
                                                    const gchar   *unit_format,
-                                                   GimpSizeEntryUpdatePolicy  update_policy,
+                                                   PicmanSizeEntryUpdatePolicy  update_policy,
                                                    gdouble        xresolution,
                                                    gdouble        yresolution,
                                                    gboolean       has_chainbutton);
-gboolean        gimp_prop_coordinates_connect     (GObject       *config,
+gboolean        picman_prop_coordinates_connect     (GObject       *config,
                                                    const gchar   *x_property_name,
                                                    const gchar   *y_property_name,
                                                    const gchar   *unit_property_name,
@@ -196,31 +196,31 @@ gboolean        gimp_prop_coordinates_connect     (GObject       *config,
                                                    gdouble        yresolution);
 
 
-/*  GimpParamColor  */
+/*  PicmanParamColor  */
 
-GtkWidget     * gimp_prop_color_area_new          (GObject       *config,
+GtkWidget     * picman_prop_color_area_new          (GObject       *config,
                                                    const gchar   *property_name,
                                                    gint           width,
                                                    gint           height,
-                                                   GimpColorAreaType  type);
+                                                   PicmanColorAreaType  type);
 
-/*  GimpParamUnit  */
+/*  PicmanParamUnit  */
 
-GtkWidget     * gimp_prop_unit_combo_box_new      (GObject       *config,
+GtkWidget     * picman_prop_unit_combo_box_new      (GObject       *config,
                                                    const gchar   *property_name);
-GIMP_DEPRECATED_FOR(gimp_prop_unit_combo_box_new)
-GtkWidget     * gimp_prop_unit_menu_new           (GObject       *config,
+PICMAN_DEPRECATED_FOR(picman_prop_unit_combo_box_new)
+GtkWidget     * picman_prop_unit_menu_new           (GObject       *config,
                                                    const gchar   *property_name,
                                                    const gchar   *unit_format);
 
 
 /*  GParamString (stock_id)  */
 
-GtkWidget     * gimp_prop_stock_image_new         (GObject       *config,
+GtkWidget     * picman_prop_stock_image_new         (GObject       *config,
                                                    const gchar   *property_name,
                                                    GtkIconSize    icon_size);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_PROP_WIDGETS_H__ */
+#endif /* __PICMAN_PROP_WIDGETS_H__ */

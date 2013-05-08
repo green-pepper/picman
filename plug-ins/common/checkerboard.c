@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Copyright (C) 1997 Brent Burton & the Edward Blevins
  *
@@ -20,15 +20,15 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC      "plug-in-checkerboard"
 #define PLUG_IN_BINARY    "checkerboard"
-#define PLUG_IN_ROLE      "gimp-checkerboard"
+#define PLUG_IN_ROLE      "picman-checkerboard"
 #define SPIN_BUTTON_WIDTH 8
 
 
@@ -43,21 +43,21 @@ typedef struct data
 static void      query  (void);
 static void      run    (const gchar       *name,
                          gint               nparams,
-                         const GimpParam   *param,
+                         const PicmanParam   *param,
                          gint              *nreturn_vals,
-                         GimpParam        **return_vals);
+                         PicmanParam        **return_vals);
 
-static void      do_checkerboard_pattern    (GimpDrawable *drawable,
-                                             GimpPreview  *preview);
+static void      do_checkerboard_pattern    (PicmanDrawable *drawable,
+                                             PicmanPreview  *preview);
 static gint      inblock                    (gint          pos,
                                              gint          size);
 
 static gboolean  checkerboard_dialog        (gint32        image_ID,
-                                             GimpDrawable *drawable);
+                                             PicmanDrawable *drawable);
 static void      check_size_update_callback (GtkWidget    *widget);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -76,16 +76,16 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",      "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",   "Input drawable"       },
-    { GIMP_PDB_INT32,    "check-mode", "Check mode { REGULAR (0), PSYCHOBILY (1) }" },
-    { GIMP_PDB_INT32,    "check-size", "Size of the checks"   }
+    { PICMAN_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",      "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",   "Input drawable"       },
+    { PICMAN_PDB_INT32,    "check-mode", "Check mode { REGULAR (0), PSYCHOBILY (1) }" },
+    { PICMAN_PDB_INT32,    "check-size", "Size of the checks"   }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Create a checkerboard pattern"),
                           "More here later",
                           "Brent Burton & the Edward Blevins",
@@ -93,25 +93,25 @@ query (void)
                           "1997",
                           N_("_Checkerboard..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render/Pattern");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render/Pattern");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
   gint32             image_ID;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
 
@@ -121,61 +121,61 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &cvals);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &cvals);
       if (! checkerboard_dialog (image_ID, drawable))
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams != 5)
-        status = GIMP_PDB_CALLING_ERROR;
-      if (status == GIMP_PDB_SUCCESS)
+        status = PICMAN_PDB_CALLING_ERROR;
+      if (status == PICMAN_PDB_SUCCESS)
         {
           cvals.mode = param[3].data.d_int32;
           cvals.size = param[4].data.d_int32;
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &cvals);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &cvals);
       break;
 
     default:
       break;
     }
 
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
-      gimp_progress_init (_("Adding checkerboard"));
+      picman_progress_init (_("Adding checkerboard"));
 
       do_checkerboard_pattern (drawable, NULL);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &cvals, sizeof (CheckVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &cvals, sizeof (CheckVals));
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 typedef struct
@@ -219,18 +219,18 @@ checkerboard_func (gint      x,
 }
 
 static void
-do_checkerboard_pattern (GimpDrawable *drawable,
-                         GimpPreview  *preview)
+do_checkerboard_pattern (PicmanDrawable *drawable,
+                         PicmanPreview  *preview)
 {
   CheckerboardParam_t  param;
-  GimpRgnIterator     *iter;
-  GimpRGB              color;
+  PicmanRgnIterator     *iter;
+  PicmanRGB              color;
 
-  gimp_context_get_background (&color);
-  gimp_drawable_get_color_uchar (drawable->drawable_id, &color, param.bg);
+  picman_context_get_background (&color);
+  picman_drawable_get_color_uchar (drawable->drawable_id, &color, param.bg);
 
-  gimp_context_get_foreground (&color);
-  gimp_drawable_get_color_uchar (drawable->drawable_id, &color, param.fg);
+  picman_context_get_foreground (&color);
+  picman_drawable_get_color_uchar (drawable->drawable_id, &color, param.fg);
 
   if (cvals.size < 1)
     {
@@ -246,8 +246,8 @@ do_checkerboard_pattern (GimpDrawable *drawable,
       gint    bpp;
       guchar *buffer;
 
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
       bpp = drawable->bpp;
       buffer = g_new (guchar, width * height * bpp);
 
@@ -258,14 +258,14 @@ do_checkerboard_pattern (GimpDrawable *drawable,
                              buffer + i * bpp,
                              bpp, &param);
         }
-      gimp_preview_draw_buffer (preview, buffer, width * bpp);
+      picman_preview_draw_buffer (preview, buffer, width * bpp);
       g_free (buffer);
     }
   else
     {
-      iter = gimp_rgn_iterator_new (drawable, 0);
-      gimp_rgn_iterator_dest (iter, checkerboard_func, &param);
-      gimp_rgn_iterator_free (iter);
+      iter = picman_rgn_iterator_new (drawable, 0);
+      picman_rgn_iterator_dest (iter, checkerboard_func, &param);
+      picman_rgn_iterator_free (iter);
     }
 }
 
@@ -327,7 +327,7 @@ inblock (gint pos,
 
 static gboolean
 checkerboard_dialog (gint32        image_ID,
-                     GimpDrawable *drawable)
+                     PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *vbox;
@@ -336,16 +336,16 @@ checkerboard_dialog (gint32        image_ID,
   GtkWidget *toggle;
   GtkWidget *size_entry;
   gint       size, width, height;
-  GimpUnit   unit;
+  PicmanUnit   unit;
   gdouble    xres;
   gdouble    yres;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Checkerboard"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Checkerboard"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -357,7 +357,7 @@ checkerboard_dialog (gint32        image_ID,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
@@ -365,7 +365,7 @@ checkerboard_dialog (gint32        image_ID,
                       vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
   g_signal_connect_swapped (preview, "invalidated",
@@ -377,46 +377,46 @@ checkerboard_dialog (gint32        image_ID,
   gtk_widget_show (hbox);
 
   /*  Get the image resolution and unit  */
-  gimp_image_get_resolution (image_ID, &xres, &yres);
-  unit = gimp_image_get_unit (image_ID);
+  picman_image_get_resolution (image_ID, &xres, &yres);
+  unit = picman_image_get_unit (image_ID);
 
-  width  = gimp_drawable_width (drawable->drawable_id);
-  height = gimp_drawable_height (drawable->drawable_id);
+  width  = picman_drawable_width (drawable->drawable_id);
+  height = picman_drawable_height (drawable->drawable_id);
   size   = MIN (width, height);
 
-  size_entry = gimp_size_entry_new (1, unit, "%a",
+  size_entry = picman_size_entry_new (1, unit, "%a",
                                     TRUE, TRUE, FALSE, SPIN_BUTTON_WIDTH,
-                                    GIMP_SIZE_ENTRY_UPDATE_SIZE);
+                                    PICMAN_SIZE_ENTRY_UPDATE_SIZE);
   gtk_table_set_col_spacing (GTK_TABLE (size_entry), 0, 4);
   gtk_table_set_col_spacing (GTK_TABLE (size_entry), 1, 4);
   gtk_box_pack_start (GTK_BOX (hbox), size_entry, FALSE, FALSE, 0);
   gtk_widget_show (size_entry);
 
   /*  set the unit back to pixels, since most times we will want pixels */
-  gimp_size_entry_set_unit (GIMP_SIZE_ENTRY (size_entry), GIMP_UNIT_PIXEL);
+  picman_size_entry_set_unit (PICMAN_SIZE_ENTRY (size_entry), PICMAN_UNIT_PIXEL);
 
   /*  set the resolution to the image resolution  */
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (size_entry), 0, xres, TRUE);
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (size_entry), 0, xres, TRUE);
 
   /*  set the size (in pixels) that will be treated as 0% and 100%  */
-  gimp_size_entry_set_size (GIMP_SIZE_ENTRY (size_entry), 0, 0.0, size);
+  picman_size_entry_set_size (PICMAN_SIZE_ENTRY (size_entry), 0, 0.0, size);
 
   /*  set upper and lower limits (in pixels)  */
-  gimp_size_entry_set_refval_boundaries (GIMP_SIZE_ENTRY (size_entry), 0,
+  picman_size_entry_set_refval_boundaries (PICMAN_SIZE_ENTRY (size_entry), 0,
                                          1.0, size);
 
   /*  initialize the values  */
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (size_entry), 0, cvals.size);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (size_entry), 0, cvals.size);
 
   /*  attach labels  */
-  gimp_size_entry_attach_label (GIMP_SIZE_ENTRY (size_entry),
+  picman_size_entry_attach_label (PICMAN_SIZE_ENTRY (size_entry),
                                 _("_Size:"), 1, 0, 0.0);
 
   g_signal_connect (size_entry, "value-changed",
                     G_CALLBACK (check_size_update_callback),
                     &cvals.size);
   g_signal_connect_swapped (size_entry, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_check_button_new_with_mnemonic (_("_Psychobilly"));
@@ -425,15 +425,15 @@ checkerboard_dialog (gint32        image_ID,
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &cvals.mode);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -443,5 +443,5 @@ checkerboard_dialog (gint32        image_ID,
 static void
 check_size_update_callback (GtkWidget *widget)
 {
-  cvals.size = gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (widget), 0);
+  cvals.size = picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (widget), 0);
 }

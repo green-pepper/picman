@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"Gimp-Dialogs\"
+	-DG_LOG_DOMAIN=\"Picman-Dialogs\"
 
 INCLUDES = \
 	-I$(top_builddir)	\

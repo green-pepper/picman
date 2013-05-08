@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpoffsetarea.c
- * Copyright (C) 2001  Sven Neumann <sven@gimp.org>
+ * picmanoffsetarea.c
+ * Copyright (C) 2001  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,15 +23,15 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpwidgetsmarshal.h"
-#include "gimpoffsetarea.h"
+#include "picmanwidgetsmarshal.h"
+#include "picmanoffsetarea.h"
 
 
 /**
- * SECTION: gimpoffsetarea
- * @title: GimpOffsetArea
+ * SECTION: picmanoffsetarea
+ * @title: PicmanOffsetArea
  * @short_description: Widget to control image offsets.
  *
  * Widget to control image offsets.
@@ -48,48 +48,48 @@ enum
 };
 
 
-static void      gimp_offset_area_resize        (GimpOffsetArea *area);
+static void      picman_offset_area_resize        (PicmanOffsetArea *area);
 
-static void      gimp_offset_area_realize       (GtkWidget      *widget);
-static void      gimp_offset_area_size_allocate (GtkWidget      *widget,
+static void      picman_offset_area_realize       (GtkWidget      *widget);
+static void      picman_offset_area_size_allocate (GtkWidget      *widget,
                                                  GtkAllocation  *allocation);
-static gboolean  gimp_offset_area_event         (GtkWidget      *widget,
+static gboolean  picman_offset_area_event         (GtkWidget      *widget,
                                                  GdkEvent       *event);
-static gboolean  gimp_offset_area_expose_event  (GtkWidget      *widget,
+static gboolean  picman_offset_area_expose_event  (GtkWidget      *widget,
                                                  GdkEventExpose *eevent);
 
 
-G_DEFINE_TYPE (GimpOffsetArea, gimp_offset_area, GTK_TYPE_DRAWING_AREA)
+G_DEFINE_TYPE (PicmanOffsetArea, picman_offset_area, GTK_TYPE_DRAWING_AREA)
 
-#define parent_class gimp_offset_area_parent_class
+#define parent_class picman_offset_area_parent_class
 
-static guint gimp_offset_area_signals[LAST_SIGNAL] = { 0 };
+static guint picman_offset_area_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_offset_area_class_init (GimpOffsetAreaClass *klass)
+picman_offset_area_class_init (PicmanOffsetAreaClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  gimp_offset_area_signals[OFFSETS_CHANGED] =
+  picman_offset_area_signals[OFFSETS_CHANGED] =
     g_signal_new ("offsets-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpOffsetAreaClass, offsets_changed),
+                  G_STRUCT_OFFSET (PicmanOffsetAreaClass, offsets_changed),
                   NULL, NULL,
-                  _gimp_widgets_marshal_VOID__INT_INT,
+                  _picman_widgets_marshal_VOID__INT_INT,
                   G_TYPE_NONE, 2,
                   G_TYPE_INT,
                   G_TYPE_INT);
 
-  widget_class->size_allocate = gimp_offset_area_size_allocate;
-  widget_class->realize       = gimp_offset_area_realize;
-  widget_class->event         = gimp_offset_area_event;
-  widget_class->expose_event  = gimp_offset_area_expose_event;
+  widget_class->size_allocate = picman_offset_area_size_allocate;
+  widget_class->realize       = picman_offset_area_realize;
+  widget_class->event         = picman_offset_area_event;
+  widget_class->expose_event  = picman_offset_area_expose_event;
 }
 
 static void
-gimp_offset_area_init (GimpOffsetArea *area)
+picman_offset_area_init (PicmanOffsetArea *area)
 {
   area->orig_width      = 0;
   area->orig_height     = 0;
@@ -107,50 +107,50 @@ gimp_offset_area_init (GimpOffsetArea *area)
 }
 
 /**
- * gimp_offset_area_new:
+ * picman_offset_area_new:
  * @orig_width: the original width
  * @orig_height: the original height
  *
- * Creates a new #GimpOffsetArea widget. A #GimpOffsetArea can be used
+ * Creates a new #PicmanOffsetArea widget. A #PicmanOffsetArea can be used
  * when resizing an image or a drawable to allow the user to interactively
  * specify the new offsets.
  *
- * Return value: the new #GimpOffsetArea widget.
+ * Return value: the new #PicmanOffsetArea widget.
  **/
 GtkWidget *
-gimp_offset_area_new (gint orig_width,
+picman_offset_area_new (gint orig_width,
                       gint orig_height)
 {
-  GimpOffsetArea *area;
+  PicmanOffsetArea *area;
 
   g_return_val_if_fail (orig_width  > 0, NULL);
   g_return_val_if_fail (orig_height > 0, NULL);
 
-  area = g_object_new (GIMP_TYPE_OFFSET_AREA, NULL);
+  area = g_object_new (PICMAN_TYPE_OFFSET_AREA, NULL);
 
   area->orig_width  = area->width  = orig_width;
   area->orig_height = area->height = orig_height;
 
-  gimp_offset_area_resize (area);
+  picman_offset_area_resize (area);
 
   return GTK_WIDGET (area);
 }
 
 /**
- * gimp_offset_area_set_pixbuf:
- * @offset_area: a #GimpOffsetArea.
+ * picman_offset_area_set_pixbuf:
+ * @offset_area: a #PicmanOffsetArea.
  * @pixbuf: a #GdkPixbuf.
  *
  * Sets the pixbuf which represents the original image/drawable which
  * is being offset.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_offset_area_set_pixbuf (GimpOffsetArea *area,
+picman_offset_area_set_pixbuf (PicmanOffsetArea *area,
                              GdkPixbuf      *pixbuf)
 {
-  g_return_if_fail (GIMP_IS_OFFSET_AREA (area));
+  g_return_if_fail (PICMAN_IS_OFFSET_AREA (area));
   g_return_if_fail (GDK_IS_PIXBUF (pixbuf));
 
   g_object_set_data_full (G_OBJECT (area), "pixbuf",
@@ -161,21 +161,21 @@ gimp_offset_area_set_pixbuf (GimpOffsetArea *area,
 }
 
 /**
- * gimp_offset_area_set_size:
- * @offset_area: a #GimpOffsetArea.
+ * picman_offset_area_set_size:
+ * @offset_area: a #PicmanOffsetArea.
  * @width: the new width
  * @height: the new height
  *
- * Sets the size of the image/drawable displayed by the #GimpOffsetArea.
+ * Sets the size of the image/drawable displayed by the #PicmanOffsetArea.
  * If the offsets change as a result of this change, the "offsets-changed"
  * signal is emitted.
  **/
 void
-gimp_offset_area_set_size (GimpOffsetArea *area,
+picman_offset_area_set_size (PicmanOffsetArea *area,
                            gint            width,
                            gint            height)
 {
-  g_return_if_fail (GIMP_IS_OFFSET_AREA (area));
+  g_return_if_fail (PICMAN_IS_OFFSET_AREA (area));
   g_return_if_fail (width > 0 && height > 0);
 
   if (area->width != width || area->height != height)
@@ -202,29 +202,29 @@ gimp_offset_area_set_size (GimpOffsetArea *area,
           area->offset_y = offset_y;
 
           g_signal_emit (area,
-                         gimp_offset_area_signals[OFFSETS_CHANGED], 0,
+                         picman_offset_area_signals[OFFSETS_CHANGED], 0,
                          offset_x, offset_y);
         }
 
-      gimp_offset_area_resize (area);
+      picman_offset_area_resize (area);
     }
 }
 
 /**
- * gimp_offset_area_set_offsets:
- * @offset_area: a #GimpOffsetArea.
+ * picman_offset_area_set_offsets:
+ * @offset_area: a #PicmanOffsetArea.
  * @offset_x: the X offset
  * @offset_y: the Y offset
  *
- * Sets the offsets of the image/drawable displayed by the #GimpOffsetArea.
+ * Sets the offsets of the image/drawable displayed by the #PicmanOffsetArea.
  * It does not emit the "offsets-changed" signal.
  **/
 void
-gimp_offset_area_set_offsets (GimpOffsetArea *area,
+picman_offset_area_set_offsets (PicmanOffsetArea *area,
                               gint            offset_x,
                               gint            offset_y)
 {
-  g_return_if_fail (GIMP_IS_OFFSET_AREA (area));
+  g_return_if_fail (PICMAN_IS_OFFSET_AREA (area));
 
   if (area->offset_x != offset_x || area->offset_y != offset_y)
     {
@@ -243,7 +243,7 @@ gimp_offset_area_set_offsets (GimpOffsetArea *area,
 }
 
 static void
-gimp_offset_area_resize (GimpOffsetArea *area)
+picman_offset_area_resize (PicmanOffsetArea *area)
 {
   gint    width;
   gint    height;
@@ -272,10 +272,10 @@ gimp_offset_area_resize (GimpOffsetArea *area)
 }
 
 static void
-gimp_offset_area_size_allocate (GtkWidget     *widget,
+picman_offset_area_size_allocate (GtkWidget     *widget,
                                 GtkAllocation *allocation)
 {
-  GimpOffsetArea *area = GIMP_OFFSET_AREA (widget);
+  PicmanOffsetArea *area = PICMAN_OFFSET_AREA (widget);
   GdkPixbuf      *pixbuf;
 
   GTK_WIDGET_CLASS (parent_class)->size_allocate (widget, allocation);
@@ -325,7 +325,7 @@ gimp_offset_area_size_allocate (GtkWidget     *widget,
 }
 
 static void
-gimp_offset_area_realize (GtkWidget *widget)
+picman_offset_area_realize (GtkWidget *widget)
 {
   GdkCursor *cursor;
 
@@ -338,7 +338,7 @@ gimp_offset_area_realize (GtkWidget *widget)
 }
 
 static gboolean
-gimp_offset_area_event (GtkWidget *widget,
+picman_offset_area_event (GtkWidget *widget,
                         GdkEvent  *event)
 {
   static gint orig_offset_x = 0;
@@ -346,7 +346,7 @@ gimp_offset_area_event (GtkWidget *widget,
   static gint start_x       = 0;
   static gint start_y       = 0;
 
-  GimpOffsetArea *area = GIMP_OFFSET_AREA (widget);
+  PicmanOffsetArea *area = PICMAN_OFFSET_AREA (widget);
   gint            offset_x;
   gint            offset_y;
 
@@ -375,10 +375,10 @@ gimp_offset_area_event (GtkWidget *widget,
 
       if (area->offset_x != offset_x || area->offset_y != offset_y)
         {
-          gimp_offset_area_set_offsets (area, offset_x, offset_y);
+          picman_offset_area_set_offsets (area, offset_x, offset_y);
 
           g_signal_emit (area,
-                         gimp_offset_area_signals[OFFSETS_CHANGED], 0,
+                         picman_offset_area_signals[OFFSETS_CHANGED], 0,
                          area->offset_x, area->offset_y);
         }
       break;
@@ -400,10 +400,10 @@ gimp_offset_area_event (GtkWidget *widget,
 }
 
 static gboolean
-gimp_offset_area_expose_event (GtkWidget      *widget,
+picman_offset_area_expose_event (GtkWidget      *widget,
                                GdkEventExpose *eevent)
 {
-  GimpOffsetArea *area   = GIMP_OFFSET_AREA (widget);
+  PicmanOffsetArea *area   = PICMAN_OFFSET_AREA (widget);
   GtkStyle       *style  = gtk_widget_get_style (widget);
   GdkWindow      *window = gtk_widget_get_window (widget);
   cairo_t        *cr;

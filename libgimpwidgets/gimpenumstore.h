@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpenumstore.h
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanenumstore.h
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,63 +19,63 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_ENUM_STORE_H__
-#define __GIMP_ENUM_STORE_H__
+#ifndef __PICMAN_ENUM_STORE_H__
+#define __PICMAN_ENUM_STORE_H__
 
-#include <libgimpwidgets/gimpintstore.h>
+#include <libpicmanwidgets/picmanintstore.h>
 
 
 G_BEGIN_DECLS
 
-#define GIMP_TYPE_ENUM_STORE            (gimp_enum_store_get_type ())
-#define GIMP_ENUM_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ENUM_STORE, GimpEnumStore))
-#define GIMP_ENUM_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ENUM_STORE, GimpEnumStoreClass))
-#define GIMP_IS_ENUM_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ENUM_STORE))
-#define GIMP_IS_ENUM_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ENUM_STORE))
-#define GIMP_ENUM_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ENUM_STORE, GimpEnumStoreClass))
+#define PICMAN_TYPE_ENUM_STORE            (picman_enum_store_get_type ())
+#define PICMAN_ENUM_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ENUM_STORE, PicmanEnumStore))
+#define PICMAN_ENUM_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ENUM_STORE, PicmanEnumStoreClass))
+#define PICMAN_IS_ENUM_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ENUM_STORE))
+#define PICMAN_IS_ENUM_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ENUM_STORE))
+#define PICMAN_ENUM_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ENUM_STORE, PicmanEnumStoreClass))
 
 
-typedef struct _GimpEnumStoreClass  GimpEnumStoreClass;
+typedef struct _PicmanEnumStoreClass  PicmanEnumStoreClass;
 
-struct _GimpEnumStore
+struct _PicmanEnumStore
 {
-  GimpIntStore       parent_instance;
+  PicmanIntStore       parent_instance;
 
   GEnumClass        *enum_class;
 };
 
-struct _GimpEnumStoreClass
+struct _PicmanEnumStoreClass
 {
-  GimpIntStoreClass  parent_class;
+  PicmanIntStoreClass  parent_class;
 
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType          gimp_enum_store_get_type               (void) G_GNUC_CONST;
+GType          picman_enum_store_get_type               (void) G_GNUC_CONST;
 
-GtkListStore * gimp_enum_store_new                    (GType    enum_type);
-GtkListStore * gimp_enum_store_new_with_range         (GType    enum_type,
+GtkListStore * picman_enum_store_new                    (GType    enum_type);
+GtkListStore * picman_enum_store_new_with_range         (GType    enum_type,
                                                        gint     minimum,
                                                        gint     maximum);
-GtkListStore * gimp_enum_store_new_with_values        (GType    enum_type,
+GtkListStore * picman_enum_store_new_with_values        (GType    enum_type,
                                                        gint     n_values,
                                                        ...);
-GtkListStore * gimp_enum_store_new_with_values_valist (GType    enum_type,
+GtkListStore * picman_enum_store_new_with_values_valist (GType    enum_type,
                                                        gint     n_values,
                                                        va_list  args);
 
-void           gimp_enum_store_set_stock_prefix (GimpEnumStore *store,
+void           picman_enum_store_set_stock_prefix (PicmanEnumStore *store,
                                                  const gchar   *stock_prefix);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_ENUM_STORE_H__ */
+#endif  /* __PICMAN_ENUM_STORE_H__ */

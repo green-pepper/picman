@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpRc serialization routines
- * Copyright (C) 2001-2005  Sven Neumann <sven@gimp.org>
+ * PicmanRc serialization routines
+ * Copyright (C) 2001-2005  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,46 +22,46 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "config-types.h"
 
-#include "gimprc.h"
-#include "gimprc-serialize.h"
-#include "gimprc-unknown.h"
+#include "picmanrc.h"
+#include "picmanrc-serialize.h"
+#include "picmanrc-unknown.h"
 
 
-static gboolean gimp_rc_serialize_properties_diff (GimpConfig       *config,
-                                                   GimpConfig       *compare,
-                                                   GimpConfigWriter *writer);
-static gboolean gimp_rc_serialize_unknown_tokens  (GimpConfig       *config,
-                                                   GimpConfigWriter *writer);
+static gboolean picman_rc_serialize_properties_diff (PicmanConfig       *config,
+                                                   PicmanConfig       *compare,
+                                                   PicmanConfigWriter *writer);
+static gboolean picman_rc_serialize_unknown_tokens  (PicmanConfig       *config,
+                                                   PicmanConfigWriter *writer);
 
 
 gboolean
-gimp_rc_serialize (GimpConfig       *config,
-                   GimpConfigWriter *writer,
+picman_rc_serialize (PicmanConfig       *config,
+                   PicmanConfigWriter *writer,
                    gpointer          data)
 {
-  if (data && GIMP_IS_RC (data))
+  if (data && PICMAN_IS_RC (data))
     {
-      if (! gimp_rc_serialize_properties_diff (config, data, writer))
+      if (! picman_rc_serialize_properties_diff (config, data, writer))
         return FALSE;
     }
   else
     {
-      if (! gimp_config_serialize_properties (config, writer))
+      if (! picman_config_serialize_properties (config, writer))
         return FALSE;
     }
 
-  return gimp_rc_serialize_unknown_tokens (config, writer);
+  return picman_rc_serialize_unknown_tokens (config, writer);
 }
 
 static gboolean
-gimp_rc_serialize_properties_diff (GimpConfig       *config,
-                                   GimpConfig       *compare,
-                                   GimpConfigWriter *writer)
+picman_rc_serialize_properties_diff (PicmanConfig       *config,
+                                   PicmanConfig       *compare,
+                                   PicmanConfigWriter *writer)
 {
   GList    *diff;
   GList    *list;
@@ -72,17 +72,17 @@ gimp_rc_serialize_properties_diff (GimpConfig       *config,
   g_return_val_if_fail (G_TYPE_FROM_INSTANCE (config) ==
                         G_TYPE_FROM_INSTANCE (compare), FALSE);
 
-  diff = gimp_config_diff (G_OBJECT (config),
-                           G_OBJECT (compare), GIMP_CONFIG_PARAM_SERIALIZE);
+  diff = picman_config_diff (G_OBJECT (config),
+                           G_OBJECT (compare), PICMAN_CONFIG_PARAM_SERIALIZE);
 
   for (list = diff; list; list = g_list_next (list))
     {
       GParamSpec *prop_spec = list->data;
 
-      if (! (prop_spec->flags & GIMP_CONFIG_PARAM_SERIALIZE))
+      if (! (prop_spec->flags & PICMAN_CONFIG_PARAM_SERIALIZE))
         continue;
 
-      if (! gimp_config_serialize_property (config, prop_spec, writer))
+      if (! picman_config_serialize_property (config, prop_spec, writer))
         {
           retval = FALSE;
           break;
@@ -99,21 +99,21 @@ serialize_unknown_token (const gchar *key,
                          const gchar *value,
                          gpointer     data)
 {
-  GimpConfigWriter *writer = data;
+  PicmanConfigWriter *writer = data;
 
-  gimp_config_writer_open (writer, key);
-  gimp_config_writer_string (writer, value);
-  gimp_config_writer_close (writer);
+  picman_config_writer_open (writer, key);
+  picman_config_writer_string (writer, value);
+  picman_config_writer_close (writer);
 }
 
 static gboolean
-gimp_rc_serialize_unknown_tokens (GimpConfig       *config,
-                                  GimpConfigWriter *writer)
+picman_rc_serialize_unknown_tokens (PicmanConfig       *config,
+                                  PicmanConfigWriter *writer)
 {
   g_return_val_if_fail (G_IS_OBJECT (config), FALSE);
 
-  gimp_config_writer_linefeed (writer);
-  gimp_rc_foreach_unknown_token (config, serialize_unknown_token, writer);
+  picman_config_writer_linefeed (writer);
+  picman_rc_foreach_unknown_token (config, serialize_unknown_token, writer);
 
   return TRUE;
 }

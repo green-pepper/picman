@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates clickable image maps.
  *
@@ -24,9 +24,9 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimp/gimp.h"
+#include "libpicman/picman.h"
 
-#include <libgimp/gimpui.h>
+#include <libpicman/picmanui.h>
 
 #include "imap_commands.h"
 #include "imap_grid.h"
@@ -78,7 +78,7 @@ preview_get_height(GtkWidget *preview)
 }
 
 static void
-render_gray_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
+render_gray_image(Preview_t *preview_base, PicmanPixelRgn *srcrgn)
 {
    guchar        *src_row, *dest_buffer, *dest;
    gint          row, col;
@@ -102,7 +102,7 @@ render_gray_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
    dest = dest_buffer;
 
    for (row = 0; row < pheight; row++) {
-      gimp_pixel_rgn_get_row(srcrgn, src_row, 0, row * dheight / pheight,
+      picman_pixel_rgn_get_row(srcrgn, src_row, 0, row * dheight / pheight,
                              dwidth);
 
       for (col = 0; col < pwidth; col++) {
@@ -111,9 +111,9 @@ render_gray_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
          *dest++ = *src;
       }
    }
-   gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+   picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                            0, 0, pwidth, pheight,
-                           GIMP_GRAY_IMAGE,
+                           PICMAN_GRAY_IMAGE,
                            dest_buffer,
                            pwidth);
    g_free(src_col);
@@ -123,7 +123,7 @@ render_gray_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
 }
 
 static void
-render_indexed_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
+render_indexed_image(Preview_t *preview_base, PicmanPixelRgn *srcrgn)
 {
    guchar        *src_row, *dest_buffer, *src, *dest;
    gint          row, col;
@@ -141,11 +141,11 @@ render_indexed_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
    pheight = preview_base->widget_height;
    bpp = srcrgn->bpp;
    alpha = bpp;
-   has_alpha = gimp_drawable_has_alpha(srcrgn->drawable->drawable_id);
+   has_alpha = picman_drawable_has_alpha(srcrgn->drawable->drawable_id);
    if (has_alpha)
       alpha--;
 
-   cmap = gimp_image_get_colormap (gimp_item_get_image (srcrgn->drawable->drawable_id),
+   cmap = picman_image_get_colormap (picman_item_get_image (srcrgn->drawable->drawable_id),
                                    &ncols);
 
    src_row = g_new(guchar, dwidth * bpp);
@@ -157,7 +157,7 @@ render_indexed_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
 
    dest = dest_buffer;
    for (row = 0; row < pheight; row++) {
-      gimp_pixel_rgn_get_row(srcrgn, src_row, 0, row * dheight / pheight,
+      picman_pixel_rgn_get_row(srcrgn, src_row, 0, row * dheight / pheight,
                              dwidth);
 
       for (col = 0; col < pwidth; col++) {
@@ -177,9 +177,9 @@ render_indexed_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
          }
       }
    }
-   gimp_preview_area_draw(GIMP_PREVIEW_AREA(preview),
+   picman_preview_area_draw(PICMAN_PREVIEW_AREA(preview),
                           0, 0, pwidth, pheight,
-                          GIMP_RGB_IMAGE,
+                          PICMAN_RGB_IMAGE,
                           dest_buffer,
                           pwidth * 3);
    g_free(src_col);
@@ -188,7 +188,7 @@ render_indexed_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
 }
 
 static void
-render_rgb_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
+render_rgb_image(Preview_t *preview_base, PicmanPixelRgn *srcrgn)
 {
    guchar        *src_row, *dest_buffer, *src, *dest;
    gint          row, col;
@@ -205,7 +205,7 @@ render_rgb_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
    pheight = preview_base->widget_height;
    bpp = srcrgn->bpp;
    alpha = bpp;
-   has_alpha = gimp_drawable_has_alpha(srcrgn->drawable->drawable_id);
+   has_alpha = picman_drawable_has_alpha(srcrgn->drawable->drawable_id);
    if (has_alpha)
       alpha--;
 
@@ -218,7 +218,7 @@ render_rgb_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
 
    dest = dest_buffer;
    for (row = 0; row < pheight; row++) {
-      gimp_pixel_rgn_get_row(srcrgn, src_row, 0, row * dheight / pheight,
+      picman_pixel_rgn_get_row(srcrgn, src_row, 0, row * dheight / pheight,
                              dwidth);
       for (col = 0; col < pwidth; col++) {
          src = &src_row[src_col[col]];
@@ -254,9 +254,9 @@ render_rgb_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
          dest += alpha;
       }
    }
-   gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+   picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                            0, 0, pwidth, pheight,
-                           GIMP_RGB_IMAGE,
+                           PICMAN_RGB_IMAGE,
                            dest_buffer,
                            pwidth * 3);
    g_free(src_col);
@@ -265,19 +265,19 @@ render_rgb_image(Preview_t *preview_base, GimpPixelRgn *srcrgn)
 }
 
 static void
-render_preview(Preview_t *preview_base, GimpPixelRgn *srcrgn)
+render_preview(Preview_t *preview_base, PicmanPixelRgn *srcrgn)
 {
-   switch (gimp_drawable_type(srcrgn->drawable->drawable_id)) {
-   case GIMP_RGB_IMAGE:
-   case GIMP_RGBA_IMAGE:
+   switch (picman_drawable_type(srcrgn->drawable->drawable_id)) {
+   case PICMAN_RGB_IMAGE:
+   case PICMAN_RGBA_IMAGE:
       render_rgb_image(preview_base, srcrgn);
       break;
-   case GIMP_GRAY_IMAGE:
-   case GIMP_GRAYA_IMAGE:
+   case PICMAN_GRAY_IMAGE:
+   case PICMAN_GRAYA_IMAGE:
       render_gray_image(preview_base, srcrgn);
       break;
-   case GIMP_INDEXED_IMAGE:
-   case GIMP_INDEXEDA_IMAGE:
+   case PICMAN_INDEXED_IMAGE:
+   case PICMAN_INDEXEDA_IMAGE:
       render_indexed_image(preview_base, srcrgn);
       break;
    }
@@ -404,9 +404,9 @@ preview_size_allocate (GtkWidget *widget,
 
 static void
 scroll_adj_changed (GtkAdjustment *adj,
-                    GimpRuler     *ruler)
+                    PicmanRuler     *ruler)
 {
-  gimp_ruler_set_range (ruler,
+  picman_ruler_set_range (ruler,
                         gtk_adjustment_get_value (adj),
                         gtk_adjustment_get_value (adj) +
                         gtk_adjustment_get_page_size (adj),
@@ -414,7 +414,7 @@ scroll_adj_changed (GtkAdjustment *adj,
 }
 
 Preview_t *
-make_preview (GimpDrawable *drawable)
+make_preview (PicmanDrawable *drawable)
 {
    Preview_t *data = g_new(Preview_t, 1);
    GtkAdjustment *hadj;
@@ -428,7 +428,7 @@ make_preview (GimpDrawable *drawable)
    gint width, height;
 
    data->drawable = drawable;
-   data->preview = preview = gimp_preview_area_new ();
+   data->preview = preview = picman_preview_area_new ();
 
    g_object_set_data (G_OBJECT (preview), "preview", data);
    gtk_widget_set_events(GTK_WIDGET(preview), PREVIEW_MASK);
@@ -444,9 +444,9 @@ make_preview (GimpDrawable *drawable)
                     G_CALLBACK(handle_drop), NULL);
 
    data->widget_width = data->width =
-       gimp_drawable_width(drawable->drawable_id);
+       picman_drawable_width(drawable->drawable_id);
    data->widget_height = data->height =
-       gimp_drawable_height(drawable->drawable_id);
+       picman_drawable_height(drawable->drawable_id);
    gtk_widget_set_size_request (preview, data->widget_width,
                                 data->widget_height);
 
@@ -471,7 +471,7 @@ make_preview (GimpDrawable *drawable)
    gtk_widget_show(arrow);
 
    /* Create horizontal ruler */
-   data->hruler = ruler = gimp_ruler_new (GTK_ORIENTATION_HORIZONTAL);
+   data->hruler = ruler = picman_ruler_new (GTK_ORIENTATION_HORIZONTAL);
    g_signal_connect_swapped(preview, "motion-notify-event",
                             G_CALLBACK(GTK_WIDGET_GET_CLASS(ruler)->motion_notify_event),
                             ruler);
@@ -481,7 +481,7 @@ make_preview (GimpDrawable *drawable)
    gtk_widget_show(ruler);
 
    /* Create vertical ruler */
-   data->vruler = ruler = gimp_ruler_new (GTK_ORIENTATION_VERTICAL);
+   data->vruler = ruler = picman_ruler_new (GTK_ORIENTATION_VERTICAL);
    g_signal_connect_swapped(preview, "motion-notify-event",
                             G_CALLBACK(GTK_WIDGET_GET_CLASS(ruler)->motion_notify_event),
                             ruler);
@@ -531,7 +531,7 @@ make_preview (GimpDrawable *drawable)
 
    gtk_widget_show (preview);
 
-   gimp_pixel_rgn_init(&data->src_rgn, drawable, 0, 0, data->width,
+   picman_pixel_rgn_init(&data->src_rgn, drawable, 0, 0, data->width,
                        data->height, FALSE, FALSE);
    render_preview(data, &data->src_rgn);
 

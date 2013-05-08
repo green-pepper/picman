@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,355 +23,355 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp-parasites.h"
-#include "core/gimp-utils.h"
-#include "core/gimp.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman-parasites.h"
+#include "core/picman-utils.h"
+#include "core/picman.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-version_invoker (GimpProcedure         *procedure,
-                 Gimp                  *gimp,
-                 GimpContext           *context,
-                 GimpProgress          *progress,
-                 const GimpValueArray  *args,
+static PicmanValueArray *
+version_invoker (PicmanProcedure         *procedure,
+                 Picman                  *picman,
+                 PicmanContext           *context,
+                 PicmanProgress          *progress,
+                 const PicmanValueArray  *args,
                  GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gchar *version = NULL;
 
-  version = g_strdup (GIMP_VERSION);
+  version = g_strdup (PICMAN_VERSION);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_take_string (gimp_value_array_index (return_vals, 1), version);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_take_string (picman_value_array_index (return_vals, 1), version);
 
   return return_vals;
 }
 
-static GimpValueArray *
-getpid_invoker (GimpProcedure         *procedure,
-                Gimp                  *gimp,
-                GimpContext           *context,
-                GimpProgress          *progress,
-                const GimpValueArray  *args,
+static PicmanValueArray *
+getpid_invoker (PicmanProcedure         *procedure,
+                Picman                  *picman,
+                PicmanContext           *context,
+                PicmanProgress          *progress,
+                const PicmanValueArray  *args,
                 GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 pid = 0;
 
-  pid = gimp_get_pid ();
+  pid = picman_get_pid ();
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_int (gimp_value_array_index (return_vals, 1), pid);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_int (picman_value_array_index (return_vals, 1), pid);
 
   return return_vals;
 }
 
-static GimpValueArray *
-quit_invoker (GimpProcedure         *procedure,
-              Gimp                  *gimp,
-              GimpContext           *context,
-              GimpProgress          *progress,
-              const GimpValueArray  *args,
+static PicmanValueArray *
+quit_invoker (PicmanProcedure         *procedure,
+              Picman                  *picman,
+              PicmanContext           *context,
+              PicmanProgress          *progress,
+              const PicmanValueArray  *args,
               GError               **error)
 {
   gboolean success = TRUE;
   gboolean force;
 
-  force = g_value_get_boolean (gimp_value_array_index (args, 0));
+  force = g_value_get_boolean (picman_value_array_index (args, 0));
 
   if (success)
     {
-      gimp_exit (gimp, force);
+      picman_exit (picman, force);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-attach_parasite_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+attach_parasite_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  const GimpParasite *parasite;
+  const PicmanParasite *parasite;
 
-  parasite = g_value_get_boxed (gimp_value_array_index (args, 0));
+  parasite = g_value_get_boxed (picman_value_array_index (args, 0));
 
   if (success)
     {
-      gimp_parasite_attach (gimp, parasite);
+      picman_parasite_attach (picman, parasite);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-detach_parasite_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+detach_parasite_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
   const gchar *name;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      gimp_parasite_detach (gimp, name);
+      picman_parasite_detach (picman, name);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-get_parasite_invoker (GimpProcedure         *procedure,
-                      Gimp                  *gimp,
-                      GimpContext           *context,
-                      GimpProgress          *progress,
-                      const GimpValueArray  *args,
+static PicmanValueArray *
+get_parasite_invoker (PicmanProcedure         *procedure,
+                      Picman                  *picman,
+                      PicmanContext           *context,
+                      PicmanProgress          *progress,
+                      const PicmanValueArray  *args,
                       GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
-  GimpParasite *parasite = NULL;
+  PicmanParasite *parasite = NULL;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      parasite = gimp_parasite_copy (gimp_parasite_find (gimp, name));
+      parasite = picman_parasite_copy (picman_parasite_find (picman, name));
 
       if (! parasite)
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_boxed (gimp_value_array_index (return_vals, 1), parasite);
+    g_value_take_boxed (picman_value_array_index (return_vals, 1), parasite);
 
   return return_vals;
 }
 
-static GimpValueArray *
-get_parasite_list_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+get_parasite_list_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   gint32 num_parasites = 0;
   gchar **parasites = NULL;
 
-  parasites = gimp_parasite_list (gimp, &num_parasites);
+  parasites = picman_parasite_list (picman, &num_parasites);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
 
-  g_value_set_int (gimp_value_array_index (return_vals, 1), num_parasites);
-  gimp_value_take_stringarray (gimp_value_array_index (return_vals, 2), parasites, num_parasites);
+  g_value_set_int (picman_value_array_index (return_vals, 1), num_parasites);
+  picman_value_take_stringarray (picman_value_array_index (return_vals, 2), parasites, num_parasites);
 
   return return_vals;
 }
 
 void
-register_gimp_procs (GimpPDB *pdb)
+register_picman_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-version
+   * picman-version
    */
-  procedure = gimp_procedure_new (version_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-version");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-version",
-                                     "Returns the host GIMP version.",
-                                     "This procedure returns the version number of the currently running GIMP.",
+  procedure = picman_procedure_new (version_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-version");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-version",
+                                     "Returns the host PICMAN version.",
+                                     "This procedure returns the version number of the currently running PICMAN.",
                                      "Manish Singh",
                                      "Manish Singh",
                                      "1999",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("version",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("version",
                                                            "version",
-                                                           "GIMP version number",
+                                                           "PICMAN version number",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-getpid
+   * picman-getpid
    */
-  procedure = gimp_procedure_new (getpid_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-getpid");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-getpid",
-                                     "Returns the PID of the host GIMP process.",
-                                     "This procedure returns the process ID of the currently running GIMP.",
-                                     "Michael Natterer <mitch@gimp.org>",
+  procedure = picman_procedure_new (getpid_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-getpid");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-getpid",
+                                     "Returns the PID of the host PICMAN process.",
+                                     "This procedure returns the process ID of the currently running PICMAN.",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("pid",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("pid",
                                                           "pid",
                                                           "The PID",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-quit
+   * picman-quit
    */
-  procedure = gimp_procedure_new (quit_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-quit");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-quit",
-                                     "Causes GIMP to exit gracefully.",
-                                     "If there are unsaved images in an interactive GIMP session, the user will be asked for confirmation. If force is TRUE, the application is quit without querying the user to save any dirty images.",
+  procedure = picman_procedure_new (quit_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-quit");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-quit",
+                                     "Causes PICMAN to exit gracefully.",
+                                     "If there are unsaved images in an interactive PICMAN session, the user will be asked for confirmation. If force is TRUE, the application is quit without querying the user to save any dirty images.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("force",
                                                      "force",
-                                                     "Force GIMP to quit without asking",
+                                                     "Force PICMAN to quit without asking",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-attach-parasite
+   * picman-attach-parasite
    */
-  procedure = gimp_procedure_new (attach_parasite_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-attach-parasite");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-attach-parasite",
+  procedure = picman_procedure_new (attach_parasite_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-attach-parasite");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-attach-parasite",
                                      "Add a global parasite.",
                                      "This procedure attaches a global parasite. It has no return values.",
                                      "Jay Cox",
                                      "Jay Cox",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_parasite ("parasite",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_parasite ("parasite",
                                                          "parasite",
                                                          "The parasite to attach",
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-detach-parasite
+   * picman-detach-parasite
    */
-  procedure = gimp_procedure_new (detach_parasite_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-detach-parasite");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-detach-parasite",
+  procedure = picman_procedure_new (detach_parasite_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-detach-parasite");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-detach-parasite",
                                      "Removes a global parasite.",
                                      "This procedure detaches a global parasite from. It has no return values.",
                                      "Jay Cox",
                                      "Jay Cox",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the parasite to detach.",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-get-parasite
+   * picman-get-parasite
    */
-  procedure = gimp_procedure_new (get_parasite_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-get-parasite");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-get-parasite",
+  procedure = picman_procedure_new (get_parasite_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-get-parasite");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-get-parasite",
                                      "Look up a global parasite.",
                                      "Finds and returns the global parasite that was previously attached.",
                                      "Jay Cox",
                                      "Jay Cox",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the parasite to find",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_parasite ("parasite",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_parasite ("parasite",
                                                              "parasite",
                                                              "The found parasite",
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-get-parasite-list
+   * picman-get-parasite-list
    */
-  procedure = gimp_procedure_new (get_parasite_list_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-get-parasite-list");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-get-parasite-list",
+  procedure = picman_procedure_new (get_parasite_list_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-get-parasite-list");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-get-parasite-list",
                                      "List all parasites.",
                                      "Returns a list of all currently attached global parasites.",
                                      "Marc Lehmann",
                                      "Marc Lehmann",
                                      "1999",
                                      NULL);
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-parasites",
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-parasites",
                                                           "num parasites",
                                                           "The number of attached parasites",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string_array ("parasites",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string_array ("parasites",
                                                                  "parasites",
                                                                  "The names of currently attached parasites",
-                                                                 GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                 PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

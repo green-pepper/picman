@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbrushclipboard.h
- * Copyright (C) 2006 Michael Natterer <mitch@gimp.org>
+ * picmanbrushclipboard.h
+ * Copyright (C) 2006 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,39 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_CLIPBOARD_H__
-#define __GIMP_BRUSH_CLIPBOARD_H__
+#ifndef __PICMAN_BRUSH_CLIPBOARD_H__
+#define __PICMAN_BRUSH_CLIPBOARD_H__
 
 
-#include "gimpbrush.h"
+#include "picmanbrush.h"
 
 
-#define GIMP_TYPE_BRUSH_CLIPBOARD            (gimp_brush_clipboard_get_type ())
-#define GIMP_BRUSH_CLIPBOARD(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BRUSH_CLIPBOARD, GimpBrushClipboard))
-#define GIMP_BRUSH_CLIPBOARD_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BRUSH_CLIPBOARD, GimpBrushClipboardClass))
-#define GIMP_IS_BRUSH_CLIPBOARD(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BRUSH_CLIPBOARD))
-#define GIMP_IS_BRUSH_CLIPBOARD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BRUSH_CLIPBOARD))
-#define GIMP_BRUSH_CLIPBOARD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BRUSH_CLIPBOARD, GimpBrushClipboardClass))
+#define PICMAN_TYPE_BRUSH_CLIPBOARD            (picman_brush_clipboard_get_type ())
+#define PICMAN_BRUSH_CLIPBOARD(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BRUSH_CLIPBOARD, PicmanBrushClipboard))
+#define PICMAN_BRUSH_CLIPBOARD_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BRUSH_CLIPBOARD, PicmanBrushClipboardClass))
+#define PICMAN_IS_BRUSH_CLIPBOARD(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BRUSH_CLIPBOARD))
+#define PICMAN_IS_BRUSH_CLIPBOARD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BRUSH_CLIPBOARD))
+#define PICMAN_BRUSH_CLIPBOARD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BRUSH_CLIPBOARD, PicmanBrushClipboardClass))
 
 
-typedef struct _GimpBrushClipboardClass GimpBrushClipboardClass;
+typedef struct _PicmanBrushClipboardClass PicmanBrushClipboardClass;
 
-struct _GimpBrushClipboard
+struct _PicmanBrushClipboard
 {
-  GimpBrush  parent_instance;
+  PicmanBrush  parent_instance;
 
-  Gimp      *gimp;
+  Picman      *picman;
 };
 
-struct _GimpBrushClipboardClass
+struct _PicmanBrushClipboardClass
 {
-  GimpBrushClass  parent_class;
+  PicmanBrushClass  parent_class;
 };
 
 
-GType      gimp_brush_clipboard_get_type (void) G_GNUC_CONST;
+GType      picman_brush_clipboard_get_type (void) G_GNUC_CONST;
 
-GimpData * gimp_brush_clipboard_new      (Gimp *gimp);
+PicmanData * picman_brush_clipboard_new      (Picman *picman);
 
 
-#endif  /*  __GIMP_BRUSH_CLIPBOARD_H__  */
+#endif  /*  __PICMAN_BRUSH_CLIPBOARD_H__  */

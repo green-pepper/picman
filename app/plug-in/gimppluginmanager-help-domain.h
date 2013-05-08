@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginmanager-help-domain.h
+ * picmanpluginmanager-help-domain.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,27 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_MANAGER_HELP_DOMAIN_H__
-#define __GIMP_PLUG_IN_MANAGER_HELP_DOMAIN_H__
+#ifndef __PICMAN_PLUG_IN_MANAGER_HELP_DOMAIN_H__
+#define __PICMAN_PLUG_IN_MANAGER_HELP_DOMAIN_H__
 
 
-void          gimp_plug_in_manager_help_domain_exit (GimpPlugInManager   *manager);
+void          picman_plug_in_manager_help_domain_exit (PicmanPlugInManager   *manager);
 
 /* Add a help domain */
-void          gimp_plug_in_manager_add_help_domain  (GimpPlugInManager   *manager,
+void          picman_plug_in_manager_add_help_domain  (PicmanPlugInManager   *manager,
                                                      const gchar         *prog_name,
                                                      const gchar         *domain_name,
                                                      const gchar         *domain_uri);
 
 /* Retrieve a plug-ins help domain */
-const gchar * gimp_plug_in_manager_get_help_domain  (GimpPlugInManager   *manager,
+const gchar * picman_plug_in_manager_get_help_domain  (PicmanPlugInManager   *manager,
                                                      const gchar         *prog_name,
                                                      const gchar        **help_uri);
 
 /* Retrieve all help domains */
-gint          gimp_plug_in_manager_get_help_domains (GimpPlugInManager   *manager,
+gint          picman_plug_in_manager_get_help_domains (PicmanPlugInManager   *manager,
                                                      gchar             ***help_domains,
                                                      gchar             ***help_uris);
 
 
-#endif /* __GIMP_PLUG_IN_MANAGER_HELP_DOMAIN_H__ */
+#endif /* __PICMAN_PLUG_IN_MANAGER_HELP_DOMAIN_H__ */

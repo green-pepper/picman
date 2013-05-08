@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpparasiteio.c
+ * picmanparasiteio.c
  * Copyright (C) 1999 Tor Lillqvist <tml@iki.fi>
  *
  * This library is free software: you can redistribute it and/or
@@ -32,23 +32,23 @@
 
 #include <glib.h>
 
-#include "gimpparasiteio.h"
+#include "picmanparasiteio.h"
 
 
 /**
- * SECTION: gimpparasiteio
- * @title: gimpparasiteio
+ * SECTION: picmanparasiteio
+ * @title: picmanparasiteio
  * @short_description: Utility functions to (de)serialize certain C
- *                     structures to/from #GimpParasite's.
- * @see_also: #GimpParasite
+ *                     structures to/from #PicmanParasite's.
+ * @see_also: #PicmanParasite
  *
  * Utility functions to (de)serialize certain C structures to/from*
- * #GimpParasite's.
+ * #PicmanParasite's.
  **/
 
 
 void
-gimp_pixpipe_params_init (GimpPixPipeParams *params)
+picman_pixpipe_params_init (PicmanPixPipeParams *params)
 {
   gint i;
 
@@ -63,19 +63,19 @@ gimp_pixpipe_params_init (GimpPixPipeParams *params)
   params->rows       = 1;
   params->placement  = "constant";
   params->free_placement_string = FALSE;
-  for (i = 0; i < GIMP_PIXPIPE_MAXDIM; i++)
+  for (i = 0; i < PICMAN_PIXPIPE_MAXDIM; i++)
     {
       params->selection[i]          = "random";
       params->free_selection_string = FALSE;
     }
   params->rank[0] = 1;
-  for (i = 1; i < GIMP_PIXPIPE_MAXDIM; i++)
+  for (i = 1; i < PICMAN_PIXPIPE_MAXDIM; i++)
     params->rank[i] = 0;
 }
 
 void
-gimp_pixpipe_params_parse (const gchar       *string,
-                           GimpPixPipeParams *params)
+picman_pixpipe_params_parse (const gchar       *string,
+                           PicmanPixPipeParams *params)
 {
   gchar *copy;
   gchar *p, *q, *r;
@@ -109,7 +109,7 @@ gimp_pixpipe_params_parse (const gchar       *string,
           if (r)
             {
               params->dim = atoi (r + 1);
-              params->dim = CLAMP (params->dim, 1, GIMP_PIXPIPE_MAXDIM);
+              params->dim = CLAMP (params->dim, 1, PICMAN_PIXPIPE_MAXDIM);
             }
         }
       else if (strcmp (p, "cols") == 0)
@@ -169,7 +169,7 @@ gimp_pixpipe_params_parse (const gchar       *string,
 }
 
 gchar *
-gimp_pixpipe_params_build (GimpPixPipeParams *params)
+picman_pixpipe_params_build (PicmanPixPipeParams *params)
 {
   GString *str;
   gint     i;

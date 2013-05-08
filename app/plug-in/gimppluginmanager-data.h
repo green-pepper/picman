@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginmanager-data.h
+ * picmanpluginmanager-data.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_MANAGER_DATA_H__
-#define __GIMP_PLUG_IN_MANAGER_DATA_H__
+#ifndef __PICMAN_PLUG_IN_MANAGER_DATA_H__
+#define __PICMAN_PLUG_IN_MANAGER_DATA_H__
 
 
-void           gimp_plug_in_manager_data_free (GimpPlugInManager *manager);
+void           picman_plug_in_manager_data_free (PicmanPlugInManager *manager);
 
-void           gimp_plug_in_manager_set_data  (GimpPlugInManager *manager,
+void           picman_plug_in_manager_set_data  (PicmanPlugInManager *manager,
                                                const gchar       *identifier,
                                                gint32             bytes,
                                                const guint8      *data);
-const guint8 * gimp_plug_in_manager_get_data  (GimpPlugInManager *manager,
+const guint8 * picman_plug_in_manager_get_data  (PicmanPlugInManager *manager,
                                                const gchar       *identifier,
                                                gint32            *bytes);
 
 
-#endif  /*  __GIMP_PLUG_IN_MANAGER_DATA_H__  */
+#endif  /*  __PICMAN_PLUG_IN_MANAGER_DATA_H__  */

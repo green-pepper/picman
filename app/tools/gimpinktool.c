@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,64 +20,64 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "paint/gimpinkoptions.h"
+#include "paint/picmaninkoptions.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "gimpinkoptions-gui.h"
-#include "gimpinktool.h"
-#include "gimptoolcontrol.h"
+#include "picmaninkoptions-gui.h"
+#include "picmaninktool.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpInkTool, gimp_ink_tool, GIMP_TYPE_PAINT_TOOL)
+G_DEFINE_TYPE (PicmanInkTool, picman_ink_tool, PICMAN_TYPE_PAINT_TOOL)
 
-#define parent_class gimp_ink_tool_parent_class
+#define parent_class picman_ink_tool_parent_class
 
 
 void
-gimp_ink_tool_register (GimpToolRegisterCallback  callback,
+picman_ink_tool_register (PicmanToolRegisterCallback  callback,
                         gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_INK_TOOL,
-                GIMP_TYPE_INK_OPTIONS,
-                gimp_ink_options_gui,
-                GIMP_CONTEXT_FOREGROUND_MASK |
-                GIMP_CONTEXT_BACKGROUND_MASK |
-                GIMP_CONTEXT_OPACITY_MASK    |
-                GIMP_CONTEXT_PAINT_MODE_MASK,
-                "gimp-ink-tool",
+  (* callback) (PICMAN_TYPE_INK_TOOL,
+                PICMAN_TYPE_INK_OPTIONS,
+                picman_ink_options_gui,
+                PICMAN_CONTEXT_FOREGROUND_MASK |
+                PICMAN_CONTEXT_BACKGROUND_MASK |
+                PICMAN_CONTEXT_OPACITY_MASK    |
+                PICMAN_CONTEXT_PAINT_MODE_MASK,
+                "picman-ink-tool",
                 _("Ink"),
                 _("Ink Tool: Calligraphy-style painting"),
                 N_("In_k"), "K",
-                NULL, GIMP_HELP_TOOL_INK,
-                GIMP_STOCK_TOOL_INK,
+                NULL, PICMAN_HELP_TOOL_INK,
+                PICMAN_STOCK_TOOL_INK,
                 data);
 }
 
 static void
-gimp_ink_tool_class_init (GimpInkToolClass *klass)
+picman_ink_tool_class_init (PicmanInkToolClass *klass)
 {
 }
 
 static void
-gimp_ink_tool_init (GimpInkTool *ink_tool)
+picman_ink_tool_init (PicmanInkTool *ink_tool)
 {
-  GimpTool *tool = GIMP_TOOL (ink_tool);
+  PicmanTool *tool = PICMAN_TOOL (ink_tool);
 
-  gimp_tool_control_set_tool_cursor    (tool->control, GIMP_TOOL_CURSOR_INK);
-  gimp_tool_control_set_action_value_2 (tool->control,
+  picman_tool_control_set_tool_cursor    (tool->control, PICMAN_TOOL_CURSOR_INK);
+  picman_tool_control_set_action_value_2 (tool->control,
                                         "tools/tools-ink-blob-size-set");
-  gimp_tool_control_set_action_value_3 (tool->control,
+  picman_tool_control_set_action_value_3 (tool->control,
                                         "tools/tools-ink-blob-aspect-set");
-  gimp_tool_control_set_action_value_4 (tool->control,
+  picman_tool_control_set_action_value_4 (tool->control,
                                         "tools/tools-ink-blob-angle-set");
 
-  gimp_paint_tool_enable_color_picker (GIMP_PAINT_TOOL (ink_tool),
-                                       GIMP_COLOR_PICK_MODE_FOREGROUND);
+  picman_paint_tool_enable_color_picker (PICMAN_PAINT_TOOL (ink_tool),
+                                       PICMAN_COLOR_PICK_MODE_FOREGROUND);
 }

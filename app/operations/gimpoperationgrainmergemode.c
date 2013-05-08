@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationgrainmergemode.c
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanoperationgrainmergemode.c
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *               2012 Ville Sokk <ville.sokk@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,10 +26,10 @@
 
 #include "operations-types.h"
 
-#include "gimpoperationgrainmergemode.h"
+#include "picmanoperationgrainmergemode.h"
 
 
-static gboolean gimp_operation_grain_merge_mode_process (GeglOperation       *operation,
+static gboolean picman_operation_grain_merge_mode_process (GeglOperation       *operation,
                                                          void                *in_buf,
                                                          void                *aux_buf,
                                                          void                *aux2_buf,
@@ -39,12 +39,12 @@ static gboolean gimp_operation_grain_merge_mode_process (GeglOperation       *op
                                                          gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationGrainMergeMode, gimp_operation_grain_merge_mode,
-               GIMP_TYPE_OPERATION_POINT_LAYER_MODE)
+G_DEFINE_TYPE (PicmanOperationGrainMergeMode, picman_operation_grain_merge_mode,
+               PICMAN_TYPE_OPERATION_POINT_LAYER_MODE)
 
 
 static void
-gimp_operation_grain_merge_mode_class_init (GimpOperationGrainMergeModeClass *klass)
+picman_operation_grain_merge_mode_class_init (PicmanOperationGrainMergeModeClass *klass)
 {
   GeglOperationClass               *operation_class;
   GeglOperationPointComposer3Class *point_class;
@@ -53,20 +53,20 @@ gimp_operation_grain_merge_mode_class_init (GimpOperationGrainMergeModeClass *kl
   point_class     = GEGL_OPERATION_POINT_COMPOSER3_CLASS (klass);
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:grain-merge-mode",
-                                 "description", "GIMP grain merge mode operation",
+                                 "name",        "picman:grain-merge-mode",
+                                 "description", "PICMAN grain merge mode operation",
                                  NULL);
 
-  point_class->process = gimp_operation_grain_merge_mode_process;
+  point_class->process = picman_operation_grain_merge_mode_process;
 }
 
 static void
-gimp_operation_grain_merge_mode_init (GimpOperationGrainMergeMode *self)
+picman_operation_grain_merge_mode_init (PicmanOperationGrainMergeMode *self)
 {
 }
 
 static gboolean
-gimp_operation_grain_merge_mode_process (GeglOperation       *operation,
+picman_operation_grain_merge_mode_process (GeglOperation       *operation,
                                          void                *in_buf,
                                          void                *aux_buf,
                                          void                *aux2_buf,
@@ -75,7 +75,7 @@ gimp_operation_grain_merge_mode_process (GeglOperation       *operation,
                                          const GeglRectangle *roi,
                                          gint                 level)
 {
-  gdouble         opacity  = GIMP_OPERATION_POINT_LAYER_MODE (operation)->opacity;
+  gdouble         opacity  = PICMAN_OPERATION_POINT_LAYER_MODE (operation)->opacity;
   gfloat         *in       = in_buf;
   gfloat         *layer    = aux_buf;
   gfloat         *mask     = aux2_buf;

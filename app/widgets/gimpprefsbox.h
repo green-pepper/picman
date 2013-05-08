@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpprefsbox.h
- * Copyright (C) 2013 Michael Natterer <mitch@gimp.org>
+ * picmanprefsbox.h
+ * Copyright (C) 2013 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PREFS_BOX_H__
-#define __GIMP_PREFS_BOX_H__
+#ifndef __PICMAN_PREFS_BOX_H__
+#define __PICMAN_PREFS_BOX_H__
 
 
-#define GIMP_TYPE_PREFS_BOX            (gimp_prefs_box_get_type ())
-#define GIMP_PREFS_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PREFS_BOX, GimpPrefsBox))
-#define GIMP_PREFS_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PREFS_BOX, GimpPrefsBoxClass))
-#define GIMP_IS_PREFS_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PREFS_BOX))
-#define GIMP_IS_PREFS_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PREFS_BOX))
-#define GIMP_PREFS_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PREFS_BOX, GimpPrefsBoxClass))
+#define PICMAN_TYPE_PREFS_BOX            (picman_prefs_box_get_type ())
+#define PICMAN_PREFS_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PREFS_BOX, PicmanPrefsBox))
+#define PICMAN_PREFS_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PREFS_BOX, PicmanPrefsBoxClass))
+#define PICMAN_IS_PREFS_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PREFS_BOX))
+#define PICMAN_IS_PREFS_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PREFS_BOX))
+#define PICMAN_PREFS_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PREFS_BOX, PicmanPrefsBoxClass))
 
 
-typedef struct _GimpPrefsBoxClass GimpPrefsBoxClass;
+typedef struct _PicmanPrefsBoxClass PicmanPrefsBoxClass;
 
-struct _GimpPrefsBox
+struct _PicmanPrefsBox
 {
   GtkBox  parent_instance;
 };
 
-struct _GimpPrefsBoxClass
+struct _PicmanPrefsBoxClass
 {
   GtkBoxClass  parent_class;
 };
 
 
-GType       gimp_prefs_box_get_type      (void) G_GNUC_CONST;
+GType       picman_prefs_box_get_type      (void) G_GNUC_CONST;
 
-GtkWidget * gimp_prefs_box_new           (void);
+GtkWidget * picman_prefs_box_new           (void);
 
-GtkWidget * gimp_prefs_box_add_page      (GimpPrefsBox *box,
+GtkWidget * picman_prefs_box_add_page      (PicmanPrefsBox *box,
                                           const gchar  *notebook_label,
                                           GdkPixbuf    *notebook_icon,
                                           const gchar  *tree_label,
@@ -56,9 +56,9 @@ GtkWidget * gimp_prefs_box_add_page      (GimpPrefsBox *box,
                                           GtkTreeIter  *parent,
                                           GtkTreeIter  *iter);
 
-GtkWidget * gimp_prefs_box_get_tree_view (GimpPrefsBox *box);
-GtkWidget * gimp_prefs_box_get_notebook  (GimpPrefsBox *box);
-GtkWidget * gimp_prefs_box_get_image     (GimpPrefsBox *box);
+GtkWidget * picman_prefs_box_get_tree_view (PicmanPrefsBox *box);
+GtkWidget * picman_prefs_box_get_notebook  (PicmanPrefsBox *box);
+GtkWidget * picman_prefs_box_get_image     (PicmanPrefsBox *box);
 
 
-#endif  /*  __GIMP_PREFS_BOX_H__  */
+#endif  /*  __PICMAN_PREFS_BOX_H__  */

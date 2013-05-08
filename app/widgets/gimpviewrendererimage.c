@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewrendererimage.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmanviewrendererimage.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,46 +23,46 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpimage.h"
-#include "core/gimptempbuf.h"
+#include "core/picmanimage.h"
+#include "core/picmantempbuf.h"
 
-#include "gimpviewrendererimage.h"
+#include "picmanviewrendererimage.h"
 
 
-static void   gimp_view_renderer_image_render (GimpViewRenderer *renderer,
+static void   picman_view_renderer_image_render (PicmanViewRenderer *renderer,
                                                GtkWidget        *widget);
 
 
-G_DEFINE_TYPE (GimpViewRendererImage, gimp_view_renderer_image,
-               GIMP_TYPE_VIEW_RENDERER)
+G_DEFINE_TYPE (PicmanViewRendererImage, picman_view_renderer_image,
+               PICMAN_TYPE_VIEW_RENDERER)
 
-#define parent_class gimp_view_renderer_image_parent_class
+#define parent_class picman_view_renderer_image_parent_class
 
 
 static void
-gimp_view_renderer_image_class_init (GimpViewRendererImageClass *klass)
+picman_view_renderer_image_class_init (PicmanViewRendererImageClass *klass)
 {
-  GimpViewRendererClass *renderer_class = GIMP_VIEW_RENDERER_CLASS (klass);
+  PicmanViewRendererClass *renderer_class = PICMAN_VIEW_RENDERER_CLASS (klass);
 
-  renderer_class->render = gimp_view_renderer_image_render;
+  renderer_class->render = picman_view_renderer_image_render;
 }
 
 static void
-gimp_view_renderer_image_init (GimpViewRendererImage *renderer)
+picman_view_renderer_image_init (PicmanViewRendererImage *renderer)
 {
   renderer->channel = -1;
 }
 
 static void
-gimp_view_renderer_image_render (GimpViewRenderer *renderer,
+picman_view_renderer_image_render (PicmanViewRenderer *renderer,
                                  GtkWidget        *widget)
 {
-  GimpViewRendererImage *rendererimage = GIMP_VIEW_RENDERER_IMAGE (renderer);
-  GimpImage             *image         = GIMP_IMAGE (renderer->viewable);
+  PicmanViewRendererImage *rendererimage = PICMAN_VIEW_RENDERER_IMAGE (renderer);
+  PicmanImage             *image         = PICMAN_IMAGE (renderer->viewable);
   const gchar           *stock_id;
 
   /* The conditions checked here are mostly a hack to hide the fact that
@@ -71,20 +71,20 @@ gimp_view_renderer_image_render (GimpViewRenderer *renderer,
    * preview all black. See bug #459518 for details.
    */
   if (rendererimage->channel == -1 ||
-      (gimp_image_get_component_visible (image, rendererimage->channel) &&
-       gimp_image_get_component_visible (image, GIMP_ALPHA_CHANNEL)))
+      (picman_image_get_component_visible (image, rendererimage->channel) &&
+       picman_image_get_component_visible (image, PICMAN_ALPHA_CHANNEL)))
     {
       gint         view_width;
       gint         view_height;
       gdouble      xres;
       gdouble      yres;
       gboolean     scaling_up;
-      GimpTempBuf *render_buf = NULL;
+      PicmanTempBuf *render_buf = NULL;
 
-      gimp_image_get_resolution (image, &xres, &yres);
+      picman_image_get_resolution (image, &xres, &yres);
 
-      gimp_viewable_calc_preview_size (gimp_image_get_width  (image),
-                                       gimp_image_get_height (image),
+      picman_viewable_calc_preview_size (picman_image_get_width  (image),
+                                       picman_image_get_height (image),
                                        renderer->width,
                                        renderer->height,
                                        renderer->dot_for_dot,
@@ -96,23 +96,23 @@ gimp_view_renderer_image_render (GimpViewRenderer *renderer,
 
       if (scaling_up)
         {
-          GimpTempBuf *temp_buf;
+          PicmanTempBuf *temp_buf;
 
-          temp_buf = gimp_viewable_get_new_preview (renderer->viewable,
+          temp_buf = picman_viewable_get_new_preview (renderer->viewable,
                                                     renderer->context,
-                                                    gimp_image_get_width  (image),
-                                                    gimp_image_get_height (image));
+                                                    picman_image_get_width  (image),
+                                                    picman_image_get_height (image));
 
           if (temp_buf)
             {
-              render_buf = gimp_temp_buf_scale (temp_buf,
+              render_buf = picman_temp_buf_scale (temp_buf,
                                                 view_width, view_height);
-              gimp_temp_buf_unref (temp_buf);
+              picman_temp_buf_unref (temp_buf);
             }
         }
       else
         {
-          render_buf = gimp_viewable_get_new_preview (renderer->viewable,
+          render_buf = picman_viewable_get_new_preview (renderer->viewable,
                                                       renderer->context,
                                                       view_width,
                                                       view_height);
@@ -127,11 +127,11 @@ gimp_view_renderer_image_render (GimpViewRenderer *renderer,
           /*  xresolution != yresolution */
           if (view_width > renderer->width || view_height > renderer->height)
             {
-              GimpTempBuf *temp_buf;
+              PicmanTempBuf *temp_buf;
 
-              temp_buf = gimp_temp_buf_scale (render_buf,
+              temp_buf = picman_temp_buf_scale (render_buf,
                                               renderer->width, renderer->height);
-              gimp_temp_buf_unref (render_buf);
+              picman_temp_buf_unref (render_buf);
               render_buf = temp_buf;
             }
 
@@ -143,14 +143,14 @@ gimp_view_renderer_image_render (GimpViewRenderer *renderer,
 
           if (rendererimage->channel != -1)
             component_index =
-              gimp_image_get_component_index (image, rendererimage->channel);
+              picman_image_get_component_index (image, rendererimage->channel);
 
-          gimp_view_renderer_render_temp_buf (renderer, render_buf,
+          picman_view_renderer_render_temp_buf (renderer, render_buf,
                                               render_buf_x, render_buf_y,
                                               component_index,
-                                              GIMP_VIEW_BG_CHECKS,
-                                              GIMP_VIEW_BG_WHITE);
-          gimp_temp_buf_unref (render_buf);
+                                              PICMAN_VIEW_BG_CHECKS,
+                                              PICMAN_VIEW_BG_WHITE);
+          picman_temp_buf_unref (render_buf);
 
           return;
         }
@@ -158,17 +158,17 @@ gimp_view_renderer_image_render (GimpViewRenderer *renderer,
 
   switch (rendererimage->channel)
     {
-    case GIMP_RED_CHANNEL:     stock_id = GIMP_STOCK_CHANNEL_RED;     break;
-    case GIMP_GREEN_CHANNEL:   stock_id = GIMP_STOCK_CHANNEL_GREEN;   break;
-    case GIMP_BLUE_CHANNEL:    stock_id = GIMP_STOCK_CHANNEL_BLUE;    break;
-    case GIMP_GRAY_CHANNEL:    stock_id = GIMP_STOCK_CHANNEL_GRAY;    break;
-    case GIMP_INDEXED_CHANNEL: stock_id = GIMP_STOCK_CHANNEL_INDEXED; break;
-    case GIMP_ALPHA_CHANNEL:   stock_id = GIMP_STOCK_CHANNEL_ALPHA;   break;
+    case PICMAN_RED_CHANNEL:     stock_id = PICMAN_STOCK_CHANNEL_RED;     break;
+    case PICMAN_GREEN_CHANNEL:   stock_id = PICMAN_STOCK_CHANNEL_GREEN;   break;
+    case PICMAN_BLUE_CHANNEL:    stock_id = PICMAN_STOCK_CHANNEL_BLUE;    break;
+    case PICMAN_GRAY_CHANNEL:    stock_id = PICMAN_STOCK_CHANNEL_GRAY;    break;
+    case PICMAN_INDEXED_CHANNEL: stock_id = PICMAN_STOCK_CHANNEL_INDEXED; break;
+    case PICMAN_ALPHA_CHANNEL:   stock_id = PICMAN_STOCK_CHANNEL_ALPHA;   break;
 
     default:
-      stock_id = gimp_viewable_get_stock_id (renderer->viewable);
+      stock_id = picman_viewable_get_stock_id (renderer->viewable);
       break;
     }
 
-  gimp_view_renderer_render_stock (renderer, widget, stock_id);
+  picman_view_renderer_render_stock (renderer, widget, stock_id);
 }

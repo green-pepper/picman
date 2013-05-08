@@ -2,7 +2,7 @@
 
 (define (script-fu-guides-from-selection image drawable)
   (let* (
-        (boundries (gimp-selection-bounds image))
+        (boundries (picman-selection-bounds image))
         ;; non-empty INT32 TRUE if there is a selection
         (selection (car boundries))
         (x1 (cadr boundries))
@@ -14,15 +14,15 @@
     ;; need to check for a selection or we get guides right at edges of the image
     (if (= selection TRUE)
       (begin
-        (gimp-image-undo-group-start image)
+        (picman-image-undo-group-start image)
 
-        (gimp-image-add-vguide image x1)
-        (gimp-image-add-hguide image y1)
-        (gimp-image-add-vguide image x2)
-        (gimp-image-add-hguide image y2)
+        (picman-image-add-vguide image x1)
+        (picman-image-add-hguide image y1)
+        (picman-image-add-vguide image x2)
+        (picman-image-add-hguide image y2)
 
-        (gimp-image-undo-group-end image)
-        (gimp-displays-flush)
+        (picman-image-undo-group-end image)
+        (picman-displays-flush)
       )
     )
   )

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationgrow.c
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picmanoperationgrow.c
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,12 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "operations-types.h"
 
-#include "gimpoperationgrow.h"
+#include "picmanoperationgrow.h"
 
 
 enum
@@ -40,58 +40,58 @@ enum
 };
 
 
-static void          gimp_operation_grow_get_property (GObject             *object,
+static void          picman_operation_grow_get_property (GObject             *object,
                                                        guint                property_id,
                                                        GValue              *value,
                                                        GParamSpec          *pspec);
-static void          gimp_operation_grow_set_property (GObject             *object,
+static void          picman_operation_grow_set_property (GObject             *object,
                                                        guint                property_id,
                                                        const GValue        *value,
                                                        GParamSpec          *pspec);
 
-static void          gimp_operation_grow_prepare      (GeglOperation       *operation);
+static void          picman_operation_grow_prepare      (GeglOperation       *operation);
 static GeglRectangle
-          gimp_operation_grow_get_required_for_output (GeglOperation       *self,
+          picman_operation_grow_get_required_for_output (GeglOperation       *self,
                                                        const gchar         *input_pad,
                                                        const GeglRectangle *roi);
 static GeglRectangle
-                gimp_operation_grow_get_cached_region (GeglOperation       *self,
+                picman_operation_grow_get_cached_region (GeglOperation       *self,
                                                        const GeglRectangle *roi);
 
-static gboolean gimp_operation_grow_process           (GeglOperation       *operation,
+static gboolean picman_operation_grow_process           (GeglOperation       *operation,
                                                        GeglBuffer          *input,
                                                        GeglBuffer          *output,
                                                        const GeglRectangle *roi,
                                                        gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationGrow, gimp_operation_grow,
+G_DEFINE_TYPE (PicmanOperationGrow, picman_operation_grow,
                GEGL_TYPE_OPERATION_FILTER)
 
-#define parent_class gimp_operation_grow_parent_class
+#define parent_class picman_operation_grow_parent_class
 
 
 static void
-gimp_operation_grow_class_init (GimpOperationGrowClass *klass)
+picman_operation_grow_class_init (PicmanOperationGrowClass *klass)
 {
   GObjectClass             *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass       *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationFilterClass *filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  object_class->set_property   = gimp_operation_grow_set_property;
-  object_class->get_property   = gimp_operation_grow_get_property;
+  object_class->set_property   = picman_operation_grow_set_property;
+  object_class->get_property   = picman_operation_grow_get_property;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:grow",
-                                 "categories",  "gimp",
-                                 "description", "GIMP Grow operation",
+                                 "name",        "picman:grow",
+                                 "categories",  "picman",
+                                 "description", "PICMAN Grow operation",
                                  NULL);
 
-  operation_class->prepare                 = gimp_operation_grow_prepare;
-  operation_class->get_required_for_output = gimp_operation_grow_get_required_for_output;
-  operation_class->get_cached_region       = gimp_operation_grow_get_cached_region;
+  operation_class->prepare                 = picman_operation_grow_prepare;
+  operation_class->get_required_for_output = picman_operation_grow_get_required_for_output;
+  operation_class->get_cached_region       = picman_operation_grow_get_cached_region;
 
-  filter_class->process                    = gimp_operation_grow_process;
+  filter_class->process                    = picman_operation_grow_process;
 
   g_object_class_install_property (object_class, PROP_RADIUS_X,
                                    g_param_spec_int ("radius-x",
@@ -111,17 +111,17 @@ gimp_operation_grow_class_init (GimpOperationGrowClass *klass)
 }
 
 static void
-gimp_operation_grow_init (GimpOperationGrow *self)
+picman_operation_grow_init (PicmanOperationGrow *self)
 {
 }
 
 static void
-gimp_operation_grow_get_property (GObject    *object,
+picman_operation_grow_get_property (GObject    *object,
                                   guint       property_id,
                                   GValue     *value,
                                   GParamSpec *pspec)
 {
- GimpOperationGrow *self = GIMP_OPERATION_GROW (object);
+ PicmanOperationGrow *self = PICMAN_OPERATION_GROW (object);
 
   switch (property_id)
     {
@@ -140,12 +140,12 @@ gimp_operation_grow_get_property (GObject    *object,
 }
 
 static void
-gimp_operation_grow_set_property (GObject      *object,
+picman_operation_grow_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  GimpOperationGrow *self = GIMP_OPERATION_GROW (object);
+  PicmanOperationGrow *self = PICMAN_OPERATION_GROW (object);
 
   switch (property_id)
     {
@@ -164,14 +164,14 @@ gimp_operation_grow_set_property (GObject      *object,
 }
 
 static void
-gimp_operation_grow_prepare (GeglOperation *operation)
+picman_operation_grow_prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input",  babl_format ("Y u8"));
   gegl_operation_set_format (operation, "output", babl_format ("Y u8"));
 }
 
 static GeglRectangle
-gimp_operation_grow_get_required_for_output (GeglOperation       *self,
+picman_operation_grow_get_required_for_output (GeglOperation       *self,
                                              const gchar         *input_pad,
                                              const GeglRectangle *roi)
 {
@@ -179,7 +179,7 @@ gimp_operation_grow_get_required_for_output (GeglOperation       *self,
 }
 
 static GeglRectangle
-gimp_operation_grow_get_cached_region (GeglOperation       *self,
+picman_operation_grow_get_cached_region (GeglOperation       *self,
                                        const GeglRectangle *roi)
 {
   return *gegl_operation_source_get_bounding_box (self, "input");
@@ -224,16 +224,16 @@ rotate_pointers (guchar  **p,
 }
 
 static gboolean
-gimp_operation_grow_process (GeglOperation       *operation,
+picman_operation_grow_process (GeglOperation       *operation,
                              GeglBuffer          *input,
                              GeglBuffer          *output,
                              const GeglRectangle *roi,
                              gint                 level)
 {
   /* Any bugs in this fuction are probably also in thin_region Blame
-   * all bugs in this function on jaycox@gimp.org
+   * all bugs in this function on jaycox@picman.org
    */
-  GimpOperationGrow *self          = GIMP_OPERATION_GROW (operation);
+  PicmanOperationGrow *self          = PICMAN_OPERATION_GROW (operation);
   const Babl        *input_format  = babl_format ("Y u8");
   const Babl        *output_format = babl_format ("Y u8");
   gint32             i, j, x, y;

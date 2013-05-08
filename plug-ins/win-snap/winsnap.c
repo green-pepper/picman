@@ -45,10 +45,10 @@
 
 #include "resource.h"
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 /*
  * Plug-in Definitions
@@ -61,7 +61,7 @@
 #define PLUG_IN_COPYRIGHT   "Craig Setera"
 #define PLUG_IN_VERSION     "v0.70 (07/16/1999)"
 #define PLUG_IN_BINARY      "win-snap"
-#define PLUG_IN_ROLE        "gimp-win-snap"
+#define PLUG_IN_ROLE        "picman-win-snap"
 
 /*
  * Application definitions
@@ -93,11 +93,11 @@ static ICONINFO			iconInfo;
 static void query (void);
 static void run   (const gchar      *name,
 		   gint              nparams,
-		   const GimpParam  *param,
+		   const PicmanParam  *param,
 		   gint             *nreturn_vals,
-		   GimpParam       **return_vals);
+		   PicmanParam       **return_vals);
 
-static void sendBMPToGimp(HBITMAP hBMP, HDC hDC, RECT rect);
+static void sendBMPToPicman(HBITMAP hBMP, HDC hDC, RECT rect);
 
 BOOL CALLBACK dialogProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -139,7 +139,7 @@ static WinSnapInterface winsnapintf =
 };
 
 /* This plug-in's functions */
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,    /* init_proc */
   NULL,    /* quit_proc */
@@ -151,7 +151,7 @@ const GimpPlugInInfo PLUG_IN_INFO =
  * DIB sections are aligned ona LONG (four byte) boundary. Its pixel
  * data is in RGB (BGR actually) format, three bytes per pixel.
  *
- * GIMP uses no alignment for its pixel regions. The GIMP image we
+ * PICMAN uses no alignment for its pixel regions. The PICMAN image we
  * create is of type RGB, i.e. three bytes per pixel, too. Thus in
  * order to be able to quickly transfer all of the image at a time, we
  * must use a DIB section and pixel region the scanline width in
@@ -346,7 +346,7 @@ doCapture(HWND selectedHwnd)
 
   /* Send the bitmap */
   if (hbm != NULL) {
-    sendBMPToGimp(hbm, hdcCompat, rect);
+    sendBMPToPicman(hbm, hdcCompat, rect);
   }
 
   return TRUE;
@@ -604,7 +604,7 @@ dialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
   return FALSE;
 }
 
-/* Don't use the normal WinMain from gimp.h */
+/* Don't use the normal WinMain from picman.h */
 #define WinMain WinMain_no_thanks
 MAIN()
 #undef WinMain
@@ -612,7 +612,7 @@ MAIN()
 /*
  * WinMain
  *
- * The standard gimp plug-in WinMain won't quite cut it for
+ * The standard picman plug-in WinMain won't quite cut it for
  * this plug-in.
  */
 int APIENTRY
@@ -633,10 +633,10 @@ WinMain(HINSTANCE hInstance,
   hInst = hInstance;
 
   /*
-   * Now, call gimp_main... This is what the normal WinMain()
+   * Now, call picman_main... This is what the normal WinMain()
    * would do.
    */
-  return gimp_main(&PLUG_IN_INFO, __argc, __argv);
+  return picman_main(&PLUG_IN_INFO, __argc, __argv);
 }
 
 /*
@@ -860,12 +860,12 @@ snap_dialog (void)
   decorations      = winsnapvals.decor;
 
   /* Init GTK  */
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
   /* Main Dialog */
-  dialog = gimp_dialog_new (PLUG_IN_PRINT_NAME, PLUG_IN_ROLE,
+  dialog = picman_dialog_new (PLUG_IN_PRINT_NAME, PLUG_IN_ROLE,
                             NULL, 0,
-			    gimp_standard_help_func, PLUG_IN_PROC,
+			    picman_standard_help_func, PLUG_IN_PROC,
 
 			    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             _("Grab"),        GTK_RESPONSE_OK,
@@ -919,7 +919,7 @@ snap_dialog (void)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  winsnapintf.delay_spinner = gimp_spin_button_new (&adj,
+  winsnapintf.delay_spinner = picman_spin_button_new (&adj,
                                                     winsnapvals.delay,
                                                     0.0, 100.0,
                                                     1.0, 5.0, 0.0, 0, 0);
@@ -947,7 +947,7 @@ snap_dialog (void)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   if (run)
     {
@@ -963,20 +963,20 @@ snap_dialog (void)
 }
 
 /******************************************************************
- * GIMP Plug-in entry points
+ * PICMAN Plug-in entry points
  ******************************************************************/
 
 /*
  * Plug-in Parameter definitions
  */
 #define NUMBER_IN_ARGS 3
-#define IN_ARGS { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },\
-                { GIMP_PDB_INT32,    "root",      "Root window { TRUE, FALSE }" },\
-                { GIMP_PDB_INT32,    "decorations", \
+#define IN_ARGS { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },\
+                { PICMAN_PDB_INT32,    "root",      "Root window { TRUE, FALSE }" },\
+                { PICMAN_PDB_INT32,    "decorations", \
 									"Include Window Decorations { TRUE, FALSE }" }
 
 #define NUMBER_OUT_ARGS 1
-#define OUT_ARGS { GIMP_PDB_IMAGE,   "image",     "Output image" }
+#define OUT_ARGS { PICMAN_PDB_IMAGE,   "image",     "Output image" }
 
 
 /*
@@ -988,11 +988,11 @@ snap_dialog (void)
 static void
 query(void)
 {
-  static const GimpParamDef args[] = { IN_ARGS };
-  static const GimpParamDef return_vals[] = { OUT_ARGS };
+  static const PicmanParamDef args[] = { IN_ARGS };
+  static const PicmanParamDef return_vals[] = { OUT_ARGS };
 
   /* the installation of the plugin */
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Capture a window or desktop image"),
                           PLUG_IN_HELP,
                           PLUG_IN_AUTHOR,
@@ -1000,17 +1000,17 @@ query(void)
                           PLUG_IN_VERSION,
                           N_("_Screen Shot..."),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           NUMBER_IN_ARGS,
                           NUMBER_OUT_ARGS,
                           args,
                           return_vals);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/File/Create/Acquire");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/File/Create/Acquire");
 }
 
 /* Return values storage */
-static GimpParam values[2];
+static PicmanParam values[2];
 
 /*
  * run
@@ -1021,17 +1021,17 @@ static GimpParam values[2];
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  GimpRunMode run_mode;
+  PicmanRunMode run_mode;
 
   /* Initialize the return values
    * Always return at least the status to the caller.
    */
-  values[0].type = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_SUCCESS;
+  values[0].type = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_SUCCESS;
   *nreturn_vals = 1;
   *return_vals = values;
 
@@ -1041,24 +1041,24 @@ run (const gchar      *name,
   INIT_I18N ();
 
   /* Set up the rest of the return parameters */
-  values[1].type = GIMP_PDB_INT32;
+  values[1].type = PICMAN_PDB_INT32;
   values[1].data.d_int32 = 0;
 
   /* Get the data from last run */
-  gimp_get_data (PLUG_IN_PROC, &winsnapvals);
+  picman_get_data (PLUG_IN_PROC, &winsnapvals);
 
   /* How are we running today? */
   switch (run_mode) {
-  case GIMP_RUN_INTERACTIVE:
+  case PICMAN_RUN_INTERACTIVE:
     /* Get information from the dialog */
     if (!snap_dialog())
       return;
     break;
 
-  case GIMP_RUN_NONINTERACTIVE:
-  case GIMP_RUN_WITH_LAST_VALS:
+  case PICMAN_RUN_NONINTERACTIVE:
+  case PICMAN_RUN_WITH_LAST_VALS:
     if (!winsnapvals.root)
-      values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+      values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
     break;
 
   default:
@@ -1078,20 +1078,20 @@ run (const gchar      *name,
     /* A window was captured.
      * Do final Interactive steps.
      */
-    if (run_mode == GIMP_RUN_INTERACTIVE) {
+    if (run_mode == PICMAN_RUN_INTERACTIVE) {
       /* Store variable states for next run */
-      gimp_set_data (PLUG_IN_PROC, &winsnapvals, sizeof(WinSnapValues));
+      picman_set_data (PLUG_IN_PROC, &winsnapvals, sizeof(WinSnapValues));
     }
 
     /* Set return values */
     *nreturn_vals = 2;
   } else {
-    values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+    values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
   }
 }
 
 /******************************************************************
- * GIMP format and transfer functions
+ * PICMAN format and transfer functions
  ******************************************************************/
 
 /*
@@ -1101,7 +1101,7 @@ run (const gchar      *name,
  * interface for retrieving bitmap bits.  DIBSections have
  * RGB information as BGR instead.  So, we have to swap
  * the silly red and blue bytes before sending to the
- * GIMP.
+ * PICMAN.
  */
 static void
 flipRedAndBlueBytes(int width, int height)
@@ -1125,20 +1125,20 @@ flipRedAndBlueBytes(int width, int height)
 }
 
 /*
- * sendBMPToGIMP
+ * sendBMPToPICMAN
  *
  * Take the captured data and send it across
- * to GIMP.
+ * to PICMAN.
  */
 static void
-sendBMPToGimp(HBITMAP hBMP, HDC hDC, RECT rect)
+sendBMPToPicman(HBITMAP hBMP, HDC hDC, RECT rect)
 {
   int		width, height;
   int		imageType, layerType;
   gint32	image_id;
   gint32	layer_id;
-  GimpPixelRgn	pixel_rgn;
-  GimpDrawable    *drawable;
+  PicmanPixelRgn	pixel_rgn;
+  PicmanDrawable    *drawable;
 
   /* Our width and height */
   width = (rect.right - rect.left);
@@ -1154,38 +1154,38 @@ sendBMPToGimp(HBITMAP hBMP, HDC hDC, RECT rect)
   flipRedAndBlueBytes(width, height);
 
   /* Set up the image and layer types */
-  imageType = GIMP_RGB;
-  layerType = GIMP_RGB_IMAGE;
+  imageType = PICMAN_RGB;
+  layerType = PICMAN_RGB_IMAGE;
 
-  /* Create the GIMP image and layers */
-  image_id = gimp_image_new(width, height, imageType);
-  layer_id = gimp_layer_new(image_id, _("Background"),
+  /* Create the PICMAN image and layers */
+  image_id = picman_image_new(width, height, imageType);
+  layer_id = picman_layer_new(image_id, _("Background"),
 			    ROUND4(width), height,
-			    layerType, 100, GIMP_NORMAL_MODE);
-  gimp_image_insert_layer(image_id, layer_id, -1, 0);
+			    layerType, 100, PICMAN_NORMAL_MODE);
+  picman_image_insert_layer(image_id, layer_id, -1, 0);
 
   /* Get our drawable */
-  drawable = gimp_drawable_get(layer_id);
+  drawable = picman_drawable_get(layer_id);
 
-  gimp_tile_cache_size(ROUND4(width) * gimp_tile_height() * 3);
+  picman_tile_cache_size(ROUND4(width) * picman_tile_height() * 3);
 
   /* Initialize a pixel region for writing to the image */
-  gimp_pixel_rgn_init(&pixel_rgn, drawable, 0, 0,
+  picman_pixel_rgn_init(&pixel_rgn, drawable, 0, 0,
 		      ROUND4(width), height, TRUE, FALSE);
 
-  gimp_pixel_rgn_set_rect(&pixel_rgn, (guchar *) capBytes,
+  picman_pixel_rgn_set_rect(&pixel_rgn, (guchar *) capBytes,
 			  0, 0, ROUND4(width), height);
 
   /* HB: update data BEFORE size change */
-  gimp_drawable_flush(drawable);
+  picman_drawable_flush(drawable);
   /* Now resize the layer down to the correct size if necessary. */
   if (width != ROUND4(width)) {
-    gimp_layer_resize (layer_id, width, height, 0, 0);
-    gimp_image_resize (image_id, width, height, 0, 0);
+    picman_layer_resize (layer_id, width, height, 0, 0);
+    picman_image_resize (image_id, width, height, 0, 0);
   }
   /* Finish up */
-  gimp_drawable_detach(drawable);
-  gimp_display_new (image_id);
+  picman_drawable_detach(drawable);
+  picman_display_new (image_id);
 
   return;
 }

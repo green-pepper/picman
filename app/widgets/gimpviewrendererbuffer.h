@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewrendererbuffer.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanviewrendererbuffer.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,33 +18,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VIEW_RENDERER_BUFFER_H__
-#define __GIMP_VIEW_RENDERER_BUFFER_H__
+#ifndef __PICMAN_VIEW_RENDERER_BUFFER_H__
+#define __PICMAN_VIEW_RENDERER_BUFFER_H__
 
-#include "gimpviewrenderer.h"
+#include "picmanviewrenderer.h"
 
-#define GIMP_TYPE_VIEW_RENDERER_BUFFER            (gimp_view_renderer_buffer_get_type ())
-#define GIMP_VIEW_RENDERER_BUFFER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_VIEW_RENDERER_BUFFER, GimpViewRendererBuffer))
-#define GIMP_VIEW_RENDERER_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_VIEW_RENDERER_BUFFER, GimpViewRendererBufferClass))
-#define GIMP_IS_VIEW_RENDERER_BUFFER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, GIMP_TYPE_VIEW_RENDERER_BUFFER))
-#define GIMP_IS_VIEW_RENDERER_BUFFER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_VIEW_RENDERER_BUFFER))
-#define GIMP_VIEW_RENDERER_BUFFER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_VIEW_RENDERER_BUFFER, GimpViewRendererBufferClass))
+#define PICMAN_TYPE_VIEW_RENDERER_BUFFER            (picman_view_renderer_buffer_get_type ())
+#define PICMAN_VIEW_RENDERER_BUFFER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_VIEW_RENDERER_BUFFER, PicmanViewRendererBuffer))
+#define PICMAN_VIEW_RENDERER_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_VIEW_RENDERER_BUFFER, PicmanViewRendererBufferClass))
+#define PICMAN_IS_VIEW_RENDERER_BUFFER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, PICMAN_TYPE_VIEW_RENDERER_BUFFER))
+#define PICMAN_IS_VIEW_RENDERER_BUFFER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_VIEW_RENDERER_BUFFER))
+#define PICMAN_VIEW_RENDERER_BUFFER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_VIEW_RENDERER_BUFFER, PicmanViewRendererBufferClass))
 
 
-typedef struct _GimpViewRendererBufferClass  GimpViewRendererBufferClass;
+typedef struct _PicmanViewRendererBufferClass  PicmanViewRendererBufferClass;
 
-struct _GimpViewRendererBuffer
+struct _PicmanViewRendererBuffer
 {
-  GimpViewRenderer  parent_instance;
+  PicmanViewRenderer  parent_instance;
 };
 
-struct _GimpViewRendererBufferClass
+struct _PicmanViewRendererBufferClass
 {
-  GimpViewRendererClass  parent_class;
+  PicmanViewRendererClass  parent_class;
 };
 
 
-GType   gimp_view_renderer_buffer_get_type (void) G_GNUC_CONST;
+GType   picman_view_renderer_buffer_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_VIEW_RENDERER_BUFFER_H__ */
+#endif /* __PICMAN_VIEW_RENDERER_BUFFER_H__ */

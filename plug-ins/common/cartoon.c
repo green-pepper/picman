@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Cartoon filter for GIMP for BIPS
+/* Cartoon filter for PICMAN for BIPS
  *  -Spencer Kimball
  *
  * This filter propagates dark values in an image based on
@@ -26,17 +26,17 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Some useful macros */
 
 #define PLUG_IN_PROC    "plug-in-cartoon"
 #define PLUG_IN_BINARY  "cartoon"
-#define PLUG_IN_ROLE    "gimp-cartoon"
+#define PLUG_IN_ROLE    "picman-cartoon"
 #define TILE_CACHE_SIZE 48
 
 typedef struct
@@ -54,13 +54,13 @@ typedef struct
 static void      query  (void);
 static void      run    (const gchar       *name,
                          gint               nparams,
-                         const GimpParam   *param,
+                         const PicmanParam   *param,
                          gint              *nreturn_vals,
-                         GimpParam        **return_vals);
+                         PicmanParam        **return_vals);
 
-static void      cartoon        (GimpDrawable *drawable,
-                                 GimpPreview  *preview);
-static gboolean  cartoon_dialog (GimpDrawable *drawable);
+static void      cartoon        (PicmanDrawable *drawable,
+                                 PicmanPreview  *preview);
+static gboolean  cartoon_dialog (PicmanDrawable *drawable);
 
 static gdouble   compute_ramp   (guchar       *dest1,
                                  guchar       *dest2,
@@ -87,7 +87,7 @@ static void      transfer_pixels   (gdouble *src1,
 
 /***** Local vars *****/
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init  */
   NULL,  /* quit  */
@@ -110,13 +110,13 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",       "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",    "Input drawable" },
-    { GIMP_PDB_FLOAT,    "mask-radius", "Cartoon mask radius (radius of pixel neighborhood)" },
-    { GIMP_PDB_FLOAT,    "pct-black",   "Percentage of darkened pixels to set to black (0.0 - 1.0)" }
+    { PICMAN_PDB_INT32,    "run-mode",    "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",       "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",    "Input drawable" },
+    { PICMAN_PDB_FLOAT,    "mask-radius", "Cartoon mask radius (radius of pixel neighborhood)" },
+    { PICMAN_PDB_FLOAT,    "pct-black",   "Percentage of darkened pixels to set to black (0.0 - 1.0)" }
   };
 
   gchar *help_string =
@@ -138,7 +138,7 @@ query (void)
     "black border lines smoother and the lines themselves thinner and less "
     "noticeable; larger values achieve the opposite effect.";
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Simulate a cartoon by enhancing edges"),
                           help_string,
                           "Spencer Kimball",
@@ -146,96 +146,96 @@ query (void)
                           "2001",
                           N_("Ca_rtoon..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Artistic");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Artistic");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpDrawable      *drawable;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanDrawable      *drawable;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*  set the tile cache size  */
-  gimp_tile_cache_ntiles (TILE_CACHE_SIZE);
+  picman_tile_cache_ntiles (TILE_CACHE_SIZE);
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   INIT_I18N();
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &cvals);
+      picman_get_data (PLUG_IN_PROC, &cvals);
 
       /*  First acquire information with a dialog  */
       if (! cartoon_dialog (drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       cvals.mask_radius = param[3].data.d_float;
       cvals.pct_black   = param[4].data.d_float;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &cvals);
+      picman_get_data (PLUG_IN_PROC, &cvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is RGB or GRAY color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init ("Cartoon");
+          picman_progress_init ("Cartoon");
 
 
           cartoon (drawable, NULL);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &cvals, sizeof (CartoonVals));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &cvals, sizeof (CartoonVals));
         }
       else
         {
-          status        = GIMP_PDB_EXECUTION_ERROR;
+          status        = PICMAN_PDB_EXECUTION_ERROR;
           *nreturn_vals = 2;
-          values[1].type          = GIMP_PDB_STRING;
+          values[1].type          = PICMAN_PDB_STRING;
           values[1].data.d_string = _("Cannot operate on indexed color images.");
         }
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 /*
@@ -254,11 +254,11 @@ run (const gchar      *name,
  *   pixel intensity *= intensity mult
  */
 static void
-cartoon (GimpDrawable *drawable,
-         GimpPreview  *preview)
+cartoon (PicmanDrawable *drawable,
+         PicmanPreview  *preview)
 {
-  GimpPixelRgn  src_rgn, dest_rgn;
-  GimpPixelRgn *pr;
+  PicmanPixelRgn  src_rgn, dest_rgn;
+  PicmanPixelRgn *pr;
   gint          x, y, width, height;
   gint          bytes;
   gboolean      has_alpha;
@@ -291,17 +291,17 @@ cartoon (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x, &y);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x, &y);
+      picman_preview_get_size (preview, &width, &height);
     }
-  else if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  else if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                            &x, &y, &width, &height))
     {
       return;
     }
 
   bytes     = drawable->bpp;
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   val_p1 = g_new (gdouble, MAX (width, height) * bytes);
   val_p2 = g_new (gdouble, MAX (width, height) * bytes);
@@ -312,7 +312,7 @@ cartoon (GimpDrawable *drawable,
   dest1 = g_new0 (guchar, width * height);
   dest2 = g_new0 (guchar, width * height);
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        0, 0, drawable->width, drawable->height, FALSE, FALSE);
 
   progress = 0;
@@ -339,7 +339,7 @@ cartoon (GimpDrawable *drawable,
       memset (val_m1, 0, height * bytes * sizeof (gdouble));
       memset (val_m2, 0, height * bytes * sizeof (gdouble));
 
-      gimp_pixel_rgn_get_col (&src_rgn, src, col + x, y, height);
+      picman_pixel_rgn_get_col (&src_rgn, src, col + x, y, height);
 
       src1  = src;
       sp_p1 = src1;
@@ -406,7 +406,7 @@ cartoon (GimpDrawable *drawable,
         {
           progress += height;
           if ((col % 5) == 0)
-            gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+            picman_progress_update ((gdouble) progress / (gdouble) max_progress);
         }
     }
 
@@ -480,7 +480,7 @@ cartoon (GimpDrawable *drawable,
         {
           progress += width;
           if ((row % 5) == 0)
-            gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+            picman_progress_update ((gdouble) progress / (gdouble) max_progress);
         }
     }
 
@@ -488,18 +488,18 @@ cartoon (GimpDrawable *drawable,
   ramp = compute_ramp (dest1, dest2, width * height, cvals.pct_black);
 
   /* Initialize the pixel regions. */
-  gimp_pixel_rgn_init (&src_rgn, drawable, x, y, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&src_rgn, drawable, x, y, width, height, FALSE, FALSE);
 
   if (preview)
     {
-      pr = gimp_pixel_rgns_register (1, &src_rgn);
+      pr = picman_pixel_rgns_register (1, &src_rgn);
       preview_buffer = g_new (guchar, width * height * bytes);
     }
   else
     {
-      gimp_pixel_rgn_init (&dest_rgn, drawable,
+      picman_pixel_rgn_init (&dest_rgn, drawable,
                            x, y, width, height, TRUE, TRUE);
-      pr = gimp_pixel_rgns_register (2, &src_rgn, &dest_rgn);
+      pr = picman_pixel_rgns_register (2, &src_rgn, &dest_rgn);
     }
 
   while (pr)
@@ -554,9 +554,9 @@ cartoon (GimpDrawable *drawable,
                   g = src_ptr[col * src_rgn.bpp + 1];
                   b = src_ptr[col * src_rgn.bpp + 2];
 
-                  gimp_rgb_to_hsl_int (&r, &g, &b);
+                  picman_rgb_to_hsl_int (&r, &g, &b);
                   b = lightness;
-                  gimp_hsl_to_rgb_int (&r, &g, &b);
+                  picman_hsl_to_rgb_int (&r, &g, &b);
 
                   dest_ptr[col * bytes + 0] = r;
                   dest_ptr[col * bytes + 1] = g;
@@ -579,24 +579,24 @@ cartoon (GimpDrawable *drawable,
       if (!preview)
         {
           progress += src_rgn.w * src_rgn.h;
-          gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+          picman_progress_update ((gdouble) progress / (gdouble) max_progress);
         }
 
-      pr = gimp_pixel_rgns_process (pr);
+      pr = picman_pixel_rgns_process (pr);
     }
 
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, preview_buffer, width * bytes);
+      picman_preview_draw_buffer (preview, preview_buffer, width * bytes);
       g_free (preview_buffer);
     }
   else
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
       /*  merge the shadow, update the drawable  */
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x, y, width, height);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x, y, width, height);
     }
 
   /*  free up buffers  */
@@ -681,7 +681,7 @@ transfer_pixels (gdouble *src1,
 
       /*  Convert to lightness if RGB  */
       if (bytes > 2)
-        *dest = (guchar) gimp_rgb_to_l_int (sum[0], sum[1], sum[2]);
+        *dest = (guchar) picman_rgb_to_l_int (sum[0], sum[1], sum[2]);
       else
         *dest = (guchar) sum[0];
 
@@ -795,7 +795,7 @@ find_constants (gdouble n_p[],
 /*******************************************************/
 
 static gboolean
-cartoon_dialog (GimpDrawable *drawable)
+cartoon_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -804,11 +804,11 @@ cartoon_dialog (GimpDrawable *drawable)
   GtkObject *scale_data;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Cartoon"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Cartoon"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -820,7 +820,7 @@ cartoon_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -828,7 +828,7 @@ cartoon_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -843,36 +843,36 @@ cartoon_dialog (GimpDrawable *drawable)
   gtk_widget_show (table);
 
   /*  Label, scale, entry for cvals.amount  */
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                      _("_Mask radius:"), 100, 5,
                                      cvals.mask_radius, 1.0, 50.0, 1, 5.0, 2,
                                      TRUE, 0, 0,
                                      NULL, NULL);
 
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &cvals.mask_radius);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*  Label, scale, entry for cvals.amount  */
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                                      _("_Percent black:"), 50, 5,
                                      cvals.pct_black, 0.0, 1.0, 0.01, 0.1, 3,
                                      TRUE, 0, 0,
                                      NULL, NULL);
 
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &cvals.pct_black);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

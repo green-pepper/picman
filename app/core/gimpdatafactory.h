@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdatafactory.h
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmandatafactory.h
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,94 +18,94 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DATA_FACTORY_H__
-#define __GIMP_DATA_FACTORY_H__
+#ifndef __PICMAN_DATA_FACTORY_H__
+#define __PICMAN_DATA_FACTORY_H__
 
 
-#include "gimpobject.h"
+#include "picmanobject.h"
 
 
-typedef GimpData * (* GimpDataNewFunc)         (GimpContext  *context,
+typedef PicmanData * (* PicmanDataNewFunc)         (PicmanContext  *context,
                                                 const gchar  *name);
-typedef GList    * (* GimpDataLoadFunc)        (GimpContext  *context,
+typedef GList    * (* PicmanDataLoadFunc)        (PicmanContext  *context,
                                                 const gchar  *filename,
                                                 GError      **error);
-typedef GimpData * (* GimpDataGetStandardFunc) (GimpContext  *context);
+typedef PicmanData * (* PicmanDataGetStandardFunc) (PicmanContext  *context);
 
 
-typedef struct _GimpDataFactoryLoaderEntry GimpDataFactoryLoaderEntry;
+typedef struct _PicmanDataFactoryLoaderEntry PicmanDataFactoryLoaderEntry;
 
-struct _GimpDataFactoryLoaderEntry
+struct _PicmanDataFactoryLoaderEntry
 {
-  GimpDataLoadFunc  load_func;
+  PicmanDataLoadFunc  load_func;
   const gchar      *extension;
   gboolean          writable;
 };
 
 
-#define GIMP_TYPE_DATA_FACTORY            (gimp_data_factory_get_type ())
-#define GIMP_DATA_FACTORY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DATA_FACTORY, GimpDataFactory))
-#define GIMP_DATA_FACTORY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DATA_FACTORY, GimpDataFactoryClass))
-#define GIMP_IS_DATA_FACTORY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DATA_FACTORY))
-#define GIMP_IS_DATA_FACTORY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DATA_FACTORY))
-#define GIMP_DATA_FACTORY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DATA_FACTORY, GimpDataFactoryClass))
+#define PICMAN_TYPE_DATA_FACTORY            (picman_data_factory_get_type ())
+#define PICMAN_DATA_FACTORY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DATA_FACTORY, PicmanDataFactory))
+#define PICMAN_DATA_FACTORY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DATA_FACTORY, PicmanDataFactoryClass))
+#define PICMAN_IS_DATA_FACTORY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DATA_FACTORY))
+#define PICMAN_IS_DATA_FACTORY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DATA_FACTORY))
+#define PICMAN_DATA_FACTORY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DATA_FACTORY, PicmanDataFactoryClass))
 
 
-typedef struct _GimpDataFactoryClass  GimpDataFactoryClass;
-typedef struct _GimpDataFactoryPriv   GimpDataFactoryPriv;
+typedef struct _PicmanDataFactoryClass  PicmanDataFactoryClass;
+typedef struct _PicmanDataFactoryPriv   PicmanDataFactoryPriv;
 
-struct _GimpDataFactory
+struct _PicmanDataFactory
 {
-  GimpObject           parent_instance;
+  PicmanObject           parent_instance;
 
-  GimpDataFactoryPriv *priv;
+  PicmanDataFactoryPriv *priv;
 };
 
-struct _GimpDataFactoryClass
+struct _PicmanDataFactoryClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType             gimp_data_factory_get_type (void) G_GNUC_CONST;
+GType             picman_data_factory_get_type (void) G_GNUC_CONST;
 
-GimpDataFactory * gimp_data_factory_new      (Gimp                             *gimp,
+PicmanDataFactory * picman_data_factory_new      (Picman                             *picman,
                                               GType                             data_type,
                                               const gchar                      *path_property_name,
                                               const gchar                      *writable_property_name,
-                                              const GimpDataFactoryLoaderEntry *loader_entries,
+                                              const PicmanDataFactoryLoaderEntry *loader_entries,
                                               gint                              n_loader_entries,
-                                              GimpDataNewFunc                   new_func,
-                                              GimpDataGetStandardFunc           get_standard_func);
+                                              PicmanDataNewFunc                   new_func,
+                                              PicmanDataGetStandardFunc           get_standard_func);
 
-void            gimp_data_factory_data_init         (GimpDataFactory  *factory,
-                                                     GimpContext      *context,
+void            picman_data_factory_data_init         (PicmanDataFactory  *factory,
+                                                     PicmanContext      *context,
                                                      gboolean          no_data);
-void            gimp_data_factory_data_refresh      (GimpDataFactory  *factory,
-                                                     GimpContext      *context);
-void            gimp_data_factory_data_save         (GimpDataFactory  *factory);
-void            gimp_data_factory_data_free         (GimpDataFactory  *factory);
+void            picman_data_factory_data_refresh      (PicmanDataFactory  *factory,
+                                                     PicmanContext      *context);
+void            picman_data_factory_data_save         (PicmanDataFactory  *factory);
+void            picman_data_factory_data_free         (PicmanDataFactory  *factory);
 
-GimpData      * gimp_data_factory_data_new          (GimpDataFactory  *factory,
-                                                     GimpContext      *context,
+PicmanData      * picman_data_factory_data_new          (PicmanDataFactory  *factory,
+                                                     PicmanContext      *context,
                                                      const gchar      *name);
-GimpData      * gimp_data_factory_data_duplicate    (GimpDataFactory  *factory,
-                                                     GimpData         *data);
-gboolean        gimp_data_factory_data_delete       (GimpDataFactory  *factory,
-                                                     GimpData         *data,
+PicmanData      * picman_data_factory_data_duplicate    (PicmanDataFactory  *factory,
+                                                     PicmanData         *data);
+gboolean        picman_data_factory_data_delete       (PicmanDataFactory  *factory,
+                                                     PicmanData         *data,
                                                      gboolean          delete_from_disk,
                                                      GError          **error);
-GimpData      * gimp_data_factory_data_get_standard (GimpDataFactory  *factory,
-                                                     GimpContext      *context);
-gboolean        gimp_data_factory_data_save_single  (GimpDataFactory  *factory,
-                                                     GimpData         *data,
+PicmanData      * picman_data_factory_data_get_standard (PicmanDataFactory  *factory,
+                                                     PicmanContext      *context);
+gboolean        picman_data_factory_data_save_single  (PicmanDataFactory  *factory,
+                                                     PicmanData         *data,
                                                      GError          **error);
-GType           gimp_data_factory_get_data_type     (GimpDataFactory  *factory);
-GimpContainer * gimp_data_factory_get_container     (GimpDataFactory  *factory);
-GimpContainer * gimp_data_factory_get_container_obsolete
-                                                    (GimpDataFactory  *factory);
-Gimp          * gimp_data_factory_get_gimp          (GimpDataFactory  *factory);
-gboolean        gimp_data_factory_has_data_new_func (GimpDataFactory  *factory);
+GType           picman_data_factory_get_data_type     (PicmanDataFactory  *factory);
+PicmanContainer * picman_data_factory_get_container     (PicmanDataFactory  *factory);
+PicmanContainer * picman_data_factory_get_container_obsolete
+                                                    (PicmanDataFactory  *factory);
+Picman          * picman_data_factory_get_picman          (PicmanDataFactory  *factory);
+gboolean        picman_data_factory_has_data_new_func (PicmanDataFactory  *factory);
 
 
-#endif  /*  __GIMP_DATA_FACTORY_H__  */
+#endif  /*  __PICMAN_DATA_FACTORY_H__  */

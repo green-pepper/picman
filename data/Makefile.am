@@ -1,4 +1,4 @@
-## Makefile.am for gimp/data
+## Makefile.am for picman/data
 
 SUBDIRS = \
 	brushes		\
@@ -13,7 +13,7 @@ SUBDIRS = \
 	tags		\
 	tool-presets
 
-fontdir = $(gimpdatadir)/fonts
+fontdir = $(picmandatadir)/fonts
 
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(fontdir)

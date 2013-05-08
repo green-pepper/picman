@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis, and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,15 +19,15 @@
 
 #include <glib-object.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gimp-transform-utils.h"
+#include "picman-transform-utils.h"
 
 
 void
-gimp_transform_get_rotate_center (gint      x,
+picman_transform_get_rotate_center (gint      x,
                                   gint      y,
                                   gint      width,
                                   gint      height,
@@ -46,11 +46,11 @@ gimp_transform_get_rotate_center (gint      x,
 }
 
 void
-gimp_transform_get_flip_axis (gint                 x,
+picman_transform_get_flip_axis (gint                 x,
                               gint                 y,
                               gint                 width,
                               gint                 height,
-                              GimpOrientationType  flip_type,
+                              PicmanOrientationType  flip_type,
                               gboolean             auto_center,
                               gdouble             *axis)
 {
@@ -60,11 +60,11 @@ gimp_transform_get_flip_axis (gint                 x,
     {
       switch (flip_type)
         {
-        case GIMP_ORIENTATION_HORIZONTAL:
+        case PICMAN_ORIENTATION_HORIZONTAL:
           *axis = ((gdouble) x + (gdouble) width / 2.0);
           break;
 
-        case GIMP_ORIENTATION_VERTICAL:
+        case PICMAN_ORIENTATION_VERTICAL:
           *axis = ((gdouble) y + (gdouble) height / 2.0);
           break;
 
@@ -76,33 +76,33 @@ gimp_transform_get_flip_axis (gint                 x,
 }
 
 void
-gimp_transform_matrix_flip (GimpMatrix3         *matrix,
-                            GimpOrientationType  flip_type,
+picman_transform_matrix_flip (PicmanMatrix3         *matrix,
+                            PicmanOrientationType  flip_type,
                             gdouble              axis)
 {
   g_return_if_fail (matrix != NULL);
 
   switch (flip_type)
     {
-    case GIMP_ORIENTATION_HORIZONTAL:
-      gimp_matrix3_translate (matrix, - axis, 0.0);
-      gimp_matrix3_scale (matrix, -1.0, 1.0);
-      gimp_matrix3_translate (matrix, axis, 0.0);
+    case PICMAN_ORIENTATION_HORIZONTAL:
+      picman_matrix3_translate (matrix, - axis, 0.0);
+      picman_matrix3_scale (matrix, -1.0, 1.0);
+      picman_matrix3_translate (matrix, axis, 0.0);
       break;
 
-    case GIMP_ORIENTATION_VERTICAL:
-      gimp_matrix3_translate (matrix, 0.0, - axis);
-      gimp_matrix3_scale (matrix, 1.0, -1.0);
-      gimp_matrix3_translate (matrix, 0.0, axis);
+    case PICMAN_ORIENTATION_VERTICAL:
+      picman_matrix3_translate (matrix, 0.0, - axis);
+      picman_matrix3_scale (matrix, 1.0, -1.0);
+      picman_matrix3_translate (matrix, 0.0, axis);
       break;
 
-    case GIMP_ORIENTATION_UNKNOWN:
+    case PICMAN_ORIENTATION_UNKNOWN:
       break;
     }
 }
 
 void
-gimp_transform_matrix_flip_free (GimpMatrix3 *matrix,
+picman_transform_matrix_flip_free (PicmanMatrix3 *matrix,
                                  gdouble      x1,
                                  gdouble      y1,
                                  gdouble      x2,
@@ -114,17 +114,17 @@ gimp_transform_matrix_flip_free (GimpMatrix3 *matrix,
 
   angle = atan2  (y2 - y1, x2 - x1);
 
-  gimp_matrix3_identity  (matrix);
-  gimp_matrix3_translate (matrix, -x1, -y1);
-  gimp_matrix3_rotate    (matrix, -angle);
-  gimp_matrix3_scale     (matrix, 1.0, -1.0);
-  gimp_matrix3_rotate    (matrix, angle);
-  gimp_matrix3_translate (matrix, x1, y1);
+  picman_matrix3_identity  (matrix);
+  picman_matrix3_translate (matrix, -x1, -y1);
+  picman_matrix3_rotate    (matrix, -angle);
+  picman_matrix3_scale     (matrix, 1.0, -1.0);
+  picman_matrix3_rotate    (matrix, angle);
+  picman_matrix3_translate (matrix, x1, y1);
 }
 
 void
-gimp_transform_matrix_rotate (GimpMatrix3         *matrix,
-                              GimpRotationType     rotate_type,
+picman_transform_matrix_rotate (PicmanMatrix3         *matrix,
+                              PicmanRotationType     rotate_type,
                               gdouble              center_x,
                               gdouble              center_y)
 {
@@ -132,22 +132,22 @@ gimp_transform_matrix_rotate (GimpMatrix3         *matrix,
 
   switch (rotate_type)
     {
-    case GIMP_ROTATE_90:
+    case PICMAN_ROTATE_90:
       angle = G_PI_2;
       break;
-    case GIMP_ROTATE_180:
+    case PICMAN_ROTATE_180:
       angle = G_PI;
       break;
-    case GIMP_ROTATE_270:
+    case PICMAN_ROTATE_270:
       angle = - G_PI_2;
       break;
     }
 
-  gimp_transform_matrix_rotate_center (matrix, center_x, center_y, angle);
+  picman_transform_matrix_rotate_center (matrix, center_x, center_y, angle);
 }
 
 void
-gimp_transform_matrix_rotate_rect (GimpMatrix3 *matrix,
+picman_transform_matrix_rotate_rect (PicmanMatrix3 *matrix,
                                    gint         x,
                                    gint         y,
                                    gint         width,
@@ -162,26 +162,26 @@ gimp_transform_matrix_rotate_rect (GimpMatrix3 *matrix,
   center_x = (gdouble) x + (gdouble) width  / 2.0;
   center_y = (gdouble) y + (gdouble) height / 2.0;
 
-  gimp_matrix3_translate (matrix, -center_x, -center_y);
-  gimp_matrix3_rotate    (matrix, angle);
-  gimp_matrix3_translate (matrix, +center_x, +center_y);
+  picman_matrix3_translate (matrix, -center_x, -center_y);
+  picman_matrix3_rotate    (matrix, angle);
+  picman_matrix3_translate (matrix, +center_x, +center_y);
 }
 
 void
-gimp_transform_matrix_rotate_center (GimpMatrix3 *matrix,
+picman_transform_matrix_rotate_center (PicmanMatrix3 *matrix,
                                      gdouble      center_x,
                                      gdouble      center_y,
                                      gdouble      angle)
 {
   g_return_if_fail (matrix != NULL);
 
-  gimp_matrix3_translate (matrix, -center_x, -center_y);
-  gimp_matrix3_rotate    (matrix, angle);
-  gimp_matrix3_translate (matrix, +center_x, +center_y);
+  picman_matrix3_translate (matrix, -center_x, -center_y);
+  picman_matrix3_rotate    (matrix, angle);
+  picman_matrix3_translate (matrix, +center_x, +center_y);
 }
 
 void
-gimp_transform_matrix_scale (GimpMatrix3 *matrix,
+picman_transform_matrix_scale (PicmanMatrix3 *matrix,
                              gint         x,
                              gint         y,
                              gint         width,
@@ -202,19 +202,19 @@ gimp_transform_matrix_scale (GimpMatrix3 *matrix,
   if (height > 0)
     scale_y = t_height / (gdouble) height;
 
-  gimp_matrix3_identity  (matrix);
-  gimp_matrix3_translate (matrix, -x, -y);
-  gimp_matrix3_scale     (matrix, scale_x, scale_y);
-  gimp_matrix3_translate (matrix, t_x, t_y);
+  picman_matrix3_identity  (matrix);
+  picman_matrix3_translate (matrix, -x, -y);
+  picman_matrix3_scale     (matrix, scale_x, scale_y);
+  picman_matrix3_translate (matrix, t_x, t_y);
 }
 
 void
-gimp_transform_matrix_shear (GimpMatrix3         *matrix,
+picman_transform_matrix_shear (PicmanMatrix3         *matrix,
                              gint                 x,
                              gint                 y,
                              gint                 width,
                              gint                 height,
-                             GimpOrientationType  orientation,
+                             PicmanOrientationType  orientation,
                              gdouble              amount)
 {
   gdouble center_x;
@@ -231,19 +231,19 @@ gimp_transform_matrix_shear (GimpMatrix3         *matrix,
   center_x = (gdouble) x + (gdouble) width  / 2.0;
   center_y = (gdouble) y + (gdouble) height / 2.0;
 
-  gimp_matrix3_identity  (matrix);
-  gimp_matrix3_translate (matrix, -center_x, -center_y);
+  picman_matrix3_identity  (matrix);
+  picman_matrix3_translate (matrix, -center_x, -center_y);
 
-  if (orientation == GIMP_ORIENTATION_HORIZONTAL)
-    gimp_matrix3_xshear (matrix, amount / height);
+  if (orientation == PICMAN_ORIENTATION_HORIZONTAL)
+    picman_matrix3_xshear (matrix, amount / height);
   else
-    gimp_matrix3_yshear (matrix, amount / width);
+    picman_matrix3_yshear (matrix, amount / width);
 
-  gimp_matrix3_translate (matrix, +center_x, +center_y);
+  picman_matrix3_translate (matrix, +center_x, +center_y);
 }
 
 void
-gimp_transform_matrix_perspective (GimpMatrix3 *matrix,
+picman_transform_matrix_perspective (PicmanMatrix3 *matrix,
                                    gint         x,
                                    gint         y,
                                    gint         width,
@@ -257,7 +257,7 @@ gimp_transform_matrix_perspective (GimpMatrix3 *matrix,
                                    gdouble      t_x4,
                                    gdouble      t_y4)
 {
-  GimpMatrix3 trafo;
+  PicmanMatrix3 trafo;
   gdouble     scalex;
   gdouble     scaley;
 
@@ -271,8 +271,8 @@ gimp_transform_matrix_perspective (GimpMatrix3 *matrix,
   if (height > 0)
     scaley = 1.0 / (gdouble) height;
 
-  gimp_matrix3_translate (matrix, -x, -y);
-  gimp_matrix3_scale     (matrix, scalex, scaley);
+  picman_matrix3_translate (matrix, -x, -y);
+  picman_matrix3_scale     (matrix, scalex, scaley);
 
   /* Determine the perspective transform that maps from
    * the unit cube to the transformed coordinates
@@ -325,11 +325,11 @@ gimp_transform_matrix_perspective (GimpMatrix3 *matrix,
     trafo.coeff[2][2] = 1.0;
   }
 
-  gimp_matrix3_mult (&trafo, matrix);
+  picman_matrix3_mult (&trafo, matrix);
 }
 
 gboolean
-gimp_transform_polygon_is_convex (gdouble x1,
+picman_transform_polygon_is_convex (gdouble x1,
                                   gdouble y1,
                                   gdouble x2,
                                   gdouble y2,

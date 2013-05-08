@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvaslayerboundary.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvaslayerboundary.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,18 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "core/gimpchannel.h"
-#include "core/gimplayer.h"
-#include "core/gimplayer-floating-sel.h"
+#include "core/picmanchannel.h"
+#include "core/picmanlayer.h"
+#include "core/picmanlayer-floating-sel.h"
 
-#include "gimpcanvas-style.h"
-#include "gimpcanvaslayerboundary.h"
-#include "gimpdisplayshell.h"
+#include "picmancanvas-style.h"
+#include "picmancanvaslayerboundary.h"
+#include "picmandisplayshell.h"
 
 
 enum
@@ -45,81 +45,81 @@ enum
 };
 
 
-typedef struct _GimpCanvasLayerBoundaryPrivate GimpCanvasLayerBoundaryPrivate;
+typedef struct _PicmanCanvasLayerBoundaryPrivate PicmanCanvasLayerBoundaryPrivate;
 
-struct _GimpCanvasLayerBoundaryPrivate
+struct _PicmanCanvasLayerBoundaryPrivate
 {
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gboolean   edit_mask;
 };
 
 #define GET_PRIVATE(layer_boundary) \
         G_TYPE_INSTANCE_GET_PRIVATE (layer_boundary, \
-                                     GIMP_TYPE_CANVAS_LAYER_BOUNDARY, \
-                                     GimpCanvasLayerBoundaryPrivate)
+                                     PICMAN_TYPE_CANVAS_LAYER_BOUNDARY, \
+                                     PicmanCanvasLayerBoundaryPrivate)
 
 
 /*  local function prototypes  */
 
-static void             gimp_canvas_layer_boundary_set_property (GObject        *object,
+static void             picman_canvas_layer_boundary_set_property (GObject        *object,
                                                                  guint           property_id,
                                                                  const GValue   *value,
                                                                  GParamSpec     *pspec);
-static void             gimp_canvas_layer_boundary_get_property (GObject        *object,
+static void             picman_canvas_layer_boundary_get_property (GObject        *object,
                                                                  guint           property_id,
                                                                  GValue         *value,
                                                                  GParamSpec     *pspec);
-static void             gimp_canvas_layer_boundary_draw         (GimpCanvasItem *item,
+static void             picman_canvas_layer_boundary_draw         (PicmanCanvasItem *item,
                                                                  cairo_t        *cr);
-static cairo_region_t * gimp_canvas_layer_boundary_get_extents  (GimpCanvasItem *item);
-static void             gimp_canvas_layer_boundary_stroke       (GimpCanvasItem *item,
+static cairo_region_t * picman_canvas_layer_boundary_get_extents  (PicmanCanvasItem *item);
+static void             picman_canvas_layer_boundary_stroke       (PicmanCanvasItem *item,
                                                                  cairo_t        *cr);
 
 
-G_DEFINE_TYPE (GimpCanvasLayerBoundary, gimp_canvas_layer_boundary,
-               GIMP_TYPE_CANVAS_RECTANGLE)
+G_DEFINE_TYPE (PicmanCanvasLayerBoundary, picman_canvas_layer_boundary,
+               PICMAN_TYPE_CANVAS_RECTANGLE)
 
-#define parent_class gimp_canvas_layer_boundary_parent_class
+#define parent_class picman_canvas_layer_boundary_parent_class
 
 
 static void
-gimp_canvas_layer_boundary_class_init (GimpCanvasLayerBoundaryClass *klass)
+picman_canvas_layer_boundary_class_init (PicmanCanvasLayerBoundaryClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpCanvasItemClass *item_class   = GIMP_CANVAS_ITEM_CLASS (klass);
+  PicmanCanvasItemClass *item_class   = PICMAN_CANVAS_ITEM_CLASS (klass);
 
-  object_class->set_property = gimp_canvas_layer_boundary_set_property;
-  object_class->get_property = gimp_canvas_layer_boundary_get_property;
+  object_class->set_property = picman_canvas_layer_boundary_set_property;
+  object_class->get_property = picman_canvas_layer_boundary_get_property;
 
-  item_class->draw           = gimp_canvas_layer_boundary_draw;
-  item_class->get_extents    = gimp_canvas_layer_boundary_get_extents;
-  item_class->stroke         = gimp_canvas_layer_boundary_stroke;
+  item_class->draw           = picman_canvas_layer_boundary_draw;
+  item_class->get_extents    = picman_canvas_layer_boundary_get_extents;
+  item_class->stroke         = picman_canvas_layer_boundary_stroke;
 
   g_object_class_install_property (object_class, PROP_LAYER,
                                    g_param_spec_object ("layer", NULL, NULL,
-                                                        GIMP_TYPE_LAYER,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_LAYER,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_EDIT_MASK,
                                    g_param_spec_boolean ("edit-mask", NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpCanvasLayerBoundaryPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanCanvasLayerBoundaryPrivate));
 }
 
 static void
-gimp_canvas_layer_boundary_init (GimpCanvasLayerBoundary *layer_boundary)
+picman_canvas_layer_boundary_init (PicmanCanvasLayerBoundary *layer_boundary)
 {
 }
 
 static void
-gimp_canvas_layer_boundary_set_property (GObject      *object,
+picman_canvas_layer_boundary_set_property (GObject      *object,
                                          guint         property_id,
                                          const GValue *value,
                                          GParamSpec   *pspec)
 {
-  GimpCanvasLayerBoundaryPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasLayerBoundaryPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -137,12 +137,12 @@ gimp_canvas_layer_boundary_set_property (GObject      *object,
 }
 
 static void
-gimp_canvas_layer_boundary_get_property (GObject    *object,
+picman_canvas_layer_boundary_get_property (GObject    *object,
                                          guint       property_id,
                                          GValue     *value,
                                          GParamSpec *pspec)
 {
-  GimpCanvasLayerBoundaryPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasLayerBoundaryPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -160,65 +160,65 @@ gimp_canvas_layer_boundary_get_property (GObject    *object,
 }
 
 static void
-gimp_canvas_layer_boundary_draw (GimpCanvasItem *item,
+picman_canvas_layer_boundary_draw (PicmanCanvasItem *item,
                                  cairo_t        *cr)
 {
-  GimpCanvasLayerBoundaryPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasLayerBoundaryPrivate *private = GET_PRIVATE (item);
 
   if (private->layer)
-    GIMP_CANVAS_ITEM_CLASS (parent_class)->draw (item, cr);
+    PICMAN_CANVAS_ITEM_CLASS (parent_class)->draw (item, cr);
 }
 
 static cairo_region_t *
-gimp_canvas_layer_boundary_get_extents (GimpCanvasItem *item)
+picman_canvas_layer_boundary_get_extents (PicmanCanvasItem *item)
 {
-  GimpCanvasLayerBoundaryPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasLayerBoundaryPrivate *private = GET_PRIVATE (item);
 
   if (private->layer)
-    return GIMP_CANVAS_ITEM_CLASS (parent_class)->get_extents (item);
+    return PICMAN_CANVAS_ITEM_CLASS (parent_class)->get_extents (item);
 
   return NULL;
 }
 
 static void
-gimp_canvas_layer_boundary_stroke (GimpCanvasItem *item,
+picman_canvas_layer_boundary_stroke (PicmanCanvasItem *item,
                                    cairo_t        *cr)
 {
-  GimpCanvasLayerBoundaryPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasLayerBoundaryPrivate *private = GET_PRIVATE (item);
 
-  gimp_canvas_set_layer_style (gimp_canvas_item_get_canvas (item), cr,
+  picman_canvas_set_layer_style (picman_canvas_item_get_canvas (item), cr,
                                private->layer);
   cairo_stroke (cr);
 }
 
-GimpCanvasItem *
-gimp_canvas_layer_boundary_new (GimpDisplayShell *shell)
+PicmanCanvasItem *
+picman_canvas_layer_boundary_new (PicmanDisplayShell *shell)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
 
-  return g_object_new (GIMP_TYPE_CANVAS_LAYER_BOUNDARY,
+  return g_object_new (PICMAN_TYPE_CANVAS_LAYER_BOUNDARY,
                        "shell", shell,
                        NULL);
 }
 
 void
-gimp_canvas_layer_boundary_set_layer (GimpCanvasLayerBoundary *boundary,
-                                      GimpLayer               *layer)
+picman_canvas_layer_boundary_set_layer (PicmanCanvasLayerBoundary *boundary,
+                                      PicmanLayer               *layer)
 {
-  GimpCanvasLayerBoundaryPrivate *private;
+  PicmanCanvasLayerBoundaryPrivate *private;
 
-  g_return_if_fail (GIMP_IS_CANVAS_LAYER_BOUNDARY (boundary));
-  g_return_if_fail (layer == NULL || GIMP_IS_LAYER (layer));
+  g_return_if_fail (PICMAN_IS_CANVAS_LAYER_BOUNDARY (boundary));
+  g_return_if_fail (layer == NULL || PICMAN_IS_LAYER (layer));
 
   private = GET_PRIVATE (boundary);
 
-  if (layer && gimp_layer_is_floating_sel (layer))
+  if (layer && picman_layer_is_floating_sel (layer))
     {
-      GimpDrawable *drawable;
+      PicmanDrawable *drawable;
 
-      drawable = gimp_layer_get_floating_sel_drawable (layer);
+      drawable = picman_layer_get_floating_sel_drawable (layer);
 
-      if (GIMP_IS_CHANNEL (drawable))
+      if (PICMAN_IS_CHANNEL (drawable))
         {
           /*  if the owner drawable is a channel, show no outline  */
 
@@ -228,7 +228,7 @@ gimp_canvas_layer_boundary_set_layer (GimpCanvasLayerBoundary *boundary,
         {
           /*  otherwise, set the layer to the owner drawable  */
 
-          layer = GIMP_LAYER (drawable);
+          layer = PICMAN_LAYER (drawable);
         }
     }
 
@@ -236,20 +236,20 @@ gimp_canvas_layer_boundary_set_layer (GimpCanvasLayerBoundary *boundary,
     {
       gboolean edit_mask = FALSE;
 
-      gimp_canvas_item_begin_change (GIMP_CANVAS_ITEM (boundary));
+      picman_canvas_item_begin_change (PICMAN_CANVAS_ITEM (boundary));
 
       if (layer)
         {
-          GimpItem *item = GIMP_ITEM (layer);
+          PicmanItem *item = PICMAN_ITEM (layer);
 
-          edit_mask = (gimp_layer_get_mask (layer) &&
-                       gimp_layer_get_edit_mask (layer));
+          edit_mask = (picman_layer_get_mask (layer) &&
+                       picman_layer_get_edit_mask (layer));
 
           g_object_set (boundary,
-                        "x",      (gdouble) gimp_item_get_offset_x (item),
-                        "y",      (gdouble) gimp_item_get_offset_y (item),
-                        "width",  (gdouble) gimp_item_get_width  (item),
-                        "height", (gdouble) gimp_item_get_height (item),
+                        "x",      (gdouble) picman_item_get_offset_x (item),
+                        "y",      (gdouble) picman_item_get_offset_y (item),
+                        "width",  (gdouble) picman_item_get_width  (item),
+                        "height", (gdouble) picman_item_get_height (item),
                         NULL);
         }
 
@@ -258,22 +258,22 @@ gimp_canvas_layer_boundary_set_layer (GimpCanvasLayerBoundary *boundary,
                     "edit-mask", edit_mask,
                     NULL);
 
-      gimp_canvas_item_end_change (GIMP_CANVAS_ITEM (boundary));
+      picman_canvas_item_end_change (PICMAN_CANVAS_ITEM (boundary));
     }
   else if (layer && layer == private->layer)
     {
-      GimpItem *item = GIMP_ITEM (layer);
+      PicmanItem *item = PICMAN_ITEM (layer);
       gint      lx, ly, lw, lh;
       gdouble   x, y, w ,h;
       gboolean  edit_mask;
 
-      lx = gimp_item_get_offset_x (item);
-      ly = gimp_item_get_offset_y (item);
-      lw = gimp_item_get_width  (item);
-      lh = gimp_item_get_height (item);
+      lx = picman_item_get_offset_x (item);
+      ly = picman_item_get_offset_y (item);
+      lw = picman_item_get_width  (item);
+      lh = picman_item_get_height (item);
 
-      edit_mask = (gimp_layer_get_mask (layer) &&
-                   gimp_layer_get_edit_mask (layer));
+      edit_mask = (picman_layer_get_mask (layer) &&
+                   picman_layer_get_edit_mask (layer));
 
       g_object_get (boundary,
                     "x",      &x,
@@ -288,7 +288,7 @@ gimp_canvas_layer_boundary_set_layer (GimpCanvasLayerBoundary *boundary,
           lh        != (gint) h ||
           edit_mask != private->edit_mask)
         {
-          gimp_canvas_item_begin_change (GIMP_CANVAS_ITEM (boundary));
+          picman_canvas_item_begin_change (PICMAN_CANVAS_ITEM (boundary));
 
           g_object_set (boundary,
                         "x",         (gdouble) lx,
@@ -298,7 +298,7 @@ gimp_canvas_layer_boundary_set_layer (GimpCanvasLayerBoundary *boundary,
                         "edit-mask", edit_mask,
                         NULL);
 
-          gimp_canvas_item_end_change (GIMP_CANVAS_ITEM (boundary));
+          picman_canvas_item_end_change (PICMAN_CANVAS_ITEM (boundary));
         }
     }
 }

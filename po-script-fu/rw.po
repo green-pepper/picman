@@ -1,6 +1,6 @@
-# translation of gimp-script-fu to Kinyarwanda.
+# translation of picman-script-fu to Kinyarwanda.
 # Copyright (C) 2005 Free Software Foundation, Inc.
-# This file is distributed under the same license as the gimp-script-fu package.
+# This file is distributed under the same license as the picman-script-fu package.
 # Steve Murphy <murf@e-tools.com>, 2005
 # Steve performed initial rough translation from compendium built from translations provided by the following translators:
 # Philibert Ndandali  <ndandali@yahoo.fr>, 2005.
@@ -13,7 +13,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu HEAD\n"
+"Project-Id-Version: picman-script-fu HEAD\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-04-01 13:05-0700\n"
 "PO-Revision-Date: 2005-03-31 20:55-0700\n"
@@ -138,18 +138,18 @@ msgstr "(ntacyo)"
 
 # shell/source\win32\shlxthandler\shlxthdl.lng:%AUTHOR_COLON%.text
 #: plug-ins/script-fu/script-fu-interface.c:1083
-#: plug-ins/dbbrowser/gimpprocview.c:198
+#: plug-ins/dbbrowser/picmanprocview.c:198
 msgid "Author:"
 msgstr "Umwanditsi:"
 
 #: plug-ins/script-fu/script-fu-interface.c:1090
-#: plug-ins/dbbrowser/gimpprocview.c:220
+#: plug-ins/dbbrowser/picmanprocview.c:220
 #, fuzzy
 msgid "Copyright:"
 msgstr "Uburenganzira bw'umuhimbyi"
 
 #: plug-ins/script-fu/script-fu-interface.c:1097
-#: plug-ins/dbbrowser/gimpprocview.c:209
+#: plug-ins/dbbrowser/picmanprocview.c:209
 msgid "Date:"
 msgstr "Itariki:"
 
@@ -240,7 +240,7 @@ msgid "_Beveled Pattern"
 msgstr ""
 
 #: plug-ins/script-fu/script-fu.c:293
-msgid "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
 msgstr ""
 
 #: plug-ins/script-fu/script-fu.c:296
@@ -287,19 +287,19 @@ msgstr ""
 msgid "_Refresh Scripts"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:128
-#: plug-ins/dbbrowser/gimpprocbrowser.c:142
+#: plug-ins/dbbrowser/picmanprocbrowser.c:128
+#: plug-ins/dbbrowser/picmanprocbrowser.c:142
 msgid "Procedure Browser"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:132
-#: plug-ins/dbbrowser/gimpprocbrowser.c:146
+#: plug-ins/dbbrowser/picmanprocbrowser.c:132
+#: plug-ins/dbbrowser/picmanprocbrowser.c:146
 #, fuzzy
 msgid "Search by _Name"
 msgstr "ku"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:133
-#: plug-ins/dbbrowser/gimpprocbrowser.c:147
+#: plug-ins/dbbrowser/picmanprocbrowser.c:133
+#: plug-ins/dbbrowser/picmanprocbrowser.c:147
 #, fuzzy
 msgid "Search by _Blurb"
 msgstr "ku"
@@ -308,37 +308,37 @@ msgstr "ku"
 # so3/src\svuidlg.src:MD_INSERT_OLEOBJECT.BTN_FILEPATH.text
 # #-#-#-#-#  so3.pot (PACKAGE VERSION)  #-#-#-#-#
 # so3/src\svuidlg.src:MD_INSERT_OBJECT_APPLET.BTN_CLASS.text
-#: plug-ins/dbbrowser/gimpprocbrowser.c:224
+#: plug-ins/dbbrowser/picmanprocbrowser.c:224
 #, fuzzy
 msgid "_Search:"
 msgstr "Gushakisha..."
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:386
+#: plug-ins/dbbrowser/picmanprocbrowser.c:386
 #, fuzzy
 msgid "Searching by name - please wait"
 msgstr "ku Izina: Tegereza"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:410
+#: plug-ins/dbbrowser/picmanprocbrowser.c:410
 #, fuzzy
 msgid "Searching by blurb - please wait"
 msgstr "ku Tegereza"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:421
+#: plug-ins/dbbrowser/picmanprocbrowser.c:421
 #, fuzzy
 msgid "Searching - please wait"
 msgstr "Tegereza"
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:428
+#: plug-ins/dbbrowser/picmanprocbrowser.c:428
 #, fuzzy
 msgid "1 Procedure"
 msgstr "1."
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:430
+#: plug-ins/dbbrowser/picmanprocbrowser.c:430
 #, c-format
 msgid "%d Procedures"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocbrowser.c:476
+#: plug-ins/dbbrowser/picmanprocbrowser.c:476
 msgid "No matches"
 msgstr ""
 
@@ -352,32 +352,32 @@ msgstr ""
 # svx/source\dialog\grfflt.src:RID_SVX_GRFFILTER_DLG_POSTER.FL_PARAMETER.text
 # #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
 # svx/source\dialog\grfflt.src:RID_SVX_GRFFILTER_DLG_EMBOSS.FL_PARAMETER.text
-#: plug-ins/dbbrowser/gimpprocview.c:133
+#: plug-ins/dbbrowser/picmanprocview.c:133
 msgid "Parameters"
 msgstr "Ibigenga"
 
-#: plug-ins/dbbrowser/gimpprocview.c:146
+#: plug-ins/dbbrowser/picmanprocview.c:146
 msgid "Return Values"
 msgstr ""
 
 # svx/source\form\fmstring.src:RID_STR_TAG.text
-#: plug-ins/dbbrowser/gimpprocview.c:159
+#: plug-ins/dbbrowser/picmanprocview.c:159
 msgid "Additional Information"
 msgstr "Ibisobanuro Nyongera"
 
-#: plug-ins/dbbrowser/gimpprocview.c:319
-msgid "Internal GIMP procedure"
+#: plug-ins/dbbrowser/picmanprocview.c:319
+msgid "Internal PICMAN procedure"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:320
-msgid "GIMP Plug-In"
+#: plug-ins/dbbrowser/picmanprocview.c:320
+msgid "PICMAN Plug-In"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:321
-msgid "GIMP Extension"
+#: plug-ins/dbbrowser/picmanprocview.c:321
+msgid "PICMAN Extension"
 msgstr ""
 
-#: plug-ins/dbbrowser/gimpprocview.c:322
+#: plug-ins/dbbrowser/picmanprocview.c:322
 msgid "Temporary Procedure"
 msgstr ""
 
@@ -415,8 +415,8 @@ msgstr "Amagenamiterere"
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm.h:4
 #: plug-ins/script-fu/scripts/crystal-logo.scm.h:5
 #: plug-ins/script-fu/scripts/frosty-logo.scm.h:3
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:3
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:2
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:3
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:2
 #: plug-ins/script-fu/scripts/glossy.scm.h:6
 #: plug-ins/script-fu/scripts/glowing-logo.scm.h:3
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:6
@@ -455,8 +455,8 @@ msgstr "Intego-nyuguti"
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm.h:5
 #: plug-ins/script-fu/scripts/crystal-logo.scm.h:6
 #: plug-ins/script-fu/scripts/frosty-logo.scm.h:4
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:4
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:3
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:4
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:3
 #: plug-ins/script-fu/scripts/glossy.scm.h:7
 #: plug-ins/script-fu/scripts/glowing-logo.scm.h:4
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:7
@@ -531,8 +531,8 @@ msgstr "Akarambararo"
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm.h:8
 #: plug-ins/script-fu/scripts/crystal-logo.scm.h:7
 #: plug-ins/script-fu/scripts/frosty-logo.scm.h:5
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:11
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:13
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:11
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:13
 #: plug-ins/script-fu/scripts/glossy.scm.h:17
 #: plug-ins/script-fu/scripts/glowing-logo.scm.h:6
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:9
@@ -571,7 +571,7 @@ msgstr ""
 #: plug-ins/script-fu/scripts/comic-logo.scm.h:1
 #: plug-ins/script-fu/scripts/coolmetal-logo.scm.h:1
 #: plug-ins/script-fu/scripts/frosty-logo.scm.h:1
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:1
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:1
 #: plug-ins/script-fu/scripts/glossy.scm.h:1
 #: plug-ins/script-fu/scripts/glowing-logo.scm.h:1
 #: plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:1
@@ -795,8 +795,8 @@ msgstr "Wuzuza:"
 #: plug-ins/script-fu/scripts/beveled-button.scm.h:9
 #: plug-ins/script-fu/scripts/beveled-pattern-button.scm.h:7
 #: plug-ins/script-fu/scripts/blended-logo.scm.h:16
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:12
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:14
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:12
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:14
 #: plug-ins/script-fu/scripts/i26-gunya2.scm.h:7
 #: plug-ins/script-fu/scripts/news-text.scm.h:10
 #: plug-ins/script-fu/scripts/pupi-button.scm.h:13
@@ -889,7 +889,7 @@ msgid "H_eading..."
 msgstr "Umutwe"
 
 #: plug-ins/script-fu/scripts/beveled-pattern-hrule.scm.h:1
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:4
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:4
 #: plug-ins/script-fu/scripts/gradient-example.scm.h:3
 #: plug-ins/script-fu/scripts/mkbrush.scm.h:3
 #: plug-ins/script-fu/scripts/swirltile.scm.h:6
@@ -953,7 +953,7 @@ msgstr ""
 #: plug-ins/script-fu/scripts/land.scm.h:2
 #: plug-ins/script-fu/scripts/lava.scm.h:1
 #: plug-ins/script-fu/scripts/rendermap.scm.h:3
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Gradient"
 msgstr "Ikizamuko"
 
@@ -1362,17 +1362,17 @@ msgstr "Akarambararo"
 #: plug-ins/script-fu/scripts/drop-shadow.scm.h:3
 #: plug-ins/script-fu/scripts/fuzzyborder.scm.h:4
 #: plug-ins/script-fu/scripts/perspective-shadow.scm.h:4
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Color"
 msgstr "Ibara"
 
 #: plug-ins/script-fu/scripts/drop-shadow.scm.h:4
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:7
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:7
 msgid "Offset X"
 msgstr ""
 
 #: plug-ins/script-fu/scripts/drop-shadow.scm.h:5
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:8
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:8
 msgid "Offset Y"
 msgstr ""
 
@@ -1586,41 +1586,41 @@ msgstr "Uburemere"
 msgid "_Fuzzy Border..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:1
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:1
 msgid "Autocrop"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:2
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:2
 #, fuzzy
 msgid "Dark color"
 msgstr "Ibara"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:5
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:5
 #: plug-ins/script-fu/scripts/xach-effect.scm.h:8
 #, fuzzy
 msgid "Highlight color"
 msgstr "Garagaza ibara"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:6
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:5
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:6
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:5
 #, fuzzy
 msgid "Index image"
 msgstr "Ishusho"
 
 # officecfg/registry\schema\org\openoffice\Office\Common.xcs:....Vectorize.ColorCount.text
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:7
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:6
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:7
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:6
 msgid "Number of colors"
 msgstr "Umubare w'amabara"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:8
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:9
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:8
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:9
 #, fuzzy
 msgid "Remove background"
 msgstr "Mbuganyuma"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:9
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:10
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:9
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:10
 #, fuzzy
 msgid "Select-by-color threshold"
 msgstr "ku Ibara"
@@ -1629,32 +1629,32 @@ msgstr "ku Ibara"
 # svx/source\svdraw\svdstr.src:STR_ItemNam_SHADOWCOLOR.text
 # #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
 # svx/source\svdraw\svdstr.src:SIP_SA_SHADOWCOLOR.text
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:10
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:11
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:10
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:11
 msgid "Shadow color"
 msgstr "Ibara ry'igicucu"
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:13
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:13
 msgid "_Big Header..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-headers.scm.h:14
+#: plug-ins/script-fu/scripts/picman-headers.scm.h:14
 msgid "_Small Header..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:12
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:12
 msgid "T_ube Sub-Button Label..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:15
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:15
 msgid "Tub_e Sub-Sub-Button Label..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:16
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:16
 msgid "_General Tube Labels..."
 msgstr ""
 
-#: plug-ins/script-fu/scripts/gimp-labels.scm.h:17
+#: plug-ins/script-fu/scripts/picman-labels.scm.h:17
 msgid "_Tube Button Label..."
 msgstr ""
 
@@ -2380,110 +2380,110 @@ msgid "_Spinning Globe..."
 msgstr ""
 
 # 111
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:1
 msgid "Airbrush"
 msgstr "uburoso mvubura"
 
 # svx/source\items\svxitems.src:RID_ATTR_BRUSH.text
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Brush"
 msgstr "Uburoso"
 
 # starmath/source\smres.src:RID_TOOLBOXWINDOW.6.RID_CIRCLEX.text
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Circle"
 msgstr "Uruziga"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:5
 #, fuzzy
 msgid "Color method"
 msgstr "Uburyo"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:6
 #, fuzzy
 msgid ""
 "Draws Spirographs, Epitrochoids and Lissajous Curves. More info at http://"
-"netword.com/*spyrogimp"
+"netword.com/*spyropicman"
 msgstr "Na Ibisobanuro ku HTTP com"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid "Epitrochoid"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Frame"
 msgstr "Ikadiri"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient: Loop Sawtooth"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: Loop Triangle"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Hexagon"
 msgstr "Ikinyampande16"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hole ratio"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:14
 msgid "Inner teeth"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:15
 msgid "Lissajous"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:16
 #, fuzzy
 msgid "Margin (pixels)"
 msgstr "Pigiseli"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Outer teeth"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:18
 msgid "Pencil"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pentagon"
 msgstr "Ikinyampande5"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:20
 #, fuzzy
 msgid "Polygon: 10 sides"
 msgstr "10"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:21
 #, fuzzy
 msgid "Polygon: 7 sides"
 msgstr "7"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:22
 #, fuzzy
 msgid "Polygon: 8 sides"
 msgstr "8"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:23
 #, fuzzy
 msgid "Polygon: 9 sides"
 msgstr "9"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Shape"
 msgstr "Imisusire"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Solid Color"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Spyrograph"
 msgstr ""
 
@@ -2499,7 +2499,7 @@ msgstr ""
 # svx/source\dialog\tabarea.src:RID_SVXPAGE_GRADIENT.LB_GRADIENT_TYPES.5.text
 # #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
 # svx/source\svdraw\svdstr.src:STR_ObjNameSingulQUAD.text
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Square"
 msgstr "kare"
 
@@ -2507,26 +2507,26 @@ msgstr "kare"
 # svx/source\svdraw\svdstr.src:STR_ItemNam_STARTANGLE.text
 # #-#-#-#-#  svx.pot (PACKAGE VERSION)  #-#-#-#-#
 # svx/source\svdraw\svdstr.src:SIP_SA_CIRCSTARTANGLE.text
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:28
 #: plug-ins/script-fu/scripts/text-circle.scm.h:6
 msgid "Start angle"
 msgstr "Gutangiza imfuruka"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:29
 msgid "Tool"
 msgstr ""
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Triangle"
 msgstr ""
 
 # filter/source\xsltdialog\xmlfilterdialogstrings.src:STR_COLUMN_HEADER_TYPE.text
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Type"
 msgstr "Ubwoko"
 
-#: plug-ins/script-fu/scripts/spyrogimp.scm.h:32
-msgid "_Spyrogimp..."
+#: plug-ins/script-fu/scripts/spyropicman.scm.h:32
+msgid "_Spyropicman..."
 msgstr ""
 
 #: plug-ins/script-fu/scripts/starburst-logo.scm.h:2

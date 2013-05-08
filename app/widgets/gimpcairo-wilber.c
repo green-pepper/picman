@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Wilber Cairo rendering
- * Copyright (C) 2008  Sven Neumann <sven@gimp.org>
+ * Copyright (C) 2008  Sven Neumann <sven@picman.org>
  *
  * Some code here is based on code from librsvg that was originally
  * written by Raph Levien <raph@artofcode.com> for Gill.
@@ -27,15 +27,15 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "widgets-types.h"
 
-#include "gimpcairo-wilber.h"
+#include "picmancairo-wilber.h"
 
 
 void
-gimp_cairo_draw_toolbox_wilber (GtkWidget *widget,
+picman_cairo_draw_toolbox_wilber (GtkWidget *widget,
                                 cairo_t   *cr)
 {
   GtkStyle     *style;
@@ -53,7 +53,7 @@ gimp_cairo_draw_toolbox_wilber (GtkWidget *widget,
 
   gtk_widget_get_allocation (widget, &allocation);
 
-  gimp_cairo_wilber_get_size (cr, &wilber_width, &wilber_height);
+  picman_cairo_wilber_get_size (cr, &wilber_width, &wilber_height);
 
   factor = allocation.width / wilber_width * 0.9;
 
@@ -62,7 +62,7 @@ gimp_cairo_draw_toolbox_wilber (GtkWidget *widget,
 
   cairo_scale (cr, factor, factor);
 
-  gimp_cairo_wilber (cr,
+  picman_cairo_wilber (cr,
                      (allocation.width  / factor - wilber_width)  / 2.0,
                      (allocation.height / factor - wilber_height) / 2.0);
 
@@ -75,7 +75,7 @@ gimp_cairo_draw_toolbox_wilber (GtkWidget *widget,
 }
 
 void
-gimp_cairo_draw_drop_wilber (GtkWidget *widget,
+picman_cairo_draw_drop_wilber (GtkWidget *widget,
                              cairo_t   *cr)
 {
   GtkStyle     *style;
@@ -96,7 +96,7 @@ gimp_cairo_draw_drop_wilber (GtkWidget *widget,
 
   gtk_widget_get_allocation (widget, &allocation);
 
-  gimp_cairo_wilber_get_size (cr, &wilber_width, &wilber_height);
+  picman_cairo_wilber_get_size (cr, &wilber_width, &wilber_height);
 
   wilber_width  /= 2;
   wilber_height /= 2;
@@ -116,7 +116,7 @@ gimp_cairo_draw_drop_wilber (GtkWidget *widget,
 
   /*  magic factors depend on the image used, everything else is generic
    */
-  gimp_cairo_wilber (cr,
+  picman_cairo_wilber (cr,
                      - wilber_width * 0.6,
                      allocation.height / factor - wilber_height * 1.1);
 
@@ -148,7 +148,7 @@ static void  wilber_get_extents     (cairo_t     *cr);
 
 
 /**
- * gimp_cairo_wilber:
+ * picman_cairo_wilber:
  * @cr: Cairo context
  * @x: x position
  * @y: y position
@@ -156,7 +156,7 @@ static void  wilber_get_extents     (cairo_t     *cr);
  * Draw a Wilber path at position @x, @y.
  */
 void
-gimp_cairo_wilber (cairo_t *cr,
+picman_cairo_wilber (cairo_t *cr,
                    gdouble  x,
                    gdouble  y)
 {
@@ -171,7 +171,7 @@ gimp_cairo_wilber (cairo_t *cr,
 }
 
 void
-gimp_cairo_wilber_get_size (cairo_t *cr,
+picman_cairo_wilber_get_size (cairo_t *cr,
                             gdouble *width,
                             gdouble *height)
 {

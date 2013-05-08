@@ -1,11 +1,11 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; Make-Brush - a script for the script-fu program
 ; by Seth Burgess 1997 <sjburges@ou.edu>
 ;
 ; 18-Dec-2000 fixed to work with the new convention (not inverted) of
-;             gbr saver (jtl@gimp.org)
+;             gbr saver (jtl@picman.org)
 ;
 ; This program is free software: you can redistribute it and/or modify
 ; it under the terms of the GNU General Public License as published by
@@ -23,11 +23,11 @@
 
 (define (script-fu-make-brush-rectangular name width height spacing)
   (let* (
-        (img (car (gimp-image-new width height GRAY)))
-        (drawable (car (gimp-layer-new img
+        (img (car (picman-image-new width height GRAY)))
+        (drawable (car (picman-layer-new img
                                        width height GRAY-IMAGE
                                        "MakeBrush" 100 NORMAL-MODE)))
-        (filename (string-append gimp-directory
+        (filename (string-append picman-directory
                                  "/brushes/r"
                                  (number->string width)
                                  "x"
@@ -35,27 +35,27 @@
                                  ".gbr"))
         )
 
-    (gimp-context-push)
-    (gimp-context-set-defaults)
+    (picman-context-push)
+    (picman-context-set-defaults)
 
-    (gimp-image-undo-disable img)
-    (gimp-image-insert-layer img drawable 0 0)
+    (picman-image-undo-disable img)
+    (picman-image-insert-layer img drawable 0 0)
 
-    (gimp-context-set-background '(255 255 255))
-    (gimp-drawable-fill drawable BACKGROUND-FILL)
+    (picman-context-set-background '(255 255 255))
+    (picman-drawable-fill drawable BACKGROUND-FILL)
 
-    (gimp-image-select-rectangle img CHANNEL-OP-REPLACE 0 0 width height)
+    (picman-image-select-rectangle img CHANNEL-OP-REPLACE 0 0 width height)
 
-    (gimp-context-set-background '(0 0 0))
-    (gimp-edit-fill drawable BACKGROUND-FILL)
+    (picman-context-set-background '(0 0 0))
+    (picman-edit-fill drawable BACKGROUND-FILL)
 
     (file-gbr-save 1 img drawable filename "" spacing name)
-    (gimp-image-delete img)
+    (picman-image-delete img)
 
-    (gimp-context-pop)
+    (picman-context-pop)
 
-    (gimp-brushes-refresh)
-    (gimp-context-set-brush name)
+    (picman-brushes-refresh)
+    (picman-context-set-brush name)
   )
 )
 
@@ -81,11 +81,11 @@
   (let* (
         (widthplus (+ width feathering))
         (heightplus (+ height feathering))
-        (img (car (gimp-image-new widthplus heightplus GRAY)))
-        (drawable (car (gimp-layer-new img
+        (img (car (picman-image-new widthplus heightplus GRAY)))
+        (drawable (car (picman-layer-new img
                                        widthplus heightplus GRAY-IMAGE
                                        "MakeBrush" 100 NORMAL-MODE)))
-        (filename (string-append gimp-directory
+        (filename (string-append picman-directory
                                  "/brushes/r"
                                  (number->string width)
                                  "x"
@@ -95,35 +95,35 @@
                                  ".gbr"))
         )
 
-    (gimp-context-push)
+    (picman-context-push)
 
-    (gimp-image-undo-disable img)
-    (gimp-image-insert-layer img drawable 0 0)
+    (picman-image-undo-disable img)
+    (picman-image-insert-layer img drawable 0 0)
 
-    (gimp-context-set-background '(255 255 255))
-    (gimp-drawable-fill drawable BACKGROUND-FILL)
+    (picman-context-set-background '(255 255 255))
+    (picman-drawable-fill drawable BACKGROUND-FILL)
 
     (cond
       ((< 0 feathering)
-       (gimp-context-set-feather TRUE)
-       (gimp-context-set-feather-radius feathering feathering)
-       (gimp-image-select-rectangle img CHANNEL-OP-REPLACE
+       (picman-context-set-feather TRUE)
+       (picman-context-set-feather-radius feathering feathering)
+       (picman-image-select-rectangle img CHANNEL-OP-REPLACE
            (/ feathering 2) (/ feathering 2) width height))
       ((>= 0 feathering)
-      (gimp-context-set-feather FALSE)
-      (gimp-image-select-rectangle img CHANNEL-OP-REPLACE 0 0 width height))
+      (picman-context-set-feather FALSE)
+      (picman-image-select-rectangle img CHANNEL-OP-REPLACE 0 0 width height))
     )
 
-    (gimp-context-set-background '(0 0 0))
-    (gimp-edit-fill drawable BACKGROUND-FILL)
+    (picman-context-set-background '(0 0 0))
+    (picman-edit-fill drawable BACKGROUND-FILL)
 
     (file-gbr-save 1 img drawable filename "" spacing name)
-    (gimp-image-delete img)
+    (picman-image-delete img)
 
-    (gimp-context-pop)
+    (picman-context-pop)
 
-    (gimp-brushes-refresh)
-    (gimp-context-set-brush name)
+    (picman-brushes-refresh)
+    (picman-context-set-brush name)
   )
 )
 
@@ -147,11 +147,11 @@
 
 (define (script-fu-make-brush-elliptical name width height spacing)
   (let* (
-        (img (car (gimp-image-new width height GRAY)))
-        (drawable (car (gimp-layer-new img
+        (img (car (picman-image-new width height GRAY)))
+        (drawable (car (picman-layer-new img
                                        width height GRAY-IMAGE
                                        "MakeBrush" 100 NORMAL-MODE)))
-        (filename (string-append gimp-directory
+        (filename (string-append picman-directory
                                  "/brushes/e"
                                  (number->string width)
                                  "x"
@@ -159,27 +159,27 @@
                                  ".gbr"))
         )
 
-    (gimp-context-push)
-    (gimp-context-set-antialias TRUE)
-    (gimp-context-set-feather FALSE)
+    (picman-context-push)
+    (picman-context-set-antialias TRUE)
+    (picman-context-set-feather FALSE)
 
-    (gimp-image-undo-disable img)
-    (gimp-image-insert-layer img drawable 0 0)
+    (picman-image-undo-disable img)
+    (picman-image-insert-layer img drawable 0 0)
 
-    (gimp-context-set-background '(255 255 255))
-    (gimp-drawable-fill drawable BACKGROUND-FILL)
-    (gimp-context-set-background '(0 0 0))
-    (gimp-image-select-ellipse img CHANNEL-OP-REPLACE 0 0 width height)
+    (picman-context-set-background '(255 255 255))
+    (picman-drawable-fill drawable BACKGROUND-FILL)
+    (picman-context-set-background '(0 0 0))
+    (picman-image-select-ellipse img CHANNEL-OP-REPLACE 0 0 width height)
 
-    (gimp-edit-fill drawable BACKGROUND-FILL)
+    (picman-edit-fill drawable BACKGROUND-FILL)
 
     (file-gbr-save 1 img drawable filename "" spacing name)
-    (gimp-image-delete img)
+    (picman-image-delete img)
 
-    (gimp-context-pop)
+    (picman-context-pop)
 
-    (gimp-brushes-refresh)
-    (gimp-context-set-brush name)
+    (picman-brushes-refresh)
+    (picman-context-set-brush name)
   )
 )
 
@@ -206,11 +206,11 @@
   (let* (
         (widthplus (+ feathering width)) ; add 3 for blurring
         (heightplus (+ feathering height))
-        (img (car (gimp-image-new widthplus heightplus GRAY)))
-        (drawable (car (gimp-layer-new img
+        (img (car (picman-image-new widthplus heightplus GRAY)))
+        (drawable (car (picman-layer-new img
                                        widthplus heightplus GRAY-IMAGE
                                        "MakeBrush" 100 NORMAL-MODE)))
-        (filename (string-append gimp-directory
+        (filename (string-append picman-directory
                                  "/brushes/e"
                                  (number->string width)
                                  "x"
@@ -220,35 +220,35 @@
                                  ".gbr"))
         )
 
-    (gimp-context-push)
-    (gimp-context-set-antialias TRUE)
+    (picman-context-push)
+    (picman-context-set-antialias TRUE)
 
-    (gimp-image-undo-disable img)
-    (gimp-image-insert-layer img drawable 0 0)
+    (picman-image-undo-disable img)
+    (picman-image-insert-layer img drawable 0 0)
 
-    (gimp-context-set-background '(255 255 255))
-    (gimp-drawable-fill drawable BACKGROUND-FILL)
+    (picman-context-set-background '(255 255 255))
+    (picman-drawable-fill drawable BACKGROUND-FILL)
 
-    (cond ((> feathering 0)   ; keep from taking out gimp with stupid entry.
-        (gimp-context-set-feather TRUE)
-        (gimp-context-set-feather-radius feathering feathering)
-        (gimp-image-select-ellipse img CHANNEL-OP-REPLACE
+    (cond ((> feathering 0)   ; keep from taking out picman with stupid entry.
+        (picman-context-set-feather TRUE)
+        (picman-context-set-feather-radius feathering feathering)
+        (picman-image-select-ellipse img CHANNEL-OP-REPLACE
            (/ feathering 2) (/ feathering 2)
            width height))
           ((<= feathering 0)
-        (gimp-context-set-feather FALSE)
-        (gimp-image-select-ellipse img CHANNEL-OP-REPLACE 0 0 width height)))
+        (picman-context-set-feather FALSE)
+        (picman-image-select-ellipse img CHANNEL-OP-REPLACE 0 0 width height)))
 
-    (gimp-context-set-background '(0 0 0))
-    (gimp-edit-fill drawable BACKGROUND-FILL)
+    (picman-context-set-background '(0 0 0))
+    (picman-edit-fill drawable BACKGROUND-FILL)
 
     (file-gbr-save 1 img drawable filename "" spacing name)
-    (gimp-image-delete img)
+    (picman-image-delete img)
 
-    (gimp-context-pop)
+    (picman-context-pop)
 
-    (gimp-brushes-refresh)
-    (gimp-context-set-brush name)
+    (picman-brushes-refresh)
+    (picman-context-set-brush name)
   )
 )
 

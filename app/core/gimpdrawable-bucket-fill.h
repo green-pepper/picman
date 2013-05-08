@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,17 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_DRAWABLE_BUCKET_FILL_H__
-#define  __GIMP_DRAWABLE_BUCKET_FILL_H__
+#ifndef  __PICMAN_DRAWABLE_BUCKET_FILL_H__
+#define  __PICMAN_DRAWABLE_BUCKET_FILL_H__
 
 
-gboolean   gimp_drawable_bucket_fill (GimpDrawable         *drawable,
-                                      GimpContext          *context,
-                                      GimpBucketFillMode    fill_mode,
+gboolean   picman_drawable_bucket_fill (PicmanDrawable         *drawable,
+                                      PicmanContext          *context,
+                                      PicmanBucketFillMode    fill_mode,
                                       gint                  paint_mode,
                                       gdouble               opacity,
                                       gboolean              fill_transparent,
-                                      GimpSelectCriterion   fill_criterion,
+                                      PicmanSelectCriterion   fill_criterion,
                                       gdouble               threshold,
                                       gboolean              sample_merged,
                                       gdouble               x,
@@ -33,4 +33,4 @@ gboolean   gimp_drawable_bucket_fill (GimpDrawable         *drawable,
                                       GError              **error);
 
 
-#endif  /*  __GIMP_DRAWABLE_BUCKET_FILL_H__  */
+#endif  /*  __PICMAN_DRAWABLE_BUCKET_FILL_H__  */

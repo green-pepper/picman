@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,10 +25,10 @@
 
 #include "core-types.h"
 
-#include "gimptempbuf.h"
+#include "picmantempbuf.h"
 
 
-struct _GimpTempBuf
+struct _PicmanTempBuf
 {
   gint        ref_count;
   gint        width;
@@ -38,17 +38,17 @@ struct _GimpTempBuf
 };
 
 
-GimpTempBuf *
-gimp_temp_buf_new (gint        width,
+PicmanTempBuf *
+picman_temp_buf_new (gint        width,
                    gint        height,
                    const Babl *format)
 {
-  GimpTempBuf *temp;
+  PicmanTempBuf *temp;
 
   g_return_val_if_fail (width > 0 && height > 0, NULL);
   g_return_val_if_fail (format != NULL, NULL);
 
-  temp = g_slice_new (GimpTempBuf);
+  temp = g_slice_new (PicmanTempBuf);
 
   temp->ref_count = 1;
   temp->width     = width;
@@ -61,24 +61,24 @@ gimp_temp_buf_new (gint        width,
   return temp;
 }
 
-GimpTempBuf *
-gimp_temp_buf_copy (const GimpTempBuf *src)
+PicmanTempBuf *
+picman_temp_buf_copy (const PicmanTempBuf *src)
 {
-  GimpTempBuf *dest;
+  PicmanTempBuf *dest;
 
   g_return_val_if_fail (src != NULL, NULL);
 
-  dest = gimp_temp_buf_new (src->width, src->height, src->format);
+  dest = picman_temp_buf_new (src->width, src->height, src->format);
 
-  memcpy (gimp_temp_buf_get_data (dest),
-          gimp_temp_buf_get_data (src),
-          gimp_temp_buf_get_data_size (src));
+  memcpy (picman_temp_buf_get_data (dest),
+          picman_temp_buf_get_data (src),
+          picman_temp_buf_get_data_size (src));
 
   return dest;
 }
 
-GimpTempBuf *
-gimp_temp_buf_ref (GimpTempBuf *buf)
+PicmanTempBuf *
+picman_temp_buf_ref (PicmanTempBuf *buf)
 {
   g_return_val_if_fail (buf != NULL, NULL);
 
@@ -88,7 +88,7 @@ gimp_temp_buf_ref (GimpTempBuf *buf)
 }
 
 void
-gimp_temp_buf_unref (GimpTempBuf *buf)
+picman_temp_buf_unref (PicmanTempBuf *buf)
 {
   g_return_if_fail (buf != NULL);
   g_return_if_fail (buf->ref_count > 0);
@@ -100,16 +100,16 @@ gimp_temp_buf_unref (GimpTempBuf *buf)
       if (buf->data)
         g_free (buf->data);
 
-      g_slice_free (GimpTempBuf, buf);
+      g_slice_free (PicmanTempBuf, buf);
     }
 }
 
-GimpTempBuf *
-gimp_temp_buf_scale (const GimpTempBuf *src,
+PicmanTempBuf *
+picman_temp_buf_scale (const PicmanTempBuf *src,
                      gint               new_width,
                      gint               new_height)
 {
-  GimpTempBuf  *dest;
+  PicmanTempBuf  *dest;
   const guchar *src_data;
   guchar       *dest_data;
   gdouble       x_ratio;
@@ -122,14 +122,14 @@ gimp_temp_buf_scale (const GimpTempBuf *src,
   g_return_val_if_fail (new_width > 0 && new_height > 0, NULL);
 
   if (new_width == src->width && new_height == src->height)
-    return gimp_temp_buf_copy (src);
+    return picman_temp_buf_copy (src);
 
-  dest = gimp_temp_buf_new (new_width,
+  dest = picman_temp_buf_new (new_width,
                             new_height,
                             src->format);
 
-  src_data  = gimp_temp_buf_get_data (src);
-  dest_data = gimp_temp_buf_get_data (dest);
+  src_data  = picman_temp_buf_get_data (src);
+  dest_data = picman_temp_buf_get_data (dest);
 
   x_ratio = (gdouble) src->width  / (gdouble) new_width;
   y_ratio = (gdouble) src->height / (gdouble) new_height;
@@ -160,25 +160,25 @@ gimp_temp_buf_scale (const GimpTempBuf *src,
 }
 
 gint
-gimp_temp_buf_get_width (const GimpTempBuf *buf)
+picman_temp_buf_get_width (const PicmanTempBuf *buf)
 {
   return buf->width;
 }
 
 gint
-gimp_temp_buf_get_height (const GimpTempBuf *buf)
+picman_temp_buf_get_height (const PicmanTempBuf *buf)
 {
   return buf->height;
 }
 
 const Babl *
-gimp_temp_buf_get_format (const GimpTempBuf *buf)
+picman_temp_buf_get_format (const PicmanTempBuf *buf)
 {
   return buf->format;
 }
 
 void
-gimp_temp_buf_set_format (GimpTempBuf *buf,
+picman_temp_buf_set_format (PicmanTempBuf *buf,
                           const Babl  *format)
 {
   g_return_if_fail (babl_format_get_bytes_per_pixel (buf->format) ==
@@ -188,60 +188,60 @@ gimp_temp_buf_set_format (GimpTempBuf *buf,
 }
 
 guchar *
-gimp_temp_buf_get_data (const GimpTempBuf *buf)
+picman_temp_buf_get_data (const PicmanTempBuf *buf)
 {
   return buf->data;
 }
 
 gsize
-gimp_temp_buf_get_data_size (const GimpTempBuf *buf)
+picman_temp_buf_get_data_size (const PicmanTempBuf *buf)
 {
   return babl_format_get_bytes_per_pixel (buf->format) * buf->width * buf->height;
 }
 
 guchar *
-gimp_temp_buf_data_clear (GimpTempBuf *buf)
+picman_temp_buf_data_clear (PicmanTempBuf *buf)
 {
-  memset (buf->data, 0, gimp_temp_buf_get_data_size (buf));
+  memset (buf->data, 0, picman_temp_buf_get_data_size (buf));
 
   return buf->data;
 }
 
 gsize
-gimp_temp_buf_get_memsize (const GimpTempBuf *buf)
+picman_temp_buf_get_memsize (const PicmanTempBuf *buf)
 {
   if (buf)
-    return (sizeof (GimpTempBuf) + gimp_temp_buf_get_data_size (buf));
+    return (sizeof (PicmanTempBuf) + picman_temp_buf_get_data_size (buf));
 
   return 0;
 }
 
 GeglBuffer  *
-gimp_temp_buf_create_buffer (GimpTempBuf *temp_buf)
+picman_temp_buf_create_buffer (PicmanTempBuf *temp_buf)
 {
   GeglBuffer *buffer;
 
   g_return_val_if_fail (temp_buf != NULL, NULL);
 
   buffer =
-    gegl_buffer_linear_new_from_data (gimp_temp_buf_get_data (temp_buf),
+    gegl_buffer_linear_new_from_data (picman_temp_buf_get_data (temp_buf),
                                       temp_buf->format,
                                       GEGL_RECTANGLE (0, 0,
                                                       temp_buf->width,
                                                       temp_buf->height),
                                       GEGL_AUTO_ROWSTRIDE,
-                                      (GDestroyNotify) gimp_temp_buf_unref,
-                                      gimp_temp_buf_ref (temp_buf));
+                                      (GDestroyNotify) picman_temp_buf_unref,
+                                      picman_temp_buf_ref (temp_buf));
 
-  g_object_set_data (G_OBJECT (buffer), "gimp-temp-buf", temp_buf);
+  g_object_set_data (G_OBJECT (buffer), "picman-temp-buf", temp_buf);
 
   return buffer;
 }
 
-GimpTempBuf *
-gimp_gegl_buffer_get_temp_buf (GeglBuffer *buffer)
+PicmanTempBuf *
+picman_gegl_buffer_get_temp_buf (GeglBuffer *buffer)
 {
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
 
-  return g_object_get_data (G_OBJECT (buffer), "gimp-temp-buf");
+  return g_object_get_data (G_OBJECT (buffer), "picman-temp-buf");
 }

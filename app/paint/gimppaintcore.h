@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,37 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PAINT_CORE_H__
-#define __GIMP_PAINT_CORE_H__
+#ifndef __PICMAN_PAINT_CORE_H__
+#define __PICMAN_PAINT_CORE_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-#define GIMP_TYPE_PAINT_CORE            (gimp_paint_core_get_type ())
-#define GIMP_PAINT_CORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PAINT_CORE, GimpPaintCore))
-#define GIMP_PAINT_CORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PAINT_CORE, GimpPaintCoreClass))
-#define GIMP_IS_PAINT_CORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PAINT_CORE))
-#define GIMP_IS_PAINT_CORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PAINT_CORE))
-#define GIMP_PAINT_CORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PAINT_CORE, GimpPaintCoreClass))
+#define PICMAN_TYPE_PAINT_CORE            (picman_paint_core_get_type ())
+#define PICMAN_PAINT_CORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PAINT_CORE, PicmanPaintCore))
+#define PICMAN_PAINT_CORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PAINT_CORE, PicmanPaintCoreClass))
+#define PICMAN_IS_PAINT_CORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PAINT_CORE))
+#define PICMAN_IS_PAINT_CORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PAINT_CORE))
+#define PICMAN_PAINT_CORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PAINT_CORE, PicmanPaintCoreClass))
 
 
-typedef struct _GimpPaintCoreClass GimpPaintCoreClass;
+typedef struct _PicmanPaintCoreClass PicmanPaintCoreClass;
 
-struct _GimpPaintCore
+struct _PicmanPaintCore
 {
-  GimpObject   parent_instance;
+  PicmanObject   parent_instance;
 
   gint         ID;                /*  unique instance ID                  */
 
   gchar       *undo_desc;         /*  undo description                    */
 
-  GimpCoords   start_coords;      /*  starting coords (for undo only)     */
+  PicmanCoords   start_coords;      /*  starting coords (for undo only)     */
 
-  GimpCoords   cur_coords;        /*  current coords                      */
-  GimpCoords   last_coords;       /*  last coords                         */
+  PicmanCoords   cur_coords;        /*  current coords                      */
+  PicmanCoords   last_coords;       /*  last coords                         */
 
-  GimpVector2  last_paint;        /*  last point that was painted         */
+  PicmanVector2  last_paint;        /*  last point that was painted         */
 
   gdouble      distance;          /*  distance traveled by brush          */
   gdouble      pixel_dist;        /*  distance in pixels                  */
@@ -65,127 +65,127 @@ struct _GimpPaintCore
 
   GArray      *stroke_buffer;
 
-  GimpApplicator *applicator;
+  PicmanApplicator *applicator;
 };
 
-struct _GimpPaintCoreClass
+struct _PicmanPaintCoreClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 
   /*  virtual functions  */
-  gboolean     (* start)            (GimpPaintCore    *core,
-                                     GimpDrawable     *drawable,
-                                     GimpPaintOptions *paint_options,
-                                     const GimpCoords *coords,
+  gboolean     (* start)            (PicmanPaintCore    *core,
+                                     PicmanDrawable     *drawable,
+                                     PicmanPaintOptions *paint_options,
+                                     const PicmanCoords *coords,
                                      GError          **error);
 
-  gboolean     (* pre_paint)        (GimpPaintCore    *core,
-                                     GimpDrawable     *drawable,
-                                     GimpPaintOptions *paint_options,
-                                     GimpPaintState    paint_state,
+  gboolean     (* pre_paint)        (PicmanPaintCore    *core,
+                                     PicmanDrawable     *drawable,
+                                     PicmanPaintOptions *paint_options,
+                                     PicmanPaintState    paint_state,
                                      guint32           time);
-  void         (* paint)            (GimpPaintCore    *core,
-                                     GimpDrawable     *drawable,
-                                     GimpPaintOptions *paint_options,
-                                     const GimpCoords *coords,
-                                     GimpPaintState    paint_state,
+  void         (* paint)            (PicmanPaintCore    *core,
+                                     PicmanDrawable     *drawable,
+                                     PicmanPaintOptions *paint_options,
+                                     const PicmanCoords *coords,
+                                     PicmanPaintState    paint_state,
                                      guint32           time);
-  void         (* post_paint)       (GimpPaintCore    *core,
-                                     GimpDrawable     *drawable,
-                                     GimpPaintOptions *paint_options,
-                                     GimpPaintState    paint_state,
-                                     guint32           time);
-
-  void         (* interpolate)      (GimpPaintCore    *core,
-                                     GimpDrawable     *drawable,
-                                     GimpPaintOptions *paint_options,
+  void         (* post_paint)       (PicmanPaintCore    *core,
+                                     PicmanDrawable     *drawable,
+                                     PicmanPaintOptions *paint_options,
+                                     PicmanPaintState    paint_state,
                                      guint32           time);
 
-  GeglBuffer * (* get_paint_buffer) (GimpPaintCore    *core,
-                                     GimpDrawable     *drawable,
-                                     GimpPaintOptions *paint_options,
-                                     const GimpCoords *coords,
+  void         (* interpolate)      (PicmanPaintCore    *core,
+                                     PicmanDrawable     *drawable,
+                                     PicmanPaintOptions *paint_options,
+                                     guint32           time);
+
+  GeglBuffer * (* get_paint_buffer) (PicmanPaintCore    *core,
+                                     PicmanDrawable     *drawable,
+                                     PicmanPaintOptions *paint_options,
+                                     const PicmanCoords *coords,
                                      gint             *paint_buffer_x,
                                      gint             *paint_buffer_y);
 
-  GimpUndo   * (* push_undo)        (GimpPaintCore    *core,
-                                     GimpImage        *image,
+  PicmanUndo   * (* push_undo)        (PicmanPaintCore    *core,
+                                     PicmanImage        *image,
                                      const gchar      *undo_desc);
 };
 
 
-GType     gimp_paint_core_get_type                  (void) G_GNUC_CONST;
+GType     picman_paint_core_get_type                  (void) G_GNUC_CONST;
 
-void      gimp_paint_core_paint                     (GimpPaintCore    *core,
-                                                     GimpDrawable     *drawable,
-                                                     GimpPaintOptions *paint_options,
-                                                     GimpPaintState    state,
+void      picman_paint_core_paint                     (PicmanPaintCore    *core,
+                                                     PicmanDrawable     *drawable,
+                                                     PicmanPaintOptions *paint_options,
+                                                     PicmanPaintState    state,
                                                      guint32           time);
 
-gboolean  gimp_paint_core_start                     (GimpPaintCore    *core,
-                                                     GimpDrawable     *drawable,
-                                                     GimpPaintOptions *paint_options,
-                                                     const GimpCoords *coords,
+gboolean  picman_paint_core_start                     (PicmanPaintCore    *core,
+                                                     PicmanDrawable     *drawable,
+                                                     PicmanPaintOptions *paint_options,
+                                                     const PicmanCoords *coords,
                                                      GError          **error);
-void      gimp_paint_core_finish                    (GimpPaintCore    *core,
-                                                     GimpDrawable     *drawable,
+void      picman_paint_core_finish                    (PicmanPaintCore    *core,
+                                                     PicmanDrawable     *drawable,
                                                      gboolean          push_undo);
-void      gimp_paint_core_cancel                    (GimpPaintCore    *core,
-                                                     GimpDrawable     *drawable);
-void      gimp_paint_core_cleanup                   (GimpPaintCore    *core);
+void      picman_paint_core_cancel                    (PicmanPaintCore    *core,
+                                                     PicmanDrawable     *drawable);
+void      picman_paint_core_cleanup                   (PicmanPaintCore    *core);
 
-void      gimp_paint_core_interpolate               (GimpPaintCore    *core,
-                                                     GimpDrawable     *drawable,
-                                                     GimpPaintOptions *paint_options,
-                                                     const GimpCoords *coords,
+void      picman_paint_core_interpolate               (PicmanPaintCore    *core,
+                                                     PicmanDrawable     *drawable,
+                                                     PicmanPaintOptions *paint_options,
+                                                     const PicmanCoords *coords,
                                                      guint32           time);
 
-void      gimp_paint_core_set_current_coords        (GimpPaintCore    *core,
-                                                     const GimpCoords *coords);
-void      gimp_paint_core_get_current_coords        (GimpPaintCore    *core,
-                                                     GimpCoords       *coords);
+void      picman_paint_core_set_current_coords        (PicmanPaintCore    *core,
+                                                     const PicmanCoords *coords);
+void      picman_paint_core_get_current_coords        (PicmanPaintCore    *core,
+                                                     PicmanCoords       *coords);
 
-void      gimp_paint_core_set_last_coords           (GimpPaintCore    *core,
-                                                     const GimpCoords *coords);
-void      gimp_paint_core_get_last_coords           (GimpPaintCore    *core,
-                                                     GimpCoords       *coords);
+void      picman_paint_core_set_last_coords           (PicmanPaintCore    *core,
+                                                     const PicmanCoords *coords);
+void      picman_paint_core_get_last_coords           (PicmanPaintCore    *core,
+                                                     PicmanCoords       *coords);
 
-void      gimp_paint_core_round_line                (GimpPaintCore    *core,
-                                                     GimpPaintOptions *options,
+void      picman_paint_core_round_line                (PicmanPaintCore    *core,
+                                                     PicmanPaintOptions *options,
                                                      gboolean          constrain_15_degrees);
 
 
 /*  protected functions  */
 
-GeglBuffer * gimp_paint_core_get_paint_buffer       (GimpPaintCore    *core,
-                                                     GimpDrawable     *drawable,
-                                                     GimpPaintOptions *options,
-                                                     const GimpCoords *coords,
+GeglBuffer * picman_paint_core_get_paint_buffer       (PicmanPaintCore    *core,
+                                                     PicmanDrawable     *drawable,
+                                                     PicmanPaintOptions *options,
+                                                     const PicmanCoords *coords,
                                                      gint             *paint_buffer_x,
                                                      gint             *paint_buffer_y);
 
-GeglBuffer * gimp_paint_core_get_orig_image         (GimpPaintCore    *core);
-GeglBuffer * gimp_paint_core_get_orig_proj          (GimpPaintCore    *core);
+GeglBuffer * picman_paint_core_get_orig_image         (PicmanPaintCore    *core);
+GeglBuffer * picman_paint_core_get_orig_proj          (PicmanPaintCore    *core);
 
-void      gimp_paint_core_paste             (GimpPaintCore            *core,
+void      picman_paint_core_paste             (PicmanPaintCore            *core,
                                              GeglBuffer               *paint_mask,
                                              const GeglRectangle      *paint_mask_rect,
-                                             GimpDrawable             *drawable,
+                                             PicmanDrawable             *drawable,
                                              gdouble                   paint_opacity,
                                              gdouble                   image_opacity,
-                                             GimpLayerModeEffects      paint_mode,
-                                             GimpPaintApplicationMode  mode);
-void      gimp_paint_core_replace           (GimpPaintCore            *core,
+                                             PicmanLayerModeEffects      paint_mode,
+                                             PicmanPaintApplicationMode  mode);
+void      picman_paint_core_replace           (PicmanPaintCore            *core,
                                              GeglBuffer               *paint_mask,
                                              const GeglRectangle      *paint_mask_rect,
-                                             GimpDrawable             *drawable,
+                                             PicmanDrawable             *drawable,
                                              gdouble                   paint_opacity,
                                              gdouble                   image_opacity,
-                                             GimpPaintApplicationMode  mode);
+                                             PicmanPaintApplicationMode  mode);
 
-void      gimp_paint_core_smooth_coords             (GimpPaintCore    *core,
-                                                     GimpPaintOptions *paint_options,
-                                                     GimpCoords       *coords);
+void      picman_paint_core_smooth_coords             (PicmanPaintCore    *core,
+                                                     PicmanPaintOptions *paint_options,
+                                                     PicmanCoords       *coords);
 
 
-#endif  /*  __GIMP_PAINT_CORE_H__  */
+#endif  /*  __PICMAN_PAINT_CORE_H__  */

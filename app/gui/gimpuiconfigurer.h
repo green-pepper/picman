@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpuiconfigurer.h
+ * picmanuiconfigurer.h
  * Copyright (C) 2009 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,40 +18,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_UI_CONFIGURER_H__
-#define __GIMP_UI_CONFIGURER_H__
+#ifndef __PICMAN_UI_CONFIGURER_H__
+#define __PICMAN_UI_CONFIGURER_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-#define GIMP_TYPE_UI_CONFIGURER              (gimp_ui_configurer_get_type ())
-#define GIMP_UI_CONFIGURER(obj)              (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_UI_CONFIGURER, GimpUIConfigurer))
-#define GIMP_UI_CONFIGURER_CLASS(vtable)     (G_TYPE_CHECK_CLASS_CAST ((vtable), GIMP_TYPE_UI_CONFIGURER, GimpUIConfigurerClass))
-#define GIMP_IS_UI_CONFIGURER(obj)           (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_UI_CONFIGURER))
-#define GIMP_IS_UI_CONFIGURER_CLASS(vtable)  (G_TYPE_CHECK_CLASS_TYPE ((vtable), GIMP_TYPE_UI_CONFIGURER))
-#define GIMP_UI_CONFIGURER_GET_CLASS(inst)   (G_TYPE_INSTANCE_GET_CLASS ((inst), GIMP_TYPE_UI_CONFIGURER, GimpUIConfigurerClass))
+#define PICMAN_TYPE_UI_CONFIGURER              (picman_ui_configurer_get_type ())
+#define PICMAN_UI_CONFIGURER(obj)              (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_UI_CONFIGURER, PicmanUIConfigurer))
+#define PICMAN_UI_CONFIGURER_CLASS(vtable)     (G_TYPE_CHECK_CLASS_CAST ((vtable), PICMAN_TYPE_UI_CONFIGURER, PicmanUIConfigurerClass))
+#define PICMAN_IS_UI_CONFIGURER(obj)           (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_UI_CONFIGURER))
+#define PICMAN_IS_UI_CONFIGURER_CLASS(vtable)  (G_TYPE_CHECK_CLASS_TYPE ((vtable), PICMAN_TYPE_UI_CONFIGURER))
+#define PICMAN_UI_CONFIGURER_GET_CLASS(inst)   (G_TYPE_INSTANCE_GET_CLASS ((inst), PICMAN_TYPE_UI_CONFIGURER, PicmanUIConfigurerClass))
 
 
-typedef struct _GimpUIConfigurerClass   GimpUIConfigurerClass;
-typedef struct _GimpUIConfigurerPrivate GimpUIConfigurerPrivate;
+typedef struct _PicmanUIConfigurerClass   PicmanUIConfigurerClass;
+typedef struct _PicmanUIConfigurerPrivate PicmanUIConfigurerPrivate;
 
-struct _GimpUIConfigurer
+struct _PicmanUIConfigurer
 {
-  GimpObject parent_instance;
+  PicmanObject parent_instance;
 
-  GimpUIConfigurerPrivate *p;
+  PicmanUIConfigurerPrivate *p;
 };
 
-struct _GimpUIConfigurerClass
+struct _PicmanUIConfigurerClass
 {
-  GimpObjectClass parent_class;
+  PicmanObjectClass parent_class;
 };
 
 
-GType         gimp_ui_configurer_get_type  (void) G_GNUC_CONST;
-void          gimp_ui_configurer_configure (GimpUIConfigurer *ui_configurer,
+GType         picman_ui_configurer_get_type  (void) G_GNUC_CONST;
+void          picman_ui_configurer_configure (PicmanUIConfigurer *ui_configurer,
                                             gboolean          single_window_mode);
 
 
-#endif  /* __GIMP_UI_CONFIGURER_H__ */
+#endif  /* __PICMAN_UI_CONFIGURER_H__ */

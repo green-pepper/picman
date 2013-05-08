@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpTextStyleEditor
- * Copyright (C) 2010  Michael Natterer <mitch@gimp.org>
+ * PicmanTextStyleEditor
+ * Copyright (C) 2010  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,32 +23,32 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
 
-#include "text/gimpfontlist.h"
-#include "text/gimptext.h"
+#include "text/picmanfontlist.h"
+#include "text/picmantext.h"
 
-#include "gimpcolorpanel.h"
-#include "gimpcontainerentry.h"
-#include "gimpcontainerview.h"
-#include "gimptextbuffer.h"
-#include "gimptextstyleeditor.h"
-#include "gimptexttag.h"
+#include "picmancolorpanel.h"
+#include "picmancontainerentry.h"
+#include "picmancontainerview.h"
+#include "picmantextbuffer.h"
+#include "picmantextstyleeditor.h"
+#include "picmantexttag.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
 {
   PROP_0,
-  PROP_GIMP,
+  PROP_PICMAN,
   PROP_TEXT,
   PROP_BUFFER,
   PROP_FONTS,
@@ -57,134 +57,134 @@ enum
 };
 
 
-static void      gimp_text_style_editor_constructed       (GObject             *object);
-static void      gimp_text_style_editor_dispose           (GObject             *object);
-static void      gimp_text_style_editor_finalize          (GObject             *object);
-static void      gimp_text_style_editor_set_property      (GObject             *object,
+static void      picman_text_style_editor_constructed       (GObject             *object);
+static void      picman_text_style_editor_dispose           (GObject             *object);
+static void      picman_text_style_editor_finalize          (GObject             *object);
+static void      picman_text_style_editor_set_property      (GObject             *object,
                                                            guint                property_id,
                                                            const GValue        *value,
                                                            GParamSpec          *pspec);
-static void      gimp_text_style_editor_get_property      (GObject             *object,
+static void      picman_text_style_editor_get_property      (GObject             *object,
                                                            guint                property_id,
                                                            GValue              *value,
                                                            GParamSpec          *pspec);
 
-static GtkWidget * gimp_text_style_editor_create_toggle   (GimpTextStyleEditor *editor,
+static GtkWidget * picman_text_style_editor_create_toggle   (PicmanTextStyleEditor *editor,
                                                            GtkTextTag          *tag,
                                                            const gchar         *stock_id,
                                                            const gchar         *tooltip);
 
-static void      gimp_text_style_editor_clear_tags        (GtkButton           *button,
-                                                           GimpTextStyleEditor *editor);
+static void      picman_text_style_editor_clear_tags        (GtkButton           *button,
+                                                           PicmanTextStyleEditor *editor);
 
-static void      gimp_text_style_editor_font_changed      (GimpContext         *context,
-                                                           GimpFont            *font,
-                                                           GimpTextStyleEditor *editor);
-static void      gimp_text_style_editor_set_font          (GimpTextStyleEditor *editor,
+static void      picman_text_style_editor_font_changed      (PicmanContext         *context,
+                                                           PicmanFont            *font,
+                                                           PicmanTextStyleEditor *editor);
+static void      picman_text_style_editor_set_font          (PicmanTextStyleEditor *editor,
                                                            GtkTextTag          *font_tag);
-static void      gimp_text_style_editor_set_default_font  (GimpTextStyleEditor *editor);
+static void      picman_text_style_editor_set_default_font  (PicmanTextStyleEditor *editor);
 
-static void      gimp_text_style_editor_color_changed     (GimpColorButton     *button,
-                                                           GimpTextStyleEditor *editor);
-static void      gimp_text_style_editor_set_color         (GimpTextStyleEditor *editor,
+static void      picman_text_style_editor_color_changed     (PicmanColorButton     *button,
+                                                           PicmanTextStyleEditor *editor);
+static void      picman_text_style_editor_set_color         (PicmanTextStyleEditor *editor,
                                                            GtkTextTag          *color_tag);
-static void      gimp_text_style_editor_set_default_color (GimpTextStyleEditor *editor);
+static void      picman_text_style_editor_set_default_color (PicmanTextStyleEditor *editor);
 
-static void      gimp_text_style_editor_tag_toggled       (GtkToggleButton     *toggle,
-                                                           GimpTextStyleEditor *editor);
-static void      gimp_text_style_editor_set_toggle        (GimpTextStyleEditor *editor,
+static void      picman_text_style_editor_tag_toggled       (GtkToggleButton     *toggle,
+                                                           PicmanTextStyleEditor *editor);
+static void      picman_text_style_editor_set_toggle        (PicmanTextStyleEditor *editor,
                                                            GtkToggleButton     *toggle,
                                                            gboolean             active);
 
-static void      gimp_text_style_editor_size_changed      (GimpSizeEntry       *entry,
-                                                           GimpTextStyleEditor *editor);
-static void      gimp_text_style_editor_set_size          (GimpTextStyleEditor *editor,
+static void      picman_text_style_editor_size_changed      (PicmanSizeEntry       *entry,
+                                                           PicmanTextStyleEditor *editor);
+static void      picman_text_style_editor_set_size          (PicmanTextStyleEditor *editor,
                                                            GtkTextTag          *size_tag);
-static void      gimp_text_style_editor_set_default_size  (GimpTextStyleEditor *editor);
+static void      picman_text_style_editor_set_default_size  (PicmanTextStyleEditor *editor);
 
-static void      gimp_text_style_editor_baseline_changed  (GtkAdjustment       *adjustment,
-                                                           GimpTextStyleEditor *editor);
-static void      gimp_text_style_editor_set_baseline      (GimpTextStyleEditor *editor,
+static void      picman_text_style_editor_baseline_changed  (GtkAdjustment       *adjustment,
+                                                           PicmanTextStyleEditor *editor);
+static void      picman_text_style_editor_set_baseline      (PicmanTextStyleEditor *editor,
                                                            GtkTextTag          *baseline_tag);
 
-static void      gimp_text_style_editor_kerning_changed   (GtkAdjustment       *adjustment,
-                                                           GimpTextStyleEditor *editor);
-static void      gimp_text_style_editor_set_kerning       (GimpTextStyleEditor *editor,
+static void      picman_text_style_editor_kerning_changed   (GtkAdjustment       *adjustment,
+                                                           PicmanTextStyleEditor *editor);
+static void      picman_text_style_editor_set_kerning       (PicmanTextStyleEditor *editor,
                                                            GtkTextTag          *kerning_tag);
 
-static void      gimp_text_style_editor_update            (GimpTextStyleEditor *editor);
-static gboolean  gimp_text_style_editor_update_idle       (GimpTextStyleEditor *editor);
+static void      picman_text_style_editor_update            (PicmanTextStyleEditor *editor);
+static gboolean  picman_text_style_editor_update_idle       (PicmanTextStyleEditor *editor);
 
 
-G_DEFINE_TYPE (GimpTextStyleEditor, gimp_text_style_editor,
+G_DEFINE_TYPE (PicmanTextStyleEditor, picman_text_style_editor,
                GTK_TYPE_BOX)
 
-#define parent_class gimp_text_style_editor_parent_class
+#define parent_class picman_text_style_editor_parent_class
 
 
 static void
-gimp_text_style_editor_class_init (GimpTextStyleEditorClass *klass)
+picman_text_style_editor_class_init (PicmanTextStyleEditorClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_text_style_editor_constructed;
-  object_class->dispose      = gimp_text_style_editor_dispose;
-  object_class->finalize     = gimp_text_style_editor_finalize;
-  object_class->set_property = gimp_text_style_editor_set_property;
-  object_class->get_property = gimp_text_style_editor_get_property;
+  object_class->constructed  = picman_text_style_editor_constructed;
+  object_class->dispose      = picman_text_style_editor_dispose;
+  object_class->finalize     = picman_text_style_editor_finalize;
+  object_class->set_property = picman_text_style_editor_set_property;
+  object_class->get_property = picman_text_style_editor_get_property;
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp",
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_TEXT,
                                    g_param_spec_object ("text",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_TEXT,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_TEXT,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_BUFFER,
                                    g_param_spec_object ("buffer",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_TEXT_BUFFER,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_TEXT_BUFFER,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_FONTS,
                                    g_param_spec_object ("fonts",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_FONT_LIST,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_FONT_LIST,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_RESOLUTION_X,
                                    g_param_spec_double ("resolution-x",
                                                         NULL, NULL,
-                                                        GIMP_MIN_RESOLUTION,
-                                                        GIMP_MAX_RESOLUTION,
+                                                        PICMAN_MIN_RESOLUTION,
+                                                        PICMAN_MAX_RESOLUTION,
                                                         1.0,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_RESOLUTION_Y,
                                    g_param_spec_double ("resolution-y",
                                                         NULL, NULL,
-                                                        GIMP_MIN_RESOLUTION,
-                                                        GIMP_MAX_RESOLUTION,
+                                                        PICMAN_MIN_RESOLUTION,
+                                                        PICMAN_MAX_RESOLUTION,
                                                         1.0,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_text_style_editor_init (GimpTextStyleEditor *editor)
+picman_text_style_editor_init (PicmanTextStyleEditor *editor)
 {
   GtkWidget *image;
-  GimpRGB    color;
+  PicmanRGB    color;
 
   gtk_orientable_set_orientation (GTK_ORIENTABLE (editor),
                                   GTK_ORIENTATION_VERTICAL);
@@ -196,28 +196,28 @@ gimp_text_style_editor_init (GimpTextStyleEditor *editor)
   gtk_box_pack_start (GTK_BOX (editor), editor->upper_hbox, FALSE, FALSE, 0);
   gtk_widget_show (editor->upper_hbox);
 
-  editor->font_entry = gimp_container_entry_new (NULL, NULL,
-                                                 GIMP_VIEW_SIZE_SMALL, 1);
+  editor->font_entry = picman_container_entry_new (NULL, NULL,
+                                                 PICMAN_VIEW_SIZE_SMALL, 1);
   gtk_box_pack_start (GTK_BOX (editor->upper_hbox), editor->font_entry,
                       FALSE, FALSE, 0);
   gtk_widget_show (editor->font_entry);
 
-  gimp_help_set_help_data (editor->font_entry,
+  picman_help_set_help_data (editor->font_entry,
                            _("Change font of selected text"), NULL);
 
   editor->size_entry =
-    gimp_size_entry_new (1, 0, "%a", TRUE, FALSE, FALSE, 10,
-                         GIMP_SIZE_ENTRY_UPDATE_SIZE);
+    picman_size_entry_new (1, 0, "%a", TRUE, FALSE, FALSE, 10,
+                         PICMAN_SIZE_ENTRY_UPDATE_SIZE);
   gtk_table_set_col_spacing (GTK_TABLE (editor->size_entry), 1, 0);
   gtk_box_pack_start (GTK_BOX (editor->upper_hbox), editor->size_entry,
                       FALSE, FALSE, 0);
   gtk_widget_show (editor->size_entry);
 
-  gimp_help_set_help_data (editor->size_entry,
+  picman_help_set_help_data (editor->size_entry,
                            _("Change size of selected text"), NULL);
 
   g_signal_connect (editor->size_entry, "value-changed",
-                    G_CALLBACK (gimp_text_style_editor_size_changed),
+                    G_CALLBACK (picman_text_style_editor_size_changed),
                     editor);
 
   /*  lower row  */
@@ -232,31 +232,31 @@ gimp_text_style_editor_init (GimpTextStyleEditor *editor)
                       FALSE, FALSE, 0);
   gtk_widget_show (editor->clear_button);
 
-  gimp_help_set_help_data (editor->clear_button,
+  picman_help_set_help_data (editor->clear_button,
                            _("Clear style of selected text"), NULL);
 
   g_signal_connect (editor->clear_button, "clicked",
-                    G_CALLBACK (gimp_text_style_editor_clear_tags),
+                    G_CALLBACK (picman_text_style_editor_clear_tags),
                     editor);
 
   image = gtk_image_new_from_stock (GTK_STOCK_CLEAR, GTK_ICON_SIZE_MENU);
   gtk_container_add (GTK_CONTAINER (editor->clear_button), image);
   gtk_widget_show (image);
 
-  gimp_rgba_set (&color, 0.0, 0.0, 0.0, 1.0);
-  editor->color_button = gimp_color_panel_new (_("Change color of selected text"),
+  picman_rgba_set (&color, 0.0, 0.0, 0.0, 1.0);
+  editor->color_button = picman_color_panel_new (_("Change color of selected text"),
                                                &color,
-                                               GIMP_COLOR_AREA_FLAT, 20, 20);
+                                               PICMAN_COLOR_AREA_FLAT, 20, 20);
 
   gtk_box_pack_end (GTK_BOX (editor->lower_hbox), editor->color_button,
                     FALSE, FALSE, 0);
   gtk_widget_show (editor->color_button);
 
-  gimp_help_set_help_data (editor->color_button,
+  picman_help_set_help_data (editor->color_button,
                            _("Change color of selected text"), NULL);
 
   g_signal_connect (editor->color_button, "color-changed",
-                    G_CALLBACK (gimp_text_style_editor_color_changed),
+                    G_CALLBACK (picman_text_style_editor_color_changed),
                     editor);
 
   editor->kerning_adjustment =
@@ -268,11 +268,11 @@ gimp_text_style_editor_init (GimpTextStyleEditor *editor)
                     FALSE, FALSE, 0);
   gtk_widget_show (editor->kerning_spinbutton);
 
-  gimp_help_set_help_data (editor->kerning_spinbutton,
+  picman_help_set_help_data (editor->kerning_spinbutton,
                            _("Change kerning of selected text"), NULL);
 
   g_signal_connect (editor->kerning_adjustment, "value-changed",
-                    G_CALLBACK (gimp_text_style_editor_kerning_changed),
+                    G_CALLBACK (picman_text_style_editor_kerning_changed),
                     editor);
 
   editor->baseline_adjustment =
@@ -284,106 +284,106 @@ gimp_text_style_editor_init (GimpTextStyleEditor *editor)
                     FALSE, FALSE, 0);
   gtk_widget_show (editor->baseline_spinbutton);
 
-  gimp_help_set_help_data (editor->baseline_spinbutton,
+  picman_help_set_help_data (editor->baseline_spinbutton,
                            _("Change baseline of selected text"), NULL);
 
   g_signal_connect (editor->baseline_adjustment, "value-changed",
-                    G_CALLBACK (gimp_text_style_editor_baseline_changed),
+                    G_CALLBACK (picman_text_style_editor_baseline_changed),
                     editor);
 }
 
 static void
-gimp_text_style_editor_constructed (GObject *object)
+picman_text_style_editor_constructed (GObject *object)
 {
-  GimpTextStyleEditor *editor = GIMP_TEXT_STYLE_EDITOR (object);
+  PicmanTextStyleEditor *editor = PICMAN_TEXT_STYLE_EDITOR (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_GIMP (editor->gimp));
-  g_assert (GIMP_IS_FONT_LIST (editor->fonts));
-  g_assert (GIMP_IS_TEXT (editor->text));
-  g_assert (GIMP_IS_TEXT_BUFFER (editor->buffer));
+  g_assert (PICMAN_IS_PICMAN (editor->picman));
+  g_assert (PICMAN_IS_FONT_LIST (editor->fonts));
+  g_assert (PICMAN_IS_TEXT (editor->text));
+  g_assert (PICMAN_IS_TEXT_BUFFER (editor->buffer));
 
-  editor->context = gimp_context_new (editor->gimp, "text style editor", NULL);
+  editor->context = picman_context_new (editor->picman, "text style editor", NULL);
 
   g_signal_connect (editor->context, "font-changed",
-                    G_CALLBACK (gimp_text_style_editor_font_changed),
+                    G_CALLBACK (picman_text_style_editor_font_changed),
                     editor);
 
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (editor->size_entry), 0,
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (editor->size_entry), 0,
                                   editor->resolution_y, TRUE);
 
   /* use the global user context so we get the global FG/BG colors */
-  gimp_color_panel_set_context (GIMP_COLOR_PANEL (editor->color_button),
-                                gimp_get_user_context (editor->gimp));
+  picman_color_panel_set_context (PICMAN_COLOR_PANEL (editor->color_button),
+                                picman_get_user_context (editor->picman));
 
-  gimp_container_view_set_container (GIMP_CONTAINER_VIEW (editor->font_entry),
+  picman_container_view_set_container (PICMAN_CONTAINER_VIEW (editor->font_entry),
                                      editor->fonts);
-  gimp_container_view_set_context (GIMP_CONTAINER_VIEW (editor->font_entry),
+  picman_container_view_set_context (PICMAN_CONTAINER_VIEW (editor->font_entry),
                                    editor->context);
 
-  gimp_text_style_editor_create_toggle (editor, editor->buffer->bold_tag,
+  picman_text_style_editor_create_toggle (editor, editor->buffer->bold_tag,
                                         GTK_STOCK_BOLD,
                                         _("Bold"));
-  gimp_text_style_editor_create_toggle (editor, editor->buffer->italic_tag,
+  picman_text_style_editor_create_toggle (editor, editor->buffer->italic_tag,
                                         GTK_STOCK_ITALIC,
                                         _("Italic"));
-  gimp_text_style_editor_create_toggle (editor, editor->buffer->underline_tag,
+  picman_text_style_editor_create_toggle (editor, editor->buffer->underline_tag,
                                         GTK_STOCK_UNDERLINE,
                                         _("Underline"));
-  gimp_text_style_editor_create_toggle (editor, editor->buffer->strikethrough_tag,
+  picman_text_style_editor_create_toggle (editor, editor->buffer->strikethrough_tag,
                                         GTK_STOCK_STRIKETHROUGH,
                                         _("Strikethrough"));
 
   g_signal_connect_swapped (editor->text, "notify::font",
-                            G_CALLBACK (gimp_text_style_editor_update),
+                            G_CALLBACK (picman_text_style_editor_update),
                             editor);
   g_signal_connect_swapped (editor->text, "notify::font-size",
-                            G_CALLBACK (gimp_text_style_editor_update),
+                            G_CALLBACK (picman_text_style_editor_update),
                             editor);
   g_signal_connect_swapped (editor->text, "notify::font-size-unit",
-                            G_CALLBACK (gimp_text_style_editor_update),
+                            G_CALLBACK (picman_text_style_editor_update),
                             editor);
   g_signal_connect_swapped (editor->text, "notify::color",
-                            G_CALLBACK (gimp_text_style_editor_update),
+                            G_CALLBACK (picman_text_style_editor_update),
                             editor);
 
   g_signal_connect_data (editor->buffer, "changed",
-                         G_CALLBACK (gimp_text_style_editor_update),
+                         G_CALLBACK (picman_text_style_editor_update),
                          editor, 0,
                          G_CONNECT_AFTER | G_CONNECT_SWAPPED);
   g_signal_connect_data (editor->buffer, "apply-tag",
-                         G_CALLBACK (gimp_text_style_editor_update),
+                         G_CALLBACK (picman_text_style_editor_update),
                          editor, 0,
                          G_CONNECT_AFTER | G_CONNECT_SWAPPED);
   g_signal_connect_data (editor->buffer, "remove-tag",
-                         G_CALLBACK (gimp_text_style_editor_update),
+                         G_CALLBACK (picman_text_style_editor_update),
                          editor, 0,
                          G_CONNECT_AFTER | G_CONNECT_SWAPPED);
   g_signal_connect_data (editor->buffer, "mark-set",
-                         G_CALLBACK (gimp_text_style_editor_update),
+                         G_CALLBACK (picman_text_style_editor_update),
                          editor, 0,
                          G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
-  gimp_text_style_editor_update (editor);
+  picman_text_style_editor_update (editor);
 }
 
 static void
-gimp_text_style_editor_dispose (GObject *object)
+picman_text_style_editor_dispose (GObject *object)
 {
-  GimpTextStyleEditor *editor = GIMP_TEXT_STYLE_EDITOR (object);
+  PicmanTextStyleEditor *editor = PICMAN_TEXT_STYLE_EDITOR (object);
 
   if (editor->text)
     {
       g_signal_handlers_disconnect_by_func (editor->text,
-                                            gimp_text_style_editor_update,
+                                            picman_text_style_editor_update,
                                             editor);
     }
 
   if (editor->buffer)
     {
       g_signal_handlers_disconnect_by_func (editor->buffer,
-                                            gimp_text_style_editor_update,
+                                            picman_text_style_editor_update,
                                             editor);
     }
 
@@ -397,9 +397,9 @@ gimp_text_style_editor_dispose (GObject *object)
 }
 
 static void
-gimp_text_style_editor_finalize (GObject *object)
+picman_text_style_editor_finalize (GObject *object)
 {
-  GimpTextStyleEditor *editor = GIMP_TEXT_STYLE_EDITOR (object);
+  PicmanTextStyleEditor *editor = PICMAN_TEXT_STYLE_EDITOR (object);
 
   if (editor->context)
     {
@@ -435,17 +435,17 @@ gimp_text_style_editor_finalize (GObject *object)
 }
 
 static void
-gimp_text_style_editor_set_property (GObject      *object,
+picman_text_style_editor_set_property (GObject      *object,
                                      guint         property_id,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  GimpTextStyleEditor *editor = GIMP_TEXT_STYLE_EDITOR (object);
+  PicmanTextStyleEditor *editor = PICMAN_TEXT_STYLE_EDITOR (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      editor->gimp = g_value_get_object (value); /* don't ref */
+    case PROP_PICMAN:
+      editor->picman = g_value_get_object (value); /* don't ref */
       break;
     case PROP_TEXT:
       editor->text = g_value_dup_object (value);
@@ -462,7 +462,7 @@ gimp_text_style_editor_set_property (GObject      *object,
     case PROP_RESOLUTION_Y:
       editor->resolution_y = g_value_get_double (value);
       if (editor->size_entry)
-        gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (editor->size_entry), 0,
+        picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (editor->size_entry), 0,
                                         editor->resolution_y, TRUE);
       break;
 
@@ -473,17 +473,17 @@ gimp_text_style_editor_set_property (GObject      *object,
 }
 
 static void
-gimp_text_style_editor_get_property (GObject    *object,
+picman_text_style_editor_get_property (GObject    *object,
                                      guint       property_id,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  GimpTextStyleEditor *editor = GIMP_TEXT_STYLE_EDITOR (object);
+  PicmanTextStyleEditor *editor = PICMAN_TEXT_STYLE_EDITOR (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      g_value_set_object (value, editor->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, editor->picman);
       break;
     case PROP_TEXT:
       g_value_set_object (value, editor->text);
@@ -511,21 +511,21 @@ gimp_text_style_editor_get_property (GObject    *object,
 /*  public functions  */
 
 GtkWidget *
-gimp_text_style_editor_new (Gimp           *gimp,
-                            GimpText       *text,
-                            GimpTextBuffer *buffer,
-                            GimpContainer  *fonts,
+picman_text_style_editor_new (Picman           *picman,
+                            PicmanText       *text,
+                            PicmanTextBuffer *buffer,
+                            PicmanContainer  *fonts,
                             gdouble         resolution_x,
                             gdouble         resolution_y)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (GIMP_IS_TEXT (text), NULL);
-  g_return_val_if_fail (GIMP_IS_TEXT_BUFFER (buffer), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEXT (text), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEXT_BUFFER (buffer), NULL);
   g_return_val_if_fail (resolution_x > 0.0, NULL);
   g_return_val_if_fail (resolution_y > 0.0, NULL);
 
-  return g_object_new (GIMP_TYPE_TEXT_STYLE_EDITOR,
-                       "gimp",         gimp,
+  return g_object_new (PICMAN_TYPE_TEXT_STYLE_EDITOR,
+                       "picman",         picman,
                        "text",         text,
                        "buffer",       buffer,
                        "fonts",        fonts,
@@ -535,13 +535,13 @@ gimp_text_style_editor_new (Gimp           *gimp,
 }
 
 GList *
-gimp_text_style_editor_list_tags (GimpTextStyleEditor  *editor,
+picman_text_style_editor_list_tags (PicmanTextStyleEditor  *editor,
                                   GList               **remove_tags)
 {
   GList *toggles;
   GList *tags = NULL;
 
-  g_return_val_if_fail (GIMP_IS_TEXT_STYLE_EDITOR (editor), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEXT_STYLE_EDITOR (editor), NULL);
   g_return_val_if_fail (remove_tags != NULL, NULL);
 
   *remove_tags = NULL;
@@ -567,17 +567,17 @@ gimp_text_style_editor_list_tags (GimpTextStyleEditor  *editor,
     for (list = editor->buffer->size_tags; list; list = g_list_next (list))
       *remove_tags = g_list_prepend (*remove_tags, list->data);
 
-    pixels = gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (editor->size_entry), 0);
+    pixels = picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (editor->size_entry), 0);
 
     if (pixels != 0.0)
       {
         GtkTextTag *tag;
         gdouble     points;
 
-        points = gimp_units_to_points (pixels,
-                                       GIMP_UNIT_PIXEL,
+        points = picman_units_to_points (pixels,
+                                       PICMAN_UNIT_PIXEL,
                                        editor->resolution_y);
-        tag = gimp_text_buffer_get_size_tag (editor->buffer,
+        tag = picman_text_buffer_get_size_tag (editor->buffer,
                                              PANGO_SCALE * points);
         tags = g_list_prepend (tags, tag);
       }
@@ -590,32 +590,32 @@ gimp_text_style_editor_list_tags (GimpTextStyleEditor  *editor,
     for (list = editor->buffer->font_tags; list; list = g_list_next (list))
       *remove_tags = g_list_prepend (*remove_tags, list->data);
 
-    font_name = gimp_context_get_font_name (editor->context);
+    font_name = picman_context_get_font_name (editor->context);
 
     if (font_name)
       {
         GtkTextTag  *tag;
 
-        tag = gimp_text_buffer_get_font_tag (editor->buffer, font_name);
+        tag = picman_text_buffer_get_font_tag (editor->buffer, font_name);
         tags = g_list_prepend (tags, tag);
       }
   }
 
   {
     GList   *list;
-    GimpRGB  color;
+    PicmanRGB  color;
 
     for (list = editor->buffer->color_tags; list; list = g_list_next (list))
       *remove_tags = g_list_prepend (*remove_tags, list->data);
 
-    gimp_color_button_get_color (GIMP_COLOR_BUTTON (editor->color_button),
+    picman_color_button_get_color (PICMAN_COLOR_BUTTON (editor->color_button),
                                  &color);
 
     if (TRUE) /* FIXME should have "inconsistent" state as for font and size */
       {
         GtkTextTag *tag;
 
-        tag = gimp_text_buffer_get_color_tag (editor->buffer, &color);
+        tag = picman_text_buffer_get_color_tag (editor->buffer, &color);
         tags = g_list_prepend (tags, tag);
       }
   }
@@ -629,7 +629,7 @@ gimp_text_style_editor_list_tags (GimpTextStyleEditor  *editor,
 /*  private functions  */
 
 static GtkWidget *
-gimp_text_style_editor_create_toggle (GimpTextStyleEditor *editor,
+picman_text_style_editor_create_toggle (PicmanTextStyleEditor *editor,
                                       GtkTextTag          *tag,
                                       const gchar         *stock_id,
                                       const gchar         *tooltip)
@@ -642,13 +642,13 @@ gimp_text_style_editor_create_toggle (GimpTextStyleEditor *editor,
   gtk_box_pack_start (GTK_BOX (editor->lower_hbox), toggle, FALSE, FALSE, 0);
   gtk_widget_show (toggle);
 
-  gimp_help_set_help_data (toggle, tooltip, NULL);
+  picman_help_set_help_data (toggle, tooltip, NULL);
 
   editor->toggles = g_list_append (editor->toggles, toggle);
   g_object_set_data (G_OBJECT (toggle), "tag", tag);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_text_style_editor_tag_toggled),
+                    G_CALLBACK (picman_text_style_editor_tag_toggled),
                     editor);
 
   image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_MENU);
@@ -659,8 +659,8 @@ gimp_text_style_editor_create_toggle (GimpTextStyleEditor *editor,
 }
 
 static void
-gimp_text_style_editor_clear_tags (GtkButton           *button,
-                                   GimpTextStyleEditor *editor)
+picman_text_style_editor_clear_tags (GtkButton           *button,
+                                   PicmanTextStyleEditor *editor)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (editor->buffer);
 
@@ -679,9 +679,9 @@ gimp_text_style_editor_clear_tags (GtkButton           *button,
 }
 
 static void
-gimp_text_style_editor_font_changed (GimpContext         *context,
-                                     GimpFont            *font,
-                                     GimpTextStyleEditor *editor)
+picman_text_style_editor_font_changed (PicmanContext         *context,
+                                     PicmanFont            *font,
+                                     PicmanTextStyleEditor *editor)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (editor->buffer);
   GList         *insert_tags;
@@ -693,53 +693,53 @@ gimp_text_style_editor_font_changed (GimpContext         *context,
 
       gtk_text_buffer_get_selection_bounds (buffer, &start, &end);
 
-      gimp_text_buffer_set_font (editor->buffer, &start, &end,
-                                 gimp_context_get_font_name (context));
+      picman_text_buffer_set_font (editor->buffer, &start, &end,
+                                 picman_context_get_font_name (context));
     }
 
-  insert_tags = gimp_text_style_editor_list_tags (editor, &remove_tags);
-  gimp_text_buffer_set_insert_tags (editor->buffer, insert_tags, remove_tags);
+  insert_tags = picman_text_style_editor_list_tags (editor, &remove_tags);
+  picman_text_buffer_set_insert_tags (editor->buffer, insert_tags, remove_tags);
 }
 
 static void
-gimp_text_style_editor_set_font (GimpTextStyleEditor *editor,
+picman_text_style_editor_set_font (PicmanTextStyleEditor *editor,
                                  GtkTextTag          *font_tag)
 {
   gchar *font = NULL;
 
   if (font_tag)
-    font = gimp_text_tag_get_font (font_tag);
+    font = picman_text_tag_get_font (font_tag);
 
   g_signal_handlers_block_by_func (editor->context,
-                                   gimp_text_style_editor_font_changed,
+                                   picman_text_style_editor_font_changed,
                                    editor);
 
-  gimp_context_set_font_name (editor->context, font);
+  picman_context_set_font_name (editor->context, font);
 
   g_signal_handlers_unblock_by_func (editor->context,
-                                     gimp_text_style_editor_font_changed,
+                                     picman_text_style_editor_font_changed,
                                      editor);
 
   g_free (font);
 }
 
 static void
-gimp_text_style_editor_set_default_font (GimpTextStyleEditor *editor)
+picman_text_style_editor_set_default_font (PicmanTextStyleEditor *editor)
 {
   g_signal_handlers_block_by_func (editor->context,
-                                   gimp_text_style_editor_font_changed,
+                                   picman_text_style_editor_font_changed,
                                    editor);
 
-  gimp_context_set_font_name (editor->context, editor->text->font);
+  picman_context_set_font_name (editor->context, editor->text->font);
 
   g_signal_handlers_unblock_by_func (editor->context,
-                                     gimp_text_style_editor_font_changed,
+                                     picman_text_style_editor_font_changed,
                                      editor);
 }
 
 static void
-gimp_text_style_editor_color_changed (GimpColorButton     *button,
-                                      GimpTextStyleEditor *editor)
+picman_text_style_editor_color_changed (PicmanColorButton     *button,
+                                      PicmanTextStyleEditor *editor)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (editor->buffer);
   GList         *insert_tags;
@@ -748,61 +748,61 @@ gimp_text_style_editor_color_changed (GimpColorButton     *button,
   if (gtk_text_buffer_get_has_selection (buffer))
     {
       GtkTextIter start, end;
-      GimpRGB     color;
+      PicmanRGB     color;
 
       gtk_text_buffer_get_selection_bounds (buffer, &start, &end);
 
-      gimp_color_button_get_color (button, &color);
-      gimp_text_buffer_set_color (editor->buffer, &start, &end, &color);
+      picman_color_button_get_color (button, &color);
+      picman_text_buffer_set_color (editor->buffer, &start, &end, &color);
     }
 
-  insert_tags = gimp_text_style_editor_list_tags (editor, &remove_tags);
-  gimp_text_buffer_set_insert_tags (editor->buffer, insert_tags, remove_tags);
+  insert_tags = picman_text_style_editor_list_tags (editor, &remove_tags);
+  picman_text_buffer_set_insert_tags (editor->buffer, insert_tags, remove_tags);
 }
 
 static void
-gimp_text_style_editor_set_color (GimpTextStyleEditor *editor,
+picman_text_style_editor_set_color (PicmanTextStyleEditor *editor,
                                   GtkTextTag          *color_tag)
 {
-  GimpRGB color;
+  PicmanRGB color;
 
-  gimp_rgba_set (&color, 0.0, 0.0, 0.0, 1.0);
+  picman_rgba_set (&color, 0.0, 0.0, 0.0, 1.0);
 
   if (color_tag)
-    gimp_text_tag_get_color (color_tag, &color);
+    picman_text_tag_get_color (color_tag, &color);
 
   g_signal_handlers_block_by_func (editor->color_button,
-                                   gimp_text_style_editor_color_changed,
+                                   picman_text_style_editor_color_changed,
                                    editor);
 
-  gimp_color_button_set_color (GIMP_COLOR_BUTTON (editor->color_button),
+  picman_color_button_set_color (PICMAN_COLOR_BUTTON (editor->color_button),
                                &color);
 
   /* FIXME should have "inconsistent" state as for font and size */
 
   g_signal_handlers_unblock_by_func (editor->color_button,
-                                     gimp_text_style_editor_color_changed,
+                                     picman_text_style_editor_color_changed,
                                      editor);
 }
 
 static void
-gimp_text_style_editor_set_default_color (GimpTextStyleEditor *editor)
+picman_text_style_editor_set_default_color (PicmanTextStyleEditor *editor)
 {
   g_signal_handlers_block_by_func (editor->color_button,
-                                   gimp_text_style_editor_color_changed,
+                                   picman_text_style_editor_color_changed,
                                    editor);
 
-  gimp_color_button_set_color (GIMP_COLOR_BUTTON (editor->color_button),
+  picman_color_button_set_color (PICMAN_COLOR_BUTTON (editor->color_button),
                                &editor->text->color);
 
   g_signal_handlers_unblock_by_func (editor->color_button,
-                                     gimp_text_style_editor_color_changed,
+                                     picman_text_style_editor_color_changed,
                                      editor);
 }
 
 static void
-gimp_text_style_editor_tag_toggled (GtkToggleButton     *toggle,
-                                    GimpTextStyleEditor *editor)
+picman_text_style_editor_tag_toggled (GtkToggleButton     *toggle,
+                                    PicmanTextStyleEditor *editor)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (editor->buffer);
   GtkTextTag    *tag    = g_object_get_data (G_OBJECT (toggle), "tag");
@@ -829,29 +829,29 @@ gimp_text_style_editor_tag_toggled (GtkToggleButton     *toggle,
       gtk_text_buffer_end_user_action (buffer);
     }
 
-  insert_tags = gimp_text_style_editor_list_tags (editor, &remove_tags);
-  gimp_text_buffer_set_insert_tags (editor->buffer, insert_tags, remove_tags);
+  insert_tags = picman_text_style_editor_list_tags (editor, &remove_tags);
+  picman_text_buffer_set_insert_tags (editor->buffer, insert_tags, remove_tags);
 }
 
 static void
-gimp_text_style_editor_set_toggle (GimpTextStyleEditor *editor,
+picman_text_style_editor_set_toggle (PicmanTextStyleEditor *editor,
                                    GtkToggleButton     *toggle,
                                    gboolean             active)
 {
   g_signal_handlers_block_by_func (toggle,
-                                   gimp_text_style_editor_tag_toggled,
+                                   picman_text_style_editor_tag_toggled,
                                    editor);
 
   gtk_toggle_button_set_active (toggle, active);
 
   g_signal_handlers_unblock_by_func (toggle,
-                                     gimp_text_style_editor_tag_toggled,
+                                     picman_text_style_editor_tag_toggled,
                                      editor);
 }
 
 static void
-gimp_text_style_editor_size_changed (GimpSizeEntry       *entry,
-                                     GimpTextStyleEditor *editor)
+picman_text_style_editor_size_changed (PicmanSizeEntry       *entry,
+                                     PicmanTextStyleEditor *editor)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (editor->buffer);
   GList         *insert_tags;
@@ -864,72 +864,72 @@ gimp_text_style_editor_size_changed (GimpSizeEntry       *entry,
 
       gtk_text_buffer_get_selection_bounds (buffer, &start, &end);
 
-      points = gimp_units_to_points (gimp_size_entry_get_refval (entry, 0),
-                                     GIMP_UNIT_PIXEL,
+      points = picman_units_to_points (picman_size_entry_get_refval (entry, 0),
+                                     PICMAN_UNIT_PIXEL,
                                      editor->resolution_y);
 
-      gimp_text_buffer_set_size (editor->buffer, &start, &end,
+      picman_text_buffer_set_size (editor->buffer, &start, &end,
                                  PANGO_SCALE * points);
     }
 
-  insert_tags = gimp_text_style_editor_list_tags (editor, &remove_tags);
-  gimp_text_buffer_set_insert_tags (editor->buffer, insert_tags, remove_tags);
+  insert_tags = picman_text_style_editor_list_tags (editor, &remove_tags);
+  picman_text_buffer_set_insert_tags (editor->buffer, insert_tags, remove_tags);
 }
 
 static void
-gimp_text_style_editor_set_size (GimpTextStyleEditor *editor,
+picman_text_style_editor_set_size (PicmanTextStyleEditor *editor,
                                  GtkTextTag          *size_tag)
 {
   gint    size = 0;
   gdouble pixels;
 
   if (size_tag)
-    size = gimp_text_tag_get_size (size_tag);
+    size = picman_text_tag_get_size (size_tag);
 
   g_signal_handlers_block_by_func (editor->size_entry,
-                                   gimp_text_style_editor_size_changed,
+                                   picman_text_style_editor_size_changed,
                                    editor);
 
-  pixels = gimp_units_to_pixels ((gdouble) size / PANGO_SCALE,
-                                 GIMP_UNIT_POINT,
+  pixels = picman_units_to_pixels ((gdouble) size / PANGO_SCALE,
+                                 PICMAN_UNIT_POINT,
                                  editor->resolution_y);
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (editor->size_entry), 0, pixels);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (editor->size_entry), 0, pixels);
 
   if (size == 0)
     {
       GtkWidget *spinbutton;
 
-      spinbutton = gimp_size_entry_get_help_widget (GIMP_SIZE_ENTRY (editor->size_entry), 0);
+      spinbutton = picman_size_entry_get_help_widget (PICMAN_SIZE_ENTRY (editor->size_entry), 0);
 
       gtk_entry_set_text (GTK_ENTRY (spinbutton), "");
     }
 
   g_signal_handlers_unblock_by_func (editor->size_entry,
-                                     gimp_text_style_editor_size_changed,
+                                     picman_text_style_editor_size_changed,
                                      editor);
 }
 
 static void
-gimp_text_style_editor_set_default_size (GimpTextStyleEditor *editor)
+picman_text_style_editor_set_default_size (PicmanTextStyleEditor *editor)
 {
-  gdouble pixels = gimp_units_to_pixels (editor->text->font_size,
+  gdouble pixels = picman_units_to_pixels (editor->text->font_size,
                                          editor->text->unit,
                                          editor->resolution_y);
 
   g_signal_handlers_block_by_func (editor->size_entry,
-                                   gimp_text_style_editor_size_changed,
+                                   picman_text_style_editor_size_changed,
                                    editor);
 
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (editor->size_entry), 0, pixels);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (editor->size_entry), 0, pixels);
 
   g_signal_handlers_unblock_by_func (editor->size_entry,
-                                     gimp_text_style_editor_size_changed,
+                                     picman_text_style_editor_size_changed,
                                      editor);
 }
 
 static void
-gimp_text_style_editor_baseline_changed (GtkAdjustment       *adjustment,
-                                         GimpTextStyleEditor *editor)
+picman_text_style_editor_baseline_changed (GtkAdjustment       *adjustment,
+                                         PicmanTextStyleEditor *editor)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (editor->buffer);
   GtkTextIter    start, end;
@@ -941,22 +941,22 @@ gimp_text_style_editor_baseline_changed (GtkAdjustment       *adjustment,
       gtk_text_buffer_get_end_iter (buffer, &end);
     }
 
-  gimp_text_buffer_set_baseline (editor->buffer, &start, &end,
+  picman_text_buffer_set_baseline (editor->buffer, &start, &end,
                                  gtk_adjustment_get_value (adjustment) *
                                  PANGO_SCALE);
 }
 
 static void
-gimp_text_style_editor_set_baseline (GimpTextStyleEditor *editor,
+picman_text_style_editor_set_baseline (PicmanTextStyleEditor *editor,
                                      GtkTextTag          *baseline_tag)
 {
   gint baseline = 0;
 
   if (baseline_tag)
-    baseline = gimp_text_tag_get_baseline (baseline_tag);
+    baseline = picman_text_tag_get_baseline (baseline_tag);
 
   g_signal_handlers_block_by_func (editor->baseline_adjustment,
-                                   gimp_text_style_editor_baseline_changed,
+                                   picman_text_style_editor_baseline_changed,
                                    editor);
 
   gtk_adjustment_set_value (editor->baseline_adjustment,
@@ -965,13 +965,13 @@ gimp_text_style_editor_set_baseline (GimpTextStyleEditor *editor,
   gtk_adjustment_value_changed (editor->baseline_adjustment);
 
   g_signal_handlers_unblock_by_func (editor->baseline_adjustment,
-                                     gimp_text_style_editor_baseline_changed,
+                                     picman_text_style_editor_baseline_changed,
                                      editor);
 }
 
 static void
-gimp_text_style_editor_kerning_changed (GtkAdjustment       *adjustment,
-                                        GimpTextStyleEditor *editor)
+picman_text_style_editor_kerning_changed (GtkAdjustment       *adjustment,
+                                        PicmanTextStyleEditor *editor)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (editor->buffer);
   GtkTextIter    start, end;
@@ -984,22 +984,22 @@ gimp_text_style_editor_kerning_changed (GtkAdjustment       *adjustment,
       gtk_text_iter_forward_char (&end);
     }
 
-  gimp_text_buffer_set_kerning (editor->buffer, &start, &end,
+  picman_text_buffer_set_kerning (editor->buffer, &start, &end,
                                 gtk_adjustment_get_value (adjustment) *
                                 PANGO_SCALE);
 }
 
 static void
-gimp_text_style_editor_set_kerning (GimpTextStyleEditor *editor,
+picman_text_style_editor_set_kerning (PicmanTextStyleEditor *editor,
                                     GtkTextTag          *kerning_tag)
 {
   gint kerning = 0;
 
   if (kerning_tag)
-    kerning = gimp_text_tag_get_kerning (kerning_tag);
+    kerning = picman_text_tag_get_kerning (kerning_tag);
 
   g_signal_handlers_block_by_func (editor->kerning_adjustment,
-                                   gimp_text_style_editor_kerning_changed,
+                                   picman_text_style_editor_kerning_changed,
                                    editor);
 
   gtk_adjustment_set_value (editor->kerning_adjustment,
@@ -1008,23 +1008,23 @@ gimp_text_style_editor_set_kerning (GimpTextStyleEditor *editor,
   gtk_adjustment_value_changed (editor->kerning_adjustment);
 
   g_signal_handlers_unblock_by_func (editor->kerning_adjustment,
-                                     gimp_text_style_editor_kerning_changed,
+                                     picman_text_style_editor_kerning_changed,
                                      editor);
 }
 
 static void
-gimp_text_style_editor_update (GimpTextStyleEditor *editor)
+picman_text_style_editor_update (PicmanTextStyleEditor *editor)
 {
   if (editor->update_idle_id)
     g_source_remove (editor->update_idle_id);
 
   editor->update_idle_id =
-    gdk_threads_add_idle ((GSourceFunc) gimp_text_style_editor_update_idle,
+    gdk_threads_add_idle ((GSourceFunc) picman_text_style_editor_update_idle,
                           editor);
 }
 
 static gboolean
-gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
+picman_text_style_editor_update_idle (PicmanTextStyleEditor *editor)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (editor->buffer);
 
@@ -1059,19 +1059,19 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
         {
           GtkToggleButton *toggle = list->data;
 
-          gimp_text_style_editor_set_toggle (editor, toggle, TRUE);
+          picman_text_style_editor_set_toggle (editor, toggle, TRUE);
         }
 
       /*  and get some initial values  */
-      font_tag     = gimp_text_buffer_get_iter_font (editor->buffer,
+      font_tag     = picman_text_buffer_get_iter_font (editor->buffer,
                                                      &start, NULL);
-      color_tag    = gimp_text_buffer_get_iter_color (editor->buffer,
+      color_tag    = picman_text_buffer_get_iter_color (editor->buffer,
                                                       &start, NULL);
-      size_tag     = gimp_text_buffer_get_iter_size (editor->buffer,
+      size_tag     = picman_text_buffer_get_iter_size (editor->buffer,
                                                      &start, NULL);
-      baseline_tag = gimp_text_buffer_get_iter_baseline (editor->buffer,
+      baseline_tag = picman_text_buffer_get_iter_baseline (editor->buffer,
                                                          &start, NULL);
-      kerning_tag  = gimp_text_buffer_get_iter_kerning (editor->buffer,
+      kerning_tag  = picman_text_buffer_get_iter_kerning (editor->buffer,
                                                         &start, NULL);
 
       for (iter = start;
@@ -1090,7 +1090,7 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
 
                   if (! gtk_text_iter_has_tag (&iter, tag))
                     {
-                      gimp_text_style_editor_set_toggle (editor, toggle, FALSE);
+                      picman_text_style_editor_set_toggle (editor, toggle, FALSE);
                     }
                   else
                     {
@@ -1103,7 +1103,7 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
             {
               GtkTextTag *tag;
 
-              tag = gimp_text_buffer_get_iter_font (editor->buffer, &iter,
+              tag = picman_text_buffer_get_iter_font (editor->buffer, &iter,
                                                     NULL);
 
               if (tag != font_tag)
@@ -1114,7 +1114,7 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
             {
               GtkTextTag *tag;
 
-              tag = gimp_text_buffer_get_iter_color (editor->buffer, &iter,
+              tag = picman_text_buffer_get_iter_color (editor->buffer, &iter,
                                                      NULL);
 
               if (tag != color_tag)
@@ -1125,7 +1125,7 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
             {
               GtkTextTag *tag;
 
-              tag = gimp_text_buffer_get_iter_size (editor->buffer, &iter,
+              tag = picman_text_buffer_get_iter_size (editor->buffer, &iter,
                                                     NULL);
 
               if (tag != size_tag)
@@ -1136,7 +1136,7 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
             {
               GtkTextTag *tag;
 
-              tag = gimp_text_buffer_get_iter_baseline (editor->buffer, &iter,
+              tag = picman_text_buffer_get_iter_baseline (editor->buffer, &iter,
                                                         NULL);
 
               if (tag != baseline_tag)
@@ -1147,7 +1147,7 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
             {
               GtkTextTag *tag;
 
-              tag = gimp_text_buffer_get_iter_kerning (editor->buffer, &iter,
+              tag = picman_text_buffer_get_iter_kerning (editor->buffer, &iter,
                                                        NULL);
 
               if (tag != kerning_tag)
@@ -1164,35 +1164,35 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
        }
 
       if (font_differs)
-        gimp_text_style_editor_set_font (editor, NULL);
+        picman_text_style_editor_set_font (editor, NULL);
       else if (font_tag)
-        gimp_text_style_editor_set_font (editor, font_tag);
+        picman_text_style_editor_set_font (editor, font_tag);
       else
-        gimp_text_style_editor_set_default_font (editor);
+        picman_text_style_editor_set_default_font (editor);
 
       if (color_differs)
-        gimp_text_style_editor_set_color (editor, NULL);
+        picman_text_style_editor_set_color (editor, NULL);
       else if (color_tag)
-        gimp_text_style_editor_set_color (editor, color_tag);
+        picman_text_style_editor_set_color (editor, color_tag);
       else
-        gimp_text_style_editor_set_default_color (editor);
+        picman_text_style_editor_set_default_color (editor);
 
       if (size_differs)
-        gimp_text_style_editor_set_size (editor, NULL);
+        picman_text_style_editor_set_size (editor, NULL);
       else if (size_tag)
-        gimp_text_style_editor_set_size (editor, size_tag);
+        picman_text_style_editor_set_size (editor, size_tag);
       else
-        gimp_text_style_editor_set_default_size (editor);
+        picman_text_style_editor_set_default_size (editor);
 
       if (baseline_differs)
         gtk_entry_set_text (GTK_ENTRY (editor->baseline_spinbutton), "");
       else
-        gimp_text_style_editor_set_baseline (editor, baseline_tag);
+        picman_text_style_editor_set_baseline (editor, baseline_tag);
 
       if (kerning_differs)
         gtk_entry_set_text (GTK_ENTRY (editor->kerning_spinbutton), "");
       else
-        gimp_text_style_editor_set_kerning (editor, kerning_tag);
+        picman_text_style_editor_set_kerning (editor, kerning_tag);
     }
   else /* no selection */
     {
@@ -1217,13 +1217,13 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
                ! g_slist_find (tags_on, tag)) ||
               g_slist_find (tags_off, tag))
             {
-              gimp_text_style_editor_set_font (editor, tag);
+              picman_text_style_editor_set_font (editor, tag);
               break;
             }
         }
 
       if (! list)
-        gimp_text_style_editor_set_default_font (editor);
+        picman_text_style_editor_set_default_font (editor);
 
       for (list = editor->buffer->color_tags; list; list = g_list_next (list))
         {
@@ -1233,13 +1233,13 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
                ! g_slist_find (tags_on, tag)) ||
               g_slist_find (tags_off, tag))
             {
-              gimp_text_style_editor_set_color (editor, tag);
+              picman_text_style_editor_set_color (editor, tag);
               break;
             }
         }
 
       if (! list)
-        gimp_text_style_editor_set_default_color (editor);
+        picman_text_style_editor_set_default_color (editor);
 
       for (list = editor->buffer->size_tags; list; list = g_list_next (list))
         {
@@ -1249,13 +1249,13 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
                ! g_slist_find (tags_on, tag)) ||
               g_slist_find (tags_off, tag))
             {
-              gimp_text_style_editor_set_size (editor, tag);
+              picman_text_style_editor_set_size (editor, tag);
               break;
             }
         }
 
       if (! list)
-        gimp_text_style_editor_set_default_size (editor);
+        picman_text_style_editor_set_default_size (editor);
 
       for (list = editor->buffer->baseline_tags; list; list = g_list_next (list))
         {
@@ -1265,13 +1265,13 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
                ! g_slist_find (tags_on, tag)) ||
               g_slist_find (tags_off, tag))
             {
-              gimp_text_style_editor_set_baseline (editor, tag);
+              picman_text_style_editor_set_baseline (editor, tag);
               break;
             }
         }
 
       if (! list)
-        gimp_text_style_editor_set_baseline (editor, NULL);
+        picman_text_style_editor_set_baseline (editor, NULL);
 
       for (list = editor->toggles; list; list = g_list_next (list))
         {
@@ -1279,7 +1279,7 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
           GtkTextTag      *tag    = g_object_get_data (G_OBJECT (toggle),
                                                        "tag");
 
-          gimp_text_style_editor_set_toggle (editor, toggle,
+          picman_text_style_editor_set_toggle (editor, toggle,
                                              (g_slist_find (tags, tag) &&
                                               ! g_slist_find (tags_on, tag)) ||
                                              g_slist_find (tags_off, tag));
@@ -1288,8 +1288,8 @@ gimp_text_style_editor_update_idle (GimpTextStyleEditor *editor)
       {
         GtkTextTag *tag;
 
-        tag = gimp_text_buffer_get_iter_kerning (editor->buffer, &cursor, NULL);
-        gimp_text_style_editor_set_kerning (editor, tag);
+        tag = picman_text_buffer_get_iter_kerning (editor->buffer, &cursor, NULL);
+        picman_text_style_editor_set_kerning (editor, tag);
       }
 
       g_slist_free (tags);

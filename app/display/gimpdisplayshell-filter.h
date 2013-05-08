@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1999 Manish Singh
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_SHELL_FILTER_H__
-#define __GIMP_DISPLAY_SHELL_FILTER_H__
+#ifndef __PICMAN_DISPLAY_SHELL_FILTER_H__
+#define __PICMAN_DISPLAY_SHELL_FILTER_H__
 
 
-void   gimp_display_shell_filter_set (GimpDisplayShell      *shell,
-                                      GimpColorDisplayStack *stack);
+void   picman_display_shell_filter_set (PicmanDisplayShell      *shell,
+                                      PicmanColorDisplayStack *stack);
 
-GimpColorDisplayStack * gimp_display_shell_filter_new (GimpDisplayShell *shell,
-                                                       GimpColorConfig  *config);
+PicmanColorDisplayStack * picman_display_shell_filter_new (PicmanDisplayShell *shell,
+                                                       PicmanColorConfig  *config);
 
 
-#endif /* __GIMP_DISPLAY_SHELL_FILTER_H__ */
+#endif /* __PICMAN_DISPLAY_SHELL_FILTER_H__ */

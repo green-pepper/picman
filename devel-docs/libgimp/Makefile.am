@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 # The name of the module.
-DOC_MODULE = libgimp
+DOC_MODULE = libpicman
 
 # The top-level SGML file.
 DOC_MAIN_SGML_FILE = $(DOC_MODULE)-docs.sgml
@@ -13,13 +13,13 @@ DOC_SOURCE_DIR = $(top_srcdir)/$(DOC_MODULE)
 SCANGOBJ_OPTIONS =
 
 # Extra options to supply to gtkdoc-scan
-SCAN_OPTIONS = --deprecated-guards="GIMP_DISABLE_DEPRECATED"
+SCAN_OPTIONS = --deprecated-guards="PICMAN_DISABLE_DEPRECATED"
 
 # Extra options to supply to gtkdoc-mkdb
-MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=gimp
+MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=picman
 
 # Extra options to supply to gtkdoc-fixref
-FIXXREF_OPTIONS = --extra-dir=../libgimpbase/html --extra-dir=../libgimpcolor/html --extra-dir=../libgimpconfig/html --extra-dir=../libgimpmath/html --extra-dir=../libgimpwidgets/html
+FIXXREF_OPTIONS = --extra-dir=../libpicmanbase/html --extra-dir=../libpicmancolor/html --extra-dir=../libpicmanconfig/html --extra-dir=../libpicmanmath/html --extra-dir=../libpicmanwidgets/html
 
 # Used for dependencies
 HFILE_GLOB = $(DOC_SOURCE_DIR)/*.h
@@ -27,10 +27,10 @@ CFILE_GLOB = $(DOC_SOURCE_DIR)/*.c
 
 # Header files to ignore when scanning
 IGNORE_HFILES = \
-	gimpcompat.h		\
-	gimpunit_pdb.h		\
-	gimpunitcache.h		\
-	libgimp-intl.h		\
+	picmancompat.h		\
+	picmanunit_pdb.h		\
+	picmanunitcache.h		\
+	libpicman-intl.h		\
 	stdplugins-intl.h
 
 # Images to copy into HTML directory
@@ -53,13 +53,13 @@ GTKDOC_CFLAGS = \
 	-UGTK_DISABLE_SINGLE_INCLUDES
 
 GTKDOC_LIBS = \
-	$(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la		\
-	$(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la	\
-	$(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la		\
-	$(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la	\
-	$(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la	\
-	$(top_builddir)/libgimp/libgimp-$(GIMP_API_VERSION).la			\
-	$(top_builddir)/libgimp/libgimpui-$(GIMP_API_VERSION).la		\
+	$(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la		\
+	$(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la	\
+	$(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la		\
+	$(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la	\
+	$(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la	\
+	$(top_builddir)/libpicman/libpicman-$(PICMAN_API_VERSION).la			\
+	$(top_builddir)/libpicman/libpicmanui-$(PICMAN_API_VERSION).la		\
 	@GTK_LIBS@
 
 

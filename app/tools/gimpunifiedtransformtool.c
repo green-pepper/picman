@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,33 +22,33 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimpchannel.h"
-#include "core/gimp-transform-utils.h"
-#include "core/gimpimage.h"
-#include "core/gimpdrawable-transform.h"
-#include "core/gimp-utils.h"
+#include "core/picmanchannel.h"
+#include "core/picman-transform-utils.h"
+#include "core/picmanimage.h"
+#include "core/picmandrawable-transform.h"
+#include "core/picman-utils.h"
 
-#include "vectors/gimpvectors.h"
-#include "vectors/gimpstroke.h"
+#include "vectors/picmanvectors.h"
+#include "vectors/picmanstroke.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpcanvasgroup.h"
-#include "display/gimpcanvashandle.h"
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-transform.h"
+#include "display/picmancanvasgroup.h"
+#include "display/picmancanvashandle.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-transform.h"
 
-#include "gimpunifiedtransformtool.h"
-#include "gimptoolcontrol.h"
-#include "gimptransformoptions.h"
+#include "picmanunifiedtransformtool.h"
+#include "picmantoolcontrol.h"
+#include "picmantransformoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  index into trans_info array  */
@@ -69,66 +69,66 @@ enum
 
 /*  local function prototypes  */
 
-static void            gimp_unified_transform_tool_dialog        (GimpTransformTool *tr_tool);
-static void            gimp_unified_transform_tool_dialog_update (GimpTransformTool *tr_tool);
-static void            gimp_unified_transform_tool_prepare       (GimpTransformTool *tr_tool);
-static void            gimp_unified_transform_tool_motion        (GimpTransformTool *tr_tool);
-static void            gimp_unified_transform_tool_recalc_matrix (GimpTransformTool *tr_tool);
-static gchar *         gimp_unified_transform_tool_get_undo_desc (GimpTransformTool *tr_tool);
-static TransformAction gimp_unified_transform_tool_pick_function (GimpTransformTool *tr_tool,
-                                                                  const GimpCoords  *coords,
+static void            picman_unified_transform_tool_dialog        (PicmanTransformTool *tr_tool);
+static void            picman_unified_transform_tool_dialog_update (PicmanTransformTool *tr_tool);
+static void            picman_unified_transform_tool_prepare       (PicmanTransformTool *tr_tool);
+static void            picman_unified_transform_tool_motion        (PicmanTransformTool *tr_tool);
+static void            picman_unified_transform_tool_recalc_matrix (PicmanTransformTool *tr_tool);
+static gchar *         picman_unified_transform_tool_get_undo_desc (PicmanTransformTool *tr_tool);
+static TransformAction picman_unified_transform_tool_pick_function (PicmanTransformTool *tr_tool,
+                                                                  const PicmanCoords  *coords,
                                                                   GdkModifierType    state,
-                                                                  GimpDisplay       *display);
-static void            gimp_unified_transform_tool_cursor_update (GimpTransformTool  *tr_tool,
-                                                                  GimpCursorType     *cursor,
-                                                                  GimpCursorModifier *modifier);
-static void            gimp_unified_transform_tool_draw_gui      (GimpTransformTool *tr_tool,
+                                                                  PicmanDisplay       *display);
+static void            picman_unified_transform_tool_cursor_update (PicmanTransformTool  *tr_tool,
+                                                                  PicmanCursorType     *cursor,
+                                                                  PicmanCursorModifier *modifier);
+static void            picman_unified_transform_tool_draw_gui      (PicmanTransformTool *tr_tool,
                                                                   gint               handle_w,
                                                                   gint               handle_h);
 
 
-G_DEFINE_TYPE (GimpUnifiedTransformTool, gimp_unified_transform_tool,
-               GIMP_TYPE_TRANSFORM_TOOL)
+G_DEFINE_TYPE (PicmanUnifiedTransformTool, picman_unified_transform_tool,
+               PICMAN_TYPE_TRANSFORM_TOOL)
 
 
 void
-gimp_unified_transform_tool_register (GimpToolRegisterCallback  callback,
+picman_unified_transform_tool_register (PicmanToolRegisterCallback  callback,
                                       gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_UNIFIED_TRANSFORM_TOOL,
-                GIMP_TYPE_TRANSFORM_OPTIONS,
-                gimp_transform_options_gui,
-                GIMP_CONTEXT_BACKGROUND_MASK,
-                "gimp-unified-transform-tool",
+  (* callback) (PICMAN_TYPE_UNIFIED_TRANSFORM_TOOL,
+                PICMAN_TYPE_TRANSFORM_OPTIONS,
+                picman_transform_options_gui,
+                PICMAN_CONTEXT_BACKGROUND_MASK,
+                "picman-unified-transform-tool",
                 _("Unified Transform"),
                 _("Unified Transform Tool: "
                   "Transform the layer, selection or path"),
                 N_("_Unified Transform"), "<shift>L",
-                NULL, GIMP_HELP_TOOL_UNIFIED_TRANSFORM,
-                GIMP_STOCK_TOOL_UNIFIED_TRANSFORM,
+                NULL, PICMAN_HELP_TOOL_UNIFIED_TRANSFORM,
+                PICMAN_STOCK_TOOL_UNIFIED_TRANSFORM,
                 data);
 }
 
 static void
-gimp_unified_transform_tool_class_init (GimpUnifiedTransformToolClass *klass)
+picman_unified_transform_tool_class_init (PicmanUnifiedTransformToolClass *klass)
 {
-  GimpTransformToolClass *trans_class = GIMP_TRANSFORM_TOOL_CLASS (klass);
+  PicmanTransformToolClass *trans_class = PICMAN_TRANSFORM_TOOL_CLASS (klass);
 
-  trans_class->dialog        = gimp_unified_transform_tool_dialog;
-  trans_class->dialog_update = gimp_unified_transform_tool_dialog_update;
-  trans_class->prepare       = gimp_unified_transform_tool_prepare;
-  trans_class->motion        = gimp_unified_transform_tool_motion;
-  trans_class->recalc_matrix = gimp_unified_transform_tool_recalc_matrix;
-  trans_class->get_undo_desc = gimp_unified_transform_tool_get_undo_desc;
-  trans_class->pick_function = gimp_unified_transform_tool_pick_function;
-  trans_class->cursor_update = gimp_unified_transform_tool_cursor_update;
-  trans_class->draw_gui      = gimp_unified_transform_tool_draw_gui;
+  trans_class->dialog        = picman_unified_transform_tool_dialog;
+  trans_class->dialog_update = picman_unified_transform_tool_dialog_update;
+  trans_class->prepare       = picman_unified_transform_tool_prepare;
+  trans_class->motion        = picman_unified_transform_tool_motion;
+  trans_class->recalc_matrix = picman_unified_transform_tool_recalc_matrix;
+  trans_class->get_undo_desc = picman_unified_transform_tool_get_undo_desc;
+  trans_class->pick_function = picman_unified_transform_tool_pick_function;
+  trans_class->cursor_update = picman_unified_transform_tool_cursor_update;
+  trans_class->draw_gui      = picman_unified_transform_tool_draw_gui;
 }
 
 static void
-gimp_unified_transform_tool_init (GimpUnifiedTransformTool *unified_tool)
+picman_unified_transform_tool_init (PicmanUnifiedTransformTool *unified_tool)
 {
-  GimpTransformTool *tr_tool = GIMP_TRANSFORM_TOOL (unified_tool);
+  PicmanTransformTool *tr_tool = PICMAN_TRANSFORM_TOOL (unified_tool);
 
   tr_tool->progress_text = _("Unified transform");
 
@@ -137,32 +137,32 @@ gimp_unified_transform_tool_init (GimpUnifiedTransformTool *unified_tool)
 }
 
 static gboolean
-transform_is_convex (GimpVector2 *pos)
+transform_is_convex (PicmanVector2 *pos)
 {
-  return gimp_transform_polygon_is_convex (pos[0].x, pos[0].y,
+  return picman_transform_polygon_is_convex (pos[0].x, pos[0].y,
                                            pos[1].x, pos[1].y,
                                            pos[2].x, pos[2].y,
                                            pos[3].x, pos[3].y);
 }
 
 static inline gdouble
-dotprod (GimpVector2 a,
-         GimpVector2 b)
+dotprod (PicmanVector2 a,
+         PicmanVector2 b)
 {
   return a.x * b.x + a.y * b.y;
 }
 
 static inline gdouble
-norm (GimpVector2 a)
+norm (PicmanVector2 a)
 {
   return sqrt (dotprod (a, a));
 }
 
-static inline GimpVector2
-vectorsubtract (GimpVector2 a,
-                GimpVector2 b)
+static inline PicmanVector2
+vectorsubtract (PicmanVector2 a,
+                PicmanVector2 b)
 {
-  GimpVector2 c;
+  PicmanVector2 c;
 
   c.x = a.x - b.x;
   c.y = a.y - b.y;
@@ -170,11 +170,11 @@ vectorsubtract (GimpVector2 a,
   return c;
 }
 
-static inline GimpVector2
-vectoradd (GimpVector2 a,
-           GimpVector2 b)
+static inline PicmanVector2
+vectoradd (PicmanVector2 a,
+           PicmanVector2 b)
 {
-  GimpVector2 c;
+  PicmanVector2 c;
 
   c.x = a.x + b.x;
   c.y = a.y + b.y;
@@ -182,11 +182,11 @@ vectoradd (GimpVector2 a,
   return c;
 }
 
-static inline GimpVector2
-scalemult (GimpVector2 a,
+static inline PicmanVector2
+scalemult (PicmanVector2 a,
            gdouble     b)
 {
-  GimpVector2 c;
+  PicmanVector2 c;
 
   c.x = a.x * b;
   c.y = a.y * b;
@@ -194,17 +194,17 @@ scalemult (GimpVector2 a,
   return c;
 }
 
-static inline GimpVector2
-vectorproject (GimpVector2 a,
-               GimpVector2 b)
+static inline PicmanVector2
+vectorproject (PicmanVector2 a,
+               PicmanVector2 b)
 {
   return scalemult (b, dotprod (a, b) / dotprod (b, b));
 }
 
 /* finds the clockwise angle between the vectors given, 0-2π */
 static inline gdouble
-calcangle (GimpVector2 a,
-           GimpVector2 b)
+calcangle (PicmanVector2 a,
+           PicmanVector2 b)
 {
   gdouble angle, angle2;
   gdouble length = norm (a) * norm (b);
@@ -218,11 +218,11 @@ calcangle (GimpVector2 a,
   return ((angle2 > G_PI/2.) ? angle : 2*G_PI-angle);
 }
 
-static inline GimpVector2
-rotate2d (GimpVector2 p,
+static inline PicmanVector2
+rotate2d (PicmanVector2 p,
           gdouble     angle)
 {
-  GimpVector2 ret;
+  PicmanVector2 ret;
 
   ret.x = cos (angle) * p.x-sin (angle) * p.y;
   ret.y = sin (angle) * p.x+cos (angle) * p.y;
@@ -230,12 +230,12 @@ rotate2d (GimpVector2 p,
   return ret;
 }
 
-static inline GimpVector2
-lineintersect (GimpVector2 p1, GimpVector2 p2,
-               GimpVector2 q1, GimpVector2 q2)
+static inline PicmanVector2
+lineintersect (PicmanVector2 p1, PicmanVector2 p2,
+               PicmanVector2 q1, PicmanVector2 q2)
 {
   gdouble     denom, u;
-  GimpVector2 p;
+  PicmanVector2 p;
 
   denom = (q2.y - q1.y) * (p2.x - p1.x) - (q2.x - q1.x) * (p2.y - p1.y);
   if (denom == 0.0)
@@ -255,19 +255,19 @@ lineintersect (GimpVector2 p1, GimpVector2 p2,
   return p;
 }
 
-static inline GimpVector2
-getpivotdelta (GimpTransformTool *tr_tool,
-               GimpVector2       *oldpos,
-               GimpVector2       *newpos,
-               GimpVector2        pivot)
+static inline PicmanVector2
+getpivotdelta (PicmanTransformTool *tr_tool,
+               PicmanVector2       *oldpos,
+               PicmanVector2       *newpos,
+               PicmanVector2        pivot)
 {
-  GimpMatrix3 transform_before, transform_after;
-  GimpVector2 delta;
+  PicmanMatrix3 transform_before, transform_after;
+  PicmanVector2 delta;
 
-  gimp_matrix3_identity (&transform_before);
-  gimp_matrix3_identity (&transform_after);
+  picman_matrix3_identity (&transform_before);
+  picman_matrix3_identity (&transform_after);
 
-  gimp_transform_matrix_perspective (&transform_before,
+  picman_transform_matrix_perspective (&transform_before,
                                      tr_tool->x1,
                                      tr_tool->y1,
                                      tr_tool->x2 - tr_tool->x1,
@@ -276,7 +276,7 @@ getpivotdelta (GimpTransformTool *tr_tool,
                                      oldpos[1].x, oldpos[1].y,
                                      oldpos[2].x, oldpos[2].y,
                                      oldpos[3].x, oldpos[3].y);
-  gimp_transform_matrix_perspective (&transform_after,
+  picman_transform_matrix_perspective (&transform_after,
                                      tr_tool->x1,
                                      tr_tool->y1,
                                      tr_tool->x2 - tr_tool->x1,
@@ -285,9 +285,9 @@ getpivotdelta (GimpTransformTool *tr_tool,
                                      newpos[1].x, newpos[1].y,
                                      newpos[2].x, newpos[2].y,
                                      newpos[3].x, newpos[3].y);
-  gimp_matrix3_invert (&transform_before);
-  gimp_matrix3_mult (&transform_after, &transform_before);
-  gimp_matrix3_transform_point (&transform_before,
+  picman_matrix3_invert (&transform_before);
+  picman_matrix3_mult (&transform_after, &transform_before);
+  picman_matrix3_transform_point (&transform_before,
                                 pivot.x, pivot.y, &delta.x, &delta.y);
 
   delta = vectorsubtract (delta, pivot);
@@ -315,7 +315,7 @@ point_is_inside_polygon (gint n, gdouble *x, gdouble *y, gdouble px, gdouble py)
 }
 
 static gboolean
-point_is_inside_polygon_pos (GimpVector2 *pos, GimpVector2 point)
+point_is_inside_polygon_pos (PicmanVector2 *pos, PicmanVector2 point)
 {
   return point_is_inside_polygon (4,
                                   (gdouble[4]){ pos[0].x, pos[1].x,
@@ -364,19 +364,19 @@ get_friendly_operation_name (TransformAction op)
 }
 
 static TransformAction
-gimp_unified_transform_tool_pick_function (GimpTransformTool *tr_tool,
-                                           const GimpCoords  *coords,
+picman_unified_transform_tool_pick_function (PicmanTransformTool *tr_tool,
+                                           const PicmanCoords  *coords,
                                            GdkModifierType    state,
-                                           GimpDisplay       *display)
+                                           PicmanDisplay       *display)
 {
-  GimpTool        *tool = GIMP_TOOL (tr_tool);
+  PicmanTool        *tool = PICMAN_TOOL (tr_tool);
   TransformAction  ret = TRANSFORM_HANDLE_NONE;
   TransformAction  i;
 
   for (i = TRANSFORM_HANDLE_NONE + 1; i < TRANSFORM_HANDLE_NUM; i++)
     {
       if (tr_tool->handles[i] &&
-          gimp_canvas_item_hit (tr_tool->handles[i], coords->x, coords->y))
+          picman_canvas_item_hit (tr_tool->handles[i], coords->x, coords->y))
         {
           ret = i;
           break;
@@ -397,21 +397,21 @@ gimp_unified_transform_tool_pick_function (GimpTransformTool *tr_tool,
         ret = TRANSFORM_HANDLE_ROTATION;
     }
 
-  gimp_tool_pop_status (tool, tool->display);
+  picman_tool_pop_status (tool, tool->display);
 
   if (ret != TRANSFORM_HANDLE_NONE)
-    gimp_tool_push_status (tool, tool->display, "%s",
+    picman_tool_push_status (tool, tool->display, "%s",
                            get_friendly_operation_name (ret));
 
   return ret;
 }
 
 static void
-gethandlegeometry (GimpTransformTool *tr_tool,
-                   GimpVector2       *position,
+gethandlegeometry (PicmanTransformTool *tr_tool,
+                   PicmanVector2       *position,
                    gdouble           *angle)
 {
-  GimpVector2      o[] = { { .x = tr_tool->tx1, .y = tr_tool->ty1 },
+  PicmanVector2      o[] = { { .x = tr_tool->tx1, .y = tr_tool->ty1 },
                            { .x = tr_tool->tx2, .y = tr_tool->ty2 },
                            { .x = tr_tool->tx3, .y = tr_tool->ty3 },
                            { .x = tr_tool->tx4, .y = tr_tool->ty4 } },
@@ -438,25 +438,25 @@ gethandlegeometry (GimpTransformTool *tr_tool,
 }
 
 static void
-gimp_unified_transform_tool_cursor_update (GimpTransformTool  *tr_tool,
-                                           GimpCursorType     *cursor,
-                                           GimpCursorModifier *modifier)
+picman_unified_transform_tool_cursor_update (PicmanTransformTool  *tr_tool,
+                                           PicmanCursorType     *cursor,
+                                           PicmanCursorModifier *modifier)
 {
-  GimpToolCursorType toolcursor = GIMP_TOOL_CURSOR_NONE;
+  PicmanToolCursorType toolcursor = PICMAN_TOOL_CURSOR_NONE;
   gdouble angle[8];
   gint i;
-  GimpCursorType map[8];
-  GimpVector2 pos[4], this, that;
+  PicmanCursorType map[8];
+  PicmanVector2 pos[4], this, that;
   gboolean flip = FALSE, side = FALSE, setcursor = TRUE;
 
-  map[0] = GIMP_CURSOR_CORNER_TOP_LEFT;
-  map[1] = GIMP_CURSOR_CORNER_TOP;
-  map[2] = GIMP_CURSOR_CORNER_TOP_RIGHT;
-  map[3] = GIMP_CURSOR_CORNER_RIGHT;
-  map[4] = GIMP_CURSOR_CORNER_BOTTOM_RIGHT;
-  map[5] = GIMP_CURSOR_CORNER_BOTTOM;
-  map[6] = GIMP_CURSOR_CORNER_BOTTOM_LEFT;
-  map[7] = GIMP_CURSOR_CORNER_LEFT;
+  map[0] = PICMAN_CURSOR_CORNER_TOP_LEFT;
+  map[1] = PICMAN_CURSOR_CORNER_TOP;
+  map[2] = PICMAN_CURSOR_CORNER_TOP_RIGHT;
+  map[3] = PICMAN_CURSOR_CORNER_RIGHT;
+  map[4] = PICMAN_CURSOR_CORNER_BOTTOM_RIGHT;
+  map[5] = PICMAN_CURSOR_CORNER_BOTTOM;
+  map[6] = PICMAN_CURSOR_CORNER_BOTTOM_LEFT;
+  map[7] = PICMAN_CURSOR_CORNER_LEFT;
 
   gethandlegeometry (tr_tool, pos, angle);
 
@@ -536,35 +536,35 @@ gimp_unified_transform_tool_cursor_update (GimpTransformTool  *tr_tool,
 
       switch (map[i])
         {
-        case GIMP_CURSOR_CORNER_TOP_LEFT:
+        case PICMAN_CURSOR_CORNER_TOP_LEFT:
           if (this.x + this.y > that.x + that.y)
             flip = TRUE;
           break;
-        case GIMP_CURSOR_CORNER_TOP:
+        case PICMAN_CURSOR_CORNER_TOP:
           if (this.y > that.y)
             flip = TRUE;
           break;
-        case GIMP_CURSOR_CORNER_TOP_RIGHT:
+        case PICMAN_CURSOR_CORNER_TOP_RIGHT:
           if (this.x - this.y < that.x - that.y)
             flip = TRUE;
           break;
-        case GIMP_CURSOR_CORNER_RIGHT:
+        case PICMAN_CURSOR_CORNER_RIGHT:
           if (this.x < that.x)
             flip = TRUE;
           break;
-        case GIMP_CURSOR_CORNER_BOTTOM_RIGHT:
+        case PICMAN_CURSOR_CORNER_BOTTOM_RIGHT:
           if (this.x + this.y < that.x + that.y)
             flip = TRUE;
           break;
-        case GIMP_CURSOR_CORNER_BOTTOM:
+        case PICMAN_CURSOR_CORNER_BOTTOM:
           if (this.y < that.y)
             flip = TRUE;
           break;
-        case GIMP_CURSOR_CORNER_BOTTOM_LEFT:
+        case PICMAN_CURSOR_CORNER_BOTTOM_LEFT:
           if (this.x - this.y > that.x - that.y)
             flip = TRUE;
           break;
-        case GIMP_CURSOR_CORNER_LEFT:
+        case PICMAN_CURSOR_CORNER_LEFT:
           if (this.x > that.x)
             flip = TRUE;
           break;
@@ -584,13 +584,13 @@ gimp_unified_transform_tool_cursor_update (GimpTransformTool  *tr_tool,
     {
     case TRANSFORM_HANDLE_NONE:
     case TRANSFORM_CREATING:
-      toolcursor = GIMP_TOOL_CURSOR_NONE;
+      toolcursor = PICMAN_TOOL_CURSOR_NONE;
       break;
     case TRANSFORM_HANDLE_NW_P:
     case TRANSFORM_HANDLE_NE_P:
     case TRANSFORM_HANDLE_SW_P:
     case TRANSFORM_HANDLE_SE_P:
-      toolcursor = GIMP_TOOL_CURSOR_PERSPECTIVE;
+      toolcursor = PICMAN_TOOL_CURSOR_PERSPECTIVE;
       break;
     case TRANSFORM_HANDLE_NW:
     case TRANSFORM_HANDLE_NE:
@@ -600,65 +600,65 @@ gimp_unified_transform_tool_cursor_update (GimpTransformTool  *tr_tool,
     case TRANSFORM_HANDLE_S:
     case TRANSFORM_HANDLE_E:
     case TRANSFORM_HANDLE_W:
-      toolcursor = GIMP_TOOL_CURSOR_RESIZE;
+      toolcursor = PICMAN_TOOL_CURSOR_RESIZE;
       break;
     case TRANSFORM_HANDLE_CENTER:
-      toolcursor = GIMP_TOOL_CURSOR_MOVE;
+      toolcursor = PICMAN_TOOL_CURSOR_MOVE;
       break;
     case TRANSFORM_HANDLE_PIVOT:
-      toolcursor = GIMP_TOOL_CURSOR_ROTATE;
-      *modifier = GIMP_CURSOR_MODIFIER_MOVE;
+      toolcursor = PICMAN_TOOL_CURSOR_ROTATE;
+      *modifier = PICMAN_CURSOR_MODIFIER_MOVE;
       break;
     case TRANSFORM_HANDLE_N_S:
     case TRANSFORM_HANDLE_S_S:
     case TRANSFORM_HANDLE_E_S:
     case TRANSFORM_HANDLE_W_S:
-      toolcursor = GIMP_TOOL_CURSOR_SHEAR;
+      toolcursor = PICMAN_TOOL_CURSOR_SHEAR;
       break;
     case TRANSFORM_HANDLE_ROTATION:
-      toolcursor = GIMP_TOOL_CURSOR_ROTATE;
+      toolcursor = PICMAN_TOOL_CURSOR_ROTATE;
       break;
     default:
       g_assert_not_reached();
     }
 
   /* parent class sets cursor and cursor_modifier */
-  gimp_tool_control_set_tool_cursor (GIMP_TOOL (tr_tool)->control, toolcursor);
+  picman_tool_control_set_tool_cursor (PICMAN_TOOL (tr_tool)->control, toolcursor);
 }
 
 static void
-gimp_unified_transform_tool_draw_gui (GimpTransformTool *tr_tool,
+picman_unified_transform_tool_draw_gui (PicmanTransformTool *tr_tool,
                                       gint               handle_w,
                                       gint               handle_h)
 {
-  GimpDrawTool    *draw_tool = GIMP_DRAW_TOOL (tr_tool);
-  GimpCanvasGroup *stroke_group;
+  PicmanDrawTool    *draw_tool = PICMAN_DRAW_TOOL (tr_tool);
+  PicmanCanvasGroup *stroke_group;
   gint             d, i;
   gdouble          angle[8];
-  GimpVector2      o[4], t[4];
+  PicmanVector2      o[4], t[4];
 
   gethandlegeometry (tr_tool, o, angle);
 
   for (i = 0; i < 4; i++)
     {
-      GimpCanvasItem *h;
+      PicmanCanvasItem *h;
 
       /*  draw the scale handles  */
-      h = gimp_draw_tool_add_handle (draw_tool,
-                                     GIMP_HANDLE_SQUARE,
+      h = picman_draw_tool_add_handle (draw_tool,
+                                     PICMAN_HANDLE_SQUARE,
                                      o[i].x, o[i].y,
                                      handle_w * 1.5, handle_h * 1.5,
-                                     GIMP_HANDLE_ANCHOR_CENTER);
-      gimp_canvas_handle_set_angles (h, angle[i + 4], 0.0);
+                                     PICMAN_HANDLE_ANCHOR_CENTER);
+      picman_canvas_handle_set_angles (h, angle[i + 4], 0.0);
       tr_tool->handles[TRANSFORM_HANDLE_NW + i] = h;
 
       /*  draw the perspective handles  */
-      h = gimp_draw_tool_add_handle (draw_tool,
-                                     GIMP_HANDLE_DIAMOND,
+      h = picman_draw_tool_add_handle (draw_tool,
+                                     PICMAN_HANDLE_DIAMOND,
                                      o[i].x, o[i].y,
                                      handle_w * 0.8, handle_h * 0.8,
-                                     GIMP_HANDLE_ANCHOR_CENTER);
-      gimp_canvas_handle_set_angles (h, angle[i + 4], 0.0);
+                                     PICMAN_HANDLE_ANCHOR_CENTER);
+      picman_canvas_handle_set_angles (h, angle[i + 4], 0.0);
       tr_tool->handles[TRANSFORM_HANDLE_NW_P + i] = h;
     }
 
@@ -670,14 +670,14 @@ gimp_unified_transform_tool_draw_gui (GimpTransformTool *tr_tool,
 
   for (i = 0; i < 4; i++)
     {
-      GimpCanvasItem *h;
+      PicmanCanvasItem *h;
 
-      h = gimp_draw_tool_add_handle (draw_tool,
-                                     GIMP_HANDLE_SQUARE,
+      h = picman_draw_tool_add_handle (draw_tool,
+                                     PICMAN_HANDLE_SQUARE,
                                      t[i].x, t[i].y,
                                      handle_w, handle_h,
-                                     GIMP_HANDLE_ANCHOR_CENTER);
-      gimp_canvas_handle_set_angles (h, angle[i], 0.0);
+                                     PICMAN_HANDLE_ANCHOR_CENTER);
+      picman_canvas_handle_set_angles (h, angle[i], 0.0);
       tr_tool->handles[TRANSFORM_HANDLE_N + i] = h;
     }
 
@@ -689,54 +689,54 @@ gimp_unified_transform_tool_draw_gui (GimpTransformTool *tr_tool,
 
   for (i = 0; i < 4; i++)
     {
-      GimpCanvasItem *h;
+      PicmanCanvasItem *h;
 
-      h = gimp_draw_tool_add_handle (draw_tool,
-                                     GIMP_HANDLE_FILLED_DIAMOND,
+      h = picman_draw_tool_add_handle (draw_tool,
+                                     PICMAN_HANDLE_FILLED_DIAMOND,
                                      t[i].x, t[i].y,
                                      handle_w, handle_h,
-                                     GIMP_HANDLE_ANCHOR_CENTER);
-      gimp_canvas_handle_set_angles (h, angle[i], 0.0);
+                                     PICMAN_HANDLE_ANCHOR_CENTER);
+      picman_canvas_handle_set_angles (h, angle[i], 0.0);
       tr_tool->handles[TRANSFORM_HANDLE_N_S + i] = h;
     }
 
   /*  draw the rotation center axis handle  */
   d = MIN (handle_w, handle_h);
 
-  stroke_group = gimp_draw_tool_add_stroke_group (draw_tool);
+  stroke_group = picman_draw_tool_add_stroke_group (draw_tool);
 
-  tr_tool->handles[TRANSFORM_HANDLE_PIVOT] = GIMP_CANVAS_ITEM (stroke_group);
+  tr_tool->handles[TRANSFORM_HANDLE_PIVOT] = PICMAN_CANVAS_ITEM (stroke_group);
 
-  gimp_draw_tool_push_group (draw_tool, stroke_group);
+  picman_draw_tool_push_group (draw_tool, stroke_group);
 
-  gimp_draw_tool_add_handle (draw_tool,
-                             GIMP_HANDLE_CIRCLE,
+  picman_draw_tool_add_handle (draw_tool,
+                             PICMAN_HANDLE_CIRCLE,
                              tr_tool->tpx, tr_tool->tpy,
                              d, d,
-                             GIMP_HANDLE_ANCHOR_CENTER);
-  gimp_draw_tool_add_handle (draw_tool,
-                             GIMP_HANDLE_CROSS,
+                             PICMAN_HANDLE_ANCHOR_CENTER);
+  picman_draw_tool_add_handle (draw_tool,
+                             PICMAN_HANDLE_CROSS,
                              tr_tool->tpx, tr_tool->tpy,
                              d, d,
-                             GIMP_HANDLE_ANCHOR_CENTER);
+                             PICMAN_HANDLE_ANCHOR_CENTER);
 
-  gimp_draw_tool_pop_group (draw_tool);
+  picman_draw_tool_pop_group (draw_tool);
 
   /* draw an item at 40,80 in screen coordinates */
   //gint x, y;
-  //gimp_display_shell_untransform_xy (gimp_display_get_shell (tool->display),
+  //picman_display_shell_untransform_xy (picman_display_get_shell (tool->display),
   //                                 40, 80, &x, &y, TRUE);
-  //gimp_draw_tool_add_handle (draw_tool,
-  //                           GIMP_HANDLE_SQUARE,
+  //picman_draw_tool_add_handle (draw_tool,
+  //                           PICMAN_HANDLE_SQUARE,
   //                           x, y,
   //                           5, 5,
-  //                           GIMP_HANDLE_ANCHOR_CENTER);
+  //                           PICMAN_HANDLE_ANCHOR_CENTER);
 }
 
 static void
-gimp_unified_transform_tool_dialog (GimpTransformTool *tr_tool)
+picman_unified_transform_tool_dialog (PicmanTransformTool *tr_tool)
 {
-  GimpUnifiedTransformTool *unified = GIMP_UNIFIED_TRANSFORM_TOOL (tr_tool);
+  PicmanUnifiedTransformTool *unified = PICMAN_UNIFIED_TRANSFORM_TOOL (tr_tool);
   GtkWidget                *content_area;
   GtkWidget                *frame;
   GtkWidget                *table;
@@ -744,7 +744,7 @@ gimp_unified_transform_tool_dialog (GimpTransformTool *tr_tool)
 
   content_area = gtk_dialog_get_content_area (GTK_DIALOG (tr_tool->dialog));
 
-  frame = gimp_frame_new (_("Transform Matrix"));
+  frame = picman_frame_new (_("Transform Matrix"));
   gtk_container_set_border_width (GTK_CONTAINER (frame), 6);
   gtk_box_pack_start (GTK_BOX (content_area), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
@@ -771,9 +771,9 @@ gimp_unified_transform_tool_dialog (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_unified_transform_tool_dialog_update (GimpTransformTool *tr_tool)
+picman_unified_transform_tool_dialog_update (PicmanTransformTool *tr_tool)
 {
-  GimpUnifiedTransformTool *unified = GIMP_UNIFIED_TRANSFORM_TOOL (tr_tool);
+  PicmanUnifiedTransformTool *unified = PICMAN_UNIFIED_TRANSFORM_TOOL (tr_tool);
   gint                      x, y;
 
   for (y = 0; y < 3; y++)
@@ -789,7 +789,7 @@ gimp_unified_transform_tool_dialog_update (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_unified_transform_tool_prepare (GimpTransformTool *tr_tool)
+picman_unified_transform_tool_prepare (PicmanTransformTool *tr_tool)
 {
   tr_tool->trans_info[PIVOT_X] = (gdouble) (tr_tool->x1 + tr_tool->x2) / 2.0;
   tr_tool->trans_info[PIVOT_Y] = (gdouble) (tr_tool->y1 + tr_tool->y2) / 2.0;
@@ -805,19 +805,19 @@ gimp_unified_transform_tool_prepare (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
+picman_unified_transform_tool_motion (PicmanTransformTool *transform_tool)
 {
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (transform_tool);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (transform_tool);
   gdouble              *x[4], *y[4];
   gdouble              *newpivot_x, *newpivot_y;
 
-  GimpVector2           oldpos[5], newpos[4];
-  GimpVector2           cur   = { .x = transform_tool->curx,
+  PicmanVector2           oldpos[5], newpos[4];
+  PicmanVector2           cur   = { .x = transform_tool->curx,
                                   .y = transform_tool->cury };
-  GimpVector2           mouse = { .x = transform_tool->mousex,
+  PicmanVector2           mouse = { .x = transform_tool->mousex,
                                   .y = transform_tool->mousey };
-  GimpVector2           d;
-  GimpVector2           pivot;
+  PicmanVector2           d;
+  PicmanVector2           pivot;
 
   gint                  i;
 
@@ -851,7 +851,7 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
       if (options->constrain_move)
         {
           /* snap to 45 degree vectors from starting point */
-          gdouble angle = 16. * calcangle ((GimpVector2){1., 0.}, d) / (2.*G_PI);
+          gdouble angle = 16. * calcangle ((PicmanVector2){1., 0.}, d) / (2.*G_PI);
           gdouble dist = norm (d) / sqrt (2);
 
           if (angle < 1. || angle >= 15.)
@@ -919,7 +919,7 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
             }
 
           if (closest_dist *
-              gimp_display_get_shell (GIMP_TOOL (transform_tool)->display)->scale_x < 50)
+              picman_display_get_shell (PICMAN_TOOL (transform_tool)->display)->scale_x < 50)
             {
               pivot = oldpos[closest];
             }
@@ -966,7 +966,7 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
       if (options->constrain_scale)
         {
           /* restrict to movement along the diagonal */
-          GimpVector2 diag = vectorsubtract (oldpos[this], oldpos[opposite]);
+          PicmanVector2 diag = vectorsubtract (oldpos[this], oldpos[opposite]);
 
           d = vectorproject (d, diag);
         }
@@ -1021,7 +1021,7 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
           /* transform the pivot point before the interaction and after, and move everything by
            * this difference */
           //TODO the handle doesn't actually end up where the mouse cursor is
-          GimpVector2 delta = getpivotdelta (transform_tool, oldpos, newpos, pivot);
+          PicmanVector2 delta = getpivotdelta (transform_tool, oldpos, newpos, pivot);
           for (i = 0; i < 4; i++)
             newpos[i] = vectorsubtract (newpos[i], delta);
 
@@ -1036,7 +1036,7 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
       function == TRANSFORM_HANDLE_W)
     {
       gint        this_l, this_r, opp_l, opp_r;
-      GimpVector2 side_l, side_r, midline;
+      PicmanVector2 side_l, side_r, midline;
 
       /* 0: northwest, 1: northeast, 2: southwest, 3: southeast */
       if (function == TRANSFORM_HANDLE_N)
@@ -1069,7 +1069,7 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
 
       if (options->constrain_scale)
         {
-          GimpVector2 before, after, effective_pivot = pivot;
+          PicmanVector2 before, after, effective_pivot = pivot;
           gdouble     distance;
 
           if (!options->frompivot_scale)
@@ -1103,7 +1103,7 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
       if (!options->constrain_scale && options->frompivot_scale &&
           transform_is_convex (newpos) && transform_is_convex (oldpos))
         {
-          GimpVector2 delta = getpivotdelta (transform_tool,
+          PicmanVector2 delta = getpivotdelta (transform_tool,
                                              oldpos, newpos, pivot);
           for (i = 0; i < 4; i++)
             newpos[i] = vectorsubtract (newpos[i], delta);
@@ -1143,7 +1143,7 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
       if (options->constrain_shear)
         {
           /* restrict to movement along the side */
-          GimpVector2 side = vectorsubtract (oldpos[this_r], oldpos[this_l]);
+          PicmanVector2 side = vectorsubtract (oldpos[this_r], oldpos[this_l]);
 
           d = vectorproject (d, side);
         }
@@ -1154,7 +1154,7 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
       if (options->frompivot_shear && transform_is_convex (newpos) &&
           transform_is_convex (oldpos))
         {
-          GimpVector2 delta = getpivotdelta (transform_tool,
+          PicmanVector2 delta = getpivotdelta (transform_tool,
                                              oldpos, newpos, pivot);
           for (i = 0; i < 4; i++)
             newpos[i] = vectorsubtract (newpos[i], delta);
@@ -1198,7 +1198,7 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
            * angles of the two sides that run to this corner point, or
            * along the diagonal that runs trough this corner point.
            */
-          GimpVector2 proj[4];
+          PicmanVector2 proj[4];
           gdouble     rej[4];
 
           for (i = 0; i < 4; i++)
@@ -1229,7 +1229,7 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
       if (options->frompivot_perspective && transform_is_convex (newpos) &&
           transform_is_convex (oldpos))
         {
-          GimpVector2 delta = getpivotdelta (transform_tool,
+          PicmanVector2 delta = getpivotdelta (transform_tool,
                                              oldpos, newpos, pivot);
 
           for (i = 0; i < 4; i++)
@@ -1251,7 +1251,7 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
   if (!fixedpivot && transform_is_convex (newpos) &&
       transform_is_convex (oldpos) && point_is_inside_polygon_pos (oldpos, pivot))
     {
-      GimpVector2 delta = getpivotdelta (transform_tool, oldpos, newpos, pivot);
+      PicmanVector2 delta = getpivotdelta (transform_tool, oldpos, newpos, pivot);
       pivot = vectoradd (pivot, delta);
     }
 
@@ -1263,13 +1263,13 @@ gimp_unified_transform_tool_motion (GimpTransformTool *transform_tool)
 }
 
 static void
-gimp_unified_transform_tool_recalc_matrix (GimpTransformTool *tr_tool)
+picman_unified_transform_tool_recalc_matrix (PicmanTransformTool *tr_tool)
 {
   tr_tool->px = tr_tool->trans_info[PIVOT_X];
   tr_tool->py = tr_tool->trans_info[PIVOT_Y];
 
-  gimp_matrix3_identity (&tr_tool->transform);
-  gimp_transform_matrix_perspective (&tr_tool->transform,
+  picman_matrix3_identity (&tr_tool->transform);
+  picman_transform_matrix_perspective (&tr_tool->transform,
                                      tr_tool->x1,
                                      tr_tool->y1,
                                      tr_tool->x2 - tr_tool->x1,
@@ -1285,7 +1285,7 @@ gimp_unified_transform_tool_recalc_matrix (GimpTransformTool *tr_tool)
 }
 
 static gchar *
-gimp_unified_transform_tool_get_undo_desc (GimpTransformTool *tr_tool)
+picman_unified_transform_tool_get_undo_desc (PicmanTransformTool *tr_tool)
 {
   return g_strdup (C_("undo-type", "Unified Transform"));
 }

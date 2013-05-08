@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,39 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEMP_BUF_H__
-#define __GIMP_TEMP_BUF_H__
+#ifndef __PICMAN_TEMP_BUF_H__
+#define __PICMAN_TEMP_BUF_H__
 
 
-GimpTempBuf * gimp_temp_buf_new             (gint               width,
+PicmanTempBuf * picman_temp_buf_new             (gint               width,
                                              gint               height,
                                              const Babl        *fomat) G_GNUC_WARN_UNUSED_RESULT;
-GimpTempBuf * gimp_temp_buf_copy            (const GimpTempBuf *src) G_GNUC_WARN_UNUSED_RESULT;
+PicmanTempBuf * picman_temp_buf_copy            (const PicmanTempBuf *src) G_GNUC_WARN_UNUSED_RESULT;
 
-GimpTempBuf * gimp_temp_buf_ref             (GimpTempBuf       *buf);
-void          gimp_temp_buf_unref           (GimpTempBuf       *buf);
+PicmanTempBuf * picman_temp_buf_ref             (PicmanTempBuf       *buf);
+void          picman_temp_buf_unref           (PicmanTempBuf       *buf);
 
-GimpTempBuf * gimp_temp_buf_scale           (const GimpTempBuf *buf,
+PicmanTempBuf * picman_temp_buf_scale           (const PicmanTempBuf *buf,
                                              gint               width,
                                              gint               height) G_GNUC_WARN_UNUSED_RESULT;
 
-gint          gimp_temp_buf_get_width       (const GimpTempBuf *buf);
-gint          gimp_temp_buf_get_height      (const GimpTempBuf *buf);
+gint          picman_temp_buf_get_width       (const PicmanTempBuf *buf);
+gint          picman_temp_buf_get_height      (const PicmanTempBuf *buf);
 
-const Babl  * gimp_temp_buf_get_format      (const GimpTempBuf *buf);
-void          gimp_temp_buf_set_format      (GimpTempBuf       *buf,
+const Babl  * picman_temp_buf_get_format      (const PicmanTempBuf *buf);
+void          picman_temp_buf_set_format      (PicmanTempBuf       *buf,
                                              const Babl        *format);
 
-guchar      * gimp_temp_buf_get_data        (const GimpTempBuf *buf);
-gsize         gimp_temp_buf_get_data_size   (const GimpTempBuf *buf);
+guchar      * picman_temp_buf_get_data        (const PicmanTempBuf *buf);
+gsize         picman_temp_buf_get_data_size   (const PicmanTempBuf *buf);
 
-guchar      * gimp_temp_buf_data_clear      (GimpTempBuf       *buf);
+guchar      * picman_temp_buf_data_clear      (PicmanTempBuf       *buf);
 
-gsize         gimp_temp_buf_get_memsize     (const GimpTempBuf *buf);
+gsize         picman_temp_buf_get_memsize     (const PicmanTempBuf *buf);
 
-GeglBuffer  * gimp_temp_buf_create_buffer   (GimpTempBuf       *temp_buf) G_GNUC_WARN_UNUSED_RESULT;
-GimpTempBuf * gimp_gegl_buffer_get_temp_buf (GeglBuffer        *buffer);
+GeglBuffer  * picman_temp_buf_create_buffer   (PicmanTempBuf       *temp_buf) G_GNUC_WARN_UNUSED_RESULT;
+PicmanTempBuf * picman_gegl_buffer_get_temp_buf (GeglBuffer        *buffer);
 
 
 
-#endif  /*  __GIMP_TEMP_BUF_H__  */
+#endif  /*  __PICMAN_TEMP_BUF_H__  */

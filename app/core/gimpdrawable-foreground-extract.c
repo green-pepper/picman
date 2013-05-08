@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,61 +21,61 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
 #include "base/siox.h"
 #include "base/tile-manager.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimpchannel.h"
-#include "gimpdrawable.h"
-#include "gimpdrawable-foreground-extract.h"
-#include "gimpimage.h"
-#include "gimpprogress.h"
+#include "picmanchannel.h"
+#include "picmandrawable.h"
+#include "picmandrawable-foreground-extract.h"
+#include "picmanimage.h"
+#include "picmanprogress.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  public functions  */
 
 void
-gimp_drawable_foreground_extract (GimpDrawable              *drawable,
-                                  GimpForegroundExtractMode  mode,
-                                  GimpDrawable              *mask,
-                                  GimpProgress              *progress)
+picman_drawable_foreground_extract (PicmanDrawable              *drawable,
+                                  PicmanForegroundExtractMode  mode,
+                                  PicmanDrawable              *mask,
+                                  PicmanProgress              *progress)
 {
   SioxState    *state;
   const gdouble sensitivity[3] = { SIOX_DEFAULT_SENSITIVITY_L,
                                    SIOX_DEFAULT_SENSITIVITY_A,
                                    SIOX_DEFAULT_SENSITIVITY_B };
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (mask));
-  g_return_if_fail (mode == GIMP_FOREGROUND_EXTRACT_SIOX);
+  g_return_if_fail (PICMAN_IS_DRAWABLE (mask));
+  g_return_if_fail (mode == PICMAN_FOREGROUND_EXTRACT_SIOX);
 
   state =
-    gimp_drawable_foreground_extract_siox_init (drawable,
+    picman_drawable_foreground_extract_siox_init (drawable,
                                                 0, 0,
-                                                gimp_item_get_width  (GIMP_ITEM (mask)),
-                                                gimp_item_get_height (GIMP_ITEM (mask)));
+                                                picman_item_get_width  (PICMAN_ITEM (mask)),
+                                                picman_item_get_height (PICMAN_ITEM (mask)));
 
   if (state)
     {
-      gimp_drawable_foreground_extract_siox (mask, state,
+      picman_drawable_foreground_extract_siox (mask, state,
                                              SIOX_REFINEMENT_RECALCULATE,
                                              SIOX_DEFAULT_SMOOTHNESS,
                                              sensitivity,
                                              FALSE,
                                              progress);
 
-      gimp_drawable_foreground_extract_siox_done (state);
+      picman_drawable_foreground_extract_siox_done (state);
     }
 }
 
 SioxState *
-gimp_drawable_foreground_extract_siox_init (GimpDrawable *drawable,
+picman_drawable_foreground_extract_siox_init (PicmanDrawable *drawable,
                                             gint          x,
                                             gint          y,
                                             gint          width,
@@ -87,17 +87,17 @@ gimp_drawable_foreground_extract_siox_init (GimpDrawable *drawable,
   gint          offset_x;
   gint          offset_y;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
 
-  if (gimp_drawable_is_indexed (drawable))
-    colormap = gimp_drawable_get_colormap (drawable);
+  if (picman_drawable_is_indexed (drawable))
+    colormap = picman_drawable_get_colormap (drawable);
 
-  gimp_item_get_offset (GIMP_ITEM (drawable), &offset_x, &offset_y);
+  picman_item_get_offset (PICMAN_ITEM (drawable), &offset_x, &offset_y);
 
-  intersect = gimp_rectangle_intersect (offset_x, offset_y,
-                                        gimp_item_get_width  (GIMP_ITEM (drawable)),
-                                        gimp_item_get_height (GIMP_ITEM (drawable)),
+  intersect = picman_rectangle_intersect (offset_x, offset_y,
+                                        picman_item_get_width  (PICMAN_ITEM (drawable)),
+                                        picman_item_get_height (PICMAN_ITEM (drawable)),
                                         x, y, width, height,
                                         &x, &y, &width, &height);
 
@@ -109,65 +109,65 @@ gimp_drawable_foreground_extract_siox_init (GimpDrawable *drawable,
   if (! intersect)
     return NULL;
 
-  buffer = gimp_drawable_get_buffer (drawable);
+  buffer = picman_drawable_get_buffer (drawable);
 
-  return siox_init (gimp_gegl_buffer_get_tiles (buffer), colormap,
+  return siox_init (picman_gegl_buffer_get_tiles (buffer), colormap,
                     offset_x, offset_y,
                     x, y, width, height);
 }
 
 void
-gimp_drawable_foreground_extract_siox (GimpDrawable       *mask,
+picman_drawable_foreground_extract_siox (PicmanDrawable       *mask,
                                        SioxState          *state,
                                        SioxRefinementType  refinement,
                                        gint                smoothness,
                                        const gdouble       sensitivity[3],
                                        gboolean            multiblob,
-                                       GimpProgress       *progress)
+                                       PicmanProgress       *progress)
 {
   GeglBuffer *buffer;
   gint        x1, y1;
   gint        x2, y2;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (mask));
-  g_return_if_fail (babl_format_get_bytes_per_pixel (gimp_drawable_get_format (mask)) == 1);
+  g_return_if_fail (PICMAN_IS_DRAWABLE (mask));
+  g_return_if_fail (babl_format_get_bytes_per_pixel (picman_drawable_get_format (mask)) == 1);
 
   g_return_if_fail (state != NULL);
 
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
   if (progress)
-    gimp_progress_start (progress, _("Foreground Extraction"), FALSE);
+    picman_progress_start (progress, _("Foreground Extraction"), FALSE);
 
-  if (GIMP_IS_CHANNEL (mask))
+  if (PICMAN_IS_CHANNEL (mask))
     {
-      gimp_channel_bounds (GIMP_CHANNEL (mask), &x1, &y1, &x2, &y2);
+      picman_channel_bounds (PICMAN_CHANNEL (mask), &x1, &y1, &x2, &y2);
     }
   else
     {
       x1 = 0;
       y1 = 0;
-      x2 = gimp_item_get_width  (GIMP_ITEM (mask));
-      y2 = gimp_item_get_height (GIMP_ITEM (mask));
+      x2 = picman_item_get_width  (PICMAN_ITEM (mask));
+      y2 = picman_item_get_height (PICMAN_ITEM (mask));
     }
 
-  buffer = gimp_drawable_get_buffer (mask);
+  buffer = picman_drawable_get_buffer (mask);
 
   siox_foreground_extract (state, refinement,
-                           gimp_gegl_buffer_get_tiles (buffer),
+                           picman_gegl_buffer_get_tiles (buffer),
                            x1, y1, x2, y2,
                            smoothness, sensitivity, multiblob,
-                           (SioxProgressFunc) gimp_progress_set_value,
+                           (SioxProgressFunc) picman_progress_set_value,
                            progress);
 
   if (progress)
-    gimp_progress_end (progress);
+    picman_progress_end (progress);
 
-  gimp_drawable_update (mask, x1, y1, x2, y2);
+  picman_drawable_update (mask, x1, y1, x2, y2);
 }
 
 void
-gimp_drawable_foreground_extract_siox_done (SioxState *state)
+picman_drawable_foreground_extract_siox_done (SioxState *state)
 {
   g_return_if_fail (state != NULL);
 

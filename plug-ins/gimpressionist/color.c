@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "gimpressionist.h"
+#include "picmanressionist.h"
 #include "color.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define NUMCOLORRADIO 2
@@ -62,8 +62,8 @@ create_colorpage (GtkNotebook *notebook)
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
   gtk_widget_show (vbox);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Color"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Color"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &pcvals.color_type, 0,
 
                                     _("A_verage under brush"),
@@ -73,11 +73,11 @@ create_colorpage (GtkNotebook *notebook)
 
                                     NULL);
 
-  gimp_help_set_help_data
+  picman_help_set_help_data
     (colorradio[COLOR_TYPE_AVERAGE],
      _("Color is computed from the average of all pixels under the brush"),
      NULL);
-  gimp_help_set_help_data
+  picman_help_set_help_data
     (colorradio[COLOR_TYPE_CENTER],
      _("Samples the color from the pixel in the center of the brush"), NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
@@ -89,7 +89,7 @@ create_colorpage (GtkNotebook *notebook)
   gtk_widget_show (table);
 
   colornoiseadjust =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                           _("Color _noise:"),
                           100, -1, pcvals.color_noise,
                           0.0, 100.0, 1.0, 5.0, 0,
@@ -97,7 +97,7 @@ create_colorpage (GtkNotebook *notebook)
                           _("Adds random noise to the color"),
                           NULL);
   g_signal_connect (colornoiseadjust, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pcvals.color_noise);
 
   color_restore ();

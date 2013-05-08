@@ -1,8 +1,8 @@
-## Makefile.am for gimp/etc
+## Makefile.am for picman/etc
 
-gimpsysconf_DATA = \
+picmansysconf_DATA = \
 	controllerrc	\
-	gimprc		\
+	picmanrc		\
 	gtkrc		\
 	menurc		\
 	sessionrc	\
@@ -10,4 +10,4 @@ gimpsysconf_DATA = \
 	unitrc
 
 EXTRA_DIST = \
-	$(gimpsysconf_DATA)
+	$(picmansysconf_DATA)

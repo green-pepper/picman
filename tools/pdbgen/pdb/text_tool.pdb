@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub text_fontname {
     $blurb = <<'BLURB';
@@ -58,7 +58,7 @@ HELP
           desc => 'Antialiasing' },
         { name => 'size', type => '0 < float',
           desc => 'The size of text in either pixels or points' },
-        { name => 'size_type', type => 'enum GimpSizeType', dead => 1,
+        { name => 'size_type', type => 'enum PicmanSizeType', dead => 1,
           desc => 'The units of specified size' },
         { name => 'fontname', type => 'string',
           desc => 'The name of the font' }
@@ -73,9 +73,9 @@ HELP
         code => <<'CODE'
 {
   if (drawable &&
-      (! gimp_pdb_item_is_attached (GIMP_ITEM (drawable), image,
-                                    GIMP_PDB_ITEM_CONTENT, error) ||
-       ! gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error)))
+      (! picman_pdb_item_is_attached (PICMAN_ITEM (drawable), image,
+                                    PICMAN_PDB_ITEM_CONTENT, error) ||
+       ! picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error)))
     success = FALSE;
 
   if (success)
@@ -114,7 +114,7 @@ HELP
           desc => 'The text to generate (in UTF-8 encoding)' },
         { name => 'size', type => '0 < float',
           desc => 'The size of text in either pixels or points' },
-        { name => 'size_type', type => 'enum GimpSizeType', dead => 1,
+        { name => 'size_type', type => 'enum PicmanSizeType', dead => 1,
           desc => 'The units of specified size' },
         { name => 'fontname', type => 'string',
           desc => 'The name of the font' }
@@ -147,7 +147,7 @@ CODE
 }
 
 sub text {
-    &std_pdb_deprecated ('gimp-text-fontname');
+    &std_pdb_deprecated ('picman-text-fontname');
 
     @inargs = (
         { name => 'image', type => 'image',
@@ -167,7 +167,7 @@ sub text {
           desc => 'Antialiasing' },
         { name => 'size', type => '0 < float',
           desc => 'The size of text in either pixels or points' },
-        { name => 'size_type', type => 'enum GimpSizeType', dead => 1,
+        { name => 'size_type', type => 'enum PicmanSizeType', dead => 1,
           desc => 'The units of specified size' },
         { name => 'foundry', type => 'string', allow_non_utf8 => 1, dead => 1,
           desc => 'The font foundry' },
@@ -196,9 +196,9 @@ sub text {
         code => <<'CODE'
 {
   if (drawable &&
-      (! gimp_pdb_item_is_attached (GIMP_ITEM (drawable), image,
-                                    GIMP_PDB_ITEM_CONTENT, error) ||
-       ! gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error)))
+      (! picman_pdb_item_is_attached (PICMAN_ITEM (drawable), image,
+                                    PICMAN_PDB_ITEM_CONTENT, error) ||
+       ! picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error)))
     success = FALSE;
 
   if (success)
@@ -217,14 +217,14 @@ CODE
 }
 
 sub text_get_extents {
-    &std_pdb_deprecated ('gimp-text-get-extents-fontname');
+    &std_pdb_deprecated ('picman-text-get-extents-fontname');
 
     @inargs = (
         { name => 'text', type => 'string',
           desc => 'The text to generate (in UTF-8 encoding)' },
         { name => 'size', type => '0 < float',
           desc => 'The size of text in either pixels or points' },
-        { name => 'size_type', type => 'enum GimpSizeType', dead => 1,
+        { name => 'size_type', type => 'enum PicmanSizeType', dead => 1,
           desc => 'The units of specified size' },
         { name => 'foundry', type => 'string', allow_non_utf8 => 1, dead => 1,
           desc => 'The font foundry' },
@@ -271,9 +271,9 @@ CODE
 }
 
 
-@headers = qw("libgimpbase/gimpbase.h"
-              "text/gimptext-compat.h"
-              "gimppdb-utils.h");
+@headers = qw("libpicmanbase/picmanbase.h"
+              "text/picmantext-compat.h"
+              "picmanpdb-utils.h");
 
 @procs = qw(text_fontname text_get_extents_fontname
             text text_get_extents);
@@ -281,7 +281,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Text procedures';
-$doc_title = 'gimptexttool';
+$doc_title = 'picmantexttool';
 $doc_short_desc = 'Functions for controlling the text tool.';
 $doc_long_desc = 'Functions for controlling the text tool.';
 

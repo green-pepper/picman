@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 # The name of the module.
-DOC_MODULE = libgimpbase
+DOC_MODULE = libpicmanbase
 
 # The top-level SGML file.
 DOC_MAIN_SGML_FILE = $(DOC_MODULE)-docs.sgml
@@ -13,10 +13,10 @@ DOC_SOURCE_DIR = $(top_srcdir)/$(DOC_MODULE)
 SCANGOBJ_OPTIONS =
 
 # Extra options to supply to gtkdoc-scan
-SCAN_OPTIONS = --deprecated-guards="GIMP_DISABLE_DEPRECATED"
+SCAN_OPTIONS = --deprecated-guards="PICMAN_DISABLE_DEPRECATED"
 
 # Extra options to supply to gtkdoc-mkdb
-MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=gimp
+MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=picman
 
 # Extra options to supply to gtkdoc-fixref
 FIXXREF_OPTIONS =
@@ -27,12 +27,12 @@ CFILE_GLOB = $(DOC_SOURCE_DIR)/*.c
 
 # Header files to ignore when scanning
 IGNORE_HFILES = \
-	gimpbase.h		\
-	gimpbase-private.h	\
-	gimpprotocol.h		\
-	gimpreloc.h		\
-	gimpwire.h		\
-	gimpwin32-io.h
+	picmanbase.h		\
+	picmanbase-private.h	\
+	picmanprotocol.h		\
+	picmanreloc.h		\
+	picmanwire.h		\
+	picmanwin32-io.h
 
 # Images to copy into HTML directory
 HTML_IMAGES=

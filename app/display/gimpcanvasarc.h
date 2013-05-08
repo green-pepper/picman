@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasarc.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasarc.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,38 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_ARC_H__
-#define __GIMP_CANVAS_ARC_H__
+#ifndef __PICMAN_CANVAS_ARC_H__
+#define __PICMAN_CANVAS_ARC_H__
 
 
-#include "gimpcanvasitem.h"
+#include "picmancanvasitem.h"
 
 
-#define GIMP_TYPE_CANVAS_ARC            (gimp_canvas_arc_get_type ())
-#define GIMP_CANVAS_ARC(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_ARC, GimpCanvasArc))
-#define GIMP_CANVAS_ARC_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_ARC, GimpCanvasArcClass))
-#define GIMP_IS_CANVAS_ARC(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_ARC))
-#define GIMP_IS_CANVAS_ARC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_ARC))
-#define GIMP_CANVAS_ARC_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_ARC, GimpCanvasArcClass))
+#define PICMAN_TYPE_CANVAS_ARC            (picman_canvas_arc_get_type ())
+#define PICMAN_CANVAS_ARC(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_ARC, PicmanCanvasArc))
+#define PICMAN_CANVAS_ARC_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_ARC, PicmanCanvasArcClass))
+#define PICMAN_IS_CANVAS_ARC(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_ARC))
+#define PICMAN_IS_CANVAS_ARC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_ARC))
+#define PICMAN_CANVAS_ARC_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_ARC, PicmanCanvasArcClass))
 
 
-typedef struct _GimpCanvasArc      GimpCanvasArc;
-typedef struct _GimpCanvasArcClass GimpCanvasArcClass;
+typedef struct _PicmanCanvasArc      PicmanCanvasArc;
+typedef struct _PicmanCanvasArcClass PicmanCanvasArcClass;
 
-struct _GimpCanvasArc
+struct _PicmanCanvasArc
 {
-  GimpCanvasItem  parent_instance;
+  PicmanCanvasItem  parent_instance;
 };
 
-struct _GimpCanvasArcClass
+struct _PicmanCanvasArcClass
 {
-  GimpCanvasItemClass  parent_class;
+  PicmanCanvasItemClass  parent_class;
 };
 
 
-GType            gimp_canvas_arc_get_type (void) G_GNUC_CONST;
+GType            picman_canvas_arc_get_type (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_canvas_arc_new      (GimpDisplayShell *shell,
+PicmanCanvasItem * picman_canvas_arc_new      (PicmanDisplayShell *shell,
                                            gdouble          center_x,
                                            gdouble          center_y,
                                            gdouble          radius_x,
@@ -59,4 +59,4 @@ GimpCanvasItem * gimp_canvas_arc_new      (GimpDisplayShell *shell,
                                            gboolean         filled);
 
 
-#endif /* __GIMP_CANVAS_ARC_H__ */
+#endif /* __PICMAN_CANVAS_ARC_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 2009 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,114 +22,114 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools/tools-types.h"
 
-#include "tools/gimprectangleoptions.h"
+#include "tools/picmanrectangleoptions.h"
 #include "tools/tool_manager.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-callbacks.h"
-#include "display/gimpdisplayshell-scale.h"
-#include "display/gimpdisplayshell-tool-events.h"
-#include "display/gimpdisplayshell-transform.h"
-#include "display/gimpimagewindow.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-callbacks.h"
+#include "display/picmandisplayshell-scale.h"
+#include "display/picmandisplayshell-tool-events.h"
+#include "display/picmandisplayshell-transform.h"
+#include "display/picmanimagewindow.h"
 
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpdock.h"
-#include "widgets/gimpdockable.h"
-#include "widgets/gimpdockbook.h"
-#include "widgets/gimpdocked.h"
-#include "widgets/gimpdockwindow.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpsessioninfo.h"
-#include "widgets/gimptoolbox.h"
-#include "widgets/gimptooloptionseditor.h"
-#include "widgets/gimpuimanager.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmandock.h"
+#include "widgets/picmandockable.h"
+#include "widgets/picmandockbook.h"
+#include "widgets/picmandocked.h"
+#include "widgets/picmandockwindow.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmansessioninfo.h"
+#include "widgets/picmantoolbox.h"
+#include "widgets/picmantooloptionseditor.h"
+#include "widgets/picmanuimanager.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "core/gimp.h"
-#include "core/gimpchannel.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
-#include "core/gimptoolinfo.h"
-#include "core/gimptooloptions.h"
+#include "core/picman.h"
+#include "core/picmanchannel.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
+#include "core/picmantoolinfo.h"
+#include "core/picmantooloptions.h"
 
 #include "tests.h"
 
-#include "gimp-app-test-utils.h"
+#include "picman-app-test-utils.h"
 
 
-#define GIMP_TEST_IMAGE_WIDTH            150
-#define GIMP_TEST_IMAGE_HEIGHT           267
+#define PICMAN_TEST_IMAGE_WIDTH            150
+#define PICMAN_TEST_IMAGE_HEIGHT           267
 
 /* Put this in the code below when you want the test to pause so you
  * can do measurements of widgets on the screen for example
  */
-#define GIMP_PAUSE (g_usleep (2 * 1000 * 1000))
+#define PICMAN_PAUSE (g_usleep (2 * 1000 * 1000))
 
 #define ADD_TEST(function) \
-  g_test_add ("/gimp-tools/" #function, \
-              GimpTestFixture, \
-              gimp, \
-              gimp_tools_setup_image, \
+  g_test_add ("/picman-tools/" #function, \
+              PicmanTestFixture, \
+              picman, \
+              picman_tools_setup_image, \
               function, \
-              gimp_tools_teardown_image);
+              picman_tools_teardown_image);
 
 
 typedef struct
 {
   int avoid_sizeof_zero;
-} GimpTestFixture;
+} PicmanTestFixture;
 
 
-static void               gimp_tools_setup_image                         (GimpTestFixture  *fixture,
+static void               picman_tools_setup_image                         (PicmanTestFixture  *fixture,
                                                                           gconstpointer     data);
-static void               gimp_tools_teardown_image                      (GimpTestFixture  *fixture,
+static void               picman_tools_teardown_image                      (PicmanTestFixture  *fixture,
                                                                           gconstpointer     data);
-static void               gimp_tools_synthesize_image_click_drag_release (GimpDisplayShell *shell,
+static void               picman_tools_synthesize_image_click_drag_release (PicmanDisplayShell *shell,
                                                                           gdouble           start_image_x,
                                                                           gdouble           start_image_y,
                                                                           gdouble           end_image_x,
                                                                           gdouble           end_image_y,
                                                                           gint              button,
                                                                           GdkModifierType   modifiers);
-static GimpDisplay      * gimp_test_get_only_display                     (Gimp             *gimp);
-static GimpImage        * gimp_test_get_only_image                       (Gimp             *gimp);
-static GimpDisplayShell * gimp_test_get_only_display_shell               (Gimp             *gimp);
+static PicmanDisplay      * picman_test_get_only_display                     (Picman             *picman);
+static PicmanImage        * picman_test_get_only_image                       (Picman             *picman);
+static PicmanDisplayShell * picman_test_get_only_display_shell               (Picman             *picman);
 
 
 static void
-gimp_tools_setup_image (GimpTestFixture *fixture,
+picman_tools_setup_image (PicmanTestFixture *fixture,
                         gconstpointer    data)
 {
-  Gimp *gimp = GIMP (data);
+  Picman *picman = PICMAN (data);
 
-  gimp_test_utils_create_image (gimp, 
-                                GIMP_TEST_IMAGE_WIDTH,
-                                GIMP_TEST_IMAGE_HEIGHT);
-  gimp_test_run_mainloop_until_idle ();
+  picman_test_utils_create_image (picman, 
+                                PICMAN_TEST_IMAGE_WIDTH,
+                                PICMAN_TEST_IMAGE_HEIGHT);
+  picman_test_run_mainloop_until_idle ();
 }
 
 static void
-gimp_tools_teardown_image (GimpTestFixture *fixture,
+picman_tools_teardown_image (PicmanTestFixture *fixture,
                            gconstpointer    data)
 {
-  Gimp *gimp = GIMP (data);
+  Picman *picman = PICMAN (data);
 
-  g_object_unref (gimp_test_get_only_image (gimp));
-  gimp_display_close (gimp_test_get_only_display (gimp));
-  gimp_test_run_mainloop_until_idle ();
+  g_object_unref (picman_test_get_only_image (picman));
+  picman_display_close (picman_test_get_only_display (picman));
+  picman_test_run_mainloop_until_idle ();
 }
 
 /**
- * gimp_tools_set_tool:
- * @gimp:
+ * picman_tools_set_tool:
+ * @picman:
  * @tool_id:
  * @display:
  *
@@ -137,68 +137,68 @@ gimp_tools_teardown_image (GimpTestFixture *fixture,
  * display is the focused tool display.
  **/
 static void
-gimp_tools_set_tool (Gimp        *gimp,
+picman_tools_set_tool (Picman        *picman,
                      const gchar *tool_id,
-                     GimpDisplay *display)
+                     PicmanDisplay *display)
 {
   /* Activate tool and setup active display for the new tool */
-  gimp_context_set_tool (gimp_get_user_context (gimp),
-                         gimp_get_tool_info (gimp, tool_id));
-  tool_manager_focus_display_active (gimp, display);
+  picman_context_set_tool (picman_get_user_context (picman),
+                         picman_get_tool_info (picman, tool_id));
+  tool_manager_focus_display_active (picman, display);
 }
 
 /**
- * gimp_test_get_only_display:
- * @gimp:
+ * picman_test_get_only_display:
+ * @picman:
  *
  * Asserts that there only is one image and display and then
  * returns the display.
  *
- * Returns: The #GimpDisplay.
+ * Returns: The #PicmanDisplay.
  **/
-static GimpDisplay *
-gimp_test_get_only_display (Gimp *gimp)
+static PicmanDisplay *
+picman_test_get_only_display (Picman *picman)
 {
-  g_assert (g_list_length (gimp_get_image_iter (gimp)) == 1);
-  g_assert (g_list_length (gimp_get_display_iter (gimp)) == 1);
+  g_assert (g_list_length (picman_get_image_iter (picman)) == 1);
+  g_assert (g_list_length (picman_get_display_iter (picman)) == 1);
 
-  return GIMP_DISPLAY (gimp_get_display_iter (gimp)->data);
+  return PICMAN_DISPLAY (picman_get_display_iter (picman)->data);
 }
 
 /**
- * gimp_test_get_only_display_shell:
- * @gimp:
+ * picman_test_get_only_display_shell:
+ * @picman:
  *
  * Asserts that there only is one image and display shell and then
  * returns the display shell.
  *
- * Returns: The #GimpDisplayShell.
+ * Returns: The #PicmanDisplayShell.
  **/
-static GimpDisplayShell *
-gimp_test_get_only_display_shell (Gimp *gimp)
+static PicmanDisplayShell *
+picman_test_get_only_display_shell (Picman *picman)
 {
-  return gimp_display_get_shell (gimp_test_get_only_display (gimp));
+  return picman_display_get_shell (picman_test_get_only_display (picman));
 }
 
 /**
- * gimp_test_get_only_image:
- * @gimp:
+ * picman_test_get_only_image:
+ * @picman:
  *
  * Asserts that there is only one image and returns that.
  *
- * Returns: The #GimpImage.
+ * Returns: The #PicmanImage.
  **/
-static GimpImage *
-gimp_test_get_only_image (Gimp *gimp)
+static PicmanImage *
+picman_test_get_only_image (Picman *picman)
 {
-  g_assert (g_list_length (gimp_get_image_iter (gimp)) == 1);
-  g_assert (g_list_length (gimp_get_display_iter (gimp)) == 1);
+  g_assert (g_list_length (picman_get_image_iter (picman)) == 1);
+  g_assert (g_list_length (picman_get_display_iter (picman)) == 1);
 
-  return GIMP_IMAGE (gimp_get_image_iter (gimp)->data);
+  return PICMAN_IMAGE (picman_get_image_iter (picman)->data);
 }
 
 static void
-gimp_test_synthesize_tool_button_event (GimpDisplayShell *shell,
+picman_test_synthesize_tool_button_event (PicmanDisplayShell *shell,
                                        gint              x,
                                        gint              y,
                                        gint              button,
@@ -224,14 +224,14 @@ gimp_test_synthesize_tool_button_event (GimpDisplayShell *shell,
   event->button.x_root     = -1;
   event->button.y_root     = -1;
 
-  gimp_display_shell_canvas_tool_events (shell->canvas,
+  picman_display_shell_canvas_tool_events (shell->canvas,
                                          event,
                                          shell);
   gdk_event_free (event);
 }
 
 static void
-gimp_test_synthesize_tool_motion_event (GimpDisplayShell *shell,
+picman_test_synthesize_tool_motion_event (PicmanDisplayShell *shell,
                                         gint              x,
                                         gint              y,
                                         gint              modifiers)
@@ -252,14 +252,14 @@ gimp_test_synthesize_tool_motion_event (GimpDisplayShell *shell,
   event->motion.x_root     = -1;
   event->motion.y_root     = -1;
 
-  gimp_display_shell_canvas_tool_events (shell->canvas,
+  picman_display_shell_canvas_tool_events (shell->canvas,
                                          event,
                                          shell);
   gdk_event_free (event);
 }
 
 static void
-gimp_test_synthesize_tool_crossing_event (GimpDisplayShell *shell,
+picman_test_synthesize_tool_crossing_event (PicmanDisplayShell *shell,
                                           gint              x,
                                           gint              y,
                                           gint              modifiers,
@@ -284,14 +284,14 @@ gimp_test_synthesize_tool_crossing_event (GimpDisplayShell *shell,
   event->crossing.focus      = TRUE;
   event->crossing.state      = modifiers;
 
-  gimp_display_shell_canvas_tool_events (shell->canvas,
+  picman_display_shell_canvas_tool_events (shell->canvas,
                                          event,
                                          shell);
   gdk_event_free (event);
 }
 
 static void
-gimp_tools_synthesize_image_click_drag_release (GimpDisplayShell *shell,
+picman_tools_synthesize_image_click_drag_release (PicmanDisplayShell *shell,
                                                 gdouble           start_image_x,
                                                 gdouble           start_image_y,
                                                 gdouble           end_image_x,
@@ -307,12 +307,12 @@ gimp_tools_synthesize_image_click_drag_release (GimpDisplayShell *shell,
   gdouble end_canvas_y    = -1.0;
 
   /* Transform coordinates */
-  gimp_display_shell_transform_xy_f (shell,
+  picman_display_shell_transform_xy_f (shell,
                                      start_image_x,
                                      start_image_y,
                                      &start_canvas_x,
                                      &start_canvas_y);
-  gimp_display_shell_transform_xy_f (shell,
+  picman_display_shell_transform_xy_f (shell,
                                      end_image_x,
                                      end_image_y,
                                      &end_canvas_x,
@@ -321,14 +321,14 @@ gimp_tools_synthesize_image_click_drag_release (GimpDisplayShell *shell,
   middle_canvas_y = (start_canvas_y + end_canvas_y) / 2;
 
   /* Enter notify */
-  gimp_test_synthesize_tool_crossing_event (shell,
+  picman_test_synthesize_tool_crossing_event (shell,
                                             (int)start_canvas_x,
                                             (int)start_canvas_y,
                                             modifiers,
                                             GDK_ENTER_NOTIFY);
 
   /* Button press */
-  gimp_test_synthesize_tool_button_event (shell,
+  picman_test_synthesize_tool_button_event (shell,
                                           (int)start_canvas_x,
                                           (int)start_canvas_y,
                                           button,
@@ -336,21 +336,21 @@ gimp_tools_synthesize_image_click_drag_release (GimpDisplayShell *shell,
                                           GDK_BUTTON_PRESS);
 
   /* Move events */
-  gimp_test_synthesize_tool_motion_event (shell,
+  picman_test_synthesize_tool_motion_event (shell,
                                           (int)start_canvas_x,
                                           (int)start_canvas_y,
                                           modifiers);
-  gimp_test_synthesize_tool_motion_event (shell,
+  picman_test_synthesize_tool_motion_event (shell,
                                           (int)middle_canvas_x,
                                           (int)middle_canvas_y,
                                           modifiers);
-  gimp_test_synthesize_tool_motion_event (shell,
+  picman_test_synthesize_tool_motion_event (shell,
                                           (int)end_canvas_x,
                                           (int)end_canvas_y,
                                           modifiers);
 
   /* Button release */
-  gimp_test_synthesize_tool_button_event (shell,
+  picman_test_synthesize_tool_button_event (shell,
                                           (int)end_canvas_x,
                                           (int)end_canvas_y,
                                           button,
@@ -358,14 +358,14 @@ gimp_tools_synthesize_image_click_drag_release (GimpDisplayShell *shell,
                                           GDK_BUTTON_RELEASE);
 
   /* Leave notify */
-  gimp_test_synthesize_tool_crossing_event (shell,
+  picman_test_synthesize_tool_crossing_event (shell,
                                             (int)start_canvas_x,
                                             (int)start_canvas_y,
                                             modifiers,
                                             GDK_LEAVE_NOTIFY);
 
   /* Process them */
-  gimp_test_run_mainloop_until_idle ();
+  picman_test_run_mainloop_until_idle ();
 }
 
 /**
@@ -377,12 +377,12 @@ gimp_tools_synthesize_image_click_drag_release (GimpDisplayShell *shell,
  * "Bug 315255 - SIGSEGV, while doing a crop".
  **/
 static void
-crop_tool_can_crop (GimpTestFixture *fixture,
+crop_tool_can_crop (PicmanTestFixture *fixture,
                     gconstpointer    data)
 {
-  Gimp             *gimp  = GIMP (data);
-  GimpImage        *image = gimp_test_get_only_image (gimp);
-  GimpDisplayShell *shell = gimp_test_get_only_display_shell (gimp);
+  Picman             *picman  = PICMAN (data);
+  PicmanImage        *image = picman_test_get_only_image (picman);
+  PicmanDisplayShell *shell = picman_test_get_only_display_shell (picman);
 
   gint cropped_x = 10;
   gint cropped_y = 10;
@@ -392,17 +392,17 @@ crop_tool_can_crop (GimpTestFixture *fixture,
   /* Fit display and pause and let it stabalize (two idlings seems to
    * always be enough)
    */
-  gimp_ui_manager_activate_action (gimp_test_utils_get_ui_manager (gimp),
+  picman_ui_manager_activate_action (picman_test_utils_get_ui_manager (picman),
                                    "view",
                                    "view-shrink-wrap");
-  gimp_test_run_mainloop_until_idle ();
-  gimp_test_run_mainloop_until_idle ();
+  picman_test_run_mainloop_until_idle ();
+  picman_test_run_mainloop_until_idle ();
 
   /* Activate crop tool */
-  gimp_tools_set_tool (gimp, "gimp-crop-tool", shell->display);
+  picman_tools_set_tool (picman, "picman-crop-tool", shell->display);
 
   /* Do the crop rect */
-  gimp_tools_synthesize_image_click_drag_release (shell,
+  picman_tools_synthesize_image_click_drag_release (shell,
                                                   cropped_x,
                                                   cropped_y,
                                                   cropped_x + cropped_w,
@@ -411,12 +411,12 @@ crop_tool_can_crop (GimpTestFixture *fixture,
                                                   0 /*modifiers*/);
 
   /* Crop */
-  gimp_test_utils_synthesize_key_event (GTK_WIDGET (shell), GDK_KEY_Return);
-  gimp_test_run_mainloop_until_idle ();
+  picman_test_utils_synthesize_key_event (GTK_WIDGET (shell), GDK_KEY_Return);
+  picman_test_run_mainloop_until_idle ();
 
   /* Make sure the new image has the expected size */
-  g_assert_cmpint (cropped_w, ==, gimp_image_get_width (image));
-  g_assert_cmpint (cropped_h, ==, gimp_image_get_height (image));
+  g_assert_cmpint (cropped_w, ==, picman_image_get_width (image));
+  g_assert_cmpint (cropped_h, ==, picman_image_get_height (image));
 }
 
 /**
@@ -429,29 +429,29 @@ crop_tool_can_crop (GimpTestFixture *fixture,
  * for "Bug 322396 - Crop dimension entering causes crash".
  **/
 static void
-crop_set_width_without_pending_rect (GimpTestFixture *fixture,
+crop_set_width_without_pending_rect (PicmanTestFixture *fixture,
                                      gconstpointer    data)
 {
-  Gimp                 *gimp    = GIMP (data);
-  GimpDisplay          *display = gimp_test_get_only_display (gimp);
-  GimpToolInfo         *tool_info;
-  GimpRectangleOptions *rectangle_options;
+  Picman                 *picman    = PICMAN (data);
+  PicmanDisplay          *display = picman_test_get_only_display (picman);
+  PicmanToolInfo         *tool_info;
+  PicmanRectangleOptions *rectangle_options;
   GtkWidget            *tool_options_gui;
   GtkWidget            *size_entry;
 
   /* Activate crop tool */
-  gimp_tools_set_tool (gimp, "gimp-crop-tool", display);
+  picman_tools_set_tool (picman, "picman-crop-tool", display);
 
   /* Get tool options */
-  tool_info         = gimp_get_tool_info (gimp, "gimp-crop-tool");
-  tool_options_gui  = gimp_tools_get_tool_options_gui (tool_info->tool_options);
-  rectangle_options = GIMP_RECTANGLE_OPTIONS (tool_info->tool_options);
+  tool_info         = picman_get_tool_info (picman, "picman-crop-tool");
+  tool_options_gui  = picman_tools_get_tool_options_gui (tool_info->tool_options);
+  rectangle_options = PICMAN_RECTANGLE_OPTIONS (tool_info->tool_options);
 
   /* Find 'Width' or 'Height' GtkTextEntry in tool options */
-  size_entry = gimp_rectangle_options_get_width_entry (rectangle_options);
+  size_entry = picman_rectangle_options_get_width_entry (rectangle_options);
 
   /* Set arbitrary non-0 value */
-  gimp_size_entry_set_value (GIMP_SIZE_ENTRY (size_entry),
+  picman_size_entry_set_value (PICMAN_SIZE_ENTRY (size_entry),
                              0 /*field*/,
                              42.0 /*lower*/);
 
@@ -460,19 +460,19 @@ crop_set_width_without_pending_rect (GimpTestFixture *fixture,
 
 int main(int argc, char **argv)
 {
-  Gimp *gimp   = NULL;
+  Picman *picman   = NULL;
   gint  result = -1;
 
-  gimp_test_bail_if_no_display ();
+  picman_test_bail_if_no_display ();
   gtk_test_init (&argc, &argv, NULL);
 
-  gimp_test_utils_set_gimp2_directory ("GIMP_TESTING_ABS_TOP_SRCDIR",
-                                       "app/tests/gimpdir");
-  gimp_test_utils_setup_menus_dir ();
+  picman_test_utils_set_picman2_directory ("PICMAN_TESTING_ABS_TOP_SRCDIR",
+                                       "app/tests/picmandir");
+  picman_test_utils_setup_menus_dir ();
 
-  /* Start up GIMP */
-  gimp = gimp_init_for_gui_testing (TRUE /*show_gui*/);
-  gimp_test_run_mainloop_until_idle ();
+  /* Start up PICMAN */
+  picman = picman_init_for_gui_testing (TRUE /*show_gui*/);
+  picman_test_run_mainloop_until_idle ();
 
   /* Add tests */
   ADD_TEST (crop_tool_can_crop);
@@ -482,11 +482,11 @@ int main(int argc, char **argv)
   result = g_test_run ();
 
   /* Don't write files to the source dir */
-  gimp_test_utils_set_gimp2_directory ("GIMP_TESTING_ABS_TOP_BUILDDIR",
-                                       "app/tests/gimpdir-output");
+  picman_test_utils_set_picman2_directory ("PICMAN_TESTING_ABS_TOP_BUILDDIR",
+                                       "app/tests/picmandir-output");
 
   /* Exit properly so we don't break script-fu plug-in wire */
-  gimp_exit (gimp, TRUE);
+  picman_exit (picman, TRUE);
 
   return result;
 }

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdasheditor.c
- * Copyright (C) 2003 Simon Budig  <simon@gimp.org>
+ * picmandasheditor.c
+ * Copyright (C) 2003 Simon Budig  <simon@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,15 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpdashpattern.h"
-#include "core/gimpstrokeoptions.h"
+#include "core/picmandashpattern.h"
+#include "core/picmanstrokeoptions.h"
 
-#include "gimpdasheditor.h"
+#include "picmandasheditor.h"
 
 
 #define MIN_WIDTH          64
@@ -49,68 +49,68 @@ enum
 };
 
 
-static void gimp_dash_editor_finalize           (GObject        *object);
-static void gimp_dash_editor_set_property       (GObject        *object,
+static void picman_dash_editor_finalize           (GObject        *object);
+static void picman_dash_editor_set_property       (GObject        *object,
                                                  guint           property_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void gimp_dash_editor_get_property       (GObject        *object,
+static void picman_dash_editor_get_property       (GObject        *object,
                                                  guint           property_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
 
-static void gimp_dash_editor_size_request       (GtkWidget      *widget,
+static void picman_dash_editor_size_request       (GtkWidget      *widget,
                                                  GtkRequisition *requisition);
-static gboolean gimp_dash_editor_expose         (GtkWidget      *widget,
+static gboolean picman_dash_editor_expose         (GtkWidget      *widget,
                                                  GdkEventExpose *event);
-static gboolean gimp_dash_editor_button_press   (GtkWidget      *widget,
+static gboolean picman_dash_editor_button_press   (GtkWidget      *widget,
                                                  GdkEventButton *bevent);
-static gboolean gimp_dash_editor_button_release (GtkWidget      *widget,
+static gboolean picman_dash_editor_button_release (GtkWidget      *widget,
                                                  GdkEventButton *bevent);
-static gboolean gimp_dash_editor_motion_notify  (GtkWidget      *widget,
+static gboolean picman_dash_editor_motion_notify  (GtkWidget      *widget,
                                                  GdkEventMotion *bevent);
 
 /* helper function */
-static void update_segments_from_options        (GimpDashEditor *editor);
-static void update_options_from_segments        (GimpDashEditor *editor);
-static void update_blocksize                    (GimpDashEditor *editor);
-static gint dash_x_to_index                     (GimpDashEditor *editor,
+static void update_segments_from_options        (PicmanDashEditor *editor);
+static void update_options_from_segments        (PicmanDashEditor *editor);
+static void update_blocksize                    (PicmanDashEditor *editor);
+static gint dash_x_to_index                     (PicmanDashEditor *editor,
                                                  gint            x);
 
 
-G_DEFINE_TYPE (GimpDashEditor, gimp_dash_editor, GTK_TYPE_DRAWING_AREA)
+G_DEFINE_TYPE (PicmanDashEditor, picman_dash_editor, GTK_TYPE_DRAWING_AREA)
 
-#define parent_class gimp_dash_editor_parent_class
+#define parent_class picman_dash_editor_parent_class
 
 
 static void
-gimp_dash_editor_class_init (GimpDashEditorClass *klass)
+picman_dash_editor_class_init (PicmanDashEditorClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize     = gimp_dash_editor_finalize;
-  object_class->get_property = gimp_dash_editor_get_property;
-  object_class->set_property = gimp_dash_editor_set_property;
+  object_class->finalize     = picman_dash_editor_finalize;
+  object_class->get_property = picman_dash_editor_get_property;
+  object_class->set_property = picman_dash_editor_set_property;
 
-  widget_class->size_request         = gimp_dash_editor_size_request;
-  widget_class->expose_event         = gimp_dash_editor_expose;
-  widget_class->button_press_event   = gimp_dash_editor_button_press;
-  widget_class->button_release_event = gimp_dash_editor_button_release;
-  widget_class->motion_notify_event  = gimp_dash_editor_motion_notify;
+  widget_class->size_request         = picman_dash_editor_size_request;
+  widget_class->expose_event         = picman_dash_editor_expose;
+  widget_class->button_press_event   = picman_dash_editor_button_press;
+  widget_class->button_release_event = picman_dash_editor_button_release;
+  widget_class->motion_notify_event  = picman_dash_editor_motion_notify;
 
   g_object_class_install_property (object_class, PROP_STROKE_OPTIONS,
                                    g_param_spec_object ("stroke-options",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_STROKE_OPTIONS,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_STROKE_OPTIONS,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_N_SEGMENTS,
                                    g_param_spec_int ("n-segments",
                                                      NULL, NULL,
                                                      2, 120, DEFAULT_N_SEGMENTS,
-                                                     GIMP_PARAM_READWRITE |
+                                                     PICMAN_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_LENGTH,
@@ -118,12 +118,12 @@ gimp_dash_editor_class_init (GimpDashEditorClass *klass)
                                                         NULL, NULL,
                                                         0.0, 2000.0,
                                                         0.5 * DEFAULT_N_SEGMENTS,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_dash_editor_init (GimpDashEditor *editor)
+picman_dash_editor_init (PicmanDashEditor *editor)
 {
   editor->segments       = NULL;
   editor->block_width    = 6;
@@ -138,9 +138,9 @@ gimp_dash_editor_init (GimpDashEditor *editor)
 }
 
 static void
-gimp_dash_editor_finalize (GObject *object)
+picman_dash_editor_finalize (GObject *object)
 {
-  GimpDashEditor *editor = GIMP_DASH_EDITOR (object);
+  PicmanDashEditor *editor = PICMAN_DASH_EDITOR (object);
 
   if (editor->stroke_options)
     {
@@ -158,12 +158,12 @@ gimp_dash_editor_finalize (GObject *object)
 }
 
 static void
-gimp_dash_editor_set_property (GObject      *object,
+picman_dash_editor_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpDashEditor *editor = GIMP_DASH_EDITOR (object);
+  PicmanDashEditor *editor = PICMAN_DASH_EDITOR (object);
 
   switch (property_id)
     {
@@ -197,12 +197,12 @@ gimp_dash_editor_set_property (GObject      *object,
 }
 
 static void
-gimp_dash_editor_get_property (GObject      *object,
+picman_dash_editor_get_property (GObject      *object,
                                guint         property_id,
                                GValue       *value,
                                GParamSpec   *pspec)
 {
-  GimpDashEditor *editor = GIMP_DASH_EDITOR (object);
+  PicmanDashEditor *editor = PICMAN_DASH_EDITOR (object);
 
   switch (property_id)
     {
@@ -223,10 +223,10 @@ gimp_dash_editor_get_property (GObject      *object,
 }
 
 static void
-gimp_dash_editor_size_request (GtkWidget      *widget,
+picman_dash_editor_size_request (GtkWidget      *widget,
                                GtkRequisition *requisition)
 {
-  GimpDashEditor *editor = GIMP_DASH_EDITOR (widget);
+  PicmanDashEditor *editor = PICMAN_DASH_EDITOR (widget);
 
   requisition->width  = MAX (editor->block_width * editor->n_segments + 20,
                              MIN_WIDTH);
@@ -234,10 +234,10 @@ gimp_dash_editor_size_request (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_dash_editor_expose (GtkWidget      *widget,
+picman_dash_editor_expose (GtkWidget      *widget,
                          GdkEventExpose *event)
 {
-  GimpDashEditor *editor = GIMP_DASH_EDITOR (widget);
+  PicmanDashEditor *editor = PICMAN_DASH_EDITOR (widget);
   GtkStyle       *style  = gtk_widget_get_style (widget);
   cairo_t        *cr     = gdk_cairo_create (gtk_widget_get_window (widget));
   GtkAllocation   allocation;
@@ -344,10 +344,10 @@ gimp_dash_editor_expose (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_dash_editor_button_press (GtkWidget      *widget,
+picman_dash_editor_button_press (GtkWidget      *widget,
                                GdkEventButton *bevent)
 {
-  GimpDashEditor *editor = GIMP_DASH_EDITOR (widget);
+  PicmanDashEditor *editor = PICMAN_DASH_EDITOR (widget);
   gint            index;
 
   if (bevent->button == 1 && bevent->type == GDK_BUTTON_PRESS)
@@ -368,10 +368,10 @@ gimp_dash_editor_button_press (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_dash_editor_button_release (GtkWidget      *widget,
+picman_dash_editor_button_release (GtkWidget      *widget,
                                  GdkEventButton *bevent)
 {
-  GimpDashEditor *editor = GIMP_DASH_EDITOR (widget);
+  PicmanDashEditor *editor = PICMAN_DASH_EDITOR (widget);
 
   if (bevent->button == 1)
     {
@@ -384,10 +384,10 @@ gimp_dash_editor_button_release (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_dash_editor_motion_notify (GtkWidget      *widget,
+picman_dash_editor_motion_notify (GtkWidget      *widget,
                                 GdkEventMotion *mevent)
 {
-  GimpDashEditor *editor = GIMP_DASH_EDITOR (widget);
+  PicmanDashEditor *editor = PICMAN_DASH_EDITOR (widget);
   gint            x, index;
 
   index = dash_x_to_index (editor, mevent->x);
@@ -417,22 +417,22 @@ gimp_dash_editor_motion_notify (GtkWidget      *widget,
 }
 
 GtkWidget *
-gimp_dash_editor_new (GimpStrokeOptions *stroke_options)
+picman_dash_editor_new (PicmanStrokeOptions *stroke_options)
 {
-  g_return_val_if_fail (GIMP_IS_STROKE_OPTIONS (stroke_options), NULL);
+  g_return_val_if_fail (PICMAN_IS_STROKE_OPTIONS (stroke_options), NULL);
 
-  return g_object_new (GIMP_TYPE_DASH_EDITOR,
+  return g_object_new (PICMAN_TYPE_DASH_EDITOR,
                        "stroke-options", stroke_options,
                        NULL);
 }
 
 void
-gimp_dash_editor_shift_right (GimpDashEditor *editor)
+picman_dash_editor_shift_right (PicmanDashEditor *editor)
 {
   gboolean swap;
   gint     i;
 
-  g_return_if_fail (GIMP_IS_DASH_EDITOR (editor));
+  g_return_if_fail (PICMAN_IS_DASH_EDITOR (editor));
   g_return_if_fail (editor->n_segments > 0);
 
   swap = editor->segments[editor->n_segments - 1];
@@ -444,12 +444,12 @@ gimp_dash_editor_shift_right (GimpDashEditor *editor)
 }
 
 void
-gimp_dash_editor_shift_left (GimpDashEditor *editor)
+picman_dash_editor_shift_left (PicmanDashEditor *editor)
 {
   gboolean swap;
   gint     i;
 
-  g_return_if_fail (GIMP_IS_DASH_EDITOR (editor));
+  g_return_if_fail (PICMAN_IS_DASH_EDITOR (editor));
   g_return_if_fail (editor->n_segments > 0);
 
   swap = editor->segments[0];
@@ -461,36 +461,36 @@ gimp_dash_editor_shift_left (GimpDashEditor *editor)
 }
 
 static void
-update_segments_from_options (GimpDashEditor *editor)
+update_segments_from_options (PicmanDashEditor *editor)
 {
   GArray *dash_info;
 
   if (editor->stroke_options == NULL || editor->segments == NULL)
     return;
 
-  g_return_if_fail (GIMP_IS_STROKE_OPTIONS (editor->stroke_options));
+  g_return_if_fail (PICMAN_IS_STROKE_OPTIONS (editor->stroke_options));
 
   gtk_widget_queue_draw (GTK_WIDGET (editor));
 
-  dash_info = gimp_stroke_options_get_dash_info (editor->stroke_options);
+  dash_info = picman_stroke_options_get_dash_info (editor->stroke_options);
 
-  gimp_dash_pattern_fill_segments (dash_info,
+  picman_dash_pattern_fill_segments (dash_info,
                                    editor->segments, editor->n_segments);
 }
 
 static void
-update_options_from_segments (GimpDashEditor *editor)
+update_options_from_segments (PicmanDashEditor *editor)
 {
-  GArray *pattern = gimp_dash_pattern_new_from_segments (editor->segments,
+  GArray *pattern = picman_dash_pattern_new_from_segments (editor->segments,
                                                          editor->n_segments,
                                                          editor->dash_length);
 
-  gimp_stroke_options_take_dash_pattern (editor->stroke_options,
-                                         GIMP_DASH_CUSTOM, pattern);
+  picman_stroke_options_take_dash_pattern (editor->stroke_options,
+                                         PICMAN_DASH_CUSTOM, pattern);
 }
 
 static void
-update_blocksize (GimpDashEditor *editor)
+update_blocksize (PicmanDashEditor *editor)
 {
   GtkWidget     *widget = GTK_WIDGET (editor);
   GtkAllocation  allocation;
@@ -508,7 +508,7 @@ update_blocksize (GimpDashEditor *editor)
 }
 
 static gint
-dash_x_to_index (GimpDashEditor *editor,
+dash_x_to_index (PicmanDashEditor *editor,
                  gint            x)
 {
   gint index = x - editor->x0;

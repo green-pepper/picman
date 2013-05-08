@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationcolorize.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanoperationcolorize.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,15 +24,15 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "operations-types.h"
 
-#include "gimpcolorizeconfig.h"
-#include "gimpoperationcolorize.h"
+#include "picmancolorizeconfig.h"
+#include "picmanoperationcolorize.h"
 
 
-static gboolean gimp_operation_colorize_process (GeglOperation       *operation,
+static gboolean picman_operation_colorize_process (GeglOperation       *operation,
                                                  void                *in_buf,
                                                  void                *out_buf,
                                                  glong                samples,
@@ -40,58 +40,58 @@ static gboolean gimp_operation_colorize_process (GeglOperation       *operation,
                                                  gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationColorize, gimp_operation_colorize,
-               GIMP_TYPE_OPERATION_POINT_FILTER)
+G_DEFINE_TYPE (PicmanOperationColorize, picman_operation_colorize,
+               PICMAN_TYPE_OPERATION_POINT_FILTER)
 
-#define parent_class gimp_operation_colorize_parent_class
+#define parent_class picman_operation_colorize_parent_class
 
 
 static void
-gimp_operation_colorize_class_init (GimpOperationColorizeClass *klass)
+picman_operation_colorize_class_init (PicmanOperationColorizeClass *klass)
 {
   GObjectClass                  *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass            *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationPointFilterClass *point_class     = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  object_class->set_property   = gimp_operation_point_filter_set_property;
-  object_class->get_property   = gimp_operation_point_filter_get_property;
+  object_class->set_property   = picman_operation_point_filter_set_property;
+  object_class->get_property   = picman_operation_point_filter_get_property;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:colorize",
+                                 "name",        "picman:colorize",
                                  "categories",  "color",
-                                 "description", "GIMP Colorize operation",
+                                 "description", "PICMAN Colorize operation",
                                  NULL);
 
-  point_class->process = gimp_operation_colorize_process;
+  point_class->process = picman_operation_colorize_process;
 
   g_object_class_install_property (object_class,
-                                   GIMP_OPERATION_POINT_FILTER_PROP_CONFIG,
+                                   PICMAN_OPERATION_POINT_FILTER_PROP_CONFIG,
                                    g_param_spec_object ("config",
                                                         "Config",
                                                         "The config object",
-                                                        GIMP_TYPE_COLORIZE_CONFIG,
+                                                        PICMAN_TYPE_COLORIZE_CONFIG,
                                                         G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_operation_colorize_init (GimpOperationColorize *self)
+picman_operation_colorize_init (PicmanOperationColorize *self)
 {
 }
 
 static gboolean
-gimp_operation_colorize_process (GeglOperation       *operation,
+picman_operation_colorize_process (GeglOperation       *operation,
                                  void                *in_buf,
                                  void                *out_buf,
                                  glong                samples,
                                  const GeglRectangle *roi,
                                  gint                 level)
 {
-  GimpOperationPointFilter *point  = GIMP_OPERATION_POINT_FILTER (operation);
-  GimpColorizeConfig       *config = GIMP_COLORIZE_CONFIG (point->config);
+  PicmanOperationPointFilter *point  = PICMAN_OPERATION_POINT_FILTER (operation);
+  PicmanColorizeConfig       *config = PICMAN_COLORIZE_CONFIG (point->config);
   gfloat                   *src    = in_buf;
   gfloat                   *dest   = out_buf;
-  GimpHSL                   hsl;
+  PicmanHSL                   hsl;
 
   if (! config)
     return FALSE;
@@ -101,8 +101,8 @@ gimp_operation_colorize_process (GeglOperation       *operation,
 
   while (samples--)
     {
-      GimpRGB rgb;
-      gfloat  lum = GIMP_RGB_LUMINANCE (src[RED],
+      PicmanRGB rgb;
+      gfloat  lum = PICMAN_RGB_LUMINANCE (src[RED],
                                         src[GREEN],
                                         src[BLUE]);
 
@@ -119,7 +119,7 @@ gimp_operation_colorize_process (GeglOperation       *operation,
 
       hsl.l = lum;
 
-      gimp_hsl_to_rgb (&hsl, &rgb);
+      picman_hsl_to_rgb (&hsl, &rgb);
 
       /*  the code in base/colorize.c would multiply r,b,g with lum,
        *  but this is a bug since it should multiply with 255. We

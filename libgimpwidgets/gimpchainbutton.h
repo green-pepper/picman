@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpchainbutton.h
- * Copyright (C) 1999-2000 Sven Neumann <sven@gimp.org>
+ * picmanchainbutton.h
+ * Copyright (C) 1999-2000 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,36 +22,36 @@
 /*
  * This implements a widget derived from GtkTable that visualizes
  * it's state with two different pixmaps showing a closed and a
- * broken chain. It's intended to be used with the GimpSizeEntry
+ * broken chain. It's intended to be used with the PicmanSizeEntry
  * widget. The usage is quite similar to the one the GtkToggleButton
  * provides.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_CHAIN_BUTTON_H__
-#define __GIMP_CHAIN_BUTTON_H__
+#ifndef __PICMAN_CHAIN_BUTTON_H__
+#define __PICMAN_CHAIN_BUTTON_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_CHAIN_BUTTON            (gimp_chain_button_get_type ())
-#define GIMP_CHAIN_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CHAIN_BUTTON, GimpChainButton))
-#define GIMP_CHAIN_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CHAIN_BUTTON, GimpChainButtonClass))
-#define GIMP_IS_CHAIN_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CHAIN_BUTTON))
-#define GIMP_IS_CHAIN_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CHAIN_BUTTON))
-#define GIMP_CHAIN_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CHAIN_BUTTON, GimpChainButtonClass))
+#define PICMAN_TYPE_CHAIN_BUTTON            (picman_chain_button_get_type ())
+#define PICMAN_CHAIN_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CHAIN_BUTTON, PicmanChainButton))
+#define PICMAN_CHAIN_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CHAIN_BUTTON, PicmanChainButtonClass))
+#define PICMAN_IS_CHAIN_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CHAIN_BUTTON))
+#define PICMAN_IS_CHAIN_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CHAIN_BUTTON))
+#define PICMAN_CHAIN_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CHAIN_BUTTON, PicmanChainButtonClass))
 
 
-typedef struct _GimpChainButtonClass  GimpChainButtonClass;
+typedef struct _PicmanChainButtonClass  PicmanChainButtonClass;
 
-struct _GimpChainButton
+struct _PicmanChainButton
 {
   GtkTable           parent_instance;
 
-  GimpChainPosition  position;
+  PicmanChainPosition  position;
   gboolean           active;
 
   GtkWidget         *button;
@@ -60,29 +60,29 @@ struct _GimpChainButton
   GtkWidget         *image;
 };
 
-struct _GimpChainButtonClass
+struct _PicmanChainButtonClass
 {
   GtkTableClass  parent_class;
 
-  void (* toggled)  (GimpChainButton *button);
+  void (* toggled)  (PicmanChainButton *button);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType       gimp_chain_button_get_type   (void) G_GNUC_CONST;
+GType       picman_chain_button_get_type   (void) G_GNUC_CONST;
 
-GtkWidget * gimp_chain_button_new        (GimpChainPosition  position);
+GtkWidget * picman_chain_button_new        (PicmanChainPosition  position);
 
-void        gimp_chain_button_set_active (GimpChainButton   *button,
+void        picman_chain_button_set_active (PicmanChainButton   *button,
                                           gboolean           active);
-gboolean    gimp_chain_button_get_active (GimpChainButton   *button);
+gboolean    picman_chain_button_get_active (PicmanChainButton   *button);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_CHAIN_BUTTON_H__ */
+#endif /* __PICMAN_CHAIN_BUTTON_H__ */

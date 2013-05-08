@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpaction.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanaction.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,20 +25,20 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpmarshal.h"
-#include "core/gimpimagefile.h"  /* eek */
-#include "core/gimpviewable.h"
+#include "core/picmancontext.h"
+#include "core/picmanmarshal.h"
+#include "core/picmanimagefile.h"  /* eek */
+#include "core/picmanviewable.h"
 
-#include "gimpaction.h"
-#include "gimpview.h"
-#include "gimpviewrenderer.h"
+#include "picmanaction.h"
+#include "picmanview.h"
+#include "picmanviewrenderer.h"
 
 
 enum
@@ -52,81 +52,81 @@ enum
 };
 
 
-static void   gimp_action_finalize          (GObject          *object);
-static void   gimp_action_set_property      (GObject          *object,
+static void   picman_action_finalize          (GObject          *object);
+static void   picman_action_set_property      (GObject          *object,
                                              guint             prop_id,
                                              const GValue     *value,
                                              GParamSpec       *pspec);
-static void   gimp_action_get_property      (GObject          *object,
+static void   picman_action_get_property      (GObject          *object,
                                              guint             prop_id,
                                              GValue           *value,
                                              GParamSpec       *pspec);
 
-static void   gimp_action_connect_proxy     (GtkAction        *action,
+static void   picman_action_connect_proxy     (GtkAction        *action,
                                              GtkWidget        *proxy);
-static void   gimp_action_set_proxy         (GimpAction       *action,
+static void   picman_action_set_proxy         (PicmanAction       *action,
                                              GtkWidget        *proxy);
-static void   gimp_action_set_proxy_tooltip (GimpAction       *action,
+static void   picman_action_set_proxy_tooltip (PicmanAction       *action,
                                              GtkWidget        *proxy);
-static void   gimp_action_tooltip_notify    (GimpAction       *action,
+static void   picman_action_tooltip_notify    (PicmanAction       *action,
                                              const GParamSpec *pspec,
                                              gpointer          data);
 
 
-G_DEFINE_TYPE (GimpAction, gimp_action, GTK_TYPE_ACTION)
+G_DEFINE_TYPE (PicmanAction, picman_action, GTK_TYPE_ACTION)
 
-#define parent_class gimp_action_parent_class
+#define parent_class picman_action_parent_class
 
 
 static void
-gimp_action_class_init (GimpActionClass *klass)
+picman_action_class_init (PicmanActionClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkActionClass *action_class = GTK_ACTION_CLASS (klass);
-  GimpRGB         black;
+  PicmanRGB         black;
 
-  object_class->finalize      = gimp_action_finalize;
-  object_class->set_property  = gimp_action_set_property;
-  object_class->get_property  = gimp_action_get_property;
+  object_class->finalize      = picman_action_finalize;
+  object_class->set_property  = picman_action_set_property;
+  object_class->get_property  = picman_action_get_property;
 
-  action_class->connect_proxy = gimp_action_connect_proxy;
+  action_class->connect_proxy = picman_action_connect_proxy;
 
-  gimp_rgba_set (&black, 0.0, 0.0, 0.0, GIMP_OPACITY_OPAQUE);
+  picman_rgba_set (&black, 0.0, 0.0, 0.0, PICMAN_OPACITY_OPAQUE);
 
   g_object_class_install_property (object_class, PROP_CONTEXT,
                                    g_param_spec_object ("context",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_CONTEXT,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_CONTEXT,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_COLOR,
-                                   gimp_param_spec_rgb ("color",
+                                   picman_param_spec_rgb ("color",
                                                         NULL, NULL,
                                                         TRUE, &black,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_VIEWABLE,
                                    g_param_spec_object ("viewable",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_VIEWABLE,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_VIEWABLE,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_ELLIPSIZE,
                                    g_param_spec_enum ("ellipsize",
                                                       NULL, NULL,
                                                       PANGO_TYPE_ELLIPSIZE_MODE,
                                                       PANGO_ELLIPSIZE_NONE,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_MAX_WIDTH_CHARS,
                                    g_param_spec_int ("max-width-chars",
                                                      NULL, NULL,
                                                      -1, G_MAXINT, -1,
-                                                     GIMP_PARAM_READWRITE));
+                                                     PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_action_init (GimpAction *action)
+picman_action_init (PicmanAction *action)
 {
   action->color           = NULL;
   action->viewable        = NULL;
@@ -134,14 +134,14 @@ gimp_action_init (GimpAction *action)
   action->max_width_chars = -1;
 
   g_signal_connect (action, "notify::tooltip",
-                    G_CALLBACK (gimp_action_tooltip_notify),
+                    G_CALLBACK (picman_action_tooltip_notify),
                     NULL);
 }
 
 static void
-gimp_action_finalize (GObject *object)
+picman_action_finalize (GObject *object)
 {
-  GimpAction *action = GIMP_ACTION (object);
+  PicmanAction *action = PICMAN_ACTION (object);
 
   if (action->context)
     {
@@ -165,12 +165,12 @@ gimp_action_finalize (GObject *object)
 }
 
 static void
-gimp_action_get_property (GObject    *object,
+picman_action_get_property (GObject    *object,
                           guint       prop_id,
                           GValue     *value,
                           GParamSpec *pspec)
 {
-  GimpAction *action = GIMP_ACTION (object);
+  PicmanAction *action = PICMAN_ACTION (object);
 
   switch (prop_id)
     {
@@ -201,12 +201,12 @@ gimp_action_get_property (GObject    *object,
 }
 
 static void
-gimp_action_set_property (GObject      *object,
+picman_action_set_property (GObject      *object,
                           guint         prop_id,
                           const GValue *value,
                           GParamSpec   *pspec)
 {
-  GimpAction *action    = GIMP_ACTION (object);
+  PicmanAction *action    = PICMAN_ACTION (object);
   gboolean    set_proxy = FALSE;
 
   switch (prop_id)
@@ -254,33 +254,33 @@ gimp_action_set_property (GObject      *object,
            list;
            list = g_slist_next (list))
         {
-          gimp_action_set_proxy (action, list->data);
+          picman_action_set_proxy (action, list->data);
         }
     }
 }
 
 static void
-gimp_action_connect_proxy (GtkAction *action,
+picman_action_connect_proxy (GtkAction *action,
                            GtkWidget *proxy)
 {
   GTK_ACTION_CLASS (parent_class)->connect_proxy (action, proxy);
 
-  gimp_action_set_proxy (GIMP_ACTION (action), proxy);
-  gimp_action_set_proxy_tooltip (GIMP_ACTION (action), proxy);
+  picman_action_set_proxy (PICMAN_ACTION (action), proxy);
+  picman_action_set_proxy_tooltip (PICMAN_ACTION (action), proxy);
 }
 
 
 /*  public functions  */
 
-GimpAction *
-gimp_action_new (const gchar *name,
+PicmanAction *
+picman_action_new (const gchar *name,
                  const gchar *label,
                  const gchar *tooltip,
                  const gchar *stock_id)
 {
-  GimpAction *action;
+  PicmanAction *action;
 
-  action = g_object_new (GIMP_TYPE_ACTION,
+  action = g_object_new (PICMAN_TYPE_ACTION,
                          "name",     name,
                          "label",    label,
                          "tooltip",  tooltip,
@@ -297,8 +297,8 @@ gimp_action_new (const gchar *name,
 }
 
 gint
-gimp_action_name_compare (GimpAction  *action1,
-                          GimpAction  *action2)
+picman_action_name_compare (PicmanAction  *action1,
+                          PicmanAction  *action2)
 {
   return strcmp (gtk_action_get_name ((GtkAction *) action1),
                  gtk_action_get_name ((GtkAction *) action2));
@@ -308,7 +308,7 @@ gimp_action_name_compare (GimpAction  *action1,
 /*  private functions  */
 
 static void
-gimp_action_set_proxy (GimpAction *action,
+picman_action_set_proxy (PicmanAction *action,
                        GtkWidget  *proxy)
 {
   if (! GTK_IS_IMAGE_MENU_ITEM (proxy))
@@ -320,17 +320,17 @@ gimp_action_set_proxy (GimpAction *action,
 
       area = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (proxy));
 
-      if (GIMP_IS_COLOR_AREA (area))
+      if (PICMAN_IS_COLOR_AREA (area))
         {
-          gimp_color_area_set_color (GIMP_COLOR_AREA (area), action->color);
+          picman_color_area_set_color (PICMAN_COLOR_AREA (area), action->color);
         }
       else
         {
           gint width, height;
 
-          area = gimp_color_area_new (action->color,
-                                      GIMP_COLOR_AREA_SMALL_CHECKS, 0);
-          gimp_color_area_set_draw_border (GIMP_COLOR_AREA (area), TRUE);
+          area = picman_color_area_new (action->color,
+                                      PICMAN_COLOR_AREA_SMALL_CHECKS, 0);
+          picman_color_area_set_draw_border (PICMAN_COLOR_AREA (area), TRUE);
 
           gtk_icon_size_lookup_for_settings (gtk_widget_get_settings (proxy),
                                              GTK_ICON_SIZE_MENU,
@@ -347,11 +347,11 @@ gimp_action_set_proxy (GimpAction *action,
 
       view = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (proxy));
 
-      if (GIMP_IS_VIEW (view) &&
+      if (PICMAN_IS_VIEW (view) &&
           g_type_is_a (G_TYPE_FROM_INSTANCE (action->viewable),
-                       GIMP_VIEW (view)->renderer->viewable_type))
+                       PICMAN_VIEW (view)->renderer->viewable_type))
         {
-          gimp_view_set_viewable (GIMP_VIEW (view), action->viewable);
+          picman_view_set_viewable (PICMAN_VIEW (view), action->viewable);
         }
       else
         {
@@ -359,7 +359,7 @@ gimp_action_set_proxy (GimpAction *action,
           gint        width, height;
           gint        border_width;
 
-          if (GIMP_IS_IMAGEFILE (action->viewable))
+          if (PICMAN_IS_IMAGEFILE (action->viewable))
             {
               size         = GTK_ICON_SIZE_LARGE_TOOLBAR;
               border_width = 0;
@@ -373,7 +373,7 @@ gimp_action_set_proxy (GimpAction *action,
           gtk_icon_size_lookup_for_settings (gtk_widget_get_settings (proxy),
                                              size, &width, &height);
 
-          view = gimp_view_new_full (action->context, action->viewable,
+          view = picman_view_new_full (action->context, action->viewable,
                                      width, height, border_width,
                                      FALSE, FALSE, FALSE);
           gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy), view);
@@ -386,7 +386,7 @@ gimp_action_set_proxy (GimpAction *action,
 
       image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (proxy));
 
-      if (GIMP_IS_VIEW (image) || GIMP_IS_COLOR_AREA (image))
+      if (PICMAN_IS_VIEW (image) || PICMAN_IS_COLOR_AREA (image))
         {
           gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy), NULL);
           g_object_notify (G_OBJECT (action), "stock-id");
@@ -407,19 +407,19 @@ gimp_action_set_proxy (GimpAction *action,
 }
 
 static void
-gimp_action_set_proxy_tooltip (GimpAction *action,
+picman_action_set_proxy_tooltip (PicmanAction *action,
                                GtkWidget  *proxy)
 {
   const gchar *tooltip = gtk_action_get_tooltip (GTK_ACTION (action));
 
   if (tooltip)
-    gimp_help_set_help_data (proxy, tooltip,
+    picman_help_set_help_data (proxy, tooltip,
                              g_object_get_qdata (G_OBJECT (proxy),
-                                                 GIMP_HELP_ID));
+                                                 PICMAN_HELP_ID));
 }
 
 static void
-gimp_action_tooltip_notify (GimpAction       *action,
+picman_action_tooltip_notify (PicmanAction       *action,
                             const GParamSpec *pspec,
                             gpointer          data)
 {
@@ -429,6 +429,6 @@ gimp_action_tooltip_notify (GimpAction       *action,
        list;
        list = g_slist_next (list))
     {
-      gimp_action_set_proxy_tooltip (action, list->data);
+      picman_action_set_proxy_tooltip (action, list->data);
     }
 }

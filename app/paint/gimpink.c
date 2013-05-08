@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,23 +21,23 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "paint-types.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimptempbuf.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmantempbuf.h"
 
-#include "gimpinkoptions.h"
-#include "gimpink.h"
-#include "gimpink-blob.h"
-#include "gimpinkundo.h"
+#include "picmaninkoptions.h"
+#include "picmanink.h"
+#include "picmanink-blob.h"
+#include "picmaninkundo.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define SUBSAMPLE 8
@@ -45,31 +45,31 @@
 
 /*  local function prototypes  */
 
-static void         gimp_ink_finalize         (GObject          *object);
+static void         picman_ink_finalize         (GObject          *object);
 
-static void         gimp_ink_paint            (GimpPaintCore    *paint_core,
-                                               GimpDrawable     *drawable,
-                                               GimpPaintOptions *paint_options,
-                                               const GimpCoords *coords,
-                                               GimpPaintState    paint_state,
+static void         picman_ink_paint            (PicmanPaintCore    *paint_core,
+                                               PicmanDrawable     *drawable,
+                                               PicmanPaintOptions *paint_options,
+                                               const PicmanCoords *coords,
+                                               PicmanPaintState    paint_state,
                                                guint32           time);
-static GeglBuffer * gimp_ink_get_paint_buffer (GimpPaintCore    *paint_core,
-                                               GimpDrawable     *drawable,
-                                               GimpPaintOptions *paint_options,
-                                               const GimpCoords *coords,
+static GeglBuffer * picman_ink_get_paint_buffer (PicmanPaintCore    *paint_core,
+                                               PicmanDrawable     *drawable,
+                                               PicmanPaintOptions *paint_options,
+                                               const PicmanCoords *coords,
                                                gint             *paint_buffer_x,
                                                gint             *paint_buffer_y);
-static GimpUndo   * gimp_ink_push_undo        (GimpPaintCore    *core,
-                                               GimpImage        *image,
+static PicmanUndo   * picman_ink_push_undo        (PicmanPaintCore    *core,
+                                               PicmanImage        *image,
                                                const gchar      *undo_desc);
 
-static void         gimp_ink_motion           (GimpPaintCore    *paint_core,
-                                               GimpDrawable     *drawable,
-                                               GimpPaintOptions *paint_options,
-                                               const GimpCoords *coords,
+static void         picman_ink_motion           (PicmanPaintCore    *paint_core,
+                                               PicmanDrawable     *drawable,
+                                               PicmanPaintOptions *paint_options,
+                                               const PicmanCoords *coords,
                                                guint32           time);
 
-static GimpBlob   * ink_pen_ellipse           (GimpInkOptions   *options,
+static PicmanBlob   * ink_pen_ellipse           (PicmanInkOptions   *options,
                                                gdouble           x_center,
                                                gdouble           y_center,
                                                gdouble           pressure,
@@ -79,48 +79,48 @@ static GimpBlob   * ink_pen_ellipse           (GimpInkOptions   *options,
 
 static void         render_blob               (GeglBuffer       *buffer,
                                                GeglRectangle    *rect,
-                                               GimpBlob         *blob);
+                                               PicmanBlob         *blob);
 
 
-G_DEFINE_TYPE (GimpInk, gimp_ink, GIMP_TYPE_PAINT_CORE)
+G_DEFINE_TYPE (PicmanInk, picman_ink, PICMAN_TYPE_PAINT_CORE)
 
-#define parent_class gimp_ink_parent_class
+#define parent_class picman_ink_parent_class
 
 
 void
-gimp_ink_register (Gimp                      *gimp,
-                   GimpPaintRegisterCallback  callback)
+picman_ink_register (Picman                      *picman,
+                   PicmanPaintRegisterCallback  callback)
 {
-  (* callback) (gimp,
-                GIMP_TYPE_INK,
-                GIMP_TYPE_INK_OPTIONS,
-                "gimp-ink",
+  (* callback) (picman,
+                PICMAN_TYPE_INK,
+                PICMAN_TYPE_INK_OPTIONS,
+                "picman-ink",
                 _("Ink"),
-                "gimp-tool-ink");
+                "picman-tool-ink");
 }
 
 static void
-gimp_ink_class_init (GimpInkClass *klass)
+picman_ink_class_init (PicmanInkClass *klass)
 {
   GObjectClass       *object_class     = G_OBJECT_CLASS (klass);
-  GimpPaintCoreClass *paint_core_class = GIMP_PAINT_CORE_CLASS (klass);
+  PicmanPaintCoreClass *paint_core_class = PICMAN_PAINT_CORE_CLASS (klass);
 
-  object_class->finalize             = gimp_ink_finalize;
+  object_class->finalize             = picman_ink_finalize;
 
-  paint_core_class->paint            = gimp_ink_paint;
-  paint_core_class->get_paint_buffer = gimp_ink_get_paint_buffer;
-  paint_core_class->push_undo        = gimp_ink_push_undo;
+  paint_core_class->paint            = picman_ink_paint;
+  paint_core_class->get_paint_buffer = picman_ink_get_paint_buffer;
+  paint_core_class->push_undo        = picman_ink_push_undo;
 }
 
 static void
-gimp_ink_init (GimpInk *ink)
+picman_ink_init (PicmanInk *ink)
 {
 }
 
 static void
-gimp_ink_finalize (GObject *object)
+picman_ink_finalize (GObject *object)
 {
-  GimpInk *ink = GIMP_INK (object);
+  PicmanInk *ink = PICMAN_INK (object);
 
   if (ink->start_blob)
     {
@@ -138,22 +138,22 @@ gimp_ink_finalize (GObject *object)
 }
 
 static void
-gimp_ink_paint (GimpPaintCore    *paint_core,
-                GimpDrawable     *drawable,
-                GimpPaintOptions *paint_options,
-                const GimpCoords *coords,
-                GimpPaintState    paint_state,
+picman_ink_paint (PicmanPaintCore    *paint_core,
+                PicmanDrawable     *drawable,
+                PicmanPaintOptions *paint_options,
+                const PicmanCoords *coords,
+                PicmanPaintState    paint_state,
                 guint32           time)
 {
-  GimpInk *ink = GIMP_INK (paint_core);
-  GimpCoords last_coords;
+  PicmanInk *ink = PICMAN_INK (paint_core);
+  PicmanCoords last_coords;
 
-  gimp_paint_core_get_last_coords (paint_core, &last_coords);
+  picman_paint_core_get_last_coords (paint_core, &last_coords);
 
   switch (paint_state)
     {
 
-    case GIMP_PAINT_STATE_INIT:
+    case PICMAN_PAINT_STATE_INIT:
 
       if (coords->x == last_coords.x &&
           coords->y == last_coords.y)
@@ -179,37 +179,37 @@ gimp_ink_paint (GimpPaintCore    *paint_core,
           if (ink->start_blob)
             g_free (ink->start_blob);
 
-          ink->start_blob = gimp_blob_duplicate (ink->last_blob);
+          ink->start_blob = picman_blob_duplicate (ink->last_blob);
         }
       break;
 
-    case GIMP_PAINT_STATE_MOTION:
-      gimp_ink_motion (paint_core, drawable, paint_options, coords, time);
+    case PICMAN_PAINT_STATE_MOTION:
+      picman_ink_motion (paint_core, drawable, paint_options, coords, time);
       break;
 
-    case GIMP_PAINT_STATE_FINISH:
+    case PICMAN_PAINT_STATE_FINISH:
       break;
     }
 }
 
 static GeglBuffer *
-gimp_ink_get_paint_buffer (GimpPaintCore    *paint_core,
-                           GimpDrawable     *drawable,
-                           GimpPaintOptions *paint_options,
-                           const GimpCoords *coords,
+picman_ink_get_paint_buffer (PicmanPaintCore    *paint_core,
+                           PicmanDrawable     *drawable,
+                           PicmanPaintOptions *paint_options,
+                           const PicmanCoords *coords,
                            gint             *paint_buffer_x,
                            gint             *paint_buffer_y)
 {
-  GimpInk *ink = GIMP_INK (paint_core);
+  PicmanInk *ink = PICMAN_INK (paint_core);
   gint     x, y;
   gint     width, height;
   gint     dwidth, dheight;
   gint     x1, y1, x2, y2;
 
-  gimp_blob_bounds (ink->cur_blob, &x, &y, &width, &height);
+  picman_blob_bounds (ink->cur_blob, &x, &y, &width, &height);
 
-  dwidth  = gimp_item_get_width  (GIMP_ITEM (drawable));
-  dheight = gimp_item_get_height (GIMP_ITEM (drawable));
+  dwidth  = picman_item_get_width  (PICMAN_ITEM (drawable));
+  dheight = picman_item_get_height (PICMAN_ITEM (drawable));
 
   x1 = CLAMP (x / SUBSAMPLE - 1,            0, dwidth);
   y1 = CLAMP (y / SUBSAMPLE - 1,            0, dheight);
@@ -219,9 +219,9 @@ gimp_ink_get_paint_buffer (GimpPaintCore    *paint_core,
   /*  configure the canvas buffer  */
   if ((x2 - x1) && (y2 - y1))
     {
-      GimpTempBuf *temp_buf;
+      PicmanTempBuf *temp_buf;
 
-      temp_buf = gimp_temp_buf_new ((x2 - x1), (y2 - y1),
+      temp_buf = picman_temp_buf_new ((x2 - x1), (y2 - y1),
                                     babl_format ("RGBA float"));
 
       *paint_buffer_x = x1;
@@ -230,9 +230,9 @@ gimp_ink_get_paint_buffer (GimpPaintCore    *paint_core,
       if (paint_core->paint_buffer)
         g_object_unref (paint_core->paint_buffer);
 
-      paint_core->paint_buffer = gimp_temp_buf_create_buffer (temp_buf);
+      paint_core->paint_buffer = picman_temp_buf_create_buffer (temp_buf);
 
-      gimp_temp_buf_unref (temp_buf);
+      picman_temp_buf_unref (temp_buf);
 
       return paint_core->paint_buffer;
     }
@@ -240,34 +240,34 @@ gimp_ink_get_paint_buffer (GimpPaintCore    *paint_core,
   return NULL;
 }
 
-static GimpUndo *
-gimp_ink_push_undo (GimpPaintCore *core,
-                    GimpImage     *image,
+static PicmanUndo *
+picman_ink_push_undo (PicmanPaintCore *core,
+                    PicmanImage     *image,
                     const gchar   *undo_desc)
 {
-  return gimp_image_undo_push (image, GIMP_TYPE_INK_UNDO,
-                               GIMP_UNDO_INK, undo_desc,
+  return picman_image_undo_push (image, PICMAN_TYPE_INK_UNDO,
+                               PICMAN_UNDO_INK, undo_desc,
                                0,
                                "paint-core", core,
                                NULL);
 }
 
 static void
-gimp_ink_motion (GimpPaintCore    *paint_core,
-                 GimpDrawable     *drawable,
-                 GimpPaintOptions *paint_options,
-                 const GimpCoords *coords,
+picman_ink_motion (PicmanPaintCore    *paint_core,
+                 PicmanDrawable     *drawable,
+                 PicmanPaintOptions *paint_options,
+                 const PicmanCoords *coords,
                  guint32           time)
 {
-  GimpInk        *ink        = GIMP_INK (paint_core);
-  GimpInkOptions *options    = GIMP_INK_OPTIONS (paint_options);
-  GimpContext    *context    = GIMP_CONTEXT (paint_options);
-  GimpBlob       *blob_union = NULL;
-  GimpBlob       *blob_to_render;
+  PicmanInk        *ink        = PICMAN_INK (paint_core);
+  PicmanInkOptions *options    = PICMAN_INK_OPTIONS (paint_options);
+  PicmanContext    *context    = PICMAN_CONTEXT (paint_options);
+  PicmanBlob       *blob_union = NULL;
+  PicmanBlob       *blob_to_render;
   GeglBuffer     *paint_buffer;
   gint            paint_buffer_x;
   gint            paint_buffer_y;
-  GimpRGB         foreground;
+  PicmanRGB         foreground;
   GeglColor      *color;
 
   if (! ink->last_blob)
@@ -283,13 +283,13 @@ gimp_ink_motion (GimpPaintCore    *paint_core,
       if (ink->start_blob)
         g_free (ink->start_blob);
 
-      ink->start_blob = gimp_blob_duplicate (ink->last_blob);
+      ink->start_blob = picman_blob_duplicate (ink->last_blob);
 
       blob_to_render = ink->last_blob;
     }
   else
     {
-      GimpBlob *blob = ink_pen_ellipse (options,
+      PicmanBlob *blob = ink_pen_ellipse (options,
                                         coords->x,
                                         coords->y,
                                         coords->pressure,
@@ -297,7 +297,7 @@ gimp_ink_motion (GimpPaintCore    *paint_core,
                                         coords->ytilt,
                                         coords->velocity * 100);
 
-      blob_union = gimp_blob_convex_union (ink->last_blob, blob);
+      blob_union = picman_blob_convex_union (ink->last_blob, blob);
 
       g_free (ink->last_blob);
       ink->last_blob = blob;
@@ -307,7 +307,7 @@ gimp_ink_motion (GimpPaintCore    *paint_core,
 
   /* Get the buffer */
   ink->cur_blob = blob_to_render;
-  paint_buffer = gimp_paint_core_get_paint_buffer (paint_core, drawable,
+  paint_buffer = picman_paint_core_get_paint_buffer (paint_core, drawable,
                                                    paint_options, coords,
                                                    &paint_buffer_x,
                                                    &paint_buffer_y);
@@ -316,8 +316,8 @@ gimp_ink_motion (GimpPaintCore    *paint_core,
   if (! paint_buffer)
     return;
 
-  gimp_context_get_foreground (context, &foreground);
-  color = gimp_gegl_color_new (&foreground);
+  picman_context_get_foreground (context, &foreground);
+  color = picman_gegl_color_new (&foreground);
 
   gegl_buffer_set_color (paint_buffer, NULL, color);
   g_object_unref (color);
@@ -331,24 +331,24 @@ gimp_ink_motion (GimpPaintCore    *paint_core,
                blob_to_render);
 
   /*  draw the paint_area using the just rendered canvas_buffer as mask */
-  gimp_paint_core_paste (paint_core,
+  picman_paint_core_paste (paint_core,
                          paint_core->canvas_buffer,
                          GEGL_RECTANGLE (paint_core->paint_buffer_x,
                                          paint_core->paint_buffer_y,
                                          gegl_buffer_get_width  (paint_core->paint_buffer),
                                          gegl_buffer_get_height (paint_core->paint_buffer)),
                          drawable,
-                         GIMP_OPACITY_OPAQUE,
-                         gimp_context_get_opacity (context),
-                         gimp_context_get_paint_mode (context),
-                         GIMP_PAINT_CONSTANT);
+                         PICMAN_OPACITY_OPAQUE,
+                         picman_context_get_opacity (context),
+                         picman_context_get_paint_mode (context),
+                         PICMAN_PAINT_CONSTANT);
 
   if (blob_union)
     g_free (blob_union);
 }
 
-static GimpBlob *
-ink_pen_ellipse (GimpInkOptions *options,
+static PicmanBlob *
+ink_pen_ellipse (PicmanInkOptions *options,
                  gdouble         x_center,
                  gdouble         y_center,
                  gdouble         pressure,
@@ -356,7 +356,7 @@ ink_pen_ellipse (GimpInkOptions *options,
                  gdouble         ytilt,
                  gdouble         velocity)
 {
-  GimpBlobFunc blob_function;
+  PicmanBlobFunc blob_function;
   gdouble      size;
   gdouble      tsin, tcos;
   gdouble      aspect, radmin;
@@ -407,8 +407,8 @@ ink_pen_ellipse (GimpInkOptions *options,
    */
 
   tscale   = options->tilt_sensitivity * 10.0;
-  tscale_c = tscale * cos (gimp_deg_to_rad (options->tilt_angle));
-  tscale_s = tscale * sin (gimp_deg_to_rad (options->tilt_angle));
+  tscale_c = tscale * cos (picman_deg_to_rad (options->tilt_angle));
+  tscale_s = tscale * sin (picman_deg_to_rad (options->tilt_angle));
 
   x = (options->blob_aspect * cos (options->blob_angle) +
        xtilt * tscale_c - ytilt * tscale_s);
@@ -440,16 +440,16 @@ ink_pen_ellipse (GimpInkOptions *options,
 
   switch (options->blob_type)
     {
-    case GIMP_INK_BLOB_TYPE_CIRCLE:
-      blob_function = gimp_blob_ellipse;
+    case PICMAN_INK_BLOB_TYPE_CIRCLE:
+      blob_function = picman_blob_ellipse;
       break;
 
-    case GIMP_INK_BLOB_TYPE_SQUARE:
-      blob_function = gimp_blob_square;
+    case PICMAN_INK_BLOB_TYPE_SQUARE:
+      blob_function = picman_blob_square;
       break;
 
-    case GIMP_INK_BLOB_TYPE_DIAMOND:
-      blob_function = gimp_blob_diamond;
+    case PICMAN_INK_BLOB_TYPE_DIAMOND:
+      blob_function = picman_blob_diamond;
       break;
 
     default:
@@ -539,7 +539,7 @@ fill_run (gfloat *dest,
 }
 
 static void
-render_blob_line (GimpBlob *blob,
+render_blob_line (PicmanBlob *blob,
                   gfloat   *dest,
                   gint      x,
                   gint      y,
@@ -648,7 +648,7 @@ render_blob_line (GimpBlob *blob,
 static void
 render_blob (GeglBuffer    *buffer,
              GeglRectangle *rect,
-             GimpBlob      *blob)
+             PicmanBlob      *blob)
 {
   GeglBufferIterator *iter;
   GeglRectangle      *roi;

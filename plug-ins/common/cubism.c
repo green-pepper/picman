@@ -1,4 +1,4 @@
-/* Cubism --- image filter plug-in for GIMP
+/* Cubism --- image filter plug-in for PICMAN
  * Copyright (C) 1996 Spencer Kimball, Tracy Scott
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * You can contact me at quartic@polloux.fciencias.unam.mx
- * You can contact the original GIMP authors at gimp@xcf.berkeley.edu
+ * You can contact the original PICMAN authors at picman@xcf.berkeley.edu
  * Speedups by Elliot Lee
  */
 
@@ -23,15 +23,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC    "plug-in-cubism"
 #define PLUG_IN_BINARY  "cubism"
-#define PLUG_IN_ROLE    "gimp-cubism"
+#define PLUG_IN_ROLE    "picman-cubism"
 
 #define SCALE_WIDTH     125
 #define BLACK             0
@@ -44,7 +44,7 @@
 typedef struct
 {
   gint        npts;
-  GimpVector2 pts[MAX_POINTS];
+  PicmanVector2 pts[MAX_POINTS];
 } Polygon;
 
 typedef struct
@@ -60,17 +60,17 @@ typedef struct
 static void      query                (void);
 static void      run                  (const gchar      *name,
                                        gint              nparams,
-                                       const GimpParam  *param,
+                                       const PicmanParam  *param,
                                        gint             *nreturn_vals,
-                                       GimpParam       **return_vals);
+                                       PicmanParam       **return_vals);
 
-static void      cubism               (GimpDrawable     *drawable,
-                                       GimpPreview      *preview);
-static gboolean  cubism_dialog        (GimpDrawable     *drawable);
+static void      cubism               (PicmanDrawable     *drawable,
+                                       PicmanPreview      *preview);
+static gboolean  cubism_dialog        (PicmanDrawable     *drawable);
 
 static void      fill_poly_color      (Polygon          *poly,
-                                       GimpDrawable     *drawable,
-                                       GimpPreview      *preview,
+                                       PicmanDrawable     *drawable,
+                                       PicmanPreview      *preview,
                                        guchar           *col,
                                        guchar           *dest);
 
@@ -118,7 +118,7 @@ static CubismVals cvals =
   TRUE         /* preview         */
 };
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -136,17 +136,17 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",        "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",           "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",        "Input drawable" },
-    { GIMP_PDB_FLOAT,    "tile-size",       "Average diameter of each tile (in pixels)" },
-    { GIMP_PDB_FLOAT,    "tile-saturation", "Expand tiles by this amount" },
-    { GIMP_PDB_INT32,    "bg-color",        "Background color { BLACK (0), BG (1) }" }
+    { PICMAN_PDB_INT32,    "run-mode",        "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",           "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",        "Input drawable" },
+    { PICMAN_PDB_FLOAT,    "tile-size",       "Average diameter of each tile (in pixels)" },
+    { PICMAN_PDB_FLOAT,    "tile-saturation", "Expand tiles by this amount" },
+    { PICMAN_PDB_INT32,    "bg-color",        "Background color { BLACK (0), BG (1) }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Convert the image into randomly rotated square blobs"),
                           "Help not yet written for this plug-in",
                           "Spencer Kimball & Tracy Scott",
@@ -154,24 +154,24 @@ query (void)
                           "1996",
                           N_("_Cubism..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Artistic");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Artistic");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
 
@@ -180,45 +180,45 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*  get the active drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*  set cache size  */
   /* asking for a lot here but seems to give a speedup -- WES 12-23-04 */
-  gimp_tile_cache_ntiles (2 * drawable->ntile_rows * drawable->ntile_cols);
+  picman_tile_cache_ntiles (2 * drawable->ntile_rows * drawable->ntile_cols);
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &cvals);
+      picman_get_data (PLUG_IN_PROC, &cvals);
 
       /*  First acquire information with a dialog  */
       if (! cubism_dialog (drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 6)
-        status = GIMP_PDB_CALLING_ERROR;
-      if (status == GIMP_PDB_SUCCESS)
+        status = PICMAN_PDB_CALLING_ERROR;
+      if (status == PICMAN_PDB_SUCCESS)
         {
           cvals.tile_size       = param[3].data.d_float;
           cvals.tile_saturation = param[4].data.d_float;
           cvals.bg_color        = param[5].data.d_int32;
         }
-      if (status == GIMP_PDB_SUCCESS &&
+      if (status == PICMAN_PDB_SUCCESS &&
           (cvals.bg_color < BLACK || cvals.bg_color > BG))
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &cvals);
+      picman_get_data (PLUG_IN_PROC, &cvals);
       break;
 
     default:
@@ -226,34 +226,34 @@ run (const gchar      *name,
     }
 
   /*  Render the cubism effect  */
-  if ((status == GIMP_PDB_SUCCESS) &&
-      (gimp_drawable_is_rgb (drawable->drawable_id) ||
-       gimp_drawable_is_gray (drawable->drawable_id)))
+  if ((status == PICMAN_PDB_SUCCESS) &&
+      (picman_drawable_is_rgb (drawable->drawable_id) ||
+       picman_drawable_is_gray (drawable->drawable_id)))
     {
 
       cubism (drawable, NULL);
 
       /*  If the run mode is interactive, flush the displays  */
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
       /*  Store mvals data  */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &cvals, sizeof (CubismVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &cvals, sizeof (CubismVals));
     }
-  else if (status == GIMP_PDB_SUCCESS)
+  else if (status == PICMAN_PDB_SUCCESS)
     {
-      /* gimp_message ("cubism: cannot operate on indexed color images"); */
-      status = GIMP_PDB_EXECUTION_ERROR;
+      /* picman_message ("cubism: cannot operate on indexed color images"); */
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static gboolean
-cubism_dialog (GimpDrawable *drawable)
+cubism_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -263,11 +263,11 @@ cubism_dialog (GimpDrawable *drawable)
   GtkObject *scale_data;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Cubism"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Cubism"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -279,7 +279,7 @@ cubism_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -287,7 +287,7 @@ cubism_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, &cvals.preview);
+  preview = picman_drawable_preview_new (drawable, &cvals.preview);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -302,29 +302,29 @@ cubism_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                      _("_Tile size:"), SCALE_WIDTH, 5,
                                      cvals.tile_size, 0.0, 100.0, 1.0, 10.0, 1,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &cvals.tile_size);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   scale_data =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                           _("T_ile saturation:"), SCALE_WIDTH, 5,
                           cvals.tile_saturation, 0.0, 10.0, 0.1, 1, 1,
                           TRUE, 0, 0,
                           NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &cvals.tile_saturation);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_check_button_new_with_mnemonic (_("_Use background color"));
@@ -332,10 +332,10 @@ cubism_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &cvals.bg_color);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle),
@@ -343,7 +343,7 @@ cubism_dialog (GimpDrawable *drawable)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -351,10 +351,10 @@ cubism_dialog (GimpDrawable *drawable)
 }
 
 static void
-cubism (GimpDrawable *drawable,
-        GimpPreview  *preview)
+cubism (PicmanDrawable *drawable,
+        PicmanPreview  *preview)
 {
-  GimpPixelRgn src_rgn;
+  PicmanPixelRgn src_rgn;
   guchar       bg_col[4];
   gdouble      x, y;
   gdouble      width, height;
@@ -375,16 +375,16 @@ cubism (GimpDrawable *drawable,
   GRand       *gr;
 
   gr = g_rand_new ();
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   bytes = drawable->bpp;
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &sel_width, &sel_height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &sel_width, &sel_height);
       dest = g_new (guchar, sel_height * sel_width * bytes);
     }
-  else if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  else if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                            &x1, &y1, &sel_width, &sel_height))
     {
       return;
@@ -400,11 +400,11 @@ cubism (GimpDrawable *drawable,
     }
   else
     {
-      GimpRGB color;
+      PicmanRGB color;
 
-      gimp_context_get_background (&color);
-      gimp_rgb_set_alpha (&color, 0.0);
-      gimp_drawable_get_color_uchar (drawable->drawable_id, &color, bg_col);
+      picman_context_get_background (&color);
+      picman_rgb_set_alpha (&color, 0.0);
+      picman_drawable_get_color_uchar (drawable->drawable_id, &color, bg_col);
     }
 
   cols = ((x2 - x1) + cvals.tile_size - 1) / cvals.tile_size;
@@ -419,13 +419,13 @@ cubism (GimpDrawable *drawable,
     }
   else
     {
-      gimp_progress_init (_("Cubistic transformation"));
-      gimp_pixel_rgn_init (&src_rgn, drawable,
+      picman_progress_init (_("Cubistic transformation"));
+      picman_pixel_rgn_init (&src_rgn, drawable,
                            x1, y1, (x2 - x1), (y2 - y1), TRUE, TRUE);
 
-      for (pr = gimp_pixel_rgns_register (1, &src_rgn);
+      for (pr = picman_pixel_rgns_register (1, &src_rgn);
            pr != NULL;
-           pr = gimp_pixel_rgns_process (pr))
+           pr = picman_pixel_rgns_process (pr))
         {
           count = src_rgn.w * src_rgn.h;
           dest  = src_rgn.data;
@@ -445,7 +445,7 @@ cubism (GimpDrawable *drawable,
 
   randomize_indices (num_tiles, random_indices);
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x1, y1, x2 - x1, y2 - y1, FALSE, FALSE);
 
   for (count = 0; count < num_tiles; count++)
@@ -475,7 +475,7 @@ cubism (GimpDrawable *drawable,
       ix = CLAMP (x, x1, x2 - 1);
       iy = CLAMP (y, y1, y2 - 1);
 
-      gimp_pixel_rgn_get_pixel (&src_rgn, col, ix, iy);
+      picman_pixel_rgn_get_pixel (&src_rgn, col, ix, iy);
 
       if (! has_alpha || col[bytes - 1])
         fill_poly_color (&poly, drawable, preview, col, dest);
@@ -483,7 +483,7 @@ cubism (GimpDrawable *drawable,
       if (! preview)
         {
           if (count % 8 == 0)
-            gimp_progress_update ((gdouble) count / (gdouble) num_tiles);
+            picman_progress_update ((gdouble) count / (gdouble) num_tiles);
         }
     }
 
@@ -492,16 +492,16 @@ cubism (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, dest, sel_width * bytes);
+      picman_preview_draw_buffer (preview, dest, sel_width * bytes);
       g_free (dest);
     }
   else
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
       /*  merge the shadow, update the drawable  */
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
     }
 }
 
@@ -523,12 +523,12 @@ calc_alpha_blend (gdouble *vec,
 
 static void
 fill_poly_color (Polygon      *poly,
-                 GimpDrawable *drawable,
-                 GimpPreview  *preview,
+                 PicmanDrawable *drawable,
+                 PicmanPreview  *preview,
                  guchar       *col,
                  guchar       *dest)
 {
-  GimpPixelRgn  src_rgn;
+  PicmanPixelRgn  src_rgn;
   gdouble       dmin_x = 0.0;
   gdouble       dmin_y = 0.0;
   gdouble       dmax_x = 0.0;
@@ -576,15 +576,15 @@ fill_poly_color (Polygon      *poly,
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &sel_width, &sel_height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &sel_width, &sel_height);
       x2 = x1 + sel_width;
       y2 = y1 + sel_height;
     }
   else
     {
-      gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
-      gimp_pixel_rgn_init (&src_rgn, drawable,
+      picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+      picman_pixel_rgn_init (&src_rgn, drawable,
                            x1, y1, x2 - x1, y2 - y1,
                           TRUE, TRUE);
     }
@@ -609,7 +609,7 @@ fill_poly_color (Polygon      *poly,
 
   if (poly->npts)
     {
-      GimpVector2 *curptr;
+      PicmanVector2 *curptr;
       gint         poly_npts = poly->npts;
 
       xs = (gint) (poly->pts[poly_npts-1].x);
@@ -694,7 +694,7 @@ fill_poly_color (Polygon      *poly,
                             }
                           else
                             {
-                              gimp_pixel_rgn_get_pixel (&src_rgn, buf, x, y);
+                              picman_pixel_rgn_get_pixel (&src_rgn, buf, x, y);
                             }
 
 #ifndef USE_READABLE_BUT_SLOW_CODE
@@ -720,7 +720,7 @@ fill_poly_color (Polygon      *poly,
                             }
                           else
                             {
-                              gimp_pixel_rgn_set_pixel (&src_rgn, buf, x, y);
+                              picman_pixel_rgn_set_pixel (&src_rgn, buf, x, y);
                             }
                         }
                     }

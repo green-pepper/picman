@@ -35,10 +35,10 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #if ! defined PATH_MAX
 #  if defined _MAX_PATH
@@ -58,7 +58,7 @@
 
 #define PLUG_IN_PROC    "plug-in-qbist"
 #define PLUG_IN_BINARY  "qbist"
-#define PLUG_IN_ROLE    "gimp-qbist"
+#define PLUG_IN_ROLE    "picman-qbist"
 #define PLUG_IN_VERSION "January 2001, 1.12"
 
 /** types *******************************************************************/
@@ -105,9 +105,9 @@ QbistInfo;
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparams,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 
 static gboolean  dialog_run             (void);
 static void      dialog_new_variations  (GtkWidget *widget,
@@ -384,7 +384,7 @@ qbist (ExpInfo *info,
 
 /** Plugin interface *********************************************************/
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,                         /* init_proc  */
   NULL,                         /* quit_proc  */
@@ -397,14 +397,14 @@ MAIN ()
 static void
 query (void)
 {
-  GimpParamDef args[] =
+  PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"       }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"       }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Generate a huge variety of abstract patterns"),
                           "This Plug-in is based on an article by "
                           "Jörn Loviscach (appeared in c't 10/95, page 326). "
@@ -415,53 +415,53 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("_Qbist..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render/Pattern");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render/Pattern");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam values[1];
+  static PicmanParam values[1];
   gint sel_x1, sel_y1, sel_x2, sel_y2;
   gint img_height, img_width;
 
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status;
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status;
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  status = GIMP_PDB_SUCCESS;
+  status = PICMAN_PDB_SUCCESS;
 
-  if (param[0].type != GIMP_PDB_INT32)
-    status = GIMP_PDB_CALLING_ERROR;
+  if (param[0].type != PICMAN_PDB_INT32)
+    status = PICMAN_PDB_CALLING_ERROR;
   run_mode = param[0].data.d_int32;
 
   INIT_I18N ();
 
-  if (param[2].type != GIMP_PDB_DRAWABLE)
-    status = GIMP_PDB_CALLING_ERROR;
+  if (param[2].type != PICMAN_PDB_DRAWABLE)
+    status = PICMAN_PDB_CALLING_ERROR;
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
-  img_width = gimp_drawable_width (drawable->drawable_id);
-  img_height = gimp_drawable_height (drawable->drawable_id);
-  gimp_drawable_mask_bounds (drawable->drawable_id,
+  img_width = picman_drawable_width (drawable->drawable_id);
+  img_height = picman_drawable_height (drawable->drawable_id);
+  picman_drawable_mask_bounds (drawable->drawable_id,
                              &sel_x1, &sel_y1, &sel_x2, &sel_y2);
 
-  if (!gimp_drawable_is_rgb (drawable->drawable_id))
-    status = GIMP_PDB_CALLING_ERROR;
+  if (!picman_drawable_is_rgb (drawable->drawable_id))
+    status = PICMAN_PDB_CALLING_ERROR;
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       gr = g_rand_new ();
 
@@ -471,52 +471,52 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           /* Possibly retrieve data */
-          gimp_get_data (PLUG_IN_PROC, &qbist_info);
+          picman_get_data (PLUG_IN_PROC, &qbist_info);
 
           /* Get information from the dialog */
           if (dialog_run ())
             {
-              status = GIMP_PDB_SUCCESS;
-              gimp_set_data (PLUG_IN_PROC, &qbist_info, sizeof (QbistInfo));
+              status = PICMAN_PDB_SUCCESS;
+              picman_set_data (PLUG_IN_PROC, &qbist_info, sizeof (QbistInfo));
             }
           else
-            status = GIMP_PDB_EXECUTION_ERROR;
+            status = PICMAN_PDB_EXECUTION_ERROR;
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
-          status = GIMP_PDB_CALLING_ERROR;
+        case PICMAN_RUN_NONINTERACTIVE:
+          status = PICMAN_PDB_CALLING_ERROR;
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           /* Possibly retrieve data */
-          gimp_get_data (PLUG_IN_PROC, &qbist_info);
-          status = GIMP_PDB_SUCCESS;
+          picman_get_data (PLUG_IN_PROC, &qbist_info);
+          status = PICMAN_PDB_SUCCESS;
           break;
 
         default:
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
           break;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
-          GimpPixelRgn imagePR;
+          PicmanPixelRgn imagePR;
           gpointer     pr;
 
-          gimp_tile_cache_ntiles ((drawable->width + gimp_tile_width () - 1) /
-                                  gimp_tile_width ());
-          gimp_pixel_rgn_init (&imagePR, drawable,
+          picman_tile_cache_ntiles ((drawable->width + picman_tile_width () - 1) /
+                                  picman_tile_width ());
+          picman_pixel_rgn_init (&imagePR, drawable,
                                0, 0, img_width, img_height, TRUE, TRUE);
 
           optimize (&qbist_info.info);
 
-          gimp_progress_init (_("Qbist"));
+          picman_progress_init (_("Qbist"));
 
-          for (pr = gimp_pixel_rgns_register (1, &imagePR);
+          for (pr = picman_pixel_rgns_register (1, &imagePR);
                pr != NULL;
-               pr = gimp_pixel_rgns_process (pr))
+               pr = picman_pixel_rgns_process (pr))
             {
               gint row;
 
@@ -533,27 +533,27 @@ run (const gchar      *name,
                          qbist_info.oversampling);
                 }
 
-              gimp_progress_update ((gfloat) (imagePR.y - sel_y1) /
+              picman_progress_update ((gfloat) (imagePR.y - sel_y1) /
                                     (gfloat) (sel_y2 - sel_y1));
             }
 
-          gimp_progress_update (1.0);
-          gimp_drawable_flush (drawable);
-          gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-          gimp_drawable_update (drawable->drawable_id,
+          picman_progress_update (1.0);
+          picman_drawable_flush (drawable);
+          picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+          picman_drawable_update (drawable->drawable_id,
                                 sel_x1, sel_y1,
                                 (sel_x2 - sel_x1), (sel_y2 - sel_y1));
 
-          gimp_displays_flush ();
+          picman_displays_flush ();
         }
 
       g_rand_free (gr);
     }
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 /** User interface ***********************************************************/
@@ -587,9 +587,9 @@ dialog_update_previews (GtkWidget *widget,
           qbist (&info[(j + 5) % 9], buf + i * PREVIEW_SIZE * 3,
                  0, i, PREVIEW_SIZE, PREVIEW_SIZE, PREVIEW_SIZE, 3, 1);
         }
-      gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview[j]),
+      picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview[j]),
                               0, 0, PREVIEW_SIZE, PREVIEW_SIZE,
-                              GIMP_RGB_IMAGE,
+                              PICMAN_RGB_IMAGE,
                               buf,
                               PREVIEW_SIZE *3);
     }
@@ -803,11 +803,11 @@ dialog_run (void)
   gint       i;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("G-Qbist"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("G-Qbist"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -819,7 +819,7 @@ dialog_run (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
@@ -849,7 +849,7 @@ dialog_run (void)
                         G_CALLBACK (dialog_select_preview),
                         (gpointer) & (info[(i + 5) % 9]));
 
-      preview[i] = gimp_preview_area_new ();
+      preview[i] = picman_preview_area_new ();
       gtk_widget_set_size_request (preview[i], PREVIEW_SIZE, PREVIEW_SIZE);
       gtk_container_add (GTK_CONTAINER (button), preview[i]);
       gtk_widget_show (preview[i]);
@@ -897,7 +897,7 @@ dialog_run (void)
   gtk_widget_show (dialog);
   dialog_update_previews (NULL, NULL);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   if (run)
     qbist_info.info = info[0];

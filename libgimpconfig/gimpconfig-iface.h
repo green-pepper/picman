@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * Config file serialization and deserialization interface
- * Copyright (C) 2001-2003  Sven Neumann <sven@gimp.org>
+ * Copyright (C) 2001-2003  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,100 +19,100 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_CONFIG_H_INSIDE__) && !defined (GIMP_CONFIG_COMPILATION)
-#error "Only <libgimpconfig/gimpconfig.h> can be included directly."
+#if !defined (__PICMAN_CONFIG_H_INSIDE__) && !defined (PICMAN_CONFIG_COMPILATION)
+#error "Only <libpicmanconfig/picmanconfig.h> can be included directly."
 #endif
 
-#ifndef __GIMP_CONFIG_IFACE_H__
-#define __GIMP_CONFIG_IFACE_H__
+#ifndef __PICMAN_CONFIG_IFACE_H__
+#define __PICMAN_CONFIG_IFACE_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_CONFIG               (gimp_config_interface_get_type ())
-#define GIMP_IS_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CONFIG))
-#define GIMP_CONFIG(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CONFIG, GimpConfig))
-#define GIMP_CONFIG_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GIMP_TYPE_CONFIG, GimpConfigInterface))
+#define PICMAN_TYPE_CONFIG               (picman_config_interface_get_type ())
+#define PICMAN_IS_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CONFIG))
+#define PICMAN_CONFIG(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CONFIG, PicmanConfig))
+#define PICMAN_CONFIG_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), PICMAN_TYPE_CONFIG, PicmanConfigInterface))
 
 
-typedef struct _GimpConfigInterface GimpConfigInterface;
+typedef struct _PicmanConfigInterface PicmanConfigInterface;
 
-struct _GimpConfigInterface
+struct _PicmanConfigInterface
 {
   GTypeInterface base_iface;
 
-  gboolean     (* serialize)            (GimpConfig       *config,
-                                         GimpConfigWriter *writer,
+  gboolean     (* serialize)            (PicmanConfig       *config,
+                                         PicmanConfigWriter *writer,
                                          gpointer          data);
-  gboolean     (* deserialize)          (GimpConfig       *config,
+  gboolean     (* deserialize)          (PicmanConfig       *config,
                                          GScanner         *scanner,
                                          gint              nest_level,
                                          gpointer          data);
-  gboolean     (* serialize_property)   (GimpConfig       *config,
+  gboolean     (* serialize_property)   (PicmanConfig       *config,
                                          guint             property_id,
                                          const GValue     *value,
                                          GParamSpec       *pspec,
-                                         GimpConfigWriter *writer);
-  gboolean     (* deserialize_property) (GimpConfig       *config,
+                                         PicmanConfigWriter *writer);
+  gboolean     (* deserialize_property) (PicmanConfig       *config,
                                          guint             property_id,
                                          GValue           *value,
                                          GParamSpec       *pspec,
                                          GScanner         *scanner,
                                          GTokenType       *expected);
-  GimpConfig * (* duplicate)            (GimpConfig       *config);
-  gboolean     (* equal)                (GimpConfig       *a,
-                                         GimpConfig       *b);
-  void         (* reset)                (GimpConfig       *config);
-  gboolean     (* copy)                 (GimpConfig       *src,
-                                         GimpConfig       *dest,
+  PicmanConfig * (* duplicate)            (PicmanConfig       *config);
+  gboolean     (* equal)                (PicmanConfig       *a,
+                                         PicmanConfig       *b);
+  void         (* reset)                (PicmanConfig       *config);
+  gboolean     (* copy)                 (PicmanConfig       *src,
+                                         PicmanConfig       *dest,
                                          GParamFlags       flags);
 };
 
 
-GType         gimp_config_interface_get_type    (void) G_GNUC_CONST;
+GType         picman_config_interface_get_type    (void) G_GNUC_CONST;
 
-gboolean      gimp_config_serialize_to_file     (GimpConfig       *config,
+gboolean      picman_config_serialize_to_file     (PicmanConfig       *config,
                                                  const gchar      *filename,
                                                  const gchar      *header,
                                                  const gchar      *footer,
                                                  gpointer          data,
                                                  GError          **error);
-gboolean      gimp_config_serialize_to_fd       (GimpConfig       *config,
+gboolean      picman_config_serialize_to_fd       (PicmanConfig       *config,
                                                  gint              fd,
                                                  gpointer          data);
-gchar       * gimp_config_serialize_to_string   (GimpConfig       *config,
+gchar       * picman_config_serialize_to_string   (PicmanConfig       *config,
                                                  gpointer          data);
-gboolean      gimp_config_deserialize_file      (GimpConfig       *config,
+gboolean      picman_config_deserialize_file      (PicmanConfig       *config,
                                                  const gchar      *filename,
                                                  gpointer          data,
                                                  GError          **error);
-gboolean      gimp_config_deserialize_string    (GimpConfig       *config,
+gboolean      picman_config_deserialize_string    (PicmanConfig       *config,
                                                  const gchar      *text,
                                                  gint              text_len,
                                                  gpointer          data,
                                                  GError          **error);
-gboolean      gimp_config_deserialize_return    (GScanner         *scanner,
+gboolean      picman_config_deserialize_return    (GScanner         *scanner,
                                                  GTokenType        expected_token,
                                                  gint              nest_level);
 
-gboolean      gimp_config_serialize             (GimpConfig       *config,
-                                                 GimpConfigWriter *writer,
+gboolean      picman_config_serialize             (PicmanConfig       *config,
+                                                 PicmanConfigWriter *writer,
                                                  gpointer          data);
-gboolean      gimp_config_deserialize           (GimpConfig       *config,
+gboolean      picman_config_deserialize           (PicmanConfig       *config,
                                                  GScanner         *scanner,
                                                  gint              nest_level,
                                                  gpointer          data);
-gpointer      gimp_config_duplicate             (GimpConfig       *config);
-gboolean      gimp_config_is_equal_to           (GimpConfig       *a,
-                                                 GimpConfig       *b);
-void          gimp_config_reset                 (GimpConfig       *config);
-gboolean      gimp_config_copy                  (GimpConfig       *src,
-                                                 GimpConfig       *dest,
+gpointer      picman_config_duplicate             (PicmanConfig       *config);
+gboolean      picman_config_is_equal_to           (PicmanConfig       *a,
+                                                 PicmanConfig       *b);
+void          picman_config_reset                 (PicmanConfig       *config);
+gboolean      picman_config_copy                  (PicmanConfig       *src,
+                                                 PicmanConfig       *dest,
                                                  GParamFlags       flags);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_CONFIG_IFACE_H__ */
+#endif  /* __PICMAN_CONFIG_IFACE_H__ */

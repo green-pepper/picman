@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpitem_pdb.c
+ * picmanitem_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,12 @@
 
 #include <string.h>
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpitem
- * @title: gimpitem
+ * SECTION: picmanitem
+ * @title: picmanitem
  * @short_description: Functions to manipulate items.
  *
  * Functions to manipulate items.
@@ -37,7 +37,7 @@
 
 
 /**
- * gimp_item_is_valid:
+ * picman_item_is_valid:
  * @item_ID: The item to check.
  *
  * Returns TRUE if the item is valid.
@@ -47,30 +47,30 @@
  *
  * Returns: Whether the item ID is valid.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_is_valid (gint32 item_ID)
+picman_item_is_valid (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean valid = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-is-valid",
+  return_vals = picman_run_procedure ("picman-item-is-valid",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     valid = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return valid;
 }
 
 /**
- * gimp_item_get_image:
+ * picman_item_get_image:
  * @item_ID: The item.
  *
  * Returns the item's image.
@@ -79,30 +79,30 @@ gimp_item_is_valid (gint32 item_ID)
  *
  * Returns: The item's image.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_item_get_image (gint32 item_ID)
+picman_item_get_image (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 image_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-item-get-image",
+  return_vals = picman_run_procedure ("picman-item-get-image",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     image_ID = return_vals[1].data.d_image;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return image_ID;
 }
 
 /**
- * gimp_item_delete:
+ * picman_item_delete:
  * @item_ID: The item to delete.
  *
  * Delete a item.
@@ -115,29 +115,29 @@ gimp_item_get_image (gint32 item_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_delete (gint32 item_ID)
+picman_item_delete (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-item-delete",
+  return_vals = picman_run_procedure ("picman-item-delete",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_item_is_drawable:
+ * picman_item_is_drawable:
  * @item_ID: The item.
  *
  * Returns whether the item is a drawable.
@@ -146,30 +146,30 @@ gimp_item_delete (gint32 item_ID)
  *
  * Returns: TRUE if the item is a drawable, FALSE otherwise.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_is_drawable (gint32 item_ID)
+picman_item_is_drawable (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean drawable = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-is-drawable",
+  return_vals = picman_run_procedure ("picman-item-is-drawable",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     drawable = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return drawable;
 }
 
 /**
- * gimp_item_is_layer:
+ * picman_item_is_layer:
  * @item_ID: The item.
  *
  * Returns whether the item is a layer.
@@ -178,30 +178,30 @@ gimp_item_is_drawable (gint32 item_ID)
  *
  * Returns: TRUE if the item is a layer, FALSE otherwise.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_is_layer (gint32 item_ID)
+picman_item_is_layer (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean layer = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-is-layer",
+  return_vals = picman_run_procedure ("picman-item-is-layer",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     layer = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return layer;
 }
 
 /**
- * gimp_item_is_text_layer:
+ * picman_item_is_text_layer:
  * @item_ID: The item.
  *
  * Returns whether the item is a text layer.
@@ -210,30 +210,30 @@ gimp_item_is_layer (gint32 item_ID)
  *
  * Returns: TRUE if the item is a text layer, FALSE otherwise.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_is_text_layer (gint32 item_ID)
+picman_item_is_text_layer (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean text_layer = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-is-text-layer",
+  return_vals = picman_run_procedure ("picman-item-is-text-layer",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     text_layer = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return text_layer;
 }
 
 /**
- * gimp_item_is_channel:
+ * picman_item_is_channel:
  * @item_ID: The item.
  *
  * Returns whether the item is a channel.
@@ -242,30 +242,30 @@ gimp_item_is_text_layer (gint32 item_ID)
  *
  * Returns: TRUE if the item is a channel, FALSE otherwise.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_is_channel (gint32 item_ID)
+picman_item_is_channel (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean channel = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-is-channel",
+  return_vals = picman_run_procedure ("picman-item-is-channel",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     channel = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return channel;
 }
 
 /**
- * gimp_item_is_layer_mask:
+ * picman_item_is_layer_mask:
  * @item_ID: The item.
  *
  * Returns whether the item is a layer mask.
@@ -274,30 +274,30 @@ gimp_item_is_channel (gint32 item_ID)
  *
  * Returns: TRUE if the item is a layer mask, FALSE otherwise.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_is_layer_mask (gint32 item_ID)
+picman_item_is_layer_mask (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean layer_mask = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-is-layer-mask",
+  return_vals = picman_run_procedure ("picman-item-is-layer-mask",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     layer_mask = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return layer_mask;
 }
 
 /**
- * gimp_item_is_selection:
+ * picman_item_is_selection:
  * @item_ID: The item.
  *
  * Returns whether the item is a selection.
@@ -306,30 +306,30 @@ gimp_item_is_layer_mask (gint32 item_ID)
  *
  * Returns: TRUE if the item is a selection, FALSE otherwise.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_is_selection (gint32 item_ID)
+picman_item_is_selection (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean selection = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-is-selection",
+  return_vals = picman_run_procedure ("picman-item-is-selection",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     selection = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return selection;
 }
 
 /**
- * gimp_item_is_vectors:
+ * picman_item_is_vectors:
  * @item_ID: The item.
  *
  * Returns whether the item is a vectors.
@@ -338,30 +338,30 @@ gimp_item_is_selection (gint32 item_ID)
  *
  * Returns: TRUE if the item is a vectors, FALSE otherwise.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_is_vectors (gint32 item_ID)
+picman_item_is_vectors (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean vectors = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-is-vectors",
+  return_vals = picman_run_procedure ("picman-item-is-vectors",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     vectors = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return vectors;
 }
 
 /**
- * gimp_item_is_group:
+ * picman_item_is_group:
  * @item_ID: The item.
  *
  * Returns whether the item is a group item.
@@ -371,30 +371,30 @@ gimp_item_is_vectors (gint32 item_ID)
  *
  * Returns: TRUE if the item is a group, FALSE otherwise.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_is_group (gint32 item_ID)
+picman_item_is_group (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean group = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-is-group",
+  return_vals = picman_run_procedure ("picman-item-is-group",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     group = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return group;
 }
 
 /**
- * gimp_item_get_parent:
+ * picman_item_get_parent:
  * @item_ID: The item.
  *
  * Returns the item's parent item.
@@ -403,30 +403,30 @@ gimp_item_is_group (gint32 item_ID)
  *
  * Returns: The item's parent item.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_item_get_parent (gint32 item_ID)
+picman_item_get_parent (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 parent_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-item-get-parent",
+  return_vals = picman_run_procedure ("picman-item-get-parent",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     parent_ID = return_vals[1].data.d_item;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return parent_ID;
 }
 
 /**
- * gimp_item_get_children:
+ * picman_item_get_children:
  * @item_ID: The item.
  * @num_children: The item's number of children.
  *
@@ -437,24 +437,24 @@ gimp_item_get_parent (gint32 item_ID)
  *
  * Returns: The item's list of children.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint *
-gimp_item_get_children (gint32  item_ID,
+picman_item_get_children (gint32  item_ID,
                         gint   *num_children)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint *child_ids = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-item-get-children",
+  return_vals = picman_run_procedure ("picman-item-get-children",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
   *num_children = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_children = return_vals[1].data.d_int32;
       child_ids = g_new (gint32, *num_children);
@@ -463,13 +463,13 @@ gimp_item_get_children (gint32  item_ID,
               *num_children * sizeof (gint32));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return child_ids;
 }
 
 /**
- * gimp_item_get_name:
+ * picman_item_get_name:
  * @item_ID: The item.
  *
  * Get the name of the specified item.
@@ -478,30 +478,30 @@ gimp_item_get_children (gint32  item_ID,
  *
  * Returns: The item name.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gchar *
-gimp_item_get_name (gint32 item_ID)
+picman_item_get_name (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-item-get-name",
+  return_vals = picman_run_procedure ("picman-item-get-name",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return name;
 }
 
 /**
- * gimp_item_set_name:
+ * picman_item_set_name:
  * @item_ID: The item.
  * @name: The new item name.
  *
@@ -511,31 +511,31 @@ gimp_item_get_name (gint32 item_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_set_name (gint32       item_ID,
+picman_item_set_name (gint32       item_ID,
                     const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-item-set-name",
+  return_vals = picman_run_procedure ("picman-item-set-name",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_item_get_visible:
+ * picman_item_get_visible:
  * @item_ID: The item.
  *
  * Get the visibility of the specified item.
@@ -544,30 +544,30 @@ gimp_item_set_name (gint32       item_ID,
  *
  * Returns: The item visibility.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_get_visible (gint32 item_ID)
+picman_item_get_visible (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean visible = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-get-visible",
+  return_vals = picman_run_procedure ("picman-item-get-visible",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     visible = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return visible;
 }
 
 /**
- * gimp_item_set_visible:
+ * picman_item_set_visible:
  * @item_ID: The item.
  * @visible: The new item visibility.
  *
@@ -577,31 +577,31 @@ gimp_item_get_visible (gint32 item_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_set_visible (gint32   item_ID,
+picman_item_set_visible (gint32   item_ID,
                        gboolean visible)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-item-set-visible",
+  return_vals = picman_run_procedure ("picman-item-set-visible",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_INT32, visible,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_INT32, visible,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_item_get_linked:
+ * picman_item_get_linked:
  * @item_ID: The item.
  *
  * Get the linked state of the specified item.
@@ -610,30 +610,30 @@ gimp_item_set_visible (gint32   item_ID,
  *
  * Returns: The item linked state (for moves).
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_get_linked (gint32 item_ID)
+picman_item_get_linked (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean linked = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-get-linked",
+  return_vals = picman_run_procedure ("picman-item-get-linked",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     linked = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return linked;
 }
 
 /**
- * gimp_item_set_linked:
+ * picman_item_set_linked:
  * @item_ID: The item.
  * @linked: The new item linked state.
  *
@@ -643,31 +643,31 @@ gimp_item_get_linked (gint32 item_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_set_linked (gint32   item_ID,
+picman_item_set_linked (gint32   item_ID,
                       gboolean linked)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-item-set-linked",
+  return_vals = picman_run_procedure ("picman-item-set-linked",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_INT32, linked,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_INT32, linked,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_item_get_lock_content:
+ * picman_item_get_lock_content:
  * @item_ID: The item.
  *
  * Get the 'lock content' state of the specified item.
@@ -676,30 +676,30 @@ gimp_item_set_linked (gint32   item_ID,
  *
  * Returns: Whether the item's contents are locked.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_get_lock_content (gint32 item_ID)
+picman_item_get_lock_content (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean lock_content = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-get-lock-content",
+  return_vals = picman_run_procedure ("picman-item-get-lock-content",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     lock_content = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return lock_content;
 }
 
 /**
- * gimp_item_set_lock_content:
+ * picman_item_set_lock_content:
  * @item_ID: The item.
  * @lock_content: The new item 'lock content' state.
  *
@@ -709,31 +709,31 @@ gimp_item_get_lock_content (gint32 item_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_set_lock_content (gint32   item_ID,
+picman_item_set_lock_content (gint32   item_ID,
                             gboolean lock_content)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-item-set-lock-content",
+  return_vals = picman_run_procedure ("picman-item-set-lock-content",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_INT32, lock_content,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_INT32, lock_content,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_item_get_lock_position:
+ * picman_item_get_lock_position:
  * @item_ID: The item.
  *
  * Get the 'lock position' state of the specified item.
@@ -742,30 +742,30 @@ gimp_item_set_lock_content (gint32   item_ID,
  *
  * Returns: Whether the item's position is locked.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 gboolean
-gimp_item_get_lock_position (gint32 item_ID)
+picman_item_get_lock_position (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean lock_position = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-item-get-lock-position",
+  return_vals = picman_run_procedure ("picman-item-get-lock-position",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     lock_position = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return lock_position;
 }
 
 /**
- * gimp_item_set_lock_position:
+ * picman_item_set_lock_position:
  * @item_ID: The item.
  * @lock_position: The new item 'lock position' state.
  *
@@ -775,31 +775,31 @@ gimp_item_get_lock_position (gint32 item_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 gboolean
-gimp_item_set_lock_position (gint32   item_ID,
+picman_item_set_lock_position (gint32   item_ID,
                              gboolean lock_position)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-item-set-lock-position",
+  return_vals = picman_run_procedure ("picman-item-set-lock-position",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_INT32, lock_position,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_INT32, lock_position,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_item_get_tattoo:
+ * picman_item_get_tattoo:
  * @item_ID: The item.
  *
  * Get the tattoo of the specified item.
@@ -810,30 +810,30 @@ gimp_item_set_lock_position (gint32   item_ID,
  *
  * Returns: The item tattoo.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint
-gimp_item_get_tattoo (gint32 item_ID)
+picman_item_get_tattoo (gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint tattoo = 0;
 
-  return_vals = gimp_run_procedure ("gimp-item-get-tattoo",
+  return_vals = picman_run_procedure ("picman-item-get-tattoo",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     tattoo = return_vals[1].data.d_tattoo;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return tattoo;
 }
 
 /**
- * gimp_item_set_tattoo:
+ * picman_item_set_tattoo:
  * @item_ID: The item.
  * @tattoo: The new item tattoo.
  *
@@ -845,31 +845,31 @@ gimp_item_get_tattoo (gint32 item_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_set_tattoo (gint32 item_ID,
+picman_item_set_tattoo (gint32 item_ID,
                       gint   tattoo)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-item-set-tattoo",
+  return_vals = picman_run_procedure ("picman-item-set-tattoo",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_INT32, tattoo,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_INT32, tattoo,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_item_attach_parasite:
+ * picman_item_attach_parasite:
  * @item_ID: The item.
  * @parasite: The parasite to attach to the item.
  *
@@ -880,31 +880,31 @@ gimp_item_set_tattoo (gint32 item_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_attach_parasite (gint32              item_ID,
-                           const GimpParasite *parasite)
+picman_item_attach_parasite (gint32              item_ID,
+                           const PicmanParasite *parasite)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-item-attach-parasite",
+  return_vals = picman_run_procedure ("picman-item-attach-parasite",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_PARASITE, parasite,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_PARASITE, parasite,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_item_detach_parasite:
+ * picman_item_detach_parasite:
  * @item_ID: The item.
  * @name: The name of the parasite to detach from the item.
  *
@@ -915,31 +915,31 @@ gimp_item_attach_parasite (gint32              item_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_item_detach_parasite (gint32       item_ID,
+picman_item_detach_parasite (gint32       item_ID,
                            const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-item-detach-parasite",
+  return_vals = picman_run_procedure ("picman-item-detach-parasite",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_item_get_parasite:
+ * picman_item_get_parasite:
  * @item_ID: The item.
  * @name: The name of the parasite to find.
  *
@@ -949,32 +949,32 @@ gimp_item_detach_parasite (gint32       item_ID,
  *
  * Returns: The found parasite.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
-GimpParasite *
-gimp_item_get_parasite (gint32       item_ID,
+PicmanParasite *
+picman_item_get_parasite (gint32       item_ID,
                         const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpParasite *parasite = NULL;
+  PicmanParasite *parasite = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-item-get-parasite",
+  return_vals = picman_run_procedure ("picman-item-get-parasite",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
-    parasite = gimp_parasite_copy (&return_vals[1].data.d_parasite);
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
+    parasite = picman_parasite_copy (&return_vals[1].data.d_parasite);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return parasite;
 }
 
 /**
- * gimp_item_get_parasite_list:
+ * picman_item_get_parasite_list:
  * @item_ID: The item.
  * @num_parasites: The number of attached parasites.
  *
@@ -985,25 +985,25 @@ gimp_item_get_parasite (gint32       item_ID,
  * Returns: The names of currently attached parasites. The returned
  * value must be freed with g_strfreev().
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gchar **
-gimp_item_get_parasite_list (gint32  item_ID,
+picman_item_get_parasite_list (gint32  item_ID,
                              gint   *num_parasites)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar **parasites = NULL;
   gint i;
 
-  return_vals = gimp_run_procedure ("gimp-item-get-parasite-list",
+  return_vals = picman_run_procedure ("picman-item-get-parasite-list",
                                     &nreturn_vals,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
   *num_parasites = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_parasites = return_vals[1].data.d_int32;
       parasites = g_new (gchar *, *num_parasites + 1);
@@ -1012,7 +1012,7 @@ gimp_item_get_parasite_list (gint32  item_ID,
       parasites[i] = NULL;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return parasites;
 }

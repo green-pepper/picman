@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpeevl.h
+ * picmaneevl.h
  * Copyright (C) 2008-2009 Fredrik Alstromer <roe@excu.se>
  * Copyright (C) 2008-2009 Martin Nordholts <martinn@svn.gnome.org>
  *
@@ -20,14 +20,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_EEVL_H__
-#define __GIMP_EEVL_H__
+#ifndef __PICMAN_EEVL_H__
+#define __PICMAN_EEVL_H__
 
 G_BEGIN_DECLS
 
 
 /**
- * GimpEevlQuantity:
+ * PicmanEevlQuantity:
  * @value:     In reference units.
  * @dimension: in has a dimension of 1, in^2 has a dimension of 2 etc
  */
@@ -35,28 +35,28 @@ typedef struct
 {
   gdouble value;
   gint dimension;
-} GimpEevlQuantity;
+} PicmanEevlQuantity;
 
 
 /**
- * GimpEevlUnitResolverProc:
+ * PicmanEevlUnitResolverProc:
  * @identifier: Identifier of unit to resolve or %NULL if default unit
  *              should be resolved.
- * @result:     Units per reference unit. For example, in GIMP the
+ * @result:     Units per reference unit. For example, in PICMAN the
  *              reference unit is inches so resolving "mm" should
  *              return 25.4 since there are 25.4 millimeters per inch.
- * @data:       Data given to gimp_eevl_evaluate().
+ * @data:       Data given to picman_eevl_evaluate().
  *
  * Returns: If the unit was successfully resolved or not.
  *
  */
-typedef gboolean (* GimpEevlUnitResolverProc) (const gchar      *identifier,
-                                               GimpEevlQuantity *result,
+typedef gboolean (* PicmanEevlUnitResolverProc) (const gchar      *identifier,
+                                               PicmanEevlQuantity *result,
                                                gpointer          data);
 
-gboolean gimp_eevl_evaluate (const gchar               *string,
-                             GimpEevlUnitResolverProc   unit_resolver_proc,
-                             GimpEevlQuantity          *result,
+gboolean picman_eevl_evaluate (const gchar               *string,
+                             PicmanEevlUnitResolverProc   unit_resolver_proc,
+                             PicmanEevlQuantity          *result,
                              gpointer                   data,
                              const gchar              **error_pos,
                              GError                   **error);
@@ -64,4 +64,4 @@ gboolean gimp_eevl_evaluate (const gchar               *string,
 
 G_END_DECLS
 
-#endif /* __GIMP_EEVL_H__ */
+#endif /* __PICMAN_EEVL_H__ */

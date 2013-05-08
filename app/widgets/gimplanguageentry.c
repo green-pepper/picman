@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimplanguageentry.c
- * Copyright (C) 2008  Sven Neumann <sven@gimp.org>
+ * picmanlanguageentry.c
+ * Copyright (C) 2008  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* GimpLanguageEntry is an entry widget that provides completion on
+/* PicmanLanguageEntry is an entry widget that provides completion on
  * translated language names. It is suited for specifying the language
  * a text is written in.
  */
@@ -31,8 +31,8 @@
 
 #include "widgets-types.h"
 
-#include "gimplanguageentry.h"
-#include "gimplanguagestore.h"
+#include "picmanlanguageentry.h"
+#include "picmanlanguagestore.h"
 
 
 enum
@@ -41,7 +41,7 @@ enum
   PROP_MODEL
 };
 
-struct _GimpLanguageEntry
+struct _PicmanLanguageEntry
 {
   GtkEntry       parent_instance;
 
@@ -50,54 +50,54 @@ struct _GimpLanguageEntry
 };
 
 
-static void      gimp_language_entry_constructed  (GObject      *object);
-static void      gimp_language_entry_finalize     (GObject      *object);
-static void      gimp_language_entry_set_property (GObject      *object,
+static void      picman_language_entry_constructed  (GObject      *object);
+static void      picman_language_entry_finalize     (GObject      *object);
+static void      picman_language_entry_set_property (GObject      *object,
                                                    guint         property_id,
                                                    const GValue *value,
                                                    GParamSpec   *pspec);
-static void      gimp_language_entry_get_property (GObject      *object,
+static void      picman_language_entry_get_property (GObject      *object,
                                                    guint         property_id,
                                                    GValue       *value,
                                                    GParamSpec   *pspec);
 
-static gboolean  gimp_language_entry_language_selected (GtkEntryCompletion *completion,
+static gboolean  picman_language_entry_language_selected (GtkEntryCompletion *completion,
                                                         GtkTreeModel       *model,
                                                         GtkTreeIter        *iter,
-                                                        GimpLanguageEntry  *entry);
+                                                        PicmanLanguageEntry  *entry);
 
 
-G_DEFINE_TYPE (GimpLanguageEntry, gimp_language_entry, GTK_TYPE_ENTRY)
+G_DEFINE_TYPE (PicmanLanguageEntry, picman_language_entry, GTK_TYPE_ENTRY)
 
-#define parent_class gimp_language_entry_parent_class
+#define parent_class picman_language_entry_parent_class
 
 
 static void
-gimp_language_entry_class_init (GimpLanguageEntryClass *klass)
+picman_language_entry_class_init (PicmanLanguageEntryClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_language_entry_constructed;
-  object_class->finalize     = gimp_language_entry_finalize;
-  object_class->set_property = gimp_language_entry_set_property;
-  object_class->get_property = gimp_language_entry_get_property;
+  object_class->constructed  = picman_language_entry_constructed;
+  object_class->finalize     = picman_language_entry_finalize;
+  object_class->set_property = picman_language_entry_set_property;
+  object_class->get_property = picman_language_entry_get_property;
 
   g_object_class_install_property (object_class, PROP_MODEL,
                                    g_param_spec_object ("model", NULL, NULL,
-                                                        GIMP_TYPE_LANGUAGE_STORE,
+                                                        PICMAN_TYPE_LANGUAGE_STORE,
                                                         G_PARAM_CONSTRUCT_ONLY |
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_language_entry_init (GimpLanguageEntry *entry)
+picman_language_entry_init (PicmanLanguageEntry *entry)
 {
 }
 
 static void
-gimp_language_entry_constructed (GObject *object)
+picman_language_entry_constructed (GObject *object)
 {
-  GimpLanguageEntry *entry = GIMP_LANGUAGE_ENTRY (object);
+  PicmanLanguageEntry *entry = PICMAN_LANGUAGE_ENTRY (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
@@ -114,21 +114,21 @@ gimp_language_entry_constructed (GObject *object)
        * otherwise we won't get a cell renderer for free.
        */
       gtk_entry_completion_set_text_column (completion,
-                                            GIMP_LANGUAGE_STORE_LABEL);
+                                            PICMAN_LANGUAGE_STORE_LABEL);
 
       gtk_entry_set_completion (GTK_ENTRY (entry), completion);
       g_object_unref (completion);
 
       g_signal_connect (completion, "match-selected",
-                        G_CALLBACK (gimp_language_entry_language_selected),
+                        G_CALLBACK (picman_language_entry_language_selected),
                         entry);
     }
 }
 
 static void
-gimp_language_entry_finalize (GObject *object)
+picman_language_entry_finalize (GObject *object)
 {
-  GimpLanguageEntry *entry = GIMP_LANGUAGE_ENTRY (object);
+  PicmanLanguageEntry *entry = PICMAN_LANGUAGE_ENTRY (object);
 
   if (entry->store)
     {
@@ -146,12 +146,12 @@ gimp_language_entry_finalize (GObject *object)
 }
 
 static void
-gimp_language_entry_set_property (GObject      *object,
+picman_language_entry_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  GimpLanguageEntry *entry = GIMP_LANGUAGE_ENTRY (object);
+  PicmanLanguageEntry *entry = PICMAN_LANGUAGE_ENTRY (object);
 
   switch (property_id)
     {
@@ -167,12 +167,12 @@ gimp_language_entry_set_property (GObject      *object,
 }
 
 static void
-gimp_language_entry_get_property (GObject      *object,
+picman_language_entry_get_property (GObject      *object,
                                   guint         property_id,
                                   GValue       *value,
                                   GParamSpec   *pspec)
 {
-  GimpLanguageEntry *entry = GIMP_LANGUAGE_ENTRY (object);
+  PicmanLanguageEntry *entry = PICMAN_LANGUAGE_ENTRY (object);
 
   switch (property_id)
     {
@@ -187,29 +187,29 @@ gimp_language_entry_get_property (GObject      *object,
 }
 
 static gboolean
-gimp_language_entry_language_selected (GtkEntryCompletion *completion,
+picman_language_entry_language_selected (GtkEntryCompletion *completion,
                                        GtkTreeModel       *model,
                                        GtkTreeIter        *iter,
-                                       GimpLanguageEntry  *entry)
+                                       PicmanLanguageEntry  *entry)
 {
   g_free (entry->code);
 
   gtk_tree_model_get (model, iter,
-                      GIMP_LANGUAGE_STORE_CODE, &entry->code,
+                      PICMAN_LANGUAGE_STORE_CODE, &entry->code,
                       -1);
 
   return FALSE;
 }
 
 GtkWidget *
-gimp_language_entry_new (void)
+picman_language_entry_new (void)
 {
   GtkWidget    *entry;
   GtkListStore *store;
 
-  store = gimp_language_store_new ();
+  store = picman_language_store_new ();
 
-  entry = g_object_new (GIMP_TYPE_LANGUAGE_ENTRY,
+  entry = g_object_new (PICMAN_TYPE_LANGUAGE_ENTRY,
                         "model", store,
                         NULL);
 
@@ -219,20 +219,20 @@ gimp_language_entry_new (void)
 }
 
 const gchar *
-gimp_language_entry_get_code (GimpLanguageEntry *entry)
+picman_language_entry_get_code (PicmanLanguageEntry *entry)
 {
-  g_return_val_if_fail (GIMP_IS_LANGUAGE_ENTRY (entry), NULL);
+  g_return_val_if_fail (PICMAN_IS_LANGUAGE_ENTRY (entry), NULL);
 
   return entry->code;
 }
 
 gboolean
-gimp_language_entry_set_code (GimpLanguageEntry *entry,
+picman_language_entry_set_code (PicmanLanguageEntry *entry,
                               const gchar       *code)
 {
   GtkTreeIter  iter;
 
-  g_return_val_if_fail (GIMP_IS_LANGUAGE_ENTRY (entry), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LANGUAGE_ENTRY (entry), FALSE);
 
   if (entry->code)
     {
@@ -247,14 +247,14 @@ gimp_language_entry_set_code (GimpLanguageEntry *entry,
       return TRUE;
     }
 
-  if (gimp_language_store_lookup (GIMP_LANGUAGE_STORE (entry->store),
+  if (picman_language_store_lookup (PICMAN_LANGUAGE_STORE (entry->store),
                                   code, &iter))
     {
       gchar *label;
 
       gtk_tree_model_get (GTK_TREE_MODEL (entry->store), &iter,
-                          GIMP_LANGUAGE_STORE_LABEL, &label,
-                          GIMP_LANGUAGE_STORE_CODE,  &entry->code,
+                          PICMAN_LANGUAGE_STORE_LABEL, &label,
+                          PICMAN_LANGUAGE_STORE_CODE,  &entry->code,
                           -1);
 
       gtk_entry_set_text (GTK_ENTRY (entry), label);

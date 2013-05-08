@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasline.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasline.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "gimpcanvasline.h"
-#include "gimpdisplayshell.h"
+#include "picmancanvasline.h"
+#include "picmandisplayshell.h"
 
 
 enum
@@ -42,9 +42,9 @@ enum
 };
 
 
-typedef struct _GimpCanvasLinePrivate GimpCanvasLinePrivate;
+typedef struct _PicmanCanvasLinePrivate PicmanCanvasLinePrivate;
 
-struct _GimpCanvasLinePrivate
+struct _PicmanCanvasLinePrivate
 {
   gdouble  x1;
   gdouble  y1;
@@ -54,81 +54,81 @@ struct _GimpCanvasLinePrivate
 
 #define GET_PRIVATE(line) \
         G_TYPE_INSTANCE_GET_PRIVATE (line, \
-                                     GIMP_TYPE_CANVAS_LINE, \
-                                     GimpCanvasLinePrivate)
+                                     PICMAN_TYPE_CANVAS_LINE, \
+                                     PicmanCanvasLinePrivate)
 
 
 /*  local function prototypes  */
 
-static void             gimp_canvas_line_set_property (GObject        *object,
+static void             picman_canvas_line_set_property (GObject        *object,
                                                        guint           property_id,
                                                        const GValue   *value,
                                                        GParamSpec     *pspec);
-static void             gimp_canvas_line_get_property (GObject        *object,
+static void             picman_canvas_line_get_property (GObject        *object,
                                                        guint           property_id,
                                                        GValue         *value,
                                                        GParamSpec     *pspec);
-static void             gimp_canvas_line_draw         (GimpCanvasItem *item,
+static void             picman_canvas_line_draw         (PicmanCanvasItem *item,
                                                        cairo_t        *cr);
-static cairo_region_t * gimp_canvas_line_get_extents  (GimpCanvasItem *item);
+static cairo_region_t * picman_canvas_line_get_extents  (PicmanCanvasItem *item);
 
 
-G_DEFINE_TYPE (GimpCanvasLine, gimp_canvas_line, GIMP_TYPE_CANVAS_ITEM)
+G_DEFINE_TYPE (PicmanCanvasLine, picman_canvas_line, PICMAN_TYPE_CANVAS_ITEM)
 
-#define parent_class gimp_canvas_line_parent_class
+#define parent_class picman_canvas_line_parent_class
 
 
 static void
-gimp_canvas_line_class_init (GimpCanvasLineClass *klass)
+picman_canvas_line_class_init (PicmanCanvasLineClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpCanvasItemClass *item_class   = GIMP_CANVAS_ITEM_CLASS (klass);
+  PicmanCanvasItemClass *item_class   = PICMAN_CANVAS_ITEM_CLASS (klass);
 
-  object_class->set_property = gimp_canvas_line_set_property;
-  object_class->get_property = gimp_canvas_line_get_property;
+  object_class->set_property = picman_canvas_line_set_property;
+  object_class->get_property = picman_canvas_line_get_property;
 
-  item_class->draw           = gimp_canvas_line_draw;
-  item_class->get_extents    = gimp_canvas_line_get_extents;
+  item_class->draw           = picman_canvas_line_draw;
+  item_class->get_extents    = picman_canvas_line_get_extents;
 
   g_object_class_install_property (object_class, PROP_X1,
                                    g_param_spec_double ("x1", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_Y1,
                                    g_param_spec_double ("y1", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_X2,
                                    g_param_spec_double ("x2", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_Y2,
                                    g_param_spec_double ("y2", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpCanvasLinePrivate));
+  g_type_class_add_private (klass, sizeof (PicmanCanvasLinePrivate));
 }
 
 static void
-gimp_canvas_line_init (GimpCanvasLine *line)
+picman_canvas_line_init (PicmanCanvasLine *line)
 {
 }
 
 static void
-gimp_canvas_line_set_property (GObject      *object,
+picman_canvas_line_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpCanvasLinePrivate *private = GET_PRIVATE (object);
+  PicmanCanvasLinePrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -152,12 +152,12 @@ gimp_canvas_line_set_property (GObject      *object,
 }
 
 static void
-gimp_canvas_line_get_property (GObject    *object,
+picman_canvas_line_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpCanvasLinePrivate *private = GET_PRIVATE (object);
+  PicmanCanvasLinePrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -181,18 +181,18 @@ gimp_canvas_line_get_property (GObject    *object,
 }
 
 static void
-gimp_canvas_line_transform (GimpCanvasItem *item,
+picman_canvas_line_transform (PicmanCanvasItem *item,
                             gdouble        *x1,
                             gdouble        *y1,
                             gdouble        *x2,
                             gdouble        *y2)
 {
-  GimpCanvasLinePrivate *private = GET_PRIVATE (item);
+  PicmanCanvasLinePrivate *private = GET_PRIVATE (item);
 
-  gimp_canvas_item_transform_xy_f (item,
+  picman_canvas_item_transform_xy_f (item,
                                    private->x1, private->y1,
                                    x1, y1);
-  gimp_canvas_item_transform_xy_f (item,
+  picman_canvas_item_transform_xy_f (item,
                                    private->x2, private->y2,
                                    x2, y2);
 
@@ -203,28 +203,28 @@ gimp_canvas_line_transform (GimpCanvasItem *item,
 }
 
 static void
-gimp_canvas_line_draw (GimpCanvasItem *item,
+picman_canvas_line_draw (PicmanCanvasItem *item,
                        cairo_t        *cr)
 {
   gdouble x1, y1;
   gdouble x2, y2;
 
-  gimp_canvas_line_transform (item, &x1, &y1, &x2, &y2);
+  picman_canvas_line_transform (item, &x1, &y1, &x2, &y2);
 
   cairo_move_to (cr, x1, y1);
   cairo_line_to (cr, x2, y2);
 
-  _gimp_canvas_item_stroke (item, cr);
+  _picman_canvas_item_stroke (item, cr);
 }
 
 static cairo_region_t *
-gimp_canvas_line_get_extents (GimpCanvasItem *item)
+picman_canvas_line_get_extents (PicmanCanvasItem *item)
 {
   cairo_rectangle_int_t rectangle;
   gdouble               x1, y1;
   gdouble               x2, y2;
 
-  gimp_canvas_line_transform (item, &x1, &y1, &x2, &y2);
+  picman_canvas_line_transform (item, &x1, &y1, &x2, &y2);
 
   if (x1 == x2 || y1 == y2)
     {
@@ -244,16 +244,16 @@ gimp_canvas_line_get_extents (GimpCanvasItem *item)
   return cairo_region_create_rectangle (&rectangle);
 }
 
-GimpCanvasItem *
-gimp_canvas_line_new (GimpDisplayShell *shell,
+PicmanCanvasItem *
+picman_canvas_line_new (PicmanDisplayShell *shell,
                       gdouble           x1,
                       gdouble           y1,
                       gdouble           x2,
                       gdouble           y2)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
 
-  return g_object_new (GIMP_TYPE_CANVAS_LINE,
+  return g_object_new (PICMAN_TYPE_CANVAS_LINE,
                        "shell", shell,
                        "x1",    x1,
                        "y1",    y1,
@@ -263,15 +263,15 @@ gimp_canvas_line_new (GimpDisplayShell *shell,
 }
 
 void
-gimp_canvas_line_set (GimpCanvasItem *line,
+picman_canvas_line_set (PicmanCanvasItem *line,
                       gdouble         x1,
                       gdouble         y1,
                       gdouble         x2,
                       gdouble         y2)
 {
-  g_return_if_fail (GIMP_IS_CANVAS_LINE (line));
+  g_return_if_fail (PICMAN_IS_CANVAS_LINE (line));
 
-  gimp_canvas_item_begin_change (line);
+  picman_canvas_item_begin_change (line);
 
   g_object_set (line,
                 "x1", x1,
@@ -280,5 +280,5 @@ gimp_canvas_line_set (GimpCanvasItem *line,
                 "y2", y2,
                 NULL);
 
-  gimp_canvas_item_end_change (line);
+  picman_canvas_item_end_change (line);
 }

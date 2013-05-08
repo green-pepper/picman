@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpimage_pdb.c
+ * picmanimage_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,12 @@
 
 #include <string.h>
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpimage
- * @title: gimpimage
+ * SECTION: picmanimage
+ * @title: picmanimage
  * @short_description: Operations on complete images.
  *
  * Operations on complete images: creation, resizing/rescaling, and
@@ -38,7 +38,7 @@
 
 
 /**
- * gimp_image_is_valid:
+ * picman_image_is_valid:
  * @image_ID: The image to check.
  *
  * Returns TRUE if the image is valid.
@@ -48,53 +48,53 @@
  *
  * Returns: Whether the image ID is valid.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_is_valid (gint32 image_ID)
+picman_image_is_valid (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean valid = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-image-is-valid",
+  return_vals = picman_run_procedure ("picman-image-is-valid",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     valid = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return valid;
 }
 
 /**
- * gimp_image_list:
+ * picman_image_list:
  * @num_images: The number of images currently open.
  *
  * Returns the list of images currently open.
  *
- * This procedure returns the list of images currently open in GIMP.
+ * This procedure returns the list of images currently open in PICMAN.
  *
  * Returns: The list of images currently open. The returned value must
  * be freed with g_free().
  **/
 gint *
-gimp_image_list (gint *num_images)
+picman_image_list (gint *num_images)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint *image_ids = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-image-list",
+  return_vals = picman_run_procedure ("picman-image-list",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
   *num_images = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_images = return_vals[1].data.d_int32;
       image_ids = g_new (gint32, *num_images);
@@ -103,13 +103,13 @@ gimp_image_list (gint *num_images)
               *num_images * sizeof (gint32));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return image_ids;
 }
 
 /**
- * gimp_image_new:
+ * picman_image_new:
  * @width: The width of the image.
  * @height: The height of the image.
  * @type: The type of image.
@@ -118,39 +118,39 @@ gimp_image_list (gint *num_images)
  *
  * Creates a new image, undisplayed with the specified extents and
  * type. A layer should be created and added before this image is
- * displayed, or subsequent calls to gimp_display_new() with this image
+ * displayed, or subsequent calls to picman_display_new() with this image
  * as an argument will fail. Layers can be created using the
- * gimp_layer_new() commands. They can be added to an image using the
- * gimp_image_insert_layer() command.
+ * picman_layer_new() commands. They can be added to an image using the
+ * picman_image_insert_layer() command.
  *
  * Returns: The ID of the newly created image.
  **/
 gint32
-gimp_image_new (gint              width,
+picman_image_new (gint              width,
                 gint              height,
-                GimpImageBaseType type)
+                PicmanImageBaseType type)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 image_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-new",
+  return_vals = picman_run_procedure ("picman-image-new",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, width,
-                                    GIMP_PDB_INT32, height,
-                                    GIMP_PDB_INT32, type,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, width,
+                                    PICMAN_PDB_INT32, height,
+                                    PICMAN_PDB_INT32, type,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     image_ID = return_vals[1].data.d_image;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return image_ID;
 }
 
 /**
- * gimp_image_new_with_precision:
+ * picman_image_new_with_precision:
  * @width: The width of the image.
  * @height: The height of the image.
  * @type: The type of image.
@@ -161,41 +161,41 @@ gimp_image_new (gint              width,
  *
  * Creates a new image, undisplayed with the specified extents, type
  * and precision. Indexed images can only be created at
- * GIMP_PRECISION_U8 precision. See gimp_image_new() for further
+ * PICMAN_PRECISION_U8 precision. See picman_image_new() for further
  * details.
  *
  * Returns: The ID of the newly created image.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 gint32
-gimp_image_new_with_precision (gint              width,
+picman_image_new_with_precision (gint              width,
                                gint              height,
-                               GimpImageBaseType type,
-                               GimpPrecision     precision)
+                               PicmanImageBaseType type,
+                               PicmanPrecision     precision)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 image_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-new-with-precision",
+  return_vals = picman_run_procedure ("picman-image-new-with-precision",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, width,
-                                    GIMP_PDB_INT32, height,
-                                    GIMP_PDB_INT32, type,
-                                    GIMP_PDB_INT32, precision,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, width,
+                                    PICMAN_PDB_INT32, height,
+                                    PICMAN_PDB_INT32, type,
+                                    PICMAN_PDB_INT32, precision,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     image_ID = return_vals[1].data.d_image;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return image_ID;
 }
 
 /**
- * gimp_image_duplicate:
+ * picman_image_duplicate:
  * @image_ID: The image.
  *
  * Duplicate the specified image
@@ -206,27 +206,27 @@ gimp_image_new_with_precision (gint              width,
  * Returns: The new, duplicated image.
  **/
 gint32
-gimp_image_duplicate (gint32 image_ID)
+picman_image_duplicate (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 new_image_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-duplicate",
+  return_vals = picman_run_procedure ("picman-image-duplicate",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     new_image_ID = return_vals[1].data.d_image;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return new_image_ID;
 }
 
 /**
- * gimp_image_delete:
+ * picman_image_delete:
  * @image_ID: The image.
  *
  * Delete the specified image.
@@ -241,26 +241,26 @@ gimp_image_duplicate (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_delete (gint32 image_ID)
+picman_image_delete (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-delete",
+  return_vals = picman_run_procedure ("picman-image-delete",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_base_type:
+ * picman_image_base_type:
  * @image_ID: The image.
  *
  * Get the base type of the image.
@@ -270,28 +270,28 @@ gimp_image_delete (gint32 image_ID)
  *
  * Returns: The image's base type.
  **/
-GimpImageBaseType
-gimp_image_base_type (gint32 image_ID)
+PicmanImageBaseType
+picman_image_base_type (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpImageBaseType base_type = 0;
+  PicmanImageBaseType base_type = 0;
 
-  return_vals = gimp_run_procedure ("gimp-image-base-type",
+  return_vals = picman_run_procedure ("picman-image-base-type",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     base_type = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return base_type;
 }
 
 /**
- * gimp_image_get_precision:
+ * picman_image_get_precision:
  * @image_ID: The image.
  *
  * Get the precision of the image.
@@ -300,30 +300,30 @@ gimp_image_base_type (gint32 image_ID)
  *
  * Returns: The image's precision.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
-GimpPrecision
-gimp_image_get_precision (gint32 image_ID)
+PicmanPrecision
+picman_image_get_precision (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpPrecision precision = 0;
+  PicmanPrecision precision = 0;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-precision",
+  return_vals = picman_run_procedure ("picman-image-get-precision",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     precision = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return precision;
 }
 
 /**
- * gimp_image_width:
+ * picman_image_width:
  * @image_ID: The image.
  *
  * Return the width of the image
@@ -334,27 +334,27 @@ gimp_image_get_precision (gint32 image_ID)
  * Returns: The image's width.
  **/
 gint
-gimp_image_width (gint32 image_ID)
+picman_image_width (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint width = 0;
 
-  return_vals = gimp_run_procedure ("gimp-image-width",
+  return_vals = picman_run_procedure ("picman-image-width",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     width = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return width;
 }
 
 /**
- * gimp_image_height:
+ * picman_image_height:
  * @image_ID: The image.
  *
  * Return the height of the image
@@ -365,54 +365,54 @@ gimp_image_width (gint32 image_ID)
  * Returns: The image's height.
  **/
 gint
-gimp_image_height (gint32 image_ID)
+picman_image_height (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint height = 0;
 
-  return_vals = gimp_run_procedure ("gimp-image-height",
+  return_vals = picman_run_procedure ("picman-image-height",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     height = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return height;
 }
 
 /**
- * gimp_image_free_shadow:
+ * picman_image_free_shadow:
  * @image_ID: The image.
  *
- * Deprecated: Use gimp_drawable_free_shadow() instead.
+ * Deprecated: Use picman_drawable_free_shadow() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_free_shadow (gint32 image_ID)
+picman_image_free_shadow (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-free-shadow",
+  return_vals = picman_run_procedure ("picman-image-free-shadow",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_resize:
+ * picman_image_resize:
  * @image_ID: The image.
  * @new_width: New image width.
  * @new_height: New image height.
@@ -432,34 +432,34 @@ gimp_image_free_shadow (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_resize (gint32 image_ID,
+picman_image_resize (gint32 image_ID,
                    gint   new_width,
                    gint   new_height,
                    gint   offx,
                    gint   offy)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-resize",
+  return_vals = picman_run_procedure ("picman-image-resize",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, new_width,
-                                    GIMP_PDB_INT32, new_height,
-                                    GIMP_PDB_INT32, offx,
-                                    GIMP_PDB_INT32, offy,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, new_width,
+                                    PICMAN_PDB_INT32, new_height,
+                                    PICMAN_PDB_INT32, offx,
+                                    PICMAN_PDB_INT32, offy,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_resize_to_layers:
+ * picman_image_resize_to_layers:
  * @image_ID: The image.
  *
  * Resize the image to fit all layers.
@@ -471,29 +471,29 @@ gimp_image_resize (gint32 image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_image_resize_to_layers (gint32 image_ID)
+picman_image_resize_to_layers (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-resize-to-layers",
+  return_vals = picman_run_procedure ("picman-image-resize-to-layers",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_scale:
+ * picman_image_scale:
  * @image_ID: The image.
  * @new_width: New image width.
  * @new_height: New image height.
@@ -504,73 +504,73 @@ gimp_image_resize_to_layers (gint32 image_ID)
  * equal to the supplied parameters. All layers and channels within the
  * image are scaled according to the specified parameters; this
  * includes the image selection mask. The interpolation method used can
- * be set with gimp_context_set_interpolation().
+ * be set with picman_context_set_interpolation().
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_scale (gint32 image_ID,
+picman_image_scale (gint32 image_ID,
                   gint   new_width,
                   gint   new_height)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-scale",
+  return_vals = picman_run_procedure ("picman-image-scale",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, new_width,
-                                    GIMP_PDB_INT32, new_height,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, new_width,
+                                    PICMAN_PDB_INT32, new_height,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_scale_full:
+ * picman_image_scale_full:
  * @image_ID: The image.
  * @new_width: New image width.
  * @new_height: New image height.
  * @interpolation: Type of interpolation.
  *
- * Deprecated: Use gimp_image_scale() instead.
+ * Deprecated: Use picman_image_scale() instead.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_image_scale_full (gint32                image_ID,
+picman_image_scale_full (gint32                image_ID,
                        gint                  new_width,
                        gint                  new_height,
-                       GimpInterpolationType interpolation)
+                       PicmanInterpolationType interpolation)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-scale-full",
+  return_vals = picman_run_procedure ("picman-image-scale-full",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, new_width,
-                                    GIMP_PDB_INT32, new_height,
-                                    GIMP_PDB_INT32, interpolation,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, new_width,
+                                    PICMAN_PDB_INT32, new_height,
+                                    PICMAN_PDB_INT32, interpolation,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_crop:
+ * picman_image_crop:
  * @image_ID: The image.
  * @new_width: New image width: (0 < new_width <= width).
  * @new_height: New image height: (0 < new_height <= height).
@@ -589,34 +589,34 @@ gimp_image_scale_full (gint32                image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_crop (gint32 image_ID,
+picman_image_crop (gint32 image_ID,
                  gint   new_width,
                  gint   new_height,
                  gint   offx,
                  gint   offy)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-crop",
+  return_vals = picman_run_procedure ("picman-image-crop",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, new_width,
-                                    GIMP_PDB_INT32, new_height,
-                                    GIMP_PDB_INT32, offx,
-                                    GIMP_PDB_INT32, offy,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, new_width,
+                                    PICMAN_PDB_INT32, new_height,
+                                    PICMAN_PDB_INT32, offx,
+                                    PICMAN_PDB_INT32, offy,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_flip:
+ * picman_image_flip:
  * @image_ID: The image.
  * @flip_type: Type of flip.
  *
@@ -627,28 +627,28 @@ gimp_image_crop (gint32 image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_flip (gint32              image_ID,
-                 GimpOrientationType flip_type)
+picman_image_flip (gint32              image_ID,
+                 PicmanOrientationType flip_type)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-flip",
+  return_vals = picman_run_procedure ("picman-image-flip",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, flip_type,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, flip_type,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_rotate:
+ * picman_image_rotate:
  * @image_ID: The image.
  * @rotate_type: Angle of rotation.
  *
@@ -659,28 +659,28 @@ gimp_image_flip (gint32              image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_rotate (gint32           image_ID,
-                   GimpRotationType rotate_type)
+picman_image_rotate (gint32           image_ID,
+                   PicmanRotationType rotate_type)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-rotate",
+  return_vals = picman_run_procedure ("picman-image-rotate",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, rotate_type,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, rotate_type,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_layers:
+ * picman_image_get_layers:
  * @image_ID: The image.
  * @num_layers: The number of layers contained in the image.
  *
@@ -693,21 +693,21 @@ gimp_image_rotate (gint32           image_ID,
  * value must be freed with g_free().
  **/
 gint *
-gimp_image_get_layers (gint32  image_ID,
+picman_image_get_layers (gint32  image_ID,
                        gint   *num_layers)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint *layer_ids = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-layers",
+  return_vals = picman_run_procedure ("picman-image-get-layers",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
   *num_layers = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_layers = return_vals[1].data.d_int32;
       layer_ids = g_new (gint32, *num_layers);
@@ -716,13 +716,13 @@ gimp_image_get_layers (gint32  image_ID,
               *num_layers * sizeof (gint32));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return layer_ids;
 }
 
 /**
- * gimp_image_get_channels:
+ * picman_image_get_channels:
  * @image_ID: The image.
  * @num_channels: The number of channels contained in the image.
  *
@@ -736,21 +736,21 @@ gimp_image_get_layers (gint32  image_ID,
  * value must be freed with g_free().
  **/
 gint *
-gimp_image_get_channels (gint32  image_ID,
+picman_image_get_channels (gint32  image_ID,
                          gint   *num_channels)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint *channel_ids = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-channels",
+  return_vals = picman_run_procedure ("picman-image-get-channels",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
   *num_channels = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_channels = return_vals[1].data.d_int32;
       channel_ids = g_new (gint32, *num_channels);
@@ -759,13 +759,13 @@ gimp_image_get_channels (gint32  image_ID,
               *num_channels * sizeof (gint32));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return channel_ids;
 }
 
 /**
- * gimp_image_get_vectors:
+ * picman_image_get_vectors:
  * @image_ID: The image.
  * @num_vectors: The number of vectors contained in the image.
  *
@@ -777,24 +777,24 @@ gimp_image_get_channels (gint32  image_ID,
  * Returns: The list of vectors contained in the image. The returned
  * value must be freed with g_free().
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint *
-gimp_image_get_vectors (gint32  image_ID,
+picman_image_get_vectors (gint32  image_ID,
                         gint   *num_vectors)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint *vector_ids = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-vectors",
+  return_vals = picman_run_procedure ("picman-image-get-vectors",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
   *num_vectors = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_vectors = return_vals[1].data.d_int32;
       vector_ids = g_new (gint32, *num_vectors);
@@ -803,13 +803,13 @@ gimp_image_get_vectors (gint32  image_ID,
               *num_vectors * sizeof (gint32));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return vector_ids;
 }
 
 /**
- * gimp_image_get_active_drawable:
+ * picman_image_get_active_drawable:
  * @image_ID: The image.
  *
  * Get the image's active drawable
@@ -824,27 +824,27 @@ gimp_image_get_vectors (gint32  image_ID,
  * Returns: The active drawable.
  **/
 gint32
-gimp_image_get_active_drawable (gint32 image_ID)
+picman_image_get_active_drawable (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 drawable_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-active-drawable",
+  return_vals = picman_run_procedure ("picman-image-get-active-drawable",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     drawable_ID = return_vals[1].data.d_drawable;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return drawable_ID;
 }
 
 /**
- * gimp_image_unset_active_channel:
+ * picman_image_unset_active_channel:
  * @image_ID: The image.
  *
  * Unsets the active channel in the specified image.
@@ -857,26 +857,26 @@ gimp_image_get_active_drawable (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_unset_active_channel (gint32 image_ID)
+picman_image_unset_active_channel (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-unset-active-channel",
+  return_vals = picman_run_procedure ("picman-image-unset-active-channel",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_floating_sel:
+ * picman_image_get_floating_sel:
  * @image_ID: The image.
  *
  * Return the floating selection of the image.
@@ -887,27 +887,27 @@ gimp_image_unset_active_channel (gint32 image_ID)
  * Returns: The image's floating selection.
  **/
 gint32
-gimp_image_get_floating_sel (gint32 image_ID)
+picman_image_get_floating_sel (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 floating_sel_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-floating-sel",
+  return_vals = picman_run_procedure ("picman-image-get-floating-sel",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     floating_sel_ID = return_vals[1].data.d_layer;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return floating_sel_ID;
 }
 
 /**
- * gimp_image_floating_sel_attached_to:
+ * picman_image_floating_sel_attached_to:
  * @image_ID: The image.
  *
  * Return the drawable the floating selection is attached to.
@@ -919,27 +919,27 @@ gimp_image_get_floating_sel (gint32 image_ID)
  * Returns: The drawable the floating selection is attached to.
  **/
 gint32
-gimp_image_floating_sel_attached_to (gint32 image_ID)
+picman_image_floating_sel_attached_to (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 drawable_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-floating-sel-attached-to",
+  return_vals = picman_run_procedure ("picman-image-floating-sel-attached-to",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     drawable_ID = return_vals[1].data.d_drawable;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return drawable_ID;
 }
 
 /**
- * gimp_image_pick_color:
+ * picman_image_pick_color:
  * @image_ID: The image.
  * @drawable_ID: The drawable to pick from.
  * @x: x coordinate of upper-left corner of rectangle.
@@ -966,42 +966,42 @@ gimp_image_floating_sel_attached_to (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_pick_color (gint32    image_ID,
+picman_image_pick_color (gint32    image_ID,
                        gint32    drawable_ID,
                        gdouble   x,
                        gdouble   y,
                        gboolean  sample_merged,
                        gboolean  sample_average,
                        gdouble   average_radius,
-                       GimpRGB  *color)
+                       PicmanRGB  *color)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-pick-color",
+  return_vals = picman_run_procedure ("picman-image-pick-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, x,
-                                    GIMP_PDB_FLOAT, y,
-                                    GIMP_PDB_INT32, sample_merged,
-                                    GIMP_PDB_INT32, sample_average,
-                                    GIMP_PDB_FLOAT, average_radius,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_FLOAT, x,
+                                    PICMAN_PDB_FLOAT, y,
+                                    PICMAN_PDB_INT32, sample_merged,
+                                    PICMAN_PDB_INT32, sample_average,
+                                    PICMAN_PDB_FLOAT, average_radius,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     *color = return_vals[1].data.d_color;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_pick_correlate_layer:
+ * picman_image_pick_correlate_layer:
  * @image_ID: The image.
  * @x: The x coordinate for the pick.
  * @y: The y coordinate for the pick.
@@ -1017,64 +1017,64 @@ gimp_image_pick_color (gint32    image_ID,
  * Returns: The layer found at the specified coordinates.
  **/
 gint32
-gimp_image_pick_correlate_layer (gint32 image_ID,
+picman_image_pick_correlate_layer (gint32 image_ID,
                                  gint   x,
                                  gint   y)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 layer_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-pick-correlate-layer",
+  return_vals = picman_run_procedure ("picman-image-pick-correlate-layer",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, x,
-                                    GIMP_PDB_INT32, y,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, x,
+                                    PICMAN_PDB_INT32, y,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     layer_ID = return_vals[1].data.d_layer;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return layer_ID;
 }
 
 /**
- * gimp_image_add_layer:
+ * picman_image_add_layer:
  * @image_ID: The image.
  * @layer_ID: The layer.
  * @position: The layer position.
  *
- * Deprecated: Use gimp_image_insert_layer() instead.
+ * Deprecated: Use picman_image_insert_layer() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_add_layer (gint32 image_ID,
+picman_image_add_layer (gint32 image_ID,
                       gint32 layer_ID,
                       gint   position)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-add-layer",
+  return_vals = picman_run_procedure ("picman-image-add-layer",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_INT32, position,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_INT32, position,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_insert_layer:
+ * picman_image_insert_layer:
  * @image_ID: The image.
  * @layer_ID: The layer.
  * @parent_ID: The parent layer.
@@ -1084,7 +1084,7 @@ gimp_image_add_layer (gint32 image_ID,
  *
  * This procedure adds the specified layer to the image at the given
  * position. If the specified parent is a valid layer group (See
- * gimp_item_is_group() and gimp_layer_group_new()) then the layer is
+ * picman_item_is_group() and picman_layer_group_new()) then the layer is
  * added inside the group. If the parent is 0, the layer is added
  * inside the main stack, outside of any group. The position argument
  * specifies the location of the layer inside the stack (or the group,
@@ -1097,32 +1097,32 @@ gimp_image_add_layer (gint32 image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_insert_layer (gint32 image_ID,
+picman_image_insert_layer (gint32 image_ID,
                          gint32 layer_ID,
                          gint32 parent_ID,
                          gint   position)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-insert-layer",
+  return_vals = picman_run_procedure ("picman-image-insert-layer",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_LAYER, parent_ID,
-                                    GIMP_PDB_INT32, position,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_LAYER, parent_ID,
+                                    PICMAN_PDB_INT32, position,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_remove_layer:
+ * picman_image_remove_layer:
  * @image_ID: The image.
  * @layer_ID: The layer.
  *
@@ -1137,61 +1137,61 @@ gimp_image_insert_layer (gint32 image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_remove_layer (gint32 image_ID,
+picman_image_remove_layer (gint32 image_ID,
                          gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-remove-layer",
+  return_vals = picman_run_procedure ("picman-image-remove-layer",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_add_channel:
+ * picman_image_add_channel:
  * @image_ID: The image.
  * @channel_ID: The channel.
  * @position: The channel position.
  *
- * Deprecated: Use gimp_image_insert_channel() instead.
+ * Deprecated: Use picman_image_insert_channel() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_add_channel (gint32 image_ID,
+picman_image_add_channel (gint32 image_ID,
                         gint32 channel_ID,
                         gint   position)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-add-channel",
+  return_vals = picman_run_procedure ("picman-image-add-channel",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_CHANNEL, channel_ID,
-                                    GIMP_PDB_INT32, position,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_CHANNEL, channel_ID,
+                                    PICMAN_PDB_INT32, position,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_insert_channel:
+ * picman_image_insert_channel:
  * @image_ID: The image.
  * @channel_ID: The channel.
  * @parent_ID: The parent channel.
@@ -1209,32 +1209,32 @@ gimp_image_add_channel (gint32 image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_insert_channel (gint32 image_ID,
+picman_image_insert_channel (gint32 image_ID,
                            gint32 channel_ID,
                            gint32 parent_ID,
                            gint   position)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-insert-channel",
+  return_vals = picman_run_procedure ("picman-image-insert-channel",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_CHANNEL, channel_ID,
-                                    GIMP_PDB_CHANNEL, parent_ID,
-                                    GIMP_PDB_INT32, position,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_CHANNEL, channel_ID,
+                                    PICMAN_PDB_CHANNEL, parent_ID,
+                                    PICMAN_PDB_INT32, position,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_remove_channel:
+ * picman_image_remove_channel:
  * @image_ID: The image.
  * @channel_ID: The channel.
  *
@@ -1246,61 +1246,61 @@ gimp_image_insert_channel (gint32 image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_remove_channel (gint32 image_ID,
+picman_image_remove_channel (gint32 image_ID,
                            gint32 channel_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-remove-channel",
+  return_vals = picman_run_procedure ("picman-image-remove-channel",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_CHANNEL, channel_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_CHANNEL, channel_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_add_vectors:
+ * picman_image_add_vectors:
  * @image_ID: The image.
  * @vectors_ID: The vectors object.
  * @position: The vectors objects position.
  *
- * Deprecated: Use gimp_image_insert_vectors() instead.
+ * Deprecated: Use picman_image_insert_vectors() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_add_vectors (gint32 image_ID,
+picman_image_add_vectors (gint32 image_ID,
                         gint32 vectors_ID,
                         gint   position)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-add-vectors",
+  return_vals = picman_run_procedure ("picman-image-add-vectors",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_VECTORS, vectors_ID,
-                                    GIMP_PDB_INT32, position,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_VECTORS, vectors_ID,
+                                    PICMAN_PDB_INT32, position,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_insert_vectors:
+ * picman_image_insert_vectors:
  * @image_ID: The image.
  * @vectors_ID: The vectors.
  * @parent_ID: The parent vectors.
@@ -1318,32 +1318,32 @@ gimp_image_add_vectors (gint32 image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_insert_vectors (gint32 image_ID,
+picman_image_insert_vectors (gint32 image_ID,
                            gint32 vectors_ID,
                            gint32 parent_ID,
                            gint   position)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-insert-vectors",
+  return_vals = picman_run_procedure ("picman-image-insert-vectors",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_VECTORS, vectors_ID,
-                                    GIMP_PDB_VECTORS, parent_ID,
-                                    GIMP_PDB_INT32, position,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_VECTORS, vectors_ID,
+                                    PICMAN_PDB_VECTORS, parent_ID,
+                                    PICMAN_PDB_INT32, position,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_remove_vectors:
+ * picman_image_remove_vectors:
  * @image_ID: The image.
  * @vectors_ID: The vectors object.
  *
@@ -1354,31 +1354,31 @@ gimp_image_insert_vectors (gint32 image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_remove_vectors (gint32 image_ID,
+picman_image_remove_vectors (gint32 image_ID,
                            gint32 vectors_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-remove-vectors",
+  return_vals = picman_run_procedure ("picman-image-remove-vectors",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_VECTORS, vectors_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_VECTORS, vectors_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_item_position:
+ * picman_image_get_item_position:
  * @image_ID: The image.
  * @item_ID: The item.
  *
@@ -1391,32 +1391,32 @@ gimp_image_remove_vectors (gint32 image_ID,
  *
  * Returns: The position of the item in its level in the item tree.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint
-gimp_image_get_item_position (gint32 image_ID,
+picman_image_get_item_position (gint32 image_ID,
                               gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint position = 0;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-item-position",
+  return_vals = picman_run_procedure ("picman-image-get-item-position",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     position = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return position;
 }
 
 /**
- * gimp_image_raise_item:
+ * picman_image_raise_item:
  * @image_ID: The image.
  * @item_ID: The item to raise.
  *
@@ -1427,31 +1427,31 @@ gimp_image_get_item_position (gint32 image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_raise_item (gint32 image_ID,
+picman_image_raise_item (gint32 image_ID,
                        gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-raise-item",
+  return_vals = picman_run_procedure ("picman-image-raise-item",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_lower_item:
+ * picman_image_lower_item:
  * @image_ID: The image.
  * @item_ID: The item to lower.
  *
@@ -1462,31 +1462,31 @@ gimp_image_raise_item (gint32 image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_lower_item (gint32 image_ID,
+picman_image_lower_item (gint32 image_ID,
                        gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-lower-item",
+  return_vals = picman_run_procedure ("picman-image-lower-item",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_raise_item_to_top:
+ * picman_image_raise_item_to_top:
  * @image_ID: The image.
  * @item_ID: The item to raise to top.
  *
@@ -1497,31 +1497,31 @@ gimp_image_lower_item (gint32 image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_raise_item_to_top (gint32 image_ID,
+picman_image_raise_item_to_top (gint32 image_ID,
                               gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-raise-item-to-top",
+  return_vals = picman_run_procedure ("picman-image-raise-item-to-top",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_lower_item_to_bottom:
+ * picman_image_lower_item_to_bottom:
  * @image_ID: The image.
  * @item_ID: The item to lower to bottom.
  *
@@ -1533,31 +1533,31 @@ gimp_image_raise_item_to_top (gint32 image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_lower_item_to_bottom (gint32 image_ID,
+picman_image_lower_item_to_bottom (gint32 image_ID,
                                  gint32 item_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-lower-item-to-bottom",
+  return_vals = picman_run_procedure ("picman-image-lower-item-to-bottom",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_reorder_item:
+ * picman_image_reorder_item:
  * @image_ID: The image.
  * @item_ID: The item to reorder.
  * @parent_ID: The new parent item.
@@ -1569,35 +1569,35 @@ gimp_image_lower_item_to_bottom (gint32 image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_reorder_item (gint32 image_ID,
+picman_image_reorder_item (gint32 image_ID,
                          gint32 item_ID,
                          gint32 parent_ID,
                          gint   position)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-reorder-item",
+  return_vals = picman_run_procedure ("picman-image-reorder-item",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_ITEM, item_ID,
-                                    GIMP_PDB_ITEM, parent_ID,
-                                    GIMP_PDB_INT32, position,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_ITEM, item_ID,
+                                    PICMAN_PDB_ITEM, parent_ID,
+                                    PICMAN_PDB_INT32, position,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_flatten:
+ * picman_image_flatten:
  * @image_ID: The image.
  *
  * Flatten all visible layers into a single layer. Discard all
@@ -1610,27 +1610,27 @@ gimp_image_reorder_item (gint32 image_ID,
  * Returns: The resulting layer.
  **/
 gint32
-gimp_image_flatten (gint32 image_ID)
+picman_image_flatten (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 layer_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-flatten",
+  return_vals = picman_run_procedure ("picman-image-flatten",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     layer_ID = return_vals[1].data.d_layer;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return layer_ID;
 }
 
 /**
- * gimp_image_merge_visible_layers:
+ * picman_image_merge_visible_layers:
  * @image_ID: The image.
  * @merge_type: The type of merge.
  *
@@ -1646,29 +1646,29 @@ gimp_image_flatten (gint32 image_ID)
  * Returns: The resulting layer.
  **/
 gint32
-gimp_image_merge_visible_layers (gint32        image_ID,
-                                 GimpMergeType merge_type)
+picman_image_merge_visible_layers (gint32        image_ID,
+                                 PicmanMergeType merge_type)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 layer_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-merge-visible-layers",
+  return_vals = picman_run_procedure ("picman-image-merge-visible-layers",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, merge_type,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, merge_type,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     layer_ID = return_vals[1].data.d_layer;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return layer_ID;
 }
 
 /**
- * gimp_image_merge_down:
+ * picman_image_merge_down:
  * @image_ID: The image.
  * @merge_layer_ID: The layer to merge down from.
  * @merge_type: The type of merge.
@@ -1686,31 +1686,31 @@ gimp_image_merge_visible_layers (gint32        image_ID,
  * Returns: The resulting layer.
  **/
 gint32
-gimp_image_merge_down (gint32        image_ID,
+picman_image_merge_down (gint32        image_ID,
                        gint32        merge_layer_ID,
-                       GimpMergeType merge_type)
+                       PicmanMergeType merge_type)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 layer_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-merge-down",
+  return_vals = picman_run_procedure ("picman-image-merge-down",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_LAYER, merge_layer_ID,
-                                    GIMP_PDB_INT32, merge_type,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_LAYER, merge_layer_ID,
+                                    PICMAN_PDB_INT32, merge_type,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     layer_ID = return_vals[1].data.d_layer;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return layer_ID;
 }
 
 /**
- * _gimp_image_get_colormap:
+ * _picman_image_get_colormap:
  * @image_ID: The image.
  * @num_bytes: Number of bytes in the colormap array.
  *
@@ -1726,21 +1726,21 @@ gimp_image_merge_down (gint32        image_ID,
  * g_free().
  **/
 guint8 *
-_gimp_image_get_colormap (gint32  image_ID,
+_picman_image_get_colormap (gint32  image_ID,
                           gint   *num_bytes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   guint8 *colormap = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-colormap",
+  return_vals = picman_run_procedure ("picman-image-get-colormap",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
   *num_bytes = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_bytes = return_vals[1].data.d_int32;
       colormap = g_new (guint8, *num_bytes);
@@ -1749,13 +1749,13 @@ _gimp_image_get_colormap (gint32  image_ID,
               *num_bytes * sizeof (guint8));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return colormap;
 }
 
 /**
- * _gimp_image_set_colormap:
+ * _picman_image_set_colormap:
  * @image_ID: The image.
  * @num_bytes: Number of bytes in the colormap array.
  * @colormap: The new colormap values.
@@ -1771,30 +1771,30 @@ _gimp_image_get_colormap (gint32  image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-_gimp_image_set_colormap (gint32        image_ID,
+_picman_image_set_colormap (gint32        image_ID,
                           gint          num_bytes,
                           const guint8 *colormap)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-set-colormap",
+  return_vals = picman_run_procedure ("picman-image-set-colormap",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, num_bytes,
-                                    GIMP_PDB_INT8ARRAY, colormap,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, num_bytes,
+                                    PICMAN_PDB_INT8ARRAY, colormap,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_clean_all:
+ * picman_image_clean_all:
  * @image_ID: The image.
  *
  * Set the image dirty count to 0.
@@ -1809,59 +1809,59 @@ _gimp_image_set_colormap (gint32        image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_clean_all (gint32 image_ID)
+picman_image_clean_all (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-clean-all",
+  return_vals = picman_run_procedure ("picman-image-clean-all",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_is_dirty:
+ * picman_image_is_dirty:
  * @image_ID: The image.
  *
  * Checks if the image has unsaved changes.
  *
  * This procedure checks the specified image's dirty count to see if it
  * needs to be saved. Note that saving the image does not automatically
- * set the dirty count to 0, you need to call gimp_image_clean_all()
+ * set the dirty count to 0, you need to call picman_image_clean_all()
  * after calling a save procedure to make the image clean.
  *
  * Returns: TRUE if the image has unsaved changes.
  **/
 gboolean
-gimp_image_is_dirty (gint32 image_ID)
+picman_image_is_dirty (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean dirty = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-image-is-dirty",
+  return_vals = picman_run_procedure ("picman-image-is-dirty",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     dirty = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return dirty;
 }
 
 /**
- * _gimp_image_thumbnail:
+ * _picman_image_thumbnail:
  * @image_ID: The image.
  * @width: The requested thumbnail width.
  * @height: The requested thumbnail height.
@@ -1881,7 +1881,7 @@ gimp_image_is_dirty (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-_gimp_image_thumbnail (gint32   image_ID,
+_picman_image_thumbnail (gint32   image_ID,
                        gint     width,
                        gint     height,
                        gint    *actual_width,
@@ -1890,16 +1890,16 @@ _gimp_image_thumbnail (gint32   image_ID,
                        gint    *thumbnail_data_count,
                        guint8 **thumbnail_data)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-thumbnail",
+  return_vals = picman_run_procedure ("picman-image-thumbnail",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, width,
-                                    GIMP_PDB_INT32, height,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, width,
+                                    PICMAN_PDB_INT32, height,
+                                    PICMAN_PDB_END);
 
   *actual_width = 0;
   *actual_height = 0;
@@ -1907,7 +1907,7 @@ _gimp_image_thumbnail (gint32   image_ID,
   *thumbnail_data_count = 0;
   *thumbnail_data = NULL;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -1921,13 +1921,13 @@ _gimp_image_thumbnail (gint32   image_ID,
               *thumbnail_data_count * sizeof (guint8));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_active_layer:
+ * picman_image_get_active_layer:
  * @image_ID: The image.
  *
  * Returns the specified image's active layer.
@@ -1939,27 +1939,27 @@ _gimp_image_thumbnail (gint32   image_ID,
  * Returns: The active layer.
  **/
 gint32
-gimp_image_get_active_layer (gint32 image_ID)
+picman_image_get_active_layer (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 active_layer_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-active-layer",
+  return_vals = picman_run_procedure ("picman-image-get-active-layer",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     active_layer_ID = return_vals[1].data.d_layer;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return active_layer_ID;
 }
 
 /**
- * gimp_image_set_active_layer:
+ * picman_image_set_active_layer:
  * @image_ID: The image.
  * @active_layer_ID: The new image active layer.
  *
@@ -1973,28 +1973,28 @@ gimp_image_get_active_layer (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_set_active_layer (gint32 image_ID,
+picman_image_set_active_layer (gint32 image_ID,
                              gint32 active_layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-set-active-layer",
+  return_vals = picman_run_procedure ("picman-image-set-active-layer",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_LAYER, active_layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_LAYER, active_layer_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_active_channel:
+ * picman_image_get_active_channel:
  * @image_ID: The image.
  *
  * Returns the specified image's active channel.
@@ -2005,27 +2005,27 @@ gimp_image_set_active_layer (gint32 image_ID,
  * Returns: The active channel.
  **/
 gint32
-gimp_image_get_active_channel (gint32 image_ID)
+picman_image_get_active_channel (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 active_channel_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-active-channel",
+  return_vals = picman_run_procedure ("picman-image-get-active-channel",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     active_channel_ID = return_vals[1].data.d_channel;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return active_channel_ID;
 }
 
 /**
- * gimp_image_set_active_channel:
+ * picman_image_set_active_channel:
  * @image_ID: The image.
  * @active_channel_ID: The new image active channel.
  *
@@ -2039,28 +2039,28 @@ gimp_image_get_active_channel (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_set_active_channel (gint32 image_ID,
+picman_image_set_active_channel (gint32 image_ID,
                                gint32 active_channel_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-set-active-channel",
+  return_vals = picman_run_procedure ("picman-image-set-active-channel",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_CHANNEL, active_channel_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_CHANNEL, active_channel_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_active_vectors:
+ * picman_image_get_active_vectors:
  * @image_ID: The image.
  *
  * Returns the specified image's active vectors.
@@ -2070,27 +2070,27 @@ gimp_image_set_active_channel (gint32 image_ID,
  * Returns: The active vectors.
  **/
 gint32
-gimp_image_get_active_vectors (gint32 image_ID)
+picman_image_get_active_vectors (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 active_vectors_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-active-vectors",
+  return_vals = picman_run_procedure ("picman-image-get-active-vectors",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     active_vectors_ID = return_vals[1].data.d_vectors;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return active_vectors_ID;
 }
 
 /**
- * gimp_image_set_active_vectors:
+ * picman_image_set_active_vectors:
  * @image_ID: The image.
  * @active_vectors_ID: The new image active vectors.
  *
@@ -2101,28 +2101,28 @@ gimp_image_get_active_vectors (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_set_active_vectors (gint32 image_ID,
+picman_image_set_active_vectors (gint32 image_ID,
                                gint32 active_vectors_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-set-active-vectors",
+  return_vals = picman_run_procedure ("picman-image-set-active-vectors",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_VECTORS, active_vectors_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_VECTORS, active_vectors_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_selection:
+ * picman_image_get_selection:
  * @image_ID: The image.
  *
  * Returns the specified image's selection.
@@ -2133,27 +2133,27 @@ gimp_image_set_active_vectors (gint32 image_ID,
  * Returns: The selection channel.
  **/
 gint32
-gimp_image_get_selection (gint32 image_ID)
+picman_image_get_selection (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 selection_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-selection",
+  return_vals = picman_run_procedure ("picman-image-get-selection",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     selection_ID = return_vals[1].data.d_selection;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return selection_ID;
 }
 
 /**
- * gimp_image_get_component_active:
+ * picman_image_get_component_active:
  * @image_ID: The image.
  * @component: The image component.
  *
@@ -2167,29 +2167,29 @@ gimp_image_get_selection (gint32 image_ID)
  * Returns: Component is active.
  **/
 gboolean
-gimp_image_get_component_active (gint32          image_ID,
-                                 GimpChannelType component)
+picman_image_get_component_active (gint32          image_ID,
+                                 PicmanChannelType component)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean active = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-component-active",
+  return_vals = picman_run_procedure ("picman-image-get-component-active",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, component,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, component,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     active = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return active;
 }
 
 /**
- * gimp_image_set_component_active:
+ * picman_image_set_component_active:
  * @image_ID: The image.
  * @component: The image component.
  * @active: Component is active.
@@ -2204,30 +2204,30 @@ gimp_image_get_component_active (gint32          image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_set_component_active (gint32          image_ID,
-                                 GimpChannelType component,
+picman_image_set_component_active (gint32          image_ID,
+                                 PicmanChannelType component,
                                  gboolean        active)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-set-component-active",
+  return_vals = picman_run_procedure ("picman-image-set-component-active",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, component,
-                                    GIMP_PDB_INT32, active,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, component,
+                                    PICMAN_PDB_INT32, active,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_component_visible:
+ * picman_image_get_component_visible:
  * @image_ID: The image.
  * @component: The image component.
  *
@@ -2242,29 +2242,29 @@ gimp_image_set_component_active (gint32          image_ID,
  * Returns: Component is visible.
  **/
 gboolean
-gimp_image_get_component_visible (gint32          image_ID,
-                                  GimpChannelType component)
+picman_image_get_component_visible (gint32          image_ID,
+                                  PicmanChannelType component)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean visible = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-component-visible",
+  return_vals = picman_run_procedure ("picman-image-get-component-visible",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, component,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, component,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     visible = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return visible;
 }
 
 /**
- * gimp_image_set_component_visible:
+ * picman_image_set_component_visible:
  * @image_ID: The image.
  * @component: The image component.
  * @visible: Component is visible.
@@ -2279,30 +2279,30 @@ gimp_image_get_component_visible (gint32          image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_set_component_visible (gint32          image_ID,
-                                  GimpChannelType component,
+picman_image_set_component_visible (gint32          image_ID,
+                                  PicmanChannelType component,
                                   gboolean        visible)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-set-component-visible",
+  return_vals = picman_run_procedure ("picman-image-set-component-visible",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, component,
-                                    GIMP_PDB_INT32, visible,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, component,
+                                    PICMAN_PDB_INT32, visible,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_filename:
+ * picman_image_get_filename:
  * @image_ID: The image.
  *
  * Returns the specified image's filename.
@@ -2311,33 +2311,33 @@ gimp_image_set_component_visible (gint32          image_ID,
  * filesystem encoding. The image has a filename only if it was loaded
  * or imported from a file or has since been saved or exported.
  * Otherwise, this function returns %NULL. See also
- * gimp_image_get_uri().
+ * picman_image_get_uri().
  *
  * Returns: The filename. The returned value must be freed with
  * g_free().
  **/
 gchar *
-gimp_image_get_filename (gint32 image_ID)
+picman_image_get_filename (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *filename = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-filename",
+  return_vals = picman_run_procedure ("picman-image-get-filename",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     filename = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return filename;
 }
 
 /**
- * gimp_image_set_filename:
+ * picman_image_set_filename:
  * @image_ID: The image.
  * @filename: The new image filename.
  *
@@ -2349,28 +2349,28 @@ gimp_image_get_filename (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_set_filename (gint32       image_ID,
+picman_image_set_filename (gint32       image_ID,
                          const gchar *filename)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-set-filename",
+  return_vals = picman_run_procedure ("picman-image-set-filename",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_STRING, filename,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_STRING, filename,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_uri:
+ * picman_image_get_uri:
  * @image_ID: The image.
  *
  * Returns the URI for the specified image.
@@ -2378,37 +2378,37 @@ gimp_image_set_filename (gint32       image_ID,
  * This procedure returns the URI associated with the specified image.
  * The image has an URI only if it was loaded or imported from a file
  * or has since been saved or exported. Otherwise, this function
- * returns %NULL. See also gimp-image-get-imported-uri to get the URI
- * of the current file if it was imported from a non-GIMP file format
- * and not yet saved, or gimp-image-get-exported-uri if the image has
- * been exported to a non-GIMP file format.
+ * returns %NULL. See also picman-image-get-imported-uri to get the URI
+ * of the current file if it was imported from a non-PICMAN file format
+ * and not yet saved, or picman-image-get-exported-uri if the image has
+ * been exported to a non-PICMAN file format.
  *
  * Returns: The URI. The returned value must be freed with g_free().
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gchar *
-gimp_image_get_uri (gint32 image_ID)
+picman_image_get_uri (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *uri = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-uri",
+  return_vals = picman_run_procedure ("picman-image-get-uri",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     uri = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return uri;
 }
 
 /**
- * gimp_image_get_xcf_uri:
+ * picman_image_get_xcf_uri:
  * @image_ID: The image.
  *
  * Returns the XCF URI for the specified image.
@@ -2419,101 +2419,101 @@ gimp_image_get_uri (gint32 image_ID)
  * Returns: The imported URI. The returned value must be freed with
  * g_free().
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gchar *
-gimp_image_get_xcf_uri (gint32 image_ID)
+picman_image_get_xcf_uri (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *uri = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-xcf-uri",
+  return_vals = picman_run_procedure ("picman-image-get-xcf-uri",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     uri = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return uri;
 }
 
 /**
- * gimp_image_get_imported_uri:
+ * picman_image_get_imported_uri:
  * @image_ID: The image.
  *
  * Returns the imported URI for the specified image.
  *
  * This procedure returns the URI associated with the specified image
- * if the image was imported from a non-native Gimp format. If the
- * image was not imported, or has since been saved in the native Gimp
+ * if the image was imported from a non-native Picman format. If the
+ * image was not imported, or has since been saved in the native Picman
  * format, this procedure returns %NULL.
  *
  * Returns: The imported URI. The returned value must be freed with
  * g_free().
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gchar *
-gimp_image_get_imported_uri (gint32 image_ID)
+picman_image_get_imported_uri (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *uri = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-imported-uri",
+  return_vals = picman_run_procedure ("picman-image-get-imported-uri",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     uri = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return uri;
 }
 
 /**
- * gimp_image_get_exported_uri:
+ * picman_image_get_exported_uri:
  * @image_ID: The image.
  *
  * Returns the exported URI for the specified image.
  *
  * This procedure returns the URI associated with the specified image
- * if the image was exported a non-native GIMP format. If the image was
+ * if the image was exported a non-native PICMAN format. If the image was
  * not exported, this procedure returns %NULL.
  *
  * Returns: The exported URI. The returned value must be freed with
  * g_free().
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gchar *
-gimp_image_get_exported_uri (gint32 image_ID)
+picman_image_get_exported_uri (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *uri = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-exported-uri",
+  return_vals = picman_run_procedure ("picman-image-get-exported-uri",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     uri = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return uri;
 }
 
 /**
- * gimp_image_get_name:
+ * picman_image_get_name:
  * @image_ID: The image.
  *
  * Returns the specified image's name.
@@ -2525,27 +2525,27 @@ gimp_image_get_exported_uri (gint32 image_ID)
  * Returns: The name. The returned value must be freed with g_free().
  **/
 gchar *
-gimp_image_get_name (gint32 image_ID)
+picman_image_get_name (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-name",
+  return_vals = picman_run_procedure ("picman-image-get-name",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return name;
 }
 
 /**
- * gimp_image_get_resolution:
+ * picman_image_get_resolution:
  * @image_ID: The image.
  * @xresolution: The resolution in the x-axis, in dots per inch.
  * @yresolution: The resolution in the y-axis, in dots per inch.
@@ -2558,23 +2558,23 @@ gimp_image_get_name (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_get_resolution (gint32   image_ID,
+picman_image_get_resolution (gint32   image_ID,
                            gdouble *xresolution,
                            gdouble *yresolution)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-resolution",
+  return_vals = picman_run_procedure ("picman-image-get-resolution",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
   *xresolution = 0.0;
   *yresolution = 0.0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -2582,13 +2582,13 @@ gimp_image_get_resolution (gint32   image_ID,
       *yresolution = return_vals[2].data.d_float;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_set_resolution:
+ * picman_image_set_resolution:
  * @image_ID: The image.
  * @xresolution: The new image resolution in the x-axis, in dots per inch.
  * @yresolution: The new image resolution in the y-axis, in dots per inch.
@@ -2602,63 +2602,63 @@ gimp_image_get_resolution (gint32   image_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_set_resolution (gint32  image_ID,
+picman_image_set_resolution (gint32  image_ID,
                            gdouble xresolution,
                            gdouble yresolution)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-set-resolution",
+  return_vals = picman_run_procedure ("picman-image-set-resolution",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_FLOAT, xresolution,
-                                    GIMP_PDB_FLOAT, yresolution,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_FLOAT, xresolution,
+                                    PICMAN_PDB_FLOAT, yresolution,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_unit:
+ * picman_image_get_unit:
  * @image_ID: The image.
  *
  * Returns the specified image's unit.
  *
  * This procedure returns the specified image's unit. This value is
  * independent of any of the layers in this image. See the
- * gimp_unit_*() procedure definitions for the valid range of unit IDs
+ * picman_unit_*() procedure definitions for the valid range of unit IDs
  * and a description of the unit system.
  *
  * Returns: The unit.
  **/
-GimpUnit
-gimp_image_get_unit (gint32 image_ID)
+PicmanUnit
+picman_image_get_unit (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpUnit unit = 0;
+  PicmanUnit unit = 0;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-unit",
+  return_vals = picman_run_procedure ("picman-image-get-unit",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     unit = return_vals[1].data.d_unit;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return unit;
 }
 
 /**
- * gimp_image_set_unit:
+ * picman_image_set_unit:
  * @image_ID: The image.
  * @unit: The new image unit.
  *
@@ -2666,35 +2666,35 @@ gimp_image_get_unit (gint32 image_ID)
  *
  * This procedure sets the specified image's unit. No scaling or
  * resizing is performed. This value is independent of any of the
- * layers in this image. See the gimp_unit_*() procedure definitions
+ * layers in this image. See the picman_unit_*() procedure definitions
  * for the valid range of unit IDs and a description of the unit
  * system.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_set_unit (gint32   image_ID,
-                     GimpUnit unit)
+picman_image_set_unit (gint32   image_ID,
+                     PicmanUnit unit)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-set-unit",
+  return_vals = picman_run_procedure ("picman-image-set-unit",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, unit,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, unit,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_tattoo_state:
+ * picman_image_get_tattoo_state:
  * @image_ID: The image.
  *
  * Returns the tattoo state associated with the image.
@@ -2706,27 +2706,27 @@ gimp_image_set_unit (gint32   image_ID,
  * Returns: The tattoo state.
  **/
 gint
-gimp_image_get_tattoo_state (gint32 image_ID)
+picman_image_get_tattoo_state (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint tattoo_state = 0;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-tattoo-state",
+  return_vals = picman_run_procedure ("picman-image-get-tattoo-state",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     tattoo_state = return_vals[1].data.d_tattoo;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return tattoo_state;
 }
 
 /**
- * gimp_image_set_tattoo_state:
+ * picman_image_set_tattoo_state:
  * @image_ID: The image.
  * @tattoo_state: The new image tattoo state.
  *
@@ -2748,28 +2748,28 @@ gimp_image_get_tattoo_state (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_set_tattoo_state (gint32 image_ID,
+picman_image_set_tattoo_state (gint32 image_ID,
                              gint   tattoo_state)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-set-tattoo-state",
+  return_vals = picman_run_procedure ("picman-image-set-tattoo-state",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, tattoo_state,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, tattoo_state,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_layer_by_tattoo:
+ * picman_image_get_layer_by_tattoo:
  * @image_ID: The image.
  * @tattoo: The tattoo of the layer to find.
  *
@@ -2781,29 +2781,29 @@ gimp_image_set_tattoo_state (gint32 image_ID,
  * Returns: The layer with the specified tattoo.
  **/
 gint32
-gimp_image_get_layer_by_tattoo (gint32 image_ID,
+picman_image_get_layer_by_tattoo (gint32 image_ID,
                                 gint   tattoo)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 layer_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-layer-by-tattoo",
+  return_vals = picman_run_procedure ("picman-image-get-layer-by-tattoo",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, tattoo,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, tattoo,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     layer_ID = return_vals[1].data.d_layer;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return layer_ID;
 }
 
 /**
- * gimp_image_get_channel_by_tattoo:
+ * picman_image_get_channel_by_tattoo:
  * @image_ID: The image.
  * @tattoo: The tattoo of the channel to find.
  *
@@ -2815,29 +2815,29 @@ gimp_image_get_layer_by_tattoo (gint32 image_ID,
  * Returns: The channel with the specified tattoo.
  **/
 gint32
-gimp_image_get_channel_by_tattoo (gint32 image_ID,
+picman_image_get_channel_by_tattoo (gint32 image_ID,
                                   gint   tattoo)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 channel_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-channel-by-tattoo",
+  return_vals = picman_run_procedure ("picman-image-get-channel-by-tattoo",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, tattoo,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, tattoo,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     channel_ID = return_vals[1].data.d_channel;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return channel_ID;
 }
 
 /**
- * gimp_image_get_vectors_by_tattoo:
+ * picman_image_get_vectors_by_tattoo:
  * @image_ID: The image.
  * @tattoo: The tattoo of the vectors to find.
  *
@@ -2848,32 +2848,32 @@ gimp_image_get_channel_by_tattoo (gint32 image_ID,
  *
  * Returns: The vectors with the specified tattoo.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gint32
-gimp_image_get_vectors_by_tattoo (gint32 image_ID,
+picman_image_get_vectors_by_tattoo (gint32 image_ID,
                                   gint   tattoo)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 vectors_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-vectors-by-tattoo",
+  return_vals = picman_run_procedure ("picman-image-get-vectors-by-tattoo",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, tattoo,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, tattoo,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     vectors_ID = return_vals[1].data.d_vectors;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return vectors_ID;
 }
 
 /**
- * gimp_image_get_layer_by_name:
+ * picman_image_get_layer_by_name:
  * @image_ID: The image.
  * @name: The name of the layer to find.
  *
@@ -2884,32 +2884,32 @@ gimp_image_get_vectors_by_tattoo (gint32 image_ID,
  *
  * Returns: The layer with the specified name.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_image_get_layer_by_name (gint32       image_ID,
+picman_image_get_layer_by_name (gint32       image_ID,
                               const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 layer_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-layer-by-name",
+  return_vals = picman_run_procedure ("picman-image-get-layer-by-name",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     layer_ID = return_vals[1].data.d_layer;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return layer_ID;
 }
 
 /**
- * gimp_image_get_channel_by_name:
+ * picman_image_get_channel_by_name:
  * @image_ID: The image.
  * @name: The name of the channel to find.
  *
@@ -2920,32 +2920,32 @@ gimp_image_get_layer_by_name (gint32       image_ID,
  *
  * Returns: The channel with the specified name.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_image_get_channel_by_name (gint32       image_ID,
+picman_image_get_channel_by_name (gint32       image_ID,
                                 const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 channel_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-channel-by-name",
+  return_vals = picman_run_procedure ("picman-image-get-channel-by-name",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     channel_ID = return_vals[1].data.d_channel;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return channel_ID;
 }
 
 /**
- * gimp_image_get_vectors_by_name:
+ * picman_image_get_vectors_by_name:
  * @image_ID: The image.
  * @name: The name of the vectors to find.
  *
@@ -2956,32 +2956,32 @@ gimp_image_get_channel_by_name (gint32       image_ID,
  *
  * Returns: The vectors with the specified name.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gint32
-gimp_image_get_vectors_by_name (gint32       image_ID,
+picman_image_get_vectors_by_name (gint32       image_ID,
                                 const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 vectors_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-vectors-by-name",
+  return_vals = picman_run_procedure ("picman-image-get-vectors-by-name",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     vectors_ID = return_vals[1].data.d_vectors;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return vectors_ID;
 }
 
 /**
- * gimp_image_attach_parasite:
+ * picman_image_attach_parasite:
  * @image_ID: The image.
  * @parasite: The parasite to attach to an image.
  *
@@ -2992,31 +2992,31 @@ gimp_image_get_vectors_by_name (gint32       image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_attach_parasite (gint32              image_ID,
-                            const GimpParasite *parasite)
+picman_image_attach_parasite (gint32              image_ID,
+                            const PicmanParasite *parasite)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-attach-parasite",
+  return_vals = picman_run_procedure ("picman-image-attach-parasite",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_PARASITE, parasite,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_PARASITE, parasite,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_detach_parasite:
+ * picman_image_detach_parasite:
  * @image_ID: The image.
  * @name: The name of the parasite to detach from an image.
  *
@@ -3027,31 +3027,31 @@ gimp_image_attach_parasite (gint32              image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_image_detach_parasite (gint32       image_ID,
+picman_image_detach_parasite (gint32       image_ID,
                             const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-detach-parasite",
+  return_vals = picman_run_procedure ("picman-image-detach-parasite",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_get_parasite:
+ * picman_image_get_parasite:
  * @image_ID: The image.
  * @name: The name of the parasite to find.
  *
@@ -3062,32 +3062,32 @@ gimp_image_detach_parasite (gint32       image_ID,
  *
  * Returns: The found parasite.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
-GimpParasite *
-gimp_image_get_parasite (gint32       image_ID,
+PicmanParasite *
+picman_image_get_parasite (gint32       image_ID,
                          const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpParasite *parasite = NULL;
+  PicmanParasite *parasite = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-parasite",
+  return_vals = picman_run_procedure ("picman-image-get-parasite",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
-    parasite = gimp_parasite_copy (&return_vals[1].data.d_parasite);
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
+    parasite = picman_parasite_copy (&return_vals[1].data.d_parasite);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return parasite;
 }
 
 /**
- * gimp_image_get_parasite_list:
+ * picman_image_get_parasite_list:
  * @image_ID: The image.
  * @num_parasites: The number of attached parasites.
  *
@@ -3098,25 +3098,25 @@ gimp_image_get_parasite (gint32       image_ID,
  * Returns: The names of currently attached parasites. The returned
  * value must be freed with g_strfreev().
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gchar **
-gimp_image_get_parasite_list (gint32  image_ID,
+picman_image_get_parasite_list (gint32  image_ID,
                               gint   *num_parasites)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar **parasites = NULL;
   gint i;
 
-  return_vals = gimp_run_procedure ("gimp-image-get-parasite-list",
+  return_vals = picman_run_procedure ("picman-image-get-parasite-list",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
   *num_parasites = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_parasites = return_vals[1].data.d_int32;
       parasites = g_new (gchar *, *num_parasites + 1);
@@ -3125,7 +3125,7 @@ gimp_image_get_parasite_list (gint32  image_ID,
       parasites[i] = NULL;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return parasites;
 }

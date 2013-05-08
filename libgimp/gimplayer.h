@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2000 Peter Mattis and Spencer Kimball
  *
- * gimplayer.h
+ * picmanlayer.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,46 +18,46 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
-#ifndef __GIMP_LAYER_H__
-#define __GIMP_LAYER_H__
+#ifndef __PICMAN_LAYER_H__
+#define __PICMAN_LAYER_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-gint32   gimp_layer_new                (gint32                image_ID,
+gint32   picman_layer_new                (gint32                image_ID,
                                         const gchar          *name,
                                         gint                  width,
                                         gint                  height,
-                                        GimpImageType         type,
+                                        PicmanImageType         type,
                                         gdouble               opacity,
-                                        GimpLayerModeEffects  mode);
-gint32   gimp_layer_copy               (gint32                layer_ID);
+                                        PicmanLayerModeEffects  mode);
+gint32   picman_layer_copy               (gint32                layer_ID);
 
-gint32   gimp_layer_new_from_pixbuf    (gint32                image_ID,
+gint32   picman_layer_new_from_pixbuf    (gint32                image_ID,
                                         const gchar          *name,
                                         GdkPixbuf            *pixbuf,
                                         gdouble               opacity,
-                                        GimpLayerModeEffects  mode,
+                                        PicmanLayerModeEffects  mode,
                                         gdouble               progress_start,
                                         gdouble               progress_end);
-gint32   gimp_layer_new_from_surface   (gint32                image_ID,
+gint32   picman_layer_new_from_surface   (gint32                image_ID,
                                         const gchar          *name,
                                         cairo_surface_t      *surface,
                                         gdouble               progress_start,
                                         gdouble               progress_end);
 
-GIMP_DEPRECATED_FOR(gimp_layer_get_lock_alpha)
-gboolean gimp_layer_get_preserve_trans (gint32                layer_ID);
-GIMP_DEPRECATED_FOR(gimp_layer_set_lock_alpha)
-gboolean gimp_layer_set_preserve_trans (gint32                layer_ID,
+PICMAN_DEPRECATED_FOR(picman_layer_get_lock_alpha)
+gboolean picman_layer_get_preserve_trans (gint32                layer_ID);
+PICMAN_DEPRECATED_FOR(picman_layer_set_lock_alpha)
+gboolean picman_layer_set_preserve_trans (gint32                layer_ID,
                                         gboolean              preserve_trans);
 
 G_END_DECLS
 
-#endif /* __GIMP_LAYER_H__ */
+#endif /* __PICMAN_LAYER_H__ */

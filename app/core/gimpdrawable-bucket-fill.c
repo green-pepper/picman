@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,81 +23,81 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "gegl/gimp-gegl-apply-operation.h"
-#include "gegl/gimp-gegl-mask.h"
-#include "gegl/gimp-gegl-mask-combine.h"
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-apply-operation.h"
+#include "gegl/picman-gegl-mask.h"
+#include "gegl/picman-gegl-mask-combine.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimp.h"
-#include "gimpchannel-combine.h"
-#include "gimpcontext.h"
-#include "gimpdrawable.h"
-#include "gimpdrawable-bucket-fill.h"
-#include "gimperror.h"
-#include "gimpimage.h"
-#include "gimpimage-contiguous-region.h"
-#include "gimppattern.h"
+#include "picman.h"
+#include "picmanchannel-combine.h"
+#include "picmancontext.h"
+#include "picmandrawable.h"
+#include "picmandrawable-bucket-fill.h"
+#include "picmanerror.h"
+#include "picmanimage.h"
+#include "picmanimage-contiguous-region.h"
+#include "picmanpattern.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void   gimp_drawable_bucket_fill_internal (GimpDrawable        *drawable,
-                                                  GimpBucketFillMode   fill_mode,
+static void   picman_drawable_bucket_fill_internal (PicmanDrawable        *drawable,
+                                                  PicmanBucketFillMode   fill_mode,
                                                   gint                 paint_mode,
                                                   gdouble              opacity,
                                                   gboolean             fill_transparent,
-                                                  GimpSelectCriterion  fill_criterion,
+                                                  PicmanSelectCriterion  fill_criterion,
                                                   gdouble              threshold,
                                                   gboolean             sample_merged,
                                                   gdouble              x,
                                                   gdouble              y,
-                                                  const GimpRGB       *color,
-                                                  GimpPattern         *pattern);
+                                                  const PicmanRGB       *color,
+                                                  PicmanPattern         *pattern);
 
 
 /*  public functions  */
 
 gboolean
-gimp_drawable_bucket_fill (GimpDrawable         *drawable,
-                           GimpContext          *context,
-                           GimpBucketFillMode    fill_mode,
+picman_drawable_bucket_fill (PicmanDrawable         *drawable,
+                           PicmanContext          *context,
+                           PicmanBucketFillMode    fill_mode,
                            gint                  paint_mode,
                            gdouble               opacity,
                            gboolean              fill_transparent,
-                           GimpSelectCriterion   fill_criterion,
+                           PicmanSelectCriterion   fill_criterion,
                            gdouble               threshold,
                            gboolean              sample_merged,
                            gdouble               x,
                            gdouble               y,
                            GError              **error)
 {
-  GimpRGB      color;
-  GimpPattern *pattern = NULL;
+  PicmanRGB      color;
+  PicmanPattern *pattern = NULL;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), FALSE);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  if (fill_mode == GIMP_FG_BUCKET_FILL)
+  if (fill_mode == PICMAN_FG_BUCKET_FILL)
     {
-      gimp_context_get_foreground (context, &color);
+      picman_context_get_foreground (context, &color);
     }
-  else if (fill_mode == GIMP_BG_BUCKET_FILL)
+  else if (fill_mode == PICMAN_BG_BUCKET_FILL)
     {
-      gimp_context_get_background (context, &color);
+      picman_context_get_background (context, &color);
     }
-  else if (fill_mode == GIMP_PATTERN_BUCKET_FILL)
+  else if (fill_mode == PICMAN_PATTERN_BUCKET_FILL)
     {
-      pattern = gimp_context_get_pattern (context);
+      pattern = picman_context_get_pattern (context);
 
       if (! pattern)
         {
-          g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+          g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			       _("No patterns available for this operation."));
           return FALSE;
         }
@@ -108,7 +108,7 @@ gimp_drawable_bucket_fill (GimpDrawable         *drawable,
       return FALSE;
     }
 
-  gimp_drawable_bucket_fill_internal (drawable,
+  picman_drawable_bucket_fill_internal (drawable,
                                       fill_mode,
                                       paint_mode, opacity,
                                       fill_transparent, fill_criterion,
@@ -123,20 +123,20 @@ gimp_drawable_bucket_fill (GimpDrawable         *drawable,
 /*  private functions  */
 
 static void
-gimp_drawable_bucket_fill_internal (GimpDrawable        *drawable,
-                                    GimpBucketFillMode   fill_mode,
+picman_drawable_bucket_fill_internal (PicmanDrawable        *drawable,
+                                    PicmanBucketFillMode   fill_mode,
                                     gint                 paint_mode,
                                     gdouble              opacity,
                                     gboolean             fill_transparent,
-                                    GimpSelectCriterion  fill_criterion,
+                                    PicmanSelectCriterion  fill_criterion,
                                     gdouble              threshold,
                                     gboolean             sample_merged,
                                     gdouble              x,
                                     gdouble              y,
-                                    const GimpRGB       *color,
-                                    GimpPattern         *pattern)
+                                    const PicmanRGB       *color,
+                                    PicmanPattern         *pattern)
 {
-  GimpImage   *image;
+  PicmanImage   *image;
   GeglBuffer  *buffer;
   GeglBuffer  *mask_buffer;
   gint         x1, y1, x2, y2;
@@ -144,27 +144,27 @@ gimp_drawable_bucket_fill_internal (GimpDrawable        *drawable,
   gint         mask_offset_y = 0;
   gboolean     selection;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)));
-  g_return_if_fail (fill_mode != GIMP_PATTERN_BUCKET_FILL ||
-                    GIMP_IS_PATTERN (pattern));
-  g_return_if_fail (fill_mode == GIMP_PATTERN_BUCKET_FILL ||
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)));
+  g_return_if_fail (fill_mode != PICMAN_PATTERN_BUCKET_FILL ||
+                    PICMAN_IS_PATTERN (pattern));
+  g_return_if_fail (fill_mode == PICMAN_PATTERN_BUCKET_FILL ||
                     color != NULL);
 
-  image = gimp_item_get_image (GIMP_ITEM (drawable));
+  image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-  selection = gimp_item_mask_bounds (GIMP_ITEM (drawable), &x1, &y1, &x2, &y2);
+  selection = picman_item_mask_bounds (PICMAN_ITEM (drawable), &x1, &y1, &x2, &y2);
 
   if ((x1 == x2) || (y1 == y2))
     return;
 
-  gimp_set_busy (image->gimp);
+  picman_set_busy (image->picman);
 
   /*  Do a seed bucket fill...To do this, calculate a new
    *  contiguous region. If there is a selection, calculate the
    *  intersection of this region with the existing selection.
    */
-  mask_buffer = gimp_image_contiguous_region_by_seed (image, drawable,
+  mask_buffer = picman_image_contiguous_region_by_seed (image, drawable,
                                                       sample_merged,
                                                       TRUE,
                                                       threshold,
@@ -175,36 +175,36 @@ gimp_drawable_bucket_fill_internal (GimpDrawable        *drawable,
 
   if (selection)
     {
-      GimpDrawable *sel;
+      PicmanDrawable *sel;
       gint          off_x = 0;
       gint          off_y = 0;
 
       if (! sample_merged)
-        gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+        picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
 
-      sel = GIMP_DRAWABLE (gimp_image_get_mask (image));
+      sel = PICMAN_DRAWABLE (picman_image_get_mask (image));
 
-      gimp_gegl_mask_combine_buffer (mask_buffer,
-                                     gimp_drawable_get_buffer (sel),
-                                     GIMP_CHANNEL_OP_INTERSECT,
+      picman_gegl_mask_combine_buffer (mask_buffer,
+                                     picman_drawable_get_buffer (sel),
+                                     PICMAN_CHANNEL_OP_INTERSECT,
                                      -off_x, -off_y);
     }
 
-  gimp_gegl_mask_bounds (mask_buffer, &x1, &y1, &x2, &y2);
+  picman_gegl_mask_bounds (mask_buffer, &x1, &y1, &x2, &y2);
 
   /*  make sure we handle the mask correctly if it was sample-merged  */
   if (sample_merged)
     {
-      GimpItem *item = GIMP_ITEM (drawable);
+      PicmanItem *item = PICMAN_ITEM (drawable);
       gint      off_x, off_y;
 
       /*  Limit the channel bounds to the drawable's extents  */
-      gimp_item_get_offset (item, &off_x, &off_y);
+      picman_item_get_offset (item, &off_x, &off_y);
 
-      x1 = CLAMP (x1, off_x, (off_x + gimp_item_get_width (item)));
-      y1 = CLAMP (y1, off_y, (off_y + gimp_item_get_height (item)));
-      x2 = CLAMP (x2, off_x, (off_x + gimp_item_get_width (item)));
-      y2 = CLAMP (y2, off_y, (off_y + gimp_item_get_height (item)));
+      x1 = CLAMP (x1, off_x, (off_x + picman_item_get_width (item)));
+      y1 = CLAMP (y1, off_y, (off_y + picman_item_get_height (item)));
+      x2 = CLAMP (x2, off_x, (off_x + picman_item_get_width (item)));
+      y2 = CLAMP (y2, off_y, (off_y + picman_item_get_height (item)));
 
       mask_offset_x = x1;
       mask_offset_y = y1;
@@ -222,23 +222,23 @@ gimp_drawable_bucket_fill_internal (GimpDrawable        *drawable,
     }
 
   buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0, x2 - x1, y2 - y1),
-                            gimp_drawable_get_format_with_alpha (drawable));
+                            picman_drawable_get_format_with_alpha (drawable));
 
   switch (fill_mode)
     {
-    case GIMP_FG_BUCKET_FILL:
-    case GIMP_BG_BUCKET_FILL:
+    case PICMAN_FG_BUCKET_FILL:
+    case PICMAN_BG_BUCKET_FILL:
       {
-        GeglColor *gegl_color = gimp_gegl_color_new (color);
+        GeglColor *gegl_color = picman_gegl_color_new (color);
 
         gegl_buffer_set_color (buffer, NULL, gegl_color);
         g_object_unref (gegl_color);
       }
       break;
 
-    case GIMP_PATTERN_BUCKET_FILL:
+    case PICMAN_PATTERN_BUCKET_FILL:
       {
-        GeglBuffer *pattern_buffer = gimp_pattern_create_buffer (pattern);
+        GeglBuffer *pattern_buffer = picman_pattern_create_buffer (pattern);
 
         gegl_buffer_set_pattern (buffer, NULL, pattern_buffer, -x1, -y1);
         g_object_unref (pattern_buffer);
@@ -246,7 +246,7 @@ gimp_drawable_bucket_fill_internal (GimpDrawable        *drawable,
       break;
     }
 
-  gimp_gegl_apply_opacity (buffer, NULL, NULL, buffer,
+  picman_gegl_apply_opacity (buffer, NULL, NULL, buffer,
                            mask_buffer,
                            -mask_offset_x,
                            -mask_offset_y,
@@ -254,7 +254,7 @@ gimp_drawable_bucket_fill_internal (GimpDrawable        *drawable,
   g_object_unref (mask_buffer);
 
   /*  Apply it to the image  */
-  gimp_drawable_apply_buffer (drawable, buffer,
+  picman_drawable_apply_buffer (drawable, buffer,
                               GEGL_RECTANGLE (0, 0, x2 - x1, y2 - y1),
                               TRUE, C_("undo-type", "Bucket Fill"),
                               opacity, paint_mode,
@@ -262,7 +262,7 @@ gimp_drawable_bucket_fill_internal (GimpDrawable        *drawable,
 
   g_object_unref (buffer);
 
-  gimp_drawable_update (drawable, x1, y1, x2 - x1, y2 - y1);
+  picman_drawable_update (drawable, x1, y1, x2 - x1, y2 - y1);
 
-  gimp_unset_busy (image->gimp);
+  picman_unset_busy (image->picman);
 }

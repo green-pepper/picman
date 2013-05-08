@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,26 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COLORMAP_EDITOR_H__
-#define __GIMP_COLORMAP_EDITOR_H__
+#ifndef __PICMAN_COLORMAP_EDITOR_H__
+#define __PICMAN_COLORMAP_EDITOR_H__
 
 
-#include "gimpimageeditor.h"
+#include "picmanimageeditor.h"
 
 
-#define GIMP_TYPE_COLORMAP_EDITOR            (gimp_colormap_editor_get_type ())
-#define GIMP_COLORMAP_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLORMAP_EDITOR, GimpColormapEditor))
-#define GIMP_COLORMAP_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLORMAP_EDITOR, GimpColormapEditorClass))
-#define GIMP_IS_COLORMAP_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLORMAP_EDITOR))
-#define GIMP_IS_COLORMAP_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLORMAP_EDITOR))
-#define GIMP_COLORMAP_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLORMAP_EDITOR, GimpColormapEditorClass))
+#define PICMAN_TYPE_COLORMAP_EDITOR            (picman_colormap_editor_get_type ())
+#define PICMAN_COLORMAP_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLORMAP_EDITOR, PicmanColormapEditor))
+#define PICMAN_COLORMAP_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLORMAP_EDITOR, PicmanColormapEditorClass))
+#define PICMAN_IS_COLORMAP_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLORMAP_EDITOR))
+#define PICMAN_IS_COLORMAP_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLORMAP_EDITOR))
+#define PICMAN_COLORMAP_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLORMAP_EDITOR, PicmanColormapEditorClass))
 
 
-typedef struct _GimpColormapEditorClass GimpColormapEditorClass;
+typedef struct _PicmanColormapEditorClass PicmanColormapEditorClass;
 
-struct _GimpColormapEditor
+struct _PicmanColormapEditor
 {
-  GimpImageEditor  parent_instance;
+  PicmanImageEditor  parent_instance;
 
   GtkWidget       *view;
   gint             col_index;
@@ -48,23 +48,23 @@ struct _GimpColormapEditor
   GtkWidget       *color_dialog;
 };
 
-struct _GimpColormapEditorClass
+struct _PicmanColormapEditorClass
 {
-  GimpImageEditorClass  parent_class;
+  PicmanImageEditorClass  parent_class;
 };
 
 
-GType       gimp_colormap_editor_get_type  (void) G_GNUC_CONST;
+GType       picman_colormap_editor_get_type  (void) G_GNUC_CONST;
 
-GtkWidget * gimp_colormap_editor_new       (GimpMenuFactory    *menu_factory);
+GtkWidget * picman_colormap_editor_new       (PicmanMenuFactory    *menu_factory);
 
-gint        gimp_colormap_editor_get_index (GimpColormapEditor *editor,
-                                            const GimpRGB      *search);
-gboolean    gimp_colormap_editor_set_index (GimpColormapEditor *editor,
+gint        picman_colormap_editor_get_index (PicmanColormapEditor *editor,
+                                            const PicmanRGB      *search);
+gboolean    picman_colormap_editor_set_index (PicmanColormapEditor *editor,
                                             gint                index,
-                                            GimpRGB            *color);
+                                            PicmanRGB            *color);
 
-gint        gimp_colormap_editor_max_index (GimpColormapEditor *editor);
+gint        picman_colormap_editor_max_index (PicmanColormapEditor *editor);
 
 
-#endif /* __GIMP_COLORMAP_EDITOR_H__ */
+#endif /* __PICMAN_COLORMAP_EDITOR_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  *
  * file-pdf-save.c - PDF file exporter, based on the cairo PDF surface
  *
@@ -24,7 +24,7 @@
  *    the pdf file, and it can show a gui. This procedure works on a single
  *    image.
  * 2. file-pdf-save-defaults
- *    This procedures is the one that will be invoked by gimp's file-save,
+ *    This procedures is the one that will be invoked by picman's file-save,
  *    when the pdf extension is chosen. If it's in RUN_INTERACTIVE, it will
  *    pop a user interface with more options, like file-pdf-save. If it's in
  *    RUN_NONINTERACTIVE, it will simply use the default values. Note that on
@@ -36,22 +36,22 @@
  *    paged pdf files. It will be located in File/Create/Multiple page PDF...
  *
  * It was suggested that file-pdf-save-multi will be removed from the UI as it
- * does not match the product vision (GIMP isn't a program for editing multiple
+ * does not match the product vision (PICMAN isn't a program for editing multiple
  * paged documents).
  */
 
 /* Known Issues (except for the coding style issues):
  * 1. Grayscale layers are inverted (although layer masks which are not grayscale,
  * are not inverted)
- * 2. Exporting some fonts doesn't work since gimp_text_layer_get_font Returns a
+ * 2. Exporting some fonts doesn't work since picman_text_layer_get_font Returns a
  * font which is sometimes incompatiable with pango_font_description_from_string
- * (gimp_text_layer_get_font sometimes returns suffixes such as "semi-expanded" to
- * the font's name although the GIMP's font selection dialog shows the don'ts name
- * normally - This should be checked again in GIMP 2.7)
- * 3. Indexed layers can't be optimized yet (Since gimp_histogram won't work on
+ * (picman_text_layer_get_font sometimes returns suffixes such as "semi-expanded" to
+ * the font's name although the PICMAN's font selection dialog shows the don'ts name
+ * normally - This should be checked again in PICMAN 2.7)
+ * 3. Indexed layers can't be optimized yet (Since picman_histogram won't work on
  * indexed layers)
  * 4. Rendering the pango layout requires multiplying the size in PANGO_SCALE. This
- * means I'll need to do some hacking on the markup returned from GIMP.
+ * means I'll need to do some hacking on the markup returned from PICMAN.
  * 5. When accessing the contents of layer groups is supported, we should do use it
  * (since this plugin should preserve layers).
  *
@@ -86,15 +86,15 @@
  *
  * August 21, 2009 | Barak Itkin <lightningismyname@gmail.com>
  *   Fixed a typo that prevented the plugin from compiling...
- *   A migration to the new GIMP 2.8 api, which includes:
- *   - Now using gimp_export_dialog_new
- *   - Using gimp_text_layer_get_hint_style (2.8) instead of the depreceated
- *     gimp_text_layer_get_hinting (2.6).
+ *   A migration to the new PICMAN 2.8 api, which includes:
+ *   - Now using picman_export_dialog_new
+ *   - Using picman_text_layer_get_hint_style (2.8) instead of the depreceated
+ *     picman_text_layer_get_hinting (2.6).
  *
  * August 24, 2010 | Barak Itkin <lightningismyname@gmail.com>
- *   More migrations to the new GIMP 2.8 api:
- *   - Now using the GimpItem api
- *   - Using gimp_text_layer_get_markup where possible
+ *   More migrations to the new PICMAN 2.8 api:
+ *   - Now using the PicmanItem api
+ *   - Using picman_text_layer_get_markup where possible
  *   - Fixed some compiler warnings
  *   Also merged the header and c file into one file, Updated some of the comments
  *   and documentation, and moved this into the main source repository.
@@ -106,21 +106,21 @@
 #include <cairo-pdf.h>
 #include <pango/pangocairo.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define SAVE_PROC               "file-pdf-save"
 #define SAVE_MULTI_PROC         "file-pdf-save-multi"
 #define PLUG_IN_BINARY          "file-pdf-save"
-#define PLUG_IN_ROLE            "gimp-file-pdf-save"
+#define PLUG_IN_ROLE            "picman-file-pdf-save"
 
 #define DATA_OPTIMIZE           "file-pdf-data-optimize"
 #define DATA_IMAGE_LIST         "file-pdf-data-multi-page"
 
-/* Gimp will crash before you reach this limitation :D */
+/* Picman will crash before you reach this limitation :D */
 #define MAX_PAGE_COUNT           350
 #define MAX_FILE_NAME_LENGTH     350
 
@@ -195,16 +195,16 @@ typedef struct
 static void              query                      (void);
 static void              run                        (const gchar     *name,
                                                      gint             nparams,
-                                                     const GimpParam *param,
+                                                     const PicmanParam *param,
                                                      gint            *nreturn_vals,
-                                                     GimpParam      **return_vals);
+                                                     PicmanParam      **return_vals);
 
 static gboolean          init_vals                  (const gchar     *name,
                                                      gint             nparams,
-                                                     const GimpParam *param,
+                                                     const PicmanParam *param,
                                                      gboolean        *single,
                                                      gboolean        *defaults,
-                                                     GimpRunMode     *run_mode);
+                                                     PicmanRunMode     *run_mode);
 
 static void              init_image_list_defaults   (gint32           image);
 
@@ -229,7 +229,7 @@ static void              remove_call                (GtkTreeModel    *tree_model
 static void              recount_pages              (void);
 
 static cairo_surface_t * get_drawable_image         (gint32           drawable_ID);
-static GimpRGB           get_layer_color            (gint32           layer_ID,
+static PicmanRGB           get_layer_color            (gint32           layer_ID,
                                                      gboolean        *single);
 static void              drawText                   (gint32           text_id,
                                                      gdouble          opacity,
@@ -253,7 +253,7 @@ static GtkWidget    *file_choose;
 static gchar        *file_name;
 
 
-GimpPlugInInfo PLUG_IN_INFO =
+PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,
   NULL,
@@ -266,31 +266,31 @@ MAIN()
 static void
 query (void)
 {
-  static GimpParamDef save_args[] =
+  static PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "Run mode" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Input drawable" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },
-    { GIMP_PDB_INT32,    "vectorize",    "Convert bitmaps to vector graphics where possible. TRUE or FALSE" },
-    { GIMP_PDB_INT32,    "ignore-hidden","Omit hidden layers and layers with zero opacity. TRUE or FALSE" },
-    { GIMP_PDB_INT32,    "apply-masks",  "Apply layer masks before saving. TRUE or FALSE (Keeping them will not change the output)" }
+    { PICMAN_PDB_INT32,    "run-mode",     "Run mode" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Input drawable" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },
+    { PICMAN_PDB_INT32,    "vectorize",    "Convert bitmaps to vector graphics where possible. TRUE or FALSE" },
+    { PICMAN_PDB_INT32,    "ignore-hidden","Omit hidden layers and layers with zero opacity. TRUE or FALSE" },
+    { PICMAN_PDB_INT32,    "apply-masks",  "Apply layer masks before saving. TRUE or FALSE (Keeping them will not change the output)" }
   };
 
-  static GimpParamDef save_multi_args[] =
+  static PicmanParamDef save_multi_args[] =
   {
-    { GIMP_PDB_INT32,      "run-mode",     "Run mode" },
-    { GIMP_PDB_INT32ARRAY, "images",       "Input image for each page (An image can appear more than once)" },
-    { GIMP_PDB_INT32,      "count",        "The amount of images entered (This will be the amount of pages). 1 <= count <= MAX_PAGE_COUNT" },
-    { GIMP_PDB_INT32,      "vectorize",    "Convert bitmaps to vector graphics where possible. TRUE or FALSE" },
-    { GIMP_PDB_INT32,      "ignore-hidden","Omit hidden layers and layers with zero opacity. TRUE or FALSE" },
-    { GIMP_PDB_INT32,      "apply-masks",  "Apply layer masks before saving. TRUE or FALSE (Keeping them will not change the output)" },
-    { GIMP_PDB_STRING,     "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,     "raw-filename", "The name of the file to save the image in" }
+    { PICMAN_PDB_INT32,      "run-mode",     "Run mode" },
+    { PICMAN_PDB_INT32ARRAY, "images",       "Input image for each page (An image can appear more than once)" },
+    { PICMAN_PDB_INT32,      "count",        "The amount of images entered (This will be the amount of pages). 1 <= count <= MAX_PAGE_COUNT" },
+    { PICMAN_PDB_INT32,      "vectorize",    "Convert bitmaps to vector graphics where possible. TRUE or FALSE" },
+    { PICMAN_PDB_INT32,      "ignore-hidden","Omit hidden layers and layers with zero opacity. TRUE or FALSE" },
+    { PICMAN_PDB_INT32,      "apply-masks",  "Apply layer masks before saving. TRUE or FALSE (Keeping them will not change the output)" },
+    { PICMAN_PDB_STRING,     "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,     "raw-filename", "The name of the file to save the image in" }
   };
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "Save files in PDF format",
                           "Saves files in Adobe's Portable Document Format. "
                           "PDF is designed to be easily processed by a variety "
@@ -301,11 +301,11 @@ query (void)
                           "August 2009",
                           N_("Portable Document Format"),
                           "RGB*, GRAY*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_install_procedure (SAVE_MULTI_PROC,
+  picman_install_procedure (SAVE_MULTI_PROC,
                           "Save files in PDF format",
                           "Saves files in Adobe's Portable Document Format. "
                           "PDF is designed to be easily processed by a variety "
@@ -316,17 +316,17 @@ query (void)
                           "August 2009",
                           N_("_Create multipage PDF..."),
                           "RGB*, GRAY*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_multi_args), 0,
                           save_multi_args, NULL);
 
 #if 0
-  gimp_plugin_menu_register (SAVE_MULTI_PROC,
+  picman_plugin_menu_register (SAVE_MULTI_PROC,
                              "<Image>/File/Create/PDF");
 #endif
 
-  gimp_register_file_handler_mime (SAVE_PROC, "application/pdf");
-  gimp_register_save_handler (SAVE_PROC, "pdf", "");
+  picman_register_file_handler_mime (SAVE_PROC, "application/pdf");
+  picman_register_save_handler (SAVE_PROC, "pdf", "");
 }
 
 static cairo_status_t
@@ -341,18 +341,18 @@ write_func (void                *fp,
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam        values[1];
-  GimpPDBStatusType       status = GIMP_PDB_SUCCESS;
-  GimpRunMode             run_mode;
+  static PicmanParam        values[1];
+  PicmanPDBStatusType       status = PICMAN_PDB_SUCCESS;
+  PicmanRunMode             run_mode;
   gboolean                single_image;
   gboolean                defaults_proc;
   cairo_surface_t        *pdf_file;
   cairo_t                *cr;
-  GimpExportCapabilities  capabilities;
+  PicmanExportCapabilities  capabilities;
   FILE                   *fp;
   gint                    i;
 
@@ -363,7 +363,7 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /* Initializing all the settings */
@@ -372,31 +372,31 @@ run (const gchar      *name,
   if (! init_vals (name, nparams, param, &single_image,
                    &defaults_proc, &run_mode))
     {
-      values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+      values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
       return;
     }
 
   /* Starting the executions */
-  if (run_mode == GIMP_RUN_INTERACTIVE)
+  if (run_mode == PICMAN_RUN_INTERACTIVE)
     {
       if (single_image)
         {
           if (! gui_single ())
             {
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
             }
         }
       else if (! gui_multi ())
         {
-          values[0].data.d_status = GIMP_PDB_CANCEL;
+          values[0].data.d_status = PICMAN_PDB_CANCEL;
           return;
         }
 
       if (file_name == NULL)
         {
-          values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
-          gimp_message (_("You must select a file to save!"));
+          values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
+          picman_message (_("You must select a file to save!"));
           return;
         }
     }
@@ -413,19 +413,19 @@ run (const gchar      *name,
                    "selected location isn't read only!"),
                  cairo_status_to_string (cairo_surface_status (pdf_file)));
 
-      values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+      values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
       return;
     }
 
   cr = cairo_create (pdf_file);
 
-  capabilities = (GIMP_EXPORT_CAN_HANDLE_RGB    |
-                  GIMP_EXPORT_CAN_HANDLE_ALPHA  |
-                  GIMP_EXPORT_CAN_HANDLE_GRAY   |
-                  GIMP_EXPORT_CAN_HANDLE_LAYERS |
-                  GIMP_EXPORT_CAN_HANDLE_INDEXED);
+  capabilities = (PICMAN_EXPORT_CAN_HANDLE_RGB    |
+                  PICMAN_EXPORT_CAN_HANDLE_ALPHA  |
+                  PICMAN_EXPORT_CAN_HANDLE_GRAY   |
+                  PICMAN_EXPORT_CAN_HANDLE_LAYERS |
+                  PICMAN_EXPORT_CAN_HANDLE_INDEXED);
   if (optimize.apply_masks)
-    capabilities |= GIMP_EXPORT_CAN_HANDLE_LAYER_MASKS;
+    capabilities |= PICMAN_EXPORT_CAN_HANDLE_LAYER_MASKS;
 
   for (i = 0; i < multi_page.image_count; i++)
     {
@@ -438,7 +438,7 @@ run (const gchar      *name,
       gint32    temp;
       gint      j;
 
-      temp = gimp_image_get_active_drawable (image_ID);
+      temp = picman_image_get_active_drawable (image_ID);
       if (temp < 1)
         continue;
 
@@ -447,8 +447,8 @@ run (const gchar      *name,
        */
       cairo_save (cr);
 
-      if (gimp_export_image (&image_ID, &temp, NULL,
-                             capabilities) == GIMP_EXPORT_EXPORT)
+      if (picman_export_image (&image_ID, &temp, NULL,
+                             capabilities) == PICMAN_EXPORT_EXPORT)
         {
           exported = TRUE;
         }
@@ -457,13 +457,13 @@ run (const gchar      *name,
           exported = FALSE;
         }
 
-      gimp_image_get_resolution (image_ID, &x_res, &y_res);
+      picman_image_get_resolution (image_ID, &x_res, &y_res);
       x_scale = 72.0 / x_res;
       y_scale = 72.0 / y_res;
 
       cairo_pdf_surface_set_size (pdf_file,
-                                  gimp_image_width (image_ID) * x_scale,
-                                  gimp_image_height (image_ID) * y_scale);
+                                  picman_image_width (image_ID) * x_scale,
+                                  picman_image_height (image_ID) * y_scale);
 
       /* This way we set how many pixels are there in every inch.
        * It's very important for PangoCairo
@@ -476,7 +476,7 @@ run (const gchar      *name,
       cairo_scale (cr, x_scale, y_scale);
 
       /* Now, we should loop over the layers of each image */
-      layers = gimp_image_get_layers (image_ID, &n_layers);
+      layers = picman_image_get_layers (image_ID, &n_layers);
 
       for (j = 0; j < n_layers; j++)
         {
@@ -487,29 +487,29 @@ run (const gchar      *name,
           gboolean         single_color;
           gint             x, y;
 
-          opacity = gimp_layer_get_opacity (layer_ID) / 100.0;
+          opacity = picman_layer_get_opacity (layer_ID) / 100.0;
 
-          if (gimp_item_get_visible (layer_ID) &&
+          if (picman_item_get_visible (layer_ID) &&
               (! optimize.ignore_hidden ||
                (optimize.ignore_hidden && opacity > 0.0)))
             {
-              mask_ID = gimp_layer_get_mask (layer_ID);
+              mask_ID = picman_layer_get_mask (layer_ID);
               if (mask_ID != -1)
                 mask_image = get_drawable_image (mask_ID);
 
-              gimp_drawable_offsets (layer_ID, &x, &y);
+              picman_drawable_offsets (layer_ID, &x, &y);
 
-              if (! gimp_item_is_text_layer (layer_ID))
+              if (! picman_item_is_text_layer (layer_ID))
                 {
                   /* For raster layers */
 
-                  GimpRGB layer_color;
+                  PicmanRGB layer_color;
 
                   layer_color = get_layer_color (layer_ID, &single_color);
 
                   cairo_rectangle (cr, x, y,
-                                   gimp_drawable_width (layer_ID),
-                                   gimp_drawable_height (layer_ID));
+                                   picman_drawable_width (layer_ID),
+                                   picman_drawable_height (layer_ID));
 
                   if (optimize.vectorize && single_color)
                     {
@@ -564,7 +564,7 @@ run (const gchar      *name,
       cairo_restore (cr);
 
       if (exported)
-        gimp_image_delete (image_ID);
+        picman_image_delete (image_ID);
     }
 
   /* We are done with all the images - time to free the resources */
@@ -574,12 +574,12 @@ run (const gchar      *name,
   fclose (fp);
 
   /* Finally done, let's save the parameters */
-  gimp_set_data (DATA_OPTIMIZE, &optimize, sizeof (optimize));
+  picman_set_data (DATA_OPTIMIZE, &optimize, sizeof (optimize));
 
   if (! single_image)
     {
       g_strlcpy (multi_page.file_name, file_name, MAX_FILE_NAME_LENGTH);
-      gimp_set_data (DATA_IMAGE_LIST, &multi_page, sizeof (multi_page));
+      picman_set_data (DATA_IMAGE_LIST, &multi_page, sizeof (multi_page));
     }
 }
 
@@ -592,10 +592,10 @@ run (const gchar      *name,
 static gboolean
 init_vals (const gchar      *name,
            gint              nparams,
-           const GimpParam  *param,
+           const PicmanParam  *param,
            gboolean         *single_image,
            gboolean         *defaults_proc,
-           GimpRunMode      *run_mode)
+           PicmanRunMode      *run_mode)
 {
   gboolean had_saved_list = FALSE;
   gboolean single;
@@ -641,7 +641,7 @@ init_vals (const gchar      *name,
 
   switch (*run_mode)
     {
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (single)
         {
           init_image_list_defaults (image);
@@ -655,10 +655,10 @@ init_vals (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /* Possibly retrieve data */
-      gimp_get_data (DATA_OPTIMIZE, &optimize);
-      had_saved_list = gimp_get_data (DATA_IMAGE_LIST, &multi_page);
+      picman_get_data (DATA_OPTIMIZE, &optimize);
+      had_saved_list = picman_get_data (DATA_IMAGE_LIST, &multi_page);
 
       if (had_saved_list && (file_name == NULL || strlen (file_name) == 0))
         {
@@ -669,11 +669,11 @@ init_vals (const gchar      *name,
         init_image_list_defaults (image);
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /* Possibly retrieve data */
       if (! single)
         {
-          had_saved_list = gimp_get_data (DATA_IMAGE_LIST, &multi_page);
+          had_saved_list = picman_get_data (DATA_IMAGE_LIST, &multi_page);
           if (had_saved_list)
             {
               file_name = multi_page.file_name;
@@ -683,7 +683,7 @@ init_vals (const gchar      *name,
         {
           init_image_list_defaults (image);
         }
-      gimp_get_data (DATA_OPTIMIZE, &optimize);
+      picman_get_data (DATA_OPTIMIZE, &optimize);
       break;
     }
 
@@ -721,7 +721,7 @@ validate_image_list (void)
 
   for (i = 0 ; i < MAX_PAGE_COUNT && i < multi_page.image_count ; i++)
     {
-      if (gimp_image_is_valid (multi_page.images[i]))
+      if (picman_image_is_valid (multi_page.images[i]))
         {
           multi_page.images[valid] = multi_page.images[i];
           valid++;
@@ -748,12 +748,12 @@ gui_single (void)
   GtkWidget *apply_c;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  window = gimp_export_dialog_new ("PDF", PLUG_IN_ROLE, SAVE_PROC);
+  window = picman_export_dialog_new ("PDF", PLUG_IN_ROLE, SAVE_PROC);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (window)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (window)),
                       vbox, TRUE, TRUE, 0);
 
   gtk_container_set_border_width (GTK_CONTAINER (window), 12);
@@ -772,7 +772,7 @@ gui_single (void)
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (apply_c),
                                 optimize.apply_masks);
   gtk_box_pack_end (GTK_BOX (vbox), apply_c, TRUE, TRUE, 0);
-  gimp_help_set_help_data (apply_c, _("Keeping the masks will not change the output"), NULL);
+  picman_help_set_help_data (apply_c, _("Keeping the masks will not change the output"), NULL);
 
   gtk_widget_show_all (window);
 
@@ -814,12 +814,12 @@ gui_multi (void)
   gboolean     run;
   const gchar *temp;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  window = gimp_export_dialog_new ("PDF", PLUG_IN_ROLE, SAVE_MULTI_PROC);
+  window = picman_export_dialog_new ("PDF", PLUG_IN_ROLE, SAVE_MULTI_PROC);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 10);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (window)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (window)),
                       vbox, TRUE, TRUE, 0);
 
   gtk_container_set_border_width (GTK_CONTAINER (window), 12);
@@ -872,7 +872,7 @@ gui_multi (void)
 
   h_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
 
-  img_combo = gimp_image_combo_box_new (NULL, NULL);
+  img_combo = picman_image_combo_box_new (NULL, NULL);
   gtk_box_pack_start (GTK_BOX (h_box), img_combo, FALSE, FALSE, 0);
 
   add_image = gtk_button_new_with_label (_("Add this image"));
@@ -894,7 +894,7 @@ gui_multi (void)
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (apply_c),
                                 optimize.apply_masks);
   gtk_box_pack_end (GTK_BOX (vbox), apply_c, FALSE, FALSE, 0);
-  gimp_help_set_help_data (apply_c, _("Keeping the masks will not change the output"), NULL);
+  picman_help_set_help_data (apply_c, _("Keeping the masks will not change the output"), NULL);
 
   gtk_widget_show_all (window);
 
@@ -977,14 +977,14 @@ create_model (void)
       gint32      image = multi_page.images[i];
       GdkPixbuf  *pixbuf;
 
-      pixbuf = gimp_image_get_thumbnail (image, THUMB_WIDTH, THUMB_HEIGHT,
-                                         GIMP_PIXBUF_SMALL_CHECKS);
+      pixbuf = picman_image_get_thumbnail (image, THUMB_WIDTH, THUMB_HEIGHT,
+                                         PICMAN_PIXBUF_SMALL_CHECKS);
 
       gtk_list_store_append (model, &iter);
       gtk_list_store_set (model, &iter,
                           THUMB,       pixbuf,
                           PAGE_NUMBER, g_strdup_printf (_("Page %d"), i + 1),
-                          IMAGE_NAME,  gimp_image_get_name (image),
+                          IMAGE_NAME,  picman_image_get_name (image),
                           IMAGE_ID,    image,
                           -1);
 
@@ -1042,19 +1042,19 @@ add_image_call (GtkWidget *widget,
 
   dnd_remove = FALSE;
 
-  gimp_int_combo_box_get_active (img_combo, &image);
+  picman_int_combo_box_get_active (img_combo, &image);
 
   store = GTK_LIST_STORE (model);
 
-  pixbuf = gimp_image_get_thumbnail (image, THUMB_WIDTH, THUMB_HEIGHT,
-                                     GIMP_PIXBUF_SMALL_CHECKS);
+  pixbuf = picman_image_get_thumbnail (image, THUMB_WIDTH, THUMB_HEIGHT,
+                                     PICMAN_PIXBUF_SMALL_CHECKS);
 
   gtk_list_store_append (store, &iter);
   gtk_list_store_set (store, &iter,
                       PAGE_NUMBER, g_strdup_printf (_("Page %d"),
                                                     multi_page.image_count+1),
                       THUMB,       pixbuf,
-                      IMAGE_NAME,  gimp_image_get_name (image),
+                      IMAGE_NAME,  picman_image_get_name (image),
                       IMAGE_ID,    image,
                       -1);
 
@@ -1170,19 +1170,19 @@ get_drawable_image (gint32 drawable_ID)
   gint             width;
   gint             height;
 
-  src_buffer = gimp_drawable_get_buffer (drawable_ID);
+  src_buffer = picman_drawable_get_buffer (drawable_ID);
 
   width  = gegl_buffer_get_width  (src_buffer);
   height = gegl_buffer_get_height (src_buffer);
 
-  if (gimp_drawable_has_alpha (drawable_ID))
+  if (picman_drawable_has_alpha (drawable_ID))
     format = CAIRO_FORMAT_ARGB32;
   else
     format = CAIRO_FORMAT_RGB24;
 
   surface = cairo_image_surface_create (format, width, height);
 
-  dest_buffer = gimp_cairo_surface_create_buffer (surface);
+  dest_buffer = picman_cairo_surface_create_buffer (surface);
 
   gegl_buffer_copy (src_buffer, NULL, dest_buffer, NULL);
 
@@ -1197,11 +1197,11 @@ get_drawable_image (gint32 drawable_ID)
 /* A function to check if a drawable is single colored This allows to
  * convert bitmaps to vector where possible
  */
-static GimpRGB
+static PicmanRGB
 get_layer_color (gint32    layer_ID,
                  gboolean *single)
 {
-  GimpRGB col;
+  PicmanRGB col;
   gdouble red, green, blue, alpha;
   gdouble dev, devSum;
   gdouble median, pixels, count, precentile;
@@ -1213,7 +1213,7 @@ get_layer_color (gint32    layer_ID,
   alpha = 0;
   dev = 0;
 
-  if (gimp_drawable_is_indexed (layer_ID))
+  if (picman_drawable_is_indexed (layer_ID))
     {
       /* FIXME: We can't do a propper histogram on indexed layers! */
       *single = FALSE;
@@ -1221,17 +1221,17 @@ get_layer_color (gint32    layer_ID,
       return col;
     }
 
-  if (gimp_drawable_bpp (layer_ID) >= 3)
+  if (picman_drawable_bpp (layer_ID) >= 3)
     {
       /* Are we in RGB mode? */
 
-      gimp_histogram (layer_ID, GIMP_HISTOGRAM_RED, 0, 255,
+      picman_histogram (layer_ID, PICMAN_HISTOGRAM_RED, 0, 255,
                       &red, &dev, &median, &pixels, &count, &precentile);
       devSum += dev;
-      gimp_histogram (layer_ID, GIMP_HISTOGRAM_GREEN, 0, 255,
+      picman_histogram (layer_ID, PICMAN_HISTOGRAM_GREEN, 0, 255,
                       &green, &dev, &median, &pixels, &count, &precentile);
       devSum += dev;
-      gimp_histogram (layer_ID, GIMP_HISTOGRAM_BLUE, 0, 255,
+      picman_histogram (layer_ID, PICMAN_HISTOGRAM_BLUE, 0, 255,
                       &blue, &dev, &median, &pixels, &count, &precentile);
       devSum += dev;
     }
@@ -1239,15 +1239,15 @@ get_layer_color (gint32    layer_ID,
     {
       /* We are in Grayscale mode (or Indexed) */
 
-      gimp_histogram (layer_ID, GIMP_HISTOGRAM_VALUE, 0, 255,
+      picman_histogram (layer_ID, PICMAN_HISTOGRAM_VALUE, 0, 255,
                       &red, &dev, &median, &pixels, &count, &precentile);
       devSum += dev;
       green = red;
       blue = red;
     }
 
-  if (gimp_drawable_has_alpha (layer_ID))
-    gimp_histogram (layer_ID, GIMP_HISTOGRAM_ALPHA, 0, 255,
+  if (picman_drawable_has_alpha (layer_ID))
+    picman_histogram (layer_ID, PICMAN_HISTOGRAM_ALPHA, 0, 255,
                     &alpha, &dev, &median, &pixels, &count, &precentile);
   else
     alpha = 255;
@@ -1264,7 +1264,7 @@ get_layer_color (gint32    layer_ID,
 }
 
 /* A function that uses Pango to render the text to our cairo surface,
- * in the same way it was the user saw it inside gimp.
+ * in the same way it was the user saw it inside picman.
  * Needs some work on choosing the font name better, and on hinting
  * (freetype and pango differences)
  */
@@ -1275,21 +1275,21 @@ drawText (gint32    text_id,
           gdouble   x_res,
           gdouble   y_res)
 {
-  GimpImageType         type   = gimp_drawable_type (text_id);
-  gchar                *text   = gimp_text_layer_get_text (text_id);
-  gchar                *markup = gimp_text_layer_get_markup (text_id);
+  PicmanImageType         type   = picman_drawable_type (text_id);
+  gchar                *text   = picman_text_layer_get_text (text_id);
+  gchar                *markup = picman_text_layer_get_markup (text_id);
   gchar                *font_family;
   cairo_font_options_t *options;
   gint                  x;
   gint                  y;
-  GimpRGB               color;
-  GimpUnit              unit;
+  PicmanRGB               color;
+  PicmanUnit              unit;
   gdouble               size;
-  GimpTextHintStyle     hinting;
-  GimpTextJustification j;
+  PicmanTextHintStyle     hinting;
+  PicmanTextJustification j;
   gboolean              justify;
   PangoAlignment        align;
-  GimpTextDirection     dir;
+  PicmanTextDirection     dir;
   PangoDirection        pango_dir;
   PangoLayout          *layout;
   PangoContext         *context;
@@ -1307,43 +1307,43 @@ drawText (gint32    text_id,
   cairo_get_font_options (cr, options);
 
   /* Position */
-  gimp_drawable_offsets (text_id, &x, &y);
+  picman_drawable_offsets (text_id, &x, &y);
   cairo_move_to (cr, x, y);
 
   /* Color */
   /* When dealing with a gray/indexed image, the viewed color of the text layer
    * can be different than the one kept in the memory */
-  if (type == GIMP_RGBA_IMAGE)
-    gimp_text_layer_get_color (text_id, &color);
+  if (type == PICMAN_RGBA_IMAGE)
+    picman_text_layer_get_color (text_id, &color);
   else
-    gimp_image_pick_color (gimp_item_get_image (text_id),
+    picman_image_pick_color (picman_item_get_image (text_id),
                            text_id, x, y, FALSE, FALSE, 0, &color);
 
   cairo_set_source_rgba (cr, color.r, color.g, color.b, opacity);
 
   /* Hinting */
-  hinting = gimp_text_layer_get_hint_style (text_id);
+  hinting = picman_text_layer_get_hint_style (text_id);
   switch (hinting)
     {
-    case GIMP_TEXT_HINT_STYLE_NONE:
+    case PICMAN_TEXT_HINT_STYLE_NONE:
       cairo_font_options_set_hint_style (options, CAIRO_HINT_STYLE_NONE);
       break;
 
-    case GIMP_TEXT_HINT_STYLE_SLIGHT:
+    case PICMAN_TEXT_HINT_STYLE_SLIGHT:
       cairo_font_options_set_hint_style (options, CAIRO_HINT_STYLE_SLIGHT);
       break;
 
-    case GIMP_TEXT_HINT_STYLE_MEDIUM:
+    case PICMAN_TEXT_HINT_STYLE_MEDIUM:
       cairo_font_options_set_hint_style (options, CAIRO_HINT_STYLE_MEDIUM);
       break;
 
-    case GIMP_TEXT_HINT_STYLE_FULL:
+    case PICMAN_TEXT_HINT_STYLE_FULL:
       cairo_font_options_set_hint_style (options, CAIRO_HINT_STYLE_FULL);
       break;
     }
 
   /* Antialiasing */
-  if (gimp_text_layer_get_antialias (text_id))
+  if (picman_text_layer_get_antialias (text_id))
     cairo_font_options_set_antialias (options, CAIRO_ANTIALIAS_DEFAULT);
   else
     cairo_font_options_set_antialias (options, CAIRO_ANTIALIAS_NONE);
@@ -1356,9 +1356,9 @@ drawText (gint32    text_id,
   pango_cairo_context_set_font_options (context, options);
 
   /* Text Direction */
-  dir = gimp_text_layer_get_base_direction (text_id);
+  dir = picman_text_layer_get_base_direction (text_id);
 
-  if (dir == GIMP_TEXT_DIRECTION_RTL)
+  if (dir == PICMAN_TEXT_DIRECTION_RTL)
     pango_dir = PANGO_DIRECTION_RTL;
   else
     pango_dir = PANGO_DIRECTION_LTR;
@@ -1371,37 +1371,37 @@ drawText (gint32    text_id,
   layout = pango_layout_new (context);
 
   /* Font */
-  font_family = gimp_text_layer_get_font (text_id);
+  font_family = picman_text_layer_get_font (text_id);
 
-  /* We need to find a way to convert GIMP's returned font name to a
-   * normal Pango name... Hopefully GIMP 2.8 with Pango will fix it.
+  /* We need to find a way to convert PICMAN's returned font name to a
+   * normal Pango name... Hopefully PICMAN 2.8 with Pango will fix it.
    */
   font_description = pango_font_description_from_string (font_family);
 
   /* Font Size */
-  size = gimp_text_layer_get_font_size (text_id, &unit);
-  size = gimp_units_to_pixels (size, unit, y_res);
+  size = picman_text_layer_get_font_size (text_id, &unit);
+  size = picman_units_to_pixels (size, unit, y_res);
   pango_font_description_set_absolute_size (font_description, size * PANGO_SCALE);
 
   pango_layout_set_font_description (layout, font_description);
 
   /* Width and height */
-  pango_layout_set_width (layout, gimp_drawable_width (text_id) * PANGO_SCALE);
-  pango_layout_set_height (layout, gimp_drawable_height (text_id) * PANGO_SCALE);
+  pango_layout_set_width (layout, picman_drawable_width (text_id) * PANGO_SCALE);
+  pango_layout_set_height (layout, picman_drawable_height (text_id) * PANGO_SCALE);
 
   /* Justification, and Alignment */
   justify = FALSE;
-  j = gimp_text_layer_get_justification (text_id);
+  j = picman_text_layer_get_justification (text_id);
 
-  if (j == GIMP_TEXT_JUSTIFY_CENTER)
+  if (j == PICMAN_TEXT_JUSTIFY_CENTER)
     align = PANGO_ALIGN_CENTER;
-  else if (j == GIMP_TEXT_JUSTIFY_LEFT)
+  else if (j == PICMAN_TEXT_JUSTIFY_LEFT)
     align = PANGO_ALIGN_LEFT;
-  else if (j == GIMP_TEXT_JUSTIFY_RIGHT)
+  else if (j == PICMAN_TEXT_JUSTIFY_RIGHT)
     align = PANGO_ALIGN_RIGHT;
-  else /* We have GIMP_TEXT_JUSTIFY_FILL */
+  else /* We have PICMAN_TEXT_JUSTIFY_FILL */
     {
-      if (dir == GIMP_TEXT_DIRECTION_LTR)
+      if (dir == PICMAN_TEXT_DIRECTION_LTR)
         align = PANGO_ALIGN_LEFT;
       else
         align = PANGO_ALIGN_RIGHT;
@@ -1409,15 +1409,15 @@ drawText (gint32    text_id,
     }
 
   /* Indentation */
-  indent = gimp_text_layer_get_indent (text_id);
+  indent = picman_text_layer_get_indent (text_id);
   pango_layout_set_indent (layout, (int)(PANGO_SCALE * indent));
 
   /* Line Spacing */
-  line_spacing = gimp_text_layer_get_line_spacing (text_id);
+  line_spacing = picman_text_layer_get_line_spacing (text_id);
   pango_layout_set_spacing (layout, (int)(PANGO_SCALE * line_spacing));
 
   /* Letter Spacing */
-  letter_spacing = gimp_text_layer_get_letter_spacing (text_id);
+  letter_spacing = picman_text_layer_get_letter_spacing (text_id);
   letter_spacing_at = pango_attr_letter_spacing_new ((int)(PANGO_SCALE * letter_spacing));
   pango_attr_list_insert (attr_list, letter_spacing_at);
 

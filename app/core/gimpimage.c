@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,55 +24,55 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "gegl/gimp-babl.h"
+#include "gegl/picman-babl.h"
 
-#include "gimp.h"
-#include "gimp-parasites.h"
-#include "gimp-utils.h"
-#include "gimpcontext.h"
-#include "gimpdrawablestack.h"
-#include "gimpgrid.h"
-#include "gimperror.h"
-#include "gimpguide.h"
-#include "gimpidtable.h"
-#include "gimpimage.h"
-#include "gimpimage-colormap.h"
-#include "gimpimage-guides.h"
-#include "gimpimage-sample-points.h"
-#include "gimpimage-preview.h"
-#include "gimpimage-private.h"
-#include "gimpimage-quick-mask.h"
-#include "gimpimage-undo.h"
-#include "gimpimage-undo-push.h"
-#include "gimpitemtree.h"
-#include "gimplayer.h"
-#include "gimplayer-floating-sel.h"
-#include "gimplayermask.h"
-#include "gimpmarshal.h"
-#include "gimpparasitelist.h"
-#include "gimppickable.h"
-#include "gimpprojectable.h"
-#include "gimpprojection.h"
-#include "gimpsamplepoint.h"
-#include "gimpselection.h"
-#include "gimptempbuf.h"
-#include "gimptemplate.h"
-#include "gimpundostack.h"
+#include "picman.h"
+#include "picman-parasites.h"
+#include "picman-utils.h"
+#include "picmancontext.h"
+#include "picmandrawablestack.h"
+#include "picmangrid.h"
+#include "picmanerror.h"
+#include "picmanguide.h"
+#include "picmanidtable.h"
+#include "picmanimage.h"
+#include "picmanimage-colormap.h"
+#include "picmanimage-guides.h"
+#include "picmanimage-sample-points.h"
+#include "picmanimage-preview.h"
+#include "picmanimage-private.h"
+#include "picmanimage-quick-mask.h"
+#include "picmanimage-undo.h"
+#include "picmanimage-undo-push.h"
+#include "picmanitemtree.h"
+#include "picmanlayer.h"
+#include "picmanlayer-floating-sel.h"
+#include "picmanlayermask.h"
+#include "picmanmarshal.h"
+#include "picmanparasitelist.h"
+#include "picmanpickable.h"
+#include "picmanprojectable.h"
+#include "picmanprojection.h"
+#include "picmansamplepoint.h"
+#include "picmanselection.h"
+#include "picmantempbuf.h"
+#include "picmantemplate.h"
+#include "picmanundostack.h"
 
 #include "file/file-utils.h"
 
-#include "vectors/gimpvectors.h"
+#include "vectors/picmanvectors.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #ifdef DEBUG
@@ -81,10 +81,10 @@
 #define TRC(x)
 #endif
 
-/* Data keys for GimpImage */
-#define GIMP_FILE_EXPORT_URI_KEY        "gimp-file-export-uri"
-#define GIMP_FILE_SAVE_A_COPY_URI_KEY   "gimp-file-save-a-copy-uri"
-#define GIMP_FILE_IMPORT_SOURCE_URI_KEY "gimp-file-import-source-uri"
+/* Data keys for PicmanImage */
+#define PICMAN_FILE_EXPORT_URI_KEY        "picman-file-export-uri"
+#define PICMAN_FILE_SAVE_A_COPY_URI_KEY   "picman-file-save-a-copy-uri"
+#define PICMAN_FILE_IMPORT_SOURCE_URI_KEY "picman-file-import-source-uri"
 
 
 enum
@@ -124,7 +124,7 @@ enum
 enum
 {
   PROP_0,
-  PROP_GIMP,
+  PROP_PICMAN,
   PROP_ID,
   PROP_WIDTH,
   PROP_HEIGHT,
@@ -135,400 +135,400 @@ enum
 
 /*  local function prototypes  */
 
-static void     gimp_color_managed_iface_init    (GimpColorManagedInterface *iface);
-static void     gimp_projectable_iface_init      (GimpProjectableInterface  *iface);
+static void     picman_color_managed_iface_init    (PicmanColorManagedInterface *iface);
+static void     picman_projectable_iface_init      (PicmanProjectableInterface  *iface);
 
-static void     gimp_image_constructed           (GObject           *object);
-static void     gimp_image_set_property          (GObject           *object,
+static void     picman_image_constructed           (GObject           *object);
+static void     picman_image_set_property          (GObject           *object,
                                                   guint              property_id,
                                                   const GValue      *value,
                                                   GParamSpec        *pspec);
-static void     gimp_image_get_property          (GObject           *object,
+static void     picman_image_get_property          (GObject           *object,
                                                   guint              property_id,
                                                   GValue            *value,
                                                   GParamSpec        *pspec);
-static void     gimp_image_dispose               (GObject           *object);
-static void     gimp_image_finalize              (GObject           *object);
+static void     picman_image_dispose               (GObject           *object);
+static void     picman_image_finalize              (GObject           *object);
 
-static void     gimp_image_name_changed          (GimpObject        *object);
-static gint64   gimp_image_get_memsize           (GimpObject        *object,
+static void     picman_image_name_changed          (PicmanObject        *object);
+static gint64   picman_image_get_memsize           (PicmanObject        *object,
                                                   gint64            *gui_size);
 
-static gboolean gimp_image_get_size              (GimpViewable      *viewable,
+static gboolean picman_image_get_size              (PicmanViewable      *viewable,
                                                   gint              *width,
                                                   gint              *height);
-static void     gimp_image_size_changed          (GimpViewable      *viewable);
-static gchar  * gimp_image_get_description       (GimpViewable      *viewable,
+static void     picman_image_size_changed          (PicmanViewable      *viewable);
+static gchar  * picman_image_get_description       (PicmanViewable      *viewable,
                                                   gchar            **tooltip);
 
-static void     gimp_image_real_mode_changed     (GimpImage         *image);
-static void     gimp_image_real_precision_changed(GimpImage         *image);
-static void     gimp_image_real_size_changed_detailed
-                                                 (GimpImage         *image,
+static void     picman_image_real_mode_changed     (PicmanImage         *image);
+static void     picman_image_real_precision_changed(PicmanImage         *image);
+static void     picman_image_real_size_changed_detailed
+                                                 (PicmanImage         *image,
                                                   gint               previous_origin_x,
                                                   gint               previous_origin_y,
                                                   gint               previous_width,
                                                   gint               previous_height);
-static void     gimp_image_real_colormap_changed (GimpImage         *image,
+static void     picman_image_real_colormap_changed (PicmanImage         *image,
                                                   gint               color_index);
 
-static const guint8 * gimp_image_get_icc_profile (GimpColorManaged  *managed,
+static const guint8 * picman_image_get_icc_profile (PicmanColorManaged  *managed,
                                                   gsize             *len);
 
-static void        gimp_image_projectable_flush  (GimpProjectable   *projectable,
+static void        picman_image_projectable_flush  (PicmanProjectable   *projectable,
                                                   gboolean           invalidate_preview);
-static GeglNode   * gimp_image_get_graph         (GimpProjectable   *projectable);
-static GimpImage  * gimp_image_get_image         (GimpProjectable   *projectable);
-static const Babl * gimp_image_get_proj_format   (GimpProjectable   *projectable);
+static GeglNode   * picman_image_get_graph         (PicmanProjectable   *projectable);
+static PicmanImage  * picman_image_get_image         (PicmanProjectable   *projectable);
+static const Babl * picman_image_get_proj_format   (PicmanProjectable   *projectable);
 
-static void     gimp_image_mask_update           (GimpDrawable      *drawable,
+static void     picman_image_mask_update           (PicmanDrawable      *drawable,
                                                   gint               x,
                                                   gint               y,
                                                   gint               width,
                                                   gint               height,
-                                                  GimpImage         *image);
-static void     gimp_image_layer_alpha_changed   (GimpDrawable      *drawable,
-                                                  GimpImage         *image);
-static void     gimp_image_channel_add           (GimpContainer     *container,
-                                                  GimpChannel       *channel,
-                                                  GimpImage         *image);
-static void     gimp_image_channel_remove        (GimpContainer     *container,
-                                                  GimpChannel       *channel,
-                                                  GimpImage         *image);
-static void     gimp_image_channel_name_changed  (GimpChannel       *channel,
-                                                  GimpImage         *image);
-static void     gimp_image_channel_color_changed (GimpChannel       *channel,
-                                                  GimpImage         *image);
-static void     gimp_image_active_layer_notify   (GimpItemTree      *tree,
+                                                  PicmanImage         *image);
+static void     picman_image_layer_alpha_changed   (PicmanDrawable      *drawable,
+                                                  PicmanImage         *image);
+static void     picman_image_channel_add           (PicmanContainer     *container,
+                                                  PicmanChannel       *channel,
+                                                  PicmanImage         *image);
+static void     picman_image_channel_remove        (PicmanContainer     *container,
+                                                  PicmanChannel       *channel,
+                                                  PicmanImage         *image);
+static void     picman_image_channel_name_changed  (PicmanChannel       *channel,
+                                                  PicmanImage         *image);
+static void     picman_image_channel_color_changed (PicmanChannel       *channel,
+                                                  PicmanImage         *image);
+static void     picman_image_active_layer_notify   (PicmanItemTree      *tree,
                                                   const GParamSpec  *pspec,
-                                                  GimpImage         *image);
-static void     gimp_image_active_channel_notify (GimpItemTree      *tree,
+                                                  PicmanImage         *image);
+static void     picman_image_active_channel_notify (PicmanItemTree      *tree,
                                                   const GParamSpec  *pspec,
-                                                  GimpImage         *image);
-static void     gimp_image_active_vectors_notify (GimpItemTree      *tree,
+                                                  PicmanImage         *image);
+static void     picman_image_active_vectors_notify (PicmanItemTree      *tree,
                                                   const GParamSpec  *pspec,
-                                                  GimpImage         *image);
+                                                  PicmanImage         *image);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpImage, gimp_image, GIMP_TYPE_VIEWABLE,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_COLOR_MANAGED,
-                                                gimp_color_managed_iface_init)
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PROJECTABLE,
-                                                gimp_projectable_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanImage, picman_image, PICMAN_TYPE_VIEWABLE,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_COLOR_MANAGED,
+                                                picman_color_managed_iface_init)
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PROJECTABLE,
+                                                picman_projectable_iface_init))
 
-#define parent_class gimp_image_parent_class
+#define parent_class picman_image_parent_class
 
-static guint gimp_image_signals[LAST_SIGNAL] = { 0 };
+static guint picman_image_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_image_class_init (GimpImageClass *klass)
+picman_image_class_init (PicmanImageClass *klass)
 {
   GObjectClass      *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass   *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class    = GIMP_VIEWABLE_CLASS (klass);
+  PicmanObjectClass   *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanViewableClass *viewable_class    = PICMAN_VIEWABLE_CLASS (klass);
 
-  gimp_image_signals[MODE_CHANGED] =
+  picman_image_signals[MODE_CHANGED] =
     g_signal_new ("mode-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, mode_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, mode_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  gimp_image_signals[PRECISION_CHANGED] =
+  picman_image_signals[PRECISION_CHANGED] =
     g_signal_new ("precision-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, precision_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, precision_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  gimp_image_signals[ALPHA_CHANGED] =
+  picman_image_signals[ALPHA_CHANGED] =
     g_signal_new ("alpha-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, alpha_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, alpha_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  gimp_image_signals[FLOATING_SELECTION_CHANGED] =
+  picman_image_signals[FLOATING_SELECTION_CHANGED] =
     g_signal_new ("floating-selection-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, floating_selection_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, floating_selection_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  gimp_image_signals[ACTIVE_LAYER_CHANGED] =
+  picman_image_signals[ACTIVE_LAYER_CHANGED] =
     g_signal_new ("active-layer-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, active_layer_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, active_layer_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  gimp_image_signals[ACTIVE_CHANNEL_CHANGED] =
+  picman_image_signals[ACTIVE_CHANNEL_CHANGED] =
     g_signal_new ("active-channel-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, active_channel_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, active_channel_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  gimp_image_signals[ACTIVE_VECTORS_CHANGED] =
+  picman_image_signals[ACTIVE_VECTORS_CHANGED] =
     g_signal_new ("active-vectors-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, active_vectors_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, active_vectors_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  gimp_image_signals[COMPONENT_VISIBILITY_CHANGED] =
+  picman_image_signals[COMPONENT_VISIBILITY_CHANGED] =
     g_signal_new ("component-visibility-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, component_visibility_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, component_visibility_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__ENUM,
+                  picman_marshal_VOID__ENUM,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_CHANNEL_TYPE);
+                  PICMAN_TYPE_CHANNEL_TYPE);
 
-  gimp_image_signals[COMPONENT_ACTIVE_CHANGED] =
+  picman_image_signals[COMPONENT_ACTIVE_CHANGED] =
     g_signal_new ("component-active-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, component_active_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, component_active_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__ENUM,
+                  picman_marshal_VOID__ENUM,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_CHANNEL_TYPE);
+                  PICMAN_TYPE_CHANNEL_TYPE);
 
-  gimp_image_signals[MASK_CHANGED] =
+  picman_image_signals[MASK_CHANGED] =
     g_signal_new ("mask-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, mask_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, mask_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  gimp_image_signals[RESOLUTION_CHANGED] =
+  picman_image_signals[RESOLUTION_CHANGED] =
     g_signal_new ("resolution-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, resolution_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, resolution_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  gimp_image_signals[SIZE_CHANGED_DETAILED] =
+  picman_image_signals[SIZE_CHANGED_DETAILED] =
     g_signal_new ("size-changed-detailed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, size_changed_detailed),
+                  G_STRUCT_OFFSET (PicmanImageClass, size_changed_detailed),
                   NULL, NULL,
-                  gimp_marshal_VOID__INT_INT_INT_INT,
+                  picman_marshal_VOID__INT_INT_INT_INT,
                   G_TYPE_NONE, 4,
                   G_TYPE_INT,
                   G_TYPE_INT,
                   G_TYPE_INT,
                   G_TYPE_INT);
 
-  gimp_image_signals[UNIT_CHANGED] =
+  picman_image_signals[UNIT_CHANGED] =
     g_signal_new ("unit-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, unit_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, unit_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  gimp_image_signals[QUICK_MASK_CHANGED] =
+  picman_image_signals[QUICK_MASK_CHANGED] =
     g_signal_new ("quick-mask-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, quick_mask_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, quick_mask_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  gimp_image_signals[SELECTION_INVALIDATE] =
+  picman_image_signals[SELECTION_INVALIDATE] =
     g_signal_new ("selection-invalidate",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, selection_invalidate),
+                  G_STRUCT_OFFSET (PicmanImageClass, selection_invalidate),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  gimp_image_signals[CLEAN] =
+  picman_image_signals[CLEAN] =
     g_signal_new ("clean",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, clean),
+                  G_STRUCT_OFFSET (PicmanImageClass, clean),
                   NULL, NULL,
-                  gimp_marshal_VOID__FLAGS,
+                  picman_marshal_VOID__FLAGS,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_DIRTY_MASK);
+                  PICMAN_TYPE_DIRTY_MASK);
 
-  gimp_image_signals[DIRTY] =
+  picman_image_signals[DIRTY] =
     g_signal_new ("dirty",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, dirty),
+                  G_STRUCT_OFFSET (PicmanImageClass, dirty),
                   NULL, NULL,
-                  gimp_marshal_VOID__FLAGS,
+                  picman_marshal_VOID__FLAGS,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_DIRTY_MASK);
+                  PICMAN_TYPE_DIRTY_MASK);
 
-  gimp_image_signals[SAVED] =
+  picman_image_signals[SAVED] =
     g_signal_new ("saved",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, saved),
+                  G_STRUCT_OFFSET (PicmanImageClass, saved),
                   NULL, NULL,
-                  gimp_marshal_VOID__STRING,
+                  picman_marshal_VOID__STRING,
                   G_TYPE_NONE, 1,
                   G_TYPE_STRING);
 
-  gimp_image_signals[EXPORTED] =
+  picman_image_signals[EXPORTED] =
     g_signal_new ("exported",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, exported),
+                  G_STRUCT_OFFSET (PicmanImageClass, exported),
                   NULL, NULL,
-                  gimp_marshal_VOID__STRING,
+                  picman_marshal_VOID__STRING,
                   G_TYPE_NONE, 1,
                   G_TYPE_STRING);
 
-  gimp_image_signals[GUIDE_ADDED] =
+  picman_image_signals[GUIDE_ADDED] =
     g_signal_new ("guide-added",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, guide_added),
+                  G_STRUCT_OFFSET (PicmanImageClass, guide_added),
                   NULL, NULL,
-                  gimp_marshal_VOID__OBJECT,
+                  picman_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_GUIDE);
+                  PICMAN_TYPE_GUIDE);
 
-  gimp_image_signals[GUIDE_REMOVED] =
+  picman_image_signals[GUIDE_REMOVED] =
     g_signal_new ("guide-removed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, guide_removed),
+                  G_STRUCT_OFFSET (PicmanImageClass, guide_removed),
                   NULL, NULL,
-                  gimp_marshal_VOID__OBJECT,
+                  picman_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_GUIDE);
+                  PICMAN_TYPE_GUIDE);
 
-  gimp_image_signals[GUIDE_MOVED] =
+  picman_image_signals[GUIDE_MOVED] =
     g_signal_new ("guide-moved",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, guide_moved),
+                  G_STRUCT_OFFSET (PicmanImageClass, guide_moved),
                   NULL, NULL,
-                  gimp_marshal_VOID__OBJECT,
+                  picman_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_GUIDE);
+                  PICMAN_TYPE_GUIDE);
 
-  gimp_image_signals[SAMPLE_POINT_ADDED] =
+  picman_image_signals[SAMPLE_POINT_ADDED] =
     g_signal_new ("sample-point-added",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, sample_point_added),
+                  G_STRUCT_OFFSET (PicmanImageClass, sample_point_added),
                   NULL, NULL,
-                  gimp_marshal_VOID__POINTER,
+                  picman_marshal_VOID__POINTER,
                   G_TYPE_NONE, 1,
                   G_TYPE_POINTER);
 
-  gimp_image_signals[SAMPLE_POINT_REMOVED] =
+  picman_image_signals[SAMPLE_POINT_REMOVED] =
     g_signal_new ("sample-point-removed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, sample_point_removed),
+                  G_STRUCT_OFFSET (PicmanImageClass, sample_point_removed),
                   NULL, NULL,
-                  gimp_marshal_VOID__POINTER,
+                  picman_marshal_VOID__POINTER,
                   G_TYPE_NONE, 1,
                   G_TYPE_POINTER);
 
-  gimp_image_signals[SAMPLE_POINT_MOVED] =
+  picman_image_signals[SAMPLE_POINT_MOVED] =
     g_signal_new ("sample-point-moved",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, sample_point_moved),
+                  G_STRUCT_OFFSET (PicmanImageClass, sample_point_moved),
                   NULL, NULL,
-                  gimp_marshal_VOID__POINTER,
+                  picman_marshal_VOID__POINTER,
                   G_TYPE_NONE, 1,
                   G_TYPE_POINTER);
 
-  gimp_image_signals[PARASITE_ATTACHED] =
+  picman_image_signals[PARASITE_ATTACHED] =
     g_signal_new ("parasite-attached",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, parasite_attached),
+                  G_STRUCT_OFFSET (PicmanImageClass, parasite_attached),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__STRING,
                   G_TYPE_NONE, 1,
                   G_TYPE_STRING);
 
-  gimp_image_signals[PARASITE_DETACHED] =
+  picman_image_signals[PARASITE_DETACHED] =
     g_signal_new ("parasite-detached",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, parasite_detached),
+                  G_STRUCT_OFFSET (PicmanImageClass, parasite_detached),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__STRING,
                   G_TYPE_NONE, 1,
                   G_TYPE_STRING);
 
-  gimp_image_signals[COLORMAP_CHANGED] =
+  picman_image_signals[COLORMAP_CHANGED] =
     g_signal_new ("colormap-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, colormap_changed),
+                  G_STRUCT_OFFSET (PicmanImageClass, colormap_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__INT,
+                  picman_marshal_VOID__INT,
                   G_TYPE_NONE, 1,
                   G_TYPE_INT);
 
-  gimp_image_signals[UNDO_EVENT] =
+  picman_image_signals[UNDO_EVENT] =
     g_signal_new ("undo-event",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageClass, undo_event),
+                  G_STRUCT_OFFSET (PicmanImageClass, undo_event),
                   NULL, NULL,
-                  gimp_marshal_VOID__ENUM_OBJECT,
+                  picman_marshal_VOID__ENUM_OBJECT,
                   G_TYPE_NONE, 2,
-                  GIMP_TYPE_UNDO_EVENT,
-                  GIMP_TYPE_UNDO);
+                  PICMAN_TYPE_UNDO_EVENT,
+                  PICMAN_TYPE_UNDO);
 
-  object_class->constructed           = gimp_image_constructed;
-  object_class->set_property          = gimp_image_set_property;
-  object_class->get_property          = gimp_image_get_property;
-  object_class->dispose               = gimp_image_dispose;
-  object_class->finalize              = gimp_image_finalize;
+  object_class->constructed           = picman_image_constructed;
+  object_class->set_property          = picman_image_set_property;
+  object_class->get_property          = picman_image_get_property;
+  object_class->dispose               = picman_image_dispose;
+  object_class->finalize              = picman_image_finalize;
 
-  gimp_object_class->name_changed     = gimp_image_name_changed;
-  gimp_object_class->get_memsize      = gimp_image_get_memsize;
+  picman_object_class->name_changed     = picman_image_name_changed;
+  picman_object_class->get_memsize      = picman_image_get_memsize;
 
-  viewable_class->default_stock_id    = "gimp-image";
-  viewable_class->get_size            = gimp_image_get_size;
-  viewable_class->size_changed        = gimp_image_size_changed;
-  viewable_class->get_preview_size    = gimp_image_get_preview_size;
-  viewable_class->get_popup_size      = gimp_image_get_popup_size;
-  viewable_class->get_new_preview     = gimp_image_get_new_preview;
-  viewable_class->get_description     = gimp_image_get_description;
+  viewable_class->default_stock_id    = "picman-image";
+  viewable_class->get_size            = picman_image_get_size;
+  viewable_class->size_changed        = picman_image_size_changed;
+  viewable_class->get_preview_size    = picman_image_get_preview_size;
+  viewable_class->get_popup_size      = picman_image_get_popup_size;
+  viewable_class->get_new_preview     = picman_image_get_new_preview;
+  viewable_class->get_description     = picman_image_get_description;
 
-  klass->mode_changed                 = gimp_image_real_mode_changed;
-  klass->precision_changed            = gimp_image_real_precision_changed;
+  klass->mode_changed                 = picman_image_real_mode_changed;
+  klass->precision_changed            = picman_image_real_precision_changed;
   klass->alpha_changed                = NULL;
   klass->floating_selection_changed   = NULL;
   klass->active_layer_changed         = NULL;
@@ -538,7 +538,7 @@ gimp_image_class_init (GimpImageClass *klass)
   klass->component_active_changed     = NULL;
   klass->mask_changed                 = NULL;
   klass->resolution_changed           = NULL;
-  klass->size_changed_detailed        = gimp_image_real_size_changed_detailed;
+  klass->size_changed_detailed        = picman_image_real_size_changed_detailed;
   klass->unit_changed                 = NULL;
   klass->quick_mask_changed           = NULL;
   klass->selection_invalidate         = NULL;
@@ -555,70 +555,70 @@ gimp_image_class_init (GimpImageClass *klass)
   klass->sample_point_moved           = NULL;
   klass->parasite_attached            = NULL;
   klass->parasite_detached            = NULL;
-  klass->colormap_changed             = gimp_image_real_colormap_changed;
+  klass->colormap_changed             = picman_image_real_colormap_changed;
   klass->undo_event                   = NULL;
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp", NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman", NULL, NULL,
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_ID,
                                    g_param_spec_int ("id", NULL, NULL,
                                                      0, G_MAXINT, 0,
-                                                     GIMP_PARAM_READABLE));
+                                                     PICMAN_PARAM_READABLE));
 
   g_object_class_install_property (object_class, PROP_WIDTH,
                                    g_param_spec_int ("width", NULL, NULL,
-                                                     1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                     GIMP_PARAM_READWRITE |
+                                                     1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                     PICMAN_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_HEIGHT,
                                    g_param_spec_int ("height", NULL, NULL,
-                                                     1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                     GIMP_PARAM_READWRITE |
+                                                     1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                     PICMAN_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_BASE_TYPE,
                                    g_param_spec_enum ("base-type", NULL, NULL,
-                                                      GIMP_TYPE_IMAGE_BASE_TYPE,
-                                                      GIMP_RGB,
-                                                      GIMP_PARAM_READWRITE |
+                                                      PICMAN_TYPE_IMAGE_BASE_TYPE,
+                                                      PICMAN_RGB,
+                                                      PICMAN_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_PRECISION,
                                    g_param_spec_enum ("precision", NULL, NULL,
-                                                      GIMP_TYPE_PRECISION,
-                                                      GIMP_PRECISION_U8,
-                                                      GIMP_PARAM_READWRITE |
+                                                      PICMAN_TYPE_PRECISION,
+                                                      PICMAN_PRECISION_U8,
+                                                      PICMAN_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 
-  g_type_class_add_private (klass, sizeof (GimpImagePrivate));
+  g_type_class_add_private (klass, sizeof (PicmanImagePrivate));
 }
 
 static void
-gimp_color_managed_iface_init (GimpColorManagedInterface *iface)
+picman_color_managed_iface_init (PicmanColorManagedInterface *iface)
 {
-  iface->get_icc_profile = gimp_image_get_icc_profile;
+  iface->get_icc_profile = picman_image_get_icc_profile;
 }
 
 static void
-gimp_projectable_iface_init (GimpProjectableInterface *iface)
+picman_projectable_iface_init (PicmanProjectableInterface *iface)
 {
-  iface->flush              = gimp_image_projectable_flush;
-  iface->get_image          = gimp_image_get_image;
-  iface->get_format         = gimp_image_get_proj_format;
-  iface->get_size           = (void (*) (GimpProjectable*, gint*, gint*)) gimp_image_get_size;
-  iface->get_graph          = gimp_image_get_graph;
-  iface->invalidate_preview = (void (*) (GimpProjectable*)) gimp_viewable_invalidate_preview;
+  iface->flush              = picman_image_projectable_flush;
+  iface->get_image          = picman_image_get_image;
+  iface->get_format         = picman_image_get_proj_format;
+  iface->get_size           = (void (*) (PicmanProjectable*, gint*, gint*)) picman_image_get_size;
+  iface->get_graph          = picman_image_get_graph;
+  iface->invalidate_preview = (void (*) (PicmanProjectable*)) picman_viewable_invalidate_preview;
 }
 
 static void
-gimp_image_init (GimpImage *image)
+picman_image_init (PicmanImage *image)
 {
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
   gint              i;
 
   private->ID                  = 0;
@@ -630,9 +630,9 @@ gimp_image_init (GimpImage *image)
   private->height              = 0;
   private->xresolution         = 1.0;
   private->yresolution         = 1.0;
-  private->resolution_unit     = GIMP_UNIT_INCH;
-  private->base_type           = GIMP_RGB;
-  private->precision           = GIMP_PRECISION_U8;
+  private->resolution_unit     = PICMAN_UNIT_INCH;
+  private->base_type           = PICMAN_RGB;
+  private->precision           = PICMAN_PRECISION_U8;
 
   private->colormap            = NULL;
   private->n_colors            = 0;
@@ -649,66 +649,66 @@ gimp_image_init (GimpImage *image)
 
   private->tattoo_state        = 0;
 
-  private->projection          = gimp_projection_new (GIMP_PROJECTABLE (image));
+  private->projection          = picman_projection_new (PICMAN_PROJECTABLE (image));
 
   private->guides              = NULL;
   private->grid                = NULL;
   private->sample_points       = NULL;
 
-  private->layers              = gimp_item_tree_new (image,
-                                                     GIMP_TYPE_DRAWABLE_STACK,
-                                                     GIMP_TYPE_LAYER);
-  private->channels            = gimp_item_tree_new (image,
-                                                     GIMP_TYPE_DRAWABLE_STACK,
-                                                     GIMP_TYPE_CHANNEL);
-  private->vectors             = gimp_item_tree_new (image,
-                                                     GIMP_TYPE_ITEM_STACK,
-                                                     GIMP_TYPE_VECTORS);
+  private->layers              = picman_item_tree_new (image,
+                                                     PICMAN_TYPE_DRAWABLE_STACK,
+                                                     PICMAN_TYPE_LAYER);
+  private->channels            = picman_item_tree_new (image,
+                                                     PICMAN_TYPE_DRAWABLE_STACK,
+                                                     PICMAN_TYPE_CHANNEL);
+  private->vectors             = picman_item_tree_new (image,
+                                                     PICMAN_TYPE_ITEM_STACK,
+                                                     PICMAN_TYPE_VECTORS);
   private->layer_stack         = NULL;
 
   g_signal_connect (private->layers, "notify::active-item",
-                    G_CALLBACK (gimp_image_active_layer_notify),
+                    G_CALLBACK (picman_image_active_layer_notify),
                     image);
   g_signal_connect (private->channels, "notify::active-item",
-                    G_CALLBACK (gimp_image_active_channel_notify),
+                    G_CALLBACK (picman_image_active_channel_notify),
                     image);
   g_signal_connect (private->vectors, "notify::active-item",
-                    G_CALLBACK (gimp_image_active_vectors_notify),
+                    G_CALLBACK (picman_image_active_vectors_notify),
                     image);
 
   g_signal_connect_swapped (private->layers->container, "update",
-                            G_CALLBACK (gimp_image_invalidate),
+                            G_CALLBACK (picman_image_invalidate),
                             image);
 
   private->layer_alpha_handler =
-    gimp_container_add_handler (private->layers->container, "alpha-changed",
-                                G_CALLBACK (gimp_image_layer_alpha_changed),
+    picman_container_add_handler (private->layers->container, "alpha-changed",
+                                G_CALLBACK (picman_image_layer_alpha_changed),
                                 image);
 
   g_signal_connect_swapped (private->channels->container, "update",
-                            G_CALLBACK (gimp_image_invalidate),
+                            G_CALLBACK (picman_image_invalidate),
                             image);
 
   private->channel_name_changed_handler =
-    gimp_container_add_handler (private->channels->container, "name-changed",
-                                G_CALLBACK (gimp_image_channel_name_changed),
+    picman_container_add_handler (private->channels->container, "name-changed",
+                                G_CALLBACK (picman_image_channel_name_changed),
                                 image);
   private->channel_color_changed_handler =
-    gimp_container_add_handler (private->channels->container, "color-changed",
-                                G_CALLBACK (gimp_image_channel_color_changed),
+    picman_container_add_handler (private->channels->container, "color-changed",
+                                G_CALLBACK (picman_image_channel_color_changed),
                                 image);
 
   g_signal_connect (private->channels->container, "add",
-                    G_CALLBACK (gimp_image_channel_add),
+                    G_CALLBACK (picman_image_channel_add),
                     image);
   g_signal_connect (private->channels->container, "remove",
-                    G_CALLBACK (gimp_image_channel_remove),
+                    G_CALLBACK (picman_image_channel_remove),
                     image);
 
   private->floating_sel        = NULL;
   private->selection_mask      = NULL;
 
-  private->parasites           = gimp_parasite_list_new ();
+  private->parasites           = picman_parasite_list_new ();
 
   for (i = 0; i < MAX_CHANNELS; i++)
     {
@@ -718,12 +718,12 @@ gimp_image_init (GimpImage *image)
 
   private->quick_mask_state    = FALSE;
   private->quick_mask_inverted = FALSE;
-  gimp_rgba_set (&private->quick_mask_color, 1.0, 0.0, 0.0, 0.5);
+  picman_rgba_set (&private->quick_mask_color, 1.0, 0.0, 0.0, 0.5);
 
-  private->undo_stack          = gimp_undo_stack_new (image);
-  private->redo_stack          = gimp_undo_stack_new (image);
+  private->undo_stack          = picman_undo_stack_new (image);
+  private->redo_stack          = picman_undo_stack_new (image);
   private->group_count         = 0;
-  private->pushing_undo_group  = GIMP_UNDO_GROUP_NONE;
+  private->pushing_undo_group  = PICMAN_UNDO_GROUP_NONE;
 
   private->flush_accum.alpha_changed              = FALSE;
   private->flush_accum.mask_changed               = FALSE;
@@ -732,66 +732,66 @@ gimp_image_init (GimpImage *image)
 }
 
 static void
-gimp_image_constructed (GObject *object)
+picman_image_constructed (GObject *object)
 {
-  GimpImage        *image   = GIMP_IMAGE (object);
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
-  GimpChannel      *selection;
-  GimpCoreConfig   *config;
-  GimpTemplate     *template;
+  PicmanImage        *image   = PICMAN_IMAGE (object);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
+  PicmanChannel      *selection;
+  PicmanCoreConfig   *config;
+  PicmanTemplate     *template;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_GIMP (image->gimp));
+  g_assert (PICMAN_IS_PICMAN (image->picman));
 
-  config = image->gimp->config;
+  config = image->picman->config;
 
-  private->ID = gimp_id_table_insert (image->gimp->image_table, image);
+  private->ID = picman_id_table_insert (image->picman->image_table, image);
 
   template = config->default_image;
 
-  private->xresolution     = gimp_template_get_resolution_x (template);
-  private->yresolution     = gimp_template_get_resolution_y (template);
-  private->resolution_unit = gimp_template_get_resolution_unit (template);
+  private->xresolution     = picman_template_get_resolution_x (template);
+  private->yresolution     = picman_template_get_resolution_y (template);
+  private->resolution_unit = picman_template_get_resolution_unit (template);
 
-  private->grid = gimp_config_duplicate (GIMP_CONFIG (config->default_grid));
+  private->grid = picman_config_duplicate (PICMAN_CONFIG (config->default_grid));
 
   private->quick_mask_color = config->quick_mask_color;
 
-  if (private->base_type == GIMP_INDEXED)
-    gimp_image_colormap_init (image);
+  if (private->base_type == PICMAN_INDEXED)
+    picman_image_colormap_init (image);
 
-  selection = gimp_selection_new (image,
-                                  gimp_image_get_width  (image),
-                                  gimp_image_get_height (image));
-  gimp_image_take_mask (image, selection);
+  selection = picman_selection_new (image,
+                                  picman_image_get_width  (image),
+                                  picman_image_get_height (image));
+  picman_image_take_mask (image, selection);
 
   g_signal_connect_object (config, "notify::transparency-type",
-                           G_CALLBACK (gimp_item_stack_invalidate_previews),
+                           G_CALLBACK (picman_item_stack_invalidate_previews),
                            private->layers->container, G_CONNECT_SWAPPED);
   g_signal_connect_object (config, "notify::transparency-size",
-                           G_CALLBACK (gimp_item_stack_invalidate_previews),
+                           G_CALLBACK (picman_item_stack_invalidate_previews),
                            private->layers->container, G_CONNECT_SWAPPED);
   g_signal_connect_object (config, "notify::layer-previews",
-                           G_CALLBACK (gimp_viewable_size_changed),
+                           G_CALLBACK (picman_viewable_size_changed),
                            image, G_CONNECT_SWAPPED);
 
-  gimp_container_add (image->gimp->images, GIMP_OBJECT (image));
+  picman_container_add (image->picman->images, PICMAN_OBJECT (image));
 }
 
 static void
-gimp_image_set_property (GObject      *object,
+picman_image_set_property (GObject      *object,
                          guint         property_id,
                          const GValue *value,
                          GParamSpec   *pspec)
 {
-  GimpImage        *image   = GIMP_IMAGE (object);
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+  PicmanImage        *image   = PICMAN_IMAGE (object);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      image->gimp = g_value_get_object (value);
+    case PROP_PICMAN:
+      image->picman = g_value_get_object (value);
       break;
     case PROP_ID:
       g_assert_not_reached ();
@@ -815,18 +815,18 @@ gimp_image_set_property (GObject      *object,
 }
 
 static void
-gimp_image_get_property (GObject    *object,
+picman_image_get_property (GObject    *object,
                          guint       property_id,
                          GValue     *value,
                          GParamSpec *pspec)
 {
-  GimpImage        *image   = GIMP_IMAGE (object);
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+  PicmanImage        *image   = PICMAN_IMAGE (object);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      g_value_set_object (value, image->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, image->picman);
       break;
     case PROP_ID:
       g_value_set_int (value, private->ID);
@@ -850,54 +850,54 @@ gimp_image_get_property (GObject    *object,
 }
 
 static void
-gimp_image_dispose (GObject *object)
+picman_image_dispose (GObject *object)
 {
-  GimpImage        *image   = GIMP_IMAGE (object);
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+  PicmanImage        *image   = PICMAN_IMAGE (object);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   if (private->colormap)
-    gimp_image_colormap_dispose (image);
+    picman_image_colormap_dispose (image);
 
-  gimp_image_undo_free (image);
+  picman_image_undo_free (image);
 
   g_signal_handlers_disconnect_by_func (private->layers->container,
-                                        gimp_image_invalidate,
+                                        picman_image_invalidate,
                                         image);
 
-  gimp_container_remove_handler (private->layers->container,
+  picman_container_remove_handler (private->layers->container,
                                  private->layer_alpha_handler);
 
   g_signal_handlers_disconnect_by_func (private->channels->container,
-                                        gimp_image_invalidate,
+                                        picman_image_invalidate,
                                         image);
 
-  gimp_container_remove_handler (private->channels->container,
+  picman_container_remove_handler (private->channels->container,
                                  private->channel_name_changed_handler);
-  gimp_container_remove_handler (private->channels->container,
+  picman_container_remove_handler (private->channels->container,
                                  private->channel_color_changed_handler);
 
   g_signal_handlers_disconnect_by_func (private->channels->container,
-                                        gimp_image_channel_add,
+                                        picman_image_channel_add,
                                         image);
   g_signal_handlers_disconnect_by_func (private->channels->container,
-                                        gimp_image_channel_remove,
+                                        picman_image_channel_remove,
                                         image);
 
-  gimp_container_foreach (private->layers->container,
-                          (GFunc) gimp_item_removed, NULL);
-  gimp_container_foreach (private->channels->container,
-                          (GFunc) gimp_item_removed, NULL);
-  gimp_container_foreach (private->vectors->container,
-                          (GFunc) gimp_item_removed, NULL);
+  picman_container_foreach (private->layers->container,
+                          (GFunc) picman_item_removed, NULL);
+  picman_container_foreach (private->channels->container,
+                          (GFunc) picman_item_removed, NULL);
+  picman_container_foreach (private->vectors->container,
+                          (GFunc) picman_item_removed, NULL);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_image_finalize (GObject *object)
+picman_image_finalize (GObject *object)
 {
-  GimpImage        *image   = GIMP_IMAGE (object);
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+  PicmanImage        *image   = PICMAN_IMAGE (object);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   if (private->projection)
     {
@@ -913,7 +913,7 @@ gimp_image_finalize (GObject *object)
     }
 
   if (private->colormap)
-    gimp_image_colormap_free (image);
+    picman_image_colormap_free (image);
 
   if (private->layers)
     {
@@ -963,7 +963,7 @@ gimp_image_finalize (GObject *object)
   if (private->sample_points)
     {
       g_list_free_full (private->sample_points,
-                        (GDestroyNotify) gimp_sample_point_unref);
+                        (GDestroyNotify) picman_sample_point_unref);
       private->sample_points = NULL;
     }
 
@@ -978,10 +978,10 @@ gimp_image_finalize (GObject *object)
       private->redo_stack = NULL;
     }
 
-  if (image->gimp && image->gimp->image_table)
+  if (image->picman && image->picman->image_table)
     {
-      gimp_id_table_remove (image->gimp->image_table, private->ID);
-      image->gimp = NULL;
+      picman_id_table_remove (image->picman->image_table, private->ID);
+      image->picman = NULL;
     }
 
   if (private->display_name)
@@ -1000,14 +1000,14 @@ gimp_image_finalize (GObject *object)
 }
 
 static void
-gimp_image_name_changed (GimpObject *object)
+picman_image_name_changed (PicmanObject *object)
 {
-  GimpImage        *image   = GIMP_IMAGE (object);
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+  PicmanImage        *image   = PICMAN_IMAGE (object);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
   const gchar      *name;
 
-  if (GIMP_OBJECT_CLASS (parent_class)->name_changed)
-    GIMP_OBJECT_CLASS (parent_class)->name_changed (object);
+  if (PICMAN_OBJECT_CLASS (parent_class)->name_changed)
+    PICMAN_OBJECT_CLASS (parent_class)->name_changed (object);
 
   if (private->display_name)
     {
@@ -1025,195 +1025,195 @@ gimp_image_name_changed (GimpObject *object)
    * to NULL strings (without emitting the "name-changed" signal
    * again)
    */
-  name = gimp_object_get_name (object);
+  name = picman_object_get_name (object);
   if (name && strlen (name) == 0)
-    gimp_object_name_free (object);
+    picman_object_name_free (object);
 }
 
 static gint64
-gimp_image_get_memsize (GimpObject *object,
+picman_image_get_memsize (PicmanObject *object,
                         gint64     *gui_size)
 {
-  GimpImage        *image   = GIMP_IMAGE (object);
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+  PicmanImage        *image   = PICMAN_IMAGE (object);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
   gint64            memsize = 0;
 
-  if (gimp_image_get_colormap (image))
-    memsize += GIMP_IMAGE_COLORMAP_SIZE;
+  if (picman_image_get_colormap (image))
+    memsize += PICMAN_IMAGE_COLORMAP_SIZE;
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->palette),
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (private->palette),
                                       gui_size);
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->projection),
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (private->projection),
                                       gui_size);
 
-  memsize += gimp_g_list_get_memsize (gimp_image_get_guides (image),
-                                      sizeof (GimpGuide));
+  memsize += picman_g_list_get_memsize (picman_image_get_guides (image),
+                                      sizeof (PicmanGuide));
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->grid), gui_size);
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (private->grid), gui_size);
 
-  memsize += gimp_g_list_get_memsize (gimp_image_get_sample_points (image),
-                                      sizeof (GimpSamplePoint));
+  memsize += picman_g_list_get_memsize (picman_image_get_sample_points (image),
+                                      sizeof (PicmanSamplePoint));
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->layers),
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (private->layers),
                                       gui_size);
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->channels),
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (private->channels),
                                       gui_size);
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->vectors),
-                                      gui_size);
-
-  memsize += gimp_g_slist_get_memsize (private->layer_stack, 0);
-
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->selection_mask),
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (private->vectors),
                                       gui_size);
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->parasites),
+  memsize += picman_g_slist_get_memsize (private->layer_stack, 0);
+
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (private->selection_mask),
                                       gui_size);
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->undo_stack),
-                                      gui_size);
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->redo_stack),
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (private->parasites),
                                       gui_size);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (private->undo_stack),
+                                      gui_size);
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (private->redo_stack),
+                                      gui_size);
+
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 static gboolean
-gimp_image_get_size (GimpViewable *viewable,
+picman_image_get_size (PicmanViewable *viewable,
                      gint         *width,
                      gint         *height)
 {
-  GimpImage *image = GIMP_IMAGE (viewable);
+  PicmanImage *image = PICMAN_IMAGE (viewable);
 
-  *width  = gimp_image_get_width  (image);
-  *height = gimp_image_get_height (image);
+  *width  = picman_image_get_width  (image);
+  *height = picman_image_get_height (image);
 
   return TRUE;
 }
 
 static void
-gimp_image_size_changed (GimpViewable *viewable)
+picman_image_size_changed (PicmanViewable *viewable)
 {
-  GimpImage *image = GIMP_IMAGE (viewable);
+  PicmanImage *image = PICMAN_IMAGE (viewable);
   GList     *all_items;
   GList     *list;
 
-  if (GIMP_VIEWABLE_CLASS (parent_class)->size_changed)
-    GIMP_VIEWABLE_CLASS (parent_class)->size_changed (viewable);
+  if (PICMAN_VIEWABLE_CLASS (parent_class)->size_changed)
+    PICMAN_VIEWABLE_CLASS (parent_class)->size_changed (viewable);
 
-  all_items = gimp_image_get_layer_list (image);
+  all_items = picman_image_get_layer_list (image);
   for (list = all_items; list; list = g_list_next (list))
     {
-      GimpLayerMask *mask = gimp_layer_get_mask (GIMP_LAYER (list->data));
+      PicmanLayerMask *mask = picman_layer_get_mask (PICMAN_LAYER (list->data));
 
-      gimp_viewable_size_changed (GIMP_VIEWABLE (list->data));
+      picman_viewable_size_changed (PICMAN_VIEWABLE (list->data));
 
       if (mask)
-        gimp_viewable_size_changed (GIMP_VIEWABLE (mask));
+        picman_viewable_size_changed (PICMAN_VIEWABLE (mask));
     }
   g_list_free (all_items);
 
-  all_items = gimp_image_get_channel_list (image);
-  g_list_free_full (all_items, (GDestroyNotify) gimp_viewable_size_changed);
+  all_items = picman_image_get_channel_list (image);
+  g_list_free_full (all_items, (GDestroyNotify) picman_viewable_size_changed);
 
-  all_items = gimp_image_get_vectors_list (image);
-  g_list_free_full (all_items, (GDestroyNotify) gimp_viewable_size_changed);
+  all_items = picman_image_get_vectors_list (image);
+  g_list_free_full (all_items, (GDestroyNotify) picman_viewable_size_changed);
 
-  gimp_viewable_size_changed (GIMP_VIEWABLE (gimp_image_get_mask (image)));
+  picman_viewable_size_changed (PICMAN_VIEWABLE (picman_image_get_mask (image)));
 
-  gimp_projectable_structure_changed (GIMP_PROJECTABLE (image));
+  picman_projectable_structure_changed (PICMAN_PROJECTABLE (image));
 }
 
 static gchar *
-gimp_image_get_description (GimpViewable  *viewable,
+picman_image_get_description (PicmanViewable  *viewable,
                             gchar        **tooltip)
 {
-  GimpImage *image = GIMP_IMAGE (viewable);
+  PicmanImage *image = PICMAN_IMAGE (viewable);
 
   if (tooltip)
-    *tooltip = g_strdup (gimp_image_get_display_path (image));
+    *tooltip = g_strdup (picman_image_get_display_path (image));
 
   return g_strdup_printf ("%s-%d",
-			  gimp_image_get_display_name (image),
-			  gimp_image_get_ID (image));
+			  picman_image_get_display_name (image),
+			  picman_image_get_ID (image));
 }
 
 static void
-gimp_image_real_mode_changed (GimpImage *image)
+picman_image_real_mode_changed (PicmanImage *image)
 {
-  gimp_projectable_structure_changed (GIMP_PROJECTABLE (image));
+  picman_projectable_structure_changed (PICMAN_PROJECTABLE (image));
 }
 
 static void
-gimp_image_real_precision_changed (GimpImage *image)
+picman_image_real_precision_changed (PicmanImage *image)
 {
-  gimp_projectable_structure_changed (GIMP_PROJECTABLE (image));
+  picman_projectable_structure_changed (PICMAN_PROJECTABLE (image));
 }
 
 static void
-gimp_image_real_size_changed_detailed (GimpImage *image,
+picman_image_real_size_changed_detailed (PicmanImage *image,
                                        gint       previous_origin_x,
                                        gint       previous_origin_y,
                                        gint       previous_width,
                                        gint       previous_height)
 {
-  /* Whenever GimpImage::size-changed-detailed is emitted, so is
-   * GimpViewable::size-changed. Clients choose what signal to listen
+  /* Whenever PicmanImage::size-changed-detailed is emitted, so is
+   * PicmanViewable::size-changed. Clients choose what signal to listen
    * to depending on how much info they need.
    */
-  gimp_viewable_size_changed (GIMP_VIEWABLE (image));
+  picman_viewable_size_changed (PICMAN_VIEWABLE (image));
 }
 
 static void
-gimp_image_real_colormap_changed (GimpImage *image,
+picman_image_real_colormap_changed (PicmanImage *image,
                                   gint       color_index)
 {
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   if (private->colormap)
     {
       babl_palette_set_palette (private->babl_palette_rgb,
-                                gimp_babl_format (GIMP_RGB,
+                                picman_babl_format (PICMAN_RGB,
                                                   private->precision, FALSE),
                                 private->colormap,
                                 private->n_colors);
       babl_palette_set_palette (private->babl_palette_rgba,
-                                gimp_babl_format (GIMP_RGB,
+                                picman_babl_format (PICMAN_RGB,
                                                   private->precision, FALSE),
                                 private->colormap,
                                 private->n_colors);
     }
 
-  if (gimp_image_get_base_type (image) == GIMP_INDEXED)
+  if (picman_image_get_base_type (image) == PICMAN_INDEXED)
     {
       /* A colormap alteration affects the whole image */
-      gimp_image_invalidate (image,
+      picman_image_invalidate (image,
                              0, 0,
-                             gimp_image_get_width  (image),
-                             gimp_image_get_height (image));
+                             picman_image_get_width  (image),
+                             picman_image_get_height (image));
 
-      gimp_item_stack_invalidate_previews (GIMP_ITEM_STACK (private->layers->container));
+      picman_item_stack_invalidate_previews (PICMAN_ITEM_STACK (private->layers->container));
     }
 }
 
 static const guint8 *
-gimp_image_get_icc_profile (GimpColorManaged *managed,
+picman_image_get_icc_profile (PicmanColorManaged *managed,
                             gsize            *len)
 {
-  const GimpParasite *parasite;
+  const PicmanParasite *parasite;
 
-  parasite = gimp_image_parasite_find (GIMP_IMAGE (managed), "icc-profile");
+  parasite = picman_image_parasite_find (PICMAN_IMAGE (managed), "icc-profile");
 
   if (parasite)
     {
-      gsize data_size = gimp_parasite_data_size (parasite);
+      gsize data_size = picman_parasite_data_size (parasite);
 
       if (data_size > 0)
         {
           *len = data_size;
 
-          return gimp_parasite_data (parasite);
+          return picman_parasite_data (parasite);
         }
     }
 
@@ -1221,27 +1221,27 @@ gimp_image_get_icc_profile (GimpColorManaged *managed,
 }
 
 static void
-gimp_image_projectable_flush (GimpProjectable *projectable,
+picman_image_projectable_flush (PicmanProjectable *projectable,
                               gboolean         invalidate_preview)
 {
-  GimpImage        *image   = GIMP_IMAGE (projectable);
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+  PicmanImage        *image   = PICMAN_IMAGE (projectable);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   if (private->flush_accum.alpha_changed)
     {
-      gimp_image_alpha_changed (image);
+      picman_image_alpha_changed (image);
       private->flush_accum.alpha_changed = FALSE;
     }
 
   if (private->flush_accum.mask_changed)
     {
-      gimp_image_mask_changed (image);
+      picman_image_mask_changed (image);
       private->flush_accum.mask_changed = FALSE;
     }
 
   if (private->flush_accum.floating_selection_changed)
     {
-      gimp_image_floating_selection_changed (image);
+      picman_image_floating_selection_changed (image);
       private->flush_accum.floating_selection_changed = FALSE;
     }
 
@@ -1254,28 +1254,28 @@ gimp_image_projectable_flush (GimpProjectable *projectable,
     }
 }
 
-static GimpImage *
-gimp_image_get_image (GimpProjectable *projectable)
+static PicmanImage *
+picman_image_get_image (PicmanProjectable *projectable)
 {
-  return GIMP_IMAGE (projectable);
+  return PICMAN_IMAGE (projectable);
 }
 
 static const Babl *
-gimp_image_get_proj_format (GimpProjectable *projectable)
+picman_image_get_proj_format (PicmanProjectable *projectable)
 {
-  GimpImage        *image   = GIMP_IMAGE (projectable);
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+  PicmanImage        *image   = PICMAN_IMAGE (projectable);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   switch (private->base_type)
     {
-    case GIMP_RGB:
-    case GIMP_INDEXED:
-      return gimp_image_get_format (image, GIMP_RGB,
-                                    gimp_image_get_precision (image), TRUE);
+    case PICMAN_RGB:
+    case PICMAN_INDEXED:
+      return picman_image_get_format (image, PICMAN_RGB,
+                                    picman_image_get_precision (image), TRUE);
 
-    case GIMP_GRAY:
-      return gimp_image_get_format (image, GIMP_GRAY,
-                                    gimp_image_get_precision (image), TRUE);
+    case PICMAN_GRAY:
+      return picman_image_get_format (image, PICMAN_GRAY,
+                                    picman_image_get_precision (image), TRUE);
     }
 
   g_assert_not_reached ();
@@ -1284,14 +1284,14 @@ gimp_image_get_proj_format (GimpProjectable *projectable)
 }
 
 static GeglNode *
-gimp_image_get_graph (GimpProjectable *projectable)
+picman_image_get_graph (PicmanProjectable *projectable)
 {
-  GimpImage         *image   = GIMP_IMAGE (projectable);
-  GimpImagePrivate  *private = GIMP_IMAGE_GET_PRIVATE (image);
+  PicmanImage         *image   = PICMAN_IMAGE (projectable);
+  PicmanImagePrivate  *private = PICMAN_IMAGE_GET_PRIVATE (image);
   GeglNode          *layers_node;
   GeglNode          *channels_node;
   GeglNode          *output;
-  GimpComponentMask  mask;
+  PicmanComponentMask  mask;
 
   if (private->graph)
     return private->graph;
@@ -1299,23 +1299,23 @@ gimp_image_get_graph (GimpProjectable *projectable)
   private->graph = gegl_node_new ();
 
   layers_node =
-    gimp_filter_stack_get_graph (GIMP_FILTER_STACK (private->layers->container));
+    picman_filter_stack_get_graph (PICMAN_FILTER_STACK (private->layers->container));
 
   gegl_node_add_child (private->graph, layers_node);
 
   channels_node =
-    gimp_filter_stack_get_graph (GIMP_FILTER_STACK (private->channels->container));
+    picman_filter_stack_get_graph (PICMAN_FILTER_STACK (private->channels->container));
 
   gegl_node_add_child (private->graph, channels_node);
 
   gegl_node_connect_to (layers_node,   "output",
                         channels_node, "input");
 
-  mask = ~gimp_image_get_visible_mask (image) & GIMP_COMPONENT_ALL;
+  mask = ~picman_image_get_visible_mask (image) & PICMAN_COMPONENT_ALL;
 
   private->visible_mask =
     gegl_node_new_child (private->graph,
-                         "operation", "gimp:mask-components",
+                         "operation", "picman:mask-components",
                          "mask",      mask,
                          NULL);
 
@@ -1331,84 +1331,84 @@ gimp_image_get_graph (GimpProjectable *projectable)
 }
 
 static void
-gimp_image_mask_update (GimpDrawable *drawable,
+picman_image_mask_update (PicmanDrawable *drawable,
                         gint          x,
                         gint          y,
                         gint          width,
                         gint          height,
-                        GimpImage    *image)
+                        PicmanImage    *image)
 {
-  GIMP_IMAGE_GET_PRIVATE (image)->flush_accum.mask_changed = TRUE;
+  PICMAN_IMAGE_GET_PRIVATE (image)->flush_accum.mask_changed = TRUE;
 }
 
 static void
-gimp_image_layer_alpha_changed (GimpDrawable *drawable,
-                                GimpImage    *image)
+picman_image_layer_alpha_changed (PicmanDrawable *drawable,
+                                PicmanImage    *image)
 {
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  if (gimp_container_get_n_children (private->layers->container) == 1)
+  if (picman_container_get_n_children (private->layers->container) == 1)
     private->flush_accum.alpha_changed = TRUE;
 }
 
 static void
-gimp_image_channel_add (GimpContainer *container,
-                        GimpChannel   *channel,
-                        GimpImage     *image)
+picman_image_channel_add (PicmanContainer *container,
+                        PicmanChannel   *channel,
+                        PicmanImage     *image)
 {
-  if (! strcmp (GIMP_IMAGE_QUICK_MASK_NAME,
-                gimp_object_get_name (channel)))
+  if (! strcmp (PICMAN_IMAGE_QUICK_MASK_NAME,
+                picman_object_get_name (channel)))
     {
-      gimp_image_set_quick_mask_state (image, TRUE);
+      picman_image_set_quick_mask_state (image, TRUE);
     }
 }
 
 static void
-gimp_image_channel_remove (GimpContainer *container,
-                           GimpChannel   *channel,
-                           GimpImage     *image)
+picman_image_channel_remove (PicmanContainer *container,
+                           PicmanChannel   *channel,
+                           PicmanImage     *image)
 {
-  if (! strcmp (GIMP_IMAGE_QUICK_MASK_NAME,
-                gimp_object_get_name (channel)))
+  if (! strcmp (PICMAN_IMAGE_QUICK_MASK_NAME,
+                picman_object_get_name (channel)))
     {
-      gimp_image_set_quick_mask_state (image, FALSE);
+      picman_image_set_quick_mask_state (image, FALSE);
     }
 }
 
 static void
-gimp_image_channel_name_changed (GimpChannel *channel,
-                                 GimpImage   *image)
+picman_image_channel_name_changed (PicmanChannel *channel,
+                                 PicmanImage   *image)
 {
-  if (! strcmp (GIMP_IMAGE_QUICK_MASK_NAME,
-                gimp_object_get_name (channel)))
+  if (! strcmp (PICMAN_IMAGE_QUICK_MASK_NAME,
+                picman_object_get_name (channel)))
     {
-      gimp_image_set_quick_mask_state (image, TRUE);
+      picman_image_set_quick_mask_state (image, TRUE);
     }
-  else if (gimp_image_get_quick_mask_state (image) &&
-           ! gimp_image_get_quick_mask (image))
+  else if (picman_image_get_quick_mask_state (image) &&
+           ! picman_image_get_quick_mask (image))
     {
-      gimp_image_set_quick_mask_state (image, FALSE);
+      picman_image_set_quick_mask_state (image, FALSE);
     }
 }
 
 static void
-gimp_image_channel_color_changed (GimpChannel *channel,
-                                  GimpImage   *image)
+picman_image_channel_color_changed (PicmanChannel *channel,
+                                  PicmanImage   *image)
 {
-  if (! strcmp (GIMP_IMAGE_QUICK_MASK_NAME,
-                gimp_object_get_name (channel)))
+  if (! strcmp (PICMAN_IMAGE_QUICK_MASK_NAME,
+                picman_object_get_name (channel)))
     {
-      GIMP_IMAGE_GET_PRIVATE (image)->quick_mask_color = channel->color;
+      PICMAN_IMAGE_GET_PRIVATE (image)->quick_mask_color = channel->color;
     }
 }
 
 static void
-gimp_image_active_layer_notify (GimpItemTree     *tree,
+picman_image_active_layer_notify (PicmanItemTree     *tree,
                                 const GParamSpec *pspec,
-                                GimpImage        *image)
+                                PicmanImage        *image)
 {
-  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
-  GimpLayer        *layer   = gimp_image_get_active_layer (image);
+  PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
+  PicmanLayer        *layer   = picman_image_get_active_layer (image);
 
   if (layer)
     {
@@ -1417,49 +1417,49 @@ gimp_image_active_layer_notify (GimpItemTree     *tree,
       private->layer_stack = g_slist_prepend (private->layer_stack, layer);
     }
 
-  g_signal_emit (image, gimp_image_signals[ACTIVE_LAYER_CHANGED], 0);
+  g_signal_emit (image, picman_image_signals[ACTIVE_LAYER_CHANGED], 0);
 
-  if (layer && gimp_image_get_active_channel (image))
-    gimp_image_set_active_channel (image, NULL);
+  if (layer && picman_image_get_active_channel (image))
+    picman_image_set_active_channel (image, NULL);
 }
 
 static void
-gimp_image_active_channel_notify (GimpItemTree     *tree,
+picman_image_active_channel_notify (PicmanItemTree     *tree,
                                   const GParamSpec *pspec,
-                                  GimpImage        *image)
+                                  PicmanImage        *image)
 {
-  GimpChannel *channel = gimp_image_get_active_channel (image);
+  PicmanChannel *channel = picman_image_get_active_channel (image);
 
-  g_signal_emit (image, gimp_image_signals[ACTIVE_CHANNEL_CHANGED], 0);
+  g_signal_emit (image, picman_image_signals[ACTIVE_CHANNEL_CHANGED], 0);
 
-  if (channel && gimp_image_get_active_layer (image))
-    gimp_image_set_active_layer (image, NULL);
+  if (channel && picman_image_get_active_layer (image))
+    picman_image_set_active_layer (image, NULL);
 }
 
 static void
-gimp_image_active_vectors_notify (GimpItemTree     *tree,
+picman_image_active_vectors_notify (PicmanItemTree     *tree,
                                   const GParamSpec *pspec,
-                                  GimpImage        *image)
+                                  PicmanImage        *image)
 {
-  g_signal_emit (image, gimp_image_signals[ACTIVE_VECTORS_CHANGED], 0);
+  g_signal_emit (image, picman_image_signals[ACTIVE_VECTORS_CHANGED], 0);
 }
 
 
 /*  public functions  */
 
-GimpImage *
-gimp_image_new (Gimp              *gimp,
+PicmanImage *
+picman_image_new (Picman              *picman,
                 gint               width,
                 gint               height,
-                GimpImageBaseType  base_type,
-                GimpPrecision      precision)
+                PicmanImageBaseType  base_type,
+                PicmanPrecision      precision)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (base_type != GIMP_INDEXED ||
-                        precision == GIMP_PRECISION_U8, NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (base_type != PICMAN_INDEXED ||
+                        precision == PICMAN_PRECISION_U8, NULL);
 
-  return g_object_new (GIMP_TYPE_IMAGE,
-                       "gimp",      gimp,
+  return g_object_new (PICMAN_TYPE_IMAGE,
+                       "picman",      picman,
                        "width",     width,
                        "height",    height,
                        "base-type", base_type,
@@ -1467,43 +1467,43 @@ gimp_image_new (Gimp              *gimp,
                        NULL);
 }
 
-GimpImageBaseType
-gimp_image_get_base_type (const GimpImage *image)
+PicmanImageBaseType
+picman_image_get_base_type (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), -1);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), -1);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->base_type;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->base_type;
 }
 
-GimpPrecision
-gimp_image_get_precision (const GimpImage *image)
+PicmanPrecision
+picman_image_get_precision (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), -1);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), -1);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->precision;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->precision;
 }
 
 const Babl *
-gimp_image_get_format (const GimpImage   *image,
-                       GimpImageBaseType  base_type,
-                       GimpPrecision      precision,
+picman_image_get_format (const PicmanImage   *image,
+                       PicmanImageBaseType  base_type,
+                       PicmanPrecision      precision,
                        gboolean           with_alpha)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
   switch (base_type)
     {
-    case GIMP_RGB:
-    case GIMP_GRAY:
-      return gimp_babl_format (base_type, precision, with_alpha);
+    case PICMAN_RGB:
+    case PICMAN_GRAY:
+      return picman_babl_format (base_type, precision, with_alpha);
 
-    case GIMP_INDEXED:
-      if (precision == GIMP_PRECISION_U8)
+    case PICMAN_INDEXED:
+      if (precision == PICMAN_PRECISION_U8)
         {
           if (with_alpha)
-            return gimp_image_colormap_get_rgba_format (image);
+            return picman_image_colormap_get_rgba_format (image);
           else
-            return gimp_image_colormap_get_rgb_format (image);
+            return picman_image_colormap_get_rgb_format (image);
         }
     }
 
@@ -1511,206 +1511,206 @@ gimp_image_get_format (const GimpImage   *image,
 }
 
 const Babl *
-gimp_image_get_layer_format (const GimpImage *image,
+picman_image_get_layer_format (const PicmanImage *image,
                              gboolean         with_alpha)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return gimp_image_get_format (image,
-                                gimp_image_get_base_type (image),
-                                gimp_image_get_precision (image),
+  return picman_image_get_format (image,
+                                picman_image_get_base_type (image),
+                                picman_image_get_precision (image),
                                 with_alpha);
 }
 
 const Babl *
-gimp_image_get_channel_format (const GimpImage *image)
+picman_image_get_channel_format (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return gimp_image_get_format (image, GIMP_GRAY,
-                                gimp_image_get_precision (image),
+  return picman_image_get_format (image, PICMAN_GRAY,
+                                picman_image_get_precision (image),
                                 FALSE);
 }
 
 const Babl *
-gimp_image_get_mask_format (const GimpImage *image)
+picman_image_get_mask_format (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return gimp_babl_mask_format (gimp_image_get_precision (image));
+  return picman_babl_mask_format (picman_image_get_precision (image));
 }
 
 gint
-gimp_image_get_ID (const GimpImage *image)
+picman_image_get_ID (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), -1);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), -1);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->ID;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->ID;
 }
 
-GimpImage *
-gimp_image_get_by_ID (Gimp *gimp,
+PicmanImage *
+picman_image_get_by_ID (Picman *picman,
                       gint  image_id)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  if (gimp->image_table == NULL)
+  if (picman->image_table == NULL)
     return NULL;
 
-  return (GimpImage *) gimp_id_table_lookup (gimp->image_table, image_id);
+  return (PicmanImage *) picman_id_table_lookup (picman->image_table, image_id);
 }
 
 void
-gimp_image_set_uri (GimpImage   *image,
+picman_image_set_uri (PicmanImage   *image,
                     const gchar *uri)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  gimp_object_set_name (GIMP_OBJECT (image), uri);
+  picman_object_set_name (PICMAN_OBJECT (image), uri);
 }
 
 static void
-gimp_image_take_uri (GimpImage *image,
+picman_image_take_uri (PicmanImage *image,
                      gchar     *uri)
 {
-  gimp_object_take_name (GIMP_OBJECT (image), uri);
+  picman_object_take_name (PICMAN_OBJECT (image), uri);
 }
 
 /**
- * gimp_image_get_untitled_string:
+ * picman_image_get_untitled_string:
  *
  * Returns: The (translated) "Untitled" string for newly created
  * images.
  **/
 const gchar *
-gimp_image_get_string_untitled (void)
+picman_image_get_string_untitled (void)
 {
   return _("Untitled");
 }
 
 /**
- * gimp_image_get_uri_or_untitled:
- * @image: A #GimpImage.
+ * picman_image_get_uri_or_untitled:
+ * @image: A #PicmanImage.
  *
  * Get the URI of the XCF image, or "Untitled" if there is no URI.
  *
  * Returns: The URI, or "Untitled".
  **/
 const gchar *
-gimp_image_get_uri_or_untitled (const GimpImage *image)
+picman_image_get_uri_or_untitled (const PicmanImage *image)
 {
   const gchar *uri;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  uri = gimp_image_get_uri (image);
+  uri = picman_image_get_uri (image);
 
-  return uri ? uri : gimp_image_get_string_untitled ();
+  return uri ? uri : picman_image_get_string_untitled ();
 }
 
 /**
- * gimp_image_get_uri:
- * @image: A #GimpImage.
+ * picman_image_get_uri:
+ * @image: A #PicmanImage.
  *
  * Get the URI of the XCF image, or NULL if there is no URI.
  *
  * Returns: The URI, or NULL.
  **/
 const gchar *
-gimp_image_get_uri (const GimpImage *image)
+picman_image_get_uri (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return gimp_object_get_name (image);
+  return picman_object_get_name (image);
 }
 
 void
-gimp_image_set_filename (GimpImage   *image,
+picman_image_set_filename (PicmanImage   *image,
                          const gchar *filename)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
   if (filename && strlen (filename))
     {
-      gimp_image_take_uri (image,
-                           file_utils_filename_to_uri (image->gimp,
+      picman_image_take_uri (image,
+                           file_utils_filename_to_uri (image->picman,
                                                        filename,
                                                        NULL));
     }
   else
     {
-      gimp_image_set_uri (image, NULL);
+      picman_image_set_uri (image, NULL);
     }
 }
 
 /**
- * gimp_image_get_imported_uri:
- * @image: A #GimpImage.
+ * picman_image_get_imported_uri:
+ * @image: A #PicmanImage.
  *
  * Returns: The URI of the imported image, or NULL if the image has
  * been saved as XCF after it was imported.
  **/
 const gchar *
-gimp_image_get_imported_uri (const GimpImage *image)
+picman_image_get_imported_uri (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
   return g_object_get_data (G_OBJECT (image),
-                            GIMP_FILE_IMPORT_SOURCE_URI_KEY);
+                            PICMAN_FILE_IMPORT_SOURCE_URI_KEY);
 }
 
 /**
- * gimp_image_get_exported_uri:
- * @image: A #GimpImage.
+ * picman_image_get_exported_uri:
+ * @image: A #PicmanImage.
  *
  * Returns: The URI of the image last exported from this XCF file, or
  * NULL if the image has never been exported.
  **/
 const gchar *
-gimp_image_get_exported_uri (const GimpImage *image)
+picman_image_get_exported_uri (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
   return g_object_get_data (G_OBJECT (image),
-                            GIMP_FILE_EXPORT_URI_KEY);
+                            PICMAN_FILE_EXPORT_URI_KEY);
 }
 
 /**
- * gimp_image_get_save_a_copy_uri:
- * @image: A #GimpImage.
+ * picman_image_get_save_a_copy_uri:
+ * @image: A #PicmanImage.
  *
  * Returns: The URI of the last copy that was saved of this XCF file.
  **/
 const gchar *
-gimp_image_get_save_a_copy_uri (const GimpImage *image)
+picman_image_get_save_a_copy_uri (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
   return g_object_get_data (G_OBJECT (image),
-                            GIMP_FILE_SAVE_A_COPY_URI_KEY);
+                            PICMAN_FILE_SAVE_A_COPY_URI_KEY);
 }
 
 /**
- * gimp_image_get_any_uri:
- * @image: A #GimpImage.
+ * picman_image_get_any_uri:
+ * @image: A #PicmanImage.
  *
  * Returns: The XCF file URI, the imported file URI, or the exported
  * file URI, in that order of precedence.
  **/
 const gchar *
-gimp_image_get_any_uri (const GimpImage *image)
+picman_image_get_any_uri (const PicmanImage *image)
 {
   const gchar *uri;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  uri = gimp_image_get_uri (image);
+  uri = picman_image_get_uri (image);
   if (! uri)
     {
-      uri = gimp_image_get_imported_uri (image);
+      uri = picman_image_get_imported_uri (image);
       if (! uri)
         {
-          uri = gimp_image_get_exported_uri (image);
+          uri = picman_image_get_exported_uri (image);
         }
     }
 
@@ -1718,81 +1718,81 @@ gimp_image_get_any_uri (const GimpImage *image)
 }
 
 /**
- * gimp_image_set_imported_uri:
- * @image: A #GimpImage.
+ * picman_image_set_imported_uri:
+ * @image: A #PicmanImage.
  * @uri:
  *
  * Sets the URI this file was imported from.
  **/
 void
-gimp_image_set_imported_uri (GimpImage   *image,
+picman_image_set_imported_uri (PicmanImage   *image,
                              const gchar *uri)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  if (gimp_image_get_imported_uri (image) == uri)
+  if (picman_image_get_imported_uri (image) == uri)
     return;
 
-  g_object_set_data_full (G_OBJECT (image), GIMP_FILE_IMPORT_SOURCE_URI_KEY,
+  g_object_set_data_full (G_OBJECT (image), PICMAN_FILE_IMPORT_SOURCE_URI_KEY,
                           g_strdup (uri), (GDestroyNotify) g_free);
 
-  gimp_object_name_changed (GIMP_OBJECT (image));
+  picman_object_name_changed (PICMAN_OBJECT (image));
 }
 
 /**
- * gimp_image_set_exported_uri:
- * @image: A #GimpImage.
+ * picman_image_set_exported_uri:
+ * @image: A #PicmanImage.
  * @uri:
  *
  * Sets the URI this file was last exported to. Note that saving as
  * XCF is not "exporting".
  **/
 void
-gimp_image_set_exported_uri (GimpImage   *image,
+picman_image_set_exported_uri (PicmanImage   *image,
                              const gchar *uri)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  if (gimp_image_get_exported_uri (image) == uri)
+  if (picman_image_get_exported_uri (image) == uri)
     return;
 
   g_object_set_data_full (G_OBJECT (image),
-                          GIMP_FILE_EXPORT_URI_KEY,
+                          PICMAN_FILE_EXPORT_URI_KEY,
                           g_strdup (uri), (GDestroyNotify) g_free);
 
-  gimp_object_name_changed (GIMP_OBJECT (image));
+  picman_object_name_changed (PICMAN_OBJECT (image));
 }
 
 /**
- * gimp_image_set_save_a_copy_uri:
- * @image: A #GimpImage.
+ * picman_image_set_save_a_copy_uri:
+ * @image: A #PicmanImage.
  * @uri:
  *
  * Set the URI to the last copy this XCF file was saved to through the
  * "save a copy" action.
  **/
 void
-gimp_image_set_save_a_copy_uri (GimpImage   *image,
+picman_image_set_save_a_copy_uri (PicmanImage   *image,
                                 const gchar *uri)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  if (gimp_image_get_save_a_copy_uri (image) == uri)
+  if (picman_image_get_save_a_copy_uri (image) == uri)
     return;
 
   g_object_set_data_full (G_OBJECT (image),
-                          GIMP_FILE_SAVE_A_COPY_URI_KEY,
+                          PICMAN_FILE_SAVE_A_COPY_URI_KEY,
                           g_strdup (uri), (GDestroyNotify) g_free);
 }
 
 gchar *
-gimp_image_get_filename (const GimpImage *image)
+picman_image_get_filename (const PicmanImage *image)
 {
   const gchar *uri;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  uri = gimp_image_get_uri (image);
+  uri = picman_image_get_uri (image);
 
   if (! uri)
     return NULL;
@@ -1801,7 +1801,7 @@ gimp_image_get_filename (const GimpImage *image)
 }
 
 static gchar *
-gimp_image_format_display_uri (GimpImage *image,
+picman_image_format_display_uri (PicmanImage *image,
                                gboolean   basename)
 {
   const gchar *uri_format    = NULL;
@@ -1815,11 +1815,11 @@ gimp_image_format_display_uri (GimpImage *image,
   gchar       *format_string;
   gchar       *tmp;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  uri    = gimp_image_get_uri (image);
-  source = gimp_image_get_imported_uri (image);
-  dest   = gimp_image_get_exported_uri (image);
+  uri    = picman_image_get_uri (image);
+  source = picman_image_get_imported_uri (image);
+  dest   = picman_image_get_exported_uri (image);
 
   is_imported = (source != NULL);
   is_exported = (dest   != NULL);
@@ -1835,7 +1835,7 @@ gimp_image_format_display_uri (GimpImage *image,
         display_uri = g_strdup (source);
 
       /* Calculate filename suffix */
-      if (! gimp_image_is_export_dirty (image))
+      if (! picman_image_is_export_dirty (image))
         {
           if (is_exported)
             {
@@ -1868,7 +1868,7 @@ gimp_image_format_display_uri (GimpImage *image,
 
   if (! display_uri)
     {
-      display_uri = g_strdup (gimp_image_get_string_untitled ());
+      display_uri = g_strdup (picman_image_get_string_untitled ());
     }
   else if (basename)
     {
@@ -1895,214 +1895,214 @@ gimp_image_format_display_uri (GimpImage *image,
 }
 
 const gchar *
-gimp_image_get_display_name (GimpImage *image)
+picman_image_get_display_name (PicmanImage *image)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   if (! private->display_name)
-    private->display_name = gimp_image_format_display_uri (image, TRUE);
+    private->display_name = picman_image_format_display_uri (image, TRUE);
 
   return private->display_name;
 }
 
 const gchar *
-gimp_image_get_display_path (GimpImage *image)
+picman_image_get_display_path (PicmanImage *image)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   if (! private->display_path)
-    private->display_path = gimp_image_format_display_uri (image, FALSE);
+    private->display_path = picman_image_format_display_uri (image, FALSE);
 
   return private->display_path;
 }
 
 void
-gimp_image_set_load_proc (GimpImage           *image,
-                          GimpPlugInProcedure *proc)
+picman_image_set_load_proc (PicmanImage           *image,
+                          PicmanPlugInProcedure *proc)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  GIMP_IMAGE_GET_PRIVATE (image)->load_proc = proc;
+  PICMAN_IMAGE_GET_PRIVATE (image)->load_proc = proc;
 }
 
-GimpPlugInProcedure *
-gimp_image_get_load_proc (const GimpImage *image)
+PicmanPlugInProcedure *
+picman_image_get_load_proc (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->load_proc;
-}
-
-void
-gimp_image_set_save_proc (GimpImage           *image,
-                          GimpPlugInProcedure *proc)
-{
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-
-  GIMP_IMAGE_GET_PRIVATE (image)->save_proc = proc;
-}
-
-GimpPlugInProcedure *
-gimp_image_get_save_proc (const GimpImage *image)
-{
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-
-  return GIMP_IMAGE_GET_PRIVATE (image)->save_proc;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->load_proc;
 }
 
 void
-gimp_image_set_resolution (GimpImage *image,
+picman_image_set_save_proc (PicmanImage           *image,
+                          PicmanPlugInProcedure *proc)
+{
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+
+  PICMAN_IMAGE_GET_PRIVATE (image)->save_proc = proc;
+}
+
+PicmanPlugInProcedure *
+picman_image_get_save_proc (const PicmanImage *image)
+{
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+
+  return PICMAN_IMAGE_GET_PRIVATE (image)->save_proc;
+}
+
+void
+picman_image_set_resolution (PicmanImage *image,
                            gdouble    xresolution,
                            gdouble    yresolution)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   /* don't allow to set the resolution out of bounds */
-  if (xresolution < GIMP_MIN_RESOLUTION || xresolution > GIMP_MAX_RESOLUTION ||
-      yresolution < GIMP_MIN_RESOLUTION || yresolution > GIMP_MAX_RESOLUTION)
+  if (xresolution < PICMAN_MIN_RESOLUTION || xresolution > PICMAN_MAX_RESOLUTION ||
+      yresolution < PICMAN_MIN_RESOLUTION || yresolution > PICMAN_MAX_RESOLUTION)
     return;
 
   if ((ABS (private->xresolution - xresolution) >= 1e-5) ||
       (ABS (private->yresolution - yresolution) >= 1e-5))
     {
-      gimp_image_undo_push_image_resolution (image,
+      picman_image_undo_push_image_resolution (image,
                                              C_("undo-type", "Change Image Resolution"));
 
       private->xresolution = xresolution;
       private->yresolution = yresolution;
 
-      gimp_image_resolution_changed (image);
-      gimp_image_size_changed_detailed (image,
+      picman_image_resolution_changed (image);
+      picman_image_size_changed_detailed (image,
                                         0,
                                         0,
-                                        gimp_image_get_width (image),
-                                        gimp_image_get_height (image));
+                                        picman_image_get_width (image),
+                                        picman_image_get_height (image));
     }
 }
 
 void
-gimp_image_get_resolution (const GimpImage *image,
+picman_image_get_resolution (const PicmanImage *image,
                            gdouble         *xresolution,
                            gdouble         *yresolution)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (xresolution != NULL && yresolution != NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   *xresolution = private->xresolution;
   *yresolution = private->yresolution;
 }
 
 void
-gimp_image_resolution_changed (GimpImage *image)
+picman_image_resolution_changed (PicmanImage *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  g_signal_emit (image, gimp_image_signals[RESOLUTION_CHANGED], 0);
+  g_signal_emit (image, picman_image_signals[RESOLUTION_CHANGED], 0);
 }
 
 void
-gimp_image_set_unit (GimpImage *image,
-                     GimpUnit   unit)
+picman_image_set_unit (PicmanImage *image,
+                     PicmanUnit   unit)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (unit > GIMP_UNIT_PIXEL);
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (unit > PICMAN_UNIT_PIXEL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   if (private->resolution_unit != unit)
     {
-      gimp_image_undo_push_image_resolution (image,
+      picman_image_undo_push_image_resolution (image,
                                              C_("undo-type", "Change Image Unit"));
 
       private->resolution_unit = unit;
-      gimp_image_unit_changed (image);
+      picman_image_unit_changed (image);
     }
 }
 
-GimpUnit
-gimp_image_get_unit (const GimpImage *image)
+PicmanUnit
+picman_image_get_unit (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), GIMP_UNIT_INCH);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), PICMAN_UNIT_INCH);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->resolution_unit;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->resolution_unit;
 }
 
 void
-gimp_image_unit_changed (GimpImage *image)
+picman_image_unit_changed (PicmanImage *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  g_signal_emit (image, gimp_image_signals[UNIT_CHANGED], 0);
+  g_signal_emit (image, picman_image_signals[UNIT_CHANGED], 0);
 }
 
 gint
-gimp_image_get_width (const GimpImage *image)
+picman_image_get_width (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), 0);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), 0);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->width;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->width;
 }
 
 gint
-gimp_image_get_height (const GimpImage *image)
+picman_image_get_height (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), 0);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), 0);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->height;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->height;
 }
 
 gboolean
-gimp_image_has_alpha (const GimpImage *image)
+picman_image_has_alpha (const PicmanImage *image)
 {
-  GimpImagePrivate *private;
-  GimpLayer        *layer;
+  PicmanImagePrivate *private;
+  PicmanLayer        *layer;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), TRUE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), TRUE);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  layer = GIMP_LAYER (gimp_container_get_first_child (private->layers->container));
+  layer = PICMAN_LAYER (picman_container_get_first_child (private->layers->container));
 
-  return ((gimp_image_get_n_layers (image) > 1) ||
-          (layer && gimp_drawable_has_alpha (GIMP_DRAWABLE (layer))));
+  return ((picman_image_get_n_layers (image) > 1) ||
+          (layer && picman_drawable_has_alpha (PICMAN_DRAWABLE (layer))));
 }
 
 gboolean
-gimp_image_is_empty (const GimpImage *image)
+picman_image_is_empty (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), TRUE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), TRUE);
 
-  return gimp_container_is_empty (GIMP_IMAGE_GET_PRIVATE (image)->layers->container);
+  return picman_container_is_empty (PICMAN_IMAGE_GET_PRIVATE (image)->layers->container);
 }
 
 void
-gimp_image_set_floating_selection (GimpImage *image,
-                                   GimpLayer *floating_sel)
+picman_image_set_floating_selection (PicmanImage *image,
+                                   PicmanLayer *floating_sel)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (floating_sel == NULL || GIMP_IS_LAYER (floating_sel));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (floating_sel == NULL || PICMAN_IS_LAYER (floating_sel));
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   if (private->floating_sel != floating_sel)
     {
@@ -2112,48 +2112,48 @@ gimp_image_set_floating_selection (GimpImage *image,
     }
 }
 
-GimpLayer *
-gimp_image_get_floating_selection (const GimpImage *image)
+PicmanLayer *
+picman_image_get_floating_selection (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->floating_sel;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->floating_sel;
 }
 
 void
-gimp_image_floating_selection_changed (GimpImage *image)
+picman_image_floating_selection_changed (PicmanImage *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  g_signal_emit (image, gimp_image_signals[FLOATING_SELECTION_CHANGED], 0);
+  g_signal_emit (image, picman_image_signals[FLOATING_SELECTION_CHANGED], 0);
 }
 
-GimpChannel *
-gimp_image_get_mask (const GimpImage *image)
+PicmanChannel *
+picman_image_get_mask (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->selection_mask;
-}
-
-void
-gimp_image_mask_changed (GimpImage *image)
-{
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-
-  g_signal_emit (image, gimp_image_signals[MASK_CHANGED], 0);
+  return PICMAN_IMAGE_GET_PRIVATE (image)->selection_mask;
 }
 
 void
-gimp_image_take_mask (GimpImage   *image,
-                      GimpChannel *mask)
+picman_image_mask_changed (PicmanImage *image)
 {
-  GimpImagePrivate *private;
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_SELECTION (mask));
+  g_signal_emit (image, picman_image_signals[MASK_CHANGED], 0);
+}
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+void
+picman_image_take_mask (PicmanImage   *image,
+                      PicmanChannel *mask)
+{
+  PicmanImagePrivate *private;
+
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_SELECTION (mask));
+
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   if (private->selection_mask)
     g_object_unref (private->selection_mask);
@@ -2161,7 +2161,7 @@ gimp_image_take_mask (GimpImage   *image,
   private->selection_mask = g_object_ref_sink (mask);
 
   g_signal_connect (private->selection_mask, "update",
-                    G_CALLBACK (gimp_image_mask_update),
+                    G_CALLBACK (picman_image_mask_update),
                     image);
 }
 
@@ -2169,39 +2169,39 @@ gimp_image_take_mask (GimpImage   *image,
 /*  image components  */
 
 const Babl *
-gimp_image_get_component_format (const GimpImage *image,
-                                 GimpChannelType  channel)
+picman_image_get_component_format (const PicmanImage *image,
+                                 PicmanChannelType  channel)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
   switch (channel)
     {
-    case GIMP_RED_CHANNEL:
-      return gimp_babl_component_format (GIMP_RGB,
-                                         gimp_image_get_precision (image),
+    case PICMAN_RED_CHANNEL:
+      return picman_babl_component_format (PICMAN_RGB,
+                                         picman_image_get_precision (image),
                                          RED);
 
-    case GIMP_GREEN_CHANNEL:
-      return gimp_babl_component_format (GIMP_RGB,
-                                         gimp_image_get_precision (image),
+    case PICMAN_GREEN_CHANNEL:
+      return picman_babl_component_format (PICMAN_RGB,
+                                         picman_image_get_precision (image),
                                          GREEN);
 
-    case GIMP_BLUE_CHANNEL:
-      return gimp_babl_component_format (GIMP_RGB,
-                                         gimp_image_get_precision (image),
+    case PICMAN_BLUE_CHANNEL:
+      return picman_babl_component_format (PICMAN_RGB,
+                                         picman_image_get_precision (image),
                                          BLUE);
 
-    case GIMP_ALPHA_CHANNEL:
-      return gimp_babl_component_format (GIMP_RGB,
-                                         gimp_image_get_precision (image),
+    case PICMAN_ALPHA_CHANNEL:
+      return picman_babl_component_format (PICMAN_RGB,
+                                         picman_image_get_precision (image),
                                          ALPHA);
 
-    case GIMP_GRAY_CHANNEL:
-      return gimp_babl_component_format (GIMP_GRAY,
-                                         gimp_image_get_precision (image),
+    case PICMAN_GRAY_CHANNEL:
+      return picman_babl_component_format (PICMAN_GRAY,
+                                         picman_image_get_precision (image),
                                          GRAY);
 
-    case GIMP_INDEXED_CHANNEL:
+    case PICMAN_INDEXED_CHANNEL:
       return babl_format ("Y u8"); /* will extract grayscale, the best
                                     * we can do here */
     }
@@ -2210,24 +2210,24 @@ gimp_image_get_component_format (const GimpImage *image,
 }
 
 gint
-gimp_image_get_component_index (const GimpImage *image,
-                                GimpChannelType  channel)
+picman_image_get_component_index (const PicmanImage *image,
+                                PicmanChannelType  channel)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), -1);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), -1);
 
   switch (channel)
     {
-    case GIMP_RED_CHANNEL:     return RED;
-    case GIMP_GREEN_CHANNEL:   return GREEN;
-    case GIMP_BLUE_CHANNEL:    return BLUE;
-    case GIMP_GRAY_CHANNEL:    return GRAY;
-    case GIMP_INDEXED_CHANNEL: return INDEXED;
-    case GIMP_ALPHA_CHANNEL:
-      switch (gimp_image_get_base_type (image))
+    case PICMAN_RED_CHANNEL:     return RED;
+    case PICMAN_GREEN_CHANNEL:   return GREEN;
+    case PICMAN_BLUE_CHANNEL:    return BLUE;
+    case PICMAN_GRAY_CHANNEL:    return GRAY;
+    case PICMAN_INDEXED_CHANNEL: return INDEXED;
+    case PICMAN_ALPHA_CHANNEL:
+      switch (picman_image_get_base_type (image))
         {
-        case GIMP_RGB:     return ALPHA;
-        case GIMP_GRAY:    return ALPHA_G;
-        case GIMP_INDEXED: return ALPHA_I;
+        case PICMAN_RGB:     return ALPHA;
+        case PICMAN_GRAY:    return ALPHA_G;
+        case PICMAN_INDEXED: return ALPHA_I;
         }
     }
 
@@ -2235,18 +2235,18 @@ gimp_image_get_component_index (const GimpImage *image,
 }
 
 void
-gimp_image_set_component_active (GimpImage       *image,
-                                 GimpChannelType  channel,
+picman_image_set_component_active (PicmanImage       *image,
+                                 PicmanChannelType  channel,
                                  gboolean         active)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
   gint              index = -1;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  index = gimp_image_get_component_index (image, channel);
+  index = picman_image_get_component_index (image, channel);
 
   if (index != -1 && active != private->active[index])
     {
@@ -2255,71 +2255,71 @@ gimp_image_set_component_active (GimpImage       *image,
       /*  If there is an active channel and we mess with the components,
        *  the active channel gets unset...
        */
-      gimp_image_unset_active_channel (image);
+      picman_image_unset_active_channel (image);
 
       g_signal_emit (image,
-                     gimp_image_signals[COMPONENT_ACTIVE_CHANGED], 0,
+                     picman_image_signals[COMPONENT_ACTIVE_CHANGED], 0,
                      channel);
     }
 }
 
 gboolean
-gimp_image_get_component_active (const GimpImage *image,
-                                 GimpChannelType  channel)
+picman_image_get_component_active (const PicmanImage *image,
+                                 PicmanChannelType  channel)
 {
   gint index = -1;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
-  index = gimp_image_get_component_index (image, channel);
+  index = picman_image_get_component_index (image, channel);
 
   if (index != -1)
-    return GIMP_IMAGE_GET_PRIVATE (image)->active[index];
+    return PICMAN_IMAGE_GET_PRIVATE (image)->active[index];
 
   return FALSE;
 }
 
 void
-gimp_image_get_active_array (const GimpImage *image,
+picman_image_get_active_array (const PicmanImage *image,
                              gboolean        *components)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
   gint              i;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (components != NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   for (i = 0; i < MAX_CHANNELS; i++)
     components[i] = private->active[i];
 }
 
-GimpComponentMask
-gimp_image_get_active_mask (const GimpImage *image)
+PicmanComponentMask
+picman_image_get_active_mask (const PicmanImage *image)
 {
-  GimpImagePrivate  *private;
-  GimpComponentMask  mask = 0;
+  PicmanImagePrivate  *private;
+  PicmanComponentMask  mask = 0;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), 0);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), 0);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  switch (gimp_image_get_base_type (image))
+  switch (picman_image_get_base_type (image))
     {
-    case GIMP_RGB:
-      mask |= (private->active[RED])   ? GIMP_COMPONENT_RED   : 0;
-      mask |= (private->active[GREEN]) ? GIMP_COMPONENT_GREEN : 0;
-      mask |= (private->active[BLUE])  ? GIMP_COMPONENT_BLUE  : 0;
-      mask |= (private->active[ALPHA]) ? GIMP_COMPONENT_ALPHA : 0;
+    case PICMAN_RGB:
+      mask |= (private->active[RED])   ? PICMAN_COMPONENT_RED   : 0;
+      mask |= (private->active[GREEN]) ? PICMAN_COMPONENT_GREEN : 0;
+      mask |= (private->active[BLUE])  ? PICMAN_COMPONENT_BLUE  : 0;
+      mask |= (private->active[ALPHA]) ? PICMAN_COMPONENT_ALPHA : 0;
       break;
 
-    case GIMP_GRAY:
-    case GIMP_INDEXED:
-      mask |= (private->active[GRAY])    ? GIMP_COMPONENT_RED   : 0;
-      mask |= (private->active[GRAY])    ? GIMP_COMPONENT_GREEN : 0;
-      mask |= (private->active[GRAY])    ? GIMP_COMPONENT_BLUE  : 0;
-      mask |= (private->active[ALPHA_G]) ? GIMP_COMPONENT_ALPHA : 0;
+    case PICMAN_GRAY:
+    case PICMAN_INDEXED:
+      mask |= (private->active[GRAY])    ? PICMAN_COMPONENT_RED   : 0;
+      mask |= (private->active[GRAY])    ? PICMAN_COMPONENT_GREEN : 0;
+      mask |= (private->active[GRAY])    ? PICMAN_COMPONENT_BLUE  : 0;
+      mask |= (private->active[ALPHA_G]) ? PICMAN_COMPONENT_ALPHA : 0;
       break;
     }
 
@@ -2327,18 +2327,18 @@ gimp_image_get_active_mask (const GimpImage *image)
 }
 
 void
-gimp_image_set_component_visible (GimpImage       *image,
-                                  GimpChannelType  channel,
+picman_image_set_component_visible (PicmanImage       *image,
+                                  PicmanChannelType  channel,
                                   gboolean         visible)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
   gint              index = -1;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  index = gimp_image_get_component_index (image, channel);
+  index = picman_image_get_component_index (image, channel);
 
   if (index != -1 && visible != private->visible[index])
     {
@@ -2346,9 +2346,9 @@ gimp_image_set_component_visible (GimpImage       *image,
 
       if (private->visible_mask)
         {
-          GimpComponentMask mask;
+          PicmanComponentMask mask;
 
-          mask = ~gimp_image_get_visible_mask (image) & GIMP_COMPONENT_ALL;
+          mask = ~picman_image_get_visible_mask (image) & PICMAN_COMPONENT_ALL;
 
           gegl_node_set (private->visible_mask,
                          "mask", mask,
@@ -2356,73 +2356,73 @@ gimp_image_set_component_visible (GimpImage       *image,
         }
 
       g_signal_emit (image,
-                     gimp_image_signals[COMPONENT_VISIBILITY_CHANGED], 0,
+                     picman_image_signals[COMPONENT_VISIBILITY_CHANGED], 0,
                      channel);
 
-      gimp_image_invalidate (image,
+      picman_image_invalidate (image,
                              0, 0,
-                             gimp_image_get_width  (image),
-                             gimp_image_get_height (image));
+                             picman_image_get_width  (image),
+                             picman_image_get_height (image));
     }
 }
 
 gboolean
-gimp_image_get_component_visible (const GimpImage *image,
-                                  GimpChannelType  channel)
+picman_image_get_component_visible (const PicmanImage *image,
+                                  PicmanChannelType  channel)
 {
   gint index = -1;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
-  index = gimp_image_get_component_index (image, channel);
+  index = picman_image_get_component_index (image, channel);
 
   if (index != -1)
-    return GIMP_IMAGE_GET_PRIVATE (image)->visible[index];
+    return PICMAN_IMAGE_GET_PRIVATE (image)->visible[index];
 
   return FALSE;
 }
 
 void
-gimp_image_get_visible_array (const GimpImage *image,
+picman_image_get_visible_array (const PicmanImage *image,
                               gboolean        *components)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
   gint              i;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (components != NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   for (i = 0; i < MAX_CHANNELS; i++)
     components[i] = private->visible[i];
 }
 
-GimpComponentMask
-gimp_image_get_visible_mask (const GimpImage *image)
+PicmanComponentMask
+picman_image_get_visible_mask (const PicmanImage *image)
 {
-  GimpImagePrivate  *private;
-  GimpComponentMask  mask = 0;
+  PicmanImagePrivate  *private;
+  PicmanComponentMask  mask = 0;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), 0);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), 0);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  switch (gimp_image_get_base_type (image))
+  switch (picman_image_get_base_type (image))
     {
-    case GIMP_RGB:
-      mask |= (private->visible[RED])   ? GIMP_COMPONENT_RED   : 0;
-      mask |= (private->visible[GREEN]) ? GIMP_COMPONENT_GREEN : 0;
-      mask |= (private->visible[BLUE])  ? GIMP_COMPONENT_BLUE  : 0;
-      mask |= (private->visible[ALPHA]) ? GIMP_COMPONENT_ALPHA : 0;
+    case PICMAN_RGB:
+      mask |= (private->visible[RED])   ? PICMAN_COMPONENT_RED   : 0;
+      mask |= (private->visible[GREEN]) ? PICMAN_COMPONENT_GREEN : 0;
+      mask |= (private->visible[BLUE])  ? PICMAN_COMPONENT_BLUE  : 0;
+      mask |= (private->visible[ALPHA]) ? PICMAN_COMPONENT_ALPHA : 0;
       break;
 
-    case GIMP_GRAY:
-    case GIMP_INDEXED:
-      mask |= (private->visible[GRAY])  ? GIMP_COMPONENT_RED   : 0;
-      mask |= (private->visible[GRAY])  ? GIMP_COMPONENT_GREEN : 0;
-      mask |= (private->visible[GRAY])  ? GIMP_COMPONENT_BLUE  : 0;
-      mask |= (private->visible[ALPHA]) ? GIMP_COMPONENT_ALPHA : 0;
+    case PICMAN_GRAY:
+    case PICMAN_INDEXED:
+      mask |= (private->visible[GRAY])  ? PICMAN_COMPONENT_RED   : 0;
+      mask |= (private->visible[GRAY])  ? PICMAN_COMPONENT_GREEN : 0;
+      mask |= (private->visible[GRAY])  ? PICMAN_COMPONENT_BLUE  : 0;
+      mask |= (private->visible[ALPHA]) ? PICMAN_COMPONENT_ALPHA : 0;
       break;
     }
 
@@ -2433,112 +2433,112 @@ gimp_image_get_visible_mask (const GimpImage *image)
 /*  emitting image signals  */
 
 void
-gimp_image_mode_changed (GimpImage *image)
+picman_image_mode_changed (PicmanImage *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  g_signal_emit (image, gimp_image_signals[MODE_CHANGED], 0);
+  g_signal_emit (image, picman_image_signals[MODE_CHANGED], 0);
 }
 
 void
-gimp_image_precision_changed (GimpImage *image)
+picman_image_precision_changed (PicmanImage *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  g_signal_emit (image, gimp_image_signals[PRECISION_CHANGED], 0);
+  g_signal_emit (image, picman_image_signals[PRECISION_CHANGED], 0);
 }
 
 void
-gimp_image_alpha_changed (GimpImage *image)
+picman_image_alpha_changed (PicmanImage *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  g_signal_emit (image, gimp_image_signals[ALPHA_CHANGED], 0);
+  g_signal_emit (image, picman_image_signals[ALPHA_CHANGED], 0);
 }
 
 void
-gimp_image_invalidate (GimpImage *image,
+picman_image_invalidate (PicmanImage *image,
                        gint       x,
                        gint       y,
                        gint       width,
                        gint       height)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  gimp_projectable_invalidate (GIMP_PROJECTABLE (image),
+  picman_projectable_invalidate (PICMAN_PROJECTABLE (image),
                                x, y, width, height);
 
-  GIMP_IMAGE_GET_PRIVATE (image)->flush_accum.preview_invalidated = TRUE;
+  PICMAN_IMAGE_GET_PRIVATE (image)->flush_accum.preview_invalidated = TRUE;
 }
 
 void
-gimp_image_guide_added (GimpImage *image,
-                        GimpGuide *guide)
+picman_image_guide_added (PicmanImage *image,
+                        PicmanGuide *guide)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_GUIDE (guide));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_GUIDE (guide));
 
-  g_signal_emit (image, gimp_image_signals[GUIDE_ADDED], 0,
+  g_signal_emit (image, picman_image_signals[GUIDE_ADDED], 0,
                  guide);
 }
 
 void
-gimp_image_guide_removed (GimpImage *image,
-                          GimpGuide *guide)
+picman_image_guide_removed (PicmanImage *image,
+                          PicmanGuide *guide)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_GUIDE (guide));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_GUIDE (guide));
 
-  g_signal_emit (image, gimp_image_signals[GUIDE_REMOVED], 0,
+  g_signal_emit (image, picman_image_signals[GUIDE_REMOVED], 0,
                  guide);
 }
 
 void
-gimp_image_guide_moved (GimpImage *image,
-                        GimpGuide *guide)
+picman_image_guide_moved (PicmanImage *image,
+                        PicmanGuide *guide)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_GUIDE (guide));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_GUIDE (guide));
 
-  g_signal_emit (image, gimp_image_signals[GUIDE_MOVED], 0,
+  g_signal_emit (image, picman_image_signals[GUIDE_MOVED], 0,
                  guide);
 }
 
 void
-gimp_image_sample_point_added (GimpImage       *image,
-                               GimpSamplePoint *sample_point)
+picman_image_sample_point_added (PicmanImage       *image,
+                               PicmanSamplePoint *sample_point)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (sample_point != NULL);
 
-  g_signal_emit (image, gimp_image_signals[SAMPLE_POINT_ADDED], 0,
+  g_signal_emit (image, picman_image_signals[SAMPLE_POINT_ADDED], 0,
                  sample_point);
 }
 
 void
-gimp_image_sample_point_removed (GimpImage       *image,
-                                 GimpSamplePoint *sample_point)
+picman_image_sample_point_removed (PicmanImage       *image,
+                                 PicmanSamplePoint *sample_point)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (sample_point != NULL);
 
-  g_signal_emit (image, gimp_image_signals[SAMPLE_POINT_REMOVED], 0,
+  g_signal_emit (image, picman_image_signals[SAMPLE_POINT_REMOVED], 0,
                  sample_point);
 }
 
 void
-gimp_image_sample_point_moved (GimpImage       *image,
-                               GimpSamplePoint *sample_point)
+picman_image_sample_point_moved (PicmanImage       *image,
+                               PicmanSamplePoint *sample_point)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (sample_point != NULL);
 
-  g_signal_emit (image, gimp_image_signals[SAMPLE_POINT_MOVED], 0,
+  g_signal_emit (image, picman_image_signals[SAMPLE_POINT_MOVED], 0,
                  sample_point);
 }
 
 /**
- * gimp_image_size_changed_detailed:
+ * picman_image_size_changed_detailed:
  * @image:
  * @previous_origin_x:
  * @previous_origin_y:
@@ -2547,18 +2547,18 @@ gimp_image_sample_point_moved (GimpImage       *image,
  * position of the image in the display shell on various operations,
  * e.g. crop.
  *
- * This function makes sure that GimpViewable::size-changed is also emitted.
+ * This function makes sure that PicmanViewable::size-changed is also emitted.
  **/
 void
-gimp_image_size_changed_detailed (GimpImage *image,
+picman_image_size_changed_detailed (PicmanImage *image,
                                   gint       previous_origin_x,
                                   gint       previous_origin_y,
                                   gint       previous_width,
                                   gint       previous_height)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  g_signal_emit (image, gimp_image_signals[SIZE_CHANGED_DETAILED], 0,
+  g_signal_emit (image, picman_image_signals[SIZE_CHANGED_DETAILED], 0,
                  previous_origin_x,
                  previous_origin_y,
                  previous_width,
@@ -2566,45 +2566,45 @@ gimp_image_size_changed_detailed (GimpImage *image,
 }
 
 void
-gimp_image_colormap_changed (GimpImage *image,
+picman_image_colormap_changed (PicmanImage *image,
                              gint       color_index)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (color_index >= -1 &&
-                    color_index < GIMP_IMAGE_GET_PRIVATE (image)->n_colors);
+                    color_index < PICMAN_IMAGE_GET_PRIVATE (image)->n_colors);
 
-  g_signal_emit (image, gimp_image_signals[COLORMAP_CHANGED], 0,
+  g_signal_emit (image, picman_image_signals[COLORMAP_CHANGED], 0,
                  color_index);
 }
 
 void
-gimp_image_selection_invalidate (GimpImage *image)
+picman_image_selection_invalidate (PicmanImage *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  g_signal_emit (image, gimp_image_signals[SELECTION_INVALIDATE], 0);
+  g_signal_emit (image, picman_image_signals[SELECTION_INVALIDATE], 0);
 }
 
 void
-gimp_image_quick_mask_changed (GimpImage *image)
+picman_image_quick_mask_changed (PicmanImage *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  g_signal_emit (image, gimp_image_signals[QUICK_MASK_CHANGED], 0);
+  g_signal_emit (image, picman_image_signals[QUICK_MASK_CHANGED], 0);
 }
 
 void
-gimp_image_undo_event (GimpImage     *image,
-                       GimpUndoEvent  event,
-                       GimpUndo      *undo)
+picman_image_undo_event (PicmanImage     *image,
+                       PicmanUndoEvent  event,
+                       PicmanUndo      *undo)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (((event == GIMP_UNDO_EVENT_UNDO_FREE   ||
-                      event == GIMP_UNDO_EVENT_UNDO_FREEZE ||
-                      event == GIMP_UNDO_EVENT_UNDO_THAW) && undo == NULL) ||
-                    GIMP_IS_UNDO (undo));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (((event == PICMAN_UNDO_EVENT_UNDO_FREE   ||
+                      event == PICMAN_UNDO_EVENT_UNDO_FREEZE ||
+                      event == PICMAN_UNDO_EVENT_UNDO_THAW) && undo == NULL) ||
+                    PICMAN_IS_UNDO (undo));
 
-  g_signal_emit (image, gimp_image_signals[UNDO_EVENT], 0, event, undo);
+  g_signal_emit (image, picman_image_signals[UNDO_EVENT], 0, event, undo);
 }
 
 
@@ -2625,11 +2625,11 @@ gimp_image_undo_event (GimpImage     *image,
  *   before a saved version, then changing the image (thus destroying
  *   the redo stack).  Once this has happened, it's impossible to get
  *   the image back to the state on disk, since the redo info has been
- *   freed.  See gimpimage-undo.c for the gory details.
+ *   freed.  See picmanimage-undo.c for the gory details.
  */
 
 /*
- * NEVER CALL gimp_image_dirty() directly!
+ * NEVER CALL picman_image_dirty() directly!
  *
  * If your code has just dirtied the image, push an undo instead.
  * Failing that, push the trivial undo which tells the user the
@@ -2640,14 +2640,14 @@ gimp_image_undo_event (GimpImage     *image,
  */
 
 gint
-gimp_image_dirty (GimpImage     *image,
-                  GimpDirtyMask  dirty_mask)
+picman_image_dirty (PicmanImage     *image,
+                  PicmanDirtyMask  dirty_mask)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   private->dirty++;
   private->export_dirty++;
@@ -2655,7 +2655,7 @@ gimp_image_dirty (GimpImage     *image,
   if (! private->dirty_time)
     private->dirty_time = time (NULL);
 
-  g_signal_emit (image, gimp_image_signals[DIRTY], 0, dirty_mask);
+  g_signal_emit (image, picman_image_signals[DIRTY], 0, dirty_mask);
 
   TRC (("dirty %d -> %d\n", private->dirty - 1, private->dirty));
 
@@ -2663,19 +2663,19 @@ gimp_image_dirty (GimpImage     *image,
 }
 
 gint
-gimp_image_clean (GimpImage     *image,
-                  GimpDirtyMask  dirty_mask)
+picman_image_clean (PicmanImage     *image,
+                  PicmanDirtyMask  dirty_mask)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   private->dirty--;
   private->export_dirty--;
 
-  g_signal_emit (image, gimp_image_signals[CLEAN], 0, dirty_mask);
+  g_signal_emit (image, picman_image_signals[CLEAN], 0, dirty_mask);
 
   TRC (("clean %d -> %d\n", private->dirty + 1, private->dirty));
 
@@ -2683,72 +2683,72 @@ gimp_image_clean (GimpImage     *image,
 }
 
 void
-gimp_image_clean_all (GimpImage *image)
+picman_image_clean_all (PicmanImage *image)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   private->dirty      = 0;
   private->dirty_time = 0;
 
-  g_signal_emit (image, gimp_image_signals[CLEAN], 0, GIMP_DIRTY_ALL);
+  g_signal_emit (image, picman_image_signals[CLEAN], 0, PICMAN_DIRTY_ALL);
 }
 
 void
-gimp_image_export_clean_all (GimpImage *image)
+picman_image_export_clean_all (PicmanImage *image)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   private->export_dirty = 0;
 
-  g_signal_emit (image, gimp_image_signals[CLEAN], 0, GIMP_DIRTY_ALL);
+  g_signal_emit (image, picman_image_signals[CLEAN], 0, PICMAN_DIRTY_ALL);
 }
 
 /**
- * gimp_image_is_dirty:
+ * picman_image_is_dirty:
  * @image:
  *
  * Returns: True if the image is dirty, false otherwise.
  **/
 gint
-gimp_image_is_dirty (const GimpImage *image)
+picman_image_is_dirty (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->dirty != 0;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->dirty != 0;
 }
 
 /**
- * gimp_image_is_export_dirty:
+ * picman_image_is_export_dirty:
  * @image:
  *
  * Returns: True if the image export is dirty, false otherwise.
  **/
 gboolean
-gimp_image_is_export_dirty (const GimpImage *image)
+picman_image_is_export_dirty (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->export_dirty != 0;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->export_dirty != 0;
 }
 
 gint
-gimp_image_get_dirty_time (const GimpImage *image)
+picman_image_get_dirty_time (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), 0);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), 0);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->dirty_time;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->dirty_time;
 }
 
 /**
- * gimp_image_saved:
+ * picman_image_saved:
  * @image:
  * @uri:
  *
@@ -2756,17 +2756,17 @@ gimp_image_get_dirty_time (const GimpImage *image)
  * location specified by @uri.
  */
 void
-gimp_image_saved (GimpImage   *image,
+picman_image_saved (PicmanImage   *image,
                   const gchar *uri)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (uri != NULL);
 
-  g_signal_emit (image, gimp_image_signals[SAVED], 0, uri);
+  g_signal_emit (image, picman_image_signals[SAVED], 0, uri);
 }
 
 /**
- * gimp_image_exported:
+ * picman_image_exported:
  * @image:
  * @uri:
  *
@@ -2774,130 +2774,130 @@ gimp_image_saved (GimpImage   *image,
  * location specified by @uri.
  */
 void
-gimp_image_exported (GimpImage   *image,
+picman_image_exported (PicmanImage   *image,
                      const gchar *uri)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (uri != NULL);
 
-  g_signal_emit (image, gimp_image_signals[EXPORTED], 0, uri);
+  g_signal_emit (image, picman_image_signals[EXPORTED], 0, uri);
 }
 
 
 /*  flush this image's displays  */
 
 void
-gimp_image_flush (GimpImage *image)
+picman_image_flush (PicmanImage *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  gimp_projectable_flush (GIMP_PROJECTABLE (image),
-                          GIMP_IMAGE_GET_PRIVATE (image)->flush_accum.preview_invalidated);
+  picman_projectable_flush (PICMAN_PROJECTABLE (image),
+                          PICMAN_IMAGE_GET_PRIVATE (image)->flush_accum.preview_invalidated);
 }
 
 
 /*  display / instance counters  */
 
 gint
-gimp_image_get_display_count (const GimpImage *image)
+picman_image_get_display_count (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), 0);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), 0);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->disp_count;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->disp_count;
 }
 
 void
-gimp_image_inc_display_count (GimpImage *image)
+picman_image_inc_display_count (PicmanImage *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  GIMP_IMAGE_GET_PRIVATE (image)->disp_count++;
+  PICMAN_IMAGE_GET_PRIVATE (image)->disp_count++;
 }
 
 void
-gimp_image_dec_display_count (GimpImage *image)
+picman_image_dec_display_count (PicmanImage *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  GIMP_IMAGE_GET_PRIVATE (image)->disp_count--;
+  PICMAN_IMAGE_GET_PRIVATE (image)->disp_count--;
 }
 
 gint
-gimp_image_get_instance_count (const GimpImage *image)
+picman_image_get_instance_count (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), 0);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), 0);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->instance_count;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->instance_count;
 }
 
 void
-gimp_image_inc_instance_count (GimpImage *image)
+picman_image_inc_instance_count (PicmanImage *image)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  GIMP_IMAGE_GET_PRIVATE (image)->instance_count++;
+  PICMAN_IMAGE_GET_PRIVATE (image)->instance_count++;
 }
 
 
 /*  parasites  */
 
-const GimpParasite *
-gimp_image_parasite_find (const GimpImage *image,
+const PicmanParasite *
+picman_image_parasite_find (const PicmanImage *image,
                           const gchar     *name)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return gimp_parasite_list_find (GIMP_IMAGE_GET_PRIVATE (image)->parasites,
+  return picman_parasite_list_find (PICMAN_IMAGE_GET_PRIVATE (image)->parasites,
                                   name);
 }
 
 static void
 list_func (gchar          *key,
-           GimpParasite   *p,
+           PicmanParasite   *p,
            gchar        ***cur)
 {
   *(*cur)++ = (gchar *) g_strdup (key);
 }
 
 gchar **
-gimp_image_parasite_list (const GimpImage *image,
+picman_image_parasite_list (const PicmanImage *image,
                           gint            *count)
 {
-  GimpImagePrivate  *private;
+  PicmanImagePrivate  *private;
   gchar            **list;
   gchar            **cur;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  *count = gimp_parasite_list_length (private->parasites);
+  *count = picman_parasite_list_length (private->parasites);
   cur = list = g_new (gchar *, *count);
 
-  gimp_parasite_list_foreach (private->parasites, (GHFunc) list_func, &cur);
+  picman_parasite_list_foreach (private->parasites, (GHFunc) list_func, &cur);
 
   return list;
 }
 
 void
-gimp_image_parasite_attach (GimpImage          *image,
-                            const GimpParasite *parasite)
+picman_image_parasite_attach (PicmanImage          *image,
+                            const PicmanParasite *parasite)
 {
-  GimpParasite  copy;
+  PicmanParasite  copy;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (parasite != NULL);
 
-  /*  make a temporary copy of the GimpParasite struct because
-   *  gimp_parasite_shift_parent() changes it
+  /*  make a temporary copy of the PicmanParasite struct because
+   *  picman_parasite_shift_parent() changes it
    */
   copy = *parasite;
 
   /*  only set the dirty bit manually if we can be saved and the new
    *  parasite differs from the current one and we aren't undoable
    */
-  if (gimp_parasite_is_undoable (&copy))
-    gimp_image_undo_push_image_parasite (image,
+  if (picman_parasite_is_undoable (&copy))
+    picman_image_undo_push_image_parasite (image,
                                          C_("undo-type", "Attach Parasite to Image"),
                                          &copy);
 
@@ -2907,61 +2907,61 @@ gimp_image_parasite_attach (GimpImage          *image,
    *  Now we simply attach the parasite without pushing an undo. That way
    *  it's undoable but does not block the undo system.   --Sven
    */
-  gimp_parasite_list_add (GIMP_IMAGE_GET_PRIVATE (image)->parasites, &copy);
+  picman_parasite_list_add (PICMAN_IMAGE_GET_PRIVATE (image)->parasites, &copy);
 
-  if (gimp_parasite_has_flag (&copy, GIMP_PARASITE_ATTACH_PARENT))
+  if (picman_parasite_has_flag (&copy, PICMAN_PARASITE_ATTACH_PARENT))
     {
-      gimp_parasite_shift_parent (&copy);
-      gimp_parasite_attach (image->gimp, &copy);
+      picman_parasite_shift_parent (&copy);
+      picman_parasite_attach (image->picman, &copy);
     }
 
-  g_signal_emit (image, gimp_image_signals[PARASITE_ATTACHED], 0,
+  g_signal_emit (image, picman_image_signals[PARASITE_ATTACHED], 0,
                  parasite->name);
 
   if (strcmp (parasite->name, "icc-profile") == 0)
-    gimp_color_managed_profile_changed (GIMP_COLOR_MANAGED (image));
+    picman_color_managed_profile_changed (PICMAN_COLOR_MANAGED (image));
 }
 
 void
-gimp_image_parasite_detach (GimpImage   *image,
+picman_image_parasite_detach (PicmanImage   *image,
                             const gchar *name)
 {
-  GimpImagePrivate   *private;
-  const GimpParasite *parasite;
+  PicmanImagePrivate   *private;
+  const PicmanParasite *parasite;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (name != NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  if (! (parasite = gimp_parasite_list_find (private->parasites, name)))
+  if (! (parasite = picman_parasite_list_find (private->parasites, name)))
     return;
 
-  if (gimp_parasite_is_undoable (parasite))
-    gimp_image_undo_push_image_parasite_remove (image,
+  if (picman_parasite_is_undoable (parasite))
+    picman_image_undo_push_image_parasite_remove (image,
                                                 C_("undo-type", "Remove Parasite from Image"),
                                                 name);
 
-  gimp_parasite_list_remove (private->parasites, name);
+  picman_parasite_list_remove (private->parasites, name);
 
-  g_signal_emit (image, gimp_image_signals[PARASITE_DETACHED], 0,
+  g_signal_emit (image, picman_image_signals[PARASITE_DETACHED], 0,
                  name);
 
   if (strcmp (name, "icc-profile") == 0)
-    gimp_color_managed_profile_changed (GIMP_COLOR_MANAGED (image));
+    picman_color_managed_profile_changed (PICMAN_COLOR_MANAGED (image));
 }
 
 
 /*  tattoos  */
 
-GimpTattoo
-gimp_image_get_new_tattoo (GimpImage *image)
+PicmanTattoo
+picman_image_get_new_tattoo (PicmanImage *image)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), 0);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), 0);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   private->tattoo_state++;
 
@@ -2971,70 +2971,70 @@ gimp_image_get_new_tattoo (GimpImage *image)
   return private->tattoo_state;
 }
 
-GimpTattoo
-gimp_image_get_tattoo_state (GimpImage *image)
+PicmanTattoo
+picman_image_get_tattoo_state (PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), 0);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), 0);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->tattoo_state;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->tattoo_state;
 }
 
 gboolean
-gimp_image_set_tattoo_state (GimpImage  *image,
-                             GimpTattoo  val)
+picman_image_set_tattoo_state (PicmanImage  *image,
+                             PicmanTattoo  val)
 {
   GList      *all_items;
   GList      *list;
   gboolean    retval = TRUE;
-  GimpTattoo  maxval = 0;
+  PicmanTattoo  maxval = 0;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
   /* Check that the layer tattoos don't overlap with channel or vector ones */
-  all_items = gimp_image_get_layer_list (image);
+  all_items = picman_image_get_layer_list (image);
 
   for (list = all_items; list; list = g_list_next (list))
     {
-      GimpTattoo ltattoo;
+      PicmanTattoo ltattoo;
 
-      ltattoo = gimp_item_get_tattoo (GIMP_ITEM (list->data));
+      ltattoo = picman_item_get_tattoo (PICMAN_ITEM (list->data));
       if (ltattoo > maxval)
         maxval = ltattoo;
 
-      if (gimp_image_get_channel_by_tattoo (image, ltattoo))
+      if (picman_image_get_channel_by_tattoo (image, ltattoo))
         retval = FALSE; /* Oopps duplicated tattoo in channel */
 
-      if (gimp_image_get_vectors_by_tattoo (image, ltattoo))
+      if (picman_image_get_vectors_by_tattoo (image, ltattoo))
         retval = FALSE; /* Oopps duplicated tattoo in vectors */
     }
 
   g_list_free (all_items);
 
   /* Now check that the channel and vectors tattoos don't overlap */
-  all_items = gimp_image_get_channel_list (image);
+  all_items = picman_image_get_channel_list (image);
 
   for (list = all_items; list; list = g_list_next (list))
     {
-      GimpTattoo ctattoo;
+      PicmanTattoo ctattoo;
 
-      ctattoo = gimp_item_get_tattoo (GIMP_ITEM (list->data));
+      ctattoo = picman_item_get_tattoo (PICMAN_ITEM (list->data));
       if (ctattoo > maxval)
         maxval = ctattoo;
 
-      if (gimp_image_get_vectors_by_tattoo (image, ctattoo))
+      if (picman_image_get_vectors_by_tattoo (image, ctattoo))
         retval = FALSE; /* Oopps duplicated tattoo in vectors */
     }
 
   g_list_free (all_items);
 
   /* Find the max tattoo value in the vectors */
-  all_items = gimp_image_get_vectors_list (image);
+  all_items = picman_image_get_vectors_list (image);
 
   for (list = all_items; list; list = g_list_next (list))
     {
-      GimpTattoo vtattoo;
+      PicmanTattoo vtattoo;
 
-      vtattoo = gimp_item_get_tattoo (GIMP_ITEM (list->data));
+      vtattoo = picman_item_get_tattoo (PICMAN_ITEM (list->data));
       if (vtattoo > maxval)
         maxval = vtattoo;
     }
@@ -3046,7 +3046,7 @@ gimp_image_set_tattoo_state (GimpImage  *image,
 
   /* Must check if the state is valid */
   if (retval == TRUE)
-    GIMP_IMAGE_GET_PRIVATE (image)->tattoo_state = val;
+    PICMAN_IMAGE_GET_PRIVATE (image)->tattoo_state = val;
 
   return retval;
 }
@@ -3054,587 +3054,587 @@ gimp_image_set_tattoo_state (GimpImage  *image,
 
 /*  projection  */
 
-GimpProjection *
-gimp_image_get_projection (const GimpImage *image)
+PicmanProjection *
+picman_image_get_projection (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->projection;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->projection;
 }
 
 
 /*  layers / channels / vectors  */
 
-GimpItemTree *
-gimp_image_get_layer_tree (const GimpImage *image)
+PicmanItemTree *
+picman_image_get_layer_tree (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->layers;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->layers;
 }
 
-GimpItemTree *
-gimp_image_get_channel_tree (const GimpImage *image)
+PicmanItemTree *
+picman_image_get_channel_tree (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->channels;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->channels;
 }
 
-GimpItemTree *
-gimp_image_get_vectors_tree (const GimpImage *image)
+PicmanItemTree *
+picman_image_get_vectors_tree (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->vectors;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->vectors;
 }
 
-GimpContainer *
-gimp_image_get_layers (const GimpImage *image)
+PicmanContainer *
+picman_image_get_layers (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->layers->container;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->layers->container;
 }
 
-GimpContainer *
-gimp_image_get_channels (const GimpImage *image)
+PicmanContainer *
+picman_image_get_channels (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->channels->container;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->channels->container;
 }
 
-GimpContainer *
-gimp_image_get_vectors (const GimpImage *image)
+PicmanContainer *
+picman_image_get_vectors (const PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->vectors->container;
-}
-
-gint
-gimp_image_get_n_layers (const GimpImage *image)
-{
-  GimpItemStack *stack;
-
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), 0);
-
-  stack = GIMP_ITEM_STACK (gimp_image_get_layers (image));
-
-  return gimp_item_stack_get_n_items (stack);
+  return PICMAN_IMAGE_GET_PRIVATE (image)->vectors->container;
 }
 
 gint
-gimp_image_get_n_channels (const GimpImage *image)
+picman_image_get_n_layers (const PicmanImage *image)
 {
-  GimpItemStack *stack;
+  PicmanItemStack *stack;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), 0);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), 0);
 
-  stack = GIMP_ITEM_STACK (gimp_image_get_channels (image));
+  stack = PICMAN_ITEM_STACK (picman_image_get_layers (image));
 
-  return gimp_item_stack_get_n_items (stack);
+  return picman_item_stack_get_n_items (stack);
 }
 
 gint
-gimp_image_get_n_vectors (const GimpImage *image)
+picman_image_get_n_channels (const PicmanImage *image)
 {
-  GimpItemStack *stack;
+  PicmanItemStack *stack;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), 0);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), 0);
 
-  stack = GIMP_ITEM_STACK (gimp_image_get_vectors (image));
+  stack = PICMAN_ITEM_STACK (picman_image_get_channels (image));
 
-  return gimp_item_stack_get_n_items (stack);
+  return picman_item_stack_get_n_items (stack);
+}
+
+gint
+picman_image_get_n_vectors (const PicmanImage *image)
+{
+  PicmanItemStack *stack;
+
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), 0);
+
+  stack = PICMAN_ITEM_STACK (picman_image_get_vectors (image));
+
+  return picman_item_stack_get_n_items (stack);
 }
 
 GList *
-gimp_image_get_layer_iter (const GimpImage *image)
+picman_image_get_layer_iter (const PicmanImage *image)
 {
-  GimpItemStack *stack;
+  PicmanItemStack *stack;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  stack = GIMP_ITEM_STACK (gimp_image_get_layers (image));
+  stack = PICMAN_ITEM_STACK (picman_image_get_layers (image));
 
-  return gimp_item_stack_get_item_iter (stack);
+  return picman_item_stack_get_item_iter (stack);
 }
 
 GList *
-gimp_image_get_channel_iter (const GimpImage *image)
+picman_image_get_channel_iter (const PicmanImage *image)
 {
-  GimpItemStack *stack;
+  PicmanItemStack *stack;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  stack = GIMP_ITEM_STACK (gimp_image_get_channels (image));
+  stack = PICMAN_ITEM_STACK (picman_image_get_channels (image));
 
-  return gimp_item_stack_get_item_iter (stack);
+  return picman_item_stack_get_item_iter (stack);
 }
 
 GList *
-gimp_image_get_vectors_iter (const GimpImage *image)
+picman_image_get_vectors_iter (const PicmanImage *image)
 {
-  GimpItemStack *stack;
+  PicmanItemStack *stack;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  stack = GIMP_ITEM_STACK (gimp_image_get_vectors (image));
+  stack = PICMAN_ITEM_STACK (picman_image_get_vectors (image));
 
-  return gimp_item_stack_get_item_iter (stack);
+  return picman_item_stack_get_item_iter (stack);
 }
 
 GList *
-gimp_image_get_layer_list (const GimpImage *image)
+picman_image_get_layer_list (const PicmanImage *image)
 {
-  GimpItemStack *stack;
+  PicmanItemStack *stack;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  stack = GIMP_ITEM_STACK (gimp_image_get_layers (image));
+  stack = PICMAN_ITEM_STACK (picman_image_get_layers (image));
 
-  return gimp_item_stack_get_item_list (stack);
+  return picman_item_stack_get_item_list (stack);
 }
 
 GList *
-gimp_image_get_channel_list (const GimpImage *image)
+picman_image_get_channel_list (const PicmanImage *image)
 {
-  GimpItemStack *stack;
+  PicmanItemStack *stack;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  stack = GIMP_ITEM_STACK (gimp_image_get_channels (image));
+  stack = PICMAN_ITEM_STACK (picman_image_get_channels (image));
 
-  return gimp_item_stack_get_item_list (stack);
+  return picman_item_stack_get_item_list (stack);
 }
 
 GList *
-gimp_image_get_vectors_list (const GimpImage *image)
+picman_image_get_vectors_list (const PicmanImage *image)
 {
-  GimpItemStack *stack;
+  PicmanItemStack *stack;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  stack = GIMP_ITEM_STACK (gimp_image_get_vectors (image));
+  stack = PICMAN_ITEM_STACK (picman_image_get_vectors (image));
 
-  return gimp_item_stack_get_item_list (stack);
+  return picman_item_stack_get_item_list (stack);
 }
 
 
 /*  active drawable, layer, channel, vectors  */
 
-GimpDrawable *
-gimp_image_get_active_drawable (const GimpImage *image)
+PicmanDrawable *
+picman_image_get_active_drawable (const PicmanImage *image)
 {
-  GimpImagePrivate *private;
-  GimpItem         *active_channel;
-  GimpItem         *active_layer;
+  PicmanImagePrivate *private;
+  PicmanItem         *active_channel;
+  PicmanItem         *active_layer;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  active_channel = gimp_item_tree_get_active_item (private->channels);
-  active_layer   = gimp_item_tree_get_active_item (private->layers);
+  active_channel = picman_item_tree_get_active_item (private->channels);
+  active_layer   = picman_item_tree_get_active_item (private->layers);
 
   /*  If there is an active channel (a saved selection, etc.),
    *  we ignore the active layer
    */
   if (active_channel)
     {
-      return GIMP_DRAWABLE (active_channel);
+      return PICMAN_DRAWABLE (active_channel);
     }
   else if (active_layer)
     {
-      GimpLayer     *layer = GIMP_LAYER (active_layer);
-      GimpLayerMask *mask  = gimp_layer_get_mask (layer);
+      PicmanLayer     *layer = PICMAN_LAYER (active_layer);
+      PicmanLayerMask *mask  = picman_layer_get_mask (layer);
 
-      if (mask && gimp_layer_get_edit_mask (layer))
-        return GIMP_DRAWABLE (mask);
+      if (mask && picman_layer_get_edit_mask (layer))
+        return PICMAN_DRAWABLE (mask);
       else
-        return GIMP_DRAWABLE (layer);
+        return PICMAN_DRAWABLE (layer);
     }
 
   return NULL;
 }
 
-GimpLayer *
-gimp_image_get_active_layer (const GimpImage *image)
+PicmanLayer *
+picman_image_get_active_layer (const PicmanImage *image)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  return GIMP_LAYER (gimp_item_tree_get_active_item (private->layers));
+  return PICMAN_LAYER (picman_item_tree_get_active_item (private->layers));
 }
 
-GimpChannel *
-gimp_image_get_active_channel (const GimpImage *image)
+PicmanChannel *
+picman_image_get_active_channel (const PicmanImage *image)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  return GIMP_CHANNEL (gimp_item_tree_get_active_item (private->channels));
+  return PICMAN_CHANNEL (picman_item_tree_get_active_item (private->channels));
 }
 
-GimpVectors *
-gimp_image_get_active_vectors (const GimpImage *image)
+PicmanVectors *
+picman_image_get_active_vectors (const PicmanImage *image)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  return GIMP_VECTORS (gimp_item_tree_get_active_item (private->vectors));
+  return PICMAN_VECTORS (picman_item_tree_get_active_item (private->vectors));
 }
 
-GimpLayer *
-gimp_image_set_active_layer (GimpImage *image,
-                             GimpLayer *layer)
+PicmanLayer *
+picman_image_set_active_layer (PicmanImage *image,
+                             PicmanLayer *layer)
 {
-  GimpImagePrivate *private;
-  GimpLayer        *floating_sel;
-  GimpLayer        *active_layer;
+  PicmanImagePrivate *private;
+  PicmanLayer        *floating_sel;
+  PicmanLayer        *active_layer;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (layer == NULL || GIMP_IS_LAYER (layer), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (layer == NULL || PICMAN_IS_LAYER (layer), NULL);
   g_return_val_if_fail (layer == NULL ||
-                        (gimp_item_is_attached (GIMP_ITEM (layer)) &&
-                         gimp_item_get_image (GIMP_ITEM (layer)) == image),
+                        (picman_item_is_attached (PICMAN_ITEM (layer)) &&
+                         picman_item_get_image (PICMAN_ITEM (layer)) == image),
                         NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  floating_sel = gimp_image_get_floating_selection (image);
+  floating_sel = picman_image_get_floating_selection (image);
 
   /*  Make sure the floating_sel always is the active layer  */
   if (floating_sel && layer != floating_sel)
     return floating_sel;
 
-  active_layer = gimp_image_get_active_layer (image);
+  active_layer = picman_image_get_active_layer (image);
 
   if (layer != active_layer)
     {
       /*  Don't cache selection info for the previous active layer  */
       if (active_layer)
-        gimp_drawable_invalidate_boundary (GIMP_DRAWABLE (active_layer));
+        picman_drawable_invalidate_boundary (PICMAN_DRAWABLE (active_layer));
 
-      gimp_item_tree_set_active_item (private->layers, GIMP_ITEM (layer));
+      picman_item_tree_set_active_item (private->layers, PICMAN_ITEM (layer));
     }
 
-  return gimp_image_get_active_layer (image);
+  return picman_image_get_active_layer (image);
 }
 
-GimpChannel *
-gimp_image_set_active_channel (GimpImage   *image,
-                               GimpChannel *channel)
+PicmanChannel *
+picman_image_set_active_channel (PicmanImage   *image,
+                               PicmanChannel *channel)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (channel == NULL || GIMP_IS_CHANNEL (channel), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (channel == NULL || PICMAN_IS_CHANNEL (channel), NULL);
   g_return_val_if_fail (channel == NULL ||
-                        (gimp_item_is_attached (GIMP_ITEM (channel)) &&
-                         gimp_item_get_image (GIMP_ITEM (channel)) == image),
+                        (picman_item_is_attached (PICMAN_ITEM (channel)) &&
+                         picman_item_get_image (PICMAN_ITEM (channel)) == image),
                         NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   /*  Not if there is a floating selection  */
-  if (channel && gimp_image_get_floating_selection (image))
+  if (channel && picman_image_get_floating_selection (image))
     return NULL;
 
-  if (channel != gimp_image_get_active_channel (image))
+  if (channel != picman_image_get_active_channel (image))
     {
-      gimp_item_tree_set_active_item (private->channels, GIMP_ITEM (channel));
+      picman_item_tree_set_active_item (private->channels, PICMAN_ITEM (channel));
     }
 
-  return gimp_image_get_active_channel (image);
+  return picman_image_get_active_channel (image);
 }
 
-GimpChannel *
-gimp_image_unset_active_channel (GimpImage *image)
+PicmanChannel *
+picman_image_unset_active_channel (PicmanImage *image)
 {
-  GimpImagePrivate *private;
-  GimpChannel      *channel;
+  PicmanImagePrivate *private;
+  PicmanChannel      *channel;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  channel = gimp_image_get_active_channel (image);
+  channel = picman_image_get_active_channel (image);
 
   if (channel)
     {
-      gimp_image_set_active_channel (image, NULL);
+      picman_image_set_active_channel (image, NULL);
 
       if (private->layer_stack)
-        gimp_image_set_active_layer (image, private->layer_stack->data);
+        picman_image_set_active_layer (image, private->layer_stack->data);
     }
 
   return channel;
 }
 
-GimpVectors *
-gimp_image_set_active_vectors (GimpImage   *image,
-                               GimpVectors *vectors)
+PicmanVectors *
+picman_image_set_active_vectors (PicmanImage   *image,
+                               PicmanVectors *vectors)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (vectors == NULL || GIMP_IS_VECTORS (vectors), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (vectors == NULL || PICMAN_IS_VECTORS (vectors), NULL);
   g_return_val_if_fail (vectors == NULL ||
-                        (gimp_item_is_attached (GIMP_ITEM (vectors)) &&
-                         gimp_item_get_image (GIMP_ITEM (vectors)) == image),
+                        (picman_item_is_attached (PICMAN_ITEM (vectors)) &&
+                         picman_item_get_image (PICMAN_ITEM (vectors)) == image),
                         NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  if (vectors != gimp_image_get_active_vectors (image))
+  if (vectors != picman_image_get_active_vectors (image))
     {
-      gimp_item_tree_set_active_item (private->vectors, GIMP_ITEM (vectors));
+      picman_item_tree_set_active_item (private->vectors, PICMAN_ITEM (vectors));
     }
 
-  return gimp_image_get_active_vectors (image);
+  return picman_image_get_active_vectors (image);
 }
 
 
 /*  layer, channel, vectors by tattoo  */
 
-GimpLayer *
-gimp_image_get_layer_by_tattoo (const GimpImage *image,
-                                GimpTattoo       tattoo)
+PicmanLayer *
+picman_image_get_layer_by_tattoo (const PicmanImage *image,
+                                PicmanTattoo       tattoo)
 {
-  GimpItemStack *stack;
+  PicmanItemStack *stack;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  stack = GIMP_ITEM_STACK (gimp_image_get_layers (image));
+  stack = PICMAN_ITEM_STACK (picman_image_get_layers (image));
 
-  return GIMP_LAYER (gimp_item_stack_get_item_by_tattoo (stack, tattoo));
+  return PICMAN_LAYER (picman_item_stack_get_item_by_tattoo (stack, tattoo));
 }
 
-GimpChannel *
-gimp_image_get_channel_by_tattoo (const GimpImage *image,
-                                  GimpTattoo       tattoo)
+PicmanChannel *
+picman_image_get_channel_by_tattoo (const PicmanImage *image,
+                                  PicmanTattoo       tattoo)
 {
-  GimpItemStack *stack;
+  PicmanItemStack *stack;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  stack = GIMP_ITEM_STACK (gimp_image_get_channels (image));
+  stack = PICMAN_ITEM_STACK (picman_image_get_channels (image));
 
-  return GIMP_CHANNEL (gimp_item_stack_get_item_by_tattoo (stack, tattoo));
+  return PICMAN_CHANNEL (picman_item_stack_get_item_by_tattoo (stack, tattoo));
 }
 
-GimpVectors *
-gimp_image_get_vectors_by_tattoo (const GimpImage *image,
-                                  GimpTattoo       tattoo)
+PicmanVectors *
+picman_image_get_vectors_by_tattoo (const PicmanImage *image,
+                                  PicmanTattoo       tattoo)
 {
-  GimpItemStack *stack;
+  PicmanItemStack *stack;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  stack = GIMP_ITEM_STACK (gimp_image_get_vectors (image));
+  stack = PICMAN_ITEM_STACK (picman_image_get_vectors (image));
 
-  return GIMP_VECTORS (gimp_item_stack_get_item_by_tattoo (stack, tattoo));
+  return PICMAN_VECTORS (picman_item_stack_get_item_by_tattoo (stack, tattoo));
 }
 
 
 /*  layer, channel, vectors by name  */
 
-GimpLayer *
-gimp_image_get_layer_by_name (const GimpImage *image,
+PicmanLayer *
+picman_image_get_layer_by_name (const PicmanImage *image,
                               const gchar     *name)
 {
-  GimpItemTree *tree;
+  PicmanItemTree *tree;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (name != NULL, NULL);
 
-  tree = gimp_image_get_layer_tree (image);
+  tree = picman_image_get_layer_tree (image);
 
-  return GIMP_LAYER (gimp_item_tree_get_item_by_name (tree, name));
+  return PICMAN_LAYER (picman_item_tree_get_item_by_name (tree, name));
 }
 
-GimpChannel *
-gimp_image_get_channel_by_name (const GimpImage *image,
+PicmanChannel *
+picman_image_get_channel_by_name (const PicmanImage *image,
                                 const gchar     *name)
 {
-  GimpItemTree *tree;
+  PicmanItemTree *tree;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (name != NULL, NULL);
 
-  tree = gimp_image_get_channel_tree (image);
+  tree = picman_image_get_channel_tree (image);
 
-  return GIMP_CHANNEL (gimp_item_tree_get_item_by_name (tree, name));
+  return PICMAN_CHANNEL (picman_item_tree_get_item_by_name (tree, name));
 }
 
-GimpVectors *
-gimp_image_get_vectors_by_name (const GimpImage *image,
+PicmanVectors *
+picman_image_get_vectors_by_name (const PicmanImage *image,
                                 const gchar     *name)
 {
-  GimpItemTree *tree;
+  PicmanItemTree *tree;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (name != NULL, NULL);
 
-  tree = gimp_image_get_vectors_tree (image);
+  tree = picman_image_get_vectors_tree (image);
 
-  return GIMP_VECTORS (gimp_item_tree_get_item_by_name (tree, name));
+  return PICMAN_VECTORS (picman_item_tree_get_item_by_name (tree, name));
 }
 
 
 /*  items  */
 
 gboolean
-gimp_image_reorder_item (GimpImage   *image,
-                         GimpItem    *item,
-                         GimpItem    *new_parent,
+picman_image_reorder_item (PicmanImage   *image,
+                         PicmanItem    *item,
+                         PicmanItem    *new_parent,
                          gint         new_index,
                          gboolean     push_undo,
                          const gchar *undo_desc)
 {
-  GimpItemTree *tree;
+  PicmanItemTree *tree;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
-  g_return_val_if_fail (GIMP_IS_ITEM (item), FALSE);
-  g_return_val_if_fail (gimp_item_get_image (item) == image, FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_ITEM (item), FALSE);
+  g_return_val_if_fail (picman_item_get_image (item) == image, FALSE);
 
-  tree = gimp_item_get_tree (item);
+  tree = picman_item_get_tree (item);
 
   g_return_val_if_fail (tree != NULL, FALSE);
 
   if (push_undo && ! undo_desc)
-    undo_desc = GIMP_ITEM_GET_CLASS (item)->reorder_desc;
+    undo_desc = PICMAN_ITEM_GET_CLASS (item)->reorder_desc;
 
-  /*  item and new_parent are type-checked in GimpItemTree
+  /*  item and new_parent are type-checked in PicmanItemTree
    */
-  return gimp_item_tree_reorder_item (tree, item,
+  return picman_item_tree_reorder_item (tree, item,
                                       new_parent, new_index,
                                       push_undo, undo_desc);
 }
 
 gboolean
-gimp_image_raise_item (GimpImage *image,
-                       GimpItem  *item,
+picman_image_raise_item (PicmanImage *image,
+                       PicmanItem  *item,
                        GError    **error)
 {
   gint index;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
-  g_return_val_if_fail (GIMP_IS_ITEM (item), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_ITEM (item), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  index = gimp_item_get_index (item);
+  index = picman_item_get_index (item);
 
   g_return_val_if_fail (index != -1, FALSE);
 
   if (index == 0)
     {
-      g_set_error_literal (error,  GIMP_ERROR, GIMP_FAILED,
-			   GIMP_ITEM_GET_CLASS (item)->raise_failed);
+      g_set_error_literal (error,  PICMAN_ERROR, PICMAN_FAILED,
+			   PICMAN_ITEM_GET_CLASS (item)->raise_failed);
       return FALSE;
     }
 
-  return gimp_image_reorder_item (image, item,
-                                  gimp_item_get_parent (item), index - 1,
-                                  TRUE, GIMP_ITEM_GET_CLASS (item)->raise_desc);
+  return picman_image_reorder_item (image, item,
+                                  picman_item_get_parent (item), index - 1,
+                                  TRUE, PICMAN_ITEM_GET_CLASS (item)->raise_desc);
 }
 
 gboolean
-gimp_image_raise_item_to_top (GimpImage *image,
-                              GimpItem  *item)
+picman_image_raise_item_to_top (PicmanImage *image,
+                              PicmanItem  *item)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
-  g_return_val_if_fail (GIMP_IS_ITEM (item), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_ITEM (item), FALSE);
 
-  return gimp_image_reorder_item (image, item,
-                                  gimp_item_get_parent (item), 0,
-                                  TRUE, GIMP_ITEM_GET_CLASS (item)->raise_to_top_desc);
+  return picman_image_reorder_item (image, item,
+                                  picman_item_get_parent (item), 0,
+                                  TRUE, PICMAN_ITEM_GET_CLASS (item)->raise_to_top_desc);
 }
 
 gboolean
-gimp_image_lower_item (GimpImage *image,
-                       GimpItem  *item,
+picman_image_lower_item (PicmanImage *image,
+                       PicmanItem  *item,
                        GError    **error)
 {
-  GimpContainer *container;
+  PicmanContainer *container;
   gint           index;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
-  g_return_val_if_fail (GIMP_IS_ITEM (item), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_ITEM (item), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  container = gimp_item_get_container (item);
+  container = picman_item_get_container (item);
 
   g_return_val_if_fail (container != NULL, FALSE);
 
-  index = gimp_item_get_index (item);
+  index = picman_item_get_index (item);
 
-  if (index == gimp_container_get_n_children (container) - 1)
+  if (index == picman_container_get_n_children (container) - 1)
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
-			   GIMP_ITEM_GET_CLASS (item)->lower_failed);
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
+			   PICMAN_ITEM_GET_CLASS (item)->lower_failed);
       return FALSE;
     }
 
-  return gimp_image_reorder_item (image, item,
-                                  gimp_item_get_parent (item), index + 1,
-                                  TRUE, GIMP_ITEM_GET_CLASS (item)->lower_desc);
+  return picman_image_reorder_item (image, item,
+                                  picman_item_get_parent (item), index + 1,
+                                  TRUE, PICMAN_ITEM_GET_CLASS (item)->lower_desc);
 }
 
 gboolean
-gimp_image_lower_item_to_bottom (GimpImage *image,
-                                  GimpItem *item)
+picman_image_lower_item_to_bottom (PicmanImage *image,
+                                  PicmanItem *item)
 {
-  GimpContainer *container;
+  PicmanContainer *container;
   gint           length;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
-  g_return_val_if_fail (GIMP_IS_ITEM (item), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_ITEM (item), FALSE);
 
-  container = gimp_item_get_container (item);
+  container = picman_item_get_container (item);
 
   g_return_val_if_fail (container != NULL, FALSE);
 
-  length = gimp_container_get_n_children (container);
+  length = picman_container_get_n_children (container);
 
-  return gimp_image_reorder_item (image, item,
-                                  gimp_item_get_parent (item), length - 1,
-                                  TRUE, GIMP_ITEM_GET_CLASS (item)->lower_to_bottom_desc);
+  return picman_image_reorder_item (image, item,
+                                  picman_item_get_parent (item), length - 1,
+                                  TRUE, PICMAN_ITEM_GET_CLASS (item)->lower_to_bottom_desc);
 }
 
 
 /*  layers  */
 
 gboolean
-gimp_image_add_layer (GimpImage *image,
-                      GimpLayer *layer,
-                      GimpLayer *parent,
+picman_image_add_layer (PicmanImage *image,
+                      PicmanLayer *layer,
+                      PicmanLayer *parent,
                       gint       position,
                       gboolean   push_undo)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
   gboolean          old_has_alpha;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  /*  item and parent are type-checked in GimpItemTree
+  /*  item and parent are type-checked in PicmanItemTree
    */
-  if (! gimp_item_tree_get_insert_pos (private->layers,
-                                       (GimpItem *) layer,
-                                       (GimpItem **) &parent,
+  if (! picman_item_tree_get_insert_pos (private->layers,
+                                       (PicmanItem *) layer,
+                                       (PicmanItem **) &parent,
                                        &position))
     return FALSE;
 
@@ -3642,79 +3642,79 @@ gimp_image_add_layer (GimpImage *image,
    *  make sure the insert position is greater than 0
    */
   if (parent == NULL && position == 0 &&
-      gimp_image_get_floating_selection (image))
+      picman_image_get_floating_selection (image))
     position = 1;
 
-  old_has_alpha = gimp_image_has_alpha (image);
+  old_has_alpha = picman_image_has_alpha (image);
 
   if (push_undo)
-    gimp_image_undo_push_layer_add (image, C_("undo-type", "Add Layer"),
+    picman_image_undo_push_layer_add (image, C_("undo-type", "Add Layer"),
                                     layer,
-                                    gimp_image_get_active_layer (image));
+                                    picman_image_get_active_layer (image));
 
-  gimp_item_tree_add_item (private->layers, GIMP_ITEM (layer),
-                           GIMP_ITEM (parent), position);
+  picman_item_tree_add_item (private->layers, PICMAN_ITEM (layer),
+                           PICMAN_ITEM (parent), position);
 
-  gimp_image_set_active_layer (image, layer);
+  picman_image_set_active_layer (image, layer);
 
   /*  If the layer is a floating selection, attach it to the drawable  */
-  if (gimp_layer_is_floating_sel (layer))
-    gimp_drawable_attach_floating_sel (gimp_layer_get_floating_sel_drawable (layer),
+  if (picman_layer_is_floating_sel (layer))
+    picman_drawable_attach_floating_sel (picman_layer_get_floating_sel_drawable (layer),
                                        layer);
 
-  if (old_has_alpha != gimp_image_has_alpha (image))
+  if (old_has_alpha != picman_image_has_alpha (image))
     private->flush_accum.alpha_changed = TRUE;
 
   return TRUE;
 }
 
 void
-gimp_image_remove_layer (GimpImage *image,
-                         GimpLayer *layer,
+picman_image_remove_layer (PicmanImage *image,
+                         PicmanLayer *layer,
                          gboolean   push_undo,
-                         GimpLayer *new_active)
+                         PicmanLayer *new_active)
 {
-  GimpImagePrivate *private;
-  GimpLayer        *active_layer;
+  PicmanImagePrivate *private;
+  PicmanLayer        *active_layer;
   gboolean          old_has_alpha;
   gboolean          undo_group = FALSE;
   const gchar      *undo_desc;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_LAYER (layer));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (layer)));
-  g_return_if_fail (gimp_item_get_image (GIMP_ITEM (layer)) == image);
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (layer)));
+  g_return_if_fail (picman_item_get_image (PICMAN_ITEM (layer)) == image);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  if (gimp_drawable_get_floating_sel (GIMP_DRAWABLE (layer)))
+  if (picman_drawable_get_floating_sel (PICMAN_DRAWABLE (layer)))
     {
       if (! push_undo)
         {
           g_warning ("%s() was called from an undo function while the layer "
                      "had a floating selection. Please report this at "
-                     "http://www.gimp.org/bugs/", G_STRFUNC);
+                     "http://www.picman.org/bugs/", G_STRFUNC);
           return;
         }
 
-      gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_IMAGE_ITEM_REMOVE,
+      picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_IMAGE_ITEM_REMOVE,
                                    C_("undo-type", "Remove Layer"));
       undo_group = TRUE;
 
-      gimp_image_remove_layer (image,
-                               gimp_drawable_get_floating_sel (GIMP_DRAWABLE (layer)),
+      picman_image_remove_layer (image,
+                               picman_drawable_get_floating_sel (PICMAN_DRAWABLE (layer)),
                                TRUE, NULL);
     }
 
-  active_layer = gimp_image_get_active_layer (image);
+  active_layer = picman_image_get_active_layer (image);
 
-  old_has_alpha = gimp_image_has_alpha (image);
+  old_has_alpha = picman_image_has_alpha (image);
 
-  if (gimp_layer_is_floating_sel (layer))
+  if (picman_layer_is_floating_sel (layer))
     {
       undo_desc = C_("undo-type", "Remove Floating Selection");
 
-      gimp_drawable_detach_floating_sel (gimp_layer_get_floating_sel_drawable (layer));
+      picman_drawable_detach_floating_sel (picman_layer_get_floating_sel_drawable (layer));
     }
   else
     {
@@ -3722,27 +3722,27 @@ gimp_image_remove_layer (GimpImage *image,
     }
 
   if (push_undo)
-    gimp_image_undo_push_layer_remove (image, undo_desc, layer,
-                                       gimp_layer_get_parent (layer),
-                                       gimp_item_get_index (GIMP_ITEM (layer)),
+    picman_image_undo_push_layer_remove (image, undo_desc, layer,
+                                       picman_layer_get_parent (layer),
+                                       picman_item_get_index (PICMAN_ITEM (layer)),
                                        active_layer);
 
   g_object_ref (layer);
 
   /*  Make sure we're not caching any old selection info  */
   if (layer == active_layer)
-    gimp_drawable_invalidate_boundary (GIMP_DRAWABLE (layer));
+    picman_drawable_invalidate_boundary (PICMAN_DRAWABLE (layer));
 
   private->layer_stack = g_slist_remove (private->layer_stack, layer);
 
   /*  Also remove all children of a group layer from the layer_stack  */
-  if (gimp_viewable_get_children (GIMP_VIEWABLE (layer)))
+  if (picman_viewable_get_children (PICMAN_VIEWABLE (layer)))
     {
-      GimpContainer *stack = gimp_viewable_get_children (GIMP_VIEWABLE (layer));
+      PicmanContainer *stack = picman_viewable_get_children (PICMAN_VIEWABLE (layer));
       GList         *children;
       GList         *list;
 
-      children = gimp_item_stack_get_item_list (GIMP_ITEM_STACK (stack));
+      children = picman_item_stack_get_item_list (PICMAN_ITEM_STACK (stack));
 
       for (list = children; list; list = g_list_next (list))
         {
@@ -3757,11 +3757,11 @@ gimp_image_remove_layer (GimpImage *image,
     new_active = private->layer_stack->data;
 
   new_active =
-    GIMP_LAYER (gimp_item_tree_remove_item (private->layers,
-                                            GIMP_ITEM (layer),
-                                            GIMP_ITEM (new_active)));
+    PICMAN_LAYER (picman_item_tree_remove_item (private->layers,
+                                            PICMAN_ITEM (layer),
+                                            PICMAN_ITEM (new_active)));
 
-  if (gimp_layer_is_floating_sel (layer))
+  if (picman_layer_is_floating_sel (layer))
     {
       /*  If this was the floating selection, activate the underlying drawable
        */
@@ -3769,25 +3769,25 @@ gimp_image_remove_layer (GimpImage *image,
     }
   else if (active_layer &&
            (layer == active_layer ||
-            gimp_viewable_is_ancestor (GIMP_VIEWABLE (layer),
-                                       GIMP_VIEWABLE (active_layer))))
+            picman_viewable_is_ancestor (PICMAN_VIEWABLE (layer),
+                                       PICMAN_VIEWABLE (active_layer))))
     {
-      gimp_image_set_active_layer (image, new_active);
+      picman_image_set_active_layer (image, new_active);
     }
 
   g_object_unref (layer);
 
-  if (old_has_alpha != gimp_image_has_alpha (image))
+  if (old_has_alpha != picman_image_has_alpha (image))
     private->flush_accum.alpha_changed = TRUE;
 
   if (undo_group)
-    gimp_image_undo_group_end (image);
+    picman_image_undo_group_end (image);
 }
 
 void
-gimp_image_add_layers (GimpImage   *image,
+picman_image_add_layers (PicmanImage   *image,
                        GList       *layers,
-                       GimpLayer   *parent,
+                       PicmanLayer   *parent,
                        gint         position,
                        gint         x,
                        gint         y,
@@ -3795,7 +3795,7 @@ gimp_image_add_layers (GimpImage   *image,
                        gint         height,
                        const gchar *undo_desc)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
   GList            *list;
   gint              layers_x      = G_MAXINT;
   gint              layers_y      = G_MAXINT;
@@ -3804,288 +3804,288 @@ gimp_image_add_layers (GimpImage   *image,
   gint              offset_x;
   gint              offset_y;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (layers != NULL);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  /*  item and parent are type-checked in GimpItemTree
+  /*  item and parent are type-checked in PicmanItemTree
    */
-  if (! gimp_item_tree_get_insert_pos (private->layers,
-                                       (GimpItem *) layers->data,
-                                       (GimpItem **) &parent,
+  if (! picman_item_tree_get_insert_pos (private->layers,
+                                       (PicmanItem *) layers->data,
+                                       (PicmanItem **) &parent,
                                        &position))
     return;
 
   for (list = layers; list; list = g_list_next (list))
     {
-      GimpItem *item = GIMP_ITEM (list->data);
+      PicmanItem *item = PICMAN_ITEM (list->data);
       gint      off_x, off_y;
 
-      gimp_item_get_offset (item, &off_x, &off_y);
+      picman_item_get_offset (item, &off_x, &off_y);
 
       layers_x = MIN (layers_x, off_x);
       layers_y = MIN (layers_y, off_y);
 
       layers_width  = MAX (layers_width,
-                           off_x + gimp_item_get_width (item)  - layers_x);
+                           off_x + picman_item_get_width (item)  - layers_x);
       layers_height = MAX (layers_height,
-                           off_y + gimp_item_get_height (item) - layers_y);
+                           off_y + picman_item_get_height (item) - layers_y);
     }
 
   offset_x = x + (width  - layers_width)  / 2 - layers_x;
   offset_y = y + (height - layers_height) / 2 - layers_y;
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_LAYER_ADD, undo_desc);
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_LAYER_ADD, undo_desc);
 
   for (list = layers; list; list = g_list_next (list))
     {
-      GimpItem *new_item = GIMP_ITEM (list->data);
+      PicmanItem *new_item = PICMAN_ITEM (list->data);
 
-      gimp_item_translate (new_item, offset_x, offset_y, FALSE);
+      picman_item_translate (new_item, offset_x, offset_y, FALSE);
 
-      gimp_image_add_layer (image, GIMP_LAYER (new_item),
+      picman_image_add_layer (image, PICMAN_LAYER (new_item),
                             parent, position, TRUE);
       position++;
     }
 
   if (layers)
-    gimp_image_set_active_layer (image, layers->data);
+    picman_image_set_active_layer (image, layers->data);
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 }
 
 
 /*  channels  */
 
 gboolean
-gimp_image_add_channel (GimpImage   *image,
-                        GimpChannel *channel,
-                        GimpChannel *parent,
+picman_image_add_channel (PicmanImage   *image,
+                        PicmanChannel *channel,
+                        PicmanChannel *parent,
                         gint         position,
                         gboolean     push_undo)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  /*  item and parent are type-checked in GimpItemTree
+  /*  item and parent are type-checked in PicmanItemTree
    */
-  if (! gimp_item_tree_get_insert_pos (private->channels,
-                                       (GimpItem *) channel,
-                                       (GimpItem **) &parent,
+  if (! picman_item_tree_get_insert_pos (private->channels,
+                                       (PicmanItem *) channel,
+                                       (PicmanItem **) &parent,
                                        &position))
     return FALSE;
 
   if (push_undo)
-    gimp_image_undo_push_channel_add (image, C_("undo-type", "Add Channel"),
+    picman_image_undo_push_channel_add (image, C_("undo-type", "Add Channel"),
                                       channel,
-                                      gimp_image_get_active_channel (image));
+                                      picman_image_get_active_channel (image));
 
-  gimp_item_tree_add_item (private->channels, GIMP_ITEM (channel),
-                           GIMP_ITEM (parent), position);
+  picman_item_tree_add_item (private->channels, PICMAN_ITEM (channel),
+                           PICMAN_ITEM (parent), position);
 
-  gimp_image_set_active_channel (image, channel);
+  picman_image_set_active_channel (image, channel);
 
   return TRUE;
 }
 
 void
-gimp_image_remove_channel (GimpImage   *image,
-                           GimpChannel *channel,
+picman_image_remove_channel (PicmanImage   *image,
+                           PicmanChannel *channel,
                            gboolean     push_undo,
-                           GimpChannel *new_active)
+                           PicmanChannel *new_active)
 {
-  GimpImagePrivate *private;
-  GimpChannel      *active_channel;
+  PicmanImagePrivate *private;
+  PicmanChannel      *active_channel;
   gboolean          undo_group = FALSE;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_CHANNEL (channel));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
-  g_return_if_fail (gimp_item_get_image (GIMP_ITEM (channel)) == image);
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_CHANNEL (channel));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (channel)));
+  g_return_if_fail (picman_item_get_image (PICMAN_ITEM (channel)) == image);
 
-  if (gimp_drawable_get_floating_sel (GIMP_DRAWABLE (channel)))
+  if (picman_drawable_get_floating_sel (PICMAN_DRAWABLE (channel)))
     {
       if (! push_undo)
         {
           g_warning ("%s() was called from an undo function while the channel "
                      "had a floating selection. Please report this at "
-                     "http://www.gimp.org/bugs/", G_STRFUNC);
+                     "http://www.picman.org/bugs/", G_STRFUNC);
           return;
         }
 
-      gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_IMAGE_ITEM_REMOVE,
+      picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_IMAGE_ITEM_REMOVE,
                                    C_("undo-type", "Remove Channel"));
       undo_group = TRUE;
 
-      gimp_image_remove_layer (image,
-                               gimp_drawable_get_floating_sel (GIMP_DRAWABLE (channel)),
+      picman_image_remove_layer (image,
+                               picman_drawable_get_floating_sel (PICMAN_DRAWABLE (channel)),
                                TRUE, NULL);
     }
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  active_channel = gimp_image_get_active_channel (image);
+  active_channel = picman_image_get_active_channel (image);
 
   if (push_undo)
-    gimp_image_undo_push_channel_remove (image, C_("undo-type", "Remove Channel"), channel,
-                                         gimp_channel_get_parent (channel),
-                                         gimp_item_get_index (GIMP_ITEM (channel)),
+    picman_image_undo_push_channel_remove (image, C_("undo-type", "Remove Channel"), channel,
+                                         picman_channel_get_parent (channel),
+                                         picman_item_get_index (PICMAN_ITEM (channel)),
                                          active_channel);
 
   g_object_ref (channel);
 
   new_active =
-    GIMP_CHANNEL (gimp_item_tree_remove_item (private->channels,
-                                              GIMP_ITEM (channel),
-                                              GIMP_ITEM (new_active)));
+    PICMAN_CHANNEL (picman_item_tree_remove_item (private->channels,
+                                              PICMAN_ITEM (channel),
+                                              PICMAN_ITEM (new_active)));
 
   if (active_channel &&
       (channel == active_channel ||
-       gimp_viewable_is_ancestor (GIMP_VIEWABLE (channel),
-                                  GIMP_VIEWABLE (active_channel))))
+       picman_viewable_is_ancestor (PICMAN_VIEWABLE (channel),
+                                  PICMAN_VIEWABLE (active_channel))))
     {
       if (new_active)
-        gimp_image_set_active_channel (image, new_active);
+        picman_image_set_active_channel (image, new_active);
       else
-        gimp_image_unset_active_channel (image);
+        picman_image_unset_active_channel (image);
     }
 
   g_object_unref (channel);
 
   if (undo_group)
-    gimp_image_undo_group_end (image);
+    picman_image_undo_group_end (image);
 }
 
 
 /*  vectors  */
 
 gboolean
-gimp_image_add_vectors (GimpImage   *image,
-                        GimpVectors *vectors,
-                        GimpVectors *parent,
+picman_image_add_vectors (PicmanImage   *image,
+                        PicmanVectors *vectors,
+                        PicmanVectors *parent,
                         gint         position,
                         gboolean     push_undo)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  /*  item and parent are type-checked in GimpItemTree
+  /*  item and parent are type-checked in PicmanItemTree
    */
-  if (! gimp_item_tree_get_insert_pos (private->vectors,
-                                       (GimpItem *) vectors,
-                                       (GimpItem **) &parent,
+  if (! picman_item_tree_get_insert_pos (private->vectors,
+                                       (PicmanItem *) vectors,
+                                       (PicmanItem **) &parent,
                                        &position))
     return FALSE;
 
   if (push_undo)
-    gimp_image_undo_push_vectors_add (image, C_("undo-type", "Add Path"),
+    picman_image_undo_push_vectors_add (image, C_("undo-type", "Add Path"),
                                       vectors,
-                                      gimp_image_get_active_vectors (image));
+                                      picman_image_get_active_vectors (image));
 
-  gimp_item_tree_add_item (private->vectors, GIMP_ITEM (vectors),
-                           GIMP_ITEM (parent), position);
+  picman_item_tree_add_item (private->vectors, PICMAN_ITEM (vectors),
+                           PICMAN_ITEM (parent), position);
 
-  gimp_image_set_active_vectors (image, vectors);
+  picman_image_set_active_vectors (image, vectors);
 
   return TRUE;
 }
 
 void
-gimp_image_remove_vectors (GimpImage   *image,
-                           GimpVectors *vectors,
+picman_image_remove_vectors (PicmanImage   *image,
+                           PicmanVectors *vectors,
                            gboolean     push_undo,
-                           GimpVectors *new_active)
+                           PicmanVectors *new_active)
 {
-  GimpImagePrivate *private;
-  GimpVectors      *active_vectors;
+  PicmanImagePrivate *private;
+  PicmanVectors      *active_vectors;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_VECTORS (vectors));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (vectors)));
-  g_return_if_fail (gimp_item_get_image (GIMP_ITEM (vectors)) == image);
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_VECTORS (vectors));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (vectors)));
+  g_return_if_fail (picman_item_get_image (PICMAN_ITEM (vectors)) == image);
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-  active_vectors = gimp_image_get_active_vectors (image);
+  active_vectors = picman_image_get_active_vectors (image);
 
   if (push_undo)
-    gimp_image_undo_push_vectors_remove (image, C_("undo-type", "Remove Path"), vectors,
-                                         gimp_vectors_get_parent (vectors),
-                                         gimp_item_get_index (GIMP_ITEM (vectors)),
+    picman_image_undo_push_vectors_remove (image, C_("undo-type", "Remove Path"), vectors,
+                                         picman_vectors_get_parent (vectors),
+                                         picman_item_get_index (PICMAN_ITEM (vectors)),
                                          active_vectors);
 
   g_object_ref (vectors);
 
   new_active =
-    GIMP_VECTORS (gimp_item_tree_remove_item (private->vectors,
-                                              GIMP_ITEM (vectors),
-                                              GIMP_ITEM (new_active)));
+    PICMAN_VECTORS (picman_item_tree_remove_item (private->vectors,
+                                              PICMAN_ITEM (vectors),
+                                              PICMAN_ITEM (new_active)));
 
   if (active_vectors &&
       (vectors == active_vectors ||
-       gimp_viewable_is_ancestor (GIMP_VIEWABLE (vectors),
-                                  GIMP_VIEWABLE (active_vectors))))
+       picman_viewable_is_ancestor (PICMAN_VIEWABLE (vectors),
+                                  PICMAN_VIEWABLE (active_vectors))))
     {
-      gimp_image_set_active_vectors (image, new_active);
+      picman_image_set_active_vectors (image, new_active);
     }
 
   g_object_unref (vectors);
 }
 
 gboolean
-gimp_image_coords_in_active_pickable (GimpImage        *image,
-                                      const GimpCoords *coords,
+picman_image_coords_in_active_pickable (PicmanImage        *image,
+                                      const PicmanCoords *coords,
                                       gboolean          sample_merged,
                                       gboolean          selected_only)
 {
   gint     x, y;
   gboolean in_pickable = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
   x = floor (coords->x);
   y = floor (coords->y);
 
   if (sample_merged)
     {
-      if (x >= 0 && x < gimp_image_get_width  (image) &&
-          y >= 0 && y < gimp_image_get_height (image))
+      if (x >= 0 && x < picman_image_get_width  (image) &&
+          y >= 0 && y < picman_image_get_height (image))
         in_pickable = TRUE;
     }
   else
     {
-      GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+      PicmanDrawable *drawable = picman_image_get_active_drawable (image);
 
       if (drawable)
         {
-          GimpItem *item = GIMP_ITEM (drawable);
+          PicmanItem *item = PICMAN_ITEM (drawable);
           gint      off_x, off_y;
           gint      d_x, d_y;
 
-          gimp_item_get_offset (item, &off_x, &off_y);
+          picman_item_get_offset (item, &off_x, &off_y);
 
           d_x = x - off_x;
           d_y = y - off_y;
 
-          if (d_x >= 0 && d_x < gimp_item_get_width  (item) &&
-              d_y >= 0 && d_y < gimp_item_get_height (item))
+          if (d_x >= 0 && d_x < picman_item_get_width  (item) &&
+              d_y >= 0 && d_y < picman_item_get_height (item))
             in_pickable = TRUE;
         }
     }
 
   if (in_pickable && selected_only)
     {
-      GimpChannel *selection = gimp_image_get_mask (image);
+      PicmanChannel *selection = picman_image_get_mask (image);
 
-      if (! gimp_channel_is_empty (selection) &&
-          ! gimp_pickable_get_opacity_at (GIMP_PICKABLE (selection),
+      if (! picman_channel_is_empty (selection) &&
+          ! picman_pickable_get_opacity_at (PICMAN_PICKABLE (selection),
                                           x, y))
         {
           in_pickable = FALSE;
@@ -4096,16 +4096,16 @@ gimp_image_coords_in_active_pickable (GimpImage        *image,
 }
 
 void
-gimp_image_invalidate_previews (GimpImage *image)
+picman_image_invalidate_previews (PicmanImage *image)
 {
-  GimpItemStack *layers;
-  GimpItemStack *channels;
+  PicmanItemStack *layers;
+  PicmanItemStack *channels;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  layers   = GIMP_ITEM_STACK (gimp_image_get_layers (image));
-  channels = GIMP_ITEM_STACK (gimp_image_get_channels (image));
+  layers   = PICMAN_ITEM_STACK (picman_image_get_layers (image));
+  channels = PICMAN_ITEM_STACK (picman_image_get_channels (image));
 
-  gimp_item_stack_invalidate_previews (layers);
-  gimp_item_stack_invalidate_previews (channels);
+  picman_item_stack_invalidate_previews (layers);
+  picman_item_stack_invalidate_previews (channels);
 }

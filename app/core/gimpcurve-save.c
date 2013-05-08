@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,35 +22,35 @@
 #include <gegl.h>
 #include <glib/gstdio.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
-#include "gimpcurve.h"
-#include "gimpcurve-save.h"
+#include "picmancurve.h"
+#include "picmancurve-save.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 gboolean
-gimp_curve_save (GimpData  *data,
+picman_curve_save (PicmanData  *data,
                  GError   **error)
 {
-  /* GimpCurve *curve; */
+  /* PicmanCurve *curve; */
   FILE      *file;
 
-  g_return_val_if_fail (GIMP_IS_CURVE (data), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CURVE (data), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  /* curve = GIMP_CURVE (data); */
+  /* curve = PICMAN_CURVE (data); */
 
-  file = g_fopen (gimp_data_get_filename (data), "wb");
+  file = g_fopen (picman_data_get_filename (data), "wb");
 
   if (! file)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (gimp_data_get_filename (data)),
+                   picman_filename_to_utf8 (picman_data_get_filename (data)),
                    g_strerror (errno));
       return FALSE;
     }

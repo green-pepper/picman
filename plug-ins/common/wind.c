@@ -1,5 +1,5 @@
 /*
- * wind 1.1.0 - a plug-in for GIMP
+ * wind 1.1.0 - a plug-in for PICMAN
  *
  * Copyright (C) Nigel Wetten
  *
@@ -31,15 +31,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-wind"
 #define PLUG_IN_BINARY "wind"
-#define PLUG_IN_ROLE   "gimp-wind"
+#define PLUG_IN_ROLE   "picman-wind"
 
 #define COMPARE_WIDTH    3
 
@@ -72,26 +72,26 @@ typedef enum
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparams,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 
-static gint dialog_box       (GimpDrawable *drawable);
+static gint dialog_box       (PicmanDrawable *drawable);
 
-static gint render_effect    (GimpDrawable *drawable,
-                              GimpPreview  *preview);
-static void render_wind      (GimpDrawable *drawable,
+static gint render_effect    (PicmanDrawable *drawable,
+                              PicmanPreview  *preview);
+static void render_wind      (PicmanDrawable *drawable,
                               gint          threshold,
                               gint          strength,
                               direction_t   direction,
                               edge_t        edge,
-                              GimpPreview  *preview);
-static void render_blast     (GimpDrawable *drawable,
+                              PicmanPreview  *preview);
+static void render_blast     (PicmanDrawable *drawable,
                               gint          threshold,
                               gint          strength,
                               direction_t   direction,
                               edge_t        edge,
-                              GimpPreview  *preview);
+                              PicmanPreview  *preview);
 static gint render_blast_row (guchar       *buffer,
                               gint          bytes,
                               gint          lpi,
@@ -122,7 +122,7 @@ static void reverse_buffer         (guchar   *buffer,
                                     gint      length,
                                     gint      bytes);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -159,19 +159,19 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",     "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",  "Input drawable" },
-    { GIMP_PDB_INT32,    "threshold", "Controls where blending will be done >= 0" },
-    { GIMP_PDB_INT32,    "direction", "Left or Right: 0 or 1" },
-    { GIMP_PDB_INT32,    "strength",  "Controls the extent of the blending > 1" },
-    { GIMP_PDB_INT32,    "algorithm", "Algorithm { WIND (0), BLAST (1) }" },
-    { GIMP_PDB_INT32,    "edge",      "Edge behavior { BOTH (0), LEADING (1), TRAILING (2) }" }
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",     "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "Input drawable" },
+    { PICMAN_PDB_INT32,    "threshold", "Controls where blending will be done >= 0" },
+    { PICMAN_PDB_INT32,    "direction", "Left or Right: 0 or 1" },
+    { PICMAN_PDB_INT32,    "strength",  "Controls the extent of the blending > 1" },
+    { PICMAN_PDB_INT32,    "algorithm", "Algorithm { WIND (0), BLAST (1) }" },
+    { PICMAN_PDB_INT32,    "edge",      "Edge behavior { BOTH (0), LEADING (1), TRAILING (2) }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Smear image to give windblown effect"),
                           "Renders a wind effect.",
                           "Nigel Wetten",
@@ -179,37 +179,37 @@ query (void)
                           "May 2000",
                           N_("Wi_nd..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
-  gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width () + 1));
+  drawable = picman_drawable_get (param[2].data.d_drawable);
+  picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width () + 1));
 
   INIT_I18N ();
 
   switch (run_mode)
     {
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams != 8)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -220,50 +220,50 @@ run (const gchar      *name,
           config.edge      = param[7].data.d_int32;
 
           if (render_effect (drawable, NULL) == -1)
-            status = GIMP_PDB_EXECUTION_ERROR;
+            status = PICMAN_PDB_EXECUTION_ERROR;
         }
       break;
 
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &config);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &config);
       if (! dialog_box (drawable))
         {
-          status = GIMP_PDB_CANCEL;
+          status = PICMAN_PDB_CANCEL;
           break;
         }
       if (render_effect(drawable, NULL) == -1)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
           break;
         }
-      gimp_set_data (PLUG_IN_PROC, &config, sizeof (config_t));
-      gimp_displays_flush ();
+      picman_set_data (PLUG_IN_PROC, &config, sizeof (config_t));
+      picman_displays_flush ();
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &config);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &config);
       if (render_effect (drawable, NULL) == -1)
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
-          gimp_message ("An execution error occurred.");
+          status = PICMAN_PDB_EXECUTION_ERROR;
+          picman_message ("An execution error occurred.");
         }
       else
         {
-          gimp_displays_flush ();
+          picman_displays_flush ();
         }
     }
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   *nreturn_vals = 1;
   *return_vals = values;
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 }
 
 static gint
-render_effect (GimpDrawable *drawable,
-               GimpPreview  *preview)
+render_effect (PicmanDrawable *drawable,
+               PicmanPreview  *preview)
 {
   if (config.alg == RENDER_WIND)
     {
@@ -279,19 +279,19 @@ render_effect (GimpDrawable *drawable,
 }
 
 static void
-render_blast (GimpDrawable *drawable,
+render_blast (PicmanDrawable *drawable,
               gint          threshold,
               gint          strength,
               direction_t   direction,
               edge_t        edge,
-              GimpPreview  *preview)
+              PicmanPreview  *preview)
 {
   gint          x1, y1, y2;
   gint          width;
   gint          height;
   gint          bytes = drawable->bpp;
   guchar       *buffer, *preview_buffer = NULL;
-  GimpPixelRgn  src_region, dest_region;
+  PicmanPixelRgn  src_region, dest_region;
   gint          row;
   gint          row_stride;
   gint          marker = 0;
@@ -299,8 +299,8 @@ render_blast (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
 
       y2 = y1 + height;
 
@@ -308,14 +308,14 @@ render_blast (GimpDrawable *drawable,
     }
   else
     {
-      if (gimp_drawable_mask_intersect (drawable->drawable_id,
+      if (picman_drawable_mask_intersect (drawable->drawable_id,
                                         &x1, &y1, &width, &height))
         {
-          gimp_progress_init (_("Rendering blast"));
+          picman_progress_init (_("Rendering blast"));
 
           y2 = y1 + height;
 
-          gimp_pixel_rgn_init (&dest_region, drawable,
+          picman_pixel_rgn_init (&dest_region, drawable,
                                x1, y1, width, height, TRUE, TRUE);
         }
       else
@@ -324,7 +324,7 @@ render_blast (GimpDrawable *drawable,
         }
     }
 
-  gimp_pixel_rgn_init (&src_region,  drawable,
+  picman_pixel_rgn_init (&src_region,  drawable,
                        x1, y1, width, height, FALSE, FALSE);
   row_stride = width * bytes;
   lpi = row_stride - bytes;
@@ -333,7 +333,7 @@ render_blast (GimpDrawable *drawable,
 
   for (row = y1; row < y2; row++)
     {
-      gimp_pixel_rgn_get_row (&src_region, buffer, x1, row, width);
+      picman_pixel_rgn_get_row (&src_region, buffer, x1, row, width);
 
       if (direction == RIGHT)
         {
@@ -355,10 +355,10 @@ render_blast (GimpDrawable *drawable,
         }
       else
         {
-          gimp_pixel_rgn_set_row (&dest_region, buffer, x1, row, width);
+          picman_pixel_rgn_set_row (&dest_region, buffer, x1, row, width);
 
           if (row % 8 == 0)
-            gimp_progress_update ((double) (row - y1)/ (double) (height));
+            picman_progress_update ((double) (row - y1)/ (double) (height));
         }
 
       if (marker)
@@ -371,7 +371,7 @@ render_blast (GimpDrawable *drawable,
               row++;
               if (row < y2)
                 {
-                  gimp_pixel_rgn_get_row (&src_region,
+                  picman_pixel_rgn_get_row (&src_region,
                                           buffer, x1, row, width);
                   if (preview)
                     {
@@ -381,7 +381,7 @@ render_blast (GimpDrawable *drawable,
                     }
                   else
                     {
-                      gimp_pixel_rgn_set_row (&dest_region,
+                      picman_pixel_rgn_set_row (&dest_region,
                                               buffer, x1, row, width);
                     }
                 }
@@ -394,27 +394,27 @@ render_blast (GimpDrawable *drawable,
   /*  update the region  */
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, preview_buffer, width * bytes);
+      picman_preview_draw_buffer (preview, preview_buffer, width * bytes);
       g_free (preview_buffer);
     }
   else
     {
-      gimp_progress_update (1.0);
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x1, y1, width, height);
+      picman_progress_update (1.0);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x1, y1, width, height);
     }
 }
 
 static void
-render_wind (GimpDrawable *drawable,
+render_wind (PicmanDrawable *drawable,
              gint          threshold,
              gint          strength,
              direction_t   direction,
              edge_t        edge,
-             GimpPreview  *preview)
+             PicmanPreview  *preview)
 {
-  GimpPixelRgn  src_region, dest_region;
+  PicmanPixelRgn  src_region, dest_region;
   gint          width;
   gint          height;
   gint          bytes;
@@ -429,8 +429,8 @@ render_wind (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
 
       y2 = y1 + height;
 
@@ -438,14 +438,14 @@ render_wind (GimpDrawable *drawable,
     }
   else
     {
-      if (gimp_drawable_mask_intersect (drawable->drawable_id,
+      if (picman_drawable_mask_intersect (drawable->drawable_id,
                                         &x1, &y1, &width, &height))
         {
-          gimp_progress_init (_("Rendering wind"));
+          picman_progress_init (_("Rendering wind"));
 
           y2 = y1 + height;
 
-          gimp_pixel_rgn_init (&dest_region, drawable,
+          picman_pixel_rgn_init (&dest_region, drawable,
                                x1, y1, width, height, TRUE, TRUE);
         }
       else
@@ -454,7 +454,7 @@ render_wind (GimpDrawable *drawable,
         }
     }
 
-  gimp_pixel_rgn_init (&src_region, drawable,
+  picman_pixel_rgn_init (&src_region, drawable,
                        x1, y1, width, height, FALSE, FALSE);
   row_stride = width * bytes;
   comp_stride = bytes * COMPARE_WIDTH;
@@ -464,7 +464,7 @@ render_wind (GimpDrawable *drawable,
 
   for (row = y1; row < y2; row++)
     {
-      gimp_pixel_rgn_get_row (&src_region, sb, x1, row, width);
+      picman_pixel_rgn_get_row (&src_region, sb, x1, row, width);
 
       if (direction == RIGHT)
         reverse_buffer (sb, row_stride, bytes);
@@ -480,10 +480,10 @@ render_wind (GimpDrawable *drawable,
         }
       else
         {
-          gimp_pixel_rgn_set_row (&dest_region, sb, x1, row, width);
+          picman_pixel_rgn_set_row (&dest_region, sb, x1, row, width);
 
           if (row % 8 == 0)
-            gimp_progress_update ((double) (row - y1)/ (double) (height));
+            picman_progress_update ((double) (row - y1)/ (double) (height));
         }
     }
 
@@ -492,15 +492,15 @@ render_wind (GimpDrawable *drawable,
   /*  update the region  */
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, preview_buffer, width * bytes);
+      picman_preview_draw_buffer (preview, preview_buffer, width * bytes);
       g_free (preview_buffer);
     }
   else
     {
-      gimp_progress_update (1.0);
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x1, y1, width, height);
+      picman_progress_update (1.0);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x1, y1, width, height);
     }
 }
 
@@ -854,7 +854,7 @@ reverse_buffer (guchar *buffer,
  ***************************************************/
 
 static gint
-dialog_box (GimpDrawable *drawable)
+dialog_box (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -871,11 +871,11 @@ dialog_box (GimpDrawable *drawable)
   GtkWidget *edge3;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Wind"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Wind"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -887,7 +887,7 @@ dialog_box (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -895,7 +895,7 @@ dialog_box (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -916,8 +916,8 @@ dialog_box (GimpDrawable *drawable)
     radio buttons for choosing wind rendering algorithm
     ******************************************************/
 
-  frame = gimp_int_radio_group_new (TRUE, _("Style"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Style"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &config.alg, config.alg,
 
                                     _("_Wind"),  RENDER_WIND,  &style1,
@@ -926,10 +926,10 @@ dialog_box (GimpDrawable *drawable)
                                     NULL);
 
   g_signal_connect_swapped (style1, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (style2, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_table_attach (GTK_TABLE (table), frame, 0, 1, 0, 1,
@@ -940,8 +940,8 @@ dialog_box (GimpDrawable *drawable)
     radio buttons for choosing LEFT or RIGHT
     **************************************************/
 
-  frame = gimp_int_radio_group_new (TRUE, _("Direction"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Direction"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &config.direction, config.direction,
 
                                     _("_Left"),  LEFT,  &dir1,
@@ -950,10 +950,10 @@ dialog_box (GimpDrawable *drawable)
                                     NULL);
 
   g_signal_connect_swapped (dir1, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (dir2, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_table_attach (GTK_TABLE (table), frame, 1, 2, 0, 1,
@@ -964,8 +964,8 @@ dialog_box (GimpDrawable *drawable)
     radio buttons for choosing BOTH, LEADING, TRAILING
     ***************************************************/
 
-  frame = gimp_int_radio_group_new (TRUE, _("Edge Affected"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Edge Affected"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &config.edge, config.edge,
 
                                     _("L_eading"),  LEADING,  &edge1,
@@ -975,13 +975,13 @@ dialog_box (GimpDrawable *drawable)
                                     NULL);
 
   g_signal_connect_swapped (edge1, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (edge2, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (edge3, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_table_attach (GTK_TABLE (table), frame, 2, 3, 0, 1,
@@ -1002,7 +1002,7 @@ dialog_box (GimpDrawable *drawable)
     slider and entry for threshold
     ***************************************************/
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Threshold:"), SCALE_WIDTH, 0,
                               config.threshold,
                               MIN_THRESHOLD, MAX_THRESHOLD, 1.0, 10, 0,
@@ -1010,18 +1010,18 @@ dialog_box (GimpDrawable *drawable)
                               _("Higher values restrict the effect to fewer areas of the image"), NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &config.threshold);
 
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*****************************************************
     slider and entry for strength of wind
     ****************************************************/
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("_Strength:"), SCALE_WIDTH, 0,
                               config.strength,
                               MIN_STRENGTH, MAX_STRENGTH, 1.0, 10.0, 0,
@@ -1029,18 +1029,18 @@ dialog_box (GimpDrawable *drawable)
                               _("Higher values increase the magnitude of the effect"), NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &config.strength);
 
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (table);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

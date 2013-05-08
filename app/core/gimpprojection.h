@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,16 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PROJECTION_H__
-#define __GIMP_PROJECTION_H__
+#ifndef __PICMAN_PROJECTION_H__
+#define __PICMAN_PROJECTION_H__
 
 
-#include "gimpobject.h"
+#include "picmanobject.h"
 
 
-typedef struct _GimpProjectionIdleRender GimpProjectionIdleRender;
+typedef struct _PicmanProjectionIdleRender PicmanProjectionIdleRender;
 
-struct _GimpProjectionIdleRender
+struct _PicmanProjectionIdleRender
 {
   gint    width;
   gint    height;
@@ -37,37 +37,37 @@ struct _GimpProjectionIdleRender
 };
 
 
-#define GIMP_TYPE_PROJECTION            (gimp_projection_get_type ())
-#define GIMP_PROJECTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PROJECTION, GimpProjection))
-#define GIMP_PROJECTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PROJECTION, GimpProjectionClass))
-#define GIMP_IS_PROJECTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PROJECTION))
-#define GIMP_IS_PROJECTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PROJECTION))
-#define GIMP_PROJECTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PROJECTION, GimpProjectionClass))
+#define PICMAN_TYPE_PROJECTION            (picman_projection_get_type ())
+#define PICMAN_PROJECTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PROJECTION, PicmanProjection))
+#define PICMAN_PROJECTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PROJECTION, PicmanProjectionClass))
+#define PICMAN_IS_PROJECTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PROJECTION))
+#define PICMAN_IS_PROJECTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PROJECTION))
+#define PICMAN_PROJECTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PROJECTION, PicmanProjectionClass))
 
 
 
-typedef struct _GimpProjectionClass GimpProjectionClass;
+typedef struct _PicmanProjectionClass PicmanProjectionClass;
 
-struct _GimpProjection
+struct _PicmanProjection
 {
-  GimpObject                parent_instance;
+  PicmanObject                parent_instance;
 
-  GimpProjectable          *projectable;
+  PicmanProjectable          *projectable;
 
   GeglBuffer               *buffer;
   gpointer                  validate_handler;
 
   GSList                   *update_areas;
-  GimpProjectionIdleRender  idle_render;
+  PicmanProjectionIdleRender  idle_render;
 
   gboolean                  invalidate_preview;
 };
 
-struct _GimpProjectionClass
+struct _PicmanProjectionClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 
-  void (* update) (GimpProjection *proj,
+  void (* update) (PicmanProjection *proj,
                    gboolean        now,
                    gint            x,
                    gint            y,
@@ -76,18 +76,18 @@ struct _GimpProjectionClass
 };
 
 
-GType            gimp_projection_get_type         (void) G_GNUC_CONST;
+GType            picman_projection_get_type         (void) G_GNUC_CONST;
 
-GimpProjection * gimp_projection_new              (GimpProjectable   *projectable);
+PicmanProjection * picman_projection_new              (PicmanProjectable   *projectable);
 
-void             gimp_projection_flush            (GimpProjection    *proj);
-void             gimp_projection_flush_now        (GimpProjection    *proj);
-void             gimp_projection_finish_draw      (GimpProjection    *proj);
+void             picman_projection_flush            (PicmanProjection    *proj);
+void             picman_projection_flush_now        (PicmanProjection    *proj);
+void             picman_projection_finish_draw      (PicmanProjection    *proj);
 
-gint64           gimp_projection_estimate_memsize (GimpImageBaseType  type,
-                                                   GimpPrecision      precision,
+gint64           picman_projection_estimate_memsize (PicmanImageBaseType  type,
+                                                   PicmanPrecision      precision,
                                                    gint               width,
                                                    gint               height);
 
 
-#endif /*  __GIMP_PROJECTION_H__  */
+#endif /*  __PICMAN_PROJECTION_H__  */

@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimptile.c
+ * picmantile.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,18 +24,18 @@
 
 #include <glib-object.h>
 
-#define GIMP_DISABLE_DEPRECATION_WARNINGS
+#define PICMAN_DISABLE_DEPRECATION_WARNINGS
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpbase/gimpprotocol.h"
-#include "libgimpbase/gimpwire.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanbase/picmanprotocol.h"
+#include "libpicmanbase/picmanwire.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimptile
- * @title: gimptile
+ * SECTION: picmantile
+ * @title: picmantile
  * @short_description: Functions for working with tiles.
  *
  * Functions for working with tiles.
@@ -49,13 +49,13 @@
 #define FREE_QUANTUM 0.1
 
 
-void         gimp_read_expect_msg   (GimpWireMessage *msg,
+void         picman_read_expect_msg   (PicmanWireMessage *msg,
                                      gint             type);
 
-static void  gimp_tile_get          (GimpTile        *tile);
-static void  gimp_tile_put          (GimpTile        *tile);
-static void  gimp_tile_cache_insert (GimpTile        *tile);
-static void  gimp_tile_cache_flush  (GimpTile        *tile);
+static void  picman_tile_get          (PicmanTile        *tile);
+static void  picman_tile_put          (PicmanTile        *tile);
+static void  picman_tile_cache_insert (PicmanTile        *tile);
+static void  picman_tile_cache_flush  (PicmanTile        *tile);
 
 
 /*  private variables  */
@@ -71,7 +71,7 @@ static gulong       max_cache_size  = 0;
 /*  public functions  */
 
 void
-gimp_tile_ref (GimpTile *tile)
+picman_tile_ref (PicmanTile *tile)
 {
   g_return_if_fail (tile != NULL);
 
@@ -79,15 +79,15 @@ gimp_tile_ref (GimpTile *tile)
 
   if (tile->ref_count == 1)
     {
-      gimp_tile_get (tile);
+      picman_tile_get (tile);
       tile->dirty = FALSE;
     }
 
-  gimp_tile_cache_insert (tile);
+  picman_tile_cache_insert (tile);
 }
 
 void
-gimp_tile_ref_zero (GimpTile *tile)
+picman_tile_ref_zero (PicmanTile *tile)
 {
   g_return_if_fail (tile != NULL);
 
@@ -96,11 +96,11 @@ gimp_tile_ref_zero (GimpTile *tile)
   if (tile->ref_count == 1)
     tile->data = g_new0 (guchar, tile->ewidth * tile->eheight * tile->bpp);
 
-  gimp_tile_cache_insert (tile);
+  picman_tile_cache_insert (tile);
 }
 
 void
-gimp_tile_unref (GimpTile *tile,
+picman_tile_unref (PicmanTile *tile,
                  gboolean  dirty)
 {
   g_return_if_fail (tile != NULL);
@@ -111,44 +111,44 @@ gimp_tile_unref (GimpTile *tile,
 
   if (tile->ref_count == 0)
     {
-      gimp_tile_flush (tile);
+      picman_tile_flush (tile);
       g_free (tile->data);
       tile->data = NULL;
     }
 }
 
 void
-gimp_tile_flush (GimpTile *tile)
+picman_tile_flush (PicmanTile *tile)
 {
   g_return_if_fail (tile != NULL);
 
   if (tile->data && tile->dirty)
     {
-      gimp_tile_put (tile);
+      picman_tile_put (tile);
       tile->dirty = FALSE;
     }
 }
 
 /**
- * gimp_tile_cache_size:
+ * picman_tile_cache_size:
  * @kilobytes: new cache size in kilobytes
  *
  * Sets the size of the tile cache on the plug-in side. The tile cache
- * is used to reduce the number of tiles exchanged between the GIMP core
- * and the plug-in. See also gimp_tile_cache_ntiles().
+ * is used to reduce the number of tiles exchanged between the PICMAN core
+ * and the plug-in. See also picman_tile_cache_ntiles().
  **/
 void
-gimp_tile_cache_size (gulong kilobytes)
+picman_tile_cache_size (gulong kilobytes)
 {
   max_cache_size = kilobytes * 1024;
 }
 
 /**
- * gimp_tile_cache_ntiles:
+ * picman_tile_cache_ntiles:
  * @ntiles: number of tiles that should fit into the cache
  *
  * Sets the size of the tile cache on the plug-in side. This function
- * is similar to gimp_tile_cache_size() but supports specifying the
+ * is similar to picman_tile_cache_size() but supports specifying the
  * number of tiles directly.
  *
  * If your plug-in access pixels tile-by-tile, it doesn't need a tile
@@ -158,15 +158,15 @@ gimp_tile_cache_size (gulong kilobytes)
  * shadow tiles.
  **/
 void
-gimp_tile_cache_ntiles (gulong ntiles)
+picman_tile_cache_ntiles (gulong ntiles)
 {
-  gimp_tile_cache_size ((ntiles *
-                         gimp_tile_width () *
-                         gimp_tile_height () * 4 + 1023) / 1024);
+  picman_tile_cache_size ((ntiles *
+                         picman_tile_width () *
+                         picman_tile_height () * 4 + 1023) / 1024);
 }
 
 void
-_gimp_tile_cache_flush_drawable (GimpDrawable *drawable)
+_picman_tile_cache_flush_drawable (PicmanDrawable *drawable)
 {
   GList *list;
 
@@ -175,12 +175,12 @@ _gimp_tile_cache_flush_drawable (GimpDrawable *drawable)
   list = tile_list_head;
   while (list)
     {
-      GimpTile *tile = list->data;
+      PicmanTile *tile = list->data;
 
       list = list->next;
 
       if (tile->drawable == drawable)
-        gimp_tile_cache_flush (tile);
+        picman_tile_cache_flush (tile);
     }
 }
 
@@ -188,22 +188,22 @@ _gimp_tile_cache_flush_drawable (GimpDrawable *drawable)
 /*  private functions  */
 
 static void
-gimp_tile_get (GimpTile *tile)
+picman_tile_get (PicmanTile *tile)
 {
   extern GIOChannel *_writechannel;
 
   GPTileReq        tile_req;
   GPTileData      *tile_data;
-  GimpWireMessage  msg;
+  PicmanWireMessage  msg;
 
   tile_req.drawable_ID = tile->drawable->drawable_id;
   tile_req.tile_num    = tile->tile_num;
   tile_req.shadow      = tile->shadow;
 
   if (! gp_tile_req_write (_writechannel, &tile_req, NULL))
-    gimp_quit ();
+    picman_quit ();
 
-  gimp_read_expect_msg (&msg, GP_TILE_DATA);
+  picman_read_expect_msg (&msg, GP_TILE_DATA);
 
   tile_data = msg.data;
   if (tile_data->drawable_ID != tile->drawable->drawable_id ||
@@ -214,12 +214,12 @@ gimp_tile_get (GimpTile *tile)
       tile_data->bpp         != tile->bpp)
     {
       g_message ("received tile info did not match computed tile info");
-      gimp_quit ();
+      picman_quit ();
     }
 
   if (tile_data->use_shm)
     {
-      tile->data = g_memdup (gimp_shm_addr (),
+      tile->data = g_memdup (picman_shm_addr (),
                              tile->ewidth * tile->eheight * tile->bpp);
     }
   else
@@ -229,29 +229,29 @@ gimp_tile_get (GimpTile *tile)
     }
 
   if (! gp_tile_ack_write (_writechannel, NULL))
-    gimp_quit ();
+    picman_quit ();
 
-  gimp_wire_destroy (&msg);
+  picman_wire_destroy (&msg);
 }
 
 static void
-gimp_tile_put (GimpTile *tile)
+picman_tile_put (PicmanTile *tile)
 {
   extern GIOChannel *_writechannel;
 
   GPTileReq        tile_req;
   GPTileData       tile_data;
   GPTileData      *tile_info;
-  GimpWireMessage  msg;
+  PicmanWireMessage  msg;
 
   tile_req.drawable_ID = -1;
   tile_req.tile_num    = 0;
   tile_req.shadow      = 0;
 
   if (! gp_tile_req_write (_writechannel, &tile_req, NULL))
-    gimp_quit ();
+    picman_quit ();
 
-  gimp_read_expect_msg (&msg, GP_TILE_DATA);
+  picman_read_expect_msg (&msg, GP_TILE_DATA);
 
   tile_info = msg.data;
 
@@ -265,36 +265,36 @@ gimp_tile_put (GimpTile *tile)
   tile_data.data        = NULL;
 
   if (tile_info->use_shm)
-    memcpy (gimp_shm_addr (),
+    memcpy (picman_shm_addr (),
             tile->data,
             tile->ewidth * tile->eheight * tile->bpp);
   else
     tile_data.data = tile->data;
 
   if (! gp_tile_data_write (_writechannel, &tile_data, NULL))
-    gimp_quit ();
+    picman_quit ();
 
   if (! tile_info->use_shm)
     tile_data.data = NULL;
 
-  gimp_wire_destroy (&msg);
+  picman_wire_destroy (&msg);
 
-  gimp_read_expect_msg (&msg, GP_TILE_ACK);
-  gimp_wire_destroy (&msg);
+  picman_read_expect_msg (&msg, GP_TILE_ACK);
+  picman_wire_destroy (&msg);
 }
 
 /* This function is nearly identical to the function 'tile_cache_insert'
- *  in the file 'tile_cache.c' which is part of the main gimp application.
+ *  in the file 'tile_cache.c' which is part of the main picman application.
  */
 static void
-gimp_tile_cache_insert (GimpTile *tile)
+picman_tile_cache_insert (PicmanTile *tile)
 {
   GList *list;
 
   if (!tile_hash_table)
     {
       tile_hash_table = g_hash_table_new (g_direct_hash, NULL);
-      max_tile_size = gimp_tile_width () * gimp_tile_height () * 4;
+      max_tile_size = picman_tile_width () * picman_tile_height () * 4;
     }
 
   /* First check and see if the tile is already
@@ -336,7 +336,7 @@ gimp_tile_cache_insert (GimpTile *tile)
                  (cur_cache_size +
                   max_cache_size * FREE_QUANTUM) > max_cache_size)
             {
-              gimp_tile_cache_flush ((GimpTile *) tile_list_head->data);
+              picman_tile_cache_flush ((PicmanTile *) tile_list_head->data);
             }
 
           if ((cur_cache_size + max_tile_size) > max_cache_size)
@@ -362,14 +362,14 @@ gimp_tile_cache_insert (GimpTile *tile)
       cur_cache_size += max_tile_size;
 
       /* Reference the tile so that it won't be returned to
-       *  the main gimp application immediately.
+       *  the main picman application immediately.
        */
       tile->ref_count++;
     }
 }
 
 static void
-gimp_tile_cache_flush (GimpTile *tile)
+picman_tile_cache_flush (PicmanTile *tile)
 {
   GList *list;
 
@@ -405,6 +405,6 @@ gimp_tile_cache_flush (GimpTile *tile)
 
       /* Unreference the tile.
        */
-      gimp_tile_unref (tile, FALSE);
+      picman_tile_unref (tile, FALSE);
     }
 }

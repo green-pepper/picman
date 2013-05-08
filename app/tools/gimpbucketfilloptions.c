@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,27 +20,27 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmandatafactory.h"
+#include "core/picmantoolinfo.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "widgets/gimppropwidgets.h"
-#include "widgets/gimpviewablebox.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanpropwidgets.h"
+#include "widgets/picmanviewablebox.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimpbucketfilloptions.h"
-#include "gimppaintoptions-gui.h"
+#include "picmanbucketfilloptions.h"
+#include "picmanpaintoptions-gui.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -55,82 +55,82 @@ enum
 };
 
 
-static void   gimp_bucket_fill_options_set_property (GObject         *object,
+static void   picman_bucket_fill_options_set_property (GObject         *object,
                                                      guint            property_id,
                                                      const GValue    *value,
                                                      GParamSpec      *pspec);
-static void   gimp_bucket_fill_options_get_property (GObject         *object,
+static void   picman_bucket_fill_options_get_property (GObject         *object,
                                                      guint            property_id,
                                                      GValue          *value,
                                                      GParamSpec      *pspec);
 
-static void   gimp_bucket_fill_options_reset        (GimpToolOptions *tool_options);
+static void   picman_bucket_fill_options_reset        (PicmanToolOptions *tool_options);
 
 
-G_DEFINE_TYPE (GimpBucketFillOptions, gimp_bucket_fill_options,
-               GIMP_TYPE_PAINT_OPTIONS)
+G_DEFINE_TYPE (PicmanBucketFillOptions, picman_bucket_fill_options,
+               PICMAN_TYPE_PAINT_OPTIONS)
 
-#define parent_class gimp_bucket_fill_options_parent_class
+#define parent_class picman_bucket_fill_options_parent_class
 
 
 static void
-gimp_bucket_fill_options_class_init (GimpBucketFillOptionsClass *klass)
+picman_bucket_fill_options_class_init (PicmanBucketFillOptionsClass *klass)
 {
   GObjectClass         *object_class  = G_OBJECT_CLASS (klass);
-  GimpToolOptionsClass *options_class = GIMP_TOOL_OPTIONS_CLASS (klass);
+  PicmanToolOptionsClass *options_class = PICMAN_TOOL_OPTIONS_CLASS (klass);
 
-  object_class->set_property = gimp_bucket_fill_options_set_property;
-  object_class->get_property = gimp_bucket_fill_options_get_property;
+  object_class->set_property = picman_bucket_fill_options_set_property;
+  object_class->get_property = picman_bucket_fill_options_get_property;
 
-  options_class->reset       = gimp_bucket_fill_options_reset;
+  options_class->reset       = picman_bucket_fill_options_reset;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_FILL_MODE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_FILL_MODE,
                                  "fill-mode", NULL,
-                                 GIMP_TYPE_BUCKET_FILL_MODE,
-                                 GIMP_FG_BUCKET_FILL,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FILL_SELECTION,
+                                 PICMAN_TYPE_BUCKET_FILL_MODE,
+                                 PICMAN_FG_BUCKET_FILL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FILL_SELECTION,
                                     "fill-selection",
                                     N_("Which area will be filled"),
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FILL_TRANSPARENT,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FILL_TRANSPARENT,
                                     "fill-transparent",
                                     N_("Allow completely transparent regions "
                                        "to be filled"),
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_MERGED,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_MERGED,
                                     "sample-merged",
                                     N_("Base filled area on all visible "
                                        "layers"),
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_THRESHOLD,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_THRESHOLD,
                                    "threshold",
                                    N_("Maximum color difference"),
                                    0.0, 255.0, 15.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_FILL_CRITERION,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_FILL_CRITERION,
                                  "fill-criterion",
                                  N_("Criterion used for determining color similarity"),
-                                 GIMP_TYPE_SELECT_CRITERION,
-                                 GIMP_SELECT_CRITERION_COMPOSITE,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_SELECT_CRITERION,
+                                 PICMAN_SELECT_CRITERION_COMPOSITE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_bucket_fill_options_init (GimpBucketFillOptions *options)
+picman_bucket_fill_options_init (PicmanBucketFillOptions *options)
 {
 }
 
 static void
-gimp_bucket_fill_options_set_property (GObject      *object,
+picman_bucket_fill_options_set_property (GObject      *object,
                                        guint         property_id,
                                        const GValue *value,
                                        GParamSpec   *pspec)
 {
-  GimpBucketFillOptions *options = GIMP_BUCKET_FILL_OPTIONS (object);
+  PicmanBucketFillOptions *options = PICMAN_BUCKET_FILL_OPTIONS (object);
 
   switch (property_id)
     {
@@ -160,12 +160,12 @@ gimp_bucket_fill_options_set_property (GObject      *object,
 }
 
 static void
-gimp_bucket_fill_options_get_property (GObject    *object,
+picman_bucket_fill_options_get_property (GObject    *object,
                                        guint       property_id,
                                        GValue     *value,
                                        GParamSpec *pspec)
 {
-  GimpBucketFillOptions *options = GIMP_BUCKET_FILL_OPTIONS (object);
+  PicmanBucketFillOptions *options = PICMAN_BUCKET_FILL_OPTIONS (object);
 
   switch (property_id)
     {
@@ -195,7 +195,7 @@ gimp_bucket_fill_options_get_property (GObject    *object,
 }
 
 static void
-gimp_bucket_fill_options_reset (GimpToolOptions *tool_options)
+picman_bucket_fill_options_reset (PicmanToolOptions *tool_options)
 {
   GParamSpec *pspec;
 
@@ -204,16 +204,16 @@ gimp_bucket_fill_options_reset (GimpToolOptions *tool_options)
 
   if (pspec)
     G_PARAM_SPEC_DOUBLE (pspec)->default_value =
-      tool_options->tool_info->gimp->config->default_threshold;
+      tool_options->tool_info->picman->config->default_threshold;
 
-  GIMP_TOOL_OPTIONS_CLASS (parent_class)->reset (tool_options);
+  PICMAN_TOOL_OPTIONS_CLASS (parent_class)->reset (tool_options);
 }
 
 GtkWidget *
-gimp_bucket_fill_options_gui (GimpToolOptions *tool_options)
+picman_bucket_fill_options_gui (PicmanToolOptions *tool_options)
 {
   GObject         *config = G_OBJECT (tool_options);
-  GtkWidget       *vbox   = gimp_paint_options_gui (tool_options);
+  GtkWidget       *vbox   = picman_paint_options_gui (tool_options);
   GtkWidget       *vbox2;
   GtkWidget       *table;
   GtkWidget       *frame;
@@ -224,27 +224,27 @@ gimp_bucket_fill_options_gui (GimpToolOptions *tool_options)
   gchar           *str;
   GdkModifierType  toggle_mask;
 
-  toggle_mask = gimp_get_toggle_behavior_mask ();
+  toggle_mask = picman_get_toggle_behavior_mask ();
 
   /*  fill type  */
   str = g_strdup_printf (_("Fill Type  (%s)"),
-                         gimp_get_mod_string (toggle_mask)),
-  frame = gimp_prop_enum_radio_frame_new (config, "fill-mode", str, 0, 0);
+                         picman_get_mod_string (toggle_mask)),
+  frame = picman_prop_enum_radio_frame_new (config, "fill-mode", str, 0, 0);
   g_free (str);
 
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  hbox = gimp_prop_pattern_box_new (NULL, GIMP_CONTEXT (tool_options),
+  hbox = picman_prop_pattern_box_new (NULL, PICMAN_CONTEXT (tool_options),
                                     NULL, 2,
                                     "pattern-view-type", "pattern-view-size");
-  gimp_enum_radio_frame_add (GTK_FRAME (frame), hbox,
-                             GIMP_PATTERN_BUCKET_FILL, TRUE);
+  picman_enum_radio_frame_add (GTK_FRAME (frame), hbox,
+                             PICMAN_PATTERN_BUCKET_FILL, TRUE);
 
   /*  fill selection  */
   str = g_strdup_printf (_("Affected Area  (%s)"),
-                         gimp_get_mod_string (GDK_SHIFT_MASK));
-  frame = gimp_prop_boolean_radio_frame_new (config, "fill-selection",
+                         picman_get_mod_string (GDK_SHIFT_MASK));
+  frame = picman_prop_boolean_radio_frame_new (config, "fill-selection",
                                              str,
                                              _("Fill whole selection"),
                                              _("Fill similar colors"));
@@ -256,7 +256,7 @@ gimp_bucket_fill_options_gui (GimpToolOptions *tool_options)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  frame = gimp_frame_new (_("Finding Similar Colors"));
+  frame = picman_frame_new (_("Finding Similar Colors"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -270,19 +270,19 @@ gimp_bucket_fill_options_gui (GimpToolOptions *tool_options)
   gtk_widget_show (vbox2);
 
   /*  the fill transparent areas toggle  */
-  button = gimp_prop_check_button_new (config, "fill-transparent",
+  button = picman_prop_check_button_new (config, "fill-transparent",
                                        _("Fill transparent areas"));
   gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   /*  the sample merged toggle  */
-  button = gimp_prop_check_button_new (config, "sample-merged",
+  button = picman_prop_check_button_new (config, "sample-merged",
                                        _("Sample merged"));
   gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   /*  the threshold scale  */
-  scale = gimp_prop_spin_scale_new (config, "threshold",
+  scale = picman_prop_spin_scale_new (config, "threshold",
                                     _("Threshold"),
                                     1.0, 16.0, 1);
   gtk_box_pack_start (GTK_BOX (vbox2), scale, FALSE, FALSE, 0);
@@ -294,8 +294,8 @@ gimp_bucket_fill_options_gui (GimpToolOptions *tool_options)
   gtk_box_pack_start (GTK_BOX (vbox2), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  combo = gimp_prop_enum_combo_box_new (config, "fill-criterion", 0, 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  combo = picman_prop_enum_combo_box_new (config, "fill-criterion", 0, 0);
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("Fill by:"), 0.0, 0.5,
                              combo, 2, FALSE);
 

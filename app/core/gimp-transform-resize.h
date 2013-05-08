@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis, and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TRANSFORM_RESIZE_H__
-#define __GIMP_TRANSFORM_RESIZE_H__
+#ifndef __PICMAN_TRANSFORM_RESIZE_H__
+#define __PICMAN_TRANSFORM_RESIZE_H__
 
 
-void   gimp_transform_resize_boundary (const GimpMatrix3   *inv,
-                                       GimpTransformResize  resize,
+void   picman_transform_resize_boundary (const PicmanMatrix3   *inv,
+                                       PicmanTransformResize  resize,
                                        gint                 u1,
                                        gint                 v1,
                                        gint                 u2,
@@ -31,4 +31,4 @@ void   gimp_transform_resize_boundary (const GimpMatrix3   *inv,
                                        gint                *y2);
 
 
-#endif  /*  __GIMP_TRANSFORM_RESIZE_H__  */
+#endif  /*  __PICMAN_TRANSFORM_RESIZE_H__  */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationlevels.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanoperationlevels.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,15 @@
 #include <cairo.h>
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "operations-types.h"
 
-#include "gimplevelsconfig.h"
-#include "gimpoperationlevels.h"
+#include "picmanlevelsconfig.h"
+#include "picmanoperationlevels.h"
 
 
-static gboolean gimp_operation_levels_process (GeglOperation       *operation,
+static gboolean picman_operation_levels_process (GeglOperation       *operation,
                                                void                *in_buf,
                                                void                *out_buf,
                                                glong                samples,
@@ -39,47 +39,47 @@ static gboolean gimp_operation_levels_process (GeglOperation       *operation,
                                                gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationLevels, gimp_operation_levels,
-               GIMP_TYPE_OPERATION_POINT_FILTER)
+G_DEFINE_TYPE (PicmanOperationLevels, picman_operation_levels,
+               PICMAN_TYPE_OPERATION_POINT_FILTER)
 
-#define parent_class gimp_operation_levels_parent_class
+#define parent_class picman_operation_levels_parent_class
 
 
 static void
-gimp_operation_levels_class_init (GimpOperationLevelsClass *klass)
+picman_operation_levels_class_init (PicmanOperationLevelsClass *klass)
 {
   GObjectClass                  *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass            *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationPointFilterClass *point_class     = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  object_class->set_property   = gimp_operation_point_filter_set_property;
-  object_class->get_property   = gimp_operation_point_filter_get_property;
+  object_class->set_property   = picman_operation_point_filter_set_property;
+  object_class->get_property   = picman_operation_point_filter_get_property;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:levels",
+                                 "name",        "picman:levels",
                                  "categories",  "color",
-                                 "description", "GIMP Levels operation",
+                                 "description", "PICMAN Levels operation",
                                  NULL);
 
-  point_class->process = gimp_operation_levels_process;
+  point_class->process = picman_operation_levels_process;
 
   g_object_class_install_property (object_class,
-                                   GIMP_OPERATION_POINT_FILTER_PROP_CONFIG,
+                                   PICMAN_OPERATION_POINT_FILTER_PROP_CONFIG,
                                    g_param_spec_object ("config",
                                                         "Config",
                                                         "The config object",
-                                                        GIMP_TYPE_LEVELS_CONFIG,
+                                                        PICMAN_TYPE_LEVELS_CONFIG,
                                                         G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_operation_levels_init (GimpOperationLevels *self)
+picman_operation_levels_init (PicmanOperationLevels *self)
 {
 }
 
 static inline gdouble
-gimp_operation_levels_map (gdouble value,
+picman_operation_levels_map (gdouble value,
                            gdouble inv_gamma,
                            gdouble low_input,
                            gdouble high_input,
@@ -105,15 +105,15 @@ gimp_operation_levels_map (gdouble value,
 }
 
 static gboolean
-gimp_operation_levels_process (GeglOperation       *operation,
+picman_operation_levels_process (GeglOperation       *operation,
                                void                *in_buf,
                                void                *out_buf,
                                glong                samples,
                                const GeglRectangle *roi,
                                gint                 level)
 {
-  GimpOperationPointFilter *point  = GIMP_OPERATION_POINT_FILTER (operation);
-  GimpLevelsConfig         *config = GIMP_LEVELS_CONFIG (point->config);
+  PicmanOperationPointFilter *point  = PICMAN_OPERATION_POINT_FILTER (operation);
+  PicmanLevelsConfig         *config = PICMAN_LEVELS_CONFIG (point->config);
   gfloat                   *src    = in_buf;
   gfloat                   *dest   = out_buf;
   gfloat                    inv_gamma[5];
@@ -135,7 +135,7 @@ gimp_operation_levels_process (GeglOperation       *operation,
         {
           gdouble value;
 
-          value = gimp_operation_levels_map (src[channel],
+          value = picman_operation_levels_map (src[channel],
                                              inv_gamma[channel + 1],
                                              config->low_input[channel + 1],
                                              config->high_input[channel + 1],
@@ -144,7 +144,7 @@ gimp_operation_levels_process (GeglOperation       *operation,
 
           /* don't apply the overall curve to the alpha channel */
           if (channel != ALPHA)
-            value = gimp_operation_levels_map (value,
+            value = picman_operation_levels_map (value,
                                                inv_gamma[0],
                                                config->low_input[0],
                                                config->high_input[0],
@@ -165,11 +165,11 @@ gimp_operation_levels_process (GeglOperation       *operation,
 /*  public functions  */
 
 gdouble
-gimp_operation_levels_map_input (GimpLevelsConfig     *config,
-                                 GimpHistogramChannel  channel,
+picman_operation_levels_map_input (PicmanLevelsConfig     *config,
+                                 PicmanHistogramChannel  channel,
                                  gdouble               value)
 {
-  g_return_val_if_fail (GIMP_IS_LEVELS_CONFIG (config), 0.0);
+  g_return_val_if_fail (PICMAN_IS_LEVELS_CONFIG (config), 0.0);
 
   /*  determine input intensity  */
   if (config->high_input[channel] != config->low_input[channel])

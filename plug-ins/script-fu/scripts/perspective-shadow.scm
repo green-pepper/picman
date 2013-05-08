@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ;
 ; perspective-shadow.scm   version 1.2   2000/11/08
 ;
-; Copyright (C) 1997-2000 Sven Neumann <sven@gimp.org>
+; Copyright (C) 1997-2000 Sven Neumann <sven@picman.org>
 ;
 ;
 ; Adds a perspective shadow of the current selection or alpha-channel
@@ -40,32 +40,32 @@
         (shadow-opacity (max shadow-opacity 0))
         (rel-length (abs rel-length))
         (alpha (* (/ alpha 180) *pi*))
-        (type (car (gimp-drawable-type-with-alpha drawable)))
-        (image-width (car (gimp-image-width image)))
-        (image-height (car (gimp-image-height image)))
+        (type (car (picman-drawable-type-with-alpha drawable)))
+        (image-width (car (picman-image-width image)))
+        (image-height (car (picman-image-height image)))
         (from-selection 0)
         (active-selection 0)
         (shadow-layer 0)
         )
 
-    (gimp-context-push)
-    (gimp-context-set-defaults)
+    (picman-context-push)
+    (picman-context-set-defaults)
 
     (if (> rel-distance 24) (set! rel-distance 999999))
     (if (= rel-distance rel-length) (set! rel-distance (+ rel-distance 0.01)))
 
-    (gimp-image-undo-group-start image)
+    (picman-image-undo-group-start image)
 
-    (gimp-layer-add-alpha drawable)
-    (if (= (car (gimp-selection-is-empty image)) TRUE)
+    (picman-layer-add-alpha drawable)
+    (if (= (car (picman-selection-is-empty image)) TRUE)
         (begin
-          (gimp-image-select-item image CHANNEL-OP-REPLACE drawable)
+          (picman-image-select-item image CHANNEL-OP-REPLACE drawable)
           (set! from-selection FALSE))
         (begin
           (set! from-selection TRUE)
-          (set! active-selection (car (gimp-selection-save image)))))
+          (set! active-selection (car (picman-selection-save image)))))
 
-    (let* ((selection-bounds (gimp-selection-bounds image))
+    (let* ((selection-bounds (picman-selection-bounds image))
            (select-offset-x (cadr selection-bounds))
            (select-offset-y (caddr selection-bounds))
            (select-width (- (cadr (cddr selection-bounds)) select-offset-x))
@@ -94,7 +94,7 @@
            (shadow-offset-y (- (min y0 y2) shadow-blur)))
 
 
-      (set! shadow-layer (car (gimp-layer-new image
+      (set! shadow-layer (car (picman-layer-new image
                                               select-width
                                               select-height
                                               type
@@ -103,12 +103,12 @@
                                               NORMAL-MODE)))
 
 
-      (gimp-image-insert-layer image shadow-layer 0 -1)
-      (gimp-layer-set-offsets shadow-layer select-offset-x select-offset-y)
-      (gimp-drawable-fill shadow-layer TRANSPARENT-FILL)
-      (gimp-context-set-background shadow-color)
-      (gimp-edit-fill shadow-layer BACKGROUND-FILL)
-      (gimp-selection-none image)
+      (picman-image-insert-layer image shadow-layer 0 -1)
+      (picman-layer-set-offsets shadow-layer select-offset-x select-offset-y)
+      (picman-drawable-fill shadow-layer TRANSPARENT-FILL)
+      (picman-context-set-background shadow-color)
+      (picman-edit-fill shadow-layer BACKGROUND-FILL)
+      (picman-selection-none image)
 
       (if (= allow-resize TRUE)
           (let* ((new-image-width image-width)
@@ -143,18 +143,18 @@
 
             (if (> (+ shadow-height shadow-offset-y) new-image-height)
                 (set! new-image-height (+ shadow-height shadow-offset-y)))
-            (gimp-image-resize image
+            (picman-image-resize image
                                new-image-width
                                new-image-height
                                image-offset-x
                                image-offset-y)))
 
-      (gimp-context-set-transform-direction TRANSFORM-FORWARD)
-      (gimp-context-set-interpolation interpolation)
-      (gimp-context-set-transform-recursion 3)
-      (gimp-context-set-transform-resize TRANSFORM-RESIZE-ADJUST)
+      (picman-context-set-transform-direction TRANSFORM-FORWARD)
+      (picman-context-set-interpolation interpolation)
+      (picman-context-set-transform-recursion 3)
+      (picman-context-set-transform-resize TRANSFORM-RESIZE-ADJUST)
 
-      (gimp-item-transform-perspective shadow-layer
+      (picman-item-transform-perspective shadow-layer
                         x0 y0
                         x1 y1
                         x2 y2
@@ -162,8 +162,8 @@
 
       (if (>= shadow-blur 1.0)
           (begin
-            (gimp-layer-set-lock-alpha shadow-layer FALSE)
-            (gimp-layer-resize shadow-layer
+            (picman-layer-set-lock-alpha shadow-layer FALSE)
+            (picman-layer-resize shadow-layer
                                shadow-width
                                shadow-height
                                shadow-blur
@@ -177,27 +177,27 @@
 
     (if (= from-selection TRUE)
         (begin
-          (gimp-image-select-item image CHANNEL-OP-REPLACE active-selection)
-          (gimp-edit-clear shadow-layer)
-          (gimp-image-remove-channel image active-selection)))
+          (picman-image-select-item image CHANNEL-OP-REPLACE active-selection)
+          (picman-edit-clear shadow-layer)
+          (picman-image-remove-channel image active-selection)))
 
     (if (and
-          (= (car (gimp-layer-is-floating-sel drawable)) 0)
+          (= (car (picman-layer-is-floating-sel drawable)) 0)
           (= from-selection FALSE))
-      (gimp-image-raise-item image drawable))
+      (picman-image-raise-item image drawable))
 
-    (gimp-image-set-active-layer image drawable)
-    (gimp-image-undo-group-end image)
-    (gimp-displays-flush)
+    (picman-image-set-active-layer image drawable)
+    (picman-image-undo-group-end image)
+    (picman-displays-flush)
 
-    (gimp-context-pop)
+    (picman-context-pop)
   )
 )
 
 (script-fu-register "script-fu-perspective-shadow"
   _"_Perspective..."
   _"Add a perspective shadow to the selected region (or alpha)"
-  "Sven Neumann <sven@gimp.org>"
+  "Sven Neumann <sven@picman.org>"
   "Sven Neumann"
   "2000/11/08"
   "RGB* GRAY*"

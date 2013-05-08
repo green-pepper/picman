@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,59 +21,59 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "gimp.h"
-#include "gimpchannel.h"
-#include "gimpimage.h"
-#include "gimpdrawable-preview.h"
-#include "gimpdrawable-private.h"
-#include "gimplayer.h"
-#include "gimptempbuf.h"
+#include "picman.h"
+#include "picmanchannel.h"
+#include "picmanimage.h"
+#include "picmandrawable-preview.h"
+#include "picmandrawable-private.h"
+#include "picmanlayer.h"
+#include "picmantempbuf.h"
 
 
 /*  public functions  */
 
-GimpTempBuf *
-gimp_drawable_get_new_preview (GimpViewable *viewable,
-                               GimpContext  *context,
+PicmanTempBuf *
+picman_drawable_get_new_preview (PicmanViewable *viewable,
+                               PicmanContext  *context,
                                gint          width,
                                gint          height)
 {
-  GimpItem  *item  = GIMP_ITEM (viewable);
-  GimpImage *image = gimp_item_get_image (item);
+  PicmanItem  *item  = PICMAN_ITEM (viewable);
+  PicmanImage *image = picman_item_get_image (item);
 
-  if (! image->gimp->config->layer_previews)
+  if (! image->picman->config->layer_previews)
     return NULL;
 
-  return gimp_drawable_get_sub_preview (GIMP_DRAWABLE (viewable),
+  return picman_drawable_get_sub_preview (PICMAN_DRAWABLE (viewable),
                                         0, 0,
-                                        gimp_item_get_width  (item),
-                                        gimp_item_get_height (item),
+                                        picman_item_get_width  (item),
+                                        picman_item_get_height (item),
                                         width,
                                         height);
 }
 
 const Babl *
-gimp_drawable_get_preview_format (GimpDrawable *drawable)
+picman_drawable_get_preview_format (PicmanDrawable *drawable)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
-  switch (gimp_drawable_get_base_type (drawable))
+  switch (picman_drawable_get_base_type (drawable))
     {
-    case GIMP_GRAY:
-      if (gimp_drawable_has_alpha (drawable))
+    case PICMAN_GRAY:
+      if (picman_drawable_has_alpha (drawable))
         return babl_format ("Y'A u8");
       else
         return babl_format ("Y' u8");
 
-    case GIMP_RGB:
-    case GIMP_INDEXED:
-      if (gimp_drawable_has_alpha (drawable))
+    case PICMAN_RGB:
+    case PICMAN_INDEXED:
+      if (picman_drawable_has_alpha (drawable))
         return babl_format ("R'G'B'A u8");
       else
         return babl_format ("R'G'B' u8");
@@ -82,8 +82,8 @@ gimp_drawable_get_preview_format (GimpDrawable *drawable)
   g_return_val_if_reached (NULL);
 }
 
-GimpTempBuf *
-gimp_drawable_get_sub_preview (GimpDrawable *drawable,
+PicmanTempBuf *
+picman_drawable_get_sub_preview (PicmanDrawable *drawable,
                                gint          src_x,
                                gint          src_y,
                                gint          src_width,
@@ -91,13 +91,13 @@ gimp_drawable_get_sub_preview (GimpDrawable *drawable,
                                gint          dest_width,
                                gint          dest_height)
 {
-  GimpItem    *item;
-  GimpImage   *image;
+  PicmanItem    *item;
+  PicmanImage   *image;
   GeglBuffer  *buffer;
-  GimpTempBuf *preview;
+  PicmanTempBuf *preview;
   gdouble      scale;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
   g_return_val_if_fail (src_x >= 0, NULL);
   g_return_val_if_fail (src_y >= 0, NULL);
   g_return_val_if_fail (src_width  > 0, NULL);
@@ -105,20 +105,20 @@ gimp_drawable_get_sub_preview (GimpDrawable *drawable,
   g_return_val_if_fail (dest_width  > 0, NULL);
   g_return_val_if_fail (dest_height > 0, NULL);
 
-  item = GIMP_ITEM (drawable);
+  item = PICMAN_ITEM (drawable);
 
-  g_return_val_if_fail ((src_x + src_width)  <= gimp_item_get_width  (item), NULL);
-  g_return_val_if_fail ((src_y + src_height) <= gimp_item_get_height (item), NULL);
+  g_return_val_if_fail ((src_x + src_width)  <= picman_item_get_width  (item), NULL);
+  g_return_val_if_fail ((src_y + src_height) <= picman_item_get_height (item), NULL);
 
-  image = gimp_item_get_image (item);
+  image = picman_item_get_image (item);
 
-  if (! image->gimp->config->layer_previews)
+  if (! image->picman->config->layer_previews)
     return NULL;
 
-  buffer = gimp_drawable_get_buffer (drawable);
+  buffer = picman_drawable_get_buffer (drawable);
 
-  preview = gimp_temp_buf_new (dest_width, dest_height,
-                               gimp_drawable_get_preview_format (drawable));
+  preview = picman_temp_buf_new (dest_width, dest_height,
+                               picman_drawable_get_preview_format (drawable));
 
   scale = MIN ((gdouble) dest_width  / (gdouble) gegl_buffer_get_width  (buffer),
                (gdouble) dest_height / (gdouble) gegl_buffer_get_height (buffer));
@@ -126,8 +126,8 @@ gimp_drawable_get_sub_preview (GimpDrawable *drawable,
   gegl_buffer_get (buffer,
                    GEGL_RECTANGLE (src_x, src_y, dest_width, dest_height),
                    scale,
-                   gimp_temp_buf_get_format (preview),
-                   gimp_temp_buf_get_data (preview),
+                   picman_temp_buf_get_format (preview),
+                   picman_temp_buf_get_data (preview),
                    GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   return preview;

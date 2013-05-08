@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcellrendererdashes.c
- * Copyright (C) 2005 Sven Neumann <sven@gimp.org>
+ * picmancellrendererdashes.c
+ * Copyright (C) 2005 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
 
 #include "widgets-types.h"
 
-#include "core/gimpdashpattern.h"
+#include "core/picmandashpattern.h"
 
-#include "gimpcellrendererdashes.h"
+#include "picmancellrendererdashes.h"
 
 
 #define DASHES_WIDTH   96
@@ -43,23 +43,23 @@ enum
 };
 
 
-static void gimp_cell_renderer_dashes_finalize     (GObject         *object);
-static void gimp_cell_renderer_dashes_get_property (GObject         *object,
+static void picman_cell_renderer_dashes_finalize     (GObject         *object);
+static void picman_cell_renderer_dashes_get_property (GObject         *object,
                                                     guint            param_id,
                                                     GValue          *value,
                                                     GParamSpec      *pspec);
-static void gimp_cell_renderer_dashes_set_property (GObject         *object,
+static void picman_cell_renderer_dashes_set_property (GObject         *object,
                                                     guint            param_id,
                                                     const GValue    *value,
                                                     GParamSpec      *pspec);
-static void gimp_cell_renderer_dashes_get_size     (GtkCellRenderer *cell,
+static void picman_cell_renderer_dashes_get_size     (GtkCellRenderer *cell,
                                                     GtkWidget       *widget,
                                                     GdkRectangle    *rectangle,
                                                     gint            *x_offset,
                                                     gint            *y_offset,
                                                     gint            *width,
                                                     gint            *height);
-static void gimp_cell_renderer_dashes_render       (GtkCellRenderer *cell,
+static void picman_cell_renderer_dashes_render       (GtkCellRenderer *cell,
                                                     GdkWindow       *window,
                                                     GtkWidget       *widget,
                                                     GdkRectangle    *background_area,
@@ -68,41 +68,41 @@ static void gimp_cell_renderer_dashes_render       (GtkCellRenderer *cell,
                                                     GtkCellRendererState flags);
 
 
-G_DEFINE_TYPE (GimpCellRendererDashes, gimp_cell_renderer_dashes,
+G_DEFINE_TYPE (PicmanCellRendererDashes, picman_cell_renderer_dashes,
                GTK_TYPE_CELL_RENDERER)
 
-#define parent_class gimp_cell_renderer_dashes_parent_class
+#define parent_class picman_cell_renderer_dashes_parent_class
 
 
 static void
-gimp_cell_renderer_dashes_class_init (GimpCellRendererDashesClass *klass)
+picman_cell_renderer_dashes_class_init (PicmanCellRendererDashesClass *klass)
 {
   GObjectClass         *object_class = G_OBJECT_CLASS (klass);
   GtkCellRendererClass *cell_class   = GTK_CELL_RENDERER_CLASS (klass);
 
-  object_class->finalize     = gimp_cell_renderer_dashes_finalize;
-  object_class->get_property = gimp_cell_renderer_dashes_get_property;
-  object_class->set_property = gimp_cell_renderer_dashes_set_property;
+  object_class->finalize     = picman_cell_renderer_dashes_finalize;
+  object_class->get_property = picman_cell_renderer_dashes_get_property;
+  object_class->set_property = picman_cell_renderer_dashes_set_property;
 
-  cell_class->get_size       = gimp_cell_renderer_dashes_get_size;
-  cell_class->render         = gimp_cell_renderer_dashes_render;
+  cell_class->get_size       = picman_cell_renderer_dashes_get_size;
+  cell_class->render         = picman_cell_renderer_dashes_render;
 
   g_object_class_install_property (object_class, PROP_PATTERN,
                                    g_param_spec_boxed ("pattern", NULL, NULL,
-                                                       GIMP_TYPE_DASH_PATTERN,
-                                                       GIMP_PARAM_WRITABLE));
+                                                       PICMAN_TYPE_DASH_PATTERN,
+                                                       PICMAN_PARAM_WRITABLE));
 }
 
 static void
-gimp_cell_renderer_dashes_init (GimpCellRendererDashes *dashes)
+picman_cell_renderer_dashes_init (PicmanCellRendererDashes *dashes)
 {
   dashes->segments = g_new0 (gboolean, N_SEGMENTS);
 }
 
 static void
-gimp_cell_renderer_dashes_finalize (GObject *object)
+picman_cell_renderer_dashes_finalize (GObject *object)
 {
-  GimpCellRendererDashes *dashes = GIMP_CELL_RENDERER_DASHES (object);
+  PicmanCellRendererDashes *dashes = PICMAN_CELL_RENDERER_DASHES (object);
 
   g_free (dashes->segments);
 
@@ -110,7 +110,7 @@ gimp_cell_renderer_dashes_finalize (GObject *object)
 }
 
 static void
-gimp_cell_renderer_dashes_get_property (GObject    *object,
+picman_cell_renderer_dashes_get_property (GObject    *object,
                                         guint       param_id,
                                         GValue     *value,
                                         GParamSpec *pspec)
@@ -119,17 +119,17 @@ gimp_cell_renderer_dashes_get_property (GObject    *object,
 }
 
 static void
-gimp_cell_renderer_dashes_set_property (GObject      *object,
+picman_cell_renderer_dashes_set_property (GObject      *object,
                                         guint         param_id,
                                         const GValue *value,
                                         GParamSpec   *pspec)
 {
-  GimpCellRendererDashes *dashes = GIMP_CELL_RENDERER_DASHES (object);
+  PicmanCellRendererDashes *dashes = PICMAN_CELL_RENDERER_DASHES (object);
 
   switch (param_id)
     {
     case PROP_PATTERN:
-      gimp_dash_pattern_fill_segments (g_value_get_boxed (value),
+      picman_dash_pattern_fill_segments (g_value_get_boxed (value),
                                        dashes->segments, N_SEGMENTS);
       break;
 
@@ -140,7 +140,7 @@ gimp_cell_renderer_dashes_set_property (GObject      *object,
 }
 
 static void
-gimp_cell_renderer_dashes_get_size (GtkCellRenderer *cell,
+picman_cell_renderer_dashes_get_size (GtkCellRenderer *cell,
                                     GtkWidget       *widget,
                                     GdkRectangle    *cell_area,
                                     gint            *x_offset,
@@ -187,7 +187,7 @@ gimp_cell_renderer_dashes_get_size (GtkCellRenderer *cell,
 }
 
 static void
-gimp_cell_renderer_dashes_render (GtkCellRenderer      *cell,
+picman_cell_renderer_dashes_render (GtkCellRenderer      *cell,
                                   GdkWindow            *window,
                                   GtkWidget            *widget,
                                   GdkRectangle         *background_area,
@@ -195,7 +195,7 @@ gimp_cell_renderer_dashes_render (GtkCellRenderer      *cell,
                                   GdkRectangle         *expose_area,
                                   GtkCellRendererState  flags)
 {
-  GimpCellRendererDashes *dashes = GIMP_CELL_RENDERER_DASHES (cell);
+  PicmanCellRendererDashes *dashes = PICMAN_CELL_RENDERER_DASHES (cell);
   GtkStyle               *style  = gtk_widget_get_style (widget);
   GtkStateType            state;
   gint                    xpad, ypad;
@@ -256,7 +256,7 @@ gimp_cell_renderer_dashes_render (GtkCellRenderer      *cell,
 }
 
 GtkCellRenderer *
-gimp_cell_renderer_dashes_new (void)
+picman_cell_renderer_dashes_new (void)
 {
-  return g_object_new (GIMP_TYPE_CELL_RENDERER_DASHES, NULL);
+  return g_object_new (PICMAN_TYPE_CELL_RENDERER_DASHES, NULL);
 }

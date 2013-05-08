@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpenumwidgets.c
- * Copyright (C) 2002-2004  Sven Neumann <sven@gimp.org>
+ * picmanenumwidgets.c
+ * Copyright (C) 2002-2004  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,19 +23,19 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpenumwidgets.h"
-#include "gimpframe.h"
-#include "gimphelpui.h"
-#include "gimp3migration.h"
+#include "picmanenumwidgets.h"
+#include "picmanframe.h"
+#include "picmanhelpui.h"
+#include "picman3migration.h"
 
 
 /**
- * SECTION: gimpenumwidgets
- * @title: GimpEnumWidgets
+ * SECTION: picmanenumwidgets
+ * @title: PicmanEnumWidgets
  * @short_description: A set of utility functions to create widgets
  *                     based on enums.
  *
@@ -44,7 +44,7 @@
 
 
 /**
- * gimp_enum_radio_box_new:
+ * picman_enum_radio_box_new:
  * @enum_type:     the #GType of an enum.
  * @callback:      a callback to connect to the "toggled" signal of each
  *                 #GtkRadioButton that is created.
@@ -54,14 +54,14 @@
  * Creates a new group of #GtkRadioButtons representing the enum
  * values.  A group of radiobuttons is a good way to represent enums
  * with up to three or four values. Often it is better to use a
- * #GimpEnumComboBox instead.
+ * #PicmanEnumComboBox instead.
  *
  * Return value: a new #GtkVBox holding a group of #GtkRadioButtons.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_enum_radio_box_new (GType       enum_type,
+picman_enum_radio_box_new (GType       enum_type,
                          GCallback   callback,
                          gpointer    callback_data,
                          GtkWidget **first_button)
@@ -73,7 +73,7 @@ gimp_enum_radio_box_new (GType       enum_type,
 
   enum_class = g_type_class_ref (enum_type);
 
-  vbox = gimp_enum_radio_box_new_with_range (enum_type,
+  vbox = picman_enum_radio_box_new_with_range (enum_type,
                                              enum_class->minimum,
                                              enum_class->maximum,
                                              callback, callback_data,
@@ -85,7 +85,7 @@ gimp_enum_radio_box_new (GType       enum_type,
 }
 
 /**
- * gimp_enum_radio_box_new_with_range:
+ * picman_enum_radio_box_new_with_range:
  * @minimum:       the minimum enum value
  * @maximum:       the maximum enum value
  * @enum_type:     the #GType of an enum.
@@ -94,16 +94,16 @@ gimp_enum_radio_box_new (GType       enum_type,
  * @callback_data: data to pass to the @callback.
  * @first_button:  returns the first button in the created group.
  *
- * Just like gimp_enum_radio_box_new(), this function creates a group
+ * Just like picman_enum_radio_box_new(), this function creates a group
  * of radio buttons, but additionally it supports limiting the range
  * of available enum values.
  *
  * Return value: a new #GtkVBox holding a group of #GtkRadioButtons.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_enum_radio_box_new_with_range (GType       enum_type,
+picman_enum_radio_box_new_with_range (GType       enum_type,
                                     gint        minimum,
                                     gint        maximum,
                                     GCallback   callback,
@@ -134,7 +134,7 @@ gimp_enum_radio_box_new_with_range (GType       enum_type,
       if (value->value < minimum || value->value > maximum)
         continue;
 
-      desc = gimp_enum_value_get_desc (enum_class, value);
+      desc = picman_enum_value_get_desc (enum_class, value);
 
       button = gtk_radio_button_new_with_mnemonic (group, desc);
 
@@ -145,7 +145,7 @@ gimp_enum_radio_box_new_with_range (GType       enum_type,
       gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
       gtk_widget_show (button);
 
-      g_object_set_data (G_OBJECT (button), "gimp-item-data",
+      g_object_set_data (G_OBJECT (button), "picman-item-data",
                          GINT_TO_POINTER (value->value));
 
       if (callback)
@@ -158,7 +158,7 @@ gimp_enum_radio_box_new_with_range (GType       enum_type,
 }
 
 /**
- * gimp_enum_radio_frame_new:
+ * picman_enum_radio_frame_new:
  * @enum_type:     the #GType of an enum.
  * @label_widget:  a widget to use as label for the frame that will
  *                 hold the radio box.
@@ -167,15 +167,15 @@ gimp_enum_radio_box_new_with_range (GType       enum_type,
  * @callback_data: data to pass to the @callback.
  * @first_button:  returns the first button in the created group.
  *
- * Calls gimp_enum_radio_box_new() and puts the resulting vbox into a
+ * Calls picman_enum_radio_box_new() and puts the resulting vbox into a
  * #GtkFrame.
  *
  * Return value: a new #GtkFrame holding a group of #GtkRadioButtons.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_enum_radio_frame_new (GType       enum_type,
+picman_enum_radio_frame_new (GType       enum_type,
                            GtkWidget  *label_widget,
                            GCallback   callback,
                            gpointer    callback_data,
@@ -188,7 +188,7 @@ gimp_enum_radio_frame_new (GType       enum_type,
   g_return_val_if_fail (label_widget == NULL || GTK_IS_WIDGET (label_widget),
                         NULL);
 
-  frame = gimp_frame_new (NULL);
+  frame = picman_frame_new (NULL);
 
   if (label_widget)
     {
@@ -196,7 +196,7 @@ gimp_enum_radio_frame_new (GType       enum_type,
       gtk_widget_show (label_widget);
     }
 
-  radio_box = gimp_enum_radio_box_new (enum_type,
+  radio_box = picman_enum_radio_box_new (enum_type,
                                        callback, callback_data,
                                        first_button);
   gtk_container_add (GTK_CONTAINER (frame), radio_box);
@@ -206,7 +206,7 @@ gimp_enum_radio_frame_new (GType       enum_type,
 }
 
 /**
- * gimp_enum_radio_frame_new_with_range:
+ * picman_enum_radio_frame_new_with_range:
  * @enum_type:     the #GType of an enum.
  * @minimum:       the minimum enum value
  * @maximum:       the maximum enum value
@@ -216,15 +216,15 @@ gimp_enum_radio_frame_new (GType       enum_type,
  * @callback_data: data to pass to the @callback.
  * @first_button:  returns the first button in the created group.
  *
- * Calls gimp_enum_radio_box_new_with_range() and puts the resulting
+ * Calls picman_enum_radio_box_new_with_range() and puts the resulting
  * vbox into a #GtkFrame.
  *
  * Return value: a new #GtkFrame holding a group of #GtkRadioButtons.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_enum_radio_frame_new_with_range (GType       enum_type,
+picman_enum_radio_frame_new_with_range (GType       enum_type,
                                       gint        minimum,
                                       gint        maximum,
                                       GtkWidget  *label_widget,
@@ -239,7 +239,7 @@ gimp_enum_radio_frame_new_with_range (GType       enum_type,
   g_return_val_if_fail (label_widget == NULL || GTK_IS_WIDGET (label_widget),
                         NULL);
 
-  frame = gimp_frame_new (NULL);
+  frame = picman_frame_new (NULL);
 
   if (label_widget)
     {
@@ -247,7 +247,7 @@ gimp_enum_radio_frame_new_with_range (GType       enum_type,
       gtk_widget_show (label_widget);
     }
 
-  radio_box = gimp_enum_radio_box_new_with_range (enum_type,
+  radio_box = picman_enum_radio_box_new_with_range (enum_type,
                                                   minimum,
                                                   maximum,
                                                   callback, callback_data,
@@ -260,7 +260,7 @@ gimp_enum_radio_frame_new_with_range (GType       enum_type,
 
 
 /**
- * gimp_enum_stock_box_new:
+ * picman_enum_stock_box_new:
  * @enum_type:     the #GType of an enum.
  * @stock_prefix:  the prefix of the group of stock ids to use.
  * @icon_size:     the icon size for the stock icons
@@ -275,10 +275,10 @@ gimp_enum_radio_frame_new_with_range (GType       enum_type,
  *
  * Return value: a new #GtkHBox holding a group of #GtkRadioButtons.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_enum_stock_box_new (GType         enum_type,
+picman_enum_stock_box_new (GType         enum_type,
                          const gchar  *stock_prefix,
                          GtkIconSize   icon_size,
                          GCallback     callback,
@@ -292,7 +292,7 @@ gimp_enum_stock_box_new (GType         enum_type,
 
   enum_class = g_type_class_ref (enum_type);
 
-  box = gimp_enum_stock_box_new_with_range (enum_type,
+  box = picman_enum_stock_box_new_with_range (enum_type,
                                             enum_class->minimum,
                                             enum_class->maximum,
                                             stock_prefix, icon_size,
@@ -305,7 +305,7 @@ gimp_enum_stock_box_new (GType         enum_type,
 }
 
 /**
- * gimp_enum_stock_box_new_with_range:
+ * picman_enum_stock_box_new_with_range:
  * @enum_type:     the #GType of an enum.
  * @minimum:       the minumim enum value
  * @maximum:       the maximum enum value
@@ -316,16 +316,16 @@ gimp_enum_stock_box_new (GType         enum_type,
  * @callback_data: data to pass to the @callback.
  * @first_button:  returns the first button in the created group.
  *
- * Just like gimp_enum_stock_box_new(), this function creates a group
+ * Just like picman_enum_stock_box_new(), this function creates a group
  * of radio buttons, but additionally it supports limiting the range
  * of available enum values.
  *
  * Return value: a new #GtkHBox holding a group of #GtkRadioButtons.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_enum_stock_box_new_with_range (GType         enum_type,
+picman_enum_stock_box_new_with_range (GType         enum_type,
                                     gint          minimum,
                                     gint          maximum,
                                     const gchar  *stock_prefix,
@@ -379,15 +379,15 @@ gimp_enum_stock_box_new_with_range (GType         enum_type,
           gtk_widget_show (image);
         }
 
-      gimp_help_set_help_data (button,
-                               gimp_enum_value_get_desc (enum_class, value),
+      picman_help_set_help_data (button,
+                               picman_enum_value_get_desc (enum_class, value),
                                NULL);
 
       group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (button));
       gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
       gtk_widget_show (button);
 
-      g_object_set_data (G_OBJECT (button), "gimp-item-data",
+      g_object_set_data (G_OBJECT (button), "picman-item-data",
                          GINT_TO_POINTER (value->value));
 
       if (callback)
@@ -400,18 +400,18 @@ gimp_enum_stock_box_new_with_range (GType         enum_type,
 }
 
 /**
- * gimp_enum_stock_box_set_child_padding:
+ * picman_enum_stock_box_set_child_padding:
  * @stock_box: a stock box widget
  * @xpad:      horizontal padding
  * @ypad:      vertical padding
  *
  * Sets the padding of all buttons in a box created by
- * gimp_enum_stock_box_new().
+ * picman_enum_stock_box_new().
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_enum_stock_box_set_child_padding (GtkWidget *stock_box,
+picman_enum_stock_box_set_child_padding (GtkWidget *stock_box,
                                        gint       xpad,
                                        gint       ypad)
 {

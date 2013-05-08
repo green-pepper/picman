@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,20 +20,20 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimpdatafactory.h"
+#include "core/picmandatafactory.h"
 
-#include "widgets/gimppropwidgets.h"
-#include "widgets/gimpviewablebox.h"
+#include "widgets/picmanpropwidgets.h"
+#include "widgets/picmanviewablebox.h"
 
-#include "gimpblendoptions.h"
-#include "gimppaintoptions-gui.h"
+#include "picmanblendoptions.h"
+#include "picmanpaintoptions-gui.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -41,7 +41,7 @@ enum
   PROP_0,
   PROP_OFFSET,
   PROP_GRADIENT_TYPE,
-  PROP_GRADIENT_REPEAT,  /*  overrides a GimpPaintOptions property  */
+  PROP_GRADIENT_REPEAT,  /*  overrides a PicmanPaintOptions property  */
   PROP_SUPERSAMPLE,
   PROP_SUPERSAMPLE_DEPTH,
   PROP_SUPERSAMPLE_THRESHOLD,
@@ -49,77 +49,77 @@ enum
 };
 
 
-static void   gimp_blend_options_set_property    (GObject          *object,
+static void   picman_blend_options_set_property    (GObject          *object,
                                                   guint             property_id,
                                                   const GValue     *value,
                                                   GParamSpec       *pspec);
-static void   gimp_blend_options_get_property    (GObject          *object,
+static void   picman_blend_options_get_property    (GObject          *object,
                                                   guint             property_id,
                                                   GValue           *value,
                                                   GParamSpec       *pspec);
 
-static void   blend_options_gradient_type_notify (GimpBlendOptions *options,
+static void   blend_options_gradient_type_notify (PicmanBlendOptions *options,
                                                   GParamSpec       *pspec,
                                                   GtkWidget        *repeat_combo);
 
 
-G_DEFINE_TYPE (GimpBlendOptions, gimp_blend_options, GIMP_TYPE_PAINT_OPTIONS)
+G_DEFINE_TYPE (PicmanBlendOptions, picman_blend_options, PICMAN_TYPE_PAINT_OPTIONS)
 
 
 static void
-gimp_blend_options_class_init (GimpBlendOptionsClass *klass)
+picman_blend_options_class_init (PicmanBlendOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_blend_options_set_property;
-  object_class->get_property = gimp_blend_options_get_property;
+  object_class->set_property = picman_blend_options_set_property;
+  object_class->get_property = picman_blend_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_OFFSET,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_OFFSET,
                                    "offset", NULL,
                                    0.0, 100.0, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_GRADIENT_TYPE,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_GRADIENT_TYPE,
                                  "gradient-type", NULL,
-                                 GIMP_TYPE_GRADIENT_TYPE,
-                                 GIMP_GRADIENT_LINEAR,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_GRADIENT_REPEAT,
+                                 PICMAN_TYPE_GRADIENT_TYPE,
+                                 PICMAN_GRADIENT_LINEAR,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_GRADIENT_REPEAT,
                                  "gradient-repeat", NULL,
-                                 GIMP_TYPE_REPEAT_MODE,
-                                 GIMP_REPEAT_NONE,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_REPEAT_MODE,
+                                 PICMAN_REPEAT_NONE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SUPERSAMPLE,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SUPERSAMPLE,
                                     "supersample", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_SUPERSAMPLE_DEPTH,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_SUPERSAMPLE_DEPTH,
                                 "supersample-depth", NULL,
                                 0, 6, 3,
-                                GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SUPERSAMPLE_THRESHOLD,
+                                PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SUPERSAMPLE_THRESHOLD,
                                    "supersample-threshold", NULL,
                                    0.0, 4.0, 0.2,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DITHER,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DITHER,
                                     "dither", NULL,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_blend_options_init (GimpBlendOptions *options)
+picman_blend_options_init (PicmanBlendOptions *options)
 {
 }
 
 static void
-gimp_blend_options_set_property (GObject      *object,
+picman_blend_options_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  GimpBlendOptions *options = GIMP_BLEND_OPTIONS (object);
+  PicmanBlendOptions *options = PICMAN_BLEND_OPTIONS (object);
 
   switch (property_id)
     {
@@ -130,7 +130,7 @@ gimp_blend_options_set_property (GObject      *object,
       options->gradient_type = g_value_get_enum (value);
       break;
     case PROP_GRADIENT_REPEAT:
-      GIMP_PAINT_OPTIONS (options)->gradient_options->gradient_repeat =
+      PICMAN_PAINT_OPTIONS (options)->gradient_options->gradient_repeat =
         g_value_get_enum (value);
       break;
 
@@ -155,12 +155,12 @@ gimp_blend_options_set_property (GObject      *object,
 }
 
 static void
-gimp_blend_options_get_property (GObject    *object,
+picman_blend_options_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  GimpBlendOptions *options = GIMP_BLEND_OPTIONS (object);
+  PicmanBlendOptions *options = PICMAN_BLEND_OPTIONS (object);
 
   switch (property_id)
     {
@@ -172,7 +172,7 @@ gimp_blend_options_get_property (GObject    *object,
       break;
     case PROP_GRADIENT_REPEAT:
       g_value_set_enum (value,
-                        GIMP_PAINT_OPTIONS (options)->gradient_options->gradient_repeat);
+                        PICMAN_PAINT_OPTIONS (options)->gradient_options->gradient_repeat);
       break;
 
     case PROP_SUPERSAMPLE:
@@ -196,10 +196,10 @@ gimp_blend_options_get_property (GObject    *object,
 }
 
 GtkWidget *
-gimp_blend_options_gui (GimpToolOptions *tool_options)
+picman_blend_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config = G_OBJECT (tool_options);
-  GtkWidget *vbox   = gimp_paint_options_gui (tool_options);
+  GtkWidget *vbox   = picman_paint_options_gui (tool_options);
   GtkWidget *table;
   GtkWidget *vbox2;
   GtkWidget *frame;
@@ -208,12 +208,12 @@ gimp_blend_options_gui (GimpToolOptions *tool_options)
   GtkWidget *button;
 
   /*  the gradient  */
-  button = gimp_prop_gradient_box_new (NULL, GIMP_CONTEXT (tool_options),
+  button = picman_prop_gradient_box_new (NULL, PICMAN_CONTEXT (tool_options),
                                        _("Gradient"), 2,
                                        "gradient-view-type",
                                        "gradient-view-size",
                                        "gradient-reverse",
-                                       "gimp-gradient-editor");
+                                       "picman-gradient-editor");
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
@@ -224,18 +224,18 @@ gimp_blend_options_gui (GimpToolOptions *tool_options)
   gtk_widget_show (table);
 
   /*  the gradient type menu  */
-  combo = gimp_prop_enum_combo_box_new (config, "gradient-type", 0, 0);
+  combo = picman_prop_enum_combo_box_new (config, "gradient-type", 0, 0);
   g_object_set (combo, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-  gimp_enum_combo_box_set_stock_prefix (GIMP_ENUM_COMBO_BOX (combo),
-                                        "gimp-gradient");
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_enum_combo_box_set_stock_prefix (PICMAN_ENUM_COMBO_BOX (combo),
+                                        "picman-gradient");
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("Shape:"), 0.0, 0.5,
                              combo, 2, FALSE);
 
   /*  the repeat option  */
-  combo = gimp_prop_enum_combo_box_new (config, "gradient-repeat", 0, 0);
+  combo = picman_prop_enum_combo_box_new (config, "gradient-repeat", 0, 0);
   g_object_set (combo, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("Repeat:"), 0.0, 0.5,
                              combo, 2, FALSE);
 
@@ -244,35 +244,35 @@ gimp_blend_options_gui (GimpToolOptions *tool_options)
                     combo);
 
   /*  the offset scale  */
-  scale = gimp_prop_spin_scale_new (config, "offset",
+  scale = picman_prop_spin_scale_new (config, "offset",
                                     _("Offset"),
                                     1.0, 10.0, 1);
   gtk_box_pack_start (GTK_BOX (vbox), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   /*  the dither toggle  */
-  button = gimp_prop_check_button_new (config, "dither",
+  button = picman_prop_check_button_new (config, "dither",
                                        _("Dithering"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   /*  supersampling options  */
   vbox2 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
-  frame = gimp_prop_expanding_frame_new (config, "supersample",
+  frame = picman_prop_expanding_frame_new (config, "supersample",
                                          _("Adaptive supersampling"),
                                          vbox2, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
   /*  max depth scale  */
-  scale = gimp_prop_spin_scale_new (config, "supersample-depth",
+  scale = picman_prop_spin_scale_new (config, "supersample-depth",
                                     _("Max depth"),
                                     1.0, 1.0, 0);
   gtk_box_pack_start (GTK_BOX (vbox2), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   /*  threshold scale  */
-  scale = gimp_prop_spin_scale_new (config, "supersample-threshold",
+  scale = picman_prop_spin_scale_new (config, "supersample-threshold",
                                     _("Threshold"),
                                     0.01, 0.1, 2);
   gtk_box_pack_start (GTK_BOX (vbox2), scale, FALSE, FALSE, 0);
@@ -282,7 +282,7 @@ gimp_blend_options_gui (GimpToolOptions *tool_options)
 }
 
 static void
-blend_options_gradient_type_notify (GimpBlendOptions *options,
+blend_options_gradient_type_notify (PicmanBlendOptions *options,
                                     GParamSpec       *pspec,
                                     GtkWidget        *repeat_combo)
 {

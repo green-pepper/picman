@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,44 +19,44 @@
 
 #include "glib-object.h"
 
-#include "gimp-debug.h"
-#include "gimp-log.h"
+#include "picman-debug.h"
+#include "picman-log.h"
 
 
 static const GDebugKey log_keys[] =
 {
-  { "tool-events",        GIMP_LOG_TOOL_EVENTS        },
-  { "tool-focus",         GIMP_LOG_TOOL_FOCUS         },
-  { "dnd",                GIMP_LOG_DND                },
-  { "help",               GIMP_LOG_HELP               },
-  { "dialog-factory",     GIMP_LOG_DIALOG_FACTORY     },
-  { "menus",              GIMP_LOG_MENUS              },
-  { "save-dialog",        GIMP_LOG_SAVE_DIALOG        },
-  { "image-scale",        GIMP_LOG_IMAGE_SCALE        },
-  { "shadow-tiles",       GIMP_LOG_SHADOW_TILES       },
-  { "scale",              GIMP_LOG_SCALE              },
-  { "wm",                 GIMP_LOG_WM                 },
-  { "floating-selection", GIMP_LOG_FLOATING_SELECTION },
-  { "shm",                GIMP_LOG_SHM                },
-  { "text-editing",       GIMP_LOG_TEXT_EDITING       },
-  { "key-events",         GIMP_LOG_KEY_EVENTS         },
-  { "auto-tab-style",     GIMP_LOG_AUTO_TAB_STYLE     },
-  { "instances",          GIMP_LOG_INSTANCES          },
-  { "rectangle-tool",     GIMP_LOG_RECTANGLE_TOOL     },
-  { "brush-cache",        GIMP_LOG_BRUSH_CACHE        }
+  { "tool-events",        PICMAN_LOG_TOOL_EVENTS        },
+  { "tool-focus",         PICMAN_LOG_TOOL_FOCUS         },
+  { "dnd",                PICMAN_LOG_DND                },
+  { "help",               PICMAN_LOG_HELP               },
+  { "dialog-factory",     PICMAN_LOG_DIALOG_FACTORY     },
+  { "menus",              PICMAN_LOG_MENUS              },
+  { "save-dialog",        PICMAN_LOG_SAVE_DIALOG        },
+  { "image-scale",        PICMAN_LOG_IMAGE_SCALE        },
+  { "shadow-tiles",       PICMAN_LOG_SHADOW_TILES       },
+  { "scale",              PICMAN_LOG_SCALE              },
+  { "wm",                 PICMAN_LOG_WM                 },
+  { "floating-selection", PICMAN_LOG_FLOATING_SELECTION },
+  { "shm",                PICMAN_LOG_SHM                },
+  { "text-editing",       PICMAN_LOG_TEXT_EDITING       },
+  { "key-events",         PICMAN_LOG_KEY_EVENTS         },
+  { "auto-tab-style",     PICMAN_LOG_AUTO_TAB_STYLE     },
+  { "instances",          PICMAN_LOG_INSTANCES          },
+  { "rectangle-tool",     PICMAN_LOG_RECTANGLE_TOOL     },
+  { "brush-cache",        PICMAN_LOG_BRUSH_CACHE        }
 };
 
 
-GimpLogFlags gimp_log_flags = 0;
+PicmanLogFlags picman_log_flags = 0;
 
 
 void
-gimp_log_init (void)
+picman_log_init (void)
 {
-  const gchar *env_log_val = g_getenv ("GIMP_LOG");
+  const gchar *env_log_val = g_getenv ("PICMAN_LOG");
 
   if (! env_log_val)
-    env_log_val = g_getenv ("GIMP_DEBUG");
+    env_log_val = g_getenv ("PICMAN_DEBUG");
 
   if (env_log_val)
     g_setenv ("G_MESSAGES_DEBUG", env_log_val, TRUE);
@@ -64,22 +64,22 @@ gimp_log_init (void)
   if (env_log_val)
     {
       /*  g_parse_debug_string() has special treatment of the string 'help',
-       *  but we want to use it for the GIMP_LOG_HELP domain
+       *  but we want to use it for the PICMAN_LOG_HELP domain
        */
       if (g_ascii_strcasecmp (env_log_val, "help") == 0)
-        gimp_log_flags = GIMP_LOG_HELP;
+        picman_log_flags = PICMAN_LOG_HELP;
       else
-        gimp_log_flags = g_parse_debug_string (env_log_val,
+        picman_log_flags = g_parse_debug_string (env_log_val,
                                                log_keys,
                                                G_N_ELEMENTS (log_keys));
 
-      if (gimp_log_flags & GIMP_LOG_INSTANCES)
-        gimp_debug_enable_instances ();
+      if (picman_log_flags & PICMAN_LOG_INSTANCES)
+        picman_debug_enable_instances ();
     }
 }
 
 void
-gimp_log (GimpLogFlags  flags,
+picman_log (PicmanLogFlags  flags,
           const gchar  *function,
           gint          line,
           const gchar  *format,
@@ -88,12 +88,12 @@ gimp_log (GimpLogFlags  flags,
   va_list args;
 
   va_start (args, format);
-  gimp_logv (flags, function, line, format, args);
+  picman_logv (flags, function, line, format, args);
   va_end (args);
 }
 
 void
-gimp_logv (GimpLogFlags  flags,
+picman_logv (PicmanLogFlags  flags,
            const gchar  *function,
            gint          line,
            const gchar  *format,

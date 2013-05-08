@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationhuesaturation.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanoperationhuesaturation.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +24,16 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "operations-types.h"
 
-#include "gimphuesaturationconfig.h"
-#include "gimpoperationhuesaturation.h"
+#include "picmanhuesaturationconfig.h"
+#include "picmanoperationhuesaturation.h"
 
 
-static gboolean gimp_operation_hue_saturation_process (GeglOperation       *operation,
+static gboolean picman_operation_hue_saturation_process (GeglOperation       *operation,
                                                        void                *in_buf,
                                                        void                *out_buf,
                                                        glong                samples,
@@ -41,51 +41,51 @@ static gboolean gimp_operation_hue_saturation_process (GeglOperation       *oper
                                                        gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationHueSaturation, gimp_operation_hue_saturation,
-               GIMP_TYPE_OPERATION_POINT_FILTER)
+G_DEFINE_TYPE (PicmanOperationHueSaturation, picman_operation_hue_saturation,
+               PICMAN_TYPE_OPERATION_POINT_FILTER)
 
-#define parent_class gimp_operation_hue_saturation_parent_class
+#define parent_class picman_operation_hue_saturation_parent_class
 
 
 static void
-gimp_operation_hue_saturation_class_init (GimpOperationHueSaturationClass *klass)
+picman_operation_hue_saturation_class_init (PicmanOperationHueSaturationClass *klass)
 {
   GObjectClass                  *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass            *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationPointFilterClass *point_class     = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  object_class->set_property   = gimp_operation_point_filter_set_property;
-  object_class->get_property   = gimp_operation_point_filter_get_property;
+  object_class->set_property   = picman_operation_point_filter_set_property;
+  object_class->get_property   = picman_operation_point_filter_get_property;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:hue-saturation",
+                                 "name",        "picman:hue-saturation",
                                  "categories",  "color",
-                                 "description", "GIMP Hue-Saturation operation",
+                                 "description", "PICMAN Hue-Saturation operation",
                                  NULL);
 
-  point_class->process = gimp_operation_hue_saturation_process;
+  point_class->process = picman_operation_hue_saturation_process;
 
   g_object_class_install_property (object_class,
-                                   GIMP_OPERATION_POINT_FILTER_PROP_CONFIG,
+                                   PICMAN_OPERATION_POINT_FILTER_PROP_CONFIG,
                                    g_param_spec_object ("config",
                                                         "Config",
                                                         "The config object",
-                                                        GIMP_TYPE_HUE_SATURATION_CONFIG,
+                                                        PICMAN_TYPE_HUE_SATURATION_CONFIG,
                                                         G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_operation_hue_saturation_init (GimpOperationHueSaturation *self)
+picman_operation_hue_saturation_init (PicmanOperationHueSaturation *self)
 {
 }
 
 static inline gdouble
-map_hue (GimpHueSaturationConfig *config,
-         GimpHueRange             range,
+map_hue (PicmanHueSaturationConfig *config,
+         PicmanHueRange             range,
          gdouble                  value)
 {
-  value += (config->hue[GIMP_ALL_HUES] + config->hue[range]) / 2.0;
+  value += (config->hue[PICMAN_ALL_HUES] + config->hue[range]) / 2.0;
 
   if (value < 0)
     return value + 1.0;
@@ -96,11 +96,11 @@ map_hue (GimpHueSaturationConfig *config,
 }
 
 static inline gdouble
-map_saturation (GimpHueSaturationConfig *config,
-                GimpHueRange             range,
+map_saturation (PicmanHueSaturationConfig *config,
+                PicmanHueRange             range,
                 gdouble                  value)
 {
-  gdouble v = config->saturation[GIMP_ALL_HUES] + config->saturation[range];
+  gdouble v = config->saturation[PICMAN_ALL_HUES] + config->saturation[range];
 
   /* This change affects the way saturation is computed. With the old
    * code (different code for value < 0), increasing the saturation
@@ -116,11 +116,11 @@ map_saturation (GimpHueSaturationConfig *config,
 }
 
 static inline gdouble
-map_lightness (GimpHueSaturationConfig *config,
-               GimpHueRange             range,
+map_lightness (PicmanHueSaturationConfig *config,
+               PicmanHueRange             range,
                gdouble                  value)
 {
-  gdouble v = (config->lightness[GIMP_ALL_HUES] + config->lightness[range]) / 2.0;
+  gdouble v = (config->lightness[PICMAN_ALL_HUES] + config->lightness[range]) / 2.0;
 
   if (v < 0)
     return value * (v + 1.0);
@@ -129,15 +129,15 @@ map_lightness (GimpHueSaturationConfig *config,
 }
 
 static gboolean
-gimp_operation_hue_saturation_process (GeglOperation       *operation,
+picman_operation_hue_saturation_process (GeglOperation       *operation,
                                        void                *in_buf,
                                        void                *out_buf,
                                        glong                samples,
                                        const GeglRectangle *roi,
                                        gint                 level)
 {
-  GimpOperationPointFilter *point  = GIMP_OPERATION_POINT_FILTER (operation);
-  GimpHueSaturationConfig  *config = GIMP_HUE_SATURATION_CONFIG (point->config);
+  PicmanOperationPointFilter *point  = PICMAN_OPERATION_POINT_FILTER (operation);
+  PicmanHueSaturationConfig  *config = PICMAN_HUE_SATURATION_CONFIG (point->config);
   gfloat                   *src    = in_buf;
   gfloat                   *dest   = out_buf;
   gfloat                    overlap;
@@ -149,8 +149,8 @@ gimp_operation_hue_saturation_process (GeglOperation       *operation,
 
   while (samples--)
     {
-      GimpRGB  rgb;
-      GimpHSL  hsl;
+      PicmanRGB  rgb;
+      PicmanHSL  hsl;
       gdouble  h;
       gint     hue_counter;
       gint     hue                 = 0;
@@ -163,7 +163,7 @@ gimp_operation_hue_saturation_process (GeglOperation       *operation,
       rgb.g = src[GREEN];
       rgb.b = src[BLUE];
 
-      gimp_rgb_to_hsl (&rgb, &hsl);
+      picman_rgb_to_hsl (&rgb, &hsl);
 
       h = hsl.h * 6.0;
 
@@ -206,7 +206,7 @@ gimp_operation_hue_saturation_process (GeglOperation       *operation,
           secondary_hue = 0;
         }
 
-      /*  transform into GimpHueRange values  */
+      /*  transform into PicmanHueRange values  */
       hue++;
       secondary_hue++;
 
@@ -248,7 +248,7 @@ gimp_operation_hue_saturation_process (GeglOperation       *operation,
           hsl.l = map_lightness  (config, hue, hsl.l);
         }
 
-      gimp_hsl_to_rgb (&hsl, &rgb);
+      picman_hsl_to_rgb (&hsl, &rgb);
 
       dest[RED]   = rgb.r;
       dest[GREEN] = rgb.g;
@@ -266,22 +266,22 @@ gimp_operation_hue_saturation_process (GeglOperation       *operation,
 /*  public functions  */
 
 void
-gimp_operation_hue_saturation_map (GimpHueSaturationConfig *config,
-                                   const GimpRGB           *color,
-                                   GimpHueRange             range,
-                                   GimpRGB                 *result)
+picman_operation_hue_saturation_map (PicmanHueSaturationConfig *config,
+                                   const PicmanRGB           *color,
+                                   PicmanHueRange             range,
+                                   PicmanRGB                 *result)
 {
-  GimpHSL hsl;
+  PicmanHSL hsl;
 
-  g_return_if_fail (GIMP_IS_HUE_SATURATION_CONFIG (config));
+  g_return_if_fail (PICMAN_IS_HUE_SATURATION_CONFIG (config));
   g_return_if_fail (color != NULL);
   g_return_if_fail (result != NULL);
 
-  gimp_rgb_to_hsl (color, &hsl);
+  picman_rgb_to_hsl (color, &hsl);
 
   hsl.h = map_hue        (config, range, hsl.h);
   hsl.s = map_saturation (config, range, hsl.s);
   hsl.l = map_lightness  (config, range, hsl.l);
 
-  gimp_hsl_to_rgb (&hsl, result);
+  picman_hsl_to_rgb (&hsl, result);
 }

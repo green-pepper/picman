@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,105 +20,105 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "config/gimpconfig-utils.h"
+#include "config/picmanconfig-utils.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpdatafactory.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmandatafactory.h"
 
-#include "gimpcontainerentry.h"
-#include "gimpdialogfactory.h"
-#include "gimppropwidgets.h"
-#include "gimpview.h"
-#include "gimpviewablebutton.h"
-#include "gimpviewablebox.h"
-#include "gimpviewrenderergradient.h"
-#include "gimpwindowstrategy.h"
+#include "picmancontainerentry.h"
+#include "picmandialogfactory.h"
+#include "picmanpropwidgets.h"
+#include "picmanview.h"
+#include "picmanviewablebutton.h"
+#include "picmanviewablebox.h"
+#include "picmanviewrenderergradient.h"
+#include "picmanwindowstrategy.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static GtkWidget * gimp_viewable_box_new       (GimpContainer *container,
-                                                GimpContext   *context,
+static GtkWidget * picman_viewable_box_new       (PicmanContainer *container,
+                                                PicmanContext   *context,
                                                 const gchar   *label,
                                                 gint           spacing,
-                                                GimpViewType   view_type,
-                                                GimpViewType   button_view_size,
-                                                GimpViewSize   view_size,
+                                                PicmanViewType   view_type,
+                                                PicmanViewType   button_view_size,
+                                                PicmanViewSize   view_size,
                                                 const gchar   *dialog_identifier,
                                                 const gchar   *dialog_stock_id,
                                                 const gchar   *dialog_tooltip,
                                                 const gchar   *editor_id);
 static GtkWidget * view_props_connect          (GtkWidget     *box,
-                                                GimpContext   *context,
+                                                PicmanContext   *context,
                                                 const gchar   *view_type_prop,
                                                 const gchar   *view_size_prop);
-static void   gimp_viewable_box_edit_clicked   (GtkWidget          *widget,
-                                                GimpViewableButton *button);
-static void   gimp_gradient_box_reverse_notify (GObject       *object,
+static void   picman_viewable_box_edit_clicked   (GtkWidget          *widget,
+                                                PicmanViewableButton *button);
+static void   picman_gradient_box_reverse_notify (GObject       *object,
                                                 GParamSpec    *pspec,
-                                                GimpView      *view);
+                                                PicmanView      *view);
 
 
 /*  brush boxes  */
 
 static GtkWidget *
-brush_box_new (GimpContainer *container,
-               GimpContext   *context,
+brush_box_new (PicmanContainer *container,
+               PicmanContext   *context,
                const gchar   *label,
                gint           spacing,
-               GimpViewType   view_type,
-               GimpViewSize   view_size,
+               PicmanViewType   view_type,
+               PicmanViewSize   view_size,
                const gchar   *editor_id)
 {
   if (! container)
-    container = gimp_data_factory_get_container (context->gimp->brush_factory);
+    container = picman_data_factory_get_container (context->picman->brush_factory);
 
-  return gimp_viewable_box_new (container, context, label, spacing,
-                                view_type, GIMP_VIEW_SIZE_SMALL, view_size,
-                                "gimp-brush-grid|gimp-brush-list",
-                                GIMP_STOCK_BRUSH,
+  return picman_viewable_box_new (container, context, label, spacing,
+                                view_type, PICMAN_VIEW_SIZE_SMALL, view_size,
+                                "picman-brush-grid|picman-brush-list",
+                                PICMAN_STOCK_BRUSH,
                                 _("Open the brush selection dialog"),
                                 editor_id);
 }
 
 GtkWidget *
-gimp_brush_box_new (GimpContainer *container,
-                    GimpContext   *context,
+picman_brush_box_new (PicmanContainer *container,
+                    PicmanContext   *context,
                     const gchar   *label,
                     gint           spacing)
 {
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   return brush_box_new (container, context, label, spacing,
-                        GIMP_VIEW_TYPE_GRID, GIMP_VIEW_SIZE_SMALL,
+                        PICMAN_VIEW_TYPE_GRID, PICMAN_VIEW_SIZE_SMALL,
                         NULL);
 }
 
 GtkWidget *
-gimp_prop_brush_box_new (GimpContainer *container,
-                         GimpContext   *context,
+picman_prop_brush_box_new (PicmanContainer *container,
+                         PicmanContext   *context,
                          const gchar   *label,
                          gint           spacing,
                          const gchar   *view_type_prop,
                          const gchar   *view_size_prop,
                          const gchar   *editor_id)
 {
-  GimpViewType view_type;
-  GimpViewSize view_size;
+  PicmanViewType view_type;
+  PicmanViewSize view_size;
 
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   g_object_get (context,
                 view_type_prop, &view_type,
@@ -135,54 +135,54 @@ gimp_prop_brush_box_new (GimpContainer *container,
 /*  dynamics boxes  */
 
 static GtkWidget *
-dynamics_box_new (GimpContainer *container,
-                  GimpContext   *context,
+dynamics_box_new (PicmanContainer *container,
+                  PicmanContext   *context,
                   const gchar   *label,
                   gint           spacing,
-                  GimpViewSize   view_size,
+                  PicmanViewSize   view_size,
                   const gchar   *editor_id)
 {
   if (! container)
-    container = gimp_data_factory_get_container (context->gimp->dynamics_factory);
+    container = picman_data_factory_get_container (context->picman->dynamics_factory);
 
-  return gimp_viewable_box_new (container, context, label, spacing,
-                                GIMP_VIEW_TYPE_LIST, GIMP_VIEW_SIZE_SMALL, view_size,
-                                "gimp-dynamics-list",
-                                GIMP_STOCK_DYNAMICS,
+  return picman_viewable_box_new (container, context, label, spacing,
+                                PICMAN_VIEW_TYPE_LIST, PICMAN_VIEW_SIZE_SMALL, view_size,
+                                "picman-dynamics-list",
+                                PICMAN_STOCK_DYNAMICS,
                                 _("Open the dynamics selection dialog"),
                                 editor_id);
 }
 
 GtkWidget *
-gimp_dynamics_box_new (GimpContainer *container,
-                       GimpContext   *context,
+picman_dynamics_box_new (PicmanContainer *container,
+                       PicmanContext   *context,
                        const gchar   *label,
                        gint           spacing)
 {
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   return dynamics_box_new (container, context, label, spacing,
-                           GIMP_VIEW_SIZE_SMALL,
+                           PICMAN_VIEW_SIZE_SMALL,
                            NULL);
 }
 
 GtkWidget *
-gimp_prop_dynamics_box_new (GimpContainer *container,
-                            GimpContext   *context,
+picman_prop_dynamics_box_new (PicmanContainer *container,
+                            PicmanContext   *context,
                             const gchar   *label,
                             gint           spacing,
                             const gchar   *view_type_prop,
                             const gchar   *view_size_prop,
                             const gchar   *editor_id)
 {
-  GimpViewType view_type;
-  GimpViewSize view_size;
+  PicmanViewType view_type;
+  PicmanViewSize view_size;
 
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   g_object_get (context,
                 view_type_prop, &view_type,
@@ -200,52 +200,52 @@ gimp_prop_dynamics_box_new (GimpContainer *container,
 /*  pattern boxes  */
 
 static GtkWidget *
-pattern_box_new (GimpContainer *container,
-                 GimpContext   *context,
+pattern_box_new (PicmanContainer *container,
+                 PicmanContext   *context,
                  const gchar   *label,
                  gint           spacing,
-                 GimpViewType   view_type,
-                 GimpViewSize   view_size)
+                 PicmanViewType   view_type,
+                 PicmanViewSize   view_size)
 {
   if (! container)
-    container = gimp_data_factory_get_container (context->gimp->pattern_factory);
+    container = picman_data_factory_get_container (context->picman->pattern_factory);
 
-  return gimp_viewable_box_new (container, context, label, spacing,
-                                view_type, GIMP_VIEW_SIZE_SMALL, view_size,
-                                "gimp-pattern-grid|gimp-pattern-list",
-                                GIMP_STOCK_PATTERN,
+  return picman_viewable_box_new (container, context, label, spacing,
+                                view_type, PICMAN_VIEW_SIZE_SMALL, view_size,
+                                "picman-pattern-grid|picman-pattern-list",
+                                PICMAN_STOCK_PATTERN,
                                 _("Open the pattern selection dialog"),
                                 NULL);
 }
 
 GtkWidget *
-gimp_pattern_box_new (GimpContainer *container,
-                      GimpContext   *context,
+picman_pattern_box_new (PicmanContainer *container,
+                      PicmanContext   *context,
                       const gchar   *label,
                       gint           spacing)
 {
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   return pattern_box_new (container, context, label, spacing,
-                          GIMP_VIEW_TYPE_GRID, GIMP_VIEW_SIZE_SMALL);
+                          PICMAN_VIEW_TYPE_GRID, PICMAN_VIEW_SIZE_SMALL);
 }
 
 GtkWidget *
-gimp_prop_pattern_box_new (GimpContainer *container,
-                           GimpContext   *context,
+picman_prop_pattern_box_new (PicmanContainer *container,
+                           PicmanContext   *context,
                            const gchar   *label,
                            gint           spacing,
                            const gchar   *view_type_prop,
                            const gchar   *view_size_prop)
 {
-  GimpViewType view_type;
-  GimpViewSize view_size;
+  PicmanViewType view_type;
+  PicmanViewSize view_size;
 
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   g_object_get (context,
                 view_type_prop, &view_type,
@@ -262,12 +262,12 @@ gimp_prop_pattern_box_new (GimpContainer *container,
 /*  gradient boxes  */
 
 static GtkWidget *
-gradient_box_new (GimpContainer *container,
-                  GimpContext   *context,
+gradient_box_new (PicmanContainer *container,
+                  PicmanContext   *context,
                   const gchar   *label,
                   gint           spacing,
-                  GimpViewType   view_type,
-                  GimpViewSize   view_size,
+                  PicmanViewType   view_type,
+                  PicmanViewSize   view_size,
                   const gchar   *reverse_prop,
                   const gchar   *editor_id)
 {
@@ -276,12 +276,12 @@ gradient_box_new (GimpContainer *container,
   GList     *children;
 
   if (! container)
-    container = gimp_data_factory_get_container (context->gimp->gradient_factory);
+    container = picman_data_factory_get_container (context->picman->gradient_factory);
 
-  hbox = gimp_viewable_box_new (container, context, label, spacing,
-                                view_type, GIMP_VIEW_SIZE_LARGE, view_size,
-                                "gimp-gradient-list|gimp-gradient-grid",
-                                GIMP_STOCK_GRADIENT,
+  hbox = picman_viewable_box_new (container, context, label, spacing,
+                                view_type, PICMAN_VIEW_SIZE_LARGE, view_size,
+                                "picman-gradient-list|picman-gradient-grid",
+                                PICMAN_STOCK_GRADIENT,
                                 _("Open the gradient selection dialog"),
                                 editor_id);
 
@@ -289,7 +289,7 @@ gradient_box_new (GimpContainer *container,
   button = children->data;
   g_list_free (children);
 
-  GIMP_VIEWABLE_BUTTON (button)->button_view_size = GIMP_VIEW_SIZE_SMALL;
+  PICMAN_VIEWABLE_BUTTON (button)->button_view_size = PICMAN_VIEW_SIZE_SMALL;
 
   if (reverse_prop)
     {
@@ -303,15 +303,15 @@ gradient_box_new (GimpContainer *container,
       gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
       gtk_widget_show (vbox);
 
-      toggle = gimp_prop_check_button_new (G_OBJECT (context), reverse_prop,
+      toggle = picman_prop_check_button_new (G_OBJECT (context), reverse_prop,
                                            NULL);
       gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (toggle), FALSE);
       gtk_box_pack_end (GTK_BOX (vbox), toggle, FALSE, FALSE, 0);
       gtk_widget_show (toggle);
 
-      gimp_help_set_help_data (toggle, _("Reverse"), NULL);
+      picman_help_set_help_data (toggle, _("Reverse"), NULL);
 
-      image = gtk_image_new_from_stock (GIMP_STOCK_FLIP_HORIZONTAL,
+      image = gtk_image_new_from_stock (PICMAN_STOCK_FLIP_HORIZONTAL,
                                         GTK_ICON_SIZE_MENU);
       gtk_misc_set_alignment (GTK_MISC (image), 0.5, 1.0);
       gtk_container_add (GTK_CONTAINER (toggle), image);
@@ -321,38 +321,38 @@ gradient_box_new (GimpContainer *container,
 
       signal_name = g_strconcat ("notify::", reverse_prop, NULL);
       g_signal_connect_object (context, signal_name,
-                               G_CALLBACK (gimp_gradient_box_reverse_notify),
+                               G_CALLBACK (picman_gradient_box_reverse_notify),
                                G_OBJECT (view), 0);
       g_free (signal_name);
 
-      gimp_gradient_box_reverse_notify (G_OBJECT (context),
+      picman_gradient_box_reverse_notify (G_OBJECT (context),
                                         NULL,
-                                        GIMP_VIEW (view));
+                                        PICMAN_VIEW (view));
     }
 
   return hbox;
 }
 
 GtkWidget *
-gimp_gradient_box_new (GimpContainer *container,
-                       GimpContext   *context,
+picman_gradient_box_new (PicmanContainer *container,
+                       PicmanContext   *context,
                        const gchar   *label,
                        gint           spacing,
                        const gchar   *reverse_prop)
 {
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   return gradient_box_new (container, context, label, spacing,
-                           GIMP_VIEW_TYPE_LIST, GIMP_VIEW_SIZE_LARGE,
+                           PICMAN_VIEW_TYPE_LIST, PICMAN_VIEW_SIZE_LARGE,
                            reverse_prop,
                            NULL);
 }
 
 GtkWidget *
-gimp_prop_gradient_box_new (GimpContainer *container,
-                            GimpContext   *context,
+picman_prop_gradient_box_new (PicmanContainer *container,
+                            PicmanContext   *context,
                             const gchar   *label,
                             gint           spacing,
                             const gchar   *view_type_prop,
@@ -360,12 +360,12 @@ gimp_prop_gradient_box_new (GimpContainer *container,
                             const gchar   *reverse_prop,
                             const gchar   *editor_id)
 {
-  GimpViewType view_type;
-  GimpViewSize view_size;
+  PicmanViewType view_type;
+  PicmanViewSize view_size;
 
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   g_object_get (context,
                 view_type_prop, &view_type,
@@ -384,55 +384,55 @@ gimp_prop_gradient_box_new (GimpContainer *container,
 /*  palette boxes  */
 
 static GtkWidget *
-palette_box_new (GimpContainer *container,
-                 GimpContext   *context,
+palette_box_new (PicmanContainer *container,
+                 PicmanContext   *context,
                  const gchar   *label,
                  gint           spacing,
-                 GimpViewType   view_type,
-                 GimpViewSize   view_size,
+                 PicmanViewType   view_type,
+                 PicmanViewSize   view_size,
                  const gchar   *editor_id)
 {
   if (! container)
-    container = gimp_data_factory_get_container (context->gimp->palette_factory);
+    container = picman_data_factory_get_container (context->picman->palette_factory);
 
-  return gimp_viewable_box_new (container, context, label, spacing,
-                                view_type, GIMP_VIEW_SIZE_MEDIUM, view_size,
-                                "gimp-palette-list|gimp-palette-grid",
-                                GIMP_STOCK_PALETTE,
+  return picman_viewable_box_new (container, context, label, spacing,
+                                view_type, PICMAN_VIEW_SIZE_MEDIUM, view_size,
+                                "picman-palette-list|picman-palette-grid",
+                                PICMAN_STOCK_PALETTE,
                                 _("Open the palette selection dialog"),
                                 editor_id);
 }
 
 GtkWidget *
-gimp_palette_box_new (GimpContainer *container,
-                      GimpContext   *context,
+picman_palette_box_new (PicmanContainer *container,
+                      PicmanContext   *context,
                       const gchar   *label,
                       gint           spacing)
 {
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   return palette_box_new (container, context, label, spacing,
-                          GIMP_VIEW_TYPE_LIST, GIMP_VIEW_SIZE_MEDIUM,
+                          PICMAN_VIEW_TYPE_LIST, PICMAN_VIEW_SIZE_MEDIUM,
                           NULL);
 }
 
 GtkWidget *
-gimp_prop_palette_box_new (GimpContainer *container,
-                           GimpContext   *context,
+picman_prop_palette_box_new (PicmanContainer *container,
+                           PicmanContext   *context,
                            const gchar   *label,
                            gint           spacing,
                            const gchar   *view_type_prop,
                            const gchar   *view_size_prop,
                            const gchar   *editor_id)
 {
-  GimpViewType view_type;
-  GimpViewSize view_size;
+  PicmanViewType view_type;
+  PicmanViewSize view_size;
 
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   g_object_get (context,
                 view_type_prop, &view_type,
@@ -450,52 +450,52 @@ gimp_prop_palette_box_new (GimpContainer *container,
 /*  font boxes  */
 
 static GtkWidget *
-font_box_new (GimpContainer *container,
-              GimpContext   *context,
+font_box_new (PicmanContainer *container,
+              PicmanContext   *context,
               const gchar   *label,
               gint           spacing,
-              GimpViewType   view_type,
-              GimpViewSize   view_size)
+              PicmanViewType   view_type,
+              PicmanViewSize   view_size)
 {
   if (! container)
-    container = context->gimp->fonts;
+    container = context->picman->fonts;
 
-  return gimp_viewable_box_new (container, context, label, spacing,
-                                view_type, GIMP_VIEW_SIZE_SMALL, view_size,
-                                "gimp-font-list|gimp-font-grid",
-                                GIMP_STOCK_FONT,
+  return picman_viewable_box_new (container, context, label, spacing,
+                                view_type, PICMAN_VIEW_SIZE_SMALL, view_size,
+                                "picman-font-list|picman-font-grid",
+                                PICMAN_STOCK_FONT,
                                 _("Open the font selection dialog"),
                                 NULL);
 }
 
 GtkWidget *
-gimp_font_box_new (GimpContainer *container,
-                   GimpContext   *context,
+picman_font_box_new (PicmanContainer *container,
+                   PicmanContext   *context,
                    const gchar   *label,
                    gint           spacing)
 {
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   return font_box_new (container, context, label, spacing,
-                       GIMP_VIEW_TYPE_LIST, GIMP_VIEW_SIZE_SMALL);
+                       PICMAN_VIEW_TYPE_LIST, PICMAN_VIEW_SIZE_SMALL);
 }
 
 GtkWidget *
-gimp_prop_font_box_new (GimpContainer *container,
-                        GimpContext   *context,
+picman_prop_font_box_new (PicmanContainer *container,
+                        PicmanContext   *context,
                         const gchar   *label,
                         gint           spacing,
                         const gchar   *view_type_prop,
                         const gchar   *view_size_prop)
 {
-  GimpViewType view_type;
-  GimpViewSize view_size;
+  PicmanViewType view_type;
+  PicmanViewSize view_size;
 
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   g_object_get (context,
                 view_type_prop, &view_type,
@@ -512,13 +512,13 @@ gimp_prop_font_box_new (GimpContainer *container,
 /*  private functions  */
 
 static GtkWidget *
-gimp_viewable_box_new (GimpContainer *container,
-                       GimpContext   *context,
+picman_viewable_box_new (PicmanContainer *container,
+                       PicmanContext   *context,
                        const gchar   *label,
                        gint           spacing,
-                       GimpViewType   view_type,
-                       GimpViewType   button_view_size,
-                       GimpViewSize   view_size,
+                       PicmanViewType   view_type,
+                       PicmanViewType   button_view_size,
+                       PicmanViewSize   view_size,
                        const gchar   *dialog_identifier,
                        const gchar   *dialog_stock_id,
                        const gchar   *dialog_tooltip,
@@ -532,9 +532,9 @@ gimp_viewable_box_new (GimpContainer *container,
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, spacing);
 
-  button = gimp_viewable_button_new (container, context,
+  button = picman_viewable_button_new (container, context,
                                      view_type, button_view_size, view_size, 1,
-                                     gimp_dialog_factory_get_singleton (),
+                                     picman_dialog_factory_get_singleton (),
                                      dialog_identifier,
                                      dialog_stock_id,
                                      dialog_tooltip);
@@ -556,7 +556,7 @@ gimp_viewable_box_new (GimpContainer *container,
       gtk_widget_show (l);
     }
 
-  entry = gimp_container_entry_new (container, context, view_size, 1);
+  entry = picman_container_entry_new (container, context, view_size, 1);
 
   /*  set a silly smally size request on the entry to disable
    *  GtkEntry's minimal width of 150 pixels.
@@ -580,19 +580,19 @@ gimp_viewable_box_new (GimpContainer *container,
       gtk_box_pack_end (GTK_BOX (edit_vbox), edit_button, FALSE, FALSE, 0);
       gtk_widget_show (edit_button);
 
-      image = gtk_image_new_from_stock (GIMP_STOCK_EDIT,
+      image = gtk_image_new_from_stock (PICMAN_STOCK_EDIT,
                                         GTK_ICON_SIZE_BUTTON);
       gtk_misc_set_alignment (GTK_MISC (image), 0.5, 1.0);
       gtk_container_add (GTK_CONTAINER (edit_button), image);
       gtk_widget_show (image);
 
       g_object_set_data_full (G_OBJECT (button),
-                              "gimp-viewable-box-editor",
+                              "picman-viewable-box-editor",
                               g_strdup (editor_id),
                               (GDestroyNotify) g_free);
 
       g_signal_connect (edit_button, "clicked",
-                        G_CALLBACK (gimp_viewable_box_edit_clicked),
+                        G_CALLBACK (picman_viewable_box_edit_clicked),
                         button);
     }
 
@@ -601,45 +601,45 @@ gimp_viewable_box_new (GimpContainer *container,
 
 static GtkWidget *
 view_props_connect (GtkWidget   *box,
-                    GimpContext *context,
+                    PicmanContext *context,
                     const gchar *view_type_prop,
                     const gchar *view_size_prop)
 {
   GtkWidget *button = g_object_get_data (G_OBJECT (box), "viewable-button");
 
-  gimp_config_connect_full (G_OBJECT (context), G_OBJECT (button),
+  picman_config_connect_full (G_OBJECT (context), G_OBJECT (button),
                             view_type_prop, "popup-view-type");
-  gimp_config_connect_full (G_OBJECT (context), G_OBJECT (button),
+  picman_config_connect_full (G_OBJECT (context), G_OBJECT (button),
                             view_size_prop, "popup-view-size");
 
   return box;
 }
 
 static void
-gimp_viewable_box_edit_clicked (GtkWidget          *widget,
-                                GimpViewableButton *button)
+picman_viewable_box_edit_clicked (GtkWidget          *widget,
+                                PicmanViewableButton *button)
 {
   const gchar *editor_id = g_object_get_data (G_OBJECT (button),
-                                              "gimp-viewable-box-editor");
+                                              "picman-viewable-box-editor");
 
-  gimp_window_strategy_show_dockable_dialog (GIMP_WINDOW_STRATEGY (gimp_get_window_strategy (button->context->gimp)),
-                                             button->context->gimp,
-                                             gimp_dialog_factory_get_singleton (),
+  picman_window_strategy_show_dockable_dialog (PICMAN_WINDOW_STRATEGY (picman_get_window_strategy (button->context->picman)),
+                                             button->context->picman,
+                                             picman_dialog_factory_get_singleton (),
                                              gtk_widget_get_screen (widget),
                                              editor_id);
 }
 
 static void
-gimp_gradient_box_reverse_notify (GObject    *object,
+picman_gradient_box_reverse_notify (GObject    *object,
                                   GParamSpec *pspec,
-                                  GimpView   *view)
+                                  PicmanView   *view)
 {
-  GimpViewRendererGradient *rendergrad;
+  PicmanViewRendererGradient *rendergrad;
   gboolean                  reverse;
 
-  rendergrad = GIMP_VIEW_RENDERER_GRADIENT (view->renderer);
+  rendergrad = PICMAN_VIEW_RENDERER_GRADIENT (view->renderer);
 
   g_object_get (object, "gradient-reverse", &reverse, NULL);
 
-  gimp_view_renderer_gradient_set_reverse (rendergrad, reverse);
+  picman_view_renderer_gradient_set_reverse (rendergrad, reverse);
 }

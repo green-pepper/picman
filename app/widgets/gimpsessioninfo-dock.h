@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpsessioninfo-dock.h
- * Copyright (C) 2001-2007 Michael Natterer <mitch@gimp.org>
+ * picmansessioninfo-dock.h
+ * Copyright (C) 2001-2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,47 +18,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SESSION_INFO_DOCK_H__
-#define __GIMP_SESSION_INFO_DOCK_H__
+#ifndef __PICMAN_SESSION_INFO_DOCK_H__
+#define __PICMAN_SESSION_INFO_DOCK_H__
 
 
 /**
- * GimpSessionInfoDock:
+ * PicmanSessionInfoDock:
  *
  * Contains information about a dock in the interface.
  */
-struct _GimpSessionInfoDock
+struct _PicmanSessionInfoDock
 {
-  /* Type of dock, written to/read from sessionrc. E.g. 'gimp-dock' or
-   * 'gimp-toolbox'
+  /* Type of dock, written to/read from sessionrc. E.g. 'picman-dock' or
+   * 'picman-toolbox'
    */
   gchar             *dock_type;
 
   /* What side this dock is in in single-window mode. Either
-   * GIMP_ARRANGE_LEFT, GIMP_ARRANGE_RIGHT or -1.
+   * PICMAN_ARRANGE_LEFT, PICMAN_ARRANGE_RIGHT or -1.
    */
-  GimpAlignmentType  side;
+  PicmanAlignmentType  side;
 
   /* GtkPaned position of this dock */
   gint               position;
 
-  /*  list of GimpSessionInfoBook  */
+  /*  list of PicmanSessionInfoBook  */
   GList             *books;
 };
 
-GimpSessionInfoDock * gimp_session_info_dock_new         (const gchar          *dock_type);
-void                  gimp_session_info_dock_free        (GimpSessionInfoDock  *dock_info);
-void                  gimp_session_info_dock_serialize   (GimpConfigWriter     *writer,
-                                                          GimpSessionInfoDock  *dock);
-GTokenType            gimp_session_info_dock_deserialize (GScanner             *scanner,
+PicmanSessionInfoDock * picman_session_info_dock_new         (const gchar          *dock_type);
+void                  picman_session_info_dock_free        (PicmanSessionInfoDock  *dock_info);
+void                  picman_session_info_dock_serialize   (PicmanConfigWriter     *writer,
+                                                          PicmanSessionInfoDock  *dock);
+GTokenType            picman_session_info_dock_deserialize (GScanner             *scanner,
                                                           gint                  scope,
-                                                          GimpSessionInfoDock **info,
+                                                          PicmanSessionInfoDock **info,
                                                           const gchar          *dock_type);
-GimpSessionInfoDock * gimp_session_info_dock_from_widget (GimpDock             *dock);
-GimpDock            * gimp_session_info_dock_restore     (GimpSessionInfoDock  *dock_info,
-                                                          GimpDialogFactory    *factory,
+PicmanSessionInfoDock * picman_session_info_dock_from_widget (PicmanDock             *dock);
+PicmanDock            * picman_session_info_dock_restore     (PicmanSessionInfoDock  *dock_info,
+                                                          PicmanDialogFactory    *factory,
                                                           GdkScreen            *screen,
-                                                          GimpDockContainer    *dock_container);
+                                                          PicmanDockContainer    *dock_container);
 
 
-#endif  /* __GIMP_SESSION_INFO_DOCK_H__ */
+#endif  /* __PICMAN_SESSION_INFO_DOCK_H__ */

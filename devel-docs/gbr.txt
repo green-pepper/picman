@@ -1,4 +1,4 @@
-The GIMP Paintbrush File Format Version 1 (.gbr)
+The PICMAN Paintbrush File Format Version 1 (.gbr)
 ------------------------------------------------
 
 Based on examples and code, it seems that v1 is like v2, but it is
@@ -13,7 +13,7 @@ GBR v1 is deprecated and should never be used to save new brushes.
 
 
 
-The GIMP Paintbrush File Format Version 2 (.gbr)
+The PICMAN Paintbrush File Format Version 2 (.gbr)
 ------------------------------------------------
 
 HEADER
@@ -42,7 +42,7 @@ Bytes 16 - 19: bytes
 
 Bytes 20 - 23: magic_number
 	Type: 32 bit unsigned int 
-	Value: GIMP brush magic number.
+	Value: PICMAN brush magic number.
 	('G' << 24) + ('I' << 16) + ('M' << 8) + 'P'
 
 Bytes 24 - 27: spacing
@@ -63,13 +63,13 @@ BODY
 
 
 
-The GIMP Paintbrush File Format Version 3 (.gbr)
+The PICMAN Paintbrush File Format Version 3 (.gbr)
 ------------------------------------------------
 
-This changed GIMP brush format was introduced by the FilmGimp or
-CinePaint developers without notifying the GIMP developers. We've
+This changed PICMAN brush format was introduced by the FilmPicman or
+CinePaint developers without notifying the PICMAN developers. We've
 added support for reading these brushes. The format is very similar
 to version 2 but uses the bytes field as a data format identifier. 
 It seems the only format identifier in use is 18 which corresponds
 to 16bit floats. If you encounter brushes with a different data
-format, please let the GIMP developers know.
+format, please let the PICMAN developers know.

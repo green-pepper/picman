@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpwidgets.h
- * Copyright (C) 2000 Michael Natterer <mitch@gimp.org>
+ * picmanwidgets.h
+ * Copyright (C) 2000 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,70 +19,70 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_WIDGETS_H__
-#define __GIMP_WIDGETS_H__
+#ifndef __PICMAN_WIDGETS_H__
+#define __PICMAN_WIDGETS_H__
 
-#define __GIMP_WIDGETS_H_INSIDE__
+#define __PICMAN_WIDGETS_H_INSIDE__
 
-#include <libgimpwidgets/gimpwidgetstypes.h>
+#include <libpicmanwidgets/picmanwidgetstypes.h>
 
-#include <libgimpwidgets/gimpbrowser.h>
-#include <libgimpwidgets/gimpbutton.h>
-#include <libgimpwidgets/gimpcairo-utils.h>
-#include <libgimpwidgets/gimpcellrenderercolor.h>
-#include <libgimpwidgets/gimpcellrenderertoggle.h>
-#include <libgimpwidgets/gimpchainbutton.h>
-#include <libgimpwidgets/gimpcolorarea.h>
-#include <libgimpwidgets/gimpcolorbutton.h>
-#include <libgimpwidgets/gimpcolordisplay.h>
-#include <libgimpwidgets/gimpcolordisplaystack.h>
-#include <libgimpwidgets/gimpcolorhexentry.h>
-#include <libgimpwidgets/gimpcolornotebook.h>
-#include <libgimpwidgets/gimpcolorprofilecombobox.h>
-#include <libgimpwidgets/gimpcolorprofilestore.h>
-#include <libgimpwidgets/gimpcolorscale.h>
-#include <libgimpwidgets/gimpcolorscales.h>
-#include <libgimpwidgets/gimpcolorselector.h>
-#include <libgimpwidgets/gimpcolorselect.h>
-#include <libgimpwidgets/gimpcolorselection.h>
-#include <libgimpwidgets/gimpdialog.h>
-#include <libgimpwidgets/gimpenumcombobox.h>
-#include <libgimpwidgets/gimpenumlabel.h>
-#include <libgimpwidgets/gimpenumstore.h>
-#include <libgimpwidgets/gimpenumwidgets.h>
-#include <libgimpwidgets/gimpfileentry.h>
-#include <libgimpwidgets/gimpframe.h>
-#include <libgimpwidgets/gimphelpui.h>
-#include <libgimpwidgets/gimphintbox.h>
-#include <libgimpwidgets/gimpintcombobox.h>
-#include <libgimpwidgets/gimpintstore.h>
-#include <libgimpwidgets/gimpmemsizeentry.h>
-#include <libgimpwidgets/gimpnumberpairentry.h>
-#include <libgimpwidgets/gimpoffsetarea.h>
-#include <libgimpwidgets/gimppageselector.h>
-#include <libgimpwidgets/gimppatheditor.h>
-#include <libgimpwidgets/gimppickbutton.h>
-#include <libgimpwidgets/gimppixmap.h>
-#include <libgimpwidgets/gimppreview.h>
-#include <libgimpwidgets/gimppreviewarea.h>
-#include <libgimpwidgets/gimppropwidgets.h>
-#include <libgimpwidgets/gimpquerybox.h>
-#include <libgimpwidgets/gimpruler.h>
-#include <libgimpwidgets/gimpscaleentry.h>
-#include <libgimpwidgets/gimpscrolledpreview.h>
-#include <libgimpwidgets/gimpsizeentry.h>
-#include <libgimpwidgets/gimpstock.h>
-#include <libgimpwidgets/gimpstringcombobox.h>
-#include <libgimpwidgets/gimpunitcombobox.h>
-#include <libgimpwidgets/gimpunitmenu.h>
-#include <libgimpwidgets/gimpunitstore.h>
-#include <libgimpwidgets/gimpwidgets-error.h>
-#include <libgimpwidgets/gimpzoommodel.h>
+#include <libpicmanwidgets/picmanbrowser.h>
+#include <libpicmanwidgets/picmanbutton.h>
+#include <libpicmanwidgets/picmancairo-utils.h>
+#include <libpicmanwidgets/picmancellrenderercolor.h>
+#include <libpicmanwidgets/picmancellrenderertoggle.h>
+#include <libpicmanwidgets/picmanchainbutton.h>
+#include <libpicmanwidgets/picmancolorarea.h>
+#include <libpicmanwidgets/picmancolorbutton.h>
+#include <libpicmanwidgets/picmancolordisplay.h>
+#include <libpicmanwidgets/picmancolordisplaystack.h>
+#include <libpicmanwidgets/picmancolorhexentry.h>
+#include <libpicmanwidgets/picmancolornotebook.h>
+#include <libpicmanwidgets/picmancolorprofilecombobox.h>
+#include <libpicmanwidgets/picmancolorprofilestore.h>
+#include <libpicmanwidgets/picmancolorscale.h>
+#include <libpicmanwidgets/picmancolorscales.h>
+#include <libpicmanwidgets/picmancolorselector.h>
+#include <libpicmanwidgets/picmancolorselect.h>
+#include <libpicmanwidgets/picmancolorselection.h>
+#include <libpicmanwidgets/picmandialog.h>
+#include <libpicmanwidgets/picmanenumcombobox.h>
+#include <libpicmanwidgets/picmanenumlabel.h>
+#include <libpicmanwidgets/picmanenumstore.h>
+#include <libpicmanwidgets/picmanenumwidgets.h>
+#include <libpicmanwidgets/picmanfileentry.h>
+#include <libpicmanwidgets/picmanframe.h>
+#include <libpicmanwidgets/picmanhelpui.h>
+#include <libpicmanwidgets/picmanhintbox.h>
+#include <libpicmanwidgets/picmanintcombobox.h>
+#include <libpicmanwidgets/picmanintstore.h>
+#include <libpicmanwidgets/picmanmemsizeentry.h>
+#include <libpicmanwidgets/picmannumberpairentry.h>
+#include <libpicmanwidgets/picmanoffsetarea.h>
+#include <libpicmanwidgets/picmanpageselector.h>
+#include <libpicmanwidgets/picmanpatheditor.h>
+#include <libpicmanwidgets/picmanpickbutton.h>
+#include <libpicmanwidgets/picmanpixmap.h>
+#include <libpicmanwidgets/picmanpreview.h>
+#include <libpicmanwidgets/picmanpreviewarea.h>
+#include <libpicmanwidgets/picmanpropwidgets.h>
+#include <libpicmanwidgets/picmanquerybox.h>
+#include <libpicmanwidgets/picmanruler.h>
+#include <libpicmanwidgets/picmanscaleentry.h>
+#include <libpicmanwidgets/picmanscrolledpreview.h>
+#include <libpicmanwidgets/picmansizeentry.h>
+#include <libpicmanwidgets/picmanstock.h>
+#include <libpicmanwidgets/picmanstringcombobox.h>
+#include <libpicmanwidgets/picmanunitcombobox.h>
+#include <libpicmanwidgets/picmanunitmenu.h>
+#include <libpicmanwidgets/picmanunitstore.h>
+#include <libpicmanwidgets/picmanwidgets-error.h>
+#include <libpicmanwidgets/picmanzoommodel.h>
 
-#include <libgimpwidgets/gimp3migration.h>
-#include <libgimpwidgets/gimpoldwidgets.h>
+#include <libpicmanwidgets/picman3migration.h>
+#include <libpicmanwidgets/picmanoldwidgets.h>
 
-#undef __GIMP_WIDGETS_H_INSIDE__
+#undef __PICMAN_WIDGETS_H_INSIDE__
 
 G_BEGIN_DECLS
 
@@ -93,7 +93,7 @@ G_BEGIN_DECLS
  *  Widget Constructors
  */
 
-GtkWidget * gimp_int_radio_group_new (gboolean          in_frame,
+GtkWidget * picman_int_radio_group_new (gboolean          in_frame,
                                       const gchar      *frame_title,
                                       GCallback         radio_button_callback,
                                       gpointer          radio_button_callback_data,
@@ -107,11 +107,11 @@ GtkWidget * gimp_int_radio_group_new (gboolean          in_frame,
 
                                       ...) G_GNUC_NULL_TERMINATED;
 
-void        gimp_int_radio_group_set_active (GtkRadioButton *radio_button,
+void        picman_int_radio_group_set_active (GtkRadioButton *radio_button,
                                              gint            item_data);
 
 
-GtkWidget * gimp_radio_group_new   (gboolean            in_frame,
+GtkWidget * picman_radio_group_new   (gboolean            in_frame,
                                     const gchar        *frame_title,
 
                                     /* specify radio buttons as va_list:
@@ -124,7 +124,7 @@ GtkWidget * gimp_radio_group_new   (gboolean            in_frame,
                                      */
 
                                     ...) G_GNUC_NULL_TERMINATED;
-GtkWidget * gimp_radio_group_new2  (gboolean            in_frame,
+GtkWidget * picman_radio_group_new2  (gboolean            in_frame,
                                     const gchar        *frame_title,
                                     GCallback           radio_button_callback,
                                     gpointer            radio_button_callback_data,
@@ -138,11 +138,11 @@ GtkWidget * gimp_radio_group_new2  (gboolean            in_frame,
 
                                     ...) G_GNUC_NULL_TERMINATED;
 
-void   gimp_radio_group_set_active (GtkRadioButton     *radio_button,
+void   picman_radio_group_set_active (GtkRadioButton     *radio_button,
                                     gpointer            item_data);
 
 
-GtkWidget * gimp_spin_button_new   (/* return value: */
+GtkWidget * picman_spin_button_new   (/* return value: */
                                     GtkObject         **adjustment,
 
                                     gdouble             value,
@@ -155,52 +155,52 @@ GtkWidget * gimp_spin_button_new   (/* return value: */
                                     guint               digits);
 
 /**
- * GIMP_RANDOM_SEED_SPINBUTTON:
- * @hbox: The #GtkHBox returned by gimp_random_seed_new().
+ * PICMAN_RANDOM_SEED_SPINBUTTON:
+ * @hbox: The #GtkHBox returned by picman_random_seed_new().
  *
  * Returns: the random_seed's #GtkSpinButton.
  **/
-#define GIMP_RANDOM_SEED_SPINBUTTON(hbox) \
+#define PICMAN_RANDOM_SEED_SPINBUTTON(hbox) \
         (g_object_get_data (G_OBJECT (hbox), "spinbutton"))
 
 /**
- * GIMP_RANDOM_SEED_SPINBUTTON_ADJ:
- * @hbox: The #GtkHBox returned by gimp_random_seed_new().
+ * PICMAN_RANDOM_SEED_SPINBUTTON_ADJ:
+ * @hbox: The #GtkHBox returned by picman_random_seed_new().
  *
  * Returns: the #GtkAdjustment of the random_seed's #GtkSpinButton.
  **/
-#define GIMP_RANDOM_SEED_SPINBUTTON_ADJ(hbox)       \
+#define PICMAN_RANDOM_SEED_SPINBUTTON_ADJ(hbox)       \
         gtk_spin_button_get_adjustment \
         (GTK_SPIN_BUTTON (g_object_get_data (G_OBJECT (hbox), "spinbutton")))
 
 /**
- * GIMP_RANDOM_SEED_TOGGLE:
- * @hbox: The #GtkHBox returned by gimp_random_seed_new().
+ * PICMAN_RANDOM_SEED_TOGGLE:
+ * @hbox: The #GtkHBox returned by picman_random_seed_new().
  *
  * Returns: the random_seed's #GtkToggleButton.
  **/
-#define GIMP_RANDOM_SEED_TOGGLE(hbox) \
+#define PICMAN_RANDOM_SEED_TOGGLE(hbox) \
         (g_object_get_data (G_OBJECT(hbox), "toggle"))
 
-GtkWidget * gimp_random_seed_new   (guint32            *seed,
+GtkWidget * picman_random_seed_new   (guint32            *seed,
                                     gboolean           *random_seed);
 
 /**
- * GIMP_COORDINATES_CHAINBUTTON:
- * @sizeentry: The #GimpSizeEntry returned by gimp_coordinates_new().
+ * PICMAN_COORDINATES_CHAINBUTTON:
+ * @sizeentry: The #PicmanSizeEntry returned by picman_coordinates_new().
  *
- * Returns: the #GimpChainButton which is attached to the
- *          #GimpSizeEntry.
+ * Returns: the #PicmanChainButton which is attached to the
+ *          #PicmanSizeEntry.
  **/
-#define GIMP_COORDINATES_CHAINBUTTON(sizeentry) \
+#define PICMAN_COORDINATES_CHAINBUTTON(sizeentry) \
         (g_object_get_data (G_OBJECT (sizeentry), "chainbutton"))
 
-GtkWidget * gimp_coordinates_new   (GimpUnit            unit,
+GtkWidget * picman_coordinates_new   (PicmanUnit            unit,
                                     const gchar        *unit_format,
                                     gboolean            menu_show_pixels,
                                     gboolean            menu_show_percent,
                                     gint                spinbutton_width,
-                                    GimpSizeEntryUpdatePolicy  update_policy,
+                                    PicmanSizeEntryUpdatePolicy  update_policy,
 
                                     gboolean            chainbutton_active,
                                     gboolean            chain_constrains_ratio,
@@ -226,22 +226,22 @@ GtkWidget * gimp_coordinates_new   (GimpUnit            unit,
  *  Standard Callbacks
  */
 
-void gimp_toggle_button_update           (GtkWidget       *widget,
+void picman_toggle_button_update           (GtkWidget       *widget,
                                           gpointer         data);
 
-void gimp_radio_button_update            (GtkWidget       *widget,
+void picman_radio_button_update            (GtkWidget       *widget,
                                           gpointer         data);
 
-void gimp_int_adjustment_update          (GtkAdjustment   *adjustment,
+void picman_int_adjustment_update          (GtkAdjustment   *adjustment,
                                           gpointer         data);
 
-void gimp_uint_adjustment_update         (GtkAdjustment   *adjustment,
+void picman_uint_adjustment_update         (GtkAdjustment   *adjustment,
                                           gpointer         data);
 
-void gimp_float_adjustment_update        (GtkAdjustment   *adjustment,
+void picman_float_adjustment_update        (GtkAdjustment   *adjustment,
                                           gpointer         data);
 
-void gimp_double_adjustment_update       (GtkAdjustment   *adjustment,
+void picman_double_adjustment_update       (GtkAdjustment   *adjustment,
                                           gpointer         data);
 
 
@@ -249,7 +249,7 @@ void gimp_double_adjustment_update       (GtkAdjustment   *adjustment,
  *  Helper Functions
  */
 
-GtkWidget * gimp_table_attach_aligned    (GtkTable        *table,
+GtkWidget * picman_table_attach_aligned    (GtkTable        *table,
                                           gint             column,
                                           gint             row,
                                           const gchar     *label_text,
@@ -260,10 +260,10 @@ GtkWidget * gimp_table_attach_aligned    (GtkTable        *table,
                                           gboolean         left_align);
 
 
-void        gimp_label_set_attributes    (GtkLabel        *label,
+void        picman_label_set_attributes    (GtkLabel        *label,
                                           ...);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_WIDGETS_H__ */
+#endif /* __PICMAN_WIDGETS_H__ */

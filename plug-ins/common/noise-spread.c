@@ -1,4 +1,4 @@
-/* Spread --- image filter plug-in for GIMP
+/* Spread --- image filter plug-in for PICMAN
  * Copyright (C) 1997 Brian Degenhardt and Federico Mena Quintero
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,15 +18,15 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC    "plug-in-spread"
 #define PLUG_IN_BINARY  "noise-spread"
-#define PLUG_IN_ROLE    "gimp-noise-spread"
+#define PLUG_IN_ROLE    "picman-noise-spread"
 #define TILE_CACHE_SIZE 16
 
 typedef struct
@@ -40,20 +40,20 @@ typedef struct
 static void      query                 (void);
 static void      run                   (const gchar      *name,
                                         gint              nparams,
-                                        const GimpParam  *param,
+                                        const PicmanParam  *param,
                                         gint             *nreturn_vals,
-                                        GimpParam       **return_vals);
+                                        PicmanParam       **return_vals);
 
-static void      spread                (GimpDrawable     *drawable);
+static void      spread                (PicmanDrawable     *drawable);
 
-static void      spread_preview_update (GimpPreview      *preview,
+static void      spread_preview_update (PicmanPreview      *preview,
                                         GtkWidget        *size);
 static gboolean  spread_dialog         (gint32            image_ID,
-                                        GimpDrawable     *drawable);
+                                        PicmanDrawable     *drawable);
 
 /***** Local vars *****/
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -74,16 +74,16 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",        "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",           "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",        "Input drawable" },
-    { GIMP_PDB_FLOAT,    "spread-amount-x", "Horizontal spread amount (0 <= spread_amount_x <= 200)" },
-    { GIMP_PDB_FLOAT,    "spread-amount-y", "Vertical spread amount (0 <= spread_amount_y <= 200)"   }
+    { PICMAN_PDB_INT32,    "run-mode",        "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",           "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",        "Input drawable" },
+    { PICMAN_PDB_FLOAT,    "spread-amount-x", "Horizontal spread amount (0 <= spread_amount_x <= 200)" },
+    { PICMAN_PDB_FLOAT,    "spread-amount-y", "Vertical spread amount (0 <= spread_amount_y <= 200)"   }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Move pixels around randomly"),
                           "Spreads the pixels of the specified drawable.  "
                           "Pixels are randomly moved to another location whose "
@@ -95,25 +95,25 @@ query (void)
                           "1997",
                           N_("Sp_read..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Noise");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Noise");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
+  static PicmanParam   values[1];
   gint32             image_ID;
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
@@ -121,33 +121,33 @@ run (const gchar      *name,
 
   /*  Get the specified image and drawable  */
   image_ID = param[1].data.d_image;
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*  set the tile cache size  */
-  gimp_tile_cache_ntiles (TILE_CACHE_SIZE);
+  picman_tile_cache_ntiles (TILE_CACHE_SIZE);
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &spvals);
+      picman_get_data (PLUG_IN_PROC, &spvals);
 
       /*  First acquire information with a dialog  */
       if (! spread_dialog (image_ID, drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 5)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -155,54 +155,54 @@ run (const gchar      *name,
           spvals.spread_amount_y = param[4].data.d_float;
         }
 
-      if ((status == GIMP_PDB_SUCCESS) &&
+      if ((status == PICMAN_PDB_SUCCESS) &&
           (spvals.spread_amount_x < 0 || spvals.spread_amount_x > 200) &&
           (spvals.spread_amount_y < 0 || spvals.spread_amount_y > 200))
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &spvals);
+      picman_get_data (PLUG_IN_PROC, &spvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init (_("Spreading"));
+          picman_progress_init (_("Spreading"));
 
           /*  run the spread effect  */
           spread (drawable);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &spvals, sizeof (SpreadValues));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &spvals, sizeof (SpreadValues));
         }
       else
         {
-          /* gimp_message ("spread: cannot operate on indexed color images"); */
-          status = GIMP_PDB_EXECUTION_ERROR;
+          /* picman_message ("spread: cannot operate on indexed color images"); */
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 typedef struct
 {
-  GimpPixelFetcher *pft;
+  PicmanPixelFetcher *pft;
   GRand            *gr;
   gint              x_amount;
   gint              y_amount;
@@ -221,7 +221,7 @@ typedef struct
    to the random value generated from spread_amount_y.  The reason
    that the spread is done this way is to make the end product more
    random looking.  To see a result of this, compare spreading a
-   square with gimp 0.54 to spreading a square with this filter.
+   square with picman 0.54 to spreading a square with this filter.
    The corners are less sharp with this algorithm.
 */
 
@@ -252,40 +252,40 @@ spread_func (gint      x,
   /* Only displace the pixel if it's within the bounds of the image. */
   if (xi >= 0 && xi < param->width && yi >= 0 && yi < param->height)
     {
-      gimp_pixel_fetcher_get_pixel (param->pft, xi, yi, dest);
+      picman_pixel_fetcher_get_pixel (param->pft, xi, yi, dest);
     }
   else /* Else just copy it */
     {
-      gimp_pixel_fetcher_get_pixel (param->pft, x, y, dest);
+      picman_pixel_fetcher_get_pixel (param->pft, x, y, dest);
     }
 }
 
 static void
-spread (GimpDrawable *drawable)
+spread (PicmanDrawable *drawable)
 {
-  GimpRgnIterator *iter;
+  PicmanRgnIterator *iter;
   SpreadParam_t    param;
 
-  param.pft      = gimp_pixel_fetcher_new (drawable, FALSE);
+  param.pft      = picman_pixel_fetcher_new (drawable, FALSE);
   param.gr       = g_rand_new ();
   param.x_amount = (spvals.spread_amount_x + 1) / 2;
   param.y_amount = (spvals.spread_amount_y + 1) / 2;
   param.width    = drawable->width;
   param.height   = drawable->height;
 
-  gimp_pixel_fetcher_set_edge_mode(param.pft, GIMP_PIXEL_FETCHER_EDGE_BLACK);
-  iter = gimp_rgn_iterator_new (drawable, 0);
-  gimp_rgn_iterator_dest (iter, spread_func, &param);
-  gimp_rgn_iterator_free (iter);
+  picman_pixel_fetcher_set_edge_mode(param.pft, PICMAN_PIXEL_FETCHER_EDGE_BLACK);
+  iter = picman_rgn_iterator_new (drawable, 0);
+  picman_rgn_iterator_dest (iter, spread_func, &param);
+  picman_rgn_iterator_free (iter);
 
   g_rand_free (param.gr);
 }
 
 static void
-spread_preview_update (GimpPreview *preview,
+spread_preview_update (PicmanPreview *preview,
                        GtkWidget   *size)
 {
-  GimpDrawable   *drawable;
+  PicmanDrawable   *drawable;
   SpreadParam_t   param;
   gint            x, y, bpp;
   guchar         *buffer, *dest;
@@ -293,24 +293,24 @@ spread_preview_update (GimpPreview *preview,
   gint            width, height;
 
   drawable =
-    gimp_drawable_preview_get_drawable (GIMP_DRAWABLE_PREVIEW (preview));
+    picman_drawable_preview_get_drawable (PICMAN_DRAWABLE_PREVIEW (preview));
 
-  param.pft      = gimp_pixel_fetcher_new (drawable, FALSE);
+  param.pft      = picman_pixel_fetcher_new (drawable, FALSE);
   param.gr       = g_rand_new ();
-  param.x_amount = (gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (size),
+  param.x_amount = (picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (size),
                                                 0) + 1) / 2;
-  param.y_amount = (gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (size),
+  param.y_amount = (picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (size),
                                                 1) + 1) / 2;
   param.width    = drawable->width;
   param.height   = drawable->height;
-  gimp_pixel_fetcher_set_edge_mode(param.pft, GIMP_PIXEL_FETCHER_EDGE_BLACK);
+  picman_pixel_fetcher_set_edge_mode(param.pft, PICMAN_PIXEL_FETCHER_EDGE_BLACK);
 
-  gimp_preview_get_size (preview, &width, &height);
+  picman_preview_get_size (preview, &width, &height);
 
   bpp = drawable->bpp;
   dest = buffer = g_new (guchar, width * height * bpp);
 
-  gimp_preview_get_position (preview, &x_off, &y_off);
+  picman_preview_get_position (preview, &x_off, &y_off);
 
   for (y = 0 ; y < height ; y++)
     for (x = 0 ; x < width ; x++)
@@ -319,7 +319,7 @@ spread_preview_update (GimpPreview *preview,
         dest += bpp;
       }
 
-  gimp_preview_draw_buffer (preview, buffer, width * bpp);
+  picman_preview_draw_buffer (preview, buffer, width * bpp);
 
   g_free (buffer);
   g_rand_free (param.gr);
@@ -327,23 +327,23 @@ spread_preview_update (GimpPreview *preview,
 
 static gboolean
 spread_dialog (gint32        image_ID,
-               GimpDrawable *drawable)
+               PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
   GtkWidget *preview;
   GtkWidget *frame;
   GtkWidget *size;
-  GimpUnit   unit;
+  PicmanUnit   unit;
   gdouble    xres;
   gdouble    yres;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Spread"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Spread"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -355,7 +355,7 @@ spread_dialog (gint32        image_ID,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -363,21 +363,21 @@ spread_dialog (gint32        image_ID,
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
-  frame = gimp_frame_new (_("Spread Amount"));
+  frame = picman_frame_new (_("Spread Amount"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
   /*  Get the image resolution and unit  */
-  gimp_image_get_resolution (image_ID, &xres, &yres);
-  unit = gimp_image_get_unit (image_ID);
+  picman_image_get_resolution (image_ID, &xres, &yres);
+  unit = picman_image_get_unit (image_ID);
 
   /* sizeentries */
-  size = gimp_coordinates_new (unit, "%a", TRUE, FALSE, -1,
-                               GIMP_SIZE_ENTRY_UPDATE_SIZE,
+  size = picman_coordinates_new (unit, "%a", TRUE, FALSE, -1,
+                               PICMAN_SIZE_ENTRY_UPDATE_SIZE,
 
                                spvals.spread_amount_x == spvals.spread_amount_y,
                                FALSE,
@@ -396,21 +396,21 @@ spread_dialog (gint32        image_ID,
                     G_CALLBACK (spread_preview_update),
                     size);
   g_signal_connect_swapped (size, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  spread_preview_update (GIMP_PREVIEW (preview), size);
+  spread_preview_update (PICMAN_PREVIEW (preview), size);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   if (run)
     {
       spvals.spread_amount_x =
-        gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (size), 0);
+        picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (size), 0);
       spvals.spread_amount_y =
-        gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (size), 1);
+        picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (size), 1);
     }
 
   gtk_widget_destroy (dialog);

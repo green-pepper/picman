@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,39 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SMUDGE_TOOL_H__
-#define __GIMP_SMUDGE_TOOL_H__
+#ifndef __PICMAN_SMUDGE_TOOL_H__
+#define __PICMAN_SMUDGE_TOOL_H__
 
 
-#include "gimpbrushtool.h"
+#include "picmanbrushtool.h"
 
 
-#define GIMP_TYPE_SMUDGE_TOOL            (gimp_smudge_tool_get_type ())
-#define GIMP_SMUDGE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SMUDGE_TOOL, GimpSmudgeTool))
-#define GIMP_SMUDGE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SMUDGE_TOOL, GimpSmudgeToolClass))
-#define GIMP_IS_SMUDGE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SMUDGE_TOOL))
-#define GIMP_IS_SMUDGE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SMUDGE_TOOL))
-#define GIMP_SMUDGE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SMUDGE_TOOL, GimpSmudgeToolClass))
+#define PICMAN_TYPE_SMUDGE_TOOL            (picman_smudge_tool_get_type ())
+#define PICMAN_SMUDGE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SMUDGE_TOOL, PicmanSmudgeTool))
+#define PICMAN_SMUDGE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SMUDGE_TOOL, PicmanSmudgeToolClass))
+#define PICMAN_IS_SMUDGE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SMUDGE_TOOL))
+#define PICMAN_IS_SMUDGE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SMUDGE_TOOL))
+#define PICMAN_SMUDGE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SMUDGE_TOOL, PicmanSmudgeToolClass))
 
 
-typedef struct _GimpSmudgeTool      GimpSmudgeTool;
-typedef struct _GimpSmudgeToolClass GimpSmudgeToolClass;
+typedef struct _PicmanSmudgeTool      PicmanSmudgeTool;
+typedef struct _PicmanSmudgeToolClass PicmanSmudgeToolClass;
 
-struct _GimpSmudgeTool
+struct _PicmanSmudgeTool
 {
-  GimpBrushTool parent_instance;
+  PicmanBrushTool parent_instance;
 };
 
-struct _GimpSmudgeToolClass
+struct _PicmanSmudgeToolClass
 {
-  GimpBrushToolClass parent_class;
+  PicmanBrushToolClass parent_class;
 };
 
 
-void    gimp_smudge_tool_register (GimpToolRegisterCallback  callback,
+void    picman_smudge_tool_register (PicmanToolRegisterCallback  callback,
                                    gpointer                  data);
 
-GType   gimp_smudge_tool_get_type (void) G_GNUC_CONST;
+GType   picman_smudge_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_SMUDGE_TOOL_H__  */
+#endif  /*  __PICMAN_SMUDGE_TOOL_H__  */

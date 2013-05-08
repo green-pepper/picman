@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2002 Spencer Kimball, Peter Mattis, and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,209 +19,209 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimp-gui.h"
-#include "gimpcontainer.h"
-#include "gimpcontext.h"
-#include "gimpimage.h"
-#include "gimpprogress.h"
+#include "picman.h"
+#include "picman-gui.h"
+#include "picmancontainer.h"
+#include "picmancontext.h"
+#include "picmanimage.h"
+#include "picmanprogress.h"
 
 #include "about.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 void
-gimp_gui_init (Gimp *gimp)
+picman_gui_init (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  gimp->gui.ungrab                = NULL;
-  gimp->gui.threads_enter         = NULL;
-  gimp->gui.threads_leave         = NULL;
-  gimp->gui.set_busy              = NULL;
-  gimp->gui.unset_busy            = NULL;
-  gimp->gui.show_message          = NULL;
-  gimp->gui.help                  = NULL;
-  gimp->gui.get_program_class     = NULL;
-  gimp->gui.get_display_name      = NULL;
-  gimp->gui.get_user_time         = NULL;
-  gimp->gui.get_theme_dir         = NULL;
-  gimp->gui.display_get_by_id     = NULL;
-  gimp->gui.display_get_id        = NULL;
-  gimp->gui.display_get_window_id = NULL;
-  gimp->gui.display_create        = NULL;
-  gimp->gui.display_delete        = NULL;
-  gimp->gui.displays_reconnect    = NULL;
-  gimp->gui.progress_new          = NULL;
-  gimp->gui.progress_free         = NULL;
-  gimp->gui.pdb_dialog_set        = NULL;
-  gimp->gui.pdb_dialog_close      = NULL;
-  gimp->gui.recent_list_add_uri   = NULL;
-  gimp->gui.recent_list_load      = NULL;
+  picman->gui.ungrab                = NULL;
+  picman->gui.threads_enter         = NULL;
+  picman->gui.threads_leave         = NULL;
+  picman->gui.set_busy              = NULL;
+  picman->gui.unset_busy            = NULL;
+  picman->gui.show_message          = NULL;
+  picman->gui.help                  = NULL;
+  picman->gui.get_program_class     = NULL;
+  picman->gui.get_display_name      = NULL;
+  picman->gui.get_user_time         = NULL;
+  picman->gui.get_theme_dir         = NULL;
+  picman->gui.display_get_by_id     = NULL;
+  picman->gui.display_get_id        = NULL;
+  picman->gui.display_get_window_id = NULL;
+  picman->gui.display_create        = NULL;
+  picman->gui.display_delete        = NULL;
+  picman->gui.displays_reconnect    = NULL;
+  picman->gui.progress_new          = NULL;
+  picman->gui.progress_free         = NULL;
+  picman->gui.pdb_dialog_set        = NULL;
+  picman->gui.pdb_dialog_close      = NULL;
+  picman->gui.recent_list_add_uri   = NULL;
+  picman->gui.recent_list_load      = NULL;
 }
 
 void
-gimp_gui_ungrab (Gimp *gimp)
+picman_gui_ungrab (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  if (gimp->gui.ungrab)
-    gimp->gui.ungrab (gimp);
+  if (picman->gui.ungrab)
+    picman->gui.ungrab (picman);
 }
 
 void
-gimp_threads_enter (Gimp *gimp)
+picman_threads_enter (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  if (gimp->gui.threads_enter)
-    gimp->gui.threads_enter (gimp);
+  if (picman->gui.threads_enter)
+    picman->gui.threads_enter (picman);
 }
 
 void
-gimp_threads_leave (Gimp *gimp)
+picman_threads_leave (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  if (gimp->gui.threads_leave)
-    gimp->gui.threads_leave (gimp);
+  if (picman->gui.threads_leave)
+    picman->gui.threads_leave (picman);
 }
 
 void
-gimp_set_busy (Gimp *gimp)
+picman_set_busy (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  /* FIXME: gimp_busy HACK */
-  gimp->busy++;
+  /* FIXME: picman_busy HACK */
+  picman->busy++;
 
-  if (gimp->busy == 1)
+  if (picman->busy == 1)
     {
-      if (gimp->gui.set_busy)
-        gimp->gui.set_busy (gimp);
+      if (picman->gui.set_busy)
+        picman->gui.set_busy (picman);
     }
 }
 
 static gboolean
-gimp_idle_unset_busy (gpointer data)
+picman_idle_unset_busy (gpointer data)
 {
-  Gimp *gimp = data;
+  Picman *picman = data;
 
-  gimp_unset_busy (gimp);
+  picman_unset_busy (picman);
 
-  gimp->busy_idle_id = 0;
+  picman->busy_idle_id = 0;
 
   return FALSE;
 }
 
 void
-gimp_set_busy_until_idle (Gimp *gimp)
+picman_set_busy_until_idle (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  if (! gimp->busy_idle_id)
+  if (! picman->busy_idle_id)
     {
-      gimp_set_busy (gimp);
+      picman_set_busy (picman);
 
-      gimp->busy_idle_id = g_idle_add_full (G_PRIORITY_HIGH,
-                                            gimp_idle_unset_busy, gimp,
+      picman->busy_idle_id = g_idle_add_full (G_PRIORITY_HIGH,
+                                            picman_idle_unset_busy, picman,
                                             NULL);
     }
 }
 
 void
-gimp_unset_busy (Gimp *gimp)
+picman_unset_busy (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (gimp->busy > 0);
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (picman->busy > 0);
 
-  /* FIXME: gimp_busy HACK */
-  gimp->busy--;
+  /* FIXME: picman_busy HACK */
+  picman->busy--;
 
-  if (gimp->busy == 0)
+  if (picman->busy == 0)
     {
-      if (gimp->gui.unset_busy)
-        gimp->gui.unset_busy (gimp);
+      if (picman->gui.unset_busy)
+        picman->gui.unset_busy (picman);
     }
 }
 
 void
-gimp_show_message (Gimp                *gimp,
+picman_show_message (Picman                *picman,
                    GObject             *handler,
-                   GimpMessageSeverity  severity,
+                   PicmanMessageSeverity  severity,
                    const gchar         *domain,
                    const gchar         *message)
 {
   const gchar *desc = "Message";
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
   g_return_if_fail (handler == NULL || G_IS_OBJECT (handler));
   g_return_if_fail (message != NULL);
 
   if (! domain)
-    domain = GIMP_ACRONYM;
+    domain = PICMAN_ACRONYM;
 
-  if (! gimp->console_messages)
+  if (! picman->console_messages)
     {
-      if (gimp->gui.show_message)
+      if (picman->gui.show_message)
         {
-          gimp->gui.show_message (gimp, handler,
+          picman->gui.show_message (picman, handler,
                                   severity, domain, message);
           return;
         }
-      else if (GIMP_IS_PROGRESS (handler) &&
-               gimp_progress_message (GIMP_PROGRESS (handler), gimp,
+      else if (PICMAN_IS_PROGRESS (handler) &&
+               picman_progress_message (PICMAN_PROGRESS (handler), picman,
                                       severity, domain, message))
         {
-          /* message has been handled by GimpProgress */
+          /* message has been handled by PicmanProgress */
           return;
         }
     }
 
-  gimp_enum_get_value (GIMP_TYPE_MESSAGE_SEVERITY, severity,
+  picman_enum_get_value (PICMAN_TYPE_MESSAGE_SEVERITY, severity,
                        NULL, NULL, &desc, NULL);
   g_printerr ("%s-%s: %s\n\n", domain, desc, message);
 }
 
 void
-gimp_help (Gimp         *gimp,
-           GimpProgress *progress,
+picman_help (Picman         *picman,
+           PicmanProgress *progress,
            const gchar  *help_domain,
            const gchar  *help_id)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
-  if (gimp->gui.help)
-    gimp->gui.help (gimp, progress, help_domain, help_id);
+  if (picman->gui.help)
+    picman->gui.help (picman, progress, help_domain, help_id);
 }
 
 const gchar *
-gimp_get_program_class (Gimp *gimp)
+picman_get_program_class (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  if (gimp->gui.get_program_class)
-    return gimp->gui.get_program_class (gimp);
+  if (picman->gui.get_program_class)
+    return picman->gui.get_program_class (picman);
 
   return NULL;
 }
 
 gchar *
-gimp_get_display_name (Gimp *gimp,
+picman_get_display_name (Picman *picman,
                        gint  display_ID,
                        gint *monitor_number)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (monitor_number != NULL, NULL);
 
-  if (gimp->gui.get_display_name)
-    return gimp->gui.get_display_name (gimp, display_ID, monitor_number);
+  if (picman->gui.get_display_name)
+    return picman->gui.get_display_name (picman, display_ID, monitor_number);
 
   *monitor_number = 0;
 
@@ -229,8 +229,8 @@ gimp_get_display_name (Gimp *gimp,
 }
 
 /**
- * gimp_get_user_time:
- * @gimp:
+ * picman_get_user_time:
+ * @picman:
  *
  * Returns the timestamp of the last user interaction. The timestamp is
  * taken from events caused by user interaction such as key presses or
@@ -239,155 +239,155 @@ gimp_get_display_name (Gimp *gimp,
  * Return value: the timestamp of the last user interaction
  */
 guint32
-gimp_get_user_time (Gimp *gimp)
+picman_get_user_time (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), 0);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), 0);
 
-  if (gimp->gui.get_user_time)
-    return gimp->gui.get_user_time (gimp);
+  if (picman->gui.get_user_time)
+    return picman->gui.get_user_time (picman);
 
   return 0;
 }
 
 const gchar *
-gimp_get_theme_dir (Gimp *gimp)
+picman_get_theme_dir (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  if (gimp->gui.get_theme_dir)
-    return gimp->gui.get_theme_dir (gimp);
+  if (picman->gui.get_theme_dir)
+    return picman->gui.get_theme_dir (picman);
 
   return NULL;
 }
 
-GimpObject *
-gimp_get_window_strategy (Gimp *gimp)
+PicmanObject *
+picman_get_window_strategy (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  if (gimp->gui.get_window_strategy)
-    return gimp->gui.get_window_strategy (gimp);
+  if (picman->gui.get_window_strategy)
+    return picman->gui.get_window_strategy (picman);
 
   return NULL;
 }
 
-GimpObject *
-gimp_get_empty_display (Gimp *gimp)
+PicmanObject *
+picman_get_empty_display (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  if (gimp->gui.get_empty_display)
-    return gimp->gui.get_empty_display (gimp);
+  if (picman->gui.get_empty_display)
+    return picman->gui.get_empty_display (picman);
 
   return NULL;
 }
 
-GimpObject *
-gimp_get_display_by_ID (Gimp *gimp,
+PicmanObject *
+picman_get_display_by_ID (Picman *picman,
                         gint  ID)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  if (gimp->gui.display_get_by_id)
-    return gimp->gui.display_get_by_id (gimp, ID);
+  if (picman->gui.display_get_by_id)
+    return picman->gui.display_get_by_id (picman, ID);
 
   return NULL;
 }
 
 gint
-gimp_get_display_ID (Gimp       *gimp,
-                     GimpObject *display)
+picman_get_display_ID (Picman       *picman,
+                     PicmanObject *display)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), -1);
-  g_return_val_if_fail (GIMP_IS_OBJECT (display), -1);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), -1);
+  g_return_val_if_fail (PICMAN_IS_OBJECT (display), -1);
 
-  if (gimp->gui.display_get_id)
-    return gimp->gui.display_get_id (display);
+  if (picman->gui.display_get_id)
+    return picman->gui.display_get_id (display);
 
   return -1;
 }
 
 guint32
-gimp_get_display_window_id (Gimp       *gimp,
-                            GimpObject *display)
+picman_get_display_window_id (Picman       *picman,
+                            PicmanObject *display)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), -1);
-  g_return_val_if_fail (GIMP_IS_OBJECT (display), -1);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), -1);
+  g_return_val_if_fail (PICMAN_IS_OBJECT (display), -1);
 
-  if (gimp->gui.display_get_window_id)
-    return gimp->gui.display_get_window_id (display);
+  if (picman->gui.display_get_window_id)
+    return picman->gui.display_get_window_id (display);
 
   return -1;
 }
 
-GimpObject *
-gimp_create_display (Gimp      *gimp,
-                     GimpImage *image,
-                     GimpUnit   unit,
+PicmanObject *
+picman_create_display (Picman      *picman,
+                     PicmanImage *image,
+                     PicmanUnit   unit,
                      gdouble    scale)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (image == NULL || GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (image == NULL || PICMAN_IS_IMAGE (image), NULL);
 
-  if (gimp->gui.display_create)
-    return gimp->gui.display_create (gimp, image, unit, scale);
-
-  return NULL;
-}
-
-void
-gimp_delete_display (Gimp       *gimp,
-                     GimpObject *display)
-{
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (GIMP_IS_OBJECT (display));
-
-  if (gimp->gui.display_delete)
-    gimp->gui.display_delete (display);
-}
-
-void
-gimp_reconnect_displays (Gimp      *gimp,
-                         GimpImage *old_image,
-                         GimpImage *new_image)
-{
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (GIMP_IS_IMAGE (old_image));
-  g_return_if_fail (GIMP_IS_IMAGE (new_image));
-
-  if (gimp->gui.displays_reconnect)
-    gimp->gui.displays_reconnect (gimp, old_image, new_image);
-}
-
-GimpProgress *
-gimp_new_progress (Gimp       *gimp,
-                   GimpObject *display)
-{
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (display == NULL || GIMP_IS_OBJECT (display), NULL);
-
-  if (gimp->gui.progress_new)
-    return gimp->gui.progress_new (gimp, display);
+  if (picman->gui.display_create)
+    return picman->gui.display_create (picman, image, unit, scale);
 
   return NULL;
 }
 
 void
-gimp_free_progress (Gimp         *gimp,
-                    GimpProgress *progress)
+picman_delete_display (Picman       *picman,
+                     PicmanObject *display)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (PICMAN_IS_OBJECT (display));
 
-  if (gimp->gui.progress_free)
-    gimp->gui.progress_free (gimp, progress);
+  if (picman->gui.display_delete)
+    picman->gui.display_delete (display);
+}
+
+void
+picman_reconnect_displays (Picman      *picman,
+                         PicmanImage *old_image,
+                         PicmanImage *new_image)
+{
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (PICMAN_IS_IMAGE (old_image));
+  g_return_if_fail (PICMAN_IS_IMAGE (new_image));
+
+  if (picman->gui.displays_reconnect)
+    picman->gui.displays_reconnect (picman, old_image, new_image);
+}
+
+PicmanProgress *
+picman_new_progress (Picman       *picman,
+                   PicmanObject *display)
+{
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (display == NULL || PICMAN_IS_OBJECT (display), NULL);
+
+  if (picman->gui.progress_new)
+    return picman->gui.progress_new (picman, display);
+
+  return NULL;
+}
+
+void
+picman_free_progress (Picman         *picman,
+                    PicmanProgress *progress)
+{
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (PICMAN_IS_PROGRESS (progress));
+
+  if (picman->gui.progress_free)
+    picman->gui.progress_free (picman, progress);
 }
 
 gboolean
-gimp_pdb_dialog_new (Gimp          *gimp,
-                     GimpContext   *context,
-                     GimpProgress  *progress,
-                     GimpContainer *container,
+picman_pdb_dialog_new (Picman          *picman,
+                     PicmanContext   *context,
+                     PicmanProgress  *progress,
+                     PicmanContainer *container,
                      const gchar   *title,
                      const gchar   *callback_name,
                      const gchar   *object_name,
@@ -395,20 +395,20 @@ gimp_pdb_dialog_new (Gimp          *gimp,
 {
   gboolean retval = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), FALSE);
-  g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress), FALSE);
-  g_return_val_if_fail (GIMP_IS_CONTAINER (container), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), FALSE);
+  g_return_val_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CONTAINER (container), FALSE);
   g_return_val_if_fail (title != NULL, FALSE);
   g_return_val_if_fail (callback_name != NULL, FALSE);
 
-  if (gimp->gui.pdb_dialog_new)
+  if (picman->gui.pdb_dialog_new)
     {
       va_list args;
 
       va_start (args, object_name);
 
-      retval = gimp->gui.pdb_dialog_new (gimp, context, progress,
+      retval = picman->gui.pdb_dialog_new (picman, context, progress,
                                          container, title,
                                          callback_name, object_name,
                                          args);
@@ -420,26 +420,26 @@ gimp_pdb_dialog_new (Gimp          *gimp,
 }
 
 gboolean
-gimp_pdb_dialog_set (Gimp          *gimp,
-                     GimpContainer *container,
+picman_pdb_dialog_set (Picman          *picman,
+                     PicmanContainer *container,
                      const gchar   *callback_name,
                      const gchar   *object_name,
                      ...)
 {
   gboolean retval = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
-  g_return_val_if_fail (GIMP_IS_CONTAINER (container), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CONTAINER (container), FALSE);
   g_return_val_if_fail (callback_name != NULL, FALSE);
   g_return_val_if_fail (object_name != NULL, FALSE);
 
-  if (gimp->gui.pdb_dialog_set)
+  if (picman->gui.pdb_dialog_set)
     {
       va_list args;
 
       va_start (args, object_name);
 
-      retval = gimp->gui.pdb_dialog_set (gimp, container, callback_name,
+      retval = picman->gui.pdb_dialog_set (picman, container, callback_name,
                                          object_name, args);
 
       va_end (args);
@@ -449,39 +449,39 @@ gimp_pdb_dialog_set (Gimp          *gimp,
 }
 
 gboolean
-gimp_pdb_dialog_close (Gimp          *gimp,
-                       GimpContainer *container,
+picman_pdb_dialog_close (Picman          *picman,
+                       PicmanContainer *container,
                        const gchar   *callback_name)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
-  g_return_val_if_fail (GIMP_IS_CONTAINER (container), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CONTAINER (container), FALSE);
   g_return_val_if_fail (callback_name != NULL, FALSE);
 
-  if (gimp->gui.pdb_dialog_close)
-    return gimp->gui.pdb_dialog_close (gimp, container, callback_name);
+  if (picman->gui.pdb_dialog_close)
+    return picman->gui.pdb_dialog_close (picman, container, callback_name);
 
   return FALSE;
 }
 
 gboolean
-gimp_recent_list_add_uri (Gimp        *gimp,
+picman_recent_list_add_uri (Picman        *picman,
                           const gchar *uri,
                           const gchar *mime_type)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
   g_return_val_if_fail (uri != NULL, FALSE);
 
-  if (gimp->gui.recent_list_add_uri)
-    return gimp->gui.recent_list_add_uri (gimp, uri, mime_type);
+  if (picman->gui.recent_list_add_uri)
+    return picman->gui.recent_list_add_uri (picman, uri, mime_type);
 
   return FALSE;
 }
 
 void
-gimp_recent_list_load (Gimp *gimp)
+picman_recent_list_load (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  if (gimp->gui.recent_list_load)
-    gimp->gui.recent_list_load (gimp);
+  if (picman->gui.recent_list_load)
+    picman->gui.recent_list_load (picman);
 }

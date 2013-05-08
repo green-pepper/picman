@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,12 @@
 
 #include "core-types.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimp-utils.h"
-#include "gimpimage.h"
-#include "gimpdrawable.h"
-#include "gimpdrawablemodundo.h"
+#include "picman-utils.h"
+#include "picmanimage.h"
+#include "picmandrawable.h"
+#include "picmandrawablemodundo.h"
 
 
 enum
@@ -36,97 +36,97 @@ enum
 };
 
 
-static void     gimp_drawable_mod_undo_constructed  (GObject             *object);
-static void     gimp_drawable_mod_undo_set_property (GObject             *object,
+static void     picman_drawable_mod_undo_constructed  (GObject             *object);
+static void     picman_drawable_mod_undo_set_property (GObject             *object,
                                                      guint                property_id,
                                                      const GValue        *value,
                                                      GParamSpec          *pspec);
-static void     gimp_drawable_mod_undo_get_property (GObject             *object,
+static void     picman_drawable_mod_undo_get_property (GObject             *object,
                                                      guint                property_id,
                                                      GValue              *value,
                                                      GParamSpec          *pspec);
 
-static gint64   gimp_drawable_mod_undo_get_memsize  (GimpObject          *object,
+static gint64   picman_drawable_mod_undo_get_memsize  (PicmanObject          *object,
                                                      gint64              *gui_size);
 
-static void     gimp_drawable_mod_undo_pop          (GimpUndo            *undo,
-                                                     GimpUndoMode         undo_mode,
-                                                     GimpUndoAccumulator *accum);
-static void     gimp_drawable_mod_undo_free         (GimpUndo            *undo,
-                                                     GimpUndoMode         undo_mode);
+static void     picman_drawable_mod_undo_pop          (PicmanUndo            *undo,
+                                                     PicmanUndoMode         undo_mode,
+                                                     PicmanUndoAccumulator *accum);
+static void     picman_drawable_mod_undo_free         (PicmanUndo            *undo,
+                                                     PicmanUndoMode         undo_mode);
 
 
-G_DEFINE_TYPE (GimpDrawableModUndo, gimp_drawable_mod_undo, GIMP_TYPE_ITEM_UNDO)
+G_DEFINE_TYPE (PicmanDrawableModUndo, picman_drawable_mod_undo, PICMAN_TYPE_ITEM_UNDO)
 
-#define parent_class gimp_drawable_mod_undo_parent_class
+#define parent_class picman_drawable_mod_undo_parent_class
 
 
 static void
-gimp_drawable_mod_undo_class_init (GimpDrawableModUndoClass *klass)
+picman_drawable_mod_undo_class_init (PicmanDrawableModUndoClass *klass)
 {
   GObjectClass    *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpUndoClass   *undo_class        = GIMP_UNDO_CLASS (klass);
+  PicmanObjectClass *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanUndoClass   *undo_class        = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed      = gimp_drawable_mod_undo_constructed;
-  object_class->set_property     = gimp_drawable_mod_undo_set_property;
-  object_class->get_property     = gimp_drawable_mod_undo_get_property;
+  object_class->constructed      = picman_drawable_mod_undo_constructed;
+  object_class->set_property     = picman_drawable_mod_undo_set_property;
+  object_class->get_property     = picman_drawable_mod_undo_get_property;
 
-  gimp_object_class->get_memsize = gimp_drawable_mod_undo_get_memsize;
+  picman_object_class->get_memsize = picman_drawable_mod_undo_get_memsize;
 
-  undo_class->pop                = gimp_drawable_mod_undo_pop;
-  undo_class->free               = gimp_drawable_mod_undo_free;
+  undo_class->pop                = picman_drawable_mod_undo_pop;
+  undo_class->free               = picman_drawable_mod_undo_free;
 
   g_object_class_install_property (object_class, PROP_COPY_BUFFER,
                                    g_param_spec_boolean ("copy-buffer",
                                                          NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE |
+                                                         PICMAN_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_drawable_mod_undo_init (GimpDrawableModUndo *undo)
+picman_drawable_mod_undo_init (PicmanDrawableModUndo *undo)
 {
 }
 
 static void
-gimp_drawable_mod_undo_constructed (GObject *object)
+picman_drawable_mod_undo_constructed (GObject *object)
 {
-  GimpDrawableModUndo *drawable_mod_undo = GIMP_DRAWABLE_MOD_UNDO (object);
-  GimpItem            *item;
-  GimpDrawable        *drawable;
+  PicmanDrawableModUndo *drawable_mod_undo = PICMAN_DRAWABLE_MOD_UNDO (object);
+  PicmanItem            *item;
+  PicmanDrawable        *drawable;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_DRAWABLE (GIMP_ITEM_UNDO (object)->item));
+  g_assert (PICMAN_IS_DRAWABLE (PICMAN_ITEM_UNDO (object)->item));
 
-  item     = GIMP_ITEM_UNDO (object)->item;
-  drawable = GIMP_DRAWABLE (item);
+  item     = PICMAN_ITEM_UNDO (object)->item;
+  drawable = PICMAN_DRAWABLE (item);
 
   if (drawable_mod_undo->copy_buffer)
     {
       drawable_mod_undo->buffer =
-        gegl_buffer_dup (gimp_drawable_get_buffer (drawable));
+        gegl_buffer_dup (picman_drawable_get_buffer (drawable));
     }
   else
     {
       drawable_mod_undo->buffer =
-        g_object_ref (gimp_drawable_get_buffer (drawable));
+        g_object_ref (picman_drawable_get_buffer (drawable));
     }
 
-  gimp_item_get_offset (item,
+  picman_item_get_offset (item,
                         &drawable_mod_undo->offset_x,
                         &drawable_mod_undo->offset_y);
 }
 
 static void
-gimp_drawable_mod_undo_set_property (GObject      *object,
+picman_drawable_mod_undo_set_property (GObject      *object,
                                      guint         property_id,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  GimpDrawableModUndo *drawable_mod_undo = GIMP_DRAWABLE_MOD_UNDO (object);
+  PicmanDrawableModUndo *drawable_mod_undo = PICMAN_DRAWABLE_MOD_UNDO (object);
 
   switch (property_id)
     {
@@ -141,12 +141,12 @@ gimp_drawable_mod_undo_set_property (GObject      *object,
 }
 
 static void
-gimp_drawable_mod_undo_get_property (GObject    *object,
+picman_drawable_mod_undo_get_property (GObject    *object,
                                      guint       property_id,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  GimpDrawableModUndo *drawable_mod_undo = GIMP_DRAWABLE_MOD_UNDO (object);
+  PicmanDrawableModUndo *drawable_mod_undo = PICMAN_DRAWABLE_MOD_UNDO (object);
 
   switch (property_id)
     {
@@ -161,51 +161,51 @@ gimp_drawable_mod_undo_get_property (GObject    *object,
 }
 
 static gint64
-gimp_drawable_mod_undo_get_memsize (GimpObject *object,
+picman_drawable_mod_undo_get_memsize (PicmanObject *object,
                                     gint64     *gui_size)
 {
-  GimpDrawableModUndo *drawable_mod_undo = GIMP_DRAWABLE_MOD_UNDO (object);
+  PicmanDrawableModUndo *drawable_mod_undo = PICMAN_DRAWABLE_MOD_UNDO (object);
   gint64               memsize           = 0;
 
-  memsize += gimp_gegl_buffer_get_memsize (drawable_mod_undo->buffer);
+  memsize += picman_gegl_buffer_get_memsize (drawable_mod_undo->buffer);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 static void
-gimp_drawable_mod_undo_pop (GimpUndo            *undo,
-                            GimpUndoMode         undo_mode,
-                            GimpUndoAccumulator *accum)
+picman_drawable_mod_undo_pop (PicmanUndo            *undo,
+                            PicmanUndoMode         undo_mode,
+                            PicmanUndoAccumulator *accum)
 {
-  GimpDrawableModUndo *drawable_mod_undo = GIMP_DRAWABLE_MOD_UNDO (undo);
-  GimpDrawable        *drawable          = GIMP_DRAWABLE (GIMP_ITEM_UNDO (undo)->item);
+  PicmanDrawableModUndo *drawable_mod_undo = PICMAN_DRAWABLE_MOD_UNDO (undo);
+  PicmanDrawable        *drawable          = PICMAN_DRAWABLE (PICMAN_ITEM_UNDO (undo)->item);
   GeglBuffer          *buffer;
   gint                 offset_x;
   gint                 offset_y;
 
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 
   buffer   = drawable_mod_undo->buffer;
   offset_x = drawable_mod_undo->offset_x;
   offset_y = drawable_mod_undo->offset_y;
 
-  drawable_mod_undo->buffer = g_object_ref (gimp_drawable_get_buffer (drawable));
+  drawable_mod_undo->buffer = g_object_ref (picman_drawable_get_buffer (drawable));
 
-  gimp_item_get_offset (GIMP_ITEM (drawable),
+  picman_item_get_offset (PICMAN_ITEM (drawable),
                         &drawable_mod_undo->offset_x,
                         &drawable_mod_undo->offset_y);
 
-  gimp_drawable_set_buffer_full (drawable, FALSE, NULL,
+  picman_drawable_set_buffer_full (drawable, FALSE, NULL,
                                  buffer, offset_x, offset_y);
   g_object_unref (buffer);
 }
 
 static void
-gimp_drawable_mod_undo_free (GimpUndo     *undo,
-                             GimpUndoMode  undo_mode)
+picman_drawable_mod_undo_free (PicmanUndo     *undo,
+                             PicmanUndoMode  undo_mode)
 {
-  GimpDrawableModUndo *drawable_mod_undo = GIMP_DRAWABLE_MOD_UNDO (undo);
+  PicmanDrawableModUndo *drawable_mod_undo = PICMAN_DRAWABLE_MOD_UNDO (undo);
 
   if (drawable_mod_undo->buffer)
     {
@@ -213,5 +213,5 @@ gimp_drawable_mod_undo_free (GimpUndo     *undo,
       drawable_mod_undo->buffer = NULL;
     }
 
-  GIMP_UNDO_CLASS (parent_class)->free (undo, undo_mode);
+  PICMAN_UNDO_CLASS (parent_class)->free (undo, undo_mode);
 }

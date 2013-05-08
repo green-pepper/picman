@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,113 +20,113 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimpimage.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpcanvasrectangle.h"
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-scale.h"
+#include "display/picmancanvasrectangle.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-scale.h"
 
-#include "gimpmagnifyoptions.h"
-#include "gimpmagnifytool.h"
-#include "gimptoolcontrol.h"
+#include "picmanmagnifyoptions.h"
+#include "picmanmagnifytool.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void   gimp_magnify_tool_button_press   (GimpTool              *tool,
-                                                const GimpCoords      *coords,
+static void   picman_magnify_tool_button_press   (PicmanTool              *tool,
+                                                const PicmanCoords      *coords,
                                                 guint32                time,
                                                 GdkModifierType        state,
-                                                GimpButtonPressType    press_type,
-                                                GimpDisplay           *display);
-static void   gimp_magnify_tool_button_release (GimpTool              *tool,
-                                                const GimpCoords      *coords,
+                                                PicmanButtonPressType    press_type,
+                                                PicmanDisplay           *display);
+static void   picman_magnify_tool_button_release (PicmanTool              *tool,
+                                                const PicmanCoords      *coords,
                                                 guint32                time,
                                                 GdkModifierType        state,
-                                                GimpButtonReleaseType  release_type,
-                                                GimpDisplay           *display);
-static void   gimp_magnify_tool_motion         (GimpTool              *tool,
-                                                const GimpCoords      *coords,
+                                                PicmanButtonReleaseType  release_type,
+                                                PicmanDisplay           *display);
+static void   picman_magnify_tool_motion         (PicmanTool              *tool,
+                                                const PicmanCoords      *coords,
                                                 guint32                time,
                                                 GdkModifierType        state,
-                                                GimpDisplay           *display);
-static void   gimp_magnify_tool_modifier_key   (GimpTool              *tool,
+                                                PicmanDisplay           *display);
+static void   picman_magnify_tool_modifier_key   (PicmanTool              *tool,
                                                 GdkModifierType        key,
                                                 gboolean               press,
                                                 GdkModifierType        state,
-                                                GimpDisplay           *display);
-static void   gimp_magnify_tool_cursor_update  (GimpTool              *tool,
-                                                const GimpCoords      *coords,
+                                                PicmanDisplay           *display);
+static void   picman_magnify_tool_cursor_update  (PicmanTool              *tool,
+                                                const PicmanCoords      *coords,
                                                 GdkModifierType        state,
-                                                GimpDisplay           *display);
+                                                PicmanDisplay           *display);
 
-static void   gimp_magnify_tool_draw           (GimpDrawTool          *draw_tool);
+static void   picman_magnify_tool_draw           (PicmanDrawTool          *draw_tool);
 
-static void   gimp_magnify_tool_update_items   (GimpMagnifyTool       *magnify);
+static void   picman_magnify_tool_update_items   (PicmanMagnifyTool       *magnify);
 
 
-G_DEFINE_TYPE (GimpMagnifyTool, gimp_magnify_tool, GIMP_TYPE_DRAW_TOOL)
+G_DEFINE_TYPE (PicmanMagnifyTool, picman_magnify_tool, PICMAN_TYPE_DRAW_TOOL)
 
-#define parent_class gimp_magnify_tool_parent_class
+#define parent_class picman_magnify_tool_parent_class
 
 
 void
-gimp_magnify_tool_register (GimpToolRegisterCallback  callback,
+picman_magnify_tool_register (PicmanToolRegisterCallback  callback,
                             gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_MAGNIFY_TOOL,
-                GIMP_TYPE_MAGNIFY_OPTIONS,
-                gimp_magnify_options_gui,
+  (* callback) (PICMAN_TYPE_MAGNIFY_TOOL,
+                PICMAN_TYPE_MAGNIFY_OPTIONS,
+                picman_magnify_options_gui,
                 0,
-                "gimp-zoom-tool",
+                "picman-zoom-tool",
                 _("Zoom"),
                 _("Zoom Tool: Adjust the zoom level"),
                 N_("_Zoom"), "Z",
-                NULL, GIMP_HELP_TOOL_ZOOM,
-                GIMP_STOCK_TOOL_ZOOM,
+                NULL, PICMAN_HELP_TOOL_ZOOM,
+                PICMAN_STOCK_TOOL_ZOOM,
                 data);
 }
 
 static void
-gimp_magnify_tool_class_init (GimpMagnifyToolClass *klass)
+picman_magnify_tool_class_init (PicmanMagnifyToolClass *klass)
 {
-  GimpToolClass     *tool_class      = GIMP_TOOL_CLASS (klass);
-  GimpDrawToolClass *draw_tool_class = GIMP_DRAW_TOOL_CLASS (klass);
+  PicmanToolClass     *tool_class      = PICMAN_TOOL_CLASS (klass);
+  PicmanDrawToolClass *draw_tool_class = PICMAN_DRAW_TOOL_CLASS (klass);
 
-  tool_class->button_press   = gimp_magnify_tool_button_press;
-  tool_class->button_release = gimp_magnify_tool_button_release;
-  tool_class->motion         = gimp_magnify_tool_motion;
-  tool_class->modifier_key   = gimp_magnify_tool_modifier_key;
-  tool_class->cursor_update  = gimp_magnify_tool_cursor_update;
+  tool_class->button_press   = picman_magnify_tool_button_press;
+  tool_class->button_release = picman_magnify_tool_button_release;
+  tool_class->motion         = picman_magnify_tool_motion;
+  tool_class->modifier_key   = picman_magnify_tool_modifier_key;
+  tool_class->cursor_update  = picman_magnify_tool_cursor_update;
 
-  draw_tool_class->draw      = gimp_magnify_tool_draw;
+  draw_tool_class->draw      = picman_magnify_tool_draw;
 }
 
 static void
-gimp_magnify_tool_init (GimpMagnifyTool *magnify_tool)
+picman_magnify_tool_init (PicmanMagnifyTool *magnify_tool)
 {
-  GimpTool *tool = GIMP_TOOL (magnify_tool);
+  PicmanTool *tool = PICMAN_TOOL (magnify_tool);
 
-  gimp_tool_control_set_scroll_lock            (tool->control, TRUE);
-  gimp_tool_control_set_handle_empty_image     (tool->control, TRUE);
-  gimp_tool_control_set_wants_click            (tool->control, TRUE);
-  gimp_tool_control_set_snap_to                (tool->control, FALSE);
+  picman_tool_control_set_scroll_lock            (tool->control, TRUE);
+  picman_tool_control_set_handle_empty_image     (tool->control, TRUE);
+  picman_tool_control_set_wants_click            (tool->control, TRUE);
+  picman_tool_control_set_snap_to                (tool->control, FALSE);
 
-  gimp_tool_control_set_tool_cursor            (tool->control,
-                                                GIMP_TOOL_CURSOR_ZOOM);
-  gimp_tool_control_set_cursor_modifier        (tool->control,
-                                                GIMP_CURSOR_MODIFIER_PLUS);
-  gimp_tool_control_set_toggle_cursor_modifier (tool->control,
-                                                GIMP_CURSOR_MODIFIER_MINUS);
+  picman_tool_control_set_tool_cursor            (tool->control,
+                                                PICMAN_TOOL_CURSOR_ZOOM);
+  picman_tool_control_set_cursor_modifier        (tool->control,
+                                                PICMAN_CURSOR_MODIFIER_PLUS);
+  picman_tool_control_set_toggle_cursor_modifier (tool->control,
+                                                PICMAN_CURSOR_MODIFIER_MINUS);
 
   magnify_tool->x = 0;
   magnify_tool->y = 0;
@@ -135,53 +135,53 @@ gimp_magnify_tool_init (GimpMagnifyTool *magnify_tool)
 }
 
 static void
-gimp_magnify_tool_button_press (GimpTool            *tool,
-                                const GimpCoords    *coords,
+picman_magnify_tool_button_press (PicmanTool            *tool,
+                                const PicmanCoords    *coords,
                                 guint32              time,
                                 GdkModifierType      state,
-                                GimpButtonPressType  press_type,
-                                GimpDisplay         *display)
+                                PicmanButtonPressType  press_type,
+                                PicmanDisplay         *display)
 {
-  GimpMagnifyTool *magnify = GIMP_MAGNIFY_TOOL (tool);
+  PicmanMagnifyTool *magnify = PICMAN_MAGNIFY_TOOL (tool);
 
   magnify->x = coords->x;
   magnify->y = coords->y;
   magnify->w = 0;
   magnify->h = 0;
 
-  gimp_tool_control_activate (tool->control);
+  picman_tool_control_activate (tool->control);
   tool->display = display;
 
-  gimp_draw_tool_start (GIMP_DRAW_TOOL (tool), display);
+  picman_draw_tool_start (PICMAN_DRAW_TOOL (tool), display);
 }
 
 static void
-gimp_magnify_tool_button_release (GimpTool              *tool,
-                                  const GimpCoords      *coords,
+picman_magnify_tool_button_release (PicmanTool              *tool,
+                                  const PicmanCoords      *coords,
                                   guint32                time,
                                   GdkModifierType        state,
-                                  GimpButtonReleaseType  release_type,
-                                  GimpDisplay           *display)
+                                  PicmanButtonReleaseType  release_type,
+                                  PicmanDisplay           *display)
 {
-  GimpMagnifyTool    *magnify = GIMP_MAGNIFY_TOOL (tool);
-  GimpMagnifyOptions *options = GIMP_MAGNIFY_TOOL_GET_OPTIONS (tool);
-  GimpDisplayShell   *shell   = gimp_display_get_shell (tool->display);
+  PicmanMagnifyTool    *magnify = PICMAN_MAGNIFY_TOOL (tool);
+  PicmanMagnifyOptions *options = PICMAN_MAGNIFY_TOOL_GET_OPTIONS (tool);
+  PicmanDisplayShell   *shell   = picman_display_get_shell (tool->display);
 
-  gimp_draw_tool_stop (GIMP_DRAW_TOOL (tool));
+  picman_draw_tool_stop (PICMAN_DRAW_TOOL (tool));
 
-  gimp_tool_control_halt (tool->control);
+  picman_tool_control_halt (tool->control);
 
   switch (release_type)
     {
-    case GIMP_BUTTON_RELEASE_CLICK:
-    case GIMP_BUTTON_RELEASE_NO_MOTION:
-      gimp_display_shell_scale (shell,
+    case PICMAN_BUTTON_RELEASE_CLICK:
+    case PICMAN_BUTTON_RELEASE_NO_MOTION:
+      picman_display_shell_scale (shell,
                                 options->zoom_type,
                                 0.0,
-                                GIMP_ZOOM_FOCUS_POINTER);
+                                PICMAN_ZOOM_FOCUS_POINTER);
       break;
 
-    case GIMP_BUTTON_RELEASE_NORMAL:
+    case PICMAN_BUTTON_RELEASE_NORMAL:
       {
         gdouble x1, y1, x2, y2;
         gdouble width, height;
@@ -201,19 +201,19 @@ gimp_magnify_tool_button_release (GimpTool              *tool,
         width  = MAX (1.0, width);
         height = MAX (1.0, height);
 
-        current_scale = gimp_zoom_model_get_factor (shell->zoom);
+        current_scale = picman_zoom_model_get_factor (shell->zoom);
 
         display_width  = FUNSCALEX (shell, shell->disp_width);
         display_height = FUNSCALEY (shell, shell->disp_height);
 
         switch (options->zoom_type)
           {
-          case GIMP_ZOOM_IN:
+          case PICMAN_ZOOM_IN:
             factor = MIN ((display_width  / width),
                           (display_height / height));
             break;
 
-          case GIMP_ZOOM_OUT:
+          case PICMAN_ZOOM_OUT:
             factor = MAX ((width  / display_width),
                           (height / display_height));
             break;
@@ -233,14 +233,14 @@ gimp_magnify_tool_button_release (GimpTool              *tool,
             gdouble screen_xres;
             gdouble screen_yres;
 
-            gimp_image_get_resolution (gimp_display_get_image (display),
+            picman_image_get_resolution (picman_display_get_image (display),
                                        &xres, &yres);
-            gimp_display_shell_get_screen_resolution (shell,
+            picman_display_shell_get_screen_resolution (shell,
                                                       &screen_xres, &screen_yres);
 
             switch (options->zoom_type)
               {
-              case GIMP_ZOOM_IN:
+              case PICMAN_ZOOM_IN:
                 /*  move the center of the rectangle to the center of the
                  *  viewport:
                  *
@@ -259,7 +259,7 @@ gimp_magnify_tool_button_release (GimpTool              *tool,
                                  (shell->disp_height / 2.0));
                 break;
 
-              case GIMP_ZOOM_OUT:
+              case PICMAN_ZOOM_OUT:
                 /*  move the center of the viewport to the center of the
                  *  rectangle:
                  *
@@ -288,7 +288,7 @@ gimp_magnify_tool_button_release (GimpTool              *tool,
                 break;
               }
 
-            gimp_display_shell_scale_by_values (shell,
+            picman_display_shell_scale_by_values (shell,
                                                 new_scale,
                                                 offset_x, offset_y,
                                                 options->auto_resize);
@@ -302,39 +302,39 @@ gimp_magnify_tool_button_release (GimpTool              *tool,
 }
 
 static void
-gimp_magnify_tool_motion (GimpTool         *tool,
-                          const GimpCoords *coords,
+picman_magnify_tool_motion (PicmanTool         *tool,
+                          const PicmanCoords *coords,
                           guint32           time,
                           GdkModifierType   state,
-                          GimpDisplay      *display)
+                          PicmanDisplay      *display)
 {
-  GimpMagnifyTool *magnify = GIMP_MAGNIFY_TOOL (tool);
+  PicmanMagnifyTool *magnify = PICMAN_MAGNIFY_TOOL (tool);
 
   magnify->w = coords->x - magnify->x;
   magnify->h = coords->y - magnify->y;
 
-  gimp_magnify_tool_update_items (magnify);
+  picman_magnify_tool_update_items (magnify);
 }
 
 static void
-gimp_magnify_tool_modifier_key (GimpTool        *tool,
+picman_magnify_tool_modifier_key (PicmanTool        *tool,
                                 GdkModifierType  key,
                                 gboolean         press,
                                 GdkModifierType  state,
-                                GimpDisplay     *display)
+                                PicmanDisplay     *display)
 {
-  GimpMagnifyOptions *options = GIMP_MAGNIFY_TOOL_GET_OPTIONS (tool);
+  PicmanMagnifyOptions *options = PICMAN_MAGNIFY_TOOL_GET_OPTIONS (tool);
 
-  if (key == gimp_get_toggle_behavior_mask ())
+  if (key == picman_get_toggle_behavior_mask ())
     {
       switch (options->zoom_type)
         {
-        case GIMP_ZOOM_IN:
-          g_object_set (options, "zoom-type", GIMP_ZOOM_OUT, NULL);
+        case PICMAN_ZOOM_IN:
+          g_object_set (options, "zoom-type", PICMAN_ZOOM_OUT, NULL);
           break;
 
-        case GIMP_ZOOM_OUT:
-          g_object_set (options, "zoom-type", GIMP_ZOOM_IN, NULL);
+        case PICMAN_ZOOM_OUT:
+          g_object_set (options, "zoom-type", PICMAN_ZOOM_IN, NULL);
           break;
 
         default:
@@ -344,26 +344,26 @@ gimp_magnify_tool_modifier_key (GimpTool        *tool,
 }
 
 static void
-gimp_magnify_tool_cursor_update (GimpTool         *tool,
-                                 const GimpCoords *coords,
+picman_magnify_tool_cursor_update (PicmanTool         *tool,
+                                 const PicmanCoords *coords,
                                  GdkModifierType   state,
-                                 GimpDisplay      *display)
+                                 PicmanDisplay      *display)
 {
-  GimpMagnifyOptions *options = GIMP_MAGNIFY_TOOL_GET_OPTIONS (tool);
+  PicmanMagnifyOptions *options = PICMAN_MAGNIFY_TOOL_GET_OPTIONS (tool);
 
-  gimp_tool_control_set_toggled (tool->control,
-                                 options->zoom_type == GIMP_ZOOM_OUT);
+  picman_tool_control_set_toggled (tool->control,
+                                 options->zoom_type == PICMAN_ZOOM_OUT);
 
-  GIMP_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
+  PICMAN_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
 }
 
 static void
-gimp_magnify_tool_draw (GimpDrawTool *draw_tool)
+picman_magnify_tool_draw (PicmanDrawTool *draw_tool)
 {
-  GimpMagnifyTool *magnify = GIMP_MAGNIFY_TOOL (draw_tool);
+  PicmanMagnifyTool *magnify = PICMAN_MAGNIFY_TOOL (draw_tool);
 
   magnify->rectangle =
-    gimp_draw_tool_add_rectangle (draw_tool, FALSE,
+    picman_draw_tool_add_rectangle (draw_tool, FALSE,
                                   magnify->x,
                                   magnify->y,
                                   magnify->w,
@@ -371,11 +371,11 @@ gimp_magnify_tool_draw (GimpDrawTool *draw_tool)
 }
 
 static void
-gimp_magnify_tool_update_items (GimpMagnifyTool *magnify)
+picman_magnify_tool_update_items (PicmanMagnifyTool *magnify)
 {
-  if (gimp_draw_tool_is_active (GIMP_DRAW_TOOL (magnify)))
+  if (picman_draw_tool_is_active (PICMAN_DRAW_TOOL (magnify)))
     {
-      gimp_canvas_rectangle_set (magnify->rectangle,
+      picman_canvas_rectangle_set (magnify->rectangle,
                                  magnify->x,
                                  magnify->y,
                                  magnify->w,

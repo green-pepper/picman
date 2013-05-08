@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * The GIMP Help plug-in
- * Copyright (C) 1999-2008 Sven Neumann <sven@gimp.org>
- *                         Michael Natterer <mitch@gimp.org>
- *                         Henrik Brix Andersen <brix@gimp.org>
+ * The PICMAN Help plug-in
+ * Copyright (C) 1999-2008 Sven Neumann <sven@picman.org>
+ *                         Michael Natterer <mitch@picman.org>
+ *                         Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 
 /*  This code is written so that it can also be compiled standalone.
- *  It shouldn't depend on libgimp.
+ *  It shouldn't depend on libpicman.
  */
 
 #include "config.h"
@@ -30,29 +30,29 @@
 
 #include <gio/gio.h>
 
-#include "gimphelptypes.h"
-#include "gimphelpprogress.h"
-#include "gimphelpprogress-private.h"
+#include "picmanhelptypes.h"
+#include "picmanhelpprogress.h"
+#include "picmanhelpprogress-private.h"
 
 
-struct _GimpHelpProgress
+struct _PicmanHelpProgress
 {
-  GimpHelpProgressVTable  vtable;
+  PicmanHelpProgressVTable  vtable;
   gpointer                user_data;
 
   GCancellable           *cancellable;
 };
 
 
-GimpHelpProgress *
-gimp_help_progress_new (const GimpHelpProgressVTable *vtable,
+PicmanHelpProgress *
+picman_help_progress_new (const PicmanHelpProgressVTable *vtable,
                         gpointer                      user_data)
 {
-  GimpHelpProgress *progress;
+  PicmanHelpProgress *progress;
 
   g_return_val_if_fail (vtable != NULL, NULL);
 
-  progress = g_slice_new0 (GimpHelpProgress);
+  progress = g_slice_new0 (PicmanHelpProgress);
 
   progress->vtable.start     = vtable->start;
   progress->vtable.end       = vtable->end;
@@ -64,7 +64,7 @@ gimp_help_progress_new (const GimpHelpProgressVTable *vtable,
 }
 
 void
-gimp_help_progress_free (GimpHelpProgress *progress)
+picman_help_progress_free (PicmanHelpProgress *progress)
 {
   g_return_if_fail (progress != NULL);
 
@@ -74,11 +74,11 @@ gimp_help_progress_free (GimpHelpProgress *progress)
       progress->cancellable = NULL;
     }
 
-  g_slice_free (GimpHelpProgress, progress);
+  g_slice_free (PicmanHelpProgress, progress);
 }
 
 void
-gimp_help_progress_cancel (GimpHelpProgress *progress)
+picman_help_progress_cancel (PicmanHelpProgress *progress)
 {
   g_return_if_fail (progress != NULL);
 
@@ -88,7 +88,7 @@ gimp_help_progress_cancel (GimpHelpProgress *progress)
 
 
 void
-_gimp_help_progress_start (GimpHelpProgress *progress,
+_picman_help_progress_start (PicmanHelpProgress *progress,
                            GCancellable     *cancellable,
                            const gchar      *format,
                            ...)
@@ -117,7 +117,7 @@ _gimp_help_progress_start (GimpHelpProgress *progress,
 }
 
 void
-_gimp_help_progress_update (GimpHelpProgress *progress,
+_picman_help_progress_update (PicmanHelpProgress *progress,
                             gdouble           percentage)
 {
   g_return_if_fail (progress != NULL);
@@ -127,15 +127,15 @@ _gimp_help_progress_update (GimpHelpProgress *progress,
 }
 
 void
-_gimp_help_progress_pulse (GimpHelpProgress *progress)
+_picman_help_progress_pulse (PicmanHelpProgress *progress)
 {
   g_return_if_fail (progress != NULL);
 
-  _gimp_help_progress_update (progress, -1.0);
+  _picman_help_progress_update (progress, -1.0);
 }
 
 void
-_gimp_help_progress_finish (GimpHelpProgress *progress)
+_picman_help_progress_finish (PicmanHelpProgress *progress)
 {
   g_return_if_fail (progress != NULL);
 

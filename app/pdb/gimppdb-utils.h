@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,91 +15,91 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PDB_UTILS_H__
-#define __GIMP_PDB_UTILS_H__
+#ifndef __PICMAN_PDB_UTILS_H__
+#define __PICMAN_PDB_UTILS_H__
 
 
-GimpBrush     * gimp_pdb_get_brush              (Gimp               *gimp,
+PicmanBrush     * picman_pdb_get_brush              (Picman               *picman,
                                                  const gchar        *name,
                                                  gboolean            writable,
                                                  GError            **error);
-GimpBrush     * gimp_pdb_get_generated_brush    (Gimp               *gimp,
+PicmanBrush     * picman_pdb_get_generated_brush    (Picman               *picman,
                                                  const gchar        *name,
                                                  gboolean            writable,
                                                  GError            **error);
-GimpDynamics  * gimp_pdb_get_dynamics           (Gimp               *gimp,
+PicmanDynamics  * picman_pdb_get_dynamics           (Picman               *picman,
                                                  const gchar        *name,
                                                  gboolean            writable,
                                                  GError            **error);
-GimpPattern   * gimp_pdb_get_pattern            (Gimp               *gimp,
+PicmanPattern   * picman_pdb_get_pattern            (Picman               *picman,
                                                  const gchar        *name,
                                                  GError            **error);
-GimpGradient  * gimp_pdb_get_gradient           (Gimp               *gimp,
-                                                 const gchar        *name,
-                                                 gboolean            writable,
-                                                 GError            **error);
-GimpPalette   * gimp_pdb_get_palette            (Gimp               *gimp,
+PicmanGradient  * picman_pdb_get_gradient           (Picman               *picman,
                                                  const gchar        *name,
                                                  gboolean            writable,
                                                  GError            **error);
-GimpFont      * gimp_pdb_get_font               (Gimp               *gimp,
+PicmanPalette   * picman_pdb_get_palette            (Picman               *picman,
+                                                 const gchar        *name,
+                                                 gboolean            writable,
+                                                 GError            **error);
+PicmanFont      * picman_pdb_get_font               (Picman               *picman,
                                                  const gchar        *name,
                                                  GError            **error);
-GimpBuffer    * gimp_pdb_get_buffer             (Gimp               *gimp,
+PicmanBuffer    * picman_pdb_get_buffer             (Picman               *picman,
                                                  const gchar        *name,
                                                  GError            **error);
-GimpPaintInfo * gimp_pdb_get_paint_info         (Gimp               *gimp,
+PicmanPaintInfo * picman_pdb_get_paint_info         (Picman               *picman,
                                                  const gchar        *name,
                                                  GError            **error);
 
-gboolean        gimp_pdb_item_is_attached       (GimpItem           *item,
-                                                 GimpImage          *image,
-                                                 GimpPDBItemModify   modify,
+gboolean        picman_pdb_item_is_attached       (PicmanItem           *item,
+                                                 PicmanImage          *image,
+                                                 PicmanPDBItemModify   modify,
                                                  GError            **error);
-gboolean        gimp_pdb_item_is_in_tree        (GimpItem           *item,
-                                                 GimpImage          *image,
-                                                 GimpPDBItemModify   modify,
+gboolean        picman_pdb_item_is_in_tree        (PicmanItem           *item,
+                                                 PicmanImage          *image,
+                                                 PicmanPDBItemModify   modify,
                                                  GError            **error);
-gboolean        gimp_pdb_item_is_in_same_tree   (GimpItem           *item,
-                                                 GimpItem           *item2,
-                                                 GimpImage          *image,
+gboolean        picman_pdb_item_is_in_same_tree   (PicmanItem           *item,
+                                                 PicmanItem           *item2,
+                                                 PicmanImage          *image,
                                                  GError            **error);
-gboolean        gimp_pdb_item_is_not_ancestor   (GimpItem           *item,
-                                                 GimpItem           *not_descendant,
+gboolean        picman_pdb_item_is_not_ancestor   (PicmanItem           *item,
+                                                 PicmanItem           *not_descendant,
                                                  GError            **error);
-gboolean        gimp_pdb_item_is_floating       (GimpItem           *item,
-                                                 GimpImage          *dest_image,
+gboolean        picman_pdb_item_is_floating       (PicmanItem           *item,
+                                                 PicmanImage          *dest_image,
                                                  GError            **error);
-gboolean        gimp_pdb_item_is_modifyable     (GimpItem           *item,
-                                                 GimpPDBItemModify   modify,
+gboolean        picman_pdb_item_is_modifyable     (PicmanItem           *item,
+                                                 PicmanPDBItemModify   modify,
                                                  GError            **error);
-gboolean        gimp_pdb_item_is_group          (GimpItem           *item,
+gboolean        picman_pdb_item_is_group          (PicmanItem           *item,
                                                  GError            **error);
-gboolean        gimp_pdb_item_is_not_group      (GimpItem           *item,
-                                                 GError            **error);
-
-gboolean        gimp_pdb_layer_is_text_layer    (GimpLayer          *layer,
-                                                 GimpPDBItemModify   modify,
+gboolean        picman_pdb_item_is_not_group      (PicmanItem           *item,
                                                  GError            **error);
 
-gboolean        gimp_pdb_image_is_base_type     (GimpImage          *image,
-                                                 GimpImageBaseType   type,
-                                                 GError            **error);
-gboolean        gimp_pdb_image_is_not_base_type (GimpImage          *image,
-                                                 GimpImageBaseType   type,
+gboolean        picman_pdb_layer_is_text_layer    (PicmanLayer          *layer,
+                                                 PicmanPDBItemModify   modify,
                                                  GError            **error);
 
-gboolean        gimp_pdb_image_is_precision     (GimpImage          *image,
-                                                 GimpPrecision       precision,
+gboolean        picman_pdb_image_is_base_type     (PicmanImage          *image,
+                                                 PicmanImageBaseType   type,
                                                  GError            **error);
-gboolean        gimp_pdb_image_is_not_precision (GimpImage          *image,
-                                                 GimpPrecision       precision,
+gboolean        picman_pdb_image_is_not_base_type (PicmanImage          *image,
+                                                 PicmanImageBaseType   type,
                                                  GError            **error);
 
-GimpStroke    * gimp_pdb_get_vectors_stroke     (GimpVectors        *vectors,
+gboolean        picman_pdb_image_is_precision     (PicmanImage          *image,
+                                                 PicmanPrecision       precision,
+                                                 GError            **error);
+gboolean        picman_pdb_image_is_not_precision (PicmanImage          *image,
+                                                 PicmanPrecision       precision,
+                                                 GError            **error);
+
+PicmanStroke    * picman_pdb_get_vectors_stroke     (PicmanVectors        *vectors,
                                                  gint                stroke_ID,
-                                                 GimpPDBItemModify   modify,
+                                                 PicmanPDBItemModify   modify,
                                                  GError            **error);
 
 
-#endif /* __GIMP_PDB_UTILS_H__ */
+#endif /* __PICMAN_PDB_UTILS_H__ */

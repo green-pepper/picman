@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpaspectpreview.h
+ * picmanaspectpreview.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,12 +18,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_UI_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimpui.h> can be included directly."
+#if !defined (__PICMAN_UI_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picmanui.h> can be included directly."
 #endif
 
-#ifndef __GIMP_ASPECT_PREVIEW_H__
-#define __GIMP_ASPECT_PREVIEW_H__
+#ifndef __PICMAN_ASPECT_PREVIEW_H__
+#define __PICMAN_ASPECT_PREVIEW_H__
 
 G_BEGIN_DECLS
 
@@ -31,42 +31,42 @@ G_BEGIN_DECLS
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_ASPECT_PREVIEW            (gimp_aspect_preview_get_type ())
-#define GIMP_ASPECT_PREVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ASPECT_PREVIEW, GimpAspectPreview))
-#define GIMP_ASPECT_PREVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ASPECT_PREVIEW, GimpAspectPreviewClass))
-#define GIMP_IS_ASPECT_PREVIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ASPECT_PREVIEW))
-#define GIMP_IS_ASPECT_PREVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ASPECT_PREVIEW))
-#define GIMP_ASPECT_PREVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ASPECT_PREVIEW, GimpAspectPreviewClass))
+#define PICMAN_TYPE_ASPECT_PREVIEW            (picman_aspect_preview_get_type ())
+#define PICMAN_ASPECT_PREVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ASPECT_PREVIEW, PicmanAspectPreview))
+#define PICMAN_ASPECT_PREVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ASPECT_PREVIEW, PicmanAspectPreviewClass))
+#define PICMAN_IS_ASPECT_PREVIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ASPECT_PREVIEW))
+#define PICMAN_IS_ASPECT_PREVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ASPECT_PREVIEW))
+#define PICMAN_ASPECT_PREVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ASPECT_PREVIEW, PicmanAspectPreviewClass))
 
 
-typedef struct _GimpAspectPreviewClass  GimpAspectPreviewClass;
+typedef struct _PicmanAspectPreviewClass  PicmanAspectPreviewClass;
 
-struct _GimpAspectPreview
+struct _PicmanAspectPreview
 {
-  GimpPreview   parent_instance;
+  PicmanPreview   parent_instance;
 
   /*< private >*/
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
 };
 
-struct _GimpAspectPreviewClass
+struct _PicmanAspectPreviewClass
 {
-  GimpPreviewClass  parent_class;
+  PicmanPreviewClass  parent_class;
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType       gimp_aspect_preview_get_type (void) G_GNUC_CONST;
+GType       picman_aspect_preview_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_aspect_preview_new      (GimpDrawable *drawable,
+GtkWidget * picman_aspect_preview_new      (PicmanDrawable *drawable,
                                           gboolean     *toggle);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_ASPECT_PREVIEW_H__ */
+#endif /* __PICMAN_ASPECT_PREVIEW_H__ */

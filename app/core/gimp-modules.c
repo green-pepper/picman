@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpmodules.c
- * (C) 1999 Austin Donnelly <austin@gimp.org>
+ * picmanmodules.c
+ * (C) 1999 Austin Donnelly <austin@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,66 +22,66 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "gimp.h"
-#include "gimp-modules.h"
+#include "picman.h"
+#include "picman-modules.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 void
-gimp_modules_init (Gimp *gimp)
+picman_modules_init (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  if (! gimp->no_interface)
+  if (! picman->no_interface)
     {
-      gimp->module_db = gimp_module_db_new (gimp->be_verbose);
-      gimp->write_modulerc = FALSE;
+      picman->module_db = picman_module_db_new (picman->be_verbose);
+      picman->write_modulerc = FALSE;
     }
 }
 
 void
-gimp_modules_exit (Gimp *gimp)
+picman_modules_exit (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  if (gimp->module_db)
+  if (picman->module_db)
     {
-      g_object_unref (gimp->module_db);
-      gimp->module_db = NULL;
+      g_object_unref (picman->module_db);
+      picman->module_db = NULL;
     }
 }
 
 void
-gimp_modules_load (Gimp *gimp)
+picman_modules_load (Picman *picman)
 {
   gchar    *filename;
   gchar    *path;
   GScanner *scanner;
   gchar    *module_load_inhibit = NULL;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  if (gimp->no_interface)
+  if (picman->no_interface)
     return;
 
-  /* FIXME, gimp->be_verbose is not yet initialized in init() */
-  gimp->module_db->verbose = gimp->be_verbose;
+  /* FIXME, picman->be_verbose is not yet initialized in init() */
+  picman->module_db->verbose = picman->be_verbose;
 
-  filename = gimp_personal_rc_file ("modulerc");
+  filename = picman_personal_rc_file ("modulerc");
 
-  if (gimp->be_verbose)
-    g_print ("Parsing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Parsing '%s'\n", picman_filename_to_utf8 (filename));
 
-  scanner = gimp_scanner_new_file (filename, NULL);
+  scanner = picman_scanner_new_file (filename, NULL);
   g_free (filename);
 
   if (scanner)
@@ -111,7 +111,7 @@ gimp_modules_load (Gimp *gimp)
                 {
                   token = G_TOKEN_STRING;
 
-                  if (! gimp_scanner_parse_string_no_validate (scanner,
+                  if (! picman_scanner_parse_string_no_validate (scanner,
                                                                &module_load_inhibit))
                     goto error;
                 }
@@ -140,21 +140,21 @@ gimp_modules_load (Gimp *gimp)
 
       if (error)
         {
-          gimp_message_literal (gimp, NULL, GIMP_MESSAGE_ERROR, error->message);
+          picman_message_literal (picman, NULL, PICMAN_MESSAGE_ERROR, error->message);
           g_clear_error (&error);
         }
 
-      gimp_scanner_destroy (scanner);
+      picman_scanner_destroy (scanner);
     }
 
   if (module_load_inhibit)
     {
-      gimp_module_db_set_load_inhibit (gimp->module_db, module_load_inhibit);
+      picman_module_db_set_load_inhibit (picman->module_db, module_load_inhibit);
       g_free (module_load_inhibit);
     }
 
-  path = gimp_config_path_expand (gimp->config->module_path, TRUE, NULL);
-  gimp_module_db_load (gimp->module_db, path);
+  path = picman_config_path_expand (picman->config->module_path, TRUE, NULL);
+  picman_module_db_load (picman->module_db, path);
   g_free (path);
 }
 
@@ -162,7 +162,7 @@ static void
 add_to_inhibit_string (gpointer data,
                        gpointer user_data)
 {
-  GimpModule *module = data;
+  PicmanModule *module = data;
   GString    *str    = user_data;
 
   if (module->load_inhibit)
@@ -173,66 +173,66 @@ add_to_inhibit_string (gpointer data,
 }
 
 void
-gimp_modules_unload (Gimp *gimp)
+picman_modules_unload (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  if (! gimp->no_interface && gimp->write_modulerc)
+  if (! picman->no_interface && picman->write_modulerc)
     {
-      GimpConfigWriter *writer;
+      PicmanConfigWriter *writer;
       GString          *str;
       const gchar      *p;
       gchar            *filename;
       GError           *error = NULL;
 
       str = g_string_new (NULL);
-      g_list_foreach (gimp->module_db->modules, add_to_inhibit_string, str);
+      g_list_foreach (picman->module_db->modules, add_to_inhibit_string, str);
       if (str->len > 0)
         p = str->str + 1;
       else
         p = "";
 
-      filename = gimp_personal_rc_file ("modulerc");
+      filename = picman_personal_rc_file ("modulerc");
 
-      if (gimp->be_verbose)
-        g_print ("Writing '%s'\n", gimp_filename_to_utf8 (filename));
+      if (picman->be_verbose)
+        g_print ("Writing '%s'\n", picman_filename_to_utf8 (filename));
 
-      writer = gimp_config_writer_new_file (filename, TRUE,
-                                            "GIMP modulerc", &error);
+      writer = picman_config_writer_new_file (filename, TRUE,
+                                            "PICMAN modulerc", &error);
       g_free (filename);
 
       if (writer)
         {
-          gimp_config_writer_open (writer, "module-load-inhibit");
-          gimp_config_writer_string (writer, p);
-          gimp_config_writer_close (writer);
+          picman_config_writer_open (writer, "module-load-inhibit");
+          picman_config_writer_string (writer, p);
+          picman_config_writer_close (writer);
 
-          gimp_config_writer_finish (writer, "end of modulerc", &error);
+          picman_config_writer_finish (writer, "end of modulerc", &error);
 
-          gimp->write_modulerc = FALSE;
+          picman->write_modulerc = FALSE;
         }
 
       g_string_free (str, TRUE);
 
       if (error)
         {
-          gimp_message_literal (gimp, NULL, GIMP_MESSAGE_ERROR, error->message);
+          picman_message_literal (picman, NULL, PICMAN_MESSAGE_ERROR, error->message);
           g_clear_error (&error);
         }
     }
 }
 
 void
-gimp_modules_refresh (Gimp *gimp)
+picman_modules_refresh (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  if (! gimp->no_interface)
+  if (! picman->no_interface)
     {
       gchar *path;
 
-      path = gimp_config_path_expand (gimp->config->module_path, TRUE, NULL);
-      gimp_module_db_refresh (gimp->module_db, path);
+      path = picman_config_path_expand (picman->config->module_path, TRUE, NULL);
+      picman_module_db_refresh (picman->module_db, path);
       g_free (path);
     }
 }

@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimp_pdb.c
+ * picman_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimp
- * @title: gimp
+ * SECTION: picman
+ * @title: picman
  * @short_description: Miscellaneous procedures
  *
  * Miscellaneous procedures not fitting in any category.
@@ -35,66 +35,66 @@
 
 
 /**
- * gimp_version:
+ * picman_version:
  *
- * Returns the host GIMP version.
+ * Returns the host PICMAN version.
  *
  * This procedure returns the version number of the currently running
- * GIMP.
+ * PICMAN.
  *
- * Returns: GIMP version number.
+ * Returns: PICMAN version number.
  **/
 gchar *
-gimp_version (void)
+picman_version (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *version = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-version",
+  return_vals = picman_run_procedure ("picman-version",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     version = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return version;
 }
 
 /**
- * gimp_getpid:
+ * picman_getpid:
  *
- * Returns the PID of the host GIMP process.
+ * Returns the PID of the host PICMAN process.
  *
- * This procedure returns the process ID of the currently running GIMP.
+ * This procedure returns the process ID of the currently running PICMAN.
  *
  * Returns: The PID.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint
-gimp_getpid (void)
+picman_getpid (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint pid = 0;
 
-  return_vals = gimp_run_procedure ("gimp-getpid",
+  return_vals = picman_run_procedure ("picman-getpid",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     pid = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return pid;
 }
 
 /**
- * gimp_attach_parasite:
+ * picman_attach_parasite:
  * @parasite: The parasite to attach.
  *
  * Add a global parasite.
@@ -103,29 +103,29 @@ gimp_getpid (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_attach_parasite (const GimpParasite *parasite)
+picman_attach_parasite (const PicmanParasite *parasite)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-attach-parasite",
+  return_vals = picman_run_procedure ("picman-attach-parasite",
                                     &nreturn_vals,
-                                    GIMP_PDB_PARASITE, parasite,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_PARASITE, parasite,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_detach_parasite:
+ * picman_detach_parasite:
  * @name: The name of the parasite to detach.
  *
  * Removes a global parasite.
@@ -135,29 +135,29 @@ gimp_attach_parasite (const GimpParasite *parasite)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_detach_parasite (const gchar *name)
+picman_detach_parasite (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-detach-parasite",
+  return_vals = picman_run_procedure ("picman-detach-parasite",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_get_parasite:
+ * picman_get_parasite:
  * @name: The name of the parasite to find.
  *
  * Look up a global parasite.
@@ -166,30 +166,30 @@ gimp_detach_parasite (const gchar *name)
  *
  * Returns: The found parasite.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
-GimpParasite *
-gimp_get_parasite (const gchar *name)
+PicmanParasite *
+picman_get_parasite (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpParasite *parasite = NULL;
+  PicmanParasite *parasite = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-get-parasite",
+  return_vals = picman_run_procedure ("picman-get-parasite",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
-    parasite = gimp_parasite_copy (&return_vals[1].data.d_parasite);
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
+    parasite = picman_parasite_copy (&return_vals[1].data.d_parasite);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return parasite;
 }
 
 /**
- * gimp_get_parasite_list:
+ * picman_get_parasite_list:
  * @num_parasites: The number of attached parasites.
  *
  * List all parasites.
@@ -199,23 +199,23 @@ gimp_get_parasite (const gchar *name)
  * Returns: The names of currently attached parasites. The returned
  * value must be freed with g_strfreev().
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gchar **
-gimp_get_parasite_list (gint *num_parasites)
+picman_get_parasite_list (gint *num_parasites)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar **parasites = NULL;
   gint i;
 
-  return_vals = gimp_run_procedure ("gimp-get-parasite-list",
+  return_vals = picman_run_procedure ("picman-get-parasite-list",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
   *num_parasites = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_parasites = return_vals[1].data.d_int32;
       parasites = g_new (gchar *, *num_parasites + 1);
@@ -224,7 +224,7 @@ gimp_get_parasite_list (gint *num_parasites)
       parasites[i] = NULL;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return parasites;
 }

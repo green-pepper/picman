@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,22 +20,22 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimpimage.h"
+#include "core/picmanimage.h"
 
 #include "vectors-export-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 static void  vectors_export_dialog_free (VectorsExportDialog *dialog);
 
 
 VectorsExportDialog *
-vectors_export_dialog_new (GimpImage *image,
+vectors_export_dialog_new (PicmanImage *image,
                            GtkWidget *parent,
                            gboolean   active_only)
 {
@@ -43,7 +43,7 @@ vectors_export_dialog_new (GimpImage *image,
   GtkWidget           *combo;
   GtkFileChooser      *chooser;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (GTK_IS_WIDGET (parent), NULL);
 
   dialog = g_slice_new0 (VectorsExportDialog);
@@ -70,7 +70,7 @@ vectors_export_dialog_new (GimpImage *image,
   gtk_window_set_screen (GTK_WINDOW (dialog->dialog),
                          gtk_widget_get_screen (parent));
 
-  gtk_window_set_role (GTK_WINDOW (dialog->dialog), "gimp-vectors-export");
+  gtk_window_set_role (GTK_WINDOW (dialog->dialog), "picman-vectors-export");
   gtk_window_set_position (GTK_WINDOW (dialog->dialog), GTK_WIN_POS_MOUSE);
 
   gtk_dialog_set_default_response (GTK_DIALOG (chooser), GTK_RESPONSE_OK);
@@ -87,15 +87,15 @@ vectors_export_dialog_new (GimpImage *image,
                     G_CALLBACK (gtk_true),
                     NULL);
 
-  combo = gimp_int_combo_box_new (_("Export the active path"),           TRUE,
+  combo = picman_int_combo_box_new (_("Export the active path"),           TRUE,
                                   _("Export all paths from this image"), FALSE,
                                   NULL);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo),
                                  dialog->active_only);
   gtk_file_chooser_set_extra_widget (chooser, combo);
 
   g_signal_connect (combo, "changed",
-                    G_CALLBACK (gimp_int_combo_box_get_active),
+                    G_CALLBACK (picman_int_combo_box_get_active),
                     &dialog->active_only);
 
   return dialog;

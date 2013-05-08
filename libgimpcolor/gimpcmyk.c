@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -20,16 +20,16 @@
 
 #include <glib-object.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "gimpcolortypes.h"
+#include "picmancolortypes.h"
 
-#include "gimpcmyk.h"
+#include "picmancmyk.h"
 
 
 /**
- * SECTION: gimpcmyk
- * @title: GimpCMYK
+ * SECTION: picmancmyk
+ * @title: PicmanCMYK
  * @short_description: Definitions and Functions relating to CMYK colors.
  *
  * Definitions and Functions relating to CMYK colors.
@@ -37,47 +37,47 @@
 
 
 /*
- * GIMP_TYPE_CMYK
+ * PICMAN_TYPE_CMYK
  */
 
-static GimpCMYK * gimp_cmyk_copy (const GimpCMYK *cmyk);
+static PicmanCMYK * picman_cmyk_copy (const PicmanCMYK *cmyk);
 
 
 GType
-gimp_cmyk_get_type (void)
+picman_cmyk_get_type (void)
 {
   static GType cmyk_type = 0;
 
   if (!cmyk_type)
-    cmyk_type = g_boxed_type_register_static ("GimpCMYK",
-                                              (GBoxedCopyFunc) gimp_cmyk_copy,
+    cmyk_type = g_boxed_type_register_static ("PicmanCMYK",
+                                              (GBoxedCopyFunc) picman_cmyk_copy,
                                               (GBoxedFreeFunc) g_free);
 
   return cmyk_type;
 }
 
-static GimpCMYK *
-gimp_cmyk_copy (const GimpCMYK *cmyk)
+static PicmanCMYK *
+picman_cmyk_copy (const PicmanCMYK *cmyk)
 {
-  return g_memdup (cmyk, sizeof (GimpCMYK));
+  return g_memdup (cmyk, sizeof (PicmanCMYK));
 }
 
 
 /*  CMYK functions  */
 
 /**
- * gimp_cmyk_set:
- * @cmyk:    A #GimpCMYK structure which will hold the specified CMYK value.
+ * picman_cmyk_set:
+ * @cmyk:    A #PicmanCMYK structure which will hold the specified CMYK value.
  * @cyan:    The Cyan channel of the CMYK value
  * @magenta: The Magenta channel
  * @yellow:  The Yellow channel
  * @black:   The blacK channel
  *
- * Very basic initialiser for the internal #GimpCMYK structure. Channel
+ * Very basic initialiser for the internal #PicmanCMYK structure. Channel
  * values are doubles in the range 0 to 1.
  **/
 void
-gimp_cmyk_set (GimpCMYK *cmyk,
+picman_cmyk_set (PicmanCMYK *cmyk,
                gdouble   cyan,
                gdouble   magenta,
                gdouble   yellow,
@@ -92,18 +92,18 @@ gimp_cmyk_set (GimpCMYK *cmyk,
 }
 
 /**
- * gimp_cmyk_set_uchar:
- * @cmyk:    A #GimpCMYK structure which will hold the specified CMYK value.
+ * picman_cmyk_set_uchar:
+ * @cmyk:    A #PicmanCMYK structure which will hold the specified CMYK value.
  * @cyan:    The Cyan channel of the CMYK value
  * @magenta: The Magenta channel
  * @yellow:  The Yellow channel
  * @black:   The blacK channel
  *
- * The same as gimp_cmyk_set(), except that channel values are
+ * The same as picman_cmyk_set(), except that channel values are
  * unsigned chars in the range 0 to 255.
  **/
 void
-gimp_cmyk_set_uchar (GimpCMYK *cmyk,
+picman_cmyk_set_uchar (PicmanCMYK *cmyk,
                      guchar    cyan,
                      guchar    magenta,
                      guchar    yellow,
@@ -118,18 +118,18 @@ gimp_cmyk_set_uchar (GimpCMYK *cmyk,
 }
 
 /**
- * gimp_cmyk_get_uchar:
- * @cmyk:    A #GimpCMYK structure which will hold the specified CMYK value.
+ * picman_cmyk_get_uchar:
+ * @cmyk:    A #PicmanCMYK structure which will hold the specified CMYK value.
  * @cyan:    The Cyan channel of the CMYK value
  * @magenta: The Magenta channel
  * @yellow:  The Yellow channel
  * @black:   The blacK channel
  *
- * Retrieve individual channel values from a #GimpCMYK structure. Channel
+ * Retrieve individual channel values from a #PicmanCMYK structure. Channel
  * values are pointers to unsigned chars in the range 0 to 255.
  **/
 void
-gimp_cmyk_get_uchar (const GimpCMYK *cmyk,
+picman_cmyk_get_uchar (const PicmanCMYK *cmyk,
                      guchar         *cyan,
                      guchar         *magenta,
                      guchar         *yellow,
@@ -147,19 +147,19 @@ gimp_cmyk_get_uchar (const GimpCMYK *cmyk,
 /*  CMYKA functions  */
 
 /**
- * gimp_cmyka_set:
- * @cmyka:   A #GimpCMYK structure which will hold the specified CMYKA value.
+ * picman_cmyka_set:
+ * @cmyka:   A #PicmanCMYK structure which will hold the specified CMYKA value.
  * @cyan:    The Cyan channel of the CMYK value
  * @magenta: The Magenta channel
  * @yellow:  The Yellow channel
  * @black:   The blacK channel
  * @alpha:   The Alpha channel
  *
- * Initialiser for the internal #GimpCMYK structure. Channel values are
+ * Initialiser for the internal #PicmanCMYK structure. Channel values are
  * doubles in the range 0 to 1.
  **/
 void
-gimp_cmyka_set (GimpCMYK *cmyka,
+picman_cmyka_set (PicmanCMYK *cmyka,
                 gdouble   cyan,
                 gdouble   magenta,
                 gdouble   yellow,
@@ -176,19 +176,19 @@ gimp_cmyka_set (GimpCMYK *cmyka,
 }
 
 /**
- * gimp_cmyka_set_uchar:
- * @cmyka:   A #GimpCMYK structure which will hold the specified CMYKA value.
+ * picman_cmyka_set_uchar:
+ * @cmyka:   A #PicmanCMYK structure which will hold the specified CMYKA value.
  * @cyan:    The Cyan channel of the CMYK value
  * @magenta: The Magenta channel
  * @yellow:  The Yellow channel
  * @black:   The blacK channel
  * @alpha:   The Alpha channel
  *
- * The same as gimp_cmyka_set(), except that channel values are
+ * The same as picman_cmyka_set(), except that channel values are
  * unsigned chars in the range 0 to 255.
  **/
 void
-gimp_cmyka_set_uchar (GimpCMYK *cmyka,
+picman_cmyka_set_uchar (PicmanCMYK *cmyka,
                       guchar    cyan,
                       guchar    magenta,
                       guchar    yellow,
@@ -204,19 +204,19 @@ gimp_cmyka_set_uchar (GimpCMYK *cmyka,
   cmyka->a = (gdouble) alpha   / 255.0;
 }
 /**
- * gimp_cmyka_get_uchar:
- * @cmyka:   A #GimpCMYK structure which will hold the specified CMYKA value.
+ * picman_cmyka_get_uchar:
+ * @cmyka:   A #PicmanCMYK structure which will hold the specified CMYKA value.
  * @cyan:    The Cyan channel of the CMYK value
  * @magenta: The Magenta channel
  * @yellow:  The Yellow channel
  * @black:   The blacK channel
  * @alpha:   The Alpha channel
  *
- * Retrieve individual channel values from a #GimpCMYK structure.
+ * Retrieve individual channel values from a #PicmanCMYK structure.
  * Channel values are pointers to unsigned chars in the range 0 to 255.
  **/
 void
-gimp_cmyka_get_uchar (const GimpCMYK *cmyka,
+picman_cmyka_get_uchar (const PicmanCMYK *cmyka,
                       guchar         *cyan,
                       guchar         *magenta,
                       guchar         *yellow,

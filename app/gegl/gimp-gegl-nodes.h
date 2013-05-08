@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-gegl-nodes.h
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picman-gegl-nodes.h
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GEGL_NODES_H__
-#define __GIMP_GEGL_NODES_H__
+#ifndef __PICMAN_GEGL_NODES_H__
+#define __PICMAN_GEGL_NODES_H__
 
 
-GeglNode * gimp_gegl_create_flatten_node       (const GimpRGB        *background);
-GeglNode * gimp_gegl_create_apply_opacity_node (GeglBuffer           *mask,
+GeglNode * picman_gegl_create_flatten_node       (const PicmanRGB        *background);
+GeglNode * picman_gegl_create_apply_opacity_node (GeglBuffer           *mask,
                                                 gint                  mask_offset_x,
                                                 gint                  mask_offset_y,
                                                 gdouble               opacity);
-GeglNode * gimp_gegl_add_buffer_source         (GeglNode             *parent,
+GeglNode * picman_gegl_add_buffer_source         (GeglNode             *parent,
                                                 GeglBuffer           *buffer,
                                                 gint                  offset_x,
                                                 gint                  offset_y);
 
-void       gimp_gegl_mode_node_set_mode        (GeglNode             *node,
-                                                GimpLayerModeEffects  mode,
+void       picman_gegl_mode_node_set_mode        (GeglNode             *node,
+                                                PicmanLayerModeEffects  mode,
                                                 gboolean              linear);
-void       gimp_gegl_mode_node_set_opacity     (GeglNode             *node,
+void       picman_gegl_mode_node_set_opacity     (GeglNode             *node,
                                                 gdouble               opacity);
-void       gimp_gegl_node_set_matrix           (GeglNode             *node,
-                                                const GimpMatrix3    *matrix);
+void       picman_gegl_node_set_matrix           (GeglNode             *node,
+                                                const PicmanMatrix3    *matrix);
 
 
-#endif /* __GIMP_GEGL_NODES_H__ */
+#endif /* __PICMAN_GEGL_NODES_H__ */

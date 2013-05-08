@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Object properties serialization routines
- * Copyright (C) 2001-2002  Sven Neumann <sven@gimp.org>
+ * Copyright (C) 2001-2002  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,34 +19,34 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_CONFIG_H_INSIDE__) && !defined (GIMP_CONFIG_COMPILATION)
-#error "Only <libgimpconfig/gimpconfig.h> can be included directly."
+#if !defined (__PICMAN_CONFIG_H_INSIDE__) && !defined (PICMAN_CONFIG_COMPILATION)
+#error "Only <libpicmanconfig/picmanconfig.h> can be included directly."
 #endif
 
-#ifndef __GIMP_CONFIG_SERIALIZE_H__
-#define __GIMP_CONFIG_SERIALIZE_H__
+#ifndef __PICMAN_CONFIG_SERIALIZE_H__
+#define __PICMAN_CONFIG_SERIALIZE_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-gboolean  gimp_config_serialize_properties         (GimpConfig       *config,
-                                                    GimpConfigWriter *writer);
-gboolean  gimp_config_serialize_changed_properties (GimpConfig       *config,
-                                                    GimpConfigWriter *writer);
+gboolean  picman_config_serialize_properties         (PicmanConfig       *config,
+                                                    PicmanConfigWriter *writer);
+gboolean  picman_config_serialize_changed_properties (PicmanConfig       *config,
+                                                    PicmanConfigWriter *writer);
 
-gboolean  gimp_config_serialize_property           (GimpConfig       *config,
+gboolean  picman_config_serialize_property           (PicmanConfig       *config,
                                                     GParamSpec       *param_spec,
-                                                    GimpConfigWriter *writer);
-gboolean  gimp_config_serialize_property_by_name   (GimpConfig       *config,
+                                                    PicmanConfigWriter *writer);
+gboolean  picman_config_serialize_property_by_name   (PicmanConfig       *config,
                                                     const gchar      *prop_name,
-                                                    GimpConfigWriter *writer);
-gboolean  gimp_config_serialize_value              (const GValue     *value,
+                                                    PicmanConfigWriter *writer);
+gboolean  picman_config_serialize_value              (const GValue     *value,
                                                     GString          *str,
                                                     gboolean          escaped);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_CONFIG_SERIALIZE_H__ */
+#endif /* __PICMAN_CONFIG_SERIALIZE_H__ */

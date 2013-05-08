@@ -3,9 +3,9 @@
 ;
 ; Creates an image with the text "Hello, World!"
 ; This was the first TinyScheme based script ever created and run for the
-; 2.x version of GIMP.
+; 2.x version of PICMAN.
 
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -27,24 +27,24 @@
   (let* (
         (width 10)
         (height 10)
-        (img (car (gimp-image-new width height RGB)))
+        (img (car (picman-image-new width height RGB)))
         (text-layer)
         )
 
-    (gimp-context-push)
+    (picman-context-push)
 
-    (gimp-image-undo-disable img)
-    (gimp-context-set-foreground colour)
+    (picman-image-undo-disable img)
+    (picman-context-set-foreground colour)
 
-    (set! text-layer (car (gimp-text-fontname img -1 0 0 text 10 TRUE size PIXELS font)))
-    (set! width (car (gimp-drawable-width text-layer)))
-    (set! height (car (gimp-drawable-height text-layer)))
-    (gimp-image-resize img width height 0 0)
+    (set! text-layer (car (picman-text-fontname img -1 0 0 text 10 TRUE size PIXELS font)))
+    (set! width (car (picman-drawable-width text-layer)))
+    (set! height (car (picman-drawable-height text-layer)))
+    (picman-image-resize img width height 0 0)
 
-    (gimp-image-undo-enable img)
-    (gimp-display-new img)
+    (picman-image-undo-enable img)
+    (picman-display-new img)
 
-    (gimp-context-pop)
+    (picman-context-pop)
   )
 )
 

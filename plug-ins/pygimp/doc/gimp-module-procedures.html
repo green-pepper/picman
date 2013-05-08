@@ -2,19 +2,19 @@
 <HTML
 ><HEAD
 ><TITLE
->Gimp Module Procedures</TITLE
+>Picman Module Procedures</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet"><LINK
 REL="HOME"
-TITLE="Gimp Python Documentation"
-HREF="pygimp.html"><LINK
+TITLE="Picman Python Documentation"
+HREF="pypicman.html"><LINK
 REL="PREVIOUS"
 TITLE="The Procedural Database"
 HREF="procedural-database.html"><LINK
 REL="NEXT"
-TITLE="Gimp Objects"
-HREF="gimp-objects.html"></HEAD
+TITLE="Picman Objects"
+HREF="picman-objects.html"></HEAD
 ><BODY
 ><DIV
 CLASS="NAVHEADER"
@@ -27,7 +27,7 @@ CELLSPACING="0"
 ><TH
 COLSPAN="3"
 ALIGN="center"
->Gimp Python Documentation</TH
+>Picman Python Documentation</TH
 ></TR
 ><TR
 ><TD
@@ -48,7 +48,7 @@ WIDTH="10%"
 ALIGN="right"
 VALIGN="bottom"
 ><A
-HREF="gimp-objects.html"
+HREF="picman-objects.html"
 >Next</A
 ></TD
 ></TR
@@ -61,15 +61,15 @@ CLASS="SECT1"
 ><H1
 CLASS="SECT1"
 ><A
-NAME="GIMP-MODULE-PROCEDURES"
->Gimp Module Procedures</A
+NAME="PICMAN-MODULE-PROCEDURES"
+>Picman Module Procedures</A
 ></H1
 ><P
 >The <TT
 CLASS="FILENAME"
->gimp</TT
+>picman</TT
 > module contains a number of
-    procedures and functions, as well as the definitions of many gimp
+    procedures and functions, as well as the definitions of many picman
     types such as images, and the procedural database.  This section
     explains the base level procedures.</P
 ><DIV
@@ -84,9 +84,9 @@ NAME="CONSTRUCTORS-AND-DESTRUCTORS"
 >There are a number of functions in the
       <TT
 CLASS="FILENAME"
->gimp</TT
+>picman</TT
 > module that are used to create the objects
-      used to make up an image in Gimp.  Here is a set of descriptions
+      used to make up an image in Picman.  Here is a set of descriptions
       of these constructors:</P
 ><P
 ></P
@@ -95,7 +95,7 @@ CLASS="FILENAME"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.image</B
+>picman.image</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -135,7 +135,7 @@ CLASS="LITERAL"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.layer</B
+>picman.layer</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -220,7 +220,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.channel</B
+>picman.channel</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -282,7 +282,7 @@ CLASS="LITERAL"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.display</B
+>picman.display</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -297,7 +297,7 @@ CLASS="PARAMETER"
             <TT
 CLASS="FUNCTION"
 ><B
->gimp.displays_flush</B
+>picman.displays_flush</B
 ></TT
 > is made.</P
 ></DD
@@ -305,34 +305,34 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.parasite(name, flags, data)</B
+>picman.parasite(name, flags, data)</B
 ></TT
 ></DT
 ><DD
 ><P
 >Create a new parasite.  The parasite can then be
-	    attached to gimp, an image or a drawable.  This is only
-	    available in gimp &#62;= 1.1</P
+	    attached to picman, an image or a drawable.  This is only
+	    available in picman &#62;= 1.1</P
 ></DD
 ></DL
 ><P
 >When any of these objects get removed from memory (such as
-      when their name goes out of range), the gimp thing it represents
+      when their name goes out of range), the picman thing it represents
       does not get deleted with it (otherwise when your plugin
       finished running, it would delete all its work).  In order to
       delete the thing the Python object represents, you should use
       the <TT
 CLASS="FUNCTION"
 ><B
->gimp.delete</B
+>picman.delete</B
 ></TT
 > procedure.  It deletes the
-      gimp thing associated with the Python object given as a
+      picman thing associated with the Python object given as a
       parameter.  If the object is not an image, layer, channel,
       drawable or display <TT
 CLASS="FUNCTION"
 ><B
->gimp.delete</B
+>picman.delete</B
 ></TT
 > does
       nothing.</P
@@ -355,13 +355,13 @@ NAME="CONFIGURATION-INFORMATION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.color_cube</B
+>picman.color_cube</B
 ></TT
 >() or
 	  <TT
 CLASS="FUNCTION"
 ><B
->gimp.colour_cube</B
+>picman.colour_cube</B
 ></TT
 >()</DT
 ><DD
@@ -372,7 +372,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.gamma</B
+>picman.gamma</B
 ></TT
 >()</DT
 ><DD
@@ -383,7 +383,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.install_cmap</B
+>picman.install_cmap</B
 ></TT
 >()</DT
 ><DD
@@ -395,19 +395,19 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.use_xshm</B
+>picman.use_xshm</B
 ></TT
 >()</DT
 ><DD
 ><P
->Returns non-zero if Gimp is using X shared
+>Returns non-zero if Picman is using X shared
 	    memory.</P
 ></DD
 ><DT
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.gtkrc</B
+>picman.gtkrc</B
 ></TT
 >()</DT
 ><DD
@@ -435,7 +435,7 @@ NAME="PALETTE-OPERATIONS"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.get_background</B
+>picman.get_background</B
 ></TT
 >()</DT
 ><DD
@@ -447,7 +447,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.get_foreground</B
+>picman.get_foreground</B
 ></TT
 >()</DT
 ><DD
@@ -459,7 +459,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.set_background</B
+>picman.set_background</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -485,7 +485,7 @@ CLASS="PARAMETER"
             returned by <TT
 CLASS="FUNCTION"
 ><B
->gimp.get_background</B
+>picman.get_background</B
 ></TT
 >.</P
 ></DD
@@ -493,7 +493,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.set_foreground</B
+>picman.set_foreground</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -518,7 +518,7 @@ CLASS="PARAMETER"
             <TT
 CLASS="FUNCTION"
 ><B
->gimp.set_background</B
+>picman.set_background</B
 ></TT
 >, the arguments may
             be replaced by a 3-tuple.</P
@@ -542,7 +542,7 @@ NAME="GRADIENT-OPERATIONS"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.gradients_get_active</B
+>picman.gradients_get_active</B
 ></TT
 >()</DT
 ><DD
@@ -553,7 +553,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.gradients_set_active</B
+>picman.gradients_set_active</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -569,7 +569,7 @@ CLASS="PARAMETER"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.gradients_get_list</B
+>picman.gradients_get_list</B
 ></TT
 >()</DT
 ><DD
@@ -581,7 +581,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.gradients_sample_uniform</B
+>picman.gradients_sample_uniform</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -605,7 +605,7 @@ CLASS="PARAMETER"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.gradients_sample_custom</B
+>picman.gradients_sample_custom</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -619,7 +619,7 @@ CLASS="PARAMETER"
             <TT
 CLASS="FUNCTION"
 ><B
->gimp.gradients_sample_uniform</B
+>picman.gradients_sample_uniform</B
 ></TT
 >, except
             the samples are taken at the positions given in the list
@@ -643,7 +643,7 @@ NAME="PDB-REGISTRATION-FUNCTIONS"
 ></H2
 ><P
 >These functions either install procedures into the PDB or
-      alert gimp to their special use (eg as file handlers).</P
+      alert picman to their special use (eg as file handlers).</P
 ><P
 >For simple plugins, you will usually only need to use
       <TT
@@ -651,7 +651,7 @@ CLASS="FUNCTION"
 ><B
 >register</B
 ></TT
-> from gimpfu.</P
+> from picmanfu.</P
 ><P
 ></P
 ><DL
@@ -659,7 +659,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.install_procedure</B
+>picman.install_procedure</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -747,7 +747,7 @@ CLASS="LITERAL"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.install_temp_proc</B
+>picman.install_temp_proc</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -811,14 +811,14 @@ CLASS="PARAMETER"
 ><P
 >This procedure is used to install a procedure into
             the PDB temporarily.  That is, it must be added again
-            every time gimp is run.  This procedure will be called the
+            every time picman is run.  This procedure will be called the
             same way as all other procedures for a plugin.</P
 ></DD
 ><DT
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.uninstall_temp_proc</B
+>picman.uninstall_temp_proc</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -835,7 +835,7 @@ CLASS="PARAMETER"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.register_magic_load_handle</B
+>picman.register_magic_load_handle</B
 ></TT
 >r(<TT
 CLASS="PARAMETER"
@@ -863,7 +863,7 @@ CLASS="PARAMETER"
 >)</DT
 ><DD
 ><P
->This procedure tells Gimp that the PDB procedure
+>This procedure tells Picman that the PDB procedure
             <TT
 CLASS="PARAMETER"
 ><I
@@ -893,7 +893,7 @@ CLASS="PARAMETER"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.register_load_handler</B
+>picman.register_load_handler</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -915,7 +915,7 @@ CLASS="PARAMETER"
 >)</DT
 ><DD
 ><P
->This procedure tells Gimp that the PDB procedure
+>This procedure tells Picman that the PDB procedure
             <TT
 CLASS="PARAMETER"
 ><I
@@ -939,7 +939,7 @@ CLASS="PARAMETER"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.register_save_handler</B
+>picman.register_save_handler</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -961,7 +961,7 @@ CLASS="PARAMETER"
 >)</DT
 ><DD
 ><P
->This procedure tells Gimp that the PDB procedure
+>This procedure tells Picman that the PDB procedure
             <TT
 CLASS="PARAMETER"
 ><I
@@ -995,7 +995,7 @@ NAME="OTHER-FUNCTIONS"
 >These are the other functions in the
       <TT
 CLASS="FILENAME"
->gimp</TT
+>picman</TT
 > module.</P
 ><P
 ></P
@@ -1004,7 +1004,7 @@ CLASS="FILENAME"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.main</B
+>picman.main</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -1033,12 +1033,12 @@ CLASS="PARAMETER"
 ><DD
 ><P
 >This function is the one that controls the execution
-            of a Gimp-Python plugin.  It is better to not use this
+            of a Picman-Python plugin.  It is better to not use this
             directly but rather subclass the plugin class, defined in
             the <A
-HREF="support-modules.html#GIMPPLUGIN-MODULE"
+HREF="support-modules.html#PICMANPLUGIN-MODULE"
 >the section called <I
->The gimpplugin Module</I
+>The picmanplugin Module</I
 ></A
 >.</P
 ></DD
@@ -1046,7 +1046,7 @@ HREF="support-modules.html#GIMPPLUGIN-MODULE"
 ><TT
 CLASS="PARAMETER"
 ><I
->gimp.pdb</I
+>picman.pdb</I
 ></TT
 ></DT
 ><DD
@@ -1057,7 +1057,7 @@ CLASS="PARAMETER"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.progress_init</B
+>picman.progress_init</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -1080,7 +1080,7 @@ CLASS="PARAMETER"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.progress_update</B
+>picman.progress_update</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -1102,7 +1102,7 @@ CLASS="PARAMETER"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.query_images</B
+>picman.query_images</B
 ></TT
 >()</DT
 ><DD
@@ -1113,7 +1113,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.quit</B
+>picman.quit</B
 ></TT
 >()</DT
 ><DD
@@ -1124,7 +1124,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.displays_flush</B
+>picman.displays_flush</B
 ></TT
 >()</DT
 ><DD
@@ -1135,7 +1135,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.tile_width</B
+>picman.tile_width</B
 ></TT
 >()</DT
 ><DD
@@ -1146,7 +1146,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.tile_height</B
+>picman.tile_height</B
 ></TT
 >()</DT
 ><DD
@@ -1157,7 +1157,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.tile_cache_size</B
+>picman.tile_cache_size</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -1173,7 +1173,7 @@ CLASS="PARAMETER"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.tile_cache_ntiles</B
+>picman.tile_cache_ntiles</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -1189,7 +1189,7 @@ CLASS="PARAMETER"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.get_data</B
+>picman.get_data</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -1207,9 +1207,9 @@ CLASS="PARAMETER"
 ></TT
 >.  The data will be a string.
             This function should probably be used through the <A
-HREF="support-modules.html#GIMPSHELF-MODULE"
+HREF="support-modules.html#PICMANSHELF-MODULE"
 >the section called <I
->The gimpshelf Module</I
+>The picmanshelf Module</I
 ></A
 >.</P
 ></DD
@@ -1217,7 +1217,7 @@ HREF="support-modules.html#GIMPSHELF-MODULE"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.set_data</B
+>picman.set_data</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -1246,11 +1246,11 @@ CLASS="PARAMETER"
 >key</I
 ></TT
 >.  The data will persist for the
-            whole gimp session.  Rather than directly accessing this
+            whole picman session.  Rather than directly accessing this
             function, it is better to go through the <A
-HREF="support-modules.html#GIMPSHELF-MODULE"
+HREF="support-modules.html#PICMANSHELF-MODULE"
 >the section called <I
->The gimpshelf Module</I
+>The picmanshelf Module</I
 ></A
 >.</P
 ></DD
@@ -1258,14 +1258,14 @@ HREF="support-modules.html#GIMPSHELF-MODULE"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.extension_ack</B
+>picman.extension_ack</B
 ></TT
 >()</DT
 ><DD
 ><P
->Tells gimp that the plugin has finished its work,
+>Tells picman that the plugin has finished its work,
             while keeping the plugin connection open.  This is used by
-            an extension plugin to tell gimp it can continue, while
+            an extension plugin to tell picman it can continue, while
             leaving the plugin connection open.  This is what the
             script-fu plugin does so that only one scheme interpretter
             is needed.</P
@@ -1274,7 +1274,7 @@ CLASS="FUNCTION"
 ><TT
 CLASS="FUNCTION"
 ><B
->gimp.extension_process</B
+>picman.extension_process</B
 ></TT
 >(<TT
 CLASS="PARAMETER"
@@ -1284,9 +1284,9 @@ CLASS="PARAMETER"
 >)</DT
 ><DD
 ><P
->Makes the plugin check for messages from gimp.
+>Makes the plugin check for messages from picman.
             generally this is not needed, as messages are checked
-            during most calls in the gimp module.</P
+            during most calls in the picman module.</P
 ></DD
 ></DL
 ></DIV
@@ -1299,7 +1299,7 @@ NAME="PARASITES"
 >Parasites</A
 ></H2
 ><P
->In gimp &#62;= 1.1, it is possible to attach arbitrary data to
+>In picman &#62;= 1.1, it is possible to attach arbitrary data to
       an image through the use of parasites.  Parasites are simply
       wrappers for the data, containing its name and some flags.
       Parasites have the following parameters:</P
@@ -1361,7 +1361,7 @@ CLASS="FUNCTION"
       manipulate parasites.  They exist as functions in the
       <TT
 CLASS="FILENAME"
->gimp</TT
+>picman</TT
 > module, and methods for image and
       drawable objects.  They are:</P
 ><P
@@ -1467,7 +1467,7 @@ WIDTH="34%"
 ALIGN="center"
 VALIGN="top"
 ><A
-HREF="pygimp.html"
+HREF="pypicman.html"
 >Home</A
 ></TD
 ><TD
@@ -1475,7 +1475,7 @@ WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
 ><A
-HREF="gimp-objects.html"
+HREF="picman-objects.html"
 >Next</A
 ></TD
 ></TR
@@ -1494,7 +1494,7 @@ VALIGN="top"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Gimp Objects</TD
+>Picman Objects</TD
 ></TR
 ></TABLE
 ></DIV

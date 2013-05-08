@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpselectbutton.c
- * Copyright (C) 2003  Sven Neumann  <sven@gimp.org>
+ * picmanselectbutton.c
+ * Copyright (C) 2003  Sven Neumann  <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,15 +23,15 @@
 
 #include <gtk/gtk.h>
 
-#include "gimp.h"
+#include "picman.h"
 
-#include "gimpuitypes.h"
-#include "gimpselectbutton.h"
+#include "picmanuitypes.h"
+#include "picmanselectbutton.h"
 
 
 /**
- * SECTION: gimpselectbutton
- * @title: GimpSelectButton
+ * SECTION: picmanselectbutton
+ * @title: PicmanSelectButton
  * @short_description: The base class of the data select buttons.
  *
  * The base class of the brush, pattern, gradient, palette and font
@@ -41,21 +41,21 @@
 
 /*  local function prototypes  */
 
-static void   gimp_select_button_dispose (GObject *object);
+static void   picman_select_button_dispose (GObject *object);
 
 
-G_DEFINE_TYPE (GimpSelectButton, gimp_select_button, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanSelectButton, picman_select_button, GTK_TYPE_BOX)
 
 static void
-gimp_select_button_class_init (GimpSelectButtonClass *klass)
+picman_select_button_class_init (PicmanSelectButtonClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->dispose = gimp_select_button_dispose;
+  object_class->dispose = picman_select_button_dispose;
 }
 
 static void
-gimp_select_button_init (GimpSelectButton *select_button)
+picman_select_button_init (PicmanSelectButton *select_button)
 {
   gtk_orientable_set_orientation (GTK_ORIENTABLE (select_button),
                                   GTK_ORIENTATION_HORIZONTAL);
@@ -64,29 +64,29 @@ gimp_select_button_init (GimpSelectButton *select_button)
 }
 
 static void
-gimp_select_button_dispose (GObject *object)
+picman_select_button_dispose (GObject *object)
 {
-  gimp_select_button_close_popup (GIMP_SELECT_BUTTON (object));
+  picman_select_button_close_popup (PICMAN_SELECT_BUTTON (object));
 
-  G_OBJECT_CLASS (gimp_select_button_parent_class)->dispose (object);
+  G_OBJECT_CLASS (picman_select_button_parent_class)->dispose (object);
 }
 
 /**
- * gimp_select_button_close_popup:
- * @button: A #GimpSelectButton
+ * picman_select_button_close_popup:
+ * @button: A #PicmanSelectButton
  *
  * Closes the popup window associated with @button.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 void
-gimp_select_button_close_popup (GimpSelectButton *button)
+picman_select_button_close_popup (PicmanSelectButton *button)
 {
-  g_return_if_fail (GIMP_IS_SELECT_BUTTON (button));
+  g_return_if_fail (PICMAN_IS_SELECT_BUTTON (button));
 
   if (button->temp_callback)
     {
-      GimpSelectButtonClass *klass = GIMP_SELECT_BUTTON_GET_CLASS (button);
+      PicmanSelectButtonClass *klass = PICMAN_SELECT_BUTTON_GET_CLASS (button);
 
       klass->select_destroy (button->temp_callback);
 

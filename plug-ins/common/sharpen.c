@@ -1,5 +1,5 @@
 /*
- * Sharpen filters for GIMP - The GNU Image Manipulation Program
+ * Sharpen filters for PICMAN - The GNU Image Manipulation Program
  *
  * Copyright 1997-1998 Michael Sweet (mike@easysw.com)
  *
@@ -22,10 +22,10 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 /*
  * Constants...
@@ -33,7 +33,7 @@
 
 #define PLUG_IN_PROC    "plug-in-sharpen"
 #define PLUG_IN_BINARY  "sharpen"
-#define PLUG_IN_ROLE    "gimp-sharpen"
+#define PLUG_IN_ROLE    "picman-sharpen"
 #define PLUG_IN_VERSION "1.4.2 - 3 June 1998"
 #define SCALE_WIDTH     100
 
@@ -44,16 +44,16 @@
 static void     query (void);
 static void     run   (const gchar      *name,
                        gint              nparams,
-                       const GimpParam  *param,
+                       const PicmanParam  *param,
                        gint             *nreturn_vals,
-                       GimpParam       **returm_vals);
+                       PicmanParam       **returm_vals);
 
 static void     compute_luts   (void);
-static void     sharpen        (GimpDrawable *drawable);
+static void     sharpen        (PicmanDrawable *drawable);
 
-static gboolean sharpen_dialog (GimpDrawable *drawable);
+static gboolean sharpen_dialog (PicmanDrawable *drawable);
 
-static void     preview_update (GimpPreview  *preview);
+static void     preview_update (PicmanPreview  *preview);
 
 typedef gint32 intneg;
 typedef gint32 intpos;
@@ -72,7 +72,7 @@ static void     rgba_filter  (int width, guchar *src, guchar *dst, intneg *neg0,
  * Globals...
  */
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -99,15 +99,15 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef   args[] =
+  static const PicmanParamDef   args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"      },
-    { GIMP_PDB_IMAGE,    "image",    "Input image"                       },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"                    },
-    { GIMP_PDB_INT32,    "percent",  "Percent sharpening (default = 10)" }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"      },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image"                       },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"                    },
+    { PICMAN_PDB_INT32,    "percent",  "Percent sharpening (default = 10)" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Make image sharper "
                              "(less powerful than Unsharp Mask)"),
                           "This plug-in selectively performs a convolution "
@@ -117,7 +117,7 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("_Sharpen..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -125,20 +125,20 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1]; /* Return values */
-  GimpRunMode        run_mode;  /* Current run mode */
-  GimpPDBStatusType  status;    /* Return status */
-  GimpDrawable      *drawable;  /* Current image */
+  static PicmanParam   values[1]; /* Return values */
+  PicmanRunMode        run_mode;  /* Current run mode */
+  PicmanPDBStatusType  status;    /* Return status */
+  PicmanDrawable      *drawable;  /* Current image */
 
   /*
    * Initialize parameter data...
    */
 
-  status   = GIMP_PDB_SUCCESS;
+  status   = PICMAN_PDB_SUCCESS;
   run_mode = param[0].data.d_int32;
 
   INIT_I18N ();
@@ -146,15 +146,15 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*
    * Get drawable information...
    */
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
-  gimp_tile_cache_ntiles (2 * drawable->ntile_cols);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
+  picman_tile_cache_ntiles (2 * drawable->ntile_cols);
 
 
   /*
@@ -163,11 +163,11 @@ run (const gchar      *name,
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*
        * Possibly retrieve data...
        */
-      gimp_get_data (PLUG_IN_PROC, &sharpen_params);
+      picman_get_data (PLUG_IN_PROC, &sharpen_params);
 
       /*
        * Get information from the dialog...
@@ -176,25 +176,25 @@ run (const gchar      *name,
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*
        * Make sure all the arguments are present...
        */
       if (nparams != 4)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
       else
         sharpen_params.sharpen_percent = param[3].data.d_int32;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*
        * Possibly retrieve data...
        */
-      gimp_get_data (PLUG_IN_PROC, &sharpen_params);
+      picman_get_data (PLUG_IN_PROC, &sharpen_params);
       break;
 
     default:
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
       break;
     }
 
@@ -202,10 +202,10 @@ run (const gchar      *name,
    * Sharpen the image...
    */
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      if ((gimp_drawable_is_rgb (drawable->drawable_id) ||
-           gimp_drawable_is_gray (drawable->drawable_id)))
+      if ((picman_drawable_is_rgb (drawable->drawable_id) ||
+           picman_drawable_is_gray (drawable->drawable_id)))
         {
           /*
            * Run!
@@ -215,18 +215,18 @@ run (const gchar      *name,
           /*
            * If run mode is interactive, flush displays...
            */
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /*
            * Store data...
            */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC,
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC,
                            &sharpen_params, sizeof (SharpenParams));
         }
       else
-        status = GIMP_PDB_EXECUTION_ERROR;
+        status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   /*
@@ -237,7 +237,7 @@ run (const gchar      *name,
   /*
    * Detach from the drawable...
    */
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 
@@ -263,10 +263,10 @@ compute_luts (void)
  */
 
 static void
-sharpen (GimpDrawable *drawable)
+sharpen (PicmanDrawable *drawable)
 {
-  GimpPixelRgn  src_rgn;        /* Source image region */
-  GimpPixelRgn  dst_rgn;        /* Destination image region */
+  PicmanPixelRgn  src_rgn;        /* Source image region */
+  PicmanPixelRgn  dst_rgn;        /* Destination image region */
   guchar       *src_rows[4];    /* Source pixel rows */
   guchar       *src_ptr;        /* Current source pixel */
   guchar       *dst_row;        /* Destination pixel row */
@@ -287,26 +287,26 @@ sharpen (GimpDrawable *drawable)
 
   filter = NULL;
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &x1, &y1, &sel_width, &sel_height))
     return;
 
   y2 = y1 + sel_height;
 
-  img_bpp = gimp_drawable_bpp (drawable->drawable_id);
+  img_bpp = picman_drawable_bpp (drawable->drawable_id);
 
   /*
    * Let the user know what we're doing...
    */
-  gimp_progress_init (_("Sharpening"));
+  picman_progress_init (_("Sharpening"));
 
   /*
    * Setup for filter...
    */
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x1, y1, sel_width, sel_height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dst_rgn, drawable,
+  picman_pixel_rgn_init (&dst_rgn, drawable,
                        x1, y1, sel_width, sel_height, TRUE, TRUE);
 
   compute_luts ();
@@ -325,7 +325,7 @@ sharpen (GimpDrawable *drawable)
    * Pre-load the first row for the filter...
    */
 
-  gimp_pixel_rgn_get_row (&src_rgn, src_rows[0], x1, y1, sel_width);
+  picman_pixel_rgn_get_row (&src_rgn, src_rows[0], x1, y1, sel_width);
 
   for (i = width, src_ptr = src_rows[0], neg_ptr = neg_rows[0];
        i > 0;
@@ -378,7 +378,7 @@ sharpen (GimpDrawable *drawable)
            * Grab the next row...
            */
 
-          gimp_pixel_rgn_get_row (&src_rgn, src_rows[row],
+          picman_pixel_rgn_get_row (&src_rgn, src_rows[row],
                                   x1, y + 1, sel_width);
           for (i = width, src_ptr = src_rows[row], neg_ptr = neg_rows[row];
                i > 0;
@@ -412,20 +412,20 @@ sharpen (GimpDrawable *drawable)
            * Set the row...
            */
 
-          gimp_pixel_rgn_set_row (&dst_rgn, dst_row, x1, y, sel_width);
+          picman_pixel_rgn_set_row (&dst_rgn, dst_row, x1, y, sel_width);
         }
       else if (count == 2)
         {
           if (y == y1)      /* first row */
-            gimp_pixel_rgn_set_row (&dst_rgn, src_rows[0],
+            picman_pixel_rgn_set_row (&dst_rgn, src_rows[0],
                                     x1, y, sel_width);
           else                  /* last row  */
-            gimp_pixel_rgn_set_row (&dst_rgn, src_rows[(sel_height - 1) & 3],
+            picman_pixel_rgn_set_row (&dst_rgn, src_rows[(sel_height - 1) & 3],
                                     x1, y, sel_width);
         }
 
       if ((y & 15) == 0)
-        gimp_progress_update ((gdouble) (y - y1) / (gdouble) sel_height);
+        picman_progress_update ((gdouble) (y - y1) / (gdouble) sel_height);
     }
 
   /*
@@ -444,10 +444,10 @@ sharpen (GimpDrawable *drawable)
    * Update the screen...
    */
 
-  gimp_progress_update (1.0);
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id,
+  picman_progress_update (1.0);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id,
                         x1, y1, sel_width, sel_height);
 }
 
@@ -457,7 +457,7 @@ sharpen (GimpDrawable *drawable)
  */
 
 static gboolean
-sharpen_dialog (GimpDrawable *drawable)
+sharpen_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -466,11 +466,11 @@ sharpen_dialog (GimpDrawable *drawable)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Sharpen"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Sharpen"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -482,7 +482,7 @@ sharpen_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -490,7 +490,7 @@ sharpen_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -503,22 +503,22 @@ sharpen_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Sharpness:"), SCALE_WIDTH, 0,
                               sharpen_params.sharpen_percent,
                               1, 99, 1, 10, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &sharpen_params.sharpen_percent);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -526,10 +526,10 @@ sharpen_dialog (GimpDrawable *drawable)
 }
 
 static void
-preview_update (GimpPreview *preview)
+preview_update (PicmanPreview *preview)
 {
-  GimpDrawable *drawable;
-  GimpPixelRgn  src_rgn;        /* Source image region */
+  PicmanDrawable *drawable;
+  PicmanPixelRgn  src_rgn;        /* Source image region */
   guchar       *src_ptr;        /* Current source pixel */
   guchar       *dst_ptr;        /* Current destination pixel */
   intneg       *neg_ptr;        /* Current negative pixel */
@@ -548,20 +548,20 @@ preview_update (GimpPreview *preview)
 
   compute_luts();
 
-  gimp_preview_get_position (preview, &x1, &y1);
-  gimp_preview_get_size (preview, &preview_width, &preview_height);
+  picman_preview_get_position (preview, &x1, &y1);
+  picman_preview_get_size (preview, &preview_width, &preview_height);
 
   drawable =
-    gimp_drawable_preview_get_drawable (GIMP_DRAWABLE_PREVIEW (preview));
+    picman_drawable_preview_get_drawable (PICMAN_DRAWABLE_PREVIEW (preview));
 
-  img_bpp = gimp_drawable_bpp (drawable->drawable_id);
+  img_bpp = picman_drawable_bpp (drawable->drawable_id);
 
 
   preview_src = g_new (guchar, preview_width * preview_height * img_bpp);
   preview_neg = g_new (intneg, preview_width * preview_height * img_bpp);
   preview_dst = g_new (guchar, preview_width * preview_height * img_bpp);
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x1, y1, preview_width, preview_height,
                        FALSE, FALSE);
 
@@ -571,7 +571,7 @@ preview_update (GimpPreview *preview)
    * Load the preview area...
    */
 
-  gimp_pixel_rgn_get_rect (&src_rgn, preview_src, x1, y1,
+  picman_pixel_rgn_get_rect (&src_rgn, preview_src, x1, y1,
                            preview_width, preview_height);
 
   for (i = width * preview_height, src_ptr = preview_src, neg_ptr = preview_neg;
@@ -619,7 +619,7 @@ preview_update (GimpPreview *preview)
     (*filter)(preview_width, src_ptr, dst_ptr, neg_ptr - width,
               neg_ptr, neg_ptr + width);
 
-  gimp_preview_draw_buffer (preview, preview_dst, preview_width * img_bpp);
+  picman_preview_draw_buffer (preview, preview_dst, preview_width * img_bpp);
 
   g_free (preview_src);
   g_free (preview_neg);

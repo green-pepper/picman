@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#   Gimp-Python - allows the writing of Gimp plugins in Python.
+#   Picman-Python - allows the writing of Picman plugins in Python.
 #   Copyright (C) 1997  James Henstridge <james@daa.com.au>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,27 +16,27 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gimpfu import *
+from picmanfu import *
 import time
 
-gettext.install("gimp20-python", gimp.locale_directory, unicode=True)
+gettext.install("picman20-python", picman.locale_directory, unicode=True)
 
 def foggify(img, layer, name, colour, turbulence, opacity):
 
-    gimp.context_push()
+    picman.context_push()
     img.undo_group_start()
 
     if img.base_type is RGB:
         type = RGBA_IMAGE
     else:
         type = GRAYA_IMAGE
-    fog = gimp.Layer(img, name,
+    fog = picman.Layer(img, name,
                      layer.width, layer.height, type, opacity, NORMAL_MODE)
     fog.fill(TRANSPARENT_FILL)
     img.insert_layer(fog)
 
-    gimp.set_background(colour)
-    pdb.gimp_edit_fill(fog, BACKGROUND_FILL)
+    picman.set_background(colour)
+    pdb.picman_edit_fill(fog, BACKGROUND_FILL)
 
     # create a layer mask for the new layer
     mask = fog.create_mask(0)
@@ -49,7 +49,7 @@ def foggify(img, layer, name, colour, turbulence, opacity):
     fog.remove_mask(MASK_APPLY)
 
     img.undo_group_end()
-    gimp.context_pop()
+    picman.context_pop()
 
 register(
     "python-fu-foggify",
@@ -71,7 +71,7 @@ register(
     [],
     foggify,
     menu="<Image>/Filters/Render/Clouds",
-    domain=("gimp20-python", gimp.locale_directory)
+    domain=("picman20-python", picman.locale_directory)
     )
 
 main()

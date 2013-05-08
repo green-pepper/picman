@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationbehindmode.c
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanoperationbehindmode.c
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *               2012 Ville Sokk <ville.sokk@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,10 +26,10 @@
 
 #include "operations-types.h"
 
-#include "gimpoperationbehindmode.h"
+#include "picmanoperationbehindmode.h"
 
 
-static gboolean gimp_operation_behind_mode_process (GeglOperation       *operation,
+static gboolean picman_operation_behind_mode_process (GeglOperation       *operation,
                                                     void                *in_buf,
                                                     void                *aux_buf,
                                                     void                *aux2_buf,
@@ -39,12 +39,12 @@ static gboolean gimp_operation_behind_mode_process (GeglOperation       *operati
                                                     gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationBehindMode, gimp_operation_behind_mode,
-               GIMP_TYPE_OPERATION_POINT_LAYER_MODE)
+G_DEFINE_TYPE (PicmanOperationBehindMode, picman_operation_behind_mode,
+               PICMAN_TYPE_OPERATION_POINT_LAYER_MODE)
 
 
 static void
-gimp_operation_behind_mode_class_init (GimpOperationBehindModeClass *klass)
+picman_operation_behind_mode_class_init (PicmanOperationBehindModeClass *klass)
 {
   GeglOperationClass               *operation_class;
   GeglOperationPointComposer3Class *point_class;
@@ -53,20 +53,20 @@ gimp_operation_behind_mode_class_init (GimpOperationBehindModeClass *klass)
   point_class     = GEGL_OPERATION_POINT_COMPOSER3_CLASS (klass);
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:behind-mode",
-                                 "description", "GIMP behind mode operation",
+                                 "name",        "picman:behind-mode",
+                                 "description", "PICMAN behind mode operation",
                                  NULL);
 
-  point_class->process = gimp_operation_behind_mode_process;
+  point_class->process = picman_operation_behind_mode_process;
 }
 
 static void
-gimp_operation_behind_mode_init (GimpOperationBehindMode *self)
+picman_operation_behind_mode_init (PicmanOperationBehindMode *self)
 {
 }
 
 static gboolean
-gimp_operation_behind_mode_process (GeglOperation       *operation,
+picman_operation_behind_mode_process (GeglOperation       *operation,
                                     void                *in_buf,
                                     void                *aux_buf,
                                     void                *aux2_buf,
@@ -75,7 +75,7 @@ gimp_operation_behind_mode_process (GeglOperation       *operation,
                                     const GeglRectangle *roi,
                                     gint                 level)
 {
-  GimpOperationPointLayerMode *point    = GIMP_OPERATION_POINT_LAYER_MODE (operation);
+  PicmanOperationPointLayerMode *point    = PICMAN_OPERATION_POINT_LAYER_MODE (operation);
   gdouble                      opacity  = point->opacity;
   gfloat                      *in       = in_buf;
   gfloat                      *layer    = aux_buf;

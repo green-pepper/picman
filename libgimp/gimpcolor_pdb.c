@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpcolor_pdb.c
+ * picmancolor_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpcolor
- * @title: gimpcolor
+ * SECTION: picmancolor
+ * @title: picmancolor
  * @short_description: Functions for manipulating color.
  *
  * Functions for manipulating color, including curves and histograms.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_brightness_contrast:
+ * picman_brightness_contrast:
  * @drawable_ID: The drawable.
  * @brightness: Brightness adjustment.
  * @contrast: Contrast adjustment.
@@ -49,30 +49,30 @@
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_brightness_contrast (gint32 drawable_ID,
+picman_brightness_contrast (gint32 drawable_ID,
                           gint   brightness,
                           gint   contrast)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-brightness-contrast",
+  return_vals = picman_run_procedure ("picman-brightness-contrast",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, brightness,
-                                    GIMP_PDB_INT32, contrast,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, brightness,
+                                    PICMAN_PDB_INT32, contrast,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_levels:
+ * picman_levels:
  * @drawable_ID: The drawable.
  * @channel: The channel to modify.
  * @low_input: Intensity of lowest input.
@@ -99,65 +99,65 @@ gimp_brightness_contrast (gint32 drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_levels (gint32               drawable_ID,
-             GimpHistogramChannel channel,
+picman_levels (gint32               drawable_ID,
+             PicmanHistogramChannel channel,
              gint                 low_input,
              gint                 high_input,
              gdouble              gamma,
              gint                 low_output,
              gint                 high_output)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-levels",
+  return_vals = picman_run_procedure ("picman-levels",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, channel,
-                                    GIMP_PDB_INT32, low_input,
-                                    GIMP_PDB_INT32, high_input,
-                                    GIMP_PDB_FLOAT, gamma,
-                                    GIMP_PDB_INT32, low_output,
-                                    GIMP_PDB_INT32, high_output,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, channel,
+                                    PICMAN_PDB_INT32, low_input,
+                                    PICMAN_PDB_INT32, high_input,
+                                    PICMAN_PDB_FLOAT, gamma,
+                                    PICMAN_PDB_INT32, low_output,
+                                    PICMAN_PDB_INT32, high_output,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_levels_auto:
+ * picman_levels_auto:
  * @drawable_ID: The drawable.
  *
- * Deprecated: Use gimp_levels_stretch() instead.
+ * Deprecated: Use picman_levels_stretch() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_levels_auto (gint32 drawable_ID)
+picman_levels_auto (gint32 drawable_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-levels-auto",
+  return_vals = picman_run_procedure ("picman-levels-auto",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_levels_stretch:
+ * picman_levels_stretch:
  * @drawable_ID: The drawable.
  *
  * Automatically modifies intensity levels in the specified drawable.
@@ -169,26 +169,26 @@ gimp_levels_auto (gint32 drawable_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_levels_stretch (gint32 drawable_ID)
+picman_levels_stretch (gint32 drawable_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-levels-stretch",
+  return_vals = picman_run_procedure ("picman-levels-stretch",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_posterize:
+ * picman_posterize:
  * @drawable_ID: The drawable.
  * @levels: Levels of posterization.
  *
@@ -200,28 +200,28 @@ gimp_levels_stretch (gint32 drawable_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_posterize (gint32 drawable_ID,
+picman_posterize (gint32 drawable_ID,
                 gint   levels)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-posterize",
+  return_vals = picman_run_procedure ("picman-posterize",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, levels,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, levels,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_desaturate:
+ * picman_desaturate:
  * @drawable_ID: The drawable.
  *
  * Desaturate the contents of the specified drawable.
@@ -232,26 +232,26 @@ gimp_posterize (gint32 drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_desaturate (gint32 drawable_ID)
+picman_desaturate (gint32 drawable_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-desaturate",
+  return_vals = picman_run_procedure ("picman-desaturate",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_desaturate_full:
+ * picman_desaturate_full:
  * @drawable_ID: The drawable.
  * @desaturate_mode: The formula to use to desaturate.
  *
@@ -264,31 +264,31 @@ gimp_desaturate (gint32 drawable_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_desaturate_full (gint32             drawable_ID,
-                      GimpDesaturateMode desaturate_mode)
+picman_desaturate_full (gint32             drawable_ID,
+                      PicmanDesaturateMode desaturate_mode)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-desaturate-full",
+  return_vals = picman_run_procedure ("picman-desaturate-full",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, desaturate_mode,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, desaturate_mode,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_equalize:
+ * picman_equalize:
  * @drawable_ID: The drawable.
  * @mask_only: Equalization option.
  *
@@ -305,28 +305,28 @@ gimp_desaturate_full (gint32             drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_equalize (gint32   drawable_ID,
+picman_equalize (gint32   drawable_ID,
                gboolean mask_only)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-equalize",
+  return_vals = picman_run_procedure ("picman-equalize",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, mask_only,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, mask_only,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_invert:
+ * picman_invert:
  * @drawable_ID: The drawable.
  *
  * Invert the contents of the specified drawable.
@@ -338,26 +338,26 @@ gimp_equalize (gint32   drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_invert (gint32 drawable_ID)
+picman_invert (gint32 drawable_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-invert",
+  return_vals = picman_run_procedure ("picman-invert",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_curves_spline:
+ * picman_curves_spline:
  * @drawable_ID: The drawable.
  * @channel: The channel to modify.
  * @num_points: The number of values in the control point array.
@@ -370,38 +370,38 @@ gimp_invert (gint32 drawable_ID)
  * channel can be either an intensity component, or the value. The
  * 'control_pts' parameter is an array of integers which define a set
  * of control points which describe a Catmull Rom spline which yields
- * the final intensity curve. Use the gimp_curves_explicit() function
+ * the final intensity curve. Use the picman_curves_explicit() function
  * to explicitly modify intensity levels.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_curves_spline (gint32                drawable_ID,
-                    GimpHistogramChannel  channel,
+picman_curves_spline (gint32                drawable_ID,
+                    PicmanHistogramChannel  channel,
                     gint                  num_points,
                     const guint8         *control_pts)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-curves-spline",
+  return_vals = picman_run_procedure ("picman-curves-spline",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, channel,
-                                    GIMP_PDB_INT32, num_points,
-                                    GIMP_PDB_INT8ARRAY, control_pts,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, channel,
+                                    PICMAN_PDB_INT32, num_points,
+                                    PICMAN_PDB_INT8ARRAY, control_pts,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_curves_explicit:
+ * picman_curves_explicit:
  * @drawable_ID: The drawable.
  * @channel: The channel to modify.
  * @num_bytes: The number of bytes in the new curve (always 256).
@@ -414,38 +414,38 @@ gimp_curves_spline (gint32                drawable_ID,
  * channel can be either an intensity component, or the value. The
  * 'curve' parameter is an array of bytes which explicitly defines how
  * each pixel value in the drawable will be modified. Use the
- * gimp_curves_spline() function to modify intensity levels with
+ * picman_curves_spline() function to modify intensity levels with
  * Catmull Rom splines.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_curves_explicit (gint32                drawable_ID,
-                      GimpHistogramChannel  channel,
+picman_curves_explicit (gint32                drawable_ID,
+                      PicmanHistogramChannel  channel,
                       gint                  num_bytes,
                       const guint8         *curve)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-curves-explicit",
+  return_vals = picman_run_procedure ("picman-curves-explicit",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, channel,
-                                    GIMP_PDB_INT32, num_bytes,
-                                    GIMP_PDB_INT8ARRAY, curve,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, channel,
+                                    PICMAN_PDB_INT32, num_bytes,
+                                    PICMAN_PDB_INT8ARRAY, curve,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_color_balance:
+ * picman_color_balance:
  * @drawable_ID: The drawable.
  * @transfer_mode: Transfer mode.
  * @preserve_lum: Preserve luminosity values at each pixel.
@@ -467,36 +467,36 @@ gimp_curves_explicit (gint32                drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_color_balance (gint32           drawable_ID,
-                    GimpTransferMode transfer_mode,
+picman_color_balance (gint32           drawable_ID,
+                    PicmanTransferMode transfer_mode,
                     gboolean         preserve_lum,
                     gdouble          cyan_red,
                     gdouble          magenta_green,
                     gdouble          yellow_blue)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-color-balance",
+  return_vals = picman_run_procedure ("picman-color-balance",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, transfer_mode,
-                                    GIMP_PDB_INT32, preserve_lum,
-                                    GIMP_PDB_FLOAT, cyan_red,
-                                    GIMP_PDB_FLOAT, magenta_green,
-                                    GIMP_PDB_FLOAT, yellow_blue,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, transfer_mode,
+                                    PICMAN_PDB_INT32, preserve_lum,
+                                    PICMAN_PDB_FLOAT, cyan_red,
+                                    PICMAN_PDB_FLOAT, magenta_green,
+                                    PICMAN_PDB_FLOAT, yellow_blue,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_colorize:
+ * picman_colorize:
  * @drawable_ID: The drawable.
  * @hue: Hue in degrees.
  * @saturation: Saturation in percent.
@@ -511,35 +511,35 @@ gimp_color_balance (gint32           drawable_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_colorize (gint32  drawable_ID,
+picman_colorize (gint32  drawable_ID,
                gdouble hue,
                gdouble saturation,
                gdouble lightness)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-colorize",
+  return_vals = picman_run_procedure ("picman-colorize",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, hue,
-                                    GIMP_PDB_FLOAT, saturation,
-                                    GIMP_PDB_FLOAT, lightness,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_FLOAT, hue,
+                                    PICMAN_PDB_FLOAT, saturation,
+                                    PICMAN_PDB_FLOAT, lightness,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_histogram:
+ * picman_histogram:
  * @drawable_ID: The drawable.
  * @channel: The channel to modify.
  * @start_range: Start of the intensity measurement range.
@@ -559,7 +559,7 @@ gimp_colorize (gint32  drawable_ID,
  * specified. This can be either value, red, green, or blue, depending
  * on whether the drawable is of type color or grayscale. The drawable
  * may not be indexed. Second, a range of intensities are specified.
- * The gimp_histogram() function returns statistics based on the pixels
+ * The picman_histogram() function returns statistics based on the pixels
  * in the drawable that fall under this range of values. Mean, standard
  * deviation, median, number of pixels, and percentile are all
  * returned. Additionally, the total count of pixels in the image is
@@ -571,8 +571,8 @@ gimp_colorize (gint32  drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_histogram (gint32                drawable_ID,
-                GimpHistogramChannel  channel,
+picman_histogram (gint32                drawable_ID,
+                PicmanHistogramChannel  channel,
                 gint                  start_range,
                 gint                  end_range,
                 gdouble              *mean,
@@ -582,17 +582,17 @@ gimp_histogram (gint32                drawable_ID,
                 gdouble              *count,
                 gdouble              *percentile)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-histogram",
+  return_vals = picman_run_procedure ("picman-histogram",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, channel,
-                                    GIMP_PDB_INT32, start_range,
-                                    GIMP_PDB_INT32, end_range,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, channel,
+                                    PICMAN_PDB_INT32, start_range,
+                                    PICMAN_PDB_INT32, end_range,
+                                    PICMAN_PDB_END);
 
   *mean = 0.0;
   *std_dev = 0.0;
@@ -601,7 +601,7 @@ gimp_histogram (gint32                drawable_ID,
   *count = 0.0;
   *percentile = 0.0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -613,13 +613,13 @@ gimp_histogram (gint32                drawable_ID,
       *percentile = return_vals[6].data.d_float;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_hue_saturation:
+ * picman_hue_saturation:
  * @drawable_ID: The drawable.
  * @hue_range: Range of affected hues.
  * @hue_offset: Hue offset in degrees.
@@ -635,34 +635,34 @@ gimp_histogram (gint32                drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_hue_saturation (gint32       drawable_ID,
-                     GimpHueRange hue_range,
+picman_hue_saturation (gint32       drawable_ID,
+                     PicmanHueRange hue_range,
                      gdouble      hue_offset,
                      gdouble      lightness,
                      gdouble      saturation)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-hue-saturation",
+  return_vals = picman_run_procedure ("picman-hue-saturation",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, hue_range,
-                                    GIMP_PDB_FLOAT, hue_offset,
-                                    GIMP_PDB_FLOAT, lightness,
-                                    GIMP_PDB_FLOAT, saturation,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, hue_range,
+                                    PICMAN_PDB_FLOAT, hue_offset,
+                                    PICMAN_PDB_FLOAT, lightness,
+                                    PICMAN_PDB_FLOAT, saturation,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_threshold:
+ * picman_threshold:
  * @drawable_ID: The drawable.
  * @low_threshold: The low threshold value.
  * @high_threshold: The high threshold value.
@@ -677,24 +677,24 @@ gimp_hue_saturation (gint32       drawable_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_threshold (gint32 drawable_ID,
+picman_threshold (gint32 drawable_ID,
                 gint   low_threshold,
                 gint   high_threshold)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-threshold",
+  return_vals = picman_run_procedure ("picman-threshold",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, low_threshold,
-                                    GIMP_PDB_INT32, high_threshold,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_INT32, low_threshold,
+                                    PICMAN_PDB_INT32, high_threshold,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

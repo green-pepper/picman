@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,8 +20,8 @@
 
 #if 0
    This file is parsed by two scripts, enumgen.pl in tools/pdbgen,
-   and gimp-mkenums. All enums that are not marked with
-   /*< pdb-skip >*/ are exported to libgimp and the PDB. Enums that are
+   and picman-mkenums. All enums that are not marked with
+   /*< pdb-skip >*/ are exported to libpicman and the PDB. Enums that are
    not marked with /*< skip >*/ are registered with the GType system.
    If you want the enum to be skipped by both scripts, you have to use
    /*< pdb-skip, skip >*/.
@@ -34,64 +34,64 @@
  * these enums that are registered with the type system
  */
 
-#define GIMP_TYPE_BRUSH_APPLICATION_MODE (gimp_brush_application_mode_get_type ())
+#define PICMAN_TYPE_BRUSH_APPLICATION_MODE (picman_brush_application_mode_get_type ())
 
-GType gimp_brush_application_mode_get_type (void) G_GNUC_CONST;
+GType picman_brush_application_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_BRUSH_HARD,
-  GIMP_BRUSH_SOFT,
-  GIMP_BRUSH_PRESSURE  /*< pdb-skip, skip >*/
-} GimpBrushApplicationMode;
+  PICMAN_BRUSH_HARD,
+  PICMAN_BRUSH_SOFT,
+  PICMAN_BRUSH_PRESSURE  /*< pdb-skip, skip >*/
+} PicmanBrushApplicationMode;
 
 
-#define GIMP_TYPE_PERSPECTIVE_CLONE_MODE (gimp_perspective_clone_mode_get_type ())
+#define PICMAN_TYPE_PERSPECTIVE_CLONE_MODE (picman_perspective_clone_mode_get_type ())
 
-GType gimp_perspective_clone_mode_get_type (void) G_GNUC_CONST;
+GType picman_perspective_clone_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum  /*< pdb-skip >*/
 {
-  GIMP_PERSPECTIVE_CLONE_MODE_ADJUST,  /*< desc="Modify Perspective" >*/
-  GIMP_PERSPECTIVE_CLONE_MODE_PAINT    /*< desc="Perspective Clone"  >*/
-} GimpPerspectiveCloneMode;
+  PICMAN_PERSPECTIVE_CLONE_MODE_ADJUST,  /*< desc="Modify Perspective" >*/
+  PICMAN_PERSPECTIVE_CLONE_MODE_PAINT    /*< desc="Perspective Clone"  >*/
+} PicmanPerspectiveCloneMode;
 
 
-#define GIMP_TYPE_SOURCE_ALIGN_MODE (gimp_source_align_mode_get_type ())
+#define PICMAN_TYPE_SOURCE_ALIGN_MODE (picman_source_align_mode_get_type ())
 
-GType gimp_source_align_mode_get_type (void) G_GNUC_CONST;
+GType picman_source_align_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum /*< pdb-skip >*/
 {
-  GIMP_SOURCE_ALIGN_NO,          /*< desc="None"        >*/
-  GIMP_SOURCE_ALIGN_YES,         /*< desc="Aligned"     >*/
-  GIMP_SOURCE_ALIGN_REGISTERED,  /*< desc="Registered"  >*/
-  GIMP_SOURCE_ALIGN_FIXED        /*< desc="Fixed"       >*/
-} GimpSourceAlignMode;
+  PICMAN_SOURCE_ALIGN_NO,          /*< desc="None"        >*/
+  PICMAN_SOURCE_ALIGN_YES,         /*< desc="Aligned"     >*/
+  PICMAN_SOURCE_ALIGN_REGISTERED,  /*< desc="Registered"  >*/
+  PICMAN_SOURCE_ALIGN_FIXED        /*< desc="Fixed"       >*/
+} PicmanSourceAlignMode;
 
 
-#define GIMP_TYPE_CONVOLVE_TYPE (gimp_convolve_type_get_type ())
+#define PICMAN_TYPE_CONVOLVE_TYPE (picman_convolve_type_get_type ())
 
-GType gimp_convolve_type_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_BLUR_CONVOLVE,     /*< desc="Blur"    >*/
-  GIMP_SHARPEN_CONVOLVE,  /*< desc="Sharpen" >*/
-  GIMP_CUSTOM_CONVOLVE    /*< pdb-skip, skip >*/
-} GimpConvolveType;
-
-
-#define GIMP_TYPE_INK_BLOB_TYPE (gimp_ink_blob_type_get_type ())
-
-GType gimp_ink_blob_type_get_type (void) G_GNUC_CONST;
+GType picman_convolve_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_INK_BLOB_TYPE_CIRCLE,  /*< desc="Circle"  >*/
-  GIMP_INK_BLOB_TYPE_SQUARE,  /*< desc="Square"  >*/
-  GIMP_INK_BLOB_TYPE_DIAMOND  /*< desc="Diamond" >*/
-} GimpInkBlobType;
+  PICMAN_BLUR_CONVOLVE,     /*< desc="Blur"    >*/
+  PICMAN_SHARPEN_CONVOLVE,  /*< desc="Sharpen" >*/
+  PICMAN_CUSTOM_CONVOLVE    /*< pdb-skip, skip >*/
+} PicmanConvolveType;
+
+
+#define PICMAN_TYPE_INK_BLOB_TYPE (picman_ink_blob_type_get_type ())
+
+GType picman_ink_blob_type_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_INK_BLOB_TYPE_CIRCLE,  /*< desc="Circle"  >*/
+  PICMAN_INK_BLOB_TYPE_SQUARE,  /*< desc="Square"  >*/
+  PICMAN_INK_BLOB_TYPE_DIAMOND  /*< desc="Diamond" >*/
+} PicmanInkBlobType;
 
 
 /*
@@ -100,10 +100,10 @@ typedef enum
 
 typedef enum  /*< skip, pdb-skip >*/
 {
-  GIMP_PAINT_STATE_INIT,    /*  Setup PaintFunc internals                    */
-  GIMP_PAINT_STATE_MOTION,  /*  PaintFunc performs motion-related rendering  */
-  GIMP_PAINT_STATE_FINISH   /*  Cleanup and/or reset PaintFunc operation     */
-} GimpPaintState;
+  PICMAN_PAINT_STATE_INIT,    /*  Setup PaintFunc internals                    */
+  PICMAN_PAINT_STATE_MOTION,  /*  PaintFunc performs motion-related rendering  */
+  PICMAN_PAINT_STATE_FINISH   /*  Cleanup and/or reset PaintFunc operation     */
+} PicmanPaintState;
 
 
 #endif /* __PAINT_ENUMS_H__ */

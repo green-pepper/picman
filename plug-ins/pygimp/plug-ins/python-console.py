@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#   Gimp-Python - allows the writing of Gimp plugins in Python.
+#   Picman-Python - allows the writing of Picman plugins in Python.
 #   Copyright (C) 1997  James Henstridge <james@daa.com.au>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,9 +16,9 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gimpfu import *
+from picmanfu import *
 
-t = gettext.translation('gimp20-python', gimp.locale_directory, fallback=True)
+t = gettext.translation('picman20-python', picman.locale_directory, fallback=True)
 _ = t.ugettext
 
 PROC_NAME = 'python-fu-console'
@@ -29,31 +29,31 @@ def do_console():
     import pygtk
     pygtk.require('2.0')
 
-    import sys, gobject, gtk, gimpenums, gimpshelf, gimpui, pyconsole
+    import sys, gobject, gtk, picmanenums, picmanshelf, picmanui, pyconsole
 
     namespace = {'__builtins__': __builtins__,
                  '__name__': '__main__', '__doc__': None,
-                 'gimp': gimp, 'pdb': gimp.pdb,
-                 'shelf': gimpshelf.shelf}
+                 'picman': picman, 'pdb': picman.pdb,
+                 'shelf': picmanshelf.shelf}
 
-    for s in gimpenums.__dict__.keys():
+    for s in picmanenums.__dict__.keys():
         if s[0] != '_':
-            namespace[s] = getattr(gimpenums, s)
+            namespace[s] = getattr(picmanenums, s)
 
-    class GimpConsole(pyconsole.Console):
+    class PicmanConsole(pyconsole.Console):
         def __init__(self, quit_func=None):
-            banner = ('GIMP %s Python Console\nPython %s\n' %
-                      (gimp.pdb.gimp_version(), sys.version))
+            banner = ('PICMAN %s Python Console\nPython %s\n' %
+                      (picman.pdb.picman_version(), sys.version))
             pyconsole.Console.__init__(self,
                                        locals=namespace, banner=banner,
                                        quit_func=quit_func)
         def _commit(self):
             pyconsole.Console._commit(self)
-            gimp.displays_flush()
+            picman.displays_flush()
 
-    class ConsoleDialog(gimpui.Dialog):
+    class ConsoleDialog(picmanui.Dialog):
         def __init__(self):
-            gimpui.Dialog.__init__(self, title=_("Python Console"),
+            picmanui.Dialog.__init__(self, title=_("Python Console"),
                                    role=PROC_NAME, help_id=PROC_NAME,
                                    buttons=(gtk.STOCK_SAVE,  RESPONSE_SAVE,
                                             gtk.STOCK_CLEAR, RESPONSE_CLEAR,
@@ -65,7 +65,7 @@ def do_console():
                                                RESPONSE_CLEAR,
                                                RESPONSE_SAVE))
 
-            self.cons = GimpConsole(quit_func=lambda: gtk.main_quit())
+            self.cons = PicmanConsole(quit_func=lambda: gtk.main_quit())
 
             self.connect('response', self.response)
 
@@ -135,7 +135,7 @@ def do_console():
 
         def browse(self):
             if not self.browse_dlg:
-                dlg = gimpui.ProcBrowserDialog(_("Python Procedure Browser"),
+                dlg = picmanui.ProcBrowserDialog(_("Python Procedure Browser"),
                                                role=PROC_NAME,
                                                buttons=(gtk.STOCK_APPLY,
                                                         gtk.RESPONSE_APPLY,
@@ -164,7 +164,7 @@ def do_console():
                 try:
                     logfile = open(filename, 'w')
                 except IOError, e:
-                    gimp.message(_("Could not open '%s' for writing: %s") %
+                    picman.message(_("Could not open '%s' for writing: %s") %
                                  (filename, e.strerror))
                     return
 
@@ -179,7 +179,7 @@ def do_console():
                     logfile.write(log)
                     logfile.close()
                 except IOError, e:
-                    gimp.message(_("Could not write to '%s': %s") %
+                    picman.message(_("Could not write to '%s': %s") %
                                  (filename, e.strerror))
                     return
 
@@ -213,7 +213,7 @@ def do_console():
 
 register(
     PROC_NAME,
-    N_("Interactive GIMP Python interpreter"),
+    N_("Interactive PICMAN Python interpreter"),
     "Type in commands and see results",
     "James Henstridge",
     "James Henstridge",
@@ -224,6 +224,6 @@ register(
     [],
     do_console,
     menu="<Image>/Filters/Languages/Python-Fu",
-    domain=("gimp20-python", gimp.locale_directory))
+    domain=("picman20-python", picman.locale_directory))
 
 main()

@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpunit.h
- * Copyright (C) 1999-2003 Michael Natterer <mitch@gimp.org>
+ * picmanunit.h
+ * Copyright (C) 1999-2003 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,52 +19,52 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_BASE_H_INSIDE__) && !defined (GIMP_BASE_COMPILATION)
-#error "Only <libgimpbase/gimpbase.h> can be included directly."
+#if !defined (__PICMAN_BASE_H_INSIDE__) && !defined (PICMAN_BASE_COMPILATION)
+#error "Only <libpicmanbase/picmanbase.h> can be included directly."
 #endif
 
-#ifndef __GIMP_UNIT_H__
-#define __GIMP_UNIT_H__
+#ifndef __PICMAN_UNIT_H__
+#define __PICMAN_UNIT_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 /**
- * GIMP_TYPE_UNIT:
+ * PICMAN_TYPE_UNIT:
  *
- * #GIMP_TYPE_UNIT is a #GType derived from #G_TYPE_INT.
+ * #PICMAN_TYPE_UNIT is a #GType derived from #G_TYPE_INT.
  **/
 
-#define GIMP_TYPE_UNIT               (gimp_unit_get_type ())
-#define GIMP_VALUE_HOLDS_UNIT(value) (G_TYPE_CHECK_VALUE_TYPE ((value), GIMP_TYPE_UNIT))
+#define PICMAN_TYPE_UNIT               (picman_unit_get_type ())
+#define PICMAN_VALUE_HOLDS_UNIT(value) (G_TYPE_CHECK_VALUE_TYPE ((value), PICMAN_TYPE_UNIT))
 
-GType        gimp_unit_get_type      (void) G_GNUC_CONST;
+GType        picman_unit_get_type      (void) G_GNUC_CONST;
 
 
 /*
- * GIMP_TYPE_PARAM_UNIT
+ * PICMAN_TYPE_PARAM_UNIT
  */
 
-#define GIMP_TYPE_PARAM_UNIT              (gimp_param_unit_get_type ())
-#define GIMP_IS_PARAM_SPEC_UNIT(pspec)    (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GIMP_TYPE_PARAM_UNIT))
+#define PICMAN_TYPE_PARAM_UNIT              (picman_param_unit_get_type ())
+#define PICMAN_IS_PARAM_SPEC_UNIT(pspec)    (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), PICMAN_TYPE_PARAM_UNIT))
 
-GType        gimp_param_unit_get_type     (void) G_GNUC_CONST;
+GType        picman_param_unit_get_type     (void) G_GNUC_CONST;
 
-GParamSpec * gimp_param_spec_unit         (const gchar  *name,
+GParamSpec * picman_param_spec_unit         (const gchar  *name,
                                            const gchar  *nick,
                                            const gchar  *blurb,
                                            gboolean      allow_pixels,
                                            gboolean      allow_percent,
-                                           GimpUnit      default_value,
+                                           PicmanUnit      default_value,
                                            GParamFlags   flags);
 
 
 
-gint          gimp_unit_get_number_of_units          (void);
-gint          gimp_unit_get_number_of_built_in_units (void) G_GNUC_CONST;
+gint          picman_unit_get_number_of_units          (void);
+gint          picman_unit_get_number_of_built_in_units (void) G_GNUC_CONST;
 
-GimpUnit      gimp_unit_new                 (gchar       *identifier,
+PicmanUnit      picman_unit_new                 (gchar       *identifier,
                                              gdouble      factor,
                                              gint         digits,
                                              gchar       *symbol,
@@ -72,35 +72,35 @@ GimpUnit      gimp_unit_new                 (gchar       *identifier,
                                              gchar       *singular,
                                              gchar       *plural);
 
-gboolean      gimp_unit_get_deletion_flag   (GimpUnit     unit);
-void          gimp_unit_set_deletion_flag   (GimpUnit     unit,
+gboolean      picman_unit_get_deletion_flag   (PicmanUnit     unit);
+void          picman_unit_set_deletion_flag   (PicmanUnit     unit,
                                              gboolean     deletion_flag);
 
-gdouble       gimp_unit_get_factor          (GimpUnit     unit);
+gdouble       picman_unit_get_factor          (PicmanUnit     unit);
 
-gint          gimp_unit_get_digits          (GimpUnit     unit);
+gint          picman_unit_get_digits          (PicmanUnit     unit);
 
-const gchar * gimp_unit_get_identifier      (GimpUnit     unit);
+const gchar * picman_unit_get_identifier      (PicmanUnit     unit);
 
-const gchar * gimp_unit_get_symbol          (GimpUnit     unit);
-const gchar * gimp_unit_get_abbreviation    (GimpUnit     unit);
-const gchar * gimp_unit_get_singular        (GimpUnit     unit);
-const gchar * gimp_unit_get_plural          (GimpUnit     unit);
+const gchar * picman_unit_get_symbol          (PicmanUnit     unit);
+const gchar * picman_unit_get_abbreviation    (PicmanUnit     unit);
+const gchar * picman_unit_get_singular        (PicmanUnit     unit);
+const gchar * picman_unit_get_plural          (PicmanUnit     unit);
 
-gchar       * gimp_unit_format_string       (const gchar *format,
-                                             GimpUnit     unit);
+gchar       * picman_unit_format_string       (const gchar *format,
+                                             PicmanUnit     unit);
 
-gdouble       gimp_pixels_to_units          (gdouble      pixels,
-                                             GimpUnit     unit,
+gdouble       picman_pixels_to_units          (gdouble      pixels,
+                                             PicmanUnit     unit,
                                              gdouble      resolution);
-gdouble       gimp_units_to_pixels          (gdouble      value,
-                                             GimpUnit     unit,
+gdouble       picman_units_to_pixels          (gdouble      value,
+                                             PicmanUnit     unit,
                                              gdouble      resolution);
-gdouble       gimp_units_to_points          (gdouble      value,
-                                             GimpUnit     unit,
+gdouble       picman_units_to_points          (gdouble      value,
+                                             PicmanUnit     unit,
                                              gdouble      resolution);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_UNIT_H__ */
+#endif /* __PICMAN_UNIT_H__ */

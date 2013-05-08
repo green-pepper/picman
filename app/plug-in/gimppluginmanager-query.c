@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * plug-ins-query.c
@@ -23,13 +23,13 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "plug-in-types.h"
 
-#include "gimppluginmanager.h"
-#include "gimppluginmanager-query.h"
-#include "gimppluginprocedure.h"
+#include "picmanpluginmanager.h"
+#include "picmanpluginmanager-query.h"
+#include "picmanpluginprocedure.h"
 
 
 static gboolean
@@ -40,7 +40,7 @@ match_string (GRegex *regex,
 }
 
 gint
-gimp_plug_in_manager_query (GimpPlugInManager   *manager,
+picman_plug_in_manager_query (PicmanPlugInManager   *manager,
                             const gchar         *search_str,
                             gchar             ***menu_strs,
                             gchar             ***accel_strs,
@@ -55,7 +55,7 @@ gimp_plug_in_manager_query (GimpPlugInManager   *manager,
   gint     i           = 0;
   GRegex  *sregex      = NULL;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager), 0);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager), 0);
   g_return_val_if_fail (menu_strs != NULL, 0);
   g_return_val_if_fail (accel_strs != NULL, 0);
   g_return_val_if_fail (prog_strs != NULL, 0);
@@ -87,7 +87,7 @@ gimp_plug_in_manager_query (GimpPlugInManager   *manager,
 
   for (list = manager->plug_in_procedures; list; list = g_slist_next (list))
     {
-      GimpPlugInProcedure *proc = list->data;
+      PicmanPlugInProcedure *proc = list->data;
 
       if (proc->prog && proc->menu_paths)
         {
@@ -107,7 +107,7 @@ gimp_plug_in_manager_query (GimpPlugInManager   *manager,
                 name = proc->menu_paths->data;
             }
 
-          name = gimp_strip_uline (name);
+          name = picman_strip_uline (name);
 
           if (! search_str || match_string (sregex, name))
             {
@@ -130,7 +130,7 @@ gimp_plug_in_manager_query (GimpPlugInManager   *manager,
 
   for (list = matched; list; list = g_slist_next (list))
     {
-      GimpPlugInProcedure *proc = list->data;
+      PicmanPlugInProcedure *proc = list->data;
       gchar               *name;
 
       if (proc->menu_label)
@@ -140,11 +140,11 @@ gimp_plug_in_manager_query (GimpPlugInManager   *manager,
       else
         name = g_strdup (proc->menu_paths->data);
 
-      (*menu_strs)[i]     = gimp_strip_uline (name);
+      (*menu_strs)[i]     = picman_strip_uline (name);
       (*accel_strs)[i]    = NULL;
       (*prog_strs)[i]     = g_strdup (proc->prog);
       (*types_strs)[i]    = g_strdup (proc->image_types);
-      (*realname_strs)[i] = g_strdup (gimp_object_get_name (proc));
+      (*realname_strs)[i] = g_strdup (picman_object_get_name (proc));
       (*time_ints)[i]     = proc->mtime;
 
       g_free (name);

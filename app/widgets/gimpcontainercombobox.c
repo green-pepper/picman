@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcontainercombobox.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmancontainercombobox.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,122 +27,122 @@
 
 #include "widgets-types.h"
 
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpviewable.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanviewable.h"
 
-#include "gimpcellrendererviewable.h"
-#include "gimpcontainercombobox.h"
-#include "gimpcontainertreestore.h"
-#include "gimpcontainerview.h"
-#include "gimpviewrenderer.h"
+#include "picmancellrendererviewable.h"
+#include "picmancontainercombobox.h"
+#include "picmancontainertreestore.h"
+#include "picmancontainerview.h"
+#include "picmanviewrenderer.h"
 
 
 enum
 {
   PROP_0,
-  PROP_ELLIPSIZE = GIMP_CONTAINER_VIEW_PROP_LAST + 1
+  PROP_ELLIPSIZE = PICMAN_CONTAINER_VIEW_PROP_LAST + 1
 };
 
 
-static void     gimp_container_combo_box_view_iface_init (GimpContainerViewInterface *iface);
+static void     picman_container_combo_box_view_iface_init (PicmanContainerViewInterface *iface);
 
-static void     gimp_container_combo_box_set_property (GObject                *object,
+static void     picman_container_combo_box_set_property (GObject                *object,
                                                        guint                   property_id,
                                                        const GValue           *value,
                                                        GParamSpec             *pspec);
-static void     gimp_container_combo_box_get_property (GObject                *object,
+static void     picman_container_combo_box_get_property (GObject                *object,
                                                        guint                   property_id,
                                                        GValue                 *value,
                                                        GParamSpec             *pspec);
 
-static void     gimp_container_combo_box_set_context  (GimpContainerView      *view,
-                                                       GimpContext            *context);
-static gpointer gimp_container_combo_box_insert_item  (GimpContainerView      *view,
-                                                       GimpViewable           *viewable,
+static void     picman_container_combo_box_set_context  (PicmanContainerView      *view,
+                                                       PicmanContext            *context);
+static gpointer picman_container_combo_box_insert_item  (PicmanContainerView      *view,
+                                                       PicmanViewable           *viewable,
                                                        gpointer                parent_insert_data,
                                                        gint                    index);
-static void     gimp_container_combo_box_remove_item  (GimpContainerView      *view,
-                                                       GimpViewable           *viewable,
+static void     picman_container_combo_box_remove_item  (PicmanContainerView      *view,
+                                                       PicmanViewable           *viewable,
                                                        gpointer                insert_data);
-static void     gimp_container_combo_box_reorder_item (GimpContainerView      *view,
-                                                       GimpViewable           *viewable,
+static void     picman_container_combo_box_reorder_item (PicmanContainerView      *view,
+                                                       PicmanViewable           *viewable,
                                                        gint                    new_index,
                                                        gpointer                insert_data);
-static void     gimp_container_combo_box_rename_item  (GimpContainerView      *view,
-                                                       GimpViewable           *viewable,
+static void     picman_container_combo_box_rename_item  (PicmanContainerView      *view,
+                                                       PicmanViewable           *viewable,
                                                        gpointer                insert_data);
-static gboolean  gimp_container_combo_box_select_item (GimpContainerView      *view,
-                                                       GimpViewable           *viewable,
+static gboolean  picman_container_combo_box_select_item (PicmanContainerView      *view,
+                                                       PicmanViewable           *viewable,
                                                        gpointer                insert_data);
-static void     gimp_container_combo_box_clear_items  (GimpContainerView      *view);
-static void    gimp_container_combo_box_set_view_size (GimpContainerView      *view);
+static void     picman_container_combo_box_clear_items  (PicmanContainerView      *view);
+static void    picman_container_combo_box_set_view_size (PicmanContainerView      *view);
 
-static void     gimp_container_combo_box_changed      (GtkComboBox            *combo_box,
-                                                       GimpContainerView      *view);
+static void     picman_container_combo_box_changed      (GtkComboBox            *combo_box,
+                                                       PicmanContainerView      *view);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpContainerComboBox, gimp_container_combo_box,
+G_DEFINE_TYPE_WITH_CODE (PicmanContainerComboBox, picman_container_combo_box,
                          GTK_TYPE_COMBO_BOX,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONTAINER_VIEW,
-                                                gimp_container_combo_box_view_iface_init))
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONTAINER_VIEW,
+                                                picman_container_combo_box_view_iface_init))
 
-#define parent_class gimp_container_combo_box_parent_class
+#define parent_class picman_container_combo_box_parent_class
 
-static GimpContainerViewInterface *parent_view_iface = NULL;
+static PicmanContainerViewInterface *parent_view_iface = NULL;
 
 
 static void
-gimp_container_combo_box_class_init (GimpContainerComboBoxClass *klass)
+picman_container_combo_box_class_init (PicmanContainerComboBoxClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_container_combo_box_set_property;
-  object_class->get_property = gimp_container_combo_box_get_property;
+  object_class->set_property = picman_container_combo_box_set_property;
+  object_class->get_property = picman_container_combo_box_get_property;
 
-  gimp_container_view_install_properties (object_class);
+  picman_container_view_install_properties (object_class);
 
   g_object_class_install_property (object_class,
                                    PROP_ELLIPSIZE,
                                    g_param_spec_enum ("ellipsize", NULL, NULL,
 						      PANGO_TYPE_ELLIPSIZE_MODE,
 						      PANGO_ELLIPSIZE_MIDDLE,
-						      GIMP_PARAM_READWRITE |
+						      PICMAN_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_container_combo_box_view_iface_init (GimpContainerViewInterface *iface)
+picman_container_combo_box_view_iface_init (PicmanContainerViewInterface *iface)
 {
   parent_view_iface = g_type_interface_peek_parent (iface);
 
   if (! parent_view_iface)
-    parent_view_iface = g_type_default_interface_peek (GIMP_TYPE_CONTAINER_VIEW);
+    parent_view_iface = g_type_default_interface_peek (PICMAN_TYPE_CONTAINER_VIEW);
 
-  iface->set_context   = gimp_container_combo_box_set_context;
-  iface->insert_item   = gimp_container_combo_box_insert_item;
-  iface->remove_item   = gimp_container_combo_box_remove_item;
-  iface->reorder_item  = gimp_container_combo_box_reorder_item;
-  iface->rename_item   = gimp_container_combo_box_rename_item;
-  iface->select_item   = gimp_container_combo_box_select_item;
-  iface->clear_items   = gimp_container_combo_box_clear_items;
-  iface->set_view_size = gimp_container_combo_box_set_view_size;
+  iface->set_context   = picman_container_combo_box_set_context;
+  iface->insert_item   = picman_container_combo_box_insert_item;
+  iface->remove_item   = picman_container_combo_box_remove_item;
+  iface->reorder_item  = picman_container_combo_box_reorder_item;
+  iface->rename_item   = picman_container_combo_box_rename_item;
+  iface->select_item   = picman_container_combo_box_select_item;
+  iface->clear_items   = picman_container_combo_box_clear_items;
+  iface->set_view_size = picman_container_combo_box_set_view_size;
 
   iface->insert_data_free = (GDestroyNotify) gtk_tree_iter_free;
 }
 
 static void
-gimp_container_combo_box_init (GimpContainerComboBox *combo)
+picman_container_combo_box_init (PicmanContainerComboBox *combo)
 {
   GtkTreeModel    *model;
   GtkCellLayout   *layout;
   GtkCellRenderer *cell;
-  GType            types[GIMP_CONTAINER_TREE_STORE_N_COLUMNS];
+  GType            types[PICMAN_CONTAINER_TREE_STORE_N_COLUMNS];
   gint             n_types = 0;
 
-  gimp_container_tree_store_columns_init (types, &n_types);
+  picman_container_tree_store_columns_init (types, &n_types);
 
-  model = gimp_container_tree_store_new (GIMP_CONTAINER_VIEW (combo),
+  model = picman_container_tree_store_new (PICMAN_CONTAINER_VIEW (combo),
                                          n_types, types);
 
   gtk_combo_box_set_model (GTK_COMBO_BOX (combo), model);
@@ -151,14 +151,14 @@ gimp_container_combo_box_init (GimpContainerComboBox *combo)
 
   layout = GTK_CELL_LAYOUT (combo);
 
-  cell = gimp_cell_renderer_viewable_new ();
+  cell = picman_cell_renderer_viewable_new ();
   gtk_cell_layout_pack_start (layout, cell, FALSE);
   gtk_cell_layout_set_attributes (layout, cell,
                                   "renderer",
-                                  GIMP_CONTAINER_TREE_STORE_COLUMN_RENDERER,
+                                  PICMAN_CONTAINER_TREE_STORE_COLUMN_RENDERER,
                                   NULL);
 
-  gimp_container_tree_store_add_renderer_cell (GIMP_CONTAINER_TREE_STORE (model),
+  picman_container_tree_store_add_renderer_cell (PICMAN_CONTAINER_TREE_STORE (model),
                                                cell);
 
   combo->viewable_renderer = cell;
@@ -167,25 +167,25 @@ gimp_container_combo_box_init (GimpContainerComboBox *combo)
   gtk_cell_layout_pack_start (layout, cell, TRUE);
   gtk_cell_layout_set_attributes (layout, cell,
                                   "text",
-                                  GIMP_CONTAINER_TREE_STORE_COLUMN_NAME,
+                                  PICMAN_CONTAINER_TREE_STORE_COLUMN_NAME,
                                   NULL);
 
   combo->text_renderer = cell;
 
   g_signal_connect (combo, "changed",
-                    G_CALLBACK (gimp_container_combo_box_changed),
+                    G_CALLBACK (picman_container_combo_box_changed),
                     combo);
 
   gtk_widget_set_sensitive (GTK_WIDGET (combo), FALSE);
 }
 
 static void
-gimp_container_combo_box_set_property (GObject      *object,
+picman_container_combo_box_set_property (GObject      *object,
                                        guint         property_id,
                                        const GValue *value,
                                        GParamSpec   *pspec)
 {
-  GimpContainerComboBox *combo = GIMP_CONTAINER_COMBO_BOX (object);
+  PicmanContainerComboBox *combo = PICMAN_CONTAINER_COMBO_BOX (object);
 
   switch (property_id)
     {
@@ -195,18 +195,18 @@ gimp_container_combo_box_set_property (GObject      *object,
       break;
 
     default:
-      gimp_container_view_set_property (object, property_id, value, pspec);
+      picman_container_view_set_property (object, property_id, value, pspec);
       break;
     }
 }
 
 static void
-gimp_container_combo_box_get_property (GObject    *object,
+picman_container_combo_box_get_property (GObject    *object,
                                        guint       property_id,
                                        GValue     *value,
                                        GParamSpec *pspec)
 {
-  GimpContainerComboBox *combo = GIMP_CONTAINER_COMBO_BOX (object);
+  PicmanContainerComboBox *combo = PICMAN_CONTAINER_COMBO_BOX (object);
 
   switch (property_id)
     {
@@ -216,58 +216,58 @@ gimp_container_combo_box_get_property (GObject    *object,
       break;
 
     default:
-      gimp_container_view_get_property (object, property_id, value, pspec);
+      picman_container_view_get_property (object, property_id, value, pspec);
       break;
     }
 }
 
 GtkWidget *
-gimp_container_combo_box_new (GimpContainer *container,
-                              GimpContext   *context,
+picman_container_combo_box_new (PicmanContainer *container,
+                              PicmanContext   *context,
                               gint           view_size,
                               gint           view_border_width)
 {
   GtkWidget         *combo_box;
-  GimpContainerView *view;
+  PicmanContainerView *view;
 
-  g_return_val_if_fail (container == NULL || GIMP_IS_CONTAINER (container),
+  g_return_val_if_fail (container == NULL || PICMAN_IS_CONTAINER (container),
                         NULL);
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), NULL);
 
-  combo_box = g_object_new (GIMP_TYPE_CONTAINER_COMBO_BOX, NULL);
+  combo_box = g_object_new (PICMAN_TYPE_CONTAINER_COMBO_BOX, NULL);
 
-  view = GIMP_CONTAINER_VIEW (combo_box);
+  view = PICMAN_CONTAINER_VIEW (combo_box);
 
-  gimp_container_view_set_view_size (view, view_size, view_border_width);
+  picman_container_view_set_view_size (view, view_size, view_border_width);
 
   if (container)
-    gimp_container_view_set_container (view, container);
+    picman_container_view_set_container (view, container);
 
   if (context)
-    gimp_container_view_set_context (view, context);
+    picman_container_view_set_context (view, context);
 
   return combo_box;
 }
 
 
-/*  GimpContainerView methods  */
+/*  PicmanContainerView methods  */
 
 static void
-gimp_container_combo_box_set_context (GimpContainerView *view,
-                                      GimpContext       *context)
+picman_container_combo_box_set_context (PicmanContainerView *view,
+                                      PicmanContext       *context)
 {
   GtkTreeModel *model = gtk_combo_box_get_model (GTK_COMBO_BOX (view));
 
   parent_view_iface->set_context (view, context);
 
   if (model)
-    gimp_container_tree_store_set_context (GIMP_CONTAINER_TREE_STORE (model),
+    picman_container_tree_store_set_context (PICMAN_CONTAINER_TREE_STORE (model),
                                            context);
 }
 
 static gpointer
-gimp_container_combo_box_insert_item (GimpContainerView *view,
-                                      GimpViewable      *viewable,
+picman_container_combo_box_insert_item (PicmanContainerView *view,
+                                      PicmanViewable      *viewable,
                                       gpointer           parent_insert_data,
                                       gint               index)
 {
@@ -277,14 +277,14 @@ gimp_container_combo_box_insert_item (GimpContainerView *view,
     {
       GtkTreeIter *iter;
 
-      iter = gimp_container_tree_store_insert_item (GIMP_CONTAINER_TREE_STORE (model),
+      iter = picman_container_tree_store_insert_item (PICMAN_CONTAINER_TREE_STORE (model),
                                                     viewable,
                                                     parent_insert_data,
                                                     index);
 
       if (gtk_tree_model_iter_n_children (model, NULL) == 1)
         {
-          /*  GimpContainerViews don't select items by default  */
+          /*  PicmanContainerViews don't select items by default  */
           gtk_combo_box_set_active (GTK_COMBO_BOX (view), -1);
 
           gtk_widget_set_sensitive (GTK_WIDGET (view), TRUE);
@@ -297,8 +297,8 @@ gimp_container_combo_box_insert_item (GimpContainerView *view,
 }
 
 static void
-gimp_container_combo_box_remove_item (GimpContainerView *view,
-                                      GimpViewable      *viewable,
+picman_container_combo_box_remove_item (PicmanContainerView *view,
+                                      PicmanViewable      *viewable,
                                       gpointer           insert_data)
 {
   GtkTreeModel *model = gtk_combo_box_get_model (GTK_COMBO_BOX (view));
@@ -307,7 +307,7 @@ gimp_container_combo_box_remove_item (GimpContainerView *view,
     {
       GtkTreeIter *iter = insert_data;
 
-      gimp_container_tree_store_remove_item (GIMP_CONTAINER_TREE_STORE (model),
+      picman_container_tree_store_remove_item (PICMAN_CONTAINER_TREE_STORE (model),
                                              viewable,
                                              iter);
 
@@ -319,36 +319,36 @@ gimp_container_combo_box_remove_item (GimpContainerView *view,
 }
 
 static void
-gimp_container_combo_box_reorder_item (GimpContainerView *view,
-                                       GimpViewable      *viewable,
+picman_container_combo_box_reorder_item (PicmanContainerView *view,
+                                       PicmanViewable      *viewable,
                                        gint               new_index,
                                        gpointer           insert_data)
 {
   GtkTreeModel *model = gtk_combo_box_get_model (GTK_COMBO_BOX (view));
 
   if (model)
-    gimp_container_tree_store_reorder_item (GIMP_CONTAINER_TREE_STORE (model),
+    picman_container_tree_store_reorder_item (PICMAN_CONTAINER_TREE_STORE (model),
                                             viewable,
                                             new_index,
                                             insert_data);
 }
 
 static void
-gimp_container_combo_box_rename_item (GimpContainerView *view,
-                                      GimpViewable      *viewable,
+picman_container_combo_box_rename_item (PicmanContainerView *view,
+                                      PicmanViewable      *viewable,
                                       gpointer           insert_data)
 {
   GtkTreeModel *model = gtk_combo_box_get_model (GTK_COMBO_BOX (view));
 
   if (model)
-    gimp_container_tree_store_rename_item (GIMP_CONTAINER_TREE_STORE (model),
+    picman_container_tree_store_rename_item (PICMAN_CONTAINER_TREE_STORE (model),
                                            viewable,
                                            insert_data);
 }
 
 static gboolean
-gimp_container_combo_box_select_item (GimpContainerView *view,
-                                      GimpViewable      *viewable,
+picman_container_combo_box_select_item (PicmanContainerView *view,
+                                      PicmanViewable      *viewable,
                                       gpointer           insert_data)
 {
   GtkComboBox *combo_box = GTK_COMBO_BOX (view);
@@ -358,7 +358,7 @@ gimp_container_combo_box_select_item (GimpContainerView *view,
       GtkTreeIter *iter = insert_data;
 
      g_signal_handlers_block_by_func (combo_box,
-                                       gimp_container_combo_box_changed,
+                                       picman_container_combo_box_changed,
                                        view);
 
       if (iter)
@@ -371,7 +371,7 @@ gimp_container_combo_box_select_item (GimpContainerView *view,
         }
 
       g_signal_handlers_unblock_by_func (combo_box,
-                                         gimp_container_combo_box_changed,
+                                         picman_container_combo_box_changed,
                                          view);
     }
 
@@ -379,12 +379,12 @@ gimp_container_combo_box_select_item (GimpContainerView *view,
 }
 
 static void
-gimp_container_combo_box_clear_items (GimpContainerView *view)
+picman_container_combo_box_clear_items (PicmanContainerView *view)
 {
   GtkTreeModel *model = gtk_combo_box_get_model (GTK_COMBO_BOX (view));
 
   if (model)
-    gimp_container_tree_store_clear_items (GIMP_CONTAINER_TREE_STORE (model));
+    picman_container_tree_store_clear_items (PICMAN_CONTAINER_TREE_STORE (model));
 
   gtk_widget_set_sensitive (GTK_WIDGET (view), FALSE);
 
@@ -392,29 +392,29 @@ gimp_container_combo_box_clear_items (GimpContainerView *view)
 }
 
 static void
-gimp_container_combo_box_set_view_size (GimpContainerView *view)
+picman_container_combo_box_set_view_size (PicmanContainerView *view)
 {
   GtkTreeModel *model = gtk_combo_box_get_model (GTK_COMBO_BOX (view));
 
   if (model)
-    gimp_container_tree_store_set_view_size (GIMP_CONTAINER_TREE_STORE (model));
+    picman_container_tree_store_set_view_size (PICMAN_CONTAINER_TREE_STORE (model));
 }
 
 static void
-gimp_container_combo_box_changed (GtkComboBox       *combo,
-                                  GimpContainerView *view)
+picman_container_combo_box_changed (GtkComboBox       *combo,
+                                  PicmanContainerView *view)
 {
   GtkTreeIter iter;
 
   if (gtk_combo_box_get_active_iter (combo, &iter))
     {
-      GimpViewRenderer *renderer;
+      PicmanViewRenderer *renderer;
 
       gtk_tree_model_get (gtk_combo_box_get_model (combo), &iter,
-                          GIMP_CONTAINER_TREE_STORE_COLUMN_RENDERER, &renderer,
+                          PICMAN_CONTAINER_TREE_STORE_COLUMN_RENDERER, &renderer,
                           -1);
 
-      gimp_container_view_item_selected (view, renderer->viewable);
+      picman_container_view_item_selected (view, renderer->viewable);
       g_object_unref (renderer);
     }
 }

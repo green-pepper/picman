@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,14 @@
 #define __THEMES_H__
 
 
-void           themes_init           (Gimp        *gimp);
-void           themes_exit           (Gimp        *gimp);
+void           themes_init           (Picman        *picman);
+void           themes_exit           (Picman        *picman);
 
-gchar       ** themes_list_themes    (Gimp        *gimp,
+gchar       ** themes_list_themes    (Picman        *picman,
                                       gint        *n_themes);
-const gchar  * themes_get_theme_dir  (Gimp        *gimp,
+const gchar  * themes_get_theme_dir  (Picman        *picman,
                                       const gchar *theme_name);
-gchar        * themes_get_theme_file (Gimp        *gimp,
+gchar        * themes_get_theme_file (Picman        *picman,
                                       const gchar *first_component,
                                       ...) G_GNUC_NULL_TERMINATED;
 

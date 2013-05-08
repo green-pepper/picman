@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DRAWABLE_EQUALIZE_H__
-#define __GIMP_DRAWABLE_EQUALIZE_H__
+#ifndef __PICMAN_DRAWABLE_EQUALIZE_H__
+#define __PICMAN_DRAWABLE_EQUALIZE_H__
 
 
-void   gimp_drawable_equalize (GimpDrawable *drawable,
+void   picman_drawable_equalize (PicmanDrawable *drawable,
                                gboolean      mask_only);
 
 
-#endif  /*  __GIMP_DRAWABLE_EQUALIZE_H__  */
+#endif  /*  __PICMAN_DRAWABLE_EQUALIZE_H__  */

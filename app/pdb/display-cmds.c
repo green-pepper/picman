@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,67 +23,67 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpimage.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmanimage.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-display_is_valid_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+display_is_valid_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
-  GimpValueArray *return_vals;
-  GimpObject *display;
+  PicmanValueArray *return_vals;
+  PicmanObject *display;
   gboolean valid = FALSE;
 
-  display = gimp_value_get_display (gimp_value_array_index (args, 0), gimp);
+  display = picman_value_get_display (picman_value_array_index (args, 0), picman);
 
   valid = (display != NULL);
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_boolean (gimp_value_array_index (return_vals, 1), valid);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_boolean (picman_value_array_index (return_vals, 1), valid);
 
   return return_vals;
 }
 
-static GimpValueArray *
-display_new_invoker (GimpProcedure         *procedure,
-                     Gimp                  *gimp,
-                     GimpContext           *context,
-                     GimpProgress          *progress,
-                     const GimpValueArray  *args,
+static PicmanValueArray *
+display_new_invoker (PicmanProcedure         *procedure,
+                     Picman                  *picman,
+                     PicmanContext           *context,
+                     PicmanProgress          *progress,
+                     const PicmanValueArray  *args,
                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
-  GimpObject *display = NULL;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
+  PicmanObject *display = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      gimp_image_flush (image);
+      picman_image_flush (image);
 
-      display = gimp_create_display (gimp, image, GIMP_UNIT_PIXEL, 1.0);
+      display = picman_create_display (picman, image, PICMAN_UNIT_PIXEL, 1.0);
 
       if (display)
         {
           /* the first display takes ownership of the image */
-          if (gimp_image_get_display_count (image) == 1)
+          if (picman_image_get_display_count (image) == 1)
             g_object_unref (image);
         }
       else
@@ -92,272 +92,272 @@ display_new_invoker (GimpProcedure         *procedure,
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_display (gimp_value_array_index (return_vals, 1), display);
+    picman_value_set_display (picman_value_array_index (return_vals, 1), display);
 
   return return_vals;
 }
 
-static GimpValueArray *
-display_delete_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+display_delete_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpObject *display;
+  PicmanObject *display;
 
-  display = gimp_value_get_display (gimp_value_array_index (args, 0), gimp);
+  display = picman_value_get_display (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      gimp_delete_display (gimp, display);
+      picman_delete_display (picman, display);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-display_get_window_handle_invoker (GimpProcedure         *procedure,
-                                   Gimp                  *gimp,
-                                   GimpContext           *context,
-                                   GimpProgress          *progress,
-                                   const GimpValueArray  *args,
+static PicmanValueArray *
+display_get_window_handle_invoker (PicmanProcedure         *procedure,
+                                   Picman                  *picman,
+                                   PicmanContext           *context,
+                                   PicmanProgress          *progress,
+                                   const PicmanValueArray  *args,
                                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpObject *display;
+  PicmanValueArray *return_vals;
+  PicmanObject *display;
   gint32 window = 0;
 
-  display = gimp_value_get_display (gimp_value_array_index (args, 0), gimp);
+  display = picman_value_get_display (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      window = (gint32) gimp_get_display_window_id (gimp, display);
+      window = (gint32) picman_get_display_window_id (picman, display);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), window);
+    g_value_set_int (picman_value_array_index (return_vals, 1), window);
 
   return return_vals;
 }
 
-static GimpValueArray *
-displays_flush_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+displays_flush_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
-  gimp_container_foreach (gimp->images, (GFunc) gimp_image_flush, NULL);
+  picman_container_foreach (picman->images, (GFunc) picman_image_flush, NULL);
 
-  return gimp_procedure_get_return_values (procedure, TRUE, NULL);
+  return picman_procedure_get_return_values (procedure, TRUE, NULL);
 }
 
-static GimpValueArray *
-displays_reconnect_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+displays_reconnect_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *old_image;
-  GimpImage *new_image;
+  PicmanImage *old_image;
+  PicmanImage *new_image;
 
-  old_image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  new_image = gimp_value_get_image (gimp_value_array_index (args, 1), gimp);
+  old_image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  new_image = picman_value_get_image (picman_value_array_index (args, 1), picman);
 
   if (success)
     {
       success = (old_image != new_image    &&
-                 gimp_image_get_display_count (old_image) > 0 &&
-                 gimp_image_get_display_count (new_image) == 0);
+                 picman_image_get_display_count (old_image) > 0 &&
+                 picman_image_get_display_count (new_image) == 0);
 
       if (success)
         {
-          gimp_reconnect_displays (gimp, old_image, new_image);
+          picman_reconnect_displays (picman, old_image, new_image);
 
           /* take ownership of the image */
-          if (gimp_image_get_display_count (new_image) > 0)
+          if (picman_image_get_display_count (new_image) > 0)
             g_object_unref (new_image);
         }
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_display_procs (GimpPDB *pdb)
+register_display_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-display-is-valid
+   * picman-display-is-valid
    */
-  procedure = gimp_procedure_new (display_is_valid_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-display-is-valid");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-display-is-valid",
+  procedure = picman_procedure_new (display_is_valid_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-display-is-valid");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-display-is-valid",
                                      "Returns TRUE if the display is valid.",
                                      "This procedure checks if the given display ID is valid and refers to an existing display.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2007",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_display_id ("display",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_display_id ("display",
                                                            "display",
                                                            "The display to check",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_return_value (procedure,
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("valid",
                                                          "valid",
                                                          "Whether the display ID is valid",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-display-new
+   * picman-display-new
    */
-  procedure = gimp_procedure_new (display_new_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-display-new");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-display-new",
+  procedure = picman_procedure_new (display_new_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-display-new");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-display-new",
                                      "Create a new display for the specified image.",
-                                     "Creates a new display for the specified image. If the image already has a display, another is added. Multiple displays are handled transparently by GIMP. The newly created display is returned and can be subsequently destroyed with a call to 'gimp-display-delete'. This procedure only makes sense for use with the GIMP UI.",
+                                     "Creates a new display for the specified image. If the image already has a display, another is added. Multiple displays are handled transparently by PICMAN. The newly created display is returned and can be subsequently destroyed with a call to 'picman-display-delete'. This procedure only makes sense for use with the PICMAN UI.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_display_id ("display",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_display_id ("display",
                                                                "display",
                                                                "The new display",
-                                                               pdb->gimp, FALSE,
-                                                               GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                               pdb->picman, FALSE,
+                                                               PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-display-delete
+   * picman-display-delete
    */
-  procedure = gimp_procedure_new (display_delete_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-display-delete");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-display-delete",
+  procedure = picman_procedure_new (display_delete_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-display-delete");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-display-delete",
                                      "Delete the specified display.",
                                      "This procedure removes the specified display. If this is the last remaining display for the underlying image, then the image is deleted also. Note that the display is closed no matter if the image is dirty or not. Better save the image before calling this procedure.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_display_id ("display",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_display_id ("display",
                                                            "display",
                                                            "The display to delete",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-display-get-window-handle
+   * picman-display-get-window-handle
    */
-  procedure = gimp_procedure_new (display_get_window_handle_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-display-get-window-handle");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-display-get-window-handle",
+  procedure = picman_procedure_new (display_get_window_handle_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-display-get-window-handle");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-display-get-window-handle",
                                      "Get a handle to the native window for an image display.",
                                      "This procedure returns a handle to the native window for a given image display. For example in the X backend of GDK, a native window handle is an Xlib XID. A value of 0 is returned for an invalid display or if this function is unimplemented for the windowing system that is being used.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2005",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_display_id ("display",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_display_id ("display",
                                                            "display",
                                                            "The display to get the window handle from",
-                                                           pdb->gimp, FALSE,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("window",
+                                                           pdb->picman, FALSE,
+                                                           PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("window",
                                                           "window",
                                                           "The native window handle or 0",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-displays-flush
+   * picman-displays-flush
    */
-  procedure = gimp_procedure_new (displays_flush_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-displays-flush");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-displays-flush",
+  procedure = picman_procedure_new (displays_flush_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-displays-flush");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-displays-flush",
                                      "Flush all internal changes to the user interface",
                                      "This procedure takes no arguments and returns nothing except a success status. Its purpose is to flush all pending updates of image manipulations to the user interface. It should be called whenever appropriate.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_pdb_register_procedure (pdb, procedure);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-displays-reconnect
+   * picman-displays-reconnect
    */
-  procedure = gimp_procedure_new (displays_reconnect_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-displays-reconnect");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-displays-reconnect",
+  procedure = picman_procedure_new (displays_reconnect_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-displays-reconnect");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-displays-reconnect",
                                      "Reconnect displays from one image to another image.",
                                      "This procedure connects all displays of the old_image to the new_image. If the old_image has no display or new_image already has a display the reconnect is not performed and the procedure returns without success. You should rarely need to use this function.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("old-image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("old-image",
                                                          "old image",
                                                          "The old image (must have at least one display)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("new-image",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("new-image",
                                                          "new image",
                                                          "The new image (must not have a display)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

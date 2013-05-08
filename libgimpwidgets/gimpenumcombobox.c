@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpenumcombobox.c
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanenumcombobox.c
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,18 +23,18 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpenumcombobox.h"
-#include "gimpenumstore.h"
+#include "picmanenumcombobox.h"
+#include "picmanenumstore.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpenumcombobox
- * @title: GimpEnumComboBox
- * @short_description: A #GimpIntComboBox subclass for selecting an enum value.
+ * SECTION: picmanenumcombobox
+ * @title: PicmanEnumComboBox
+ * @short_description: A #PicmanIntComboBox subclass for selecting an enum value.
  *
  * A #GtkComboBox subclass for selecting an enum value.
  **/
@@ -47,45 +47,45 @@ enum
 };
 
 
-static void  gimp_enum_combo_box_set_property (GObject      *object,
+static void  picman_enum_combo_box_set_property (GObject      *object,
                                                guint         prop_id,
                                                const GValue *value,
                                                GParamSpec   *pspec);
-static void  gimp_enum_combo_box_get_property (GObject      *object,
+static void  picman_enum_combo_box_get_property (GObject      *object,
                                                guint         prop_id,
                                                GValue       *value,
                                                GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpEnumComboBox, gimp_enum_combo_box,
-               GIMP_TYPE_INT_COMBO_BOX)
+G_DEFINE_TYPE (PicmanEnumComboBox, picman_enum_combo_box,
+               PICMAN_TYPE_INT_COMBO_BOX)
 
-#define parent_class gimp_enum_combo_box_parent_class
+#define parent_class picman_enum_combo_box_parent_class
 
 
 static void
-gimp_enum_combo_box_class_init (GimpEnumComboBoxClass *klass)
+picman_enum_combo_box_class_init (PicmanEnumComboBoxClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_enum_combo_box_set_property;
-  object_class->get_property = gimp_enum_combo_box_get_property;
+  object_class->set_property = picman_enum_combo_box_set_property;
+  object_class->get_property = picman_enum_combo_box_get_property;
 
   /*  override the "model" property of GtkComboBox  */
   g_object_class_install_property (object_class,
                                    PROP_MODEL,
                                    g_param_spec_object ("model", NULL, NULL,
-                                                        GIMP_TYPE_ENUM_STORE,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_ENUM_STORE,
+                                                        PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_enum_combo_box_init (GimpEnumComboBox *combo_box)
+picman_enum_combo_box_init (PicmanEnumComboBox *combo_box)
 {
 }
 
 static void
-gimp_enum_combo_box_set_property (GObject      *object,
+picman_enum_combo_box_set_property (GObject      *object,
                                   guint         prop_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
@@ -105,7 +105,7 @@ gimp_enum_combo_box_set_property (GObject      *object,
 }
 
 static void
-gimp_enum_combo_box_get_property (GObject    *object,
+picman_enum_combo_box_get_property (GObject    *object,
                                   guint       prop_id,
                                   GValue     *value,
                                   GParamSpec *pspec)
@@ -126,34 +126,34 @@ gimp_enum_combo_box_get_property (GObject    *object,
 
 
 /**
- * gimp_enum_combo_box_new:
+ * picman_enum_combo_box_new:
  * @enum_type: the #GType of an enum.
  *
  * Creates a #GtkComboBox readily filled with all enum values from a
  * given @enum_type. The enum needs to be registered to the type
- * system. It should also have %GimpEnumDesc descriptions registered
+ * system. It should also have %PicmanEnumDesc descriptions registered
  * that contain translatable value names. This is the case for the
- * enums used in the GIMP PDB functions.
+ * enums used in the PICMAN PDB functions.
  *
  * This is just a convenience function. If you need more control over
  * the enum values that appear in the combo_box, you can create your
- * own #GimpEnumStore and use gimp_enum_combo_box_new_with_model().
+ * own #PicmanEnumStore and use picman_enum_combo_box_new_with_model().
  *
- * Return value: a new #GimpEnumComboBox.
+ * Return value: a new #PicmanEnumComboBox.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_enum_combo_box_new (GType enum_type)
+picman_enum_combo_box_new (GType enum_type)
 {
   GtkListStore *store;
   GtkWidget    *combo_box;
 
   g_return_val_if_fail (G_TYPE_IS_ENUM (enum_type), NULL);
 
-  store = gimp_enum_store_new (enum_type);
+  store = picman_enum_store_new (enum_type);
 
-  combo_box = g_object_new (GIMP_TYPE_ENUM_COMBO_BOX,
+  combo_box = g_object_new (PICMAN_TYPE_ENUM_COMBO_BOX,
                             "model", store,
                             NULL);
 
@@ -163,45 +163,45 @@ gimp_enum_combo_box_new (GType enum_type)
 }
 
 /**
- * gimp_enum_combo_box_new_with_model
- * @enum_store: a #GimpEnumStore to use as the model
+ * picman_enum_combo_box_new_with_model
+ * @enum_store: a #PicmanEnumStore to use as the model
  *
  * Creates a #GtkComboBox for the given @enum_store.
  *
- * Return value: a new #GimpEnumComboBox.
+ * Return value: a new #PicmanEnumComboBox.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_enum_combo_box_new_with_model (GimpEnumStore *enum_store)
+picman_enum_combo_box_new_with_model (PicmanEnumStore *enum_store)
 {
-  g_return_val_if_fail (GIMP_IS_ENUM_STORE (enum_store), NULL);
+  g_return_val_if_fail (PICMAN_IS_ENUM_STORE (enum_store), NULL);
 
-  return g_object_new (GIMP_TYPE_ENUM_COMBO_BOX,
+  return g_object_new (PICMAN_TYPE_ENUM_COMBO_BOX,
                        "model", enum_store,
                        NULL);
 }
 
 /**
- * gimp_enum_combo_box_set_stock_prefix:
- * @combo_box:    a #GimpEnumComboBox
+ * picman_enum_combo_box_set_stock_prefix:
+ * @combo_box:    a #PicmanEnumComboBox
  * @stock_prefix: a prefix to create icon stock ID from enum values
  *
  * Attempts to create stock icons for all items in the @combo_box. See
- * gimp_enum_store_set_stock_prefix() to find out what to use as
+ * picman_enum_store_set_stock_prefix() to find out what to use as
  * @stock_prefix.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_enum_combo_box_set_stock_prefix (GimpEnumComboBox *combo_box,
+picman_enum_combo_box_set_stock_prefix (PicmanEnumComboBox *combo_box,
                                       const gchar      *stock_prefix)
 {
   GtkTreeModel *model;
 
-  g_return_if_fail (GIMP_IS_ENUM_COMBO_BOX (combo_box));
+  g_return_if_fail (PICMAN_IS_ENUM_COMBO_BOX (combo_box));
 
   model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo_box));
 
-  gimp_enum_store_set_stock_prefix (GIMP_ENUM_STORE (model), stock_prefix);
+  picman_enum_store_set_stock_prefix (PICMAN_ENUM_STORE (model), stock_prefix);
 }

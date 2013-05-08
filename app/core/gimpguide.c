@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpGuide
- * Copyright (C) 2003  Henrik Brix Andersen <brix@gimp.org>
+ * PicmanGuide
+ * Copyright (C) 2003  Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimpguide.h"
-#include "gimpmarshal.h"
+#include "picmanguide.h"
+#include "picmanmarshal.h"
 
 enum
 {
@@ -45,38 +45,38 @@ enum
 };
 
 
-static void   gimp_guide_get_property (GObject      *object,
+static void   picman_guide_get_property (GObject      *object,
                                        guint         property_id,
                                        GValue       *value,
                                        GParamSpec   *pspec);
-static void   gimp_guide_set_property (GObject      *object,
+static void   picman_guide_set_property (GObject      *object,
                                        guint         property_id,
                                        const GValue *value,
                                        GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpGuide, gimp_guide, G_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanGuide, picman_guide, G_TYPE_OBJECT)
 
-static guint gimp_guide_signals[LAST_SIGNAL] = { 0 };
+static guint picman_guide_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_guide_class_init (GimpGuideClass *klass)
+picman_guide_class_init (PicmanGuideClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  gimp_guide_signals[REMOVED] =
+  picman_guide_signals[REMOVED] =
     g_signal_new ("removed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpGuideClass, removed),
+                  G_STRUCT_OFFSET (PicmanGuideClass, removed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
 
-  object_class->get_property = gimp_guide_get_property;
-  object_class->set_property = gimp_guide_set_property;
+  object_class->get_property = picman_guide_get_property;
+  object_class->set_property = picman_guide_set_property;
 
   klass->removed             = NULL;
 
@@ -84,31 +84,31 @@ gimp_guide_class_init (GimpGuideClass *klass)
                                    g_param_spec_uint ("id", NULL, NULL,
                                                       0, G_MAXUINT32, 0,
                                                       G_PARAM_CONSTRUCT_ONLY |
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_PARAM_READWRITE));
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_ORIENTATION,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_ORIENTATION,
                                  "orientation", NULL,
-                                 GIMP_TYPE_ORIENTATION_TYPE,
-                                 GIMP_ORIENTATION_UNKNOWN,
+                                 PICMAN_TYPE_ORIENTATION_TYPE,
+                                 PICMAN_ORIENTATION_UNKNOWN,
                                  0);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_POSITION,
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_POSITION,
                                 "position", NULL,
-                                -1, GIMP_MAX_IMAGE_SIZE, -1,
+                                -1, PICMAN_MAX_IMAGE_SIZE, -1,
                                 0);
 }
 
 static void
-gimp_guide_init (GimpGuide *guide)
+picman_guide_init (PicmanGuide *guide)
 {
 }
 
 static void
-gimp_guide_get_property (GObject      *object,
+picman_guide_get_property (GObject      *object,
                          guint         property_id,
                          GValue       *value,
                          GParamSpec   *pspec)
 {
-  GimpGuide *guide = GIMP_GUIDE (object);
+  PicmanGuide *guide = PICMAN_GUIDE (object);
 
   switch (property_id)
     {
@@ -128,12 +128,12 @@ gimp_guide_get_property (GObject      *object,
 }
 
 static void
-gimp_guide_set_property (GObject      *object,
+picman_guide_set_property (GObject      *object,
                          guint         property_id,
                          const GValue *value,
                          GParamSpec   *pspec)
 {
-  GimpGuide *guide = GIMP_GUIDE (object);
+  PicmanGuide *guide = PICMAN_GUIDE (object);
 
   switch (property_id)
     {
@@ -152,37 +152,37 @@ gimp_guide_set_property (GObject      *object,
     }
 }
 
-GimpGuide *
-gimp_guide_new (GimpOrientationType  orientation,
+PicmanGuide *
+picman_guide_new (PicmanOrientationType  orientation,
                 guint32              guide_ID)
 {
-  return g_object_new (GIMP_TYPE_GUIDE,
+  return g_object_new (PICMAN_TYPE_GUIDE,
                        "id",          guide_ID,
                        "orientation", orientation,
                        NULL);
 }
 
 guint32
-gimp_guide_get_ID (GimpGuide *guide)
+picman_guide_get_ID (PicmanGuide *guide)
 {
-  g_return_val_if_fail (GIMP_IS_GUIDE (guide), 0);
+  g_return_val_if_fail (PICMAN_IS_GUIDE (guide), 0);
 
   return guide->guide_ID;
 }
 
-GimpOrientationType
-gimp_guide_get_orientation (GimpGuide *guide)
+PicmanOrientationType
+picman_guide_get_orientation (PicmanGuide *guide)
 {
-  g_return_val_if_fail (GIMP_IS_GUIDE (guide), GIMP_ORIENTATION_UNKNOWN);
+  g_return_val_if_fail (PICMAN_IS_GUIDE (guide), PICMAN_ORIENTATION_UNKNOWN);
 
   return guide->orientation;
 }
 
 void
-gimp_guide_set_orientation (GimpGuide           *guide,
-                            GimpOrientationType  orientation)
+picman_guide_set_orientation (PicmanGuide           *guide,
+                            PicmanOrientationType  orientation)
 {
-  g_return_if_fail (GIMP_IS_GUIDE (guide));
+  g_return_if_fail (PICMAN_IS_GUIDE (guide));
 
   guide->orientation = orientation;
 
@@ -190,18 +190,18 @@ gimp_guide_set_orientation (GimpGuide           *guide,
 }
 
 gint
-gimp_guide_get_position (GimpGuide *guide)
+picman_guide_get_position (PicmanGuide *guide)
 {
-  g_return_val_if_fail (GIMP_IS_GUIDE (guide), -1);
+  g_return_val_if_fail (PICMAN_IS_GUIDE (guide), -1);
 
   return guide->position;
 }
 
 void
-gimp_guide_set_position (GimpGuide *guide,
+picman_guide_set_position (PicmanGuide *guide,
                          gint       position)
 {
-  g_return_if_fail (GIMP_IS_GUIDE (guide));
+  g_return_if_fail (PICMAN_IS_GUIDE (guide));
 
   guide->position = position;
 
@@ -209,9 +209,9 @@ gimp_guide_set_position (GimpGuide *guide,
 }
 
 void
-gimp_guide_removed (GimpGuide *guide)
+picman_guide_removed (PicmanGuide *guide)
 {
-  g_return_if_fail (GIMP_IS_GUIDE (guide));
+  g_return_if_fail (PICMAN_IS_GUIDE (guide));
 
-  g_signal_emit (guide, gimp_guide_signals[REMOVED], 0);
+  g_signal_emit (guide, picman_guide_signals[REMOVED], 0);
 }

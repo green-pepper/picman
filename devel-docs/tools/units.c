@@ -3,8 +3,8 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpbase/gimpbase-private.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanbase/picmanbase-private.h"
 
 #include "units.h"
 
@@ -18,9 +18,9 @@ typedef struct
   const gchar *abbreviation;
   const gchar *singular;
   const gchar *plural;
-} GimpUnitDef;
+} PicmanUnitDef;
 
-static const GimpUnitDef unit_defs[] =
+static const PicmanUnitDef unit_defs[] =
 {
   {  0.0, 0, "pixels",      "px", "px", "pixel",      "pixels"      },
   {  1.0, 2, "inches",      "''", "in", "inch",       "inches"      },
@@ -41,43 +41,43 @@ units_get_number_of_built_in_units (void)
 }
 
 static gdouble
-units_unit_get_factor (GimpUnit unit)
+units_unit_get_factor (PicmanUnit unit)
 {
   return unit_defs[unit].factor;
 }
 
 static gint
-units_unit_get_digits (GimpUnit unit)
+units_unit_get_digits (PicmanUnit unit)
 {
   return unit_defs[unit].digits;
 }
 
 static const gchar *
-units_unit_get_identifier (GimpUnit unit)
+units_unit_get_identifier (PicmanUnit unit)
 {
   return unit_defs[unit].identifier;
 }
 
 static const gchar *
-units_unit_get_symbol (GimpUnit unit)
+units_unit_get_symbol (PicmanUnit unit)
 {
   return unit_defs[unit].symbol;
 }
 
 static const gchar *
-units_unit_get_abbreviation (GimpUnit unit)
+units_unit_get_abbreviation (PicmanUnit unit)
 {
   return unit_defs[unit].abbreviation;
 }
 
 static const gchar *
-units_unit_get_singular (GimpUnit unit)
+units_unit_get_singular (PicmanUnit unit)
 {
   return unit_defs[unit].singular;
 }
 
 static const gchar *
-units_unit_get_plural (GimpUnit unit)
+units_unit_get_plural (PicmanUnit unit)
 {
   return unit_defs[unit].plural;
 }
@@ -85,7 +85,7 @@ units_unit_get_plural (GimpUnit unit)
 void
 units_init (void)
 {
-  GimpUnitVtable vtable;
+  PicmanUnitVtable vtable;
 
   vtable.unit_get_number_of_units          = units_get_number_of_units;
   vtable.unit_get_number_of_built_in_units = units_get_number_of_built_in_units;
@@ -98,5 +98,5 @@ units_init (void)
   vtable.unit_get_singular                 = units_unit_get_singular;
   vtable.unit_get_plural                   = units_unit_get_plural;
 
-  gimp_base_init (&vtable);
+  picman_base_init (&vtable);
 }

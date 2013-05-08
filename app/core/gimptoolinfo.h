@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,32 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TOOL_INFO_H__
-#define __GIMP_TOOL_INFO_H__
+#ifndef __PICMAN_TOOL_INFO_H__
+#define __PICMAN_TOOL_INFO_H__
 
 
-#include "gimpdata.h"
+#include "picmandata.h"
 
 
-#define GIMP_TYPE_TOOL_INFO            (gimp_tool_info_get_type ())
-#define GIMP_TOOL_INFO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TOOL_INFO, GimpToolInfo))
-#define GIMP_TOOL_INFO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TOOL_INFO, GimpToolInfoClass))
-#define GIMP_IS_TOOL_INFO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TOOL_INFO))
-#define GIMP_IS_TOOL_INFO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TOOL_INFO))
-#define GIMP_TOOL_INFO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TOOL_INFO, GimpToolInfoClass))
+#define PICMAN_TYPE_TOOL_INFO            (picman_tool_info_get_type ())
+#define PICMAN_TOOL_INFO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TOOL_INFO, PicmanToolInfo))
+#define PICMAN_TOOL_INFO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TOOL_INFO, PicmanToolInfoClass))
+#define PICMAN_IS_TOOL_INFO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TOOL_INFO))
+#define PICMAN_IS_TOOL_INFO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TOOL_INFO))
+#define PICMAN_TOOL_INFO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TOOL_INFO, PicmanToolInfoClass))
 
 
-typedef struct _GimpToolInfoClass GimpToolInfoClass;
+typedef struct _PicmanToolInfoClass PicmanToolInfoClass;
 
-struct _GimpToolInfo
+struct _PicmanToolInfo
 {
-  GimpViewable         parent_instance;
+  PicmanViewable         parent_instance;
 
-  Gimp                *gimp;
+  Picman                *picman;
 
   GType                tool_type;
   GType                tool_options_type;
-  GimpContextPropMask  context_props;
+  PicmanContextPropMask  context_props;
 
   gchar               *blurb;
   gchar               *help;
@@ -52,24 +52,24 @@ struct _GimpToolInfo
   gchar               *help_id;
 
   gboolean             visible;
-  GimpToolOptions     *tool_options;
-  GimpPaintInfo       *paint_info;
+  PicmanToolOptions     *tool_options;
+  PicmanPaintInfo       *paint_info;
 
-  GimpContainer       *presets;
+  PicmanContainer       *presets;
 };
 
-struct _GimpToolInfoClass
+struct _PicmanToolInfoClass
 {
-  GimpViewableClass    parent_class;
+  PicmanViewableClass    parent_class;
 };
 
 
-GType          gimp_tool_info_get_type     (void) G_GNUC_CONST;
+GType          picman_tool_info_get_type     (void) G_GNUC_CONST;
 
-GimpToolInfo * gimp_tool_info_new          (Gimp                *gimp,
+PicmanToolInfo * picman_tool_info_new          (Picman                *picman,
                                             GType                tool_type,
                                             GType                tool_options_type,
-                                            GimpContextPropMask  context_props,
+                                            PicmanContextPropMask  context_props,
                                             const gchar         *identifier,
                                             const gchar         *blurb,
                                             const gchar         *help,
@@ -80,13 +80,13 @@ GimpToolInfo * gimp_tool_info_new          (Gimp                *gimp,
                                             const gchar         *paint_core_name,
                                             const gchar         *stock_id);
 
-void           gimp_tool_info_set_standard (Gimp                *gimp,
-                                            GimpToolInfo        *tool_info);
-GimpToolInfo * gimp_tool_info_get_standard (Gimp                *gimp);
+void           picman_tool_info_set_standard (Picman                *picman,
+                                            PicmanToolInfo        *tool_info);
+PicmanToolInfo * picman_tool_info_get_standard (Picman                *picman);
 
 gchar *
-     gimp_tool_info_build_options_filename (GimpToolInfo        *tool_info,
+     picman_tool_info_build_options_filename (PicmanToolInfo        *tool_info,
                                             const gchar         *suffix);
 
 
-#endif  /*  __GIMP_TOOL_INFO_H__  */
+#endif  /*  __PICMAN_TOOL_INFO_H__  */

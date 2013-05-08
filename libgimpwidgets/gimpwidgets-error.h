@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpwidgets-error.h
+ * picmanwidgets-error.h
  * Copyright (C) 2008  Martin Nordholts <martinn@svn.gnome.org>
  *
  * This library is free software: you can redistribute it and/or
@@ -19,34 +19,34 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_WIDGETS_ERROR_H__
-#define __GIMP_WIDGETS_ERROR_H__
+#ifndef __PICMAN_WIDGETS_ERROR_H__
+#define __PICMAN_WIDGETS_ERROR_H__
 
 G_BEGIN_DECLS
 
 
 typedef enum
 {
-  GIMP_WIDGETS_PARSE_ERROR
-} GimpWidgetsError;
+  PICMAN_WIDGETS_PARSE_ERROR
+} PicmanWidgetsError;
 
 
 /**
- * GIMP_WIDGETS_ERROR:
+ * PICMAN_WIDGETS_ERROR:
  *
- * The GIMP widgets error domain.
+ * The PICMAN widgets error domain.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  */
-#define GIMP_WIDGETS_ERROR (gimp_widgets_error_quark ())
+#define PICMAN_WIDGETS_ERROR (picman_widgets_error_quark ())
 
-GQuark  gimp_widgets_error_quark (void) G_GNUC_CONST;
+GQuark  picman_widgets_error_quark (void) G_GNUC_CONST;
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_WIDGETS_ERROR_H__ */
+#endif  /* __PICMAN_WIDGETS_ERROR_H__ */

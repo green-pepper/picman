@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimp3migration.h
- * Copyright (C) 2011 Michael Natterer <mitch@gimp.org>
+ * picman3migration.h
+ * Copyright (C) 2011 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,18 +19,18 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_3_MIGRATION_H__
-#define __GIMP_3_MIGRATION_H__
+#ifndef __PICMAN_3_MIGRATION_H__
+#define __PICMAN_3_MIGRATION_H__
 
 
-/* This file is evil. Its purpose is to keep GIMP's gtk3-port branch
+/* This file is evil. Its purpose is to keep PICMAN's gtk3-port branch
  * manageable, and contains functions that are only in GTK+ 3.x but
  * are *not* in GTK+ 2.x. Please just ignore the uglyness and move
- * along. This file will be removed in GIMP 3.
+ * along. This file will be removed in PICMAN 3.
  */
 
 GtkWidget * gtk_box_new        (GtkOrientation  orientation,
@@ -46,7 +46,7 @@ GtkWidget * gtk_separator_new  (GtkOrientation  orientation);
 
 /* These functions are even more evil. They exist only since GTK+ 3.3
  * and need to be taken care of carefully when building against GTK+
- * 3.x. This is not an issue as long as we don't have any GIMP 3.x
+ * 3.x. This is not an issue as long as we don't have any PICMAN 3.x
  * release, and this file will be gone until then.
  */
 
@@ -71,4 +71,4 @@ gboolean        gdk_cairo_get_clip_rectangle    (cairo_t           *cr,
                                                  GdkRectangle      *rect);
 
 
-#endif /* __GIMP_3_MIGRATION_H__ */
+#endif /* __PICMAN_3_MIGRATION_H__ */

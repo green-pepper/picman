@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginmanager-data.c
+ * picmanpluginmanager-data.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,13 +25,13 @@
 
 #include "plug-in-types.h"
 
-#include "gimppluginmanager.h"
-#include "gimppluginmanager-data.h"
+#include "picmanpluginmanager.h"
+#include "picmanpluginmanager-data.h"
 
 
-typedef struct _GimpPlugInData GimpPlugInData;
+typedef struct _PicmanPlugInData PicmanPlugInData;
 
-struct _GimpPlugInData
+struct _PicmanPlugInData
 {
   gchar  *identifier;
   gint32  bytes;
@@ -42,9 +42,9 @@ struct _GimpPlugInData
 /*  public functions  */
 
 void
-gimp_plug_in_manager_data_free (GimpPlugInManager *manager)
+picman_plug_in_manager_data_free (PicmanPlugInManager *manager)
 {
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
 
   if (manager->data_list)
     {
@@ -54,11 +54,11 @@ gimp_plug_in_manager_data_free (GimpPlugInManager *manager)
            list;
            list = g_list_next (list))
         {
-          GimpPlugInData *data = list->data;
+          PicmanPlugInData *data = list->data;
 
           g_free (data->identifier);
           g_free (data->data);
-          g_slice_free (GimpPlugInData, data);
+          g_slice_free (PicmanPlugInData, data);
         }
 
       g_list_free (manager->data_list);
@@ -67,15 +67,15 @@ gimp_plug_in_manager_data_free (GimpPlugInManager *manager)
 }
 
 void
-gimp_plug_in_manager_set_data (GimpPlugInManager *manager,
+picman_plug_in_manager_set_data (PicmanPlugInManager *manager,
                                const gchar       *identifier,
                                gint32             bytes,
                                const guint8      *data)
 {
-  GimpPlugInData *plug_in_data;
+  PicmanPlugInData *plug_in_data;
   GList          *list;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
   g_return_if_fail (identifier != NULL);
   g_return_if_fail (bytes > 0);
   g_return_if_fail (data != NULL);
@@ -91,7 +91,7 @@ gimp_plug_in_manager_set_data (GimpPlugInManager *manager,
   /* If there isn't already data with the specified identifier, create one */
   if (list == NULL)
     {
-      plug_in_data = g_slice_new0 (GimpPlugInData);
+      plug_in_data = g_slice_new0 (PicmanPlugInData);
       plug_in_data->identifier = g_strdup (identifier);
 
       manager->data_list = g_list_prepend (manager->data_list, plug_in_data);
@@ -106,13 +106,13 @@ gimp_plug_in_manager_set_data (GimpPlugInManager *manager,
 }
 
 const guint8 *
-gimp_plug_in_manager_get_data (GimpPlugInManager *manager,
+picman_plug_in_manager_get_data (PicmanPlugInManager *manager,
                                const gchar       *identifier,
                                gint32            *bytes)
 {
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager), NULL);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager), NULL);
   g_return_val_if_fail (identifier != NULL, NULL);
   g_return_val_if_fail (bytes != NULL, NULL);
 
@@ -120,7 +120,7 @@ gimp_plug_in_manager_get_data (GimpPlugInManager *manager,
 
   for (list = manager->data_list; list; list = g_list_next (list))
     {
-      GimpPlugInData *plug_in_data = list->data;
+      PicmanPlugInData *plug_in_data = list->data;
 
       if (! strcmp (plug_in_data->identifier, identifier))
         {

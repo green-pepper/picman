@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationnormalmode.h
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picmanoperationnormalmode.h
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,36 +19,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GIMP_OPERATION_NORMAL_MODE_H__
-#define __GIMP_OPERATION_NORMAL_MODE_H__
+#ifndef __PICMAN_OPERATION_NORMAL_MODE_H__
+#define __PICMAN_OPERATION_NORMAL_MODE_H__
 
 
-#include "gimpoperationpointlayermode.h"
+#include "picmanoperationpointlayermode.h"
 
 
-#define GIMP_TYPE_OPERATION_NORMAL_MODE            (gimp_operation_normal_mode_get_type ())
-#define GIMP_OPERATION_NORMAL_MODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_NORMAL_MODE, GimpOperationNormalMode))
-#define GIMP_OPERATION_NORMAL_MODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_NORMAL_MODE, GimpOperationNormalModeClass))
-#define GIMP_IS_OPERATION_NORMAL_MODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_NORMAL_MODE))
-#define GIMP_IS_OPERATION_NORMAL_MODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_NORMAL_MODE))
-#define GIMP_OPERATION_NORMAL_MODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_NORMAL_MODE, GimpOperationNormalModeClass))
+#define PICMAN_TYPE_OPERATION_NORMAL_MODE            (picman_operation_normal_mode_get_type ())
+#define PICMAN_OPERATION_NORMAL_MODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_NORMAL_MODE, PicmanOperationNormalMode))
+#define PICMAN_OPERATION_NORMAL_MODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_NORMAL_MODE, PicmanOperationNormalModeClass))
+#define PICMAN_IS_OPERATION_NORMAL_MODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_NORMAL_MODE))
+#define PICMAN_IS_OPERATION_NORMAL_MODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_NORMAL_MODE))
+#define PICMAN_OPERATION_NORMAL_MODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_NORMAL_MODE, PicmanOperationNormalModeClass))
 
 
-typedef struct _GimpOperationNormalMode      GimpOperationNormalMode;
-typedef struct _GimpOperationNormalModeClass GimpOperationNormalModeClass;
+typedef struct _PicmanOperationNormalMode      PicmanOperationNormalMode;
+typedef struct _PicmanOperationNormalModeClass PicmanOperationNormalModeClass;
 
-struct _GimpOperationNormalMode
+struct _PicmanOperationNormalMode
 {
-  GimpOperationPointLayerMode  parent_instance;
+  PicmanOperationPointLayerMode  parent_instance;
 };
 
-struct _GimpOperationNormalModeClass
+struct _PicmanOperationNormalModeClass
 {
-  GimpOperationPointLayerModeClass  parent_class;
+  PicmanOperationPointLayerModeClass  parent_class;
 };
 
 
-GType   gimp_operation_normal_mode_get_type (void) G_GNUC_CONST;
+GType   picman_operation_normal_mode_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_NORMAL_MODE_H__ */
+#endif /* __PICMAN_OPERATION_NORMAL_MODE_H__ */

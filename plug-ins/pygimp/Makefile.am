@@ -1,13 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
-libgimpui = $(top_builddir)/libgimp/libgimpui-$(GIMP_API_VERSION).la
-libgimpconfig = $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la
-libgimpwidgets = $(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la
-libgimp = $(top_builddir)/libgimp/libgimp-$(GIMP_API_VERSION).la
-libgimpcolor = $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
-libgimpmath = $(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la
-libgimpthumb = $(top_builddir)/libgimpthumb/libgimpthumb-$(GIMP_API_VERSION).la
+libpicmanui = $(top_builddir)/libpicman/libpicmanui-$(PICMAN_API_VERSION).la
+libpicmanconfig = $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la
+libpicmanwidgets = $(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la
+libpicman = $(top_builddir)/libpicman/libpicman-$(PICMAN_API_VERSION).la
+libpicmancolor = $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
+libpicmanmath = $(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la
+libpicmanthumb = $(top_builddir)/libpicmanthumb/libpicmanthumb-$(PICMAN_API_VERSION).la
 
 SUBDIRS = plug-ins
 
@@ -19,129 +19,129 @@ else
 path_separator = :
 endif
 
-AM_CFLAGS = $(PYGIMP_EXTRA_CFLAGS)
+AM_CFLAGS = $(PYPICMAN_EXTRA_CFLAGS)
 
 INCLUDES = -I$(top_srcdir) $(PYTHON_INCLUDES) $(PYGTK_CFLAGS) $(GTK_CFLAGS) $(GEGL_CFLAGS)
 
-pygimpbase = python
+pypicmanbase = python
 
-pygimpdir = $(gimpplugindir)/$(pygimpbase)
+pypicmandir = $(picmanplugindir)/$(pypicmanbase)
 
-pygimp_LTLIBRARIES = gimp.la _gimpenums.la gimpcolor.la _gimpui.la \
-	gimpthumb.la
+pypicman_LTLIBRARIES = picman.la _picmanenums.la picmancolor.la _picmanui.la \
+	picmanthumb.la
 
-gimp_la_SOURCES = \
-	gimpmodule.c		\
-	pygimp-item.c		\
-	pygimp-display.c	\
-	pygimp-drawable.c	\
-	pygimp-image.c		\
-	pygimp-parasite.c	\
-	pygimp-pdb.c		\
-	pygimp-tile.c		\
-	pygimp-vectors.c	\
-	pygimp.h		\
-	pygimp-api.h		\
-	pygimp-intl.h		\
-	pygimp-util.h
+picman_la_SOURCES = \
+	picmanmodule.c		\
+	pypicman-item.c		\
+	pypicman-display.c	\
+	pypicman-drawable.c	\
+	pypicman-image.c		\
+	pypicman-parasite.c	\
+	pypicman-pdb.c		\
+	pypicman-tile.c		\
+	pypicman-vectors.c	\
+	pypicman.h		\
+	pypicman-api.h		\
+	pypicman-intl.h		\
+	pypicman-util.h
 
-gimp_la_LDFLAGS = -module -avoid-version $(no_undefined) $(shrext) \
-	-export-symbols-regex initgimp
+picman_la_LDFLAGS = -module -avoid-version $(no_undefined) $(shrext) \
+	-export-symbols-regex initpicman
 
-gimp_la_LIBADD = \
-	$(libgimp)		\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+picman_la_LIBADD = \
+	$(libpicman)		\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GLIB_LIBS)		\
 	$(PYLINK_LIBS)		\
 	$(RT_LIBS)
 
-_gimpenums_la_SOURCES = \
-	gimpenumsmodule.c
+_picmanenums_la_SOURCES = \
+	picmanenumsmodule.c
 
-_gimpenums_la_LDFLAGS = -module -avoid-version $(no_undefined) $(shrext) \
-	-export-symbols-regex init_gimpenums
+_picmanenums_la_LDFLAGS = -module -avoid-version $(no_undefined) $(shrext) \
+	-export-symbols-regex init_picmanenums
 
-_gimpenums_la_LIBADD = \
-	$(libgimp)		\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+_picmanenums_la_LIBADD = \
+	$(libpicman)		\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GLIB_LIBS)		\
 	$(PYLINK_LIBS)		\
 	$(RT_LIBS)
 
-gimpcolor_la_SOURCES = \
-	gimpcolormodule.c	\
-	pygimp-colors.c		\
-	pygimpcolor.h		\
-	pygimpcolor-api.h
+picmancolor_la_SOURCES = \
+	picmancolormodule.c	\
+	pypicman-colors.c		\
+	pypicmancolor.h		\
+	pypicmancolor-api.h
 
-gimpcolor_la_LDFLAGS = -module -avoid-version $(no_undefined) $(shrext) \
-	-export-symbols-regex initgimpcolor
+picmancolor_la_LDFLAGS = -module -avoid-version $(no_undefined) $(shrext) \
+	-export-symbols-regex initpicmancolor
 
-gimpcolor_la_LIBADD = \
-	$(libgimpcolor)		\
+picmancolor_la_LIBADD = \
+	$(libpicmancolor)		\
 	$(GLIB_LIBS)		\
 	$(PYLINK_LIBS)
 
-_gimpui_la_SOURCES = \
-	gimpuimodule.c		\
-	gimpui.c
+_picmanui_la_SOURCES = \
+	picmanuimodule.c		\
+	picmanui.c
 
-_gimpui_la_LDFLAGS = -module -avoid-version $(no_undefined) $(shrext) \
-	-export-symbols-regex init_gimpui
+_picmanui_la_LDFLAGS = -module -avoid-version $(no_undefined) $(shrext) \
+	-export-symbols-regex init_picmanui
 
-_gimpui_la_LIBADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpconfig)	\
-	$(libgimpmath)		\
-	$(libgimp)		\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+_picmanui_la_LIBADD = \
+	$(libpicmanui)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanconfig)	\
+	$(libpicmanmath)		\
+	$(libpicman)		\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(PYLINK_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)
 
-gimpthumb_la_SOURCES = \
-	gimpthumbmodule.c \
-	gimpthumb.c
+picmanthumb_la_SOURCES = \
+	picmanthumbmodule.c \
+	picmanthumb.c
 
-gimpthumb_la_LDFLAGS = -module -avoid-version $(no_undefined) $(shrext) \
-	-export-symbols-regex initgimpthumb
+picmanthumb_la_LDFLAGS = -module -avoid-version $(no_undefined) $(shrext) \
+	-export-symbols-regex initpicmanthumb
 
-gimpthumb_la_LIBADD = \
-	$(libgimpthumb)		\
+picmanthumb_la_LIBADD = \
+	$(libpicmanthumb)		\
 	$(GDK_PIXBUF_LIBS)	\
 	$(PYLINK_LIBS)
 
-pygimp_PYTHON = \
-	gimpenums.py	\
-	gimpfu.py	\
-	gimpplugin.py	\
-	gimpshelf.py	\
-	gimpui.py
+pypicman_PYTHON = \
+	picmanenums.py	\
+	picmanfu.py	\
+	picmanplugin.py	\
+	picmanshelf.py	\
+	picmanui.py
 
-pygimp_DATA = pygimp-logo.png
+pypicman_DATA = pypicman-logo.png
 
 codegen_files = \
-	gimpcolor-types.defs	\
-	gimpenums-types.defs	\
-	gimpthumb.defs		\
-	gimpthumb.override	\
-	gimpui.defs		\
-	gimpui.override
+	picmancolor-types.defs	\
+	picmanenums-types.defs	\
+	picmanthumb.defs		\
+	picmanthumb.override	\
+	picmanui.defs		\
+	picmanui.override
 
-pyenvdir = $(gimpplugindir)/environ
-pyinterpdir = $(gimpplugindir)/interpreters
+pyenvdir = $(picmanplugindir)/environ
+pyinterpdir = $(picmanplugindir)/interpreters
 
-pyenvfile = $(pyenvdir)/pygimp.env
-pyinterpfile = $(pyinterpdir)/pygimp.interp
+pyenvfile = $(pyenvdir)/pypicman.env
+pyinterpfile = $(pyinterpdir)/pypicman.interp
 
 install-env-file:
 	$(mkinstalldirs) '$(DESTDIR)$(pyenvdir)'
-	echo '$(path_separator) PYTHONPATH=$${gimp_plug_in_dir}/$(pygimpbase)' > '$(DESTDIR)$(pyenvfile)'
+	echo '$(path_separator) PYTHONPATH=$${picman_plug_in_dir}/$(pypicmanbase)' > '$(DESTDIR)$(pyenvfile)'
 
 install-interp-file:
 	$(mkinstalldirs) '$(DESTDIR)$(pyinterpdir)'
@@ -155,14 +155,14 @@ uninstall-local:
 	rm -f '$(DESTDIR)$(pyenvfile)' '$(DESTDIR)$(pyinterpfile)'
 
 EXTRA_DIST = \
-	$(pygimp_DATA)		\
+	$(pypicman_DATA)		\
 	$(codegen_files)
 
-gimpui.c: gimpui.defs gimpui.override gimpcolor-types.defs gimpenums-types.defs
+picmanui.c: picmanui.defs picmanui.override picmancolor-types.defs picmanenums-types.defs
 
-gimpthumb.c: gimpthumb.defs gimpthumb.override
+picmanthumb.c: picmanthumb.defs picmanthumb.override
 
-CLEANFILES = gimpui.c gimpthumb.c
+CLEANFILES = picmanui.c picmanthumb.c
 
 .defs.c:
 	(cd $(srcdir) \
@@ -170,8 +170,8 @@ CLEANFILES = gimpui.c gimpthumb.c
 	    --override $*.override \
 	    --register $(PYGTK_DEFSDIR)/gdk-types.defs \
 	    --register $(PYGTK_DEFSDIR)/gtk-types.defs \
-	    --register gimpcolor-types.defs \
-	    --register gimpenums-types.defs \
+	    --register picmancolor-types.defs \
+	    --register picmanenums-types.defs \
 	    --prefix $* $*.defs) > gen-$*.c \
 	 && cp gen-$*.c $*.c \
 	 && rm -f gen-$*.c

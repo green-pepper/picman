@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,19 +25,19 @@ struct _ImageMergeLayersDialog
 {
   GtkWidget     *dialog;
 
-  GimpImage     *image;
-  GimpContext   *context;
-  GimpMergeType  merge_type;
+  PicmanImage     *image;
+  PicmanContext   *context;
+  PicmanMergeType  merge_type;
   gboolean       merge_active_group;
   gboolean       discard_invisible;
 };
 
 
 ImageMergeLayersDialog *
-  image_merge_layers_dialog_new (GimpImage     *image,
-                                 GimpContext   *context,
+  image_merge_layers_dialog_new (PicmanImage     *image,
+                                 PicmanContext   *context,
                                  GtkWidget     *parent,
-                                 GimpMergeType  merge_type,
+                                 PicmanMergeType  merge_type,
                                  gboolean       merge_active_group,
                                  gboolean       discard_invisible);
 

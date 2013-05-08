@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginshm.h
+ * picmanpluginshm.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_SHM_H__
-#define __GIMP_PLUG_IN_SHM_H__
+#ifndef __PICMAN_PLUG_IN_SHM_H__
+#define __PICMAN_PLUG_IN_SHM_H__
 
 
-GimpPlugInShm * gimp_plug_in_shm_new      (void);
-void            gimp_plug_in_shm_free     (GimpPlugInShm *shm);
+PicmanPlugInShm * picman_plug_in_shm_new      (void);
+void            picman_plug_in_shm_free     (PicmanPlugInShm *shm);
 
-gint            gimp_plug_in_shm_get_ID   (GimpPlugInShm *shm);
-guchar        * gimp_plug_in_shm_get_addr (GimpPlugInShm *shm);
+gint            picman_plug_in_shm_get_ID   (PicmanPlugInShm *shm);
+guchar        * picman_plug_in_shm_get_addr (PicmanPlugInShm *shm);
 
 
-#endif /* __GIMP_PLUG_IN_SHM_H__ */
+#endif /* __PICMAN_PLUG_IN_SHM_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationpointfilter.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanoperationpointfilter.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,39 +24,39 @@
 
 #include "operations-types.h"
 
-#include "gimpoperationpointfilter.h"
+#include "picmanoperationpointfilter.h"
 
 
-static void   gimp_operation_point_filter_finalize (GObject       *object);
-static void   gimp_operation_point_filter_prepare  (GeglOperation *operation);
+static void   picman_operation_point_filter_finalize (GObject       *object);
+static void   picman_operation_point_filter_prepare  (GeglOperation *operation);
 
 
-G_DEFINE_ABSTRACT_TYPE (GimpOperationPointFilter, gimp_operation_point_filter,
+G_DEFINE_ABSTRACT_TYPE (PicmanOperationPointFilter, picman_operation_point_filter,
                         GEGL_TYPE_OPERATION_POINT_FILTER)
 
-#define parent_class gimp_operation_point_filter_parent_class
+#define parent_class picman_operation_point_filter_parent_class
 
 
 static void
-gimp_operation_point_filter_class_init (GimpOperationPointFilterClass *klass)
+picman_operation_point_filter_class_init (PicmanOperationPointFilterClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
   GeglOperationClass  *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  object_class->finalize = gimp_operation_point_filter_finalize;
+  object_class->finalize = picman_operation_point_filter_finalize;
 
-  operation_class->prepare = gimp_operation_point_filter_prepare;
+  operation_class->prepare = picman_operation_point_filter_prepare;
 }
 
 static void
-gimp_operation_point_filter_init (GimpOperationPointFilter *self)
+picman_operation_point_filter_init (PicmanOperationPointFilter *self)
 {
 }
 
 static void
-gimp_operation_point_filter_finalize (GObject *object)
+picman_operation_point_filter_finalize (GObject *object)
 {
-  GimpOperationPointFilter *self = GIMP_OPERATION_POINT_FILTER (object);
+  PicmanOperationPointFilter *self = PICMAN_OPERATION_POINT_FILTER (object);
 
   if (self->config)
     {
@@ -68,16 +68,16 @@ gimp_operation_point_filter_finalize (GObject *object)
 }
 
 void
-gimp_operation_point_filter_get_property (GObject    *object,
+picman_operation_point_filter_get_property (GObject    *object,
                                           guint       property_id,
                                           GValue     *value,
                                           GParamSpec *pspec)
 {
-  GimpOperationPointFilter *self = GIMP_OPERATION_POINT_FILTER (object);
+  PicmanOperationPointFilter *self = PICMAN_OPERATION_POINT_FILTER (object);
 
   switch (property_id)
     {
-    case GIMP_OPERATION_POINT_FILTER_PROP_CONFIG:
+    case PICMAN_OPERATION_POINT_FILTER_PROP_CONFIG:
       g_value_set_object (value, self->config);
       break;
 
@@ -88,16 +88,16 @@ gimp_operation_point_filter_get_property (GObject    *object,
 }
 
 void
-gimp_operation_point_filter_set_property (GObject      *object,
+picman_operation_point_filter_set_property (GObject      *object,
                                           guint         property_id,
                                           const GValue *value,
                                           GParamSpec   *pspec)
 {
-  GimpOperationPointFilter *self = GIMP_OPERATION_POINT_FILTER (object);
+  PicmanOperationPointFilter *self = PICMAN_OPERATION_POINT_FILTER (object);
 
   switch (property_id)
     {
-    case GIMP_OPERATION_POINT_FILTER_PROP_CONFIG:
+    case PICMAN_OPERATION_POINT_FILTER_PROP_CONFIG:
       if (self->config)
         g_object_unref (self->config);
       self->config = g_value_dup_object (value);
@@ -110,7 +110,7 @@ gimp_operation_point_filter_set_property (GObject      *object,
 }
 
 static void
-gimp_operation_point_filter_prepare (GeglOperation *operation)
+picman_operation_point_filter_prepare (GeglOperation *operation)
 {
   const Babl *format = babl_format ("R'G'B'A float");
 

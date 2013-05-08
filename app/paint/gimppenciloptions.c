@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "paint-types.h"
 
-#include "gimppenciloptions.h"
+#include "picmanpenciloptions.h"
 
 
 #define PENCIL_DEFAULT_HARD TRUE
@@ -36,46 +36,46 @@ enum
 };
 
 
-static void   gimp_pencil_options_set_property (GObject      *object,
+static void   picman_pencil_options_set_property (GObject      *object,
                                                 guint         property_id,
                                                 const GValue *value,
                                                 GParamSpec   *pspec);
-static void   gimp_pencil_options_get_property (GObject      *object,
+static void   picman_pencil_options_get_property (GObject      *object,
                                                 guint         property_id,
                                                 GValue       *value,
                                                 GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpPencilOptions, gimp_pencil_options,
-               GIMP_TYPE_PAINT_OPTIONS)
+G_DEFINE_TYPE (PicmanPencilOptions, picman_pencil_options,
+               PICMAN_TYPE_PAINT_OPTIONS)
 
 
 static void
-gimp_pencil_options_class_init (GimpPencilOptionsClass *klass)
+picman_pencil_options_class_init (PicmanPencilOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_pencil_options_set_property;
-  object_class->get_property = gimp_pencil_options_get_property;
+  object_class->set_property = picman_pencil_options_set_property;
+  object_class->get_property = picman_pencil_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_HARD,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_HARD,
                                     "hard", NULL,
                                     PENCIL_DEFAULT_HARD,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_pencil_options_init (GimpPencilOptions *options)
+picman_pencil_options_init (PicmanPencilOptions *options)
 {
 }
 
 static void
-gimp_pencil_options_set_property (GObject      *object,
+picman_pencil_options_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  GimpPaintOptions *options = GIMP_PAINT_OPTIONS (object);
+  PicmanPaintOptions *options = PICMAN_PAINT_OPTIONS (object);
 
   switch (property_id)
     {
@@ -89,12 +89,12 @@ gimp_pencil_options_set_property (GObject      *object,
 }
 
 static void
-gimp_pencil_options_get_property (GObject    *object,
+picman_pencil_options_get_property (GObject    *object,
                                   guint       property_id,
                                   GValue     *value,
                                   GParamSpec *pspec)
 {
-  GimpPaintOptions *options = GIMP_PAINT_OPTIONS (object);
+  PicmanPaintOptions *options = PICMAN_PAINT_OPTIONS (object);
 
   switch (property_id)
     {

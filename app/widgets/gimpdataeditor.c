@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdataeditor.c
- * Copyright (C) 2002-2004 Michael Natterer <mitch@gimp.org>
+ * picmandataeditor.c
+ * Copyright (C) 2002-2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,23 +26,23 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpdata.h"
-#include "core/gimpdatafactory.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmandata.h"
+#include "core/picmandatafactory.h"
 
-#include "gimpdataeditor.h"
-#include "gimpdocked.h"
-#include "gimpmenufactory.h"
-#include "gimpsessioninfo-aux.h"
-#include "gimpuimanager.h"
+#include "picmandataeditor.h"
+#include "picmandocked.h"
+#include "picmanmenufactory.h"
+#include "picmansessioninfo-aux.h"
+#include "picmanuimanager.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define DEFAULT_MINIMAL_HEIGHT 96
@@ -57,97 +57,97 @@ enum
 };
 
 
-static void       gimp_data_editor_docked_iface_init (GimpDockedInterface *iface);
+static void       picman_data_editor_docked_iface_init (PicmanDockedInterface *iface);
 
-static void       gimp_data_editor_constructed       (GObject        *object);
-static void       gimp_data_editor_dispose           (GObject        *object);
-static void       gimp_data_editor_set_property      (GObject        *object,
+static void       picman_data_editor_constructed       (GObject        *object);
+static void       picman_data_editor_dispose           (GObject        *object);
+static void       picman_data_editor_set_property      (GObject        *object,
                                                       guint           property_id,
                                                       const GValue   *value,
                                                       GParamSpec     *pspec);
-static void       gimp_data_editor_get_property      (GObject        *object,
+static void       picman_data_editor_get_property      (GObject        *object,
                                                       guint           property_id,
                                                       GValue         *value,
                                                       GParamSpec     *pspec);
 
-static void       gimp_data_editor_style_set         (GtkWidget      *widget,
+static void       picman_data_editor_style_set         (GtkWidget      *widget,
                                                       GtkStyle       *prev_style);
 
-static void       gimp_data_editor_set_context       (GimpDocked     *docked,
-                                                      GimpContext    *context);
-static void       gimp_data_editor_set_aux_info      (GimpDocked     *docked,
+static void       picman_data_editor_set_context       (PicmanDocked     *docked,
+                                                      PicmanContext    *context);
+static void       picman_data_editor_set_aux_info      (PicmanDocked     *docked,
                                                       GList          *aux_info);
-static GList    * gimp_data_editor_get_aux_info      (GimpDocked     *docked);
-static gchar    * gimp_data_editor_get_title         (GimpDocked     *docked);
+static GList    * picman_data_editor_get_aux_info      (PicmanDocked     *docked);
+static gchar    * picman_data_editor_get_title         (PicmanDocked     *docked);
 
-static void       gimp_data_editor_real_set_data     (GimpDataEditor *editor,
-                                                      GimpData       *data);
+static void       picman_data_editor_real_set_data     (PicmanDataEditor *editor,
+                                                      PicmanData       *data);
 
-static void       gimp_data_editor_data_changed      (GimpContext    *context,
-                                                      GimpData       *data,
-                                                      GimpDataEditor *editor);
-static gboolean   gimp_data_editor_name_key_press    (GtkWidget      *widget,
+static void       picman_data_editor_data_changed      (PicmanContext    *context,
+                                                      PicmanData       *data,
+                                                      PicmanDataEditor *editor);
+static gboolean   picman_data_editor_name_key_press    (GtkWidget      *widget,
                                                       GdkEventKey    *kevent,
-                                                      GimpDataEditor *editor);
-static void       gimp_data_editor_name_activate     (GtkWidget      *widget,
-                                                      GimpDataEditor *editor);
-static gboolean   gimp_data_editor_name_focus_out    (GtkWidget      *widget,
+                                                      PicmanDataEditor *editor);
+static void       picman_data_editor_name_activate     (GtkWidget      *widget,
+                                                      PicmanDataEditor *editor);
+static gboolean   picman_data_editor_name_focus_out    (GtkWidget      *widget,
                                                       GdkEvent       *event,
-                                                      GimpDataEditor *editor);
+                                                      PicmanDataEditor *editor);
 
-static void       gimp_data_editor_data_name_changed (GimpObject     *object,
-                                                      GimpDataEditor *editor);
+static void       picman_data_editor_data_name_changed (PicmanObject     *object,
+                                                      PicmanDataEditor *editor);
 
-static void       gimp_data_editor_save_clicked      (GtkWidget      *widget,
-                                                      GimpDataEditor *editor);
-static void       gimp_data_editor_revert_clicked    (GtkWidget      *widget,
-                                                      GimpDataEditor *editor);
-static void       gimp_data_editor_save_dirty        (GimpDataEditor *editor);
+static void       picman_data_editor_save_clicked      (GtkWidget      *widget,
+                                                      PicmanDataEditor *editor);
+static void       picman_data_editor_revert_clicked    (GtkWidget      *widget,
+                                                      PicmanDataEditor *editor);
+static void       picman_data_editor_save_dirty        (PicmanDataEditor *editor);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpDataEditor, gimp_data_editor, GIMP_TYPE_EDITOR,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_DOCKED,
-                                                gimp_data_editor_docked_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanDataEditor, picman_data_editor, PICMAN_TYPE_EDITOR,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_DOCKED,
+                                                picman_data_editor_docked_iface_init))
 
-#define parent_class gimp_data_editor_parent_class
+#define parent_class picman_data_editor_parent_class
 
-static GimpDockedInterface *parent_docked_iface = NULL;
+static PicmanDockedInterface *parent_docked_iface = NULL;
 
 
 static void
-gimp_data_editor_class_init (GimpDataEditorClass *klass)
+picman_data_editor_class_init (PicmanDataEditorClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->constructed  = gimp_data_editor_constructed;
-  object_class->dispose      = gimp_data_editor_dispose;
-  object_class->set_property = gimp_data_editor_set_property;
-  object_class->get_property = gimp_data_editor_get_property;
+  object_class->constructed  = picman_data_editor_constructed;
+  object_class->dispose      = picman_data_editor_dispose;
+  object_class->set_property = picman_data_editor_set_property;
+  object_class->get_property = picman_data_editor_get_property;
 
-  widget_class->style_set    = gimp_data_editor_style_set;
+  widget_class->style_set    = picman_data_editor_style_set;
 
-  klass->set_data            = gimp_data_editor_real_set_data;
+  klass->set_data            = picman_data_editor_real_set_data;
 
   g_object_class_install_property (object_class, PROP_DATA_FACTORY,
                                    g_param_spec_object ("data-factory",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_DATA_FACTORY,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_DATA_FACTORY,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_CONTEXT,
                                    g_param_spec_object ("context",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_CONTEXT,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_CONTEXT,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_DATA,
                                    g_param_spec_object ("data",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_DATA,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_DATA,
+                                                        PICMAN_PARAM_READWRITE));
 
   gtk_widget_class_install_style_property (widget_class,
                                            g_param_spec_int ("minimal-height",
@@ -155,25 +155,25 @@ gimp_data_editor_class_init (GimpDataEditorClass *klass)
                                                              32,
                                                              G_MAXINT,
                                                              DEFAULT_MINIMAL_HEIGHT,
-                                                             GIMP_PARAM_READABLE));
+                                                             PICMAN_PARAM_READABLE));
 }
 
 static void
-gimp_data_editor_docked_iface_init (GimpDockedInterface *iface)
+picman_data_editor_docked_iface_init (PicmanDockedInterface *iface)
 {
   parent_docked_iface = g_type_interface_peek_parent (iface);
 
   if (! parent_docked_iface)
-    parent_docked_iface = g_type_default_interface_peek (GIMP_TYPE_DOCKED);
+    parent_docked_iface = g_type_default_interface_peek (PICMAN_TYPE_DOCKED);
 
-  iface->set_context  = gimp_data_editor_set_context;
-  iface->set_aux_info = gimp_data_editor_set_aux_info;
-  iface->get_aux_info = gimp_data_editor_get_aux_info;
-  iface->get_title    = gimp_data_editor_get_title;
+  iface->set_context  = picman_data_editor_set_context;
+  iface->set_aux_info = picman_data_editor_set_aux_info;
+  iface->get_aux_info = picman_data_editor_get_aux_info;
+  iface->get_title    = picman_data_editor_get_title;
 }
 
 static void
-gimp_data_editor_init (GimpDataEditor *editor)
+picman_data_editor_init (PicmanDataEditor *editor)
 {
   editor->data_factory  = NULL;
   editor->context       = NULL;
@@ -187,41 +187,41 @@ gimp_data_editor_init (GimpDataEditor *editor)
   gtk_editable_set_editable (GTK_EDITABLE (editor->name_entry), FALSE);
 
   g_signal_connect (editor->name_entry, "key-press-event",
-                    G_CALLBACK (gimp_data_editor_name_key_press),
+                    G_CALLBACK (picman_data_editor_name_key_press),
                     editor);
   g_signal_connect (editor->name_entry, "activate",
-                    G_CALLBACK (gimp_data_editor_name_activate),
+                    G_CALLBACK (picman_data_editor_name_activate),
                     editor);
   g_signal_connect (editor->name_entry, "focus-out-event",
-                    G_CALLBACK (gimp_data_editor_name_focus_out),
+                    G_CALLBACK (picman_data_editor_name_focus_out),
                     editor);
 }
 
 static void
-gimp_data_editor_constructed (GObject *object)
+picman_data_editor_constructed (GObject *object)
 {
-  GimpDataEditor *editor = GIMP_DATA_EDITOR (object);
+  PicmanDataEditor *editor = PICMAN_DATA_EDITOR (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_DATA_FACTORY (editor->data_factory));
-  g_assert (GIMP_IS_CONTEXT (editor->context));
+  g_assert (PICMAN_IS_DATA_FACTORY (editor->data_factory));
+  g_assert (PICMAN_IS_CONTEXT (editor->context));
 
-  gimp_data_editor_set_edit_active (editor, TRUE);
+  picman_data_editor_set_edit_active (editor, TRUE);
 
   editor->save_button =
-    gimp_editor_add_button (GIMP_EDITOR (editor),
+    picman_editor_add_button (PICMAN_EDITOR (editor),
                             GTK_STOCK_SAVE,
                             _("Save"), NULL,
-                            G_CALLBACK (gimp_data_editor_save_clicked),
+                            G_CALLBACK (picman_data_editor_save_clicked),
                             NULL,
                             editor);
 
   editor->revert_button =
-    gimp_editor_add_button (GIMP_EDITOR (editor),
+    picman_editor_add_button (PICMAN_EDITOR (editor),
                             GTK_STOCK_REVERT_TO_SAVED,
                             _("Revert"), NULL,
-                            G_CALLBACK (gimp_data_editor_revert_clicked),
+                            G_CALLBACK (picman_data_editor_revert_clicked),
                             NULL,
                             editor);
   /* Hide because revert buttons are not yet implemented */
@@ -229,30 +229,30 @@ gimp_data_editor_constructed (GObject *object)
 }
 
 static void
-gimp_data_editor_dispose (GObject *object)
+picman_data_editor_dispose (GObject *object)
 {
-  GimpDataEditor *editor = GIMP_DATA_EDITOR (object);
+  PicmanDataEditor *editor = PICMAN_DATA_EDITOR (object);
 
   if (editor->data)
     {
       /* Save dirty data before we clear out */
-      gimp_data_editor_save_dirty (editor);
-      gimp_data_editor_set_data (editor, NULL);
+      picman_data_editor_save_dirty (editor);
+      picman_data_editor_set_data (editor, NULL);
     }
 
   if (editor->context)
-    gimp_docked_set_context (GIMP_DOCKED (editor), NULL);
+    picman_docked_set_context (PICMAN_DOCKED (editor), NULL);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_data_editor_set_property (GObject      *object,
+picman_data_editor_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpDataEditor *editor = GIMP_DATA_EDITOR (object);
+  PicmanDataEditor *editor = PICMAN_DATA_EDITOR (object);
 
   switch (property_id)
     {
@@ -260,11 +260,11 @@ gimp_data_editor_set_property (GObject      *object,
       editor->data_factory = g_value_get_object (value);
       break;
     case PROP_CONTEXT:
-      gimp_docked_set_context (GIMP_DOCKED (object),
+      picman_docked_set_context (PICMAN_DOCKED (object),
                                g_value_get_object (value));
       break;
     case PROP_DATA:
-      gimp_data_editor_set_data (editor, g_value_get_object (value));
+      picman_data_editor_set_data (editor, g_value_get_object (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -273,12 +273,12 @@ gimp_data_editor_set_property (GObject      *object,
 }
 
 static void
-gimp_data_editor_get_property (GObject    *object,
+picman_data_editor_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpDataEditor *editor = GIMP_DATA_EDITOR (object);
+  PicmanDataEditor *editor = PICMAN_DATA_EDITOR (object);
 
   switch (property_id)
     {
@@ -298,10 +298,10 @@ gimp_data_editor_get_property (GObject    *object,
 }
 
 static void
-gimp_data_editor_style_set (GtkWidget *widget,
+picman_data_editor_style_set (GtkWidget *widget,
                             GtkStyle  *prev_style)
 {
-  GimpDataEditor *editor = GIMP_DATA_EDITOR (widget);
+  PicmanDataEditor *editor = PICMAN_DATA_EDITOR (widget);
   gint            minimal_height;
 
   GTK_WIDGET_CLASS (parent_class)->style_set (widget, prev_style);
@@ -315,10 +315,10 @@ gimp_data_editor_style_set (GtkWidget *widget,
 }
 
 static void
-gimp_data_editor_set_context (GimpDocked  *docked,
-                              GimpContext *context)
+picman_data_editor_set_context (PicmanDocked  *docked,
+                              PicmanContext *context)
 {
-  GimpDataEditor *editor = GIMP_DATA_EDITOR (docked);
+  PicmanDataEditor *editor = PICMAN_DATA_EDITOR (docked);
 
   if (context == editor->context)
     return;
@@ -329,7 +329,7 @@ gimp_data_editor_set_context (GimpDocked  *docked,
   if (editor->context)
     {
       g_signal_handlers_disconnect_by_func (editor->context,
-                                            gimp_data_editor_data_changed,
+                                            picman_data_editor_data_changed,
                                             editor);
 
       g_object_unref (editor->context);
@@ -340,19 +340,19 @@ gimp_data_editor_set_context (GimpDocked  *docked,
   if (editor->context)
     {
       GType     data_type;
-      GimpData *data;
+      PicmanData *data;
 
       g_object_ref (editor->context);
 
-      data_type = gimp_data_factory_get_data_type (editor->data_factory);
-      data = GIMP_DATA (gimp_context_get_by_type (editor->context, data_type));
+      data_type = picman_data_factory_get_data_type (editor->data_factory);
+      data = PICMAN_DATA (picman_context_get_by_type (editor->context, data_type));
 
       g_signal_connect (editor->context,
-                        gimp_context_type_to_signal_name (data_type),
-                        G_CALLBACK (gimp_data_editor_data_changed),
+                        picman_context_type_to_signal_name (data_type),
+                        G_CALLBACK (picman_data_editor_data_changed),
                         editor);
 
-      gimp_data_editor_data_changed (editor->context, data, editor);
+      picman_data_editor_data_changed (editor->context, data, editor);
     }
 }
 
@@ -360,17 +360,17 @@ gimp_data_editor_set_context (GimpDocked  *docked,
 #define AUX_INFO_CURRENT_DATA "current-data"
 
 static void
-gimp_data_editor_set_aux_info (GimpDocked *docked,
+picman_data_editor_set_aux_info (PicmanDocked *docked,
                                GList      *aux_info)
 {
-  GimpDataEditor *editor = GIMP_DATA_EDITOR (docked);
+  PicmanDataEditor *editor = PICMAN_DATA_EDITOR (docked);
   GList          *list;
 
   parent_docked_iface->set_aux_info (docked, aux_info);
 
   for (list = aux_info; list; list = g_list_next (list))
     {
-      GimpSessionInfoAux *aux = list->data;
+      PicmanSessionInfoAux *aux = list->data;
 
       if (! strcmp (aux->name, AUX_INFO_EDIT_ACTIVE))
         {
@@ -378,35 +378,35 @@ gimp_data_editor_set_aux_info (GimpDocked *docked,
 
           edit_active = ! g_ascii_strcasecmp (aux->value, "true");
 
-          gimp_data_editor_set_edit_active (editor, edit_active);
+          picman_data_editor_set_edit_active (editor, edit_active);
         }
       else if (! strcmp (aux->name, AUX_INFO_CURRENT_DATA))
         {
           if (! editor->edit_active)
             {
-              GimpData *data;
+              PicmanData *data;
 
-              data = (GimpData *)
-                gimp_container_get_child_by_name (gimp_data_factory_get_container (editor->data_factory),
+              data = (PicmanData *)
+                picman_container_get_child_by_name (picman_data_factory_get_container (editor->data_factory),
                                                   aux->value);
 
               if (data)
-                gimp_data_editor_set_data (editor, data);
+                picman_data_editor_set_data (editor, data);
             }
         }
     }
 }
 
 static GList *
-gimp_data_editor_get_aux_info (GimpDocked *docked)
+picman_data_editor_get_aux_info (PicmanDocked *docked)
 {
-  GimpDataEditor     *editor = GIMP_DATA_EDITOR (docked);
+  PicmanDataEditor     *editor = PICMAN_DATA_EDITOR (docked);
   GList              *aux_info;
-  GimpSessionInfoAux *aux;
+  PicmanSessionInfoAux *aux;
 
   aux_info = parent_docked_iface->get_aux_info (docked);
 
-  aux = gimp_session_info_aux_new (AUX_INFO_EDIT_ACTIVE,
+  aux = picman_session_info_aux_new (AUX_INFO_EDIT_ACTIVE,
                                    editor->edit_active ? "true" : "false");
   aux_info = g_list_append (aux_info, aux);
 
@@ -414,9 +414,9 @@ gimp_data_editor_get_aux_info (GimpDocked *docked)
     {
       const gchar *value;
 
-      value = gimp_object_get_name (editor->data);
+      value = picman_object_get_name (editor->data);
 
-      aux = gimp_session_info_aux_new (AUX_INFO_CURRENT_DATA, value);
+      aux = picman_session_info_aux_new (AUX_INFO_CURRENT_DATA, value);
       aux_info = g_list_append (aux_info, aux);
     }
 
@@ -424,10 +424,10 @@ gimp_data_editor_get_aux_info (GimpDocked *docked)
 }
 
 static gchar *
-gimp_data_editor_get_title (GimpDocked *docked)
+picman_data_editor_get_title (PicmanDocked *docked)
 {
-  GimpDataEditor      *editor       = GIMP_DATA_EDITOR (docked);
-  GimpDataEditorClass *editor_class = GIMP_DATA_EDITOR_GET_CLASS (editor);
+  PicmanDataEditor      *editor       = PICMAN_DATA_EDITOR (docked);
+  PicmanDataEditorClass *editor_class = PICMAN_DATA_EDITOR_GET_CLASS (editor);
 
   if (editor->data_editable)
     return g_strdup (editor_class->title);
@@ -436,15 +436,15 @@ gimp_data_editor_get_title (GimpDocked *docked)
 }
 
 static void
-gimp_data_editor_real_set_data (GimpDataEditor *editor,
-                                GimpData       *data)
+picman_data_editor_real_set_data (PicmanDataEditor *editor,
+                                PicmanData       *data)
 {
   gboolean editable;
 
   if (editor->data)
     {
       g_signal_handlers_disconnect_by_func (editor->data,
-                                            gimp_data_editor_data_name_changed,
+                                            picman_data_editor_data_name_changed,
                                             editor);
 
       g_object_unref (editor->data);
@@ -457,63 +457,63 @@ gimp_data_editor_real_set_data (GimpDataEditor *editor,
       g_object_ref (editor->data);
 
       g_signal_connect (editor->data, "name-changed",
-                        G_CALLBACK (gimp_data_editor_data_name_changed),
+                        G_CALLBACK (picman_data_editor_data_name_changed),
                         editor);
 
       gtk_entry_set_text (GTK_ENTRY (editor->name_entry),
-                          gimp_object_get_name (editor->data));
+                          picman_object_get_name (editor->data));
     }
   else
     {
       gtk_entry_set_text (GTK_ENTRY (editor->name_entry), "");
     }
 
-  editable = (editor->data && gimp_data_is_writable (editor->data));
+  editable = (editor->data && picman_data_is_writable (editor->data));
 
   if (editor->data_editable != editable)
     {
       editor->data_editable = editable;
 
       gtk_editable_set_editable (GTK_EDITABLE (editor->name_entry), editable);
-      gimp_docked_title_changed (GIMP_DOCKED (editor));
+      picman_docked_title_changed (PICMAN_DOCKED (editor));
     }
 }
 
 void
-gimp_data_editor_set_data (GimpDataEditor *editor,
-                           GimpData       *data)
+picman_data_editor_set_data (PicmanDataEditor *editor,
+                           PicmanData       *data)
 {
-  g_return_if_fail (GIMP_IS_DATA_EDITOR (editor));
-  g_return_if_fail (data == NULL || GIMP_IS_DATA (data));
+  g_return_if_fail (PICMAN_IS_DATA_EDITOR (editor));
+  g_return_if_fail (data == NULL || PICMAN_IS_DATA (data));
   g_return_if_fail (data == NULL ||
                     g_type_is_a (G_TYPE_FROM_INSTANCE (data),
-                                 gimp_data_factory_get_data_type (editor->data_factory)));
+                                 picman_data_factory_get_data_type (editor->data_factory)));
 
   if (editor->data != data)
     {
-      GIMP_DATA_EDITOR_GET_CLASS (editor)->set_data (editor, data);
+      PICMAN_DATA_EDITOR_GET_CLASS (editor)->set_data (editor, data);
 
       g_object_notify (G_OBJECT (editor), "data");
 
-      if (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)))
-        gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor)),
-                                gimp_editor_get_popup_data (GIMP_EDITOR (editor)));
+      if (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)))
+        picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor)),
+                                picman_editor_get_popup_data (PICMAN_EDITOR (editor)));
     }
 }
 
-GimpData *
-gimp_data_editor_get_data (GimpDataEditor *editor)
+PicmanData *
+picman_data_editor_get_data (PicmanDataEditor *editor)
 {
-  g_return_val_if_fail (GIMP_IS_DATA_EDITOR (editor), NULL);
+  g_return_val_if_fail (PICMAN_IS_DATA_EDITOR (editor), NULL);
 
   return editor->data;
 }
 
 void
-gimp_data_editor_set_edit_active (GimpDataEditor *editor,
+picman_data_editor_set_edit_active (PicmanDataEditor *editor,
                                   gboolean        edit_active)
 {
-  g_return_if_fail (GIMP_IS_DATA_EDITOR (editor));
+  g_return_if_fail (PICMAN_IS_DATA_EDITOR (editor));
 
   if (editor->edit_active != edit_active)
     {
@@ -522,21 +522,21 @@ gimp_data_editor_set_edit_active (GimpDataEditor *editor,
       if (editor->edit_active && editor->context)
         {
           GType     data_type;
-          GimpData *data;
+          PicmanData *data;
 
-          data_type = gimp_data_factory_get_data_type (editor->data_factory);
-          data = GIMP_DATA (gimp_context_get_by_type (editor->context,
+          data_type = picman_data_factory_get_data_type (editor->data_factory);
+          data = PICMAN_DATA (picman_context_get_by_type (editor->context,
                                                       data_type));
 
-          gimp_data_editor_set_data (editor, data);
+          picman_data_editor_set_data (editor, data);
         }
     }
 }
 
 gboolean
-gimp_data_editor_get_edit_active (GimpDataEditor *editor)
+picman_data_editor_get_edit_active (PicmanDataEditor *editor)
 {
-  g_return_val_if_fail (GIMP_IS_DATA_EDITOR (editor), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DATA_EDITOR (editor), FALSE);
 
   return editor->edit_active;
 }
@@ -545,23 +545,23 @@ gimp_data_editor_get_edit_active (GimpDataEditor *editor)
 /*  private functions  */
 
 static void
-gimp_data_editor_data_changed (GimpContext    *context,
-                               GimpData       *data,
-                               GimpDataEditor *editor)
+picman_data_editor_data_changed (PicmanContext    *context,
+                               PicmanData       *data,
+                               PicmanDataEditor *editor)
 {
   if (editor->edit_active)
-    gimp_data_editor_set_data (editor, data);
+    picman_data_editor_set_data (editor, data);
 }
 
 static gboolean
-gimp_data_editor_name_key_press (GtkWidget      *widget,
+picman_data_editor_name_key_press (GtkWidget      *widget,
                                  GdkEventKey    *kevent,
-                                 GimpDataEditor *editor)
+                                 PicmanDataEditor *editor)
 {
   if (kevent->keyval == GDK_KEY_Escape)
     {
       gtk_entry_set_text (GTK_ENTRY (editor->name_entry),
-                          gimp_object_get_name (editor->data));
+                          picman_object_get_name (editor->data));
       return TRUE;
     }
 
@@ -569,8 +569,8 @@ gimp_data_editor_name_key_press (GtkWidget      *widget,
 }
 
 static void
-gimp_data_editor_name_activate (GtkWidget      *widget,
-                                GimpDataEditor *editor)
+picman_data_editor_name_activate (GtkWidget      *widget,
+                                PicmanDataEditor *editor)
 {
   if (editor->data)
     {
@@ -581,66 +581,66 @@ gimp_data_editor_name_activate (GtkWidget      *widget,
 
       if (strlen (new_name))
         {
-          gimp_object_take_name (GIMP_OBJECT (editor->data), new_name);
+          picman_object_take_name (PICMAN_OBJECT (editor->data), new_name);
         }
       else
         {
           gtk_entry_set_text (GTK_ENTRY (widget),
-                              gimp_object_get_name (editor->data));
+                              picman_object_get_name (editor->data));
           g_free (new_name);
         }
     }
 }
 
 static gboolean
-gimp_data_editor_name_focus_out (GtkWidget      *widget,
+picman_data_editor_name_focus_out (GtkWidget      *widget,
                                  GdkEvent       *event,
-                                 GimpDataEditor *editor)
+                                 PicmanDataEditor *editor)
 {
-  gimp_data_editor_name_activate (widget, editor);
+  picman_data_editor_name_activate (widget, editor);
 
   return FALSE;
 }
 
 static void
-gimp_data_editor_data_name_changed (GimpObject     *object,
-                                    GimpDataEditor *editor)
+picman_data_editor_data_name_changed (PicmanObject     *object,
+                                    PicmanDataEditor *editor)
 {
   gtk_entry_set_text (GTK_ENTRY (editor->name_entry),
-                      gimp_object_get_name (object));
+                      picman_object_get_name (object));
 }
 
 static void
-gimp_data_editor_save_clicked (GtkWidget      *widget,
-                               GimpDataEditor *editor)
+picman_data_editor_save_clicked (GtkWidget      *widget,
+                               PicmanDataEditor *editor)
 {
-  gimp_data_editor_save_dirty (editor);
+  picman_data_editor_save_dirty (editor);
 }
 
 static void
-gimp_data_editor_revert_clicked (GtkWidget      *widget,
-                                 GimpDataEditor *editor)
+picman_data_editor_revert_clicked (GtkWidget      *widget,
+                                 PicmanDataEditor *editor)
 {
   g_print ("TODO: implement revert\n");
 }
 
 static void
-gimp_data_editor_save_dirty (GimpDataEditor *editor)
+picman_data_editor_save_dirty (PicmanDataEditor *editor)
 {
-  GimpData *data = editor->data;
+  PicmanData *data = editor->data;
 
   if (data                      &&
-      gimp_data_is_dirty (data) &&
-      gimp_data_is_writable (data))
+      picman_data_is_dirty (data) &&
+      picman_data_is_writable (data))
     {
       GError *error = NULL;
 
-      if (! gimp_data_factory_data_save_single (editor->data_factory, data,
+      if (! picman_data_factory_data_save_single (editor->data_factory, data,
                                                 &error))
         {
-          gimp_message_literal (gimp_data_factory_get_gimp (editor->data_factory),
+          picman_message_literal (picman_data_factory_get_picman (editor->data_factory),
                                 G_OBJECT (editor),
-				GIMP_MESSAGE_ERROR,
+				PICMAN_MESSAGE_ERROR,
 				error->message);
           g_clear_error (&error);
         }

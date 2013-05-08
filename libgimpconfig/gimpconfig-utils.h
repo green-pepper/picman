@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * Utility functions for GimpConfig.
- * Copyright (C) 2001-2003  Sven Neumann <sven@gimp.org>
+ * Utility functions for PicmanConfig.
+ * Copyright (C) 2001-2003  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,34 +19,34 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_CONFIG_H_INSIDE__) && !defined (GIMP_CONFIG_COMPILATION)
-#error "Only <libgimpconfig/gimpconfig.h> can be included directly."
+#if !defined (__PICMAN_CONFIG_H_INSIDE__) && !defined (PICMAN_CONFIG_COMPILATION)
+#error "Only <libpicmanconfig/picmanconfig.h> can be included directly."
 #endif
 
-#ifndef __GIMP_CONFIG_UTILS_H__
-#define __GIMP_CONFIG_UTILS_H__
+#ifndef __PICMAN_CONFIG_UTILS_H__
+#define __PICMAN_CONFIG_UTILS_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-GList    * gimp_config_diff                  (GObject      *a,
+GList    * picman_config_diff                  (GObject      *a,
                                               GObject      *b,
                                               GParamFlags   flags);
 
-gboolean   gimp_config_sync                  (GObject      *src,
+gboolean   picman_config_sync                  (GObject      *src,
                                               GObject      *dest,
                                               GParamFlags   flags);
 
-void       gimp_config_reset_properties      (GObject      *object);
-void       gimp_config_reset_property        (GObject      *object,
+void       picman_config_reset_properties      (GObject      *object);
+void       picman_config_reset_property        (GObject      *object,
                                               const gchar  *property_name);
 
-void       gimp_config_string_append_escaped (GString      *string,
+void       picman_config_string_append_escaped (GString      *string,
                                               const gchar  *val);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_CONFIG_UTILS_H__ */
+#endif  /* __PICMAN_CONFIG_UTILS_H__ */

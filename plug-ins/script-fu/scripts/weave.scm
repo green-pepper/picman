@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; Weave script --- make an image look as if it were woven
@@ -29,12 +29,12 @@
                         height
                         dest-x
                         dest-y)
-  (gimp-image-select-rectangle img CHANNEL-OP-REPLACE x1 y1 width height)
-  (gimp-edit-copy drawable)
-  (let ((floating-sel (car (gimp-edit-paste drawable FALSE))))
-    (gimp-layer-set-offsets floating-sel dest-x dest-y)
-    (gimp-floating-sel-anchor floating-sel))
-  (gimp-selection-none img))
+  (picman-image-select-rectangle img CHANNEL-OP-REPLACE x1 y1 width height)
+  (picman-edit-copy drawable)
+  (let ((floating-sel (car (picman-edit-paste drawable FALSE))))
+    (picman-layer-set-offsets floating-sel dest-x dest-y)
+    (picman-floating-sel-anchor floating-sel))
+  (picman-selection-none img))
 
 ; Creates a single weaving tile
 
@@ -44,43 +44,43 @@
                            shadow-depth)
   (let* ((tile-size (+ (* 2 ribbon-width) (* 2 ribbon-spacing)))
          (darkness (* 255 (/ (- 100 shadow-darkness) 100)))
-         (img (car (gimp-image-new tile-size tile-size RGB)))
-         (drawable (car (gimp-layer-new img tile-size tile-size RGB-IMAGE
+         (img (car (picman-image-new tile-size tile-size RGB)))
+         (drawable (car (picman-layer-new img tile-size tile-size RGB-IMAGE
                                         "Weave tile" 100 NORMAL-MODE))))
 
-    (gimp-image-undo-disable img)
-    (gimp-image-insert-layer img drawable 0 0)
+    (picman-image-undo-disable img)
+    (picman-image-insert-layer img drawable 0 0)
 
-    (gimp-context-set-background '(0 0 0))
-    (gimp-edit-fill drawable BACKGROUND-FILL)
+    (picman-context-set-background '(0 0 0))
+    (picman-edit-fill drawable BACKGROUND-FILL)
 
     ; Create main horizontal ribbon
 
-    (gimp-context-set-foreground '(255 255 255))
-    (gimp-context-set-background (list darkness darkness darkness))
+    (picman-context-set-foreground '(255 255 255))
+    (picman-context-set-background (list darkness darkness darkness))
 
-    (gimp-image-select-rectangle img
+    (picman-image-select-rectangle img
                                  CHANNEL-OP-REPLACE
                                  0
                                  ribbon-spacing
                                  (+ (* 2 ribbon-spacing) ribbon-width)
                                  ribbon-width)
 
-    (gimp-edit-blend drawable FG-BG-RGB-MODE NORMAL-MODE
+    (picman-edit-blend drawable FG-BG-RGB-MODE NORMAL-MODE
                      GRADIENT-BILINEAR 100 (- 100 shadow-depth) REPEAT-NONE FALSE
                      FALSE 0 0 TRUE
                      (/ (+ (* 2 ribbon-spacing) ribbon-width -1) 2) 0 0 0)
 
     ; Create main vertical ribbon
 
-    (gimp-image-select-rectangle img
+    (picman-image-select-rectangle img
                                  CHANNEL-OP-REPLACE
                                  (+ (* 2 ribbon-spacing) ribbon-width)
                                  0
                                  ribbon-width
                                  (+ (* 2 ribbon-spacing) ribbon-width))
 
-    (gimp-edit-blend drawable FG-BG-RGB-MODE NORMAL-MODE
+    (picman-edit-blend drawable FG-BG-RGB-MODE NORMAL-MODE
                      GRADIENT-BILINEAR 100 (- 100 shadow-depth) REPEAT-NONE FALSE
                      FALSE 0 0 TRUE
                      0 (/ (+ (* 2 ribbon-spacing) ribbon-width -1) 2) 0 0)
@@ -127,7 +127,7 @@
 
     ; Done
 
-    (gimp-image-undo-enable img)
+    (picman-image-undo-enable img)
     (list img drawable)))
 
 ; Creates a complete weaving mask
@@ -143,7 +143,7 @@
          (tile-img (car tile))
          (tile-layer (cadr tile))
           (weaving (plug-in-tile RUN-NONINTERACTIVE tile-img tile-layer width height TRUE)))
-    (gimp-image-delete tile-img)
+    (picman-image-delete tile-img)
     weaving))
 
 ; Creates a single tile for masking
@@ -163,24 +163,24 @@
                           r3-width
                           r3-height)
   (let* ((tile-size (+ (* 2 ribbon-width) (* 2 ribbon-spacing)))
-         (img (car (gimp-image-new tile-size tile-size RGB)))
-         (drawable (car (gimp-layer-new img tile-size tile-size RGB-IMAGE
+         (img (car (picman-image-new tile-size tile-size RGB)))
+         (drawable (car (picman-layer-new img tile-size tile-size RGB-IMAGE
                                         "Mask" 100 NORMAL-MODE))))
-    (gimp-image-undo-disable img)
-    (gimp-image-insert-layer img drawable 0 0)
+    (picman-image-undo-disable img)
+    (picman-image-insert-layer img drawable 0 0)
 
-    (gimp-context-set-background '(0 0 0))
-    (gimp-edit-fill drawable BACKGROUND-FILL)
+    (picman-context-set-background '(0 0 0))
+    (picman-edit-fill drawable BACKGROUND-FILL)
 
-    (gimp-image-select-rectangle img CHANNEL-OP-REPLACE r1-x1 r1-y1 r1-width r1-height)
-    (gimp-image-select-rectangle img CHANNEL-OP-ADD r2-x1 r2-y1 r2-width r2-height)
-    (gimp-image-select-rectangle img CHANNEL-OP-ADD r3-x1 r3-y1 r3-width r3-height)
+    (picman-image-select-rectangle img CHANNEL-OP-REPLACE r1-x1 r1-y1 r1-width r1-height)
+    (picman-image-select-rectangle img CHANNEL-OP-ADD r2-x1 r2-y1 r2-width r2-height)
+    (picman-image-select-rectangle img CHANNEL-OP-ADD r3-x1 r3-y1 r3-width r3-height)
 
-    (gimp-context-set-background '(255 255 255))
-    (gimp-edit-fill drawable BACKGROUND-FILL)
-    (gimp-selection-none img)
+    (picman-context-set-background '(255 255 255))
+    (picman-edit-fill drawable BACKGROUND-FILL)
+    (picman-selection-none img)
 
-    (gimp-image-undo-enable img)
+    (picman-image-undo-enable img)
 
     (list img drawable)))
 
@@ -210,7 +210,7 @@
          (tile-layer (cadr tile))
          (mask (plug-in-tile RUN-NONINTERACTIVE tile-img tile-layer final-width final-height
                              TRUE)))
-    (gimp-image-delete tile-img)
+    (picman-image-delete tile-img)
     mask))
 
 ; Creates the mask for horizontal ribbons
@@ -267,12 +267,12 @@
                               length
                               density
                               orientation)
-  (let* ((drawable (car (gimp-layer-new img width height RGBA-IMAGE
+  (let* ((drawable (car (picman-layer-new img width height RGBA-IMAGE
                                         "Threads" 100 NORMAL-MODE)))
          (dense (/ density 100.0)))
-    (gimp-image-insert-layer img drawable 0 -1)
-    (gimp-context-set-background '(255 255 255))
-    (gimp-edit-fill drawable BACKGROUND-FILL)
+    (picman-image-insert-layer img drawable 0 -1)
+    (picman-context-set-background '(255 255 255))
+    (picman-edit-fill drawable BACKGROUND-FILL)
     (plug-in-noisify RUN-NONINTERACTIVE img drawable FALSE dense dense dense dense)
     (plug-in-c-astretch RUN-NONINTERACTIVE img drawable)
     (cond ((eq? orientation 'horizontal)
@@ -298,11 +298,11 @@
 
          (h-layer (create-threads-layer w-img width height thread-length
                                         thread-density 'horizontal))
-         (h-mask (car (gimp-layer-create-mask h-layer ADD-WHITE-MASK)))
+         (h-mask (car (picman-layer-create-mask h-layer ADD-WHITE-MASK)))
 
          (v-layer (create-threads-layer w-img width height thread-length
                                         thread-density 'vertical))
-         (v-mask (car (gimp-layer-create-mask v-layer ADD-WHITE-MASK)))
+         (v-mask (car (picman-layer-create-mask v-layer ADD-WHITE-MASK)))
 
          (hmask (create-horizontal-mask ribbon-width ribbon-spacing
                                         width height))
@@ -313,27 +313,27 @@
          (vm-img (car vmask))
          (vm-layer (cadr vmask)))
 
-    (gimp-layer-add-mask h-layer h-mask)
-    (gimp-selection-all hm-img)
-    (gimp-edit-copy hm-layer)
-    (gimp-image-delete hm-img)
-    (gimp-floating-sel-anchor (car (gimp-edit-paste h-mask FALSE)))
-    (gimp-layer-set-opacity h-layer thread-intensity)
-    (gimp-layer-set-mode h-layer MULTIPLY-MODE)
+    (picman-layer-add-mask h-layer h-mask)
+    (picman-selection-all hm-img)
+    (picman-edit-copy hm-layer)
+    (picman-image-delete hm-img)
+    (picman-floating-sel-anchor (car (picman-edit-paste h-mask FALSE)))
+    (picman-layer-set-opacity h-layer thread-intensity)
+    (picman-layer-set-mode h-layer MULTIPLY-MODE)
 
-    (gimp-layer-add-mask v-layer v-mask)
-    (gimp-selection-all vm-img)
-    (gimp-edit-copy vm-layer)
-    (gimp-image-delete vm-img)
-    (gimp-floating-sel-anchor (car (gimp-edit-paste v-mask FALSE)))
-    (gimp-layer-set-opacity v-layer thread-intensity)
-    (gimp-layer-set-mode v-layer MULTIPLY-MODE)
+    (picman-layer-add-mask v-layer v-mask)
+    (picman-selection-all vm-img)
+    (picman-edit-copy vm-layer)
+    (picman-image-delete vm-img)
+    (picman-floating-sel-anchor (car (picman-edit-paste v-mask FALSE)))
+    (picman-layer-set-opacity v-layer thread-intensity)
+    (picman-layer-set-mode v-layer MULTIPLY-MODE)
 
     ; Uncomment this if you want to keep the weaving mask image
-    ; (gimp-display-new (car (gimp-image-duplicate w-img)))
+    ; (picman-display-new (car (picman-image-duplicate w-img)))
 
     (list w-img
-          (car (gimp-image-flatten w-img)))))
+          (car (picman-image-flatten w-img)))))
 
 ; The main weave function
 
@@ -347,10 +347,10 @@
                          thread-density
                          thread-intensity)
   (let* (
-        (d-img (car (gimp-item-get-image drawable)))
-        (d-width (car (gimp-drawable-width drawable)))
-        (d-height (car (gimp-drawable-height drawable)))
-        (d-offsets (gimp-drawable-offsets drawable))
+        (d-img (car (picman-item-get-image drawable)))
+        (d-width (car (picman-drawable-width drawable)))
+        (d-height (car (picman-drawable-height drawable)))
+        (d-offsets (picman-drawable-offsets drawable))
 
         (weaving (create-complete-weave d-width
                                         d-height
@@ -365,23 +365,23 @@
         (w-layer (cadr weaving))
         )
 
-    (gimp-context-push)
-    (gimp-context-set-feather FALSE)
+    (picman-context-push)
+    (picman-context-set-feather FALSE)
 
-    (gimp-selection-all w-img)
-    (gimp-edit-copy w-layer)
-    (gimp-image-delete w-img)
-    (let ((floating-sel (car (gimp-edit-paste drawable FALSE))))
-      (gimp-layer-set-offsets floating-sel
+    (picman-selection-all w-img)
+    (picman-edit-copy w-layer)
+    (picman-image-delete w-img)
+    (let ((floating-sel (car (picman-edit-paste drawable FALSE))))
+      (picman-layer-set-offsets floating-sel
                               (car d-offsets)
                               (cadr d-offsets))
-      (gimp-layer-set-mode floating-sel MULTIPLY-MODE)
-      (gimp-floating-sel-to-layer floating-sel)
+      (picman-layer-set-mode floating-sel MULTIPLY-MODE)
+      (picman-floating-sel-to-layer floating-sel)
     )
 
-    (gimp-displays-flush)
+    (picman-displays-flush)
 
-    (gimp-context-pop)
+    (picman-context-pop)
   )
 )
 

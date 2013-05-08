@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; This program is free software: you can redistribute it and/or modify
@@ -20,13 +20,13 @@
 ;
 (define (script-fu-util-image-resize-from-layer image layer)
   (let* (
-        (width (car (gimp-drawable-width layer)))
-        (height (car (gimp-drawable-height layer)))
-        (posx (- (car (gimp-drawable-offsets layer))))
-        (posy (- (cadr (gimp-drawable-offsets layer))))
+        (width (car (picman-drawable-width layer)))
+        (height (car (picman-drawable-height layer)))
+        (posx (- (car (picman-drawable-offsets layer))))
+        (posy (- (cadr (picman-drawable-offsets layer))))
         )
 
-    (gimp-image-resize image width height posx posy)
+    (picman-image-resize image width height posx posy)
   )
 )
 
@@ -38,8 +38,8 @@
   (while (not (null? layers))
     (let ((layer (car layers)))
       (set! layers (cdr layers))
-      (gimp-image-insert-layer image layer 0 -1)
-      (gimp-image-lower-item image layer)
+      (picman-image-insert-layer image layer 0 -1)
+      (picman-image-lower-item image layer)
     )
   )
 )

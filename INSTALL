@@ -1,19 +1,19 @@
 --------------------------------------
-Installation instructions for GIMP 2.8
+Installation instructions for PICMAN 2.8
 --------------------------------------
 
-There are some basic steps to building and installing GIMP.
+There are some basic steps to building and installing PICMAN.
 
-GIMP 2.8 replaces earlier GIMP 2.x versions. It is advised that you
-uninstall them before installing GIMP 2.8. If you want to keep your
-older GIMP 2.x installation in parallel to GIMP 2.8, you have to
+PICMAN 2.8 replaces earlier PICMAN 2.x versions. It is advised that you
+uninstall them before installing PICMAN 2.8. If you want to keep your
+older PICMAN 2.x installation in parallel to PICMAN 2.8, you have to
 choose a separate prefix which is not in your default library search
 path.
 
-GIMP 2.8 is fully backward compatible to all earlier GIMP 2.x version.
-Plug-ins and scripts written for GIMP 2.6 or earlier GIMP 2.x versions
+PICMAN 2.8 is fully backward compatible to all earlier PICMAN 2.x version.
+Plug-ins and scripts written for PICMAN 2.6 or earlier PICMAN 2.x versions
 will continue to work and don't need to be changed nor recompiled to
-be used with GIMP 2.8.
+be used with PICMAN 2.8.
 
 The most important part is to make sure the requirements for a build
 are fulfilled.  We depend on a number of tools and libraries which are
@@ -44,7 +44,7 @@ header files installed.
        git://git.gnome.org/gegl
 
   4. You need to have installed GTK+ version 2.24.10 or newer.
-     GIMP also need a recent versions of GLib (>= 2.30.2), GDK-Pixbuf
+     PICMAN also need a recent versions of GLib (>= 2.30.2), GDK-Pixbuf
      (>= 2.24.1), and Pango (>= 1.29.4). Sources for these can be grabbed
      from ftp://ftp.gtk.org/.
 
@@ -53,16 +53,16 @@ header files installed.
 
   6. We require PangoCairo, a Pango backend using Cairo. Make sure you
      have Cairo, FreeType2 and fontconfig installed before you compile
-     Pango. GIMP depends on freetype2 being newer than version 2.1.7
+     Pango. PICMAN depends on freetype2 being newer than version 2.1.7
      and fontconfig 2.2.0 or newer. Older versions are known to have
-     bugs that seriously affect the stability of GIMP.
+     bugs that seriously affect the stability of PICMAN.
 
   7. We use dbus-glib if available. Grab it from
      http://dbus.freedesktop.org/releases/dbus-glib/
 
   8. Access of remote files is implemented in the URI plug-in. There
      are several possible implementations for this. The implementation
-     used is determined when you configure GIMP. By default the
+     used is determined when you configure PICMAN. By default the
      GIO/GVfs backend is used. If you don't have GVfs support on your
      target platform, you should pass the '--without-gvfs' option to
      configure. The configure script will then try to detect another
@@ -81,17 +81,17 @@ header files installed.
      present. You will also need PyGTK and the respective development
      headers.
 
- 12. Configure GIMP by running the `configure' script. You may want
+ 12. Configure PICMAN by running the `configure' script. You may want
      to pass some options to it, see below.
 
- 13. Build GIMP by running `make'. The use of GNU make is recommended.
+ 13. Build PICMAN by running `make'. The use of GNU make is recommended.
      If you need to tweak the build to make it work with other flavours
      of make, we'd appreciate if you'd send us a patch with the changes.
 
- 14. Install GIMP by running `make install'. In order to avoid clashes
-     with other versions of GIMP, we install a binary called gimp-2.8.
-     By default there's also a link created so that you can type 'gimp'
-     to start gimp-2.8.
+ 14. Install PICMAN by running `make install'. In order to avoid clashes
+     with other versions of PICMAN, we install a binary called picman-2.8.
+     By default there's also a link created so that you can type 'picman'
+     to start picman-2.8.
 
 Please make sure you don't have any old GTK+-2.x, jpeg, etc. libraries
 lying around on your system, otherwise configure may fail to find the
@@ -100,21 +100,21 @@ new ones.
 
 Generic instructions for configuring and compiling auto-configured
 packages are included below. Here is an illustration of commands that
-might be used to build and install GIMP. The actual configuration,
+might be used to build and install PICMAN. The actual configuration,
 compilation and installation output is not shown.
 
-  % tar xvfz gimp-2.8.x.tar.gz   # unpack the sources
-  % cd gimp-2.8.x                # change to the toplevel directory
+  % tar xvfz picman-2.8.x.tar.gz   # unpack the sources
+  % cd picman-2.8.x                # change to the toplevel directory
   % ./configure                  # run the `configure' script
-  % make                         # build GIMP
-  % make install                 # install GIMP
+  % make                         # build PICMAN
+  % make install                 # install PICMAN
 
 
-The `configure' script examines your system, and adapts GIMP to run on
+The `configure' script examines your system, and adapts PICMAN to run on
 it. The script has many options, some of which are described in the
 generic instructions included at the end of this file. All of the
 options can be listed using the command `./configure --help'. There
-are several special options the GIMP `configure' script recognizes.
+are several special options the PICMAN `configure' script recognizes.
 These are:
 
   --enable-shared and --disable-shared.  This option affects whether
@@ -124,7 +124,7 @@ These are:
 
   --enable-debug and --disable-debug.  This option causes the build
      process to compile with debugging enabled. If debugging is
-     disabled, GIMP will instead be compiled with optimizations turned
+     disabled, PICMAN will instead be compiled with optimizations turned
      on. The default is for debugging to be disabled. NOTE: This
      option is intended primarily as a convenience for developers.
 
@@ -138,13 +138,13 @@ These are:
      default is for strict checking to be disabled. NOTE: This option
      is intended primarily as a convenience for developers.
 
-  --with-gimpdir=DIR.  This option changes the default directory
-     GIMP uses to search for its configuration files from ~/.gimp-2.8
-     (the directory .gimp-2.8 in the users home directory) to DIR.
+  --with-picmandir=DIR.  This option changes the default directory
+     PICMAN uses to search for its configuration files from ~/.picman-2.8
+     (the directory .picman-2.8 in the users home directory) to DIR.
 
   --enable-binreloc.  When compiled for Linux with this option enabled,
-     GIMP will be binary relocatable.  Plug-ins and data files will
-     be searched relative to the gimp binary instead of in the paths
+     PICMAN will be binary relocatable.  Plug-ins and data files will
+     be searched relative to the picman binary instead of in the paths
      defined at compile time.
 
   --with-shm=[none|sysv|posix|auto].  This option allows you to specify
@@ -154,7 +154,7 @@ These are:
   --without-libtiff, --without-libjpeg, --without-libpng.  configure
      will bail out if libtiff, libjpeg or libpng can not be found. You
      better fix the underlying problem and install these libraries with
-     their header files. If you absolutely want to compile GIMP without
+     their header files. If you absolutely want to compile PICMAN without
      support for TIFF, JPEG or PNG you need to explicitly disable
      them using the options given above.
 
@@ -183,10 +183,10 @@ These are:
      Help Browser plug-in, you can use --without-webkit to disable
      it explicitly.
 
-  --without-librsvg.  If for some reason you want to build GIMP without
+  --without-librsvg.  If for some reason you want to build PICMAN without
      SVG support, you can build --without-librsvg.
 
-  --without-lcms.  If for some reason you want to build GIMP without
+  --without-lcms.  If for some reason you want to build PICMAN without
      using lcms for color support, you can build with --without-lcms.
 
   --without-poppler.  If for some reason you don't want to build the PDF
@@ -222,21 +222,21 @@ These are:
      can go for simple run-length encoding or even configure the plug-in
      to create uncompressed GIFs.
 
-  --enable-gtk-doc.  This option controls whether the libgimp API
+  --enable-gtk-doc.  This option controls whether the libpicman API
      references will be created using gtk-doc. The HTML pages are
      included in a standard tarball, so you will only need this if you
      are building from SVN.
 
   --with-html-dir=PATH.  This option allows to specify where the
-     libgimp API reference should be installed. You might want to modify
+     libpicman API reference should be installed. You might want to modify
      the path so it points to the place where glib and gtk+ installed
-     their API references so that the libgimp reference can link to
+     their API references so that the libpicman reference can link to
      them.
 
   --disable-mp. This option allows you to disable support for multiple
      processors. It is enabled by default.
 
-  --with-sendmail=[PATH]. This option is used to tell GIMP where to find
+  --with-sendmail=[PATH]. This option is used to tell PICMAN where to find
      the sendmail command. Normally this options don't have to be used
      because configure tries to find it in the usual places.
 
@@ -244,19 +244,19 @@ These are:
      desktop files. These files are used by desktop environments that
      comply to the specs published at freedesktop.org. The default
      value ${prefix}/share should be fine if your desktop environment
-     is installed in the same prefix as gimp. No files are installed
+     is installed in the same prefix as picman. No files are installed
      if you call configure with --without-desktop-dir.
 
   --disable-default-binary. Use this option if you don't want to make
-     gimp-2.8 the default GIMP installation. Otherwise a link called
-     gimp pointing to the gimp-2.8 executable will be installed.
+     picman-2.8 the default PICMAN installation. Otherwise a link called
+     picman pointing to the picman-2.8 executable will be installed.
 
-  --disable-gimp-console.  Use this option if you don't want the
-     gimp-console binary to be built in addition to the standard binary.
-     gimp-console is useful for command-line batch mode or as a server.
+  --disable-picman-console.  Use this option if you don't want the
+     picman-console binary to be built in addition to the standard binary.
+     picman-console is useful for command-line batch mode or as a server.
 
   --disable-python.  If for some reason you don't want to build the
-     Python based PyGIMP plug-in, you can use --disable-python.
+     Python based PyPICMAN plug-in, you can use --disable-python.
 
   --without-script-fu.  If for some reason you don't want to build the
      Script-Fu plug-in, you can use --without-script-fu.
@@ -268,15 +268,15 @@ These are:
 
 
 The `make' command builds several things:
- - A bunch of public libraries in the directories starting with 'libgimp'.
+ - A bunch of public libraries in the directories starting with 'libpicman'.
  - The plug-in programs in the 'plug-ins' directory.
  - Some modules in the 'modules' subdirectory.
- - The main GIMP program 'gimp-2.8' in `app'.
+ - The main PICMAN program 'picman-2.8' in `app'.
 
-The `make install' commands installs the GIMP header files associated
-with the libgimp libraries, the plug-ins, some data files and the GIMP
+The `make install' commands installs the PICMAN header files associated
+with the libpicman libraries, the plug-ins, some data files and the PICMAN
 executable. After running `make install' and assuming the build process
-was successful you should be able to run `gimp'.
+was successful you should be able to run `picman'.
 
 
 When ./configure fails
@@ -298,7 +298,7 @@ several reasons why this might fail:
   gtk+-2.0.pc to the environment variable PKG_CONFIG_PATH before running
   configure.
 
-* Libraries you installed are not found when you attempt to start GIMP.
+* Libraries you installed are not found when you attempt to start PICMAN.
   The details of how to fix this problem will depend on the system:
 
   On Linux and other systems using ELF libraries, add the directory to
@@ -334,7 +334,7 @@ config.log. This may help diagnose problems.
 When ./configure fails on plug-ins
 ==================================
 
-There are some GIMP plug-ins that need additional third-party libraries
+There are some PICMAN plug-ins that need additional third-party libraries
 installed on your system. For example to compile the plug-ins that load
 and save JPEG, PNG or TIFF files you need the related libraries and header
 files installed, otherwise you'll get a message that plug-in xyz will not

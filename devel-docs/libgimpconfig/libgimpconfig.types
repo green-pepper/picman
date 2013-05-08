@@ -1,5 +1,5 @@
 #include <glib-object.h>
-#include <libgimpconfig/gimpconfig.h>
+#include <libpicmanconfig/picmanconfig.h>
 
-gimp_config_interface_get_type
-gimp_color_config_get_type
+picman_config_interface_get_type
+picman_color_config_get_type

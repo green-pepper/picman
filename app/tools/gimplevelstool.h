@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,32 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_LEVELS_TOOL_H__
-#define __GIMP_LEVELS_TOOL_H__
+#ifndef __PICMAN_LEVELS_TOOL_H__
+#define __PICMAN_LEVELS_TOOL_H__
 
 
-#include "gimpimagemaptool.h"
+#include "picmanimagemaptool.h"
 
 
-#define GIMP_TYPE_LEVELS_TOOL            (gimp_levels_tool_get_type ())
-#define GIMP_LEVELS_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_LEVELS_TOOL, GimpLevelsTool))
-#define GIMP_LEVELS_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_LEVELS_TOOL, GimpLevelsToolClass))
-#define GIMP_IS_LEVELS_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_LEVELS_TOOL))
-#define GIMP_IS_LEVELS_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_LEVELS_TOOL))
-#define GIMP_LEVELS_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_LEVELS_TOOL, GimpLevelsToolClass))
+#define PICMAN_TYPE_LEVELS_TOOL            (picman_levels_tool_get_type ())
+#define PICMAN_LEVELS_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_LEVELS_TOOL, PicmanLevelsTool))
+#define PICMAN_LEVELS_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_LEVELS_TOOL, PicmanLevelsToolClass))
+#define PICMAN_IS_LEVELS_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_LEVELS_TOOL))
+#define PICMAN_IS_LEVELS_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_LEVELS_TOOL))
+#define PICMAN_LEVELS_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_LEVELS_TOOL, PicmanLevelsToolClass))
 
 
-typedef struct _GimpLevelsTool      GimpLevelsTool;
-typedef struct _GimpLevelsToolClass GimpLevelsToolClass;
+typedef struct _PicmanLevelsTool      PicmanLevelsTool;
+typedef struct _PicmanLevelsToolClass PicmanLevelsToolClass;
 
-struct _GimpLevelsTool
+struct _PicmanLevelsTool
 {
-  GimpImageMapTool      parent_instance;
+  PicmanImageMapTool      parent_instance;
 
-  GimpLevelsConfig     *config;
+  PicmanLevelsConfig     *config;
 
   /* dialog */
-  GimpHistogram        *histogram;
+  PicmanHistogram        *histogram;
 
   GtkWidget            *channel_menu;
 
@@ -67,16 +67,16 @@ struct _GimpLevelsTool
   gboolean              export_old_format;
 };
 
-struct _GimpLevelsToolClass
+struct _PicmanLevelsToolClass
 {
-  GimpImageMapToolClass  parent_class;
+  PicmanImageMapToolClass  parent_class;
 };
 
 
-void    gimp_levels_tool_register (GimpToolRegisterCallback  callback,
+void    picman_levels_tool_register (PicmanToolRegisterCallback  callback,
                                    gpointer                  data);
 
-GType   gimp_levels_tool_get_type (void) G_GNUC_CONST;
+GType   picman_levels_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_LEVELS_TOOL_H__  */
+#endif  /*  __PICMAN_LEVELS_TOOL_H__  */

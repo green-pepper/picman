@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,90 +15,90 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SELECTION_DATA_H__
-#define __GIMP_SELECTION_DATA_H__
+#ifndef __PICMAN_SELECTION_DATA_H__
+#define __PICMAN_SELECTION_DATA_H__
 
 
 /*  uri list  */
 
-void            gimp_selection_data_set_uri_list  (GtkSelectionData *selection,
+void            picman_selection_data_set_uri_list  (GtkSelectionData *selection,
                                                    GList            *uris);
-GList         * gimp_selection_data_get_uri_list  (GtkSelectionData *selection);
+GList         * picman_selection_data_get_uri_list  (GtkSelectionData *selection);
 
 
 /*  color  */
 
-void            gimp_selection_data_set_color     (GtkSelectionData *selection,
-                                                   const GimpRGB    *color);
-gboolean        gimp_selection_data_get_color     (GtkSelectionData *selection,
-                                                   GimpRGB          *color);
+void            picman_selection_data_set_color     (GtkSelectionData *selection,
+                                                   const PicmanRGB    *color);
+gboolean        picman_selection_data_get_color     (GtkSelectionData *selection,
+                                                   PicmanRGB          *color);
 
 
 /*  stream (svg/png)  */
 
-void            gimp_selection_data_set_stream    (GtkSelectionData *selection,
+void            picman_selection_data_set_stream    (GtkSelectionData *selection,
                                                    const guchar     *stream,
                                                    gsize             stream_length);
-const guchar  * gimp_selection_data_get_stream    (GtkSelectionData *selection,
+const guchar  * picman_selection_data_get_stream    (GtkSelectionData *selection,
                                                    gsize            *stream_length);
 
 
 /*  curve  */
 
-void            gimp_selection_data_set_curve     (GtkSelectionData *selection,
-                                                   GimpCurve        *curve);
-GimpCurve     * gimp_selection_data_get_curve     (GtkSelectionData *selection);
+void            picman_selection_data_set_curve     (GtkSelectionData *selection,
+                                                   PicmanCurve        *curve);
+PicmanCurve     * picman_selection_data_get_curve     (GtkSelectionData *selection);
 
 
 /*  image  */
 
-void            gimp_selection_data_set_image     (GtkSelectionData *selection,
-                                                   GimpImage        *image);
-GimpImage     * gimp_selection_data_get_image     (GtkSelectionData *selection,
-                                                   Gimp             *gimp);
+void            picman_selection_data_set_image     (GtkSelectionData *selection,
+                                                   PicmanImage        *image);
+PicmanImage     * picman_selection_data_get_image     (GtkSelectionData *selection,
+                                                   Picman             *picman);
 
 
 /*  component  */
 
-void            gimp_selection_data_set_component (GtkSelectionData *selection,
-                                                   GimpImage        *image,
-                                                   GimpChannelType   channel);
-GimpImage     * gimp_selection_data_get_component (GtkSelectionData *selection,
-                                                   Gimp             *gimp,
-                                                   GimpChannelType  *channel);
+void            picman_selection_data_set_component (GtkSelectionData *selection,
+                                                   PicmanImage        *image,
+                                                   PicmanChannelType   channel);
+PicmanImage     * picman_selection_data_get_component (GtkSelectionData *selection,
+                                                   Picman             *picman,
+                                                   PicmanChannelType  *channel);
 
 
 /*  item  */
 
-void            gimp_selection_data_set_item      (GtkSelectionData *selection,
-                                                   GimpItem         *item);
-GimpItem      * gimp_selection_data_get_item      (GtkSelectionData *selection,
-                                                   Gimp             *gimp);
+void            picman_selection_data_set_item      (GtkSelectionData *selection,
+                                                   PicmanItem         *item);
+PicmanItem      * picman_selection_data_get_item      (GtkSelectionData *selection,
+                                                   Picman             *picman);
 
 
 /*  various data  */
 
-void            gimp_selection_data_set_object    (GtkSelectionData *selection,
-                                                   GimpObject       *object);
+void            picman_selection_data_set_object    (GtkSelectionData *selection,
+                                                   PicmanObject       *object);
 
-GimpBrush     * gimp_selection_data_get_brush     (GtkSelectionData *selection,
-                                                   Gimp             *gimp);
-GimpPattern   * gimp_selection_data_get_pattern   (GtkSelectionData *selection,
-                                                   Gimp             *gimp);
-GimpGradient  * gimp_selection_data_get_gradient  (GtkSelectionData *selection,
-                                                   Gimp             *gimp);
-GimpPalette   * gimp_selection_data_get_palette   (GtkSelectionData *selection,
-                                                   Gimp             *gimp);
-GimpFont      * gimp_selection_data_get_font      (GtkSelectionData *selection,
-                                                   Gimp             *gimp);
-GimpBuffer    * gimp_selection_data_get_buffer    (GtkSelectionData *selection,
-                                                   Gimp             *gimp);
-GimpImagefile * gimp_selection_data_get_imagefile (GtkSelectionData *selection,
-                                                   Gimp             *gimp);
-GimpTemplate  * gimp_selection_data_get_template  (GtkSelectionData *selection,
-                                                   Gimp             *gimp);
-GimpToolInfo  * gimp_selection_data_get_tool_info (GtkSelectionData *selection,
-                                                   Gimp             *gimp);
+PicmanBrush     * picman_selection_data_get_brush     (GtkSelectionData *selection,
+                                                   Picman             *picman);
+PicmanPattern   * picman_selection_data_get_pattern   (GtkSelectionData *selection,
+                                                   Picman             *picman);
+PicmanGradient  * picman_selection_data_get_gradient  (GtkSelectionData *selection,
+                                                   Picman             *picman);
+PicmanPalette   * picman_selection_data_get_palette   (GtkSelectionData *selection,
+                                                   Picman             *picman);
+PicmanFont      * picman_selection_data_get_font      (GtkSelectionData *selection,
+                                                   Picman             *picman);
+PicmanBuffer    * picman_selection_data_get_buffer    (GtkSelectionData *selection,
+                                                   Picman             *picman);
+PicmanImagefile * picman_selection_data_get_imagefile (GtkSelectionData *selection,
+                                                   Picman             *picman);
+PicmanTemplate  * picman_selection_data_get_template  (GtkSelectionData *selection,
+                                                   Picman             *picman);
+PicmanToolInfo  * picman_selection_data_get_tool_info (GtkSelectionData *selection,
+                                                   Picman             *picman);
 
 
-#endif /* __GIMP_SELECTION_DATA_H__ */
+#endif /* __PICMAN_SELECTION_DATA_H__ */

@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub brushes_refresh {
     $blurb = 'Refresh current brushes. This function always succeeds.';
@@ -29,7 +29,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_data_factory_data_refresh (gimp->brush_factory, context);
+  picman_data_factory_data_refresh (picman->brush_factory, context);
 }
 CODE
     );
@@ -39,9 +39,9 @@ sub brushes_get_list {
     $blurb = 'Retrieve a complete listing of the available brushes.';
 
     $help = <<'HELP';
-This procedure returns a complete listing of available GIMP
+This procedure returns a complete listing of available PICMAN
 brushes. Each name returned can be used as input to the
-gimp_context_set_brush() procedure.
+picman_context_set_brush() procedure.
 HELP
 
     &std_pdb_misc;
@@ -59,10 +59,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpcontainer-filter.h") ],
+        headers => [ qw("core/picmancontainer-filter.h") ],
 	code    => <<'CODE'
 {
-  brush_list = gimp_container_get_filtered_name_array (gimp_data_factory_get_container (gimp->brush_factory),
+  brush_list = picman_container_get_filtered_name_array (picman_data_factory_get_container (picman->brush_factory),
                                                        filter, &num_brushes);
 }
 CODE
@@ -70,7 +70,7 @@ CODE
 }
 
 sub brushes_get_brush {
-    &std_pdb_deprecated ('gimp-context-get-brush');
+    &std_pdb_deprecated ('picman-context-get-brush');
 
     @outargs = (
 	{ name => 'name', type => 'string',
@@ -86,14 +86,14 @@ sub brushes_get_brush {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_context_get_brush (context);
+  PicmanBrush *brush = picman_context_get_brush (context);
 
   if (brush)
     {
-      name    = g_strdup (gimp_object_get_name (brush));
-      width   = gimp_temp_buf_get_width  (brush->mask);
-      height  = gimp_temp_buf_get_height (brush->mask);
-      spacing = gimp_brush_get_spacing (brush);
+      name    = g_strdup (picman_object_get_name (brush));
+      width   = picman_temp_buf_get_width  (brush->mask);
+      height  = picman_temp_buf_get_height (brush->mask);
+      spacing = picman_brush_get_spacing (brush);
     }
   else
     success = FALSE;
@@ -103,7 +103,7 @@ CODE
 }
 
 sub brushes_get_spacing {
-    &std_pdb_deprecated ('gimp-brush-get-spacing');
+    &std_pdb_deprecated ('picman-brush-get-spacing');
 
     @outargs = (
 	{ name => 'spacing', type => '0 <= int32 <= 1000',
@@ -113,10 +113,10 @@ sub brushes_get_spacing {
     %invoke = (
 	code =><<'CODE'
 {
-  GimpBrush *brush = gimp_context_get_brush (context);
+  PicmanBrush *brush = picman_context_get_brush (context);
 
   if (brush)
-    spacing = gimp_brush_get_spacing (brush);
+    spacing = picman_brush_get_spacing (brush);
   else
     success = FALSE;
 }
@@ -125,7 +125,7 @@ CODE
 }
 
 sub brushes_set_spacing {
-    &std_pdb_deprecated ('gimp-brush-set-spacing');
+    &std_pdb_deprecated ('picman-brush-set-spacing');
 
     @inargs = (
 	{ name => 'spacing', type => '0 <= int32 <= 1000',
@@ -135,14 +135,14 @@ sub brushes_set_spacing {
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_brush_set_spacing (gimp_context_get_brush (context), spacing);
+  picman_brush_set_spacing (picman_context_get_brush (context), spacing);
 }
 CODE
     );
 }
 
 sub brushes_get_brush_data {
-    &std_pdb_deprecated ('gimp-brush-get-pixels');
+    &std_pdb_deprecated ('picman-brush-get-pixels');
 
     @inargs = (
 	{ name => 'name', type => 'string', null_ok => 1,
@@ -156,7 +156,7 @@ sub brushes_get_brush_data {
 	  desc => 'The brush opacity' },
 	{ name => 'spacing', type => '0 <= int32 <= 1000',
 	  desc => 'The brush spacing' },
-	{ name => 'paint_mode', type => 'enum GimpLayerModeEffects',
+	{ name => 'paint_mode', type => 'enum PicmanLayerModeEffects',
 	  desc => 'The paint mode' },
 	{ name => 'width', type => 'int32',
 	  desc => 'The brush width' },
@@ -171,23 +171,23 @@ sub brushes_get_brush_data {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush;
+  PicmanBrush *brush;
 
   if (name && strlen (name))
-    brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+    brush = picman_pdb_get_brush (picman, name, FALSE, error);
   else
-    brush = gimp_context_get_brush (context);
+    brush = picman_context_get_brush (context);
 
   if (brush)
     {
-      actual_name = g_strdup (gimp_object_get_name (brush));
+      actual_name = g_strdup (picman_object_get_name (brush));
       opacity     = 1.0;
-      spacing     = gimp_brush_get_spacing (brush);
+      spacing     = picman_brush_get_spacing (brush);
       paint_mode  = 0;
-      width       = gimp_temp_buf_get_width  (brush->mask);
-      height      = gimp_temp_buf_get_height (brush->mask);
-      length      = gimp_temp_buf_get_data_size (brush->mask);
-      mask_data   = g_memdup (gimp_temp_buf_get_data (brush->mask), length);
+      width       = picman_temp_buf_get_width  (brush->mask);
+      height      = picman_temp_buf_get_height (brush->mask);
+      length      = picman_temp_buf_get_data_size (brush->mask);
+      mask_data   = g_memdup (picman_temp_buf_get_data (brush->mask), length);
     }
   else
     success = FALSE;
@@ -198,12 +198,12 @@ CODE
 
 
 @headers = qw(<string.h>
-              "core/gimp.h"
-              "core/gimpbrush.h"
-              "core/gimpcontext.h"
-              "core/gimpdatafactory.h"
-              "core/gimptempbuf.h"
-              "gimppdb-utils.h");
+              "core/picman.h"
+              "core/picmanbrush.h"
+              "core/picmancontext.h"
+              "core/picmandatafactory.h"
+              "core/picmantempbuf.h"
+              "picmanpdb-utils.h");
 
 @procs = qw(brushes_refresh
             brushes_get_list
@@ -214,7 +214,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Brushes';
-$doc_title = 'gimpbrushes';
+$doc_title = 'picmanbrushes';
 $doc_short_desc = 'Functions for manipulating brushes.';
 $doc_long_desc = 'Functions related to getting and setting brushes.';
 

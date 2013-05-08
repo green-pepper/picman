@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbrusheditor.c
+ * picmanbrusheditor.c
  * Copyright 1998 Jay Cox <jaycox@earthlink.net>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,22 +25,22 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpbrushgenerated.h"
-#include "core/gimpcontext.h"
+#include "core/picman.h"
+#include "core/picmanbrushgenerated.h"
+#include "core/picmancontext.h"
 
-#include "gimpbrusheditor.h"
-#include "gimpdocked.h"
-#include "gimpspinscale.h"
-#include "gimpview.h"
-#include "gimpviewrenderer.h"
+#include "picmanbrusheditor.h"
+#include "picmandocked.h"
+#include "picmanspinscale.h"
+#include "picmanview.h"
+#include "picmanviewrenderer.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define BRUSH_VIEW_SIZE 96
@@ -48,62 +48,62 @@
 
 /*  local function prototypes  */
 
-static void   gimp_brush_editor_docked_iface_init (GimpDockedInterface *face);
+static void   picman_brush_editor_docked_iface_init (PicmanDockedInterface *face);
 
-static void   gimp_brush_editor_constructed    (GObject            *object);
+static void   picman_brush_editor_constructed    (GObject            *object);
 
-static void   gimp_brush_editor_set_data       (GimpDataEditor     *editor,
-                                                GimpData           *data);
+static void   picman_brush_editor_set_data       (PicmanDataEditor     *editor,
+                                                PicmanData           *data);
 
-static void   gimp_brush_editor_set_context    (GimpDocked         *docked,
-                                                GimpContext        *context);
+static void   picman_brush_editor_set_context    (PicmanDocked         *docked,
+                                                PicmanContext        *context);
 
-static void   gimp_brush_editor_update_brush   (GtkAdjustment      *adjustment,
-                                                GimpBrushEditor    *editor);
-static void   gimp_brush_editor_update_shape   (GtkWidget          *widget,
-                                                GimpBrushEditor    *editor);
-static void   gimp_brush_editor_notify_brush   (GimpBrushGenerated *brush,
+static void   picman_brush_editor_update_brush   (GtkAdjustment      *adjustment,
+                                                PicmanBrushEditor    *editor);
+static void   picman_brush_editor_update_shape   (GtkWidget          *widget,
+                                                PicmanBrushEditor    *editor);
+static void   picman_brush_editor_notify_brush   (PicmanBrushGenerated *brush,
                                                 GParamSpec         *pspec,
-                                                GimpBrushEditor    *editor);
+                                                PicmanBrushEditor    *editor);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpBrushEditor, gimp_brush_editor,
-                         GIMP_TYPE_DATA_EDITOR,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_DOCKED,
-                                                gimp_brush_editor_docked_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanBrushEditor, picman_brush_editor,
+                         PICMAN_TYPE_DATA_EDITOR,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_DOCKED,
+                                                picman_brush_editor_docked_iface_init))
 
-#define parent_class gimp_brush_editor_parent_class
+#define parent_class picman_brush_editor_parent_class
 
-static GimpDockedInterface *parent_docked_iface = NULL;
+static PicmanDockedInterface *parent_docked_iface = NULL;
 
 
 static void
-gimp_brush_editor_class_init (GimpBrushEditorClass *klass)
+picman_brush_editor_class_init (PicmanBrushEditorClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpDataEditorClass *editor_class = GIMP_DATA_EDITOR_CLASS (klass);
+  PicmanDataEditorClass *editor_class = PICMAN_DATA_EDITOR_CLASS (klass);
 
-  object_class->constructed = gimp_brush_editor_constructed;
+  object_class->constructed = picman_brush_editor_constructed;
 
-  editor_class->set_data    = gimp_brush_editor_set_data;
+  editor_class->set_data    = picman_brush_editor_set_data;
   editor_class->title       = _("Brush Editor");
 }
 
 static void
-gimp_brush_editor_docked_iface_init (GimpDockedInterface *iface)
+picman_brush_editor_docked_iface_init (PicmanDockedInterface *iface)
 {
   parent_docked_iface = g_type_interface_peek_parent (iface);
 
   if (! parent_docked_iface)
-    parent_docked_iface = g_type_default_interface_peek (GIMP_TYPE_DOCKED);
+    parent_docked_iface = g_type_default_interface_peek (PICMAN_TYPE_DOCKED);
 
-  iface->set_context = gimp_brush_editor_set_context;
+  iface->set_context = picman_brush_editor_set_context;
 }
 
 static void
-gimp_brush_editor_init (GimpBrushEditor *editor)
+picman_brush_editor_init (PicmanBrushEditor *editor)
 {
-  GimpDataEditor *data_editor = GIMP_DATA_EDITOR (editor);
+  PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (editor);
   GtkWidget      *frame;
   GtkWidget      *hbox;
   GtkWidget      *label;
@@ -115,14 +115,14 @@ gimp_brush_editor_init (GimpBrushEditor *editor)
   gtk_box_pack_start (GTK_BOX (editor), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
-  data_editor->view = gimp_view_new_full_by_types (NULL,
-                                                   GIMP_TYPE_VIEW,
-                                                   GIMP_TYPE_BRUSH,
+  data_editor->view = picman_view_new_full_by_types (NULL,
+                                                   PICMAN_TYPE_VIEW,
+                                                   PICMAN_TYPE_BRUSH,
                                                    BRUSH_VIEW_SIZE,
                                                    BRUSH_VIEW_SIZE, 0,
                                                    FALSE, FALSE, TRUE);
   gtk_widget_set_size_request (data_editor->view, -1, BRUSH_VIEW_SIZE);
-  gimp_view_set_expand (GIMP_VIEW (data_editor->view), TRUE);
+  picman_view_set_expand (PICMAN_VIEW (data_editor->view), TRUE);
   gtk_container_add (GTK_CONTAINER (frame), data_editor->view);
   gtk_widget_show (data_editor->view);
 
@@ -141,10 +141,10 @@ gimp_brush_editor_init (GimpBrushEditor *editor)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  box = gimp_enum_stock_box_new (GIMP_TYPE_BRUSH_GENERATED_SHAPE,
-                                 "gimp-shape",
+  box = picman_enum_stock_box_new (PICMAN_TYPE_BRUSH_GENERATED_SHAPE,
+                                 "picman-shape",
                                  GTK_ICON_SIZE_MENU,
-                                 G_CALLBACK (gimp_brush_editor_update_shape),
+                                 G_CALLBACK (picman_brush_editor_update_shape),
                                  editor,
                                  &editor->shape_group);
   gtk_box_pack_start (GTK_BOX (hbox), box, FALSE, FALSE, 0);
@@ -153,87 +153,87 @@ gimp_brush_editor_init (GimpBrushEditor *editor)
   /*  brush radius scale  */
   editor->radius_data =
     GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.1, 1000.0, 0.1, 1.0, 0.0));
-  scale = gimp_spin_scale_new (editor->radius_data, _("Radius"), 1);
+  scale = picman_spin_scale_new (editor->radius_data, _("Radius"), 1);
   gtk_box_pack_start (GTK_BOX (editor->options_box), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   g_signal_connect (editor->radius_data, "value-changed",
-                    G_CALLBACK (gimp_brush_editor_update_brush),
+                    G_CALLBACK (picman_brush_editor_update_brush),
                     editor);
 
   /*  number of spikes  */
   editor->spikes_data =
     GTK_ADJUSTMENT (gtk_adjustment_new (2.0, 2.0, 20.0, 1.0, 1.0, 0.0));
-  scale = gimp_spin_scale_new (editor->spikes_data, _("Spikes"), 0);
+  scale = picman_spin_scale_new (editor->spikes_data, _("Spikes"), 0);
   gtk_box_pack_start (GTK_BOX (editor->options_box), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   g_signal_connect (editor->spikes_data, "value-changed",
-                    G_CALLBACK (gimp_brush_editor_update_brush),
+                    G_CALLBACK (picman_brush_editor_update_brush),
                     editor);
 
   /*  brush hardness scale  */
   editor->hardness_data =
     GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.0, 1.0, 0.01, 0.1, 0.0));
-  scale = gimp_spin_scale_new (editor->hardness_data, _("Hardness"), 2);
+  scale = picman_spin_scale_new (editor->hardness_data, _("Hardness"), 2);
   gtk_box_pack_start (GTK_BOX (editor->options_box), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   g_signal_connect (editor->hardness_data, "value-changed",
-                    G_CALLBACK (gimp_brush_editor_update_brush),
+                    G_CALLBACK (picman_brush_editor_update_brush),
                     editor);
 
   /*  brush aspect ratio scale  */
   editor->aspect_ratio_data =
     GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 1.0, 20.0, 0.1, 1.0, 0.0));
-  scale = gimp_spin_scale_new (editor->aspect_ratio_data, _("Aspect ratio"), 1);
+  scale = picman_spin_scale_new (editor->aspect_ratio_data, _("Aspect ratio"), 1);
   gtk_box_pack_start (GTK_BOX (editor->options_box), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   g_signal_connect (editor->aspect_ratio_data,"value-changed",
-                    G_CALLBACK (gimp_brush_editor_update_brush),
+                    G_CALLBACK (picman_brush_editor_update_brush),
                     editor);
 
   /*  brush angle scale  */
   editor->angle_data =
     GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.0, 180.0, 0.1, 1.0, 0.0));
-  scale = gimp_spin_scale_new (editor->angle_data, _("Angle"), 1);
+  scale = picman_spin_scale_new (editor->angle_data, _("Angle"), 1);
   gtk_box_pack_start (GTK_BOX (editor->options_box), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   g_signal_connect (editor->angle_data, "value-changed",
-                    G_CALLBACK (gimp_brush_editor_update_brush),
+                    G_CALLBACK (picman_brush_editor_update_brush),
                     editor);
 
   /*  brush spacing  */
   editor->spacing_data =
     GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 1.0, 5000.0, 1.0, 10.0, 0.0));
-  scale = gimp_spin_scale_new (editor->spacing_data, _("Spacing"), 1);
-  gimp_spin_scale_set_scale_limits (GIMP_SPIN_SCALE (scale), 1.0, 200.0);
+  scale = picman_spin_scale_new (editor->spacing_data, _("Spacing"), 1);
+  picman_spin_scale_set_scale_limits (PICMAN_SPIN_SCALE (scale), 1.0, 200.0);
   gtk_box_pack_start (GTK_BOX (editor->options_box), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
-  gimp_help_set_help_data (scale, _("Percentage of width of brush"), NULL);
+  picman_help_set_help_data (scale, _("Percentage of width of brush"), NULL);
 
   g_signal_connect (editor->spacing_data, "value-changed",
-                    G_CALLBACK (gimp_brush_editor_update_brush),
+                    G_CALLBACK (picman_brush_editor_update_brush),
                     editor);
 }
 
 static void
-gimp_brush_editor_constructed (GObject *object)
+picman_brush_editor_constructed (GObject *object)
 {
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  gimp_docked_set_show_button_bar (GIMP_DOCKED (object), FALSE);
+  picman_docked_set_show_button_bar (PICMAN_DOCKED (object), FALSE);
 }
 
 static void
-gimp_brush_editor_set_data (GimpDataEditor *editor,
-                            GimpData       *data)
+picman_brush_editor_set_data (PicmanDataEditor *editor,
+                            PicmanData       *data)
 {
-  GimpBrushEditor         *brush_editor = GIMP_BRUSH_EDITOR (editor);
-  GimpBrushGeneratedShape  shape        = GIMP_BRUSH_GENERATED_CIRCLE;
+  PicmanBrushEditor         *brush_editor = PICMAN_BRUSH_EDITOR (editor);
+  PicmanBrushGeneratedShape  shape        = PICMAN_BRUSH_GENERATED_CIRCLE;
   gdouble                  radius       = 0.0;
   gint                     spikes       = 2;
   gdouble                  hardness     = 0.0;
@@ -243,39 +243,39 @@ gimp_brush_editor_set_data (GimpDataEditor *editor,
 
   if (editor->data)
     g_signal_handlers_disconnect_by_func (editor->data,
-                                          gimp_brush_editor_notify_brush,
+                                          picman_brush_editor_notify_brush,
                                           editor);
 
-  GIMP_DATA_EDITOR_CLASS (parent_class)->set_data (editor, data);
+  PICMAN_DATA_EDITOR_CLASS (parent_class)->set_data (editor, data);
 
   if (editor->data)
     g_signal_connect (editor->data, "notify",
-                      G_CALLBACK (gimp_brush_editor_notify_brush),
+                      G_CALLBACK (picman_brush_editor_notify_brush),
                       editor);
 
-  gimp_view_set_viewable (GIMP_VIEW (editor->view), GIMP_VIEWABLE (data));
+  picman_view_set_viewable (PICMAN_VIEW (editor->view), PICMAN_VIEWABLE (data));
 
   if (editor->data)
     {
-      spacing = gimp_brush_get_spacing (GIMP_BRUSH (editor->data));
+      spacing = picman_brush_get_spacing (PICMAN_BRUSH (editor->data));
 
-      if (GIMP_IS_BRUSH_GENERATED (editor->data))
+      if (PICMAN_IS_BRUSH_GENERATED (editor->data))
         {
-          GimpBrushGenerated *brush = GIMP_BRUSH_GENERATED (editor->data);
+          PicmanBrushGenerated *brush = PICMAN_BRUSH_GENERATED (editor->data);
 
-          shape    = gimp_brush_generated_get_shape        (brush);
-          radius   = gimp_brush_generated_get_radius       (brush);
-          spikes   = gimp_brush_generated_get_spikes       (brush);
-          hardness = gimp_brush_generated_get_hardness     (brush);
-          ratio    = gimp_brush_generated_get_aspect_ratio (brush);
-          angle    = gimp_brush_generated_get_angle        (brush);
+          shape    = picman_brush_generated_get_shape        (brush);
+          radius   = picman_brush_generated_get_radius       (brush);
+          spikes   = picman_brush_generated_get_spikes       (brush);
+          hardness = picman_brush_generated_get_hardness     (brush);
+          ratio    = picman_brush_generated_get_aspect_ratio (brush);
+          angle    = picman_brush_generated_get_angle        (brush);
         }
     }
 
   gtk_widget_set_sensitive (brush_editor->options_box,
                             editor->data_editable);
 
-  gimp_int_radio_group_set_active (GTK_RADIO_BUTTON (brush_editor->shape_group),
+  picman_int_radio_group_set_active (GTK_RADIO_BUTTON (brush_editor->shape_group),
                                    shape);
 
   gtk_adjustment_set_value (brush_editor->radius_data,       radius);
@@ -287,14 +287,14 @@ gimp_brush_editor_set_data (GimpDataEditor *editor,
 }
 
 static void
-gimp_brush_editor_set_context (GimpDocked  *docked,
-                               GimpContext *context)
+picman_brush_editor_set_context (PicmanDocked  *docked,
+                               PicmanContext *context)
 {
-  GimpDataEditor *data_editor = GIMP_DATA_EDITOR (docked);
+  PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (docked);
 
   parent_docked_iface->set_context (docked, context);
 
-  gimp_view_renderer_set_context (GIMP_VIEW (data_editor->view)->renderer,
+  picman_view_renderer_set_context (PICMAN_VIEW (data_editor->view)->renderer,
                                   context);
 }
 
@@ -302,18 +302,18 @@ gimp_brush_editor_set_context (GimpDocked  *docked,
 /*  public functions  */
 
 GtkWidget *
-gimp_brush_editor_new (GimpContext     *context,
-                       GimpMenuFactory *menu_factory)
+picman_brush_editor_new (PicmanContext     *context,
+                       PicmanMenuFactory *menu_factory)
 {
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
-  return g_object_new (GIMP_TYPE_BRUSH_EDITOR,
+  return g_object_new (PICMAN_TYPE_BRUSH_EDITOR,
                        "menu-factory",    menu_factory,
                        "menu-identifier", "<BrushEditor>",
                        "ui-path",         "/brush-editor-popup",
-                       "data-factory",    context->gimp->brush_factory,
+                       "data-factory",    context->picman->brush_factory,
                        "context",         context,
-                       "data",            gimp_context_get_brush (context),
+                       "data",            picman_context_get_brush (context),
                        NULL);
 }
 
@@ -321,10 +321,10 @@ gimp_brush_editor_new (GimpContext     *context,
 /*  private functions  */
 
 static void
-gimp_brush_editor_update_brush (GtkAdjustment   *adjustment,
-                                GimpBrushEditor *editor)
+picman_brush_editor_update_brush (GtkAdjustment   *adjustment,
+                                PicmanBrushEditor *editor)
 {
-  GimpBrushGenerated *brush;
+  PicmanBrushGenerated *brush;
   gdouble             radius;
   gint                spikes;
   gdouble             hardness;
@@ -332,10 +332,10 @@ gimp_brush_editor_update_brush (GtkAdjustment   *adjustment,
   gdouble             angle;
   gdouble             spacing;
 
-  if (! GIMP_IS_BRUSH_GENERATED (GIMP_DATA_EDITOR (editor)->data))
+  if (! PICMAN_IS_BRUSH_GENERATED (PICMAN_DATA_EDITOR (editor)->data))
     return;
 
-  brush = GIMP_BRUSH_GENERATED (GIMP_DATA_EDITOR (editor)->data);
+  brush = PICMAN_BRUSH_GENERATED (PICMAN_DATA_EDITOR (editor)->data);
 
   radius   = gtk_adjustment_get_value (editor->radius_data);
   spikes   = ROUND (gtk_adjustment_get_value (editor->spikes_data));
@@ -344,63 +344,63 @@ gimp_brush_editor_update_brush (GtkAdjustment   *adjustment,
   angle    = gtk_adjustment_get_value (editor->angle_data);
   spacing  = gtk_adjustment_get_value (editor->spacing_data);
 
-  if (radius   != gimp_brush_generated_get_radius       (brush) ||
-      spikes   != gimp_brush_generated_get_spikes       (brush) ||
-      hardness != gimp_brush_generated_get_hardness     (brush) ||
-      ratio    != gimp_brush_generated_get_aspect_ratio (brush) ||
-      angle    != gimp_brush_generated_get_angle        (brush) ||
-      spacing  != gimp_brush_get_spacing                (GIMP_BRUSH (brush)))
+  if (radius   != picman_brush_generated_get_radius       (brush) ||
+      spikes   != picman_brush_generated_get_spikes       (brush) ||
+      hardness != picman_brush_generated_get_hardness     (brush) ||
+      ratio    != picman_brush_generated_get_aspect_ratio (brush) ||
+      angle    != picman_brush_generated_get_angle        (brush) ||
+      spacing  != picman_brush_get_spacing                (PICMAN_BRUSH (brush)))
     {
       g_signal_handlers_block_by_func (brush,
-                                       gimp_brush_editor_notify_brush,
+                                       picman_brush_editor_notify_brush,
                                        editor);
 
-      gimp_data_freeze (GIMP_DATA (brush));
+      picman_data_freeze (PICMAN_DATA (brush));
       g_object_freeze_notify (G_OBJECT (brush));
 
-      gimp_brush_generated_set_radius       (brush, radius);
-      gimp_brush_generated_set_spikes       (brush, spikes);
-      gimp_brush_generated_set_hardness     (brush, hardness);
-      gimp_brush_generated_set_aspect_ratio (brush, ratio);
-      gimp_brush_generated_set_angle        (brush, angle);
-      gimp_brush_set_spacing                (GIMP_BRUSH (brush), spacing);
+      picman_brush_generated_set_radius       (brush, radius);
+      picman_brush_generated_set_spikes       (brush, spikes);
+      picman_brush_generated_set_hardness     (brush, hardness);
+      picman_brush_generated_set_aspect_ratio (brush, ratio);
+      picman_brush_generated_set_angle        (brush, angle);
+      picman_brush_set_spacing                (PICMAN_BRUSH (brush), spacing);
 
       g_object_thaw_notify (G_OBJECT (brush));
-      gimp_data_thaw (GIMP_DATA (brush));
+      picman_data_thaw (PICMAN_DATA (brush));
 
       g_signal_handlers_unblock_by_func (brush,
-                                         gimp_brush_editor_notify_brush,
+                                         picman_brush_editor_notify_brush,
                                          editor);
     }
 }
 
 static void
-gimp_brush_editor_update_shape (GtkWidget       *widget,
-                                GimpBrushEditor *editor)
+picman_brush_editor_update_shape (GtkWidget       *widget,
+                                PicmanBrushEditor *editor)
 {
-  GimpBrushGenerated *brush;
+  PicmanBrushGenerated *brush;
 
-  if (! GIMP_IS_BRUSH_GENERATED (GIMP_DATA_EDITOR (editor)->data))
+  if (! PICMAN_IS_BRUSH_GENERATED (PICMAN_DATA_EDITOR (editor)->data))
     return;
 
-  brush = GIMP_BRUSH_GENERATED (GIMP_DATA_EDITOR (editor)->data);
+  brush = PICMAN_BRUSH_GENERATED (PICMAN_DATA_EDITOR (editor)->data);
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
     {
-      GimpBrushGeneratedShape shape;
+      PicmanBrushGeneratedShape shape;
 
       shape = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (widget),
-                                                  "gimp-item-data"));
+                                                  "picman-item-data"));
 
-      if (gimp_brush_generated_get_shape (brush) != shape)
-        gimp_brush_generated_set_shape (brush, shape);
+      if (picman_brush_generated_get_shape (brush) != shape)
+        picman_brush_generated_set_shape (brush, shape);
     }
 }
 
 static void
-gimp_brush_editor_notify_brush (GimpBrushGenerated   *brush,
+picman_brush_editor_notify_brush (PicmanBrushGenerated   *brush,
                                 GParamSpec           *pspec,
-                                GimpBrushEditor      *editor)
+                                PicmanBrushEditor      *editor)
 {
   GtkAdjustment *adj   = NULL;
   gdouble        value = 0.0;
@@ -408,14 +408,14 @@ gimp_brush_editor_notify_brush (GimpBrushGenerated   *brush,
   if (! strcmp (pspec->name, "shape"))
     {
       g_signal_handlers_block_by_func (editor->shape_group,
-                                       gimp_brush_editor_update_shape,
+                                       picman_brush_editor_update_shape,
                                        editor);
 
-      gimp_int_radio_group_set_active (GTK_RADIO_BUTTON (editor->shape_group),
+      picman_int_radio_group_set_active (GTK_RADIO_BUTTON (editor->shape_group),
                                        brush->shape);
 
       g_signal_handlers_unblock_by_func (editor->shape_group,
-                                         gimp_brush_editor_update_shape,
+                                         picman_brush_editor_update_shape,
                                          editor);
 
       adj   = editor->radius_data;
@@ -449,19 +449,19 @@ gimp_brush_editor_notify_brush (GimpBrushGenerated   *brush,
   else if (! strcmp (pspec->name, "spacing"))
     {
       adj   = editor->spacing_data;
-      value = GIMP_BRUSH (brush)->spacing;
+      value = PICMAN_BRUSH (brush)->spacing;
     }
 
   if (adj)
     {
       g_signal_handlers_block_by_func (adj,
-                                       gimp_brush_editor_update_brush,
+                                       picman_brush_editor_update_brush,
                                        editor);
 
       gtk_adjustment_set_value (adj, value);
 
       g_signal_handlers_unblock_by_func (adj,
-                                         gimp_brush_editor_update_brush,
+                                         picman_brush_editor_update_brush,
                                          editor);
     }
 }

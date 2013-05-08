@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpview.h
- * Copyright (C) 2001-2006 Michael Natterer <mitch@gimp.org>
+ * picmanview.h
+ * Copyright (C) 2001-2006 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VIEW_H__
-#define __GIMP_VIEW_H__
+#ifndef __PICMAN_VIEW_H__
+#define __PICMAN_VIEW_H__
 
 
-#define GIMP_TYPE_VIEW            (gimp_view_get_type ())
-#define GIMP_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_VIEW, GimpView))
-#define GIMP_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_VIEW, GimpViewClass))
-#define GIMP_IS_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, GIMP_TYPE_VIEW))
-#define GIMP_IS_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_VIEW))
-#define GIMP_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_VIEW, GimpViewClass))
+#define PICMAN_TYPE_VIEW            (picman_view_get_type ())
+#define PICMAN_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_VIEW, PicmanView))
+#define PICMAN_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_VIEW, PicmanViewClass))
+#define PICMAN_IS_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, PICMAN_TYPE_VIEW))
+#define PICMAN_IS_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_VIEW))
+#define PICMAN_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_VIEW, PicmanViewClass))
 
 
-typedef struct _GimpViewClass  GimpViewClass;
+typedef struct _PicmanViewClass  PicmanViewClass;
 
-struct _GimpView
+struct _PicmanView
 {
   GtkWidget         parent_instance;
 
   GdkWindow        *event_window;
 
-  GimpViewable     *viewable;
-  GimpViewRenderer *renderer;
+  PicmanViewable     *viewable;
+  PicmanViewRenderer *renderer;
 
   guint             clickable : 1;
   guint             eat_button_events : 1;
@@ -52,43 +52,43 @@ struct _GimpView
   GdkModifierType   press_state;
 };
 
-struct _GimpViewClass
+struct _PicmanViewClass
 {
   GtkWidgetClass  parent_class;
 
   /*  signals  */
-  void        (* set_viewable)   (GimpView        *view,
-                                  GimpViewable    *old_viewable,
-                                  GimpViewable    *new_viewable);
-  void        (* clicked)        (GimpView        *view,
+  void        (* set_viewable)   (PicmanView        *view,
+                                  PicmanViewable    *old_viewable,
+                                  PicmanViewable    *new_viewable);
+  void        (* clicked)        (PicmanView        *view,
                                   GdkModifierType  modifier_state);
-  void        (* double_clicked) (GimpView        *view);
-  void        (* context)        (GimpView        *view);
+  void        (* double_clicked) (PicmanView        *view);
+  void        (* context)        (PicmanView        *view);
 };
 
 
-GType          gimp_view_get_type          (void) G_GNUC_CONST;
+GType          picman_view_get_type          (void) G_GNUC_CONST;
 
-GtkWidget    * gimp_view_new               (GimpContext   *context,
-                                            GimpViewable  *viewable,
+GtkWidget    * picman_view_new               (PicmanContext   *context,
+                                            PicmanViewable  *viewable,
                                             gint           size,
                                             gint           border_width,
                                             gboolean       is_popup);
-GtkWidget    * gimp_view_new_full          (GimpContext   *context,
-                                            GimpViewable  *viewable,
+GtkWidget    * picman_view_new_full          (PicmanContext   *context,
+                                            PicmanViewable  *viewable,
                                             gint           width,
                                             gint           height,
                                             gint           border_width,
                                             gboolean       is_popup,
                                             gboolean       clickable,
                                             gboolean       show_popup);
-GtkWidget    * gimp_view_new_by_types      (GimpContext   *context,
+GtkWidget    * picman_view_new_by_types      (PicmanContext   *context,
                                             GType          view_type,
                                             GType          viewable_type,
                                             gint           size,
                                             gint           border_width,
                                             gboolean       is_popup);
-GtkWidget    * gimp_view_new_full_by_types (GimpContext   *context,
+GtkWidget    * picman_view_new_full_by_types (PicmanContext   *context,
                                             GType          view_type,
                                             GType          viewable_type,
                                             gint           width,
@@ -98,11 +98,11 @@ GtkWidget    * gimp_view_new_full_by_types (GimpContext   *context,
                                             gboolean       clickable,
                                             gboolean       show_popup);
 
-GimpViewable * gimp_view_get_viewable      (GimpView      *view);
-void           gimp_view_set_viewable      (GimpView      *view,
-                                            GimpViewable  *viewable);
-void           gimp_view_set_expand        (GimpView      *view,
+PicmanViewable * picman_view_get_viewable      (PicmanView      *view);
+void           picman_view_set_viewable      (PicmanView      *view,
+                                            PicmanViewable  *viewable);
+void           picman_view_set_expand        (PicmanView      *view,
                                             gboolean       expand);
 
 
-#endif /* __GIMP_VIEW_H__ */
+#endif /* __PICMAN_VIEW_H__ */

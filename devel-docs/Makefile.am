@@ -6,14 +6,14 @@ endif
 
 SUBDIRS = \
 	tools		\
-	libgimpbase	\
-	libgimpcolor	\
-	libgimpconfig	\
-	libgimpmath	\
-	libgimpmodule	\
-	libgimpthumb	\
-	libgimpwidgets	\
-	libgimp		\
+	libpicmanbase	\
+	libpicmancolor	\
+	libpicmanconfig	\
+	libpicmanmath	\
+	libpicmanmodule	\
+	libpicmanthumb	\
+	libpicmanwidgets	\
+	libpicman		\
 	$(app)
 
 EXTRA_DIST = \

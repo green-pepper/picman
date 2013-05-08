@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,59 +15,59 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_MOVE_TOOL_H__
-#define __GIMP_MOVE_TOOL_H__
+#ifndef __PICMAN_MOVE_TOOL_H__
+#define __PICMAN_MOVE_TOOL_H__
 
 
-#include "gimpdrawtool.h"
+#include "picmandrawtool.h"
 
 
-#define GIMP_TYPE_MOVE_TOOL            (gimp_move_tool_get_type ())
-#define GIMP_MOVE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_MOVE_TOOL, GimpMoveTool))
-#define GIMP_MOVE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_MOVE_TOOL, GimpMoveToolClass))
-#define GIMP_IS_MOVE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_MOVE_TOOL))
-#define GIMP_IS_MOVE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_MOVE_TOOL))
-#define GIMP_MOVE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_MOVE_TOOL, GimpMoveToolClass))
+#define PICMAN_TYPE_MOVE_TOOL            (picman_move_tool_get_type ())
+#define PICMAN_MOVE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_MOVE_TOOL, PicmanMoveTool))
+#define PICMAN_MOVE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_MOVE_TOOL, PicmanMoveToolClass))
+#define PICMAN_IS_MOVE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_MOVE_TOOL))
+#define PICMAN_IS_MOVE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_MOVE_TOOL))
+#define PICMAN_MOVE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_MOVE_TOOL, PicmanMoveToolClass))
 
-#define GIMP_MOVE_TOOL_GET_OPTIONS(t)  (GIMP_MOVE_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_MOVE_TOOL_GET_OPTIONS(t)  (PICMAN_MOVE_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpMoveTool      GimpMoveTool;
-typedef struct _GimpMoveToolClass GimpMoveToolClass;
+typedef struct _PicmanMoveTool      PicmanMoveTool;
+typedef struct _PicmanMoveToolClass PicmanMoveToolClass;
 
-struct _GimpMoveTool
+struct _PicmanMoveTool
 {
-  GimpDrawTool         parent_instance;
+  PicmanDrawTool         parent_instance;
 
-  GimpLayer           *floating_layer;
-  GimpGuide           *guide;
+  PicmanLayer           *floating_layer;
+  PicmanGuide           *guide;
 
   gboolean             moving_guide;
   gint                 guide_position;
-  GimpOrientationType  guide_orientation;
+  PicmanOrientationType  guide_orientation;
 
-  GimpTransformType    saved_type;
+  PicmanTransformType    saved_type;
 
-  GimpLayer           *old_active_layer;
-  GimpVectors         *old_active_vectors;
+  PicmanLayer           *old_active_layer;
+  PicmanVectors         *old_active_vectors;
 };
 
-struct _GimpMoveToolClass
+struct _PicmanMoveToolClass
 {
-  GimpDrawToolClass  parent_class;
+  PicmanDrawToolClass  parent_class;
 };
 
 
-void    gimp_move_tool_register (GimpToolRegisterCallback  callback,
+void    picman_move_tool_register (PicmanToolRegisterCallback  callback,
                                  gpointer                  data);
 
-GType   gimp_move_tool_get_type (void) G_GNUC_CONST;
+GType   picman_move_tool_get_type (void) G_GNUC_CONST;
 
 
-void    gimp_move_tool_start_hguide (GimpTool    *tool,
-                                     GimpDisplay *display);
-void    gimp_move_tool_start_vguide (GimpTool    *tool,
-                                     GimpDisplay *display);
+void    picman_move_tool_start_hguide (PicmanTool    *tool,
+                                     PicmanDisplay *display);
+void    picman_move_tool_start_vguide (PicmanTool    *tool,
+                                     PicmanDisplay *display);
 
 
-#endif  /*  __GIMP_MOVE_TOOL_H__  */
+#endif  /*  __PICMAN_MOVE_TOOL_H__  */

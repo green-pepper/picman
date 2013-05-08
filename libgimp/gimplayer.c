@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2000 Peter Mattis and Spencer Kimball
  *
- * gimplayer.c
+ * picmanlayer.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,13 +22,13 @@
 
 #include <string.h>
 
-#define GIMP_DISABLE_DEPRECATION_WARNINGS
+#define PICMAN_DISABLE_DEPRECATION_WARNINGS
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * gimp_layer_new:
+ * picman_layer_new:
  * @image_ID: The image to which to add the layer.
  * @name: The layer name.
  * @width: The layer width.
@@ -42,22 +42,22 @@
  * This procedure creates a new layer with the specified width, height,
  * and type. Name, opacity, and mode are also supplied parameters. The
  * new layer still needs to be added to the image, as this is not
- * automatic. Add the new layer with the gimp_image_insert_layer()
+ * automatic. Add the new layer with the picman_image_insert_layer()
  * command. Other attributes such as layer mask modes, and offsets
  * should be set with explicit procedure calls.
  *
  * Returns: The newly created layer.
  */
 gint32
-gimp_layer_new (gint32                image_ID,
+picman_layer_new (gint32                image_ID,
                 const gchar          *name,
                 gint                  width,
                 gint                  height,
-                GimpImageType         type,
+                PicmanImageType         type,
                 gdouble               opacity,
-                GimpLayerModeEffects  mode)
+                PicmanLayerModeEffects  mode)
 {
-  return _gimp_layer_new (image_ID,
+  return _picman_layer_new (image_ID,
                           width,
                           height,
                           type,
@@ -67,7 +67,7 @@ gimp_layer_new (gint32                image_ID,
 }
 
 /**
- * gimp_layer_copy:
+ * picman_layer_copy:
  * @layer_ID: The layer to copy.
  *
  * Copy a layer.
@@ -79,13 +79,13 @@ gimp_layer_new (gint32                image_ID,
  * Returns: The newly copied layer.
  */
 gint32
-gimp_layer_copy (gint32  layer_ID)
+picman_layer_copy (gint32  layer_ID)
 {
-  return _gimp_layer_copy (layer_ID, FALSE);
+  return _picman_layer_copy (layer_ID, FALSE);
 }
 
 /**
- * gimp_layer_new_from_pixbuf:
+ * picman_layer_new_from_pixbuf:
  * @image_ID:       The RGB image to which to add the layer.
  * @name:           The layer name.
  * @pixbuf:         A GdkPixbuf.
@@ -97,23 +97,23 @@ gimp_layer_copy (gint32  layer_ID)
  * Create a new layer from a %GdkPixbuf.
  *
  * This procedure creates a new layer from the given %GdkPixbuf.  The
- * image has to be an RGB image and just like with gimp_layer_new()
+ * image has to be an RGB image and just like with picman_layer_new()
  * you will still need to add the layer to it.
  *
  * If you pass @progress_end > @progress_start to this function,
- * gimp_progress_update() will be called for. You have to call
- * gimp_progress_init() beforehand then.
+ * picman_progress_update() will be called for. You have to call
+ * picman_progress_init() beforehand then.
  *
  * Returns: The newly created layer.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 gint32
-gimp_layer_new_from_pixbuf (gint32                image_ID,
+picman_layer_new_from_pixbuf (gint32                image_ID,
                             const gchar          *name,
                             GdkPixbuf            *pixbuf,
                             gdouble               opacity,
-                            GimpLayerModeEffects  mode,
+                            PicmanLayerModeEffects  mode,
                             gdouble               progress_start,
                             gdouble               progress_end)
 {
@@ -125,15 +125,15 @@ gimp_layer_new_from_pixbuf (gint32                image_ID,
 
   g_return_val_if_fail (GDK_IS_PIXBUF (pixbuf), -1);
 
-  if (gimp_image_base_type (image_ID) != GIMP_RGB)
+  if (picman_image_base_type (image_ID) != PICMAN_RGB)
     {
-      g_warning ("gimp_layer_new_from_pixbuf() needs an RGB image");
+      g_warning ("picman_layer_new_from_pixbuf() needs an RGB image");
       return -1;
     }
 
   if (gdk_pixbuf_get_colorspace (pixbuf) != GDK_COLORSPACE_RGB)
     {
-      g_warning ("gimp_layer_new_from_pixbuf() assumes that GdkPixbuf is RGB");
+      g_warning ("picman_layer_new_from_pixbuf() assumes that GdkPixbuf is RGB");
       return -1;
     }
 
@@ -141,20 +141,20 @@ gimp_layer_new_from_pixbuf (gint32                image_ID,
   height    = gdk_pixbuf_get_height (pixbuf);
   bpp       = gdk_pixbuf_get_n_channels (pixbuf);
 
-  layer = gimp_layer_new (image_ID, name, width, height,
-                          bpp == 3 ? GIMP_RGB_IMAGE : GIMP_RGBA_IMAGE,
+  layer = picman_layer_new (image_ID, name, width, height,
+                          bpp == 3 ? PICMAN_RGB_IMAGE : PICMAN_RGBA_IMAGE,
                           opacity, mode);
 
   if (layer == -1)
     return -1;
 
-  if (gimp_plugin_precision_enabled ())
+  if (picman_plugin_precision_enabled ())
     {
       GeglBuffer *src_buffer;
       GeglBuffer *dest_buffer;
 
-      src_buffer = gimp_pixbuf_create_buffer (pixbuf);
-      dest_buffer = gimp_drawable_get_buffer (layer);
+      src_buffer = picman_pixbuf_create_buffer (pixbuf);
+      dest_buffer = picman_drawable_get_buffer (layer);
 
       gegl_buffer_copy (src_buffer, NULL, dest_buffer, NULL);
 
@@ -163,26 +163,26 @@ gimp_layer_new_from_pixbuf (gint32                image_ID,
     }
   else
     {
-      GimpDrawable *drawable;
-      GimpPixelRgn  rgn;
+      PicmanDrawable *drawable;
+      PicmanPixelRgn  rgn;
       gpointer      pr;
       const guchar *pixels;
       gint          rowstride;
       guint         done  = 0;
       guint         count = 0;
 
-      drawable = gimp_drawable_get (layer);
+      drawable = picman_drawable_get (layer);
 
-      gimp_pixel_rgn_init (&rgn, drawable, 0, 0, width, height, TRUE, FALSE);
+      picman_pixel_rgn_init (&rgn, drawable, 0, 0, width, height, TRUE, FALSE);
 
       g_assert (bpp == rgn.bpp);
 
       rowstride = gdk_pixbuf_get_rowstride (pixbuf);
       pixels    = gdk_pixbuf_get_pixels (pixbuf);
 
-      for (pr = gimp_pixel_rgns_register (1, &rgn);
+      for (pr = picman_pixel_rgns_register (1, &rgn);
            pr != NULL;
-           pr = gimp_pixel_rgns_process (pr))
+           pr = picman_pixel_rgns_process (pr))
         {
           const guchar *src  = pixels + rgn.y * rowstride + rgn.x * bpp;
           guchar       *dest = rgn.data;
@@ -201,22 +201,22 @@ gimp_layer_new_from_pixbuf (gint32                image_ID,
               done += rgn.h * rgn.w;
 
               if (count++ % 32 == 0)
-                gimp_progress_update (progress_start +
+                picman_progress_update (progress_start +
                                       (gdouble) done / (width * height) * range);
             }
         }
 
-      gimp_drawable_detach (drawable);
+      picman_drawable_detach (drawable);
     }
 
   if (range > 0.0)
-    gimp_progress_update (progress_end);
+    picman_progress_update (progress_end);
 
   return layer;
 }
 
 /**
- * gimp_layer_new_from_surface:
+ * picman_layer_new_from_surface:
  * @image_ID:        The RGB image to which to add the layer.
  * @name:            The layer name.
  * @surface:         A Cairo image surface.
@@ -227,18 +227,18 @@ gimp_layer_new_from_pixbuf (gint32                image_ID,
  *
  * This procedure creates a new layer from the given
  * #cairo_surface_t. The image has to be an RGB image and just like
- * with gimp_layer_new() you will still need to add the layer to it.
+ * with picman_layer_new() you will still need to add the layer to it.
  *
  * If you pass @progress_end > @progress_start to this function,
- * gimp_progress_update() will be called for. You have to call
- * gimp_progress_init() beforehand then.
+ * picman_progress_update() will be called for. You have to call
+ * picman_progress_init() beforehand then.
  *
  * Returns: The newly created layer.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  */
 gint32
-gimp_layer_new_from_surface (gint32                image_ID,
+picman_layer_new_from_surface (gint32                image_ID,
                              const gchar          *name,
                              cairo_surface_t      *surface,
                              gdouble               progress_start,
@@ -254,9 +254,9 @@ gimp_layer_new_from_surface (gint32                image_ID,
   g_return_val_if_fail (cairo_surface_get_type (surface) ==
                         CAIRO_SURFACE_TYPE_IMAGE, -1);
 
-  if (gimp_image_base_type (image_ID) != GIMP_RGB)
+  if (picman_image_base_type (image_ID) != PICMAN_RGB)
     {
-      g_warning ("gimp_layer_new_from_surface() needs an RGB image");
+      g_warning ("picman_layer_new_from_surface() needs an RGB image");
       return -1;
     }
 
@@ -267,25 +267,25 @@ gimp_layer_new_from_surface (gint32                image_ID,
   if (format != CAIRO_FORMAT_ARGB32 &&
       format != CAIRO_FORMAT_RGB24)
     {
-      g_warning ("gimp_layer_new_from_surface() assumes that surface is RGB");
+      g_warning ("picman_layer_new_from_surface() assumes that surface is RGB");
       return -1;
     }
 
-  layer = gimp_layer_new (image_ID, name, width, height,
+  layer = picman_layer_new (image_ID, name, width, height,
                           format == CAIRO_FORMAT_RGB24 ?
-                          GIMP_RGB_IMAGE : GIMP_RGBA_IMAGE,
-                          100.0, GIMP_NORMAL_MODE);
+                          PICMAN_RGB_IMAGE : PICMAN_RGBA_IMAGE,
+                          100.0, PICMAN_NORMAL_MODE);
 
   if (layer == -1)
     return -1;
 
-  if (gimp_plugin_precision_enabled ())
+  if (picman_plugin_precision_enabled ())
     {
       GeglBuffer *src_buffer;
       GeglBuffer *dest_buffer;
 
-      src_buffer = gimp_cairo_surface_create_buffer (surface);
-      dest_buffer = gimp_drawable_get_buffer (layer);
+      src_buffer = picman_cairo_surface_create_buffer (surface);
+      dest_buffer = picman_drawable_get_buffer (layer);
 
       gegl_buffer_copy (src_buffer, NULL, dest_buffer, NULL);
 
@@ -294,24 +294,24 @@ gimp_layer_new_from_surface (gint32                image_ID,
     }
   else
     {
-      GimpDrawable   *drawable;
-      GimpPixelRgn    rgn;
+      PicmanDrawable   *drawable;
+      PicmanPixelRgn    rgn;
       const guchar   *pixels;
       gpointer        pr;
       gint            rowstride;
       guint           count = 0;
       guint           done  = 0;
 
-      drawable = gimp_drawable_get (layer);
+      drawable = picman_drawable_get (layer);
 
-      gimp_pixel_rgn_init (&rgn, drawable, 0, 0, width, height, TRUE, FALSE);
+      picman_pixel_rgn_init (&rgn, drawable, 0, 0, width, height, TRUE, FALSE);
 
       rowstride = cairo_image_surface_get_stride (surface);
       pixels    = cairo_image_surface_get_data (surface);
 
-      for (pr = gimp_pixel_rgns_register (1, &rgn);
+      for (pr = picman_pixel_rgns_register (1, &rgn);
            pr != NULL;
-           pr = gimp_pixel_rgns_process (pr))
+           pr = picman_pixel_rgns_process (pr))
         {
           const guchar *src  = pixels + rgn.y * rowstride + rgn.x * 4;
           guchar       *dest = rgn.data;
@@ -328,7 +328,7 @@ gimp_layer_new_from_surface (gint32                image_ID,
 
                   while (w--)
                     {
-                      GIMP_CAIRO_RGB24_GET_PIXEL (s, d[0], d[1], d[2]);
+                      PICMAN_CAIRO_RGB24_GET_PIXEL (s, d[0], d[1], d[2]);
 
                       s += 4;
                       d += 3;
@@ -348,7 +348,7 @@ gimp_layer_new_from_surface (gint32                image_ID,
 
                   while (w--)
                     {
-                      GIMP_CAIRO_ARGB32_GET_PIXEL (s, d[0], d[1], d[2], d[3]);
+                      PICMAN_CAIRO_ARGB32_GET_PIXEL (s, d[0], d[1], d[2], d[3]);
 
                       s += 4;
                       d += 4;
@@ -368,46 +368,46 @@ gimp_layer_new_from_surface (gint32                image_ID,
               done += rgn.h * rgn.w;
 
               if (count++ % 32 == 0)
-                gimp_progress_update (progress_start +
+                picman_progress_update (progress_start +
                                       (gdouble) done / (width * height) * range);
             }
         }
 
-      gimp_drawable_detach (drawable);
+      picman_drawable_detach (drawable);
    }
 
   if (range > 0.0)
-    gimp_progress_update (progress_end);
+    picman_progress_update (progress_end);
 
   return layer;
 }
 
 /**
- * gimp_layer_get_preserve_trans:
+ * picman_layer_get_preserve_trans:
  * @layer_ID: The layer.
  *
- * This procedure is deprecated! Use gimp_layer_get_lock_alpha() instead.
+ * This procedure is deprecated! Use picman_layer_get_lock_alpha() instead.
  *
  * Returns: The layer's preserve transperancy setting.
  */
 gboolean
-gimp_layer_get_preserve_trans (gint32 layer_ID)
+picman_layer_get_preserve_trans (gint32 layer_ID)
 {
-  return gimp_layer_get_lock_alpha (layer_ID);
+  return picman_layer_get_lock_alpha (layer_ID);
 }
 
 /**
- * gimp_layer_set_preserve_trans:
+ * picman_layer_set_preserve_trans:
  * @layer_ID: The layer.
  * @preserve_trans: The new layer's preserve transperancy setting.
  *
- * This procedure is deprecated! Use gimp_layer_set_lock_alpha() instead.
+ * This procedure is deprecated! Use picman_layer_set_lock_alpha() instead.
  *
  * Returns: TRUE on success.
  */
 gboolean
-gimp_layer_set_preserve_trans (gint32   layer_ID,
+picman_layer_set_preserve_trans (gint32   layer_ID,
                                gboolean preserve_trans)
 {
-  return gimp_layer_set_lock_alpha (layer_ID, preserve_trans);
+  return picman_layer_set_lock_alpha (layer_ID, preserve_trans);
 }

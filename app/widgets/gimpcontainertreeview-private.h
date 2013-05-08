@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcontainertreeview-private.h
- * Copyright (C) 2003-2004 Michael Natterer <mitch@gimp.org>
+ * picmancontainertreeview-private.h
+ * Copyright (C) 2003-2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTAINER_TREE_VIEW_PRIVATE_H__
-#define __GIMP_CONTAINER_TREE_VIEW_PRIVATE_H__
+#ifndef __PICMAN_CONTAINER_TREE_VIEW_PRIVATE_H__
+#define __PICMAN_CONTAINER_TREE_VIEW_PRIVATE_H__
 
 
-struct _GimpContainerTreeViewPriv
+struct _PicmanContainerTreeViewPriv
 {
   GtkTreeSelection   *selection;
 
@@ -30,7 +30,7 @@ struct _GimpContainerTreeViewPriv
 
   GList              *editable_cells;
 
-  GimpViewRenderer   *dnd_renderer;
+  PicmanViewRenderer   *dnd_renderer;
 
   GList              *toggle_cells;
   GList              *renderer_cells;
@@ -43,4 +43,4 @@ struct _GimpContainerTreeViewPriv
 };
 
 
-#endif  /*  __GIMP_CONTAINER_TREE_VIEW_PRIVATE_H__  */
+#endif  /*  __PICMAN_CONTAINER_TREE_VIEW_PRIVATE_H__  */

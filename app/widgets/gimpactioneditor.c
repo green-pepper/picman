@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpactioneditor.c
- * Copyright (C) 2008  Michael Natterer <mitch@gimp.org>
+ * picmanactioneditor.c
+ * Copyright (C) 2008  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,36 +22,36 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "gimpactioneditor.h"
-#include "gimpactionview.h"
-#include "gimpuimanager.h"
+#include "picmanactioneditor.h"
+#include "picmanactionview.h"
+#include "picmanuimanager.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   gimp_action_editor_filter_clear   (GtkEntry         *entry);
-static void   gimp_action_editor_filter_changed (GtkEntry         *entry,
-                                                 GimpActionEditor *editor);
+static void   picman_action_editor_filter_clear   (GtkEntry         *entry);
+static void   picman_action_editor_filter_changed (GtkEntry         *entry,
+                                                 PicmanActionEditor *editor);
 
 
-G_DEFINE_TYPE (GimpActionEditor, gimp_action_editor, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanActionEditor, picman_action_editor, GTK_TYPE_BOX)
 
-#define parent_class gimp_action_editor_parent_class
+#define parent_class picman_action_editor_parent_class
 
 
 static void
-gimp_action_editor_class_init (GimpActionEditorClass *klass)
+picman_action_editor_class_init (PicmanActionEditorClass *klass)
 {
 }
 
 static void
-gimp_action_editor_init (GimpActionEditor *editor)
+picman_action_editor_init (PicmanActionEditor *editor)
 {
   GtkWidget *hbox;
   GtkWidget *label;
@@ -84,24 +84,24 @@ gimp_action_editor_init (GimpActionEditor *editor)
                                 GTK_ENTRY_ICON_SECONDARY, FALSE);
 
   g_signal_connect (entry, "icon-press",
-                    G_CALLBACK (gimp_action_editor_filter_clear),
+                    G_CALLBACK (picman_action_editor_filter_clear),
                     NULL);
   g_signal_connect (entry, "changed",
-                    G_CALLBACK (gimp_action_editor_filter_changed),
+                    G_CALLBACK (picman_action_editor_filter_changed),
                     editor);
 }
 
 GtkWidget *
-gimp_action_editor_new (GimpUIManager *manager,
+picman_action_editor_new (PicmanUIManager *manager,
                         const gchar   *select_action,
                         gboolean       show_shortcuts)
 {
-  GimpActionEditor *editor;
+  PicmanActionEditor *editor;
   GtkWidget        *scrolled_window;
 
-  g_return_val_if_fail (GIMP_IS_UI_MANAGER (manager), NULL);
+  g_return_val_if_fail (PICMAN_IS_UI_MANAGER (manager), NULL);
 
-  editor = g_object_new (GIMP_TYPE_ACTION_EDITOR, NULL);
+  editor = g_object_new (PICMAN_TYPE_ACTION_EDITOR, NULL);
 
   scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
@@ -111,7 +111,7 @@ gimp_action_editor_new (GimpUIManager *manager,
   gtk_box_pack_start (GTK_BOX (editor), scrolled_window, TRUE, TRUE, 0);
   gtk_widget_show (scrolled_window);
 
-  editor->view = gimp_action_view_new (manager, select_action, show_shortcuts);
+  editor->view = picman_action_view_new (manager, select_action, show_shortcuts);
   gtk_widget_set_size_request (editor->view, 300, 400);
   gtk_container_add (GTK_CONTAINER (scrolled_window), editor->view);
   gtk_widget_show (editor->view);
@@ -123,16 +123,16 @@ gimp_action_editor_new (GimpUIManager *manager,
 /*  private functions  */
 
 static void
-gimp_action_editor_filter_clear (GtkEntry *entry)
+picman_action_editor_filter_clear (GtkEntry *entry)
 {
   gtk_entry_set_text (entry, "");
 }
 
 static void
-gimp_action_editor_filter_changed (GtkEntry         *entry,
-                                   GimpActionEditor *editor)
+picman_action_editor_filter_changed (GtkEntry         *entry,
+                                   PicmanActionEditor *editor)
 {
-  gimp_action_view_set_filter (GIMP_ACTION_VIEW (editor->view),
+  picman_action_view_set_filter (PICMAN_ACTION_VIEW (editor->view),
                                gtk_entry_get_text (entry));
   gtk_entry_set_icon_sensitive (entry,
                                 GTK_ENTRY_ICON_SECONDARY,

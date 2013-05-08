@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,34 +17,34 @@
 
 #if 0
 
-#ifndef  __GIMP_DRAWABLE_FOREGROUND_EXTRACT_H__
-#define  __GIMP_DRAWABLE_FOREGROUND_EXTRACT_H__
+#ifndef  __PICMAN_DRAWABLE_FOREGROUND_EXTRACT_H__
+#define  __PICMAN_DRAWABLE_FOREGROUND_EXTRACT_H__
 
 
 /*  general API (as seen from the PDB)  */
 
-void       gimp_drawable_foreground_extract (GimpDrawable              *drawable,
-                                             GimpForegroundExtractMode  mode,
-                                             GimpDrawable              *mask,
-                                             GimpProgress              *progress);
+void       picman_drawable_foreground_extract (PicmanDrawable              *drawable,
+                                             PicmanForegroundExtractMode  mode,
+                                             PicmanDrawable              *mask,
+                                             PicmanProgress              *progress);
 
 /*  SIOX specific API  */
 
-SioxState * gimp_drawable_foreground_extract_siox_init   (GimpDrawable *drawable,
+SioxState * picman_drawable_foreground_extract_siox_init   (PicmanDrawable *drawable,
                                                           gint          x,
                                                           gint          y,
                                                           gint          width,
                                                           gint          height);
-void        gimp_drawable_foreground_extract_siox  (GimpDrawable       *mask,
+void        picman_drawable_foreground_extract_siox  (PicmanDrawable       *mask,
                                                     SioxState          *state,
                                                     SioxRefinementType  refinemane,
                                                     gint                smoothness,
                                                     const gdouble       sensitivity[3],
                                                     gboolean            multiblob,
-                                                    GimpProgress       *progress);
-void        gimp_drawable_foreground_extract_siox_done (SioxState      *state);
+                                                    PicmanProgress       *progress);
+void        picman_drawable_foreground_extract_siox_done (SioxState      *state);
 
 
-#endif  /*  __GIMP_DRAWABLE_FOREGROUND_EXTRACT_H__  */
+#endif  /*  __PICMAN_DRAWABLE_FOREGROUND_EXTRACT_H__  */
 
 #endif

@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcoords-interpolate.c
+ * picmancoords-interpolate.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,26 +21,26 @@
 
 #include <glib-object.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gimpcoords.h"
-#include "gimpcoords-interpolate.h"
+#include "picmancoords.h"
+#include "picmancoords-interpolate.h"
 
 
 /* Local helper functions declarations*/
-static void     gimp_coords_interpolate_bezier_internal (const GimpCoords  bezier_pt1,
-                                                         const GimpCoords  bezier_pt2,
-                                                         const GimpCoords  bezier_pt3,
-                                                         const GimpCoords  bezier_pt4,
+static void     picman_coords_interpolate_bezier_internal (const PicmanCoords  bezier_pt1,
+                                                         const PicmanCoords  bezier_pt2,
+                                                         const PicmanCoords  bezier_pt3,
+                                                         const PicmanCoords  bezier_pt4,
                                                          const gdouble     start_t,
                                                          const gdouble     end_t,
                                                          const gdouble     precision,
                                                          GArray          **ret_coords,
                                                          GArray          **ret_params,
                                                          gint              depth);
-static gdouble  gimp_coords_get_catmull_spline_point    (const gdouble     t,
+static gdouble  picman_coords_get_catmull_spline_point    (const gdouble     t,
                                                          const gdouble     p0,
                                                          const gdouble     p1,
                                                          const gdouble     p2,
@@ -49,15 +49,15 @@ static gdouble  gimp_coords_get_catmull_spline_point    (const gdouble     t,
 /* Functions for bezier subdivision */
 
 void
-gimp_coords_interpolate_bezier (const GimpCoords   bezier_pt1,
-                                const GimpCoords   bezier_pt2,
-                                const GimpCoords   bezier_pt3,
-                                const GimpCoords   bezier_pt4,
+picman_coords_interpolate_bezier (const PicmanCoords   bezier_pt1,
+                                const PicmanCoords   bezier_pt2,
+                                const PicmanCoords   bezier_pt3,
+                                const PicmanCoords   bezier_pt4,
                                 const gdouble      precision,
                                 GArray           **ret_coords,
                                 GArray           **ret_params)
 {
-  gimp_coords_interpolate_bezier_internal (bezier_pt1,
+  picman_coords_interpolate_bezier_internal (bezier_pt1,
                                            bezier_pt2,
                                            bezier_pt3,
                                            bezier_pt4,
@@ -68,10 +68,10 @@ gimp_coords_interpolate_bezier (const GimpCoords   bezier_pt1,
 
 /* Recursive subdivision helper function */
 static void
-gimp_coords_interpolate_bezier_internal (const GimpCoords  bezier_pt1,
-                                         const GimpCoords  bezier_pt2,
-                                         const GimpCoords  bezier_pt3,
-                                         const GimpCoords  bezier_pt4,
+picman_coords_interpolate_bezier_internal (const PicmanCoords  bezier_pt1,
+                                         const PicmanCoords  bezier_pt2,
+                                         const PicmanCoords  bezier_pt3,
+                                         const PicmanCoords  bezier_pt4,
                                          const gdouble     start_t,
                                          const gdouble     end_t,
                                          const gdouble     precision,
@@ -80,11 +80,11 @@ gimp_coords_interpolate_bezier_internal (const GimpCoords  bezier_pt1,
                                          gint              depth)
 {
   /*
-   * beziercoords has to contain four GimpCoords with the four control points
+   * beziercoords has to contain four PicmanCoords with the four control points
    * of the bezier segment. We subdivide it at the parameter 0.5.
    */
 
-  GimpCoords subdivided[8];
+  PicmanCoords subdivided[8];
   gdouble    middle_t = (start_t + end_t) / 2;
 
   subdivided[0] = bezier_pt1;
@@ -92,19 +92,19 @@ gimp_coords_interpolate_bezier_internal (const GimpCoords  bezier_pt1,
 
   /* if (!depth) g_printerr ("Hit recursion depth limit!\n"); */
 
-  gimp_coords_average (&bezier_pt1, &bezier_pt2, &(subdivided[1]));
+  picman_coords_average (&bezier_pt1, &bezier_pt2, &(subdivided[1]));
 
-  gimp_coords_average (&bezier_pt2, &bezier_pt3, &(subdivided[7]));
+  picman_coords_average (&bezier_pt2, &bezier_pt3, &(subdivided[7]));
 
-  gimp_coords_average (&bezier_pt3, &bezier_pt4, &(subdivided[5]));
+  picman_coords_average (&bezier_pt3, &bezier_pt4, &(subdivided[5]));
 
-  gimp_coords_average (&(subdivided[1]), &(subdivided[7]),
+  picman_coords_average (&(subdivided[1]), &(subdivided[7]),
                        &(subdivided[2]));
 
-  gimp_coords_average (&(subdivided[7]), &(subdivided[5]),
+  picman_coords_average (&(subdivided[7]), &(subdivided[5]),
                        &(subdivided[4]));
 
-  gimp_coords_average (&(subdivided[2]), &(subdivided[4]),
+  picman_coords_average (&(subdivided[2]), &(subdivided[4]),
                        &(subdivided[3]));
 
   /*
@@ -117,7 +117,7 @@ gimp_coords_interpolate_bezier_internal (const GimpCoords  bezier_pt1,
    * if the stroke is sufficiently close to a straight line.
    */
 
-  if (!depth || gimp_coords_bezier_is_straight (subdivided[0],
+  if (!depth || picman_coords_bezier_is_straight (subdivided[0],
                                                 subdivided[1],
                                                 subdivided[2],
                                                 subdivided[3],
@@ -138,7 +138,7 @@ gimp_coords_interpolate_bezier_internal (const GimpCoords  bezier_pt1,
     }
   else
     {
-      gimp_coords_interpolate_bezier_internal (subdivided[0],
+      picman_coords_interpolate_bezier_internal (subdivided[0],
                                                subdivided[1],
                                                subdivided[2],
                                                subdivided[3],
@@ -147,7 +147,7 @@ gimp_coords_interpolate_bezier_internal (const GimpCoords  bezier_pt1,
                                                ret_coords, ret_params, depth-1);
     }
 
-  if (!depth || gimp_coords_bezier_is_straight (subdivided[3],
+  if (!depth || picman_coords_bezier_is_straight (subdivided[3],
                                                 subdivided[4],
                                                 subdivided[5],
                                                 subdivided[6],
@@ -168,7 +168,7 @@ gimp_coords_interpolate_bezier_internal (const GimpCoords  bezier_pt1,
     }
   else
     {
-      gimp_coords_interpolate_bezier_internal (subdivided[3],
+      picman_coords_interpolate_bezier_internal (subdivided[3],
                                                subdivided[4],
                                                subdivided[5],
                                                subdivided[6],
@@ -187,41 +187,41 @@ gimp_coords_interpolate_bezier_internal (const GimpCoords  bezier_pt1,
  * evenly along the line. This makes it easier to reconstruct parameters for
  * a given point along the segment.
  *
- * Needs four GimpCoords in an array.
+ * Needs four PicmanCoords in an array.
  */
 
 gboolean
-gimp_coords_bezier_is_straight (const GimpCoords bezier_pt1,
-                                const GimpCoords bezier_pt2,
-                                const GimpCoords bezier_pt3,
-                                const GimpCoords bezier_pt4,
+picman_coords_bezier_is_straight (const PicmanCoords bezier_pt1,
+                                const PicmanCoords bezier_pt2,
+                                const PicmanCoords bezier_pt3,
+                                const PicmanCoords bezier_pt4,
                                 gdouble          precision)
 {
-  GimpCoords pt1, pt2;
+  PicmanCoords pt1, pt2;
 
   /* calculate the "ideal" positions for the control points */
 
-  gimp_coords_mix (2.0 / 3.0, &bezier_pt1,
+  picman_coords_mix (2.0 / 3.0, &bezier_pt1,
                    1.0 / 3.0, &bezier_pt4,
                    &pt1);
-  gimp_coords_mix (1.0 / 3.0, &bezier_pt1,
+  picman_coords_mix (1.0 / 3.0, &bezier_pt1,
                    2.0 / 3.0, &bezier_pt4,
                    &pt2);
 
   /* calculate the deviation of the actual control points */
 
-  return (gimp_coords_manhattan_dist (&bezier_pt2, &pt1) < precision &&
-          gimp_coords_manhattan_dist (&bezier_pt3, &pt2) < precision);
+  return (picman_coords_manhattan_dist (&bezier_pt2, &pt1) < precision &&
+          picman_coords_manhattan_dist (&bezier_pt3, &pt2) < precision);
 }
 
 
 /* Functions for camull-rom interpolation */
 
 void
-gimp_coords_interpolate_catmull (const GimpCoords   catmul_pt1,
-                                 const GimpCoords   catmul_pt2,
-                                 const GimpCoords   catmul_pt3,
-                                 const GimpCoords   catmul_pt4,
+picman_coords_interpolate_catmull (const PicmanCoords   catmul_pt1,
+                                 const PicmanCoords   catmul_pt2,
+                                 const PicmanCoords   catmul_pt3,
+                                 const PicmanCoords   catmul_pt4,
                                  gdouble            precision,
                                  GArray           **ret_coords,
                                  GArray           **ret_params)
@@ -233,10 +233,10 @@ gimp_coords_interpolate_catmull (const GimpCoords   catmul_pt1,
   gint        num_points;
   gint        n;
 
-  GimpCoords  past_coords;
-  GimpCoords  start_coords;
-  GimpCoords  end_coords;
-  GimpCoords  future_coords;
+  PicmanCoords  past_coords;
+  PicmanCoords  start_coords;
+  PicmanCoords  end_coords;
+  PicmanCoords  future_coords;
 
   delta_x = catmul_pt3.x - catmul_pt2.x;
   delta_y = catmul_pt3.y - catmul_pt2.y;
@@ -265,27 +265,27 @@ gimp_coords_interpolate_catmull (const GimpCoords   catmul_pt1,
 
   for (n = 1; n <= num_points; n++)
     {
-      GimpCoords coords;
+      PicmanCoords coords;
       gdouble    velocity;
       gdouble    pressure;
       gdouble    p = (gdouble) n / num_points;
 
       coords.x =
-        gimp_coords_get_catmull_spline_point (p,
+        picman_coords_get_catmull_spline_point (p,
                                               past_coords.x,
                                               start_coords.x,
                                               end_coords.x,
                                               future_coords.x);
 
       coords.y =
-        gimp_coords_get_catmull_spline_point (p,
+        picman_coords_get_catmull_spline_point (p,
                                               past_coords.y,
                                               start_coords.y,
                                               end_coords.y,
                                               future_coords.y);
 
       pressure =
-        gimp_coords_get_catmull_spline_point (p,
+        picman_coords_get_catmull_spline_point (p,
                                               past_coords.pressure,
                                               start_coords.pressure,
                                               end_coords.pressure,
@@ -293,26 +293,26 @@ gimp_coords_interpolate_catmull (const GimpCoords   catmul_pt1,
       coords.pressure = CLAMP (pressure, 0.0, 1.0);
 
       coords.xtilt =
-        gimp_coords_get_catmull_spline_point (p,
+        picman_coords_get_catmull_spline_point (p,
                                               past_coords.xtilt,
                                               start_coords.xtilt,
                                               end_coords.xtilt,
                                               future_coords.xtilt);
       coords.ytilt =
-        gimp_coords_get_catmull_spline_point (p,
+        picman_coords_get_catmull_spline_point (p,
                                               past_coords.ytilt,
                                               start_coords.ytilt,
                                               end_coords.ytilt,
                                               future_coords.ytilt);
 
       coords.wheel =
-        gimp_coords_get_catmull_spline_point (p,
+        picman_coords_get_catmull_spline_point (p,
                                               past_coords.wheel,
                                               start_coords.wheel,
                                               end_coords.wheel,
                                               future_coords.wheel);
 
-      velocity = gimp_coords_get_catmull_spline_point (p,
+      velocity = picman_coords_get_catmull_spline_point (p,
                                                        past_coords.velocity,
                                                        start_coords.velocity,
                                                        end_coords.velocity,
@@ -331,7 +331,7 @@ gimp_coords_interpolate_catmull (const GimpCoords   catmul_pt1,
 }
 
 static gdouble
-gimp_coords_get_catmull_spline_point (const gdouble  t,
+picman_coords_get_catmull_spline_point (const gdouble  t,
                                       const gdouble  p0,
                                       const gdouble  p1,
                                       const gdouble  p2,

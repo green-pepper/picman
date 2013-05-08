@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,24 +20,24 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "core/gimpboundary.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimp-utils.h"
+#include "core/picmanboundary.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picman-utils.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-scroll.h"
-#include "gimpdisplayshell-transform.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-scroll.h"
+#include "picmandisplayshell-transform.h"
 
 
 /**
- * gimp_display_shell_zoom_coords:
- * @shell:          a #GimpDisplayShell
+ * picman_display_shell_zoom_coords:
+ * @shell:          a #PicmanDisplayShell
  * @image_coords:   image coordinates
  * @display_coords: returns the corresponding display coordinates
  *
@@ -45,11 +45,11 @@
  * objects can be rendered at the correct points on the display.
  **/
 void
-gimp_display_shell_zoom_coords (const GimpDisplayShell *shell,
-                                const GimpCoords       *image_coords,
-                                GimpCoords             *display_coords)
+picman_display_shell_zoom_coords (const PicmanDisplayShell *shell,
+                                const PicmanCoords       *image_coords,
+                                PicmanCoords             *display_coords)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (image_coords != NULL);
   g_return_if_fail (display_coords != NULL);
 
@@ -63,8 +63,8 @@ gimp_display_shell_zoom_coords (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_unzoom_coords:
- * @shell:          a #GimpDisplayShell
+ * picman_display_shell_unzoom_coords:
+ * @shell:          a #PicmanDisplayShell
  * @display_coords: display coordinates
  * @image_coords:   returns the corresponding image coordinates
  *
@@ -72,11 +72,11 @@ gimp_display_shell_zoom_coords (const GimpDisplayShell *shell,
  * points on the display can be mapped to points in the image.
  **/
 void
-gimp_display_shell_unzoom_coords (const GimpDisplayShell *shell,
-                                  const GimpCoords       *display_coords,
-                                  GimpCoords             *image_coords)
+picman_display_shell_unzoom_coords (const PicmanDisplayShell *shell,
+                                  const PicmanCoords       *display_coords,
+                                  PicmanCoords             *image_coords)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (display_coords != NULL);
   g_return_if_fail (image_coords != NULL);
 
@@ -90,7 +90,7 @@ gimp_display_shell_unzoom_coords (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_zoom_xy:
+ * picman_display_shell_zoom_xy:
  * @shell:
  * @x:
  * @y:
@@ -100,7 +100,7 @@ gimp_display_shell_unzoom_coords (const GimpDisplayShell *shell,
  * Zooms an image coordinate to a shell coordinate.
  **/
 void
-gimp_display_shell_zoom_xy (const GimpDisplayShell *shell,
+picman_display_shell_zoom_xy (const PicmanDisplayShell *shell,
                             gdouble                 x,
                             gdouble                 y,
                             gint                   *nx,
@@ -109,7 +109,7 @@ gimp_display_shell_zoom_xy (const GimpDisplayShell *shell,
   gint64 tx;
   gint64 ty;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx != NULL);
   g_return_if_fail (ny != NULL);
 
@@ -128,8 +128,8 @@ gimp_display_shell_zoom_xy (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_unzoom_xy:
- * @shell:       a #GimpDisplayShell
+ * picman_display_shell_unzoom_xy:
+ * @shell:       a #PicmanDisplayShell
  * @x:           x coordinate in display coordinates
  * @y:           y coordinate in display coordinates
  * @nx:          returns x oordinate in image coordinates
@@ -142,7 +142,7 @@ gimp_display_shell_zoom_xy (const GimpDisplayShell *shell,
  * in the image.
  **/
 void
-gimp_display_shell_unzoom_xy (const GimpDisplayShell *shell,
+picman_display_shell_unzoom_xy (const PicmanDisplayShell *shell,
                               gint                    x,
                               gint                    y,
                               gint                   *nx,
@@ -152,7 +152,7 @@ gimp_display_shell_unzoom_xy (const GimpDisplayShell *shell,
   gint64 tx;
   gint64 ty;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx != NULL);
   g_return_if_fail (ny != NULL);
 
@@ -172,8 +172,8 @@ gimp_display_shell_unzoom_xy (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_zoom_xy_f:
- * @shell: a #GimpDisplayShell
+ * picman_display_shell_zoom_xy_f:
+ * @shell: a #PicmanDisplayShell
  * @x:     image x coordinate of point
  * @y:     image y coordinate of point
  * @nx:    returned shell canvas x coordinate
@@ -183,13 +183,13 @@ gimp_display_shell_unzoom_xy (const GimpDisplayShell *shell,
  * coordinates.
  **/
 void
-gimp_display_shell_zoom_xy_f (const GimpDisplayShell *shell,
+picman_display_shell_zoom_xy_f (const PicmanDisplayShell *shell,
                               gdouble                 x,
                               gdouble                 y,
                               gdouble                *nx,
                               gdouble                *ny)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx != NULL);
   g_return_if_fail (ny != NULL);
 
@@ -198,25 +198,25 @@ gimp_display_shell_zoom_xy_f (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_unzoom_xy_f:
- * @shell:       a #GimpDisplayShell
+ * picman_display_shell_unzoom_xy_f:
+ * @shell:       a #PicmanDisplayShell
  * @x:           x coordinate in display coordinates
  * @y:           y coordinate in display coordinates
  * @nx:          place to return x coordinate in image coordinates
  * @ny:          place to return y coordinate in image coordinates
  *
- * This function is identical to gimp_display_shell_unzoom_xy(),
+ * This function is identical to picman_display_shell_unzoom_xy(),
  * except that the input and output coordinates are doubles rather than
  * ints, and consequently there is no option related to rounding.
  **/
 void
-gimp_display_shell_unzoom_xy_f (const GimpDisplayShell *shell,
+picman_display_shell_unzoom_xy_f (const PicmanDisplayShell *shell,
                                 gdouble                 x,
                                 gdouble                 y,
                                 gdouble                *nx,
                                 gdouble                *ny)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx != NULL);
   g_return_if_fail (ny != NULL);
 
@@ -225,8 +225,8 @@ gimp_display_shell_unzoom_xy_f (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_zoom_segments:
- * @shell:       a #GimpDisplayShell
+ * picman_display_shell_zoom_segments:
+ * @shell:       a #PicmanDisplayShell
  * @src_segs:    array of segments in image coordinates
  * @dest_segs:   returns the corresponding segments in display coordinates
  * @n_segs:      number of segments
@@ -235,16 +235,16 @@ gimp_display_shell_unzoom_xy_f (const GimpDisplayShell *shell,
  * objects can be rendered at the correct points on the display.
  **/
 void
-gimp_display_shell_zoom_segments (const GimpDisplayShell *shell,
-                                  const GimpBoundSeg     *src_segs,
-                                  GimpSegment            *dest_segs,
+picman_display_shell_zoom_segments (const PicmanDisplayShell *shell,
+                                  const PicmanBoundSeg     *src_segs,
+                                  PicmanSegment            *dest_segs,
                                   gint                    n_segs,
                                   gdouble                 offset_x,
                                   gdouble                 offset_y)
 {
   gint i;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   for (i = 0; i < n_segs ; i++)
     {
@@ -264,8 +264,8 @@ gimp_display_shell_zoom_segments (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_rotate_coords:
- * @shell:          a #GimpDisplayShell
+ * picman_display_shell_rotate_coords:
+ * @shell:          a #PicmanDisplayShell
  * @image_coords:   unrotated display coordinates
  * @display_coords: returns the corresponding rotated display coordinates
  *
@@ -274,11 +274,11 @@ gimp_display_shell_zoom_segments (const GimpDisplayShell *shell,
  * on the display.
  **/
 void
-gimp_display_shell_rotate_coords (const GimpDisplayShell *shell,
-                                  const GimpCoords       *unrotated_coords,
-                                  GimpCoords             *rotated_coords)
+picman_display_shell_rotate_coords (const PicmanDisplayShell *shell,
+                                  const PicmanCoords       *unrotated_coords,
+                                  PicmanCoords             *rotated_coords)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (unrotated_coords != NULL);
   g_return_if_fail (rotated_coords != NULL);
 
@@ -291,19 +291,19 @@ gimp_display_shell_rotate_coords (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_unrotate_coords:
- * @shell:          a #GimpDisplayShell
+ * picman_display_shell_unrotate_coords:
+ * @shell:          a #PicmanDisplayShell
  * @display_coords: rotated display coordinates
  * @image_coords:   returns the corresponding unrotated display coordinates
  *
  * Rotates from rotated display coordinates to unrotated display coordinates.
  **/
 void
-gimp_display_shell_unrotate_coords (const GimpDisplayShell *shell,
-                                    const GimpCoords       *rotated_coords,
-                                    GimpCoords             *unrotated_coords)
+picman_display_shell_unrotate_coords (const PicmanDisplayShell *shell,
+                                    const PicmanCoords       *rotated_coords,
+                                    PicmanCoords             *unrotated_coords)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (rotated_coords != NULL);
   g_return_if_fail (unrotated_coords != NULL);
 
@@ -316,7 +316,7 @@ gimp_display_shell_unrotate_coords (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_rotate_xy:
+ * picman_display_shell_rotate_xy:
  * @shell:
  * @x:
  * @y:
@@ -326,7 +326,7 @@ gimp_display_shell_unrotate_coords (const GimpDisplayShell *shell,
  * Rotates an unrotated display coordinate to a rotated shell coordinate.
  **/
 void
-gimp_display_shell_rotate_xy (const GimpDisplayShell *shell,
+picman_display_shell_rotate_xy (const PicmanDisplayShell *shell,
                               gdouble                 x,
                               gdouble                 y,
                               gint                   *nx,
@@ -335,7 +335,7 @@ gimp_display_shell_rotate_xy (const GimpDisplayShell *shell,
   gint64 tx;
   gint64 ty;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx != NULL);
   g_return_if_fail (ny != NULL);
 
@@ -354,8 +354,8 @@ gimp_display_shell_rotate_xy (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_unrotate_xy:
- * @shell:       a #GimpDisplayShell
+ * picman_display_shell_unrotate_xy:
+ * @shell:       a #PicmanDisplayShell
  * @x:           x coordinate in rotated display coordinates
  * @y:           y coordinate in rotated display coordinates
  * @nx:          returns x oordinate in unrotated display coordinates
@@ -365,13 +365,13 @@ gimp_display_shell_rotate_xy (const GimpDisplayShell *shell,
  * coordinates.
  **/
 void
-gimp_display_shell_unrotate_xy (const GimpDisplayShell *shell,
+picman_display_shell_unrotate_xy (const PicmanDisplayShell *shell,
                                 gint                    x,
                                 gint                    y,
                                 gint                   *nx,
                                 gint                   *ny)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx != NULL);
   g_return_if_fail (ny != NULL);
 
@@ -393,8 +393,8 @@ gimp_display_shell_unrotate_xy (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_rotate_xy_f:
- * @shell: a #GimpDisplayShell
+ * picman_display_shell_rotate_xy_f:
+ * @shell: a #PicmanDisplayShell
  * @x:     image x coordinate of point
  * @y:     image y coordinate of point
  * @nx:    returned shell canvas x coordinate
@@ -404,13 +404,13 @@ gimp_display_shell_unrotate_xy (const GimpDisplayShell *shell,
  * coordinates.
  **/
 void
-gimp_display_shell_rotate_xy_f (const GimpDisplayShell *shell,
+picman_display_shell_rotate_xy_f (const PicmanDisplayShell *shell,
                                 gdouble                 x,
                                 gdouble                 y,
                                 gdouble                *nx,
                                 gdouble                *ny)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx != NULL);
   g_return_if_fail (ny != NULL);
 
@@ -422,25 +422,25 @@ gimp_display_shell_rotate_xy_f (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_unrotate_xy_f:
- * @shell:       a #GimpDisplayShell
+ * picman_display_shell_unrotate_xy_f:
+ * @shell:       a #PicmanDisplayShell
  * @x:           x coordinate in rotated display coordinates
  * @y:           y coordinate in rotated display coordinates
  * @nx:          place to return x coordinate in unrotated display coordinates
  * @ny:          place to return y coordinate in unrotated display  coordinates
  *
- * This function is identical to gimp_display_shell_unrotate_xy(),
+ * This function is identical to picman_display_shell_unrotate_xy(),
  * except that the input and output coordinates are doubles rather
  * than ints.
  **/
 void
-gimp_display_shell_unrotate_xy_f (const GimpDisplayShell *shell,
+picman_display_shell_unrotate_xy_f (const PicmanDisplayShell *shell,
                                   gdouble                 x,
                                   gdouble                 y,
                                   gdouble                *nx,
                                   gdouble                *ny)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx != NULL);
   g_return_if_fail (ny != NULL);
 
@@ -452,7 +452,7 @@ gimp_display_shell_unrotate_xy_f (const GimpDisplayShell *shell,
 }
 
 void
-gimp_display_shell_rotate_bounds (GimpDisplayShell *shell,
+picman_display_shell_rotate_bounds (PicmanDisplayShell *shell,
                                   gdouble           x1,
                                   gdouble           y1,
                                   gdouble           x2,
@@ -463,7 +463,7 @@ gimp_display_shell_rotate_bounds (GimpDisplayShell *shell,
                                   gdouble          *ny2)
 {
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   if (shell->rotate_transform)
     {
@@ -496,7 +496,7 @@ gimp_display_shell_rotate_bounds (GimpDisplayShell *shell,
 }
 
 void
-gimp_display_shell_unrotate_bounds (GimpDisplayShell *shell,
+picman_display_shell_unrotate_bounds (PicmanDisplayShell *shell,
                                     gdouble           x1,
                                     gdouble           y1,
                                     gdouble           x2,
@@ -506,7 +506,7 @@ gimp_display_shell_unrotate_bounds (GimpDisplayShell *shell,
                                     gdouble          *nx2,
                                     gdouble          *ny2)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   if (shell->rotate_untransform)
     {
@@ -539,8 +539,8 @@ gimp_display_shell_unrotate_bounds (GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_transform_coords:
- * @shell:          a #GimpDisplayShell
+ * picman_display_shell_transform_coords:
+ * @shell:          a #PicmanDisplayShell
  * @image_coords:   image coordinates
  * @display_coords: returns the corresponding display coordinates
  *
@@ -548,11 +548,11 @@ gimp_display_shell_unrotate_bounds (GimpDisplayShell *shell,
  * objects can be rendered at the correct points on the display.
  **/
 void
-gimp_display_shell_transform_coords (const GimpDisplayShell *shell,
-                                     const GimpCoords       *image_coords,
-                                     GimpCoords             *display_coords)
+picman_display_shell_transform_coords (const PicmanDisplayShell *shell,
+                                     const PicmanCoords       *image_coords,
+                                     PicmanCoords             *display_coords)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (image_coords != NULL);
   g_return_if_fail (display_coords != NULL);
 
@@ -571,8 +571,8 @@ gimp_display_shell_transform_coords (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_untransform_coords:
- * @shell:          a #GimpDisplayShell
+ * picman_display_shell_untransform_coords:
+ * @shell:          a #PicmanDisplayShell
  * @display_coords: display coordinates
  * @image_coords:   returns the corresponding image coordinates
  *
@@ -580,11 +580,11 @@ gimp_display_shell_transform_coords (const GimpDisplayShell *shell,
  * points on the display can be mapped to points in the image.
  **/
 void
-gimp_display_shell_untransform_coords (const GimpDisplayShell *shell,
-                                       const GimpCoords       *display_coords,
-                                       GimpCoords             *image_coords)
+picman_display_shell_untransform_coords (const PicmanDisplayShell *shell,
+                                       const PicmanCoords       *display_coords,
+                                       PicmanCoords             *image_coords)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (display_coords != NULL);
   g_return_if_fail (image_coords != NULL);
 
@@ -603,7 +603,7 @@ gimp_display_shell_untransform_coords (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_transform_xy:
+ * picman_display_shell_transform_xy:
  * @shell:
  * @x:
  * @y:
@@ -613,7 +613,7 @@ gimp_display_shell_untransform_coords (const GimpDisplayShell *shell,
  * Transforms an image coordinate to a shell coordinate.
  **/
 void
-gimp_display_shell_transform_xy (const GimpDisplayShell *shell,
+picman_display_shell_transform_xy (const PicmanDisplayShell *shell,
                                  gdouble                 x,
                                  gdouble                 y,
                                  gint                   *nx,
@@ -622,7 +622,7 @@ gimp_display_shell_transform_xy (const GimpDisplayShell *shell,
   gint64 tx;
   gint64 ty;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx != NULL);
   g_return_if_fail (ny != NULL);
 
@@ -652,8 +652,8 @@ gimp_display_shell_transform_xy (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_untransform_xy:
- * @shell:       a #GimpDisplayShell
+ * picman_display_shell_untransform_xy:
+ * @shell:       a #PicmanDisplayShell
  * @x:           x coordinate in display coordinates
  * @y:           y coordinate in display coordinates
  * @nx:          returns x oordinate in image coordinates
@@ -666,7 +666,7 @@ gimp_display_shell_transform_xy (const GimpDisplayShell *shell,
  * in the image.
  **/
 void
-gimp_display_shell_untransform_xy (const GimpDisplayShell *shell,
+picman_display_shell_untransform_xy (const PicmanDisplayShell *shell,
                                    gint                    x,
                                    gint                    y,
                                    gint                   *nx,
@@ -676,7 +676,7 @@ gimp_display_shell_untransform_xy (const GimpDisplayShell *shell,
   gint64 tx;
   gint64 ty;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx != NULL);
   g_return_if_fail (ny != NULL);
 
@@ -707,8 +707,8 @@ gimp_display_shell_untransform_xy (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_transform_xy_f:
- * @shell: a #GimpDisplayShell
+ * picman_display_shell_transform_xy_f:
+ * @shell: a #PicmanDisplayShell
  * @x:     image x coordinate of point
  * @y:     image y coordinate of point
  * @nx:    returned shell canvas x coordinate
@@ -718,13 +718,13 @@ gimp_display_shell_untransform_xy (const GimpDisplayShell *shell,
  * coordinates.
  **/
 void
-gimp_display_shell_transform_xy_f  (const GimpDisplayShell *shell,
+picman_display_shell_transform_xy_f  (const PicmanDisplayShell *shell,
                                     gdouble                 x,
                                     gdouble                 y,
                                     gdouble                *nx,
                                     gdouble                *ny)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx != NULL);
   g_return_if_fail (ny != NULL);
 
@@ -736,25 +736,25 @@ gimp_display_shell_transform_xy_f  (const GimpDisplayShell *shell,
 }
 
 /**
- * gimp_display_shell_untransform_xy_f:
- * @shell:       a #GimpDisplayShell
+ * picman_display_shell_untransform_xy_f:
+ * @shell:       a #PicmanDisplayShell
  * @x:           x coordinate in display coordinates
  * @y:           y coordinate in display coordinates
  * @nx:          place to return x coordinate in image coordinates
  * @ny:          place to return y coordinate in image coordinates
  *
- * This function is identical to gimp_display_shell_untransform_xy(),
+ * This function is identical to picman_display_shell_untransform_xy(),
  * except that the input and output coordinates are doubles rather than
  * ints, and consequently there is no option related to rounding.
  **/
 void
-gimp_display_shell_untransform_xy_f (const GimpDisplayShell *shell,
+picman_display_shell_untransform_xy_f (const PicmanDisplayShell *shell,
                                      gdouble                 x,
                                      gdouble                 y,
                                      gdouble                *nx,
                                      gdouble                *ny)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx != NULL);
   g_return_if_fail (ny != NULL);
 
@@ -766,7 +766,7 @@ gimp_display_shell_untransform_xy_f (const GimpDisplayShell *shell,
 }
 
 void
-gimp_display_shell_transform_bounds (const GimpDisplayShell *shell,
+picman_display_shell_transform_bounds (const PicmanDisplayShell *shell,
                                      gdouble                 x1,
                                      gdouble                 y1,
                                      gdouble                 x2,
@@ -776,7 +776,7 @@ gimp_display_shell_transform_bounds (const GimpDisplayShell *shell,
                                      gdouble                *nx2,
                                      gdouble                *ny2)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx1 != NULL);
   g_return_if_fail (ny1 != NULL);
   g_return_if_fail (nx2 != NULL);
@@ -789,10 +789,10 @@ gimp_display_shell_transform_bounds (const GimpDisplayShell *shell,
       gdouble tx3, ty3;
       gdouble tx4, ty4;
 
-      gimp_display_shell_transform_xy_f (shell, x1, y1, &tx1, &ty1);
-      gimp_display_shell_transform_xy_f (shell, x1, y2, &tx2, &ty2);
-      gimp_display_shell_transform_xy_f (shell, x2, y1, &tx3, &ty3);
-      gimp_display_shell_transform_xy_f (shell, x2, y2, &tx4, &ty4);
+      picman_display_shell_transform_xy_f (shell, x1, y1, &tx1, &ty1);
+      picman_display_shell_transform_xy_f (shell, x1, y2, &tx2, &ty2);
+      picman_display_shell_transform_xy_f (shell, x2, y1, &tx3, &ty3);
+      picman_display_shell_transform_xy_f (shell, x2, y2, &tx4, &ty4);
 
       *nx1 = MIN4 (tx1, tx2, tx3, tx4);
       *ny1 = MIN4 (ty1, ty2, ty3, ty4);
@@ -801,13 +801,13 @@ gimp_display_shell_transform_bounds (const GimpDisplayShell *shell,
     }
   else
     {
-      gimp_display_shell_transform_xy_f (shell, x1, y1, nx1, ny1);
-      gimp_display_shell_transform_xy_f (shell, x2, y2, nx2, ny2);
+      picman_display_shell_transform_xy_f (shell, x1, y1, nx1, ny1);
+      picman_display_shell_transform_xy_f (shell, x2, y2, nx2, ny2);
     }
 }
 
 void
-gimp_display_shell_untransform_bounds (const GimpDisplayShell *shell,
+picman_display_shell_untransform_bounds (const PicmanDisplayShell *shell,
                                        gdouble                 x1,
                                        gdouble                 y1,
                                        gdouble                 x2,
@@ -817,7 +817,7 @@ gimp_display_shell_untransform_bounds (const GimpDisplayShell *shell,
                                        gdouble                *nx2,
                                        gdouble                *ny2)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (nx1 != NULL);
   g_return_if_fail (ny1 != NULL);
   g_return_if_fail (nx2 != NULL);
@@ -830,10 +830,10 @@ gimp_display_shell_untransform_bounds (const GimpDisplayShell *shell,
       gdouble tx3, ty3;
       gdouble tx4, ty4;
 
-      gimp_display_shell_untransform_xy_f (shell, x1, y1, &tx1, &ty1);
-      gimp_display_shell_untransform_xy_f (shell, x1, y2, &tx2, &ty2);
-      gimp_display_shell_untransform_xy_f (shell, x2, y1, &tx3, &ty3);
-      gimp_display_shell_untransform_xy_f (shell, x2, y2, &tx4, &ty4);
+      picman_display_shell_untransform_xy_f (shell, x1, y1, &tx1, &ty1);
+      picman_display_shell_untransform_xy_f (shell, x1, y2, &tx2, &ty2);
+      picman_display_shell_untransform_xy_f (shell, x2, y1, &tx3, &ty3);
+      picman_display_shell_untransform_xy_f (shell, x2, y2, &tx4, &ty4);
 
       *nx1 = MIN4 (tx1, tx2, tx3, tx4);
       *ny1 = MIN4 (ty1, ty2, ty3, ty4);
@@ -842,14 +842,14 @@ gimp_display_shell_untransform_bounds (const GimpDisplayShell *shell,
     }
   else
     {
-      gimp_display_shell_untransform_xy_f (shell, x1, y1, nx1, ny1);
-      gimp_display_shell_untransform_xy_f (shell, x2, y2, nx2, ny2);
+      picman_display_shell_untransform_xy_f (shell, x1, y1, nx1, ny1);
+      picman_display_shell_untransform_xy_f (shell, x2, y2, nx2, ny2);
     }
 }
 
 /**
- * gimp_display_shell_untransform_viewport:
- * @shell:  a #GimpDisplayShell
+ * picman_display_shell_untransform_viewport:
+ * @shell:  a #PicmanDisplayShell
  * @x:      returns image x coordinate of display upper left corner
  * @y:      returns image y coordinate of display upper left corner
  * @width:  returns width of display measured in image coordinates
@@ -859,27 +859,27 @@ gimp_display_shell_untransform_bounds (const GimpDisplayShell *shell,
  * that corresponds to the display viewport.
  **/
 void
-gimp_display_shell_untransform_viewport (const GimpDisplayShell *shell,
+picman_display_shell_untransform_viewport (const PicmanDisplayShell *shell,
                                          gint                   *x,
                                          gint                   *y,
                                          gint                   *width,
                                          gint                   *height)
 {
-  GimpImage *image;
+  PicmanImage *image;
   gint       x1, y1, x2, y2;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
-  gimp_display_shell_untransform_xy (shell,
+  picman_display_shell_untransform_xy (shell,
                                      0, 0,
                                      &x1, &y1,
                                      FALSE);
-  gimp_display_shell_untransform_xy (shell,
+  picman_display_shell_untransform_xy (shell,
                                      shell->disp_width, shell->disp_height,
                                      &x2, &y2,
                                      FALSE);
 
-  image = gimp_display_get_image (shell->display);
+  image = picman_display_get_image (shell->display);
 
   if (x1 < 0)
     x1 = 0;
@@ -887,11 +887,11 @@ gimp_display_shell_untransform_viewport (const GimpDisplayShell *shell,
   if (y1 < 0)
     y1 = 0;
 
-  if (x2 > gimp_image_get_width (image))
-    x2 = gimp_image_get_width (image);
+  if (x2 > picman_image_get_width (image))
+    x2 = picman_image_get_width (image);
 
-  if (y2 > gimp_image_get_height (image))
-    y2 = gimp_image_get_height (image);
+  if (y2 > picman_image_get_height (image))
+    y2 = picman_image_get_height (image);
 
   if (x)      *x      = x1;
   if (y)      *y      = y1;

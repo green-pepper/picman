@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpimage-convert-precision.h
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picmanimage-convert-precision.h
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_CONVERT_PRECISION_H__
-#define __GIMP_IMAGE_CONVERT_PRECISION_H__
+#ifndef __PICMAN_IMAGE_CONVERT_PRECISION_H__
+#define __PICMAN_IMAGE_CONVERT_PRECISION_H__
 
 
-void   gimp_image_convert_precision (GimpImage     *image,
-                                     GimpPrecision  precision,
+void   picman_image_convert_precision (PicmanImage     *image,
+                                     PicmanPrecision  precision,
                                      gint           layer_dither_type,
                                      gint           text_layer_dither_type,
                                      gint           mask_dither_type,
-                                     GimpProgress  *progress);
+                                     PicmanProgress  *progress);
 
 
-#endif  /*  __GIMP_IMAGE_CONVERT_PRECISION_H__  */
+#endif  /*  __PICMAN_IMAGE_CONVERT_PRECISION_H__  */

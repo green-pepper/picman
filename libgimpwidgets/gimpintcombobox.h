@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpintcombobox.h
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanintcombobox.h
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,27 +19,27 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_INT_COMBO_BOX_H__
-#define __GIMP_INT_COMBO_BOX_H__
+#ifndef __PICMAN_INT_COMBO_BOX_H__
+#define __PICMAN_INT_COMBO_BOX_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_INT_COMBO_BOX            (gimp_int_combo_box_get_type ())
-#define GIMP_INT_COMBO_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_INT_COMBO_BOX, GimpIntComboBox))
-#define GIMP_INT_COMBO_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_INT_COMBO_BOX, GimpIntComboBoxClass))
-#define GIMP_IS_INT_COMBO_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_INT_COMBO_BOX))
-#define GIMP_IS_INT_COMBO_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_INT_COMBO_BOX))
-#define GIMP_INT_COMBO_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_INT_COMBO_BOX, GimpIntComboBoxClass))
+#define PICMAN_TYPE_INT_COMBO_BOX            (picman_int_combo_box_get_type ())
+#define PICMAN_INT_COMBO_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_INT_COMBO_BOX, PicmanIntComboBox))
+#define PICMAN_INT_COMBO_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_INT_COMBO_BOX, PicmanIntComboBoxClass))
+#define PICMAN_IS_INT_COMBO_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_INT_COMBO_BOX))
+#define PICMAN_IS_INT_COMBO_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_INT_COMBO_BOX))
+#define PICMAN_INT_COMBO_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_INT_COMBO_BOX, PicmanIntComboBoxClass))
 
 
-typedef struct _GimpIntComboBoxClass  GimpIntComboBoxClass;
+typedef struct _PicmanIntComboBoxClass  PicmanIntComboBoxClass;
 
-struct _GimpIntComboBox
+struct _PicmanIntComboBox
 {
   GtkComboBox       parent_instance;
 
@@ -47,55 +47,55 @@ struct _GimpIntComboBox
   gpointer          priv;
 
   /* Padding for future expansion (should have gone to the class) */
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
-struct _GimpIntComboBoxClass
+struct _PicmanIntComboBoxClass
 {
   GtkComboBoxClass  parent_class;
 };
 
 
-typedef  gboolean (* GimpIntSensitivityFunc) (gint      value,
+typedef  gboolean (* PicmanIntSensitivityFunc) (gint      value,
                                               gpointer  data);
 
 
 
-GType       gimp_int_combo_box_get_type        (void) G_GNUC_CONST;
+GType       picman_int_combo_box_get_type        (void) G_GNUC_CONST;
 
-GtkWidget * gimp_int_combo_box_new             (const gchar     *first_label,
+GtkWidget * picman_int_combo_box_new             (const gchar     *first_label,
                                                 gint             first_value,
                                                 ...) G_GNUC_NULL_TERMINATED;
-GtkWidget * gimp_int_combo_box_new_valist      (const gchar     *first_label,
+GtkWidget * picman_int_combo_box_new_valist      (const gchar     *first_label,
                                                 gint             first_value,
                                                 va_list          values);
 
-GtkWidget * gimp_int_combo_box_new_array       (gint             n_values,
+GtkWidget * picman_int_combo_box_new_array       (gint             n_values,
                                                 const gchar     *labels[]);
 
-void        gimp_int_combo_box_prepend         (GimpIntComboBox *combo_box,
+void        picman_int_combo_box_prepend         (PicmanIntComboBox *combo_box,
                                                 ...);
-void        gimp_int_combo_box_append          (GimpIntComboBox *combo_box,
+void        picman_int_combo_box_append          (PicmanIntComboBox *combo_box,
                                                 ...);
 
-gboolean    gimp_int_combo_box_set_active      (GimpIntComboBox *combo_box,
+gboolean    picman_int_combo_box_set_active      (PicmanIntComboBox *combo_box,
                                                 gint             value);
-gboolean    gimp_int_combo_box_get_active      (GimpIntComboBox *combo_box,
+gboolean    picman_int_combo_box_get_active      (PicmanIntComboBox *combo_box,
                                                 gint            *value);
 
-gulong      gimp_int_combo_box_connect         (GimpIntComboBox *combo_box,
+gulong      picman_int_combo_box_connect         (PicmanIntComboBox *combo_box,
                                                 gint             value,
                                                 GCallback        callback,
                                                 gpointer         data);
 
-void        gimp_int_combo_box_set_sensitivity (GimpIntComboBox        *combo_box,
-                                                GimpIntSensitivityFunc  func,
+void        picman_int_combo_box_set_sensitivity (PicmanIntComboBox        *combo_box,
+                                                PicmanIntSensitivityFunc  func,
                                                 gpointer                data,
                                                 GDestroyNotify          destroy);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_INT_COMBO_BOX_H__ */
+#endif  /* __PICMAN_INT_COMBO_BOX_H__ */

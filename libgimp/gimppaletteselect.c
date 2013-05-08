@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppaletteselect.c
+ * picmanpaletteselect.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 typedef struct
@@ -29,48 +29,48 @@ typedef struct
   guint                   idle_id;
   gchar                  *palette_name;
   gint                    num_colors;
-  GimpRunPaletteCallback  callback;
+  PicmanRunPaletteCallback  callback;
   gboolean                closing;
   gpointer                data;
-} GimpPaletteData;
+} PicmanPaletteData;
 
 
 /*  local function prototypes  */
 
-static void      gimp_palette_data_free     (GimpPaletteData  *data);
+static void      picman_palette_data_free     (PicmanPaletteData  *data);
 
-static void      gimp_temp_palette_run      (const gchar      *name,
+static void      picman_temp_palette_run      (const gchar      *name,
                                              gint              nparams,
-                                             const GimpParam  *param,
+                                             const PicmanParam  *param,
                                              gint             *nreturn_vals,
-                                             GimpParam       **return_vals);
-static gboolean  gimp_temp_palette_run_idle (GimpPaletteData  *palette_data);
+                                             PicmanParam       **return_vals);
+static gboolean  picman_temp_palette_run_idle (PicmanPaletteData  *palette_data);
 
 
 /*  private variables  */
 
-static GHashTable *gimp_palette_select_ht = NULL;
+static GHashTable *picman_palette_select_ht = NULL;
 
 
 /*  public functions  */
 
 const gchar *
-gimp_palette_select_new (const gchar            *title,
+picman_palette_select_new (const gchar            *title,
                          const gchar            *palette_name,
-                         GimpRunPaletteCallback  callback,
+                         PicmanRunPaletteCallback  callback,
                          gpointer                data)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_STRING, "str",           "String"                      },
-    { GIMP_PDB_INT32,  "num colors",    "Number of colors"            },
-    { GIMP_PDB_INT32,  "dialog status", "If the dialog was closing "
+    { PICMAN_PDB_STRING, "str",           "String"                      },
+    { PICMAN_PDB_INT32,  "num colors",    "Number of colors"            },
+    { PICMAN_PDB_INT32,  "dialog status", "If the dialog was closing "
                                         "[0 = No, 1 = Yes]"           }
   };
 
-  gchar *palette_callback = gimp_procedural_db_temp_name ();
+  gchar *palette_callback = picman_procedural_db_temp_name ();
 
-  gimp_install_temp_proc (palette_callback,
+  picman_install_temp_proc (palette_callback,
                           "Temporary palette popup callback procedure",
                           "",
                           "",
@@ -78,53 +78,53 @@ gimp_palette_select_new (const gchar            *title,
                           "",
                           NULL,
                           "",
-                          GIMP_TEMPORARY,
+                          PICMAN_TEMPORARY,
                           G_N_ELEMENTS (args), 0,
                           args, NULL,
-                          gimp_temp_palette_run);
+                          picman_temp_palette_run);
 
-  if (gimp_palettes_popup (palette_callback, title, palette_name))
+  if (picman_palettes_popup (palette_callback, title, palette_name))
     {
-      GimpPaletteData *palette_data;
+      PicmanPaletteData *palette_data;
 
-      gimp_extension_enable (); /* Allow callbacks to be watched */
+      picman_extension_enable (); /* Allow callbacks to be watched */
 
       /* Now add to hash table so we can find it again */
-      if (! gimp_palette_select_ht)
+      if (! picman_palette_select_ht)
         {
-          gimp_palette_select_ht =
+          picman_palette_select_ht =
             g_hash_table_new_full (g_str_hash, g_str_equal,
                                    g_free,
-                                   (GDestroyNotify) gimp_palette_data_free);
+                                   (GDestroyNotify) picman_palette_data_free);
         }
 
-      palette_data = g_slice_new0 (GimpPaletteData);
+      palette_data = g_slice_new0 (PicmanPaletteData);
 
       palette_data->palette_callback = palette_callback;
       palette_data->callback      = callback;
       palette_data->data          = data;
 
-      g_hash_table_insert (gimp_palette_select_ht,
+      g_hash_table_insert (picman_palette_select_ht,
                            palette_callback, palette_data);
 
       return palette_callback;
     }
 
-  gimp_uninstall_temp_proc (palette_callback);
+  picman_uninstall_temp_proc (palette_callback);
   g_free (palette_callback);
 
   return NULL;
 }
 
 void
-gimp_palette_select_destroy (const gchar *palette_callback)
+picman_palette_select_destroy (const gchar *palette_callback)
 {
-  GimpPaletteData *palette_data;
+  PicmanPaletteData *palette_data;
 
   g_return_if_fail (palette_callback != NULL);
-  g_return_if_fail (gimp_palette_select_ht != NULL);
+  g_return_if_fail (picman_palette_select_ht != NULL);
 
-  palette_data = g_hash_table_lookup (gimp_palette_select_ht, palette_callback);
+  palette_data = g_hash_table_lookup (picman_palette_select_ht, palette_callback);
 
   if (! palette_data)
     {
@@ -138,33 +138,33 @@ gimp_palette_select_destroy (const gchar *palette_callback)
   g_free (palette_data->palette_name);
 
   if (palette_data->palette_callback)
-    gimp_palettes_close_popup (palette_data->palette_callback);
+    picman_palettes_close_popup (palette_data->palette_callback);
 
-  gimp_uninstall_temp_proc (palette_callback);
+  picman_uninstall_temp_proc (palette_callback);
 
-  g_hash_table_remove (gimp_palette_select_ht, palette_callback);
+  g_hash_table_remove (picman_palette_select_ht, palette_callback);
 }
 
 
 /*  private functions  */
 
 static void
-gimp_palette_data_free (GimpPaletteData *data)
+picman_palette_data_free (PicmanPaletteData *data)
 {
-  g_slice_free (GimpPaletteData, data);
+  g_slice_free (PicmanPaletteData, data);
 }
 
 static void
-gimp_temp_palette_run (const gchar      *name,
+picman_temp_palette_run (const gchar      *name,
                        gint              nparams,
-                       const GimpParam  *param,
+                       const PicmanParam  *param,
                        gint             *nreturn_vals,
-                       GimpParam       **return_vals)
+                       PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
-  GimpPaletteData  *palette_data;
+  static PicmanParam  values[1];
+  PicmanPaletteData  *palette_data;
 
-  palette_data = g_hash_table_lookup (gimp_palette_select_ht, name);
+  palette_data = g_hash_table_lookup (picman_palette_select_ht, name);
 
   if (! palette_data)
     {
@@ -179,19 +179,19 @@ gimp_temp_palette_run (const gchar      *name,
       palette_data->closing      = param[2].data.d_int32;
 
       if (! palette_data->idle_id)
-        palette_data->idle_id = g_idle_add ((GSourceFunc) gimp_temp_palette_run_idle,
+        palette_data->idle_id = g_idle_add ((GSourceFunc) picman_temp_palette_run_idle,
                                             palette_data);
     }
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_SUCCESS;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_SUCCESS;
 }
 
 static gboolean
-gimp_temp_palette_run_idle (GimpPaletteData *palette_data)
+picman_temp_palette_run_idle (PicmanPaletteData *palette_data)
 {
   palette_data->idle_id = 0;
 
@@ -205,7 +205,7 @@ gimp_temp_palette_run_idle (GimpPaletteData *palette_data)
       gchar *palette_callback = palette_data->palette_callback;
 
       palette_data->palette_callback = NULL;
-      gimp_palette_select_destroy (palette_callback);
+      picman_palette_select_destroy (palette_callback);
     }
 
   return FALSE;

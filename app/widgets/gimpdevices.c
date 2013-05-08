@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,31 +29,31 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpbase/gimpbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanbase/picmanbase.h"
 
 #ifdef G_OS_WIN32
-#include "libgimpbase/gimpwin32-io.h"
+#include "libpicmanbase/picmanwin32-io.h"
 #endif
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpgradient.h"
-#include "core/gimplist.h"
-#include "core/gimppattern.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmandatafactory.h"
+#include "core/picmangradient.h"
+#include "core/picmanlist.h"
+#include "core/picmanpattern.h"
+#include "core/picmantoolinfo.h"
 
-#include "gimpdeviceinfo.h"
-#include "gimpdevicemanager.h"
-#include "gimpdevices.h"
+#include "picmandeviceinfo.h"
+#include "picmandevicemanager.h"
+#include "picmandevices.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-#define GIMP_DEVICE_MANAGER_DATA_KEY "gimp-device-manager"
+#define PICMAN_DEVICE_MANAGER_DATA_KEY "picman-device-manager"
 
 
 static gboolean devicerc_deleted = FALSE;
@@ -62,79 +62,79 @@ static gboolean devicerc_deleted = FALSE;
 /*  public functions  */
 
 void
-gimp_devices_init (Gimp *gimp)
+picman_devices_init (Picman *picman)
 {
-  GimpDeviceManager *manager;
+  PicmanDeviceManager *manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  manager = g_object_get_data (G_OBJECT (gimp), GIMP_DEVICE_MANAGER_DATA_KEY);
+  manager = g_object_get_data (G_OBJECT (picman), PICMAN_DEVICE_MANAGER_DATA_KEY);
 
   g_return_if_fail (manager == NULL);
 
-  manager = gimp_device_manager_new (gimp);
+  manager = picman_device_manager_new (picman);
 
-  g_object_set_data_full (G_OBJECT (gimp),
-                          GIMP_DEVICE_MANAGER_DATA_KEY, manager,
+  g_object_set_data_full (G_OBJECT (picman),
+                          PICMAN_DEVICE_MANAGER_DATA_KEY, manager,
                           (GDestroyNotify) g_object_unref);
 }
 
 void
-gimp_devices_exit (Gimp *gimp)
+picman_devices_exit (Picman *picman)
 {
-  GimpDeviceManager *manager;
+  PicmanDeviceManager *manager;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  manager = gimp_devices_get_manager (gimp);
+  manager = picman_devices_get_manager (picman);
 
-  g_return_if_fail (GIMP_IS_DEVICE_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_DEVICE_MANAGER (manager));
 
-  g_object_set_data (G_OBJECT (gimp), GIMP_DEVICE_MANAGER_DATA_KEY, NULL);
+  g_object_set_data (G_OBJECT (picman), PICMAN_DEVICE_MANAGER_DATA_KEY, NULL);
 }
 
 void
-gimp_devices_restore (Gimp *gimp)
+picman_devices_restore (Picman *picman)
 {
-  GimpDeviceManager *manager;
-  GimpContext       *user_context;
-  GimpDeviceInfo    *current_device;
+  PicmanDeviceManager *manager;
+  PicmanContext       *user_context;
+  PicmanDeviceInfo    *current_device;
   GList             *list;
   gchar             *filename;
   GError            *error = NULL;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  manager = gimp_devices_get_manager (gimp);
+  manager = picman_devices_get_manager (picman);
 
-  g_return_if_fail (GIMP_IS_DEVICE_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_DEVICE_MANAGER (manager));
 
-  user_context = gimp_get_user_context (gimp);
+  user_context = picman_get_user_context (picman);
 
-  for (list = GIMP_LIST (manager)->list;
+  for (list = PICMAN_LIST (manager)->list;
        list;
        list = g_list_next (list))
     {
-      GimpDeviceInfo *device_info = list->data;
+      PicmanDeviceInfo *device_info = list->data;
 
-      gimp_context_copy_properties (user_context, GIMP_CONTEXT (device_info),
-                                    GIMP_DEVICE_INFO_CONTEXT_MASK);
+      picman_context_copy_properties (user_context, PICMAN_CONTEXT (device_info),
+                                    PICMAN_DEVICE_INFO_CONTEXT_MASK);
 
-      gimp_device_info_set_default_tool (device_info);
+      picman_device_info_set_default_tool (device_info);
     }
 
-  filename = gimp_personal_rc_file ("devicerc");
+  filename = picman_personal_rc_file ("devicerc");
 
-  if (gimp->be_verbose)
-    g_print ("Parsing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Parsing '%s'\n", picman_filename_to_utf8 (filename));
 
-  if (! gimp_config_deserialize_file (GIMP_CONFIG (manager),
+  if (! picman_config_deserialize_file (PICMAN_CONFIG (manager),
                                       filename,
-                                      gimp,
+                                      picman,
                                       &error))
     {
-      if (error->code != GIMP_CONFIG_ERROR_OPEN_ENOENT)
-        gimp_message_literal (gimp, NULL, GIMP_MESSAGE_ERROR, error->message);
+      if (error->code != PICMAN_CONFIG_ERROR_OPEN_ENOENT)
+        picman_message_literal (picman, NULL, PICMAN_MESSAGE_ERROR, error->message);
 
       g_error_free (error);
       /* don't bail out here */
@@ -142,43 +142,43 @@ gimp_devices_restore (Gimp *gimp)
 
   g_free (filename);
 
-  current_device = gimp_device_manager_get_current_device (manager);
+  current_device = picman_device_manager_get_current_device (manager);
 
-  gimp_context_copy_properties (GIMP_CONTEXT (current_device), user_context,
-                                GIMP_DEVICE_INFO_CONTEXT_MASK);
-  gimp_context_set_parent (GIMP_CONTEXT (current_device), user_context);
+  picman_context_copy_properties (PICMAN_CONTEXT (current_device), user_context,
+                                PICMAN_DEVICE_INFO_CONTEXT_MASK);
+  picman_context_set_parent (PICMAN_CONTEXT (current_device), user_context);
 }
 
 void
-gimp_devices_save (Gimp     *gimp,
+picman_devices_save (Picman     *picman,
                    gboolean  always_save)
 {
-  GimpDeviceManager *manager;
+  PicmanDeviceManager *manager;
   gchar             *filename;
   GError            *error = NULL;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  manager = gimp_devices_get_manager (gimp);
+  manager = picman_devices_get_manager (picman);
 
-  g_return_if_fail (GIMP_IS_DEVICE_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_DEVICE_MANAGER (manager));
 
   if (devicerc_deleted && ! always_save)
     return;
 
-  filename = gimp_personal_rc_file ("devicerc");
+  filename = picman_personal_rc_file ("devicerc");
 
-  if (gimp->be_verbose)
-    g_print ("Writing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Writing '%s'\n", picman_filename_to_utf8 (filename));
 
-  if (! gimp_config_serialize_to_file (GIMP_CONFIG (manager),
+  if (! picman_config_serialize_to_file (PICMAN_CONFIG (manager),
                                        filename,
-                                       "GIMP devicerc",
+                                       "PICMAN devicerc",
                                        "end of devicerc",
                                        NULL,
                                        &error))
     {
-      gimp_message_literal (gimp, NULL, GIMP_MESSAGE_ERROR, error->message);
+      picman_message_literal (picman, NULL, PICMAN_MESSAGE_ERROR, error->message);
       g_error_free (error);
     }
 
@@ -188,26 +188,26 @@ gimp_devices_save (Gimp     *gimp,
 }
 
 gboolean
-gimp_devices_clear (Gimp    *gimp,
+picman_devices_clear (Picman    *picman,
                     GError **error)
 {
-  GimpDeviceManager *manager;
+  PicmanDeviceManager *manager;
   gchar             *filename;
   gboolean           success = TRUE;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
 
-  manager = gimp_devices_get_manager (gimp);
+  manager = picman_devices_get_manager (picman);
 
-  g_return_val_if_fail (GIMP_IS_DEVICE_MANAGER (manager), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DEVICE_MANAGER (manager), FALSE);
 
-  filename = gimp_personal_rc_file ("devicerc");
+  filename = picman_personal_rc_file ("devicerc");
 
   if (g_unlink (filename) != 0 && errno != ENOENT)
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
 		   _("Deleting \"%s\" failed: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       success = FALSE;
     }
   else
@@ -220,63 +220,63 @@ gimp_devices_clear (Gimp    *gimp,
   return success;
 }
 
-GimpDeviceManager *
-gimp_devices_get_manager (Gimp *gimp)
+PicmanDeviceManager *
+picman_devices_get_manager (Picman *picman)
 {
-  GimpDeviceManager *manager;
+  PicmanDeviceManager *manager;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  manager = g_object_get_data (G_OBJECT (gimp), GIMP_DEVICE_MANAGER_DATA_KEY);
+  manager = g_object_get_data (G_OBJECT (picman), PICMAN_DEVICE_MANAGER_DATA_KEY);
 
-  g_return_val_if_fail (GIMP_IS_DEVICE_MANAGER (manager), NULL);
+  g_return_val_if_fail (PICMAN_IS_DEVICE_MANAGER (manager), NULL);
 
   return manager;
 }
 
 void
-gimp_devices_add_widget (Gimp      *gimp,
+picman_devices_add_widget (Picman      *picman,
                          GtkWidget *widget)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
   g_return_if_fail (GTK_IS_WIDGET (widget));
 
   gtk_widget_set_extension_events (widget, GDK_EXTENSION_EVENTS_ALL);
 
   g_signal_connect (widget, "motion-notify-event",
-                    G_CALLBACK (gimp_devices_check_callback),
-                    gimp);
+                    G_CALLBACK (picman_devices_check_callback),
+                    picman);
 }
 
 gboolean
-gimp_devices_check_callback (GtkWidget *widget,
+picman_devices_check_callback (GtkWidget *widget,
                              GdkEvent  *event,
-                             Gimp      *gimp)
+                             Picman      *picman)
 {
   g_return_val_if_fail (event != NULL, FALSE);
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
 
-  if (! gimp->busy)
-    gimp_devices_check_change (gimp, event);
+  if (! picman->busy)
+    picman_devices_check_change (picman, event);
 
   return FALSE;
 }
 
 gboolean
-gimp_devices_check_change (Gimp     *gimp,
+picman_devices_check_change (Picman     *picman,
                            GdkEvent *event)
 {
-  GimpDeviceManager *manager;
+  PicmanDeviceManager *manager;
   GdkDevice         *device;
-  GimpDeviceInfo    *device_info;
+  PicmanDeviceInfo    *device_info;
   GtkWidget         *source;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
   g_return_val_if_fail (event != NULL, FALSE);
 
-  manager = gimp_devices_get_manager (gimp);
+  manager = picman_devices_get_manager (picman);
 
-  g_return_val_if_fail (GIMP_IS_DEVICE_MANAGER (manager), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DEVICE_MANAGER (manager), FALSE);
 
   /* It is possible that the event was propagated from a widget that does not
      want extension events and therefore always sends core pointer events.
@@ -311,15 +311,15 @@ gimp_devices_check_change (Gimp     *gimp,
       break;
 
     default:
-      device = gimp_device_manager_get_current_device (manager)->device;
+      device = picman_device_manager_get_current_device (manager)->device;
       break;
     }
 
-  device_info = gimp_device_info_get_by_device (device);
+  device_info = picman_device_info_get_by_device (device);
 
-  if (device_info != gimp_device_manager_get_current_device (manager))
+  if (device_info != picman_device_manager_get_current_device (manager))
     {
-      gimp_device_manager_set_current_device (manager, device_info);
+      picman_device_manager_set_current_device (manager, device_info);
       return TRUE;
     }
 

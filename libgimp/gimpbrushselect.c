@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpbrushselect.c
+ * picmanbrushselect.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 typedef struct
@@ -34,57 +34,57 @@ typedef struct
   gint                  width;
   gint                  height;
   guchar               *brush_mask_data;
-  GimpRunBrushCallback  callback;
+  PicmanRunBrushCallback  callback;
   gboolean              closing;
   gpointer              data;
-} GimpBrushData;
+} PicmanBrushData;
 
 
 /*  local function prototypes  */
 
-static void      gimp_brush_data_free     (GimpBrushData    *data);
+static void      picman_brush_data_free     (PicmanBrushData    *data);
 
-static void      gimp_temp_brush_run      (const gchar      *name,
+static void      picman_temp_brush_run      (const gchar      *name,
                                            gint              nparams,
-                                           const GimpParam  *param,
+                                           const PicmanParam  *param,
                                            gint             *nreturn_vals,
-                                           GimpParam       **return_vals);
-static gboolean  gimp_temp_brush_run_idle (GimpBrushData    *brush_data);
+                                           PicmanParam       **return_vals);
+static gboolean  picman_temp_brush_run_idle (PicmanBrushData    *brush_data);
 
 
 /*  private variables  */
 
-static GHashTable *gimp_brush_select_ht = NULL;
+static GHashTable *picman_brush_select_ht = NULL;
 
 
 /*  public functions  */
 
 const gchar *
-gimp_brush_select_new (const gchar          *title,
+picman_brush_select_new (const gchar          *title,
                        const gchar          *brush_name,
                        gdouble               opacity,
                        gint                  spacing,
-                       GimpLayerModeEffects  paint_mode,
-                       GimpRunBrushCallback  callback,
+                       PicmanLayerModeEffects  paint_mode,
+                       PicmanRunBrushCallback  callback,
                        gpointer              data)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_STRING,    "str",           "String"                     },
-    { GIMP_PDB_FLOAT,     "opacity",       "Opacity"                    },
-    { GIMP_PDB_INT32,     "spacing",       "Spacing"                    },
-    { GIMP_PDB_INT32,     "paint mode",    "Paint mode"                 },
-    { GIMP_PDB_INT32,     "mask width",    "Brush width"                },
-    { GIMP_PDB_INT32,     "mask height"    "Brush heigth"               },
-    { GIMP_PDB_INT32,     "mask len",      "Length of brush mask data"  },
-    { GIMP_PDB_INT8ARRAY, "mask data",     "The brush mask data"        },
-    { GIMP_PDB_INT32,     "dialog status", "If the dialog was closing "
+    { PICMAN_PDB_STRING,    "str",           "String"                     },
+    { PICMAN_PDB_FLOAT,     "opacity",       "Opacity"                    },
+    { PICMAN_PDB_INT32,     "spacing",       "Spacing"                    },
+    { PICMAN_PDB_INT32,     "paint mode",    "Paint mode"                 },
+    { PICMAN_PDB_INT32,     "mask width",    "Brush width"                },
+    { PICMAN_PDB_INT32,     "mask height"    "Brush heigth"               },
+    { PICMAN_PDB_INT32,     "mask len",      "Length of brush mask data"  },
+    { PICMAN_PDB_INT8ARRAY, "mask data",     "The brush mask data"        },
+    { PICMAN_PDB_INT32,     "dialog status", "If the dialog was closing "
                                            "[0 = No, 1 = Yes]"          }
   };
 
-  gchar *brush_callback = gimp_procedural_db_temp_name ();
+  gchar *brush_callback = picman_procedural_db_temp_name ();
 
-  gimp_install_temp_proc (brush_callback,
+  picman_install_temp_proc (brush_callback,
                           "Temporary brush popup callback procedure",
                           "",
                           "",
@@ -92,53 +92,53 @@ gimp_brush_select_new (const gchar          *title,
                           "",
                           NULL,
                           "",
-                          GIMP_TEMPORARY,
+                          PICMAN_TEMPORARY,
                           G_N_ELEMENTS (args), 0,
                           args, NULL,
-                          gimp_temp_brush_run);
+                          picman_temp_brush_run);
 
-  if (gimp_brushes_popup (brush_callback, title, brush_name,
+  if (picman_brushes_popup (brush_callback, title, brush_name,
                           opacity, spacing, paint_mode))
     {
-      GimpBrushData *brush_data;
+      PicmanBrushData *brush_data;
 
-      gimp_extension_enable (); /* Allow callbacks to be watched */
+      picman_extension_enable (); /* Allow callbacks to be watched */
 
       /* Now add to hash table so we can find it again */
-      if (! gimp_brush_select_ht)
+      if (! picman_brush_select_ht)
         {
-          gimp_brush_select_ht =
+          picman_brush_select_ht =
             g_hash_table_new_full (g_str_hash, g_str_equal,
                                    g_free,
-                                   (GDestroyNotify) gimp_brush_data_free);
+                                   (GDestroyNotify) picman_brush_data_free);
         }
 
-      brush_data = g_slice_new0 (GimpBrushData);
+      brush_data = g_slice_new0 (PicmanBrushData);
 
       brush_data->brush_callback = brush_callback;
       brush_data->callback       = callback;
       brush_data->data           = data;
 
-      g_hash_table_insert (gimp_brush_select_ht, brush_callback, brush_data);
+      g_hash_table_insert (picman_brush_select_ht, brush_callback, brush_data);
 
       return brush_callback;
     }
 
-  gimp_uninstall_temp_proc (brush_callback);
+  picman_uninstall_temp_proc (brush_callback);
   g_free (brush_callback);
 
   return NULL;
 }
 
 void
-gimp_brush_select_destroy (const gchar *brush_callback)
+picman_brush_select_destroy (const gchar *brush_callback)
 {
-  GimpBrushData *brush_data;
+  PicmanBrushData *brush_data;
 
   g_return_if_fail (brush_callback != NULL);
-  g_return_if_fail (gimp_brush_select_ht != NULL);
+  g_return_if_fail (picman_brush_select_ht != NULL);
 
-  brush_data = g_hash_table_lookup (gimp_brush_select_ht, brush_callback);
+  brush_data = g_hash_table_lookup (picman_brush_select_ht, brush_callback);
 
   if (! brush_data)
     {
@@ -153,33 +153,33 @@ gimp_brush_select_destroy (const gchar *brush_callback)
   g_free (brush_data->brush_mask_data);
 
   if (brush_data->brush_callback)
-    gimp_brushes_close_popup (brush_data->brush_callback);
+    picman_brushes_close_popup (brush_data->brush_callback);
 
-  gimp_uninstall_temp_proc (brush_callback);
+  picman_uninstall_temp_proc (brush_callback);
 
-  g_hash_table_remove (gimp_brush_select_ht, brush_callback);
+  g_hash_table_remove (picman_brush_select_ht, brush_callback);
 }
 
 
 /*  private functions  */
 
 static void
-gimp_brush_data_free (GimpBrushData *data)
+picman_brush_data_free (PicmanBrushData *data)
 {
-  g_slice_free (GimpBrushData, data);
+  g_slice_free (PicmanBrushData, data);
 }
 
 static void
-gimp_temp_brush_run (const gchar      *name,
+picman_temp_brush_run (const gchar      *name,
                      gint              nparams,
-                     const GimpParam  *param,
+                     const PicmanParam  *param,
                      gint             *nreturn_vals,
-                     GimpParam       **return_vals)
+                     PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
-  GimpBrushData    *brush_data;
+  static PicmanParam  values[1];
+  PicmanBrushData    *brush_data;
 
-  brush_data = g_hash_table_lookup (gimp_brush_select_ht, name);
+  brush_data = g_hash_table_lookup (picman_brush_select_ht, name);
 
   if (! brush_data)
     {
@@ -201,19 +201,19 @@ gimp_temp_brush_run (const gchar      *name,
       brush_data->closing         = param[8].data.d_int32;
 
       if (! brush_data->idle_id)
-        brush_data->idle_id = g_idle_add ((GSourceFunc) gimp_temp_brush_run_idle,
+        brush_data->idle_id = g_idle_add ((GSourceFunc) picman_temp_brush_run_idle,
                                           brush_data);
     }
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_SUCCESS;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_SUCCESS;
 }
 
 static gboolean
-gimp_temp_brush_run_idle (GimpBrushData *brush_data)
+picman_temp_brush_run_idle (PicmanBrushData *brush_data)
 {
   brush_data->idle_id = 0;
 
@@ -233,7 +233,7 @@ gimp_temp_brush_run_idle (GimpBrushData *brush_data)
       gchar *brush_callback = brush_data->brush_callback;
 
       brush_data->brush_callback = NULL;
-      gimp_brush_select_destroy (brush_callback);
+      picman_brush_select_destroy (brush_callback);
     }
 
   return FALSE;

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,33 +21,33 @@
 
 #include "core-types.h"
 
-#include "gegl/gimp-babl.h"
+#include "gegl/picman-babl.h"
 
-#include "gimpimage.h"
-#include "gimpimage-preview.h"
-#include "gimpimage-private.h"
-#include "gimppickable.h"
-#include "gimpprojectable.h"
-#include "gimpprojection.h"
-#include "gimptempbuf.h"
+#include "picmanimage.h"
+#include "picmanimage-preview.h"
+#include "picmanimage-private.h"
+#include "picmanpickable.h"
+#include "picmanprojectable.h"
+#include "picmanprojection.h"
+#include "picmantempbuf.h"
 
 
 void
-gimp_image_get_preview_size (GimpViewable *viewable,
+picman_image_get_preview_size (PicmanViewable *viewable,
                              gint          size,
                              gboolean      is_popup,
                              gboolean      dot_for_dot,
                              gint         *width,
                              gint         *height)
 {
-  GimpImage *image = GIMP_IMAGE (viewable);
+  PicmanImage *image = PICMAN_IMAGE (viewable);
   gdouble    xres;
   gdouble    yres;
 
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
 
-  gimp_viewable_calc_preview_size (gimp_image_get_width  (image),
-                                   gimp_image_get_height (image),
+  picman_viewable_calc_preview_size (picman_image_get_width  (image),
+                                   picman_image_get_height (image),
                                    size,
                                    size,
                                    dot_for_dot,
@@ -59,22 +59,22 @@ gimp_image_get_preview_size (GimpViewable *viewable,
 }
 
 gboolean
-gimp_image_get_popup_size (GimpViewable *viewable,
+picman_image_get_popup_size (PicmanViewable *viewable,
                            gint          width,
                            gint          height,
                            gboolean      dot_for_dot,
                            gint         *popup_width,
                            gint         *popup_height)
 {
-  GimpImage *image = GIMP_IMAGE (viewable);
+  PicmanImage *image = PICMAN_IMAGE (viewable);
 
-  if (gimp_image_get_width  (image) > width ||
-      gimp_image_get_height (image) > height)
+  if (picman_image_get_width  (image) > width ||
+      picman_image_get_height (image) > height)
     {
       gboolean scaling_up;
 
-      gimp_viewable_calc_preview_size (gimp_image_get_width  (image),
-                                       gimp_image_get_height (image),
+      picman_viewable_calc_preview_size (picman_image_get_width  (image),
+                                       picman_image_get_height (image),
                                        width  * 2,
                                        height * 2,
                                        dot_for_dot, 1.0, 1.0,
@@ -84,8 +84,8 @@ gimp_image_get_popup_size (GimpViewable *viewable,
 
       if (scaling_up)
         {
-          *popup_width  = gimp_image_get_width  (image);
-          *popup_height = gimp_image_get_height (image);
+          *popup_width  = picman_image_get_width  (image);
+          *popup_height = picman_image_get_height (image);
         }
 
       return TRUE;
@@ -94,34 +94,34 @@ gimp_image_get_popup_size (GimpViewable *viewable,
   return FALSE;
 }
 
-GimpTempBuf *
-gimp_image_get_new_preview (GimpViewable *viewable,
-                            GimpContext  *context,
+PicmanTempBuf *
+picman_image_get_new_preview (PicmanViewable *viewable,
+                            PicmanContext  *context,
                             gint          width,
                             gint          height)
 {
-  GimpImage      *image      = GIMP_IMAGE (viewable);
-  GimpProjection *projection = gimp_image_get_projection (image);
+  PicmanImage      *image      = PICMAN_IMAGE (viewable);
+  PicmanProjection *projection = picman_image_get_projection (image);
   const Babl     *format;
-  GimpTempBuf    *buf;
+  PicmanTempBuf    *buf;
   gdouble         scale_x;
   gdouble         scale_y;
 
-  scale_x = (gdouble) width  / (gdouble) gimp_image_get_width  (image);
-  scale_y = (gdouble) height / (gdouble) gimp_image_get_height (image);
+  scale_x = (gdouble) width  / (gdouble) picman_image_get_width  (image);
+  scale_y = (gdouble) height / (gdouble) picman_image_get_height (image);
 
-  format = gimp_projectable_get_format (GIMP_PROJECTABLE (image));
-  format = gimp_babl_format (gimp_babl_format_get_base_type (format),
-                             GIMP_PRECISION_U8,
+  format = picman_projectable_get_format (PICMAN_PROJECTABLE (image));
+  format = picman_babl_format (picman_babl_format_get_base_type (format),
+                             PICMAN_PRECISION_U8,
                              babl_format_has_alpha (format));
 
-  buf = gimp_temp_buf_new (width, height, format);
+  buf = picman_temp_buf_new (width, height, format);
 
-  gegl_buffer_get (gimp_pickable_get_buffer (GIMP_PICKABLE (projection)),
+  gegl_buffer_get (picman_pickable_get_buffer (PICMAN_PICKABLE (projection)),
                    GEGL_RECTANGLE (0, 0, width, height),
                    MIN (scale_x, scale_y),
-                   gimp_temp_buf_get_format (buf),
-                   gimp_temp_buf_get_data (buf),
+                   picman_temp_buf_get_format (buf),
+                   picman_temp_buf_get_data (buf),
                    GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   return buf;

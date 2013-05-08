@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptooldialog.c
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * picmantooldialog.c
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,58 +23,58 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "display-types.h"
 
-#include "core/gimpobject.h"
-#include "core/gimptoolinfo.h"
+#include "core/picmanobject.h"
+#include "core/picmantoolinfo.h"
 
-#include "widgets/gimpdialogfactory.h"
+#include "widgets/picmandialogfactory.h"
 
-#include "gimpdisplayshell.h"
-#include "gimptooldialog.h"
+#include "picmandisplayshell.h"
+#include "picmantooldialog.h"
 
 
-typedef struct _GimpToolDialogPrivate GimpToolDialogPrivate;
+typedef struct _PicmanToolDialogPrivate PicmanToolDialogPrivate;
 
-struct _GimpToolDialogPrivate
+struct _PicmanToolDialogPrivate
 {
-  GimpDisplayShell *shell;
+  PicmanDisplayShell *shell;
 };
 
 #define GET_PRIVATE(dialog) G_TYPE_INSTANCE_GET_PRIVATE (dialog, \
-                                                         GIMP_TYPE_TOOL_DIALOG, \
-                                                         GimpToolDialogPrivate)
+                                                         PICMAN_TYPE_TOOL_DIALOG, \
+                                                         PicmanToolDialogPrivate)
 
 
-static void   gimp_tool_dialog_dispose     (GObject          *object);
+static void   picman_tool_dialog_dispose     (GObject          *object);
 
-static void   gimp_tool_dialog_shell_unmap (GimpDisplayShell *shell,
-                                            GimpToolDialog   *dialog);
+static void   picman_tool_dialog_shell_unmap (PicmanDisplayShell *shell,
+                                            PicmanToolDialog   *dialog);
 
 
-G_DEFINE_TYPE (GimpToolDialog, gimp_tool_dialog, GIMP_TYPE_VIEWABLE_DIALOG)
+G_DEFINE_TYPE (PicmanToolDialog, picman_tool_dialog, PICMAN_TYPE_VIEWABLE_DIALOG)
 
 static void
-gimp_tool_dialog_class_init (GimpToolDialogClass *klass)
+picman_tool_dialog_class_init (PicmanToolDialogClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->dispose = gimp_tool_dialog_dispose;
+  object_class->dispose = picman_tool_dialog_dispose;
 
-  g_type_class_add_private (klass, sizeof (GimpToolDialogPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanToolDialogPrivate));
 }
 
 static void
-gimp_tool_dialog_init (GimpToolDialog *dialog)
+picman_tool_dialog_init (PicmanToolDialog *dialog)
 {
 }
 
 static void
-gimp_tool_dialog_dispose (GObject *object)
+picman_tool_dialog_dispose (GObject *object)
 {
-  GimpToolDialogPrivate *private = GET_PRIVATE (object);
+  PicmanToolDialogPrivate *private = GET_PRIVATE (object);
 
   if (private->shell)
     {
@@ -83,28 +83,28 @@ gimp_tool_dialog_dispose (GObject *object)
       private->shell = NULL;
     }
 
-  G_OBJECT_CLASS (gimp_tool_dialog_parent_class)->dispose (object);
+  G_OBJECT_CLASS (picman_tool_dialog_parent_class)->dispose (object);
 }
 
 
 /**
- * gimp_tool_dialog_new:
- * @tool_info: a #GimpToolInfo
+ * picman_tool_dialog_new:
+ * @tool_info: a #PicmanToolInfo
  * @shell:     the parent display shell this dialog
  * @desc:      a string to use in the dialog header or %NULL to use the help
- *             field from #GimpToolInfo
+ *             field from #PicmanToolInfo
  * @...:       a %NULL-terminated valist of button parameters as described in
  *             gtk_dialog_new_with_buttons().
  *
- * This function conveniently creates a #GimpViewableDialog using the
+ * This function conveniently creates a #PicmanViewableDialog using the
  * information stored in @tool_info. It also registers the tool with
  * the "toplevel" dialog factory.
  *
- * Return value: a new #GimpViewableDialog
+ * Return value: a new #PicmanViewableDialog
  **/
 GtkWidget *
-gimp_tool_dialog_new (GimpToolInfo     *tool_info,
-                      GimpDisplayShell *shell,
+picman_tool_dialog_new (PicmanToolInfo     *tool_info,
+                      PicmanDisplayShell *shell,
                       const gchar      *desc,
                       ...)
 {
@@ -113,29 +113,29 @@ gimp_tool_dialog_new (GimpToolInfo     *tool_info,
   gchar       *identifier;
   va_list      args;
 
-  g_return_val_if_fail (GIMP_IS_TOOL_INFO (tool_info), NULL);
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_TOOL_INFO (tool_info), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
 
-  stock_id = gimp_viewable_get_stock_id (GIMP_VIEWABLE (tool_info));
+  stock_id = picman_viewable_get_stock_id (PICMAN_VIEWABLE (tool_info));
 
-  dialog = g_object_new (GIMP_TYPE_TOOL_DIALOG,
+  dialog = g_object_new (PICMAN_TYPE_TOOL_DIALOG,
                          "title",        tool_info->blurb,
-                         "role",         gimp_object_get_name (tool_info),
-                         "help-func",    gimp_standard_help_func,
+                         "role",         picman_object_get_name (tool_info),
+                         "help-func",    picman_standard_help_func,
                          "help-id",      tool_info->help_id,
                          "stock-id",     stock_id,
                          "description",  desc ? desc : tool_info->help,
                          NULL);
 
-  gimp_tool_dialog_set_shell (GIMP_TOOL_DIALOG (dialog), shell);
+  picman_tool_dialog_set_shell (PICMAN_TOOL_DIALOG (dialog), shell);
 
   va_start (args, desc);
-  gimp_dialog_add_buttons_valist (GIMP_DIALOG (dialog), args);
+  picman_dialog_add_buttons_valist (PICMAN_DIALOG (dialog), args);
   va_end (args);
 
-  identifier = g_strconcat (gimp_object_get_name (tool_info), "-dialog", NULL);
+  identifier = g_strconcat (picman_object_get_name (tool_info), "-dialog", NULL);
 
-  gimp_dialog_factory_add_foreign (gimp_dialog_factory_get_singleton (),
+  picman_dialog_factory_add_foreign (picman_dialog_factory_get_singleton (),
                                    identifier,
                                    dialog);
 
@@ -145,13 +145,13 @@ gimp_tool_dialog_new (GimpToolInfo     *tool_info,
 }
 
 void
-gimp_tool_dialog_set_shell (GimpToolDialog   *tool_dialog,
-                            GimpDisplayShell *shell)
+picman_tool_dialog_set_shell (PicmanToolDialog   *tool_dialog,
+                            PicmanDisplayShell *shell)
 {
-  GimpToolDialogPrivate *private = GET_PRIVATE (tool_dialog);
+  PicmanToolDialogPrivate *private = GET_PRIVATE (tool_dialog);
 
-  g_return_if_fail (GIMP_IS_TOOL_DIALOG (tool_dialog));
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_TOOL_DIALOG (tool_dialog));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   if (shell == private->shell)
     return;
@@ -161,7 +161,7 @@ gimp_tool_dialog_set_shell (GimpToolDialog   *tool_dialog,
       g_object_remove_weak_pointer (G_OBJECT (private->shell),
                                     (gpointer) &private->shell);
       g_signal_handlers_disconnect_by_func (private->shell,
-                                            gimp_tool_dialog_shell_unmap,
+                                            picman_tool_dialog_shell_unmap,
                                             tool_dialog);
       private->shell = NULL;
     }
@@ -173,7 +173,7 @@ gimp_tool_dialog_set_shell (GimpToolDialog   *tool_dialog,
       GtkWidget *toplevel;
 
       g_signal_connect_object (private->shell, "unmap",
-                               G_CALLBACK (gimp_tool_dialog_shell_unmap),
+                               G_CALLBACK (picman_tool_dialog_shell_unmap),
                                tool_dialog, 0);
 
       g_object_add_weak_pointer (G_OBJECT (private->shell),
@@ -189,11 +189,11 @@ gimp_tool_dialog_set_shell (GimpToolDialog   *tool_dialog,
 /*  private functions  */
 
 static void
-gimp_tool_dialog_shell_unmap (GimpDisplayShell *shell,
-                              GimpToolDialog   *dialog)
+picman_tool_dialog_shell_unmap (PicmanDisplayShell *shell,
+                              PicmanToolDialog   *dialog)
 {
   /*  the dialog being mapped while the shell is being unmapped
-   *  happens when switching images in GimpImageWindow
+   *  happens when switching images in PicmanImageWindow
    */
   if (gtk_widget_get_mapped (GTK_WIDGET (dialog)))
     g_signal_emit_by_name (dialog, "close");

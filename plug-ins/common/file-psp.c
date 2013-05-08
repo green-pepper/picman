@@ -1,4 +1,4 @@
-/* GIMP plug-in to load and save Paint Shop Pro files (.PSP and .TUB)
+/* PICMAN plug-in to load and save Paint Shop Pro files (.PSP and .TUB)
  *
  * Copyright (C) 1999 Tor Lillqvist
  *
@@ -28,7 +28,7 @@
 #define LOAD_PROC      "file-psp-load"
 #define SAVE_PROC      "file-psp-save"
 #define PLUG_IN_BINARY "file-psp"
-#define PLUG_IN_ROLE   "gimp-file-psp"
+#define PLUG_IN_ROLE   "picman-file-psp"
 
 /* set to the level of debugging output you want, 0 for none */
 #define PSP_DEBUG 0
@@ -43,11 +43,11 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
-#include <libgimpbase/gimpparasiteio.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
+#include <libpicmanbase/picmanparasiteio.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Note that the upcoming PSP version 6 writes PSP file format version
@@ -525,9 +525,9 @@ typedef struct
 static void   query      (void);
 static void   run        (const gchar      *name,
                           gint              nparams,
-                          const GimpParam  *param,
+                          const PicmanParam  *param,
                           gint             *nreturn_vals,
-                          GimpParam       **return_vals);
+                          PicmanParam       **return_vals);
 static gint32 load_image (const gchar      *filename,
                           GError          **error);
 static gint   save_image (const gchar      *filename,
@@ -537,7 +537,7 @@ static gint   save_image (const gchar      *filename,
 
 /* Various local variables...
  */
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -564,30 +564,30 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename", "The name of the file to load" }
+    { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename", "The name of the file to load" }
   };
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "image", "Output image" }
+    { PICMAN_PDB_IMAGE, "image", "Output image" }
   };
 
 #if 0
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },
-    { GIMP_PDB_INT32,    "compression",  "Specify 0 for no compression, 1 for RLE, and 2 for LZ77" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },
+    { PICMAN_PDB_INT32,    "compression",  "Specify 0 for no compression, 1 for RLE, and 2 for LZ77" }
   };
 #endif
 
-  gimp_install_procedure (LOAD_PROC,
+  picman_install_procedure (LOAD_PROC,
                           "loads images from the Paint Shop Pro PSP file format",
                           "This plug-in loads and saves images in "
                           "Paint Shop Pro's native PSP format. "
@@ -598,20 +598,20 @@ query (void)
                           "1999",
                           N_("Paint Shop Pro image"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_file_handler_mime (LOAD_PROC, "image/x-psp");
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_register_file_handler_mime (LOAD_PROC, "image/x-psp");
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "psp,tub,pspimage",
                                     "",
                                     "0,string,Paint\\040Shop\\040Pro\\040Image\\040File\n\032");
 
   /* commented out until saving is implemented */
 #if 0
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "saves images in the Paint Shop Pro PSP file format",
                           "This plug-in loads and saves images in "
                           "Paint Shop Pro's native PSP format. "
@@ -622,11 +622,11 @@ query (void)
                           "1999",
                           N_("Paint Shop Pro image"),
                           "RGB*, GRAY*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_save_handler (SAVE_PROC, "psp,tub", "");
+  picman_register_save_handler (SAVE_PROC, "psp,tub", "");
 #endif
 }
 
@@ -637,11 +637,11 @@ save_dialog (void)
   GtkWidget *frame;
   gint       run;
 
-  dialog = gimp_export_dialog_new (_("PSP"), PLUG_IN_BINARY, SAVE_PROC);
+  dialog = picman_export_dialog_new (_("PSP"), PLUG_IN_BINARY, SAVE_PROC);
 
   /*  file save type  */
-  frame = gimp_int_radio_group_new (TRUE, _("Data Compression"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Data Compression"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &psvals.compression, psvals.compression,
 
                                     C_("compression", "None"), PSP_COMP_NONE, NULL,
@@ -651,13 +651,13 @@ save_dialog (void)
                                     NULL);
 
   gtk_container_set_border_width (GTK_CONTAINER (frame), 12);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -856,7 +856,7 @@ read_creator_block (FILE     *f,
   guint32       dword;
   guint32       cdate = 0, mdate = 0, appid, appver;
   GString      *comment;
-  GimpParasite *comment_parasite;
+  PicmanParasite *comment_parasite;
 
   data_start = ftell (f);
   comment = g_string_new (NULL);
@@ -961,12 +961,12 @@ read_creator_block (FILE     *f,
     }
   if (comment->len > 0)
     {
-      comment_parasite = gimp_parasite_new ("gimp-comment",
-                                            GIMP_PARASITE_PERSISTENT,
+      comment_parasite = picman_parasite_new ("picman-comment",
+                                            PICMAN_PARASITE_PERSISTENT,
                                             strlen (comment->str) + 1,
                                             comment->str);
-      gimp_image_attach_parasite (image_ID, comment_parasite);
-      gimp_parasite_free (comment_parasite);
+      picman_image_attach_parasite (image_ID, comment_parasite);
+      picman_parasite_free (comment_parasite);
     }
 
   g_string_free (comment, FALSE);
@@ -983,43 +983,43 @@ swab_rect (guint32 *rect)
   rect[3] = GUINT32_FROM_LE (rect[3]);
 }
 
-static GimpLayerModeEffects
-gimp_layer_mode_from_psp_blend_mode (PSPBlendModes mode)
+static PicmanLayerModeEffects
+picman_layer_mode_from_psp_blend_mode (PSPBlendModes mode)
 {
   switch (mode)
     {
     case PSP_BLEND_NORMAL:
-      return GIMP_NORMAL_MODE;
+      return PICMAN_NORMAL_MODE;
     case PSP_BLEND_DARKEN:
-      return GIMP_DARKEN_ONLY_MODE;
+      return PICMAN_DARKEN_ONLY_MODE;
     case PSP_BLEND_LIGHTEN:
-      return GIMP_LIGHTEN_ONLY_MODE;
+      return PICMAN_LIGHTEN_ONLY_MODE;
     case PSP_BLEND_HUE:
-      return GIMP_HUE_MODE;
+      return PICMAN_HUE_MODE;
     case PSP_BLEND_SATURATION:
-      return GIMP_SATURATION_MODE;
+      return PICMAN_SATURATION_MODE;
     case PSP_BLEND_COLOR:
-      return GIMP_COLOR_MODE;
+      return PICMAN_COLOR_MODE;
     case PSP_BLEND_LUMINOSITY:
-      return GIMP_VALUE_MODE;   /* ??? */
+      return PICMAN_VALUE_MODE;   /* ??? */
     case PSP_BLEND_MULTIPLY:
-      return GIMP_MULTIPLY_MODE;
+      return PICMAN_MULTIPLY_MODE;
     case PSP_BLEND_SCREEN:
-      return GIMP_SCREEN_MODE;
+      return PICMAN_SCREEN_MODE;
     case PSP_BLEND_DISSOLVE:
-      return GIMP_DISSOLVE_MODE;
+      return PICMAN_DISSOLVE_MODE;
     case PSP_BLEND_OVERLAY:
-      return GIMP_OVERLAY_MODE;
+      return PICMAN_OVERLAY_MODE;
     case PSP_BLEND_HARD_LIGHT:
-      return GIMP_HARDLIGHT_MODE;
+      return PICMAN_HARDLIGHT_MODE;
     case PSP_BLEND_SOFT_LIGHT:
-      return GIMP_SOFTLIGHT_MODE;
+      return PICMAN_SOFTLIGHT_MODE;
     case PSP_BLEND_DIFFERENCE:
-      return GIMP_DIFFERENCE_MODE;
+      return PICMAN_DIFFERENCE_MODE;
     case PSP_BLEND_DODGE:
-      return GIMP_DODGE_MODE;
+      return PICMAN_DODGE_MODE;
     case PSP_BLEND_BURN:
-      return GIMP_BURN_MODE;
+      return PICMAN_BURN_MODE;
     case PSP_BLEND_EXCLUSION:
       return -1;                /* ??? */
     case PSP_BLEND_ADJUST:
@@ -1294,9 +1294,9 @@ read_layer_block (FILE     *f,
   guint32 image_rect[4], saved_image_rect[4], mask_rect[4], saved_mask_rect[4];
   gboolean null_layer = FALSE;
   guint16 bitmap_count, channel_count;
-  GimpImageType drawable_type;
+  PicmanImageType drawable_type;
   guint32 layer_ID = 0;
-  GimpLayerModeEffects layer_mode;
+  PicmanLayerModeEffects layer_mode;
   guint32 channel_init_len, channel_total_len;
   guint32 compressed_len, uncompressed_len;
   guint16 bitmap_type, channel_type;
@@ -1392,21 +1392,21 @@ read_layer_block (FILE     *f,
       bitmap_count = GUINT16_FROM_LE (bitmap_count);
       channel_count = GUINT16_FROM_LE (channel_count);
 
-      layer_mode = gimp_layer_mode_from_psp_blend_mode (blend_mode);
+      layer_mode = picman_layer_mode_from_psp_blend_mode (blend_mode);
       if ((int) layer_mode == -1)
         {
           g_message ("Unsupported PSP layer blend mode %s "
                      "for layer %s, setting layer invisible",
                      blend_mode_name (blend_mode), name);
-          layer_mode = GIMP_NORMAL_MODE;
+          layer_mode = PICMAN_NORMAL_MODE;
           visibility = FALSE;
         }
 
       width = saved_image_rect[2] - saved_image_rect[0];
       height = saved_image_rect[3] - saved_image_rect[1];
 
-      if ((width < 0) || (width > GIMP_MAX_IMAGE_SIZE)       /* w <= 2^18 */
-          || (height < 0) || (height > GIMP_MAX_IMAGE_SIZE)  /* h <= 2^18 */
+      if ((width < 0) || (width > PICMAN_MAX_IMAGE_SIZE)       /* w <= 2^18 */
+          || (height < 0) || (height > PICMAN_MAX_IMAGE_SIZE)  /* h <= 2^18 */
           || ((width / 256) * (height / 256) >= 8192))       /* w * h < 2^29 */
         {
           g_message ("Invalid layer dimensions: %dx%d", width, height);
@@ -1444,16 +1444,16 @@ read_layer_block (FILE     *f,
 
       if (ia->greyscale)
         if (!null_layer && bitmap_count == 1)
-          drawable_type = GIMP_GRAY_IMAGE, bytespp = 1;
+          drawable_type = PICMAN_GRAY_IMAGE, bytespp = 1;
         else
-          drawable_type = GIMP_GRAYA_IMAGE, bytespp = 1;
+          drawable_type = PICMAN_GRAYA_IMAGE, bytespp = 1;
       else
         if (!null_layer && bitmap_count == 1)
-          drawable_type = GIMP_RGB_IMAGE, bytespp = 3;
+          drawable_type = PICMAN_RGB_IMAGE, bytespp = 3;
         else
-          drawable_type = GIMP_RGBA_IMAGE, bytespp = 4;
+          drawable_type = PICMAN_RGBA_IMAGE, bytespp = 4;
 
-      layer_ID = gimp_layer_new (image_ID, name,
+      layer_ID = picman_layer_new (image_ID, name,
                                  width, height,
                                  drawable_type,
                                  100.0 * opacity / 255.0,
@@ -1466,16 +1466,16 @@ read_layer_block (FILE     *f,
 
       g_free (name);
 
-      gimp_image_insert_layer (image_ID, layer_ID, -1, -1);
+      picman_image_insert_layer (image_ID, layer_ID, -1, -1);
 
       if (saved_image_rect[0] != 0 || saved_image_rect[1] != 0)
-        gimp_layer_set_offsets (layer_ID,
+        picman_layer_set_offsets (layer_ID,
                                 saved_image_rect[0], saved_image_rect[1]);
 
       if (!visibility)
-        gimp_item_set_visible (layer_ID, FALSE);
+        picman_item_set_visible (layer_ID, FALSE);
 
-      gimp_layer_set_lock_alpha (layer_ID, transparency_protected);
+      picman_layer_set_lock_alpha (layer_ID, transparency_protected);
 
       if (psp_ver_major < 4)
         if (try_fseek (f, sub_block_start + sub_init_len, SEEK_SET) < 0)
@@ -1495,7 +1495,7 @@ read_layer_block (FILE     *f,
             pixels[i] = pixel + width * bytespp * i;
         }
 
-      buffer = gimp_drawable_get_buffer (layer_ID);
+      buffer = picman_drawable_get_buffer (layer_ID);
 
       /* Read the layer channel sub-blocks */
       while (ftell (f) < sub_block_start + sub_total_len)
@@ -1504,7 +1504,7 @@ read_layer_block (FILE     *f,
                                       &channel_total_len);
           if (sub_id == -1)
             {
-              gimp_image_delete (image_ID);
+              picman_image_delete (image_ID);
               return -1;
             }
 
@@ -1606,11 +1606,11 @@ read_tube_block (FILE     *f,
   guint32            step_size, column_count, row_count, cell_count;
   guint32            placement_mode, selection_mode;
   gint               i;
-  GimpPixPipeParams  params;
-  GimpParasite      *pipe_parasite;
+  PicmanPixPipeParams  params;
+  PicmanParasite      *pipe_parasite;
   gchar             *parasite_text;
 
-  gimp_pixpipe_params_init (&params);
+  picman_pixpipe_params_init (&params);
 
   if (fread (&version, 2, 1, f) < 1
       || fread (name, 513, 1, f) < 1
@@ -1635,13 +1635,13 @@ read_tube_block (FILE     *f,
   selection_mode = GUINT32_FROM_LE (selection_mode);
 
   for (i = 1; i < params.cols; i++)
-    gimp_image_add_vguide (image_ID, (ia->width * i)/params.cols);
+    picman_image_add_vguide (image_ID, (ia->width * i)/params.cols);
   for (i = 1; i < params.rows; i++)
-    gimp_image_add_hguide (image_ID, (ia->height * i)/params.rows);
+    picman_image_add_hguide (image_ID, (ia->height * i)/params.rows);
 
   /* We use a parasite to pass in the tube (pipe) parameters in
    * case we will have any use of those, for instance in the gpb
-   * plug-in that saves a GIMP image pipe.
+   * plug-in that saves a PICMAN image pipe.
    */
   params.dim = 1;
   params.cellwidth = ia->width / params.cols;
@@ -1656,15 +1656,15 @@ read_tube_block (FILE     *f,
                            (selection_mode == tsmPressure ? "pressure" :
                             (selection_mode == tsmVelocity ? "velocity" :
                              "default")))));
-  parasite_text = gimp_pixpipe_params_build (&params);
+  parasite_text = picman_pixpipe_params_build (&params);
 
   IFDBG(2) g_message ("parasite: %s", parasite_text);
 
-  pipe_parasite = gimp_parasite_new ("gimp-brush-pipe-parameters",
-                                     GIMP_PARASITE_PERSISTENT,
+  pipe_parasite = picman_parasite_new ("picman-brush-pipe-parameters",
+                                     PICMAN_PARASITE_PERSISTENT,
                                      strlen (parasite_text) + 1, parasite_text);
-  gimp_image_attach_parasite (image_ID, pipe_parasite);
-  gimp_parasite_free (pipe_parasite);
+  picman_image_attach_parasite (image_ID, pipe_parasite);
+  picman_parasite_free (pipe_parasite);
   g_free (parasite_text);
 
   return 0;
@@ -1712,7 +1712,7 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
@@ -1786,16 +1786,16 @@ load_image (const gchar  *filename,
                               ia.width, ia.height,
                               compression_name (ia.compression));
 
-          image_ID = gimp_image_new (ia.width, ia.height,
-                                     ia.greyscale ? GIMP_GRAY : GIMP_RGB);
+          image_ID = picman_image_new (ia.width, ia.height,
+                                     ia.greyscale ? PICMAN_GRAY : PICMAN_RGB);
           if (image_ID == -1)
             {
               goto error;
             }
 
-          gimp_image_set_filename (image_ID, filename);
+          picman_image_set_filename (image_ID, filename);
 
-          gimp_image_set_resolution (image_ID, ia.resolution, ia.resolution);
+          picman_image_set_resolution (image_ID, ia.resolution, ia.resolution);
         }
       else
         {
@@ -1874,7 +1874,7 @@ load_image (const gchar  *filename,
     error:
       fclose (f);
       if (image_ID != -1)
-        gimp_image_delete (image_ID);
+        picman_image_delete (image_ID);
       return -1;
     }
 
@@ -1897,16 +1897,16 @@ save_image (const gchar  *filename,
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint32             image_ID;
   gint32             drawable_ID;
-  GimpExportReturn   export = GIMP_EXPORT_CANCEL;
+  PicmanExportReturn   export = PICMAN_EXPORT_CANCEL;
   GError            *error  = NULL;
 
   INIT_I18N ();
@@ -1917,8 +1917,8 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   if (strcmp (name, LOAD_PROC) == 0)
     {
@@ -1927,12 +1927,12 @@ run (const gchar      *name,
       if (image_ID != -1)
         {
           *nreturn_vals = 2;
-          values[1].type         = GIMP_PDB_IMAGE;
+          values[1].type         = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_ID;
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
   else if (strcmp (name, SAVE_PROC) == 0)
@@ -1943,18 +1943,18 @@ run (const gchar      *name,
       /*  eventually export the image */
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
-          export = gimp_export_image (&image_ID, &drawable_ID, NULL,
-                                      GIMP_EXPORT_CAN_HANDLE_RGB     |
-                                      GIMP_EXPORT_CAN_HANDLE_GRAY    |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
-                                      GIMP_EXPORT_CAN_HANDLE_ALPHA   |
-                                      GIMP_EXPORT_CAN_HANDLE_LAYERS);
-          if (export == GIMP_EXPORT_CANCEL)
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
+          export = picman_export_image (&image_ID, &drawable_ID, NULL,
+                                      PICMAN_EXPORT_CAN_HANDLE_RGB     |
+                                      PICMAN_EXPORT_CAN_HANDLE_GRAY    |
+                                      PICMAN_EXPORT_CAN_HANDLE_INDEXED |
+                                      PICMAN_EXPORT_CAN_HANDLE_ALPHA   |
+                                      PICMAN_EXPORT_CAN_HANDLE_LAYERS);
+          if (export == PICMAN_EXPORT_CANCEL)
             {
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
             }
           break;
@@ -1964,20 +1964,20 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           /*  Possibly retrieve data  */
-          gimp_get_data (SAVE_PROC, &psvals);
+          picman_get_data (SAVE_PROC, &psvals);
 
           /*  First acquire information with a dialog  */
           if (! save_dialog ())
-            status = GIMP_PDB_CANCEL;
+            status = PICMAN_PDB_CANCEL;
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           /*  Make sure all the arguments are there!  */
           if (nparams != 6)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
@@ -1985,42 +1985,42 @@ run (const gchar      *name,
 
               if (param[5].data.d_int32 < 0 ||
                   param[5].data.d_int32 > PSP_COMP_LZ77)
-                status = GIMP_PDB_CALLING_ERROR;
+                status = PICMAN_PDB_CALLING_ERROR;
             }
 
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_get_data (SAVE_PROC, &psvals);
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_get_data (SAVE_PROC, &psvals);
           break;
 
         default:
           break;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           if (save_image (param[3].data.d_string, image_ID, drawable_ID,
                           &error))
             {
-              gimp_set_data (SAVE_PROC, &psvals, sizeof (PSPSaveVals));
+              picman_set_data (SAVE_PROC, &psvals, sizeof (PSPSaveVals));
             }
           else
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image_ID);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image_ID);
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 

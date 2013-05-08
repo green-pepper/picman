@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpgradients.h
+ * picmangradients.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,22 +18,22 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
-#ifndef __GIMP_GRADIENTS_H__
-#define __GIMP_GRADIENTS_H__
+#ifndef __PICMAN_GRADIENTS_H__
+#define __PICMAN_GRADIENTS_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
-GIMP_DEPRECATED_FOR(gimp_context_get_gradient)
-gchar    * gimp_gradients_get_gradient (void);
-GIMP_DEPRECATED_FOR(gimp_context_set_gradient)
-gboolean   gimp_gradients_set_gradient (const gchar *name);
+PICMAN_DEPRECATED_FOR(picman_context_get_gradient)
+gchar    * picman_gradients_get_gradient (void);
+PICMAN_DEPRECATED_FOR(picman_context_set_gradient)
+gboolean   picman_gradients_set_gradient (const gchar *name);
 
 G_END_DECLS
 
-#endif /* __GIMP_GRADIENTS_H__ */
+#endif /* __PICMAN_GRADIENTS_H__ */

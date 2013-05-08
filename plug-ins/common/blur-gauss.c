@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #define GAUSS_PROC      "plug-in-gauss"
 #define GAUSS_IIR_PROC  "plug-in-gauss-iir"
@@ -30,7 +30,7 @@
 #define GAUSS_RLE_PROC  "plug-in-gauss-rle"
 #define GAUSS_RLE2_PROC "plug-in-gauss-rle2"
 #define PLUG_IN_BINARY  "blur-gauss"
-#define PLUG_IN_ROLE    "gimp-blur-gauss"
+#define PLUG_IN_ROLE    "picman-blur-gauss"
 
 typedef enum
 {
@@ -51,11 +51,11 @@ typedef struct
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
-static void      gauss             (GimpDrawable *drawable,
+static void      gauss             (PicmanDrawable *drawable,
                                     gdouble       horizontal,
                                     gdouble       vertical,
                                     BlurMethod    method,
@@ -67,7 +67,7 @@ static void      update_preview    (GtkWidget    *preview,
  * Gaussian blur interface
  */
 static gboolean  gauss_dialog      (gint32        image_ID,
-                                    GimpDrawable *drawable);
+                                    PicmanDrawable *drawable);
 
 /*
  * Gaussian blur helper functions
@@ -105,7 +105,7 @@ static inline gint run_length_encode (const guchar *src,
                                       gboolean      pack);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -126,36 +126,36 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",      "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",   "Input drawable" },
-    { GIMP_PDB_FLOAT,    "horizontal", "Horizontal radius of gaussian blur (in pixels, > 0.0)" },
-    { GIMP_PDB_FLOAT,    "vertical",   "Vertical radius of gaussian blur (in pixels, > 0.0)" },
-    { GIMP_PDB_INT32,    "method",     "Blur method { IIR (0), RLE (1) }" }
+    { PICMAN_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",      "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",   "Input drawable" },
+    { PICMAN_PDB_FLOAT,    "horizontal", "Horizontal radius of gaussian blur (in pixels, > 0.0)" },
+    { PICMAN_PDB_FLOAT,    "vertical",   "Vertical radius of gaussian blur (in pixels, > 0.0)" },
+    { PICMAN_PDB_INT32,    "method",     "Blur method { IIR (0), RLE (1) }" }
   };
 
-  static const GimpParamDef args1[] =
+  static const PicmanParamDef args1[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",      "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",   "Input drawable" },
-    { GIMP_PDB_FLOAT,    "radius",     "Radius of gaussian blur (in pixels, > 0.0)" },
-    { GIMP_PDB_INT32,    "horizontal", "Blur in horizontal direction" },
-    { GIMP_PDB_INT32,    "vertical",   "Blur in vertical direction" }
+    { PICMAN_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",      "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",   "Input drawable" },
+    { PICMAN_PDB_FLOAT,    "radius",     "Radius of gaussian blur (in pixels, > 0.0)" },
+    { PICMAN_PDB_INT32,    "horizontal", "Blur in horizontal direction" },
+    { PICMAN_PDB_INT32,    "vertical",   "Blur in vertical direction" }
   };
 
-  static const GimpParamDef args2[] =
+  static const PicmanParamDef args2[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",      "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",   "Input drawable" },
-    { GIMP_PDB_FLOAT,    "horizontal", "Horizontal radius of gaussian blur (in pixels, > 0.0)" },
-    { GIMP_PDB_FLOAT,    "vertical",   "Vertical radius of gaussian blur (in pixels, > 0.0)" }
+    { PICMAN_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",      "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",   "Input drawable" },
+    { PICMAN_PDB_FLOAT,    "horizontal", "Horizontal radius of gaussian blur (in pixels, > 0.0)" },
+    { PICMAN_PDB_FLOAT,    "vertical",   "Vertical radius of gaussian blur (in pixels, > 0.0)" }
   };
 
-  gimp_install_procedure (GAUSS_PROC,
+  picman_install_procedure (GAUSS_PROC,
                           N_("Simplest, most commonly used way of blurring"),
                           "Applies a gaussian blur to the drawable, with "
                           "specified radius of affect.  The standard deviation "
@@ -171,11 +171,11 @@ query (void)
                           "1995-1996",
                           N_("_Gaussian Blur..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_install_procedure (GAUSS_IIR_PROC,
+  picman_install_procedure (GAUSS_IIR_PROC,
                           N_("Apply a gaussian blur"),
                           "Applies a gaussian blur to the drawable, with "
                           "specified radius of affect.  The standard deviation "
@@ -191,11 +191,11 @@ query (void)
                           "1995-1996",
                           NULL,
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args1), 0,
                           args1, NULL);
 
-  gimp_install_procedure (GAUSS_IIR2_PROC,
+  picman_install_procedure (GAUSS_IIR2_PROC,
                           N_("Apply a gaussian blur"),
                           "Applies a gaussian blur to the drawable, with "
                           "specified radius of affect.  The standard deviation "
@@ -211,11 +211,11 @@ query (void)
                           "1995-2000",
                           NULL,
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args2), 0,
                           args2, NULL);
 
-  gimp_install_procedure (GAUSS_RLE_PROC,
+  picman_install_procedure (GAUSS_RLE_PROC,
                           N_("Apply a gaussian blur"),
                           "Applies a gaussian blur to the drawable, with "
                           "specified radius of affect.  The standard deviation "
@@ -231,11 +231,11 @@ query (void)
                           "1995-1996",
                           NULL,
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args1), 0,
                           args1, NULL);
 
-  gimp_install_procedure (GAUSS_RLE2_PROC,
+  picman_install_procedure (GAUSS_RLE2_PROC,
                           N_("Apply a gaussian blur"),
                           "Applies a gaussian blur to the drawable, with "
                           "specified radius of affect.  The standard deviation "
@@ -251,25 +251,25 @@ query (void)
                           "1995-2000",
                           NULL,
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args2), 0,
                           args2, NULL);
 
-  gimp_plugin_menu_register (GAUSS_PROC, "<Image>/Filters/Blur");
+  picman_plugin_menu_register (GAUSS_PROC, "<Image>/Filters/Blur");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
+  static PicmanParam   values[2];
   gint32             image_ID;
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gdouble            radius = 0.;
 
   run_mode = param[0].data.d_int32;
@@ -279,51 +279,51 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*  Get the specified image and drawable  */
   image_ID = param[1].data.d_image;
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*  set the tile cache size so that the gaussian blur works well  */
-  gimp_tile_cache_ntiles (2*
+  picman_tile_cache_ntiles (2*
                           (MAX (drawable->width, drawable->height) /
-                           gimp_tile_width () + 1));
+                           picman_tile_width () + 1));
 
 
   if (strcmp (name, GAUSS_PROC) == 0)
     {
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           /*  Possibly retrieve data  */
-          gimp_get_data (GAUSS_PROC, &bvals);
+          picman_get_data (GAUSS_PROC, &bvals);
 
           /*  First acquire information with a dialog  */
           if (! gauss_dialog (image_ID, drawable))
             return;
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           /*  Make sure all the arguments are there!  */
           if (nparams != 6)
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
 
-          if (status == GIMP_PDB_SUCCESS)
+          if (status == PICMAN_PDB_SUCCESS)
             {
               bvals.horizontal = param[3].data.d_float;
               bvals.vertical   = param[4].data.d_float;
               bvals.method     = param[5].data.d_int32;
             }
-          if (status == GIMP_PDB_SUCCESS &&
+          if (status == PICMAN_PDB_SUCCESS &&
               (bvals.horizontal <= 0.0 && bvals.vertical <= 0.0))
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           /*  Possibly retrieve data  */
-          gimp_get_data (GAUSS_PROC, &bvals);
+          picman_get_data (GAUSS_PROC, &bvals);
           break;
 
         default:
@@ -333,9 +333,9 @@ run (const gchar      *name,
   else if (strcmp (name, GAUSS_IIR_PROC) == 0)
     {
       if (nparams != 6)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           radius           = param[3].data.d_float;
           bvals.horizontal = (param[4].data.d_int32) ? radius : 0.;
@@ -344,9 +344,9 @@ run (const gchar      *name,
         }
 
       if (radius <= 0.0)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
           if (! gauss_dialog (image_ID, drawable))
             return;
@@ -355,9 +355,9 @@ run (const gchar      *name,
   else if (strcmp (name, GAUSS_IIR2_PROC) == 0)
     {
       if (nparams != 5)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           bvals.horizontal = param[3].data.d_float;
           bvals.vertical   = param[4].data.d_float;
@@ -365,9 +365,9 @@ run (const gchar      *name,
         }
 
       if (bvals.horizontal <= 0.0 && bvals.vertical <= 0.0)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
           if (! gauss_dialog (image_ID, drawable))
             return;
@@ -376,9 +376,9 @@ run (const gchar      *name,
   else if (strcmp (name, GAUSS_RLE_PROC) == 0)
     {
       if (nparams != 6)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           radius           = param[3].data.d_float;
           bvals.horizontal = (param[4].data.d_int32) ? radius : 0.;
@@ -387,9 +387,9 @@ run (const gchar      *name,
         }
 
       if (radius <= 0.0)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
           if (! gauss_dialog (image_ID, drawable))
             return;
@@ -398,9 +398,9 @@ run (const gchar      *name,
   else if (strcmp (name, GAUSS_RLE2_PROC) == 0)
     {
       if (nparams != 5)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           bvals.horizontal = param[3].data.d_float;
           bvals.vertical   = param[4].data.d_float;
@@ -408,24 +408,24 @@ run (const gchar      *name,
         }
 
       if (bvals.horizontal <= 0.0 && bvals.vertical <= 0.0)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
           if (! gauss_dialog (image_ID, drawable))
             return;
         }
     }
   else
-    status = GIMP_PDB_CALLING_ERROR;
+    status = PICMAN_PDB_CALLING_ERROR;
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init (_("Gaussian Blur"));
+          picman_progress_init (_("Gaussian Blur"));
 
           /*  run the gaussian blur  */
           gauss (drawable,
@@ -434,21 +434,21 @@ run (const gchar      *name,
                  NULL);
 
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (GAUSS_PROC, &bvals, sizeof (BlurValues));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (GAUSS_PROC, &bvals, sizeof (BlurValues));
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
         }
       else
         {
-          status        = GIMP_PDB_EXECUTION_ERROR;
+          status        = PICMAN_PDB_EXECUTION_ERROR;
           *nreturn_vals = 2;
-          values[1].type          = GIMP_PDB_STRING;
+          values[1].type          = PICMAN_PDB_STRING;
           values[1].data.d_string = _("Cannot operate on indexed color images.");
         }
 
-      gimp_drawable_detach (drawable);
+      picman_drawable_detach (drawable);
     }
 
   values[0].data.d_status = status;
@@ -458,7 +458,7 @@ run (const gchar      *name,
 
 static gboolean
 gauss_dialog (gint32        image_ID,
-              GimpDrawable *drawable)
+              PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -468,16 +468,16 @@ gauss_dialog (gint32        image_ID,
   GtkWidget *button;
   GtkWidget *preview;
 
-  GimpUnit   unit;
+  PicmanUnit   unit;
   gdouble    xres;
   gdouble    yres;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Gaussian Blur"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Gaussian Blur"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, GAUSS_PROC,
+                            picman_standard_help_func, GAUSS_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -489,7 +489,7 @@ gauss_dialog (gint32        image_ID,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -497,7 +497,7 @@ gauss_dialog (gint32        image_ID,
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -506,16 +506,16 @@ gauss_dialog (gint32        image_ID,
   gtk_widget_show (hbox);
 
   /*  parameter settings  */
-  frame = gimp_frame_new (_("Blur Radius"));
+  frame = picman_frame_new (_("Blur Radius"));
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
   /*  Get the image resolution and unit  */
-  gimp_image_get_resolution (image_ID, &xres, &yres);
-  unit = gimp_image_get_unit (image_ID);
+  picman_image_get_resolution (image_ID, &xres, &yres);
+  unit = picman_image_get_unit (image_ID);
 
-  size = gimp_coordinates_new (unit, "%a", TRUE, FALSE, -1,
-                               GIMP_SIZE_ENTRY_UPDATE_SIZE,
+  size = picman_coordinates_new (unit, "%a", TRUE, FALSE, -1,
+                               PICMAN_SIZE_ENTRY_UPDATE_SIZE,
 
                                (bvals.horizontal == bvals.vertical),
                                FALSE,
@@ -532,23 +532,23 @@ gauss_dialog (gint32        image_ID,
   gtk_container_add (GTK_CONTAINER (frame), size);
   gtk_widget_show (size);
 
-  gimp_size_entry_set_pixel_digits (GIMP_SIZE_ENTRY (size), 1);
+  picman_size_entry_set_pixel_digits (PICMAN_SIZE_ENTRY (size), 1);
 
   /*  FIXME: Shouldn't need two signal connections here,
-             gimp_coordinates_new() seems to be severily broken.  */
+             picman_coordinates_new() seems to be severily broken.  */
   g_signal_connect_swapped (size, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (size, "refval-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   g_signal_connect (preview, "invalidated",
                     G_CALLBACK (update_preview),
                     size);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Blur Method"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Blur Method"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &bvals.method, bvals.method,
 
                                     _("_IIR"), BLUR_IIR, &button,
@@ -557,7 +557,7 @@ gauss_dialog (gint32        image_ID,
                                     NULL);
 
   g_signal_connect_swapped (button, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
@@ -565,12 +565,12 @@ gauss_dialog (gint32        image_ID,
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   if (run)
     {
-      bvals.horizontal = gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (size), 0);
-      bvals.vertical   = gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (size), 1);
+      bvals.horizontal = picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (size), 0);
+      bvals.vertical   = picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (size), 1);
     }
 
   gtk_widget_destroy (dialog);
@@ -582,9 +582,9 @@ static void
 update_preview (GtkWidget *preview,
                 GtkWidget *size)
 {
-  gauss (gimp_drawable_preview_get_drawable (GIMP_DRAWABLE_PREVIEW (preview)),
-         gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (size), 0),
-         gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (size), 1),
+  gauss (picman_drawable_preview_get_drawable (PICMAN_DRAWABLE_PREVIEW (preview)),
+         picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (size), 0),
+         picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (size), 1),
          bvals.method,
          preview);
 }
@@ -871,7 +871,7 @@ do_full_lre (const gint *src,
 }
 
 static void
-gauss_iir (GimpDrawable *drawable,
+gauss_iir (PicmanDrawable *drawable,
            gdouble       horz,
            gdouble       vert,
            BlurMethod    method,
@@ -881,7 +881,7 @@ gauss_iir (GimpDrawable *drawable,
            gint          width,
            gint          height)
 {
-  GimpPixelRgn  src_rgn, dest_rgn;
+  PicmanPixelRgn  src_rgn, dest_rgn;
   gint          bytes;
   gint          has_alpha;
   guchar       *dest;
@@ -905,7 +905,7 @@ gauss_iir (GimpDrawable *drawable,
   direct = (preview_buffer == NULL);
 
   bytes = drawable->bpp;
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   val_p = g_new (gdouble, MAX (width, height) * bytes);
   val_m = g_new (gdouble, MAX (width, height) * bytes);
@@ -913,12 +913,12 @@ gauss_iir (GimpDrawable *drawable,
   src =  g_new (guchar, MAX (width, height) * bytes);
   dest = g_new (guchar, MAX (width, height) * bytes);
 
-  gimp_pixel_rgn_init (&src_rgn,
+  picman_pixel_rgn_init (&src_rgn,
                        drawable, 0, 0, drawable->width, drawable->height,
                        FALSE, FALSE);
   if (direct)
     {
-      gimp_pixel_rgn_init (&dest_rgn,
+      picman_pixel_rgn_init (&dest_rgn,
                            drawable, 0, 0, drawable->width, drawable->height,
                            TRUE, TRUE);
     }
@@ -955,7 +955,7 @@ gauss_iir (GimpDrawable *drawable,
           memset (val_p, 0, height * bytes * sizeof (gdouble));
           memset (val_m, 0, height * bytes * sizeof (gdouble));
 
-          gimp_pixel_rgn_get_col (&src_rgn, src, col + x1, y1, height);
+          picman_pixel_rgn_get_col (&src_rgn, src, col + x1, y1, height);
 
           if (has_alpha)
             multiply_alpha (src, height, bytes);
@@ -1006,12 +1006,12 @@ gauss_iir (GimpDrawable *drawable,
 
           if (direct)
             {
-              gimp_pixel_rgn_set_col(&dest_rgn, dest, col + x1, y1, height);
+              picman_pixel_rgn_set_col(&dest_rgn, dest, col + x1, y1, height);
 
               progress += height * vert;
 
               if ((col % progress_step) == 0)
-                gimp_progress_update (progress / max_progress);
+                picman_progress_update (progress / max_progress);
             }
           else
             {
@@ -1023,7 +1023,7 @@ gauss_iir (GimpDrawable *drawable,
         }
 
       /*  prepare for the horizontal pass  */
-      gimp_pixel_rgn_init (&src_rgn,
+      picman_pixel_rgn_init (&src_rgn,
                            drawable,
                            0, 0,
                            drawable->width, drawable->height,
@@ -1031,7 +1031,7 @@ gauss_iir (GimpDrawable *drawable,
     }
   else if (!direct)
     {
-      gimp_pixel_rgn_get_rect (&src_rgn,
+      picman_pixel_rgn_get_rect (&src_rgn,
                                preview_buffer,
                                x1, y1,
                                width, height);
@@ -1072,7 +1072,7 @@ gauss_iir (GimpDrawable *drawable,
 
           if (direct)
             {
-              gimp_pixel_rgn_get_row (&src_rgn, src, x1, row + y1, width);
+              picman_pixel_rgn_get_row (&src_rgn, src, x1, row + y1, width);
             }
           else
             {
@@ -1135,12 +1135,12 @@ gauss_iir (GimpDrawable *drawable,
 
           if (direct)
             {
-              gimp_pixel_rgn_set_row (&dest_rgn, dest, x1, row + y1, width);
+              picman_pixel_rgn_set_row (&dest_rgn, dest, x1, row + y1, width);
 
               progress += width * horz;
 
               if ((row % progress_step) == 0)
-                gimp_progress_update (progress / max_progress);
+                picman_progress_update (progress / max_progress);
             }
           else
             {
@@ -1162,7 +1162,7 @@ gauss_iir (GimpDrawable *drawable,
 
 
 static void
-gauss_rle (GimpDrawable *drawable,
+gauss_rle (PicmanDrawable *drawable,
            gdouble       horz,
            gdouble       vert,
            BlurMethod    method,
@@ -1172,7 +1172,7 @@ gauss_rle (GimpDrawable *drawable,
            gint          width,
            gint          height)
 {
-  GimpPixelRgn  src_rgn, dest_rgn;
+  PicmanPixelRgn  src_rgn, dest_rgn;
   gint          bytes;
   gboolean      has_alpha;
   guchar       *dest;
@@ -1190,17 +1190,17 @@ gauss_rle (GimpDrawable *drawable,
   direct = (preview_buffer == NULL);
 
   bytes = drawable->bpp;
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   src  = g_new (guchar, MAX (width, height) * bytes);
   dest = g_new (guchar, MAX (width, height) * bytes);
 
-  gimp_pixel_rgn_init (&src_rgn,
+  picman_pixel_rgn_init (&src_rgn,
                        drawable, 0, 0, drawable->width, drawable->height,
                        FALSE, FALSE);
 
   if (direct)
-    gimp_pixel_rgn_init (&dest_rgn,
+    picman_pixel_rgn_init (&dest_rgn,
                          drawable, 0, 0, drawable->width, drawable->height,
                          TRUE, TRUE);
 
@@ -1237,7 +1237,7 @@ gauss_rle (GimpDrawable *drawable,
       for (col = 0; col < width; col++)
         {
 
-          gimp_pixel_rgn_get_col (&src_rgn, src, col + x1, y1, height);
+          picman_pixel_rgn_get_col (&src_rgn, src, col + x1, y1, height);
 
           if (has_alpha)
             multiply_alpha (src, height, bytes);
@@ -1268,12 +1268,12 @@ gauss_rle (GimpDrawable *drawable,
 
           if (direct)
             {
-              gimp_pixel_rgn_set_col (&dest_rgn, dest, col + x1, y1, height);
+              picman_pixel_rgn_set_col (&dest_rgn, dest, col + x1, y1, height);
 
               progress += height * vert;
 
               if ((col % progress_step) == 0)
-                gimp_progress_update (progress / max_progress);
+                picman_progress_update (progress / max_progress);
             }
           else
             {
@@ -1290,13 +1290,13 @@ gauss_rle (GimpDrawable *drawable,
       g_free (pix - length);
 
       /* prepare for the horizontal pass  */
-      gimp_pixel_rgn_init (&src_rgn,
+      picman_pixel_rgn_init (&src_rgn,
                            drawable, 0, 0, drawable->width, drawable->height,
                            FALSE, TRUE);
     }
   else if (!direct)
     {
-      gimp_pixel_rgn_get_rect (&src_rgn,
+      picman_pixel_rgn_get_rect (&src_rgn,
                                preview_buffer, x1, y1, width, height);
     }
 
@@ -1342,7 +1342,7 @@ gauss_rle (GimpDrawable *drawable,
         {
           if (direct)
             {
-              gimp_pixel_rgn_get_row (&src_rgn, src, x1, row + y1, width);
+              picman_pixel_rgn_get_row (&src_rgn, src, x1, row + y1, width);
             }
           else
             {
@@ -1381,12 +1381,12 @@ gauss_rle (GimpDrawable *drawable,
 
           if (direct)
             {
-              gimp_pixel_rgn_set_row (&dest_rgn, dest, x1, row + y1, width);
+              picman_pixel_rgn_set_row (&dest_rgn, dest, x1, row + y1, width);
 
               progress += width * horz;
 
               if ((row % progress_step) == 0)
-                gimp_progress_update (progress / max_progress);
+                picman_progress_update (progress / max_progress);
             }
           else
             {
@@ -1409,7 +1409,7 @@ gauss_rle (GimpDrawable *drawable,
 
 
 static void
-gauss (GimpDrawable *drawable,
+gauss (PicmanDrawable *drawable,
        gdouble       horz,
        gdouble       vert,
        BlurMethod    method,
@@ -1430,19 +1430,19 @@ gauss (GimpDrawable *drawable,
   if (horz <= 0.0 && vert <= 0.0)
     {
       if (preview)
-        gimp_preview_draw (GIMP_PREVIEW (preview));
+        picman_preview_draw (PICMAN_PREVIEW (preview));
       return;
     }
 
   if (preview)
     {
-      gimp_preview_get_position (GIMP_PREVIEW (preview), &x, &y);
-      gimp_preview_get_size (GIMP_PREVIEW (preview), &width, &height);
+      picman_preview_get_position (PICMAN_PREVIEW (preview), &x, &y);
+      picman_preview_get_size (PICMAN_PREVIEW (preview), &width, &height);
 
       preview_buffer = g_new (guchar, width * height * drawable->bpp);
 
     }
-  else if (gimp_drawable_mask_intersect (drawable->drawable_id,
+  else if (picman_drawable_mask_intersect (drawable->drawable_id,
                                          &x, &y, &width, &height))
     { /* With a selection, extend the input area of the amount required */
       gint hor_extra = method == BLUR_IIR ? 4 : 1 + ceil (horz);
@@ -1470,17 +1470,17 @@ gauss (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_draw_buffer (GIMP_PREVIEW (preview),
+      picman_preview_draw_buffer (PICMAN_PREVIEW (preview),
                                 preview_buffer, width * drawable->bpp);
       g_free (preview_buffer);
     }
   else
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
       /*  merge the shadow, update the drawable  */
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x, y, width, height);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x, y, width, height);
     }
 }
 

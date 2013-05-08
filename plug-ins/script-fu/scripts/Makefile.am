@@ -2,7 +2,7 @@
 
 SUBDIRS = images
 
-scriptdatadir = $(gimpdatadir)/scripts
+scriptdatadir = $(picmandatadir)/scripts
 
 scripts = \
 	script-fu.init			\
@@ -24,7 +24,7 @@ scripts = \
 	erase-rows.scm			\
 	font-map.scm			\
 	fuzzyborder.scm			\
-	gimp-online.scm			\
+	picman-online.scm			\
 	gradient-example.scm		\
 	grid-system.scm			\
 	guides-from-selection.scm	\
@@ -51,7 +51,7 @@ scripts = \
 	selection-round.scm		\
 	slide.scm			\
 	spinning-globe.scm		\
-	spyrogimp.scm			\
+	spyropicman.scm			\
 	tileblur.scm			\
 	unsharp-mask.scm		\
 	waves-anim.scm			\

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcontrollerinfo.c
- * Copyright (C) 2004-2005 Michael Natterer <mitch@gimp.org>
+ * picmancontrollerinfo.c
+ * Copyright (C) 2004-2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,19 +25,19 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#define GIMP_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
-#include "libgimpwidgets/gimpcontroller.h"
+#define PICMAN_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
+#include "libpicmanwidgets/picmancontroller.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpmarshal.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpcontrollerinfo.h"
+#include "picmancontrollerinfo.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -56,81 +56,81 @@ enum
 };
 
 
-static void     gimp_controller_info_config_iface_init (GimpConfigInterface *iface);
+static void     picman_controller_info_config_iface_init (PicmanConfigInterface *iface);
 
-static void     gimp_controller_info_finalize     (GObject          *object);
-static void     gimp_controller_info_set_property (GObject          *object,
+static void     picman_controller_info_finalize     (GObject          *object);
+static void     picman_controller_info_set_property (GObject          *object,
                                                    guint             property_id,
                                                    const GValue     *value,
                                                    GParamSpec       *pspec);
-static void     gimp_controller_info_get_property (GObject          *object,
+static void     picman_controller_info_get_property (GObject          *object,
                                                    guint             property_id,
                                                    GValue           *value,
                                                    GParamSpec       *pspec);
 
-static gboolean gimp_controller_info_serialize_property   (GimpConfig       *config,
+static gboolean picman_controller_info_serialize_property   (PicmanConfig       *config,
                                                            guint             property_id,
                                                            const GValue     *value,
                                                            GParamSpec       *pspec,
-                                                           GimpConfigWriter *writer);
-static gboolean gimp_controller_info_deserialize_property (GimpConfig       *config,
+                                                           PicmanConfigWriter *writer);
+static gboolean picman_controller_info_deserialize_property (PicmanConfig       *config,
                                                            guint             property_id,
                                                            GValue           *value,
                                                            GParamSpec       *pspec,
                                                            GScanner         *scanner,
                                                            GTokenType       *expected);
 
-static gboolean gimp_controller_info_event (GimpController            *controller,
-                                            const GimpControllerEvent *event,
-                                            GimpControllerInfo        *info);
+static gboolean picman_controller_info_event (PicmanController            *controller,
+                                            const PicmanControllerEvent *event,
+                                            PicmanControllerInfo        *info);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpControllerInfo, gimp_controller_info,
-                         GIMP_TYPE_VIEWABLE,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG,
-                                                gimp_controller_info_config_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanControllerInfo, picman_controller_info,
+                         PICMAN_TYPE_VIEWABLE,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG,
+                                                picman_controller_info_config_iface_init))
 
-#define parent_class gimp_controller_info_parent_class
+#define parent_class picman_controller_info_parent_class
 
 static guint info_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_controller_info_class_init (GimpControllerInfoClass *klass)
+picman_controller_info_class_init (PicmanControllerInfoClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->finalize           = gimp_controller_info_finalize;
-  object_class->set_property       = gimp_controller_info_set_property;
-  object_class->get_property       = gimp_controller_info_get_property;
+  object_class->finalize           = picman_controller_info_finalize;
+  object_class->set_property       = picman_controller_info_set_property;
+  object_class->get_property       = picman_controller_info_get_property;
 
-  viewable_class->default_stock_id = GIMP_STOCK_CONTROLLER;
+  viewable_class->default_stock_id = PICMAN_STOCK_CONTROLLER;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ENABLED,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ENABLED,
                                     "enabled", NULL,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DEBUG_EVENTS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DEBUG_EVENTS,
                                     "debug-events", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_CONTROLLER,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_CONTROLLER,
                                    "controller", NULL,
-                                   GIMP_TYPE_CONTROLLER,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOXED (object_class, PROP_MAPPING,
+                                   PICMAN_TYPE_CONTROLLER,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOXED (object_class, PROP_MAPPING,
                                   "mapping", NULL,
                                   G_TYPE_HASH_TABLE,
-                                  GIMP_PARAM_STATIC_STRINGS);
+                                  PICMAN_PARAM_STATIC_STRINGS);
 
   info_signals[EVENT_MAPPED] =
     g_signal_new ("event-mapped",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpControllerInfoClass, event_mapped),
+                  G_STRUCT_OFFSET (PicmanControllerInfoClass, event_mapped),
                   g_signal_accumulator_true_handled, NULL,
-                  gimp_marshal_BOOLEAN__OBJECT_POINTER_STRING,
+                  picman_marshal_BOOLEAN__OBJECT_POINTER_STRING,
                   G_TYPE_BOOLEAN, 3,
                   G_TYPE_OBJECT,
                   G_TYPE_POINTER,
@@ -138,7 +138,7 @@ gimp_controller_info_class_init (GimpControllerInfoClass *klass)
 }
 
 static void
-gimp_controller_info_init (GimpControllerInfo *info)
+picman_controller_info_init (PicmanControllerInfo *info)
 {
   info->controller = NULL;
   info->mapping    = g_hash_table_new_full (g_str_hash,
@@ -148,16 +148,16 @@ gimp_controller_info_init (GimpControllerInfo *info)
 }
 
 static void
-gimp_controller_info_config_iface_init (GimpConfigInterface *iface)
+picman_controller_info_config_iface_init (PicmanConfigInterface *iface)
 {
-  iface->serialize_property   = gimp_controller_info_serialize_property;
-  iface->deserialize_property = gimp_controller_info_deserialize_property;
+  iface->serialize_property   = picman_controller_info_serialize_property;
+  iface->deserialize_property = picman_controller_info_deserialize_property;
 }
 
 static void
-gimp_controller_info_finalize (GObject *object)
+picman_controller_info_finalize (GObject *object)
 {
-  GimpControllerInfo *info = GIMP_CONTROLLER_INFO (object);
+  PicmanControllerInfo *info = PICMAN_CONTROLLER_INFO (object);
 
   if (info->controller)
     {
@@ -175,12 +175,12 @@ gimp_controller_info_finalize (GObject *object)
 }
 
 static void
-gimp_controller_info_set_property (GObject      *object,
+picman_controller_info_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpControllerInfo *info = GIMP_CONTROLLER_INFO (object);
+  PicmanControllerInfo *info = PICMAN_CONTROLLER_INFO (object);
 
   switch (property_id)
     {
@@ -194,7 +194,7 @@ gimp_controller_info_set_property (GObject      *object,
       if (info->controller)
         {
           g_signal_handlers_disconnect_by_func (info->controller,
-                                                gimp_controller_info_event,
+                                                picman_controller_info_event,
                                                 info);
           g_object_unref (info->controller);
         }
@@ -203,15 +203,15 @@ gimp_controller_info_set_property (GObject      *object,
 
       if (info->controller)
         {
-          GimpControllerClass *controller_class;
+          PicmanControllerClass *controller_class;
 
           g_signal_connect_object (info->controller, "event",
-                                   G_CALLBACK (gimp_controller_info_event),
+                                   G_CALLBACK (picman_controller_info_event),
                                    G_OBJECT (info),
                                    0);
 
-          controller_class = GIMP_CONTROLLER_GET_CLASS (info->controller);
-          gimp_viewable_set_stock_id (GIMP_VIEWABLE (info),
+          controller_class = PICMAN_CONTROLLER_GET_CLASS (info->controller);
+          picman_viewable_set_stock_id (PICMAN_VIEWABLE (info),
                                       controller_class->stock_id);
         }
       break;
@@ -228,12 +228,12 @@ gimp_controller_info_set_property (GObject      *object,
 }
 
 static void
-gimp_controller_info_get_property (GObject    *object,
+picman_controller_info_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpControllerInfo *info = GIMP_CONTROLLER_INFO (object);
+  PicmanControllerInfo *info = PICMAN_CONTROLLER_INFO (object);
 
   switch (property_id)
     {
@@ -257,26 +257,26 @@ gimp_controller_info_get_property (GObject    *object,
 }
 
 static void
-gimp_controller_info_serialize_mapping (gpointer key,
+picman_controller_info_serialize_mapping (gpointer key,
                                         gpointer value,
                                         gpointer data)
 {
   const gchar      *event_name  = key;
   const gchar      *action_name = value;
-  GimpConfigWriter *writer      = data;
+  PicmanConfigWriter *writer      = data;
 
-  gimp_config_writer_open (writer, "map");
-  gimp_config_writer_string (writer, event_name);
-  gimp_config_writer_string (writer, action_name);
-  gimp_config_writer_close (writer);
+  picman_config_writer_open (writer, "map");
+  picman_config_writer_string (writer, event_name);
+  picman_config_writer_string (writer, action_name);
+  picman_config_writer_close (writer);
 }
 
 static gboolean
-gimp_controller_info_serialize_property (GimpConfig       *config,
+picman_controller_info_serialize_property (PicmanConfig       *config,
                                          guint             property_id,
                                          const GValue     *value,
                                          GParamSpec       *pspec,
-                                         GimpConfigWriter *writer)
+                                         PicmanConfigWriter *writer)
 {
   GHashTable *mapping;
 
@@ -287,20 +287,20 @@ gimp_controller_info_serialize_property (GimpConfig       *config,
 
   if (mapping)
     {
-      gimp_config_writer_open (writer, pspec->name);
+      picman_config_writer_open (writer, pspec->name);
 
       g_hash_table_foreach (mapping,
-                            (GHFunc) gimp_controller_info_serialize_mapping,
+                            (GHFunc) picman_controller_info_serialize_mapping,
                             writer);
 
-      gimp_config_writer_close (writer);
+      picman_config_writer_close (writer);
     }
 
   return TRUE;
 }
 
 static gboolean
-gimp_controller_info_deserialize_property (GimpConfig *config,
+picman_controller_info_deserialize_property (PicmanConfig *config,
                                            guint       property_id,
                                            GValue     *value,
                                            GParamSpec *pspec,
@@ -337,11 +337,11 @@ gimp_controller_info_deserialize_property (GimpConfig *config,
               gchar *action_name;
 
               token = G_TOKEN_STRING;
-              if (! gimp_scanner_parse_string (scanner, &event_name))
+              if (! picman_scanner_parse_string (scanner, &event_name))
                 goto error;
 
               token = G_TOKEN_STRING;
-              if (! gimp_scanner_parse_string (scanner, &action_name))
+              if (! picman_scanner_parse_string (scanner, &action_name))
                 goto error;
 
               g_hash_table_insert (mapping, event_name, action_name);
@@ -385,19 +385,19 @@ gimp_controller_info_deserialize_property (GimpConfig *config,
 
 /*  public functions  */
 
-GimpControllerInfo *
-gimp_controller_info_new (GType type)
+PicmanControllerInfo *
+picman_controller_info_new (GType type)
 {
-  GimpControllerClass *controller_class;
-  GimpController      *controller;
-  GimpControllerInfo  *info;
+  PicmanControllerClass *controller_class;
+  PicmanController      *controller;
+  PicmanControllerInfo  *info;
 
-  g_return_val_if_fail (g_type_is_a (type, GIMP_TYPE_CONTROLLER), NULL);
+  g_return_val_if_fail (g_type_is_a (type, PICMAN_TYPE_CONTROLLER), NULL);
 
   controller_class = g_type_class_ref (type);
 
-  controller = gimp_controller_new (type);
-  info = g_object_new (GIMP_TYPE_CONTROLLER_INFO,
+  controller = picman_controller_new (type);
+  info = g_object_new (PICMAN_TYPE_CONTROLLER_INFO,
                        "name",       controller_class->name,
                        "controller", controller,
                        NULL);
@@ -409,29 +409,29 @@ gimp_controller_info_new (GType type)
 }
 
 void
-gimp_controller_info_set_enabled (GimpControllerInfo *info,
+picman_controller_info_set_enabled (PicmanControllerInfo *info,
                                   gboolean            enabled)
 {
-  g_return_if_fail (GIMP_IS_CONTROLLER_INFO (info));
+  g_return_if_fail (PICMAN_IS_CONTROLLER_INFO (info));
 
   if (enabled != info->enabled)
     g_object_set (info, "enabled", enabled, NULL);
 }
 
 gboolean
-gimp_controller_info_get_enabled (GimpControllerInfo *info)
+picman_controller_info_get_enabled (PicmanControllerInfo *info)
 {
-  g_return_val_if_fail (GIMP_IS_CONTROLLER_INFO (info), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CONTROLLER_INFO (info), FALSE);
 
   return info->enabled;
 }
 
 void
-gimp_controller_info_set_event_snooper (GimpControllerInfo         *info,
-                                        GimpControllerEventSnooper  snooper,
+picman_controller_info_set_event_snooper (PicmanControllerInfo         *info,
+                                        PicmanControllerEventSnooper  snooper,
                                         gpointer                    snooper_data)
 {
-  g_return_if_fail (GIMP_IS_CONTROLLER_INFO (info));
+  g_return_if_fail (PICMAN_IS_CONTROLLER_INFO (info));
 
   info->snooper      = snooper;
   info->snooper_data = snooper_data;
@@ -441,33 +441,33 @@ gimp_controller_info_set_event_snooper (GimpControllerInfo         *info,
 /*  private functions  */
 
 static gboolean
-gimp_controller_info_event (GimpController            *controller,
-                            const GimpControllerEvent *event,
-                            GimpControllerInfo        *info)
+picman_controller_info_event (PicmanController            *controller,
+                            const PicmanControllerEvent *event,
+                            PicmanControllerInfo        *info)
 {
   const gchar *event_name;
   const gchar *event_blurb;
   const gchar *action_name = NULL;
 
-  event_name = gimp_controller_get_event_name (controller,
+  event_name = picman_controller_get_event_name (controller,
                                                event->any.event_id);
-  event_blurb = gimp_controller_get_event_blurb (controller,
+  event_blurb = picman_controller_get_event_blurb (controller,
                                                  event->any.event_id);
 
   if (info->debug_events)
     {
       g_print ("Received '%s' (class '%s')\n"
                "    controller event '%s (%s)'\n",
-               controller->name, GIMP_CONTROLLER_GET_CLASS (controller)->name,
+               controller->name, PICMAN_CONTROLLER_GET_CLASS (controller)->name,
                event_name, event_blurb);
 
       switch (event->any.type)
         {
-        case GIMP_CONTROLLER_EVENT_TRIGGER:
+        case PICMAN_CONTROLLER_EVENT_TRIGGER:
           g_print ("    (trigger event)\n");
           break;
 
-        case GIMP_CONTROLLER_EVENT_VALUE:
+        case PICMAN_CONTROLLER_EVENT_VALUE:
           if (G_VALUE_HOLDS_DOUBLE (&event->value.value))
             g_print ("    (value event, value = %f)\n",
                      g_value_get_double (&event->value.value));

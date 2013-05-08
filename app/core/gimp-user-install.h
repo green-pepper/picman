@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,23 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_USER_INSTALL_H__
-#define __GIMP_USER_INSTALL_H__
+#ifndef __PICMAN_USER_INSTALL_H__
+#define __PICMAN_USER_INSTALL_H__
 
 
-typedef struct _GimpUserInstall GimpUserInstall;
+typedef struct _PicmanUserInstall PicmanUserInstall;
 
-typedef void  (* GimpUserInstallLogFunc) (const gchar *message,
+typedef void  (* PicmanUserInstallLogFunc) (const gchar *message,
                                           gboolean     error,
                                           gpointer     user_data);
 
 
-GimpUserInstall * gimp_user_install_new  (gboolean          verbose);
-gboolean          gimp_user_install_run  (GimpUserInstall  *install);
-void              gimp_user_install_free (GimpUserInstall  *install);
+PicmanUserInstall * picman_user_install_new  (gboolean          verbose);
+gboolean          picman_user_install_run  (PicmanUserInstall  *install);
+void              picman_user_install_free (PicmanUserInstall  *install);
 
-void   gimp_user_install_set_log_handler (GimpUserInstall        *install,
-                                          GimpUserInstallLogFunc  log,
+void   picman_user_install_set_log_handler (PicmanUserInstall        *install,
+                                          PicmanUserInstallLogFunc  log,
                                           gpointer                user_data);
 
 

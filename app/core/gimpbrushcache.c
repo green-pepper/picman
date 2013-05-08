@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbrushcache.c
- * Copyright (C) 2011 Michael Natterer <mitch@gimp.org>
+ * picmanbrushcache.c
+ * Copyright (C) 2011 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@
 
 #include "core-types.h"
 
-#include "gimpbrushcache.h"
+#include "picmanbrushcache.h"
 
-#include "gimp-log.h"
-#include "gimp-intl.h"
+#include "picman-log.h"
+#include "picman-intl.h"
 
 
 enum
@@ -37,49 +37,49 @@ enum
 };
 
 
-static void   gimp_brush_cache_constructed  (GObject      *object);
-static void   gimp_brush_cache_finalize     (GObject      *object);
-static void   gimp_brush_cache_set_property (GObject      *object,
+static void   picman_brush_cache_constructed  (GObject      *object);
+static void   picman_brush_cache_finalize     (GObject      *object);
+static void   picman_brush_cache_set_property (GObject      *object,
                                              guint         property_id,
                                              const GValue *value,
                                              GParamSpec   *pspec);
-static void   gimp_brush_cache_get_property (GObject      *object,
+static void   picman_brush_cache_get_property (GObject      *object,
                                              guint         property_id,
                                              GValue       *value,
                                              GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpBrushCache, gimp_brush_cache, GIMP_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanBrushCache, picman_brush_cache, PICMAN_TYPE_OBJECT)
 
-#define parent_class gimp_brush_cache_parent_class
+#define parent_class picman_brush_cache_parent_class
 
 
 static void
-gimp_brush_cache_class_init (GimpBrushCacheClass *klass)
+picman_brush_cache_class_init (PicmanBrushCacheClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_brush_cache_constructed;
-  object_class->finalize     = gimp_brush_cache_finalize;
-  object_class->set_property = gimp_brush_cache_set_property;
-  object_class->get_property = gimp_brush_cache_get_property;
+  object_class->constructed  = picman_brush_cache_constructed;
+  object_class->finalize     = picman_brush_cache_finalize;
+  object_class->set_property = picman_brush_cache_set_property;
+  object_class->get_property = picman_brush_cache_get_property;
 
   g_object_class_install_property (object_class, PROP_DATA_DESTROY,
                                    g_param_spec_pointer ("data-destroy",
                                                          NULL, NULL,
-                                                         GIMP_PARAM_READWRITE |
+                                                         PICMAN_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_brush_cache_init (GimpBrushCache *brush)
+picman_brush_cache_init (PicmanBrushCache *brush)
 {
 }
 
 static void
-gimp_brush_cache_constructed (GObject *object)
+picman_brush_cache_constructed (GObject *object)
 {
-  GimpBrushCache *cache = GIMP_BRUSH_CACHE (object);
+  PicmanBrushCache *cache = PICMAN_BRUSH_CACHE (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
@@ -87,9 +87,9 @@ gimp_brush_cache_constructed (GObject *object)
 }
 
 static void
-gimp_brush_cache_finalize (GObject *object)
+picman_brush_cache_finalize (GObject *object)
 {
-  GimpBrushCache *cache = GIMP_BRUSH_CACHE (object);
+  PicmanBrushCache *cache = PICMAN_BRUSH_CACHE (object);
 
   if (cache->last_data)
     {
@@ -101,12 +101,12 @@ gimp_brush_cache_finalize (GObject *object)
 }
 
 static void
-gimp_brush_cache_set_property (GObject      *object,
+picman_brush_cache_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpBrushCache *cache = GIMP_BRUSH_CACHE (object);
+  PicmanBrushCache *cache = PICMAN_BRUSH_CACHE (object);
 
   switch (property_id)
     {
@@ -121,12 +121,12 @@ gimp_brush_cache_set_property (GObject      *object,
 }
 
 static void
-gimp_brush_cache_get_property (GObject    *object,
+picman_brush_cache_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpBrushCache *cache = GIMP_BRUSH_CACHE (object);
+  PicmanBrushCache *cache = PICMAN_BRUSH_CACHE (object);
 
   switch (property_id)
     {
@@ -143,16 +143,16 @@ gimp_brush_cache_get_property (GObject    *object,
 
 /*  public functions  */
 
-GimpBrushCache *
-gimp_brush_cache_new (GDestroyNotify  data_destroy,
+PicmanBrushCache *
+picman_brush_cache_new (GDestroyNotify  data_destroy,
                       gchar           debug_hit,
                       gchar           debug_miss)
 {
-  GimpBrushCache *cache;
+  PicmanBrushCache *cache;
 
   g_return_val_if_fail (data_destroy != NULL, NULL);
 
-  cache =  g_object_new (GIMP_TYPE_BRUSH_CACHE,
+  cache =  g_object_new (PICMAN_TYPE_BRUSH_CACHE,
                          "data-destroy", data_destroy,
                          NULL);
 
@@ -163,9 +163,9 @@ gimp_brush_cache_new (GDestroyNotify  data_destroy,
 }
 
 void
-gimp_brush_cache_clear (GimpBrushCache *cache)
+picman_brush_cache_clear (PicmanBrushCache *cache)
 {
-  g_return_if_fail (GIMP_IS_BRUSH_CACHE (cache));
+  g_return_if_fail (PICMAN_IS_BRUSH_CACHE (cache));
 
   if (cache->last_data)
     {
@@ -175,7 +175,7 @@ gimp_brush_cache_clear (GimpBrushCache *cache)
 }
 
 gconstpointer
-gimp_brush_cache_get (GimpBrushCache *cache,
+picman_brush_cache_get (PicmanBrushCache *cache,
                       gint            width,
                       gint            height,
                       gdouble         scale,
@@ -183,7 +183,7 @@ gimp_brush_cache_get (GimpBrushCache *cache,
                       gdouble         angle,
                       gdouble         hardness)
 {
-  g_return_val_if_fail (GIMP_IS_BRUSH_CACHE (cache), NULL);
+  g_return_val_if_fail (PICMAN_IS_BRUSH_CACHE (cache), NULL);
 
   if (cache->last_data                         &&
       cache->last_width        == width        &&
@@ -193,20 +193,20 @@ gimp_brush_cache_get (GimpBrushCache *cache,
       cache->last_angle        == angle        &&
       cache->last_hardness     == hardness)
     {
-      if (gimp_log_flags & GIMP_LOG_BRUSH_CACHE)
+      if (picman_log_flags & PICMAN_LOG_BRUSH_CACHE)
         g_printerr ("%c", cache->debug_hit);
 
       return (gconstpointer) cache->last_data;
     }
 
-  if (gimp_log_flags & GIMP_LOG_BRUSH_CACHE)
+  if (picman_log_flags & PICMAN_LOG_BRUSH_CACHE)
     g_printerr ("%c", cache->debug_miss);
 
   return NULL;
 }
 
 void
-gimp_brush_cache_add (GimpBrushCache *cache,
+picman_brush_cache_add (PicmanBrushCache *cache,
                       gpointer        data,
                       gint            width,
                       gint            height,
@@ -215,7 +215,7 @@ gimp_brush_cache_add (GimpBrushCache *cache,
                       gdouble         angle,
                       gdouble         hardness)
 {
-  g_return_if_fail (GIMP_IS_BRUSH_CACHE (cache));
+  g_return_if_fail (PICMAN_IS_BRUSH_CACHE (cache));
   g_return_if_fail (data != NULL);
 
   if (data == cache->last_data)

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,80 +21,80 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpbase/gimpbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "paint-types.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "core/gimp.h"
-#include "core/gimpbrush.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdynamics.h"
-#include "core/gimpgradient.h"
-#include "core/gimpimage.h"
-#include "core/gimptempbuf.h"
+#include "core/picman.h"
+#include "core/picmanbrush.h"
+#include "core/picmandrawable.h"
+#include "core/picmandynamics.h"
+#include "core/picmangradient.h"
+#include "core/picmanimage.h"
+#include "core/picmantempbuf.h"
 
-#include "gimppaintbrush.h"
-#include "gimppaintoptions.h"
+#include "picmanpaintbrush.h"
+#include "picmanpaintoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void   gimp_paintbrush_paint (GimpPaintCore    *paint_core,
-                                     GimpDrawable     *drawable,
-                                     GimpPaintOptions *paint_options,
-                                     const GimpCoords *coords,
-                                     GimpPaintState    paint_state,
+static void   picman_paintbrush_paint (PicmanPaintCore    *paint_core,
+                                     PicmanDrawable     *drawable,
+                                     PicmanPaintOptions *paint_options,
+                                     const PicmanCoords *coords,
+                                     PicmanPaintState    paint_state,
                                      guint32           time);
 
 
-G_DEFINE_TYPE (GimpPaintbrush, gimp_paintbrush, GIMP_TYPE_BRUSH_CORE)
+G_DEFINE_TYPE (PicmanPaintbrush, picman_paintbrush, PICMAN_TYPE_BRUSH_CORE)
 
 
 void
-gimp_paintbrush_register (Gimp                      *gimp,
-                          GimpPaintRegisterCallback  callback)
+picman_paintbrush_register (Picman                      *picman,
+                          PicmanPaintRegisterCallback  callback)
 {
-  (* callback) (gimp,
-                GIMP_TYPE_PAINTBRUSH,
-                GIMP_TYPE_PAINT_OPTIONS,
-                "gimp-paintbrush",
+  (* callback) (picman,
+                PICMAN_TYPE_PAINTBRUSH,
+                PICMAN_TYPE_PAINT_OPTIONS,
+                "picman-paintbrush",
                 _("Paintbrush"),
-                "gimp-tool-paintbrush");
+                "picman-tool-paintbrush");
 }
 
 static void
-gimp_paintbrush_class_init (GimpPaintbrushClass *klass)
+picman_paintbrush_class_init (PicmanPaintbrushClass *klass)
 {
-  GimpPaintCoreClass *paint_core_class = GIMP_PAINT_CORE_CLASS (klass);
-  GimpBrushCoreClass *brush_core_class = GIMP_BRUSH_CORE_CLASS (klass);
+  PicmanPaintCoreClass *paint_core_class = PICMAN_PAINT_CORE_CLASS (klass);
+  PicmanBrushCoreClass *brush_core_class = PICMAN_BRUSH_CORE_CLASS (klass);
 
-  paint_core_class->paint                  = gimp_paintbrush_paint;
+  paint_core_class->paint                  = picman_paintbrush_paint;
 
   brush_core_class->handles_changing_brush = TRUE;
 }
 
 static void
-gimp_paintbrush_init (GimpPaintbrush *paintbrush)
+picman_paintbrush_init (PicmanPaintbrush *paintbrush)
 {
 }
 
 static void
-gimp_paintbrush_paint (GimpPaintCore    *paint_core,
-                       GimpDrawable     *drawable,
-                       GimpPaintOptions *paint_options,
-                       const GimpCoords *coords,
-                       GimpPaintState    paint_state,
+picman_paintbrush_paint (PicmanPaintCore    *paint_core,
+                       PicmanDrawable     *drawable,
+                       PicmanPaintOptions *paint_options,
+                       const PicmanCoords *coords,
+                       PicmanPaintState    paint_state,
                        guint32           time)
 {
   switch (paint_state)
     {
-    case GIMP_PAINT_STATE_MOTION:
-      _gimp_paintbrush_motion (paint_core, drawable, paint_options, coords,
-                               GIMP_OPACITY_OPAQUE);
+    case PICMAN_PAINT_STATE_MOTION:
+      _picman_paintbrush_motion (paint_core, drawable, paint_options, coords,
+                               PICMAN_OPACITY_OPAQUE);
       break;
 
     default:
@@ -103,39 +103,39 @@ gimp_paintbrush_paint (GimpPaintCore    *paint_core,
 }
 
 void
-_gimp_paintbrush_motion (GimpPaintCore    *paint_core,
-                         GimpDrawable     *drawable,
-                         GimpPaintOptions *paint_options,
-                         const GimpCoords *coords,
+_picman_paintbrush_motion (PicmanPaintCore    *paint_core,
+                         PicmanDrawable     *drawable,
+                         PicmanPaintOptions *paint_options,
+                         const PicmanCoords *coords,
                          gdouble           opacity)
 {
-  GimpBrushCore            *brush_core = GIMP_BRUSH_CORE (paint_core);
-  GimpContext              *context    = GIMP_CONTEXT (paint_options);
-  GimpDynamics             *dynamics   = brush_core->dynamics;
-  GimpImage                *image;
-  GimpRGB                   gradient_color;
+  PicmanBrushCore            *brush_core = PICMAN_BRUSH_CORE (paint_core);
+  PicmanContext              *context    = PICMAN_CONTEXT (paint_options);
+  PicmanDynamics             *dynamics   = brush_core->dynamics;
+  PicmanImage                *image;
+  PicmanRGB                   gradient_color;
   GeglBuffer               *paint_buffer;
   gint                      paint_buffer_x;
   gint                      paint_buffer_y;
-  GimpPaintApplicationMode  paint_appl_mode;
+  PicmanPaintApplicationMode  paint_appl_mode;
   gdouble                   fade_point;
   gdouble                   grad_point;
   gdouble                   force;
 
-  image = gimp_item_get_image (GIMP_ITEM (drawable));
+  image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-  fade_point = gimp_paint_options_get_fade (paint_options, image,
+  fade_point = picman_paint_options_get_fade (paint_options, image,
                                             paint_core->pixel_dist);
 
-  opacity *= gimp_dynamics_get_linear_value (dynamics,
-                                             GIMP_DYNAMICS_OUTPUT_OPACITY,
+  opacity *= picman_dynamics_get_linear_value (dynamics,
+                                             PICMAN_DYNAMICS_OUTPUT_OPACITY,
                                              coords,
                                              paint_options,
                                              fade_point);
   if (opacity == 0.0)
     return;
 
-  paint_buffer = gimp_paint_core_get_paint_buffer (paint_core, drawable,
+  paint_buffer = picman_paint_core_get_paint_buffer (paint_core, drawable,
                                                    paint_options, coords,
                                                    &paint_buffer_x,
                                                    &paint_buffer_y);
@@ -144,13 +144,13 @@ _gimp_paintbrush_motion (GimpPaintCore    *paint_core,
 
   paint_appl_mode = paint_options->application_mode;
 
-  grad_point = gimp_dynamics_get_linear_value (dynamics,
-                                               GIMP_DYNAMICS_OUTPUT_COLOR,
+  grad_point = picman_dynamics_get_linear_value (dynamics,
+                                               PICMAN_DYNAMICS_OUTPUT_COLOR,
                                                coords,
                                                paint_options,
                                                fade_point);
 
-  if (gimp_paint_options_get_gradient_color (paint_options, image,
+  if (picman_paint_options_get_gradient_color (paint_options, image,
                                              grad_point,
                                              paint_core->pixel_dist,
                                              &gradient_color))
@@ -160,56 +160,56 @@ _gimp_paintbrush_motion (GimpPaintCore    *paint_core,
       GeglColor *color;
 
       opacity *= gradient_color.a;
-      gimp_rgb_set_alpha (&gradient_color, GIMP_OPACITY_OPAQUE);
+      picman_rgb_set_alpha (&gradient_color, PICMAN_OPACITY_OPAQUE);
 
-      color = gimp_gegl_color_new (&gradient_color);
+      color = picman_gegl_color_new (&gradient_color);
 
       gegl_buffer_set_color (paint_buffer, NULL, color);
       g_object_unref (color);
 
-      paint_appl_mode = GIMP_PAINT_INCREMENTAL;
+      paint_appl_mode = PICMAN_PAINT_INCREMENTAL;
     }
   else if (brush_core->brush && brush_core->brush->pixmap)
     {
       /* otherwise check if the brush has a pixmap and use that to
        * color the area
        */
-      gimp_brush_core_color_area_with_pixmap (brush_core, drawable,
+      picman_brush_core_color_area_with_pixmap (brush_core, drawable,
                                               coords,
                                               paint_buffer,
                                               paint_buffer_x,
                                               paint_buffer_y,
-                                              gimp_paint_options_get_brush_mode (paint_options));
+                                              picman_paint_options_get_brush_mode (paint_options));
 
-      paint_appl_mode = GIMP_PAINT_INCREMENTAL;
+      paint_appl_mode = PICMAN_PAINT_INCREMENTAL;
     }
   else
     {
       /* otherwise fill the area with the foreground color */
 
-      GimpRGB    foreground;
+      PicmanRGB    foreground;
       GeglColor *color;
 
-      gimp_context_get_foreground (context, &foreground);
-      color = gimp_gegl_color_new (&foreground);
+      picman_context_get_foreground (context, &foreground);
+      color = picman_gegl_color_new (&foreground);
 
       gegl_buffer_set_color (paint_buffer, NULL, color);
       g_object_unref (color);
     }
 
-  force = gimp_dynamics_get_linear_value (dynamics,
-                                          GIMP_DYNAMICS_OUTPUT_FORCE,
+  force = picman_dynamics_get_linear_value (dynamics,
+                                          PICMAN_DYNAMICS_OUTPUT_FORCE,
                                           coords,
                                           paint_options,
                                           fade_point);
 
   /* finally, let the brush core paste the colored area on the canvas */
-  gimp_brush_core_paste_canvas (brush_core, drawable,
+  picman_brush_core_paste_canvas (brush_core, drawable,
                                 coords,
-                                MIN (opacity, GIMP_OPACITY_OPAQUE),
-                                gimp_context_get_opacity (context),
-                                gimp_context_get_paint_mode (context),
-                                gimp_paint_options_get_brush_mode (paint_options),
+                                MIN (opacity, PICMAN_OPACITY_OPAQUE),
+                                picman_context_get_opacity (context),
+                                picman_context_get_paint_mode (context),
+                                picman_paint_options_get_brush_mode (paint_options),
                                 force,
                                 paint_appl_mode);
 }

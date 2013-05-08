@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,20 +19,20 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "paint/gimppaintoptions.h"
+#include "paint/picmanpaintoptions.h"
 
 
-#include "gimpcurve.h"
-#include "gimpcurve-map.h"
+#include "picmancurve.h"
+#include "picmancurve-map.h"
 
-#include "gimpdynamicsoutput.h"
+#include "picmandynamicsoutput.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define DEFAULT_USE_PRESSURE  FALSE
@@ -66,11 +66,11 @@ enum
 };
 
 
-typedef struct _GimpDynamicsOutputPrivate GimpDynamicsOutputPrivate;
+typedef struct _PicmanDynamicsOutputPrivate PicmanDynamicsOutputPrivate;
 
-struct _GimpDynamicsOutputPrivate
+struct _PicmanDynamicsOutputPrivate
 {
-  GimpDynamicsOutputType  type;
+  PicmanDynamicsOutputType  type;
 
   gboolean                use_pressure;
   gboolean                use_velocity;
@@ -80,163 +80,163 @@ struct _GimpDynamicsOutputPrivate
   gboolean                use_random;
   gboolean                use_fade;
 
-  GimpCurve              *pressure_curve;
-  GimpCurve              *velocity_curve;
-  GimpCurve              *direction_curve;
-  GimpCurve              *tilt_curve;
-  GimpCurve              *wheel_curve;
-  GimpCurve              *random_curve;
-  GimpCurve              *fade_curve;
+  PicmanCurve              *pressure_curve;
+  PicmanCurve              *velocity_curve;
+  PicmanCurve              *direction_curve;
+  PicmanCurve              *tilt_curve;
+  PicmanCurve              *wheel_curve;
+  PicmanCurve              *random_curve;
+  PicmanCurve              *fade_curve;
 };
 
 #define GET_PRIVATE(output) \
         G_TYPE_INSTANCE_GET_PRIVATE (output, \
-                                     GIMP_TYPE_DYNAMICS_OUTPUT, \
-                                     GimpDynamicsOutputPrivate)
+                                     PICMAN_TYPE_DYNAMICS_OUTPUT, \
+                                     PicmanDynamicsOutputPrivate)
 
 
-static void   gimp_dynamics_output_finalize     (GObject           *object);
-static void   gimp_dynamics_output_set_property (GObject           *object,
+static void   picman_dynamics_output_finalize     (GObject           *object);
+static void   picman_dynamics_output_set_property (GObject           *object,
                                                  guint              property_id,
                                                  const GValue      *value,
                                                  GParamSpec        *pspec);
-static void   gimp_dynamics_output_get_property (GObject           *object,
+static void   picman_dynamics_output_get_property (GObject           *object,
                                                  guint              property_id,
                                                  GValue            *value,
                                                  GParamSpec        *pspec);
-static void   gimp_dynamics_output_copy_curve   (GimpCurve          *src,
-                                                 GimpCurve          *dest);
+static void   picman_dynamics_output_copy_curve   (PicmanCurve          *src,
+                                                 PicmanCurve          *dest);
 
-static GimpCurve *
-              gimp_dynamics_output_create_curve (GimpDynamicsOutput *output,
+static PicmanCurve *
+              picman_dynamics_output_create_curve (PicmanDynamicsOutput *output,
                                                  const gchar        *name);
-static void   gimp_dynamics_output_curve_dirty  (GimpCurve          *curve,
-                                                 GimpDynamicsOutput *output);
+static void   picman_dynamics_output_curve_dirty  (PicmanCurve          *curve,
+                                                 PicmanDynamicsOutput *output);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpDynamicsOutput, gimp_dynamics_output,
-                         GIMP_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanDynamicsOutput, picman_dynamics_output,
+                         PICMAN_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL))
 
-#define parent_class gimp_dynamics_output_parent_class
+#define parent_class picman_dynamics_output_parent_class
 
 
 static void
-gimp_dynamics_output_class_init (GimpDynamicsOutputClass *klass)
+picman_dynamics_output_class_init (PicmanDynamicsOutputClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize     = gimp_dynamics_output_finalize;
-  object_class->set_property = gimp_dynamics_output_set_property;
-  object_class->get_property = gimp_dynamics_output_get_property;
+  object_class->finalize     = picman_dynamics_output_finalize;
+  object_class->set_property = picman_dynamics_output_set_property;
+  object_class->get_property = picman_dynamics_output_get_property;
 
   g_object_class_install_property (object_class, PROP_TYPE,
                                    g_param_spec_enum ("type", NULL,
                                                       _("Output type"),
-                                                      GIMP_TYPE_DYNAMICS_OUTPUT_TYPE,
-                                                      GIMP_DYNAMICS_OUTPUT_OPACITY,
-                                                      GIMP_PARAM_READWRITE |
+                                                      PICMAN_TYPE_DYNAMICS_OUTPUT_TYPE,
+                                                      PICMAN_DYNAMICS_OUTPUT_OPACITY,
+                                                      PICMAN_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_PRESSURE,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_PRESSURE,
                                     "use-pressure", NULL,
                                     DEFAULT_USE_PRESSURE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_VELOCITY,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_VELOCITY,
                                     "use-velocity", NULL,
                                     DEFAULT_USE_VELOCITY,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_DIRECTION,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_DIRECTION,
                                     "use-direction", NULL,
                                     DEFAULT_USE_DIRECTION,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_TILT,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_TILT,
                                     "use-tilt", NULL,
                                     DEFAULT_USE_TILT,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_WHEEL,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_WHEEL,
                                     "use-wheel", NULL,
                                     DEFAULT_USE_TILT,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_RANDOM,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_RANDOM,
                                     "use-random", NULL,
                                     DEFAULT_USE_RANDOM,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_FADE,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_FADE,
                                     "use-fade", NULL,
                                     DEFAULT_USE_FADE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_PRESSURE_CURVE,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_PRESSURE_CURVE,
                                    "pressure-curve", NULL,
-                                   GIMP_TYPE_CURVE,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_CURVE,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_VELOCITY_CURVE,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_VELOCITY_CURVE,
                                    "velocity-curve", NULL,
-                                   GIMP_TYPE_CURVE,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_CURVE,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_DIRECTION_CURVE,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_DIRECTION_CURVE,
                                    "direction-curve", NULL,
-                                   GIMP_TYPE_CURVE,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_CURVE,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_TILT_CURVE,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_TILT_CURVE,
                                    "tilt-curve", NULL,
-                                   GIMP_TYPE_CURVE,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_CURVE,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_WHEEL_CURVE,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_WHEEL_CURVE,
                                    "wheel-curve", NULL,
-                                   GIMP_TYPE_CURVE,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_CURVE,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_RANDOM_CURVE,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_RANDOM_CURVE,
                                    "random-curve", NULL,
-                                   GIMP_TYPE_CURVE,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_CURVE,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_FADE_CURVE,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_FADE_CURVE,
                                    "fade-curve", NULL,
-                                   GIMP_TYPE_CURVE,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_CURVE,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 
-  g_type_class_add_private (klass, sizeof (GimpDynamicsOutputPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanDynamicsOutputPrivate));
 }
 
 static void
-gimp_dynamics_output_init (GimpDynamicsOutput *output)
+picman_dynamics_output_init (PicmanDynamicsOutput *output)
 {
-  GimpDynamicsOutputPrivate *private = GET_PRIVATE (output);
+  PicmanDynamicsOutputPrivate *private = GET_PRIVATE (output);
 
-  private->pressure_curve  = gimp_dynamics_output_create_curve (output,
+  private->pressure_curve  = picman_dynamics_output_create_curve (output,
                                                                 "pressure-curve");
-  private->velocity_curve  = gimp_dynamics_output_create_curve (output,
+  private->velocity_curve  = picman_dynamics_output_create_curve (output,
                                                                 "velocity-curve");
-  private->direction_curve = gimp_dynamics_output_create_curve (output,
+  private->direction_curve = picman_dynamics_output_create_curve (output,
                                                                 "direction-curve");
-  private->tilt_curve      = gimp_dynamics_output_create_curve (output,
+  private->tilt_curve      = picman_dynamics_output_create_curve (output,
                                                                 "tilt-curve");
-  private->wheel_curve     = gimp_dynamics_output_create_curve (output,
+  private->wheel_curve     = picman_dynamics_output_create_curve (output,
                                                                 "wheel-curve");
-  private->random_curve    = gimp_dynamics_output_create_curve (output,
+  private->random_curve    = picman_dynamics_output_create_curve (output,
                                                                 "random-curve");
-  private->fade_curve      = gimp_dynamics_output_create_curve (output,
+  private->fade_curve      = picman_dynamics_output_create_curve (output,
                                                                 "fade-curve");
 }
 
 static void
-gimp_dynamics_output_finalize (GObject *object)
+picman_dynamics_output_finalize (GObject *object)
 {
-  GimpDynamicsOutputPrivate *private = GET_PRIVATE (object);
+  PicmanDynamicsOutputPrivate *private = GET_PRIVATE (object);
 
   g_object_unref (private->pressure_curve);
   g_object_unref (private->velocity_curve);
@@ -250,12 +250,12 @@ gimp_dynamics_output_finalize (GObject *object)
 }
 
 static void
-gimp_dynamics_output_set_property (GObject      *object,
+picman_dynamics_output_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpDynamicsOutputPrivate *private = GET_PRIVATE (object);
+  PicmanDynamicsOutputPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -292,37 +292,37 @@ gimp_dynamics_output_set_property (GObject      *object,
       break;
 
     case PROP_PRESSURE_CURVE:
-      gimp_dynamics_output_copy_curve (g_value_get_object (value),
+      picman_dynamics_output_copy_curve (g_value_get_object (value),
                                        private->pressure_curve);
       break;
 
     case PROP_VELOCITY_CURVE:
-      gimp_dynamics_output_copy_curve (g_value_get_object (value),
+      picman_dynamics_output_copy_curve (g_value_get_object (value),
                                        private->velocity_curve);
       break;
 
     case PROP_DIRECTION_CURVE:
-      gimp_dynamics_output_copy_curve (g_value_get_object (value),
+      picman_dynamics_output_copy_curve (g_value_get_object (value),
                                        private->direction_curve);
       break;
 
     case PROP_TILT_CURVE:
-      gimp_dynamics_output_copy_curve (g_value_get_object (value),
+      picman_dynamics_output_copy_curve (g_value_get_object (value),
                                        private->tilt_curve);
       break;
 
     case PROP_WHEEL_CURVE:
-      gimp_dynamics_output_copy_curve (g_value_get_object (value),
+      picman_dynamics_output_copy_curve (g_value_get_object (value),
                                        private->wheel_curve);
       break;
 
     case PROP_RANDOM_CURVE:
-      gimp_dynamics_output_copy_curve (g_value_get_object (value),
+      picman_dynamics_output_copy_curve (g_value_get_object (value),
                                        private->random_curve);
       break;
 
     case PROP_FADE_CURVE:
-      gimp_dynamics_output_copy_curve (g_value_get_object (value),
+      picman_dynamics_output_copy_curve (g_value_get_object (value),
                                        private->fade_curve);
       break;
 
@@ -333,12 +333,12 @@ gimp_dynamics_output_set_property (GObject      *object,
 }
 
 static void
-gimp_dynamics_output_get_property (GObject    *object,
+picman_dynamics_output_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpDynamicsOutputPrivate *private = GET_PRIVATE (object);
+  PicmanDynamicsOutputPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -411,22 +411,22 @@ gimp_dynamics_output_get_property (GObject    *object,
 
 /*  public functions  */
 
-GimpDynamicsOutput *
-gimp_dynamics_output_new (const gchar            *name,
-                          GimpDynamicsOutputType  type)
+PicmanDynamicsOutput *
+picman_dynamics_output_new (const gchar            *name,
+                          PicmanDynamicsOutputType  type)
 {
   g_return_val_if_fail (name != NULL, NULL);
 
-  return g_object_new (GIMP_TYPE_DYNAMICS_OUTPUT,
+  return g_object_new (PICMAN_TYPE_DYNAMICS_OUTPUT,
                        "name", name,
                        "type", type,
                        NULL);
 }
 
 gboolean
-gimp_dynamics_output_is_enabled (GimpDynamicsOutput *output)
+picman_dynamics_output_is_enabled (PicmanDynamicsOutput *output)
 {
-  GimpDynamicsOutputPrivate *private = GET_PRIVATE (output);
+  PicmanDynamicsOutputPrivate *private = GET_PRIVATE (output);
 
   return (private->use_pressure  ||
           private->use_velocity  ||
@@ -438,40 +438,40 @@ gimp_dynamics_output_is_enabled (GimpDynamicsOutput *output)
 }
 
 gdouble
-gimp_dynamics_output_get_linear_value (GimpDynamicsOutput *output,
-                                       const GimpCoords   *coords,
-                                       GimpPaintOptions   *options,
+picman_dynamics_output_get_linear_value (PicmanDynamicsOutput *output,
+                                       const PicmanCoords   *coords,
+                                       PicmanPaintOptions   *options,
                                        gdouble             fade_point)
 {
-  GimpDynamicsOutputPrivate *private = GET_PRIVATE (output);
+  PicmanDynamicsOutputPrivate *private = GET_PRIVATE (output);
   gdouble                    total   = 0.0;
   gdouble                    result  = 1.0;
   gint                       factors = 0;
 
   if (private->use_pressure)
     {
-      total += gimp_curve_map_value (private->pressure_curve,
+      total += picman_curve_map_value (private->pressure_curve,
                                      coords->pressure);
       factors++;
     }
 
   if (private->use_velocity)
     {
-      total += gimp_curve_map_value (private->velocity_curve,
+      total += picman_curve_map_value (private->velocity_curve,
                                     (1.0 - coords->velocity));
       factors++;
     }
 
   if (private->use_direction)
     {
-      total += gimp_curve_map_value (private->direction_curve,
+      total += picman_curve_map_value (private->direction_curve,
                                      fmod (coords->direction + 0.5, 1));
       factors++;
     }
 
   if (private->use_tilt)
     {
-      total += gimp_curve_map_value (private->tilt_curve,
+      total += picman_curve_map_value (private->tilt_curve,
                                      (1.0 - sqrt (SQR (coords->xtilt) +
                                       SQR (coords->ytilt))));
       factors++;
@@ -483,20 +483,20 @@ gimp_dynamics_output_get_linear_value (GimpDynamicsOutput *output,
 
       wheel = coords->wheel;
 
-      total += gimp_curve_map_value (private->wheel_curve, wheel);
+      total += picman_curve_map_value (private->wheel_curve, wheel);
       factors++;
     }
 
   if (private->use_random)
     {
-      total += gimp_curve_map_value (private->random_curve,
+      total += picman_curve_map_value (private->random_curve,
                                      g_random_double_range (0.0, 1.0));
       factors++;
     }
 
   if (private->use_fade)
     {
-      total += gimp_curve_map_value (private->fade_curve, fade_point);
+      total += picman_curve_map_value (private->fade_curve, fade_point);
 
       factors++;
     }
@@ -513,33 +513,33 @@ gimp_dynamics_output_get_linear_value (GimpDynamicsOutput *output,
 }
 
 gdouble
-gimp_dynamics_output_get_angular_value (GimpDynamicsOutput *output,
-                                        const GimpCoords   *coords,
-                                        GimpPaintOptions   *options,
+picman_dynamics_output_get_angular_value (PicmanDynamicsOutput *output,
+                                        const PicmanCoords   *coords,
+                                        PicmanPaintOptions   *options,
                                         gdouble             fade_point)
 {
-  GimpDynamicsOutputPrivate *private = GET_PRIVATE (output);
+  PicmanDynamicsOutputPrivate *private = GET_PRIVATE (output);
   gdouble                    total   = 0.0;
   gdouble                    result  = 0.0; /* angles are additive, so we retun zero for no change. */
   gint                       factors = 0;
 
   if (private->use_pressure)
     {
-      total += gimp_curve_map_value (private->pressure_curve,
+      total += picman_curve_map_value (private->pressure_curve,
                                      coords->pressure);
       factors++;
     }
 
   if (private->use_velocity)
     {
-      total += gimp_curve_map_value (private->velocity_curve,
+      total += picman_curve_map_value (private->velocity_curve,
                                     (1.0 - coords->velocity));
       factors++;
     }
 
   if (private->use_direction)
     {
-      total += gimp_curve_map_value (private->direction_curve,
+      total += picman_curve_map_value (private->direction_curve,
                                      coords->direction);
       factors++;
     }
@@ -579,7 +579,7 @@ gimp_dynamics_output_get_angular_value (GimpDynamicsOutput *output,
       while (tilt < 0.0)
         tilt += 1.0;
 
-      total += gimp_curve_map_value (private->tilt_curve, tilt);
+      total += picman_curve_map_value (private->tilt_curve, tilt);
       factors++;
     }
 
@@ -587,20 +587,20 @@ gimp_dynamics_output_get_angular_value (GimpDynamicsOutput *output,
     {
       gdouble angle = 1.0 - fmod(0.5 + coords->wheel, 1);
 
-      total += gimp_curve_map_value (private->wheel_curve, angle);
+      total += picman_curve_map_value (private->wheel_curve, angle);
       factors++;
     }
 
   if (private->use_random)
     {
-      total += gimp_curve_map_value (private->random_curve,
+      total += picman_curve_map_value (private->random_curve,
                                      g_random_double_range (0.0, 1.0));
       factors++;
     }
 
   if (private->use_fade)
     {
-      total += gimp_curve_map_value (private->fade_curve, fade_point);
+      total += picman_curve_map_value (private->fade_curve, fade_point);
 
       factors++;
     }
@@ -617,12 +617,12 @@ gimp_dynamics_output_get_angular_value (GimpDynamicsOutput *output,
 }
 
 gdouble
-gimp_dynamics_output_get_aspect_value (GimpDynamicsOutput *output,
-                                       const GimpCoords   *coords,
-                                       GimpPaintOptions   *options,
+picman_dynamics_output_get_aspect_value (PicmanDynamicsOutput *output,
+                                       const PicmanCoords   *coords,
+                                       PicmanPaintOptions   *options,
                                        gdouble             fade_point)
 {
-  GimpDynamicsOutputPrivate *private = GET_PRIVATE (output);
+  PicmanDynamicsOutputPrivate *private = GET_PRIVATE (output);
   gdouble                    total   = 0.0;
   gint                       factors = 0;
   gdouble                    sign    = 1.0;
@@ -630,21 +630,21 @@ gimp_dynamics_output_get_aspect_value (GimpDynamicsOutput *output,
 
   if (private->use_pressure)
     {
-      total += gimp_curve_map_value (private->pressure_curve,
+      total += picman_curve_map_value (private->pressure_curve,
                                      coords->pressure);
       factors++;
     }
 
   if (private->use_velocity)
     {
-      total += gimp_curve_map_value (private->velocity_curve,
+      total += picman_curve_map_value (private->velocity_curve,
                                      coords->velocity);
       factors++;
     }
 
   if (private->use_direction)
     {
-      gdouble direction = gimp_curve_map_value (private->direction_curve,
+      gdouble direction = picman_curve_map_value (private->direction_curve,
                                                 coords->direction);
 
       if (((direction > 0.875) && (direction <= 1.0)) ||
@@ -660,7 +660,7 @@ gimp_dynamics_output_get_aspect_value (GimpDynamicsOutput *output,
     {
       gdouble tilt_value =  MAX (fabs (coords->xtilt), fabs (coords->ytilt));
 
-      tilt_value = gimp_curve_map_value (private->tilt_curve,
+      tilt_value = picman_curve_map_value (private->tilt_curve,
                                          tilt_value);
 
       total += tilt_value;
@@ -670,7 +670,7 @@ gimp_dynamics_output_get_aspect_value (GimpDynamicsOutput *output,
 
   if (private->use_wheel)
     {
-      gdouble wheel = gimp_curve_map_value (private->wheel_curve,
+      gdouble wheel = picman_curve_map_value (private->wheel_curve,
                                             coords->wheel);
 
       if (((wheel > 0.875) && (wheel <= 1.0)) ||
@@ -685,7 +685,7 @@ gimp_dynamics_output_get_aspect_value (GimpDynamicsOutput *output,
 
   if (private->use_random)
     {
-      gdouble random = gimp_curve_map_value (private->random_curve,
+      gdouble random = picman_curve_map_value (private->random_curve,
                                              g_random_double_range (0.0, 1.0));
 
       total += random;
@@ -694,7 +694,7 @@ gimp_dynamics_output_get_aspect_value (GimpDynamicsOutput *output,
 
   if (private->use_fade)
     {
-      total += gimp_curve_map_value (private->fade_curve, fade_point);
+      total += picman_curve_map_value (private->fade_curve, fade_point);
 
       factors++;
     }
@@ -713,33 +713,33 @@ gimp_dynamics_output_get_aspect_value (GimpDynamicsOutput *output,
 }
 
 static void
-gimp_dynamics_output_copy_curve (GimpCurve *src,
-                                 GimpCurve *dest)
+picman_dynamics_output_copy_curve (PicmanCurve *src,
+                                 PicmanCurve *dest)
 {
   if (src && dest)
     {
-      gimp_config_copy (GIMP_CONFIG (src),
-                        GIMP_CONFIG (dest),
-                        GIMP_CONFIG_PARAM_SERIALIZE);
+      picman_config_copy (PICMAN_CONFIG (src),
+                        PICMAN_CONFIG (dest),
+                        PICMAN_CONFIG_PARAM_SERIALIZE);
     }
 }
 
-static GimpCurve *
-gimp_dynamics_output_create_curve (GimpDynamicsOutput *output,
+static PicmanCurve *
+picman_dynamics_output_create_curve (PicmanDynamicsOutput *output,
                                    const gchar        *name)
 {
-  GimpCurve *curve = GIMP_CURVE (gimp_curve_new (name));
+  PicmanCurve *curve = PICMAN_CURVE (picman_curve_new (name));
 
   g_signal_connect_object (curve, "dirty",
-                           G_CALLBACK (gimp_dynamics_output_curve_dirty),
+                           G_CALLBACK (picman_dynamics_output_curve_dirty),
                            output, 0);
 
   return curve;
 }
 
 static void
-gimp_dynamics_output_curve_dirty (GimpCurve          *curve,
-                                  GimpDynamicsOutput *output)
+picman_dynamics_output_curve_dirty (PicmanCurve          *curve,
+                                  PicmanDynamicsOutput *output)
 {
-  g_object_notify (G_OBJECT (output), gimp_object_get_name (curve));
+  g_object_notify (G_OBJECT (output), picman_object_get_name (curve));
 }

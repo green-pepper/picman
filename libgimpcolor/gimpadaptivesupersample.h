@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,12 +16,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_COLOR_H_INSIDE__) && !defined (GIMP_COLOR_COMPILATION)
-#error "Only <libgimpcolor/gimpcolor.h> can be included directly."
+#if !defined (__PICMAN_COLOR_H_INSIDE__) && !defined (PICMAN_COLOR_COMPILATION)
+#error "Only <libpicmancolor/picmancolor.h> can be included directly."
 #endif
 
-#ifndef __GIMP_ADAPTIVE_SUPERSAMPLE_H__
-#define __GIMP_ADAPTIVE_SUPERSAMPLE_H__
+#ifndef __PICMAN_ADAPTIVE_SUPERSAMPLE_H__
+#define __PICMAN_ADAPTIVE_SUPERSAMPLE_H__
 
 G_BEGIN_DECLS
 
@@ -31,20 +31,20 @@ G_BEGIN_DECLS
 /*  adaptive supersampling function taken from LibGCK  */
 
 
-gulong   gimp_adaptive_supersample_area (gint              x1,
+gulong   picman_adaptive_supersample_area (gint              x1,
                                          gint              y1,
                                          gint              x2,
                                          gint              y2,
                                          gint              max_depth,
                                          gdouble           threshold,
-                                         GimpRenderFunc    render_func,
+                                         PicmanRenderFunc    render_func,
                                          gpointer          render_data,
-                                         GimpPutPixelFunc  put_pixel_func,
+                                         PicmanPutPixelFunc  put_pixel_func,
                                          gpointer          put_pixel_data,
-                                         GimpProgressFunc  progress_func,
+                                         PicmanProgressFunc  progress_func,
                                          gpointer          progress_data);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_ADAPTIVE_SUPERSAMPLE_H__ */
+#endif  /* __PICMAN_ADAPTIVE_SUPERSAMPLE_H__ */

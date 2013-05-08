@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Multiple-image Network Graphics (MNG) plug-in
@@ -86,15 +86,15 @@
 
 #include <libmng.h>
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define SAVE_PROC      "file-mng-save"
 #define PLUG_IN_BINARY "file-mng"
-#define PLUG_IN_ROLE   "gimp-file-mng"
+#define PLUG_IN_ROLE   "picman-file-mng"
 #define SCALE_WIDTH    125
 
 enum
@@ -223,9 +223,9 @@ static gboolean  mng_save_dialog (gint32            image_id);
 static void      query           (void);
 static void      run             (const gchar      *name,
                                   gint              nparams,
-                                  const GimpParam  *param,
+                                  const PicmanParam  *param,
                                   gint             *nreturn_vals,
-                                  GimpParam       **return_vals);
+                                  PicmanParam       **return_vals);
 
 
 /*
@@ -464,7 +464,7 @@ respin_cmap (png_structp  pp,
   gint           transparent;
   gint           cols, rows;
 
-  before = gimp_image_get_colormap (image_id, &colors);
+  before = picman_image_get_colormap (image_id, &colors);
 
   /* Make sure there is something in the colormap */
   if (colors == 0)
@@ -600,7 +600,7 @@ mng_save_image (const gchar  *filename,
   guint32         mng_ticks_per_second;
   guint32         mng_simplicity_profile;
 
-  layers = gimp_image_get_layers (image_id, &num_layers);
+  layers = picman_image_get_layers (image_id, &num_layers);
 
   if (num_layers < 1)
     return FALSE;
@@ -610,8 +610,8 @@ mng_save_image (const gchar  *filename,
   else
     mng_ticks_per_second = 0;
 
-  rows = gimp_image_height (image_id);
-  cols = gimp_image_width (image_id);
+  rows = picman_image_height (image_id);
+  cols = picman_image_width (image_id);
 
   mng_simplicity_profile = (MNG_SIMPLICITY_VALID |
                             MNG_SIMPLICITY_SIMPLEFEATURES |
@@ -622,7 +622,7 @@ mng_save_image (const gchar  *filename,
                              MNG_SIMPLICITY_DELTAPNG);
 
   for (i = 0; i < num_layers; i++)
-    if (gimp_drawable_has_alpha (layers[i]))
+    if (picman_drawable_has_alpha (layers[i]))
       {
         /* internal transparency exists */
         mng_simplicity_profile |= MNG_SIMPLICITY_TRANSPARENCY;
@@ -646,7 +646,7 @@ mng_save_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       goto err;
     }
 
@@ -682,7 +682,7 @@ mng_save_image (const gchar  *filename,
   if ((num_layers > 1) && (mng_data.loop))
     {
       gint32 ms =
-        parse_ms_tag_from_layer_name (gimp_item_get_name (layers[0]));
+        parse_ms_tag_from_layer_name (picman_item_get_name (layers[0]));
 
       if (mng_putchunk_term (handle, MNG_TERMACTION_REPEAT,
                              MNG_ITERACTION_LASTFRAME,
@@ -695,7 +695,7 @@ mng_save_image (const gchar  *filename,
   else
     {
       gint32 ms =
-        parse_ms_tag_from_layer_name (gimp_item_get_name (layers[0]));
+        parse_ms_tag_from_layer_name (picman_item_get_name (layers[0]));
 
       if (mng_putchunk_term (handle, MNG_TERMACTION_LASTFRAME,
                              MNG_ITERACTION_LASTFRAME,
@@ -711,7 +711,7 @@ mng_save_image (const gchar  *filename,
 
   if (mng_putchunk_text (handle,
                          strlen (MNG_TEXT_TITLE), MNG_TEXT_TITLE,
-                         18, "Created using GIMP") != MNG_NOERROR)
+                         18, "Created using PICMAN") != MNG_NOERROR)
     {
       g_warning ("Unable to mng_putchunk_text() in mng_save_image()");
       goto err3;
@@ -722,11 +722,11 @@ mng_save_image (const gchar  *filename,
   /* how do we get this to work? */
   if (mng_data.bkgd)
     {
-      GimpRGB bgcolor;
+      PicmanRGB bgcolor;
       guchar red, green, blue;
 
-      gimp_context_get_background (&bgcolor);
-      gimp_rgb_get_uchar (&bgcolor, &red, &green, &blue);
+      picman_context_get_background (&bgcolor);
+      picman_rgb_get_uchar (&bgcolor, &red, &green, &blue);
 
       if (mng_putchunk_back (handle, red, green, blue,
                              MNG_BACKGROUNDCOLOR_MANDATORY,
@@ -737,7 +737,7 @@ mng_save_image (const gchar  *filename,
         }
 
       if (mng_putchunk_bkgd (handle, MNG_FALSE, 2, 0,
-                             gimp_rgb_luminance_uchar (&bgcolor),
+                             picman_rgb_luminance_uchar (&bgcolor),
                              red, green, blue) != MNG_NOERROR)
         {
           g_warning ("Unable to mng_putchunk_bkgd() in mng_save_image()");
@@ -750,7 +750,7 @@ mng_save_image (const gchar  *filename,
   if (mng_data.gama)
     {
       if (mng_putchunk_gama (handle, MNG_FALSE,
-                             (1.0 / (gimp_gamma ()) * 100000)) != MNG_NOERROR)
+                             (1.0 / (picman_gamma ()) * 100000)) != MNG_NOERROR)
         {
           g_warning ("Unable to mng_putchunk_gama() in mng_save_image()");
           goto err3;
@@ -762,7 +762,7 @@ mng_save_image (const gchar  *filename,
   /* how do we get this to work? */
   if (mng_data.phys)
     {
-      gimp_image_get_resolution(original_image_id, &xres, &yres);
+      picman_image_get_resolution(original_image_id, &xres, &yres);
 
       if (mng_putchunk_phyg (handle, MNG_FALSE,
                              (mng_uint32) (xres * 39.37),
@@ -797,12 +797,12 @@ mng_save_image (const gchar  *filename,
         }
     }
 
-  if (gimp_image_base_type (image_id) == GIMP_INDEXED)
+  if (picman_image_base_type (image_id) == PICMAN_INDEXED)
     {
       guchar *palette;
       gint    numcolors;
 
-      palette = gimp_image_get_colormap (image_id, &numcolors);
+      palette = picman_image_get_colormap (image_id, &numcolors);
 
       if ((numcolors != 0) &&
           (mng_putchunk_plte_wrapper (handle, numcolors,
@@ -815,7 +815,7 @@ mng_save_image (const gchar  *filename,
 
   for (i = (num_layers - 1); i >= 0; i--)
     {
-      GimpImageType   layer_drawable_type;
+      PicmanImageType   layer_drawable_type;
       GeglBuffer     *layer_buffer;
       gint            layer_offset_x, layer_offset_y;
       gint            layer_rows, layer_cols;
@@ -844,15 +844,15 @@ mng_save_image (const gchar  *filename,
       int             color_type;
       int             bit_depth;
 
-      layer_name          = gimp_item_get_name (layers[i]);
+      layer_name          = picman_item_get_name (layers[i]);
       layer_chunks_type   = parse_chunks_type_from_layer_name (layer_name);
-      layer_drawable_type = gimp_drawable_type (layers[i]);
+      layer_drawable_type = picman_drawable_type (layers[i]);
 
-      layer_buffer        = gimp_drawable_get_buffer (layers[i]);
+      layer_buffer        = picman_drawable_get_buffer (layers[i]);
       layer_rows          = gegl_buffer_get_width  (layer_buffer);
       layer_cols          = gegl_buffer_get_height (layer_buffer);
 
-      gimp_drawable_offsets (layers[i], &layer_offset_x, &layer_offset_y);
+      picman_drawable_offsets (layers[i], &layer_offset_x, &layer_offset_y);
       layer_has_unique_palette = TRUE;
 
       for (j = 0; j < 256; j++)
@@ -860,32 +860,32 @@ mng_save_image (const gchar  *filename,
 
       switch (layer_drawable_type)
         {
-        case GIMP_RGB_IMAGE:
+        case PICMAN_RGB_IMAGE:
           layer_format        = babl_format ("R'G'B' u8");
           layer_mng_colortype = MNG_COLORTYPE_RGB;
           break;
-        case GIMP_RGBA_IMAGE:
+        case PICMAN_RGBA_IMAGE:
           layer_format        = babl_format ("R'G'B'A u8");
           layer_mng_colortype = MNG_COLORTYPE_RGBA;
           break;
-        case GIMP_GRAY_IMAGE:
+        case PICMAN_GRAY_IMAGE:
           layer_format        = babl_format ("Y' u8");
           layer_mng_colortype = MNG_COLORTYPE_GRAY;
           break;
-        case GIMP_GRAYA_IMAGE:
+        case PICMAN_GRAYA_IMAGE:
           layer_format        = babl_format ("Y'A u8");
           layer_mng_colortype = MNG_COLORTYPE_GRAYA;
           break;
-        case GIMP_INDEXED_IMAGE:
+        case PICMAN_INDEXED_IMAGE:
           layer_format        = gegl_buffer_get_format (layer_buffer);
           layer_mng_colortype = MNG_COLORTYPE_INDEXED;
           break;
-        case GIMP_INDEXEDA_IMAGE:
+        case PICMAN_INDEXEDA_IMAGE:
           layer_format        = gegl_buffer_get_format (layer_buffer);
           layer_mng_colortype = MNG_COLORTYPE_INDEXED | MNG_COLORTYPE_GRAYA;
           break;
         default:
-          g_warning ("Unsupported GimpImageType in mng_save_image()");
+          g_warning ("Unsupported PicmanImageType in mng_save_image()");
           goto err3;
         }
 
@@ -973,9 +973,9 @@ mng_save_image (const gchar  *filename,
             }
         }
 
-      if ((temp_file_name = gimp_temp_name ("mng")) == NULL)
+      if ((temp_file_name = picman_temp_name ("mng")) == NULL)
         {
-          g_warning ("gimp_temp_name() failed in mng_save_image()");
+          g_warning ("picman_temp_name() failed in mng_save_image()");
           goto err3;
         }
 
@@ -983,7 +983,7 @@ mng_save_image (const gchar  *filename,
         {
           g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                        _("Could not open '%s' for writing: %s"),
-                       gimp_filename_to_utf8 (temp_file_name),
+                       picman_filename_to_utf8 (temp_file_name),
                        g_strerror (errno));
           g_unlink (temp_file_name);
           goto err3;
@@ -1025,26 +1025,26 @@ mng_save_image (const gchar  *filename,
 
       switch (layer_drawable_type)
         {
-        case GIMP_RGB_IMAGE:
+        case PICMAN_RGB_IMAGE:
           color_type = PNG_COLOR_TYPE_RGB;
           break;
-        case GIMP_RGBA_IMAGE:
+        case PICMAN_RGBA_IMAGE:
           color_type = PNG_COLOR_TYPE_RGB_ALPHA;
           break;
-        case GIMP_GRAY_IMAGE:
+        case PICMAN_GRAY_IMAGE:
           color_type = PNG_COLOR_TYPE_GRAY;
           break;
-        case GIMP_GRAYA_IMAGE:
+        case PICMAN_GRAYA_IMAGE:
           color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
           break;
-        case GIMP_INDEXED_IMAGE:
+        case PICMAN_INDEXED_IMAGE:
           color_type = PNG_COLOR_TYPE_PALETTE;
           mngg.has_plte = TRUE;
           mngg.palette = (png_colorp)
-            gimp_image_get_colormap (image_id, &mngg.num_palette);
+            picman_image_get_colormap (image_id, &mngg.num_palette);
           bit_depth = get_bit_depth_for_palette (mngg.num_palette);
           break;
-        case GIMP_INDEXEDA_IMAGE:
+        case PICMAN_INDEXEDA_IMAGE:
           color_type = PNG_COLOR_TYPE_PALETTE;
           layer_has_unique_palette =
             respin_cmap (pp, info, layer_remap,
@@ -1091,7 +1091,7 @@ mng_save_image (const gchar  *filename,
           (bit_depth < 8))
         png_set_packing (pp);
 
-      tile_height = gimp_tile_height ();
+      tile_height = picman_tile_height ();
       layer_pixel = g_new (guchar, tile_height * layer_cols * layer_bpp);
       layer_pixels = g_new (guchar *, tile_height);
 
@@ -1156,7 +1156,7 @@ mng_save_image (const gchar  *filename,
         {
           g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                        _("Could not open '%s' for reading: %s"),
-                       gimp_filename_to_utf8 (temp_file_name),
+                       picman_filename_to_utf8 (temp_file_name),
                        g_strerror (errno));
           g_unlink (temp_file_name);
           goto err3;
@@ -1334,14 +1334,14 @@ mng_save_dialog (gint32 image_id)
   gint           num_layers;
   gboolean       run;
 
-  dialog = gimp_export_dialog_new (_("MNG"), PLUG_IN_BINARY, SAVE_PROC);
+  dialog = picman_export_dialog_new (_("MNG"), PLUG_IN_BINARY, SAVE_PROC);
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       main_vbox, TRUE, TRUE, 0);
 
-  frame = gimp_frame_new (_("MNG Options"));
+  frame = picman_frame_new (_("MNG Options"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1351,7 +1351,7 @@ mng_save_dialog (gint32 image_id)
   gtk_box_pack_start (GTK_BOX (vbox), toggle, FALSE, FALSE, 0);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mng_data.interlaced);
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle),
@@ -1363,7 +1363,7 @@ mng_save_dialog (gint32 image_id)
   gtk_widget_set_sensitive (toggle, FALSE);
   gtk_box_pack_start (GTK_BOX (vbox), toggle, FALSE, FALSE, 0);
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mng_data.bkgd);
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle), mng_data.bkgd);
@@ -1373,7 +1373,7 @@ mng_save_dialog (gint32 image_id)
   toggle = gtk_check_button_new_with_label (_("Save gamma"));
   gtk_box_pack_start (GTK_BOX (vbox), toggle, FALSE, FALSE, 0);
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mng_data.gama);
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle), mng_data.gama);
@@ -1384,7 +1384,7 @@ mng_save_dialog (gint32 image_id)
   gtk_widget_set_sensitive (toggle, FALSE);
   gtk_box_pack_start (GTK_BOX (vbox), toggle, FALSE, FALSE, 0);
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mng_data.phys);
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle), mng_data.phys);
@@ -1394,7 +1394,7 @@ mng_save_dialog (gint32 image_id)
   toggle = gtk_check_button_new_with_label (_("Save creation time"));
   gtk_box_pack_start (GTK_BOX (vbox), toggle, FALSE, FALSE, 0);
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mng_data.time);
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle), mng_data.time);
@@ -1407,43 +1407,43 @@ mng_save_dialog (gint32 image_id)
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  gimp_image_get_layers (image_id, &num_layers);
+  picman_image_get_layers (image_id, &num_layers);
 
   if (num_layers == 1)
-    combo = gimp_int_combo_box_new (_("PNG"), CHUNKS_PNG_D,
+    combo = picman_int_combo_box_new (_("PNG"), CHUNKS_PNG_D,
                                     _("JNG"), CHUNKS_JNG_D,
                                     NULL);
   else
-    combo = gimp_int_combo_box_new (_("PNG + delta PNG"), CHUNKS_PNG_D,
+    combo = picman_int_combo_box_new (_("PNG + delta PNG"), CHUNKS_PNG_D,
                                     _("JNG + delta PNG"), CHUNKS_JNG_D,
                                     _("All PNG"),         CHUNKS_PNG,
                                     _("All JNG"),         CHUNKS_JNG,
                                     NULL);
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo),
                                  mng_data.default_chunks);
 
   g_signal_connect (combo, "changed",
-                    G_CALLBACK (gimp_int_combo_box_get_active),
+                    G_CALLBACK (picman_int_combo_box_get_active),
                     &mng_data.default_chunks);
 
   gtk_widget_set_sensitive (combo, FALSE);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("Default chunks type:"), 0.0, 0.5,
                              combo, 1, FALSE);
 
-  combo = gimp_int_combo_box_new (_("Combine"), DISPOSE_COMBINE,
+  combo = picman_int_combo_box_new (_("Combine"), DISPOSE_COMBINE,
                                   _("Replace"), DISPOSE_REPLACE,
                                   NULL);
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo),
                                  mng_data.default_dispose);
 
   g_signal_connect (combo, "changed",
-                    G_CALLBACK (gimp_int_combo_box_get_active),
+                    G_CALLBACK (picman_int_combo_box_get_active),
                     &mng_data.default_dispose);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("Default frame disposal:"), 0.0, 0.5,
                              combo, 1, FALSE);
 
@@ -1455,15 +1455,15 @@ mng_save_dialog (gint32 image_id)
   gtk_widget_set_size_request (scale, SCALE_WIDTH, -1);
   gtk_scale_set_value_pos (GTK_SCALE (scale), GTK_POS_TOP);
   gtk_scale_set_digits (GTK_SCALE (scale), 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 2,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 2,
                              _("PNG compression level:"), 0.0, 0.9,
                              scale, 1, FALSE);
 
   g_signal_connect (scale_adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &mng_data.compression_level);
 
-  gimp_help_set_help_data (scale,
+  picman_help_set_help_data (scale,
                            _("Choose a high compression level "
                              "for small file size"),
                            NULL);
@@ -1477,12 +1477,12 @@ mng_save_dialog (gint32 image_id)
   gtk_scale_set_value_pos (GTK_SCALE (scale), GTK_POS_TOP);
   gtk_scale_set_digits (GTK_SCALE (scale), 2);
   gtk_widget_set_sensitive (scale, FALSE);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 3,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 3,
                              _("JPEG compression quality:"), 0.0, 0.9,
                              scale, 1, FALSE);
 
   g_signal_connect (scale_adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &mng_data.quality);
 
   scale_adj = (GtkAdjustment *)
@@ -1494,18 +1494,18 @@ mng_save_dialog (gint32 image_id)
   gtk_scale_set_value_pos (GTK_SCALE (scale), GTK_POS_TOP);
   gtk_scale_set_digits (GTK_SCALE (scale), 2);
   gtk_widget_set_sensitive (scale, FALSE);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 4,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 4,
                              _("JPEG smoothing factor:"), 0.0, 0.9,
                              scale, 1, FALSE);
 
   g_signal_connect (scale_adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &mng_data.smoothing);
 
   gtk_widget_show (vbox);
   gtk_widget_show (frame);
 
-  frame = gimp_frame_new (_("Animated MNG Options"));
+  frame = picman_frame_new (_("Animated MNG Options"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1514,7 +1514,7 @@ mng_save_dialog (gint32 image_id)
   toggle = gtk_check_button_new_with_label (_("Loop"));
   gtk_box_pack_start (GTK_BOX (vbox), toggle, FALSE, FALSE, 0);
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mng_data.loop);
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle),
@@ -1529,12 +1529,12 @@ mng_save_dialog (gint32 image_id)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  spinbutton = gimp_spin_button_new ((GtkObject **) &spinbutton_adj,
+  spinbutton = picman_spin_button_new ((GtkObject **) &spinbutton_adj,
                                      mng_data.default_delay,
                                      0, 65000, 10, 100, 0, 1, 0);
 
   g_signal_connect (spinbutton_adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &mng_data.default_delay);
 
   gtk_box_pack_start (GTK_BOX (hbox), spinbutton, FALSE, FALSE, 0);
@@ -1553,7 +1553,7 @@ mng_save_dialog (gint32 image_id)
   if (num_layers <= 1)
     {
       gtk_widget_set_sensitive (frame, FALSE);
-      gimp_help_set_help_data (frame,
+      picman_help_set_help_data (frame,
                                _("These options are only available when "
                                  "the exported image has more than one "
                                  "layer. The image you are exporting only has "
@@ -1564,7 +1564,7 @@ mng_save_dialog (gint32 image_id)
   gtk_widget_show (main_vbox);
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -1572,9 +1572,9 @@ mng_save_dialog (gint32 image_id)
 }
 
 
-/* GIMP calls these methods. */
+/* PICMAN calls these methods. */
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,
   NULL,
@@ -1587,29 +1587,29 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",        "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",           "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",        "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",        "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename",    "The name of the file to save the image in" },
+    { PICMAN_PDB_INT32,    "run-mode",        "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",           "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",        "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",        "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename",    "The name of the file to save the image in" },
 
-    { GIMP_PDB_INT32,    "interlace",       "Use interlacing" },
-    { GIMP_PDB_INT32,    "compression",     "PNG deflate compression level (0 - 9)" },
-    { GIMP_PDB_FLOAT,    "quality",         "JPEG quality factor (0.00 - 1.00)" },
-    { GIMP_PDB_FLOAT,    "smoothing",       "JPEG smoothing factor (0.00 - 1.00)" },
-    { GIMP_PDB_INT32,    "loop",            "(ANIMATED MNG) Loop infinitely" },
-    { GIMP_PDB_INT32,    "default-delay",   "(ANIMATED MNG) Default delay between frames in milliseconds" },
-    { GIMP_PDB_INT32,    "default-chunks",  "(ANIMATED MNG) Default chunks type (0 = PNG + Delta PNG; 1 = JNG + Delta PNG; 2 = All PNG; 3 = All JNG)" },
-    { GIMP_PDB_INT32,    "default-dispose", "(ANIMATED MNG) Default dispose type (0 = combine; 1 = replace)" },
-    { GIMP_PDB_INT32,    "bkgd",            "Write bKGD (background color) chunk" },
-    { GIMP_PDB_INT32,    "gama",            "Write gAMA (gamma) chunk"},
-    { GIMP_PDB_INT32,    "phys",            "Write pHYs (image resolution) chunk" },
-    { GIMP_PDB_INT32,    "time",            "Write tIME (creation time) chunk" }
+    { PICMAN_PDB_INT32,    "interlace",       "Use interlacing" },
+    { PICMAN_PDB_INT32,    "compression",     "PNG deflate compression level (0 - 9)" },
+    { PICMAN_PDB_FLOAT,    "quality",         "JPEG quality factor (0.00 - 1.00)" },
+    { PICMAN_PDB_FLOAT,    "smoothing",       "JPEG smoothing factor (0.00 - 1.00)" },
+    { PICMAN_PDB_INT32,    "loop",            "(ANIMATED MNG) Loop infinitely" },
+    { PICMAN_PDB_INT32,    "default-delay",   "(ANIMATED MNG) Default delay between frames in milliseconds" },
+    { PICMAN_PDB_INT32,    "default-chunks",  "(ANIMATED MNG) Default chunks type (0 = PNG + Delta PNG; 1 = JNG + Delta PNG; 2 = All PNG; 3 = All JNG)" },
+    { PICMAN_PDB_INT32,    "default-dispose", "(ANIMATED MNG) Default dispose type (0 = combine; 1 = replace)" },
+    { PICMAN_PDB_INT32,    "bkgd",            "Write bKGD (background color) chunk" },
+    { PICMAN_PDB_INT32,    "gama",            "Write gAMA (gamma) chunk"},
+    { PICMAN_PDB_INT32,    "phys",            "Write pHYs (image resolution) chunk" },
+    { PICMAN_PDB_INT32,    "time",            "Write tIME (creation time) chunk" }
   };
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "Saves images in the MNG file format",
                           "This plug-in saves images in the Multiple-image "
                           "Network Graphics (MNG) format which can be used as "
@@ -1619,22 +1619,22 @@ query (void)
                           "November 19, 2002",
                           N_("MNG animation"),
                           "RGB*,GRAY*,INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_file_handler_mime (SAVE_PROC, "image/x-mng");
-  gimp_register_save_handler (SAVE_PROC, "mng", "");
+  picman_register_file_handler_mime (SAVE_PROC, "image/x-mng");
+  picman_register_save_handler (SAVE_PROC, "mng", "");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam values[2];
+  static PicmanParam values[2];
 
   INIT_I18N ();
   gegl_init (NULL, NULL);
@@ -1642,49 +1642,49 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_SUCCESS;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_SUCCESS;
 
   if (strcmp (name, SAVE_PROC) == 0)
     {
-      GimpRunMode      run_mode          = param[0].data.d_int32;
+      PicmanRunMode      run_mode          = param[0].data.d_int32;
       gint32           image_id          = param[1].data.d_int32;
       gint32           original_image_id = image_id;
       gint32           drawable_id       = param[2].data.d_int32;
-      GimpExportReturn export            = GIMP_EXPORT_IGNORE;
+      PicmanExportReturn export            = PICMAN_EXPORT_IGNORE;
 
-      if ((run_mode == GIMP_RUN_INTERACTIVE)
-          || (run_mode == GIMP_RUN_WITH_LAST_VALS))
+      if ((run_mode == PICMAN_RUN_INTERACTIVE)
+          || (run_mode == PICMAN_RUN_WITH_LAST_VALS))
         {
-          gimp_procedural_db_get_data (SAVE_PROC, &mng_data);
+          picman_procedural_db_get_data (SAVE_PROC, &mng_data);
 
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
-          export = gimp_export_image (&image_id, &drawable_id, NULL,
-                                      GIMP_EXPORT_CAN_HANDLE_RGB     |
-                                      GIMP_EXPORT_CAN_HANDLE_GRAY    |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
-                                      GIMP_EXPORT_CAN_HANDLE_ALPHA   |
-                                      GIMP_EXPORT_CAN_HANDLE_LAYERS);
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
+          export = picman_export_image (&image_id, &drawable_id, NULL,
+                                      PICMAN_EXPORT_CAN_HANDLE_RGB     |
+                                      PICMAN_EXPORT_CAN_HANDLE_GRAY    |
+                                      PICMAN_EXPORT_CAN_HANDLE_INDEXED |
+                                      PICMAN_EXPORT_CAN_HANDLE_ALPHA   |
+                                      PICMAN_EXPORT_CAN_HANDLE_LAYERS);
         }
 
-      if (export == GIMP_EXPORT_CANCEL)
+      if (export == PICMAN_EXPORT_CANCEL)
         {
-          values[0].data.d_status = GIMP_PDB_CANCEL;
+          values[0].data.d_status = PICMAN_PDB_CANCEL;
         }
-      else if (export == GIMP_EXPORT_IGNORE || export == GIMP_EXPORT_EXPORT)
+      else if (export == PICMAN_EXPORT_IGNORE || export == PICMAN_EXPORT_EXPORT)
         {
-          if (run_mode == GIMP_RUN_INTERACTIVE)
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
             {
               if (mng_save_dialog (image_id) == 0)
-                values[0].data.d_status = GIMP_PDB_CANCEL;
+                values[0].data.d_status = PICMAN_PDB_CANCEL;
             }
-          else if (run_mode == GIMP_RUN_NONINTERACTIVE)
+          else if (run_mode == PICMAN_RUN_NONINTERACTIVE)
             {
               if (nparams != 17)
                 {
                   g_message ("Incorrect number of parameters "
                              "passed to file-mng-save()");
-                  values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+                  values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
                 }
               else
                 {
@@ -1735,7 +1735,7 @@ run (const gchar      *name,
                     {
                       g_warning ("Parameter 'default_chunks' passed to "
                                  "file-mng-save() must be in the range 0 - 2.");
-                      values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+                      values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
                     }
 
                   if ((mng_data.default_dispose < 0)
@@ -1743,12 +1743,12 @@ run (const gchar      *name,
                     {
                       g_warning ("Parameter 'default_dispose' passed to "
                                  "file-mng-save() must be in the range 0 - 1.");
-                      values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+                      values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
                     }
                 }
             }
 
-          if (values[0].data.d_status == GIMP_PDB_SUCCESS)
+          if (values[0].data.d_status == PICMAN_PDB_SUCCESS)
             {
               GError *error = NULL;
 
@@ -1756,28 +1756,28 @@ run (const gchar      *name,
                                   image_id, drawable_id,
                                   original_image_id, &error))
                 {
-                  gimp_set_data (SAVE_PROC, &mng_data, sizeof (mng_data));
+                  picman_set_data (SAVE_PROC, &mng_data, sizeof (mng_data));
                 }
               else
                 {
-                  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+                  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
                   if (error)
                     {
                       *nreturn_vals = 2;
-                      values[1].type          = GIMP_PDB_STRING;
+                      values[1].type          = PICMAN_PDB_STRING;
                       values[1].data.d_string = error->message;
                     }
                 }
             }
 
-          if (export == GIMP_EXPORT_EXPORT)
-            gimp_image_delete (image_id);
+          if (export == PICMAN_EXPORT_EXPORT)
+            picman_image_delete (image_id);
         }
 
     }
   else
     {
-      values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+      values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
     }
 }

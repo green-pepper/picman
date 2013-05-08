@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,38 +22,38 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimp-utils.h"
-#include "core/gimpchannel.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-merge.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimpitemundo.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimpprogress.h"
-#include "core/gimpstrokeoptions.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picman-utils.h"
+#include "core/picmanchannel.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-merge.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanitemundo.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanprogress.h"
+#include "core/picmanstrokeoptions.h"
+#include "core/picmantoolinfo.h"
 
-#include "pdb/gimppdb.h"
-#include "pdb/gimpprocedure.h"
+#include "pdb/picmanpdb.h"
+#include "pdb/picmanprocedure.h"
 
-#include "vectors/gimpvectors.h"
-#include "vectors/gimpvectors-export.h"
-#include "vectors/gimpvectors-import.h"
+#include "vectors/picmanvectors.h"
+#include "vectors/picmanvectors-export.h"
+#include "vectors/picmanvectors-import.h"
 
-#include "widgets/gimpaction.h"
-#include "widgets/gimpclipboard.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanaction.h"
+#include "widgets/picmanclipboard.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "tools/gimpvectortool.h"
+#include "tools/picmanvectortool.h"
 #include "tools/tool_manager.h"
 
 #include "dialogs/stroke-dialog.h"
@@ -64,7 +64,7 @@
 #include "actions.h"
 #include "vectors-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
@@ -97,27 +97,27 @@ void
 vectors_vectors_tool_cmd_callback (GtkAction *action,
                                    gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
-  GimpTool    *active_tool;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
+  PicmanTool    *active_tool;
   return_if_no_vectors (image, vectors, data);
 
-  active_tool = tool_manager_get_active (image->gimp);
+  active_tool = tool_manager_get_active (image->picman);
 
-  if (! GIMP_IS_VECTOR_TOOL (active_tool))
+  if (! PICMAN_IS_VECTOR_TOOL (active_tool))
     {
-      GimpToolInfo  *tool_info = gimp_get_tool_info (image->gimp,
-                                                     "gimp-vector-tool");
+      PicmanToolInfo  *tool_info = picman_get_tool_info (image->picman,
+                                                     "picman-vector-tool");
 
-      if (GIMP_IS_TOOL_INFO (tool_info))
+      if (PICMAN_IS_TOOL_INFO (tool_info))
         {
-          gimp_context_set_tool (action_data_get_context (data), tool_info);
-          active_tool = tool_manager_get_active (image->gimp);
+          picman_context_set_tool (action_data_get_context (data), tool_info);
+          active_tool = tool_manager_get_active (image->picman);
         }
     }
 
-  if (GIMP_IS_VECTOR_TOOL (active_tool))
-    gimp_vector_tool_set_vectors (GIMP_VECTOR_TOOL (active_tool), vectors);
+  if (PICMAN_IS_VECTOR_TOOL (active_tool))
+    picman_vector_tool_set_vectors (PICMAN_VECTOR_TOOL (active_tool), vectors);
 }
 
 void
@@ -125,8 +125,8 @@ vectors_edit_attributes_cmd_callback (GtkAction *action,
                                       gpointer   data)
 {
   VectorsOptionsDialog *options;
-  GimpImage            *image;
-  GimpVectors          *vectors;
+  PicmanImage            *image;
+  PicmanVectors          *vectors;
   GtkWidget            *widget;
   return_if_no_vectors (image, vectors, data);
   return_if_no_widget (widget, data);
@@ -134,12 +134,12 @@ vectors_edit_attributes_cmd_callback (GtkAction *action,
   options = vectors_options_dialog_new (image, vectors,
                                         action_data_get_context (data),
                                         widget,
-                                        gimp_object_get_name (vectors),
+                                        picman_object_get_name (vectors),
                                         _("Path Attributes"),
-                                        "gimp-vectors-edit",
+                                        "picman-vectors-edit",
                                         GTK_STOCK_EDIT,
                                         _("Edit Path Attributes"),
-                                        GIMP_HELP_PATH_EDIT);
+                                        PICMAN_HELP_PATH_EDIT);
 
   g_signal_connect (options->dialog, "response",
                     G_CALLBACK (vectors_edit_vectors_response),
@@ -153,7 +153,7 @@ vectors_new_cmd_callback (GtkAction *action,
                           gpointer   data)
 {
   VectorsOptionsDialog *options;
-  GimpImage            *image;
+  PicmanImage            *image;
   GtkWidget            *widget;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
@@ -164,10 +164,10 @@ vectors_new_cmd_callback (GtkAction *action,
                                         vectors_name ? vectors_name :
                                         _("Path"),
                                         _("New Path"),
-                                        "gimp-vectors-new",
-                                        GIMP_STOCK_PATH,
+                                        "picman-vectors-new",
+                                        PICMAN_STOCK_PATH,
                                         _("New Path Options"),
-                                        GIMP_HELP_PATH_NEW);
+                                        PICMAN_HELP_PATH_NEW);
 
   g_signal_connect (options->dialog, "response",
                     G_CALLBACK (vectors_new_vectors_response),
@@ -180,122 +180,122 @@ void
 vectors_new_last_vals_cmd_callback (GtkAction *action,
                                     gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *new_vectors;
+  PicmanImage   *image;
+  PicmanVectors *new_vectors;
   return_if_no_image (image, data);
 
-  new_vectors = gimp_vectors_new (image, vectors_name);
+  new_vectors = picman_vectors_new (image, vectors_name);
 
-  gimp_image_add_vectors (image, new_vectors,
-                          GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+  picman_image_add_vectors (image, new_vectors,
+                          PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 vectors_raise_cmd_callback (GtkAction *action,
                             gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
   return_if_no_vectors (image, vectors, data);
 
-  gimp_image_raise_item (image, GIMP_ITEM (vectors), NULL);
-  gimp_image_flush (image);
+  picman_image_raise_item (image, PICMAN_ITEM (vectors), NULL);
+  picman_image_flush (image);
 }
 
 void
 vectors_raise_to_top_cmd_callback (GtkAction *action,
                                    gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
   return_if_no_vectors (image, vectors, data);
 
-  gimp_image_raise_item_to_top (image, GIMP_ITEM (vectors));
-  gimp_image_flush (image);
+  picman_image_raise_item_to_top (image, PICMAN_ITEM (vectors));
+  picman_image_flush (image);
 }
 
 void
 vectors_lower_cmd_callback (GtkAction *action,
                             gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
   return_if_no_vectors (image, vectors, data);
 
-  gimp_image_lower_item (image, GIMP_ITEM (vectors), NULL);
-  gimp_image_flush (image);
+  picman_image_lower_item (image, PICMAN_ITEM (vectors), NULL);
+  picman_image_flush (image);
 }
 
 void
 vectors_lower_to_bottom_cmd_callback (GtkAction *action,
                                       gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
   return_if_no_vectors (image, vectors, data);
 
-  gimp_image_lower_item_to_bottom (image, GIMP_ITEM (vectors));
-  gimp_image_flush (image);
+  picman_image_lower_item_to_bottom (image, PICMAN_ITEM (vectors));
+  picman_image_flush (image);
 }
 
 void
 vectors_duplicate_cmd_callback (GtkAction *action,
                                 gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
-  GimpVectors *new_vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
+  PicmanVectors *new_vectors;
   return_if_no_vectors (image, vectors, data);
 
-  new_vectors = GIMP_VECTORS (gimp_item_duplicate (GIMP_ITEM (vectors),
+  new_vectors = PICMAN_VECTORS (picman_item_duplicate (PICMAN_ITEM (vectors),
                                                    G_TYPE_FROM_INSTANCE (vectors)));
 
-  /*  use the actual parent here, not GIMP_IMAGE_ACTIVE_PARENT because
+  /*  use the actual parent here, not PICMAN_IMAGE_ACTIVE_PARENT because
    *  the latter would add a duplicated group inside itself instead of
    *  above it
    */
-  gimp_image_add_vectors (image, new_vectors,
-                          gimp_vectors_get_parent (vectors), -1,
+  picman_image_add_vectors (image, new_vectors,
+                          picman_vectors_get_parent (vectors), -1,
                           TRUE);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 vectors_delete_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
   return_if_no_vectors (image, vectors, data);
 
-  gimp_image_remove_vectors (image, vectors, TRUE, NULL);
-  gimp_image_flush (image);
+  picman_image_remove_vectors (image, vectors, TRUE, NULL);
+  picman_image_flush (image);
 }
 
 void
 vectors_merge_visible_cmd_callback (GtkAction *action,
                                     gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
   GtkWidget   *widget;
   GError      *error = NULL;
   return_if_no_vectors (image, vectors, data);
   return_if_no_widget (widget, data);
 
-  if (! gimp_image_merge_visible_vectors (image, &error))
+  if (! picman_image_merge_visible_vectors (image, &error))
     {
-      gimp_message_literal (image->gimp,
-			    G_OBJECT (widget), GIMP_MESSAGE_WARNING,
+      picman_message_literal (image->picman,
+			    G_OBJECT (widget), PICMAN_MESSAGE_WARNING,
 			    error->message);
       g_clear_error (&error);
       return;
     }
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
@@ -303,14 +303,14 @@ vectors_to_selection_cmd_callback (GtkAction *action,
                                    gint       value,
                                    gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
   return_if_no_vectors (image, vectors, data);
 
-  gimp_item_to_selection (GIMP_ITEM (vectors),
-                          (GimpChannelOps) value,
+  picman_item_to_selection (PICMAN_ITEM (vectors),
+                          (PicmanChannelOps) value,
                           TRUE, FALSE, 0, 0);
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
@@ -318,51 +318,51 @@ vectors_selection_to_vectors_cmd_callback (GtkAction *action,
                                            gint       value,
                                            gpointer   data)
 {
-  GimpImage      *image;
+  PicmanImage      *image;
   GtkWidget      *widget;
-  GimpProcedure  *procedure;
-  GimpValueArray *args;
-  GimpDisplay    *display;
+  PicmanProcedure  *procedure;
+  PicmanValueArray *args;
+  PicmanDisplay    *display;
   GError         *error = NULL;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
 
   if (value)
-    procedure = gimp_pdb_lookup_procedure (image->gimp->pdb,
+    procedure = picman_pdb_lookup_procedure (image->picman->pdb,
                                            "plug-in-sel2path-advanced");
   else
-    procedure = gimp_pdb_lookup_procedure (image->gimp->pdb,
+    procedure = picman_pdb_lookup_procedure (image->picman->pdb,
                                            "plug-in-sel2path");
 
   if (! procedure)
     {
-      gimp_message_literal (image->gimp,
-			    G_OBJECT (widget), GIMP_MESSAGE_ERROR,
+      picman_message_literal (image->picman,
+			    G_OBJECT (widget), PICMAN_MESSAGE_ERROR,
 			    "Selection to path procedure lookup failed.");
       return;
     }
 
-  display = gimp_context_get_display (action_data_get_context (data));
+  display = picman_context_get_display (action_data_get_context (data));
 
-  args = gimp_procedure_get_arguments (procedure);
-  gimp_value_array_truncate (args, 2);
+  args = picman_procedure_get_arguments (procedure);
+  picman_value_array_truncate (args, 2);
 
-  g_value_set_int      (gimp_value_array_index (args, 0),
-                        GIMP_RUN_INTERACTIVE);
-  gimp_value_set_image (gimp_value_array_index (args, 1),
+  g_value_set_int      (picman_value_array_index (args, 0),
+                        PICMAN_RUN_INTERACTIVE);
+  picman_value_set_image (picman_value_array_index (args, 1),
                         image);
 
-  gimp_procedure_execute_async (procedure, image->gimp,
+  picman_procedure_execute_async (procedure, image->picman,
                                 action_data_get_context (data),
-                                GIMP_PROGRESS (display), args,
-                                GIMP_OBJECT (display), &error);
+                                PICMAN_PROGRESS (display), args,
+                                PICMAN_OBJECT (display), &error);
 
-  gimp_value_array_unref (args);
+  picman_value_array_unref (args);
 
   if (error)
     {
-      gimp_message_literal (image->gimp,
-			    G_OBJECT (widget), GIMP_MESSAGE_ERROR,
+      picman_message_literal (image->picman,
+			    G_OBJECT (widget), PICMAN_MESSAGE_ERROR,
 			    error->message);
       g_error_free (error);
     }
@@ -372,29 +372,29 @@ void
 vectors_stroke_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  GimpImage    *image;
-  GimpVectors  *vectors;
-  GimpDrawable *drawable;
+  PicmanImage    *image;
+  PicmanVectors  *vectors;
+  PicmanDrawable *drawable;
   GtkWidget    *widget;
   GtkWidget    *dialog;
   return_if_no_vectors (image, vectors, data);
   return_if_no_widget (widget, data);
 
-  drawable = gimp_image_get_active_drawable (image);
+  drawable = picman_image_get_active_drawable (image);
 
   if (! drawable)
     {
-      gimp_message_literal (image->gimp,
-			    G_OBJECT (widget), GIMP_MESSAGE_WARNING,
+      picman_message_literal (image->picman,
+			    G_OBJECT (widget), PICMAN_MESSAGE_WARNING,
 			    _("There is no active layer or channel to stroke to."));
       return;
     }
 
-  dialog = stroke_dialog_new (GIMP_ITEM (vectors),
+  dialog = stroke_dialog_new (PICMAN_ITEM (vectors),
                               action_data_get_context (data),
                               _("Stroke Path"),
-                              GIMP_STOCK_PATH_STROKE,
-                              GIMP_HELP_PATH_STROKE,
+                              PICMAN_STOCK_PATH_STROKE,
+                              PICMAN_HELP_PATH_STROKE,
                               widget);
   gtk_widget_show (dialog);
 }
@@ -403,45 +403,45 @@ void
 vectors_stroke_last_vals_cmd_callback (GtkAction *action,
                                        gpointer   data)
 {
-  GimpImage         *image;
-  GimpVectors       *vectors;
-  GimpDrawable      *drawable;
-  GimpContext       *context;
+  PicmanImage         *image;
+  PicmanVectors       *vectors;
+  PicmanDrawable      *drawable;
+  PicmanContext       *context;
   GtkWidget         *widget;
-  GimpStrokeOptions *options;
+  PicmanStrokeOptions *options;
   GError            *error = NULL;
   return_if_no_vectors (image, vectors, data);
   return_if_no_context (context, data);
   return_if_no_widget (widget, data);
 
-  drawable = gimp_image_get_active_drawable (image);
+  drawable = picman_image_get_active_drawable (image);
 
   if (! drawable)
     {
-      gimp_message_literal (image->gimp,
-			    G_OBJECT (widget), GIMP_MESSAGE_WARNING,
+      picman_message_literal (image->picman,
+			    G_OBJECT (widget), PICMAN_MESSAGE_WARNING,
 			    _("There is no active layer or channel to stroke to."));
       return;
     }
 
 
-  options = g_object_get_data (G_OBJECT (image->gimp), "saved-stroke-options");
+  options = g_object_get_data (G_OBJECT (image->picman), "saved-stroke-options");
 
   if (options)
     g_object_ref (options);
   else
-    options = gimp_stroke_options_new (image->gimp, context, TRUE);
+    options = picman_stroke_options_new (image->picman, context, TRUE);
 
-  if (! gimp_item_stroke (GIMP_ITEM (vectors), drawable, context, options, FALSE,
+  if (! picman_item_stroke (PICMAN_ITEM (vectors), drawable, context, options, FALSE,
                           TRUE, NULL, &error))
     {
-      gimp_message_literal (image->gimp, G_OBJECT (widget),
-			    GIMP_MESSAGE_WARNING, error->message);
+      picman_message_literal (image->picman, G_OBJECT (widget),
+			    PICMAN_MESSAGE_WARNING, error->message);
       g_clear_error (&error);
     }
   else
     {
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
 
   g_object_unref (options);
@@ -451,16 +451,16 @@ void
 vectors_copy_cmd_callback (GtkAction *action,
                            gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
   gchar       *svg;
   return_if_no_vectors (image, vectors, data);
 
-  svg = gimp_vectors_export_string (image, vectors);
+  svg = picman_vectors_export_string (image, vectors);
 
   if (svg)
     {
-      gimp_clipboard_set_svg (image->gimp, svg);
+      picman_clipboard_set_svg (image->picman, svg);
       g_free (svg);
     }
 }
@@ -469,31 +469,31 @@ void
 vectors_paste_cmd_callback (GtkAction *action,
                             gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   GtkWidget *widget;
   gchar     *svg;
   gsize      svg_size;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
 
-  svg = gimp_clipboard_get_svg (image->gimp, &svg_size);
+  svg = picman_clipboard_get_svg (image->picman, &svg_size);
 
   if (svg)
     {
       GError *error = NULL;
 
-      if (! gimp_vectors_import_buffer (image, svg, svg_size,
+      if (! picman_vectors_import_buffer (image, svg, svg_size,
                                         TRUE, FALSE,
-                                        GIMP_IMAGE_ACTIVE_PARENT, -1,
+                                        PICMAN_IMAGE_ACTIVE_PARENT, -1,
                                         NULL, &error))
         {
-          gimp_message (image->gimp, G_OBJECT (widget), GIMP_MESSAGE_ERROR,
+          picman_message (image->picman, G_OBJECT (widget), PICMAN_MESSAGE_ERROR,
                         "%s", error->message);
           g_clear_error (&error);
         }
       else
         {
-          gimp_image_flush (image);
+          picman_image_flush (image);
         }
 
       g_free (svg);
@@ -505,8 +505,8 @@ vectors_export_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
   VectorsExportDialog *dialog;
-  GimpImage           *image;
-  GimpVectors         *vectors;
+  PicmanImage           *image;
+  PicmanVectors         *vectors;
   GtkWidget           *widget;
   const gchar         *folder;
   return_if_no_vectors (image, vectors, data);
@@ -515,8 +515,8 @@ vectors_export_cmd_callback (GtkAction *action,
   dialog = vectors_export_dialog_new (image, widget,
                                       vectors_export_active_only);
 
-  folder = g_object_get_data (G_OBJECT (image->gimp),
-                              "gimp-vectors-export-folder");
+  folder = g_object_get_data (G_OBJECT (image->picman),
+                              "picman-vectors-export-folder");
   if (folder)
     gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog->dialog),
                                          folder);
@@ -533,7 +533,7 @@ vectors_import_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
   VectorsImportDialog *dialog;
-  GimpImage           *image;
+  PicmanImage           *image;
   GtkWidget           *widget;
   const gchar         *folder;
   return_if_no_image (image, data);
@@ -543,8 +543,8 @@ vectors_import_cmd_callback (GtkAction *action,
                                       vectors_import_merge,
                                       vectors_import_scale);
 
-  folder = g_object_get_data (G_OBJECT (image->gimp),
-                              "gimp-vectors-import-folder");
+  folder = g_object_get_data (G_OBJECT (image->picman),
+                              "picman-vectors-import-folder");
   if (folder)
     gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog->dialog),
                                          folder);
@@ -560,26 +560,26 @@ void
 vectors_visible_cmd_callback (GtkAction *action,
                               gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
   gboolean     visible;
   return_if_no_vectors (image, vectors, data);
 
   visible = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  if (visible != gimp_item_get_visible (GIMP_ITEM (vectors)))
+  if (visible != picman_item_get_visible (PICMAN_ITEM (vectors)))
     {
-      GimpUndo *undo;
+      PicmanUndo *undo;
       gboolean  push_undo = TRUE;
 
-      undo = gimp_image_undo_can_compress (image, GIMP_TYPE_ITEM_UNDO,
-                                           GIMP_UNDO_ITEM_VISIBILITY);
+      undo = picman_image_undo_can_compress (image, PICMAN_TYPE_ITEM_UNDO,
+                                           PICMAN_UNDO_ITEM_VISIBILITY);
 
-      if (undo && GIMP_ITEM_UNDO (undo)->item == GIMP_ITEM (vectors))
+      if (undo && PICMAN_ITEM_UNDO (undo)->item == PICMAN_ITEM (vectors))
         push_undo = FALSE;
 
-      gimp_item_set_visible (GIMP_ITEM (vectors), visible, push_undo);
-      gimp_image_flush (image);
+      picman_item_set_visible (PICMAN_ITEM (vectors), visible, push_undo);
+      picman_image_flush (image);
     }
 }
 
@@ -587,26 +587,26 @@ void
 vectors_linked_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
   gboolean     linked;
   return_if_no_vectors (image, vectors, data);
 
   linked = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  if (linked != gimp_item_get_linked (GIMP_ITEM (vectors)))
+  if (linked != picman_item_get_linked (PICMAN_ITEM (vectors)))
     {
-      GimpUndo *undo;
+      PicmanUndo *undo;
       gboolean  push_undo = TRUE;
 
-      undo = gimp_image_undo_can_compress (image, GIMP_TYPE_ITEM_UNDO,
-                                           GIMP_UNDO_ITEM_LINKED);
+      undo = picman_image_undo_can_compress (image, PICMAN_TYPE_ITEM_UNDO,
+                                           PICMAN_UNDO_ITEM_LINKED);
 
-      if (undo && GIMP_ITEM_UNDO (undo)->item == GIMP_ITEM (vectors))
+      if (undo && PICMAN_ITEM_UNDO (undo)->item == PICMAN_ITEM (vectors))
         push_undo = FALSE;
 
-      gimp_item_set_linked (GIMP_ITEM (vectors), linked, push_undo);
-      gimp_image_flush (image);
+      picman_item_set_linked (PICMAN_ITEM (vectors), linked, push_undo);
+      picman_image_flush (image);
     }
 }
 
@@ -614,30 +614,30 @@ void
 vectors_lock_content_cmd_callback (GtkAction *action,
                                    gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
   gboolean     locked;
   return_if_no_vectors (image, vectors, data);
 
   locked = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  if (locked != gimp_item_get_lock_content (GIMP_ITEM (vectors)))
+  if (locked != picman_item_get_lock_content (PICMAN_ITEM (vectors)))
     {
 #if 0
-      GimpUndo *undo;
+      PicmanUndo *undo;
 #endif
       gboolean  push_undo = TRUE;
 
 #if 0
-      undo = gimp_image_undo_can_compress (image, GIMP_TYPE_ITEM_UNDO,
-                                           GIMP_UNDO_ITEM_LINKED);
+      undo = picman_image_undo_can_compress (image, PICMAN_TYPE_ITEM_UNDO,
+                                           PICMAN_UNDO_ITEM_LINKED);
 
-      if (undo && GIMP_ITEM_UNDO (undo)->item == GIMP_ITEM (vectors))
+      if (undo && PICMAN_ITEM_UNDO (undo)->item == PICMAN_ITEM (vectors))
         push_undo = FALSE;
 #endif
 
-      gimp_item_set_lock_content (GIMP_ITEM (vectors), locked, push_undo);
-      gimp_image_flush (image);
+      picman_item_set_lock_content (PICMAN_ITEM (vectors), locked, push_undo);
+      picman_image_flush (image);
     }
 }
 
@@ -645,27 +645,27 @@ void
 vectors_lock_position_cmd_callback (GtkAction *action,
                                    gpointer   data)
 {
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
   gboolean     locked;
   return_if_no_vectors (image, vectors, data);
 
   locked = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  if (locked != gimp_item_get_lock_position (GIMP_ITEM (vectors)))
+  if (locked != picman_item_get_lock_position (PICMAN_ITEM (vectors)))
     {
-      GimpUndo *undo;
+      PicmanUndo *undo;
       gboolean  push_undo = TRUE;
 
-      undo = gimp_image_undo_can_compress (image, GIMP_TYPE_ITEM_UNDO,
-                                           GIMP_UNDO_ITEM_LOCK_POSITION);
+      undo = picman_image_undo_can_compress (image, PICMAN_TYPE_ITEM_UNDO,
+                                           PICMAN_UNDO_ITEM_LOCK_POSITION);
 
-      if (undo && GIMP_ITEM_UNDO (undo)->item == GIMP_ITEM (vectors))
+      if (undo && PICMAN_ITEM_UNDO (undo)->item == PICMAN_ITEM (vectors))
         push_undo = FALSE;
 
 
-      gimp_item_set_lock_position (GIMP_ITEM (vectors), locked, push_undo);
-      gimp_image_flush (image);
+      picman_item_set_lock_position (PICMAN_ITEM (vectors), locked, push_undo);
+      picman_image_flush (image);
     }
 }
 
@@ -678,7 +678,7 @@ vectors_new_vectors_response (GtkWidget            *widget,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpVectors *new_vectors;
+      PicmanVectors *new_vectors;
 
       if (vectors_name)
         g_free (vectors_name);
@@ -686,12 +686,12 @@ vectors_new_vectors_response (GtkWidget            *widget,
       vectors_name =
         g_strdup (gtk_entry_get_text (GTK_ENTRY (options->name_entry)));
 
-      new_vectors = gimp_vectors_new (options->image, vectors_name);
+      new_vectors = picman_vectors_new (options->image, vectors_name);
 
-      gimp_image_add_vectors (options->image, new_vectors,
-                              GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+      picman_image_add_vectors (options->image, new_vectors,
+                              PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-      gimp_image_flush (options->image);
+      picman_image_flush (options->image);
     }
 
   gtk_widget_destroy (options->dialog);
@@ -704,15 +704,15 @@ vectors_edit_vectors_response (GtkWidget            *widget,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpVectors *vectors = options->vectors;
+      PicmanVectors *vectors = options->vectors;
       const gchar *new_name;
 
       new_name = gtk_entry_get_text (GTK_ENTRY (options->name_entry));
 
-      if (strcmp (new_name, gimp_object_get_name (vectors)))
+      if (strcmp (new_name, picman_object_get_name (vectors)))
         {
-          gimp_item_rename (GIMP_ITEM (vectors), new_name, NULL);
-          gimp_image_flush (options->image);
+          picman_item_rename (PICMAN_ITEM (vectors), new_name, NULL);
+          picman_image_flush (options->image);
         }
     }
 
@@ -735,17 +735,17 @@ vectors_import_response (GtkWidget           *widget,
 
       filename = gtk_file_chooser_get_filename (chooser);
 
-      if (gimp_vectors_import_file (dialog->image, filename,
+      if (picman_vectors_import_file (dialog->image, filename,
                                     vectors_import_merge, vectors_import_scale,
-                                    GIMP_IMAGE_ACTIVE_PARENT, -1,
+                                    PICMAN_IMAGE_ACTIVE_PARENT, -1,
                                     NULL, &error))
         {
-          gimp_image_flush (dialog->image);
+          picman_image_flush (dialog->image);
         }
       else
         {
-          gimp_message (dialog->image->gimp, G_OBJECT (widget),
-                        GIMP_MESSAGE_ERROR,
+          picman_message (dialog->image->picman, G_OBJECT (widget),
+                        PICMAN_MESSAGE_ERROR,
                         "%s", error->message);
           g_error_free (error);
           return;
@@ -753,8 +753,8 @@ vectors_import_response (GtkWidget           *widget,
 
       g_free (filename);
 
-      g_object_set_data_full (G_OBJECT (dialog->image->gimp),
-                              "gimp-vectors-import-folder",
+      g_object_set_data_full (G_OBJECT (dialog->image->picman),
+                              "picman-vectors-import-folder",
                               gtk_file_chooser_get_current_folder (chooser),
                               (GDestroyNotify) g_free);
     }
@@ -770,7 +770,7 @@ vectors_export_response (GtkWidget           *widget,
   if (response_id == GTK_RESPONSE_OK)
     {
       GtkFileChooser *chooser = GTK_FILE_CHOOSER (widget);
-      GimpVectors    *vectors = NULL;
+      PicmanVectors    *vectors = NULL;
       gchar          *filename;
       GError         *error   = NULL;
 
@@ -779,12 +779,12 @@ vectors_export_response (GtkWidget           *widget,
       filename = gtk_file_chooser_get_filename (chooser);
 
       if (vectors_export_active_only)
-        vectors = gimp_image_get_active_vectors (dialog->image);
+        vectors = picman_image_get_active_vectors (dialog->image);
 
-      if (! gimp_vectors_export_file (dialog->image, vectors, filename, &error))
+      if (! picman_vectors_export_file (dialog->image, vectors, filename, &error))
         {
-          gimp_message (dialog->image->gimp, G_OBJECT (widget),
-                        GIMP_MESSAGE_ERROR,
+          picman_message (dialog->image->picman, G_OBJECT (widget),
+                        PICMAN_MESSAGE_ERROR,
                         "%s", error->message);
           g_error_free (error);
           return;
@@ -792,8 +792,8 @@ vectors_export_response (GtkWidget           *widget,
 
       g_free (filename);
 
-      g_object_set_data_full (G_OBJECT (dialog->image->gimp),
-                              "gimp-vectors-export-folder",
+      g_object_set_data_full (G_OBJECT (dialog->image->picman),
+                              "picman-vectors-export-folder",
                               gtk_file_chooser_get_current_folder (chooser),
                               (GDestroyNotify) g_free);
     }

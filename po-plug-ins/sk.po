@@ -1,4 +1,4 @@
-# translation of gimp-plug-ins.HEAD.po to Slovak
+# translation of picman-plug-ins.HEAD.po to Slovak
 # Copyright (C) 2001, 2004, 2005 Free Software Foundation, Inc.
 # Zdenko Podobný <zdpo@mailbox.sk>, 2004.
 # Marcel Telka <marcel@telka.sk>, 2005.
@@ -7,7 +7,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-plug-ins\n"
+"Project-Id-Version: picman-plug-ins\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-12-28 13:52+0100\n"
 "PO-Revision-Date: 2005-12-28 13:54+0100\n"
@@ -20,15 +20,15 @@ msgstr ""
 
 #: ../plug-ins/FractalExplorer/Dialogs.c:529
 #: ../plug-ins/gfig/gfig-dialog.c:282 ../plug-ins/gflare/gflare.c:887
-#: ../plug-ins/gimpressionist/utils.c:124
+#: ../plug-ins/picmanressionist/utils.c:124
 #, c-format
 msgid ""
-"No %s in gimprc:\n"
+"No %s in picmanrc:\n"
 "You need to add an entry like\n"
 "(%s \"%s\")\n"
 "to your %s file."
 msgstr ""
-"V gimprc nie je %s:\n"
+"V picmanrc nie je %s:\n"
 "Musíte pridať položku ako napr.\n"
 "(%s \"%s\")\n"
 "do vášho %s súboru."
@@ -620,7 +620,7 @@ msgstr "Intenzita svetla"
 #: ../plug-ins/Lighting/lighting_ui.c:447
 #: ../plug-ins/MapObject/mapobject_ui.c:671
 #: ../plug-ins/MapObject/mapobject_ui.c:998
-#: ../plug-ins/print/gimp_main_window.c:475
+#: ../plug-ins/print/picman_main_window.c:475
 msgid "Position"
 msgstr "Pozícia"
 
@@ -847,8 +847,8 @@ msgid "_Environment Map"
 msgstr "Mapa prostr_edia"
 
 #: ../plug-ins/Lighting/lighting_ui.c:1026
-#: ../plug-ins/gimpressionist/preview.c:185
-#: ../plug-ins/gimpressionist/repaint.c:1166
+#: ../plug-ins/picmanressionist/preview.c:185
+#: ../plug-ins/picmanressionist/repaint.c:1166
 #: ../plug-ins/imagemap/imap_polygon.c:515
 msgid "_Update"
 msgstr "_Obnoviť"
@@ -1067,22 +1067,22 @@ msgid "Back:"
 msgstr "Vzadu:"
 
 #: ../plug-ins/MapObject/mapobject_ui.c:1110
-#: ../plug-ins/print/gimp_main_window.c:534
+#: ../plug-ins/print/picman_main_window.c:534
 msgid "Top:"
 msgstr "Hore:"
 
 #: ../plug-ins/MapObject/mapobject_ui.c:1110
-#: ../plug-ins/print/gimp_main_window.c:575
+#: ../plug-ins/print/picman_main_window.c:575
 msgid "Bottom:"
 msgstr "Dole:"
 
 #: ../plug-ins/MapObject/mapobject_ui.c:1111
-#: ../plug-ins/print/gimp_main_window.c:521
+#: ../plug-ins/print/picman_main_window.c:521
 msgid "Left:"
 msgstr "Vľavo:"
 
 #: ../plug-ins/MapObject/mapobject_ui.c:1111
-#: ../plug-ins/print/gimp_main_window.c:547
+#: ../plug-ins/print/picman_main_window.c:547
 msgid "Right:"
 msgstr "Vpravo:"
 
@@ -1120,7 +1120,7 @@ msgid "Images for the Cap Faces"
 msgstr "Obrázky pre uzatváracie plochy"
 
 #: ../plug-ins/MapObject/mapobject_ui.c:1239
-#: ../plug-ins/print/gimp_main_window.c:1119
+#: ../plug-ins/print/picman_main_window.c:1119
 msgid "Size"
 msgstr "Veľkosť"
 
@@ -1231,7 +1231,7 @@ msgstr "Nepodporovaná alebo neplatná bitová hĺbka."
 #: ../plug-ins/common/tile.c:266 ../plug-ins/common/xbm.c:866
 #: ../plug-ins/faxg3/faxg3.c:464 ../plug-ins/fits/fits.c:508
 #: ../plug-ins/gfig/gfig-dialog.c:1290
-#: ../plug-ins/gimpressionist/general.c:121 ../plug-ins/jpeg/jpeg-load.c:236
+#: ../plug-ins/picmanressionist/general.c:121 ../plug-ins/jpeg/jpeg-load.c:236
 #: ../plug-ins/jpeg/jpeg-load.c:738 ../plug-ins/sgi/sgi.c:369
 #: ../plug-ins/twain/twain.c:574 ../plug-ins/winsnap/winsnap.c:1156
 msgid "Background"
@@ -1511,7 +1511,7 @@ msgid "Min (x-d, -), (0.5 < x)"
 msgstr "Min (x-d, -), (0.5 < x)"
 
 #: ../plug-ins/common/CML_explorer.c:200 ../plug-ins/common/sunras.c:1593
-#: ../plug-ins/print/gimp_main_window.c:1668
+#: ../plug-ins/print/picman_main_window.c:1668
 msgid "Standard"
 msgstr "Štandardný"
 
@@ -1593,8 +1593,8 @@ msgstr "Náhodné čísla zo semena (zdieľané)"
 
 #: ../plug-ins/common/CML_explorer.c:300 ../plug-ins/common/CML_explorer.c:308
 #: ../plug-ins/common/decompose.c:152
-#: ../plug-ins/gimpressionist/orientation.c:162
-#: ../plug-ins/gimpressionist/size.c:165
+#: ../plug-ins/picmanressionist/orientation.c:162
+#: ../plug-ins/picmanressionist/size.c:165
 msgid "Hue"
 msgstr "Odtieň"
 
@@ -1605,8 +1605,8 @@ msgstr "Sýtosť"
 
 #: ../plug-ins/common/CML_explorer.c:302 ../plug-ins/common/CML_explorer.c:310
 #: ../plug-ins/common/decompose.c:154
-#: ../plug-ins/gimpressionist/orientation.c:138
-#: ../plug-ins/gimpressionist/size.c:141 ../plug-ins/metadata/interface.c:142
+#: ../plug-ins/picmanressionist/orientation.c:138
+#: ../plug-ins/picmanressionist/size.c:141 ../plug-ins/metadata/interface.c:142
 msgid "Value"
 msgstr "Jas"
 
@@ -2372,7 +2372,7 @@ msgid "_Psychobilly"
 msgstr "_Psychoplocha"
 
 #: ../plug-ins/common/checkerboard.c:417 ../plug-ins/common/papertile.c:293
-#: ../plug-ins/gimpressionist/sizemap.c:493
+#: ../plug-ins/picmanressionist/sizemap.c:493
 msgid "_Size:"
 msgstr "_Veľkosť:"
 
@@ -2813,8 +2813,8 @@ msgstr "Ohýbanie pomocou krivky"
 
 #. Preview area, top of column
 #: ../plug-ins/common/curve_bend.c:1253
-#: ../plug-ins/gimpressionist/orientmap.c:574
-#: ../plug-ins/gimpressionist/sizemap.c:443
+#: ../plug-ins/picmanressionist/orientmap.c:574
+#: ../plug-ins/picmanressionist/sizemap.c:443
 msgid "Preview"
 msgstr "Náhľad"
 
@@ -3352,7 +3352,7 @@ msgstr "_Polomer 2:"
 msgid "_Normalize"
 msgstr "_Normalizovať"
 
-#: ../plug-ins/common/dog.c:345 ../plug-ins/gimpressionist/paper.c:149
+#: ../plug-ins/common/dog.c:345 ../plug-ins/picmanressionist/paper.c:149
 msgid "_Invert"
 msgstr "_Invertovať"
 
@@ -3632,15 +3632,15 @@ msgstr "Stred efektu odlesku"
 msgid "_Show cursor"
 msgstr "_Zobraziť kurzor"
 
-#: ../plug-ins/common/fp.c:230 ../plug-ins/print/gimp_color_window.c:307
+#: ../plug-ins/common/fp.c:230 ../plug-ins/print/picman_color_window.c:307
 msgid "Cyan:"
 msgstr "Azúrová:"
 
-#: ../plug-ins/common/fp.c:231 ../plug-ins/print/gimp_color_window.c:345
+#: ../plug-ins/common/fp.c:231 ../plug-ins/print/picman_color_window.c:345
 msgid "Yellow:"
 msgstr "Žltá:"
 
-#: ../plug-ins/common/fp.c:232 ../plug-ins/print/gimp_color_window.c:326
+#: ../plug-ins/common/fp.c:232 ../plug-ins/print/picman_color_window.c:326
 msgid "Magenta:"
 msgstr "Purpurová:"
 
@@ -3869,8 +3869,8 @@ msgid "_RLE"
 msgstr "_RLE"
 
 #: ../plug-ins/common/gbr.c:152 ../plug-ins/common/gbr.c:173
-msgid "GIMP brush"
-msgstr "GIMP štetec"
+msgid "PICMAN brush"
+msgstr "PICMAN štetec"
 
 #: ../plug-ins/common/gbr.c:388 ../plug-ins/common/gbr.c:400
 msgid "Unsupported brush format"
@@ -3878,8 +3878,8 @@ msgstr "Nepodporovaný formát štetca"
 
 #: ../plug-ins/common/gbr.c:411
 #, c-format
-msgid "Error in GIMP brush file '%s'"
-msgstr "Chyba v súbore GIMP štetca '%s'"
+msgid "Error in PICMAN brush file '%s'"
+msgstr "Chyba v súbore PICMAN štetca '%s'"
 
 #: ../plug-ins/common/gbr.c:419
 #, c-format
@@ -3892,8 +3892,8 @@ msgid "Unnamed"
 msgstr "Nepomenovaný"
 
 #: ../plug-ins/common/gbr.c:607
-msgid "GIMP brushes are either GRAYSCALE or RGBA"
-msgstr "GIMP štetce sú buď v odtieňoch šedej alebo RGBA"
+msgid "PICMAN brushes are either GRAYSCALE or RGBA"
+msgstr "PICMAN štetce sú buď v odtieňoch šedej alebo RGBA"
 
 #: ../plug-ins/common/gbr.c:704
 msgid "Save as Brush"
@@ -3905,7 +3905,7 @@ msgid "Spacing:"
 msgstr "Rozostup:"
 
 #: ../plug-ins/common/gbr.c:742 ../plug-ins/common/gih.c:910
-#: ../plug-ins/common/pat.c:544 ../plug-ins/gimpressionist/presets.c:646
+#: ../plug-ins/common/pat.c:544 ../plug-ins/picmanressionist/presets.c:646
 msgid "Description:"
 msgstr "Popis:"
 
@@ -3914,8 +3914,8 @@ msgid "Gee Slime"
 msgstr "Jéj sliz"
 
 #: ../plug-ins/common/gee.c:168 ../plug-ins/common/gee_zoom.c:192
-msgid "Thank You for Choosing GIMP"
-msgstr "Ďakujeme, že ste si vybrali GIMP"
+msgid "Thank You for Choosing PICMAN"
+msgstr "Ďakujeme, že ste si vybrali PICMAN"
 
 #: ../plug-ins/common/gee.c:175
 #, c-format
@@ -4093,8 +4093,8 @@ msgstr ""
 "nemusí dať prehrať alebo znovu perfektne uložiť."
 
 #: ../plug-ins/common/gih.c:207 ../plug-ins/common/gih.c:228
-msgid "GIMP brush (animated)"
-msgstr "GIMP štetec (animovaný)"
+msgid "PICMAN brush (animated)"
+msgstr "PICMAN štetec (animovaný)"
 
 #: ../plug-ins/common/gih.c:321
 #, c-format
@@ -4102,12 +4102,12 @@ msgid "Layer %s doesn't have an alpha channel, skipped"
 msgstr "Vrstva %s nemá alfa kanál, bude preskočená"
 
 #: ../plug-ins/common/gih.c:492
-msgid "Error in GIMP brush pipe file."
-msgstr "Chyba v súbore GIMP kolóny štetcov"
+msgid "Error in PICMAN brush pipe file."
+msgstr "Chyba v súbore PICMAN kolóny štetcov"
 
 #: ../plug-ins/common/gih.c:558
-msgid "GIMP brush file appears to be corrupted."
-msgstr "Zdá sa, že súbor s GIMP štetcom je poškodený."
+msgid "PICMAN brush file appears to be corrupted."
+msgstr "Zdá sa, že súbor s PICMAN štetcom je poškodený."
 
 #: ../plug-ins/common/gih.c:703
 msgid "Couldn't load one brush in the pipe, giving up."
@@ -4240,8 +4240,8 @@ msgstr "Prienik"
 
 #. Width and Height
 #: ../plug-ins/common/grid.c:724 ../plug-ins/common/svg.c:788
-#: ../plug-ins/common/wmf.c:549 ../plug-ins/print/gimp_main_window.c:1009
-#: ../plug-ins/print/gimp_main_window.c:1216
+#: ../plug-ins/common/wmf.c:549 ../plug-ins/print/picman_main_window.c:1009
+#: ../plug-ins/print/picman_main_window.c:1216
 msgid "Width:"
 msgstr "Šírka:"
 
@@ -5380,7 +5380,7 @@ msgid "_Paper Tile..."
 msgstr "_Papierová dlaždica..."
 
 #: ../plug-ins/common/pat.c:123 ../plug-ins/common/pat.c:146
-msgid "GIMP pattern"
+msgid "PICMAN pattern"
 msgstr "GiMP vzorka"
 
 #: ../plug-ins/common/pat.c:362
@@ -5766,7 +5766,7 @@ msgstr "Generovanie"
 
 #. Resolution
 #: ../plug-ins/common/postscript.c:3084 ../plug-ins/common/svg.c:909
-#: ../plug-ins/common/wmf.c:670 ../plug-ins/print/gimp_main_window.c:1104
+#: ../plug-ins/common/wmf.c:670 ../plug-ins/print/picman_main_window.c:1104
 msgid "Resolution:"
 msgstr "Rozlíšenie:"
 
@@ -5809,9 +5809,9 @@ msgid "Gray"
 msgstr "Šedá"
 
 #: ../plug-ins/common/postscript.c:3153 ../plug-ins/common/xpm.c:468
-#: ../plug-ins/gimpressionist/color.c:48
-#: ../plug-ins/gimpressionist/general.c:151
-#: ../plug-ins/print/gimp_main_window.c:1416
+#: ../plug-ins/picmanressionist/color.c:48
+#: ../plug-ins/picmanressionist/general.c:151
+#: ../plug-ins/print/picman_main_window.c:1416
 msgid "Color"
 msgstr "Farba"
 
@@ -6730,7 +6730,7 @@ msgid "Use the background color"
 msgstr "Použiť farbu pozadia"
 
 #: ../plug-ins/common/spheredesigner.c:291
-#: ../plug-ins/gimpressionist/general.c:147
+#: ../plug-ins/picmanressionist/general.c:147
 msgid "Solid"
 msgstr "Vyplnené"
 
@@ -6820,7 +6820,7 @@ msgstr "Dialóg pre výber farby"
 
 #. Scale
 #: ../plug-ins/common/spheredesigner.c:2726
-#: ../plug-ins/gimpressionist/paper.c:176
+#: ../plug-ins/picmanressionist/paper.c:176
 #: ../plug-ins/ifscompose/ifscompose.c:555
 msgid "Scale:"
 msgstr "Mierka:"
@@ -7019,8 +7019,8 @@ msgid "Render Scalable Vector Graphics"
 msgstr "Generovať Scalable Vector Graphics"
 
 #: ../plug-ins/common/svg.c:794 ../plug-ins/common/wmf.c:555
-#: ../plug-ins/print/gimp_main_window.c:1026
-#: ../plug-ins/print/gimp_main_window.c:1229
+#: ../plug-ins/print/picman_main_window.c:1026
+#: ../plug-ins/print/picman_main_window.c:1229
 msgid "Height:"
 msgstr "Výška:"
 
@@ -7048,9 +7048,9 @@ msgstr "Importovať _cesty"
 
 #: ../plug-ins/common/svg.c:941
 msgid ""
-"Import path elements of the SVG so they can be used with the GIMP path tool"
+"Import path elements of the SVG so they can be used with the PICMAN path tool"
 msgstr ""
-"Importovať elementy ciest z SVG, aby mohly byť použité s GIMP nástrojom pre "
+"Importovať elementy ciest z SVG, aby mohly byť použité s PICMAN nástrojom pre "
 "cesty"
 
 #: ../plug-ins/common/svg.c:954
@@ -7121,12 +7121,12 @@ msgstr "TIFF kanál"
 #: ../plug-ins/common/tiff.c:913
 msgid ""
 "Warning:\n"
-"The image you are loading has 16 bits per channel. GIMP can only handle 8 "
+"The image you are loading has 16 bits per channel. PICMAN can only handle 8 "
 "bit, so it will be converted for you. Information will be lost because of "
 "this conversion."
 msgstr ""
 "Varovanie:\n"
-"Obrázok, ktorý načítavate má 16 bitov na kanál. GIMP vie spracovať iba 8 "
+"Obrázok, ktorý načítavate má 16 bitov na kanál. PICMAN vie spracovať iba 8 "
 "bitov a tak bude skonvertovaný. Informácie počas konverzie budú stratené."
 
 #: ../plug-ins/common/tiff.c:2085
@@ -7257,10 +7257,10 @@ msgstr "Uložené"
 
 #: ../plug-ins/common/uniteditor.c:94
 msgid ""
-"A unit definition will only be saved before GIMP exits if this column is "
+"A unit definition will only be saved before PICMAN exits if this column is "
 "checked."
 msgstr ""
-"Definícia jednotky bude zapísaná pred skončením programu GIMP iba pri "
+"Definícia jednotky bude zapísaná pred skončením programu PICMAN iba pri "
 "zaškrtnutí tohoto stĺpca."
 
 #: ../plug-ins/common/uniteditor.c:96
@@ -7269,10 +7269,10 @@ msgstr "ID"
 
 #: ../plug-ins/common/uniteditor.c:96
 msgid ""
-"This string will be used to identify a unit in GIMP's configuration files."
+"This string will be used to identify a unit in PICMAN's configuration files."
 msgstr ""
 "Tento reťazec bude použitý na identifikáciu jednotky v konfiguračnom súbore "
-"programu GIMP."
+"programu PICMAN."
 
 #: ../plug-ins/common/uniteditor.c:98
 msgid "Factor"
@@ -7663,7 +7663,7 @@ msgstr "Ponuka výberu pevného smerového vektoru"
 
 #.
 #. if (display_diff_map) {
-#. gimp_display_new(new_image_id);
+#. picman_display_new(new_image_id);
 #. }
 #.
 #. make sure layer is visible
@@ -7825,7 +7825,7 @@ msgstr "_Oboje"
 msgid "Higher values restrict the effect to fewer areas of the image"
 msgstr "Vyššie hodnoty obmedzujú efekt na menšie oblasti obrázky"
 
-#: ../plug-ins/common/wind.c:1027 ../plug-ins/gimpressionist/orientmap.c:676
+#: ../plug-ins/common/wind.c:1027 ../plug-ins/picmanressionist/orientmap.c:676
 msgid "_Strength:"
 msgstr "_Sila:"
 
@@ -7854,7 +7854,7 @@ msgstr "Tlačiareň nepodporuje bitové mapy"
 msgid "StartPage failed"
 msgstr "Štart strany zlyhal"
 
-#: ../plug-ins/common/winprint.c:427 ../plug-ins/print/print-image-gimp.c:320
+#: ../plug-ins/common/winprint.c:427 ../plug-ins/print/print-image-picman.c:320
 msgid "Printing"
 msgstr "Tlačím"
 
@@ -8167,8 +8167,8 @@ msgstr "_Náhodnosť"
 msgid "Same"
 msgstr "Rovnaká"
 
-#: ../plug-ins/flame/flame.c:741 ../plug-ins/gimpressionist/orientation.c:146
-#: ../plug-ins/gimpressionist/size.c:149
+#: ../plug-ins/flame/flame.c:741 ../plug-ins/picmanressionist/orientation.c:146
+#: ../plug-ins/picmanressionist/size.c:149
 msgid "Random"
 msgstr "Náhodná"
 
@@ -8441,7 +8441,7 @@ msgid "Max undo:"
 msgstr "Max. späť:"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1289
-#: ../plug-ins/gimpressionist/general.c:166
+#: ../plug-ins/picmanressionist/general.c:166
 msgid "Transparent"
 msgstr "Priesvitné"
 
@@ -8535,8 +8535,8 @@ msgid "Left"
 msgstr "Doľava"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1724
-#: ../plug-ins/gimpressionist/orientation.c:130
-#: ../plug-ins/print/gimp_main_window.c:511
+#: ../plug-ins/picmanressionist/orientation.c:130
+#: ../plug-ins/print/picman_main_window.c:511
 msgid "Orientation:"
 msgstr "Orientácia:"
 
@@ -8771,7 +8771,7 @@ msgstr "Voľby kreslenia "
 msgid "Second Flares Paint Options"
 msgstr "Nastavenie kreslenia druhej žiary"
 
-#: ../plug-ins/gflare/gflare.c:3459 ../plug-ins/gimpressionist/general.c:115
+#: ../plug-ins/gflare/gflare.c:3459 ../plug-ins/picmanressionist/general.c:115
 msgid "_General"
 msgstr "_Všeobecné"
 
@@ -8879,282 +8879,282 @@ msgstr "GFLI 1.3 - Načítanie zásobníka snímok"
 msgid "GFLI 1.3 - Save framestack"
 msgstr "GFLI 1.3 - Uloženie zásobníka snímok"
 
-#: ../plug-ins/gimpressionist/brush.c:230
+#: ../plug-ins/picmanressionist/brush.c:230
 msgid "Can only save drawables!"
 msgstr "Uložiť je možné len kresby!"
 
-#: ../plug-ins/gimpressionist/brush.c:235
+#: ../plug-ins/picmanressionist/brush.c:235
 msgid "Save Brush"
 msgstr "Uložiť štetec"
 
-#: ../plug-ins/gimpressionist/brush.c:488
+#: ../plug-ins/picmanressionist/brush.c:488
 msgid "_Brush"
 msgstr "Š_tetec"
 
-#: ../plug-ins/gimpressionist/brush.c:525
-#: ../plug-ins/print/gimp_color_window.c:407
+#: ../plug-ins/picmanressionist/brush.c:525
+#: ../plug-ins/print/picman_color_window.c:407
 msgid "Gamma:"
 msgstr "Gama:"
 
-#: ../plug-ins/gimpressionist/brush.c:543
+#: ../plug-ins/picmanressionist/brush.c:543
 msgid "Changes the gamma (brightness) of the selected brush"
 msgstr "Zmeniť gamma (jas) zvoleného štetca"
 
-#: ../plug-ins/gimpressionist/brush.c:551
+#: ../plug-ins/picmanressionist/brush.c:551
 msgid "Select:"
 msgstr "Výber:"
 
-#: ../plug-ins/gimpressionist/brush.c:580
+#: ../plug-ins/picmanressionist/brush.c:580
 msgid "Aspect ratio:"
 msgstr "Pomer strán:"
 
-#: ../plug-ins/gimpressionist/brush.c:584
+#: ../plug-ins/picmanressionist/brush.c:584
 msgid "Specifies the aspect ratio of the brush"
 msgstr "Určuje pomer strán stopy"
 
-#: ../plug-ins/gimpressionist/brush.c:593
-#: ../plug-ins/gimpressionist/paper.c:188
+#: ../plug-ins/picmanressionist/brush.c:593
+#: ../plug-ins/picmanressionist/paper.c:188
 msgid "Relief:"
 msgstr "Reliéf:"
 
-#: ../plug-ins/gimpressionist/brush.c:597
-#: ../plug-ins/gimpressionist/paper.c:192
+#: ../plug-ins/picmanressionist/brush.c:597
+#: ../plug-ins/picmanressionist/paper.c:192
 msgid "Specifies the amount of embossing to apply to the image (in percent)"
 msgstr "Určí mieru vyvýšenia použitú na obrázok (v percentách)"
 
-#: ../plug-ins/gimpressionist/color.c:42
+#: ../plug-ins/picmanressionist/color.c:42
 msgid "Co_lor"
 msgstr "_Farba"
 
-#: ../plug-ins/gimpressionist/color.c:52
+#: ../plug-ins/picmanressionist/color.c:52
 msgid "A_verage under brush"
 msgstr "Prie_mer pod štetcom"
 
-#: ../plug-ins/gimpressionist/color.c:54
+#: ../plug-ins/picmanressionist/color.c:54
 msgid "C_enter of brush"
 msgstr "Str_ed štetca"
 
-#: ../plug-ins/gimpressionist/color.c:61
+#: ../plug-ins/picmanressionist/color.c:61
 msgid "Color is computed from the average of all pixels under the brush"
 msgstr "Farba je vypočítaná z priemeru všetkých bodov pod štetcom"
 
-#: ../plug-ins/gimpressionist/color.c:65
+#: ../plug-ins/picmanressionist/color.c:65
 msgid "Samples the color from the pixel in the center of the brush"
 msgstr "Vzorkuje farbu z bodu v strede štetca"
 
-#: ../plug-ins/gimpressionist/color.c:76
+#: ../plug-ins/picmanressionist/color.c:76
 msgid "Color _noise:"
 msgstr "_Farebný šum:"
 
-#: ../plug-ins/gimpressionist/color.c:80
+#: ../plug-ins/picmanressionist/color.c:80
 msgid "Adds random noise to the color"
 msgstr "Pridá náhodný šum do farby"
 
-#: ../plug-ins/gimpressionist/general.c:131
+#: ../plug-ins/picmanressionist/general.c:131
 msgid "Keep original"
 msgstr "Zachovať pôvodné"
 
-#: ../plug-ins/gimpressionist/general.c:132
+#: ../plug-ins/picmanressionist/general.c:132
 msgid "Preserve the original image as a background"
 msgstr "Použije pôvodný obrázok ako pozadie"
 
-#: ../plug-ins/gimpressionist/general.c:137
+#: ../plug-ins/picmanressionist/general.c:137
 msgid "From paper"
 msgstr "Z papiera"
 
-#: ../plug-ins/gimpressionist/general.c:138
+#: ../plug-ins/picmanressionist/general.c:138
 msgid "Copy the texture of the selected paper as a background"
 msgstr "Kopíruje textúru zvoleného papiera ako pozadie"
 
-#: ../plug-ins/gimpressionist/general.c:148
+#: ../plug-ins/picmanressionist/general.c:148
 msgid "Solid colored background"
 msgstr "Pozadie z farebnej plochy"
 
-#: ../plug-ins/gimpressionist/general.c:167
+#: ../plug-ins/picmanressionist/general.c:167
 msgid "Use a transparent background; Only the strokes painted will be visible"
 msgstr "Použiť priesvitné pozadie; Iba kreslené ťahy budú viditeľné"
 
-#: ../plug-ins/gimpressionist/general.c:184
+#: ../plug-ins/picmanressionist/general.c:184
 msgid "Paint edges"
 msgstr "Kreslenie hrán"
 
-#: ../plug-ins/gimpressionist/general.c:189
+#: ../plug-ins/picmanressionist/general.c:189
 msgid "Selects if to place strokes all the way out to the edges of the image"
 msgstr "Určuje, či je možné štetcom ťahať štetcom za okraje obrázka"
 
 #. Tileable checkbox
-#: ../plug-ins/gimpressionist/general.c:194 ../plug-ins/maze/maze_face.c:317
+#: ../plug-ins/picmanressionist/general.c:194 ../plug-ins/maze/maze_face.c:317
 msgid "Tileable"
 msgstr "Dlaždicoviteľné"
 
-#: ../plug-ins/gimpressionist/general.c:198
+#: ../plug-ins/picmanressionist/general.c:198
 msgid "Selects if the resulting image should be seamlessly tileable"
 msgstr "Určí, či bude výsledný obrázok dlaždicovateľný bez švov"
 
-#: ../plug-ins/gimpressionist/general.c:203
+#: ../plug-ins/picmanressionist/general.c:203
 msgid "Drop shadow"
 msgstr "Vrhnúť tieň"
 
-#: ../plug-ins/gimpressionist/general.c:208
+#: ../plug-ins/picmanressionist/general.c:208
 msgid "Adds a shadow effect to each brush stroke"
 msgstr "Pridá efekt tieňa každému ťahu"
 
-#: ../plug-ins/gimpressionist/general.c:221
+#: ../plug-ins/picmanressionist/general.c:221
 msgid "Edge darken:"
 msgstr "Stmavenie hrany:"
 
-#: ../plug-ins/gimpressionist/general.c:225
+#: ../plug-ins/picmanressionist/general.c:225
 msgid "How much to \"darken\" the edges of each brush stroke"
 msgstr "Miera ako \"stmavnú\" hrany každého ťahu štetca"
 
-#: ../plug-ins/gimpressionist/general.c:230
+#: ../plug-ins/picmanressionist/general.c:230
 msgid "Shadow darken:"
 msgstr "Ztmavenie tieňa:"
 
-#: ../plug-ins/gimpressionist/general.c:234
+#: ../plug-ins/picmanressionist/general.c:234
 msgid "How much to \"darken\" the drop shadow"
 msgstr "Miera ako \"stmavnú\" vrhané tiene"
 
-#: ../plug-ins/gimpressionist/general.c:239
+#: ../plug-ins/picmanressionist/general.c:239
 msgid "Shadow depth:"
 msgstr "Hĺbka tieňa:"
 
-#: ../plug-ins/gimpressionist/general.c:243
+#: ../plug-ins/picmanressionist/general.c:243
 msgid ""
 "The depth of the drop shadow, i.e. how far apart from the object it should be"
 msgstr "Hĺbka vrhaného tieňa, t.j. ako ďaleko od objektov budú"
 
-#: ../plug-ins/gimpressionist/general.c:248
+#: ../plug-ins/picmanressionist/general.c:248
 msgid "Shadow blur:"
 msgstr "Rozostrenie tieňov:"
 
-#: ../plug-ins/gimpressionist/general.c:252
+#: ../plug-ins/picmanressionist/general.c:252
 msgid "How much to blur the drop shadow"
 msgstr "Miera rozostrenia tieňov"
 
-#: ../plug-ins/gimpressionist/general.c:257
+#: ../plug-ins/picmanressionist/general.c:257
 msgid "Deviation threshold:"
 msgstr "Prah odchýlky:"
 
-#: ../plug-ins/gimpressionist/general.c:261
+#: ../plug-ins/picmanressionist/general.c:261
 msgid "A bailout-value for adaptive selections"
 msgstr "Pomocná hodnota pre adaptívne výbery"
 
-#: ../plug-ins/gimpressionist/gimp.c:79
-msgid "_GIMPressionist..."
-msgstr "_GIMPressionista..."
+#: ../plug-ins/picmanressionist/picman.c:79
+msgid "_PICMANressionist..."
+msgstr "_PICMANressionista..."
 
-#: ../plug-ins/gimpressionist/gimp.c:350
+#: ../plug-ins/picmanressionist/picman.c:350
 msgid "Painting"
 msgstr "Kreslím"
 
-#: ../plug-ins/gimpressionist/gimpressionist.c:121
-msgid "GIMPressionist"
-msgstr "GIMPressionista"
+#: ../plug-ins/picmanressionist/picmanressionist.c:121
+msgid "PICMANressionist"
+msgstr "PICMANressionista"
 
-#: ../plug-ins/gimpressionist/orientation.c:74
+#: ../plug-ins/picmanressionist/orientation.c:74
 msgid "Or_ientation"
 msgstr "Or_ientácia"
 
-#: ../plug-ins/gimpressionist/orientation.c:88
+#: ../plug-ins/picmanressionist/orientation.c:88
 msgid "Directions:"
 msgstr "Smer:"
 
-#: ../plug-ins/gimpressionist/orientation.c:92
+#: ../plug-ins/picmanressionist/orientation.c:92
 msgid "The number of directions (i.e. brushes) to use"
 msgstr "Počet použitých smerov (t.j. štetcov"
 
-#: ../plug-ins/gimpressionist/orientation.c:100
+#: ../plug-ins/picmanressionist/orientation.c:100
 msgid "Start angle:"
 msgstr "Počiatočný uhol:"
 
-#: ../plug-ins/gimpressionist/orientation.c:104
+#: ../plug-ins/picmanressionist/orientation.c:104
 msgid "The starting angle of the first brush to create"
 msgstr "Počiatočný uhol prvého vytváraného štetca"
 
-#: ../plug-ins/gimpressionist/orientation.c:112
+#: ../plug-ins/picmanressionist/orientation.c:112
 msgid "Angle span:"
 msgstr "Rozpätie uhla:"
 
-#: ../plug-ins/gimpressionist/orientation.c:116
+#: ../plug-ins/picmanressionist/orientation.c:116
 msgid "The angle span of the first brush to create"
 msgstr "Rozsah uhlu prvého vytváraného štetca"
 
-#: ../plug-ins/gimpressionist/orientation.c:139
+#: ../plug-ins/picmanressionist/orientation.c:139
 msgid ""
 "Let the value (brightness) of the region determine the direction of the "
 "stroke"
 msgstr "Nech hodnota (jas) oblasti určí smer ťahu"
 
-#: ../plug-ins/gimpressionist/orientation.c:142
-#: ../plug-ins/gimpressionist/size.c:145
+#: ../plug-ins/picmanressionist/orientation.c:142
+#: ../plug-ins/picmanressionist/size.c:145
 msgid "Radius"
 msgstr "Polomer"
 
-#: ../plug-ins/gimpressionist/orientation.c:143
+#: ../plug-ins/picmanressionist/orientation.c:143
 msgid ""
 "The distance from the center of the image determines the direction of the "
 "stroke"
 msgstr "Vzdialenosť od stredu obrázky určí smer ťahu"
 
-#: ../plug-ins/gimpressionist/orientation.c:147
+#: ../plug-ins/picmanressionist/orientation.c:147
 msgid "Selects a random direction of each stroke"
 msgstr "Zvolí náhodný smer každého ťahu"
 
-#: ../plug-ins/gimpressionist/orientation.c:150
-#: ../plug-ins/gimpressionist/size.c:153
+#: ../plug-ins/picmanressionist/orientation.c:150
+#: ../plug-ins/picmanressionist/size.c:153
 msgid "Radial"
 msgstr "Radiálny"
 
-#: ../plug-ins/gimpressionist/orientation.c:151
+#: ../plug-ins/picmanressionist/orientation.c:151
 msgid "Let the direction from the center determine the direction of the stroke"
 msgstr "Nech smer od stredu určí smer ťahu"
 
-#: ../plug-ins/gimpressionist/orientation.c:158
-#: ../plug-ins/gimpressionist/size.c:161
+#: ../plug-ins/picmanressionist/orientation.c:158
+#: ../plug-ins/picmanressionist/size.c:161
 msgid "Flowing"
 msgstr "Uvoľnený"
 
-#: ../plug-ins/gimpressionist/orientation.c:159
-#: ../plug-ins/gimpressionist/size.c:162
+#: ../plug-ins/picmanressionist/orientation.c:159
+#: ../plug-ins/picmanressionist/size.c:162
 msgid "The strokes follow a \"flowing\" pattern"
 msgstr "Ťahy sledujú \"uvoľnenú\" vzorku"
 
-#: ../plug-ins/gimpressionist/orientation.c:163
+#: ../plug-ins/picmanressionist/orientation.c:163
 msgid "The hue of the region determines the direction of the stroke"
 msgstr "Odtieň oblasti určí smer ťahu"
 
-#: ../plug-ins/gimpressionist/orientation.c:166
-#: ../plug-ins/gimpressionist/size.c:169
+#: ../plug-ins/picmanressionist/orientation.c:166
+#: ../plug-ins/picmanressionist/size.c:169
 msgid "Adaptive"
 msgstr "Adaptívne"
 
-#: ../plug-ins/gimpressionist/orientation.c:167
+#: ../plug-ins/picmanressionist/orientation.c:167
 msgid "The direction that matches the original image the closest is selected"
 msgstr "Bude zvolený smer, ktorý najlepšie zodpovedá pôvodnému obrázka"
 
-#: ../plug-ins/gimpressionist/orientation.c:174
-#: ../plug-ins/gimpressionist/size.c:178
+#: ../plug-ins/picmanressionist/orientation.c:174
+#: ../plug-ins/picmanressionist/size.c:178
 msgid "Manual"
 msgstr "Ručne"
 
-#: ../plug-ins/gimpressionist/orientation.c:175
+#: ../plug-ins/picmanressionist/orientation.c:175
 msgid "Manually specify the stroke orientation"
 msgstr "Ručné určenie orientácie ťahov"
 
-#: ../plug-ins/gimpressionist/orientation.c:186
+#: ../plug-ins/picmanressionist/orientation.c:186
 msgid "Opens up the Orientation Map Editor"
 msgstr "Otvorí editor máp orientácie"
 
-#: ../plug-ins/gimpressionist/orientmap.c:508
+#: ../plug-ins/picmanressionist/orientmap.c:508
 msgid "Orientation Map Editor"
 msgstr "Editor máp orientácie"
 
-#: ../plug-ins/gimpressionist/orientmap.c:537
+#: ../plug-ins/picmanressionist/orientmap.c:537
 msgid "Vectors"
 msgstr "Vektory"
 
-#: ../plug-ins/gimpressionist/orientmap.c:549
+#: ../plug-ins/picmanressionist/orientmap.c:549
 msgid ""
 "The vector-field. Left-click to move selected vector, Right-click to point "
 "it towards mouse, Middle-click to add a new vector."
@@ -9162,281 +9162,281 @@ msgstr ""
 "Vektorové pole. Ľavé tlačítko presunie zvolený vektor. Pravé tlačítko ho "
 "smeruje podľa myši. Prostredné tlačítko pridá nový vektor."
 
-#: ../plug-ins/gimpressionist/orientmap.c:572
-#: ../plug-ins/gimpressionist/sizemap.c:441
+#: ../plug-ins/picmanressionist/orientmap.c:572
+#: ../plug-ins/picmanressionist/sizemap.c:441
 msgid "Adjust the preview's brightness"
 msgstr "Prispôsobiť jas náhľadu"
 
-#: ../plug-ins/gimpressionist/orientmap.c:594
+#: ../plug-ins/picmanressionist/orientmap.c:594
 msgid "Select previous vector"
 msgstr "Vybrať predchádzajúci vektor"
 
-#: ../plug-ins/gimpressionist/orientmap.c:600
+#: ../plug-ins/picmanressionist/orientmap.c:600
 msgid "Select next vector"
 msgstr "Vybrať nasledujúci vektor"
 
-#: ../plug-ins/gimpressionist/orientmap.c:602
-#: ../plug-ins/gimpressionist/sizemap.c:472
+#: ../plug-ins/picmanressionist/orientmap.c:602
+#: ../plug-ins/picmanressionist/sizemap.c:472
 msgid "A_dd"
 msgstr "_Pridať"
 
-#: ../plug-ins/gimpressionist/orientmap.c:606
+#: ../plug-ins/picmanressionist/orientmap.c:606
 msgid "Add new vector"
 msgstr "Pridať nový vektor"
 
-#: ../plug-ins/gimpressionist/orientmap.c:608
-#: ../plug-ins/gimpressionist/sizemap.c:479
+#: ../plug-ins/picmanressionist/orientmap.c:608
+#: ../plug-ins/picmanressionist/sizemap.c:479
 msgid "_Kill"
 msgstr "_Odstrániť"
 
-#: ../plug-ins/gimpressionist/orientmap.c:612
+#: ../plug-ins/picmanressionist/orientmap.c:612
 msgid "Delete selected vector"
 msgstr "Zmazať zvolený vektor"
 
-#: ../plug-ins/gimpressionist/orientmap.c:623
+#: ../plug-ins/picmanressionist/orientmap.c:623
 msgid "Type"
 msgstr "Typ"
 
-#: ../plug-ins/gimpressionist/orientmap.c:627
+#: ../plug-ins/picmanressionist/orientmap.c:627
 msgid "_Normal"
 msgstr "_Normálny"
 
-#: ../plug-ins/gimpressionist/orientmap.c:628
+#: ../plug-ins/picmanressionist/orientmap.c:628
 msgid "Vorte_x"
 msgstr "Ví_r"
 
-#: ../plug-ins/gimpressionist/orientmap.c:629
+#: ../plug-ins/picmanressionist/orientmap.c:629
 msgid "Vortex_2"
 msgstr "Vír_2"
 
-#: ../plug-ins/gimpressionist/orientmap.c:630
+#: ../plug-ins/picmanressionist/orientmap.c:630
 msgid "Vortex_3"
 msgstr "Vír_3"
 
-#: ../plug-ins/gimpressionist/orientmap.c:636
-#: ../plug-ins/gimpressionist/sizemap.c:524
+#: ../plug-ins/picmanressionist/orientmap.c:636
+#: ../plug-ins/picmanressionist/sizemap.c:524
 msgid "_Voronoi"
 msgstr "_Voronoi"
 
-#: ../plug-ins/gimpressionist/orientmap.c:644
+#: ../plug-ins/picmanressionist/orientmap.c:644
 msgid ""
 "Voronoi-mode makes only the vector closest to the given point have any "
 "influence"
 msgstr "Režim Voronoi znamená, že vplyv bude mať iba najbližší vektor k bodu"
 
-#: ../plug-ins/gimpressionist/orientmap.c:654
+#: ../plug-ins/picmanressionist/orientmap.c:654
 msgid "A_ngle:"
 msgstr "_Uhol:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:658
+#: ../plug-ins/picmanressionist/orientmap.c:658
 msgid "Change the angle of the selected vector"
 msgstr "Zmeniť uhol zvoleného vektora"
 
-#: ../plug-ins/gimpressionist/orientmap.c:665
+#: ../plug-ins/picmanressionist/orientmap.c:665
 msgid "Ang_le offset:"
 msgstr "Posun uh_la:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:669
+#: ../plug-ins/picmanressionist/orientmap.c:669
 msgid "Offset all vectors with a given angle"
 msgstr "Posun všetkých vektorov o daný uhol"
 
-#: ../plug-ins/gimpressionist/orientmap.c:680
+#: ../plug-ins/picmanressionist/orientmap.c:680
 msgid "Change the strength of the selected vector"
 msgstr "Zmeniť silu zvoleného vektora"
 
-#: ../plug-ins/gimpressionist/orientmap.c:687
+#: ../plug-ins/picmanressionist/orientmap.c:687
 msgid "S_trength exp.:"
 msgstr "Exponent _sily:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:691
-#: ../plug-ins/gimpressionist/sizemap.c:519
+#: ../plug-ins/picmanressionist/orientmap.c:691
+#: ../plug-ins/picmanressionist/sizemap.c:519
 msgid "Change the exponent of the strength"
 msgstr "Zmena exponenta sily"
 
-#: ../plug-ins/gimpressionist/paper.c:120
+#: ../plug-ins/picmanressionist/paper.c:120
 msgid "P_aper"
 msgstr "P_apier"
 
-#: ../plug-ins/gimpressionist/paper.c:155
+#: ../plug-ins/picmanressionist/paper.c:155
 msgid "Inverts the Papers texture"
 msgstr "Invertuje textúru papiera"
 
-#: ../plug-ins/gimpressionist/paper.c:159
+#: ../plug-ins/picmanressionist/paper.c:159
 msgid "O_verlay"
 msgstr "Pre_krytie"
 
-#: ../plug-ins/gimpressionist/paper.c:164
+#: ../plug-ins/picmanressionist/paper.c:164
 msgid "Applies the paper as it is (without embossing it)"
 msgstr "Použije papier tak, ako je (bez reliéfu)"
 
-#: ../plug-ins/gimpressionist/paper.c:180
+#: ../plug-ins/picmanressionist/paper.c:180
 msgid "Specifies the scale of the texture (in percent of original file)"
 msgstr "Určuje veľkosť textúry (v percentách pôvodného obrázka)"
 
-#: ../plug-ins/gimpressionist/placement.c:49
+#: ../plug-ins/picmanressionist/placement.c:49
 msgid "Pl_acement"
 msgstr "_Umiestnenie"
 
-#: ../plug-ins/gimpressionist/placement.c:55
+#: ../plug-ins/picmanressionist/placement.c:55
 msgid "Placement"
 msgstr "Umiestnenie"
 
-#: ../plug-ins/gimpressionist/placement.c:59
+#: ../plug-ins/picmanressionist/placement.c:59
 msgid "Randomly"
 msgstr "Náhodne"
 
-#: ../plug-ins/gimpressionist/placement.c:63
+#: ../plug-ins/picmanressionist/placement.c:63
 msgid "Evenly distributed"
 msgstr "Rovnomerné rozloženie"
 
-#: ../plug-ins/gimpressionist/placement.c:71
+#: ../plug-ins/picmanressionist/placement.c:71
 msgid "Place strokes randomly around the image"
 msgstr "Náhodne umiestni ťahy v obrázku"
 
-#: ../plug-ins/gimpressionist/placement.c:75
+#: ../plug-ins/picmanressionist/placement.c:75
 msgid "The strokes are evenly distributed across the image"
 msgstr "Ťahy sú rovnomerne rozložené v obrázku"
 
-#: ../plug-ins/gimpressionist/placement.c:84
+#: ../plug-ins/picmanressionist/placement.c:84
 msgid "Centered"
 msgstr "Vystredené"
 
-#: ../plug-ins/gimpressionist/placement.c:90
+#: ../plug-ins/picmanressionist/placement.c:90
 msgid "Focus the brush strokes around the center of the image"
 msgstr "Smerovať ťahy štetca do stredu obrázka"
 
-#: ../plug-ins/gimpressionist/placement.c:102
+#: ../plug-ins/picmanressionist/placement.c:102
 msgid "Stroke _density:"
 msgstr "_Hustota ťahov:"
 
-#: ../plug-ins/gimpressionist/placement.c:106
+#: ../plug-ins/picmanressionist/placement.c:106
 msgid "The relative density of the brush strokes"
 msgstr "Relatívna hustota ťahov štetca"
 
 #.
-#. * gimp_filename_to_utf8 () and g_strerror () return temporary strings
+#. * picman_filename_to_utf8 () and g_strerror () return temporary strings
 #. * that need not and should not be freed. So this call is OK.
 #. *
-#: ../plug-ins/gimpressionist/ppmtool.c:632
+#: ../plug-ins/picmanressionist/ppmtool.c:632
 #, c-format
 msgid "Failed to save PPM file '%s': %s"
 msgstr "Nepodarilo sa uložiť PPM súbor '%s': %s"
 
-#: ../plug-ins/gimpressionist/presets.c:620
+#: ../plug-ins/picmanressionist/presets.c:620
 msgid "Save Current"
 msgstr "Uložiť aktuálne"
 
-#: ../plug-ins/gimpressionist/presets.c:870
-msgid "Gimpressionist Defaults"
-msgstr "Štandardné nastavenia Gimpressionistu"
+#: ../plug-ins/picmanressionist/presets.c:870
+msgid "Picmanressionist Defaults"
+msgstr "Štandardné nastavenia Picmanressionistu"
 
-#: ../plug-ins/gimpressionist/presets.c:991
+#: ../plug-ins/picmanressionist/presets.c:991
 msgid "_Presets"
 msgstr "_Predvoľby"
 
-#: ../plug-ins/gimpressionist/presets.c:1006
+#: ../plug-ins/picmanressionist/presets.c:1006
 msgid "Save Current..."
 msgstr "Uložiť aktuálne..."
 
-#: ../plug-ins/gimpressionist/presets.c:1014
+#: ../plug-ins/picmanressionist/presets.c:1014
 msgid "Save the current settings to the specified file"
 msgstr "Uloží aktuálne nastavenia do určeného súboru"
 
-#: ../plug-ins/gimpressionist/presets.c:1042
+#: ../plug-ins/picmanressionist/presets.c:1042
 msgid "Reads the selected Preset into memory"
 msgstr "Číta zvolené predvoľby do pamäte"
 
-#: ../plug-ins/gimpressionist/presets.c:1048
+#: ../plug-ins/picmanressionist/presets.c:1048
 msgid "Deletes the selected Preset"
 msgstr "Zmaže zvolené prevoľby"
 
-#: ../plug-ins/gimpressionist/presets.c:1054
+#: ../plug-ins/picmanressionist/presets.c:1054
 msgid "Reread the folder of Presets"
 msgstr "Znovu načítanie priečinka s predvoľbami"
 
-#: ../plug-ins/gimpressionist/preview.c:191
+#: ../plug-ins/picmanressionist/preview.c:191
 msgid "Refresh the Preview window"
 msgstr "Aktualizovať okno s náhľadom"
 
-#: ../plug-ins/gimpressionist/preview.c:199
+#: ../plug-ins/picmanressionist/preview.c:199
 msgid "Revert to the original image"
 msgstr "Návrat k pôvodnému obrázku"
 
-#: ../plug-ins/gimpressionist/size.c:77
+#: ../plug-ins/picmanressionist/size.c:77
 msgid "_Size"
 msgstr "Veľko_sť"
 
-#: ../plug-ins/gimpressionist/size.c:91
+#: ../plug-ins/picmanressionist/size.c:91
 msgid "Sizes:"
 msgstr "Veľkosti:"
 
-#: ../plug-ins/gimpressionist/size.c:95
+#: ../plug-ins/picmanressionist/size.c:95
 msgid "The number of sizes of brushes to use"
 msgstr "Počet použitých veľkostí štetcov"
 
-#: ../plug-ins/gimpressionist/size.c:103
+#: ../plug-ins/picmanressionist/size.c:103
 msgid "Minimum size:"
 msgstr "Minimálna veľkosť:"
 
-#: ../plug-ins/gimpressionist/size.c:107
+#: ../plug-ins/picmanressionist/size.c:107
 msgid "The smallest brush to create"
 msgstr "Najmenší vytváraný štetec"
 
-#: ../plug-ins/gimpressionist/size.c:115
+#: ../plug-ins/picmanressionist/size.c:115
 msgid "Maximum size:"
 msgstr "Maximálna veľkosť:"
 
-#: ../plug-ins/gimpressionist/size.c:119
+#: ../plug-ins/picmanressionist/size.c:119
 msgid "The largest brush to create"
 msgstr "Najväčší vytváraný štetec"
 
-#: ../plug-ins/gimpressionist/size.c:133
+#: ../plug-ins/picmanressionist/size.c:133
 msgid "Size:"
 msgstr "Veľkosť:"
 
-#: ../plug-ins/gimpressionist/size.c:142
+#: ../plug-ins/picmanressionist/size.c:142
 msgid ""
 "Let the value (brightness) of the region determine the size of the stroke"
 msgstr "Nech hodnota (jas) oblasti určí rozmer ťahu"
 
-#: ../plug-ins/gimpressionist/size.c:146
+#: ../plug-ins/picmanressionist/size.c:146
 msgid ""
 "The distance from the center of the image determines the size of the stroke"
 msgstr "Vzdialenosť od stredu obrázka určí rozmer ťahu"
 
-#: ../plug-ins/gimpressionist/size.c:150
+#: ../plug-ins/picmanressionist/size.c:150
 msgid "Selects a random size for each stroke"
 msgstr "Náhodný výber rozmeru ťahu"
 
-#: ../plug-ins/gimpressionist/size.c:154
+#: ../plug-ins/picmanressionist/size.c:154
 msgid "Let the direction from the center determine the size of the stroke"
 msgstr "Nech smer od stredu určí rozmer ťahu"
 
-#: ../plug-ins/gimpressionist/size.c:166
+#: ../plug-ins/picmanressionist/size.c:166
 msgid "The hue of the region determines the size of the stroke"
 msgstr "Odtieň oblasti určí rozmer ťahu"
 
-#: ../plug-ins/gimpressionist/size.c:170
+#: ../plug-ins/picmanressionist/size.c:170
 msgid "The brush-size that matches the original image the closest is selected"
 msgstr "Zvolí sa veľkosť štetca najlepšie zodpovedajúca pôvodnému obrázka"
 
-#: ../plug-ins/gimpressionist/size.c:179
+#: ../plug-ins/picmanressionist/size.c:179
 msgid "Manually specify the stroke size"
 msgstr "Ručné určenie rozmeru ťahu"
 
-#: ../plug-ins/gimpressionist/size.c:190
+#: ../plug-ins/picmanressionist/size.c:190
 msgid "Opens up the Size Map Editor"
 msgstr "Otvára editor mapy veľkosti"
 
-#: ../plug-ins/gimpressionist/sizemap.c:383
+#: ../plug-ins/picmanressionist/sizemap.c:383
 msgid "Size Map Editor"
 msgstr "Editor máp veľkosti"
 
-#: ../plug-ins/gimpressionist/sizemap.c:411
+#: ../plug-ins/picmanressionist/sizemap.c:411
 msgid "Smvectors"
 msgstr "Vektory mv"
 
-#: ../plug-ins/gimpressionist/sizemap.c:421
+#: ../plug-ins/picmanressionist/sizemap.c:421
 msgid ""
 "The smvector-field. Left-click to move selected smvector, Right-click to "
 "point it towards mouse, Middle-click to add a new smvector."
@@ -9444,59 +9444,59 @@ msgstr ""
 "Pole vektorov mv. Ľavým tlačítkom presuniete vybraný vektor, pravým "
 "presuniete bod a prostredným tlačítkom pridáte nový vektor mv."
 
-#: ../plug-ins/gimpressionist/sizemap.c:463
+#: ../plug-ins/picmanressionist/sizemap.c:463
 msgid "Select previous smvector"
 msgstr "Vybrať prechádzajúci vektor"
 
-#: ../plug-ins/gimpressionist/sizemap.c:470
+#: ../plug-ins/picmanressionist/sizemap.c:470
 msgid "Select next smvector"
 msgstr "Vybrať nasledujúci vektor"
 
-#: ../plug-ins/gimpressionist/sizemap.c:477
+#: ../plug-ins/picmanressionist/sizemap.c:477
 msgid "Add new smvector"
 msgstr "Pridať nový vektor"
 
-#: ../plug-ins/gimpressionist/sizemap.c:484
+#: ../plug-ins/picmanressionist/sizemap.c:484
 msgid "Delete selected smvector"
 msgstr "Zmazať zvolený vektor."
 
-#: ../plug-ins/gimpressionist/sizemap.c:497
+#: ../plug-ins/picmanressionist/sizemap.c:497
 msgid "Change the angle of the selected smvector"
 msgstr "Zmeniť uhol zvoleného vektora mv"
 
-#: ../plug-ins/gimpressionist/sizemap.c:504
+#: ../plug-ins/picmanressionist/sizemap.c:504
 msgid "S_trength:"
 msgstr "_Sila:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:508
+#: ../plug-ins/picmanressionist/sizemap.c:508
 msgid "Change the strength of the selected smvector"
 msgstr "Zmeniť pevnosť zvoleného vektora mv"
 
-#: ../plug-ins/gimpressionist/sizemap.c:515
+#: ../plug-ins/picmanressionist/sizemap.c:515
 msgid "St_rength exp.:"
 msgstr "Exponent _sily:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:531
+#: ../plug-ins/picmanressionist/sizemap.c:531
 msgid ""
 "Voronoi-mode makes only the smvector closest to the given point have any "
 "influence"
 msgstr "Režim Voronoi berie do úvahy iba vplyv bodu najbližšieho vektora mv"
 
 #: ../plug-ins/help/domain.c:177
-msgid "The GIMP help files are not found."
-msgstr "Súbory pomocníka GIMP neboli nájdené."
+msgid "The PICMAN help files are not found."
+msgstr "Súbory pomocníka PICMAN neboli nájdené."
 
 #: ../plug-ins/help/domain.c:178
 msgid ""
 "Please install the additional help package or use the online user manual at "
-"http://docs.gimp.org/."
+"http://docs.picman.org/."
 msgstr ""
 "Prosím, nainštalujte prídavný balík pomocníka, alebo použite príručku "
-"používateľa na internete na adrese http://docs.gimp.org/."
+"používateľa na internete na adrese http://docs.picman.org/."
 
 #: ../plug-ins/help/domain.c:184
-msgid "There is a problem with the GIMP help files."
-msgstr "Je problém so súbormi pomocníka GIMP-"
+msgid "There is a problem with the PICMAN help files."
+msgstr "Je problém so súbormi pomocníka PICMAN-"
 
 #: ../plug-ins/help/domain.c:186
 msgid "Please check your installation."
@@ -9517,8 +9517,8 @@ msgstr ""
 "%s"
 
 #: ../plug-ins/helpbrowser/dialog.c:190
-msgid "GIMP Help Browser"
-msgstr "Prehliadač GIMP pomocníka"
+msgid "PICMAN Help Browser"
+msgstr "Prehliadač PICMAN pomocníka"
 
 #: ../plug-ins/helpbrowser/dialog.c:254
 msgid "Drag and drop this icon to a web browser"
@@ -9537,8 +9537,8 @@ msgid "Go to the index page"
 msgstr "Prejsť na indexovú stranu"
 
 #: ../plug-ins/helpbrowser/dialog.c:503
-msgid "Visit the GIMP documentation website"
-msgstr "Navštíviť www stránku s dokumentáciou GIMPu"
+msgid "Visit the PICMAN documentation website"
+msgstr "Navštíviť www stránku s dokumentáciou PICMANu"
 
 #: ../plug-ins/helpbrowser/dialog.c:577
 msgid "Document not found"
@@ -9745,7 +9745,7 @@ msgid "Clear"
 msgstr "Vymazať"
 
 #: ../plug-ins/imagemap/imap_cmd_create.c:58
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:151
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:151
 msgid "Create"
 msgstr "Vytvoriť"
 
@@ -9767,41 +9767,41 @@ msgid "Edit Object"
 msgstr "Upraviť objekt"
 
 #. Create the areas
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:117
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:147
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:251
-msgid "Use Gimp Guides"
-msgstr "Použiť GIMP vodítka"
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:117
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:147
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:251
+msgid "Use Picman Guides"
+msgstr "Použiť PICMAN vodítka"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:160
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:160
 msgid "Al_ternate"
 msgstr "Al_ternatívne"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:165
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:165
 msgid "A_ll"
 msgstr "_Všetko"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:169
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:169
 msgid "Add Additional Guides"
 msgstr "Pridať ďalšie vodítka"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:177
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:177
 msgid "L_eft border"
 msgstr "Ľ_avý okraj"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:181
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:181
 msgid "_Right border"
 msgstr "_Pravý okraj"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:185
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:185
 msgid "_Upper border"
 msgstr "_Horný okraj"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:189
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:189
 msgid "Lo_wer border"
 msgstr "_Dolný okraj"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:197
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:197
 msgid "_Base URL:"
 msgstr "_Základné URL:"
 
@@ -10318,8 +10318,8 @@ msgid "According to the EXIF data, this image is rotated."
 msgstr "Podľa EXIF údaje je tento obrázok zrotovaný."
 
 #: ../plug-ins/jpeg/jpeg-exif.c:91
-msgid "Would you like GIMP to rotate it into the standard orientation?"
-msgstr "Chcete, aby ho GIMP zrotoval na štandardnú orientáciu?"
+msgid "Would you like PICMAN to rotate it into the standard orientation?"
+msgstr "Chcete, aby ho PICMAN zrotoval na štandardnú orientáciu?"
 
 #: ../plug-ins/jpeg/jpeg-exif.c:93
 msgid "_Keep Orientation"
@@ -10710,15 +10710,15 @@ msgstr "Rozčerenie vrstvy..."
 msgid "Page Curl"
 msgstr "Rozčerenie stránky"
 
-#: ../plug-ins/print/gimp_color_window.c:208
+#: ../plug-ins/print/picman_color_window.c:208
 msgid "Print Color Adjust"
 msgstr "Prispôsobenie farieb pre tlač"
 
-#: ../plug-ins/print/gimp_color_window.c:268
+#: ../plug-ins/print/picman_color_window.c:268
 msgid "Brightness:"
 msgstr "Jas:"
 
-#: ../plug-ins/print/gimp_color_window.c:276
+#: ../plug-ins/print/picman_color_window.c:276
 msgid ""
 "Set the brightness of the print.\n"
 "0 is solid black, 2 is solid white"
@@ -10726,33 +10726,33 @@ msgstr ""
 "Nastavenie jasu tlače.\n"
 "0 je jednoliata čierna, 2 je jednoliata biela"
 
-#: ../plug-ins/print/gimp_color_window.c:288
+#: ../plug-ins/print/picman_color_window.c:288
 msgid "Contrast:"
 msgstr "Kontrast:"
 
-#: ../plug-ins/print/gimp_color_window.c:296
+#: ../plug-ins/print/picman_color_window.c:296
 msgid "Set the contrast of the print"
 msgstr "Nastaviť kontrast tlače"
 
-#: ../plug-ins/print/gimp_color_window.c:315
+#: ../plug-ins/print/picman_color_window.c:315
 msgid "Adjust the cyan balance of the print"
 msgstr "Prispôsobenie vyváženie azúrovej farby pre tlač"
 
-#: ../plug-ins/print/gimp_color_window.c:334
+#: ../plug-ins/print/picman_color_window.c:334
 msgid "Adjust the magenta balance of the print"
 msgstr "Prispôsobenie vyváženie purpurovej farby pre tlač"
 
-#: ../plug-ins/print/gimp_color_window.c:353
+#: ../plug-ins/print/picman_color_window.c:353
 msgid "Adjust the yellow balance of the print"
 msgstr "Prispôsobenie vyváženie žltej farby pre tlač"
 
 #. Gray: Circle: Spinbutton 2
-#: ../plug-ins/print/gimp_color_window.c:364 ../plug-ins/rcm/rcm_dialog.c:494
+#: ../plug-ins/print/picman_color_window.c:364 ../plug-ins/rcm/rcm_dialog.c:494
 #: ../plug-ins/rcm/rcm_dialog.c:556
 msgid "Saturation:"
 msgstr "Sýtosť:"
 
-#: ../plug-ins/print/gimp_color_window.c:372
+#: ../plug-ins/print/picman_color_window.c:372
 msgid ""
 "Adjust the saturation (color balance) of the print\n"
 "Use zero saturation to produce grayscale output using color and black inks"
@@ -10761,11 +10761,11 @@ msgstr ""
 "Použite nulu na vyprodukovanie výstupu v odtieňoch šedej s použitím "
 "farebného a čierneho atramentu"
 
-#: ../plug-ins/print/gimp_color_window.c:385
+#: ../plug-ins/print/picman_color_window.c:385
 msgid "Density:"
 msgstr "Hustota:"
 
-#: ../plug-ins/print/gimp_color_window.c:393
+#: ../plug-ins/print/picman_color_window.c:393
 msgid ""
 "Adjust the density (amount of ink) of the print. Reduce the density if the "
 "ink bleeds through the paper or smears; increase the density if black "
@@ -10775,7 +10775,7 @@ msgstr ""
 "tečie po papiery, alebo sa rozmazáva; zvýšte hustotu, ak čierne oblasti sú "
 "jednoliate."
 
-#: ../plug-ins/print/gimp_color_window.c:415
+#: ../plug-ins/print/picman_color_window.c:415
 msgid ""
 "Adjust the gamma of the print. Larger values will produce a generally "
 "brighter print, while smaller values will produce a generally darker print. "
@@ -10785,11 +10785,11 @@ msgstr ""
 "tlač, kým nižšie hodnoty vyprodukujú tmavšiu tlač. Čierna a biela zostanú "
 "také isté na rozdiel od nastavovania jasu."
 
-#: ../plug-ins/print/gimp_color_window.c:432
+#: ../plug-ins/print/picman_color_window.c:432
 msgid "Dither algorithm:"
 msgstr "Algoritmus rozptylu:"
 
-#: ../plug-ins/print/gimp_color_window.c:440
+#: ../plug-ins/print/picman_color_window.c:440
 msgid ""
 "Choose the dither algorithm to be used.\n"
 "Adaptive Hybrid usually produces the best all-around quality.\n"
@@ -10809,12 +10809,12 @@ msgstr ""
 #.
 #. * Create the main dialog
 #.
-#: ../plug-ins/print/gimp_main_window.c:360
+#: ../plug-ins/print/picman_main_window.c:360
 #, c-format
 msgid "%s -- Print v%s"
 msgstr "%s -- Tlač v%s"
 
-#: ../plug-ins/print/gimp_main_window.c:369
+#: ../plug-ins/print/picman_main_window.c:369
 msgid ""
 "Save\n"
 "Settings"
@@ -10822,7 +10822,7 @@ msgstr ""
 "Uložiť\n"
 "nastavenia"
 
-#: ../plug-ins/print/gimp_main_window.c:370
+#: ../plug-ins/print/picman_main_window.c:370
 msgid ""
 "Print and\n"
 "Save Settings"
@@ -10830,7 +10830,7 @@ msgstr ""
 "Tlačiť\n"
 "a uložiť nastavenia"
 
-#: ../plug-ins/print/gimp_main_window.c:449
+#: ../plug-ins/print/picman_main_window.c:449
 msgid ""
 "Position the image on the page.\n"
 "Click and drag with the primary button to position the image.\n"
@@ -10854,135 +10854,135 @@ msgstr ""
 "Ak počas ťahania obrázka myšou kliknete iným tlačítkom, obrázok sa vráti na "
 "pôvodnú pozíciu."
 
-#: ../plug-ins/print/gimp_main_window.c:492
+#: ../plug-ins/print/picman_main_window.c:492
 msgid "Auto"
 msgstr "Automaticky"
 
-#: ../plug-ins/print/gimp_main_window.c:493
+#: ../plug-ins/print/picman_main_window.c:493
 msgid "Portrait"
 msgstr "Na výšku"
 
-#: ../plug-ins/print/gimp_main_window.c:494
+#: ../plug-ins/print/picman_main_window.c:494
 msgid "Landscape"
 msgstr "Na šírku"
 
-#: ../plug-ins/print/gimp_main_window.c:495
+#: ../plug-ins/print/picman_main_window.c:495
 msgid "Upside down"
 msgstr "Hore nohami"
 
-#: ../plug-ins/print/gimp_main_window.c:496
+#: ../plug-ins/print/picman_main_window.c:496
 msgid "Seascape"
 msgstr "Na šírku"
 
-#: ../plug-ins/print/gimp_main_window.c:506
+#: ../plug-ins/print/picman_main_window.c:506
 msgid ""
 "Select the orientation: portrait, landscape, upside down, or seascape "
 "(upside down landscape)"
 msgstr ""
 "Zvoľte orientáciu: na výšku, na šírku, hore nohami, na šírku hore nohami "
 
-#: ../plug-ins/print/gimp_main_window.c:525
+#: ../plug-ins/print/picman_main_window.c:525
 msgid "Distance from the left of the paper to the image"
 msgstr "Vzdialenosť od ľavého okraja papiera k obrázku"
 
-#: ../plug-ins/print/gimp_main_window.c:538
+#: ../plug-ins/print/picman_main_window.c:538
 msgid "Distance from the top of the paper to the image"
 msgstr "Vzdialenosť od horného okraja papiera k obrázku"
 
-#: ../plug-ins/print/gimp_main_window.c:551
+#: ../plug-ins/print/picman_main_window.c:551
 msgid "Distance from the left of the paper to the right of the image"
 msgstr "Vzdialenosť od ľavého okraja papiera k pravému okraju obrázka"
 
-#: ../plug-ins/print/gimp_main_window.c:561
+#: ../plug-ins/print/picman_main_window.c:561
 msgid "Right border:"
 msgstr "Pravý okraj:"
 
-#: ../plug-ins/print/gimp_main_window.c:565
+#: ../plug-ins/print/picman_main_window.c:565
 msgid "Distance from the right of the paper to the image"
 msgstr "Vzdialenosť od pravého okraja papiera k obrázku"
 
-#: ../plug-ins/print/gimp_main_window.c:579
+#: ../plug-ins/print/picman_main_window.c:579
 msgid "Distance from the top of the paper to the bottom of the image"
 msgstr "Vzdialenosť od horného okraja papiera k dolnému okraju obrázka"
 
-#: ../plug-ins/print/gimp_main_window.c:589
+#: ../plug-ins/print/picman_main_window.c:589
 msgid "Bottom border:"
 msgstr "Dolný okraj:"
 
-#: ../plug-ins/print/gimp_main_window.c:593
+#: ../plug-ins/print/picman_main_window.c:593
 msgid "Distance from the bottom of the paper to the image"
 msgstr "Vzdialenosť od dolného okraja papiera k obrázku"
 
-#: ../plug-ins/print/gimp_main_window.c:606
+#: ../plug-ins/print/picman_main_window.c:606
 msgid "Center:"
 msgstr "Centrovanie:"
 
-#: ../plug-ins/print/gimp_main_window.c:610
+#: ../plug-ins/print/picman_main_window.c:610
 msgid "Vertically"
 msgstr "Vertikálne"
 
-#: ../plug-ins/print/gimp_main_window.c:615
+#: ../plug-ins/print/picman_main_window.c:615
 msgid "Center the image vertically on the paper"
 msgstr "Vycentrovať obrázok zvisle na papiery"
 
-#: ../plug-ins/print/gimp_main_window.c:621
+#: ../plug-ins/print/picman_main_window.c:621
 msgid "Both"
 msgstr "Obidvoje"
 
-#: ../plug-ins/print/gimp_main_window.c:626
+#: ../plug-ins/print/picman_main_window.c:626
 msgid "Center the image on the paper"
 msgstr "Vycentrovať obrázok na papiery"
 
-#: ../plug-ins/print/gimp_main_window.c:633
+#: ../plug-ins/print/picman_main_window.c:633
 msgid "Horizontally"
 msgstr "Vodorovne"
 
-#: ../plug-ins/print/gimp_main_window.c:638
+#: ../plug-ins/print/picman_main_window.c:638
 msgid "Center the image horizontally on the paper"
 msgstr "Vycentrovať vodorovne obrázok na papiery"
 
-#: ../plug-ins/print/gimp_main_window.c:654
+#: ../plug-ins/print/picman_main_window.c:654
 msgid "Setup Printer"
 msgstr "Nastaviť tlačiareň"
 
 #.
 #. * Printer driver option menu.
 #.
-#: ../plug-ins/print/gimp_main_window.c:683
+#: ../plug-ins/print/picman_main_window.c:683
 msgid "Printer Model:"
 msgstr "Model tlačiarne:"
 
-#: ../plug-ins/print/gimp_main_window.c:695
+#: ../plug-ins/print/picman_main_window.c:695
 msgid "Select your printer model"
 msgstr "Vyberte model vašej tlačiarne"
 
 #.
 #. * PPD file.
 #.
-#: ../plug-ins/print/gimp_main_window.c:734
+#: ../plug-ins/print/picman_main_window.c:734
 msgid "PPD File:"
 msgstr "PPD súbor:"
 
-#: ../plug-ins/print/gimp_main_window.c:750
+#: ../plug-ins/print/picman_main_window.c:750
 msgid "Enter the PPD filename for your printer"
 msgstr "Vložte PPD názov súboru pre vašu tlačiareň"
 
-#: ../plug-ins/print/gimp_main_window.c:753
+#: ../plug-ins/print/picman_main_window.c:753
 msgid "Browse"
 msgstr "Prechádzať"
 
-#: ../plug-ins/print/gimp_main_window.c:759
+#: ../plug-ins/print/picman_main_window.c:759
 msgid "Choose the PPD file for your printer"
 msgstr "Zvoľte PPD súbor pre vašu tlačiareň"
 
 #.
 #. * Print command.
 #.
-#: ../plug-ins/print/gimp_main_window.c:769
+#: ../plug-ins/print/picman_main_window.c:769
 msgid "Command:"
 msgstr "Príkaz:"
 
-#: ../plug-ins/print/gimp_main_window.c:782
+#: ../plug-ins/print/picman_main_window.c:782
 msgid ""
 "Enter the command to print to your printer. Note: Please do not remove the `-"
 "l' or `-oraw' from the command string, or printing will probably fail!"
@@ -10991,39 +10991,39 @@ msgstr ""
 "prosím z reťazca pre tlač prepínače `-l' alebo `-oraw', lebo tlač "
 "pravdepodobne nebude úspešná!"
 
-#: ../plug-ins/print/gimp_main_window.c:792
+#: ../plug-ins/print/picman_main_window.c:792
 msgid "Choose PPD File"
 msgstr "Vybrať PPD súbor"
 
-#: ../plug-ins/print/gimp_main_window.c:819
+#: ../plug-ins/print/picman_main_window.c:819
 msgid "Define New Printer"
 msgstr "Definovanie novej tlačiarne"
 
-#: ../plug-ins/print/gimp_main_window.c:842
-#: ../plug-ins/print/gimp_main_window.c:937
+#: ../plug-ins/print/picman_main_window.c:842
+#: ../plug-ins/print/picman_main_window.c:937
 msgid "Printer name:"
 msgstr "Názov tlačiarne:"
 
-#: ../plug-ins/print/gimp_main_window.c:846
+#: ../plug-ins/print/picman_main_window.c:846
 msgid "Enter the name you wish to give this logical printer"
 msgstr "Vložte označenie, ktoré chcete dať tejto logickej tlačiarni"
 
-#: ../plug-ins/print/gimp_main_window.c:859
-msgid "About Gimp-Print "
-msgstr "O Gimp-Print "
+#: ../plug-ins/print/picman_main_window.c:859
+msgid "About Picman-Print "
+msgstr "O Picman-Print "
 
-#: ../plug-ins/print/gimp_main_window.c:872
-msgid "Gimp-Print Version "
-msgstr "Verzia Gimp-Print"
+#: ../plug-ins/print/picman_main_window.c:872
+msgid "Picman-Print Version "
+msgstr "Verzia Picman-Print"
 
-#: ../plug-ins/print/gimp_main_window.c:872
+#: ../plug-ins/print/picman_main_window.c:872
 msgid ""
 "\n"
 "\n"
 "Copyright (C) 1997-2001 Michael Sweet, Robert Krawitz,\n"
-"and the rest of the Gimp-Print Development Team.\n"
+"and the rest of the Picman-Print Development Team.\n"
 "\n"
-"Please visit our web site at http://gimp-print.sourceforge.net.\n"
+"Please visit our web site at http://picman-print.sourceforge.net.\n"
 "\n"
 "This program is free software; you can redistribute it and/or modify\n"
 "it under the terms of the GNU General Public License as published by\n"
@@ -11042,9 +11042,9 @@ msgstr ""
 "\n"
 "\n"
 "Copyright (C) 1997-2001 Michael Sweet, Robert Krawitz,\n"
-"a zvyšok vývojového tímu  Gimp-Print.\n"
+"a zvyšok vývojového tímu  Picman-Print.\n"
 "\n"
-"Navštívte prosím webovskú stánku http://gimp-print.sourceforge.net.\n"
+"Navštívte prosím webovskú stánku http://picman-print.sourceforge.net.\n"
 "\n"
 "Tento program je slobodný softvér; môžete ho nedistribuovať a/alebo meniť\n"
 "v súlade so Všeobecnou verejnou licenciou GNU publikovanou\n"
@@ -11061,11 +11061,11 @@ msgstr ""
 "Foundation, Inc., 59 Temple Place - Suite 330, Boston,\n"
 "MA 02111-1307, USA.\n"
 
-#: ../plug-ins/print/gimp_main_window.c:920
+#: ../plug-ins/print/picman_main_window.c:920
 msgid "Printer Settings"
 msgstr "Nastavenie tlačiarne"
 
-#: ../plug-ins/print/gimp_main_window.c:933
+#: ../plug-ins/print/picman_main_window.c:933
 msgid ""
 "Select the name of the printer (not the type, or model, of printer) that you "
 "wish to print to"
@@ -11073,18 +11073,18 @@ msgstr ""
 "Zvoľte si názov tlačiarne (nie typ alebo model tlačiarne), na ktorej chcete "
 "tlačiť"
 
-#: ../plug-ins/print/gimp_main_window.c:943
+#: ../plug-ins/print/picman_main_window.c:943
 msgid "Printer model:"
 msgstr "Model tlačiarne:"
 
 #.
 #. * Setup printer button
 #.
-#: ../plug-ins/print/gimp_main_window.c:954
+#: ../plug-ins/print/picman_main_window.c:954
 msgid "Setup Printer..."
 msgstr "Nastavenie tlačiarne..."
 
-#: ../plug-ins/print/gimp_main_window.c:956
+#: ../plug-ins/print/picman_main_window.c:956
 msgid ""
 "Choose the printer model, PPD file, and command that is used to print to "
 "this printer"
@@ -11095,11 +11095,11 @@ msgstr ""
 #.
 #. * New printer button
 #.
-#: ../plug-ins/print/gimp_main_window.c:971
+#: ../plug-ins/print/picman_main_window.c:971
 msgid "New Printer..."
 msgstr "Nová tlačiareň..."
 
-#: ../plug-ins/print/gimp_main_window.c:973
+#: ../plug-ins/print/picman_main_window.c:973
 msgid ""
 "Define a new logical printer. This can be used to name a collection of "
 "settings that you wish to remember for future use."
@@ -11107,67 +11107,67 @@ msgstr ""
 "Definovanie novej logickej tlačiarne. Toto môže byť použité na pomenovanie "
 "zbierky nastavení, ktoré si prajete zapamätať a v budúcnosti používať."
 
-#: ../plug-ins/print/gimp_main_window.c:994
+#: ../plug-ins/print/picman_main_window.c:994
 msgid "Size of paper that you wish to print to"
 msgstr "Veľkosť papiera, na ktorý chcete tlačiť"
 
-#: ../plug-ins/print/gimp_main_window.c:997
+#: ../plug-ins/print/picman_main_window.c:997
 msgid "Media size:"
 msgstr "Veľkosť média:"
 
-#: ../plug-ins/print/gimp_main_window.c:1006
+#: ../plug-ins/print/picman_main_window.c:1006
 msgid "Dimensions:"
 msgstr "Rozmery:"
 
-#: ../plug-ins/print/gimp_main_window.c:1020
+#: ../plug-ins/print/picman_main_window.c:1020
 msgid "Width of the paper that you wish to print to"
 msgstr "Šírka papiera, na ktorý chcete tlačiť"
 
-#: ../plug-ins/print/gimp_main_window.c:1037
+#: ../plug-ins/print/picman_main_window.c:1037
 msgid "Height of the paper that you wish to print to"
 msgstr "Výška papiera, na ktorý chcete tlačiť"
 
-#: ../plug-ins/print/gimp_main_window.c:1053
+#: ../plug-ins/print/picman_main_window.c:1053
 msgid "Type of media you're printing to"
 msgstr "Typ média na ktorý bude tlačené"
 
-#: ../plug-ins/print/gimp_main_window.c:1056
+#: ../plug-ins/print/picman_main_window.c:1056
 msgid "Media type:"
 msgstr "Typ média:"
 
-#: ../plug-ins/print/gimp_main_window.c:1069
+#: ../plug-ins/print/picman_main_window.c:1069
 msgid "Source (input slot) of media you're printing to"
 msgstr "Zdroj (vstupné miesto) média, na ktoré tlačíte"
 
-#: ../plug-ins/print/gimp_main_window.c:1072
+#: ../plug-ins/print/picman_main_window.c:1072
 msgid "Media source:"
 msgstr "Zdroj média:"
 
-#: ../plug-ins/print/gimp_main_window.c:1085
+#: ../plug-ins/print/picman_main_window.c:1085
 msgid "Type of ink in the printer"
 msgstr "Typ atramentu tlačiarne"
 
-#: ../plug-ins/print/gimp_main_window.c:1088
+#: ../plug-ins/print/picman_main_window.c:1088
 msgid "Ink type:"
 msgstr "Typ atramentu:"
 
-#: ../plug-ins/print/gimp_main_window.c:1101
+#: ../plug-ins/print/picman_main_window.c:1101
 msgid "Resolution and quality of the print"
 msgstr "Rozlíšenie a kvalita tlače"
 
-#: ../plug-ins/print/gimp_main_window.c:1138
+#: ../plug-ins/print/picman_main_window.c:1138
 msgid "Scaling:"
 msgstr "Zväčšenie:"
 
-#: ../plug-ins/print/gimp_main_window.c:1144
+#: ../plug-ins/print/picman_main_window.c:1144
 msgid "Set the scale (size) of the image"
 msgstr "Nastaviť zväčšenie (veľkosť) obrázka"
 
-#: ../plug-ins/print/gimp_main_window.c:1169
+#: ../plug-ins/print/picman_main_window.c:1169
 msgid "Scale by:"
 msgstr "Zmena veľkosti o:"
 
-#: ../plug-ins/print/gimp_main_window.c:1174
+#: ../plug-ins/print/picman_main_window.c:1174
 msgid ""
 "Select whether scaling is measured as percent of available page size or "
 "number of output dots per inch"
@@ -11175,58 +11175,58 @@ msgstr ""
 "Zvoľte, či zmena veľkosti bude vyjadrená ako percento dostupnej veľkosti "
 "stránky, alebo ako číslo výstupného DPI"
 
-#: ../plug-ins/print/gimp_main_window.c:1179
+#: ../plug-ins/print/picman_main_window.c:1179
 msgid "Percent"
 msgstr "Percentá"
 
-#: ../plug-ins/print/gimp_main_window.c:1186
+#: ../plug-ins/print/picman_main_window.c:1186
 msgid "Scale the print to the size of the page"
 msgstr "Zmeniť veľkosť tlače podľa rozmerov strany"
 
-#: ../plug-ins/print/gimp_main_window.c:1192
+#: ../plug-ins/print/picman_main_window.c:1192
 msgid "PPI"
 msgstr "PPI"
 
-#: ../plug-ins/print/gimp_main_window.c:1198
+#: ../plug-ins/print/picman_main_window.c:1198
 msgid "Scale the print to the number of dots per inch"
 msgstr "Zmeniť veľkosť tlače podľa počtu bodov na palec"
 
-#: ../plug-ins/print/gimp_main_window.c:1220
+#: ../plug-ins/print/picman_main_window.c:1220
 msgid "Set the width of the print"
 msgstr "Nastaviť šírku tlače"
 
-#: ../plug-ins/print/gimp_main_window.c:1233
+#: ../plug-ins/print/picman_main_window.c:1233
 msgid "Set the height of the print"
 msgstr "Nastaviť výšku tlače"
 
-#: ../plug-ins/print/gimp_main_window.c:1254
+#: ../plug-ins/print/picman_main_window.c:1254
 msgid "Units:"
 msgstr "Jednotky:"
 
-#: ../plug-ins/print/gimp_main_window.c:1259
+#: ../plug-ins/print/picman_main_window.c:1259
 msgid "Select the base unit of measurement for printing"
 msgstr "Zvoliť základnú mernú jednotku pre tlač"
 
-#: ../plug-ins/print/gimp_main_window.c:1262
+#: ../plug-ins/print/picman_main_window.c:1262
 msgid "Inch"
 msgstr "Palec"
 
-#: ../plug-ins/print/gimp_main_window.c:1269
+#: ../plug-ins/print/picman_main_window.c:1269
 msgid "Set the base unit of measurement to inches"
 msgstr "Nastaviť palce ako základnú mernú jednotku"
 
-#: ../plug-ins/print/gimp_main_window.c:1275
+#: ../plug-ins/print/picman_main_window.c:1275
 msgid "cm"
 msgstr "cm"
 
-#: ../plug-ins/print/gimp_main_window.c:1281
+#: ../plug-ins/print/picman_main_window.c:1281
 msgid "Set the base unit of measurement to centimetres"
 msgstr "Nastaviť centimetre ako základnú mernú jednotku"
 
 #.
 #. * The "image size" button
 #.
-#: ../plug-ins/print/gimp_main_window.c:1291
+#: ../plug-ins/print/picman_main_window.c:1291
 msgid ""
 "Use Original\n"
 "Image Size"
@@ -11234,43 +11234,43 @@ msgstr ""
 "Použiť pôvodnú\n"
 "veľkosť obrázka"
 
-#: ../plug-ins/print/gimp_main_window.c:1297
+#: ../plug-ins/print/picman_main_window.c:1297
 msgid "Set the print size to the size of the image"
 msgstr "Nastavenie veľkosti tlače na veľkosť obrázka"
 
-#: ../plug-ins/print/gimp_main_window.c:1320
+#: ../plug-ins/print/picman_main_window.c:1320
 msgid "Image / Output Settings"
 msgstr "Obrázok / Výstupné nastavenia"
 
-#: ../plug-ins/print/gimp_main_window.c:1334
+#: ../plug-ins/print/picman_main_window.c:1334
 msgid "Image type:"
 msgstr "Typ obrázka:"
 
-#: ../plug-ins/print/gimp_main_window.c:1342
+#: ../plug-ins/print/picman_main_window.c:1342
 msgid "Optimize the output for the type of image being printed"
 msgstr "Optimalizovať výstup podľa typu tlačeného obrázka"
 
-#: ../plug-ins/print/gimp_main_window.c:1346
+#: ../plug-ins/print/picman_main_window.c:1346
 msgid "Line art"
 msgstr "Čiarová grafika"
 
-#: ../plug-ins/print/gimp_main_window.c:1353
+#: ../plug-ins/print/picman_main_window.c:1353
 msgid "Fastest and brightest color for text and line art"
 msgstr "Najrýchlejšie a jasnejšie farby pre text a čiarovú grafiku"
 
-#: ../plug-ins/print/gimp_main_window.c:1360
+#: ../plug-ins/print/picman_main_window.c:1360
 msgid "Solid colors"
 msgstr "Farebné plochy"
 
-#: ../plug-ins/print/gimp_main_window.c:1367
+#: ../plug-ins/print/picman_main_window.c:1367
 msgid "Best for images dominated by regions of solid color"
 msgstr "Najlepšie pre obrázky s dominatnými oblasťami jednej farby"
 
-#: ../plug-ins/print/gimp_main_window.c:1375
+#: ../plug-ins/print/picman_main_window.c:1375
 msgid "Photograph"
 msgstr "Fotografia"
 
-#: ../plug-ins/print/gimp_main_window.c:1383
+#: ../plug-ins/print/picman_main_window.c:1383
 msgid ""
 "Slowest, but most accurate and smoothest color for continuous tone images "
 "and photographs"
@@ -11278,48 +11278,48 @@ msgstr ""
 "Najpomalšie, ale najpresnejšie a najhladšie farby pre plynulé odtiene "
 "obrázkov a fotografií"
 
-#: ../plug-ins/print/gimp_main_window.c:1406
+#: ../plug-ins/print/picman_main_window.c:1406
 msgid "Output type:"
 msgstr "Typ výstupu:"
 
-#: ../plug-ins/print/gimp_main_window.c:1413
+#: ../plug-ins/print/picman_main_window.c:1413
 msgid "Select the desired output type"
 msgstr "Zvoľte vytúžený typ výstupu"
 
-#: ../plug-ins/print/gimp_main_window.c:1422
+#: ../plug-ins/print/picman_main_window.c:1422
 msgid "Color output"
 msgstr "Farebný výstup"
 
-#: ../plug-ins/print/gimp_main_window.c:1427
+#: ../plug-ins/print/picman_main_window.c:1427
 msgid "Grayscale"
 msgstr "Odtiene šedej"
 
-#: ../plug-ins/print/gimp_main_window.c:1434
+#: ../plug-ins/print/picman_main_window.c:1434
 msgid "Print in shades of gray using black ink"
 msgstr "Tlačiť v odtieňoch šedej s použitím čiernej farby"
 
-#: ../plug-ins/print/gimp_main_window.c:1441
+#: ../plug-ins/print/picman_main_window.c:1441
 msgid "Black and white"
 msgstr "Čierna a biela"
 
-#: ../plug-ins/print/gimp_main_window.c:1448
+#: ../plug-ins/print/picman_main_window.c:1448
 msgid "Print in black and white (no color, and no shades of gray)"
 msgstr "Tlačiť čiernou a bielou (bez farieb a bez odtieňov šedej)"
 
 #.
 #. *  Color adjust button
 #.
-#: ../plug-ins/print/gimp_main_window.c:1459
+#: ../plug-ins/print/picman_main_window.c:1459
 msgid "Adjust Output..."
 msgstr "Prispôsobiť výstup..."
 
-#: ../plug-ins/print/gimp_main_window.c:1466
+#: ../plug-ins/print/picman_main_window.c:1466
 msgid ""
 "Adjust color balance, brightness, contrast, saturation, and dither algorithm"
 msgstr ""
 "Nastavenie farebného vyváženia, kontrastu, sýtosti a algoritmu rozptylu"
 
-#: ../plug-ins/print/gimp_main_window.c:1500
+#: ../plug-ins/print/picman_main_window.c:1500
 msgid "Print to File"
 msgstr "Tlačiť do súboru"
 
@@ -11633,8 +11633,8 @@ msgid "No data captured"
 msgstr "Neboli zachytené žiadne dáta"
 
 #: ../plug-ins/xjt/xjt.c:479 ../plug-ins/xjt/xjt.c:497
-msgid "GIMP compressed XJT image"
-msgstr "GIMP komprimovaný XJT obrázok"
+msgid "PICMAN compressed XJT image"
+msgstr "PICMAN komprimovaný XJT obrázok"
 
 #: ../plug-ins/xjt/xjt.c:718
 #, c-format

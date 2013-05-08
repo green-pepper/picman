@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,22 +22,22 @@
 
 #include "core-types.h"
 
-#include "gegl/gimp-babl.h"
-#include "gegl/gimp-gegl-utils.h"
-#include "gegl/gimptilehandlerprojection.h"
+#include "gegl/picman-babl.h"
+#include "gegl/picman-gegl-utils.h"
+#include "gegl/picmantilehandlerprojection.h"
 
-#include "gimp.h"
-#include "gimp-utils.h"
-#include "gimparea.h"
-#include "gimpimage.h"
-#include "gimpmarshal.h"
-#include "gimppickable.h"
-#include "gimpprojectable.h"
-#include "gimpprojection.h"
+#include "picman.h"
+#include "picman-utils.h"
+#include "picmanarea.h"
+#include "picmanimage.h"
+#include "picmanmarshal.h"
+#include "picmanpickable.h"
+#include "picmanprojectable.h"
+#include "picmanprojection.h"
 
 
 /*  halfway between G_PRIORITY_HIGH_IDLE and G_PRIORITY_DEFAULT_IDLE  */
-#define GIMP_PROJECTION_IDLE_PRIORITY \
+#define PICMAN_PROJECTION_IDLE_PRIORITY \
         ((G_PRIORITY_HIGH_IDLE + G_PRIORITY_DEFAULT_IDLE) / 2)
 
 
@@ -50,84 +50,84 @@ enum
 
 /*  local function prototypes  */
 
-static void   gimp_projection_pickable_iface_init (GimpPickableInterface  *iface);
+static void   picman_projection_pickable_iface_init (PicmanPickableInterface  *iface);
 
-static void        gimp_projection_finalize              (GObject         *object);
+static void        picman_projection_finalize              (GObject         *object);
 
-static gint64      gimp_projection_get_memsize           (GimpObject      *object,
+static gint64      picman_projection_get_memsize           (PicmanObject      *object,
                                                           gint64          *gui_size);
 
-static void        gimp_projection_pickable_flush        (GimpPickable    *pickable);
-static GimpImage * gimp_projection_get_image             (GimpPickable    *pickable);
-static const Babl * gimp_projection_get_format           (GimpPickable    *pickable);
-static GeglBuffer * gimp_projection_get_buffer           (GimpPickable    *pickable);
-static gboolean    gimp_projection_get_pixel_at          (GimpPickable    *pickable,
+static void        picman_projection_pickable_flush        (PicmanPickable    *pickable);
+static PicmanImage * picman_projection_get_image             (PicmanPickable    *pickable);
+static const Babl * picman_projection_get_format           (PicmanPickable    *pickable);
+static GeglBuffer * picman_projection_get_buffer           (PicmanPickable    *pickable);
+static gboolean    picman_projection_get_pixel_at          (PicmanPickable    *pickable,
                                                           gint             x,
                                                           gint             y,
                                                           const Babl      *format,
                                                           gpointer         pixel);
-static gdouble     gimp_projection_get_opacity_at        (GimpPickable    *pickable,
+static gdouble     picman_projection_get_opacity_at        (PicmanPickable    *pickable,
                                                           gint             x,
                                                           gint             y);
 
-static void        gimp_projection_free_buffer           (GimpProjection  *proj);
-static void        gimp_projection_add_update_area       (GimpProjection  *proj,
+static void        picman_projection_free_buffer           (PicmanProjection  *proj);
+static void        picman_projection_add_update_area       (PicmanProjection  *proj,
                                                           gint             x,
                                                           gint             y,
                                                           gint             w,
                                                           gint             h);
-static void        gimp_projection_flush_whenever        (GimpProjection  *proj,
+static void        picman_projection_flush_whenever        (PicmanProjection  *proj,
                                                           gboolean         now);
-static void        gimp_projection_idle_render_init      (GimpProjection  *proj);
-static gboolean    gimp_projection_idle_render_callback  (gpointer         data);
-static gboolean    gimp_projection_idle_render_next_area (GimpProjection  *proj);
-static void        gimp_projection_paint_area            (GimpProjection  *proj,
+static void        picman_projection_idle_render_init      (PicmanProjection  *proj);
+static gboolean    picman_projection_idle_render_callback  (gpointer         data);
+static gboolean    picman_projection_idle_render_next_area (PicmanProjection  *proj);
+static void        picman_projection_paint_area            (PicmanProjection  *proj,
                                                           gboolean         now,
                                                           gint             x,
                                                           gint             y,
                                                           gint             w,
                                                           gint             h);
-static void        gimp_projection_invalidate            (GimpProjection  *proj,
+static void        picman_projection_invalidate            (PicmanProjection  *proj,
                                                           guint            x,
                                                           guint            y,
                                                           guint            w,
                                                           guint            h);
 
-static void        gimp_projection_projectable_invalidate(GimpProjectable *projectable,
+static void        picman_projection_projectable_invalidate(PicmanProjectable *projectable,
                                                           gint             x,
                                                           gint             y,
                                                           gint             w,
                                                           gint             h,
-                                                          GimpProjection  *proj);
-static void        gimp_projection_projectable_flush     (GimpProjectable *projectable,
+                                                          PicmanProjection  *proj);
+static void        picman_projection_projectable_flush     (PicmanProjectable *projectable,
                                                           gboolean         invalidate_preview,
-                                                          GimpProjection  *proj);
-static void        gimp_projection_projectable_changed   (GimpProjectable *projectable,
-                                                          GimpProjection  *proj);
+                                                          PicmanProjection  *proj);
+static void        picman_projection_projectable_changed   (PicmanProjectable *projectable,
+                                                          PicmanProjection  *proj);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpProjection, gimp_projection, GIMP_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PICKABLE,
-                                                gimp_projection_pickable_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanProjection, picman_projection, PICMAN_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PICKABLE,
+                                                picman_projection_pickable_iface_init))
 
-#define parent_class gimp_projection_parent_class
+#define parent_class picman_projection_parent_class
 
 static guint projection_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_projection_class_init (GimpProjectionClass *klass)
+picman_projection_class_init (PicmanProjectionClass *klass)
 {
   GObjectClass    *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass *gimp_object_class = GIMP_OBJECT_CLASS (klass);
+  PicmanObjectClass *picman_object_class = PICMAN_OBJECT_CLASS (klass);
 
   projection_signals[UPDATE] =
     g_signal_new ("update",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpProjectionClass, update),
+                  G_STRUCT_OFFSET (PicmanProjectionClass, update),
                   NULL, NULL,
-                  gimp_marshal_VOID__BOOLEAN_INT_INT_INT_INT,
+                  picman_marshal_VOID__BOOLEAN_INT_INT_INT_INT,
                   G_TYPE_NONE, 5,
                   G_TYPE_BOOLEAN,
                   G_TYPE_INT,
@@ -135,32 +135,32 @@ gimp_projection_class_init (GimpProjectionClass *klass)
                   G_TYPE_INT,
                   G_TYPE_INT);
 
-  object_class->finalize         = gimp_projection_finalize;
+  object_class->finalize         = picman_projection_finalize;
 
-  gimp_object_class->get_memsize = gimp_projection_get_memsize;
+  picman_object_class->get_memsize = picman_projection_get_memsize;
 }
 
 static void
-gimp_projection_init (GimpProjection *proj)
+picman_projection_init (PicmanProjection *proj)
 {
 }
 
 static void
-gimp_projection_pickable_iface_init (GimpPickableInterface *iface)
+picman_projection_pickable_iface_init (PicmanPickableInterface *iface)
 {
-  iface->flush                 = gimp_projection_pickable_flush;
-  iface->get_image             = gimp_projection_get_image;
-  iface->get_format            = gimp_projection_get_format;
-  iface->get_format_with_alpha = gimp_projection_get_format; /* sic */
-  iface->get_buffer            = gimp_projection_get_buffer;
-  iface->get_pixel_at          = gimp_projection_get_pixel_at;
-  iface->get_opacity_at        = gimp_projection_get_opacity_at;
+  iface->flush                 = picman_projection_pickable_flush;
+  iface->get_image             = picman_projection_get_image;
+  iface->get_format            = picman_projection_get_format;
+  iface->get_format_with_alpha = picman_projection_get_format; /* sic */
+  iface->get_buffer            = picman_projection_get_buffer;
+  iface->get_pixel_at          = picman_projection_get_pixel_at;
+  iface->get_opacity_at        = picman_projection_get_opacity_at;
 }
 
 static void
-gimp_projection_finalize (GObject *object)
+picman_projection_finalize (GObject *object)
 {
-  GimpProjection *proj = GIMP_PROJECTION (object);
+  PicmanProjection *proj = PICMAN_PROJECTION (object);
 
   if (proj->idle_render.idle_id)
     {
@@ -168,32 +168,32 @@ gimp_projection_finalize (GObject *object)
       proj->idle_render.idle_id = 0;
     }
 
-  gimp_area_list_free (proj->update_areas);
+  picman_area_list_free (proj->update_areas);
   proj->update_areas = NULL;
 
-  gimp_area_list_free (proj->idle_render.update_areas);
+  picman_area_list_free (proj->idle_render.update_areas);
   proj->idle_render.update_areas = NULL;
 
-  gimp_projection_free_buffer (proj);
+  picman_projection_free_buffer (proj);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static gint64
-gimp_projection_get_memsize (GimpObject *object,
+picman_projection_get_memsize (PicmanObject *object,
                              gint64     *gui_size)
 {
-  GimpProjection *projection = GIMP_PROJECTION (object);
+  PicmanProjection *projection = PICMAN_PROJECTION (object);
   gint64          memsize    = 0;
 
-  memsize += gimp_gegl_buffer_get_memsize (projection->buffer);
+  memsize += picman_gegl_buffer_get_memsize (projection->buffer);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 /**
- * gimp_projection_estimate_memsize:
+ * picman_projection_estimate_memsize:
  * @type:      the projectable's base type
  * @precision: the projectable's precision
  * @width:     projection width
@@ -205,18 +205,18 @@ gimp_projection_get_memsize (GimpObject *object,
  * Return value: a rough estimate of the memory requirements.
  **/
 gint64
-gimp_projection_estimate_memsize (GimpImageBaseType type,
-                                  GimpPrecision     precision,
+picman_projection_estimate_memsize (PicmanImageBaseType type,
+                                  PicmanPrecision     precision,
                                   gint              width,
                                   gint              height)
 {
   const Babl *format;
   gint64      bytes;
 
-  if (type == GIMP_INDEXED)
-    type = GIMP_RGB;
+  if (type == PICMAN_INDEXED)
+    type = PICMAN_RGB;
 
-  format = gimp_babl_format (type, precision, TRUE);
+  format = picman_babl_format (type, precision, TRUE);
   bytes  = babl_format_get_bytes_per_pixel (format);
 
   /* The pyramid levels constitute a geometric sum with a ratio of 1/4. */
@@ -225,15 +225,15 @@ gimp_projection_estimate_memsize (GimpImageBaseType type,
 
 
 static void
-gimp_projection_pickable_flush (GimpPickable *pickable)
+picman_projection_pickable_flush (PicmanPickable *pickable)
 {
-  GimpProjection *proj = GIMP_PROJECTION (pickable);
+  PicmanProjection *proj = PICMAN_PROJECTION (pickable);
 
   /* create the buffer if it doesn't exist */
-  gimp_projection_get_buffer (pickable);
+  picman_projection_get_buffer (pickable);
 
-  gimp_projection_finish_draw (proj);
-  gimp_projection_flush_now (proj);
+  picman_projection_finish_draw (proj);
+  picman_projection_flush_now (proj);
 
   if (proj->invalidate_preview)
     {
@@ -242,30 +242,30 @@ gimp_projection_pickable_flush (GimpPickable *pickable)
        */
       proj->invalidate_preview = FALSE;
 
-      gimp_projectable_invalidate_preview (proj->projectable);
+      picman_projectable_invalidate_preview (proj->projectable);
     }
 }
 
-static GimpImage *
-gimp_projection_get_image (GimpPickable *pickable)
+static PicmanImage *
+picman_projection_get_image (PicmanPickable *pickable)
 {
-  GimpProjection *proj = GIMP_PROJECTION (pickable);
+  PicmanProjection *proj = PICMAN_PROJECTION (pickable);
 
-  return gimp_projectable_get_image (proj->projectable);
+  return picman_projectable_get_image (proj->projectable);
 }
 
 static const Babl *
-gimp_projection_get_format (GimpPickable *pickable)
+picman_projection_get_format (PicmanPickable *pickable)
 {
-  GimpProjection *proj = GIMP_PROJECTION (pickable);
+  PicmanProjection *proj = PICMAN_PROJECTION (pickable);
 
-  return gimp_projectable_get_format (proj->projectable);
+  return picman_projectable_get_format (proj->projectable);
 }
 
 static GeglBuffer *
-gimp_projection_get_buffer (GimpPickable *pickable)
+picman_projection_get_buffer (PicmanPickable *pickable)
 {
-  GimpProjection *proj = GIMP_PROJECTION (pickable);
+  PicmanProjection *proj = PICMAN_PROJECTION (pickable);
 
   if (! proj->buffer)
     {
@@ -274,40 +274,40 @@ gimp_projection_get_buffer (GimpPickable *pickable)
       gint        width;
       gint        height;
 
-      graph = gimp_projectable_get_graph (proj->projectable);
-      format = gimp_projection_get_format (GIMP_PICKABLE (proj));
-      gimp_projectable_get_size (proj->projectable, &width, &height);
+      graph = picman_projectable_get_graph (proj->projectable);
+      format = picman_projection_get_format (PICMAN_PICKABLE (proj));
+      picman_projectable_get_size (proj->projectable, &width, &height);
 
       proj->buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0, width, height),
                                       format);
 
-      proj->validate_handler = gimp_tile_handler_projection_new (graph,
+      proj->validate_handler = picman_tile_handler_projection_new (graph,
                                                                  width, height);
       gegl_buffer_add_handler (proj->buffer, proj->validate_handler);
 
-      /*  This used to call gimp_tile_handler_projection_invalidate()
+      /*  This used to call picman_tile_handler_projection_invalidate()
        *  which forced the entire projection to be constructed in one
        *  go for new images, causing a potentially huge delay. Now we
        *  initially validate stuff the normal way, which makes the
        *  image appear incrementally, but it keeps everything
        *  responsive.
        */
-      gimp_projection_add_update_area (proj, 0, 0, width, height);
+      picman_projection_add_update_area (proj, 0, 0, width, height);
       proj->invalidate_preview = TRUE;
-      gimp_projection_flush (proj);
+      picman_projection_flush (proj);
     }
 
   return proj->buffer;
 }
 
 static gboolean
-gimp_projection_get_pixel_at (GimpPickable *pickable,
+picman_projection_get_pixel_at (PicmanPickable *pickable,
                               gint          x,
                               gint          y,
                               const Babl   *format,
                               gpointer      pixel)
 {
-  GeglBuffer *buffer = gimp_projection_get_buffer (pickable);
+  GeglBuffer *buffer = picman_projection_get_buffer (pickable);
 
   if (x <  0                               ||
       y <  0                               ||
@@ -322,66 +322,66 @@ gimp_projection_get_pixel_at (GimpPickable *pickable,
 }
 
 static gdouble
-gimp_projection_get_opacity_at (GimpPickable *pickable,
+picman_projection_get_opacity_at (PicmanPickable *pickable,
                                 gint          x,
                                 gint          y)
 {
-  return GIMP_OPACITY_OPAQUE;
+  return PICMAN_OPACITY_OPAQUE;
 }
 
-GimpProjection *
-gimp_projection_new (GimpProjectable *projectable)
+PicmanProjection *
+picman_projection_new (PicmanProjectable *projectable)
 {
-  GimpProjection *proj;
+  PicmanProjection *proj;
 
-  g_return_val_if_fail (GIMP_IS_PROJECTABLE (projectable), NULL);
+  g_return_val_if_fail (PICMAN_IS_PROJECTABLE (projectable), NULL);
 
-  proj = g_object_new (GIMP_TYPE_PROJECTION, NULL);
+  proj = g_object_new (PICMAN_TYPE_PROJECTION, NULL);
 
   proj->projectable = projectable;
 
   g_signal_connect_object (projectable, "invalidate",
-                           G_CALLBACK (gimp_projection_projectable_invalidate),
+                           G_CALLBACK (picman_projection_projectable_invalidate),
                            proj, 0);
   g_signal_connect_object (projectable, "flush",
-                           G_CALLBACK (gimp_projection_projectable_flush),
+                           G_CALLBACK (picman_projection_projectable_flush),
                            proj, 0);
   g_signal_connect_object (projectable, "structure-changed",
-                           G_CALLBACK (gimp_projection_projectable_changed),
+                           G_CALLBACK (picman_projection_projectable_changed),
                            proj, 0);
 
   return proj;
 }
 
 void
-gimp_projection_flush (GimpProjection *proj)
+picman_projection_flush (PicmanProjection *proj)
 {
-  g_return_if_fail (GIMP_IS_PROJECTION (proj));
+  g_return_if_fail (PICMAN_IS_PROJECTION (proj));
 
   /* Construct on idle time */
-  gimp_projection_flush_whenever (proj, FALSE);
+  picman_projection_flush_whenever (proj, FALSE);
 }
 
 void
-gimp_projection_flush_now (GimpProjection *proj)
+picman_projection_flush_now (PicmanProjection *proj)
 {
-  g_return_if_fail (GIMP_IS_PROJECTION (proj));
+  g_return_if_fail (PICMAN_IS_PROJECTION (proj));
 
   /* Construct NOW */
-  gimp_projection_flush_whenever (proj, TRUE);
+  picman_projection_flush_whenever (proj, TRUE);
 }
 
 void
-gimp_projection_finish_draw (GimpProjection *proj)
+picman_projection_finish_draw (PicmanProjection *proj)
 {
-  g_return_if_fail (GIMP_IS_PROJECTION (proj));
+  g_return_if_fail (PICMAN_IS_PROJECTION (proj));
 
   if (proj->idle_render.idle_id)
     {
       g_source_remove (proj->idle_render.idle_id);
       proj->idle_render.idle_id = 0;
 
-      while (gimp_projection_idle_render_callback (proj));
+      while (picman_projection_idle_render_callback (proj));
     }
 }
 
@@ -389,7 +389,7 @@ gimp_projection_finish_draw (GimpProjection *proj)
 /*  private functions  */
 
 static void
-gimp_projection_free_buffer (GimpProjection  *proj)
+picman_projection_free_buffer (PicmanProjection  *proj)
 {
   if (proj->buffer)
     {
@@ -408,18 +408,18 @@ gimp_projection_free_buffer (GimpProjection  *proj)
 }
 
 static void
-gimp_projection_add_update_area (GimpProjection *proj,
+picman_projection_add_update_area (PicmanProjection *proj,
                                  gint            x,
                                  gint            y,
                                  gint            w,
                                  gint            h)
 {
-  GimpArea *area;
+  PicmanArea *area;
   gint      off_x, off_y;
   gint      width, height;
 
-  gimp_projectable_get_offset (proj->projectable, &off_x, &off_y);
-  gimp_projectable_get_size   (proj->projectable, &width, &height);
+  picman_projectable_get_offset (proj->projectable, &off_x, &off_y);
+  picman_projectable_get_size   (proj->projectable, &width, &height);
 
   /*  subtract the projectable's offsets because the list of update
    *  areas is in tile-pyramid coordinates, but our external API is
@@ -428,16 +428,16 @@ gimp_projection_add_update_area (GimpProjection *proj,
   x -= off_x;
   y -= off_y;
 
-  area = gimp_area_new (CLAMP (x,     0, width),
+  area = picman_area_new (CLAMP (x,     0, width),
                         CLAMP (y,     0, height),
                         CLAMP (x + w, 0, width),
                         CLAMP (y + h, 0, height));
 
-  proj->update_areas = gimp_area_list_process (proj->update_areas, area);
+  proj->update_areas = picman_area_list_process (proj->update_areas, area);
 }
 
 static void
-gimp_projection_flush_whenever (GimpProjection *proj,
+picman_projection_flush_whenever (PicmanProjection *proj,
                                 gboolean        now)
 {
   /*  First the updates...  */
@@ -449,11 +449,11 @@ gimp_projection_flush_whenever (GimpProjection *proj,
 
           for (list = proj->update_areas; list; list = g_slist_next (list))
             {
-              GimpArea *area = list->data;
+              PicmanArea *area = list->data;
 
               if ((area->x1 != area->x2) && (area->y1 != area->y2))
                 {
-                  gimp_projection_paint_area (proj,
+                  picman_projection_paint_area (proj,
                                               FALSE, /* sic! */
                                               area->x1,
                                               area->y1,
@@ -464,11 +464,11 @@ gimp_projection_flush_whenever (GimpProjection *proj,
         }
       else  /* Asynchronous */
         {
-          gimp_projection_idle_render_init (proj);
+          picman_projection_idle_render_init (proj);
         }
 
       /*  Free the update lists  */
-      gimp_area_list_free (proj->update_areas);
+      picman_area_list_free (proj->update_areas);
       proj->update_areas = NULL;
     }
   else if (! now && proj->invalidate_preview)
@@ -478,26 +478,26 @@ gimp_projection_flush_whenever (GimpProjection *proj,
        */
       proj->invalidate_preview = FALSE;
 
-      gimp_projectable_invalidate_preview (proj->projectable);
+      picman_projectable_invalidate_preview (proj->projectable);
     }
 }
 
 static void
-gimp_projection_idle_render_init (GimpProjection *proj)
+picman_projection_idle_render_init (PicmanProjection *proj)
 {
   GSList *list;
 
-  /* We need to merge the IdleRender's and the GimpProjection's update_areas
+  /* We need to merge the IdleRender's and the PicmanProjection's update_areas
    * list to keep track of which of the updates have been flushed and hence
    * need to be drawn.
    */
   for (list = proj->update_areas; list; list = g_slist_next (list))
     {
-      GimpArea *area = list->data;
+      PicmanArea *area = list->data;
 
       proj->idle_render.update_areas =
-        gimp_area_list_process (proj->idle_render.update_areas,
-                                gimp_area_new (area->x1, area->y1,
+        picman_area_list_process (proj->idle_render.update_areas,
+                                picman_area_new (area->x1, area->y1,
                                                area->x2, area->y2));
     }
 
@@ -507,8 +507,8 @@ gimp_projection_idle_render_init (GimpProjection *proj)
    */
   if (proj->idle_render.idle_id)
     {
-      GimpArea *area =
-        gimp_area_new (proj->idle_render.base_x,
+      PicmanArea *area =
+        picman_area_new (proj->idle_render.base_x,
                        proj->idle_render.y,
                        proj->idle_render.base_x + proj->idle_render.width,
                        proj->idle_render.y + (proj->idle_render.height -
@@ -516,9 +516,9 @@ gimp_projection_idle_render_init (GimpProjection *proj)
                                                 proj->idle_render.base_y)));
 
       proj->idle_render.update_areas =
-        gimp_area_list_process (proj->idle_render.update_areas, area);
+        picman_area_list_process (proj->idle_render.update_areas, area);
 
-      gimp_projection_idle_render_next_area (proj);
+      picman_projection_idle_render_next_area (proj);
     }
   else
     {
@@ -529,11 +529,11 @@ gimp_projection_idle_render_init (GimpProjection *proj)
           return;
         }
 
-      gimp_projection_idle_render_next_area (proj);
+      picman_projection_idle_render_next_area (proj);
 
       proj->idle_render.idle_id =
-        g_idle_add_full (GIMP_PROJECTION_IDLE_PRIORITY,
-                         gimp_projection_idle_render_callback, proj,
+        g_idle_add_full (PICMAN_PROJECTION_IDLE_PRIORITY,
+                         picman_projection_idle_render_callback, proj,
                          NULL);
     }
 }
@@ -541,13 +541,13 @@ gimp_projection_idle_render_init (GimpProjection *proj)
 /* Unless specified otherwise, projection re-rendering is organised by
  * IdleRender, which amalgamates areas to be re-rendered and breaks
  * them into bite-sized chunks which are chewed on in a low- priority
- * idle thread.  This greatly improves responsiveness for many GIMP
+ * idle thread.  This greatly improves responsiveness for many PICMAN
  * operations.  -- Adam
  */
 static gboolean
-gimp_projection_idle_render_callback (gpointer data)
+picman_projection_idle_render_callback (gpointer data)
 {
-  GimpProjection *proj = data;
+  PicmanProjection *proj = data;
   gint            workx, worky;
   gint            workw, workh;
 
@@ -569,7 +569,7 @@ gimp_projection_idle_render_callback (gpointer data)
       workh = proj->idle_render.base_y + proj->idle_render.height - worky;
     }
 
-  gimp_projection_paint_area (proj, TRUE /* sic! */,
+  picman_projection_paint_area (proj, TRUE /* sic! */,
                               workx, worky, workw, workh);
 
   proj->idle_render.x += CHUNK_WIDTH;
@@ -583,7 +583,7 @@ gimp_projection_idle_render_callback (gpointer data)
       if (proj->idle_render.y >=
           proj->idle_render.base_y + proj->idle_render.height)
         {
-          if (! gimp_projection_idle_render_next_area (proj))
+          if (! picman_projection_idle_render_next_area (proj))
             {
               /* FINISHED */
               proj->idle_render.idle_id = 0;
@@ -595,7 +595,7 @@ gimp_projection_idle_render_callback (gpointer data)
                    */
                   proj->invalidate_preview = FALSE;
 
-                  gimp_projectable_invalidate_preview (proj->projectable);
+                  picman_projectable_invalidate_preview (proj->projectable);
                 }
 
               return FALSE;
@@ -608,9 +608,9 @@ gimp_projection_idle_render_callback (gpointer data)
 }
 
 static gboolean
-gimp_projection_idle_render_next_area (GimpProjection *proj)
+picman_projection_idle_render_next_area (PicmanProjection *proj)
 {
-  GimpArea *area;
+  PicmanArea *area;
 
   if (! proj->idle_render.update_areas)
     return FALSE;
@@ -625,13 +625,13 @@ gimp_projection_idle_render_next_area (GimpProjection *proj)
   proj->idle_render.width  = area->x2 - area->x1;
   proj->idle_render.height = area->y2 - area->y1;
 
-  gimp_area_free (area);
+  picman_area_free (area);
 
   return TRUE;
 }
 
 static void
-gimp_projection_paint_area (GimpProjection *proj,
+picman_projection_paint_area (PicmanProjection *proj,
                             gboolean        now,
                             gint            x,
                             gint            y,
@@ -642,8 +642,8 @@ gimp_projection_paint_area (GimpProjection *proj,
   gint width, height;
   gint x1, y1, x2, y2;
 
-  gimp_projectable_get_offset (proj->projectable, &off_x, &off_y);
-  gimp_projectable_get_size   (proj->projectable, &width, &height);
+  picman_projectable_get_offset (proj->projectable, &off_x, &off_y);
+  picman_projectable_get_size   (proj->projectable, &width, &height);
 
   /*  Bounds check  */
   x1 = CLAMP (x,     0, width);
@@ -651,7 +651,7 @@ gimp_projection_paint_area (GimpProjection *proj,
   x2 = CLAMP (x + w, 0, width);
   y2 = CLAMP (y + h, 0, height);
 
-  gimp_projection_invalidate (proj, x1, y1, x2 - x1, y2 - y1);
+  picman_projection_invalidate (proj, x1, y1, x2 - x1, y2 - y1);
 
   /*  add the projectable's offsets because the list of update areas
    *  is in tile-pyramid coordinates, but our external API is always
@@ -666,14 +666,14 @@ gimp_projection_paint_area (GimpProjection *proj,
 }
 
 static void
-gimp_projection_invalidate (GimpProjection *proj,
+picman_projection_invalidate (PicmanProjection *proj,
                             guint           x,
                             guint           y,
                             guint           w,
                             guint           h)
 {
   if (proj->validate_handler)
-    gimp_tile_handler_projection_invalidate (proj->validate_handler,
+    picman_tile_handler_projection_invalidate (proj->validate_handler,
                                              x, y, w, h);
 }
 
@@ -681,30 +681,30 @@ gimp_projection_invalidate (GimpProjection *proj,
 /*  image callbacks  */
 
 static void
-gimp_projection_projectable_invalidate (GimpProjectable *projectable,
+picman_projection_projectable_invalidate (PicmanProjectable *projectable,
                                         gint             x,
                                         gint             y,
                                         gint             w,
                                         gint             h,
-                                        GimpProjection  *proj)
+                                        PicmanProjection  *proj)
 {
-  gimp_projection_add_update_area (proj, x, y, w, h);
+  picman_projection_add_update_area (proj, x, y, w, h);
 }
 
 static void
-gimp_projection_projectable_flush (GimpProjectable *projectable,
+picman_projection_projectable_flush (PicmanProjectable *projectable,
                                    gboolean         invalidate_preview,
-                                   GimpProjection  *proj)
+                                   PicmanProjection  *proj)
 {
   if (invalidate_preview)
     proj->invalidate_preview = TRUE;
 
-  gimp_projection_flush (proj);
+  picman_projection_flush (proj);
 }
 
 static void
-gimp_projection_projectable_changed (GimpProjectable *projectable,
-                                     GimpProjection  *proj)
+picman_projection_projectable_changed (PicmanProjectable *projectable,
+                                     PicmanProjection  *proj)
 {
   gint off_x, off_y;
   gint width, height;
@@ -715,13 +715,13 @@ gimp_projection_projectable_changed (GimpProjectable *projectable,
       proj->idle_render.idle_id = 0;
     }
 
-  gimp_area_list_free (proj->update_areas);
+  picman_area_list_free (proj->update_areas);
   proj->update_areas = NULL;
 
-  gimp_projection_free_buffer (proj);
+  picman_projection_free_buffer (proj);
 
-  gimp_projectable_get_offset (proj->projectable, &off_x, &off_y);
-  gimp_projectable_get_size (projectable, &width, &height);
+  picman_projectable_get_offset (proj->projectable, &off_x, &off_y);
+  picman_projectable_get_size (projectable, &width, &height);
 
-  gimp_projection_add_update_area (proj, off_x, off_y, width, height);
+  picman_projection_add_update_area (proj, off_x, off_y, width, height);
 }

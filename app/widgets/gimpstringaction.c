@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpstringaction.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanstringaction.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
 
 #include "widgets-types.h"
 
-#include "core/gimpmarshal.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpstringaction.h"
+#include "picmanstringaction.h"
 
 
 enum
@@ -42,65 +42,65 @@ enum
 };
 
 
-static void   gimp_string_action_finalize     (GObject      *object);
-static void   gimp_string_action_set_property (GObject      *object,
+static void   picman_string_action_finalize     (GObject      *object);
+static void   picman_string_action_set_property (GObject      *object,
                                                guint         prop_id,
                                                const GValue *value,
                                                GParamSpec   *pspec);
-static void   gimp_string_action_get_property (GObject      *object,
+static void   picman_string_action_get_property (GObject      *object,
                                                guint         prop_id,
                                                GValue       *value,
                                                GParamSpec   *pspec);
 
-static void   gimp_string_action_activate     (GtkAction    *action);
+static void   picman_string_action_activate     (GtkAction    *action);
 
 
-G_DEFINE_TYPE (GimpStringAction, gimp_string_action, GIMP_TYPE_ACTION)
+G_DEFINE_TYPE (PicmanStringAction, picman_string_action, PICMAN_TYPE_ACTION)
 
-#define parent_class gimp_string_action_parent_class
+#define parent_class picman_string_action_parent_class
 
 static guint action_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_string_action_class_init (GimpStringActionClass *klass)
+picman_string_action_class_init (PicmanStringActionClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkActionClass *action_class = GTK_ACTION_CLASS (klass);
 
-  object_class->finalize     = gimp_string_action_finalize;
-  object_class->set_property = gimp_string_action_set_property;
-  object_class->get_property = gimp_string_action_get_property;
+  object_class->finalize     = picman_string_action_finalize;
+  object_class->set_property = picman_string_action_set_property;
+  object_class->get_property = picman_string_action_get_property;
 
-  action_class->activate = gimp_string_action_activate;
+  action_class->activate = picman_string_action_activate;
 
   g_object_class_install_property (object_class, PROP_VALUE,
                                    g_param_spec_string ("value",
                                                         NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   action_signals[SELECTED] =
     g_signal_new ("selected",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpStringActionClass, selected),
+                  G_STRUCT_OFFSET (PicmanStringActionClass, selected),
                   NULL, NULL,
-                  gimp_marshal_VOID__STRING,
+                  picman_marshal_VOID__STRING,
                   G_TYPE_NONE, 1,
                   G_TYPE_STRING);
 }
 
 static void
-gimp_string_action_init (GimpStringAction *action)
+picman_string_action_init (PicmanStringAction *action)
 {
   action->value = NULL;
 }
 
 static void
-gimp_string_action_finalize (GObject *object)
+picman_string_action_finalize (GObject *object)
 {
-  GimpStringAction *action = GIMP_STRING_ACTION (object);
+  PicmanStringAction *action = PICMAN_STRING_ACTION (object);
 
   if (action->value)
     {
@@ -112,12 +112,12 @@ gimp_string_action_finalize (GObject *object)
 }
 
 static void
-gimp_string_action_get_property (GObject    *object,
+picman_string_action_get_property (GObject    *object,
                                  guint       prop_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  GimpStringAction *action = GIMP_STRING_ACTION (object);
+  PicmanStringAction *action = PICMAN_STRING_ACTION (object);
 
   switch (prop_id)
     {
@@ -131,12 +131,12 @@ gimp_string_action_get_property (GObject    *object,
 }
 
 static void
-gimp_string_action_set_property (GObject      *object,
+picman_string_action_set_property (GObject      *object,
                                  guint         prop_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  GimpStringAction *action = GIMP_STRING_ACTION (object);
+  PicmanStringAction *action = PICMAN_STRING_ACTION (object);
 
   switch (prop_id)
     {
@@ -150,16 +150,16 @@ gimp_string_action_set_property (GObject      *object,
     }
 }
 
-GimpStringAction *
-gimp_string_action_new (const gchar *name,
+PicmanStringAction *
+picman_string_action_new (const gchar *name,
                         const gchar *label,
                         const gchar *tooltip,
                         const gchar *stock_id,
                         const gchar *value)
 {
-  GimpStringAction *action;
+  PicmanStringAction *action;
 
-  action = g_object_new (GIMP_TYPE_STRING_ACTION,
+  action = g_object_new (PICMAN_TYPE_STRING_ACTION,
                          "name",     name,
                          "label",    label,
                          "tooltip",  tooltip,
@@ -177,18 +177,18 @@ gimp_string_action_new (const gchar *name,
 }
 
 static void
-gimp_string_action_activate (GtkAction *action)
+picman_string_action_activate (GtkAction *action)
 {
-  GimpStringAction *string_action = GIMP_STRING_ACTION (action);
+  PicmanStringAction *string_action = PICMAN_STRING_ACTION (action);
 
-  gimp_string_action_selected (string_action, string_action->value);
+  picman_string_action_selected (string_action, string_action->value);
 }
 
 void
-gimp_string_action_selected (GimpStringAction *action,
+picman_string_action_selected (PicmanStringAction *action,
                              const gchar      *value)
 {
-  g_return_if_fail (GIMP_IS_STRING_ACTION (action));
+  g_return_if_fail (PICMAN_IS_STRING_ACTION (action));
 
   g_signal_emit (action, action_signals[SELECTED], 0, value);
 }

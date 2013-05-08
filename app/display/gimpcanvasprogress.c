@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasprogress.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasprogress.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,18 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "core/gimpprogress.h"
+#include "core/picmanprogress.h"
 
-#include "gimpcanvas.h"
-#include "gimpcanvas-style.h"
-#include "gimpcanvasitem-utils.h"
-#include "gimpcanvasprogress.h"
-#include "gimpdisplayshell.h"
+#include "picmancanvas.h"
+#include "picmancanvas-style.h"
+#include "picmancanvasitem-utils.h"
+#include "picmancanvasprogress.h"
+#include "picmandisplayshell.h"
 
 
 #define BORDER   5
@@ -50,11 +50,11 @@ enum
 };
 
 
-typedef struct _GimpCanvasProgressPrivate GimpCanvasProgressPrivate;
+typedef struct _PicmanCanvasProgressPrivate PicmanCanvasProgressPrivate;
 
-struct _GimpCanvasProgressPrivate
+struct _PicmanCanvasProgressPrivate
 {
-  GimpHandleAnchor  anchor;
+  PicmanHandleAnchor  anchor;
   gdouble           x;
   gdouble           y;
 
@@ -64,109 +64,109 @@ struct _GimpCanvasProgressPrivate
 
 #define GET_PRIVATE(progress) \
         G_TYPE_INSTANCE_GET_PRIVATE (progress, \
-                                     GIMP_TYPE_CANVAS_PROGRESS, \
-                                     GimpCanvasProgressPrivate)
+                                     PICMAN_TYPE_CANVAS_PROGRESS, \
+                                     PicmanCanvasProgressPrivate)
 
 
 /*  local function prototypes  */
 
-static void             gimp_canvas_progress_iface_init   (GimpProgressInterface *iface);
+static void             picman_canvas_progress_iface_init   (PicmanProgressInterface *iface);
 
-static void             gimp_canvas_progress_finalize     (GObject          *object);
-static void             gimp_canvas_progress_set_property (GObject          *object,
+static void             picman_canvas_progress_finalize     (GObject          *object);
+static void             picman_canvas_progress_set_property (GObject          *object,
                                                            guint             property_id,
                                                            const GValue     *value,
                                                            GParamSpec       *pspec);
-static void             gimp_canvas_progress_get_property (GObject          *object,
+static void             picman_canvas_progress_get_property (GObject          *object,
                                                            guint             property_id,
                                                            GValue           *value,
                                                            GParamSpec       *pspec);
-static void             gimp_canvas_progress_draw         (GimpCanvasItem   *item,
+static void             picman_canvas_progress_draw         (PicmanCanvasItem   *item,
                                                            cairo_t          *cr);
-static cairo_region_t * gimp_canvas_progress_get_extents  (GimpCanvasItem   *item);
+static cairo_region_t * picman_canvas_progress_get_extents  (PicmanCanvasItem   *item);
 
-static GimpProgress   * gimp_canvas_progress_start        (GimpProgress      *progress,
+static PicmanProgress   * picman_canvas_progress_start        (PicmanProgress      *progress,
                                                            const gchar       *message,
                                                            gboolean           cancelable);
-static void             gimp_canvas_progress_end          (GimpProgress      *progress);
-static gboolean         gimp_canvas_progress_is_active    (GimpProgress      *progress);
-static void             gimp_canvas_progress_set_text     (GimpProgress      *progress,
+static void             picman_canvas_progress_end          (PicmanProgress      *progress);
+static gboolean         picman_canvas_progress_is_active    (PicmanProgress      *progress);
+static void             picman_canvas_progress_set_text     (PicmanProgress      *progress,
                                                            const gchar       *message);
-static void             gimp_canvas_progress_set_value    (GimpProgress      *progress,
+static void             picman_canvas_progress_set_value    (PicmanProgress      *progress,
                                                            gdouble            percentage);
-static gdouble          gimp_canvas_progress_get_value    (GimpProgress      *progress);
-static void             gimp_canvas_progress_pulse        (GimpProgress      *progress);
-static gboolean         gimp_canvas_progress_message      (GimpProgress      *progress,
-                                                           Gimp              *gimp,
-                                                           GimpMessageSeverity severity,
+static gdouble          picman_canvas_progress_get_value    (PicmanProgress      *progress);
+static void             picman_canvas_progress_pulse        (PicmanProgress      *progress);
+static gboolean         picman_canvas_progress_message      (PicmanProgress      *progress,
+                                                           Picman              *picman,
+                                                           PicmanMessageSeverity severity,
                                                            const gchar       *domain,
                                                            const gchar       *message);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpCanvasProgress, gimp_canvas_progress,
-                         GIMP_TYPE_CANVAS_ITEM,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PROGRESS,
-                                                gimp_canvas_progress_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanCanvasProgress, picman_canvas_progress,
+                         PICMAN_TYPE_CANVAS_ITEM,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PROGRESS,
+                                                picman_canvas_progress_iface_init))
 
-#define parent_class gimp_canvas_progress_parent_class
+#define parent_class picman_canvas_progress_parent_class
 
 
 static void
-gimp_canvas_progress_class_init (GimpCanvasProgressClass *klass)
+picman_canvas_progress_class_init (PicmanCanvasProgressClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpCanvasItemClass *item_class   = GIMP_CANVAS_ITEM_CLASS (klass);
+  PicmanCanvasItemClass *item_class   = PICMAN_CANVAS_ITEM_CLASS (klass);
 
-  object_class->finalize     = gimp_canvas_progress_finalize;
-  object_class->set_property = gimp_canvas_progress_set_property;
-  object_class->get_property = gimp_canvas_progress_get_property;
+  object_class->finalize     = picman_canvas_progress_finalize;
+  object_class->set_property = picman_canvas_progress_set_property;
+  object_class->get_property = picman_canvas_progress_get_property;
 
-  item_class->draw           = gimp_canvas_progress_draw;
-  item_class->get_extents    = gimp_canvas_progress_get_extents;
+  item_class->draw           = picman_canvas_progress_draw;
+  item_class->get_extents    = picman_canvas_progress_get_extents;
 
   g_object_class_install_property (object_class, PROP_ANCHOR,
                                    g_param_spec_enum ("anchor", NULL, NULL,
-                                                      GIMP_TYPE_HANDLE_ANCHOR,
-                                                      GIMP_HANDLE_ANCHOR_CENTER,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_TYPE_HANDLE_ANCHOR,
+                                                      PICMAN_HANDLE_ANCHOR_CENTER,
+                                                      PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_X,
                                    g_param_spec_double ("x", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_Y,
                                    g_param_spec_double ("y", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpCanvasProgressPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanCanvasProgressPrivate));
 }
 
 static void
-gimp_canvas_progress_iface_init (GimpProgressInterface *iface)
+picman_canvas_progress_iface_init (PicmanProgressInterface *iface)
 {
-  iface->start     = gimp_canvas_progress_start;
-  iface->end       = gimp_canvas_progress_end;
-  iface->is_active = gimp_canvas_progress_is_active;
-  iface->set_text  = gimp_canvas_progress_set_text;
-  iface->set_value = gimp_canvas_progress_set_value;
-  iface->get_value = gimp_canvas_progress_get_value;
-  iface->pulse     = gimp_canvas_progress_pulse;
-  iface->message   = gimp_canvas_progress_message;
+  iface->start     = picman_canvas_progress_start;
+  iface->end       = picman_canvas_progress_end;
+  iface->is_active = picman_canvas_progress_is_active;
+  iface->set_text  = picman_canvas_progress_set_text;
+  iface->set_value = picman_canvas_progress_set_value;
+  iface->get_value = picman_canvas_progress_get_value;
+  iface->pulse     = picman_canvas_progress_pulse;
+  iface->message   = picman_canvas_progress_message;
 }
 
 static void
-gimp_canvas_progress_init (GimpCanvasProgress *progress)
+picman_canvas_progress_init (PicmanCanvasProgress *progress)
 {
 }
 
 static void
-gimp_canvas_progress_finalize (GObject *object)
+picman_canvas_progress_finalize (GObject *object)
 {
-  GimpCanvasProgressPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasProgressPrivate *private = GET_PRIVATE (object);
 
   if (private->text)
     {
@@ -178,12 +178,12 @@ gimp_canvas_progress_finalize (GObject *object)
 }
 
 static void
-gimp_canvas_progress_set_property (GObject      *object,
+picman_canvas_progress_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpCanvasProgressPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasProgressPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -204,12 +204,12 @@ gimp_canvas_progress_set_property (GObject      *object,
 }
 
 static void
-gimp_canvas_progress_get_property (GObject    *object,
+picman_canvas_progress_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpCanvasProgressPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasProgressPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -230,17 +230,17 @@ gimp_canvas_progress_get_property (GObject    *object,
 }
 
 static PangoLayout *
-gimp_canvas_progress_transform (GimpCanvasItem *item,
+picman_canvas_progress_transform (PicmanCanvasItem *item,
                                 gdouble        *x,
                                 gdouble        *y,
                                 gint           *width,
                                 gint           *height)
 {
-  GimpCanvasProgressPrivate *private = GET_PRIVATE (item);
-  GtkWidget                 *canvas  = gimp_canvas_item_get_canvas (item);
+  PicmanCanvasProgressPrivate *private = GET_PRIVATE (item);
+  GtkWidget                 *canvas  = picman_canvas_item_get_canvas (item);
   PangoLayout               *layout;
 
-  layout = gimp_canvas_get_layout (GIMP_CANVAS (canvas), "%s",
+  layout = picman_canvas_get_layout (PICMAN_CANVAS (canvas), "%s",
                                    private->text);
 
   pango_layout_get_pixel_size (layout, width, height);
@@ -248,11 +248,11 @@ gimp_canvas_progress_transform (GimpCanvasItem *item,
   *width  += 2 * BORDER;
   *height += 3 * BORDER + 2 * RADIUS;
 
-  gimp_canvas_item_transform_xy_f (item,
+  picman_canvas_item_transform_xy_f (item,
                                    private->x, private->y,
                                    x, y);
 
-  gimp_canvas_item_shift_to_north_west (private->anchor,
+  picman_canvas_item_shift_to_north_west (private->anchor,
                                         *x, *y,
                                         *width,
                                         *height,
@@ -265,15 +265,15 @@ gimp_canvas_progress_transform (GimpCanvasItem *item,
 }
 
 static void
-gimp_canvas_progress_draw (GimpCanvasItem *item,
+picman_canvas_progress_draw (PicmanCanvasItem *item,
                            cairo_t        *cr)
 {
-  GimpCanvasProgressPrivate *private = GET_PRIVATE (item);
-  GtkWidget                 *canvas  = gimp_canvas_item_get_canvas (item);
+  PicmanCanvasProgressPrivate *private = GET_PRIVATE (item);
+  GtkWidget                 *canvas  = picman_canvas_item_get_canvas (item);
   gdouble                    x, y;
   gint                       width, height;
 
-  gimp_canvas_progress_transform (item, &x, &y, &width, &height);
+  picman_canvas_progress_transform (item, &x, &y, &width, &height);
 
   cairo_move_to (cr, x, y);
   cairo_line_to (cr, x + width, y);
@@ -283,15 +283,15 @@ gimp_canvas_progress_draw (GimpCanvasItem *item,
              BORDER + RADIUS, 0, G_PI);
   cairo_close_path (cr);
 
-  _gimp_canvas_item_fill (item, cr);
+  _picman_canvas_item_fill (item, cr);
 
   cairo_move_to (cr, x + BORDER, y + BORDER);
   cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 1.0);
   pango_cairo_show_layout (cr,
-                           gimp_canvas_get_layout (GIMP_CANVAS (canvas),
+                           picman_canvas_get_layout (PICMAN_CANVAS (canvas),
                                                    "%s", private->text));
 
-  gimp_canvas_set_tool_bg_style (gimp_canvas_item_get_canvas (item), cr);
+  picman_canvas_set_tool_bg_style (picman_canvas_item_get_canvas (item), cr);
   cairo_arc (cr, x + BORDER + RADIUS, y + height - BORDER - RADIUS,
              RADIUS, - G_PI / 2.0, 2 * G_PI - G_PI / 2.0);
   cairo_fill (cr);
@@ -304,13 +304,13 @@ gimp_canvas_progress_draw (GimpCanvasItem *item,
 }
 
 static cairo_region_t *
-gimp_canvas_progress_get_extents (GimpCanvasItem *item)
+picman_canvas_progress_get_extents (PicmanCanvasItem *item)
 {
   cairo_rectangle_int_t rectangle;
   gdouble               x, y;
   gint                  width, height;
 
-  gimp_canvas_progress_transform (item, &x, &y, &width, &height);
+  picman_canvas_progress_transform (item, &x, &y, &width, &height);
 
   /*  add 1px on each side because fill()'s default impl does the same  */
   rectangle.x      = (gint) x - 1;
@@ -321,57 +321,57 @@ gimp_canvas_progress_get_extents (GimpCanvasItem *item)
   return cairo_region_create_rectangle (&rectangle);
 }
 
-static GimpProgress *
-gimp_canvas_progress_start (GimpProgress *progress,
+static PicmanProgress *
+picman_canvas_progress_start (PicmanProgress *progress,
                             const gchar  *message,
                             gboolean      cancelable)
 {
-  gimp_canvas_progress_set_text (progress, message);
+  picman_canvas_progress_set_text (progress, message);
 
   return progress;
 }
 
 static void
-gimp_canvas_progress_end (GimpProgress *progress)
+picman_canvas_progress_end (PicmanProgress *progress)
 {
 }
 
 static gboolean
-gimp_canvas_progress_is_active (GimpProgress *progress)
+picman_canvas_progress_is_active (PicmanProgress *progress)
 {
   return TRUE;
 }
 
 static void
-gimp_canvas_progress_set_text (GimpProgress *progress,
+picman_canvas_progress_set_text (PicmanProgress *progress,
                                const gchar  *message)
 {
-  GimpCanvasProgressPrivate *private = GET_PRIVATE (progress);
+  PicmanCanvasProgressPrivate *private = GET_PRIVATE (progress);
   cairo_region_t            *old_region;
   cairo_region_t            *new_region;
 
-  old_region = gimp_canvas_item_get_extents (GIMP_CANVAS_ITEM (progress));
+  old_region = picman_canvas_item_get_extents (PICMAN_CANVAS_ITEM (progress));
 
   if (private->text)
     g_free (private->text);
 
   private->text = g_strdup (message);
 
-  new_region = gimp_canvas_item_get_extents (GIMP_CANVAS_ITEM (progress));
+  new_region = picman_canvas_item_get_extents (PICMAN_CANVAS_ITEM (progress));
 
   cairo_region_union (new_region, old_region);
   cairo_region_destroy (old_region);
 
-  _gimp_canvas_item_update (GIMP_CANVAS_ITEM (progress), new_region);
+  _picman_canvas_item_update (PICMAN_CANVAS_ITEM (progress), new_region);
 
   cairo_region_destroy (new_region);
 }
 
 static void
-gimp_canvas_progress_set_value (GimpProgress *progress,
+picman_canvas_progress_set_value (PicmanProgress *progress,
                                 gdouble       percentage)
 {
-  GimpCanvasProgressPrivate *private = GET_PRIVATE (progress);
+  PicmanCanvasProgressPrivate *private = GET_PRIVATE (progress);
 
   if (percentage != private->value)
     {
@@ -379,46 +379,46 @@ gimp_canvas_progress_set_value (GimpProgress *progress,
 
       private->value = percentage;
 
-      region = gimp_canvas_item_get_extents (GIMP_CANVAS_ITEM (progress));
+      region = picman_canvas_item_get_extents (PICMAN_CANVAS_ITEM (progress));
 
-      _gimp_canvas_item_update (GIMP_CANVAS_ITEM (progress), region);
+      _picman_canvas_item_update (PICMAN_CANVAS_ITEM (progress), region);
 
       cairo_region_destroy (region);
     }
 }
 
 static gdouble
-gimp_canvas_progress_get_value (GimpProgress *progress)
+picman_canvas_progress_get_value (PicmanProgress *progress)
 {
-  GimpCanvasProgressPrivate *private = GET_PRIVATE (progress);
+  PicmanCanvasProgressPrivate *private = GET_PRIVATE (progress);
 
   return private->value;
 }
 
 static void
-gimp_canvas_progress_pulse (GimpProgress *progress)
+picman_canvas_progress_pulse (PicmanProgress *progress)
 {
 }
 
 static gboolean
-gimp_canvas_progress_message (GimpProgress        *progress,
-                              Gimp                *gimp,
-                              GimpMessageSeverity  severity,
+picman_canvas_progress_message (PicmanProgress        *progress,
+                              Picman                *picman,
+                              PicmanMessageSeverity  severity,
                               const gchar         *domain,
                               const gchar         *message)
 {
   return FALSE;
 }
 
-GimpCanvasItem *
-gimp_canvas_progress_new (GimpDisplayShell *shell,
-                          GimpHandleAnchor  anchor,
+PicmanCanvasItem *
+picman_canvas_progress_new (PicmanDisplayShell *shell,
+                          PicmanHandleAnchor  anchor,
                           gdouble           x,
                           gdouble           y)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
 
-  return g_object_new (GIMP_TYPE_CANVAS_PROGRESS,
+  return g_object_new (PICMAN_TYPE_CANVAS_PROGRESS,
                        "shell",  shell,
                        "anchor", anchor,
                        "x",      x,

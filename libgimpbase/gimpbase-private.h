@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpbase-private.h
- * Copyright (C) 2003 Sven Neumann <sven@gimp.org>
+ * picmanbase-private.h
+ * Copyright (C) 2003 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,35 +19,35 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BASE_PRIVATE_H__
-#define __GIMP_BASE_PRIVATE_H__
+#ifndef __PICMAN_BASE_PRIVATE_H__
+#define __PICMAN_BASE_PRIVATE_H__
 
 
-typedef struct _GimpUnitVtable GimpUnitVtable;
+typedef struct _PicmanUnitVtable PicmanUnitVtable;
 
-struct _GimpUnitVtable
+struct _PicmanUnitVtable
 {
   gint          (* unit_get_number_of_units)          (void);
   gint          (* unit_get_number_of_built_in_units) (void);
 
-  GimpUnit      (* unit_new)                          (gchar    *identifier,
+  PicmanUnit      (* unit_new)                          (gchar    *identifier,
                                                        gdouble   factor,
                                                        gint      digits,
                                                        gchar    *symbol,
                                                        gchar    *abbreviation,
                                                        gchar    *singular,
                                                        gchar    *plural);
-  gboolean      (* unit_get_deletion_flag)            (GimpUnit  unit);
-  void          (* unit_set_deletion_flag)            (GimpUnit  unit,
+  gboolean      (* unit_get_deletion_flag)            (PicmanUnit  unit);
+  void          (* unit_set_deletion_flag)            (PicmanUnit  unit,
                                                        gboolean  deletion_flag);
 
-  gdouble       (* unit_get_factor)                   (GimpUnit  unit);
-  gint          (* unit_get_digits)                   (GimpUnit  unit);
-  const gchar * (* unit_get_identifier)               (GimpUnit  unit);
-  const gchar * (* unit_get_symbol)                   (GimpUnit  unit);
-  const gchar * (* unit_get_abbreviation)             (GimpUnit  unit);
-  const gchar * (* unit_get_singular)                 (GimpUnit  unit);
-  const gchar * (* unit_get_plural)                   (GimpUnit  unit);
+  gdouble       (* unit_get_factor)                   (PicmanUnit  unit);
+  gint          (* unit_get_digits)                   (PicmanUnit  unit);
+  const gchar * (* unit_get_identifier)               (PicmanUnit  unit);
+  const gchar * (* unit_get_symbol)                   (PicmanUnit  unit);
+  const gchar * (* unit_get_abbreviation)             (PicmanUnit  unit);
+  const gchar * (* unit_get_singular)                 (PicmanUnit  unit);
+  const gchar * (* unit_get_plural)                   (PicmanUnit  unit);
 
   void          (* _reserved_1)                       (void);
   void          (* _reserved_2)                       (void);
@@ -56,13 +56,13 @@ struct _GimpUnitVtable
 };
 
 
-extern GimpUnitVtable _gimp_unit_vtable;
+extern PicmanUnitVtable _picman_unit_vtable;
 
 
 G_BEGIN_DECLS
 
-void  gimp_base_init (GimpUnitVtable *vtable);
+void  picman_base_init (PicmanUnitVtable *vtable);
 
 G_END_DECLS
 
-#endif /* __GIMP_BASE_PRIVATE_H__ */
+#endif /* __PICMAN_BASE_PRIVATE_H__ */

@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppatternselectbutton.h
+ * picmanpatternselectbutton.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,41 +18,41 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_UI_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimpui.h> can be included directly."
+#if !defined (__PICMAN_UI_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picmanui.h> can be included directly."
 #endif
 
-#ifndef __GIMP_PATTERN_SELECT_BUTTON_H__
-#define __GIMP_PATTERN_SELECT_BUTTON_H__
+#ifndef __PICMAN_PATTERN_SELECT_BUTTON_H__
+#define __PICMAN_PATTERN_SELECT_BUTTON_H__
 
-#include <libgimp/gimpselectbutton.h>
+#include <libpicman/picmanselectbutton.h>
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_PATTERN_SELECT_BUTTON            (gimp_pattern_select_button_get_type ())
-#define GIMP_PATTERN_SELECT_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PATTERN_SELECT_BUTTON, GimpPatternSelectButton))
-#define GIMP_PATTERN_SELECT_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PATTERN_SELECT_BUTTON, GimpPatternSelectButtonClass))
-#define GIMP_IS_PATTERN_SELECT_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PATTERN_SELECT_BUTTON))
-#define GIMP_IS_PATTERN_SELECT_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PATTERN_SELECT_BUTTON))
-#define GIMP_PATTERN_SELECT_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PATTERN_SELECT_BUTTON, GimpPatternSelectButtonClass))
+#define PICMAN_TYPE_PATTERN_SELECT_BUTTON            (picman_pattern_select_button_get_type ())
+#define PICMAN_PATTERN_SELECT_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PATTERN_SELECT_BUTTON, PicmanPatternSelectButton))
+#define PICMAN_PATTERN_SELECT_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PATTERN_SELECT_BUTTON, PicmanPatternSelectButtonClass))
+#define PICMAN_IS_PATTERN_SELECT_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PATTERN_SELECT_BUTTON))
+#define PICMAN_IS_PATTERN_SELECT_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PATTERN_SELECT_BUTTON))
+#define PICMAN_PATTERN_SELECT_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PATTERN_SELECT_BUTTON, PicmanPatternSelectButtonClass))
 
 
-typedef struct _GimpPatternSelectButtonClass   GimpPatternSelectButtonClass;
+typedef struct _PicmanPatternSelectButtonClass   PicmanPatternSelectButtonClass;
 
-struct _GimpPatternSelectButton
+struct _PicmanPatternSelectButton
 {
-  GimpSelectButton  parent_instance;
+  PicmanSelectButton  parent_instance;
 };
 
-struct _GimpPatternSelectButtonClass
+struct _PicmanPatternSelectButtonClass
 {
-  GimpSelectButtonClass  parent_class;
+  PicmanSelectButtonClass  parent_class;
 
   /* pattern_set signal is emitted when pattern is chosen */
-  void (* pattern_set) (GimpPatternSelectButton *button,
+  void (* pattern_set) (PicmanPatternSelectButton *button,
                         const gchar             *pattern_name,
                         gint                     width,
                         gint                     height,
@@ -61,23 +61,23 @@ struct _GimpPatternSelectButtonClass
                         gboolean                 dialog_closing);
 
   /* Padding for future expansion */
-  void (*_gimp_reserved1) (void);
-  void (*_gimp_reserved2) (void);
-  void (*_gimp_reserved3) (void);
-  void (*_gimp_reserved4) (void);
+  void (*_picman_reserved1) (void);
+  void (*_picman_reserved2) (void);
+  void (*_picman_reserved3) (void);
+  void (*_picman_reserved4) (void);
 };
 
 
-GType         gimp_pattern_select_button_get_type    (void) G_GNUC_CONST;
+GType         picman_pattern_select_button_get_type    (void) G_GNUC_CONST;
 
-GtkWidget   * gimp_pattern_select_button_new         (const gchar *title,
+GtkWidget   * picman_pattern_select_button_new         (const gchar *title,
                                                       const gchar *pattern_name);
 
-const gchar * gimp_pattern_select_button_get_pattern (GimpPatternSelectButton *button);
-void          gimp_pattern_select_button_set_pattern (GimpPatternSelectButton *button,
+const gchar * picman_pattern_select_button_get_pattern (PicmanPatternSelectButton *button);
+void          picman_pattern_select_button_set_pattern (PicmanPatternSelectButton *button,
                                                       const gchar             *pattern_name);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_PATTERN_SELECT_BUTTON_H__ */
+#endif /* __PICMAN_PATTERN_SELECT_BUTTON_H__ */

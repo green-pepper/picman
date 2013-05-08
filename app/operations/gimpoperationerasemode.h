@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationerasemode.h
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanoperationerasemode.h
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,36 +19,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GIMP_OPERATION_ERASE_MODE_H__
-#define __GIMP_OPERATION_ERASE_MODE_H__
+#ifndef __PICMAN_OPERATION_ERASE_MODE_H__
+#define __PICMAN_OPERATION_ERASE_MODE_H__
 
 
-#include "gimpoperationpointlayermode.h"
+#include "picmanoperationpointlayermode.h"
 
 
-#define GIMP_TYPE_OPERATION_ERASE_MODE            (gimp_operation_erase_mode_get_type ())
-#define GIMP_OPERATION_ERASE_MODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_ERASE_MODE, GimpOperationEraseMode))
-#define GIMP_OPERATION_ERASE_MODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_ERASE_MODE, GimpOperationEraseModeClass))
-#define GIMP_IS_OPERATION_ERASE_MODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_ERASE_MODE))
-#define GIMP_IS_OPERATION_ERASE_MODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_ERASE_MODE))
-#define GIMP_OPERATION_ERASE_MODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_ERASE_MODE, GimpOperationEraseModeClass))
+#define PICMAN_TYPE_OPERATION_ERASE_MODE            (picman_operation_erase_mode_get_type ())
+#define PICMAN_OPERATION_ERASE_MODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_ERASE_MODE, PicmanOperationEraseMode))
+#define PICMAN_OPERATION_ERASE_MODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_ERASE_MODE, PicmanOperationEraseModeClass))
+#define PICMAN_IS_OPERATION_ERASE_MODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_ERASE_MODE))
+#define PICMAN_IS_OPERATION_ERASE_MODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_ERASE_MODE))
+#define PICMAN_OPERATION_ERASE_MODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_ERASE_MODE, PicmanOperationEraseModeClass))
 
 
-typedef struct _GimpOperationEraseMode      GimpOperationEraseMode;
-typedef struct _GimpOperationEraseModeClass GimpOperationEraseModeClass;
+typedef struct _PicmanOperationEraseMode      PicmanOperationEraseMode;
+typedef struct _PicmanOperationEraseModeClass PicmanOperationEraseModeClass;
 
-struct _GimpOperationEraseMode
+struct _PicmanOperationEraseMode
 {
-  GimpOperationPointLayerMode  parent_instance;
+  PicmanOperationPointLayerMode  parent_instance;
 };
 
-struct _GimpOperationEraseModeClass
+struct _PicmanOperationEraseModeClass
 {
-  GimpOperationPointLayerModeClass  parent_class;
+  PicmanOperationPointLayerModeClass  parent_class;
 };
 
 
-GType   gimp_operation_erase_mode_get_type (void) G_GNUC_CONST;
+GType   picman_operation_erase_mode_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_ERASE_MODE_H__ */
+#endif /* __PICMAN_OPERATION_ERASE_MODE_H__ */

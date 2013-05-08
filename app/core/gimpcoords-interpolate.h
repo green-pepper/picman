@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcoords-interpolate.h
+ * picmancoords-interpolate.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COORDS_INTERPOLATE_H__
-#define __GIMP_COORDS_INTERPOLATE_H__
+#ifndef __PICMAN_COORDS_INTERPOLATE_H__
+#define __PICMAN_COORDS_INTERPOLATE_H__
 
-void      gimp_coords_interpolate_bezier  (const GimpCoords bezier_pt1,
-                                           const GimpCoords bezier_pt2,
-                                           const GimpCoords bezier_pt3,
-                                           const GimpCoords bezier_pt4,
+void      picman_coords_interpolate_bezier  (const PicmanCoords bezier_pt1,
+                                           const PicmanCoords bezier_pt2,
+                                           const PicmanCoords bezier_pt3,
+                                           const PicmanCoords bezier_pt4,
                                            gdouble          precision,
                                            GArray           **ret_coords,
                                            GArray           **ret_params);
 
-gboolean  gimp_coords_bezier_is_straight  (const GimpCoords bezier_pt1,
-                                           const GimpCoords bezier_pt2,
-                                           const GimpCoords bezier_pt3,
-                                           const GimpCoords bezier_pt4,
+gboolean  picman_coords_bezier_is_straight  (const PicmanCoords bezier_pt1,
+                                           const PicmanCoords bezier_pt2,
+                                           const PicmanCoords bezier_pt3,
+                                           const PicmanCoords bezier_pt4,
                                            gdouble          precision);
 
-void      gimp_coords_interpolate_catmull (const GimpCoords catmul_pt1,
-                                           const GimpCoords catmul_pt2,
-                                           const GimpCoords catmul_pt3,
-                                           const GimpCoords catmul_pt4,
+void      picman_coords_interpolate_catmull (const PicmanCoords catmul_pt1,
+                                           const PicmanCoords catmul_pt2,
+                                           const PicmanCoords catmul_pt3,
+                                           const PicmanCoords catmul_pt4,
                                            gdouble          precision,
                                            GArray           **ret_coords,
                                            GArray           **ret_params);
 
-#endif /* __GIMP_COORDS_INTERPOLATE_H__ */
+#endif /* __PICMAN_COORDS_INTERPOLATE_H__ */

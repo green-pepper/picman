@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,10 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub brushes_popup {
-    $blurb = 'Invokes the Gimp brush selection.';
+    $blurb = 'Invokes the Picman brush selection.';
     $help  = 'This procedure opens the brush selection dialog.';
 
     &andy_pdb_misc('1998');
@@ -35,17 +35,17 @@ sub brushes_popup {
 	{ name => 'spacing', type => 'int32 <= 1000',
 	  desc => 'The initial spacing of the brush (if < 0 then use brush
                    default spacing)' },
-	{ name => 'paint_mode', type => 'enum GimpLayerModeEffects',
+	{ name => 'paint_mode', type => 'enum PicmanLayerModeEffects',
 	  desc => 'The initial paint mode' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp->no_interface ||
-      ! gimp_pdb_lookup_procedure (gimp->pdb, brush_callback) ||
-      ! gimp_pdb_dialog_new (gimp, context, progress,
-                             gimp_data_factory_get_container (gimp->brush_factory),
+  if (picman->no_interface ||
+      ! picman_pdb_lookup_procedure (picman->pdb, brush_callback) ||
+      ! picman_pdb_dialog_new (picman, context, progress,
+                             picman_data_factory_get_container (picman->brush_factory),
                              popup_title, brush_callback, initial_brush,
                              "opacity",    opacity / 100.0,
                              "paint-mode", paint_mode,
@@ -71,9 +71,9 @@ sub brushes_close_popup {
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp->no_interface ||
-      ! gimp_pdb_lookup_procedure (gimp->pdb, brush_callback) ||
-      ! gimp_pdb_dialog_close (gimp, gimp_data_factory_get_container (gimp->brush_factory),
+  if (picman->no_interface ||
+      ! picman_pdb_lookup_procedure (picman->pdb, brush_callback) ||
+      ! picman_pdb_dialog_close (picman, picman_data_factory_get_container (picman->brush_factory),
                                brush_callback))
     success = FALSE;
 }
@@ -97,16 +97,16 @@ sub brushes_set_popup {
 	{ name => 'spacing', type => 'int32 <= 1000',
 	  desc => 'The initial spacing of the brush (if < 0 then use brush
                    default spacing)' },
-	{ name => 'paint_mode', type => 'enum GimpLayerModeEffects',
+	{ name => 'paint_mode', type => 'enum PicmanLayerModeEffects',
 	  desc => 'The initial paint mode' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp->no_interface ||
-      ! gimp_pdb_lookup_procedure (gimp->pdb, brush_callback) ||
-      ! gimp_pdb_dialog_set (gimp, gimp_data_factory_get_container (gimp->brush_factory),
+  if (picman->no_interface ||
+      ! picman_pdb_lookup_procedure (picman->pdb, brush_callback) ||
+      ! picman_pdb_dialog_set (picman, picman_data_factory_get_container (picman->brush_factory),
                              brush_callback, brush_name,
                              "opacity",    opacity / 100.0,
                              "paint-mode", paint_mode,
@@ -119,8 +119,8 @@ CODE
 }
 
 
-@headers = qw("core/gimp.h"
-              "core/gimpdatafactory.h");
+@headers = qw("core/picman.h"
+              "core/picmandatafactory.h");
 
 @procs = qw(brushes_popup
             brushes_close_popup
@@ -129,7 +129,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Brush UI';
-$doc_title = 'gimpbrushselect';
+$doc_title = 'picmanbrushselect';
 $doc_short_desc = 'Functions providing a brush selection dialog.';
 $doc_long_desc = 'Functions providing a brush selection dialog.';
 

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpuimanager.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanuimanager.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,27 +27,27 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpmarshal.h"
+#include "core/picman.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpactiongroup.h"
-#include "gimphelp.h"
-#include "gimphelp-ids.h"
-#include "gimpuimanager.h"
+#include "picmanactiongroup.h"
+#include "picmanhelp.h"
+#include "picmanhelp-ids.h"
+#include "picmanuimanager.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
 {
   PROP_0,
   PROP_NAME,
-  PROP_GIMP
+  PROP_PICMAN
 };
 
 enum
@@ -59,92 +59,92 @@ enum
 };
 
 
-static void       gimp_ui_manager_constructed         (GObject        *object);
-static void       gimp_ui_manager_dispose             (GObject        *object);
-static void       gimp_ui_manager_finalize            (GObject        *object);
-static void       gimp_ui_manager_set_property        (GObject        *object,
+static void       picman_ui_manager_constructed         (GObject        *object);
+static void       picman_ui_manager_dispose             (GObject        *object);
+static void       picman_ui_manager_finalize            (GObject        *object);
+static void       picman_ui_manager_set_property        (GObject        *object,
                                                        guint           prop_id,
                                                        const GValue   *value,
                                                        GParamSpec     *pspec);
-static void       gimp_ui_manager_get_property        (GObject        *object,
+static void       picman_ui_manager_get_property        (GObject        *object,
                                                        guint           prop_id,
                                                        GValue         *value,
                                                        GParamSpec     *pspec);
-static void       gimp_ui_manager_connect_proxy       (GtkUIManager   *manager,
+static void       picman_ui_manager_connect_proxy       (GtkUIManager   *manager,
                                                        GtkAction      *action,
                                                        GtkWidget      *proxy);
-static GtkWidget *gimp_ui_manager_get_widget          (GtkUIManager   *manager,
+static GtkWidget *picman_ui_manager_get_widget          (GtkUIManager   *manager,
                                                        const gchar    *path);
-static GtkAction *gimp_ui_manager_get_action          (GtkUIManager   *manager,
+static GtkAction *picman_ui_manager_get_action          (GtkUIManager   *manager,
                                                        const gchar    *path);
-static void       gimp_ui_manager_real_update         (GimpUIManager  *manager,
+static void       picman_ui_manager_real_update         (PicmanUIManager  *manager,
                                                        gpointer        update_data);
-static GimpUIManagerUIEntry *
-                  gimp_ui_manager_entry_get           (GimpUIManager  *manager,
+static PicmanUIManagerUIEntry *
+                  picman_ui_manager_entry_get           (PicmanUIManager  *manager,
                                                        const gchar    *ui_path);
-static gboolean   gimp_ui_manager_entry_load          (GimpUIManager  *manager,
-                                                       GimpUIManagerUIEntry *entry,
+static gboolean   picman_ui_manager_entry_load          (PicmanUIManager  *manager,
+                                                       PicmanUIManagerUIEntry *entry,
                                                        GError        **error);
-static GimpUIManagerUIEntry *
-                  gimp_ui_manager_entry_ensure        (GimpUIManager  *manager,
+static PicmanUIManagerUIEntry *
+                  picman_ui_manager_entry_ensure        (PicmanUIManager  *manager,
                                                        const gchar    *path);
-static void       gimp_ui_manager_menu_position       (GtkMenu        *menu,
+static void       picman_ui_manager_menu_position       (GtkMenu        *menu,
                                                        gint           *x,
                                                        gint           *y,
                                                        gpointer        data);
-static void       gimp_ui_manager_menu_pos            (GtkMenu        *menu,
+static void       picman_ui_manager_menu_pos            (GtkMenu        *menu,
                                                        gint           *x,
                                                        gint           *y,
                                                        gboolean       *push_in,
                                                        gpointer        data);
-static void       gimp_ui_manager_delete_popdown_data (GtkObject      *object,
-                                                       GimpUIManager  *manager);
-static void       gimp_ui_manager_item_realize        (GtkWidget      *widget,
-                                                       GimpUIManager  *manager);
-static void       gimp_ui_manager_menu_item_select    (GtkWidget      *widget,
-                                                       GimpUIManager  *manager);
-static void       gimp_ui_manager_menu_item_deselect  (GtkWidget      *widget,
-                                                       GimpUIManager  *manager);
-static gboolean   gimp_ui_manager_item_key_press      (GtkWidget      *widget,
+static void       picman_ui_manager_delete_popdown_data (GtkObject      *object,
+                                                       PicmanUIManager  *manager);
+static void       picman_ui_manager_item_realize        (GtkWidget      *widget,
+                                                       PicmanUIManager  *manager);
+static void       picman_ui_manager_menu_item_select    (GtkWidget      *widget,
+                                                       PicmanUIManager  *manager);
+static void       picman_ui_manager_menu_item_deselect  (GtkWidget      *widget,
+                                                       PicmanUIManager  *manager);
+static gboolean   picman_ui_manager_item_key_press      (GtkWidget      *widget,
                                                        GdkEventKey    *kevent,
-                                                       GimpUIManager  *manager);
+                                                       PicmanUIManager  *manager);
 static GtkWidget *find_widget_under_pointer           (GdkWindow      *window,
                                                        gint           *x,
                                                        gint           *y);
 
 
-G_DEFINE_TYPE (GimpUIManager, gimp_ui_manager, GTK_TYPE_UI_MANAGER)
+G_DEFINE_TYPE (PicmanUIManager, picman_ui_manager, GTK_TYPE_UI_MANAGER)
 
-#define parent_class gimp_ui_manager_parent_class
+#define parent_class picman_ui_manager_parent_class
 
 static guint manager_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_ui_manager_class_init (GimpUIManagerClass *klass)
+picman_ui_manager_class_init (PicmanUIManagerClass *klass)
 {
   GObjectClass      *object_class  = G_OBJECT_CLASS (klass);
   GtkUIManagerClass *manager_class = GTK_UI_MANAGER_CLASS (klass);
 
-  object_class->constructed    = gimp_ui_manager_constructed;
-  object_class->dispose        = gimp_ui_manager_dispose;
-  object_class->finalize       = gimp_ui_manager_finalize;
-  object_class->set_property   = gimp_ui_manager_set_property;
-  object_class->get_property   = gimp_ui_manager_get_property;
+  object_class->constructed    = picman_ui_manager_constructed;
+  object_class->dispose        = picman_ui_manager_dispose;
+  object_class->finalize       = picman_ui_manager_finalize;
+  object_class->set_property   = picman_ui_manager_set_property;
+  object_class->get_property   = picman_ui_manager_get_property;
 
-  manager_class->connect_proxy = gimp_ui_manager_connect_proxy;
-  manager_class->get_widget    = gimp_ui_manager_get_widget;
-  manager_class->get_action    = gimp_ui_manager_get_action;
+  manager_class->connect_proxy = picman_ui_manager_connect_proxy;
+  manager_class->get_widget    = picman_ui_manager_get_widget;
+  manager_class->get_action    = picman_ui_manager_get_action;
 
-  klass->update                = gimp_ui_manager_real_update;
+  klass->update                = picman_ui_manager_real_update;
 
   manager_signals[UPDATE] =
     g_signal_new ("update",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpUIManagerClass, update),
+                  G_STRUCT_OFFSET (PicmanUIManagerClass, update),
                   NULL, NULL,
-                  gimp_marshal_VOID__POINTER,
+                  picman_marshal_VOID__POINTER,
                   G_TYPE_NONE, 1,
                   G_TYPE_POINTER);
 
@@ -152,9 +152,9 @@ gimp_ui_manager_class_init (GimpUIManagerClass *klass)
     g_signal_new ("show-tooltip",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpUIManagerClass, show_tooltip),
+                  G_STRUCT_OFFSET (PicmanUIManagerClass, show_tooltip),
                   NULL, NULL,
-                  gimp_marshal_VOID__STRING,
+                  picman_marshal_VOID__STRING,
                   G_TYPE_NONE, 1,
                   G_TYPE_STRING);
 
@@ -162,9 +162,9 @@ gimp_ui_manager_class_init (GimpUIManagerClass *klass)
     g_signal_new ("hide-tooltip",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpUIManagerClass, hide_tooltip),
+                  G_STRUCT_OFFSET (PicmanUIManagerClass, hide_tooltip),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0,
                   G_TYPE_NONE);
 
@@ -172,14 +172,14 @@ gimp_ui_manager_class_init (GimpUIManagerClass *klass)
                                    g_param_spec_string ("name",
                                                         NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp",
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   klass->managers = g_hash_table_new_full (g_str_hash, g_str_equal,
@@ -187,25 +187,25 @@ gimp_ui_manager_class_init (GimpUIManagerClass *klass)
 }
 
 static void
-gimp_ui_manager_init (GimpUIManager *manager)
+picman_ui_manager_init (PicmanUIManager *manager)
 {
   manager->name = NULL;
-  manager->gimp = NULL;
+  manager->picman = NULL;
 }
 
 static void
-gimp_ui_manager_constructed (GObject *object)
+picman_ui_manager_constructed (GObject *object)
 {
-  GimpUIManager *manager = GIMP_UI_MANAGER (object);
+  PicmanUIManager *manager = PICMAN_UI_MANAGER (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
   if (manager->name)
     {
-      GimpUIManagerClass *manager_class;
+      PicmanUIManagerClass *manager_class;
       GList              *list;
 
-      manager_class = GIMP_UI_MANAGER_GET_CLASS (object);
+      manager_class = PICMAN_UI_MANAGER_GET_CLASS (object);
 
       list = g_hash_table_lookup (manager_class->managers, manager->name);
 
@@ -217,16 +217,16 @@ gimp_ui_manager_constructed (GObject *object)
 }
 
 static void
-gimp_ui_manager_dispose (GObject *object)
+picman_ui_manager_dispose (GObject *object)
 {
-  GimpUIManager *manager = GIMP_UI_MANAGER (object);
+  PicmanUIManager *manager = PICMAN_UI_MANAGER (object);
 
   if (manager->name)
     {
-      GimpUIManagerClass *manager_class;
+      PicmanUIManagerClass *manager_class;
       GList              *list;
 
-      manager_class = GIMP_UI_MANAGER_GET_CLASS (object);
+      manager_class = PICMAN_UI_MANAGER_GET_CLASS (object);
 
       list = g_hash_table_lookup (manager_class->managers, manager->name);
 
@@ -246,14 +246,14 @@ gimp_ui_manager_dispose (GObject *object)
 }
 
 static void
-gimp_ui_manager_finalize (GObject *object)
+picman_ui_manager_finalize (GObject *object)
 {
-  GimpUIManager *manager = GIMP_UI_MANAGER (object);
+  PicmanUIManager *manager = PICMAN_UI_MANAGER (object);
   GList         *list;
 
   for (list = manager->registered_uis; list; list = g_list_next (list))
     {
-      GimpUIManagerUIEntry *entry = list->data;
+      PicmanUIManagerUIEntry *entry = list->data;
 
       g_free (entry->ui_path);
       g_free (entry->basename);
@@ -261,7 +261,7 @@ gimp_ui_manager_finalize (GObject *object)
       if (entry->widget)
         g_object_unref (entry->widget);
 
-      g_slice_free (GimpUIManagerUIEntry, entry);
+      g_slice_free (PicmanUIManagerUIEntry, entry);
     }
 
   g_list_free (manager->registered_uis);
@@ -277,12 +277,12 @@ gimp_ui_manager_finalize (GObject *object)
 }
 
 static void
-gimp_ui_manager_set_property (GObject      *object,
+picman_ui_manager_set_property (GObject      *object,
                               guint         prop_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  GimpUIManager *manager = GIMP_UI_MANAGER (object);
+  PicmanUIManager *manager = PICMAN_UI_MANAGER (object);
 
   switch (prop_id)
     {
@@ -291,8 +291,8 @@ gimp_ui_manager_set_property (GObject      *object,
       manager->name = g_value_dup_string (value);
       break;
 
-    case PROP_GIMP:
-      manager->gimp = g_value_get_object (value);
+    case PROP_PICMAN:
+      manager->picman = g_value_get_object (value);
       break;
 
     default:
@@ -302,12 +302,12 @@ gimp_ui_manager_set_property (GObject      *object,
 }
 
 static void
-gimp_ui_manager_get_property (GObject    *object,
+picman_ui_manager_get_property (GObject    *object,
                               guint       prop_id,
                               GValue     *value,
                               GParamSpec *pspec)
 {
-  GimpUIManager *manager = GIMP_UI_MANAGER (object);
+  PicmanUIManager *manager = PICMAN_UI_MANAGER (object);
 
   switch (prop_id)
     {
@@ -315,8 +315,8 @@ gimp_ui_manager_get_property (GObject    *object,
       g_value_set_string (value, manager->name);
       break;
 
-    case PROP_GIMP:
-      g_value_set_object (value, manager->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, manager->picman);
       break;
 
     default:
@@ -326,35 +326,35 @@ gimp_ui_manager_get_property (GObject    *object,
 }
 
 static void
-gimp_ui_manager_connect_proxy (GtkUIManager *manager,
+picman_ui_manager_connect_proxy (GtkUIManager *manager,
                                GtkAction    *action,
                                GtkWidget    *proxy)
 {
-  g_object_set_qdata (G_OBJECT (proxy), GIMP_HELP_ID,
-                      g_object_get_qdata (G_OBJECT (action), GIMP_HELP_ID));
+  g_object_set_qdata (G_OBJECT (proxy), PICMAN_HELP_ID,
+                      g_object_get_qdata (G_OBJECT (action), PICMAN_HELP_ID));
 
   if (GTK_IS_MENU_ITEM (proxy))
     {
       g_signal_connect (proxy, "select",
-                        G_CALLBACK (gimp_ui_manager_menu_item_select),
+                        G_CALLBACK (picman_ui_manager_menu_item_select),
                         manager);
       g_signal_connect (proxy, "deselect",
-                        G_CALLBACK (gimp_ui_manager_menu_item_deselect),
+                        G_CALLBACK (picman_ui_manager_menu_item_deselect),
                         manager);
 
       g_signal_connect_after (proxy, "realize",
-                              G_CALLBACK (gimp_ui_manager_item_realize),
+                              G_CALLBACK (picman_ui_manager_item_realize),
                               manager);
     }
 }
 
 static GtkWidget *
-gimp_ui_manager_get_widget (GtkUIManager *manager,
+picman_ui_manager_get_widget (GtkUIManager *manager,
                             const gchar  *path)
 {
-  GimpUIManagerUIEntry *entry;
+  PicmanUIManagerUIEntry *entry;
 
-  entry = gimp_ui_manager_entry_ensure (GIMP_UI_MANAGER (manager), path);
+  entry = picman_ui_manager_entry_ensure (PICMAN_UI_MANAGER (manager), path);
 
   if (entry)
     {
@@ -368,17 +368,17 @@ gimp_ui_manager_get_widget (GtkUIManager *manager,
 }
 
 static GtkAction *
-gimp_ui_manager_get_action (GtkUIManager *manager,
+picman_ui_manager_get_action (GtkUIManager *manager,
                             const gchar  *path)
 {
-  if (gimp_ui_manager_entry_ensure (GIMP_UI_MANAGER (manager), path))
+  if (picman_ui_manager_entry_ensure (PICMAN_UI_MANAGER (manager), path))
     return GTK_UI_MANAGER_CLASS (parent_class)->get_action (manager, path);
 
   return NULL;
 }
 
 static void
-gimp_ui_manager_real_update (GimpUIManager *manager,
+picman_ui_manager_real_update (PicmanUIManager *manager,
                              gpointer       update_data)
 {
   GList *list;
@@ -387,44 +387,44 @@ gimp_ui_manager_real_update (GimpUIManager *manager,
        list;
        list = g_list_next (list))
     {
-      gimp_action_group_update (list->data, update_data);
+      picman_action_group_update (list->data, update_data);
     }
 }
 
 /**
- * gimp_ui_manager_new:
- * @gimp: the @Gimp instance this ui manager belongs to
+ * picman_ui_manager_new:
+ * @picman: the @Picman instance this ui manager belongs to
  * @name: the UI manager's name.
  *
- * Creates a new #GimpUIManager object.
+ * Creates a new #PicmanUIManager object.
  *
- * Returns: the new #GimpUIManager
+ * Returns: the new #PicmanUIManager
  */
-GimpUIManager *
-gimp_ui_manager_new (Gimp        *gimp,
+PicmanUIManager *
+picman_ui_manager_new (Picman        *picman,
                      const gchar *name)
 {
-  GimpUIManager *manager;
+  PicmanUIManager *manager;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  manager = g_object_new (GIMP_TYPE_UI_MANAGER,
+  manager = g_object_new (PICMAN_TYPE_UI_MANAGER,
                           "name", name,
-                          "gimp", gimp,
+                          "picman", picman,
                           NULL);
 
   return manager;
 }
 
 GList *
-gimp_ui_managers_from_name (const gchar *name)
+picman_ui_managers_from_name (const gchar *name)
 {
-  GimpUIManagerClass *manager_class;
+  PicmanUIManagerClass *manager_class;
   GList              *list;
 
   g_return_val_if_fail (name != NULL, NULL);
 
-  manager_class = g_type_class_ref (GIMP_TYPE_UI_MANAGER);
+  manager_class = g_type_class_ref (PICMAN_TYPE_UI_MANAGER);
 
   list = g_hash_table_lookup (manager_class->managers, name);
 
@@ -434,28 +434,28 @@ gimp_ui_managers_from_name (const gchar *name)
 }
 
 void
-gimp_ui_manager_update (GimpUIManager *manager,
+picman_ui_manager_update (PicmanUIManager *manager,
                         gpointer       update_data)
 {
-  g_return_if_fail (GIMP_IS_UI_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_UI_MANAGER (manager));
 
   g_signal_emit (manager, manager_signals[UPDATE], 0, update_data);
 }
 
-GimpActionGroup *
-gimp_ui_manager_get_action_group (GimpUIManager *manager,
+PicmanActionGroup *
+picman_ui_manager_get_action_group (PicmanUIManager *manager,
                                   const gchar   *name)
 {
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_UI_MANAGER (manager), NULL);
+  g_return_val_if_fail (PICMAN_IS_UI_MANAGER (manager), NULL);
   g_return_val_if_fail (name != NULL, NULL);
 
   for (list = gtk_ui_manager_get_action_groups (GTK_UI_MANAGER (manager));
        list;
        list = g_list_next (list))
     {
-      GimpActionGroup *group = list->data;
+      PicmanActionGroup *group = list->data;
 
       if (! strcmp (name, gtk_action_group_get_name (GTK_ACTION_GROUP (group))))
         return group;
@@ -465,19 +465,19 @@ gimp_ui_manager_get_action_group (GimpUIManager *manager,
 }
 
 GtkAction *
-gimp_ui_manager_find_action (GimpUIManager *manager,
+picman_ui_manager_find_action (PicmanUIManager *manager,
                              const gchar   *group_name,
                              const gchar   *action_name)
 {
-  GimpActionGroup *group;
+  PicmanActionGroup *group;
   GtkAction       *action = NULL;
 
-  g_return_val_if_fail (GIMP_IS_UI_MANAGER (manager), NULL);
+  g_return_val_if_fail (PICMAN_IS_UI_MANAGER (manager), NULL);
   g_return_val_if_fail (action_name != NULL, NULL);
 
   if (group_name)
     {
-      group = gimp_ui_manager_get_action_group (manager, group_name);
+      group = picman_ui_manager_get_action_group (manager, group_name);
 
       if (group)
         action = gtk_action_group_get_action (GTK_ACTION_GROUP (group),
@@ -505,16 +505,16 @@ gimp_ui_manager_find_action (GimpUIManager *manager,
 }
 
 gboolean
-gimp_ui_manager_activate_action (GimpUIManager *manager,
+picman_ui_manager_activate_action (PicmanUIManager *manager,
                                  const gchar   *group_name,
                                  const gchar   *action_name)
 {
   GtkAction *action;
 
-  g_return_val_if_fail (GIMP_IS_UI_MANAGER (manager), FALSE);
+  g_return_val_if_fail (PICMAN_IS_UI_MANAGER (manager), FALSE);
   g_return_val_if_fail (action_name != NULL, FALSE);
 
-  action = gimp_ui_manager_find_action (manager, group_name, action_name);
+  action = picman_ui_manager_find_action (manager, group_name, action_name);
 
   if (action)
     gtk_action_activate (action);
@@ -524,19 +524,19 @@ gimp_ui_manager_activate_action (GimpUIManager *manager,
 
 
 void
-gimp_ui_manager_ui_register (GimpUIManager          *manager,
+picman_ui_manager_ui_register (PicmanUIManager          *manager,
                              const gchar            *ui_path,
                              const gchar            *basename,
-                             GimpUIManagerSetupFunc  setup_func)
+                             PicmanUIManagerSetupFunc  setup_func)
 {
-  GimpUIManagerUIEntry *entry;
+  PicmanUIManagerUIEntry *entry;
 
-  g_return_if_fail (GIMP_IS_UI_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_UI_MANAGER (manager));
   g_return_if_fail (ui_path != NULL);
   g_return_if_fail (basename != NULL);
-  g_return_if_fail (gimp_ui_manager_entry_get (manager, ui_path) == NULL);
+  g_return_if_fail (picman_ui_manager_entry_get (manager, ui_path) == NULL);
 
-  entry = g_slice_new0 (GimpUIManagerUIEntry);
+  entry = g_slice_new0 (PicmanUIManagerUIEntry);
 
   entry->ui_path    = g_strdup (ui_path);
   entry->basename   = g_strdup (basename);
@@ -561,10 +561,10 @@ menu_pos_free (MenuPos *pos)
 }
 
 void
-gimp_ui_manager_ui_popup (GimpUIManager        *manager,
+picman_ui_manager_ui_popup (PicmanUIManager        *manager,
                           const gchar          *ui_path,
                           GtkWidget            *parent,
-                          GimpMenuPositionFunc  position_func,
+                          PicmanMenuPositionFunc  position_func,
                           gpointer              position_data,
                           GDestroyNotify        popdown_func,
                           gpointer              popdown_data)
@@ -576,7 +576,7 @@ gimp_ui_manager_ui_popup (GimpUIManager        *manager,
   guint32    activate_time;
   MenuPos   *menu_pos;
 
-  g_return_if_fail (GIMP_IS_UI_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_UI_MANAGER (manager));
   g_return_if_fail (ui_path != NULL);
   g_return_if_fail (parent == NULL || GTK_IS_WIDGET (parent));
 
@@ -592,7 +592,7 @@ gimp_ui_manager_ui_popup (GimpUIManager        *manager,
 
   if (! position_func)
     {
-      position_func = gimp_ui_manager_menu_position;
+      position_func = picman_ui_manager_menu_position;
       position_data = parent;
     }
 
@@ -633,21 +633,21 @@ gimp_ui_manager_ui_popup (GimpUIManager        *manager,
       g_object_set_data_full (G_OBJECT (manager), "popdown-data",
                               popdown_data, popdown_func);
       g_signal_connect (widget, "selection-done",
-                        G_CALLBACK (gimp_ui_manager_delete_popdown_data),
+                        G_CALLBACK (picman_ui_manager_delete_popdown_data),
                         manager);
     }
 
   gtk_menu_popup (GTK_MENU (widget),
                   NULL, NULL,
-                  gimp_ui_manager_menu_pos, menu_pos,
+                  picman_ui_manager_menu_pos, menu_pos,
                   button, activate_time);
 }
 
 
 /*  private functions  */
 
-static GimpUIManagerUIEntry *
-gimp_ui_manager_entry_get (GimpUIManager *manager,
+static PicmanUIManagerUIEntry *
+picman_ui_manager_entry_get (PicmanUIManager *manager,
                            const gchar   *ui_path)
 {
   GList *list;
@@ -665,7 +665,7 @@ gimp_ui_manager_entry_get (GimpUIManager *manager,
 
   for (list = manager->registered_uis; list; list = g_list_next (list))
     {
-      GimpUIManagerUIEntry *entry = list->data;
+      PicmanUIManagerUIEntry *entry = list->data;
 
       if (! strcmp (entry->ui_path, path))
         {
@@ -681,26 +681,26 @@ gimp_ui_manager_entry_get (GimpUIManager *manager,
 }
 
 static gboolean
-gimp_ui_manager_entry_load (GimpUIManager         *manager,
-                            GimpUIManagerUIEntry  *entry,
+picman_ui_manager_entry_load (PicmanUIManager         *manager,
+                            PicmanUIManagerUIEntry  *entry,
                             GError               **error)
 {
   gchar       *filename           = NULL;
-  const gchar *menus_dir_override = g_getenv ("GIMP_TESTING_MENUS_DIR");
+  const gchar *menus_dir_override = g_getenv ("PICMAN_TESTING_MENUS_DIR");
 
-  /* In order for test cases to be able to run without GIMP being
+  /* In order for test cases to be able to run without PICMAN being
    * installed yet, allow them to override the menus directory to the
    * menus dir in the source root
    */
   if (menus_dir_override)
     filename = g_build_filename (menus_dir_override, entry->basename, NULL);
   else
-    filename = g_build_filename (gimp_data_directory (), "menus",
+    filename = g_build_filename (picman_data_directory (), "menus",
                                  entry->basename, NULL);
 
-  if (manager->gimp->be_verbose)
+  if (manager->picman->be_verbose)
     g_print ("loading menu '%s' for %s\n",
-             gimp_filename_to_utf8 (filename), entry->ui_path);
+             picman_filename_to_utf8 (filename), entry->ui_path);
 
   entry->merge_id = gtk_ui_manager_add_ui_from_file (GTK_UI_MANAGER (manager),
                                                      filename, error);
@@ -713,13 +713,13 @@ gimp_ui_manager_entry_load (GimpUIManager         *manager,
   return TRUE;
 }
 
-static GimpUIManagerUIEntry *
-gimp_ui_manager_entry_ensure (GimpUIManager *manager,
+static PicmanUIManagerUIEntry *
+picman_ui_manager_entry_ensure (PicmanUIManager *manager,
                               const gchar   *path)
 {
-  GimpUIManagerUIEntry *entry;
+  PicmanUIManagerUIEntry *entry;
 
-  entry = gimp_ui_manager_entry_get (manager, path);
+  entry = picman_ui_manager_entry_get (manager, path);
 
   if (! entry)
     {
@@ -731,24 +731,24 @@ gimp_ui_manager_entry_ensure (GimpUIManager *manager,
     {
       GError *error = NULL;
 
-      if (! gimp_ui_manager_entry_load (manager, entry, &error))
+      if (! picman_ui_manager_entry_load (manager, entry, &error))
         {
           if (error->domain == G_FILE_ERROR &&
               error->code == G_FILE_ERROR_EXIST)
             {
-              gimp_message (manager->gimp, NULL, GIMP_MESSAGE_ERROR,
+              picman_message (manager->picman, NULL, PICMAN_MESSAGE_ERROR,
                             "%s\n\n%s\n\n%s",
-                            _("Your GIMP installation is incomplete:"),
+                            _("Your PICMAN installation is incomplete:"),
                             error->message,
                             _("Please make sure the menu XML files are "
                               "correctly installed."));
             }
           else
             {
-              gimp_message (manager->gimp, NULL, GIMP_MESSAGE_ERROR,
+              picman_message (manager->picman, NULL, PICMAN_MESSAGE_ERROR,
                             _("There was an error parsing the menu definition "
                               "from %s: %s"),
-                            gimp_filename_to_utf8 (entry->basename),
+                            picman_filename_to_utf8 (entry->basename),
                             error->message);
             }
 
@@ -792,7 +792,7 @@ gimp_ui_manager_entry_ensure (GimpUIManager *manager,
 }
 
 static void
-gimp_ui_manager_menu_position (GtkMenu  *menu,
+picman_ui_manager_menu_position (GtkMenu  *menu,
                                gint     *x,
                                gint     *y,
                                gpointer  data)
@@ -844,7 +844,7 @@ gimp_ui_manager_menu_position (GtkMenu  *menu,
 }
 
 static void
-gimp_ui_manager_menu_pos (GtkMenu  *menu,
+picman_ui_manager_menu_pos (GtkMenu  *menu,
                           gint     *x,
                           gint     *y,
                           gboolean *push_in,
@@ -857,24 +857,24 @@ gimp_ui_manager_menu_pos (GtkMenu  *menu,
 }
 
 static void
-gimp_ui_manager_delete_popdown_data (GtkObject     *object,
-                                     GimpUIManager *manager)
+picman_ui_manager_delete_popdown_data (GtkObject     *object,
+                                     PicmanUIManager *manager)
 {
   g_signal_handlers_disconnect_by_func (object,
-                                        gimp_ui_manager_delete_popdown_data,
+                                        picman_ui_manager_delete_popdown_data,
                                         manager);
   g_object_set_data (G_OBJECT (manager), "popdown-data", NULL);
 }
 
 static void
-gimp_ui_manager_item_realize (GtkWidget     *widget,
-                              GimpUIManager *manager)
+picman_ui_manager_item_realize (GtkWidget     *widget,
+                              PicmanUIManager *manager)
 {
   GtkWidget *menu;
   GtkWidget *submenu;
 
   g_signal_handlers_disconnect_by_func (widget,
-                                        gimp_ui_manager_item_realize,
+                                        picman_ui_manager_item_realize,
                                         manager);
 
   menu = gtk_widget_get_parent (widget);
@@ -885,13 +885,13 @@ gimp_ui_manager_item_realize (GtkWidget     *widget,
 
       if (! quark_key_press_connected)
         quark_key_press_connected =
-          g_quark_from_static_string ("gimp-menu-item-key-press-connected");
+          g_quark_from_static_string ("picman-menu-item-key-press-connected");
 
       if (! GPOINTER_TO_INT (g_object_get_qdata (G_OBJECT (menu),
                                                  quark_key_press_connected)))
         {
           g_signal_connect (menu, "key-press-event",
-                            G_CALLBACK (gimp_ui_manager_item_key_press),
+                            G_CALLBACK (picman_ui_manager_item_key_press),
                             manager);
 
           g_object_set_qdata (G_OBJECT (menu),
@@ -903,14 +903,14 @@ gimp_ui_manager_item_realize (GtkWidget     *widget,
   submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (widget));
 
   if (submenu)
-    g_object_set_qdata (G_OBJECT (submenu), GIMP_HELP_ID,
+    g_object_set_qdata (G_OBJECT (submenu), PICMAN_HELP_ID,
                         g_object_get_qdata (G_OBJECT (widget),
-                                            GIMP_HELP_ID));
+                                            PICMAN_HELP_ID));
 }
 
 static void
-gimp_ui_manager_menu_item_select (GtkWidget     *widget,
-                                  GimpUIManager *manager)
+picman_ui_manager_menu_item_select (GtkWidget     *widget,
+                                  PicmanUIManager *manager)
 {
   GtkAction *action =
     gtk_activatable_get_related_action (GTK_ACTIVATABLE (widget));
@@ -925,16 +925,16 @@ gimp_ui_manager_menu_item_select (GtkWidget     *widget,
 }
 
 static void
-gimp_ui_manager_menu_item_deselect (GtkWidget     *widget,
-                                    GimpUIManager *manager)
+picman_ui_manager_menu_item_deselect (GtkWidget     *widget,
+                                    PicmanUIManager *manager)
 {
   g_signal_emit (manager, manager_signals[HIDE_TOOLTIP], 0);
 }
 
 static gboolean
-gimp_ui_manager_item_key_press (GtkWidget     *widget,
+picman_ui_manager_item_key_press (GtkWidget     *widget,
                                 GdkEventKey   *kevent,
-                                GimpUIManager *manager)
+                                PicmanUIManager *manager)
 {
   gchar *help_id = NULL;
 
@@ -965,7 +965,7 @@ gimp_ui_manager_item_key_press (GtkWidget     *widget,
        */
       if (menu_item)
         {
-          help_id = g_object_get_qdata (G_OBJECT (menu_item), GIMP_HELP_ID);
+          help_id = g_object_get_qdata (G_OBJECT (menu_item), PICMAN_HELP_ID);
 
           if (help_id && ! strlen (help_id))
             help_id = NULL;
@@ -975,7 +975,7 @@ gimp_ui_manager_item_key_press (GtkWidget     *widget,
        */
       if (! help_id)
         {
-          help_id = g_object_get_qdata (G_OBJECT (widget), GIMP_HELP_ID);
+          help_id = g_object_get_qdata (G_OBJECT (widget), PICMAN_HELP_ID);
 
           if (help_id && ! strlen (help_id))
             help_id = NULL;
@@ -1008,8 +1008,8 @@ gimp_ui_manager_item_key_press (GtkWidget     *widget,
     {
       if (help_id                                   &&
           gtk_accelerator_valid (kevent->keyval, 0) &&
-          (strcmp (help_id, GIMP_HELP_HELP)         == 0 ||
-           strcmp (help_id, GIMP_HELP_HELP_CONTEXT) == 0))
+          (strcmp (help_id, PICMAN_HELP_HELP)         == 0 ||
+           strcmp (help_id, PICMAN_HELP_HELP_CONTEXT) == 0))
         {
           return TRUE;
         }
@@ -1041,7 +1041,7 @@ gimp_ui_manager_item_key_press (GtkWidget     *widget,
           help_string = g_strdup (help_id);
         }
 
-      gimp_help (manager->gimp, NULL, help_domain, help_string);
+      picman_help (manager->picman, NULL, help_domain, help_string);
 
       g_free (help_domain);
       g_free (help_string);

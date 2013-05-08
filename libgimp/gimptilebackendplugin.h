@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptilebackendtilemanager.h
- * Copyright (C) 2011 Øyvind Kolås <pippin@gimp.org>
+ * picmantilebackendtilemanager.h
+ * Copyright (C) 2011 Øyvind Kolås <pippin@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,42 +18,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TILE_BACKEND_PLUGIN_H__
-#define __GIMP_TILE_BACKEND_PLUGIN_H__
+#ifndef __PICMAN_TILE_BACKEND_PLUGIN_H__
+#define __PICMAN_TILE_BACKEND_PLUGIN_H__
 
 #include <gegl-buffer-backend.h>
 
 G_BEGIN_DECLS
 
-#define GIMP_TYPE_TILE_BACKEND_PLUGIN            (_gimp_tile_backend_plugin_get_type ())
-#define GIMP_TILE_BACKEND_PLUGIN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TILE_BACKEND_PLUGIN, GimpTileBackendPlugin))
-#define GIMP_TILE_BACKEND_PLUGIN_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_TILE_BACKEND_PLUGIN, GimpTileBackendPluginClass))
-#define GIMP_IS_TILE_BACKEND_PLUGIN(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TILE_BACKEND_PLUGIN))
-#define GIMP_IS_TILE_BACKEND_PLUGIN_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_TILE_BACKEND_PLUGIN))
-#define GIMP_TILE_BACKEND_PLUGIN_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_TILE_BACKEND_PLUGIN, GimpTileBackendPluginClass))
+#define PICMAN_TYPE_TILE_BACKEND_PLUGIN            (_picman_tile_backend_plugin_get_type ())
+#define PICMAN_TILE_BACKEND_PLUGIN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TILE_BACKEND_PLUGIN, PicmanTileBackendPlugin))
+#define PICMAN_TILE_BACKEND_PLUGIN_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_TILE_BACKEND_PLUGIN, PicmanTileBackendPluginClass))
+#define PICMAN_IS_TILE_BACKEND_PLUGIN(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TILE_BACKEND_PLUGIN))
+#define PICMAN_IS_TILE_BACKEND_PLUGIN_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_TILE_BACKEND_PLUGIN))
+#define PICMAN_TILE_BACKEND_PLUGIN_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_TILE_BACKEND_PLUGIN, PicmanTileBackendPluginClass))
 
 
-typedef struct _GimpTileBackendPlugin        GimpTileBackendPlugin;
-typedef struct _GimpTileBackendPluginClass   GimpTileBackendPluginClass;
-typedef struct _GimpTileBackendPluginPrivate GimpTileBackendPluginPrivate;
+typedef struct _PicmanTileBackendPlugin        PicmanTileBackendPlugin;
+typedef struct _PicmanTileBackendPluginClass   PicmanTileBackendPluginClass;
+typedef struct _PicmanTileBackendPluginPrivate PicmanTileBackendPluginPrivate;
 
-struct _GimpTileBackendPlugin
+struct _PicmanTileBackendPlugin
 {
   GeglTileBackend  parent_instance;
 
-  GimpTileBackendPluginPrivate *priv;
+  PicmanTileBackendPluginPrivate *priv;
 };
 
-struct _GimpTileBackendPluginClass
+struct _PicmanTileBackendPluginClass
 {
   GeglTileBackendClass parent_class;
 };
 
-GType             _gimp_tile_backend_plugin_get_type (void) G_GNUC_CONST;
+GType             _picman_tile_backend_plugin_get_type (void) G_GNUC_CONST;
 
-GeglTileBackend * _gimp_tile_backend_plugin_new      (GimpDrawable *drawable,
+GeglTileBackend * _picman_tile_backend_plugin_new      (PicmanDrawable *drawable,
                                                       gint          shadow);
 
 G_END_DECLS
 
-#endif /* __GIMP_TILE_BACKEND_plugin_H__ */
+#endif /* __PICMAN_TILE_BACKEND_plugin_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpGroupLayer
- * Copyright (C) 2009  Michael Natterer <mitch@gimp.org>
+ * PicmanGroupLayer
+ * Copyright (C) 2009  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,44 +18,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GROUP_LAYER_H__
-#define __GIMP_GROUP_LAYER_H__
+#ifndef __PICMAN_GROUP_LAYER_H__
+#define __PICMAN_GROUP_LAYER_H__
 
 
-#include "core/gimplayer.h"
+#include "core/picmanlayer.h"
 
 
-#define GIMP_TYPE_GROUP_LAYER            (gimp_group_layer_get_type ())
-#define GIMP_GROUP_LAYER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_GROUP_LAYER, GimpGroupLayer))
-#define GIMP_GROUP_LAYER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_GROUP_LAYER, GimpGroupLayerClass))
-#define GIMP_IS_GROUP_LAYER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_GROUP_LAYER))
-#define GIMP_IS_GROUP_LAYER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_GROUP_LAYER))
-#define GIMP_GROUP_LAYER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_GROUP_LAYER, GimpGroupLayerClass))
+#define PICMAN_TYPE_GROUP_LAYER            (picman_group_layer_get_type ())
+#define PICMAN_GROUP_LAYER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_GROUP_LAYER, PicmanGroupLayer))
+#define PICMAN_GROUP_LAYER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_GROUP_LAYER, PicmanGroupLayerClass))
+#define PICMAN_IS_GROUP_LAYER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_GROUP_LAYER))
+#define PICMAN_IS_GROUP_LAYER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_GROUP_LAYER))
+#define PICMAN_GROUP_LAYER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_GROUP_LAYER, PicmanGroupLayerClass))
 
 
-typedef struct _GimpGroupLayerClass GimpGroupLayerClass;
+typedef struct _PicmanGroupLayerClass PicmanGroupLayerClass;
 
-struct _GimpGroupLayer
+struct _PicmanGroupLayer
 {
-  GimpLayer  parent_instance;
+  PicmanLayer  parent_instance;
 };
 
-struct _GimpGroupLayerClass
+struct _PicmanGroupLayerClass
 {
-  GimpLayerClass  parent_class;
+  PicmanLayerClass  parent_class;
 };
 
 
-GType            gimp_group_layer_get_type       (void) G_GNUC_CONST;
+GType            picman_group_layer_get_type       (void) G_GNUC_CONST;
 
-GimpLayer      * gimp_group_layer_new            (GimpImage      *image);
+PicmanLayer      * picman_group_layer_new            (PicmanImage      *image);
 
-GimpProjection * gimp_group_layer_get_projection (GimpGroupLayer *group);
+PicmanProjection * picman_group_layer_get_projection (PicmanGroupLayer *group);
 
-void             gimp_group_layer_suspend_resize (GimpGroupLayer *group,
+void             picman_group_layer_suspend_resize (PicmanGroupLayer *group,
                                                   gboolean        push_undo);
-void             gimp_group_layer_resume_resize  (GimpGroupLayer *group,
+void             picman_group_layer_resume_resize  (PicmanGroupLayer *group,
                                                   gboolean        push_undo);
 
 
-#endif /* __GIMP_GROUP_LAYER_H__ */
+#endif /* __PICMAN_GROUP_LAYER_H__ */

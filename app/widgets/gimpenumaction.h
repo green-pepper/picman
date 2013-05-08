@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpenumaction.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanenumaction.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,50 +18,50 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ENUM_ACTION_H__
-#define __GIMP_ENUM_ACTION_H__
+#ifndef __PICMAN_ENUM_ACTION_H__
+#define __PICMAN_ENUM_ACTION_H__
 
 
-#include "gimpaction.h"
+#include "picmanaction.h"
 
 
-#define GIMP_TYPE_ENUM_ACTION            (gimp_enum_action_get_type ())
-#define GIMP_ENUM_ACTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ENUM_ACTION, GimpEnumAction))
-#define GIMP_ENUM_ACTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ENUM_ACTION, GimpEnumActionClass))
-#define GIMP_IS_ENUM_ACTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ENUM_ACTION))
-#define GIMP_IS_ENUM_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), GIMP_TYPE_ENUM_ACTION))
-#define GIMP_ENUM_ACTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GIMP_TYPE_ENUM_ACTION, GimpEnumActionClass))
+#define PICMAN_TYPE_ENUM_ACTION            (picman_enum_action_get_type ())
+#define PICMAN_ENUM_ACTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ENUM_ACTION, PicmanEnumAction))
+#define PICMAN_ENUM_ACTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ENUM_ACTION, PicmanEnumActionClass))
+#define PICMAN_IS_ENUM_ACTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ENUM_ACTION))
+#define PICMAN_IS_ENUM_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), PICMAN_TYPE_ENUM_ACTION))
+#define PICMAN_ENUM_ACTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PICMAN_TYPE_ENUM_ACTION, PicmanEnumActionClass))
 
 
-typedef struct _GimpEnumActionClass GimpEnumActionClass;
+typedef struct _PicmanEnumActionClass PicmanEnumActionClass;
 
-struct _GimpEnumAction
+struct _PicmanEnumAction
 {
-  GimpAction parent_instance;
+  PicmanAction parent_instance;
 
   gint       value;
   gboolean   value_variable;
 };
 
-struct _GimpEnumActionClass
+struct _PicmanEnumActionClass
 {
-  GimpActionClass parent_class;
+  PicmanActionClass parent_class;
 
-  void (* selected) (GimpEnumAction *action,
+  void (* selected) (PicmanEnumAction *action,
                      gint            value);
 };
 
 
-GType            gimp_enum_action_get_type (void) G_GNUC_CONST;
+GType            picman_enum_action_get_type (void) G_GNUC_CONST;
 
-GimpEnumAction * gimp_enum_action_new      (const gchar    *name,
+PicmanEnumAction * picman_enum_action_new      (const gchar    *name,
                                             const gchar    *label,
                                             const gchar    *tooltip,
                                             const gchar    *stock_id,
                                             gint            value,
                                             gboolean        value_variable);
-void             gimp_enum_action_selected (GimpEnumAction *action,
+void             picman_enum_action_selected (PicmanEnumAction *action,
                                             gint            value);
 
 
-#endif  /* __GIMP_ENUM_ACTION_H__ */
+#endif  /* __PICMAN_ENUM_ACTION_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,25 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_AREA_H__
-#define __GIMP_AREA_H__
+#ifndef __PICMAN_AREA_H__
+#define __PICMAN_AREA_H__
 
 
-struct _GimpArea
+struct _PicmanArea
 {
   gint x1, y1, x2, y2;   /*  area bounds  */
 };
 
 
-GimpArea * gimp_area_new          (gint      x1,
+PicmanArea * picman_area_new          (gint      x1,
                                    gint      y1,
                                    gint      x2,
                                    gint      y2);
-void       gimp_area_free         (GimpArea *area);
+void       picman_area_free         (PicmanArea *area);
 
-GSList   * gimp_area_list_process (GSList   *list,
-                                   GimpArea *area);
-void       gimp_area_list_free    (GSList   *list);
+GSList   * picman_area_list_process (GSList   *list,
+                                   PicmanArea *area);
+void       picman_area_list_free    (GSList   *list);
 
 
-#endif /*  __GIMP_AREA_H__  */
+#endif /*  __PICMAN_AREA_H__  */

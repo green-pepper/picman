@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-patterndatadir = $(gimpdatadir)/patterns
+patterndatadir = $(picmandatadir)/patterns
 
 patterndata_DATA = \
 	3dgreen.pat		\

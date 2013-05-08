@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,84 +23,84 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
 
-#include "gimpdialogfactory.h"
-#include "gimpdnd.h"
-#include "gimpview.h"
-#include "gimptoolbox.h"
-#include "gimptoolbox-image-area.h"
-#include "gimpwindowstrategy.h"
+#include "picmandialogfactory.h"
+#include "picmandnd.h"
+#include "picmanview.h"
+#include "picmantoolbox.h"
+#include "picmantoolbox-image-area.h"
+#include "picmanwindowstrategy.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 static void
 image_preview_clicked (GtkWidget       *widget,
                        GdkModifierType  state,
-                       GimpToolbox     *toolbox)
+                       PicmanToolbox     *toolbox)
 {
-  GimpContext *context = gimp_toolbox_get_context (toolbox);
+  PicmanContext *context = picman_toolbox_get_context (toolbox);
 
-  gimp_window_strategy_show_dockable_dialog (GIMP_WINDOW_STRATEGY (gimp_get_window_strategy (context->gimp)),
-                                             context->gimp,
-                                             gimp_dock_get_dialog_factory (GIMP_DOCK (toolbox)),
+  picman_window_strategy_show_dockable_dialog (PICMAN_WINDOW_STRATEGY (picman_get_window_strategy (context->picman)),
+                                             context->picman,
+                                             picman_dock_get_dialog_factory (PICMAN_DOCK (toolbox)),
                                              gtk_widget_get_screen (widget),
-                                             "gimp-image-list|gimp-image-grid");
+                                             "picman-image-list|picman-image-grid");
 }
 
 static void
 image_preview_drop_image (GtkWidget    *widget,
                           gint          x,
                           gint          y,
-                          GimpViewable *viewable,
+                          PicmanViewable *viewable,
                           gpointer      data)
 {
-  GimpContext *context = GIMP_CONTEXT (data);
+  PicmanContext *context = PICMAN_CONTEXT (data);
 
-  gimp_context_set_image (context, GIMP_IMAGE (viewable));
+  picman_context_set_image (context, PICMAN_IMAGE (viewable));
 }
 
 static void
-image_preview_set_viewable (GimpView     *view,
-                            GimpViewable *old_viewable,
-                            GimpViewable *new_viewable)
+image_preview_set_viewable (PicmanView     *view,
+                            PicmanViewable *old_viewable,
+                            PicmanViewable *new_viewable)
 {
   if (! old_viewable && new_viewable)
     {
-      gimp_dnd_xds_source_add (GTK_WIDGET (view),
-                               (GimpDndDragViewableFunc) gimp_view_get_viewable,
+      picman_dnd_xds_source_add (GTK_WIDGET (view),
+                               (PicmanDndDragViewableFunc) picman_view_get_viewable,
                                NULL);
     }
   else if (old_viewable && ! new_viewable)
     {
-      gimp_dnd_xds_source_remove (GTK_WIDGET (view));
+      picman_dnd_xds_source_remove (GTK_WIDGET (view));
     }
 }
 
 /*  public functions  */
 
 GtkWidget *
-gimp_toolbox_image_area_create (GimpToolbox *toolbox,
+picman_toolbox_image_area_create (PicmanToolbox *toolbox,
                                 gint         width,
                                 gint         height)
 {
-  GimpContext *context;
+  PicmanContext *context;
   GtkWidget   *image_view;
   gchar       *tooltip;
 
-  g_return_val_if_fail (GIMP_IS_TOOLBOX (toolbox), NULL);
+  g_return_val_if_fail (PICMAN_IS_TOOLBOX (toolbox), NULL);
 
-  context = gimp_toolbox_get_context (toolbox);
+  context = picman_toolbox_get_context (toolbox);
 
-  image_view = gimp_view_new_full_by_types (context,
-                                            GIMP_TYPE_VIEW, GIMP_TYPE_IMAGE,
+  image_view = picman_view_new_full_by_types (context,
+                                            PICMAN_TYPE_VIEW, PICMAN_TYPE_IMAGE,
                                             width, height, 0,
                                             FALSE, TRUE, TRUE);
 
@@ -108,8 +108,8 @@ gimp_toolbox_image_area_create (GimpToolbox *toolbox,
                     G_CALLBACK (image_preview_set_viewable),
                     NULL);
 
-  gimp_view_set_viewable (GIMP_VIEW (image_view),
-                          GIMP_VIEWABLE (gimp_context_get_image (context)));
+  picman_view_set_viewable (PICMAN_VIEW (image_view),
+                          PICMAN_VIEWABLE (picman_context_get_image (context)));
 
   gtk_widget_show (image_view);
 
@@ -124,19 +124,19 @@ gimp_toolbox_image_area_create (GimpToolbox *toolbox,
                         "Click to open the Image Dialog."));
 #endif
 
-  gimp_help_set_help_data (image_view, tooltip, NULL);
+  picman_help_set_help_data (image_view, tooltip, NULL);
   g_free (tooltip);
 
   g_signal_connect_object (context, "image-changed",
-                           G_CALLBACK (gimp_view_set_viewable),
+                           G_CALLBACK (picman_view_set_viewable),
                            image_view, G_CONNECT_SWAPPED);
 
   g_signal_connect (image_view, "clicked",
                     G_CALLBACK (image_preview_clicked),
                     toolbox);
 
-  gimp_dnd_viewable_dest_add (image_view,
-                              GIMP_TYPE_IMAGE,
+  picman_dnd_viewable_dest_add (image_view,
+                              PICMAN_TYPE_IMAGE,
                               image_preview_drop_image,
                               context);
 

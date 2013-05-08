@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball, Peter Mattis, and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,30 +24,30 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gegl/gimp-gegl-apply-operation.h"
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-apply-operation.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimp.h"
-#include "gimp-transform-resize.h"
-#include "gimpchannel.h"
-#include "gimpcontext.h"
-#include "gimpdrawable-transform.h"
-#include "gimpimage.h"
-#include "gimpimage-undo.h"
-#include "gimpimage-undo-push.h"
-#include "gimplayer.h"
-#include "gimplayer-floating-sel.h"
-#include "gimppickable.h"
-#include "gimpprogress.h"
-#include "gimpselection.h"
+#include "picman.h"
+#include "picman-transform-resize.h"
+#include "picmanchannel.h"
+#include "picmancontext.h"
+#include "picmandrawable-transform.h"
+#include "picmanimage.h"
+#include "picmanimage-undo.h"
+#include "picmanimage-undo-push.h"
+#include "picmanlayer.h"
+#include "picmanlayer-floating-sel.h"
+#include "picmanpickable.h"
+#include "picmanprogress.h"
+#include "picmanselection.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #if defined (HAVE_FINITE)
@@ -64,41 +64,41 @@
 /*  public functions  */
 
 GeglBuffer *
-gimp_drawable_transform_buffer_affine (GimpDrawable           *drawable,
-                                       GimpContext            *context,
+picman_drawable_transform_buffer_affine (PicmanDrawable           *drawable,
+                                       PicmanContext            *context,
                                        GeglBuffer             *orig_buffer,
                                        gint                    orig_offset_x,
                                        gint                    orig_offset_y,
-                                       const GimpMatrix3      *matrix,
-                                       GimpTransformDirection  direction,
-                                       GimpInterpolationType   interpolation_type,
+                                       const PicmanMatrix3      *matrix,
+                                       PicmanTransformDirection  direction,
+                                       PicmanInterpolationType   interpolation_type,
                                        gint                    recursion_level,
-                                       GimpTransformResize     clip_result,
+                                       PicmanTransformResize     clip_result,
                                        gint                   *new_offset_x,
                                        gint                   *new_offset_y,
-                                       GimpProgress           *progress)
+                                       PicmanProgress           *progress)
 {
   GeglBuffer  *new_buffer;
-  GimpMatrix3  m;
+  PicmanMatrix3  m;
   gint         u1, v1, u2, v2;  /* source bounding box */
   gint         x1, y1, x2, y2;  /* target bounding box */
-  GimpMatrix3  gegl_matrix;
+  PicmanMatrix3  gegl_matrix;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (GEGL_IS_BUFFER (orig_buffer), NULL);
   g_return_val_if_fail (matrix != NULL, NULL);
   g_return_val_if_fail (new_offset_x != NULL, NULL);
   g_return_val_if_fail (new_offset_y != NULL, NULL);
-  g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress), NULL);
+  g_return_val_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress), NULL);
 
   m = *matrix;
 
-  if (direction == GIMP_TRANSFORM_BACKWARD)
+  if (direction == PICMAN_TRANSFORM_BACKWARD)
     {
       /*  Find the inverse of the transformation matrix  */
-      gimp_matrix3_invert (&m);
+      picman_matrix3_invert (&m);
     }
 
   u1 = orig_offset_x;
@@ -107,12 +107,12 @@ gimp_drawable_transform_buffer_affine (GimpDrawable           *drawable,
   v2 = v1 + gegl_buffer_get_height (orig_buffer);
 
   /*  Always clip unfloated buffers since they must keep their size  */
-  if (G_TYPE_FROM_INSTANCE (drawable) == GIMP_TYPE_CHANNEL &&
+  if (G_TYPE_FROM_INSTANCE (drawable) == PICMAN_TYPE_CHANNEL &&
       ! babl_format_has_alpha (gegl_buffer_get_format (orig_buffer)))
-    clip_result = GIMP_TRANSFORM_RESIZE_CLIP;
+    clip_result = PICMAN_TRANSFORM_RESIZE_CLIP;
 
   /*  Find the bounding coordinates of target */
-  gimp_transform_resize_boundary (&m, clip_result,
+  picman_transform_resize_boundary (&m, clip_result,
                                   u1, v1, u2, v2,
                                   &x1, &y1, &x2, &y2);
 
@@ -120,12 +120,12 @@ gimp_drawable_transform_buffer_affine (GimpDrawable           *drawable,
   new_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0, x2 - x1, y2 - y1),
                                 gegl_buffer_get_format (orig_buffer));
 
-  gimp_matrix3_identity (&gegl_matrix);
-  gimp_matrix3_translate (&gegl_matrix, u1, v1);
-  gimp_matrix3_mult (&m, &gegl_matrix);
-  gimp_matrix3_translate (&gegl_matrix, -x1, -y1);
+  picman_matrix3_identity (&gegl_matrix);
+  picman_matrix3_translate (&gegl_matrix, u1, v1);
+  picman_matrix3_mult (&m, &gegl_matrix);
+  picman_matrix3_translate (&gegl_matrix, -x1, -y1);
 
-  gimp_gegl_apply_transform (orig_buffer, progress, NULL,
+  picman_gegl_apply_transform (orig_buffer, progress, NULL,
                              new_buffer,
                              interpolation_type,
                              &gegl_matrix);
@@ -137,12 +137,12 @@ gimp_drawable_transform_buffer_affine (GimpDrawable           *drawable,
 }
 
 GeglBuffer *
-gimp_drawable_transform_buffer_flip (GimpDrawable        *drawable,
-                                     GimpContext         *context,
+picman_drawable_transform_buffer_flip (PicmanDrawable        *drawable,
+                                     PicmanContext         *context,
                                      GeglBuffer          *orig_buffer,
                                      gint                 orig_offset_x,
                                      gint                 orig_offset_y,
-                                     GimpOrientationType  flip_type,
+                                     PicmanOrientationType  flip_type,
                                      gdouble              axis,
                                      gboolean             clip_result,
                                      gint                *new_offset_x,
@@ -157,9 +157,9 @@ gimp_drawable_transform_buffer_flip (GimpDrawable        *drawable,
   gint           new_width, new_height;
   gint           i;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (GEGL_IS_BUFFER (orig_buffer), NULL);
 
   orig_x      = orig_offset_x;
@@ -174,17 +174,17 @@ gimp_drawable_transform_buffer_flip (GimpDrawable        *drawable,
 
   switch (flip_type)
     {
-    case GIMP_ORIENTATION_HORIZONTAL:
+    case PICMAN_ORIENTATION_HORIZONTAL:
       new_x = RINT (-((gdouble) orig_x +
                       (gdouble) orig_width - axis) + axis);
       break;
 
-    case GIMP_ORIENTATION_VERTICAL:
+    case PICMAN_ORIENTATION_VERTICAL:
       new_y = RINT (-((gdouble) orig_y +
                       (gdouble) orig_height - axis) + axis);
       break;
 
-    case GIMP_ORIENTATION_UNKNOWN:
+    case PICMAN_ORIENTATION_UNKNOWN:
       g_return_val_if_reached (NULL);
       break;
     }
@@ -195,7 +195,7 @@ gimp_drawable_transform_buffer_flip (GimpDrawable        *drawable,
 
   if (clip_result && (new_x != orig_x || new_y != orig_y))
     {
-      GimpRGB    bg;
+      PicmanRGB    bg;
       GeglColor *color;
       gint       clip_x, clip_y;
       gint       clip_width, clip_height;
@@ -204,16 +204,16 @@ gimp_drawable_transform_buffer_flip (GimpDrawable        *drawable,
       *new_offset_y = orig_y;
 
       /*  "Outside" a channel is transparency, not the bg color  */
-      if (GIMP_IS_CHANNEL (drawable))
-        gimp_rgba_set (&bg, 0.0, 0.0, 0.0, 0.0);
+      if (PICMAN_IS_CHANNEL (drawable))
+        picman_rgba_set (&bg, 0.0, 0.0, 0.0, 0.0);
       else
-        gimp_context_get_background (context, &bg);
+        picman_context_get_background (context, &bg);
 
-      color = gimp_gegl_color_new (&bg);
+      color = picman_gegl_color_new (&bg);
       gegl_buffer_set_color (new_buffer, NULL, color);
       g_object_unref (color);
 
-      if (gimp_rectangle_intersect (orig_x, orig_y, orig_width, orig_height,
+      if (picman_rectangle_intersect (orig_x, orig_y, orig_width, orig_height,
                                     new_x, new_y, new_width, new_height,
                                     &clip_x, &clip_y,
                                     &clip_width, &clip_height))
@@ -241,7 +241,7 @@ gimp_drawable_transform_buffer_flip (GimpDrawable        *drawable,
 
   switch (flip_type)
     {
-    case GIMP_ORIENTATION_HORIZONTAL:
+    case PICMAN_ORIENTATION_HORIZONTAL:
       src_rect.x      = orig_x;
       src_rect.y      = orig_y;
       src_rect.width  = 1;
@@ -262,7 +262,7 @@ gimp_drawable_transform_buffer_flip (GimpDrawable        *drawable,
         }
       break;
 
-    case GIMP_ORIENTATION_VERTICAL:
+    case PICMAN_ORIENTATION_VERTICAL:
       src_rect.x      = orig_x;
       src_rect.y      = orig_y;
       src_rect.width  = orig_width;
@@ -283,7 +283,7 @@ gimp_drawable_transform_buffer_flip (GimpDrawable        *drawable,
         }
       break;
 
-    case GIMP_ORIENTATION_UNKNOWN:
+    case PICMAN_ORIENTATION_UNKNOWN:
       break;
     }
 
@@ -291,9 +291,9 @@ gimp_drawable_transform_buffer_flip (GimpDrawable        *drawable,
 }
 
 static void
-gimp_drawable_transform_rotate_point (gint              x,
+picman_drawable_transform_rotate_point (gint              x,
                                       gint              y,
-                                      GimpRotationType  rotate_type,
+                                      PicmanRotationType  rotate_type,
                                       gdouble           center_x,
                                       gdouble           center_y,
                                       gint             *new_x,
@@ -304,17 +304,17 @@ gimp_drawable_transform_rotate_point (gint              x,
 
   switch (rotate_type)
     {
-    case GIMP_ROTATE_90:
+    case PICMAN_ROTATE_90:
       *new_x = RINT (center_x - (gdouble) y + center_y);
       *new_y = RINT (center_y + (gdouble) x - center_x);
       break;
 
-    case GIMP_ROTATE_180:
+    case PICMAN_ROTATE_180:
       *new_x = RINT (center_x - ((gdouble) x - center_x));
       *new_y = RINT (center_y - ((gdouble) y - center_y));
       break;
 
-    case GIMP_ROTATE_270:
+    case PICMAN_ROTATE_270:
       *new_x = RINT (center_x + (gdouble) y - center_y);
       *new_y = RINT (center_y - (gdouble) x + center_x);
       break;
@@ -325,12 +325,12 @@ gimp_drawable_transform_rotate_point (gint              x,
 }
 
 GeglBuffer *
-gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
-                                       GimpContext      *context,
+picman_drawable_transform_buffer_rotate (PicmanDrawable     *drawable,
+                                       PicmanContext      *context,
                                        GeglBuffer       *orig_buffer,
                                        gint              orig_offset_x,
                                        gint              orig_offset_y,
-                                       GimpRotationType  rotate_type,
+                                       PicmanRotationType  rotate_type,
                                        gdouble           center_x,
                                        gdouble           center_y,
                                        gboolean          clip_result,
@@ -346,9 +346,9 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
   gint           new_x, new_y;
   gint           new_width, new_height;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (GEGL_IS_BUFFER (orig_buffer), NULL);
 
   orig_x      = orig_offset_x;
@@ -359,8 +359,8 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
 
   switch (rotate_type)
     {
-    case GIMP_ROTATE_90:
-      gimp_drawable_transform_rotate_point (orig_x,
+    case PICMAN_ROTATE_90:
+      picman_drawable_transform_rotate_point (orig_x,
                                             orig_y + orig_height,
                                             rotate_type, center_x, center_y,
                                             &new_x, &new_y);
@@ -368,8 +368,8 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
       new_height = orig_width;
       break;
 
-    case GIMP_ROTATE_180:
-      gimp_drawable_transform_rotate_point (orig_x + orig_width,
+    case PICMAN_ROTATE_180:
+      picman_drawable_transform_rotate_point (orig_x + orig_width,
                                             orig_y + orig_height,
                                             rotate_type, center_x, center_y,
                                             &new_x, &new_y);
@@ -377,8 +377,8 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
       new_height = orig_height;
       break;
 
-    case GIMP_ROTATE_270:
-      gimp_drawable_transform_rotate_point (orig_x + orig_width,
+    case PICMAN_ROTATE_270:
+      picman_drawable_transform_rotate_point (orig_x + orig_width,
                                             orig_y,
                                             rotate_type, center_x, center_y,
                                             &new_x, &new_y);
@@ -395,7 +395,7 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
                       new_width != orig_width || new_height != orig_height))
 
     {
-      GimpRGB    bg;
+      PicmanRGB    bg;
       GeglColor *color;
       gint       clip_x, clip_y;
       gint       clip_width, clip_height;
@@ -408,16 +408,16 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
       *new_offset_y = orig_y;
 
       /*  "Outside" a channel is transparency, not the bg color  */
-      if (GIMP_IS_CHANNEL (drawable))
-        gimp_rgba_set (&bg, 0.0, 0.0, 0.0, 0.0);
+      if (PICMAN_IS_CHANNEL (drawable))
+        picman_rgba_set (&bg, 0.0, 0.0, 0.0, 0.0);
       else
-        gimp_context_get_background (context, &bg);
+        picman_context_get_background (context, &bg);
 
-      color = gimp_gegl_color_new (&bg);
+      color = picman_gegl_color_new (&bg);
       gegl_buffer_set_color (new_buffer, NULL, color);
       g_object_unref (color);
 
-      if (gimp_rectangle_intersect (orig_x, orig_y, orig_width, orig_height,
+      if (picman_rectangle_intersect (orig_x, orig_y, orig_width, orig_height,
                                     new_x, new_y, new_width, new_height,
                                     &clip_x, &clip_y,
                                     &clip_width, &clip_height))
@@ -430,10 +430,10 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
 
           switch (rotate_type)
             {
-            case GIMP_ROTATE_90:
-              gimp_drawable_transform_rotate_point (clip_x + clip_width,
+            case PICMAN_ROTATE_90:
+              picman_drawable_transform_rotate_point (clip_x + clip_width,
                                                     clip_y,
-                                                    GIMP_ROTATE_270,
+                                                    PICMAN_ROTATE_270,
                                                     center_x,
                                                     center_y,
                                                     &orig_x,
@@ -444,17 +444,17 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
               orig_height  = clip_width;
               break;
 
-            case GIMP_ROTATE_180:
+            case PICMAN_ROTATE_180:
               orig_x      = clip_x - orig_x;
               orig_y      = clip_y - orig_y;
               orig_width  = clip_width;
               orig_height = clip_height;
               break;
 
-            case GIMP_ROTATE_270:
-              gimp_drawable_transform_rotate_point (clip_x,
+            case PICMAN_ROTATE_270:
+              picman_drawable_transform_rotate_point (clip_x,
                                                     clip_y + clip_height,
-                                                    GIMP_ROTATE_90,
+                                                    PICMAN_ROTATE_90,
                                                     center_x,
                                                     center_y,
                                                     &orig_x,
@@ -505,7 +505,7 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
 
   switch (rotate_type)
     {
-    case GIMP_ROTATE_90:
+    case PICMAN_ROTATE_90:
       {
         guchar *buf = g_new (guchar, new_height * orig_bpp);
         gint    i;
@@ -533,7 +533,7 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
       }
       break;
 
-    case GIMP_ROTATE_180:
+    case PICMAN_ROTATE_180:
       {
         guchar *buf = g_new (guchar, new_width * orig_bpp);
         gint    i, j, k;
@@ -575,7 +575,7 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
       }
       break;
 
-    case GIMP_ROTATE_270:
+    case PICMAN_ROTATE_270:
       {
         guchar *buf = g_new (guchar, new_width * orig_bpp);
         gint    i;
@@ -607,38 +607,38 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable     *drawable,
   return new_buffer;
 }
 
-GimpDrawable *
-gimp_drawable_transform_affine (GimpDrawable           *drawable,
-                                GimpContext            *context,
-                                const GimpMatrix3      *matrix,
-                                GimpTransformDirection  direction,
-                                GimpInterpolationType   interpolation_type,
+PicmanDrawable *
+picman_drawable_transform_affine (PicmanDrawable           *drawable,
+                                PicmanContext            *context,
+                                const PicmanMatrix3      *matrix,
+                                PicmanTransformDirection  direction,
+                                PicmanInterpolationType   interpolation_type,
                                 gint                    recursion_level,
-                                GimpTransformResize     clip_result,
-                                GimpProgress           *progress)
+                                PicmanTransformResize     clip_result,
+                                PicmanProgress           *progress)
 {
-  GimpImage    *image;
+  PicmanImage    *image;
   GeglBuffer   *orig_buffer;
   gint          orig_offset_x;
   gint          orig_offset_y;
   gboolean      new_layer;
-  GimpDrawable *result = NULL;
+  PicmanDrawable *result = NULL;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (matrix != NULL, NULL);
-  g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress), NULL);
+  g_return_val_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress), NULL);
 
-  image = gimp_item_get_image (GIMP_ITEM (drawable));
+  image = picman_item_get_image (PICMAN_ITEM (drawable));
 
   /* Start a transform undo group */
-  gimp_image_undo_group_start (image,
-                               GIMP_UNDO_GROUP_TRANSFORM,
+  picman_image_undo_group_start (image,
+                               PICMAN_UNDO_GROUP_TRANSFORM,
                                C_("undo-type", "Transform"));
 
   /* Cut/Copy from the specified drawable */
-  orig_buffer = gimp_drawable_transform_cut (drawable, context,
+  orig_buffer = picman_drawable_transform_cut (drawable, context,
                                              &orig_offset_x, &orig_offset_y,
                                              &new_layer);
 
@@ -649,18 +649,18 @@ gimp_drawable_transform_affine (GimpDrawable           *drawable,
       gint        new_offset_y;
 
       /*  always clip unfloated buffers so they keep their size  */
-      if (GIMP_IS_CHANNEL (drawable) &&
+      if (PICMAN_IS_CHANNEL (drawable) &&
           ! babl_format_has_alpha (gegl_buffer_get_format (orig_buffer)))
-        clip_result = GIMP_TRANSFORM_RESIZE_CLIP;
+        clip_result = PICMAN_TRANSFORM_RESIZE_CLIP;
 
       /*  also transform the mask if we are transforming an entire layer  */
-      if (GIMP_IS_LAYER (drawable) &&
-          gimp_layer_get_mask (GIMP_LAYER (drawable)) &&
-          gimp_channel_is_empty (gimp_image_get_mask (image)))
+      if (PICMAN_IS_LAYER (drawable) &&
+          picman_layer_get_mask (PICMAN_LAYER (drawable)) &&
+          picman_channel_is_empty (picman_image_get_mask (image)))
         {
-          GimpLayerMask *mask = gimp_layer_get_mask (GIMP_LAYER (drawable));
+          PicmanLayerMask *mask = picman_layer_get_mask (PICMAN_LAYER (drawable));
 
-          gimp_item_transform (GIMP_ITEM (mask), context,
+          picman_item_transform (PICMAN_ITEM (mask), context,
                                matrix,
                                direction,
                                interpolation_type,
@@ -670,7 +670,7 @@ gimp_drawable_transform_affine (GimpDrawable           *drawable,
         }
 
       /* transform the buffer */
-      new_buffer = gimp_drawable_transform_buffer_affine (drawable, context,
+      new_buffer = picman_drawable_transform_buffer_affine (drawable, context,
                                                           orig_buffer,
                                                           orig_offset_x,
                                                           orig_offset_y,
@@ -688,7 +688,7 @@ gimp_drawable_transform_affine (GimpDrawable           *drawable,
 
       if (new_buffer)
         {
-          result = gimp_drawable_transform_paste (drawable, new_buffer,
+          result = picman_drawable_transform_paste (drawable, new_buffer,
                                                   new_offset_x, new_offset_y,
                                                   new_layer);
           g_object_unref (new_buffer);
@@ -696,38 +696,38 @@ gimp_drawable_transform_affine (GimpDrawable           *drawable,
     }
 
   /*  push the undo group end  */
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
   return result;
 }
 
-GimpDrawable *
-gimp_drawable_transform_flip (GimpDrawable        *drawable,
-                              GimpContext         *context,
-                              GimpOrientationType  flip_type,
+PicmanDrawable *
+picman_drawable_transform_flip (PicmanDrawable        *drawable,
+                              PicmanContext         *context,
+                              PicmanOrientationType  flip_type,
                               gdouble              axis,
                               gboolean             clip_result)
 {
-  GimpImage    *image;
+  PicmanImage    *image;
   GeglBuffer   *orig_buffer;
   gint          orig_offset_x;
   gint          orig_offset_y;
   gboolean      new_layer;
-  GimpDrawable *result = NULL;
+  PicmanDrawable *result = NULL;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
-  image = gimp_item_get_image (GIMP_ITEM (drawable));
+  image = picman_item_get_image (PICMAN_ITEM (drawable));
 
   /* Start a transform undo group */
-  gimp_image_undo_group_start (image,
-                               GIMP_UNDO_GROUP_TRANSFORM,
+  picman_image_undo_group_start (image,
+                               PICMAN_UNDO_GROUP_TRANSFORM,
                                C_("undo-type", "Flip"));
 
   /* Cut/Copy from the specified drawable */
-  orig_buffer = gimp_drawable_transform_cut (drawable, context,
+  orig_buffer = picman_drawable_transform_cut (drawable, context,
                                              &orig_offset_x, &orig_offset_y,
                                              &new_layer);
 
@@ -738,18 +738,18 @@ gimp_drawable_transform_flip (GimpDrawable        *drawable,
       gint        new_offset_y;
 
       /*  always clip unfloated buffers so they keep their size  */
-      if (GIMP_IS_CHANNEL (drawable) &&
+      if (PICMAN_IS_CHANNEL (drawable) &&
           ! babl_format_has_alpha (gegl_buffer_get_format (orig_buffer)))
         clip_result = TRUE;
 
       /*  also transform the mask if we are transforming an entire layer  */
-      if (GIMP_IS_LAYER (drawable) &&
-          gimp_layer_get_mask (GIMP_LAYER (drawable)) &&
-          gimp_channel_is_empty (gimp_image_get_mask (image)))
+      if (PICMAN_IS_LAYER (drawable) &&
+          picman_layer_get_mask (PICMAN_LAYER (drawable)) &&
+          picman_channel_is_empty (picman_image_get_mask (image)))
         {
-          GimpLayerMask *mask = gimp_layer_get_mask (GIMP_LAYER (drawable));
+          PicmanLayerMask *mask = picman_layer_get_mask (PICMAN_LAYER (drawable));
 
-          gimp_item_flip (GIMP_ITEM (mask), context,
+          picman_item_flip (PICMAN_ITEM (mask), context,
                           flip_type,
                           axis,
                           clip_result);
@@ -758,7 +758,7 @@ gimp_drawable_transform_flip (GimpDrawable        *drawable,
       /* transform the buffer */
       if (orig_buffer)
         {
-          new_buffer = gimp_drawable_transform_buffer_flip (drawable, context,
+          new_buffer = picman_drawable_transform_buffer_flip (drawable, context,
                                                             orig_buffer,
                                                             orig_offset_x,
                                                             orig_offset_y,
@@ -773,7 +773,7 @@ gimp_drawable_transform_flip (GimpDrawable        *drawable,
 
       if (new_buffer)
         {
-          result = gimp_drawable_transform_paste (drawable, new_buffer,
+          result = picman_drawable_transform_paste (drawable, new_buffer,
                                                   new_offset_x, new_offset_y,
                                                   new_layer);
           g_object_unref (new_buffer);
@@ -781,39 +781,39 @@ gimp_drawable_transform_flip (GimpDrawable        *drawable,
     }
 
   /*  push the undo group end  */
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
   return result;
 }
 
-GimpDrawable *
-gimp_drawable_transform_rotate (GimpDrawable     *drawable,
-                                GimpContext      *context,
-                                GimpRotationType  rotate_type,
+PicmanDrawable *
+picman_drawable_transform_rotate (PicmanDrawable     *drawable,
+                                PicmanContext      *context,
+                                PicmanRotationType  rotate_type,
                                 gdouble           center_x,
                                 gdouble           center_y,
                                 gboolean          clip_result)
 {
-  GimpImage    *image;
+  PicmanImage    *image;
   GeglBuffer   *orig_buffer;
   gint          orig_offset_x;
   gint          orig_offset_y;
   gboolean      new_layer;
-  GimpDrawable *result = NULL;
+  PicmanDrawable *result = NULL;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
-  image = gimp_item_get_image (GIMP_ITEM (drawable));
+  image = picman_item_get_image (PICMAN_ITEM (drawable));
 
   /* Start a transform undo group */
-  gimp_image_undo_group_start (image,
-                               GIMP_UNDO_GROUP_TRANSFORM,
+  picman_image_undo_group_start (image,
+                               PICMAN_UNDO_GROUP_TRANSFORM,
                                C_("undo-type", "Rotate"));
 
   /* Cut/Copy from the specified drawable */
-  orig_buffer = gimp_drawable_transform_cut (drawable, context,
+  orig_buffer = picman_drawable_transform_cut (drawable, context,
                                              &orig_offset_x, &orig_offset_y,
                                              &new_layer);
 
@@ -824,18 +824,18 @@ gimp_drawable_transform_rotate (GimpDrawable     *drawable,
       gint        new_offset_y;
 
       /*  always clip unfloated buffers so they keep their size  */
-      if (GIMP_IS_CHANNEL (drawable) &&
+      if (PICMAN_IS_CHANNEL (drawable) &&
           ! babl_format_has_alpha (gegl_buffer_get_format (orig_buffer)))
         clip_result = TRUE;
 
       /*  also transform the mask if we are transforming an entire layer  */
-      if (GIMP_IS_LAYER (drawable) &&
-          gimp_layer_get_mask (GIMP_LAYER (drawable)) &&
-          gimp_channel_is_empty (gimp_image_get_mask (image)))
+      if (PICMAN_IS_LAYER (drawable) &&
+          picman_layer_get_mask (PICMAN_LAYER (drawable)) &&
+          picman_channel_is_empty (picman_image_get_mask (image)))
         {
-          GimpLayerMask *mask = gimp_layer_get_mask (GIMP_LAYER (drawable));
+          PicmanLayerMask *mask = picman_layer_get_mask (PICMAN_LAYER (drawable));
 
-          gimp_item_rotate (GIMP_ITEM (mask), context,
+          picman_item_rotate (PICMAN_ITEM (mask), context,
                             rotate_type,
                             center_x,
                             center_y,
@@ -843,7 +843,7 @@ gimp_drawable_transform_rotate (GimpDrawable     *drawable,
         }
 
       /* transform the buffer */
-      new_buffer = gimp_drawable_transform_buffer_rotate (drawable, context,
+      new_buffer = picman_drawable_transform_buffer_rotate (drawable, context,
                                                           orig_buffer,
                                                           orig_offset_x,
                                                           orig_offset_y,
@@ -858,7 +858,7 @@ gimp_drawable_transform_rotate (GimpDrawable     *drawable,
 
       if (new_buffer)
         {
-          result = gimp_drawable_transform_paste (drawable, new_buffer,
+          result = picman_drawable_transform_paste (drawable, new_buffer,
                                                   new_offset_x, new_offset_y,
                                                   new_layer);
           g_object_unref (new_buffer);
@@ -866,49 +866,49 @@ gimp_drawable_transform_rotate (GimpDrawable     *drawable,
     }
 
   /*  push the undo group end  */
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
   return result;
 }
 
 GeglBuffer *
-gimp_drawable_transform_cut (GimpDrawable *drawable,
-                             GimpContext  *context,
+picman_drawable_transform_cut (PicmanDrawable *drawable,
+                             PicmanContext  *context,
                              gint         *offset_x,
                              gint         *offset_y,
                              gboolean     *new_layer)
 {
-  GimpImage  *image;
+  PicmanImage  *image;
   GeglBuffer *buffer;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (offset_x != NULL, NULL);
   g_return_val_if_fail (offset_y != NULL, NULL);
   g_return_val_if_fail (new_layer != NULL, NULL);
 
-  image = gimp_item_get_image (GIMP_ITEM (drawable));
+  image = picman_item_get_image (PICMAN_ITEM (drawable));
 
   /*  extract the selected mask if there is a selection  */
-  if (! gimp_channel_is_empty (gimp_image_get_mask (image)))
+  if (! picman_channel_is_empty (picman_image_get_mask (image)))
     {
       gint x, y, w, h;
 
       /* set the keep_indexed flag to FALSE here, since we use
-       * gimp_layer_new_from_buffer() later which assumes that the buffer
+       * picman_layer_new_from_buffer() later which assumes that the buffer
        * are either RGB or GRAY.  Eeek!!!              (Sven)
        */
-      if (gimp_item_mask_intersect (GIMP_ITEM (drawable), &x, &y, &w, &h))
+      if (picman_item_mask_intersect (PICMAN_ITEM (drawable), &x, &y, &w, &h))
         {
-          buffer = gimp_selection_extract (GIMP_SELECTION (gimp_image_get_mask (image)),
-                                           GIMP_PICKABLE (drawable),
+          buffer = picman_selection_extract (PICMAN_SELECTION (picman_image_get_mask (image)),
+                                           PICMAN_PICKABLE (drawable),
                                            context,
                                            TRUE, FALSE, TRUE,
                                            offset_x, offset_y,
                                            NULL);
           /*  clear the selection  */
-          gimp_channel_clear (gimp_image_get_mask (image), NULL, TRUE);
+          picman_channel_clear (picman_image_get_mask (image), NULL, TRUE);
 
           *new_layer = TRUE;
         }
@@ -920,10 +920,10 @@ gimp_drawable_transform_cut (GimpDrawable *drawable,
     }
   else  /*  otherwise, just copy the layer  */
     {
-      buffer = gimp_selection_extract (GIMP_SELECTION (gimp_image_get_mask (image)),
-                                       GIMP_PICKABLE (drawable),
+      buffer = picman_selection_extract (PICMAN_SELECTION (picman_image_get_mask (image)),
+                                       PICMAN_PICKABLE (drawable),
                                        context,
-                                       FALSE, TRUE, GIMP_IS_LAYER (drawable),
+                                       FALSE, TRUE, PICMAN_IS_LAYER (drawable),
                                        offset_x, offset_y,
                                        NULL);
 
@@ -933,54 +933,54 @@ gimp_drawable_transform_cut (GimpDrawable *drawable,
   return buffer;
 }
 
-GimpDrawable *
-gimp_drawable_transform_paste (GimpDrawable *drawable,
+PicmanDrawable *
+picman_drawable_transform_paste (PicmanDrawable *drawable,
                                GeglBuffer   *buffer,
                                gint          offset_x,
                                gint          offset_y,
                                gboolean      new_layer)
 {
-  GimpImage   *image;
-  GimpLayer   *layer     = NULL;
+  PicmanImage   *image;
+  PicmanLayer   *layer     = NULL;
   const gchar *undo_desc = NULL;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
 
-  image = gimp_item_get_image (GIMP_ITEM (drawable));
+  image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-  if (GIMP_IS_LAYER (drawable))
+  if (PICMAN_IS_LAYER (drawable))
     undo_desc = C_("undo-type", "Transform Layer");
-  else if (GIMP_IS_CHANNEL (drawable))
+  else if (PICMAN_IS_CHANNEL (drawable))
     undo_desc = C_("undo-type", "Transform Channel");
   else
     return NULL;
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_EDIT_PASTE, undo_desc);
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_EDIT_PASTE, undo_desc);
 
   if (new_layer)
     {
       layer =
-        gimp_layer_new_from_buffer (buffer, image,
-                                    gimp_drawable_get_format_with_alpha (drawable),
+        picman_layer_new_from_buffer (buffer, image,
+                                    picman_drawable_get_format_with_alpha (drawable),
                                     _("Transformation"),
-                                    GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+                                    PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
 
-      gimp_item_set_offset (GIMP_ITEM (layer), offset_x, offset_y);
+      picman_item_set_offset (PICMAN_ITEM (layer), offset_x, offset_y);
 
       floating_sel_attach (layer, drawable);
 
-      drawable = GIMP_DRAWABLE (layer);
+      drawable = PICMAN_DRAWABLE (layer);
     }
   else
     {
-      gimp_drawable_set_buffer_full (drawable, TRUE, NULL,
+      picman_drawable_set_buffer_full (drawable, TRUE, NULL,
                                      buffer,
                                      offset_x, offset_y);
     }
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
   return drawable;
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,15 +23,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-sobel"
 #define PLUG_IN_BINARY "edge-sobel"
-#define PLUG_IN_ROLE   "gimp-edge-sobel"
+#define PLUG_IN_ROLE   "picman-edge-sobel"
 
 
 typedef struct
@@ -47,33 +47,33 @@ typedef struct
 static void   query  (void);
 static void   run    (const gchar      *name,
                       gint              nparams,
-                      const GimpParam  *param,
+                      const PicmanParam  *param,
                       gint             *nreturn_vals,
-                      GimpParam       **return_vals);
+                      PicmanParam       **return_vals);
 
-static void   sobel  (GimpDrawable     *drawable,
+static void   sobel  (PicmanDrawable     *drawable,
                       gboolean          horizontal,
                       gboolean          vertical,
                       gboolean          keep_sign,
-                      GimpPreview      *preview);
+                      PicmanPreview      *preview);
 
 /*
  * Sobel interface
  */
-static gboolean  sobel_dialog         (GimpDrawable *drawable);
-static void      sobel_preview_update (GimpPreview  *preview);
+static gboolean  sobel_dialog         (PicmanDrawable *drawable);
+static void      sobel_preview_update (PicmanPreview  *preview);
 
 /*
  * Sobel helper functions
  */
-static void      sobel_prepare_row (GimpPixelRgn *pixel_rgn,
+static void      sobel_prepare_row (PicmanPixelRgn *pixel_rgn,
                                     guchar       *data,
                                     gint          x,
                                     gint          y,
                                     gint          w);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -94,17 +94,17 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"  },
-    { GIMP_PDB_IMAGE,    "image",      "Input image (unused)"          },
-    { GIMP_PDB_DRAWABLE, "drawable",   "Input drawable"                },
-    { GIMP_PDB_INT32,    "horizontal", "Sobel in horizontal direction" },
-    { GIMP_PDB_INT32,    "vertical",   "Sobel in vertical direction"   },
-    { GIMP_PDB_INT32,    "keep-sign",  "Keep sign of result (one direction only)" }
+    { PICMAN_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"  },
+    { PICMAN_PDB_IMAGE,    "image",      "Input image (unused)"          },
+    { PICMAN_PDB_DRAWABLE, "drawable",   "Input drawable"                },
+    { PICMAN_PDB_INT32,    "horizontal", "Sobel in horizontal direction" },
+    { PICMAN_PDB_INT32,    "vertical",   "Sobel in vertical direction"   },
+    { PICMAN_PDB_INT32,    "keep-sign",  "Keep sign of result (one direction only)" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Specialized direction-dependent edge detection"),
                           "This plugin calculates the gradient with a sobel "
                           "operator. The user can specify which direction to "
@@ -120,7 +120,7 @@ query (void)
                           "1997",
                           N_("_Sobel..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -128,14 +128,14 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
@@ -144,30 +144,30 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
-  gimp_tile_cache_ntiles (2 * drawable->ntile_cols);
+  picman_tile_cache_ntiles (2 * drawable->ntile_cols);
 
   switch (run_mode)
    {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &bvals);
+      picman_get_data (PLUG_IN_PROC, &bvals);
 
       /*  First acquire information with a dialog  */
       if (! sobel_dialog (drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 6)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -177,9 +177,9 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &bvals);
+      picman_get_data (PLUG_IN_PROC, &bvals);
       break;
 
     default:
@@ -187,36 +187,36 @@ run (const gchar      *name,
     }
 
   /*  Make sure that the drawable is gray or RGB color  */
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
       sobel (drawable,
              bvals.horizontal, bvals.vertical, bvals.keep_sign,
              NULL);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
 
       /*  Store data  */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &bvals, sizeof (bvals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &bvals, sizeof (bvals));
     }
   else
     {
-      status        = GIMP_PDB_EXECUTION_ERROR;
+      status        = PICMAN_PDB_EXECUTION_ERROR;
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = _("Cannot operate on indexed color images.");
     }
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   values[0].data.d_status = status;
 }
 
 static gboolean
-sobel_dialog (GimpDrawable *drawable)
+sobel_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -224,11 +224,11 @@ sobel_dialog (GimpDrawable *drawable)
   GtkWidget *toggle;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Sobel Edge Detection"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Sobel Edge Detection"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -240,7 +240,7 @@ sobel_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -248,7 +248,7 @@ sobel_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -262,10 +262,10 @@ sobel_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &bvals.horizontal);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_check_button_new_with_mnemonic (_("Sobel _vertically"));
@@ -274,10 +274,10 @@ sobel_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &bvals.vertical);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_check_button_new_with_mnemonic (_("_Keep sign of result "
@@ -287,15 +287,15 @@ sobel_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &bvals.keep_sign);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -303,9 +303,9 @@ sobel_dialog (GimpDrawable *drawable)
 }
 
 static void
-sobel_preview_update (GimpPreview *preview)
+sobel_preview_update (PicmanPreview *preview)
 {
-  sobel (gimp_drawable_preview_get_drawable (GIMP_DRAWABLE_PREVIEW (preview)),
+  sobel (picman_drawable_preview_get_drawable (PICMAN_DRAWABLE_PREVIEW (preview)),
          bvals.horizontal,
          bvals.vertical,
          bvals.keep_sign,
@@ -313,7 +313,7 @@ sobel_preview_update (GimpPreview *preview)
 }
 
 static void
-sobel_prepare_row (GimpPixelRgn *pixel_rgn,
+sobel_prepare_row (PicmanPixelRgn *pixel_rgn,
                    guchar       *data,
                    gint          x,
                    gint          y,
@@ -322,7 +322,7 @@ sobel_prepare_row (GimpPixelRgn *pixel_rgn,
   gint b;
 
   y = CLAMP (y, 0, pixel_rgn->h - 1);
-  gimp_pixel_rgn_get_row (pixel_rgn, data, x, y, w);
+  picman_pixel_rgn_get_row (pixel_rgn, data, x, y, w);
 
   /*  Fill in edge pixels  */
   for (b = 0; b < pixel_rgn->bpp; b++)
@@ -335,13 +335,13 @@ sobel_prepare_row (GimpPixelRgn *pixel_rgn,
 #define RMS(a, b) (sqrt ((a) * (a) + (b) * (b)))
 
 static void
-sobel (GimpDrawable *drawable,
+sobel (PicmanDrawable *drawable,
        gboolean      do_horizontal,
        gboolean      do_vertical,
        gboolean      keep_sign,
-       GimpPreview  *preview)
+       PicmanPreview  *preview)
 {
-  GimpPixelRgn  srcPR, destPR;
+  PicmanPixelRgn  srcPR, destPR;
   gint          width, height;
   gint          bytes;
   gint          gradient, hor_gradient, ver_gradient;
@@ -358,23 +358,23 @@ sobel (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x, &y);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x, &y);
+      picman_preview_get_size (preview, &width, &height);
     }
   else
     {
-      if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+      if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                           &x, &y, &width, &height))
         return;
 
-      gimp_progress_init (_("Sobel edge detecting"));
+      picman_progress_init (_("Sobel edge detecting"));
     }
 
   /* Get the size of the input image. (This will/must be the same
    *  as the size of the output image.
    */
   bytes  = drawable->bpp;
-  alpha  = gimp_drawable_has_alpha (drawable->drawable_id);
+  alpha  = picman_drawable_has_alpha (drawable->drawable_id);
 
   /*  allocate row buffers  */
   prev_row = g_new (guchar, (width + 2) * bytes);
@@ -383,7 +383,7 @@ sobel (GimpDrawable *drawable,
   dest     = g_new (guchar, width * bytes);
 
   /*  initialize the pixel regions  */
-  gimp_pixel_rgn_init (&srcPR, drawable, 0, 0,
+  picman_pixel_rgn_init (&srcPR, drawable, 0, 0,
                        drawable->width, drawable->height,
                        FALSE, FALSE);
 
@@ -393,7 +393,7 @@ sobel (GimpDrawable *drawable,
     }
   else
     {
-      gimp_pixel_rgn_init (&destPR, drawable, 0, 0,
+      picman_pixel_rgn_init (&destPR, drawable, 0, 0,
                            drawable->width, drawable->height,
                            TRUE, TRUE);
     }
@@ -453,25 +453,25 @@ sobel (GimpDrawable *drawable,
         }
       else
         {
-          gimp_pixel_rgn_set_row (&destPR, dest, x, row, width);
+          picman_pixel_rgn_set_row (&destPR, dest, x, row, width);
 
           if ((row % 20) == 0)
-            gimp_progress_update ((double) row / (double) height);
+            picman_progress_update ((double) row / (double) height);
         }
     }
 
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, preview_buffer, width * bytes);
+      picman_preview_draw_buffer (preview, preview_buffer, width * bytes);
       g_free (preview_buffer);
     }
   else
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
       /*  update the sobeled region  */
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x, y, width, height);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x, y, width, height);
     }
 
   g_free (prev_row);

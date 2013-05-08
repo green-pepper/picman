@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,33 +19,33 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpbase/gimpbase-private.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanbase/picmanbase-private.h"
 
 #include "core/core-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpunit.h"
+#include "core/picman.h"
+#include "core/picmanunit.h"
 
 #include "units.h"
 
 
-static Gimp *the_unit_gimp = NULL;
+static Picman *the_unit_picman = NULL;
 
 
 static gint
 units_get_number_of_units (void)
 {
-  return _gimp_unit_get_number_of_units (the_unit_gimp);
+  return _picman_unit_get_number_of_units (the_unit_picman);
 }
 
 static gint
 units_get_number_of_built_in_units (void)
 {
-  return GIMP_UNIT_END;
+  return PICMAN_UNIT_END;
 }
 
-static GimpUnit
+static PicmanUnit
 units_unit_new (gchar   *identifier,
                 gdouble  factor,
                 gint     digits,
@@ -54,7 +54,7 @@ units_unit_new (gchar   *identifier,
                 gchar   *singular,
                 gchar   *plural)
 {
-  return _gimp_unit_new (the_unit_gimp,
+  return _picman_unit_new (the_unit_picman,
                          identifier,
                          factor,
                          digits,
@@ -65,69 +65,69 @@ units_unit_new (gchar   *identifier,
 }
 
 static gboolean
-units_unit_get_deletion_flag (GimpUnit unit)
+units_unit_get_deletion_flag (PicmanUnit unit)
 {
-  return _gimp_unit_get_deletion_flag (the_unit_gimp, unit);
+  return _picman_unit_get_deletion_flag (the_unit_picman, unit);
 }
 
 static void
-units_unit_set_deletion_flag (GimpUnit unit,
+units_unit_set_deletion_flag (PicmanUnit unit,
                               gboolean deletion_flag)
 {
-  _gimp_unit_set_deletion_flag (the_unit_gimp, unit, deletion_flag);
+  _picman_unit_set_deletion_flag (the_unit_picman, unit, deletion_flag);
 }
 
 static gdouble
-units_unit_get_factor (GimpUnit unit)
+units_unit_get_factor (PicmanUnit unit)
 {
-  return _gimp_unit_get_factor (the_unit_gimp, unit);
+  return _picman_unit_get_factor (the_unit_picman, unit);
 }
 
 static gint
-units_unit_get_digits (GimpUnit unit)
+units_unit_get_digits (PicmanUnit unit)
 {
-  return _gimp_unit_get_digits (the_unit_gimp, unit);
+  return _picman_unit_get_digits (the_unit_picman, unit);
 }
 
 static const gchar *
-units_unit_get_identifier (GimpUnit unit)
+units_unit_get_identifier (PicmanUnit unit)
 {
-  return _gimp_unit_get_identifier (the_unit_gimp, unit);
+  return _picman_unit_get_identifier (the_unit_picman, unit);
 }
 
 static const gchar *
-units_unit_get_symbol (GimpUnit unit)
+units_unit_get_symbol (PicmanUnit unit)
 {
-  return _gimp_unit_get_symbol (the_unit_gimp, unit);
+  return _picman_unit_get_symbol (the_unit_picman, unit);
 }
 
 static const gchar *
-units_unit_get_abbreviation (GimpUnit unit)
+units_unit_get_abbreviation (PicmanUnit unit)
 {
-  return _gimp_unit_get_abbreviation (the_unit_gimp, unit);
+  return _picman_unit_get_abbreviation (the_unit_picman, unit);
 }
 
 static const gchar *
-units_unit_get_singular (GimpUnit unit)
+units_unit_get_singular (PicmanUnit unit)
 {
-  return _gimp_unit_get_singular (the_unit_gimp, unit);
+  return _picman_unit_get_singular (the_unit_picman, unit);
 }
 
 static const gchar *
-units_unit_get_plural (GimpUnit unit)
+units_unit_get_plural (PicmanUnit unit)
 {
-  return _gimp_unit_get_plural (the_unit_gimp, unit);
+  return _picman_unit_get_plural (the_unit_picman, unit);
 }
 
 void
-units_init (Gimp *gimp)
+units_init (Picman *picman)
 {
-  GimpUnitVtable vtable;
+  PicmanUnitVtable vtable;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (the_unit_gimp == NULL);
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (the_unit_picman == NULL);
 
-  the_unit_gimp = gimp;
+  the_unit_picman = picman;
 
   vtable.unit_get_number_of_units          = units_get_number_of_units;
   vtable.unit_get_number_of_built_in_units = units_get_number_of_built_in_units;
@@ -142,5 +142,5 @@ units_init (Gimp *gimp)
   vtable.unit_get_singular      = units_unit_get_singular;
   vtable.unit_get_plural        = units_unit_get_plural;
 
-  gimp_base_init (&vtable);
+  picman_base_init (&vtable);
 }

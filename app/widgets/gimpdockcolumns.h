@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdockcolumns.h
+ * picmandockcolumns.h
  * Copyright (C) 2009 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,63 +18,63 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DOCK_COLUMNS_H__
-#define __GIMP_DOCK_COLUMNS_H__
+#ifndef __PICMAN_DOCK_COLUMNS_H__
+#define __PICMAN_DOCK_COLUMNS_H__
 
 
-#define GIMP_TYPE_DOCK_COLUMNS            (gimp_dock_columns_get_type ())
-#define GIMP_DOCK_COLUMNS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DOCK_COLUMNS, GimpDockColumns))
-#define GIMP_DOCK_COLUMNS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DOCK_COLUMNS, GimpDockColumnsClass))
-#define GIMP_IS_DOCK_COLUMNS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DOCK_COLUMNS))
-#define GIMP_IS_DOCK_COLUMNS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DOCK_COLUMNS))
-#define GIMP_DOCK_COLUMNS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DOCK_COLUMNS, GimpDockColumnsClass))
+#define PICMAN_TYPE_DOCK_COLUMNS            (picman_dock_columns_get_type ())
+#define PICMAN_DOCK_COLUMNS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DOCK_COLUMNS, PicmanDockColumns))
+#define PICMAN_DOCK_COLUMNS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DOCK_COLUMNS, PicmanDockColumnsClass))
+#define PICMAN_IS_DOCK_COLUMNS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DOCK_COLUMNS))
+#define PICMAN_IS_DOCK_COLUMNS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DOCK_COLUMNS))
+#define PICMAN_DOCK_COLUMNS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DOCK_COLUMNS, PicmanDockColumnsClass))
 
 
-typedef struct _GimpDockColumnsClass    GimpDockColumnsClass;
-typedef struct _GimpDockColumnsPrivate  GimpDockColumnsPrivate;
+typedef struct _PicmanDockColumnsClass    PicmanDockColumnsClass;
+typedef struct _PicmanDockColumnsPrivate  PicmanDockColumnsPrivate;
 
 /**
- * GimpDockColumns:
+ * PicmanDockColumns:
  *
- * A widget containing GimpDocks so that dockables are arranged in
+ * A widget containing PicmanDocks so that dockables are arranged in
  * columns.
  */
-struct _GimpDockColumns
+struct _PicmanDockColumns
 {
   GtkBox parent_instance;
 
-  GimpDockColumnsPrivate *p;
+  PicmanDockColumnsPrivate *p;
 };
 
-struct _GimpDockColumnsClass
+struct _PicmanDockColumnsClass
 {
   GtkBoxClass parent_class;
 
-  void (* dock_added)   (GimpDockColumns *dock_columns,
-                         GimpDock        *dock);
-  void (* dock_removed) (GimpDockColumns *dock_columns,
-                         GimpDock        *dock);
+  void (* dock_added)   (PicmanDockColumns *dock_columns,
+                         PicmanDock        *dock);
+  void (* dock_removed) (PicmanDockColumns *dock_columns,
+                         PicmanDock        *dock);
 };
 
 
-GType               gimp_dock_columns_get_type           (void) G_GNUC_CONST;
-GtkWidget         * gimp_dock_columns_new                (GimpContext       *context,
-                                                          GimpDialogFactory *dialog_factory,
-                                                          GimpUIManager     *ui_manager);
-void                gimp_dock_columns_add_dock           (GimpDockColumns   *dock_columns,
-                                                          GimpDock          *dock,
+GType               picman_dock_columns_get_type           (void) G_GNUC_CONST;
+GtkWidget         * picman_dock_columns_new                (PicmanContext       *context,
+                                                          PicmanDialogFactory *dialog_factory,
+                                                          PicmanUIManager     *ui_manager);
+void                picman_dock_columns_add_dock           (PicmanDockColumns   *dock_columns,
+                                                          PicmanDock          *dock,
                                                           gint               index);
-void                gimp_dock_columns_prepare_dockbook   (GimpDockColumns   *dock_columns,
+void                picman_dock_columns_prepare_dockbook   (PicmanDockColumns   *dock_columns,
                                                           gint               dock_index,
                                                           GtkWidget        **dockbook_p);
-void                gimp_dock_columns_remove_dock        (GimpDockColumns   *dock_columns,
-                                                          GimpDock          *dock);
-GList             * gimp_dock_columns_get_docks          (GimpDockColumns   *dock_columns);
-GimpContext       * gimp_dock_columns_get_context        (GimpDockColumns   *dock_columns);
-void                gimp_dock_columns_set_context        (GimpDockColumns   *dock_columns,
-                                                          GimpContext       *context);
-GimpDialogFactory * gimp_dock_columns_get_dialog_factory (GimpDockColumns   *dock_columns);
-GimpUIManager     * gimp_dock_columns_get_ui_manager     (GimpDockColumns   *dock_columns);
+void                picman_dock_columns_remove_dock        (PicmanDockColumns   *dock_columns,
+                                                          PicmanDock          *dock);
+GList             * picman_dock_columns_get_docks          (PicmanDockColumns   *dock_columns);
+PicmanContext       * picman_dock_columns_get_context        (PicmanDockColumns   *dock_columns);
+void                picman_dock_columns_set_context        (PicmanDockColumns   *dock_columns,
+                                                          PicmanContext       *context);
+PicmanDialogFactory * picman_dock_columns_get_dialog_factory (PicmanDockColumns   *dock_columns);
+PicmanUIManager     * picman_dock_columns_get_ui_manager     (PicmanDockColumns   *dock_columns);
 
 
-#endif /* __GIMP_DOCK_COLUMNS_H__ */
+#endif /* __PICMAN_DOCK_COLUMNS_H__ */

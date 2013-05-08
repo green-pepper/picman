@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,10 +32,10 @@ typedef struct
 {
   gint32              image_id;
   gint32              drawable_id;
-  GimpUnit            unit;
+  PicmanUnit            unit;
   gdouble             xres;
   gdouble             yres;
-  GimpUnit            image_unit;
+  PicmanUnit            image_unit;
   gdouble             offset_x;
   gdouble             offset_y;
   PrintCenterMode     center;

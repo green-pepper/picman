@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,19 +23,19 @@
 #include <gegl-plugin.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimppropwidgets.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanpropwidgets.h"
 
-#include "gimpcoloroptions.h"
-#include "gimpgegltool.h"
+#include "picmancoloroptions.h"
+#include "picmangegltool.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -49,51 +49,51 @@ enum
 
 /*  local function prototypes  */
 
-static void   gimp_gegl_tool_dialog            (GimpImageMapTool  *im_tool);
+static void   picman_gegl_tool_dialog            (PicmanImageMapTool  *im_tool);
 
-static void   gimp_gegl_tool_operation_changed (GtkWidget         *widget,
-                                                GimpGeglTool      *tool);
+static void   picman_gegl_tool_operation_changed (GtkWidget         *widget,
+                                                PicmanGeglTool      *tool);
 
 
-G_DEFINE_TYPE (GimpGeglTool, gimp_gegl_tool, GIMP_TYPE_OPERATION_TOOL)
+G_DEFINE_TYPE (PicmanGeglTool, picman_gegl_tool, PICMAN_TYPE_OPERATION_TOOL)
 
-#define parent_class gimp_gegl_tool_parent_class
+#define parent_class picman_gegl_tool_parent_class
 
 
 void
-gimp_gegl_tool_register (GimpToolRegisterCallback  callback,
+picman_gegl_tool_register (PicmanToolRegisterCallback  callback,
                          gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_GEGL_TOOL,
-                GIMP_TYPE_COLOR_OPTIONS,
-                gimp_color_options_gui,
+  (* callback) (PICMAN_TYPE_GEGL_TOOL,
+                PICMAN_TYPE_COLOR_OPTIONS,
+                picman_color_options_gui,
                 0,
-                "gimp-gegl-tool",
+                "picman-gegl-tool",
                 _("GEGL Operation"),
                 _("GEGL Tool: Use an arbitrary GEGL operation"),
                 N_("_GEGL Operation..."), NULL,
-                NULL, GIMP_HELP_TOOL_GEGL,
-                GIMP_STOCK_GEGL,
+                NULL, PICMAN_HELP_TOOL_GEGL,
+                PICMAN_STOCK_GEGL,
                 data);
 }
 
 static void
-gimp_gegl_tool_class_init (GimpGeglToolClass *klass)
+picman_gegl_tool_class_init (PicmanGeglToolClass *klass)
 {
-  GimpImageMapToolClass *im_tool_class = GIMP_IMAGE_MAP_TOOL_CLASS (klass);
+  PicmanImageMapToolClass *im_tool_class = PICMAN_IMAGE_MAP_TOOL_CLASS (klass);
 
   im_tool_class->dialog_desc = _("GEGL Operation");
 
-  im_tool_class->dialog      = gimp_gegl_tool_dialog;
+  im_tool_class->dialog      = picman_gegl_tool_dialog;
 }
 
 static void
-gimp_gegl_tool_init (GimpGeglTool *tool)
+picman_gegl_tool_init (PicmanGeglTool *tool)
 {
 }
 
 static gboolean
-gimp_gegl_tool_operation_blacklisted (const gchar *name,
+picman_gegl_tool_operation_blacklisted (const gchar *name,
                                       const gchar *categories_str)
 {
   static const gchar * const category_blacklist[] =
@@ -110,59 +110,59 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
   };
   static const gchar * const name_blacklist[] =
   {
-    "gegl:c2g", /* in gimp */
-    "gegl:cartoon", /* in gimp */
-    "gegl:checkerboard", /* in gimp */
+    "gegl:c2g", /* in picman */
+    "gegl:cartoon", /* in picman */
+    "gegl:checkerboard", /* in picman */
     "gegl:color", /* pointless */
-    "gegl:color-reduction", /* in gimp */
-    "gegl:color-temperature", /* in gimp */
-    "gegl:color-to-alpha", /* in gimp */
-    "gegl:colorize", /* in gimp */
+    "gegl:color-reduction", /* in picman */
+    "gegl:color-temperature", /* in picman */
+    "gegl:color-to-alpha", /* in picman */
+    "gegl:colorize", /* in picman */
     "gegl:contrast-curve",
     "gegl:convert-format",
-    "gegl:difference-of-gaussians", /* in gimp */
+    "gegl:difference-of-gaussians", /* in picman */
     "gegl:display",
-    "gegl:dot", /* in gimp */
-    "gegl:edge-laplace", /* in gimp */
-    "gegl:edge-sobel", /* in gimp */
+    "gegl:dot", /* in picman */
+    "gegl:edge-laplace", /* in picman */
+    "gegl:edge-sobel", /* in picman */
     "gegl:fill-path",
-    "gegl:gaussian-blur", /* in gimp */
-    "gegl:grey", /* in gimp */
+    "gegl:gaussian-blur", /* in picman */
+    "gegl:grey", /* in picman */
     "gegl:hstack",
     "gegl:introspect",
-    "gegl:invert", /* in gimp */
+    "gegl:invert", /* in picman */
     "gegl:layer",
     "gegl:lens-correct",
-    "gegl:lens-distortion", /* in gimp */
+    "gegl:lens-distortion", /* in picman */
     "gegl:matting-global", /* useless */
-    "gegl:mono-mixer", /* in gimp */
-    "gegl:noise-CIE_lch", /* in gimp */
-    "gegl:noise-hsv", /* in gimp */
-    "gegl:noise-hurl", /* in gimp */
-    "gegl:noise-pick", /* in gimp */
-    "gegl:noise-rgb", /* in gimp */
-    "gegl:noise-slur", /* in gimp */
+    "gegl:mono-mixer", /* in picman */
+    "gegl:noise-CIE_lch", /* in picman */
+    "gegl:noise-hsv", /* in picman */
+    "gegl:noise-hurl", /* in picman */
+    "gegl:noise-pick", /* in picman */
+    "gegl:noise-rgb", /* in picman */
+    "gegl:noise-slur", /* in picman */
     "gegl:opacity", /* pointless */
     "gegl:path",
-    "gegl:photocopy", /* in gimp */
-    "gegl:pixelize", /* in gimp */
-    "gegl:polar-coordinates", /* in gimp */
-    "gegl:posterize", /* in gimp */
-    "gegl:ripple", /* in gimp */
-    "gegl:rotate", /* in gimp */
-    "gegl:scale", /* in gimp */
+    "gegl:photocopy", /* in picman */
+    "gegl:pixelize", /* in picman */
+    "gegl:polar-coordinates", /* in picman */
+    "gegl:posterize", /* in picman */
+    "gegl:ripple", /* in picman */
+    "gegl:rotate", /* in picman */
+    "gegl:scale", /* in picman */
     "gegl:sdl-display", /* useless */
     "gegl:seamless-clone",
-    "gegl:shear", /* in gimp */
+    "gegl:shear", /* in picman */
     "gegl:text",
-    "gegl:threshold", /* in gimp */
+    "gegl:threshold", /* in picman */
     "gegl:tile", /* useless */
-    "gegl:transform", /* in gimp */
+    "gegl:transform", /* in picman */
     "gegl:translate", /* pointless */
-    "gegl:unsharp-mask", /* in gimp */
-    "gegl:value-invert", /* in gimp */
+    "gegl:unsharp-mask", /* in picman */
+    "gegl:value-invert", /* in picman */
     "gegl:vector-stroke",
-    "gegl:vignette", /* in gimp */
+    "gegl:vignette", /* in picman */
   };
 
   gchar **categories;
@@ -172,7 +172,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
   if (! name)
     return TRUE;
 
-  if (g_str_has_prefix (name, "gimp"))
+  if (g_str_has_prefix (name, "picman"))
     return TRUE;
 
   for (i = 0; i < G_N_ELEMENTS (name_blacklist); i++)
@@ -207,7 +207,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
 /* Builds a GList of the class structures of all subtypes of type.
  */
 static GList *
-gimp_get_subtype_classes (GType  type,
+picman_get_subtype_classes (GType  type,
                           GList *classes)
 {
   GeglOperationClass *klass;
@@ -224,11 +224,11 @@ gimp_get_subtype_classes (GType  type,
 
   categories = gegl_operation_class_get_key (klass, "categories");
 
-  if (! gimp_gegl_tool_operation_blacklisted (klass->name, categories))
+  if (! picman_gegl_tool_operation_blacklisted (klass->name, categories))
     classes = g_list_prepend (classes, klass);
 
   for (i = 0; i < n_ops; i++)
-    classes = gimp_get_subtype_classes (ops[i], classes);
+    classes = picman_get_subtype_classes (ops[i], classes);
 
   if (ops)
     g_free (ops);
@@ -237,22 +237,22 @@ gimp_get_subtype_classes (GType  type,
 }
 
 static gint
-gimp_gegl_tool_compare_operation_names (GeglOperationClass *a,
+picman_gegl_tool_compare_operation_names (GeglOperationClass *a,
                                         GeglOperationClass *b)
 {
   return strcmp (a->name, b->name);
 }
 
 static GList *
-gimp_get_geglopclasses (void)
+picman_get_geglopclasses (void)
 {
   GList *opclasses;
 
-  opclasses = gimp_get_subtype_classes (GEGL_TYPE_OPERATION, NULL);
+  opclasses = picman_get_subtype_classes (GEGL_TYPE_OPERATION, NULL);
 
   opclasses = g_list_sort (opclasses,
                            (GCompareFunc)
-                           gimp_gegl_tool_compare_operation_names);
+                           picman_gegl_tool_compare_operation_names);
 
   return opclasses;
 }
@@ -263,10 +263,10 @@ gimp_get_geglopclasses (void)
 /*****************/
 
 static void
-gimp_gegl_tool_dialog (GimpImageMapTool *image_map_tool)
+picman_gegl_tool_dialog (PicmanImageMapTool *image_map_tool)
 {
-  GimpGeglTool      *tool   = GIMP_GEGL_TOOL (image_map_tool);
-  GimpOperationTool *o_tool = GIMP_OPERATION_TOOL (image_map_tool);
+  PicmanGeglTool      *tool   = PICMAN_GEGL_TOOL (image_map_tool);
+  PicmanOperationTool *o_tool = PICMAN_OPERATION_TOOL (image_map_tool);
   GtkListStore      *store;
   GtkCellRenderer   *cell;
   GtkWidget         *main_vbox;
@@ -275,9 +275,9 @@ gimp_gegl_tool_dialog (GimpImageMapTool *image_map_tool)
   GList             *opclasses;
   GList             *iter;
 
-  GIMP_IMAGE_MAP_TOOL_CLASS (parent_class)->dialog (image_map_tool);
+  PICMAN_IMAGE_MAP_TOOL_CLASS (parent_class)->dialog (image_map_tool);
 
-  main_vbox = gimp_image_map_tool_dialog_get_vbox (image_map_tool);
+  main_vbox = picman_image_map_tool_dialog_get_vbox (image_map_tool);
 
   /*  The operation combo box  */
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
@@ -288,7 +288,7 @@ gimp_gegl_tool_dialog (GimpImageMapTool *image_map_tool)
   store = gtk_list_store_new (N_COLUMNS,
                               G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
-  opclasses = gimp_get_geglopclasses ();
+  opclasses = picman_get_geglopclasses ();
 
   for (iter = opclasses; iter; iter = iter->next)
     {
@@ -299,7 +299,7 @@ gimp_gegl_tool_dialog (GimpImageMapTool *image_map_tool)
       if (g_str_has_prefix (opclass->name, "gegl:"))
         {
           label    = opclass->name + strlen ("gegl:");
-          stock_id = GIMP_STOCK_GEGL;
+          stock_id = PICMAN_STOCK_GEGL;
         }
       else
         {
@@ -332,7 +332,7 @@ gimp_gegl_tool_dialog (GimpImageMapTool *image_map_tool)
                                  "text", COLUMN_LABEL);
 
   g_signal_connect (combo, "changed",
-                    G_CALLBACK (gimp_gegl_tool_operation_changed),
+                    G_CALLBACK (picman_gegl_tool_operation_changed),
                     tool);
 
   tool->operation_combo = combo;
@@ -340,7 +340,7 @@ gimp_gegl_tool_dialog (GimpImageMapTool *image_map_tool)
   /*  The options vbox  */
   o_tool->options_table =
     gtk_label_new (_("Select an operation from the list above"));
-  gimp_label_set_attributes (GTK_LABEL (o_tool->options_table),
+  picman_label_set_attributes (GTK_LABEL (o_tool->options_table),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              -1);
   gtk_misc_set_padding (GTK_MISC (o_tool->options_table), 0, 4);
@@ -350,8 +350,8 @@ gimp_gegl_tool_dialog (GimpImageMapTool *image_map_tool)
 }
 
 static void
-gimp_gegl_tool_operation_changed (GtkWidget    *widget,
-                                  GimpGeglTool *tool)
+picman_gegl_tool_operation_changed (GtkWidget    *widget,
+                                  PicmanGeglTool *tool)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
@@ -368,7 +368,7 @@ gimp_gegl_tool_operation_changed (GtkWidget    *widget,
 
   if (operation)
     {
-      gimp_operation_tool_set_operation (GIMP_OPERATION_TOOL (tool),
+      picman_operation_tool_set_operation (PICMAN_OPERATION_TOOL (tool),
                                          operation, NULL);
       g_free (operation);
     }

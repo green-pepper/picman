@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorscales.h
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * picmancolorscales.h
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * based on color_notebook module
  * Copyright (C) 1998 Austin Donnelly <austin@greenend.org.uk>
@@ -22,24 +22,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_COLOR_SCALES_H__
-#define __GIMP_COLOR_SCALES_H__
+#ifndef __PICMAN_COLOR_SCALES_H__
+#define __PICMAN_COLOR_SCALES_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_COLOR_SCALES            (gimp_color_scales_get_type ())
-#define GIMP_COLOR_SCALES(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_SCALES, GimpColorScales))
-#define GIMP_IS_COLOR_SCALES(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_SCALES))
+#define PICMAN_TYPE_COLOR_SCALES            (picman_color_scales_get_type ())
+#define PICMAN_COLOR_SCALES(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_SCALES, PicmanColorScales))
+#define PICMAN_IS_COLOR_SCALES(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_SCALES))
 
 
-GType   gimp_color_scales_get_type (void) G_GNUC_CONST;
+GType   picman_color_scales_get_type (void) G_GNUC_CONST;
 
 
 G_END_DECLS
 
-#endif /* __GIMP_COLOR_SCALES_H__ */
+#endif /* __PICMAN_COLOR_SCALES_H__ */

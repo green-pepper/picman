@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PATTERN_HEADER_H__
-#define __GIMP_PATTERN_HEADER_H__
+#ifndef __PICMAN_PATTERN_HEADER_H__
+#define __PICMAN_PATTERN_HEADER_H__
 
 #define GPATTERN_FILE_VERSION    1
 #define GPATTERN_MAGIC    (('G' << 24) + ('P' << 16) + ('A' << 8) + ('T' << 0))
@@ -32,11 +32,11 @@ struct _PatternHeader
   guint32   width;        /*  width of pattern  */
   guint32   height;       /*  height of pattern  */
   guint32   bytes;        /*  depth of pattern in bytes  */
-  guint32   magic_number; /*  GIMP pattern magic number  */
+  guint32   magic_number; /*  PICMAN pattern magic number  */
 };
 
 /*  In a pattern file, next comes the pattern name, null-terminated.  After that
  *  comes the pattern data--width * height * bytes bytes of it...
  */
 
-#endif  /*  __GIMP_PATTERN_HEADER_H__  */
+#endif  /*  __PICMAN_PATTERN_HEADER_H__  */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,29 +19,29 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "paint-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
-#include "core/gimpdynamics.h"
-#include "core/gimpdynamicsoutput.h"
-#include "core/gimpgradient.h"
-#include "core/gimppaintinfo.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
+#include "core/picmandynamics.h"
+#include "core/picmandynamicsoutput.h"
+#include "core/picmangradient.h"
+#include "core/picmanpaintinfo.h"
 
-#include "gimppaintoptions.h"
+#include "picmanpaintoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define DEFAULT_BRUSH_SIZE             20.0
 #define DEFAULT_BRUSH_ASPECT_RATIO     0.0
 #define DEFAULT_BRUSH_ANGLE            0.0
 
-#define DEFAULT_APPLICATION_MODE       GIMP_PAINT_CONSTANT
+#define DEFAULT_APPLICATION_MODE       PICMAN_PAINT_CONSTANT
 #define DEFAULT_HARD                   FALSE
 
 #define DEFAULT_USE_JITTER             FALSE
@@ -51,13 +51,13 @@
 
 #define DEFAULT_FADE_LENGTH            100.0
 #define DEFAULT_FADE_REVERSE           FALSE
-#define DEFAULT_FADE_REPEAT            GIMP_REPEAT_NONE
-#define DEFAULT_FADE_UNIT              GIMP_UNIT_PIXEL
+#define DEFAULT_FADE_REPEAT            PICMAN_REPEAT_NONE
+#define DEFAULT_FADE_UNIT              PICMAN_UNIT_PIXEL
 
 #define DEFAULT_GRADIENT_REVERSE       FALSE
-#define DEFAULT_GRADIENT_REPEAT        GIMP_REPEAT_TRIANGULAR
+#define DEFAULT_GRADIENT_REPEAT        PICMAN_REPEAT_TRIANGULAR
 #define DEFAULT_GRADIENT_LENGTH        100.0
-#define DEFAULT_GRADIENT_UNIT          GIMP_UNIT_PIXEL
+#define DEFAULT_GRADIENT_UNIT          PICMAN_UNIT_PIXEL
 
 #define DYNAMIC_MAX_VALUE              1.0
 #define DYNAMIC_MIN_VALUE              0.0
@@ -106,184 +106,184 @@ enum
 };
 
 
-static void    gimp_paint_options_dispose          (GObject      *object);
-static void    gimp_paint_options_finalize         (GObject      *object);
-static void    gimp_paint_options_set_property     (GObject      *object,
+static void    picman_paint_options_dispose          (GObject      *object);
+static void    picman_paint_options_finalize         (GObject      *object);
+static void    picman_paint_options_set_property     (GObject      *object,
                                                     guint         property_id,
                                                     const GValue *value,
                                                     GParamSpec   *pspec);
-static void    gimp_paint_options_get_property     (GObject      *object,
+static void    picman_paint_options_get_property     (GObject      *object,
                                                     guint         property_id,
                                                     GValue       *value,
                                                     GParamSpec   *pspec);
 
 
 
-G_DEFINE_TYPE (GimpPaintOptions, gimp_paint_options, GIMP_TYPE_TOOL_OPTIONS)
+G_DEFINE_TYPE (PicmanPaintOptions, picman_paint_options, PICMAN_TYPE_TOOL_OPTIONS)
 
-#define parent_class gimp_paint_options_parent_class
+#define parent_class picman_paint_options_parent_class
 
 
 static void
-gimp_paint_options_class_init (GimpPaintOptionsClass *klass)
+picman_paint_options_class_init (PicmanPaintOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->dispose      = gimp_paint_options_dispose;
-  object_class->finalize     = gimp_paint_options_finalize;
-  object_class->set_property = gimp_paint_options_set_property;
-  object_class->get_property = gimp_paint_options_get_property;
+  object_class->dispose      = picman_paint_options_dispose;
+  object_class->finalize     = picman_paint_options_finalize;
+  object_class->set_property = picman_paint_options_set_property;
+  object_class->get_property = picman_paint_options_get_property;
 
   g_object_class_install_property (object_class, PROP_PAINT_INFO,
                                    g_param_spec_object ("paint-info",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_PAINT_INFO,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_PAINT_INFO,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BRUSH_SIZE,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BRUSH_SIZE,
                                    "brush-size", _("Brush Size"),
                                    1.0, 10000.0, DEFAULT_BRUSH_SIZE,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BRUSH_ASPECT_RATIO,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BRUSH_ASPECT_RATIO,
                                    "brush-aspect-ratio", _("Brush Aspect Ratio"),
                                    -20.0, 20.0, DEFAULT_BRUSH_ASPECT_RATIO,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BRUSH_ANGLE,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BRUSH_ANGLE,
                                    "brush-angle", _("Brush Angle"),
                                    -180.0, 180.0, DEFAULT_BRUSH_ANGLE,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_APPLICATION_MODE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_APPLICATION_MODE,
                                  "application-mode", _("Every stamp has its own opacity"),
-                                 GIMP_TYPE_PAINT_APPLICATION_MODE,
+                                 PICMAN_TYPE_PAINT_APPLICATION_MODE,
                                  DEFAULT_APPLICATION_MODE,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_HARD,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_HARD,
                                     "hard", _("Ignore fuzziness of the current brush"),
                                     DEFAULT_HARD,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_JITTER,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_JITTER,
                                     "use-jitter", _("Scatter brush as you paint"),
                                     DEFAULT_USE_JITTER,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_JITTER_AMOUNT,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_JITTER_AMOUNT,
                                    "jitter-amount", _("Distance of scattering"),
                                    0.0, 50.0, DEFAULT_JITTER_AMOUNT,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DYNAMICS_EXPANDED,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DYNAMICS_EXPANDED,
                                      "dynamics-expanded", NULL,
                                     DEFAULT_DYNAMICS_EXPANDED,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_FADE_LENGTH,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_FADE_LENGTH,
                                    "fade-length", _("Distance over which strokes fade out"),
                                    0.0, 32767.0, DEFAULT_FADE_LENGTH,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_FADE_UNIT,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_FADE_UNIT,
                                  "fade-unit", NULL,
                                  TRUE, TRUE, DEFAULT_FADE_UNIT,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FADE_REVERSE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FADE_REVERSE,
                                     "fade-reverse", _("Reverse direction of fading"),
                                     DEFAULT_FADE_REVERSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_FADE_REPEAT,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_FADE_REPEAT,
                                  "fade-repeat", _("How fade is repeated as you paint"),
-                                 GIMP_TYPE_REPEAT_MODE,
+                                 PICMAN_TYPE_REPEAT_MODE,
                                  DEFAULT_FADE_REPEAT,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GRADIENT_REVERSE,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GRADIENT_REVERSE,
                                     "gradient-reverse", NULL,
                                     DEFAULT_GRADIENT_REVERSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_BRUSH_VIEW_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_BRUSH_VIEW_TYPE,
                                  "brush-view-type", NULL,
-                                 GIMP_TYPE_VIEW_TYPE,
-                                 GIMP_VIEW_TYPE_GRID,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_BRUSH_VIEW_SIZE,
+                                 PICMAN_TYPE_VIEW_TYPE,
+                                 PICMAN_VIEW_TYPE_GRID,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_BRUSH_VIEW_SIZE,
                                 "brush-view-size", NULL,
-                                GIMP_VIEW_SIZE_TINY,
-                                GIMP_VIEWABLE_MAX_BUTTON_SIZE,
-                                GIMP_VIEW_SIZE_SMALL,
-                                GIMP_PARAM_STATIC_STRINGS);
+                                PICMAN_VIEW_SIZE_TINY,
+                                PICMAN_VIEWABLE_MAX_BUTTON_SIZE,
+                                PICMAN_VIEW_SIZE_SMALL,
+                                PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_DYNAMICS_VIEW_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_DYNAMICS_VIEW_TYPE,
                                   "dynamics-view-type", NULL,
-                                 GIMP_TYPE_VIEW_TYPE,
-                                 GIMP_VIEW_TYPE_LIST,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_DYNAMICS_VIEW_SIZE,
+                                 PICMAN_TYPE_VIEW_TYPE,
+                                 PICMAN_VIEW_TYPE_LIST,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_DYNAMICS_VIEW_SIZE,
                                 "dynamics-view-size", NULL,
-                                GIMP_VIEW_SIZE_TINY,
-                                GIMP_VIEWABLE_MAX_BUTTON_SIZE,
-                                GIMP_VIEW_SIZE_SMALL,
-                                GIMP_PARAM_STATIC_STRINGS);
+                                PICMAN_VIEW_SIZE_TINY,
+                                PICMAN_VIEWABLE_MAX_BUTTON_SIZE,
+                                PICMAN_VIEW_SIZE_SMALL,
+                                PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_PATTERN_VIEW_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_PATTERN_VIEW_TYPE,
                                  "pattern-view-type", NULL,
-                                 GIMP_TYPE_VIEW_TYPE,
-                                 GIMP_VIEW_TYPE_GRID,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_PATTERN_VIEW_SIZE,
+                                 PICMAN_TYPE_VIEW_TYPE,
+                                 PICMAN_VIEW_TYPE_GRID,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_PATTERN_VIEW_SIZE,
                                 "pattern-view-size", NULL,
-                                GIMP_VIEW_SIZE_TINY,
-                                GIMP_VIEWABLE_MAX_BUTTON_SIZE,
-                                GIMP_VIEW_SIZE_SMALL,
-                                GIMP_PARAM_STATIC_STRINGS);
+                                PICMAN_VIEW_SIZE_TINY,
+                                PICMAN_VIEWABLE_MAX_BUTTON_SIZE,
+                                PICMAN_VIEW_SIZE_SMALL,
+                                PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_GRADIENT_VIEW_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_GRADIENT_VIEW_TYPE,
                                  "gradient-view-type", NULL,
-                                 GIMP_TYPE_VIEW_TYPE,
-                                 GIMP_VIEW_TYPE_LIST,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_GRADIENT_VIEW_SIZE,
+                                 PICMAN_TYPE_VIEW_TYPE,
+                                 PICMAN_VIEW_TYPE_LIST,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_GRADIENT_VIEW_SIZE,
                                 "gradient-view-size", NULL,
-                                GIMP_VIEW_SIZE_TINY,
-                                GIMP_VIEWABLE_MAX_BUTTON_SIZE,
-                                GIMP_VIEW_SIZE_LARGE,
-                                GIMP_PARAM_STATIC_STRINGS);
+                                PICMAN_VIEW_SIZE_TINY,
+                                PICMAN_VIEWABLE_MAX_BUTTON_SIZE,
+                                PICMAN_VIEW_SIZE_LARGE,
+                                PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_SMOOTHING,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_SMOOTHING,
                                     "use-smoothing", _("Paint smoother strokes"),
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_SMOOTHING_QUALITY,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_SMOOTHING_QUALITY,
                                 "smoothing-quality", _("Depth of smoothing"),
                                 1, 100, DEFAULT_SMOOTHING_QUALITY,
-                                GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SMOOTHING_FACTOR,
+                                PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SMOOTHING_FACTOR,
                                    "smoothing-factor", _("Gravity of the pen"),
                                    3.0, 1000.0, DEFAULT_SMOOTHING_FACTOR,
                                    /* Max velocity is set at 3.
                                     * Allowing for smoothing factor to be
                                     * less than velcoty results in numeric
                                     * instablility */
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_paint_options_init (GimpPaintOptions *options)
+picman_paint_options_init (PicmanPaintOptions *options)
 {
   options->application_mode_save = DEFAULT_APPLICATION_MODE;
 
-  options->jitter_options    = g_slice_new0 (GimpJitterOptions);
-  options->fade_options      = g_slice_new0 (GimpFadeOptions);
-  options->gradient_options  = g_slice_new0 (GimpGradientOptions);
-  options->smoothing_options = g_slice_new0 (GimpSmoothingOptions);
+  options->jitter_options    = g_slice_new0 (PicmanJitterOptions);
+  options->fade_options      = g_slice_new0 (PicmanFadeOptions);
+  options->gradient_options  = g_slice_new0 (PicmanGradientOptions);
+  options->smoothing_options = g_slice_new0 (PicmanSmoothingOptions);
 }
 
 static void
-gimp_paint_options_dispose (GObject *object)
+picman_paint_options_dispose (GObject *object)
 {
-  GimpPaintOptions *options = GIMP_PAINT_OPTIONS (object);
+  PicmanPaintOptions *options = PICMAN_PAINT_OPTIONS (object);
 
   if (options->paint_info)
     {
@@ -295,29 +295,29 @@ gimp_paint_options_dispose (GObject *object)
 }
 
 static void
-gimp_paint_options_finalize (GObject *object)
+picman_paint_options_finalize (GObject *object)
 {
-  GimpPaintOptions *options = GIMP_PAINT_OPTIONS (object);
+  PicmanPaintOptions *options = PICMAN_PAINT_OPTIONS (object);
 
-  g_slice_free (GimpJitterOptions,    options->jitter_options);
-  g_slice_free (GimpFadeOptions,      options->fade_options);
-  g_slice_free (GimpGradientOptions,  options->gradient_options);
-  g_slice_free (GimpSmoothingOptions, options->smoothing_options);
+  g_slice_free (PicmanJitterOptions,    options->jitter_options);
+  g_slice_free (PicmanFadeOptions,      options->fade_options);
+  g_slice_free (PicmanGradientOptions,  options->gradient_options);
+  g_slice_free (PicmanSmoothingOptions, options->smoothing_options);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
-gimp_paint_options_set_property (GObject      *object,
+picman_paint_options_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  GimpPaintOptions    *options            = GIMP_PAINT_OPTIONS (object);
-  GimpFadeOptions     *fade_options       = options->fade_options;
-  GimpJitterOptions   *jitter_options     = options->jitter_options;
-  GimpGradientOptions *gradient_options   = options->gradient_options;
-  GimpSmoothingOptions *smoothing_options = options->smoothing_options;
+  PicmanPaintOptions    *options            = PICMAN_PAINT_OPTIONS (object);
+  PicmanFadeOptions     *fade_options       = options->fade_options;
+  PicmanJitterOptions   *jitter_options     = options->jitter_options;
+  PicmanGradientOptions *gradient_options   = options->gradient_options;
+  PicmanSmoothingOptions *smoothing_options = options->smoothing_options;
 
   switch (property_id)
     {
@@ -428,16 +428,16 @@ gimp_paint_options_set_property (GObject      *object,
 }
 
 static void
-gimp_paint_options_get_property (GObject    *object,
+picman_paint_options_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  GimpPaintOptions     *options           = GIMP_PAINT_OPTIONS (object);
-  GimpFadeOptions      *fade_options      = options->fade_options;
-  GimpJitterOptions    *jitter_options    = options->jitter_options;
-  GimpGradientOptions  *gradient_options  = options->gradient_options;
-  GimpSmoothingOptions *smoothing_options = options->smoothing_options;
+  PicmanPaintOptions     *options           = PICMAN_PAINT_OPTIONS (object);
+  PicmanFadeOptions      *fade_options      = options->fade_options;
+  PicmanJitterOptions    *jitter_options    = options->jitter_options;
+  PicmanGradientOptions  *gradient_options  = options->gradient_options;
+  PicmanSmoothingOptions *smoothing_options = options->smoothing_options;
 
   switch (property_id)
     {
@@ -548,16 +548,16 @@ gimp_paint_options_get_property (GObject    *object,
 }
 
 
-GimpPaintOptions *
-gimp_paint_options_new (GimpPaintInfo *paint_info)
+PicmanPaintOptions *
+picman_paint_options_new (PicmanPaintInfo *paint_info)
 {
-  GimpPaintOptions *options;
+  PicmanPaintOptions *options;
 
-  g_return_val_if_fail (GIMP_IS_PAINT_INFO (paint_info), NULL);
+  g_return_val_if_fail (PICMAN_IS_PAINT_INFO (paint_info), NULL);
 
   options = g_object_new (paint_info->paint_options_type,
-                          "gimp",       paint_info->gimp,
-                          "name",       gimp_object_get_name (paint_info),
+                          "picman",       paint_info->picman,
+                          "name",       picman_object_get_name (paint_info),
                           "paint-info", paint_info,
                           NULL);
 
@@ -565,31 +565,31 @@ gimp_paint_options_new (GimpPaintInfo *paint_info)
 }
 
 gdouble
-gimp_paint_options_get_fade (GimpPaintOptions *paint_options,
-                             GimpImage        *image,
+picman_paint_options_get_fade (PicmanPaintOptions *paint_options,
+                             PicmanImage        *image,
                              gdouble           pixel_dist)
 {
-  GimpFadeOptions *fade_options;
+  PicmanFadeOptions *fade_options;
   gdouble          z        = -1.0;
   gdouble          fade_out =  0.0;
   gdouble          unit_factor;
   gdouble          pos;
 
-  g_return_val_if_fail (GIMP_IS_PAINT_OPTIONS (paint_options),
+  g_return_val_if_fail (PICMAN_IS_PAINT_OPTIONS (paint_options),
                         DYNAMIC_MAX_VALUE);
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), DYNAMIC_MAX_VALUE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), DYNAMIC_MAX_VALUE);
 
   fade_options = paint_options->fade_options;
 
   switch (fade_options->fade_unit)
     {
-    case GIMP_UNIT_PIXEL:
+    case PICMAN_UNIT_PIXEL:
       fade_out = fade_options->fade_length;
       break;
 
-    case GIMP_UNIT_PERCENT:
-      fade_out = (MAX (gimp_image_get_width  (image),
-                       gimp_image_get_height (image)) *
+    case PICMAN_UNIT_PERCENT:
+      fade_out = (MAX (picman_image_get_width  (image),
+                       picman_image_get_height (image)) *
                   fade_options->fade_length / 100);
       break;
 
@@ -598,9 +598,9 @@ gimp_paint_options_get_fade (GimpPaintOptions *paint_options,
         gdouble xres;
         gdouble yres;
 
-        gimp_image_get_resolution (image, &xres, &yres);
+        picman_image_get_resolution (image, &xres, &yres);
 
-        unit_factor = gimp_unit_get_factor (fade_options->fade_unit);
+        unit_factor = picman_unit_get_factor (fade_options->fade_unit);
         fade_out    = (fade_options->fade_length *
                        MAX (xres, yres) / unit_factor);
       }
@@ -616,11 +616,11 @@ gimp_paint_options_get_fade (GimpPaintOptions *paint_options,
     pos = DYNAMIC_MAX_VALUE;
 
   /*  for no repeat, set pos close to 1.0 after the first chunk  */
-  if (fade_options->fade_repeat == GIMP_REPEAT_NONE && pos >= DYNAMIC_MAX_VALUE)
+  if (fade_options->fade_repeat == PICMAN_REPEAT_NONE && pos >= DYNAMIC_MAX_VALUE)
     pos = DYNAMIC_MAX_VALUE - 0.0000001;
 
   if (((gint) pos & 1) &&
-      fade_options->fade_repeat != GIMP_REPEAT_SAWTOOTH)
+      fade_options->fade_repeat != PICMAN_REPEAT_SAWTOOTH)
     pos = DYNAMIC_MAX_VALUE - (pos - (gint) pos);
   else
     pos = pos - (gint) pos;
@@ -634,12 +634,12 @@ gimp_paint_options_get_fade (GimpPaintOptions *paint_options,
 }
 
 gdouble
-gimp_paint_options_get_jitter (GimpPaintOptions *paint_options,
-                               GimpImage        *image)
+picman_paint_options_get_jitter (PicmanPaintOptions *paint_options,
+                               PicmanImage        *image)
 {
-  GimpJitterOptions *jitter_options;
+  PicmanJitterOptions *jitter_options;
 
-  g_return_val_if_fail (GIMP_IS_PAINT_OPTIONS (paint_options), 0.0);
+  g_return_val_if_fail (PICMAN_IS_PAINT_OPTIONS (paint_options), 0.0);
 
   jitter_options = paint_options->jitter_options;
 
@@ -652,33 +652,33 @@ gimp_paint_options_get_jitter (GimpPaintOptions *paint_options,
 }
 
 gboolean
-gimp_paint_options_get_gradient_color (GimpPaintOptions *paint_options,
-                                       GimpImage        *image,
+picman_paint_options_get_gradient_color (PicmanPaintOptions *paint_options,
+                                       PicmanImage        *image,
                                        gdouble           grad_point,
                                        gdouble           pixel_dist,
-                                       GimpRGB          *color)
+                                       PicmanRGB          *color)
 {
-  GimpGradientOptions *gradient_options;
-  GimpGradient        *gradient;
-  GimpDynamics        *dynamics;
-  GimpDynamicsOutput  *color_output;
+  PicmanGradientOptions *gradient_options;
+  PicmanGradient        *gradient;
+  PicmanDynamics        *dynamics;
+  PicmanDynamicsOutput  *color_output;
 
-  g_return_val_if_fail (GIMP_IS_PAINT_OPTIONS (paint_options), FALSE);
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PAINT_OPTIONS (paint_options), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
   g_return_val_if_fail (color != NULL, FALSE);
 
   gradient_options = paint_options->gradient_options;
 
-  gradient = gimp_context_get_gradient (GIMP_CONTEXT (paint_options));
+  gradient = picman_context_get_gradient (PICMAN_CONTEXT (paint_options));
 
-  dynamics = gimp_context_get_dynamics (GIMP_CONTEXT (paint_options));
+  dynamics = picman_context_get_dynamics (PICMAN_CONTEXT (paint_options));
 
-  color_output = gimp_dynamics_get_output (dynamics,
-                                           GIMP_DYNAMICS_OUTPUT_COLOR);
+  color_output = picman_dynamics_get_output (dynamics,
+                                           PICMAN_DYNAMICS_OUTPUT_COLOR);
 
-  if (gimp_dynamics_output_is_enabled (color_output))
+  if (picman_dynamics_output_is_enabled (color_output))
     {
-      gimp_gradient_get_color_at (gradient, GIMP_CONTEXT (paint_options),
+      picman_gradient_get_color_at (gradient, PICMAN_CONTEXT (paint_options),
                                   NULL, grad_point,
                                   gradient_options->gradient_reverse,
                                   color);
@@ -689,41 +689,41 @@ gimp_paint_options_get_gradient_color (GimpPaintOptions *paint_options,
   return FALSE;
 }
 
-GimpBrushApplicationMode
-gimp_paint_options_get_brush_mode (GimpPaintOptions *paint_options)
+PicmanBrushApplicationMode
+picman_paint_options_get_brush_mode (PicmanPaintOptions *paint_options)
 {
-  GimpDynamics       *dynamics;
-  GimpDynamicsOutput *force_output;
+  PicmanDynamics       *dynamics;
+  PicmanDynamicsOutput *force_output;
 
-  g_return_val_if_fail (GIMP_IS_PAINT_OPTIONS (paint_options), GIMP_BRUSH_SOFT);
+  g_return_val_if_fail (PICMAN_IS_PAINT_OPTIONS (paint_options), PICMAN_BRUSH_SOFT);
 
   if (paint_options->hard)
-    return GIMP_BRUSH_HARD;
+    return PICMAN_BRUSH_HARD;
 
-  dynamics = gimp_context_get_dynamics (GIMP_CONTEXT (paint_options));
+  dynamics = picman_context_get_dynamics (PICMAN_CONTEXT (paint_options));
 
-  force_output = gimp_dynamics_get_output (dynamics,
-                                           GIMP_DYNAMICS_OUTPUT_FORCE);
+  force_output = picman_dynamics_get_output (dynamics,
+                                           PICMAN_DYNAMICS_OUTPUT_FORCE);
 
   if (!force_output)
-    return GIMP_BRUSH_SOFT;
+    return PICMAN_BRUSH_SOFT;
 
-  if (gimp_dynamics_output_is_enabled (force_output))
-    return GIMP_BRUSH_PRESSURE;
+  if (picman_dynamics_output_is_enabled (force_output))
+    return PICMAN_BRUSH_PRESSURE;
 
-  return GIMP_BRUSH_SOFT;
+  return PICMAN_BRUSH_SOFT;
 }
 
 void
-gimp_paint_options_copy_brush_props (GimpPaintOptions *src,
-                                     GimpPaintOptions *dest)
+picman_paint_options_copy_brush_props (PicmanPaintOptions *src,
+                                     PicmanPaintOptions *dest)
 {
   gdouble  brush_size;
   gdouble  brush_angle;
   gdouble  brush_aspect_ratio;
 
-  g_return_if_fail (GIMP_IS_PAINT_OPTIONS (src));
-  g_return_if_fail (GIMP_IS_PAINT_OPTIONS (dest));
+  g_return_if_fail (PICMAN_IS_PAINT_OPTIONS (src));
+  g_return_if_fail (PICMAN_IS_PAINT_OPTIONS (dest));
 
   g_object_get (src,
                 "brush-size", &brush_size,
@@ -739,17 +739,17 @@ gimp_paint_options_copy_brush_props (GimpPaintOptions *src,
 }
 
 void
-gimp_paint_options_copy_dynamics_props (GimpPaintOptions *src,
-                                        GimpPaintOptions *dest)
+picman_paint_options_copy_dynamics_props (PicmanPaintOptions *src,
+                                        PicmanPaintOptions *dest)
 {
   gboolean        dynamics_expanded;
   gboolean        fade_reverse;
   gdouble         fade_length;
-  GimpUnit        fade_unit;
-  GimpRepeatMode  fade_repeat;
+  PicmanUnit        fade_unit;
+  PicmanRepeatMode  fade_repeat;
 
-  g_return_if_fail (GIMP_IS_PAINT_OPTIONS (src));
-  g_return_if_fail (GIMP_IS_PAINT_OPTIONS (dest));
+  g_return_if_fail (PICMAN_IS_PAINT_OPTIONS (src));
+  g_return_if_fail (PICMAN_IS_PAINT_OPTIONS (dest));
 
   g_object_get (src,
                 "dynamics-expanded", &dynamics_expanded,
@@ -769,13 +769,13 @@ gimp_paint_options_copy_dynamics_props (GimpPaintOptions *src,
 }
 
 void
-gimp_paint_options_copy_gradient_props (GimpPaintOptions *src,
-                                        GimpPaintOptions *dest)
+picman_paint_options_copy_gradient_props (PicmanPaintOptions *src,
+                                        PicmanPaintOptions *dest)
 {
   gboolean  gradient_reverse;
 
-  g_return_if_fail (GIMP_IS_PAINT_OPTIONS (src));
-  g_return_if_fail (GIMP_IS_PAINT_OPTIONS (dest));
+  g_return_if_fail (PICMAN_IS_PAINT_OPTIONS (src));
+  g_return_if_fail (PICMAN_IS_PAINT_OPTIONS (dest));
 
   g_object_get (src,
                 "gradient-reverse", &gradient_reverse,

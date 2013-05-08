@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpplugindef.h
+ * picmanplugindef.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,27 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_DEF_H__
-#define __GIMP_PLUG_IN_DEF_H__
+#ifndef __PICMAN_PLUG_IN_DEF_H__
+#define __PICMAN_PLUG_IN_DEF_H__
 
 
 #include <time.h>
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-#define GIMP_TYPE_PLUG_IN_DEF            (gimp_plug_in_def_get_type ())
-#define GIMP_PLUG_IN_DEF(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PLUG_IN_DEF, GimpPlugInDef))
-#define GIMP_PLUG_IN_DEF_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PLUG_IN_DEF, GimpPlugInDefClass))
-#define GIMP_IS_PLUG_IN_DEF(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PLUG_IN_DEF))
-#define GIMP_IS_PLUG_IN_DEF_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PLUG_IN_DEF))
+#define PICMAN_TYPE_PLUG_IN_DEF            (picman_plug_in_def_get_type ())
+#define PICMAN_PLUG_IN_DEF(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PLUG_IN_DEF, PicmanPlugInDef))
+#define PICMAN_PLUG_IN_DEF_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PLUG_IN_DEF, PicmanPlugInDefClass))
+#define PICMAN_IS_PLUG_IN_DEF(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PLUG_IN_DEF))
+#define PICMAN_IS_PLUG_IN_DEF_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PLUG_IN_DEF))
 
 
-typedef struct _GimpPlugInDefClass GimpPlugInDefClass;
+typedef struct _PicmanPlugInDefClass PicmanPlugInDefClass;
 
-struct _GimpPlugInDef
+struct _PicmanPlugInDef
 {
-  GimpObject  parent_instance;
+  PicmanObject  parent_instance;
 
   gchar      *prog;
   GSList     *procedures;
@@ -50,35 +50,35 @@ struct _GimpPlugInDef
   gboolean    has_init;     /* Does the plug-in need to be initialized ? */
 };
 
-struct _GimpPlugInDefClass
+struct _PicmanPlugInDefClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType           gimp_plug_in_def_get_type (void) G_GNUC_CONST;
+GType           picman_plug_in_def_get_type (void) G_GNUC_CONST;
 
-GimpPlugInDef * gimp_plug_in_def_new      (const gchar         *prog);
+PicmanPlugInDef * picman_plug_in_def_new      (const gchar         *prog);
 
-void   gimp_plug_in_def_add_procedure     (GimpPlugInDef       *plug_in_def,
-                                           GimpPlugInProcedure *proc);
-void   gimp_plug_in_def_remove_procedure  (GimpPlugInDef       *plug_in_def,
-                                           GimpPlugInProcedure *proc);
+void   picman_plug_in_def_add_procedure     (PicmanPlugInDef       *plug_in_def,
+                                           PicmanPlugInProcedure *proc);
+void   picman_plug_in_def_remove_procedure  (PicmanPlugInDef       *plug_in_def,
+                                           PicmanPlugInProcedure *proc);
 
-void   gimp_plug_in_def_set_locale_domain (GimpPlugInDef       *plug_in_def,
+void   picman_plug_in_def_set_locale_domain (PicmanPlugInDef       *plug_in_def,
                                            const gchar         *domain_name,
                                            const gchar         *domain_path);
 
-void   gimp_plug_in_def_set_help_domain   (GimpPlugInDef       *plug_in_def,
+void   picman_plug_in_def_set_help_domain   (PicmanPlugInDef       *plug_in_def,
                                            const gchar         *domain_name,
                                            const gchar         *domain_uri);
 
-void   gimp_plug_in_def_set_mtime         (GimpPlugInDef       *plug_in_def,
+void   picman_plug_in_def_set_mtime         (PicmanPlugInDef       *plug_in_def,
                                            time_t               mtime);
-void   gimp_plug_in_def_set_needs_query   (GimpPlugInDef       *plug_in_def,
+void   picman_plug_in_def_set_needs_query   (PicmanPlugInDef       *plug_in_def,
                                            gboolean             needs_query);
-void   gimp_plug_in_def_set_has_init      (GimpPlugInDef       *plug_in_def,
+void   picman_plug_in_def_set_has_init      (PicmanPlugInDef       *plug_in_def,
                                            gboolean             has_init);
 
 
-#endif /* __GIMP_PLUG_IN_DEF_H__ */
+#endif /* __PICMAN_PLUG_IN_DEF_H__ */

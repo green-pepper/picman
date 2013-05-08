@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,27 +30,27 @@
 #include "unique.h"
 
 
-static gboolean  gimp_unique_dbus_open  (const gchar **filenames,
+static gboolean  picman_unique_dbus_open  (const gchar **filenames,
 					 gboolean      as_new);
 #ifdef G_OS_WIN32
-static gboolean  gimp_unique_win32_open (const gchar **filenames,
+static gboolean  picman_unique_win32_open (const gchar **filenames,
 					 gboolean      as_new);
 #endif
 
 gboolean
-gimp_unique_open (const gchar **filenames,
+picman_unique_open (const gchar **filenames,
 		  gboolean      as_new)
 {
 #ifdef G_OS_WIN32
-  return gimp_unique_win32_open (filenames, as_new);
+  return picman_unique_win32_open (filenames, as_new);
 #else
-  return gimp_unique_dbus_open (filenames, as_new);
+  return picman_unique_dbus_open (filenames, as_new);
 #endif
 }
 
-#ifndef GIMP_CONSOLE_COMPILATION
+#ifndef PICMAN_CONSOLE_COMPILATION
 static gchar *
-gimp_unique_filename_to_uri (const gchar  *filename,
+picman_unique_filename_to_uri (const gchar  *filename,
 			     const gchar  *cwd,
 			     GError      **error)
 {
@@ -82,13 +82,13 @@ gimp_unique_filename_to_uri (const gchar  *filename,
 
 
 static gboolean
-gimp_unique_dbus_open (const gchar **filenames,
+picman_unique_dbus_open (const gchar **filenames,
 		       gboolean      as_new)
 {
-#ifndef GIMP_CONSOLE_COMPILATION
+#ifndef PICMAN_CONSOLE_COMPILATION
 
 /*  for the DBus service names  */
-#include "gui/gimpdbusservice.h"
+#include "gui/picmandbusservice.h"
 
   GDBusConnection *connection;
   GError          *error = NULL;
@@ -108,7 +108,7 @@ gimp_unique_dbus_open (const gchar **filenames,
           for (i = 0; filenames[i] && success; i++)
             {
               GError *error = NULL;
-	      gchar  *uri   = gimp_unique_filename_to_uri (filenames[i],
+	      gchar  *uri   = picman_unique_filename_to_uri (filenames[i],
                                                            cwd, &error);
 
               if (uri)
@@ -116,9 +116,9 @@ gimp_unique_dbus_open (const gchar **filenames,
                   GVariant *result;
 
                   result = g_dbus_connection_call_sync (connection,
-                                                        GIMP_DBUS_SERVICE_NAME,
-                                                        GIMP_DBUS_SERVICE_PATH,
-                                                        GIMP_DBUS_SERVICE_INTERFACE,
+                                                        PICMAN_DBUS_SERVICE_NAME,
+                                                        PICMAN_DBUS_SERVICE_PATH,
+                                                        PICMAN_DBUS_SERVICE_INTERFACE,
                                                         method,
                                                         g_variant_new ("(s)",
                                                                        uri),
@@ -147,9 +147,9 @@ gimp_unique_dbus_open (const gchar **filenames,
           GVariant *result;
 
           result = g_dbus_connection_call_sync (connection,
-                                                GIMP_DBUS_SERVICE_NAME,
-                                                GIMP_DBUS_SERVICE_PATH,
-                                                GIMP_DBUS_SERVICE_INTERFACE,
+                                                PICMAN_DBUS_SERVICE_NAME,
+                                                PICMAN_DBUS_SERVICE_PATH,
+                                                PICMAN_DBUS_SERVICE_INTERFACE,
                                                 "Activate",
                                                 NULL,
                                                 NULL,
@@ -179,16 +179,16 @@ gimp_unique_dbus_open (const gchar **filenames,
 #ifdef G_OS_WIN32
 
 static gboolean
-gimp_unique_win32_open (const gchar **filenames,
+picman_unique_win32_open (const gchar **filenames,
 			gboolean      as_new)
 {
-#ifndef GIMP_CONSOLE_COMPILATION
+#ifndef PICMAN_CONSOLE_COMPILATION
 
 /*  for the proxy window names  */
 #include "gui/gui-unique.h"
 
-  HWND  window_handle = FindWindowW (GIMP_UNIQUE_WIN32_WINDOW_CLASS,
-				     GIMP_UNIQUE_WIN32_WINDOW_NAME);
+  HWND  window_handle = FindWindowW (PICMAN_UNIQUE_WIN32_WINDOW_CLASS,
+				     PICMAN_UNIQUE_WIN32_WINDOW_NAME);
 
   if (window_handle)
     {
@@ -204,7 +204,7 @@ gimp_unique_win32_open (const gchar **filenames,
             {
               gchar *uri;
 
-              uri = gimp_unique_filename_to_uri (filenames[i], cwd, &error);
+              uri = picman_unique_filename_to_uri (filenames[i], cwd, &error);
 
               if (uri)
                 {

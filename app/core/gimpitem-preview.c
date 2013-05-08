@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,32 +21,32 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "gimp.h"
-#include "gimpimage.h"
-#include "gimpitem.h"
-#include "gimpitem-preview.h"
+#include "picman.h"
+#include "picmanimage.h"
+#include "picmanitem.h"
+#include "picmanitem-preview.h"
 
 
 /*  public functions  */
 
 void
-gimp_item_get_preview_size (GimpViewable *viewable,
+picman_item_get_preview_size (PicmanViewable *viewable,
                             gint          size,
                             gboolean      is_popup,
                             gboolean      dot_for_dot,
                             gint         *width,
                             gint         *height)
 {
-  GimpItem  *item  = GIMP_ITEM (viewable);
-  GimpImage *image = gimp_item_get_image (item);
+  PicmanItem  *item  = PICMAN_ITEM (viewable);
+  PicmanImage *image = picman_item_get_image (item);
 
-  if (image && ! image->gimp->config->layer_previews && ! is_popup)
+  if (image && ! image->picman->config->layer_previews && ! is_popup)
     {
       *width  = size;
       *height = size;
@@ -58,10 +58,10 @@ gimp_item_get_preview_size (GimpViewable *viewable,
       gdouble xres;
       gdouble yres;
 
-      gimp_image_get_resolution (image, &xres, &yres);
+      picman_image_get_resolution (image, &xres, &yres);
 
-      gimp_viewable_calc_preview_size (gimp_image_get_width  (image),
-                                       gimp_image_get_height (image),
+      picman_viewable_calc_preview_size (picman_image_get_width  (image),
+                                       picman_image_get_height (image),
                                        size,
                                        size,
                                        dot_for_dot,
@@ -73,8 +73,8 @@ gimp_item_get_preview_size (GimpViewable *viewable,
     }
   else
     {
-      gimp_viewable_calc_preview_size (gimp_item_get_width  (item),
-                                       gimp_item_get_height (item),
+      picman_viewable_calc_preview_size (picman_item_get_width  (item),
+                                       picman_item_get_height (item),
                                        size,
                                        size,
                                        dot_for_dot, 1.0, 1.0,
@@ -85,31 +85,31 @@ gimp_item_get_preview_size (GimpViewable *viewable,
 }
 
 gboolean
-gimp_item_get_popup_size (GimpViewable *viewable,
+picman_item_get_popup_size (PicmanViewable *viewable,
                           gint          width,
                           gint          height,
                           gboolean      dot_for_dot,
                           gint         *popup_width,
                           gint         *popup_height)
 {
-  GimpItem  *item  = GIMP_ITEM (viewable);
-  GimpImage *image = gimp_item_get_image (item);
+  PicmanItem  *item  = PICMAN_ITEM (viewable);
+  PicmanImage *image = picman_item_get_image (item);
 
-  if (image && ! image->gimp->config->layer_previews)
+  if (image && ! image->picman->config->layer_previews)
     return FALSE;
 
-  if (gimp_item_get_width  (item) > width ||
-      gimp_item_get_height (item) > height)
+  if (picman_item_get_width  (item) > width ||
+      picman_item_get_height (item) > height)
     {
       gboolean scaling_up;
       gdouble  xres = 1.0;
       gdouble  yres = 1.0;
 
       if (image)
-        gimp_image_get_resolution (image, &xres, &yres);
+        picman_image_get_resolution (image, &xres, &yres);
 
-      gimp_viewable_calc_preview_size (gimp_item_get_width  (item),
-                                       gimp_item_get_height (item),
+      picman_viewable_calc_preview_size (picman_item_get_width  (item),
+                                       picman_item_get_height (item),
                                        width  * 2,
                                        height * 2,
                                        dot_for_dot,
@@ -121,8 +121,8 @@ gimp_item_get_popup_size (GimpViewable *viewable,
 
       if (scaling_up)
         {
-          *popup_width = gimp_item_get_width  (item);
-          *popup_width = gimp_item_get_height (item);
+          *popup_width = picman_item_get_width  (item);
+          *popup_width = picman_item_get_height (item);
         }
 
       return TRUE;

@@ -1,4 +1,4 @@
-# translation of gimp-plug-ins.master.po to Basque
+# translation of picman-plug-ins.master.po to Basque
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 #
@@ -7,7 +7,7 @@
 # Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2007, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-plug-ins.master\n"
+"Project-Id-Version: picman-plug-ins.master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-15 18:20+0200\n"
 "PO-Revision-Date: 2011-09-15 18:16+0200\n"
@@ -431,8 +431,8 @@ msgid "Optimizing animation"
 msgstr "Animazioa optimizatzen"
 
 #: ../plug-ins/common/animation-play.c:169
-msgid "Preview a GIMP layer-based animation"
-msgstr "Aurrikusi GIMPeko geruzetan oinarritutako animazioa"
+msgid "Preview a PICMAN layer-based animation"
+msgstr "Aurrikusi PICMANeko geruzetan oinarritutako animazioa"
 
 #: ../plug-ins/common/animation-play.c:174
 msgid "_Playback..."
@@ -627,7 +627,7 @@ msgstr "_Bertikala"
 #: ../plug-ins/file-psd/psd-image-res-load.c:997
 #: ../plug-ins/file-psd/psd-load.c:1637 ../plug-ins/file-sgi/sgi.c:407
 #: ../plug-ins/gfig/gfig-dialog.c:1306
-#: ../plug-ins/gimpressionist/general.c:139
+#: ../plug-ins/picmanressionist/general.c:139
 #: ../plug-ins/map-object/map-object-apply.c:252 ../plug-ins/twain/twain.c:567
 #: ../plug-ins/win-snap/winsnap.c:1156
 msgid "Background"
@@ -1040,8 +1040,8 @@ msgstr "Kargatu kanal-nahasgailuaren ezarpenak"
 #: ../plug-ins/common/file-xmc.c:667 ../plug-ins/common/file-xmc.c:852
 #: ../plug-ins/common/file-xwd.c:433 ../plug-ins/common/sphere-designer.c:2005
 #: ../plug-ins/file-bmp/bmp-read.c:153 ../plug-ins/file-faxg3/faxg3.c:232
-#: ../plug-ins/file-fits/fits.c:358 ../plug-ins/file-fli/fli-gimp.c:459
-#: ../plug-ins/file-fli/fli-gimp.c:496 ../plug-ins/file-ico/ico-load.c:651
+#: ../plug-ins/file-fits/fits.c:358 ../plug-ins/file-fli/fli-picman.c:459
+#: ../plug-ins/file-fli/fli-picman.c:496 ../plug-ins/file-ico/ico-load.c:651
 #: ../plug-ins/file-ico/ico-load.c:729 ../plug-ins/file-jpeg/jpeg-load.c:114
 #: ../plug-ins/file-jpeg/jpeg-load.c:886 ../plug-ins/file-psd/psd-load.c:130
 #: ../plug-ins/file-psd/psd-thumb-load.c:79
@@ -1050,8 +1050,8 @@ msgstr "Kargatu kanal-nahasgailuaren ezarpenak"
 #: ../plug-ins/flame/flame.c:411
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:1862
 #: ../plug-ins/fractal-explorer/fractal-explorer.c:928
-#: ../plug-ins/gfig/gfig.c:434 ../plug-ins/help/gimphelplocale.c:222
-#: ../plug-ins/help/gimphelplocale.c:238
+#: ../plug-ins/gfig/gfig.c:434 ../plug-ins/help/picmanhelplocale.c:222
+#: ../plug-ins/help/picmanhelplocale.c:238
 #: ../plug-ins/lighting/lighting-ui.c:1367
 #, c-format
 msgid "Could not open '%s' for reading: %s"
@@ -1080,7 +1080,7 @@ msgstr "Gorde kanal-nahastailea ezarpenak"
 #: ../plug-ins/common/file-xmc.c:1459 ../plug-ins/common/file-xwd.c:619
 #: ../plug-ins/common/sphere-designer.c:2116
 #: ../plug-ins/file-bmp/bmp-write.c:306 ../plug-ins/file-fits/fits.c:476
-#: ../plug-ins/file-fli/fli-gimp.c:750 ../plug-ins/file-ico/ico-save.c:1007
+#: ../plug-ins/file-fli/fli-picman.c:750 ../plug-ins/file-ico/ico-save.c:1007
 #: ../plug-ins/file-jpeg/jpeg-save.c:329 ../plug-ins/file-psd/psd-save.c:1655
 #: ../plug-ins/file-uri/uri-backend-libcurl.c:166
 #: ../plug-ins/file-xjt/xjt.c:1276 ../plug-ins/file-xjt/xjt.c:1715
@@ -1115,7 +1115,7 @@ msgid "Checkerboard"
 msgstr "Xake-taula"
 
 #: ../plug-ins/common/checkerboard.c:413 ../plug-ins/common/file-xmc.c:1166
-#: ../plug-ins/gimpressionist/sizemap.c:511
+#: ../plug-ins/picmanressionist/sizemap.c:511
 msgid "_Size:"
 msgstr "Ta_maina:"
 
@@ -1313,8 +1313,8 @@ msgstr "Ausazkoak hazitik (partekatuak)"
 
 #: ../plug-ins/common/cml-explorer.c:300 ../plug-ins/common/cml-explorer.c:308
 #: ../plug-ins/common/decompose.c:188
-#: ../plug-ins/gimpressionist/orientation.c:179
-#: ../plug-ins/gimpressionist/size.c:182
+#: ../plug-ins/picmanressionist/orientation.c:179
+#: ../plug-ins/picmanressionist/size.c:182
 msgid "Hue"
 msgstr "Ñabardura"
 
@@ -1325,8 +1325,8 @@ msgstr "Saturazioa"
 
 #: ../plug-ins/common/cml-explorer.c:302 ../plug-ins/common/cml-explorer.c:310
 #: ../plug-ins/common/decompose.c:190
-#: ../plug-ins/gimpressionist/orientation.c:155
-#: ../plug-ins/gimpressionist/size.c:158
+#: ../plug-ins/picmanressionist/orientation.c:155
+#: ../plug-ins/picmanressionist/size.c:158
 msgid "Value"
 msgstr "Balioa"
 
@@ -2242,8 +2242,8 @@ msgstr "Tolestu kurbaren arabera"
 #. Preview area, top of column
 #. preview
 #: ../plug-ins/common/curve-bend.c:1262
-#: ../plug-ins/gimpressionist/orientmap.c:591
-#: ../plug-ins/gimpressionist/sizemap.c:461
+#: ../plug-ins/picmanressionist/orientmap.c:591
+#: ../plug-ins/picmanressionist/sizemap.c:461
 #: ../plug-ins/print/print-page-layout.c:171
 msgid "Preview"
 msgstr "Aurrebista"
@@ -2830,7 +2830,7 @@ msgstr "1. _erradioa:"
 msgid "R_adius 2:"
 msgstr "2. err_adioa:"
 
-#: ../plug-ins/common/edge-dog.c:373 ../plug-ins/gimpressionist/paper.c:166
+#: ../plug-ins/common/edge-dog.c:373 ../plug-ins/picmanressionist/paper.c:166
 msgid "_Invert"
 msgstr "_Alderantzikatu"
 
@@ -3037,7 +3037,7 @@ msgstr "Kargatu KISS paleta"
 #: ../plug-ins/common/file-xbm.c:742 ../plug-ins/common/file-xmc.c:679
 #: ../plug-ins/common/file-xpm.c:352 ../plug-ins/common/file-xwd.c:524
 #: ../plug-ins/file-bmp/bmp-read.c:158 ../plug-ins/file-faxg3/faxg3.c:216
-#: ../plug-ins/file-fli/fli-gimp.c:501 ../plug-ins/file-ico/ico-load.c:644
+#: ../plug-ins/file-fli/fli-picman.c:501 ../plug-ins/file-ico/ico-load.c:644
 #: ../plug-ins/file-jpeg/jpeg-load.c:120 ../plug-ins/file-psd/psd-load.c:135
 #: ../plug-ins/file-sgi/sgi.c:330 ../plug-ins/file-xjt/xjt.c:3333
 #, c-format
@@ -3065,7 +3065,7 @@ msgstr "Kolore-sakonera (%d) ez da onartzen"
 #: ../plug-ins/common/file-xbm.c:1041 ../plug-ins/common/file-xmc.c:1464
 #: ../plug-ins/common/file-xpm.c:638 ../plug-ins/common/file-xwd.c:624
 #: ../plug-ins/file-bmp/bmp-write.c:317 ../plug-ins/file-fits/fits.c:481
-#: ../plug-ins/file-fli/fli-gimp.c:718 ../plug-ins/file-ico/ico-save.c:1001
+#: ../plug-ins/file-fli/fli-picman.c:718 ../plug-ins/file-ico/ico-save.c:1001
 #: ../plug-ins/file-jpeg/jpeg-save.c:286 ../plug-ins/file-psd/psd-save.c:1660
 #: ../plug-ins/file-sgi/sgi.c:577 ../plug-ins/file-xjt/xjt.c:1696
 #, c-format
@@ -3173,8 +3173,8 @@ msgid "Cannot operate on unknown image types."
 msgstr "Ezin izan da irudi-mota ezezagunekin lan egin"
 
 #: ../plug-ins/common/file-gbr.c:154 ../plug-ins/common/file-gbr.c:175
-msgid "GIMP brush"
-msgstr "GIMPen brotxa"
+msgid "PICMAN brush"
+msgstr "PICMANen brotxa"
 
 #: ../plug-ins/common/file-gbr.c:399 ../plug-ins/common/file-pat.c:418
 #, c-format
@@ -3188,8 +3188,8 @@ msgstr "Brotxa formatua ez da onartzen "
 
 #: ../plug-ins/common/file-gbr.c:447
 #, c-format
-msgid "Error in GIMP brush file '%s'"
-msgstr "Errorea GIMPen brotxa-fitxategian '%s'"
+msgid "Error in PICMAN brush file '%s'"
+msgstr "Errorea PICMANen brotxa-fitxategian '%s'"
 
 #: ../plug-ins/common/file-gbr.c:455
 #, c-format
@@ -3203,8 +3203,8 @@ msgid "Unnamed"
 msgstr "Izengabea"
 
 #: ../plug-ins/common/file-gbr.c:653
-msgid "GIMP brushes are either GRAYSCALE or RGBA"
-msgstr "GIMP brotxak gris-eskalakoak edo GBUA dira"
+msgid "PICMAN brushes are either GRAYSCALE or RGBA"
+msgstr "PICMAN brotxak gris-eskalakoak edo GBUA dira"
 
 #: ../plug-ins/common/file-gbr.c:770
 msgid "Brush"
@@ -3216,7 +3216,7 @@ msgid "Spacing:"
 msgstr "Tartea:"
 
 #: ../plug-ins/common/file-gbr.c:795 ../plug-ins/common/file-gih.c:893
-#: ../plug-ins/common/file-pat.c:568 ../plug-ins/gimpressionist/presets.c:666
+#: ../plug-ins/common/file-pat.c:568 ../plug-ins/picmanressionist/presets.c:666
 msgid "Description:"
 msgstr "Azalpena:"
 
@@ -3356,16 +3356,16 @@ msgid "The default comment is limited to %d characters."
 msgstr "Iruzkin lehenetsiak gehienez %d karaktere izan ditzake."
 
 #: ../plug-ins/common/file-gih.c:209 ../plug-ins/common/file-gih.c:230
-msgid "GIMP brush (animated)"
-msgstr "GIMPeko brotxa (animatua)"
+msgid "PICMAN brush (animated)"
+msgstr "PICMANeko brotxa (animatua)"
 
 #: ../plug-ins/common/file-gih.c:485
-msgid "Error in GIMP brush pipe file."
-msgstr "Errorea GIMPeko brotxa animatuan."
+msgid "Error in PICMAN brush pipe file."
+msgstr "Errorea PICMANeko brotxa animatuan."
 
 #: ../plug-ins/common/file-gih.c:551
-msgid "GIMP brush file appears to be corrupted."
-msgstr "GIMPeko brotxa-fitxategia hondatuta dagoela ematen du."
+msgid "PICMAN brush file appears to be corrupted."
+msgstr "PICMANeko brotxa-fitxategia hondatuta dagoela ematen du."
 
 #: ../plug-ins/common/file-gih.c:701
 msgid "Couldn't load one brush in the pipe, giving up."
@@ -3748,8 +3748,8 @@ msgid "MNG animation"
 msgstr "MNG animazioa"
 
 #: ../plug-ins/common/file-pat.c:123 ../plug-ins/common/file-pat.c:145
-msgid "GIMP pattern"
-msgstr "GIMPen eredua"
+msgid "PICMAN pattern"
+msgstr "PICMANen eredua"
 
 #: ../plug-ins/common/file-pat.c:378
 #, c-format
@@ -3945,16 +3945,16 @@ msgid "Invalid X resolution."
 msgstr "X bereizmen baliogabea."
 
 #: ../plug-ins/common/file-pnm.c:555
-msgid "Image width is larger than GIMP can handle."
-msgstr "Irudiaren zabalera handiegia GIMPek kudeatzeko."
+msgid "Image width is larger than PICMAN can handle."
+msgstr "Irudiaren zabalera handiegia PICMANek kudeatzeko."
 
 #: ../plug-ins/common/file-pnm.c:562
 msgid "Invalid Y resolution."
 msgstr "Y bereizmen baliogabea."
 
 #: ../plug-ins/common/file-pnm.c:564
-msgid "Image height is larger than GIMP can handle."
-msgstr "Irudiaren altuera handiegia GIMPek kudeatzeko."
+msgid "Image height is larger than PICMAN can handle."
+msgstr "Irudiaren altuera handiegia PICMANek kudeatzeko."
 
 #: ../plug-ins/common/file-pnm.c:574
 msgid "Unsupported maximum value."
@@ -4007,12 +4007,12 @@ msgstr "Alfa kanalak dituzten irudiak ezin dira PostScript gisa gorde"
 #, c-format
 msgid ""
 "Error starting Ghostscript. Make sure that Ghostscript is installed and - if "
-"necessary - use the environment variable GS_PROG to tell GIMP about its "
+"necessary - use the environment variable GS_PROG to tell PICMAN about its "
 "location.\n"
 "(%s)"
 msgstr ""
 "Errorea Ghostscript abiaraztean. Ziurtatu Ghostscript instalatuta dagoela "
-"eta, beharrezkoa bada, erabili inguruneko GS_PROG aldagaia GIMP aplikazioari "
+"eta, beharrezkoa bada, erabili inguruneko GS_PROG aldagaia PICMAN aplikazioari "
 "bere kokalekua zein den adierazteko.\n"
 "(%s)"
 
@@ -4077,8 +4077,8 @@ msgid "B/W"
 msgstr "Z/B"
 
 #: ../plug-ins/common/file-ps.c:3238 ../plug-ins/common/file-xpm.c:479
-#: ../plug-ins/gimpressionist/color.c:65
-#: ../plug-ins/gimpressionist/general.c:169
+#: ../plug-ins/picmanressionist/color.c:65
+#: ../plug-ins/picmanressionist/general.c:169
 #: ../plug-ins/imagemap/imap_menu.c:212
 msgid "Color"
 msgstr "Kolorea"
@@ -4306,10 +4306,10 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image width is larger than GIMP can handle"
+"Image width is larger than PICMAN can handle"
 msgstr ""
 "'%s':\n"
-"Irudiaren zabalera handiegia da GIMPek kudeatzeko"
+"Irudiaren zabalera handiegia da PICMANek kudeatzeko"
 
 #: ../plug-ins/common/file-sunras.c:473 ../plug-ins/common/file-xbm.c:841
 #: ../plug-ins/common/file-xwd.c:508
@@ -4326,10 +4326,10 @@ msgstr ""
 #, c-format
 msgid ""
 "'%s':\n"
-"Image height is larger than GIMP can handle"
+"Image height is larger than PICMAN can handle"
 msgstr ""
 "'%s':\n"
-"Irudiaren altuera handiegia da GIMPek kudeatzeko"
+"Irudiaren altuera handiegia da PICMANek kudeatzeko"
 
 #: ../plug-ins/common/file-sunras.c:520
 msgid "This image depth is not supported"
@@ -4434,9 +4434,9 @@ msgstr "Inportatu _bideak"
 
 #: ../plug-ins/common/file-svg.c:963
 msgid ""
-"Import path elements of the SVG so they can be used with the GIMP path tool"
+"Import path elements of the SVG so they can be used with the PICMAN path tool"
 msgstr ""
-"Inportatu SVG-ko bide-elementuak, GIMPeko bide-tresnarekin erabil ahal "
+"Inportatu SVG-ko bide-elementuak, PICMANeko bide-tresnarekin erabil ahal "
 "izateko."
 
 #: ../plug-ins/common/file-svg.c:971
@@ -4511,12 +4511,12 @@ msgstr "TIFF kanala"
 #: ../plug-ins/file-psd/psd-load.c:333
 msgid ""
 "Warning:\n"
-"The image you are loading has 16 bits per channel. GIMP can only handle 8 "
+"The image you are loading has 16 bits per channel. PICMAN can only handle 8 "
 "bit, so it will be converted for you. Information will be lost because of "
 "this conversion."
 msgstr ""
 "Oharra:\n"
-"Kargatzen ari zaren irudiak 16 bit ditu kanaleko. GIMPek 8 bit bakarrik "
+"Kargatzen ari zaren irudiak 16 bit ditu kanaleko. PICMANek 8 bit bakarrik "
 "kudea ditzakeenez, bihurtu egingo du. Bihurketa horren ondorioz, informazioa "
 "galduko da."
 
@@ -7294,7 +7294,7 @@ msgid "Use the background color"
 msgstr "Erabili atzeko planoaren kolorea"
 
 #: ../plug-ins/common/sphere-designer.c:293
-#: ../plug-ins/gimpressionist/general.c:165
+#: ../plug-ins/picmanressionist/general.c:165
 msgid "Solid"
 msgstr "Lisoa"
 
@@ -7390,7 +7390,7 @@ msgstr "Kolorea hautatzeko elkarrizketa-koadroa"
 
 #. Scale
 #: ../plug-ins/common/sphere-designer.c:2756
-#: ../plug-ins/gimpressionist/paper.c:193
+#: ../plug-ins/picmanressionist/paper.c:193
 #: ../plug-ins/ifs-compose/ifs-compose.c:553
 msgid "Scale:"
 msgstr "Eskala:"
@@ -7684,10 +7684,10 @@ msgstr "Gordeta"
 
 #: ../plug-ins/common/unit-editor.c:94
 msgid ""
-"A unit definition will only be saved before GIMP exits if this column is "
+"A unit definition will only be saved before PICMAN exits if this column is "
 "checked."
 msgstr ""
-"GIMPetik irten aurretik unitate-definizio bat gordetzeko, beharrezkoa da "
+"PICMANetik irten aurretik unitate-definizio bat gordetzeko, beharrezkoa da "
 "zutabe hau hautatuta egotea."
 
 #: ../plug-ins/common/unit-editor.c:96
@@ -7696,9 +7696,9 @@ msgstr "IDa"
 
 #: ../plug-ins/common/unit-editor.c:96
 msgid ""
-"This string will be used to identify a unit in GIMP's configuration files."
+"This string will be used to identify a unit in PICMAN's configuration files."
 msgstr ""
-"Kate hau GIMPen konfigurazio-fitxategietan unitate bat identifikatzeko "
+"Kate hau PICMANen konfigurazio-fitxategietan unitate bat identifikatzeko "
 "erabiliko da."
 
 #: ../plug-ins/common/unit-editor.c:98
@@ -7769,8 +7769,8 @@ msgstr ""
 "Sortu unitate berria unean hautatutako unitatea txantiloi gisa erabiliz"
 
 #: ../plug-ins/common/unit-editor.c:145
-msgid "Create or alter units used in GIMP"
-msgstr "Sortu edo eraldatu GIMPen erabilitako unitateak"
+msgid "Create or alter units used in PICMAN"
+msgstr "Sortu edo eraldatu PICMANen erabilitako unitateak"
 
 #: ../plug-ins/common/unit-editor.c:150
 msgid "U_nits"
@@ -8462,7 +8462,7 @@ msgstr "_Biak"
 msgid "Higher values restrict the effect to fewer areas of the image"
 msgstr "Balio handiek efektua irudiaren eremu gutxiagotara murrizten dute"
 
-#: ../plug-ins/common/wind.c:1030 ../plug-ins/gimpressionist/orientmap.c:693
+#: ../plug-ins/common/wind.c:1030 ../plug-ins/picmanressionist/orientmap.c:693
 msgid "_Strength:"
 msgstr "_Indarra:"
 
@@ -8535,12 +8535,12 @@ msgstr "_Ez idatzi kolore-espazioaren informazioa"
 #: ../plug-ins/file-bmp/bmp-write.c:885
 msgid ""
 "Some applications can not read BMP images that include color space "
-"information. GIMP writes color space information by default. Enabling this "
-"option will cause GIMP to not write color space information to the file."
+"information. PICMAN writes color space information by default. Enabling this "
+"option will cause PICMAN to not write color space information to the file."
 msgstr ""
 "Aplikazio batzuek ezin dituzte kolore-espazioaren informazioa daukaten BPM "
-"irudiak irakurri. Lehenetsi gisa, GIMPek kolore-espazioaren informazioa "
-"idazten du. Aukera hau gaitzean GIMPek ez du kolore-espazioaren "
+"irudiak irakurri. Lehenetsi gisa, PICMANek kolore-espazioaren informazioa "
+"idazten du. Aukera hau gaitzean PICMANek ez du kolore-espazioaren "
 "informaziorik idatziko fitxategian."
 
 #. Advanced Options
@@ -8609,34 +8609,34 @@ msgstr "DATAMIN/DATAMAXen arabera"
 msgid "Image Composing"
 msgstr "Irudi-konposizioa"
 
-#: ../plug-ins/file-fli/fli-gimp.c:166 ../plug-ins/file-fli/fli-gimp.c:186
+#: ../plug-ins/file-fli/fli-picman.c:166 ../plug-ins/file-fli/fli-picman.c:186
 msgid "AutoDesk FLIC animation"
 msgstr "AutoDesk FLIC animazioa"
 
-#: ../plug-ins/file-fli/fli-gimp.c:561
+#: ../plug-ins/file-fli/fli-picman.c:561
 #, c-format
 msgid "Frame (%i)"
 msgstr "Markoa (%i)"
 
-#: ../plug-ins/file-fli/fli-gimp.c:714
+#: ../plug-ins/file-fli/fli-picman.c:714
 msgid "Sorry, I can save only INDEXED and GRAY images."
 msgstr "Zoritxarrez, irudi INDEXATUAK eta GRISAK bakarrik gorde ditzaket."
 
-#: ../plug-ins/file-fli/fli-gimp.c:847
+#: ../plug-ins/file-fli/fli-picman.c:847
 msgid "GFLI 1.3 - Load framestack"
 msgstr "GFLI 1.3 - Kargatu marko-piloa"
 
-#: ../plug-ins/file-fli/fli-gimp.c:876 ../plug-ins/file-fli/fli-gimp.c:932
+#: ../plug-ins/file-fli/fli-picman.c:876 ../plug-ins/file-fli/fli-picman.c:932
 msgctxt "frame-range"
 msgid "From:"
 msgstr "Nondik:"
 
-#: ../plug-ins/file-fli/fli-gimp.c:885 ../plug-ins/file-fli/fli-gimp.c:941
+#: ../plug-ins/file-fli/fli-picman.c:885 ../plug-ins/file-fli/fli-picman.c:941
 msgctxt "frame-range"
 msgid "To:"
 msgstr "Nora:"
 
-#: ../plug-ins/file-fli/fli-gimp.c:915
+#: ../plug-ins/file-fli/fli-picman.c:915
 msgid "GFLI 1.3"
 msgstr "GFLI 1.3"
 
@@ -8709,8 +8709,8 @@ msgid "According to the EXIF data, this image is rotated."
 msgstr "EXIF datuek diotenez irudia biratuta dago."
 
 #: ../plug-ins/file-jpeg/jpeg-exif.c:430
-msgid "Would you like GIMP to rotate it into the standard orientation?"
-msgstr "Nahi duzu GIMPek orientazio estandarrera biratzea?"
+msgid "Would you like PICMAN to rotate it into the standard orientation?"
+msgstr "Nahi duzu PICMANek orientazio estandarrera biratzea?"
 
 #: ../plug-ins/file-jpeg/jpeg-load.c:244
 msgid "JPEG preview"
@@ -8959,8 +8959,8 @@ msgstr ""
 "ez dute onartzen, modu normala erabiltzen ari da horren ordez."
 
 #: ../plug-ins/file-psd/psd-save.c:634
-msgid "Error: Can't convert GIMP base imagetype to PSD mode"
-msgstr "Errorea: ezin da GIMP oinarriko irudi-mota PSD modura bihurtu"
+msgid "Error: Can't convert PICMAN base imagetype to PSD mode"
+msgstr "Errorea: ezin da PICMAN oinarriko irudi-mota PSD modura bihurtu"
 
 #: ../plug-ins/file-psd/psd-save.c:1625
 #, c-format
@@ -9121,8 +9121,8 @@ msgid "URI"
 msgstr "URIa"
 
 #: ../plug-ins/file-xjt/xjt.c:485 ../plug-ins/file-xjt/xjt.c:503
-msgid "GIMP compressed XJT image"
-msgstr "GIMPeko XJT irudi-konprimatua"
+msgid "PICMAN compressed XJT image"
+msgstr "PICMANeko XJT irudi-konprimatua"
 
 #: ../plug-ins/file-xjt/xjt.c:733
 #, c-format
@@ -9234,8 +9234,8 @@ msgstr "_Ausaz nahastu"
 msgid "Same"
 msgstr "Bera"
 
-#: ../plug-ins/flame/flame.c:746 ../plug-ins/gimpressionist/orientation.c:163
-#: ../plug-ins/gimpressionist/size.c:166
+#: ../plug-ins/flame/flame.c:746 ../plug-ins/picmanressionist/orientation.c:163
+#: ../plug-ins/picmanressionist/size.c:166
 msgid "Random"
 msgstr "Ausazkoa"
 
@@ -9384,16 +9384,16 @@ msgid "C_amera"
 msgstr "K_amera"
 
 #: ../plug-ins/fractal-explorer/fractal-explorer-dialogs.c:546
-#: ../plug-ins/gfig/gfig-dialog.c:277 ../plug-ins/gimpressionist/utils.c:142
+#: ../plug-ins/gfig/gfig-dialog.c:277 ../plug-ins/picmanressionist/utils.c:142
 #: ../plug-ins/gradient-flare/gradient-flare.c:881
 #, c-format
 msgid ""
-"No %s in gimprc:\n"
+"No %s in picmanrc:\n"
 "You need to add an entry like\n"
 "(%s \"%s\")\n"
 "to your %s file."
 msgstr ""
-"'%s' ez dago gimprc fitxategian:\n"
+"'%s' ez dago picmanrc fitxategian:\n"
 "Honelako sarrera bat gehitu behar diozu\n"
 "(%s \"%s\")\n"
 "zure %s fitxategiari."
@@ -9924,7 +9924,7 @@ msgid "Max undo:"
 msgstr "Geh desegitea:"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1305
-#: ../plug-ins/gimpressionist/general.c:184
+#: ../plug-ins/picmanressionist/general.c:184
 msgid "Transparent"
 msgstr "Gardena"
 
@@ -10020,7 +10020,7 @@ msgid "Left"
 msgstr "Ezkerra"
 
 #: ../plug-ins/gfig/gfig-dialog.c:1738
-#: ../plug-ins/gimpressionist/orientation.c:147
+#: ../plug-ins/picmanressionist/orientation.c:147
 msgid "Orientation:"
 msgstr "Orientazioa:"
 
@@ -10082,299 +10082,299 @@ msgid "Error trying to open temporary file '%s' for parasite loading: %s"
 msgstr ""
 "Errorea '%s' aldi baterako fitxategia irekitzean parasitoa kargatzeko: %s"
 
-#: ../plug-ins/gimpressionist/brush.c:246
+#: ../plug-ins/picmanressionist/brush.c:246
 msgid "Can only save drawables!"
 msgstr "Marrazgaiak bakarrik gorde ditzaket!"
 
-#: ../plug-ins/gimpressionist/brush.c:251
+#: ../plug-ins/picmanressionist/brush.c:251
 msgid "Save Brush"
 msgstr "Gorde brotxa"
 
-#: ../plug-ins/gimpressionist/brush.c:506
+#: ../plug-ins/picmanressionist/brush.c:506
 msgid "_Brush"
 msgstr "_Brotxa"
 
-#: ../plug-ins/gimpressionist/brush.c:543
+#: ../plug-ins/picmanressionist/brush.c:543
 msgid "Gamma:"
 msgstr "Gamma:"
 
-#: ../plug-ins/gimpressionist/brush.c:561
+#: ../plug-ins/picmanressionist/brush.c:561
 msgid "Changes the gamma (brightness) of the selected brush"
 msgstr "Hautatutako brotxaren gamma (distira) aldatzen du"
 
-#: ../plug-ins/gimpressionist/brush.c:569
+#: ../plug-ins/picmanressionist/brush.c:569
 msgid "Select:"
 msgstr "Hautatu:"
 
-#: ../plug-ins/gimpressionist/brush.c:598
+#: ../plug-ins/picmanressionist/brush.c:598
 msgid "Aspect ratio:"
 msgstr "Aspektu-erlazioa:"
 
-#: ../plug-ins/gimpressionist/brush.c:602
+#: ../plug-ins/picmanressionist/brush.c:602
 msgid "Specifies the aspect ratio of the brush"
 msgstr "Brotxaren aspektu-erlazioa zehazten du"
 
-#: ../plug-ins/gimpressionist/brush.c:611
-#: ../plug-ins/gimpressionist/paper.c:205
+#: ../plug-ins/picmanressionist/brush.c:611
+#: ../plug-ins/picmanressionist/paper.c:205
 msgid "Relief:"
 msgstr "Erliebea:"
 
-#: ../plug-ins/gimpressionist/brush.c:615
-#: ../plug-ins/gimpressionist/paper.c:209
+#: ../plug-ins/picmanressionist/brush.c:615
+#: ../plug-ins/picmanressionist/paper.c:209
 msgid "Specifies the amount of embossing to apply to the image (in percent)"
 msgstr "Irudiari aplikatu beharreko erliebea (ehunekotan)"
 
-#: ../plug-ins/gimpressionist/color.c:59
+#: ../plug-ins/picmanressionist/color.c:59
 msgid "Co_lor"
 msgstr "Ko_lorea"
 
-#: ../plug-ins/gimpressionist/color.c:69
+#: ../plug-ins/picmanressionist/color.c:69
 msgid "A_verage under brush"
 msgstr "Batezbeste_koa brotxaren azpian"
 
-#: ../plug-ins/gimpressionist/color.c:71
+#: ../plug-ins/picmanressionist/color.c:71
 msgid "C_enter of brush"
 msgstr "B_rotxaren erdian"
 
-#: ../plug-ins/gimpressionist/color.c:78
+#: ../plug-ins/picmanressionist/color.c:78
 msgid "Color is computed from the average of all pixels under the brush"
 msgstr ""
 "Kolorea brotxaren azpiko pixel guztien batez bestekoarekin kalkulatzen da"
 
-#: ../plug-ins/gimpressionist/color.c:82
+#: ../plug-ins/picmanressionist/color.c:82
 msgid "Samples the color from the pixel in the center of the brush"
 msgstr "Kolorearen lagina brotxaren erdiko pixeletik hartzen du"
 
-#: ../plug-ins/gimpressionist/color.c:93
+#: ../plug-ins/picmanressionist/color.c:93
 msgid "Color _noise:"
 msgstr "Kolore-_zarata:"
 
-#: ../plug-ins/gimpressionist/color.c:97
+#: ../plug-ins/picmanressionist/color.c:97
 msgid "Adds random noise to the color"
 msgstr "Koloreari ausazko zarata eransten dio"
 
-#: ../plug-ins/gimpressionist/general.c:133
+#: ../plug-ins/picmanressionist/general.c:133
 #: ../plug-ins/gradient-flare/gradient-flare.c:3530
 msgid "_General"
 msgstr "_Orokorra"
 
-#: ../plug-ins/gimpressionist/general.c:149
+#: ../plug-ins/picmanressionist/general.c:149
 msgid "Keep original"
 msgstr "Mantendu jatorrizkoa"
 
-#: ../plug-ins/gimpressionist/general.c:150
+#: ../plug-ins/picmanressionist/general.c:150
 msgid "Preserve the original image as a background"
 msgstr "Mantendu jatorrizko irudia atzeko plano gisa"
 
-#: ../plug-ins/gimpressionist/general.c:155
+#: ../plug-ins/picmanressionist/general.c:155
 msgid "From paper"
 msgstr "Paperetik"
 
-#: ../plug-ins/gimpressionist/general.c:156
+#: ../plug-ins/picmanressionist/general.c:156
 msgid "Copy the texture of the selected paper as a background"
 msgstr "Kopiatu hautatutako paperaren testura atzeko plano gisa"
 
-#: ../plug-ins/gimpressionist/general.c:166
+#: ../plug-ins/picmanressionist/general.c:166
 msgid "Solid colored background"
 msgstr "Kolore lisoko atzeko planoa"
 
-#: ../plug-ins/gimpressionist/general.c:185
+#: ../plug-ins/picmanressionist/general.c:185
 msgid "Use a transparent background; Only the strokes painted will be visible"
 msgstr ""
 "Erabili atzeko plano gardena; pintatutako trazuak bakarrik ikusiko dira"
 
-#: ../plug-ins/gimpressionist/general.c:202
+#: ../plug-ins/picmanressionist/general.c:202
 msgid "Paint edges"
 msgstr "Margotu ertzak"
 
-#: ../plug-ins/gimpressionist/general.c:207
+#: ../plug-ins/picmanressionist/general.c:207
 msgid "Selects if to place strokes all the way out to the edges of the image"
 msgstr "Hautatu trazuak irudiaren ertz guztietan zehar jarriko diren"
 
 #. Tileable checkbox
-#: ../plug-ins/gimpressionist/general.c:212 ../plug-ins/maze/maze-dialog.c:268
+#: ../plug-ins/picmanressionist/general.c:212 ../plug-ins/maze/maze-dialog.c:268
 msgid "Tileable"
 msgstr "Mosaikoan jar daiteke"
 
-#: ../plug-ins/gimpressionist/general.c:216
+#: ../plug-ins/picmanressionist/general.c:216
 msgid "Selects if the resulting image should be seamlessly tileable"
 msgstr ""
 "Hautatu lortzen den irudia hutsunerik utzi gabe mosaiko bihur daitekeen ala "
 "ez"
 
-#: ../plug-ins/gimpressionist/general.c:221
+#: ../plug-ins/picmanressionist/general.c:221
 msgid "Drop shadow"
 msgstr "Jaregin itzala"
 
-#: ../plug-ins/gimpressionist/general.c:226
+#: ../plug-ins/picmanressionist/general.c:226
 msgid "Adds a shadow effect to each brush stroke"
 msgstr "Brotxaren trazu bakoitzari itzalaren efektua eransten dio"
 
-#: ../plug-ins/gimpressionist/general.c:239
+#: ../plug-ins/picmanressionist/general.c:239
 msgid "Edge darken:"
 msgstr "Ilundu ertzak:"
 
-#: ../plug-ins/gimpressionist/general.c:243
+#: ../plug-ins/picmanressionist/general.c:243
 msgid "How much to \"darken\" the edges of each brush stroke"
 msgstr "Brotxaren trazu bakoitzaren ertzak zenbat \"ilundu\" behar diren"
 
-#: ../plug-ins/gimpressionist/general.c:248
+#: ../plug-ins/picmanressionist/general.c:248
 msgid "Shadow darken:"
 msgstr "Ilundu itzala:"
 
-#: ../plug-ins/gimpressionist/general.c:252
+#: ../plug-ins/picmanressionist/general.c:252
 msgid "How much to \"darken\" the drop shadow"
 msgstr "Itzala zenbat \"ilundu\" behar den"
 
-#: ../plug-ins/gimpressionist/general.c:257
+#: ../plug-ins/picmanressionist/general.c:257
 msgid "Shadow depth:"
 msgstr "Itzalaren sakonera:"
 
-#: ../plug-ins/gimpressionist/general.c:261
+#: ../plug-ins/picmanressionist/general.c:261
 msgid ""
 "The depth of the drop shadow, i.e. how far apart from the object it should be"
 msgstr ""
 "Itzalaren sakonera, hau da, objektutik zein distantziatara egon behar duen"
 
-#: ../plug-ins/gimpressionist/general.c:266
+#: ../plug-ins/picmanressionist/general.c:266
 msgid "Shadow blur:"
 msgstr "Lausotu itzala:"
 
-#: ../plug-ins/gimpressionist/general.c:270
+#: ../plug-ins/picmanressionist/general.c:270
 msgid "How much to blur the drop shadow"
 msgstr "Itzala zenbat \"lausotu\" behar den"
 
-#: ../plug-ins/gimpressionist/general.c:275
+#: ../plug-ins/picmanressionist/general.c:275
 msgid "Deviation threshold:"
 msgstr "Desbideraketaren muga:"
 
-#: ../plug-ins/gimpressionist/general.c:279
+#: ../plug-ins/picmanressionist/general.c:279
 msgid "A bailout-value for adaptive selections"
 msgstr "Hautapen moldakorretarako segurtasun-balioa"
 
-#: ../plug-ins/gimpressionist/gimp.c:89
+#: ../plug-ins/picmanressionist/picman.c:89
 msgid "Performs various artistic operations"
 msgstr "Egin eragiketa artistiko batzuk"
 
-#: ../plug-ins/gimpressionist/gimp.c:94
-msgid "_GIMPressionist..."
-msgstr "_GIMPresionista..."
+#: ../plug-ins/picmanressionist/picman.c:94
+msgid "_PICMANressionist..."
+msgstr "_PICMANresionista..."
 
-#: ../plug-ins/gimpressionist/gimp.c:164
+#: ../plug-ins/picmanressionist/picman.c:164
 msgid "The selection does not intersect the active layer or mask."
 msgstr "Hautapenak ez du geruza edo maskara aktiborik gurutzatzen."
 
-#: ../plug-ins/gimpressionist/gimp.c:391
+#: ../plug-ins/picmanressionist/picman.c:391
 msgid "Painting"
 msgstr "Margotzen"
 
-#: ../plug-ins/gimpressionist/gimpressionist.c:138
-msgid "GIMPressionist"
-msgstr "GIMPresionista"
+#: ../plug-ins/picmanressionist/picmanressionist.c:138
+msgid "PICMANressionist"
+msgstr "PICMANresionista"
 
-#: ../plug-ins/gimpressionist/orientation.c:91
+#: ../plug-ins/picmanressionist/orientation.c:91
 msgid "Or_ientation"
 msgstr "Or_ientazioa"
 
-#: ../plug-ins/gimpressionist/orientation.c:105
+#: ../plug-ins/picmanressionist/orientation.c:105
 msgid "Directions:"
 msgstr "Noranzkoak:"
 
-#: ../plug-ins/gimpressionist/orientation.c:109
+#: ../plug-ins/picmanressionist/orientation.c:109
 msgid "The number of directions (i.e. brushes) to use"
 msgstr "Erabili beharreko noranzko-kopurua (hau da, brotxak)"
 
-#: ../plug-ins/gimpressionist/orientation.c:117
+#: ../plug-ins/picmanressionist/orientation.c:117
 msgid "Start angle:"
 msgstr "Hasierako angelua:"
 
-#: ../plug-ins/gimpressionist/orientation.c:121
+#: ../plug-ins/picmanressionist/orientation.c:121
 msgid "The starting angle of the first brush to create"
 msgstr "Sortu beharreko lehen brotxaren angelua"
 
-#: ../plug-ins/gimpressionist/orientation.c:129
+#: ../plug-ins/picmanressionist/orientation.c:129
 msgid "Angle span:"
 msgstr "Angelu arteko bitartea:"
 
-#: ../plug-ins/gimpressionist/orientation.c:133
+#: ../plug-ins/picmanressionist/orientation.c:133
 msgid "The angle span of the first brush to create"
 msgstr "Sortu beharreko lehen brotxaren angelua"
 
-#: ../plug-ins/gimpressionist/orientation.c:156
+#: ../plug-ins/picmanressionist/orientation.c:156
 msgid ""
 "Let the value (brightness) of the region determine the direction of the "
 "stroke"
 msgstr "Eskualdearen balioak (distirak) zehazten du trazuaren noranzkoa"
 
-#: ../plug-ins/gimpressionist/orientation.c:159
-#: ../plug-ins/gimpressionist/size.c:162
+#: ../plug-ins/picmanressionist/orientation.c:159
+#: ../plug-ins/picmanressionist/size.c:162
 msgid "Radius"
 msgstr "Erradioa"
 
-#: ../plug-ins/gimpressionist/orientation.c:160
+#: ../plug-ins/picmanressionist/orientation.c:160
 msgid ""
 "The distance from the center of the image determines the direction of the "
 "stroke"
 msgstr "Irudiaren erdira dagoen distantziak trazuaren noranzkoa zehazten du"
 
-#: ../plug-ins/gimpressionist/orientation.c:164
+#: ../plug-ins/picmanressionist/orientation.c:164
 msgid "Selects a random direction of each stroke"
 msgstr "Trazu bakoitzaren ausazko noranzkoa hautatzen du"
 
-#: ../plug-ins/gimpressionist/orientation.c:167
-#: ../plug-ins/gimpressionist/size.c:170
+#: ../plug-ins/picmanressionist/orientation.c:167
+#: ../plug-ins/picmanressionist/size.c:170
 msgid "Radial"
 msgstr "Erradiala"
 
-#: ../plug-ins/gimpressionist/orientation.c:168
+#: ../plug-ins/picmanressionist/orientation.c:168
 msgid "Let the direction from the center determine the direction of the stroke"
 msgstr "Erditiko noranzkoak trazuaren noranzkoa zehazten du"
 
-#: ../plug-ins/gimpressionist/orientation.c:175
-#: ../plug-ins/gimpressionist/size.c:178
+#: ../plug-ins/picmanressionist/orientation.c:175
+#: ../plug-ins/picmanressionist/size.c:178
 msgid "Flowing"
 msgstr "Fluxua"
 
-#: ../plug-ins/gimpressionist/orientation.c:176
-#: ../plug-ins/gimpressionist/size.c:179
+#: ../plug-ins/picmanressionist/orientation.c:176
+#: ../plug-ins/picmanressionist/size.c:179
 msgid "The strokes follow a \"flowing\" pattern"
 msgstr "Trazuek \"fluxu-eredu\" bati jarraitzen diote"
 
-#: ../plug-ins/gimpressionist/orientation.c:180
+#: ../plug-ins/picmanressionist/orientation.c:180
 msgid "The hue of the region determines the direction of the stroke"
 msgstr "Eskualdearen ñabardurak trazuaren noranzkoa zehazten du"
 
-#: ../plug-ins/gimpressionist/orientation.c:183
-#: ../plug-ins/gimpressionist/size.c:186
+#: ../plug-ins/picmanressionist/orientation.c:183
+#: ../plug-ins/picmanressionist/size.c:186
 msgid "Adaptive"
 msgstr "Moldakorra"
 
-#: ../plug-ins/gimpressionist/orientation.c:184
+#: ../plug-ins/picmanressionist/orientation.c:184
 msgid "The direction that matches the original image the closest is selected"
 msgstr "Jatorrizko irudira gehien hurbiltzen den noranzkoa hautatuko da"
 
-#: ../plug-ins/gimpressionist/orientation.c:191
-#: ../plug-ins/gimpressionist/size.c:195
+#: ../plug-ins/picmanressionist/orientation.c:191
+#: ../plug-ins/picmanressionist/size.c:195
 msgid "Manual"
 msgstr "Eskuz"
 
-#: ../plug-ins/gimpressionist/orientation.c:192
+#: ../plug-ins/picmanressionist/orientation.c:192
 msgid "Manually specify the stroke orientation"
 msgstr "Trazuaren orientazioa eskuz hautatzen da"
 
-#: ../plug-ins/gimpressionist/orientation.c:203
+#: ../plug-ins/picmanressionist/orientation.c:203
 msgid "Opens up the Orientation Map Editor"
 msgstr "Orientazio-mapen editorea irekitzen du"
 
-#: ../plug-ins/gimpressionist/orientmap.c:525
+#: ../plug-ins/picmanressionist/orientmap.c:525
 msgid "Orientation Map Editor"
 msgstr "Orientazio-mapen editorea"
 
-#: ../plug-ins/gimpressionist/orientmap.c:554
+#: ../plug-ins/picmanressionist/orientmap.c:554
 msgid "Vectors"
 msgstr "Bektoreak"
 
-#: ../plug-ins/gimpressionist/orientmap.c:566
+#: ../plug-ins/picmanressionist/orientmap.c:566
 msgid ""
 "The vector-field. Left-click to move selected vector, Right-click to point "
 "it towards mouse, Middle-click to add a new vector."
@@ -10383,63 +10383,63 @@ msgstr ""
 "eskuineko botoian sagurantz seinalatzeko, eta erdiko botoian bektore berria "
 "gehitzeko."
 
-#: ../plug-ins/gimpressionist/orientmap.c:589
-#: ../plug-ins/gimpressionist/sizemap.c:459
+#: ../plug-ins/picmanressionist/orientmap.c:589
+#: ../plug-ins/picmanressionist/sizemap.c:459
 msgid "Adjust the preview's brightness"
 msgstr "Doitu aurrebistaren distira"
 
-#: ../plug-ins/gimpressionist/orientmap.c:611
+#: ../plug-ins/picmanressionist/orientmap.c:611
 msgid "Select previous vector"
 msgstr "Hautatu aurreko bektorea"
 
-#: ../plug-ins/gimpressionist/orientmap.c:617
+#: ../plug-ins/picmanressionist/orientmap.c:617
 msgid "Select next vector"
 msgstr "Hautatu hurrengo bektorea"
 
-#: ../plug-ins/gimpressionist/orientmap.c:619
-#: ../plug-ins/gimpressionist/sizemap.c:490
+#: ../plug-ins/picmanressionist/orientmap.c:619
+#: ../plug-ins/picmanressionist/sizemap.c:490
 msgid "A_dd"
 msgstr "_Gehitu"
 
-#: ../plug-ins/gimpressionist/orientmap.c:623
+#: ../plug-ins/picmanressionist/orientmap.c:623
 msgid "Add new vector"
 msgstr "Gehitu bektore berria"
 
-#: ../plug-ins/gimpressionist/orientmap.c:625
-#: ../plug-ins/gimpressionist/sizemap.c:497
+#: ../plug-ins/picmanressionist/orientmap.c:625
+#: ../plug-ins/picmanressionist/sizemap.c:497
 msgid "_Kill"
 msgstr "_Hil"
 
-#: ../plug-ins/gimpressionist/orientmap.c:629
+#: ../plug-ins/picmanressionist/orientmap.c:629
 msgid "Delete selected vector"
 msgstr "Ezabatu hautatutako bektorea"
 
-#: ../plug-ins/gimpressionist/orientmap.c:640
+#: ../plug-ins/picmanressionist/orientmap.c:640
 msgid "Type"
 msgstr "Mota"
 
-#: ../plug-ins/gimpressionist/orientmap.c:644
+#: ../plug-ins/picmanressionist/orientmap.c:644
 msgid "_Normal"
 msgstr "_Normala"
 
-#: ../plug-ins/gimpressionist/orientmap.c:645
+#: ../plug-ins/picmanressionist/orientmap.c:645
 msgid "Vorte_x"
 msgstr "Arra_npa"
 
-#: ../plug-ins/gimpressionist/orientmap.c:646
+#: ../plug-ins/picmanressionist/orientmap.c:646
 msgid "Vortex_2"
 msgstr "_2.arranpa"
 
-#: ../plug-ins/gimpressionist/orientmap.c:647
+#: ../plug-ins/picmanressionist/orientmap.c:647
 msgid "Vortex_3"
 msgstr "_3.arranpa"
 
-#: ../plug-ins/gimpressionist/orientmap.c:653
-#: ../plug-ins/gimpressionist/sizemap.c:542
+#: ../plug-ins/picmanressionist/orientmap.c:653
+#: ../plug-ins/picmanressionist/sizemap.c:542
 msgid "_Voronoi"
 msgstr "_Voronoi"
 
-#: ../plug-ins/gimpressionist/orientmap.c:661
+#: ../plug-ins/picmanressionist/orientmap.c:661
 msgid ""
 "Voronoi-mode makes only the vector closest to the given point have any "
 "influence"
@@ -10447,226 +10447,226 @@ msgstr ""
 "Voronoi moduan, adierazitako puntutik hurbilen dagoen bektoreak bakarrik du "
 "eragina"
 
-#: ../plug-ins/gimpressionist/orientmap.c:671
+#: ../plug-ins/picmanressionist/orientmap.c:671
 msgid "A_ngle:"
 msgstr "_Angelua:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:675
+#: ../plug-ins/picmanressionist/orientmap.c:675
 msgid "Change the angle of the selected vector"
 msgstr "Aldatu hautatutako bektorearen angelua"
 
-#: ../plug-ins/gimpressionist/orientmap.c:682
+#: ../plug-ins/picmanressionist/orientmap.c:682
 msgid "Ang_le offset:"
 msgstr "Ange_luaren desplazamendua:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:686
+#: ../plug-ins/picmanressionist/orientmap.c:686
 msgid "Offset all vectors with a given angle"
 msgstr "Desplazatu angelu jakina duten bektore guztiak"
 
-#: ../plug-ins/gimpressionist/orientmap.c:697
+#: ../plug-ins/picmanressionist/orientmap.c:697
 msgid "Change the strength of the selected vector"
 msgstr "Aldatu hautatutako bektorearen indarra"
 
-#: ../plug-ins/gimpressionist/orientmap.c:704
+#: ../plug-ins/picmanressionist/orientmap.c:704
 msgid "S_trength exp.:"
 msgstr "I_ndarraren berr.:"
 
-#: ../plug-ins/gimpressionist/orientmap.c:708
-#: ../plug-ins/gimpressionist/sizemap.c:537
+#: ../plug-ins/picmanressionist/orientmap.c:708
+#: ../plug-ins/picmanressionist/sizemap.c:537
 msgid "Change the exponent of the strength"
 msgstr "Aldatu indarraren berretzailea"
 
-#: ../plug-ins/gimpressionist/paper.c:137
+#: ../plug-ins/picmanressionist/paper.c:137
 msgid "P_aper"
 msgstr "P_apera"
 
-#: ../plug-ins/gimpressionist/paper.c:172
+#: ../plug-ins/picmanressionist/paper.c:172
 msgid "Inverts the Papers texture"
 msgstr "Paperen testura alderantzikatzen du"
 
-#: ../plug-ins/gimpressionist/paper.c:176
+#: ../plug-ins/picmanressionist/paper.c:176
 msgid "O_verlay"
 msgstr "_Gainjarri"
 
-#: ../plug-ins/gimpressionist/paper.c:181
+#: ../plug-ins/picmanressionist/paper.c:181
 msgid "Applies the paper as it is (without embossing it)"
 msgstr "Papera dagoen bezala aplikatzen du (erliebetu gabe)"
 
-#: ../plug-ins/gimpressionist/paper.c:197
+#: ../plug-ins/picmanressionist/paper.c:197
 msgid "Specifies the scale of the texture (in percent of original file)"
 msgstr "Testuraren eskala zehazten du (jatorrizko fitxategiaren ehunekoan)"
 
-#: ../plug-ins/gimpressionist/placement.c:66
+#: ../plug-ins/picmanressionist/placement.c:66
 msgid "Pl_acement"
 msgstr "_Kokalekua"
 
-#: ../plug-ins/gimpressionist/placement.c:72
+#: ../plug-ins/picmanressionist/placement.c:72
 msgid "Placement"
 msgstr "Kokalekua"
 
-#: ../plug-ins/gimpressionist/placement.c:76
+#: ../plug-ins/picmanressionist/placement.c:76
 msgid "Randomly"
 msgstr "Ausaz"
 
-#: ../plug-ins/gimpressionist/placement.c:80
+#: ../plug-ins/picmanressionist/placement.c:80
 msgid "Evenly distributed"
 msgstr "Uniformeki banatuta"
 
-#: ../plug-ins/gimpressionist/placement.c:88
+#: ../plug-ins/picmanressionist/placement.c:88
 msgid "Place strokes randomly around the image"
 msgstr "Trazuak ausaz kokatzen ditu irudiaren inguruan"
 
-#: ../plug-ins/gimpressionist/placement.c:92
+#: ../plug-ins/picmanressionist/placement.c:92
 msgid "The strokes are evenly distributed across the image"
 msgstr "Trazuak uniformeki banatzen dira irudian zehar"
 
-#: ../plug-ins/gimpressionist/placement.c:101
+#: ../plug-ins/picmanressionist/placement.c:101
 msgid "Centered"
 msgstr "Erdikoa"
 
-#: ../plug-ins/gimpressionist/placement.c:107
+#: ../plug-ins/picmanressionist/placement.c:107
 msgid "Focus the brush strokes around the center of the image"
 msgstr "Brotxaren trazuak irudiaren erdialdera orientatzen ditu"
 
-#: ../plug-ins/gimpressionist/placement.c:119
+#: ../plug-ins/picmanressionist/placement.c:119
 msgid "Stroke _density:"
 msgstr "Trazuaren _dentsitatea:"
 
-#: ../plug-ins/gimpressionist/placement.c:123
+#: ../plug-ins/picmanressionist/placement.c:123
 msgid "The relative density of the brush strokes"
 msgstr "Brotxaren trazuen dentsitate erlatiboa"
 
 #.
-#. * gimp_filename_to_utf8 () and g_strerror () return temporary strings
+#. * picman_filename_to_utf8 () and g_strerror () return temporary strings
 #. * that need not and should not be freed. So this call is OK.
 #. *
-#: ../plug-ins/gimpressionist/ppmtool.c:652
+#: ../plug-ins/picmanressionist/ppmtool.c:652
 #, c-format
 msgid "Failed to save PPM file '%s': %s"
 msgstr "Ezin izan da '%s' PPM fitxategian gorde: %s"
 
-#: ../plug-ins/gimpressionist/presets.c:639
+#: ../plug-ins/picmanressionist/presets.c:639
 msgid "Save Current"
 msgstr "Gorde unekoa"
 
-#: ../plug-ins/gimpressionist/presets.c:894
-msgid "Gimpressionist Defaults"
-msgstr "Gimpresionistaren lehenespenak"
+#: ../plug-ins/picmanressionist/presets.c:894
+msgid "Picmanressionist Defaults"
+msgstr "Picmanresionistaren lehenespenak"
 
-#: ../plug-ins/gimpressionist/presets.c:1015
+#: ../plug-ins/picmanressionist/presets.c:1015
 msgid "_Presets"
 msgstr "_Aurrezarpenak"
 
-#: ../plug-ins/gimpressionist/presets.c:1030
+#: ../plug-ins/picmanressionist/presets.c:1030
 msgid "Save Current..."
 msgstr "Gorde unekoa..."
 
-#: ../plug-ins/gimpressionist/presets.c:1038
+#: ../plug-ins/picmanressionist/presets.c:1038
 msgid "Save the current settings to the specified file"
 msgstr "Gorde zehaztutako fitxategiaren uneko ezarpenak "
 
-#: ../plug-ins/gimpressionist/presets.c:1066
+#: ../plug-ins/picmanressionist/presets.c:1066
 msgid "Reads the selected Preset into memory"
 msgstr "Hautatutako aurrezarpenak memoriatik irakurtzen ditu"
 
-#: ../plug-ins/gimpressionist/presets.c:1072
+#: ../plug-ins/picmanressionist/presets.c:1072
 msgid "Deletes the selected Preset"
 msgstr "Hautatutako aurrezarpenak ezabatzen ditu"
 
-#: ../plug-ins/gimpressionist/presets.c:1078
+#: ../plug-ins/picmanressionist/presets.c:1078
 msgid "Reread the folder of Presets"
 msgstr "Irakurri berriro aurrezarpenen karpeta"
 
-#: ../plug-ins/gimpressionist/preview.c:173
-#: ../plug-ins/gimpressionist/repaint.c:1183
+#: ../plug-ins/picmanressionist/preview.c:173
+#: ../plug-ins/picmanressionist/repaint.c:1183
 #: ../plug-ins/imagemap/imap_polygon.c:513
 #: ../plug-ins/lighting/lighting-ui.c:1082
 msgid "_Update"
 msgstr "_Eguneratu"
 
-#: ../plug-ins/gimpressionist/preview.c:179
+#: ../plug-ins/picmanressionist/preview.c:179
 msgid "Refresh the Preview window"
 msgstr "Freskatu aurrebistaren leihoa"
 
-#: ../plug-ins/gimpressionist/preview.c:187
+#: ../plug-ins/picmanressionist/preview.c:187
 msgid "Revert to the original image"
 msgstr "Leheneratu jatorrizko irudira"
 
-#: ../plug-ins/gimpressionist/size.c:94
+#: ../plug-ins/picmanressionist/size.c:94
 msgid "_Size"
 msgstr "Ta_maina"
 
-#: ../plug-ins/gimpressionist/size.c:108
+#: ../plug-ins/picmanressionist/size.c:108
 msgid "Size variants:"
 msgstr "Tamainaren aldaerak:"
 
-#: ../plug-ins/gimpressionist/size.c:112
+#: ../plug-ins/picmanressionist/size.c:112
 msgid "The number of sizes of brushes to use"
 msgstr "Erabili beharreko brotxen tamaina-kopurua"
 
-#: ../plug-ins/gimpressionist/size.c:120
+#: ../plug-ins/picmanressionist/size.c:120
 msgid "Minimum size:"
 msgstr "Gutxieneko tamaina:"
 
-#: ../plug-ins/gimpressionist/size.c:124
+#: ../plug-ins/picmanressionist/size.c:124
 msgid "The smallest brush to create"
 msgstr "Sortu beharreko brotxa txikiena"
 
-#: ../plug-ins/gimpressionist/size.c:132
+#: ../plug-ins/picmanressionist/size.c:132
 msgid "Maximum size:"
 msgstr "Gehienezko tamaina:"
 
-#: ../plug-ins/gimpressionist/size.c:136
+#: ../plug-ins/picmanressionist/size.c:136
 msgid "The largest brush to create"
 msgstr "Sortu beharreko brotxa handiena"
 
-#: ../plug-ins/gimpressionist/size.c:150
+#: ../plug-ins/picmanressionist/size.c:150
 msgid "Size depends on:"
 msgstr "Tamainaren mendekotasunak:"
 
-#: ../plug-ins/gimpressionist/size.c:159
+#: ../plug-ins/picmanressionist/size.c:159
 msgid ""
 "Let the value (brightness) of the region determine the size of the stroke"
 msgstr "Eskualdearen balioak (distirak) zehazten du trazuaren tamaina"
 
-#: ../plug-ins/gimpressionist/size.c:163
+#: ../plug-ins/picmanressionist/size.c:163
 msgid ""
 "The distance from the center of the image determines the size of the stroke"
 msgstr "Irudiaren erdira dagoen distantziak trazuaren tamaina zehazten du"
 
-#: ../plug-ins/gimpressionist/size.c:167
+#: ../plug-ins/picmanressionist/size.c:167
 msgid "Selects a random size for each stroke"
 msgstr "Trazu bakoitzaren ausazko tamaina hautatzen du"
 
-#: ../plug-ins/gimpressionist/size.c:171
+#: ../plug-ins/picmanressionist/size.c:171
 msgid "Let the direction from the center determine the size of the stroke"
 msgstr "Erditiko noranzkoak trazuaren tamaina zehazten du"
 
-#: ../plug-ins/gimpressionist/size.c:183
+#: ../plug-ins/picmanressionist/size.c:183
 msgid "The hue of the region determines the size of the stroke"
 msgstr "Eskualdearen ñabardurak trazuaren tamaina zehazten du"
 
-#: ../plug-ins/gimpressionist/size.c:187
+#: ../plug-ins/picmanressionist/size.c:187
 msgid "The brush-size that matches the original image the closest is selected"
 msgstr "Jatorrizko irudira gehien hurbiltzen den brotxa-tamaina hautatuko da"
 
-#: ../plug-ins/gimpressionist/size.c:196
+#: ../plug-ins/picmanressionist/size.c:196
 msgid "Manually specify the stroke size"
 msgstr "Trazuaren tamaina eskuz hautatzen da"
 
-#: ../plug-ins/gimpressionist/size.c:207
+#: ../plug-ins/picmanressionist/size.c:207
 msgid "Opens up the Size Map Editor"
 msgstr "Tamaina-mapen editorea irekitzen du"
 
-#: ../plug-ins/gimpressionist/sizemap.c:400
+#: ../plug-ins/picmanressionist/sizemap.c:400
 msgid "Size Map Editor"
 msgstr "Tamaina-mapen editorea"
 
-#: ../plug-ins/gimpressionist/sizemap.c:429
+#: ../plug-ins/picmanressionist/sizemap.c:429
 msgid "Smvectors"
 msgstr "Bektoreak"
 
-#: ../plug-ins/gimpressionist/sizemap.c:439
+#: ../plug-ins/picmanressionist/sizemap.c:439
 msgid ""
 "The smvector-field. Left-click to move selected smvector, Right-click to "
 "point it towards mouse, Middle-click to add a new smvector."
@@ -10675,39 +10675,39 @@ msgstr ""
 "mugitzeko, eskuineko botoian sagurantz seinalatzeko, eta erdiko botoian "
 "tamaina-bektore berria gehitzeko."
 
-#: ../plug-ins/gimpressionist/sizemap.c:481
+#: ../plug-ins/picmanressionist/sizemap.c:481
 msgid "Select previous smvector"
 msgstr "Hautatu aurreko bektorea"
 
-#: ../plug-ins/gimpressionist/sizemap.c:488
+#: ../plug-ins/picmanressionist/sizemap.c:488
 msgid "Select next smvector"
 msgstr "Hautatu hurrengo bektorea"
 
-#: ../plug-ins/gimpressionist/sizemap.c:495
+#: ../plug-ins/picmanressionist/sizemap.c:495
 msgid "Add new smvector"
 msgstr "Gehitu bektore berria"
 
-#: ../plug-ins/gimpressionist/sizemap.c:502
+#: ../plug-ins/picmanressionist/sizemap.c:502
 msgid "Delete selected smvector"
 msgstr "Ezabatu hautatutako bektorea"
 
-#: ../plug-ins/gimpressionist/sizemap.c:515
+#: ../plug-ins/picmanressionist/sizemap.c:515
 msgid "Change the angle of the selected smvector"
 msgstr "Aldatu hautatutako bektorearen angelua"
 
-#: ../plug-ins/gimpressionist/sizemap.c:522
+#: ../plug-ins/picmanressionist/sizemap.c:522
 msgid "S_trength:"
 msgstr "_Indarra:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:526
+#: ../plug-ins/picmanressionist/sizemap.c:526
 msgid "Change the strength of the selected smvector"
 msgstr "Aldatu hautatutako bektorearen indarra"
 
-#: ../plug-ins/gimpressionist/sizemap.c:533
+#: ../plug-ins/picmanressionist/sizemap.c:533
 msgid "St_rength exp.:"
 msgstr "I_ndararen berr.:"
 
-#: ../plug-ins/gimpressionist/sizemap.c:549
+#: ../plug-ins/picmanressionist/sizemap.c:549
 msgid ""
 "Voronoi-mode makes only the smvector closest to the given point have any "
 "influence"
@@ -10993,8 +10993,8 @@ msgstr "_Bigarren erlantzak"
 
 #: ../plug-ins/help-browser/dialog.c:186
 #: ../plug-ins/help-browser/dialog.c:1115
-msgid "GIMP Help Browser"
-msgstr "GIMPeko Laguntza arakatzailea"
+msgid "PICMAN Help Browser"
+msgstr "PICMANeko Laguntza arakatzailea"
 
 #: ../plug-ins/help-browser/dialog.c:564
 msgid "Go back one page"
@@ -11049,8 +11049,8 @@ msgid "Toggle the visibility of the sidebar"
 msgstr "Txandakatu albo-barraren ikusgaitasuna"
 
 #: ../plug-ins/help-browser/dialog.c:656
-msgid "Visit the GIMP documentation website"
-msgstr "Bisitatu GIMPen dokumentazioaren web gunea"
+msgid "Visit the PICMAN documentation website"
+msgstr "Bisitatu PICMANen dokumentazioaren web gunea"
 
 #: ../plug-ins/help-browser/dialog.c:1156
 msgid "Find:"
@@ -11066,38 +11066,38 @@ msgctxt "search"
 msgid "_Next"
 msgstr "_Hurrengoa"
 
-#: ../plug-ins/help/gimphelpdomain.c:180
+#: ../plug-ins/help/picmanhelpdomain.c:180
 #, c-format
 msgid "The help pages for '%s' are not available."
 msgstr "'%s'(r)en laguntzako orrialdeak ez daude erabilgarri."
 
-#: ../plug-ins/help/gimphelpdomain.c:186
-msgid "The GIMP user manual is not available."
-msgstr "GIMPen erabiltzailearen eskuliburua ez dago erabilgarri."
+#: ../plug-ins/help/picmanhelpdomain.c:186
+msgid "The PICMAN user manual is not available."
+msgstr "PICMANen erabiltzailearen eskuliburua ez dago erabilgarri."
 
-#: ../plug-ins/help/gimphelpdomain.c:187
+#: ../plug-ins/help/picmanhelpdomain.c:187
 msgid ""
 "Please install the additional help package or use the online user manual at "
-"http://docs.gimp.org/."
+"http://docs.picman.org/."
 msgstr ""
 "Instalatu laguntzako pakete gehigarriak edo erabili likneako erabiltzeilaren "
-"gida honako gunean: http://docs.gimp.org/."
+"gida honako gunean: http://docs.picman.org/."
 
-#: ../plug-ins/help/gimphelpdomain.c:196
+#: ../plug-ins/help/picmanhelpdomain.c:196
 msgid "Perhaps you are missing GIO backends and need to install GVFS?"
 msgstr "Agian GIO motorrak falta dira eta GVFS instalatzea behar da?"
 
-#: ../plug-ins/help/gimphelpdomain.c:215
+#: ../plug-ins/help/picmanhelpdomain.c:215
 #, c-format
 msgid "Help ID '%s' unknown"
 msgstr "Laguntzako %s ID ezezaguna"
 
-#: ../plug-ins/help/gimphelplocale.c:208
+#: ../plug-ins/help/picmanhelplocale.c:208
 #, c-format
 msgid "Loading index from '%s'"
 msgstr "Indizea '%s'(e)ndik kargatzen"
 
-#: ../plug-ins/help/gimphelplocale.c:266
+#: ../plug-ins/help/picmanhelplocale.c:266
 #, c-format
 msgid ""
 "Parse error in '%s':\n"
@@ -11324,7 +11324,7 @@ msgid "Clear"
 msgstr "Garbitu"
 
 #: ../plug-ins/imagemap/imap_cmd_create.c:57
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:150
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:150
 msgid "Create"
 msgstr "Sortu"
 
@@ -11349,41 +11349,41 @@ msgid "Edit Object"
 msgstr "Editatu objektua"
 
 #. Create the areas
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:116
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:146
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:250
-msgid "Use Gimp Guides"
-msgstr "Erabili Gimp-eko gidak"
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:116
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:146
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:250
+msgid "Use Picman Guides"
+msgstr "Erabili Picman-eko gidak"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:159
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:159
 msgid "Al_ternate"
 msgstr "T_xandakatu"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:164
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:164
 msgid "A_ll"
 msgstr "_Guztiak"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:168
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:168
 msgid "Add Additional Guides"
 msgstr "Gehitu gida osagarriak"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:176
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:176
 msgid "L_eft border"
 msgstr "E_zkerreko ertza"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:180
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:180
 msgid "_Right border"
 msgstr "E_skuineko ertza"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:184
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:184
 msgid "_Upper border"
 msgstr "_Goiko ertza"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:188
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:188
 msgid "Lo_wer border"
 msgstr "_Beheko ertza"
 
-#: ../plug-ins/imagemap/imap_cmd_gimp_guides.c:196
+#: ../plug-ins/imagemap/imap_cmd_picman_guides.c:196
 msgid "_Base URL:"
 msgstr "_Oinarrizko URLa:"
 
@@ -11817,8 +11817,8 @@ msgid "Grid Settings..."
 msgstr "Saretaren ezarpenak..."
 
 #: ../plug-ins/imagemap/imap_menu.c:193
-msgid "Use GIMP Guides..."
-msgstr "Erabili GIMPeko gidak..."
+msgid "Use PICMAN Guides..."
+msgstr "Erabili PICMANeko gidak..."
 
 #: ../plug-ins/imagemap/imap_menu.c:195
 msgid "Create Guides..."

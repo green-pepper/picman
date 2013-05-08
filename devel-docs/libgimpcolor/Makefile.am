@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 # The name of the module.
-DOC_MODULE = libgimpcolor
+DOC_MODULE = libpicmancolor
 
 # The top-level SGML file.
 DOC_MAIN_SGML_FILE = $(DOC_MODULE)-docs.sgml
@@ -13,7 +13,7 @@ DOC_SOURCE_DIR = $(top_srcdir)/$(DOC_MODULE)
 SCANGOBJ_OPTIONS =
 
 # Extra options to supply to gtkdoc-scan
-SCAN_OPTIONS = --deprecated-guards="GIMP_DISABLE_DEPRECATED"
+SCAN_OPTIONS = --deprecated-guards="PICMAN_DISABLE_DEPRECATED"
 
 # Extra options to supply to gtkdoc-mkdb
 MKDB_OPTIONS = --sgml-mode --output-format=xml
@@ -26,7 +26,7 @@ HFILE_GLOB = $(DOC_SOURCE_DIR)/*.h
 CFILE_GLOB = $(DOC_SOURCE_DIR)/*.c
 
 # Header files to ignore when scanning
-IGNORE_HFILES = gimpcolor.h
+IGNORE_HFILES = picmancolor.h
 
 # Images to copy into HTML directory
 HTML_IMAGES=

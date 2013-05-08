@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,56 +16,56 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_BASE_H_INSIDE__) && !defined (GIMP_BASE_COMPILATION)
-#error "Only <libgimpbase/gimpbase.h> can be included directly."
+#if !defined (__PICMAN_BASE_H_INSIDE__) && !defined (PICMAN_BASE_COMPILATION)
+#error "Only <libpicmanbase/picmanbase.h> can be included directly."
 #endif
 
-#ifndef __GIMP_UTILS_H__
-#define __GIMP_UTILS_H__
+#ifndef __PICMAN_UTILS_H__
+#define __PICMAN_UTILS_H__
 
 G_BEGIN_DECLS
 
 
-gchar         * gimp_utf8_strtrim            (const gchar  *str,
+gchar         * picman_utf8_strtrim            (const gchar  *str,
                                               gint          max_chars) G_GNUC_MALLOC;
-gchar         * gimp_any_to_utf8             (const gchar  *str,
+gchar         * picman_any_to_utf8             (const gchar  *str,
                                               gssize        len,
                                               const gchar  *warning_format,
                                               ...) G_GNUC_PRINTF (3, 4) G_GNUC_MALLOC;
-const gchar   * gimp_filename_to_utf8        (const gchar  *filename);
+const gchar   * picman_filename_to_utf8        (const gchar  *filename);
 
-gchar         * gimp_strip_uline             (const gchar  *str) G_GNUC_MALLOC;
-gchar         * gimp_escape_uline            (const gchar  *str) G_GNUC_MALLOC;
+gchar         * picman_strip_uline             (const gchar  *str) G_GNUC_MALLOC;
+gchar         * picman_escape_uline            (const gchar  *str) G_GNUC_MALLOC;
 
-gchar         * gimp_canonicalize_identifier (const gchar  *identifier) G_GNUC_MALLOC;
+gchar         * picman_canonicalize_identifier (const gchar  *identifier) G_GNUC_MALLOC;
 
-GimpEnumDesc  * gimp_enum_get_desc           (GEnumClass   *enum_class,
+PicmanEnumDesc  * picman_enum_get_desc           (GEnumClass   *enum_class,
                                               gint          value);
-gboolean        gimp_enum_get_value          (GType         enum_type,
+gboolean        picman_enum_get_value          (GType         enum_type,
                                               gint          value,
                                               const gchar **value_name,
                                               const gchar **value_nick,
                                               const gchar **value_desc,
                                               const gchar **value_help);
-const gchar   * gimp_enum_value_get_desc     (GEnumClass   *enum_class,
+const gchar   * picman_enum_value_get_desc     (GEnumClass   *enum_class,
                                               GEnumValue   *enum_value);
-const gchar   * gimp_enum_value_get_help     (GEnumClass   *enum_class,
+const gchar   * picman_enum_value_get_help     (GEnumClass   *enum_class,
                                               GEnumValue   *enum_value);
 
-GimpFlagsDesc * gimp_flags_get_first_desc    (GFlagsClass  *flags_class,
+PicmanFlagsDesc * picman_flags_get_first_desc    (GFlagsClass  *flags_class,
                                               guint         value);
-gboolean        gimp_flags_get_first_value   (GType         flags_type,
+gboolean        picman_flags_get_first_value   (GType         flags_type,
                                               guint         value,
                                               const gchar **value_name,
                                               const gchar **value_nick,
                                               const gchar **value_desc,
                                               const gchar **value_help);
-const gchar   * gimp_flags_value_get_desc    (GFlagsClass  *flags_class,
+const gchar   * picman_flags_value_get_desc    (GFlagsClass  *flags_class,
                                               GFlagsValue  *flags_value);
-const gchar   * gimp_flags_value_get_help    (GFlagsClass  *flags_class,
+const gchar   * picman_flags_value_get_help    (GFlagsClass  *flags_class,
                                               GFlagsValue  *flags_value);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_UTILS_H__ */
+#endif  /* __PICMAN_UTILS_H__ */

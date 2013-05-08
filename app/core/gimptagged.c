@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptagged.c
- * Copyright (C) 2008  Sven Neumann <sven@gimp.org>
+ * picmantagged.c
+ * Copyright (C) 2008  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
 
 #include "core-types.h"
 
-#include "gimpmarshal.h"
-#include "gimptag.h"
-#include "gimptagged.h"
+#include "picmanmarshal.h"
+#include "picmantag.h"
+#include "picmantagged.h"
 
 
 enum
@@ -37,13 +37,13 @@ enum
 };
 
 
-static void  gimp_tagged_base_init (gpointer klass);
+static void  picman_tagged_base_init (gpointer klass);
 
-static guint gimp_tagged_signals[LAST_SIGNAL] = { 0, };
+static guint picman_tagged_signals[LAST_SIGNAL] = { 0, };
 
 
 GType
-gimp_tagged_interface_get_type (void)
+picman_tagged_interface_get_type (void)
 {
   static GType tagged_iface_type = 0;
 
@@ -51,13 +51,13 @@ gimp_tagged_interface_get_type (void)
     {
       const GTypeInfo tagged_iface_info =
       {
-        sizeof (GimpTaggedInterface),
-        gimp_tagged_base_init,
+        sizeof (PicmanTaggedInterface),
+        picman_tagged_base_init,
         (GBaseFinalizeFunc) NULL,
       };
 
       tagged_iface_type = g_type_register_static (G_TYPE_INTERFACE,
-                                                  "GimpTaggedInterface",
+                                                  "PicmanTaggedInterface",
                                                   &tagged_iface_info,
                                                   0);
    }
@@ -66,89 +66,89 @@ gimp_tagged_interface_get_type (void)
 }
 
 static void
-gimp_tagged_base_init (gpointer klass)
+picman_tagged_base_init (gpointer klass)
 {
   static gboolean initialized = FALSE;
 
   if (! initialized)
     {
-      gimp_tagged_signals[TAG_ADDED] =
+      picman_tagged_signals[TAG_ADDED] =
         g_signal_new ("tag-added",
-                      GIMP_TYPE_TAGGED,
+                      PICMAN_TYPE_TAGGED,
                       G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (GimpTaggedInterface, tag_added),
+                      G_STRUCT_OFFSET (PicmanTaggedInterface, tag_added),
                       NULL, NULL,
                       g_cclosure_marshal_VOID__OBJECT,
                       G_TYPE_NONE, 1,
-                      GIMP_TYPE_TAG);
+                      PICMAN_TYPE_TAG);
 
-      gimp_tagged_signals[TAG_REMOVED] =
+      picman_tagged_signals[TAG_REMOVED] =
         g_signal_new ("tag-removed",
-                      GIMP_TYPE_TAGGED,
+                      PICMAN_TYPE_TAGGED,
                       G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (GimpTaggedInterface, tag_removed),
+                      G_STRUCT_OFFSET (PicmanTaggedInterface, tag_removed),
                       NULL, NULL,
                       g_cclosure_marshal_VOID__OBJECT,
                       G_TYPE_NONE, 1,
-                      GIMP_TYPE_TAG);
+                      PICMAN_TYPE_TAG);
 
       initialized = TRUE;
     }
 }
 
 /**
- * gimp_tagged_add_tag:
- * @tagged: an object that implements the %GimpTagged interface
- * @tag:    a %GimpTag
+ * picman_tagged_add_tag:
+ * @tagged: an object that implements the %PicmanTagged interface
+ * @tag:    a %PicmanTag
  *
- * Adds @tag to the @tagged object. The GimpTagged::tag-added signal
+ * Adds @tag to the @tagged object. The PicmanTagged::tag-added signal
  * is emitted if and only if the @tag was not already assigned to this
  * object.
  **/
 void
-gimp_tagged_add_tag (GimpTagged *tagged,
-                     GimpTag    *tag)
+picman_tagged_add_tag (PicmanTagged *tagged,
+                     PicmanTag    *tag)
 {
-  g_return_if_fail (GIMP_IS_TAGGED (tagged));
-  g_return_if_fail (GIMP_IS_TAG (tag));
+  g_return_if_fail (PICMAN_IS_TAGGED (tagged));
+  g_return_if_fail (PICMAN_IS_TAG (tag));
 
-  if (GIMP_TAGGED_GET_INTERFACE (tagged)->add_tag (tagged, tag))
+  if (PICMAN_TAGGED_GET_INTERFACE (tagged)->add_tag (tagged, tag))
     {
-      g_signal_emit (tagged, gimp_tagged_signals[TAG_ADDED], 0, tag);
+      g_signal_emit (tagged, picman_tagged_signals[TAG_ADDED], 0, tag);
     }
 }
 
 /**
- * gimp_tagged_remove_tag:
- * @tagged: an object that implements the %GimpTagged interface
- * @tag:    a %GimpTag
+ * picman_tagged_remove_tag:
+ * @tagged: an object that implements the %PicmanTagged interface
+ * @tag:    a %PicmanTag
  *
- * Removes @tag from the @tagged object. The GimpTagged::tag-removed
+ * Removes @tag from the @tagged object. The PicmanTagged::tag-removed
  * signal is emitted if and only if the @tag was actually assigned to
  * this object.
  **/
 void
-gimp_tagged_remove_tag (GimpTagged *tagged,
-                        GimpTag    *tag)
+picman_tagged_remove_tag (PicmanTagged *tagged,
+                        PicmanTag    *tag)
 {
   GList *tag_iter;
 
-  g_return_if_fail (GIMP_IS_TAGGED (tagged));
-  g_return_if_fail (GIMP_IS_TAG (tag));
+  g_return_if_fail (PICMAN_IS_TAGGED (tagged));
+  g_return_if_fail (PICMAN_IS_TAG (tag));
 
-  for (tag_iter = gimp_tagged_get_tags (tagged);
+  for (tag_iter = picman_tagged_get_tags (tagged);
        tag_iter;
        tag_iter = g_list_next (tag_iter))
     {
-      GimpTag *tag_ref = tag_iter->data;
+      PicmanTag *tag_ref = tag_iter->data;
 
-      if (gimp_tag_equals (tag_ref, tag))
+      if (picman_tag_equals (tag_ref, tag))
         {
           g_object_ref (tag_ref);
 
-          if (GIMP_TAGGED_GET_INTERFACE (tagged)->remove_tag (tagged, tag_ref))
+          if (PICMAN_TAGGED_GET_INTERFACE (tagged)->remove_tag (tagged, tag_ref))
             {
-              g_signal_emit (tagged, gimp_tagged_signals[TAG_REMOVED], 0,
+              g_signal_emit (tagged, picman_tagged_signals[TAG_REMOVED], 0,
                              tag_ref);
             }
 
@@ -158,42 +158,42 @@ gimp_tagged_remove_tag (GimpTagged *tagged,
 }
 
 /**
- * gimp_tagged_set_tags:
- * @tagged: an object that implements the %GimpTagged interface
+ * picman_tagged_set_tags:
+ * @tagged: an object that implements the %PicmanTagged interface
  * @tags:   a list of tags
  *
  * Sets the list of tags assigned to this object. The passed list of
  * tags is copied and should be freed by the caller.
  **/
 void
-gimp_tagged_set_tags (GimpTagged *tagged,
+picman_tagged_set_tags (PicmanTagged *tagged,
                       GList      *tags)
 {
   GList *old_tags;
   GList *list;
 
-  g_return_if_fail (GIMP_IS_TAGGED (tagged));
+  g_return_if_fail (PICMAN_IS_TAGGED (tagged));
 
-  old_tags = g_list_copy (gimp_tagged_get_tags (tagged));
+  old_tags = g_list_copy (picman_tagged_get_tags (tagged));
 
   for (list = old_tags; list; list = g_list_next (list))
     {
-      gimp_tagged_remove_tag (tagged, list->data);
+      picman_tagged_remove_tag (tagged, list->data);
     }
 
   g_list_free (old_tags);
 
   for (list = tags; list; list = g_list_next (list))
     {
-      g_return_if_fail (GIMP_IS_TAG (list->data));
+      g_return_if_fail (PICMAN_IS_TAG (list->data));
 
-      gimp_tagged_add_tag (tagged, list->data);
+      picman_tagged_add_tag (tagged, list->data);
     }
 }
 
 /**
- * gimp_tagged_get_tags:
- * @tagged: an object that implements the %GimpTagged interface
+ * picman_tagged_get_tags:
+ * @tagged: an object that implements the %PicmanTagged interface
  *
  * Returns the list of tags assigned to this object. The returned %GList
  * is owned by the @tagged object and must not be modified or destroyed.
@@ -201,16 +201,16 @@ gimp_tagged_set_tags (GimpTagged *tagged,
  * Return value: a list of tags
  **/
 GList *
-gimp_tagged_get_tags (GimpTagged *tagged)
+picman_tagged_get_tags (PicmanTagged *tagged)
 {
-  g_return_val_if_fail (GIMP_IS_TAGGED (tagged), NULL);
+  g_return_val_if_fail (PICMAN_IS_TAGGED (tagged), NULL);
 
-  return GIMP_TAGGED_GET_INTERFACE (tagged)->get_tags (tagged);
+  return PICMAN_TAGGED_GET_INTERFACE (tagged)->get_tags (tagged);
 }
 
 /**
- * gimp_tagged_get_identifier:
- * @tagged: an object that implements the %GimpTagged interface
+ * picman_tagged_get_identifier:
+ * @tagged: an object that implements the %PicmanTagged interface
  *
  * Returns an identifier string which uniquely identifies the tagged
  * object. Two different objects must have unique identifiers but may
@@ -223,16 +223,16 @@ gimp_tagged_get_tags (GimpTagged *tagged)
  * of the object. It must be freed using #g_free.
  **/
 gchar *
-gimp_tagged_get_identifier (GimpTagged *tagged)
+picman_tagged_get_identifier (PicmanTagged *tagged)
 {
-  g_return_val_if_fail (GIMP_IS_TAGGED (tagged), NULL);
+  g_return_val_if_fail (PICMAN_IS_TAGGED (tagged), NULL);
 
-  return GIMP_TAGGED_GET_INTERFACE (tagged)->get_identifier (tagged);
+  return PICMAN_TAGGED_GET_INTERFACE (tagged)->get_identifier (tagged);
 }
 
 /**
- * gimp_tagged_get_checksum:
- * @tagged: an object that implements the %GimpTagged interface
+ * picman_tagged_get_checksum:
+ * @tagged: an object that implements the %PicmanTagged interface
  *
  * Returns the checksum of the @tagged object. It is used to remap the
  * tags for an object for which the identifier has changed, for
@@ -245,34 +245,34 @@ gimp_tagged_get_identifier (GimpTagged *tagged)
  * #NULL otherwise. Returned string must be freed with #g_free().
  **/
 gchar *
-gimp_tagged_get_checksum (GimpTagged *tagged)
+picman_tagged_get_checksum (PicmanTagged *tagged)
 {
-  g_return_val_if_fail (GIMP_IS_TAGGED (tagged), FALSE);
+  g_return_val_if_fail (PICMAN_IS_TAGGED (tagged), FALSE);
 
-  return GIMP_TAGGED_GET_INTERFACE (tagged)->get_checksum (tagged);
+  return PICMAN_TAGGED_GET_INTERFACE (tagged)->get_checksum (tagged);
 }
 
 /**
- * gimp_tagged_has_tag:
- * @tagged: an object that implements the %GimpTagged interface
- * @tag:    a %GimpTag
+ * picman_tagged_has_tag:
+ * @tagged: an object that implements the %PicmanTagged interface
+ * @tag:    a %PicmanTag
  *
  * Return value: #TRUE if the object has @tag, #FALSE otherwise.
  **/
 gboolean
-gimp_tagged_has_tag (GimpTagged *tagged,
-                     GimpTag    *tag)
+picman_tagged_has_tag (PicmanTagged *tagged,
+                     PicmanTag    *tag)
 {
   GList *tag_iter;
 
-  g_return_val_if_fail (GIMP_IS_TAGGED (tagged), FALSE);
-  g_return_val_if_fail (GIMP_IS_TAG (tag), FALSE);
+  g_return_val_if_fail (PICMAN_IS_TAGGED (tagged), FALSE);
+  g_return_val_if_fail (PICMAN_IS_TAG (tag), FALSE);
 
-  for (tag_iter = gimp_tagged_get_tags (tagged);
+  for (tag_iter = picman_tagged_get_tags (tagged);
        tag_iter;
        tag_iter = g_list_next (tag_iter))
     {
-      if (gimp_tag_equals (tag_iter->data, tag))
+      if (picman_tag_equals (tag_iter->data, tag))
         return TRUE;
     }
 

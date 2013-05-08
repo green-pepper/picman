@@ -1,5 +1,5 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
+ * Picman-Python - allows the writing of Picman plugins in Python.
  * Copyright (C) 1997-2002  James Henstridge <james@daa.com.au>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,26 +23,26 @@
 #define NO_IMPORT_PYGOBJECT
 #include <pygobject.h>
 
-#include "pygimp.h"
+#include "pypicman.h"
 
-#define NO_IMPORT_PYGIMPCOLOR
-#include "pygimpcolor-api.h"
+#define NO_IMPORT_PYPICMANCOLOR
+#include "pypicmancolor-api.h"
 
 #include <glib-object.h>
 
 static void
-ensure_drawable(PyGimpDrawable *self)
+ensure_drawable(PyPicmanDrawable *self)
 {
     if (!self->drawable)
-	self->drawable = gimp_drawable_get(self->ID);
+	self->drawable = picman_drawable_get(self->ID);
 }
 
 static PyObject *
-drw_flush(PyGimpDrawable *self)
+drw_flush(PyPicmanDrawable *self)
 {
     ensure_drawable(self);
 
-    gimp_drawable_flush(self->drawable);
+    picman_drawable_flush(self->drawable);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -50,7 +50,7 @@ drw_flush(PyGimpDrawable *self)
 
 
 static PyObject *
-drw_update(PyGimpDrawable *self, PyObject *args)
+drw_update(PyPicmanDrawable *self, PyObject *args)
 {
     int x, y;
     unsigned int w, h;
@@ -58,8 +58,8 @@ drw_update(PyGimpDrawable *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "iiii:update", &x, &y, &w, &h))
 	return NULL;
 
-    if (!gimp_drawable_update(self->ID, x, y, w, h)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_drawable_update(self->ID, x, y, w, h)) {
+	PyErr_Format(pypicman_error,
 		     "could not update drawable (ID %d): "
 		     "x=%d, y=%d, w=%d, h=%d",
 		     self->ID, x, y, (int)w, (int)h);
@@ -72,7 +72,7 @@ drw_update(PyGimpDrawable *self, PyObject *args)
 
 
 static PyObject *
-drw_merge_shadow(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_merge_shadow(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     gboolean undo = FALSE;
 
@@ -82,8 +82,8 @@ drw_merge_shadow(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 				     &undo))
 	return NULL;
 
-    if (!gimp_drawable_merge_shadow(self->ID, undo)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_drawable_merge_shadow(self->ID, undo)) {
+	PyErr_Format(pypicman_error,
 		     "could not merge the shadow buffer on drawable (ID %d)",
 		     self->ID);
 	return NULL;
@@ -94,10 +94,10 @@ drw_merge_shadow(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyObject *
-drw_free_shadow(PyGimpDrawable *self)
+drw_free_shadow(PyPicmanDrawable *self)
 {
-    if (!gimp_drawable_free_shadow(self->ID)) {
-	PyErr_Format(pygimp_error, "could not free shadow tiles on drawable (ID %d)",
+    if (!picman_drawable_free_shadow(self->ID)) {
+	PyErr_Format(pypicman_error, "could not free shadow tiles on drawable (ID %d)",
 		     self->ID);
 	return NULL;
     }
@@ -107,17 +107,17 @@ drw_free_shadow(PyGimpDrawable *self)
 }
 
 static PyObject *
-drw_fill(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_fill(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
-    int fill = GIMP_FOREGROUND_FILL;
+    int fill = PICMAN_FOREGROUND_FILL;
 
     static char *kwlist[] = { "fill", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|i:fill", kwlist, &fill))
 	return NULL;
 
-    if (!gimp_drawable_fill(self->ID, fill)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_drawable_fill(self->ID, fill)) {
+	PyErr_Format(pypicman_error,
 		     "could not fill drawable (ID %d) with fill mode %d",
 		     self->ID, fill);
 	return NULL;
@@ -129,9 +129,9 @@ drw_fill(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 
 
 static PyObject *
-drw_get_tile(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_get_tile(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
-    GimpTile *t;
+    PicmanTile *t;
     int shadow, row, col;
 
     static char *kwlist[] = { "shadow", "row", "col", NULL };
@@ -148,14 +148,14 @@ drw_get_tile(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
         return Py_None;
     }
 
-    t = gimp_drawable_get_tile(self->drawable, shadow, row, col);
-    return pygimp_tile_new(t, self);
+    t = picman_drawable_get_tile(self->drawable, shadow, row, col);
+    return pypicman_tile_new(t, self);
 }
 
 static PyObject *
-drw_get_tile2(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_get_tile2(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
-    GimpTile *t;
+    PicmanTile *t;
     int shadow, x, y;
 
     static char *kwlist[] = { "shadow", "x", "y", NULL };
@@ -171,12 +171,12 @@ drw_get_tile2(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
         return Py_None;
     }
 
-    t = gimp_drawable_get_tile2(self->drawable, shadow, x, y);
-    return pygimp_tile_new(t, self);
+    t = picman_drawable_get_tile2(self->drawable, shadow, x, y);
+    return pypicman_tile_new(t, self);
 }
 
 static PyObject *
-drw_get_pixel_rgn(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_get_pixel_rgn(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     int x, y, width, height, dirty = 1, shadow = 0;
 
@@ -190,14 +190,14 @@ drw_get_pixel_rgn(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 
     ensure_drawable(self);
 
-    return pygimp_pixel_rgn_new(self, x, y, width, height, dirty, shadow);
+    return pypicman_pixel_rgn_new(self, x, y, width, height, dirty, shadow);
 }
 
 static PyObject *
-drw_offset(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_offset(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     int wrap_around;
-    GimpOffsetType fill_type;
+    PicmanOffsetType fill_type;
     int offset_x, offset_y;
 
     static char *kwlist[] = { "wrap_around", "fill_type",
@@ -209,9 +209,9 @@ drw_offset(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 				     &offset_x, &offset_y))
 	return NULL;
 
-    if (!gimp_drawable_offset(self->ID, wrap_around, fill_type,
+    if (!picman_drawable_offset(self->ID, wrap_around, fill_type,
 			      offset_x, offset_y)) {
-	PyErr_Format(pygimp_error,
+	PyErr_Format(pypicman_error,
 		     "could not offset drawable (ID %d) by x: %d, y: %d",
 		     self->ID, offset_x, offset_y);
 	return NULL;
@@ -222,29 +222,29 @@ drw_offset(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyObject *
-drw_parasite_find(PyGimpDrawable *self, PyObject *args)
+drw_parasite_find(PyPicmanDrawable *self, PyObject *args)
 {
     char *name;
 
     if (!PyArg_ParseTuple(args, "s:parasite_find", &name))
 	return NULL;
 
-    return pygimp_parasite_new(gimp_item_get_parasite(self->ID, name));
+    return pypicman_parasite_new(picman_item_get_parasite(self->ID, name));
 }
 
 static PyObject *
-drw_parasite_attach(PyGimpDrawable *self, PyObject *args)
+drw_parasite_attach(PyPicmanDrawable *self, PyObject *args)
 {
-    PyGimpParasite *parasite;
+    PyPicmanParasite *parasite;
 
-    if (!PyArg_ParseTuple(args, "O!:parasite_attach", &PyGimpParasite_Type,
+    if (!PyArg_ParseTuple(args, "O!:parasite_attach", &PyPicmanParasite_Type,
 			  &parasite))
 	return NULL;
 
-    if (!gimp_item_attach_parasite(self->ID, parasite->para)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_item_attach_parasite(self->ID, parasite->para)) {
+	PyErr_Format(pypicman_error,
 		     "could not attach parasite '%s' on drawable (ID %d)",
-		     gimp_parasite_name(parasite->para), self->ID);
+		     picman_parasite_name(parasite->para), self->ID);
 	return NULL;
     }
 
@@ -253,12 +253,12 @@ drw_parasite_attach(PyGimpDrawable *self, PyObject *args)
 }
 
 static PyObject *
-drw_attach_new_parasite(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_attach_new_parasite(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     char         *name;
     int           flags, size;
     guint8       *data;
-    GimpParasite *parasite;
+    PicmanParasite *parasite;
     gboolean      success;
 
     static char *kwlist[] = { "name", "flags", "data", NULL };
@@ -268,13 +268,13 @@ drw_attach_new_parasite(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 				     &name, &flags, &data, &size))
 	return NULL;
 
-    parasite = gimp_parasite_new (name,
+    parasite = picman_parasite_new (name,
                                   flags, size + 1, data);
-    success = gimp_item_attach_parasite (self->ID, parasite);
-    gimp_parasite_free (parasite);
+    success = picman_item_attach_parasite (self->ID, parasite);
+    picman_parasite_free (parasite);
 
     if (!success) {
-	PyErr_Format(pygimp_error,
+	PyErr_Format(pypicman_error,
 		     "could not attach new parasite '%s' to drawable (ID %d)",
 		     name, self->ID);
 	return NULL;
@@ -285,14 +285,14 @@ drw_attach_new_parasite(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyObject *
-drw_parasite_detach(PyGimpDrawable *self, PyObject *args)
+drw_parasite_detach(PyPicmanDrawable *self, PyObject *args)
 {
     char *name;
     if (!PyArg_ParseTuple(args, "s:detach_parasite", &name))
 	return NULL;
 
-    if (!gimp_item_detach_parasite(self->ID, name)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_item_detach_parasite(self->ID, name)) {
+	PyErr_Format(pypicman_error,
 		     "could not detach parasite '%s' from drawable (ID %d)",
 		     name, self->ID);
 	return NULL;
@@ -303,12 +303,12 @@ drw_parasite_detach(PyGimpDrawable *self, PyObject *args)
 }
 
 static PyObject *
-drw_parasite_list(PyGimpDrawable *self)
+drw_parasite_list(PyPicmanDrawable *self)
 {
     gint num_parasites;
     gchar **parasites;
 
-    parasites = gimp_item_get_parasite_list(self->ID, &num_parasites);
+    parasites = picman_item_get_parasite_list(self->ID, &num_parasites);
     if (parasites) {
 	PyObject *ret;
 	gint i;
@@ -323,13 +323,13 @@ drw_parasite_list(PyGimpDrawable *self)
 	return ret;
     }
 
-    PyErr_Format(pygimp_error, "could not list parasites on drawable (ID %d)",
+    PyErr_Format(pypicman_error, "could not list parasites on drawable (ID %d)",
 		 self->ID);
     return NULL;
 }
 
 static PyObject *
-drw_get_pixel(PyGimpDrawable *self, PyObject *args)
+drw_get_pixel(PyPicmanDrawable *self, PyObject *args)
 {
     int x, y;
     int num_channels, i;
@@ -342,10 +342,10 @@ drw_get_pixel(PyGimpDrawable *self, PyObject *args)
 	    return NULL;
     }
 
-    pixel = gimp_drawable_get_pixel(self->ID, x, y, &num_channels);
+    pixel = picman_drawable_get_pixel(self->ID, x, y, &num_channels);
 
     if (!pixel) {
-	PyErr_Format(pygimp_error,
+	PyErr_Format(pypicman_error,
 		     "could not get pixel (%d, %d) on drawable (ID %d)",
 		     x, y, self->ID);
 	return NULL;
@@ -362,7 +362,7 @@ drw_get_pixel(PyGimpDrawable *self, PyObject *args)
 }
 
 static PyObject *
-drw_set_pixel(PyGimpDrawable *self, PyObject *args)
+drw_set_pixel(PyPicmanDrawable *self, PyObject *args)
 {
     int x, y;
     int num_channels, i, val;
@@ -414,10 +414,10 @@ drw_set_pixel(PyGimpDrawable *self, PyObject *args)
 	pixel = (guint8 *)PyString_AsString(seq);
     }
 
-    error = !gimp_drawable_set_pixel(self->ID, x, y, num_channels, pixel);
+    error = !picman_drawable_set_pixel(self->ID, x, y, num_channels, pixel);
 
     if (error)
-	PyErr_Format(pygimp_error,
+	PyErr_Format(pypicman_error,
 		     "could not set %d-element pixel (%d, %d) on "
 		     "drawable (ID %d)",
 		     num_channels, x, y, self->ID);
@@ -434,12 +434,12 @@ out:
 }
 
 static PyObject *
-drw_mask_intersect(PyGimpDrawable *self)
+drw_mask_intersect(PyPicmanDrawable *self)
 {
     int x, y, width, height;
 
-    if (!gimp_drawable_mask_intersect(self->ID, &x, &y, &width, &height)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_drawable_mask_intersect(self->ID, &x, &y, &width, &height)) {
+	PyErr_Format(pypicman_error,
 		     "could not get selection bounds of drawable (ID %d)",
 		     self->ID);
 	return NULL;
@@ -449,22 +449,22 @@ drw_mask_intersect(PyGimpDrawable *self)
 }
 
 static PyObject *
-transform_result(PyGimpDrawable *self, gint32 id, const char *err_desc)
+transform_result(PyPicmanDrawable *self, gint32 id, const char *err_desc)
 {
     if (id == self->ID) {
 	Py_INCREF(self);
 	return (PyObject *)self;
     } else if (id != -1) {
-	return pygimp_drawable_new(NULL, id);
+	return pypicman_drawable_new(NULL, id);
     } else {
-	PyErr_Format(pygimp_error, "could not %s drawable (ID %d)",
+	PyErr_Format(pypicman_error, "could not %s drawable (ID %d)",
 		     err_desc, self->ID);
 	return NULL;
     }
 }
 
 static PyObject *
-drw_transform_flip(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_flip(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     double x0, y0, x1, y1;
     int transform_direction, interpolation, recursion_level = 3;
@@ -483,21 +483,21 @@ drw_transform_flip(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 				     &recursion_level, &clip_result))
 	return NULL;
 
-    gimp_context_push ();
-    gimp_context_set_transform_direction (transform_direction);
-    gimp_context_set_interpolation (interpolation);
-    gimp_context_set_transform_recursion (recursion_level);
-    gimp_context_set_transform_resize (clip_result);
+    picman_context_push ();
+    picman_context_set_transform_direction (transform_direction);
+    picman_context_set_interpolation (interpolation);
+    picman_context_set_transform_recursion (recursion_level);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_flip (self->ID, x0, y0, x1, y1);
+    id = picman_item_transform_flip (self->ID, x0, y0, x1, y1);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "flip");
 }
 
 static PyObject *
-drw_transform_flip_simple(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_flip_simple(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     int flip_type;
     gboolean auto_center, clip_result = FALSE;
@@ -513,19 +513,19 @@ drw_transform_flip_simple(PyGimpDrawable *self, PyObject *args, PyObject *kwargs
 				     &clip_result))
 	return NULL;
 
-    gimp_context_push ();
-    gimp_context_set_transform_resize (clip_result);
+    picman_context_push ();
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_flip_simple (self->ID, flip_type,
+    id = picman_item_transform_flip_simple (self->ID, flip_type,
                                           auto_center, axis);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "flip");
 }
 
 static PyObject *
-drw_transform_flip_default(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_flip_default(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     double x0, y0, x1, y1;
     gboolean interpolate = FALSE, clip_result = FALSE;
@@ -540,20 +540,20 @@ drw_transform_flip_default(PyGimpDrawable *self, PyObject *args, PyObject *kwarg
 				     &clip_result))
 	return NULL;
 
-    gimp_context_push ();
+    picman_context_push ();
     if (! interpolate)
-        gimp_context_set_interpolation (GIMP_INTERPOLATION_NONE);
-    gimp_context_set_transform_resize (clip_result);
+        picman_context_set_interpolation (PICMAN_INTERPOLATION_NONE);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_flip (self->ID, x0, y0, x1, y1);
+    id = picman_item_transform_flip (self->ID, x0, y0, x1, y1);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "flip");
 }
 
 static PyObject *
-drw_transform_perspective(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_perspective(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     double x0, y0, x1, y1, x2, y2, x3, y3;
     int transform_direction, interpolation, recursion_level = 3;
@@ -574,22 +574,22 @@ drw_transform_perspective(PyGimpDrawable *self, PyObject *args, PyObject *kwargs
 				     &clip_result))
 	return NULL;
 
-    gimp_context_push ();
-    gimp_context_set_transform_direction (transform_direction);
-    gimp_context_set_interpolation (interpolation);
-    gimp_context_set_transform_recursion (recursion_level);
-    gimp_context_set_transform_resize (clip_result);
+    picman_context_push ();
+    picman_context_set_transform_direction (transform_direction);
+    picman_context_set_interpolation (interpolation);
+    picman_context_set_transform_recursion (recursion_level);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_perspective (self->ID,
+    id = picman_item_transform_perspective (self->ID,
                                           x0, y0, x1, y1, x2, y2, x3, y3);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "apply perspective transform to");
 }
 
 static PyObject *
-drw_transform_perspective_default(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_perspective_default(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     double x0, y0, x1, y1, x2, y2, x3, y3;
     gboolean interpolate = FALSE, clip_result = FALSE;
@@ -605,21 +605,21 @@ drw_transform_perspective_default(PyGimpDrawable *self, PyObject *args, PyObject
 				     &interpolate, &clip_result))
 	return NULL;
 
-    gimp_context_push ();
+    picman_context_push ();
     if (! interpolate)
-        gimp_context_set_interpolation (GIMP_INTERPOLATION_NONE);
-    gimp_context_set_transform_resize (clip_result);
+        picman_context_set_interpolation (PICMAN_INTERPOLATION_NONE);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_perspective (self->ID,
+    id = picman_item_transform_perspective (self->ID,
                                           x0, y0, x1, y1, x2, y2, x3, y3);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "apply perspective transform to");
 }
 
 static PyObject *
-drw_transform_rotate(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_rotate(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     double angle;
     gboolean auto_center, supersample = FALSE, clip_result = FALSE;
@@ -640,22 +640,22 @@ drw_transform_rotate(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 				     &clip_result))
 	return NULL;
 
-    gimp_context_push ();
-    gimp_context_set_transform_direction (transform_direction);
-    gimp_context_set_interpolation (interpolation);
-    gimp_context_set_transform_recursion (recursion_level);
-    gimp_context_set_transform_resize (clip_result);
+    picman_context_push ();
+    picman_context_set_transform_direction (transform_direction);
+    picman_context_set_interpolation (interpolation);
+    picman_context_set_transform_recursion (recursion_level);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_rotate (self->ID, angle, auto_center,
+    id = picman_item_transform_rotate (self->ID, angle, auto_center,
                                      center_x, center_y);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "rotate");
 }
 
 static PyObject *
-drw_transform_rotate_simple(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_rotate_simple(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     int rotate_type, center_x, center_y;
     gboolean auto_center, clip_result = FALSE;
@@ -672,20 +672,20 @@ drw_transform_rotate_simple(PyGimpDrawable *self, PyObject *args, PyObject *kwar
 				     &clip_result))
 	return NULL;
 
-    gimp_context_push ();
-    gimp_context_set_transform_resize (clip_result);
+    picman_context_push ();
+    picman_context_set_transform_resize (clip_result);
 
-   id = gimp_item_transform_rotate_simple (self->ID, rotate_type,
+   id = picman_item_transform_rotate_simple (self->ID, rotate_type,
                                            auto_center,
                                            center_x, center_y);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "rotate");
 }
 
 static PyObject *
-drw_transform_rotate_default(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_rotate_default(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     double angle;
     gboolean auto_center, interpolate = FALSE, clip_result = FALSE;
@@ -701,21 +701,21 @@ drw_transform_rotate_default(PyGimpDrawable *self, PyObject *args, PyObject *kwa
 				     &interpolate, &clip_result))
 	return NULL;
 
-    gimp_context_push ();
+    picman_context_push ();
     if (! interpolate)
-        gimp_context_set_interpolation (GIMP_INTERPOLATION_NONE);
-    gimp_context_set_transform_resize (clip_result);
+        picman_context_set_interpolation (PICMAN_INTERPOLATION_NONE);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_rotate (self->ID, angle, auto_center,
+    id = picman_item_transform_rotate (self->ID, angle, auto_center,
                                      center_x, center_y);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "rotate");
 }
 
 static PyObject *
-drw_transform_scale(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_scale(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     double x0, y0, x1, y1;
     int transform_direction, interpolation, recursion_level = 3;
@@ -734,21 +734,21 @@ drw_transform_scale(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 				     &recursion_level, &clip_result))
 	return NULL;
 
-    gimp_context_push ();
-    gimp_context_set_transform_direction (transform_direction);
-    gimp_context_set_interpolation (interpolation);
-    gimp_context_set_transform_recursion (recursion_level);
-    gimp_context_set_transform_resize (clip_result);
+    picman_context_push ();
+    picman_context_set_transform_direction (transform_direction);
+    picman_context_set_interpolation (interpolation);
+    picman_context_set_transform_recursion (recursion_level);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_scale (self->ID, x0, y0, x1, y1);
+    id = picman_item_transform_scale (self->ID, x0, y0, x1, y1);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "scale");
 }
 
 static PyObject *
-drw_transform_scale_default(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_scale_default(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     double x0, y0, x1, y1;
     gboolean interpolate = FALSE, clip_result = FALSE;
@@ -763,20 +763,20 @@ drw_transform_scale_default(PyGimpDrawable *self, PyObject *args, PyObject *kwar
 				     &clip_result))
 	return NULL;
 
-    gimp_context_push ();
+    picman_context_push ();
     if (! interpolate)
-        gimp_context_set_interpolation (GIMP_INTERPOLATION_NONE);
-    gimp_context_set_transform_resize (clip_result);
+        picman_context_set_interpolation (PICMAN_INTERPOLATION_NONE);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_scale (self->ID, x0, y0, x1, y1);
+    id = picman_item_transform_scale (self->ID, x0, y0, x1, y1);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "scale");
 }
 
 static PyObject *
-drw_transform_shear(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_shear(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     int shear_type, transform_direction, interpolation, recursion_level = 3;
     double magnitude;
@@ -796,21 +796,21 @@ drw_transform_shear(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 				     &clip_result))
 	return NULL;
 
-    gimp_context_push ();
-    gimp_context_set_transform_direction (transform_direction);
-    gimp_context_set_interpolation (interpolation);
-    gimp_context_set_transform_recursion (recursion_level);
-    gimp_context_set_transform_resize (clip_result);
+    picman_context_push ();
+    picman_context_set_transform_direction (transform_direction);
+    picman_context_set_interpolation (interpolation);
+    picman_context_set_transform_recursion (recursion_level);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_shear (self->ID, shear_type, magnitude);
+    id = picman_item_transform_shear (self->ID, shear_type, magnitude);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "shear");
 }
 
 static PyObject *
-drw_transform_shear_default(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_shear_default(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     int shear_type;
     double magnitude;
@@ -826,20 +826,20 @@ drw_transform_shear_default(PyGimpDrawable *self, PyObject *args, PyObject *kwar
 				     &clip_result))
 	return NULL;
 
-    gimp_context_push ();
+    picman_context_push ();
     if (! interpolate)
-        gimp_context_set_interpolation (GIMP_INTERPOLATION_NONE);
-    gimp_context_set_transform_resize (clip_result);
+        picman_context_set_interpolation (PICMAN_INTERPOLATION_NONE);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_shear (self->ID, shear_type, magnitude);
+    id = picman_item_transform_shear (self->ID, shear_type, magnitude);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "shear");
 }
 
 static PyObject *
-drw_transform_2d(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_2d(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     double source_x, source_y, scale_x, scale_y, angle, dest_x, dest_y;
     int transform_direction, interpolation, recursion_level = 3;
@@ -861,22 +861,22 @@ drw_transform_2d(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 				     &clip_result))
 	return NULL;
 
-    gimp_context_push ();
-    gimp_context_set_transform_direction (transform_direction);
-    gimp_context_set_interpolation (interpolation);
-    gimp_context_set_transform_recursion (recursion_level);
-    gimp_context_set_transform_resize (clip_result);
+    picman_context_push ();
+    picman_context_set_transform_direction (transform_direction);
+    picman_context_set_interpolation (interpolation);
+    picman_context_set_transform_recursion (recursion_level);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_2d (self->ID, source_x, source_y,
+    id = picman_item_transform_2d (self->ID, source_x, source_y,
                                  scale_x, scale_y, angle, dest_x, dest_y);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "apply 2d transform to");
 }
 
 static PyObject *
-drw_transform_2d_default(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_2d_default(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     double source_x, source_y, scale_x, scale_y, angle, dest_x, dest_y;
     gboolean interpolate = FALSE, clip_result = FALSE;
@@ -893,21 +893,21 @@ drw_transform_2d_default(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 				     &clip_result))
 	return NULL;
 
-    gimp_context_push ();
+    picman_context_push ();
     if (! interpolate)
-        gimp_context_set_interpolation (GIMP_INTERPOLATION_NONE);
-    gimp_context_set_transform_resize (clip_result);
+        picman_context_set_interpolation (PICMAN_INTERPOLATION_NONE);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_2d (self->ID, source_x, source_y,
+    id = picman_item_transform_2d (self->ID, source_x, source_y,
                                  scale_x, scale_y, angle, dest_x, dest_y);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "apply 2d transform to");
 }
 
 static PyObject *
-drw_transform_matrix(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_matrix(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     double coeff_0_0, coeff_0_1, coeff_0_2,
 	   coeff_1_0, coeff_1_1, coeff_1_2,
@@ -933,24 +933,24 @@ drw_transform_matrix(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
 				     &clip_result))
 	return NULL;
 
-    gimp_context_push ();
-    gimp_context_set_transform_direction (transform_direction);
-    gimp_context_set_interpolation (interpolation);
-    gimp_context_set_transform_recursion (recursion_level);
-    gimp_context_set_transform_resize (clip_result);
+    picman_context_push ();
+    picman_context_set_transform_direction (transform_direction);
+    picman_context_set_interpolation (interpolation);
+    picman_context_set_transform_recursion (recursion_level);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_matrix (self->ID,
+    id = picman_item_transform_matrix (self->ID,
                                      coeff_0_0, coeff_0_1, coeff_0_2,
                                      coeff_1_0, coeff_1_1, coeff_1_2,
                                      coeff_2_0, coeff_2_1, coeff_2_2);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "apply 2d matrix transform to");
 }
 
 static PyObject *
-drw_transform_matrix_default(PyGimpDrawable *self, PyObject *args, PyObject *kwargs)
+drw_transform_matrix_default(PyPicmanDrawable *self, PyObject *args, PyObject *kwargs)
 {
     double coeff_0_0, coeff_0_1, coeff_0_2,
 	   coeff_1_0, coeff_1_1, coeff_1_2,
@@ -972,17 +972,17 @@ drw_transform_matrix_default(PyGimpDrawable *self, PyObject *args, PyObject *kwa
 				     &interpolate, &clip_result))
 	return NULL;
 
-    gimp_context_push ();
+    picman_context_push ();
     if (! interpolate)
-        gimp_context_set_interpolation (GIMP_INTERPOLATION_NONE);
-    gimp_context_set_transform_resize (clip_result);
+        picman_context_set_interpolation (PICMAN_INTERPOLATION_NONE);
+    picman_context_set_transform_resize (clip_result);
 
-    id = gimp_item_transform_matrix (self->ID,
+    id = picman_item_transform_matrix (self->ID,
                                      coeff_0_0, coeff_0_1, coeff_0_2,
                                      coeff_1_0, coeff_1_1, coeff_1_2,
                                      coeff_2_0, coeff_2_1, coeff_2_2);
 
-    gimp_context_pop ();
+    picman_context_pop ();
 
     return transform_result(self, id, "apply 2d matrix transform to");
 }
@@ -1026,19 +1026,19 @@ static PyMethodDef drw_methods[] = {
 };
 
 static PyObject *
-drw_get_ID(PyGimpDrawable *self, void *closure)
+drw_get_ID(PyPicmanDrawable *self, void *closure)
 {
     return PyInt_FromLong(self->ID);
 }
 
 static PyObject *
-drw_get_name(PyGimpDrawable *self, void *closure)
+drw_get_name(PyPicmanDrawable *self, void *closure)
 {
-    return PyString_FromString(gimp_item_get_name(self->ID));
+    return PyString_FromString(picman_item_get_name(self->ID));
 }
 
 static int
-drw_set_name(PyGimpDrawable *self, PyObject *value, void *closure)
+drw_set_name(PyPicmanDrawable *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete name");
@@ -1050,104 +1050,104 @@ drw_set_name(PyGimpDrawable *self, PyObject *value, void *closure)
         return -1;
     }
 
-    gimp_item_set_name(self->ID, PyString_AsString(value));
+    picman_item_set_name(self->ID, PyString_AsString(value));
 
     return 0;
 }
 
 static PyObject *
-drw_get_bpp(PyGimpDrawable *self, void *closure)
+drw_get_bpp(PyPicmanDrawable *self, void *closure)
 {
-    return PyInt_FromLong(gimp_drawable_bpp(self->ID));
+    return PyInt_FromLong(picman_drawable_bpp(self->ID));
 }
 
 static PyObject *
-drw_get_has_alpha(PyGimpDrawable *self, void *closure)
+drw_get_has_alpha(PyPicmanDrawable *self, void *closure)
 {
-    return PyBool_FromLong(gimp_drawable_has_alpha(self->ID));
+    return PyBool_FromLong(picman_drawable_has_alpha(self->ID));
 }
 
 static PyObject *
-drw_get_height(PyGimpDrawable *self, void *closure)
+drw_get_height(PyPicmanDrawable *self, void *closure)
 {
-    return PyInt_FromLong(gimp_drawable_height(self->ID));
+    return PyInt_FromLong(picman_drawable_height(self->ID));
 }
 
 static PyObject *
-drw_get_image(PyGimpDrawable *self, void *closure)
+drw_get_image(PyPicmanDrawable *self, void *closure)
 {
-    return pygimp_image_new(gimp_item_get_image(self->ID));
+    return pypicman_image_new(picman_item_get_image(self->ID));
 }
 
 static PyObject *
-drw_get_is_rgb(PyGimpDrawable *self, void *closure)
+drw_get_is_rgb(PyPicmanDrawable *self, void *closure)
 {
-    return PyBool_FromLong(gimp_drawable_is_rgb(self->ID));
+    return PyBool_FromLong(picman_drawable_is_rgb(self->ID));
 }
 
 static PyObject *
-drw_get_is_gray(PyGimpDrawable *self, void *closure)
+drw_get_is_gray(PyPicmanDrawable *self, void *closure)
 {
-    return PyBool_FromLong(gimp_drawable_is_gray(self->ID));
+    return PyBool_FromLong(picman_drawable_is_gray(self->ID));
 }
 
 static PyObject *
-drw_get_is_indexed(PyGimpDrawable *self, void *closure)
+drw_get_is_indexed(PyPicmanDrawable *self, void *closure)
 {
-    return PyBool_FromLong(gimp_drawable_is_indexed(self->ID));
+    return PyBool_FromLong(picman_drawable_is_indexed(self->ID));
 }
 
 static PyObject *
-drw_get_is_layer_mask(PyGimpDrawable *self, void *closure)
+drw_get_is_layer_mask(PyPicmanDrawable *self, void *closure)
 {
-    return PyBool_FromLong(gimp_item_is_layer_mask(self->ID));
+    return PyBool_FromLong(picman_item_is_layer_mask(self->ID));
 }
 
 static PyObject *
-drw_get_mask_bounds(PyGimpDrawable *self, void *closure)
+drw_get_mask_bounds(PyPicmanDrawable *self, void *closure)
 {
     gint x1, y1, x2, y2;
 
-    gimp_drawable_mask_bounds(self->ID, &x1, &y1, &x2, &y2);
+    picman_drawable_mask_bounds(self->ID, &x1, &y1, &x2, &y2);
     return Py_BuildValue("(iiii)", x1, y1, x2, y2);
 }
 
 static PyObject *
-drw_get_offsets(PyGimpDrawable *self, void *closure)
+drw_get_offsets(PyPicmanDrawable *self, void *closure)
 {
     gint x, y;
 
-    gimp_drawable_offsets(self->ID, &x, &y);
+    picman_drawable_offsets(self->ID, &x, &y);
 
     return Py_BuildValue("(ii)", x, y);
 }
 
 static PyObject *
-drw_get_type(PyGimpDrawable *self, void *closure)
+drw_get_type(PyPicmanDrawable *self, void *closure)
 {
-    return PyInt_FromLong(gimp_drawable_type(self->ID));
+    return PyInt_FromLong(picman_drawable_type(self->ID));
 }
 
 static PyObject *
-drw_get_type_with_alpha(PyGimpDrawable *self, void *closure)
+drw_get_type_with_alpha(PyPicmanDrawable *self, void *closure)
 {
-    return PyInt_FromLong(gimp_drawable_type_with_alpha(self->ID));
+    return PyInt_FromLong(picman_drawable_type_with_alpha(self->ID));
 }
 
 static PyObject *
-drw_get_width(PyGimpDrawable *self, void *closure)
+drw_get_width(PyPicmanDrawable *self, void *closure)
 {
-    return PyInt_FromLong(gimp_drawable_width(self->ID));
+    return PyInt_FromLong(picman_drawable_width(self->ID));
 }
 
 static PyObject *
-drw_get_linked(PyGimpDrawable *self, void *closure)
+drw_get_linked(PyPicmanDrawable *self, void *closure)
 {
-    return PyBool_FromLong(gimp_item_get_linked(self->ID));
+    return PyBool_FromLong(picman_item_get_linked(self->ID));
 }
 
 static int
-drw_set_linked(PyGimpDrawable *self, PyObject *value, void *closure)
+drw_set_linked(PyPicmanDrawable *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete linked");
@@ -1159,19 +1159,19 @@ drw_set_linked(PyGimpDrawable *self, PyObject *value, void *closure)
 	return -1;
     }
 
-    gimp_item_set_linked(self->ID, PyInt_AsLong(value));
+    picman_item_set_linked(self->ID, PyInt_AsLong(value));
 
     return 0;
 }
 
 static PyObject *
-drw_get_tattoo(PyGimpDrawable *self, void *closure)
+drw_get_tattoo(PyPicmanDrawable *self, void *closure)
 {
-    return PyInt_FromLong(gimp_item_get_tattoo(self->ID));
+    return PyInt_FromLong(picman_item_get_tattoo(self->ID));
 }
 
 static int
-drw_set_tattoo(PyGimpDrawable *self, PyObject *value, void *closure)
+drw_set_tattoo(PyPicmanDrawable *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete tattoo");
@@ -1183,19 +1183,19 @@ drw_set_tattoo(PyGimpDrawable *self, PyObject *value, void *closure)
         return -1;
     }
 
-    gimp_item_set_tattoo(self->ID, PyInt_AsLong(value));
+    picman_item_set_tattoo(self->ID, PyInt_AsLong(value));
 
     return 0;
 }
 
 static PyObject *
-drw_get_visible(PyGimpDrawable *self, void *closure)
+drw_get_visible(PyPicmanDrawable *self, void *closure)
 {
-    return PyBool_FromLong(gimp_item_get_visible(self->ID));
+    return PyBool_FromLong(picman_item_get_visible(self->ID));
 }
 
 static int
-drw_set_visible(PyGimpDrawable *self, PyObject *value, void *closure)
+drw_set_visible(PyPicmanDrawable *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete visible");
@@ -1207,7 +1207,7 @@ drw_set_visible(PyGimpDrawable *self, PyObject *value, void *closure)
         return -1;
     }
 
-    gimp_item_set_visible(self->ID, PyInt_AsLong(value));
+    picman_item_set_visible(self->ID, PyInt_AsLong(value));
 
     return 0;
 }
@@ -1236,29 +1236,29 @@ static  PyGetSetDef drw_getsets[] = {
 };
 
 static void
-drw_dealloc(PyGimpDrawable *self)
+drw_dealloc(PyPicmanDrawable *self)
 {
     if (self->drawable)
-	gimp_drawable_detach(self->drawable);
+	picman_drawable_detach(self->drawable);
 
     PyObject_DEL(self);
 }
 
 static PyObject *
-drw_repr(PyGimpDrawable *self)
+drw_repr(PyPicmanDrawable *self)
 {
     PyObject *s;
     gchar *name;
 
-    name = gimp_item_get_name(self->ID);
-    s = PyString_FromFormat("<gimp.Drawable '%s'>", name ? name : "(null)");
+    name = picman_item_get_name(self->ID);
+    s = PyString_FromFormat("<picman.Drawable '%s'>", name ? name : "(null)");
     g_free(name);
 
     return s;
 }
 
 static int
-drw_cmp(PyGimpDrawable *self, PyGimpDrawable *other)
+drw_cmp(PyPicmanDrawable *self, PyPicmanDrawable *other)
 {
     if (self->ID == other->ID)
 	return 0;
@@ -1267,11 +1267,11 @@ drw_cmp(PyGimpDrawable *self, PyGimpDrawable *other)
     return 1;
 }
 
-PyTypeObject PyGimpDrawable_Type = {
+PyTypeObject PyPicmanDrawable_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                  /* ob_size */
-    "gimp.Drawable",                    /* tp_name */
-    sizeof(PyGimpDrawable),             /* tp_basicsize */
+    "picman.Drawable",                    /* tp_name */
+    sizeof(PyPicmanDrawable),             /* tp_basicsize */
     0,                                  /* tp_itemsize */
     /* methods */
     (destructor)drw_dealloc,            /* tp_dealloc */
@@ -1300,7 +1300,7 @@ PyTypeObject PyGimpDrawable_Type = {
     drw_methods,			/* tp_methods */
     0,					/* tp_members */
     drw_getsets,			/* tp_getset */
-    &PyGimpItem_Type,			/* tp_base */
+    &PyPicmanItem_Type,			/* tp_base */
     (PyObject *)0,			/* tp_dict */
     0,					/* tp_descr_get */
     0,					/* tp_descr_set */
@@ -1312,29 +1312,29 @@ PyTypeObject PyGimpDrawable_Type = {
 
 
 PyObject *
-pygimp_drawable_new(GimpDrawable *drawable, gint32 ID)
+pypicman_drawable_new(PicmanDrawable *drawable, gint32 ID)
 {
     PyObject *self;
 
     if (drawable != NULL)
     ID = drawable->drawable_id;
 
-    if (!gimp_item_is_valid(ID)) {
+    if (!picman_item_is_valid(ID)) {
 	Py_INCREF(Py_None);
 	return Py_None;
     }
 
     /* create the appropriate object type */
-    if (gimp_item_is_layer(ID))
-	self = pygimp_layer_new(ID);
+    if (picman_item_is_layer(ID))
+	self = pypicman_layer_new(ID);
     else
-	self = pygimp_channel_new(ID);
+	self = pypicman_channel_new(ID);
 
     if (self == NULL)
 	return NULL;
 
-    if (PyObject_TypeCheck(self, &PyGimpDrawable_Type))
-    ((PyGimpDrawable *)self)->drawable = drawable;
+    if (PyObject_TypeCheck(self, &PyPicmanDrawable_Type))
+    ((PyPicmanDrawable *)self)->drawable = drawable;
 
     return self;
 }
@@ -1344,10 +1344,10 @@ pygimp_drawable_new(GimpDrawable *drawable, gint32 ID)
 
 
 static PyObject *
-lay_copy(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
+lay_copy(PyPicmanLayer *self, PyObject *args, PyObject *kwargs)
 {
     int nreturn_vals;
-    GimpParam *return_vals;
+    PicmanParam *return_vals;
     gboolean add_alpha = FALSE;
     gint32 id = -1;
 
@@ -1357,30 +1357,30 @@ lay_copy(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
 				     &add_alpha))
 	return NULL;
 
-    return_vals = gimp_run_procedure("gimp-layer-copy",
+    return_vals = picman_run_procedure("picman-layer-copy",
 				     &nreturn_vals,
-				     GIMP_PDB_LAYER, self->ID,
-				     GIMP_PDB_INT32, add_alpha,
-				     GIMP_PDB_END);
+				     PICMAN_PDB_LAYER, self->ID,
+				     PICMAN_PDB_INT32, add_alpha,
+				     PICMAN_PDB_END);
 
-    if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+    if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
 	id = return_vals[1].data.d_layer;
     else
-	PyErr_Format(pygimp_error,
+	PyErr_Format(pypicman_error,
 		     "could not create new layer copy from layer (ID %d)",
 		     self->ID);
 
-    gimp_destroy_params(return_vals, nreturn_vals);
+    picman_destroy_params(return_vals, nreturn_vals);
 
-    return id != -1 ? pygimp_layer_new(id) : NULL;
+    return id != -1 ? pypicman_layer_new(id) : NULL;
 }
 
 
 static PyObject *
-lay_add_alpha(PyGimpLayer *self)
+lay_add_alpha(PyPicmanLayer *self)
 {
-    if (!gimp_layer_add_alpha(self->ID)) {
-	PyErr_Format(pygimp_error, "could not add alpha to layer (ID %d)",
+    if (!picman_layer_add_alpha(self->ID)) {
+	PyErr_Format(pypicman_error, "could not add alpha to layer (ID %d)",
 		     self->ID);
 	return NULL;
     }
@@ -1391,15 +1391,15 @@ lay_add_alpha(PyGimpLayer *self)
 
 
 static PyObject *
-lay_add_mask(PyGimpLayer *self, PyObject *args)
+lay_add_mask(PyPicmanLayer *self, PyObject *args)
 {
-    PyGimpChannel *mask;
+    PyPicmanChannel *mask;
 
-    if (!PyArg_ParseTuple(args, "O!:add_mask", &PyGimpChannel_Type, &mask))
+    if (!PyArg_ParseTuple(args, "O!:add_mask", &PyPicmanChannel_Type, &mask))
 	return NULL;
 
-    if (!gimp_layer_add_mask(self->ID, mask->ID)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_layer_add_mask(self->ID, mask->ID)) {
+	PyErr_Format(pypicman_error,
 		     "could not add mask (ID %d) to layer (ID %d)",
 		     mask->ID, self->ID);
 	return NULL;
@@ -1410,7 +1410,7 @@ lay_add_mask(PyGimpLayer *self, PyObject *args)
 }
 
 static PyObject *
-lay_create_mask(PyGimpLayer *self, PyObject *args)
+lay_create_mask(PyPicmanLayer *self, PyObject *args)
 {
     int type;
     gint32 id;
@@ -1418,28 +1418,28 @@ lay_create_mask(PyGimpLayer *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "i:create_mask", &type))
 	return NULL;
 
-    id = gimp_layer_create_mask(self->ID, type);
+    id = picman_layer_create_mask(self->ID, type);
 
     if (id == -1) {
-	PyErr_Format(pygimp_error,
+	PyErr_Format(pypicman_error,
 		     "could not create mask of type %d on layer (ID %d)",
 		     type, self->ID);
 	return NULL;
     }
 
-    return pygimp_channel_new(id);
+    return pypicman_channel_new(id);
 }
 
 static PyObject *
-lay_remove_mask(PyGimpLayer *self, PyObject *args)
+lay_remove_mask(PyPicmanLayer *self, PyObject *args)
 {
     int mode;
 
     if (!PyArg_ParseTuple(args, "i:remove_mask", &mode))
 	return NULL;
 
-    if (!gimp_layer_remove_mask(self->ID, mode)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_layer_remove_mask(self->ID, mode)) {
+	PyErr_Format(pypicman_error,
 		     "could not remove mask from layer (ID %d) with mode %d",
 		      self->ID, mode);
 	return NULL;
@@ -1451,7 +1451,7 @@ lay_remove_mask(PyGimpLayer *self, PyObject *args)
 
 
 static PyObject *
-lay_resize(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
+lay_resize(PyPicmanLayer *self, PyObject *args, PyObject *kwargs)
 {
     unsigned int new_h, new_w;
     int offs_x = 0, offs_y = 0;
@@ -1462,8 +1462,8 @@ lay_resize(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
 				     &new_w, &new_h, &offs_x, &offs_y))
 	return NULL;
 
-    if (!gimp_layer_resize(self->ID, new_w, new_h, offs_x, offs_y)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_layer_resize(self->ID, new_w, new_h, offs_x, offs_y)) {
+	PyErr_Format(pypicman_error,
 		     "could not resize layer (ID %d) to size %dx%d "
 		     "(offset %d, %d)",
 		     self->ID, new_w, new_h, offs_x, offs_y);
@@ -1475,10 +1475,10 @@ lay_resize(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyObject *
-lay_resize_to_image_size(PyGimpLayer *self)
+lay_resize_to_image_size(PyPicmanLayer *self)
 {
-    if (!gimp_layer_resize_to_image_size(self->ID)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_layer_resize_to_image_size(self->ID)) {
+	PyErr_Format(pypicman_error,
 		     "could not resize layer (ID %d) to image size",
 		     self->ID);
 	return NULL;
@@ -1489,7 +1489,7 @@ lay_resize_to_image_size(PyGimpLayer *self)
 }
 
 static PyObject *
-lay_scale(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
+lay_scale(PyPicmanLayer *self, PyObject *args, PyObject *kwargs)
 {
     int new_width, new_height;
     int interpolation = -1;
@@ -1504,22 +1504,22 @@ lay_scale(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
 	return NULL;
 
     if (interpolation != -1) {
-        gimp_context_push();
-        gimp_context_set_interpolation(interpolation);
+        picman_context_push();
+        picman_context_set_interpolation(interpolation);
     }
 
-    if (!gimp_layer_scale(self->ID, new_width, new_height, local_origin)) {
-        PyErr_Format(pygimp_error,
+    if (!picman_layer_scale(self->ID, new_width, new_height, local_origin)) {
+        PyErr_Format(pypicman_error,
                      "could not scale layer (ID %d) to size %dx%d",
                      self->ID, new_width, new_height);
         if (interpolation != -1) {
-            gimp_context_pop();
+            picman_context_pop();
         }
         return NULL;
     }
 
     if (interpolation != -1) {
-        gimp_context_pop();
+        picman_context_pop();
     }
 
     Py_INCREF(Py_None);
@@ -1528,7 +1528,7 @@ lay_scale(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
 
 
 static PyObject *
-lay_translate(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
+lay_translate(PyPicmanLayer *self, PyObject *args, PyObject *kwargs)
 {
     int offs_x, offs_y;
 
@@ -1538,8 +1538,8 @@ lay_translate(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
 				     &offs_x, &offs_y))
 	return NULL;
 
-    if (!gimp_layer_translate(self->ID, offs_x, offs_y)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_layer_translate(self->ID, offs_x, offs_y)) {
+	PyErr_Format(pypicman_error,
 		     "could not translate layer (ID %d) to offset %d, %d",
 		     self->ID, offs_x, offs_y);
 	return NULL;
@@ -1551,7 +1551,7 @@ lay_translate(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
 
 
 static PyObject *
-lay_set_offsets(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
+lay_set_offsets(PyPicmanLayer *self, PyObject *args, PyObject *kwargs)
 {
     int offs_x, offs_y;
 
@@ -1561,8 +1561,8 @@ lay_set_offsets(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
 				     &offs_x, &offs_y))
 	return NULL;
 
-    if (!gimp_layer_set_offsets(self->ID, offs_x, offs_y)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_layer_set_offsets(self->ID, offs_x, offs_y)) {
+	PyErr_Format(pypicman_error,
 		     "could not set offset %d, %d on layer (ID %d)",
 		     offs_x, offs_y, self->ID);
 	return NULL;
@@ -1587,32 +1587,32 @@ static PyMethodDef lay_methods[] = {
 };
 
 static PyObject *
-lay_get_is_floating_sel(PyGimpLayer *self, void *closure)
+lay_get_is_floating_sel(PyPicmanLayer *self, void *closure)
 {
-    return PyBool_FromLong(gimp_layer_is_floating_sel(self->ID));
+    return PyBool_FromLong(picman_layer_is_floating_sel(self->ID));
 }
 
 static PyObject *
-lay_get_mask(PyGimpLayer *self, void *closure)
+lay_get_mask(PyPicmanLayer *self, void *closure)
 {
-    gint32 id = gimp_layer_get_mask(self->ID);
+    gint32 id = picman_layer_get_mask(self->ID);
 
     if (id == -1) {
 	Py_INCREF(Py_None);
 	return Py_None;
     }
 
-    return pygimp_channel_new(id);
+    return pypicman_channel_new(id);
 }
 
 static PyObject *
-lay_get_apply_mask(PyGimpLayer *self, void *closure)
+lay_get_apply_mask(PyPicmanLayer *self, void *closure)
 {
-    return PyBool_FromLong(gimp_layer_get_apply_mask(self->ID));
+    return PyBool_FromLong(picman_layer_get_apply_mask(self->ID));
 }
 
 static int
-lay_set_apply_mask(PyGimpLayer *self, PyObject *value, void *closure)
+lay_set_apply_mask(PyPicmanLayer *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete apply_mask");
@@ -1624,8 +1624,8 @@ lay_set_apply_mask(PyGimpLayer *self, PyObject *value, void *closure)
 	return -1;
     }
 
-    if (!gimp_layer_set_apply_mask(self->ID, PyInt_AsLong(value))) {
-	PyErr_Format(pygimp_error,
+    if (!picman_layer_set_apply_mask(self->ID, PyInt_AsLong(value))) {
+	PyErr_Format(pypicman_error,
 		     "could not set layer mask on layer (ID %d)",
 		     self->ID);
 	return -1;
@@ -1635,13 +1635,13 @@ lay_set_apply_mask(PyGimpLayer *self, PyObject *value, void *closure)
 }
 
 static PyObject *
-lay_get_edit_mask(PyGimpLayer *self, void *closure)
+lay_get_edit_mask(PyPicmanLayer *self, void *closure)
 {
-    return PyBool_FromLong(gimp_layer_get_edit_mask(self->ID));
+    return PyBool_FromLong(picman_layer_get_edit_mask(self->ID));
 }
 
 static int
-lay_set_edit_mask(PyGimpLayer *self, PyObject *value, void *closure)
+lay_set_edit_mask(PyPicmanLayer *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete edit_mask");
@@ -1653,8 +1653,8 @@ lay_set_edit_mask(PyGimpLayer *self, PyObject *value, void *closure)
 	return -1;
     }
 
-    if (!gimp_layer_set_edit_mask(self->ID, PyInt_AsLong(value))) {
-	PyErr_Format(pygimp_error,
+    if (!picman_layer_set_edit_mask(self->ID, PyInt_AsLong(value))) {
+	PyErr_Format(pypicman_error,
 		     "could not set layer mask active on layer (ID %d)",
 		     self->ID);
 	return -1;
@@ -1664,13 +1664,13 @@ lay_set_edit_mask(PyGimpLayer *self, PyObject *value, void *closure)
 }
 
 static PyObject *
-lay_get_mode(PyGimpLayer *self, void *closure)
+lay_get_mode(PyPicmanLayer *self, void *closure)
 {
-    return PyInt_FromLong(gimp_layer_get_mode(self->ID));
+    return PyInt_FromLong(picman_layer_get_mode(self->ID));
 }
 
 static int
-lay_set_mode(PyGimpLayer *self, PyObject *value, void *closure)
+lay_set_mode(PyPicmanLayer *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete mode");
@@ -1682,8 +1682,8 @@ lay_set_mode(PyGimpLayer *self, PyObject *value, void *closure)
 	return -1;
     }
 
-    if (!gimp_layer_set_mode(self->ID, PyInt_AsLong(value))) {
-	PyErr_Format(pygimp_error, "could not set mode on layer (ID %d)",
+    if (!picman_layer_set_mode(self->ID, PyInt_AsLong(value))) {
+	PyErr_Format(pypicman_error, "could not set mode on layer (ID %d)",
 		     self->ID);
 	return -1;
     }
@@ -1692,13 +1692,13 @@ lay_set_mode(PyGimpLayer *self, PyObject *value, void *closure)
 }
 
 static PyObject *
-lay_get_opacity(PyGimpLayer *self, void *closure)
+lay_get_opacity(PyPicmanLayer *self, void *closure)
 {
-    return PyFloat_FromDouble(gimp_layer_get_opacity(self->ID));
+    return PyFloat_FromDouble(picman_layer_get_opacity(self->ID));
 }
 
 static int
-lay_set_opacity(PyGimpLayer *self, PyObject *value, void *closure)
+lay_set_opacity(PyPicmanLayer *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete opacity");
@@ -1710,8 +1710,8 @@ lay_set_opacity(PyGimpLayer *self, PyObject *value, void *closure)
 	return -1;
     }
 
-    if (!gimp_layer_set_opacity(self->ID, PyFloat_AsDouble(value))) {
-	PyErr_Format(pygimp_error, "could not set opacity on layer (ID %d)",
+    if (!picman_layer_set_opacity(self->ID, PyFloat_AsDouble(value))) {
+	PyErr_Format(pypicman_error, "could not set opacity on layer (ID %d)",
 		     self->ID);
 	return -1;
     }
@@ -1720,13 +1720,13 @@ lay_set_opacity(PyGimpLayer *self, PyObject *value, void *closure)
 }
 
 static PyObject *
-lay_get_lock_alpha(PyGimpLayer *self, void *closure)
+lay_get_lock_alpha(PyPicmanLayer *self, void *closure)
 {
-    return PyBool_FromLong(gimp_layer_get_lock_alpha(self->ID));
+    return PyBool_FromLong(picman_layer_get_lock_alpha(self->ID));
 }
 
 static int
-lay_set_lock_alpha(PyGimpLayer *self, PyObject *value, void *closure)
+lay_set_lock_alpha(PyPicmanLayer *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError,
@@ -1739,8 +1739,8 @@ lay_set_lock_alpha(PyGimpLayer *self, PyObject *value, void *closure)
 	return -1;
     }
 
-    if (!gimp_layer_set_lock_alpha(self->ID, PyInt_AsLong(value))) {
-	PyErr_Format(pygimp_error,
+    if (!picman_layer_set_lock_alpha(self->ID, PyInt_AsLong(value))) {
+	PyErr_Format(pypicman_error,
 	             "could not set lock alpha setting on layer (ID %d)",
 		     self->ID);
 	return -1;
@@ -1750,13 +1750,13 @@ lay_set_lock_alpha(PyGimpLayer *self, PyObject *value, void *closure)
 }
 
 static PyObject *
-lay_get_show_mask(PyGimpLayer *self, void *closure)
+lay_get_show_mask(PyPicmanLayer *self, void *closure)
 {
-    return PyBool_FromLong(gimp_layer_get_show_mask(self->ID));
+    return PyBool_FromLong(picman_layer_get_show_mask(self->ID));
 }
 
 static int
-lay_set_show_mask(PyGimpLayer *self, PyObject *value, void *closure)
+lay_set_show_mask(PyPicmanLayer *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete show_mask");
@@ -1768,8 +1768,8 @@ lay_set_show_mask(PyGimpLayer *self, PyObject *value, void *closure)
 	return -1;
     }
 
-    if (!gimp_layer_set_show_mask(self->ID, PyInt_AsLong(value))) {
-	PyErr_Format(pygimp_error,
+    if (!picman_layer_set_show_mask(self->ID, PyInt_AsLong(value))) {
+	PyErr_Format(pypicman_error,
 	             "could not set mask visibility on layer (ID %d)",
 		     self->ID);
 	return -1;
@@ -1779,7 +1779,7 @@ lay_set_show_mask(PyGimpLayer *self, PyObject *value, void *closure)
 }
 
 static PyObject *
-lay_get_preserve_trans(PyGimpLayer *self, void *closure)
+lay_get_preserve_trans(PyPicmanLayer *self, void *closure)
 {
     if (PyErr_Warn(PyExc_DeprecationWarning, "use lock_alpha attribute") < 0)
 	return NULL;
@@ -1788,7 +1788,7 @@ lay_get_preserve_trans(PyGimpLayer *self, void *closure)
 }
 
 static int
-lay_set_preserve_trans(PyGimpLayer *self, PyObject *value, void *closure)
+lay_set_preserve_trans(PyPicmanLayer *self, PyObject *value, void *closure)
 {
     if (PyErr_Warn(PyExc_DeprecationWarning, "use lock_alpha attribute") < 0)
 	return -1;
@@ -1811,41 +1811,41 @@ static PyGetSetDef lay_getsets[] = {
 };
 
 static PyObject *
-lay_repr(PyGimpLayer *self)
+lay_repr(PyPicmanLayer *self)
 {
     PyObject *s;
     gchar *name;
 
-    name = gimp_item_get_name(self->ID);
-    s = PyString_FromFormat("<gimp.Layer '%s'>", name ? name : "(null)");
+    name = picman_item_get_name(self->ID);
+    s = PyString_FromFormat("<picman.Layer '%s'>", name ? name : "(null)");
     g_free(name);
 
     return s;
 }
 
 static int
-lay_init(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
+lay_init(PyPicmanLayer *self, PyObject *args, PyObject *kwargs)
 {
-    PyGimpImage *img;
+    PyPicmanImage *img;
     char *name;
     unsigned int width, height;
-    GimpImageType type = GIMP_RGB_IMAGE;
+    PicmanImageType type = PICMAN_RGB_IMAGE;
     double opacity = 100.0;
-    GimpLayerModeEffects mode = GIMP_NORMAL_MODE;
+    PicmanLayerModeEffects mode = PICMAN_NORMAL_MODE;
 
 
-    if (!PyArg_ParseTuple(args, "O!sii|idi:gimp.Layer.__init__",
-			  &PyGimpImage_Type, &img, &name, &width, &height,
+    if (!PyArg_ParseTuple(args, "O!sii|idi:picman.Layer.__init__",
+			  &PyPicmanImage_Type, &img, &name, &width, &height,
 			  &type, &opacity, &mode))
 	return -1;
 
-    self->ID = gimp_layer_new(img->ID, name, width, height,
+    self->ID = picman_layer_new(img->ID, name, width, height,
 			      type, opacity, mode);
 
     self->drawable = NULL;
 
     if (self->ID < 0) {
-	PyErr_Format(pygimp_error,
+	PyErr_Format(pypicman_error,
 		     "could not create %dx%d layer '%s' of type %d on "
 		     "image (ID %d)",
 		     width, height, name, type, img->ID);
@@ -1855,11 +1855,11 @@ lay_init(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
     return 0;
 }
 
-PyTypeObject PyGimpLayer_Type = {
+PyTypeObject PyPicmanLayer_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                  /* ob_size */
-    "gimp.Layer",                       /* tp_name */
-    sizeof(PyGimpLayer),                /* tp_basicsize */
+    "picman.Layer",                       /* tp_name */
+    sizeof(PyPicmanLayer),                /* tp_basicsize */
     0,                                  /* tp_itemsize */
     /* methods */
     (destructor)drw_dealloc,            /* tp_dealloc */
@@ -1888,7 +1888,7 @@ PyTypeObject PyGimpLayer_Type = {
     lay_methods,			/* tp_methods */
     0,					/* tp_members */
     lay_getsets,			/* tp_getset */
-    &PyGimpDrawable_Type,		/* tp_base */
+    &PyPicmanDrawable_Type,		/* tp_base */
     (PyObject *)0,			/* tp_dict */
     0,					/* tp_descr_get */
     0,					/* tp_descr_set */
@@ -1899,16 +1899,16 @@ PyTypeObject PyGimpLayer_Type = {
 };
 
 PyObject *
-pygimp_layer_new(gint32 ID)
+pypicman_layer_new(gint32 ID)
 {
-    PyGimpLayer *self;
+    PyPicmanLayer *self;
 
-    if (!gimp_item_is_valid(ID) || !gimp_item_is_layer(ID)) {
+    if (!picman_item_is_valid(ID) || !picman_item_is_layer(ID)) {
 	Py_INCREF(Py_None);
 	return Py_None;
     }
 
-    self = PyObject_NEW(PyGimpLayer, &PyGimpLayer_Type);
+    self = PyObject_NEW(PyPicmanLayer, &PyPicmanLayer_Type);
 
     if (self == NULL)
 	return NULL;
@@ -1927,18 +1927,18 @@ static PyMethodDef grouplay_methods[] = {
 };
 
 static PyObject *
-grouplay_get_layers(PyGimpGroupLayer *self, void *closure)
+grouplay_get_layers(PyPicmanGroupLayer *self, void *closure)
 {
     gint32 *layers;
     gint n_layers, i;
     PyObject *ret;
 
-    layers = gimp_item_get_children(self->ID, &n_layers);
+    layers = picman_item_get_children(self->ID, &n_layers);
 
     ret = PyList_New(n_layers);
 
     for (i = 0; i < n_layers; i++)
-        PyList_SetItem(ret, i, pygimp_group_layer_new(layers[i]));
+        PyList_SetItem(ret, i, pypicman_group_layer_new(layers[i]));
 
     g_free(layers);
 
@@ -1951,23 +1951,23 @@ static PyGetSetDef grouplay_getsets[] = {
 };
 
 static PyObject *
-grouplay_repr(PyGimpLayer *self)
+grouplay_repr(PyPicmanLayer *self)
 {
     PyObject *s;
     gchar *name;
 
-    name = gimp_item_get_name(self->ID);
-    s = PyString_FromFormat("<gimp.GroupLayer '%s'>", name ? name : "(null)");
+    name = picman_item_get_name(self->ID);
+    s = PyString_FromFormat("<picman.GroupLayer '%s'>", name ? name : "(null)");
     g_free(name);
 
     return s;
 }
 
-PyTypeObject PyGimpGroupLayer_Type = {
+PyTypeObject PyPicmanGroupLayer_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                  /* ob_size */
-    "gimp.GroupLayer",                  /* tp_name */
-    sizeof(PyGimpGroupLayer),                /* tp_basicsize */
+    "picman.GroupLayer",                  /* tp_name */
+    sizeof(PyPicmanGroupLayer),                /* tp_basicsize */
     0,                                  /* tp_itemsize */
     /* methods */
     (destructor)drw_dealloc,            /* tp_dealloc */
@@ -1996,7 +1996,7 @@ PyTypeObject PyGimpGroupLayer_Type = {
     grouplay_methods,                   /* tp_methods */
     0,                                  /* tp_members */
     grouplay_getsets,                        /* tp_getset */
-    &PyGimpLayer_Type,                  /* tp_base */
+    &PyPicmanLayer_Type,                  /* tp_base */
     (PyObject *)0,                      /* tp_dict */
     0,                                  /* tp_descr_get */
     0,                                  /* tp_descr_set */
@@ -2007,20 +2007,20 @@ PyTypeObject PyGimpGroupLayer_Type = {
 };
 
 PyObject *
-pygimp_group_layer_new(gint32 ID)
+pypicman_group_layer_new(gint32 ID)
 {
-    PyGimpGroupLayer *self;
+    PyPicmanGroupLayer *self;
 
-    if (!gimp_item_is_valid(ID) || !gimp_item_is_layer(ID)) {
+    if (!picman_item_is_valid(ID) || !picman_item_is_layer(ID)) {
         Py_INCREF(Py_None);
         return Py_None;
     }
     
-    if (!gimp_item_is_group(ID)) {
-        return pygimp_layer_new(ID);
+    if (!picman_item_is_group(ID)) {
+        return pypicman_layer_new(ID);
     }
 
-    self = PyObject_NEW(PyGimpGroupLayer, &PyGimpGroupLayer_Type);
+    self = PyObject_NEW(PyPicmanGroupLayer, &PyPicmanGroupLayer_Type);
 
     if (self == NULL)
         return NULL;
@@ -2036,27 +2036,27 @@ pygimp_group_layer_new(gint32 ID)
 
 
 static PyObject *
-chn_copy(PyGimpChannel *self)
+chn_copy(PyPicmanChannel *self)
 {
     gint32 id;
 
-    id = gimp_channel_copy(self->ID);
+    id = picman_channel_copy(self->ID);
 
     if (id == -1) {
-	PyErr_Format(pygimp_error,
+	PyErr_Format(pypicman_error,
 		     "could not create new channel copy from channel (ID %d)",
 		     self->ID);
 	return NULL;
     }
 
-    return pygimp_channel_new(id);
+    return pypicman_channel_new(id);
 }
 
 static PyObject *
-chn_combine_masks(PyGimpChannel *self, PyObject *args, PyObject *kwargs)
+chn_combine_masks(PyPicmanChannel *self, PyObject *args, PyObject *kwargs)
 {
-    PyGimpChannel *channel2;
-    GimpChannelOps operation;
+    PyPicmanChannel *channel2;
+    PicmanChannelOps operation;
     int offx = 0, offy = 0;
 
     static char *kwlist[] = { "channel", "operation", "offset_x", "offset_y",
@@ -2064,13 +2064,13 @@ chn_combine_masks(PyGimpChannel *self, PyObject *args, PyObject *kwargs)
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!i|ii:combine_masks",
 				     kwlist,
-				     &PyGimpChannel_Type, &channel2,
+				     &PyPicmanChannel_Type, &channel2,
 				     &operation, &offx, &offy))
 	return NULL;
 
-    if (!gimp_channel_combine_masks(self->ID, channel2->ID, operation,
+    if (!picman_channel_combine_masks(self->ID, channel2->ID, operation,
 				    offx, offy)) {
-	PyErr_Format(pygimp_error,
+	PyErr_Format(pypicman_error,
 		     "could not combine masks with channels (ID %d and ID %d) "
 		     "with operation %d, offset %d, %d",
 		     self->ID, channel2->ID, operation, offx, offy);
@@ -2088,36 +2088,36 @@ static PyMethodDef chn_methods[] = {
 };
 
 static PyObject *
-chn_get_color(PyGimpChannel *self, void *closure)
+chn_get_color(PyPicmanChannel *self, void *closure)
 {
-    GimpRGB rgb;
+    PicmanRGB rgb;
 
-    if (!gimp_channel_get_color(self->ID, &rgb)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_channel_get_color(self->ID, &rgb)) {
+	PyErr_Format(pypicman_error,
 		     "could not get compositing color of channel (ID %d)",
 		     self->ID);
 	return NULL;
     }
 
-    return pygimp_rgb_new(&rgb);
+    return pypicman_rgb_new(&rgb);
 }
 
 static int
-chn_set_color(PyGimpChannel *self, PyObject *value, void *closure)
+chn_set_color(PyPicmanChannel *self, PyObject *value, void *closure)
 {
     guchar r, g, b;
-    GimpRGB tmprgb, *rgb;
+    PicmanRGB tmprgb, *rgb;
 
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete color");
         return -1;
     }
 
-    if (pygimp_rgb_check(value)) {
-	rgb = pyg_boxed_get(value, GimpRGB);
+    if (pypicman_rgb_check(value)) {
+	rgb = pyg_boxed_get(value, PicmanRGB);
     } else if (PyTuple_Check(value) &&
 	       PyArg_ParseTuple(value, "(BBB)", &r, &g, &b)) {
-	gimp_rgb_set_uchar(&tmprgb, r, g, b);
+	picman_rgb_set_uchar(&tmprgb, r, g, b);
 	rgb = &tmprgb;
     } else {
 	PyErr_Clear();
@@ -2125,8 +2125,8 @@ chn_set_color(PyGimpChannel *self, PyObject *value, void *closure)
 	return -1;
     }
 
-    if (!gimp_channel_set_color(self->ID, rgb)) {
-	PyErr_Format(pygimp_error,
+    if (!picman_channel_set_color(self->ID, rgb)) {
+	PyErr_Format(pypicman_error,
 		     "could not set compositing color on channel (ID %d)",
 		     self->ID);
 	return -1;
@@ -2136,13 +2136,13 @@ chn_set_color(PyGimpChannel *self, PyObject *value, void *closure)
 }
 
 static PyObject *
-chn_get_opacity(PyGimpLayer *self, void *closure)
+chn_get_opacity(PyPicmanLayer *self, void *closure)
 {
-    return PyFloat_FromDouble(gimp_channel_get_opacity(self->ID));
+    return PyFloat_FromDouble(picman_channel_get_opacity(self->ID));
 }
 
 static int
-chn_set_opacity(PyGimpLayer *self, PyObject *value, void *closure)
+chn_set_opacity(PyPicmanLayer *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete opacity");
@@ -2154,8 +2154,8 @@ chn_set_opacity(PyGimpLayer *self, PyObject *value, void *closure)
 	return -1;
     }
 
-    if (!gimp_channel_set_opacity(self->ID, PyFloat_AsDouble(value))) {
-	PyErr_Format(pygimp_error,
+    if (!picman_channel_set_opacity(self->ID, PyFloat_AsDouble(value))) {
+	PyErr_Format(pypicman_error,
 		     "could not set opacity on channel (ID %d)",
 		     self->ID);
 	return -1;
@@ -2165,13 +2165,13 @@ chn_set_opacity(PyGimpLayer *self, PyObject *value, void *closure)
 }
 
 static PyObject *
-chn_get_show_masked(PyGimpLayer *self, void *closure)
+chn_get_show_masked(PyPicmanLayer *self, void *closure)
 {
-    return PyBool_FromLong(gimp_channel_get_show_masked(self->ID));
+    return PyBool_FromLong(picman_channel_get_show_masked(self->ID));
 }
 
 static int
-chn_set_show_masked(PyGimpLayer *self, PyObject *value, void *closure)
+chn_set_show_masked(PyPicmanLayer *self, PyObject *value, void *closure)
 {
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "cannot delete show_masked");
@@ -2183,8 +2183,8 @@ chn_set_show_masked(PyGimpLayer *self, PyObject *value, void *closure)
 	return -1;
     }
 
-    if (!gimp_channel_set_show_masked(self->ID, PyInt_AsLong(value))) {
-	PyErr_Format(pygimp_error,
+    if (!picman_channel_set_show_masked(self->ID, PyInt_AsLong(value))) {
+	PyErr_Format(pypicman_error,
 		     "could not set composite method on channel (ID %d)",
 		     self->ID);
 	return -1;
@@ -2202,38 +2202,38 @@ static PyGetSetDef chn_getsets[] = {
 };
 
 static PyObject *
-chn_repr(PyGimpChannel *self)
+chn_repr(PyPicmanChannel *self)
 {
     PyObject *s;
     gchar *name;
 
-    name = gimp_item_get_name(self->ID);
-    s = PyString_FromFormat("<gimp.Channel '%s'>", name ? name : "(null)");
+    name = picman_item_get_name(self->ID);
+    s = PyString_FromFormat("<picman.Channel '%s'>", name ? name : "(null)");
     g_free(name);
 
     return s;
 }
 
 static int
-chn_init(PyGimpChannel *self, PyObject *args, PyObject *kwargs)
+chn_init(PyPicmanChannel *self, PyObject *args, PyObject *kwargs)
 {
-    PyGimpImage *img;
+    PyPicmanImage *img;
     PyObject *color;
     char *name;
     unsigned int width, height, r, g, b;
     double opacity;
-    GimpRGB tmprgb, *rgb;
+    PicmanRGB tmprgb, *rgb;
 
-    if (!PyArg_ParseTuple(args, "O!siidO:gimp.Channel.__init__",
-			  &PyGimpImage_Type, &img, &name, &width,
+    if (!PyArg_ParseTuple(args, "O!siidO:picman.Channel.__init__",
+			  &PyPicmanImage_Type, &img, &name, &width,
 			  &height, &opacity, &color))
 	return -1;
 
-    if (pygimp_rgb_check(color)) {
-	rgb = pyg_boxed_get(color, GimpRGB);
+    if (pypicman_rgb_check(color)) {
+	rgb = pyg_boxed_get(color, PicmanRGB);
     } else if (PyTuple_Check(color) &&
 	       PyArg_ParseTuple(color, "(BBB)", &r, &g, &b)) {
-	gimp_rgb_set_uchar(&tmprgb, r, g, b);
+	picman_rgb_set_uchar(&tmprgb, r, g, b);
 	rgb = &tmprgb;
     } else {
 	PyErr_Clear();
@@ -2241,12 +2241,12 @@ chn_init(PyGimpChannel *self, PyObject *args, PyObject *kwargs)
 	return -1;
     }
 
-    self->ID = gimp_channel_new(img->ID, name, width, height, opacity, rgb);
+    self->ID = picman_channel_new(img->ID, name, width, height, opacity, rgb);
 
     self->drawable = NULL;
 
     if (self->ID < 0) {
-	PyErr_Format(pygimp_error,
+	PyErr_Format(pypicman_error,
 		     "could not create %dx%d channel '%s' on image (ID %d)",
 		     width, height, name, img->ID);
 	return -1;
@@ -2255,11 +2255,11 @@ chn_init(PyGimpChannel *self, PyObject *args, PyObject *kwargs)
     return 0;
 }
 
-PyTypeObject PyGimpChannel_Type = {
+PyTypeObject PyPicmanChannel_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                  /* ob_size */
-    "gimp.Channel",                     /* tp_name */
-    sizeof(PyGimpChannel),              /* tp_basicsize */
+    "picman.Channel",                     /* tp_name */
+    sizeof(PyPicmanChannel),              /* tp_basicsize */
     0,                                  /* tp_itemsize */
     /* methods */
     (destructor)drw_dealloc,            /* tp_dealloc */
@@ -2288,7 +2288,7 @@ PyTypeObject PyGimpChannel_Type = {
     chn_methods,			/* tp_methods */
     0,					/* tp_members */
     chn_getsets,			/* tp_getset */
-    &PyGimpDrawable_Type,		/* tp_base */
+    &PyPicmanDrawable_Type,		/* tp_base */
     (PyObject *)0,			/* tp_dict */
     0,					/* tp_descr_get */
     0,					/* tp_descr_set */
@@ -2299,16 +2299,16 @@ PyTypeObject PyGimpChannel_Type = {
 };
 
 PyObject *
-pygimp_channel_new(gint32 ID)
+pypicman_channel_new(gint32 ID)
 {
-    PyGimpChannel *self;
+    PyPicmanChannel *self;
 
-    if (!gimp_item_is_valid(ID) || !gimp_item_is_channel(ID)) {
+    if (!picman_item_is_valid(ID) || !picman_item_is_channel(ID)) {
 	Py_INCREF(Py_None);
 	return Py_None;
     }
 
-    self = PyObject_NEW(PyGimpChannel, &PyGimpChannel_Type);
+    self = PyObject_NEW(PyPicmanChannel, &PyPicmanChannel_Type);
 
     if (self == NULL)
 	return NULL;

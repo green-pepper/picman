@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,268 +23,268 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpgrouplayer.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimpimage.h"
-#include "core/gimpitem-linked.h"
-#include "core/gimplayer.h"
-#include "core/gimplayermask.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimppickable.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmandrawable.h"
+#include "core/picmangrouplayer.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanimage.h"
+#include "core/picmanitem-linked.h"
+#include "core/picmanlayer.h"
+#include "core/picmanlayermask.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanpickable.h"
+#include "core/picmanprogress.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimppdbcontext.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanpdbcontext.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GimpValueArray *
-layer_new_invoker (GimpProcedure         *procedure,
-                   Gimp                  *gimp,
-                   GimpContext           *context,
-                   GimpProgress          *progress,
-                   const GimpValueArray  *args,
+static PicmanValueArray *
+layer_new_invoker (PicmanProcedure         *procedure,
+                   Picman                  *picman,
+                   PicmanContext           *context,
+                   PicmanProgress          *progress,
+                   const PicmanValueArray  *args,
                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gint32 width;
   gint32 height;
   gint32 type;
   const gchar *name;
   gdouble opacity;
   gint32 mode;
-  GimpLayer *layer = NULL;
+  PicmanLayer *layer = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  width = g_value_get_int (gimp_value_array_index (args, 1));
-  height = g_value_get_int (gimp_value_array_index (args, 2));
-  type = g_value_get_enum (gimp_value_array_index (args, 3));
-  name = g_value_get_string (gimp_value_array_index (args, 4));
-  opacity = g_value_get_double (gimp_value_array_index (args, 5));
-  mode = g_value_get_enum (gimp_value_array_index (args, 6));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  width = g_value_get_int (picman_value_array_index (args, 1));
+  height = g_value_get_int (picman_value_array_index (args, 2));
+  type = g_value_get_enum (picman_value_array_index (args, 3));
+  name = g_value_get_string (picman_value_array_index (args, 4));
+  opacity = g_value_get_double (picman_value_array_index (args, 5));
+  mode = g_value_get_enum (picman_value_array_index (args, 6));
 
   if (success)
     {
-      GimpImageBaseType  base_type = GIMP_RGB;
+      PicmanImageBaseType  base_type = PICMAN_RGB;
       gboolean           has_alpha = FALSE;
       const Babl        *format;
 
       switch (type)
         {
-        case GIMP_RGB_IMAGE:
-          base_type = GIMP_RGB;
+        case PICMAN_RGB_IMAGE:
+          base_type = PICMAN_RGB;
           has_alpha = FALSE;
           break;
 
-        case GIMP_RGBA_IMAGE:
-          base_type = GIMP_RGB;
+        case PICMAN_RGBA_IMAGE:
+          base_type = PICMAN_RGB;
           has_alpha = TRUE;
           break;
 
-        case GIMP_GRAY_IMAGE:
-          base_type = GIMP_GRAY;
+        case PICMAN_GRAY_IMAGE:
+          base_type = PICMAN_GRAY;
           has_alpha = FALSE;
           break;
 
-        case GIMP_GRAYA_IMAGE:
-          base_type = GIMP_GRAY;
+        case PICMAN_GRAYA_IMAGE:
+          base_type = PICMAN_GRAY;
           has_alpha = TRUE;
           break;
 
-        case GIMP_INDEXED_IMAGE:
-          base_type = GIMP_INDEXED;
+        case PICMAN_INDEXED_IMAGE:
+          base_type = PICMAN_INDEXED;
           has_alpha = FALSE;
           break;
 
-        case GIMP_INDEXEDA_IMAGE:
-          base_type = GIMP_INDEXED;
+        case PICMAN_INDEXEDA_IMAGE:
+          base_type = PICMAN_INDEXED;
           has_alpha = TRUE;
           break;
         }
 
-      /* do not use gimp_image_get_layer_format() because it might
+      /* do not use picman_image_get_layer_format() because it might
        * be the floating selection of a channel or mask
        */
-      format = gimp_image_get_format (image, base_type,
-                                      gimp_image_get_precision (image),
+      format = picman_image_get_format (image, base_type,
+                                      picman_image_get_precision (image),
                                       has_alpha);
 
-      layer = gimp_layer_new (image, width, height,
+      layer = picman_layer_new (image, width, height,
                               format, name, opacity / 100.0, mode);
 
       if (! layer)
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer (gimp_value_array_index (return_vals, 1), layer);
+    picman_value_set_layer (picman_value_array_index (return_vals, 1), layer);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_new_from_visible_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+layer_new_from_visible_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
-  GimpImage *dest_image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
+  PicmanImage *dest_image;
   const gchar *name;
-  GimpLayer *layer = NULL;
+  PicmanLayer *layer = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  dest_image = gimp_value_get_image (gimp_value_array_index (args, 1), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 2));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  dest_image = picman_value_get_image (picman_value_array_index (args, 1), picman);
+  name = g_value_get_string (picman_value_array_index (args, 2));
 
   if (success)
     {
-      GimpPickable *pickable = GIMP_PICKABLE (gimp_image_get_projection (image));
+      PicmanPickable *pickable = PICMAN_PICKABLE (picman_image_get_projection (image));
 
-      gimp_pickable_flush (pickable);
+      picman_pickable_flush (pickable);
 
-      layer = gimp_layer_new_from_buffer (gimp_pickable_get_buffer (pickable),
+      layer = picman_layer_new_from_buffer (picman_pickable_get_buffer (pickable),
                                           dest_image,
-                                          gimp_image_get_layer_format (dest_image,
+                                          picman_image_get_layer_format (dest_image,
                                                                        TRUE),
                                           name,
-                                          GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+                                          PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer (gimp_value_array_index (return_vals, 1), layer);
+    picman_value_set_layer (picman_value_array_index (return_vals, 1), layer);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_new_from_drawable_invoker (GimpProcedure         *procedure,
-                                 Gimp                  *gimp,
-                                 GimpContext           *context,
-                                 GimpProgress          *progress,
-                                 const GimpValueArray  *args,
+static PicmanValueArray *
+layer_new_from_drawable_invoker (PicmanProcedure         *procedure,
+                                 Picman                  *picman,
+                                 PicmanContext           *context,
+                                 PicmanProgress          *progress,
+                                 const PicmanValueArray  *args,
                                  GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
-  GimpImage *dest_image;
-  GimpLayer *layer_copy = NULL;
+  PicmanValueArray *return_vals;
+  PicmanDrawable *drawable;
+  PicmanImage *dest_image;
+  PicmanLayer *layer_copy = NULL;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  dest_image = gimp_value_get_image (gimp_value_array_index (args, 1), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 0), picman);
+  dest_image = picman_value_get_image (picman_value_array_index (args, 1), picman);
 
   if (success)
     {
       GType     new_type;
-      GimpItem *new_item;
+      PicmanItem *new_item;
 
-      if (GIMP_IS_LAYER (drawable))
+      if (PICMAN_IS_LAYER (drawable))
         new_type = G_TYPE_FROM_INSTANCE (drawable);
       else
-        new_type = GIMP_TYPE_LAYER;
+        new_type = PICMAN_TYPE_LAYER;
 
-      if (dest_image == gimp_item_get_image (GIMP_ITEM (drawable)))
-        new_item = gimp_item_duplicate (GIMP_ITEM (drawable), new_type);
+      if (dest_image == picman_item_get_image (PICMAN_ITEM (drawable)))
+        new_item = picman_item_duplicate (PICMAN_ITEM (drawable), new_type);
       else
-        new_item = gimp_item_convert (GIMP_ITEM (drawable), dest_image, new_type);
+        new_item = picman_item_convert (PICMAN_ITEM (drawable), dest_image, new_type);
 
       if (new_item)
-        layer_copy = GIMP_LAYER (new_item);
+        layer_copy = PICMAN_LAYER (new_item);
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer (gimp_value_array_index (return_vals, 1), layer_copy);
+    picman_value_set_layer (picman_value_array_index (return_vals, 1), layer_copy);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_group_new_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+layer_group_new_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
-  GimpLayer *layer_group = NULL;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
+  PicmanLayer *layer_group = NULL;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      layer_group = gimp_group_layer_new (image);
+      layer_group = picman_group_layer_new (image);
 
       if (! layer_group)
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer (gimp_value_array_index (return_vals, 1), layer_group);
+    picman_value_set_layer (picman_value_array_index (return_vals, 1), layer_group);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_copy_invoker (GimpProcedure         *procedure,
-                    Gimp                  *gimp,
-                    GimpContext           *context,
-                    GimpProgress          *progress,
-                    const GimpValueArray  *args,
+static PicmanValueArray *
+layer_copy_invoker (PicmanProcedure         *procedure,
+                    Picman                  *picman,
+                    PicmanContext           *context,
+                    PicmanProgress          *progress,
+                    const PicmanValueArray  *args,
                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpLayer *layer;
+  PicmanValueArray *return_vals;
+  PicmanLayer *layer;
   gboolean add_alpha;
-  GimpLayer *layer_copy = NULL;
+  PicmanLayer *layer_copy = NULL;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  add_alpha = g_value_get_boolean (gimp_value_array_index (args, 1));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  add_alpha = g_value_get_boolean (picman_value_array_index (args, 1));
 
   if (success)
     {
-      layer_copy = GIMP_LAYER (gimp_item_duplicate (GIMP_ITEM (layer),
+      layer_copy = PICMAN_LAYER (picman_item_duplicate (PICMAN_ITEM (layer),
                                                     G_TYPE_FROM_INSTANCE (layer)));
       if (layer_copy)
         {
           if (add_alpha)
-            gimp_layer_add_alpha (layer_copy);
+            picman_layer_add_alpha (layer_copy);
         }
       else
         {
@@ -292,105 +292,105 @@ layer_copy_invoker (GimpProcedure         *procedure,
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer (gimp_value_array_index (return_vals, 1), layer_copy);
+    picman_value_set_layer (picman_value_array_index (return_vals, 1), layer_copy);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_add_alpha_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+layer_add_alpha_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_modifyable (GIMP_ITEM (layer),
-                                       GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (layer), error))
-        gimp_layer_add_alpha (layer);
+      if (picman_pdb_item_is_modifyable (PICMAN_ITEM (layer),
+                                       PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (layer), error))
+        picman_layer_add_alpha (layer);
       else
        success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_flatten_invoker (GimpProcedure         *procedure,
-                       Gimp                  *gimp,
-                       GimpContext           *context,
-                       GimpProgress          *progress,
-                       const GimpValueArray  *args,
+static PicmanValueArray *
+layer_flatten_invoker (PicmanProcedure         *procedure,
+                       Picman                  *picman,
+                       PicmanContext           *context,
+                       PicmanProgress          *progress,
+                       const PicmanValueArray  *args,
                        GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_modifyable (GIMP_ITEM (layer),
-                                       GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (layer), error))
-        gimp_layer_flatten (layer, context);
+      if (picman_pdb_item_is_modifyable (PICMAN_ITEM (layer),
+                                       PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (layer), error))
+        picman_layer_flatten (layer, context);
       else
        success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_scale_invoker (GimpProcedure         *procedure,
-                     Gimp                  *gimp,
-                     GimpContext           *context,
-                     GimpProgress          *progress,
-                     const GimpValueArray  *args,
+static PicmanValueArray *
+layer_scale_invoker (PicmanProcedure         *procedure,
+                     Picman                  *picman,
+                     PicmanContext           *context,
+                     PicmanProgress          *progress,
+                     const PicmanValueArray  *args,
                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gint32 new_width;
   gint32 new_height;
   gboolean local_origin;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  new_width = g_value_get_int (gimp_value_array_index (args, 1));
-  new_height = g_value_get_int (gimp_value_array_index (args, 2));
-  local_origin = g_value_get_boolean (gimp_value_array_index (args, 3));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  new_width = g_value_get_int (picman_value_array_index (args, 1));
+  new_height = g_value_get_int (picman_value_array_index (args, 2));
+  local_origin = g_value_get_boolean (picman_value_array_index (args, 3));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL,
-                                     GIMP_PDB_ITEM_CONTENT | GIMP_PDB_ITEM_POSITION,
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT | PICMAN_PDB_ITEM_POSITION,
                                      error))
         {
-          GimpPDBContext *pdb_context = GIMP_PDB_CONTEXT (context);
+          PicmanPDBContext *pdb_context = PICMAN_PDB_CONTEXT (context);
 
           if (progress)
-            gimp_progress_start (progress, _("Scaling"), FALSE);
+            picman_progress_start (progress, _("Scaling"), FALSE);
 
-          gimp_item_scale_by_origin (GIMP_ITEM (layer), new_width, new_height,
+          picman_item_scale_by_origin (PICMAN_ITEM (layer), new_width, new_height,
                                      pdb_context->interpolation, progress,
                                      local_origin);
 
           if (progress)
-            gimp_progress_end (progress);
+            picman_progress_end (progress);
         }
       else
         {
@@ -398,46 +398,46 @@ layer_scale_invoker (GimpProcedure         *procedure,
         }
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_scale_full_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+layer_scale_full_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gint32 new_width;
   gint32 new_height;
   gboolean local_origin;
   gint32 interpolation;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  new_width = g_value_get_int (gimp_value_array_index (args, 1));
-  new_height = g_value_get_int (gimp_value_array_index (args, 2));
-  local_origin = g_value_get_boolean (gimp_value_array_index (args, 3));
-  interpolation = g_value_get_enum (gimp_value_array_index (args, 4));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  new_width = g_value_get_int (picman_value_array_index (args, 1));
+  new_height = g_value_get_int (picman_value_array_index (args, 2));
+  local_origin = g_value_get_boolean (picman_value_array_index (args, 3));
+  interpolation = g_value_get_enum (picman_value_array_index (args, 4));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL,
-                                     GIMP_PDB_ITEM_CONTENT | GIMP_PDB_ITEM_POSITION,
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT | PICMAN_PDB_ITEM_POSITION,
                                      error))
         {
           if (progress)
-            gimp_progress_start (progress, _("Scaling"), FALSE);
+            picman_progress_start (progress, _("Scaling"), FALSE);
 
-          gimp_item_scale_by_origin (GIMP_ITEM (layer), new_width, new_height,
+          picman_item_scale_by_origin (PICMAN_ITEM (layer), new_width, new_height,
                                      interpolation, progress,
                                      local_origin);
 
           if (progress)
-            gimp_progress_end (progress);
+            picman_progress_end (progress);
         }
       else
         {
@@ -445,187 +445,187 @@ layer_scale_full_invoker (GimpProcedure         *procedure,
         }
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_resize_invoker (GimpProcedure         *procedure,
-                      Gimp                  *gimp,
-                      GimpContext           *context,
-                      GimpProgress          *progress,
-                      const GimpValueArray  *args,
+static PicmanValueArray *
+layer_resize_invoker (PicmanProcedure         *procedure,
+                      Picman                  *picman,
+                      PicmanContext           *context,
+                      PicmanProgress          *progress,
+                      const PicmanValueArray  *args,
                       GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gint32 new_width;
   gint32 new_height;
   gint32 offx;
   gint32 offy;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  new_width = g_value_get_int (gimp_value_array_index (args, 1));
-  new_height = g_value_get_int (gimp_value_array_index (args, 2));
-  offx = g_value_get_int (gimp_value_array_index (args, 3));
-  offy = g_value_get_int (gimp_value_array_index (args, 4));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  new_width = g_value_get_int (picman_value_array_index (args, 1));
+  new_height = g_value_get_int (picman_value_array_index (args, 2));
+  offx = g_value_get_int (picman_value_array_index (args, 3));
+  offy = g_value_get_int (picman_value_array_index (args, 4));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL,
-                                     GIMP_PDB_ITEM_CONTENT | GIMP_PDB_ITEM_POSITION,
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT | PICMAN_PDB_ITEM_POSITION,
                                      error))
-        gimp_item_resize (GIMP_ITEM (layer), context,
+        picman_item_resize (PICMAN_ITEM (layer), context,
                           new_width, new_height, offx, offy);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_resize_to_image_size_invoker (GimpProcedure         *procedure,
-                                    Gimp                  *gimp,
-                                    GimpContext           *context,
-                                    GimpProgress          *progress,
-                                    const GimpValueArray  *args,
+static PicmanValueArray *
+layer_resize_to_image_size_invoker (PicmanProcedure         *procedure,
+                                    Picman                  *picman,
+                                    PicmanContext           *context,
+                                    PicmanProgress          *progress,
+                                    const PicmanValueArray  *args,
                                     GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL,
-                                     GIMP_PDB_ITEM_CONTENT | GIMP_PDB_ITEM_POSITION,
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT | PICMAN_PDB_ITEM_POSITION,
                                      error))
-        gimp_layer_resize_to_image (layer, context);
+        picman_layer_resize_to_image (layer, context);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_translate_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+layer_translate_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gint32 offx;
   gint32 offy;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  offx = g_value_get_int (gimp_value_array_index (args, 1));
-  offy = g_value_get_int (gimp_value_array_index (args, 2));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  offx = g_value_get_int (picman_value_array_index (args, 1));
+  offy = g_value_get_int (picman_value_array_index (args, 2));
 
   if (success)
     {
-      if (gimp_pdb_item_is_modifyable (GIMP_ITEM (layer),
-                                       GIMP_PDB_ITEM_POSITION, error))
+      if (picman_pdb_item_is_modifyable (PICMAN_ITEM (layer),
+                                       PICMAN_PDB_ITEM_POSITION, error))
         {
-          GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
+          PicmanImage *image = picman_item_get_image (PICMAN_ITEM (layer));
 
-          gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_ITEM_DISPLACE,
+          picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_ITEM_DISPLACE,
                                        _("Move Layer"));
 
-          gimp_item_translate (GIMP_ITEM (layer), offx, offy, TRUE);
+          picman_item_translate (PICMAN_ITEM (layer), offx, offy, TRUE);
 
-          if (gimp_item_get_linked (GIMP_ITEM (layer)))
-            gimp_item_linked_translate (GIMP_ITEM (layer), offx, offy, TRUE);
+          if (picman_item_get_linked (PICMAN_ITEM (layer)))
+            picman_item_linked_translate (PICMAN_ITEM (layer), offx, offy, TRUE);
 
-          gimp_image_undo_group_end (image);
+          picman_image_undo_group_end (image);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_set_offsets_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+layer_set_offsets_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gint32 offx;
   gint32 offy;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  offx = g_value_get_int (gimp_value_array_index (args, 1));
-  offy = g_value_get_int (gimp_value_array_index (args, 2));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  offx = g_value_get_int (picman_value_array_index (args, 1));
+  offy = g_value_get_int (picman_value_array_index (args, 2));
 
   if (success)
     {
-      if (gimp_pdb_item_is_modifyable (GIMP_ITEM (layer),
-                                       GIMP_PDB_ITEM_POSITION, error))
+      if (picman_pdb_item_is_modifyable (PICMAN_ITEM (layer),
+                                       PICMAN_PDB_ITEM_POSITION, error))
         {
-          GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
+          PicmanImage *image = picman_item_get_image (PICMAN_ITEM (layer));
           gint       offset_x;
           gint       offset_y;
 
-          gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_ITEM_DISPLACE,
+          picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_ITEM_DISPLACE,
                                        _("Move Layer"));
 
-          gimp_item_get_offset (GIMP_ITEM (layer), &offset_x, &offset_y);
+          picman_item_get_offset (PICMAN_ITEM (layer), &offset_x, &offset_y);
           offx -= offset_x;
           offy -= offset_y;
 
-          gimp_item_translate (GIMP_ITEM (layer), offx, offy, TRUE);
+          picman_item_translate (PICMAN_ITEM (layer), offx, offy, TRUE);
 
-          if (gimp_item_get_linked (GIMP_ITEM (layer)))
-            gimp_item_linked_translate (GIMP_ITEM (layer), offx, offy, TRUE);
+          if (picman_item_get_linked (PICMAN_ITEM (layer)))
+            picman_item_linked_translate (PICMAN_ITEM (layer), offx, offy, TRUE);
 
-          gimp_image_undo_group_end (image);
+          picman_image_undo_group_end (image);
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_create_mask_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+layer_create_mask_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpLayer *layer;
+  PicmanValueArray *return_vals;
+  PicmanLayer *layer;
   gint32 mask_type;
-  GimpLayerMask *mask = NULL;
+  PicmanLayerMask *mask = NULL;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  mask_type = g_value_get_enum (gimp_value_array_index (args, 1));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  mask_type = g_value_get_enum (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpChannel *channel = NULL;
+      PicmanChannel *channel = NULL;
 
-      if (mask_type == GIMP_ADD_CHANNEL_MASK)
+      if (mask_type == PICMAN_ADD_CHANNEL_MASK)
         {
-          channel = gimp_image_get_active_channel (gimp_item_get_image (GIMP_ITEM (layer)));
+          channel = picman_image_get_active_channel (picman_item_get_image (PICMAN_ITEM (layer)));
 
           if (! channel)
             success = FALSE;
@@ -633,1529 +633,1529 @@ layer_create_mask_invoker (GimpProcedure         *procedure,
 
       if (success)
         {
-          mask = gimp_layer_create_mask (layer, mask_type, channel);
+          mask = picman_layer_create_mask (layer, mask_type, channel);
 
           if (! mask)
             success = FALSE;
         }
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer_mask (gimp_value_array_index (return_vals, 1), mask);
+    picman_value_set_layer_mask (picman_value_array_index (return_vals, 1), mask);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_get_mask_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+layer_get_mask_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpLayer *layer;
-  GimpLayerMask *mask = NULL;
+  PicmanValueArray *return_vals;
+  PicmanLayer *layer;
+  PicmanLayerMask *mask = NULL;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      mask = gimp_layer_get_mask (layer);
+      mask = picman_layer_get_mask (layer);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer_mask (gimp_value_array_index (return_vals, 1), mask);
+    picman_value_set_layer_mask (picman_value_array_index (return_vals, 1), mask);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_from_mask_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+layer_from_mask_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpLayerMask *mask;
-  GimpLayer *layer = NULL;
+  PicmanValueArray *return_vals;
+  PicmanLayerMask *mask;
+  PicmanLayer *layer = NULL;
 
-  mask = gimp_value_get_layer_mask (gimp_value_array_index (args, 0), gimp);
+  mask = picman_value_get_layer_mask (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      layer = gimp_layer_mask_get_layer (mask);
+      layer = picman_layer_mask_get_layer (mask);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_layer (gimp_value_array_index (return_vals, 1), layer);
+    picman_value_set_layer (picman_value_array_index (return_vals, 1), layer);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_add_mask_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+layer_add_mask_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
-  GimpLayerMask *mask;
+  PicmanLayer *layer;
+  PicmanLayerMask *mask;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  mask = gimp_value_get_layer_mask (gimp_value_array_index (args, 1), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  mask = picman_value_get_layer_mask (picman_value_array_index (args, 1), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_floating (GIMP_ITEM (mask),
-                                     gimp_item_get_image (GIMP_ITEM (layer)),
+      if (picman_pdb_item_is_floating (PICMAN_ITEM (mask),
+                                     picman_item_get_image (PICMAN_ITEM (layer)),
                                      error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (layer), error))
-        success = (gimp_layer_add_mask (layer, mask, TRUE, error) == mask);
+          picman_pdb_item_is_not_group (PICMAN_ITEM (layer), error))
+        success = (picman_layer_add_mask (layer, mask, TRUE, error) == mask);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_remove_mask_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+layer_remove_mask_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gint32 mode;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  mode = g_value_get_enum (gimp_value_array_index (args, 1));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  mode = g_value_get_enum (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpPDBItemModify modify = 0;
+      PicmanPDBItemModify modify = 0;
 
-      if (mode == GIMP_MASK_APPLY)
-        modify |= GIMP_PDB_ITEM_CONTENT;
+      if (mode == PICMAN_MASK_APPLY)
+        modify |= PICMAN_PDB_ITEM_CONTENT;
 
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL, modify, error) &&
-          gimp_layer_get_mask (layer))
-        gimp_layer_apply_mask (layer, mode, TRUE);
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (layer), NULL, modify, error) &&
+          picman_layer_get_mask (layer))
+        picman_layer_apply_mask (layer, mode, TRUE);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_is_floating_sel_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+layer_is_floating_sel_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpLayer *layer;
+  PicmanValueArray *return_vals;
+  PicmanLayer *layer;
   gboolean is_floating_sel = FALSE;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      is_floating_sel = gimp_layer_is_floating_sel (layer);
+      is_floating_sel = picman_layer_is_floating_sel (layer);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), is_floating_sel);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), is_floating_sel);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_get_lock_alpha_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+layer_get_lock_alpha_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpLayer *layer;
+  PicmanValueArray *return_vals;
+  PicmanLayer *layer;
   gboolean lock_alpha = FALSE;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      lock_alpha = gimp_layer_get_lock_alpha (layer);
+      lock_alpha = picman_layer_get_lock_alpha (layer);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), lock_alpha);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), lock_alpha);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_set_lock_alpha_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+layer_set_lock_alpha_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gboolean lock_alpha;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  lock_alpha = g_value_get_boolean (gimp_value_array_index (args, 1));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  lock_alpha = g_value_get_boolean (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp_layer_can_lock_alpha (layer))
-        gimp_layer_set_lock_alpha (layer, lock_alpha, TRUE);
+      if (picman_layer_can_lock_alpha (layer))
+        picman_layer_set_lock_alpha (layer, lock_alpha, TRUE);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_get_apply_mask_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+layer_get_apply_mask_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpLayer *layer;
+  PicmanValueArray *return_vals;
+  PicmanLayer *layer;
   gboolean apply_mask = FALSE;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
       if (layer->mask)
-        apply_mask = gimp_layer_get_apply_mask (layer);
+        apply_mask = picman_layer_get_apply_mask (layer);
       else
         apply_mask = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), apply_mask);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), apply_mask);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_set_apply_mask_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+layer_set_apply_mask_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gboolean apply_mask;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  apply_mask = g_value_get_boolean (gimp_value_array_index (args, 1));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  apply_mask = g_value_get_boolean (picman_value_array_index (args, 1));
 
   if (success)
     {
       if (layer->mask)
-        gimp_layer_set_apply_mask (layer, apply_mask, TRUE);
+        picman_layer_set_apply_mask (layer, apply_mask, TRUE);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_get_show_mask_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+layer_get_show_mask_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpLayer *layer;
+  PicmanValueArray *return_vals;
+  PicmanLayer *layer;
   gboolean show_mask = FALSE;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
       if (layer->mask)
-        show_mask = gimp_layer_get_show_mask (layer);
+        show_mask = picman_layer_get_show_mask (layer);
       else
         show_mask = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), show_mask);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), show_mask);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_set_show_mask_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+layer_set_show_mask_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gboolean show_mask;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  show_mask = g_value_get_boolean (gimp_value_array_index (args, 1));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  show_mask = g_value_get_boolean (picman_value_array_index (args, 1));
 
   if (success)
     {
       if (layer->mask)
-        gimp_layer_set_show_mask (layer, show_mask, TRUE);
+        picman_layer_set_show_mask (layer, show_mask, TRUE);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_get_edit_mask_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+layer_get_edit_mask_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpLayer *layer;
+  PicmanValueArray *return_vals;
+  PicmanLayer *layer;
   gboolean edit_mask = FALSE;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
       if (layer->mask)
-        edit_mask = gimp_layer_get_edit_mask (layer);
+        edit_mask = picman_layer_get_edit_mask (layer);
       else
         edit_mask = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), edit_mask);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), edit_mask);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_set_edit_mask_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+layer_set_edit_mask_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gboolean edit_mask;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  edit_mask = g_value_get_boolean (gimp_value_array_index (args, 1));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  edit_mask = g_value_get_boolean (picman_value_array_index (args, 1));
 
   if (success)
     {
       if (layer->mask)
-        gimp_layer_set_edit_mask (layer, edit_mask);
+        picman_layer_set_edit_mask (layer, edit_mask);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_get_opacity_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+layer_get_opacity_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpLayer *layer;
+  PicmanValueArray *return_vals;
+  PicmanLayer *layer;
   gdouble opacity = 0.0;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      opacity = gimp_layer_get_opacity (layer) * 100.0;
+      opacity = picman_layer_get_opacity (layer) * 100.0;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), opacity);
+    g_value_set_double (picman_value_array_index (return_vals, 1), opacity);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_set_opacity_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+layer_set_opacity_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gdouble opacity;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  opacity = g_value_get_double (gimp_value_array_index (args, 1));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  opacity = g_value_get_double (picman_value_array_index (args, 1));
 
   if (success)
     {
-      gimp_layer_set_opacity (layer, opacity / 100.0, TRUE);
+      picman_layer_set_opacity (layer, opacity / 100.0, TRUE);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-layer_get_mode_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+layer_get_mode_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpLayer *layer;
+  PicmanValueArray *return_vals;
+  PicmanLayer *layer;
   gint32 mode = 0;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      mode = gimp_layer_get_mode (layer);
+      mode = picman_layer_get_mode (layer);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_enum (gimp_value_array_index (return_vals, 1), mode);
+    g_value_set_enum (picman_value_array_index (return_vals, 1), mode);
 
   return return_vals;
 }
 
-static GimpValueArray *
-layer_set_mode_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+layer_set_mode_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpLayer *layer;
+  PicmanLayer *layer;
   gint32 mode;
 
-  layer = gimp_value_get_layer (gimp_value_array_index (args, 0), gimp);
-  mode = g_value_get_enum (gimp_value_array_index (args, 1));
+  layer = picman_value_get_layer (picman_value_array_index (args, 0), picman);
+  mode = g_value_get_enum (picman_value_array_index (args, 1));
 
   if (success)
     {
-      gimp_layer_set_mode (layer, mode, TRUE);
+      picman_layer_set_mode (layer, mode, TRUE);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_layer_procs (GimpPDB *pdb)
+register_layer_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-layer-new
+   * picman-layer-new
    */
-  procedure = gimp_procedure_new (layer_new_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-new");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-new",
+  procedure = picman_procedure_new (layer_new_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-new");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-new",
                                      "Create a new layer.",
-                                     "This procedure creates a new layer with the specified width, height, and type. Name, opacity, and mode are also supplied parameters. The new layer still needs to be added to the image, as this is not automatic. Add the new layer with the 'gimp-image-insert-layer' command. Other attributes such as layer mask modes, and offsets should be set with explicit procedure calls.",
+                                     "This procedure creates a new layer with the specified width, height, and type. Name, opacity, and mode are also supplied parameters. The new layer still needs to be added to the image, as this is not automatic. Add the new layer with the 'picman-image-insert-layer' command. Other attributes such as layer mask modes, and offsets should be set with explicit procedure calls.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image to which to add the layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("width",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("width",
                                                       "width",
                                                       "The layer width",
-                                                      1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("height",
+                                                      1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("height",
                                                       "height",
                                                       "The layer height",
-                                                      1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("type",
                                                   "type",
                                                   "The layer type",
-                                                  GIMP_TYPE_IMAGE_TYPE,
-                                                  GIMP_RGB_IMAGE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                  PICMAN_TYPE_IMAGE_TYPE,
+                                                  PICMAN_RGB_IMAGE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The layer name",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("opacity",
                                                     "opacity",
                                                     "The layer opacity",
                                                     0, 100, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("mode",
                                                   "mode",
                                                   "The layer combination mode",
-                                                  GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                  GIMP_NORMAL_MODE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_id ("layer",
+                                                  PICMAN_TYPE_LAYER_MODE_EFFECTS,
+                                                  PICMAN_NORMAL_MODE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_id ("layer",
                                                              "layer",
                                                              "The newly created layer",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-new-from-visible
+   * picman-layer-new-from-visible
    */
-  procedure = gimp_procedure_new (layer_new_from_visible_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-new-from-visible");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-new-from-visible",
+  procedure = picman_procedure_new (layer_new_from_visible_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-new-from-visible");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-new-from-visible",
                                      "Create a new layer from what is visible in an image.",
-                                     "This procedure creates a new layer from what is visible in the given image. The new layer still needs to be added to the destination image, as this is not automatic. Add the new layer with the 'gimp-image-insert-layer' command. Other attributes such as layer mask modes, and offsets should be set with explicit procedure calls.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "This procedure creates a new layer from what is visible in the given image. The new layer still needs to be added to the destination image, as this is not automatic. Add the new layer with the 'picman-image-insert-layer' command. Other attributes such as layer mask modes, and offsets should be set with explicit procedure calls.",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2008",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The source image from where the content is copied",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("dest-image",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("dest-image",
                                                          "dest image",
                                                          "The destination image to which to add the layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The layer name",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_id ("layer",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_id ("layer",
                                                              "layer",
                                                              "The newly created layer",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-new-from-drawable
+   * picman-layer-new-from-drawable
    */
-  procedure = gimp_procedure_new (layer_new_from_drawable_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-new-from-drawable");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-new-from-drawable",
+  procedure = picman_procedure_new (layer_new_from_drawable_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-new-from-drawable");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-new-from-drawable",
                                      "Create a new layer by copying an existing drawable.",
-                                     "This procedure creates a new layer as a copy of the specified drawable. The new layer still needs to be added to the image, as this is not automatic. Add the new layer with the 'gimp-image-insert-layer' command. Other attributes such as layer mask modes, and offsets should be set with explicit procedure calls.",
+                                     "This procedure creates a new layer as a copy of the specified drawable. The new layer still needs to be added to the image, as this is not automatic. Add the new layer with the 'picman-image-insert-layer' command. Other attributes such as layer mask modes, and offsets should be set with explicit procedure calls.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "The source drawable from where the new layer is copied",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("dest-image",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("dest-image",
                                                          "dest image",
                                                          "The destination image to which to add the layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_id ("layer-copy",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_id ("layer-copy",
                                                              "layer copy",
                                                              "The newly copied layer",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-group-new
+   * picman-layer-group-new
    */
-  procedure = gimp_procedure_new (layer_group_new_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-group-new");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-group-new",
+  procedure = picman_procedure_new (layer_group_new_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-group-new");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-group-new",
                                      "Create a new layer group.",
-                                     "This procedure creates a new layer group. Attributes such as layer mode and opacity should be set with explicit procedure calls. Add the new layer group (which is a kind of layer) with the 'gimp-image-insert-layer' command.",
+                                     "This procedure creates a new layer group. Attributes such as layer mode and opacity should be set with explicit procedure calls. Add the new layer group (which is a kind of layer) with the 'picman-image-insert-layer' command.",
                                      "Barak Itkin <lightningismyname@gmail.com>",
                                      "Barak Itkin",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image to which to add the layer group",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_id ("layer-group",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_id ("layer-group",
                                                              "layer group",
                                                              "The newly created layer group",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-copy
+   * picman-layer-copy
    */
-  procedure = gimp_procedure_new (layer_copy_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-copy");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-copy",
+  procedure = picman_procedure_new (layer_copy_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-copy");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-copy",
                                      "Copy a layer.",
                                      "This procedure copies the specified layer and returns the copy. The newly copied layer is for use within the original layer's image. It should not be subsequently added to any other image. The copied layer can optionally have an added alpha channel. This is useful if the background layer in an image is being copied and added to the same image.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer to copy",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("add-alpha",
                                                      "add alpha",
                                                      "Add an alpha channel to the copied layer",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_id ("layer-copy",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_id ("layer-copy",
                                                              "layer copy",
                                                              "The newly copied layer",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-add-alpha
+   * picman-layer-add-alpha
    */
-  procedure = gimp_procedure_new (layer_add_alpha_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-add-alpha");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-add-alpha",
+  procedure = picman_procedure_new (layer_add_alpha_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-add-alpha");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-add-alpha",
                                      "Add an alpha channel to the layer if it doesn't already have one.",
                                      "This procedure adds an additional component to the specified layer if it does not already possess an alpha channel. An alpha channel makes it possible to clear and erase to transparency, instead of the background color. This transforms layers of type RGB to RGBA, GRAY to GRAYA, and INDEXED to INDEXEDA.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-flatten
+   * picman-layer-flatten
    */
-  procedure = gimp_procedure_new (layer_flatten_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-flatten");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-flatten",
+  procedure = picman_procedure_new (layer_flatten_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-flatten");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-flatten",
                                      "Remove the alpha channel from the layer if it has one.",
                                      "This procedure removes the alpha channel from a layer, blending all (partially) transparent pixels in the layer against the background color. This transforms layers of type RGBA to RGB, GRAYA to GRAY, and INDEXEDA to INDEXED.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2007",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-scale
+   * picman-layer-scale
    */
-  procedure = gimp_procedure_new (layer_scale_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-scale");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-scale",
+  procedure = picman_procedure_new (layer_scale_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-scale");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-scale",
                                      "Scale the layer using the default interpolation method.",
-                                     "This procedure scales the layer so that its new width and height are equal to the supplied parameters. The 'local-origin' parameter specifies whether to scale from the center of the layer, or from the image origin. This operation only works if the layer has been added to an image. The interpolation method used can be set with 'gimp-context-set-interpolation'.",
+                                     "This procedure scales the layer so that its new width and height are equal to the supplied parameters. The 'local-origin' parameter specifies whether to scale from the center of the layer, or from the image origin. This operation only works if the layer has been added to an image. The interpolation method used can be set with 'picman-context-set-interpolation'.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("new-width",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("new-width",
                                                       "new width",
                                                       "New layer width",
-                                                      1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("new-height",
+                                                      1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("new-height",
                                                       "new height",
                                                       "New layer height",
-                                                      1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("local-origin",
                                                      "local origin",
                                                      "Use a local origin (as opposed to the image origin)",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-scale-full
+   * picman-layer-scale-full
    */
-  procedure = gimp_procedure_new (layer_scale_full_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-scale-full");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-scale-full",
-                                     "Deprecated: Use 'gimp-layer-scale' instead.",
-                                     "Deprecated: Use 'gimp-layer-scale' instead.",
-                                     "Sven Neumann <sven@gimp.org>",
+  procedure = picman_procedure_new (layer_scale_full_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-scale-full");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-scale-full",
+                                     "Deprecated: Use 'picman-layer-scale' instead.",
+                                     "Deprecated: Use 'picman-layer-scale' instead.",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2008",
-                                     "gimp-layer-scale");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+                                     "picman-layer-scale");
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("new-width",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("new-width",
                                                       "new width",
                                                       "New layer width",
-                                                      1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("new-height",
+                                                      1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("new-height",
                                                       "new height",
                                                       "New layer height",
-                                                      1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                      1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("local-origin",
                                                      "local origin",
                                                      "Use a local origin (as opposed to the image origin)",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("interpolation",
                                                   "interpolation",
                                                   "Type of interpolation",
-                                                  GIMP_TYPE_INTERPOLATION_TYPE,
-                                                  GIMP_INTERPOLATION_NONE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_INTERPOLATION_TYPE,
+                                                  PICMAN_INTERPOLATION_NONE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-resize
+   * picman-layer-resize
    */
-  procedure = gimp_procedure_new (layer_resize_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-resize");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-resize",
+  procedure = picman_procedure_new (layer_resize_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-resize");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-resize",
                                      "Resize the layer to the specified extents.",
                                      "This procedure resizes the layer so that its new width and height are equal to the supplied parameters. Offsets are also provided which describe the position of the previous layer's content. This operation only works if the layer has been added to an image.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("new-width",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("new-width",
                                                       "new width",
                                                       "New layer width",
-                                                      1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("new-height",
+                                                      1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("new-height",
                                                       "new height",
                                                       "New layer height",
-                                                      1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("offx",
+                                                      1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("offx",
                                                       "offx",
                                                       "x offset between upper left corner of old and new layers: (old - new)",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("offy",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("offy",
                                                       "offy",
                                                       "y offset between upper left corner of old and new layers: (old - new)",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-resize-to-image-size
+   * picman-layer-resize-to-image-size
    */
-  procedure = gimp_procedure_new (layer_resize_to_image_size_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-resize-to-image-size");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-resize-to-image-size",
+  procedure = picman_procedure_new (layer_resize_to_image_size_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-resize-to-image-size");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-resize-to-image-size",
                                      "Resize a layer to the image size.",
                                      "This procedure resizes the layer so that it's new width and height are equal to the width and height of its image container.",
                                      "Manish Singh",
                                      "Manish Singh",
                                      "2003",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer to resize",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-translate
+   * picman-layer-translate
    */
-  procedure = gimp_procedure_new (layer_translate_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-translate");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-translate",
+  procedure = picman_procedure_new (layer_translate_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-translate");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-translate",
                                      "Translate the layer by the specified offsets.",
                                      "This procedure translates the layer by the amounts specified in the x and y arguments. These can be negative, and are considered offsets from the current position. This command only works if the layer has been added to an image. All additional layers contained in the image which have the linked flag set to TRUE w ill also be translated by the specified offsets.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("offx",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("offx",
                                                       "offx",
                                                       "Offset in x direction",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("offy",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("offy",
                                                       "offy",
                                                       "Offset in y direction",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-set-offsets
+   * picman-layer-set-offsets
    */
-  procedure = gimp_procedure_new (layer_set_offsets_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-set-offsets");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-set-offsets",
+  procedure = picman_procedure_new (layer_set_offsets_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-set-offsets");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-set-offsets",
                                      "Set the layer offsets.",
                                      "This procedure sets the offsets for the specified layer. The offsets are relative to the image origin and can be any values. This operation is valid only on layers which have been added to an image.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("offx",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("offx",
                                                       "offx",
                                                       "Offset in x direction",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("offy",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("offy",
                                                       "offy",
                                                       "Offset in y direction",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-create-mask
+   * picman-layer-create-mask
    */
-  procedure = gimp_procedure_new (layer_create_mask_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-create-mask");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-create-mask",
+  procedure = picman_procedure_new (layer_create_mask_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-create-mask");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-create-mask",
                                      "Create a layer mask for the specified specified layer.",
-                                     "This procedure creates a layer mask for the specified layer. Layer masks serve as an additional alpha channel for a layer. A number of different types of masks are allowed for initialisation: completely white masks (which will leave the layer fully visible), completely black masks (which will give the layer complete transparency, the layer's already existing alpha channel (which will leave the layer fully visible, but which may be more useful than a white mask), the current selection or a grayscale copy of the layer. The layer mask still needs to be added to the layer. This can be done with a call to 'gimp-layer-add-mask'.",
+                                     "This procedure creates a layer mask for the specified layer. Layer masks serve as an additional alpha channel for a layer. A number of different types of masks are allowed for initialisation: completely white masks (which will leave the layer fully visible), completely black masks (which will give the layer complete transparency, the layer's already existing alpha channel (which will leave the layer fully visible, but which may be more useful than a white mask), the current selection or a grayscale copy of the layer. The layer mask still needs to be added to the layer. This can be done with a call to 'picman-layer-add-mask'.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer to which to add the mask",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("mask-type",
                                                   "mask type",
                                                   "The type of mask",
-                                                  GIMP_TYPE_ADD_MASK_TYPE,
-                                                  GIMP_ADD_WHITE_MASK,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_mask_id ("mask",
+                                                  PICMAN_TYPE_ADD_MASK_TYPE,
+                                                  PICMAN_ADD_WHITE_MASK,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_mask_id ("mask",
                                                                   "mask",
                                                                   "The newly created mask",
-                                                                  pdb->gimp, FALSE,
-                                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                  pdb->picman, FALSE,
+                                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-get-mask
+   * picman-layer-get-mask
    */
-  procedure = gimp_procedure_new (layer_get_mask_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-get-mask");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-get-mask",
+  procedure = picman_procedure_new (layer_get_mask_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-get-mask");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-get-mask",
                                      "Get the specified layer's mask if it exists.",
                                      "This procedure returns the specified layer's mask, or -1 if none exists.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_mask_id ("mask",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_mask_id ("mask",
                                                                   "mask",
                                                                   "The layer mask",
-                                                                  pdb->gimp, FALSE,
-                                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                  pdb->picman, FALSE,
+                                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-from-mask
+   * picman-layer-from-mask
    */
-  procedure = gimp_procedure_new (layer_from_mask_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-from-mask");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-from-mask",
+  procedure = picman_procedure_new (layer_from_mask_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-from-mask");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-from-mask",
                                      "Get the specified mask's layer.",
                                      "This procedure returns the specified mask's layer , or -1 if none exists.",
                                      "Geert Jordaens",
                                      "Geert Jordaens",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_mask_id ("mask",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_mask_id ("mask",
                                                               "mask",
                                                               "Mask for which to return the layer",
-                                                              pdb->gimp, FALSE,
-                                                              GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_layer_id ("layer",
+                                                              pdb->picman, FALSE,
+                                                              PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_layer_id ("layer",
                                                              "layer",
                                                              "The mask's layer",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-add-mask
+   * picman-layer-add-mask
    */
-  procedure = gimp_procedure_new (layer_add_mask_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-add-mask");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-add-mask",
+  procedure = picman_procedure_new (layer_add_mask_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-add-mask");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-add-mask",
                                      "Add a layer mask to the specified layer.",
-                                     "This procedure adds a layer mask to the specified layer. Layer masks serve as an additional alpha channel for a layer. This procedure will fail if a number of prerequisites aren't met. The layer cannot already have a layer mask. The specified mask must exist and have the same dimensions as the layer. The layer must have been created for use with the specified image and the mask must have been created with the procedure 'gimp-layer-create-mask'.",
+                                     "This procedure adds a layer mask to the specified layer. Layer masks serve as an additional alpha channel for a layer. This procedure will fail if a number of prerequisites aren't met. The layer cannot already have a layer mask. The specified mask must exist and have the same dimensions as the layer. The layer must have been created for use with the specified image and the mask must have been created with the procedure 'picman-layer-create-mask'.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer to receive the mask",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_mask_id ("mask",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_mask_id ("mask",
                                                               "mask",
                                                               "The mask to add to the layer",
-                                                              pdb->gimp, FALSE,
-                                                              GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                              pdb->picman, FALSE,
+                                                              PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-remove-mask
+   * picman-layer-remove-mask
    */
-  procedure = gimp_procedure_new (layer_remove_mask_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-remove-mask");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-remove-mask",
+  procedure = picman_procedure_new (layer_remove_mask_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-remove-mask");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-remove-mask",
                                      "Remove the specified layer mask from the layer.",
                                      "This procedure removes the specified layer mask from the layer. If the mask doesn't exist, an error is returned.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer from which to remove mask",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("mode",
                                                   "mode",
                                                   "Removal mode",
-                                                  GIMP_TYPE_MASK_APPLY_MODE,
-                                                  GIMP_MASK_APPLY,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_MASK_APPLY_MODE,
+                                                  PICMAN_MASK_APPLY,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-is-floating-sel
+   * picman-layer-is-floating-sel
    */
-  procedure = gimp_procedure_new (layer_is_floating_sel_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-is-floating-sel");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-is-floating-sel",
+  procedure = picman_procedure_new (layer_is_floating_sel_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-is-floating-sel");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-is-floating-sel",
                                      "Is the specified layer a floating selection?",
                                      "This procedure returns whether the layer is a floating selection. Floating selections are special cases of layers which are attached to a specific drawable.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("is-floating-sel",
                                                          "is floating sel",
                                                          "TRUE if the layer is a floating selection",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-get-lock-alpha
+   * picman-layer-get-lock-alpha
    */
-  procedure = gimp_procedure_new (layer_get_lock_alpha_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-get-lock-alpha");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-get-lock-alpha",
+  procedure = picman_procedure_new (layer_get_lock_alpha_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-get-lock-alpha");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-get-lock-alpha",
                                      "Get the lock alpha channel setting of the specified layer.",
                                      "This procedure returns the specified layer's lock alpha channel setting.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("lock-alpha",
                                                          "lock alpha",
                                                          "The layer's lock alpha channel setting",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-set-lock-alpha
+   * picman-layer-set-lock-alpha
    */
-  procedure = gimp_procedure_new (layer_set_lock_alpha_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-set-lock-alpha");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-set-lock-alpha",
+  procedure = picman_procedure_new (layer_set_lock_alpha_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-set-lock-alpha");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-set-lock-alpha",
                                      "Set the lock alpha channel setting of the specified layer.",
                                      "This procedure sets the specified layer's lock alpha channel setting.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("lock-alpha",
                                                      "lock alpha",
                                                      "The new layer's lock alpha channel setting",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-get-apply-mask
+   * picman-layer-get-apply-mask
    */
-  procedure = gimp_procedure_new (layer_get_apply_mask_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-get-apply-mask");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-get-apply-mask",
+  procedure = picman_procedure_new (layer_get_apply_mask_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-get-apply-mask");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-get-apply-mask",
                                      "Get the apply mask setting of the specified layer.",
                                      "This procedure returns the specified layer's apply mask setting. If the value is TRUE, then the layer mask for this layer is currently being composited with the layer's alpha channel.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("apply-mask",
                                                          "apply mask",
                                                          "The layer's apply mask setting",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-set-apply-mask
+   * picman-layer-set-apply-mask
    */
-  procedure = gimp_procedure_new (layer_set_apply_mask_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-set-apply-mask");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-set-apply-mask",
+  procedure = picman_procedure_new (layer_set_apply_mask_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-set-apply-mask");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-set-apply-mask",
                                      "Set the apply mask setting of the specified layer.",
                                      "This procedure sets the specified layer's apply mask setting. This controls whether the layer's mask is currently affecting the alpha channel. If there is no layer mask, this function will return an error.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("apply-mask",
                                                      "apply mask",
                                                      "The new layer's apply mask setting",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-get-show-mask
+   * picman-layer-get-show-mask
    */
-  procedure = gimp_procedure_new (layer_get_show_mask_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-get-show-mask");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-get-show-mask",
+  procedure = picman_procedure_new (layer_get_show_mask_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-get-show-mask");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-get-show-mask",
                                      "Get the show mask setting of the specified layer.",
                                      "This procedure returns the specified layer's show mask setting. This controls whether the layer or its mask is visible. TRUE indicates that the mask should be visible. If the layer has no mask, then this function returns an error.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("show-mask",
                                                          "show mask",
                                                          "The layer's show mask setting",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-set-show-mask
+   * picman-layer-set-show-mask
    */
-  procedure = gimp_procedure_new (layer_set_show_mask_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-set-show-mask");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-set-show-mask",
+  procedure = picman_procedure_new (layer_set_show_mask_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-set-show-mask");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-set-show-mask",
                                      "Set the show mask setting of the specified layer.",
                                      "This procedure sets the specified layer's show mask setting. This controls whether the layer or its mask is visible. TRUE indicates that the mask should be visible. If there is no layer mask, this function will return an error.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("show-mask",
                                                      "show mask",
                                                      "The new layer's show mask setting",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-get-edit-mask
+   * picman-layer-get-edit-mask
    */
-  procedure = gimp_procedure_new (layer_get_edit_mask_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-get-edit-mask");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-get-edit-mask",
+  procedure = picman_procedure_new (layer_get_edit_mask_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-get-edit-mask");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-get-edit-mask",
                                      "Get the edit mask setting of the specified layer.",
                                      "This procedure returns the specified layer's edit mask setting. If the value is TRUE, then the layer mask for this layer is currently active, and not the layer.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("edit-mask",
                                                          "edit mask",
                                                          "The layer's edit mask setting",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-set-edit-mask
+   * picman-layer-set-edit-mask
    */
-  procedure = gimp_procedure_new (layer_set_edit_mask_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-set-edit-mask");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-set-edit-mask",
+  procedure = picman_procedure_new (layer_set_edit_mask_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-set-edit-mask");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-set-edit-mask",
                                      "Set the edit mask setting of the specified layer.",
                                      "This procedure sets the specified layer's edit mask setting. This controls whether the layer or it's mask is currently active for editing. If the specified layer has no layer mask, then this procedure will return an error.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("edit-mask",
                                                      "edit mask",
                                                      "The new layer's edit mask setting",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-get-opacity
+   * picman-layer-get-opacity
    */
-  procedure = gimp_procedure_new (layer_get_opacity_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-get-opacity");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-get-opacity",
+  procedure = picman_procedure_new (layer_get_opacity_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-get-opacity");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-get-opacity",
                                      "Get the opacity of the specified layer.",
                                      "This procedure returns the specified layer's opacity.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("opacity",
                                                         "opacity",
                                                         "The layer opacity",
                                                         0, 100, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-set-opacity
+   * picman-layer-set-opacity
    */
-  procedure = gimp_procedure_new (layer_set_opacity_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-set-opacity");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-set-opacity",
+  procedure = picman_procedure_new (layer_set_opacity_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-set-opacity");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-set-opacity",
                                      "Set the opacity of the specified layer.",
                                      "This procedure sets the specified layer's opacity.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("opacity",
                                                     "opacity",
                                                     "The new layer opacity",
                                                     0, 100, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-get-mode
+   * picman-layer-get-mode
    */
-  procedure = gimp_procedure_new (layer_get_mode_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-get-mode");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-get-mode",
+  procedure = picman_procedure_new (layer_get_mode_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-get-mode");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-get-mode",
                                      "Get the combination mode of the specified layer.",
                                      "This procedure returns the specified layer's combination mode.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("mode",
                                                       "mode",
                                                       "The layer combination mode",
-                                                      GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                      GIMP_NORMAL_MODE,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_TYPE_LAYER_MODE_EFFECTS,
+                                                      PICMAN_NORMAL_MODE,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-layer-set-mode
+   * picman-layer-set-mode
    */
-  procedure = gimp_procedure_new (layer_set_mode_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-layer-set-mode");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-layer-set-mode",
+  procedure = picman_procedure_new (layer_set_mode_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-layer-set-mode");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-layer-set-mode",
                                      "Set the combination mode of the specified layer.",
                                      "This procedure sets the specified layer's combination mode.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_layer_id ("layer",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_layer_id ("layer",
                                                          "layer",
                                                          "The layer",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("mode",
                                                   "mode",
                                                   "The new layer combination mode",
-                                                  GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                  GIMP_NORMAL_MODE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_TYPE_LAYER_MODE_EFFECTS,
+                                                  PICMAN_NORMAL_MODE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

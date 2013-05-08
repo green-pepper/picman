@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,44 +15,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_INK_H__
-#define  __GIMP_INK_H__
+#ifndef  __PICMAN_INK_H__
+#define  __PICMAN_INK_H__
 
 
-#include "gimppaintcore.h"
-#include "gimpink-blob.h"
+#include "picmanpaintcore.h"
+#include "picmanink-blob.h"
 
 
-#define GIMP_TYPE_INK            (gimp_ink_get_type ())
-#define GIMP_INK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_INK, GimpInk))
-#define GIMP_INK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_INK, GimpInkClass))
-#define GIMP_IS_INK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_INK))
-#define GIMP_IS_INK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_INK))
-#define GIMP_INK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_INK, GimpInkClass))
+#define PICMAN_TYPE_INK            (picman_ink_get_type ())
+#define PICMAN_INK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_INK, PicmanInk))
+#define PICMAN_INK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_INK, PicmanInkClass))
+#define PICMAN_IS_INK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_INK))
+#define PICMAN_IS_INK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_INK))
+#define PICMAN_INK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_INK, PicmanInkClass))
 
 
-typedef struct _GimpInkClass GimpInkClass;
+typedef struct _PicmanInkClass PicmanInkClass;
 
-struct _GimpInk
+struct _PicmanInk
 {
-  GimpPaintCore  parent_instance;
+  PicmanPaintCore  parent_instance;
 
-  GimpBlob      *start_blob;   /*  starting blob (for undo)       */
+  PicmanBlob      *start_blob;   /*  starting blob (for undo)       */
 
-  GimpBlob      *cur_blob;     /*  current blob                   */
-  GimpBlob      *last_blob;    /*  blob for last cursor position  */
+  PicmanBlob      *cur_blob;     /*  current blob                   */
+  PicmanBlob      *last_blob;    /*  blob for last cursor position  */
 };
 
-struct _GimpInkClass
+struct _PicmanInkClass
 {
-  GimpPaintCoreClass  parent_class;
+  PicmanPaintCoreClass  parent_class;
 };
 
 
-void    gimp_ink_register (Gimp                      *gimp,
-                           GimpPaintRegisterCallback  callback);
+void    picman_ink_register (Picman                      *picman,
+                           PicmanPaintRegisterCallback  callback);
 
-GType   gimp_ink_get_type (void) G_GNUC_CONST;
+GType   picman_ink_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_INK_H__  */
+#endif  /*  __PICMAN_INK_H__  */

@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpscaleentry.c
- * Copyright (C) 2000 Michael Natterer <mitch@gimp.org>
+ * picmanscaleentry.c
+ * Copyright (C) 2000 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,21 +24,21 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpbase/gimpbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpwidgets.h"
+#include "picmanwidgets.h"
 
 
-static void gimp_scale_entry_unconstrained_adjustment_callback (GtkAdjustment *adjustment,
+static void picman_scale_entry_unconstrained_adjustment_callback (GtkAdjustment *adjustment,
                                                                 GtkAdjustment *other_adj);
-static void gimp_scale_entry_exp_adjustment_callback           (GtkAdjustment *adjustment,
+static void picman_scale_entry_exp_adjustment_callback           (GtkAdjustment *adjustment,
                                                                 GtkAdjustment *other_adj);
-static void gimp_scale_entry_log_adjustment_callback           (GtkAdjustment *adjustment,
+static void picman_scale_entry_log_adjustment_callback           (GtkAdjustment *adjustment,
                                                                 GtkAdjustment *other_adj);
 
-static GtkObject * gimp_scale_entry_new_internal               (gboolean       color_scale,
+static GtkObject * picman_scale_entry_new_internal               (gboolean       color_scale,
                                                                 GtkTable      *table,
                                                                 gint           column,
                                                                 gint           row,
@@ -59,28 +59,28 @@ static GtkObject * gimp_scale_entry_new_internal               (gboolean       c
 
 
 static void
-gimp_scale_entry_unconstrained_adjustment_callback (GtkAdjustment *adjustment,
+picman_scale_entry_unconstrained_adjustment_callback (GtkAdjustment *adjustment,
                                                     GtkAdjustment *other_adj)
 {
   g_signal_handlers_block_by_func (other_adj,
-                                   gimp_scale_entry_unconstrained_adjustment_callback,
+                                   picman_scale_entry_unconstrained_adjustment_callback,
                                    adjustment);
 
   gtk_adjustment_set_value (other_adj, gtk_adjustment_get_value (adjustment));
 
   g_signal_handlers_unblock_by_func (other_adj,
-                                     gimp_scale_entry_unconstrained_adjustment_callback,
+                                     picman_scale_entry_unconstrained_adjustment_callback,
                                      adjustment);
 }
 
 static void
-gimp_scale_entry_log_adjustment_callback (GtkAdjustment *adjustment,
+picman_scale_entry_log_adjustment_callback (GtkAdjustment *adjustment,
                                           GtkAdjustment *other_adj)
 {
   gdouble value;
 
   g_signal_handlers_block_by_func (other_adj,
-                                   gimp_scale_entry_exp_adjustment_callback,
+                                   picman_scale_entry_exp_adjustment_callback,
                                    adjustment);
 
   if (gtk_adjustment_get_lower (adjustment) <= 0.0)
@@ -92,18 +92,18 @@ gimp_scale_entry_log_adjustment_callback (GtkAdjustment *adjustment,
   gtk_adjustment_set_value (other_adj, value);
 
   g_signal_handlers_unblock_by_func (other_adj,
-                                     gimp_scale_entry_exp_adjustment_callback,
+                                     picman_scale_entry_exp_adjustment_callback,
                                      adjustment);
 }
 
 static void
-gimp_scale_entry_exp_adjustment_callback (GtkAdjustment *adjustment,
+picman_scale_entry_exp_adjustment_callback (GtkAdjustment *adjustment,
                                           GtkAdjustment *other_adj)
 {
   gdouble value;
 
   g_signal_handlers_block_by_func (other_adj,
-                                   gimp_scale_entry_log_adjustment_callback,
+                                   picman_scale_entry_log_adjustment_callback,
                                    adjustment);
 
   value = exp (gtk_adjustment_get_value (adjustment));
@@ -113,12 +113,12 @@ gimp_scale_entry_exp_adjustment_callback (GtkAdjustment *adjustment,
   gtk_adjustment_set_value (other_adj, value);
 
   g_signal_handlers_unblock_by_func (other_adj,
-                                     gimp_scale_entry_log_adjustment_callback,
+                                     picman_scale_entry_log_adjustment_callback,
                                      adjustment);
 }
 
 static GtkObject *
-gimp_scale_entry_new_internal (gboolean     color_scale,
+picman_scale_entry_new_internal (gboolean     color_scale,
                                GtkTable    *table,
                                gint         column,
                                gint         row,
@@ -160,7 +160,7 @@ gimp_scale_entry_new_internal (gboolean     color_scale,
                                             step_increment, page_increment,
                                             0.0);
 
-      spinbutton = gimp_spin_button_new (&adjustment, value,
+      spinbutton = picman_spin_button_new (&adjustment, value,
                                          unconstrained_lower,
                                          unconstrained_upper,
                                          step_increment, page_increment, 0.0,
@@ -168,12 +168,12 @@ gimp_scale_entry_new_internal (gboolean     color_scale,
 
       g_signal_connect
         (G_OBJECT (constrained_adj), "value-changed",
-         G_CALLBACK (gimp_scale_entry_unconstrained_adjustment_callback),
+         G_CALLBACK (picman_scale_entry_unconstrained_adjustment_callback),
          adjustment);
 
       g_signal_connect
         (G_OBJECT (adjustment), "value-changed",
-         G_CALLBACK (gimp_scale_entry_unconstrained_adjustment_callback),
+         G_CALLBACK (picman_scale_entry_unconstrained_adjustment_callback),
          constrained_adj);
 
       return_adj = adjustment;
@@ -182,7 +182,7 @@ gimp_scale_entry_new_internal (gboolean     color_scale,
     }
   else
     {
-      spinbutton = gimp_spin_button_new (&adjustment, value, lower, upper,
+      spinbutton = picman_spin_button_new (&adjustment, value, lower, upper,
                                          step_increment, page_increment, 0.0,
                                          1.0, digits);
 
@@ -201,8 +201,8 @@ gimp_scale_entry_new_internal (gboolean     color_scale,
 
   if (color_scale)
     {
-      scale = gimp_color_scale_new (GTK_ORIENTATION_HORIZONTAL,
-                                    GIMP_COLOR_SELECTOR_VALUE);
+      scale = picman_color_scale_new (GTK_ORIENTATION_HORIZONTAL,
+                                    PICMAN_COLOR_SELECTOR_VALUE);
 
       gtk_range_set_adjustment (GTK_RANGE (scale),
                                 GTK_ADJUSTMENT (adjustment));
@@ -229,9 +229,9 @@ gimp_scale_entry_new_internal (gboolean     color_scale,
 
   if (tooltip || help_id)
     {
-      gimp_help_set_help_data (label, tooltip, help_id);
-      gimp_help_set_help_data (scale, tooltip, help_id);
-      gimp_help_set_help_data (spinbutton, tooltip, help_id);
+      picman_help_set_help_data (label, tooltip, help_id);
+      picman_help_set_help_data (scale, tooltip, help_id);
+      picman_help_set_help_data (spinbutton, tooltip, help_id);
     }
 
   g_object_set_data (G_OBJECT (return_adj), "label",      label);
@@ -244,7 +244,7 @@ gimp_scale_entry_new_internal (gboolean     color_scale,
 }
 
 /**
- * gimp_scale_entry_new:
+ * picman_scale_entry_new:
  * @table:               The #GtkTable the widgets will be attached to.
  * @column:              The column to start with.
  * @row:                 The row to attach the widgets.
@@ -265,7 +265,7 @@ gimp_scale_entry_new_internal (gboolean     color_scale,
  * @unconstrained_upper: The spinbutton's upper boundary
  *                       if @constrain == %FALSE.
  * @tooltip:             A tooltip message for the scale and the spinbutton.
- * @help_id:             The widgets' help_id (see gimp_help_set_help_data()).
+ * @help_id:             The widgets' help_id (see picman_help_set_help_data()).
  *
  * This function creates a #GtkLabel, a #GtkHScale and a #GtkSpinButton and
  * attaches them to a 3-column #GtkTable.
@@ -273,7 +273,7 @@ gimp_scale_entry_new_internal (gboolean     color_scale,
  * Returns: The #GtkSpinButton's #GtkAdjustment.
  **/
 GtkObject *
-gimp_scale_entry_new (GtkTable    *table,
+picman_scale_entry_new (GtkTable    *table,
                       gint         column,
                       gint         row,
                       const gchar *text,
@@ -291,7 +291,7 @@ gimp_scale_entry_new (GtkTable    *table,
                       const gchar *tooltip,
                       const gchar *help_id)
 {
-  return gimp_scale_entry_new_internal (FALSE,
+  return picman_scale_entry_new_internal (FALSE,
                                         table, column, row,
                                         text, scale_width, spinbutton_width,
                                         value, lower, upper,
@@ -304,7 +304,7 @@ gimp_scale_entry_new (GtkTable    *table,
 }
 
 /**
- * gimp_color_scale_entry_new:
+ * picman_color_scale_entry_new:
  * @table:               The #GtkTable the widgets will be attached to.
  * @column:              The column to start with.
  * @row:                 The row to attach the widgets.
@@ -319,15 +319,15 @@ gimp_scale_entry_new (GtkTable    *table,
  * @page_increment:      The page increment.
  * @digits:              The number of decimal digits.
  * @tooltip:             A tooltip message for the scale and the spinbutton.
- * @help_id:             The widgets' help_id (see gimp_help_set_help_data()).
+ * @help_id:             The widgets' help_id (see picman_help_set_help_data()).
  *
- * This function creates a #GtkLabel, a #GimpColorScale and a
+ * This function creates a #GtkLabel, a #PicmanColorScale and a
  * #GtkSpinButton and attaches them to a 3-column #GtkTable.
  *
  * Returns: The #GtkSpinButton's #GtkAdjustment.
  **/
 GtkObject *
-gimp_color_scale_entry_new (GtkTable    *table,
+picman_color_scale_entry_new (GtkTable    *table,
                             gint         column,
                             gint         row,
                             const gchar *text,
@@ -342,7 +342,7 @@ gimp_color_scale_entry_new (GtkTable    *table,
                             const gchar *tooltip,
                             const gchar *help_id)
 {
-  return gimp_scale_entry_new_internal (TRUE,
+  return picman_scale_entry_new_internal (TRUE,
                                         table, column, row,
                                         text, scale_width, spinbutton_width,
                                         value, lower, upper,
@@ -353,8 +353,8 @@ gimp_color_scale_entry_new (GtkTable    *table,
 }
 
 /**
- * gimp_scale_entry_set_logarithmic:
- * @adjustment:  a  #GtkAdjustment as returned by gimp_scale_entry_new()
+ * picman_scale_entry_set_logarithmic:
+ * @adjustment:  a  #GtkAdjustment as returned by picman_scale_entry_new()
  * @logarithmic: a boolean value to set or reset logarithmic behaviour
  *               of the scale widget
  *
@@ -363,10 +363,10 @@ gimp_color_scale_entry_new (GtkTable    *table,
  * ranges, but smaller selections on that range require a finer
  * adjustment.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_scale_entry_set_logarithmic (GtkObject *adjustment,
+picman_scale_entry_set_logarithmic (GtkObject *adjustment,
                                   gboolean   logarithmic)
 {
   GtkAdjustment *adj;
@@ -375,9 +375,9 @@ gimp_scale_entry_set_logarithmic (GtkObject *adjustment,
   g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
 
   adj       = GTK_ADJUSTMENT (adjustment);
-  scale_adj = GIMP_SCALE_ENTRY_SCALE_ADJ (adjustment);
+  scale_adj = PICMAN_SCALE_ENTRY_SCALE_ADJ (adjustment);
 
-  if (logarithmic == gimp_scale_entry_get_logarithmic (adjustment))
+  if (logarithmic == picman_scale_entry_get_logarithmic (adjustment))
     return;
 
   if (logarithmic)
@@ -411,7 +411,7 @@ gimp_scale_entry_set_logarithmic (GtkObject *adjustment,
                                         gtk_adjustment_get_step_increment (scale_adj),
                                         gtk_adjustment_get_page_increment (scale_adj),
                                         0.0);
-          gtk_range_set_adjustment (GTK_RANGE (GIMP_SCALE_ENTRY_SCALE (adj)),
+          gtk_range_set_adjustment (GTK_RANGE (PICMAN_SCALE_ENTRY_SCALE (adj)),
                                     GTK_ADJUSTMENT (new_adj));
 
           scale_adj = (GtkAdjustment *) new_adj;
@@ -419,11 +419,11 @@ gimp_scale_entry_set_logarithmic (GtkObject *adjustment,
       else
         {
           g_signal_handlers_disconnect_by_func (adj,
-                                                gimp_scale_entry_unconstrained_adjustment_callback,
+                                                picman_scale_entry_unconstrained_adjustment_callback,
                                                 scale_adj);
 
           g_signal_handlers_disconnect_by_func (scale_adj,
-                                                gimp_scale_entry_unconstrained_adjustment_callback,
+                                                picman_scale_entry_unconstrained_adjustment_callback,
                                                 adj);
         }
 
@@ -432,11 +432,11 @@ gimp_scale_entry_set_logarithmic (GtkObject *adjustment,
                                 log_step_increment, log_page_increment, 0.0);
 
       g_signal_connect (scale_adj, "value-changed",
-                        G_CALLBACK (gimp_scale_entry_exp_adjustment_callback),
+                        G_CALLBACK (picman_scale_entry_exp_adjustment_callback),
                         adj);
 
       g_signal_connect (adj, "value-changed",
-                        G_CALLBACK (gimp_scale_entry_log_adjustment_callback),
+                        G_CALLBACK (picman_scale_entry_log_adjustment_callback),
                         scale_adj);
 
       g_object_set_data (G_OBJECT (adjustment),
@@ -447,11 +447,11 @@ gimp_scale_entry_set_logarithmic (GtkObject *adjustment,
       gdouble lower, upper;
 
       g_signal_handlers_disconnect_by_func (adj,
-                                            gimp_scale_entry_log_adjustment_callback,
+                                            picman_scale_entry_log_adjustment_callback,
                                             scale_adj);
 
       g_signal_handlers_disconnect_by_func (scale_adj,
-                                            gimp_scale_entry_exp_adjustment_callback,
+                                            picman_scale_entry_exp_adjustment_callback,
                                             adj);
 
       lower = exp (gtk_adjustment_get_lower (scale_adj));
@@ -471,11 +471,11 @@ gimp_scale_entry_set_logarithmic (GtkObject *adjustment,
                                 0.0);
 
       g_signal_connect (scale_adj, "value-changed",
-                        G_CALLBACK (gimp_scale_entry_unconstrained_adjustment_callback),
+                        G_CALLBACK (picman_scale_entry_unconstrained_adjustment_callback),
                         adj);
 
       g_signal_connect (adj, "value-changed",
-                        G_CALLBACK (gimp_scale_entry_unconstrained_adjustment_callback),
+                        G_CALLBACK (picman_scale_entry_unconstrained_adjustment_callback),
                         scale_adj);
 
       g_object_set_data (G_OBJECT (adjustment),
@@ -484,24 +484,24 @@ gimp_scale_entry_set_logarithmic (GtkObject *adjustment,
 }
 
 /**
- * gimp_scale_entry_get_logarithmic:
- * @adjustment: a  #GtkAdjustment as returned by gimp_scale_entry_new()
+ * picman_scale_entry_get_logarithmic:
+ * @adjustment: a  #GtkAdjustment as returned by picman_scale_entry_new()
  *
  * Return value: %TRUE if the the entry's scale widget will behave in
  *               logharithmic fashion, %FALSE for linear behaviour.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_scale_entry_get_logarithmic (GtkObject *adjustment)
+picman_scale_entry_get_logarithmic (GtkObject *adjustment)
 {
   return GPOINTER_TO_INT (g_object_get_data (G_OBJECT (adjustment),
                                              "logarithmic"));
 }
 
 /**
- * gimp_scale_entry_set_sensitive:
- * @adjustment: a #GtkAdjustment returned by gimp_scale_entry_new()
+ * picman_scale_entry_set_sensitive:
+ * @adjustment: a #GtkAdjustment returned by picman_scale_entry_new()
  * @sensitive:  a boolean value with the same semantics as the @sensitive
  *              parameter of gtk_widget_set_sensitive()
  *
@@ -509,22 +509,22 @@ gimp_scale_entry_get_logarithmic (GtkObject *adjustment)
  * #GtkSpinButton.
  **/
 void
-gimp_scale_entry_set_sensitive (GtkObject *adjustment,
+picman_scale_entry_set_sensitive (GtkObject *adjustment,
                                 gboolean   sensitive)
 {
   GtkWidget *widget;
 
   g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
 
-  widget = GIMP_SCALE_ENTRY_LABEL (adjustment);
+  widget = PICMAN_SCALE_ENTRY_LABEL (adjustment);
   if (widget)
     gtk_widget_set_sensitive (widget, sensitive);
 
-  widget = GIMP_SCALE_ENTRY_SCALE (adjustment);
+  widget = PICMAN_SCALE_ENTRY_SCALE (adjustment);
   if (widget)
     gtk_widget_set_sensitive (widget, sensitive);
 
-  widget = GIMP_SCALE_ENTRY_SPINBUTTON (adjustment);
+  widget = PICMAN_SCALE_ENTRY_SPINBUTTON (adjustment);
   if (widget)
     gtk_widget_set_sensitive (widget, sensitive);
 }

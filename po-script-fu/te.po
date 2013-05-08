@@ -1,13 +1,13 @@
 # Telugu translation of script-fu
 # Copyright (C) 2011 e-Telugu Localization Team
-# This file is distributed under the same license as the gimp package.
+# This file is distributed under the same license as the picman package.
 # Praveen Illa <mail2ipn@gmail.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gimp 2.8\n"
+"Project-Id-Version: Picman 2.8\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-03-15 13:35+0000\n"
 "PO-Revision-Date: 2012-03-17 00:25+0530\n"
 "Last-Translator: Praveen Illa <mail2ipn@gmail.com>\n"
@@ -37,7 +37,7 @@ msgid "_Start Server..."
 msgstr "సేవకాన్ని ప్రారంభించు...(_S)"
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
+msgid "_PICMAN Online"
 msgstr "గింప్ ఆన్‌లైను (_G)"
 
 #: ../plug-ins/script-fu/script-fu.c:302
@@ -77,8 +77,8 @@ msgid "_Beveled Pattern"
 msgstr "బెవెల్ చేసిన నమూనా (_B)"
 
 #: ../plug-ins/script-fu/script-fu.c:323
-msgid "_Classic.Gimp.Org"
-msgstr "Classic.Gimp.Org (_C)"
+msgid "_Classic.Picman.Org"
+msgstr "Classic.Picman.Org (_C)"
 
 #: ../plug-ins/script-fu/script-fu.c:326
 msgid "Alpha to _Logo"
@@ -257,19 +257,19 @@ msgstr "టైలు"
 msgid "Wrap"
 msgstr "చుట్టుకొనుట"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:323
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:323
 msgid "Spyrograph"
 msgstr "శంఖాకార గ్రాఫు"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:326
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:326
 msgid "Circle"
 msgstr "వృత్తం"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:342
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:342
 msgid "Pencil"
 msgstr "పెన్సిలు"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm:347
+#: ../plug-ins/script-fu/scripts/spyropicman.scm:347
 msgid "Solid Color"
 msgstr "గట్టి రంగు"
 

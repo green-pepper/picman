@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationdesaturate.h
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanoperationdesaturate.h
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_DESATURATE_H__
-#define __GIMP_OPERATION_DESATURATE_H__
+#ifndef __PICMAN_OPERATION_DESATURATE_H__
+#define __PICMAN_OPERATION_DESATURATE_H__
 
 
-#include "gimpoperationpointfilter.h"
+#include "picmanoperationpointfilter.h"
 
 
-#define GIMP_TYPE_OPERATION_DESATURATE            (gimp_operation_desaturate_get_type ())
-#define GIMP_OPERATION_DESATURATE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_DESATURATE, GimpOperationDesaturate))
-#define GIMP_OPERATION_DESATURATE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_DESATURATE, GimpOperationDesaturateClass))
-#define GIMP_IS_OPERATION_DESATURATE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_DESATURATE))
-#define GIMP_IS_OPERATION_DESATURATE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_DESATURATE))
-#define GIMP_OPERATION_DESATURATE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_DESATURATE, GimpOperationDesaturateClass))
+#define PICMAN_TYPE_OPERATION_DESATURATE            (picman_operation_desaturate_get_type ())
+#define PICMAN_OPERATION_DESATURATE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_DESATURATE, PicmanOperationDesaturate))
+#define PICMAN_OPERATION_DESATURATE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_DESATURATE, PicmanOperationDesaturateClass))
+#define PICMAN_IS_OPERATION_DESATURATE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_DESATURATE))
+#define PICMAN_IS_OPERATION_DESATURATE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_DESATURATE))
+#define PICMAN_OPERATION_DESATURATE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_DESATURATE, PicmanOperationDesaturateClass))
 
 
-typedef struct _GimpOperationDesaturate      GimpOperationDesaturate;
-typedef struct _GimpOperationDesaturateClass GimpOperationDesaturateClass;
+typedef struct _PicmanOperationDesaturate      PicmanOperationDesaturate;
+typedef struct _PicmanOperationDesaturateClass PicmanOperationDesaturateClass;
 
-struct _GimpOperationDesaturate
+struct _PicmanOperationDesaturate
 {
-  GimpOperationPointFilter  parent_instance;
+  PicmanOperationPointFilter  parent_instance;
 };
 
-struct _GimpOperationDesaturateClass
+struct _PicmanOperationDesaturateClass
 {
-  GimpOperationPointFilterClass  parent_class;
+  PicmanOperationPointFilterClass  parent_class;
 };
 
 
-GType   gimp_operation_desaturate_get_type (void) G_GNUC_CONST;
+GType   picman_operation_desaturate_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_DESATURATE_H__ */
+#endif /* __PICMAN_OPERATION_DESATURATE_H__ */

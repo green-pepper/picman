@@ -13,29 +13,29 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gimpfu import *
+from picmanfu import *
 
-gettext.install("gimp20-python", gimp.locale_directory, unicode=True)
+gettext.install("picman20-python", picman.locale_directory, unicode=True)
 
 def palette_offset(palette, amount):
     #If palette is read only, work on a copy:
-    editable = pdb.gimp_palette_is_editable(palette)
-    if not editable:palette = pdb.gimp_palette_duplicate (palette)
+    editable = pdb.picman_palette_is_editable(palette)
+    if not editable:palette = pdb.picman_palette_duplicate (palette)
 
-    num_colors = pdb.gimp_palette_get_info (palette)
+    num_colors = pdb.picman_palette_get_info (palette)
 
     tmp_entry_array = []
     for i in xrange (num_colors):
-        tmp_entry_array.append  ((pdb.gimp_palette_entry_get_name (palette, i),
-                                  pdb.gimp_palette_entry_get_color (palette, i)))
+        tmp_entry_array.append  ((pdb.picman_palette_entry_get_name (palette, i),
+                                  pdb.picman_palette_entry_get_color (palette, i)))
     for i in xrange (num_colors):
         target_index = i + amount
         if target_index >= num_colors:
             target_index -= num_colors
         elif target_index < 0:
             target_index += num_colors
-        pdb.gimp_palette_entry_set_name (palette, target_index, tmp_entry_array[i][0])
-        pdb.gimp_palette_entry_set_color (palette, target_index, tmp_entry_array[i][1])
+        pdb.picman_palette_entry_set_name (palette, target_index, tmp_entry_array[i][0])
+        pdb.picman_palette_entry_set_color (palette, target_index, tmp_entry_array[i][1])
     return palette
 
 
@@ -55,7 +55,7 @@ register(
     [(PF_PALETTE, "new-palette", "Result")],
     palette_offset,
     menu="<Palettes>",
-    domain=("gimp20-python", gimp.locale_directory)
+    domain=("picman20-python", picman.locale_directory)
     )
 
 main ()

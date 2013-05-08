@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,14 +26,14 @@ struct _VectorsOptionsDialog
   GtkWidget   *dialog;
   GtkWidget   *name_entry;
 
-  GimpImage   *image;
-  GimpVectors *vectors;
+  PicmanImage   *image;
+  PicmanVectors *vectors;
 };
 
 
-VectorsOptionsDialog * vectors_options_dialog_new (GimpImage   *image,
-                                                   GimpVectors *vectors,
-                                                   GimpContext *context,
+VectorsOptionsDialog * vectors_options_dialog_new (PicmanImage   *image,
+                                                   PicmanVectors *vectors,
+                                                   PicmanContext *context,
                                                    GtkWidget   *parent,
                                                    const gchar *vectors_name,
                                                    const gchar *title,

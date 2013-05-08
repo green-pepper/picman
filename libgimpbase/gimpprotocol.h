@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,8 +16,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PROTOCOL_H__
-#define __GIMP_PROTOCOL_H__
+#ifndef __PICMAN_PROTOCOL_H__
+#define __PICMAN_PROTOCOL_H__
 
 G_BEGIN_DECLS
 
@@ -26,7 +26,7 @@ G_BEGIN_DECLS
 
 /* Increment every time the protocol changes
  */
-#define GIMP_PROTOCOL_VERSION  0x0014
+#define PICMAN_PROTOCOL_VERSION  0x0014
 
 
 enum
@@ -69,10 +69,10 @@ struct _GPConfig
   gint8    check_type;
   gint8    show_help_button;
   gint8    use_cpu_accel;
-  gint8    gimp_reserved_5;
-  gint8    gimp_reserved_6;
-  gint8    gimp_reserved_7;
-  gint8    gimp_reserved_8;
+  gint8    picman_reserved_5;
+  gint8    picman_reserved_6;
+  gint8    picman_reserved_7;
+  gint8    picman_reserved_8;
   gint8    install_cmap;
   gint8    show_tooltips;
   gint32   min_colors;
@@ -119,8 +119,8 @@ struct _GPParam
     guint8       *d_int8array;
     gdouble      *d_floatarray;
     gchar       **d_stringarray;
-    GimpRGB      *d_colorarray;
-    GimpRGB       d_color;
+    PicmanRGB      *d_colorarray;
+    PicmanRGB       d_color;
     struct
     {
       gint32 x;
@@ -139,7 +139,7 @@ struct _GPParam
     gint32        d_path; /* deprecated */
     gint32        d_vectors;
     gint32        d_status;
-    GimpParasite  d_parasite;
+    PicmanParasite  d_parasite;
   } data;
 };
 
@@ -231,4 +231,4 @@ void      gp_params_destroy         (GPParam         *params,
 
 G_END_DECLS
 
-#endif /* __GIMP_PROTOCOL_H__ */
+#endif /* __PICMAN_PROTOCOL_H__ */

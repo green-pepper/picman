@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpuitypes.h
+ * picmanuitypes.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,36 +18,36 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_UI_TYPES_H__
-#define __GIMP_UI_TYPES_H__
+#ifndef __PICMAN_UI_TYPES_H__
+#define __PICMAN_UI_TYPES_H__
 
-#include <libgimpwidgets/gimpwidgetstypes.h>
+#include <libpicmanwidgets/picmanwidgetstypes.h>
 
 G_BEGIN_DECLS
 
 /* For information look into the html documentation */
 
 
-typedef struct _GimpAspectPreview        GimpAspectPreview;
-typedef struct _GimpDrawablePreview      GimpDrawablePreview;
-typedef struct _GimpProcBrowserDialog    GimpProcBrowserDialog;
-typedef struct _GimpProgressBar          GimpProgressBar;
-typedef struct _GimpZoomPreview          GimpZoomPreview;
+typedef struct _PicmanAspectPreview        PicmanAspectPreview;
+typedef struct _PicmanDrawablePreview      PicmanDrawablePreview;
+typedef struct _PicmanProcBrowserDialog    PicmanProcBrowserDialog;
+typedef struct _PicmanProgressBar          PicmanProgressBar;
+typedef struct _PicmanZoomPreview          PicmanZoomPreview;
 
-typedef struct _GimpDrawableComboBox     GimpDrawableComboBox;
-typedef struct _GimpChannelComboBox      GimpChannelComboBox;
-typedef struct _GimpLayerComboBox        GimpLayerComboBox;
-typedef struct _GimpVectorsComboBox      GimpVectorsComboBox;
-typedef struct _GimpImageComboBox        GimpImageComboBox;
+typedef struct _PicmanDrawableComboBox     PicmanDrawableComboBox;
+typedef struct _PicmanChannelComboBox      PicmanChannelComboBox;
+typedef struct _PicmanLayerComboBox        PicmanLayerComboBox;
+typedef struct _PicmanVectorsComboBox      PicmanVectorsComboBox;
+typedef struct _PicmanImageComboBox        PicmanImageComboBox;
 
-typedef struct _GimpSelectButton         GimpSelectButton;
-typedef struct _GimpBrushSelectButton    GimpBrushSelectButton;
-typedef struct _GimpFontSelectButton     GimpFontSelectButton;
-typedef struct _GimpGradientSelectButton GimpGradientSelectButton;
-typedef struct _GimpPaletteSelectButton  GimpPaletteSelectButton;
-typedef struct _GimpPatternSelectButton  GimpPatternSelectButton;
+typedef struct _PicmanSelectButton         PicmanSelectButton;
+typedef struct _PicmanBrushSelectButton    PicmanBrushSelectButton;
+typedef struct _PicmanFontSelectButton     PicmanFontSelectButton;
+typedef struct _PicmanGradientSelectButton PicmanGradientSelectButton;
+typedef struct _PicmanPaletteSelectButton  PicmanPaletteSelectButton;
+typedef struct _PicmanPatternSelectButton  PicmanPatternSelectButton;
 
 
 G_END_DECLS
 
-#endif /* __GIMP_UI_TYPES_H__ */
+#endif /* __PICMAN_UI_TYPES_H__ */

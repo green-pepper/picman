@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
 
 #include "widgets-types.h"
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "paint/gimpink-blob.h"
+#include "paint/picmanink-blob.h"
 
-#include "gimpblobeditor.h"
+#include "picmanblobeditor.h"
 
 
 enum
@@ -37,75 +37,75 @@ enum
 };
 
 
-static void      gimp_blob_editor_set_property   (GObject        *object,
+static void      picman_blob_editor_set_property   (GObject        *object,
                                                   guint           property_id,
                                                   const GValue   *value,
                                                   GParamSpec     *pspec);
-static void      gimp_blob_editor_get_property   (GObject        *object,
+static void      picman_blob_editor_get_property   (GObject        *object,
                                                   guint           property_id,
                                                   GValue         *value,
                                                   GParamSpec     *pspec);
 
-static gboolean  gimp_blob_editor_expose         (GtkWidget      *widget,
+static gboolean  picman_blob_editor_expose         (GtkWidget      *widget,
                                                   GdkEventExpose *event);
-static gboolean  gimp_blob_editor_button_press   (GtkWidget      *widget,
+static gboolean  picman_blob_editor_button_press   (GtkWidget      *widget,
                                                   GdkEventButton *event);
-static gboolean  gimp_blob_editor_button_release (GtkWidget      *widget,
+static gboolean  picman_blob_editor_button_release (GtkWidget      *widget,
                                                   GdkEventButton *event);
-static gboolean  gimp_blob_editor_motion_notify  (GtkWidget      *widget,
+static gboolean  picman_blob_editor_motion_notify  (GtkWidget      *widget,
                                                   GdkEventMotion *event);
 
-static void      gimp_blob_editor_get_handle     (GimpBlobEditor *editor,
+static void      picman_blob_editor_get_handle     (PicmanBlobEditor *editor,
                                                   GdkRectangle   *rect);
-static void      gimp_blob_editor_draw_blob      (GimpBlobEditor *editor,
+static void      picman_blob_editor_draw_blob      (PicmanBlobEditor *editor,
                                                   cairo_t        *cr,
                                                   gdouble         xc,
                                                   gdouble         yc,
                                                   gdouble         radius);
 
 
-G_DEFINE_TYPE (GimpBlobEditor, gimp_blob_editor, GTK_TYPE_DRAWING_AREA)
+G_DEFINE_TYPE (PicmanBlobEditor, picman_blob_editor, GTK_TYPE_DRAWING_AREA)
 
-#define parent_class gimp_blob_editor_parent_class
+#define parent_class picman_blob_editor_parent_class
 
 
 static void
-gimp_blob_editor_class_init (GimpBlobEditorClass *klass)
+picman_blob_editor_class_init (PicmanBlobEditorClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->set_property         = gimp_blob_editor_set_property;
-  object_class->get_property         = gimp_blob_editor_get_property;
+  object_class->set_property         = picman_blob_editor_set_property;
+  object_class->get_property         = picman_blob_editor_get_property;
 
-  widget_class->expose_event         = gimp_blob_editor_expose;
-  widget_class->button_press_event   = gimp_blob_editor_button_press;
-  widget_class->button_release_event = gimp_blob_editor_button_release;
-  widget_class->motion_notify_event  = gimp_blob_editor_motion_notify;
+  widget_class->expose_event         = picman_blob_editor_expose;
+  widget_class->button_press_event   = picman_blob_editor_button_press;
+  widget_class->button_release_event = picman_blob_editor_button_release;
+  widget_class->motion_notify_event  = picman_blob_editor_motion_notify;
 
   g_object_class_install_property (object_class, PROP_TYPE,
                                    g_param_spec_enum ("blob-type",
                                                       NULL, NULL,
-                                                      GIMP_TYPE_INK_BLOB_TYPE,
-                                                      GIMP_INK_BLOB_TYPE_CIRCLE,
-                                                      GIMP_PARAM_READWRITE |
+                                                      PICMAN_TYPE_INK_BLOB_TYPE,
+                                                      PICMAN_INK_BLOB_TYPE_CIRCLE,
+                                                      PICMAN_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
   g_object_class_install_property (object_class, PROP_ASPECT,
                                    g_param_spec_double ("blob-aspect",
                                                         NULL, NULL,
                                                         1.0, 10.0, 1.0,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
   g_object_class_install_property (object_class, PROP_ANGLE,
                                    g_param_spec_double ("blob-angle",
                                                         NULL, NULL,
                                                         -90.0, 90.0, 0.0,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_blob_editor_init (GimpBlobEditor *editor)
+picman_blob_editor_init (PicmanBlobEditor *editor)
 {
   editor->active = FALSE;
 
@@ -117,11 +117,11 @@ gimp_blob_editor_init (GimpBlobEditor *editor)
 }
 
 GtkWidget *
-gimp_blob_editor_new (GimpInkBlobType  type,
+picman_blob_editor_new (PicmanInkBlobType  type,
                       gdouble          aspect,
                       gdouble          angle)
 {
-  return g_object_new (GIMP_TYPE_BLOB_EDITOR,
+  return g_object_new (PICMAN_TYPE_BLOB_EDITOR,
                        "blob-type",   type,
                        "blob-aspect", aspect,
                        "blob-angle",  angle,
@@ -129,12 +129,12 @@ gimp_blob_editor_new (GimpInkBlobType  type,
 }
 
 static void
-gimp_blob_editor_set_property (GObject      *object,
+picman_blob_editor_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpBlobEditor *editor = GIMP_BLOB_EDITOR (object);
+  PicmanBlobEditor *editor = PICMAN_BLOB_EDITOR (object);
 
   switch (property_id)
     {
@@ -157,12 +157,12 @@ gimp_blob_editor_set_property (GObject      *object,
 }
 
 static void
-gimp_blob_editor_get_property (GObject    *object,
+picman_blob_editor_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpBlobEditor *editor = GIMP_BLOB_EDITOR (object);
+  PicmanBlobEditor *editor = PICMAN_BLOB_EDITOR (object);
 
   switch (property_id)
     {
@@ -183,10 +183,10 @@ gimp_blob_editor_get_property (GObject    *object,
 }
 
 static gboolean
-gimp_blob_editor_expose (GtkWidget      *widget,
+picman_blob_editor_expose (GtkWidget      *widget,
                          GdkEventExpose *event)
 {
-  GimpBlobEditor *editor = GIMP_BLOB_EDITOR (widget);
+  PicmanBlobEditor *editor = PICMAN_BLOB_EDITOR (widget);
   GtkStyle       *style  = gtk_widget_get_style (widget);
   GtkStateType    state  = gtk_widget_get_state (widget);
   GtkAllocation   allocation;
@@ -203,12 +203,12 @@ gimp_blob_editor_expose (GtkWidget      *widget,
 
   cr = gdk_cairo_create (gtk_widget_get_window (widget));
 
-  gimp_blob_editor_draw_blob (editor, cr,
+  picman_blob_editor_draw_blob (editor, cr,
                               allocation.width  / 2.0,
                               allocation.height / 2.0,
                               0.9 * r0);
 
-  gimp_blob_editor_get_handle (editor, &rect);
+  picman_blob_editor_get_handle (editor, &rect);
 
   cairo_rectangle (cr,
                    rect.x + 0.5, rect.y + 0.5, rect.width - 1, rect.width - 1);
@@ -225,13 +225,13 @@ gimp_blob_editor_expose (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_blob_editor_button_press (GtkWidget      *widget,
+picman_blob_editor_button_press (GtkWidget      *widget,
                                GdkEventButton *event)
 {
-  GimpBlobEditor *editor = GIMP_BLOB_EDITOR (widget);
+  PicmanBlobEditor *editor = PICMAN_BLOB_EDITOR (widget);
   GdkRectangle    rect;
 
-  gimp_blob_editor_get_handle (editor, &rect);
+  picman_blob_editor_get_handle (editor, &rect);
 
   if ((event->x >= rect.x) && (event->x - rect.x < rect.width) &&
       (event->y >= rect.y) && (event->y - rect.y < rect.height))
@@ -243,10 +243,10 @@ gimp_blob_editor_button_press (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_blob_editor_button_release (GtkWidget      *widget,
+picman_blob_editor_button_release (GtkWidget      *widget,
                                  GdkEventButton *event)
 {
-  GimpBlobEditor *editor = GIMP_BLOB_EDITOR (widget);
+  PicmanBlobEditor *editor = PICMAN_BLOB_EDITOR (widget);
 
   editor->active = FALSE;
 
@@ -254,10 +254,10 @@ gimp_blob_editor_button_release (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_blob_editor_motion_notify (GtkWidget      *widget,
+picman_blob_editor_motion_notify (GtkWidget      *widget,
                                 GdkEventMotion *event)
 {
-  GimpBlobEditor *editor = GIMP_BLOB_EDITOR (widget);
+  PicmanBlobEditor *editor = PICMAN_BLOB_EDITOR (widget);
 
   if (editor->active)
     {
@@ -297,7 +297,7 @@ gimp_blob_editor_motion_notify (GtkWidget      *widget,
 }
 
 static void
-gimp_blob_editor_get_handle (GimpBlobEditor *editor,
+picman_blob_editor_get_handle (PicmanBlobEditor *editor,
                              GdkRectangle   *rect)
 {
   GtkWidget     *widget = GTK_WIDGET (editor);
@@ -322,7 +322,7 @@ gimp_blob_editor_get_handle (GimpBlobEditor *editor,
 }
 
 static void
-gimp_blob_editor_draw_blob (GimpBlobEditor *editor,
+picman_blob_editor_draw_blob (PicmanBlobEditor *editor,
                             cairo_t        *cr,
                             gdouble         xc,
                             gdouble         yc,
@@ -330,22 +330,22 @@ gimp_blob_editor_draw_blob (GimpBlobEditor *editor,
 {
   GtkWidget    *widget   = GTK_WIDGET (editor);
   GtkStyle     *style    = gtk_widget_get_style (widget);
-  GimpBlob     *blob;
-  GimpBlobFunc  function = gimp_blob_ellipse;
+  PicmanBlob     *blob;
+  PicmanBlobFunc  function = picman_blob_ellipse;
   gint          i;
 
   switch (editor->type)
     {
-    case GIMP_INK_BLOB_TYPE_CIRCLE:
-      function = gimp_blob_ellipse;
+    case PICMAN_INK_BLOB_TYPE_CIRCLE:
+      function = picman_blob_ellipse;
       break;
 
-    case GIMP_INK_BLOB_TYPE_SQUARE:
-      function = gimp_blob_square;
+    case PICMAN_INK_BLOB_TYPE_SQUARE:
+      function = picman_blob_square;
       break;
 
-    case GIMP_INK_BLOB_TYPE_DIAMOND:
-      function = gimp_blob_diamond;
+    case PICMAN_INK_BLOB_TYPE_DIAMOND:
+      function = picman_blob_diamond;
       break;
     }
 

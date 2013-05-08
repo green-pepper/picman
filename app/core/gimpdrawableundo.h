@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,26 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DRAWABLE_UNDO_H__
-#define __GIMP_DRAWABLE_UNDO_H__
+#ifndef __PICMAN_DRAWABLE_UNDO_H__
+#define __PICMAN_DRAWABLE_UNDO_H__
 
 
-#include "gimpitemundo.h"
+#include "picmanitemundo.h"
 
 
-#define GIMP_TYPE_DRAWABLE_UNDO            (gimp_drawable_undo_get_type ())
-#define GIMP_DRAWABLE_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DRAWABLE_UNDO, GimpDrawableUndo))
-#define GIMP_DRAWABLE_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DRAWABLE_UNDO, GimpDrawableUndoClass))
-#define GIMP_IS_DRAWABLE_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DRAWABLE_UNDO))
-#define GIMP_IS_DRAWABLE_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DRAWABLE_UNDO))
-#define GIMP_DRAWABLE_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DRAWABLE_UNDO, GimpDrawableUndoClass))
+#define PICMAN_TYPE_DRAWABLE_UNDO            (picman_drawable_undo_get_type ())
+#define PICMAN_DRAWABLE_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DRAWABLE_UNDO, PicmanDrawableUndo))
+#define PICMAN_DRAWABLE_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DRAWABLE_UNDO, PicmanDrawableUndoClass))
+#define PICMAN_IS_DRAWABLE_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DRAWABLE_UNDO))
+#define PICMAN_IS_DRAWABLE_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DRAWABLE_UNDO))
+#define PICMAN_DRAWABLE_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DRAWABLE_UNDO, PicmanDrawableUndoClass))
 
 
-typedef struct _GimpDrawableUndoClass GimpDrawableUndoClass;
+typedef struct _PicmanDrawableUndoClass PicmanDrawableUndoClass;
 
-struct _GimpDrawableUndo
+struct _PicmanDrawableUndo
 {
-  GimpItemUndo  parent_instance;
+  PicmanItemUndo  parent_instance;
 
   GeglBuffer   *buffer;
   gint          x;
@@ -42,17 +42,17 @@ struct _GimpDrawableUndo
 
   /* stuff for "Fade" */
   GeglBuffer           *applied_buffer;
-  GimpLayerModeEffects  paint_mode;
+  PicmanLayerModeEffects  paint_mode;
   gdouble               opacity;
 };
 
-struct _GimpDrawableUndoClass
+struct _PicmanDrawableUndoClass
 {
-  GimpItemUndoClass  parent_class;
+  PicmanItemUndoClass  parent_class;
 };
 
 
-GType   gimp_drawable_undo_get_type (void) G_GNUC_CONST;
+GType   picman_drawable_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_DRAWABLE_UNDO_H__ */
+#endif /* __PICMAN_DRAWABLE_UNDO_H__ */

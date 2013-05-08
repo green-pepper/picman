@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,17 +21,17 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "gimp-gegl-types.h"
+#include "picman-gegl-types.h"
 
-#include "gimp-gegl-mask-combine.h"
+#include "picman-gegl-mask-combine.h"
 
 
 gboolean
-gimp_gegl_mask_combine_rect (GeglBuffer     *mask,
-                             GimpChannelOps  op,
+picman_gegl_mask_combine_rect (GeglBuffer     *mask,
+                             PicmanChannelOps  op,
                              gint            x,
                              gint            y,
                              gint            w,
@@ -41,14 +41,14 @@ gimp_gegl_mask_combine_rect (GeglBuffer     *mask,
 
   g_return_val_if_fail (GEGL_IS_BUFFER (mask), FALSE);
 
-  if (! gimp_rectangle_intersect (x, y, w, h,
+  if (! picman_rectangle_intersect (x, y, w, h,
                                   0, 0,
                                   gegl_buffer_get_width  (mask),
                                   gegl_buffer_get_height (mask),
                                   &x, &y, &w, &h))
     return FALSE;
 
-  if (op == GIMP_CHANNEL_OP_ADD || op == GIMP_CHANNEL_OP_REPLACE)
+  if (op == PICMAN_CHANNEL_OP_ADD || op == PICMAN_CHANNEL_OP_REPLACE)
     color = gegl_color_new ("#fff");
   else
     color = gegl_color_new ("#000");
@@ -60,7 +60,7 @@ gimp_gegl_mask_combine_rect (GeglBuffer     *mask,
 }
 
 /**
- * gimp_gegl_mask_combine_ellipse:
+ * picman_gegl_mask_combine_ellipse:
  * @mask:      the channel with which to combine the ellipse
  * @op:        whether to replace, add to, or subtract from the current
  *             contents
@@ -71,28 +71,28 @@ gimp_gegl_mask_combine_rect (GeglBuffer     *mask,
  * @antialias: if %TRUE, antialias the ellipse
  *
  * Mainly used for elliptical selections.  If @op is
- * %GIMP_CHANNEL_OP_REPLACE or %GIMP_CHANNEL_OP_ADD, sets pixels
- * within the ellipse to 255.  If @op is %GIMP_CHANNEL_OP_SUBTRACT,
+ * %PICMAN_CHANNEL_OP_REPLACE or %PICMAN_CHANNEL_OP_ADD, sets pixels
+ * within the ellipse to 255.  If @op is %PICMAN_CHANNEL_OP_SUBTRACT,
  * sets pixels within to zero.  If @antialias is %TRUE, pixels that
  * impinge on the edge of the ellipse are set to intermediate values,
  * depending on how much they overlap.
  **/
 gboolean
-gimp_gegl_mask_combine_ellipse (GeglBuffer     *mask,
-                                GimpChannelOps  op,
+picman_gegl_mask_combine_ellipse (GeglBuffer     *mask,
+                                PicmanChannelOps  op,
                                 gint            x,
                                 gint            y,
                                 gint            w,
                                 gint            h,
                                 gboolean        antialias)
 {
-  return gimp_gegl_mask_combine_ellipse_rect (mask, op, x, y, w, h,
+  return picman_gegl_mask_combine_ellipse_rect (mask, op, x, y, w, h,
                                               w / 2.0, h / 2.0, antialias);
 }
 
 static void
-gimp_gegl_mask_combine_span (gfloat         *data,
-                             GimpChannelOps  op,
+picman_gegl_mask_combine_span (gfloat         *data,
+                             PicmanChannelOps  op,
                              gint            x1,
                              gint            x2,
                              gfloat          value)
@@ -102,8 +102,8 @@ gimp_gegl_mask_combine_span (gfloat         *data,
 
   switch (op)
     {
-    case GIMP_CHANNEL_OP_ADD:
-    case GIMP_CHANNEL_OP_REPLACE:
+    case PICMAN_CHANNEL_OP_ADD:
+    case PICMAN_CHANNEL_OP_REPLACE:
       if (value == 1.0)
         {
           while (x1 < x2)
@@ -119,7 +119,7 @@ gimp_gegl_mask_combine_span (gfloat         *data,
         }
       break;
 
-    case GIMP_CHANNEL_OP_SUBTRACT:
+    case PICMAN_CHANNEL_OP_SUBTRACT:
       if (value == 1.0)
         {
           while (x1 < x2)
@@ -135,14 +135,14 @@ gimp_gegl_mask_combine_span (gfloat         *data,
         }
       break;
 
-    case GIMP_CHANNEL_OP_INTERSECT:
+    case PICMAN_CHANNEL_OP_INTERSECT:
       /* Should not happen */
       break;
     }
 }
 
 /**
- * gimp_gegl_mask_combine_ellipse_rect:
+ * picman_gegl_mask_combine_ellipse_rect:
  * @mask:      the channel with which to combine the elliptic rect
  * @op:        whether to replace, add to, or subtract from the current
  *             contents
@@ -155,15 +155,15 @@ gimp_gegl_mask_combine_span (gfloat         *data,
  * @antialias: if %TRUE, antialias the elliptic corners
  *
  * Used for rounded cornered rectangles and ellipses.  If @op is
- * %GIMP_CHANNEL_OP_REPLACE or %GIMP_CHANNEL_OP_ADD, sets pixels
- * within the ellipse to 255.  If @op is %GIMP_CHANNEL_OP_SUBTRACT,
+ * %PICMAN_CHANNEL_OP_REPLACE or %PICMAN_CHANNEL_OP_ADD, sets pixels
+ * within the ellipse to 255.  If @op is %PICMAN_CHANNEL_OP_SUBTRACT,
  * sets pixels within to zero.  If @antialias is %TRUE, pixels that
  * impinge on the edge of the ellipse are set to intermediate values,
  * depending on how much they overlap.
  **/
 gboolean
-gimp_gegl_mask_combine_ellipse_rect (GeglBuffer     *mask,
-                                     GimpChannelOps  op,
+picman_gegl_mask_combine_ellipse_rect (GeglBuffer     *mask,
+                                     PicmanChannelOps  op,
                                      gint            x,
                                      gint            y,
                                      gint            w,
@@ -182,7 +182,7 @@ gimp_gegl_mask_combine_ellipse_rect (GeglBuffer     *mask,
 
   g_return_val_if_fail (GEGL_IS_BUFFER (mask), FALSE);
   g_return_val_if_fail (a >= 0.0 && b >= 0.0, FALSE);
-  g_return_val_if_fail (op != GIMP_CHANNEL_OP_INTERSECT, FALSE);
+  g_return_val_if_fail (op != PICMAN_CHANNEL_OP_INTERSECT, FALSE);
 
   /* Make sure the elliptic corners fit into the rect */
   a = MIN (a, w / 2.0);
@@ -191,7 +191,7 @@ gimp_gegl_mask_combine_ellipse_rect (GeglBuffer     *mask,
   a_sqr = SQR (a);
   b_sqr = SQR (b);
 
-  if (! gimp_rectangle_intersect (x, y, w, h,
+  if (! picman_rectangle_intersect (x, y, w, h,
                                   0, 0,
                                   gegl_buffer_get_width  (mask),
                                   gegl_buffer_get_height (mask),
@@ -221,7 +221,7 @@ gimp_gegl_mask_combine_ellipse_rect (GeglBuffer     *mask,
           if (py >= y + b && py < y + h - b)
             {
               /*  we are on a row without rounded corners  */
-              gimp_gegl_mask_combine_span (data, op, 0, roi->width, 1.0);
+              picman_gegl_mask_combine_span (data, op, 0, roi->width, 1.0);
               continue;
             }
 
@@ -253,7 +253,7 @@ gimp_gegl_mask_combine_ellipse_rect (GeglBuffer     *mask,
               x_end   = ROUND (ellipse_center_x + w - 2 * a +
                                half_ellipse_width_at_y);
 
-              gimp_gegl_mask_combine_span (data, op,
+              picman_gegl_mask_combine_span (data, op,
                                            MAX (x_start - px, 0),
                                            MIN (x_end   - px, roi->width), 1.0);
             }
@@ -324,7 +324,7 @@ gimp_gegl_mask_combine_ellipse_rect (GeglBuffer     *mask,
                   if (last_val != val)
                     {
                       if (last_val != -1)
-                        gimp_gegl_mask_combine_span (data, op,
+                        picman_gegl_mask_combine_span (data, op,
                                                      MAX (x_start - px, 0),
                                                      MIN (cur_x   - px, roi->width),
                                                      last_val);
@@ -338,7 +338,7 @@ gimp_gegl_mask_combine_ellipse_rect (GeglBuffer     *mask,
                    */
                   if (cur_x >= x + a && cur_x < x + w - a)
                     {
-                      gimp_gegl_mask_combine_span (data, op,
+                      picman_gegl_mask_combine_span (data, op,
                                                    MAX (x_start - px, 0),
                                                    MIN (cur_x   - px, roi->width),
                                                    last_val);
@@ -355,7 +355,7 @@ gimp_gegl_mask_combine_ellipse_rect (GeglBuffer     *mask,
                     }
                 }
 
-              gimp_gegl_mask_combine_span (data, op,
+              picman_gegl_mask_combine_span (data, op,
                                            MAX (x_start - px, 0),
                                            MIN (cur_x   - px, roi->width),
                                            last_val);
@@ -367,9 +367,9 @@ gimp_gegl_mask_combine_ellipse_rect (GeglBuffer     *mask,
 }
 
 gboolean
-gimp_gegl_mask_combine_buffer (GeglBuffer     *mask,
+picman_gegl_mask_combine_buffer (GeglBuffer     *mask,
                                GeglBuffer     *add_on,
-                               GimpChannelOps  op,
+                               PicmanChannelOps  op,
                                gint            off_x,
                                gint            off_y)
 {
@@ -380,7 +380,7 @@ gimp_gegl_mask_combine_buffer (GeglBuffer     *mask,
   g_return_val_if_fail (GEGL_IS_BUFFER (mask), FALSE);
   g_return_val_if_fail (GEGL_IS_BUFFER (add_on), FALSE);
 
-  if (! gimp_rectangle_intersect (off_x, off_y,
+  if (! picman_rectangle_intersect (off_x, off_y,
                                   gegl_buffer_get_width  (add_on),
                                   gegl_buffer_get_height (add_on),
                                   0, 0,
@@ -407,8 +407,8 @@ gimp_gegl_mask_combine_buffer (GeglBuffer     *mask,
 
   switch (op)
     {
-    case GIMP_CHANNEL_OP_ADD:
-    case GIMP_CHANNEL_OP_REPLACE:
+    case PICMAN_CHANNEL_OP_ADD:
+    case PICMAN_CHANNEL_OP_REPLACE:
       while (gegl_buffer_iterator_next (iter))
         {
           gfloat       *mask_data   = iter->data[0];
@@ -426,7 +426,7 @@ gimp_gegl_mask_combine_buffer (GeglBuffer     *mask,
         }
       break;
 
-    case GIMP_CHANNEL_OP_SUBTRACT:
+    case PICMAN_CHANNEL_OP_SUBTRACT:
       while (gegl_buffer_iterator_next (iter))
         {
           gfloat       *mask_data   = iter->data[0];
@@ -445,7 +445,7 @@ gimp_gegl_mask_combine_buffer (GeglBuffer     *mask,
         }
       break;
 
-    case GIMP_CHANNEL_OP_INTERSECT:
+    case PICMAN_CHANNEL_OP_INTERSECT:
       while (gegl_buffer_iterator_next (iter))
         {
           gfloat       *mask_data   = iter->data[0];

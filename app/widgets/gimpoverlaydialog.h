@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoverlaydialog.h
- * Copyright (C) 2009-2010  Michael Natterer <mitch@gimp.org>
+ * picmanoverlaydialog.h
+ * Copyright (C) 2009-2010  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,55 +18,55 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OVERLAY_DIALOG_H__
-#define __GIMP_OVERLAY_DIALOG_H__
+#ifndef __PICMAN_OVERLAY_DIALOG_H__
+#define __PICMAN_OVERLAY_DIALOG_H__
 
 
-#include "gimpoverlayframe.h"
+#include "picmanoverlayframe.h"
 
 
-#define GIMP_TYPE_OVERLAY_DIALOG            (gimp_overlay_dialog_get_type ())
-#define GIMP_OVERLAY_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OVERLAY_DIALOG, GimpOverlayDialog))
-#define GIMP_OVERLAY_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_OVERLAY_DIALOG, GimpOverlayDialogClass))
-#define GIMP_IS_OVERLAY_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OVERLAY_DIALOG))
-#define GIMP_IS_OVERLAY_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_OVERLAY_DIALOG))
-#define GIMP_OVERLAY_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_OVERLAY_DIALOG, GimpOverlayDialogClass))
+#define PICMAN_TYPE_OVERLAY_DIALOG            (picman_overlay_dialog_get_type ())
+#define PICMAN_OVERLAY_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OVERLAY_DIALOG, PicmanOverlayDialog))
+#define PICMAN_OVERLAY_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_OVERLAY_DIALOG, PicmanOverlayDialogClass))
+#define PICMAN_IS_OVERLAY_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OVERLAY_DIALOG))
+#define PICMAN_IS_OVERLAY_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_OVERLAY_DIALOG))
+#define PICMAN_OVERLAY_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_OVERLAY_DIALOG, PicmanOverlayDialogClass))
 
 
-typedef struct _GimpOverlayDialog      GimpOverlayDialog;
-typedef struct _GimpOverlayDialogClass GimpOverlayDialogClass;
+typedef struct _PicmanOverlayDialog      PicmanOverlayDialog;
+typedef struct _PicmanOverlayDialogClass PicmanOverlayDialogClass;
 
-struct _GimpOverlayDialog
+struct _PicmanOverlayDialog
 {
-  GimpOverlayFrame  parent_instance;
+  PicmanOverlayFrame  parent_instance;
 
   GtkWidget        *action_area;
 };
 
-struct _GimpOverlayDialogClass
+struct _PicmanOverlayDialogClass
 {
-  GimpOverlayFrameClass  parent_class;
+  PicmanOverlayFrameClass  parent_class;
 
-  void (* response) (GimpOverlayDialog *overlay,
+  void (* response) (PicmanOverlayDialog *overlay,
                      gint               response_id);
 
-  void (* close)    (GimpOverlayDialog *overlay);
+  void (* close)    (PicmanOverlayDialog *overlay);
 };
 
 
-GType       gimp_overlay_dialog_get_type           (void) G_GNUC_CONST;
+GType       picman_overlay_dialog_get_type           (void) G_GNUC_CONST;
 
-GtkWidget * gimp_overlay_dialog_new                (GimpToolInfo    *tool_info,
+GtkWidget * picman_overlay_dialog_new                (PicmanToolInfo    *tool_info,
                                                     const gchar     *desc,
                                                     ...) G_GNUC_NULL_TERMINATED;
 
-void        gimp_overlay_dialog_response           (GimpOverlayDialog *overlay,
+void        picman_overlay_dialog_response           (PicmanOverlayDialog *overlay,
                                                     gint             response_id);
-void        gimp_overlay_dialog_add_buttons_valist (GimpOverlayDialog *overlay,
+void        picman_overlay_dialog_add_buttons_valist (PicmanOverlayDialog *overlay,
                                                     va_list          args);
-GtkWidget * gimp_overlay_dialog_add_button         (GimpOverlayDialog *overlay,
+GtkWidget * picman_overlay_dialog_add_button         (PicmanOverlayDialog *overlay,
                                                     const gchar     *button_text,
                                                     gint             response_id);
 
 
-#endif /* __GIMP_OVERLAY_DIALOG_H__ */
+#endif /* __PICMAN_OVERLAY_DIALOG_H__ */

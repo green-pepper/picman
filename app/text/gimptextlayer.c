@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpTextLayer
- * Copyright (C) 2002-2004  Sven Neumann <sven@gimp.org>
+ * PicmanTextLayer
+ * Copyright (C) 2002-2004  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,32 +27,32 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <pango/pangocairo.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "text-types.h"
 
-#include "gegl/gimp-babl.h"
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-babl.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "core/gimp.h"
-#include "core/gimp-utils.h"
-#include "core/gimpcontext.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimpimage-undo-push.h"
-#include "core/gimpitemtree.h"
-#include "core/gimpparasitelist.h"
+#include "core/picman.h"
+#include "core/picman-utils.h"
+#include "core/picmancontext.h"
+#include "core/picmancontainer.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanimage-undo-push.h"
+#include "core/picmanitemtree.h"
+#include "core/picmanparasitelist.h"
 
-#include "gimptext.h"
-#include "gimptextlayer.h"
-#include "gimptextlayer-transform.h"
-#include "gimptextlayout.h"
-#include "gimptextlayout-render.h"
+#include "picmantext.h"
+#include "picmantextlayer.h"
+#include "picmantextlayer-transform.h"
+#include "picmantextlayout.h"
+#include "picmantextlayout-render.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -64,41 +64,41 @@ enum
 };
 
 
-static void       gimp_text_layer_finalize       (GObject           *object);
-static void       gimp_text_layer_get_property   (GObject           *object,
+static void       picman_text_layer_finalize       (GObject           *object);
+static void       picman_text_layer_get_property   (GObject           *object,
                                                   guint              property_id,
                                                   GValue            *value,
                                                   GParamSpec        *pspec);
-static void       gimp_text_layer_set_property   (GObject           *object,
+static void       picman_text_layer_set_property   (GObject           *object,
                                                   guint              property_id,
                                                   const GValue      *value,
                                                   GParamSpec        *pspec);
 
-static gint64     gimp_text_layer_get_memsize    (GimpObject        *object,
+static gint64     picman_text_layer_get_memsize    (PicmanObject        *object,
                                                   gint64            *gui_size);
 
-static GimpItem * gimp_text_layer_duplicate      (GimpItem          *item,
+static PicmanItem * picman_text_layer_duplicate      (PicmanItem          *item,
                                                   GType              new_type);
-static gboolean   gimp_text_layer_rename         (GimpItem          *item,
+static gboolean   picman_text_layer_rename         (PicmanItem          *item,
                                                   const gchar       *new_name,
                                                   const gchar       *undo_desc,
                                                   GError           **error);
 
-static void       gimp_text_layer_convert_type   (GimpDrawable      *drawable,
-                                                  GimpImage         *dest_image,
+static void       picman_text_layer_convert_type   (PicmanDrawable      *drawable,
+                                                  PicmanImage         *dest_image,
                                                   const Babl        *new_format,
-                                                  GimpImageBaseType  new_base_type,
-                                                  GimpPrecision      new_precision,
+                                                  PicmanImageBaseType  new_base_type,
+                                                  PicmanPrecision      new_precision,
                                                   gint               layer_dither_type,
                                                   gint               mask_dither_type,
                                                   gboolean           push_undo);
-static void       gimp_text_layer_set_buffer     (GimpDrawable      *drawable,
+static void       picman_text_layer_set_buffer     (PicmanDrawable      *drawable,
                                                   gboolean           push_undo,
                                                   const gchar       *undo_desc,
                                                   GeglBuffer        *buffer,
                                                   gint               offset_x,
                                                   gint               offset_y);
-static void       gimp_text_layer_push_undo      (GimpDrawable      *drawable,
+static void       picman_text_layer_push_undo      (PicmanDrawable      *drawable,
                                                   const gchar       *undo_desc,
                                                   GeglBuffer        *buffer,
                                                   gint               x,
@@ -106,42 +106,42 @@ static void       gimp_text_layer_push_undo      (GimpDrawable      *drawable,
                                                   gint               width,
                                                   gint               height);
 
-static void       gimp_text_layer_text_changed   (GimpTextLayer     *layer);
-static gboolean   gimp_text_layer_render         (GimpTextLayer     *layer);
-static void       gimp_text_layer_render_layout  (GimpTextLayer     *layer,
-                                                  GimpTextLayout    *layout);
+static void       picman_text_layer_text_changed   (PicmanTextLayer     *layer);
+static gboolean   picman_text_layer_render         (PicmanTextLayer     *layer);
+static void       picman_text_layer_render_layout  (PicmanTextLayer     *layer,
+                                                  PicmanTextLayout    *layout);
 
 
-G_DEFINE_TYPE (GimpTextLayer, gimp_text_layer, GIMP_TYPE_LAYER)
+G_DEFINE_TYPE (PicmanTextLayer, picman_text_layer, PICMAN_TYPE_LAYER)
 
-#define parent_class gimp_text_layer_parent_class
+#define parent_class picman_text_layer_parent_class
 
 
 static void
-gimp_text_layer_class_init (GimpTextLayerClass *klass)
+picman_text_layer_class_init (PicmanTextLayerClass *klass)
 {
   GObjectClass      *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass   *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class    = GIMP_VIEWABLE_CLASS (klass);
-  GimpItemClass     *item_class        = GIMP_ITEM_CLASS (klass);
-  GimpDrawableClass *drawable_class    = GIMP_DRAWABLE_CLASS (klass);
+  PicmanObjectClass   *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanViewableClass *viewable_class    = PICMAN_VIEWABLE_CLASS (klass);
+  PicmanItemClass     *item_class        = PICMAN_ITEM_CLASS (klass);
+  PicmanDrawableClass *drawable_class    = PICMAN_DRAWABLE_CLASS (klass);
 
-  object_class->finalize           = gimp_text_layer_finalize;
-  object_class->get_property       = gimp_text_layer_get_property;
-  object_class->set_property       = gimp_text_layer_set_property;
+  object_class->finalize           = picman_text_layer_finalize;
+  object_class->get_property       = picman_text_layer_get_property;
+  object_class->set_property       = picman_text_layer_set_property;
 
-  gimp_object_class->get_memsize   = gimp_text_layer_get_memsize;
+  picman_object_class->get_memsize   = picman_text_layer_get_memsize;
 
-  viewable_class->default_stock_id = "gimp-text-layer";
+  viewable_class->default_stock_id = "picman-text-layer";
 
-  item_class->duplicate            = gimp_text_layer_duplicate;
-  item_class->rename               = gimp_text_layer_rename;
+  item_class->duplicate            = picman_text_layer_duplicate;
+  item_class->rename               = picman_text_layer_rename;
 
 #if 0
-  item_class->scale                = gimp_text_layer_scale;
-  item_class->flip                 = gimp_text_layer_flip;
-  item_class->rotate               = gimp_text_layer_rotate;
-  item_class->transform            = gimp_text_layer_transform;
+  item_class->scale                = picman_text_layer_scale;
+  item_class->flip                 = picman_text_layer_flip;
+  item_class->rotate               = picman_text_layer_rotate;
+  item_class->transform            = picman_text_layer_transform;
 #endif
 
   item_class->default_name         = _("Text Layer");
@@ -153,37 +153,37 @@ gimp_text_layer_class_init (GimpTextLayerClass *klass)
   item_class->rotate_desc          = _("Rotate Text Layer");
   item_class->transform_desc       = _("Transform Text Layer");
 
-  drawable_class->convert_type     = gimp_text_layer_convert_type;
-  drawable_class->set_buffer       = gimp_text_layer_set_buffer;
-  drawable_class->push_undo        = gimp_text_layer_push_undo;
+  drawable_class->convert_type     = picman_text_layer_convert_type;
+  drawable_class->set_buffer       = picman_text_layer_set_buffer;
+  drawable_class->push_undo        = picman_text_layer_push_undo;
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_TEXT,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_TEXT,
                                    "text", NULL,
-                                   GIMP_TYPE_TEXT,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_TYPE_TEXT,
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_AUTO_RENAME,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_AUTO_RENAME,
                                     "auto-rename", NULL,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_MODIFIED,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_MODIFIED,
                                     "modified", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_text_layer_init (GimpTextLayer *layer)
+picman_text_layer_init (PicmanTextLayer *layer)
 {
   layer->text          = NULL;
   layer->text_parasite = NULL;
 }
 
 static void
-gimp_text_layer_finalize (GObject *object)
+picman_text_layer_finalize (GObject *object)
 {
-  GimpTextLayer *layer = GIMP_TEXT_LAYER (object);
+  PicmanTextLayer *layer = PICMAN_TEXT_LAYER (object);
 
   if (layer->text)
     {
@@ -195,12 +195,12 @@ gimp_text_layer_finalize (GObject *object)
 }
 
 static void
-gimp_text_layer_get_property (GObject      *object,
+picman_text_layer_get_property (GObject      *object,
                               guint         property_id,
                               GValue       *value,
                               GParamSpec   *pspec)
 {
-  GimpTextLayer *text_layer = GIMP_TEXT_LAYER (object);
+  PicmanTextLayer *text_layer = PICMAN_TEXT_LAYER (object);
 
   switch (property_id)
     {
@@ -221,17 +221,17 @@ gimp_text_layer_get_property (GObject      *object,
 }
 
 static void
-gimp_text_layer_set_property (GObject      *object,
+picman_text_layer_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  GimpTextLayer *text_layer = GIMP_TEXT_LAYER (object);
+  PicmanTextLayer *text_layer = PICMAN_TEXT_LAYER (object);
 
   switch (property_id)
     {
     case PROP_TEXT:
-      gimp_text_layer_set_text (text_layer, g_value_get_object (value));
+      picman_text_layer_set_text (text_layer, g_value_get_object (value));
       break;
     case PROP_AUTO_RENAME:
       text_layer->auto_rename = g_value_get_boolean (value);
@@ -247,41 +247,41 @@ gimp_text_layer_set_property (GObject      *object,
 }
 
 static gint64
-gimp_text_layer_get_memsize (GimpObject *object,
+picman_text_layer_get_memsize (PicmanObject *object,
                              gint64     *gui_size)
 {
-  GimpTextLayer *text_layer = GIMP_TEXT_LAYER (object);
+  PicmanTextLayer *text_layer = PICMAN_TEXT_LAYER (object);
   gint64         memsize    = 0;
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (text_layer->text),
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (text_layer->text),
                                       gui_size);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
-static GimpItem *
-gimp_text_layer_duplicate (GimpItem *item,
+static PicmanItem *
+picman_text_layer_duplicate (PicmanItem *item,
                            GType     new_type)
 {
-  GimpItem *new_item;
+  PicmanItem *new_item;
 
-  g_return_val_if_fail (g_type_is_a (new_type, GIMP_TYPE_DRAWABLE), NULL);
+  g_return_val_if_fail (g_type_is_a (new_type, PICMAN_TYPE_DRAWABLE), NULL);
 
-  new_item = GIMP_ITEM_CLASS (parent_class)->duplicate (item, new_type);
+  new_item = PICMAN_ITEM_CLASS (parent_class)->duplicate (item, new_type);
 
-  if (GIMP_IS_TEXT_LAYER (new_item))
+  if (PICMAN_IS_TEXT_LAYER (new_item))
     {
-      GimpTextLayer *layer     = GIMP_TEXT_LAYER (item);
-      GimpTextLayer *new_layer = GIMP_TEXT_LAYER (new_item);
+      PicmanTextLayer *layer     = PICMAN_TEXT_LAYER (item);
+      PicmanTextLayer *new_layer = PICMAN_TEXT_LAYER (new_item);
 
-      gimp_config_sync (G_OBJECT (layer), G_OBJECT (new_layer), 0);
+      picman_config_sync (G_OBJECT (layer), G_OBJECT (new_layer), 0);
 
       if (layer->text)
         {
-          GimpText *text = gimp_config_duplicate (GIMP_CONFIG (layer->text));
+          PicmanText *text = picman_config_duplicate (PICMAN_CONFIG (layer->text));
 
-          gimp_text_layer_set_text (new_layer, text);
+          picman_text_layer_set_text (new_layer, text);
 
           g_object_unref (text);
         }
@@ -295,12 +295,12 @@ gimp_text_layer_duplicate (GimpItem *item,
 }
 
 static gboolean
-gimp_text_layer_rename (GimpItem     *item,
+picman_text_layer_rename (PicmanItem     *item,
                         const gchar  *new_name,
                         const gchar  *undo_desc,
                         GError      **error)
 {
-  if (GIMP_ITEM_CLASS (parent_class)->rename (item, new_name, undo_desc, error))
+  if (PICMAN_ITEM_CLASS (parent_class)->rename (item, new_name, undo_desc, error))
     {
       g_object_set (item, "auto-rename", FALSE, NULL);
 
@@ -311,21 +311,21 @@ gimp_text_layer_rename (GimpItem     *item,
 }
 
 static void
-gimp_text_layer_convert_type (GimpDrawable      *drawable,
-                              GimpImage         *dest_image,
+picman_text_layer_convert_type (PicmanDrawable      *drawable,
+                              PicmanImage         *dest_image,
                               const Babl        *new_format,
-                              GimpImageBaseType  new_base_type,
-                              GimpPrecision      new_precision,
+                              PicmanImageBaseType  new_base_type,
+                              PicmanPrecision      new_precision,
                               gint               layer_dither_type,
                               gint               mask_dither_type,
                               gboolean           push_undo)
 {
-  GimpTextLayer *layer = GIMP_TEXT_LAYER (drawable);
-  GimpImage     *image = gimp_item_get_image (GIMP_ITEM (layer));
+  PicmanTextLayer *layer = PICMAN_TEXT_LAYER (drawable);
+  PicmanImage     *image = picman_item_get_image (PICMAN_ITEM (layer));
 
   if (! layer->text || layer->modified || layer_dither_type != 0)
     {
-      GIMP_DRAWABLE_CLASS (parent_class)->convert_type (drawable, dest_image,
+      PICMAN_DRAWABLE_CLASS (parent_class)->convert_type (drawable, dest_image,
                                                         new_format,
                                                         new_base_type,
                                                         new_precision,
@@ -336,48 +336,48 @@ gimp_text_layer_convert_type (GimpDrawable      *drawable,
   else
     {
       if (push_undo)
-        gimp_image_undo_push_text_layer_convert (image, NULL, layer);
+        picman_image_undo_push_text_layer_convert (image, NULL, layer);
 
       layer->convert_format = new_format;
 
-      gimp_text_layer_render (layer);
+      picman_text_layer_render (layer);
 
       layer->convert_format = NULL;
     }
 }
 
 static void
-gimp_text_layer_set_buffer (GimpDrawable *drawable,
+picman_text_layer_set_buffer (PicmanDrawable *drawable,
                             gboolean      push_undo,
                             const gchar  *undo_desc,
                             GeglBuffer   *buffer,
                             gint          offset_x,
                             gint          offset_y)
 {
-  GimpTextLayer *layer = GIMP_TEXT_LAYER (drawable);
-  GimpImage     *image = gimp_item_get_image (GIMP_ITEM (layer));
+  PicmanTextLayer *layer = PICMAN_TEXT_LAYER (drawable);
+  PicmanImage     *image = picman_item_get_image (PICMAN_ITEM (layer));
 
   if (push_undo && ! layer->modified)
-    gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_DRAWABLE_MOD,
+    picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_DRAWABLE_MOD,
                                  undo_desc);
 
-  GIMP_DRAWABLE_CLASS (parent_class)->set_buffer (drawable,
+  PICMAN_DRAWABLE_CLASS (parent_class)->set_buffer (drawable,
                                                   push_undo, undo_desc,
                                                   buffer,
                                                   offset_x, offset_y);
 
   if (push_undo && ! layer->modified)
     {
-      gimp_image_undo_push_text_layer_modified (image, NULL, layer);
+      picman_image_undo_push_text_layer_modified (image, NULL, layer);
 
       g_object_set (drawable, "modified", TRUE, NULL);
 
-      gimp_image_undo_group_end (image);
+      picman_image_undo_group_end (image);
     }
 }
 
 static void
-gimp_text_layer_push_undo (GimpDrawable *drawable,
+picman_text_layer_push_undo (PicmanDrawable *drawable,
                            const gchar  *undo_desc,
                            GeglBuffer   *buffer,
                            gint          x,
@@ -385,23 +385,23 @@ gimp_text_layer_push_undo (GimpDrawable *drawable,
                            gint          width,
                            gint          height)
 {
-  GimpTextLayer *layer = GIMP_TEXT_LAYER (drawable);
-  GimpImage     *image = gimp_item_get_image (GIMP_ITEM (layer));
+  PicmanTextLayer *layer = PICMAN_TEXT_LAYER (drawable);
+  PicmanImage     *image = picman_item_get_image (PICMAN_ITEM (layer));
 
   if (! layer->modified)
-    gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_DRAWABLE, undo_desc);
+    picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_DRAWABLE, undo_desc);
 
-  GIMP_DRAWABLE_CLASS (parent_class)->push_undo (drawable, undo_desc,
+  PICMAN_DRAWABLE_CLASS (parent_class)->push_undo (drawable, undo_desc,
                                                  buffer,
                                                  x, y, width, height);
 
   if (! layer->modified)
     {
-      gimp_image_undo_push_text_layer_modified (image, NULL, layer);
+      picman_image_undo_push_text_layer_modified (image, NULL, layer);
 
       g_object_set (drawable, "modified", TRUE, NULL);
 
-      gimp_image_undo_group_end (image);
+      picman_image_undo_group_end (image);
     }
 }
 
@@ -409,50 +409,50 @@ gimp_text_layer_push_undo (GimpDrawable *drawable,
 /*  public functions  */
 
 /**
- * gimp_text_layer_new:
- * @image: the #GimpImage the layer should belong to
- * @text: a #GimpText object
+ * picman_text_layer_new:
+ * @image: the #PicmanImage the layer should belong to
+ * @text: a #PicmanText object
  *
  * Creates a new text layer.
  *
- * Return value: a new #GimpTextLayer or %NULL in case of a problem
+ * Return value: a new #PicmanTextLayer or %NULL in case of a problem
  **/
-GimpLayer *
-gimp_text_layer_new (GimpImage *image,
-                     GimpText  *text)
+PicmanLayer *
+picman_text_layer_new (PicmanImage *image,
+                     PicmanText  *text)
 {
-  GimpTextLayer *layer;
+  PicmanTextLayer *layer;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_TEXT (text), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEXT (text), NULL);
 
   if (! text->text && ! text->markup)
     return NULL;
 
   layer =
-    GIMP_TEXT_LAYER (gimp_drawable_new (GIMP_TYPE_TEXT_LAYER,
+    PICMAN_TEXT_LAYER (picman_drawable_new (PICMAN_TYPE_TEXT_LAYER,
                                         image, NULL,
                                         0, 0, 1, 1,
-                                        gimp_image_get_layer_format (image,
+                                        picman_image_get_layer_format (image,
                                                                      TRUE)));
 
-  gimp_text_layer_set_text (layer, text);
+  picman_text_layer_set_text (layer, text);
 
-  if (! gimp_text_layer_render (layer))
+  if (! picman_text_layer_render (layer))
     {
       g_object_unref (layer);
       return NULL;
     }
 
-  return GIMP_LAYER (layer);
+  return PICMAN_LAYER (layer);
 }
 
 void
-gimp_text_layer_set_text (GimpTextLayer *layer,
-                          GimpText      *text)
+picman_text_layer_set_text (PicmanTextLayer *layer,
+                          PicmanText      *text)
 {
-  g_return_if_fail (GIMP_IS_TEXT_LAYER (layer));
-  g_return_if_fail (text == NULL || GIMP_IS_TEXT (text));
+  g_return_if_fail (PICMAN_IS_TEXT_LAYER (layer));
+  g_return_if_fail (text == NULL || PICMAN_IS_TEXT (text));
 
   if (layer->text == text)
     return;
@@ -460,7 +460,7 @@ gimp_text_layer_set_text (GimpTextLayer *layer,
   if (layer->text)
     {
       g_signal_handlers_disconnect_by_func (layer->text,
-                                            G_CALLBACK (gimp_text_layer_text_changed),
+                                            G_CALLBACK (picman_text_layer_text_changed),
                                             layer);
 
       g_object_unref (layer->text);
@@ -472,48 +472,48 @@ gimp_text_layer_set_text (GimpTextLayer *layer,
       layer->text = g_object_ref (text);
 
       g_signal_connect_object (text, "changed",
-                               G_CALLBACK (gimp_text_layer_text_changed),
+                               G_CALLBACK (picman_text_layer_text_changed),
                                layer, G_CONNECT_SWAPPED);
     }
 
   g_object_notify (G_OBJECT (layer), "text");
-  gimp_viewable_invalidate_preview (GIMP_VIEWABLE (layer));
+  picman_viewable_invalidate_preview (PICMAN_VIEWABLE (layer));
 }
 
-GimpText *
-gimp_text_layer_get_text (GimpTextLayer *layer)
+PicmanText *
+picman_text_layer_get_text (PicmanTextLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_TEXT_LAYER (layer), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEXT_LAYER (layer), NULL);
 
   return layer->text;
 }
 
 void
-gimp_text_layer_set (GimpTextLayer *layer,
+picman_text_layer_set (PicmanTextLayer *layer,
                      const gchar   *undo_desc,
                      const gchar   *first_property_name,
                      ...)
 {
-  GimpImage *image;
-  GimpText  *text;
+  PicmanImage *image;
+  PicmanText  *text;
   va_list    var_args;
 
-  g_return_if_fail (gimp_item_is_text_layer (GIMP_ITEM (layer)));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (layer)));
+  g_return_if_fail (picman_item_is_text_layer (PICMAN_ITEM (layer)));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (layer)));
 
-  text = gimp_text_layer_get_text (layer);
+  text = picman_text_layer_get_text (layer);
   if (! text)
     return;
 
-  image = gimp_item_get_image (GIMP_ITEM (layer));
+  image = picman_item_get_image (PICMAN_ITEM (layer));
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_TEXT, undo_desc);
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_TEXT, undo_desc);
 
   g_object_freeze_notify (G_OBJECT (layer));
 
   if (layer->modified)
     {
-      gimp_image_undo_push_text_layer_modified (image, NULL, layer);
+      picman_image_undo_push_text_layer_modified (image, NULL, layer);
 
       /*  pass copy_tiles = TRUE so we not only ref the tiles; after
        *  being a text layer again, undo doesn't care about the
@@ -522,11 +522,11 @@ gimp_text_layer_set (GimpTextLayer *layer,
        *  pixels, changing the pixels on the undo stack too without
        *  any chance to ever undo again.
        */
-      gimp_image_undo_push_drawable_mod (image, NULL,
-                                         GIMP_DRAWABLE (layer), TRUE);
+      picman_image_undo_push_drawable_mod (image, NULL,
+                                         PICMAN_DRAWABLE (layer), TRUE);
     }
 
-  gimp_image_undo_push_text_layer (image, undo_desc, layer, NULL);
+  picman_image_undo_push_text_layer (image, undo_desc, layer, NULL);
 
   va_start (var_args, first_property_name);
 
@@ -538,54 +538,54 @@ gimp_text_layer_set (GimpTextLayer *layer,
 
   g_object_thaw_notify (G_OBJECT (layer));
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 }
 
 /**
- * gimp_text_layer_discard:
- * @layer: a #GimpTextLayer
+ * picman_text_layer_discard:
+ * @layer: a #PicmanTextLayer
  *
  * Discards the text information. This makes @layer behave like a
  * normal layer.
  */
 void
-gimp_text_layer_discard (GimpTextLayer *layer)
+picman_text_layer_discard (PicmanTextLayer *layer)
 {
-  g_return_if_fail (GIMP_IS_TEXT_LAYER (layer));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (layer)));
+  g_return_if_fail (PICMAN_IS_TEXT_LAYER (layer));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (layer)));
 
   if (! layer->text)
     return;
 
-  gimp_image_undo_push_text_layer (gimp_item_get_image (GIMP_ITEM (layer)),
+  picman_image_undo_push_text_layer (picman_item_get_image (PICMAN_ITEM (layer)),
                                    _("Discard Text Information"),
                                    layer, NULL);
 
-  gimp_text_layer_set_text (layer, NULL);
+  picman_text_layer_set_text (layer, NULL);
 }
 
 gboolean
-gimp_item_is_text_layer (GimpItem *item)
+picman_item_is_text_layer (PicmanItem *item)
 {
-  return (GIMP_IS_TEXT_LAYER (item)    &&
-          GIMP_TEXT_LAYER (item)->text &&
-          GIMP_TEXT_LAYER (item)->modified == FALSE);
+  return (PICMAN_IS_TEXT_LAYER (item)    &&
+          PICMAN_TEXT_LAYER (item)->text &&
+          PICMAN_TEXT_LAYER (item)->modified == FALSE);
 }
 
 
 /*  private functions  */
 
 static const Babl *
-gimp_text_layer_get_format (GimpTextLayer *layer)
+picman_text_layer_get_format (PicmanTextLayer *layer)
 {
   if (layer->convert_format)
     return layer->convert_format;
 
-  return gimp_drawable_get_format (GIMP_DRAWABLE (layer));
+  return picman_drawable_get_format (PICMAN_DRAWABLE (layer));
 }
 
 static void
-gimp_text_layer_text_changed (GimpTextLayer *layer)
+picman_text_layer_text_changed (PicmanTextLayer *layer)
 {
   /*  If the text layer was created from a parasite, it's time to
    *  remove that parasite now.
@@ -595,21 +595,21 @@ gimp_text_layer_text_changed (GimpTextLayer *layer)
       /*  Don't push an undo because the parasite only exists temporarily
        *  while the text layer is loaded from XCF.
        */
-      gimp_item_parasite_detach (GIMP_ITEM (layer), layer->text_parasite,
+      picman_item_parasite_detach (PICMAN_ITEM (layer), layer->text_parasite,
                                  FALSE);
       layer->text_parasite = NULL;
     }
 
-  gimp_text_layer_render (layer);
+  picman_text_layer_render (layer);
 }
 
 static gboolean
-gimp_text_layer_render (GimpTextLayer *layer)
+picman_text_layer_render (PicmanTextLayer *layer)
 {
-  GimpDrawable   *drawable;
-  GimpItem       *item;
-  GimpImage      *image;
-  GimpTextLayout *layout;
+  PicmanDrawable   *drawable;
+  PicmanItem       *item;
+  PicmanImage      *image;
+  PicmanTextLayout *layout;
   gdouble         xres;
   gdouble         yres;
   gint            width;
@@ -618,82 +618,82 @@ gimp_text_layer_render (GimpTextLayer *layer)
   if (! layer->text)
     return FALSE;
 
-  drawable = GIMP_DRAWABLE (layer);
-  item     = GIMP_ITEM (layer);
-  image    = gimp_item_get_image (item);
+  drawable = PICMAN_DRAWABLE (layer);
+  item     = PICMAN_ITEM (layer);
+  image    = picman_item_get_image (item);
 
-  if (gimp_container_is_empty (image->gimp->fonts))
+  if (picman_container_is_empty (image->picman->fonts))
     {
-      gimp_message_literal (image->gimp, NULL, GIMP_MESSAGE_ERROR,
+      picman_message_literal (image->picman, NULL, PICMAN_MESSAGE_ERROR,
 			    _("Due to lack of any fonts, "
 			      "text functionality is not available."));
       return FALSE;
     }
 
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
 
-  layout = gimp_text_layout_new (layer->text, xres, yres);
+  layout = picman_text_layout_new (layer->text, xres, yres);
 
   g_object_freeze_notify (G_OBJECT (drawable));
 
-  if (gimp_text_layout_get_size (layout, &width, &height) &&
-      (width  != gimp_item_get_width  (item) ||
-       height != gimp_item_get_height (item) ||
-       gimp_text_layer_get_format (layer) !=
-       gimp_drawable_get_format (drawable)))
+  if (picman_text_layout_get_size (layout, &width, &height) &&
+      (width  != picman_item_get_width  (item) ||
+       height != picman_item_get_height (item) ||
+       picman_text_layer_get_format (layer) !=
+       picman_drawable_get_format (drawable)))
     {
       GeglBuffer *new_buffer;
 
       new_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0, width, height),
-                                    gimp_text_layer_get_format (layer));
-      gimp_drawable_set_buffer (drawable, FALSE, NULL, new_buffer);
+                                    picman_text_layer_get_format (layer));
+      picman_drawable_set_buffer (drawable, FALSE, NULL, new_buffer);
       g_object_unref (new_buffer);
 
-      if (gimp_layer_get_mask (GIMP_LAYER (layer)))
+      if (picman_layer_get_mask (PICMAN_LAYER (layer)))
         {
-          GimpLayerMask *mask = gimp_layer_get_mask (GIMP_LAYER (layer));
+          PicmanLayerMask *mask = picman_layer_get_mask (PICMAN_LAYER (layer));
 
-          static GimpContext *unused_eek = NULL;
+          static PicmanContext *unused_eek = NULL;
 
           if (! unused_eek)
-            unused_eek = gimp_context_new (image->gimp, "eek", NULL);
+            unused_eek = picman_context_new (image->picman, "eek", NULL);
 
-          gimp_item_resize (GIMP_ITEM (mask), unused_eek, width, height, 0, 0);
+          picman_item_resize (PICMAN_ITEM (mask), unused_eek, width, height, 0, 0);
         }
     }
 
   if (layer->auto_rename)
     {
-      GimpItem *item = GIMP_ITEM (layer);
+      PicmanItem *item = PICMAN_ITEM (layer);
       gchar    *name = NULL;
 
       if (layer->text->text)
         {
-          name = gimp_utf8_strtrim (layer->text->text, 30);
+          name = picman_utf8_strtrim (layer->text->text, 30);
         }
       else if (layer->text->markup)
         {
-          gchar *tmp = gimp_markup_extract_text (layer->text->markup);
-          name = gimp_utf8_strtrim (tmp, 30);
+          gchar *tmp = picman_markup_extract_text (layer->text->markup);
+          name = picman_utf8_strtrim (tmp, 30);
           g_free (tmp);
         }
 
       if (! name)
         name = g_strdup (_("Empty Text Layer"));
 
-      if (gimp_item_is_attached (item))
+      if (picman_item_is_attached (item))
         {
-          gimp_item_tree_rename_item (gimp_item_get_tree (item), item,
+          picman_item_tree_rename_item (picman_item_get_tree (item), item,
                                       name, FALSE, NULL);
           g_free (name);
         }
       else
         {
-          gimp_object_take_name (GIMP_OBJECT (layer), name);
+          picman_object_take_name (PICMAN_OBJECT (layer), name);
         }
     }
 
-  gimp_text_layer_render_layout (layer, layout);
+  picman_text_layer_render_layout (layer, layout);
 
   g_object_unref (layout);
 
@@ -703,37 +703,37 @@ gimp_text_layer_render (GimpTextLayer *layer)
 }
 
 static void
-gimp_text_layer_render_layout (GimpTextLayer  *layer,
-                               GimpTextLayout *layout)
+picman_text_layer_render_layout (PicmanTextLayer  *layer,
+                               PicmanTextLayout *layout)
 {
-  GimpDrawable    *drawable = GIMP_DRAWABLE (layer);
-  GimpItem        *item     = GIMP_ITEM (layer);
+  PicmanDrawable    *drawable = PICMAN_DRAWABLE (layer);
+  PicmanItem        *item     = PICMAN_ITEM (layer);
   GeglBuffer      *buffer;
   cairo_t         *cr;
   cairo_surface_t *surface;
   gint             width;
   gint             height;
 
-  g_return_if_fail (gimp_drawable_has_alpha (drawable));
+  g_return_if_fail (picman_drawable_has_alpha (drawable));
 
-  width  = gimp_item_get_width  (item);
-  height = gimp_item_get_height (item);
+  width  = picman_item_get_width  (item);
+  height = picman_item_get_height (item);
 
   surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
 
   cr = cairo_create (surface);
-  gimp_text_layout_render (layout, cr, layer->text->base_dir, FALSE);
+  picman_text_layout_render (layout, cr, layer->text->base_dir, FALSE);
   cairo_destroy (cr);
 
   cairo_surface_flush (surface);
 
-  buffer = gimp_cairo_surface_create_buffer (surface);
+  buffer = picman_cairo_surface_create_buffer (surface);
 
   gegl_buffer_copy (buffer, NULL,
-                    gimp_drawable_get_buffer (drawable), NULL);
+                    picman_drawable_get_buffer (drawable), NULL);
 
   g_object_unref (buffer);
   cairo_surface_destroy (surface);
 
-  gimp_drawable_update (drawable, 0, 0, width, height);
+  picman_drawable_update (drawable, 0, 0, width, height);
 }

@@ -1,11 +1,11 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * Thumbnail handling according to the Thumbnail Managing Standard.
  * http://triq.net/~pearl/thumbnail-spec/
  *
- * Copyright (C) 2001-2004  Sven Neumann <sven@gimp.org>
- *                          Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2001-2004  Sven Neumann <sven@picman.org>
+ *                          Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,38 +22,38 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_THUMB_H_INSIDE__) && !defined (GIMP_THUMB_COMPILATION)
-#error "Only <libgimpthumb/gimpthumb.h> can be included directly."
+#if !defined (__PICMAN_THUMB_H_INSIDE__) && !defined (PICMAN_THUMB_COMPILATION)
+#error "Only <libpicmanthumb/picmanthumb.h> can be included directly."
 #endif
 
-#ifndef __GIMP_THUMBNAIL_H__
-#define __GIMP_THUMBNAIL_H__
+#ifndef __PICMAN_THUMBNAIL_H__
+#define __PICMAN_THUMBNAIL_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_THUMBNAIL            (gimp_thumbnail_get_type ())
-#define GIMP_THUMBNAIL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_THUMBNAIL, GimpThumbnail))
-#define GIMP_THUMBNAIL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_THUMBNAIL, GimpThumbnailClass))
-#define GIMP_IS_THUMBNAIL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_THUMBNAIL))
-#define GIMP_IS_THUMBNAIL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_THUMBNAIL))
-#define GIMP_THUMBNAIL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_THUMBNAIL, GimpThumbnailClass))
+#define PICMAN_TYPE_THUMBNAIL            (picman_thumbnail_get_type ())
+#define PICMAN_THUMBNAIL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_THUMBNAIL, PicmanThumbnail))
+#define PICMAN_THUMBNAIL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_THUMBNAIL, PicmanThumbnailClass))
+#define PICMAN_IS_THUMBNAIL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_THUMBNAIL))
+#define PICMAN_IS_THUMBNAIL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_THUMBNAIL))
+#define PICMAN_THUMBNAIL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_THUMBNAIL, PicmanThumbnailClass))
 
 
-typedef struct _GimpThumbnailClass GimpThumbnailClass;
+typedef struct _PicmanThumbnailClass PicmanThumbnailClass;
 
 /**
- * GimpThumbnail:
+ * PicmanThumbnail:
  *
- * All members of #GimpThumbnail are private and should only be accessed
+ * All members of #PicmanThumbnail are private and should only be accessed
  * using object properties.
  **/
-struct _GimpThumbnail
+struct _PicmanThumbnail
 {
   GObject         parent_instance;
 
   /*< private >*/
-  GimpThumbState  image_state;
+  PicmanThumbState  image_state;
   gchar          *image_uri;
   gchar          *image_filename;
   gint64          image_filesize;
@@ -64,8 +64,8 @@ struct _GimpThumbnail
   gchar          *image_type;
   gint            image_num_layers;
 
-  GimpThumbState  thumb_state;
-  GimpThumbSize   thumb_size;
+  PicmanThumbState  thumb_state;
+  PicmanThumbSize   thumb_size;
   gchar          *thumb_filename;
   gint64          thumb_filesize;
   gint64          thumb_mtime;
@@ -75,61 +75,61 @@ struct _GimpThumbnail
   gpointer        _reserved_2;
 };
 
-struct _GimpThumbnailClass
+struct _PicmanThumbnailClass
 {
   GObjectClass    parent_class;
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType            gimp_thumbnail_get_type         (void) G_GNUC_CONST;
+GType            picman_thumbnail_get_type         (void) G_GNUC_CONST;
 
-GimpThumbnail  * gimp_thumbnail_new              (void);
+PicmanThumbnail  * picman_thumbnail_new              (void);
 
-void             gimp_thumbnail_set_uri          (GimpThumbnail  *thumbnail,
+void             picman_thumbnail_set_uri          (PicmanThumbnail  *thumbnail,
                                                   const gchar    *uri);
-gboolean         gimp_thumbnail_set_filename     (GimpThumbnail  *thumbnail,
+gboolean         picman_thumbnail_set_filename     (PicmanThumbnail  *thumbnail,
                                                   const gchar    *filename,
                                                   GError        **error);
-gboolean         gimp_thumbnail_set_from_thumb   (GimpThumbnail  *thumbnail,
+gboolean         picman_thumbnail_set_from_thumb   (PicmanThumbnail  *thumbnail,
                                                   const gchar    *filename,
                                                   GError        **error);
 
-GimpThumbState   gimp_thumbnail_peek_image       (GimpThumbnail  *thumbnail);
-GimpThumbState   gimp_thumbnail_peek_thumb       (GimpThumbnail  *thumbnail,
-                                                  GimpThumbSize   size);
+PicmanThumbState   picman_thumbnail_peek_image       (PicmanThumbnail  *thumbnail);
+PicmanThumbState   picman_thumbnail_peek_thumb       (PicmanThumbnail  *thumbnail,
+                                                  PicmanThumbSize   size);
 
-GimpThumbState   gimp_thumbnail_check_thumb      (GimpThumbnail  *thumbnail,
-                                                  GimpThumbSize   size);
+PicmanThumbState   picman_thumbnail_check_thumb      (PicmanThumbnail  *thumbnail,
+                                                  PicmanThumbSize   size);
 
-GdkPixbuf      * gimp_thumbnail_load_thumb       (GimpThumbnail  *thumbnail,
-                                                  GimpThumbSize   size,
+GdkPixbuf      * picman_thumbnail_load_thumb       (PicmanThumbnail  *thumbnail,
+                                                  PicmanThumbSize   size,
                                                   GError        **error);
 
-gboolean         gimp_thumbnail_save_thumb       (GimpThumbnail  *thumbnail,
+gboolean         picman_thumbnail_save_thumb       (PicmanThumbnail  *thumbnail,
                                                   GdkPixbuf      *pixbuf,
                                                   const gchar    *software,
                                                   GError        **error);
-gboolean         gimp_thumbnail_save_thumb_local (GimpThumbnail  *thumbnail,
+gboolean         picman_thumbnail_save_thumb_local (PicmanThumbnail  *thumbnail,
                                                   GdkPixbuf      *pixbuf,
                                                   const gchar    *software,
                                                   GError        **error);
 
-gboolean         gimp_thumbnail_save_failure     (GimpThumbnail  *thumbnail,
+gboolean         picman_thumbnail_save_failure     (PicmanThumbnail  *thumbnail,
                                                   const gchar    *software,
                                                   GError        **error);
-void             gimp_thumbnail_delete_failure   (GimpThumbnail  *thumbnail);
-void             gimp_thumbnail_delete_others    (GimpThumbnail  *thumbnail,
-                                                  GimpThumbSize   size);
+void             picman_thumbnail_delete_failure   (PicmanThumbnail  *thumbnail);
+void             picman_thumbnail_delete_others    (PicmanThumbnail  *thumbnail,
+                                                  PicmanThumbSize   size);
 
-gboolean         gimp_thumbnail_has_failed       (GimpThumbnail  *thumbnail);
+gboolean         picman_thumbnail_has_failed       (PicmanThumbnail  *thumbnail);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_THUMBNAIL_H__ */
+#endif /* __PICMAN_THUMBNAIL_H__ */

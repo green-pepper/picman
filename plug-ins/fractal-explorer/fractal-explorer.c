@@ -8,7 +8,7 @@
  *********************************************************************/
 
 /**********************************************************************
-   GIMP - The GNU Image Manipulation Program
+   PICMAN - The GNU Image Manipulation Program
    Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
    This program is free software: you can redistribute it and/or modify
@@ -56,18 +56,18 @@
 #include <glib/gstdio.h>
 
 #ifdef G_OS_WIN32
-#include <libgimpbase/gimpwin32-io.h>
+#include <libpicmanbase/picmanwin32-io.h>
 #endif
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "fractal-explorer.h"
 #include "fractal-explorer-dialogs.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /**********************************************************************
@@ -95,7 +95,7 @@ gchar               *fractalexplorer_path = NULL;
 
 static gfloat        cx = -0.75;
 static gfloat        cy = -0.2;
-GimpDrawable        *drawable;
+PicmanDrawable        *drawable;
 static GList        *fractalexplorer_list = NULL;
 
 explorer_interface_t wint =
@@ -137,11 +137,11 @@ static GtkWidget   *delete_dialog = NULL;
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparams,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 
-static void explorer            (GimpDrawable *drawable);
+static void explorer            (PicmanDrawable *drawable);
 
 /**********************************************************************
  Declare local functions
@@ -176,7 +176,7 @@ static void       fractalexplorer_list_load_all    (const gchar *path);
 static void       fractalexplorer_rescan_list      (GtkWidget *widget,
                                                     gpointer   data);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -197,12 +197,12 @@ MAIN()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32, "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE, "image", "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable" },
-    { GIMP_PDB_INT8, "fractaltype", "0: Mandelbrot; "
+    { PICMAN_PDB_INT32, "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE, "image", "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable" },
+    { PICMAN_PDB_INT8, "fractaltype", "0: Mandelbrot; "
                                     "1: Julia; "
                                     "2: Barnsley 1; "
                                     "3: Barnsley 2; "
@@ -211,28 +211,28 @@ query (void)
                                     "6: ManOWar; "
                                     "7: Lambda; "
                                     "8: Sierpinski" },
-    { GIMP_PDB_FLOAT, "xmin", "xmin fractal image delimiter" },
-    { GIMP_PDB_FLOAT, "xmax", "xmax fractal image delimiter" },
-    { GIMP_PDB_FLOAT, "ymin", "ymin fractal image delimiter" },
-    { GIMP_PDB_FLOAT, "ymax", "ymax fractal image delimiter" },
-    { GIMP_PDB_FLOAT, "iter", "Iteration value" },
-    { GIMP_PDB_FLOAT, "cx", "cx value ( only Julia)" },
-    { GIMP_PDB_FLOAT, "cy", "cy value ( only Julia)" },
-    { GIMP_PDB_INT8, "colormode", "0: Apply colormap as specified by the parameters below; "
+    { PICMAN_PDB_FLOAT, "xmin", "xmin fractal image delimiter" },
+    { PICMAN_PDB_FLOAT, "xmax", "xmax fractal image delimiter" },
+    { PICMAN_PDB_FLOAT, "ymin", "ymin fractal image delimiter" },
+    { PICMAN_PDB_FLOAT, "ymax", "ymax fractal image delimiter" },
+    { PICMAN_PDB_FLOAT, "iter", "Iteration value" },
+    { PICMAN_PDB_FLOAT, "cx", "cx value ( only Julia)" },
+    { PICMAN_PDB_FLOAT, "cy", "cy value ( only Julia)" },
+    { PICMAN_PDB_INT8, "colormode", "0: Apply colormap as specified by the parameters below; "
                                   "1: Apply active gradient to final image" },
-    { GIMP_PDB_FLOAT, "redstretch", "Red stretching factor" },
-    { GIMP_PDB_FLOAT, "greenstretch", "Green stretching factor" },
-    { GIMP_PDB_FLOAT, "bluestretch", "Blue stretching factor" },
-    { GIMP_PDB_INT8, "redmode", "Red application mode (0:SIN;1:COS;2:NONE)" },
-    { GIMP_PDB_INT8, "greenmode", "Green application mode (0:SIN;1:COS;2:NONE)" },
-    { GIMP_PDB_INT8, "bluemode", "Blue application mode (0:SIN;1:COS;2:NONE)" },
-    { GIMP_PDB_INT8, "redinvert", "Red inversion mode (1: enabled; 0: disabled)" },
-    { GIMP_PDB_INT8, "greeninvert", "Green inversion mode (1: enabled; 0: disabled)" },
-    { GIMP_PDB_INT8, "blueinvert", "Green inversion mode (1: enabled; 0: disabled)" },
-    { GIMP_PDB_INT32, "ncolors", "Number of Colors for mapping (2<=ncolors<=8192)" }
+    { PICMAN_PDB_FLOAT, "redstretch", "Red stretching factor" },
+    { PICMAN_PDB_FLOAT, "greenstretch", "Green stretching factor" },
+    { PICMAN_PDB_FLOAT, "bluestretch", "Blue stretching factor" },
+    { PICMAN_PDB_INT8, "redmode", "Red application mode (0:SIN;1:COS;2:NONE)" },
+    { PICMAN_PDB_INT8, "greenmode", "Green application mode (0:SIN;1:COS;2:NONE)" },
+    { PICMAN_PDB_INT8, "bluemode", "Blue application mode (0:SIN;1:COS;2:NONE)" },
+    { PICMAN_PDB_INT8, "redinvert", "Red inversion mode (1: enabled; 0: disabled)" },
+    { PICMAN_PDB_INT8, "greeninvert", "Green inversion mode (1: enabled; 0: disabled)" },
+    { PICMAN_PDB_INT8, "blueinvert", "Green inversion mode (1: enabled; 0: disabled)" },
+    { PICMAN_PDB_INT32, "ncolors", "Number of Colors for mapping (2<=ncolors<=8192)" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Render fractal art"),
                           "No help yet.",
                           "Daniel Cotting (cotting@multimania.com, www.multimania.com/cotting)",
@@ -240,11 +240,11 @@ query (void)
                           "December, 1998",
                           N_("_Fractal Explorer..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render");
 }
 
 /**********************************************************************
@@ -254,21 +254,21 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpRunMode        run_mode;
+  static PicmanParam   values[1];
+  PicmanRunMode        run_mode;
   gint               pwidth;
   gint               pheight;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint               sel_width;
   gint               sel_height;
 
   run_mode = param[0].data.d_int32;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   *nreturn_vals = 1;
@@ -277,9 +277,9 @@ run (const gchar      *name,
   INIT_I18N ();
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &sel_x, &sel_y,
                                       &sel_width, &sel_height))
     return;
@@ -302,9 +302,9 @@ run (const gchar      *name,
   /* See how we will run */
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /* Possibly retrieve data */
-      gimp_get_data ("plug_in_fractalexplorer", &wvals);
+      picman_get_data ("plug_in_fractalexplorer", &wvals);
 
       /* Get information from the dialog */
       if (!explorer_dialog ())
@@ -312,11 +312,11 @@ run (const gchar      *name,
 
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /* Make sure all the arguments are present */
       if (nparams != 22)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -343,9 +343,9 @@ run (const gchar      *name,
       make_color_map();
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /* Possibly retrieve data */
-      gimp_get_data ("plug_in_fractalexplorer", &wvals);
+      picman_get_data ("plug_in_fractalexplorer", &wvals);
       make_color_map ();
       break;
 
@@ -360,34 +360,34 @@ run (const gchar      *name,
   cx = wvals.cx;
   cy = wvals.cy;
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is not indexed */
-      if (! gimp_drawable_is_indexed (drawable->drawable_id))
+      if (! picman_drawable_is_indexed (drawable->drawable_id))
         {
-          gimp_progress_init (_("Rendering fractal"));
+          picman_progress_init (_("Rendering fractal"));
 
           /* Set the tile cache size */
-          gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width() + 1));
+          picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width() + 1));
           /* Run! */
 
           explorer (drawable);
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /* Store data */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data ("plug_in_fractalexplorer",
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data ("plug_in_fractalexplorer",
                            &wvals, sizeof (explorer_vals_t));
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 /**********************************************************************
@@ -395,10 +395,10 @@ run (const gchar      *name,
  *********************************************************************/
 
 static void
-explorer (GimpDrawable * drawable)
+explorer (PicmanDrawable * drawable)
 {
-  GimpPixelRgn  srcPR;
-  GimpPixelRgn  destPR;
+  PicmanPixelRgn  srcPR;
+  PicmanPixelRgn  destPR;
   gint          width;
   gint          height;
   gint          bpp;
@@ -416,7 +416,7 @@ explorer (GimpDrawable * drawable)
    *  need to be done for correct operation. (It simply makes it go
    *  faster, since fewer pixels need to be operated on).
    */
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
 
   /* Get the size of the input image. (This will/must be the same
    *  as the size of the output image.
@@ -430,8 +430,8 @@ explorer (GimpDrawable * drawable)
   dest_row = g_new (guchar, bpp * (x2 - x1));
 
   /*  initialize the pixel regions  */
-  gimp_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&destPR, drawable, 0, 0, width, height, TRUE, TRUE);
+  picman_pixel_rgn_init (&srcPR, drawable, 0, 0, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&destPR, drawable, 0, 0, width, height, TRUE, TRUE);
 
   xbild = width;
   ybild = height;
@@ -443,14 +443,14 @@ explorer (GimpDrawable * drawable)
     {
       gint     i;
       for (i = 0; i < MAXNCOLORS; i++)
-          valuemap[i] = GIMP_RGB_LUMINANCE (colormap[i].r,
+          valuemap[i] = PICMAN_RGB_LUMINANCE (colormap[i].r,
                                             colormap[i].g,
                                             colormap[i].b);
     }
 
   for (row = y1; row < y2; row++)
     {
-      gimp_pixel_rgn_get_row (&srcPR, src_row, x1, row, (x2 - x1));
+      picman_pixel_rgn_get_row (&srcPR, src_row, x1, row, (x2 - x1));
 
       explorer_render_row (src_row,
                            dest_row,
@@ -459,17 +459,17 @@ explorer (GimpDrawable * drawable)
                            bpp);
 
       /*  store the dest  */
-      gimp_pixel_rgn_set_row (&destPR, dest_row, x1, row, (x2 - x1));
+      picman_pixel_rgn_set_row (&destPR, dest_row, x1, row, (x2 - x1));
 
       if ((row % 10) == 0)
-        gimp_progress_update ((double) row / (double) (y2 - y1));
+        picman_progress_update ((double) row / (double) (y2 - y1));
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   /*  update the processed region  */
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
 
   g_free (src_row);
   g_free (dest_row);
@@ -752,9 +752,9 @@ delete_fractal_callback (GtkWidget *widget,
                                "\"%s\" from the list and from disk?"),
                              sel_obj->draw_name);
 
-      delete_dialog = gimp_query_boolean_box (_("Delete Fractal"),
+      delete_dialog = picman_query_boolean_box (_("Delete Fractal"),
                                               gtk_widget_get_toplevel (view),
-                                              gimp_standard_help_func, NULL,
+                                              picman_standard_help_func, NULL,
                                               GTK_STOCK_DIALOG_QUESTION,
                                               str,
                                               GTK_STOCK_DELETE, GTK_STOCK_CANCEL,
@@ -921,7 +921,7 @@ fractalexplorer_load (const gchar *filename,
   if (!fp)
     {
       g_message (_("Could not open '%s' for reading: %s"),
-                 gimp_filename_to_utf8 (filename), g_strerror (errno));
+                 picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
@@ -942,7 +942,7 @@ fractalexplorer_load (const gchar *filename,
   if (strncmp (fractalexplorer_HEADER, load_buf, strlen (load_buf)))
     {
       g_message (_("File '%s' is not a FractalExplorer file"),
-                 gimp_filename_to_utf8 (filename));
+                 picman_filename_to_utf8 (filename));
       fclose (fp);
       fractalexplorer_free (fractalexplorer);
 
@@ -952,7 +952,7 @@ fractalexplorer_load (const gchar *filename,
   if (load_options (fractalexplorer, fp))
     {
       g_message (_("File '%s' is corrupt.\nLine %d Option section incorrect"),
-                 gimp_filename_to_utf8 (filename), line_no);
+                 picman_filename_to_utf8 (filename), line_no);
       fclose (fp);
       fractalexplorer_free (fractalexplorer);
 
@@ -967,7 +967,7 @@ fractalexplorer_load (const gchar *filename,
 }
 
 static void
-fractalexplorer_list_load_one (const GimpDatafileData *file_data,
+fractalexplorer_list_load_one (const PicmanDatafileData *file_data,
                                gpointer                user_data)
 {
   fractalexplorerOBJ *fractalexplorer;
@@ -986,7 +986,7 @@ fractalexplorer_list_load_all (const gchar *path)
   current_obj = NULL;
   fractalexplorer_list_free_all ();
 
-  gimp_datafiles_read_directories (path, G_FILE_TEST_IS_REGULAR,
+  picman_datafiles_read_directories (path, G_FILE_TEST_IS_REGULAR,
                                    fractalexplorer_list_load_one,
                                    NULL);
 
@@ -1059,7 +1059,7 @@ add_objects_list (void)
                     GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
-  gimp_help_set_help_data (button,
+  picman_help_set_help_data (button,
                            _("Select folder and rescan collection"), NULL);
 
   g_signal_connect (button, "clicked",
@@ -1071,7 +1071,7 @@ add_objects_list (void)
                     GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
-  gimp_help_set_help_data (button,
+  picman_help_set_help_data (button,
                            _("Apply currently selected fractal"), NULL);
 
   g_signal_connect (button, "clicked",
@@ -1083,7 +1083,7 @@ add_objects_list (void)
                     GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
-  gimp_help_set_help_data (button,
+  picman_help_set_help_data (button,
                            _("Delete currently selected fractal"), NULL);
 
   g_signal_connect (button, "clicked",
@@ -1107,10 +1107,10 @@ fractalexplorer_rescan_list (GtkWidget *widget,
       return;
     }
 
-  dlg = gimp_dialog_new (_("Rescan for Fractals"), PLUG_IN_ROLE,
+  dlg = picman_dialog_new (_("Rescan for Fractals"), PLUG_IN_ROLE,
                          gtk_widget_get_toplevel (view),
                          GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                         gimp_standard_help_func, PLUG_IN_PROC,
+                         picman_standard_help_func, PLUG_IN_PROC,
 
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                          GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -1126,18 +1126,18 @@ fractalexplorer_rescan_list (GtkWidget *widget,
                     G_CALLBACK (gtk_widget_destroyed),
                     &dlg);
 
-  patheditor = gimp_path_editor_new (_("Add FractalExplorer Path"),
+  patheditor = picman_path_editor_new (_("Add FractalExplorer Path"),
                                      fractalexplorer_path);
   gtk_container_set_border_width (GTK_CONTAINER (patheditor), 12);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dlg))),
                       patheditor, TRUE, TRUE, 0);
   gtk_widget_show (patheditor);
 
-  if (gimp_dialog_run (GIMP_DIALOG (dlg)) == GTK_RESPONSE_OK)
+  if (picman_dialog_run (PICMAN_DIALOG (dlg)) == GTK_RESPONSE_OK)
     {
       g_free (fractalexplorer_path);
       fractalexplorer_path =
-        gimp_path_editor_get_path (GIMP_PATH_EDITOR (patheditor));
+        picman_path_editor_get_path (PICMAN_PATH_EDITOR (patheditor));
 
       if (fractalexplorer_path)
         {

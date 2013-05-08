@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#   Gimp-Python - allows the writing of Gimp plugins in Python.
+#   Picman-Python - allows the writing of Picman plugins in Python.
 #   Copyright (C) 1997  James Henstridge <james@daa.com.au>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,9 +16,9 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gimpfu import *
+from picmanfu import *
 
-gettext.install("gimp20-python", gimp.locale_directory, unicode=True)
+gettext.install("picman20-python", picman.locale_directory, unicode=True)
 
 def shadow_bevel(img, drawable, blur, bevel, do_shadow, drop_x, drop_y):
     # disable undo for the image
@@ -31,7 +31,7 @@ def shadow_bevel(img, drawable, blur, bevel, do_shadow, drop_x, drop_y):
     shadow.lock_alpha = False
 
     # threshold the shadow layer to all white
-    pdb.gimp_threshold(shadow, 0, 255)
+    pdb.picman_threshold(shadow, 0, 255)
 
     # blur the shadow layer
     pdb.plug_in_gauss_iir(img, shadow, blur, True, True)
@@ -42,14 +42,14 @@ def shadow_bevel(img, drawable, blur, bevel, do_shadow, drop_x, drop_y):
                              0, 0, 0, 0, True, False, 0)
 
     # make the shadow layer black now ...
-    pdb.gimp_invert(shadow)
+    pdb.picman_invert(shadow)
 
     # translate the drop shadow
     shadow.translate(drop_x, drop_y)
 
     if not do_shadow:
         # delete shadow ...
-        gimp.delete(shadow)
+        picman.delete(shadow)
 
     # enable undo again
     img.undo_group_end()
@@ -76,7 +76,7 @@ register(
     [],
     shadow_bevel,
     menu="<Image>/Filters/Light and Shadow/Shadow",
-    domain=("gimp20-python", gimp.locale_directory)
+    domain=("picman20-python", picman.locale_directory)
     )
 
 main()

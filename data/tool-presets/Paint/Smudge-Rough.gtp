@@ -1,9 +1,9 @@
-# GIMP tool preset file
+# PICMAN tool preset file
 
-(stock-id "gimp-tool-smudge")
+(stock-id "picman-tool-smudge")
 (name "Smudge Rough")
-(tool-options "GimpSmudgeOptions"
-    (tool "gimp-smudge-tool")
+(tool-options "PicmanSmudgeOptions"
+    (tool "picman-smudge-tool")
     (opacity 0.500000)
     (brush "Acrylic 01")
     (dynamics "Pressure Opacity")
@@ -19,4 +19,4 @@
 (use-palette no)
 (use-font no)
 
-# end of GIMP tool preset file
+# end of PICMAN tool preset file

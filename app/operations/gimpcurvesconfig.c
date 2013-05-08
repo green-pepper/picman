@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcurvesconfig.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmancurvesconfig.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,18 +27,18 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <glib/gstdio.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "operations-types.h"
 
-#include "core/gimpcurve.h"
-#include "core/gimphistogram.h"
+#include "core/picmancurve.h"
+#include "core/picmanhistogram.h"
 
-#include "gimpcurvesconfig.h"
+#include "picmancurvesconfig.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -49,106 +49,106 @@ enum
 };
 
 
-static void     gimp_curves_config_iface_init   (GimpConfigInterface *iface);
+static void     picman_curves_config_iface_init   (PicmanConfigInterface *iface);
 
-static void     gimp_curves_config_finalize     (GObject          *object);
-static void     gimp_curves_config_get_property (GObject          *object,
+static void     picman_curves_config_finalize     (GObject          *object);
+static void     picman_curves_config_get_property (GObject          *object,
                                                  guint             property_id,
                                                  GValue           *value,
                                                  GParamSpec       *pspec);
-static void     gimp_curves_config_set_property (GObject          *object,
+static void     picman_curves_config_set_property (GObject          *object,
                                                  guint             property_id,
                                                  const GValue     *value,
                                                  GParamSpec       *pspec);
 
-static gboolean gimp_curves_config_serialize    (GimpConfig       *config,
-                                                 GimpConfigWriter *writer,
+static gboolean picman_curves_config_serialize    (PicmanConfig       *config,
+                                                 PicmanConfigWriter *writer,
                                                  gpointer          data);
-static gboolean gimp_curves_config_deserialize  (GimpConfig       *config,
+static gboolean picman_curves_config_deserialize  (PicmanConfig       *config,
                                                  GScanner         *scanner,
                                                  gint              nest_level,
                                                  gpointer          data);
-static gboolean gimp_curves_config_equal        (GimpConfig       *a,
-                                                 GimpConfig       *b);
-static void     gimp_curves_config_reset        (GimpConfig       *config);
-static gboolean gimp_curves_config_copy         (GimpConfig       *src,
-                                                 GimpConfig       *dest,
+static gboolean picman_curves_config_equal        (PicmanConfig       *a,
+                                                 PicmanConfig       *b);
+static void     picman_curves_config_reset        (PicmanConfig       *config);
+static gboolean picman_curves_config_copy         (PicmanConfig       *src,
+                                                 PicmanConfig       *dest,
                                                  GParamFlags       flags);
 
-static void     gimp_curves_config_curve_dirty  (GimpCurve        *curve,
-                                                 GimpCurvesConfig *config);
+static void     picman_curves_config_curve_dirty  (PicmanCurve        *curve,
+                                                 PicmanCurvesConfig *config);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpCurvesConfig, gimp_curves_config,
-                         GIMP_TYPE_IMAGE_MAP_CONFIG,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG,
-                                                gimp_curves_config_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanCurvesConfig, picman_curves_config,
+                         PICMAN_TYPE_IMAGE_MAP_CONFIG,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG,
+                                                picman_curves_config_iface_init))
 
-#define parent_class gimp_curves_config_parent_class
+#define parent_class picman_curves_config_parent_class
 
 
 static void
-gimp_curves_config_class_init (GimpCurvesConfigClass *klass)
+picman_curves_config_class_init (PicmanCurvesConfigClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->finalize           = gimp_curves_config_finalize;
-  object_class->set_property       = gimp_curves_config_set_property;
-  object_class->get_property       = gimp_curves_config_get_property;
+  object_class->finalize           = picman_curves_config_finalize;
+  object_class->set_property       = picman_curves_config_set_property;
+  object_class->get_property       = picman_curves_config_get_property;
 
-  viewable_class->default_stock_id = "gimp-tool-curves";
+  viewable_class->default_stock_id = "picman-tool-curves";
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CHANNEL,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CHANNEL,
                                  "channel",
                                  "The affected channel",
-                                 GIMP_TYPE_HISTOGRAM_CHANNEL,
-                                 GIMP_HISTOGRAM_VALUE, 0);
+                                 PICMAN_TYPE_HISTOGRAM_CHANNEL,
+                                 PICMAN_HISTOGRAM_VALUE, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_CURVE,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_CURVE,
                                    "curve",
                                    "Curve",
-                                   GIMP_TYPE_CURVE,
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
+                                   PICMAN_TYPE_CURVE,
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
 }
 
 static void
-gimp_curves_config_iface_init (GimpConfigInterface *iface)
+picman_curves_config_iface_init (PicmanConfigInterface *iface)
 {
-  iface->serialize   = gimp_curves_config_serialize;
-  iface->deserialize = gimp_curves_config_deserialize;
-  iface->equal       = gimp_curves_config_equal;
-  iface->reset       = gimp_curves_config_reset;
-  iface->copy        = gimp_curves_config_copy;
+  iface->serialize   = picman_curves_config_serialize;
+  iface->deserialize = picman_curves_config_deserialize;
+  iface->equal       = picman_curves_config_equal;
+  iface->reset       = picman_curves_config_reset;
+  iface->copy        = picman_curves_config_copy;
 }
 
 static void
-gimp_curves_config_init (GimpCurvesConfig *self)
+picman_curves_config_init (PicmanCurvesConfig *self)
 {
-  GimpHistogramChannel channel;
+  PicmanHistogramChannel channel;
 
-  for (channel = GIMP_HISTOGRAM_VALUE;
-       channel <= GIMP_HISTOGRAM_ALPHA;
+  for (channel = PICMAN_HISTOGRAM_VALUE;
+       channel <= PICMAN_HISTOGRAM_ALPHA;
        channel++)
     {
-      self->curve[channel] = GIMP_CURVE (gimp_curve_new ("curves config"));
+      self->curve[channel] = PICMAN_CURVE (picman_curve_new ("curves config"));
 
       g_signal_connect_object (self->curve[channel], "dirty",
-                               G_CALLBACK (gimp_curves_config_curve_dirty),
+                               G_CALLBACK (picman_curves_config_curve_dirty),
                                self, 0);
     }
 
-  gimp_config_reset (GIMP_CONFIG (self));
+  picman_config_reset (PICMAN_CONFIG (self));
 }
 
 static void
-gimp_curves_config_finalize (GObject *object)
+picman_curves_config_finalize (GObject *object)
 {
-  GimpCurvesConfig     *self = GIMP_CURVES_CONFIG (object);
-  GimpHistogramChannel  channel;
+  PicmanCurvesConfig     *self = PICMAN_CURVES_CONFIG (object);
+  PicmanHistogramChannel  channel;
 
-  for (channel = GIMP_HISTOGRAM_VALUE;
-       channel <= GIMP_HISTOGRAM_ALPHA;
+  for (channel = PICMAN_HISTOGRAM_VALUE;
+       channel <= PICMAN_HISTOGRAM_ALPHA;
        channel++)
     {
       g_object_unref (self->curve[channel]);
@@ -159,12 +159,12 @@ gimp_curves_config_finalize (GObject *object)
 }
 
 static void
-gimp_curves_config_get_property (GObject    *object,
+picman_curves_config_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  GimpCurvesConfig *self = GIMP_CURVES_CONFIG (object);
+  PicmanCurvesConfig *self = PICMAN_CURVES_CONFIG (object);
 
   switch (property_id)
     {
@@ -183,12 +183,12 @@ gimp_curves_config_get_property (GObject    *object,
 }
 
 static void
-gimp_curves_config_set_property (GObject      *object,
+picman_curves_config_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  GimpCurvesConfig *self = GIMP_CURVES_CONFIG (object);
+  PicmanCurvesConfig *self = PICMAN_CURVES_CONFIG (object);
 
   switch (property_id)
     {
@@ -199,13 +199,13 @@ gimp_curves_config_set_property (GObject      *object,
 
     case PROP_CURVE:
       {
-        GimpCurve *src_curve  = g_value_get_object (value);
-        GimpCurve *dest_curve = self->curve[self->channel];
+        PicmanCurve *src_curve  = g_value_get_object (value);
+        PicmanCurve *dest_curve = self->curve[self->channel];
 
         if (src_curve && dest_curve)
           {
-            gimp_config_copy (GIMP_CONFIG (src_curve),
-                              GIMP_CONFIG (dest_curve), 0);
+            picman_config_copy (PICMAN_CONFIG (src_curve),
+                              PICMAN_CONFIG (dest_curve), 0);
           }
       }
       break;
@@ -217,27 +217,27 @@ gimp_curves_config_set_property (GObject      *object,
 }
 
 static gboolean
-gimp_curves_config_serialize (GimpConfig       *config,
-                              GimpConfigWriter *writer,
+picman_curves_config_serialize (PicmanConfig       *config,
+                              PicmanConfigWriter *writer,
                               gpointer          data)
 {
-  GimpCurvesConfig     *c_config = GIMP_CURVES_CONFIG (config);
-  GimpHistogramChannel  channel;
-  GimpHistogramChannel  old_channel;
+  PicmanCurvesConfig     *c_config = PICMAN_CURVES_CONFIG (config);
+  PicmanHistogramChannel  channel;
+  PicmanHistogramChannel  old_channel;
   gboolean              success = TRUE;
 
-  if (! gimp_config_serialize_property_by_name (config, "time", writer))
+  if (! picman_config_serialize_property_by_name (config, "time", writer))
     return FALSE;
 
   old_channel = c_config->channel;
 
-  for (channel = GIMP_HISTOGRAM_VALUE;
-       channel <= GIMP_HISTOGRAM_ALPHA;
+  for (channel = PICMAN_HISTOGRAM_VALUE;
+       channel <= PICMAN_HISTOGRAM_ALPHA;
        channel++)
     {
       c_config->channel = channel;
 
-      success = gimp_config_serialize_properties (config, writer);
+      success = picman_config_serialize_properties (config, writer);
 
       if (! success)
         break;
@@ -249,18 +249,18 @@ gimp_curves_config_serialize (GimpConfig       *config,
 }
 
 static gboolean
-gimp_curves_config_deserialize (GimpConfig *config,
+picman_curves_config_deserialize (PicmanConfig *config,
                                 GScanner   *scanner,
                                 gint        nest_level,
                                 gpointer    data)
 {
-  GimpCurvesConfig     *c_config = GIMP_CURVES_CONFIG (config);
-  GimpHistogramChannel  old_channel;
+  PicmanCurvesConfig     *c_config = PICMAN_CURVES_CONFIG (config);
+  PicmanHistogramChannel  old_channel;
   gboolean              success = TRUE;
 
   old_channel = c_config->channel;
 
-  success = gimp_config_deserialize_properties (config, scanner, nest_level);
+  success = picman_config_deserialize_properties (config, scanner, nest_level);
 
   g_object_set (config, "channel", old_channel, NULL);
 
@@ -268,24 +268,24 @@ gimp_curves_config_deserialize (GimpConfig *config,
 }
 
 static gboolean
-gimp_curves_config_equal (GimpConfig *a,
-                          GimpConfig *b)
+picman_curves_config_equal (PicmanConfig *a,
+                          PicmanConfig *b)
 {
-  GimpCurvesConfig     *config_a = GIMP_CURVES_CONFIG (a);
-  GimpCurvesConfig     *config_b = GIMP_CURVES_CONFIG (b);
-  GimpHistogramChannel  channel;
+  PicmanCurvesConfig     *config_a = PICMAN_CURVES_CONFIG (a);
+  PicmanCurvesConfig     *config_b = PICMAN_CURVES_CONFIG (b);
+  PicmanHistogramChannel  channel;
 
-  for (channel = GIMP_HISTOGRAM_VALUE;
-       channel <= GIMP_HISTOGRAM_ALPHA;
+  for (channel = PICMAN_HISTOGRAM_VALUE;
+       channel <= PICMAN_HISTOGRAM_ALPHA;
        channel++)
     {
-      GimpCurve *curve_a = config_a->curve[channel];
-      GimpCurve *curve_b = config_b->curve[channel];
+      PicmanCurve *curve_a = config_a->curve[channel];
+      PicmanCurve *curve_b = config_b->curve[channel];
 
       if (curve_a && curve_b)
         {
-          if (! gimp_config_is_equal_to (GIMP_CONFIG (curve_a),
-                                         GIMP_CONFIG (curve_b)))
+          if (! picman_config_is_equal_to (PICMAN_CONFIG (curve_a),
+                                         PICMAN_CONFIG (curve_b)))
             return FALSE;
         }
       else if (curve_a || curve_b)
@@ -300,37 +300,37 @@ gimp_curves_config_equal (GimpConfig *a,
 }
 
 static void
-gimp_curves_config_reset (GimpConfig *config)
+picman_curves_config_reset (PicmanConfig *config)
 {
-  GimpCurvesConfig     *c_config = GIMP_CURVES_CONFIG (config);
-  GimpHistogramChannel  channel;
+  PicmanCurvesConfig     *c_config = PICMAN_CURVES_CONFIG (config);
+  PicmanHistogramChannel  channel;
 
-  for (channel = GIMP_HISTOGRAM_VALUE;
-       channel <= GIMP_HISTOGRAM_ALPHA;
+  for (channel = PICMAN_HISTOGRAM_VALUE;
+       channel <= PICMAN_HISTOGRAM_ALPHA;
        channel++)
     {
       c_config->channel = channel;
-      gimp_curves_config_reset_channel (c_config);
+      picman_curves_config_reset_channel (c_config);
     }
 
-  gimp_config_reset_property (G_OBJECT (config), "channel");
+  picman_config_reset_property (G_OBJECT (config), "channel");
 }
 
 static gboolean
-gimp_curves_config_copy (GimpConfig  *src,
-                         GimpConfig  *dest,
+picman_curves_config_copy (PicmanConfig  *src,
+                         PicmanConfig  *dest,
                          GParamFlags  flags)
 {
-  GimpCurvesConfig     *src_config  = GIMP_CURVES_CONFIG (src);
-  GimpCurvesConfig     *dest_config = GIMP_CURVES_CONFIG (dest);
-  GimpHistogramChannel  channel;
+  PicmanCurvesConfig     *src_config  = PICMAN_CURVES_CONFIG (src);
+  PicmanCurvesConfig     *dest_config = PICMAN_CURVES_CONFIG (dest);
+  PicmanHistogramChannel  channel;
 
-  for (channel = GIMP_HISTOGRAM_VALUE;
-       channel <= GIMP_HISTOGRAM_ALPHA;
+  for (channel = PICMAN_HISTOGRAM_VALUE;
+       channel <= PICMAN_HISTOGRAM_ALPHA;
        channel++)
     {
-      gimp_config_copy (GIMP_CONFIG (src_config->curve[channel]),
-                        GIMP_CONFIG (dest_config->curve[channel]),
+      picman_config_copy (PICMAN_CONFIG (src_config->curve[channel]),
+                        PICMAN_CONFIG (dest_config->curve[channel]),
                         flags);
     }
 
@@ -342,8 +342,8 @@ gimp_curves_config_copy (GimpConfig  *src,
 }
 
 static void
-gimp_curves_config_curve_dirty (GimpCurve        *curve,
-                                GimpCurvesConfig *config)
+picman_curves_config_curve_dirty (PicmanCurve        *curve,
+                                PicmanCurvesConfig *config)
 {
   g_object_notify (G_OBJECT (config), "curve");
 }
@@ -352,81 +352,81 @@ gimp_curves_config_curve_dirty (GimpCurve        *curve,
 /*  public functions  */
 
 GObject *
-gimp_curves_config_new_spline (gint32        channel,
+picman_curves_config_new_spline (gint32        channel,
                                const guint8 *points,
                                gint          n_points)
 {
-  GimpCurvesConfig *config;
-  GimpCurve        *curve;
+  PicmanCurvesConfig *config;
+  PicmanCurve        *curve;
   gint              i;
 
-  g_return_val_if_fail (channel >= GIMP_HISTOGRAM_VALUE &&
-                        channel <= GIMP_HISTOGRAM_ALPHA, NULL);
+  g_return_val_if_fail (channel >= PICMAN_HISTOGRAM_VALUE &&
+                        channel <= PICMAN_HISTOGRAM_ALPHA, NULL);
 
-  config = g_object_new (GIMP_TYPE_CURVES_CONFIG, NULL);
+  config = g_object_new (PICMAN_TYPE_CURVES_CONFIG, NULL);
 
   curve = config->curve[channel];
 
-  gimp_data_freeze (GIMP_DATA (curve));
+  picman_data_freeze (PICMAN_DATA (curve));
 
   /* FIXME: create a curves object with the right number of points */
   /*  unset the last point  */
-  gimp_curve_set_point (curve, curve->n_points - 1, -1, -1);
+  picman_curve_set_point (curve, curve->n_points - 1, -1, -1);
 
   n_points = MIN (n_points / 2, curve->n_points);
 
   for (i = 0; i < n_points; i++)
-    gimp_curve_set_point (curve, i,
+    picman_curve_set_point (curve, i,
                           (gdouble) points[i * 2]     / 255.0,
                           (gdouble) points[i * 2 + 1] / 255.0);
 
-  gimp_data_thaw (GIMP_DATA (curve));
+  picman_data_thaw (PICMAN_DATA (curve));
 
   return G_OBJECT (config);
 }
 
 GObject *
-gimp_curves_config_new_explicit (gint32        channel,
+picman_curves_config_new_explicit (gint32        channel,
                                  const guint8 *points,
                                  gint          n_points)
 {
-  GimpCurvesConfig *config;
-  GimpCurve        *curve;
+  PicmanCurvesConfig *config;
+  PicmanCurve        *curve;
   gint              i;
 
-  g_return_val_if_fail (channel >= GIMP_HISTOGRAM_VALUE &&
-                        channel <= GIMP_HISTOGRAM_ALPHA, NULL);
+  g_return_val_if_fail (channel >= PICMAN_HISTOGRAM_VALUE &&
+                        channel <= PICMAN_HISTOGRAM_ALPHA, NULL);
 
-  config = g_object_new (GIMP_TYPE_CURVES_CONFIG, NULL);
+  config = g_object_new (PICMAN_TYPE_CURVES_CONFIG, NULL);
 
   curve = config->curve[channel];
 
-  gimp_data_freeze (GIMP_DATA (curve));
+  picman_data_freeze (PICMAN_DATA (curve));
 
-  gimp_curve_set_curve_type (curve, GIMP_CURVE_FREE);
+  picman_curve_set_curve_type (curve, PICMAN_CURVE_FREE);
 
   for (i = 0; i < 256; i++)
-    gimp_curve_set_curve (curve,
+    picman_curve_set_curve (curve,
                           (gdouble) i         / 255.0,
                           (gdouble) points[i] / 255.0);
 
-  gimp_data_thaw (GIMP_DATA (curve));
+  picman_data_thaw (PICMAN_DATA (curve));
 
   return G_OBJECT (config);
 }
 
 void
-gimp_curves_config_reset_channel (GimpCurvesConfig *config)
+picman_curves_config_reset_channel (PicmanCurvesConfig *config)
 {
-  g_return_if_fail (GIMP_IS_CURVES_CONFIG (config));
+  g_return_if_fail (PICMAN_IS_CURVES_CONFIG (config));
 
-  gimp_config_reset (GIMP_CONFIG (config->curve[config->channel]));
+  picman_config_reset (PICMAN_CONFIG (config->curve[config->channel]));
 }
 
-#define GIMP_CURVE_N_CRUFT_POINTS 17
+#define PICMAN_CURVE_N_CRUFT_POINTS 17
 
 gboolean
-gimp_curves_config_load_cruft (GimpCurvesConfig  *config,
+picman_curves_config_load_cruft (PicmanCurvesConfig  *config,
                                gpointer           fp,
                                GError           **error)
 {
@@ -434,25 +434,25 @@ gimp_curves_config_load_cruft (GimpCurvesConfig  *config,
   gint   i, j;
   gint   fields;
   gchar  buf[50];
-  gint   index[5][GIMP_CURVE_N_CRUFT_POINTS];
-  gint   value[5][GIMP_CURVE_N_CRUFT_POINTS];
+  gint   index[5][PICMAN_CURVE_N_CRUFT_POINTS];
+  gint   value[5][PICMAN_CURVE_N_CRUFT_POINTS];
 
-  g_return_val_if_fail (GIMP_IS_CURVES_CONFIG (config), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CURVES_CONFIG (config), FALSE);
   g_return_val_if_fail (file != NULL, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   if (! fgets (buf, sizeof (buf), file) ||
-      strcmp (buf, "# GIMP Curves File\n") != 0)
+      strcmp (buf, "# PICMAN Curves File\n") != 0)
     {
       g_set_error_literal (error,
-			   GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_PARSE,
-			   _("not a GIMP Curves file"));
+			   PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_PARSE,
+			   _("not a PICMAN Curves file"));
       return FALSE;
     }
 
   for (i = 0; i < 5; i++)
     {
-      for (j = 0; j < GIMP_CURVE_N_CRUFT_POINTS; j++)
+      for (j = 0; j < PICMAN_CURVE_N_CRUFT_POINTS; j++)
         {
           fields = fscanf (file, "%d %d ", &index[i][j], &value[i][j]);
           if (fields != 2)
@@ -460,7 +460,7 @@ gimp_curves_config_load_cruft (GimpCurvesConfig  *config,
               /*  FIXME: should have a helpful error message here  */
               g_printerr ("fields != 2");
               g_set_error_literal (error,
-				   GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_PARSE,
+				   PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_PARSE,
 				   _("parse error"));
               return FALSE;
             }
@@ -471,25 +471,25 @@ gimp_curves_config_load_cruft (GimpCurvesConfig  *config,
 
   for (i = 0; i < 5; i++)
     {
-      GimpCurve *curve = config->curve[i];
+      PicmanCurve *curve = config->curve[i];
 
-      gimp_data_freeze (GIMP_DATA (curve));
+      picman_data_freeze (PICMAN_DATA (curve));
 
-      gimp_curve_set_curve_type (curve, GIMP_CURVE_SMOOTH);
+      picman_curve_set_curve_type (curve, PICMAN_CURVE_SMOOTH);
 
-      gimp_curve_reset (curve, FALSE);
+      picman_curve_reset (curve, FALSE);
 
-      for (j = 0; j < GIMP_CURVE_N_CRUFT_POINTS; j++)
+      for (j = 0; j < PICMAN_CURVE_N_CRUFT_POINTS; j++)
         {
           if (index[i][j] < 0 || value[i][j] < 0)
-            gimp_curve_set_point (curve, j, -1.0, -1.0);
+            picman_curve_set_point (curve, j, -1.0, -1.0);
           else
-            gimp_curve_set_point (curve, j,
+            picman_curve_set_point (curve, j,
                                   (gdouble) index[i][j] / 255.0,
                                   (gdouble) value[i][j] / 255.0);
         }
 
-      gimp_data_thaw (GIMP_DATA (curve));
+      picman_data_thaw (PICMAN_DATA (curve));
     }
 
   g_object_thaw_notify (G_OBJECT (config));
@@ -498,25 +498,25 @@ gimp_curves_config_load_cruft (GimpCurvesConfig  *config,
 }
 
 gboolean
-gimp_curves_config_save_cruft (GimpCurvesConfig  *config,
+picman_curves_config_save_cruft (PicmanCurvesConfig  *config,
                                gpointer           fp,
                                GError           **error)
 {
   FILE *file = fp;
   gint  i;
 
-  g_return_val_if_fail (GIMP_IS_CURVES_CONFIG (config), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CURVES_CONFIG (config), FALSE);
   g_return_val_if_fail (file != NULL, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  fprintf (file, "# GIMP Curves File\n");
+  fprintf (file, "# PICMAN Curves File\n");
 
   for (i = 0; i < 5; i++)
     {
-      GimpCurve *curve = config->curve[i];
+      PicmanCurve *curve = config->curve[i];
       gint       j;
 
-      if (curve->curve_type == GIMP_CURVE_FREE)
+      if (curve->curve_type == PICMAN_CURVE_FREE)
         {
           gint n_points;
 
@@ -544,8 +544,8 @@ gimp_curves_config_save_cruft (GimpCurvesConfig  *config,
 
       for (j = 0; j < curve->n_points; j++)
         {
-          /* don't use gimp_curve_get_point() becaue that doesn't
-           * work when the curve type is GIMP_CURVE_FREE
+          /* don't use picman_curve_get_point() becaue that doesn't
+           * work when the curve type is PICMAN_CURVE_FREE
            */
           gdouble x = curve->points[j].x;
           gdouble y = curve->points[j].y;

@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginmanager-call.c
+ * picmanpluginmanager-call.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,67 +21,67 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpbase/gimpprotocol.h"
-#include "libgimpbase/gimpwire.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanbase/picmanprotocol.h"
+#include "libpicmanbase/picmanwire.h"
 
 #include "plug-in-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmanprogress.h"
 
-#include "pdb/gimppdbcontext.h"
+#include "pdb/picmanpdbcontext.h"
 
-#include "gimpplugin.h"
-#include "gimpplugin-message.h"
-#include "gimpplugindef.h"
-#include "gimppluginerror.h"
-#include "gimppluginmanager.h"
-#define __YES_I_NEED_GIMP_PLUG_IN_MANAGER_CALL__
-#include "gimppluginmanager-call.h"
-#include "gimppluginshm.h"
-#include "gimptemporaryprocedure.h"
+#include "picmanplugin.h"
+#include "picmanplugin-message.h"
+#include "picmanplugindef.h"
+#include "picmanpluginerror.h"
+#include "picmanpluginmanager.h"
+#define __YES_I_NEED_PICMAN_PLUG_IN_MANAGER_CALL__
+#include "picmanpluginmanager-call.h"
+#include "picmanpluginshm.h"
+#include "picmantemporaryprocedure.h"
 #include "plug-in-params.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  public functions  */
 
 void
-gimp_plug_in_manager_call_query (GimpPlugInManager *manager,
-                                 GimpContext       *context,
-                                 GimpPlugInDef     *plug_in_def)
+picman_plug_in_manager_call_query (PicmanPlugInManager *manager,
+                                 PicmanContext       *context,
+                                 PicmanPlugInDef     *plug_in_def)
 {
-  GimpPlugIn *plug_in;
+  PicmanPlugIn *plug_in;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
-  g_return_if_fail (GIMP_IS_PDB_CONTEXT (context));
-  g_return_if_fail (GIMP_IS_PLUG_IN_DEF (plug_in_def));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PDB_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_DEF (plug_in_def));
 
-  plug_in = gimp_plug_in_new (manager, context, NULL,
+  plug_in = picman_plug_in_new (manager, context, NULL,
                               NULL, plug_in_def->prog);
 
   if (plug_in)
     {
       plug_in->plug_in_def = plug_in_def;
 
-      if (gimp_plug_in_open (plug_in, GIMP_PLUG_IN_CALL_QUERY, TRUE))
+      if (picman_plug_in_open (plug_in, PICMAN_PLUG_IN_CALL_QUERY, TRUE))
         {
           while (plug_in->open)
             {
-              GimpWireMessage msg;
+              PicmanWireMessage msg;
 
-              if (! gimp_wire_read_msg (plug_in->my_read, &msg, plug_in))
+              if (! picman_wire_read_msg (plug_in->my_read, &msg, plug_in))
                 {
-                  gimp_plug_in_close (plug_in, TRUE);
+                  picman_plug_in_close (plug_in, TRUE);
                 }
               else
                 {
-                  gimp_plug_in_handle_message (plug_in, &msg);
-                  gimp_wire_destroy (&msg);
+                  picman_plug_in_handle_message (plug_in, &msg);
+                  picman_wire_destroy (&msg);
                 }
             }
         }
@@ -91,37 +91,37 @@ gimp_plug_in_manager_call_query (GimpPlugInManager *manager,
 }
 
 void
-gimp_plug_in_manager_call_init (GimpPlugInManager *manager,
-                                GimpContext       *context,
-                                GimpPlugInDef     *plug_in_def)
+picman_plug_in_manager_call_init (PicmanPlugInManager *manager,
+                                PicmanContext       *context,
+                                PicmanPlugInDef     *plug_in_def)
 {
-  GimpPlugIn *plug_in;
+  PicmanPlugIn *plug_in;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
-  g_return_if_fail (GIMP_IS_PDB_CONTEXT (context));
-  g_return_if_fail (GIMP_IS_PLUG_IN_DEF (plug_in_def));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PDB_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_DEF (plug_in_def));
 
-  plug_in = gimp_plug_in_new (manager, context, NULL,
+  plug_in = picman_plug_in_new (manager, context, NULL,
                               NULL, plug_in_def->prog);
 
   if (plug_in)
     {
       plug_in->plug_in_def = plug_in_def;
 
-      if (gimp_plug_in_open (plug_in, GIMP_PLUG_IN_CALL_INIT, TRUE))
+      if (picman_plug_in_open (plug_in, PICMAN_PLUG_IN_CALL_INIT, TRUE))
         {
           while (plug_in->open)
             {
-              GimpWireMessage msg;
+              PicmanWireMessage msg;
 
-              if (! gimp_wire_read_msg (plug_in->my_read, &msg, plug_in))
+              if (! picman_wire_read_msg (plug_in->my_read, &msg, plug_in))
                 {
-                  gimp_plug_in_close (plug_in, TRUE);
+                  picman_plug_in_close (plug_in, TRUE);
                 }
               else
                 {
-                  gimp_plug_in_handle_message (plug_in, &msg);
-                  gimp_wire_destroy (&msg);
+                  picman_plug_in_handle_message (plug_in, &msg);
+                  picman_wire_destroy (&msg);
                 }
             }
         }
@@ -130,61 +130,61 @@ gimp_plug_in_manager_call_init (GimpPlugInManager *manager,
     }
 }
 
-GimpValueArray *
-gimp_plug_in_manager_call_run (GimpPlugInManager   *manager,
-                               GimpContext         *context,
-                               GimpProgress        *progress,
-                               GimpPlugInProcedure *procedure,
-                               GimpValueArray      *args,
+PicmanValueArray *
+picman_plug_in_manager_call_run (PicmanPlugInManager   *manager,
+                               PicmanContext         *context,
+                               PicmanProgress        *progress,
+                               PicmanPlugInProcedure *procedure,
+                               PicmanValueArray      *args,
                                gboolean             synchronous,
-                               GimpObject          *display)
+                               PicmanObject          *display)
 {
-  GimpValueArray *return_vals = NULL;
-  GimpPlugIn     *plug_in;
+  PicmanValueArray *return_vals = NULL;
+  PicmanPlugIn     *plug_in;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager), NULL);
-  g_return_val_if_fail (GIMP_IS_PDB_CONTEXT (context), NULL);
-  g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress), NULL);
-  g_return_val_if_fail (GIMP_IS_PLUG_IN_PROCEDURE (procedure), NULL);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager), NULL);
+  g_return_val_if_fail (PICMAN_IS_PDB_CONTEXT (context), NULL);
+  g_return_val_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress), NULL);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN_PROCEDURE (procedure), NULL);
   g_return_val_if_fail (args != NULL, NULL);
-  g_return_val_if_fail (display == NULL || GIMP_IS_OBJECT (display), NULL);
+  g_return_val_if_fail (display == NULL || PICMAN_IS_OBJECT (display), NULL);
 
-  plug_in = gimp_plug_in_new (manager, context, progress, procedure, NULL);
+  plug_in = picman_plug_in_new (manager, context, progress, procedure, NULL);
 
   if (plug_in)
     {
-      GimpCoreConfig    *core_config    = manager->gimp->config;
-      GimpDisplayConfig *display_config = GIMP_DISPLAY_CONFIG (core_config);
-      GimpGuiConfig     *gui_config     = GIMP_GUI_CONFIG (core_config);
+      PicmanCoreConfig    *core_config    = manager->picman->config;
+      PicmanDisplayConfig *display_config = PICMAN_DISPLAY_CONFIG (core_config);
+      PicmanGuiConfig     *gui_config     = PICMAN_GUI_CONFIG (core_config);
       GPConfig           config;
       GPProcRun          proc_run;
       gint               display_ID;
       gint               monitor;
 
-      if (! gimp_plug_in_open (plug_in, GIMP_PLUG_IN_CALL_RUN, FALSE))
+      if (! picman_plug_in_open (plug_in, PICMAN_PLUG_IN_CALL_RUN, FALSE))
         {
-          const gchar *name  = gimp_object_get_name (plug_in);
-          GError      *error = g_error_new (GIMP_PLUG_IN_ERROR,
-                                            GIMP_PLUG_IN_EXECUTION_FAILED,
+          const gchar *name  = picman_object_get_name (plug_in);
+          GError      *error = g_error_new (PICMAN_PLUG_IN_ERROR,
+                                            PICMAN_PLUG_IN_EXECUTION_FAILED,
                                             _("Failed to run plug-in \"%s\""),
                                             name);
 
           g_object_unref (plug_in);
 
-          return_vals = gimp_procedure_get_return_values (GIMP_PROCEDURE (procedure),
+          return_vals = picman_procedure_get_return_values (PICMAN_PROCEDURE (procedure),
                                                           FALSE, error);
           g_error_free (error);
 
           return return_vals;
         }
 
-      display_ID = display ? gimp_get_display_ID (manager->gimp, display) : -1;
+      display_ID = display ? picman_get_display_ID (manager->picman, display) : -1;
 
-      config.version          = GIMP_PROTOCOL_VERSION;
-      config.tile_width       = GIMP_PLUG_IN_TILE_WIDTH;
-      config.tile_height      = GIMP_PLUG_IN_TILE_HEIGHT;
+      config.version          = PICMAN_PROTOCOL_VERSION;
+      config.tile_width       = PICMAN_PLUG_IN_TILE_WIDTH;
+      config.tile_height      = PICMAN_PLUG_IN_TILE_HEIGHT;
       config.shm_ID           = (manager->shm ?
-                                 gimp_plug_in_shm_get_ID (manager->shm) : -1);
+                                 picman_plug_in_shm_get_ID (manager->shm) : -1);
       config.check_size       = display_config->transparency_size;
       config.check_type       = display_config->transparency_type;
       config.show_help_button = (gui_config->use_help &&
@@ -193,32 +193,32 @@ gimp_plug_in_manager_call_run (GimpPlugInManager   *manager,
 #warning FIXME what to do with config.use_cpu_accel
 #endif
       config.use_cpu_accel    = FALSE;
-      config.gimp_reserved_5  = 0;
-      config.gimp_reserved_6  = 0;
-      config.gimp_reserved_7  = 0;
-      config.gimp_reserved_8  = 0;
+      config.picman_reserved_5  = 0;
+      config.picman_reserved_6  = 0;
+      config.picman_reserved_7  = 0;
+      config.picman_reserved_8  = 0;
       config.install_cmap     = FALSE;
       config.show_tooltips    = gui_config->show_tooltips;
       config.min_colors       = 144;
       config.gdisp_ID         = display_ID;
       config.app_name         = (gchar *) g_get_application_name ();
-      config.wm_class         = (gchar *) gimp_get_program_class (manager->gimp);
-      config.display_name     = gimp_get_display_name (manager->gimp,
+      config.wm_class         = (gchar *) picman_get_program_class (manager->picman);
+      config.display_name     = picman_get_display_name (manager->picman,
                                                        display_ID, &monitor);
       config.monitor_number   = monitor;
-      config.timestamp        = gimp_get_user_time (manager->gimp);
+      config.timestamp        = picman_get_user_time (manager->picman);
 
-      proc_run.name    = GIMP_PROCEDURE (procedure)->original_name;
-      proc_run.nparams = gimp_value_array_length (args);
+      proc_run.name    = PICMAN_PROCEDURE (procedure)->original_name;
+      proc_run.nparams = picman_value_array_length (args);
       proc_run.params  = plug_in_args_to_params (args, FALSE);
 
       if (! gp_config_write (plug_in->my_write, &config, plug_in)     ||
           ! gp_proc_run_write (plug_in->my_write, &proc_run, plug_in) ||
-          ! gimp_wire_flush (plug_in->my_write, plug_in))
+          ! picman_wire_flush (plug_in->my_write, plug_in))
         {
-          const gchar *name  = gimp_object_get_name (plug_in);
-          GError      *error = g_error_new (GIMP_PLUG_IN_ERROR,
-                                            GIMP_PLUG_IN_EXECUTION_FAILED,
+          const gchar *name  = picman_object_get_name (plug_in);
+          GError      *error = g_error_new (PICMAN_PLUG_IN_ERROR,
+                                            PICMAN_PLUG_IN_EXECUTION_FAILED,
                                             _("Failed to run plug-in \"%s\""),
                                             name);
 
@@ -227,7 +227,7 @@ gimp_plug_in_manager_call_run (GimpPlugInManager   *manager,
 
           g_object_unref (plug_in);
 
-          return_vals = gimp_procedure_get_return_values (GIMP_PROCEDURE (procedure),
+          return_vals = picman_procedure_get_return_values (PICMAN_PROCEDURE (procedure),
                                                           FALSE, error);
           g_error_free (error);
 
@@ -240,15 +240,15 @@ gimp_plug_in_manager_call_run (GimpPlugInManager   *manager,
       /* If this is an extension,
        * wait for an installation-confirmation message
        */
-      if (GIMP_PROCEDURE (procedure)->proc_type == GIMP_EXTENSION)
+      if (PICMAN_PROCEDURE (procedure)->proc_type == PICMAN_EXTENSION)
         {
           plug_in->ext_main_loop = g_main_loop_new (NULL, FALSE);
 
-          gimp_threads_leave (manager->gimp);
+          picman_threads_leave (manager->picman);
           g_main_loop_run (plug_in->ext_main_loop);
-          gimp_threads_enter (manager->gimp);
+          picman_threads_enter (manager->picman);
 
-          /*  main_loop is quit in gimp_plug_in_handle_extension_ack()  */
+          /*  main_loop is quit in picman_plug_in_handle_extension_ack()  */
 
           g_main_loop_unref (plug_in->ext_main_loop);
           plug_in->ext_main_loop = NULL;
@@ -259,20 +259,20 @@ gimp_plug_in_manager_call_run (GimpPlugInManager   *manager,
        */
       if (synchronous)
         {
-          GimpPlugInProcFrame *proc_frame = &plug_in->main_proc_frame;
+          PicmanPlugInProcFrame *proc_frame = &plug_in->main_proc_frame;
 
           proc_frame->main_loop = g_main_loop_new (NULL, FALSE);
 
-          gimp_threads_leave (manager->gimp);
+          picman_threads_leave (manager->picman);
           g_main_loop_run (proc_frame->main_loop);
-          gimp_threads_enter (manager->gimp);
+          picman_threads_enter (manager->picman);
 
-          /*  main_loop is quit in gimp_plug_in_handle_proc_return()  */
+          /*  main_loop is quit in picman_plug_in_handle_proc_return()  */
 
           g_main_loop_unref (proc_frame->main_loop);
           proc_frame->main_loop = NULL;
 
-          return_vals = gimp_plug_in_proc_frame_get_return_values (proc_frame);
+          return_vals = picman_plug_in_proc_frame_get_return_values (proc_frame);
         }
 
       g_object_unref (plug_in);
@@ -281,49 +281,49 @@ gimp_plug_in_manager_call_run (GimpPlugInManager   *manager,
   return return_vals;
 }
 
-GimpValueArray *
-gimp_plug_in_manager_call_run_temp (GimpPlugInManager      *manager,
-                                    GimpContext            *context,
-                                    GimpProgress           *progress,
-                                    GimpTemporaryProcedure *procedure,
-                                    GimpValueArray         *args)
+PicmanValueArray *
+picman_plug_in_manager_call_run_temp (PicmanPlugInManager      *manager,
+                                    PicmanContext            *context,
+                                    PicmanProgress           *progress,
+                                    PicmanTemporaryProcedure *procedure,
+                                    PicmanValueArray         *args)
 {
-  GimpValueArray *return_vals = NULL;
-  GimpPlugIn     *plug_in;
+  PicmanValueArray *return_vals = NULL;
+  PicmanPlugIn     *plug_in;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager), NULL);
-  g_return_val_if_fail (GIMP_IS_PDB_CONTEXT (context), NULL);
-  g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress), NULL);
-  g_return_val_if_fail (GIMP_IS_TEMPORARY_PROCEDURE (procedure), NULL);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager), NULL);
+  g_return_val_if_fail (PICMAN_IS_PDB_CONTEXT (context), NULL);
+  g_return_val_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEMPORARY_PROCEDURE (procedure), NULL);
   g_return_val_if_fail (args != NULL, NULL);
 
   plug_in = procedure->plug_in;
 
   if (plug_in)
     {
-      GimpPlugInProcFrame *proc_frame;
+      PicmanPlugInProcFrame *proc_frame;
       GPProcRun            proc_run;
 
-      proc_frame = gimp_plug_in_proc_frame_push (plug_in, context, progress,
+      proc_frame = picman_plug_in_proc_frame_push (plug_in, context, progress,
                                                  procedure);
 
-      proc_run.name    = GIMP_PROCEDURE (procedure)->original_name;
-      proc_run.nparams = gimp_value_array_length (args);
+      proc_run.name    = PICMAN_PROCEDURE (procedure)->original_name;
+      proc_run.nparams = picman_value_array_length (args);
       proc_run.params  = plug_in_args_to_params (args, FALSE);
 
       if (! gp_temp_proc_run_write (plug_in->my_write, &proc_run, plug_in) ||
-          ! gimp_wire_flush (plug_in->my_write, plug_in))
+          ! picman_wire_flush (plug_in->my_write, plug_in))
         {
-          const gchar *name  = gimp_object_get_name (plug_in);
-          GError      *error = g_error_new (GIMP_PLUG_IN_ERROR,
-                                            GIMP_PLUG_IN_EXECUTION_FAILED,
+          const gchar *name  = picman_object_get_name (plug_in);
+          GError      *error = g_error_new (PICMAN_PLUG_IN_ERROR,
+                                            PICMAN_PLUG_IN_EXECUTION_FAILED,
                                             _("Failed to run plug-in \"%s\""),
                                             name);
 
           g_free (proc_run.params);
-          gimp_plug_in_proc_frame_pop (plug_in);
+          picman_plug_in_proc_frame_pop (plug_in);
 
-          return_vals = gimp_procedure_get_return_values (GIMP_PROCEDURE (procedure),
+          return_vals = picman_procedure_get_return_values (PICMAN_PROCEDURE (procedure),
                                                           FALSE, error);
           g_error_free (error);
 
@@ -333,17 +333,17 @@ gimp_plug_in_manager_call_run_temp (GimpPlugInManager      *manager,
       g_free (proc_run.params);
 
       g_object_ref (plug_in);
-      gimp_plug_in_proc_frame_ref (proc_frame);
+      picman_plug_in_proc_frame_ref (proc_frame);
 
-      gimp_plug_in_main_loop (plug_in);
+      picman_plug_in_main_loop (plug_in);
 
       /*  main_loop is quit and proc_frame is popped in
-       *  gimp_plug_in_handle_temp_proc_return()
+       *  picman_plug_in_handle_temp_proc_return()
        */
 
-      return_vals = gimp_plug_in_proc_frame_get_return_values (proc_frame);
+      return_vals = picman_plug_in_proc_frame_get_return_values (proc_frame);
 
-      gimp_plug_in_proc_frame_unref (proc_frame, plug_in);
+      picman_plug_in_proc_frame_unref (proc_frame, plug_in);
       g_object_unref (plug_in);
     }
 

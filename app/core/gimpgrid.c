@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpGrid
- * Copyright (C) 2003  Henrik Brix Andersen <brix@gimp.org>
+ * PicmanGrid
+ * Copyright (C) 2003  Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,16 +26,16 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "gimpgrid.h"
+#include "picmangrid.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -53,96 +53,96 @@ enum
 };
 
 
-static void   gimp_grid_get_property (GObject      *object,
+static void   picman_grid_get_property (GObject      *object,
                                       guint         property_id,
                                       GValue       *value,
                                       GParamSpec   *pspec);
-static void   gimp_grid_set_property (GObject      *object,
+static void   picman_grid_set_property (GObject      *object,
                                       guint         property_id,
                                       const GValue *value,
                                       GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpGrid, gimp_grid, GIMP_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanGrid, picman_grid, PICMAN_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL))
 
 
 static void
-gimp_grid_class_init (GimpGridClass *klass)
+picman_grid_class_init (PicmanGridClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  GimpRGB       black;
-  GimpRGB       white;
+  PicmanRGB       black;
+  PicmanRGB       white;
 
-  object_class->get_property = gimp_grid_get_property;
-  object_class->set_property = gimp_grid_set_property;
+  object_class->get_property = picman_grid_get_property;
+  object_class->set_property = picman_grid_set_property;
 
-  gimp_rgba_set (&black, 0.0, 0.0, 0.0, GIMP_OPACITY_OPAQUE);
-  gimp_rgba_set (&white, 1.0, 1.0, 1.0, GIMP_OPACITY_OPAQUE);
+  picman_rgba_set (&black, 0.0, 0.0, 0.0, PICMAN_OPACITY_OPAQUE);
+  picman_rgba_set (&white, 1.0, 1.0, 1.0, PICMAN_OPACITY_OPAQUE);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_STYLE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_STYLE,
                                  "style",
                                  N_("Line style used for the grid."),
-                                 GIMP_TYPE_GRID_STYLE,
-                                 GIMP_GRID_SOLID,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_RGB (object_class, PROP_FGCOLOR,
+                                 PICMAN_TYPE_GRID_STYLE,
+                                 PICMAN_GRID_SOLID,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_RGB (object_class, PROP_FGCOLOR,
                                 "fgcolor",
                                 N_("The foreground color of the grid."),
                                 TRUE, &black,
-                                GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_RGB (object_class, PROP_BGCOLOR,
+                                PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_RGB (object_class, PROP_BGCOLOR,
                                 "bgcolor",
                                 N_("The background color of the grid; "
                                    "only used in double dashed line style."),
                                 TRUE, &white,
-                                GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_XSPACING,
+                                PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_XSPACING,
                                    "xspacing",
                                    N_("Horizontal spacing of grid lines."),
-                                   1.0, GIMP_MAX_IMAGE_SIZE, 10.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_YSPACING,
+                                   1.0, PICMAN_MAX_IMAGE_SIZE, 10.0,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_YSPACING,
                                    "yspacing",
                                    N_("Vertical spacing of grid lines."),
-                                   1.0, GIMP_MAX_IMAGE_SIZE, 10.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_SPACING_UNIT,
+                                   1.0, PICMAN_MAX_IMAGE_SIZE, 10.0,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_SPACING_UNIT,
                                  "spacing-unit", NULL,
-                                 FALSE, FALSE, GIMP_UNIT_INCH,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_XOFFSET,
+                                 FALSE, FALSE, PICMAN_UNIT_INCH,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_XOFFSET,
                                    "xoffset",
                                    N_("Horizontal offset of the first grid "
                                       "line; this may be a negative number."),
-                                   - GIMP_MAX_IMAGE_SIZE,
-                                   GIMP_MAX_IMAGE_SIZE, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_YOFFSET,
+                                   - PICMAN_MAX_IMAGE_SIZE,
+                                   PICMAN_MAX_IMAGE_SIZE, 0.0,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_YOFFSET,
                                    "yoffset",
                                    N_("Vertical offset of the first grid "
                                       "line; this may be a negative number."),
-                                   - GIMP_MAX_IMAGE_SIZE,
-                                   GIMP_MAX_IMAGE_SIZE, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_OFFSET_UNIT,
+                                   - PICMAN_MAX_IMAGE_SIZE,
+                                   PICMAN_MAX_IMAGE_SIZE, 0.0,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_OFFSET_UNIT,
                                  "offset-unit", NULL,
-                                 FALSE, FALSE, GIMP_UNIT_INCH,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 FALSE, FALSE, PICMAN_UNIT_INCH,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_grid_init (GimpGrid *grid)
+picman_grid_init (PicmanGrid *grid)
 {
 }
 
 static void
-gimp_grid_get_property (GObject      *object,
+picman_grid_get_property (GObject      *object,
                         guint         property_id,
                         GValue       *value,
                         GParamSpec   *pspec)
 {
-  GimpGrid *grid = GIMP_GRID (object);
+  PicmanGrid *grid = PICMAN_GRID (object);
 
   switch (property_id)
     {
@@ -180,13 +180,13 @@ gimp_grid_get_property (GObject      *object,
 }
 
 static void
-gimp_grid_set_property (GObject      *object,
+picman_grid_set_property (GObject      *object,
                         guint         property_id,
                         const GValue *value,
                         GParamSpec   *pspec)
 {
-  GimpGrid *grid = GIMP_GRID (object);
-  GimpRGB  *color;
+  PicmanGrid *grid = PICMAN_GRID (object);
+  PicmanRGB  *color;
 
   switch (property_id)
     {
@@ -226,49 +226,49 @@ gimp_grid_set_property (GObject      *object,
 }
 
 const gchar *
-gimp_grid_parasite_name (void)
+picman_grid_parasite_name (void)
 {
-  return "gimp-image-grid";
+  return "picman-image-grid";
 }
 
-GimpParasite *
-gimp_grid_to_parasite (const GimpGrid *grid)
+PicmanParasite *
+picman_grid_to_parasite (const PicmanGrid *grid)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   gchar        *str;
 
-  g_return_val_if_fail (GIMP_IS_GRID (grid), NULL);
+  g_return_val_if_fail (PICMAN_IS_GRID (grid), NULL);
 
-  str = gimp_config_serialize_to_string (GIMP_CONFIG (grid), NULL);
+  str = picman_config_serialize_to_string (PICMAN_CONFIG (grid), NULL);
   g_return_val_if_fail (str != NULL, NULL);
 
-  parasite = gimp_parasite_new (gimp_grid_parasite_name (),
-                                GIMP_PARASITE_PERSISTENT,
+  parasite = picman_parasite_new (picman_grid_parasite_name (),
+                                PICMAN_PARASITE_PERSISTENT,
                                 strlen (str) + 1, str);
   g_free (str);
 
   return parasite;
 }
 
-GimpGrid *
-gimp_grid_from_parasite (const GimpParasite *parasite)
+PicmanGrid *
+picman_grid_from_parasite (const PicmanParasite *parasite)
 {
-  GimpGrid    *grid;
+  PicmanGrid    *grid;
   const gchar *str;
   GError      *error = NULL;
 
   g_return_val_if_fail (parasite != NULL, NULL);
-  g_return_val_if_fail (strcmp (gimp_parasite_name (parasite),
-                                gimp_grid_parasite_name ()) == 0, NULL);
+  g_return_val_if_fail (strcmp (picman_parasite_name (parasite),
+                                picman_grid_parasite_name ()) == 0, NULL);
 
-  str = gimp_parasite_data (parasite);
+  str = picman_parasite_data (parasite);
   g_return_val_if_fail (str != NULL, NULL);
 
-  grid = g_object_new (GIMP_TYPE_GRID, NULL);
+  grid = g_object_new (PICMAN_TYPE_GRID, NULL);
 
-  if (! gimp_config_deserialize_string (GIMP_CONFIG (grid),
+  if (! picman_config_deserialize_string (PICMAN_CONFIG (grid),
                                         str,
-                                        gimp_parasite_data_size (parasite),
+                                        picman_parasite_data_size (parasite),
                                         NULL,
                                         &error))
     {

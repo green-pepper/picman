@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpmessage_pdb.c
+ * picmanmessage_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpmessage
- * @title: gimpmessage
+ * SECTION: picmanmessage
+ * @title: picmanmessage
  * @short_description: Display a dialog box with a message.
  *
  * Display a dialog box with a message.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_message:
+ * picman_message:
  * @message: Message to display in the dialog.
  *
  * Displays a dialog box with a message.
@@ -46,81 +46,81 @@
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_message (const gchar *message)
+picman_message (const gchar *message)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-message",
+  return_vals = picman_run_procedure ("picman-message",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, message,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, message,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_message_get_handler:
+ * picman_message_get_handler:
  *
  * Returns the current state of where warning messages are displayed.
  *
  * This procedure returns the way g_message warnings are displayed.
  * They can be shown in a dialog box or printed on the console where
- * gimp was started.
+ * picman was started.
  *
  * Returns: The current handler type.
  **/
-GimpMessageHandlerType
-gimp_message_get_handler (void)
+PicmanMessageHandlerType
+picman_message_get_handler (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpMessageHandlerType handler = 0;
+  PicmanMessageHandlerType handler = 0;
 
-  return_vals = gimp_run_procedure ("gimp-message-get-handler",
+  return_vals = picman_run_procedure ("picman-message-get-handler",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     handler = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return handler;
 }
 
 /**
- * gimp_message_set_handler:
+ * picman_message_set_handler:
  * @handler: The new handler type.
  *
  * Controls where warning messages are displayed.
  *
  * This procedure controls how g_message warnings are displayed. They
- * can be shown in a dialog box or printed on the console where gimp
+ * can be shown in a dialog box or printed on the console where picman
  * was started.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_message_set_handler (GimpMessageHandlerType handler)
+picman_message_set_handler (PicmanMessageHandlerType handler)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-message-set-handler",
+  return_vals = picman_run_procedure ("picman-message-set-handler",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, handler,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, handler,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,36 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PROCEDURE_H__
-#define __GIMP_PROCEDURE_H__
+#ifndef __PICMAN_PROCEDURE_H__
+#define __PICMAN_PROCEDURE_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-typedef GimpValueArray * (* GimpMarshalFunc) (GimpProcedure         *procedure,
-                                              Gimp                  *gimp,
-                                              GimpContext           *context,
-                                              GimpProgress          *progress,
-                                              const GimpValueArray  *args,
+typedef PicmanValueArray * (* PicmanMarshalFunc) (PicmanProcedure         *procedure,
+                                              Picman                  *picman,
+                                              PicmanContext           *context,
+                                              PicmanProgress          *progress,
+                                              const PicmanValueArray  *args,
                                               GError               **error);
 
 
-#define GIMP_TYPE_PROCEDURE            (gimp_procedure_get_type ())
-#define GIMP_PROCEDURE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PROCEDURE, GimpProcedure))
-#define GIMP_PROCEDURE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PROCEDURE, GimpProcedureClass))
-#define GIMP_IS_PROCEDURE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PROCEDURE))
-#define GIMP_IS_PROCEDURE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PROCEDURE))
-#define GIMP_PROCEDURE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PROCEDURE, GimpProcedureClass))
+#define PICMAN_TYPE_PROCEDURE            (picman_procedure_get_type ())
+#define PICMAN_PROCEDURE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PROCEDURE, PicmanProcedure))
+#define PICMAN_PROCEDURE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PROCEDURE, PicmanProcedureClass))
+#define PICMAN_IS_PROCEDURE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PROCEDURE))
+#define PICMAN_IS_PROCEDURE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PROCEDURE))
+#define PICMAN_PROCEDURE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PROCEDURE, PicmanProcedureClass))
 
 
-typedef struct _GimpProcedureClass GimpProcedureClass;
+typedef struct _PicmanProcedureClass PicmanProcedureClass;
 
-struct _GimpProcedure
+struct _PicmanProcedure
 {
-  GimpObject        parent_instance;
+  PicmanObject        parent_instance;
 
-  GimpPDBProcType   proc_type;      /* Type of procedure              */
+  PicmanPDBProcType   proc_type;      /* Type of procedure              */
 
   gboolean          static_strings; /* Are the strings allocated?     */
 
@@ -62,33 +62,33 @@ struct _GimpProcedure
   gint32            num_values;     /* Number of return values        */
   GParamSpec      **values;         /* Array of return values         */
 
-  GimpMarshalFunc   marshal_func;   /* Marshaller for internal procs  */
+  PicmanMarshalFunc   marshal_func;   /* Marshaller for internal procs  */
 };
 
-struct _GimpProcedureClass
+struct _PicmanProcedureClass
 {
-  GimpObjectClass parent_class;
+  PicmanObjectClass parent_class;
 
-  GimpValueArray * (* execute)       (GimpProcedure   *procedure,
-                                      Gimp            *gimp,
-                                      GimpContext     *context,
-                                      GimpProgress    *progress,
-                                      GimpValueArray  *args,
+  PicmanValueArray * (* execute)       (PicmanProcedure   *procedure,
+                                      Picman            *picman,
+                                      PicmanContext     *context,
+                                      PicmanProgress    *progress,
+                                      PicmanValueArray  *args,
                                       GError         **error);
-  void             (* execute_async) (GimpProcedure   *procedure,
-                                      Gimp            *gimp,
-                                      GimpContext     *context,
-                                      GimpProgress    *progress,
-                                      GimpValueArray  *args,
-                                      GimpObject      *display);
+  void             (* execute_async) (PicmanProcedure   *procedure,
+                                      Picman            *picman,
+                                      PicmanContext     *context,
+                                      PicmanProgress    *progress,
+                                      PicmanValueArray  *args,
+                                      PicmanObject      *display);
 };
 
 
-GType            gimp_procedure_get_type           (void) G_GNUC_CONST;
+GType            picman_procedure_get_type           (void) G_GNUC_CONST;
 
-GimpProcedure  * gimp_procedure_new                (GimpMarshalFunc   marshal_func);
+PicmanProcedure  * picman_procedure_new                (PicmanMarshalFunc   marshal_func);
 
-void             gimp_procedure_set_strings        (GimpProcedure    *procedure,
+void             picman_procedure_set_strings        (PicmanProcedure    *procedure,
                                                     const gchar      *original_name,
                                                     const gchar      *blurb,
                                                     const gchar      *help,
@@ -96,7 +96,7 @@ void             gimp_procedure_set_strings        (GimpProcedure    *procedure,
                                                     const gchar      *copyright,
                                                     const gchar      *date,
                                                     const gchar      *deprecated);
-void             gimp_procedure_set_static_strings (GimpProcedure    *procedure,
+void             picman_procedure_set_static_strings (PicmanProcedure    *procedure,
                                                     const gchar      *original_name,
                                                     const gchar      *blurb,
                                                     const gchar      *help,
@@ -104,7 +104,7 @@ void             gimp_procedure_set_static_strings (GimpProcedure    *procedure,
                                                     const gchar      *copyright,
                                                     const gchar      *date,
                                                     const gchar      *deprecated);
-void             gimp_procedure_take_strings       (GimpProcedure    *procedure,
+void             picman_procedure_take_strings       (PicmanProcedure    *procedure,
                                                     gchar            *original_name,
                                                     gchar            *blurb,
                                                     gchar            *help,
@@ -113,36 +113,36 @@ void             gimp_procedure_take_strings       (GimpProcedure    *procedure,
                                                     gchar            *date,
                                                     gchar            *deprecated);
 
-void             gimp_procedure_add_argument       (GimpProcedure    *procedure,
+void             picman_procedure_add_argument       (PicmanProcedure    *procedure,
                                                     GParamSpec       *pspec);
-void             gimp_procedure_add_return_value   (GimpProcedure    *procedure,
+void             picman_procedure_add_return_value   (PicmanProcedure    *procedure,
                                                     GParamSpec       *pspec);
 
-GimpValueArray * gimp_procedure_get_arguments      (GimpProcedure    *procedure);
-GimpValueArray * gimp_procedure_get_return_values  (GimpProcedure    *procedure,
+PicmanValueArray * picman_procedure_get_arguments      (PicmanProcedure    *procedure);
+PicmanValueArray * picman_procedure_get_return_values  (PicmanProcedure    *procedure,
                                                     gboolean          success,
                                                     const GError     *error);
 
-GimpProcedure  * gimp_procedure_create_override    (GimpProcedure    *procedure,
-                                                    GimpMarshalFunc   new_marshal_func);
+PicmanProcedure  * picman_procedure_create_override    (PicmanProcedure    *procedure,
+                                                    PicmanMarshalFunc   new_marshal_func);
 
-GimpValueArray * gimp_procedure_execute            (GimpProcedure    *procedure,
-                                                    Gimp             *gimp,
-                                                    GimpContext      *context,
-                                                    GimpProgress     *progress,
-                                                    GimpValueArray   *args,
+PicmanValueArray * picman_procedure_execute            (PicmanProcedure    *procedure,
+                                                    Picman             *picman,
+                                                    PicmanContext      *context,
+                                                    PicmanProgress     *progress,
+                                                    PicmanValueArray   *args,
                                                     GError          **error);
-void             gimp_procedure_execute_async      (GimpProcedure    *procedure,
-                                                    Gimp             *gimp,
-                                                    GimpContext      *context,
-                                                    GimpProgress     *progress,
-                                                    GimpValueArray   *args,
-                                                    GimpObject       *display,
+void             picman_procedure_execute_async      (PicmanProcedure    *procedure,
+                                                    Picman             *picman,
+                                                    PicmanContext      *context,
+                                                    PicmanProgress     *progress,
+                                                    PicmanValueArray   *args,
+                                                    PicmanObject       *display,
                                                     GError          **error);
 
-gint             gimp_procedure_name_compare       (GimpProcedure    *proc1,
-                                                    GimpProcedure    *proc2);
+gint             picman_procedure_name_compare       (PicmanProcedure    *proc1,
+                                                    PicmanProcedure    *proc2);
 
 
 
-#endif  /*  __GIMP_PROCEDURE_H__  */
+#endif  /*  __PICMAN_PROCEDURE_H__  */

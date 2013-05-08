@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,37 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_HISTOGRAM_OPTIONS_H__
-#define __GIMP_HISTOGRAM_OPTIONS_H__
+#ifndef __PICMAN_HISTOGRAM_OPTIONS_H__
+#define __PICMAN_HISTOGRAM_OPTIONS_H__
 
 
-#include "gimpcoloroptions.h"
+#include "picmancoloroptions.h"
 
 
-#define GIMP_TYPE_HISTOGRAM_OPTIONS            (gimp_histogram_options_get_type ())
-#define GIMP_HISTOGRAM_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_HISTOGRAM_OPTIONS, GimpHistogramOptions))
-#define GIMP_HISTOGRAM_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_HISTOGRAM_OPTIONS, GimpHistogramOptionsClass))
-#define GIMP_IS_HISTOGRAM_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_HISTOGRAM_OPTIONS))
-#define GIMP_IS_HISTOGRAM_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_HISTOGRAM_OPTIONS))
-#define GIMP_HISTOGRAM_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_HISTOGRAM_OPTIONS, GimpHistogramOptionsClass))
+#define PICMAN_TYPE_HISTOGRAM_OPTIONS            (picman_histogram_options_get_type ())
+#define PICMAN_HISTOGRAM_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_HISTOGRAM_OPTIONS, PicmanHistogramOptions))
+#define PICMAN_HISTOGRAM_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_HISTOGRAM_OPTIONS, PicmanHistogramOptionsClass))
+#define PICMAN_IS_HISTOGRAM_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_HISTOGRAM_OPTIONS))
+#define PICMAN_IS_HISTOGRAM_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_HISTOGRAM_OPTIONS))
+#define PICMAN_HISTOGRAM_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_HISTOGRAM_OPTIONS, PicmanHistogramOptionsClass))
 
 
-typedef struct _GimpHistogramOptions  GimpHistogramOptions;
-typedef         GimpColorOptionsClass GimpHistogramOptionsClass;
+typedef struct _PicmanHistogramOptions  PicmanHistogramOptions;
+typedef         PicmanColorOptionsClass PicmanHistogramOptionsClass;
 
-struct _GimpHistogramOptions
+struct _PicmanHistogramOptions
 {
-  GimpColorOptions    parent_instance;
+  PicmanColorOptions    parent_instance;
 
-  GimpHistogramScale  scale;
+  PicmanHistogramScale  scale;
 };
 
 
-GType       gimp_histogram_options_get_type     (void) G_GNUC_CONST;
+GType       picman_histogram_options_get_type     (void) G_GNUC_CONST;
 
-GtkWidget * gimp_histogram_options_gui          (GimpToolOptions      *tool_options);
-void        gimp_histogram_options_connect_view (GimpHistogramOptions *options,
-                                                 GimpHistogramView    *view);
+GtkWidget * picman_histogram_options_gui          (PicmanToolOptions      *tool_options);
+void        picman_histogram_options_connect_view (PicmanHistogramOptions *options,
+                                                 PicmanHistogramView    *view);
 
 
-#endif /* __GIMP_HISTOGRAM_OPTIONS_H__ */
+#endif /* __PICMAN_HISTOGRAM_OPTIONS_H__ */

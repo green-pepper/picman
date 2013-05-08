@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * GimpColorManaged interface
- * Copyright (C) 2007  Sven Neumann <sven@gimp.org>
+ * PicmanColorManaged interface
+ * Copyright (C) 2007  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,46 +19,46 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_COLOR_H_INSIDE__) && !defined (GIMP_COLOR_COMPILATION)
-#error "Only <libgimpcolor/gimpcolor.h> can be included directly."
+#if !defined (__PICMAN_COLOR_H_INSIDE__) && !defined (PICMAN_COLOR_COMPILATION)
+#error "Only <libpicmancolor/picmancolor.h> can be included directly."
 #endif
 
-#ifndef __GIMP_COLOR_MANAGED_H__
-#define __GIMP_COLOR_MANAGED_H__
+#ifndef __PICMAN_COLOR_MANAGED_H__
+#define __PICMAN_COLOR_MANAGED_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_COLOR_MANAGED               (gimp_color_managed_interface_get_type ())
-#define GIMP_IS_COLOR_MANAGED(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_MANAGED))
-#define GIMP_COLOR_MANAGED(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_MANAGED, GimpColorManaged))
-#define GIMP_COLOR_MANAGED_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GIMP_TYPE_COLOR_MANAGED, GimpColorManagedInterface))
+#define PICMAN_TYPE_COLOR_MANAGED               (picman_color_managed_interface_get_type ())
+#define PICMAN_IS_COLOR_MANAGED(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_MANAGED))
+#define PICMAN_COLOR_MANAGED(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_MANAGED, PicmanColorManaged))
+#define PICMAN_COLOR_MANAGED_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), PICMAN_TYPE_COLOR_MANAGED, PicmanColorManagedInterface))
 
 
-typedef struct _GimpColorManagedInterface GimpColorManagedInterface;
+typedef struct _PicmanColorManagedInterface PicmanColorManagedInterface;
 
-struct _GimpColorManagedInterface
+struct _PicmanColorManagedInterface
 {
   GTypeInterface  base_iface;
 
   /*  virtual functions  */
-  const guint8 * (* get_icc_profile) (GimpColorManaged *managed,
+  const guint8 * (* get_icc_profile) (PicmanColorManaged *managed,
                                       gsize            *len);
 
   /*  signals  */
-  void           (* profile_changed) (GimpColorManaged *managed);
+  void           (* profile_changed) (PicmanColorManaged *managed);
 };
 
 
-GType          gimp_color_managed_interface_get_type (void) G_GNUC_CONST;
+GType          picman_color_managed_interface_get_type (void) G_GNUC_CONST;
 
-const guint8 * gimp_color_managed_get_icc_profile    (GimpColorManaged *managed,
+const guint8 * picman_color_managed_get_icc_profile    (PicmanColorManaged *managed,
                                                       gsize            *len);
-void           gimp_color_managed_profile_changed    (GimpColorManaged *managed);
+void           picman_color_managed_profile_changed    (PicmanColorManaged *managed);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_COLOR_MANAGED_IFACE_H__ */
+#endif  /* __PICMAN_COLOR_MANAGED_IFACE_H__ */

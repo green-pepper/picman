@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -33,11 +33,11 @@ sub gradient_new {
     %invoke = (
         code => <<'CODE'
 {
-  GimpData *data = gimp_data_factory_data_new (gimp->gradient_factory,
+  PicmanData *data = picman_data_factory_data_new (picman->gradient_factory,
                                                context, name);
 
   if (data)
-    actual_name = g_strdup (gimp_object_get_name (data));
+    actual_name = g_strdup (picman_object_get_name (data));
   else
     success = FALSE;
 }
@@ -64,16 +64,16 @@ sub gradient_duplicate {
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient *gradient = gimp_pdb_get_gradient (gimp, name, FALSE, error);
+  PicmanGradient *gradient = picman_pdb_get_gradient (picman, name, FALSE, error);
 
   if (gradient)
     {
-      GimpGradient *gradient_copy = (GimpGradient *)
-        gimp_data_factory_data_duplicate (gimp->gradient_factory,
-                                          GIMP_DATA (gradient));
+      PicmanGradient *gradient_copy = (PicmanGradient *)
+        picman_data_factory_data_duplicate (picman->gradient_factory,
+                                          PICMAN_DATA (gradient));
 
       if (gradient_copy)
-        copy_name = g_strdup (gimp_object_get_name (gradient_copy));
+        copy_name = g_strdup (picman_object_get_name (gradient_copy));
       else
         success = FALSE;
     }
@@ -103,10 +103,10 @@ sub gradient_is_editable {
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient *gradient = gimp_pdb_get_gradient (gimp, name, FALSE, error);
+  PicmanGradient *gradient = picman_pdb_get_gradient (picman, name, FALSE, error);
 
   if (gradient)
-    editable = gimp_data_is_writable (GIMP_DATA (gradient));
+    editable = picman_data_is_writable (PICMAN_DATA (gradient));
   else
     success = FALSE;
 }
@@ -135,12 +135,12 @@ sub gradient_rename {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpGradient *gradient = gimp_pdb_get_gradient (gimp, name, TRUE, error);
+  PicmanGradient *gradient = picman_pdb_get_gradient (picman, name, TRUE, error);
 
   if (gradient)
     {
-      gimp_object_set_name (GIMP_OBJECT (gradient), new_name);
-      actual_name = g_strdup (gimp_object_get_name (gradient));
+      picman_object_set_name (PICMAN_OBJECT (gradient), new_name);
+      actual_name = g_strdup (picman_object_get_name (gradient));
     }
   else
     success = FALSE;
@@ -163,11 +163,11 @@ sub gradient_delete {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpGradient *gradient = gimp_pdb_get_gradient (gimp, name, FALSE, error);
+  PicmanGradient *gradient = picman_pdb_get_gradient (picman, name, FALSE, error);
 
-  if (gradient && gimp_data_is_deletable (GIMP_DATA (gradient)))
-    success = gimp_data_factory_data_delete (gimp->gradient_factory,
-                                             GIMP_DATA (gradient),
+  if (gradient && picman_data_is_deletable (PICMAN_DATA (gradient)))
+    success = picman_data_factory_data_delete (picman->gradient_factory,
+                                             PICMAN_DATA (gradient),
                                              TRUE, error);
   else
     success = FALSE;
@@ -201,10 +201,10 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gimp_pdb_get_gradient (gimp, name, FALSE, error);
+  gradient = picman_pdb_get_gradient (picman, name, FALSE, error);
 
   if (gradient)
     {
@@ -251,11 +251,11 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpGradient *gradient = gimp_pdb_get_gradient (gimp, name, FALSE, error);
+  PicmanGradient *gradient = picman_pdb_get_gradient (picman, name, FALSE, error);
 
   if (gradient)
     {
-      GimpGradientSegment *seg   = NULL;
+      PicmanGradientSegment *seg   = NULL;
       gdouble              pos   = 0.0;
       gdouble              delta = 1.0 / (num_samples - 1);
       gdouble             *sample;
@@ -266,9 +266,9 @@ HELP
 
       while (num_samples--)
         {
-          GimpRGB color;
+          PicmanRGB color;
 
-	  seg = gimp_gradient_get_color_at (gradient, context, seg,
+	  seg = picman_gradient_get_color_at (gradient, context, seg,
                                             pos, reverse, &color);
 
           *sample++ = color.r;
@@ -321,11 +321,11 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpGradient *gradient = gimp_pdb_get_gradient (gimp, name, FALSE, error);
+  PicmanGradient *gradient = picman_pdb_get_gradient (picman, name, FALSE, error);
 
   if (gradient)
     {
-      GimpGradientSegment *seg = NULL;
+      PicmanGradientSegment *seg = NULL;
       gdouble             *sample;
 
       num_color_samples = num_samples * 4;
@@ -334,9 +334,9 @@ HELP
 
       while (num_samples--)
         {
-          GimpRGB color;
+          PicmanRGB color;
 
-          seg = gimp_gradient_get_color_at (gradient, context,
+          seg = picman_gradient_get_color_at (gradient, context,
                                             seg, *positions,
                                             reverse, &color);
 
@@ -382,14 +382,14 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gradient_get (gimp, name, FALSE, segment, &seg, error);
+  gradient = gradient_get (picman, name, FALSE, segment, &seg, error);
 
   if (seg)
     {
-      gimp_gradient_segment_get_left_color (gradient, seg, &color);
+      picman_gradient_segment_get_left_color (gradient, seg, &color);
       opacity = color.a * 100.0;
     }
   else
@@ -426,14 +426,14 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gradient_get (gimp, name, FALSE, segment, &seg, error);
+  gradient = gradient_get (picman, name, FALSE, segment, &seg, error);
 
   if (seg)
     {
-      gimp_gradient_segment_get_right_color (gradient, seg, &color);
+      picman_gradient_segment_get_right_color (gradient, seg, &color);
       opacity = color.a * 100.0;
     }
   else
@@ -467,15 +467,15 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gradient_get (gimp, name, TRUE, segment, &seg, error);
+  gradient = gradient_get (picman, name, TRUE, segment, &seg, error);
 
   if (seg)
     {
       color.a = opacity / 100.0;
-      gimp_gradient_segment_set_left_color (gradient, seg, &color);
+      picman_gradient_segment_set_left_color (gradient, seg, &color);
     }
   else
     success = FALSE;
@@ -508,15 +508,15 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gradient_get (gimp, name, TRUE, segment, &seg, error);
+  gradient = gradient_get (picman, name, TRUE, segment, &seg, error);
 
   if (seg)
     {
       color.a = opacity / 100.0;
-      gimp_gradient_segment_set_right_color (gradient, seg, &color);
+      picman_gradient_segment_set_right_color (gradient, seg, &color);
     }
   else
     success = FALSE;
@@ -550,14 +550,14 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gradient_get (gimp, name, FALSE, segment, &seg, error);
+  gradient = gradient_get (picman, name, FALSE, segment, &seg, error);
 
   if (seg)
     {
-      pos = gimp_gradient_segment_get_left_pos (gradient, seg);
+      pos = picman_gradient_segment_get_left_pos (gradient, seg);
     }
   else
     success = FALSE;
@@ -591,14 +591,14 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gradient_get (gimp, name, FALSE, segment, &seg, error);
+  gradient = gradient_get (picman, name, FALSE, segment, &seg, error);
 
   if (seg)
     {
-      pos = gimp_gradient_segment_get_right_pos (gradient, seg);
+      pos = picman_gradient_segment_get_right_pos (gradient, seg);
     }
   else
     success = FALSE;
@@ -632,14 +632,14 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gradient_get (gimp, name, FALSE, segment, &seg, error);
+  gradient = gradient_get (picman, name, FALSE, segment, &seg, error);
 
   if (seg)
     {
-      pos = gimp_gradient_segment_get_middle_pos (gradient, seg);
+      pos = picman_gradient_segment_get_middle_pos (gradient, seg);
     }
   else
     success = FALSE;
@@ -679,14 +679,14 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gradient_get (gimp, name, TRUE, segment, &seg, error);
+  gradient = gradient_get (picman, name, TRUE, segment, &seg, error);
 
   if (seg)
     {
-      final_pos = gimp_gradient_segment_set_left_pos (gradient, seg, pos);
+      final_pos = picman_gradient_segment_set_left_pos (gradient, seg, pos);
     }
   else
     success = FALSE;
@@ -726,15 +726,15 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gradient_get (gimp, name, TRUE, segment, &seg, error);
+  gradient = gradient_get (picman, name, TRUE, segment, &seg, error);
 
   if (seg)
     {
       final_pos =
-        gimp_gradient_segment_set_right_pos (gradient, seg, pos);
+        picman_gradient_segment_set_right_pos (gradient, seg, pos);
     }
   else
     success = FALSE;
@@ -773,15 +773,15 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gradient_get (gimp, name, TRUE, segment, &seg, error);
+  gradient = gradient_get (picman, name, TRUE, segment, &seg, error);
 
   if (seg)
     {
       final_pos =
-        gimp_gradient_segment_set_middle_pos (gradient, seg, pos);
+        picman_gradient_segment_set_middle_pos (gradient, seg, pos);
     }
   else
     success = FALSE;
@@ -808,7 +808,7 @@ HELP
     );
 
     @outargs = (
-        { name => 'blend_func', type => 'enum GimpGradientSegmentType',
+        { name => 'blend_func', type => 'enum PicmanGradientSegmentType',
           void_ret => 1,
 	  desc => 'The blending function of the segment' }
     );
@@ -816,14 +816,14 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gradient_get (gimp, name, FALSE, segment, &seg, error);
+  gradient = gradient_get (picman, name, FALSE, segment, &seg, error);
 
   if (seg)
     {
-      blend_func = gimp_gradient_segment_get_blending_function (gradient, seg);
+      blend_func = picman_gradient_segment_get_blending_function (gradient, seg);
     }
   else
     success = FALSE;
@@ -850,7 +850,7 @@ HELP
     );
 
     @outargs = (
-        { name => 'coloring_type', type => 'enum GimpGradientSegmentColor',
+        { name => 'coloring_type', type => 'enum PicmanGradientSegmentColor',
           void_ret => 1,
 	  desc => 'The coloring type of the segment' }
     );
@@ -858,14 +858,14 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *seg;
 
-  gradient = gradient_get (gimp, name, FALSE, segment, &seg, error);
+  gradient = gradient_get (picman, name, FALSE, segment, &seg, error);
 
   if (seg)
     {
-      coloring_type = gimp_gradient_segment_get_coloring_type (gradient, seg);
+      coloring_type = picman_gradient_segment_get_coloring_type (gradient, seg);
     }
   else
     success = FALSE;
@@ -892,23 +892,23 @@ HELP
         { name => 'end_segment', type => 'int32',
           desc => 'The index of the last segment to operate on. If negative,
                    the selection will extend to the end of the string.' },
-        { name => 'blending_function', type => 'enum GimpGradientSegmentType',
+        { name => 'blending_function', type => 'enum PicmanGradientSegmentType',
           desc => 'The blending function' }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *start_seg;
-  GimpGradientSegment *end_seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *start_seg;
+  PicmanGradientSegment *end_seg;
 
-  gradient = gradient_get_range (gimp, name, start_segment, end_segment,
+  gradient = gradient_get_range (picman, name, start_segment, end_segment,
                                  &start_seg, &end_seg, error);
 
   if (start_seg)
     {
-      gimp_gradient_segment_range_set_blending_function (gradient,
+      picman_gradient_segment_range_set_blending_function (gradient,
                                                          start_seg, end_seg,
                                                          blending_function);
     }
@@ -937,23 +937,23 @@ HELP
         { name => 'end_segment', type => 'int32',
           desc => 'The index of the last segment to operate on. If negative,
                    the selection will extend to the end of the string.' },
-        { name => 'coloring_type', type => 'enum GimpGradientSegmentColor',
+        { name => 'coloring_type', type => 'enum PicmanGradientSegmentColor',
           desc => 'The coloring type' }
     );
 
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *start_seg;
-  GimpGradientSegment *end_seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *start_seg;
+  PicmanGradientSegment *end_seg;
 
-  gradient = gradient_get_range (gimp, name, start_segment, end_segment,
+  gradient = gradient_get_range (picman, name, start_segment, end_segment,
                                  &start_seg, &end_seg, error);
 
   if (start_seg)
     {
-      gimp_gradient_segment_range_set_coloring_type (gradient,
+      picman_gradient_segment_range_set_coloring_type (gradient,
                                                      start_seg, end_seg,
                                                      coloring_type);
     }
@@ -983,16 +983,16 @@ sub gradient_segment_range_flip {
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *start_seg;
-  GimpGradientSegment *end_seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *start_seg;
+  PicmanGradientSegment *end_seg;
 
-  gradient = gradient_get_range (gimp, name, start_segment, end_segment,
+  gradient = gradient_get_range (picman, name, start_segment, end_segment,
                                  &start_seg, &end_seg, error);
 
   if (start_seg)
     {
-      gimp_gradient_segment_range_flip (gradient,
+      picman_gradient_segment_range_flip (gradient,
                                         start_seg, end_seg,
                                         NULL, NULL);
     }
@@ -1029,16 +1029,16 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *start_seg;
-  GimpGradientSegment *end_seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *start_seg;
+  PicmanGradientSegment *end_seg;
 
-  gradient = gradient_get_range (gimp, name, start_segment, end_segment,
+  gradient = gradient_get_range (picman, name, start_segment, end_segment,
                                  &start_seg, &end_seg, error);
 
-  if (start_seg && gimp_data_is_writable (GIMP_DATA (gradient)))
+  if (start_seg && picman_data_is_writable (PICMAN_DATA (gradient)))
     {
-      gimp_gradient_segment_range_replicate (gradient,
+      picman_gradient_segment_range_replicate (gradient,
                                              start_seg, end_seg,
                                              replicate_times,
                                              NULL, NULL);
@@ -1072,16 +1072,16 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *start_seg;
-  GimpGradientSegment *end_seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *start_seg;
+  PicmanGradientSegment *end_seg;
 
-  gradient = gradient_get_range (gimp, name, start_segment, end_segment,
+  gradient = gradient_get_range (picman, name, start_segment, end_segment,
                                  &start_seg, &end_seg, error);
 
   if (start_seg)
     {
-      gimp_gradient_segment_range_split_midpoint (gradient, context,
+      picman_gradient_segment_range_split_midpoint (gradient, context,
                                                   start_seg, end_seg,
                                                   NULL, NULL);
     }
@@ -1117,16 +1117,16 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *start_seg;
-  GimpGradientSegment *end_seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *start_seg;
+  PicmanGradientSegment *end_seg;
 
-  gradient = gradient_get_range (gimp, name, start_segment, end_segment,
+  gradient = gradient_get_range (picman, name, start_segment, end_segment,
                                  &start_seg, &end_seg, error);
 
   if (start_seg)
     {
-      gimp_gradient_segment_range_split_uniform (gradient, context,
+      picman_gradient_segment_range_split_uniform (gradient, context,
                                                  start_seg, end_seg,
                                                  split_parts,
                                                  NULL, NULL);
@@ -1157,16 +1157,16 @@ sub gradient_segment_range_delete {
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *start_seg;
-  GimpGradientSegment *end_seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *start_seg;
+  PicmanGradientSegment *end_seg;
 
-  gradient = gradient_get_range (gimp, name, start_segment, end_segment,
+  gradient = gradient_get_range (picman, name, start_segment, end_segment,
                                  &start_seg, &end_seg, error);
 
   if (start_seg)
     {
-      gimp_gradient_segment_range_delete (gradient,
+      picman_gradient_segment_range_delete (gradient,
                                           start_seg, end_seg,
                                           NULL, NULL);
     }
@@ -1200,16 +1200,16 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *start_seg;
-  GimpGradientSegment *end_seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *start_seg;
+  PicmanGradientSegment *end_seg;
 
-  gradient = gradient_get_range (gimp, name, start_segment, end_segment,
+  gradient = gradient_get_range (picman, name, start_segment, end_segment,
                                  &start_seg, &end_seg, error);
 
   if (start_seg)
     {
-      gimp_gradient_segment_range_redistribute_handles (gradient,
+      picman_gradient_segment_range_redistribute_handles (gradient,
                                                         start_seg, end_seg);
     }
   else
@@ -1243,19 +1243,19 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *start_seg;
-  GimpGradientSegment *end_seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *start_seg;
+  PicmanGradientSegment *end_seg;
 
-  gradient = gradient_get_range (gimp, name, start_segment, end_segment,
+  gradient = gradient_get_range (picman, name, start_segment, end_segment,
                                  &start_seg, &end_seg, error);
 
   if (start_seg)
     {
       if (!end_seg)
-        end_seg = gimp_gradient_segment_get_last (start_seg);
+        end_seg = picman_gradient_segment_get_last (start_seg);
 
-      gimp_gradient_segment_range_blend (gradient,
+      picman_gradient_segment_range_blend (gradient,
                                          start_seg, end_seg,
                                          &start_seg->left_color,
                                          &end_seg->right_color,
@@ -1292,19 +1292,19 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *start_seg;
-  GimpGradientSegment *end_seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *start_seg;
+  PicmanGradientSegment *end_seg;
 
-  gradient = gradient_get_range (gimp, name, start_segment, end_segment,
+  gradient = gradient_get_range (picman, name, start_segment, end_segment,
                                  &start_seg, &end_seg, error);
 
   if (start_seg)
     {
       if (!end_seg)
-        end_seg = gimp_gradient_segment_get_last (start_seg);
+        end_seg = picman_gradient_segment_get_last (start_seg);
 
-      gimp_gradient_segment_range_blend (gradient,
+      picman_gradient_segment_range_blend (gradient,
                                          start_seg, end_seg,
                                          &start_seg->left_color,
                                          &end_seg->right_color,
@@ -1350,16 +1350,16 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *start_seg;
-  GimpGradientSegment *end_seg;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *start_seg;
+  PicmanGradientSegment *end_seg;
 
-  gradient = gradient_get_range (gimp, name, start_segment, end_segment,
+  gradient = gradient_get_range (picman, name, start_segment, end_segment,
                                  &start_seg, &end_seg, error);
 
   if (start_seg)
     {
-      final_delta = gimp_gradient_segment_range_move (gradient,
+      final_delta = picman_gradient_segment_range_move (gradient,
                                                       start_seg, end_seg,
                                                       delta,
                                                       control_compress);
@@ -1372,34 +1372,34 @@ CODE
 }
 
 $extra{app}->{code} = <<'CODE';
-static GimpGradient *
-gradient_get (Gimp                 *gimp,
+static PicmanGradient *
+gradient_get (Picman                 *picman,
               const gchar          *name,
 	      gboolean              writable,
               gint                  segment,
-              GimpGradientSegment **seg,
+              PicmanGradientSegment **seg,
 	      GError              **error)
 {
-  GimpGradient *gradient = gimp_pdb_get_gradient (gimp, name, writable, error);
+  PicmanGradient *gradient = picman_pdb_get_gradient (picman, name, writable, error);
 
   *seg = NULL;
 
   if (gradient)
-    *seg = gimp_gradient_segment_get_nth (gradient->segments, segment);
+    *seg = picman_gradient_segment_get_nth (gradient->segments, segment);
 
   return gradient;
 }
 
-static GimpGradient *
-gradient_get_range (Gimp                 *gimp,
+static PicmanGradient *
+gradient_get_range (Picman                 *picman,
                     const gchar          *name,
                     gint                  start_segment,
                     gint                  end_segment,
-                    GimpGradientSegment **start_seg,
-                    GimpGradientSegment **end_seg,
+                    PicmanGradientSegment **start_seg,
+                    PicmanGradientSegment **end_seg,
 		    GError              **error)
 {
-  GimpGradient *gradient = gimp_pdb_get_gradient (gimp, name, TRUE, error);
+  PicmanGradient *gradient = picman_pdb_get_gradient (picman, name, TRUE, error);
 
   *start_seg = NULL;
   *end_seg   = NULL;
@@ -1409,11 +1409,11 @@ gradient_get_range (Gimp                 *gimp,
 
   if (gradient)
     {
-      *start_seg = gimp_gradient_segment_get_nth (gradient->segments,
+      *start_seg = picman_gradient_segment_get_nth (gradient->segments,
                                                   start_segment);
 
       if (*start_seg && end_segment >= 0)
-        *end_seg = gimp_gradient_segment_get_nth (*start_seg,
+        *end_seg = picman_gradient_segment_get_nth (*start_seg,
                                                   end_segment -
                                                   start_segment);
     }
@@ -1424,11 +1424,11 @@ CODE
 
 
 @headers = qw(<string.h>
-              "core/gimp.h"
-              "core/gimpcontext.h"
-              "core/gimpgradient.h"
-              "core/gimpdatafactory.h"
-              "gimppdb-utils.h");
+              "core/picman.h"
+              "core/picmancontext.h"
+              "core/picmangradient.h"
+              "core/picmandatafactory.h"
+              "picmanpdb-utils.h");
 
 @procs = qw(gradient_new
             gradient_duplicate
@@ -1459,7 +1459,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Gradient';
-$doc_title = 'gimpgradient';
+$doc_title = 'picmangradient';
 $doc_short_desc = 'Functions operating on a single gradient.';
 $doc_long_desc = 'Functions operating on a single gradient.';
 

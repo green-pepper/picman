@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpselectiontools_pdb.c
+ * picmanselectiontools_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpselectiontools
- * @title: gimpselectiontools
+ * SECTION: picmanselectiontools
+ * @title: picmanselectiontools
  * @short_description: Access to toolbox selection tools.
  *
  * Functions giving access to toolbox selection tools.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_by_color_select:
+ * picman_by_color_select:
  * @drawable_ID: The affected drawable.
  * @color: The color to select.
  * @threshold: Threshold in intensity levels.
@@ -45,45 +45,45 @@
  * @feather_radius: Radius for feather operation.
  * @sample_merged: Use the composite image, not the drawable.
  *
- * Deprecated: Use gimp_image_select_color() instead.
+ * Deprecated: Use picman_image_select_color() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_by_color_select (gint32          drawable_ID,
-                      const GimpRGB  *color,
+picman_by_color_select (gint32          drawable_ID,
+                      const PicmanRGB  *color,
                       gint            threshold,
-                      GimpChannelOps  operation,
+                      PicmanChannelOps  operation,
                       gboolean        antialias,
                       gboolean        feather,
                       gdouble         feather_radius,
                       gboolean        sample_merged)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-by-color-select",
+  return_vals = picman_run_procedure ("picman-by-color-select",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_COLOR, color,
-                                    GIMP_PDB_INT32, threshold,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_INT32, antialias,
-                                    GIMP_PDB_INT32, feather,
-                                    GIMP_PDB_FLOAT, feather_radius,
-                                    GIMP_PDB_INT32, sample_merged,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_COLOR, color,
+                                    PICMAN_PDB_INT32, threshold,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_INT32, antialias,
+                                    PICMAN_PDB_INT32, feather,
+                                    PICMAN_PDB_FLOAT, feather_radius,
+                                    PICMAN_PDB_INT32, sample_merged,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_by_color_select_full:
+ * picman_by_color_select_full:
  * @drawable_ID: The affected drawable.
  * @color: The color to select.
  * @threshold: Threshold in intensity levels.
@@ -96,53 +96,53 @@ gimp_by_color_select (gint32          drawable_ID,
  * @select_transparent: Whether to consider transparent pixels for selection. If TRUE, transparency is considered as a unique selectable color.
  * @select_criterion: The criterion used to determine color similarity. SELECT_CRITERION_COMPOSITE is the standard choice.
  *
- * Deprecated: Use gimp_image_select_color() instead.
+ * Deprecated: Use picman_image_select_color() instead.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_by_color_select_full (gint32               drawable_ID,
-                           const GimpRGB       *color,
+picman_by_color_select_full (gint32               drawable_ID,
+                           const PicmanRGB       *color,
                            gint                 threshold,
-                           GimpChannelOps       operation,
+                           PicmanChannelOps       operation,
                            gboolean             antialias,
                            gboolean             feather,
                            gdouble              feather_radius_x,
                            gdouble              feather_radius_y,
                            gboolean             sample_merged,
                            gboolean             select_transparent,
-                           GimpSelectCriterion  select_criterion)
+                           PicmanSelectCriterion  select_criterion)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-by-color-select-full",
+  return_vals = picman_run_procedure ("picman-by-color-select-full",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_COLOR, color,
-                                    GIMP_PDB_INT32, threshold,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_INT32, antialias,
-                                    GIMP_PDB_INT32, feather,
-                                    GIMP_PDB_FLOAT, feather_radius_x,
-                                    GIMP_PDB_FLOAT, feather_radius_y,
-                                    GIMP_PDB_INT32, sample_merged,
-                                    GIMP_PDB_INT32, select_transparent,
-                                    GIMP_PDB_INT32, select_criterion,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_COLOR, color,
+                                    PICMAN_PDB_INT32, threshold,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_INT32, antialias,
+                                    PICMAN_PDB_INT32, feather,
+                                    PICMAN_PDB_FLOAT, feather_radius_x,
+                                    PICMAN_PDB_FLOAT, feather_radius_y,
+                                    PICMAN_PDB_INT32, sample_merged,
+                                    PICMAN_PDB_INT32, select_transparent,
+                                    PICMAN_PDB_INT32, select_criterion,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_ellipse_select:
+ * picman_ellipse_select:
  * @image_ID: The image.
  * @x: x coordinate of upper-left corner of ellipse bounding box.
  * @y: y coordinate of upper-left corner of ellipse bounding box.
@@ -153,47 +153,47 @@ gimp_by_color_select_full (gint32               drawable_ID,
  * @feather: Feather option for selections.
  * @feather_radius: Radius for feather operation.
  *
- * Deprecated: Use gimp_image_select_ellipse() instead.
+ * Deprecated: Use picman_image_select_ellipse() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_ellipse_select (gint32         image_ID,
+picman_ellipse_select (gint32         image_ID,
                      gdouble        x,
                      gdouble        y,
                      gdouble        width,
                      gdouble        height,
-                     GimpChannelOps operation,
+                     PicmanChannelOps operation,
                      gboolean       antialias,
                      gboolean       feather,
                      gdouble        feather_radius)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-ellipse-select",
+  return_vals = picman_run_procedure ("picman-ellipse-select",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_FLOAT, x,
-                                    GIMP_PDB_FLOAT, y,
-                                    GIMP_PDB_FLOAT, width,
-                                    GIMP_PDB_FLOAT, height,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_INT32, antialias,
-                                    GIMP_PDB_INT32, feather,
-                                    GIMP_PDB_FLOAT, feather_radius,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_FLOAT, x,
+                                    PICMAN_PDB_FLOAT, y,
+                                    PICMAN_PDB_FLOAT, width,
+                                    PICMAN_PDB_FLOAT, height,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_INT32, antialias,
+                                    PICMAN_PDB_INT32, feather,
+                                    PICMAN_PDB_FLOAT, feather_radius,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_free_select:
+ * picman_free_select:
  * @image_ID: The image.
  * @num_segs: Number of points (count 1 coordinate as two points).
  * @segs: Array of points: { p1.x, p1.y, p2.x, p2.y, ..., pn.x, pn.y}.
@@ -202,43 +202,43 @@ gimp_ellipse_select (gint32         image_ID,
  * @feather: Feather option for selections.
  * @feather_radius: Radius for feather operation.
  *
- * Deprecated: Use gimp_image_select_polygon() instead.
+ * Deprecated: Use picman_image_select_polygon() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_free_select (gint32          image_ID,
+picman_free_select (gint32          image_ID,
                   gint            num_segs,
                   const gdouble  *segs,
-                  GimpChannelOps  operation,
+                  PicmanChannelOps  operation,
                   gboolean        antialias,
                   gboolean        feather,
                   gdouble         feather_radius)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-free-select",
+  return_vals = picman_run_procedure ("picman-free-select",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, num_segs,
-                                    GIMP_PDB_FLOATARRAY, segs,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_INT32, antialias,
-                                    GIMP_PDB_INT32, feather,
-                                    GIMP_PDB_FLOAT, feather_radius,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, num_segs,
+                                    PICMAN_PDB_FLOATARRAY, segs,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_INT32, antialias,
+                                    PICMAN_PDB_INT32, feather,
+                                    PICMAN_PDB_FLOAT, feather_radius,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_fuzzy_select:
+ * picman_fuzzy_select:
  * @drawable_ID: The affected drawable.
  * @x: x coordinate of initial seed fill point: (image coordinates).
  * @y: y coordinate of initial seed fill point: (image coordinates).
@@ -249,47 +249,47 @@ gimp_free_select (gint32          image_ID,
  * @feather_radius: Radius for feather operation.
  * @sample_merged: Use the composite image, not the drawable.
  *
- * Deprecated: Use gimp_image_select_contiguous_color() instead.
+ * Deprecated: Use picman_image_select_contiguous_color() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_fuzzy_select (gint32         drawable_ID,
+picman_fuzzy_select (gint32         drawable_ID,
                    gdouble        x,
                    gdouble        y,
                    gint           threshold,
-                   GimpChannelOps operation,
+                   PicmanChannelOps operation,
                    gboolean       antialias,
                    gboolean       feather,
                    gdouble        feather_radius,
                    gboolean       sample_merged)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-fuzzy-select",
+  return_vals = picman_run_procedure ("picman-fuzzy-select",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, x,
-                                    GIMP_PDB_FLOAT, y,
-                                    GIMP_PDB_INT32, threshold,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_INT32, antialias,
-                                    GIMP_PDB_INT32, feather,
-                                    GIMP_PDB_FLOAT, feather_radius,
-                                    GIMP_PDB_INT32, sample_merged,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_FLOAT, x,
+                                    PICMAN_PDB_FLOAT, y,
+                                    PICMAN_PDB_INT32, threshold,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_INT32, antialias,
+                                    PICMAN_PDB_INT32, feather,
+                                    PICMAN_PDB_FLOAT, feather_radius,
+                                    PICMAN_PDB_INT32, sample_merged,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_fuzzy_select_full:
+ * picman_fuzzy_select_full:
  * @drawable_ID: The affected drawable.
  * @x: x coordinate of initial seed fill point: (image coordinates).
  * @y: y coordinate of initial seed fill point: (image coordinates).
@@ -303,55 +303,55 @@ gimp_fuzzy_select (gint32         drawable_ID,
  * @select_transparent: Whether to consider transparent pixels for selection. If TRUE, transparency is considered as a unique selectable color.
  * @select_criterion: The criterion used to determine color similarity. SELECT_CRITERION_COMPOSITE is the standard choice.
  *
- * Deprecated: Use gimp_image_select_contiguous_color() instead.
+ * Deprecated: Use picman_image_select_contiguous_color() instead.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_fuzzy_select_full (gint32              drawable_ID,
+picman_fuzzy_select_full (gint32              drawable_ID,
                         gdouble             x,
                         gdouble             y,
                         gint                threshold,
-                        GimpChannelOps      operation,
+                        PicmanChannelOps      operation,
                         gboolean            antialias,
                         gboolean            feather,
                         gdouble             feather_radius_x,
                         gdouble             feather_radius_y,
                         gboolean            sample_merged,
                         gboolean            select_transparent,
-                        GimpSelectCriterion select_criterion)
+                        PicmanSelectCriterion select_criterion)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-fuzzy-select-full",
+  return_vals = picman_run_procedure ("picman-fuzzy-select-full",
                                     &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, x,
-                                    GIMP_PDB_FLOAT, y,
-                                    GIMP_PDB_INT32, threshold,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_INT32, antialias,
-                                    GIMP_PDB_INT32, feather,
-                                    GIMP_PDB_FLOAT, feather_radius_x,
-                                    GIMP_PDB_FLOAT, feather_radius_y,
-                                    GIMP_PDB_INT32, sample_merged,
-                                    GIMP_PDB_INT32, select_transparent,
-                                    GIMP_PDB_INT32, select_criterion,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_FLOAT, x,
+                                    PICMAN_PDB_FLOAT, y,
+                                    PICMAN_PDB_INT32, threshold,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_INT32, antialias,
+                                    PICMAN_PDB_INT32, feather,
+                                    PICMAN_PDB_FLOAT, feather_radius_x,
+                                    PICMAN_PDB_FLOAT, feather_radius_y,
+                                    PICMAN_PDB_INT32, sample_merged,
+                                    PICMAN_PDB_INT32, select_transparent,
+                                    PICMAN_PDB_INT32, select_criterion,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_rect_select:
+ * picman_rect_select:
  * @image_ID: The image.
  * @x: x coordinate of upper-left corner of rectangle.
  * @y: y coordinate of upper-left corner of rectangle.
@@ -361,45 +361,45 @@ gimp_fuzzy_select_full (gint32              drawable_ID,
  * @feather: Feather option for selections.
  * @feather_radius: Radius for feather operation.
  *
- * Deprecated: Use gimp_image_select_rectangle() instead.
+ * Deprecated: Use picman_image_select_rectangle() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_rect_select (gint32         image_ID,
+picman_rect_select (gint32         image_ID,
                   gdouble        x,
                   gdouble        y,
                   gdouble        width,
                   gdouble        height,
-                  GimpChannelOps operation,
+                  PicmanChannelOps operation,
                   gboolean       feather,
                   gdouble        feather_radius)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-rect-select",
+  return_vals = picman_run_procedure ("picman-rect-select",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_FLOAT, x,
-                                    GIMP_PDB_FLOAT, y,
-                                    GIMP_PDB_FLOAT, width,
-                                    GIMP_PDB_FLOAT, height,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_INT32, feather,
-                                    GIMP_PDB_FLOAT, feather_radius,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_FLOAT, x,
+                                    PICMAN_PDB_FLOAT, y,
+                                    PICMAN_PDB_FLOAT, width,
+                                    PICMAN_PDB_FLOAT, height,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_INT32, feather,
+                                    PICMAN_PDB_FLOAT, feather_radius,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_round_rect_select:
+ * picman_round_rect_select:
  * @image_ID: The image.
  * @x: x coordinate of upper-left corner of rectangle.
  * @y: y coordinate of upper-left corner of rectangle.
@@ -413,49 +413,49 @@ gimp_rect_select (gint32         image_ID,
  * @feather_radius_x: Radius for feather operation in X direction.
  * @feather_radius_y: Radius for feather operation in Y direction.
  *
- * Deprecated: Use gimp_image_select_round_rectangle() instead.
+ * Deprecated: Use picman_image_select_round_rectangle() instead.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_round_rect_select (gint32         image_ID,
+picman_round_rect_select (gint32         image_ID,
                         gdouble        x,
                         gdouble        y,
                         gdouble        width,
                         gdouble        height,
                         gdouble        corner_radius_x,
                         gdouble        corner_radius_y,
-                        GimpChannelOps operation,
+                        PicmanChannelOps operation,
                         gboolean       antialias,
                         gboolean       feather,
                         gdouble        feather_radius_x,
                         gdouble        feather_radius_y)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-round-rect-select",
+  return_vals = picman_run_procedure ("picman-round-rect-select",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_FLOAT, x,
-                                    GIMP_PDB_FLOAT, y,
-                                    GIMP_PDB_FLOAT, width,
-                                    GIMP_PDB_FLOAT, height,
-                                    GIMP_PDB_FLOAT, corner_radius_x,
-                                    GIMP_PDB_FLOAT, corner_radius_y,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_INT32, antialias,
-                                    GIMP_PDB_INT32, feather,
-                                    GIMP_PDB_FLOAT, feather_radius_x,
-                                    GIMP_PDB_FLOAT, feather_radius_y,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_FLOAT, x,
+                                    PICMAN_PDB_FLOAT, y,
+                                    PICMAN_PDB_FLOAT, width,
+                                    PICMAN_PDB_FLOAT, height,
+                                    PICMAN_PDB_FLOAT, corner_radius_x,
+                                    PICMAN_PDB_FLOAT, corner_radius_y,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_INT32, antialias,
+                                    PICMAN_PDB_INT32, feather,
+                                    PICMAN_PDB_FLOAT, feather_radius_x,
+                                    PICMAN_PDB_FLOAT, feather_radius_y,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

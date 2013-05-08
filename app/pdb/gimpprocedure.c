@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,85 +22,85 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimp-utils.h"
-#include "core/gimpchannel.h"
-#include "core/gimplayer.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picman-utils.h"
+#include "core/picmanchannel.h"
+#include "core/picmanlayer.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanprogress.h"
 
-#include "vectors/gimpvectors.h"
+#include "vectors/picmanvectors.h"
 
-#include "gimppdbcontext.h"
-#include "gimppdberror.h"
-#include "gimpprocedure.h"
+#include "picmanpdbcontext.h"
+#include "picmanpdberror.h"
+#include "picmanprocedure.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void             gimp_procedure_finalize      (GObject         *object);
+static void             picman_procedure_finalize      (GObject         *object);
 
-static gint64           gimp_procedure_get_memsize   (GimpObject      *object,
+static gint64           picman_procedure_get_memsize   (PicmanObject      *object,
                                                       gint64          *gui_size);
 
-static GimpValueArray * gimp_procedure_real_execute  (GimpProcedure   *procedure,
-                                                      Gimp            *gimp,
-                                                      GimpContext     *context,
-                                                      GimpProgress    *progress,
-                                                      GimpValueArray  *args,
+static PicmanValueArray * picman_procedure_real_execute  (PicmanProcedure   *procedure,
+                                                      Picman            *picman,
+                                                      PicmanContext     *context,
+                                                      PicmanProgress    *progress,
+                                                      PicmanValueArray  *args,
                                                       GError         **error);
-static void       gimp_procedure_real_execute_async  (GimpProcedure   *procedure,
-                                                      Gimp            *gimp,
-                                                      GimpContext     *context,
-                                                      GimpProgress    *progress,
-                                                      GimpValueArray  *args,
-                                                      GimpObject      *display);
+static void       picman_procedure_real_execute_async  (PicmanProcedure   *procedure,
+                                                      Picman            *picman,
+                                                      PicmanContext     *context,
+                                                      PicmanProgress    *progress,
+                                                      PicmanValueArray  *args,
+                                                      PicmanObject      *display);
 
-static void             gimp_procedure_free_strings  (GimpProcedure   *procedure);
-static gboolean         gimp_procedure_validate_args (GimpProcedure   *procedure,
+static void             picman_procedure_free_strings  (PicmanProcedure   *procedure);
+static gboolean         picman_procedure_validate_args (PicmanProcedure   *procedure,
                                                       GParamSpec     **param_specs,
                                                       gint             n_param_specs,
-                                                      GimpValueArray  *args,
+                                                      PicmanValueArray  *args,
                                                       gboolean         return_vals,
                                                       GError         **error);
 
 
-G_DEFINE_TYPE (GimpProcedure, gimp_procedure, GIMP_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanProcedure, picman_procedure, PICMAN_TYPE_OBJECT)
 
-#define parent_class gimp_procedure_parent_class
+#define parent_class picman_procedure_parent_class
 
 
 static void
-gimp_procedure_class_init (GimpProcedureClass *klass)
+picman_procedure_class_init (PicmanProcedureClass *klass)
 {
   GObjectClass    *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass *gimp_object_class = GIMP_OBJECT_CLASS (klass);
+  PicmanObjectClass *picman_object_class = PICMAN_OBJECT_CLASS (klass);
 
-  object_class->finalize         = gimp_procedure_finalize;
+  object_class->finalize         = picman_procedure_finalize;
 
-  gimp_object_class->get_memsize = gimp_procedure_get_memsize;
+  picman_object_class->get_memsize = picman_procedure_get_memsize;
 
-  klass->execute                 = gimp_procedure_real_execute;
-  klass->execute_async           = gimp_procedure_real_execute_async;
+  klass->execute                 = picman_procedure_real_execute;
+  klass->execute_async           = picman_procedure_real_execute_async;
 }
 
 static void
-gimp_procedure_init (GimpProcedure *procedure)
+picman_procedure_init (PicmanProcedure *procedure)
 {
-  procedure->proc_type = GIMP_INTERNAL;
+  procedure->proc_type = PICMAN_INTERNAL;
 }
 
 static void
-gimp_procedure_finalize (GObject *object)
+picman_procedure_finalize (GObject *object)
 {
-  GimpProcedure *procedure = GIMP_PROCEDURE (object);
+  PicmanProcedure *procedure = PICMAN_PROCEDURE (object);
   gint           i;
 
-  gimp_procedure_free_strings (procedure);
+  picman_procedure_free_strings (procedure);
 
   if (procedure->args)
     {
@@ -124,79 +124,79 @@ gimp_procedure_finalize (GObject *object)
 }
 
 static gint64
-gimp_procedure_get_memsize (GimpObject *object,
+picman_procedure_get_memsize (PicmanObject *object,
                             gint64     *gui_size)
 {
-  GimpProcedure *procedure = GIMP_PROCEDURE (object);
+  PicmanProcedure *procedure = PICMAN_PROCEDURE (object);
   gint64         memsize   = 0;
   gint           i;
 
   if (! procedure->static_strings)
     {
-      memsize += gimp_string_get_memsize (procedure->original_name);
-      memsize += gimp_string_get_memsize (procedure->blurb);
-      memsize += gimp_string_get_memsize (procedure->help);
-      memsize += gimp_string_get_memsize (procedure->author);
-      memsize += gimp_string_get_memsize (procedure->copyright);
-      memsize += gimp_string_get_memsize (procedure->date);
-      memsize += gimp_string_get_memsize (procedure->deprecated);
+      memsize += picman_string_get_memsize (procedure->original_name);
+      memsize += picman_string_get_memsize (procedure->blurb);
+      memsize += picman_string_get_memsize (procedure->help);
+      memsize += picman_string_get_memsize (procedure->author);
+      memsize += picman_string_get_memsize (procedure->copyright);
+      memsize += picman_string_get_memsize (procedure->date);
+      memsize += picman_string_get_memsize (procedure->deprecated);
     }
 
   memsize += procedure->num_args * sizeof (GParamSpec *);
 
   for (i = 0; i < procedure->num_args; i++)
-    memsize += gimp_g_param_spec_get_memsize (procedure->args[i]);
+    memsize += picman_g_param_spec_get_memsize (procedure->args[i]);
 
   memsize += procedure->num_values * sizeof (GParamSpec *);
 
   for (i = 0; i < procedure->num_values; i++)
-    memsize += gimp_g_param_spec_get_memsize (procedure->values[i]);
+    memsize += picman_g_param_spec_get_memsize (procedure->values[i]);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
-static GimpValueArray *
-gimp_procedure_real_execute (GimpProcedure   *procedure,
-                             Gimp            *gimp,
-                             GimpContext     *context,
-                             GimpProgress    *progress,
-                             GimpValueArray  *args,
+static PicmanValueArray *
+picman_procedure_real_execute (PicmanProcedure   *procedure,
+                             Picman            *picman,
+                             PicmanContext     *context,
+                             PicmanProgress    *progress,
+                             PicmanValueArray  *args,
                              GError         **error)
 {
-  g_return_val_if_fail (gimp_value_array_length (args) >=
+  g_return_val_if_fail (picman_value_array_length (args) >=
                         procedure->num_args, NULL);
 
-  return procedure->marshal_func (procedure, gimp,
+  return procedure->marshal_func (procedure, picman,
                                   context, progress,
                                   args, error);
 }
 
 static void
-gimp_procedure_real_execute_async (GimpProcedure  *procedure,
-                                   Gimp           *gimp,
-                                   GimpContext    *context,
-                                   GimpProgress   *progress,
-                                   GimpValueArray *args,
-                                   GimpObject     *display)
+picman_procedure_real_execute_async (PicmanProcedure  *procedure,
+                                   Picman           *picman,
+                                   PicmanContext    *context,
+                                   PicmanProgress   *progress,
+                                   PicmanValueArray *args,
+                                   PicmanObject     *display)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   GError         *error = NULL;
 
-  g_return_if_fail (gimp_value_array_length (args) >= procedure->num_args);
+  g_return_if_fail (picman_value_array_length (args) >= procedure->num_args);
 
-  return_vals = GIMP_PROCEDURE_GET_CLASS (procedure)->execute (procedure,
-                                                               gimp,
+  return_vals = PICMAN_PROCEDURE_GET_CLASS (procedure)->execute (procedure,
+                                                               picman,
                                                                context,
                                                                progress,
                                                                args,
                                                                &error);
 
-  gimp_value_array_unref (return_vals);
+  picman_value_array_unref (return_vals);
 
   if (error)
     {
-      gimp_message_literal (gimp, G_OBJECT (progress), GIMP_MESSAGE_ERROR,
+      picman_message_literal (picman, G_OBJECT (progress), PICMAN_MESSAGE_ERROR,
 			    error->message);
       g_error_free (error);
     }
@@ -205,14 +205,14 @@ gimp_procedure_real_execute_async (GimpProcedure  *procedure,
 
 /*  public functions  */
 
-GimpProcedure  *
-gimp_procedure_new (GimpMarshalFunc marshal_func)
+PicmanProcedure  *
+picman_procedure_new (PicmanMarshalFunc marshal_func)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   g_return_val_if_fail (marshal_func != NULL, NULL);
 
-  procedure = g_object_new (GIMP_TYPE_PROCEDURE, NULL);
+  procedure = g_object_new (PICMAN_TYPE_PROCEDURE, NULL);
 
   procedure->marshal_func = marshal_func;
 
@@ -220,7 +220,7 @@ gimp_procedure_new (GimpMarshalFunc marshal_func)
 }
 
 void
-gimp_procedure_set_strings (GimpProcedure *procedure,
+picman_procedure_set_strings (PicmanProcedure *procedure,
                             const gchar   *original_name,
                             const gchar   *blurb,
                             const gchar   *help,
@@ -229,9 +229,9 @@ gimp_procedure_set_strings (GimpProcedure *procedure,
                             const gchar   *date,
                             const gchar   *deprecated)
 {
-  g_return_if_fail (GIMP_IS_PROCEDURE (procedure));
+  g_return_if_fail (PICMAN_IS_PROCEDURE (procedure));
 
-  gimp_procedure_free_strings (procedure);
+  picman_procedure_free_strings (procedure);
 
   procedure->original_name = g_strdup (original_name);
   procedure->blurb         = g_strdup (blurb);
@@ -245,7 +245,7 @@ gimp_procedure_set_strings (GimpProcedure *procedure,
 }
 
 void
-gimp_procedure_set_static_strings (GimpProcedure *procedure,
+picman_procedure_set_static_strings (PicmanProcedure *procedure,
                                    const gchar   *original_name,
                                    const gchar   *blurb,
                                    const gchar   *help,
@@ -254,9 +254,9 @@ gimp_procedure_set_static_strings (GimpProcedure *procedure,
                                    const gchar   *date,
                                    const gchar   *deprecated)
 {
-  g_return_if_fail (GIMP_IS_PROCEDURE (procedure));
+  g_return_if_fail (PICMAN_IS_PROCEDURE (procedure));
 
-  gimp_procedure_free_strings (procedure);
+  picman_procedure_free_strings (procedure);
 
   procedure->original_name = (gchar *) original_name;
   procedure->blurb         = (gchar *) blurb;
@@ -270,7 +270,7 @@ gimp_procedure_set_static_strings (GimpProcedure *procedure,
 }
 
 void
-gimp_procedure_take_strings (GimpProcedure *procedure,
+picman_procedure_take_strings (PicmanProcedure *procedure,
                              gchar         *original_name,
                              gchar         *blurb,
                              gchar         *help,
@@ -279,9 +279,9 @@ gimp_procedure_take_strings (GimpProcedure *procedure,
                              gchar         *date,
                              gchar         *deprecated)
 {
-  g_return_if_fail (GIMP_IS_PROCEDURE (procedure));
+  g_return_if_fail (PICMAN_IS_PROCEDURE (procedure));
 
-  gimp_procedure_free_strings (procedure);
+  picman_procedure_free_strings (procedure);
 
   procedure->original_name = original_name;
   procedure->blurb         = blurb;
@@ -294,43 +294,43 @@ gimp_procedure_take_strings (GimpProcedure *procedure,
   procedure->static_strings = FALSE;
 }
 
-GimpValueArray *
-gimp_procedure_execute (GimpProcedure   *procedure,
-                        Gimp            *gimp,
-                        GimpContext     *context,
-                        GimpProgress    *progress,
-                        GimpValueArray  *args,
+PicmanValueArray *
+picman_procedure_execute (PicmanProcedure   *procedure,
+                        Picman            *picman,
+                        PicmanContext     *context,
+                        PicmanProgress    *progress,
+                        PicmanValueArray  *args,
                         GError         **error)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   GError         *pdb_error = NULL;
 
-  g_return_val_if_fail (GIMP_IS_PROCEDURE (procedure), NULL);
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
-  g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress), NULL);
+  g_return_val_if_fail (PICMAN_IS_PROCEDURE (procedure), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress), NULL);
   g_return_val_if_fail (args != NULL, NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  if (! gimp_procedure_validate_args (procedure,
+  if (! picman_procedure_validate_args (procedure,
                                       procedure->args, procedure->num_args,
                                       args, FALSE, &pdb_error))
     {
-      return_vals = gimp_procedure_get_return_values (procedure, FALSE,
+      return_vals = picman_procedure_get_return_values (procedure, FALSE,
                                                       pdb_error);
       g_propagate_error (error, pdb_error);
 
       return return_vals;
     }
 
-  if (GIMP_IS_PDB_CONTEXT (context))
+  if (PICMAN_IS_PDB_CONTEXT (context))
     context = g_object_ref (context);
   else
-    context = gimp_pdb_context_new (gimp, context, TRUE);
+    context = picman_pdb_context_new (picman, context, TRUE);
 
   /*  call the procedure  */
-  return_vals = GIMP_PROCEDURE_GET_CLASS (procedure)->execute (procedure,
-                                                               gimp,
+  return_vals = PICMAN_PROCEDURE_GET_CLASS (procedure)->execute (procedure,
+                                                               picman,
                                                                context,
                                                                progress,
                                                                args,
@@ -340,23 +340,23 @@ gimp_procedure_execute (GimpProcedure   *procedure,
 
   if (return_vals)
     {
-      switch (g_value_get_enum (gimp_value_array_index (return_vals, 0)))
+      switch (g_value_get_enum (picman_value_array_index (return_vals, 0)))
         {
-        case GIMP_PDB_CALLING_ERROR:
-        case GIMP_PDB_EXECUTION_ERROR:
+        case PICMAN_PDB_CALLING_ERROR:
+        case PICMAN_PDB_EXECUTION_ERROR:
           /*  If the error has not already been set, construct one
            *  from the error message that is optionally passed with
            *  the return values.
            */
           if (error && *error == NULL)
             {
-              if (gimp_value_array_length (return_vals) > 1 &&
-                  G_VALUE_HOLDS_STRING (gimp_value_array_index (return_vals, 1)))
+              if (picman_value_array_length (return_vals) > 1 &&
+                  G_VALUE_HOLDS_STRING (picman_value_array_index (return_vals, 1)))
                 {
-                  GValue *value = gimp_value_array_index (return_vals, 1);
+                  GValue *value = picman_value_array_index (return_vals, 1);
 
-                  g_set_error_literal (error, GIMP_PDB_ERROR,
-                                       GIMP_PDB_ERROR_FAILED,
+                  g_set_error_literal (error, PICMAN_PDB_ERROR,
+                                       PICMAN_PDB_ERROR_FAILED,
 				       g_value_get_string (value));
                 }
             }
@@ -370,12 +370,12 @@ gimp_procedure_execute (GimpProcedure   *procedure,
     {
       g_warning ("%s: no return values, shouldn't happen", G_STRFUNC);
 
-      pdb_error = g_error_new (GIMP_PDB_ERROR,
-                               GIMP_PDB_ERROR_INVALID_RETURN_VALUE,
+      pdb_error = g_error_new (PICMAN_PDB_ERROR,
+                               PICMAN_PDB_ERROR_INVALID_RETURN_VALUE,
                                _("Procedure '%s' returned no return values"),
-                               gimp_object_get_name (procedure));
+                               picman_object_get_name (procedure));
 
-      return_vals = gimp_procedure_get_return_values (procedure, FALSE,
+      return_vals = picman_procedure_get_return_values (procedure, FALSE,
                                                       pdb_error);
       if (error && *error == NULL)
         g_propagate_error (error, pdb_error);
@@ -388,32 +388,32 @@ gimp_procedure_execute (GimpProcedure   *procedure,
 }
 
 void
-gimp_procedure_execute_async (GimpProcedure  *procedure,
-                              Gimp           *gimp,
-                              GimpContext    *context,
-                              GimpProgress   *progress,
-                              GimpValueArray *args,
-                              GimpObject     *display,
+picman_procedure_execute_async (PicmanProcedure  *procedure,
+                              Picman           *picman,
+                              PicmanContext    *context,
+                              PicmanProgress   *progress,
+                              PicmanValueArray *args,
+                              PicmanObject     *display,
                               GError        **error)
 {
-  g_return_if_fail (GIMP_IS_PROCEDURE (procedure));
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_PROCEDURE (procedure));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (args != NULL);
-  g_return_if_fail (display == NULL || GIMP_IS_OBJECT (display));
+  g_return_if_fail (display == NULL || PICMAN_IS_OBJECT (display));
   g_return_if_fail (error == NULL || *error == NULL);
 
-  if (gimp_procedure_validate_args (procedure,
+  if (picman_procedure_validate_args (procedure,
                                     procedure->args, procedure->num_args,
                                     args, FALSE, error))
     {
-      if (GIMP_IS_PDB_CONTEXT (context))
+      if (PICMAN_IS_PDB_CONTEXT (context))
         context = g_object_ref (context);
       else
-        context = gimp_pdb_context_new (gimp, context, TRUE);
+        context = picman_pdb_context_new (picman, context, TRUE);
 
-      GIMP_PROCEDURE_GET_CLASS (procedure)->execute_async (procedure, gimp,
+      PICMAN_PROCEDURE_GET_CLASS (procedure)->execute_async (procedure, picman,
                                                            context, progress,
                                                            args, display);
 
@@ -421,76 +421,76 @@ gimp_procedure_execute_async (GimpProcedure  *procedure,
     }
 }
 
-GimpValueArray *
-gimp_procedure_get_arguments (GimpProcedure *procedure)
+PicmanValueArray *
+picman_procedure_get_arguments (PicmanProcedure *procedure)
 {
-  GimpValueArray *args;
+  PicmanValueArray *args;
   GValue          value = { 0, };
   gint            i;
 
-  g_return_val_if_fail (GIMP_IS_PROCEDURE (procedure), NULL);
+  g_return_val_if_fail (PICMAN_IS_PROCEDURE (procedure), NULL);
 
-  args = gimp_value_array_new (procedure->num_args);
+  args = picman_value_array_new (procedure->num_args);
 
   for (i = 0; i < procedure->num_args; i++)
     {
       g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (procedure->args[i]));
-      gimp_value_array_append (args, &value);
+      picman_value_array_append (args, &value);
       g_value_unset (&value);
     }
 
   return args;
 }
 
-GimpValueArray *
-gimp_procedure_get_return_values (GimpProcedure *procedure,
+PicmanValueArray *
+picman_procedure_get_return_values (PicmanProcedure *procedure,
                                   gboolean       success,
                                   const GError  *error)
 {
-  GimpValueArray *args;
+  PicmanValueArray *args;
   GValue          value = { 0, };
   gint            i;
 
-  g_return_val_if_fail (success == FALSE || GIMP_IS_PROCEDURE (procedure),
+  g_return_val_if_fail (success == FALSE || PICMAN_IS_PROCEDURE (procedure),
                         NULL);
 
   if (success)
     {
-      args = gimp_value_array_new (procedure->num_values + 1);
+      args = picman_value_array_new (procedure->num_values + 1);
 
-      g_value_init (&value, GIMP_TYPE_PDB_STATUS_TYPE);
-      g_value_set_enum (&value, GIMP_PDB_SUCCESS);
-      gimp_value_array_append (args, &value);
+      g_value_init (&value, PICMAN_TYPE_PDB_STATUS_TYPE);
+      g_value_set_enum (&value, PICMAN_PDB_SUCCESS);
+      picman_value_array_append (args, &value);
       g_value_unset (&value);
 
       for (i = 0; i < procedure->num_values; i++)
         {
           g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (procedure->values[i]));
-          gimp_value_array_append (args, &value);
+          picman_value_array_append (args, &value);
           g_value_unset (&value);
         }
     }
   else
     {
-      args = gimp_value_array_new ((error && error->message) ? 2 : 1);
+      args = picman_value_array_new ((error && error->message) ? 2 : 1);
 
-      g_value_init (&value, GIMP_TYPE_PDB_STATUS_TYPE);
+      g_value_init (&value, PICMAN_TYPE_PDB_STATUS_TYPE);
 
-      /*  errors in the GIMP_PDB_ERROR domain are calling errors  */
-      if (error && error->domain == GIMP_PDB_ERROR)
+      /*  errors in the PICMAN_PDB_ERROR domain are calling errors  */
+      if (error && error->domain == PICMAN_PDB_ERROR)
         {
-          switch ((GimpPdbErrorCode) error->code)
+          switch ((PicmanPdbErrorCode) error->code)
             {
-            case GIMP_PDB_ERROR_FAILED:
-            case GIMP_PDB_ERROR_PROCEDURE_NOT_FOUND:
-            case GIMP_PDB_ERROR_INVALID_ARGUMENT:
-            case GIMP_PDB_ERROR_INVALID_RETURN_VALUE:
-            case GIMP_PDB_ERROR_INTERNAL_ERROR:
-              g_value_set_enum (&value, GIMP_PDB_CALLING_ERROR);
+            case PICMAN_PDB_ERROR_FAILED:
+            case PICMAN_PDB_ERROR_PROCEDURE_NOT_FOUND:
+            case PICMAN_PDB_ERROR_INVALID_ARGUMENT:
+            case PICMAN_PDB_ERROR_INVALID_RETURN_VALUE:
+            case PICMAN_PDB_ERROR_INTERNAL_ERROR:
+              g_value_set_enum (&value, PICMAN_PDB_CALLING_ERROR);
               break;
 
-            case GIMP_PDB_ERROR_CANCELLED:
-              g_value_set_enum (&value, GIMP_PDB_CANCEL);
+            case PICMAN_PDB_ERROR_CANCELLED:
+              g_value_set_enum (&value, PICMAN_PDB_CANCEL);
               break;
 
             default:
@@ -499,17 +499,17 @@ gimp_procedure_get_return_values (GimpProcedure *procedure,
         }
       else
         {
-          g_value_set_enum (&value, GIMP_PDB_EXECUTION_ERROR);
+          g_value_set_enum (&value, PICMAN_PDB_EXECUTION_ERROR);
         }
 
-      gimp_value_array_append (args, &value);
+      picman_value_array_append (args, &value);
       g_value_unset (&value);
 
       if (error && error->message)
         {
           g_value_init (&value, G_TYPE_STRING);
           g_value_set_string (&value, error->message);
-          gimp_value_array_append (args, &value);
+          picman_value_array_append (args, &value);
           g_value_unset (&value);
         }
     }
@@ -518,10 +518,10 @@ gimp_procedure_get_return_values (GimpProcedure *procedure,
 }
 
 void
-gimp_procedure_add_argument (GimpProcedure *procedure,
+picman_procedure_add_argument (PicmanProcedure *procedure,
                              GParamSpec    *pspec)
 {
-  g_return_if_fail (GIMP_IS_PROCEDURE (procedure));
+  g_return_if_fail (PICMAN_IS_PROCEDURE (procedure));
   g_return_if_fail (G_IS_PARAM_SPEC (pspec));
 
   procedure->args = g_renew (GParamSpec *, procedure->args,
@@ -535,10 +535,10 @@ gimp_procedure_add_argument (GimpProcedure *procedure,
 }
 
 void
-gimp_procedure_add_return_value (GimpProcedure *procedure,
+picman_procedure_add_return_value (PicmanProcedure *procedure,
                                  GParamSpec    *pspec)
 {
-  g_return_if_fail (GIMP_IS_PROCEDURE (procedure));
+  g_return_if_fail (PICMAN_IS_PROCEDURE (procedure));
   g_return_if_fail (G_IS_PARAM_SPEC (pspec));
 
   procedure->values = g_renew (GParamSpec *, procedure->values,
@@ -552,40 +552,40 @@ gimp_procedure_add_return_value (GimpProcedure *procedure,
 }
 
 /**
- * gimp_procedure_create_override:
+ * picman_procedure_create_override:
  * @procedure:
  * @new_marshal_func:
  *
- * Creates a new GimpProcedure that can be used to override the
+ * Creates a new PicmanProcedure that can be used to override the
  * existing @procedure.
  *
- * Returns: The new #GimpProcedure.
+ * Returns: The new #PicmanProcedure.
  **/
-GimpProcedure *
-gimp_procedure_create_override (GimpProcedure   *procedure,
-                                GimpMarshalFunc  new_marshal_func)
+PicmanProcedure *
+picman_procedure_create_override (PicmanProcedure   *procedure,
+                                PicmanMarshalFunc  new_marshal_func)
 {
-  GimpProcedure *new_procedure = NULL;
+  PicmanProcedure *new_procedure = NULL;
   const gchar   *name          = NULL;
   int            i             = 0;
 
-  new_procedure = gimp_procedure_new (new_marshal_func);
-  name          = gimp_object_get_name (procedure);
+  new_procedure = picman_procedure_new (new_marshal_func);
+  name          = picman_object_get_name (procedure);
 
-  gimp_object_set_static_name (GIMP_OBJECT (new_procedure), name);
+  picman_object_set_static_name (PICMAN_OBJECT (new_procedure), name);
 
   for (i = 0; i < procedure->num_args; i++)
-    gimp_procedure_add_argument (new_procedure, procedure->args[i]);
+    picman_procedure_add_argument (new_procedure, procedure->args[i]);
 
   for (i = 0; i < procedure->num_values; i++)
-    gimp_procedure_add_return_value (new_procedure, procedure->values[i]);
+    picman_procedure_add_return_value (new_procedure, procedure->values[i]);
 
   return new_procedure;
 }
 
 gint
-gimp_procedure_name_compare (GimpProcedure *proc1,
-                             GimpProcedure *proc2)
+picman_procedure_name_compare (PicmanProcedure *proc1,
+                             PicmanProcedure *proc2)
 {
   /* Assume there always is a name, don't bother with NULL checks */
   return strcmp (proc1->original_name,
@@ -595,7 +595,7 @@ gimp_procedure_name_compare (GimpProcedure *proc1,
 /*  private functions  */
 
 static void
-gimp_procedure_free_strings (GimpProcedure *procedure)
+picman_procedure_free_strings (PicmanProcedure *procedure)
 {
   if (! procedure->static_strings)
     {
@@ -620,18 +620,18 @@ gimp_procedure_free_strings (GimpProcedure *procedure)
 }
 
 static gboolean
-gimp_procedure_validate_args (GimpProcedure  *procedure,
+picman_procedure_validate_args (PicmanProcedure  *procedure,
                               GParamSpec    **param_specs,
                               gint            n_param_specs,
-                              GimpValueArray *args,
+                              PicmanValueArray *args,
                               gboolean        return_vals,
                               GError        **error)
 {
   gint i;
 
-  for (i = 0; i < MIN (gimp_value_array_length (args), n_param_specs); i++)
+  for (i = 0; i < MIN (picman_value_array_length (args), n_param_specs); i++)
     {
-      GValue     *arg       = gimp_value_array_index (args, i);
+      GValue     *arg       = picman_value_array_index (args, i);
       GParamSpec *pspec     = param_specs[i];
       GType       arg_type  = G_VALUE_TYPE (arg);
       GType       spec_type = G_PARAM_SPEC_VALUE_TYPE (pspec);
@@ -641,11 +641,11 @@ gimp_procedure_validate_args (GimpProcedure  *procedure,
           if (return_vals)
             {
               g_set_error (error,
-                           GIMP_PDB_ERROR, GIMP_PDB_ERROR_INVALID_RETURN_VALUE,
+                           PICMAN_PDB_ERROR, PICMAN_PDB_ERROR_INVALID_RETURN_VALUE,
                            _("Procedure '%s' returned a wrong value type "
                              "for return value '%s' (#%d). "
                              "Expected %s, got %s."),
-                           gimp_object_get_name (procedure),
+                           picman_object_get_name (procedure),
                            g_param_spec_get_name (pspec),
                            i + 1, g_type_name (spec_type),
                            g_type_name (arg_type));
@@ -653,11 +653,11 @@ gimp_procedure_validate_args (GimpProcedure  *procedure,
           else
             {
               g_set_error (error,
-                           GIMP_PDB_ERROR, GIMP_PDB_ERROR_INVALID_ARGUMENT,
+                           PICMAN_PDB_ERROR, PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                            _("Procedure '%s' has been called with a "
                              "wrong value type for argument '%s' (#%d). "
                              "Expected %s, got %s."),
-                           gimp_object_get_name (procedure),
+                           picman_object_get_name (procedure),
                            g_param_spec_get_name (pspec),
                            i + 1, g_type_name (spec_type),
                            g_type_name (arg_type));
@@ -665,7 +665,7 @@ gimp_procedure_validate_args (GimpProcedure  *procedure,
 
           return FALSE;
         }
-      else if (! (pspec->flags & GIMP_PARAM_NO_VALIDATE))
+      else if (! (pspec->flags & PICMAN_PARAM_NO_VALIDATE))
         {
           GValue string_value = { 0, };
 
@@ -679,63 +679,63 @@ gimp_procedure_validate_args (GimpProcedure  *procedure,
 
           if (g_param_value_validate (pspec, arg))
             {
-              if (GIMP_IS_PARAM_SPEC_DRAWABLE_ID (pspec) &&
+              if (PICMAN_IS_PARAM_SPEC_DRAWABLE_ID (pspec) &&
                   g_value_get_int (arg) == -1)
                 {
                   if (return_vals)
                     {
                       g_set_error (error,
-                                   GIMP_PDB_ERROR,
-                                   GIMP_PDB_ERROR_INVALID_RETURN_VALUE,
+                                   PICMAN_PDB_ERROR,
+                                   PICMAN_PDB_ERROR_INVALID_RETURN_VALUE,
                                    _("Procedure '%s' returned an "
                                      "invalid ID for argument '%s'. "
                                      "Most likely a plug-in is trying "
                                      "to work on a layer that doesn't "
                                      "exist any longer."),
-                                   gimp_object_get_name (procedure),
+                                   picman_object_get_name (procedure),
                                    g_param_spec_get_name (pspec));
                     }
                   else
                     {
                       g_set_error (error,
-                                   GIMP_PDB_ERROR,
-                                   GIMP_PDB_ERROR_INVALID_ARGUMENT,
+                                   PICMAN_PDB_ERROR,
+                                   PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                                    _("Procedure '%s' has been called with an "
                                      "invalid ID for argument '%s'. "
                                      "Most likely a plug-in is trying "
                                      "to work on a layer that doesn't "
                                      "exist any longer."),
-                                   gimp_object_get_name (procedure),
+                                   picman_object_get_name (procedure),
                                    g_param_spec_get_name (pspec));
                     }
                 }
-              else if (GIMP_IS_PARAM_SPEC_IMAGE_ID (pspec) &&
+              else if (PICMAN_IS_PARAM_SPEC_IMAGE_ID (pspec) &&
                        g_value_get_int (arg) == -1)
                 {
                   if (return_vals)
                     {
                       g_set_error (error,
-                                   GIMP_PDB_ERROR,
-                                   GIMP_PDB_ERROR_INVALID_RETURN_VALUE,
+                                   PICMAN_PDB_ERROR,
+                                   PICMAN_PDB_ERROR_INVALID_RETURN_VALUE,
                                    _("Procedure '%s' returned an "
                                      "invalid ID for argument '%s'. "
                                      "Most likely a plug-in is trying "
                                      "to work on an image that doesn't "
                                      "exist any longer."),
-                                   gimp_object_get_name (procedure),
+                                   picman_object_get_name (procedure),
                                    g_param_spec_get_name (pspec));
                     }
                   else
                     {
                       g_set_error (error,
-                                   GIMP_PDB_ERROR,
-                                   GIMP_PDB_ERROR_INVALID_ARGUMENT,
+                                   PICMAN_PDB_ERROR,
+                                   PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                                    _("Procedure '%s' has been called with an "
                                      "invalid ID for argument '%s'. "
                                      "Most likely a plug-in is trying "
                                      "to work on an image that doesn't "
                                      "exist any longer."),
-                                   gimp_object_get_name (procedure),
+                                   picman_object_get_name (procedure),
                                    g_param_spec_get_name (pspec));
                     }
                 }
@@ -749,13 +749,13 @@ gimp_procedure_validate_args (GimpProcedure  *procedure,
                   if (return_vals)
                     {
                       g_set_error (error,
-                                   GIMP_PDB_ERROR,
-                                   GIMP_PDB_ERROR_INVALID_RETURN_VALUE,
+                                   PICMAN_PDB_ERROR,
+                                   PICMAN_PDB_ERROR_INVALID_RETURN_VALUE,
                                    _("Procedure '%s' returned "
                                      "'%s' as return value '%s' "
                                      "(#%d, type %s). "
                                      "This value is out of range."),
-                                   gimp_object_get_name (procedure),
+                                   picman_object_get_name (procedure),
                                    value,
                                    g_param_spec_get_name (pspec),
                                    i + 1, g_type_name (spec_type));
@@ -763,13 +763,13 @@ gimp_procedure_validate_args (GimpProcedure  *procedure,
                   else
                     {
                       g_set_error (error,
-                                   GIMP_PDB_ERROR,
-                                   GIMP_PDB_ERROR_INVALID_ARGUMENT,
+                                   PICMAN_PDB_ERROR,
+                                   PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                                    _("Procedure '%s' has been called with "
                                      "value '%s' for argument '%s' "
                                      "(#%d, type %s). "
                                      "This value is out of range."),
-                                   gimp_object_get_name (procedure),
+                                   picman_object_get_name (procedure),
                                    value,
                                    g_param_spec_get_name (pspec),
                                    i + 1, g_type_name (spec_type));

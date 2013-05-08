@@ -4,10 +4,10 @@
          xmlns:gnome="http://api.gnome.org/doap-extensions#"
          xmlns="http://usefulinc.com/ns/doap#">
 
-  <name xml:lang="en">GIMP</name>
+  <name xml:lang="en">PICMAN</name>
   <shortdesc xml:lang="en">GNU Image Manipulation Program</shortdesc>
-  <homepage rdf:resource="http://www.gimp.org" />
-  <mailing-list rdf:resource="http://gimp.org/mail_lists.html" />
+  <homepage rdf:resource="http://www.picman.org" />
+  <mailing-list rdf:resource="http://picman.org/mail_lists.html" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#productivity" />
 
   <maintainer>

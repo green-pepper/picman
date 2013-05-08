@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpgradients.c
+ * picmangradients.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,32 +22,32 @@
 
 #include <string.h>
 
-#include "gimp.h"
-#include "gimpgradients.h"
+#include "picman.h"
+#include "picmangradients.h"
 
 /**
- * gimp_gradients_get_gradient:
+ * picman_gradients_get_gradient:
  *
- * This procedure is deprecated! Use gimp_context_get_gradient() instead.
+ * This procedure is deprecated! Use picman_context_get_gradient() instead.
  *
  * Returns: The name of the active gradient.
  */
 gchar *
-gimp_gradients_get_gradient (void)
+picman_gradients_get_gradient (void)
 {
-  return gimp_context_get_gradient ();
+  return picman_context_get_gradient ();
 }
 
 /**
- * gimp_gradients_set_gradient:
+ * picman_gradients_set_gradient:
  * @name: The name of the gradient to set.
  *
- * This procedure is deprecated! Use gimp_context_set_gradient() instead.
+ * This procedure is deprecated! Use picman_context_set_gradient() instead.
  *
  * Returns: TRUE on success.
  */
 gboolean
-gimp_gradients_set_gradient (const gchar *name)
+picman_gradients_set_gradient (const gchar *name)
 {
-  return gimp_context_set_gradient (name);
+  return picman_context_set_gradient (name);
 }

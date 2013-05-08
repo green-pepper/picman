@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimppattern_pdb.c
+ * picmanpattern_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,12 @@
 
 #include <string.h>
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimppattern
- * @title: gimppattern
+ * SECTION: picmanpattern
+ * @title: picmanpattern
  * @short_description: Functions operating on a single pattern.
  *
  * Functions operating on a single pattern.
@@ -37,7 +37,7 @@
 
 
 /**
- * gimp_pattern_get_info:
+ * picman_pattern_get_info:
  * @name: The pattern name.
  * @width: The pattern width.
  * @height: The pattern height.
@@ -50,28 +50,28 @@
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_pattern_get_info (const gchar *name,
+picman_pattern_get_info (const gchar *name,
                        gint        *width,
                        gint        *height,
                        gint        *bpp)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-pattern-get-info",
+  return_vals = picman_run_procedure ("picman-pattern-get-info",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
   *width = 0;
   *height = 0;
   *bpp = 0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -80,13 +80,13 @@ gimp_pattern_get_info (const gchar *name,
       *bpp = return_vals[3].data.d_int32;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_pattern_get_pixels:
+ * picman_pattern_get_pixels:
  * @name: The pattern name.
  * @width: The pattern width.
  * @height: The pattern height.
@@ -102,24 +102,24 @@ gimp_pattern_get_info (const gchar *name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_pattern_get_pixels (const gchar  *name,
+picman_pattern_get_pixels (const gchar  *name,
                          gint         *width,
                          gint         *height,
                          gint         *bpp,
                          gint         *num_color_bytes,
                          guint8      **color_bytes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-pattern-get-pixels",
+  return_vals = picman_run_procedure ("picman-pattern-get-pixels",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
   *width = 0;
   *height = 0;
@@ -127,7 +127,7 @@ gimp_pattern_get_pixels (const gchar  *name,
   *num_color_bytes = 0;
   *color_bytes = NULL;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -141,7 +141,7 @@ gimp_pattern_get_pixels (const gchar  *name,
               *num_color_bytes * sizeof (guint8));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

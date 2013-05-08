@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimpprogress.h"
+#include "core/picmanprogress.h"
 
-#include "widgets/gimphelp.h"
+#include "widgets/picmanhelp.h"
 
 #include "actions.h"
 #include "help-commands.h"
@@ -35,12 +35,12 @@ void
 help_help_cmd_callback (GtkAction *action,
                         gpointer   data)
 {
-  Gimp        *gimp;
-  GimpDisplay *display;
-  return_if_no_gimp (gimp, data);
+  Picman        *picman;
+  PicmanDisplay *display;
+  return_if_no_picman (picman, data);
   return_if_no_display (display, data);
 
-  gimp_help_show (gimp, GIMP_PROGRESS (display), NULL, NULL);
+  picman_help_show (picman, PICMAN_PROGRESS (display), NULL, NULL);
 }
 
 void
@@ -50,5 +50,5 @@ help_context_help_cmd_callback (GtkAction *action,
   GtkWidget *widget;
   return_if_no_widget (widget, data);
 
-  gimp_context_help (widget);
+  picman_context_help (widget);
 }

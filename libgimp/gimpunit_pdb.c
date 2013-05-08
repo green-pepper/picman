@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpunit_pdb.c
+ * picmanunit_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpunit
- * @title: gimpunit
+ * SECTION: picmanunit
+ * @title: picmanunit
  * @short_description: Provides a collection of predefined units and functions for creating user-defined units.
  *
  * Provides a collection of predefined units and functions for creating
@@ -36,7 +36,7 @@
 
 
 /**
- * _gimp_unit_get_number_of_units:
+ * _picman_unit_get_number_of_units:
  *
  * Returns the number of units.
  *
@@ -45,54 +45,54 @@
  * Returns: The number of units.
  **/
 gint
-_gimp_unit_get_number_of_units (void)
+_picman_unit_get_number_of_units (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  gint num_units = GIMP_UNIT_END;
+  gint num_units = PICMAN_UNIT_END;
 
-  return_vals = gimp_run_procedure ("gimp-unit-get-number-of-units",
+  return_vals = picman_run_procedure ("picman-unit-get-number-of-units",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     num_units = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return num_units;
 }
 
 /**
- * _gimp_unit_get_number_of_built_in_units:
+ * _picman_unit_get_number_of_built_in_units:
  *
  * Returns the number of built-in units.
  *
- * This procedure returns the number of defined units built-in to GIMP.
+ * This procedure returns the number of defined units built-in to PICMAN.
  *
  * Returns: The number of built-in units.
  **/
 gint
-_gimp_unit_get_number_of_built_in_units (void)
+_picman_unit_get_number_of_built_in_units (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  gint num_units = GIMP_UNIT_END;
+  gint num_units = PICMAN_UNIT_END;
 
-  return_vals = gimp_run_procedure ("gimp-unit-get-number-of-built-in-units",
+  return_vals = picman_run_procedure ("picman-unit-get-number-of-built-in-units",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     num_units = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return num_units;
 }
 
 /**
- * _gimp_unit_new:
+ * _picman_unit_new:
  * @identifier: The new unit's identifier.
  * @factor: The new unit's factor.
  * @digits: The new unit's digits.
@@ -105,13 +105,13 @@ _gimp_unit_get_number_of_built_in_units (void)
  *
  * This procedure creates a new unit and returns it's integer ID. Note
  * that the new unit will have it's deletion flag set to TRUE, so you
- * will have to set it to FALSE with gimp_unit_set_deletion_flag() to
+ * will have to set it to FALSE with picman_unit_set_deletion_flag() to
  * make it persistent.
  *
  * Returns: The new unit's ID.
  **/
-GimpUnit
-_gimp_unit_new (const gchar *identifier,
+PicmanUnit
+_picman_unit_new (const gchar *identifier,
                 gdouble      factor,
                 gint         digits,
                 const gchar *symbol,
@@ -119,97 +119,97 @@ _gimp_unit_new (const gchar *identifier,
                 const gchar *singular,
                 const gchar *plural)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpUnit unit_id = GIMP_UNIT_INCH;
+  PicmanUnit unit_id = PICMAN_UNIT_INCH;
 
-  return_vals = gimp_run_procedure ("gimp-unit-new",
+  return_vals = picman_run_procedure ("picman-unit-new",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, identifier,
-                                    GIMP_PDB_FLOAT, factor,
-                                    GIMP_PDB_INT32, digits,
-                                    GIMP_PDB_STRING, symbol,
-                                    GIMP_PDB_STRING, abbreviation,
-                                    GIMP_PDB_STRING, singular,
-                                    GIMP_PDB_STRING, plural,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, identifier,
+                                    PICMAN_PDB_FLOAT, factor,
+                                    PICMAN_PDB_INT32, digits,
+                                    PICMAN_PDB_STRING, symbol,
+                                    PICMAN_PDB_STRING, abbreviation,
+                                    PICMAN_PDB_STRING, singular,
+                                    PICMAN_PDB_STRING, plural,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     unit_id = return_vals[1].data.d_unit;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return unit_id;
 }
 
 /**
- * _gimp_unit_get_deletion_flag:
+ * _picman_unit_get_deletion_flag:
  * @unit_id: The unit's integer ID.
  *
  * Returns the deletion flag of the unit.
  *
  * This procedure returns the deletion flag of the unit. If this value
  * is TRUE the unit's definition will not be saved in the user's unitrc
- * file on gimp exit.
+ * file on picman exit.
  *
  * Returns: The unit's deletion flag.
  **/
 gboolean
-_gimp_unit_get_deletion_flag (GimpUnit unit_id)
+_picman_unit_get_deletion_flag (PicmanUnit unit_id)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean deletion_flag = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-unit-get-deletion-flag",
+  return_vals = picman_run_procedure ("picman-unit-get-deletion-flag",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, unit_id,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, unit_id,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     deletion_flag = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return deletion_flag;
 }
 
 /**
- * _gimp_unit_set_deletion_flag:
+ * _picman_unit_set_deletion_flag:
  * @unit_id: The unit's integer ID.
  * @deletion_flag: The new deletion flag of the unit.
  *
  * Sets the deletion flag of a unit.
  *
  * This procedure sets the unit's deletion flag. If the deletion flag
- * of a unit is TRUE on gimp exit, this unit's definition will not be
+ * of a unit is TRUE on picman exit, this unit's definition will not be
  * saved in the user's unitrc.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-_gimp_unit_set_deletion_flag (GimpUnit unit_id,
+_picman_unit_set_deletion_flag (PicmanUnit unit_id,
                               gboolean deletion_flag)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-unit-set-deletion-flag",
+  return_vals = picman_run_procedure ("picman-unit-set-deletion-flag",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, unit_id,
-                                    GIMP_PDB_INT32, deletion_flag,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, unit_id,
+                                    PICMAN_PDB_INT32, deletion_flag,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * _gimp_unit_get_identifier:
+ * _picman_unit_get_identifier:
  * @unit_id: The unit's integer ID.
  *
  * Returns the textual identifier of the unit.
@@ -221,27 +221,27 @@ _gimp_unit_set_deletion_flag (GimpUnit unit_id,
  * Returns: The unit's textual identifier.
  **/
 gchar *
-_gimp_unit_get_identifier (GimpUnit unit_id)
+_picman_unit_get_identifier (PicmanUnit unit_id)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *identifier = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-unit-get-identifier",
+  return_vals = picman_run_procedure ("picman-unit-get-identifier",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, unit_id,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, unit_id,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     identifier = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return identifier;
 }
 
 /**
- * _gimp_unit_get_factor:
+ * _picman_unit_get_factor:
  * @unit_id: The unit's integer ID.
  *
  * Returns the factor of the unit.
@@ -253,27 +253,27 @@ _gimp_unit_get_identifier (GimpUnit unit_id)
  * Returns: The unit's factor.
  **/
 gdouble
-_gimp_unit_get_factor (GimpUnit unit_id)
+_picman_unit_get_factor (PicmanUnit unit_id)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble factor = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-unit-get-factor",
+  return_vals = picman_run_procedure ("picman-unit-get-factor",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, unit_id,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, unit_id,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     factor = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return factor;
 }
 
 /**
- * _gimp_unit_get_digits:
+ * _picman_unit_get_digits:
  * @unit_id: The unit's integer ID.
  *
  * Returns the number of digits of the unit.
@@ -286,27 +286,27 @@ _gimp_unit_get_factor (GimpUnit unit_id)
  * Returns: The unit's number of digits.
  **/
 gint
-_gimp_unit_get_digits (GimpUnit unit_id)
+_picman_unit_get_digits (PicmanUnit unit_id)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint digits = 0;
 
-  return_vals = gimp_run_procedure ("gimp-unit-get-digits",
+  return_vals = picman_run_procedure ("picman-unit-get-digits",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, unit_id,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, unit_id,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     digits = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return digits;
 }
 
 /**
- * _gimp_unit_get_symbol:
+ * _picman_unit_get_symbol:
  * @unit_id: The unit's integer ID.
  *
  * Returns the symbol of the unit.
@@ -316,27 +316,27 @@ _gimp_unit_get_digits (GimpUnit unit_id)
  * Returns: The unit's symbol.
  **/
 gchar *
-_gimp_unit_get_symbol (GimpUnit unit_id)
+_picman_unit_get_symbol (PicmanUnit unit_id)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *symbol = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-unit-get-symbol",
+  return_vals = picman_run_procedure ("picman-unit-get-symbol",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, unit_id,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, unit_id,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     symbol = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return symbol;
 }
 
 /**
- * _gimp_unit_get_abbreviation:
+ * _picman_unit_get_abbreviation:
  * @unit_id: The unit's integer ID.
  *
  * Returns the abbreviation of the unit.
@@ -347,27 +347,27 @@ _gimp_unit_get_symbol (GimpUnit unit_id)
  * Returns: The unit's abbreviation.
  **/
 gchar *
-_gimp_unit_get_abbreviation (GimpUnit unit_id)
+_picman_unit_get_abbreviation (PicmanUnit unit_id)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *abbreviation = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-unit-get-abbreviation",
+  return_vals = picman_run_procedure ("picman-unit-get-abbreviation",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, unit_id,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, unit_id,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     abbreviation = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return abbreviation;
 }
 
 /**
- * _gimp_unit_get_singular:
+ * _picman_unit_get_singular:
  * @unit_id: The unit's integer ID.
  *
  * Returns the singular form of the unit.
@@ -377,27 +377,27 @@ _gimp_unit_get_abbreviation (GimpUnit unit_id)
  * Returns: The unit's singular form.
  **/
 gchar *
-_gimp_unit_get_singular (GimpUnit unit_id)
+_picman_unit_get_singular (PicmanUnit unit_id)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *singular = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-unit-get-singular",
+  return_vals = picman_run_procedure ("picman-unit-get-singular",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, unit_id,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, unit_id,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     singular = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return singular;
 }
 
 /**
- * _gimp_unit_get_plural:
+ * _picman_unit_get_plural:
  * @unit_id: The unit's integer ID.
  *
  * Returns the plural form of the unit.
@@ -407,21 +407,21 @@ _gimp_unit_get_singular (GimpUnit unit_id)
  * Returns: The unit's plural form.
  **/
 gchar *
-_gimp_unit_get_plural (GimpUnit unit_id)
+_picman_unit_get_plural (PicmanUnit unit_id)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *plural = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-unit-get-plural",
+  return_vals = picman_run_procedure ("picman-unit-get-plural",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, unit_id,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, unit_id,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     plural = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return plural;
 }

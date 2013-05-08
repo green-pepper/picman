@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpviewable.c
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmanviewable.c
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,19 +26,19 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimp-utils.h"
-#include "gimpcontext.h"
-#include "gimpmarshal.h"
-#include "gimptempbuf.h"
-#include "gimpviewable.h"
+#include "picman-utils.h"
+#include "picmancontext.h"
+#include "picmanmarshal.h"
+#include "picmantempbuf.h"
+#include "picmanviewable.h"
 
-#include "themes/Default/images/gimp-core-pixbufs.h"
+#include "themes/Default/images/picman-core-pixbufs.h"
 
 
 enum
@@ -57,67 +57,67 @@ enum
 };
 
 
-typedef struct _GimpViewablePrivate GimpViewablePrivate;
+typedef struct _PicmanViewablePrivate PicmanViewablePrivate;
 
-struct _GimpViewablePrivate
+struct _PicmanViewablePrivate
 {
   gchar        *stock_id;
   GdkPixbuf    *icon_pixbuf;
   gint          freeze_count;
-  GimpViewable *parent;
+  PicmanViewable *parent;
 
-  GimpTempBuf  *preview_temp_buf;
+  PicmanTempBuf  *preview_temp_buf;
   GdkPixbuf    *preview_pixbuf;
 };
 
 #define GET_PRIVATE(viewable) G_TYPE_INSTANCE_GET_PRIVATE (viewable, \
-                                                           GIMP_TYPE_VIEWABLE, \
-                                                           GimpViewablePrivate)
+                                                           PICMAN_TYPE_VIEWABLE, \
+                                                           PicmanViewablePrivate)
 
 
-static void    gimp_viewable_config_iface_init (GimpConfigInterface *iface);
+static void    picman_viewable_config_iface_init (PicmanConfigInterface *iface);
 
-static void    gimp_viewable_finalize               (GObject        *object);
-static void    gimp_viewable_set_property           (GObject        *object,
+static void    picman_viewable_finalize               (GObject        *object);
+static void    picman_viewable_set_property           (GObject        *object,
                                                      guint           property_id,
                                                      const GValue   *value,
                                                      GParamSpec     *pspec);
-static void    gimp_viewable_get_property           (GObject        *object,
+static void    picman_viewable_get_property           (GObject        *object,
                                                      guint           property_id,
                                                      GValue         *value,
                                                      GParamSpec     *pspec);
 
-static gint64  gimp_viewable_get_memsize             (GimpObject    *object,
+static gint64  picman_viewable_get_memsize             (PicmanObject    *object,
                                                       gint64        *gui_size);
 
-static void    gimp_viewable_real_invalidate_preview (GimpViewable  *viewable);
+static void    picman_viewable_real_invalidate_preview (PicmanViewable  *viewable);
 
-static GdkPixbuf * gimp_viewable_real_get_new_pixbuf (GimpViewable  *viewable,
-                                                      GimpContext   *context,
+static GdkPixbuf * picman_viewable_real_get_new_pixbuf (PicmanViewable  *viewable,
+                                                      PicmanContext   *context,
                                                       gint           width,
                                                       gint           height);
-static void    gimp_viewable_real_get_preview_size   (GimpViewable  *viewable,
+static void    picman_viewable_real_get_preview_size   (PicmanViewable  *viewable,
                                                       gint           size,
                                                       gboolean       popup,
                                                       gboolean       dot_for_dot,
                                                       gint          *width,
                                                       gint          *height);
-static gboolean gimp_viewable_real_get_popup_size    (GimpViewable  *viewable,
+static gboolean picman_viewable_real_get_popup_size    (PicmanViewable  *viewable,
                                                       gint           width,
                                                       gint           height,
                                                       gboolean       dot_for_dot,
                                                       gint          *popup_width,
                                                       gint          *popup_height);
-static gchar * gimp_viewable_real_get_description    (GimpViewable  *viewable,
+static gchar * picman_viewable_real_get_description    (PicmanViewable  *viewable,
                                                       gchar        **tooltip);
-static GimpContainer * gimp_viewable_real_get_children (GimpViewable *viewable);
+static PicmanContainer * picman_viewable_real_get_children (PicmanViewable *viewable);
 
-static gboolean gimp_viewable_serialize_property     (GimpConfig    *config,
+static gboolean picman_viewable_serialize_property     (PicmanConfig    *config,
                                                       guint          property_id,
                                                       const GValue  *value,
                                                       GParamSpec    *pspec,
-                                                      GimpConfigWriter *writer);
-static gboolean gimp_viewable_deserialize_property   (GimpConfig       *config,
+                                                      PicmanConfigWriter *writer);
+static gboolean picman_viewable_deserialize_property   (PicmanConfig       *config,
                                                       guint             property_id,
                                                       GValue           *value,
                                                       GParamSpec       *pspec,
@@ -125,98 +125,98 @@ static gboolean gimp_viewable_deserialize_property   (GimpConfig       *config,
                                                       GTokenType       *expected);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpViewable, gimp_viewable, GIMP_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG,
-                                                gimp_viewable_config_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanViewable, picman_viewable, PICMAN_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG,
+                                                picman_viewable_config_iface_init))
 
-#define parent_class gimp_viewable_parent_class
+#define parent_class picman_viewable_parent_class
 
 static guint viewable_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_viewable_class_init (GimpViewableClass *klass)
+picman_viewable_class_init (PicmanViewableClass *klass)
 {
   GObjectClass    *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass *gimp_object_class = GIMP_OBJECT_CLASS (klass);
+  PicmanObjectClass *picman_object_class = PICMAN_OBJECT_CLASS (klass);
 
   viewable_signals[INVALIDATE_PREVIEW] =
     g_signal_new ("invalidate-preview",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpViewableClass, invalidate_preview),
+                  G_STRUCT_OFFSET (PicmanViewableClass, invalidate_preview),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
   viewable_signals[SIZE_CHANGED] =
     g_signal_new ("size-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpViewableClass, size_changed),
+                  G_STRUCT_OFFSET (PicmanViewableClass, size_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->finalize         = gimp_viewable_finalize;
-  object_class->get_property     = gimp_viewable_get_property;
-  object_class->set_property     = gimp_viewable_set_property;
+  object_class->finalize         = picman_viewable_finalize;
+  object_class->get_property     = picman_viewable_get_property;
+  object_class->set_property     = picman_viewable_set_property;
 
-  gimp_object_class->get_memsize = gimp_viewable_get_memsize;
+  picman_object_class->get_memsize = picman_viewable_get_memsize;
 
-  klass->default_stock_id        = "gimp-question";
+  klass->default_stock_id        = "picman-question";
   klass->name_changed_signal     = "name-changed";
 
-  klass->invalidate_preview      = gimp_viewable_real_invalidate_preview;
+  klass->invalidate_preview      = picman_viewable_real_invalidate_preview;
   klass->size_changed            = NULL;
 
   klass->get_size                = NULL;
-  klass->get_preview_size        = gimp_viewable_real_get_preview_size;
-  klass->get_popup_size          = gimp_viewable_real_get_popup_size;
+  klass->get_preview_size        = picman_viewable_real_get_preview_size;
+  klass->get_popup_size          = picman_viewable_real_get_popup_size;
   klass->get_preview             = NULL;
   klass->get_new_preview         = NULL;
   klass->get_pixbuf              = NULL;
-  klass->get_new_pixbuf          = gimp_viewable_real_get_new_pixbuf;
-  klass->get_description         = gimp_viewable_real_get_description;
-  klass->get_children            = gimp_viewable_real_get_children;
+  klass->get_new_pixbuf          = picman_viewable_real_get_new_pixbuf;
+  klass->get_description         = picman_viewable_real_get_description;
+  klass->get_children            = picman_viewable_real_get_children;
   klass->set_expanded            = NULL;
   klass->get_expanded            = NULL;
 
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_STOCK_ID, "stock-id",
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_STOCK_ID, "stock-id",
                                    NULL, NULL,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_ICON_PIXBUF,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_ICON_PIXBUF,
                                    "icon-pixbuf", NULL,
                                    GDK_TYPE_PIXBUF,
                                    G_PARAM_CONSTRUCT |
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
   g_object_class_install_property (object_class, PROP_FROZEN,
                                    g_param_spec_boolean ("frozen",
                                                          NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READABLE));
+                                                         PICMAN_PARAM_READABLE));
 
-  g_type_class_add_private (klass, sizeof (GimpViewablePrivate));
+  g_type_class_add_private (klass, sizeof (PicmanViewablePrivate));
 }
 
 static void
-gimp_viewable_init (GimpViewable *viewable)
+picman_viewable_init (PicmanViewable *viewable)
 {
 }
 
 static void
-gimp_viewable_config_iface_init (GimpConfigInterface *iface)
+picman_viewable_config_iface_init (PicmanConfigInterface *iface)
 {
-  iface->deserialize_property = gimp_viewable_deserialize_property;
-  iface->serialize_property   = gimp_viewable_serialize_property;
+  iface->deserialize_property = picman_viewable_deserialize_property;
+  iface->serialize_property   = picman_viewable_serialize_property;
 }
 
 static void
-gimp_viewable_finalize (GObject *object)
+picman_viewable_finalize (GObject *object)
 {
-  GimpViewablePrivate *private = GET_PRIVATE (object);
+  PicmanViewablePrivate *private = GET_PRIVATE (object);
 
   if (private->stock_id)
     {
@@ -232,7 +232,7 @@ gimp_viewable_finalize (GObject *object)
 
   if (private->preview_temp_buf)
     {
-      gimp_temp_buf_unref (private->preview_temp_buf);
+      picman_temp_buf_unref (private->preview_temp_buf);
       private->preview_temp_buf = NULL;
     }
 
@@ -246,24 +246,24 @@ gimp_viewable_finalize (GObject *object)
 }
 
 static void
-gimp_viewable_set_property (GObject      *object,
+picman_viewable_set_property (GObject      *object,
                             guint         property_id,
                             const GValue *value,
                             GParamSpec   *pspec)
 {
-  GimpViewable        *viewable = GIMP_VIEWABLE (object);
-  GimpViewablePrivate *private  = GET_PRIVATE (object);
+  PicmanViewable        *viewable = PICMAN_VIEWABLE (object);
+  PicmanViewablePrivate *private  = GET_PRIVATE (object);
 
   switch (property_id)
     {
     case PROP_STOCK_ID:
-      gimp_viewable_set_stock_id (viewable, g_value_get_string (value));
+      picman_viewable_set_stock_id (viewable, g_value_get_string (value));
       break;
     case PROP_ICON_PIXBUF:
       if (private->icon_pixbuf)
         g_object_unref (private->icon_pixbuf);
       private->icon_pixbuf = g_value_dup_object (value);
-      gimp_viewable_invalidate_preview (viewable);
+      picman_viewable_invalidate_preview (viewable);
       break;
     case PROP_FROZEN:
       /* read-only, fall through */
@@ -275,24 +275,24 @@ gimp_viewable_set_property (GObject      *object,
 }
 
 static void
-gimp_viewable_get_property (GObject    *object,
+picman_viewable_get_property (GObject    *object,
                             guint       property_id,
                             GValue     *value,
                             GParamSpec *pspec)
 {
-  GimpViewable        *viewable = GIMP_VIEWABLE (object);
-  GimpViewablePrivate *private  = GET_PRIVATE (object);
+  PicmanViewable        *viewable = PICMAN_VIEWABLE (object);
+  PicmanViewablePrivate *private  = GET_PRIVATE (object);
 
   switch (property_id)
     {
     case PROP_STOCK_ID:
-      g_value_set_string (value, gimp_viewable_get_stock_id (viewable));
+      g_value_set_string (value, picman_viewable_get_stock_id (viewable));
       break;
     case PROP_ICON_PIXBUF:
       g_value_set_object (value, private->icon_pixbuf);
       break;
     case PROP_FROZEN:
-      g_value_set_boolean (value, gimp_viewable_preview_is_frozen (viewable));
+      g_value_set_boolean (value, picman_viewable_preview_is_frozen (viewable));
       break;
 
     default:
@@ -302,32 +302,32 @@ gimp_viewable_get_property (GObject    *object,
 }
 
 static gint64
-gimp_viewable_get_memsize (GimpObject *object,
+picman_viewable_get_memsize (PicmanObject *object,
                            gint64     *gui_size)
 {
-  GimpViewablePrivate *private = GET_PRIVATE (object);
+  PicmanViewablePrivate *private = GET_PRIVATE (object);
 
-  *gui_size += gimp_temp_buf_get_memsize (private->preview_temp_buf);
+  *gui_size += picman_temp_buf_get_memsize (private->preview_temp_buf);
 
   if (private->preview_pixbuf)
     {
       *gui_size +=
-        (gimp_g_object_get_memsize (G_OBJECT (private->preview_pixbuf)) +
+        (picman_g_object_get_memsize (G_OBJECT (private->preview_pixbuf)) +
          (gsize) gdk_pixbuf_get_height (private->preview_pixbuf) *
          gdk_pixbuf_get_rowstride (private->preview_pixbuf));
     }
 
-  return GIMP_OBJECT_CLASS (parent_class)->get_memsize (object, gui_size);
+  return PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object, gui_size);
 }
 
 static void
-gimp_viewable_real_invalidate_preview (GimpViewable *viewable)
+picman_viewable_real_invalidate_preview (PicmanViewable *viewable)
 {
-  GimpViewablePrivate *private = GET_PRIVATE (viewable);
+  PicmanViewablePrivate *private = GET_PRIVATE (viewable);
 
   if (private->preview_temp_buf)
     {
-      gimp_temp_buf_unref (private->preview_temp_buf);
+      picman_temp_buf_unref (private->preview_temp_buf);
       private->preview_temp_buf = NULL;
     }
 
@@ -339,7 +339,7 @@ gimp_viewable_real_invalidate_preview (GimpViewable *viewable)
 }
 
 static void
-gimp_viewable_real_get_preview_size (GimpViewable *viewable,
+picman_viewable_real_get_preview_size (PicmanViewable *viewable,
                                      gint          size,
                                      gboolean      popup,
                                      gboolean      dot_for_dot,
@@ -351,7 +351,7 @@ gimp_viewable_real_get_preview_size (GimpViewable *viewable,
 }
 
 static gboolean
-gimp_viewable_real_get_popup_size (GimpViewable *viewable,
+picman_viewable_real_get_popup_size (PicmanViewable *viewable,
                                    gint          width,
                                    gint          height,
                                    gboolean      dot_for_dot,
@@ -360,7 +360,7 @@ gimp_viewable_real_get_popup_size (GimpViewable *viewable,
 {
   gint w, h;
 
-  if (gimp_viewable_get_size (viewable, &w, &h))
+  if (picman_viewable_get_size (viewable, &w, &h))
     {
       if (w > width || h > height)
         {
@@ -375,16 +375,16 @@ gimp_viewable_real_get_popup_size (GimpViewable *viewable,
 }
 
 static GdkPixbuf *
-gimp_viewable_real_get_new_pixbuf (GimpViewable *viewable,
-                                   GimpContext  *context,
+picman_viewable_real_get_new_pixbuf (PicmanViewable *viewable,
+                                   PicmanContext  *context,
                                    gint          width,
                                    gint          height)
 {
-  GimpViewablePrivate *private = GET_PRIVATE (viewable);
+  PicmanViewablePrivate *private = GET_PRIVATE (viewable);
   GdkPixbuf           *pixbuf  = NULL;
-  GimpTempBuf         *temp_buf;
+  PicmanTempBuf         *temp_buf;
 
-  temp_buf = gimp_viewable_get_preview (viewable, context, width, height);
+  temp_buf = picman_viewable_get_preview (viewable, context, width, height);
 
   if (temp_buf)
     {
@@ -392,13 +392,13 @@ gimp_viewable_real_get_new_pixbuf (GimpViewable *viewable,
       GeglBuffer *dest_buffer;
 
       pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
-                               babl_format_has_alpha (gimp_temp_buf_get_format (temp_buf)),
+                               babl_format_has_alpha (picman_temp_buf_get_format (temp_buf)),
                                8,
-                               gimp_temp_buf_get_width  (temp_buf),
-                               gimp_temp_buf_get_height (temp_buf));
+                               picman_temp_buf_get_width  (temp_buf),
+                               picman_temp_buf_get_height (temp_buf));
 
-      src_buffer  = gimp_temp_buf_create_buffer (temp_buf);
-      dest_buffer = gimp_pixbuf_create_buffer (pixbuf);
+      src_buffer  = picman_temp_buf_create_buffer (temp_buf);
+      dest_buffer = picman_pixbuf_create_buffer (pixbuf);
 
       gegl_buffer_copy (src_buffer, NULL, dest_buffer, NULL);
 
@@ -417,35 +417,35 @@ gimp_viewable_real_get_new_pixbuf (GimpViewable *viewable,
 }
 
 static gchar *
-gimp_viewable_real_get_description (GimpViewable  *viewable,
+picman_viewable_real_get_description (PicmanViewable  *viewable,
                                     gchar        **tooltip)
 {
-  return g_strdup (gimp_object_get_name (viewable));
+  return g_strdup (picman_object_get_name (viewable));
 }
 
-static GimpContainer *
-gimp_viewable_real_get_children (GimpViewable *viewable)
+static PicmanContainer *
+picman_viewable_real_get_children (PicmanViewable *viewable)
 {
   return NULL;
 }
 
 static gboolean
-gimp_viewable_serialize_property (GimpConfig       *config,
+picman_viewable_serialize_property (PicmanConfig       *config,
                                   guint             property_id,
                                   const GValue     *value,
                                   GParamSpec       *pspec,
-                                  GimpConfigWriter *writer)
+                                  PicmanConfigWriter *writer)
 {
-  GimpViewablePrivate *private = GET_PRIVATE (config);
+  PicmanViewablePrivate *private = GET_PRIVATE (config);
 
   switch (property_id)
     {
     case PROP_STOCK_ID:
       if (private->stock_id)
         {
-          gimp_config_writer_open (writer, pspec->name);
-          gimp_config_writer_string (writer, private->stock_id);
-          gimp_config_writer_close (writer);
+          picman_config_writer_open (writer, pspec->name);
+          picman_config_writer_string (writer, private->stock_id);
+          picman_config_writer_close (writer);
         }
       return TRUE;
 
@@ -467,9 +467,9 @@ gimp_viewable_serialize_property (GimpConfig       *config,
               {
                 pixbuffer_enc = g_base64_encode ((guchar *)pixbuffer,
                                                  pixbuffer_size);
-                gimp_config_writer_open (writer, "icon-pixbuf");
-                gimp_config_writer_string (writer, pixbuffer_enc);
-                gimp_config_writer_close (writer);
+                picman_config_writer_open (writer, "icon-pixbuf");
+                picman_config_writer_string (writer, pixbuffer_enc);
+                picman_config_writer_close (writer);
 
                 g_free (pixbuffer_enc);
                 g_free (pixbuffer);
@@ -486,7 +486,7 @@ gimp_viewable_serialize_property (GimpConfig       *config,
 }
 
 static gboolean
-gimp_viewable_deserialize_property (GimpConfig *config,
+picman_viewable_deserialize_property (PicmanConfig *config,
                                     guint       property_id,
                                     GValue     *value,
                                     GParamSpec *pspec,
@@ -500,7 +500,7 @@ gimp_viewable_deserialize_property (GimpConfig *config,
         gchar     *encoded_image = NULL;
         GdkPixbuf *icon_pixbuf   = NULL;
 
-        if (! gimp_scanner_parse_string (scanner, &encoded_image))
+        if (! picman_scanner_parse_string (scanner, &encoded_image))
           {
             *expected = G_TOKEN_STRING;
             break;
@@ -547,18 +547,18 @@ gimp_viewable_deserialize_property (GimpConfig *config,
 }
 
 /**
- * gimp_viewable_invalidate_preview:
+ * picman_viewable_invalidate_preview:
  * @viewable: a viewable object
  *
  * Causes any cached preview to be marked as invalid, so that a new
  * preview will be generated at the next attempt to display one.
  **/
 void
-gimp_viewable_invalidate_preview (GimpViewable *viewable)
+picman_viewable_invalidate_preview (PicmanViewable *viewable)
 {
-  GimpViewablePrivate *private;
+  PicmanViewablePrivate *private;
 
-  g_return_if_fail (GIMP_IS_VIEWABLE (viewable));
+  g_return_if_fail (PICMAN_IS_VIEWABLE (viewable));
 
   private = GET_PRIVATE (viewable);
 
@@ -567,23 +567,23 @@ gimp_viewable_invalidate_preview (GimpViewable *viewable)
 }
 
 /**
- * gimp_viewable_size_changed:
+ * picman_viewable_size_changed:
  * @viewable: a viewable object
  *
  * This function sends a signal that is handled at a lower level in the
  * object hierarchy, and provides a mechanism by which objects derived
- * from #GimpViewable can respond to size changes.
+ * from #PicmanViewable can respond to size changes.
  **/
 void
-gimp_viewable_size_changed (GimpViewable *viewable)
+picman_viewable_size_changed (PicmanViewable *viewable)
 {
-  g_return_if_fail (GIMP_IS_VIEWABLE (viewable));
+  g_return_if_fail (PICMAN_IS_VIEWABLE (viewable));
 
   g_signal_emit (viewable, viewable_signals[SIZE_CHANGED], 0);
 }
 
 /**
- * gimp_viewable_calc_preview_size:
+ * picman_viewable_calc_preview_size:
  * @aspect_width:   unscaled width of the preview for an item.
  * @aspect_height:  unscaled height of the preview for an item.
  * @width:          maximum available width for scaled preview.
@@ -611,7 +611,7 @@ gimp_viewable_size_changed (GimpViewable *viewable)
  * counts.
  **/
 void
-gimp_viewable_calc_preview_size (gint       aspect_width,
+picman_viewable_calc_preview_size (gint       aspect_width,
                                  gint       aspect_height,
                                  gint       width,
                                  gint       height,
@@ -651,18 +651,18 @@ gimp_viewable_calc_preview_size (gint       aspect_width,
 }
 
 gboolean
-gimp_viewable_get_size (GimpViewable  *viewable,
+picman_viewable_get_size (PicmanViewable  *viewable,
                         gint          *width,
                         gint          *height)
 {
-  GimpViewableClass *viewable_class;
+  PicmanViewableClass *viewable_class;
   gboolean           retval = FALSE;
   gint               w      = 0;
   gint               h      = 0;
 
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), FALSE);
 
-  viewable_class = GIMP_VIEWABLE_GET_CLASS (viewable);
+  viewable_class = PICMAN_VIEWABLE_GET_CLASS (viewable);
 
   if (viewable_class->get_size)
     retval = viewable_class->get_size (viewable, &w, &h);
@@ -674,7 +674,7 @@ gimp_viewable_get_size (GimpViewable  *viewable,
 }
 
 /**
- * gimp_viewable_get_preview_size:
+ * picman_viewable_get_preview_size:
  * @viewable:    the object for which to calculate the preview size.
  * @size:        requested size for preview.
  * @popup:       %TRUE if the preview is intended for a popup window.
@@ -685,11 +685,11 @@ gimp_viewable_get_size (GimpViewable  *viewable,
  * Retrieve the size of a viewable's preview.  By default, this
  * simply returns the value of the @size argument for both the @width
  * and @height, but this can be overridden in objects derived from
- * #GimpViewable.  If either the width or height exceeds
- * #GIMP_VIEWABLE_MAX_PREVIEW_SIZE, they are silently truncated.
+ * #PicmanViewable.  If either the width or height exceeds
+ * #PICMAN_VIEWABLE_MAX_PREVIEW_SIZE, they are silently truncated.
  **/
 void
-gimp_viewable_get_preview_size (GimpViewable *viewable,
+picman_viewable_get_preview_size (PicmanViewable *viewable,
                                 gint          size,
                                 gboolean      popup,
                                 gboolean      dot_for_dot,
@@ -698,15 +698,15 @@ gimp_viewable_get_preview_size (GimpViewable *viewable,
 {
   gint w, h;
 
-  g_return_if_fail (GIMP_IS_VIEWABLE (viewable));
+  g_return_if_fail (PICMAN_IS_VIEWABLE (viewable));
   g_return_if_fail (size > 0);
 
-  GIMP_VIEWABLE_GET_CLASS (viewable)->get_preview_size (viewable, size,
+  PICMAN_VIEWABLE_GET_CLASS (viewable)->get_preview_size (viewable, size,
                                                         popup, dot_for_dot,
                                                         &w, &h);
 
-  w = MIN (w, GIMP_VIEWABLE_MAX_PREVIEW_SIZE);
-  h = MIN (h, GIMP_VIEWABLE_MAX_PREVIEW_SIZE);
+  w = MIN (w, PICMAN_VIEWABLE_MAX_PREVIEW_SIZE);
+  h = MIN (h, PICMAN_VIEWABLE_MAX_PREVIEW_SIZE);
 
   if (width)  *width  = w;
   if (height) *height = h;
@@ -714,7 +714,7 @@ gimp_viewable_get_preview_size (GimpViewable *viewable,
 }
 
 /**
- * gimp_viewable_get_popup_size:
+ * picman_viewable_get_popup_size:
  * @viewable:     the object for which to calculate the popup size.
  * @width:        the width of the preview from which the popup will be shown.
  * @height:       the height of the preview from which the popup will be shown.
@@ -732,7 +732,7 @@ gimp_viewable_get_preview_size (GimpViewable *viewable,
  *          original preview.
  **/
 gboolean
-gimp_viewable_get_popup_size (GimpViewable *viewable,
+picman_viewable_get_popup_size (PicmanViewable *viewable,
                               gint          width,
                               gint          height,
                               gboolean      dot_for_dot,
@@ -741,9 +741,9 @@ gimp_viewable_get_popup_size (GimpViewable *viewable,
 {
   gint w, h;
 
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), FALSE);
 
-  if (GIMP_VIEWABLE_GET_CLASS (viewable)->get_popup_size (viewable,
+  if (PICMAN_VIEWABLE_GET_CLASS (viewable)->get_popup_size (viewable,
                                                           width, height,
                                                           dot_for_dot,
                                                           &w, &h))
@@ -751,28 +751,28 @@ gimp_viewable_get_popup_size (GimpViewable *viewable,
       if (w < 1) w = 1;
       if (h < 1) h = 1;
 
-      /*  limit the popup to 2 * GIMP_VIEWABLE_MAX_POPUP_SIZE
+      /*  limit the popup to 2 * PICMAN_VIEWABLE_MAX_POPUP_SIZE
        *  on each axis.
        */
-      if ((w > (2 * GIMP_VIEWABLE_MAX_POPUP_SIZE)) ||
-          (h > (2 * GIMP_VIEWABLE_MAX_POPUP_SIZE)))
+      if ((w > (2 * PICMAN_VIEWABLE_MAX_POPUP_SIZE)) ||
+          (h > (2 * PICMAN_VIEWABLE_MAX_POPUP_SIZE)))
         {
-          gimp_viewable_calc_preview_size (w, h,
-                                           2 * GIMP_VIEWABLE_MAX_POPUP_SIZE,
-                                           2 * GIMP_VIEWABLE_MAX_POPUP_SIZE,
+          picman_viewable_calc_preview_size (w, h,
+                                           2 * PICMAN_VIEWABLE_MAX_POPUP_SIZE,
+                                           2 * PICMAN_VIEWABLE_MAX_POPUP_SIZE,
                                            dot_for_dot, 1.0, 1.0,
                                            &w, &h, NULL);
         }
 
       /*  limit the number of pixels to
-       *  GIMP_VIEWABLE_MAX_POPUP_SIZE ^ 2
+       *  PICMAN_VIEWABLE_MAX_POPUP_SIZE ^ 2
        */
-      if ((w * h) > SQR (GIMP_VIEWABLE_MAX_POPUP_SIZE))
+      if ((w * h) > SQR (PICMAN_VIEWABLE_MAX_POPUP_SIZE))
         {
           gdouble factor;
 
           factor = sqrt (((gdouble) (w * h) /
-                          (gdouble) SQR (GIMP_VIEWABLE_MAX_POPUP_SIZE)));
+                          (gdouble) SQR (PICMAN_VIEWABLE_MAX_POPUP_SIZE)));
 
           w = RINT ((gdouble) w / factor);
           h = RINT ((gdouble) h / factor);
@@ -791,7 +791,7 @@ gimp_viewable_get_popup_size (GimpViewable *viewable,
 }
 
 /**
- * gimp_viewable_get_preview:
+ * picman_viewable_get_preview:
  * @viewable: The viewable object to get a preview for.
  * @context:  The context to render the preview for.
  * @width:    desired width for the preview
@@ -807,21 +807,21 @@ gimp_viewable_get_popup_size (GimpViewable *viewable,
  * method, and executes it, caching the result.  If everything fails,
  * #NULL is returned.
  *
- * Returns: A #GimpTempBuf containg the preview image, or #NULL if
+ * Returns: A #PicmanTempBuf containg the preview image, or #NULL if
  *          none can be found or created.
  **/
-GimpTempBuf *
-gimp_viewable_get_preview (GimpViewable *viewable,
-                           GimpContext  *context,
+PicmanTempBuf *
+picman_viewable_get_preview (PicmanViewable *viewable,
+                           PicmanContext  *context,
                            gint          width,
                            gint          height)
 {
-  GimpViewablePrivate *private;
-  GimpViewableClass   *viewable_class;
-  GimpTempBuf         *temp_buf = NULL;
+  PicmanViewablePrivate *private;
+  PicmanViewableClass   *viewable_class;
+  PicmanTempBuf         *temp_buf = NULL;
 
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), NULL);
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (width  > 0, NULL);
   g_return_val_if_fail (height > 0, NULL);
 
@@ -830,7 +830,7 @@ gimp_viewable_get_preview (GimpViewable *viewable,
   if (G_UNLIKELY (context == NULL))
     g_warning ("%s: context is NULL", G_STRFUNC);
 
-  viewable_class = GIMP_VIEWABLE_GET_CLASS (viewable);
+  viewable_class = PICMAN_VIEWABLE_GET_CLASS (viewable);
 
   if (viewable_class->get_preview)
     temp_buf = viewable_class->get_preview (viewable, context, width, height);
@@ -840,13 +840,13 @@ gimp_viewable_get_preview (GimpViewable *viewable,
 
   if (private->preview_temp_buf)
     {
-      if (gimp_temp_buf_get_width  (private->preview_temp_buf) == width &&
-          gimp_temp_buf_get_height (private->preview_temp_buf) == height)
+      if (picman_temp_buf_get_width  (private->preview_temp_buf) == width &&
+          picman_temp_buf_get_height (private->preview_temp_buf) == height)
         {
           return private->preview_temp_buf;
         }
 
-      gimp_temp_buf_unref (private->preview_temp_buf);
+      picman_temp_buf_unref (private->preview_temp_buf);
       private->preview_temp_buf = NULL;
     }
 
@@ -860,38 +860,38 @@ gimp_viewable_get_preview (GimpViewable *viewable,
 }
 
 /**
- * gimp_viewable_get_new_preview:
+ * picman_viewable_get_new_preview:
  * @viewable: The viewable object to get a preview for.
  * @width:    desired width for the preview
  * @height:   desired height for the preview
  *
  * Gets a new preview for a viewable object.  Similar to
- * gimp_viewable_get_preview(), except that it tries things in a
+ * picman_viewable_get_preview(), except that it tries things in a
  * different order, first looking for a "get_new_preview" method, and
  * then if that fails for a "get_preview" method.  This function does
  * not look for a cached preview.
  *
- * Returns: A #GimpTempBuf containg the preview image, or #NULL if
+ * Returns: A #PicmanTempBuf containg the preview image, or #NULL if
  *          none can be found or created.
  **/
-GimpTempBuf *
-gimp_viewable_get_new_preview (GimpViewable *viewable,
-                               GimpContext  *context,
+PicmanTempBuf *
+picman_viewable_get_new_preview (PicmanViewable *viewable,
+                               PicmanContext  *context,
                                gint          width,
                                gint          height)
 {
-  GimpViewableClass *viewable_class;
-  GimpTempBuf       *temp_buf = NULL;
+  PicmanViewableClass *viewable_class;
+  PicmanTempBuf       *temp_buf = NULL;
 
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), NULL);
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (width  > 0, NULL);
   g_return_val_if_fail (height > 0, NULL);
 
   if (G_UNLIKELY (context == NULL))
     g_warning ("%s: context is NULL", G_STRFUNC);
 
-  viewable_class = GIMP_VIEWABLE_GET_CLASS (viewable);
+  viewable_class = PICMAN_VIEWABLE_GET_CLASS (viewable);
 
   if (viewable_class->get_new_preview)
     temp_buf = viewable_class->get_new_preview (viewable, context,
@@ -905,13 +905,13 @@ gimp_viewable_get_new_preview (GimpViewable *viewable,
                                             width, height);
 
   if (temp_buf)
-    return gimp_temp_buf_copy (temp_buf);
+    return picman_temp_buf_copy (temp_buf);
 
   return NULL;
 }
 
 /**
- * gimp_viewable_get_dummy_preview:
+ * picman_viewable_get_dummy_preview:
  * @viewable: viewable object for which to get a dummy preview.
  * @width:    width of the preview.
  * @height:   height of the preview.
@@ -920,33 +920,33 @@ gimp_viewable_get_new_preview (GimpViewable *viewable,
  * Creates a dummy preview the fits into the specified dimensions,
  * containing a default "question" symbol.  This function is used to
  * generate a preview in situations where layer previews have been
- * disabled in the current Gimp configuration.
+ * disabled in the current Picman configuration.
  *
- * Returns: a #GimpTempBuf containing the preview image.
+ * Returns: a #PicmanTempBuf containing the preview image.
  **/
-GimpTempBuf *
-gimp_viewable_get_dummy_preview (GimpViewable *viewable,
+PicmanTempBuf *
+picman_viewable_get_dummy_preview (PicmanViewable *viewable,
                                  gint          width,
                                  gint          height,
                                  const Babl   *format)
 {
   GdkPixbuf   *pixbuf;
-  GimpTempBuf *buf;
+  PicmanTempBuf *buf;
   GeglBuffer  *src_buffer;
   GeglBuffer  *dest_buffer;
 
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), NULL);
   g_return_val_if_fail (width  > 0, NULL);
   g_return_val_if_fail (height > 0, NULL);
   g_return_val_if_fail (format != NULL, NULL);
 
-  pixbuf = gimp_viewable_get_dummy_pixbuf (viewable, width, height,
+  pixbuf = picman_viewable_get_dummy_pixbuf (viewable, width, height,
                                            babl_format_has_alpha (format));
 
-  buf = gimp_temp_buf_new (width, height, format);
+  buf = picman_temp_buf_new (width, height, format);
 
-  src_buffer  = gimp_pixbuf_create_buffer (pixbuf);
-  dest_buffer = gimp_temp_buf_create_buffer (buf);
+  src_buffer  = picman_pixbuf_create_buffer (pixbuf);
+  dest_buffer = picman_temp_buf_create_buffer (buf);
 
   gegl_buffer_copy (src_buffer, NULL, dest_buffer, NULL);
 
@@ -959,7 +959,7 @@ gimp_viewable_get_dummy_preview (GimpViewable *viewable,
 }
 
 /**
- * gimp_viewable_get_pixbuf:
+ * picman_viewable_get_pixbuf:
  * @viewable: The viewable object to get a pixbuf preview for.
  * @context:  The context to render the preview for.
  * @width:    desired width for the preview
@@ -979,17 +979,17 @@ gimp_viewable_get_dummy_preview (GimpViewable *viewable,
  *          be found or created.
  **/
 GdkPixbuf *
-gimp_viewable_get_pixbuf (GimpViewable *viewable,
-                          GimpContext  *context,
+picman_viewable_get_pixbuf (PicmanViewable *viewable,
+                          PicmanContext  *context,
                           gint          width,
                           gint          height)
 {
-  GimpViewablePrivate *private;
-  GimpViewableClass   *viewable_class;
+  PicmanViewablePrivate *private;
+  PicmanViewableClass   *viewable_class;
   GdkPixbuf           *pixbuf = NULL;
 
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), NULL);
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (width  > 0, NULL);
   g_return_val_if_fail (height > 0, NULL);
 
@@ -998,7 +998,7 @@ gimp_viewable_get_pixbuf (GimpViewable *viewable,
   if (G_UNLIKELY (context == NULL))
     g_warning ("%s: context is NULL", G_STRFUNC);
 
-  viewable_class = GIMP_VIEWABLE_GET_CLASS (viewable);
+  viewable_class = PICMAN_VIEWABLE_GET_CLASS (viewable);
 
   if (viewable_class->get_pixbuf)
     pixbuf = viewable_class->get_pixbuf (viewable, context, width, height);
@@ -1027,14 +1027,14 @@ gimp_viewable_get_pixbuf (GimpViewable *viewable,
 }
 
 /**
- * gimp_viewable_get_new_pixbuf:
+ * picman_viewable_get_new_pixbuf:
  * @viewable: The viewable object to get a new pixbuf preview for.
  * @context:  The context to render the preview for.
  * @width:    desired width for the pixbuf
  * @height:   desired height for the pixbuf
  *
  * Gets a new preview for a viewable object.  Similar to
- * gimp_viewable_get_pixbuf(), except that it tries things in a
+ * picman_viewable_get_pixbuf(), except that it tries things in a
  * different order, first looking for a "get_new_pixbuf" method, and
  * then if that fails for a "get_pixbuf" method.  This function does
  * not look for a cached pixbuf.
@@ -1043,23 +1043,23 @@ gimp_viewable_get_pixbuf (GimpViewable *viewable,
  *          be created.
  **/
 GdkPixbuf *
-gimp_viewable_get_new_pixbuf (GimpViewable *viewable,
-                              GimpContext  *context,
+picman_viewable_get_new_pixbuf (PicmanViewable *viewable,
+                              PicmanContext  *context,
                               gint          width,
                               gint          height)
 {
-  GimpViewableClass *viewable_class;
+  PicmanViewableClass *viewable_class;
   GdkPixbuf         *pixbuf = NULL;
 
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), NULL);
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (width  > 0, NULL);
   g_return_val_if_fail (height > 0, NULL);
 
   if (G_UNLIKELY (context == NULL))
     g_warning ("%s: context is NULL", G_STRFUNC);
 
-  viewable_class = GIMP_VIEWABLE_GET_CLASS (viewable);
+  viewable_class = PICMAN_VIEWABLE_GET_CLASS (viewable);
 
   if (viewable_class->get_new_pixbuf)
     pixbuf = viewable_class->get_new_pixbuf (viewable, context, width, height);
@@ -1077,7 +1077,7 @@ gimp_viewable_get_new_pixbuf (GimpViewable *viewable,
 }
 
 /**
- * gimp_viewable_get_dummy_pixbuf:
+ * picman_viewable_get_dummy_pixbuf:
  * @viewable: the viewable object for which to create a dummy representation.
  * @width:    maximum permitted width for the pixbuf.
  * @height:   maximum permitted height for the pixbuf.
@@ -1087,14 +1087,14 @@ gimp_viewable_get_new_pixbuf (GimpViewable *viewable,
  * fit into the specified dimensions.  The depth of the pixbuf must be
  * 3 or 4 because #GdkPixbuf does not support grayscale.  This
  * function is used to generate a preview in situations where
- * previewing has been disabled in the current Gimp configuration.
+ * previewing has been disabled in the current Picman configuration.
  * [Note: this function is currently unused except internally to
- * #GimpViewable -- consider making it static?]
+ * #PicmanViewable -- consider making it static?]
  *
  * Returns: the created #GdkPixbuf.
  **/
 GdkPixbuf *
-gimp_viewable_get_dummy_pixbuf (GimpViewable  *viewable,
+picman_viewable_get_dummy_pixbuf (PicmanViewable  *viewable,
                                 gint           width,
                                 gint           height,
                                 gboolean       with_alpha)
@@ -1104,7 +1104,7 @@ gimp_viewable_get_dummy_pixbuf (GimpViewable  *viewable,
   gdouble    ratio;
   gint       w, h;
 
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), NULL);
   g_return_val_if_fail (width  > 0, NULL);
   g_return_val_if_fail (height > 0, NULL);
 
@@ -1136,32 +1136,32 @@ gimp_viewable_get_dummy_pixbuf (GimpViewable  *viewable,
 }
 
 /**
- * gimp_viewable_get_description:
+ * picman_viewable_get_description:
  * @viewable: viewable object for which to retrieve a description.
  * @tooltip:  return loaction for an optional tooltip string.
  *
  * Retrieves a string containing a description of the viewable object,
  * By default, it simply returns the name of the object, but this can
- * be overridden by object types that inherit from #GimpViewable.
+ * be overridden by object types that inherit from #PicmanViewable.
  *
  * Returns: a copy of the description string.  This should be freed
  *          when it is no longer needed.
  **/
 gchar *
-gimp_viewable_get_description (GimpViewable  *viewable,
+picman_viewable_get_description (PicmanViewable  *viewable,
                                gchar        **tooltip)
 {
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), NULL);
 
   if (tooltip)
     *tooltip = NULL;
 
-  return GIMP_VIEWABLE_GET_CLASS (viewable)->get_description (viewable,
+  return PICMAN_VIEWABLE_GET_CLASS (viewable)->get_description (viewable,
                                                               tooltip);
 }
 
 /**
- * gimp_viewable_get_stock_id:
+ * picman_viewable_get_stock_id:
  * @viewable: viewable object for which to retrieve a stock ID.
  *
  * Gets the current value of the object's stock ID, for use in
@@ -1171,22 +1171,22 @@ gimp_viewable_get_description (GimpViewable  *viewable,
  *          contents must not be altered or freed.
  **/
 const gchar *
-gimp_viewable_get_stock_id (GimpViewable *viewable)
+picman_viewable_get_stock_id (PicmanViewable *viewable)
 {
-  GimpViewablePrivate *private;
+  PicmanViewablePrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), NULL);
 
   private = GET_PRIVATE (viewable);
 
   if (private->stock_id)
     return (const gchar *) private->stock_id;
 
-  return GIMP_VIEWABLE_GET_CLASS (viewable)->default_stock_id;
+  return PICMAN_VIEWABLE_GET_CLASS (viewable)->default_stock_id;
 }
 
 /**
- * gimp_viewable_set_stock_id:
+ * picman_viewable_set_stock_id:
  * @viewable: viewable object to assign the specified stock ID.
  * @stock_id: string containing a stock identifier.
  *
@@ -1195,20 +1195,20 @@ gimp_viewable_get_stock_id (GimpViewable *viewable)
  * free it when you are done with it.
  **/
 void
-gimp_viewable_set_stock_id (GimpViewable *viewable,
+picman_viewable_set_stock_id (PicmanViewable *viewable,
                             const gchar  *stock_id)
 {
-  GimpViewablePrivate *private;
-  GimpViewableClass   *viewable_class;
+  PicmanViewablePrivate *private;
+  PicmanViewableClass   *viewable_class;
 
-  g_return_if_fail (GIMP_IS_VIEWABLE (viewable));
+  g_return_if_fail (PICMAN_IS_VIEWABLE (viewable));
 
   private = GET_PRIVATE (viewable);
 
   g_free (private->stock_id);
   private->stock_id = NULL;
 
-  viewable_class = GIMP_VIEWABLE_GET_CLASS (viewable);
+  viewable_class = PICMAN_VIEWABLE_GET_CLASS (viewable);
 
   if (stock_id)
     {
@@ -1217,17 +1217,17 @@ gimp_viewable_set_stock_id (GimpViewable *viewable,
         private->stock_id = g_strdup (stock_id);
     }
 
-  gimp_viewable_invalidate_preview (viewable);
+  picman_viewable_invalidate_preview (viewable);
 
   g_object_notify (G_OBJECT (viewable), "stock-id");
 }
 
 void
-gimp_viewable_preview_freeze (GimpViewable *viewable)
+picman_viewable_preview_freeze (PicmanViewable *viewable)
 {
-  GimpViewablePrivate *private;
+  PicmanViewablePrivate *private;
 
-  g_return_if_fail (GIMP_IS_VIEWABLE (viewable));
+  g_return_if_fail (PICMAN_IS_VIEWABLE (viewable));
 
   private = GET_PRIVATE (viewable);
 
@@ -1238,11 +1238,11 @@ gimp_viewable_preview_freeze (GimpViewable *viewable)
 }
 
 void
-gimp_viewable_preview_thaw (GimpViewable *viewable)
+picman_viewable_preview_thaw (PicmanViewable *viewable)
 {
-  GimpViewablePrivate *private;
+  PicmanViewablePrivate *private;
 
-  g_return_if_fail (GIMP_IS_VIEWABLE (viewable));
+  g_return_if_fail (PICMAN_IS_VIEWABLE (viewable));
 
   private = GET_PRIVATE (viewable);
 
@@ -1252,76 +1252,76 @@ gimp_viewable_preview_thaw (GimpViewable *viewable)
 
   if (private->freeze_count == 0)
     {
-      gimp_viewable_invalidate_preview (viewable);
+      picman_viewable_invalidate_preview (viewable);
       g_object_notify (G_OBJECT (viewable), "frozen");
     }
 }
 
 gboolean
-gimp_viewable_preview_is_frozen (GimpViewable *viewable)
+picman_viewable_preview_is_frozen (PicmanViewable *viewable)
 {
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), FALSE);
 
   return GET_PRIVATE (viewable)->freeze_count != 0;
 }
 
-GimpViewable *
-gimp_viewable_get_parent (GimpViewable *viewable)
+PicmanViewable *
+picman_viewable_get_parent (PicmanViewable *viewable)
 {
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), NULL);
 
   return GET_PRIVATE (viewable)->parent;
 }
 
 void
-gimp_viewable_set_parent (GimpViewable *viewable,
-                          GimpViewable *parent)
+picman_viewable_set_parent (PicmanViewable *viewable,
+                          PicmanViewable *parent)
 {
-  g_return_if_fail (GIMP_IS_VIEWABLE (viewable));
-  g_return_if_fail (parent == NULL || GIMP_IS_VIEWABLE (parent));
+  g_return_if_fail (PICMAN_IS_VIEWABLE (viewable));
+  g_return_if_fail (parent == NULL || PICMAN_IS_VIEWABLE (parent));
 
   GET_PRIVATE (viewable)->parent = parent;
 }
 
-GimpContainer *
-gimp_viewable_get_children (GimpViewable *viewable)
+PicmanContainer *
+picman_viewable_get_children (PicmanViewable *viewable)
 {
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), NULL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), NULL);
 
-  return GIMP_VIEWABLE_GET_CLASS (viewable)->get_children (viewable);
+  return PICMAN_VIEWABLE_GET_CLASS (viewable)->get_children (viewable);
 }
 
 gboolean
-gimp_viewable_get_expanded (GimpViewable *viewable)
+picman_viewable_get_expanded (PicmanViewable *viewable)
 {
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (viewable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (viewable), FALSE);
 
-  if (GIMP_VIEWABLE_GET_CLASS (viewable)->get_expanded)
-    return GIMP_VIEWABLE_GET_CLASS (viewable)->get_expanded (viewable);
+  if (PICMAN_VIEWABLE_GET_CLASS (viewable)->get_expanded)
+    return PICMAN_VIEWABLE_GET_CLASS (viewable)->get_expanded (viewable);
 
   return FALSE;
 }
 
 void
-gimp_viewable_set_expanded (GimpViewable *viewable,
+picman_viewable_set_expanded (PicmanViewable *viewable,
                             gboolean       expanded)
 {
-  g_return_if_fail (GIMP_IS_VIEWABLE (viewable));
+  g_return_if_fail (PICMAN_IS_VIEWABLE (viewable));
 
-  if (GIMP_VIEWABLE_GET_CLASS (viewable)->set_expanded)
-    GIMP_VIEWABLE_GET_CLASS (viewable)->set_expanded (viewable, expanded);
+  if (PICMAN_VIEWABLE_GET_CLASS (viewable)->set_expanded)
+    PICMAN_VIEWABLE_GET_CLASS (viewable)->set_expanded (viewable, expanded);
 }
 
 gboolean
-gimp_viewable_is_ancestor (GimpViewable *ancestor,
-                           GimpViewable *descendant)
+picman_viewable_is_ancestor (PicmanViewable *ancestor,
+                           PicmanViewable *descendant)
 {
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (ancestor), FALSE);
-  g_return_val_if_fail (GIMP_IS_VIEWABLE (descendant), FALSE);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (ancestor), FALSE);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE (descendant), FALSE);
 
   while (descendant)
     {
-      GimpViewable *parent = gimp_viewable_get_parent (descendant);
+      PicmanViewable *parent = picman_viewable_get_parent (descendant);
 
       if (parent == ancestor)
         return TRUE;

@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -22,47 +22,47 @@
 
 #include <glib-object.h>
 
-#include <libgimpcolor/gimpcolortypes.h>
+#include <libpicmancolor/picmancolortypes.h>
 
-#include "gimpwire.h"
+#include "picmanwire.h"
 
 
-typedef struct _GimpWireHandler  GimpWireHandler;
+typedef struct _PicmanWireHandler  PicmanWireHandler;
 
-struct _GimpWireHandler
+struct _PicmanWireHandler
 {
   guint32             type;
-  GimpWireReadFunc    read_func;
-  GimpWireWriteFunc   write_func;
-  GimpWireDestroyFunc destroy_func;
+  PicmanWireReadFunc    read_func;
+  PicmanWireWriteFunc   write_func;
+  PicmanWireDestroyFunc destroy_func;
 };
 
 
 static GHashTable        *wire_ht         = NULL;
-static GimpWireIOFunc     wire_read_func  = NULL;
-static GimpWireIOFunc     wire_write_func = NULL;
-static GimpWireFlushFunc  wire_flush_func = NULL;
+static PicmanWireIOFunc     wire_read_func  = NULL;
+static PicmanWireIOFunc     wire_write_func = NULL;
+static PicmanWireFlushFunc  wire_flush_func = NULL;
 static gboolean           wire_error_val  = FALSE;
 
 
-static void  gimp_wire_init (void);
+static void  picman_wire_init (void);
 
 
 void
-gimp_wire_register (guint32             type,
-                    GimpWireReadFunc    read_func,
-                    GimpWireWriteFunc   write_func,
-                    GimpWireDestroyFunc destroy_func)
+picman_wire_register (guint32             type,
+                    PicmanWireReadFunc    read_func,
+                    PicmanWireWriteFunc   write_func,
+                    PicmanWireDestroyFunc destroy_func)
 {
-  GimpWireHandler *handler;
+  PicmanWireHandler *handler;
 
   if (! wire_ht)
-    gimp_wire_init ();
+    picman_wire_init ();
 
   handler = g_hash_table_lookup (wire_ht, &type);
 
   if (! handler)
-    handler = g_slice_new0 (GimpWireHandler);
+    handler = g_slice_new0 (PicmanWireHandler);
 
   handler->type         = type;
   handler->read_func    = read_func;
@@ -73,25 +73,25 @@ gimp_wire_register (guint32             type,
 }
 
 void
-gimp_wire_set_reader (GimpWireIOFunc read_func)
+picman_wire_set_reader (PicmanWireIOFunc read_func)
 {
   wire_read_func = read_func;
 }
 
 void
-gimp_wire_set_writer (GimpWireIOFunc write_func)
+picman_wire_set_writer (PicmanWireIOFunc write_func)
 {
   wire_write_func = write_func;
 }
 
 void
-gimp_wire_set_flusher (GimpWireFlushFunc flush_func)
+picman_wire_set_flusher (PicmanWireFlushFunc flush_func)
 {
   wire_flush_func = flush_func;
 }
 
 gboolean
-gimp_wire_read (GIOChannel *channel,
+picman_wire_read (GIOChannel *channel,
                 guint8     *buf,
                 gsize       count,
                 gpointer    user_data)
@@ -103,7 +103,7 @@ gimp_wire_read (GIOChannel *channel,
       if (!(* wire_read_func) (channel, buf, count, user_data))
         {
           /* Gives a confusing error message most of the time, disable:
-          g_warning ("%s: gimp_wire_read: error", g_get_prgname ());
+          g_warning ("%s: picman_wire_read: error", g_get_prgname ());
            */
           wire_error_val = TRUE;
           return FALSE;
@@ -131,13 +131,13 @@ gimp_wire_read (GIOChannel *channel,
             {
               if (error)
                 {
-                  g_warning ("%s: gimp_wire_read(): error: %s",
+                  g_warning ("%s: picman_wire_read(): error: %s",
                              g_get_prgname (), error->message);
                   g_error_free (error);
                 }
               else
                 {
-                  g_warning ("%s: gimp_wire_read(): error",
+                  g_warning ("%s: picman_wire_read(): error",
                              g_get_prgname ());
                 }
 
@@ -147,7 +147,7 @@ gimp_wire_read (GIOChannel *channel,
 
           if (G_UNLIKELY (bytes == 0))
             {
-              g_warning ("%s: gimp_wire_read(): unexpected EOF",
+              g_warning ("%s: picman_wire_read(): unexpected EOF",
                          g_get_prgname ());
               wire_error_val = TRUE;
               return FALSE;
@@ -162,7 +162,7 @@ gimp_wire_read (GIOChannel *channel,
 }
 
 gboolean
-gimp_wire_write (GIOChannel   *channel,
+picman_wire_write (GIOChannel   *channel,
                  const guint8 *buf,
                  gsize         count,
                  gpointer      user_data)
@@ -173,7 +173,7 @@ gimp_wire_write (GIOChannel   *channel,
     {
       if (!(* wire_write_func) (channel, (guint8 *) buf, count, user_data))
         {
-          g_warning ("%s: gimp_wire_write: error", g_get_prgname ());
+          g_warning ("%s: picman_wire_write: error", g_get_prgname ());
           wire_error_val = TRUE;
           return FALSE;
         }
@@ -200,13 +200,13 @@ gimp_wire_write (GIOChannel   *channel,
             {
               if (error)
                 {
-                  g_warning ("%s: gimp_wire_write(): error: %s",
+                  g_warning ("%s: picman_wire_write(): error: %s",
                              g_get_prgname (), error->message);
                   g_error_free (error);
                 }
               else
                 {
-                  g_warning ("%s: gimp_wire_write(): error",
+                  g_warning ("%s: picman_wire_write(): error",
                              g_get_prgname ());
                 }
 
@@ -223,7 +223,7 @@ gimp_wire_write (GIOChannel   *channel,
 }
 
 gboolean
-gimp_wire_flush (GIOChannel *channel,
+picman_wire_flush (GIOChannel *channel,
                  gpointer    user_data)
 {
   if (wire_flush_func)
@@ -233,37 +233,37 @@ gimp_wire_flush (GIOChannel *channel,
 }
 
 gboolean
-gimp_wire_error (void)
+picman_wire_error (void)
 {
   return wire_error_val;
 }
 
 void
-gimp_wire_clear_error (void)
+picman_wire_clear_error (void)
 {
   wire_error_val = FALSE;
 }
 
 gboolean
-gimp_wire_read_msg (GIOChannel      *channel,
-                    GimpWireMessage *msg,
+picman_wire_read_msg (GIOChannel      *channel,
+                    PicmanWireMessage *msg,
                     gpointer         user_data)
 {
-  GimpWireHandler *handler;
+  PicmanWireHandler *handler;
 
   if (G_UNLIKELY (! wire_ht))
-    g_error ("gimp_wire_read_msg: the wire protocol has not been initialized");
+    g_error ("picman_wire_read_msg: the wire protocol has not been initialized");
 
   if (wire_error_val)
     return !wire_error_val;
 
-  if (! _gimp_wire_read_int32 (channel, &msg->type, 1, user_data))
+  if (! _picman_wire_read_int32 (channel, &msg->type, 1, user_data))
     return FALSE;
 
   handler = g_hash_table_lookup (wire_ht, &msg->type);
 
   if (G_UNLIKELY (! handler))
-    g_error ("gimp_wire_read_msg: could not find handler for message: %d",
+    g_error ("picman_wire_read_msg: could not find handler for message: %d",
              msg->type);
 
   (* handler->read_func) (channel, msg, user_data);
@@ -272,14 +272,14 @@ gimp_wire_read_msg (GIOChannel      *channel,
 }
 
 gboolean
-gimp_wire_write_msg (GIOChannel      *channel,
-                     GimpWireMessage *msg,
+picman_wire_write_msg (GIOChannel      *channel,
+                     PicmanWireMessage *msg,
                      gpointer         user_data)
 {
-  GimpWireHandler *handler;
+  PicmanWireHandler *handler;
 
   if (G_UNLIKELY (! wire_ht))
-    g_error ("gimp_wire_write_msg: the wire protocol has not been initialized");
+    g_error ("picman_wire_write_msg: the wire protocol has not been initialized");
 
   if (wire_error_val)
     return !wire_error_val;
@@ -287,10 +287,10 @@ gimp_wire_write_msg (GIOChannel      *channel,
   handler = g_hash_table_lookup (wire_ht, &msg->type);
 
   if (G_UNLIKELY (! handler))
-    g_error ("gimp_wire_write_msg: could not find handler for message: %d",
+    g_error ("picman_wire_write_msg: could not find handler for message: %d",
              msg->type);
 
-  if (! _gimp_wire_write_int32 (channel, &msg->type, 1, user_data))
+  if (! _picman_wire_write_int32 (channel, &msg->type, 1, user_data))
     return FALSE;
 
   (* handler->write_func) (channel, msg, user_data);
@@ -299,24 +299,24 @@ gimp_wire_write_msg (GIOChannel      *channel,
 }
 
 void
-gimp_wire_destroy (GimpWireMessage *msg)
+picman_wire_destroy (PicmanWireMessage *msg)
 {
-  GimpWireHandler *handler;
+  PicmanWireHandler *handler;
 
   if (G_UNLIKELY (! wire_ht))
-    g_error ("gimp_wire_destroy: the wire protocol has not been initialized");
+    g_error ("picman_wire_destroy: the wire protocol has not been initialized");
 
   handler = g_hash_table_lookup (wire_ht, &msg->type);
 
   if (G_UNLIKELY (! handler))
-    g_error ("gimp_wire_destroy: could not find handler for message: %d\n",
+    g_error ("picman_wire_destroy: could not find handler for message: %d\n",
              msg->type);
 
   (* handler->destroy_func) (msg);
 }
 
 gboolean
-_gimp_wire_read_int32 (GIOChannel *channel,
+_picman_wire_read_int32 (GIOChannel *channel,
                        guint32    *data,
                        gint        count,
                        gpointer    user_data)
@@ -325,7 +325,7 @@ _gimp_wire_read_int32 (GIOChannel *channel,
 
   if (count > 0)
     {
-      if (! _gimp_wire_read_int8 (channel,
+      if (! _picman_wire_read_int8 (channel,
                                   (guint8 *) data, count * 4, user_data))
         return FALSE;
 
@@ -340,7 +340,7 @@ _gimp_wire_read_int32 (GIOChannel *channel,
 }
 
 gboolean
-_gimp_wire_read_int16 (GIOChannel *channel,
+_picman_wire_read_int16 (GIOChannel *channel,
                        guint16    *data,
                        gint        count,
                        gpointer    user_data)
@@ -349,7 +349,7 @@ _gimp_wire_read_int16 (GIOChannel *channel,
 
   if (count > 0)
     {
-      if (! _gimp_wire_read_int8 (channel,
+      if (! _picman_wire_read_int8 (channel,
                                   (guint8 *) data, count * 2, user_data))
         return FALSE;
 
@@ -364,18 +364,18 @@ _gimp_wire_read_int16 (GIOChannel *channel,
 }
 
 gboolean
-_gimp_wire_read_int8 (GIOChannel *channel,
+_picman_wire_read_int8 (GIOChannel *channel,
                       guint8     *data,
                       gint        count,
                       gpointer    user_data)
 {
   g_return_val_if_fail (count >= 0, FALSE);
 
-  return gimp_wire_read (channel, data, count, user_data);
+  return picman_wire_read (channel, data, count, user_data);
 }
 
 gboolean
-_gimp_wire_read_double (GIOChannel *channel,
+_picman_wire_read_double (GIOChannel *channel,
                         gdouble    *data,
                         gint        count,
                         gpointer    user_data)
@@ -394,7 +394,7 @@ _gimp_wire_read_double (GIOChannel *channel,
       gint j;
 #endif
 
-      if (! _gimp_wire_read_int8 (channel, tmp, 8, user_data))
+      if (! _picman_wire_read_int8 (channel, tmp, 8, user_data))
         return FALSE;
 
 #if (G_BYTE_ORDER == G_LITTLE_ENDIAN)
@@ -415,7 +415,7 @@ _gimp_wire_read_double (GIOChannel *channel,
 }
 
 gboolean
-_gimp_wire_read_string (GIOChannel  *channel,
+_picman_wire_read_string (GIOChannel  *channel,
                         gchar      **data,
                         gint         count,
                         gpointer     user_data)
@@ -428,7 +428,7 @@ _gimp_wire_read_string (GIOChannel  *channel,
     {
       guint32 tmp;
 
-      if (! _gimp_wire_read_int32 (channel, &tmp, 1, user_data))
+      if (! _picman_wire_read_int32 (channel, &tmp, 1, user_data))
         return FALSE;
 
       if (tmp > 0)
@@ -441,7 +441,7 @@ _gimp_wire_read_string (GIOChannel  *channel,
               return FALSE;
             }
 
-          if (! _gimp_wire_read_int8 (channel,
+          if (! _picman_wire_read_int8 (channel,
                                       (guint8 *) data[i], tmp, user_data))
             {
               g_free (data[i]);
@@ -461,19 +461,19 @@ _gimp_wire_read_string (GIOChannel  *channel,
 }
 
 gboolean
-_gimp_wire_read_color (GIOChannel *channel,
-                       GimpRGB    *data,
+_picman_wire_read_color (GIOChannel *channel,
+                       PicmanRGB    *data,
                        gint        count,
                        gpointer    user_data)
 {
   g_return_val_if_fail (count >= 0, FALSE);
 
-  return _gimp_wire_read_double (channel,
+  return _picman_wire_read_double (channel,
                                  (gdouble *) data, 4 * count, user_data);
 }
 
 gboolean
-_gimp_wire_write_int32 (GIOChannel    *channel,
+_picman_wire_write_int32 (GIOChannel    *channel,
                         const guint32 *data,
                         gint           count,
                         gpointer       user_data)
@@ -488,7 +488,7 @@ _gimp_wire_write_int32 (GIOChannel    *channel,
         {
           guint32 tmp = g_htonl (data[i]);
 
-          if (! _gimp_wire_write_int8 (channel,
+          if (! _picman_wire_write_int8 (channel,
                                        (const guint8 *) &tmp, 4, user_data))
             return FALSE;
         }
@@ -498,7 +498,7 @@ _gimp_wire_write_int32 (GIOChannel    *channel,
 }
 
 gboolean
-_gimp_wire_write_int16 (GIOChannel    *channel,
+_picman_wire_write_int16 (GIOChannel    *channel,
                         const guint16 *data,
                         gint           count,
                         gpointer       user_data)
@@ -513,7 +513,7 @@ _gimp_wire_write_int16 (GIOChannel    *channel,
         {
           guint16 tmp = g_htons (data[i]);
 
-          if (! _gimp_wire_write_int8 (channel,
+          if (! _picman_wire_write_int8 (channel,
                                        (const guint8 *) &tmp, 2, user_data))
             return FALSE;
         }
@@ -523,18 +523,18 @@ _gimp_wire_write_int16 (GIOChannel    *channel,
 }
 
 gboolean
-_gimp_wire_write_int8 (GIOChannel   *channel,
+_picman_wire_write_int8 (GIOChannel   *channel,
                        const guint8 *data,
                        gint          count,
                        gpointer      user_data)
 {
   g_return_val_if_fail (count >= 0, FALSE);
 
-  return gimp_wire_write (channel, data, count, user_data);
+  return picman_wire_write (channel, data, count, user_data);
 }
 
 gboolean
-_gimp_wire_write_double (GIOChannel    *channel,
+_picman_wire_write_double (GIOChannel    *channel,
                          const gdouble *data,
                          gint           count,
                          gpointer       user_data)
@@ -565,7 +565,7 @@ _gimp_wire_write_double (GIOChannel    *channel,
         }
 #endif
 
-      if (! _gimp_wire_write_int8 (channel, tmp, 8, user_data))
+      if (! _picman_wire_write_int8 (channel, tmp, 8, user_data))
         return FALSE;
 
 #if 0
@@ -586,7 +586,7 @@ _gimp_wire_write_double (GIOChannel    *channel,
 }
 
 gboolean
-_gimp_wire_write_string (GIOChannel  *channel,
+_picman_wire_write_string (GIOChannel  *channel,
                          gchar      **data,
                          gint         count,
                          gpointer     user_data)
@@ -604,11 +604,11 @@ _gimp_wire_write_string (GIOChannel  *channel,
       else
         tmp = 0;
 
-      if (! _gimp_wire_write_int32 (channel, &tmp, 1, user_data))
+      if (! _picman_wire_write_int32 (channel, &tmp, 1, user_data))
         return FALSE;
 
       if (tmp > 0)
-        if (! _gimp_wire_write_int8 (channel,
+        if (! _picman_wire_write_int8 (channel,
                                      (const guint8 *) data[i], tmp, user_data))
           return FALSE;
     }
@@ -617,34 +617,34 @@ _gimp_wire_write_string (GIOChannel  *channel,
 }
 
 gboolean
-_gimp_wire_write_color (GIOChannel    *channel,
-                        const GimpRGB *data,
+_picman_wire_write_color (GIOChannel    *channel,
+                        const PicmanRGB *data,
                         gint           count,
                         gpointer       user_data)
 {
   g_return_val_if_fail (count >= 0, FALSE);
 
-  return _gimp_wire_write_double (channel,
+  return _picman_wire_write_double (channel,
                                   (gdouble *) data, 4 * count, user_data);
 }
 
 static guint
-gimp_wire_hash (const guint32 *key)
+picman_wire_hash (const guint32 *key)
 {
   return *key;
 }
 
 static gboolean
-gimp_wire_compare (const guint32 *a,
+picman_wire_compare (const guint32 *a,
                    const guint32 *b)
 {
   return (*a == *b);
 }
 
 static void
-gimp_wire_init (void)
+picman_wire_init (void)
 {
   if (! wire_ht)
-    wire_ht = g_hash_table_new ((GHashFunc) gimp_wire_hash,
-                                (GCompareFunc) gimp_wire_compare);
+    wire_ht = g_hash_table_new ((GHashFunc) picman_wire_hash,
+                                (GCompareFunc) picman_wire_compare);
 }

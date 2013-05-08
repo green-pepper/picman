@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,44 +22,44 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimpdrawable-transform.h"
-#include "core/gimpimage.h"
-#include "core/gimpitem-linked.h"
-#include "core/gimplayer.h"
-#include "core/gimplayermask.h"
-#include "core/gimppickable.h"
+#include "core/picmandrawable-transform.h"
+#include "core/picmanimage.h"
+#include "core/picmanitem-linked.h"
+#include "core/picmanlayer.h"
+#include "core/picmanlayermask.h"
+#include "core/picmanpickable.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimpflipoptions.h"
-#include "gimpfliptool.h"
-#include "gimptoolcontrol.h"
+#include "picmanflipoptions.h"
+#include "picmanfliptool.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void         gimp_flip_tool_modifier_key  (GimpTool          *tool,
+static void         picman_flip_tool_modifier_key  (PicmanTool          *tool,
                                                   GdkModifierType    key,
                                                   gboolean           press,
                                                   GdkModifierType    state,
-                                                  GimpDisplay       *display);
-static void         gimp_flip_tool_cursor_update (GimpTool          *tool,
-                                                  const GimpCoords  *coords,
+                                                  PicmanDisplay       *display);
+static void         picman_flip_tool_cursor_update (PicmanTool          *tool,
+                                                  const PicmanCoords  *coords,
                                                   GdkModifierType    state,
-                                                  GimpDisplay       *display);
+                                                  PicmanDisplay       *display);
 
-static gchar      * gimp_flip_tool_get_undo_desc (GimpTransformTool *tool);
-static GeglBuffer * gimp_flip_tool_transform     (GimpTransformTool *tool,
-                                                  GimpItem          *item,
+static gchar      * picman_flip_tool_get_undo_desc (PicmanTransformTool *tool);
+static GeglBuffer * picman_flip_tool_transform     (PicmanTransformTool *tool,
+                                                  PicmanItem          *item,
                                                   GeglBuffer        *orig_buffer,
                                                   gint               orig_offset_x,
                                                   gint               orig_offset_y,
@@ -67,80 +67,80 @@ static GeglBuffer * gimp_flip_tool_transform     (GimpTransformTool *tool,
                                                   gint              *new_offset_y);
 
 
-G_DEFINE_TYPE (GimpFlipTool, gimp_flip_tool, GIMP_TYPE_TRANSFORM_TOOL)
+G_DEFINE_TYPE (PicmanFlipTool, picman_flip_tool, PICMAN_TYPE_TRANSFORM_TOOL)
 
-#define parent_class gimp_flip_tool_parent_class
+#define parent_class picman_flip_tool_parent_class
 
 
 void
-gimp_flip_tool_register (GimpToolRegisterCallback  callback,
+picman_flip_tool_register (PicmanToolRegisterCallback  callback,
                          gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_FLIP_TOOL,
-                GIMP_TYPE_FLIP_OPTIONS,
-                gimp_flip_options_gui,
-                GIMP_CONTEXT_BACKGROUND_MASK,
-                "gimp-flip-tool",
+  (* callback) (PICMAN_TYPE_FLIP_TOOL,
+                PICMAN_TYPE_FLIP_OPTIONS,
+                picman_flip_options_gui,
+                PICMAN_CONTEXT_BACKGROUND_MASK,
+                "picman-flip-tool",
                 _("Flip"),
                 _("Flip Tool: "
                   "Reverse the layer, selection or path horizontally or vertically"),
                 N_("_Flip"), "<shift>F",
-                NULL, GIMP_HELP_TOOL_FLIP,
-                GIMP_STOCK_TOOL_FLIP,
+                NULL, PICMAN_HELP_TOOL_FLIP,
+                PICMAN_STOCK_TOOL_FLIP,
                 data);
 }
 
 static void
-gimp_flip_tool_class_init (GimpFlipToolClass *klass)
+picman_flip_tool_class_init (PicmanFlipToolClass *klass)
 {
-  GimpToolClass          *tool_class  = GIMP_TOOL_CLASS (klass);
-  GimpTransformToolClass *trans_class = GIMP_TRANSFORM_TOOL_CLASS (klass);
+  PicmanToolClass          *tool_class  = PICMAN_TOOL_CLASS (klass);
+  PicmanTransformToolClass *trans_class = PICMAN_TRANSFORM_TOOL_CLASS (klass);
 
-  tool_class->modifier_key   = gimp_flip_tool_modifier_key;
-  tool_class->cursor_update  = gimp_flip_tool_cursor_update;
+  tool_class->modifier_key   = picman_flip_tool_modifier_key;
+  tool_class->cursor_update  = picman_flip_tool_cursor_update;
 
-  trans_class->get_undo_desc = gimp_flip_tool_get_undo_desc;
-  trans_class->transform     = gimp_flip_tool_transform;
+  trans_class->get_undo_desc = picman_flip_tool_get_undo_desc;
+  trans_class->transform     = picman_flip_tool_transform;
 }
 
 static void
-gimp_flip_tool_init (GimpFlipTool *flip_tool)
+picman_flip_tool_init (PicmanFlipTool *flip_tool)
 {
-  GimpTool *tool = GIMP_TOOL (flip_tool);
+  PicmanTool *tool = PICMAN_TOOL (flip_tool);
 
-  gimp_tool_control_set_snap_to            (tool->control, FALSE);
-  gimp_tool_control_set_precision          (tool->control,
-                                            GIMP_CURSOR_PRECISION_PIXEL_CENTER);
-  gimp_tool_control_set_cursor             (tool->control, GIMP_CURSOR_MOUSE);
-  gimp_tool_control_set_toggle_cursor      (tool->control, GIMP_CURSOR_MOUSE);
-  gimp_tool_control_set_tool_cursor        (tool->control,
-                                            GIMP_TOOL_CURSOR_FLIP_HORIZONTAL);
-  gimp_tool_control_set_toggle_tool_cursor (tool->control,
-                                            GIMP_TOOL_CURSOR_FLIP_VERTICAL);
+  picman_tool_control_set_snap_to            (tool->control, FALSE);
+  picman_tool_control_set_precision          (tool->control,
+                                            PICMAN_CURSOR_PRECISION_PIXEL_CENTER);
+  picman_tool_control_set_cursor             (tool->control, PICMAN_CURSOR_MOUSE);
+  picman_tool_control_set_toggle_cursor      (tool->control, PICMAN_CURSOR_MOUSE);
+  picman_tool_control_set_tool_cursor        (tool->control,
+                                            PICMAN_TOOL_CURSOR_FLIP_HORIZONTAL);
+  picman_tool_control_set_toggle_tool_cursor (tool->control,
+                                            PICMAN_TOOL_CURSOR_FLIP_VERTICAL);
 }
 
 static void
-gimp_flip_tool_modifier_key (GimpTool        *tool,
+picman_flip_tool_modifier_key (PicmanTool        *tool,
                              GdkModifierType  key,
                              gboolean         press,
                              GdkModifierType  state,
-                             GimpDisplay     *display)
+                             PicmanDisplay     *display)
 {
-  GimpFlipOptions *options = GIMP_FLIP_TOOL_GET_OPTIONS (tool);
+  PicmanFlipOptions *options = PICMAN_FLIP_TOOL_GET_OPTIONS (tool);
 
-  if (key == gimp_get_toggle_behavior_mask ())
+  if (key == picman_get_toggle_behavior_mask ())
     {
       switch (options->flip_type)
         {
-        case GIMP_ORIENTATION_HORIZONTAL:
+        case PICMAN_ORIENTATION_HORIZONTAL:
           g_object_set (options,
-                        "flip-type", GIMP_ORIENTATION_VERTICAL,
+                        "flip-type", PICMAN_ORIENTATION_VERTICAL,
                         NULL);
           break;
 
-        case GIMP_ORIENTATION_VERTICAL:
+        case PICMAN_ORIENTATION_VERTICAL:
           g_object_set (options,
-                        "flip-type", GIMP_ORIENTATION_HORIZONTAL,
+                        "flip-type", PICMAN_ORIENTATION_HORIZONTAL,
                         NULL);
           break;
 
@@ -151,42 +151,42 @@ gimp_flip_tool_modifier_key (GimpTool        *tool,
 }
 
 static void
-gimp_flip_tool_cursor_update (GimpTool         *tool,
-                              const GimpCoords *coords,
+picman_flip_tool_cursor_update (PicmanTool         *tool,
+                              const PicmanCoords *coords,
                               GdkModifierType   state,
-                              GimpDisplay      *display)
+                              PicmanDisplay      *display)
 {
-  GimpFlipOptions    *options  = GIMP_FLIP_TOOL_GET_OPTIONS (tool);
-  GimpCursorModifier  modifier = GIMP_CURSOR_MODIFIER_BAD;
-  GimpImage          *image    = gimp_display_get_image (display);
+  PicmanFlipOptions    *options  = PICMAN_FLIP_TOOL_GET_OPTIONS (tool);
+  PicmanCursorModifier  modifier = PICMAN_CURSOR_MODIFIER_BAD;
+  PicmanImage          *image    = picman_display_get_image (display);
 
-  if (gimp_image_coords_in_active_pickable (image, coords,
+  if (picman_image_coords_in_active_pickable (image, coords,
                                             FALSE, TRUE))
     {
-      modifier = GIMP_CURSOR_MODIFIER_NONE;
+      modifier = PICMAN_CURSOR_MODIFIER_NONE;
     }
 
-  gimp_tool_control_set_cursor_modifier        (tool->control, modifier);
-  gimp_tool_control_set_toggle_cursor_modifier (tool->control, modifier);
+  picman_tool_control_set_cursor_modifier        (tool->control, modifier);
+  picman_tool_control_set_toggle_cursor_modifier (tool->control, modifier);
 
-  gimp_tool_control_set_toggled (tool->control,
+  picman_tool_control_set_toggled (tool->control,
                                  options->flip_type ==
-                                 GIMP_ORIENTATION_VERTICAL);
+                                 PICMAN_ORIENTATION_VERTICAL);
 
-  GIMP_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
+  PICMAN_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
 }
 
 static gchar *
-gimp_flip_tool_get_undo_desc (GimpTransformTool *tr_tool)
+picman_flip_tool_get_undo_desc (PicmanTransformTool *tr_tool)
 {
-  GimpFlipOptions *options = GIMP_FLIP_TOOL_GET_OPTIONS (tr_tool);
+  PicmanFlipOptions *options = PICMAN_FLIP_TOOL_GET_OPTIONS (tr_tool);
 
   switch (options->flip_type)
     {
-    case GIMP_ORIENTATION_HORIZONTAL:
+    case PICMAN_ORIENTATION_HORIZONTAL:
       return g_strdup (C_("undo-type", "Flip horizontally"));
 
-    case GIMP_ORIENTATION_VERTICAL:
+    case PICMAN_ORIENTATION_VERTICAL:
       return g_strdup (C_("undo-type", "Flip vertically"));
 
     default:
@@ -198,27 +198,27 @@ gimp_flip_tool_get_undo_desc (GimpTransformTool *tr_tool)
 }
 
 static GeglBuffer *
-gimp_flip_tool_transform (GimpTransformTool *trans_tool,
-                          GimpItem          *active_item,
+picman_flip_tool_transform (PicmanTransformTool *trans_tool,
+                          PicmanItem          *active_item,
                           GeglBuffer        *orig_buffer,
                           gint               orig_offset_x,
                           gint               orig_offset_y,
                           gint              *new_offset_x,
                           gint              *new_offset_y)
 {
-  GimpFlipOptions *options = GIMP_FLIP_TOOL_GET_OPTIONS (trans_tool);
-  GimpContext     *context = GIMP_CONTEXT (options);
+  PicmanFlipOptions *options = PICMAN_FLIP_TOOL_GET_OPTIONS (trans_tool);
+  PicmanContext     *context = PICMAN_CONTEXT (options);
   gdouble          axis    = 0.0;
   GeglBuffer      *ret     = NULL;
 
   switch (options->flip_type)
     {
-    case GIMP_ORIENTATION_HORIZONTAL:
+    case PICMAN_ORIENTATION_HORIZONTAL:
       axis = ((gdouble) trans_tool->x1 +
               (gdouble) (trans_tool->x2 - trans_tool->x1) / 2.0);
       break;
 
-    case GIMP_ORIENTATION_VERTICAL:
+    case PICMAN_ORIENTATION_VERTICAL:
       axis = ((gdouble) trans_tool->y1 +
               (gdouble) (trans_tool->y2 - trans_tool->y1) / 2.0);
       break;
@@ -227,8 +227,8 @@ gimp_flip_tool_transform (GimpTransformTool *trans_tool,
       break;
     }
 
-  if (gimp_item_get_linked (active_item))
-    gimp_item_linked_flip (active_item, context, options->flip_type, axis,
+  if (picman_item_get_linked (active_item))
+    picman_item_linked_flip (active_item, context, options->flip_type, axis,
                            FALSE);
 
   if (orig_buffer)
@@ -237,7 +237,7 @@ gimp_flip_tool_transform (GimpTransformTool *trans_tool,
        *  normal drawable, or the selection
        */
 
-      ret = gimp_drawable_transform_buffer_flip (GIMP_DRAWABLE (active_item),
+      ret = picman_drawable_transform_buffer_flip (PICMAN_DRAWABLE (active_item),
                                                  context,
                                                  orig_buffer,
                                                  orig_offset_x,
@@ -251,7 +251,7 @@ gimp_flip_tool_transform (GimpTransformTool *trans_tool,
     {
       /*  this happens for entire drawables, paths and layer groups  */
 
-      gimp_item_flip (active_item, context, options->flip_type, axis, FALSE);
+      picman_item_flip (active_item, context, options->flip_type, axis, FALSE);
     }
 
   return ret;

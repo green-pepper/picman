@@ -1,32 +1,32 @@
 
-noinst_DATA = pygimp.html
+noinst_DATA = pypicman.html
 
 EXTRA_DIST = \
-	pygimp.sgml			\
-	pygimp.html			\
+	pypicman.sgml			\
+	pypicman.html			\
 	structure-of-plugin.html	\
 	procedural-database.html	\
-	gimp-module-procedures.html	\
-	gimp-objects.html		\
+	picman-module-procedures.html	\
+	picman-objects.html		\
 	support-modules.html		\
 	end-note.html
 
-printed: pygimp.ps pygimp.pdf
+printed: pypicman.ps pypicman.pdf
 
 #clean:
-#	rm -f *.html pygimp.ps pygimp.pdf
+#	rm -f *.html pypicman.ps pypicman.pdf
 
 
-pygimp.ps: pygimp.sgml
-	db2ps $(srcdir)/pygimp.sgml
+pypicman.ps: pypicman.sgml
+	db2ps $(srcdir)/pypicman.sgml
 
-pygimp.pdf: pygimp.sgml
-	db2pdf $(srcdir)/pygimp.sgml
+pypicman.pdf: pypicman.sgml
+	db2pdf $(srcdir)/pypicman.sgml
 
-pygimp.html: pygimp.sgml
-	cd $(srcdir) && db2html --nochunks pygimp.sgml
-	cd $(srcdir) && mv pygimp/*.html .
-	rm -rf $(srcdir)/pygimp
+pypicman.html: pypicman.sgml
+	cd $(srcdir) && db2html --nochunks pypicman.sgml
+	cd $(srcdir) && mv pypicman/*.html .
+	rm -rf $(srcdir)/pypicman
 
 .PHONY: printed #clean
 

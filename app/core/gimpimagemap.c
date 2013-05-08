@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,8 +22,8 @@
  * (so that it will show up in the projection) and it will restore the
  * source in case the mapping procedure was cancelled.
  *
- * To create a tool that uses this, see /tools/gimpimagemaptool.c for
- * the interface and /tools/gimpcolorbalancetool.c for an example of
+ * To create a tool that uses this, see /tools/picmanimagemaptool.c for
+ * the interface and /tools/picmancolorbalancetool.c for an example of
  * using that interface.
  *
  * Note that when talking about on canvas preview, we are speaking
@@ -37,19 +37,19 @@
 
 #include "core-types.h"
 
-#include "gegl/gimpapplicator.h"
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picmanapplicator.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimpdrawable.h"
-#include "gimpdrawable-filter.h"
-#include "gimpfilter.h"
-#include "gimpimage.h"
-#include "gimpimagemap.h"
-#include "gimpmarshal.h"
-#include "gimppickable.h"
-#include "gimpviewable.h"
-#include "gimpchannel.h"
-#include "gimpprogress.h"
+#include "picmandrawable.h"
+#include "picmandrawable-filter.h"
+#include "picmanfilter.h"
+#include "picmanimage.h"
+#include "picmanimagemap.h"
+#include "picmanmarshal.h"
+#include "picmanpickable.h"
+#include "picmanviewable.h"
+#include "picmanchannel.h"
+#include "picmanprogress.h"
 
 
 enum
@@ -59,49 +59,49 @@ enum
 };
 
 
-struct _GimpImageMap
+struct _PicmanImageMap
 {
-  GimpObject      parent_instance;
+  PicmanObject      parent_instance;
 
-  GimpDrawable   *drawable;
+  PicmanDrawable   *drawable;
   gchar          *undo_desc;
   GeglNode       *operation;
   gchar          *stock_id;
 
-  GimpFilter     *filter;
+  PicmanFilter     *filter;
   GeglNode       *translate;
-  GimpApplicator *applicator;
+  PicmanApplicator *applicator;
 };
 
 
-static void   gimp_image_map_pickable_iface_init (GimpPickableInterface *iface);
+static void   picman_image_map_pickable_iface_init (PicmanPickableInterface *iface);
 
-static void            gimp_image_map_dispose         (GObject             *object);
-static void            gimp_image_map_finalize        (GObject             *object);
+static void            picman_image_map_dispose         (GObject             *object);
+static void            picman_image_map_finalize        (GObject             *object);
 
-static GimpImage     * gimp_image_map_get_image       (GimpPickable        *pickable);
-static const Babl    * gimp_image_map_get_format      (GimpPickable        *pickable);
-static const Babl    * gimp_image_map_get_format_with_alpha
-                                                      (GimpPickable        *pickable);
-static GeglBuffer    * gimp_image_map_get_buffer      (GimpPickable        *pickable);
-static gboolean        gimp_image_map_get_pixel_at    (GimpPickable        *pickable,
+static PicmanImage     * picman_image_map_get_image       (PicmanPickable        *pickable);
+static const Babl    * picman_image_map_get_format      (PicmanPickable        *pickable);
+static const Babl    * picman_image_map_get_format_with_alpha
+                                                      (PicmanPickable        *pickable);
+static GeglBuffer    * picman_image_map_get_buffer      (PicmanPickable        *pickable);
+static gboolean        picman_image_map_get_pixel_at    (PicmanPickable        *pickable,
                                                        gint                 x,
                                                        gint                 y,
                                                        const Babl          *format,
                                                        gpointer             pixel);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpImageMap, gimp_image_map, GIMP_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PICKABLE,
-                                                gimp_image_map_pickable_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanImageMap, picman_image_map, PICMAN_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PICKABLE,
+                                                picman_image_map_pickable_iface_init))
 
-#define parent_class gimp_image_map_parent_class
+#define parent_class picman_image_map_parent_class
 
 static guint image_map_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_image_map_class_init (GimpImageMapClass *klass)
+picman_image_map_class_init (PicmanImageMapClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -109,45 +109,45 @@ gimp_image_map_class_init (GimpImageMapClass *klass)
     g_signal_new ("flush",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageMapClass, flush),
+                  G_STRUCT_OFFSET (PicmanImageMapClass, flush),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->dispose  = gimp_image_map_dispose;
-  object_class->finalize = gimp_image_map_finalize;
+  object_class->dispose  = picman_image_map_dispose;
+  object_class->finalize = picman_image_map_finalize;
 }
 
 static void
-gimp_image_map_pickable_iface_init (GimpPickableInterface *iface)
+picman_image_map_pickable_iface_init (PicmanPickableInterface *iface)
 {
-  iface->get_image             = gimp_image_map_get_image;
-  iface->get_format            = gimp_image_map_get_format;
-  iface->get_format_with_alpha = gimp_image_map_get_format_with_alpha;
-  iface->get_buffer            = gimp_image_map_get_buffer;
-  iface->get_pixel_at          = gimp_image_map_get_pixel_at;
+  iface->get_image             = picman_image_map_get_image;
+  iface->get_format            = picman_image_map_get_format;
+  iface->get_format_with_alpha = picman_image_map_get_format_with_alpha;
+  iface->get_buffer            = picman_image_map_get_buffer;
+  iface->get_pixel_at          = picman_image_map_get_pixel_at;
 }
 
 static void
-gimp_image_map_init (GimpImageMap *image_map)
+picman_image_map_init (PicmanImageMap *image_map)
 {
 }
 
 static void
-gimp_image_map_dispose (GObject *object)
+picman_image_map_dispose (GObject *object)
 {
-  GimpImageMap *image_map = GIMP_IMAGE_MAP (object);
+  PicmanImageMap *image_map = PICMAN_IMAGE_MAP (object);
 
   if (image_map->drawable)
-    gimp_viewable_preview_thaw (GIMP_VIEWABLE (image_map->drawable));
+    picman_viewable_preview_thaw (PICMAN_VIEWABLE (image_map->drawable));
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_image_map_finalize (GObject *object)
+picman_image_map_finalize (GObject *object)
 {
-  GimpImageMap *image_map = GIMP_IMAGE_MAP (object);
+  PicmanImageMap *image_map = PICMAN_IMAGE_MAP (object);
 
   if (image_map->undo_desc)
     {
@@ -188,64 +188,64 @@ gimp_image_map_finalize (GObject *object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
-static GimpImage *
-gimp_image_map_get_image (GimpPickable *pickable)
+static PicmanImage *
+picman_image_map_get_image (PicmanPickable *pickable)
 {
-  GimpImageMap *image_map = GIMP_IMAGE_MAP (pickable);
+  PicmanImageMap *image_map = PICMAN_IMAGE_MAP (pickable);
 
-  return gimp_pickable_get_image (GIMP_PICKABLE (image_map->drawable));
+  return picman_pickable_get_image (PICMAN_PICKABLE (image_map->drawable));
 }
 
 static const Babl *
-gimp_image_map_get_format (GimpPickable *pickable)
+picman_image_map_get_format (PicmanPickable *pickable)
 {
-  GimpImageMap *image_map = GIMP_IMAGE_MAP (pickable);
+  PicmanImageMap *image_map = PICMAN_IMAGE_MAP (pickable);
 
-  return gimp_pickable_get_format (GIMP_PICKABLE (image_map->drawable));
+  return picman_pickable_get_format (PICMAN_PICKABLE (image_map->drawable));
 }
 
 static const Babl *
-gimp_image_map_get_format_with_alpha (GimpPickable *pickable)
+picman_image_map_get_format_with_alpha (PicmanPickable *pickable)
 {
-  GimpImageMap *image_map = GIMP_IMAGE_MAP (pickable);
+  PicmanImageMap *image_map = PICMAN_IMAGE_MAP (pickable);
 
-  return gimp_pickable_get_format_with_alpha (GIMP_PICKABLE (image_map->drawable));
+  return picman_pickable_get_format_with_alpha (PICMAN_PICKABLE (image_map->drawable));
 }
 
 static GeglBuffer *
-gimp_image_map_get_buffer (GimpPickable *pickable)
+picman_image_map_get_buffer (PicmanPickable *pickable)
 {
-  GimpImageMap *image_map = GIMP_IMAGE_MAP (pickable);
+  PicmanImageMap *image_map = PICMAN_IMAGE_MAP (pickable);
 
-  return gimp_pickable_get_buffer (GIMP_PICKABLE (image_map->drawable));
+  return picman_pickable_get_buffer (PICMAN_PICKABLE (image_map->drawable));
 }
 
 static gboolean
-gimp_image_map_get_pixel_at (GimpPickable *pickable,
+picman_image_map_get_pixel_at (PicmanPickable *pickable,
                              gint          x,
                              gint          y,
                              const Babl   *format,
                              gpointer      pixel)
 {
-  GimpImageMap *image_map = GIMP_IMAGE_MAP (pickable);
+  PicmanImageMap *image_map = PICMAN_IMAGE_MAP (pickable);
 
-  return gimp_pickable_get_pixel_at (GIMP_PICKABLE (image_map->drawable),
+  return picman_pickable_get_pixel_at (PICMAN_PICKABLE (image_map->drawable),
                                      x, y, format, pixel);
 }
 
-GimpImageMap *
-gimp_image_map_new (GimpDrawable *drawable,
+PicmanImageMap *
+picman_image_map_new (PicmanDrawable *drawable,
                     const gchar  *undo_desc,
                     GeglNode     *operation,
                     const gchar  *stock_id)
 {
-  GimpImageMap *image_map;
+  PicmanImageMap *image_map;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (operation), NULL);
 
-  image_map = g_object_new (GIMP_TYPE_IMAGE_MAP, NULL);
+  image_map = g_object_new (PICMAN_TYPE_IMAGE_MAP, NULL);
 
   image_map->drawable  = g_object_ref (drawable);
   image_map->undo_desc = g_strdup (undo_desc);
@@ -253,27 +253,27 @@ gimp_image_map_new (GimpDrawable *drawable,
   image_map->operation = g_object_ref (operation);
   image_map->stock_id  = g_strdup (stock_id);
 
-  gimp_viewable_preview_freeze (GIMP_VIEWABLE (drawable));
+  picman_viewable_preview_freeze (PICMAN_VIEWABLE (drawable));
 
   return image_map;
 }
 
 void
-gimp_image_map_apply (GimpImageMap *image_map)
+picman_image_map_apply (PicmanImageMap *image_map)
 {
-  GimpImage         *image;
-  GimpChannel       *mask;
+  PicmanImage         *image;
+  PicmanChannel       *mask;
   GeglRectangle      rect;
-  GimpComponentMask  active_mask;
+  PicmanComponentMask  active_mask;
 
-  g_return_if_fail (GIMP_IS_IMAGE_MAP (image_map));
+  g_return_if_fail (PICMAN_IS_IMAGE_MAP (image_map));
 
   /*  Make sure the drawable is still valid  */
-  if (! gimp_item_is_attached (GIMP_ITEM (image_map->drawable)))
+  if (! picman_item_is_attached (PICMAN_ITEM (image_map->drawable)))
     return;
 
   /*  The application should occur only within selection bounds  */
-  if (! gimp_item_mask_intersect (GIMP_ITEM (image_map->drawable),
+  if (! picman_item_mask_intersect (PICMAN_ITEM (image_map->drawable),
                                   &rect.x, &rect.y,
                                   &rect.width, &rect.height))
     return;
@@ -284,19 +284,19 @@ gimp_image_map_apply (GimpImageMap *image_map)
       GeglNode *filter_output;
       GeglNode *input;
 
-      image_map->filter = gimp_filter_new (image_map->undo_desc);
-      gimp_viewable_set_stock_id (GIMP_VIEWABLE (image_map->filter),
+      image_map->filter = picman_filter_new (image_map->undo_desc);
+      picman_viewable_set_stock_id (PICMAN_VIEWABLE (image_map->filter),
                                   image_map->stock_id);
 
-      filter_node = gimp_filter_get_node (image_map->filter);
+      filter_node = picman_filter_get_node (image_map->filter);
 
       gegl_node_add_child (filter_node, image_map->operation);
 
       image_map->applicator =
-        gimp_applicator_new (filter_node,
-                             gimp_drawable_get_linear (image_map->drawable));
+        picman_applicator_new (filter_node,
+                             picman_drawable_get_linear (image_map->drawable));
 
-      gimp_filter_set_applicator (image_map->filter,
+      picman_filter_set_applicator (image_map->filter,
                                   image_map->applicator);
 
       image_map->translate = gegl_node_new_child (filter_node,
@@ -352,55 +352,55 @@ gimp_image_map_apply (GimpImageMap *image_map)
       gegl_node_connect_to (filter_output, "output",
                             filter_node,   "aux");
 
-      gimp_applicator_set_mode (image_map->applicator,
-                                GIMP_OPACITY_OPAQUE,
-                                GIMP_REPLACE_MODE);
+      picman_applicator_set_mode (image_map->applicator,
+                                PICMAN_OPACITY_OPAQUE,
+                                PICMAN_REPLACE_MODE);
     }
 
-  if (! gimp_drawable_has_filter (image_map->drawable, image_map->filter))
-    gimp_drawable_add_filter (image_map->drawable, image_map->filter);
+  if (! picman_drawable_has_filter (image_map->drawable, image_map->filter))
+    picman_drawable_add_filter (image_map->drawable, image_map->filter);
 
   gegl_node_set (image_map->translate,
                  "x", (gdouble) -rect.x,
                  "y", (gdouble) -rect.y,
                  NULL);
 
-  gimp_applicator_set_apply_offset (image_map->applicator,
+  picman_applicator_set_apply_offset (image_map->applicator,
                                     rect.x, rect.y);
 
-  active_mask = gimp_drawable_get_active_mask (image_map->drawable);
+  active_mask = picman_drawable_get_active_mask (image_map->drawable);
 
   /*  don't let the filter affect the drawable projection's alpha,
    *  because it can't affect the drawable buffer's alpha either
    *  when finally merged (see bug #699279)
    */
-  if (! gimp_drawable_has_alpha (image_map->drawable))
-    active_mask &= ~GIMP_COMPONENT_ALPHA;
+  if (! picman_drawable_has_alpha (image_map->drawable))
+    active_mask &= ~PICMAN_COMPONENT_ALPHA;
 
-  gimp_applicator_set_affect (image_map->applicator, active_mask);
+  picman_applicator_set_affect (image_map->applicator, active_mask);
 
-  image = gimp_item_get_image (GIMP_ITEM (image_map->drawable));
-  mask  = gimp_image_get_mask (image);
+  image = picman_item_get_image (PICMAN_ITEM (image_map->drawable));
+  mask  = picman_image_get_mask (image);
 
-  if (gimp_channel_is_empty (mask))
+  if (picman_channel_is_empty (mask))
     {
-      gimp_applicator_set_mask_buffer (image_map->applicator, NULL);
+      picman_applicator_set_mask_buffer (image_map->applicator, NULL);
     }
   else
     {
       GeglBuffer *mask_buffer;
       gint        offset_x, offset_y;
 
-      mask_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (mask));
-      gimp_item_get_offset (GIMP_ITEM (image_map->drawable),
+      mask_buffer = picman_drawable_get_buffer (PICMAN_DRAWABLE (mask));
+      picman_item_get_offset (PICMAN_ITEM (image_map->drawable),
                             &offset_x, &offset_y);
 
-      gimp_applicator_set_mask_buffer (image_map->applicator, mask_buffer);
-      gimp_applicator_set_mask_offset (image_map->applicator,
+      picman_applicator_set_mask_buffer (image_map->applicator, mask_buffer);
+      picman_applicator_set_mask_offset (image_map->applicator,
                                        offset_x, offset_y);
     }
 
-  gimp_drawable_update (image_map->drawable,
+  picman_drawable_update (image_map->drawable,
                         rect.x, rect.y,
                         rect.width, rect.height);
 
@@ -408,17 +408,17 @@ gimp_image_map_apply (GimpImageMap *image_map)
 }
 
 void
-gimp_image_map_commit (GimpImageMap *image_map,
-                       GimpProgress *progress)
+picman_image_map_commit (PicmanImageMap *image_map,
+                       PicmanProgress *progress)
 {
-  g_return_if_fail (GIMP_IS_IMAGE_MAP (image_map));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_IMAGE_MAP (image_map));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
-  if (gimp_drawable_has_filter (image_map->drawable, image_map->filter))
+  if (picman_drawable_has_filter (image_map->drawable, image_map->filter))
     {
-      gimp_drawable_remove_filter (image_map->drawable, image_map->filter);
+      picman_drawable_remove_filter (image_map->drawable, image_map->filter);
 
-      gimp_drawable_merge_filter (image_map->drawable, image_map->filter,
+      picman_drawable_merge_filter (image_map->drawable, image_map->filter,
                                   progress,
                                   image_map->undo_desc);
 
@@ -427,22 +427,22 @@ gimp_image_map_commit (GimpImageMap *image_map,
 }
 
 void
-gimp_image_map_abort (GimpImageMap *image_map)
+picman_image_map_abort (PicmanImageMap *image_map)
 {
-  g_return_if_fail (GIMP_IS_IMAGE_MAP (image_map));
+  g_return_if_fail (PICMAN_IS_IMAGE_MAP (image_map));
 
-  if (gimp_drawable_has_filter (image_map->drawable, image_map->filter))
+  if (picman_drawable_has_filter (image_map->drawable, image_map->filter))
     {
       GeglRectangle rect;
 
-      gimp_drawable_remove_filter (image_map->drawable, image_map->filter);
+      picman_drawable_remove_filter (image_map->drawable, image_map->filter);
 
-      if (gimp_item_is_attached (GIMP_ITEM (image_map->drawable)) &&
-          gimp_item_mask_intersect (GIMP_ITEM (image_map->drawable),
+      if (picman_item_is_attached (PICMAN_ITEM (image_map->drawable)) &&
+          picman_item_mask_intersect (PICMAN_ITEM (image_map->drawable),
                                     &rect.x, &rect.y,
                                     &rect.width, &rect.height))
         {
-          gimp_drawable_update (image_map->drawable,
+          picman_drawable_update (image_map->drawable,
                                 rect.x, rect.y,
                                 rect.width, rect.height);
 

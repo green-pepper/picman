@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,8 +24,8 @@
 
 #include "tools-types.h"
 
-#include "gimpforegroundselecttool.h"
-#include "gimpforegroundselecttoolundo.h"
+#include "picmanforegroundselecttool.h"
+#include "picmanforegroundselecttoolundo.h"
 
 
 enum
@@ -35,78 +35,78 @@ enum
 };
 
 
-static void   gimp_foreground_select_tool_undo_constructed  (GObject             *object);
-static void   gimp_foreground_select_tool_undo_set_property (GObject             *object,
+static void   picman_foreground_select_tool_undo_constructed  (GObject             *object);
+static void   picman_foreground_select_tool_undo_set_property (GObject             *object,
                                                              guint                property_id,
                                                              const GValue        *value,
                                                              GParamSpec          *pspec);
-static void   gimp_foreground_select_tool_undo_get_property (GObject             *object,
+static void   picman_foreground_select_tool_undo_get_property (GObject             *object,
                                                              guint                property_id,
                                                              GValue              *value,
                                                              GParamSpec          *pspec);
 
-static void   gimp_foreground_select_tool_undo_pop          (GimpUndo            *undo,
-                                                             GimpUndoMode         undo_mode,
-                                                             GimpUndoAccumulator *accum);
-static void   gimp_foreground_select_tool_undo_free         (GimpUndo            *undo,
-                                                             GimpUndoMode         undo_mode);
+static void   picman_foreground_select_tool_undo_pop          (PicmanUndo            *undo,
+                                                             PicmanUndoMode         undo_mode,
+                                                             PicmanUndoAccumulator *accum);
+static void   picman_foreground_select_tool_undo_free         (PicmanUndo            *undo,
+                                                             PicmanUndoMode         undo_mode);
 
 
-G_DEFINE_TYPE (GimpForegroundSelectToolUndo, gimp_foreground_select_tool_undo,
-               GIMP_TYPE_UNDO)
+G_DEFINE_TYPE (PicmanForegroundSelectToolUndo, picman_foreground_select_tool_undo,
+               PICMAN_TYPE_UNDO)
 
-#define parent_class gimp_foreground_select_tool_undo_parent_class
+#define parent_class picman_foreground_select_tool_undo_parent_class
 
 
 static void
-gimp_foreground_select_tool_undo_class_init (GimpForegroundSelectToolUndoClass *klass)
+picman_foreground_select_tool_undo_class_init (PicmanForegroundSelectToolUndoClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
-  GimpUndoClass *undo_class   = GIMP_UNDO_CLASS (klass);
+  PicmanUndoClass *undo_class   = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed  = gimp_foreground_select_tool_undo_constructed;
-  object_class->set_property = gimp_foreground_select_tool_undo_set_property;
-  object_class->get_property = gimp_foreground_select_tool_undo_get_property;
+  object_class->constructed  = picman_foreground_select_tool_undo_constructed;
+  object_class->set_property = picman_foreground_select_tool_undo_set_property;
+  object_class->get_property = picman_foreground_select_tool_undo_get_property;
 
-  undo_class->pop            = gimp_foreground_select_tool_undo_pop;
-  undo_class->free           = gimp_foreground_select_tool_undo_free;
+  undo_class->pop            = picman_foreground_select_tool_undo_pop;
+  undo_class->free           = picman_foreground_select_tool_undo_free;
 
   g_object_class_install_property (object_class, PROP_FOREGROUND_SELECT_TOOL,
                                    g_param_spec_object ("foreground-select-tool",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_FOREGROUND_SELECT_TOOL,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_FOREGROUND_SELECT_TOOL,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_foreground_select_tool_undo_init (GimpForegroundSelectToolUndo *undo)
+picman_foreground_select_tool_undo_init (PicmanForegroundSelectToolUndo *undo)
 {
 }
 
 static void
-gimp_foreground_select_tool_undo_constructed (GObject *object)
+picman_foreground_select_tool_undo_constructed (GObject *object)
 {
-  GimpForegroundSelectToolUndo *fg_select_tool_undo;
+  PicmanForegroundSelectToolUndo *fg_select_tool_undo;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  fg_select_tool_undo = GIMP_FOREGROUND_SELECT_TOOL_UNDO (object);
+  fg_select_tool_undo = PICMAN_FOREGROUND_SELECT_TOOL_UNDO (object);
 
-  g_assert (GIMP_IS_FOREGROUND_SELECT_TOOL (fg_select_tool_undo->foreground_select_tool));
+  g_assert (PICMAN_IS_FOREGROUND_SELECT_TOOL (fg_select_tool_undo->foreground_select_tool));
 
   g_object_add_weak_pointer (G_OBJECT (fg_select_tool_undo->foreground_select_tool),
                              (gpointer) &fg_select_tool_undo->foreground_select_tool);
 }
 
 static void
-gimp_foreground_select_tool_undo_set_property (GObject      *object,
+picman_foreground_select_tool_undo_set_property (GObject      *object,
                                                guint         property_id,
                                                const GValue *value,
                                                GParamSpec   *pspec)
 {
-  GimpForegroundSelectToolUndo *fg_select_tool_undo =
-    GIMP_FOREGROUND_SELECT_TOOL_UNDO (object);
+  PicmanForegroundSelectToolUndo *fg_select_tool_undo =
+    PICMAN_FOREGROUND_SELECT_TOOL_UNDO (object);
 
   switch (property_id)
     {
@@ -121,13 +121,13 @@ gimp_foreground_select_tool_undo_set_property (GObject      *object,
 }
 
 static void
-gimp_foreground_select_tool_undo_get_property (GObject    *object,
+picman_foreground_select_tool_undo_get_property (GObject    *object,
                                                guint       property_id,
                                                GValue     *value,
                                                GParamSpec *pspec)
 {
-  GimpForegroundSelectToolUndo *fg_select_tool_undo =
-    GIMP_FOREGROUND_SELECT_TOOL_UNDO (object);
+  PicmanForegroundSelectToolUndo *fg_select_tool_undo =
+    PICMAN_FOREGROUND_SELECT_TOOL_UNDO (object);
 
   switch (property_id)
     {
@@ -142,18 +142,18 @@ gimp_foreground_select_tool_undo_get_property (GObject    *object,
 }
 
 static void
-gimp_foreground_select_tool_undo_pop (GimpUndo              *undo,
-                                      GimpUndoMode           undo_mode,
-                                      GimpUndoAccumulator   *accum)
+picman_foreground_select_tool_undo_pop (PicmanUndo              *undo,
+                                      PicmanUndoMode           undo_mode,
+                                      PicmanUndoAccumulator   *accum)
 {
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 }
 
 static void
-gimp_foreground_select_tool_undo_free (GimpUndo     *undo,
-                                       GimpUndoMode  undo_mode)
+picman_foreground_select_tool_undo_free (PicmanUndo     *undo,
+                                       PicmanUndoMode  undo_mode)
 {
-  GimpForegroundSelectToolUndo *fg_select_tool_undo = GIMP_FOREGROUND_SELECT_TOOL_UNDO (undo);
+  PicmanForegroundSelectToolUndo *fg_select_tool_undo = PICMAN_FOREGROUND_SELECT_TOOL_UNDO (undo);
 
   if (fg_select_tool_undo->foreground_select_tool)
     {
@@ -162,7 +162,7 @@ gimp_foreground_select_tool_undo_free (GimpUndo     *undo,
       fg_select_tool_undo->foreground_select_tool = NULL;
     }
 
-  GIMP_UNDO_CLASS (parent_class)->free (undo, undo_mode);
+  PICMAN_UNDO_CLASS (parent_class)->free (undo, undo_mode);
 }
 
 #endif

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpitemtreeview.h
- * Copyright (C) 2001-2003 Michael Natterer <mitch@gimp.org>
+ * picmanitemtreeview.h
+ * Copyright (C) 2001-2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,65 +18,65 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ITEM_TREE_VIEW_H__
-#define __GIMP_ITEM_TREE_VIEW_H__
+#ifndef __PICMAN_ITEM_TREE_VIEW_H__
+#define __PICMAN_ITEM_TREE_VIEW_H__
 
 
-#include "gimpcontainertreeview.h"
+#include "picmancontainertreeview.h"
 
 
-typedef GimpContainer * (* GimpGetContainerFunc) (const GimpImage *image);
-typedef GimpItem      * (* GimpGetItemFunc)      (const GimpImage *image);
-typedef void            (* GimpSetItemFunc)      (GimpImage       *image,
-                                                  GimpItem        *item);
-typedef void            (* GimpAddItemFunc)      (GimpImage       *image,
-                                                  GimpItem        *item,
-                                                  GimpItem        *parent,
+typedef PicmanContainer * (* PicmanGetContainerFunc) (const PicmanImage *image);
+typedef PicmanItem      * (* PicmanGetItemFunc)      (const PicmanImage *image);
+typedef void            (* PicmanSetItemFunc)      (PicmanImage       *image,
+                                                  PicmanItem        *item);
+typedef void            (* PicmanAddItemFunc)      (PicmanImage       *image,
+                                                  PicmanItem        *item,
+                                                  PicmanItem        *parent,
                                                   gint             index,
                                                   gboolean         push_undo);
-typedef void            (* GimpRemoveItemFunc)   (GimpImage       *image,
-                                                  GimpItem        *item,
+typedef void            (* PicmanRemoveItemFunc)   (PicmanImage       *image,
+                                                  PicmanItem        *item,
                                                   gboolean         push_undo,
-                                                  GimpItem        *new_active);
-typedef GimpItem      * (* GimpNewItemFunc)      (GimpImage       *image);
+                                                  PicmanItem        *new_active);
+typedef PicmanItem      * (* PicmanNewItemFunc)      (PicmanImage       *image);
 
 
-#define GIMP_TYPE_ITEM_TREE_VIEW            (gimp_item_tree_view_get_type ())
-#define GIMP_ITEM_TREE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ITEM_TREE_VIEW, GimpItemTreeView))
-#define GIMP_ITEM_TREE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ITEM_TREE_VIEW, GimpItemTreeViewClass))
-#define GIMP_IS_ITEM_TREE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ITEM_TREE_VIEW))
-#define GIMP_IS_ITEM_TREE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ITEM_TREE_VIEW))
-#define GIMP_ITEM_TREE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ITEM_TREE_VIEW, GimpItemTreeViewClass))
+#define PICMAN_TYPE_ITEM_TREE_VIEW            (picman_item_tree_view_get_type ())
+#define PICMAN_ITEM_TREE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ITEM_TREE_VIEW, PicmanItemTreeView))
+#define PICMAN_ITEM_TREE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ITEM_TREE_VIEW, PicmanItemTreeViewClass))
+#define PICMAN_IS_ITEM_TREE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ITEM_TREE_VIEW))
+#define PICMAN_IS_ITEM_TREE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ITEM_TREE_VIEW))
+#define PICMAN_ITEM_TREE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ITEM_TREE_VIEW, PicmanItemTreeViewClass))
 
 
-typedef struct _GimpItemTreeViewClass  GimpItemTreeViewClass;
-typedef struct _GimpItemTreeViewPriv   GimpItemTreeViewPriv;
+typedef struct _PicmanItemTreeViewClass  PicmanItemTreeViewClass;
+typedef struct _PicmanItemTreeViewPriv   PicmanItemTreeViewPriv;
 
-struct _GimpItemTreeView
+struct _PicmanItemTreeView
 {
-  GimpContainerTreeView  parent_instance;
+  PicmanContainerTreeView  parent_instance;
 
-  GimpItemTreeViewPriv  *priv;
+  PicmanItemTreeViewPriv  *priv;
 };
 
-struct _GimpItemTreeViewClass
+struct _PicmanItemTreeViewClass
 {
-  GimpContainerTreeViewClass  parent_class;
+  PicmanContainerTreeViewClass  parent_class;
 
   /*  signals  */
-  void (* set_image) (GimpItemTreeView *view,
-                      GimpImage        *image);
+  void (* set_image) (PicmanItemTreeView *view,
+                      PicmanImage        *image);
 
   GType                 item_type;
   const gchar          *signal_name;
 
   /*  virtual functions for manipulating the image's item tree  */
-  GimpGetContainerFunc  get_container;
-  GimpGetItemFunc       get_active_item;
-  GimpSetItemFunc       set_active_item;
-  GimpAddItemFunc       add_item;
-  GimpRemoveItemFunc    remove_item;
-  GimpNewItemFunc       new_item;
+  PicmanGetContainerFunc  get_container;
+  PicmanGetItemFunc       get_active_item;
+  PicmanSetItemFunc       set_active_item;
+  PicmanAddItemFunc       add_item;
+  PicmanRemoveItemFunc    remove_item;
+  PicmanNewItemFunc       new_item;
 
   /*  action names  */
   const gchar          *action_group;
@@ -103,32 +103,32 @@ struct _GimpItemTreeViewClass
 };
 
 
-GType       gimp_item_tree_view_get_type        (void) G_GNUC_CONST;
+GType       picman_item_tree_view_get_type        (void) G_GNUC_CONST;
 
-GtkWidget * gimp_item_tree_view_new             (GType             view_type,
+GtkWidget * picman_item_tree_view_new             (GType             view_type,
                                                  gint              view_size,
                                                  gint              view_border_width,
-                                                 GimpImage        *image,
-                                                 GimpMenuFactory  *menu_facotry,
+                                                 PicmanImage        *image,
+                                                 PicmanMenuFactory  *menu_facotry,
                                                  const gchar      *menu_identifier,
                                                  const gchar      *ui_identifier);
 
-void        gimp_item_tree_view_set_image       (GimpItemTreeView *view,
-                                                 GimpImage        *image);
-GimpImage * gimp_item_tree_view_get_image       (GimpItemTreeView *view);
+void        picman_item_tree_view_set_image       (PicmanItemTreeView *view,
+                                                 PicmanImage        *image);
+PicmanImage * picman_item_tree_view_get_image       (PicmanItemTreeView *view);
 
-void        gimp_item_tree_view_add_options     (GimpItemTreeView *view,
+void        picman_item_tree_view_add_options     (PicmanItemTreeView *view,
                                                  const gchar      *label,
                                                  GtkWidget        *options);
-GtkWidget * gimp_item_tree_view_get_lock_box    (GimpItemTreeView *view);
+GtkWidget * picman_item_tree_view_get_lock_box    (PicmanItemTreeView *view);
 
-GtkWidget * gimp_item_tree_view_get_new_button  (GimpItemTreeView *view);
-GtkWidget * gimp_item_tree_view_get_edit_button (GimpItemTreeView *view);
+GtkWidget * picman_item_tree_view_get_new_button  (PicmanItemTreeView *view);
+GtkWidget * picman_item_tree_view_get_edit_button (PicmanItemTreeView *view);
 
-gint        gimp_item_tree_view_get_drop_index  (GimpItemTreeView *view,
-                                                 GimpViewable     *dest_viewable,
+gint        picman_item_tree_view_get_drop_index  (PicmanItemTreeView *view,
+                                                 PicmanViewable     *dest_viewable,
                                                  GtkTreeViewDropPosition drop_pos,
-                                                 GimpViewable    **parent);
+                                                 PicmanViewable    **parent);
 
 
-#endif  /*  __GIMP_ITEM_TREE_VIEW_H__  */
+#endif  /*  __PICMAN_ITEM_TREE_VIEW_H__  */

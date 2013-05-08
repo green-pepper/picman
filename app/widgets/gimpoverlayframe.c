@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoverlayframe.c
- * Copyright (C) 2010  Michael Natterer <mitch@gimp.org>
+ * picmanoverlayframe.c
+ * Copyright (C) 2010  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,45 +22,45 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "widgets-types.h"
 
-#include "gimpoverlayframe.h"
-#include "gimpwidgets-utils.h"
+#include "picmanoverlayframe.h"
+#include "picmanwidgets-utils.h"
 
 
-static void       gimp_overlay_frame_size_request  (GtkWidget      *widget,
+static void       picman_overlay_frame_size_request  (GtkWidget      *widget,
                                                     GtkRequisition *requisition);
-static void       gimp_overlay_frame_size_allocate (GtkWidget      *widget,
+static void       picman_overlay_frame_size_allocate (GtkWidget      *widget,
                                                     GtkAllocation  *allocation);
-static gboolean   gimp_overlay_frame_expose        (GtkWidget      *widget,
+static gboolean   picman_overlay_frame_expose        (GtkWidget      *widget,
                                                     GdkEventExpose *eevent);
 
 
-G_DEFINE_TYPE (GimpOverlayFrame, gimp_overlay_frame, GTK_TYPE_BIN)
+G_DEFINE_TYPE (PicmanOverlayFrame, picman_overlay_frame, GTK_TYPE_BIN)
 
-#define parent_class gimp_overlay_frame_parent_class
+#define parent_class picman_overlay_frame_parent_class
 
 
 static void
-gimp_overlay_frame_class_init (GimpOverlayFrameClass *klass)
+picman_overlay_frame_class_init (PicmanOverlayFrameClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  widget_class->size_request  = gimp_overlay_frame_size_request;
-  widget_class->size_allocate = gimp_overlay_frame_size_allocate;
-  widget_class->expose_event  = gimp_overlay_frame_expose;
+  widget_class->size_request  = picman_overlay_frame_size_request;
+  widget_class->size_allocate = picman_overlay_frame_size_allocate;
+  widget_class->expose_event  = picman_overlay_frame_expose;
 }
 
 static void
-gimp_overlay_frame_init (GimpOverlayFrame *frame)
+picman_overlay_frame_init (PicmanOverlayFrame *frame)
 {
   gtk_widget_set_app_paintable (GTK_WIDGET (frame), TRUE);
 }
 
 static void
-gimp_overlay_frame_size_request (GtkWidget      *widget,
+picman_overlay_frame_size_request (GtkWidget      *widget,
                                  GtkRequisition *requisition)
 {
   GtkWidget      *child = gtk_bin_get_child (GTK_BIN (widget));
@@ -87,7 +87,7 @@ gimp_overlay_frame_size_request (GtkWidget      *widget,
 }
 
 static void
-gimp_overlay_frame_size_allocate (GtkWidget     *widget,
+picman_overlay_frame_size_allocate (GtkWidget     *widget,
                                   GtkAllocation *allocation)
 {
   GtkWidget     *child = gtk_bin_get_child (GTK_BIN (widget));
@@ -110,7 +110,7 @@ gimp_overlay_frame_size_allocate (GtkWidget     *widget,
 }
 
 static gboolean
-gimp_overlay_frame_expose (GtkWidget      *widget,
+picman_overlay_frame_expose (GtkWidget      *widget,
                            GdkEventExpose *eevent)
 {
   cairo_t       *cr    = gdk_cairo_create (gtk_widget_get_window (widget));
@@ -199,7 +199,7 @@ gimp_overlay_frame_expose (GtkWidget      *widget,
 }
 
 GtkWidget *
-gimp_overlay_frame_new (void)
+picman_overlay_frame_new (void)
 {
-  return g_object_new (GIMP_TYPE_OVERLAY_FRAME, NULL);
+  return g_object_new (PICMAN_TYPE_OVERLAY_FRAME, NULL);
 }

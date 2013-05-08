@@ -25,10 +25,10 @@
 /cscope.files
 /cscope.out
 /depcomp
-/gimp-2.0.pc
-/gimp-zip
-/gimpthumb-2.0.pc
-/gimpui-2.0.pc
+/picman-2.0.pc
+/picman-zip
+/picmanthumb-2.0.pc
+/picmanui-2.0.pc
 /gtk-doc.make
 /install-sh
 /intltool-extract

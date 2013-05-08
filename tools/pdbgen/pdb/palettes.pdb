@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub palettes_refresh {
     $blurb = 'Refreshes current palettes. This function always succeeds.';
@@ -29,7 +29,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  gimp_data_factory_data_refresh (gimp->palette_factory, context);
+  picman_data_factory_data_refresh (picman->palette_factory, context);
 }
 CODE
     );
@@ -40,7 +40,7 @@ sub palettes_get_list {
 
     $help = <<'HELP';
 This procedure returns a complete listing of available palettes. Each name
-returned can be used as input to the command gimp_context_set_palette().
+returned can be used as input to the command picman_context_set_palette().
 HELP
 
     &rock_pdb_misc('2001');
@@ -58,10 +58,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpcontainer-filter.h") ],
+        headers => [ qw("core/picmancontainer-filter.h") ],
         code    => <<'CODE'
 {
-  palette_list = gimp_container_get_filtered_name_array (gimp_data_factory_get_container (gimp->palette_factory),
+  palette_list = picman_container_get_filtered_name_array (picman_data_factory_get_container (picman->palette_factory),
                                                          filter, &num_palettes);
 }
 CODE
@@ -69,7 +69,7 @@ CODE
 }
 
 sub palettes_get_palette {
-    &std_pdb_deprecated ('gimp-context-get-palette');
+    &std_pdb_deprecated ('picman-context-get-palette');
 
     @outargs = (
 	{ name => 'name', type => 'string', null_ok => 1,
@@ -81,12 +81,12 @@ sub palettes_get_palette {
     %invoke = (
         code => <<'CODE'
 {
-  GimpPalette *palette = gimp_context_get_palette (context);
+  PicmanPalette *palette = picman_context_get_palette (context);
 
   if (palette)
     {
-      name       = g_strdup (gimp_object_get_name (palette));
-      num_colors = gimp_palette_get_n_colors (palette);
+      name       = g_strdup (picman_object_get_name (palette));
+      num_colors = picman_palette_get_n_colors (palette);
     }
   else
     success = FALSE;
@@ -96,7 +96,7 @@ CODE
 }
 
 sub palettes_get_palette_entry {
-    &std_pdb_deprecated ('gimp-palette-entry-get-color');
+    &std_pdb_deprecated ('picman-palette-entry-get-color');
 
     @inargs = (
 	{ name => 'name', type => 'string', null_ok => 1,
@@ -117,21 +117,21 @@ sub palettes_get_palette_entry {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPalette *palette;
+  PicmanPalette *palette;
 
   if (name && strlen (name))
-    palette = gimp_pdb_get_palette (gimp, name, FALSE, error);
+    palette = picman_pdb_get_palette (picman, name, FALSE, error);
   else
-    palette = gimp_context_get_palette (context);
+    palette = picman_context_get_palette (context);
 
   if (palette)
     {
-      GimpPaletteEntry *entry = gimp_palette_get_entry (palette, entry_num);
+      PicmanPaletteEntry *entry = picman_palette_get_entry (palette, entry_num);
 
       if (entry)
         {
-          actual_name = g_strdup (gimp_object_get_name (palette));
-          num_colors  = gimp_palette_get_n_colors (palette);
+          actual_name = g_strdup (picman_object_get_name (palette));
+          num_colors  = picman_palette_get_n_colors (palette);
           color       = entry->color;
         }
       else
@@ -146,11 +146,11 @@ CODE
 
 
 @headers = qw(<string.h>
-              "core/gimp.h"
-              "core/gimpcontext.h"
-              "core/gimpdatafactory.h"
-              "core/gimppalette.h"
-              "gimppdb-utils.h");
+              "core/picman.h"
+              "core/picmancontext.h"
+              "core/picmandatafactory.h"
+              "core/picmanpalette.h"
+              "picmanpdb-utils.h");
 
 @procs = qw(palettes_refresh
             palettes_get_list
@@ -160,7 +160,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Palettes';
-$doc_title = 'gimppalettes';
+$doc_title = 'picmanpalettes';
 $doc_short_desc = 'Operations related to palettes.';
 $doc_long_desc = 'Operations related to palettes.';
 

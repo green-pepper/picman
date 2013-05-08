@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,86 +25,86 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpbrush.h"
-#include "core/gimpbrushgenerated.h"
-#include "core/gimpcontext.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimptempbuf.h"
+#include "core/picman.h"
+#include "core/picmanbrush.h"
+#include "core/picmanbrushgenerated.h"
+#include "core/picmancontext.h"
+#include "core/picmandatafactory.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmantempbuf.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-brush_new_invoker (GimpProcedure         *procedure,
-                   Gimp                  *gimp,
-                   GimpContext           *context,
-                   GimpProgress          *progress,
-                   const GimpValueArray  *args,
+static PicmanValueArray *
+brush_new_invoker (PicmanProcedure         *procedure,
+                   Picman                  *picman,
+                   PicmanContext           *context,
+                   PicmanProgress          *progress,
+                   const PicmanValueArray  *args,
                    GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gchar *actual_name = NULL;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpData *data = gimp_data_factory_data_new (gimp->brush_factory,
+      PicmanData *data = picman_data_factory_data_new (picman->brush_factory,
                                                    context, name);
 
       if (data)
-        actual_name = g_strdup (gimp_object_get_name (data));
+        actual_name = g_strdup (picman_object_get_name (data));
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), actual_name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), actual_name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_duplicate_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+brush_duplicate_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gchar *copy_name = NULL;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
       if (brush)
         {
-          GimpBrush *brush_copy = (GimpBrush *)
-            gimp_data_factory_data_duplicate (gimp->brush_factory,
-                                              GIMP_DATA (brush));
+          PicmanBrush *brush_copy = (PicmanBrush *)
+            picman_data_factory_data_duplicate (picman->brush_factory,
+                                              PICMAN_DATA (brush));
 
           if (brush_copy)
-            copy_name = g_strdup (gimp_object_get_name (brush_copy));
+            copy_name = g_strdup (picman_object_get_name (brush_copy));
           else
             success = FALSE;
         }
@@ -112,208 +112,208 @@ brush_duplicate_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), copy_name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), copy_name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_is_generated_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+brush_is_generated_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gboolean generated = FALSE;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
       if (brush)
-        generated = GIMP_IS_BRUSH_GENERATED (brush);
+        generated = PICMAN_IS_BRUSH_GENERATED (brush);
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), generated);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), generated);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_rename_invoker (GimpProcedure         *procedure,
-                      Gimp                  *gimp,
-                      GimpContext           *context,
-                      GimpProgress          *progress,
-                      const GimpValueArray  *args,
+static PicmanValueArray *
+brush_rename_invoker (PicmanProcedure         *procedure,
+                      Picman                  *picman,
+                      PicmanContext           *context,
+                      PicmanProgress          *progress,
+                      const PicmanValueArray  *args,
                       GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   const gchar *new_name;
   gchar *actual_name = NULL;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
-  new_name = g_value_get_string (gimp_value_array_index (args, 1));
+  name = g_value_get_string (picman_value_array_index (args, 0));
+  new_name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_brush (gimp, name, TRUE, error);
+      PicmanBrush *brush = picman_pdb_get_brush (picman, name, TRUE, error);
 
       if (brush)
         {
-          gimp_object_set_name (GIMP_OBJECT (brush), new_name);
-          actual_name = g_strdup (gimp_object_get_name (brush));
+          picman_object_set_name (PICMAN_OBJECT (brush), new_name);
+          actual_name = g_strdup (picman_object_get_name (brush));
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), actual_name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), actual_name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_delete_invoker (GimpProcedure         *procedure,
-                      Gimp                  *gimp,
-                      GimpContext           *context,
-                      GimpProgress          *progress,
-                      const GimpValueArray  *args,
+static PicmanValueArray *
+brush_delete_invoker (PicmanProcedure         *procedure,
+                      Picman                  *picman,
+                      PicmanContext           *context,
+                      PicmanProgress          *progress,
+                      const PicmanValueArray  *args,
                       GError               **error)
 {
   gboolean success = TRUE;
   const gchar *name;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
-      if (brush && gimp_data_is_deletable (GIMP_DATA (brush)))
-        success = gimp_data_factory_data_delete (gimp->brush_factory,
-                                                 GIMP_DATA (brush),
+      if (brush && picman_data_is_deletable (PICMAN_DATA (brush)))
+        success = picman_data_factory_data_delete (picman->brush_factory,
+                                                 PICMAN_DATA (brush),
                                                  TRUE, error);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-brush_is_editable_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+brush_is_editable_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gboolean editable = FALSE;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
       if (brush)
-        editable = gimp_data_is_writable (GIMP_DATA (brush));
+        editable = picman_data_is_writable (PICMAN_DATA (brush));
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), editable);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), editable);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_get_info_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+brush_get_info_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gint32 width = 0;
   gint32 height = 0;
   gint32 mask_bpp = 0;
   gint32 color_bpp = 0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
       if (brush)
         {
-          width     = gimp_temp_buf_get_width  (brush->mask);
-          height    = gimp_temp_buf_get_height (brush->mask);
-          mask_bpp  = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (brush->mask));
-          color_bpp = brush->pixmap ? babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (brush->pixmap)) : 0;
+          width     = picman_temp_buf_get_width  (brush->mask);
+          height    = picman_temp_buf_get_height (brush->mask);
+          mask_bpp  = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (brush->mask));
+          color_bpp = brush->pixmap ? babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (brush->pixmap)) : 0;
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), width);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), height);
-      g_value_set_int (gimp_value_array_index (return_vals, 3), mask_bpp);
-      g_value_set_int (gimp_value_array_index (return_vals, 4), color_bpp);
+      g_value_set_int (picman_value_array_index (return_vals, 1), width);
+      g_value_set_int (picman_value_array_index (return_vals, 2), height);
+      g_value_set_int (picman_value_array_index (return_vals, 3), mask_bpp);
+      g_value_set_int (picman_value_array_index (return_vals, 4), color_bpp);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_get_pixels_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+brush_get_pixels_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gint32 width = 0;
   gint32 height = 0;
@@ -324,29 +324,29 @@ brush_get_pixels_invoker (GimpProcedure         *procedure,
   gint32 num_color_bytes = 0;
   guint8 *color_bytes = NULL;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
       if (brush)
         {
-          width          = gimp_temp_buf_get_width  (brush->mask);
-          height         = gimp_temp_buf_get_height (brush->mask);
-          mask_bpp       = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (brush->mask));
-          num_mask_bytes = gimp_temp_buf_get_height (brush->mask) *
-                           gimp_temp_buf_get_width  (brush->mask) * mask_bpp;
-          mask_bytes     = g_memdup (gimp_temp_buf_get_data (brush->mask),
+          width          = picman_temp_buf_get_width  (brush->mask);
+          height         = picman_temp_buf_get_height (brush->mask);
+          mask_bpp       = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (brush->mask));
+          num_mask_bytes = picman_temp_buf_get_height (brush->mask) *
+                           picman_temp_buf_get_width  (brush->mask) * mask_bpp;
+          mask_bytes     = g_memdup (picman_temp_buf_get_data (brush->mask),
                                      num_mask_bytes);
 
           if (brush->pixmap)
             {
-              color_bpp       = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (brush->pixmap));
-              num_color_bytes = gimp_temp_buf_get_height (brush->pixmap) *
-                                gimp_temp_buf_get_width  (brush->pixmap) *
+              color_bpp       = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (brush->pixmap));
+              num_color_bytes = picman_temp_buf_get_height (brush->pixmap) *
+                                picman_temp_buf_get_width  (brush->pixmap) *
                                 color_bpp;
-              color_bytes     = g_memdup (gimp_temp_buf_get_data (brush->pixmap),
+              color_bytes     = g_memdup (picman_temp_buf_get_data (brush->pixmap),
                                           num_color_bytes);
             }
         }
@@ -354,1294 +354,1294 @@ brush_get_pixels_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), width);
-      g_value_set_int (gimp_value_array_index (return_vals, 2), height);
-      g_value_set_int (gimp_value_array_index (return_vals, 3), mask_bpp);
-      g_value_set_int (gimp_value_array_index (return_vals, 4), num_mask_bytes);
-      gimp_value_take_int8array (gimp_value_array_index (return_vals, 5), mask_bytes, num_mask_bytes);
-      g_value_set_int (gimp_value_array_index (return_vals, 6), color_bpp);
-      g_value_set_int (gimp_value_array_index (return_vals, 7), num_color_bytes);
-      gimp_value_take_int8array (gimp_value_array_index (return_vals, 8), color_bytes, num_color_bytes);
+      g_value_set_int (picman_value_array_index (return_vals, 1), width);
+      g_value_set_int (picman_value_array_index (return_vals, 2), height);
+      g_value_set_int (picman_value_array_index (return_vals, 3), mask_bpp);
+      g_value_set_int (picman_value_array_index (return_vals, 4), num_mask_bytes);
+      picman_value_take_int8array (picman_value_array_index (return_vals, 5), mask_bytes, num_mask_bytes);
+      g_value_set_int (picman_value_array_index (return_vals, 6), color_bpp);
+      g_value_set_int (picman_value_array_index (return_vals, 7), num_color_bytes);
+      picman_value_take_int8array (picman_value_array_index (return_vals, 8), color_bytes, num_color_bytes);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_get_spacing_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+brush_get_spacing_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gint32 spacing = 0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
       if (brush)
-        spacing = gimp_brush_get_spacing (brush);
+        spacing = picman_brush_get_spacing (brush);
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), spacing);
+    g_value_set_int (picman_value_array_index (return_vals, 1), spacing);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_set_spacing_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+brush_set_spacing_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
   const gchar *name;
   gint32 spacing;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
-  spacing = g_value_get_int (gimp_value_array_index (args, 1));
+  name = g_value_get_string (picman_value_array_index (args, 0));
+  spacing = g_value_get_int (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_brush (gimp, name, TRUE, error);
+      PicmanBrush *brush = picman_pdb_get_brush (picman, name, TRUE, error);
 
       if (brush)
-        gimp_brush_set_spacing (brush, spacing);
+        picman_brush_set_spacing (brush, spacing);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-brush_get_shape_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+brush_get_shape_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gint32 shape = 0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, FALSE, error);
 
       if (brush)
-        shape = GIMP_BRUSH_GENERATED (brush)->shape;
+        shape = PICMAN_BRUSH_GENERATED (brush)->shape;
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_enum (gimp_value_array_index (return_vals, 1), shape);
+    g_value_set_enum (picman_value_array_index (return_vals, 1), shape);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_set_shape_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+brush_set_shape_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gint32 shape_in;
   gint32 shape_out = 0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
-  shape_in = g_value_get_enum (gimp_value_array_index (args, 1));
+  name = g_value_get_string (picman_value_array_index (args, 0));
+  shape_in = g_value_get_enum (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, TRUE, error);
+      PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, TRUE, error);
 
       if (brush)
         {
-          gimp_brush_generated_set_shape (GIMP_BRUSH_GENERATED (brush),
+          picman_brush_generated_set_shape (PICMAN_BRUSH_GENERATED (brush),
                                           shape_in);
-          shape_out = GIMP_BRUSH_GENERATED (brush)->shape;
+          shape_out = PICMAN_BRUSH_GENERATED (brush)->shape;
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_enum (gimp_value_array_index (return_vals, 1), shape_out);
+    g_value_set_enum (picman_value_array_index (return_vals, 1), shape_out);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_get_radius_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+brush_get_radius_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gdouble radius = 0.0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, FALSE, error);
 
       if (brush)
-        radius = GIMP_BRUSH_GENERATED (brush)->radius;
+        radius = PICMAN_BRUSH_GENERATED (brush)->radius;
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), radius);
+    g_value_set_double (picman_value_array_index (return_vals, 1), radius);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_set_radius_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+brush_set_radius_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gdouble radius_in;
   gdouble radius_out = 0.0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
-  radius_in = g_value_get_double (gimp_value_array_index (args, 1));
+  name = g_value_get_string (picman_value_array_index (args, 0));
+  radius_in = g_value_get_double (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, TRUE, error);
+      PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, TRUE, error);
 
       if (brush)
         {
-          gimp_brush_generated_set_radius (GIMP_BRUSH_GENERATED (brush),
+          picman_brush_generated_set_radius (PICMAN_BRUSH_GENERATED (brush),
                                            radius_in);
-          radius_out = GIMP_BRUSH_GENERATED (brush)->radius;
+          radius_out = PICMAN_BRUSH_GENERATED (brush)->radius;
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), radius_out);
+    g_value_set_double (picman_value_array_index (return_vals, 1), radius_out);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_get_spikes_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+brush_get_spikes_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gint32 spikes = 0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, FALSE, error);
 
       if (brush)
-        spikes = GIMP_BRUSH_GENERATED (brush)->spikes;
+        spikes = PICMAN_BRUSH_GENERATED (brush)->spikes;
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), spikes);
+    g_value_set_int (picman_value_array_index (return_vals, 1), spikes);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_set_spikes_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+brush_set_spikes_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gint32 spikes_in;
   gint32 spikes_out = 0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
-  spikes_in = g_value_get_int (gimp_value_array_index (args, 1));
+  name = g_value_get_string (picman_value_array_index (args, 0));
+  spikes_in = g_value_get_int (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, TRUE, error);
+      PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, TRUE, error);
 
       if (brush)
         {
-          gimp_brush_generated_set_spikes (GIMP_BRUSH_GENERATED (brush),
+          picman_brush_generated_set_spikes (PICMAN_BRUSH_GENERATED (brush),
                                            spikes_in);
-          spikes_out = GIMP_BRUSH_GENERATED (brush)->spikes;
+          spikes_out = PICMAN_BRUSH_GENERATED (brush)->spikes;
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), spikes_out);
+    g_value_set_int (picman_value_array_index (return_vals, 1), spikes_out);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_get_hardness_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+brush_get_hardness_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gdouble hardness = 0.0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, FALSE, error);
 
       if (brush)
-        hardness = GIMP_BRUSH_GENERATED (brush)->hardness;
+        hardness = PICMAN_BRUSH_GENERATED (brush)->hardness;
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), hardness);
+    g_value_set_double (picman_value_array_index (return_vals, 1), hardness);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_set_hardness_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+brush_set_hardness_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gdouble hardness_in;
   gdouble hardness_out = 0.0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
-  hardness_in = g_value_get_double (gimp_value_array_index (args, 1));
+  name = g_value_get_string (picman_value_array_index (args, 0));
+  hardness_in = g_value_get_double (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, TRUE, error);
+      PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, TRUE, error);
 
       if (brush)
         {
-          gimp_brush_generated_set_hardness (GIMP_BRUSH_GENERATED (brush),
+          picman_brush_generated_set_hardness (PICMAN_BRUSH_GENERATED (brush),
                                              hardness_in);
-          hardness_out = GIMP_BRUSH_GENERATED (brush)->hardness;
+          hardness_out = PICMAN_BRUSH_GENERATED (brush)->hardness;
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), hardness_out);
+    g_value_set_double (picman_value_array_index (return_vals, 1), hardness_out);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_get_aspect_ratio_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+brush_get_aspect_ratio_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gdouble aspect_ratio = 0.0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, FALSE, error);
 
       if (brush)
-        aspect_ratio = GIMP_BRUSH_GENERATED (brush)->aspect_ratio;
+        aspect_ratio = PICMAN_BRUSH_GENERATED (brush)->aspect_ratio;
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), aspect_ratio);
+    g_value_set_double (picman_value_array_index (return_vals, 1), aspect_ratio);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_set_aspect_ratio_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+brush_set_aspect_ratio_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gdouble aspect_ratio_in;
   gdouble aspect_ratio_out = 0.0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
-  aspect_ratio_in = g_value_get_double (gimp_value_array_index (args, 1));
+  name = g_value_get_string (picman_value_array_index (args, 0));
+  aspect_ratio_in = g_value_get_double (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, TRUE, error);
+      PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, TRUE, error);
 
       if (brush)
         {
-          gimp_brush_generated_set_aspect_ratio (GIMP_BRUSH_GENERATED (brush),
+          picman_brush_generated_set_aspect_ratio (PICMAN_BRUSH_GENERATED (brush),
                                                  aspect_ratio_in);
-          aspect_ratio_out = GIMP_BRUSH_GENERATED (brush)->aspect_ratio;
+          aspect_ratio_out = PICMAN_BRUSH_GENERATED (brush)->aspect_ratio;
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), aspect_ratio_out);
+    g_value_set_double (picman_value_array_index (return_vals, 1), aspect_ratio_out);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_get_angle_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+brush_get_angle_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gdouble angle = 0.0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
+  name = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, FALSE, error);
+      PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, FALSE, error);
 
       if (brush)
-        angle = GIMP_BRUSH_GENERATED (brush)->angle;
+        angle = PICMAN_BRUSH_GENERATED (brush)->angle;
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), angle);
+    g_value_set_double (picman_value_array_index (return_vals, 1), angle);
 
   return return_vals;
 }
 
-static GimpValueArray *
-brush_set_angle_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+brush_set_angle_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   const gchar *name;
   gdouble angle_in;
   gdouble angle_out = 0.0;
 
-  name = g_value_get_string (gimp_value_array_index (args, 0));
-  angle_in = g_value_get_double (gimp_value_array_index (args, 1));
+  name = g_value_get_string (picman_value_array_index (args, 0));
+  angle_in = g_value_get_double (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, TRUE, error);
+      PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, TRUE, error);
 
       if (brush)
         {
-          gimp_brush_generated_set_angle (GIMP_BRUSH_GENERATED (brush),
+          picman_brush_generated_set_angle (PICMAN_BRUSH_GENERATED (brush),
                                           angle_in);
-          angle_out = GIMP_BRUSH_GENERATED (brush)->angle;
+          angle_out = PICMAN_BRUSH_GENERATED (brush)->angle;
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_double (gimp_value_array_index (return_vals, 1), angle_out);
+    g_value_set_double (picman_value_array_index (return_vals, 1), angle_out);
 
   return return_vals;
 }
 
 void
-register_brush_procs (GimpPDB *pdb)
+register_brush_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-brush-new
+   * picman-brush-new
    */
-  procedure = gimp_procedure_new (brush_new_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-new");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-new",
+  procedure = picman_procedure_new (brush_new_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-new");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-new",
                                      "Creates a new brush",
                                      "This procedure creates a new, uninitialized brush",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The requested name of the new brush",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("actual-name",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("actual-name",
                                                            "actual name",
                                                            "The actual new brush name",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-duplicate
+   * picman-brush-duplicate
    */
-  procedure = gimp_procedure_new (brush_duplicate_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-duplicate");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-duplicate",
+  procedure = picman_procedure_new (brush_duplicate_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-duplicate");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-duplicate",
                                      "Duplicates a brush",
                                      "This procedure creates an identical brush by a different name",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("copy-name",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("copy-name",
                                                            "copy name",
                                                            "The name of the brush's copy",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-is-generated
+   * picman-brush-is-generated
    */
-  procedure = gimp_procedure_new (brush_is_generated_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-is-generated");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-is-generated",
+  procedure = picman_procedure_new (brush_is_generated_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-is-generated");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-is-generated",
                                      "Tests if brush is generated",
                                      "Returns TRUE if this brush is parametric, FALSE for other types",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("generated",
                                                          "generated",
                                                          "TRUE if the brush is generated",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-rename
+   * picman-brush-rename
    */
-  procedure = gimp_procedure_new (brush_rename_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-rename");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-rename",
+  procedure = picman_procedure_new (brush_rename_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-rename");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-rename",
                                      "Rename a brush",
                                      "This procedure renames a brush",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("new-name",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("new-name",
                                                        "new name",
                                                        "The new name of the brush",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("actual-name",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("actual-name",
                                                            "actual name",
                                                            "The actual new name of the brush",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-delete
+   * picman-brush-delete
    */
-  procedure = gimp_procedure_new (brush_delete_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-delete");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-delete",
+  procedure = picman_procedure_new (brush_delete_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-delete");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-delete",
                                      "Deletes a brush",
                                      "This procedure deletes a brush",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-is-editable
+   * picman-brush-is-editable
    */
-  procedure = gimp_procedure_new (brush_is_editable_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-is-editable");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-is-editable",
+  procedure = picman_procedure_new (brush_is_editable_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-is-editable");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-is-editable",
                                      "Tests if brush can be edited",
                                      "Returns TRUE if you have permission to change the brush",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("editable",
                                                          "editable",
                                                          "TRUE if the brush can be edited",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-get-info
+   * picman-brush-get-info
    */
-  procedure = gimp_procedure_new (brush_get_info_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-get-info");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-get-info",
+  procedure = picman_procedure_new (brush_get_info_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-get-info");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-get-info",
                                      "Retrieve information about the specified brush.",
                                      "This procedure retrieves information about the specified brush. This includes the brush name, and the brush extents (width and height).",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("width",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("width",
                                                           "width",
                                                           "The brush width",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("height",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("height",
                                                           "height",
                                                           "The brush height",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("mask-bpp",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("mask-bpp",
                                                           "mask bpp",
                                                           "The brush mask bpp",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("color-bpp",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("color-bpp",
                                                           "color bpp",
                                                           "The brush color bpp",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-get-pixels
+   * picman-brush-get-pixels
    */
-  procedure = gimp_procedure_new (brush_get_pixels_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-get-pixels");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-get-pixels",
+  procedure = picman_procedure_new (brush_get_pixels_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-get-pixels");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-get-pixels",
                                      "Retrieve information about the specified brush.",
                                      "This procedure retrieves information about the specified brush. This includes the brush extents (width and height) and its pixels data.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("width",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("width",
                                                           "width",
                                                           "The brush width",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("height",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("height",
                                                           "height",
                                                           "The brush height",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("mask-bpp",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("mask-bpp",
                                                           "mask bpp",
                                                           "The brush mask bpp",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-mask-bytes",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-mask-bytes",
                                                           "num mask bytes",
                                                           "Length of brush mask data",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int8_array ("mask-bytes",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int8_array ("mask-bytes",
                                                                "mask bytes",
                                                                "The brush mask data",
-                                                               GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("color-bpp",
+                                                               PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("color-bpp",
                                                           "color bpp",
                                                           "The brush color bpp",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-color-bytes",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-color-bytes",
                                                           "num color bytes",
                                                           "Length of brush color data",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int8_array ("color-bytes",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int8_array ("color-bytes",
                                                                "color bytes",
                                                                "The brush color data",
-                                                               GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                               PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-get-spacing
+   * picman-brush-get-spacing
    */
-  procedure = gimp_procedure_new (brush_get_spacing_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-get-spacing");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-get-spacing",
+  procedure = picman_procedure_new (brush_get_spacing_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-get-spacing");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-get-spacing",
                                      "Get the brush spacing.",
                                      "This procedure returns the spacing setting for the specified brush. The return value is an integer between 0 and 1000 which represents percentage of the maximum of the width and height of the mask.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("spacing",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("spacing",
                                                           "spacing",
                                                           "The brush spacing",
                                                           0, 1000, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-set-spacing
+   * picman-brush-set-spacing
    */
-  procedure = gimp_procedure_new (brush_set_spacing_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-set-spacing");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-set-spacing",
+  procedure = picman_procedure_new (brush_set_spacing_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-set-spacing");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-set-spacing",
                                      "Set the brush spacing.",
                                      "This procedure modifies the spacing setting for the specified brush. The value should be a integer between 0 and 1000.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("spacing",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("spacing",
                                                       "spacing",
                                                       "The brush spacing",
                                                       0, 1000, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-get-shape
+   * picman-brush-get-shape
    */
-  procedure = gimp_procedure_new (brush_get_shape_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-get-shape");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-get-shape",
+  procedure = picman_procedure_new (brush_get_shape_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-get-shape");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-get-shape",
                                      "Get the shape of a generated brush.",
-                                     "This procedure gets the shape value for a generated brush. If called for any other type of brush, it does not succeed. The current possibilities are Circle (GIMP_BRUSH_GENERATED_CIRCLE), Square (GIMP_BRUSH_GENERATED_SQUARE), and Diamond (GIMP_BRUSH_GENERATED_DIAMOND). Other shapes are likely to be added in the future.",
+                                     "This procedure gets the shape value for a generated brush. If called for any other type of brush, it does not succeed. The current possibilities are Circle (PICMAN_BRUSH_GENERATED_CIRCLE), Square (PICMAN_BRUSH_GENERATED_SQUARE), and Diamond (PICMAN_BRUSH_GENERATED_DIAMOND). Other shapes are likely to be added in the future.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("shape",
                                                       "shape",
                                                       "The brush shape",
-                                                      GIMP_TYPE_BRUSH_GENERATED_SHAPE,
-                                                      GIMP_BRUSH_GENERATED_CIRCLE,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_TYPE_BRUSH_GENERATED_SHAPE,
+                                                      PICMAN_BRUSH_GENERATED_CIRCLE,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-set-shape
+   * picman-brush-set-shape
    */
-  procedure = gimp_procedure_new (brush_set_shape_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-set-shape");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-set-shape",
+  procedure = picman_procedure_new (brush_set_shape_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-set-shape");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-set-shape",
                                      "Set the shape of a generated brush.",
-                                     "This procedure sets the shape value for a generated brush. If called for any other type of brush, it does not succeed. The current possibilities are Circle (GIMP_BRUSH_GENERATED_CIRCLE), Square (GIMP_BRUSH_GENERATED_SQUARE), and Diamond (GIMP_BRUSH_GENERATED_DIAMOND). Other shapes are likely to be added in the future.",
+                                     "This procedure sets the shape value for a generated brush. If called for any other type of brush, it does not succeed. The current possibilities are Circle (PICMAN_BRUSH_GENERATED_CIRCLE), Square (PICMAN_BRUSH_GENERATED_SQUARE), and Diamond (PICMAN_BRUSH_GENERATED_DIAMOND). Other shapes are likely to be added in the future.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("shape-in",
                                                   "shape in",
                                                   "The brush shape",
-                                                  GIMP_TYPE_BRUSH_GENERATED_SHAPE,
-                                                  GIMP_BRUSH_GENERATED_CIRCLE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                  PICMAN_TYPE_BRUSH_GENERATED_SHAPE,
+                                                  PICMAN_BRUSH_GENERATED_CIRCLE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_enum ("shape-out",
                                                       "shape out",
                                                       "The brush shape actually assigned",
-                                                      GIMP_TYPE_BRUSH_GENERATED_SHAPE,
-                                                      GIMP_BRUSH_GENERATED_CIRCLE,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_TYPE_BRUSH_GENERATED_SHAPE,
+                                                      PICMAN_BRUSH_GENERATED_CIRCLE,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-get-radius
+   * picman-brush-get-radius
    */
-  procedure = gimp_procedure_new (brush_get_radius_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-get-radius");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-get-radius",
+  procedure = picman_procedure_new (brush_get_radius_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-get-radius");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-get-radius",
                                      "Get the radius of a generated brush.",
                                      "This procedure gets the radius value for a generated brush. If called for any other type of brush, it does not succeed.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("radius",
                                                         "radius",
                                                         "The radius of the brush in pixels",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-set-radius
+   * picman-brush-set-radius
    */
-  procedure = gimp_procedure_new (brush_set_radius_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-set-radius");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-set-radius",
+  procedure = picman_procedure_new (brush_set_radius_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-set-radius");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-set-radius",
                                      "Set the radius of a generated brush.",
                                      "This procedure sets the radius for a generated brush. If called for any other type of brush, it does not succeed.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("radius-in",
                                                     "radius in",
                                                     "The desired brush radius",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("radius-out",
                                                         "radius out",
                                                         "The brush radius actually assigned",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-get-spikes
+   * picman-brush-get-spikes
    */
-  procedure = gimp_procedure_new (brush_get_spikes_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-get-spikes");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-get-spikes",
+  procedure = picman_procedure_new (brush_get_spikes_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-get-spikes");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-get-spikes",
                                      "Get the number of spikes for a generated brush.",
                                      "This procedure gets the number of spikes for a generated brush. If called for any other type of brush, it does not succeed.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("spikes",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("spikes",
                                                           "spikes",
                                                           "The number of spikes on the brush.",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-set-spikes
+   * picman-brush-set-spikes
    */
-  procedure = gimp_procedure_new (brush_set_spikes_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-set-spikes");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-set-spikes",
+  procedure = picman_procedure_new (brush_set_spikes_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-set-spikes");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-set-spikes",
                                      "Set the number of spikes for a generated brush.",
                                      "This procedure sets the number of spikes for a generated brush. If called for any other type of brush, it does not succeed.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("spikes-in",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("spikes-in",
                                                       "spikes in",
                                                       "The desired number of spikes",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("spikes-out",
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("spikes-out",
                                                           "spikes out",
                                                           "The number of spikes actually assigned",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-get-hardness
+   * picman-brush-get-hardness
    */
-  procedure = gimp_procedure_new (brush_get_hardness_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-get-hardness");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-get-hardness",
+  procedure = picman_procedure_new (brush_get_hardness_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-get-hardness");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-get-hardness",
                                      "Get the hardness of a generated brush.",
                                      "This procedure gets the hardness of a generated brush. The hardness of a brush is the amount its intensity fades at the outside edge. If called for any other type of brush, the function does not succeed.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("hardness",
                                                         "hardness",
                                                         "The hardness of the brush.",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-set-hardness
+   * picman-brush-set-hardness
    */
-  procedure = gimp_procedure_new (brush_set_hardness_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-set-hardness");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-set-hardness",
+  procedure = picman_procedure_new (brush_set_hardness_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-set-hardness");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-set-hardness",
                                      "Set the hardness of a generated brush.",
                                      "This procedure sets the hardness for a generated brush. If called for any other type of brush, it does not succeed.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("hardness-in",
                                                     "hardness in",
                                                     "The desired brush hardness",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("hardness-out",
                                                         "hardness out",
                                                         "The brush hardness actually assigned",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-get-aspect-ratio
+   * picman-brush-get-aspect-ratio
    */
-  procedure = gimp_procedure_new (brush_get_aspect_ratio_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-get-aspect-ratio");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-get-aspect-ratio",
+  procedure = picman_procedure_new (brush_get_aspect_ratio_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-get-aspect-ratio");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-get-aspect-ratio",
                                      "Get the aspect ratio of a generated brush.",
                                      "This procedure gets the aspect ratio of a generated brush. If called for any other type of brush, it does not succeed.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("aspect-ratio",
                                                         "aspect ratio",
                                                         "The aspect ratio of the brush.",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-set-aspect-ratio
+   * picman-brush-set-aspect-ratio
    */
-  procedure = gimp_procedure_new (brush_set_aspect_ratio_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-set-aspect-ratio");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-set-aspect-ratio",
+  procedure = picman_procedure_new (brush_set_aspect_ratio_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-set-aspect-ratio");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-set-aspect-ratio",
                                      "Set the aspect ratio of a generated brush.",
                                      "This procedure sets the aspect ratio for a generated brush. If called for any other type of brush, it does not succeed.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("aspect-ratio-in",
                                                     "aspect ratio in",
                                                     "The desired brush aspect ratio",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("aspect-ratio-out",
                                                         "aspect ratio out",
                                                         "The brush aspect ratio actually assigned",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-get-angle
+   * picman-brush-get-angle
    */
-  procedure = gimp_procedure_new (brush_get_angle_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-get-angle");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-get-angle",
+  procedure = picman_procedure_new (brush_get_angle_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-get-angle");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-get-angle",
                                      "Get the rotation angle of a generated brush.",
                                      "This procedure gets the angle of rotation for a generated brush. If called for any other type of brush, it does not succeed.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("angle",
                                                         "angle",
                                                         "The rotation angle of the brush.",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-brush-set-angle
+   * picman-brush-set-angle
    */
-  procedure = gimp_procedure_new (brush_set_angle_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brush-set-angle");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brush-set-angle",
+  procedure = picman_procedure_new (brush_set_angle_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-brush-set-angle");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-brush-set-angle",
                                      "Set the rotation angle of a generated brush.",
                                      "This procedure sets the rotation angle for a generated brush. If called for any other type of brush, it does not succeed.",
                                      "Bill Skaggs <weskaggs@primate.ucdavis.edu>",
                                      "Bill Skaggs",
                                      "2004",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The brush name",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("angle-in",
                                                     "angle in",
                                                     "The desired brush rotation angle",
                                                     -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_double ("angle-out",
                                                         "angle out",
                                                         "The brush rotation angle actually assigned",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

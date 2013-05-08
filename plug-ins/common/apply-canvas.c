@@ -1,5 +1,5 @@
 /*
- * This is the Struc plug-in for GIMP 0.99
+ * This is the Struc plug-in for PICMAN 0.99
  * Version 1.01
  *
  * Copyright (C) 1997 Karl-Johan Andersson (t96kja@student.tdb.uu.se)
@@ -23,7 +23,7 @@
  * just happened to be called struc.c
  *
  * Some code for the dialog was taken from Motion Blur plug-in for
- * GIMP 0.99 by Daniel Skarda (0rfelyus@atrey.karlin.mff.cuni.cz)
+ * PICMAN 0.99 by Daniel Skarda (0rfelyus@atrey.karlin.mff.cuni.cz)
  *
  * Please send any comments or suggestions to me,
  * Karl-Johan Andersson (t96kja@student.tdb.uu.se)
@@ -34,15 +34,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-apply-canvas"
 #define PLUG_IN_BINARY "apply-canvas"
-#define PLUG_IN_ROLE   "gimp-apply-canvas"
+#define PLUG_IN_ROLE   "picman-apply-canvas"
 
 
 static const gchar sdata[] =
@@ -1094,18 +1094,18 @@ typedef struct
 static void      query (void);
 static void      run   (const gchar      *name,
                         gint              nparams,
-                        const GimpParam  *param,
+                        const PicmanParam  *param,
                         gint             *nreturn_vals,
-                        GimpParam       **return_vals);
+                        PicmanParam       **return_vals);
 
-static gboolean  struc_dialog (GimpDrawable *drawable);
-static void      strucpi      (GimpDrawable *drawable,
-                               GimpPreview  *preview);
+static gboolean  struc_dialog (PicmanDrawable *drawable);
+static void      strucpi      (PicmanDrawable *drawable,
+                               PicmanPreview  *preview);
 
 
 /* --- Variables --- */
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -1127,16 +1127,16 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",     "Input image (unused)"         },
-    { GIMP_PDB_DRAWABLE, "drawable",  "Input drawable"               },
-    { GIMP_PDB_INT32,    "direction", "Light direction (0 - 3)"      },
-    { GIMP_PDB_INT32,    "depth",     "Texture depth (1 - 50)"       }
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",     "Input image (unused)"         },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "Input drawable"               },
+    { PICMAN_PDB_INT32,    "direction", "Light direction (0 - 3)"      },
+    { PICMAN_PDB_INT32,    "depth",     "Texture depth (1 - 50)"       }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Add a canvas texture to the image"),
                           "This function applies a canvas texture map to the drawable.",
                           "Karl-Johan Andersson", /* Author */
@@ -1144,24 +1144,24 @@ query (void)
                           "1997",
                           N_("_Apply Canvas..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Artistic");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Artistic");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
@@ -1170,31 +1170,31 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &svals);
+      picman_get_data (PLUG_IN_PROC, &svals);
 
       /*  First acquire information with a dialog  */
       if (! struc_dialog (drawable))
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 5)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -1202,52 +1202,52 @@ run (const gchar      *name,
           svals.depth     = (gint) param[4].data.d_int32;
 
           if (svals.direction < 0 || svals.direction > 4)
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
           if (svals.depth < 1 || svals.depth > 50)
-            status = GIMP_PDB_CALLING_ERROR;
+            status = PICMAN_PDB_CALLING_ERROR;
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &svals);
+      picman_get_data (PLUG_IN_PROC, &svals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init (_("Applying canvas"));
-          gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width () + 1));
+          picman_progress_init (_("Applying canvas"));
+          picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width () + 1));
 
           strucpi (drawable, NULL);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &svals, sizeof (StrucValues));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &svals, sizeof (StrucValues));
         }
       else
         {
-          /* gimp_message ("struc: cannot operate on indexed color images"); */
-          status = GIMP_PDB_EXECUTION_ERROR;
+          /* picman_message ("struc: cannot operate on indexed color images"); */
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static gboolean
-struc_dialog (GimpDrawable *drawable)
+struc_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -1258,11 +1258,11 @@ struc_dialog (GimpDrawable *drawable)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Apply Canvas"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Apply Canvas"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -1274,7 +1274,7 @@ struc_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -1282,7 +1282,7 @@ struc_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -1290,8 +1290,8 @@ struc_dialog (GimpDrawable *drawable)
                             G_CALLBACK (strucpi),
                             drawable);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Direction"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Direction"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &svals.direction, svals.direction,
 
                                     _("_Top-right"),    TOP_RIGHT,    &radio1,
@@ -1304,16 +1304,16 @@ struc_dialog (GimpDrawable *drawable)
   gtk_widget_show (frame);
 
   g_signal_connect_swapped (radio1, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (radio2, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (radio3, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (radio4, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   table = gtk_table_new (1, 3, FALSE);
@@ -1321,21 +1321,21 @@ struc_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Depth:"), 100, 0,
                               svals.depth, 1, 50, 1, 5, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &svals.depth);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -1344,10 +1344,10 @@ struc_dialog (GimpDrawable *drawable)
 
 /* Filter function */
 static void
-strucpi (GimpDrawable *drawable,
-         GimpPreview  *preview)
+strucpi (PicmanDrawable *drawable,
+         PicmanPreview  *preview)
 {
-  GimpPixelRgn  srcPR, destPR;
+  PicmanPixelRgn  srcPR, destPR;
   gint          width, height;
   gint          bytes;
   guchar       *dest, *d;
@@ -1360,8 +1360,8 @@ strucpi (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
 
       y2 = y1 + height;
     }
@@ -1373,7 +1373,7 @@ strucpi (GimpDrawable *drawable,
        *  need to be done for correct operation. (It simply makes it go
        *  faster, since fewer pixels need to be operated on).
        */
-      if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+      if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                           &x1, &y1, &width, &height))
         return;
 
@@ -1387,7 +1387,7 @@ strucpi (GimpDrawable *drawable,
   dest     = g_new (guchar, width * bytes);
 
   /*  initialize the pixel regions  */
-  gimp_pixel_rgn_init (&srcPR, drawable, x1, y1, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&srcPR, drawable, x1, y1, width, height, FALSE, FALSE);
 
   if (preview)
     {
@@ -1395,7 +1395,7 @@ strucpi (GimpDrawable *drawable,
     }
   else
     {
-      gimp_pixel_rgn_init (&destPR,
+      picman_pixel_rgn_init (&destPR,
                            drawable, x1, y1, width, height, TRUE, TRUE);
     }
 
@@ -1438,7 +1438,7 @@ strucpi (GimpDrawable *drawable,
   rrow = 0;
   for (row = y1; row < y2; row++)
     {
-      gimp_pixel_rgn_get_row (&srcPR, cur_row, x1, row, width);
+      picman_pixel_rgn_get_row (&srcPR, cur_row, x1, row, width);
       d = dest;
       rcol = 0;
 
@@ -1488,9 +1488,9 @@ strucpi (GimpDrawable *drawable,
         }
       else
         {
-          gimp_pixel_rgn_set_row (&destPR, dest, x1, row, width);
+          picman_pixel_rgn_set_row (&destPR, dest, x1, row, width);
           if ((row % 5) == 0)
-            gimp_progress_update ((gdouble) row / (gdouble) height);
+            picman_progress_update ((gdouble) row / (gdouble) height);
         }
 
       rrow++;
@@ -1500,16 +1500,16 @@ strucpi (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, preview_buffer, width * bytes);
+      picman_preview_draw_buffer (preview, preview_buffer, width * bytes);
       g_free (preview_buffer);
     }
   else
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
       /*  update the textured region  */
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x1, y1, width, height);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x1, y1, width, height);
     }
 
   g_free (cur_row);

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,16 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GEGL_MASK_H__
-#define __GIMP_GEGL_MASK_H__
+#ifndef __PICMAN_GEGL_MASK_H__
+#define __PICMAN_GEGL_MASK_H__
 
 
-gboolean   gimp_gegl_mask_bounds   (GeglBuffer *buffer,
+gboolean   picman_gegl_mask_bounds   (GeglBuffer *buffer,
                                     gint        *x1,
                                     gint        *y1,
                                     gint        *x2,
                                     gint        *y2);
-gboolean   gimp_gegl_mask_is_empty (GeglBuffer *buffer);
+gboolean   picman_gegl_mask_is_empty (GeglBuffer *buffer);
 
 
-#endif /* __GIMP_GEGL_MASK_H__ */
+#endif /* __PICMAN_GEGL_MASK_H__ */

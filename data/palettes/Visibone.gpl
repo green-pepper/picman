@@ -1,12 +1,12 @@
-GIMP Palette
+PICMAN Palette
 Name: Visibone
 Columns: 16
 #
-# Visibone -- GIMP Palette file
+# Visibone -- PICMAN Palette file
 #
 #  Arrangement idea from www.visibone.com
-#  Conversion to GIMP Palette and addition of
-#  hex codes and color names by Tigert <tigert@gimp.org>
+#  Conversion to PICMAN Palette and addition of
+#  hex codes and color names by Tigert <tigert@picman.org>
 # 
 255 255 255	#FFFFFF - White
 204 204 204	#CCCCCC - Pale Gray

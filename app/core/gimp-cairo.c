@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-cairo.c
- * Copyright (C) 2010-2012  Michael Natterer <mitch@gimp.org>
+ * picman-cairo.c
+ * Copyright (C) 2010-2012  Michael Natterer <mitch@picman.org>
  *
  * Some code here is based on code from librsvg that was originally
  * written by Raph Levien <raph@artofcode.com> for Gill.
@@ -27,19 +27,19 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "gimp-cairo.h"
+#include "picman-cairo.h"
 
 
 static cairo_user_data_key_t surface_data_key = { 0, };
 
 
 cairo_pattern_t *
-gimp_cairo_stipple_pattern_create (const GimpRGB *fg,
-                                   const GimpRGB *bg,
+picman_cairo_stipple_pattern_create (const PicmanRGB *fg,
+                                   const PicmanRGB *bg,
                                    gint           index)
 {
   cairo_surface_t *surface;
@@ -55,8 +55,8 @@ gimp_cairo_stipple_pattern_create (const GimpRGB *fg,
 
   data = g_malloc (8 * 8 * 4);
 
-  gimp_rgba_get_uchar (fg, &fg_r, &fg_g, &fg_b, &fg_a);
-  gimp_rgba_get_uchar (bg, &bg_r, &bg_g, &bg_b, &bg_a);
+  picman_rgba_get_uchar (fg, &fg_r, &fg_g, &fg_b, &fg_a);
+  picman_rgba_get_uchar (bg, &bg_r, &bg_g, &bg_b, &bg_a);
 
   d = data;
 
@@ -65,9 +65,9 @@ gimp_cairo_stipple_pattern_create (const GimpRGB *fg,
       for (x = 0; x < 8; x++)
         {
           if ((x + y + index) % 8 >= 4)
-            GIMP_CAIRO_ARGB32_SET_PIXEL (d, fg_r, fg_g, fg_b, fg_a);
+            PICMAN_CAIRO_ARGB32_SET_PIXEL (d, fg_r, fg_g, fg_b, fg_a);
           else
-            GIMP_CAIRO_ARGB32_SET_PIXEL (d, bg_r, bg_g, bg_b, bg_a);
+            PICMAN_CAIRO_ARGB32_SET_PIXEL (d, bg_r, bg_g, bg_b, bg_a);
 
           d += 4;
         }
@@ -88,7 +88,7 @@ gimp_cairo_stipple_pattern_create (const GimpRGB *fg,
 }
 
 void
-gimp_cairo_add_arc (cairo_t *cr,
+picman_cairo_add_arc (cairo_t *cr,
                     gdouble  center_x,
                     gdouble  center_y,
                     gdouble  radius,
@@ -112,8 +112,8 @@ gimp_cairo_add_arc (cairo_t *cr,
 }
 
 void
-gimp_cairo_add_segments (cairo_t     *cr,
-                         GimpSegment *segs,
+picman_cairo_add_segments (cairo_t     *cr,
+                         PicmanSegment *segs,
                          gint         n_segs)
 {
   gint i;

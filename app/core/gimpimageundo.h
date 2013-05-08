@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,29 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_UNDO_H__
-#define __GIMP_IMAGE_UNDO_H__
+#ifndef __PICMAN_IMAGE_UNDO_H__
+#define __PICMAN_IMAGE_UNDO_H__
 
 
-#include "gimpundo.h"
+#include "picmanundo.h"
 
 
-#define GIMP_TYPE_IMAGE_UNDO            (gimp_image_undo_get_type ())
-#define GIMP_IMAGE_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_IMAGE_UNDO, GimpImageUndo))
-#define GIMP_IMAGE_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_IMAGE_UNDO, GimpImageUndoClass))
-#define GIMP_IS_IMAGE_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_IMAGE_UNDO))
-#define GIMP_IS_IMAGE_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_IMAGE_UNDO))
-#define GIMP_IMAGE_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_IMAGE_UNDO, GimpImageUndoClass))
+#define PICMAN_TYPE_IMAGE_UNDO            (picman_image_undo_get_type ())
+#define PICMAN_IMAGE_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_IMAGE_UNDO, PicmanImageUndo))
+#define PICMAN_IMAGE_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_IMAGE_UNDO, PicmanImageUndoClass))
+#define PICMAN_IS_IMAGE_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_IMAGE_UNDO))
+#define PICMAN_IS_IMAGE_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_IMAGE_UNDO))
+#define PICMAN_IMAGE_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_IMAGE_UNDO, PicmanImageUndoClass))
 
 
-typedef struct _GimpImageUndoClass GimpImageUndoClass;
+typedef struct _PicmanImageUndoClass PicmanImageUndoClass;
 
-struct _GimpImageUndo
+struct _PicmanImageUndo
 {
-  GimpUndo           parent_instance;
+  PicmanUndo           parent_instance;
 
-  GimpImageBaseType  base_type;
-  GimpPrecision      precision;
+  PicmanImageBaseType  base_type;
+  PicmanPrecision      precision;
   gint               width;
   gint               height;
   gint               previous_origin_x;
@@ -46,21 +46,21 @@ struct _GimpImageUndo
   gint               previous_height;
   gdouble            xresolution;
   gdouble            yresolution;
-  GimpUnit           resolution_unit;
-  GimpGrid          *grid;
+  PicmanUnit           resolution_unit;
+  PicmanGrid          *grid;
   gint               num_colors;
   guchar            *colormap;
   gchar             *parasite_name;
-  GimpParasite      *parasite;
+  PicmanParasite      *parasite;
 };
 
-struct _GimpImageUndoClass
+struct _PicmanImageUndoClass
 {
-  GimpUndoClass  parent_class;
+  PicmanUndoClass  parent_class;
 };
 
 
-GType   gimp_image_undo_get_type (void) G_GNUC_CONST;
+GType   picman_image_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_IMAGE_UNDO_H__ */
+#endif /* __PICMAN_IMAGE_UNDO_H__ */

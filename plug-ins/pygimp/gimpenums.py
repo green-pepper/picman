@@ -1,5 +1,5 @@
-#   Gimp-Python - allows the writing of Gimp plugins in Python.
-#   Copyright (C) 2005  Manish Singh  <yosh@gimp.org>
+#   Picman-Python - allows the writing of Picman plugins in Python.
+#   Copyright (C) 2005  Manish Singh  <yosh@picman.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,13 +14,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# gimpenums.py -- constants for use with the gimp module
+# picmanenums.py -- constants for use with the picman module
 #
 # this file pulls in constants that are useful for use in
-# gimp plugins.  Just add 'from gimpenums import *' to the top
+# picman plugins.  Just add 'from picmanenums import *' to the top
 # of the script
 
-from _gimpenums import *
+from _picmanenums import *
 
 # This is from pygtk/gtk/__init__.py
 # Copyright (C) 1998-2003  James Henstridge
@@ -44,7 +44,7 @@ class _DeprecatedConstant:
     __repr__    = lambda self: self._deprecated(repr(self._v))
     __cmp__     = lambda self, other: self._deprecated(cmp(self._v, other))
 
-TRUE = _DeprecatedConstant(True, 'gimpenums.TRUE', 'True')
-FALSE = _DeprecatedConstant(False, 'gimpenums.FALSE', 'False')
+TRUE = _DeprecatedConstant(True, 'picmanenums.TRUE', 'True')
+FALSE = _DeprecatedConstant(False, 'picmanenums.FALSE', 'False')
 
 del _DeprecatedConstant

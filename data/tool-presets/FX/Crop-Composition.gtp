@@ -1,12 +1,12 @@
-# GIMP tool preset file
+# PICMAN tool preset file
 
-(stock-id "gimp-tool-crop")
+(stock-id "picman-tool-crop")
 (name "Crop Composition")
-(tool-options "GimpCropOptions"
+(tool-options "PicmanCropOptions"
     (aspect-denominator 1251.403099)
     (aspect-numerator 1835.387351)
     (guide thirds)
-    (tool "gimp-crop-tool"))
+    (tool "picman-crop-tool"))
 (use-fg-bg no)
 (use-brush no)
 (use-dynamics no)
@@ -15,4 +15,4 @@
 (use-palette no)
 (use-font no)
 
-# end of GIMP tool preset file
+# end of PICMAN tool preset file

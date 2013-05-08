@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,39 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SAMPLE_POINT_UNDO_H__
-#define __GIMP_SAMPLE_POINT_UNDO_H__
+#ifndef __PICMAN_SAMPLE_POINT_UNDO_H__
+#define __PICMAN_SAMPLE_POINT_UNDO_H__
 
 
-#include "gimpundo.h"
+#include "picmanundo.h"
 
 
-#define GIMP_TYPE_SAMPLE_POINT_UNDO            (gimp_sample_point_undo_get_type ())
-#define GIMP_SAMPLE_POINT_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SAMPLE_POINT_UNDO, GimpSamplePointUndo))
-#define GIMP_SAMPLE_POINT_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SAMPLE_POINT_UNDO, GimpSamplePointUndoClass))
-#define GIMP_IS_SAMPLE_POINT_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SAMPLE_POINT_UNDO))
-#define GIMP_IS_SAMPLE_POINT_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SAMPLE_POINT_UNDO))
-#define GIMP_SAMPLE_POINT_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SAMPLE_POINT_UNDO, GimpSamplePointUndoClass))
+#define PICMAN_TYPE_SAMPLE_POINT_UNDO            (picman_sample_point_undo_get_type ())
+#define PICMAN_SAMPLE_POINT_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SAMPLE_POINT_UNDO, PicmanSamplePointUndo))
+#define PICMAN_SAMPLE_POINT_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SAMPLE_POINT_UNDO, PicmanSamplePointUndoClass))
+#define PICMAN_IS_SAMPLE_POINT_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SAMPLE_POINT_UNDO))
+#define PICMAN_IS_SAMPLE_POINT_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SAMPLE_POINT_UNDO))
+#define PICMAN_SAMPLE_POINT_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SAMPLE_POINT_UNDO, PicmanSamplePointUndoClass))
 
 
-typedef struct _GimpSamplePointUndoClass GimpSamplePointUndoClass;
+typedef struct _PicmanSamplePointUndoClass PicmanSamplePointUndoClass;
 
-struct _GimpSamplePointUndo
+struct _PicmanSamplePointUndo
 {
-  GimpUndo         parent_instance;
+  PicmanUndo         parent_instance;
 
-  GimpSamplePoint *sample_point;
+  PicmanSamplePoint *sample_point;
   gint             x;
   gint             y;
 };
 
-struct _GimpSamplePointUndoClass
+struct _PicmanSamplePointUndoClass
 {
-  GimpUndoClass  parent_class;
+  PicmanUndoClass  parent_class;
 };
 
 
-GType   gimp_sample_point_undo_get_type (void) G_GNUC_CONST;
+GType   picman_sample_point_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_SAMPLE_POINT_UNDO_H__ */
+#endif /* __PICMAN_SAMPLE_POINT_UNDO_H__ */

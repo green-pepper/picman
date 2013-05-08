@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpactionfactory.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanactionfactory.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,54 +24,54 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "gimpactionfactory.h"
-#include "gimpactiongroup.h"
-
-
-static void   gimp_action_factory_finalize (GObject *object);
+#include "picmanactionfactory.h"
+#include "picmanactiongroup.h"
 
 
-G_DEFINE_TYPE (GimpActionFactory, gimp_action_factory, GIMP_TYPE_OBJECT)
+static void   picman_action_factory_finalize (GObject *object);
 
-#define parent_class gimp_action_factory_parent_class
+
+G_DEFINE_TYPE (PicmanActionFactory, picman_action_factory, PICMAN_TYPE_OBJECT)
+
+#define parent_class picman_action_factory_parent_class
 
 
 static void
-gimp_action_factory_class_init (GimpActionFactoryClass *klass)
+picman_action_factory_class_init (PicmanActionFactoryClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize = gimp_action_factory_finalize;
+  object_class->finalize = picman_action_factory_finalize;
 }
 
 static void
-gimp_action_factory_init (GimpActionFactory *factory)
+picman_action_factory_init (PicmanActionFactory *factory)
 {
-  factory->gimp              = NULL;
+  factory->picman              = NULL;
   factory->registered_groups = NULL;
 }
 
 static void
-gimp_action_factory_finalize (GObject *object)
+picman_action_factory_finalize (GObject *object)
 {
-  GimpActionFactory *factory = GIMP_ACTION_FACTORY (object);
+  PicmanActionFactory *factory = PICMAN_ACTION_FACTORY (object);
   GList             *list;
 
   for (list = factory->registered_groups; list; list = g_list_next (list))
     {
-      GimpActionFactoryEntry *entry = list->data;
+      PicmanActionFactoryEntry *entry = list->data;
 
       g_free (entry->identifier);
       g_free (entry->label);
       g_free (entry->stock_id);
 
-      g_slice_free (GimpActionFactoryEntry, entry);
+      g_slice_free (PicmanActionFactoryEntry, entry);
     }
 
   g_list_free (factory->registered_groups);
@@ -80,37 +80,37 @@ gimp_action_factory_finalize (GObject *object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
-GimpActionFactory *
-gimp_action_factory_new (Gimp *gimp)
+PicmanActionFactory *
+picman_action_factory_new (Picman *picman)
 {
-  GimpActionFactory *factory;
+  PicmanActionFactory *factory;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  factory = g_object_new (GIMP_TYPE_ACTION_FACTORY, NULL);
+  factory = g_object_new (PICMAN_TYPE_ACTION_FACTORY, NULL);
 
-  factory->gimp = gimp;
+  factory->picman = picman;
 
   return factory;
 }
 
 void
-gimp_action_factory_group_register (GimpActionFactory         *factory,
+picman_action_factory_group_register (PicmanActionFactory         *factory,
                                     const gchar               *identifier,
                                     const gchar               *label,
                                     const gchar               *stock_id,
-                                    GimpActionGroupSetupFunc   setup_func,
-                                    GimpActionGroupUpdateFunc  update_func)
+                                    PicmanActionGroupSetupFunc   setup_func,
+                                    PicmanActionGroupUpdateFunc  update_func)
 {
-  GimpActionFactoryEntry *entry;
+  PicmanActionFactoryEntry *entry;
 
-  g_return_if_fail (GIMP_IS_ACTION_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_ACTION_FACTORY (factory));
   g_return_if_fail (identifier != NULL);
   g_return_if_fail (label != NULL);
   g_return_if_fail (setup_func != NULL);
   g_return_if_fail (update_func != NULL);
 
-  entry = g_slice_new0 (GimpActionFactoryEntry);
+  entry = g_slice_new0 (PicmanActionFactoryEntry);
 
   entry->identifier  = g_strdup (identifier);
   entry->label       = g_strdup (label);
@@ -122,25 +122,25 @@ gimp_action_factory_group_register (GimpActionFactory         *factory,
                                                entry);
 }
 
-GimpActionGroup *
-gimp_action_factory_group_new (GimpActionFactory *factory,
+PicmanActionGroup *
+picman_action_factory_group_new (PicmanActionFactory *factory,
                                const gchar       *identifier,
                                gpointer           user_data)
 {
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_ACTION_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_ACTION_FACTORY (factory), NULL);
   g_return_val_if_fail (identifier != NULL, NULL);
 
   for (list = factory->registered_groups; list; list = g_list_next (list))
     {
-      GimpActionFactoryEntry *entry = list->data;
+      PicmanActionFactoryEntry *entry = list->data;
 
       if (! strcmp (entry->identifier, identifier))
         {
-          GimpActionGroup *group;
+          PicmanActionGroup *group;
 
-          group = gimp_action_group_new (factory->gimp,
+          group = picman_action_group_new (factory->picman,
                                          entry->identifier,
                                          entry->label,
                                          entry->stock_id,

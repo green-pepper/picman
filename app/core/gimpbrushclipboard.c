@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbrushclipboard.c
- * Copyright (C) 2006 Michael Natterer <mitch@gimp.org>
+ * picmanbrushclipboard.c
+ * Copyright (C) 2006 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,103 +24,103 @@
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimpbuffer.h"
-#include "gimpbrushclipboard.h"
-#include "gimpimage.h"
-#include "gimptempbuf.h"
+#include "picman.h"
+#include "picmanbuffer.h"
+#include "picmanbrushclipboard.h"
+#include "picmanimage.h"
+#include "picmantempbuf.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
 {
   PROP_0,
-  PROP_GIMP
+  PROP_PICMAN
 };
 
 
 /*  local function prototypes  */
 
-static void       gimp_brush_clipboard_constructed  (GObject      *object);
-static void       gimp_brush_clipboard_set_property (GObject      *object,
+static void       picman_brush_clipboard_constructed  (GObject      *object);
+static void       picman_brush_clipboard_set_property (GObject      *object,
                                                      guint         property_id,
                                                      const GValue *value,
                                                      GParamSpec   *pspec);
-static void       gimp_brush_clipboard_get_property (GObject      *object,
+static void       picman_brush_clipboard_get_property (GObject      *object,
                                                      guint         property_id,
                                                      GValue       *value,
                                                      GParamSpec   *pspec);
 #if 0
-static GimpData * gimp_brush_clipboard_duplicate    (GimpData     *data);
+static PicmanData * picman_brush_clipboard_duplicate    (PicmanData     *data);
 #endif
 
-static void     gimp_brush_clipboard_buffer_changed (Gimp         *gimp,
-                                                     GimpBrush    *brush);
+static void     picman_brush_clipboard_buffer_changed (Picman         *picman,
+                                                     PicmanBrush    *brush);
 
 
-G_DEFINE_TYPE (GimpBrushClipboard, gimp_brush_clipboard, GIMP_TYPE_BRUSH)
+G_DEFINE_TYPE (PicmanBrushClipboard, picman_brush_clipboard, PICMAN_TYPE_BRUSH)
 
-#define parent_class gimp_brush_clipboard_parent_class
+#define parent_class picman_brush_clipboard_parent_class
 
 
 static void
-gimp_brush_clipboard_class_init (GimpBrushClipboardClass *klass)
+picman_brush_clipboard_class_init (PicmanBrushClipboardClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
 #if 0
-  GimpDataClass *data_class   = GIMP_DATA_CLASS (klass);
+  PicmanDataClass *data_class   = PICMAN_DATA_CLASS (klass);
 #endif
 
-  object_class->constructed  = gimp_brush_clipboard_constructed;
-  object_class->set_property = gimp_brush_clipboard_set_property;
-  object_class->get_property = gimp_brush_clipboard_get_property;
+  object_class->constructed  = picman_brush_clipboard_constructed;
+  object_class->set_property = picman_brush_clipboard_set_property;
+  object_class->get_property = picman_brush_clipboard_get_property;
 
 #if 0
-  data_class->duplicate      = gimp_brush_clipboard_duplicate;
+  data_class->duplicate      = picman_brush_clipboard_duplicate;
 #endif
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp", NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman", NULL, NULL,
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_brush_clipboard_init (GimpBrushClipboard *brush)
+picman_brush_clipboard_init (PicmanBrushClipboard *brush)
 {
-  brush->gimp = NULL;
+  brush->picman = NULL;
 }
 
 static void
-gimp_brush_clipboard_constructed (GObject *object)
+picman_brush_clipboard_constructed (GObject *object)
 {
-  GimpBrushClipboard *brush = GIMP_BRUSH_CLIPBOARD (object);
+  PicmanBrushClipboard *brush = PICMAN_BRUSH_CLIPBOARD (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_GIMP (brush->gimp));
+  g_assert (PICMAN_IS_PICMAN (brush->picman));
 
-  g_signal_connect_object (brush->gimp, "buffer-changed",
-                           G_CALLBACK (gimp_brush_clipboard_buffer_changed),
+  g_signal_connect_object (brush->picman, "buffer-changed",
+                           G_CALLBACK (picman_brush_clipboard_buffer_changed),
                            brush, 0);
 
-  gimp_brush_clipboard_buffer_changed (brush->gimp, GIMP_BRUSH (brush));
+  picman_brush_clipboard_buffer_changed (brush->picman, PICMAN_BRUSH (brush));
 }
 
 static void
-gimp_brush_clipboard_set_property (GObject      *object,
+picman_brush_clipboard_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpBrushClipboard *brush = GIMP_BRUSH_CLIPBOARD (object);
+  PicmanBrushClipboard *brush = PICMAN_BRUSH_CLIPBOARD (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      brush->gimp = g_value_get_object (value);
+    case PROP_PICMAN:
+      brush->picman = g_value_get_object (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -129,17 +129,17 @@ gimp_brush_clipboard_set_property (GObject      *object,
 }
 
 static void
-gimp_brush_clipboard_get_property (GObject    *object,
+picman_brush_clipboard_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpBrushClipboard *brush = GIMP_BRUSH_CLIPBOARD (object);
+  PicmanBrushClipboard *brush = PICMAN_BRUSH_CLIPBOARD (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      g_value_set_object (value, brush->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, brush->picman);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -148,23 +148,23 @@ gimp_brush_clipboard_get_property (GObject    *object,
 }
 
 #if 0
-static GimpData *
-gimp_brush_clipboard_duplicate (GimpData *data)
+static PicmanData *
+picman_brush_clipboard_duplicate (PicmanData *data)
 {
-  GimpBrushClipboard *brush = GIMP_BRUSH_CLIPBOARD (data);
+  PicmanBrushClipboard *brush = PICMAN_BRUSH_CLIPBOARD (data);
 
-  return gimp_brush_clipboard_new (brush->gimp);
+  return picman_brush_clipboard_new (brush->picman);
 }
 #endif
 
-GimpData *
-gimp_brush_clipboard_new (Gimp *gimp)
+PicmanData *
+picman_brush_clipboard_new (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  return g_object_new (GIMP_TYPE_BRUSH_CLIPBOARD,
+  return g_object_new (PICMAN_TYPE_BRUSH_CLIPBOARD,
                        "name", _("Clipboard"),
-                       "gimp", gimp,
+                       "picman", picman,
                        NULL);
 }
 
@@ -172,42 +172,42 @@ gimp_brush_clipboard_new (Gimp *gimp)
 /*  private functions  */
 
 static void
-gimp_brush_clipboard_buffer_changed (Gimp      *gimp,
-                                     GimpBrush *brush)
+picman_brush_clipboard_buffer_changed (Picman      *picman,
+                                     PicmanBrush *brush)
 {
   gint width;
   gint height;
 
   if (brush->mask)
     {
-      gimp_temp_buf_unref (brush->mask);
+      picman_temp_buf_unref (brush->mask);
       brush->mask = NULL;
     }
 
   if (brush->pixmap)
     {
-      gimp_temp_buf_unref (brush->pixmap);
+      picman_temp_buf_unref (brush->pixmap);
       brush->pixmap = NULL;
     }
 
-  if (gimp->global_buffer)
+  if (picman->global_buffer)
     {
-      GeglBuffer *buffer = gimp_buffer_get_buffer (gimp->global_buffer);
+      GeglBuffer *buffer = picman_buffer_get_buffer (picman->global_buffer);
       const Babl *format = gegl_buffer_get_format (buffer);
       GeglBuffer *dest_buffer;
 
-      width  = MIN (gimp_buffer_get_width  (gimp->global_buffer), 2048);
-      height = MIN (gimp_buffer_get_height (gimp->global_buffer), 2048);
+      width  = MIN (picman_buffer_get_width  (picman->global_buffer), 2048);
+      height = MIN (picman_buffer_get_height (picman->global_buffer), 2048);
 
-      brush->mask   = gimp_temp_buf_new (width, height,
+      brush->mask   = picman_temp_buf_new (width, height,
                                          babl_format ("Y u8"));
-      brush->pixmap = gimp_temp_buf_new (width, height,
+      brush->pixmap = picman_temp_buf_new (width, height,
                                          babl_format ("R'G'B' u8"));
 
       /*  copy the alpha channel into the brush's mask  */
       if (babl_format_has_alpha (format))
         {
-          dest_buffer = gimp_temp_buf_create_buffer (brush->mask);
+          dest_buffer = picman_temp_buf_create_buffer (brush->mask);
 
           gegl_buffer_set_format (dest_buffer, babl_format ("A u8"));
           gegl_buffer_copy (buffer, NULL, dest_buffer, NULL);
@@ -216,12 +216,12 @@ gimp_brush_clipboard_buffer_changed (Gimp      *gimp,
         }
       else
         {
-          memset (gimp_temp_buf_get_data (brush->mask), 255,
+          memset (picman_temp_buf_get_data (brush->mask), 255,
                   width * height);
         }
 
       /*  copy the color channels into the brush's pixmap  */
-      dest_buffer = gimp_temp_buf_create_buffer (brush->pixmap);
+      dest_buffer = picman_temp_buf_create_buffer (brush->pixmap);
 
       gegl_buffer_copy (buffer, NULL, dest_buffer, NULL);
 
@@ -232,8 +232,8 @@ gimp_brush_clipboard_buffer_changed (Gimp      *gimp,
       width  = 17;
       height = 17;
 
-      brush->mask = gimp_temp_buf_new (width, height, babl_format ("Y u8"));
-      gimp_temp_buf_data_clear (brush->mask);
+      brush->mask = picman_temp_buf_new (width, height, babl_format ("Y u8"));
+      picman_temp_buf_data_clear (brush->mask);
     }
 
   brush->x_axis.x = width / 2;
@@ -241,5 +241,5 @@ gimp_brush_clipboard_buffer_changed (Gimp      *gimp,
   brush->y_axis.x = 0;
   brush->y_axis.y = height / 2;
 
-  gimp_data_dirty (GIMP_DATA (brush));
+  picman_data_dirty (PICMAN_DATA (brush));
 }

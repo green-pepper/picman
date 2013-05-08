@@ -1,5 +1,5 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
+ * Picman-Python - allows the writing of Picman plugins in Python.
  * Copyright (C) 1997-2002  James Henstridge <james@daa.com.au>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,14 +20,14 @@
 #  include <config.h>
 #endif
 
-#include "pygimp.h"
+#include "pypicman.h"
 
 static PyMethodDef disp_methods[] = {
     {NULL,	NULL}		/* sentinel */
 };
 
 static PyObject *
-disp_get_ID(PyGimpDisplay *self, void *closure)
+disp_get_ID(PyPicmanDisplay *self, void *closure)
 {
     return PyInt_FromLong(self->ID);
 }
@@ -41,16 +41,16 @@ static PyGetSetDef disp_getsets[] = {
 
 
 PyObject *
-pygimp_display_new(gint32 ID)
+pypicman_display_new(gint32 ID)
 {
-    PyGimpDisplay *self;
+    PyPicmanDisplay *self;
 
-    if (!gimp_display_is_valid(ID)) {
+    if (!picman_display_is_valid(ID)) {
         Py_INCREF(Py_None);
         return Py_None;
     }
 
-    self = PyObject_NEW(PyGimpDisplay, &PyGimpDisplay_Type);
+    self = PyObject_NEW(PyPicmanDisplay, &PyPicmanDisplay_Type);
 
     if (self == NULL)
 	return NULL;
@@ -61,13 +61,13 @@ pygimp_display_new(gint32 ID)
 }
 
 static void
-disp_dealloc(PyGimpDisplay *self)
+disp_dealloc(PyPicmanDisplay *self)
 {
     PyObject_DEL(self);
 }
 
 static PyObject *
-disp_repr(PyGimpDisplay *self)
+disp_repr(PyPicmanDisplay *self)
 {
     PyObject *s;
 
@@ -77,18 +77,18 @@ disp_repr(PyGimpDisplay *self)
 }
 
 static int
-disp_init(PyGimpDisplay *self, PyObject *args, PyObject *kwargs)
+disp_init(PyPicmanDisplay *self, PyObject *args, PyObject *kwargs)
 {
-    PyGimpImage *img;
+    PyPicmanImage *img;
 
-    if (!PyArg_ParseTuple(args, "O!:gimp.Display.__init__",
-			  &PyGimpImage_Type, &img))
+    if (!PyArg_ParseTuple(args, "O!:picman.Display.__init__",
+			  &PyPicmanImage_Type, &img))
 	return -1;
 
-    self->ID = gimp_display_new(img->ID);
+    self->ID = picman_display_new(img->ID);
 
     if (self->ID < 0) {
-	PyErr_Format(pygimp_error, "could not create display for image (ID %d)",
+	PyErr_Format(pypicman_error, "could not create display for image (ID %d)",
 		     img->ID);
 	return -1;
     }
@@ -96,11 +96,11 @@ disp_init(PyGimpDisplay *self, PyObject *args, PyObject *kwargs)
     return 0;
 }
 
-PyTypeObject PyGimpDisplay_Type = {
+PyTypeObject PyPicmanDisplay_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                  /* ob_size */
-    "gimp.Display",                     /* tp_name */
-    sizeof(PyGimpDisplay),              /* tp_basicsize */
+    "picman.Display",                     /* tp_name */
+    sizeof(PyPicmanDisplay),              /* tp_basicsize */
     0,                                  /* tp_itemsize */
     /* methods */
     (destructor)disp_dealloc,           /* tp_dealloc */

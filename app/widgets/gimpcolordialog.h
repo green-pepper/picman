@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcolordialog.h
+ * picmancolordialog.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,28 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COLOR_DIALOG_H__
-#define __GIMP_COLOR_DIALOG_H__
+#ifndef __PICMAN_COLOR_DIALOG_H__
+#define __PICMAN_COLOR_DIALOG_H__
 
 
-#include "gimpviewabledialog.h"
+#include "picmanviewabledialog.h"
 
 #include "gui/color-history.h"
 
 
-#define GIMP_TYPE_COLOR_DIALOG            (gimp_color_dialog_get_type ())
-#define GIMP_COLOR_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_DIALOG, GimpColorDialog))
-#define GIMP_COLOR_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_DIALOG, GimpColorDialogClass))
-#define GIMP_IS_COLOR_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_DIALOG))
-#define GIMP_IS_COLOR_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_DIALOG))
-#define GIMP_COLOR_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_DIALOG, GimpColorDialogClass))
+#define PICMAN_TYPE_COLOR_DIALOG            (picman_color_dialog_get_type ())
+#define PICMAN_COLOR_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_DIALOG, PicmanColorDialog))
+#define PICMAN_COLOR_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_DIALOG, PicmanColorDialogClass))
+#define PICMAN_IS_COLOR_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_DIALOG))
+#define PICMAN_IS_COLOR_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_DIALOG))
+#define PICMAN_COLOR_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_DIALOG, PicmanColorDialogClass))
 
 
-typedef struct _GimpColorDialogClass GimpColorDialogClass;
+typedef struct _PicmanColorDialogClass PicmanColorDialogClass;
 
-struct _GimpColorDialog
+struct _PicmanColorDialog
 {
-  GimpViewableDialog   parent_instance;
+  PicmanViewableDialog   parent_instance;
 
   gboolean             wants_updates;
 
@@ -46,34 +46,34 @@ struct _GimpColorDialog
   GtkWidget           *history[COLOR_HISTORY_SIZE];
 };
 
-struct _GimpColorDialogClass
+struct _PicmanColorDialogClass
 {
-  GimpViewableDialogClass  parent_class;
+  PicmanViewableDialogClass  parent_class;
 
-  void (* update) (GimpColorDialog      *dialog,
-                   const GimpRGB        *color,
-                   GimpColorDialogState  state);
+  void (* update) (PicmanColorDialog      *dialog,
+                   const PicmanRGB        *color,
+                   PicmanColorDialogState  state);
 };
 
 
-GType       gimp_color_dialog_get_type  (void) G_GNUC_CONST;
+GType       picman_color_dialog_get_type  (void) G_GNUC_CONST;
 
-GtkWidget * gimp_color_dialog_new       (GimpViewable      *viewable,
-                                         GimpContext       *context,
+GtkWidget * picman_color_dialog_new       (PicmanViewable      *viewable,
+                                         PicmanContext       *context,
                                          const gchar       *title,
                                          const gchar       *stock_id,
                                          const gchar       *desc,
                                          GtkWidget         *parent,
-                                         GimpDialogFactory *dialog_factory,
+                                         PicmanDialogFactory *dialog_factory,
                                          const gchar       *dialog_identifier,
-                                         const GimpRGB     *color,
+                                         const PicmanRGB     *color,
                                          gboolean           wants_update,
                                          gboolean           show_alpha);
 
-void        gimp_color_dialog_set_color (GimpColorDialog   *dialog,
-                                         const GimpRGB     *color);
-void        gimp_color_dialog_get_color (GimpColorDialog   *dialog,
-                                         GimpRGB           *color);
+void        picman_color_dialog_set_color (PicmanColorDialog   *dialog,
+                                         const PicmanRGB     *color);
+void        picman_color_dialog_get_color (PicmanColorDialog   *dialog,
+                                         PicmanRGB           *color);
 
 
-#endif /* __GIMP_COLOR_DIALOG_H__ */
+#endif /* __PICMAN_COLOR_DIALOG_H__ */

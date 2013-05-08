@@ -1,6 +1,6 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
- * Copyright (C) 2003  Manish Singh <yosh@gimp.org>
+ * Picman-Python - allows the writing of Picman plugins in Python.
+ * Copyright (C) 2003  Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,34 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PYGIMPCOLOR_H_
-#define _PYGIMPCOLOR_H_
+#ifndef _PYPICMANCOLOR_H_
+#define _PYPICMANCOLOR_H_
 
 #include <Python.h>
 
 #include <pygobject.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 G_BEGIN_DECLS
 
-extern PyTypeObject PyGimpRGB_Type;
-#define pygimp_rgb_check(v) (pyg_boxed_check((v), GIMP_TYPE_RGB))
-PyObject *pygimp_rgb_new(const GimpRGB *rgb);
+extern PyTypeObject PyPicmanRGB_Type;
+#define pypicman_rgb_check(v) (pyg_boxed_check((v), PICMAN_TYPE_RGB))
+PyObject *pypicman_rgb_new(const PicmanRGB *rgb);
 
-extern PyTypeObject PyGimpHSV_Type;
-#define pygimp_hsv_check(v) (pyg_boxed_check((v), GIMP_TYPE_HSV))
-PyObject *pygimp_hsv_new(const GimpHSV *hsv);
+extern PyTypeObject PyPicmanHSV_Type;
+#define pypicman_hsv_check(v) (pyg_boxed_check((v), PICMAN_TYPE_HSV))
+PyObject *pypicman_hsv_new(const PicmanHSV *hsv);
 
-extern PyTypeObject PyGimpHSL_Type;
-#define pygimp_hsl_check(v) (pyg_boxed_check((v), GIMP_TYPE_HSL))
-PyObject *pygimp_hsl_new(const GimpHSL *hsl);
+extern PyTypeObject PyPicmanHSL_Type;
+#define pypicman_hsl_check(v) (pyg_boxed_check((v), PICMAN_TYPE_HSL))
+PyObject *pypicman_hsl_new(const PicmanHSL *hsl);
 
-extern PyTypeObject PyGimpCMYK_Type;
-#define pygimp_cmyk_check(v) (pyg_boxed_check((v), GIMP_TYPE_CMYK))
-PyObject *pygimp_cmyk_new(const GimpCMYK *cmyk);
+extern PyTypeObject PyPicmanCMYK_Type;
+#define pypicman_cmyk_check(v) (pyg_boxed_check((v), PICMAN_TYPE_CMYK))
+PyObject *pypicman_cmyk_new(const PicmanCMYK *cmyk);
 
-int pygimp_rgb_from_pyobject(PyObject *object, GimpRGB *color);
+int pypicman_rgb_from_pyobject(PyObject *object, PicmanRGB *color);
 
 G_END_DECLS
 

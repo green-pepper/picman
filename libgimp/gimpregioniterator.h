@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpregioniterator.h
+ * picmanregioniterator.h
  * Contains all kinds of miscellaneous routines factored out from different
  * plug-ins. They stay here until their API has crystalized a bit and we can
  * put them into the file where they belong (Maurits Rijk
@@ -22,74 +22,74 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
-#ifndef __GIMP_REGION_ITERATOR_H__
-#define __GIMP_REGION_ITERATOR_H__
+#ifndef __PICMAN_REGION_ITERATOR_H__
+#define __PICMAN_REGION_ITERATOR_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
-typedef struct _GimpRgnIterator  GimpRgnIterator;
+typedef struct _PicmanRgnIterator  PicmanRgnIterator;
 
-typedef void   (* GimpRgnFunc1)       (const guchar *src,
+typedef void   (* PicmanRgnFunc1)       (const guchar *src,
                                        gint          bpp,
                                        gpointer      data);
-typedef void   (* GimpRgnFunc2)       (const guchar *src,
+typedef void   (* PicmanRgnFunc2)       (const guchar *src,
                                        guchar       *dest,
                                        gint          bpp,
                                        gpointer      data);
-typedef void   (* GimpRgnFuncSrc)     (gint          x,
+typedef void   (* PicmanRgnFuncSrc)     (gint          x,
                                        gint          y,
                                        const guchar *src,
                                        gint          bpp,
                                        gpointer      data);
-typedef void   (* GimpRgnFuncDest)    (gint          x,
+typedef void   (* PicmanRgnFuncDest)    (gint          x,
                                        gint          y,
                                        guchar       *dest,
                                        gint          bpp,
                                        gpointer      data);
-typedef void   (* GimpRgnFuncSrcDest) (gint          x,
+typedef void   (* PicmanRgnFuncSrcDest) (gint          x,
                                        gint          y,
                                        const guchar *src,
                                        guchar       *dest,
                                        gint          bpp,
                                        gpointer      data);
 
-GIMP_DEPRECATED_FOR(GeglBufferIterator)
-GimpRgnIterator * gimp_rgn_iterator_new      (GimpDrawable      *drawable,
-                                              GimpRunMode        unused);
-GIMP_DEPRECATED_FOR(GeglBufferIterator)
-void              gimp_rgn_iterator_free     (GimpRgnIterator   *iter);
-GIMP_DEPRECATED_FOR(GeglBufferIterator)
-void              gimp_rgn_iterator_src      (GimpRgnIterator   *iter,
-                                              GimpRgnFuncSrc     func,
+PICMAN_DEPRECATED_FOR(GeglBufferIterator)
+PicmanRgnIterator * picman_rgn_iterator_new      (PicmanDrawable      *drawable,
+                                              PicmanRunMode        unused);
+PICMAN_DEPRECATED_FOR(GeglBufferIterator)
+void              picman_rgn_iterator_free     (PicmanRgnIterator   *iter);
+PICMAN_DEPRECATED_FOR(GeglBufferIterator)
+void              picman_rgn_iterator_src      (PicmanRgnIterator   *iter,
+                                              PicmanRgnFuncSrc     func,
                                               gpointer           data);
-GIMP_DEPRECATED_FOR(GeglBufferIterator)
-void              gimp_rgn_iterator_dest     (GimpRgnIterator   *iter,
-                                              GimpRgnFuncDest    func,
+PICMAN_DEPRECATED_FOR(GeglBufferIterator)
+void              picman_rgn_iterator_dest     (PicmanRgnIterator   *iter,
+                                              PicmanRgnFuncDest    func,
                                               gpointer           data);
-GIMP_DEPRECATED_FOR(GeglBufferIterator)
-void              gimp_rgn_iterator_src_dest (GimpRgnIterator   *iter,
-                                              GimpRgnFuncSrcDest func,
-                                              gpointer           data);
-
-
-GIMP_DEPRECATED_FOR(GeglBufferIterator)
-void              gimp_rgn_iterate1          (GimpDrawable      *drawable,
-                                              GimpRunMode        unused,
-                                              GimpRgnFunc1       func,
+PICMAN_DEPRECATED_FOR(GeglBufferIterator)
+void              picman_rgn_iterator_src_dest (PicmanRgnIterator   *iter,
+                                              PicmanRgnFuncSrcDest func,
                                               gpointer           data);
 
-GIMP_DEPRECATED_FOR(GeglBufferIterator)
-void              gimp_rgn_iterate2          (GimpDrawable      *drawable,
-                                              GimpRunMode        unused,
-                                              GimpRgnFunc2       func,
+
+PICMAN_DEPRECATED_FOR(GeglBufferIterator)
+void              picman_rgn_iterate1          (PicmanDrawable      *drawable,
+                                              PicmanRunMode        unused,
+                                              PicmanRgnFunc1       func,
+                                              gpointer           data);
+
+PICMAN_DEPRECATED_FOR(GeglBufferIterator)
+void              picman_rgn_iterate2          (PicmanDrawable      *drawable,
+                                              PicmanRunMode        unused,
+                                              PicmanRgnFunc2       func,
                                               gpointer           data);
 
 G_END_DECLS
 
-#endif /* __GIMP_REGION_ITERATOR_H__ */
+#endif /* __PICMAN_REGION_ITERATOR_H__ */

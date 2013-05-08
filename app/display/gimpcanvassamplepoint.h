@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvassamplepoint.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvassamplepoint.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,46 +18,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_SAMPLE_POINT_H__
-#define __GIMP_CANVAS_SAMPLE_POINT_H__
+#ifndef __PICMAN_CANVAS_SAMPLE_POINT_H__
+#define __PICMAN_CANVAS_SAMPLE_POINT_H__
 
 
-#include "gimpcanvasitem.h"
+#include "picmancanvasitem.h"
 
 
-#define GIMP_TYPE_CANVAS_SAMPLE_POINT            (gimp_canvas_sample_point_get_type ())
-#define GIMP_CANVAS_SAMPLE_POINT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_SAMPLE_POINT, GimpCanvasSamplePoint))
-#define GIMP_CANVAS_SAMPLE_POINT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_SAMPLE_POINT, GimpCanvasSamplePointClass))
-#define GIMP_IS_CANVAS_SAMPLE_POINT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_SAMPLE_POINT))
-#define GIMP_IS_CANVAS_SAMPLE_POINT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_SAMPLE_POINT))
-#define GIMP_CANVAS_SAMPLE_POINT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_SAMPLE_POINT, GimpCanvasSamplePointClass))
+#define PICMAN_TYPE_CANVAS_SAMPLE_POINT            (picman_canvas_sample_point_get_type ())
+#define PICMAN_CANVAS_SAMPLE_POINT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_SAMPLE_POINT, PicmanCanvasSamplePoint))
+#define PICMAN_CANVAS_SAMPLE_POINT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_SAMPLE_POINT, PicmanCanvasSamplePointClass))
+#define PICMAN_IS_CANVAS_SAMPLE_POINT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_SAMPLE_POINT))
+#define PICMAN_IS_CANVAS_SAMPLE_POINT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_SAMPLE_POINT))
+#define PICMAN_CANVAS_SAMPLE_POINT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_SAMPLE_POINT, PicmanCanvasSamplePointClass))
 
 
-typedef struct _GimpCanvasSamplePoint      GimpCanvasSamplePoint;
-typedef struct _GimpCanvasSamplePointClass GimpCanvasSamplePointClass;
+typedef struct _PicmanCanvasSamplePoint      PicmanCanvasSamplePoint;
+typedef struct _PicmanCanvasSamplePointClass PicmanCanvasSamplePointClass;
 
-struct _GimpCanvasSamplePoint
+struct _PicmanCanvasSamplePoint
 {
-  GimpCanvasItem  parent_instance;
+  PicmanCanvasItem  parent_instance;
 };
 
-struct _GimpCanvasSamplePointClass
+struct _PicmanCanvasSamplePointClass
 {
-  GimpCanvasItemClass  parent_class;
+  PicmanCanvasItemClass  parent_class;
 };
 
 
-GType            gimp_canvas_sample_point_get_type (void) G_GNUC_CONST;
+GType            picman_canvas_sample_point_get_type (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_canvas_sample_point_new      (GimpDisplayShell *shell,
+PicmanCanvasItem * picman_canvas_sample_point_new      (PicmanDisplayShell *shell,
                                                     gint              x,
                                                     gint              y,
                                                     gint              index,
                                                     gboolean          sample_point_style);
 
-void             gimp_canvas_sample_point_set      (GimpCanvasItem   *sample_point,
+void             picman_canvas_sample_point_set      (PicmanCanvasItem   *sample_point,
                                                     gint              x,
                                                     gint              y);
 
 
-#endif /* __GIMP_CANVAS_SAMPLE_POINT_H__ */
+#endif /* __PICMAN_CANVAS_SAMPLE_POINT_H__ */

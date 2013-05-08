@@ -1,6 +1,6 @@
  -- This file is generated from authors.xml, do not edit it directly. --
 
-GIMP was originally written by:
+PICMAN was originally written by:
 
  Spencer Kimball
  Peter Mattis
@@ -12,7 +12,7 @@ The current maintainers are:
  Michael Natterer
 
 
-The following people have contributed code to GIMP:
+The following people have contributed code to PICMAN:
 
  Lauri Alanko
  Fredrik Alströmer
@@ -290,7 +290,7 @@ The following people have contributed code to GIMP:
  Robert Ögren
 
 
-The following people have contributed art to GIMP:
+The following people have contributed art to PICMAN:
 
  Lapo Calamandrei
  Paul Davey
@@ -306,7 +306,7 @@ The following people have contributed art to GIMP:
  William Szilveszter
 
 
-The following people have helped to document GIMP:
+The following people have helped to document PICMAN:
 
  Ignacio AntI
  Žygimantas Beručka

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,138 +15,138 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CHANNEL_SELECT_H__
-#define __GIMP_CHANNEL_SELECT_H__
+#ifndef __PICMAN_CHANNEL_SELECT_H__
+#define __PICMAN_CHANNEL_SELECT_H__
 
 
 /*  basic selection functions  */
 
-void   gimp_channel_select_rectangle    (GimpChannel         *channel,
+void   picman_channel_select_rectangle    (PicmanChannel         *channel,
                                          gint                 x,
                                          gint                 y,
                                          gint                 w,
                                          gint                 h,
-                                         GimpChannelOps       op,
+                                         PicmanChannelOps       op,
                                          gboolean             feather,
                                          gdouble              feather_radius_x,
                                          gdouble              feather_radius_y,
                                          gboolean             push_undo);
-void   gimp_channel_select_ellipse      (GimpChannel         *channel,
+void   picman_channel_select_ellipse      (PicmanChannel         *channel,
                                          gint                 x,
                                          gint                 y,
                                          gint                 w,
                                          gint                 h,
-                                         GimpChannelOps       op,
+                                         PicmanChannelOps       op,
                                          gboolean             antialias,
                                          gboolean             feather,
                                          gdouble              feather_radius_x,
                                          gdouble              feather_radius_y,
                                          gboolean             push_undo);
-void   gimp_channel_select_round_rect   (GimpChannel         *channel,
+void   picman_channel_select_round_rect   (PicmanChannel         *channel,
                                          gint                 x,
                                          gint                 y,
                                          gint                 w,
                                          gint                 h,
                                          gdouble              corner_radius_y,
                                          gdouble              corner_radius_x,
-                                         GimpChannelOps       op,
+                                         PicmanChannelOps       op,
                                          gboolean             antialias,
                                          gboolean             feather,
                                          gdouble              feather_radius_x,
                                          gdouble              feather_radius_y,
                                          gboolean             push_undo);
 
-/*  select by GimpScanConvert functions  */
+/*  select by PicmanScanConvert functions  */
 
-void   gimp_channel_select_scan_convert (GimpChannel         *channel,
+void   picman_channel_select_scan_convert (PicmanChannel         *channel,
                                          const gchar         *undo_desc,
-                                         GimpScanConvert     *scan_convert,
+                                         PicmanScanConvert     *scan_convert,
                                          gint                 offset_x,
                                          gint                 offset_y,
-                                         GimpChannelOps       op,
+                                         PicmanChannelOps       op,
                                          gboolean             antialias,
                                          gboolean             feather,
                                          gdouble              feather_radius_x,
                                          gdouble              feather_radius_y,
                                          gboolean             push_undo);
-void   gimp_channel_select_polygon      (GimpChannel         *channel,
+void   picman_channel_select_polygon      (PicmanChannel         *channel,
                                          const gchar         *undo_desc,
                                          gint                 n_points,
-                                         GimpVector2         *points,
-                                         GimpChannelOps       op,
+                                         PicmanVector2         *points,
+                                         PicmanChannelOps       op,
                                          gboolean             antialias,
                                          gboolean             feather,
                                          gdouble              feather_radius_x,
                                          gdouble              feather_radius_y,
                                          gboolean             push_undo);
-void   gimp_channel_select_vectors      (GimpChannel         *channel,
+void   picman_channel_select_vectors      (PicmanChannel         *channel,
                                          const gchar         *undo_desc,
-                                         GimpVectors         *vectors,
-                                         GimpChannelOps       op,
+                                         PicmanVectors         *vectors,
+                                         PicmanChannelOps       op,
                                          gboolean             antialias,
                                          gboolean             feather,
                                          gdouble              feather_radius_x,
                                          gdouble              feather_radius_y,
                                          gboolean             push_undo);
-void   gimp_channel_select_buffer       (GimpChannel         *channel,
+void   picman_channel_select_buffer       (PicmanChannel         *channel,
                                          const gchar         *undo_desc,
                                          GeglBuffer          *add_on,
                                          gint                 offset_x,
                                          gint                 offset_y,
-                                         GimpChannelOps       op,
+                                         PicmanChannelOps       op,
                                          gboolean             feather,
                                          gdouble              feather_radius_x,
                                          gdouble              feather_radius_y);
 
 
-/*  select by GimpChannel functions  */
+/*  select by PicmanChannel functions  */
 
-void   gimp_channel_select_channel      (GimpChannel         *channel,
+void   picman_channel_select_channel      (PicmanChannel         *channel,
                                          const gchar         *undo_desc,
-                                         GimpChannel         *add_on,
+                                         PicmanChannel         *add_on,
                                          gint                 offset_x,
                                          gint                 offset_y,
-                                         GimpChannelOps       op,
+                                         PicmanChannelOps       op,
                                          gboolean             feather,
                                          gdouble              feather_radius_x,
                                          gdouble              feather_radius_y);
-void   gimp_channel_select_alpha        (GimpChannel         *channel,
-                                         GimpDrawable        *drawable,
-                                         GimpChannelOps       op,
+void   picman_channel_select_alpha        (PicmanChannel         *channel,
+                                         PicmanDrawable        *drawable,
+                                         PicmanChannelOps       op,
                                          gboolean             feather,
                                          gdouble              feather_radius_x,
                                          gdouble              feather_radius_y);
-void   gimp_channel_select_component    (GimpChannel         *channel,
-                                         GimpChannelType      component,
-                                         GimpChannelOps       op,
+void   picman_channel_select_component    (PicmanChannel         *channel,
+                                         PicmanChannelType      component,
+                                         PicmanChannelOps       op,
                                          gboolean             feather,
                                          gdouble              feather_radius_x,
                                          gdouble              feather_radius_y);
-void   gimp_channel_select_fuzzy        (GimpChannel         *channel,
-                                         GimpDrawable        *drawable,
+void   picman_channel_select_fuzzy        (PicmanChannel         *channel,
+                                         PicmanDrawable        *drawable,
                                          gboolean             sample_merged,
                                          gint                 x,
                                          gint                 y,
                                          gfloat               threshold,
                                          gboolean             select_transparent,
-                                         GimpSelectCriterion  select_criterion,
-                                         GimpChannelOps       op,
+                                         PicmanSelectCriterion  select_criterion,
+                                         PicmanChannelOps       op,
                                          gboolean             antialias,
                                          gboolean             feather,
                                          gdouble              feather_radius_x,
                                          gdouble              feather_radius_y);
-void   gimp_channel_select_by_color     (GimpChannel         *channel,
-                                         GimpDrawable        *drawable,
+void   picman_channel_select_by_color     (PicmanChannel         *channel,
+                                         PicmanDrawable        *drawable,
                                          gboolean             sample_merged,
-                                         const GimpRGB       *color,
+                                         const PicmanRGB       *color,
                                          gfloat               threshold,
                                          gboolean             select_transparent,
-                                         GimpSelectCriterion  select_criterion,
-                                         GimpChannelOps       op,
+                                         PicmanSelectCriterion  select_criterion,
+                                         PicmanChannelOps       op,
                                          gboolean             antialias,
                                          gboolean             feather,
                                          gdouble              feather_radius_x,
                                          gdouble              feather_radius_y);
 
 
-#endif  /*  __GIMP_CHANNEL_SELECT_H__  */
+#endif  /*  __PICMAN_CHANNEL_SELECT_H__  */

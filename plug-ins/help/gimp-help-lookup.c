@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-help-lookup - a standalone gimp-help ID to filename mapper
- * Copyright (C)  2004-2008 Sven Neumann <sven@gimp.org>
+ * picman-help-lookup - a standalone picman-help ID to filename mapper
+ * Copyright (C)  2004-2008 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimphelp.h"
+#include "picmanhelp.h"
 
 
 static void               show_version (void) G_GNUC_NORETURN;
@@ -36,7 +36,7 @@ static gchar            * lookup       (const gchar *help_domain,
                                         const gchar *help_locales,
                                         const gchar *help_id);
 
-static GimpHelpProgress * progress_new (void);
+static PicmanHelpProgress * progress_new (void);
 
 
 static const gchar  *help_base    = NULL;
@@ -87,8 +87,8 @@ main (gint   argc,
   gchar          *uri;
   GError         *error = NULL;
 
-  help_base = g_getenv (GIMP_HELP_ENV_URI);
-  help_root = g_build_filename (gimp_data_directory (), GIMP_HELP_PREFIX, NULL);
+  help_base = g_getenv (PICMAN_HELP_ENV_URI);
+  help_root = g_build_filename (picman_data_directory (), PICMAN_HELP_PREFIX, NULL);
 
   context = g_option_context_new ("HELP-ID");
   g_option_context_add_main_entries (context, entries, NULL);
@@ -107,12 +107,12 @@ main (gint   argc,
   else
     uri = g_filename_to_uri (help_root, NULL, NULL);
 
-  gimp_help_register_domain (GIMP_HELP_DEFAULT_DOMAIN, uri);
+  picman_help_register_domain (PICMAN_HELP_DEFAULT_DOMAIN, uri);
   g_free (uri);
 
-  uri = lookup (GIMP_HELP_DEFAULT_DOMAIN,
-                help_locales ? help_locales : GIMP_HELP_DEFAULT_LOCALE,
-                help_ids     ? help_ids[0]  : GIMP_HELP_DEFAULT_ID);
+  uri = lookup (PICMAN_HELP_DEFAULT_DOMAIN,
+                help_locales ? help_locales : PICMAN_HELP_DEFAULT_LOCALE,
+                help_ids     ? help_ids[0]  : PICMAN_HELP_DEFAULT_ID);
 
   if (uri)
     {
@@ -131,19 +131,19 @@ lookup (const gchar *help_domain,
         const gchar *help_locales,
         const gchar *help_id)
 {
-  GimpHelpDomain *domain = gimp_help_lookup_domain (help_domain);
+  PicmanHelpDomain *domain = picman_help_lookup_domain (help_domain);
 
   if (domain)
     {
-      GimpHelpProgress *progress = progress_new ();
+      PicmanHelpProgress *progress = progress_new ();
       GList            *locales;
       gchar            *full_uri;
 
-      locales  = gimp_help_parse_locales (help_locales);
-      full_uri = gimp_help_domain_map (domain, locales, help_id, progress,
+      locales  = picman_help_parse_locales (help_locales);
+      full_uri = picman_help_domain_map (domain, locales, help_id, progress,
                                        NULL, NULL);
 
-      gimp_help_progress_free (progress);
+      picman_help_progress_free (progress);
 
       g_list_free_full (locales, (GDestroyNotify) g_free);
 
@@ -156,7 +156,7 @@ lookup (const gchar *help_domain,
 static void
 show_version (void)
 {
-  g_print ("gimp-help-lookup version %s\n", GIMP_VERSION);
+  g_print ("picman-help-lookup version %s\n", PICMAN_VERSION);
   exit (EXIT_SUCCESS);
 }
 
@@ -185,15 +185,15 @@ progress_set_value (gdouble  percentage,
     g_printerr (".");
 }
 
-static GimpHelpProgress *
+static PicmanHelpProgress *
 progress_new (void)
 {
-  const GimpHelpProgressVTable vtable =
+  const PicmanHelpProgressVTable vtable =
     {
       progress_start,
       progress_end,
       progress_set_value
     };
 
-  return gimp_help_progress_new (&vtable, NULL);
+  return picman_help_progress_new (&vtable, NULL);
 }

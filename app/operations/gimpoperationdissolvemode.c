@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationdissolvemode.c
+ * picmanoperationdissolvemode.c
  * Copyright (C) 2012 Ville Sokk <ville.sokk@gmail.com>
- *               2012 Øyvind Kolås <pippin@gimp.org>
+ *               2012 Øyvind Kolås <pippin@picman.org>
  *               2003 Helvetix Victorinox
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,13 +27,13 @@
 
 #include "operations-types.h"
 
-#include "gimpoperationdissolvemode.h"
+#include "picmanoperationdissolvemode.h"
 
 
 #define RANDOM_TABLE_SIZE 4096
 
 
-static gboolean gimp_operation_dissolve_mode_process (GeglOperation       *operation,
+static gboolean picman_operation_dissolve_mode_process (GeglOperation       *operation,
                                                       void                *in_buf,
                                                       void                *aux_buf,
                                                       void                *aux2_buf,
@@ -43,14 +43,14 @@ static gboolean gimp_operation_dissolve_mode_process (GeglOperation       *opera
                                                       gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationDissolveMode, gimp_operation_dissolve_mode,
-               GIMP_TYPE_OPERATION_POINT_LAYER_MODE)
+G_DEFINE_TYPE (PicmanOperationDissolveMode, picman_operation_dissolve_mode,
+               PICMAN_TYPE_OPERATION_POINT_LAYER_MODE)
 
 static gint32 random_table[RANDOM_TABLE_SIZE];
 
 
 static void
-gimp_operation_dissolve_mode_class_init (GimpOperationDissolveModeClass *klass)
+picman_operation_dissolve_mode_class_init (PicmanOperationDissolveModeClass *klass)
 {
   GeglOperationClass               *operation_class;
   GeglOperationPointComposer3Class *point_composer_class;
@@ -61,12 +61,12 @@ gimp_operation_dissolve_mode_class_init (GimpOperationDissolveModeClass *klass)
   point_composer_class = GEGL_OPERATION_POINT_COMPOSER3_CLASS (klass);
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:dissolve-mode",
-                                 "description", "GIMP dissolve mode operation",
+                                 "name",        "picman:dissolve-mode",
+                                 "description", "PICMAN dissolve mode operation",
                                  "categories",  "compositors",
                                  NULL);
 
-  point_composer_class->process = gimp_operation_dissolve_mode_process;
+  point_composer_class->process = picman_operation_dissolve_mode_process;
 
   /* generate a table of random seeds */
   gr = g_rand_new_with_seed (314159265);
@@ -77,12 +77,12 @@ gimp_operation_dissolve_mode_class_init (GimpOperationDissolveModeClass *klass)
 }
 
 static void
-gimp_operation_dissolve_mode_init (GimpOperationDissolveMode *self)
+picman_operation_dissolve_mode_init (PicmanOperationDissolveMode *self)
 {
 }
 
 static gboolean
-gimp_operation_dissolve_mode_process (GeglOperation       *operation,
+picman_operation_dissolve_mode_process (GeglOperation       *operation,
                                       void                *in_buf,
                                       void                *aux_buf,
                                       void                *aux2_buf,
@@ -91,7 +91,7 @@ gimp_operation_dissolve_mode_process (GeglOperation       *operation,
                                       const GeglRectangle *result,
                                       gint                 level)
 {
-  gdouble         opacity  = GIMP_OPERATION_POINT_LAYER_MODE (operation)->opacity;
+  gdouble         opacity  = PICMAN_OPERATION_POINT_LAYER_MODE (operation)->opacity;
   gfloat         *in       = in_buf;
   gfloat         *out      = out_buf;
   gfloat         *aux      = aux_buf;

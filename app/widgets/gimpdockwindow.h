@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdockwindow.h
- * Copyright (C) 2001-2005 Michael Natterer <mitch@gimp.org>
+ * picmandockwindow.h
+ * Copyright (C) 2001-2005 Michael Natterer <mitch@picman.org>
  * Copyright (C)      2009 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,68 +19,68 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DOCK_WINDOW_H__
-#define __GIMP_DOCK_WINDOW_H__
+#ifndef __PICMAN_DOCK_WINDOW_H__
+#define __PICMAN_DOCK_WINDOW_H__
 
 
-#include "widgets/gimpwindow.h"
+#include "widgets/picmanwindow.h"
 
 
-#define GIMP_TYPE_DOCK_WINDOW            (gimp_dock_window_get_type ())
-#define GIMP_DOCK_WINDOW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DOCK_WINDOW, GimpDockWindow))
-#define GIMP_DOCK_WINDOW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DOCK_WINDOW, GimpDockWindowClass))
-#define GIMP_IS_DOCK_WINDOW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DOCK_WINDOW))
-#define GIMP_IS_DOCK_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DOCK_WINDOW))
-#define GIMP_DOCK_WINDOW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DOCK_WINDOW, GimpDockWindowClass))
+#define PICMAN_TYPE_DOCK_WINDOW            (picman_dock_window_get_type ())
+#define PICMAN_DOCK_WINDOW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DOCK_WINDOW, PicmanDockWindow))
+#define PICMAN_DOCK_WINDOW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DOCK_WINDOW, PicmanDockWindowClass))
+#define PICMAN_IS_DOCK_WINDOW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DOCK_WINDOW))
+#define PICMAN_IS_DOCK_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DOCK_WINDOW))
+#define PICMAN_DOCK_WINDOW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DOCK_WINDOW, PicmanDockWindowClass))
 
 
-typedef struct _GimpDockWindowClass    GimpDockWindowClass;
-typedef struct _GimpDockWindowPrivate  GimpDockWindowPrivate;
+typedef struct _PicmanDockWindowClass    PicmanDockWindowClass;
+typedef struct _PicmanDockWindowPrivate  PicmanDockWindowPrivate;
 
 /**
- * GimpDockWindow:
+ * PicmanDockWindow:
  *
- * A top-level window containing GimpDocks.
+ * A top-level window containing PicmanDocks.
  */
-struct _GimpDockWindow
+struct _PicmanDockWindow
 {
-  GimpWindow  parent_instance;
+  PicmanWindow  parent_instance;
 
-  GimpDockWindowPrivate *p;
+  PicmanDockWindowPrivate *p;
 };
 
-struct _GimpDockWindowClass
+struct _PicmanDockWindowClass
 {
-  GimpWindowClass  parent_class;
+  PicmanWindowClass  parent_class;
 };
 
 
-GType               gimp_dock_window_get_type               (void) G_GNUC_CONST;
-GtkWidget         * gimp_dock_window_new                    (const gchar       *role,
+GType               picman_dock_window_get_type               (void) G_GNUC_CONST;
+GtkWidget         * picman_dock_window_new                    (const gchar       *role,
                                                              const gchar       *ui_manager_name,
                                                              gboolean           allow_dockbook_absence,
-                                                             GimpDialogFactory *factory,
-                                                             GimpContext       *context);
-gint                gimp_dock_window_get_id                 (GimpDockWindow    *dock_window);
-void                gimp_dock_window_add_dock               (GimpDockWindow    *dock_window,
-                                                             GimpDock          *dock,
+                                                             PicmanDialogFactory *factory,
+                                                             PicmanContext       *context);
+gint                picman_dock_window_get_id                 (PicmanDockWindow    *dock_window);
+void                picman_dock_window_add_dock               (PicmanDockWindow    *dock_window,
+                                                             PicmanDock          *dock,
                                                              gint               index);
-void                gimp_dock_window_remove_dock            (GimpDockWindow    *dock_window,
-                                                             GimpDock          *dock);
-GimpContext       * gimp_dock_window_get_context            (GimpDockWindow    *dock);
-GimpDialogFactory * gimp_dock_window_get_dialog_factory     (GimpDockWindow    *dock);
-gboolean            gimp_dock_window_get_auto_follow_active (GimpDockWindow    *menu_dock);
-void                gimp_dock_window_set_auto_follow_active (GimpDockWindow    *menu_dock,
+void                picman_dock_window_remove_dock            (PicmanDockWindow    *dock_window,
+                                                             PicmanDock          *dock);
+PicmanContext       * picman_dock_window_get_context            (PicmanDockWindow    *dock);
+PicmanDialogFactory * picman_dock_window_get_dialog_factory     (PicmanDockWindow    *dock);
+gboolean            picman_dock_window_get_auto_follow_active (PicmanDockWindow    *menu_dock);
+void                picman_dock_window_set_auto_follow_active (PicmanDockWindow    *menu_dock,
                                                              gboolean           show);
-gboolean            gimp_dock_window_get_show_image_menu    (GimpDockWindow    *menu_dock);
-void                gimp_dock_window_set_show_image_menu    (GimpDockWindow    *menu_dock,
+gboolean            picman_dock_window_get_show_image_menu    (PicmanDockWindow    *menu_dock);
+void                picman_dock_window_set_show_image_menu    (PicmanDockWindow    *menu_dock,
                                                              gboolean           show);
-void                gimp_dock_window_setup                  (GimpDockWindow    *dock_window,
-                                                             GimpDockWindow    *template);
-gboolean            gimp_dock_window_has_toolbox            (GimpDockWindow    *dock_window);
+void                picman_dock_window_setup                  (PicmanDockWindow    *dock_window,
+                                                             PicmanDockWindow    *template);
+gboolean            picman_dock_window_has_toolbox            (PicmanDockWindow    *dock_window);
 
-GimpDockWindow    * gimp_dock_window_from_dock              (GimpDock          *dock);
+PicmanDockWindow    * picman_dock_window_from_dock              (PicmanDock          *dock);
 
 
 
-#endif /* __GIMP_DOCK_WINDOW_H__ */
+#endif /* __PICMAN_DOCK_WINDOW_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpThrobber
- * Copyright (C) 2005  Sven Neumann <sven@gimp.org>
+ * PicmanThrobber
+ * Copyright (C) 2005  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpthrobber.h"
+#include "picmanthrobber.h"
 
 
 enum
@@ -39,36 +39,36 @@ enum
 };
 
 
-static void      gimp_throbber_class_init      (GimpThrobberClass *klass);
+static void      picman_throbber_class_init      (PicmanThrobberClass *klass);
 
-static void      gimp_throbber_init                 (GimpThrobber *button);
+static void      picman_throbber_init                 (PicmanThrobber *button);
 
-static void      gimp_throbber_set_property         (GObject      *object,
+static void      picman_throbber_set_property         (GObject      *object,
                                                      guint         prop_id,
                                                      const GValue *value,
                                                      GParamSpec   *pspec);
-static void      gimp_throbber_get_property         (GObject      *object,
+static void      picman_throbber_get_property         (GObject      *object,
                                                      guint         prop_id,
                                                      GValue       *value,
                                                      GParamSpec   *pspec);
-static void      gimp_throbber_finalize             (GObject      *object);
+static void      picman_throbber_finalize             (GObject      *object);
 
-static gboolean  gimp_throbber_create_menu_proxy    (GtkToolItem  *tool_item);
-static void      gimp_throbber_toolbar_reconfigured (GtkToolItem  *tool_item);
-static void      gimp_throbber_button_clicked       (GtkWidget    *widget,
-                                                     GimpThrobber *button);
+static gboolean  picman_throbber_create_menu_proxy    (GtkToolItem  *tool_item);
+static void      picman_throbber_toolbar_reconfigured (GtkToolItem  *tool_item);
+static void      picman_throbber_button_clicked       (GtkWidget    *widget,
+                                                     PicmanThrobber *button);
 
-static void      gimp_throbber_construct_contents   (GtkToolItem  *tool_item);
+static void      picman_throbber_construct_contents   (GtkToolItem  *tool_item);
 
 
 static GObjectClass *parent_class                    = NULL;
 static guint         toolbutton_signals[LAST_SIGNAL] = { 0 };
 
 
-#define GIMP_THROBBER_GET_PRIVATE(obj)(G_TYPE_INSTANCE_GET_PRIVATE ((obj), GIMP_TYPE_THROBBER, GimpThrobberPrivate))
+#define PICMAN_THROBBER_GET_PRIVATE(obj)(G_TYPE_INSTANCE_GET_PRIVATE ((obj), PICMAN_TYPE_THROBBER, PicmanThrobberPrivate))
 
 
-struct _GimpThrobberPrivate
+struct _PicmanThrobberPrivate
 {
   GtkWidget *button;
   GtkWidget *image;
@@ -77,7 +77,7 @@ struct _GimpThrobberPrivate
 
 
 GType
-gimp_throbber_get_type (void)
+picman_throbber_get_type (void)
 {
   static GType type = 0;
 
@@ -85,19 +85,19 @@ gimp_throbber_get_type (void)
     {
       static const GTypeInfo type_info =
         {
-          sizeof (GimpThrobberClass),
+          sizeof (PicmanThrobberClass),
           (GBaseInitFunc) NULL,
           (GBaseFinalizeFunc) NULL,
-          (GClassInitFunc) gimp_throbber_class_init,
+          (GClassInitFunc) picman_throbber_class_init,
           (GClassFinalizeFunc) NULL,
           NULL,
-          sizeof (GimpThrobber),
+          sizeof (PicmanThrobber),
           0, /* n_preallocs */
-          (GInstanceInitFunc) gimp_throbber_init,
+          (GInstanceInitFunc) picman_throbber_init,
         };
 
       type = g_type_register_static (GTK_TYPE_TOOL_ITEM,
-                                     "GimpThrobber",
+                                     "PicmanThrobber",
                                      &type_info, 0);
     }
 
@@ -105,19 +105,19 @@ gimp_throbber_get_type (void)
 }
 
 static void
-gimp_throbber_class_init (GimpThrobberClass *klass)
+picman_throbber_class_init (PicmanThrobberClass *klass)
 {
   GObjectClass     *object_class    = G_OBJECT_CLASS (klass);
   GtkToolItemClass *tool_item_class = GTK_TOOL_ITEM_CLASS (klass);
 
   parent_class = g_type_class_peek_parent (klass);
 
-  object_class->set_property = gimp_throbber_set_property;
-  object_class->get_property = gimp_throbber_get_property;
-  object_class->finalize     = gimp_throbber_finalize;
+  object_class->set_property = picman_throbber_set_property;
+  object_class->get_property = picman_throbber_get_property;
+  object_class->finalize     = picman_throbber_finalize;
 
-  tool_item_class->create_menu_proxy    = gimp_throbber_create_menu_proxy;
-  tool_item_class->toolbar_reconfigured = gimp_throbber_toolbar_reconfigured;
+  tool_item_class->create_menu_proxy    = picman_throbber_create_menu_proxy;
+  tool_item_class->toolbar_reconfigured = picman_throbber_toolbar_reconfigured;
 
   g_object_class_install_property (object_class,
                                    PROP_STOCK_ID,
@@ -136,20 +136,20 @@ gimp_throbber_class_init (GimpThrobberClass *klass)
     g_signal_new ("clicked",
                   G_OBJECT_CLASS_TYPE (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpThrobberClass, clicked),
+                  G_STRUCT_OFFSET (PicmanThrobberClass, clicked),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  g_type_class_add_private (object_class, sizeof (GimpThrobberPrivate));
+  g_type_class_add_private (object_class, sizeof (PicmanThrobberPrivate));
 }
 
 static void
-gimp_throbber_init (GimpThrobber *button)
+picman_throbber_init (PicmanThrobber *button)
 {
   GtkToolItem *toolitem = GTK_TOOL_ITEM (button);
 
-  button->priv = GIMP_THROBBER_GET_PRIVATE (button);
+  button->priv = PICMAN_THROBBER_GET_PRIVATE (button);
 
   gtk_tool_item_set_homogeneous (toolitem, TRUE);
 
@@ -159,7 +159,7 @@ gimp_throbber_init (GimpThrobber *button)
                                        NULL);
 
   g_signal_connect_object (button->priv->button, "clicked",
-                           G_CALLBACK (gimp_throbber_button_clicked),
+                           G_CALLBACK (picman_throbber_button_clicked),
                            button, 0);
 
   gtk_container_add (GTK_CONTAINER (button), button->priv->button);
@@ -167,9 +167,9 @@ gimp_throbber_init (GimpThrobber *button)
 }
 
 static void
-gimp_throbber_construct_contents (GtkToolItem *tool_item)
+picman_throbber_construct_contents (GtkToolItem *tool_item)
 {
-  GimpThrobber    *button = GIMP_THROBBER (tool_item);
+  PicmanThrobber    *button = PICMAN_THROBBER (tool_item);
   GtkWidget       *image;
   GtkToolbarStyle  style;
 
@@ -212,21 +212,21 @@ gimp_throbber_construct_contents (GtkToolItem *tool_item)
 }
 
 static void
-gimp_throbber_set_property (GObject      *object,
+picman_throbber_set_property (GObject      *object,
                             guint         prop_id,
                             const GValue *value,
                             GParamSpec   *pspec)
 {
-  GimpThrobber *button = GIMP_THROBBER (object);
+  PicmanThrobber *button = PICMAN_THROBBER (object);
 
   switch (prop_id)
     {
     case PROP_STOCK_ID:
-      gimp_throbber_set_stock_id (button, g_value_get_string (value));
+      picman_throbber_set_stock_id (button, g_value_get_string (value));
       break;
 
     case PROP_IMAGE:
-      gimp_throbber_set_image (button, g_value_get_object (value));
+      picman_throbber_set_image (button, g_value_get_object (value));
       break;
 
     default:
@@ -236,12 +236,12 @@ gimp_throbber_set_property (GObject      *object,
 }
 
 static void
-gimp_throbber_get_property (GObject         *object,
+picman_throbber_get_property (GObject         *object,
                               guint            prop_id,
                               GValue          *value,
                               GParamSpec      *pspec)
 {
-  GimpThrobber *button = GIMP_THROBBER (object);
+  PicmanThrobber *button = PICMAN_THROBBER (object);
 
   switch (prop_id)
     {
@@ -260,9 +260,9 @@ gimp_throbber_get_property (GObject         *object,
 }
 
 static void
-gimp_throbber_finalize (GObject *object)
+picman_throbber_finalize (GObject *object)
 {
-  GimpThrobber *button = GIMP_THROBBER (object);
+  PicmanThrobber *button = PICMAN_THROBBER (object);
 
   if (button->priv->stock_id)
     g_free (button->priv->stock_id);
@@ -274,46 +274,46 @@ gimp_throbber_finalize (GObject *object)
 }
 
 static void
-gimp_throbber_button_clicked (GtkWidget    *widget,
-                              GimpThrobber *button)
+picman_throbber_button_clicked (GtkWidget    *widget,
+                              PicmanThrobber *button)
 {
   g_signal_emit_by_name (button, "clicked");
 }
 
 static gboolean
-gimp_throbber_create_menu_proxy (GtkToolItem *tool_item)
+picman_throbber_create_menu_proxy (GtkToolItem *tool_item)
 {
-  gtk_tool_item_set_proxy_menu_item (tool_item, "gimp-throbber-menu-id", NULL);
+  gtk_tool_item_set_proxy_menu_item (tool_item, "picman-throbber-menu-id", NULL);
 
   return FALSE;
 }
 
 static void
-gimp_throbber_toolbar_reconfigured (GtkToolItem *tool_item)
+picman_throbber_toolbar_reconfigured (GtkToolItem *tool_item)
 {
-  gimp_throbber_construct_contents (tool_item);
+  picman_throbber_construct_contents (tool_item);
 }
 
 GtkToolItem *
-gimp_throbber_new (const gchar *stock_id)
+picman_throbber_new (const gchar *stock_id)
 {
-  return g_object_new (GIMP_TYPE_THROBBER,
+  return g_object_new (PICMAN_TYPE_THROBBER,
                        "stock-id", stock_id,
                        NULL);
 }
 
 void
-gimp_throbber_set_stock_id (GimpThrobber *button,
+picman_throbber_set_stock_id (PicmanThrobber *button,
                             const gchar  *stock_id)
 {
   gchar *old_stock_id;
 
-  g_return_if_fail (GIMP_IS_THROBBER (button));
+  g_return_if_fail (PICMAN_IS_THROBBER (button));
 
   old_stock_id = button->priv->stock_id;
 
   button->priv->stock_id = g_strdup (stock_id);
-  gimp_throbber_construct_contents (GTK_TOOL_ITEM (button));
+  picman_throbber_construct_contents (GTK_TOOL_ITEM (button));
 
   g_object_notify (G_OBJECT (button), "stock-id");
 
@@ -321,18 +321,18 @@ gimp_throbber_set_stock_id (GimpThrobber *button,
 }
 
 const gchar *
-gimp_throbber_get_stock_id (GimpThrobber *button)
+picman_throbber_get_stock_id (PicmanThrobber *button)
 {
-  g_return_val_if_fail (GIMP_IS_THROBBER (button), NULL);
+  g_return_val_if_fail (PICMAN_IS_THROBBER (button), NULL);
 
   return button->priv->stock_id;
 }
 
 void
-gimp_throbber_set_image (GimpThrobber *button,
+picman_throbber_set_image (PicmanThrobber *button,
                          GtkWidget    *image)
 {
-  g_return_if_fail (GIMP_IS_THROBBER (button));
+  g_return_if_fail (PICMAN_IS_THROBBER (button));
   g_return_if_fail (image == NULL || GTK_IS_IMAGE (image));
 
   if (image != button->priv->image)
@@ -351,16 +351,16 @@ gimp_throbber_set_image (GimpThrobber *button,
 
       button->priv->image = image;
 
-      gimp_throbber_construct_contents (GTK_TOOL_ITEM (button));
+      picman_throbber_construct_contents (GTK_TOOL_ITEM (button));
 
       g_object_notify (G_OBJECT (button), "image");
     }
 }
 
 GtkWidget *
-gimp_throbber_get_image (GimpThrobber *button)
+picman_throbber_get_image (PicmanThrobber *button)
 {
-  g_return_val_if_fail (GIMP_IS_THROBBER (button), NULL);
+  g_return_val_if_fail (PICMAN_IS_THROBBER (button), NULL);
 
   return button->priv->image;
 }

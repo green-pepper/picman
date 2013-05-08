@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@ sub vectors_new {
 
     $help = <<'HELP';
 Creates a new empty vectors object. The vectors object needs to be added to
-the image using gimp_image_insert_vectors().
+the image using picman_image_insert_vectors().
 HELP
 
     &simon_pdb_misc('2005', '2.4');
@@ -40,7 +40,7 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  vectors = gimp_vectors_new (image, name);
+  vectors = picman_vectors_new (image, name);
 }
 CODE
     );
@@ -51,7 +51,7 @@ sub vectors_new_from_text_layer {
 
     $help = <<'HELP';
 Creates a new vectors object from a text layer. The vectors object needs to
-be added to the image using gimp_image_insert_vectors().
+be added to the image using picman_image_insert_vectors().
 HELP
 
     &marcus_pdb_misc('2008', '2.6');
@@ -71,15 +71,15 @@ HELP
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_layer_is_text_layer (layer, 0, error))
+  if (picman_pdb_layer_is_text_layer (layer, 0, error))
     {
       gint x, y;
 
-      vectors = gimp_text_vectors_new (image,
-				       gimp_text_layer_get_text (GIMP_TEXT_LAYER (layer)));
+      vectors = picman_text_vectors_new (image,
+				       picman_text_layer_get_text (PICMAN_TEXT_LAYER (layer)));
 
-      gimp_item_get_offset (GIMP_ITEM (layer), &x, &y);
-      gimp_item_translate (GIMP_ITEM (vectors), x, y, FALSE);
+      picman_item_get_offset (PICMAN_ITEM (layer), &x, &y);
+      picman_item_translate (PICMAN_ITEM (vectors), x, y, FALSE);
     }
   else
     {
@@ -112,7 +112,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  vectors_copy = GIMP_VECTORS (gimp_item_duplicate (GIMP_ITEM (vectors),
+  vectors_copy = PICMAN_VECTORS (picman_item_duplicate (PICMAN_ITEM (vectors),
                                G_TYPE_FROM_INSTANCE (vectors)));
 
   if (! vectors_copy)
@@ -146,20 +146,20 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  num_strokes = gimp_vectors_get_n_strokes (vectors);
+  num_strokes = picman_vectors_get_n_strokes (vectors);
 
   if (num_strokes)
     {
-      GimpStroke *cur_stroke;
+      PicmanStroke *cur_stroke;
       gint        i = 0;
 
       stroke_ids = g_new (gint32, num_strokes);
 
-      for (cur_stroke = gimp_vectors_stroke_get_next (vectors, NULL);
+      for (cur_stroke = picman_vectors_stroke_get_next (vectors, NULL);
            cur_stroke;
-           cur_stroke = gimp_vectors_stroke_get_next (vectors, cur_stroke))
+           cur_stroke = picman_vectors_stroke_get_next (vectors, cur_stroke))
         {
-          stroke_ids[i] = gimp_stroke_get_ID (cur_stroke);
+          stroke_ids[i] = picman_stroke_get_ID (cur_stroke);
           i++;
         }
     }
@@ -191,10 +191,10 @@ sub vectors_stroke_get_length {
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
   
   if (stroke)
-    length = gimp_stroke_get_length (stroke, precision);
+    length = picman_stroke_get_length (stroke, precision);
   else
     success = FALSE;
 }
@@ -240,13 +240,13 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
   
   if (stroke)
     {
-      GimpCoords coord;
+      PicmanCoords coord;
 
-      valid = gimp_stroke_get_point_at_dist (stroke, dist, precision,
+      valid = picman_stroke_get_point_at_dist (stroke, dist, precision,
                                              &coord, &slope);
       x_point = valid ? coord.x : 0;
       y_point = valid ? coord.y : 0;
@@ -277,17 +277,17 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                    GIMP_PDB_ITEM_CONTENT, error);
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                    PICMAN_PDB_ITEM_CONTENT, error);
   
   if (stroke)
     {
-      if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-        gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+      if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+        picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                           _("Remove path stroke"),
                                           vectors);
 
-      gimp_vectors_stroke_remove (vectors, stroke);
+      picman_vectors_stroke_remove (vectors, stroke);
     }
   else
     success = FALSE;
@@ -315,17 +315,17 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                    GIMP_PDB_ITEM_CONTENT, error);
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                    PICMAN_PDB_ITEM_CONTENT, error);
   
   if (stroke)
     {
-      if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-        gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+      if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+        picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                           _("Close path stroke"),
                                           vectors);
 
-      gimp_stroke_close (stroke);
+      picman_stroke_close (stroke);
     }
   else
     success = FALSE;
@@ -358,19 +358,19 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                    GIMP_PDB_ITEM_CONTENT |
-                                                    GIMP_PDB_ITEM_POSITION,
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                    PICMAN_PDB_ITEM_CONTENT |
+                                                    PICMAN_PDB_ITEM_POSITION,
                                                     error);
   
   if (stroke)
     {
-      if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-        gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+      if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+        picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                           _("Translate path stroke"),
                                           vectors);
 
-      gimp_stroke_translate (stroke, off_x, off_y);
+      picman_stroke_translate (stroke, off_x, off_y);
     }
   else
     success = FALSE;
@@ -402,19 +402,19 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                    GIMP_PDB_ITEM_CONTENT |
-                                                    GIMP_PDB_ITEM_POSITION,
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                    PICMAN_PDB_ITEM_CONTENT |
+                                                    PICMAN_PDB_ITEM_POSITION,
                                                     error);
   
   if (stroke)
     {
-      if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-        gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+      if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+        picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                           _("Scale path stroke"),
                                           vectors);
 
-      gimp_stroke_scale (stroke, scale_x, scale_y);
+      picman_stroke_scale (stroke, scale_x, scale_y);
     }
   else
     success = FALSE;
@@ -447,19 +447,19 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                    GIMP_PDB_ITEM_CONTENT |
-                                                    GIMP_PDB_ITEM_POSITION,
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                    PICMAN_PDB_ITEM_CONTENT |
+                                                    PICMAN_PDB_ITEM_POSITION,
                                                     error);
   
   if (stroke)
     {
-      if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-        gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+      if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+        picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                           _("Rotate path stroke"),
                                           vectors);
 
-      gimp_stroke_rotate (stroke, center_x, center_y, angle);
+      picman_stroke_rotate (stroke, center_x, center_y, angle);
     }
   else
     success = FALSE;
@@ -482,7 +482,7 @@ HELP
 	{ name => 'stroke_id', type => 'int32',
 	  desc => 'The stroke ID' },
 	{ name => "flip_type",
-	  type => 'enum GimpOrientationType (no GIMP_ORIENTATION_UNKNOWN)',
+	  type => 'enum PicmanOrientationType (no PICMAN_ORIENTATION_UNKNOWN)',
 	  desc => "Flip orientation, either vertical or horizontal" },
 	{ name => "axis", type => 'float',
 	  desc => "axis coordinate about which to flip, in pixels" }
@@ -491,19 +491,19 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                    GIMP_PDB_ITEM_CONTENT |
-                                                    GIMP_PDB_ITEM_POSITION,
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                    PICMAN_PDB_ITEM_CONTENT |
+                                                    PICMAN_PDB_ITEM_POSITION,
                                                     error);
   
   if (stroke)
     {
-      if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-        gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+      if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+        picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                           _("Flip path stroke"),
                                           vectors);
 
-      gimp_stroke_flip (stroke, flip_type, axis);
+      picman_stroke_flip (stroke, flip_type, axis);
     }
   else
     success = FALSE;
@@ -540,19 +540,19 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                    GIMP_PDB_ITEM_CONTENT |
-                                                    GIMP_PDB_ITEM_POSITION,
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                    PICMAN_PDB_ITEM_CONTENT |
+                                                    PICMAN_PDB_ITEM_POSITION,
                                                     error);
   
   if (stroke)
     {
-      if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-        gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+      if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+        picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                           _("Flip path stroke"),
                                           vectors);
 
-      gimp_stroke_flip_free (stroke, x1, y1, x2, y2);
+      picman_stroke_flip_free (stroke, x1, y1, x2, y2);
     }
   else
     success = FALSE;
@@ -566,7 +566,7 @@ sub vectors_stroke_get_points {
 
     $help = <<'HELP';
 returns the control points of a stroke. The interpretation of the coordinates
-returned depends on the type of the stroke. For Gimp 2.4 this is always a
+returned depends on the type of the stroke. For Picman 2.4 this is always a
 bezier stroke, where the coordinates are the control points.
 HELP
 
@@ -580,8 +580,8 @@ HELP
     );
 
     @outargs = (
-        { name => 'type', type => 'enum GimpVectorsStrokeType',
-          desc => 'type of the stroke (always GIMP_VECTORS_STROKE_TYPE_BEZIER for now).' },
+        { name => 'type', type => 'enum PicmanVectorsStrokeType',
+          desc => 'type of the stroke (always PICMAN_VECTORS_STROKE_TYPE_BEZIER for now).' },
         { name => 'controlpoints', type => 'floatarray',
           desc => 'List of the control points for the stroke (x0, y0, x1, y1, ...).',
           array => { name => 'num_points',
@@ -593,27 +593,27 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
   
-  if (GIMP_IS_BEZIER_STROKE (stroke))
+  if (PICMAN_IS_BEZIER_STROKE (stroke))
     {
       GArray *points_array;
       gint    i;
 
-      points_array = gimp_stroke_control_points_get (stroke, &closed);
+      points_array = picman_stroke_control_points_get (stroke, &closed);
 
       if (points_array)
         {
           num_points = points_array->len;
           controlpoints = g_new (gdouble, num_points * 2);
 
-          type = GIMP_VECTORS_STROKE_TYPE_BEZIER;
+          type = PICMAN_VECTORS_STROKE_TYPE_BEZIER;
           for (i = 0; i < num_points; i++)
             {
               controlpoints[2*i]   = g_array_index (points_array,
-	                                            GimpAnchor, i).position.x;
+	                                            PicmanAnchor, i).position.x;
               controlpoints[2*i+1] = g_array_index (points_array,
-	                                            GimpAnchor, i).position.y;
+	                                            PicmanAnchor, i).position.y;
             }
           g_array_free (points_array, TRUE);
           num_points *= 2;
@@ -659,14 +659,14 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id, 0, error);
   
   if (stroke)
     {
       GArray *coords_array;
       gint    i;
 
-      coords_array = gimp_stroke_interpolate (stroke, precision, &closed);
+      coords_array = picman_stroke_interpolate (stroke, precision, &closed);
 
       if (coords_array)
         {
@@ -675,8 +675,8 @@ HELP
 
           for (i = 0; i < num_coords; i++)
             {
-              coords[2*i]   = g_array_index (coords_array, GimpCoords, i).x;
-              coords[2*i+1] = g_array_index (coords_array, GimpCoords, i).y;
+              coords[2*i]   = g_array_index (coords_array, PicmanCoords, i).x;
+              coords[2*i+1] = g_array_index (coords_array, PicmanCoords, i).y;
             }
           g_array_free (coords_array, TRUE);
           num_coords *= 2;
@@ -698,7 +698,7 @@ sub vectors_stroke_new_from_points {
     $help = <<'HELP';
 Adds a stroke of a given type to the vectors object. The coordinates of the
 control points can be specified.
-For now only strokes of the type GIMP_VECTORS_STROKE_TYPE_BEZIER are supported.
+For now only strokes of the type PICMAN_VECTORS_STROKE_TYPE_BEZIER are supported.
 The control points are specified as a pair of float values for the x- and
 y-coordinate.
 The Bezier stroke type needs a multiple of three control points. Each Bezier
@@ -711,8 +711,8 @@ HELP
     @inargs = (
 	{ name => 'vectors', type => 'vectors',
 	  desc => 'The vectors object' },
-	{ name => 'type', type => 'enum GimpVectorsStrokeType',
-	  desc => 'type of the stroke (always GIMP_VECTORS_STROKE_TYPE_BEZIER for now).' },
+	{ name => 'type', type => 'enum PicmanVectorsStrokeType',
+	  desc => 'type of the stroke (always PICMAN_VECTORS_STROKE_TYPE_BEZIER for now).' },
 	{ name => 'controlpoints', type => 'floatarray',
 	  desc => 'List of the x- and y-coordinates of the control points.',
           array => { name => 'num_points',
@@ -731,17 +731,17 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke;
-  GimpCoords *coords;
-  GimpCoords  default_coords = GIMP_COORDS_DEFAULT_VALUES;
+  PicmanStroke *stroke;
+  PicmanCoords *coords;
+  PicmanCoords  default_coords = PICMAN_COORDS_DEFAULT_VALUES;
   gint i;
 
   success = FALSE;
 
-  if (type == GIMP_VECTORS_STROKE_TYPE_BEZIER &&
+  if (type == PICMAN_VECTORS_STROKE_TYPE_BEZIER &&
       num_points % 6 == 0)
     {
-      coords = g_new (GimpCoords, num_points/2);
+      coords = g_new (PicmanCoords, num_points/2);
       for (i = 0; i < num_points/2; i++)
         {
 	  coords[i] = default_coords;
@@ -749,18 +749,18 @@ HELP
 	  coords[i].y = controlpoints[i*2+1];
 	}
 
-      stroke = gimp_stroke_new_from_coords (type, coords, num_points/2, closed);
+      stroke = picman_stroke_new_from_coords (type, coords, num_points/2, closed);
       if (stroke)
         {
-          if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-            gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+          if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+            picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                               _("Add path stroke"),
                                               vectors);
 
-	  gimp_vectors_stroke_add (vectors, stroke);
+	  picman_vectors_stroke_add (vectors, stroke);
 	  g_object_unref (stroke);
 
-	  stroke_id = gimp_stroke_get_ID (stroke);
+	  stroke_id = picman_stroke_get_ID (stroke);
 
 	  success = TRUE;
 	}
@@ -798,27 +798,27 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  if (gimp_pdb_item_is_modifyable (GIMP_ITEM (vectors),
-                                   GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (vectors), error))
+  if (picman_pdb_item_is_modifyable (PICMAN_ITEM (vectors),
+                                   PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (vectors), error))
     {
-      GimpStroke *stroke;
-      GimpCoords  coord0 = GIMP_COORDS_DEFAULT_VALUES;
+      PicmanStroke *stroke;
+      PicmanCoords  coord0 = PICMAN_COORDS_DEFAULT_VALUES;
 
       coord0.x = x0;
       coord0.y = y0;
 
-      stroke = gimp_bezier_stroke_new_moveto (&coord0);
+      stroke = picman_bezier_stroke_new_moveto (&coord0);
 
-      if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-        gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+      if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+        picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                           _("Add path stroke"),
                                           vectors);
 
-      gimp_vectors_stroke_add (vectors, stroke);
+      picman_vectors_stroke_add (vectors, stroke);
       g_object_unref (stroke);
 
-      stroke_id = gimp_stroke_get_ID (stroke);
+      stroke_id = picman_stroke_get_ID (stroke);
     }
   else
     success = FALSE;
@@ -850,22 +850,22 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                    GIMP_PDB_ITEM_CONTENT, error);
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                    PICMAN_PDB_ITEM_CONTENT, error);
 
   if (stroke)
     {
-      GimpCoords coord0 = GIMP_COORDS_DEFAULT_VALUES;
+      PicmanCoords coord0 = PICMAN_COORDS_DEFAULT_VALUES;
 
       coord0.x = x0;
       coord0.y = y0;
 
-     if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-       gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+     if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+       picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                          _("Extend path stroke"),
                                          vectors);
 
-      gimp_bezier_stroke_lineto (stroke, &coord0);
+      picman_bezier_stroke_lineto (stroke, &coord0);
     }
   else
     success = FALSE;
@@ -903,13 +903,13 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                    GIMP_PDB_ITEM_CONTENT, error);
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                    PICMAN_PDB_ITEM_CONTENT, error);
 
   if (stroke)
     {
-      GimpCoords coord0 = GIMP_COORDS_DEFAULT_VALUES;
-      GimpCoords coord1 = GIMP_COORDS_DEFAULT_VALUES;
+      PicmanCoords coord0 = PICMAN_COORDS_DEFAULT_VALUES;
+      PicmanCoords coord1 = PICMAN_COORDS_DEFAULT_VALUES;
 
       coord0.x = x0;
       coord0.y = y0;
@@ -917,12 +917,12 @@ HELP
       coord1.x = x1;
       coord1.y = y1;
 
-     if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-       gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+     if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+       picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                          _("Extend path stroke"),
                                          vectors);
 
-      gimp_bezier_stroke_conicto (stroke, &coord0, &coord1);
+      picman_bezier_stroke_conicto (stroke, &coord0, &coord1);
     }
   else
     success = FALSE;
@@ -962,14 +962,14 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  GimpStroke *stroke = gimp_pdb_get_vectors_stroke (vectors, stroke_id,
-                                                    GIMP_PDB_ITEM_CONTENT, error);
+  PicmanStroke *stroke = picman_pdb_get_vectors_stroke (vectors, stroke_id,
+                                                    PICMAN_PDB_ITEM_CONTENT, error);
 
   if (stroke)
     {
-      GimpCoords coord0 = GIMP_COORDS_DEFAULT_VALUES;
-      GimpCoords coord1 = GIMP_COORDS_DEFAULT_VALUES;
-      GimpCoords coord2 = GIMP_COORDS_DEFAULT_VALUES;
+      PicmanCoords coord0 = PICMAN_COORDS_DEFAULT_VALUES;
+      PicmanCoords coord1 = PICMAN_COORDS_DEFAULT_VALUES;
+      PicmanCoords coord2 = PICMAN_COORDS_DEFAULT_VALUES;
 
       coord0.x = x0;
       coord0.y = y0;
@@ -980,12 +980,12 @@ HELP
       coord2.x = x2;
       coord2.y = y2;
 
-     if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-       gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+     if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+       picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                          _("Extend path stroke"),
                                          vectors);
 
-      gimp_bezier_stroke_cubicto (stroke, &coord0, &coord1, &coord2);
+      picman_bezier_stroke_cubicto (stroke, &coord0, &coord1, &coord2);
     }
   else
     success = FALSE;
@@ -1027,27 +1027,27 @@ HELP
     %invoke = (
         code => <<"CODE"
 {
-  if (gimp_pdb_item_is_modifyable (GIMP_ITEM (vectors),
-                                   GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (vectors), error))
+  if (picman_pdb_item_is_modifyable (PICMAN_ITEM (vectors),
+                                   PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (vectors), error))
     {
-      GimpStroke *stroke;
-      GimpCoords  coord0 = GIMP_COORDS_DEFAULT_VALUES;
+      PicmanStroke *stroke;
+      PicmanCoords  coord0 = PICMAN_COORDS_DEFAULT_VALUES;
 
       coord0.x = x0;
       coord0.y = y0;
 
-      stroke = gimp_bezier_stroke_new_ellipse (&coord0, radius_x, radius_y, angle);
+      stroke = picman_bezier_stroke_new_ellipse (&coord0, radius_x, radius_y, angle);
 
-      if (gimp_item_is_attached (GIMP_ITEM (vectors)))
-        gimp_image_undo_push_vectors_mod (gimp_item_get_image (GIMP_ITEM (vectors)),
+      if (picman_item_is_attached (PICMAN_ITEM (vectors)))
+        picman_image_undo_push_vectors_mod (picman_item_get_image (PICMAN_ITEM (vectors)),
                                           _("Add path stroke"),
                                           vectors);
 
-      gimp_vectors_stroke_add (vectors, stroke);
+      picman_vectors_stroke_add (vectors, stroke);
       g_object_unref (stroke);
 
-      stroke_id = gimp_stroke_get_ID (stroke);
+      stroke_id = picman_stroke_get_ID (stroke);
     }
   else
     success = FALSE;
@@ -1057,13 +1057,13 @@ CODE
 }
 
 sub vectors_to_selection {
-    &std_pdb_deprecated ('gimp-image-select-item');
+    &std_pdb_deprecated ('picman-image-select-item');
     &simon_pdb_misc('2006', '2.4');
 
     @inargs = (
         { name => 'vectors', type => 'vectors',
           desc => 'The vectors object to render to the selection' },
-        { name => 'operation', type => 'enum GimpChannelOps',
+        { name => 'operation', type => 'enum PicmanChannelOps',
           desc => 'The desired operation with current selection' },
         { name => 'antialias', type => 'boolean',
           desc => 'Antialias selection.' },
@@ -1078,8 +1078,8 @@ sub vectors_to_selection {
     %invoke = (
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (vectors), NULL, 0, error))
-    gimp_item_to_selection (GIMP_ITEM (vectors),
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (vectors), NULL, 0, error))
+    picman_item_to_selection (PICMAN_ITEM (vectors),
                             operation,
                             antialias,
                             feather,
@@ -1123,13 +1123,13 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("vectors/gimpvectors-import.h") ],
+        headers => [ qw("vectors/picmanvectors-import.h") ],
         code    => <<'CODE'
 {
   GList *list, *vectors_list = NULL;
 
   /* FIXME tree */
-  success = gimp_vectors_import_file (image, filename,
+  success = picman_vectors_import_file (image, filename,
                                       merge, scale, NULL, -1,
                                       &vectors_list, error);
 
@@ -1145,7 +1145,7 @@ HELP
       
 	  list = vectors_list;
           for (i = 0; i < num_vectors; i++, list = g_list_next (list))
-            vectors_ids[i] = gimp_item_get_ID (GIMP_ITEM (list->data));
+            vectors_ids[i] = picman_item_get_ID (PICMAN_ITEM (list->data));
 
           g_list_free (vectors_list);
         }
@@ -1159,9 +1159,9 @@ sub vectors_import_from_string {
     $blurb = 'Import paths from an SVG string.';
 
     $help = <<'HELP';
-This procedure works like gimp_vectors_import_from_file() but takes a string
+This procedure works like picman_vectors_import_from_file() but takes a string
 rather than reading the SVG from a file. This allows you to write scripts that
-generate SVG and feed it to GIMP.
+generate SVG and feed it to PICMAN.
 HELP
 
     &simon_pdb_misc('2006', '2.4');
@@ -1188,13 +1188,13 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("vectors/gimpvectors-import.h") ],
+        headers => [ qw("vectors/picmanvectors-import.h") ],
         code    => <<'CODE'
 {
   GList *list, *vectors_list = NULL;
 
   /* FIXME tree */
-  success = gimp_vectors_import_buffer (image, string, length,
+  success = picman_vectors_import_buffer (image, string, length,
                                         merge, scale, NULL, -1,
                                         &vectors_list, error);
 
@@ -1210,7 +1210,7 @@ HELP
       
 	  list = vectors_list;
           for (i = 0; i < num_vectors; i++, list = g_list_next (list))
-            vectors_ids[i] = gimp_item_get_ID (GIMP_ITEM (list->data));
+            vectors_ids[i] = picman_item_get_ID (PICMAN_ITEM (list->data));
 
           g_list_free (vectors_list);
         }
@@ -1226,7 +1226,7 @@ sub vectors_export_to_file {
     $help = <<'HELP';
 This procedure creates an SVG file to save a Vectors object, that is,
 a path.  The resulting file can be edited using a vector graphics
-application, or later reloaded into GIMP.  If you pass 0 as the 'vectors'
+application, or later reloaded into PICMAN.  If you pass 0 as the 'vectors'
 argument, then all paths in the image will be exported.
 HELP
 
@@ -1243,10 +1243,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("vectors/gimpvectors-export.h") ],
+        headers => [ qw("vectors/picmanvectors-export.h") ],
         code    => <<'CODE'
 {
-  success = gimp_vectors_export_file (image, vectors, filename, error);
+  success = picman_vectors_export_file (image, vectors, filename, error);
 }
 CODE
     );
@@ -1256,7 +1256,7 @@ sub vectors_export_to_string {
     $blurb = 'Save a path as an SVG string.';
 
     $help = <<'HELP';
-This procedure works like gimp_vectors_export_to_file() but creates a string
+This procedure works like picman_vectors_export_to_file() but creates a string
 rather than a file. The contents are a NUL-terminated string that holds a 
 complete XML document.  If you pass 0 as the 'vectors' argument, then all
 paths in the image will be exported.
@@ -1277,10 +1277,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("vectors/gimpvectors-export.h") ],
+        headers => [ qw("vectors/picmanvectors-export.h") ],
         code    => <<'CODE'
 {
-  string = gimp_vectors_export_string (image, vectors);
+  string = picman_vectors_export_string (image, vectors);
 
   success = (string != NULL);
 }
@@ -1290,17 +1290,17 @@ CODE
 
 
 @headers = qw(<string.h>
-              "core/gimplist.h"
-              "core/gimpimage.h"
-              "core/gimpimage-undo-push.h"
-	      "text/gimptext-vectors.h"
-	      "text/gimptextlayer.h"
-              "vectors/gimpanchor.h"
-              "vectors/gimpstroke-new.h"
-              "vectors/gimpbezierstroke.h"
-              "vectors/gimpvectors.h"
-              "gimppdb-utils.h"
-              "gimp-intl.h");
+              "core/picmanlist.h"
+              "core/picmanimage.h"
+              "core/picmanimage-undo-push.h"
+	      "text/picmantext-vectors.h"
+	      "text/picmantextlayer.h"
+              "vectors/picmananchor.h"
+              "vectors/picmanstroke-new.h"
+              "vectors/picmanbezierstroke.h"
+              "vectors/picmanvectors.h"
+              "picmanpdb-utils.h"
+              "picman-intl.h");
 
 @procs = qw(vectors_new
 	    vectors_new_from_text_layer
@@ -1332,7 +1332,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Vectors';
-$doc_title = 'gimpvectors';
+$doc_title = 'picmanvectors';
 $doc_short_desc = 'Functions for querying and manipulating vectors.';
 $doc_long_desc = 'Functions for querying and manipulating vectors.';
 

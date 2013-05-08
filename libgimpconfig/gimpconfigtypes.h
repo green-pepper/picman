@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * Config file serialization and deserialization interface
- * Copyright (C) 2001-2003  Sven Neumann <sven@gimp.org>
+ * Copyright (C) 2001-2003  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,21 +19,21 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONFIG_TYPES_H__
-#define __GIMP_CONFIG_TYPES_H__
+#ifndef __PICMAN_CONFIG_TYPES_H__
+#define __PICMAN_CONFIG_TYPES_H__
 
 
-#include <libgimpbase/gimpbasetypes.h>
+#include <libpicmanbase/picmanbasetypes.h>
 
 
-typedef struct _GimpConfig        GimpConfig; /* dummy typedef */
-typedef struct _GimpConfigWriter  GimpConfigWriter;
-typedef gchar *                   GimpConfigPath; /* to satisfy docs */
+typedef struct _PicmanConfig        PicmanConfig; /* dummy typedef */
+typedef struct _PicmanConfigWriter  PicmanConfigWriter;
+typedef gchar *                   PicmanConfigPath; /* to satisfy docs */
 
 
-#include <libgimpconfig/gimpcolorconfig-enums.h>
+#include <libpicmanconfig/picmancolorconfig-enums.h>
 
-typedef struct _GimpColorConfig   GimpColorConfig;
+typedef struct _PicmanColorConfig   PicmanColorConfig;
 
 
-#endif  /* __GIMP_CONFIG_TYPES_H__ */
+#endif  /* __PICMAN_CONFIG_TYPES_H__ */

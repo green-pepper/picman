@@ -1,6 +1,6 @@
 /* Watercolor color_select_module, Raph Levien <raph@acm.org>, February 1998
  *
- * Ported to loadable color-selector, Sven Neumann <sven@gimp.org>, May 1999
+ * Ported to loadable color-selector, Sven Neumann <sven@picman.org>, May 1999
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,12 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 #define COLORSEL_TYPE_WATER            (colorsel_water_get_type ())
@@ -44,7 +44,7 @@ typedef struct _ColorselWaterClass ColorselWaterClass;
 
 struct _ColorselWater
 {
-  GimpColorSelector  parent_instance;
+  PicmanColorSelector  parent_instance;
 
   gdouble            last_x;
   gdouble            last_y;
@@ -55,7 +55,7 @@ struct _ColorselWater
 
 struct _ColorselWaterClass
 {
-  GimpColorSelectorClass  parent_class;
+  PicmanColorSelectorClass  parent_class;
 };
 
 
@@ -76,11 +76,11 @@ static void       pressure_adjust_update  (GtkAdjustment      *adj,
                                            ColorselWater      *water);
 
 
-static const GimpModuleInfo colorsel_water_info =
+static const PicmanModuleInfo colorsel_water_info =
 {
-  GIMP_MODULE_ABI_VERSION,
+  PICMAN_MODULE_ABI_VERSION,
   N_("Watercolor style color selector"),
-  "Raph Levien <raph@acm.org>, Sven Neumann <sven@gimp.org>",
+  "Raph Levien <raph@acm.org>, Sven Neumann <sven@picman.org>",
   "v0.4",
   "released under the GPL",
   "1998-2006"
@@ -93,17 +93,17 @@ static const GtkTargetEntry targets[] =
 
 
 G_DEFINE_DYNAMIC_TYPE (ColorselWater, colorsel_water,
-                       GIMP_TYPE_COLOR_SELECTOR)
+                       PICMAN_TYPE_COLOR_SELECTOR)
 
 
-G_MODULE_EXPORT const GimpModuleInfo *
-gimp_module_query (GTypeModule *module)
+G_MODULE_EXPORT const PicmanModuleInfo *
+picman_module_query (GTypeModule *module)
 {
   return &colorsel_water_info;
 }
 
 G_MODULE_EXPORT gboolean
-gimp_module_register (GTypeModule *module)
+picman_module_register (GTypeModule *module)
 {
   colorsel_water_register_type (module);
 
@@ -113,11 +113,11 @@ gimp_module_register (GTypeModule *module)
 static void
 colorsel_water_class_init (ColorselWaterClass *klass)
 {
-  GimpColorSelectorClass *selector_class = GIMP_COLOR_SELECTOR_CLASS (klass);
+  PicmanColorSelectorClass *selector_class = PICMAN_COLOR_SELECTOR_CLASS (klass);
 
   selector_class->name     = _("Watercolor");
-  selector_class->help_id  = "gimp-colorselector-watercolor";
-  selector_class->stock_id = GIMP_STOCK_TOOL_PAINTBRUSH;
+  selector_class->help_id  = "picman-colorselector-watercolor";
+  selector_class->stock_id = PICMAN_STOCK_TOOL_PAINTBRUSH;
 }
 
 static void
@@ -183,7 +183,7 @@ colorsel_water_init (ColorselWater *water)
   scale = gtk_scale_new (GTK_ORIENTATION_VERTICAL, adj);
   gtk_scale_set_digits (GTK_SCALE (scale), 0);
   gtk_scale_set_draw_value (GTK_SCALE (scale), FALSE);
-  gimp_help_set_help_data (scale, _("Pressure"), NULL);
+  picman_help_set_help_data (scale, _("Pressure"), NULL);
   gtk_box_pack_start (GTK_BOX (hbox), scale, FALSE, FALSE, 0);
 
   gtk_widget_show_all (hbox);
@@ -251,7 +251,7 @@ select_area_expose (GtkWidget      *widget,
 
       for (i = 0; i < event->area.width; i++)
         {
-          GIMP_CAIRO_RGB24_SET_PIXEL (d,
+          PICMAN_CAIRO_RGB24_SET_PIXEL (d,
                                       CLAMP ((gint) r, 0, 255),
                                       CLAMP ((gint) g, 0, 255),
                                       CLAMP ((gint) b, 0, 255));
@@ -285,7 +285,7 @@ add_pigment (ColorselWater *water,
              gdouble        y,
              gdouble        much)
 {
-  GimpColorSelector *selector = GIMP_COLOR_SELECTOR (water);
+  PicmanColorSelector *selector = PICMAN_COLOR_SELECTOR (water);
 
   much *= (gdouble) water->pressure_adjust;
 
@@ -306,11 +306,11 @@ add_pigment (ColorselWater *water,
       selector->rgb.b *= (1.0 - (1.0 - b) * much);
     }
 
-  gimp_rgb_clamp (&selector->rgb);
+  picman_rgb_clamp (&selector->rgb);
 
-  gimp_rgb_to_hsv (&selector->rgb, &selector->hsv);
+  picman_rgb_to_hsv (&selector->rgb, &selector->hsv);
 
-  gimp_color_selector_color_changed (selector);
+  picman_color_selector_color_changed (selector);
 }
 
 static void

@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorbutton.h
+ * picmancolorbutton.h
  * Copyright (C) 1999-2001 Sven Neumann
  *
  * This library is free software: you can redistribute it and/or
@@ -25,31 +25,31 @@
  * fully functional wired to the preview button.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_COLOR_BUTTON_H__
-#define __GIMP_COLOR_BUTTON_H__
+#ifndef __PICMAN_COLOR_BUTTON_H__
+#define __PICMAN_COLOR_BUTTON_H__
 
-#include <libgimpwidgets/gimpbutton.h>
+#include <libpicmanwidgets/picmanbutton.h>
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_COLOR_BUTTON            (gimp_color_button_get_type ())
-#define GIMP_COLOR_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_BUTTON, GimpColorButton))
-#define GIMP_COLOR_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_BUTTON, GimpColorButtonClass))
-#define GIMP_IS_COLOR_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_BUTTON))
-#define GIMP_IS_COLOR_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_BUTTON))
-#define GIMP_COLOR_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_BUTTON, GimpColorButtonClass))
+#define PICMAN_TYPE_COLOR_BUTTON            (picman_color_button_get_type ())
+#define PICMAN_COLOR_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_BUTTON, PicmanColorButton))
+#define PICMAN_COLOR_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_BUTTON, PicmanColorButtonClass))
+#define PICMAN_IS_COLOR_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_BUTTON))
+#define PICMAN_IS_COLOR_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_BUTTON))
+#define PICMAN_COLOR_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_BUTTON, PicmanColorButtonClass))
 
 
-typedef struct _GimpColorButtonClass  GimpColorButtonClass;
+typedef struct _PicmanColorButtonClass  PicmanColorButtonClass;
 
-struct _GimpColorButton
+struct _PicmanColorButton
 {
-  GimpButton      parent_instance;
+  PicmanButton      parent_instance;
 
   gchar          *title;
   gboolean        continuous_update;
@@ -61,45 +61,45 @@ struct _GimpColorButton
   gpointer        popup_menu;
 };
 
-struct _GimpColorButtonClass
+struct _PicmanColorButtonClass
 {
-  GimpButtonClass  parent_class;
+  PicmanButtonClass  parent_class;
 
   /*  signals  */
-  void  (* color_changed)   (GimpColorButton *button);
+  void  (* color_changed)   (PicmanColorButton *button);
 
   /*  virtual functions  */
-  GType (* get_action_type) (GimpColorButton *button);
+  GType (* get_action_type) (PicmanColorButton *button);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType       gimp_color_button_get_type   (void) G_GNUC_CONST;
+GType       picman_color_button_get_type   (void) G_GNUC_CONST;
 
-GtkWidget * gimp_color_button_new        (const gchar       *title,
+GtkWidget * picman_color_button_new        (const gchar       *title,
                                           gint               width,
                                           gint               height,
-                                          const GimpRGB     *color,
-                                          GimpColorAreaType  type);
+                                          const PicmanRGB     *color,
+                                          PicmanColorAreaType  type);
 
-void        gimp_color_button_set_color  (GimpColorButton   *button,
-                                          const GimpRGB     *color);
-void        gimp_color_button_get_color  (GimpColorButton   *button,
-                                          GimpRGB           *color);
+void        picman_color_button_set_color  (PicmanColorButton   *button,
+                                          const PicmanRGB     *color);
+void        picman_color_button_get_color  (PicmanColorButton   *button,
+                                          PicmanRGB           *color);
 
-gboolean    gimp_color_button_has_alpha  (GimpColorButton   *button);
-void        gimp_color_button_set_type   (GimpColorButton   *button,
-                                          GimpColorAreaType  type);
+gboolean    picman_color_button_has_alpha  (PicmanColorButton   *button);
+void        picman_color_button_set_type   (PicmanColorButton   *button,
+                                          PicmanColorAreaType  type);
 
-gboolean    gimp_color_button_get_update (GimpColorButton   *button);
-void        gimp_color_button_set_update (GimpColorButton   *button,
+gboolean    picman_color_button_get_update (PicmanColorButton   *button);
+void        picman_color_button_set_update (PicmanColorButton   *button,
                                           gboolean           continuous);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_COLOR_BUTTON_H__ */
+#endif /* __PICMAN_COLOR_BUTTON_H__ */

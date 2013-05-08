@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptag.h
+ * picmantag.h
  * Copyright (C) 2008 Aurimas Juška <aurisj@svn.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,24 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TAG_H__
-#define __GIMP_TAG_H__
+#ifndef __PICMAN_TAG_H__
+#define __PICMAN_TAG_H__
 
 
 #include <glib-object.h>
 
 
-#define GIMP_TYPE_TAG            (gimp_tag_get_type ())
-#define GIMP_TAG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TAG, GimpTag))
-#define GIMP_TAG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TAG, GimpTagClass))
-#define GIMP_IS_TAG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TAG))
-#define GIMP_IS_TAG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TAG))
-#define GIMP_TAG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TAG, GimpTagClass))
+#define PICMAN_TYPE_TAG            (picman_tag_get_type ())
+#define PICMAN_TAG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TAG, PicmanTag))
+#define PICMAN_TAG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TAG, PicmanTagClass))
+#define PICMAN_IS_TAG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TAG))
+#define PICMAN_IS_TAG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TAG))
+#define PICMAN_TAG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TAG, PicmanTagClass))
 
 
-typedef struct _GimpTagClass    GimpTagClass;
+typedef struct _PicmanTagClass    PicmanTagClass;
 
-struct _GimpTag
+struct _PicmanTag
 {
   GObject parent_instance;
 
@@ -45,36 +45,36 @@ struct _GimpTag
   gboolean internal; /* Tags that are not serialized to disk */
 };
 
-struct _GimpTagClass
+struct _PicmanTagClass
 {
   GObjectClass parent_class;
 };
 
-GType         gimp_tag_get_type            (void) G_GNUC_CONST;
+GType         picman_tag_get_type            (void) G_GNUC_CONST;
 
-GimpTag     * gimp_tag_new                 (const gchar    *tag_string);
-GimpTag     * gimp_tag_try_new             (const gchar    *tag_string);
+PicmanTag     * picman_tag_new                 (const gchar    *tag_string);
+PicmanTag     * picman_tag_try_new             (const gchar    *tag_string);
 
-const gchar * gimp_tag_get_name            (GimpTag        *tag);
-guint         gimp_tag_get_hash            (GimpTag        *tag);
+const gchar * picman_tag_get_name            (PicmanTag        *tag);
+guint         picman_tag_get_hash            (PicmanTag        *tag);
 
-gboolean      gimp_tag_get_internal        (GimpTag        *tag);
-void          gimp_tag_set_internal        (GimpTag        *tag,
+gboolean      picman_tag_get_internal        (PicmanTag        *tag);
+void          picman_tag_set_internal        (PicmanTag        *tag,
                                             gboolean        internal);
 
-gboolean      gimp_tag_equals              (const GimpTag  *tag,
-                                            const GimpTag  *other);
-gint          gimp_tag_compare_func        (const void     *p1,
+gboolean      picman_tag_equals              (const PicmanTag  *tag,
+                                            const PicmanTag  *other);
+gint          picman_tag_compare_func        (const void     *p1,
                                             const void     *p2);
-gint          gimp_tag_compare_with_string (GimpTag        *tag,
+gint          picman_tag_compare_with_string (PicmanTag        *tag,
                                             const gchar    *tag_string);
-gboolean      gimp_tag_has_prefix          (GimpTag        *tag,
+gboolean      picman_tag_has_prefix          (PicmanTag        *tag,
                                             const gchar    *prefix_string);
-gchar       * gimp_tag_string_make_valid   (const gchar    *tag_string);
-gboolean      gimp_tag_is_tag_separator    (gunichar        c);
+gchar       * picman_tag_string_make_valid   (const gchar    *tag_string);
+gboolean      picman_tag_is_tag_separator    (gunichar        c);
 
-void          gimp_tag_or_null_ref         (GimpTag        *tag_or_null);
-void          gimp_tag_or_null_unref       (GimpTag        *tag_or_null);
+void          picman_tag_or_null_ref         (PicmanTag        *tag_or_null);
+void          picman_tag_or_null_unref       (PicmanTag        *tag_or_null);
 
 
-#endif /* __GIMP_TAG_H__ */
+#endif /* __PICMAN_TAG_H__ */

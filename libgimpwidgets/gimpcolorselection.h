@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorselection.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmancolorselection.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,37 +19,37 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_COLOR_SELECTION_H__
-#define __GIMP_COLOR_SELECTION_H__
+#ifndef __PICMAN_COLOR_SELECTION_H__
+#define __PICMAN_COLOR_SELECTION_H__
 
 G_BEGIN_DECLS
 
 /* For information look at the html documentation */
 
 
-#define GIMP_TYPE_COLOR_SELECTION            (gimp_color_selection_get_type ())
-#define GIMP_COLOR_SELECTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_SELECTION, GimpColorSelection))
-#define GIMP_COLOR_SELECTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_SELECTION, GimpColorSelectionClass))
-#define GIMP_IS_COLOR_SELECTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_SELECTION))
-#define GIMP_IS_COLOR_SELECTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_SELECTION))
-#define GIMP_COLOR_SELECTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_SELECTION, GimpColorSelectionClass))
+#define PICMAN_TYPE_COLOR_SELECTION            (picman_color_selection_get_type ())
+#define PICMAN_COLOR_SELECTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_SELECTION, PicmanColorSelection))
+#define PICMAN_COLOR_SELECTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_SELECTION, PicmanColorSelectionClass))
+#define PICMAN_IS_COLOR_SELECTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_SELECTION))
+#define PICMAN_IS_COLOR_SELECTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_SELECTION))
+#define PICMAN_COLOR_SELECTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_SELECTION, PicmanColorSelectionClass))
 
 
-typedef struct _GimpColorSelectionClass GimpColorSelectionClass;
+typedef struct _PicmanColorSelectionClass PicmanColorSelectionClass;
 
-struct _GimpColorSelection
+struct _PicmanColorSelection
 {
   GtkBox                    parent_instance;
 
   gboolean                  show_alpha;
 
-  GimpHSV                   hsv;
-  GimpRGB                   rgb;
-  GimpColorSelectorChannel  channel;
+  PicmanHSV                   hsv;
+  PicmanRGB                   rgb;
+  PicmanColorSelectorChannel  channel;
 
   GtkWidget                *left_vbox;
   GtkWidget                *right_vbox;
@@ -61,46 +61,46 @@ struct _GimpColorSelection
   GtkWidget                *old_color;
 };
 
-struct _GimpColorSelectionClass
+struct _PicmanColorSelectionClass
 {
   GtkBoxClass  parent_class;
 
-  void (* color_changed) (GimpColorSelection *selection);
+  void (* color_changed) (PicmanColorSelection *selection);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType       gimp_color_selection_get_type       (void) G_GNUC_CONST;
+GType       picman_color_selection_get_type       (void) G_GNUC_CONST;
 
-GtkWidget * gimp_color_selection_new            (void);
+GtkWidget * picman_color_selection_new            (void);
 
-void        gimp_color_selection_set_show_alpha (GimpColorSelection *selection,
+void        picman_color_selection_set_show_alpha (PicmanColorSelection *selection,
                                                  gboolean           show_alpha);
-gboolean    gimp_color_selection_get_show_alpha (GimpColorSelection *selection);
+gboolean    picman_color_selection_get_show_alpha (PicmanColorSelection *selection);
 
-void        gimp_color_selection_set_color      (GimpColorSelection *selection,
-                                                 const GimpRGB      *color);
-void        gimp_color_selection_get_color      (GimpColorSelection *selection,
-                                                 GimpRGB            *color);
+void        picman_color_selection_set_color      (PicmanColorSelection *selection,
+                                                 const PicmanRGB      *color);
+void        picman_color_selection_get_color      (PicmanColorSelection *selection,
+                                                 PicmanRGB            *color);
 
-void        gimp_color_selection_set_old_color  (GimpColorSelection *selection,
-                                                 const GimpRGB      *color);
-void        gimp_color_selection_get_old_color  (GimpColorSelection *selection,
-                                                 GimpRGB            *color);
+void        picman_color_selection_set_old_color  (PicmanColorSelection *selection,
+                                                 const PicmanRGB      *color);
+void        picman_color_selection_get_old_color  (PicmanColorSelection *selection,
+                                                 PicmanRGB            *color);
 
-void        gimp_color_selection_reset          (GimpColorSelection *selection);
+void        picman_color_selection_reset          (PicmanColorSelection *selection);
 
-void        gimp_color_selection_color_changed  (GimpColorSelection *selection);
+void        picman_color_selection_color_changed  (PicmanColorSelection *selection);
 
-void        gimp_color_selection_set_config     (GimpColorSelection *selection,
-                                                 GimpColorConfig    *config);
+void        picman_color_selection_set_config     (PicmanColorSelection *selection,
+                                                 PicmanColorConfig    *config);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_COLOR_SELECTION_H__ */
+#endif /* __PICMAN_COLOR_SELECTION_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,47 +19,47 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "help-actions.h"
 #include "help-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry help_actions[] =
+static const PicmanActionEntry help_actions[] =
 {
   { "help-menu", NULL, NC_("help-action", "_Help") },
 
   { "help-help", GTK_STOCK_HELP,
     NC_("help-action", "_Help"), "F1",
-    NC_("help-action", "Open the GIMP user manual"),
+    NC_("help-action", "Open the PICMAN user manual"),
     G_CALLBACK (help_help_cmd_callback),
-    GIMP_HELP_HELP },
+    PICMAN_HELP_HELP },
 
   { "help-context-help", GTK_STOCK_HELP,
     NC_("help-action", "_Context Help"), "<shift>F1",
     NC_("help-action", "Show the help for a specific user interface item"),
     G_CALLBACK (help_context_help_cmd_callback),
-    GIMP_HELP_HELP_CONTEXT }
+    PICMAN_HELP_HELP_CONTEXT }
 };
 
 
 void
-help_actions_setup (GimpActionGroup *group)
+help_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_actions (group, "help-action",
+  picman_action_group_add_actions (group, "help-action",
                                  help_actions,
                                  G_N_ELEMENTS (help_actions));
 }
 
 void
-help_actions_update (GimpActionGroup *group,
+help_actions_update (PicmanActionGroup *group,
                      gpointer         data)
 {
 }

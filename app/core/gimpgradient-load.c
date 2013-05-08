@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,26 +26,26 @@
 #include <glib/gstdio.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "config/gimpxmlparser.h"
+#include "config/picmanxmlparser.h"
 
-#include "gimpgradient.h"
-#include "gimpgradient-load.h"
+#include "picmangradient.h"
+#include "picmangradient-load.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 GList *
-gimp_gradient_load (GimpContext  *context,
+picman_gradient_load (PicmanContext  *context,
                     const gchar  *filename,
                     GError      **error)
 {
-  GimpGradient        *gradient;
-  GimpGradientSegment *prev;
+  PicmanGradient        *gradient;
+  PicmanGradientSegment *prev;
   gint                 num_segments;
   gint                 i;
   FILE                *file;
@@ -60,44 +60,44 @@ gimp_gradient_load (GimpContext  *context,
 
   if (!file)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
   linenum = 1;
   if (! fgets (line, sizeof (line), file))
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in gradient file '%s': "
                      "Read error in line %d."),
-                   gimp_filename_to_utf8 (filename), linenum);
+                   picman_filename_to_utf8 (filename), linenum);
       fclose (file);
       return NULL;
     }
 
-  if (! g_str_has_prefix (line, "GIMP Gradient"))
+  if (! g_str_has_prefix (line, "PICMAN Gradient"))
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in gradient file '%s': "
-                     "Not a GIMP gradient file."),
-                   gimp_filename_to_utf8 (filename));
+                     "Not a PICMAN gradient file."),
+                   picman_filename_to_utf8 (filename));
       fclose (file);
       return NULL;
     }
 
-  gradient = g_object_new (GIMP_TYPE_GRADIENT,
-                           "mime-type", "application/x-gimp-gradient",
+  gradient = g_object_new (PICMAN_TYPE_GRADIENT,
+                           "mime-type", "application/x-picman-gradient",
                            NULL);
 
   linenum++;
   if (! fgets (line, sizeof (line), file))
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in gradient file '%s': "
                      "Read error in line %d."),
-                   gimp_filename_to_utf8 (filename), linenum);
+                   picman_filename_to_utf8 (filename), linenum);
       fclose (file);
       g_object_unref (gradient);
       return NULL;
@@ -107,18 +107,18 @@ gimp_gradient_load (GimpContext  *context,
     {
       gchar *utf8;
 
-      utf8 = gimp_any_to_utf8 (g_strstrip (line + strlen ("Name: ")), -1,
+      utf8 = picman_any_to_utf8 (g_strstrip (line + strlen ("Name: ")), -1,
                                _("Invalid UTF-8 string in gradient file '%s'."),
-                               gimp_filename_to_utf8 (filename));
-      gimp_object_take_name (GIMP_OBJECT (gradient), utf8);
+                               picman_filename_to_utf8 (filename));
+      picman_object_take_name (PICMAN_OBJECT (gradient), utf8);
 
       linenum++;
       if (! fgets (line, sizeof (line), file))
         {
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Fatal parse error in gradient file '%s': "
                          "Read error in line %d."),
-                       gimp_filename_to_utf8 (filename), linenum);
+                       picman_filename_to_utf8 (filename), linenum);
           fclose (file);
           g_object_unref (gradient);
           return NULL;
@@ -126,7 +126,7 @@ gimp_gradient_load (GimpContext  *context,
     }
   else /* old gradient format */
     {
-      gimp_object_take_name (GIMP_OBJECT (gradient),
+      picman_object_take_name (PICMAN_OBJECT (gradient),
                              g_filename_display_basename (filename));
     }
 
@@ -134,10 +134,10 @@ gimp_gradient_load (GimpContext  *context,
 
   if (num_segments < 1)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in gradient file '%s': "
                      "File is corrupt in line %d."),
-                   gimp_filename_to_utf8 (filename), linenum);
+                   picman_filename_to_utf8 (filename), linenum);
       g_object_unref (gradient);
       fclose (file);
       return NULL;
@@ -147,14 +147,14 @@ gimp_gradient_load (GimpContext  *context,
 
   for (i = 0; i < num_segments; i++)
     {
-      GimpGradientSegment *seg;
+      PicmanGradientSegment *seg;
       gchar               *end;
       gint                 color;
       gint                 type;
       gint                 left_color_type;
       gint                 right_color_type;
 
-      seg = gimp_gradient_segment_new ();
+      seg = picman_gradient_segment_new ();
 
       seg->prev = prev;
 
@@ -166,10 +166,10 @@ gimp_gradient_load (GimpContext  *context,
       linenum++;
       if (! fgets (line, sizeof (line), file))
         {
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Fatal parse error in gradient file '%s': "
                          "Read error in line %d."),
-                       gimp_filename_to_utf8 (filename), linenum);
+                       picman_filename_to_utf8 (filename), linenum);
           fclose (file);
           g_object_unref (gradient);
           return NULL;
@@ -206,20 +206,20 @@ gimp_gradient_load (GimpContext  *context,
                           &left_color_type, &right_color_type))
             {
             case 4:
-              seg->left_color_type  = (GimpGradientColor) left_color_type;
-              seg->right_color_type = (GimpGradientColor) right_color_type;
+              seg->left_color_type  = (PicmanGradientColor) left_color_type;
+              seg->right_color_type = (PicmanGradientColor) right_color_type;
               /* fall thru */
 
             case 2:
-              seg->type  = (GimpGradientSegmentType) type;
-              seg->color = (GimpGradientSegmentColor) color;
+              seg->type  = (PicmanGradientSegmentType) type;
+              seg->color = (PicmanGradientSegmentColor) color;
               break;
 
             default:
-              g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+              g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                            _("Fatal parse error in gradient file '%s': "
                              "Corrupt segment %d in line %d."),
-                           gimp_filename_to_utf8 (filename), i, linenum);
+                           picman_filename_to_utf8 (filename), i, linenum);
               g_object_unref (gradient);
               fclose (file);
               return NULL;
@@ -227,10 +227,10 @@ gimp_gradient_load (GimpContext  *context,
         }
       else
         {
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Fatal parse error in gradient file '%s': "
                          "Corrupt segment %d in line %d."),
-                       gimp_filename_to_utf8 (filename), i, linenum);
+                       picman_filename_to_utf8 (filename), i, linenum);
           g_object_unref (gradient);
           fclose (file);
           return NULL;
@@ -239,10 +239,10 @@ gimp_gradient_load (GimpContext  *context,
       if ( (prev && (prev->right < seg->left))
            || (!prev && (0. < seg->left) ))
         {
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Gradient file '%s' is corrupt: "
                          "Segments do not span the range 0-1."),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           g_object_unref (gradient);
           fclose (file);
           return NULL;
@@ -253,10 +253,10 @@ gimp_gradient_load (GimpContext  *context,
 
   if (prev->right < 1.0)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Gradient file '%s' is corrupt: "
                      "Segments do not span the range 0-1."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       g_object_unref (gradient);
       fclose (file);
       return NULL;
@@ -272,7 +272,7 @@ gimp_gradient_load (GimpContext  *context,
 
 typedef struct
 {
-  GimpGradient *gradient;  /*  current gradient    */
+  PicmanGradient *gradient;  /*  current gradient    */
   GList        *gradients; /*  finished gradients  */
   GList        *stops;
 } SvgParser;
@@ -280,7 +280,7 @@ typedef struct
 typedef struct
 {
   gdouble       offset;
-  GimpRGB       color;
+  PicmanRGB       color;
 } SvgStop;
 
 
@@ -295,7 +295,7 @@ static void      svg_parser_end_element   (GMarkupParseContext  *context,
                                            gpointer              user_data,
                                            GError              **error);
 
-static GimpGradientSegment *
+static PicmanGradientSegment *
                  svg_parser_gradient_segments   (GList          *stops);
 
 static SvgStop * svg_parse_gradient_stop        (const gchar   **names,
@@ -313,11 +313,11 @@ static const GMarkupParser markup_parser =
 
 
 GList *
-gimp_gradient_load_svg (GimpContext  *context,
+picman_gradient_load_svg (PicmanContext  *context,
                         const gchar  *filename,
                         GError      **error)
 {
-  GimpXmlParser *xml_parser;
+  PicmanXmlParser *xml_parser;
   SvgParser      parser = { NULL, };
   gboolean       success;
 
@@ -325,17 +325,17 @@ gimp_gradient_load_svg (GimpContext  *context,
   g_return_val_if_fail (g_path_is_absolute (filename), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  xml_parser = gimp_xml_parser_new (&markup_parser, &parser);
+  xml_parser = picman_xml_parser_new (&markup_parser, &parser);
 
-  success = gimp_xml_parser_parse_file (xml_parser, filename, error);
+  success = picman_xml_parser_parse_file (xml_parser, filename, error);
 
-  gimp_xml_parser_free (xml_parser);
+  picman_xml_parser_free (xml_parser);
 
   if (success && ! parser.gradients)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("No linear gradients found in '%s'"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
     }
   else
     {
@@ -345,7 +345,7 @@ gimp_gradient_load_svg (GimpContext  *context,
 
           (*error)->message =
             g_strdup_printf (_("Failed to import gradients from '%s': %s"),
-                             gimp_filename_to_utf8 (filename), msg);
+                             picman_filename_to_utf8 (filename), msg);
 
           g_free (msg);
         }
@@ -390,7 +390,7 @@ svg_parser_start_element (GMarkupParseContext  *context,
           attribute_values++;
         }
 
-      parser->gradient = g_object_new (GIMP_TYPE_GRADIENT,
+      parser->gradient = g_object_new (PICMAN_TYPE_GRADIENT,
                                        "name",      name,
                                        "mime-type", "image/svg+xml",
                                        NULL);
@@ -435,10 +435,10 @@ svg_parser_end_element (GMarkupParseContext  *context,
     }
 }
 
-static GimpGradientSegment *
+static PicmanGradientSegment *
 svg_parser_gradient_segments (GList *stops)
 {
-  GimpGradientSegment *segment;
+  PicmanGradientSegment *segment;
   SvgStop             *stop;
   GList               *list;
 
@@ -447,7 +447,7 @@ svg_parser_gradient_segments (GList *stops)
 
   stop = stops->data;
 
-  segment = gimp_gradient_segment_new ();
+  segment = picman_gradient_segment_new ();
 
   segment->left_color  = stop->color;
   segment->right_color = stop->color;
@@ -455,12 +455,12 @@ svg_parser_gradient_segments (GList *stops)
   /*  the list of offsets is sorted from largest to smallest  */
   for (list = g_list_next (stops); list; list = g_list_next (list))
     {
-      GimpGradientSegment *next = segment;
+      PicmanGradientSegment *next = segment;
 
       segment->left   = stop->offset;
       segment->middle = (segment->left + segment->right) / 2.0;
 
-      segment = gimp_gradient_segment_new ();
+      segment = picman_gradient_segment_new ();
 
       segment->next = next;
       next->prev    = segment;
@@ -478,7 +478,7 @@ svg_parser_gradient_segments (GList *stops)
   if (stop->offset > 0.0)
     segment->right_color = stop->color;
 
-  /*  FIXME: remove empty segments here or add a GimpGradient API to do that
+  /*  FIXME: remove empty segments here or add a PicmanGradient API to do that
    */
 
   return segment;
@@ -491,14 +491,14 @@ svg_parse_gradient_stop_style_prop (SvgStop     *stop,
 {
   if (strcmp (name, "stop-color") == 0)
     {
-      gimp_rgb_parse_css (&stop->color, value, -1);
+      picman_rgb_parse_css (&stop->color, value, -1);
     }
   else if (strcmp (name, "stop-opacity") == 0)
     {
       gdouble opacity = g_ascii_strtod (value, NULL);
 
       if (errno != ERANGE)
-        gimp_rgb_set_alpha (&stop->color, CLAMP (opacity, 0.0, 1.0));
+        picman_rgb_set_alpha (&stop->color, CLAMP (opacity, 0.0, 1.0));
     }
 }
 
@@ -549,7 +549,7 @@ svg_parse_gradient_stop (const gchar **names,
 {
   SvgStop *stop = g_slice_new0 (SvgStop);
 
-  gimp_rgb_set_alpha (&stop->color, 1.0);
+  picman_rgb_set_alpha (&stop->color, 1.0);
 
   while (*names && *values)
     {

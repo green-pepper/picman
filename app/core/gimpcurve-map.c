@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,12 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gimpcurve.h"
-#include "gimpcurve-map.h"
+#include "picmancurve.h"
+#include "picmancurve-map.h"
 
 
 #if defined (HAVE_FINITE)
@@ -50,41 +50,41 @@ enum
   CURVE_ALPHA  = 1 << 4
 };
 
-static guint           gimp_curve_get_apply_mask   (GimpCurve *curve_colors,
-                                                    GimpCurve *curve_red,
-                                                    GimpCurve *curve_green,
-                                                    GimpCurve *curve_blue,
-                                                    GimpCurve *curve_alpha);
-static inline gdouble  gimp_curve_map_value_inline (GimpCurve *curve,
+static guint           picman_curve_get_apply_mask   (PicmanCurve *curve_colors,
+                                                    PicmanCurve *curve_red,
+                                                    PicmanCurve *curve_green,
+                                                    PicmanCurve *curve_blue,
+                                                    PicmanCurve *curve_alpha);
+static inline gdouble  picman_curve_map_value_inline (PicmanCurve *curve,
                                                     gdouble    value);
 
 
 gdouble
-gimp_curve_map_value (GimpCurve *curve,
+picman_curve_map_value (PicmanCurve *curve,
                       gdouble    value)
 {
-  g_return_val_if_fail (GIMP_IS_CURVE (curve), 0.0);
+  g_return_val_if_fail (PICMAN_IS_CURVE (curve), 0.0);
 
-  return gimp_curve_map_value_inline (curve, value);
+  return picman_curve_map_value_inline (curve, value);
 }
 
 void
-gimp_curve_map_pixels (GimpCurve *curve_colors,
-                       GimpCurve *curve_red,
-                       GimpCurve *curve_green,
-                       GimpCurve *curve_blue,
-                       GimpCurve *curve_alpha,
+picman_curve_map_pixels (PicmanCurve *curve_colors,
+                       PicmanCurve *curve_red,
+                       PicmanCurve *curve_green,
+                       PicmanCurve *curve_blue,
+                       PicmanCurve *curve_alpha,
                        gfloat    *src,
                        gfloat    *dest,
                        glong      samples)
 {
-  g_return_if_fail (GIMP_IS_CURVE (curve_colors));
-  g_return_if_fail (GIMP_IS_CURVE (curve_red));
-  g_return_if_fail (GIMP_IS_CURVE (curve_green));
-  g_return_if_fail (GIMP_IS_CURVE (curve_blue));
-  g_return_if_fail (GIMP_IS_CURVE (curve_alpha));
+  g_return_if_fail (PICMAN_IS_CURVE (curve_colors));
+  g_return_if_fail (PICMAN_IS_CURVE (curve_red));
+  g_return_if_fail (PICMAN_IS_CURVE (curve_green));
+  g_return_if_fail (PICMAN_IS_CURVE (curve_blue));
+  g_return_if_fail (PICMAN_IS_CURVE (curve_alpha));
 
-  switch (gimp_curve_get_apply_mask (curve_colors,
+  switch (picman_curve_get_apply_mask (curve_colors,
                                      curve_red,
                                      curve_green,
                                      curve_blue,
@@ -97,9 +97,9 @@ gimp_curve_map_pixels (GimpCurve *curve_colors,
     case CURVE_COLORS:
       while (samples--)
         {
-          dest[0] = gimp_curve_map_value_inline (curve_colors, src[0]);
-          dest[1] = gimp_curve_map_value_inline (curve_colors, src[1]);
-          dest[2] = gimp_curve_map_value_inline (curve_colors, src[2]);
+          dest[0] = picman_curve_map_value_inline (curve_colors, src[0]);
+          dest[1] = picman_curve_map_value_inline (curve_colors, src[1]);
+          dest[2] = picman_curve_map_value_inline (curve_colors, src[2]);
           /* don't apply the colors curve to the alpha channel */
           dest[3] = src[3];
 
@@ -111,7 +111,7 @@ gimp_curve_map_pixels (GimpCurve *curve_colors,
     case CURVE_RED:
       while (samples--)
         {
-          dest[0] = gimp_curve_map_value_inline (curve_red, src[0]);
+          dest[0] = picman_curve_map_value_inline (curve_red, src[0]);
           dest[1] = src[1];
           dest[2] = src[2];
           dest[3] = src[3];
@@ -125,7 +125,7 @@ gimp_curve_map_pixels (GimpCurve *curve_colors,
       while (samples--)
         {
           dest[0] = src[0];
-          dest[1] = gimp_curve_map_value_inline (curve_green, src[1]);
+          dest[1] = picman_curve_map_value_inline (curve_green, src[1]);
           dest[2] = src[2];
           dest[3] = src[3];
 
@@ -139,7 +139,7 @@ gimp_curve_map_pixels (GimpCurve *curve_colors,
         {
           dest[0] = src[0];
           dest[1] = src[1];
-          dest[2] = gimp_curve_map_value_inline (curve_blue, src[2]);
+          dest[2] = picman_curve_map_value_inline (curve_blue, src[2]);
           dest[3] = src[3];
 
           src  += 4;
@@ -153,7 +153,7 @@ gimp_curve_map_pixels (GimpCurve *curve_colors,
           dest[0] = src[0];
           dest[1] = src[1];
           dest[2] = src[2];
-          dest[3] = gimp_curve_map_value_inline (curve_alpha, src[3]);
+          dest[3] = picman_curve_map_value_inline (curve_alpha, src[3]);
 
           src  += 4;
           dest += 4;
@@ -163,9 +163,9 @@ gimp_curve_map_pixels (GimpCurve *curve_colors,
     case (CURVE_RED | CURVE_GREEN | CURVE_BLUE):
       while (samples--)
         {
-          dest[0] = gimp_curve_map_value_inline (curve_red,   src[0]);
-          dest[1] = gimp_curve_map_value_inline (curve_green, src[1]);
-          dest[2] = gimp_curve_map_value_inline (curve_blue,  src[2]);
+          dest[0] = picman_curve_map_value_inline (curve_red,   src[0]);
+          dest[1] = picman_curve_map_value_inline (curve_green, src[1]);
+          dest[2] = picman_curve_map_value_inline (curve_blue,  src[2]);
           dest[3] = src[3];
 
           src  += 4;
@@ -176,17 +176,17 @@ gimp_curve_map_pixels (GimpCurve *curve_colors,
     default:
       while (samples--)
         {
-          dest[0] = gimp_curve_map_value_inline (curve_colors,
-                                                 gimp_curve_map_value_inline (curve_red,
+          dest[0] = picman_curve_map_value_inline (curve_colors,
+                                                 picman_curve_map_value_inline (curve_red,
                                                                               src[0]));
-          dest[1] = gimp_curve_map_value_inline (curve_colors,
-                                                 gimp_curve_map_value_inline (curve_green,
+          dest[1] = picman_curve_map_value_inline (curve_colors,
+                                                 picman_curve_map_value_inline (curve_green,
                                                                               src[1]));
-          dest[2] = gimp_curve_map_value_inline (curve_colors,
-                                                 gimp_curve_map_value_inline (curve_blue,
+          dest[2] = picman_curve_map_value_inline (curve_colors,
+                                                 picman_curve_map_value_inline (curve_blue,
                                                                               src[2]));
           /* don't apply the colors curve to the alpha channel */
-          dest[3] = gimp_curve_map_value_inline (curve_alpha, src[3]);
+          dest[3] = picman_curve_map_value_inline (curve_alpha, src[3]);
 
           src  += 4;
           dest += 4;
@@ -196,21 +196,21 @@ gimp_curve_map_pixels (GimpCurve *curve_colors,
 }
 
 static guint
-gimp_curve_get_apply_mask (GimpCurve *curve_colors,
-                           GimpCurve *curve_red,
-                           GimpCurve *curve_green,
-                           GimpCurve *curve_blue,
-                           GimpCurve *curve_alpha)
+picman_curve_get_apply_mask (PicmanCurve *curve_colors,
+                           PicmanCurve *curve_red,
+                           PicmanCurve *curve_green,
+                           PicmanCurve *curve_blue,
+                           PicmanCurve *curve_alpha)
 {
-  return ((gimp_curve_is_identity (curve_colors) ? 0 : CURVE_COLORS) |
-          (gimp_curve_is_identity (curve_red)    ? 0 : CURVE_RED)    |
-          (gimp_curve_is_identity (curve_green)  ? 0 : CURVE_GREEN)  |
-          (gimp_curve_is_identity (curve_blue)   ? 0 : CURVE_BLUE)   |
-          (gimp_curve_is_identity (curve_alpha)  ? 0 : CURVE_ALPHA));
+  return ((picman_curve_is_identity (curve_colors) ? 0 : CURVE_COLORS) |
+          (picman_curve_is_identity (curve_red)    ? 0 : CURVE_RED)    |
+          (picman_curve_is_identity (curve_green)  ? 0 : CURVE_GREEN)  |
+          (picman_curve_is_identity (curve_blue)   ? 0 : CURVE_BLUE)   |
+          (picman_curve_is_identity (curve_alpha)  ? 0 : CURVE_ALPHA));
 }
 
 static inline gdouble
-gimp_curve_map_value_inline (GimpCurve *curve,
+picman_curve_map_value_inline (PicmanCurve *curve,
                              gdouble    value)
 {
   if (curve->identity)

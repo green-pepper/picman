@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,62 +15,62 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_SHELL_SCALE_H__
-#define __GIMP_DISPLAY_SHELL_SCALE_H__
+#ifndef __PICMAN_DISPLAY_SHELL_SCALE_H__
+#define __PICMAN_DISPLAY_SHELL_SCALE_H__
 
 
-void     gimp_display_shell_scale_update_scrollbars        (GimpDisplayShell *shell);
-void     gimp_display_shell_scale_update_rulers            (GimpDisplayShell *shell);
+void     picman_display_shell_scale_update_scrollbars        (PicmanDisplayShell *shell);
+void     picman_display_shell_scale_update_rulers            (PicmanDisplayShell *shell);
 
-gboolean gimp_display_shell_scale_revert                   (GimpDisplayShell *shell);
-gboolean gimp_display_shell_scale_can_revert               (GimpDisplayShell *shell);
+gboolean picman_display_shell_scale_revert                   (PicmanDisplayShell *shell);
+gboolean picman_display_shell_scale_can_revert               (PicmanDisplayShell *shell);
 
-void     gimp_display_shell_scale_set_dot_for_dot          (GimpDisplayShell *shell,
+void     picman_display_shell_scale_set_dot_for_dot          (PicmanDisplayShell *shell,
                                                             gboolean          dot_for_dot);
 
-void     gimp_display_shell_get_screen_resolution          (GimpDisplayShell *shell,
+void     picman_display_shell_get_screen_resolution          (PicmanDisplayShell *shell,
                                                             gdouble          *xres,
                                                             gdouble          *yres);
-void     gimp_display_shell_scale_get_image_size           (GimpDisplayShell *shell,
+void     picman_display_shell_scale_get_image_size           (PicmanDisplayShell *shell,
                                                             gint             *w,
                                                             gint             *h);
-void     gimp_display_shell_scale_get_image_size_for_scale (GimpDisplayShell *shell,
+void     picman_display_shell_scale_get_image_size_for_scale (PicmanDisplayShell *shell,
                                                             gdouble           scale,
                                                             gint             *w,
                                                             gint             *h);
 
-void     gimp_display_shell_scale                          (GimpDisplayShell *shell,
-                                                            GimpZoomType      zoom_type,
+void     picman_display_shell_scale                          (PicmanDisplayShell *shell,
+                                                            PicmanZoomType      zoom_type,
                                                             gdouble           scale,
-                                                            GimpZoomFocus     zoom_focus);
-void     gimp_display_shell_scale_fit_in                   (GimpDisplayShell *shell);
-gboolean gimp_display_shell_scale_image_is_within_viewport (GimpDisplayShell *shell,
+                                                            PicmanZoomFocus     zoom_focus);
+void     picman_display_shell_scale_fit_in                   (PicmanDisplayShell *shell);
+gboolean picman_display_shell_scale_image_is_within_viewport (PicmanDisplayShell *shell,
                                                             gboolean         *horizontally,
                                                             gboolean         *vertically);
-void     gimp_display_shell_scale_fill                     (GimpDisplayShell *shell);
-void     gimp_display_shell_scale_handle_zoom_revert       (GimpDisplayShell *shell);
-void     gimp_display_shell_scale_by_values                (GimpDisplayShell *shell,
+void     picman_display_shell_scale_fill                     (PicmanDisplayShell *shell);
+void     picman_display_shell_scale_handle_zoom_revert       (PicmanDisplayShell *shell);
+void     picman_display_shell_scale_by_values                (PicmanDisplayShell *shell,
                                                             gdouble           scale,
                                                             gint              offset_x,
                                                             gint              offset_y,
                                                             gboolean          resize_window);
-void     gimp_display_shell_scale_shrink_wrap              (GimpDisplayShell *shell,
+void     picman_display_shell_scale_shrink_wrap              (PicmanDisplayShell *shell,
                                                             gboolean          grow_only);
 
-void     gimp_display_shell_scale_resize                   (GimpDisplayShell *shell,
+void     picman_display_shell_scale_resize                   (PicmanDisplayShell *shell,
                                                             gboolean          resize_window,
                                                             gboolean          grow_only);
-void     gimp_display_shell_calculate_scale_x_and_y        (GimpDisplayShell *shell,
+void     picman_display_shell_calculate_scale_x_and_y        (PicmanDisplayShell *shell,
                                                             gdouble           scale,
                                                             gdouble          *scale_x,
                                                             gdouble          *scale_y);
-void     gimp_display_shell_set_initial_scale              (GimpDisplayShell *shell,
+void     picman_display_shell_set_initial_scale              (PicmanDisplayShell *shell,
                                                             gdouble           scale,
                                                             gint             *display_width,
                                                             gint             *display_height);
-void     gimp_display_shell_push_zoom_focus_pointer_pos    (GimpDisplayShell *shell,
+void     picman_display_shell_push_zoom_focus_pointer_pos    (PicmanDisplayShell *shell,
                                                             gint              x,
                                                             gint              y);
 
 
-#endif  /*  __GIMP_DISPLAY_SHELL_SCALE_H__  */
+#endif  /*  __PICMAN_DISPLAY_SHELL_SCALE_H__  */

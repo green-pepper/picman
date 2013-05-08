@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_CROP_H__
-#define __GIMP_IMAGE_CROP_H__
+#ifndef __PICMAN_IMAGE_CROP_H__
+#define __PICMAN_IMAGE_CROP_H__
 
 
-void   gimp_image_crop (GimpImage   *image,
-                        GimpContext *context,
+void   picman_image_crop (PicmanImage   *image,
+                        PicmanContext *context,
                         gint         x1,
                         gint         y1,
                         gint         x2,
@@ -28,4 +28,4 @@ void   gimp_image_crop (GimpImage   *image,
                         gboolean     crop_layers);
 
 
-#endif  /* __GIMP_IMAGE_CROP_H__ */
+#endif  /* __PICMAN_IMAGE_CROP_H__ */

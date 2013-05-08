@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,19 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PATTERN_LOAD_H__
-#define __GIMP_PATTERN_LOAD_H__
+#ifndef __PICMAN_PATTERN_LOAD_H__
+#define __PICMAN_PATTERN_LOAD_H__
 
 
-#define GIMP_PATTERN_FILE_EXTENSION ".pat"
+#define PICMAN_PATTERN_FILE_EXTENSION ".pat"
 
 
-GList * gimp_pattern_load        (GimpContext  *context,
+GList * picman_pattern_load        (PicmanContext  *context,
                                   const gchar  *filename,
                                   GError      **error);
-GList * gimp_pattern_load_pixbuf (GimpContext  *context,
+GList * picman_pattern_load_pixbuf (PicmanContext  *context,
                                   const gchar  *filename,
                                   GError      **error);
 
 
-#endif /* __GIMP_PATTERN_LOAD_H__ */
+#endif /* __PICMAN_PATTERN_LOAD_H__ */

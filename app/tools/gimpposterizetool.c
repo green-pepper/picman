@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,97 +20,97 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "operations/gimpposterizeconfig.h"
+#include "operations/picmanposterizeconfig.h"
 
-#include "core/gimpdrawable.h"
-#include "core/gimperror.h"
-#include "core/gimpimage.h"
+#include "core/picmandrawable.h"
+#include "core/picmanerror.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimpimagemapoptions.h"
-#include "gimpposterizetool.h"
+#include "picmanimagemapoptions.h"
+#include "picmanposterizetool.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define SLIDER_WIDTH 200
 
 
-static gboolean   gimp_posterize_tool_initialize     (GimpTool          *tool,
-                                                      GimpDisplay       *display,
+static gboolean   picman_posterize_tool_initialize     (PicmanTool          *tool,
+                                                      PicmanDisplay       *display,
                                                       GError           **error);
 
-static GeglNode * gimp_posterize_tool_get_operation  (GimpImageMapTool  *im_tool,
+static GeglNode * picman_posterize_tool_get_operation  (PicmanImageMapTool  *im_tool,
                                                       GObject          **config,
                                                       gchar            **undo_desc);
-static void       gimp_posterize_tool_dialog         (GimpImageMapTool  *im_tool);
+static void       picman_posterize_tool_dialog         (PicmanImageMapTool  *im_tool);
 
-static void       gimp_posterize_tool_config_notify  (GObject           *object,
+static void       picman_posterize_tool_config_notify  (GObject           *object,
                                                       GParamSpec        *pspec,
-                                                      GimpPosterizeTool *posterize_tool);
+                                                      PicmanPosterizeTool *posterize_tool);
 
-static void       gimp_posterize_tool_levels_changed (GtkAdjustment     *adjustment,
-                                                      GimpPosterizeTool *posterize_tool);
+static void       picman_posterize_tool_levels_changed (GtkAdjustment     *adjustment,
+                                                      PicmanPosterizeTool *posterize_tool);
 
 
-G_DEFINE_TYPE (GimpPosterizeTool, gimp_posterize_tool,
-               GIMP_TYPE_IMAGE_MAP_TOOL)
+G_DEFINE_TYPE (PicmanPosterizeTool, picman_posterize_tool,
+               PICMAN_TYPE_IMAGE_MAP_TOOL)
 
-#define parent_class gimp_posterize_tool_parent_class
+#define parent_class picman_posterize_tool_parent_class
 
 
 void
-gimp_posterize_tool_register (GimpToolRegisterCallback  callback,
+picman_posterize_tool_register (PicmanToolRegisterCallback  callback,
                               gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_POSTERIZE_TOOL,
-                GIMP_TYPE_IMAGE_MAP_OPTIONS, NULL,
+  (* callback) (PICMAN_TYPE_POSTERIZE_TOOL,
+                PICMAN_TYPE_IMAGE_MAP_OPTIONS, NULL,
                 0,
-                "gimp-posterize-tool",
+                "picman-posterize-tool",
                 _("Posterize"),
                 _("Posterize Tool: Reduce to a limited set of colors"),
                 N_("_Posterize..."), NULL,
-                NULL, GIMP_HELP_TOOL_POSTERIZE,
-                GIMP_STOCK_TOOL_POSTERIZE,
+                NULL, PICMAN_HELP_TOOL_POSTERIZE,
+                PICMAN_STOCK_TOOL_POSTERIZE,
                 data);
 }
 
 static void
-gimp_posterize_tool_class_init (GimpPosterizeToolClass *klass)
+picman_posterize_tool_class_init (PicmanPosterizeToolClass *klass)
 {
-  GimpToolClass         *tool_class    = GIMP_TOOL_CLASS (klass);
-  GimpImageMapToolClass *im_tool_class = GIMP_IMAGE_MAP_TOOL_CLASS (klass);
+  PicmanToolClass         *tool_class    = PICMAN_TOOL_CLASS (klass);
+  PicmanImageMapToolClass *im_tool_class = PICMAN_IMAGE_MAP_TOOL_CLASS (klass);
 
-  tool_class->initialize       = gimp_posterize_tool_initialize;
+  tool_class->initialize       = picman_posterize_tool_initialize;
 
   im_tool_class->dialog_desc   = _("Posterize (Reduce Number of Colors)");
 
-  im_tool_class->get_operation = gimp_posterize_tool_get_operation;
-  im_tool_class->dialog        = gimp_posterize_tool_dialog;
+  im_tool_class->get_operation = picman_posterize_tool_get_operation;
+  im_tool_class->dialog        = picman_posterize_tool_dialog;
 }
 
 static void
-gimp_posterize_tool_init (GimpPosterizeTool *posterize_tool)
+picman_posterize_tool_init (PicmanPosterizeTool *posterize_tool)
 {
 }
 
 static gboolean
-gimp_posterize_tool_initialize (GimpTool     *tool,
-                                GimpDisplay  *display,
+picman_posterize_tool_initialize (PicmanTool     *tool,
+                                PicmanDisplay  *display,
                                 GError      **error)
 {
-  GimpPosterizeTool *posterize_tool = GIMP_POSTERIZE_TOOL (tool);
+  PicmanPosterizeTool *posterize_tool = PICMAN_POSTERIZE_TOOL (tool);
 
-  if (! GIMP_TOOL_CLASS (parent_class)->initialize (tool, display, error))
+  if (! PICMAN_TOOL_CLASS (parent_class)->initialize (tool, display, error))
     {
       return FALSE;
     }
@@ -122,22 +122,22 @@ gimp_posterize_tool_initialize (GimpTool     *tool,
 }
 
 static GeglNode *
-gimp_posterize_tool_get_operation (GimpImageMapTool  *image_map_tool,
+picman_posterize_tool_get_operation (PicmanImageMapTool  *image_map_tool,
                                    GObject          **config,
                                    gchar            **undo_desc)
 {
-  GimpPosterizeTool *posterize_tool = GIMP_POSTERIZE_TOOL (image_map_tool);
+  PicmanPosterizeTool *posterize_tool = PICMAN_POSTERIZE_TOOL (image_map_tool);
 
-  posterize_tool->config = g_object_new (GIMP_TYPE_POSTERIZE_CONFIG, NULL);
+  posterize_tool->config = g_object_new (PICMAN_TYPE_POSTERIZE_CONFIG, NULL);
 
   g_signal_connect_object (posterize_tool->config, "notify",
-                           G_CALLBACK (gimp_posterize_tool_config_notify),
+                           G_CALLBACK (picman_posterize_tool_config_notify),
                            G_OBJECT (posterize_tool), 0);
 
   *config = G_OBJECT (posterize_tool->config);
 
   return gegl_node_new_child (NULL,
-                              "operation", "gimp:posterize",
+                              "operation", "picman:posterize",
                               "config",    posterize_tool->config,
                               NULL);
 }
@@ -148,14 +148,14 @@ gimp_posterize_tool_get_operation (GimpImageMapTool  *image_map_tool,
 /**********************/
 
 static void
-gimp_posterize_tool_dialog (GimpImageMapTool *image_map_tool)
+picman_posterize_tool_dialog (PicmanImageMapTool *image_map_tool)
 {
-  GimpPosterizeTool *posterize_tool = GIMP_POSTERIZE_TOOL (image_map_tool);
+  PicmanPosterizeTool *posterize_tool = PICMAN_POSTERIZE_TOOL (image_map_tool);
   GtkWidget         *main_vbox;
   GtkWidget         *table;
   GtkObject         *data;
 
-  main_vbox = gimp_image_map_tool_dialog_get_vbox (image_map_tool);
+  main_vbox = picman_image_map_tool_dialog_get_vbox (image_map_tool);
 
   /*  The table containing sliders  */
   table = gtk_table_new (1, 3, FALSE);
@@ -163,28 +163,28 @@ gimp_posterize_tool_dialog (GimpImageMapTool *image_map_tool)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  data = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  data = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                _("Posterize _levels:"), SLIDER_WIDTH, -1,
                                posterize_tool->config->levels,
                                2.0, 256.0, 1.0, 10.0, 0,
                                TRUE, 0.0, 0.0,
                                NULL, NULL);
 
-  gimp_scale_entry_set_logarithmic (data, TRUE);
+  picman_scale_entry_set_logarithmic (data, TRUE);
 
   posterize_tool->levels_data = GTK_ADJUSTMENT (data);
 
   g_signal_connect (posterize_tool->levels_data, "value-changed",
-                    G_CALLBACK (gimp_posterize_tool_levels_changed),
+                    G_CALLBACK (picman_posterize_tool_levels_changed),
                     posterize_tool);
 }
 
 static void
-gimp_posterize_tool_config_notify (GObject           *object,
+picman_posterize_tool_config_notify (GObject           *object,
                                    GParamSpec        *pspec,
-                                   GimpPosterizeTool *posterize_tool)
+                                   PicmanPosterizeTool *posterize_tool)
 {
-  GimpPosterizeConfig *config = GIMP_POSTERIZE_CONFIG (object);
+  PicmanPosterizeConfig *config = PICMAN_POSTERIZE_CONFIG (object);
 
   if (! posterize_tool->levels_data)
     return;
@@ -193,8 +193,8 @@ gimp_posterize_tool_config_notify (GObject           *object,
 }
 
 static void
-gimp_posterize_tool_levels_changed (GtkAdjustment     *adjustment,
-                                    GimpPosterizeTool *posterize_tool)
+picman_posterize_tool_levels_changed (GtkAdjustment     *adjustment,
+                                    PicmanPosterizeTool *posterize_tool)
 {
   gint value = ROUND (gtk_adjustment_get_value (adjustment));
 

@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,123 +16,123 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_WIRE_H__
-#define __GIMP_WIRE_H__
+#ifndef __PICMAN_WIRE_H__
+#define __PICMAN_WIRE_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-typedef struct _GimpWireMessage  GimpWireMessage;
+typedef struct _PicmanWireMessage  PicmanWireMessage;
 
-typedef void     (* GimpWireReadFunc)    (GIOChannel      *channel,
-                                          GimpWireMessage *msg,
+typedef void     (* PicmanWireReadFunc)    (GIOChannel      *channel,
+                                          PicmanWireMessage *msg,
                                           gpointer         user_data);
-typedef void     (* GimpWireWriteFunc)   (GIOChannel      *channel,
-                                          GimpWireMessage *msg,
+typedef void     (* PicmanWireWriteFunc)   (GIOChannel      *channel,
+                                          PicmanWireMessage *msg,
                                           gpointer         user_data);
-typedef void     (* GimpWireDestroyFunc) (GimpWireMessage *msg);
-typedef gboolean (* GimpWireIOFunc)      (GIOChannel      *channel,
+typedef void     (* PicmanWireDestroyFunc) (PicmanWireMessage *msg);
+typedef gboolean (* PicmanWireIOFunc)      (GIOChannel      *channel,
                                           const guint8    *buf,
                                           gulong           count,
                                           gpointer         user_data);
-typedef gboolean (* GimpWireFlushFunc)   (GIOChannel      *channel,
+typedef gboolean (* PicmanWireFlushFunc)   (GIOChannel      *channel,
                                           gpointer         user_data);
 
 
-struct _GimpWireMessage
+struct _PicmanWireMessage
 {
   guint32  type;
   gpointer data;
 };
 
 
-void      gimp_wire_register      (guint32              type,
-                                   GimpWireReadFunc     read_func,
-                                   GimpWireWriteFunc    write_func,
-                                   GimpWireDestroyFunc  destroy_func);
+void      picman_wire_register      (guint32              type,
+                                   PicmanWireReadFunc     read_func,
+                                   PicmanWireWriteFunc    write_func,
+                                   PicmanWireDestroyFunc  destroy_func);
 
-void      gimp_wire_set_reader    (GimpWireIOFunc       read_func);
-void      gimp_wire_set_writer    (GimpWireIOFunc       write_func);
-void      gimp_wire_set_flusher   (GimpWireFlushFunc    flush_func);
+void      picman_wire_set_reader    (PicmanWireIOFunc       read_func);
+void      picman_wire_set_writer    (PicmanWireIOFunc       write_func);
+void      picman_wire_set_flusher   (PicmanWireFlushFunc    flush_func);
 
-gboolean  gimp_wire_read          (GIOChannel           *channel,
+gboolean  picman_wire_read          (GIOChannel           *channel,
                                    guint8          *buf,
                                    gsize            count,
                                    gpointer         user_data);
-gboolean  gimp_wire_write         (GIOChannel      *channel,
+gboolean  picman_wire_write         (GIOChannel      *channel,
                                    const guint8    *buf,
                                    gsize            count,
                                    gpointer         user_data);
-gboolean  gimp_wire_flush         (GIOChannel      *channel,
+gboolean  picman_wire_flush         (GIOChannel      *channel,
                                    gpointer         user_data);
 
-gboolean  gimp_wire_error         (void);
-void      gimp_wire_clear_error   (void);
+gboolean  picman_wire_error         (void);
+void      picman_wire_clear_error   (void);
 
-gboolean  gimp_wire_read_msg      (GIOChannel          *channel,
-                                   GimpWireMessage *msg,
+gboolean  picman_wire_read_msg      (GIOChannel          *channel,
+                                   PicmanWireMessage *msg,
                                    gpointer         user_data);
-gboolean  gimp_wire_write_msg     (GIOChannel          *channel,
-                                   GimpWireMessage *msg,
+gboolean  picman_wire_write_msg     (GIOChannel          *channel,
+                                   PicmanWireMessage *msg,
                                    gpointer         user_data);
 
-void      gimp_wire_destroy       (GimpWireMessage *msg);
+void      picman_wire_destroy       (PicmanWireMessage *msg);
 
 
-/*  for internal use in libgimpbase  */
+/*  for internal use in libpicmanbase  */
 
-G_GNUC_INTERNAL gboolean  _gimp_wire_read_int32   (GIOChannel     *channel,
+G_GNUC_INTERNAL gboolean  _picman_wire_read_int32   (GIOChannel     *channel,
                                                    guint32        *data,
                                                    gint            count,
                                                    gpointer        user_data);
-G_GNUC_INTERNAL gboolean  _gimp_wire_read_int16   (GIOChannel     *channel,
+G_GNUC_INTERNAL gboolean  _picman_wire_read_int16   (GIOChannel     *channel,
                                                    guint16        *data,
                                                    gint            count,
                                                    gpointer        user_data);
-G_GNUC_INTERNAL gboolean  _gimp_wire_read_int8    (GIOChannel     *channel,
+G_GNUC_INTERNAL gboolean  _picman_wire_read_int8    (GIOChannel     *channel,
                                                    guint8         *data,
                                                    gint            count,
                                                    gpointer        user_data);
-G_GNUC_INTERNAL gboolean  _gimp_wire_read_double  (GIOChannel     *channel,
+G_GNUC_INTERNAL gboolean  _picman_wire_read_double  (GIOChannel     *channel,
                                                    gdouble        *data,
                                                    gint            count,
                                                    gpointer        user_data);
-G_GNUC_INTERNAL gboolean  _gimp_wire_read_string  (GIOChannel     *channel,
+G_GNUC_INTERNAL gboolean  _picman_wire_read_string  (GIOChannel     *channel,
                                                    gchar         **data,
                                                    gint            count,
                                                    gpointer        user_data);
-G_GNUC_INTERNAL gboolean  _gimp_wire_read_color   (GIOChannel     *channel,
-                                                   GimpRGB        *data,
+G_GNUC_INTERNAL gboolean  _picman_wire_read_color   (GIOChannel     *channel,
+                                                   PicmanRGB        *data,
                                                    gint            count,
                                                    gpointer        user_data);
-G_GNUC_INTERNAL gboolean  _gimp_wire_write_int32  (GIOChannel     *channel,
+G_GNUC_INTERNAL gboolean  _picman_wire_write_int32  (GIOChannel     *channel,
                                                    const guint32  *data,
                                                    gint            count,
                                                    gpointer        user_data);
-G_GNUC_INTERNAL gboolean  _gimp_wire_write_int16  (GIOChannel     *channel,
+G_GNUC_INTERNAL gboolean  _picman_wire_write_int16  (GIOChannel     *channel,
                                                    const guint16  *data,
                                                    gint            count,
                                                    gpointer        user_data);
-G_GNUC_INTERNAL gboolean  _gimp_wire_write_int8   (GIOChannel     *channel,
+G_GNUC_INTERNAL gboolean  _picman_wire_write_int8   (GIOChannel     *channel,
                                                    const guint8   *data,
                                                    gint            count,
                                                    gpointer        user_data);
-G_GNUC_INTERNAL gboolean  _gimp_wire_write_double (GIOChannel     *channel,
+G_GNUC_INTERNAL gboolean  _picman_wire_write_double (GIOChannel     *channel,
                                                    const gdouble  *data,
                                                    gint            count,
                                                    gpointer        user_data);
-G_GNUC_INTERNAL gboolean  _gimp_wire_write_string (GIOChannel     *channel,
+G_GNUC_INTERNAL gboolean  _picman_wire_write_string (GIOChannel     *channel,
                                                    gchar         **data,
                                                    gint            count,
                                                    gpointer        user_data);
-G_GNUC_INTERNAL gboolean  _gimp_wire_write_color  (GIOChannel     *channel,
-                                                   const GimpRGB  *data,
+G_GNUC_INTERNAL gboolean  _picman_wire_write_color  (GIOChannel     *channel,
+                                                   const PicmanRGB  *data,
                                                    gint            count,
                                                    gpointer        user_data);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_WIRE_H__ */
+#endif /* __PICMAN_WIRE_H__ */

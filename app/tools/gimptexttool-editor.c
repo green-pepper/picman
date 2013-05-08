@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpTextTool
- * Copyright (C) 2002-2010  Sven Neumann <sven@gimp.org>
+ * PicmanTextTool
+ * Copyright (C) 2002-2010  Sven Neumann <sven@picman.org>
  *                          Daniel Eddeland <danedde@svn.gnome.org>
- *                          Michael Natterer <mitch@gimp.org>
+ *                          Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,87 +26,87 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
+#include "core/picmantoolinfo.h"
 
-#include "text/gimptext.h"
-#include "text/gimptextlayout.h"
+#include "text/picmantext.h"
+#include "text/picmantextlayout.h"
 
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpoverlaybox.h"
-#include "widgets/gimpoverlayframe.h"
-#include "widgets/gimptextbuffer.h"
-#include "widgets/gimptexteditor.h"
-#include "widgets/gimptextproxy.h"
-#include "widgets/gimptextstyleeditor.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmanoverlaybox.h"
+#include "widgets/picmanoverlayframe.h"
+#include "widgets/picmantextbuffer.h"
+#include "widgets/picmantexteditor.h"
+#include "widgets/picmantextproxy.h"
+#include "widgets/picmantextstyleeditor.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
 
-#include "gimprectangletool.h"
-#include "gimptextoptions.h"
-#include "gimptexttool.h"
-#include "gimptexttool-editor.h"
+#include "picmanrectangletool.h"
+#include "picmantextoptions.h"
+#include "picmantexttool.h"
+#include "picmantexttool-editor.h"
 
-#include "gimp-log.h"
-#include "gimp-intl.h"
+#include "picman-log.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   gimp_text_tool_ensure_proxy       (GimpTextTool    *text_tool);
-static void   gimp_text_tool_move_cursor        (GimpTextTool    *text_tool,
+static void   picman_text_tool_ensure_proxy       (PicmanTextTool    *text_tool);
+static void   picman_text_tool_move_cursor        (PicmanTextTool    *text_tool,
                                                  GtkMovementStep  step,
                                                  gint             count,
                                                  gboolean         extend_selection);
-static void   gimp_text_tool_insert_at_cursor   (GimpTextTool    *text_tool,
+static void   picman_text_tool_insert_at_cursor   (PicmanTextTool    *text_tool,
                                                  const gchar     *str);
-static void   gimp_text_tool_delete_from_cursor (GimpTextTool    *text_tool,
+static void   picman_text_tool_delete_from_cursor (PicmanTextTool    *text_tool,
                                                  GtkDeleteType    type,
                                                  gint             count);
-static void   gimp_text_tool_backspace          (GimpTextTool    *text_tool);
-static void   gimp_text_tool_toggle_overwrite   (GimpTextTool    *text_tool);
-static void   gimp_text_tool_select_all         (GimpTextTool    *text_tool,
+static void   picman_text_tool_backspace          (PicmanTextTool    *text_tool);
+static void   picman_text_tool_toggle_overwrite   (PicmanTextTool    *text_tool);
+static void   picman_text_tool_select_all         (PicmanTextTool    *text_tool,
                                                  gboolean         select);
-static void   gimp_text_tool_change_size        (GimpTextTool    *text_tool,
+static void   picman_text_tool_change_size        (PicmanTextTool    *text_tool,
                                                  gdouble          amount);
-static void   gimp_text_tool_change_baseline    (GimpTextTool    *text_tool,
+static void   picman_text_tool_change_baseline    (PicmanTextTool    *text_tool,
                                                  gdouble          amount);
-static void   gimp_text_tool_change_kerning     (GimpTextTool    *text_tool,
+static void   picman_text_tool_change_kerning     (PicmanTextTool    *text_tool,
                                                  gdouble          amount);
 
-static void   gimp_text_tool_options_notify     (GimpTextOptions *options,
+static void   picman_text_tool_options_notify     (PicmanTextOptions *options,
                                                  GParamSpec      *pspec,
-                                                 GimpTextTool    *text_tool);
-static void   gimp_text_tool_editor_dialog      (GimpTextTool    *text_tool);
-static void   gimp_text_tool_editor_destroy     (GtkWidget       *dialog,
-                                                 GimpTextTool    *text_tool);
-static void   gimp_text_tool_enter_text         (GimpTextTool    *text_tool,
+                                                 PicmanTextTool    *text_tool);
+static void   picman_text_tool_editor_dialog      (PicmanTextTool    *text_tool);
+static void   picman_text_tool_editor_destroy     (GtkWidget       *dialog,
+                                                 PicmanTextTool    *text_tool);
+static void   picman_text_tool_enter_text         (PicmanTextTool    *text_tool,
                                                  const gchar     *str);
-static void   gimp_text_tool_xy_to_iter         (GimpTextTool    *text_tool,
+static void   picman_text_tool_xy_to_iter         (PicmanTextTool    *text_tool,
                                                  gdouble          x,
                                                  gdouble          y,
                                                  GtkTextIter     *iter);
-static void   gimp_text_tool_im_commit          (GtkIMContext    *context,
+static void   picman_text_tool_im_commit          (GtkIMContext    *context,
                                                  const gchar     *str,
-                                                 GimpTextTool    *text_tool);
-static void   gimp_text_tool_im_preedit_start   (GtkIMContext    *context,
-                                                 GimpTextTool    *text_tool);
-static void   gimp_text_tool_im_preedit_end     (GtkIMContext    *context,
-                                                 GimpTextTool    *text_tool);
-static void   gimp_text_tool_im_preedit_changed (GtkIMContext    *context,
-                                                 GimpTextTool    *text_tool);
+                                                 PicmanTextTool    *text_tool);
+static void   picman_text_tool_im_preedit_start   (GtkIMContext    *context,
+                                                 PicmanTextTool    *text_tool);
+static void   picman_text_tool_im_preedit_end     (GtkIMContext    *context,
+                                                 PicmanTextTool    *text_tool);
+static void   picman_text_tool_im_preedit_changed (GtkIMContext    *context,
+                                                 PicmanTextTool    *text_tool);
 
 
 /*  public functions  */
 
 void
-gimp_text_tool_editor_init (GimpTextTool *text_tool)
+picman_text_tool_editor_init (PicmanTextTool *text_tool)
 {
   text_tool->im_context     = gtk_im_multicontext_new ();
   text_tool->needs_im_reset = FALSE;
@@ -117,22 +117,22 @@ gimp_text_tool_editor_init (GimpTextTool *text_tool)
   text_tool->x_pos          = -1;
 
   g_signal_connect (text_tool->im_context, "commit",
-                    G_CALLBACK (gimp_text_tool_im_commit),
+                    G_CALLBACK (picman_text_tool_im_commit),
                     text_tool);
   g_signal_connect (text_tool->im_context, "preedit-start",
-                    G_CALLBACK (gimp_text_tool_im_preedit_start),
+                    G_CALLBACK (picman_text_tool_im_preedit_start),
                     text_tool);
   g_signal_connect (text_tool->im_context, "preedit-end",
-                    G_CALLBACK (gimp_text_tool_im_preedit_end),
+                    G_CALLBACK (picman_text_tool_im_preedit_end),
                     text_tool);
   g_signal_connect (text_tool->im_context, "preedit-changed",
-                    G_CALLBACK (gimp_text_tool_im_preedit_changed),
+                    G_CALLBACK (picman_text_tool_im_preedit_changed),
                     text_tool);
 
 }
 
 void
-gimp_text_tool_editor_finalize (GimpTextTool *text_tool)
+picman_text_tool_editor_finalize (PicmanTextTool *text_tool)
 {
   if (text_tool->im_context)
     {
@@ -142,67 +142,67 @@ gimp_text_tool_editor_finalize (GimpTextTool *text_tool)
 }
 
 void
-gimp_text_tool_editor_start (GimpTextTool *text_tool)
+picman_text_tool_editor_start (PicmanTextTool *text_tool)
 {
-  GimpTool         *tool    = GIMP_TOOL (text_tool);
-  GimpTextOptions  *options = GIMP_TEXT_TOOL_GET_OPTIONS (text_tool);
-  GimpDisplayShell *shell   = gimp_display_get_shell (tool->display);
+  PicmanTool         *tool    = PICMAN_TOOL (text_tool);
+  PicmanTextOptions  *options = PICMAN_TEXT_TOOL_GET_OPTIONS (text_tool);
+  PicmanDisplayShell *shell   = picman_display_get_shell (tool->display);
 
   gtk_im_context_set_client_window (text_tool->im_context,
                                     gtk_widget_get_window (shell->canvas));
 
   text_tool->needs_im_reset = TRUE;
-  gimp_text_tool_reset_im_context (text_tool);
+  picman_text_tool_reset_im_context (text_tool);
 
   gtk_im_context_focus_in (text_tool->im_context);
 
   if (options->use_editor)
-    gimp_text_tool_editor_dialog (text_tool);
+    picman_text_tool_editor_dialog (text_tool);
 
   g_signal_connect (options, "notify::use-editor",
-                    G_CALLBACK (gimp_text_tool_options_notify),
+                    G_CALLBACK (picman_text_tool_options_notify),
                     text_tool);
 
   if (! text_tool->style_overlay)
     {
-      Gimp    *gimp = GIMP_CONTEXT (options)->gimp;
+      Picman    *picman = PICMAN_CONTEXT (options)->picman;
       gdouble  xres = 1.0;
       gdouble  yres = 1.0;
 
-      text_tool->style_overlay = gimp_overlay_frame_new ();
+      text_tool->style_overlay = picman_overlay_frame_new ();
       gtk_container_set_border_width (GTK_CONTAINER (text_tool->style_overlay),
                                       4);
-      gimp_display_shell_add_overlay (shell,
+      picman_display_shell_add_overlay (shell,
                                       text_tool->style_overlay,
                                       0, 0,
-                                      GIMP_HANDLE_ANCHOR_CENTER, 0, 0);
-      gimp_overlay_box_set_child_opacity (GIMP_OVERLAY_BOX (shell->canvas),
+                                      PICMAN_HANDLE_ANCHOR_CENTER, 0, 0);
+      picman_overlay_box_set_child_opacity (PICMAN_OVERLAY_BOX (shell->canvas),
                                           text_tool->style_overlay, 0.7);
 
       if (text_tool->image)
-        gimp_image_get_resolution (text_tool->image, &xres, &yres);
+        picman_image_get_resolution (text_tool->image, &xres, &yres);
 
-      text_tool->style_editor = gimp_text_style_editor_new (gimp,
+      text_tool->style_editor = picman_text_style_editor_new (picman,
                                                             text_tool->proxy,
                                                             text_tool->buffer,
-                                                            gimp->fonts,
+                                                            picman->fonts,
                                                             xres, yres);
       gtk_container_add (GTK_CONTAINER (text_tool->style_overlay),
                          text_tool->style_editor);
       gtk_widget_show (text_tool->style_editor);
     }
 
-  gimp_text_tool_editor_position (text_tool);
+  picman_text_tool_editor_position (text_tool);
   gtk_widget_show (text_tool->style_overlay);
 }
 
 void
-gimp_text_tool_editor_position (GimpTextTool *text_tool)
+picman_text_tool_editor_position (PicmanTextTool *text_tool)
 {
   if (text_tool->style_overlay)
     {
-      GimpTool         *tool    = GIMP_TOOL (text_tool);
-      GimpDisplayShell *shell   = gimp_display_get_shell (tool->display);
+      PicmanTool         *tool    = PICMAN_TOOL (text_tool);
+      PicmanDisplayShell *shell   = picman_display_get_shell (tool->display);
       GtkRequisition    requisition;
       gint              x, y;
 
@@ -213,16 +213,16 @@ gimp_text_tool_editor_position (GimpTextTool *text_tool)
                     "y1", &y,
                     NULL);
 
-      gimp_display_shell_move_overlay (shell,
+      picman_display_shell_move_overlay (shell,
                                        text_tool->style_overlay,
                                        x, y,
-                                       GIMP_HANDLE_ANCHOR_SOUTH_WEST, 4, 12);
+                                       PICMAN_HANDLE_ANCHOR_SOUTH_WEST, 4, 12);
 
       if (text_tool->image)
         {
           gdouble xres, yres;
 
-          gimp_image_get_resolution (text_tool->image, &xres, &yres);
+          picman_image_get_resolution (text_tool->image, &xres, &yres);
 
           g_object_set (text_tool->style_editor,
                         "resolution-x", xres,
@@ -233,9 +233,9 @@ gimp_text_tool_editor_position (GimpTextTool *text_tool)
 }
 
 void
-gimp_text_tool_editor_halt (GimpTextTool *text_tool)
+picman_text_tool_editor_halt (PicmanTextTool *text_tool)
 {
-  GimpTextOptions *options = GIMP_TEXT_TOOL_GET_OPTIONS (text_tool);
+  PicmanTextOptions *options = PICMAN_TEXT_TOOL_GET_OPTIONS (text_tool);
 
   if (text_tool->style_overlay)
     {
@@ -245,13 +245,13 @@ gimp_text_tool_editor_halt (GimpTextTool *text_tool)
     }
 
   g_signal_handlers_disconnect_by_func (options,
-                                        gimp_text_tool_options_notify,
+                                        picman_text_tool_options_notify,
                                         text_tool);
 
   if (text_tool->editor_dialog)
     {
       g_signal_handlers_disconnect_by_func (text_tool->editor_dialog,
-                                            gimp_text_tool_editor_destroy,
+                                            picman_text_tool_editor_destroy,
                                             text_tool);
       gtk_widget_destroy (text_tool->editor_dialog);
     }
@@ -264,7 +264,7 @@ gimp_text_tool_editor_halt (GimpTextTool *text_tool)
     }
 
   text_tool->needs_im_reset = TRUE;
-  gimp_text_tool_reset_im_context (text_tool);
+  picman_text_tool_reset_im_context (text_tool);
 
   gtk_im_context_focus_out (text_tool->im_context);
 
@@ -272,16 +272,16 @@ gimp_text_tool_editor_halt (GimpTextTool *text_tool)
 }
 
 void
-gimp_text_tool_editor_button_press (GimpTextTool        *text_tool,
+picman_text_tool_editor_button_press (PicmanTextTool        *text_tool,
                                     gdouble              x,
                                     gdouble              y,
-                                    GimpButtonPressType  press_type)
+                                    PicmanButtonPressType  press_type)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (text_tool->buffer);
   GtkTextIter    cursor;
   GtkTextIter    selection;
 
-  gimp_text_tool_xy_to_iter (text_tool, x, y, &cursor);
+  picman_text_tool_xy_to_iter (text_tool, x, y, &cursor);
 
   selection = cursor;
 
@@ -291,11 +291,11 @@ gimp_text_tool_editor_button_press (GimpTextTool        *text_tool,
 
   switch (press_type)
     {
-    case GIMP_BUTTON_PRESS_NORMAL:
+    case PICMAN_BUTTON_PRESS_NORMAL:
       gtk_text_buffer_place_cursor (buffer, &cursor);
       break;
 
-    case GIMP_BUTTON_PRESS_DOUBLE:
+    case PICMAN_BUTTON_PRESS_DOUBLE:
       text_tool->select_words = TRUE;
 
       if (! gtk_text_iter_starts_word (&cursor))
@@ -308,7 +308,7 @@ gimp_text_tool_editor_button_press (GimpTextTool        *text_tool,
       gtk_text_buffer_select_range (buffer, &cursor, &selection);
       break;
 
-    case GIMP_BUTTON_PRESS_TRIPLE:
+    case PICMAN_BUTTON_PRESS_TRIPLE:
       text_tool->select_lines = TRUE;
 
       gtk_text_iter_set_line_offset (&cursor, 0);
@@ -320,14 +320,14 @@ gimp_text_tool_editor_button_press (GimpTextTool        *text_tool,
 }
 
 void
-gimp_text_tool_editor_button_release (GimpTextTool *text_tool)
+picman_text_tool_editor_button_release (PicmanTextTool *text_tool)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (text_tool->buffer);
 
   if (gtk_text_buffer_get_has_selection (buffer))
     {
-      GimpTool         *tool  = GIMP_TOOL (text_tool);
-      GimpDisplayShell *shell = gimp_display_get_shell (tool->display);
+      PicmanTool         *tool  = PICMAN_TOOL (text_tool);
+      PicmanDisplayShell *shell = picman_display_get_shell (tool->display);
       GtkClipboard     *clipboard;
 
       clipboard = gtk_widget_get_clipboard (GTK_WIDGET (shell),
@@ -338,7 +338,7 @@ gimp_text_tool_editor_button_release (GimpTextTool *text_tool)
 }
 
 void
-gimp_text_tool_editor_motion (GimpTextTool *text_tool,
+picman_text_tool_editor_motion (PicmanTextTool *text_tool,
                               gdouble       x,
                               gdouble       y)
 {
@@ -353,7 +353,7 @@ gimp_text_tool_editor_motion (GimpTextTool *text_tool,
   gtk_text_buffer_get_iter_at_mark (buffer, &old_selection,
                                     gtk_text_buffer_get_selection_bound (buffer));
 
-  gimp_text_tool_xy_to_iter (text_tool, x, y, &cursor);
+  picman_text_tool_xy_to_iter (text_tool, x, y, &cursor);
   selection = text_tool->select_start_iter;
 
   if (text_tool->select_words ||
@@ -403,20 +403,20 @@ gimp_text_tool_editor_motion (GimpTextTool *text_tool,
   if (! gtk_text_iter_equal (&cursor,    &old_cursor) ||
       ! gtk_text_iter_equal (&selection, &old_selection))
     {
-      gimp_draw_tool_pause (GIMP_DRAW_TOOL (text_tool));
+      picman_draw_tool_pause (PICMAN_DRAW_TOOL (text_tool));
 
       gtk_text_buffer_select_range (buffer, &cursor, &selection);
 
-      gimp_draw_tool_resume (GIMP_DRAW_TOOL (text_tool));
+      picman_draw_tool_resume (PICMAN_DRAW_TOOL (text_tool));
     }
 }
 
 gboolean
-gimp_text_tool_editor_key_press (GimpTextTool *text_tool,
+picman_text_tool_editor_key_press (PicmanTextTool *text_tool,
                                  GdkEventKey  *kevent)
 {
-  GimpTool         *tool   = GIMP_TOOL (text_tool);
-  GimpDisplayShell *shell  = gimp_display_get_shell (tool->display);
+  PicmanTool         *tool   = PICMAN_TOOL (text_tool);
+  PicmanDisplayShell *shell  = picman_display_get_shell (tool->display);
   GtkTextBuffer    *buffer = GTK_TEXT_BUFFER (text_tool->buffer);
   GtkTextIter       cursor;
   GtkTextIter       selection;
@@ -449,12 +449,12 @@ gimp_text_tool_editor_key_press (GimpTextTool *text_tool,
       return TRUE;
     }
 
-  gimp_text_tool_ensure_proxy (text_tool);
+  picman_text_tool_ensure_proxy (text_tool);
 
   if (gtk_bindings_activate_event (GTK_OBJECT (text_tool->proxy_text_view),
                                    kevent))
     {
-      GIMP_LOG (TEXT_EDITING, "binding handled event");
+      PICMAN_LOG (TEXT_EDITING, "binding handled event");
 
       return TRUE;
     }
@@ -469,21 +469,21 @@ gimp_text_tool_editor_key_press (GimpTextTool *text_tool,
     case GDK_KEY_Return:
     case GDK_KEY_KP_Enter:
     case GDK_KEY_ISO_Enter:
-      gimp_text_tool_reset_im_context (text_tool);
-      gimp_text_tool_enter_text (text_tool, "\n");
+      picman_text_tool_reset_im_context (text_tool);
+      picman_text_tool_enter_text (text_tool, "\n");
       break;
 
     case GDK_KEY_Tab:
     case GDK_KEY_KP_Tab:
     case GDK_KEY_ISO_Left_Tab:
-      gimp_text_tool_reset_im_context (text_tool);
-      gimp_text_tool_enter_text (text_tool, "\t");
+      picman_text_tool_reset_im_context (text_tool);
+      picman_text_tool_enter_text (text_tool, "\t");
       break;
 
     case GDK_KEY_Escape:
-      gimp_rectangle_tool_cancel (GIMP_RECTANGLE_TOOL (text_tool));
-      gimp_tool_control (GIMP_TOOL (text_tool), GIMP_TOOL_ACTION_HALT,
-                         GIMP_TOOL (text_tool)->display);
+      picman_rectangle_tool_cancel (PICMAN_RECTANGLE_TOOL (text_tool));
+      picman_tool_control (PICMAN_TOOL (text_tool), PICMAN_TOOL_ACTION_HALT,
+                         PICMAN_TOOL (text_tool)->display);
       break;
 
     default:
@@ -496,7 +496,7 @@ gimp_text_tool_editor_key_press (GimpTextTool *text_tool,
 }
 
 gboolean
-gimp_text_tool_editor_key_release (GimpTextTool *text_tool,
+picman_text_tool_editor_key_release (PicmanTextTool *text_tool,
                                    GdkEventKey  *kevent)
 {
   if (gtk_im_context_filter_keypress (text_tool->im_context, kevent))
@@ -506,12 +506,12 @@ gimp_text_tool_editor_key_release (GimpTextTool *text_tool,
       return TRUE;
     }
 
-  gimp_text_tool_ensure_proxy (text_tool);
+  picman_text_tool_ensure_proxy (text_tool);
 
   if (gtk_bindings_activate_event (GTK_OBJECT (text_tool->proxy_text_view),
                                    kevent))
     {
-      GIMP_LOG (TEXT_EDITING, "binding handled event");
+      PICMAN_LOG (TEXT_EDITING, "binding handled event");
 
       return TRUE;
     }
@@ -520,7 +520,7 @@ gimp_text_tool_editor_key_release (GimpTextTool *text_tool,
 }
 
 void
-gimp_text_tool_reset_im_context (GimpTextTool *text_tool)
+picman_text_tool_reset_im_context (PicmanTextTool *text_tool)
 {
   if (text_tool->needs_im_reset)
     {
@@ -530,7 +530,7 @@ gimp_text_tool_reset_im_context (GimpTextTool *text_tool)
 }
 
 void
-gimp_text_tool_editor_get_cursor_rect (GimpTextTool   *text_tool,
+picman_text_tool_editor_get_cursor_rect (PicmanTextTool   *text_tool,
                                        gboolean        overwrite,
                                        PangoRectangle *cursor_rect)
 {
@@ -541,26 +541,26 @@ gimp_text_tool_editor_get_cursor_rect (GimpTextTool   *text_tool,
   GtkTextIter    cursor;
   gint           cursor_index;
 
-  g_return_if_fail (GIMP_IS_TEXT_TOOL (text_tool));
+  g_return_if_fail (PICMAN_IS_TEXT_TOOL (text_tool));
   g_return_if_fail (cursor_rect != NULL);
 
   gtk_text_buffer_get_iter_at_mark (buffer, &cursor,
                                     gtk_text_buffer_get_insert (buffer));
-  cursor_index = gimp_text_buffer_get_iter_index (text_tool->buffer, &cursor,
+  cursor_index = picman_text_buffer_get_iter_index (text_tool->buffer, &cursor,
                                                   TRUE);
 
-  gimp_text_tool_ensure_layout (text_tool);
+  picman_text_tool_ensure_layout (text_tool);
 
-  layout = gimp_text_layout_get_pango_layout (text_tool->layout);
+  layout = picman_text_layout_get_pango_layout (text_tool->layout);
 
-  gimp_text_layout_get_offsets (text_tool->layout, &offset_x, &offset_y);
+  picman_text_layout_get_offsets (text_tool->layout, &offset_x, &offset_y);
 
   if (overwrite)
     pango_layout_index_to_pos (layout, cursor_index, cursor_rect);
   else
     pango_layout_get_cursor_pos (layout, cursor_index, cursor_rect, NULL);
 
-  gimp_text_layout_transform_rect (text_tool->layout, cursor_rect);
+  picman_text_layout_transform_rect (text_tool->layout, cursor_rect);
 
   cursor_rect->x      = PANGO_PIXELS (cursor_rect->x) + offset_x;
   cursor_rect->y      = PANGO_PIXELS (cursor_rect->y) + offset_y;
@@ -572,10 +572,10 @@ gimp_text_tool_editor_get_cursor_rect (GimpTextTool   *text_tool,
 /*  private functions  */
 
 static void
-gimp_text_tool_ensure_proxy (GimpTextTool *text_tool)
+picman_text_tool_ensure_proxy (PicmanTextTool *text_tool)
 {
-  GimpTool         *tool  = GIMP_TOOL (text_tool);
-  GimpDisplayShell *shell = gimp_display_get_shell (tool->display);
+  PicmanTool         *tool  = PICMAN_TOOL (text_tool);
+  PicmanDisplayShell *shell = picman_display_get_shell (tool->display);
 
   if (text_tool->offscreen_window &&
       gtk_widget_get_screen (text_tool->offscreen_window) !=
@@ -593,52 +593,52 @@ gimp_text_tool_ensure_proxy (GimpTextTool *text_tool)
       gtk_window_move (GTK_WINDOW (text_tool->offscreen_window), -200, -200);
       gtk_widget_show (text_tool->offscreen_window);
 
-      text_tool->proxy_text_view = gimp_text_proxy_new ();
+      text_tool->proxy_text_view = picman_text_proxy_new ();
       gtk_container_add (GTK_CONTAINER (text_tool->offscreen_window),
                          text_tool->proxy_text_view);
       gtk_widget_show (text_tool->proxy_text_view);
 
       g_signal_connect_swapped (text_tool->proxy_text_view, "move-cursor",
-                                G_CALLBACK (gimp_text_tool_move_cursor),
+                                G_CALLBACK (picman_text_tool_move_cursor),
                                 text_tool);
       g_signal_connect_swapped (text_tool->proxy_text_view, "insert-at-cursor",
-                                G_CALLBACK (gimp_text_tool_insert_at_cursor),
+                                G_CALLBACK (picman_text_tool_insert_at_cursor),
                                 text_tool);
       g_signal_connect_swapped (text_tool->proxy_text_view, "delete-from-cursor",
-                                G_CALLBACK (gimp_text_tool_delete_from_cursor),
+                                G_CALLBACK (picman_text_tool_delete_from_cursor),
                                 text_tool);
       g_signal_connect_swapped (text_tool->proxy_text_view, "backspace",
-                                G_CALLBACK (gimp_text_tool_backspace),
+                                G_CALLBACK (picman_text_tool_backspace),
                                 text_tool);
       g_signal_connect_swapped (text_tool->proxy_text_view, "cut-clipboard",
-                                G_CALLBACK (gimp_text_tool_cut_clipboard),
+                                G_CALLBACK (picman_text_tool_cut_clipboard),
                                 text_tool);
       g_signal_connect_swapped (text_tool->proxy_text_view, "copy-clipboard",
-                                G_CALLBACK (gimp_text_tool_copy_clipboard),
+                                G_CALLBACK (picman_text_tool_copy_clipboard),
                                 text_tool);
       g_signal_connect_swapped (text_tool->proxy_text_view, "paste-clipboard",
-                                G_CALLBACK (gimp_text_tool_paste_clipboard),
+                                G_CALLBACK (picman_text_tool_paste_clipboard),
                                 text_tool);
       g_signal_connect_swapped (text_tool->proxy_text_view, "toggle-overwrite",
-                                G_CALLBACK (gimp_text_tool_toggle_overwrite),
+                                G_CALLBACK (picman_text_tool_toggle_overwrite),
                                 text_tool);
       g_signal_connect_swapped (text_tool->proxy_text_view, "select-all",
-                                G_CALLBACK (gimp_text_tool_select_all),
+                                G_CALLBACK (picman_text_tool_select_all),
                                 text_tool);
       g_signal_connect_swapped (text_tool->proxy_text_view, "change-size",
-                                G_CALLBACK (gimp_text_tool_change_size),
+                                G_CALLBACK (picman_text_tool_change_size),
                                 text_tool);
       g_signal_connect_swapped (text_tool->proxy_text_view, "change-baseline",
-                                G_CALLBACK (gimp_text_tool_change_baseline),
+                                G_CALLBACK (picman_text_tool_change_baseline),
                                 text_tool);
       g_signal_connect_swapped (text_tool->proxy_text_view, "change-kerning",
-                                G_CALLBACK (gimp_text_tool_change_kerning),
+                                G_CALLBACK (picman_text_tool_change_kerning),
                                 text_tool);
     }
 }
 
 static void
-gimp_text_tool_move_cursor (GimpTextTool    *text_tool,
+picman_text_tool_move_cursor (PicmanTextTool    *text_tool,
                             GtkMovementStep  step,
                             gint             count,
                             gboolean         extend_selection)
@@ -650,7 +650,7 @@ gimp_text_tool_move_cursor (GimpTextTool    *text_tool,
   gboolean       cancel_selection = FALSE;
   gint           x_pos  = -1;
 
-  GIMP_LOG (TEXT_EDITING, "%s count = %d, select = %s",
+  PICMAN_LOG (TEXT_EDITING, "%s count = %d, select = %s",
             g_enum_get_value (g_type_class_ref (GTK_TYPE_MOVEMENT_STEP),
                               step)->value_name,
             count,
@@ -699,10 +699,10 @@ gimp_text_tool_move_cursor (GimpTextTool    *text_tool,
           PangoLayout *layout;
           const gchar *text;
 
-          if (! gimp_text_tool_ensure_layout (text_tool))
+          if (! picman_text_tool_ensure_layout (text_tool))
             break;
 
-          layout = gimp_text_layout_get_pango_layout (text_tool->layout);
+          layout = picman_text_layout_get_pango_layout (text_tool->layout);
           text = pango_layout_get_text (layout);
 
           while (count != 0)
@@ -712,7 +712,7 @@ gimp_text_tool_move_cursor (GimpTextTool    *text_tool,
               gint trailing = 0;
               gint new_index;
 
-              index = gimp_text_buffer_get_iter_index (text_tool->buffer,
+              index = picman_text_buffer_get_iter_index (text_tool->buffer,
                                                        &cursor, TRUE);
 
               if (count > 0)
@@ -751,7 +751,7 @@ gimp_text_tool_move_cursor (GimpTextTool    *text_tool,
               else
                 break;
 
-              gimp_text_buffer_get_iter_at_index (text_tool->buffer,
+              picman_text_buffer_get_iter_at_index (text_tool->buffer,
                                                   &cursor, index, TRUE);
               gtk_text_iter_forward_chars (&cursor, trailing);
             }
@@ -785,13 +785,13 @@ gimp_text_tool_move_cursor (GimpTextTool    *text_tool,
 
         gtk_text_buffer_get_bounds (buffer, &start, &end);
 
-        cursor_index = gimp_text_buffer_get_iter_index (text_tool->buffer,
+        cursor_index = picman_text_buffer_get_iter_index (text_tool->buffer,
                                                         &cursor, TRUE);
 
-        if (! gimp_text_tool_ensure_layout (text_tool))
+        if (! picman_text_tool_ensure_layout (text_tool))
           break;
 
-        layout = gimp_text_layout_get_pango_layout (text_tool->layout);
+        layout = picman_text_layout_get_pango_layout (text_tool->layout);
 
         pango_layout_index_to_line_x (layout, cursor_index, FALSE,
                                       &line, &x_pos);
@@ -838,7 +838,7 @@ gimp_text_tool_move_cursor (GimpTextTool    *text_tool,
         pango_layout_line_x_to_index (layout_line, x_pos - logical.x,
                                       &cursor_index, &trailing);
 
-        gimp_text_buffer_get_iter_at_index (text_tool->buffer, &cursor,
+        picman_text_buffer_get_iter_at_index (text_tool->buffer, &cursor,
                                             cursor_index, TRUE);
 
         while (trailing--)
@@ -888,20 +888,20 @@ gimp_text_tool_move_cursor (GimpTextTool    *text_tool,
 
   text_tool->x_pos = x_pos;
 
-  gimp_draw_tool_pause (GIMP_DRAW_TOOL (text_tool));
+  picman_draw_tool_pause (PICMAN_DRAW_TOOL (text_tool));
 
-  gimp_text_tool_reset_im_context (text_tool);
+  picman_text_tool_reset_im_context (text_tool);
 
   gtk_text_buffer_select_range (buffer, &cursor, sel_start);
 
-  gimp_draw_tool_resume (GIMP_DRAW_TOOL (text_tool));
+  picman_draw_tool_resume (PICMAN_DRAW_TOOL (text_tool));
 }
 
 static void
-gimp_text_tool_insert_at_cursor (GimpTextTool *text_tool,
+picman_text_tool_insert_at_cursor (PicmanTextTool *text_tool,
                                  const gchar  *str)
 {
-  gimp_text_buffer_insert (text_tool->buffer, str);
+  picman_text_buffer_insert (text_tool->buffer, str);
 }
 
 static gboolean
@@ -936,7 +936,7 @@ find_whitepace_region (const GtkTextIter *center,
 }
 
 static void
-gimp_text_tool_delete_from_cursor (GimpTextTool  *text_tool,
+picman_text_tool_delete_from_cursor (PicmanTextTool  *text_tool,
                                    GtkDeleteType  type,
                                    gint           count)
 {
@@ -944,12 +944,12 @@ gimp_text_tool_delete_from_cursor (GimpTextTool  *text_tool,
   GtkTextIter    cursor;
   GtkTextIter    end;
 
-  GIMP_LOG (TEXT_EDITING, "%s count = %d",
+  PICMAN_LOG (TEXT_EDITING, "%s count = %d",
             g_enum_get_value (g_type_class_ref (GTK_TYPE_DELETE_TYPE),
                               type)->value_name,
             count);
 
-  gimp_text_tool_reset_im_context (text_tool);
+  picman_text_tool_reset_im_context (text_tool);
 
   gtk_text_buffer_get_iter_at_mark (buffer, &cursor,
                                     gtk_text_buffer_get_insert (buffer));
@@ -1027,11 +1027,11 @@ gimp_text_tool_delete_from_cursor (GimpTextTool  *text_tool,
 }
 
 static void
-gimp_text_tool_backspace (GimpTextTool *text_tool)
+picman_text_tool_backspace (PicmanTextTool *text_tool)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (text_tool->buffer);
 
-  gimp_text_tool_reset_im_context (text_tool);
+  picman_text_tool_reset_im_context (text_tool);
 
   if (gtk_text_buffer_get_has_selection (buffer))
     {
@@ -1049,22 +1049,22 @@ gimp_text_tool_backspace (GimpTextTool *text_tool)
 }
 
 static void
-gimp_text_tool_toggle_overwrite (GimpTextTool *text_tool)
+picman_text_tool_toggle_overwrite (PicmanTextTool *text_tool)
 {
-  gimp_draw_tool_pause (GIMP_DRAW_TOOL (text_tool));
+  picman_draw_tool_pause (PICMAN_DRAW_TOOL (text_tool));
 
   text_tool->overwrite_mode = ! text_tool->overwrite_mode;
 
-  gimp_draw_tool_resume (GIMP_DRAW_TOOL (text_tool));
+  picman_draw_tool_resume (PICMAN_DRAW_TOOL (text_tool));
 }
 
 static void
-gimp_text_tool_select_all (GimpTextTool *text_tool,
+picman_text_tool_select_all (PicmanTextTool *text_tool,
                            gboolean      select)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (text_tool->buffer);
 
-  gimp_draw_tool_pause (GIMP_DRAW_TOOL (text_tool));
+  picman_draw_tool_pause (PICMAN_DRAW_TOOL (text_tool));
 
   if (select)
     {
@@ -1082,11 +1082,11 @@ gimp_text_tool_select_all (GimpTextTool *text_tool,
       gtk_text_buffer_move_mark_by_name (buffer, "selection_bound", &cursor);
     }
 
-  gimp_draw_tool_resume (GIMP_DRAW_TOOL (text_tool));
+  picman_draw_tool_resume (PICMAN_DRAW_TOOL (text_tool));
 }
 
 static void
-gimp_text_tool_change_size (GimpTextTool *text_tool,
+picman_text_tool_change_size (PicmanTextTool *text_tool,
                             gdouble       amount)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (text_tool->buffer);
@@ -1099,12 +1099,12 @@ gimp_text_tool_change_size (GimpTextTool *text_tool,
     }
 
   gtk_text_iter_order (&start, &end);
-  gimp_text_buffer_change_size (text_tool->buffer, &start, &end,
+  picman_text_buffer_change_size (text_tool->buffer, &start, &end,
                                 amount * PANGO_SCALE);
 }
 
 static void
-gimp_text_tool_change_baseline (GimpTextTool *text_tool,
+picman_text_tool_change_baseline (PicmanTextTool *text_tool,
                                 gdouble       amount)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (text_tool->buffer);
@@ -1119,12 +1119,12 @@ gimp_text_tool_change_baseline (GimpTextTool *text_tool,
     }
 
   gtk_text_iter_order (&start, &end);
-  gimp_text_buffer_change_baseline (text_tool->buffer, &start, &end,
+  picman_text_buffer_change_baseline (text_tool->buffer, &start, &end,
                                     amount * PANGO_SCALE);
 }
 
 static void
-gimp_text_tool_change_kerning (GimpTextTool *text_tool,
+picman_text_tool_change_kerning (PicmanTextTool *text_tool,
                                gdouble       amount)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (text_tool->buffer);
@@ -1140,14 +1140,14 @@ gimp_text_tool_change_kerning (GimpTextTool *text_tool,
     }
 
   gtk_text_iter_order (&start, &end);
-  gimp_text_buffer_change_kerning (text_tool->buffer, &start, &end,
+  picman_text_buffer_change_kerning (text_tool->buffer, &start, &end,
                                    amount * PANGO_SCALE);
 }
 
 static void
-gimp_text_tool_options_notify (GimpTextOptions *options,
+picman_text_tool_options_notify (PicmanTextOptions *options,
                                GParamSpec      *pspec,
-                               GimpTextTool    *text_tool)
+                               PicmanTextTool    *text_tool)
 {
   const gchar *param_name = g_param_spec_get_name (pspec);
 
@@ -1155,7 +1155,7 @@ gimp_text_tool_options_notify (GimpTextOptions *options,
     {
       if (options->use_editor)
         {
-          gimp_text_tool_editor_dialog (text_tool);
+          picman_text_tool_editor_dialog (text_tool);
         }
       else
         {
@@ -1166,11 +1166,11 @@ gimp_text_tool_options_notify (GimpTextOptions *options,
 }
 
 static void
-gimp_text_tool_editor_dialog (GimpTextTool *text_tool)
+picman_text_tool_editor_dialog (PicmanTextTool *text_tool)
 {
-  GimpTool          *tool    = GIMP_TOOL (text_tool);
-  GimpTextOptions   *options = GIMP_TEXT_TOOL_GET_OPTIONS (text_tool);
-  GimpDialogFactory *dialog_factory;
+  PicmanTool          *tool    = PICMAN_TOOL (text_tool);
+  PicmanTextOptions   *options = PICMAN_TEXT_TOOL_GET_OPTIONS (text_tool);
+  PicmanDialogFactory *dialog_factory;
   GtkWindow         *parent  = NULL;
   gdouble            xres    = 1.0;
   gdouble            yres    = 1.0;
@@ -1181,44 +1181,44 @@ gimp_text_tool_editor_dialog (GimpTextTool *text_tool)
       return;
     }
 
-  dialog_factory = gimp_dialog_factory_get_singleton ();
+  dialog_factory = picman_dialog_factory_get_singleton ();
 
   if (tool->display)
     {
-      GimpDisplayShell *shell = gimp_display_get_shell (tool->display);
+      PicmanDisplayShell *shell = picman_display_get_shell (tool->display);
 
       parent = GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (shell)));
     }
 
   if (text_tool->image)
-    gimp_image_get_resolution (text_tool->image, &xres, &yres);
+    picman_image_get_resolution (text_tool->image, &xres, &yres);
 
   text_tool->editor_dialog =
-    gimp_text_options_editor_new (parent, tool->tool_info->gimp, options,
-                                  gimp_dialog_factory_get_menu_factory (dialog_factory),
-                                  _("GIMP Text Editor"),
+    picman_text_options_editor_new (parent, tool->tool_info->picman, options,
+                                  picman_dialog_factory_get_menu_factory (dialog_factory),
+                                  _("PICMAN Text Editor"),
                                   text_tool->proxy, text_tool->buffer,
                                   xres, yres);
 
   g_object_add_weak_pointer (G_OBJECT (text_tool->editor_dialog),
                              (gpointer) &text_tool->editor_dialog);
 
-  gimp_dialog_factory_add_foreign (dialog_factory,
-                                   "gimp-text-tool-dialog",
+  picman_dialog_factory_add_foreign (dialog_factory,
+                                   "picman-text-tool-dialog",
                                    text_tool->editor_dialog);
 
   g_signal_connect (text_tool->editor_dialog, "destroy",
-                    G_CALLBACK (gimp_text_tool_editor_destroy),
+                    G_CALLBACK (picman_text_tool_editor_destroy),
                     text_tool);
 
   gtk_widget_show (text_tool->editor_dialog);
 }
 
 static void
-gimp_text_tool_editor_destroy (GtkWidget    *dialog,
-                               GimpTextTool *text_tool)
+picman_text_tool_editor_destroy (GtkWidget    *dialog,
+                               PicmanTextTool *text_tool)
 {
-  GimpTextOptions *options = GIMP_TEXT_TOOL_GET_OPTIONS (text_tool);
+  PicmanTextOptions *options = PICMAN_TEXT_TOOL_GET_OPTIONS (text_tool);
 
   g_object_set (options,
                 "use-editor", FALSE,
@@ -1226,7 +1226,7 @@ gimp_text_tool_editor_destroy (GtkWidget    *dialog,
 }
 
 static void
-gimp_text_tool_enter_text (GimpTextTool *text_tool,
+picman_text_tool_enter_text (PicmanTextTool *text_tool,
                            const gchar  *str)
 {
   GtkTextBuffer *buffer = GTK_TEXT_BUFFER (text_tool->buffer);
@@ -1236,7 +1236,7 @@ gimp_text_tool_enter_text (GimpTextTool *text_tool,
 
   gtk_text_buffer_begin_user_action (buffer);
 
-  gimp_text_tool_delete_selection (text_tool);
+  picman_text_tool_delete_selection (text_tool);
 
   if (! had_selection && text_tool->overwrite_mode && strcmp (str, "\n"))
     {
@@ -1246,16 +1246,16 @@ gimp_text_tool_enter_text (GimpTextTool *text_tool,
                                         gtk_text_buffer_get_insert (buffer));
 
       if (! gtk_text_iter_ends_line (&cursor))
-        gimp_text_tool_delete_from_cursor (text_tool, GTK_DELETE_CHARS, 1);
+        picman_text_tool_delete_from_cursor (text_tool, GTK_DELETE_CHARS, 1);
     }
 
-  gimp_text_buffer_insert (text_tool->buffer, str);
+  picman_text_buffer_insert (text_tool->buffer, str);
 
   gtk_text_buffer_end_user_action (buffer);
 }
 
 static void
-gimp_text_tool_xy_to_iter (GimpTextTool *text_tool,
+picman_text_tool_xy_to_iter (PicmanTextTool *text_tool,
                            gdouble       x,
                            gdouble       y,
                            GtkTextIter  *iter)
@@ -1266,41 +1266,41 @@ gimp_text_tool_xy_to_iter (GimpTextTool *text_tool,
   gint         index;
   gint         trailing;
 
-  gimp_text_tool_ensure_layout (text_tool);
+  picman_text_tool_ensure_layout (text_tool);
 
-  gimp_text_layout_untransform_point (text_tool->layout, &x, &y);
+  picman_text_layout_untransform_point (text_tool->layout, &x, &y);
 
-  gimp_text_layout_get_offsets (text_tool->layout, &offset_x, &offset_y);
+  picman_text_layout_get_offsets (text_tool->layout, &offset_x, &offset_y);
   x -= offset_x;
   y -= offset_y;
 
-  layout = gimp_text_layout_get_pango_layout (text_tool->layout);
+  layout = picman_text_layout_get_pango_layout (text_tool->layout);
 
   pango_layout_xy_to_index (layout,
                             x * PANGO_SCALE,
                             y * PANGO_SCALE,
                             &index, &trailing);
 
-  gimp_text_buffer_get_iter_at_index (text_tool->buffer, iter, index, TRUE);
+  picman_text_buffer_get_iter_at_index (text_tool->buffer, iter, index, TRUE);
 
   if (trailing)
     gtk_text_iter_forward_char (iter);
 }
 
 static void
-gimp_text_tool_im_commit (GtkIMContext *context,
+picman_text_tool_im_commit (GtkIMContext *context,
                           const gchar  *str,
-                          GimpTextTool *text_tool)
+                          PicmanTextTool *text_tool)
 {
-  gimp_text_tool_enter_text (text_tool, str);
+  picman_text_tool_enter_text (text_tool, str);
 }
 
 static void
-gimp_text_tool_im_preedit_start (GtkIMContext *context,
-                                 GimpTextTool *text_tool)
+picman_text_tool_im_preedit_start (GtkIMContext *context,
+                                 PicmanTextTool *text_tool)
 {
-  GimpTool         *tool  = GIMP_TOOL (text_tool);
-  GimpDisplayShell *shell = gimp_display_get_shell (tool->display);
+  PicmanTool         *tool  = PICMAN_TOOL (text_tool);
+  PicmanDisplayShell *shell = picman_display_get_shell (tool->display);
   GtkStyle         *style = gtk_widget_get_style (shell->canvas);
   GtkWidget        *frame;
   GtkWidget        *ebox;
@@ -1308,7 +1308,7 @@ gimp_text_tool_im_preedit_start (GtkIMContext *context,
   gint              off_x, off_y;
 
   if (text_tool->text)
-    gimp_text_tool_editor_get_cursor_rect (text_tool,
+    picman_text_tool_editor_get_cursor_rect (text_tool,
                                            text_tool->overwrite_mode,
                                            &cursor_rect);
 
@@ -1317,12 +1317,12 @@ gimp_text_tool_im_preedit_start (GtkIMContext *context,
   text_tool->preedit_overlay = gtk_frame_new (NULL);
   gtk_frame_set_shadow_type (GTK_FRAME (text_tool->preedit_overlay),
                              GTK_SHADOW_OUT);
-  gimp_display_shell_add_overlay (shell,
+  picman_display_shell_add_overlay (shell,
                                   text_tool->preedit_overlay,
                                   cursor_rect.x + off_x,
                                   cursor_rect.y + off_y,
-                                  GIMP_HANDLE_ANCHOR_NORTH_WEST, 0, 0);
-  gimp_overlay_box_set_child_opacity (GIMP_OVERLAY_BOX (shell->canvas),
+                                  PICMAN_HANDLE_ANCHOR_NORTH_WEST, 0, 0);
+  picman_overlay_box_set_child_opacity (PICMAN_OVERLAY_BOX (shell->canvas),
                                       text_tool->preedit_overlay, 0.7);
   gtk_widget_show (text_tool->preedit_overlay);
 
@@ -1346,8 +1346,8 @@ gimp_text_tool_im_preedit_start (GtkIMContext *context,
 }
 
 static void
-gimp_text_tool_im_preedit_end (GtkIMContext *context,
-                               GimpTextTool *text_tool)
+picman_text_tool_im_preedit_end (GtkIMContext *context,
+                               PicmanTextTool *text_tool)
 {
   if (text_tool->preedit_overlay)
     {
@@ -1358,8 +1358,8 @@ gimp_text_tool_im_preedit_end (GtkIMContext *context,
 }
 
 static void
-gimp_text_tool_im_preedit_changed (GtkIMContext *context,
-                                   GimpTextTool *text_tool)
+picman_text_tool_im_preedit_changed (GtkIMContext *context,
+                                   PicmanTextTool *text_tool)
 {
   if (text_tool->preedit_string)
     g_free (text_tool->preedit_string);

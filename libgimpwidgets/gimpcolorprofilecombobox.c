@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorprofilecombobox.c
- * Copyright (C) 2007  Sven Neumann <sven@gimp.org>
+ * picmancolorprofilecombobox.c
+ * Copyright (C) 2007  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,16 +23,16 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpcolorprofilecombobox.h"
-#include "gimpcolorprofilestore.h"
-#include "gimpcolorprofilestore-private.h"
+#include "picmancolorprofilecombobox.h"
+#include "picmancolorprofilestore.h"
+#include "picmancolorprofilestore-private.h"
 
 
 /**
- * SECTION: gimpcolorprofilecombobox
- * @title: GimpColorProfileComboBox
+ * SECTION: picmancolorprofilecombobox
+ * @title: PicmanColorProfileComboBox
  * @short_description: A combo box for selecting color profiles.
  *
  * A combo box for selecting color profiles.
@@ -50,103 +50,103 @@ enum
 typedef struct
 {
   GtkTreePath *last_path;
-} GimpColorProfileComboBoxPrivate;
+} PicmanColorProfileComboBoxPrivate;
 
-#define GIMP_COLOR_PROFILE_COMBO_BOX_GET_PRIVATE(obj) \
+#define PICMAN_COLOR_PROFILE_COMBO_BOX_GET_PRIVATE(obj) \
   G_TYPE_INSTANCE_GET_PRIVATE (obj, \
-                               GIMP_TYPE_COLOR_PROFILE_COMBO_BOX, \
-                               GimpColorProfileComboBoxPrivate)
+                               PICMAN_TYPE_COLOR_PROFILE_COMBO_BOX, \
+                               PicmanColorProfileComboBoxPrivate)
 
 
-static void  gimp_color_profile_combo_box_finalize     (GObject      *object);
-static void  gimp_color_profile_combo_box_set_property (GObject      *object,
+static void  picman_color_profile_combo_box_finalize     (GObject      *object);
+static void  picman_color_profile_combo_box_set_property (GObject      *object,
                                                         guint         property_id,
                                                         const GValue *value,
                                                         GParamSpec   *pspec);
-static void  gimp_color_profile_combo_box_get_property (GObject      *object,
+static void  picman_color_profile_combo_box_get_property (GObject      *object,
                                                         guint         property_id,
                                                         GValue       *value,
                                                         GParamSpec   *pspec);
-static void  gimp_color_profile_combo_box_changed      (GtkComboBox  *combo);
+static void  picman_color_profile_combo_box_changed      (GtkComboBox  *combo);
 
-static gboolean  gimp_color_profile_row_separator_func (GtkTreeModel *model,
+static gboolean  picman_color_profile_row_separator_func (GtkTreeModel *model,
                                                         GtkTreeIter  *iter,
                                                         gpointer      data);
 
 
-G_DEFINE_TYPE (GimpColorProfileComboBox,
-               gimp_color_profile_combo_box, GTK_TYPE_COMBO_BOX)
+G_DEFINE_TYPE (PicmanColorProfileComboBox,
+               picman_color_profile_combo_box, GTK_TYPE_COMBO_BOX)
 
-#define parent_class gimp_color_profile_combo_box_parent_class
+#define parent_class picman_color_profile_combo_box_parent_class
 
 
 static void
-gimp_color_profile_combo_box_class_init (GimpColorProfileComboBoxClass *klass)
+picman_color_profile_combo_box_class_init (PicmanColorProfileComboBoxClass *klass)
 {
   GObjectClass     *object_class = G_OBJECT_CLASS (klass);
   GtkComboBoxClass *combo_class  = GTK_COMBO_BOX_CLASS (klass);
 
-  object_class->set_property = gimp_color_profile_combo_box_set_property;
-  object_class->get_property = gimp_color_profile_combo_box_get_property;
-  object_class->finalize     = gimp_color_profile_combo_box_finalize;
+  object_class->set_property = picman_color_profile_combo_box_set_property;
+  object_class->get_property = picman_color_profile_combo_box_get_property;
+  object_class->finalize     = picman_color_profile_combo_box_finalize;
 
-  combo_class->changed       = gimp_color_profile_combo_box_changed;
+  combo_class->changed       = picman_color_profile_combo_box_changed;
 
   /**
-   * GimpColorProfileComboBox:dialog:
+   * PicmanColorProfileComboBox:dialog:
    *
    * #GtkDialog to present when the user selects the
    * "Select color profile from disk..." item.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class,
                                    PROP_DIALOG,
                                    g_param_spec_object ("dialog", NULL, NULL,
                                                         GTK_TYPE_DIALOG,
                                                         G_PARAM_CONSTRUCT_ONLY |
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
   /**
-   * GimpColorProfileComboBox:model:
+   * PicmanColorProfileComboBox:model:
    *
    * Overrides the "model" property of the #GtkComboBox class.
-   * #GimpColorProfileComboBox requires the model to be a
-   * #GimpColorProfileStore.
+   * #PicmanColorProfileComboBox requires the model to be a
+   * #PicmanColorProfileStore.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class,
                                    PROP_MODEL,
                                    g_param_spec_object ("model", NULL, NULL,
-                                                        GIMP_TYPE_COLOR_PROFILE_STORE,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_COLOR_PROFILE_STORE,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_type_class_add_private (object_class,
-                            sizeof (GimpColorProfileComboBoxPrivate));
+                            sizeof (PicmanColorProfileComboBoxPrivate));
 }
 
 static void
-gimp_color_profile_combo_box_init (GimpColorProfileComboBox *combo_box)
+picman_color_profile_combo_box_init (PicmanColorProfileComboBox *combo_box)
 {
   GtkCellRenderer *cell = gtk_cell_renderer_text_new ();
 
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell, TRUE);
   gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell,
-                                  "text", GIMP_COLOR_PROFILE_STORE_LABEL,
+                                  "text", PICMAN_COLOR_PROFILE_STORE_LABEL,
                                   NULL);
 
   gtk_combo_box_set_row_separator_func (GTK_COMBO_BOX (combo_box),
-                                        gimp_color_profile_row_separator_func,
+                                        picman_color_profile_row_separator_func,
                                         NULL, NULL);
 }
 
 static void
-gimp_color_profile_combo_box_finalize (GObject *object)
+picman_color_profile_combo_box_finalize (GObject *object)
 {
-  GimpColorProfileComboBox        *combo;
-  GimpColorProfileComboBoxPrivate *priv;
+  PicmanColorProfileComboBox        *combo;
+  PicmanColorProfileComboBoxPrivate *priv;
 
-  combo = GIMP_COLOR_PROFILE_COMBO_BOX (object);
+  combo = PICMAN_COLOR_PROFILE_COMBO_BOX (object);
 
   if (combo->dialog)
     {
@@ -154,7 +154,7 @@ gimp_color_profile_combo_box_finalize (GObject *object)
       combo->dialog = NULL;
     }
 
-  priv = GIMP_COLOR_PROFILE_COMBO_BOX_GET_PRIVATE (combo);
+  priv = PICMAN_COLOR_PROFILE_COMBO_BOX_GET_PRIVATE (combo);
 
   if (priv->last_path)
     {
@@ -166,12 +166,12 @@ gimp_color_profile_combo_box_finalize (GObject *object)
 }
 
 static void
-gimp_color_profile_combo_box_set_property (GObject      *object,
+picman_color_profile_combo_box_set_property (GObject      *object,
                                            guint         property_id,
                                            const GValue *value,
                                            GParamSpec   *pspec)
 {
-  GimpColorProfileComboBox *combo_box = GIMP_COLOR_PROFILE_COMBO_BOX (object);
+  PicmanColorProfileComboBox *combo_box = PICMAN_COLOR_PROFILE_COMBO_BOX (object);
 
   switch (property_id)
     {
@@ -192,12 +192,12 @@ gimp_color_profile_combo_box_set_property (GObject      *object,
 }
 
 static void
-gimp_color_profile_combo_box_get_property (GObject    *object,
+picman_color_profile_combo_box_get_property (GObject    *object,
                                            guint       property_id,
                                            GValue     *value,
                                            GParamSpec *pspec)
 {
-  GimpColorProfileComboBox *combo_box = GIMP_COLOR_PROFILE_COMBO_BOX (object);
+  PicmanColorProfileComboBox *combo_box = PICMAN_COLOR_PROFILE_COMBO_BOX (object);
 
   switch (property_id)
     {
@@ -217,9 +217,9 @@ gimp_color_profile_combo_box_get_property (GObject    *object,
 }
 
 static void
-gimp_color_profile_combo_box_changed (GtkComboBox *combo)
+picman_color_profile_combo_box_changed (GtkComboBox *combo)
 {
-  GimpColorProfileComboBoxPrivate *priv;
+  PicmanColorProfileComboBoxPrivate *priv;
 
   GtkTreeModel *model = gtk_combo_box_get_model (combo);
   GtkTreeIter   iter;
@@ -229,16 +229,16 @@ gimp_color_profile_combo_box_changed (GtkComboBox *combo)
     return;
 
   gtk_tree_model_get (model, &iter,
-                      GIMP_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
+                      PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
                       -1);
 
-  priv = GIMP_COLOR_PROFILE_COMBO_BOX_GET_PRIVATE (combo);
+  priv = PICMAN_COLOR_PROFILE_COMBO_BOX_GET_PRIVATE (combo);
 
   switch (type)
     {
-    case GIMP_COLOR_PROFILE_STORE_ITEM_DIALOG:
+    case PICMAN_COLOR_PROFILE_STORE_ITEM_DIALOG:
       {
-        GtkWidget *dialog = GIMP_COLOR_PROFILE_COMBO_BOX (combo)->dialog;
+        GtkWidget *dialog = PICMAN_COLOR_PROFILE_COMBO_BOX (combo)->dialog;
         GtkWidget *parent = gtk_widget_get_toplevel (GTK_WIDGET (combo));
 
         if (GTK_IS_WINDOW (parent))
@@ -255,13 +255,13 @@ gimp_color_profile_combo_box_changed (GtkComboBox *combo)
       }
       break;
 
-    case GIMP_COLOR_PROFILE_STORE_ITEM_FILE:
+    case PICMAN_COLOR_PROFILE_STORE_ITEM_FILE:
       if (priv->last_path)
         gtk_tree_path_free (priv->last_path);
 
       priv->last_path = gtk_tree_model_get_path (model, &iter);
 
-      _gimp_color_profile_store_history_reorder (GIMP_COLOR_PROFILE_STORE (model),
+      _picman_color_profile_store_history_reorder (PICMAN_COLOR_PROFILE_STORE (model),
                                                  &iter);
       break;
 
@@ -272,7 +272,7 @@ gimp_color_profile_combo_box_changed (GtkComboBox *combo)
 
 
 /**
- * gimp_color_profile_combo_box_new:
+ * picman_color_profile_combo_box_new:
  * @dialog:  a #GtkDialog to present when the user selects the
  *           "Select color profile from disk..." item
  * @history: filename of the profilerc (or %NULL for no history)
@@ -281,15 +281,15 @@ gimp_color_profile_combo_box_changed (GtkComboBox *combo)
  * is populated from the file specified as @history. This filename is
  * typically created using the following code snippet:
  * <informalexample><programlisting>
- *  gchar *history = gimp_personal_rc_file ("profilerc");
+ *  gchar *history = picman_personal_rc_file ("profilerc");
  * </programlisting></informalexample>
  *
- * Return value: a new #GimpColorProfileComboBox.
+ * Return value: a new #PicmanColorProfileComboBox.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_color_profile_combo_box_new (GtkWidget   *dialog,
+picman_color_profile_combo_box_new (GtkWidget   *dialog,
                                   const gchar *history)
 {
   GtkWidget    *combo;
@@ -297,8 +297,8 @@ gimp_color_profile_combo_box_new (GtkWidget   *dialog,
 
   g_return_val_if_fail (GTK_IS_DIALOG (dialog), NULL);
 
-  store = gimp_color_profile_store_new (history);
-  combo = gimp_color_profile_combo_box_new_with_model (dialog,
+  store = picman_color_profile_store_new (history);
+  combo = picman_color_profile_combo_box_new_with_model (dialog,
                                                        GTK_TREE_MODEL (store));
   g_object_unref (store);
 
@@ -306,67 +306,67 @@ gimp_color_profile_combo_box_new (GtkWidget   *dialog,
 }
 
 /**
- * gimp_color_profile_combo_box_new_with_model:
+ * picman_color_profile_combo_box_new_with_model:
  * @dialog: a #GtkDialog to present when the user selects the
  *          "Select color profile from disk..." item
- * @model:  a #GimpColorProfileStore object
+ * @model:  a #PicmanColorProfileStore object
  *
  * This constructor is useful when you want to create several
  * combo-boxes for profile selection that all share the same
- * #GimpColorProfileStore. This is for example done in the
- * GIMP Preferences dialog.
+ * #PicmanColorProfileStore. This is for example done in the
+ * PICMAN Preferences dialog.
  *
- * See also gimp_color_profile_combo_box_new().
+ * See also picman_color_profile_combo_box_new().
  *
- * Return value: a new #GimpColorProfileComboBox.
+ * Return value: a new #PicmanColorProfileComboBox.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_color_profile_combo_box_new_with_model (GtkWidget    *dialog,
+picman_color_profile_combo_box_new_with_model (GtkWidget    *dialog,
                                              GtkTreeModel *model)
 {
   g_return_val_if_fail (GTK_IS_DIALOG (dialog), NULL);
-  g_return_val_if_fail (GIMP_IS_COLOR_PROFILE_STORE (model), NULL);
+  g_return_val_if_fail (PICMAN_IS_COLOR_PROFILE_STORE (model), NULL);
 
-  return g_object_new (GIMP_TYPE_COLOR_PROFILE_COMBO_BOX,
+  return g_object_new (PICMAN_TYPE_COLOR_PROFILE_COMBO_BOX,
                        "dialog", dialog,
                        "model",  model,
                        NULL);
 }
 
 /**
- * gimp_color_profile_combo_box_add:
- * @combo:    a #GimpColorProfileComboBox
+ * picman_color_profile_combo_box_add:
+ * @combo:    a #PicmanColorProfileComboBox
  * @filename: filename of the profile to add (or %NULL)
  * @label:    label to use for the profile
  *            (may only be %NULL if @filename is %NULL)
  *
  * This function delegates to the underlying
- * #GimpColorProfileStore. Please refer to the documentation of
- * gimp_color_profile_store_add() for details.
+ * #PicmanColorProfileStore. Please refer to the documentation of
+ * picman_color_profile_store_add() for details.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_color_profile_combo_box_add (GimpColorProfileComboBox *combo,
+picman_color_profile_combo_box_add (PicmanColorProfileComboBox *combo,
                                   const gchar              *filename,
                                   const gchar              *label)
 {
   GtkTreeModel *model;
 
-  g_return_if_fail (GIMP_IS_COLOR_PROFILE_COMBO_BOX (combo));
+  g_return_if_fail (PICMAN_IS_COLOR_PROFILE_COMBO_BOX (combo));
   g_return_if_fail (label != NULL || filename == NULL);
 
   model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo));
 
-  gimp_color_profile_store_add (GIMP_COLOR_PROFILE_STORE (model),
+  picman_color_profile_store_add (PICMAN_COLOR_PROFILE_STORE (model),
                                 filename, label);
 }
 
 /**
- * gimp_color_profile_combo_box_set_active:
- * @combo:    a #GimpColorProfileComboBox
+ * picman_color_profile_combo_box_set_active:
+ * @combo:    a #PicmanColorProfileComboBox
  * @filename: filename of the profile to select
  * @label:    label to use when adding a new entry (can be %NULL)
  *
@@ -374,42 +374,42 @@ gimp_color_profile_combo_box_add (GimpColorProfileComboBox *combo,
  * item.  If the profile is not listed in the @combo, then it is added
  * with the given @label (or @filename in case that @label is %NULL).
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_color_profile_combo_box_set_active (GimpColorProfileComboBox *combo,
+picman_color_profile_combo_box_set_active (PicmanColorProfileComboBox *combo,
                                          const gchar              *filename,
                                          const gchar              *label)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
 
-  g_return_if_fail (GIMP_IS_COLOR_PROFILE_COMBO_BOX (combo));
+  g_return_if_fail (PICMAN_IS_COLOR_PROFILE_COMBO_BOX (combo));
 
   model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo));
 
-  if (_gimp_color_profile_store_history_add (GIMP_COLOR_PROFILE_STORE (model),
+  if (_picman_color_profile_store_history_add (PICMAN_COLOR_PROFILE_STORE (model),
                                              filename, label, &iter))
     gtk_combo_box_set_active_iter (GTK_COMBO_BOX (combo), &iter);
 }
 
 /**
- * gimp_color_profile_combo_box_get_active:
- * @combo: a #GimpColorProfileComboBox
+ * picman_color_profile_combo_box_get_active:
+ * @combo: a #PicmanColorProfileComboBox
  *
  * Return value: The filename of the currently selected color profile.
  *               This is a newly allocated string and should be released
  *               using g_free() when it is not any longer needed.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gchar *
-gimp_color_profile_combo_box_get_active (GimpColorProfileComboBox *combo)
+picman_color_profile_combo_box_get_active (PicmanColorProfileComboBox *combo)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
 
-  g_return_val_if_fail (GIMP_IS_COLOR_PROFILE_COMBO_BOX (combo), NULL);
+  g_return_val_if_fail (PICMAN_IS_COLOR_PROFILE_COMBO_BOX (combo), NULL);
 
   model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo));
 
@@ -419,11 +419,11 @@ gimp_color_profile_combo_box_get_active (GimpColorProfileComboBox *combo)
       gint   type;
 
       gtk_tree_model_get (model, &iter,
-                          GIMP_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
-                          GIMP_COLOR_PROFILE_STORE_FILENAME,  &filename,
+                          PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
+                          PICMAN_COLOR_PROFILE_STORE_FILENAME,  &filename,
                           -1);
 
-      if (type == GIMP_COLOR_PROFILE_STORE_ITEM_FILE)
+      if (type == PICMAN_COLOR_PROFILE_STORE_ITEM_FILE)
         return filename;
 
       g_free (filename);
@@ -433,20 +433,20 @@ gimp_color_profile_combo_box_get_active (GimpColorProfileComboBox *combo)
 }
 
 static gboolean
-gimp_color_profile_row_separator_func (GtkTreeModel *model,
+picman_color_profile_row_separator_func (GtkTreeModel *model,
                                        GtkTreeIter  *iter,
                                        gpointer      data)
 {
   gint type;
 
   gtk_tree_model_get (model, iter,
-                      GIMP_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
+                      PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
                       -1);
 
   switch (type)
     {
-    case GIMP_COLOR_PROFILE_STORE_ITEM_SEPARATOR_TOP:
-    case GIMP_COLOR_PROFILE_STORE_ITEM_SEPARATOR_BOTTOM:
+    case PICMAN_COLOR_PROFILE_STORE_ITEM_SEPARATOR_TOP:
+    case PICMAN_COLOR_PROFILE_STORE_ITEM_SEPARATOR_BOTTOM:
       return TRUE;
 
     default:

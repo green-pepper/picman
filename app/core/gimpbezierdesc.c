@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbezierdesc.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmanbezierdesc.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,32 +25,32 @@
 
 #include "core-types.h"
 
-#include "gimpbezierdesc.h"
-#include "gimpboundary.h"
+#include "picmanbezierdesc.h"
+#include "picmanboundary.h"
 
 
 GType
-gimp_bezier_desc_get_type (void)
+picman_bezier_desc_get_type (void)
 {
   static GType type = 0;
 
   if (! type)
-    type = g_boxed_type_register_static ("GimpBezierDesc",
-                                         (GBoxedCopyFunc) gimp_bezier_desc_copy,
-                                         (GBoxedFreeFunc) gimp_bezier_desc_free);
+    type = g_boxed_type_register_static ("PicmanBezierDesc",
+                                         (GBoxedCopyFunc) picman_bezier_desc_copy,
+                                         (GBoxedFreeFunc) picman_bezier_desc_free);
 
   return type;
 }
 
-GimpBezierDesc *
-gimp_bezier_desc_new (cairo_path_data_t *data,
+PicmanBezierDesc *
+picman_bezier_desc_new (cairo_path_data_t *data,
                       gint               n_data)
 {
-  GimpBezierDesc *desc;
+  PicmanBezierDesc *desc;
 
   g_return_val_if_fail (n_data == 0 || data != NULL, NULL);
 
-  desc = g_slice_new (GimpBezierDesc);
+  desc = g_slice_new (PicmanBezierDesc);
 
   desc->status   = CAIRO_STATUS_SUCCESS;
   desc->num_data = n_data;
@@ -61,11 +61,11 @@ gimp_bezier_desc_new (cairo_path_data_t *data,
 
 static void
 add_polyline (GArray            *path_data,
-              const GimpVector2 *points,
+              const PicmanVector2 *points,
               gint               n_points,
               gboolean           closed)
 {
-  GimpVector2       prev = { 0.0, 0.0, };
+  PicmanVector2       prev = { 0.0, 0.0, };
   cairo_path_data_t pd;
   gint              i;
 
@@ -100,13 +100,13 @@ add_polyline (GArray            *path_data,
     }
 }
 
-GimpBezierDesc *
-gimp_bezier_desc_new_from_bound_segs (GimpBoundSeg *bound_segs,
+PicmanBezierDesc *
+picman_bezier_desc_new_from_bound_segs (PicmanBoundSeg *bound_segs,
                                       gint          n_bound_segs,
                                       gint          n_bound_groups)
 {
   GArray      *path_data;
-  GimpVector2 *points;
+  PicmanVector2 *points;
   gint         n_points;
   gint         seg;
   gint         i;
@@ -116,7 +116,7 @@ gimp_bezier_desc_new_from_bound_segs (GimpBoundSeg *bound_segs,
 
   path_data = g_array_new (FALSE, FALSE, sizeof (cairo_path_data_t));
 
-  points = g_new0 (GimpVector2, n_bound_segs + 4);
+  points = g_new0 (PicmanVector2, n_bound_segs + 4);
 
   seg = 0;
   n_points = 0;
@@ -158,12 +158,12 @@ gimp_bezier_desc_new_from_bound_segs (GimpBoundSeg *bound_segs,
 
   g_free (points);
 
-  return gimp_bezier_desc_new ((cairo_path_data_t *) g_array_free (path_data, FALSE),
+  return picman_bezier_desc_new ((cairo_path_data_t *) g_array_free (path_data, FALSE),
                                path_data->len);
 }
 
 void
-gimp_bezier_desc_translate (GimpBezierDesc *desc,
+picman_bezier_desc_translate (PicmanBezierDesc *desc,
                             gdouble         offset_x,
                             gdouble         offset_y)
 {
@@ -179,21 +179,21 @@ gimp_bezier_desc_translate (GimpBezierDesc *desc,
       }
 }
 
-GimpBezierDesc *
-gimp_bezier_desc_copy (const GimpBezierDesc *desc)
+PicmanBezierDesc *
+picman_bezier_desc_copy (const PicmanBezierDesc *desc)
 {
   g_return_val_if_fail (desc != NULL, NULL);
 
-  return gimp_bezier_desc_new (g_memdup (desc->data,
+  return picman_bezier_desc_new (g_memdup (desc->data,
                                          desc->num_data * sizeof (cairo_path_data_t)),
                                desc->num_data);
 }
 
 void
-gimp_bezier_desc_free (GimpBezierDesc *desc)
+picman_bezier_desc_free (PicmanBezierDesc *desc)
 {
   g_return_if_fail (desc != NULL);
 
   g_free (desc->data);
-  g_slice_free (GimpBezierDesc, desc);
+  g_slice_free (PicmanBezierDesc, desc);
 }

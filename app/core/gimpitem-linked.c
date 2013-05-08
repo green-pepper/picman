@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,48 +21,48 @@
 
 #include "core-types.h"
 
-#include "gimpcontext.h"
-#include "gimpimage.h"
-#include "gimpimage-item-list.h"
-#include "gimpitem.h"
-#include "gimpitem-linked.h"
-#include "gimplist.h"
-#include "gimpprogress.h"
+#include "picmancontext.h"
+#include "picmanimage.h"
+#include "picmanimage-item-list.h"
+#include "picmanitem.h"
+#include "picmanitem-linked.h"
+#include "picmanlist.h"
+#include "picmanprogress.h"
 
 
 /*  public functions  */
 
 gboolean
-gimp_item_linked_is_locked (const GimpItem *item)
+picman_item_linked_is_locked (const PicmanItem *item)
 {
   GList    *list;
   GList    *l;
   gboolean  locked = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_ITEM (item), FALSE);
-  g_return_val_if_fail (gimp_item_get_linked (item) == TRUE, FALSE);
-  g_return_val_if_fail (gimp_item_is_attached (item), FALSE);
+  g_return_val_if_fail (PICMAN_IS_ITEM (item), FALSE);
+  g_return_val_if_fail (picman_item_get_linked (item) == TRUE, FALSE);
+  g_return_val_if_fail (picman_item_is_attached (item), FALSE);
 
-  list = gimp_image_item_list_get_list (gimp_item_get_image (item), item,
-                                        GIMP_ITEM_TYPE_ALL,
-                                        GIMP_ITEM_SET_LINKED);
+  list = picman_image_item_list_get_list (picman_item_get_image (item), item,
+                                        PICMAN_ITEM_TYPE_ALL,
+                                        PICMAN_ITEM_SET_LINKED);
 
-  list = gimp_image_item_list_filter (item, list, TRUE, FALSE);
+  list = picman_image_item_list_filter (item, list, TRUE, FALSE);
 
   for (l = list; l && ! locked; l = g_list_next (l))
     {
-      GimpItem *item = l->data;
+      PicmanItem *item = l->data;
 
       /*  temporarily set the item to not being linked, or we will
-       *  run into a recursion because gimp_item_is_position_locked()
+       *  run into a recursion because picman_item_is_position_locked()
        *  call this function if the item is linked
        */
-      gimp_item_set_linked (item, FALSE, FALSE);
+      picman_item_set_linked (item, FALSE, FALSE);
 
-      if (gimp_item_is_position_locked (item))
+      if (picman_item_is_position_locked (item))
         locked = TRUE;
 
-      gimp_item_set_linked (item, TRUE, FALSE);
+      picman_item_set_linked (item, TRUE, FALSE);
     }
 
   g_list_free (list);
@@ -71,119 +71,119 @@ gimp_item_linked_is_locked (const GimpItem *item)
 }
 
 void
-gimp_item_linked_translate (GimpItem *item,
+picman_item_linked_translate (PicmanItem *item,
                             gint      offset_x,
                             gint      offset_y,
                             gboolean  push_undo)
 {
   GList *list;
 
-  g_return_if_fail (GIMP_IS_ITEM (item));
-  g_return_if_fail (gimp_item_get_linked (item) == TRUE);
-  g_return_if_fail (gimp_item_is_attached (item));
+  g_return_if_fail (PICMAN_IS_ITEM (item));
+  g_return_if_fail (picman_item_get_linked (item) == TRUE);
+  g_return_if_fail (picman_item_is_attached (item));
 
-  list = gimp_image_item_list_get_list (gimp_item_get_image (item), item,
-                                        GIMP_ITEM_TYPE_ALL,
-                                        GIMP_ITEM_SET_LINKED);
+  list = picman_image_item_list_get_list (picman_item_get_image (item), item,
+                                        PICMAN_ITEM_TYPE_ALL,
+                                        PICMAN_ITEM_SET_LINKED);
 
-  list = gimp_image_item_list_filter (item, list, TRUE, FALSE);
+  list = picman_image_item_list_filter (item, list, TRUE, FALSE);
 
-  gimp_image_item_list_translate (gimp_item_get_image (item), list,
+  picman_image_item_list_translate (picman_item_get_image (item), list,
                                   offset_x, offset_y, push_undo);
 
   g_list_free (list);
 }
 
 void
-gimp_item_linked_flip (GimpItem            *item,
-                       GimpContext         *context,
-                       GimpOrientationType  flip_type,
+picman_item_linked_flip (PicmanItem            *item,
+                       PicmanContext         *context,
+                       PicmanOrientationType  flip_type,
                        gdouble              axis,
                        gboolean             clip_result)
 {
   GList *list;
 
-  g_return_if_fail (GIMP_IS_ITEM (item));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
-  g_return_if_fail (gimp_item_get_linked (item) == TRUE);
-  g_return_if_fail (gimp_item_is_attached (item));
+  g_return_if_fail (PICMAN_IS_ITEM (item));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
+  g_return_if_fail (picman_item_get_linked (item) == TRUE);
+  g_return_if_fail (picman_item_is_attached (item));
 
-  list = gimp_image_item_list_get_list (gimp_item_get_image (item), item,
-                                        GIMP_ITEM_TYPE_ALL,
-                                        GIMP_ITEM_SET_LINKED);
+  list = picman_image_item_list_get_list (picman_item_get_image (item), item,
+                                        PICMAN_ITEM_TYPE_ALL,
+                                        PICMAN_ITEM_SET_LINKED);
 
-  list = gimp_image_item_list_filter (item, list, TRUE, FALSE);
+  list = picman_image_item_list_filter (item, list, TRUE, FALSE);
 
-  gimp_image_item_list_flip (gimp_item_get_image (item), list, context,
+  picman_image_item_list_flip (picman_item_get_image (item), list, context,
                              flip_type, axis, clip_result);
 
   g_list_free (list);
 }
 
 void
-gimp_item_linked_rotate (GimpItem         *item,
-                         GimpContext      *context,
-                         GimpRotationType  rotate_type,
+picman_item_linked_rotate (PicmanItem         *item,
+                         PicmanContext      *context,
+                         PicmanRotationType  rotate_type,
                          gdouble           center_x,
                          gdouble           center_y,
                          gboolean          clip_result)
 {
   GList *list;
 
-  g_return_if_fail (GIMP_IS_ITEM (item));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
-  g_return_if_fail (gimp_item_get_linked (item) == TRUE);
-  g_return_if_fail (gimp_item_is_attached (item));
+  g_return_if_fail (PICMAN_IS_ITEM (item));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
+  g_return_if_fail (picman_item_get_linked (item) == TRUE);
+  g_return_if_fail (picman_item_is_attached (item));
 
-  list = gimp_image_item_list_get_list (gimp_item_get_image (item), item,
-                                        GIMP_ITEM_TYPE_LAYERS |
-                                        GIMP_ITEM_TYPE_VECTORS,
-                                        GIMP_ITEM_SET_LINKED);
+  list = picman_image_item_list_get_list (picman_item_get_image (item), item,
+                                        PICMAN_ITEM_TYPE_LAYERS |
+                                        PICMAN_ITEM_TYPE_VECTORS,
+                                        PICMAN_ITEM_SET_LINKED);
 
-  list = gimp_image_item_list_filter (item, list, TRUE, FALSE);
+  list = picman_image_item_list_filter (item, list, TRUE, FALSE);
 
-  gimp_image_item_list_rotate (gimp_item_get_image (item), list, context,
+  picman_image_item_list_rotate (picman_item_get_image (item), list, context,
                                rotate_type, center_x, center_y, clip_result);
 
   g_list_free (list);
 
-  list = gimp_image_item_list_get_list (gimp_item_get_image (item), item,
-                                        GIMP_ITEM_TYPE_CHANNELS,
-                                        GIMP_ITEM_SET_LINKED);
+  list = picman_image_item_list_get_list (picman_item_get_image (item), item,
+                                        PICMAN_ITEM_TYPE_CHANNELS,
+                                        PICMAN_ITEM_SET_LINKED);
 
-  list = gimp_image_item_list_filter (item, list, TRUE, FALSE);
+  list = picman_image_item_list_filter (item, list, TRUE, FALSE);
 
-  gimp_image_item_list_rotate (gimp_item_get_image (item), list, context,
+  picman_image_item_list_rotate (picman_item_get_image (item), list, context,
                                rotate_type, center_x, center_y, TRUE);
 
   g_list_free (list);
 }
 
 void
-gimp_item_linked_transform (GimpItem               *item,
-                            GimpContext            *context,
-                            const GimpMatrix3      *matrix,
-                            GimpTransformDirection  direction,
-                            GimpInterpolationType   interpolation_type,
+picman_item_linked_transform (PicmanItem               *item,
+                            PicmanContext            *context,
+                            const PicmanMatrix3      *matrix,
+                            PicmanTransformDirection  direction,
+                            PicmanInterpolationType   interpolation_type,
                             gint                    recursion_level,
-                            GimpTransformResize     clip_result,
-                            GimpProgress           *progress)
+                            PicmanTransformResize     clip_result,
+                            PicmanProgress           *progress)
 {
   GList *list;
 
-  g_return_if_fail (GIMP_IS_ITEM (item));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
-  g_return_if_fail (gimp_item_get_linked (item) == TRUE);
-  g_return_if_fail (gimp_item_is_attached (item));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_ITEM (item));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
+  g_return_if_fail (picman_item_get_linked (item) == TRUE);
+  g_return_if_fail (picman_item_is_attached (item));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
-  list = gimp_image_item_list_get_list (gimp_item_get_image (item), item,
-                                        GIMP_ITEM_TYPE_ALL,
-                                        GIMP_ITEM_SET_LINKED);
+  list = picman_image_item_list_get_list (picman_item_get_image (item), item,
+                                        PICMAN_ITEM_TYPE_ALL,
+                                        PICMAN_ITEM_SET_LINKED);
 
-  list = gimp_image_item_list_filter (item, list, TRUE, FALSE);
+  list = picman_image_item_list_filter (item, list, TRUE, FALSE);
 
-  gimp_image_item_list_transform (gimp_item_get_image (item), list, context,
+  picman_image_item_list_transform (picman_item_get_image (item), list, context,
                                   matrix, direction,
                                   interpolation_type, recursion_level,
                                   clip_result, progress);

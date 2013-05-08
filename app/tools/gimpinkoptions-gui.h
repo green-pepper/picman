@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_INK_OPTIONS_GUI_H__
-#define  __GIMP_INK_OPTIONS_GUI_H__
+#ifndef  __PICMAN_INK_OPTIONS_GUI_H__
+#define  __PICMAN_INK_OPTIONS_GUI_H__
 
 
-GtkWidget * gimp_ink_options_gui      (GimpToolOptions *tool_options);
+GtkWidget * picman_ink_options_gui      (PicmanToolOptions *tool_options);
 
 
-#endif  /*  __GIMP_INK_OPTIONS_GUI_H__  */
+#endif  /*  __PICMAN_INK_OPTIONS_GUI_H__  */

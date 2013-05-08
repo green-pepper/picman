@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,40 +24,40 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core/core-types.h"
 
-#include "gegl/gimp-babl-compat.h"
-#include "gegl/gimp-gegl-tile-compat.h"
+#include "gegl/picman-babl-compat.h"
+#include "gegl/picman-gegl-tile-compat.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpchannel.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpgrid.h"
-#include "core/gimpguide.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-colormap.h"
-#include "core/gimpimage-grid.h"
-#include "core/gimpimage-guides.h"
-#include "core/gimpimage-private.h"
-#include "core/gimpimage-sample-points.h"
-#include "core/gimplayer.h"
-#include "core/gimplayermask.h"
-#include "core/gimpparasitelist.h"
-#include "core/gimpprogress.h"
-#include "core/gimpsamplepoint.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmanchannel.h"
+#include "core/picmandrawable.h"
+#include "core/picmangrid.h"
+#include "core/picmanguide.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-colormap.h"
+#include "core/picmanimage-grid.h"
+#include "core/picmanimage-guides.h"
+#include "core/picmanimage-private.h"
+#include "core/picmanimage-sample-points.h"
+#include "core/picmanlayer.h"
+#include "core/picmanlayermask.h"
+#include "core/picmanparasitelist.h"
+#include "core/picmanprogress.h"
+#include "core/picmansamplepoint.h"
 
-#include "text/gimptextlayer.h"
-#include "text/gimptextlayer-xcf.h"
+#include "text/picmantextlayer.h"
+#include "text/picmantextlayer-xcf.h"
 
-#include "vectors/gimpanchor.h"
-#include "vectors/gimpstroke.h"
-#include "vectors/gimpbezierstroke.h"
-#include "vectors/gimpvectors.h"
-#include "vectors/gimpvectors-compat.h"
+#include "vectors/picmananchor.h"
+#include "vectors/picmanstroke.h"
+#include "vectors/picmanbezierstroke.h"
+#include "vectors/picmanvectors.h"
+#include "vectors/picmanvectors-compat.h"
 
 #include "xcf-private.h"
 #include "xcf-read.h"
@@ -65,32 +65,32 @@
 #include "xcf-seek.h"
 #include "xcf-write.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 static gboolean xcf_save_image_props   (XcfInfo           *info,
-                                        GimpImage         *image,
+                                        PicmanImage         *image,
                                         GError           **error);
 static gboolean xcf_save_layer_props   (XcfInfo           *info,
-                                        GimpImage         *image,
-                                        GimpLayer         *layer,
+                                        PicmanImage         *image,
+                                        PicmanLayer         *layer,
                                         GError           **error);
 static gboolean xcf_save_channel_props (XcfInfo           *info,
-                                        GimpImage         *image,
-                                        GimpChannel       *channel,
+                                        PicmanImage         *image,
+                                        PicmanChannel       *channel,
                                         GError           **error);
 static gboolean xcf_save_prop          (XcfInfo           *info,
-                                        GimpImage         *image,
+                                        PicmanImage         *image,
                                         PropType           prop_type,
                                         GError           **error,
                                         ...);
 static gboolean xcf_save_layer         (XcfInfo           *info,
-                                        GimpImage         *image,
-                                        GimpLayer         *layer,
+                                        PicmanImage         *image,
+                                        PicmanLayer         *layer,
                                         GError           **error);
 static gboolean xcf_save_channel       (XcfInfo           *info,
-                                        GimpImage         *image,
-                                        GimpChannel       *channel,
+                                        PicmanImage         *image,
+                                        PicmanChannel       *channel,
                                         GError           **error);
 static gboolean xcf_save_buffer        (XcfInfo           *info,
                                         GeglBuffer        *buffer,
@@ -110,16 +110,16 @@ static gboolean xcf_save_tile_rle      (XcfInfo           *info,
                                         guchar            *rlebuf,
                                         GError           **error);
 static gboolean xcf_save_parasite      (XcfInfo           *info,
-                                        GimpParasite      *parasite,
+                                        PicmanParasite      *parasite,
                                         GError           **error);
 static gboolean xcf_save_parasite_list (XcfInfo           *info,
-                                        GimpParasiteList  *parasite,
+                                        PicmanParasiteList  *parasite,
                                         GError           **error);
 static gboolean xcf_save_old_paths     (XcfInfo           *info,
-                                        GimpImage         *image,
+                                        PicmanImage         *image,
                                         GError           **error);
 static gboolean xcf_save_vectors       (XcfInfo           *info,
-                                        GimpImage         *image,
+                                        PicmanImage         *image,
                                         GError           **error);
 
 
@@ -174,35 +174,35 @@ static gboolean xcf_save_vectors       (XcfInfo           *info,
   {                                             \
     progress++;                                 \
     if (info->progress)                         \
-      gimp_progress_set_value (info->progress,  \
+      picman_progress_set_value (info->progress,  \
                                (gdouble) progress / (gdouble) max_progress); \
   } G_STMT_END
 
 
 void
 xcf_save_choose_format (XcfInfo   *info,
-                        GimpImage *image)
+                        PicmanImage *image)
 {
   GList *list;
   gint   save_version = 0;  /* default to oldest */
 
   /* need version 1 for colormaps */
-  if (gimp_image_get_colormap (image))
+  if (picman_image_get_colormap (image))
     save_version = 1;
 
-  for (list = gimp_image_get_layer_iter (image);
+  for (list = picman_image_get_layer_iter (image);
        list && save_version < 3;
        list = g_list_next (list))
     {
-      GimpLayer *layer = GIMP_LAYER (list->data);
+      PicmanLayer *layer = PICMAN_LAYER (list->data);
 
-      switch (gimp_layer_get_mode (layer))
+      switch (picman_layer_get_mode (layer))
         {
-          /* new layer modes not supported by gimp-1.2 */
-        case GIMP_SOFTLIGHT_MODE:
-        case GIMP_GRAIN_EXTRACT_MODE:
-        case GIMP_GRAIN_MERGE_MODE:
-        case GIMP_COLOR_ERASE_MODE:
+          /* new layer modes not supported by picman-1.2 */
+        case PICMAN_SOFTLIGHT_MODE:
+        case PICMAN_GRAIN_EXTRACT_MODE:
+        case PICMAN_GRAIN_MERGE_MODE:
+        case PICMAN_COLOR_ERASE_MODE:
           save_version = MAX (2, save_version);
           break;
 
@@ -211,11 +211,11 @@ xcf_save_choose_format (XcfInfo   *info,
         }
 
       /* need version 3 for layer trees */
-      if (gimp_viewable_get_children (GIMP_VIEWABLE (layer)))
+      if (picman_viewable_get_children (PICMAN_VIEWABLE (layer)))
         save_version = MAX (3, save_version);
     }
 
-  if (gimp_image_get_precision (image) != GIMP_PRECISION_U8)
+  if (picman_image_get_precision (image) != PICMAN_PRECISION_U8)
     save_version = MAX (4, save_version);
 
   info->file_version = save_version;
@@ -223,7 +223,7 @@ xcf_save_choose_format (XcfInfo   *info,
 
 gint
 xcf_save_image (XcfInfo    *info,
-                GimpImage  *image,
+                PicmanImage  *image,
                 GError    **error)
 {
   GList   *all_layers;
@@ -243,40 +243,40 @@ xcf_save_image (XcfInfo    *info,
   /* write out the tag information for the image */
   if (info->file_version > 0)
     {
-      sprintf (version_tag, "gimp xcf v%03d", info->file_version);
+      sprintf (version_tag, "picman xcf v%03d", info->file_version);
     }
   else
     {
-      strcpy (version_tag, "gimp xcf file");
+      strcpy (version_tag, "picman xcf file");
     }
 
   xcf_write_int8_check_error (info, (guint8 *) version_tag, 14);
 
   /* write out the width, height and image type information for the image */
-  value = gimp_image_get_width (image);
+  value = picman_image_get_width (image);
   xcf_write_int32_check_error (info, (guint32 *) &value, 1);
 
-  value = gimp_image_get_height (image);
+  value = picman_image_get_height (image);
   xcf_write_int32_check_error (info, (guint32 *) &value, 1);
 
-  value = gimp_image_get_base_type (image);
+  value = picman_image_get_base_type (image);
   xcf_write_int32_check_error (info, &value, 1);
 
   if (info->file_version >= 4)
     {
-      value = gimp_image_get_precision (image);
+      value = picman_image_get_precision (image);
       xcf_write_int32_check_error (info, &value, 1);
     }
 
   /* determine the number of layers and channels in the image */
-  all_layers   = gimp_image_get_layer_list (image);
-  all_channels = gimp_image_get_channel_list (image);
+  all_layers   = picman_image_get_layer_list (image);
+  all_channels = picman_image_get_channel_list (image);
 
   /* check and see if we have to save out the selection */
-  if (gimp_channel_bounds (gimp_image_get_mask (image),
+  if (picman_channel_bounds (picman_image_get_mask (image),
                            &t1, &t2, &t3, &t4))
     {
-      all_channels = g_list_append (all_channels, gimp_image_get_mask (image));
+      all_channels = g_list_append (all_channels, picman_image_get_mask (image));
     }
 
   n_layers   = (guint) g_list_length (all_layers);
@@ -303,7 +303,7 @@ xcf_save_image (XcfInfo    *info,
 
   for (list = all_layers; list; list = g_list_next (list))
     {
-      GimpLayer *layer = list->data;
+      PicmanLayer *layer = list->data;
 
       /* save the start offset of where we are writing
        *  out the next layer.
@@ -343,7 +343,7 @@ xcf_save_image (XcfInfo    *info,
 
   for (list = all_channels; list; list = g_list_next (list))
     {
-      GimpChannel *channel = list->data;
+      PicmanChannel *channel = list->data;
 
       /* save the start offset of where we are writing
        *  out the next channel.
@@ -388,64 +388,64 @@ xcf_save_image (XcfInfo    *info,
 
 static gboolean
 xcf_save_image_props (XcfInfo    *info,
-                      GimpImage  *image,
+                      PicmanImage  *image,
                       GError    **error)
 {
-  GimpImagePrivate *private  = GIMP_IMAGE_GET_PRIVATE (image);
-  GimpParasite     *parasite = NULL;
-  GimpUnit          unit     = gimp_image_get_unit (image);
+  PicmanImagePrivate *private  = PICMAN_IMAGE_GET_PRIVATE (image);
+  PicmanParasite     *parasite = NULL;
+  PicmanUnit          unit     = picman_image_get_unit (image);
   gdouble           xres;
   gdouble           yres;
 
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
 
   /* check and see if we should save the colormap property */
-  if (gimp_image_get_colormap (image))
+  if (picman_image_get_colormap (image))
     xcf_check_error (xcf_save_prop (info, image, PROP_COLORMAP, error,
-                                    gimp_image_get_colormap_size (image),
-                                    gimp_image_get_colormap (image)));
+                                    picman_image_get_colormap_size (image),
+                                    picman_image_get_colormap (image)));
 
   if (info->compression != COMPRESS_NONE)
     xcf_check_error (xcf_save_prop (info, image, PROP_COMPRESSION, error,
                                     info->compression));
 
-  if (gimp_image_get_guides (image))
+  if (picman_image_get_guides (image))
     xcf_check_error (xcf_save_prop (info, image, PROP_GUIDES, error,
-                                    gimp_image_get_guides (image)));
+                                    picman_image_get_guides (image)));
 
-  if (gimp_image_get_sample_points (image))
+  if (picman_image_get_sample_points (image))
     xcf_check_error (xcf_save_prop (info, image, PROP_SAMPLE_POINTS, error,
-                                    gimp_image_get_sample_points (image)));
+                                    picman_image_get_sample_points (image)));
 
   xcf_check_error (xcf_save_prop (info, image, PROP_RESOLUTION, error,
                                   xres, yres));
 
   xcf_check_error (xcf_save_prop (info, image, PROP_TATTOO, error,
-                                  gimp_image_get_tattoo_state (image)));
+                                  picman_image_get_tattoo_state (image)));
 
-  if (unit < gimp_unit_get_number_of_built_in_units ())
+  if (unit < picman_unit_get_number_of_built_in_units ())
     xcf_check_error (xcf_save_prop (info, image, PROP_UNIT, error, unit));
 
-  if (gimp_container_get_n_children (gimp_image_get_vectors (image)) > 0)
+  if (picman_container_get_n_children (picman_image_get_vectors (image)) > 0)
     {
-      if (gimp_vectors_compat_is_compatible (image))
+      if (picman_vectors_compat_is_compatible (image))
         xcf_check_error (xcf_save_prop (info, image, PROP_PATHS, error));
       else
         xcf_check_error (xcf_save_prop (info, image, PROP_VECTORS, error));
     }
 
-  if (unit >= gimp_unit_get_number_of_built_in_units ())
+  if (unit >= picman_unit_get_number_of_built_in_units ())
     xcf_check_error (xcf_save_prop (info, image, PROP_USER_UNIT, error, unit));
 
-  if (gimp_image_get_grid (image))
+  if (picman_image_get_grid (image))
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
 
-      parasite = gimp_grid_to_parasite (grid);
-      gimp_parasite_list_add (private->parasites, parasite);
+      parasite = picman_grid_to_parasite (grid);
+      picman_parasite_list_add (private->parasites, parasite);
     }
 
-  if (gimp_parasite_list_length (private->parasites) > 0)
+  if (picman_parasite_list_length (private->parasites) > 0)
     {
       xcf_check_error (xcf_save_prop (info, image, PROP_PARASITES, error,
                                       private->parasites));
@@ -453,9 +453,9 @@ xcf_save_image_props (XcfInfo    *info,
 
   if (parasite)
     {
-      gimp_parasite_list_remove (private->parasites,
-                                 gimp_parasite_name (parasite));
-      gimp_parasite_free (parasite);
+      picman_parasite_list_remove (private->parasites,
+                                 picman_parasite_name (parasite));
+      picman_parasite_free (parasite);
     }
 
   xcf_check_error (xcf_save_prop (info, image, PROP_END, error));
@@ -465,58 +465,58 @@ xcf_save_image_props (XcfInfo    *info,
 
 static gboolean
 xcf_save_layer_props (XcfInfo    *info,
-                      GimpImage  *image,
-                      GimpLayer  *layer,
+                      PicmanImage  *image,
+                      PicmanLayer  *layer,
                       GError    **error)
 {
-  GimpParasiteList *parasites;
+  PicmanParasiteList *parasites;
   gint              offset_x;
   gint              offset_y;
 
-  if (gimp_viewable_get_children (GIMP_VIEWABLE (layer)))
+  if (picman_viewable_get_children (PICMAN_VIEWABLE (layer)))
     xcf_check_error (xcf_save_prop (info, image, PROP_GROUP_ITEM, error));
 
-  if (gimp_viewable_get_parent (GIMP_VIEWABLE (layer)))
+  if (picman_viewable_get_parent (PICMAN_VIEWABLE (layer)))
     {
       GList *path;
 
-      path = gimp_item_get_path (GIMP_ITEM (layer));
+      path = picman_item_get_path (PICMAN_ITEM (layer));
       xcf_check_error (xcf_save_prop (info, image, PROP_ITEM_PATH, error,
                                       path));
       g_list_free (path);
     }
 
-  if (layer == gimp_image_get_active_layer (image))
+  if (layer == picman_image_get_active_layer (image))
     xcf_check_error (xcf_save_prop (info, image, PROP_ACTIVE_LAYER, error));
 
-  if (layer == gimp_image_get_floating_selection (image))
+  if (layer == picman_image_get_floating_selection (image))
     {
-      info->floating_sel_drawable = gimp_layer_get_floating_sel_drawable (layer);
+      info->floating_sel_drawable = picman_layer_get_floating_sel_drawable (layer);
       xcf_check_error (xcf_save_prop (info, image, PROP_FLOATING_SELECTION,
                                       error));
     }
 
   xcf_check_error (xcf_save_prop (info, image, PROP_OPACITY, error,
-                                  gimp_layer_get_opacity (layer)));
+                                  picman_layer_get_opacity (layer)));
   xcf_check_error (xcf_save_prop (info, image, PROP_VISIBLE, error,
-                                  gimp_item_get_visible (GIMP_ITEM (layer))));
+                                  picman_item_get_visible (PICMAN_ITEM (layer))));
   xcf_check_error (xcf_save_prop (info, image, PROP_LINKED, error,
-                                  gimp_item_get_linked (GIMP_ITEM (layer))));
+                                  picman_item_get_linked (PICMAN_ITEM (layer))));
   xcf_check_error (xcf_save_prop (info, image, PROP_LOCK_CONTENT, error,
-                                  gimp_item_get_lock_content (GIMP_ITEM (layer))));
+                                  picman_item_get_lock_content (PICMAN_ITEM (layer))));
   xcf_check_error (xcf_save_prop (info, image, PROP_LOCK_ALPHA, error,
-                                  gimp_layer_get_lock_alpha (layer)));
+                                  picman_layer_get_lock_alpha (layer)));
   xcf_check_error (xcf_save_prop (info, image, PROP_LOCK_POSITION, error,
-                                  gimp_item_get_lock_position (GIMP_ITEM (layer))));
+                                  picman_item_get_lock_position (PICMAN_ITEM (layer))));
 
-  if (gimp_layer_get_mask (layer))
+  if (picman_layer_get_mask (layer))
     {
       xcf_check_error (xcf_save_prop (info, image, PROP_APPLY_MASK, error,
-                                      gimp_layer_get_apply_mask (layer)));
+                                      picman_layer_get_apply_mask (layer)));
       xcf_check_error (xcf_save_prop (info, image, PROP_EDIT_MASK, error,
-                                      gimp_layer_get_edit_mask (layer)));
+                                      picman_layer_get_edit_mask (layer)));
       xcf_check_error (xcf_save_prop (info, image, PROP_SHOW_MASK, error,
-                                      gimp_layer_get_show_mask (layer)));
+                                      picman_layer_get_show_mask (layer)));
     }
   else
     {
@@ -528,21 +528,21 @@ xcf_save_layer_props (XcfInfo    *info,
                                       FALSE));
     }
 
-  gimp_item_get_offset (GIMP_ITEM (layer), &offset_x, &offset_y);
+  picman_item_get_offset (PICMAN_ITEM (layer), &offset_x, &offset_y);
 
   xcf_check_error (xcf_save_prop (info, image, PROP_OFFSETS, error,
                                   offset_x, offset_y));
   xcf_check_error (xcf_save_prop (info, image, PROP_MODE, error,
-                                  gimp_layer_get_mode (layer)));
+                                  picman_layer_get_mode (layer)));
   xcf_check_error (xcf_save_prop (info, image, PROP_TATTOO, error,
-                                  gimp_item_get_tattoo (GIMP_ITEM (layer))));
+                                  picman_item_get_tattoo (PICMAN_ITEM (layer))));
 
-  if (GIMP_IS_TEXT_LAYER (layer) && GIMP_TEXT_LAYER (layer)->text)
+  if (PICMAN_IS_TEXT_LAYER (layer) && PICMAN_TEXT_LAYER (layer)->text)
     {
-      GimpTextLayer *text_layer = GIMP_TEXT_LAYER (layer);
-      guint32        flags      = gimp_text_layer_get_xcf_flags (text_layer);
+      PicmanTextLayer *text_layer = PICMAN_TEXT_LAYER (layer);
+      guint32        flags      = picman_text_layer_get_xcf_flags (text_layer);
 
-      gimp_text_layer_xcf_save_prepare (text_layer);
+      picman_text_layer_xcf_save_prepare (text_layer);
 
       if (flags)
         xcf_check_error (xcf_save_prop (info,
@@ -550,11 +550,11 @@ xcf_save_layer_props (XcfInfo    *info,
                                         flags));
     }
 
-  if (gimp_viewable_get_children (GIMP_VIEWABLE (layer)))
+  if (picman_viewable_get_children (PICMAN_VIEWABLE (layer)))
     {
       gint32 flags = 0;
 
-      if (gimp_viewable_get_expanded (GIMP_VIEWABLE (layer)))
+      if (picman_viewable_get_expanded (PICMAN_VIEWABLE (layer)))
         flags |= XCF_GROUP_ITEM_EXPANDED;
 
       xcf_check_error (xcf_save_prop (info,
@@ -562,9 +562,9 @@ xcf_save_layer_props (XcfInfo    *info,
                                       flags));
     }
 
-  parasites = gimp_item_get_parasites (GIMP_ITEM (layer));
+  parasites = picman_item_get_parasites (PICMAN_ITEM (layer));
 
-  if (gimp_parasite_list_length (parasites) > 0)
+  if (picman_parasite_list_length (parasites) > 0)
     {
       xcf_check_error (xcf_save_prop (info, image, PROP_PARASITES, error,
                                       parasites));
@@ -577,41 +577,41 @@ xcf_save_layer_props (XcfInfo    *info,
 
 static gboolean
 xcf_save_channel_props (XcfInfo      *info,
-                        GimpImage    *image,
-                        GimpChannel  *channel,
+                        PicmanImage    *image,
+                        PicmanChannel  *channel,
                         GError      **error)
 {
-  GimpParasiteList *parasites;
+  PicmanParasiteList *parasites;
   guchar            col[3];
 
-  if (channel == gimp_image_get_active_channel (image))
+  if (channel == picman_image_get_active_channel (image))
     xcf_check_error (xcf_save_prop (info, image, PROP_ACTIVE_CHANNEL, error));
 
-  if (channel == gimp_image_get_mask (image))
+  if (channel == picman_image_get_mask (image))
     xcf_check_error (xcf_save_prop (info, image, PROP_SELECTION, error));
 
   xcf_check_error (xcf_save_prop (info, image, PROP_OPACITY, error,
-                                  gimp_channel_get_opacity (channel)));
+                                  picman_channel_get_opacity (channel)));
   xcf_check_error (xcf_save_prop (info, image, PROP_VISIBLE, error,
-                                  gimp_item_get_visible (GIMP_ITEM (channel))));
+                                  picman_item_get_visible (PICMAN_ITEM (channel))));
   xcf_check_error (xcf_save_prop (info, image, PROP_LINKED, error,
-                                  gimp_item_get_linked (GIMP_ITEM (channel))));
+                                  picman_item_get_linked (PICMAN_ITEM (channel))));
   xcf_check_error (xcf_save_prop (info, image, PROP_LOCK_CONTENT, error,
-                                  gimp_item_get_lock_content (GIMP_ITEM (channel))));
+                                  picman_item_get_lock_content (PICMAN_ITEM (channel))));
   xcf_check_error (xcf_save_prop (info, image, PROP_LOCK_POSITION, error,
-                                  gimp_item_get_lock_position (GIMP_ITEM (channel))));
+                                  picman_item_get_lock_position (PICMAN_ITEM (channel))));
   xcf_check_error (xcf_save_prop (info, image, PROP_SHOW_MASKED, error,
-                                  gimp_channel_get_show_masked (channel)));
+                                  picman_channel_get_show_masked (channel)));
 
-  gimp_rgb_get_uchar (&channel->color, &col[0], &col[1], &col[2]);
+  picman_rgb_get_uchar (&channel->color, &col[0], &col[1], &col[2]);
   xcf_check_error (xcf_save_prop (info, image, PROP_COLOR, error, col));
 
   xcf_check_error (xcf_save_prop (info, image, PROP_TATTOO, error,
-                                  gimp_item_get_tattoo (GIMP_ITEM (channel))));
+                                  picman_item_get_tattoo (PICMAN_ITEM (channel))));
 
-  parasites = gimp_item_get_parasites (GIMP_ITEM (channel));
+  parasites = picman_item_get_parasites (PICMAN_ITEM (channel));
 
-  if (gimp_parasite_list_length (parasites) > 0)
+  if (picman_parasite_list_length (parasites) > 0)
     {
       xcf_check_error (xcf_save_prop (info, image, PROP_PARASITES, error,
                                       parasites));
@@ -624,7 +624,7 @@ xcf_save_channel_props (XcfInfo      *info,
 
 static gboolean
 xcf_save_prop (XcfInfo    *info,
-               GimpImage  *image,
+               PicmanImage  *image,
                PropType    prop_type,
                GError    **error,
                ...)
@@ -887,17 +887,17 @@ xcf_save_prop (XcfInfo    *info,
 
         for (; guides; guides = g_list_next (guides))
           {
-            GimpGuide *guide    = guides->data;
-            gint32     position = gimp_guide_get_position (guide);
+            PicmanGuide *guide    = guides->data;
+            gint32     position = picman_guide_get_position (guide);
             gint8      orientation;
 
-            switch (gimp_guide_get_orientation (guide))
+            switch (picman_guide_get_orientation (guide))
               {
-              case GIMP_ORIENTATION_HORIZONTAL:
+              case PICMAN_ORIENTATION_HORIZONTAL:
                 orientation = XCF_ORIENTATION_HORIZONTAL;
                 break;
 
-              case GIMP_ORIENTATION_VERTICAL:
+              case PICMAN_ORIENTATION_VERTICAL:
                 orientation = XCF_ORIENTATION_VERTICAL;
                 break;
 
@@ -928,7 +928,7 @@ xcf_save_prop (XcfInfo    *info,
 
         for (; sample_points; sample_points = g_list_next (sample_points))
           {
-            GimpSamplePoint *sample_point = sample_points->data;
+            PicmanSamplePoint *sample_point = sample_points->data;
             gint32           x, y;
 
             x = sample_point->x;
@@ -974,11 +974,11 @@ xcf_save_prop (XcfInfo    *info,
 
     case PROP_PARASITES:
       {
-        GimpParasiteList *list;
+        PicmanParasiteList *list;
 
-        list = va_arg (args, GimpParasiteList *);
+        list = va_arg (args, PicmanParasiteList *);
 
-        if (gimp_parasite_list_persistent_length (list) > 0)
+        if (picman_parasite_list_persistent_length (list) > 0)
           {
             guint32 base, length;
             long    pos;
@@ -1057,7 +1057,7 @@ xcf_save_prop (XcfInfo    *info,
 
     case PROP_USER_UNIT:
       {
-        GimpUnit     unit;
+        PicmanUnit     unit;
         const gchar *unit_strings[5];
         gfloat       factor;
         guint32      digits;
@@ -1065,13 +1065,13 @@ xcf_save_prop (XcfInfo    *info,
         unit = va_arg (args, guint32);
 
         /* write the entire unit definition */
-        unit_strings[0] = gimp_unit_get_identifier (unit);
-        factor          = gimp_unit_get_factor (unit);
-        digits          = gimp_unit_get_digits (unit);
-        unit_strings[1] = gimp_unit_get_symbol (unit);
-        unit_strings[2] = gimp_unit_get_abbreviation (unit);
-        unit_strings[3] = gimp_unit_get_singular (unit);
-        unit_strings[4] = gimp_unit_get_plural (unit);
+        unit_strings[0] = picman_unit_get_identifier (unit);
+        factor          = picman_unit_get_factor (unit);
+        digits          = picman_unit_get_digits (unit);
+        unit_strings[1] = picman_unit_get_symbol (unit);
+        unit_strings[2] = picman_unit_get_abbreviation (unit);
+        unit_strings[3] = picman_unit_get_singular (unit);
+        unit_strings[4] = picman_unit_get_plural (unit);
 
         size =
           2 * 4 +
@@ -1176,8 +1176,8 @@ xcf_save_prop (XcfInfo    *info,
 
 static gboolean
 xcf_save_layer (XcfInfo    *info,
-                GimpImage  *image,
-                GimpLayer  *layer,
+                PicmanImage  *image,
+                PicmanLayer  *layer,
                 GError    **error)
 {
   guint32      saved_pos;
@@ -1189,7 +1189,7 @@ xcf_save_layer (XcfInfo    *info,
   /* check and see if this is the drawable that the floating
    *  selection is attached to.
    */
-  if (GIMP_DRAWABLE (layer) == info->floating_sel_drawable)
+  if (PICMAN_DRAWABLE (layer) == info->floating_sel_drawable)
     {
       saved_pos = info->cp;
       xcf_check_error (xcf_seek_pos (info, info->floating_sel_offset, error));
@@ -1198,17 +1198,17 @@ xcf_save_layer (XcfInfo    *info,
     }
 
   /* write out the width, height and image type information for the layer */
-  value = gimp_item_get_width (GIMP_ITEM (layer));
+  value = picman_item_get_width (PICMAN_ITEM (layer));
   xcf_write_int32_check_error (info, &value, 1);
 
-  value = gimp_item_get_height (GIMP_ITEM (layer));
+  value = picman_item_get_height (PICMAN_ITEM (layer));
   xcf_write_int32_check_error (info, &value, 1);
 
-  value = gimp_babl_format_get_image_type (gimp_drawable_get_format (GIMP_DRAWABLE (layer)));
+  value = picman_babl_format_get_image_type (picman_drawable_get_format (PICMAN_DRAWABLE (layer)));
   xcf_write_int32_check_error (info, &value, 1);
 
   /* write out the layers name */
-  string = gimp_object_get_name (layer);
+  string = picman_object_get_name (layer);
   xcf_write_string_check_error (info, (gchar **) &string, 1);
 
   /* write out the layer properties */
@@ -1224,7 +1224,7 @@ xcf_save_layer (XcfInfo    *info,
   offset = info->cp;
 
   xcf_check_error (xcf_save_buffer (info,
-                                    gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
+                                    picman_drawable_get_buffer (PICMAN_DRAWABLE (layer)),
                                     error));
 
   xcf_check_error (xcf_seek_pos (info, saved_pos, error));
@@ -1236,14 +1236,14 @@ xcf_save_layer (XcfInfo    *info,
   saved_pos = info->cp;
 
   /* write out the layer mask */
-  if (gimp_layer_get_mask (layer))
+  if (picman_layer_get_mask (layer))
     {
-      GimpLayerMask *mask = gimp_layer_get_mask (layer);
+      PicmanLayerMask *mask = picman_layer_get_mask (layer);
 
       xcf_check_error (xcf_seek_end (info, error));
       offset = info->cp;
 
-      xcf_check_error (xcf_save_channel (info, image, GIMP_CHANNEL (mask),
+      xcf_check_error (xcf_save_channel (info, image, PICMAN_CHANNEL (mask),
                                          error));
     }
   else
@@ -1257,8 +1257,8 @@ xcf_save_layer (XcfInfo    *info,
 
 static gboolean
 xcf_save_channel (XcfInfo      *info,
-                  GimpImage    *image,
-                  GimpChannel  *channel,
+                  PicmanImage    *image,
+                  PicmanChannel  *channel,
                   GError      **error)
 {
   guint32      saved_pos;
@@ -1270,7 +1270,7 @@ xcf_save_channel (XcfInfo      *info,
   /* check and see if this is the drawable that the floating
    *  selection is attached to.
    */
-  if (GIMP_DRAWABLE (channel) == info->floating_sel_drawable)
+  if (PICMAN_DRAWABLE (channel) == info->floating_sel_drawable)
     {
       saved_pos = info->cp;
       xcf_check_error (xcf_seek_pos (info, info->floating_sel_offset, error));
@@ -1279,14 +1279,14 @@ xcf_save_channel (XcfInfo      *info,
     }
 
   /* write out the width and height information for the channel */
-  value = gimp_item_get_width (GIMP_ITEM (channel));
+  value = picman_item_get_width (PICMAN_ITEM (channel));
   xcf_write_int32_check_error (info, &value, 1);
 
-  value = gimp_item_get_height (GIMP_ITEM (channel));
+  value = picman_item_get_height (PICMAN_ITEM (channel));
   xcf_write_int32_check_error (info, &value, 1);
 
   /* write out the channels name */
-  string = gimp_object_get_name (channel);
+  string = picman_object_get_name (channel);
   xcf_write_string_check_error (info, (gchar **) &string, 1);
 
   /* write out the channel properties */
@@ -1302,7 +1302,7 @@ xcf_save_channel (XcfInfo      *info,
   offset = info->cp;
 
   xcf_check_error (xcf_save_buffer (info,
-                                    gimp_drawable_get_buffer (GIMP_DRAWABLE (channel)),
+                                    picman_drawable_get_buffer (PICMAN_DRAWABLE (channel)),
                                     error));
 
   xcf_check_error (xcf_seek_pos (info, saved_pos, error));
@@ -1444,8 +1444,8 @@ xcf_save_level (XcfInfo     *info,
    */
   rlebuf = g_alloca (XCF_TILE_WIDTH * XCF_TILE_HEIGHT * bpp * 1.5);
 
-  n_tile_rows = gimp_gegl_buffer_get_n_tile_rows (buffer, XCF_TILE_HEIGHT);
-  n_tile_cols = gimp_gegl_buffer_get_n_tile_cols (buffer, XCF_TILE_WIDTH);
+  n_tile_rows = picman_gegl_buffer_get_n_tile_rows (buffer, XCF_TILE_HEIGHT);
+  n_tile_cols = picman_gegl_buffer_get_n_tile_cols (buffer, XCF_TILE_WIDTH);
 
   ntiles = n_tile_rows * n_tile_cols;
   xcf_check_error (xcf_seek_pos (info, info->cp + (ntiles + 1) * 4, error));
@@ -1459,7 +1459,7 @@ xcf_save_level (XcfInfo     *info,
        */
       offset = info->cp;
 
-      gimp_gegl_buffer_get_tile_rect (buffer,
+      picman_gegl_buffer_get_tile_rect (buffer,
                                       XCF_TILE_WIDTH, XCF_TILE_HEIGHT,
                                       i, &rect);
 
@@ -1651,27 +1651,27 @@ xcf_save_tile_rle (XcfInfo        *info,
 
 static gboolean
 xcf_save_parasite (XcfInfo       *info,
-                   GimpParasite  *parasite,
+                   PicmanParasite  *parasite,
                    GError       **error)
 {
-  if (gimp_parasite_is_persistent (parasite))
+  if (picman_parasite_is_persistent (parasite))
     {
       guint32      value;
       const gchar *string;
       GError      *tmp_error = NULL;
 
-      string = gimp_parasite_name (parasite);
+      string = picman_parasite_name (parasite);
       xcf_write_string_check_error (info, (gchar **) &string, 1);
 
-      value = gimp_parasite_flags (parasite);
+      value = picman_parasite_flags (parasite);
       xcf_write_int32_check_error (info, &value, 1);
 
-      value = gimp_parasite_data_size (parasite);
+      value = picman_parasite_data_size (parasite);
       xcf_write_int32_check_error (info, &value, 1);
 
       xcf_write_int8_check_error (info,
-                                  gimp_parasite_data (parasite),
-                                  gimp_parasite_data_size (parasite));
+                                  picman_parasite_data (parasite),
+                                  picman_parasite_data_size (parasite));
     }
 
   return TRUE;
@@ -1685,7 +1685,7 @@ typedef struct
 
 static void
 xcf_save_parasite_func (gchar           *key,
-                        GimpParasite    *parasite,
+                        PicmanParasite    *parasite,
                         XcfParasiteData *data)
 {
   if (! data->error)
@@ -1694,7 +1694,7 @@ xcf_save_parasite_func (gchar           *key,
 
 static gboolean
 xcf_save_parasite_list (XcfInfo           *info,
-                        GimpParasiteList  *list,
+                        PicmanParasiteList  *list,
                         GError           **error)
 {
   XcfParasiteData data;
@@ -1702,7 +1702,7 @@ xcf_save_parasite_list (XcfInfo           *info,
   data.info  = info;
   data.error = NULL;
 
-  gimp_parasite_list_foreach (list, (GHFunc) xcf_save_parasite_func, &data);
+  picman_parasite_list_foreach (list, (GHFunc) xcf_save_parasite_func, &data);
 
   if (data.error)
     {
@@ -1715,10 +1715,10 @@ xcf_save_parasite_list (XcfInfo           *info,
 
 static gboolean
 xcf_save_old_paths (XcfInfo    *info,
-                    GimpImage  *image,
+                    PicmanImage  *image,
                     GError    **error)
 {
-  GimpVectors *active_vectors;
+  PicmanVectors *active_vectors;
   guint32      num_paths;
   guint32      active_index = 0;
   GList       *list;
@@ -1732,29 +1732,29 @@ xcf_save_old_paths (XcfInfo    *info,
    * then each path:-
    */
 
-  num_paths = gimp_container_get_n_children (gimp_image_get_vectors (image));
+  num_paths = picman_container_get_n_children (picman_image_get_vectors (image));
 
-  active_vectors = gimp_image_get_active_vectors (image);
+  active_vectors = picman_image_get_active_vectors (image);
 
   if (active_vectors)
-    active_index = gimp_container_get_child_index (gimp_image_get_vectors (image),
-                                                   GIMP_OBJECT (active_vectors));
+    active_index = picman_container_get_child_index (picman_image_get_vectors (image),
+                                                   PICMAN_OBJECT (active_vectors));
 
   xcf_write_int32_check_error (info, &active_index, 1);
   xcf_write_int32_check_error (info, &num_paths,    1);
 
-  for (list = gimp_image_get_vectors_iter (image);
+  for (list = picman_image_get_vectors_iter (image);
        list;
        list = g_list_next (list))
     {
-      GimpVectors            *vectors = list->data;
+      PicmanVectors            *vectors = list->data;
       gchar                  *name;
       guint32                 locked;
       guint8                  state;
       guint32                 version;
       guint32                 pathtype;
       guint32                 tattoo;
-      GimpVectorsCompatPoint *points;
+      PicmanVectorsCompatPoint *points;
       guint32                 num_points;
       guint32                 closed;
       gint                    i;
@@ -1771,7 +1771,7 @@ xcf_save_old_paths (XcfInfo    *info,
        * then each point.
        */
 
-      points = gimp_vectors_compat_get_points (vectors,
+      points = picman_vectors_compat_get_points (vectors,
                                                (gint32 *) &num_points,
                                                (gint32 *) &closed);
 
@@ -1780,12 +1780,12 @@ xcf_save_old_paths (XcfInfo    *info,
        * we already saved the number of paths and I wont start seeking
        * around to fix that cruft  */
 
-      name     = (gchar *) gimp_object_get_name (vectors);
-      locked   = gimp_item_get_linked (GIMP_ITEM (vectors));
+      name     = (gchar *) picman_object_get_name (vectors);
+      locked   = picman_item_get_linked (PICMAN_ITEM (vectors));
       state    = closed ? 4 : 2;  /* EDIT : ADD  (editing state, 1.2 compat) */
       version  = 3;
       pathtype = 1;  /* BEZIER  (1.2 compat) */
-      tattoo   = gimp_item_get_tattoo (GIMP_ITEM (vectors));
+      tattoo   = picman_item_get_tattoo (PICMAN_ITEM (vectors));
 
       xcf_write_string_check_error (info, &name,       1);
       xcf_write_int32_check_error  (info, &locked,     1);
@@ -1823,10 +1823,10 @@ xcf_save_old_paths (XcfInfo    *info,
 
 static gboolean
 xcf_save_vectors (XcfInfo    *info,
-                  GimpImage  *image,
+                  PicmanImage  *image,
                   GError    **error)
 {
-  GimpVectors *active_vectors;
+  PicmanVectors *active_vectors;
   guint32      version      = 1;
   guint32      active_index = 0;
   guint32      num_paths;
@@ -1843,24 +1843,24 @@ xcf_save_vectors (XcfInfo    *info,
    * then each path:-
    */
 
-  active_vectors = gimp_image_get_active_vectors (image);
+  active_vectors = picman_image_get_active_vectors (image);
 
   if (active_vectors)
-    active_index = gimp_container_get_child_index (gimp_image_get_vectors (image),
-                                                   GIMP_OBJECT (active_vectors));
+    active_index = picman_container_get_child_index (picman_image_get_vectors (image),
+                                                   PICMAN_OBJECT (active_vectors));
 
-  num_paths = gimp_container_get_n_children (gimp_image_get_vectors (image));
+  num_paths = picman_container_get_n_children (picman_image_get_vectors (image));
 
   xcf_write_int32_check_error (info, &version,      1);
   xcf_write_int32_check_error (info, &active_index, 1);
   xcf_write_int32_check_error (info, &num_paths,    1);
 
-  for (list = gimp_image_get_vectors_iter (image);
+  for (list = picman_image_get_vectors_iter (image);
        list;
        list = g_list_next (list))
     {
-      GimpVectors      *vectors = list->data;
-      GimpParasiteList *parasites;
+      PicmanVectors      *vectors = list->data;
+      PicmanParasiteList *parasites;
       const gchar      *name;
       guint32           tattoo;
       guint32           visible;
@@ -1880,12 +1880,12 @@ xcf_save_vectors (XcfInfo    *info,
        * then each stroke
        */
 
-      name          = gimp_object_get_name (vectors);
-      visible       = gimp_item_get_visible (GIMP_ITEM (vectors));
-      linked        = gimp_item_get_linked (GIMP_ITEM (vectors));
-      tattoo        = gimp_item_get_tattoo (GIMP_ITEM (vectors));
-      parasites     = gimp_item_get_parasites (GIMP_ITEM (vectors));
-      num_parasites = gimp_parasite_list_persistent_length (parasites);
+      name          = picman_object_get_name (vectors);
+      visible       = picman_item_get_visible (PICMAN_ITEM (vectors));
+      linked        = picman_item_get_linked (PICMAN_ITEM (vectors));
+      tattoo        = picman_item_get_tattoo (PICMAN_ITEM (vectors));
+      parasites     = picman_item_get_parasites (PICMAN_ITEM (vectors));
+      num_parasites = picman_parasite_list_persistent_length (parasites);
       num_strokes   = g_list_length (vectors->strokes);
 
       xcf_write_string_check_error (info, (gchar **) &name, 1);
@@ -1901,7 +1901,7 @@ xcf_save_vectors (XcfInfo    *info,
            stroke_list;
            stroke_list = g_list_next (stroke_list))
         {
-          GimpStroke *stroke = stroke_list->data;
+          PicmanStroke *stroke = stroke_list->data;
           guint32     stroke_type;
           guint32     closed;
           guint32     num_axes;
@@ -1920,7 +1920,7 @@ xcf_save_vectors (XcfInfo    *info,
            * then each control point.
            */
 
-          if (GIMP_IS_BEZIER_STROKE (stroke))
+          if (PICMAN_IS_BEZIER_STROKE (stroke))
             {
               stroke_type = XCF_STROKETYPE_BEZIER_STROKE;
               num_axes = 2;   /* hardcoded, might be increased later */
@@ -1931,7 +1931,7 @@ xcf_save_vectors (XcfInfo    *info,
               continue;
             }
 
-          control_points = gimp_stroke_control_points_get (stroke,
+          control_points = picman_stroke_control_points_get (stroke,
                                                            (gint32 *) &closed);
 
           xcf_write_int32_check_error (info, &stroke_type,         1);
@@ -1941,9 +1941,9 @@ xcf_save_vectors (XcfInfo    *info,
 
           for (i = 0; i < control_points->len; i++)
             {
-              GimpAnchor *anchor;
+              PicmanAnchor *anchor;
 
-              anchor = & (g_array_index (control_points, GimpAnchor, i));
+              anchor = & (g_array_index (control_points, PicmanAnchor, i));
 
               type      = anchor->type;
               coords[0] = anchor->position.x;

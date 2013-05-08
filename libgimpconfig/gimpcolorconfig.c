@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpColorConfig class
+ * PicmanColorConfig class
  * Copyright (C) 2004  Stefan Döhla <stefan@doehla.de>
  *
  * This library is free software: you can redistribute it and/or
@@ -25,24 +25,24 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
-#include "gimpconfigtypes.h"
+#include "picmanconfigtypes.h"
 
-#include "gimpcolorconfig-enums.h"
+#include "picmancolorconfig-enums.h"
 
-#include "gimpcolorconfig.h"
-#include "gimpconfig-iface.h"
-#include "gimpconfig-params.h"
-#include "gimpconfig-path.h"
+#include "picmancolorconfig.h"
+#include "picmanconfig-iface.h"
+#include "picmanconfig-params.h"
+#include "picmanconfig-path.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpcolorconfig
- * @title: GimpColorConfig
+ * SECTION: picmancolorconfig
+ * @title: PicmanColorConfig
  * @short_description: Color management settings.
  *
  * Color management settings.
@@ -54,7 +54,7 @@
 #define DISPLAY_PROFILE_BLURB \
   N_("The color profile of your (primary) monitor.")
 #define DISPLAY_PROFILE_FROM_GDK_BLURB \
-  N_("When enabled, GIMP will try to use the display color profile from " \
+  N_("When enabled, PICMAN will try to use the display color profile from " \
      "the windowing system.  The configured monitor profile is then only " \
      "used as a fallback.")
 #define RGB_PROFILE_BLURB \
@@ -92,101 +92,101 @@ enum
 };
 
 
-static void  gimp_color_config_finalize     (GObject      *object);
-static void  gimp_color_config_set_property (GObject      *object,
+static void  picman_color_config_finalize     (GObject      *object);
+static void  picman_color_config_set_property (GObject      *object,
                                              guint         property_id,
                                              const GValue *value,
                                              GParamSpec   *pspec);
-static void  gimp_color_config_get_property (GObject      *object,
+static void  picman_color_config_get_property (GObject      *object,
                                              guint         property_id,
                                              GValue       *value,
                                              GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpColorConfig, gimp_color_config, G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL)
-                         gimp_type_set_translation_domain (g_define_type_id,
-                                                           GETTEXT_PACKAGE "-libgimp"))
+G_DEFINE_TYPE_WITH_CODE (PicmanColorConfig, picman_color_config, G_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL)
+                         picman_type_set_translation_domain (g_define_type_id,
+                                                           GETTEXT_PACKAGE "-libpicman"))
 
-#define parent_class gimp_color_config_parent_class
+#define parent_class picman_color_config_parent_class
 
 
 static void
-gimp_color_config_class_init (GimpColorConfigClass *klass)
+picman_color_config_class_init (PicmanColorConfigClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  GimpRGB       color;
+  PicmanRGB       color;
 
-  gimp_rgba_set_uchar (&color, 0x80, 0x80, 0x80, 0xff);
+  picman_rgba_set_uchar (&color, 0x80, 0x80, 0x80, 0xff);
 
-  object_class->finalize     = gimp_color_config_finalize;
-  object_class->set_property = gimp_color_config_set_property;
-  object_class->get_property = gimp_color_config_get_property;
+  object_class->finalize     = picman_color_config_finalize;
+  object_class->set_property = picman_color_config_set_property;
+  object_class->get_property = picman_color_config_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_MODE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_MODE,
                                  "mode", COLOR_MANAGEMENT_MODE_BLURB,
-                                 GIMP_TYPE_COLOR_MANAGEMENT_MODE,
-                                 GIMP_COLOR_MANAGEMENT_DISPLAY,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_RGB_PROFILE,
+                                 PICMAN_TYPE_COLOR_MANAGEMENT_MODE,
+                                 PICMAN_COLOR_MANAGEMENT_DISPLAY,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_RGB_PROFILE,
                                  "rgb-profile", RGB_PROFILE_BLURB,
-                                 GIMP_CONFIG_PATH_FILE, NULL,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_CMYK_PROFILE,
+                                 PICMAN_CONFIG_PATH_FILE, NULL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_CMYK_PROFILE,
                                  "cmyk-profile", CMYK_PROFILE_BLURB,
-                                 GIMP_CONFIG_PATH_FILE, NULL,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_DISPLAY_PROFILE,
+                                 PICMAN_CONFIG_PATH_FILE, NULL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_DISPLAY_PROFILE,
                                  "display-profile", DISPLAY_PROFILE_BLURB,
-                                 GIMP_CONFIG_PATH_FILE, NULL,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DISPLAY_PROFILE_FROM_GDK,
+                                 PICMAN_CONFIG_PATH_FILE, NULL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_DISPLAY_PROFILE_FROM_GDK,
                                     "display-profile-from-gdk",
                                     DISPLAY_PROFILE_FROM_GDK_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PRINTER_PROFILE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PRINTER_PROFILE,
                                  "printer-profile", PRINTER_PROFILE_BLURB,
-                                 GIMP_CONFIG_PATH_FILE, NULL,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_DISPLAY_RENDERING_INTENT,
+                                 PICMAN_CONFIG_PATH_FILE, NULL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_DISPLAY_RENDERING_INTENT,
                                  "display-rendering-intent",
                                  DISPLAY_RENDERING_INTENT_BLURB,
-                                 GIMP_TYPE_COLOR_RENDERING_INTENT,
-                                 GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_SIMULATION_RENDERING_INTENT,
+                                 PICMAN_TYPE_COLOR_RENDERING_INTENT,
+                                 PICMAN_COLOR_RENDERING_INTENT_PERCEPTUAL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_SIMULATION_RENDERING_INTENT,
                                  "simulation-rendering-intent",
                                  SIMULATION_RENDERING_INTENT_BLURB,
-                                 GIMP_TYPE_COLOR_RENDERING_INTENT,
-                                 GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SIMULATION_GAMUT_CHECK,
+                                 PICMAN_TYPE_COLOR_RENDERING_INTENT,
+                                 PICMAN_COLOR_RENDERING_INTENT_PERCEPTUAL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SIMULATION_GAMUT_CHECK,
                                     "simulation-gamut-check",
                                     SIMULATION_GAMUT_CHECK_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_RGB (object_class, PROP_OUT_OF_GAMUT_COLOR,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_RGB (object_class, PROP_OUT_OF_GAMUT_COLOR,
                                 "out-of-gamut-color",
                                 OUT_OF_GAMUT_COLOR_BLURB,
                                 FALSE, &color,
-                                GIMP_PARAM_STATIC_STRINGS);
+                                PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DISPLAY_MODULE,
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DISPLAY_MODULE,
                                    "display-module", NULL,
                                    "CdisplayLcms",
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_color_config_init (GimpColorConfig *config)
+picman_color_config_init (PicmanColorConfig *config)
 {
 }
 
 static void
-gimp_color_config_finalize (GObject *object)
+picman_color_config_finalize (GObject *object)
 {
-  GimpColorConfig *color_config = GIMP_COLOR_CONFIG (object);
+  PicmanColorConfig *color_config = PICMAN_COLOR_CONFIG (object);
 
   if (color_config->rgb_profile)
     g_free (color_config->rgb_profile);
@@ -207,12 +207,12 @@ gimp_color_config_finalize (GObject *object)
 }
 
 static void
-gimp_color_config_set_property (GObject      *object,
+picman_color_config_set_property (GObject      *object,
                                 guint         property_id,
                                 const GValue *value,
                                 GParamSpec   *pspec)
 {
-  GimpColorConfig *color_config = GIMP_COLOR_CONFIG (object);
+  PicmanColorConfig *color_config = PICMAN_COLOR_CONFIG (object);
 
   switch (property_id)
     {
@@ -248,7 +248,7 @@ gimp_color_config_set_property (GObject      *object,
       color_config->simulation_gamut_check = g_value_get_boolean (value);
       break;
     case PROP_OUT_OF_GAMUT_COLOR:
-      color_config->out_of_gamut_color = *(GimpRGB *) g_value_get_boxed (value);
+      color_config->out_of_gamut_color = *(PicmanRGB *) g_value_get_boxed (value);
       break;
     case PROP_DISPLAY_MODULE:
       g_free (color_config->display_module);
@@ -262,12 +262,12 @@ gimp_color_config_set_property (GObject      *object,
 }
 
 static void
-gimp_color_config_get_property (GObject    *object,
+picman_color_config_get_property (GObject    *object,
                                 guint       property_id,
                                 GValue     *value,
                                 GParamSpec *pspec)
 {
-  GimpColorConfig *color_config = GIMP_COLOR_CONFIG (object);
+  PicmanColorConfig *color_config = PICMAN_COLOR_CONFIG (object);
 
   switch (property_id)
     {

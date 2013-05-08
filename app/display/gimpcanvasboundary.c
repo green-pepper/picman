@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasboundary.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasboundary.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,17 +23,17 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "core/gimp-cairo.h"
-#include "core/gimpboundary.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman-cairo.h"
+#include "core/picmanboundary.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimpcanvasboundary.h"
-#include "gimpdisplayshell.h"
+#include "picmancanvasboundary.h"
+#include "picmandisplayshell.h"
 
 
 enum
@@ -46,92 +46,92 @@ enum
 };
 
 
-typedef struct _GimpCanvasBoundaryPrivate GimpCanvasBoundaryPrivate;
+typedef struct _PicmanCanvasBoundaryPrivate PicmanCanvasBoundaryPrivate;
 
-struct _GimpCanvasBoundaryPrivate
+struct _PicmanCanvasBoundaryPrivate
 {
-  GimpBoundSeg *segs;
+  PicmanBoundSeg *segs;
   gint          n_segs;
-  GimpMatrix3  *transform;
+  PicmanMatrix3  *transform;
   gdouble       offset_x;
   gdouble       offset_y;
 };
 
 #define GET_PRIVATE(boundary) \
         G_TYPE_INSTANCE_GET_PRIVATE (boundary, \
-                                     GIMP_TYPE_CANVAS_BOUNDARY, \
-                                     GimpCanvasBoundaryPrivate)
+                                     PICMAN_TYPE_CANVAS_BOUNDARY, \
+                                     PicmanCanvasBoundaryPrivate)
 
 
 /*  local function prototypes  */
 
-static void             gimp_canvas_boundary_finalize     (GObject        *object);
-static void             gimp_canvas_boundary_set_property (GObject        *object,
+static void             picman_canvas_boundary_finalize     (GObject        *object);
+static void             picman_canvas_boundary_set_property (GObject        *object,
                                                            guint           property_id,
                                                            const GValue   *value,
                                                            GParamSpec     *pspec);
-static void             gimp_canvas_boundary_get_property (GObject        *object,
+static void             picman_canvas_boundary_get_property (GObject        *object,
                                                            guint           property_id,
                                                            GValue         *value,
                                                            GParamSpec     *pspec);
-static void             gimp_canvas_boundary_draw         (GimpCanvasItem *item,
+static void             picman_canvas_boundary_draw         (PicmanCanvasItem *item,
                                                            cairo_t        *cr);
-static cairo_region_t * gimp_canvas_boundary_get_extents  (GimpCanvasItem *item);
+static cairo_region_t * picman_canvas_boundary_get_extents  (PicmanCanvasItem *item);
 
 
-G_DEFINE_TYPE (GimpCanvasBoundary, gimp_canvas_boundary,
-               GIMP_TYPE_CANVAS_ITEM)
+G_DEFINE_TYPE (PicmanCanvasBoundary, picman_canvas_boundary,
+               PICMAN_TYPE_CANVAS_ITEM)
 
-#define parent_class gimp_canvas_boundary_parent_class
+#define parent_class picman_canvas_boundary_parent_class
 
 
 static void
-gimp_canvas_boundary_class_init (GimpCanvasBoundaryClass *klass)
+picman_canvas_boundary_class_init (PicmanCanvasBoundaryClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpCanvasItemClass *item_class   = GIMP_CANVAS_ITEM_CLASS (klass);
+  PicmanCanvasItemClass *item_class   = PICMAN_CANVAS_ITEM_CLASS (klass);
 
-  object_class->finalize     = gimp_canvas_boundary_finalize;
-  object_class->set_property = gimp_canvas_boundary_set_property;
-  object_class->get_property = gimp_canvas_boundary_get_property;
+  object_class->finalize     = picman_canvas_boundary_finalize;
+  object_class->set_property = picman_canvas_boundary_set_property;
+  object_class->get_property = picman_canvas_boundary_get_property;
 
-  item_class->draw           = gimp_canvas_boundary_draw;
-  item_class->get_extents    = gimp_canvas_boundary_get_extents;
+  item_class->draw           = picman_canvas_boundary_draw;
+  item_class->get_extents    = picman_canvas_boundary_get_extents;
 
   g_object_class_install_property (object_class, PROP_SEGS,
-                                   gimp_param_spec_array ("segs", NULL, NULL,
-                                                          GIMP_PARAM_READWRITE));
+                                   picman_param_spec_array ("segs", NULL, NULL,
+                                                          PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_TRANSFORM,
                                    g_param_spec_pointer ("transform", NULL, NULL,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_OFFSET_X,
                                    g_param_spec_double ("offset-x", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_OFFSET_Y,
                                    g_param_spec_double ("offset-y", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpCanvasBoundaryPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanCanvasBoundaryPrivate));
 }
 
 static void
-gimp_canvas_boundary_init (GimpCanvasBoundary *boundary)
+picman_canvas_boundary_init (PicmanCanvasBoundary *boundary)
 {
-  gimp_canvas_item_set_line_cap (GIMP_CANVAS_ITEM (boundary),
+  picman_canvas_item_set_line_cap (PICMAN_CANVAS_ITEM (boundary),
                                  CAIRO_LINE_CAP_SQUARE);
 }
 
 static void
-gimp_canvas_boundary_finalize (GObject *object)
+picman_canvas_boundary_finalize (GObject *object)
 {
-  GimpCanvasBoundaryPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasBoundaryPrivate *private = GET_PRIVATE (object);
 
   if (private->segs)
     {
@@ -150,12 +150,12 @@ gimp_canvas_boundary_finalize (GObject *object)
 }
 
 static void
-gimp_canvas_boundary_set_property (GObject      *object,
+picman_canvas_boundary_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpCanvasBoundaryPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasBoundaryPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -163,11 +163,11 @@ gimp_canvas_boundary_set_property (GObject      *object,
       break;
     case PROP_TRANSFORM:
       {
-        GimpMatrix3 *transform = g_value_get_pointer (value);
+        PicmanMatrix3 *transform = g_value_get_pointer (value);
         if (private->transform)
           g_free (private->transform);
         if (transform)
-          private->transform = g_memdup (transform, sizeof (GimpMatrix3));
+          private->transform = g_memdup (transform, sizeof (PicmanMatrix3));
         else
           private->transform = NULL;
       }
@@ -186,12 +186,12 @@ gimp_canvas_boundary_set_property (GObject      *object,
 }
 
 static void
-gimp_canvas_boundary_get_property (GObject    *object,
+picman_canvas_boundary_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpCanvasBoundaryPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasBoundaryPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -214,10 +214,10 @@ gimp_canvas_boundary_get_property (GObject    *object,
 }
 
 static void
-gimp_canvas_boundary_transform (GimpCanvasItem *item,
-                                GimpSegment    *segs)
+picman_canvas_boundary_transform (PicmanCanvasItem *item,
+                                PicmanSegment    *segs)
 {
-  GimpCanvasBoundaryPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasBoundaryPrivate *private = GET_PRIVATE (item);
   gint                       i;
 
   if (private->transform)
@@ -226,20 +226,20 @@ gimp_canvas_boundary_transform (GimpCanvasItem *item,
         {
           gdouble tx, ty;
 
-          gimp_matrix3_transform_point (private->transform,
+          picman_matrix3_transform_point (private->transform,
                                         private->segs[i].x1,
                                         private->segs[i].y1,
                                         &tx, &ty);
-          gimp_canvas_item_transform_xy (item,
+          picman_canvas_item_transform_xy (item,
                                          tx + private->offset_x,
                                          ty + private->offset_y,
                                          &segs[i].x1, &segs[i].y1);
 
-          gimp_matrix3_transform_point (private->transform,
+          picman_matrix3_transform_point (private->transform,
                                         private->segs[i].x2,
                                         private->segs[i].y2,
                                         &tx, &ty);
-          gimp_canvas_item_transform_xy (item,
+          picman_canvas_item_transform_xy (item,
                                          tx + private->offset_x,
                                          ty + private->offset_y,
                                          &segs[i].x2, &segs[i].y2);
@@ -249,12 +249,12 @@ gimp_canvas_boundary_transform (GimpCanvasItem *item,
     {
       for (i = 0; i < private->n_segs; i++)
         {
-          gimp_canvas_item_transform_xy (item,
+          picman_canvas_item_transform_xy (item,
                                          private->segs[i].x1 + private->offset_x,
                                          private->segs[i].y1 + private->offset_y,
                                          &segs[i].x1,
                                          &segs[i].y1);
-          gimp_canvas_item_transform_xy (item,
+          picman_canvas_item_transform_xy (item,
                                          private->segs[i].x2 + private->offset_x,
                                          private->segs[i].y2 + private->offset_y,
                                          &segs[i].x2,
@@ -284,35 +284,35 @@ gimp_canvas_boundary_transform (GimpCanvasItem *item,
 }
 
 static void
-gimp_canvas_boundary_draw (GimpCanvasItem *item,
+picman_canvas_boundary_draw (PicmanCanvasItem *item,
                            cairo_t        *cr)
 {
-  GimpCanvasBoundaryPrivate *private = GET_PRIVATE (item);
-  GimpSegment               *segs;
+  PicmanCanvasBoundaryPrivate *private = GET_PRIVATE (item);
+  PicmanSegment               *segs;
 
-  segs = g_new0 (GimpSegment, private->n_segs);
+  segs = g_new0 (PicmanSegment, private->n_segs);
 
-  gimp_canvas_boundary_transform (item, segs);
+  picman_canvas_boundary_transform (item, segs);
 
-  gimp_cairo_add_segments (cr, segs, private->n_segs);
+  picman_cairo_add_segments (cr, segs, private->n_segs);
 
-  _gimp_canvas_item_stroke (item, cr);
+  _picman_canvas_item_stroke (item, cr);
 
   g_free (segs);
 }
 
 static cairo_region_t *
-gimp_canvas_boundary_get_extents (GimpCanvasItem *item)
+picman_canvas_boundary_get_extents (PicmanCanvasItem *item)
 {
-  GimpCanvasBoundaryPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasBoundaryPrivate *private = GET_PRIVATE (item);
   cairo_rectangle_int_t      rectangle;
-  GimpSegment               *segs;
+  PicmanSegment               *segs;
   gint                       x1, y1, x2, y2;
   gint                       i;
 
-  segs = g_new0 (GimpSegment, private->n_segs);
+  segs = g_new0 (PicmanSegment, private->n_segs);
 
-  gimp_canvas_boundary_transform (item, segs);
+  picman_canvas_boundary_transform (item, segs);
 
   x1 = MIN (segs[0].x1, segs[0].x2);
   y1 = MIN (segs[0].y1, segs[0].y2);
@@ -342,20 +342,20 @@ gimp_canvas_boundary_get_extents (GimpCanvasItem *item)
   return cairo_region_create_rectangle (&rectangle);
 }
 
-GimpCanvasItem *
-gimp_canvas_boundary_new (GimpDisplayShell   *shell,
-                          const GimpBoundSeg *segs,
+PicmanCanvasItem *
+picman_canvas_boundary_new (PicmanDisplayShell   *shell,
+                          const PicmanBoundSeg *segs,
                           gint                n_segs,
-                          GimpMatrix3        *transform,
+                          PicmanMatrix3        *transform,
                           gdouble             offset_x,
                           gdouble             offset_y)
 {
-  GimpCanvasItem            *item;
-  GimpCanvasBoundaryPrivate *private;
+  PicmanCanvasItem            *item;
+  PicmanCanvasBoundaryPrivate *private;
 
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
 
-  item = g_object_new (GIMP_TYPE_CANVAS_BOUNDARY,
+  item = g_object_new (PICMAN_TYPE_CANVAS_BOUNDARY,
                        "shell",     shell,
                        "transform", transform,
                        "offset-x",  offset_x,
@@ -364,7 +364,7 @@ gimp_canvas_boundary_new (GimpDisplayShell   *shell,
   private = GET_PRIVATE (item);
 
   /* puke */
-  private->segs   = g_memdup (segs, n_segs * sizeof (GimpBoundSeg));
+  private->segs   = g_memdup (segs, n_segs * sizeof (PicmanBoundSeg));
   private->n_segs = n_segs;
 
   return item;

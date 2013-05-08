@@ -1,5 +1,5 @@
-/* GIMP CMYK ColorSelector using littleCMS
- * Copyright (C) 2006  Sven Neumann <sven@gimp.org>
+/* PICMAN CMYK ColorSelector using littleCMS
+ * Copyright (C) 2006  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,12 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /* definitions and variables */
@@ -46,13 +46,13 @@ typedef struct _ColorselCmykClass ColorselCmykClass;
 
 struct _ColorselCmyk
 {
-  GimpColorSelector  parent_instance;
+  PicmanColorSelector  parent_instance;
 
-  GimpColorConfig   *config;
+  PicmanColorConfig   *config;
   cmsHTRANSFORM      rgb2cmyk;
   cmsHTRANSFORM      cmyk2rgb;
 
-  GimpCMYK           cmyk;
+  PicmanCMYK           cmyk;
   GtkAdjustment     *adj[4];
   GtkWidget         *name_label;
 
@@ -61,7 +61,7 @@ struct _ColorselCmyk
 
 struct _ColorselCmykClass
 {
-  GimpColorSelectorClass  parent_class;
+  PicmanColorSelectorClass  parent_class;
 };
 
 
@@ -69,22 +69,22 @@ static GType  colorsel_cmyk_get_type       (void);
 
 static void   colorsel_cmyk_dispose        (GObject           *object);
 
-static void   colorsel_cmyk_set_color      (GimpColorSelector *selector,
-                                            const GimpRGB     *rgb,
-                                            const GimpHSV     *hsv);
-static void   colorsel_cmyk_set_config     (GimpColorSelector *selector,
-                                            GimpColorConfig   *config);
+static void   colorsel_cmyk_set_color      (PicmanColorSelector *selector,
+                                            const PicmanRGB     *rgb,
+                                            const PicmanHSV     *hsv);
+static void   colorsel_cmyk_set_config     (PicmanColorSelector *selector,
+                                            PicmanColorConfig   *config);
 
 static void   colorsel_cmyk_adj_update     (GtkAdjustment     *adj,
                                             ColorselCmyk      *module);
 static void   colorsel_cmyk_config_changed (ColorselCmyk      *module);
 
 
-static const GimpModuleInfo colorsel_cmyk_info =
+static const PicmanModuleInfo colorsel_cmyk_info =
 {
-  GIMP_MODULE_ABI_VERSION,
+  PICMAN_MODULE_ABI_VERSION,
   N_("CMYK color selector (using color profile)"),
-  "Sven Neumann <sven@gimp.org>",
+  "Sven Neumann <sven@picman.org>",
   "v0.1",
   "(c) 2006, released under the GPL",
   "September 2006"
@@ -92,17 +92,17 @@ static const GimpModuleInfo colorsel_cmyk_info =
 
 
 G_DEFINE_DYNAMIC_TYPE (ColorselCmyk, colorsel_cmyk,
-                       GIMP_TYPE_COLOR_SELECTOR)
+                       PICMAN_TYPE_COLOR_SELECTOR)
 
 
-G_MODULE_EXPORT const GimpModuleInfo *
-gimp_module_query (GTypeModule *module)
+G_MODULE_EXPORT const PicmanModuleInfo *
+picman_module_query (GTypeModule *module)
 {
   return &colorsel_cmyk_info;
 }
 
 G_MODULE_EXPORT gboolean
-gimp_module_register (GTypeModule *module)
+picman_module_register (GTypeModule *module)
 {
   colorsel_cmyk_register_type (module);
 
@@ -113,12 +113,12 @@ static void
 colorsel_cmyk_class_init (ColorselCmykClass *klass)
 {
   GObjectClass           *object_class   = G_OBJECT_CLASS (klass);
-  GimpColorSelectorClass *selector_class = GIMP_COLOR_SELECTOR_CLASS (klass);
+  PicmanColorSelectorClass *selector_class = PICMAN_COLOR_SELECTOR_CLASS (klass);
 
   object_class->dispose      = colorsel_cmyk_dispose;
 
   selector_class->name       = _("CMYK");
-  selector_class->help_id    = "gimp-colorselector-cmyk";
+  selector_class->help_id    = "picman-colorselector-cmyk";
   selector_class->stock_id   = GTK_STOCK_PRINT;  /* FIXME */
   selector_class->set_color  = colorsel_cmyk_set_color;
   selector_class->set_config = colorsel_cmyk_set_config;
@@ -172,7 +172,7 @@ colorsel_cmyk_init (ColorselCmyk *module)
 
   for (i = 0; i < 4; i++)
     {
-      adj = gimp_scale_entry_new (GTK_TABLE (table), 1, i,
+      adj = picman_scale_entry_new (GTK_TABLE (table), 1, i,
                                   gettext (cmyk_labels[i]),
                                   -1, -1,
                                   0.0,
@@ -193,7 +193,7 @@ colorsel_cmyk_init (ColorselCmyk *module)
   module->name_label = gtk_label_new (NULL);
   gtk_misc_set_alignment (GTK_MISC (module->name_label), 0.0, 0.5);
   gtk_label_set_ellipsize (GTK_LABEL (module->name_label), PANGO_ELLIPSIZE_END);
-  gimp_label_set_attributes (GTK_LABEL (module->name_label),
+  picman_label_set_attributes (GTK_LABEL (module->name_label),
                              PANGO_ATTR_SCALE, PANGO_SCALE_SMALL,
                              -1);
   gtk_box_pack_start (GTK_BOX (module), module->name_label, FALSE, FALSE, 0);
@@ -207,15 +207,15 @@ colorsel_cmyk_dispose (GObject *object)
 
   module->in_destruction = TRUE;
 
-  colorsel_cmyk_set_config (GIMP_COLOR_SELECTOR (object), NULL);
+  colorsel_cmyk_set_config (PICMAN_COLOR_SELECTOR (object), NULL);
 
   G_OBJECT_CLASS (colorsel_cmyk_parent_class)->dispose (object);
 }
 
 static void
-colorsel_cmyk_set_color (GimpColorSelector *selector,
-                         const GimpRGB     *rgb,
-                         const GimpHSV     *hsv)
+colorsel_cmyk_set_color (PicmanColorSelector *selector,
+                         const PicmanRGB     *rgb,
+                         const PicmanHSV     *hsv)
 {
   ColorselCmyk *module = COLORSEL_CMYK (selector);
   gdouble       values[4];
@@ -239,7 +239,7 @@ colorsel_cmyk_set_color (GimpColorSelector *selector,
     }
   else
     {
-      gimp_rgb_to_cmyk (rgb, 1.0, &module->cmyk);
+      picman_rgb_to_cmyk (rgb, 1.0, &module->cmyk);
     }
 
   values[0] = module->cmyk.c * 100.0;
@@ -262,8 +262,8 @@ colorsel_cmyk_set_color (GimpColorSelector *selector,
 }
 
 static void
-colorsel_cmyk_set_config (GimpColorSelector *selector,
-                          GimpColorConfig   *config)
+colorsel_cmyk_set_config (PicmanColorSelector *selector,
+                          PicmanColorConfig   *config)
 {
   ColorselCmyk *module = COLORSEL_CMYK (selector);
 
@@ -295,7 +295,7 @@ static void
 colorsel_cmyk_adj_update (GtkAdjustment *adj,
                           ColorselCmyk  *module)
 {
-  GimpColorSelector *selector = GIMP_COLOR_SELECTOR (module);
+  PicmanColorSelector *selector = PICMAN_COLOR_SELECTOR (module);
   gint               i;
   gdouble            value;
 
@@ -341,16 +341,16 @@ colorsel_cmyk_adj_update (GtkAdjustment *adj,
     }
   else
     {
-      gimp_cmyk_to_rgb (&module->cmyk, &selector->rgb);
+      picman_cmyk_to_rgb (&module->cmyk, &selector->rgb);
     }
 
-  gimp_rgb_to_hsv (&selector->rgb, &selector->hsv);
+  picman_rgb_to_hsv (&selector->rgb, &selector->hsv);
 
-  gimp_color_selector_color_changed (selector);
+  picman_color_selector_color_changed (selector);
 }
 
 static cmsHPROFILE
-color_config_get_rgb_profile (GimpColorConfig *config)
+color_config_get_rgb_profile (PicmanColorConfig *config)
 {
   cmsHPROFILE  profile = NULL;
 
@@ -363,8 +363,8 @@ color_config_get_rgb_profile (GimpColorConfig *config)
 static void
 colorsel_cmyk_config_changed (ColorselCmyk *module)
 {
-  GimpColorSelector *selector = GIMP_COLOR_SELECTOR (module);
-  GimpColorConfig   *config   = module->config;
+  PicmanColorSelector *selector = PICMAN_COLOR_SELECTOR (module);
+  PicmanColorConfig   *config   = module->config;
   cmsUInt32Number    flags    = 0;
   cmsUInt32Number    descSize = 0;
   cmsHPROFILE        rgb_profile;
@@ -386,7 +386,7 @@ colorsel_cmyk_config_changed (ColorselCmyk *module)
     }
 
   gtk_label_set_text (GTK_LABEL (module->name_label), _("Profile: (none)"));
-  gimp_help_set_help_data (module->name_label, NULL, NULL);
+  picman_help_set_help_data (module->name_label, NULL, NULL);
 
   if (! config)
     goto out;
@@ -442,7 +442,7 @@ colorsel_cmyk_config_changed (ColorselCmyk *module)
 
   text = g_strdup_printf (_("Profile: %s"), name);
   gtk_label_set_text (GTK_LABEL (module->name_label), text);
-  gimp_help_set_help_data (module->name_label, text, NULL);
+  picman_help_set_help_data (module->name_label, text, NULL);
   g_free (text);
 
   if (descData)
@@ -451,7 +451,7 @@ colorsel_cmyk_config_changed (ColorselCmyk *module)
   rgb_profile = color_config_get_rgb_profile (config);
 
   if (config->display_intent ==
-      GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC)
+      PICMAN_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC)
     {
       flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
     }

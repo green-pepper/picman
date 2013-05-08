@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpImagePropView
- * Copyright (C) 2005  Michael Natterer <mitch@gimp.org>
- * Copyright (C) 2006  Sven Neumann <sven@gimp.org>
+ * PicmanImagePropView
+ * Copyright (C) 2005  Michael Natterer <mitch@picman.org>
+ * Copyright (C) 2006  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,29 +31,29 @@
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-colormap.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimpundostack.h"
-#include "core/gimp-utils.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-colormap.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanundostack.h"
+#include "core/picman-utils.h"
 
 #include "file/file-procedure.h"
 #include "file/file-utils.h"
 
-#include "plug-in/gimppluginmanager.h"
-#include "plug-in/gimppluginprocedure.h"
+#include "plug-in/picmanpluginmanager.h"
+#include "plug-in/picmanpluginprocedure.h"
 
-#include "gimpimagepropview.h"
-#include "gimppropwidgets.h"
+#include "picmanimagepropview.h"
+#include "picmanpropwidgets.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -63,50 +63,50 @@ enum
 };
 
 
-static void        gimp_image_prop_view_constructed  (GObject           *object);
-static void        gimp_image_prop_view_set_property (GObject           *object,
+static void        picman_image_prop_view_constructed  (GObject           *object);
+static void        picman_image_prop_view_set_property (GObject           *object,
                                                       guint              property_id,
                                                       const GValue      *value,
                                                       GParamSpec        *pspec);
-static void        gimp_image_prop_view_get_property (GObject           *object,
+static void        picman_image_prop_view_get_property (GObject           *object,
                                                       guint              property_id,
                                                       GValue            *value,
                                                       GParamSpec        *pspec);
 
-static GtkWidget * gimp_image_prop_view_add_label    (GtkTable          *table,
+static GtkWidget * picman_image_prop_view_add_label    (GtkTable          *table,
                                                       gint               row,
                                                       const gchar       *text);
-static void        gimp_image_prop_view_undo_event   (GimpImage         *image,
-                                                      GimpUndoEvent      event,
-                                                      GimpUndo          *undo,
-                                                      GimpImagePropView *view);
-static void        gimp_image_prop_view_update       (GimpImagePropView *view);
-static void        gimp_image_prop_view_file_update  (GimpImagePropView *view);
+static void        picman_image_prop_view_undo_event   (PicmanImage         *image,
+                                                      PicmanUndoEvent      event,
+                                                      PicmanUndo          *undo,
+                                                      PicmanImagePropView *view);
+static void        picman_image_prop_view_update       (PicmanImagePropView *view);
+static void        picman_image_prop_view_file_update  (PicmanImagePropView *view);
 
 
-G_DEFINE_TYPE (GimpImagePropView, gimp_image_prop_view, GTK_TYPE_TABLE)
+G_DEFINE_TYPE (PicmanImagePropView, picman_image_prop_view, GTK_TYPE_TABLE)
 
-#define parent_class gimp_image_prop_view_parent_class
+#define parent_class picman_image_prop_view_parent_class
 
 
 static void
-gimp_image_prop_view_class_init (GimpImagePropViewClass *klass)
+picman_image_prop_view_class_init (PicmanImagePropViewClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_image_prop_view_constructed;
-  object_class->set_property = gimp_image_prop_view_set_property;
-  object_class->get_property = gimp_image_prop_view_get_property;
+  object_class->constructed  = picman_image_prop_view_constructed;
+  object_class->set_property = picman_image_prop_view_set_property;
+  object_class->get_property = picman_image_prop_view_get_property;
 
   g_object_class_install_property (object_class, PROP_IMAGE,
                                    g_param_spec_object ("image", NULL, NULL,
-                                                        GIMP_TYPE_IMAGE,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_IMAGE,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_image_prop_view_init (GimpImagePropView *view)
+picman_image_prop_view_init (PicmanImagePropView *view)
 {
   GtkTable *table = GTK_TABLE (view);
   gint      row = 0;
@@ -117,107 +117,107 @@ gimp_image_prop_view_init (GimpImagePropView *view)
   gtk_table_set_row_spacings (table, 3);
 
   view->pixel_size_label =
-    gimp_image_prop_view_add_label (table, row++, _("Size in pixels:"));
+    picman_image_prop_view_add_label (table, row++, _("Size in pixels:"));
 
   view->print_size_label =
-    gimp_image_prop_view_add_label (table, row++, _("Print size:"));
+    picman_image_prop_view_add_label (table, row++, _("Print size:"));
 
   view->resolution_label =
-    gimp_image_prop_view_add_label (table, row++, _("Resolution:"));
+    picman_image_prop_view_add_label (table, row++, _("Resolution:"));
 
   view->colorspace_label =
-    gimp_image_prop_view_add_label (table, row++, _("Color space:"));
+    picman_image_prop_view_add_label (table, row++, _("Color space:"));
 
   view->precision_label =
-    gimp_image_prop_view_add_label (table, row, _("Precision:"));
+    picman_image_prop_view_add_label (table, row, _("Precision:"));
 
   gtk_table_set_row_spacing (GTK_TABLE (view), row++, 12);
 
   view->filename_label =
-    gimp_image_prop_view_add_label (table, row++, _("File Name:"));
+    picman_image_prop_view_add_label (table, row++, _("File Name:"));
 
   gtk_label_set_ellipsize (GTK_LABEL (view->filename_label),
                            PANGO_ELLIPSIZE_MIDDLE);
 
   view->filesize_label =
-    gimp_image_prop_view_add_label (table, row++, _("File Size:"));
+    picman_image_prop_view_add_label (table, row++, _("File Size:"));
 
   view->filetype_label =
-    gimp_image_prop_view_add_label (table, row, _("File Type:"));
+    picman_image_prop_view_add_label (table, row, _("File Type:"));
 
   gtk_table_set_row_spacing (GTK_TABLE (view), row++, 12);
 
   view->memsize_label =
-    gimp_image_prop_view_add_label (table, row++, _("Size in memory:"));
+    picman_image_prop_view_add_label (table, row++, _("Size in memory:"));
 
   view->undo_label =
-    gimp_image_prop_view_add_label (table, row++, _("Undo steps:"));
+    picman_image_prop_view_add_label (table, row++, _("Undo steps:"));
 
   view->redo_label =
-    gimp_image_prop_view_add_label (table, row, _("Redo steps:"));
+    picman_image_prop_view_add_label (table, row, _("Redo steps:"));
 
   gtk_table_set_row_spacing (GTK_TABLE (view), row++, 12);
 
   view->pixels_label =
-    gimp_image_prop_view_add_label (table, row++, _("Number of pixels:"));
+    picman_image_prop_view_add_label (table, row++, _("Number of pixels:"));
 
   view->layers_label =
-    gimp_image_prop_view_add_label (table, row++, _("Number of layers:"));
+    picman_image_prop_view_add_label (table, row++, _("Number of layers:"));
 
   view->channels_label =
-    gimp_image_prop_view_add_label (table, row++, _("Number of channels:"));
+    picman_image_prop_view_add_label (table, row++, _("Number of channels:"));
 
   view->vectors_label =
-    gimp_image_prop_view_add_label (table, row++, _("Number of paths:"));
+    picman_image_prop_view_add_label (table, row++, _("Number of paths:"));
 
 }
 
 static void
-gimp_image_prop_view_constructed (GObject *object)
+picman_image_prop_view_constructed (GObject *object)
 {
-  GimpImagePropView *view = GIMP_IMAGE_PROP_VIEW (object);
+  PicmanImagePropView *view = PICMAN_IMAGE_PROP_VIEW (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
   g_assert (view->image != NULL);
 
   g_signal_connect_object (view->image, "name-changed",
-                           G_CALLBACK (gimp_image_prop_view_file_update),
+                           G_CALLBACK (picman_image_prop_view_file_update),
                            G_OBJECT (view),
                            G_CONNECT_SWAPPED);
 
   g_signal_connect_object (view->image, "size-changed",
-                           G_CALLBACK (gimp_image_prop_view_update),
+                           G_CALLBACK (picman_image_prop_view_update),
                            G_OBJECT (view),
                            G_CONNECT_SWAPPED);
   g_signal_connect_object (view->image, "resolution-changed",
-                           G_CALLBACK (gimp_image_prop_view_update),
+                           G_CALLBACK (picman_image_prop_view_update),
                            G_OBJECT (view),
                            G_CONNECT_SWAPPED);
   g_signal_connect_object (view->image, "unit-changed",
-                           G_CALLBACK (gimp_image_prop_view_update),
+                           G_CALLBACK (picman_image_prop_view_update),
                            G_OBJECT (view),
                            G_CONNECT_SWAPPED);
   g_signal_connect_object (view->image, "mode-changed",
-                           G_CALLBACK (gimp_image_prop_view_update),
+                           G_CALLBACK (picman_image_prop_view_update),
                            G_OBJECT (view),
                            G_CONNECT_SWAPPED);
   g_signal_connect_object (view->image, "undo-event",
-                           G_CALLBACK (gimp_image_prop_view_undo_event),
+                           G_CALLBACK (picman_image_prop_view_undo_event),
                            G_OBJECT (view),
                            0);
 
-  gimp_image_prop_view_update (view);
-  gimp_image_prop_view_file_update (view);
+  picman_image_prop_view_update (view);
+  picman_image_prop_view_file_update (view);
 }
 
 static void
-gimp_image_prop_view_set_property (GObject      *object,
+picman_image_prop_view_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpImagePropView *view = GIMP_IMAGE_PROP_VIEW (object);
+  PicmanImagePropView *view = PICMAN_IMAGE_PROP_VIEW (object);
 
   switch (property_id)
     {
@@ -231,12 +231,12 @@ gimp_image_prop_view_set_property (GObject      *object,
 }
 
 static void
-gimp_image_prop_view_get_property (GObject    *object,
+picman_image_prop_view_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpImagePropView *view = GIMP_IMAGE_PROP_VIEW (object);
+  PicmanImagePropView *view = PICMAN_IMAGE_PROP_VIEW (object);
 
   switch (property_id)
     {
@@ -253,11 +253,11 @@ gimp_image_prop_view_get_property (GObject    *object,
 /*  public functions  */
 
 GtkWidget *
-gimp_image_prop_view_new (GimpImage *image)
+picman_image_prop_view_new (PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return g_object_new (GIMP_TYPE_IMAGE_PROP_VIEW,
+  return g_object_new (PICMAN_TYPE_IMAGE_PROP_VIEW,
                        "image", image,
                        NULL);
 }
@@ -266,7 +266,7 @@ gimp_image_prop_view_new (GimpImage *image)
 /*  private functions  */
 
 static GtkWidget *
-gimp_image_prop_view_add_label (GtkTable    *table,
+picman_image_prop_view_add_label (GtkTable    *table,
                                 gint         row,
                                 const gchar *text)
 {
@@ -278,7 +278,7 @@ gimp_image_prop_view_add_label (GtkTable    *table,
                        "xalign", 1.0,
                        "yalign", 0.5,
                        NULL);
-  gimp_label_set_attributes (GTK_LABEL (desc),
+  picman_label_set_attributes (GTK_LABEL (desc),
                              PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                              -1);
   gtk_table_attach (table, desc,
@@ -300,19 +300,19 @@ gimp_image_prop_view_add_label (GtkTable    *table,
 }
 
 static void
-gimp_image_prop_view_label_set_memsize (GtkWidget  *label,
-                                        GimpObject *object)
+picman_image_prop_view_label_set_memsize (GtkWidget  *label,
+                                        PicmanObject *object)
 {
-  gchar *str = g_format_size (gimp_object_get_memsize (object, NULL));
+  gchar *str = g_format_size (picman_object_get_memsize (object, NULL));
   gtk_label_set_text (GTK_LABEL (label), str);
   g_free (str);
 }
 
 static void
-gimp_image_prop_view_label_set_filename (GtkWidget *label,
-                                         GimpImage *image)
+picman_image_prop_view_label_set_filename (GtkWidget *label,
+                                         PicmanImage *image)
 {
-  const gchar *uri = gimp_image_get_any_uri (image);
+  const gchar *uri = picman_image_get_any_uri (image);
 
   if (uri)
     {
@@ -324,15 +324,15 @@ gimp_image_prop_view_label_set_filename (GtkWidget *label,
   else
     {
       gtk_label_set_text (GTK_LABEL (label), NULL);
-      gimp_help_set_help_data (gtk_widget_get_parent (label), NULL, NULL);
+      picman_help_set_help_data (gtk_widget_get_parent (label), NULL, NULL);
     }
 }
 
 static void
-gimp_image_prop_view_label_set_filesize (GtkWidget *label,
-                                         GimpImage *image)
+picman_image_prop_view_label_set_filesize (GtkWidget *label,
+                                         PicmanImage *image)
 {
-  const gchar *uri      = gimp_image_get_any_uri (image);
+  const gchar *uri      = picman_image_get_any_uri (image);
   gchar       *filename = NULL;
 
   if (uri)
@@ -363,20 +363,20 @@ gimp_image_prop_view_label_set_filesize (GtkWidget *label,
 }
 
 static void
-gimp_image_prop_view_label_set_filetype (GtkWidget *label,
-                                         GimpImage *image)
+picman_image_prop_view_label_set_filetype (GtkWidget *label,
+                                         PicmanImage *image)
 {
-  GimpPlugInManager   *manager = image->gimp->plug_in_manager;
-  GimpPlugInProcedure *proc;
+  PicmanPlugInManager   *manager = image->picman->plug_in_manager;
+  PicmanPlugInProcedure *proc;
 
-  proc = gimp_image_get_save_proc (image);
+  proc = picman_image_get_save_proc (image);
 
   if (! proc)
-    proc = gimp_image_get_load_proc (image);
+    proc = picman_image_get_load_proc (image);
 
   if (! proc)
     {
-      gchar *filename = gimp_image_get_filename (image);
+      gchar *filename = picman_image_get_filename (image);
 
       if (filename)
         {
@@ -386,22 +386,22 @@ gimp_image_prop_view_label_set_filetype (GtkWidget *label,
     }
 
   gtk_label_set_text (GTK_LABEL (label),
-                      proc ? gimp_plug_in_procedure_get_label (proc) : NULL);
+                      proc ? picman_plug_in_procedure_get_label (proc) : NULL);
 }
 
 static void
-gimp_image_prop_view_label_set_undo (GtkWidget     *label,
-                                     GimpUndoStack *stack)
+picman_image_prop_view_label_set_undo (GtkWidget     *label,
+                                     PicmanUndoStack *stack)
 {
-  gint steps = gimp_undo_stack_get_depth (stack);
+  gint steps = picman_undo_stack_get_depth (stack);
 
   if (steps > 0)
     {
-      GimpObject *object = GIMP_OBJECT (stack);
+      PicmanObject *object = PICMAN_OBJECT (stack);
       gchar      *str;
       gchar       buf[256];
 
-      str = g_format_size (gimp_object_get_memsize (object, NULL));
+      str = g_format_size (picman_object_get_memsize (object, NULL));
       g_snprintf (buf, sizeof (buf), "%d (%s)", steps, str);
       g_free (str);
 
@@ -415,21 +415,21 @@ gimp_image_prop_view_label_set_undo (GtkWidget     *label,
 }
 
 static void
-gimp_image_prop_view_undo_event (GimpImage         *image,
-                                 GimpUndoEvent      event,
-                                 GimpUndo          *undo,
-                                 GimpImagePropView *view)
+picman_image_prop_view_undo_event (PicmanImage         *image,
+                                 PicmanUndoEvent      event,
+                                 PicmanUndo          *undo,
+                                 PicmanImagePropView *view)
 {
-  gimp_image_prop_view_update (view);
+  picman_image_prop_view_update (view);
 }
 
 static void
-gimp_image_prop_view_update (GimpImagePropView *view)
+picman_image_prop_view_update (PicmanImagePropView *view)
 {
-  GimpImage         *image = view->image;
-  GimpImageBaseType  type;
-  GimpPrecision      precision;
-  GimpUnit           unit;
+  PicmanImage         *image = view->image;
+  PicmanImageBaseType  type;
+  PicmanPrecision      precision;
+  PicmanUnit           unit;
   gdouble            unit_factor;
   gint               unit_digits;
   const gchar       *desc;
@@ -438,56 +438,56 @@ gimp_image_prop_view_update (GimpImagePropView *view)
   gdouble            xres;
   gdouble            yres;
 
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
 
   /*  pixel size  */
   g_snprintf (buf, sizeof (buf), ngettext ("%d × %d pixel",
                                            "%d × %d pixels",
-                                           gimp_image_get_height (image)),
-              gimp_image_get_width  (image),
-              gimp_image_get_height (image));
+                                           picman_image_get_height (image)),
+              picman_image_get_width  (image),
+              picman_image_get_height (image));
   gtk_label_set_text (GTK_LABEL (view->pixel_size_label), buf);
 
   /*  print size  */
-  unit = gimp_get_default_unit ();
+  unit = picman_get_default_unit ();
 
-  unit_digits = gimp_unit_get_digits (unit);
+  unit_digits = picman_unit_get_digits (unit);
 
   g_snprintf (format_buf, sizeof (format_buf), "%%.%df × %%.%df %s",
               unit_digits + 1, unit_digits + 1,
-              gimp_unit_get_plural (unit));
+              picman_unit_get_plural (unit));
   g_snprintf (buf, sizeof (buf), format_buf,
-              gimp_pixels_to_units (gimp_image_get_width  (image), unit, xres),
-              gimp_pixels_to_units (gimp_image_get_height (image), unit, yres));
+              picman_pixels_to_units (picman_image_get_width  (image), unit, xres),
+              picman_pixels_to_units (picman_image_get_height (image), unit, yres));
   gtk_label_set_text (GTK_LABEL (view->print_size_label), buf);
 
   /*  resolution  */
-  unit        = gimp_image_get_unit (image);
-  unit_factor = gimp_unit_get_factor (unit);
+  unit        = picman_image_get_unit (image);
+  unit_factor = picman_unit_get_factor (unit);
 
   g_snprintf (format_buf, sizeof (format_buf), _("pixels/%s"),
-              gimp_unit_get_abbreviation (unit));
+              picman_unit_get_abbreviation (unit));
   g_snprintf (buf, sizeof (buf), _("%g × %g %s"),
               xres / unit_factor,
               yres / unit_factor,
-              unit == GIMP_UNIT_INCH ? _("ppi") : format_buf);
+              unit == PICMAN_UNIT_INCH ? _("ppi") : format_buf);
   gtk_label_set_text (GTK_LABEL (view->resolution_label), buf);
 
   /*  color type  */
-  type = gimp_image_get_base_type (image);
+  type = picman_image_get_base_type (image);
 
-  gimp_enum_get_value (GIMP_TYPE_IMAGE_BASE_TYPE, type,
+  picman_enum_get_value (PICMAN_TYPE_IMAGE_BASE_TYPE, type,
                        NULL, NULL, &desc, NULL);
 
   switch (type)
     {
-    case GIMP_RGB:
-    case GIMP_GRAY:
+    case PICMAN_RGB:
+    case PICMAN_GRAY:
       g_snprintf (buf, sizeof (buf), "%s", desc);
       break;
-    case GIMP_INDEXED:
+    case PICMAN_INDEXED:
       g_snprintf (buf, sizeof (buf),
-                  "%s (%d %s)", desc, gimp_image_get_colormap_size (image),
+                  "%s (%d %s)", desc, picman_image_get_colormap_size (image),
                   _("colors"));
       break;
     }
@@ -495,56 +495,56 @@ gimp_image_prop_view_update (GimpImagePropView *view)
   gtk_label_set_text (GTK_LABEL (view->colorspace_label), buf);
 
   /*  precision  */
-  precision = gimp_image_get_precision (image);
+  precision = picman_image_get_precision (image);
 
-  gimp_enum_get_value (GIMP_TYPE_PRECISION, precision,
+  picman_enum_get_value (PICMAN_TYPE_PRECISION, precision,
                        NULL, NULL, &desc, NULL);
 
   gtk_label_set_text (GTK_LABEL (view->precision_label), desc);
 
   /*  size in memory  */
-  gimp_image_prop_view_label_set_memsize (view->memsize_label,
-                                          GIMP_OBJECT (image));
+  picman_image_prop_view_label_set_memsize (view->memsize_label,
+                                          PICMAN_OBJECT (image));
 
   /*  undo / redo  */
-  gimp_image_prop_view_label_set_undo (view->undo_label,
-                                       gimp_image_get_undo_stack (image));
-  gimp_image_prop_view_label_set_undo (view->redo_label,
-                                       gimp_image_get_redo_stack (image));
+  picman_image_prop_view_label_set_undo (view->undo_label,
+                                       picman_image_get_undo_stack (image));
+  picman_image_prop_view_label_set_undo (view->redo_label,
+                                       picman_image_get_redo_stack (image));
 
   /*  number of layers  */
   g_snprintf (buf, sizeof (buf), "%d",
-              gimp_image_get_width  (image) *
-              gimp_image_get_height (image));
+              picman_image_get_width  (image) *
+              picman_image_get_height (image));
   gtk_label_set_text (GTK_LABEL (view->pixels_label), buf);
 
   /*  number of layers  */
   g_snprintf (buf, sizeof (buf), "%d",
-              gimp_image_get_n_layers (image));
+              picman_image_get_n_layers (image));
   gtk_label_set_text (GTK_LABEL (view->layers_label), buf);
 
   /*  number of channels  */
   g_snprintf (buf, sizeof (buf), "%d",
-              gimp_image_get_n_channels (image));
+              picman_image_get_n_channels (image));
   gtk_label_set_text (GTK_LABEL (view->channels_label), buf);
 
   /*  number of vectors  */
   g_snprintf (buf, sizeof (buf), "%d",
-              gimp_image_get_n_vectors (image));
+              picman_image_get_n_vectors (image));
   gtk_label_set_text (GTK_LABEL (view->vectors_label), buf);
 }
 
 static void
-gimp_image_prop_view_file_update (GimpImagePropView *view)
+picman_image_prop_view_file_update (PicmanImagePropView *view)
 {
-  GimpImage *image = view->image;
+  PicmanImage *image = view->image;
 
   /*  filename  */
-  gimp_image_prop_view_label_set_filename (view->filename_label, image);
+  picman_image_prop_view_label_set_filename (view->filename_label, image);
 
   /*  filesize  */
-  gimp_image_prop_view_label_set_filesize (view->filesize_label, image);
+  picman_image_prop_view_label_set_filesize (view->filesize_label, image);
 
   /*  filetype  */
-  gimp_image_prop_view_label_set_filetype (view->filetype_label, image);
+  picman_image_prop_view_label_set_filetype (view->filetype_label, image);
 }

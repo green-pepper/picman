@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,39 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PENCIL_TOOL_H__
-#define __GIMP_PENCIL_TOOL_H__
+#ifndef __PICMAN_PENCIL_TOOL_H__
+#define __PICMAN_PENCIL_TOOL_H__
 
 
-#include "gimppaintbrushtool.h"
+#include "picmanpaintbrushtool.h"
 
 
-#define GIMP_TYPE_PENCIL_TOOL            (gimp_pencil_tool_get_type ())
-#define GIMP_PENCIL_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PENCIL_TOOL, GimpPencilTool))
-#define GIMP_PENCIL_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PENCIL_TOOL, GimpPencilToolClass))
-#define GIMP_IS_PENCIL_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PENCIL_TOOL))
-#define GIMP_IS_PENCIL_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PENCIL_TOOL))
-#define GIMP_PENCIL_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PENCIL_TOOL, GimpPencilToolClass))
+#define PICMAN_TYPE_PENCIL_TOOL            (picman_pencil_tool_get_type ())
+#define PICMAN_PENCIL_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PENCIL_TOOL, PicmanPencilTool))
+#define PICMAN_PENCIL_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PENCIL_TOOL, PicmanPencilToolClass))
+#define PICMAN_IS_PENCIL_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PENCIL_TOOL))
+#define PICMAN_IS_PENCIL_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PENCIL_TOOL))
+#define PICMAN_PENCIL_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PENCIL_TOOL, PicmanPencilToolClass))
 
 
-typedef struct _GimpPencilTool      GimpPencilTool;
-typedef struct _GimpPencilToolClass GimpPencilToolClass;
+typedef struct _PicmanPencilTool      PicmanPencilTool;
+typedef struct _PicmanPencilToolClass PicmanPencilToolClass;
 
-struct _GimpPencilTool
+struct _PicmanPencilTool
 {
-  GimpPaintbrushTool parent_instance;
+  PicmanPaintbrushTool parent_instance;
 };
 
-struct _GimpPencilToolClass
+struct _PicmanPencilToolClass
 {
-  GimpPaintbrushToolClass parent_class;
+  PicmanPaintbrushToolClass parent_class;
 };
 
 
-void    gimp_pencil_tool_register (GimpToolRegisterCallback  callback,
+void    picman_pencil_tool_register (PicmanToolRegisterCallback  callback,
                                    gpointer                  data);
 
-GType   gimp_pencil_tool_get_type (void) G_GNUC_CONST;
+GType   picman_pencil_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_PENCIL_TOOL_H__  */
+#endif  /*  __PICMAN_PENCIL_TOOL_H__  */

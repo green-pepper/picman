@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationthreshold.h
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanoperationthreshold.h
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_THRESHOLD_H__
-#define __GIMP_OPERATION_THRESHOLD_H__
+#ifndef __PICMAN_OPERATION_THRESHOLD_H__
+#define __PICMAN_OPERATION_THRESHOLD_H__
 
 
-#include "gimpoperationpointfilter.h"
+#include "picmanoperationpointfilter.h"
 
 
-#define GIMP_TYPE_OPERATION_THRESHOLD            (gimp_operation_threshold_get_type ())
-#define GIMP_OPERATION_THRESHOLD(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_THRESHOLD, GimpOperationThreshold))
-#define GIMP_OPERATION_THRESHOLD_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_THRESHOLD, GimpOperationThresholdClass))
-#define GIMP_IS_OPERATION_THRESHOLD(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_THRESHOLD))
-#define GIMP_IS_OPERATION_THRESHOLD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_THRESHOLD))
-#define GIMP_OPERATION_THRESHOLD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_THRESHOLD, GimpOperationThresholdClass))
+#define PICMAN_TYPE_OPERATION_THRESHOLD            (picman_operation_threshold_get_type ())
+#define PICMAN_OPERATION_THRESHOLD(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_THRESHOLD, PicmanOperationThreshold))
+#define PICMAN_OPERATION_THRESHOLD_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_THRESHOLD, PicmanOperationThresholdClass))
+#define PICMAN_IS_OPERATION_THRESHOLD(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_THRESHOLD))
+#define PICMAN_IS_OPERATION_THRESHOLD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_THRESHOLD))
+#define PICMAN_OPERATION_THRESHOLD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_THRESHOLD, PicmanOperationThresholdClass))
 
 
-typedef struct _GimpOperationThreshold      GimpOperationThreshold;
-typedef struct _GimpOperationThresholdClass GimpOperationThresholdClass;
+typedef struct _PicmanOperationThreshold      PicmanOperationThreshold;
+typedef struct _PicmanOperationThresholdClass PicmanOperationThresholdClass;
 
-struct _GimpOperationThreshold
+struct _PicmanOperationThreshold
 {
-  GimpOperationPointFilter  parent_instance;
+  PicmanOperationPointFilter  parent_instance;
 };
 
-struct _GimpOperationThresholdClass
+struct _PicmanOperationThresholdClass
 {
-  GimpOperationPointFilterClass  parent_class;
+  PicmanOperationPointFilterClass  parent_class;
 };
 
 
-GType   gimp_operation_threshold_get_type (void) G_GNUC_CONST;
+GType   picman_operation_threshold_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_THRESHOLD_H__ */
+#endif /* __PICMAN_OPERATION_THRESHOLD_H__ */

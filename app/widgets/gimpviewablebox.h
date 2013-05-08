@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,51 +15,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VIEWABLE_BOX_H__
-#define __GIMP_VIEWABLE_BOX_H__
+#ifndef __PICMAN_VIEWABLE_BOX_H__
+#define __PICMAN_VIEWABLE_BOX_H__
 
 
-GtkWidget * gimp_brush_box_new         (GimpContainer *container,
-                                        GimpContext   *context,
+GtkWidget * picman_brush_box_new         (PicmanContainer *container,
+                                        PicmanContext   *context,
                                         const gchar   *label,
                                         gint           spacing);
-GtkWidget * gimp_prop_brush_box_new    (GimpContainer *container,
-                                        GimpContext   *context,
+GtkWidget * picman_prop_brush_box_new    (PicmanContainer *container,
+                                        PicmanContext   *context,
                                         const gchar   *label,
                                         gint           spacing,
                                         const gchar   *view_type_prop,
                                         const gchar   *view_size_prop,
                                         const gchar   *editor_id);
-GtkWidget * gimp_dynamics_box_new      (GimpContainer *container,
-                                        GimpContext   *context,
+GtkWidget * picman_dynamics_box_new      (PicmanContainer *container,
+                                        PicmanContext   *context,
                                         const gchar   *label,
                                         gint           spacing);
-GtkWidget * gimp_prop_dynamics_box_new (GimpContainer *container,
-                                        GimpContext   *context,
+GtkWidget * picman_prop_dynamics_box_new (PicmanContainer *container,
+                                        PicmanContext   *context,
                                         const gchar   *label,
                                         gint           spacing,
                                         const gchar   *view_type_prop,
                                         const gchar   *view_size_prop,
                                         const gchar   *editor_id);
 
-GtkWidget * gimp_pattern_box_new       (GimpContainer *container,
-                                        GimpContext   *context,
+GtkWidget * picman_pattern_box_new       (PicmanContainer *container,
+                                        PicmanContext   *context,
                                         const gchar   *label,
                                         gint           spacing);
-GtkWidget * gimp_prop_pattern_box_new  (GimpContainer *container,
-                                        GimpContext   *context,
+GtkWidget * picman_prop_pattern_box_new  (PicmanContainer *container,
+                                        PicmanContext   *context,
                                         const gchar   *label,
                                         gint           spacing,
                                         const gchar   *view_type_prop,
                                         const gchar   *view_size_prop);
 
-GtkWidget * gimp_gradient_box_new      (GimpContainer *container,
-                                        GimpContext   *context,
+GtkWidget * picman_gradient_box_new      (PicmanContainer *container,
+                                        PicmanContext   *context,
                                         const gchar   *label,
                                         gint           scacing,
                                         const gchar   *reverse_prop);
-GtkWidget * gimp_prop_gradient_box_new (GimpContainer *container,
-                                        GimpContext   *context,
+GtkWidget * picman_prop_gradient_box_new (PicmanContainer *container,
+                                        PicmanContext   *context,
                                         const gchar   *label,
                                         gint           scacing,
                                         const gchar   *view_type_prop,
@@ -67,28 +67,28 @@ GtkWidget * gimp_prop_gradient_box_new (GimpContainer *container,
                                         const gchar   *reverse_prop,
                                         const gchar   *editor_id);
 
-GtkWidget * gimp_palette_box_new       (GimpContainer *container,
-                                        GimpContext   *context,
+GtkWidget * picman_palette_box_new       (PicmanContainer *container,
+                                        PicmanContext   *context,
                                         const gchar   *label,
                                         gint           spacing);
-GtkWidget * gimp_prop_palette_box_new  (GimpContainer *container,
-                                        GimpContext   *context,
+GtkWidget * picman_prop_palette_box_new  (PicmanContainer *container,
+                                        PicmanContext   *context,
                                         const gchar   *label,
                                         gint           spacing,
                                         const gchar   *view_type_prop,
                                         const gchar   *view_size_prop,
                                         const gchar   *editor_id);
 
-GtkWidget * gimp_font_box_new          (GimpContainer *container,
-                                        GimpContext   *context,
+GtkWidget * picman_font_box_new          (PicmanContainer *container,
+                                        PicmanContext   *context,
                                         const gchar   *label,
                                         gint           spacing);
-GtkWidget * gimp_prop_font_box_new     (GimpContainer *container,
-                                        GimpContext   *context,
+GtkWidget * picman_prop_font_box_new     (PicmanContainer *container,
+                                        PicmanContext   *context,
                                         const gchar   *label,
                                         gint           spacing,
                                         const gchar   *view_type_prop,
                                         const gchar   *view_size_prop);
 
 
-#endif /* __GIMP_VIEWABLE_BOX_H__ */
+#endif /* __PICMAN_VIEWABLE_BOX_H__ */

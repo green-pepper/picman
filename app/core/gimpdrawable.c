@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,38 +22,38 @@
 #include <gegl-plugin.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "gegl/gimpapplicator.h"
-#include "gegl/gimp-babl.h"
-#include "gegl/gimp-gegl-apply-operation.h"
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picmanapplicator.h"
+#include "gegl/picman-babl.h"
+#include "gegl/picman-gegl-apply-operation.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimp-utils.h"
-#include "gimpchannel.h"
-#include "gimpcontext.h"
-#include "gimpdrawable-combine.h"
-#include "gimpdrawable-filter.h"
-#include "gimpdrawable-preview.h"
-#include "gimpdrawable-private.h"
-#include "gimpdrawable-shadow.h"
-#include "gimpdrawable-transform.h"
-#include "gimpfilterstack.h"
-#include "gimpimage.h"
-#include "gimpimage-colormap.h"
-#include "gimpimage-undo-push.h"
-#include "gimplayer.h"
-#include "gimpmarshal.h"
-#include "gimppattern.h"
-#include "gimppickable.h"
-#include "gimpprogress.h"
+#include "picman-utils.h"
+#include "picmanchannel.h"
+#include "picmancontext.h"
+#include "picmandrawable-combine.h"
+#include "picmandrawable-filter.h"
+#include "picmandrawable-preview.h"
+#include "picmandrawable-private.h"
+#include "picmandrawable-shadow.h"
+#include "picmandrawable-transform.h"
+#include "picmanfilterstack.h"
+#include "picmanimage.h"
+#include "picmanimage-colormap.h"
+#include "picmanimage-undo-push.h"
+#include "picmanlayer.h"
+#include "picmanmarshal.h"
+#include "picmanpattern.h"
+#include "picmanpickable.h"
+#include "picmanprogress.h"
 
-#include "gimp-log.h"
+#include "picman-log.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -71,242 +71,242 @@ enum
 
 /*  local function prototypes  */
 
-static void  gimp_drawable_pickable_iface_init (GimpPickableInterface *iface);
+static void  picman_drawable_pickable_iface_init (PicmanPickableInterface *iface);
 
-static void       gimp_drawable_dispose            (GObject           *object);
-static void       gimp_drawable_finalize           (GObject           *object);
-static void       gimp_drawable_set_property       (GObject           *object,
+static void       picman_drawable_dispose            (GObject           *object);
+static void       picman_drawable_finalize           (GObject           *object);
+static void       picman_drawable_set_property       (GObject           *object,
                                                     guint              property_id,
                                                     const GValue      *value,
                                                     GParamSpec        *pspec);
-static void       gimp_drawable_get_property       (GObject           *object,
+static void       picman_drawable_get_property       (GObject           *object,
                                                     guint              property_id,
                                                     GValue            *value,
                                                     GParamSpec        *pspec);
 
-static gint64     gimp_drawable_get_memsize        (GimpObject        *object,
+static gint64     picman_drawable_get_memsize        (PicmanObject        *object,
                                                     gint64            *gui_size);
 
-static gboolean   gimp_drawable_get_size           (GimpViewable      *viewable,
+static gboolean   picman_drawable_get_size           (PicmanViewable      *viewable,
                                                     gint              *width,
                                                     gint              *height);
 
-static GeglNode * gimp_drawable_get_node           (GimpFilter        *filter);
+static GeglNode * picman_drawable_get_node           (PicmanFilter        *filter);
 
-static void       gimp_drawable_removed            (GimpItem          *item);
-static void       gimp_drawable_visibility_changed (GimpItem          *item);
-static GimpItem * gimp_drawable_duplicate          (GimpItem          *item,
+static void       picman_drawable_removed            (PicmanItem          *item);
+static void       picman_drawable_visibility_changed (PicmanItem          *item);
+static PicmanItem * picman_drawable_duplicate          (PicmanItem          *item,
                                                     GType              new_type);
-static void       gimp_drawable_scale              (GimpItem          *item,
+static void       picman_drawable_scale              (PicmanItem          *item,
                                                     gint               new_width,
                                                     gint               new_height,
                                                     gint               new_offset_x,
                                                     gint               new_offset_y,
-                                                    GimpInterpolationType interp_type,
-                                                    GimpProgress      *progress);
-static void       gimp_drawable_resize             (GimpItem          *item,
-                                                    GimpContext       *context,
+                                                    PicmanInterpolationType interp_type,
+                                                    PicmanProgress      *progress);
+static void       picman_drawable_resize             (PicmanItem          *item,
+                                                    PicmanContext       *context,
                                                     gint               new_width,
                                                     gint               new_height,
                                                     gint               offset_x,
                                                     gint               offset_y);
-static void       gimp_drawable_flip               (GimpItem          *item,
-                                                    GimpContext       *context,
-                                                    GimpOrientationType  flip_type,
+static void       picman_drawable_flip               (PicmanItem          *item,
+                                                    PicmanContext       *context,
+                                                    PicmanOrientationType  flip_type,
                                                     gdouble            axis,
                                                     gboolean           clip_result);
-static void       gimp_drawable_rotate             (GimpItem          *item,
-                                                    GimpContext       *context,
-                                                    GimpRotationType   rotate_type,
+static void       picman_drawable_rotate             (PicmanItem          *item,
+                                                    PicmanContext       *context,
+                                                    PicmanRotationType   rotate_type,
                                                     gdouble            center_x,
                                                     gdouble            center_y,
                                                     gboolean           clip_result);
-static void       gimp_drawable_transform          (GimpItem          *item,
-                                                    GimpContext       *context,
-                                                    const GimpMatrix3 *matrix,
-                                                    GimpTransformDirection direction,
-                                                    GimpInterpolationType interpolation_type,
+static void       picman_drawable_transform          (PicmanItem          *item,
+                                                    PicmanContext       *context,
+                                                    const PicmanMatrix3 *matrix,
+                                                    PicmanTransformDirection direction,
+                                                    PicmanInterpolationType interpolation_type,
                                                     gint               recursion_level,
-                                                    GimpTransformResize clip_result,
-                                                    GimpProgress      *progress);
+                                                    PicmanTransformResize clip_result,
+                                                    PicmanProgress      *progress);
 
-static gboolean   gimp_drawable_get_pixel_at       (GimpPickable      *pickable,
+static gboolean   picman_drawable_get_pixel_at       (PicmanPickable      *pickable,
                                                     gint               x,
                                                     gint               y,
                                                     const Babl        *format,
                                                     gpointer           pixel);
-static void       gimp_drawable_real_update        (GimpDrawable      *drawable,
+static void       picman_drawable_real_update        (PicmanDrawable      *drawable,
                                                     gint               x,
                                                     gint               y,
                                                     gint               width,
                                                     gint               height);
 
-static gint64  gimp_drawable_real_estimate_memsize (const GimpDrawable *drawable,
+static gint64  picman_drawable_real_estimate_memsize (const PicmanDrawable *drawable,
                                                     gint               width,
                                                     gint               height);
 
-static void       gimp_drawable_real_convert_type  (GimpDrawable      *drawable,
-                                                    GimpImage         *dest_image,
+static void       picman_drawable_real_convert_type  (PicmanDrawable      *drawable,
+                                                    PicmanImage         *dest_image,
                                                     const Babl        *new_format,
-                                                    GimpImageBaseType  new_base_type,
-                                                    GimpPrecision      new_precision,
+                                                    PicmanImageBaseType  new_base_type,
+                                                    PicmanPrecision      new_precision,
                                                     gint               layer_dither_type,
                                                     gint               mask_dither_type,
                                                     gboolean           push_undo);
 
-static GeglBuffer * gimp_drawable_real_get_buffer  (GimpDrawable      *drawable);
-static void       gimp_drawable_real_set_buffer    (GimpDrawable      *drawable,
+static GeglBuffer * picman_drawable_real_get_buffer  (PicmanDrawable      *drawable);
+static void       picman_drawable_real_set_buffer    (PicmanDrawable      *drawable,
                                                     gboolean           push_undo,
                                                     const gchar       *undo_desc,
                                                     GeglBuffer        *buffer,
                                                     gint               offset_x,
                                                     gint               offset_y);
 
-static void       gimp_drawable_real_push_undo     (GimpDrawable      *drawable,
+static void       picman_drawable_real_push_undo     (PicmanDrawable      *drawable,
                                                     const gchar       *undo_desc,
                                                     GeglBuffer        *buffer,
                                                     gint               x,
                                                     gint               y,
                                                     gint               width,
                                                     gint               height);
-static void       gimp_drawable_real_swap_pixels   (GimpDrawable      *drawable,
+static void       picman_drawable_real_swap_pixels   (PicmanDrawable      *drawable,
                                                     GeglBuffer        *buffer,
                                                     gint               x,
                                                     gint               y);
 
-static void       gimp_drawable_sync_fs_filter     (GimpDrawable      *drawable,
+static void       picman_drawable_sync_fs_filter     (PicmanDrawable      *drawable,
                                                     gboolean           detach_fs);
-static void       gimp_drawable_fs_notify          (GimpLayer         *fs,
+static void       picman_drawable_fs_notify          (PicmanLayer         *fs,
                                                     const GParamSpec  *pspec,
-                                                    GimpDrawable      *drawable);
-static void       gimp_drawable_fs_affect_changed  (GimpImage         *image,
-                                                    GimpChannelType    channel,
-                                                    GimpDrawable      *drawable);
-static void       gimp_drawable_fs_mask_changed    (GimpImage         *image,
-                                                    GimpDrawable      *drawable);
-static void       gimp_drawable_fs_update          (GimpLayer         *fs,
+                                                    PicmanDrawable      *drawable);
+static void       picman_drawable_fs_affect_changed  (PicmanImage         *image,
+                                                    PicmanChannelType    channel,
+                                                    PicmanDrawable      *drawable);
+static void       picman_drawable_fs_mask_changed    (PicmanImage         *image,
+                                                    PicmanDrawable      *drawable);
+static void       picman_drawable_fs_update          (PicmanLayer         *fs,
                                                     gint               x,
                                                     gint               y,
                                                     gint               width,
                                                     gint               height,
-                                                    GimpDrawable      *drawable);
+                                                    PicmanDrawable      *drawable);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpDrawable, gimp_drawable, GIMP_TYPE_ITEM,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PICKABLE,
-                                                gimp_drawable_pickable_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanDrawable, picman_drawable, PICMAN_TYPE_ITEM,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PICKABLE,
+                                                picman_drawable_pickable_iface_init))
 
-#define parent_class gimp_drawable_parent_class
+#define parent_class picman_drawable_parent_class
 
-static guint gimp_drawable_signals[LAST_SIGNAL] = { 0 };
+static guint picman_drawable_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_drawable_class_init (GimpDrawableClass *klass)
+picman_drawable_class_init (PicmanDrawableClass *klass)
 {
   GObjectClass      *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass   *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class    = GIMP_VIEWABLE_CLASS (klass);
-  GimpFilterClass   *filter_class      = GIMP_FILTER_CLASS (klass);
-  GimpItemClass     *item_class        = GIMP_ITEM_CLASS (klass);
+  PicmanObjectClass   *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanViewableClass *viewable_class    = PICMAN_VIEWABLE_CLASS (klass);
+  PicmanFilterClass   *filter_class      = PICMAN_FILTER_CLASS (klass);
+  PicmanItemClass     *item_class        = PICMAN_ITEM_CLASS (klass);
 
-  gimp_drawable_signals[UPDATE] =
+  picman_drawable_signals[UPDATE] =
     g_signal_new ("update",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpDrawableClass, update),
+                  G_STRUCT_OFFSET (PicmanDrawableClass, update),
                   NULL, NULL,
-                  gimp_marshal_VOID__INT_INT_INT_INT,
+                  picman_marshal_VOID__INT_INT_INT_INT,
                   G_TYPE_NONE, 4,
                   G_TYPE_INT,
                   G_TYPE_INT,
                   G_TYPE_INT,
                   G_TYPE_INT);
 
-  gimp_drawable_signals[ALPHA_CHANGED] =
+  picman_drawable_signals[ALPHA_CHANGED] =
     g_signal_new ("alpha-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpDrawableClass, alpha_changed),
+                  G_STRUCT_OFFSET (PicmanDrawableClass, alpha_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->dispose              = gimp_drawable_dispose;
-  object_class->finalize             = gimp_drawable_finalize;
-  object_class->set_property         = gimp_drawable_set_property;
-  object_class->get_property         = gimp_drawable_get_property;
+  object_class->dispose              = picman_drawable_dispose;
+  object_class->finalize             = picman_drawable_finalize;
+  object_class->set_property         = picman_drawable_set_property;
+  object_class->get_property         = picman_drawable_get_property;
 
-  gimp_object_class->get_memsize     = gimp_drawable_get_memsize;
+  picman_object_class->get_memsize     = picman_drawable_get_memsize;
 
-  viewable_class->get_size           = gimp_drawable_get_size;
-  viewable_class->get_new_preview    = gimp_drawable_get_new_preview;
+  viewable_class->get_size           = picman_drawable_get_size;
+  viewable_class->get_new_preview    = picman_drawable_get_new_preview;
 
-  filter_class->get_node             = gimp_drawable_get_node;
+  filter_class->get_node             = picman_drawable_get_node;
 
-  item_class->removed                = gimp_drawable_removed;
-  item_class->visibility_changed     = gimp_drawable_visibility_changed;
-  item_class->duplicate              = gimp_drawable_duplicate;
-  item_class->scale                  = gimp_drawable_scale;
-  item_class->resize                 = gimp_drawable_resize;
-  item_class->flip                   = gimp_drawable_flip;
-  item_class->rotate                 = gimp_drawable_rotate;
-  item_class->transform              = gimp_drawable_transform;
+  item_class->removed                = picman_drawable_removed;
+  item_class->visibility_changed     = picman_drawable_visibility_changed;
+  item_class->duplicate              = picman_drawable_duplicate;
+  item_class->scale                  = picman_drawable_scale;
+  item_class->resize                 = picman_drawable_resize;
+  item_class->flip                   = picman_drawable_flip;
+  item_class->rotate                 = picman_drawable_rotate;
+  item_class->transform              = picman_drawable_transform;
 
-  klass->update                      = gimp_drawable_real_update;
+  klass->update                      = picman_drawable_real_update;
   klass->alpha_changed               = NULL;
-  klass->estimate_memsize            = gimp_drawable_real_estimate_memsize;
+  klass->estimate_memsize            = picman_drawable_real_estimate_memsize;
   klass->invalidate_boundary         = NULL;
   klass->get_active_components       = NULL;
   klass->get_active_mask             = NULL;
-  klass->convert_type                = gimp_drawable_real_convert_type;
-  klass->apply_buffer                = gimp_drawable_real_apply_buffer;
-  klass->replace_buffer              = gimp_drawable_real_replace_buffer;
-  klass->get_buffer                  = gimp_drawable_real_get_buffer;
-  klass->set_buffer                  = gimp_drawable_real_set_buffer;
-  klass->push_undo                   = gimp_drawable_real_push_undo;
-  klass->swap_pixels                 = gimp_drawable_real_swap_pixels;
+  klass->convert_type                = picman_drawable_real_convert_type;
+  klass->apply_buffer                = picman_drawable_real_apply_buffer;
+  klass->replace_buffer              = picman_drawable_real_replace_buffer;
+  klass->get_buffer                  = picman_drawable_real_get_buffer;
+  klass->set_buffer                  = picman_drawable_real_set_buffer;
+  klass->push_undo                   = picman_drawable_real_push_undo;
+  klass->swap_pixels                 = picman_drawable_real_swap_pixels;
 
-  g_type_class_add_private (klass, sizeof (GimpDrawablePrivate));
+  g_type_class_add_private (klass, sizeof (PicmanDrawablePrivate));
 }
 
 static void
-gimp_drawable_init (GimpDrawable *drawable)
+picman_drawable_init (PicmanDrawable *drawable)
 {
   drawable->private = G_TYPE_INSTANCE_GET_PRIVATE (drawable,
-                                                   GIMP_TYPE_DRAWABLE,
-                                                   GimpDrawablePrivate);
+                                                   PICMAN_TYPE_DRAWABLE,
+                                                   PicmanDrawablePrivate);
 
-  drawable->private->filter_stack = gimp_filter_stack_new (GIMP_TYPE_FILTER);
+  drawable->private->filter_stack = picman_filter_stack_new (PICMAN_TYPE_FILTER);
 }
 
 /* sorry for the evil casts */
 
 static void
-gimp_drawable_pickable_iface_init (GimpPickableInterface *iface)
+picman_drawable_pickable_iface_init (PicmanPickableInterface *iface)
 {
-  iface->get_image             = (GimpImage     * (*) (GimpPickable *pickable)) gimp_item_get_image;
-  iface->get_format            = (const Babl    * (*) (GimpPickable *pickable)) gimp_drawable_get_format;
-  iface->get_format_with_alpha = (const Babl    * (*) (GimpPickable *pickable)) gimp_drawable_get_format_with_alpha;
-  iface->get_buffer            = (GeglBuffer    * (*) (GimpPickable *pickable)) gimp_drawable_get_buffer;
-  iface->get_pixel_at          = gimp_drawable_get_pixel_at;
+  iface->get_image             = (PicmanImage     * (*) (PicmanPickable *pickable)) picman_item_get_image;
+  iface->get_format            = (const Babl    * (*) (PicmanPickable *pickable)) picman_drawable_get_format;
+  iface->get_format_with_alpha = (const Babl    * (*) (PicmanPickable *pickable)) picman_drawable_get_format_with_alpha;
+  iface->get_buffer            = (GeglBuffer    * (*) (PicmanPickable *pickable)) picman_drawable_get_buffer;
+  iface->get_pixel_at          = picman_drawable_get_pixel_at;
 }
 
 static void
-gimp_drawable_dispose (GObject *object)
+picman_drawable_dispose (GObject *object)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (object);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (object);
 
-  if (gimp_drawable_get_floating_sel (drawable))
-    gimp_drawable_detach_floating_sel (drawable);
+  if (picman_drawable_get_floating_sel (drawable))
+    picman_drawable_detach_floating_sel (drawable);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_drawable_finalize (GObject *object)
+picman_drawable_finalize (GObject *object)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (object);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (object);
 
   if (drawable->private->buffer)
     {
@@ -314,7 +314,7 @@ gimp_drawable_finalize (GObject *object)
       drawable->private->buffer = NULL;
     }
 
-  gimp_drawable_free_shadow_buffer (drawable);
+  picman_drawable_free_shadow_buffer (drawable);
 
   if (drawable->private->source_node)
     {
@@ -332,7 +332,7 @@ gimp_drawable_finalize (GObject *object)
 }
 
 static void
-gimp_drawable_set_property (GObject      *object,
+picman_drawable_set_property (GObject      *object,
                             guint         property_id,
                             const GValue *value,
                             GParamSpec   *pspec)
@@ -346,7 +346,7 @@ gimp_drawable_set_property (GObject      *object,
 }
 
 static void
-gimp_drawable_get_property (GObject    *object,
+picman_drawable_get_property (GObject    *object,
                             guint       property_id,
                             GValue     *value,
                             GParamSpec *pspec)
@@ -360,53 +360,53 @@ gimp_drawable_get_property (GObject    *object,
 }
 
 static gint64
-gimp_drawable_get_memsize (GimpObject *object,
+picman_drawable_get_memsize (PicmanObject *object,
                            gint64     *gui_size)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (object);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (object);
   gint64        memsize  = 0;
 
-  memsize += gimp_gegl_buffer_get_memsize (gimp_drawable_get_buffer (drawable));
-  memsize += gimp_gegl_buffer_get_memsize (drawable->private->shadow);
+  memsize += picman_gegl_buffer_get_memsize (picman_drawable_get_buffer (drawable));
+  memsize += picman_gegl_buffer_get_memsize (drawable->private->shadow);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 static gboolean
-gimp_drawable_get_size (GimpViewable *viewable,
+picman_drawable_get_size (PicmanViewable *viewable,
                         gint         *width,
                         gint         *height)
 {
-  GimpItem *item = GIMP_ITEM (viewable);
+  PicmanItem *item = PICMAN_ITEM (viewable);
 
-  *width  = gimp_item_get_width  (item);
-  *height = gimp_item_get_height (item);
+  *width  = picman_item_get_width  (item);
+  *height = picman_item_get_height (item);
 
   return TRUE;
 }
 
 static GeglNode *
-gimp_drawable_get_node (GimpFilter *filter)
+picman_drawable_get_node (PicmanFilter *filter)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (filter);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (filter);
   GeglNode     *node;
   GeglNode     *input;
   GeglNode     *output;
 
-  node = GIMP_FILTER_CLASS (parent_class)->get_node (filter);
+  node = PICMAN_FILTER_CLASS (parent_class)->get_node (filter);
 
   g_warn_if_fail (drawable->private->mode_node == NULL);
 
   drawable->private->mode_node =
     gegl_node_new_child (node,
-                         "operation", "gimp:normal-mode",
+                         "operation", "picman:normal-mode",
                          NULL);
 
   input  = gegl_node_get_input_proxy  (node, "input");
   output = gegl_node_get_output_proxy (node, "output");
 
-  if (gimp_item_get_visible (GIMP_ITEM (drawable)))
+  if (picman_item_get_visible (PICMAN_ITEM (drawable)))
     {
       gegl_node_connect_to (input,                        "output",
                             drawable->private->mode_node, "input");
@@ -423,33 +423,33 @@ gimp_drawable_get_node (GimpFilter *filter)
 }
 
 static void
-gimp_drawable_removed (GimpItem *item)
+picman_drawable_removed (PicmanItem *item)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (item);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (item);
 
-  gimp_drawable_free_shadow_buffer (drawable);
+  picman_drawable_free_shadow_buffer (drawable);
 
-  if (GIMP_ITEM_CLASS (parent_class)->removed)
-    GIMP_ITEM_CLASS (parent_class)->removed (item);
+  if (PICMAN_ITEM_CLASS (parent_class)->removed)
+    PICMAN_ITEM_CLASS (parent_class)->removed (item);
 }
 
 static void
-gimp_drawable_visibility_changed (GimpItem *item)
+picman_drawable_visibility_changed (PicmanItem *item)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (item);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (item);
   GeglNode     *node;
 
-  /*  don't use gimp_filter_get_node() because that would create
+  /*  don't use picman_filter_get_node() because that would create
    *  the node.
    */
-  node = gimp_filter_peek_node (GIMP_FILTER (item));
+  node = picman_filter_peek_node (PICMAN_FILTER (item));
 
   if (node)
     {
       GeglNode *input  = gegl_node_get_input_proxy  (node, "input");
       GeglNode *output = gegl_node_get_output_proxy (node, "output");
 
-      if (gimp_item_get_visible (item))
+      if (picman_item_get_visible (item))
         {
           gegl_node_connect_to (input,                        "output",
                                 drawable->private->mode_node, "input");
@@ -468,74 +468,74 @@ gimp_drawable_visibility_changed (GimpItem *item)
       return;
     }
 
-  GIMP_ITEM_CLASS (parent_class)->visibility_changed (item);
+  PICMAN_ITEM_CLASS (parent_class)->visibility_changed (item);
 }
 
-static GimpItem *
-gimp_drawable_duplicate (GimpItem *item,
+static PicmanItem *
+picman_drawable_duplicate (PicmanItem *item,
                          GType     new_type)
 {
-  GimpItem *new_item;
+  PicmanItem *new_item;
 
-  g_return_val_if_fail (g_type_is_a (new_type, GIMP_TYPE_DRAWABLE), NULL);
+  g_return_val_if_fail (g_type_is_a (new_type, PICMAN_TYPE_DRAWABLE), NULL);
 
-  new_item = GIMP_ITEM_CLASS (parent_class)->duplicate (item, new_type);
+  new_item = PICMAN_ITEM_CLASS (parent_class)->duplicate (item, new_type);
 
-  if (GIMP_IS_DRAWABLE (new_item))
+  if (PICMAN_IS_DRAWABLE (new_item))
     {
-      GimpDrawable  *drawable     = GIMP_DRAWABLE (item);
-      GimpDrawable  *new_drawable = GIMP_DRAWABLE (new_item);
+      PicmanDrawable  *drawable     = PICMAN_DRAWABLE (item);
+      PicmanDrawable  *new_drawable = PICMAN_DRAWABLE (new_item);
 
       if (new_drawable->private->buffer)
         g_object_unref (new_drawable->private->buffer);
 
       new_drawable->private->buffer =
-        gegl_buffer_dup (gimp_drawable_get_buffer (drawable));
+        gegl_buffer_dup (picman_drawable_get_buffer (drawable));
     }
 
   return new_item;
 }
 
 static void
-gimp_drawable_scale (GimpItem              *item,
+picman_drawable_scale (PicmanItem              *item,
                      gint                   new_width,
                      gint                   new_height,
                      gint                   new_offset_x,
                      gint                   new_offset_y,
-                     GimpInterpolationType  interpolation_type,
-                     GimpProgress          *progress)
+                     PicmanInterpolationType  interpolation_type,
+                     PicmanProgress          *progress)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (item);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (item);
   GeglBuffer   *new_buffer;
 
   new_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
                                                 new_width, new_height),
-                                gimp_drawable_get_format (drawable));
+                                picman_drawable_get_format (drawable));
 
-  gimp_gegl_apply_scale (gimp_drawable_get_buffer (drawable),
+  picman_gegl_apply_scale (picman_drawable_get_buffer (drawable),
                          progress, C_("undo-type", "Scale"),
                          new_buffer,
                          interpolation_type,
                          ((gdouble) new_width /
-                          gimp_item_get_width  (item)),
+                          picman_item_get_width  (item)),
                          ((gdouble) new_height /
-                          gimp_item_get_height (item)));
+                          picman_item_get_height (item)));
 
-  gimp_drawable_set_buffer_full (drawable, gimp_item_is_attached (item), NULL,
+  picman_drawable_set_buffer_full (drawable, picman_item_is_attached (item), NULL,
                                  new_buffer,
                                  new_offset_x, new_offset_y);
   g_object_unref (new_buffer);
 }
 
 static void
-gimp_drawable_resize (GimpItem    *item,
-                      GimpContext *context,
+picman_drawable_resize (PicmanItem    *item,
+                      PicmanContext *context,
                       gint         new_width,
                       gint         new_height,
                       gint         offset_x,
                       gint         offset_y)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (item);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (item);
   GeglBuffer   *new_buffer;
   gint          new_offset_x;
   gint          new_offset_y;
@@ -543,19 +543,19 @@ gimp_drawable_resize (GimpItem    *item,
   gint          copy_width, copy_height;
 
   /*  if the size doesn't change, this is a nop  */
-  if (new_width  == gimp_item_get_width  (item) &&
-      new_height == gimp_item_get_height (item) &&
+  if (new_width  == picman_item_get_width  (item) &&
+      new_height == picman_item_get_height (item) &&
       offset_x   == 0                       &&
       offset_y   == 0)
     return;
 
-  new_offset_x = gimp_item_get_offset_x (item) - offset_x;
-  new_offset_y = gimp_item_get_offset_y (item) - offset_y;
+  new_offset_x = picman_item_get_offset_x (item) - offset_x;
+  new_offset_y = picman_item_get_offset_y (item) - offset_y;
 
-  gimp_rectangle_intersect (gimp_item_get_offset_x (item),
-                            gimp_item_get_offset_y (item),
-                            gimp_item_get_width (item),
-                            gimp_item_get_height (item),
+  picman_rectangle_intersect (picman_item_get_offset_x (item),
+                            picman_item_get_offset_y (item),
+                            picman_item_get_width (item),
+                            picman_item_get_height (item),
                             new_offset_x,
                             new_offset_y,
                             new_width,
@@ -567,22 +567,22 @@ gimp_drawable_resize (GimpItem    *item,
 
   new_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
                                                 new_width, new_height),
-                                gimp_drawable_get_format (drawable));
+                                picman_drawable_get_format (drawable));
 
   if (copy_width  != new_width ||
       copy_height != new_height)
     {
       /*  Clear the new tiles if needed  */
 
-      GimpRGB    bg;
+      PicmanRGB    bg;
       GeglColor *col;
 
-      if (! gimp_drawable_has_alpha (drawable) && ! GIMP_IS_CHANNEL (drawable))
-        gimp_context_get_background (context, &bg);
+      if (! picman_drawable_has_alpha (drawable) && ! PICMAN_IS_CHANNEL (drawable))
+        picman_context_get_background (context, &bg);
       else
-        gimp_rgba_set (&bg, 0.0, 0.0, 0.0, 0.0);
+        picman_rgba_set (&bg, 0.0, 0.0, 0.0, 0.0);
 
-      col = gimp_gegl_color_new (&bg);
+      col = picman_gegl_color_new (&bg);
 
       gegl_buffer_set_color (new_buffer, NULL, col);
       g_object_unref (col);
@@ -591,9 +591,9 @@ gimp_drawable_resize (GimpItem    *item,
   if (copy_width && copy_height)
     {
       /*  Copy the pixels in the intersection  */
-      gegl_buffer_copy (gimp_drawable_get_buffer (drawable),
-                        GEGL_RECTANGLE (copy_x - gimp_item_get_offset_x (item),
-                                        copy_y - gimp_item_get_offset_y (item),
+      gegl_buffer_copy (picman_drawable_get_buffer (drawable),
+                        GEGL_RECTANGLE (copy_x - picman_item_get_offset_x (item),
+                                        copy_y - picman_item_get_offset_y (item),
                                         copy_width,
                                         copy_height),
                         new_buffer,
@@ -601,28 +601,28 @@ gimp_drawable_resize (GimpItem    *item,
                                         copy_y - new_offset_y, 0, 0));
     }
 
-  gimp_drawable_set_buffer_full (drawable, gimp_item_is_attached (item), NULL,
+  picman_drawable_set_buffer_full (drawable, picman_item_is_attached (item), NULL,
                                  new_buffer,
                                  new_offset_x, new_offset_y);
   g_object_unref (new_buffer);
 }
 
 static void
-gimp_drawable_flip (GimpItem            *item,
-                    GimpContext         *context,
-                    GimpOrientationType  flip_type,
+picman_drawable_flip (PicmanItem            *item,
+                    PicmanContext         *context,
+                    PicmanOrientationType  flip_type,
                     gdouble              axis,
                     gboolean             clip_result)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (item);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (item);
   GeglBuffer   *buffer;
   gint          off_x, off_y;
   gint          new_off_x, new_off_y;
 
-  gimp_item_get_offset (item, &off_x, &off_y);
+  picman_item_get_offset (item, &off_x, &off_y);
 
-  buffer = gimp_drawable_transform_buffer_flip (drawable, context,
-                                                gimp_drawable_get_buffer (drawable),
+  buffer = picman_drawable_transform_buffer_flip (drawable, context,
+                                                picman_drawable_get_buffer (drawable),
                                                 off_x, off_y,
                                                 flip_type, axis,
                                                 clip_result,
@@ -630,29 +630,29 @@ gimp_drawable_flip (GimpItem            *item,
 
   if (buffer)
     {
-      gimp_drawable_transform_paste (drawable, buffer,
+      picman_drawable_transform_paste (drawable, buffer,
                                      new_off_x, new_off_y, FALSE);
       g_object_unref (buffer);
     }
 }
 
 static void
-gimp_drawable_rotate (GimpItem         *item,
-                      GimpContext      *context,
-                      GimpRotationType  rotate_type,
+picman_drawable_rotate (PicmanItem         *item,
+                      PicmanContext      *context,
+                      PicmanRotationType  rotate_type,
                       gdouble           center_x,
                       gdouble           center_y,
                       gboolean          clip_result)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (item);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (item);
   GeglBuffer   *buffer;
   gint          off_x, off_y;
   gint          new_off_x, new_off_y;
 
-  gimp_item_get_offset (item, &off_x, &off_y);
+  picman_item_get_offset (item, &off_x, &off_y);
 
-  buffer = gimp_drawable_transform_buffer_rotate (drawable, context,
-                                                  gimp_drawable_get_buffer (drawable),
+  buffer = picman_drawable_transform_buffer_rotate (drawable, context,
+                                                  picman_drawable_get_buffer (drawable),
                                                   off_x, off_y,
                                                   rotate_type, center_x, center_y,
                                                   clip_result,
@@ -660,31 +660,31 @@ gimp_drawable_rotate (GimpItem         *item,
 
   if (buffer)
     {
-      gimp_drawable_transform_paste (drawable, buffer,
+      picman_drawable_transform_paste (drawable, buffer,
                                      new_off_x, new_off_y, FALSE);
       g_object_unref (buffer);
     }
 }
 
 static void
-gimp_drawable_transform (GimpItem               *item,
-                         GimpContext            *context,
-                         const GimpMatrix3      *matrix,
-                         GimpTransformDirection  direction,
-                         GimpInterpolationType   interpolation_type,
+picman_drawable_transform (PicmanItem               *item,
+                         PicmanContext            *context,
+                         const PicmanMatrix3      *matrix,
+                         PicmanTransformDirection  direction,
+                         PicmanInterpolationType   interpolation_type,
                          gint                    recursion_level,
-                         GimpTransformResize     clip_result,
-                         GimpProgress           *progress)
+                         PicmanTransformResize     clip_result,
+                         PicmanProgress           *progress)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (item);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (item);
   GeglBuffer   *buffer;
   gint          off_x, off_y;
   gint          new_off_x, new_off_y;
 
-  gimp_item_get_offset (item, &off_x, &off_y);
+  picman_item_get_offset (item, &off_x, &off_y);
 
-  buffer = gimp_drawable_transform_buffer_affine (drawable, context,
-                                                  gimp_drawable_get_buffer (drawable),
+  buffer = picman_drawable_transform_buffer_affine (drawable, context,
+                                                  picman_drawable_get_buffer (drawable),
                                                   off_x, off_y,
                                                   matrix, direction,
                                                   interpolation_type,
@@ -695,27 +695,27 @@ gimp_drawable_transform (GimpItem               *item,
 
   if (buffer)
     {
-      gimp_drawable_transform_paste (drawable, buffer,
+      picman_drawable_transform_paste (drawable, buffer,
                                      new_off_x, new_off_y, FALSE);
       g_object_unref (buffer);
     }
 }
 
 static gboolean
-gimp_drawable_get_pixel_at (GimpPickable *pickable,
+picman_drawable_get_pixel_at (PicmanPickable *pickable,
                             gint          x,
                             gint          y,
                             const Babl   *format,
                             gpointer      pixel)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (pickable);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (pickable);
 
   /* do not make this a g_return_if_fail() */
-  if (x < 0 || x >= gimp_item_get_width  (GIMP_ITEM (drawable)) ||
-      y < 0 || y >= gimp_item_get_height (GIMP_ITEM (drawable)))
+  if (x < 0 || x >= picman_item_get_width  (PICMAN_ITEM (drawable)) ||
+      y < 0 || y >= picman_item_get_height (PICMAN_ITEM (drawable)))
     return FALSE;
 
-  gegl_buffer_sample (gimp_drawable_get_buffer (drawable),
+  gegl_buffer_sample (picman_drawable_get_buffer (drawable),
                       x, y, NULL, pixel, format,
                       GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
 
@@ -723,7 +723,7 @@ gimp_drawable_get_pixel_at (GimpPickable *pickable,
 }
 
 static void
-gimp_drawable_real_update (GimpDrawable *drawable,
+picman_drawable_real_update (PicmanDrawable *drawable,
                            gint          x,
                            gint          y,
                            gint          width,
@@ -745,15 +745,15 @@ gimp_drawable_real_update (GimpDrawable *drawable,
         }
     }
 
-  gimp_viewable_invalidate_preview (GIMP_VIEWABLE (drawable));
+  picman_viewable_invalidate_preview (PICMAN_VIEWABLE (drawable));
 }
 
 static gint64
-gimp_drawable_real_estimate_memsize (const GimpDrawable *drawable,
+picman_drawable_real_estimate_memsize (const PicmanDrawable *drawable,
                                      gint                width,
                                      gint                height)
 {
-  const Babl *format = gimp_drawable_get_format (drawable);
+  const Babl *format = picman_drawable_get_format (drawable);
 
   return (gint64) babl_format_get_bytes_per_pixel (format) * width * height;
 }
@@ -763,11 +763,11 @@ gimp_drawable_real_estimate_memsize (const GimpDrawable *drawable,
  * here again.
  */
 static void
-gimp_drawable_real_convert_type (GimpDrawable      *drawable,
-                                 GimpImage         *dest_image,
+picman_drawable_real_convert_type (PicmanDrawable      *drawable,
+                                 PicmanImage         *dest_image,
                                  const Babl        *new_format,
-                                 GimpImageBaseType  new_base_type,
-                                 GimpPrecision      new_precision,
+                                 PicmanImageBaseType  new_base_type,
+                                 PicmanPrecision      new_precision,
                                  gint               layer_dither_type,
                                  gint               mask_dither_type,
                                  gboolean           push_undo)
@@ -775,52 +775,52 @@ gimp_drawable_real_convert_type (GimpDrawable      *drawable,
   GeglBuffer *dest_buffer;
   const Babl *format;
 
-  format = gimp_image_get_format (dest_image,
+  format = picman_image_get_format (dest_image,
                                   new_base_type,
                                   new_precision,
-                                  gimp_drawable_has_alpha (drawable));
+                                  picman_drawable_has_alpha (drawable));
 
   dest_buffer =
     gegl_buffer_new (GEGL_RECTANGLE (0, 0,
-                                     gimp_item_get_width  (GIMP_ITEM (drawable)),
-                                     gimp_item_get_height (GIMP_ITEM (drawable))),
+                                     picman_item_get_width  (PICMAN_ITEM (drawable)),
+                                     picman_item_get_height (PICMAN_ITEM (drawable))),
                      format);
 
-  gegl_buffer_copy (gimp_drawable_get_buffer (drawable), NULL,
+  gegl_buffer_copy (picman_drawable_get_buffer (drawable), NULL,
                     dest_buffer, NULL);
 
-  gimp_drawable_set_buffer (drawable, push_undo, NULL, dest_buffer);
+  picman_drawable_set_buffer (drawable, push_undo, NULL, dest_buffer);
   g_object_unref (dest_buffer);
 }
 
 static GeglBuffer *
-gimp_drawable_real_get_buffer (GimpDrawable *drawable)
+picman_drawable_real_get_buffer (PicmanDrawable *drawable)
 {
 #if 0
   gegl_buffer_flush (drawable->private->buffer);
-  gimp_gegl_buffer_refetch_tiles (drawable->private->buffer);
+  picman_gegl_buffer_refetch_tiles (drawable->private->buffer);
 #endif
 
   return drawable->private->buffer;
 }
 
 static void
-gimp_drawable_real_set_buffer (GimpDrawable *drawable,
+picman_drawable_real_set_buffer (PicmanDrawable *drawable,
                                gboolean      push_undo,
                                const gchar  *undo_desc,
                                GeglBuffer   *buffer,
                                gint          offset_x,
                                gint          offset_y)
 {
-  GimpItem *item = GIMP_ITEM (drawable);
+  PicmanItem *item = PICMAN_ITEM (drawable);
   gboolean  old_has_alpha;
 
-  old_has_alpha = gimp_drawable_has_alpha (drawable);
+  old_has_alpha = picman_drawable_has_alpha (drawable);
 
-  gimp_drawable_invalidate_boundary (drawable);
+  picman_drawable_invalidate_boundary (drawable);
 
   if (push_undo)
-    gimp_image_undo_push_drawable_mod (gimp_item_get_image (item), undo_desc,
+    picman_image_undo_push_drawable_mod (picman_item_get_image (item), undo_desc,
                                        drawable, FALSE);
 
   /*  ref new before unrefing old, they might be the same  */
@@ -831,22 +831,22 @@ gimp_drawable_real_set_buffer (GimpDrawable *drawable,
 
   drawable->private->buffer = buffer;
 
-  gimp_item_set_offset (item, offset_x, offset_y);
-  gimp_item_set_size (item,
+  picman_item_set_offset (item, offset_x, offset_y);
+  picman_item_set_size (item,
                       gegl_buffer_get_width  (buffer),
                       gegl_buffer_get_height (buffer));
 
-  if (old_has_alpha != gimp_drawable_has_alpha (drawable))
-    gimp_drawable_alpha_changed (drawable);
+  if (old_has_alpha != picman_drawable_has_alpha (drawable))
+    picman_drawable_alpha_changed (drawable);
 
   if (drawable->private->buffer_source_node)
     gegl_node_set (drawable->private->buffer_source_node,
-                   "buffer", gimp_drawable_get_buffer (drawable),
+                   "buffer", picman_drawable_get_buffer (drawable),
                    NULL);
 }
 
 static void
-gimp_drawable_real_push_undo (GimpDrawable *drawable,
+picman_drawable_real_push_undo (PicmanDrawable *drawable,
                               const gchar  *undo_desc,
                               GeglBuffer   *buffer,
                               gint          x,
@@ -857,9 +857,9 @@ gimp_drawable_real_push_undo (GimpDrawable *drawable,
   if (! buffer)
     {
       buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0, width, height),
-                                gimp_drawable_get_format (drawable));
+                                picman_drawable_get_format (drawable));
 
-      gegl_buffer_copy (gimp_drawable_get_buffer (drawable),
+      gegl_buffer_copy (picman_drawable_get_buffer (drawable),
                         GEGL_RECTANGLE (x, y, width, height),
                         buffer,
                         GEGL_RECTANGLE (0, 0, 0, 0));
@@ -869,7 +869,7 @@ gimp_drawable_real_push_undo (GimpDrawable *drawable,
       g_object_ref (buffer);
     }
 
-  gimp_image_undo_push_drawable (gimp_item_get_image (GIMP_ITEM (drawable)),
+  picman_image_undo_push_drawable (picman_item_get_image (PICMAN_ITEM (drawable)),
                                  undo_desc, drawable,
                                  buffer, x, y);
 
@@ -877,7 +877,7 @@ gimp_drawable_real_push_undo (GimpDrawable *drawable,
 }
 
 static void
-gimp_drawable_real_swap_pixels (GimpDrawable *drawable,
+picman_drawable_real_swap_pixels (PicmanDrawable *drawable,
                                 GeglBuffer   *buffer,
                                 gint          x,
                                 gint          y)
@@ -888,35 +888,35 @@ gimp_drawable_real_swap_pixels (GimpDrawable *drawable,
 
   tmp = gegl_buffer_dup (buffer);
 
-  gegl_buffer_copy (gimp_drawable_get_buffer (drawable),
+  gegl_buffer_copy (picman_drawable_get_buffer (drawable),
                     GEGL_RECTANGLE (x, y, width, height),
                     buffer,
                     GEGL_RECTANGLE (0, 0, 0, 0));
   gegl_buffer_copy (tmp,
                     GEGL_RECTANGLE (0, 0, width, height),
-                    gimp_drawable_get_buffer (drawable),
+                    picman_drawable_get_buffer (drawable),
                     GEGL_RECTANGLE (x, y, 0, 0));
 
   g_object_unref (tmp);
 
-  gimp_drawable_update (drawable, x, y, width, height);
+  picman_drawable_update (drawable, x, y, width, height);
 }
 
 static void
-gimp_drawable_sync_fs_filter (GimpDrawable *drawable,
+picman_drawable_sync_fs_filter (PicmanDrawable *drawable,
                               gboolean      detach_fs)
 {
-  GimpDrawablePrivate *private = drawable->private;
-  GimpImage           *image   = gimp_item_get_image (GIMP_ITEM (drawable));
-  GimpLayer           *fs      = gimp_drawable_get_floating_sel (drawable);
+  PicmanDrawablePrivate *private = drawable->private;
+  PicmanImage           *image   = picman_item_get_image (PICMAN_ITEM (drawable));
+  PicmanLayer           *fs      = picman_drawable_get_floating_sel (drawable);
 
   if (! private->source_node)
     return;
 
   if (fs && ! detach_fs)
     {
-      GimpImage   *image = gimp_item_get_image (GIMP_ITEM (drawable));
-      GimpChannel *mask  = gimp_image_get_mask (image);
+      PicmanImage   *image = picman_item_get_image (PICMAN_ITEM (drawable));
+      PicmanChannel *mask  = picman_image_get_mask (image);
       gint         off_x, off_y;
       gint         fs_off_x, fs_off_y;
 
@@ -926,26 +926,26 @@ gimp_drawable_sync_fs_filter (GimpDrawable *drawable,
           GeglNode *fs_source;
           gboolean  linear;
 
-          private->fs_filter = gimp_filter_new ("Floating Selection");
-          gimp_viewable_set_stock_id (GIMP_VIEWABLE (private->fs_filter),
-                                      "gimp-floating-selection");
+          private->fs_filter = picman_filter_new ("Floating Selection");
+          picman_viewable_set_stock_id (PICMAN_VIEWABLE (private->fs_filter),
+                                      "picman-floating-selection");
 
-          node = gimp_filter_get_node (private->fs_filter);
+          node = picman_filter_get_node (private->fs_filter);
 
-          fs_source = gimp_drawable_get_source_node (GIMP_DRAWABLE (fs));
-          linear    = gimp_drawable_get_linear (GIMP_DRAWABLE (fs));
+          fs_source = picman_drawable_get_source_node (PICMAN_DRAWABLE (fs));
+          linear    = picman_drawable_get_linear (PICMAN_DRAWABLE (fs));
 
           /* rip the fs' source node out of its graph */
           if (fs->layer_offset_node)
             {
               gegl_node_disconnect (fs->layer_offset_node, "input");
-              gegl_node_remove_child (gimp_filter_get_node (GIMP_FILTER (fs)),
+              gegl_node_remove_child (picman_filter_get_node (PICMAN_FILTER (fs)),
                                       fs_source);
             }
 
           gegl_node_add_child (node, fs_source);
 
-          private->fs_applicator = gimp_applicator_new (node, linear);
+          private->fs_applicator = picman_applicator_new (node, linear);
 
           private->fs_crop_node =
             gegl_node_new_child (node,
@@ -957,51 +957,51 @@ gimp_drawable_sync_fs_filter (GimpDrawable *drawable,
           gegl_node_connect_to (private->fs_crop_node, "output",
                                 node,                  "aux");
 
-          gimp_drawable_add_filter (drawable, private->fs_filter);
+          picman_drawable_add_filter (drawable, private->fs_filter);
 
           g_signal_connect (fs, "notify",
-                            G_CALLBACK (gimp_drawable_fs_notify),
+                            G_CALLBACK (picman_drawable_fs_notify),
                             drawable);
           g_signal_connect (image, "component-active-changed",
-                            G_CALLBACK (gimp_drawable_fs_affect_changed),
+                            G_CALLBACK (picman_drawable_fs_affect_changed),
                             drawable);
           g_signal_connect (image, "mask-changed",
-                            G_CALLBACK (gimp_drawable_fs_mask_changed),
+                            G_CALLBACK (picman_drawable_fs_mask_changed),
                             drawable);
         }
 
-      gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
-      gimp_item_get_offset (GIMP_ITEM (fs), &fs_off_x, &fs_off_y);
+      picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
+      picman_item_get_offset (PICMAN_ITEM (fs), &fs_off_x, &fs_off_y);
 
       gegl_node_set (private->fs_crop_node,
                      "x",      (gdouble) (off_x - fs_off_x),
                      "y",      (gdouble) (off_y - fs_off_y),
-                     "width",  (gdouble) gimp_item_get_width  (GIMP_ITEM (drawable)),
-                     "height", (gdouble) gimp_item_get_height (GIMP_ITEM (drawable)),
+                     "width",  (gdouble) picman_item_get_width  (PICMAN_ITEM (drawable)),
+                     "height", (gdouble) picman_item_get_height (PICMAN_ITEM (drawable)),
                      NULL);
 
-      gimp_applicator_set_apply_offset (private->fs_applicator,
+      picman_applicator_set_apply_offset (private->fs_applicator,
                                         fs_off_x - off_x,
                                         fs_off_y - off_y);
 
-      if (gimp_channel_is_empty (mask))
+      if (picman_channel_is_empty (mask))
         {
-          gimp_applicator_set_mask_buffer (private->fs_applicator, NULL);
+          picman_applicator_set_mask_buffer (private->fs_applicator, NULL);
         }
       else
         {
-          GeglBuffer *buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (mask));
+          GeglBuffer *buffer = picman_drawable_get_buffer (PICMAN_DRAWABLE (mask));
 
-          gimp_applicator_set_mask_buffer (private->fs_applicator, buffer);
-          gimp_applicator_set_mask_offset (private->fs_applicator,
+          picman_applicator_set_mask_buffer (private->fs_applicator, buffer);
+          picman_applicator_set_mask_offset (private->fs_applicator,
                                            -off_x, -off_y);
         }
 
-      gimp_applicator_set_mode (private->fs_applicator,
-                                gimp_layer_get_opacity (fs),
-                                gimp_layer_get_mode (fs));
-      gimp_applicator_set_affect (private->fs_applicator,
-                                  gimp_drawable_get_active_mask (drawable));
+      picman_applicator_set_mode (private->fs_applicator,
+                                picman_layer_get_opacity (fs),
+                                picman_layer_get_mode (fs));
+      picman_applicator_set_affect (private->fs_applicator,
+                                  picman_drawable_get_active_mask (drawable));
     }
   else
     {
@@ -1011,27 +1011,27 @@ gimp_drawable_sync_fs_filter (GimpDrawable *drawable,
           GeglNode *fs_source;
 
           g_signal_handlers_disconnect_by_func (fs,
-                                                gimp_drawable_fs_notify,
+                                                picman_drawable_fs_notify,
                                                 drawable);
           g_signal_handlers_disconnect_by_func (image,
-                                                gimp_drawable_fs_affect_changed,
+                                                picman_drawable_fs_affect_changed,
                                                 drawable);
           g_signal_handlers_disconnect_by_func (image,
-                                                gimp_drawable_fs_mask_changed,
+                                                picman_drawable_fs_mask_changed,
                                                 drawable);
 
-          gimp_drawable_remove_filter (drawable, private->fs_filter);
+          picman_drawable_remove_filter (drawable, private->fs_filter);
 
-          node = gimp_filter_get_node (private->fs_filter);
+          node = picman_filter_get_node (private->fs_filter);
 
-          fs_source = gimp_drawable_get_source_node (GIMP_DRAWABLE (fs));
+          fs_source = picman_drawable_get_source_node (PICMAN_DRAWABLE (fs));
 
           gegl_node_remove_child (node, fs_source);
 
           /* plug the fs' source node back into its graph */
           if (fs->layer_offset_node)
             {
-              gegl_node_add_child (gimp_filter_get_node (GIMP_FILTER (fs)),
+              gegl_node_add_child (picman_filter_get_node (PICMAN_FILTER (fs)),
                                    fs_source);
               gegl_node_connect_to (fs_source,             "output",
                                     fs->layer_offset_node, "input");
@@ -1049,9 +1049,9 @@ gimp_drawable_sync_fs_filter (GimpDrawable *drawable,
 }
 
 static void
-gimp_drawable_fs_notify (GimpLayer        *fs,
+picman_drawable_fs_notify (PicmanLayer        *fs,
                          const GParamSpec *pspec,
-                         GimpDrawable     *drawable)
+                         PicmanDrawable     *drawable)
 {
   if (! strcmp (pspec->name, "offset-x") ||
       ! strcmp (pspec->name, "offset-y") ||
@@ -1059,68 +1059,68 @@ gimp_drawable_fs_notify (GimpLayer        *fs,
       ! strcmp (pspec->name, "mode")     ||
       ! strcmp (pspec->name, "opacity"))
     {
-      gimp_drawable_sync_fs_filter (drawable, FALSE);
+      picman_drawable_sync_fs_filter (drawable, FALSE);
     }
 }
 
 static void
-gimp_drawable_fs_affect_changed (GimpImage       *image,
-                                 GimpChannelType  channel,
-                                 GimpDrawable    *drawable)
+picman_drawable_fs_affect_changed (PicmanImage       *image,
+                                 PicmanChannelType  channel,
+                                 PicmanDrawable    *drawable)
 {
-  GimpLayer *fs = gimp_drawable_get_floating_sel (drawable);
+  PicmanLayer *fs = picman_drawable_get_floating_sel (drawable);
 
-  gimp_drawable_sync_fs_filter (drawable, FALSE);
+  picman_drawable_sync_fs_filter (drawable, FALSE);
 
-  gimp_drawable_update (GIMP_DRAWABLE (fs),
+  picman_drawable_update (PICMAN_DRAWABLE (fs),
                         0, 0,
-                        gimp_item_get_width  (GIMP_ITEM (fs)),
-                        gimp_item_get_height (GIMP_ITEM (fs)));
+                        picman_item_get_width  (PICMAN_ITEM (fs)),
+                        picman_item_get_height (PICMAN_ITEM (fs)));
 }
 
 static void
-gimp_drawable_fs_mask_changed (GimpImage       *image,
-                               GimpDrawable    *drawable)
+picman_drawable_fs_mask_changed (PicmanImage       *image,
+                               PicmanDrawable    *drawable)
 {
-  GimpLayer *fs = gimp_drawable_get_floating_sel (drawable);
+  PicmanLayer *fs = picman_drawable_get_floating_sel (drawable);
 
-  gimp_drawable_sync_fs_filter (drawable, FALSE);
+  picman_drawable_sync_fs_filter (drawable, FALSE);
 
-  gimp_drawable_update (GIMP_DRAWABLE (fs),
+  picman_drawable_update (PICMAN_DRAWABLE (fs),
                         0, 0,
-                        gimp_item_get_width  (GIMP_ITEM (fs)),
-                        gimp_item_get_height (GIMP_ITEM (fs)));
+                        picman_item_get_width  (PICMAN_ITEM (fs)),
+                        picman_item_get_height (PICMAN_ITEM (fs)));
 }
 
 static void
-gimp_drawable_fs_update (GimpLayer    *fs,
+picman_drawable_fs_update (PicmanLayer    *fs,
                          gint          x,
                          gint          y,
                          gint          width,
                          gint          height,
-                         GimpDrawable *drawable)
+                         PicmanDrawable *drawable)
 {
   gint fs_off_x, fs_off_y;
   gint off_x, off_y;
   gint dr_x, dr_y, dr_width, dr_height;
 
-  gimp_item_get_offset (GIMP_ITEM (fs), &fs_off_x, &fs_off_y);
-  gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+  picman_item_get_offset (PICMAN_ITEM (fs), &fs_off_x, &fs_off_y);
+  picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
 
-  if (gimp_rectangle_intersect (x + fs_off_x,
+  if (picman_rectangle_intersect (x + fs_off_x,
                                 y + fs_off_y,
                                 width,
                                 height,
                                 off_x,
                                 off_y,
-                                gimp_item_get_width  (GIMP_ITEM (drawable)),
-                                gimp_item_get_height (GIMP_ITEM (drawable)),
+                                picman_item_get_width  (PICMAN_ITEM (drawable)),
+                                picman_item_get_height (PICMAN_ITEM (drawable)),
                                 &dr_x,
                                 &dr_y,
                                 &dr_width,
                                 &dr_height))
     {
-      gimp_drawable_update (drawable,
+      picman_drawable_update (drawable,
                             dr_x - off_x, dr_y - off_y,
                             dr_width, dr_height);
     }
@@ -1129,9 +1129,9 @@ gimp_drawable_fs_update (GimpLayer    *fs,
 
 /*  public functions  */
 
-GimpDrawable *
-gimp_drawable_new (GType          type,
-                   GimpImage     *image,
+PicmanDrawable *
+picman_drawable_new (GType          type,
+                   PicmanImage     *image,
                    const gchar   *name,
                    gint           offset_x,
                    gint           offset_y,
@@ -1139,14 +1139,14 @@ gimp_drawable_new (GType          type,
                    gint           height,
                    const Babl    *format)
 {
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (g_type_is_a (type, GIMP_TYPE_DRAWABLE), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (g_type_is_a (type, PICMAN_TYPE_DRAWABLE), NULL);
   g_return_val_if_fail (width > 0 && height > 0, NULL);
   g_return_val_if_fail (format != NULL, NULL);
 
-  drawable = GIMP_DRAWABLE (gimp_item_new (type,
+  drawable = PICMAN_DRAWABLE (picman_item_new (type,
                                            image, name,
                                            offset_x, offset_y,
                                            width, height));
@@ -1159,73 +1159,73 @@ gimp_drawable_new (GType          type,
 }
 
 gint64
-gimp_drawable_estimate_memsize (const GimpDrawable *drawable,
+picman_drawable_estimate_memsize (const PicmanDrawable *drawable,
                                 gint                width,
                                 gint                height)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), 0);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), 0);
 
-  return GIMP_DRAWABLE_GET_CLASS (drawable)->estimate_memsize (drawable,
+  return PICMAN_DRAWABLE_GET_CLASS (drawable)->estimate_memsize (drawable,
                                                                width, height);
 }
 
 void
-gimp_drawable_update (GimpDrawable *drawable,
+picman_drawable_update (PicmanDrawable *drawable,
                       gint          x,
                       gint          y,
                       gint          width,
                       gint          height)
 {
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
 
-  g_signal_emit (drawable, gimp_drawable_signals[UPDATE], 0,
+  g_signal_emit (drawable, picman_drawable_signals[UPDATE], 0,
                  x, y, width, height);
 }
 
 void
-gimp_drawable_alpha_changed (GimpDrawable *drawable)
+picman_drawable_alpha_changed (PicmanDrawable *drawable)
 {
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
 
-  g_signal_emit (drawable, gimp_drawable_signals[ALPHA_CHANGED], 0);
+  g_signal_emit (drawable, picman_drawable_signals[ALPHA_CHANGED], 0);
 }
 
 void
-gimp_drawable_invalidate_boundary (GimpDrawable *drawable)
+picman_drawable_invalidate_boundary (PicmanDrawable *drawable)
 {
-  GimpDrawableClass *drawable_class;
+  PicmanDrawableClass *drawable_class;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
 
-  drawable_class = GIMP_DRAWABLE_GET_CLASS (drawable);
+  drawable_class = PICMAN_DRAWABLE_GET_CLASS (drawable);
 
   if (drawable_class->invalidate_boundary)
     drawable_class->invalidate_boundary (drawable);
 }
 
 void
-gimp_drawable_get_active_components (const GimpDrawable *drawable,
+picman_drawable_get_active_components (const PicmanDrawable *drawable,
                                      gboolean           *active)
 {
-  GimpDrawableClass *drawable_class;
+  PicmanDrawableClass *drawable_class;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
   g_return_if_fail (active != NULL);
 
-  drawable_class = GIMP_DRAWABLE_GET_CLASS (drawable);
+  drawable_class = PICMAN_DRAWABLE_GET_CLASS (drawable);
 
   if (drawable_class->get_active_components)
     drawable_class->get_active_components (drawable, active);
 }
 
-GimpComponentMask
-gimp_drawable_get_active_mask (const GimpDrawable *drawable)
+PicmanComponentMask
+picman_drawable_get_active_mask (const PicmanDrawable *drawable)
 {
-  GimpDrawableClass *drawable_class;
+  PicmanDrawableClass *drawable_class;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), 0);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), 0);
 
-  drawable_class = GIMP_DRAWABLE_GET_CLASS (drawable);
+  drawable_class = PICMAN_DRAWABLE_GET_CLASS (drawable);
 
   if (drawable_class->get_active_mask)
     return drawable_class->get_active_mask (drawable);
@@ -1234,30 +1234,30 @@ gimp_drawable_get_active_mask (const GimpDrawable *drawable)
 }
 
 void
-gimp_drawable_convert_type (GimpDrawable      *drawable,
-                            GimpImage         *dest_image,
-                            GimpImageBaseType  new_base_type,
-                            GimpPrecision      new_precision,
+picman_drawable_convert_type (PicmanDrawable      *drawable,
+                            PicmanImage         *dest_image,
+                            PicmanImageBaseType  new_base_type,
+                            PicmanPrecision      new_precision,
                             gint               layer_dither_type,
                             gint               mask_dither_type,
                             gboolean           push_undo)
 {
   const Babl *new_format;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (GIMP_IS_IMAGE (dest_image));
-  g_return_if_fail (new_base_type != gimp_drawable_get_base_type (drawable) ||
-                    new_precision != gimp_drawable_get_precision (drawable));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_IMAGE (dest_image));
+  g_return_if_fail (new_base_type != picman_drawable_get_base_type (drawable) ||
+                    new_precision != picman_drawable_get_precision (drawable));
 
-  if (! gimp_item_is_attached (GIMP_ITEM (drawable)))
+  if (! picman_item_is_attached (PICMAN_ITEM (drawable)))
     push_undo = FALSE;
 
-  new_format = gimp_image_get_format (dest_image,
+  new_format = picman_image_get_format (dest_image,
                                       new_base_type,
                                       new_precision,
-                                      gimp_drawable_has_alpha (drawable));
+                                      picman_drawable_has_alpha (drawable));
 
-  GIMP_DRAWABLE_GET_CLASS (drawable)->convert_type (drawable, dest_image,
+  PICMAN_DRAWABLE_GET_CLASS (drawable)->convert_type (drawable, dest_image,
                                                     new_format,
                                                     new_base_type,
                                                     new_precision,
@@ -1267,24 +1267,24 @@ gimp_drawable_convert_type (GimpDrawable      *drawable,
 }
 
 void
-gimp_drawable_apply_buffer (GimpDrawable         *drawable,
+picman_drawable_apply_buffer (PicmanDrawable         *drawable,
                             GeglBuffer           *buffer,
                             const GeglRectangle  *buffer_region,
                             gboolean              push_undo,
                             const gchar          *undo_desc,
                             gdouble               opacity,
-                            GimpLayerModeEffects  mode,
+                            PicmanLayerModeEffects  mode,
                             GeglBuffer           *base_buffer,
                             gint                  base_x,
                             gint                  base_y)
 {
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)));
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
   g_return_if_fail (buffer_region != NULL);
   g_return_if_fail (base_buffer == NULL || GEGL_IS_BUFFER (base_buffer));
 
-  GIMP_DRAWABLE_GET_CLASS (drawable)->apply_buffer (drawable, buffer,
+  PICMAN_DRAWABLE_GET_CLASS (drawable)->apply_buffer (drawable, buffer,
                                                     buffer_region,
                                                     push_undo, undo_desc,
                                                     opacity, mode,
@@ -1293,7 +1293,7 @@ gimp_drawable_apply_buffer (GimpDrawable         *drawable,
 }
 
 void
-gimp_drawable_replace_buffer (GimpDrawable        *drawable,
+picman_drawable_replace_buffer (PicmanDrawable        *drawable,
                               GeglBuffer          *buffer,
                               const GeglRectangle *buffer_region,
                               gboolean             push_undo,
@@ -1304,12 +1304,12 @@ gimp_drawable_replace_buffer (GimpDrawable        *drawable,
                               gint                 x,
                               gint                 y)
 {
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)));
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
   g_return_if_fail (GEGL_IS_BUFFER (mask));
 
-  GIMP_DRAWABLE_GET_CLASS (drawable)->replace_buffer (drawable, buffer,
+  PICMAN_DRAWABLE_GET_CLASS (drawable)->replace_buffer (drawable, buffer,
                                                       buffer_region,
                                                       push_undo, undo_desc,
                                                       opacity,
@@ -1318,84 +1318,84 @@ gimp_drawable_replace_buffer (GimpDrawable        *drawable,
 }
 
 GeglBuffer *
-gimp_drawable_get_buffer (GimpDrawable *drawable)
+picman_drawable_get_buffer (PicmanDrawable *drawable)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
-  return GIMP_DRAWABLE_GET_CLASS (drawable)->get_buffer (drawable);
+  return PICMAN_DRAWABLE_GET_CLASS (drawable)->get_buffer (drawable);
 }
 
 void
-gimp_drawable_set_buffer (GimpDrawable *drawable,
+picman_drawable_set_buffer (PicmanDrawable *drawable,
                           gboolean      push_undo,
                           const gchar  *undo_desc,
                           GeglBuffer   *buffer)
 {
   gint offset_x, offset_y;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
 
-  if (! gimp_item_is_attached (GIMP_ITEM (drawable)))
+  if (! picman_item_is_attached (PICMAN_ITEM (drawable)))
     push_undo = FALSE;
 
-  gimp_item_get_offset (GIMP_ITEM (drawable), &offset_x, &offset_y);
+  picman_item_get_offset (PICMAN_ITEM (drawable), &offset_x, &offset_y);
 
-  gimp_drawable_set_buffer_full (drawable, push_undo, undo_desc, buffer,
+  picman_drawable_set_buffer_full (drawable, push_undo, undo_desc, buffer,
                                  offset_x, offset_y);
 }
 
 void
-gimp_drawable_set_buffer_full (GimpDrawable *drawable,
+picman_drawable_set_buffer_full (PicmanDrawable *drawable,
                                gboolean      push_undo,
                                const gchar  *undo_desc,
                                GeglBuffer   *buffer,
                                gint          offset_x,
                                gint          offset_y)
 {
-  GimpItem *item;
+  PicmanItem *item;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
 
-  item = GIMP_ITEM (drawable);
+  item = PICMAN_ITEM (drawable);
 
-  if (! gimp_item_is_attached (GIMP_ITEM (drawable)))
+  if (! picman_item_is_attached (PICMAN_ITEM (drawable)))
     push_undo = FALSE;
 
-  if (gimp_item_get_width  (item)   != gegl_buffer_get_width (buffer)  ||
-      gimp_item_get_height (item)   != gegl_buffer_get_height (buffer) ||
-      gimp_item_get_offset_x (item) != offset_x                        ||
-      gimp_item_get_offset_y (item) != offset_y)
+  if (picman_item_get_width  (item)   != gegl_buffer_get_width (buffer)  ||
+      picman_item_get_height (item)   != gegl_buffer_get_height (buffer) ||
+      picman_item_get_offset_x (item) != offset_x                        ||
+      picman_item_get_offset_y (item) != offset_y)
     {
-      gimp_drawable_update (drawable,
+      picman_drawable_update (drawable,
                             0, 0,
-                            gimp_item_get_width  (item),
-                            gimp_item_get_height (item));
+                            picman_item_get_width  (item),
+                            picman_item_get_height (item));
     }
 
   g_object_freeze_notify (G_OBJECT (drawable));
 
-  GIMP_DRAWABLE_GET_CLASS (drawable)->set_buffer (drawable,
+  PICMAN_DRAWABLE_GET_CLASS (drawable)->set_buffer (drawable,
                                                   push_undo, undo_desc,
                                                   buffer,
                                                   offset_x, offset_y);
 
   g_object_thaw_notify (G_OBJECT (drawable));
 
-  gimp_drawable_update (drawable,
+  picman_drawable_update (drawable,
                         0, 0,
-                        gimp_item_get_width  (item),
-                        gimp_item_get_height (item));
+                        picman_item_get_width  (item),
+                        picman_item_get_height (item));
 }
 
 GeglNode *
-gimp_drawable_get_source_node (GimpDrawable *drawable)
+picman_drawable_get_source_node (PicmanDrawable *drawable)
 {
   GeglNode *filter;
   GeglNode *output;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
   if (drawable->private->source_node)
     return drawable->private->source_node;
@@ -1405,10 +1405,10 @@ gimp_drawable_get_source_node (GimpDrawable *drawable)
   drawable->private->buffer_source_node =
     gegl_node_new_child (drawable->private->source_node,
                          "operation", "gegl:buffer-source",
-                         "buffer",    gimp_drawable_get_buffer (drawable),
+                         "buffer",    picman_drawable_get_buffer (drawable),
                          NULL);
 
-  filter = gimp_filter_stack_get_graph (GIMP_FILTER_STACK (drawable->private->filter_stack));
+  filter = picman_filter_stack_get_graph (PICMAN_FILTER_STACK (drawable->private->filter_stack));
 
   gegl_node_add_child (drawable->private->source_node, filter);
 
@@ -1420,36 +1420,36 @@ gimp_drawable_get_source_node (GimpDrawable *drawable)
   gegl_node_connect_to (filter, "output",
                         output, "input");
 
-  gimp_drawable_sync_fs_filter (drawable, FALSE);
+  picman_drawable_sync_fs_filter (drawable, FALSE);
 
   return drawable->private->source_node;
 }
 
 GeglNode *
-gimp_drawable_get_mode_node (GimpDrawable *drawable)
+picman_drawable_get_mode_node (PicmanDrawable *drawable)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
   if (! drawable->private->mode_node)
-    gimp_filter_get_node (GIMP_FILTER (drawable));
+    picman_filter_get_node (PICMAN_FILTER (drawable));
 
   return drawable->private->mode_node;
 }
 
 void
-gimp_drawable_swap_pixels (GimpDrawable *drawable,
+picman_drawable_swap_pixels (PicmanDrawable *drawable,
                            GeglBuffer   *buffer,
                            gint          x,
                            gint          y)
 {
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
 
-  GIMP_DRAWABLE_GET_CLASS (drawable)->swap_pixels (drawable, buffer, x, y);
+  PICMAN_DRAWABLE_GET_CLASS (drawable)->swap_pixels (drawable, buffer, x, y);
 }
 
 void
-gimp_drawable_push_undo (GimpDrawable *drawable,
+picman_drawable_push_undo (PicmanDrawable *drawable,
                          const gchar  *undo_desc,
                          GeglBuffer   *buffer,
                          gint          x,
@@ -1457,102 +1457,102 @@ gimp_drawable_push_undo (GimpDrawable *drawable,
                          gint          width,
                          gint          height)
 {
-  GimpItem *item;
+  PicmanItem *item;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
   g_return_if_fail (buffer == NULL || GEGL_IS_BUFFER (buffer));
 
-  item = GIMP_ITEM (drawable);
+  item = PICMAN_ITEM (drawable);
 
-  g_return_if_fail (gimp_item_is_attached (item));
+  g_return_if_fail (picman_item_is_attached (item));
 
   if (! buffer &&
-      ! gimp_rectangle_intersect (x, y,
+      ! picman_rectangle_intersect (x, y,
                                   width, height,
                                   0, 0,
-                                  gimp_item_get_width (item),
-                                  gimp_item_get_height (item),
+                                  picman_item_get_width (item),
+                                  picman_item_get_height (item),
                                   &x, &y, &width, &height))
     {
       g_warning ("%s: tried to push empty region", G_STRFUNC);
       return;
     }
 
-  GIMP_DRAWABLE_GET_CLASS (drawable)->push_undo (drawable, undo_desc,
+  PICMAN_DRAWABLE_GET_CLASS (drawable)->push_undo (drawable, undo_desc,
                                                  buffer,
                                                  x, y, width, height);
 }
 
 void
-gimp_drawable_fill (GimpDrawable      *drawable,
-                    const GimpRGB     *color,
-                    const GimpPattern *pattern)
+picman_drawable_fill (PicmanDrawable      *drawable,
+                    const PicmanRGB     *color,
+                    const PicmanPattern *pattern)
 {
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
   g_return_if_fail (color != NULL || pattern != NULL);
-  g_return_if_fail (pattern == NULL || GIMP_IS_PATTERN (pattern));
+  g_return_if_fail (pattern == NULL || PICMAN_IS_PATTERN (pattern));
 
   if (color)
     {
-      GimpRGB    c = *color;
+      PicmanRGB    c = *color;
       GeglColor *col;
 
-      if (! gimp_drawable_has_alpha (drawable))
-        gimp_rgb_set_alpha (&c, 1.0);
+      if (! picman_drawable_has_alpha (drawable))
+        picman_rgb_set_alpha (&c, 1.0);
 
-      col = gimp_gegl_color_new (&c);
-      gegl_buffer_set_color (gimp_drawable_get_buffer (drawable),
+      col = picman_gegl_color_new (&c);
+      gegl_buffer_set_color (picman_drawable_get_buffer (drawable),
                              NULL, col);
       g_object_unref (col);
     }
   else
     {
-      GeglBuffer *src_buffer = gimp_pattern_create_buffer (pattern);
+      GeglBuffer *src_buffer = picman_pattern_create_buffer (pattern);
 
-      gegl_buffer_set_pattern (gimp_drawable_get_buffer (drawable),
+      gegl_buffer_set_pattern (picman_drawable_get_buffer (drawable),
                                NULL, src_buffer, 0, 0);
       g_object_unref (src_buffer);
     }
 
-  gimp_drawable_update (drawable,
+  picman_drawable_update (drawable,
                         0, 0,
-                        gimp_item_get_width  (GIMP_ITEM (drawable)),
-                        gimp_item_get_height (GIMP_ITEM (drawable)));
+                        picman_item_get_width  (PICMAN_ITEM (drawable)),
+                        picman_item_get_height (PICMAN_ITEM (drawable)));
 }
 
 void
-gimp_drawable_fill_by_type (GimpDrawable *drawable,
-                            GimpContext  *context,
-                            GimpFillType  fill_type)
+picman_drawable_fill_by_type (PicmanDrawable *drawable,
+                            PicmanContext  *context,
+                            PicmanFillType  fill_type)
 {
-  GimpRGB      color;
-  GimpPattern *pattern = NULL;
+  PicmanRGB      color;
+  PicmanPattern *pattern = NULL;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
 
   switch (fill_type)
     {
-    case GIMP_FOREGROUND_FILL:
-      gimp_context_get_foreground (context, &color);
+    case PICMAN_FOREGROUND_FILL:
+      picman_context_get_foreground (context, &color);
       break;
 
-    case GIMP_BACKGROUND_FILL:
-      gimp_context_get_background (context, &color);
+    case PICMAN_BACKGROUND_FILL:
+      picman_context_get_background (context, &color);
       break;
 
-    case GIMP_WHITE_FILL:
-      gimp_rgba_set (&color, 1.0, 1.0, 1.0, GIMP_OPACITY_OPAQUE);
+    case PICMAN_WHITE_FILL:
+      picman_rgba_set (&color, 1.0, 1.0, 1.0, PICMAN_OPACITY_OPAQUE);
       break;
 
-    case GIMP_TRANSPARENT_FILL:
-      gimp_rgba_set (&color, 0.0, 0.0, 0.0, GIMP_OPACITY_TRANSPARENT);
+    case PICMAN_TRANSPARENT_FILL:
+      picman_rgba_set (&color, 0.0, 0.0, 0.0, PICMAN_OPACITY_TRANSPARENT);
       break;
 
-    case GIMP_PATTERN_FILL:
-      pattern = gimp_context_get_pattern (context);
+    case PICMAN_PATTERN_FILL:
+      pattern = picman_context_get_pattern (context);
       break;
 
-    case GIMP_NO_FILL:
+    case PICMAN_NO_FILL:
       return;
 
     default:
@@ -1560,203 +1560,203 @@ gimp_drawable_fill_by_type (GimpDrawable *drawable,
       return;
     }
 
-  gimp_drawable_fill (drawable, pattern ? NULL : &color, pattern);
+  picman_drawable_fill (drawable, pattern ? NULL : &color, pattern);
 }
 
 const Babl *
-gimp_drawable_get_format (const GimpDrawable *drawable)
+picman_drawable_get_format (const PicmanDrawable *drawable)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
   return gegl_buffer_get_format (drawable->private->buffer);
 }
 
 const Babl *
-gimp_drawable_get_format_with_alpha (const GimpDrawable *drawable)
+picman_drawable_get_format_with_alpha (const PicmanDrawable *drawable)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
-  return gimp_image_get_format (gimp_item_get_image (GIMP_ITEM (drawable)),
-                                gimp_drawable_get_base_type (drawable),
-                                gimp_drawable_get_precision (drawable),
+  return picman_image_get_format (picman_item_get_image (PICMAN_ITEM (drawable)),
+                                picman_drawable_get_base_type (drawable),
+                                picman_drawable_get_precision (drawable),
                                 TRUE);
 }
 
 const Babl *
-gimp_drawable_get_format_without_alpha (const GimpDrawable *drawable)
+picman_drawable_get_format_without_alpha (const PicmanDrawable *drawable)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
-  return gimp_image_get_format (gimp_item_get_image (GIMP_ITEM (drawable)),
-                                gimp_drawable_get_base_type (drawable),
-                                gimp_drawable_get_precision (drawable),
+  return picman_image_get_format (picman_item_get_image (PICMAN_ITEM (drawable)),
+                                picman_drawable_get_base_type (drawable),
+                                picman_drawable_get_precision (drawable),
                                 FALSE);
 }
 
 gboolean
-gimp_drawable_get_linear (const GimpDrawable *drawable)
+picman_drawable_get_linear (const PicmanDrawable *drawable)
 {
   const Babl *format;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
 
   format = gegl_buffer_get_format (drawable->private->buffer);
 
-  return gimp_babl_format_get_linear (format);
+  return picman_babl_format_get_linear (format);
 }
 
 gboolean
-gimp_drawable_has_alpha (const GimpDrawable *drawable)
+picman_drawable_has_alpha (const PicmanDrawable *drawable)
 {
   const Babl *format;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
 
   format = gegl_buffer_get_format (drawable->private->buffer);
 
   return babl_format_has_alpha (format);
 }
 
-GimpImageBaseType
-gimp_drawable_get_base_type (const GimpDrawable *drawable)
+PicmanImageBaseType
+picman_drawable_get_base_type (const PicmanDrawable *drawable)
 {
   const Babl *format;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), -1);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), -1);
 
   format = gegl_buffer_get_format (drawable->private->buffer);
 
-  return gimp_babl_format_get_base_type (format);
+  return picman_babl_format_get_base_type (format);
 }
 
-GimpPrecision
-gimp_drawable_get_precision (const GimpDrawable *drawable)
+PicmanPrecision
+picman_drawable_get_precision (const PicmanDrawable *drawable)
 {
   const Babl *format;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), -1);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), -1);
 
   format = gegl_buffer_get_format (drawable->private->buffer);
 
-  return gimp_babl_format_get_precision (format);
+  return picman_babl_format_get_precision (format);
 }
 
 gboolean
-gimp_drawable_is_rgb (const GimpDrawable *drawable)
+picman_drawable_is_rgb (const PicmanDrawable *drawable)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
 
-  return (gimp_drawable_get_base_type (drawable) == GIMP_RGB);
+  return (picman_drawable_get_base_type (drawable) == PICMAN_RGB);
 }
 
 gboolean
-gimp_drawable_is_gray (const GimpDrawable *drawable)
+picman_drawable_is_gray (const PicmanDrawable *drawable)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
 
-  return (gimp_drawable_get_base_type (drawable) == GIMP_GRAY);
+  return (picman_drawable_get_base_type (drawable) == PICMAN_GRAY);
 }
 
 gboolean
-gimp_drawable_is_indexed (const GimpDrawable *drawable)
+picman_drawable_is_indexed (const PicmanDrawable *drawable)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
 
-  return (gimp_drawable_get_base_type (drawable) == GIMP_INDEXED);
+  return (picman_drawable_get_base_type (drawable) == PICMAN_INDEXED);
 }
 
 const guchar *
-gimp_drawable_get_colormap (const GimpDrawable *drawable)
+picman_drawable_get_colormap (const PicmanDrawable *drawable)
 {
-  GimpImage *image;
+  PicmanImage *image;
 
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
-  image = gimp_item_get_image (GIMP_ITEM (drawable));
+  image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-  return image ? gimp_image_get_colormap (image) : NULL;
+  return image ? picman_image_get_colormap (image) : NULL;
 }
 
-GimpLayer *
-gimp_drawable_get_floating_sel (const GimpDrawable *drawable)
+PicmanLayer *
+picman_drawable_get_floating_sel (const PicmanDrawable *drawable)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
   return drawable->private->floating_selection;
 }
 
 void
-gimp_drawable_attach_floating_sel (GimpDrawable *drawable,
-                                   GimpLayer    *fs)
+picman_drawable_attach_floating_sel (PicmanDrawable *drawable,
+                                   PicmanLayer    *fs)
 {
-  GimpImage *image;
+  PicmanImage *image;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)));
-  g_return_if_fail (gimp_drawable_get_floating_sel (drawable) == NULL);
-  g_return_if_fail (GIMP_IS_LAYER (fs));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)));
+  g_return_if_fail (picman_drawable_get_floating_sel (drawable) == NULL);
+  g_return_if_fail (PICMAN_IS_LAYER (fs));
 
-  GIMP_LOG (FLOATING_SELECTION, "%s", G_STRFUNC);
+  PICMAN_LOG (FLOATING_SELECTION, "%s", G_STRFUNC);
 
-  image = gimp_item_get_image (GIMP_ITEM (drawable));
+  image = picman_item_get_image (PICMAN_ITEM (drawable));
 
   drawable->private->floating_selection = fs;
-  gimp_image_set_floating_selection (image, fs);
+  picman_image_set_floating_selection (image, fs);
 
   /*  clear the selection  */
-  gimp_drawable_invalidate_boundary (GIMP_DRAWABLE (fs));
+  picman_drawable_invalidate_boundary (PICMAN_DRAWABLE (fs));
 
-  gimp_drawable_sync_fs_filter (drawable, FALSE);
+  picman_drawable_sync_fs_filter (drawable, FALSE);
 
   g_signal_connect (fs, "update",
-                    G_CALLBACK (gimp_drawable_fs_update),
+                    G_CALLBACK (picman_drawable_fs_update),
                     drawable);
 
-  gimp_drawable_fs_update (fs,
+  picman_drawable_fs_update (fs,
                            0, 0,
-                           gimp_item_get_width  (GIMP_ITEM (fs)),
-                           gimp_item_get_height (GIMP_ITEM (fs)),
+                           picman_item_get_width  (PICMAN_ITEM (fs)),
+                           picman_item_get_height (PICMAN_ITEM (fs)),
                            drawable);
 }
 
 void
-gimp_drawable_detach_floating_sel (GimpDrawable *drawable)
+picman_drawable_detach_floating_sel (PicmanDrawable *drawable)
 {
-  GimpImage *image;
-  GimpLayer *fs;
+  PicmanImage *image;
+  PicmanLayer *fs;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (gimp_drawable_get_floating_sel (drawable) != NULL);
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (picman_drawable_get_floating_sel (drawable) != NULL);
 
-  GIMP_LOG (FLOATING_SELECTION, "%s", G_STRFUNC);
+  PICMAN_LOG (FLOATING_SELECTION, "%s", G_STRFUNC);
 
-  image = gimp_item_get_image (GIMP_ITEM (drawable));
+  image = picman_item_get_image (PICMAN_ITEM (drawable));
   fs    = drawable->private->floating_selection;
 
-  gimp_drawable_sync_fs_filter (drawable, TRUE);
+  picman_drawable_sync_fs_filter (drawable, TRUE);
 
   g_signal_handlers_disconnect_by_func (fs,
-                                        gimp_drawable_fs_update,
+                                        picman_drawable_fs_update,
                                         drawable);
 
-  gimp_drawable_fs_update (fs,
+  picman_drawable_fs_update (fs,
                            0, 0,
-                           gimp_item_get_width  (GIMP_ITEM (fs)),
-                           gimp_item_get_height (GIMP_ITEM (fs)),
+                           picman_item_get_width  (PICMAN_ITEM (fs)),
+                           picman_item_get_height (PICMAN_ITEM (fs)),
                            drawable);
 
   /*  clear the selection  */
-  gimp_drawable_invalidate_boundary (GIMP_DRAWABLE (fs));
+  picman_drawable_invalidate_boundary (PICMAN_DRAWABLE (fs));
 
-  gimp_image_set_floating_selection (image, NULL);
+  picman_image_set_floating_selection (image, NULL);
   drawable->private->floating_selection = NULL;
 }
 
-GimpFilter *
-gimp_drawable_get_floating_sel_filter (GimpDrawable *drawable)
+PicmanFilter *
+picman_drawable_get_floating_sel_filter (PicmanDrawable *drawable)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_drawable_get_floating_sel (drawable) != NULL, NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_drawable_get_floating_sel (drawable) != NULL, NULL);
 
   return drawable->private->fs_filter;
 }

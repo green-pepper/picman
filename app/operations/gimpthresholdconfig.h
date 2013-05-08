@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpthresholdconfig.h
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanthresholdconfig.h
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,38 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_THRESHOLD_CONFIG_H__
-#define __GIMP_THRESHOLD_CONFIG_H__
+#ifndef __PICMAN_THRESHOLD_CONFIG_H__
+#define __PICMAN_THRESHOLD_CONFIG_H__
 
 
-#include "core/gimpimagemapconfig.h"
+#include "core/picmanimagemapconfig.h"
 
 
-#define GIMP_TYPE_THRESHOLD_CONFIG            (gimp_threshold_config_get_type ())
-#define GIMP_THRESHOLD_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_THRESHOLD_CONFIG, GimpThresholdConfig))
-#define GIMP_THRESHOLD_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_THRESHOLD_CONFIG, GimpThresholdConfigClass))
-#define GIMP_IS_THRESHOLD_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_THRESHOLD_CONFIG))
-#define GIMP_IS_THRESHOLD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_THRESHOLD_CONFIG))
-#define GIMP_THRESHOLD_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_THRESHOLD_CONFIG, GimpThresholdConfigClass))
+#define PICMAN_TYPE_THRESHOLD_CONFIG            (picman_threshold_config_get_type ())
+#define PICMAN_THRESHOLD_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_THRESHOLD_CONFIG, PicmanThresholdConfig))
+#define PICMAN_THRESHOLD_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_THRESHOLD_CONFIG, PicmanThresholdConfigClass))
+#define PICMAN_IS_THRESHOLD_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_THRESHOLD_CONFIG))
+#define PICMAN_IS_THRESHOLD_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_THRESHOLD_CONFIG))
+#define PICMAN_THRESHOLD_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_THRESHOLD_CONFIG, PicmanThresholdConfigClass))
 
 
-typedef struct _GimpThresholdConfigClass GimpThresholdConfigClass;
+typedef struct _PicmanThresholdConfigClass PicmanThresholdConfigClass;
 
-struct _GimpThresholdConfig
+struct _PicmanThresholdConfig
 {
-  GimpImageMapConfig  parent_instance;
+  PicmanImageMapConfig  parent_instance;
 
   gdouble             low;
   gdouble             high;
 };
 
-struct _GimpThresholdConfigClass
+struct _PicmanThresholdConfigClass
 {
-  GimpImageMapConfigClass  parent_class;
+  PicmanImageMapConfigClass  parent_class;
 };
 
 
-GType   gimp_threshold_config_get_type (void) G_GNUC_CONST;
+GType   picman_threshold_config_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_THRESHOLD_CONFIG_H__ */
+#endif /* __PICMAN_THRESHOLD_CONFIG_H__ */

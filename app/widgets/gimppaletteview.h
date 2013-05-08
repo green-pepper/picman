@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppaletteview.h
- * Copyright (C) 2005 Michael Natterer <mitch@gimp.org>
+ * picmanpaletteview.h
+ * Copyright (C) 2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,53 +18,53 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PALETTE_VIEW_H__
-#define __GIMP_PALETTE_VIEW_H__
+#ifndef __PICMAN_PALETTE_VIEW_H__
+#define __PICMAN_PALETTE_VIEW_H__
 
-#include "gimpview.h"
-
-
-#define GIMP_TYPE_PALETTE_VIEW            (gimp_palette_view_get_type ())
-#define GIMP_PALETTE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PALETTE_VIEW, GimpPaletteView))
-#define GIMP_PALETTE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PALETTE_VIEW, GimpPaletteViewClass))
-#define GIMP_IS_PALETTE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, GIMP_TYPE_PALETTE_VIEW))
-#define GIMP_IS_PALETTE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PALETTE_VIEW))
-#define GIMP_PALETTE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PALETTE_VIEW, GimpPaletteViewClass))
+#include "picmanview.h"
 
 
-typedef struct _GimpPaletteViewClass  GimpPaletteViewClass;
+#define PICMAN_TYPE_PALETTE_VIEW            (picman_palette_view_get_type ())
+#define PICMAN_PALETTE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PALETTE_VIEW, PicmanPaletteView))
+#define PICMAN_PALETTE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PALETTE_VIEW, PicmanPaletteViewClass))
+#define PICMAN_IS_PALETTE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, PICMAN_TYPE_PALETTE_VIEW))
+#define PICMAN_IS_PALETTE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PALETTE_VIEW))
+#define PICMAN_PALETTE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PALETTE_VIEW, PicmanPaletteViewClass))
 
-struct _GimpPaletteView
+
+typedef struct _PicmanPaletteViewClass  PicmanPaletteViewClass;
+
+struct _PicmanPaletteView
 {
-  GimpView          parent_instance;
+  PicmanView          parent_instance;
 
-  GimpPaletteEntry *selected;
-  GimpPaletteEntry *dnd_entry;
+  PicmanPaletteEntry *selected;
+  PicmanPaletteEntry *dnd_entry;
 };
 
-struct _GimpPaletteViewClass
+struct _PicmanPaletteViewClass
 {
-  GimpViewClass  parent_class;
+  PicmanViewClass  parent_class;
 
-  void (* entry_clicked)   (GimpPaletteView  *view,
-                            GimpPaletteEntry *entry,
+  void (* entry_clicked)   (PicmanPaletteView  *view,
+                            PicmanPaletteEntry *entry,
                             GdkModifierType   state);
-  void (* entry_selected)  (GimpPaletteView  *view,
-                            GimpPaletteEntry *entry);
-  void (* entry_activated) (GimpPaletteView  *view,
-                            GimpPaletteEntry *entry);
-  void (* entry_context)   (GimpPaletteView  *view,
-                            GimpPaletteEntry *entry);
-  void (* color_dropped)   (GimpPaletteView  *view,
-                            GimpPaletteEntry *entry,
-                            const GimpRGB    *color);
+  void (* entry_selected)  (PicmanPaletteView  *view,
+                            PicmanPaletteEntry *entry);
+  void (* entry_activated) (PicmanPaletteView  *view,
+                            PicmanPaletteEntry *entry);
+  void (* entry_context)   (PicmanPaletteView  *view,
+                            PicmanPaletteEntry *entry);
+  void (* color_dropped)   (PicmanPaletteView  *view,
+                            PicmanPaletteEntry *entry,
+                            const PicmanRGB    *color);
 };
 
 
-GType   gimp_palette_view_get_type     (void) G_GNUC_CONST;
+GType   picman_palette_view_get_type     (void) G_GNUC_CONST;
 
-void    gimp_palette_view_select_entry (GimpPaletteView  *view,
-                                        GimpPaletteEntry *entry);
+void    picman_palette_view_select_entry (PicmanPaletteView  *view,
+                                        PicmanPaletteEntry *entry);
 
 
-#endif /* __GIMP_PALETTE_VIEW_H__ */
+#endif /* __PICMAN_PALETTE_VIEW_H__ */

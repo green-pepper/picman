@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -20,16 +20,16 @@
 
 #include <glib-object.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "gimpcolortypes.h"
+#include "picmancolortypes.h"
 
-#include "gimpbilinear.h"
+#include "picmanbilinear.h"
 
 
 /**
- * SECTION: gimpbilinear
- * @title: GimpBilinear
+ * SECTION: picmanbilinear
+ * @title: PicmanBilinear
  * @short_description: Utility functions for bilinear interpolation.
  *
  * Utility functions for bilinear interpolation.
@@ -37,7 +37,7 @@
 
 
 gdouble
-gimp_bilinear (gdouble  x,
+picman_bilinear (gdouble  x,
                gdouble  y,
                gdouble *values)
 {
@@ -60,7 +60,7 @@ gimp_bilinear (gdouble  x,
 }
 
 guchar
-gimp_bilinear_8 (gdouble x,
+picman_bilinear_8 (gdouble x,
                  gdouble y,
                  guchar *values)
 {
@@ -83,7 +83,7 @@ gimp_bilinear_8 (gdouble x,
 }
 
 guint16
-gimp_bilinear_16 (gdouble  x,
+picman_bilinear_16 (gdouble  x,
                   gdouble  y,
                   guint16 *values)
 {
@@ -106,7 +106,7 @@ gimp_bilinear_16 (gdouble  x,
 }
 
 guint32
-gimp_bilinear_32 (gdouble  x,
+picman_bilinear_32 (gdouble  x,
                   gdouble  y,
                   guint32 *values)
 {
@@ -128,14 +128,14 @@ gimp_bilinear_32 (gdouble  x,
   return (guint32) ((1.0 - y) * m0 + y * m1);
 }
 
-GimpRGB
-gimp_bilinear_rgb (gdouble  x,
+PicmanRGB
+picman_bilinear_rgb (gdouble  x,
                    gdouble  y,
-                   GimpRGB *values)
+                   PicmanRGB *values)
 {
   gdouble m0, m1;
   gdouble ix, iy;
-  GimpRGB v = { 0, };
+  PicmanRGB v = { 0, };
 
   g_return_val_if_fail (values != NULL, v);
 
@@ -174,15 +174,15 @@ gimp_bilinear_rgb (gdouble  x,
   return v;
 }
 
-GimpRGB
-gimp_bilinear_rgba (gdouble  x,
+PicmanRGB
+picman_bilinear_rgba (gdouble  x,
                     gdouble  y,
-                    GimpRGB *values)
+                    PicmanRGB *values)
 {
   gdouble m0, m1;
   gdouble ix, iy;
   gdouble a0, a1, a2, a3, alpha;
-  GimpRGB v = { 0, };
+  PicmanRGB v = { 0, };
 
   g_return_val_if_fail (values != NULL, v);
 
@@ -237,7 +237,7 @@ gimp_bilinear_rgba (gdouble  x,
 }
 
 /**
- * gimp_bilinear_pixels_8:
+ * picman_bilinear_pixels_8:
  * @dest: Pixel, where interpolation result is to be stored.
  * @x: x-coordinate (0.0 to 1.0).
  * @y: y-coordinate (0.0 to 1.0).
@@ -248,7 +248,7 @@ gimp_bilinear_rgba (gdouble  x,
  *
  * Computes bilinear interpolation of four pixels.
  *
- * When @has_alpha is %FALSE, it's identical to gimp_bilinear_8() on
+ * When @has_alpha is %FALSE, it's identical to picman_bilinear_8() on
  * each channel separately.  When @has_alpha is %TRUE, it handles
  * alpha channel correctly.
  *
@@ -256,7 +256,7 @@ gimp_bilinear_rgba (gdouble  x,
  * following order: [0,0], [1,0], [0,1], [1,1].
  **/
 void
-gimp_bilinear_pixels_8 (guchar    *dest,
+picman_bilinear_pixels_8 (guchar    *dest,
                         gdouble    x,
                         gdouble    y,
                         guint      bpp,

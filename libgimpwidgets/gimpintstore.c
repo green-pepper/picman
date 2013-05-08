@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpintstore.c
- * Copyright (C) 2004-2007  Sven Neumann <sven@gimp.org>
+ * picmanintstore.c
+ * Copyright (C) 2004-2007  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,16 +25,16 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpintstore.h"
+#include "picmanintstore.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpintstore
- * @title: GimpIntStore
+ * SECTION: picmanintstore
+ * @title: PicmanIntStore
  * @short_description: A model for integer based name-value pairs
  *                     (e.g. enums)
  *
@@ -51,62 +51,62 @@ enum
 typedef struct
 {
   GType  user_data_type;
-} GimpIntStorePrivate;
+} PicmanIntStorePrivate;
 
 
-static void  gimp_int_store_tree_model_init (GtkTreeModelIface *iface);
+static void  picman_int_store_tree_model_init (GtkTreeModelIface *iface);
 
-static void  gimp_int_store_constructed     (GObject           *object);
-static void  gimp_int_store_finalize        (GObject           *object);
-static void  gimp_int_store_set_property    (GObject           *object,
+static void  picman_int_store_constructed     (GObject           *object);
+static void  picman_int_store_finalize        (GObject           *object);
+static void  picman_int_store_set_property    (GObject           *object,
                                              guint              property_id,
                                              const GValue      *value,
                                              GParamSpec        *pspec);
-static void  gimp_int_store_get_property    (GObject           *object,
+static void  picman_int_store_get_property    (GObject           *object,
                                              guint              property_id,
                                              GValue            *value,
                                              GParamSpec        *pspec);
 
-static void  gimp_int_store_row_inserted    (GtkTreeModel      *model,
+static void  picman_int_store_row_inserted    (GtkTreeModel      *model,
                                              GtkTreePath       *path,
                                              GtkTreeIter       *iter);
-static void  gimp_int_store_row_deleted     (GtkTreeModel      *model,
+static void  picman_int_store_row_deleted     (GtkTreeModel      *model,
                                              GtkTreePath       *path);
-static void  gimp_int_store_add_empty       (GimpIntStore      *store);
+static void  picman_int_store_add_empty       (PicmanIntStore      *store);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpIntStore, gimp_int_store, GTK_TYPE_LIST_STORE,
+G_DEFINE_TYPE_WITH_CODE (PicmanIntStore, picman_int_store, GTK_TYPE_LIST_STORE,
                          G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL,
-                                                gimp_int_store_tree_model_init))
+                                                picman_int_store_tree_model_init))
 
-#define GIMP_INT_STORE_GET_PRIVATE(obj) \
-  G_TYPE_INSTANCE_GET_PRIVATE (obj, GIMP_TYPE_INT_STORE, GimpIntStorePrivate)
+#define PICMAN_INT_STORE_GET_PRIVATE(obj) \
+  G_TYPE_INSTANCE_GET_PRIVATE (obj, PICMAN_TYPE_INT_STORE, PicmanIntStorePrivate)
 
-#define parent_class gimp_int_store_parent_class
+#define parent_class picman_int_store_parent_class
 
 static GtkTreeModelIface *parent_iface = NULL;
 
 
 static void
-gimp_int_store_class_init (GimpIntStoreClass *klass)
+picman_int_store_class_init (PicmanIntStoreClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_int_store_constructed;
-  object_class->finalize     = gimp_int_store_finalize;
-  object_class->set_property = gimp_int_store_set_property;
-  object_class->get_property = gimp_int_store_get_property;
+  object_class->constructed  = picman_int_store_constructed;
+  object_class->finalize     = picman_int_store_finalize;
+  object_class->set_property = picman_int_store_set_property;
+  object_class->get_property = picman_int_store_get_property;
 
   /**
-   * GimpIntStore:user-data-type:
+   * PicmanIntStore:user-data-type:
    *
-   * Sets the #GType for the GIMP_INT_STORE_USER_DATA column.
+   * Sets the #GType for the PICMAN_INT_STORE_USER_DATA column.
    *
    * You need to set this property when constructing the store if you want
-   * to use the GIMP_INT_STORE_USER_DATA column and want to have the store
+   * to use the PICMAN_INT_STORE_USER_DATA column and want to have the store
    * handle ref-counting of your user data.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class,
                                    PROP_USER_DATA_TYPE,
@@ -114,52 +114,52 @@ gimp_int_store_class_init (GimpIntStoreClass *klass)
                                                        NULL, NULL,
                                                        G_TYPE_NONE,
                                                        G_PARAM_CONSTRUCT_ONLY |
-                                                       GIMP_PARAM_READWRITE));
+                                                       PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (object_class, sizeof (GimpIntStorePrivate));
+  g_type_class_add_private (object_class, sizeof (PicmanIntStorePrivate));
 }
 
 static void
-gimp_int_store_tree_model_init (GtkTreeModelIface *iface)
+picman_int_store_tree_model_init (GtkTreeModelIface *iface)
 {
   parent_iface = g_type_interface_peek_parent (iface);
 
-  iface->row_inserted = gimp_int_store_row_inserted;
-  iface->row_deleted  = gimp_int_store_row_deleted;
+  iface->row_inserted = picman_int_store_row_inserted;
+  iface->row_deleted  = picman_int_store_row_deleted;
 }
 
 static void
-gimp_int_store_init (GimpIntStore *store)
+picman_int_store_init (PicmanIntStore *store)
 {
   store->empty_iter = NULL;
 }
 
 static void
-gimp_int_store_constructed (GObject *object)
+picman_int_store_constructed (GObject *object)
 {
-  GimpIntStore        *store = GIMP_INT_STORE (object);
-  GimpIntStorePrivate *priv  = GIMP_INT_STORE_GET_PRIVATE (store);
-  GType                types[GIMP_INT_STORE_NUM_COLUMNS];
+  PicmanIntStore        *store = PICMAN_INT_STORE (object);
+  PicmanIntStorePrivate *priv  = PICMAN_INT_STORE_GET_PRIVATE (store);
+  GType                types[PICMAN_INT_STORE_NUM_COLUMNS];
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  types[GIMP_INT_STORE_VALUE]     = G_TYPE_INT;
-  types[GIMP_INT_STORE_LABEL]     = G_TYPE_STRING;
-  types[GIMP_INT_STORE_STOCK_ID]  = G_TYPE_STRING;
-  types[GIMP_INT_STORE_PIXBUF]    = GDK_TYPE_PIXBUF;
-  types[GIMP_INT_STORE_USER_DATA] = (priv->user_data_type != G_TYPE_NONE ?
+  types[PICMAN_INT_STORE_VALUE]     = G_TYPE_INT;
+  types[PICMAN_INT_STORE_LABEL]     = G_TYPE_STRING;
+  types[PICMAN_INT_STORE_STOCK_ID]  = G_TYPE_STRING;
+  types[PICMAN_INT_STORE_PIXBUF]    = GDK_TYPE_PIXBUF;
+  types[PICMAN_INT_STORE_USER_DATA] = (priv->user_data_type != G_TYPE_NONE ?
                                      priv->user_data_type : G_TYPE_POINTER);
 
   gtk_list_store_set_column_types (GTK_LIST_STORE (store),
-                                   GIMP_INT_STORE_NUM_COLUMNS, types);
+                                   PICMAN_INT_STORE_NUM_COLUMNS, types);
 
-  gimp_int_store_add_empty (store);
+  picman_int_store_add_empty (store);
 }
 
 static void
-gimp_int_store_finalize (GObject *object)
+picman_int_store_finalize (GObject *object)
 {
-  GimpIntStore *store = GIMP_INT_STORE (object);
+  PicmanIntStore *store = PICMAN_INT_STORE (object);
 
   if (store->empty_iter)
     {
@@ -171,12 +171,12 @@ gimp_int_store_finalize (GObject *object)
 }
 
 static void
-gimp_int_store_set_property (GObject      *object,
+picman_int_store_set_property (GObject      *object,
                              guint         property_id,
                              const GValue *value,
                              GParamSpec   *pspec)
 {
-  GimpIntStorePrivate *priv = GIMP_INT_STORE_GET_PRIVATE (object);
+  PicmanIntStorePrivate *priv = PICMAN_INT_STORE_GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -190,12 +190,12 @@ gimp_int_store_set_property (GObject      *object,
 }
 
 static void
-gimp_int_store_get_property (GObject    *object,
+picman_int_store_get_property (GObject    *object,
                              guint       property_id,
                              GValue     *value,
                              GParamSpec *pspec)
 {
-  GimpIntStorePrivate *priv = GIMP_INT_STORE_GET_PRIVATE (object);
+  PicmanIntStorePrivate *priv = PICMAN_INT_STORE_GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -209,11 +209,11 @@ gimp_int_store_get_property (GObject    *object,
 }
 
 static void
-gimp_int_store_row_inserted (GtkTreeModel *model,
+picman_int_store_row_inserted (GtkTreeModel *model,
                              GtkTreePath  *path,
                              GtkTreeIter  *iter)
 {
-  GimpIntStore *store = GIMP_INT_STORE (model);
+  PicmanIntStore *store = PICMAN_INT_STORE (model);
 
   if (parent_iface->row_inserted)
     parent_iface->row_inserted (model, path, iter);
@@ -226,10 +226,10 @@ gimp_int_store_row_inserted (GtkTreeModel *model,
 }
 
 static void
-gimp_int_store_row_deleted (GtkTreeModel *model,
+picman_int_store_row_deleted (GtkTreeModel *model,
                             GtkTreePath  *path)
 {
-  GimpIntStore *store = GIMP_INT_STORE (model);
+  PicmanIntStore *store = PICMAN_INT_STORE (model);
 
   if (parent_iface->row_deleted)
     parent_iface->row_deleted (model, path);
@@ -243,7 +243,7 @@ gimp_int_store_row_deleted (GtkTreeModel *model,
 }
 
 static void
-gimp_int_store_add_empty (GimpIntStore *store)
+picman_int_store_add_empty (PicmanIntStore *store)
 {
   GtkTreeIter iter = { 0, };
 
@@ -251,36 +251,36 @@ gimp_int_store_add_empty (GimpIntStore *store)
 
   gtk_list_store_prepend (GTK_LIST_STORE (store), &iter);
   gtk_list_store_set (GTK_LIST_STORE (store), &iter,
-                      GIMP_INT_STORE_VALUE, -1,
+                      PICMAN_INT_STORE_VALUE, -1,
                       /* This string appears in an empty menu as in
                        * "nothing selected and nothing to select"
                        */
-                      GIMP_INT_STORE_LABEL, (_("(Empty)")),
+                      PICMAN_INT_STORE_LABEL, (_("(Empty)")),
                       -1);
 
   store->empty_iter = gtk_tree_iter_copy (&iter);
 }
 
 /**
- * gimp_int_store_new:
+ * picman_int_store_new:
  *
  * Creates a #GtkListStore with a number of useful columns.
- * #GimpIntStore is especially useful if the items you want to store
+ * #PicmanIntStore is especially useful if the items you want to store
  * are identified using an integer value.
  *
- * Return value: a new #GimpIntStore.
+ * Return value: a new #PicmanIntStore.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 GtkListStore *
-gimp_int_store_new (void)
+picman_int_store_new (void)
 {
-  return g_object_new (GIMP_TYPE_INT_STORE, NULL);
+  return g_object_new (PICMAN_TYPE_INT_STORE, NULL);
 }
 
 /**
- * gimp_int_store_lookup_by_value:
- * @model: a #GimpIntStore
+ * picman_int_store_lookup_by_value:
+ * @model: a #PicmanIntStore
  * @value: an integer value to lookup in the @model
  * @iter:  return location for the iter of the given @value
  *
@@ -289,10 +289,10 @@ gimp_int_store_new (void)
  * Return value: %TRUE if the value has been located and @iter is
  *               valid, %FALSE otherwise.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_int_store_lookup_by_value (GtkTreeModel *model,
+picman_int_store_lookup_by_value (GtkTreeModel *model,
                                 gint          value,
                                 GtkTreeIter  *iter)
 {
@@ -308,7 +308,7 @@ gimp_int_store_lookup_by_value (GtkTreeModel *model,
       gint  this;
 
       gtk_tree_model_get (model, iter,
-                          GIMP_INT_STORE_VALUE, &this,
+                          PICMAN_INT_STORE_VALUE, &this,
                           -1);
       if (this == value)
         break;

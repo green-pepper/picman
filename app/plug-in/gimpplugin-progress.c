@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpplugin-progress.c
+ * picmanplugin-progress.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,36 +23,36 @@
 
 #include "plug-in-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimppdbprogress.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanpdbprogress.h"
+#include "core/picmanprogress.h"
 
-#include "pdb/gimppdb.h"
-#include "pdb/gimppdberror.h"
+#include "pdb/picmanpdb.h"
+#include "pdb/picmanpdberror.h"
 
-#include "gimpplugin.h"
-#include "gimpplugin-progress.h"
-#include "gimppluginmanager.h"
-#include "gimptemporaryprocedure.h"
+#include "picmanplugin.h"
+#include "picmanplugin-progress.h"
+#include "picmanpluginmanager.h"
+#include "picmantemporaryprocedure.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   gimp_plug_in_progress_cancel_callback (GimpProgress *progress,
-                                                     GimpPlugIn   *plug_in);
+static void   picman_plug_in_progress_cancel_callback (PicmanProgress *progress,
+                                                     PicmanPlugIn   *plug_in);
 
 
 /*  public functions  */
 
 gint
-gimp_plug_in_progress_attach (GimpProgress *progress)
+picman_plug_in_progress_attach (PicmanProgress *progress)
 {
   gint attach_count;
 
-  g_return_val_if_fail (GIMP_IS_PROGRESS (progress), 0);
+  g_return_val_if_fail (PICMAN_IS_PROGRESS (progress), 0);
 
   attach_count =
     GPOINTER_TO_INT (g_object_get_data (G_OBJECT (progress),
@@ -67,11 +67,11 @@ gimp_plug_in_progress_attach (GimpProgress *progress)
 }
 
 gint
-gimp_plug_in_progress_detach (GimpProgress *progress)
+picman_plug_in_progress_detach (PicmanProgress *progress)
 {
   gint attach_count;
 
-  g_return_val_if_fail (GIMP_IS_PROGRESS (progress), 0);
+  g_return_val_if_fail (PICMAN_IS_PROGRESS (progress), 0);
 
   attach_count =
     GPOINTER_TO_INT (g_object_get_data (G_OBJECT (progress),
@@ -86,20 +86,20 @@ gimp_plug_in_progress_detach (GimpProgress *progress)
 }
 
 void
-gimp_plug_in_progress_start (GimpPlugIn  *plug_in,
+picman_plug_in_progress_start (PicmanPlugIn  *plug_in,
                              const gchar *message,
-                             GimpObject  *display)
+                             PicmanObject  *display)
 {
-  GimpPlugInProcFrame *proc_frame;
+  PicmanPlugInProcFrame *proc_frame;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN (plug_in));
-  g_return_if_fail (display == NULL || GIMP_IS_OBJECT (display));
+  g_return_if_fail (PICMAN_IS_PLUG_IN (plug_in));
+  g_return_if_fail (display == NULL || PICMAN_IS_OBJECT (display));
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
 
   if (! proc_frame->progress)
     {
-      proc_frame->progress = gimp_new_progress (plug_in->manager->gimp,
+      proc_frame->progress = picman_new_progress (plug_in->manager->picman,
                                                 display);
 
       if (proc_frame->progress)
@@ -108,7 +108,7 @@ gimp_plug_in_progress_start (GimpPlugIn  *plug_in,
 
           g_object_ref (proc_frame->progress);
 
-          gimp_plug_in_progress_attach (proc_frame->progress);
+          picman_plug_in_progress_attach (proc_frame->progress);
         }
     }
 
@@ -117,20 +117,20 @@ gimp_plug_in_progress_start (GimpPlugIn  *plug_in,
       if (! proc_frame->progress_cancel_id)
         proc_frame->progress_cancel_id =
           g_signal_connect (proc_frame->progress, "cancel",
-                            G_CALLBACK (gimp_plug_in_progress_cancel_callback),
+                            G_CALLBACK (picman_plug_in_progress_cancel_callback),
                             plug_in);
 
-      if (gimp_progress_is_active (proc_frame->progress))
+      if (picman_progress_is_active (proc_frame->progress))
         {
           if (message)
-            gimp_progress_set_text (proc_frame->progress, message);
+            picman_progress_set_text (proc_frame->progress, message);
 
-          if (gimp_progress_get_value (proc_frame->progress) > 0.0)
-            gimp_progress_set_value (proc_frame->progress, 0.0);
+          if (picman_progress_get_value (proc_frame->progress) > 0.0)
+            picman_progress_set_value (proc_frame->progress, 0.0);
         }
       else
         {
-          gimp_progress_start (proc_frame->progress,
+          picman_progress_start (proc_frame->progress,
                                message ? message : "",
                                TRUE);
         }
@@ -138,10 +138,10 @@ gimp_plug_in_progress_start (GimpPlugIn  *plug_in,
 }
 
 void
-gimp_plug_in_progress_end (GimpPlugIn          *plug_in,
-                           GimpPlugInProcFrame *proc_frame)
+picman_plug_in_progress_end (PicmanPlugIn          *plug_in,
+                           PicmanPlugInProcFrame *proc_frame)
 {
-  g_return_if_fail (GIMP_IS_PLUG_IN (plug_in));
+  g_return_if_fail (PICMAN_IS_PLUG_IN (plug_in));
   g_return_if_fail (proc_frame != NULL);
 
   if (proc_frame->progress)
@@ -153,15 +153,15 @@ gimp_plug_in_progress_end (GimpPlugIn          *plug_in,
           proc_frame->progress_cancel_id = 0;
         }
 
-      if (gimp_plug_in_progress_detach (proc_frame->progress) < 1 &&
-          gimp_progress_is_active (proc_frame->progress))
+      if (picman_plug_in_progress_detach (proc_frame->progress) < 1 &&
+          picman_progress_is_active (proc_frame->progress))
         {
-          gimp_progress_end (proc_frame->progress);
+          picman_progress_end (proc_frame->progress);
         }
 
       if (proc_frame->progress_created)
         {
-          gimp_free_progress (plug_in->manager->gimp, proc_frame->progress);
+          picman_free_progress (plug_in->manager->picman, proc_frame->progress);
           g_object_unref (proc_frame->progress);
           proc_frame->progress = NULL;
         }
@@ -169,103 +169,103 @@ gimp_plug_in_progress_end (GimpPlugIn          *plug_in,
 }
 
 void
-gimp_plug_in_progress_set_text (GimpPlugIn  *plug_in,
+picman_plug_in_progress_set_text (PicmanPlugIn  *plug_in,
                                 const gchar *message)
 {
-  GimpPlugInProcFrame *proc_frame;
+  PicmanPlugInProcFrame *proc_frame;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN (plug_in));
+  g_return_if_fail (PICMAN_IS_PLUG_IN (plug_in));
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
 
   if (proc_frame->progress)
-    gimp_progress_set_text (proc_frame->progress, message);
+    picman_progress_set_text (proc_frame->progress, message);
 }
 
 void
-gimp_plug_in_progress_set_value (GimpPlugIn *plug_in,
+picman_plug_in_progress_set_value (PicmanPlugIn *plug_in,
                                  gdouble     percentage)
 {
-  GimpPlugInProcFrame *proc_frame;
+  PicmanPlugInProcFrame *proc_frame;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN (plug_in));
+  g_return_if_fail (PICMAN_IS_PLUG_IN (plug_in));
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
 
   if (! proc_frame->progress                           ||
-      ! gimp_progress_is_active (proc_frame->progress) ||
+      ! picman_progress_is_active (proc_frame->progress) ||
       ! proc_frame->progress_cancel_id)
     {
-      gimp_plug_in_progress_start (plug_in, NULL, NULL);
+      picman_plug_in_progress_start (plug_in, NULL, NULL);
     }
 
-  if (proc_frame->progress && gimp_progress_is_active (proc_frame->progress))
-    gimp_progress_set_value (proc_frame->progress, percentage);
+  if (proc_frame->progress && picman_progress_is_active (proc_frame->progress))
+    picman_progress_set_value (proc_frame->progress, percentage);
 }
 
 void
-gimp_plug_in_progress_pulse (GimpPlugIn *plug_in)
+picman_plug_in_progress_pulse (PicmanPlugIn *plug_in)
 {
-  GimpPlugInProcFrame *proc_frame;
+  PicmanPlugInProcFrame *proc_frame;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN (plug_in));
+  g_return_if_fail (PICMAN_IS_PLUG_IN (plug_in));
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
 
   if (! proc_frame->progress                           ||
-      ! gimp_progress_is_active (proc_frame->progress) ||
+      ! picman_progress_is_active (proc_frame->progress) ||
       ! proc_frame->progress_cancel_id)
     {
-      gimp_plug_in_progress_start (plug_in, NULL, NULL);
+      picman_plug_in_progress_start (plug_in, NULL, NULL);
     }
 
-  if (proc_frame->progress && gimp_progress_is_active (proc_frame->progress))
-    gimp_progress_pulse (proc_frame->progress);
+  if (proc_frame->progress && picman_progress_is_active (proc_frame->progress))
+    picman_progress_pulse (proc_frame->progress);
 }
 
 guint32
-gimp_plug_in_progress_get_window_id (GimpPlugIn *plug_in)
+picman_plug_in_progress_get_window_id (PicmanPlugIn *plug_in)
 {
-  GimpPlugInProcFrame *proc_frame;
+  PicmanPlugInProcFrame *proc_frame;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN (plug_in), 0);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN (plug_in), 0);
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
 
   if (proc_frame->progress)
-    return gimp_progress_get_window_id (proc_frame->progress);
+    return picman_progress_get_window_id (proc_frame->progress);
 
   return 0;
 }
 
 gboolean
-gimp_plug_in_progress_install (GimpPlugIn  *plug_in,
+picman_plug_in_progress_install (PicmanPlugIn  *plug_in,
                                const gchar *progress_callback)
 {
-  GimpPlugInProcFrame *proc_frame;
-  GimpProcedure       *procedure;
+  PicmanPlugInProcFrame *proc_frame;
+  PicmanProcedure       *procedure;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN (plug_in), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN (plug_in), FALSE);
   g_return_val_if_fail (progress_callback != NULL, FALSE);
 
-  procedure = gimp_pdb_lookup_procedure (plug_in->manager->gimp->pdb,
+  procedure = picman_pdb_lookup_procedure (plug_in->manager->picman->pdb,
                                          progress_callback);
 
-  if (! GIMP_IS_TEMPORARY_PROCEDURE (procedure)                ||
-      GIMP_TEMPORARY_PROCEDURE (procedure)->plug_in != plug_in ||
+  if (! PICMAN_IS_TEMPORARY_PROCEDURE (procedure)                ||
+      PICMAN_TEMPORARY_PROCEDURE (procedure)->plug_in != plug_in ||
       procedure->num_args                           != 3       ||
-      ! GIMP_IS_PARAM_SPEC_INT32 (procedure->args[0])          ||
+      ! PICMAN_IS_PARAM_SPEC_INT32 (procedure->args[0])          ||
       ! G_IS_PARAM_SPEC_STRING   (procedure->args[1])          ||
       ! G_IS_PARAM_SPEC_DOUBLE   (procedure->args[2]))
     {
       return FALSE;
     }
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
 
   if (proc_frame->progress)
     {
-      gimp_plug_in_progress_end (plug_in, proc_frame);
+      picman_plug_in_progress_end (plug_in, proc_frame);
 
       if (proc_frame->progress)
         {
@@ -274,31 +274,31 @@ gimp_plug_in_progress_install (GimpPlugIn  *plug_in,
         }
     }
 
-  proc_frame->progress = g_object_new (GIMP_TYPE_PDB_PROGRESS,
-                                       "pdb",           plug_in->manager->gimp->pdb,
+  proc_frame->progress = g_object_new (PICMAN_TYPE_PDB_PROGRESS,
+                                       "pdb",           plug_in->manager->picman->pdb,
                                        "context",       proc_frame->main_context,
                                        "callback-name", progress_callback,
                                        NULL);
 
-  gimp_plug_in_progress_attach (proc_frame->progress);
+  picman_plug_in_progress_attach (proc_frame->progress);
 
   return TRUE;
 }
 
 gboolean
-gimp_plug_in_progress_uninstall (GimpPlugIn  *plug_in,
+picman_plug_in_progress_uninstall (PicmanPlugIn  *plug_in,
                                  const gchar *progress_callback)
 {
-  GimpPlugInProcFrame *proc_frame;
+  PicmanPlugInProcFrame *proc_frame;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN (plug_in), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN (plug_in), FALSE);
   g_return_val_if_fail (progress_callback != NULL, FALSE);
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
 
-  if (GIMP_IS_PDB_PROGRESS (proc_frame->progress))
+  if (PICMAN_IS_PDB_PROGRESS (proc_frame->progress))
     {
-      gimp_plug_in_progress_end (plug_in, proc_frame);
+      picman_plug_in_progress_end (plug_in, proc_frame);
       g_object_unref (proc_frame->progress);
       proc_frame->progress = NULL;
 
@@ -309,10 +309,10 @@ gimp_plug_in_progress_uninstall (GimpPlugIn  *plug_in,
 }
 
 gboolean
-gimp_plug_in_progress_cancel (GimpPlugIn  *plug_in,
+picman_plug_in_progress_cancel (PicmanPlugIn  *plug_in,
                               const gchar *progress_callback)
 {
-  g_return_val_if_fail (GIMP_IS_PLUG_IN (plug_in), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN (plug_in), FALSE);
   g_return_val_if_fail (progress_callback != NULL, FALSE);
 
   return FALSE;
@@ -321,25 +321,25 @@ gimp_plug_in_progress_cancel (GimpPlugIn  *plug_in,
 
 /*  private functions  */
 
-static GimpValueArray *
-get_cancel_return_values (GimpProcedure *procedure)
+static PicmanValueArray *
+get_cancel_return_values (PicmanProcedure *procedure)
 {
-  GimpValueArray *return_vals;
+  PicmanValueArray *return_vals;
   GError         *error;
 
-  error = g_error_new_literal (GIMP_PDB_ERROR, GIMP_PDB_ERROR_CANCELLED,
+  error = g_error_new_literal (PICMAN_PDB_ERROR, PICMAN_PDB_ERROR_CANCELLED,
                                _("Cancelled"));
-  return_vals = gimp_procedure_get_return_values (procedure, FALSE, error);
+  return_vals = picman_procedure_get_return_values (procedure, FALSE, error);
   g_error_free (error);
 
   return return_vals;
 }
 
 static void
-gimp_plug_in_progress_cancel_callback (GimpProgress *progress,
-                                       GimpPlugIn   *plug_in)
+picman_plug_in_progress_cancel_callback (PicmanProgress *progress,
+                                       PicmanPlugIn   *plug_in)
 {
-  GimpPlugInProcFrame *proc_frame = &plug_in->main_proc_frame;
+  PicmanPlugInProcFrame *proc_frame = &plug_in->main_proc_frame;
   GList               *list;
 
   if (proc_frame->main_loop)
@@ -359,5 +359,5 @@ gimp_plug_in_progress_cancel_callback (GimpProgress *progress,
         }
     }
 
-  gimp_plug_in_close (plug_in, TRUE);
+  picman_plug_in_close (plug_in, TRUE);
 }

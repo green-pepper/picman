@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationvaluemode.c
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanoperationvaluemode.c
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *               2012 Ville Sokk <ville.sokk@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,14 +26,14 @@
 #include <cairo.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "operations-types.h"
 
-#include "gimpoperationvaluemode.h"
+#include "picmanoperationvaluemode.h"
 
 
-static gboolean gimp_operation_value_mode_process (GeglOperation       *operation,
+static gboolean picman_operation_value_mode_process (GeglOperation       *operation,
                                                    void                *in_buf,
                                                    void                *aux_buf,
                                                    void                *aux2_buf,
@@ -43,12 +43,12 @@ static gboolean gimp_operation_value_mode_process (GeglOperation       *operatio
                                                    gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationValueMode, gimp_operation_value_mode,
-               GIMP_TYPE_OPERATION_POINT_LAYER_MODE)
+G_DEFINE_TYPE (PicmanOperationValueMode, picman_operation_value_mode,
+               PICMAN_TYPE_OPERATION_POINT_LAYER_MODE)
 
 
 static void
-gimp_operation_value_mode_class_init (GimpOperationValueModeClass *klass)
+picman_operation_value_mode_class_init (PicmanOperationValueModeClass *klass)
 {
   GeglOperationClass               *operation_class;
   GeglOperationPointComposer3Class *point_class;
@@ -57,20 +57,20 @@ gimp_operation_value_mode_class_init (GimpOperationValueModeClass *klass)
   point_class     = GEGL_OPERATION_POINT_COMPOSER3_CLASS (klass);
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:value-mode",
-                                 "description", "GIMP value mode operation",
+                                 "name",        "picman:value-mode",
+                                 "description", "PICMAN value mode operation",
                                  NULL);
 
-  point_class->process = gimp_operation_value_mode_process;
+  point_class->process = picman_operation_value_mode_process;
 }
 
 static void
-gimp_operation_value_mode_init (GimpOperationValueMode *self)
+picman_operation_value_mode_init (PicmanOperationValueMode *self)
 {
 }
 
 static gboolean
-gimp_operation_value_mode_process (GeglOperation       *operation,
+picman_operation_value_mode_process (GeglOperation       *operation,
                                    void                *in_buf,
                                    void                *aux_buf,
                                    void                *aux2_buf,
@@ -79,7 +79,7 @@ gimp_operation_value_mode_process (GeglOperation       *operation,
                                    const GeglRectangle *roi,
                                    gint                 level)
 {
-  gdouble        opacity  = GIMP_OPERATION_POINT_LAYER_MODE (operation)->opacity;
+  gdouble        opacity  = PICMAN_OPERATION_POINT_LAYER_MODE (operation)->opacity;
   gfloat        *in       = in_buf;
   gfloat        *layer    = aux_buf;
   gfloat        *mask     = aux2_buf;
@@ -88,9 +88,9 @@ gimp_operation_value_mode_process (GeglOperation       *operation,
 
   while (samples--)
     {
-      GimpHSV layer_hsv, out_hsv;
-      GimpRGB layer_rgb = {layer[0], layer[1], layer[2]};
-      GimpRGB out_rgb   = {in[0], in[1], in[2]};
+      PicmanHSV layer_hsv, out_hsv;
+      PicmanRGB layer_rgb = {layer[0], layer[1], layer[2]};
+      PicmanRGB out_rgb   = {in[0], in[1], in[2]};
       gfloat  comp_alpha, new_alpha;
 
       comp_alpha = MIN (in[ALPHA], layer[ALPHA]) * opacity;
@@ -104,11 +104,11 @@ gimp_operation_value_mode_process (GeglOperation       *operation,
           gint   b;
           gfloat ratio = comp_alpha / new_alpha;
 
-          gimp_rgb_to_hsv (&layer_rgb, &layer_hsv);
-          gimp_rgb_to_hsv (&out_rgb, &out_hsv);
+          picman_rgb_to_hsv (&layer_rgb, &layer_hsv);
+          picman_rgb_to_hsv (&out_rgb, &out_hsv);
 
           out_hsv.v = layer_hsv.v;
-          gimp_hsv_to_rgb (&out_hsv, &out_rgb);
+          picman_hsv_to_rgb (&out_hsv, &out_rgb);
 
           out[0] = out_rgb.r;
           out[1] = out_rgb.g;

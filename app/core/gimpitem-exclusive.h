@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpitem-exclusive.h
- * Copyright (C) 2011 Michael Natterer <mitch@gimp.org>
+ * picmanitem-exclusive.h
+ * Copyright (C) 2011 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ITEM_EXCLUSIVE_H__
-#define __GIMP_ITEM_EXCLUSIVE_H__
+#ifndef __PICMAN_ITEM_EXCLUSIVE_H__
+#define __PICMAN_ITEM_EXCLUSIVE_H__
 
 
-void   gimp_item_toggle_exclusive_visible (GimpItem    *item,
-                                           GimpContext *context);
-void   gimp_item_toggle_exclusive_linked  (GimpItem    *item,
-                                           GimpContext *context);
+void   picman_item_toggle_exclusive_visible (PicmanItem    *item,
+                                           PicmanContext *context);
+void   picman_item_toggle_exclusive_linked  (PicmanItem    *item,
+                                           PicmanContext *context);
 
 
-#endif /* __GIMP_ITEM_EXCLUSIVE_H__ */
+#endif /* __PICMAN_ITEM_EXCLUSIVE_H__ */

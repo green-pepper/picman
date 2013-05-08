@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpstringaction.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanstringaction.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,48 +18,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_STRING_ACTION_H__
-#define __GIMP_STRING_ACTION_H__
+#ifndef __PICMAN_STRING_ACTION_H__
+#define __PICMAN_STRING_ACTION_H__
 
 
-#include "gimpaction.h"
+#include "picmanaction.h"
 
 
-#define GIMP_TYPE_STRING_ACTION            (gimp_string_action_get_type ())
-#define GIMP_STRING_ACTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_STRING_ACTION, GimpStringAction))
-#define GIMP_STRING_ACTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_STRING_ACTION, GimpStringActionClass))
-#define GIMP_IS_STRING_ACTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_STRING_ACTION))
-#define GIMP_IS_STRING_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), GIMP_TYPE_STRING_ACTION))
-#define GIMP_STRING_ACTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GIMP_TYPE_STRING_ACTION, GimpStringActionClass))
+#define PICMAN_TYPE_STRING_ACTION            (picman_string_action_get_type ())
+#define PICMAN_STRING_ACTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_STRING_ACTION, PicmanStringAction))
+#define PICMAN_STRING_ACTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_STRING_ACTION, PicmanStringActionClass))
+#define PICMAN_IS_STRING_ACTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_STRING_ACTION))
+#define PICMAN_IS_STRING_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), PICMAN_TYPE_STRING_ACTION))
+#define PICMAN_STRING_ACTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PICMAN_TYPE_STRING_ACTION, PicmanStringActionClass))
 
 
-typedef struct _GimpStringActionClass GimpStringActionClass;
+typedef struct _PicmanStringActionClass PicmanStringActionClass;
 
-struct _GimpStringAction
+struct _PicmanStringAction
 {
-  GimpAction  parent_instance;
+  PicmanAction  parent_instance;
 
   gchar      *value;
 };
 
-struct _GimpStringActionClass
+struct _PicmanStringActionClass
 {
-  GimpActionClass parent_class;
+  PicmanActionClass parent_class;
 
-  void (* selected) (GimpStringAction *action,
+  void (* selected) (PicmanStringAction *action,
                      const gchar      *value);
 };
 
 
-GType              gimp_string_action_get_type (void) G_GNUC_CONST;
+GType              picman_string_action_get_type (void) G_GNUC_CONST;
 
-GimpStringAction * gimp_string_action_new      (const gchar      *name,
+PicmanStringAction * picman_string_action_new      (const gchar      *name,
                                                 const gchar      *label,
                                                 const gchar      *tooltip,
                                                 const gchar      *stock_id,
                                                 const gchar      *value);
-void               gimp_string_action_selected (GimpStringAction *action,
+void               picman_string_action_selected (PicmanStringAction *action,
                                                 const gchar      *value);
 
 
-#endif  /* __GIMP_STRING_ACTION_H__ */
+#endif  /* __PICMAN_STRING_ACTION_H__ */

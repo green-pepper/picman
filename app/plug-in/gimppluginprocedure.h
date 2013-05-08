@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginprocedure.h
+ * picmanpluginprocedure.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_PROCEDURE_H__
-#define __GIMP_PLUG_IN_PROCEDURE_H__
+#ifndef __PICMAN_PLUG_IN_PROCEDURE_H__
+#define __PICMAN_PLUG_IN_PROCEDURE_H__
 
 #include <time.h>      /* time_t */
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "pdb/gimpprocedure.h"
+#include "pdb/picmanprocedure.h"
 
 
-#define GIMP_TYPE_PLUG_IN_PROCEDURE            (gimp_plug_in_procedure_get_type ())
-#define GIMP_PLUG_IN_PROCEDURE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PLUG_IN_PROCEDURE, GimpPlugInProcedure))
-#define GIMP_PLUG_IN_PROCEDURE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PLUG_IN_PROCEDURE, GimpPlugInProcedureClass))
-#define GIMP_IS_PLUG_IN_PROCEDURE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PLUG_IN_PROCEDURE))
-#define GIMP_IS_PLUG_IN_PROCEDURE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PLUG_IN_PROCEDURE))
-#define GIMP_PLUG_IN_PROCEDURE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PLUG_IN_PROCEDURE, GimpPlugInProcedureClass))
+#define PICMAN_TYPE_PLUG_IN_PROCEDURE            (picman_plug_in_procedure_get_type ())
+#define PICMAN_PLUG_IN_PROCEDURE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PLUG_IN_PROCEDURE, PicmanPlugInProcedure))
+#define PICMAN_PLUG_IN_PROCEDURE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PLUG_IN_PROCEDURE, PicmanPlugInProcedureClass))
+#define PICMAN_IS_PLUG_IN_PROCEDURE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PLUG_IN_PROCEDURE))
+#define PICMAN_IS_PLUG_IN_PROCEDURE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PLUG_IN_PROCEDURE))
+#define PICMAN_PLUG_IN_PROCEDURE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PLUG_IN_PROCEDURE, PicmanPlugInProcedureClass))
 
 
-typedef struct _GimpPlugInProcedureClass GimpPlugInProcedureClass;
+typedef struct _PicmanPlugInProcedureClass PicmanPlugInProcedureClass;
 
-struct _GimpPlugInProcedure
+struct _PicmanPlugInProcedure
 {
-  GimpProcedure        parent_instance;
+  PicmanProcedure        parent_instance;
 
   /*  common members  */
   gchar               *prog;
@@ -48,11 +48,11 @@ struct _GimpPlugInProcedure
   gchar               *menu_label;
   GList               *menu_paths;
   gchar               *label;
-  GimpIconType         icon_type;
+  PicmanIconType         icon_type;
   gint                 icon_data_length;
   guint8              *icon_data;
   gchar               *image_types;
-  GimpPlugInImageType  image_types_val;
+  PicmanPlugInImageType  image_types_val;
   time_t               mtime;
   gboolean             installed_during_init;
 
@@ -69,73 +69,73 @@ struct _GimpPlugInProcedure
   gchar               *thumb_loader;
 };
 
-struct _GimpPlugInProcedureClass
+struct _PicmanPlugInProcedureClass
 {
-  GimpProcedureClass parent_class;
+  PicmanProcedureClass parent_class;
 
   /*  virtual functions  */
-  const gchar * (* get_progname)    (const GimpPlugInProcedure *procedure);
+  const gchar * (* get_progname)    (const PicmanPlugInProcedure *procedure);
 
   /*  signals  */
-  void          (* menu_path_added) (GimpPlugInProcedure       *procedure,
+  void          (* menu_path_added) (PicmanPlugInProcedure       *procedure,
                                      const gchar               *menu_path);
 };
 
 
-GType           gimp_plug_in_procedure_get_type      (void) G_GNUC_CONST;
+GType           picman_plug_in_procedure_get_type      (void) G_GNUC_CONST;
 
-GimpProcedure * gimp_plug_in_procedure_new           (GimpPDBProcType            proc_type,
+PicmanProcedure * picman_plug_in_procedure_new           (PicmanPDBProcType            proc_type,
                                                       const gchar               *prog);
 
-GimpPlugInProcedure * gimp_plug_in_procedure_find    (GSList                    *list,
+PicmanPlugInProcedure * picman_plug_in_procedure_find    (GSList                    *list,
                                                       const gchar               *proc_name);
 
-const gchar * gimp_plug_in_procedure_get_progname    (const GimpPlugInProcedure *proc);
+const gchar * picman_plug_in_procedure_get_progname    (const PicmanPlugInProcedure *proc);
 
-void          gimp_plug_in_procedure_set_locale_domain (GimpPlugInProcedure     *proc,
+void          picman_plug_in_procedure_set_locale_domain (PicmanPlugInProcedure     *proc,
                                                         const gchar             *locale_domain);
-const gchar * gimp_plug_in_procedure_get_locale_domain (const GimpPlugInProcedure *proc);
+const gchar * picman_plug_in_procedure_get_locale_domain (const PicmanPlugInProcedure *proc);
 
-void          gimp_plug_in_procedure_set_help_domain (GimpPlugInProcedure       *proc,
+void          picman_plug_in_procedure_set_help_domain (PicmanPlugInProcedure       *proc,
                                                       const gchar               *help_domain);
-const gchar * gimp_plug_in_procedure_get_help_domain (const GimpPlugInProcedure *proc);
+const gchar * picman_plug_in_procedure_get_help_domain (const PicmanPlugInProcedure *proc);
 
-gboolean      gimp_plug_in_procedure_add_menu_path   (GimpPlugInProcedure       *proc,
+gboolean      picman_plug_in_procedure_add_menu_path   (PicmanPlugInProcedure       *proc,
                                                       const gchar               *menu_path,
                                                       GError                   **error);
 
-const gchar * gimp_plug_in_procedure_get_label       (GimpPlugInProcedure       *proc);
-const gchar * gimp_plug_in_procedure_get_blurb       (const GimpPlugInProcedure *proc);
+const gchar * picman_plug_in_procedure_get_label       (PicmanPlugInProcedure       *proc);
+const gchar * picman_plug_in_procedure_get_blurb       (const PicmanPlugInProcedure *proc);
 
-void          gimp_plug_in_procedure_set_icon        (GimpPlugInProcedure       *proc,
-                                                      GimpIconType               type,
+void          picman_plug_in_procedure_set_icon        (PicmanPlugInProcedure       *proc,
+                                                      PicmanIconType               type,
                                                       const guint8              *data,
                                                       gint                       data_length);
-const gchar * gimp_plug_in_procedure_get_stock_id    (const GimpPlugInProcedure *proc);
-GdkPixbuf   * gimp_plug_in_procedure_get_pixbuf      (const GimpPlugInProcedure *proc);
+const gchar * picman_plug_in_procedure_get_stock_id    (const PicmanPlugInProcedure *proc);
+GdkPixbuf   * picman_plug_in_procedure_get_pixbuf      (const PicmanPlugInProcedure *proc);
 
-gchar       * gimp_plug_in_procedure_get_help_id     (const GimpPlugInProcedure *proc);
+gchar       * picman_plug_in_procedure_get_help_id     (const PicmanPlugInProcedure *proc);
 
-gboolean      gimp_plug_in_procedure_get_sensitive   (const GimpPlugInProcedure *proc,
-                                                      GimpDrawable              *drawable);
+gboolean      picman_plug_in_procedure_get_sensitive   (const PicmanPlugInProcedure *proc,
+                                                      PicmanDrawable              *drawable);
 
-void          gimp_plug_in_procedure_set_image_types (GimpPlugInProcedure       *proc,
+void          picman_plug_in_procedure_set_image_types (PicmanPlugInProcedure       *proc,
                                                       const gchar               *image_types);
-void          gimp_plug_in_procedure_set_file_proc   (GimpPlugInProcedure       *proc,
+void          picman_plug_in_procedure_set_file_proc   (PicmanPlugInProcedure       *proc,
                                                       const gchar               *extensions,
                                                       const gchar               *prefixes,
                                                       const gchar               *magics);
-void          gimp_plug_in_procedure_set_mime_type   (GimpPlugInProcedure       *proc,
+void          picman_plug_in_procedure_set_mime_type   (PicmanPlugInProcedure       *proc,
                                                       const gchar               *mime_ype);
-void          gimp_plug_in_procedure_set_handles_uri (GimpPlugInProcedure       *proc);
-void          gimp_plug_in_procedure_set_thumb_loader(GimpPlugInProcedure       *proc,
+void          picman_plug_in_procedure_set_handles_uri (PicmanPlugInProcedure       *proc);
+void          picman_plug_in_procedure_set_thumb_loader(PicmanPlugInProcedure       *proc,
                                                       const gchar               *thumbnailer);
 
-void     gimp_plug_in_procedure_handle_return_values (GimpPlugInProcedure       *proc,
-                                                      Gimp                      *gimp,
-                                                      GimpProgress              *progress,
+void     picman_plug_in_procedure_handle_return_values (PicmanPlugInProcedure       *proc,
+                                                      Picman                      *picman,
+                                                      PicmanProgress              *progress,
 
-                                                      GimpValueArray            *return_vals);
+                                                      PicmanValueArray            *return_vals);
 
 
-#endif /* __GIMP_PLUG_IN_PROCEDURE_H__ */
+#endif /* __PICMAN_PLUG_IN_PROCEDURE_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcellrendererviewable.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmancellrendererviewable.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,12 @@
 
 #include "widgets-types.h"
 
-#include "core/gimpmarshal.h"
-#include "core/gimpviewable.h"
+#include "core/picmanmarshal.h"
+#include "core/picmanviewable.h"
 
-#include "gimpcellrendererviewable.h"
-#include "gimpview-popup.h"
-#include "gimpviewrenderer.h"
+#include "picmancellrendererviewable.h"
+#include "picmanview-popup.h"
+#include "picmanviewrenderer.h"
 
 
 enum
@@ -47,30 +47,30 @@ enum
 };
 
 
-static void gimp_cell_renderer_viewable_finalize     (GObject         *object);
-static void gimp_cell_renderer_viewable_get_property (GObject         *object,
+static void picman_cell_renderer_viewable_finalize     (GObject         *object);
+static void picman_cell_renderer_viewable_get_property (GObject         *object,
                                                       guint            param_id,
                                                       GValue          *value,
                                                       GParamSpec      *pspec);
-static void gimp_cell_renderer_viewable_set_property (GObject         *object,
+static void picman_cell_renderer_viewable_set_property (GObject         *object,
                                                       guint            param_id,
                                                       const GValue    *value,
                                                       GParamSpec      *pspec);
-static void gimp_cell_renderer_viewable_get_size     (GtkCellRenderer *cell,
+static void picman_cell_renderer_viewable_get_size     (GtkCellRenderer *cell,
                                                       GtkWidget       *widget,
                                                       GdkRectangle    *rectangle,
                                                       gint            *x_offset,
                                                       gint            *y_offset,
                                                       gint            *width,
                                                       gint            *height);
-static void gimp_cell_renderer_viewable_render       (GtkCellRenderer *cell,
+static void picman_cell_renderer_viewable_render       (GtkCellRenderer *cell,
                                                       GdkWindow       *window,
                                                       GtkWidget       *widget,
                                                       GdkRectangle    *background_area,
                                                       GdkRectangle    *cell_area,
                                                       GdkRectangle    *expose_area,
                                                       GtkCellRendererState flags);
-static gboolean gimp_cell_renderer_viewable_activate (GtkCellRenderer *cell,
+static gboolean picman_cell_renderer_viewable_activate (GtkCellRenderer *cell,
                                                       GdkEvent        *event,
                                                       GtkWidget       *widget,
                                                       const gchar     *path,
@@ -79,22 +79,22 @@ static gboolean gimp_cell_renderer_viewable_activate (GtkCellRenderer *cell,
                                                       GtkCellRendererState flags);
 
 
-G_DEFINE_TYPE (GimpCellRendererViewable, gimp_cell_renderer_viewable,
+G_DEFINE_TYPE (PicmanCellRendererViewable, picman_cell_renderer_viewable,
                GTK_TYPE_CELL_RENDERER)
 
-#define parent_class gimp_cell_renderer_viewable_parent_class
+#define parent_class picman_cell_renderer_viewable_parent_class
 
 static guint viewable_cell_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_cell_renderer_viewable_class_init (GimpCellRendererViewableClass *klass)
+picman_cell_renderer_viewable_class_init (PicmanCellRendererViewableClass *klass)
 {
   GObjectClass         *object_class = G_OBJECT_CLASS (klass);
   GtkCellRendererClass *cell_class   = GTK_CELL_RENDERER_CLASS (klass);
 
   /**
-   * GimpCellRendererViewable::pre-clicked:
+   * PicmanCellRendererViewable::pre-clicked:
    * @cell:
    * @path:
    * @state:
@@ -110,15 +110,15 @@ gimp_cell_renderer_viewable_class_init (GimpCellRendererViewableClass *klass)
     g_signal_new ("pre-clicked",
                   G_OBJECT_CLASS_TYPE (object_class),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpCellRendererViewableClass, pre_clicked),
+                  G_STRUCT_OFFSET (PicmanCellRendererViewableClass, pre_clicked),
                   g_signal_accumulator_true_handled, NULL,
-                  gimp_marshal_BOOLEAN__STRING_FLAGS,
+                  picman_marshal_BOOLEAN__STRING_FLAGS,
                   G_TYPE_BOOLEAN, 2,
                   G_TYPE_STRING,
                   GDK_TYPE_MODIFIER_TYPE);
 
   /**
-   * GimpCellRendererViewable::clicked:
+   * PicmanCellRendererViewable::clicked:
    * @cell:
    * @path:
    * @state:
@@ -130,32 +130,32 @@ gimp_cell_renderer_viewable_class_init (GimpCellRendererViewableClass *klass)
     g_signal_new ("clicked",
                   G_OBJECT_CLASS_TYPE (object_class),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpCellRendererViewableClass, clicked),
+                  G_STRUCT_OFFSET (PicmanCellRendererViewableClass, clicked),
                   NULL, NULL,
-                  gimp_marshal_VOID__STRING_FLAGS,
+                  picman_marshal_VOID__STRING_FLAGS,
                   G_TYPE_NONE, 2,
                   G_TYPE_STRING,
                   GDK_TYPE_MODIFIER_TYPE);
 
-  object_class->finalize     = gimp_cell_renderer_viewable_finalize;
-  object_class->get_property = gimp_cell_renderer_viewable_get_property;
-  object_class->set_property = gimp_cell_renderer_viewable_set_property;
+  object_class->finalize     = picman_cell_renderer_viewable_finalize;
+  object_class->get_property = picman_cell_renderer_viewable_get_property;
+  object_class->set_property = picman_cell_renderer_viewable_set_property;
 
-  cell_class->get_size       = gimp_cell_renderer_viewable_get_size;
-  cell_class->render         = gimp_cell_renderer_viewable_render;
-  cell_class->activate       = gimp_cell_renderer_viewable_activate;
+  cell_class->get_size       = picman_cell_renderer_viewable_get_size;
+  cell_class->render         = picman_cell_renderer_viewable_render;
+  cell_class->activate       = picman_cell_renderer_viewable_activate;
 
   klass->clicked             = NULL;
 
   g_object_class_install_property (object_class, PROP_RENDERER,
                                    g_param_spec_object ("renderer",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_VIEW_RENDERER,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_VIEW_RENDERER,
+                                                        PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_cell_renderer_viewable_init (GimpCellRendererViewable *cellviewable)
+picman_cell_renderer_viewable_init (PicmanCellRendererViewable *cellviewable)
 {
   g_object_set (cellviewable,
                 "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE,
@@ -163,9 +163,9 @@ gimp_cell_renderer_viewable_init (GimpCellRendererViewable *cellviewable)
 }
 
 static void
-gimp_cell_renderer_viewable_finalize (GObject *object)
+picman_cell_renderer_viewable_finalize (GObject *object)
 {
-  GimpCellRendererViewable *cell = GIMP_CELL_RENDERER_VIEWABLE (object);
+  PicmanCellRendererViewable *cell = PICMAN_CELL_RENDERER_VIEWABLE (object);
 
   if (cell->renderer)
     {
@@ -177,12 +177,12 @@ gimp_cell_renderer_viewable_finalize (GObject *object)
 }
 
 static void
-gimp_cell_renderer_viewable_get_property (GObject    *object,
+picman_cell_renderer_viewable_get_property (GObject    *object,
                                           guint       param_id,
                                           GValue     *value,
                                           GParamSpec *pspec)
 {
-  GimpCellRendererViewable *cell = GIMP_CELL_RENDERER_VIEWABLE (object);
+  PicmanCellRendererViewable *cell = PICMAN_CELL_RENDERER_VIEWABLE (object);
 
   switch (param_id)
     {
@@ -197,18 +197,18 @@ gimp_cell_renderer_viewable_get_property (GObject    *object,
 }
 
 static void
-gimp_cell_renderer_viewable_set_property (GObject      *object,
+picman_cell_renderer_viewable_set_property (GObject      *object,
                                           guint         param_id,
                                           const GValue *value,
                                           GParamSpec   *pspec)
 {
-  GimpCellRendererViewable *cell = GIMP_CELL_RENDERER_VIEWABLE (object);
+  PicmanCellRendererViewable *cell = PICMAN_CELL_RENDERER_VIEWABLE (object);
 
   switch (param_id)
     {
     case PROP_RENDERER:
       {
-        GimpViewRenderer *renderer = g_value_dup_object (value);
+        PicmanViewRenderer *renderer = g_value_dup_object (value);
 
         if (cell->renderer)
           g_object_unref (cell->renderer);
@@ -224,7 +224,7 @@ gimp_cell_renderer_viewable_set_property (GObject      *object,
 }
 
 static void
-gimp_cell_renderer_viewable_get_size (GtkCellRenderer *cell,
+picman_cell_renderer_viewable_get_size (GtkCellRenderer *cell,
                                       GtkWidget       *widget,
                                       GdkRectangle    *cell_area,
                                       gint            *x_offset,
@@ -232,7 +232,7 @@ gimp_cell_renderer_viewable_get_size (GtkCellRenderer *cell,
                                       gint            *width,
                                       gint            *height)
 {
-  GimpCellRendererViewable *cellviewable;
+  PicmanCellRendererViewable *cellviewable;
   gfloat                    xalign, yalign;
   gint                      xpad, ypad;
   gint                      view_width  = 0;
@@ -243,7 +243,7 @@ gimp_cell_renderer_viewable_get_size (GtkCellRenderer *cell,
   gtk_cell_renderer_get_alignment (cell, &xalign, &yalign);
   gtk_cell_renderer_get_padding (cell, &xpad, &ypad);
 
-  cellviewable = GIMP_CELL_RENDERER_VIEWABLE (cell);
+  cellviewable = PICMAN_CELL_RENDERER_VIEWABLE (cell);
 
   if (cellviewable->renderer)
     {
@@ -280,7 +280,7 @@ gimp_cell_renderer_viewable_get_size (GtkCellRenderer *cell,
 }
 
 static void
-gimp_cell_renderer_viewable_render (GtkCellRenderer      *cell,
+picman_cell_renderer_viewable_render (GtkCellRenderer      *cell,
                                     GdkWindow            *window,
                                     GtkWidget            *widget,
                                     GdkRectangle         *background_area,
@@ -288,9 +288,9 @@ gimp_cell_renderer_viewable_render (GtkCellRenderer      *cell,
                                     GdkRectangle         *expose_area,
                                     GtkCellRendererState  flags)
 {
-  GimpCellRendererViewable *cellviewable;
+  PicmanCellRendererViewable *cellviewable;
 
-  cellviewable = GIMP_CELL_RENDERER_VIEWABLE (cell);
+  cellviewable = PICMAN_CELL_RENDERER_VIEWABLE (cell);
 
   if (cellviewable->renderer)
     {
@@ -301,11 +301,11 @@ gimp_cell_renderer_viewable_render (GtkCellRenderer      *cell,
           /* this is an ugly hack. The cell state should be passed to
            * the view renderer, so that it can adjust its border.
            * (or something like this) */
-          if (cellviewable->renderer->border_type == GIMP_VIEW_BORDER_WHITE)
-            gimp_view_renderer_set_border_type (cellviewable->renderer,
-                                                GIMP_VIEW_BORDER_BLACK);
+          if (cellviewable->renderer->border_type == PICMAN_VIEW_BORDER_WHITE)
+            picman_view_renderer_set_border_type (cellviewable->renderer,
+                                                PICMAN_VIEW_BORDER_BLACK);
 
-          gimp_view_renderer_remove_idle (cellviewable->renderer);
+          picman_view_renderer_remove_idle (cellviewable->renderer);
         }
 
       cr = gdk_cairo_create (window);
@@ -314,7 +314,7 @@ gimp_cell_renderer_viewable_render (GtkCellRenderer      *cell,
 
       cairo_translate (cr, cell_area->x, cell_area->y);
 
-      gimp_view_renderer_draw (cellviewable->renderer, widget, cr,
+      picman_view_renderer_draw (cellviewable->renderer, widget, cr,
                                cell_area->width,
                                cell_area->height);
 
@@ -323,7 +323,7 @@ gimp_cell_renderer_viewable_render (GtkCellRenderer      *cell,
 }
 
 static gboolean
-gimp_cell_renderer_viewable_activate (GtkCellRenderer      *cell,
+picman_cell_renderer_viewable_activate (GtkCellRenderer      *cell,
                                       GdkEvent             *event,
                                       GtkWidget            *widget,
                                       const gchar          *path,
@@ -331,9 +331,9 @@ gimp_cell_renderer_viewable_activate (GtkCellRenderer      *cell,
                                       GdkRectangle         *cell_area,
                                       GtkCellRendererState  flags)
 {
-  GimpCellRendererViewable *cellviewable;
+  PicmanCellRendererViewable *cellviewable;
 
-  cellviewable = GIMP_CELL_RENDERER_VIEWABLE (cell);
+  cellviewable = PICMAN_CELL_RENDERER_VIEWABLE (cell);
 
   if (cellviewable->renderer)
     {
@@ -346,7 +346,7 @@ gimp_cell_renderer_viewable_activate (GtkCellRenderer      *cell,
           (((GdkEventAny *) event)->type == GDK_BUTTON_PRESS &&
            ((GdkEventButton *) event)->button == 1))
         {
-          gimp_cell_renderer_viewable_clicked (cellviewable, path, state);
+          picman_cell_renderer_viewable_clicked (cellviewable, path, state);
 
           return TRUE;
         }
@@ -356,19 +356,19 @@ gimp_cell_renderer_viewable_activate (GtkCellRenderer      *cell,
 }
 
 GtkCellRenderer *
-gimp_cell_renderer_viewable_new (void)
+picman_cell_renderer_viewable_new (void)
 {
-  return g_object_new (GIMP_TYPE_CELL_RENDERER_VIEWABLE, NULL);
+  return g_object_new (PICMAN_TYPE_CELL_RENDERER_VIEWABLE, NULL);
 }
 
 gboolean
-gimp_cell_renderer_viewable_pre_clicked (GimpCellRendererViewable *cell,
+picman_cell_renderer_viewable_pre_clicked (PicmanCellRendererViewable *cell,
                                          const gchar              *path,
                                          GdkModifierType           state)
 {
   gboolean handled = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_CELL_RENDERER_VIEWABLE (cell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CELL_RENDERER_VIEWABLE (cell), FALSE);
   g_return_val_if_fail (path != NULL, FALSE);
 
   g_signal_emit (cell,
@@ -381,12 +381,12 @@ gimp_cell_renderer_viewable_pre_clicked (GimpCellRendererViewable *cell,
 }
 
 void
-gimp_cell_renderer_viewable_clicked (GimpCellRendererViewable *cell,
+picman_cell_renderer_viewable_clicked (PicmanCellRendererViewable *cell,
                                      const gchar              *path,
                                      GdkModifierType           state)
 {
 
-  g_return_if_fail (GIMP_IS_CELL_RENDERER_VIEWABLE (cell));
+  g_return_if_fail (PICMAN_IS_CELL_RENDERER_VIEWABLE (cell));
   g_return_if_fail (path != NULL);
 
   if (cell->renderer)
@@ -400,7 +400,7 @@ gimp_cell_renderer_viewable_clicked (GimpCellRendererViewable *cell,
           if (bevent->type == GDK_BUTTON_PRESS &&
               (bevent->button == 1 || bevent->button == 2))
             {
-              gimp_view_popup_show (gtk_get_event_widget (event),
+              picman_view_popup_show (gtk_get_event_widget (event),
                                     bevent,
                                     cell->renderer->context,
                                     cell->renderer->viewable,

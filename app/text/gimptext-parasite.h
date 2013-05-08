@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpText
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * PicmanText
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEXT_PARASITE_H__
-#define __GIMP_TEXT_PARASITE_H__
+#ifndef __PICMAN_TEXT_PARASITE_H__
+#define __PICMAN_TEXT_PARASITE_H__
 
 
-const gchar  * gimp_text_parasite_name          (void) G_GNUC_CONST;
-GimpParasite * gimp_text_to_parasite            (const GimpText      *text);
-GimpText     * gimp_text_from_parasite          (const GimpParasite  *parasite,
+const gchar  * picman_text_parasite_name          (void) G_GNUC_CONST;
+PicmanParasite * picman_text_to_parasite            (const PicmanText      *text);
+PicmanText     * picman_text_from_parasite          (const PicmanParasite  *parasite,
                                                  GError             **error);
 
-const gchar  * gimp_text_gdyntext_parasite_name (void) G_GNUC_CONST;
-GimpText     * gimp_text_from_gdyntext_parasite (const GimpParasite  *parasite);
+const gchar  * picman_text_gdyntext_parasite_name (void) G_GNUC_CONST;
+PicmanText     * picman_text_from_gdyntext_parasite (const PicmanParasite  *parasite);
 
 
-#endif /* __GIMP_TEXT_PARASITE_H__ */
+#endif /* __PICMAN_TEXT_PARASITE_H__ */

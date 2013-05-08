@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,34 +15,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_SHELL_TOOL_EVENTS_H__
-#define __GIMP_DISPLAY_SHELL_TOOL_EVENTS_H__
+#ifndef __PICMAN_DISPLAY_SHELL_TOOL_EVENTS_H__
+#define __PICMAN_DISPLAY_SHELL_TOOL_EVENTS_H__
 
 
-gboolean   gimp_display_shell_events                  (GtkWidget        *widget,
+gboolean   picman_display_shell_events                  (GtkWidget        *widget,
                                                        GdkEvent         *event,
-                                                       GimpDisplayShell *shell);
+                                                       PicmanDisplayShell *shell);
 
-gboolean   gimp_display_shell_canvas_tool_events      (GtkWidget        *widget,
+gboolean   picman_display_shell_canvas_tool_events      (GtkWidget        *widget,
                                                        GdkEvent         *event,
-                                                       GimpDisplayShell *shell);
-void       gimp_display_shell_buffer_stroke           (GimpMotionBuffer *buffer,
-                                                       const GimpCoords *coords,
+                                                       PicmanDisplayShell *shell);
+void       picman_display_shell_buffer_stroke           (PicmanMotionBuffer *buffer,
+                                                       const PicmanCoords *coords,
                                                        guint32           time,
                                                        GdkModifierType   state,
-                                                       GimpDisplayShell *shell);
-void       gimp_display_shell_buffer_hover            (GimpMotionBuffer *buffer,
-                                                       const GimpCoords *coords,
+                                                       PicmanDisplayShell *shell);
+void       picman_display_shell_buffer_hover            (PicmanMotionBuffer *buffer,
+                                                       const PicmanCoords *coords,
                                                        GdkModifierType   state,
                                                        gboolean          proximity,
-                                                       GimpDisplayShell *shell);
+                                                       PicmanDisplayShell *shell);
 
-gboolean   gimp_display_shell_hruler_button_press     (GtkWidget        *widget,
+gboolean   picman_display_shell_hruler_button_press     (GtkWidget        *widget,
                                                        GdkEventButton   *bevent,
-                                                       GimpDisplayShell *shell);
-gboolean   gimp_display_shell_vruler_button_press     (GtkWidget        *widget,
+                                                       PicmanDisplayShell *shell);
+gboolean   picman_display_shell_vruler_button_press     (GtkWidget        *widget,
                                                        GdkEventButton   *bevent,
-                                                       GimpDisplayShell *shell);
+                                                       PicmanDisplayShell *shell);
 
 
-#endif /* __GIMP_DISPLAY_SHELL_TOOL_EVENT_H__ */
+#endif /* __PICMAN_DISPLAY_SHELL_TOOL_EVENT_H__ */

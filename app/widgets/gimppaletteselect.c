@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppaletteselect.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanpaletteselect.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,72 +23,72 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimppalette.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanpalette.h"
+#include "core/picmanparamspecs.h"
 
-#include "pdb/gimppdb.h"
+#include "pdb/picmanpdb.h"
 
-#include "gimpcontainerbox.h"
-#include "gimpdatafactoryview.h"
-#include "gimppaletteselect.h"
+#include "picmancontainerbox.h"
+#include "picmandatafactoryview.h"
+#include "picmanpaletteselect.h"
 
 
-static void             gimp_palette_select_constructed  (GObject        *object);
+static void             picman_palette_select_constructed  (GObject        *object);
 
-static GimpValueArray * gimp_palette_select_run_callback (GimpPdbDialog  *dialog,
-                                                          GimpObject     *object,
+static PicmanValueArray * picman_palette_select_run_callback (PicmanPdbDialog  *dialog,
+                                                          PicmanObject     *object,
                                                           gboolean        closing,
                                                           GError        **error);
 
 
-G_DEFINE_TYPE (GimpPaletteSelect, gimp_palette_select, GIMP_TYPE_PDB_DIALOG)
+G_DEFINE_TYPE (PicmanPaletteSelect, picman_palette_select, PICMAN_TYPE_PDB_DIALOG)
 
-#define parent_class gimp_palette_select_parent_class
+#define parent_class picman_palette_select_parent_class
 
 
 static void
-gimp_palette_select_class_init (GimpPaletteSelectClass *klass)
+picman_palette_select_class_init (PicmanPaletteSelectClass *klass)
 {
   GObjectClass       *object_class = G_OBJECT_CLASS (klass);
-  GimpPdbDialogClass *pdb_class    = GIMP_PDB_DIALOG_CLASS (klass);
+  PicmanPdbDialogClass *pdb_class    = PICMAN_PDB_DIALOG_CLASS (klass);
 
-  object_class->constructed = gimp_palette_select_constructed;
+  object_class->constructed = picman_palette_select_constructed;
 
-  pdb_class->run_callback   = gimp_palette_select_run_callback;
+  pdb_class->run_callback   = picman_palette_select_run_callback;
 }
 
 static void
-gimp_palette_select_init (GimpPaletteSelect *dialog)
+picman_palette_select_init (PicmanPaletteSelect *dialog)
 {
 }
 
 static void
-gimp_palette_select_constructed (GObject *object)
+picman_palette_select_constructed (GObject *object)
 {
-  GimpPdbDialog *dialog = GIMP_PDB_DIALOG (object);
+  PicmanPdbDialog *dialog = PICMAN_PDB_DIALOG (object);
   GtkWidget     *content_area;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
   dialog->view =
-    gimp_data_factory_view_new (GIMP_VIEW_TYPE_LIST,
-                                dialog->context->gimp->palette_factory,
+    picman_data_factory_view_new (PICMAN_VIEW_TYPE_LIST,
+                                dialog->context->picman->palette_factory,
                                 dialog->context,
-                                GIMP_VIEW_SIZE_MEDIUM, 1,
+                                PICMAN_VIEW_SIZE_MEDIUM, 1,
                                 dialog->menu_factory, "<Palettes>",
                                 "/palettes-popup",
                                 "palettes");
 
-  gimp_container_box_set_size_request (GIMP_CONTAINER_BOX (GIMP_CONTAINER_EDITOR (dialog->view)->view),
-                                       5 * (GIMP_VIEW_SIZE_MEDIUM + 2),
-                                       8 * (GIMP_VIEW_SIZE_MEDIUM + 2));
+  picman_container_box_set_size_request (PICMAN_CONTAINER_BOX (PICMAN_CONTAINER_EDITOR (dialog->view)->view),
+                                       5 * (PICMAN_VIEW_SIZE_MEDIUM + 2),
+                                       8 * (PICMAN_VIEW_SIZE_MEDIUM + 2));
 
   gtk_container_set_border_width (GTK_CONTAINER (dialog->view), 12);
 
@@ -97,20 +97,20 @@ gimp_palette_select_constructed (GObject *object)
   gtk_widget_show (dialog->view);
 }
 
-static GimpValueArray *
-gimp_palette_select_run_callback (GimpPdbDialog  *dialog,
-                                  GimpObject     *object,
+static PicmanValueArray *
+picman_palette_select_run_callback (PicmanPdbDialog  *dialog,
+                                  PicmanObject     *object,
                                   gboolean        closing,
                                   GError        **error)
 {
-  GimpPalette *palette = GIMP_PALETTE (object);
+  PicmanPalette *palette = PICMAN_PALETTE (object);
 
-  return gimp_pdb_execute_procedure_by_name (dialog->pdb,
+  return picman_pdb_execute_procedure_by_name (dialog->pdb,
                                              dialog->caller_context,
                                              NULL, error,
                                              dialog->callback_name,
-                                             G_TYPE_STRING,   gimp_object_get_name (object),
-                                             GIMP_TYPE_INT32, gimp_palette_get_n_colors (palette),
-                                             GIMP_TYPE_INT32, closing,
+                                             G_TYPE_STRING,   picman_object_get_name (object),
+                                             PICMAN_TYPE_INT32, picman_palette_get_n_colors (palette),
+                                             PICMAN_TYPE_INT32, closing,
                                              G_TYPE_NONE);
 }

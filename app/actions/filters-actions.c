@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,209 +20,209 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimpimage.h"
-#include "core/gimplayermask.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayermask.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "actions.h"
 #include "filters-actions.h"
 #include "filters-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpStringActionEntry filters_actions[] =
+static const PicmanStringActionEntry filters_actions[] =
 {
-  { "filters-c2g", GIMP_STOCK_GEGL,
+  { "filters-c2g", PICMAN_STOCK_GEGL,
     NC_("filters-action", "Color to Gray..."), NULL,
     NC_("filters-action", "Color to grayscale conversion"),
     "gegl:c2g",
-    NULL /* FIXME GIMP_HELP_FILTER_C2G */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_C2G */ },
 
-  { "filters-cartoon", GIMP_STOCK_GEGL,
+  { "filters-cartoon", PICMAN_STOCK_GEGL,
     NC_("filters-action", "Ca_rtoon..."), NULL,
     NC_("filters-action", "Simulate a cartoon by enhancing edges"),
     "gegl:cartoon",
-    NULL /* FIXME GIMP_HELP_FILTER_CARTOON */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_CARTOON */ },
 
-  { "filters-checkerboard", GIMP_STOCK_GEGL,
+  { "filters-checkerboard", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Checkerboard..."), NULL,
     NC_("filters-action", "Create a checkerboard pattern"),
     "gegl:checkerboard",
-    NULL /* FIXME GIMP_HELP_FILTER_CHECKERBOARD */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_CHECKERBOARD */ },
 
-  { "filters-color-reduction", GIMP_STOCK_GEGL,
+  { "filters-color-reduction", PICMAN_STOCK_GEGL,
     NC_("filters-action", "Color _Reduction..."), NULL,
     NC_("filters-action", "Reduce the number of colors in the image, with optional dithering"),
     "gegl:color-reduction",
-    NULL /* FIXME GIMP_HELP_FILTER_COLOR_TEMPERATURE */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_COLOR_TEMPERATURE */ },
 
-  { "filters-color-temperature", GIMP_STOCK_GEGL,
+  { "filters-color-temperature", PICMAN_STOCK_GEGL,
     NC_("filters-action", "Color T_emperature..."), NULL,
     NC_("filters-action", "Change the color temperature of the image"),
     "gegl:color-temperature",
-    NULL /* FIXME GIMP_HELP_FILTER_COLOR_TEMPERATURE */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_COLOR_TEMPERATURE */ },
 
-  { "filters-color-to-alpha", GIMP_STOCK_GEGL,
+  { "filters-color-to-alpha", PICMAN_STOCK_GEGL,
     NC_("filters-action", "Color to _Alpha..."), NULL,
     NC_("filters-action", "Convert a specified color to transparency"),
     "gegl:color-to-alpha",
-    NULL /* FIXME GIMP_HELP_FILTER_COLOR_TO_ALPHA */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_COLOR_TO_ALPHA */ },
 
-  { "filters-dot", GIMP_STOCK_GEGL,
+  { "filters-dot", PICMAN_STOCK_GEGL,
     NC_("filters-action", "Dots..."), NULL,
     NC_("filters-action", "Simplify image into an array of solid-colored dots"),
     "gegl:dot",
-    NULL /* FIXME GIMP_HELP_FILTER_DOT */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_DOT */ },
 
-  { "filters-difference-of-gaussians", GIMP_STOCK_GEGL,
+  { "filters-difference-of-gaussians", PICMAN_STOCK_GEGL,
     NC_("filters-action", "Difference of Gaussians..."), NULL,
     NC_("filters-action", "Edge detection with control of edge thickness"),
     "gegl:difference-of-gaussians",
-    NULL /* FIXME GIMP_HELP_FILTER_DIFFERENCE_OF_GAUSSIANS */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_DIFFERENCE_OF_GAUSSIANS */ },
 
-  { "filters-gaussian-blur", GIMP_STOCK_GEGL,
+  { "filters-gaussian-blur", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Gaussian Blur..."), NULL,
     NC_("filters-action", "Apply a gaussian blur"),
     "gegl:gaussian-blur",
-    NULL /* FIXME GIMP_HELP_FILTER_GAUSSIAN_BLUR */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_GAUSSIAN_BLUR */ },
 
-  { "filters-laplace", GIMP_STOCK_GEGL,
+  { "filters-laplace", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Laplace"), NULL,
     NC_("filters-action", "High-resolution edge detection"),
     "gegl:edge-laplace",
-    NULL /* FIXME GIMP_HELP_FILTER_LAPLACE */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_LAPLACE */ },
 
-  { "filters-lens-distortion", GIMP_STOCK_GEGL,
+  { "filters-lens-distortion", PICMAN_STOCK_GEGL,
     NC_("filters-action", "Lens Distortion..."), NULL,
     NC_("filters-action", "Corrects lens distortion"),
     "gegl:lens-distortion",
-    NULL /* FIXME GIMP_HELP_FILTER_LENS_DISTORTION */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_LENS_DISTORTION */ },
 
-  { "filters-mono-mixer", GIMP_STOCK_GEGL,
+  { "filters-mono-mixer", PICMAN_STOCK_GEGL,
     NC_("filters-action", "Mono Mixer..."), NULL,
     NC_("filters-action", "Monochrome channel mixer"),
     "gegl:mono-mixer",
-    NULL /* FIXME GIMP_HELP_FILTER_MONO_MIXER */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_MONO_MIXER */ },
 
-  { "filters-noise-cie-lch", GIMP_STOCK_GEGL,
+  { "filters-noise-cie-lch", PICMAN_STOCK_GEGL,
     NC_("filters-action", "CIE lch Noise..."), NULL,
     NC_("filters-action", "Randomize lightness, chroma and hue independently"),
     "gegl:noise-CIE_lch",
-    NULL /* FIXME GIMP_HELP_FILTER_NOISE_CIE_LCH */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_NOISE_CIE_LCH */ },
 
-  { "filters-noise-hsv", GIMP_STOCK_GEGL,
+  { "filters-noise-hsv", PICMAN_STOCK_GEGL,
     NC_("filters-action", "HSV Noise..."), NULL,
     NC_("filters-action", "Scattering pixel values in HSV space"),
     "gegl:noise-hsv",
-    NULL /* FIXME GIMP_HELP_FILTER_NOISE_HSV */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_NOISE_HSV */ },
 
-  { "filters-noise-hurl", GIMP_STOCK_GEGL,
+  { "filters-noise-hurl", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Hurl..."), NULL,
     NC_("filters-action", "Completely randomize a fraction of pixels"),
     "gegl:noise-hurl",
-    NULL /* FIXME GIMP_HELP_FILTER_NOISE_HURL */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_NOISE_HURL */ },
 
-  { "filters-noise-pick", GIMP_STOCK_GEGL,
+  { "filters-noise-pick", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Pick..."), NULL,
     NC_("filters-action", "Randomly interchange some pixels with neighbors"),
     "gegl:noise-pick",
-    NULL /* FIXME GIMP_HELP_FILTER_NOISE_PICK */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_NOISE_PICK */ },
 
-  { "filters-noise-rgb", GIMP_STOCK_GEGL,
+  { "filters-noise-rgb", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_RGB Noise..."), NULL,
     NC_("filters-action", "Distort colors by random amounts"),
     "gegl:noise-rgb",
-    NULL /* FIXME GIMP_HELP_FILTER_NOISE_RGB */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_NOISE_RGB */ },
 
-  { "filters-noise-slur", GIMP_STOCK_GEGL,
+  { "filters-noise-slur", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Slur..."), NULL,
     NC_("filters-action", "Randomly slide some pixels downward (similar to melting)"),
     "gegl:noise-slur",
-    NULL /* FIXME GIMP_HELP_FILTER_NOISE_SLUR */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_NOISE_SLUR */ },
 
-  { "filters-photocopy", GIMP_STOCK_GEGL,
+  { "filters-photocopy", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Photocopy..."), NULL,
     NC_("filters-action", "Simulate color distortion produced by a copy machine"),
     "gegl:photocopy",
-    NULL /* FIXME GIMP_HELP_FILTER_PHOTOCOPY */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_PHOTOCOPY */ },
 
-  { "filters-pixelize", GIMP_STOCK_GEGL,
+  { "filters-pixelize", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Pixelize..."), NULL,
     NC_("filters-action", "Simplify image into an array of solid-colored squares"),
     "gegl:pixelize",
-    NULL /* FIXME GIMP_HELP_FILTER_PIXELIZE */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_PIXELIZE */ },
 
-  { "filters-polar-coordinates", GIMP_STOCK_GEGL,
+  { "filters-polar-coordinates", PICMAN_STOCK_GEGL,
     NC_("filters-action", "P_olar Coordinates..."), NULL,
     NC_("filters-action", "Convert image to or from polar coordinates"),
     "gegl:polar-coordinates",
-    NULL /* FIXME GIMP_HELP_FILTER_POLAR_COORDINATES */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_POLAR_COORDINATES */ },
 
-  { "filters-ripple", GIMP_STOCK_GEGL,
+  { "filters-ripple", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Ripple..."), NULL,
     NC_("filters-action", "Displace pixels in a ripple pattern"),
     "gegl:ripple",
-    NULL /* FIXME GIMP_HELP_FILTER_RIPPLE */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_RIPPLE */ },
 
-  { "filters-semi-flatten", GIMP_STOCK_GEGL,
+  { "filters-semi-flatten", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Semi-Flatten..."), NULL,
     NC_("filters-action", "Replace partial transparency with a color"),
-    "gimp:semi-flatten",
-    NULL /* FIXME GIMP_HELP_FILTER_POLAR_COORDINATES */ },
+    "picman:semi-flatten",
+    NULL /* FIXME PICMAN_HELP_FILTER_POLAR_COORDINATES */ },
 
-  { "filters-sobel", GIMP_STOCK_GEGL,
+  { "filters-sobel", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Sobel..."), NULL,
     NC_("filters-action", "Specialized direction-dependent edge-detection"),
     "gegl:edge-sobel",
-    NULL /* FIXME GIMP_HELP_FILTER_SOBEL */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_SOBEL */ },
 
-  { "filters-softglow", GIMP_STOCK_GEGL,
+  { "filters-softglow", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Softglow..."), NULL,
     NC_("filters-action", "Simulate glow by making highlights intense and fuzzy"),
     "gegl:softglow",
-    NULL /* FIXME GIMP_HELP_FILTER_SOFTGLOW */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_SOFTGLOW */ },
 
-  { "filters-threshold-alpha", GIMP_STOCK_GEGL,
+  { "filters-threshold-alpha", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Threshold Alpha..."), NULL,
     NC_("filters-action", "Make transparency all-or-nothing"),
-    "gimp:threshold-alpha",
-    NULL /* FIXME GIMP_HELP_FILTER_POLAR_COORDINATES */ },
+    "picman:threshold-alpha",
+    NULL /* FIXME PICMAN_HELP_FILTER_POLAR_COORDINATES */ },
 
-  { "filters-unsharp-mask", GIMP_STOCK_GEGL,
+  { "filters-unsharp-mask", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Unsharp Mask..."), NULL,
     NC_("filters-action", "The most widely used method for sharpening an image"),
     "gegl:unsharp-mask",
-    NULL /* FIXME GIMP_HELP_FILTER_UNSHARP_MASK */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_UNSHARP_MASK */ },
 
-  { "filters-vignette", GIMP_STOCK_GEGL,
+  { "filters-vignette", PICMAN_STOCK_GEGL,
     NC_("filters-action", "_Vignette..."), NULL,
     NC_("filters-action", "Applies a vignette to an image"),
     "gegl:vignette",
-    NULL /* FIXME GIMP_HELP_FILTER_VIGNETTE */ },
+    NULL /* FIXME PICMAN_HELP_FILTER_VIGNETTE */ },
 };
 
 void
-filters_actions_setup (GimpActionGroup *group)
+filters_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_string_actions (group, "filters-action",
+  picman_action_group_add_string_actions (group, "filters-action",
                                         filters_actions,
                                         G_N_ELEMENTS (filters_actions),
                                         G_CALLBACK (filters_filter_cmd_callback));
 }
 
 void
-filters_actions_update (GimpActionGroup *group,
+filters_actions_update (PicmanActionGroup *group,
                         gpointer         data)
 {
-  GimpImage    *image;
-  GimpDrawable *drawable = NULL;
+  PicmanImage    *image;
+  PicmanDrawable *drawable = NULL;
   gboolean      writable = FALSE;
   gboolean      gray     = FALSE;
   gboolean      alpha    = FALSE;
@@ -231,29 +231,29 @@ filters_actions_update (GimpActionGroup *group,
 
   if (image)
     {
-      drawable = gimp_image_get_active_drawable (image);
+      drawable = picman_image_get_active_drawable (image);
 
       if (drawable)
         {
-          GimpItem *item;
+          PicmanItem *item;
 
-          alpha = gimp_drawable_has_alpha (drawable);
-          gray  = gimp_drawable_is_gray (drawable);
+          alpha = picman_drawable_has_alpha (drawable);
+          gray  = picman_drawable_is_gray (drawable);
 
-          if (GIMP_IS_LAYER_MASK (drawable))
-            item = GIMP_ITEM (gimp_layer_mask_get_layer (GIMP_LAYER_MASK (drawable)));
+          if (PICMAN_IS_LAYER_MASK (drawable))
+            item = PICMAN_ITEM (picman_layer_mask_get_layer (PICMAN_LAYER_MASK (drawable)));
           else
-            item = GIMP_ITEM (drawable);
+            item = PICMAN_ITEM (drawable);
 
-          writable = ! gimp_item_is_content_locked (item);
+          writable = ! picman_item_is_content_locked (item);
 
-          if (gimp_viewable_get_children (GIMP_VIEWABLE (drawable)))
+          if (picman_viewable_get_children (PICMAN_VIEWABLE (drawable)))
             writable = FALSE;
         }
     }
 
 #define SET_SENSITIVE(action,condition) \
-        gimp_action_group_set_action_sensitive (group, action, (condition) != 0)
+        picman_action_group_set_action_sensitive (group, action, (condition) != 0)
 
   SET_SENSITIVE ("filters-c2g",                     writable && !gray);
   SET_SENSITIVE ("filters-cartoon",                 writable);

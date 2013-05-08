@@ -1,9 +1,9 @@
-# GIMP tool preset file
+# PICMAN tool preset file
 
-(stock-id "gimp-tool-pencil")
+(stock-id "picman-tool-pencil")
 (name "Pencil (Color From Gradient)")
-(tool-options "GimpPencilOptions"
-    (tool "gimp-pencil-tool")
+(tool-options "PicmanPencilOptions"
+    (tool "picman-pencil-tool")
     (foreground (color-rgb 0.572549 0.363737 0.363737))
     (brush "2. Hardness 050")
     (dynamics "Color From Gradient")
@@ -20,4 +20,4 @@
 (use-palette no)
 (use-font no)
 
-# end of GIMP tool preset file
+# end of PICMAN tool preset file

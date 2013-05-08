@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,100 +20,100 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "paint/gimpdodgeburnoptions.h"
+#include "paint/picmandodgeburnoptions.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimppropwidgets.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanpropwidgets.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimpdodgeburntool.h"
-#include "gimppaintoptions-gui.h"
-#include "gimptoolcontrol.h"
+#include "picmandodgeburntool.h"
+#include "picmanpaintoptions-gui.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void   gimp_dodge_burn_tool_modifier_key  (GimpTool          *tool,
+static void   picman_dodge_burn_tool_modifier_key  (PicmanTool          *tool,
                                                   GdkModifierType    key,
                                                   gboolean           press,
                                                   GdkModifierType    state,
-                                                  GimpDisplay       *display);
-static void   gimp_dodge_burn_tool_cursor_update (GimpTool          *tool,
-                                                  const GimpCoords  *coords,
+                                                  PicmanDisplay       *display);
+static void   picman_dodge_burn_tool_cursor_update (PicmanTool          *tool,
+                                                  const PicmanCoords  *coords,
                                                   GdkModifierType    state,
-                                                  GimpDisplay       *display);
-static void   gimp_dodge_burn_tool_oper_update   (GimpTool          *tool,
-                                                  const GimpCoords  *coords,
+                                                  PicmanDisplay       *display);
+static void   picman_dodge_burn_tool_oper_update   (PicmanTool          *tool,
+                                                  const PicmanCoords  *coords,
                                                   GdkModifierType    state,
                                                   gboolean           proximity,
-                                                  GimpDisplay       *display);
-static void   gimp_dodge_burn_tool_status_update (GimpTool          *tool,
-                                                  GimpDodgeBurnType  type);
+                                                  PicmanDisplay       *display);
+static void   picman_dodge_burn_tool_status_update (PicmanTool          *tool,
+                                                  PicmanDodgeBurnType  type);
 
-static GtkWidget * gimp_dodge_burn_options_gui   (GimpToolOptions   *tool_options);
+static GtkWidget * picman_dodge_burn_options_gui   (PicmanToolOptions   *tool_options);
 
 
-G_DEFINE_TYPE (GimpDodgeBurnTool, gimp_dodge_burn_tool, GIMP_TYPE_BRUSH_TOOL)
+G_DEFINE_TYPE (PicmanDodgeBurnTool, picman_dodge_burn_tool, PICMAN_TYPE_BRUSH_TOOL)
 
-#define parent_class gimp_dodge_burn_tool_parent_class
+#define parent_class picman_dodge_burn_tool_parent_class
 
 
 void
-gimp_dodge_burn_tool_register (GimpToolRegisterCallback  callback,
+picman_dodge_burn_tool_register (PicmanToolRegisterCallback  callback,
                                gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_DODGE_BURN_TOOL,
-                GIMP_TYPE_DODGE_BURN_OPTIONS,
-                gimp_dodge_burn_options_gui,
-                GIMP_PAINT_OPTIONS_CONTEXT_MASK,
-                "gimp-dodge-burn-tool",
+  (* callback) (PICMAN_TYPE_DODGE_BURN_TOOL,
+                PICMAN_TYPE_DODGE_BURN_OPTIONS,
+                picman_dodge_burn_options_gui,
+                PICMAN_PAINT_OPTIONS_CONTEXT_MASK,
+                "picman-dodge-burn-tool",
                 _("Dodge / Burn"),
                 _("Dodge / Burn Tool: Selectively lighten or darken using a brush"),
                 N_("Dod_ge / Burn"), "<shift>D",
-                NULL, GIMP_HELP_TOOL_DODGE_BURN,
-                GIMP_STOCK_TOOL_DODGE,
+                NULL, PICMAN_HELP_TOOL_DODGE_BURN,
+                PICMAN_STOCK_TOOL_DODGE,
                 data);
 }
 
 static void
-gimp_dodge_burn_tool_class_init (GimpDodgeBurnToolClass *klass)
+picman_dodge_burn_tool_class_init (PicmanDodgeBurnToolClass *klass)
 {
-  GimpToolClass *tool_class = GIMP_TOOL_CLASS (klass);
+  PicmanToolClass *tool_class = PICMAN_TOOL_CLASS (klass);
 
-  tool_class->modifier_key  = gimp_dodge_burn_tool_modifier_key;
-  tool_class->cursor_update = gimp_dodge_burn_tool_cursor_update;
-  tool_class->oper_update   = gimp_dodge_burn_tool_oper_update;
+  tool_class->modifier_key  = picman_dodge_burn_tool_modifier_key;
+  tool_class->cursor_update = picman_dodge_burn_tool_cursor_update;
+  tool_class->oper_update   = picman_dodge_burn_tool_oper_update;
 }
 
 static void
-gimp_dodge_burn_tool_init (GimpDodgeBurnTool *dodgeburn)
+picman_dodge_burn_tool_init (PicmanDodgeBurnTool *dodgeburn)
 {
-  GimpTool *tool = GIMP_TOOL (dodgeburn);
+  PicmanTool *tool = PICMAN_TOOL (dodgeburn);
 
-  gimp_tool_control_set_tool_cursor        (tool->control,
-                                            GIMP_TOOL_CURSOR_DODGE);
-  gimp_tool_control_set_toggle_tool_cursor (tool->control,
-                                            GIMP_TOOL_CURSOR_BURN);
+  picman_tool_control_set_tool_cursor        (tool->control,
+                                            PICMAN_TOOL_CURSOR_DODGE);
+  picman_tool_control_set_toggle_tool_cursor (tool->control,
+                                            PICMAN_TOOL_CURSOR_BURN);
 
-  gimp_dodge_burn_tool_status_update (tool, GIMP_BURN);
+  picman_dodge_burn_tool_status_update (tool, PICMAN_BURN);
 }
 
 static void
-gimp_dodge_burn_tool_modifier_key (GimpTool        *tool,
+picman_dodge_burn_tool_modifier_key (PicmanTool        *tool,
                                    GdkModifierType  key,
                                    gboolean         press,
                                    GdkModifierType  state,
-                                   GimpDisplay     *display)
+                                   PicmanDisplay     *display)
 {
-  GimpDodgeBurnTool    *dodgeburn = GIMP_DODGE_BURN_TOOL (tool);
-  GimpDodgeBurnOptions *options   = GIMP_DODGE_BURN_TOOL_GET_OPTIONS (tool);
+  PicmanDodgeBurnTool    *dodgeburn = PICMAN_DODGE_BURN_TOOL (tool);
+  PicmanDodgeBurnOptions *options   = PICMAN_DODGE_BURN_TOOL_GET_OPTIONS (tool);
   GdkModifierType       toggle_mask;
 
-  toggle_mask = gimp_get_toggle_behavior_mask ();
+  toggle_mask = picman_get_toggle_behavior_mask ();
 
   if ((key == toggle_mask        &&
       ! (state & GDK_SHIFT_MASK) && /* leave stuff untouched in line draw mode */
@@ -130,12 +130,12 @@ gimp_dodge_burn_tool_modifier_key (GimpTool        *tool,
 
       switch (options->type)
         {
-        case GIMP_DODGE:
-          g_object_set (options, "type", GIMP_BURN, NULL);
+        case PICMAN_DODGE:
+          g_object_set (options, "type", PICMAN_BURN, NULL);
           break;
 
-        case GIMP_BURN:
-          g_object_set (options, "type", GIMP_DODGE, NULL);
+        case PICMAN_BURN:
+          g_object_set (options, "type", PICMAN_DODGE, NULL);
           break;
 
         default:
@@ -143,54 +143,54 @@ gimp_dodge_burn_tool_modifier_key (GimpTool        *tool,
         }
     }
 
-  GIMP_TOOL_CLASS (parent_class)->modifier_key (tool, key, press, state,
+  PICMAN_TOOL_CLASS (parent_class)->modifier_key (tool, key, press, state,
                                                 display);
 }
 
 static void
-gimp_dodge_burn_tool_cursor_update (GimpTool         *tool,
-                                    const GimpCoords *coords,
+picman_dodge_burn_tool_cursor_update (PicmanTool         *tool,
+                                    const PicmanCoords *coords,
                                     GdkModifierType   state,
-                                    GimpDisplay      *display)
+                                    PicmanDisplay      *display)
 {
-  GimpDodgeBurnOptions *options = GIMP_DODGE_BURN_TOOL_GET_OPTIONS (tool);
+  PicmanDodgeBurnOptions *options = PICMAN_DODGE_BURN_TOOL_GET_OPTIONS (tool);
 
-  gimp_tool_control_set_toggled (tool->control, (options->type == GIMP_BURN));
+  picman_tool_control_set_toggled (tool->control, (options->type == PICMAN_BURN));
 
-  GIMP_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state,
+  PICMAN_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state,
                                                  display);
 }
 
 static void
-gimp_dodge_burn_tool_oper_update (GimpTool         *tool,
-                                  const GimpCoords *coords,
+picman_dodge_burn_tool_oper_update (PicmanTool         *tool,
+                                  const PicmanCoords *coords,
                                   GdkModifierType   state,
                                   gboolean          proximity,
-                                  GimpDisplay      *display)
+                                  PicmanDisplay      *display)
 {
-  GimpDodgeBurnOptions *options = GIMP_DODGE_BURN_TOOL_GET_OPTIONS (tool);
+  PicmanDodgeBurnOptions *options = PICMAN_DODGE_BURN_TOOL_GET_OPTIONS (tool);
 
-  gimp_dodge_burn_tool_status_update (tool, options->type);
+  picman_dodge_burn_tool_status_update (tool, options->type);
 
-  GIMP_TOOL_CLASS (parent_class)->oper_update (tool, coords, state, proximity,
+  PICMAN_TOOL_CLASS (parent_class)->oper_update (tool, coords, state, proximity,
                                                display);
 }
 
 static void
-gimp_dodge_burn_tool_status_update (GimpTool          *tool,
-                                    GimpDodgeBurnType  type)
+picman_dodge_burn_tool_status_update (PicmanTool          *tool,
+                                    PicmanDodgeBurnType  type)
 {
-  GimpPaintTool *paint_tool = GIMP_PAINT_TOOL (tool);
+  PicmanPaintTool *paint_tool = PICMAN_PAINT_TOOL (tool);
 
   switch (type)
     {
-    case GIMP_DODGE:
+    case PICMAN_DODGE:
       paint_tool->status      = _("Click to dodge");
       paint_tool->status_line = _("Click to dodge the line");
       paint_tool->status_ctrl = _("%s to burn");
       break;
 
-    case GIMP_BURN:
+    case PICMAN_BURN:
       paint_tool->status      = _("Click to burn");
       paint_tool->status_line = _("Click to burn the line");
       paint_tool->status_ctrl = _("%s to dodge");
@@ -205,22 +205,22 @@ gimp_dodge_burn_tool_status_update (GimpTool          *tool,
 /*  tool options stuff  */
 
 static GtkWidget *
-gimp_dodge_burn_options_gui (GimpToolOptions *tool_options)
+picman_dodge_burn_options_gui (PicmanToolOptions *tool_options)
 {
   GObject         *config = G_OBJECT (tool_options);
-  GtkWidget       *vbox   = gimp_paint_options_gui (tool_options);
+  GtkWidget       *vbox   = picman_paint_options_gui (tool_options);
   GtkWidget       *frame;
   GtkWidget       *scale;
   gchar           *str;
   GdkModifierType  toggle_mask;
 
-  toggle_mask = gimp_get_toggle_behavior_mask ();
+  toggle_mask = picman_get_toggle_behavior_mask ();
 
   /* the type (dodge or burn) */
   str = g_strdup_printf (_("Type  (%s)"),
-                         gimp_get_mod_string (toggle_mask));
+                         picman_get_mod_string (toggle_mask));
 
-  frame = gimp_prop_enum_radio_frame_new (config, "type",
+  frame = picman_prop_enum_radio_frame_new (config, "type",
                                           str, 0, 0);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
@@ -228,12 +228,12 @@ gimp_dodge_burn_options_gui (GimpToolOptions *tool_options)
   g_free (str);
 
   /*  mode (highlights, midtones, or shadows)  */
-  frame = gimp_prop_enum_radio_frame_new (config, "mode", _("Range"), 0, 0);
+  frame = picman_prop_enum_radio_frame_new (config, "mode", _("Range"), 0, 0);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
   /*  the exposure scale  */
-  scale = gimp_prop_spin_scale_new (config, "exposure",
+  scale = picman_prop_spin_scale_new (config, "exposure",
                                     _("Exposure"),
                                     1.0, 10.0, 1);
   gtk_box_pack_start (GTK_BOX (vbox), scale, FALSE, FALSE, 0);

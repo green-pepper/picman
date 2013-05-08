@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimphistogram module Copyright (C) 1999 Jay Cox <jaycox@gimp.org>
+ * picmanhistogram module Copyright (C) 1999 Jay Cox <jaycox@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,16 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gegl/gimp-babl.h"
+#include "gegl/picman-babl.h"
 
-#include "gimphistogram.h"
+#include "picmanhistogram.h"
 
 
-struct _GimpHistogram
+struct _PicmanHistogram
 {
   gint     ref_count;
   gint     n_channels;
@@ -42,24 +42,24 @@ struct _GimpHistogram
 
 /*  local function prototypes  */
 
-static void   gimp_histogram_alloc_values (GimpHistogram *histogram,
+static void   picman_histogram_alloc_values (PicmanHistogram *histogram,
                                            gint           bytes);
 
 
 /*  public functions  */
 
-GimpHistogram *
-gimp_histogram_new (void)
+PicmanHistogram *
+picman_histogram_new (void)
 {
-  GimpHistogram *histogram = g_slice_new0 (GimpHistogram);
+  PicmanHistogram *histogram = g_slice_new0 (PicmanHistogram);
 
   histogram->ref_count = 1;
 
   return histogram;
 }
 
-GimpHistogram *
-gimp_histogram_ref (GimpHistogram *histogram)
+PicmanHistogram *
+picman_histogram_ref (PicmanHistogram *histogram)
 {
   g_return_val_if_fail (histogram != NULL, NULL);
 
@@ -69,7 +69,7 @@ gimp_histogram_ref (GimpHistogram *histogram)
 }
 
 void
-gimp_histogram_unref (GimpHistogram *histogram)
+picman_histogram_unref (PicmanHistogram *histogram)
 {
   g_return_if_fail (histogram != NULL);
 
@@ -77,28 +77,28 @@ gimp_histogram_unref (GimpHistogram *histogram)
 
   if (histogram->ref_count == 0)
     {
-      gimp_histogram_clear_values (histogram);
-      g_slice_free (GimpHistogram, histogram);
+      picman_histogram_clear_values (histogram);
+      g_slice_free (PicmanHistogram, histogram);
     }
 }
 
 /**
- * gimp_histogram_duplicate:
- * @histogram: a %GimpHistogram
+ * picman_histogram_duplicate:
+ * @histogram: a %PicmanHistogram
  *
  * Creates a duplicate of @histogram. The duplicate has a reference
  * count of 1 and contains the values from @histogram.
  *
- * Return value: a newly allocated %GimpHistogram
+ * Return value: a newly allocated %PicmanHistogram
  **/
-GimpHistogram *
-gimp_histogram_duplicate (GimpHistogram *histogram)
+PicmanHistogram *
+picman_histogram_duplicate (PicmanHistogram *histogram)
 {
-  GimpHistogram *dup;
+  PicmanHistogram *dup;
 
   g_return_val_if_fail (histogram != NULL, NULL);
 
-  dup = gimp_histogram_new ();
+  dup = picman_histogram_new ();
 
   dup->n_channels = histogram->n_channels;
   dup->values     = g_memdup (histogram->values,
@@ -108,7 +108,7 @@ gimp_histogram_duplicate (GimpHistogram *histogram)
 }
 
 void
-gimp_histogram_calculate (GimpHistogram       *histogram,
+picman_histogram_calculate (PicmanHistogram       *histogram,
                           GeglBuffer          *buffer,
                           const GeglRectangle *buffer_rect,
                           GeglBuffer          *mask,
@@ -125,16 +125,16 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
   format = gegl_buffer_get_format (buffer);
 
   if (babl_format_is_palette (format))
-    format = gimp_babl_format (GIMP_RGB, GIMP_PRECISION_U8,
+    format = picman_babl_format (PICMAN_RGB, PICMAN_PRECISION_U8,
                                babl_format_has_alpha (format));
   else
-    format = gimp_babl_format (gimp_babl_format_get_base_type (format),
-                               GIMP_PRECISION_U8,
+    format = picman_babl_format (picman_babl_format_get_base_type (format),
+                               PICMAN_PRECISION_U8,
                                babl_format_has_alpha (format));
 
   n_components = babl_format_get_n_components (format);
 
-  gimp_histogram_alloc_values (histogram, n_components);
+  picman_histogram_alloc_values (histogram, n_components);
 
   iter = gegl_buffer_iterator_new (buffer, buffer_rect, 0, format,
                                    GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
@@ -291,7 +291,7 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
 }
 
 void
-gimp_histogram_clear_values (GimpHistogram *histogram)
+picman_histogram_clear_values (PicmanHistogram *histogram)
 {
   g_return_if_fail (histogram != NULL);
 
@@ -309,8 +309,8 @@ gimp_histogram_clear_values (GimpHistogram *histogram)
 
 
 gdouble
-gimp_histogram_get_maximum (GimpHistogram        *histogram,
-                            GimpHistogramChannel  channel)
+picman_histogram_get_maximum (PicmanHistogram        *histogram,
+                            PicmanHistogramChannel  channel)
 {
   gdouble max = 0.0;
   gint    x;
@@ -318,19 +318,19 @@ gimp_histogram_get_maximum (GimpHistogram        *histogram,
   g_return_val_if_fail (histogram != NULL, 0.0);
 
   /*  the gray alpha channel is in slot 1  */
-  if (histogram->n_channels == 3 && channel == GIMP_HISTOGRAM_ALPHA)
+  if (histogram->n_channels == 3 && channel == PICMAN_HISTOGRAM_ALPHA)
     channel = 1;
 
   if (! histogram->values ||
-      (channel != GIMP_HISTOGRAM_RGB && channel >= histogram->n_channels))
+      (channel != PICMAN_HISTOGRAM_RGB && channel >= histogram->n_channels))
     return 0.0;
 
-  if (channel == GIMP_HISTOGRAM_RGB)
+  if (channel == PICMAN_HISTOGRAM_RGB)
     for (x = 0; x < 256; x++)
       {
-        max = MAX (max, HISTOGRAM_VALUE (GIMP_HISTOGRAM_RED,   x));
-        max = MAX (max, HISTOGRAM_VALUE (GIMP_HISTOGRAM_GREEN, x));
-        max = MAX (max, HISTOGRAM_VALUE (GIMP_HISTOGRAM_BLUE,  x));
+        max = MAX (max, HISTOGRAM_VALUE (PICMAN_HISTOGRAM_RED,   x));
+        max = MAX (max, HISTOGRAM_VALUE (PICMAN_HISTOGRAM_GREEN, x));
+        max = MAX (max, HISTOGRAM_VALUE (PICMAN_HISTOGRAM_BLUE,  x));
       }
   else
     for (x = 0; x < 256; x++)
@@ -342,29 +342,29 @@ gimp_histogram_get_maximum (GimpHistogram        *histogram,
 }
 
 gdouble
-gimp_histogram_get_value (GimpHistogram        *histogram,
-                          GimpHistogramChannel  channel,
+picman_histogram_get_value (PicmanHistogram        *histogram,
+                          PicmanHistogramChannel  channel,
                           gint                  bin)
 {
   g_return_val_if_fail (histogram != NULL, 0.0);
 
   /*  the gray alpha channel is in slot 1  */
-  if (histogram->n_channels == 3 && channel == GIMP_HISTOGRAM_ALPHA)
+  if (histogram->n_channels == 3 && channel == PICMAN_HISTOGRAM_ALPHA)
     channel = 1;
 
   if (! histogram->values ||
       bin < 0 || bin >= 256 ||
-      (channel == GIMP_HISTOGRAM_RGB && histogram->n_channels < 4) ||
-      (channel != GIMP_HISTOGRAM_RGB && channel >= histogram->n_channels))
+      (channel == PICMAN_HISTOGRAM_RGB && histogram->n_channels < 4) ||
+      (channel != PICMAN_HISTOGRAM_RGB && channel >= histogram->n_channels))
     return 0.0;
 
-  if (channel == GIMP_HISTOGRAM_RGB)
+  if (channel == PICMAN_HISTOGRAM_RGB)
     {
-      gdouble min = HISTOGRAM_VALUE (GIMP_HISTOGRAM_RED, bin);
+      gdouble min = HISTOGRAM_VALUE (PICMAN_HISTOGRAM_RED, bin);
 
-      min = MIN (min, HISTOGRAM_VALUE (GIMP_HISTOGRAM_GREEN, bin));
+      min = MIN (min, HISTOGRAM_VALUE (PICMAN_HISTOGRAM_GREEN, bin));
 
-      return MIN (min, HISTOGRAM_VALUE (GIMP_HISTOGRAM_BLUE, bin));
+      return MIN (min, HISTOGRAM_VALUE (PICMAN_HISTOGRAM_BLUE, bin));
     }
   else
     {
@@ -373,8 +373,8 @@ gimp_histogram_get_value (GimpHistogram        *histogram,
 }
 
 gdouble
-gimp_histogram_get_channel (GimpHistogram        *histogram,
-                            GimpHistogramChannel  channel,
+picman_histogram_get_channel (PicmanHistogram        *histogram,
+                            PicmanHistogramChannel  channel,
                             gint                  bin)
 {
   g_return_val_if_fail (histogram != NULL, 0.0);
@@ -382,11 +382,11 @@ gimp_histogram_get_channel (GimpHistogram        *histogram,
   if (histogram->n_channels > 3)
     channel++;
 
-  return gimp_histogram_get_value (histogram, channel, bin);
+  return picman_histogram_get_value (histogram, channel, bin);
 }
 
 gint
-gimp_histogram_n_channels (GimpHistogram *histogram)
+picman_histogram_n_channels (PicmanHistogram *histogram)
 {
   g_return_val_if_fail (histogram != NULL, 0);
 
@@ -394,8 +394,8 @@ gimp_histogram_n_channels (GimpHistogram *histogram)
 }
 
 gdouble
-gimp_histogram_get_count (GimpHistogram        *histogram,
-                          GimpHistogramChannel  channel,
+picman_histogram_get_count (PicmanHistogram        *histogram,
+                          PicmanHistogramChannel  channel,
                           gint                  start,
                           gint                  end)
 {
@@ -405,16 +405,16 @@ gimp_histogram_get_count (GimpHistogram        *histogram,
   g_return_val_if_fail (histogram != NULL, 0.0);
 
   /*  the gray alpha channel is in slot 1  */
-  if (histogram->n_channels == 3 && channel == GIMP_HISTOGRAM_ALPHA)
+  if (histogram->n_channels == 3 && channel == PICMAN_HISTOGRAM_ALPHA)
     channel = 1;
 
-  if (channel == GIMP_HISTOGRAM_RGB)
-    return (gimp_histogram_get_count (histogram,
-                                      GIMP_HISTOGRAM_RED, start, end)   +
-            gimp_histogram_get_count (histogram,
-                                      GIMP_HISTOGRAM_GREEN, start, end) +
-            gimp_histogram_get_count (histogram,
-                                      GIMP_HISTOGRAM_BLUE, start, end));
+  if (channel == PICMAN_HISTOGRAM_RGB)
+    return (picman_histogram_get_count (histogram,
+                                      PICMAN_HISTOGRAM_RED, start, end)   +
+            picman_histogram_get_count (histogram,
+                                      PICMAN_HISTOGRAM_GREEN, start, end) +
+            picman_histogram_get_count (histogram,
+                                      PICMAN_HISTOGRAM_BLUE, start, end));
 
   if (! histogram->values ||
       start > end ||
@@ -431,8 +431,8 @@ gimp_histogram_get_count (GimpHistogram        *histogram,
 }
 
 gdouble
-gimp_histogram_get_mean (GimpHistogram        *histogram,
-                         GimpHistogramChannel  channel,
+picman_histogram_get_mean (PicmanHistogram        *histogram,
+                         PicmanHistogramChannel  channel,
                          gint                  start,
                          gint                  end)
 {
@@ -443,24 +443,24 @@ gimp_histogram_get_mean (GimpHistogram        *histogram,
   g_return_val_if_fail (histogram != NULL, 0.0);
 
   /*  the gray alpha channel is in slot 1  */
-  if (histogram->n_channels == 3 && channel == GIMP_HISTOGRAM_ALPHA)
+  if (histogram->n_channels == 3 && channel == PICMAN_HISTOGRAM_ALPHA)
     channel = 1;
 
   if (! histogram->values ||
       start > end ||
-      (channel == GIMP_HISTOGRAM_RGB && histogram->n_channels < 4) ||
-      (channel != GIMP_HISTOGRAM_RGB && channel >= histogram->n_channels))
+      (channel == PICMAN_HISTOGRAM_RGB && histogram->n_channels < 4) ||
+      (channel != PICMAN_HISTOGRAM_RGB && channel >= histogram->n_channels))
     return 0.0;
 
   start = CLAMP (start, 0, 255);
   end = CLAMP (end, 0, 255);
 
-  if (channel == GIMP_HISTOGRAM_RGB)
+  if (channel == PICMAN_HISTOGRAM_RGB)
     {
       for (i = start; i <= end; i++)
-        mean += (i * HISTOGRAM_VALUE (GIMP_HISTOGRAM_RED,   i) +
-                 i * HISTOGRAM_VALUE (GIMP_HISTOGRAM_GREEN, i) +
-                 i * HISTOGRAM_VALUE (GIMP_HISTOGRAM_BLUE,  i));
+        mean += (i * HISTOGRAM_VALUE (PICMAN_HISTOGRAM_RED,   i) +
+                 i * HISTOGRAM_VALUE (PICMAN_HISTOGRAM_GREEN, i) +
+                 i * HISTOGRAM_VALUE (PICMAN_HISTOGRAM_BLUE,  i));
     }
   else
     {
@@ -468,7 +468,7 @@ gimp_histogram_get_mean (GimpHistogram        *histogram,
         mean += i * HISTOGRAM_VALUE (channel, i);
     }
 
-  count = gimp_histogram_get_count (histogram, channel, start, end);
+  count = picman_histogram_get_count (histogram, channel, start, end);
 
   if (count > 0.0)
     return mean / count;
@@ -477,8 +477,8 @@ gimp_histogram_get_mean (GimpHistogram        *histogram,
 }
 
 gint
-gimp_histogram_get_median (GimpHistogram         *histogram,
-                           GimpHistogramChannel   channel,
+picman_histogram_get_median (PicmanHistogram         *histogram,
+                           PicmanHistogramChannel   channel,
                            gint                   start,
                            gint                   end)
 {
@@ -489,26 +489,26 @@ gimp_histogram_get_median (GimpHistogram         *histogram,
   g_return_val_if_fail (histogram != NULL, -1);
 
   /*  the gray alpha channel is in slot 1  */
-  if (histogram->n_channels == 3 && channel == GIMP_HISTOGRAM_ALPHA)
+  if (histogram->n_channels == 3 && channel == PICMAN_HISTOGRAM_ALPHA)
     channel = 1;
 
   if (! histogram->values ||
       start > end ||
-      (channel == GIMP_HISTOGRAM_RGB && histogram->n_channels < 4) ||
-      (channel != GIMP_HISTOGRAM_RGB && channel >= histogram->n_channels))
+      (channel == PICMAN_HISTOGRAM_RGB && histogram->n_channels < 4) ||
+      (channel != PICMAN_HISTOGRAM_RGB && channel >= histogram->n_channels))
     return 0;
 
   start = CLAMP (start, 0, 255);
   end = CLAMP (end, 0, 255);
 
-  count = gimp_histogram_get_count (histogram, channel, start, end);
+  count = picman_histogram_get_count (histogram, channel, start, end);
 
-  if (channel == GIMP_HISTOGRAM_RGB)
+  if (channel == PICMAN_HISTOGRAM_RGB)
     for (i = start; i <= end; i++)
       {
-        sum += (HISTOGRAM_VALUE (GIMP_HISTOGRAM_RED,   i) +
-                HISTOGRAM_VALUE (GIMP_HISTOGRAM_GREEN, i) +
-                HISTOGRAM_VALUE (GIMP_HISTOGRAM_BLUE,  i));
+        sum += (HISTOGRAM_VALUE (PICMAN_HISTOGRAM_RED,   i) +
+                HISTOGRAM_VALUE (PICMAN_HISTOGRAM_GREEN, i) +
+                HISTOGRAM_VALUE (PICMAN_HISTOGRAM_BLUE,  i));
 
         if (sum * 2 > count)
           return i;
@@ -532,8 +532,8 @@ gimp_histogram_get_median (GimpHistogram         *histogram,
  *  IEEE Trans. Systems, Man, and Cybernetics, vol. 9, no. 1, pp. 62-66, 1979.
  */
 gdouble
-gimp_histogram_get_threshold (GimpHistogram        *histogram,
-                              GimpHistogramChannel  channel,
+picman_histogram_get_threshold (PicmanHistogram        *histogram,
+                              PicmanHistogramChannel  channel,
                               gint                  start,
                               gint                  end)
 {
@@ -551,13 +551,13 @@ gimp_histogram_get_threshold (GimpHistogram        *histogram,
   g_return_val_if_fail (histogram != NULL, -1);
 
   /*  the gray alpha channel is in slot 1  */
-  if (histogram->n_channels == 3 && channel == GIMP_HISTOGRAM_ALPHA)
+  if (histogram->n_channels == 3 && channel == PICMAN_HISTOGRAM_ALPHA)
     channel = 1;
 
   if (! histogram->values ||
       start > end ||
-      (channel == GIMP_HISTOGRAM_RGB && histogram->n_channels < 4) ||
-      (channel != GIMP_HISTOGRAM_RGB && channel >= histogram->n_channels))
+      (channel == PICMAN_HISTOGRAM_RGB && histogram->n_channels < 4) ||
+      (channel != PICMAN_HISTOGRAM_RGB && channel >= histogram->n_channels))
     return 0;
 
   start = CLAMP (start, 0, 255);
@@ -569,12 +569,12 @@ gimp_histogram_get_threshold (GimpHistogram        *histogram,
   chist = g_newa (gdouble, maxval + 1);
   cmom  = g_newa (gdouble, maxval + 1);
 
-  if (channel == GIMP_HISTOGRAM_RGB)
+  if (channel == PICMAN_HISTOGRAM_RGB)
     {
       for (i = start; i <= end; i++)
-        hist[i - start] = (HISTOGRAM_VALUE (GIMP_HISTOGRAM_RED,   i) +
-                           HISTOGRAM_VALUE (GIMP_HISTOGRAM_GREEN, i) +
-                           HISTOGRAM_VALUE (GIMP_HISTOGRAM_BLUE,  i));
+        hist[i - start] = (HISTOGRAM_VALUE (PICMAN_HISTOGRAM_RED,   i) +
+                           HISTOGRAM_VALUE (PICMAN_HISTOGRAM_GREEN, i) +
+                           HISTOGRAM_VALUE (PICMAN_HISTOGRAM_BLUE,  i));
     }
   else
     {
@@ -621,8 +621,8 @@ gimp_histogram_get_threshold (GimpHistogram        *histogram,
 }
 
 gdouble
-gimp_histogram_get_std_dev (GimpHistogram        *histogram,
-                            GimpHistogramChannel  channel,
+picman_histogram_get_std_dev (PicmanHistogram        *histogram,
+                            PicmanHistogramChannel  channel,
                             gint                  start,
                             gint                  end)
 {
@@ -634,17 +634,17 @@ gimp_histogram_get_std_dev (GimpHistogram        *histogram,
   g_return_val_if_fail (histogram != NULL, 0.0);
 
   /*  the gray alpha channel is in slot 1  */
-  if (histogram->n_channels == 3 && channel == GIMP_HISTOGRAM_ALPHA)
+  if (histogram->n_channels == 3 && channel == PICMAN_HISTOGRAM_ALPHA)
     channel = 1;
 
   if (! histogram->values ||
       start > end ||
-      (channel == GIMP_HISTOGRAM_RGB && histogram->n_channels < 4) ||
-      (channel != GIMP_HISTOGRAM_RGB && channel >= histogram->n_channels))
+      (channel == PICMAN_HISTOGRAM_RGB && histogram->n_channels < 4) ||
+      (channel != PICMAN_HISTOGRAM_RGB && channel >= histogram->n_channels))
     return 0.0;
 
-  mean  = gimp_histogram_get_mean  (histogram, channel, start, end);
-  count = gimp_histogram_get_count (histogram, channel, start, end);
+  mean  = picman_histogram_get_mean  (histogram, channel, start, end);
+  count = picman_histogram_get_count (histogram, channel, start, end);
 
   if (count == 0.0)
     count = 1.0;
@@ -653,15 +653,15 @@ gimp_histogram_get_std_dev (GimpHistogram        *histogram,
     {
       gdouble value;
 
-      if (channel == GIMP_HISTOGRAM_RGB)
+      if (channel == PICMAN_HISTOGRAM_RGB)
         {
-          value = (HISTOGRAM_VALUE (GIMP_HISTOGRAM_RED,   i) +
-                   HISTOGRAM_VALUE (GIMP_HISTOGRAM_GREEN, i) +
-                   HISTOGRAM_VALUE (GIMP_HISTOGRAM_BLUE,  i));
+          value = (HISTOGRAM_VALUE (PICMAN_HISTOGRAM_RED,   i) +
+                   HISTOGRAM_VALUE (PICMAN_HISTOGRAM_GREEN, i) +
+                   HISTOGRAM_VALUE (PICMAN_HISTOGRAM_BLUE,  i));
         }
       else
         {
-          value = gimp_histogram_get_value (histogram, channel, i);
+          value = picman_histogram_get_value (histogram, channel, i);
         }
 
       dev += value * SQR (i - mean);
@@ -674,12 +674,12 @@ gimp_histogram_get_std_dev (GimpHistogram        *histogram,
 /*  private functions  */
 
 static void
-gimp_histogram_alloc_values (GimpHistogram *histogram,
+picman_histogram_alloc_values (PicmanHistogram *histogram,
                              gint           bytes)
 {
   if (bytes + 1 != histogram->n_channels)
     {
-      gimp_histogram_clear_values (histogram);
+      picman_histogram_clear_values (histogram);
 
       histogram->n_channels = bytes + 1;
 

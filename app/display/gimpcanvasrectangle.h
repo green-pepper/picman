@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasrectangle.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasrectangle.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,49 +18,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_RECTANGLE_H__
-#define __GIMP_CANVAS_RECTANGLE_H__
+#ifndef __PICMAN_CANVAS_RECTANGLE_H__
+#define __PICMAN_CANVAS_RECTANGLE_H__
 
 
-#include "gimpcanvasitem.h"
+#include "picmancanvasitem.h"
 
 
-#define GIMP_TYPE_CANVAS_RECTANGLE            (gimp_canvas_rectangle_get_type ())
-#define GIMP_CANVAS_RECTANGLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_RECTANGLE, GimpCanvasRectangle))
-#define GIMP_CANVAS_RECTANGLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_RECTANGLE, GimpCanvasRectangleClass))
-#define GIMP_IS_CANVAS_RECTANGLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_RECTANGLE))
-#define GIMP_IS_CANVAS_RECTANGLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_RECTANGLE))
-#define GIMP_CANVAS_RECTANGLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_RECTANGLE, GimpCanvasRectangleClass))
+#define PICMAN_TYPE_CANVAS_RECTANGLE            (picman_canvas_rectangle_get_type ())
+#define PICMAN_CANVAS_RECTANGLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_RECTANGLE, PicmanCanvasRectangle))
+#define PICMAN_CANVAS_RECTANGLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_RECTANGLE, PicmanCanvasRectangleClass))
+#define PICMAN_IS_CANVAS_RECTANGLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_RECTANGLE))
+#define PICMAN_IS_CANVAS_RECTANGLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_RECTANGLE))
+#define PICMAN_CANVAS_RECTANGLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_RECTANGLE, PicmanCanvasRectangleClass))
 
 
-typedef struct _GimpCanvasRectangle      GimpCanvasRectangle;
-typedef struct _GimpCanvasRectangleClass GimpCanvasRectangleClass;
+typedef struct _PicmanCanvasRectangle      PicmanCanvasRectangle;
+typedef struct _PicmanCanvasRectangleClass PicmanCanvasRectangleClass;
 
-struct _GimpCanvasRectangle
+struct _PicmanCanvasRectangle
 {
-  GimpCanvasItem  parent_instance;
+  PicmanCanvasItem  parent_instance;
 };
 
-struct _GimpCanvasRectangleClass
+struct _PicmanCanvasRectangleClass
 {
-  GimpCanvasItemClass  parent_class;
+  PicmanCanvasItemClass  parent_class;
 };
 
 
-GType            gimp_canvas_rectangle_get_type (void) G_GNUC_CONST;
+GType            picman_canvas_rectangle_get_type (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_canvas_rectangle_new      (GimpDisplayShell *shell,
+PicmanCanvasItem * picman_canvas_rectangle_new      (PicmanDisplayShell *shell,
                                                  gdouble           x,
                                                  gdouble           y,
                                                  gdouble           width,
                                                  gdouble           height,
                                                  gboolean          filled);
 
-void             gimp_canvas_rectangle_set      (GimpCanvasItem   *rectangle,
+void             picman_canvas_rectangle_set      (PicmanCanvasItem   *rectangle,
                                                  gdouble           x,
                                                  gdouble           y,
                                                  gdouble           width,
                                                  gdouble           height);
 
 
-#endif /* __GIMP_CANVAS_RECTANGLE_H__ */
+#endif /* __PICMAN_CANVAS_RECTANGLE_H__ */

@@ -1,11 +1,11 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpNavigationView Widget
- * Copyright (C) 2001-2002 Michael Natterer <mitch@gimp.org>
+ * PicmanNavigationView Widget
+ * Copyright (C) 2001-2002 Michael Natterer <mitch@picman.org>
  *
  * partly based on app/nav_window
- * Copyright (C) 1999 Andy Thomas <alt@gimp.org>
+ * Copyright (C) 1999 Andy Thomas <alt@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,54 +21,54 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_NAVIGATION_VIEW_H__
-#define __GIMP_NAVIGATION_VIEW_H__
+#ifndef __PICMAN_NAVIGATION_VIEW_H__
+#define __PICMAN_NAVIGATION_VIEW_H__
 
-#include "gimpview.h"
-
-
-#define GIMP_TYPE_NAVIGATION_VIEW            (gimp_navigation_view_get_type ())
-#define GIMP_NAVIGATION_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_NAVIGATION_VIEW, GimpNavigationView))
-#define GIMP_NAVIGATION_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_NAVIGATION_VIEW, GimpNavigationViewClass))
-#define GIMP_IS_NAVIGATION_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, GIMP_TYPE_NAVIGATION_VIEW))
-#define GIMP_IS_NAVIGATION_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_NAVIGATION_VIEW))
-#define GIMP_NAVIGATION_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_NAVIGATION_VIEW, GimpNavigationViewClass))
+#include "picmanview.h"
 
 
-typedef struct _GimpNavigationViewClass  GimpNavigationViewClass;
+#define PICMAN_TYPE_NAVIGATION_VIEW            (picman_navigation_view_get_type ())
+#define PICMAN_NAVIGATION_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_NAVIGATION_VIEW, PicmanNavigationView))
+#define PICMAN_NAVIGATION_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_NAVIGATION_VIEW, PicmanNavigationViewClass))
+#define PICMAN_IS_NAVIGATION_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, PICMAN_TYPE_NAVIGATION_VIEW))
+#define PICMAN_IS_NAVIGATION_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_NAVIGATION_VIEW))
+#define PICMAN_NAVIGATION_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_NAVIGATION_VIEW, PicmanNavigationViewClass))
 
-struct _GimpNavigationViewClass
+
+typedef struct _PicmanNavigationViewClass  PicmanNavigationViewClass;
+
+struct _PicmanNavigationViewClass
 {
-  GimpViewClass  parent_class;
+  PicmanViewClass  parent_class;
 
-  void (* marker_changed) (GimpNavigationView *view,
+  void (* marker_changed) (PicmanNavigationView *view,
                            gdouble             x,
                            gdouble             y);
-  void (* zoom)           (GimpNavigationView *view,
-                           GimpZoomType        direction);
-  void (* scroll)         (GimpNavigationView *view,
+  void (* zoom)           (PicmanNavigationView *view,
+                           PicmanZoomType        direction);
+  void (* scroll)         (PicmanNavigationView *view,
                            GdkScrollDirection  direction);
 };
 
 
-GType   gimp_navigation_view_get_type     (void) G_GNUC_CONST;
+GType   picman_navigation_view_get_type     (void) G_GNUC_CONST;
 
-void    gimp_navigation_view_set_marker   (GimpNavigationView *view,
+void    picman_navigation_view_set_marker   (PicmanNavigationView *view,
                                            gdouble             x,
                                            gdouble             y,
                                            gdouble             width,
                                            gdouble             height);
-void    gimp_navigation_view_set_motion_offset
-                                          (GimpNavigationView *view,
+void    picman_navigation_view_set_motion_offset
+                                          (PicmanNavigationView *view,
                                            gint                motion_offset_x,
                                            gint                motion_offset_y);
-void    gimp_navigation_view_get_local_marker
-                                          (GimpNavigationView *view,
+void    picman_navigation_view_get_local_marker
+                                          (PicmanNavigationView *view,
                                            gint               *x,
                                            gint               *y,
                                            gint               *width,
                                            gint               *height);
-void    gimp_navigation_view_grab_pointer (GimpNavigationView *view);
+void    picman_navigation_view_grab_pointer (PicmanNavigationView *view);
 
 
-#endif /* __GIMP_NAVIGATION_VIEW_H__ */
+#endif /* __PICMAN_NAVIGATION_VIEW_H__ */

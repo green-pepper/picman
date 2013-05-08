@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,20 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONFIG_DUMP_H__
-#define __GIMP_CONFIG_DUMP_H__
+#ifndef __PICMAN_CONFIG_DUMP_H__
+#define __PICMAN_CONFIG_DUMP_H__
 
 
 typedef enum
 {
-  GIMP_CONFIG_DUMP_NONE,
-  GIMP_CONFIG_DUMP_GIMPRC,
-  GIMP_CONFIG_DUMP_GIMPRC_SYSTEM,
-  GIMP_CONFIG_DUMP_GIMPRC_MANPAGE
-} GimpConfigDumpFormat;
+  PICMAN_CONFIG_DUMP_NONE,
+  PICMAN_CONFIG_DUMP_PICMANRC,
+  PICMAN_CONFIG_DUMP_PICMANRC_SYSTEM,
+  PICMAN_CONFIG_DUMP_PICMANRC_MANPAGE
+} PicmanConfigDumpFormat;
 
 
-gboolean  gimp_config_dump (GimpConfigDumpFormat  format);
+gboolean  picman_config_dump (PicmanConfigDumpFormat  format);
 
 
-#endif  /* __GIMP_CONFIG_DUMP_H__ */
+#endif  /* __PICMAN_CONFIG_DUMP_H__ */

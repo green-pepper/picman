@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2002 Spencer Kimball, Peter Mattis, and others
  *
- * gimp-gradients.h
- * Copyright (C) 2002 Michael Natterer  <mitch@gimp.org>
+ * picman-gradients.h
+ * Copyright (C) 2002 Michael Natterer  <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GRADIENTS__
-#define __GIMP_GRADIENTS__
+#ifndef __PICMAN_GRADIENTS__
+#define __PICMAN_GRADIENTS__
 
 
-void   gimp_gradients_init (Gimp *gimp);
+void   picman_gradients_init (Picman *picman);
 
 
-#endif /* __GIMP_GRADIENTS__ */
+#endif /* __PICMAN_GRADIENTS__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattisbvf
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,19 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_PICK_LAYER_H__
-#define __GIMP_IMAGE_PICK_LAYER_H__
+#ifndef __PICMAN_IMAGE_PICK_LAYER_H__
+#define __PICMAN_IMAGE_PICK_LAYER_H__
 
 
-GimpLayer     * gimp_image_pick_layer           (const GimpImage *image,
+PicmanLayer     * picman_image_pick_layer           (const PicmanImage *image,
                                                  gint             x,
                                                  gint             y);
-GimpLayer     * gimp_image_pick_layer_by_bounds (const GimpImage *image,
+PicmanLayer     * picman_image_pick_layer_by_bounds (const PicmanImage *image,
                                                  gint             x,
                                                  gint             y);
-GimpTextLayer * gimp_image_pick_text_layer      (const GimpImage *image,
+PicmanTextLayer * picman_image_pick_text_layer      (const PicmanImage *image,
                                                  gint             x,
                                                  gint             y);
 
 
-#endif /* __GIMP_IMAGE_PICK_LAYER_H__ */
+#endif /* __PICMAN_IMAGE_PICK_LAYER_H__ */

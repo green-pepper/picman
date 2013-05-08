@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
- * Copyright (C) 2000 Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2000 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC     "plug-in-unit-editor"
 #define PLUG_IN_BINARY   "unit-editor"
-#define PLUG_IN_ROLE     "gimp-unit-editor"
+#define PLUG_IN_ROLE     "picman-unit-editor"
 #define RESPONSE_REFRESH 1
 
 enum
@@ -61,12 +61,12 @@ typedef struct
 static void     query                  (void);
 static void     run                    (const gchar           *name,
                                         gint                   n_params,
-                                        const GimpParam       *param,
+                                        const PicmanParam       *param,
                                         gint                  *n_return_vals,
-                                        GimpParam            **return_vals);
+                                        PicmanParam            **return_vals);
 
-static GimpUnit new_unit_dialog        (GtkWidget             *main_dialog,
-                                        GimpUnit               template);
+static PicmanUnit new_unit_dialog        (GtkWidget             *main_dialog,
+                                        PicmanUnit               template);
 static void     unit_editor_dialog     (void);
 static void     unit_editor_response   (GtkWidget             *widget,
                                         gint                   response_id,
@@ -81,7 +81,7 @@ static void     saved_toggled_callback (GtkCellRendererToggle *celltoggle,
 static void     unit_list_init         (GtkTreeView           *tv);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -92,9 +92,9 @@ const GimpPlugInInfo PLUG_IN_INFO =
 static const UnitColumn columns[] =
 {
   { N_("Saved"),        N_("A unit definition will only be saved before "
-                           "GIMP exits if this column is checked.")         },
+                           "PICMAN exits if this column is checked.")         },
   { N_("ID"),           N_("This string will be used to identify a "
-                           "unit in GIMP's configuration files.")           },
+                           "unit in PICMAN's configuration files.")           },
   { N_("Factor"),       N_("How many units make up an inch.")               },
   { N_("Digits"),       N_("This field is a hint for numerical input "
                            "fields. It specifies how many decimal digits "
@@ -122,7 +122,7 @@ static GtkActionEntry actions[] =
     G_CALLBACK (new_callback)
   },
 
-  { "unit-editor-duplicate", GIMP_STOCK_DUPLICATE,
+  { "unit-editor-duplicate", PICMAN_STOCK_DUPLICATE,
     NULL,  "<control>D",
     N_("Create a new unit using the currently selected unit as template"),
     G_CALLBACK (duplicate_callback)
@@ -136,56 +136,56 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32, "run-mode", "The run mode { RUN-INTERACTIVE (0) }" }
+    { PICMAN_PDB_INT32, "run-mode", "The run mode { RUN-INTERACTIVE (0) }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
-                          N_("Create or alter units used in GIMP"),
-                          "The GIMP unit editor",
-                          "Michael Natterer <mitch@gimp.org>",
-                          "Michael Natterer <mitch@gimp.org>",
+  picman_install_procedure (PLUG_IN_PROC,
+                          N_("Create or alter units used in PICMAN"),
+                          "The PICMAN unit editor",
+                          "Michael Natterer <mitch@picman.org>",
+                          "Michael Natterer <mitch@picman.org>",
                           "2000",
                           N_("U_nits"),
                           "",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Edit/Preferences");
-  gimp_plugin_icon_register (PLUG_IN_PROC, GIMP_ICON_TYPE_STOCK_ID,
-                             (const guint8 *) GIMP_STOCK_TOOL_MEASURE);
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Edit/Preferences");
+  picman_plugin_icon_register (PLUG_IN_PROC, PICMAN_ICON_TYPE_STOCK_ID,
+                             (const guint8 *) PICMAN_STOCK_TOOL_MEASURE);
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam values[2];
+  static PicmanParam values[2];
 
   INIT_I18N ();
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
 
   if (strcmp (name, PLUG_IN_PROC) == 0)
     {
-      values[0].data.d_status = GIMP_PDB_SUCCESS;
+      values[0].data.d_status = PICMAN_PDB_SUCCESS;
 
       unit_editor_dialog ();
     }
 }
 
-static GimpUnit
+static PicmanUnit
 new_unit_dialog (GtkWidget *main_dialog,
-                 GimpUnit   template)
+                 PicmanUnit   template)
 {
   GtkWidget *dialog;
   GtkWidget *table;
@@ -200,11 +200,11 @@ new_unit_dialog (GtkWidget *main_dialog,
   GtkWidget *singular_entry;
   GtkWidget *plural_entry;
 
-  GimpUnit   unit = GIMP_UNIT_PIXEL;
+  PicmanUnit   unit = PICMAN_UNIT_PIXEL;
 
-  dialog = gimp_dialog_new (_("Add a New Unit"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Add a New Unit"), PLUG_IN_ROLE,
                             main_dialog, GTK_DIALOG_MODAL,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_ADD,    GTK_RESPONSE_OK,
@@ -225,85 +225,85 @@ new_unit_dialog (GtkWidget *main_dialog,
   gtk_widget_show (table);
 
   entry = identifier_entry = gtk_entry_new ();
-  if (template != GIMP_UNIT_PIXEL)
+  if (template != PICMAN_UNIT_PIXEL)
     {
       gtk_entry_set_text (GTK_ENTRY (entry),
-                          gimp_unit_get_identifier (template));
+                          picman_unit_get_identifier (template));
     }
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("_ID:"), 0.0, 0.5,
                              entry, 1, FALSE);
 
-  gimp_help_set_help_data (entry, gettext (columns[IDENTIFIER].help), NULL);
+  picman_help_set_help_data (entry, gettext (columns[IDENTIFIER].help), NULL);
 
-  spinbutton = gimp_spin_button_new (&factor_adj,
-                                     (template != GIMP_UNIT_PIXEL) ?
-                                     gimp_unit_get_factor (template) : 1.0,
-                                     GIMP_MIN_RESOLUTION, GIMP_MAX_RESOLUTION,
+  spinbutton = picman_spin_button_new (&factor_adj,
+                                     (template != PICMAN_UNIT_PIXEL) ?
+                                     picman_unit_get_factor (template) : 1.0,
+                                     PICMAN_MIN_RESOLUTION, PICMAN_MAX_RESOLUTION,
                                      0.01, 0.1, 0.0, 0.01, 5);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("_Factor:"), 0.0, 0.5,
                              spinbutton, 1, TRUE);
 
-  gimp_help_set_help_data (spinbutton, gettext (columns[FACTOR].help), NULL);
+  picman_help_set_help_data (spinbutton, gettext (columns[FACTOR].help), NULL);
 
-  spinbutton = gimp_spin_button_new (&digits_adj,
-                                     (template != GIMP_UNIT_PIXEL) ?
-                                     gimp_unit_get_digits (template) : 2.0,
+  spinbutton = picman_spin_button_new (&digits_adj,
+                                     (template != PICMAN_UNIT_PIXEL) ?
+                                     picman_unit_get_digits (template) : 2.0,
                                      0, 5, 1, 1, 0, 1, 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 2,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 2,
                              _("_Digits:"), 0.0, 0.5,
                              spinbutton, 1, TRUE);
 
-  gimp_help_set_help_data (spinbutton, gettext (columns[DIGITS].help), NULL);
+  picman_help_set_help_data (spinbutton, gettext (columns[DIGITS].help), NULL);
 
   entry = symbol_entry = gtk_entry_new ();
-  if (template != GIMP_UNIT_PIXEL)
+  if (template != PICMAN_UNIT_PIXEL)
     {
       gtk_entry_set_text (GTK_ENTRY (entry),
-                          gimp_unit_get_symbol (template));
+                          picman_unit_get_symbol (template));
     }
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 3,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 3,
                              _("_Symbol:"), 0.0, 0.5,
                              entry, 1, FALSE);
 
-  gimp_help_set_help_data (entry, gettext (columns[SYMBOL].help), NULL);
+  picman_help_set_help_data (entry, gettext (columns[SYMBOL].help), NULL);
 
   entry = abbreviation_entry = gtk_entry_new ();
-  if (template != GIMP_UNIT_PIXEL)
+  if (template != PICMAN_UNIT_PIXEL)
     {
       gtk_entry_set_text (GTK_ENTRY (entry),
-                          gimp_unit_get_abbreviation (template));
+                          picman_unit_get_abbreviation (template));
     }
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 4,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 4,
                              _("_Abbreviation:"), 0.0, 0.5,
                              entry, 1, FALSE);
 
-  gimp_help_set_help_data (entry, gettext (columns[ABBREVIATION].help), NULL);
+  picman_help_set_help_data (entry, gettext (columns[ABBREVIATION].help), NULL);
 
   entry = singular_entry = gtk_entry_new ();
-  if (template != GIMP_UNIT_PIXEL)
+  if (template != PICMAN_UNIT_PIXEL)
     {
       gtk_entry_set_text (GTK_ENTRY (entry),
-                          gimp_unit_get_singular (template));
+                          picman_unit_get_singular (template));
     }
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 5,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 5,
                              _("Si_ngular:"), 0.0, 0.5,
                              entry, 1, FALSE);
 
-  gimp_help_set_help_data (entry, gettext (columns[SINGULAR].help), NULL);
+  picman_help_set_help_data (entry, gettext (columns[SINGULAR].help), NULL);
 
   entry = plural_entry = gtk_entry_new ();
-  if (template != GIMP_UNIT_PIXEL)
+  if (template != PICMAN_UNIT_PIXEL)
     {
       gtk_entry_set_text (GTK_ENTRY (entry),
-                          gimp_unit_get_plural (template));
+                          picman_unit_get_plural (template));
     }
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 6,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 6,
                              _("_Plural:"), 0.0, 0.5,
                              entry, 1, FALSE);
 
-  gimp_help_set_help_data (entry, gettext (columns[PLURAL].help), NULL);
+  picman_help_set_help_data (entry, gettext (columns[PLURAL].help), NULL);
 
   gtk_widget_show (dialog);
 
@@ -317,7 +317,7 @@ new_unit_dialog (GtkWidget *main_dialog,
       gchar   *singular;
       gchar   *plural;
 
-      if (gimp_dialog_run (GIMP_DIALOG (dialog)) != GTK_RESPONSE_OK)
+      if (picman_dialog_run (PICMAN_DIALOG (dialog)) != GTK_RESPONSE_OK)
         break;
 
       identifier   = g_strdup (gtk_entry_get_text (GTK_ENTRY (identifier_entry)));
@@ -353,7 +353,7 @@ new_unit_dialog (GtkWidget *main_dialog,
           continue;
         }
 
-      unit = gimp_unit_new (identifier,
+      unit = picman_unit_new (identifier,
                             factor, digits,
                             symbol, abbreviation, singular, plural);
 
@@ -387,7 +387,7 @@ unit_editor_dialog (void)
   GtkCellRenderer   *rend;
   gint               i;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
   list_store = gtk_list_store_new (NUM_COLUMNS,
                                    G_TYPE_BOOLEAN,   /*  SAVE          */
@@ -398,16 +398,16 @@ unit_editor_dialog (void)
                                    G_TYPE_STRING,    /*  ABBREVIATION  */
                                    G_TYPE_STRING,    /*  SINGULAR      */
                                    G_TYPE_STRING,    /*  PLURAL        */
-                                   GIMP_TYPE_UNIT,   /*  UNIT          */
+                                   PICMAN_TYPE_UNIT,   /*  UNIT          */
                                    G_TYPE_BOOLEAN,   /*  USER_UNIT     */
                                    GDK_TYPE_COLOR);  /*  BG_COLOR      */
 
   tv = gtk_tree_view_new_with_model (GTK_TREE_MODEL (list_store));
   g_object_unref (list_store);
 
-  dialog = gimp_dialog_new (_("Unit Editor"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Unit Editor"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_REFRESH, RESPONSE_REFRESH,
                             GTK_STOCK_CLOSE,   GTK_RESPONSE_CLOSE,
@@ -485,7 +485,7 @@ unit_editor_dialog (void)
       button = gtk_widget_get_ancestor (col_widget, GTK_TYPE_BUTTON);
 
       if (button)
-        gimp_help_set_help_data (button,
+        picman_help_set_help_data (button,
                                  gettext (columns[SAVE].help), NULL);
     }
 
@@ -513,7 +513,7 @@ unit_editor_dialog (void)
           button = gtk_widget_get_ancestor (col_widget, GTK_TYPE_BUTTON);
 
           if (button)
-            gimp_help_set_help_data (button, gettext (columns[i].help), NULL);
+            picman_help_set_help_data (button, gettext (columns[i].help), NULL);
         }
     }
 
@@ -545,12 +545,12 @@ static void
 new_callback (GtkAction   *action,
               GtkTreeView *tv)
 {
-  GimpUnit  unit;
+  PicmanUnit  unit;
 
   unit = new_unit_dialog (gtk_widget_get_toplevel (GTK_WIDGET (tv)),
-                          GIMP_UNIT_PIXEL);
+                          PICMAN_UNIT_PIXEL);
 
-  if (unit != GIMP_UNIT_PIXEL)
+  if (unit != PICMAN_UNIT_PIXEL)
     {
       GtkTreeModel *model;
       GtkTreeIter   iter;
@@ -561,7 +561,7 @@ new_callback (GtkAction   *action,
 
       if (gtk_tree_model_get_iter_first (model, &iter) &&
           gtk_tree_model_iter_nth_child (model, &iter,
-                                         NULL, unit - GIMP_UNIT_INCH))
+                                         NULL, unit - PICMAN_UNIT_INCH))
         {
           GtkAdjustment *adj;
 
@@ -587,7 +587,7 @@ duplicate_callback (GtkAction   *action,
 
   if (gtk_tree_selection_get_selected (sel, NULL, &iter))
     {
-      GimpUnit unit;
+      PicmanUnit unit;
 
       gtk_tree_model_get (model, &iter,
                           UNIT, &unit,
@@ -596,7 +596,7 @@ duplicate_callback (GtkAction   *action,
       unit = new_unit_dialog (gtk_widget_get_toplevel (GTK_WIDGET (tv)),
                               unit);
 
-      if (unit != GIMP_UNIT_PIXEL)
+      if (unit != PICMAN_UNIT_PIXEL)
         {
           GtkTreeIter iter;
 
@@ -604,7 +604,7 @@ duplicate_callback (GtkAction   *action,
 
           if (gtk_tree_model_get_iter_first (model, &iter) &&
               gtk_tree_model_iter_nth_child (model, &iter,
-                                             NULL, unit - GIMP_UNIT_INCH))
+                                             NULL, unit - PICMAN_UNIT_INCH))
             {
               GtkAdjustment *adj;
 
@@ -625,7 +625,7 @@ saved_toggled_callback (GtkCellRendererToggle *celltoggle,
   GtkTreePath *path;
   GtkTreeIter  iter;
   gboolean     saved;
-  GimpUnit     unit;
+  PicmanUnit     unit;
 
   path = gtk_tree_path_new_from_string (path_string);
 
@@ -641,9 +641,9 @@ saved_toggled_callback (GtkCellRendererToggle *celltoggle,
                       UNIT, &unit,
                       -1);
 
-  if (unit >= gimp_unit_get_number_of_built_in_units ())
+  if (unit >= picman_unit_get_number_of_built_in_units ())
     {
-      gimp_unit_set_deletion_flag (unit, saved);
+      picman_unit_set_deletion_flag (unit, saved);
       gtk_list_store_set (GTK_LIST_STORE (list_store), &iter,
                           SAVE, ! saved,
                           -1);
@@ -656,33 +656,33 @@ unit_list_init (GtkTreeView *tv)
   GtkListStore *list_store;
   GtkTreeIter   iter;
   gint          num_units;
-  GimpUnit      unit;
+  PicmanUnit      unit;
   GdkColor      color;
 
   list_store = GTK_LIST_STORE (gtk_tree_view_get_model (tv));
 
   gtk_list_store_clear (list_store);
 
-  num_units = gimp_unit_get_number_of_units ();
+  num_units = picman_unit_get_number_of_units ();
 
   color.red   = 0xdddd;
   color.green = 0xdddd;
   color.blue  = 0xffff;
 
-  for (unit = GIMP_UNIT_INCH; unit < num_units; unit++)
+  for (unit = PICMAN_UNIT_INCH; unit < num_units; unit++)
     {
-      gboolean user_unit = (unit >= gimp_unit_get_number_of_built_in_units ());
+      gboolean user_unit = (unit >= picman_unit_get_number_of_built_in_units ());
 
       gtk_list_store_append (list_store, &iter);
       gtk_list_store_set (list_store, &iter,
-                          SAVE,         ! gimp_unit_get_deletion_flag (unit),
-                          IDENTIFIER,   gimp_unit_get_identifier (unit),
-                          FACTOR,       gimp_unit_get_factor (unit),
-                          DIGITS,       gimp_unit_get_digits (unit),
-                          SYMBOL,       gimp_unit_get_symbol (unit),
-                          ABBREVIATION, gimp_unit_get_abbreviation (unit),
-                          SINGULAR,     gimp_unit_get_singular (unit),
-                          PLURAL,       gimp_unit_get_plural (unit),
+                          SAVE,         ! picman_unit_get_deletion_flag (unit),
+                          IDENTIFIER,   picman_unit_get_identifier (unit),
+                          FACTOR,       picman_unit_get_factor (unit),
+                          DIGITS,       picman_unit_get_digits (unit),
+                          SYMBOL,       picman_unit_get_symbol (unit),
+                          ABBREVIATION, picman_unit_get_abbreviation (unit),
+                          SINGULAR,     picman_unit_get_singular (unit),
+                          PLURAL,       picman_unit_get_plural (unit),
                           UNIT,         unit,
                           USER_UNIT,    user_unit,
 

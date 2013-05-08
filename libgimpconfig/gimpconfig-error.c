@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * Config file serialization and deserialization interface
- * Copyright (C) 2001-2002  Sven Neumann <sven@gimp.org>
+ * Copyright (C) 2001-2002  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,29 +23,29 @@
 
 #include <glib.h>
 
-#include "gimpconfig-error.h"
+#include "picmanconfig-error.h"
 
 
 /**
- * SECTION: gimpconfig-error
- * @title: GimpConfig-error
- * @short_description: Error utils for libgimpconfig.
+ * SECTION: picmanconfig-error
+ * @title: PicmanConfig-error
+ * @short_description: Error utils for libpicmanconfig.
  *
- * Error utils for libgimpconfig.
+ * Error utils for libpicmanconfig.
  **/
 
 
 /**
- * gimp_config_error_quark:
+ * picman_config_error_quark:
  *
- * This function is never called directly. Use GIMP_CONFIG_ERROR() instead.
+ * This function is never called directly. Use PICMAN_CONFIG_ERROR() instead.
  *
- * Return value: the #GQuark that defines the GimpConfig error domain.
+ * Return value: the #GQuark that defines the PicmanConfig error domain.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GQuark
-gimp_config_error_quark (void)
+picman_config_error_quark (void)
 {
-  return g_quark_from_static_string ("gimp-config-error-quark");
+  return g_quark_from_static_string ("picman-config-error-quark");
 }

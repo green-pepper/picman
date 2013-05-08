@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppdbdialog.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanpdbdialog.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,21 +25,21 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
 
-#include "pdb/gimppdb.h"
+#include "pdb/picmanpdb.h"
 
-#include "gimpmenufactory.h"
-#include "gimppdbdialog.h"
-#include "gimpwidgets-utils.h"
+#include "picmanmenufactory.h"
+#include "picmanpdbdialog.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -54,33 +54,33 @@ enum
 };
 
 
-static void   gimp_pdb_dialog_class_init      (GimpPdbDialogClass *klass);
-static void   gimp_pdb_dialog_init            (GimpPdbDialog      *dialog,
-                                               GimpPdbDialogClass *klass);
+static void   picman_pdb_dialog_class_init      (PicmanPdbDialogClass *klass);
+static void   picman_pdb_dialog_init            (PicmanPdbDialog      *dialog,
+                                               PicmanPdbDialogClass *klass);
 
-static void   gimp_pdb_dialog_constructed     (GObject            *object);
-static void   gimp_pdb_dialog_dispose         (GObject            *object);
-static void   gimp_pdb_dialog_set_property    (GObject            *object,
+static void   picman_pdb_dialog_constructed     (GObject            *object);
+static void   picman_pdb_dialog_dispose         (GObject            *object);
+static void   picman_pdb_dialog_set_property    (GObject            *object,
                                                guint               property_id,
                                                const GValue       *value,
                                                GParamSpec         *pspec);
 
-static void   gimp_pdb_dialog_response        (GtkDialog          *dialog,
+static void   picman_pdb_dialog_response        (GtkDialog          *dialog,
                                                gint                response_id);
 
-static void   gimp_pdb_dialog_context_changed (GimpContext        *context,
-                                               GimpObject         *object,
-                                               GimpPdbDialog      *dialog);
-static void   gimp_pdb_dialog_plug_in_closed  (GimpPlugInManager  *manager,
-                                               GimpPlugIn         *plug_in,
-                                               GimpPdbDialog      *dialog);
+static void   picman_pdb_dialog_context_changed (PicmanContext        *context,
+                                               PicmanObject         *object,
+                                               PicmanPdbDialog      *dialog);
+static void   picman_pdb_dialog_plug_in_closed  (PicmanPlugInManager  *manager,
+                                               PicmanPlugIn         *plug_in,
+                                               PicmanPdbDialog      *dialog);
 
 
-static GimpDialogClass *parent_class = NULL;
+static PicmanDialogClass *parent_class = NULL;
 
 
 GType
-gimp_pdb_dialog_get_type (void)
+picman_pdb_dialog_get_type (void)
 {
   static GType dialog_type = 0;
 
@@ -88,19 +88,19 @@ gimp_pdb_dialog_get_type (void)
     {
       const GTypeInfo dialog_info =
       {
-        sizeof (GimpPdbDialogClass),
+        sizeof (PicmanPdbDialogClass),
         (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) gimp_pdb_dialog_class_init,
+        (GClassInitFunc) picman_pdb_dialog_class_init,
         NULL,           /* class_finalize */
         NULL,           /* class_data     */
-        sizeof (GimpPdbDialog),
+        sizeof (PicmanPdbDialog),
         0,              /* n_preallocs    */
-        (GInstanceInitFunc) gimp_pdb_dialog_init,
+        (GInstanceInitFunc) picman_pdb_dialog_init,
       };
 
-      dialog_type = g_type_register_static (GIMP_TYPE_DIALOG,
-                                            "GimpPdbDialog",
+      dialog_type = g_type_register_static (PICMAN_TYPE_DIALOG,
+                                            "PicmanPdbDialog",
                                             &dialog_info,
                                             G_TYPE_FLAG_ABSTRACT);
     }
@@ -109,66 +109,66 @@ gimp_pdb_dialog_get_type (void)
 }
 
 static void
-gimp_pdb_dialog_class_init (GimpPdbDialogClass *klass)
+picman_pdb_dialog_class_init (PicmanPdbDialogClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkDialogClass *dialog_class = GTK_DIALOG_CLASS (klass);
 
   parent_class = g_type_class_peek_parent (klass);
 
-  object_class->constructed  = gimp_pdb_dialog_constructed;
-  object_class->dispose      = gimp_pdb_dialog_dispose;
-  object_class->set_property = gimp_pdb_dialog_set_property;
-  object_class->set_property = gimp_pdb_dialog_set_property;
+  object_class->constructed  = picman_pdb_dialog_constructed;
+  object_class->dispose      = picman_pdb_dialog_dispose;
+  object_class->set_property = picman_pdb_dialog_set_property;
+  object_class->set_property = picman_pdb_dialog_set_property;
 
-  dialog_class->response     = gimp_pdb_dialog_response;
+  dialog_class->response     = picman_pdb_dialog_response;
 
   klass->run_callback        = NULL;
 
   g_object_class_install_property (object_class, PROP_CONTEXT,
                                    g_param_spec_object ("context", NULL, NULL,
-                                                        GIMP_TYPE_CONTEXT,
-                                                        GIMP_PARAM_WRITABLE |
+                                                        PICMAN_TYPE_CONTEXT,
+                                                        PICMAN_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_PDB,
                                    g_param_spec_object ("pdb", NULL, NULL,
-                                                        GIMP_TYPE_PDB,
-                                                        GIMP_PARAM_WRITABLE |
+                                                        PICMAN_TYPE_PDB,
+                                                        PICMAN_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_SELECT_TYPE,
                                    g_param_spec_gtype ("select-type",
                                                        NULL, NULL,
-                                                       GIMP_TYPE_OBJECT,
-                                                       GIMP_PARAM_WRITABLE |
+                                                       PICMAN_TYPE_OBJECT,
+                                                       PICMAN_PARAM_WRITABLE |
                                                        G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_INITIAL_OBJECT,
                                    g_param_spec_object ("initial-object",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_OBJECT,
-                                                        GIMP_PARAM_WRITABLE |
+                                                        PICMAN_TYPE_OBJECT,
+                                                        PICMAN_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_CALLBACK_NAME,
                                    g_param_spec_string ("callback-name",
                                                         NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_WRITABLE |
+                                                        PICMAN_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_MENU_FACTORY,
                                    g_param_spec_object ("menu-factory",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_MENU_FACTORY,
-                                                        GIMP_PARAM_WRITABLE |
+                                                        PICMAN_TYPE_MENU_FACTORY,
+                                                        PICMAN_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_pdb_dialog_init (GimpPdbDialog      *dialog,
-                      GimpPdbDialogClass *klass)
+picman_pdb_dialog_init (PicmanPdbDialog      *dialog,
+                      PicmanPdbDialogClass *klass)
 {
   klass->dialogs = g_list_prepend (klass->dialogs, dialog);
 
@@ -177,42 +177,42 @@ gimp_pdb_dialog_init (GimpPdbDialog      *dialog,
 }
 
 static void
-gimp_pdb_dialog_constructed (GObject *object)
+picman_pdb_dialog_constructed (GObject *object)
 {
-  GimpPdbDialog *dialog = GIMP_PDB_DIALOG (object);
+  PicmanPdbDialog *dialog = PICMAN_PDB_DIALOG (object);
   const gchar   *signal_name;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_PDB (dialog->pdb));
-  g_assert (GIMP_IS_CONTEXT (dialog->caller_context));
-  g_assert (g_type_is_a (dialog->select_type, GIMP_TYPE_OBJECT));
+  g_assert (PICMAN_IS_PDB (dialog->pdb));
+  g_assert (PICMAN_IS_CONTEXT (dialog->caller_context));
+  g_assert (g_type_is_a (dialog->select_type, PICMAN_TYPE_OBJECT));
 
-  dialog->context = gimp_context_new (dialog->caller_context->gimp,
+  dialog->context = picman_context_new (dialog->caller_context->picman,
                                       G_OBJECT_TYPE_NAME (object),
                                       NULL);
 
-  gimp_context_set_by_type (dialog->context, dialog->select_type,
+  picman_context_set_by_type (dialog->context, dialog->select_type,
                             dialog->initial_object);
 
   dialog->initial_object = NULL;
 
-  signal_name = gimp_context_type_to_signal_name (dialog->select_type);
+  signal_name = picman_context_type_to_signal_name (dialog->select_type);
 
   g_signal_connect_object (dialog->context, signal_name,
-                           G_CALLBACK (gimp_pdb_dialog_context_changed),
+                           G_CALLBACK (picman_pdb_dialog_context_changed),
                            dialog, 0);
-  g_signal_connect_object (dialog->context->gimp->plug_in_manager,
+  g_signal_connect_object (dialog->context->picman->plug_in_manager,
                            "plug-in-closed",
-                           G_CALLBACK (gimp_pdb_dialog_plug_in_closed),
+                           G_CALLBACK (picman_pdb_dialog_plug_in_closed),
                            dialog, 0);
 }
 
 static void
-gimp_pdb_dialog_dispose (GObject *object)
+picman_pdb_dialog_dispose (GObject *object)
 {
-  GimpPdbDialog      *dialog = GIMP_PDB_DIALOG (object);
-  GimpPdbDialogClass *klass  = GIMP_PDB_DIALOG_GET_CLASS (object);
+  PicmanPdbDialog      *dialog = PICMAN_PDB_DIALOG (object);
+  PicmanPdbDialogClass *klass  = PICMAN_PDB_DIALOG_GET_CLASS (object);
 
   klass->dialogs = g_list_remove (klass->dialogs, object);
 
@@ -250,12 +250,12 @@ gimp_pdb_dialog_dispose (GObject *object)
 }
 
 static void
-gimp_pdb_dialog_set_property (GObject      *object,
+picman_pdb_dialog_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  GimpPdbDialog *dialog = GIMP_PDB_DIALOG (object);
+  PicmanPdbDialog *dialog = PICMAN_PDB_DIALOG (object);
 
   switch (property_id)
     {
@@ -293,23 +293,23 @@ gimp_pdb_dialog_set_property (GObject      *object,
 }
 
 static void
-gimp_pdb_dialog_response (GtkDialog *gtk_dialog,
+picman_pdb_dialog_response (GtkDialog *gtk_dialog,
                           gint       response_id)
 {
-  GimpPdbDialog *dialog = GIMP_PDB_DIALOG (gtk_dialog);
+  PicmanPdbDialog *dialog = PICMAN_PDB_DIALOG (gtk_dialog);
 
-  gimp_pdb_dialog_run_callback (dialog, TRUE);
+  picman_pdb_dialog_run_callback (dialog, TRUE);
   gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
 void
-gimp_pdb_dialog_run_callback (GimpPdbDialog *dialog,
+picman_pdb_dialog_run_callback (PicmanPdbDialog *dialog,
                               gboolean       closing)
 {
-  GimpPdbDialogClass *klass = GIMP_PDB_DIALOG_GET_CLASS (dialog);
-  GimpObject         *object;
+  PicmanPdbDialogClass *klass = PICMAN_PDB_DIALOG_GET_CLASS (dialog);
+  PicmanObject         *object;
 
-  object = gimp_context_get_by_type (dialog->context, dialog->select_type);
+  object = picman_context_get_by_type (dialog->context, dialog->select_type);
 
   if (object                &&
       klass->run_callback   &&
@@ -318,18 +318,18 @@ gimp_pdb_dialog_run_callback (GimpPdbDialog *dialog,
     {
       dialog->callback_busy = TRUE;
 
-      if (gimp_pdb_lookup_procedure (dialog->pdb, dialog->callback_name))
+      if (picman_pdb_lookup_procedure (dialog->pdb, dialog->callback_name))
         {
-          GimpValueArray *return_vals;
+          PicmanValueArray *return_vals;
           GError         *error = NULL;
 
           return_vals = klass->run_callback (dialog, object, closing, &error);
 
-          if (g_value_get_enum (gimp_value_array_index (return_vals, 0)) !=
-              GIMP_PDB_SUCCESS)
+          if (g_value_get_enum (picman_value_array_index (return_vals, 0)) !=
+              PICMAN_PDB_SUCCESS)
             {
-              gimp_message (dialog->context->gimp, G_OBJECT (dialog),
-                            GIMP_MESSAGE_ERROR,
+              picman_message (dialog->context->picman, G_OBJECT (dialog),
+                            PICMAN_MESSAGE_ERROR,
                             _("Unable to run %s callback. "
                               "The corresponding plug-in may have "
                               "crashed."),
@@ -337,31 +337,31 @@ gimp_pdb_dialog_run_callback (GimpPdbDialog *dialog,
             }
           else if (error)
             {
-              gimp_message_literal (dialog->context->gimp, G_OBJECT (dialog),
-				    GIMP_MESSAGE_ERROR,
+              picman_message_literal (dialog->context->picman, G_OBJECT (dialog),
+				    PICMAN_MESSAGE_ERROR,
 				    error->message);
               g_error_free (error);
             }
 
-          gimp_value_array_unref (return_vals);
+          picman_value_array_unref (return_vals);
         }
 
       dialog->callback_busy = FALSE;
     }
 }
 
-GimpPdbDialog *
-gimp_pdb_dialog_get_by_callback (GimpPdbDialogClass *klass,
+PicmanPdbDialog *
+picman_pdb_dialog_get_by_callback (PicmanPdbDialogClass *klass,
                                  const gchar        *callback_name)
 {
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_PDB_DIALOG_CLASS (klass), NULL);
+  g_return_val_if_fail (PICMAN_IS_PDB_DIALOG_CLASS (klass), NULL);
   g_return_val_if_fail (callback_name != NULL, NULL);
 
   for (list = klass->dialogs; list; list = g_list_next (list))
     {
-      GimpPdbDialog *dialog = list->data;
+      PicmanPdbDialog *dialog = list->data;
 
       if (dialog->callback_name &&
           ! strcmp (callback_name, dialog->callback_name))
@@ -375,22 +375,22 @@ gimp_pdb_dialog_get_by_callback (GimpPdbDialogClass *klass,
 /*  private functions  */
 
 static void
-gimp_pdb_dialog_context_changed (GimpContext   *context,
-                                 GimpObject    *object,
-                                 GimpPdbDialog *dialog)
+picman_pdb_dialog_context_changed (PicmanContext   *context,
+                                 PicmanObject    *object,
+                                 PicmanPdbDialog *dialog)
 {
   if (object)
-    gimp_pdb_dialog_run_callback (dialog, FALSE);
+    picman_pdb_dialog_run_callback (dialog, FALSE);
 }
 
 static void
-gimp_pdb_dialog_plug_in_closed (GimpPlugInManager *manager,
-                                GimpPlugIn        *plug_in,
-                                GimpPdbDialog     *dialog)
+picman_pdb_dialog_plug_in_closed (PicmanPlugInManager *manager,
+                                PicmanPlugIn        *plug_in,
+                                PicmanPdbDialog     *dialog)
 {
   if (dialog->caller_context && dialog->callback_name)
     {
-      if (! gimp_pdb_lookup_procedure (dialog->pdb, dialog->callback_name))
+      if (! picman_pdb_lookup_procedure (dialog->pdb, dialog->callback_name))
         {
           gtk_dialog_response (GTK_DIALOG (dialog), GTK_RESPONSE_CLOSE);
         }

@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbrush-transform.c
+ * picmanbrush-transform.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +21,15 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gegl/gimp-gegl-loops.h"
+#include "gegl/picman-gegl-loops.h"
 
-#include "gimpbrush.h"
-#include "gimpbrush-transform.h"
-#include "gimptempbuf.h"
+#include "picmanbrush.h"
+#include "picmanbrush-transform.h"
+#include "picmantempbuf.h"
 
 
 #define MAX_BLUR_KERNEL 15
@@ -37,18 +37,18 @@
 
 /*  local function prototypes  */
 
-static void    gimp_brush_transform_bounding_box     (GimpTempBuf       *brush,
-                                                      const GimpMatrix3 *matrix,
+static void    picman_brush_transform_bounding_box     (PicmanTempBuf       *brush,
+                                                      const PicmanMatrix3 *matrix,
                                                       gint              *x,
                                                       gint              *y,
                                                       gint              *width,
                                                       gint              *height);
 
-static gdouble gimp_brush_transform_array_sum        (gfloat            *arr,
+static gdouble picman_brush_transform_array_sum        (gfloat            *arr,
                                                       gint               len);
-static void    gimp_brush_transform_fill_blur_kernel (gfloat            *arr,
+static void    picman_brush_transform_fill_blur_kernel (gfloat            *arr,
                                                       gint               len);
-static gint    gimp_brush_transform_blur_kernel_size (gint               height,
+static gint    picman_brush_transform_blur_kernel_size (gint               height,
                                                       gint               width,
                                                       gdouble            hardness);
 
@@ -56,21 +56,21 @@ static gint    gimp_brush_transform_blur_kernel_size (gint               height,
 /*  public functions  */
 
 void
-gimp_brush_real_transform_size (GimpBrush *brush,
+picman_brush_real_transform_size (PicmanBrush *brush,
                                 gdouble    scale,
                                 gdouble    aspect_ratio,
                                 gdouble    angle,
                                 gint      *width,
                                 gint      *height)
 {
-  GimpMatrix3 matrix;
+  PicmanMatrix3 matrix;
   gint        x, y;
 
-  gimp_brush_transform_matrix (gimp_temp_buf_get_width  (brush->mask),
-                               gimp_temp_buf_get_height (brush->mask),
+  picman_brush_transform_matrix (picman_temp_buf_get_width  (brush->mask),
+                               picman_temp_buf_get_height (brush->mask),
                                scale, aspect_ratio, angle, &matrix);
 
-  gimp_brush_transform_bounding_box (brush->mask, &matrix, &x, &y, width, height);
+  picman_brush_transform_bounding_box (brush->mask, &matrix, &x, &y, width, height);
 }
 
 /*
@@ -99,18 +99,18 @@ gimp_brush_real_transform_size (GimpBrush *brush,
  * Some variables end with the suffix _i to indicate they have been
  * premultiplied by int_multiple
  */
-GimpTempBuf *
-gimp_brush_real_transform_mask (GimpBrush *brush,
+PicmanTempBuf *
+picman_brush_real_transform_mask (PicmanBrush *brush,
                                 gdouble    scale,
                                 gdouble    aspect_ratio,
                                 gdouble    angle,
                                 gdouble    hardness)
 {
-  GimpTempBuf  *result;
-  GimpTempBuf  *source;
+  PicmanTempBuf  *result;
+  PicmanTempBuf  *source;
   guchar       *dest;
   const guchar *src;
-  GimpMatrix3   matrix;
+  PicmanMatrix3   matrix;
   gint          src_width;
   gint          src_height;
   gint          src_width_minus_one;
@@ -173,28 +173,28 @@ gimp_brush_real_transform_mask (GimpBrush *brush,
 
   source = brush->mask;
 
-  src_width  = gimp_temp_buf_get_width  (source);
-  src_height = gimp_temp_buf_get_height (source);
+  src_width  = picman_temp_buf_get_width  (source);
+  src_height = picman_temp_buf_get_height (source);
 
-  gimp_brush_transform_matrix (src_width, src_height,
+  picman_brush_transform_matrix (src_width, src_height,
                                scale, aspect_ratio, angle, &matrix);
 
-  if (gimp_matrix3_is_identity (&matrix))
-    return gimp_temp_buf_copy (source);
+  if (picman_matrix3_is_identity (&matrix))
+    return picman_temp_buf_copy (source);
 
   src_width_minus_one  = src_width  - 1;
   src_height_minus_one = src_height - 1;
 
-  gimp_brush_transform_bounding_box (source, &matrix,
+  picman_brush_transform_bounding_box (source, &matrix,
                                      &x, &y, &dest_width, &dest_height);
-  gimp_matrix3_translate (&matrix, -x, -y);
-  gimp_matrix3_invert (&matrix);
+  picman_matrix3_translate (&matrix, -x, -y);
+  picman_matrix3_invert (&matrix);
 
-  result = gimp_temp_buf_new (dest_width, dest_height,
-                              gimp_temp_buf_get_format (brush->mask));
+  result = picman_temp_buf_new (dest_width, dest_height,
+                              picman_temp_buf_get_format (brush->mask));
 
-  dest = gimp_temp_buf_get_data (result);
-  src  = gimp_temp_buf_get_data (source);
+  dest = picman_temp_buf_get_data (result);
+  src  = picman_temp_buf_get_data (source);
 
   /* prevent disappearance of 1x1 pixel brush at some rotations when
      scaling < 1 */
@@ -205,10 +205,10 @@ gimp_brush_real_transform_mask (GimpBrush *brush,
       return result;
     }*/
 
-  gimp_matrix3_transform_point (&matrix, 0,          0,           &tlx, &tly);
-  gimp_matrix3_transform_point (&matrix, dest_width, 0,           &trx, &try);
-  gimp_matrix3_transform_point (&matrix, 0,          dest_height, &blx, &bly);
-  gimp_matrix3_transform_point (&matrix, dest_width, dest_height, &brx, &bry);
+  picman_matrix3_transform_point (&matrix, 0,          0,           &tlx, &tly);
+  picman_matrix3_transform_point (&matrix, dest_width, 0,           &trx, &try);
+  picman_matrix3_transform_point (&matrix, 0,          dest_height, &blx, &bly);
+  picman_matrix3_transform_point (&matrix, dest_width, dest_height, &brx, &bry);
 
 
   /* in image space, calc U (what was horizontal originally)
@@ -329,37 +329,37 @@ gimp_brush_real_transform_mask (GimpBrush *brush,
 
   if (hardness < 1.0)
     {
-      GimpTempBuf *blur_src;
+      PicmanTempBuf *blur_src;
       GeglBuffer  *src_buffer;
       GeglBuffer  *dest_buffer;
       gint         kernel_size =
-        gimp_brush_transform_blur_kernel_size (gimp_temp_buf_get_height (result),
-                                               gimp_temp_buf_get_width  (result),
+        picman_brush_transform_blur_kernel_size (picman_temp_buf_get_height (result),
+                                               picman_temp_buf_get_width  (result),
                                                hardness);
       gint         kernel_len  = kernel_size * kernel_size;
       gfloat       blur_kernel[kernel_len];
 
-      gimp_brush_transform_fill_blur_kernel (blur_kernel, kernel_len);
+      picman_brush_transform_fill_blur_kernel (blur_kernel, kernel_len);
 
-      blur_src = gimp_temp_buf_copy (result);
+      blur_src = picman_temp_buf_copy (result);
 
-      src_buffer  = gimp_temp_buf_create_buffer (blur_src);
-      dest_buffer = gimp_temp_buf_create_buffer (result);
+      src_buffer  = picman_temp_buf_create_buffer (blur_src);
+      dest_buffer = picman_temp_buf_create_buffer (result);
 
-      gimp_temp_buf_unref (blur_src);
+      picman_temp_buf_unref (blur_src);
 
-      gimp_gegl_convolve (src_buffer,
+      picman_gegl_convolve (src_buffer,
                           GEGL_RECTANGLE (0, 0,
-                                          gimp_temp_buf_get_width  (blur_src),
-                                          gimp_temp_buf_get_height (blur_src)),
+                                          picman_temp_buf_get_width  (blur_src),
+                                          picman_temp_buf_get_height (blur_src)),
                           dest_buffer,
                           GEGL_RECTANGLE (0, 0,
-                                          gimp_temp_buf_get_width  (result),
-                                          gimp_temp_buf_get_height (result)),
+                                          picman_temp_buf_get_width  (result),
+                                          picman_temp_buf_get_height (result)),
                           blur_kernel, kernel_size,
-                          gimp_brush_transform_array_sum (blur_kernel,
+                          picman_brush_transform_array_sum (blur_kernel,
                                                           kernel_len),
-                          GIMP_NORMAL_CONVOL, FALSE);
+                          PICMAN_NORMAL_CONVOL, FALSE);
 
       g_object_unref (src_buffer);
       g_object_unref (dest_buffer);
@@ -372,7 +372,7 @@ gimp_brush_real_transform_mask (GimpBrush *brush,
  * Transforms the brush pixmap with bilinear interpolation.
  *
  * The algorithm used is exactly the same as for the brush mask
- * (gimp_brush_real_transform_mask) except it accounts for 3 color channels
+ * (picman_brush_real_transform_mask) except it accounts for 3 color channels
  *  instead of 1 greyscale channel.
  *
  * Rather than calculating the inverse transform for each point in the
@@ -398,18 +398,18 @@ gimp_brush_real_transform_mask (GimpBrush *brush,
  * Some variables end with the suffix _i to indicate they have been
  * premultiplied by int_multiple
  */
-GimpTempBuf *
-gimp_brush_real_transform_pixmap (GimpBrush *brush,
+PicmanTempBuf *
+picman_brush_real_transform_pixmap (PicmanBrush *brush,
                                   gdouble    scale,
                                   gdouble    aspect_ratio,
                                   gdouble    angle,
                                   gdouble    hardness)
 {
-  GimpTempBuf  *result;
-  GimpTempBuf  *source;
+  PicmanTempBuf  *result;
+  PicmanTempBuf  *source;
   guchar       *dest;
   const guchar *src;
-  GimpMatrix3   matrix;
+  PicmanMatrix3   matrix;
   gint          src_width;
   gint          src_height;
   gint          src_width_minus_one;
@@ -472,33 +472,33 @@ gimp_brush_real_transform_pixmap (GimpBrush *brush,
 
   source = brush->pixmap;
 
-  src_width  = gimp_temp_buf_get_width  (source);
-  src_height = gimp_temp_buf_get_height (source);
+  src_width  = picman_temp_buf_get_width  (source);
+  src_height = picman_temp_buf_get_height (source);
 
-  gimp_brush_transform_matrix (src_width, src_height,
+  picman_brush_transform_matrix (src_width, src_height,
                                scale, aspect_ratio, angle, &matrix);
 
-  if (gimp_matrix3_is_identity (&matrix))
-    return gimp_temp_buf_copy (source);
+  if (picman_matrix3_is_identity (&matrix))
+    return picman_temp_buf_copy (source);
 
   src_width_minus_one  = src_width  - 1;
   src_height_minus_one = src_height - 1;
 
-  gimp_brush_transform_bounding_box (source, &matrix,
+  picman_brush_transform_bounding_box (source, &matrix,
                                      &x, &y, &dest_width, &dest_height);
-  gimp_matrix3_translate (&matrix, -x, -y);
-  gimp_matrix3_invert (&matrix);
+  picman_matrix3_translate (&matrix, -x, -y);
+  picman_matrix3_invert (&matrix);
 
-  result = gimp_temp_buf_new (dest_width, dest_height,
-                              gimp_temp_buf_get_format (brush->pixmap));
+  result = picman_temp_buf_new (dest_width, dest_height,
+                              picman_temp_buf_get_format (brush->pixmap));
 
-  dest = gimp_temp_buf_get_data (result);
-  src  = gimp_temp_buf_get_data (source);
+  dest = picman_temp_buf_get_data (result);
+  src  = picman_temp_buf_get_data (source);
 
-  gimp_matrix3_transform_point (&matrix, 0,          0,           &tlx, &tly);
-  gimp_matrix3_transform_point (&matrix, dest_width, 0,           &trx, &try);
-  gimp_matrix3_transform_point (&matrix, 0,          dest_height, &blx, &bly);
-  gimp_matrix3_transform_point (&matrix, dest_width, dest_height, &brx, &bry);
+  picman_matrix3_transform_point (&matrix, 0,          0,           &tlx, &tly);
+  picman_matrix3_transform_point (&matrix, dest_width, 0,           &trx, &try);
+  picman_matrix3_transform_point (&matrix, 0,          dest_height, &blx, &bly);
+  picman_matrix3_transform_point (&matrix, dest_width, dest_height, &brx, &bry);
 
 
   /* in image space, calc U (what was horizontal originally)
@@ -633,37 +633,37 @@ gimp_brush_real_transform_pixmap (GimpBrush *brush,
 
   if (hardness < 1.0)
     {
-      GimpTempBuf *blur_src;
+      PicmanTempBuf *blur_src;
       GeglBuffer  *src_buffer;
       GeglBuffer  *dest_buffer;
       gint         kernel_size =
-        gimp_brush_transform_blur_kernel_size (gimp_temp_buf_get_height (result),
-                                               gimp_temp_buf_get_width  (result),
+        picman_brush_transform_blur_kernel_size (picman_temp_buf_get_height (result),
+                                               picman_temp_buf_get_width  (result),
                                                hardness);
       gint         kernel_len  = kernel_size * kernel_size;
       gfloat       blur_kernel[kernel_len];
 
-      gimp_brush_transform_fill_blur_kernel (blur_kernel, kernel_len);
+      picman_brush_transform_fill_blur_kernel (blur_kernel, kernel_len);
 
-      blur_src = gimp_temp_buf_copy (result);
+      blur_src = picman_temp_buf_copy (result);
 
-      src_buffer  = gimp_temp_buf_create_buffer (blur_src);
-      dest_buffer = gimp_temp_buf_create_buffer (result);
+      src_buffer  = picman_temp_buf_create_buffer (blur_src);
+      dest_buffer = picman_temp_buf_create_buffer (result);
 
-      gimp_temp_buf_unref (blur_src);
+      picman_temp_buf_unref (blur_src);
 
-      gimp_gegl_convolve (src_buffer,
+      picman_gegl_convolve (src_buffer,
                           GEGL_RECTANGLE (0, 0,
-                                          gimp_temp_buf_get_width  (blur_src),
-                                          gimp_temp_buf_get_height (blur_src)),
+                                          picman_temp_buf_get_width  (blur_src),
+                                          picman_temp_buf_get_height (blur_src)),
                           dest_buffer,
                           GEGL_RECTANGLE (0, 0,
-                                          gimp_temp_buf_get_width  (result),
-                                          gimp_temp_buf_get_height (result)),
+                                          picman_temp_buf_get_width  (result),
+                                          picman_temp_buf_get_height (result)),
                           blur_kernel, kernel_size,
-                          gimp_brush_transform_array_sum (blur_kernel,
+                          picman_brush_transform_array_sum (blur_kernel,
                                                           kernel_len),
-                          GIMP_NORMAL_CONVOL, FALSE);
+                          PICMAN_NORMAL_CONVOL, FALSE);
 
       g_object_unref (src_buffer);
       g_object_unref (dest_buffer);
@@ -673,12 +673,12 @@ gimp_brush_real_transform_pixmap (GimpBrush *brush,
 }
 
 void
-gimp_brush_transform_matrix (gdouble      width,
+picman_brush_transform_matrix (gdouble      width,
                              gdouble      height,
                              gdouble      scale,
                              gdouble      aspect_ratio,
                              gdouble      angle,
-                             GimpMatrix3 *matrix)
+                             PicmanMatrix3 *matrix)
 {
   const gdouble center_x = width  / 2;
   const gdouble center_y = height / 2;
@@ -696,35 +696,35 @@ gimp_brush_transform_matrix (gdouble      width,
       scale_y = scale * (1.0 - (aspect_ratio  / 20.0));
     }
 
-  gimp_matrix3_identity (matrix);
-  gimp_matrix3_scale (matrix, scale_x, scale_y);
-  gimp_matrix3_translate (matrix, - center_x * scale_x, - center_y * scale_y);
-  gimp_matrix3_rotate (matrix, -2 * G_PI * angle);
-  gimp_matrix3_translate (matrix, center_x * scale_x, center_y * scale_y);
+  picman_matrix3_identity (matrix);
+  picman_matrix3_scale (matrix, scale_x, scale_y);
+  picman_matrix3_translate (matrix, - center_x * scale_x, - center_y * scale_y);
+  picman_matrix3_rotate (matrix, -2 * G_PI * angle);
+  picman_matrix3_translate (matrix, center_x * scale_x, center_y * scale_y);
 }
 
 
 /*  private functions  */
 
 static void
-gimp_brush_transform_bounding_box (GimpTempBuf       *brush,
-                                   const GimpMatrix3 *matrix,
+picman_brush_transform_bounding_box (PicmanTempBuf       *brush,
+                                   const PicmanMatrix3 *matrix,
                                    gint              *x,
                                    gint              *y,
                                    gint              *width,
                                    gint              *height)
 {
-  const gdouble  w = gimp_temp_buf_get_width  (brush);
-  const gdouble  h = gimp_temp_buf_get_height (brush);
+  const gdouble  w = picman_temp_buf_get_width  (brush);
+  const gdouble  h = picman_temp_buf_get_height (brush);
   gdouble        x1, x2, x3, x4;
   gdouble        y1, y2, y3, y4;
   gdouble        temp_x;
   gdouble        temp_y;
 
-  gimp_matrix3_transform_point (matrix, 0, 0, &x1, &y1);
-  gimp_matrix3_transform_point (matrix, w, 0, &x2, &y2);
-  gimp_matrix3_transform_point (matrix, 0, h, &x3, &y3);
-  gimp_matrix3_transform_point (matrix, w, h, &x4, &y4);
+  picman_matrix3_transform_point (matrix, 0, 0, &x1, &y1);
+  picman_matrix3_transform_point (matrix, w, 0, &x2, &y2);
+  picman_matrix3_transform_point (matrix, 0, h, &x3, &y3);
+  picman_matrix3_transform_point (matrix, w, h, &x4, &y4);
 
   temp_x = MIN (MIN (x1, x2), MIN (x3, x4));
   temp_y = MIN (MIN (y1, y2), MIN (y3, y4));
@@ -741,7 +741,7 @@ gimp_brush_transform_bounding_box (GimpTempBuf       *brush,
 }
 
 static gdouble
-gimp_brush_transform_array_sum (gfloat *arr,
+picman_brush_transform_array_sum (gfloat *arr,
                                 gint    len)
 {
   gfloat total = 0;
@@ -756,7 +756,7 @@ gimp_brush_transform_array_sum (gfloat *arr,
 }
 
 static void
-gimp_brush_transform_fill_blur_kernel (gfloat *arr,
+picman_brush_transform_fill_blur_kernel (gfloat *arr,
                                        gint    len)
 {
   gint half_point = ((gint) len / 2) + 1;
@@ -772,7 +772,7 @@ gimp_brush_transform_fill_blur_kernel (gfloat *arr,
 }
 
 static gint
-gimp_brush_transform_blur_kernel_size (gint    height,
+picman_brush_transform_blur_kernel_size (gint    height,
                                        gint    width,
                                        gdouble hardness)
 {

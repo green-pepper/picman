@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpplugin_pdb.c
+ * picmanplugin_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpplugin
- * @title: gimpplugin
+ * SECTION: picmanplugin
+ * @title: picmanplugin
  * @short_description: Functions useful for plugins, e.g. registration and progress indicators.
  *
  * Functions useful for plugins, e.g. registration and progress
@@ -36,16 +36,16 @@
 
 
 /**
- * gimp_plugin_domain_register:
+ * picman_plugin_domain_register:
  * @domain_name: The name of the textdomain (must be unique).
  * @domain_path: The absolute path to the compiled message catalog (may be NULL).
  *
  * Registers a textdomain for localisation.
  *
- * This procedure adds a textdomain to the list of domains Gimp
+ * This procedure adds a textdomain to the list of domains Picman
  * searches for strings when translating its menu entries. There is no
  * need to call this function for plug-ins that have their strings
- * included in the 'gimp-std-plugins' domain as that is used by
+ * included in the 'picman-std-plugins' domain as that is used by
  * default. If the compiled message catalog is not in the standard
  * location, you may specify an absolute path to another location. This
  * procedure can only be called in the query function of a plug-in and
@@ -54,64 +54,64 @@
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_plugin_domain_register (const gchar *domain_name,
+picman_plugin_domain_register (const gchar *domain_name,
                              const gchar *domain_path)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-plugin-domain-register",
+  return_vals = picman_run_procedure ("picman-plugin-domain-register",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, domain_name,
-                                    GIMP_PDB_STRING, domain_path,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, domain_name,
+                                    PICMAN_PDB_STRING, domain_path,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_plugin_help_register:
+ * picman_plugin_help_register:
  * @domain_name: The XML namespace of the plug-in's help pages.
  * @domain_uri: The root URI of the plug-in's help pages.
  *
  * Register a help path for a plug-in.
  *
  * This procedure registers user documentation for the calling plug-in
- * with the GIMP help system. The domain_uri parameter points to the
+ * with the PICMAN help system. The domain_uri parameter points to the
  * root directory where the plug-in help is installed. For each
- * supported language there should be a file called 'gimp-help.xml'
+ * supported language there should be a file called 'picman-help.xml'
  * that maps the help IDs to the actual help files.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_plugin_help_register (const gchar *domain_name,
+picman_plugin_help_register (const gchar *domain_name,
                            const gchar *domain_uri)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-plugin-help-register",
+  return_vals = picman_run_procedure ("picman-plugin-help-register",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, domain_name,
-                                    GIMP_PDB_STRING, domain_uri,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, domain_name,
+                                    PICMAN_PDB_STRING, domain_uri,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_plugin_menu_register:
+ * picman_plugin_menu_register:
  * @procedure_name: The procedure for which to install the menu path.
  * @menu_path: The procedure's additional menu path.
  *
@@ -122,68 +122,68 @@ gimp_plugin_help_register (const gchar *domain_name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_plugin_menu_register (const gchar *procedure_name,
+picman_plugin_menu_register (const gchar *procedure_name,
                            const gchar *menu_path)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-plugin-menu-register",
+  return_vals = picman_run_procedure ("picman-plugin-menu-register",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, procedure_name,
-                                    GIMP_PDB_STRING, menu_path,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, procedure_name,
+                                    PICMAN_PDB_STRING, menu_path,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_plugin_menu_branch_register:
+ * picman_plugin_menu_branch_register:
  * @menu_path: The sub-menu's menu path.
  * @menu_name: The name of the sub-menu.
  *
  * Register a sub-menu.
  *
  * This procedure installs a sub-menu which does not belong to any
- * procedure. The menu-name should be the untranslated menu label. GIMP
+ * procedure. The menu-name should be the untranslated menu label. PICMAN
  * will look up the translation in the textdomain registered for the
  * plug-in.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_plugin_menu_branch_register (const gchar *menu_path,
+picman_plugin_menu_branch_register (const gchar *menu_path,
                                   const gchar *menu_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-plugin-menu-branch-register",
+  return_vals = picman_run_procedure ("picman-plugin-menu-branch-register",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, menu_path,
-                                    GIMP_PDB_STRING, menu_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, menu_path,
+                                    PICMAN_PDB_STRING, menu_name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * _gimp_plugin_icon_register:
+ * _picman_plugin_icon_register:
  * @procedure_name: The procedure for which to install the icon.
  * @icon_type: The type of the icon.
  * @icon_data_length: The length of 'icon-data'.
@@ -195,138 +195,138 @@ gimp_plugin_menu_branch_register (const gchar *menu_path,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-_gimp_plugin_icon_register (const gchar  *procedure_name,
-                            GimpIconType  icon_type,
+_picman_plugin_icon_register (const gchar  *procedure_name,
+                            PicmanIconType  icon_type,
                             gint          icon_data_length,
                             const guint8 *icon_data)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-plugin-icon-register",
+  return_vals = picman_run_procedure ("picman-plugin-icon-register",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, procedure_name,
-                                    GIMP_PDB_INT32, icon_type,
-                                    GIMP_PDB_INT32, icon_data_length,
-                                    GIMP_PDB_INT8ARRAY, icon_data,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, procedure_name,
+                                    PICMAN_PDB_INT32, icon_type,
+                                    PICMAN_PDB_INT32, icon_data_length,
+                                    PICMAN_PDB_INT8ARRAY, icon_data,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_plugin_set_pdb_error_handler:
+ * picman_plugin_set_pdb_error_handler:
  * @handler: Who is responsible for handling procedure call errors.
  *
  * Sets an error handler for procedure calls.
  *
  * This procedure changes the way that errors in procedure calls are
- * handled. By default GIMP will raise an error dialog if a procedure
+ * handled. By default PICMAN will raise an error dialog if a procedure
  * call made by a plug-in fails. Using this procedure the plug-in can
  * change this behavior. If the error handler is set to
- * %GIMP_PDB_ERROR_HANDLER_PLUGIN, then the plug-in is responsible for
- * calling gimp_get_pdb_error() and handling the error whenever one if
+ * %PICMAN_PDB_ERROR_HANDLER_PLUGIN, then the plug-in is responsible for
+ * calling picman_get_pdb_error() and handling the error whenever one if
  * its procedure calls fails. It can do this by displaying the error
  * message or by forwarding it in its own return values.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_plugin_set_pdb_error_handler (GimpPDBErrorHandler handler)
+picman_plugin_set_pdb_error_handler (PicmanPDBErrorHandler handler)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-plugin-set-pdb-error-handler",
+  return_vals = picman_run_procedure ("picman-plugin-set-pdb-error-handler",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, handler,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, handler,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_plugin_get_pdb_error_handler:
+ * picman_plugin_get_pdb_error_handler:
  *
  * Retrieves the active error handler for procedure calls.
  *
  * This procedure retrieves the currently active error handler for
  * procedure calls made by the calling plug-in. See
- * gimp_plugin_set_pdb_error_handler() for details.
+ * picman_plugin_set_pdb_error_handler() for details.
  *
  * Returns: Who is responsible for handling procedure call errors.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
-GimpPDBErrorHandler
-gimp_plugin_get_pdb_error_handler (void)
+PicmanPDBErrorHandler
+picman_plugin_get_pdb_error_handler (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpPDBErrorHandler handler = 0;
+  PicmanPDBErrorHandler handler = 0;
 
-  return_vals = gimp_run_procedure ("gimp-plugin-get-pdb-error-handler",
+  return_vals = picman_run_procedure ("picman-plugin-get-pdb-error-handler",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     handler = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return handler;
 }
 
 /**
- * gimp_plugin_enable_precision:
+ * picman_plugin_enable_precision:
  *
  * Switches this plug-in to using the real bit depth of drawables.
  *
  * Switches this plug-in to using the real bit depth of drawables. This
  * setting can only be enabled, and not disabled again during the
- * lifetime of the plug-in. Using gimp_drawable_get_buffer(),
- * gimp_drawable_get_shadow_buffer() or gimp_drawable_get_format() will
+ * lifetime of the plug-in. Using picman_drawable_get_buffer(),
+ * picman_drawable_get_shadow_buffer() or picman_drawable_get_format() will
  * automatically call this function.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 gboolean
-gimp_plugin_enable_precision (void)
+picman_plugin_enable_precision (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-plugin-enable-precision",
+  return_vals = picman_run_procedure ("picman-plugin-enable-precision",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_plugin_precision_enabled:
+ * picman_plugin_precision_enabled:
  *
  * Whether this plug-in is using the real bit depth of drawables.
  *
@@ -335,23 +335,23 @@ gimp_plugin_enable_precision (void)
  *
  * Returns: Whether precision is enabled.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 gboolean
-gimp_plugin_precision_enabled (void)
+picman_plugin_precision_enabled (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean enabled = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-plugin-precision-enabled",
+  return_vals = picman_run_procedure ("picman-plugin-precision-enabled",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     enabled = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return enabled;
 }

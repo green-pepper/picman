@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimperrorconsole.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmanerrorconsole.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * partly based on errorconsole.c
  * Copyright (C) 1998 Nick Fetchak <nuke@bayside.net>
@@ -25,54 +25,54 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "gimperrorconsole.h"
-#include "gimpmenufactory.h"
-#include "gimptextbuffer.h"
-#include "gimpwidgets-utils.h"
+#include "picmanerrorconsole.h"
+#include "picmanmenufactory.h"
+#include "picmantextbuffer.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void      gimp_error_console_constructed  (GObject          *object);
-static void      gimp_error_console_dispose      (GObject          *object);
+static void      picman_error_console_constructed  (GObject          *object);
+static void      picman_error_console_dispose      (GObject          *object);
 
-static void      gimp_error_console_unmap        (GtkWidget        *widget);
+static void      picman_error_console_unmap        (GtkWidget        *widget);
 
-static gboolean  gimp_error_console_button_press (GtkWidget        *widget,
+static gboolean  picman_error_console_button_press (GtkWidget        *widget,
                                                   GdkEventButton   *event,
-                                                  GimpErrorConsole *console);
+                                                  PicmanErrorConsole *console);
 
 
-G_DEFINE_TYPE (GimpErrorConsole, gimp_error_console, GIMP_TYPE_EDITOR)
+G_DEFINE_TYPE (PicmanErrorConsole, picman_error_console, PICMAN_TYPE_EDITOR)
 
-#define parent_class gimp_error_console_parent_class
+#define parent_class picman_error_console_parent_class
 
 
 static void
-gimp_error_console_class_init (GimpErrorConsoleClass *klass)
+picman_error_console_class_init (PicmanErrorConsoleClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->constructed = gimp_error_console_constructed;
-  object_class->dispose     = gimp_error_console_dispose;
+  object_class->constructed = picman_error_console_constructed;
+  object_class->dispose     = picman_error_console_dispose;
 
-  widget_class->unmap       = gimp_error_console_unmap;
+  widget_class->unmap       = picman_error_console_unmap;
 }
 
 static void
-gimp_error_console_init (GimpErrorConsole *console)
+picman_error_console_init (PicmanErrorConsole *console)
 {
   GtkWidget *scrolled_window;
 
-  console->text_buffer = GTK_TEXT_BUFFER (gimp_text_buffer_new ());
+  console->text_buffer = GTK_TEXT_BUFFER (picman_text_buffer_new ());
 
   gtk_text_buffer_create_tag (console->text_buffer, "title",
                               "scale",  PANGO_SCALE_LARGE,
@@ -98,25 +98,25 @@ gimp_error_console_init (GimpErrorConsole *console)
   gtk_widget_show (console->text_view);
 
   g_signal_connect (console->text_view, "button-press-event",
-                    G_CALLBACK (gimp_error_console_button_press),
+                    G_CALLBACK (picman_error_console_button_press),
                     console);
 
   console->file_dialog = NULL;
 }
 
 static void
-gimp_error_console_constructed (GObject *object)
+picman_error_console_constructed (GObject *object)
 {
-  GimpErrorConsole *console = GIMP_ERROR_CONSOLE (object);
+  PicmanErrorConsole *console = PICMAN_ERROR_CONSOLE (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
   console->clear_button =
-    gimp_editor_add_action_button (GIMP_EDITOR (console), "error-console",
+    picman_editor_add_action_button (PICMAN_EDITOR (console), "error-console",
                                    "error-console-clear", NULL);
 
   console->save_button =
-    gimp_editor_add_action_button (GIMP_EDITOR (console), "error-console",
+    picman_editor_add_action_button (PICMAN_EDITOR (console), "error-console",
                                    "error-console-save-all",
                                    "error-console-save-selection",
                                    GDK_SHIFT_MASK,
@@ -124,22 +124,22 @@ gimp_error_console_constructed (GObject *object)
 }
 
 static void
-gimp_error_console_dispose (GObject *object)
+picman_error_console_dispose (GObject *object)
 {
-  GimpErrorConsole *console = GIMP_ERROR_CONSOLE (object);
+  PicmanErrorConsole *console = PICMAN_ERROR_CONSOLE (object);
 
   if (console->file_dialog)
     gtk_widget_destroy (console->file_dialog);
 
-  console->gimp->message_handler = GIMP_MESSAGE_BOX;
+  console->picman->message_handler = PICMAN_MESSAGE_BOX;
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_error_console_unmap (GtkWidget *widget)
+picman_error_console_unmap (GtkWidget *widget)
 {
-  GimpErrorConsole *console = GIMP_ERROR_CONSOLE (widget);
+  PicmanErrorConsole *console = PICMAN_ERROR_CONSOLE (widget);
 
   if (console->file_dialog)
     gtk_widget_destroy (console->file_dialog);
@@ -148,30 +148,30 @@ gimp_error_console_unmap (GtkWidget *widget)
 }
 
 GtkWidget *
-gimp_error_console_new (Gimp            *gimp,
-                        GimpMenuFactory *menu_factory)
+picman_error_console_new (Picman            *picman,
+                        PicmanMenuFactory *menu_factory)
 {
-  GimpErrorConsole *console;
+  PicmanErrorConsole *console;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (GIMP_IS_MENU_FACTORY (menu_factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (PICMAN_IS_MENU_FACTORY (menu_factory), NULL);
 
-  console = g_object_new (GIMP_TYPE_ERROR_CONSOLE,
+  console = g_object_new (PICMAN_TYPE_ERROR_CONSOLE,
                           "menu-factory",   menu_factory,
                           "menu-identifier", "<ErrorConsole>",
                           "ui-path",        "/error-console-popup",
                           NULL);
 
-  console->gimp = gimp;
+  console->picman = picman;
 
-  console->gimp->message_handler = GIMP_ERROR_CONSOLE;
+  console->picman->message_handler = PICMAN_ERROR_CONSOLE;
 
   return GTK_WIDGET (console);
 }
 
 void
-gimp_error_console_add (GimpErrorConsole    *console,
-                        GimpMessageSeverity  severity,
+picman_error_console_add (PicmanErrorConsole    *console,
+                        PicmanMessageSeverity  severity,
                         const gchar         *domain,
                         const gchar         *message)
 {
@@ -181,17 +181,17 @@ gimp_error_console_add (GimpErrorConsole    *console,
   GdkPixbuf   *pixbuf;
   gchar       *str;
 
-  g_return_if_fail (GIMP_IS_ERROR_CONSOLE (console));
+  g_return_if_fail (PICMAN_IS_ERROR_CONSOLE (console));
   g_return_if_fail (domain != NULL);
   g_return_if_fail (message != NULL);
 
-  gimp_enum_get_value (GIMP_TYPE_MESSAGE_SEVERITY, severity,
+  picman_enum_get_value (PICMAN_TYPE_MESSAGE_SEVERITY, severity,
                        NULL, NULL, &desc, NULL);
 
   gtk_text_buffer_get_end_iter (console->text_buffer, &end);
 
   pixbuf = gtk_widget_render_icon (console->text_view,
-                                   gimp_get_message_stock_id (severity),
+                                   picman_get_message_stock_id (severity),
                                    GTK_ICON_SIZE_BUTTON, NULL);
   gtk_text_buffer_insert_pixbuf (console->text_buffer, &end, pixbuf);
   g_object_unref (pixbuf);
@@ -225,13 +225,13 @@ gimp_error_console_add (GimpErrorConsole    *console,
 /*  private functions  */
 
 static gboolean
-gimp_error_console_button_press (GtkWidget        *widget,
+picman_error_console_button_press (GtkWidget        *widget,
                                  GdkEventButton   *bevent,
-                                 GimpErrorConsole *console)
+                                 PicmanErrorConsole *console)
 {
   if (gdk_event_triggers_context_menu ((GdkEvent *) bevent))
     {
-      return gimp_editor_popup_menu (GIMP_EDITOR (console), NULL, NULL);
+      return picman_editor_popup_menu (PICMAN_EDITOR (console), NULL, NULL);
     }
 
   return FALSE;

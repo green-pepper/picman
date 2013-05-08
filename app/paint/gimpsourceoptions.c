@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "paint-types.h"
 
-#include "gimpsourceoptions.h"
+#include "picmansourceoptions.h"
 
 
 enum
@@ -34,51 +34,51 @@ enum
 };
 
 
-static void   gimp_source_options_set_property (GObject      *object,
+static void   picman_source_options_set_property (GObject      *object,
                                                 guint         property_id,
                                                 const GValue *value,
                                                 GParamSpec   *pspec);
-static void   gimp_source_options_get_property (GObject      *object,
+static void   picman_source_options_get_property (GObject      *object,
                                                 guint         property_id,
                                                 GValue       *value,
                                                 GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpSourceOptions, gimp_source_options, GIMP_TYPE_PAINT_OPTIONS)
+G_DEFINE_TYPE (PicmanSourceOptions, picman_source_options, PICMAN_TYPE_PAINT_OPTIONS)
 
 
 static void
-gimp_source_options_class_init (GimpSourceOptionsClass *klass)
+picman_source_options_class_init (PicmanSourceOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_source_options_set_property;
-  object_class->get_property = gimp_source_options_get_property;
+  object_class->set_property = picman_source_options_set_property;
+  object_class->get_property = picman_source_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_ALIGN_MODE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_ALIGN_MODE,
                                  "align-mode", NULL,
-                                 GIMP_TYPE_SOURCE_ALIGN_MODE,
-                                 GIMP_SOURCE_ALIGN_NO,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_SOURCE_ALIGN_MODE,
+                                 PICMAN_SOURCE_ALIGN_NO,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_MERGED,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_MERGED,
                                     "sample-merged", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_source_options_init (GimpSourceOptions *options)
+picman_source_options_init (PicmanSourceOptions *options)
 {
 }
 
 static void
-gimp_source_options_set_property (GObject      *object,
+picman_source_options_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  GimpSourceOptions *options = GIMP_SOURCE_OPTIONS (object);
+  PicmanSourceOptions *options = PICMAN_SOURCE_OPTIONS (object);
 
   switch (property_id)
     {
@@ -95,12 +95,12 @@ gimp_source_options_set_property (GObject      *object,
 }
 
 static void
-gimp_source_options_get_property (GObject    *object,
+picman_source_options_get_property (GObject    *object,
                                   guint       property_id,
                                   GValue     *value,
                                   GParamSpec *pspec)
 {
-  GimpSourceOptions *options = GIMP_SOURCE_OPTIONS (object);
+  PicmanSourceOptions *options = PICMAN_SOURCE_OPTIONS (object);
 
   switch (property_id)
     {

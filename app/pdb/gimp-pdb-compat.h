@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,21 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PDB_COMPAT_H__
-#define __GIMP_PDB_COMPAT_H__
+#ifndef __PICMAN_PDB_COMPAT_H__
+#define __PICMAN_PDB_COMPAT_H__
 
 
-GParamSpec     * gimp_pdb_compat_param_spec          (Gimp           *gimp,
-                                                      GimpPDBArgType  arg_type,
+GParamSpec     * picman_pdb_compat_param_spec          (Picman           *picman,
+                                                      PicmanPDBArgType  arg_type,
                                                       const gchar    *name,
                                                       const gchar    *desc);
 
-GType            gimp_pdb_compat_arg_type_to_gtype   (GimpPDBArgType  type);
-GimpPDBArgType   gimp_pdb_compat_arg_type_from_gtype (GType           type);
-gchar          * gimp_pdb_compat_arg_type_to_string  (GimpPDBArgType  type);
+GType            picman_pdb_compat_arg_type_to_gtype   (PicmanPDBArgType  type);
+PicmanPDBArgType   picman_pdb_compat_arg_type_from_gtype (GType           type);
+gchar          * picman_pdb_compat_arg_type_to_string  (PicmanPDBArgType  type);
 
-void             gimp_pdb_compat_procs_register (GimpPDB           *pdb,
-                                                 GimpPDBCompatMode  compat_mode);
+void             picman_pdb_compat_procs_register (PicmanPDB           *pdb,
+                                                 PicmanPDBCompatMode  compat_mode);
 
 
-#endif  /*  __GIMP_PDB_COMPAT_H__  */
+#endif  /*  __PICMAN_PDB_COMPAT_H__  */

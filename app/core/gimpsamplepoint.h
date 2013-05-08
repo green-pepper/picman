@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SAMPLE_POINT_H__
-#define __GIMP_SAMPLE_POINT_H__
+#ifndef __PICMAN_SAMPLE_POINT_H__
+#define __PICMAN_SAMPLE_POINT_H__
 
 
-#define GIMP_TYPE_SAMPLE_POINT (gimp_sample_point_get_type ())
+#define PICMAN_TYPE_SAMPLE_POINT (picman_sample_point_get_type ())
 
 
-struct _GimpSamplePoint
+struct _PicmanSamplePoint
 {
   gint     ref_count;
   guint32  sample_point_ID;
@@ -31,12 +31,12 @@ struct _GimpSamplePoint
 };
 
 
-GType             gimp_sample_point_get_type (void) G_GNUC_CONST;
+GType             picman_sample_point_get_type (void) G_GNUC_CONST;
 
-GimpSamplePoint * gimp_sample_point_new      (guint32          sample_point_ID);
+PicmanSamplePoint * picman_sample_point_new      (guint32          sample_point_ID);
 
-GimpSamplePoint * gimp_sample_point_ref      (GimpSamplePoint *sample_point);
-void              gimp_sample_point_unref    (GimpSamplePoint *sample_point);
+PicmanSamplePoint * picman_sample_point_ref      (PicmanSamplePoint *sample_point);
+void              picman_sample_point_unref    (PicmanSamplePoint *sample_point);
 
 
-#endif /* __GIMP_SAMPLE_POINT_H__ */
+#endif /* __PICMAN_SAMPLE_POINT_H__ */

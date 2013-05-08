@@ -1,11 +1,11 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpnavigationeditor.h
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * picmannavigationeditor.h
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * partly based on app/nav_window
- * Copyright (C) 1999 Andy Thomas <alt@gimp.org>
+ * Copyright (C) 1999 Andy Thomas <alt@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,29 +21,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_NAVIGATION_EDITOR_H__
-#define __GIMP_NAVIGATION_EDITOR_H__
+#ifndef __PICMAN_NAVIGATION_EDITOR_H__
+#define __PICMAN_NAVIGATION_EDITOR_H__
 
 
-#include "widgets/gimpeditor.h"
+#include "widgets/picmaneditor.h"
 
 
-#define GIMP_TYPE_NAVIGATION_EDITOR            (gimp_navigation_editor_get_type ())
-#define GIMP_NAVIGATION_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_NAVIGATION_EDITOR, GimpNavigationEditor))
-#define GIMP_NAVIGATION_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_NAVIGATION_EDITOR, GimpNavigationEditorClass))
-#define GIMP_IS_NAVIGATION_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_NAVIGATION_EDITOR))
-#define GIMP_IS_NAVIGATION_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_NAVIGATION_EDITOR))
-#define GIMP_NAVIGATION_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_NAVIGATION_EDITOR, GimpNavigationEditorClass))
+#define PICMAN_TYPE_NAVIGATION_EDITOR            (picman_navigation_editor_get_type ())
+#define PICMAN_NAVIGATION_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_NAVIGATION_EDITOR, PicmanNavigationEditor))
+#define PICMAN_NAVIGATION_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_NAVIGATION_EDITOR, PicmanNavigationEditorClass))
+#define PICMAN_IS_NAVIGATION_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_NAVIGATION_EDITOR))
+#define PICMAN_IS_NAVIGATION_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_NAVIGATION_EDITOR))
+#define PICMAN_NAVIGATION_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_NAVIGATION_EDITOR, PicmanNavigationEditorClass))
 
 
-typedef struct _GimpNavigationEditorClass  GimpNavigationEditorClass;
+typedef struct _PicmanNavigationEditorClass  PicmanNavigationEditorClass;
 
-struct _GimpNavigationEditor
+struct _PicmanNavigationEditor
 {
-  GimpEditor        parent_instance;
+  PicmanEditor        parent_instance;
 
-  GimpContext      *context;
-  GimpDisplayShell *shell;
+  PicmanContext      *context;
+  PicmanDisplayShell *shell;
 
   GtkWidget        *view;
   GtkWidget        *zoom_label;
@@ -59,19 +59,19 @@ struct _GimpNavigationEditor
   guint             scale_timeout;
 };
 
-struct _GimpNavigationEditorClass
+struct _PicmanNavigationEditorClass
 {
-  GimpEditorClass  parent_class;
+  PicmanEditorClass  parent_class;
 };
 
 
-GType       gimp_navigation_editor_get_type  (void) G_GNUC_CONST;
+GType       picman_navigation_editor_get_type  (void) G_GNUC_CONST;
 
-GtkWidget * gimp_navigation_editor_new       (GimpMenuFactory  *menu_factory);
-void        gimp_navigation_editor_popup     (GimpDisplayShell *shell,
+GtkWidget * picman_navigation_editor_new       (PicmanMenuFactory  *menu_factory);
+void        picman_navigation_editor_popup     (PicmanDisplayShell *shell,
                                               GtkWidget        *widget,
                                               gint              click_x,
                                               gint              click_y);
 
 
-#endif  /*  __GIMP_NAVIGATION_EDITOR_H__  */
+#endif  /*  __PICMAN_NAVIGATION_EDITOR_H__  */

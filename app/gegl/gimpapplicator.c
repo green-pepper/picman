@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpapplicator.c
- * Copyright (C) 2012-2013 Michael Natterer <mitch@gimp.org>
+ * picmanapplicator.c
+ * Copyright (C) 2012-2013 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,50 +22,50 @@
 
 #include <gegl.h>
 
-#include "gimp-gegl-types.h"
+#include "picman-gegl-types.h"
 
-#include "gimp-gegl-nodes.h"
-#include "gimpapplicator.h"
+#include "picman-gegl-nodes.h"
+#include "picmanapplicator.h"
 
 
-static void   gimp_applicator_finalize     (GObject      *object);
-static void   gimp_applicator_set_property (GObject      *object,
+static void   picman_applicator_finalize     (GObject      *object);
+static void   picman_applicator_set_property (GObject      *object,
                                             guint         property_id,
                                             const GValue *value,
                                             GParamSpec   *pspec);
-static void   gimp_applicator_get_property (GObject      *object,
+static void   picman_applicator_get_property (GObject      *object,
                                             guint         property_id,
                                             GValue       *value,
                                             GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpApplicator, gimp_applicator, G_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanApplicator, picman_applicator, G_TYPE_OBJECT)
 
-#define parent_class gimp_applicator_parent_class
+#define parent_class picman_applicator_parent_class
 
 
 static void
-gimp_applicator_class_init (GimpApplicatorClass *klass)
+picman_applicator_class_init (PicmanApplicatorClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize     = gimp_applicator_finalize;
-  object_class->set_property = gimp_applicator_set_property;
-  object_class->get_property = gimp_applicator_get_property;
+  object_class->finalize     = picman_applicator_finalize;
+  object_class->set_property = picman_applicator_set_property;
+  object_class->get_property = picman_applicator_get_property;
 }
 
 static void
-gimp_applicator_init (GimpApplicator *applicator)
+picman_applicator_init (PicmanApplicator *applicator)
 {
   applicator->opacity    = 1.0;
-  applicator->paint_mode = GIMP_NORMAL_MODE;
-  applicator->affect     = GIMP_COMPONENT_ALL;
+  applicator->paint_mode = PICMAN_NORMAL_MODE;
+  applicator->affect     = PICMAN_COMPONENT_ALL;
 }
 
 static void
-gimp_applicator_finalize (GObject *object)
+picman_applicator_finalize (GObject *object)
 {
-  GimpApplicator *applicator = GIMP_APPLICATOR (object);
+  PicmanApplicator *applicator = PICMAN_APPLICATOR (object);
 
   if (applicator->node)
     {
@@ -77,7 +77,7 @@ gimp_applicator_finalize (GObject *object)
 }
 
 static void
-gimp_applicator_set_property (GObject      *object,
+picman_applicator_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
@@ -91,7 +91,7 @@ gimp_applicator_set_property (GObject      *object,
 }
 
 static void
-gimp_applicator_get_property (GObject    *object,
+picman_applicator_get_property (GObject    *object,
                               guint       property_id,
                               GValue     *value,
                               GParamSpec *pspec)
@@ -104,15 +104,15 @@ gimp_applicator_get_property (GObject    *object,
     }
 }
 
-GimpApplicator *
-gimp_applicator_new (GeglNode *parent,
+PicmanApplicator *
+picman_applicator_new (GeglNode *parent,
                      gboolean  linear)
 {
-  GimpApplicator *applicator;
+  PicmanApplicator *applicator;
 
   g_return_val_if_fail (parent == NULL || GEGL_IS_NODE (parent), NULL);
 
-  applicator = g_object_new (GIMP_TYPE_APPLICATOR, NULL);
+  applicator = g_object_new (PICMAN_TYPE_APPLICATOR, NULL);
 
   applicator->linear = linear;
 
@@ -131,13 +131,13 @@ gimp_applicator_new (GeglNode *parent,
     gegl_node_get_output_proxy (applicator->node, "output");
 
   applicator->mode_node = gegl_node_new_child (applicator->node,
-                                               "operation", "gimp:normal-mode",
+                                               "operation", "picman:normal-mode",
                                                NULL);
 
-  gimp_gegl_mode_node_set_mode (applicator->mode_node,
+  picman_gegl_mode_node_set_mode (applicator->mode_node,
                                 applicator->paint_mode,
                                 applicator->linear);
-  gimp_gegl_mode_node_set_opacity (applicator->mode_node,
+  picman_gegl_mode_node_set_opacity (applicator->mode_node,
                                    applicator->opacity);
 
   gegl_node_connect_to (applicator->input_node, "output",
@@ -169,7 +169,7 @@ gimp_applicator_new (GeglNode *parent,
 
   applicator->affect_node =
     gegl_node_new_child (applicator->node,
-                         "operation", "gimp:mask-components",
+                         "operation", "picman:mask-components",
                          "mask",      applicator->affect,
                          NULL);
 
@@ -184,7 +184,7 @@ gimp_applicator_new (GeglNode *parent,
 }
 
 void
-gimp_applicator_set_src_buffer (GimpApplicator *applicator,
+picman_applicator_set_src_buffer (PicmanApplicator *applicator,
                                 GeglBuffer     *src_buffer)
 {
   g_return_if_fail (src_buffer == NULL || GEGL_IS_BUFFER (src_buffer));
@@ -229,7 +229,7 @@ gimp_applicator_set_src_buffer (GimpApplicator *applicator,
 }
 
 void
-gimp_applicator_set_dest_buffer (GimpApplicator *applicator,
+picman_applicator_set_dest_buffer (PicmanApplicator *applicator,
                                  GeglBuffer     *dest_buffer)
 {
   g_return_if_fail (dest_buffer == NULL || GEGL_IS_BUFFER (dest_buffer));
@@ -275,7 +275,7 @@ gimp_applicator_set_dest_buffer (GimpApplicator *applicator,
 }
 
 void
-gimp_applicator_set_mask_buffer (GimpApplicator *applicator,
+picman_applicator_set_mask_buffer (PicmanApplicator *applicator,
                                  GeglBuffer     *mask_buffer)
 {
   if (applicator->mask_buffer == mask_buffer)
@@ -299,7 +299,7 @@ gimp_applicator_set_mask_buffer (GimpApplicator *applicator,
 }
 
 void
-gimp_applicator_set_mask_offset (GimpApplicator *applicator,
+picman_applicator_set_mask_offset (PicmanApplicator *applicator,
                                  gint            mask_offset_x,
                                  gint            mask_offset_y)
 {
@@ -317,7 +317,7 @@ gimp_applicator_set_mask_offset (GimpApplicator *applicator,
 }
 
 void
-gimp_applicator_set_apply_buffer (GimpApplicator *applicator,
+picman_applicator_set_apply_buffer (PicmanApplicator *applicator,
                                   GeglBuffer     *apply_buffer)
 {
   g_return_if_fail (apply_buffer == NULL || GEGL_IS_BUFFER (apply_buffer));
@@ -358,7 +358,7 @@ gimp_applicator_set_apply_buffer (GimpApplicator *applicator,
 }
 
 void
-gimp_applicator_set_apply_offset (GimpApplicator *applicator,
+picman_applicator_set_apply_offset (PicmanApplicator *applicator,
                                   gint            apply_offset_x,
                                   gint            apply_offset_y)
 {
@@ -376,15 +376,15 @@ gimp_applicator_set_apply_offset (GimpApplicator *applicator,
 }
 
 void
-gimp_applicator_set_mode (GimpApplicator       *applicator,
+picman_applicator_set_mode (PicmanApplicator       *applicator,
                           gdouble               opacity,
-                          GimpLayerModeEffects  paint_mode)
+                          PicmanLayerModeEffects  paint_mode)
 {
   if (applicator->opacity != opacity)
     {
       applicator->opacity = opacity;
 
-      gimp_gegl_mode_node_set_opacity (applicator->mode_node,
+      picman_gegl_mode_node_set_opacity (applicator->mode_node,
                                        opacity);
     }
 
@@ -392,14 +392,14 @@ gimp_applicator_set_mode (GimpApplicator       *applicator,
     {
       applicator->paint_mode = paint_mode;
 
-      gimp_gegl_mode_node_set_mode (applicator->mode_node,
+      picman_gegl_mode_node_set_mode (applicator->mode_node,
                                     paint_mode, applicator->linear);
     }
 }
 
 void
-gimp_applicator_set_affect (GimpApplicator    *applicator,
-                            GimpComponentMask  affect)
+picman_applicator_set_affect (PicmanApplicator    *applicator,
+                            PicmanComponentMask  affect)
 {
   if (applicator->affect != affect)
     {
@@ -412,7 +412,7 @@ gimp_applicator_set_affect (GimpApplicator    *applicator,
 }
 
 void
-gimp_applicator_blit (GimpApplicator      *applicator,
+picman_applicator_blit (PicmanApplicator      *applicator,
                       const GeglRectangle *rect)
 {
   gegl_node_blit (applicator->dest_node, 1.0, rect,
@@ -420,7 +420,7 @@ gimp_applicator_blit (GimpApplicator      *applicator,
 }
 
 GeglBuffer *
-gimp_applicator_dup_apply_buffer (GimpApplicator      *applicator,
+picman_applicator_dup_apply_buffer (PicmanApplicator      *applicator,
                                   const GeglRectangle *rect)
 {
   GeglBuffer *buffer;

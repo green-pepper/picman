@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,29 +22,29 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-new.h"
-#include "core/gimptemplate.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-new.h"
+#include "core/picmantemplate.h"
 
-#include "widgets/gimpcontainercombobox.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
-#include "widgets/gimptemplateeditor.h"
+#include "widgets/picmancontainercombobox.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
+#include "widgets/picmantemplateeditor.h"
 
 #include "image-new-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define RESPONSE_RESET 1
@@ -57,8 +57,8 @@ typedef struct
   GtkWidget    *combo;
   GtkWidget    *editor;
 
-  GimpContext  *context;
-  GimpTemplate *template;
+  PicmanContext  *context;
+  PicmanTemplate *template;
 } ImageNewDialog;
 
 
@@ -68,8 +68,8 @@ static void   image_new_dialog_free      (ImageNewDialog *dialog);
 static void   image_new_dialog_response  (GtkWidget      *widget,
                                           gint            response_id,
                                           ImageNewDialog *dialog);
-static void   image_new_template_changed (GimpContext    *context,
-                                          GimpTemplate   *template,
+static void   image_new_template_changed (PicmanContext    *context,
+                                          PicmanTemplate   *template,
                                           ImageNewDialog *dialog);
 static void   image_new_confirm_dialog   (ImageNewDialog *dialog);
 static void   image_new_create_image     (ImageNewDialog *dialog);
@@ -78,28 +78,28 @@ static void   image_new_create_image     (ImageNewDialog *dialog);
 /*  public functions  */
 
 GtkWidget *
-image_new_dialog_new (GimpContext *context)
+image_new_dialog_new (PicmanContext *context)
 {
   ImageNewDialog *dialog;
   GtkWidget      *main_vbox;
   GtkWidget      *hbox;
   GtkWidget      *label;
-  GimpSizeEntry  *entry;
+  PicmanSizeEntry  *entry;
 
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   dialog = g_slice_new0 (ImageNewDialog);
 
-  dialog->context  = gimp_context_new (context->gimp, "image-new-dialog",
+  dialog->context  = picman_context_new (context->picman, "image-new-dialog",
                                        context);
-  dialog->template = g_object_new (GIMP_TYPE_TEMPLATE, NULL);
+  dialog->template = g_object_new (PICMAN_TYPE_TEMPLATE, NULL);
 
-  dialog->dialog = gimp_dialog_new (_("Create a New Image"),
-                                    "gimp-image-new",
+  dialog->dialog = picman_dialog_new (_("Create a New Image"),
+                                    "picman-image-new",
                                     NULL, 0,
-                                    gimp_standard_help_func, GIMP_HELP_FILE_NEW,
+                                    picman_standard_help_func, PICMAN_HELP_FILE_NEW,
 
-                                    GIMP_STOCK_RESET, RESPONSE_RESET,
+                                    PICMAN_STOCK_RESET, RESPONSE_RESET,
                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                     GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -108,7 +108,7 @@ image_new_dialog_new (GimpContext *context)
   gtk_window_set_resizable (GTK_WINDOW (dialog->dialog), FALSE);
 
   g_object_set_data_full (G_OBJECT (dialog->dialog),
-                          "gimp-image-new-dialog", dialog,
+                          "picman-image-new-dialog", dialog,
                           (GDestroyNotify) image_new_dialog_free);
 
   g_signal_connect (dialog->dialog, "response",
@@ -136,8 +136,8 @@ image_new_dialog_new (GimpContext *context)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  dialog->combo = g_object_new (GIMP_TYPE_CONTAINER_COMBO_BOX,
-                                "container",         context->gimp->templates,
+  dialog->combo = g_object_new (PICMAN_TYPE_CONTAINER_COMBO_BOX,
+                                "container",         context->picman->templates,
                                 "context",           dialog->context,
                                 "view-size",         16,
                                 "view-border-width", 0,
@@ -154,17 +154,17 @@ image_new_dialog_new (GimpContext *context)
                     dialog);
 
   /*  Template editor  */
-  dialog->editor = gimp_template_editor_new (dialog->template, context->gimp,
+  dialog->editor = picman_template_editor_new (dialog->template, context->picman,
                                              FALSE);
   gtk_box_pack_start (GTK_BOX (main_vbox), dialog->editor, FALSE, FALSE, 0);
   gtk_widget_show (dialog->editor);
 
-  entry = GIMP_SIZE_ENTRY (gimp_template_editor_get_size_se (GIMP_TEMPLATE_EDITOR (dialog->editor)));
-  gimp_size_entry_set_activates_default (entry, TRUE);
-  gimp_size_entry_grab_focus (entry);
+  entry = PICMAN_SIZE_ENTRY (picman_template_editor_get_size_se (PICMAN_TEMPLATE_EDITOR (dialog->editor)));
+  picman_size_entry_set_activates_default (entry, TRUE);
+  picman_size_entry_grab_focus (entry);
 
   image_new_template_changed (dialog->context,
-                              gimp_context_get_template (dialog->context),
+                              picman_context_get_template (dialog->context),
                               dialog);
 
   return dialog->dialog;
@@ -172,30 +172,30 @@ image_new_dialog_new (GimpContext *context)
 
 void
 image_new_dialog_set (GtkWidget    *widget,
-                      GimpImage    *image,
-                      GimpTemplate *template)
+                      PicmanImage    *image,
+                      PicmanTemplate *template)
 {
   ImageNewDialog *dialog;
 
   g_return_if_fail (GTK_IS_WIDGET (widget));
-  g_return_if_fail (image == NULL || GIMP_IS_IMAGE (image));
-  g_return_if_fail (template == NULL || GIMP_IS_TEMPLATE (template));
+  g_return_if_fail (image == NULL || PICMAN_IS_IMAGE (image));
+  g_return_if_fail (template == NULL || PICMAN_IS_TEMPLATE (template));
 
-  dialog = g_object_get_data (G_OBJECT (widget), "gimp-image-new-dialog");
+  dialog = g_object_get_data (G_OBJECT (widget), "picman-image-new-dialog");
 
   g_return_if_fail (dialog != NULL);
 
-  gimp_context_set_template (dialog->context, template);
+  picman_context_set_template (dialog->context, template);
 
   if (! template)
     {
-      template = gimp_image_new_get_last_template (dialog->context->gimp,
+      template = picman_image_new_get_last_template (dialog->context->picman,
                                                    image);
 
       /*  make sure the resolution values are copied first (see bug #546924)  */
-      gimp_config_sync (G_OBJECT (template), G_OBJECT (dialog->template),
-                        GIMP_TEMPLATE_PARAM_COPY_FIRST);
-      gimp_config_sync (G_OBJECT (template), G_OBJECT (dialog->template),
+      picman_config_sync (G_OBJECT (template), G_OBJECT (dialog->template),
+                        PICMAN_TEMPLATE_PARAM_COPY_FIRST);
+      picman_config_sync (G_OBJECT (template), G_OBJECT (dialog->template),
                         0);
 
       g_object_unref (template);
@@ -222,14 +222,14 @@ image_new_dialog_response (GtkWidget      *widget,
   switch (response_id)
     {
     case RESPONSE_RESET:
-      gimp_config_sync (G_OBJECT (dialog->context->gimp->config->default_image),
+      picman_config_sync (G_OBJECT (dialog->context->picman->config->default_image),
                         G_OBJECT (dialog->template), 0);
-      gimp_context_set_template (dialog->context, NULL);
+      picman_context_set_template (dialog->context, NULL);
       break;
 
     case GTK_RESPONSE_OK:
-      if (gimp_template_get_initial_size (dialog->template) >
-          GIMP_GUI_CONFIG (dialog->context->gimp->config)->max_new_image_size)
+      if (picman_template_get_initial_size (dialog->template) >
+          PICMAN_GUI_CONFIG (dialog->context->picman->config)->max_new_image_size)
         image_new_confirm_dialog (dialog);
       else
         image_new_create_image (dialog);
@@ -242,8 +242,8 @@ image_new_dialog_response (GtkWidget      *widget,
 }
 
 static void
-image_new_template_changed (GimpContext    *context,
-                            GimpTemplate   *template,
+image_new_template_changed (PicmanContext    *context,
+                            PicmanTemplate   *template,
                             ImageNewDialog *dialog)
 {
   gchar *comment;
@@ -251,17 +251,17 @@ image_new_template_changed (GimpContext    *context,
   if (!template)
     return;
 
-  comment = (gchar *) gimp_template_get_comment (template);
+  comment = (gchar *) picman_template_get_comment (template);
 
   if (! comment || ! strlen (comment))
-    comment = g_strdup (gimp_template_get_comment (dialog->template));
+    comment = g_strdup (picman_template_get_comment (dialog->template));
   else
     comment = NULL;
 
   /*  make sure the resolution values are copied first (see bug #546924)  */
-  gimp_config_sync (G_OBJECT (template), G_OBJECT (dialog->template),
-                    GIMP_TEMPLATE_PARAM_COPY_FIRST);
-  gimp_config_sync (G_OBJECT (template), G_OBJECT (dialog->template), 0);
+  picman_config_sync (G_OBJECT (template), G_OBJECT (dialog->template),
+                    PICMAN_TEMPLATE_PARAM_COPY_FIRST);
+  picman_config_sync (G_OBJECT (template), G_OBJECT (dialog->template), 0);
 
   if (comment)
     {
@@ -294,7 +294,7 @@ image_new_confirm_response (GtkWidget      *dialog,
 static void
 image_new_confirm_dialog (ImageNewDialog *data)
 {
-  GimpGuiConfig *config;
+  PicmanGuiConfig *config;
   GtkWidget     *dialog;
   gchar         *size;
 
@@ -305,11 +305,11 @@ image_new_confirm_dialog (ImageNewDialog *data)
     }
 
   data->confirm_dialog =
-    dialog = gimp_message_dialog_new (_("Confirm Image Size"),
-                                      GIMP_STOCK_WARNING,
+    dialog = picman_message_dialog_new (_("Confirm Image Size"),
+                                      PICMAN_STOCK_WARNING,
                                       data->dialog,
                                       GTK_DIALOG_DESTROY_WITH_PARENT,
-                                      gimp_standard_help_func, NULL,
+                                      picman_standard_help_func, NULL,
 
                                       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                       GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -325,15 +325,15 @@ image_new_confirm_dialog (ImageNewDialog *data)
                     G_CALLBACK (image_new_confirm_response),
                     data);
 
-  size = g_format_size (gimp_template_get_initial_size (data->template));
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  size = g_format_size (picman_template_get_initial_size (data->template));
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                      _("You are trying to create an image "
                                        "with a size of %s."), size);
   g_free (size);
 
-  config = GIMP_GUI_CONFIG (data->context->gimp->config);
+  config = PICMAN_GUI_CONFIG (data->context->picman->config);
   size = g_format_size (config->max_new_image_size);
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                               _("An image of the chosen size will use more "
                                 "memory than what is configured as "
                                 "\"Maximum Image Size\" in the Preferences "
@@ -348,13 +348,13 @@ image_new_confirm_dialog (ImageNewDialog *data)
 static void
 image_new_create_image (ImageNewDialog *dialog)
 {
-  GimpTemplate *template = g_object_ref (dialog->template);
-  Gimp         *gimp     = dialog->context->gimp;
+  PicmanTemplate *template = g_object_ref (dialog->template);
+  Picman         *picman     = dialog->context->picman;
 
   gtk_widget_destroy (dialog->dialog);
 
-  gimp_image_new_from_template (gimp, template, gimp_get_user_context (gimp));
-  gimp_image_new_set_last_template (gimp, template);
+  picman_image_new_from_template (picman, template, picman_get_user_context (picman));
+  picman_image_new_set_last_template (picman, template);
 
   g_object_unref (template);
 }

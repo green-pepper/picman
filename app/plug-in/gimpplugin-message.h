@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpplugin-message.h
+ * picmanplugin-message.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_MESSAGE_H__
-#define __GIMP_PLUG_IN_MESSAGE_H__
+#ifndef __PICMAN_PLUG_IN_MESSAGE_H__
+#define __PICMAN_PLUG_IN_MESSAGE_H__
 
 
-void   gimp_plug_in_handle_message (GimpPlugIn      *plug_in,
-                                    GimpWireMessage *msg);
+void   picman_plug_in_handle_message (PicmanPlugIn      *plug_in,
+                                    PicmanWireMessage *msg);
 
 
-#endif /* __GIMP_PLUG_IN_MESSAGE_H__ */
+#endif /* __PICMAN_PLUG_IN_MESSAGE_H__ */

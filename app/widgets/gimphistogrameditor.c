@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,80 +20,80 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdrawable-histogram.h"
-#include "core/gimphistogram.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmandrawable.h"
+#include "core/picmandrawable-histogram.h"
+#include "core/picmanhistogram.h"
+#include "core/picmanimage.h"
 
-#include "gimpdocked.h"
-#include "gimphelp-ids.h"
-#include "gimphistogrambox.h"
-#include "gimphistogrameditor.h"
-#include "gimphistogramview.h"
-#include "gimpsessioninfo-aux.h"
-#include "gimpwidgets-utils.h"
+#include "picmandocked.h"
+#include "picmanhelp-ids.h"
+#include "picmanhistogrambox.h"
+#include "picmanhistogrameditor.h"
+#include "picmanhistogramview.h"
+#include "picmansessioninfo-aux.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void     gimp_histogram_editor_docked_iface_init (GimpDockedInterface *iface);
+static void     picman_histogram_editor_docked_iface_init (PicmanDockedInterface *iface);
 
-static void     gimp_histogram_editor_set_aux_info  (GimpDocked          *docked,
+static void     picman_histogram_editor_set_aux_info  (PicmanDocked          *docked,
                                                      GList               *aux_info);
-static GList  * gimp_histogram_editor_get_aux_info  (GimpDocked          *docked);
+static GList  * picman_histogram_editor_get_aux_info  (PicmanDocked          *docked);
 
-static void     gimp_histogram_editor_set_image     (GimpImageEditor     *editor,
-                                                     GimpImage           *image);
-static void     gimp_histogram_editor_layer_changed (GimpImage           *image,
-                                                     GimpHistogramEditor *editor);
-static void     gimp_histogram_editor_frozen_update (GimpHistogramEditor *editor,
+static void     picman_histogram_editor_set_image     (PicmanImageEditor     *editor,
+                                                     PicmanImage           *image);
+static void     picman_histogram_editor_layer_changed (PicmanImage           *image,
+                                                     PicmanHistogramEditor *editor);
+static void     picman_histogram_editor_frozen_update (PicmanHistogramEditor *editor,
                                                      const GParamSpec    *pspec);
-static void     gimp_histogram_editor_update        (GimpHistogramEditor *editor);
+static void     picman_histogram_editor_update        (PicmanHistogramEditor *editor);
 
-static gboolean gimp_histogram_editor_idle_update   (GimpHistogramEditor *editor);
-static gboolean gimp_histogram_menu_sensitivity     (gint                 value,
+static gboolean picman_histogram_editor_idle_update   (PicmanHistogramEditor *editor);
+static gboolean picman_histogram_menu_sensitivity     (gint                 value,
                                                      gpointer             data);
-static void     gimp_histogram_editor_menu_update   (GimpHistogramEditor *editor);
-static void     gimp_histogram_editor_name_update   (GimpHistogramEditor *editor);
-static void     gimp_histogram_editor_info_update   (GimpHistogramEditor *editor);
+static void     picman_histogram_editor_menu_update   (PicmanHistogramEditor *editor);
+static void     picman_histogram_editor_name_update   (PicmanHistogramEditor *editor);
+static void     picman_histogram_editor_info_update   (PicmanHistogramEditor *editor);
 
-static gboolean gimp_histogram_view_expose          (GimpHistogramEditor *editor);
+static gboolean picman_histogram_view_expose          (PicmanHistogramEditor *editor);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpHistogramEditor, gimp_histogram_editor,
-                         GIMP_TYPE_IMAGE_EDITOR,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_DOCKED,
-                                                gimp_histogram_editor_docked_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanHistogramEditor, picman_histogram_editor,
+                         PICMAN_TYPE_IMAGE_EDITOR,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_DOCKED,
+                                                picman_histogram_editor_docked_iface_init))
 
-#define parent_class gimp_histogram_editor_parent_class
+#define parent_class picman_histogram_editor_parent_class
 
-static GimpDockedInterface *parent_docked_iface = NULL;
+static PicmanDockedInterface *parent_docked_iface = NULL;
 
 
 static void
-gimp_histogram_editor_class_init (GimpHistogramEditorClass *klass)
+picman_histogram_editor_class_init (PicmanHistogramEditorClass *klass)
 {
-  GimpImageEditorClass *image_editor_class = GIMP_IMAGE_EDITOR_CLASS (klass);
+  PicmanImageEditorClass *image_editor_class = PICMAN_IMAGE_EDITOR_CLASS (klass);
 
-  image_editor_class->set_image = gimp_histogram_editor_set_image;
+  image_editor_class->set_image = picman_histogram_editor_set_image;
 }
 
 static void
-gimp_histogram_editor_init (GimpHistogramEditor *editor)
+picman_histogram_editor_init (PicmanHistogramEditor *editor)
 {
-  GimpHistogramView *view;
+  PicmanHistogramView *view;
   GtkWidget         *hbox;
   GtkWidget         *label;
   GtkWidget         *menu;
   GtkWidget         *table;
   gint               i;
 
-  const gchar *gimp_histogram_editor_labels[] =
+  const gchar *picman_histogram_editor_labels[] =
     {
       N_("Mean:"),
       N_("Std dev:"),
@@ -108,11 +108,11 @@ gimp_histogram_editor_init (GimpHistogramEditor *editor)
   editor->bg_histogram = NULL;
   editor->valid        = FALSE;
   editor->idle_id      = 0;
-  editor->box          = gimp_histogram_box_new ();
+  editor->box          = picman_histogram_box_new ();
 
-  gimp_editor_set_show_name (GIMP_EDITOR (editor), TRUE);
+  picman_editor_set_show_name (PICMAN_EDITOR (editor), TRUE);
 
-  view = GIMP_HISTOGRAM_BOX (editor->box)->view;
+  view = PICMAN_HISTOGRAM_BOX (editor->box)->view;
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   gtk_box_pack_start (GTK_BOX (editor), hbox, FALSE, FALSE, 0);
@@ -122,21 +122,21 @@ gimp_histogram_editor_init (GimpHistogramEditor *editor)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  editor->menu = menu = gimp_prop_enum_combo_box_new (G_OBJECT (view),
+  editor->menu = menu = picman_prop_enum_combo_box_new (G_OBJECT (view),
                                                       "histogram-channel",
                                                       0, 0);
-  gimp_enum_combo_box_set_stock_prefix (GIMP_ENUM_COMBO_BOX (menu),
-                                        "gimp-channel");
-  gimp_int_combo_box_set_sensitivity (GIMP_INT_COMBO_BOX (editor->menu),
-                                      gimp_histogram_menu_sensitivity,
+  picman_enum_combo_box_set_stock_prefix (PICMAN_ENUM_COMBO_BOX (menu),
+                                        "picman-channel");
+  picman_int_combo_box_set_sensitivity (PICMAN_INT_COMBO_BOX (editor->menu),
+                                      picman_histogram_menu_sensitivity,
                                       editor, NULL);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (editor->menu),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (editor->menu),
                                  view->channel);
   gtk_box_pack_start (GTK_BOX (hbox), menu, FALSE, FALSE, 0);
   gtk_widget_show (menu);
 
-  menu = gimp_prop_enum_stock_box_new (G_OBJECT (view),
-                                       "histogram-scale", "gimp-histogram",
+  menu = picman_prop_enum_stock_box_new (G_OBJECT (view),
+                                       "histogram-scale", "picman-histogram",
                                        0, 0);
   gtk_box_pack_end (GTK_BOX (hbox), menu, FALSE, FALSE, 0);
   gtk_widget_show (menu);
@@ -145,14 +145,14 @@ gimp_histogram_editor_init (GimpHistogramEditor *editor)
   gtk_widget_show (GTK_WIDGET (editor->box));
 
   g_signal_connect_swapped (view, "range-changed",
-                            G_CALLBACK (gimp_histogram_editor_info_update),
+                            G_CALLBACK (picman_histogram_editor_info_update),
                             editor);
   g_signal_connect_swapped (view, "notify::histogram-channel",
-                            G_CALLBACK (gimp_histogram_editor_info_update),
+                            G_CALLBACK (picman_histogram_editor_info_update),
                             editor);
 
   g_signal_connect_swapped (view, "expose-event",
-                            G_CALLBACK (gimp_histogram_view_expose),
+                            G_CALLBACK (picman_histogram_view_expose),
                             editor);
 
   table = gtk_table_new (3, 4, FALSE);
@@ -166,8 +166,8 @@ gimp_histogram_editor_init (GimpHistogramEditor *editor)
       gint x = (i / 3) * 2;
       gint y = (i % 3);
 
-      label = gtk_label_new (gettext (gimp_histogram_editor_labels[i]));
-      gimp_label_set_attributes (GTK_LABEL (label),
+      label = gtk_label_new (gettext (picman_histogram_editor_labels[i]));
+      picman_label_set_attributes (GTK_LABEL (label),
                                  PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                                  PANGO_ATTR_SCALE,  PANGO_SCALE_SMALL,
                                  -1);
@@ -182,7 +182,7 @@ gimp_histogram_editor_init (GimpHistogramEditor *editor)
                               "yalign",      0.5,
                               "width-chars", i > 2 ? 9 : 5,
                               NULL);
-      gimp_label_set_attributes (GTK_LABEL (editor->labels[i]),
+      picman_label_set_attributes (GTK_LABEL (editor->labels[i]),
                                  PANGO_ATTR_SCALE, PANGO_SCALE_SMALL,
                                  -1);
       gtk_table_attach (GTK_TABLE (table), label, x + 1, x + 2, y, y + 1,
@@ -192,54 +192,54 @@ gimp_histogram_editor_init (GimpHistogramEditor *editor)
 }
 
 static void
-gimp_histogram_editor_docked_iface_init (GimpDockedInterface *docked_iface)
+picman_histogram_editor_docked_iface_init (PicmanDockedInterface *docked_iface)
 {
   parent_docked_iface = g_type_interface_peek_parent (docked_iface);
 
   if (! parent_docked_iface)
-    parent_docked_iface = g_type_default_interface_peek (GIMP_TYPE_DOCKED);
+    parent_docked_iface = g_type_default_interface_peek (PICMAN_TYPE_DOCKED);
 
-  docked_iface->set_aux_info = gimp_histogram_editor_set_aux_info;
-  docked_iface->get_aux_info = gimp_histogram_editor_get_aux_info;
+  docked_iface->set_aux_info = picman_histogram_editor_set_aux_info;
+  docked_iface->get_aux_info = picman_histogram_editor_get_aux_info;
 }
 
 static void
-gimp_histogram_editor_set_aux_info (GimpDocked *docked,
+picman_histogram_editor_set_aux_info (PicmanDocked *docked,
                                     GList      *aux_info)
 {
-  GimpHistogramEditor *editor = GIMP_HISTOGRAM_EDITOR (docked);
-  GimpHistogramView   *view   = GIMP_HISTOGRAM_BOX (editor->box)->view;
+  PicmanHistogramEditor *editor = PICMAN_HISTOGRAM_EDITOR (docked);
+  PicmanHistogramView   *view   = PICMAN_HISTOGRAM_BOX (editor->box)->view;
 
   parent_docked_iface->set_aux_info (docked, aux_info);
 
-  gimp_session_info_aux_set_props (G_OBJECT (view), aux_info,
+  picman_session_info_aux_set_props (G_OBJECT (view), aux_info,
                                    "histogram-channel",
                                    "histogram-scale",
                                    NULL);
 }
 
 static GList *
-gimp_histogram_editor_get_aux_info (GimpDocked *docked)
+picman_histogram_editor_get_aux_info (PicmanDocked *docked)
 {
-  GimpHistogramEditor *editor = GIMP_HISTOGRAM_EDITOR (docked);
-  GimpHistogramView   *view   = GIMP_HISTOGRAM_BOX (editor->box)->view;
+  PicmanHistogramEditor *editor = PICMAN_HISTOGRAM_EDITOR (docked);
+  PicmanHistogramView   *view   = PICMAN_HISTOGRAM_BOX (editor->box)->view;
   GList               *aux_info;
 
   aux_info = parent_docked_iface->get_aux_info (docked);
 
   return g_list_concat (aux_info,
-                        gimp_session_info_aux_new_from_props (G_OBJECT (view),
+                        picman_session_info_aux_new_from_props (G_OBJECT (view),
                                                               "histogram-channel",
                                                               "histogram-scale",
                                                               NULL));
 }
 
 static void
-gimp_histogram_editor_set_image (GimpImageEditor *image_editor,
-                                 GimpImage       *image)
+picman_histogram_editor_set_image (PicmanImageEditor *image_editor,
+                                 PicmanImage       *image)
 {
-  GimpHistogramEditor *editor = GIMP_HISTOGRAM_EDITOR (image_editor);
-  GimpHistogramView   *view   = GIMP_HISTOGRAM_BOX (editor->box)->view;
+  PicmanHistogramEditor *editor = PICMAN_HISTOGRAM_EDITOR (image_editor);
+  PicmanHistogramView   *view   = PICMAN_HISTOGRAM_BOX (editor->box)->view;
 
   if (image_editor->image)
     {
@@ -250,112 +250,112 @@ gimp_histogram_editor_set_image (GimpImageEditor *image_editor,
         }
 
       g_signal_handlers_disconnect_by_func (image_editor->image,
-                                            gimp_histogram_editor_update,
+                                            picman_histogram_editor_update,
                                             editor);
       g_signal_handlers_disconnect_by_func (image_editor->image,
-                                            gimp_histogram_editor_layer_changed,
+                                            picman_histogram_editor_layer_changed,
                                             editor);
       g_signal_handlers_disconnect_by_func (image_editor->image,
-                                            gimp_histogram_editor_menu_update,
+                                            picman_histogram_editor_menu_update,
                                             editor);
 
       if (editor->histogram)
         {
-          gimp_histogram_unref (editor->histogram);
+          picman_histogram_unref (editor->histogram);
           editor->histogram = NULL;
 
-          gimp_histogram_view_set_histogram (view, NULL);
+          picman_histogram_view_set_histogram (view, NULL);
         }
 
       if (editor->bg_histogram)
         {
-          gimp_histogram_unref (editor->bg_histogram);
+          picman_histogram_unref (editor->bg_histogram);
           editor->bg_histogram = NULL;
 
-          gimp_histogram_view_set_background (view, NULL);
+          picman_histogram_view_set_background (view, NULL);
         }
     }
 
-  GIMP_IMAGE_EDITOR_CLASS (parent_class)->set_image (image_editor, image);
+  PICMAN_IMAGE_EDITOR_CLASS (parent_class)->set_image (image_editor, image);
 
   if (image)
     {
-      editor->histogram = gimp_histogram_new ();
+      editor->histogram = picman_histogram_new ();
 
-      gimp_histogram_view_set_histogram (view, editor->histogram);
+      picman_histogram_view_set_histogram (view, editor->histogram);
 
       g_signal_connect_object (image, "mode-changed",
-                               G_CALLBACK (gimp_histogram_editor_menu_update),
+                               G_CALLBACK (picman_histogram_editor_menu_update),
                                editor, G_CONNECT_SWAPPED);
       g_signal_connect_object (image, "active-layer-changed",
-                               G_CALLBACK (gimp_histogram_editor_layer_changed),
+                               G_CALLBACK (picman_histogram_editor_layer_changed),
                                editor, 0);
       g_signal_connect_object (image, "mask-changed",
-                               G_CALLBACK (gimp_histogram_editor_update),
+                               G_CALLBACK (picman_histogram_editor_update),
                                editor, G_CONNECT_SWAPPED);
     }
 
-  gimp_histogram_editor_layer_changed (image, editor);
+  picman_histogram_editor_layer_changed (image, editor);
 }
 
 GtkWidget *
-gimp_histogram_editor_new (void)
+picman_histogram_editor_new (void)
 {
-  return g_object_new (GIMP_TYPE_HISTOGRAM_EDITOR, NULL);
+  return g_object_new (PICMAN_TYPE_HISTOGRAM_EDITOR, NULL);
 }
 
 static void
-gimp_histogram_editor_layer_changed (GimpImage           *image,
-                                     GimpHistogramEditor *editor)
+picman_histogram_editor_layer_changed (PicmanImage           *image,
+                                     PicmanHistogramEditor *editor)
 {
   if (editor->drawable)
     {
       if (editor->bg_histogram)
         {
-          GimpHistogramView *view = GIMP_HISTOGRAM_BOX (editor->box)->view;
+          PicmanHistogramView *view = PICMAN_HISTOGRAM_BOX (editor->box)->view;
 
-          gimp_histogram_unref (editor->bg_histogram);
+          picman_histogram_unref (editor->bg_histogram);
           editor->bg_histogram = NULL;
 
-          gimp_histogram_view_set_background (view, NULL);
+          picman_histogram_view_set_background (view, NULL);
         }
 
       g_signal_handlers_disconnect_by_func (editor->drawable,
-                                            gimp_histogram_editor_name_update,
+                                            picman_histogram_editor_name_update,
                                             editor);
       g_signal_handlers_disconnect_by_func (editor->drawable,
-                                            gimp_histogram_editor_menu_update,
+                                            picman_histogram_editor_menu_update,
                                             editor);
       g_signal_handlers_disconnect_by_func (editor->drawable,
-                                            gimp_histogram_editor_update,
+                                            picman_histogram_editor_update,
                                             editor);
       g_signal_handlers_disconnect_by_func (editor->drawable,
-                                            gimp_histogram_editor_frozen_update,
+                                            picman_histogram_editor_frozen_update,
                                             editor);
       editor->drawable = NULL;
     }
 
   if (image)
-    editor->drawable = (GimpDrawable *) gimp_image_get_active_layer (image);
+    editor->drawable = (PicmanDrawable *) picman_image_get_active_layer (image);
 
-  gimp_histogram_editor_menu_update (editor);
+  picman_histogram_editor_menu_update (editor);
 
   if (editor->drawable)
     {
       g_signal_connect_object (editor->drawable, "notify::frozen",
-                               G_CALLBACK (gimp_histogram_editor_frozen_update),
+                               G_CALLBACK (picman_histogram_editor_frozen_update),
                                editor, G_CONNECT_SWAPPED);
       g_signal_connect_object (editor->drawable, "update",
-                               G_CALLBACK (gimp_histogram_editor_update),
+                               G_CALLBACK (picman_histogram_editor_update),
                                editor, G_CONNECT_SWAPPED);
       g_signal_connect_object (editor->drawable, "alpha-changed",
-                               G_CALLBACK (gimp_histogram_editor_menu_update),
+                               G_CALLBACK (picman_histogram_editor_menu_update),
                                editor, G_CONNECT_SWAPPED);
       g_signal_connect_object (editor->drawable, "name-changed",
-                               G_CALLBACK (gimp_histogram_editor_name_update),
+                               G_CALLBACK (picman_histogram_editor_name_update),
                                editor, G_CONNECT_SWAPPED);
 
-      gimp_histogram_editor_update (editor);
+      picman_histogram_editor_update (editor);
     }
   else if (editor->histogram)
     {
@@ -363,21 +363,21 @@ gimp_histogram_editor_layer_changed (GimpImage           *image,
       gtk_widget_queue_draw (GTK_WIDGET (editor->box));
     }
 
-  gimp_histogram_editor_info_update (editor);
-  gimp_histogram_editor_name_update (editor);
+  picman_histogram_editor_info_update (editor);
+  picman_histogram_editor_name_update (editor);
 }
 
 static gboolean
-gimp_histogram_editor_validate (GimpHistogramEditor *editor)
+picman_histogram_editor_validate (PicmanHistogramEditor *editor)
 {
   if (! editor->valid && editor->histogram)
     {
       if (editor->drawable)
-        gimp_drawable_calculate_histogram (editor->drawable, editor->histogram);
+        picman_drawable_calculate_histogram (editor->drawable, editor->histogram);
       else
-        gimp_histogram_clear_values (editor->histogram);
+        picman_histogram_clear_values (editor->histogram);
 
-      gimp_histogram_editor_info_update (editor);
+      picman_histogram_editor_info_update (editor);
 
       editor->valid = TRUE;
     }
@@ -386,12 +386,12 @@ gimp_histogram_editor_validate (GimpHistogramEditor *editor)
 }
 
 static void
-gimp_histogram_editor_frozen_update (GimpHistogramEditor *editor,
+picman_histogram_editor_frozen_update (PicmanHistogramEditor *editor,
                                      const GParamSpec    *pspec)
 {
-  GimpHistogramView *view = GIMP_HISTOGRAM_BOX (editor->box)->view;
+  PicmanHistogramView *view = PICMAN_HISTOGRAM_BOX (editor->box)->view;
 
-  if (gimp_viewable_preview_is_frozen (GIMP_VIEWABLE (editor->drawable)))
+  if (picman_viewable_preview_is_frozen (PICMAN_VIEWABLE (editor->drawable)))
     {
       /* Only do the background histogram if the histogram is visible.
        * This is a workaround for the fact that recalculating the
@@ -402,23 +402,23 @@ gimp_histogram_editor_frozen_update (GimpHistogramEditor *editor,
       if (! editor->bg_histogram &&
           gtk_widget_is_drawable (GTK_WIDGET (editor)))
         {
-          if (gimp_histogram_editor_validate (editor))
-            editor->bg_histogram = gimp_histogram_duplicate (editor->histogram);
+          if (picman_histogram_editor_validate (editor))
+            editor->bg_histogram = picman_histogram_duplicate (editor->histogram);
 
-          gimp_histogram_view_set_background (view, editor->bg_histogram);
+          picman_histogram_view_set_background (view, editor->bg_histogram);
         }
     }
   else if (editor->bg_histogram)
     {
-      gimp_histogram_unref (editor->bg_histogram);
+      picman_histogram_unref (editor->bg_histogram);
       editor->bg_histogram = NULL;
 
-      gimp_histogram_view_set_background (view, NULL);
+      picman_histogram_view_set_background (view, NULL);
     }
 }
 
 static void
-gimp_histogram_editor_update (GimpHistogramEditor *editor)
+picman_histogram_editor_update (PicmanHistogramEditor *editor)
 {
   if (editor->idle_id)
     g_source_remove (editor->idle_id);
@@ -426,13 +426,13 @@ gimp_histogram_editor_update (GimpHistogramEditor *editor)
   editor->idle_id =
     g_timeout_add_full (G_PRIORITY_LOW,
                         200,
-                        (GSourceFunc) gimp_histogram_editor_idle_update,
+                        (GSourceFunc) picman_histogram_editor_idle_update,
                         editor,
                         NULL);
 }
 
 static gboolean
-gimp_histogram_editor_idle_update (GimpHistogramEditor *editor)
+picman_histogram_editor_idle_update (PicmanHistogramEditor *editor)
 {
   editor->idle_id = 0;
 
@@ -447,24 +447,24 @@ gimp_histogram_editor_idle_update (GimpHistogramEditor *editor)
 }
 
 static gboolean
-gimp_histogram_editor_channel_valid (GimpHistogramEditor  *editor,
-                                     GimpHistogramChannel  channel)
+picman_histogram_editor_channel_valid (PicmanHistogramEditor  *editor,
+                                     PicmanHistogramChannel  channel)
 {
   if (editor->drawable)
     {
       switch (channel)
         {
-        case GIMP_HISTOGRAM_VALUE:
+        case PICMAN_HISTOGRAM_VALUE:
           return TRUE;
 
-        case GIMP_HISTOGRAM_RED:
-        case GIMP_HISTOGRAM_GREEN:
-        case GIMP_HISTOGRAM_BLUE:
-        case GIMP_HISTOGRAM_RGB:
-          return gimp_drawable_is_rgb (editor->drawable);
+        case PICMAN_HISTOGRAM_RED:
+        case PICMAN_HISTOGRAM_GREEN:
+        case PICMAN_HISTOGRAM_BLUE:
+        case PICMAN_HISTOGRAM_RGB:
+          return picman_drawable_is_rgb (editor->drawable);
 
-        case GIMP_HISTOGRAM_ALPHA:
-          return gimp_drawable_has_alpha (editor->drawable);
+        case PICMAN_HISTOGRAM_ALPHA:
+          return picman_drawable_has_alpha (editor->drawable);
         }
     }
 
@@ -472,47 +472,47 @@ gimp_histogram_editor_channel_valid (GimpHistogramEditor  *editor,
 }
 
 static gboolean
-gimp_histogram_menu_sensitivity (gint      value,
+picman_histogram_menu_sensitivity (gint      value,
                                  gpointer  data)
 {
-  GimpHistogramEditor  *editor  = GIMP_HISTOGRAM_EDITOR (data);
-  GimpHistogramChannel  channel = value;
+  PicmanHistogramEditor  *editor  = PICMAN_HISTOGRAM_EDITOR (data);
+  PicmanHistogramChannel  channel = value;
 
   if (editor->drawable)
-    return gimp_histogram_editor_channel_valid (editor, channel);
+    return picman_histogram_editor_channel_valid (editor, channel);
 
   return FALSE;
 }
 
 static void
-gimp_histogram_editor_menu_update (GimpHistogramEditor *editor)
+picman_histogram_editor_menu_update (PicmanHistogramEditor *editor)
 {
-  GimpHistogramView *view = GIMP_HISTOGRAM_BOX (editor->box)->view;
+  PicmanHistogramView *view = PICMAN_HISTOGRAM_BOX (editor->box)->view;
 
   gtk_widget_queue_draw (editor->menu);
 
-  if (! gimp_histogram_editor_channel_valid (editor, view->channel))
+  if (! picman_histogram_editor_channel_valid (editor, view->channel))
     {
-      gimp_histogram_view_set_channel (view, GIMP_HISTOGRAM_VALUE);
+      picman_histogram_view_set_channel (view, PICMAN_HISTOGRAM_VALUE);
     }
 }
 
 static void
-gimp_histogram_editor_name_update (GimpHistogramEditor *editor)
+picman_histogram_editor_name_update (PicmanHistogramEditor *editor)
 {
   const gchar *name = NULL;
 
   if (editor->drawable)
-    name = gimp_object_get_name (editor->drawable);
+    name = picman_object_get_name (editor->drawable);
 
-  gimp_editor_set_name (GIMP_EDITOR (editor), name);
+  picman_editor_set_name (PICMAN_EDITOR (editor), name);
 }
 
 static void
-gimp_histogram_editor_info_update (GimpHistogramEditor *editor)
+picman_histogram_editor_info_update (PicmanHistogramEditor *editor)
 {
-  GimpHistogramView *view = GIMP_HISTOGRAM_BOX (editor->box)->view;
-  GimpHistogram     *hist = editor->histogram;
+  PicmanHistogramView *view = PICMAN_HISTOGRAM_BOX (editor->box)->view;
+  PicmanHistogram     *hist = editor->histogram;
 
   if (hist)
     {
@@ -520,22 +520,22 @@ gimp_histogram_editor_info_update (GimpHistogramEditor *editor)
       gdouble count;
       gchar   text[12];
 
-      pixels = gimp_histogram_get_count (hist, view->channel, 0, 255);
-      count  = gimp_histogram_get_count (hist, view->channel,
+      pixels = picman_histogram_get_count (hist, view->channel, 0, 255);
+      count  = picman_histogram_get_count (hist, view->channel,
                                          view->start, view->end);
 
       g_snprintf (text, sizeof (text), "%.1f",
-                  gimp_histogram_get_mean (hist, view->channel,
+                  picman_histogram_get_mean (hist, view->channel,
                                            view->start, view->end));
       gtk_label_set_text (GTK_LABEL (editor->labels[0]), text);
 
       g_snprintf (text, sizeof (text), "%.1f",
-                  gimp_histogram_get_std_dev (hist, view->channel,
+                  picman_histogram_get_std_dev (hist, view->channel,
                                               view->start, view->end));
       gtk_label_set_text (GTK_LABEL (editor->labels[1]), text);
 
       g_snprintf (text, sizeof (text), "%.1f",
-                  (gdouble) gimp_histogram_get_median  (hist, view->channel,
+                  (gdouble) picman_histogram_get_median  (hist, view->channel,
                                                         view->start,
                                                         view->end));
       gtk_label_set_text (GTK_LABEL (editor->labels[2]), text);
@@ -561,9 +561,9 @@ gimp_histogram_editor_info_update (GimpHistogramEditor *editor)
 }
 
 static gboolean
-gimp_histogram_view_expose (GimpHistogramEditor *editor)
+picman_histogram_view_expose (PicmanHistogramEditor *editor)
 {
-  gimp_histogram_editor_validate (editor);
+  picman_histogram_editor_validate (editor);
 
   return FALSE;
 }

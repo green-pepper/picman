@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,29 +20,29 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "config/gimpconfig-utils.h"
+#include "config/picmanconfig-utils.h"
 
-#include "paint/gimpinkoptions.h"
+#include "paint/picmaninkoptions.h"
 
-#include "widgets/gimpblobeditor.h"
-#include "widgets/gimppropwidgets.h"
+#include "widgets/picmanblobeditor.h"
+#include "widgets/picmanpropwidgets.h"
 
-#include "gimpinkoptions-gui.h"
-#include "gimppaintoptions-gui.h"
+#include "picmaninkoptions-gui.h"
+#include "picmanpaintoptions-gui.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 GtkWidget *
-gimp_ink_options_gui (GimpToolOptions *tool_options)
+picman_ink_options_gui (PicmanToolOptions *tool_options)
 {
   GObject        *config      = G_OBJECT (tool_options);
-  GimpInkOptions *ink_options = GIMP_INK_OPTIONS (tool_options);
-  GtkWidget      *vbox        = gimp_paint_options_gui (tool_options);
+  PicmanInkOptions *ink_options = PICMAN_INK_OPTIONS (tool_options);
+  GtkWidget      *vbox        = picman_paint_options_gui (tool_options);
   GtkWidget      *frame;
   GtkWidget      *vbox2;
   GtkWidget      *scale;
@@ -52,7 +52,7 @@ gimp_ink_options_gui (GimpToolOptions *tool_options)
   GtkSizeGroup   *size_group;
 
   /* adjust sliders */
-  frame = gimp_frame_new (_("Adjustment"));
+  frame = picman_frame_new (_("Adjustment"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -61,21 +61,21 @@ gimp_ink_options_gui (GimpToolOptions *tool_options)
   gtk_widget_show (vbox2);
 
   /*  size slider  */
-  scale = gimp_prop_spin_scale_new (config, "size",
+  scale = picman_prop_spin_scale_new (config, "size",
                                     _("Size"),
                                     1.0, 2.0, 1);
   gtk_box_pack_start (GTK_BOX (vbox2), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   /* angle adjust slider */
-  scale = gimp_prop_spin_scale_new (config, "tilt-angle",
+  scale = picman_prop_spin_scale_new (config, "tilt-angle",
                                     _("Angle"),
                                     1.0, 10.0, 1);
   gtk_box_pack_start (GTK_BOX (vbox2), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   /* sens sliders */
-  frame = gimp_frame_new (_("Sensitivity"));
+  frame = picman_frame_new (_("Sensitivity"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -84,28 +84,28 @@ gimp_ink_options_gui (GimpToolOptions *tool_options)
   gtk_widget_show (vbox2);
 
   /* size sens slider */
-  scale = gimp_prop_spin_scale_new (config, "size-sensitivity",
+  scale = picman_prop_spin_scale_new (config, "size-sensitivity",
                                     _("Size"),
                                     0.01, 0.1, 2);
   gtk_box_pack_start (GTK_BOX (vbox2), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   /* tilt sens slider */
-  scale = gimp_prop_spin_scale_new (config, "tilt-sensitivity",
+  scale = picman_prop_spin_scale_new (config, "tilt-sensitivity",
                                     _("Tilt"),
                                     0.01, 0.1, 2);
   gtk_box_pack_start (GTK_BOX (vbox2), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   /* velocity sens slider */
-  scale = gimp_prop_spin_scale_new (config, "vel-sensitivity",
+  scale = picman_prop_spin_scale_new (config, "vel-sensitivity",
                                     _("Speed"),
                                     0.01, 0.1, 2);
   gtk_box_pack_start (GTK_BOX (vbox2), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   /* Blob shape widgets */
-  frame = gimp_frame_new (_("Shape"));
+  frame = picman_frame_new (_("Shape"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -116,8 +116,8 @@ gimp_ink_options_gui (GimpToolOptions *tool_options)
   size_group = gtk_size_group_new (GTK_SIZE_GROUP_VERTICAL);
 
   /* Blob type radiobuttons */
-  blob_box = gimp_prop_enum_stock_box_new (config, "blob-type",
-                                           "gimp-shape", 0, 0);
+  blob_box = picman_prop_enum_stock_box_new (config, "blob-type",
+                                           "picman-shape", 0, 0);
   gtk_orientable_set_orientation (GTK_ORIENTABLE (blob_box),
                                   GTK_ORIENTATION_VERTICAL);
   gtk_box_pack_start (GTK_BOX (hbox), blob_box, FALSE, FALSE, 0);
@@ -134,15 +134,15 @@ gimp_ink_options_gui (GimpToolOptions *tool_options)
 
   gtk_size_group_add_widget (size_group, frame);
 
-  editor = gimp_blob_editor_new (ink_options->blob_type,
+  editor = picman_blob_editor_new (ink_options->blob_type,
                                  ink_options->blob_aspect,
                                  ink_options->blob_angle);
   gtk_container_add (GTK_CONTAINER (frame), editor);
   gtk_widget_show (editor);
 
-  gimp_config_connect (config, G_OBJECT (editor), "blob-type");
-  gimp_config_connect (config, G_OBJECT (editor), "blob-aspect");
-  gimp_config_connect (config, G_OBJECT (editor), "blob-angle");
+  picman_config_connect (config, G_OBJECT (editor), "blob-type");
+  picman_config_connect (config, G_OBJECT (editor), "blob-aspect");
+  picman_config_connect (config, G_OBJECT (editor), "blob-angle");
 
   return vbox;
 }

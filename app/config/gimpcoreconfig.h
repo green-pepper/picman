@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpCoreConfig class
- * Copyright (C) 2001  Sven Neumann <sven@gimp.org>
+ * PicmanCoreConfig class
+ * Copyright (C) 2001  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,29 +18,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CORE_CONFIG_H__
-#define __GIMP_CORE_CONFIG_H__
+#ifndef __PICMAN_CORE_CONFIG_H__
+#define __PICMAN_CORE_CONFIG_H__
 
 #include "core/core-enums.h"
 
-#include "config/gimpgeglconfig.h"
+#include "config/picmangeglconfig.h"
 
 
-#define GIMP_TYPE_CORE_CONFIG            (gimp_core_config_get_type ())
-#define GIMP_CORE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CORE_CONFIG, GimpCoreConfig))
-#define GIMP_CORE_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CORE_CONFIG, GimpCoreConfigClass))
-#define GIMP_IS_CORE_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CORE_CONFIG))
-#define GIMP_IS_CORE_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CORE_CONFIG))
+#define PICMAN_TYPE_CORE_CONFIG            (picman_core_config_get_type ())
+#define PICMAN_CORE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CORE_CONFIG, PicmanCoreConfig))
+#define PICMAN_CORE_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CORE_CONFIG, PicmanCoreConfigClass))
+#define PICMAN_IS_CORE_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CORE_CONFIG))
+#define PICMAN_IS_CORE_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CORE_CONFIG))
 
 
-typedef struct _GimpCoreConfigClass GimpCoreConfigClass;
+typedef struct _PicmanCoreConfigClass PicmanCoreConfigClass;
 
-struct _GimpCoreConfig
+struct _PicmanCoreConfig
 {
-  GimpGeglConfig          parent_instance;
+  PicmanGeglConfig          parent_instance;
 
   gchar                  *language;
-  GimpInterpolationType   interpolation_type;
+  PicmanInterpolationType   interpolation_type;
   gint                    default_threshold;
   gchar                  *plug_in_path;
   gchar                  *module_path;
@@ -73,30 +73,30 @@ struct _GimpCoreConfig
   gboolean                global_palette;
   gboolean                global_gradient;
   gboolean                global_font;
-  GimpTemplate           *default_image;
-  GimpGrid               *default_grid;
+  PicmanTemplate           *default_image;
+  PicmanGrid               *default_grid;
   gint                    levels_of_undo;
   guint64                 undo_size;
-  GimpViewSize            undo_preview_size;
+  PicmanViewSize            undo_preview_size;
   gint                    plug_in_history_size;
   gchar                  *plug_in_rc_path;
   gboolean                layer_previews;
-  GimpViewSize            layer_preview_size;
-  GimpThumbnailSize       thumbnail_size;
+  PicmanViewSize            layer_preview_size;
+  PicmanThumbnailSize       thumbnail_size;
   guint64                 thumbnail_filesize_limit;
-  GimpColorConfig        *color_management;
-  GimpColorProfilePolicy  color_profile_policy;
+  PicmanColorConfig        *color_management;
+  PicmanColorProfilePolicy  color_profile_policy;
   gboolean                save_document_history;
-  GimpRGB                 quick_mask_color;
+  PicmanRGB                 quick_mask_color;
 };
 
-struct _GimpCoreConfigClass
+struct _PicmanCoreConfigClass
 {
-  GimpGeglConfigClass  parent_class;
+  PicmanGeglConfigClass  parent_class;
 };
 
 
-GType  gimp_core_config_get_type (void) G_GNUC_CONST;
+GType  picman_core_config_get_type (void) G_GNUC_CONST;
 
 
-#endif /* GIMP_CORE_CONFIG_H__ */
+#endif /* PICMAN_CORE_CONFIG_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -37,52 +37,52 @@
 
 #include "gui/gui-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
 #include "file/file-open.h"
 
-#include "gimpdbusservice.h"
+#include "picmandbusservice.h"
 #include "gui-unique.h"
 
 
 #if HAVE_DBUS_GLIB
-static void  gui_dbus_service_init (Gimp *gimp);
+static void  gui_dbus_service_init (Picman *picman);
 static void  gui_dbus_service_exit (void);
 
 static DBusGConnection *dbus_connection  = NULL;
 #endif
 
 #ifdef G_OS_WIN32
-static void  gui_unique_win32_init (Gimp *gimp);
+static void  gui_unique_win32_init (Picman *picman);
 static void  gui_unique_win32_exit (void);
 
-static Gimp            *unique_gimp      = NULL;
+static Picman            *unique_picman      = NULL;
 static HWND             proxy_window     = NULL;
 #endif
 
 #ifdef GDK_WINDOWING_QUARTZ
-static void  gui_unique_mac_init (Gimp *gimp);
+static void  gui_unique_mac_init (Picman *picman);
 static void  gui_unique_mac_exit (void);
 
-static Gimp            *unique_gimp      = NULL;
+static Picman            *unique_picman      = NULL;
 AEEventHandlerUPP       open_document_callback_proc;
 #endif
 
 
 void
-gui_unique_init (Gimp *gimp)
+gui_unique_init (Picman *picman)
 {
 #ifdef G_OS_WIN32
-  gui_unique_win32_init (gimp);
+  gui_unique_win32_init (picman);
 #elif HAVE_DBUS_GLIB
-  gui_dbus_service_init (gimp);
+  gui_dbus_service_init (picman);
 #endif
 
 #ifdef GDK_WINDOWING_QUARTZ
-  gui_unique_mac_init (gimp);
+  gui_unique_mac_init (picman);
 #endif
 }
 
@@ -104,24 +104,24 @@ gui_unique_exit (void)
 #if HAVE_DBUS_GLIB
 
 static void
-gui_dbus_service_init (Gimp *gimp)
+gui_dbus_service_init (Picman *picman)
 {
   GError  *error = NULL;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
   g_return_if_fail (dbus_connection == NULL);
 
   dbus_connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 
   if (dbus_connection)
     {
-      GObject *service = gimp_dbus_service_new (gimp);
+      GObject *service = picman_dbus_service_new (picman);
 
       dbus_bus_request_name (dbus_g_connection_get_connection (dbus_connection),
-                             GIMP_DBUS_SERVICE_NAME, 0, NULL);
+                             PICMAN_DBUS_SERVICE_NAME, 0, NULL);
 
       dbus_g_connection_register_g_object (dbus_connection,
-                                           GIMP_DBUS_SERVICE_PATH, service);
+                                           PICMAN_DBUS_SERVICE_PATH, service);
     }
   else
     {
@@ -178,24 +178,24 @@ idle_open_data_free (IdleOpenData *data)
 static gboolean
 gui_unique_win32_idle_open (IdleOpenData *data)
 {
-  /*  We want to be called again later in case that GIMP is not fully
+  /*  We want to be called again later in case that PICMAN is not fully
    *  started yet.
    */
-  if (! gimp_is_restored (unique_gimp))
+  if (! picman_is_restored (unique_picman))
     return TRUE;
 
   if (data->name)
     {
-      file_open_from_command_line (unique_gimp, data->name, data->as_new);
+      file_open_from_command_line (unique_picman, data->name, data->as_new);
     }
   else
     {
       /*  raise the first display  */
-      GimpObject *display;
+      PicmanObject *display;
 
-      display = gimp_container_get_first_child (unique_gimp->displays);
+      display = picman_container_get_first_child (unique_picman->displays);
 
-      gimp_display_shell_present (gimp_display_get_shell (GIMP_DISPLAY (display)));
+      picman_display_shell_present (picman_display_get_shell (PICMAN_DISPLAY (display)));
     }
 
   return FALSE;
@@ -210,7 +210,7 @@ gui_unique_win32_message_handler (HWND   hWnd,
   switch (uMsg)
     {
     case WM_COPYDATA:
-      if (unique_gimp)
+      if (unique_picman)
         {
           COPYDATASTRUCT *copydata = (COPYDATASTRUCT *) lParam;
           GSource        *source;
@@ -225,7 +225,7 @@ gui_unique_win32_message_handler (HWND   hWnd,
                                     data,
                                     (GClosureNotify) idle_open_data_free);
 
-          g_object_watch_closure (unique_gimp, closure);
+          g_object_watch_closure (unique_picman, closure);
 
           source = g_idle_source_new ();
           g_source_set_priority (source, G_PRIORITY_LOW);
@@ -241,36 +241,36 @@ gui_unique_win32_message_handler (HWND   hWnd,
 }
 
 static void
-gui_unique_win32_init (Gimp *gimp)
+gui_unique_win32_init (Picman *picman)
 {
   WNDCLASSW wc;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (unique_gimp == NULL);
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (unique_picman == NULL);
 
-  unique_gimp = gimp;
+  unique_picman = picman;
 
   /* register window class for proxy window */
   memset (&wc, 0, sizeof (wc));
 
   wc.hInstance     = GetModuleHandle (NULL);
   wc.lpfnWndProc   = gui_unique_win32_message_handler;
-  wc.lpszClassName = GIMP_UNIQUE_WIN32_WINDOW_CLASS;
+  wc.lpszClassName = PICMAN_UNIQUE_WIN32_WINDOW_CLASS;
 
   RegisterClassW (&wc);
 
   proxy_window = CreateWindowExW (0,
-                                  GIMP_UNIQUE_WIN32_WINDOW_CLASS,
-                                  GIMP_UNIQUE_WIN32_WINDOW_NAME,
+                                  PICMAN_UNIQUE_WIN32_WINDOW_CLASS,
+                                  PICMAN_UNIQUE_WIN32_WINDOW_NAME,
                                   WS_POPUP, 0, 0, 1, 1, NULL, NULL, wc.hInstance, NULL);
 }
 
 static void
 gui_unique_win32_exit (void)
 {
-  g_return_if_fail (GIMP_IS_GIMP (unique_gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (unique_picman));
 
-  unique_gimp = NULL;
+  unique_picman = NULL;
 
   DestroyWindow (proxy_window);
 }
@@ -283,15 +283,15 @@ gui_unique_win32_exit (void)
 static gboolean
 gui_unique_mac_idle_open (gchar *data)
 {
-  /*  We want to be called again later in case that GIMP is not fully
+  /*  We want to be called again later in case that PICMAN is not fully
    *  started yet.
    */
-  if (! gimp_is_restored (unique_gimp))
+  if (! picman_is_restored (unique_picman))
     return TRUE;
 
   if (data)
     {
-      file_open_from_command_line (unique_gimp, data, FALSE);
+      file_open_from_command_line (unique_picman, data, FALSE);
     }
 
   return FALSE;
@@ -340,7 +340,7 @@ gui_unique_mac_open_documents (const AppleEvent *inAppleEvent,
                                     (gpointer) callback_path,
                                     (GClosureNotify) g_free);
 
-          g_object_watch_closure (G_OBJECT (unique_gimp), closure);
+          g_object_watch_closure (G_OBJECT (unique_picman), closure);
 
           source = g_idle_source_new ();
           g_source_set_priority (source, G_PRIORITY_LOW);
@@ -354,12 +354,12 @@ gui_unique_mac_open_documents (const AppleEvent *inAppleEvent,
 }
 
 static void
-gui_unique_mac_init (Gimp *gimp)
+gui_unique_mac_init (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (unique_gimp == NULL);
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (unique_picman == NULL);
 
-  unique_gimp = gimp;
+  unique_picman = picman;
 
   open_document_callback_proc = NewAEEventHandlerUPP(gui_unique_mac_open_documents);
 
@@ -371,7 +371,7 @@ gui_unique_mac_init (Gimp *gimp)
 static void
 gui_unique_mac_exit (void)
 {
-  unique_gimp = NULL;
+  unique_picman = NULL;
 
   AERemoveEventHandler (kCoreEventClass, kAEOpenDocuments,
                         open_document_callback_proc, TRUE);

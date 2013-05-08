@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,42 +19,42 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
-#include "gimpboundary.h"
-#include "gimpdrawable-filter.h"
-#include "gimperror.h"
-#include "gimpimage.h"
-#include "gimpimage-undo.h"
-#include "gimpimage-undo-push.h"
-#include "gimplayer.h"
-#include "gimplayer-floating-sel.h"
-#include "gimplayermask.h"
+#include "picmanboundary.h"
+#include "picmandrawable-filter.h"
+#include "picmanerror.h"
+#include "picmanimage.h"
+#include "picmanimage-undo.h"
+#include "picmanimage-undo-push.h"
+#include "picmanlayer.h"
+#include "picmanlayer-floating-sel.h"
+#include "picmanlayermask.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /* public functions  */
 
 void
-floating_sel_attach (GimpLayer    *layer,
-                     GimpDrawable *drawable)
+floating_sel_attach (PicmanLayer    *layer,
+                     PicmanDrawable *drawable)
 {
-  GimpImage *image;
-  GimpLayer *floating_sel;
+  PicmanImage *image;
+  PicmanLayer *floating_sel;
 
-  g_return_if_fail (GIMP_IS_LAYER (layer));
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)));
-  g_return_if_fail (drawable != GIMP_DRAWABLE (layer));
-  g_return_if_fail (gimp_item_get_image (GIMP_ITEM (layer)) ==
-                    gimp_item_get_image (GIMP_ITEM (drawable)));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)));
+  g_return_if_fail (drawable != PICMAN_DRAWABLE (layer));
+  g_return_if_fail (picman_item_get_image (PICMAN_ITEM (layer)) ==
+                    picman_item_get_image (PICMAN_ITEM (drawable)));
 
-  image = gimp_item_get_image (GIMP_ITEM (drawable));
+  image = picman_item_get_image (PICMAN_ITEM (drawable));
 
-  floating_sel = gimp_image_get_floating_selection (image);
+  floating_sel = picman_image_get_floating_selection (image);
 
   /*  If there is already a floating selection, anchor it  */
   if (floating_sel)
@@ -64,156 +64,156 @@ floating_sel_attach (GimpLayer    *layer,
       /*  if we were pasting to the old floating selection, paste now
        *  to the drawable
        */
-      if (drawable == (GimpDrawable *) floating_sel)
-        drawable = gimp_image_get_active_drawable (image);
+      if (drawable == (PicmanDrawable *) floating_sel)
+        drawable = picman_image_get_active_drawable (image);
     }
 
-  gimp_layer_set_lock_alpha (layer, TRUE, FALSE);
+  picman_layer_set_lock_alpha (layer, TRUE, FALSE);
 
-  gimp_layer_set_floating_sel_drawable (layer, drawable);
+  picman_layer_set_floating_sel_drawable (layer, drawable);
 
-  gimp_image_add_layer (image, layer, NULL, 0, TRUE);
+  picman_image_add_layer (image, layer, NULL, 0, TRUE);
 }
 
 void
-floating_sel_anchor (GimpLayer *layer)
+floating_sel_anchor (PicmanLayer *layer)
 {
-  GimpImage    *image;
-  GimpDrawable *drawable;
-  GimpFilter   *filter = NULL;
+  PicmanImage    *image;
+  PicmanDrawable *drawable;
+  PicmanFilter   *filter = NULL;
   gint          off_x, off_y;
   gint          dr_off_x, dr_off_y;
 
-  g_return_if_fail (GIMP_IS_LAYER (layer));
-  g_return_if_fail (gimp_layer_is_floating_sel (layer));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
+  g_return_if_fail (picman_layer_is_floating_sel (layer));
 
-  image = gimp_item_get_image (GIMP_ITEM (layer));
+  image = picman_item_get_image (PICMAN_ITEM (layer));
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_FS_ANCHOR,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_FS_ANCHOR,
                                C_("undo-type", "Anchor Floating Selection"));
 
-  drawable = gimp_layer_get_floating_sel_drawable (layer);
+  drawable = picman_layer_get_floating_sel_drawable (layer);
 
-  gimp_item_get_offset (GIMP_ITEM (layer), &off_x, &off_y);
-  gimp_item_get_offset (GIMP_ITEM (drawable), &dr_off_x, &dr_off_y);
+  picman_item_get_offset (PICMAN_ITEM (layer), &off_x, &off_y);
+  picman_item_get_offset (PICMAN_ITEM (drawable), &dr_off_x, &dr_off_y);
 
-  if (gimp_item_get_visible (GIMP_ITEM (layer)) &&
-      gimp_rectangle_intersect (off_x, off_y,
-                                gimp_item_get_width  (GIMP_ITEM (layer)),
-                                gimp_item_get_height (GIMP_ITEM (layer)),
+  if (picman_item_get_visible (PICMAN_ITEM (layer)) &&
+      picman_rectangle_intersect (off_x, off_y,
+                                picman_item_get_width  (PICMAN_ITEM (layer)),
+                                picman_item_get_height (PICMAN_ITEM (layer)),
                                 dr_off_x, dr_off_y,
-                                gimp_item_get_width  (GIMP_ITEM (drawable)),
-                                gimp_item_get_height (GIMP_ITEM (drawable)),
+                                picman_item_get_width  (PICMAN_ITEM (drawable)),
+                                picman_item_get_height (PICMAN_ITEM (drawable)),
                                 NULL, NULL, NULL, NULL))
     {
-      filter = gimp_drawable_get_floating_sel_filter (drawable);
+      filter = picman_drawable_get_floating_sel_filter (drawable);
       g_object_ref (filter);
     }
 
   /*  first remove the filter, then merge it, or we will get warnings
    *  about already connected nodes
    */
-  gimp_image_remove_layer (image, layer, TRUE, NULL);
+  picman_image_remove_layer (image, layer, TRUE, NULL);
 
   if (filter)
     {
-      gimp_drawable_merge_filter (drawable, filter, NULL, NULL);
+      picman_drawable_merge_filter (drawable, filter, NULL, NULL);
       g_object_unref (filter);
     }
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
   /*  invalidate the boundaries  */
-  gimp_drawable_invalidate_boundary (GIMP_DRAWABLE (gimp_image_get_mask (image)));
+  picman_drawable_invalidate_boundary (PICMAN_DRAWABLE (picman_image_get_mask (image)));
 }
 
 gboolean
-floating_sel_to_layer (GimpLayer  *layer,
+floating_sel_to_layer (PicmanLayer  *layer,
                        GError    **error)
 {
-  GimpItem  *item;
-  GimpImage *image;
+  PicmanItem  *item;
+  PicmanImage *image;
 
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), FALSE);
-  g_return_val_if_fail (gimp_layer_is_floating_sel (layer), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), FALSE);
+  g_return_val_if_fail (picman_layer_is_floating_sel (layer), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  item  = GIMP_ITEM (layer);
-  image = gimp_item_get_image (item);
+  item  = PICMAN_ITEM (layer);
+  image = picman_item_get_image (item);
 
   /*  Check if the floating layer belongs to a channel  */
-  if (GIMP_IS_CHANNEL (gimp_layer_get_floating_sel_drawable (layer)))
+  if (PICMAN_IS_CHANNEL (picman_layer_get_floating_sel_drawable (layer)))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			   _("Cannot create a new layer from the floating "
 			     "selection because it belongs to a layer mask "
 			     "or channel."));
       return FALSE;
     }
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_FS_TO_LAYER,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_FS_TO_LAYER,
                                C_("undo-type", "Floating Selection to Layer"));
 
-  gimp_image_undo_push_fs_to_layer (image, NULL, layer);
+  picman_image_undo_push_fs_to_layer (image, NULL, layer);
 
-  gimp_drawable_detach_floating_sel (gimp_layer_get_floating_sel_drawable (layer));
-  gimp_layer_set_floating_sel_drawable (layer, NULL);
+  picman_drawable_detach_floating_sel (picman_layer_get_floating_sel_drawable (layer));
+  picman_layer_set_floating_sel_drawable (layer, NULL);
 
-  gimp_item_set_visible (item, TRUE, TRUE);
-  gimp_layer_set_lock_alpha (layer, FALSE, TRUE);
+  picman_item_set_visible (item, TRUE, TRUE);
+  picman_layer_set_lock_alpha (layer, FALSE, TRUE);
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
   /* When the floating selection is converted to/from a normal layer
    * it does something resembling a name change, so emit the
    * "name-changed" signal
    */
-  gimp_object_name_changed (GIMP_OBJECT (layer));
+  picman_object_name_changed (PICMAN_OBJECT (layer));
 
-  gimp_drawable_update (GIMP_DRAWABLE (layer),
+  picman_drawable_update (PICMAN_DRAWABLE (layer),
                         0, 0,
-                        gimp_item_get_width  (item),
-                        gimp_item_get_height (item));
+                        picman_item_get_width  (item),
+                        picman_item_get_height (item));
 
   return TRUE;
 }
 
 void
-floating_sel_activate_drawable (GimpLayer *layer)
+floating_sel_activate_drawable (PicmanLayer *layer)
 {
-  GimpImage    *image;
-  GimpDrawable *drawable;
+  PicmanImage    *image;
+  PicmanDrawable *drawable;
 
-  g_return_if_fail (GIMP_IS_LAYER (layer));
-  g_return_if_fail (gimp_layer_is_floating_sel (layer));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
+  g_return_if_fail (picman_layer_is_floating_sel (layer));
 
-  image = gimp_item_get_image (GIMP_ITEM (layer));
+  image = picman_item_get_image (PICMAN_ITEM (layer));
 
-  drawable = gimp_layer_get_floating_sel_drawable (layer);
+  drawable = picman_layer_get_floating_sel_drawable (layer);
 
   /*  set the underlying drawable to active  */
-  if (GIMP_IS_LAYER_MASK (drawable))
+  if (PICMAN_IS_LAYER_MASK (drawable))
     {
-      GimpLayerMask *mask = GIMP_LAYER_MASK (drawable);
+      PicmanLayerMask *mask = PICMAN_LAYER_MASK (drawable);
 
-      gimp_image_set_active_layer (image, gimp_layer_mask_get_layer (mask));
+      picman_image_set_active_layer (image, picman_layer_mask_get_layer (mask));
     }
-  else if (GIMP_IS_CHANNEL (drawable))
+  else if (PICMAN_IS_CHANNEL (drawable))
     {
-      gimp_image_set_active_channel (image, GIMP_CHANNEL (drawable));
+      picman_image_set_active_channel (image, PICMAN_CHANNEL (drawable));
     }
   else
     {
-      gimp_image_set_active_layer (image, GIMP_LAYER (drawable));
+      picman_image_set_active_layer (image, PICMAN_LAYER (drawable));
     }
 }
 
-const GimpBoundSeg *
-floating_sel_boundary (GimpLayer *layer,
+const PicmanBoundSeg *
+floating_sel_boundary (PicmanLayer *layer,
                        gint      *n_segs)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), NULL);
-  g_return_val_if_fail (gimp_layer_is_floating_sel (layer), NULL);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), NULL);
+  g_return_val_if_fail (picman_layer_is_floating_sel (layer), NULL);
   g_return_val_if_fail (n_segs != NULL, NULL);
 
   if (layer->fs.boundary_known == FALSE)
@@ -221,26 +221,26 @@ floating_sel_boundary (GimpLayer *layer,
       gint width, height;
       gint off_x, off_y;
 
-      width  = gimp_item_get_width  (GIMP_ITEM (layer));
-      height = gimp_item_get_height (GIMP_ITEM (layer));
-      gimp_item_get_offset (GIMP_ITEM (layer), &off_x, &off_y);
+      width  = picman_item_get_width  (PICMAN_ITEM (layer));
+      height = picman_item_get_height (PICMAN_ITEM (layer));
+      picman_item_get_offset (PICMAN_ITEM (layer), &off_x, &off_y);
 
       if (layer->fs.segs)
         g_free (layer->fs.segs);
 
-      if (gimp_drawable_has_alpha (GIMP_DRAWABLE (layer)))
+      if (picman_drawable_has_alpha (PICMAN_DRAWABLE (layer)))
         {
           GeglBuffer *buffer;
           gint        i;
 
           /*  find the segments  */
-          buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (layer));
+          buffer = picman_drawable_get_buffer (PICMAN_DRAWABLE (layer));
 
-          layer->fs.segs = gimp_boundary_find (buffer, NULL,
+          layer->fs.segs = picman_boundary_find (buffer, NULL,
                                                babl_format ("A float"),
-                                               GIMP_BOUNDARY_WITHIN_BOUNDS,
+                                               PICMAN_BOUNDARY_WITHIN_BOUNDS,
                                                0, 0, width, height,
-                                               GIMP_BOUNDARY_HALF_WAY,
+                                               PICMAN_BOUNDARY_HALF_WAY,
                                                &layer->fs.num_segs);
 
           /*  offset the segments  */
@@ -255,7 +255,7 @@ floating_sel_boundary (GimpLayer *layer,
       else
         {
           layer->fs.num_segs = 4;
-          layer->fs.segs     = g_new0 (GimpBoundSeg, 4);
+          layer->fs.segs     = g_new0 (PicmanBoundSeg, 4);
 
           /* top */
           layer->fs.segs[0].x1 = off_x;
@@ -291,13 +291,13 @@ floating_sel_boundary (GimpLayer *layer,
 }
 
 void
-floating_sel_invalidate (GimpLayer *layer)
+floating_sel_invalidate (PicmanLayer *layer)
 {
-  g_return_if_fail (GIMP_IS_LAYER (layer));
-  g_return_if_fail (gimp_layer_is_floating_sel (layer));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
+  g_return_if_fail (picman_layer_is_floating_sel (layer));
 
   /*  Invalidate the attached-to drawable's preview  */
-  gimp_viewable_invalidate_preview (GIMP_VIEWABLE (gimp_layer_get_floating_sel_drawable (layer)));
+  picman_viewable_invalidate_preview (PICMAN_VIEWABLE (picman_layer_get_floating_sel_drawable (layer)));
 
   /*  Invalidate the boundary  */
   layer->fs.boundary_known = FALSE;

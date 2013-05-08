@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimppixbuf.h
- * Copyright (C) 2012  Michael Natterer <mitch@gimp.org>
+ * picmanpixbuf.h
+ * Copyright (C) 2012  Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,22 +19,22 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_COLOR_H_INSIDE__) && !defined (GIMP_COLOR_COMPILATION)
-#error "Only <libgimpcolor/gimpcolor.h> can be included directly."
+#if !defined (__PICMAN_COLOR_H_INSIDE__) && !defined (PICMAN_COLOR_COMPILATION)
+#error "Only <libpicmancolor/picmancolor.h> can be included directly."
 #endif
 
-#ifndef __GIMP_PIXBUF_H__
-#define __GIMP_PIXBUF_H__
+#ifndef __PICMAN_PIXBUF_H__
+#define __PICMAN_PIXBUF_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-const Babl * gimp_pixbuf_get_format    (GdkPixbuf *pixbuf);
-GeglBuffer * gimp_pixbuf_create_buffer (GdkPixbuf *pixbuf);
+const Babl * picman_pixbuf_get_format    (GdkPixbuf *pixbuf);
+GeglBuffer * picman_pixbuf_create_buffer (GdkPixbuf *pixbuf);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_PIXBUF_H__ */
+#endif  /* __PICMAN_PIXBUF_H__ */

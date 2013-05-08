@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppreview.c
+ * picmanpreview.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,22 +22,22 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "gimpwidgets.h"
+#include "picmanwidgets.h"
 
-#include "gimppreview.h"
+#include "picmanpreview.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimppreview
- * @title: GimpPreview
- * @short_description: A widget providing a #GimpPreviewArea plus
+ * SECTION: picmanpreview
+ * @title: PicmanPreview
+ * @short_description: A widget providing a #PicmanPreviewArea plus
  *                     framework to update the preview.
  *
- * A widget providing a #GimpPreviewArea plus framework to update the
+ * A widget providing a #PicmanPreviewArea plus framework to update the
  * preview.
  **/
 
@@ -61,52 +61,52 @@ enum
 typedef struct
 {
   GtkWidget *controls;
-} GimpPreviewPrivate;
+} PicmanPreviewPrivate;
 
-#define GIMP_PREVIEW_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GIMP_TYPE_PREVIEW, GimpPreviewPrivate))
+#define PICMAN_PREVIEW_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PICMAN_TYPE_PREVIEW, PicmanPreviewPrivate))
 
 
-static void      gimp_preview_class_init          (GimpPreviewClass *klass);
-static void      gimp_preview_init                (GimpPreview      *preview);
-static void      gimp_preview_dispose             (GObject          *object);
-static void      gimp_preview_get_property        (GObject          *object,
+static void      picman_preview_class_init          (PicmanPreviewClass *klass);
+static void      picman_preview_init                (PicmanPreview      *preview);
+static void      picman_preview_dispose             (GObject          *object);
+static void      picman_preview_get_property        (GObject          *object,
                                                    guint             property_id,
                                                    GValue           *value,
                                                    GParamSpec       *pspec);
-static void      gimp_preview_set_property        (GObject          *object,
+static void      picman_preview_set_property        (GObject          *object,
                                                    guint             property_id,
                                                    const GValue     *value,
                                                    GParamSpec       *pspec);
 
-static void      gimp_preview_direction_changed   (GtkWidget        *widget,
+static void      picman_preview_direction_changed   (GtkWidget        *widget,
                                                    GtkTextDirection  prev_dir);
-static gboolean  gimp_preview_popup_menu          (GtkWidget        *widget);
+static gboolean  picman_preview_popup_menu          (GtkWidget        *widget);
 
-static void      gimp_preview_area_realize        (GtkWidget        *widget,
-                                                   GimpPreview      *preview);
-static void      gimp_preview_area_unrealize      (GtkWidget        *widget,
-                                                   GimpPreview      *preview);
-static void      gimp_preview_area_size_allocate  (GtkWidget        *widget,
+static void      picman_preview_area_realize        (GtkWidget        *widget,
+                                                   PicmanPreview      *preview);
+static void      picman_preview_area_unrealize      (GtkWidget        *widget,
+                                                   PicmanPreview      *preview);
+static void      picman_preview_area_size_allocate  (GtkWidget        *widget,
                                                    GtkAllocation    *allocation,
-                                                   GimpPreview      *preview);
-static void      gimp_preview_area_set_cursor     (GimpPreview      *preview);
-static gboolean  gimp_preview_area_event          (GtkWidget        *area,
+                                                   PicmanPreview      *preview);
+static void      picman_preview_area_set_cursor     (PicmanPreview      *preview);
+static gboolean  picman_preview_area_event          (GtkWidget        *area,
                                                    GdkEvent         *event,
-                                                   GimpPreview      *preview);
+                                                   PicmanPreview      *preview);
 
-static void      gimp_preview_toggle_callback     (GtkWidget        *toggle,
-                                                   GimpPreview      *preview);
+static void      picman_preview_toggle_callback     (GtkWidget        *toggle,
+                                                   PicmanPreview      *preview);
 
-static void      gimp_preview_notify_checks       (GimpPreview      *preview);
+static void      picman_preview_notify_checks       (PicmanPreview      *preview);
 
-static gboolean  gimp_preview_invalidate_now      (GimpPreview      *preview);
-static void      gimp_preview_real_set_cursor     (GimpPreview      *preview);
-static void      gimp_preview_real_transform      (GimpPreview      *preview,
+static gboolean  picman_preview_invalidate_now      (PicmanPreview      *preview);
+static void      picman_preview_real_set_cursor     (PicmanPreview      *preview);
+static void      picman_preview_real_transform      (PicmanPreview      *preview,
                                                    gint              src_x,
                                                    gint              src_y,
                                                    gint             *dest_x,
                                                    gint             *dest_y);
-static void      gimp_preview_real_untransform    (GimpPreview      *preview,
+static void      picman_preview_real_untransform    (PicmanPreview      *preview,
                                                    gint              src_x,
                                                    gint              src_y,
                                                    gint             *dest_x,
@@ -119,7 +119,7 @@ static GtkBoxClass *parent_class = NULL;
 
 
 GType
-gimp_preview_get_type (void)
+picman_preview_get_type (void)
 {
   static GType preview_type = 0;
 
@@ -127,19 +127,19 @@ gimp_preview_get_type (void)
     {
       const GTypeInfo preview_info =
       {
-        sizeof (GimpPreviewClass),
+        sizeof (PicmanPreviewClass),
         (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) gimp_preview_class_init,
+        (GClassInitFunc) picman_preview_class_init,
         NULL,           /* class_finalize */
         NULL,           /* class_data     */
-        sizeof (GimpPreview),
+        sizeof (PicmanPreview),
         0,              /* n_preallocs    */
-        (GInstanceInitFunc) gimp_preview_init,
+        (GInstanceInitFunc) picman_preview_init,
       };
 
       preview_type = g_type_register_static (GTK_TYPE_BOX,
-                                             "GimpPreview",
+                                             "PicmanPreview",
                                              &preview_info,
                                              G_TYPE_FLAG_ABSTRACT);
     }
@@ -148,7 +148,7 @@ gimp_preview_get_type (void)
 }
 
 static void
-gimp_preview_class_init (GimpPreviewClass *klass)
+picman_preview_class_init (PicmanPreviewClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
@@ -159,33 +159,33 @@ gimp_preview_class_init (GimpPreviewClass *klass)
     g_signal_new ("invalidated",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpPreviewClass, invalidated),
+                  G_STRUCT_OFFSET (PicmanPreviewClass, invalidated),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->dispose           = gimp_preview_dispose;
-  object_class->get_property      = gimp_preview_get_property;
-  object_class->set_property      = gimp_preview_set_property;
+  object_class->dispose           = picman_preview_dispose;
+  object_class->get_property      = picman_preview_get_property;
+  object_class->set_property      = picman_preview_set_property;
 
-  widget_class->direction_changed = gimp_preview_direction_changed;
-  widget_class->popup_menu        = gimp_preview_popup_menu;
+  widget_class->direction_changed = picman_preview_direction_changed;
+  widget_class->popup_menu        = picman_preview_popup_menu;
 
   klass->draw                     = NULL;
   klass->draw_thumb               = NULL;
   klass->draw_buffer              = NULL;
-  klass->set_cursor               = gimp_preview_real_set_cursor;
-  klass->transform                = gimp_preview_real_transform;
-  klass->untransform              = gimp_preview_real_untransform;
+  klass->set_cursor               = picman_preview_real_set_cursor;
+  klass->transform                = picman_preview_real_transform;
+  klass->untransform              = picman_preview_real_untransform;
 
-  g_type_class_add_private (object_class, sizeof (GimpPreviewPrivate));
+  g_type_class_add_private (object_class, sizeof (PicmanPreviewPrivate));
 
   g_object_class_install_property (object_class,
                                    PROP_UPDATE,
                                    g_param_spec_boolean ("update",
                                                          NULL, NULL,
                                                          TRUE,
-                                                         GIMP_PARAM_READWRITE |
+                                                         PICMAN_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT));
 
   gtk_widget_class_install_style_property (widget_class,
@@ -193,13 +193,13 @@ gimp_preview_class_init (GimpPreviewClass *klass)
                                                              NULL, NULL,
                                                              1, 1024,
                                                              DEFAULT_SIZE,
-                                                             GIMP_PARAM_READABLE));
+                                                             PICMAN_PARAM_READABLE));
 }
 
 static void
-gimp_preview_init (GimpPreview *preview)
+picman_preview_init (PicmanPreview *preview)
 {
-  GimpPreviewPrivate *priv = GIMP_PREVIEW_GET_PRIVATE (preview);
+  PicmanPreviewPrivate *priv = PICMAN_PREVIEW_GET_PRIVATE (preview);
   GtkWidget          *frame;
   gdouble             xalign = 0.0;
 
@@ -241,15 +241,15 @@ gimp_preview_init (GimpPreview *preview)
                     GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);
   gtk_widget_show (frame);
 
-  preview->area = gimp_preview_area_new ();
+  preview->area = picman_preview_area_new ();
   gtk_container_add (GTK_CONTAINER (frame), preview->area);
   gtk_widget_show (preview->area);
 
   g_signal_connect_swapped (preview->area, "notify::check-size",
-                            G_CALLBACK (gimp_preview_notify_checks),
+                            G_CALLBACK (picman_preview_notify_checks),
                             preview);
   g_signal_connect_swapped (preview->area, "notify::check-type",
-                            G_CALLBACK (gimp_preview_notify_checks),
+                            G_CALLBACK (picman_preview_notify_checks),
                             preview);
 
   gtk_widget_add_events (preview->area,
@@ -259,26 +259,26 @@ gimp_preview_init (GimpPreview *preview)
                          GDK_BUTTON_MOTION_MASK);
 
   g_signal_connect (preview->area, "event",
-                    G_CALLBACK (gimp_preview_area_event),
+                    G_CALLBACK (picman_preview_area_event),
                     preview);
 
   g_signal_connect (preview->area, "realize",
-                    G_CALLBACK (gimp_preview_area_realize),
+                    G_CALLBACK (picman_preview_area_realize),
                     preview);
   g_signal_connect (preview->area, "unrealize",
-                    G_CALLBACK (gimp_preview_area_unrealize),
+                    G_CALLBACK (picman_preview_area_unrealize),
                     preview);
 
   g_signal_connect_data (preview->area, "realize",
-                         G_CALLBACK (gimp_preview_area_set_cursor),
+                         G_CALLBACK (picman_preview_area_set_cursor),
                          preview, NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
   g_signal_connect (preview->area, "size-allocate",
-                    G_CALLBACK (gimp_preview_area_size_allocate),
+                    G_CALLBACK (picman_preview_area_size_allocate),
                     preview);
 
   g_signal_connect_data (preview->area, "size-allocate",
-                         G_CALLBACK (gimp_preview_area_set_cursor),
+                         G_CALLBACK (picman_preview_area_set_cursor),
                          preview, NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
   priv->controls = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
@@ -294,14 +294,14 @@ gimp_preview_init (GimpPreview *preview)
   gtk_widget_show (preview->toggle);
 
   g_signal_connect (preview->toggle, "toggled",
-                    G_CALLBACK (gimp_preview_toggle_callback),
+                    G_CALLBACK (picman_preview_toggle_callback),
                     preview);
 }
 
 static void
-gimp_preview_dispose (GObject *object)
+picman_preview_dispose (GObject *object)
 {
-  GimpPreview *preview = GIMP_PREVIEW (object);
+  PicmanPreview *preview = PICMAN_PREVIEW (object);
 
   if (preview->timeout_id)
     {
@@ -313,12 +313,12 @@ gimp_preview_dispose (GObject *object)
 }
 
 static void
-gimp_preview_get_property (GObject    *object,
+picman_preview_get_property (GObject    *object,
                            guint       property_id,
                            GValue     *value,
                            GParamSpec *pspec)
 {
-  GimpPreview *preview = GIMP_PREVIEW (object);
+  PicmanPreview *preview = PICMAN_PREVIEW (object);
 
   switch (property_id)
     {
@@ -333,12 +333,12 @@ gimp_preview_get_property (GObject    *object,
 }
 
 static void
-gimp_preview_set_property (GObject      *object,
+picman_preview_set_property (GObject      *object,
                            guint         property_id,
                            const GValue *value,
                            GParamSpec   *pspec)
 {
-  GimpPreview *preview = GIMP_PREVIEW (object);
+  PicmanPreview *preview = PICMAN_PREVIEW (object);
 
   switch (property_id)
     {
@@ -354,10 +354,10 @@ gimp_preview_set_property (GObject      *object,
 }
 
 static void
-gimp_preview_direction_changed (GtkWidget        *widget,
+picman_preview_direction_changed (GtkWidget        *widget,
                                 GtkTextDirection  prev_dir)
 {
-  GimpPreview *preview = GIMP_PREVIEW (widget);
+  PicmanPreview *preview = PICMAN_PREVIEW (widget);
   gdouble      xalign  = 0.0;
 
   if (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL)
@@ -368,18 +368,18 @@ gimp_preview_direction_changed (GtkWidget        *widget,
 }
 
 static gboolean
-gimp_preview_popup_menu (GtkWidget *widget)
+picman_preview_popup_menu (GtkWidget *widget)
 {
-  GimpPreview *preview = GIMP_PREVIEW (widget);
+  PicmanPreview *preview = PICMAN_PREVIEW (widget);
 
-  gimp_preview_area_menu_popup (GIMP_PREVIEW_AREA (preview->area), NULL);
+  picman_preview_area_menu_popup (PICMAN_PREVIEW_AREA (preview->area), NULL);
 
   return TRUE;
 }
 
 static void
-gimp_preview_area_realize (GtkWidget   *widget,
-                           GimpPreview *preview)
+picman_preview_area_realize (GtkWidget   *widget,
+                           PicmanPreview *preview)
 {
   GdkDisplay *display = gtk_widget_get_display (widget);
 
@@ -390,8 +390,8 @@ gimp_preview_area_realize (GtkWidget   *widget,
 }
 
 static void
-gimp_preview_area_unrealize (GtkWidget   *widget,
-                             GimpPreview *preview)
+picman_preview_area_unrealize (GtkWidget   *widget,
+                             PicmanPreview *preview)
 {
   if (preview->cursor_busy)
     {
@@ -401,9 +401,9 @@ gimp_preview_area_unrealize (GtkWidget   *widget,
 }
 
 static void
-gimp_preview_area_size_allocate (GtkWidget     *widget,
+picman_preview_area_size_allocate (GtkWidget     *widget,
                                  GtkAllocation *allocation,
-                                 GimpPreview   *preview)
+                                 PicmanPreview   *preview)
 {
   gint width  = preview->xmax - preview->xmin;
   gint height = preview->ymax - preview->ymin;
@@ -411,20 +411,20 @@ gimp_preview_area_size_allocate (GtkWidget     *widget,
   preview->width  = MIN (width,  allocation->width);
   preview->height = MIN (height, allocation->height);
 
-  gimp_preview_draw (preview);
-  gimp_preview_invalidate (preview);
+  picman_preview_draw (preview);
+  picman_preview_invalidate (preview);
 }
 
 static void
-gimp_preview_area_set_cursor (GimpPreview *preview)
+picman_preview_area_set_cursor (PicmanPreview *preview)
 {
-  GIMP_PREVIEW_GET_CLASS (preview)->set_cursor (preview);
+  PICMAN_PREVIEW_GET_CLASS (preview)->set_cursor (preview);
 }
 
 static gboolean
-gimp_preview_area_event (GtkWidget   *area,
+picman_preview_area_event (GtkWidget   *area,
                          GdkEvent    *event,
-                         GimpPreview *preview)
+                         PicmanPreview *preview)
 {
   GdkEventButton *button_event = (GdkEventButton *) event;
 
@@ -434,7 +434,7 @@ gimp_preview_area_event (GtkWidget   *area,
       switch (button_event->button)
         {
         case 3:
-          gimp_preview_area_menu_popup (GIMP_PREVIEW_AREA (area), button_event);
+          picman_preview_area_menu_popup (PICMAN_PREVIEW_AREA (area), button_event);
           return TRUE;
         }
       break;
@@ -447,8 +447,8 @@ gimp_preview_area_event (GtkWidget   *area,
 }
 
 static void
-gimp_preview_toggle_callback (GtkWidget   *toggle,
-                              GimpPreview *preview)
+picman_preview_toggle_callback (GtkWidget   *toggle,
+                              PicmanPreview *preview)
 {
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (toggle)))
     {
@@ -459,7 +459,7 @@ gimp_preview_toggle_callback (GtkWidget   *toggle,
       if (preview->timeout_id)
         g_source_remove (preview->timeout_id);
 
-      gimp_preview_invalidate_now (preview);
+      picman_preview_invalidate_now (preview);
     }
   else
     {
@@ -467,24 +467,24 @@ gimp_preview_toggle_callback (GtkWidget   *toggle,
 
       g_object_notify (G_OBJECT (preview), "update");
 
-      gimp_preview_draw (preview);
+      picman_preview_draw (preview);
     }
 }
 
 static void
-gimp_preview_notify_checks (GimpPreview *preview)
+picman_preview_notify_checks (PicmanPreview *preview)
 {
-  gimp_preview_draw (preview);
-  gimp_preview_invalidate (preview);
+  picman_preview_draw (preview);
+  picman_preview_invalidate (preview);
 }
 
 static gboolean
-gimp_preview_invalidate_now (GimpPreview *preview)
+picman_preview_invalidate_now (PicmanPreview *preview)
 {
   GtkWidget        *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (preview));
-  GimpPreviewClass *class    = GIMP_PREVIEW_GET_CLASS (preview);
+  PicmanPreviewClass *class    = PICMAN_PREVIEW_GET_CLASS (preview);
 
-  gimp_preview_draw (preview);
+  picman_preview_draw (preview);
 
   preview->timeout_id = 0;
 
@@ -511,7 +511,7 @@ gimp_preview_invalidate_now (GimpPreview *preview)
 }
 
 static void
-gimp_preview_real_set_cursor (GimpPreview *preview)
+picman_preview_real_set_cursor (PicmanPreview *preview)
 {
   if (gtk_widget_get_realized (preview->area))
     gdk_window_set_cursor (gtk_widget_get_window (preview->area),
@@ -519,7 +519,7 @@ gimp_preview_real_set_cursor (GimpPreview *preview)
 }
 
 static void
-gimp_preview_real_transform (GimpPreview *preview,
+picman_preview_real_transform (PicmanPreview *preview,
                              gint         src_x,
                              gint         src_y,
                              gint        *dest_x,
@@ -530,7 +530,7 @@ gimp_preview_real_transform (GimpPreview *preview,
 }
 
 static void
-gimp_preview_real_untransform (GimpPreview *preview,
+picman_preview_real_untransform (PicmanPreview *preview,
                                gint         src_x,
                                gint         src_y,
                                gint        *dest_x,
@@ -541,20 +541,20 @@ gimp_preview_real_untransform (GimpPreview *preview,
 }
 
 /**
- * gimp_preview_set_update:
- * @preview: a #GimpPreview widget
+ * picman_preview_set_update:
+ * @preview: a #PicmanPreview widget
  * @update: %TRUE if the preview should invalidate itself when being
- *          scrolled or when gimp_preview_invalidate() is being called
+ *          scrolled or when picman_preview_invalidate() is being called
  *
  * Sets the state of the "Preview" check button.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_preview_set_update (GimpPreview *preview,
+picman_preview_set_update (PicmanPreview *preview,
                          gboolean     update)
 {
-  g_return_if_fail (GIMP_IS_PREVIEW (preview));
+  g_return_if_fail (PICMAN_IS_PREVIEW (preview));
 
   g_object_set (preview,
                 "update", update,
@@ -562,24 +562,24 @@ gimp_preview_set_update (GimpPreview *preview,
 }
 
 /**
- * gimp_preview_get_update:
- * @preview: a #GimpPreview widget
+ * picman_preview_get_update:
+ * @preview: a #PicmanPreview widget
  *
  * Return value: the state of the "Preview" check button.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_preview_get_update (GimpPreview *preview)
+picman_preview_get_update (PicmanPreview *preview)
 {
-  g_return_val_if_fail (GIMP_IS_PREVIEW (preview), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PREVIEW (preview), FALSE);
 
   return preview->update_preview;
 }
 
 /**
- * gimp_preview_set_bounds:
- * @preview: a #GimpPreview widget
+ * picman_preview_set_bounds:
+ * @preview: a #PicmanPreview widget
  * @xmin:    the minimum X value
  * @ymin:    the minimum Y value
  * @xmax:    the maximum X value
@@ -587,18 +587,18 @@ gimp_preview_get_update (GimpPreview *preview)
  *
  * Sets the lower and upper limits for the previewed area. The
  * difference between the upper and lower value is used to set the
- * maximum size of the #GimpPreviewArea used in the @preview.
+ * maximum size of the #PicmanPreviewArea used in the @preview.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_preview_set_bounds (GimpPreview *preview,
+picman_preview_set_bounds (PicmanPreview *preview,
                          gint         xmin,
                          gint         ymin,
                          gint         xmax,
                          gint         ymax)
 {
-  g_return_if_fail (GIMP_IS_PREVIEW (preview));
+  g_return_if_fail (PICMAN_IS_PREVIEW (preview));
   g_return_if_fail (xmax > xmin);
   g_return_if_fail (ymax > ymin);
 
@@ -607,25 +607,25 @@ gimp_preview_set_bounds (GimpPreview *preview,
   preview->xmax = xmax;
   preview->ymax = ymax;
 
-  gimp_preview_area_set_max_size (GIMP_PREVIEW_AREA (preview->area),
+  picman_preview_area_set_max_size (PICMAN_PREVIEW_AREA (preview->area),
                                   xmax - xmin,
                                   ymax - ymin);
 }
 
 /**
- * gimp_preview_get_size:
- * @preview: a #GimpPreview widget
+ * picman_preview_get_size:
+ * @preview: a #PicmanPreview widget
  * @width:   return location for the preview area width
  * @height:  return location for the preview area height
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_preview_get_size (GimpPreview *preview,
+picman_preview_get_size (PicmanPreview *preview,
                        gint        *width,
                        gint        *height)
 {
-  g_return_if_fail (GIMP_IS_PREVIEW (preview));
+  g_return_if_fail (PICMAN_IS_PREVIEW (preview));
 
   if (width)
     *width = preview->width;
@@ -635,19 +635,19 @@ gimp_preview_get_size (GimpPreview *preview,
 }
 
 /**
- * gimp_preview_get_position:
- * @preview: a #GimpPreview widget
+ * picman_preview_get_position:
+ * @preview: a #PicmanPreview widget
  * @x:       return location for the horizontal offset
  * @y:       return location for the vertical offset
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_preview_get_position (GimpPreview *preview,
+picman_preview_get_position (PicmanPreview *preview,
                            gint        *x,
                            gint        *y)
 {
-  g_return_if_fail (GIMP_IS_PREVIEW (preview));
+  g_return_if_fail (PICMAN_IS_PREVIEW (preview));
 
   if (x)
     *x = preview->xoff + preview->xmin;
@@ -657,8 +657,8 @@ gimp_preview_get_position (GimpPreview *preview,
 }
 
 /**
- * gimp_preview_transform:
- * @preview: a #GimpPreview widget
+ * picman_preview_transform:
+ * @preview: a #PicmanPreview widget
  * @src_x:   horizontal position on the previewed image
  * @src_y:   vertical position on the previewed image
  * @dest_x:  returns the transformed horizontal position
@@ -666,25 +666,25 @@ gimp_preview_get_position (GimpPreview *preview,
  *
  * Transforms from image to widget coordinates.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_preview_transform (GimpPreview *preview,
+picman_preview_transform (PicmanPreview *preview,
                         gint         src_x,
                         gint         src_y,
                         gint        *dest_x,
                         gint        *dest_y)
 {
-  g_return_if_fail (GIMP_IS_PREVIEW (preview));
+  g_return_if_fail (PICMAN_IS_PREVIEW (preview));
   g_return_if_fail (dest_x != NULL && dest_y != NULL);
 
-  GIMP_PREVIEW_GET_CLASS (preview)->transform (preview,
+  PICMAN_PREVIEW_GET_CLASS (preview)->transform (preview,
                                                src_x, src_y, dest_x, dest_y);
 }
 
 /**
- * gimp_preview_untransform:
- * @preview: a #GimpPreview widget
+ * picman_preview_untransform:
+ * @preview: a #PicmanPreview widget
  * @src_x:   horizontal position relative to the preview area's origin
  * @src_y:   vertical position relative to  preview area's origin
  * @dest_x:  returns the untransformed horizontal position
@@ -692,94 +692,94 @@ gimp_preview_transform (GimpPreview *preview,
  *
  * Transforms from widget to image coordinates.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_preview_untransform (GimpPreview *preview,
+picman_preview_untransform (PicmanPreview *preview,
                           gint         src_x,
                           gint         src_y,
                           gint        *dest_x,
                           gint        *dest_y)
 {
-  g_return_if_fail (GIMP_IS_PREVIEW (preview));
+  g_return_if_fail (PICMAN_IS_PREVIEW (preview));
   g_return_if_fail (dest_x != NULL && dest_y != NULL);
 
-  GIMP_PREVIEW_GET_CLASS (preview)->untransform (preview,
+  PICMAN_PREVIEW_GET_CLASS (preview)->untransform (preview,
                                                  src_x, src_y, dest_x, dest_y);
 }
 
 /**
- * gimp_preview_get_area:
- * @preview: a #GimpPreview widget
+ * picman_preview_get_area:
+ * @preview: a #PicmanPreview widget
  *
- * In most cases, you shouldn't need to access the #GimpPreviewArea
+ * In most cases, you shouldn't need to access the #PicmanPreviewArea
  * that is being used in the @preview. Sometimes however, you need to.
  * For example if you want to receive mouse events from the area. In
- * such cases, use gimp_preview_get_area().
+ * such cases, use picman_preview_get_area().
  *
- * Return value: a pointer to the #GimpPreviewArea used in the @preview.
+ * Return value: a pointer to the #PicmanPreviewArea used in the @preview.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_preview_get_area (GimpPreview  *preview)
+picman_preview_get_area (PicmanPreview  *preview)
 {
-  g_return_val_if_fail (GIMP_IS_PREVIEW (preview), NULL);
+  g_return_val_if_fail (PICMAN_IS_PREVIEW (preview), NULL);
 
   return preview->area;
 }
 
 /**
- * gimp_preview_draw:
- * @preview: a #GimpPreview widget
+ * picman_preview_draw:
+ * @preview: a #PicmanPreview widget
  *
- * Calls the GimpPreview::draw method. GimpPreview itself doesn't
+ * Calls the PicmanPreview::draw method. PicmanPreview itself doesn't
  * implement a default draw method so the behaviour is determined by
  * the derived class implementing this method.
  *
- * #GimpDrawablePreview implements gimp_preview_draw() by drawing the
+ * #PicmanDrawablePreview implements picman_preview_draw() by drawing the
  * original, unmodified drawable to the @preview.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_preview_draw (GimpPreview *preview)
+picman_preview_draw (PicmanPreview *preview)
 {
-  GimpPreviewClass *class = GIMP_PREVIEW_GET_CLASS (preview);
+  PicmanPreviewClass *class = PICMAN_PREVIEW_GET_CLASS (preview);
 
   if (class->draw)
     class->draw (preview);
 }
 
 /**
- * gimp_preview_draw_buffer:
- * @preview:   a #GimpPreview widget
+ * picman_preview_draw_buffer:
+ * @preview:   a #PicmanPreview widget
  * @buffer:    a pixel buffer the size of the preview
  * @rowstride: the @buffer's rowstride
  *
- * Calls the GimpPreview::draw_buffer method. GimpPreview itself
+ * Calls the PicmanPreview::draw_buffer method. PicmanPreview itself
  * doesn't implement this method so the behaviour is determined by the
  * derived class implementing this method.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_preview_draw_buffer (GimpPreview  *preview,
+picman_preview_draw_buffer (PicmanPreview  *preview,
                           const guchar *buffer,
                           gint          rowstride)
 {
-  GimpPreviewClass *class = GIMP_PREVIEW_GET_CLASS (preview);
+  PicmanPreviewClass *class = PICMAN_PREVIEW_GET_CLASS (preview);
 
   if (class->draw_buffer)
     class->draw_buffer (preview, buffer, rowstride);
 }
 
 /**
- * gimp_preview_invalidate:
- * @preview: a #GimpPreview widget
+ * picman_preview_invalidate:
+ * @preview: a #PicmanPreview widget
  *
  * This function starts or renews a short low-priority timeout. When
- * the timeout expires, the GimpPreview::invalidated signal is emitted
+ * the timeout expires, the PicmanPreview::invalidated signal is emitted
  * which will usually cause the @preview to be updated.
  *
  * This function does nothing unless the "Preview" button is checked.
@@ -788,12 +788,12 @@ gimp_preview_draw_buffer (GimpPreview  *preview,
  * toplevel window containing the @preview and on the preview area
  * itself.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_preview_invalidate (GimpPreview *preview)
+picman_preview_invalidate (PicmanPreview *preview)
 {
-  g_return_if_fail (GIMP_IS_PREVIEW (preview));
+  g_return_if_fail (PICMAN_IS_PREVIEW (preview));
 
   if (preview->update_preview)
     {
@@ -802,27 +802,27 @@ gimp_preview_invalidate (GimpPreview *preview)
 
       preview->timeout_id =
         g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, PREVIEW_TIMEOUT,
-                            (GSourceFunc) gimp_preview_invalidate_now,
+                            (GSourceFunc) picman_preview_invalidate_now,
                             preview, NULL);
     }
 }
 
 /**
- * gimp_preview_set_default_cursor:
- * @preview: a #GimpPreview widget
+ * picman_preview_set_default_cursor:
+ * @preview: a #PicmanPreview widget
  * @cursor:  a #GdkCursor or %NULL
  *
  * Sets the default mouse cursor for the preview.  Note that this will
  * be overriden by a %GDK_FLEUR if the preview has scrollbars, or by a
  * %GDK_WATCH when the preview is invalidated.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_preview_set_default_cursor (GimpPreview *preview,
+picman_preview_set_default_cursor (PicmanPreview *preview,
                                  GdkCursor   *cursor)
 {
-  g_return_if_fail (GIMP_IS_PREVIEW (preview));
+  g_return_if_fail (PICMAN_IS_PREVIEW (preview));
 
   if (preview->default_cursor)
     gdk_cursor_unref (preview->default_cursor);
@@ -834,8 +834,8 @@ gimp_preview_set_default_cursor (GimpPreview *preview,
 }
 
 /**
- * gimp_preview_get_controls:
- * @preview: a #GimpPreview widget
+ * picman_preview_get_controls:
+ * @preview: a #PicmanPreview widget
  *
  * Gives access to the #GtkHBox at the bottom of the preview that
  * contains the update toggle. Derived widgets can use this function
@@ -843,12 +843,12 @@ gimp_preview_set_default_cursor (GimpPreview *preview,
  *
  * Return value: the #GtkHBox at the bottom of the preview.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_preview_get_controls (GimpPreview *preview)
+picman_preview_get_controls (PicmanPreview *preview)
 {
-  g_return_val_if_fail (GIMP_IS_PREVIEW (preview), NULL);
+  g_return_val_if_fail (PICMAN_IS_PREVIEW (preview), NULL);
 
-  return GIMP_PREVIEW_GET_PRIVATE (preview)->controls;
+  return PICMAN_PREVIEW_GET_PRIVATE (preview)->controls;
 }

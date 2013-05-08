@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,30 +22,30 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimpchannel.h"
-#include "core/gimpchannel-select.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-undo.h"
+#include "core/picmanchannel.h"
+#include "core/picmanchannel-select.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-undo.h"
 
-#include "widgets/gimpaction.h"
-#include "widgets/gimpcolorpanel.h"
-#include "widgets/gimpcomponenteditor.h"
-#include "widgets/gimpdock.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanaction.h"
+#include "widgets/picmancolorpanel.h"
+#include "widgets/picmancomponenteditor.h"
+#include "widgets/picmandock.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "dialogs/channel-options-dialog.h"
 
 #include "actions.h"
 #include "channels-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
@@ -61,7 +61,7 @@ static void   channels_edit_channel_response (GtkWidget            *widget,
 /*  private variables  */
 
 static gchar   *channel_name  = NULL;
-static GimpRGB  channel_color = { 0.0, 0.0, 0.0, 0.5 };
+static PicmanRGB  channel_color = { 0.0, 0.0, 0.0, 0.5 };
 
 
 /*  public functions  */
@@ -71,8 +71,8 @@ channels_edit_attributes_cmd_callback (GtkAction *action,
                                        gpointer   data)
 {
   ChannelOptionsDialog *options;
-  GimpImage            *image;
-  GimpChannel          *channel;
+  PicmanImage            *image;
+  PicmanChannel          *channel;
   GtkWidget            *widget;
   return_if_no_channel (image, channel, data);
   return_if_no_widget (widget, data);
@@ -81,12 +81,12 @@ channels_edit_attributes_cmd_callback (GtkAction *action,
                                         action_data_get_context (data),
                                         widget,
                                         &channel->color,
-                                        gimp_object_get_name (channel),
+                                        picman_object_get_name (channel),
                                         _("Channel Attributes"),
-                                        "gimp-channel-edit",
+                                        "picman-channel-edit",
                                         GTK_STOCK_EDIT,
                                         _("Edit Channel Attributes"),
-                                        GIMP_HELP_CHANNEL_EDIT,
+                                        PICMAN_HELP_CHANNEL_EDIT,
                                         _("Edit Channel Color"),
                                         _("_Fill opacity:"),
                                         FALSE);
@@ -103,7 +103,7 @@ channels_new_cmd_callback (GtkAction *action,
                            gpointer   data)
 {
   ChannelOptionsDialog *options;
-  GimpImage            *image;
+  PicmanImage            *image;
   GtkWidget            *widget;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
@@ -115,10 +115,10 @@ channels_new_cmd_callback (GtkAction *action,
                                         channel_name ? channel_name :
                                         _("Channel"),
                                         _("New Channel"),
-                                        "gimp-channel-new",
-                                        GIMP_STOCK_CHANNEL,
+                                        "picman-channel-new",
+                                        PICMAN_STOCK_CHANNEL,
                                         _("New Channel Options"),
-                                        GIMP_HELP_CHANNEL_NEW,
+                                        PICMAN_HELP_CHANNEL_NEW,
                                         _("New Channel Color"),
                                         _("_Fill opacity:"),
                                         TRUE);
@@ -134,156 +134,156 @@ void
 channels_new_last_vals_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
-  GimpImage   *image;
-  GimpChannel *new_channel;
+  PicmanImage   *image;
+  PicmanChannel *new_channel;
   gint         width, height;
-  GimpRGB      color;
+  PicmanRGB      color;
   return_if_no_image (image, data);
 
-  if (GIMP_IS_CHANNEL (GIMP_ACTION (action)->viewable))
+  if (PICMAN_IS_CHANNEL (PICMAN_ACTION (action)->viewable))
     {
-      GimpChannel *template = GIMP_CHANNEL (GIMP_ACTION (action)->viewable);
+      PicmanChannel *template = PICMAN_CHANNEL (PICMAN_ACTION (action)->viewable);
 
-      width  = gimp_item_get_width  (GIMP_ITEM (template));
-      height = gimp_item_get_height (GIMP_ITEM (template));
+      width  = picman_item_get_width  (PICMAN_ITEM (template));
+      height = picman_item_get_height (PICMAN_ITEM (template));
       color  = template->color;
     }
   else
     {
-      width  = gimp_image_get_width (image);
-      height = gimp_image_get_height (image);
+      width  = picman_image_get_width (image);
+      height = picman_image_get_height (image);
       color  = channel_color;
     }
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_EDIT_PASTE,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_EDIT_PASTE,
                                _("New Channel"));
 
-  new_channel = gimp_channel_new (image, width, height,
+  new_channel = picman_channel_new (image, width, height,
                                   channel_name, &color);
 
-  gimp_drawable_fill_by_type (GIMP_DRAWABLE (new_channel),
+  picman_drawable_fill_by_type (PICMAN_DRAWABLE (new_channel),
                               action_data_get_context (data),
-                              GIMP_TRANSPARENT_FILL);
+                              PICMAN_TRANSPARENT_FILL);
 
-  gimp_image_add_channel (image, new_channel,
-                          GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+  picman_image_add_channel (image, new_channel,
+                          PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 channels_raise_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  GimpImage   *image;
-  GimpChannel *channel;
+  PicmanImage   *image;
+  PicmanChannel *channel;
   return_if_no_channel (image, channel, data);
 
-  gimp_image_raise_item (image, GIMP_ITEM (channel), NULL);
-  gimp_image_flush (image);
+  picman_image_raise_item (image, PICMAN_ITEM (channel), NULL);
+  picman_image_flush (image);
 }
 
 void
 channels_raise_to_top_cmd_callback (GtkAction *action,
                                     gpointer   data)
 {
-  GimpImage   *image;
-  GimpChannel *channel;
+  PicmanImage   *image;
+  PicmanChannel *channel;
   return_if_no_channel (image, channel, data);
 
-  gimp_image_raise_item_to_top (image, GIMP_ITEM (channel));
-  gimp_image_flush (image);
+  picman_image_raise_item_to_top (image, PICMAN_ITEM (channel));
+  picman_image_flush (image);
 }
 
 void
 channels_lower_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  GimpImage   *image;
-  GimpChannel *channel;
+  PicmanImage   *image;
+  PicmanChannel *channel;
   return_if_no_channel (image, channel, data);
 
-  gimp_image_lower_item (image, GIMP_ITEM (channel), NULL);
-  gimp_image_flush (image);
+  picman_image_lower_item (image, PICMAN_ITEM (channel), NULL);
+  picman_image_flush (image);
 }
 
 void
 channels_lower_to_bottom_cmd_callback (GtkAction *action,
                                        gpointer   data)
 {
-  GimpImage   *image;
-  GimpChannel *channel;
+  PicmanImage   *image;
+  PicmanChannel *channel;
   return_if_no_channel (image, channel, data);
 
-  gimp_image_lower_item_to_bottom (image, GIMP_ITEM (channel));
-  gimp_image_flush (image);
+  picman_image_lower_item_to_bottom (image, PICMAN_ITEM (channel));
+  picman_image_flush (image);
 }
 
 void
 channels_duplicate_cmd_callback (GtkAction *action,
                                  gpointer   data)
 {
-  GimpImage   *image;
-  GimpChannel *new_channel;
-  GimpChannel *parent = GIMP_IMAGE_ACTIVE_PARENT;
+  PicmanImage   *image;
+  PicmanChannel *new_channel;
+  PicmanChannel *parent = PICMAN_IMAGE_ACTIVE_PARENT;
 
-  if (GIMP_IS_COMPONENT_EDITOR (data))
+  if (PICMAN_IS_COMPONENT_EDITOR (data))
     {
-      GimpChannelType  component;
+      PicmanChannelType  component;
       const gchar     *desc;
       gchar           *name;
       return_if_no_image (image, data);
 
-      component = GIMP_COMPONENT_EDITOR (data)->clicked_component;
+      component = PICMAN_COMPONENT_EDITOR (data)->clicked_component;
 
-      gimp_enum_get_value (GIMP_TYPE_CHANNEL_TYPE, component,
+      picman_enum_get_value (PICMAN_TYPE_CHANNEL_TYPE, component,
                            NULL, NULL, &desc, NULL);
 
       name = g_strdup_printf (_("%s Channel Copy"), desc);
 
-      new_channel = gimp_channel_new_from_component (image, component,
+      new_channel = picman_channel_new_from_component (image, component,
                                                      name, NULL);
 
       /*  copied components are invisible by default so subsequent copies
        *  of components don't affect each other
        */
-      gimp_item_set_visible (GIMP_ITEM (new_channel), FALSE, FALSE);
+      picman_item_set_visible (PICMAN_ITEM (new_channel), FALSE, FALSE);
 
       g_free (name);
     }
   else
     {
-      GimpChannel *channel;
+      PicmanChannel *channel;
       return_if_no_channel (image, channel, data);
 
       new_channel =
-        GIMP_CHANNEL (gimp_item_duplicate (GIMP_ITEM (channel),
+        PICMAN_CHANNEL (picman_item_duplicate (PICMAN_ITEM (channel),
                                            G_TYPE_FROM_INSTANCE (channel)));
 
-      /*  use the actual parent here, not GIMP_IMAGE_ACTIVE_PARENT because
+      /*  use the actual parent here, not PICMAN_IMAGE_ACTIVE_PARENT because
        *  the latter would add a duplicated group inside itself instead of
        *  above it
        */
-      parent = gimp_channel_get_parent (channel);
+      parent = picman_channel_get_parent (channel);
     }
 
-  gimp_image_add_channel (image, new_channel, parent, -1, TRUE);
+  picman_image_add_channel (image, new_channel, parent, -1, TRUE);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 void
 channels_delete_cmd_callback (GtkAction *action,
                               gpointer   data)
 {
-  GimpImage   *image;
-  GimpChannel *channel;
+  PicmanImage   *image;
+  PicmanChannel *channel;
   return_if_no_channel (image, channel, data);
 
-  gimp_image_remove_channel (image, channel, TRUE, NULL);
-  gimp_image_flush (image);
+  picman_image_remove_channel (image, channel, TRUE, NULL);
+  picman_image_flush (image);
 }
 
 void
@@ -291,31 +291,31 @@ channels_to_selection_cmd_callback (GtkAction *action,
                                     gint       value,
                                     gpointer   data)
 {
-  GimpChannelOps  op;
-  GimpImage      *image;
+  PicmanChannelOps  op;
+  PicmanImage      *image;
 
-  op = (GimpChannelOps) value;
+  op = (PicmanChannelOps) value;
 
-  if (GIMP_IS_COMPONENT_EDITOR (data))
+  if (PICMAN_IS_COMPONENT_EDITOR (data))
     {
-      GimpChannelType component;
+      PicmanChannelType component;
       return_if_no_image (image, data);
 
-      component = GIMP_COMPONENT_EDITOR (data)->clicked_component;
+      component = PICMAN_COMPONENT_EDITOR (data)->clicked_component;
 
-      gimp_channel_select_component (gimp_image_get_mask (image), component,
+      picman_channel_select_component (picman_image_get_mask (image), component,
                                      op, FALSE, 0.0, 0.0);
     }
   else
     {
-      GimpChannel *channel;
+      PicmanChannel *channel;
       return_if_no_channel (image, channel, data);
 
-      gimp_item_to_selection (GIMP_ITEM (channel),
+      picman_item_to_selection (PICMAN_ITEM (channel),
                               op, TRUE, FALSE, 0.0, 0.0);
     }
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 
@@ -328,7 +328,7 @@ channels_new_channel_response (GtkWidget            *widget,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpChannel *new_channel;
+      PicmanChannel *new_channel;
 
       if (channel_name)
         g_free (channel_name);
@@ -336,37 +336,37 @@ channels_new_channel_response (GtkWidget            *widget,
       channel_name =
         g_strdup (gtk_entry_get_text (GTK_ENTRY (options->name_entry)));
 
-      gimp_color_button_get_color (GIMP_COLOR_BUTTON (options->color_panel),
+      picman_color_button_get_color (PICMAN_COLOR_BUTTON (options->color_panel),
                                    &channel_color);
 
       if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (options->save_sel_checkbutton)))
         {
-          GimpChannel *selection = gimp_image_get_mask (options->image);
+          PicmanChannel *selection = picman_image_get_mask (options->image);
 
           new_channel =
-            GIMP_CHANNEL (gimp_item_duplicate (GIMP_ITEM (selection),
-                                               GIMP_TYPE_CHANNEL));
+            PICMAN_CHANNEL (picman_item_duplicate (PICMAN_ITEM (selection),
+                                               PICMAN_TYPE_CHANNEL));
 
-          gimp_object_set_name (GIMP_OBJECT (new_channel), channel_name);
-          gimp_channel_set_color (new_channel, &channel_color, FALSE);
+          picman_object_set_name (PICMAN_OBJECT (new_channel), channel_name);
+          picman_channel_set_color (new_channel, &channel_color, FALSE);
         }
       else
         {
-          new_channel = gimp_channel_new (options->image,
-                                          gimp_image_get_width  (options->image),
-                                          gimp_image_get_height (options->image),
+          new_channel = picman_channel_new (options->image,
+                                          picman_image_get_width  (options->image),
+                                          picman_image_get_height (options->image),
                                           channel_name,
                                           &channel_color);
 
-          gimp_drawable_fill_by_type (GIMP_DRAWABLE (new_channel),
+          picman_drawable_fill_by_type (PICMAN_DRAWABLE (new_channel),
                                       options->context,
-                                      GIMP_TRANSPARENT_FILL);
+                                      PICMAN_TRANSPARENT_FILL);
         }
 
-      gimp_image_add_channel (options->image, new_channel,
-                              GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+      picman_image_add_channel (options->image, new_channel,
+                              PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-      gimp_image_flush (options->image);
+      picman_image_flush (options->image);
     }
 
   gtk_widget_destroy (options->dialog);
@@ -379,39 +379,39 @@ channels_edit_channel_response (GtkWidget            *widget,
 {
   if (response_id == GTK_RESPONSE_OK)
     {
-      GimpChannel *channel = options->channel;
+      PicmanChannel *channel = options->channel;
       const gchar *new_name;
-      GimpRGB      color;
+      PicmanRGB      color;
       gboolean     name_changed  = FALSE;
       gboolean     color_changed = FALSE;
 
       new_name = gtk_entry_get_text (GTK_ENTRY (options->name_entry));
 
-      gimp_color_button_get_color (GIMP_COLOR_BUTTON (options->color_panel),
+      picman_color_button_get_color (PICMAN_COLOR_BUTTON (options->color_panel),
                                    &color);
 
-      if (strcmp (new_name, gimp_object_get_name (channel)))
+      if (strcmp (new_name, picman_object_get_name (channel)))
         name_changed = TRUE;
 
-      if (gimp_rgba_distance (&color, &channel->color) > 0.0001)
+      if (picman_rgba_distance (&color, &channel->color) > 0.0001)
         color_changed = TRUE;
 
       if (name_changed && color_changed)
-        gimp_image_undo_group_start (options->image,
-                                     GIMP_UNDO_GROUP_ITEM_PROPERTIES,
+        picman_image_undo_group_start (options->image,
+                                     PICMAN_UNDO_GROUP_ITEM_PROPERTIES,
                                      _("Channel Attributes"));
 
       if (name_changed)
-        gimp_item_rename (GIMP_ITEM (channel), new_name, NULL);
+        picman_item_rename (PICMAN_ITEM (channel), new_name, NULL);
 
       if (color_changed)
-        gimp_channel_set_color (channel, &color, TRUE);
+        picman_channel_set_color (channel, &color, TRUE);
 
       if (name_changed && color_changed)
-        gimp_image_undo_group_end (options->image);
+        picman_image_undo_group_end (options->image);
 
       if (name_changed || color_changed)
-        gimp_image_flush (options->image);
+        picman_image_flush (options->image);
     }
 
   gtk_widget_destroy (options->dialog);

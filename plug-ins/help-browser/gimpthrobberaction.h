@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpThrobberAction
- * Copyright (C) 2005  Sven Neumann <sven@gimp.org>
+ * PicmanThrobberAction
+ * Copyright (C) 2005  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_THROBBER_ACTION_H__
-#define __GIMP_THROBBER_ACTION_H__
+#ifndef __PICMAN_THROBBER_ACTION_H__
+#define __PICMAN_THROBBER_ACTION_H__
 
 G_BEGIN_DECLS
 
-#define GIMP_TYPE_THROBBER_ACTION            (gimp_throbber_action_get_type ())
-#define GIMP_THROBBER_ACTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_THROBBER_ACTION, GimpThrobberAction))
-#define GIMP_THROBBER_ACTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_THROBBER_ACTION, GimpThrobberActionClass))
-#define GIMP_IS_THROBBER_ACTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_THROBBER_ACTION))
-#define GIMP_IS_THROBBER_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), GIMP_TYPE_THROBBER_ACTION))
-#define GIMP_THROBBER_ACTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GIMP_TYPE_THROBBER_ACTION, GimpThrobberActionClass))
+#define PICMAN_TYPE_THROBBER_ACTION            (picman_throbber_action_get_type ())
+#define PICMAN_THROBBER_ACTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_THROBBER_ACTION, PicmanThrobberAction))
+#define PICMAN_THROBBER_ACTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_THROBBER_ACTION, PicmanThrobberActionClass))
+#define PICMAN_IS_THROBBER_ACTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_THROBBER_ACTION))
+#define PICMAN_IS_THROBBER_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), PICMAN_TYPE_THROBBER_ACTION))
+#define PICMAN_THROBBER_ACTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PICMAN_TYPE_THROBBER_ACTION, PicmanThrobberActionClass))
 
 
-typedef GtkAction       GimpThrobberAction;
-typedef GtkActionClass  GimpThrobberActionClass;
+typedef GtkAction       PicmanThrobberAction;
+typedef GtkActionClass  PicmanThrobberActionClass;
 
 
-GType       gimp_throbber_action_get_type (void) G_GNUC_CONST;
+GType       picman_throbber_action_get_type (void) G_GNUC_CONST;
 
-GtkAction * gimp_throbber_action_new      (const gchar *name,
+GtkAction * picman_throbber_action_new      (const gchar *name,
                                            const gchar *label,
                                            const gchar *tooltip,
                                            const gchar *stock_id);
@@ -45,4 +45,4 @@ GtkAction * gimp_throbber_action_new      (const gchar *name,
 
 G_END_DECLS
 
-#endif /* __GIMP_THROBBER_ACTION_H__ */
+#endif /* __PICMAN_THROBBER_ACTION_H__ */

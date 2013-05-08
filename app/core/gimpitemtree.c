@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpitemtree.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmanitemtree.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,11 @@
 
 #include "core-types.h"
 
-#include "gimpimage.h"
-#include "gimpimage-undo-push.h"
-#include "gimpitem.h"
-#include "gimpitemstack.h"
-#include "gimpitemtree.h"
+#include "picmanimage.h"
+#include "picmanimage-undo-push.h"
+#include "picmanitem.h"
+#include "picmanitemstack.h"
+#include "picmanitemtree.h"
 
 
 enum
@@ -44,128 +44,128 @@ enum
 };
 
 
-typedef struct _GimpItemTreePrivate GimpItemTreePrivate;
+typedef struct _PicmanItemTreePrivate PicmanItemTreePrivate;
 
-struct _GimpItemTreePrivate
+struct _PicmanItemTreePrivate
 {
-  GimpImage  *image;
+  PicmanImage  *image;
 
   GType       container_type;
   GType       item_type;
 
-  GimpItem   *active_item;
+  PicmanItem   *active_item;
 
   GHashTable *name_hash;
 };
 
-#define GIMP_ITEM_TREE_GET_PRIVATE(object) \
+#define PICMAN_ITEM_TREE_GET_PRIVATE(object) \
         G_TYPE_INSTANCE_GET_PRIVATE (object, \
-                                     GIMP_TYPE_ITEM_TREE, \
-                                     GimpItemTreePrivate)
+                                     PICMAN_TYPE_ITEM_TREE, \
+                                     PicmanItemTreePrivate)
 
 
 /*  local function prototypes  */
 
-static void     gimp_item_tree_constructed   (GObject      *object);
-static void     gimp_item_tree_finalize      (GObject      *object);
-static void     gimp_item_tree_set_property  (GObject      *object,
+static void     picman_item_tree_constructed   (GObject      *object);
+static void     picman_item_tree_finalize      (GObject      *object);
+static void     picman_item_tree_set_property  (GObject      *object,
                                               guint         property_id,
                                               const GValue *value,
                                               GParamSpec   *pspec);
-static void     gimp_item_tree_get_property  (GObject      *object,
+static void     picman_item_tree_get_property  (GObject      *object,
                                               guint         property_id,
                                               GValue       *value,
                                               GParamSpec   *pspec);
 
-static gint64   gimp_item_tree_get_memsize   (GimpObject   *object,
+static gint64   picman_item_tree_get_memsize   (PicmanObject   *object,
                                               gint64       *gui_size);
 
-static void     gimp_item_tree_uniquefy_name (GimpItemTree *tree,
-                                              GimpItem     *item,
+static void     picman_item_tree_uniquefy_name (PicmanItemTree *tree,
+                                              PicmanItem     *item,
                                               const gchar  *new_name);
 
 
-G_DEFINE_TYPE (GimpItemTree, gimp_item_tree, GIMP_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanItemTree, picman_item_tree, PICMAN_TYPE_OBJECT)
 
-#define parent_class gimp_item_tree_parent_class
+#define parent_class picman_item_tree_parent_class
 
 
 static void
-gimp_item_tree_class_init (GimpItemTreeClass *klass)
+picman_item_tree_class_init (PicmanItemTreeClass *klass)
 {
   GObjectClass    *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass *gimp_object_class = GIMP_OBJECT_CLASS (klass);
+  PicmanObjectClass *picman_object_class = PICMAN_OBJECT_CLASS (klass);
 
-  object_class->constructed      = gimp_item_tree_constructed;
-  object_class->finalize         = gimp_item_tree_finalize;
-  object_class->set_property     = gimp_item_tree_set_property;
-  object_class->get_property     = gimp_item_tree_get_property;
+  object_class->constructed      = picman_item_tree_constructed;
+  object_class->finalize         = picman_item_tree_finalize;
+  object_class->set_property     = picman_item_tree_set_property;
+  object_class->get_property     = picman_item_tree_get_property;
 
-  gimp_object_class->get_memsize = gimp_item_tree_get_memsize;
+  picman_object_class->get_memsize = picman_item_tree_get_memsize;
 
   g_object_class_install_property (object_class, PROP_IMAGE,
                                    g_param_spec_object ("image",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_IMAGE,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_IMAGE,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_CONTAINER_TYPE,
                                    g_param_spec_gtype ("container-type",
                                                        NULL, NULL,
-                                                       GIMP_TYPE_ITEM_STACK,
-                                                       GIMP_PARAM_READWRITE |
+                                                       PICMAN_TYPE_ITEM_STACK,
+                                                       PICMAN_PARAM_READWRITE |
                                                        G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_ITEM_TYPE,
                                    g_param_spec_gtype ("item-type",
                                                        NULL, NULL,
-                                                       GIMP_TYPE_ITEM,
-                                                       GIMP_PARAM_READWRITE |
+                                                       PICMAN_TYPE_ITEM,
+                                                       PICMAN_PARAM_READWRITE |
                                                        G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_ACTIVE_ITEM,
                                    g_param_spec_object ("active-item",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_ITEM,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_ITEM,
+                                                        PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpItemTreePrivate));
+  g_type_class_add_private (klass, sizeof (PicmanItemTreePrivate));
 }
 
 static void
-gimp_item_tree_init (GimpItemTree *tree)
+picman_item_tree_init (PicmanItemTree *tree)
 {
-  GimpItemTreePrivate *private = GIMP_ITEM_TREE_GET_PRIVATE (tree);
+  PicmanItemTreePrivate *private = PICMAN_ITEM_TREE_GET_PRIVATE (tree);
 
   private->name_hash = g_hash_table_new (g_str_hash, g_str_equal);
 }
 
 static void
-gimp_item_tree_constructed (GObject *object)
+picman_item_tree_constructed (GObject *object)
 {
-  GimpItemTree        *tree    = GIMP_ITEM_TREE (object);
-  GimpItemTreePrivate *private = GIMP_ITEM_TREE_GET_PRIVATE (tree);
+  PicmanItemTree        *tree    = PICMAN_ITEM_TREE (object);
+  PicmanItemTreePrivate *private = PICMAN_ITEM_TREE_GET_PRIVATE (tree);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_IMAGE (private->image));
-  g_assert (g_type_is_a (private->container_type, GIMP_TYPE_ITEM_STACK));
-  g_assert (g_type_is_a (private->item_type,      GIMP_TYPE_ITEM));
-  g_assert (private->item_type != GIMP_TYPE_ITEM);
+  g_assert (PICMAN_IS_IMAGE (private->image));
+  g_assert (g_type_is_a (private->container_type, PICMAN_TYPE_ITEM_STACK));
+  g_assert (g_type_is_a (private->item_type,      PICMAN_TYPE_ITEM));
+  g_assert (private->item_type != PICMAN_TYPE_ITEM);
 
   tree->container = g_object_new (private->container_type,
                                   "name",          g_type_name (private->item_type),
                                   "children-type", private->item_type,
-                                  "policy",        GIMP_CONTAINER_POLICY_STRONG,
+                                  "policy",        PICMAN_CONTAINER_POLICY_STRONG,
                                   NULL);
 }
 
 static void
-gimp_item_tree_finalize (GObject *object)
+picman_item_tree_finalize (GObject *object)
 {
-  GimpItemTree        *tree    = GIMP_ITEM_TREE (object);
-  GimpItemTreePrivate *private = GIMP_ITEM_TREE_GET_PRIVATE (tree);
+  PicmanItemTree        *tree    = PICMAN_ITEM_TREE (object);
+  PicmanItemTreePrivate *private = PICMAN_ITEM_TREE_GET_PRIVATE (tree);
 
   if (private->name_hash)
     {
@@ -183,12 +183,12 @@ gimp_item_tree_finalize (GObject *object)
 }
 
 static void
-gimp_item_tree_set_property (GObject      *object,
+picman_item_tree_set_property (GObject      *object,
                              guint         property_id,
                              const GValue *value,
                              GParamSpec   *pspec)
 {
-  GimpItemTreePrivate *private = GIMP_ITEM_TREE_GET_PRIVATE (object);
+  PicmanItemTreePrivate *private = PICMAN_ITEM_TREE_GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -212,12 +212,12 @@ gimp_item_tree_set_property (GObject      *object,
 }
 
 static void
-gimp_item_tree_get_property (GObject    *object,
+picman_item_tree_get_property (GObject    *object,
                              guint       property_id,
                              GValue     *value,
                              GParamSpec *pspec)
 {
-  GimpItemTreePrivate *private = GIMP_ITEM_TREE_GET_PRIVATE (object);
+  PicmanItemTreePrivate *private = PICMAN_ITEM_TREE_GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -241,58 +241,58 @@ gimp_item_tree_get_property (GObject    *object,
 }
 
 static gint64
-gimp_item_tree_get_memsize (GimpObject *object,
+picman_item_tree_get_memsize (PicmanObject *object,
                             gint64     *gui_size)
 {
-  GimpItemTree *tree    = GIMP_ITEM_TREE (object);
+  PicmanItemTree *tree    = PICMAN_ITEM_TREE (object);
   gint64        memsize = 0;
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (tree->container), gui_size);
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (tree->container), gui_size);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 
 /*  public functions  */
 
-GimpItemTree *
-gimp_item_tree_new (GimpImage *image,
+PicmanItemTree *
+picman_item_tree_new (PicmanImage *image,
                     GType      container_type,
                     GType      item_type)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (g_type_is_a (container_type, GIMP_TYPE_ITEM_STACK), NULL);
-  g_return_val_if_fail (g_type_is_a (item_type, GIMP_TYPE_ITEM), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (g_type_is_a (container_type, PICMAN_TYPE_ITEM_STACK), NULL);
+  g_return_val_if_fail (g_type_is_a (item_type, PICMAN_TYPE_ITEM), NULL);
 
-  return g_object_new (GIMP_TYPE_ITEM_TREE,
+  return g_object_new (PICMAN_TYPE_ITEM_TREE,
                        "image",          image,
                        "container-type", container_type,
                        "item-type",      item_type,
                        NULL);
 }
 
-GimpItem *
-gimp_item_tree_get_active_item (GimpItemTree *tree)
+PicmanItem *
+picman_item_tree_get_active_item (PicmanItemTree *tree)
 {
-  g_return_val_if_fail (GIMP_IS_ITEM_TREE (tree), NULL);
+  g_return_val_if_fail (PICMAN_IS_ITEM_TREE (tree), NULL);
 
-  return GIMP_ITEM_TREE_GET_PRIVATE (tree)->active_item;
+  return PICMAN_ITEM_TREE_GET_PRIVATE (tree)->active_item;
 }
 
 void
-gimp_item_tree_set_active_item (GimpItemTree *tree,
-                                GimpItem     *item)
+picman_item_tree_set_active_item (PicmanItemTree *tree,
+                                PicmanItem     *item)
 {
-  GimpItemTreePrivate *private;
+  PicmanItemTreePrivate *private;
 
-  g_return_if_fail (GIMP_IS_ITEM_TREE (tree));
+  g_return_if_fail (PICMAN_IS_ITEM_TREE (tree));
 
-  private = GIMP_ITEM_TREE_GET_PRIVATE (tree);
+  private = PICMAN_ITEM_TREE_GET_PRIVATE (tree);
 
   g_return_if_fail (item == NULL ||
                     G_TYPE_CHECK_INSTANCE_TYPE (item, private->item_type));
-  g_return_if_fail (item == NULL || gimp_item_get_tree (item) == tree);
+  g_return_if_fail (item == NULL || picman_item_get_tree (item) == tree);
 
   if (item != private->active_item)
     {
@@ -302,50 +302,50 @@ gimp_item_tree_set_active_item (GimpItemTree *tree,
     }
 }
 
-GimpItem *
-gimp_item_tree_get_item_by_name (GimpItemTree *tree,
+PicmanItem *
+picman_item_tree_get_item_by_name (PicmanItemTree *tree,
                                  const gchar  *name)
 {
-  g_return_val_if_fail (GIMP_IS_ITEM_TREE (tree), NULL);
+  g_return_val_if_fail (PICMAN_IS_ITEM_TREE (tree), NULL);
   g_return_val_if_fail (name != NULL, NULL);
 
-  return g_hash_table_lookup (GIMP_ITEM_TREE_GET_PRIVATE (tree)->name_hash,
+  return g_hash_table_lookup (PICMAN_ITEM_TREE_GET_PRIVATE (tree)->name_hash,
                               name);
 }
 
 gboolean
-gimp_item_tree_get_insert_pos (GimpItemTree  *tree,
-                               GimpItem      *item,
-                               GimpItem     **parent,
+picman_item_tree_get_insert_pos (PicmanItemTree  *tree,
+                               PicmanItem      *item,
+                               PicmanItem     **parent,
                                gint          *position)
 {
-  GimpItemTreePrivate *private;
-  GimpContainer       *container;
+  PicmanItemTreePrivate *private;
+  PicmanContainer       *container;
 
-  g_return_val_if_fail (GIMP_IS_ITEM_TREE (tree), FALSE);
+  g_return_val_if_fail (PICMAN_IS_ITEM_TREE (tree), FALSE);
   g_return_val_if_fail (parent != NULL, FALSE);
 
-  private = GIMP_ITEM_TREE_GET_PRIVATE (tree);
+  private = PICMAN_ITEM_TREE_GET_PRIVATE (tree);
 
   g_return_val_if_fail (G_TYPE_CHECK_INSTANCE_TYPE (item, private->item_type),
                         FALSE);
-  g_return_val_if_fail (! gimp_item_is_attached (item), FALSE);
-  g_return_val_if_fail (gimp_item_get_image (item) == private->image, FALSE);
+  g_return_val_if_fail (! picman_item_is_attached (item), FALSE);
+  g_return_val_if_fail (picman_item_get_image (item) == private->image, FALSE);
   g_return_val_if_fail (*parent == NULL ||
-                        *parent == GIMP_IMAGE_ACTIVE_PARENT ||
+                        *parent == PICMAN_IMAGE_ACTIVE_PARENT ||
                         G_TYPE_CHECK_INSTANCE_TYPE (*parent, private->item_type),
                         FALSE);
   g_return_val_if_fail (*parent == NULL ||
-                        *parent == GIMP_IMAGE_ACTIVE_PARENT ||
-                        gimp_item_get_tree (*parent) == tree, FALSE);
+                        *parent == PICMAN_IMAGE_ACTIVE_PARENT ||
+                        picman_item_get_tree (*parent) == tree, FALSE);
   g_return_val_if_fail (*parent == NULL ||
-                        *parent == GIMP_IMAGE_ACTIVE_PARENT ||
-                        gimp_viewable_get_children (GIMP_VIEWABLE (*parent)),
+                        *parent == PICMAN_IMAGE_ACTIVE_PARENT ||
+                        picman_viewable_get_children (PICMAN_VIEWABLE (*parent)),
                         FALSE);
   g_return_val_if_fail (position != NULL, FALSE);
 
   /*  if we want to insert in the active item's parent container  */
-  if (*parent == GIMP_IMAGE_ACTIVE_PARENT)
+  if (*parent == PICMAN_IMAGE_ACTIVE_PARENT)
     {
       if (private->active_item)
         {
@@ -353,14 +353,14 @@ gimp_item_tree_get_insert_pos (GimpItemTree  *tree,
            *  branch; add to the active item's parent container
            *  otherwise
            */
-          if (gimp_viewable_get_children (GIMP_VIEWABLE (private->active_item)))
+          if (picman_viewable_get_children (PICMAN_VIEWABLE (private->active_item)))
             {
               *parent   = private->active_item;
               *position = 0;
             }
           else
             {
-              *parent = gimp_item_get_parent (private->active_item);
+              *parent = picman_item_get_parent (private->active_item);
             }
         }
       else
@@ -371,7 +371,7 @@ gimp_item_tree_get_insert_pos (GimpItemTree  *tree,
     }
 
   if (*parent)
-    container = gimp_viewable_get_children (GIMP_VIEWABLE (*parent));
+    container = picman_viewable_get_children (PICMAN_VIEWABLE (*parent));
   else
     container = tree->container;
 
@@ -380,8 +380,8 @@ gimp_item_tree_get_insert_pos (GimpItemTree  *tree,
     {
       if (private->active_item)
         *position =
-          gimp_container_get_child_index (container,
-                                          GIMP_OBJECT (private->active_item));
+          picman_container_get_child_index (container,
+                                          PICMAN_OBJECT (private->active_item));
 
       /*  if the active item is not in the specified parent container,
        *  fall back to index 0
@@ -391,126 +391,126 @@ gimp_item_tree_get_insert_pos (GimpItemTree  *tree,
     }
 
   /*  don't add at a non-existing index  */
-  *position = CLAMP (*position, 0, gimp_container_get_n_children (container));
+  *position = CLAMP (*position, 0, picman_container_get_n_children (container));
 
   return TRUE;
 }
 
 void
-gimp_item_tree_add_item (GimpItemTree *tree,
-                         GimpItem     *item,
-                         GimpItem     *parent,
+picman_item_tree_add_item (PicmanItemTree *tree,
+                         PicmanItem     *item,
+                         PicmanItem     *parent,
                          gint          position)
 {
-  GimpItemTreePrivate *private;
-  GimpContainer       *container;
-  GimpContainer       *children;
+  PicmanItemTreePrivate *private;
+  PicmanContainer       *container;
+  PicmanContainer       *children;
 
-  g_return_if_fail (GIMP_IS_ITEM_TREE (tree));
+  g_return_if_fail (PICMAN_IS_ITEM_TREE (tree));
 
-  private = GIMP_ITEM_TREE_GET_PRIVATE (tree);
+  private = PICMAN_ITEM_TREE_GET_PRIVATE (tree);
 
   g_return_if_fail (G_TYPE_CHECK_INSTANCE_TYPE (item, private->item_type));
-  g_return_if_fail (! gimp_item_is_attached (item));
-  g_return_if_fail (gimp_item_get_image (item) == private->image);
+  g_return_if_fail (! picman_item_is_attached (item));
+  g_return_if_fail (picman_item_get_image (item) == private->image);
   g_return_if_fail (parent == NULL ||
                     G_TYPE_CHECK_INSTANCE_TYPE (parent, private->item_type));
-  g_return_if_fail (parent == NULL || gimp_item_get_tree (parent) == tree);
+  g_return_if_fail (parent == NULL || picman_item_get_tree (parent) == tree);
   g_return_if_fail (parent == NULL ||
-                    gimp_viewable_get_children (GIMP_VIEWABLE (parent)));
+                    picman_viewable_get_children (PICMAN_VIEWABLE (parent)));
 
-  gimp_item_tree_uniquefy_name (tree, item, NULL);
+  picman_item_tree_uniquefy_name (tree, item, NULL);
 
-  children = gimp_viewable_get_children (GIMP_VIEWABLE (item));
+  children = picman_viewable_get_children (PICMAN_VIEWABLE (item));
 
   if (children)
     {
-      GList *list = gimp_item_stack_get_item_list (GIMP_ITEM_STACK (children));
+      GList *list = picman_item_stack_get_item_list (PICMAN_ITEM_STACK (children));
 
       while (list)
         {
-          gimp_item_tree_uniquefy_name (tree, list->data, NULL);
+          picman_item_tree_uniquefy_name (tree, list->data, NULL);
 
           list = g_list_remove (list, list->data);
         }
     }
 
   if (parent)
-    container = gimp_viewable_get_children (GIMP_VIEWABLE (parent));
+    container = picman_viewable_get_children (PICMAN_VIEWABLE (parent));
   else
     container = tree->container;
 
   if (parent)
-    gimp_viewable_set_parent (GIMP_VIEWABLE (item),
-                              GIMP_VIEWABLE (parent));
+    picman_viewable_set_parent (PICMAN_VIEWABLE (item),
+                              PICMAN_VIEWABLE (parent));
 
-  gimp_container_insert (container, GIMP_OBJECT (item), position);
+  picman_container_insert (container, PICMAN_OBJECT (item), position);
 
   /*  if the item came from the undo stack, reset its "removed" state  */
-  if (gimp_item_is_removed (item))
-    gimp_item_unset_removed (item);
+  if (picman_item_is_removed (item))
+    picman_item_unset_removed (item);
 }
 
-GimpItem *
-gimp_item_tree_remove_item (GimpItemTree *tree,
-                            GimpItem     *item,
-                            GimpItem     *new_active)
+PicmanItem *
+picman_item_tree_remove_item (PicmanItemTree *tree,
+                            PicmanItem     *item,
+                            PicmanItem     *new_active)
 {
-  GimpItemTreePrivate *private;
-  GimpItem            *parent;
-  GimpContainer       *container;
-  GimpContainer       *children;
+  PicmanItemTreePrivate *private;
+  PicmanItem            *parent;
+  PicmanContainer       *container;
+  PicmanContainer       *children;
   gint                 index;
 
-  g_return_val_if_fail (GIMP_IS_ITEM_TREE (tree), NULL);
+  g_return_val_if_fail (PICMAN_IS_ITEM_TREE (tree), NULL);
 
-  private = GIMP_ITEM_TREE_GET_PRIVATE (tree);
+  private = PICMAN_ITEM_TREE_GET_PRIVATE (tree);
 
   g_return_val_if_fail (G_TYPE_CHECK_INSTANCE_TYPE (item, private->item_type),
                         NULL);
-  g_return_val_if_fail (gimp_item_get_tree (item) == tree, NULL);
+  g_return_val_if_fail (picman_item_get_tree (item) == tree, NULL);
 
-  parent    = gimp_item_get_parent (item);
-  container = gimp_item_get_container (item);
-  index     = gimp_item_get_index (item);
+  parent    = picman_item_get_parent (item);
+  container = picman_item_get_container (item);
+  index     = picman_item_get_index (item);
 
   g_object_ref (item);
 
   g_hash_table_remove (private->name_hash,
-                       gimp_object_get_name (item));
+                       picman_object_get_name (item));
 
-  children = gimp_viewable_get_children (GIMP_VIEWABLE (item));
+  children = picman_viewable_get_children (PICMAN_VIEWABLE (item));
 
   if (children)
     {
-      GList *list = gimp_item_stack_get_item_list (GIMP_ITEM_STACK (children));
+      GList *list = picman_item_stack_get_item_list (PICMAN_ITEM_STACK (children));
 
       while (list)
         {
           g_hash_table_remove (private->name_hash,
-                               gimp_object_get_name (list->data));
+                               picman_object_get_name (list->data));
 
           list = g_list_remove (list, list->data);
         }
     }
 
-  gimp_container_remove (container, GIMP_OBJECT (item));
+  picman_container_remove (container, PICMAN_OBJECT (item));
 
   if (parent)
-    gimp_viewable_set_parent (GIMP_VIEWABLE (item), NULL);
+    picman_viewable_set_parent (PICMAN_VIEWABLE (item), NULL);
 
-  gimp_item_removed (item);
+  picman_item_removed (item);
 
   if (! new_active)
     {
-      gint n_children = gimp_container_get_n_children (container);
+      gint n_children = picman_container_get_n_children (container);
 
       if (n_children > 0)
         {
           index = CLAMP (index, 0, n_children - 1);
 
           new_active =
-            GIMP_ITEM (gimp_container_get_child_by_index (container, index));
+            PICMAN_ITEM (picman_container_get_child_by_index (container, index));
         }
       else if (parent)
         {
@@ -524,48 +524,48 @@ gimp_item_tree_remove_item (GimpItemTree *tree,
 }
 
 gboolean
-gimp_item_tree_reorder_item (GimpItemTree *tree,
-                             GimpItem     *item,
-                             GimpItem     *new_parent,
+picman_item_tree_reorder_item (PicmanItemTree *tree,
+                             PicmanItem     *item,
+                             PicmanItem     *new_parent,
                              gint          new_index,
                              gboolean      push_undo,
                              const gchar  *undo_desc)
 {
-  GimpItemTreePrivate *private;
-  GimpContainer       *container;
-  GimpContainer       *new_container;
+  PicmanItemTreePrivate *private;
+  PicmanContainer       *container;
+  PicmanContainer       *new_container;
   gint                 n_items;
 
-  g_return_val_if_fail (GIMP_IS_ITEM_TREE (tree), FALSE);
+  g_return_val_if_fail (PICMAN_IS_ITEM_TREE (tree), FALSE);
 
-  private = GIMP_ITEM_TREE_GET_PRIVATE (tree);
+  private = PICMAN_ITEM_TREE_GET_PRIVATE (tree);
 
   g_return_val_if_fail (G_TYPE_CHECK_INSTANCE_TYPE (item, private->item_type),
                         FALSE);
-  g_return_val_if_fail (gimp_item_get_tree (item) == tree, FALSE);
+  g_return_val_if_fail (picman_item_get_tree (item) == tree, FALSE);
   g_return_val_if_fail (new_parent == NULL ||
                         G_TYPE_CHECK_INSTANCE_TYPE (new_parent,
                                                     private->item_type),
                         FALSE);
   g_return_val_if_fail (new_parent == NULL ||
-                        gimp_item_get_tree (new_parent) == tree, FALSE);
+                        picman_item_get_tree (new_parent) == tree, FALSE);
   g_return_val_if_fail (new_parent == NULL ||
-                        gimp_viewable_get_children (GIMP_VIEWABLE (new_parent)),
+                        picman_viewable_get_children (PICMAN_VIEWABLE (new_parent)),
                         FALSE);
   g_return_val_if_fail (item != new_parent, FALSE);
   g_return_val_if_fail (new_parent == NULL ||
-                        ! gimp_viewable_is_ancestor (GIMP_VIEWABLE (item),
-                                                     GIMP_VIEWABLE (new_parent)),
+                        ! picman_viewable_is_ancestor (PICMAN_VIEWABLE (item),
+                                                     PICMAN_VIEWABLE (new_parent)),
                         FALSE);
 
-  container = gimp_item_get_container (item);
+  container = picman_item_get_container (item);
 
   if (new_parent)
-    new_container = gimp_viewable_get_children (GIMP_VIEWABLE (new_parent));
+    new_container = picman_viewable_get_children (PICMAN_VIEWABLE (new_parent));
   else
     new_container = tree->container;
 
-  n_items = gimp_container_get_n_children (new_container);
+  n_items = picman_container_get_n_children (new_container);
 
   if (new_container == container)
     n_items--;
@@ -573,27 +573,27 @@ gimp_item_tree_reorder_item (GimpItemTree *tree,
   new_index = CLAMP (new_index, 0, n_items);
 
   if (new_container != container ||
-      new_index     != gimp_item_get_index (item))
+      new_index     != picman_item_get_index (item))
     {
       if (push_undo)
-        gimp_image_undo_push_item_reorder (private->image, undo_desc, item);
+        picman_image_undo_push_item_reorder (private->image, undo_desc, item);
 
       if (new_container != container)
         {
           g_object_ref (item);
 
-          gimp_container_remove (container, GIMP_OBJECT (item));
+          picman_container_remove (container, PICMAN_OBJECT (item));
 
-          gimp_viewable_set_parent (GIMP_VIEWABLE (item),
-                                    GIMP_VIEWABLE (new_parent));
+          picman_viewable_set_parent (PICMAN_VIEWABLE (item),
+                                    PICMAN_VIEWABLE (new_parent));
 
-          gimp_container_insert (new_container, GIMP_OBJECT (item), new_index);
+          picman_container_insert (new_container, PICMAN_OBJECT (item), new_index);
 
           g_object_unref (item);
         }
       else
         {
-          gimp_container_reorder (container, GIMP_OBJECT (item), new_index);
+          picman_container_reorder (container, PICMAN_OBJECT (item), new_index);
         }
     }
 
@@ -601,29 +601,29 @@ gimp_item_tree_reorder_item (GimpItemTree *tree,
 }
 
 void
-gimp_item_tree_rename_item (GimpItemTree *tree,
-                            GimpItem     *item,
+picman_item_tree_rename_item (PicmanItemTree *tree,
+                            PicmanItem     *item,
                             const gchar  *new_name,
                             gboolean      push_undo,
                             const gchar  *undo_desc)
 {
-  GimpItemTreePrivate *private;
+  PicmanItemTreePrivate *private;
 
-  g_return_if_fail (GIMP_IS_ITEM_TREE (tree));
+  g_return_if_fail (PICMAN_IS_ITEM_TREE (tree));
 
-  private = GIMP_ITEM_TREE_GET_PRIVATE (tree);
+  private = PICMAN_ITEM_TREE_GET_PRIVATE (tree);
 
   g_return_if_fail (G_TYPE_CHECK_INSTANCE_TYPE (item, private->item_type));
-  g_return_if_fail (gimp_item_get_tree (item) == tree);
+  g_return_if_fail (picman_item_get_tree (item) == tree);
   g_return_if_fail (new_name != NULL);
 
-  if (strcmp (new_name, gimp_object_get_name (item)))
+  if (strcmp (new_name, picman_object_get_name (item)))
     {
       if (push_undo)
-        gimp_image_undo_push_item_rename (gimp_item_get_image (item),
+        picman_image_undo_push_item_rename (picman_item_get_image (item),
                                           undo_desc, item);
 
-      gimp_item_tree_uniquefy_name (tree, item, new_name);
+      picman_item_tree_uniquefy_name (tree, item, new_name);
     }
 }
 
@@ -631,24 +631,24 @@ gimp_item_tree_rename_item (GimpItemTree *tree,
 /*  private functions  */
 
 static void
-gimp_item_tree_uniquefy_name (GimpItemTree *tree,
-                              GimpItem     *item,
+picman_item_tree_uniquefy_name (PicmanItemTree *tree,
+                              PicmanItem     *item,
                               const gchar  *new_name)
 {
-  GimpItemTreePrivate *private = GIMP_ITEM_TREE_GET_PRIVATE (tree);
+  PicmanItemTreePrivate *private = PICMAN_ITEM_TREE_GET_PRIVATE (tree);
 
   if (new_name)
     {
       g_hash_table_remove (private->name_hash,
-                           gimp_object_get_name (item));
+                           picman_object_get_name (item));
 
-      gimp_object_set_name (GIMP_OBJECT (item), new_name);
+      picman_object_set_name (PICMAN_OBJECT (item), new_name);
     }
 
   if (g_hash_table_lookup (private->name_hash,
-                           gimp_object_get_name (item)))
+                           picman_object_get_name (item)))
     {
-      gchar *name     = g_strdup (gimp_object_get_name (item));
+      gchar *name     = g_strdup (picman_object_get_name (item));
       gchar *ext      = strrchr (name, '#');
       gchar *new_name = NULL;
       gint   number   = 0;
@@ -687,10 +687,10 @@ gimp_item_tree_uniquefy_name (GimpItemTree *tree,
 
       g_free (name);
 
-      gimp_object_take_name (GIMP_OBJECT (item), new_name);
+      picman_object_take_name (PICMAN_OBJECT (item), new_name);
     }
 
   g_hash_table_insert (private->name_hash,
-                       (gpointer) gimp_object_get_name (item),
+                       (gpointer) picman_object_get_name (item),
                        item);
 }

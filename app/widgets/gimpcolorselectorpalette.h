@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorselectorpalette.h
- * Copyright (C) 2006 Michael Natterer <mitch@gimp.org>
+ * picmancolorselectorpalette.h
+ * Copyright (C) 2006 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COLOR_SELECTOR_PALETTE_H__
-#define __GIMP_COLOR_SELECTOR_PALETTE_H__
+#ifndef __PICMAN_COLOR_SELECTOR_PALETTE_H__
+#define __PICMAN_COLOR_SELECTOR_PALETTE_H__
 
 
-#define GIMP_TYPE_COLOR_SELECTOR_PALETTE            (gimp_color_selector_palette_get_type ())
-#define GIMP_COLOR_SELECTOR_PALETTE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_SELECTOR_PALETTE, GimpColorSelectorPalette))
-#define GIMP_IS_COLOR_SELECTOR_PALETTE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_SELECTOR_PALETTE))
-#define GIMP_COLOR_SELECTOR_PALETTE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_SELECTOR_PALETTE, GimpColorSelectorPaletteClass))
-#define GIMP_IS_COLOR_SELECTOR_PALETTE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_SELECTOR_PALETTE))
-#define GIMP_COLOR_SELECTOR_PALETTE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_SELECTOR_PALETTE, GimpColorSelectorPaletteClass))
+#define PICMAN_TYPE_COLOR_SELECTOR_PALETTE            (picman_color_selector_palette_get_type ())
+#define PICMAN_COLOR_SELECTOR_PALETTE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_SELECTOR_PALETTE, PicmanColorSelectorPalette))
+#define PICMAN_IS_COLOR_SELECTOR_PALETTE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_SELECTOR_PALETTE))
+#define PICMAN_COLOR_SELECTOR_PALETTE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_SELECTOR_PALETTE, PicmanColorSelectorPaletteClass))
+#define PICMAN_IS_COLOR_SELECTOR_PALETTE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_SELECTOR_PALETTE))
+#define PICMAN_COLOR_SELECTOR_PALETTE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_SELECTOR_PALETTE, PicmanColorSelectorPaletteClass))
 
 
-typedef struct _GimpColorSelectorPalette      GimpColorSelectorPalette;
-typedef struct _GimpColorSelectorPaletteClass GimpColorSelectorPaletteClass;
+typedef struct _PicmanColorSelectorPalette      PicmanColorSelectorPalette;
+typedef struct _PicmanColorSelectorPaletteClass PicmanColorSelectorPaletteClass;
 
-struct _GimpColorSelectorPalette
+struct _PicmanColorSelectorPalette
 {
-  GimpColorSelector  parent_instance;
+  PicmanColorSelector  parent_instance;
 
-  GimpContext       *context;
+  PicmanContext       *context;
   GtkWidget         *view;
 };
 
-struct _GimpColorSelectorPaletteClass
+struct _PicmanColorSelectorPaletteClass
 {
-  GimpColorSelectorClass  parent_class;
+  PicmanColorSelectorClass  parent_class;
 };
 
 
-GType   gimp_color_selector_palette_get_type (void) G_GNUC_CONST;
+GType   picman_color_selector_palette_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_COLOR_SELECTOR_PALETTE_H__ */
+#endif /* __PICMAN_COLOR_SELECTOR_PALETTE_H__ */

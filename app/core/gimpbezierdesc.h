@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbezierdesc.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmanbezierdesc.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,30 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BEZIER_DESC_H__
-#define __GIMP_BEZIER_DESC_H__
+#ifndef __PICMAN_BEZIER_DESC_H__
+#define __PICMAN_BEZIER_DESC_H__
 
 
-#define          GIMP_TYPE_BEZIER_DESC     (gimp_bezier_desc_get_type ())
+#define          PICMAN_TYPE_BEZIER_DESC     (picman_bezier_desc_get_type ())
 
-GType            gimp_bezier_desc_get_type (void) G_GNUC_CONST;
+GType            picman_bezier_desc_get_type (void) G_GNUC_CONST;
 
 
 /* takes ownership of "data" */
-GimpBezierDesc * gimp_bezier_desc_new                 (cairo_path_data_t    *data,
+PicmanBezierDesc * picman_bezier_desc_new                 (cairo_path_data_t    *data,
                                                        gint                  n_data);
 
-/* expects sorted GimpBoundSegs */
-GimpBezierDesc * gimp_bezier_desc_new_from_bound_segs (GimpBoundSeg         *bound_segs,
+/* expects sorted PicmanBoundSegs */
+PicmanBezierDesc * picman_bezier_desc_new_from_bound_segs (PicmanBoundSeg         *bound_segs,
                                                        gint                  n_bound_segs,
                                                        gint                  n_bound_groups);
 
-void             gimp_bezier_desc_translate           (GimpBezierDesc       *desc,
+void             picman_bezier_desc_translate           (PicmanBezierDesc       *desc,
                                                        gdouble               offset_x,
                                                        gdouble               offset_y);
 
-GimpBezierDesc * gimp_bezier_desc_copy                (const GimpBezierDesc *desc);
-void             gimp_bezier_desc_free                (GimpBezierDesc       *desc);
+PicmanBezierDesc * picman_bezier_desc_copy                (const PicmanBezierDesc *desc);
+void             picman_bezier_desc_free                (PicmanBezierDesc       *desc);
 
 
-#endif /* __GIMP_BEZIER_DESC_H__ */
+#endif /* __PICMAN_BEZIER_DESC_H__ */

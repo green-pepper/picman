@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdisplayshell-grab.c
+ * picmandisplayshell-grab.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,16 @@
 
 #include "display-types.h"
 
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-grab.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-grab.h"
 
 
 gboolean
-gimp_display_shell_pointer_grab (GimpDisplayShell *shell,
+picman_display_shell_pointer_grab (PicmanDisplayShell *shell,
                                  const GdkEvent   *event,
                                  GdkEventMask      event_mask)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
   g_return_val_if_fail (shell->pointer_grabbed == FALSE, FALSE);
 
   if (event)
@@ -61,10 +61,10 @@ gimp_display_shell_pointer_grab (GimpDisplayShell *shell,
 }
 
 void
-gimp_display_shell_pointer_ungrab (GimpDisplayShell *shell,
+picman_display_shell_pointer_ungrab (PicmanDisplayShell *shell,
                                    const GdkEvent   *event)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (shell->pointer_grabbed == TRUE);
 
   gtk_grab_remove (shell->canvas);
@@ -81,12 +81,12 @@ gimp_display_shell_pointer_ungrab (GimpDisplayShell *shell,
 }
 
 gboolean
-gimp_display_shell_keyboard_grab (GimpDisplayShell *shell,
+picman_display_shell_keyboard_grab (PicmanDisplayShell *shell,
                                   const GdkEvent   *event)
 {
   GdkGrabStatus status;
 
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), FALSE);
   g_return_val_if_fail (event != NULL, FALSE);
   g_return_val_if_fail (shell->keyboard_grabbed == FALSE, FALSE);
 
@@ -108,10 +108,10 @@ gimp_display_shell_keyboard_grab (GimpDisplayShell *shell,
 }
 
 void
-gimp_display_shell_keyboard_ungrab (GimpDisplayShell *shell,
+picman_display_shell_keyboard_ungrab (PicmanDisplayShell *shell,
                                     const GdkEvent   *event)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (event != NULL);
   g_return_if_fail (shell->keyboard_grabbed == TRUE);
 

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,35 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ITEM_LINKED_H__
-#define __GIMP_ITEM_LINKED_H__
+#ifndef __PICMAN_ITEM_LINKED_H__
+#define __PICMAN_ITEM_LINKED_H__
 
 
-gboolean gimp_item_linked_is_locked (const GimpItem         *item);
+gboolean picman_item_linked_is_locked (const PicmanItem         *item);
 
-void     gimp_item_linked_translate (GimpItem               *item,
+void     picman_item_linked_translate (PicmanItem               *item,
                                      gint                    offset_x,
                                      gint                    offset_y,
                                      gboolean                push_undo);
-void     gimp_item_linked_flip      (GimpItem               *item,
-                                     GimpContext            *context,
-                                     GimpOrientationType     flip_type,
+void     picman_item_linked_flip      (PicmanItem               *item,
+                                     PicmanContext            *context,
+                                     PicmanOrientationType     flip_type,
                                      gdouble                 axis,
                                      gboolean                clip_result);
-void     gimp_item_linked_rotate    (GimpItem               *item,
-                                     GimpContext            *context,
-                                     GimpRotationType        rotate_type,
+void     picman_item_linked_rotate    (PicmanItem               *item,
+                                     PicmanContext            *context,
+                                     PicmanRotationType        rotate_type,
                                      gdouble                 center_x,
                                      gdouble                 center_y,
                                      gboolean                clip_result);
-void     gimp_item_linked_transform (GimpItem               *item,
-                                     GimpContext            *context,
-                                     const GimpMatrix3      *matrix,
-                                     GimpTransformDirection  direction,
-                                     GimpInterpolationType   interpolation_type,
+void     picman_item_linked_transform (PicmanItem               *item,
+                                     PicmanContext            *context,
+                                     const PicmanMatrix3      *matrix,
+                                     PicmanTransformDirection  direction,
+                                     PicmanInterpolationType   interpolation_type,
                                      gint                    recursion_level,
-                                     GimpTransformResize     clip_result,
-                                     GimpProgress           *progress);
+                                     PicmanTransformResize     clip_result,
+                                     PicmanProgress           *progress);
 
 
-#endif /* __GIMP_ITEM_LINKED_H__ */
+#endif /* __PICMAN_ITEM_LINKED_H__ */

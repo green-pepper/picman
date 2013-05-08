@@ -1,5 +1,5 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
+ * Picman-Python - allows the writing of Picman plugins in Python.
  * Copyright (C) 1997-2002  James Henstridge <james@daa.com.au>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,10 +23,10 @@
 #define NO_IMPORT_PYGOBJECT
 #include <pygobject.h>
 
-#include "pygimp.h"
+#include "pypicman.h"
 
-#define NO_IMPORT_PYGIMPCOLOR
-#include "pygimpcolor-api.h"
+#define NO_IMPORT_PYPICMANCOLOR
+#include "pypicmancolor-api.h"
 
 #include <glib-object.h>
 
@@ -37,7 +37,7 @@ item_from_id(PyObject *not_used, PyObject *args)
  
     if (!PyArg_ParseTuple(args, "i", &ID)) 
         return NULL;
-    return pygimp_item_new(ID);
+    return pypicman_item_new(ID);
 }
 
 static PyMethodDef item_methods[] = {
@@ -46,31 +46,31 @@ static PyMethodDef item_methods[] = {
 };
 
 static PyObject *
-item_get_parent(PyGimpLayer *self, void *closure)
+item_get_parent(PyPicmanLayer *self, void *closure)
 {
-    gint32 id = gimp_item_get_parent(self->ID);
+    gint32 id = picman_item_get_parent(self->ID);
 
     if (id == -1) {
 	Py_INCREF(Py_None);
 	return Py_None;
     }
 
-    return pygimp_item_new(id);
+    return pypicman_item_new(id);
 }
 
 static PyObject *
-item_get_children(PyGimpLayer *self, void *closure)
+item_get_children(PyPicmanLayer *self, void *closure)
 {
     gint32 *children;
     gint n_children, i;
     PyObject *ret;
 
-    children = gimp_item_get_children(self->ID, &n_children);
+    children = picman_item_get_children(self->ID, &n_children);
 
     ret = PyList_New(n_children);
 
     for (i = 0; i < n_children; i++)
-	PyList_SetItem(ret, i, pygimp_item_new(children[i]));
+	PyList_SetItem(ret, i, pypicman_item_new(children[i]));
 
     g_free(children);
 
@@ -85,34 +85,34 @@ static PyGetSetDef item_getsets[] = {
 
 
 static void
-item_dealloc(PyGimpItem *self)
+item_dealloc(PyPicmanItem *self)
 {
     PyObject_DEL(self);
 }
 
 static PyObject *
-item_repr(PyGimpItem *self)
+item_repr(PyPicmanItem *self)
 {
     PyObject *s;
 
-    s = PyString_FromFormat("<gimp.Item '%d'>", self->ID);
+    s = PyString_FromFormat("<picman.Item '%d'>", self->ID);
 
     return s;
 }
 
 static int
-item_init(PyGimpLayer *self, PyObject *args, PyObject *kwargs)
+item_init(PyPicmanLayer *self, PyObject *args, PyObject *kwargs)
 {
     return -1;
 }
 
 
 
-PyTypeObject PyGimpItem_Type = {
+PyTypeObject PyPicmanItem_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                  /* ob_size */
-    "gimp.Item",                        /* tp_name */
-    sizeof(PyGimpItem),                 /* tp_basicsize */
+    "picman.Item",                        /* tp_name */
+    sizeof(PyPicmanItem),                 /* tp_basicsize */
     0,                                  /* tp_itemsize */
     /* methods */
     (destructor)item_dealloc,            /* tp_dealloc */
@@ -153,20 +153,20 @@ PyTypeObject PyGimpItem_Type = {
 
 
 PyObject *
-pygimp_item_new(gint32 ID)
+pypicman_item_new(gint32 ID)
 {
     PyObject *self;
 
-    if (!gimp_item_is_valid(ID)) {
+    if (!picman_item_is_valid(ID)) {
         Py_INCREF(Py_None);
         return Py_None;
     }
 
     /* create the appropriate object type */
-    if (gimp_item_is_drawable(ID))
-        self = pygimp_drawable_new(NULL, ID);
+    if (picman_item_is_drawable(ID))
+        self = pypicman_drawable_new(NULL, ID);
     else /* Vectors */
-        self = pygimp_vectors_new(ID);
+        self = pypicman_vectors_new(ID);
 
     if (self == NULL)
         return NULL;

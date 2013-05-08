@@ -2,9 +2,9 @@
 /.libs
 /Makefile
 /Makefile.in
-/gimp-2.*
-/gimp-console-2.*
-/gimp.rc
+/picman-2.*
+/picman-console-2.*
+/picman.rc
 /git-version.h
 /libapp.a
 /makefile.mingw

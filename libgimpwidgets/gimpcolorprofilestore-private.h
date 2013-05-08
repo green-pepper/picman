@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpprofilestore-private.h
- * Copyright (C) 2007  Sven Neumann <sven@gimp.org>
+ * picmanprofilestore-private.h
+ * Copyright (C) 2007  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,34 +19,34 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COLOR_PROFILE_STORE_PRIVATE_H__
-#define __GIMP_COLOR_PROFILE_STORE_PRIVATE_H__
+#ifndef __PICMAN_COLOR_PROFILE_STORE_PRIVATE_H__
+#define __PICMAN_COLOR_PROFILE_STORE_PRIVATE_H__
 
 
 typedef enum
 {
-  GIMP_COLOR_PROFILE_STORE_ITEM_FILE,
-  GIMP_COLOR_PROFILE_STORE_ITEM_SEPARATOR_TOP,
-  GIMP_COLOR_PROFILE_STORE_ITEM_SEPARATOR_BOTTOM,
-  GIMP_COLOR_PROFILE_STORE_ITEM_DIALOG
-} GimpColorProfileStoreItemType;
+  PICMAN_COLOR_PROFILE_STORE_ITEM_FILE,
+  PICMAN_COLOR_PROFILE_STORE_ITEM_SEPARATOR_TOP,
+  PICMAN_COLOR_PROFILE_STORE_ITEM_SEPARATOR_BOTTOM,
+  PICMAN_COLOR_PROFILE_STORE_ITEM_DIALOG
+} PicmanColorProfileStoreItemType;
 
 typedef enum
 {
-  GIMP_COLOR_PROFILE_STORE_ITEM_TYPE,
-  GIMP_COLOR_PROFILE_STORE_LABEL,
-  GIMP_COLOR_PROFILE_STORE_FILENAME,
-  GIMP_COLOR_PROFILE_STORE_INDEX
-} GimpColorProfileStoreColumns;
+  PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE,
+  PICMAN_COLOR_PROFILE_STORE_LABEL,
+  PICMAN_COLOR_PROFILE_STORE_FILENAME,
+  PICMAN_COLOR_PROFILE_STORE_INDEX
+} PicmanColorProfileStoreColumns;
 
 
-G_GNUC_INTERNAL gboolean  _gimp_color_profile_store_history_add     (GimpColorProfileStore *store,
+G_GNUC_INTERNAL gboolean  _picman_color_profile_store_history_add     (PicmanColorProfileStore *store,
                                                                      const gchar           *filename,
                                                                      const gchar           *label,
                                                                      GtkTreeIter           *iter);
 
-G_GNUC_INTERNAL void      _gimp_color_profile_store_history_reorder (GimpColorProfileStore *store,
+G_GNUC_INTERNAL void      _picman_color_profile_store_history_reorder (PicmanColorProfileStore *store,
                                                                      GtkTreeIter           *iter);
 
 
-#endif  /* __GIMP_COLOR_PROFILE_STORE_PRIVATE_H__ */
+#endif  /* __PICMAN_COLOR_PROFILE_STORE_PRIVATE_H__ */

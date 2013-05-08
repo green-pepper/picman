@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpaction.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanaction.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,47 +18,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ACTION_H__
-#define __GIMP_ACTION_H__
+#ifndef __PICMAN_ACTION_H__
+#define __PICMAN_ACTION_H__
 
 
-#define GIMP_TYPE_ACTION            (gimp_action_get_type ())
-#define GIMP_ACTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ACTION, GimpAction))
-#define GIMP_ACTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ACTION, GimpActionClass))
-#define GIMP_IS_ACTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ACTION))
-#define GIMP_IS_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), GIMP_TYPE_ACTION))
-#define GIMP_ACTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GIMP_TYPE_ACTION, GimpActionClass))
+#define PICMAN_TYPE_ACTION            (picman_action_get_type ())
+#define PICMAN_ACTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ACTION, PicmanAction))
+#define PICMAN_ACTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ACTION, PicmanActionClass))
+#define PICMAN_IS_ACTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ACTION))
+#define PICMAN_IS_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), PICMAN_TYPE_ACTION))
+#define PICMAN_ACTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PICMAN_TYPE_ACTION, PicmanActionClass))
 
 
-typedef struct _GimpActionClass GimpActionClass;
+typedef struct _PicmanActionClass PicmanActionClass;
 
-struct _GimpAction
+struct _PicmanAction
 {
   GtkAction           parent_instance;
 
-  GimpContext        *context;
+  PicmanContext        *context;
 
-  GimpRGB            *color;
-  GimpViewable       *viewable;
+  PicmanRGB            *color;
+  PicmanViewable       *viewable;
   PangoEllipsizeMode  ellipsize;
   gint                max_width_chars;
 };
 
-struct _GimpActionClass
+struct _PicmanActionClass
 {
   GtkActionClass parent_class;
 };
 
 
-GType        gimp_action_get_type     (void) G_GNUC_CONST;
+GType        picman_action_get_type     (void) G_GNUC_CONST;
 
-GimpAction * gimp_action_new          (const gchar *name,
+PicmanAction * picman_action_new          (const gchar *name,
                                        const gchar *label,
                                        const gchar *tooltip,
                                        const gchar *stock_id);
 
-gint         gimp_action_name_compare (GimpAction  *action1,
-                                       GimpAction  *action2);
+gint         picman_action_name_compare (PicmanAction  *action1,
+                                       PicmanAction  *action2);
 
 
-#endif  /* __GIMP_ACTION_H__ */
+#endif  /* __PICMAN_ACTION_H__ */

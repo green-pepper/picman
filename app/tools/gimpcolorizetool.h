@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,29 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COLORIZE_TOOL_H__
-#define __GIMP_COLORIZE_TOOL_H__
+#ifndef __PICMAN_COLORIZE_TOOL_H__
+#define __PICMAN_COLORIZE_TOOL_H__
 
 
-#include "gimpimagemaptool.h"
+#include "picmanimagemaptool.h"
 
 
-#define GIMP_TYPE_COLORIZE_TOOL            (gimp_colorize_tool_get_type ())
-#define GIMP_COLORIZE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLORIZE_TOOL, GimpColorizeTool))
-#define GIMP_COLORIZE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLORIZE_TOOL, GimpColorizeToolClass))
-#define GIMP_IS_COLORIZE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLORIZE_TOOL))
-#define GIMP_IS_COLORIZE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLORIZE_TOOL))
-#define GIMP_COLORIZE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLORIZE_TOOL, GimpColorizeToolClass))
+#define PICMAN_TYPE_COLORIZE_TOOL            (picman_colorize_tool_get_type ())
+#define PICMAN_COLORIZE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLORIZE_TOOL, PicmanColorizeTool))
+#define PICMAN_COLORIZE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLORIZE_TOOL, PicmanColorizeToolClass))
+#define PICMAN_IS_COLORIZE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLORIZE_TOOL))
+#define PICMAN_IS_COLORIZE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLORIZE_TOOL))
+#define PICMAN_COLORIZE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLORIZE_TOOL, PicmanColorizeToolClass))
 
 
-typedef struct _GimpColorizeTool      GimpColorizeTool;
-typedef struct _GimpColorizeToolClass GimpColorizeToolClass;
+typedef struct _PicmanColorizeTool      PicmanColorizeTool;
+typedef struct _PicmanColorizeToolClass PicmanColorizeToolClass;
 
-struct _GimpColorizeTool
+struct _PicmanColorizeTool
 {
-  GimpImageMapTool    parent_instance;
+  PicmanImageMapTool    parent_instance;
 
-  GimpColorizeConfig *config;
+  PicmanColorizeConfig *config;
 
   /*  dialog  */
   GtkAdjustment      *hue_data;
@@ -46,16 +46,16 @@ struct _GimpColorizeTool
   GtkWidget          *color_button;
 };
 
-struct _GimpColorizeToolClass
+struct _PicmanColorizeToolClass
 {
-  GimpImageMapToolClass  parent_class;
+  PicmanImageMapToolClass  parent_class;
 };
 
 
-void    gimp_colorize_tool_register (GimpToolRegisterCallback  callback,
+void    picman_colorize_tool_register (PicmanToolRegisterCallback  callback,
                                      gpointer                  data);
 
-GType   gimp_colorize_tool_get_type (void) G_GNUC_CONST;
+GType   picman_colorize_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_COLORIZE_TOOL_H__  */
+#endif  /*  __PICMAN_COLORIZE_TOOL_H__  */

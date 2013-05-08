@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpconvert_pdb.c
+ * picmanconvert_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpconvert
- * @title: gimpconvert
+ * SECTION: picmanconvert
+ * @title: picmanconvert
  * @short_description: Conversions between RGB, indexed, and grayscale modes.
  *
  * Conversions between RGB, indexed, and grayscale modes.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_image_convert_rgb:
+ * picman_image_convert_rgb:
  * @image_ID: The image.
  *
  * Convert specified image to RGB color
@@ -48,26 +48,26 @@
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_convert_rgb (gint32 image_ID)
+picman_image_convert_rgb (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-convert-rgb",
+  return_vals = picman_run_procedure ("picman-image-convert-rgb",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_convert_grayscale:
+ * picman_image_convert_grayscale:
  * @image_ID: The image.
  *
  * Convert specified image to grayscale (256 intensity levels)
@@ -79,33 +79,33 @@ gimp_image_convert_rgb (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_convert_grayscale (gint32 image_ID)
+picman_image_convert_grayscale (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-convert-grayscale",
+  return_vals = picman_run_procedure ("picman-image-convert-grayscale",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_convert_indexed:
+ * picman_image_convert_indexed:
  * @image_ID: The image.
  * @dither_type: The dither type to use.
  * @palette_type: The type of palette to use.
- * @num_cols: The number of colors to quantize to, ignored unless (palette_type == GIMP_MAKE_PALETTE).
+ * @num_cols: The number of colors to quantize to, ignored unless (palette_type == PICMAN_MAKE_PALETTE).
  * @alpha_dither: Dither transparency to fake partial opacity.
- * @remove_unused: Remove unused or duplicate color entries from final palette, ignored if (palette_type == GIMP_MAKE_PALETTE).
- * @palette: The name of the custom palette to use, ignored unless (palette_type == GIMP_CUSTOM_PALETTE).
+ * @remove_unused: Remove unused or duplicate color entries from final palette, ignored if (palette_type == PICMAN_MAKE_PALETTE).
+ * @palette: The name of the custom palette to use, ignored unless (palette_type == PICMAN_CUSTOM_PALETTE).
  *
  * Convert specified image to and Indexed image
  *
@@ -116,7 +116,7 @@ gimp_image_convert_grayscale (gint32 image_ID)
  * colors in the image. A type of '1' means to re-use the previous
  * palette (not currently implemented). A type of '2' means to use the
  * so-called WWW-optimized palette. Type '3' means to use only black
- * and white colors. A type of '4' means to use a palette from the gimp
+ * and white colors. A type of '4' means to use a palette from the picman
  * palettes directories. The 'dither type' specifies what kind of
  * dithering to use. '0' means no dithering, '1' means standard
  * Floyd-Steinberg error diffusion, '2' means Floyd-Steinberg error
@@ -126,38 +126,38 @@ gimp_image_convert_grayscale (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_convert_indexed (gint32                  image_ID,
-                            GimpConvertDitherType   dither_type,
-                            GimpConvertPaletteType  palette_type,
+picman_image_convert_indexed (gint32                  image_ID,
+                            PicmanConvertDitherType   dither_type,
+                            PicmanConvertPaletteType  palette_type,
                             gint                    num_cols,
                             gboolean                alpha_dither,
                             gboolean                remove_unused,
                             const gchar            *palette)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-convert-indexed",
+  return_vals = picman_run_procedure ("picman-image-convert-indexed",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, dither_type,
-                                    GIMP_PDB_INT32, palette_type,
-                                    GIMP_PDB_INT32, num_cols,
-                                    GIMP_PDB_INT32, alpha_dither,
-                                    GIMP_PDB_INT32, remove_unused,
-                                    GIMP_PDB_STRING, palette,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, dither_type,
+                                    PICMAN_PDB_INT32, palette_type,
+                                    PICMAN_PDB_INT32, num_cols,
+                                    PICMAN_PDB_INT32, alpha_dither,
+                                    PICMAN_PDB_INT32, remove_unused,
+                                    PICMAN_PDB_STRING, palette,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_convert_set_dither_matrix:
+ * picman_image_convert_set_dither_matrix:
  * @width: Width of the matrix (0 to reset to default matrix).
  * @height: Height of the matrix (0 to reset to default matrix).
  * @matrix_length: The length of 'matrix'.
@@ -170,35 +170,35 @@ gimp_image_convert_indexed (gint32                  image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_convert_set_dither_matrix (gint          width,
+picman_image_convert_set_dither_matrix (gint          width,
                                       gint          height,
                                       gint          matrix_length,
                                       const guint8 *matrix)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-convert-set-dither-matrix",
+  return_vals = picman_run_procedure ("picman-image-convert-set-dither-matrix",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, width,
-                                    GIMP_PDB_INT32, height,
-                                    GIMP_PDB_INT32, matrix_length,
-                                    GIMP_PDB_INT8ARRAY, matrix,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, width,
+                                    PICMAN_PDB_INT32, height,
+                                    PICMAN_PDB_INT32, matrix_length,
+                                    PICMAN_PDB_INT8ARRAY, matrix,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_convert_precision:
+ * picman_image_convert_precision:
  * @image_ID: The image.
  * @precision: The new precision.
  *
@@ -206,29 +206,29 @@ gimp_image_convert_set_dither_matrix (gint          width,
  *
  * This procedure converts the image to the specified precision. Note
  * that indexed images cannot be converted and are always in
- * GIMP_PRECISION_U8.
+ * PICMAN_PRECISION_U8.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 gboolean
-gimp_image_convert_precision (gint32        image_ID,
-                              GimpPrecision precision)
+picman_image_convert_precision (gint32        image_ID,
+                              PicmanPrecision precision)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-convert-precision",
+  return_vals = picman_run_procedure ("picman-image-convert-precision",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, precision,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, precision,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

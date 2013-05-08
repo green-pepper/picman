@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpDisplayOptions
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * PicmanDisplayOptions
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +24,18 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "config-types.h"
 
-#include "gimprc-blurbs.h"
+#include "picmanrc-blurbs.h"
 
-#include "gimpdisplayoptions.h"
+#include "picmandisplayoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -55,209 +55,209 @@ enum
 };
 
 
-static void   gimp_display_options_set_property (GObject      *object,
+static void   picman_display_options_set_property (GObject      *object,
                                                  guint         property_id,
                                                  const GValue *value,
                                                  GParamSpec   *pspec);
-static void   gimp_display_options_get_property (GObject      *object,
+static void   picman_display_options_get_property (GObject      *object,
                                                  guint         property_id,
                                                  GValue       *value,
                                                  GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpDisplayOptions,
-                         gimp_display_options,
+G_DEFINE_TYPE_WITH_CODE (PicmanDisplayOptions,
+                         picman_display_options,
                          G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL))
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL))
 
-typedef struct _GimpDisplayOptions      GimpDisplayOptionsFullscreen;
-typedef struct _GimpDisplayOptionsClass GimpDisplayOptionsFullscreenClass;
+typedef struct _PicmanDisplayOptions      PicmanDisplayOptionsFullscreen;
+typedef struct _PicmanDisplayOptionsClass PicmanDisplayOptionsFullscreenClass;
 
-#define gimp_display_options_fullscreen_init gimp_display_options_init
+#define picman_display_options_fullscreen_init picman_display_options_init
 
-G_DEFINE_TYPE_WITH_CODE (GimpDisplayOptionsFullscreen,
-                         gimp_display_options_fullscreen,
-                         GIMP_TYPE_DISPLAY_OPTIONS,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanDisplayOptionsFullscreen,
+                         picman_display_options_fullscreen,
+                         PICMAN_TYPE_DISPLAY_OPTIONS,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL))
 
-typedef struct _GimpDisplayOptions      GimpDisplayOptionsNoImage;
-typedef struct _GimpDisplayOptionsClass GimpDisplayOptionsNoImageClass;
+typedef struct _PicmanDisplayOptions      PicmanDisplayOptionsNoImage;
+typedef struct _PicmanDisplayOptionsClass PicmanDisplayOptionsNoImageClass;
 
-#define gimp_display_options_no_image_init gimp_display_options_init
+#define picman_display_options_no_image_init picman_display_options_init
 
-G_DEFINE_TYPE_WITH_CODE (GimpDisplayOptionsNoImage,
-                         gimp_display_options_no_image,
-                         GIMP_TYPE_DISPLAY_OPTIONS,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanDisplayOptionsNoImage,
+                         picman_display_options_no_image,
+                         PICMAN_TYPE_DISPLAY_OPTIONS,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL))
 
 
 static void
-gimp_display_options_class_init (GimpDisplayOptionsClass *klass)
+picman_display_options_class_init (PicmanDisplayOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  GimpRGB       white;
+  PicmanRGB       white;
 
-  gimp_rgba_set (&white, 1.0, 1.0, 1.0, GIMP_OPACITY_OPAQUE);
+  picman_rgba_set (&white, 1.0, 1.0, 1.0, PICMAN_OPACITY_OPAQUE);
 
-  object_class->set_property = gimp_display_options_set_property;
-  object_class->get_property = gimp_display_options_get_property;
+  object_class->set_property = picman_display_options_set_property;
+  object_class->get_property = picman_display_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_MENUBAR,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_MENUBAR,
                                     "show-menubar", SHOW_MENUBAR_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_STATUSBAR,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_STATUSBAR,
                                     "show-statusbar", SHOW_STATUSBAR_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_RULERS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_RULERS,
                                     "show-rulers", SHOW_RULERS_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SCROLLBARS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SCROLLBARS,
                                     "show-scrollbars", SHOW_SCROLLBARS_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SELECTION,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SELECTION,
                                     "show-selection", SHOW_SELECTION_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_LAYER_BOUNDARY,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_LAYER_BOUNDARY,
                                     "show-layer-boundary", SHOW_LAYER_BOUNDARY_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_GUIDES,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_GUIDES,
                                     "show-guides", SHOW_GUIDES_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_GRID,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_GRID,
                                     "show-grid", SHOW_GRID_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SAMPLE_POINTS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SAMPLE_POINTS,
                                     "show-sample-points", SHOW_SAMPLE_POINTS_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_PADDING_MODE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_PADDING_MODE,
                                  "padding-mode", CANVAS_PADDING_MODE_BLURB,
-                                 GIMP_TYPE_CANVAS_PADDING_MODE,
-                                 GIMP_CANVAS_PADDING_MODE_DEFAULT,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_RGB (object_class, PROP_PADDING_COLOR,
+                                 PICMAN_TYPE_CANVAS_PADDING_MODE,
+                                 PICMAN_CANVAS_PADDING_MODE_DEFAULT,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_RGB (object_class, PROP_PADDING_COLOR,
                                 "padding-color", CANVAS_PADDING_COLOR_BLURB,
                                 FALSE, &white,
-                                GIMP_PARAM_STATIC_STRINGS);
+                                PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_display_options_fullscreen_class_init (GimpDisplayOptionsFullscreenClass *klass)
+picman_display_options_fullscreen_class_init (PicmanDisplayOptionsFullscreenClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  GimpRGB       black;
+  PicmanRGB       black;
 
-  gimp_rgba_set (&black, 0.0, 0.0, 0.0, GIMP_OPACITY_OPAQUE);
+  picman_rgba_set (&black, 0.0, 0.0, 0.0, PICMAN_OPACITY_OPAQUE);
 
-  object_class->set_property = gimp_display_options_set_property;
-  object_class->get_property = gimp_display_options_get_property;
+  object_class->set_property = picman_display_options_set_property;
+  object_class->get_property = picman_display_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_MENUBAR,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_MENUBAR,
                                     "show-menubar", SHOW_MENUBAR_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_STATUSBAR,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_STATUSBAR,
                                     "show-statusbar", SHOW_STATUSBAR_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_RULERS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_RULERS,
                                     "show-rulers", SHOW_RULERS_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SCROLLBARS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SCROLLBARS,
                                     "show-scrollbars", SHOW_SCROLLBARS_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SELECTION,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SELECTION,
                                     "show-selection", SHOW_SELECTION_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_LAYER_BOUNDARY,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_LAYER_BOUNDARY,
                                     "show-layer-boundary", SHOW_LAYER_BOUNDARY_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_GUIDES,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_GUIDES,
                                     "show-guides", SHOW_GUIDES_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_GRID,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_GRID,
                                     "show-grid", SHOW_GRID_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SAMPLE_POINTS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SAMPLE_POINTS,
                                     "show-sample-points", SHOW_SAMPLE_POINTS_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_PADDING_MODE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_PADDING_MODE,
                                  "padding-mode", CANVAS_PADDING_MODE_BLURB,
-                                 GIMP_TYPE_CANVAS_PADDING_MODE,
-                                 GIMP_CANVAS_PADDING_MODE_CUSTOM,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_RGB (object_class, PROP_PADDING_COLOR,
+                                 PICMAN_TYPE_CANVAS_PADDING_MODE,
+                                 PICMAN_CANVAS_PADDING_MODE_CUSTOM,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_RGB (object_class, PROP_PADDING_COLOR,
                                 "padding-color", CANVAS_PADDING_COLOR_BLURB,
                                 FALSE, &black,
-                                GIMP_PARAM_STATIC_STRINGS);
+                                PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_display_options_no_image_class_init (GimpDisplayOptionsNoImageClass *klass)
+picman_display_options_no_image_class_init (PicmanDisplayOptionsNoImageClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_display_options_set_property;
-  object_class->get_property = gimp_display_options_get_property;
+  object_class->set_property = picman_display_options_set_property;
+  object_class->get_property = picman_display_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_RULERS,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_RULERS,
                                     "show-rulers", SHOW_RULERS_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SCROLLBARS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SCROLLBARS,
                                     "show-scrollbars", SHOW_SCROLLBARS_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SELECTION,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SELECTION,
                                     "show-selection", SHOW_SELECTION_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_LAYER_BOUNDARY,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_LAYER_BOUNDARY,
                                     "show-layer-boundary", SHOW_LAYER_BOUNDARY_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_GUIDES,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_GUIDES,
                                     "show-guides", SHOW_GUIDES_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_GRID,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_GRID,
                                     "show-grid", SHOW_GRID_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SAMPLE_POINTS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_SAMPLE_POINTS,
                                     "show-sample-points", SHOW_SAMPLE_POINTS_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_display_options_init (GimpDisplayOptions *options)
+picman_display_options_init (PicmanDisplayOptions *options)
 {
   options->padding_mode_set = FALSE;
 }
 
 static void
-gimp_display_options_set_property (GObject      *object,
+picman_display_options_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpDisplayOptions *options = GIMP_DISPLAY_OPTIONS (object);
+  PicmanDisplayOptions *options = PICMAN_DISPLAY_OPTIONS (object);
 
   switch (property_id)
     {
@@ -292,7 +292,7 @@ gimp_display_options_set_property (GObject      *object,
       options->padding_mode = g_value_get_enum (value);
       break;
     case PROP_PADDING_COLOR:
-      options->padding_color = *(GimpRGB *) g_value_get_boxed (value);
+      options->padding_color = *(PicmanRGB *) g_value_get_boxed (value);
       break;
 
     default:
@@ -302,12 +302,12 @@ gimp_display_options_set_property (GObject      *object,
 }
 
 static void
-gimp_display_options_get_property (GObject    *object,
+picman_display_options_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpDisplayOptions *options = GIMP_DISPLAY_OPTIONS (object);
+  PicmanDisplayOptions *options = PICMAN_DISPLAY_OPTIONS (object);
 
   switch (property_id)
     {

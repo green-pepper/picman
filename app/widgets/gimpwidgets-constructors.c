@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,19 +19,19 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "gimpwidgets-constructors.h"
+#include "picmanwidgets-constructors.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static gboolean   gimp_paint_mode_menu_separator_func (GtkTreeModel *model,
+static gboolean   picman_paint_mode_menu_separator_func (GtkTreeModel *model,
                                                        GtkTreeIter  *iter,
                                                        gpointer      data);
 
@@ -39,15 +39,15 @@ static gboolean   gimp_paint_mode_menu_separator_func (GtkTreeModel *model,
 /*  public functions  */
 
 static void
-gimp_enum_store_insert_value_after (GimpEnumStore *store,
+picman_enum_store_insert_value_after (PicmanEnumStore *store,
                                     gint           after,
                                     gint           insert_value)
 {
   GtkTreeIter iter;
 
-  g_return_if_fail (GIMP_IS_ENUM_STORE (store));
+  g_return_if_fail (PICMAN_IS_ENUM_STORE (store));
 
-  if (gimp_int_store_lookup_by_value (GTK_TREE_MODEL (store),
+  if (picman_int_store_lookup_by_value (GTK_TREE_MODEL (store),
                                       after, &iter))
     {
       GEnumValue *enum_value;
@@ -62,26 +62,26 @@ gimp_enum_store_insert_value_after (GimpEnumStore *store,
           gtk_list_store_insert_after (GTK_LIST_STORE (store),
                                        &value_iter, &iter);
 
-          desc = gimp_enum_value_get_desc (store->enum_class, enum_value);
+          desc = picman_enum_value_get_desc (store->enum_class, enum_value);
 
           gtk_list_store_set (GTK_LIST_STORE (store), &value_iter,
-                              GIMP_INT_STORE_VALUE, enum_value->value,
-                              GIMP_INT_STORE_LABEL, desc,
+                              PICMAN_INT_STORE_VALUE, enum_value->value,
+                              PICMAN_INT_STORE_LABEL, desc,
                               -1);
         }
     }
 }
 
 static void
-gimp_int_store_insert_separator_after (GimpIntStore *store,
+picman_int_store_insert_separator_after (PicmanIntStore *store,
                                        gint          after,
                                        gint          separator_value)
 {
   GtkTreeIter iter;
 
-  g_return_if_fail (GIMP_IS_INT_STORE (store));
+  g_return_if_fail (PICMAN_IS_INT_STORE (store));
 
-  if (gimp_int_store_lookup_by_value (GTK_TREE_MODEL (store),
+  if (picman_int_store_lookup_by_value (GTK_TREE_MODEL (store),
                                       after, &iter))
     {
       GtkTreeIter sep_iter;
@@ -89,90 +89,90 @@ gimp_int_store_insert_separator_after (GimpIntStore *store,
       gtk_list_store_insert_after (GTK_LIST_STORE (store),
                                    &sep_iter, &iter);
       gtk_list_store_set (GTK_LIST_STORE (store), &sep_iter,
-                          GIMP_INT_STORE_VALUE, separator_value,
+                          PICMAN_INT_STORE_VALUE, separator_value,
                           -1);
     }
 }
 
 GtkWidget *
-gimp_paint_mode_menu_new (gboolean with_behind_mode,
+picman_paint_mode_menu_new (gboolean with_behind_mode,
                           gboolean with_replace_modes)
 {
   GtkListStore *store;
   GtkWidget    *combo;
 
-  store = gimp_enum_store_new_with_values (GIMP_TYPE_LAYER_MODE_EFFECTS,
+  store = picman_enum_store_new_with_values (PICMAN_TYPE_LAYER_MODE_EFFECTS,
                                            21,
-                                           GIMP_NORMAL_MODE,
-                                           GIMP_DISSOLVE_MODE,
+                                           PICMAN_NORMAL_MODE,
+                                           PICMAN_DISSOLVE_MODE,
 
-                                           GIMP_LIGHTEN_ONLY_MODE,
-                                           GIMP_SCREEN_MODE,
-                                           GIMP_DODGE_MODE,
-                                           GIMP_ADDITION_MODE,
+                                           PICMAN_LIGHTEN_ONLY_MODE,
+                                           PICMAN_SCREEN_MODE,
+                                           PICMAN_DODGE_MODE,
+                                           PICMAN_ADDITION_MODE,
 
-                                           GIMP_DARKEN_ONLY_MODE,
-                                           GIMP_MULTIPLY_MODE,
-                                           GIMP_BURN_MODE,
+                                           PICMAN_DARKEN_ONLY_MODE,
+                                           PICMAN_MULTIPLY_MODE,
+                                           PICMAN_BURN_MODE,
 
-                                           GIMP_OVERLAY_MODE,
-                                           GIMP_SOFTLIGHT_MODE,
-                                           GIMP_HARDLIGHT_MODE,
+                                           PICMAN_OVERLAY_MODE,
+                                           PICMAN_SOFTLIGHT_MODE,
+                                           PICMAN_HARDLIGHT_MODE,
 
-                                           GIMP_DIFFERENCE_MODE,
-                                           GIMP_SUBTRACT_MODE,
-                                           GIMP_GRAIN_EXTRACT_MODE,
-                                           GIMP_GRAIN_MERGE_MODE,
-                                           GIMP_DIVIDE_MODE,
+                                           PICMAN_DIFFERENCE_MODE,
+                                           PICMAN_SUBTRACT_MODE,
+                                           PICMAN_GRAIN_EXTRACT_MODE,
+                                           PICMAN_GRAIN_MERGE_MODE,
+                                           PICMAN_DIVIDE_MODE,
 
-                                           GIMP_HUE_MODE,
-                                           GIMP_SATURATION_MODE,
-                                           GIMP_COLOR_MODE,
-                                           GIMP_VALUE_MODE);
+                                           PICMAN_HUE_MODE,
+                                           PICMAN_SATURATION_MODE,
+                                           PICMAN_COLOR_MODE,
+                                           PICMAN_VALUE_MODE);
 
-  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
-                                         GIMP_DISSOLVE_MODE, -1);
+  picman_int_store_insert_separator_after (PICMAN_INT_STORE (store),
+                                         PICMAN_DISSOLVE_MODE, -1);
 
-  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
-                                         GIMP_ADDITION_MODE, -1);
+  picman_int_store_insert_separator_after (PICMAN_INT_STORE (store),
+                                         PICMAN_ADDITION_MODE, -1);
 
-  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
-                                         GIMP_BURN_MODE, -1);
+  picman_int_store_insert_separator_after (PICMAN_INT_STORE (store),
+                                         PICMAN_BURN_MODE, -1);
 
-  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
-                                         GIMP_HARDLIGHT_MODE, -1);
+  picman_int_store_insert_separator_after (PICMAN_INT_STORE (store),
+                                         PICMAN_HARDLIGHT_MODE, -1);
 
-  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
-                                         GIMP_DIVIDE_MODE, -1);
+  picman_int_store_insert_separator_after (PICMAN_INT_STORE (store),
+                                         PICMAN_DIVIDE_MODE, -1);
 
   if (with_behind_mode)
     {
-      gimp_enum_store_insert_value_after (GIMP_ENUM_STORE (store),
-                                          GIMP_DISSOLVE_MODE,
-                                          GIMP_BEHIND_MODE);
-      gimp_enum_store_insert_value_after (GIMP_ENUM_STORE (store),
-                                          GIMP_BEHIND_MODE,
-                                          GIMP_COLOR_ERASE_MODE);
+      picman_enum_store_insert_value_after (PICMAN_ENUM_STORE (store),
+                                          PICMAN_DISSOLVE_MODE,
+                                          PICMAN_BEHIND_MODE);
+      picman_enum_store_insert_value_after (PICMAN_ENUM_STORE (store),
+                                          PICMAN_BEHIND_MODE,
+                                          PICMAN_COLOR_ERASE_MODE);
     }
 
   if (with_replace_modes)
     {
-      gimp_enum_store_insert_value_after (GIMP_ENUM_STORE (store),
-                                          GIMP_NORMAL_MODE,
-                                          GIMP_REPLACE_MODE);
-      gimp_enum_store_insert_value_after (GIMP_ENUM_STORE (store),
-                                          GIMP_COLOR_ERASE_MODE,
-                                          GIMP_ERASE_MODE);
-      gimp_enum_store_insert_value_after (GIMP_ENUM_STORE (store),
-                                          GIMP_ERASE_MODE,
-                                          GIMP_ANTI_ERASE_MODE);
+      picman_enum_store_insert_value_after (PICMAN_ENUM_STORE (store),
+                                          PICMAN_NORMAL_MODE,
+                                          PICMAN_REPLACE_MODE);
+      picman_enum_store_insert_value_after (PICMAN_ENUM_STORE (store),
+                                          PICMAN_COLOR_ERASE_MODE,
+                                          PICMAN_ERASE_MODE);
+      picman_enum_store_insert_value_after (PICMAN_ENUM_STORE (store),
+                                          PICMAN_ERASE_MODE,
+                                          PICMAN_ANTI_ERASE_MODE);
     }
 
-  combo = gimp_enum_combo_box_new_with_model (GIMP_ENUM_STORE (store));
+  combo = picman_enum_combo_box_new_with_model (PICMAN_ENUM_STORE (store));
   g_object_unref (store);
 
   gtk_combo_box_set_row_separator_func (GTK_COMBO_BOX (combo),
-                                        gimp_paint_mode_menu_separator_func,
+                                        picman_paint_mode_menu_separator_func,
                                         GINT_TO_POINTER (-1),
                                         NULL);
 
@@ -180,7 +180,7 @@ gimp_paint_mode_menu_new (gboolean with_behind_mode,
 }
 
 GtkWidget *
-gimp_stock_button_new (const gchar *stock_id,
+picman_stock_button_new (const gchar *stock_id,
                        const gchar *label)
 {
   GtkWidget *button;
@@ -220,13 +220,13 @@ gimp_stock_button_new (const gchar *stock_id,
 /*  private functions  */
 
 static gboolean
-gimp_paint_mode_menu_separator_func (GtkTreeModel *model,
+picman_paint_mode_menu_separator_func (GtkTreeModel *model,
                                      GtkTreeIter  *iter,
                                      gpointer      data)
 {
   gint value;
 
-  gtk_tree_model_get (model, iter, GIMP_INT_STORE_VALUE, &value, -1);
+  gtk_tree_model_get (model, iter, PICMAN_INT_STORE_VALUE, &value, -1);
 
   return value == GPOINTER_TO_INT (data);
 }

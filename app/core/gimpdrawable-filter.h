@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdrawable-filter.h
+ * picmandrawable-filter.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DRAWABLE_FILTER_H__
-#define __GIMP_DRAWABLE_FILTER_H__
+#ifndef __PICMAN_DRAWABLE_FILTER_H__
+#define __PICMAN_DRAWABLE_FILTER_H__
 
 
-GimpContainer * gimp_drawable_get_filters   (GimpDrawable *drawable);
+PicmanContainer * picman_drawable_get_filters   (PicmanDrawable *drawable);
 
-void            gimp_drawable_add_filter    (GimpDrawable *drawable,
-                                             GimpFilter   *filter);
-void            gimp_drawable_remove_filter (GimpDrawable *drawable,
-                                             GimpFilter   *filter);
+void            picman_drawable_add_filter    (PicmanDrawable *drawable,
+                                             PicmanFilter   *filter);
+void            picman_drawable_remove_filter (PicmanDrawable *drawable,
+                                             PicmanFilter   *filter);
 
-gboolean        gimp_drawable_has_filter    (GimpDrawable *drawable,
-                                             GimpFilter   *filter);
+gboolean        picman_drawable_has_filter    (PicmanDrawable *drawable,
+                                             PicmanFilter   *filter);
 
-void            gimp_drawable_merge_filter  (GimpDrawable *drawable,
-                                             GimpFilter   *filter,
-                                             GimpProgress *progress,
+void            picman_drawable_merge_filter  (PicmanDrawable *drawable,
+                                             PicmanFilter   *filter,
+                                             PicmanProgress *progress,
                                              const gchar  *undo_desc);
 
 
-#endif /* __GIMP_DRAWABLE_FILTER_H__ */
+#endif /* __PICMAN_DRAWABLE_FILTER_H__ */

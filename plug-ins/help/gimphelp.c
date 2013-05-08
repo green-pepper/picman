@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * The GIMP Help plug-in
- * Copyright (C) 1999-2008 Sven Neumann <sven@gimp.org>
- *                         Michael Natterer <mitch@gimp.org>
- *                         Henrik Brix Andersen <brix@gimp.org>
+ * The PICMAN Help plug-in
+ * Copyright (C) 1999-2008 Sven Neumann <sven@picman.org>
+ *                         Michael Natterer <mitch@picman.org>
+ *                         Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 
 /*  This code is written so that it can also be compiled standalone.
- *  It shouldn't depend on libgimp.
+ *  It shouldn't depend on libpicman.
  */
 
 #include "config.h"
@@ -30,14 +30,14 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimphelp.h"
+#include "picmanhelp.h"
 
 #ifdef DISABLE_NLS
 #define _(String)  (String)
 #else
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 #endif
 
 
@@ -49,7 +49,7 @@ static GHashTable  *domain_hash = NULL;
 /*  public functions  */
 
 gboolean
-gimp_help_init (gint    num_domain_names,
+picman_help_init (gint    num_domain_names,
                 gchar **domain_names,
                 gint    num_domain_uris,
                 gchar **domain_uris)
@@ -64,13 +64,13 @@ gimp_help_init (gint    num_domain_names,
     }
 
   for (i = 0; i < num_domain_names; i++)
-    gimp_help_register_domain (domain_names[i], domain_uris[i]);
+    picman_help_register_domain (domain_names[i], domain_uris[i]);
 
   return TRUE;
 }
 
 void
-gimp_help_exit (void)
+picman_help_exit (void)
 {
   if (domain_hash)
     {
@@ -80,13 +80,13 @@ gimp_help_exit (void)
 }
 
 void
-gimp_help_register_domain (const gchar *domain_name,
+picman_help_register_domain (const gchar *domain_name,
                            const gchar *domain_uri)
 {
   g_return_if_fail (domain_name != NULL);
   g_return_if_fail (domain_uri != NULL);
 
-#ifdef GIMP_HELP_DEBUG
+#ifdef PICMAN_HELP_DEBUG
   g_printerr ("help: registering help domain \"%s\" with base uri \"%s\"\n",
               domain_name, domain_uri);
 #endif
@@ -94,15 +94,15 @@ gimp_help_register_domain (const gchar *domain_name,
   if (! domain_hash)
     domain_hash = g_hash_table_new_full (g_str_hash, g_str_equal,
                                          g_free,
-                                         (GDestroyNotify) gimp_help_domain_free);
+                                         (GDestroyNotify) picman_help_domain_free);
 
   g_hash_table_insert (domain_hash,
                        g_strdup (domain_name),
-                       gimp_help_domain_new (domain_name, domain_uri));
+                       picman_help_domain_new (domain_name, domain_uri));
 }
 
-GimpHelpDomain *
-gimp_help_lookup_domain (const gchar *domain_name)
+PicmanHelpDomain *
+picman_help_lookup_domain (const gchar *domain_name)
 {
   g_return_val_if_fail (domain_name, NULL);
 
@@ -113,7 +113,7 @@ gimp_help_lookup_domain (const gchar *domain_name)
 }
 
 GList *
-gimp_help_parse_locales (const gchar *help_locales)
+picman_help_parse_locales (const gchar *help_locales)
 {
   GList       *locales = NULL;
   GList       *list;
@@ -137,13 +137,13 @@ gimp_help_parse_locales (const gchar *help_locales)
 
   /*  if the list doesn't contain the default locale yet, append it  */
   for (list = locales; list; list = list->next)
-    if (strcmp ((const gchar *) list->data, GIMP_HELP_DEFAULT_LOCALE) == 0)
+    if (strcmp ((const gchar *) list->data, PICMAN_HELP_DEFAULT_LOCALE) == 0)
       break;
 
   if (! list)
-    locales = g_list_append (locales, g_strdup (GIMP_HELP_DEFAULT_LOCALE));
+    locales = g_list_append (locales, g_strdup (PICMAN_HELP_DEFAULT_LOCALE));
 
-#ifdef GIMP_HELP_DEBUG
+#ifdef PICMAN_HELP_DEBUG
   g_printerr ("help: locales: ");
   for (list = locales; list; list = list->next)
     g_printerr ("%s ", (const gchar *) list->data);

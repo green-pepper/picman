@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvascorner.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvascorner.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "gimpcanvascorner.h"
-#include "gimpdisplayshell.h"
+#include "picmancanvascorner.h"
+#include "picmandisplayshell.h"
 
 
 enum
@@ -46,15 +46,15 @@ enum
 };
 
 
-typedef struct _GimpCanvasCornerPrivate GimpCanvasCornerPrivate;
+typedef struct _PicmanCanvasCornerPrivate PicmanCanvasCornerPrivate;
 
-struct _GimpCanvasCornerPrivate
+struct _PicmanCanvasCornerPrivate
 {
   gdouble          x;
   gdouble          y;
   gdouble          width;
   gdouble          height;
-  GimpHandleAnchor anchor;
+  PicmanHandleAnchor anchor;
   gint             corner_width;
   gint             corner_height;
   gboolean         outside;
@@ -62,103 +62,103 @@ struct _GimpCanvasCornerPrivate
 
 #define GET_PRIVATE(corner) \
         G_TYPE_INSTANCE_GET_PRIVATE (corner, \
-                                     GIMP_TYPE_CANVAS_CORNER, \
-                                     GimpCanvasCornerPrivate)
+                                     PICMAN_TYPE_CANVAS_CORNER, \
+                                     PicmanCanvasCornerPrivate)
 
 
 /*  local function prototypes  */
 
-static void             gimp_canvas_corner_set_property (GObject        *object,
+static void             picman_canvas_corner_set_property (GObject        *object,
                                                          guint           property_id,
                                                          const GValue   *value,
                                                          GParamSpec     *pspec);
-static void             gimp_canvas_corner_get_property (GObject        *object,
+static void             picman_canvas_corner_get_property (GObject        *object,
                                                          guint           property_id,
                                                          GValue         *value,
                                                          GParamSpec     *pspec);
-static void             gimp_canvas_corner_draw         (GimpCanvasItem *item,
+static void             picman_canvas_corner_draw         (PicmanCanvasItem *item,
                                                          cairo_t        *cr);
-static cairo_region_t * gimp_canvas_corner_get_extents  (GimpCanvasItem *item);
+static cairo_region_t * picman_canvas_corner_get_extents  (PicmanCanvasItem *item);
 
 
-G_DEFINE_TYPE (GimpCanvasCorner, gimp_canvas_corner,
-               GIMP_TYPE_CANVAS_ITEM)
+G_DEFINE_TYPE (PicmanCanvasCorner, picman_canvas_corner,
+               PICMAN_TYPE_CANVAS_ITEM)
 
-#define parent_class gimp_canvas_corner_parent_class
+#define parent_class picman_canvas_corner_parent_class
 
 
 static void
-gimp_canvas_corner_class_init (GimpCanvasCornerClass *klass)
+picman_canvas_corner_class_init (PicmanCanvasCornerClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpCanvasItemClass *item_class   = GIMP_CANVAS_ITEM_CLASS (klass);
+  PicmanCanvasItemClass *item_class   = PICMAN_CANVAS_ITEM_CLASS (klass);
 
-  object_class->set_property = gimp_canvas_corner_set_property;
-  object_class->get_property = gimp_canvas_corner_get_property;
+  object_class->set_property = picman_canvas_corner_set_property;
+  object_class->get_property = picman_canvas_corner_get_property;
 
-  item_class->draw           = gimp_canvas_corner_draw;
-  item_class->get_extents    = gimp_canvas_corner_get_extents;
+  item_class->draw           = picman_canvas_corner_draw;
+  item_class->get_extents    = picman_canvas_corner_get_extents;
 
   g_object_class_install_property (object_class, PROP_X,
                                    g_param_spec_double ("x", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_Y,
                                    g_param_spec_double ("y", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_WIDTH,
                                    g_param_spec_double ("width", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_HEIGHT,
                                    g_param_spec_double ("height", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_ANCHOR,
                                    g_param_spec_enum ("anchor", NULL, NULL,
-                                                      GIMP_TYPE_HANDLE_ANCHOR,
-                                                      GIMP_HANDLE_ANCHOR_CENTER,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_TYPE_HANDLE_ANCHOR,
+                                                      PICMAN_HANDLE_ANCHOR_CENTER,
+                                                      PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_CORNER_WIDTH,
                                    g_param_spec_int ("corner-width", NULL, NULL,
-                                                     3, GIMP_MAX_IMAGE_SIZE, 3,
-                                                     GIMP_PARAM_READWRITE));
+                                                     3, PICMAN_MAX_IMAGE_SIZE, 3,
+                                                     PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_CORNER_HEIGHT,
                                    g_param_spec_int ("corner-height", NULL, NULL,
-                                                     3, GIMP_MAX_IMAGE_SIZE, 3,
-                                                     GIMP_PARAM_READWRITE));
+                                                     3, PICMAN_MAX_IMAGE_SIZE, 3,
+                                                     PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_OUTSIDE,
                                    g_param_spec_boolean ("outside", NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpCanvasCornerPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanCanvasCornerPrivate));
 }
 
 static void
-gimp_canvas_corner_init (GimpCanvasCorner *corner)
+picman_canvas_corner_init (PicmanCanvasCorner *corner)
 {
 }
 
 static void
-gimp_canvas_corner_set_property (GObject      *object,
+picman_canvas_corner_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  GimpCanvasCornerPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasCornerPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -194,12 +194,12 @@ gimp_canvas_corner_set_property (GObject      *object,
 }
 
 static void
-gimp_canvas_corner_get_property (GObject    *object,
+picman_canvas_corner_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  GimpCanvasCornerPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasCornerPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -235,25 +235,25 @@ gimp_canvas_corner_get_property (GObject    *object,
 }
 
 static void
-gimp_canvas_corner_transform (GimpCanvasItem *item,
+picman_canvas_corner_transform (PicmanCanvasItem *item,
                               gdouble        *x,
                               gdouble        *y,
                               gdouble        *w,
                               gdouble        *h)
 {
-  GimpCanvasCornerPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasCornerPrivate *private = GET_PRIVATE (item);
   gdouble                  rx, ry;
   gdouble                  rw, rh;
   gint                     top_and_bottom_handle_x_offset;
   gint                     left_and_right_handle_y_offset;
 
-  gimp_canvas_item_transform_xy_f (item,
+  picman_canvas_item_transform_xy_f (item,
                                    MIN (private->x,
                                         private->x + private->width),
                                    MIN (private->y,
                                         private->y + private->height),
                                    &rx, &ry);
-  gimp_canvas_item_transform_xy_f (item,
+  picman_canvas_item_transform_xy_f (item,
                                    MAX (private->x,
                                         private->x + private->width),
                                    MAX (private->y,
@@ -276,10 +276,10 @@ gimp_canvas_corner_transform (GimpCanvasItem *item,
 
   switch (private->anchor)
     {
-    case GIMP_HANDLE_ANCHOR_CENTER:
+    case PICMAN_HANDLE_ANCHOR_CENTER:
       break;
 
-    case GIMP_HANDLE_ANCHOR_NORTH_WEST:
+    case PICMAN_HANDLE_ANCHOR_NORTH_WEST:
       if (private->outside)
         {
           *x = rx - private->corner_width;
@@ -292,7 +292,7 @@ gimp_canvas_corner_transform (GimpCanvasItem *item,
         }
       break;
 
-    case GIMP_HANDLE_ANCHOR_NORTH_EAST:
+    case PICMAN_HANDLE_ANCHOR_NORTH_EAST:
       if (private->outside)
         {
           *x = rx + rw;
@@ -305,7 +305,7 @@ gimp_canvas_corner_transform (GimpCanvasItem *item,
         }
       break;
 
-    case GIMP_HANDLE_ANCHOR_SOUTH_WEST:
+    case PICMAN_HANDLE_ANCHOR_SOUTH_WEST:
       if (private->outside)
         {
           *x = rx - private->corner_width;
@@ -318,7 +318,7 @@ gimp_canvas_corner_transform (GimpCanvasItem *item,
         }
       break;
 
-    case GIMP_HANDLE_ANCHOR_SOUTH_EAST:
+    case PICMAN_HANDLE_ANCHOR_SOUTH_EAST:
       if (private->outside)
         {
           *x = rx + rw;
@@ -331,7 +331,7 @@ gimp_canvas_corner_transform (GimpCanvasItem *item,
         }
       break;
 
-    case GIMP_HANDLE_ANCHOR_NORTH:
+    case PICMAN_HANDLE_ANCHOR_NORTH:
       if (private->outside)
         {
           *x = rx;
@@ -345,7 +345,7 @@ gimp_canvas_corner_transform (GimpCanvasItem *item,
         }
       break;
 
-    case GIMP_HANDLE_ANCHOR_SOUTH:
+    case PICMAN_HANDLE_ANCHOR_SOUTH:
       if (private->outside)
         {
           *x = rx;
@@ -359,7 +359,7 @@ gimp_canvas_corner_transform (GimpCanvasItem *item,
         }
       break;
 
-    case GIMP_HANDLE_ANCHOR_WEST:
+    case PICMAN_HANDLE_ANCHOR_WEST:
       if (private->outside)
         {
           *x = rx - private->corner_width;
@@ -373,7 +373,7 @@ gimp_canvas_corner_transform (GimpCanvasItem *item,
         }
       break;
 
-    case GIMP_HANDLE_ANCHOR_EAST:
+    case PICMAN_HANDLE_ANCHOR_EAST:
       if (private->outside)
         {
           *x = rx + rw;
@@ -390,27 +390,27 @@ gimp_canvas_corner_transform (GimpCanvasItem *item,
 }
 
 static void
-gimp_canvas_corner_draw (GimpCanvasItem *item,
+picman_canvas_corner_draw (PicmanCanvasItem *item,
                          cairo_t        *cr)
 {
   gdouble x, y;
   gdouble w, h;
 
-  gimp_canvas_corner_transform (item, &x, &y, &w, &h);
+  picman_canvas_corner_transform (item, &x, &y, &w, &h);
 
   cairo_rectangle (cr, x, y, w, h);
 
-  _gimp_canvas_item_stroke (item, cr);
+  _picman_canvas_item_stroke (item, cr);
 }
 
 static cairo_region_t *
-gimp_canvas_corner_get_extents (GimpCanvasItem *item)
+picman_canvas_corner_get_extents (PicmanCanvasItem *item)
 {
   cairo_rectangle_int_t rectangle;
   gdouble               x, y;
   gdouble               w, h;
 
-  gimp_canvas_corner_transform (item, &x, &y, &w, &h);
+  picman_canvas_corner_transform (item, &x, &y, &w, &h);
 
   rectangle.x      = floor (x - 1.5);
   rectangle.y      = floor (y - 1.5);
@@ -420,20 +420,20 @@ gimp_canvas_corner_get_extents (GimpCanvasItem *item)
   return cairo_region_create_rectangle (&rectangle);
 }
 
-GimpCanvasItem *
-gimp_canvas_corner_new (GimpDisplayShell *shell,
+PicmanCanvasItem *
+picman_canvas_corner_new (PicmanDisplayShell *shell,
                         gdouble           x,
                         gdouble           y,
                         gdouble           width,
                         gdouble           height,
-                        GimpHandleAnchor  anchor,
+                        PicmanHandleAnchor  anchor,
                         gint              corner_width,
                         gint              corner_height,
                         gboolean          outside)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
 
-  return g_object_new (GIMP_TYPE_CANVAS_CORNER,
+  return g_object_new (PICMAN_TYPE_CANVAS_CORNER,
                        "shell",         shell,
                        "x",             x,
                        "y",             y,

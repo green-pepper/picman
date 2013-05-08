@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginmanager-menu-branch.h
+ * picmanpluginmanager-menu-branch.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_MANAGER_MENU_BRANCH_H__
-#define __GIMP_PLUG_IN_MANAGER_MENU_BRANCH_H__
+#ifndef __PICMAN_PLUG_IN_MANAGER_MENU_BRANCH_H__
+#define __PICMAN_PLUG_IN_MANAGER_MENU_BRANCH_H__
 
 
-struct _GimpPlugInMenuBranch
+struct _PicmanPlugInMenuBranch
 {
   gchar *prog_name;
   gchar *menu_path;
@@ -29,14 +29,14 @@ struct _GimpPlugInMenuBranch
 };
 
 
-void     gimp_plug_in_manager_menu_branch_exit  (GimpPlugInManager *manager);
+void     picman_plug_in_manager_menu_branch_exit  (PicmanPlugInManager *manager);
 
 /* Add a menu branch */
-void     gimp_plug_in_manager_add_menu_branch   (GimpPlugInManager *manager,
+void     picman_plug_in_manager_add_menu_branch   (PicmanPlugInManager *manager,
                                                  const gchar       *prog_name,
                                                  const gchar       *menu_path,
                                                  const gchar       *menu_label);
-GSList * gimp_plug_in_manager_get_menu_branches (GimpPlugInManager *manager);
+GSList * picman_plug_in_manager_get_menu_branches (PicmanPlugInManager *manager);
 
 
-#endif /* __GIMP_PLUG_IN_MANAGER_MENU_BRANCH_H__ */
+#endif /* __PICMAN_PLUG_IN_MANAGER_MENU_BRANCH_H__ */

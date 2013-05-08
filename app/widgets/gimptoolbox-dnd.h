@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TOOLBOX_DND_H__
-#define __GIMP_TOOLBOX_DND_H__
+#ifndef __PICMAN_TOOLBOX_DND_H__
+#define __PICMAN_TOOLBOX_DND_H__
 
 
-void   gimp_toolbox_dnd_init (GimpToolbox *toolbox,
+void   picman_toolbox_dnd_init (PicmanToolbox *toolbox,
                               GtkWidget   *vbox);
 
 
-#endif /* __GIMP_TOOLBOX_DND_H__ */
+#endif /* __PICMAN_TOOLBOX_DND_H__ */

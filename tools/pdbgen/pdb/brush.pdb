@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub brush_new {
     $blurb = "Creates a new brush";
@@ -35,11 +35,11 @@ sub brush_new {
     %invoke = (
         code => <<'CODE'
 {
-  GimpData *data = gimp_data_factory_data_new (gimp->brush_factory,
+  PicmanData *data = picman_data_factory_data_new (picman->brush_factory,
                                                context, name);
 
   if (data)
-    actual_name = g_strdup (gimp_object_get_name (data));
+    actual_name = g_strdup (picman_object_get_name (data));
   else
     success = FALSE;
 }
@@ -66,16 +66,16 @@ sub brush_duplicate {
     %invoke = (
         code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
   if (brush)
     {
-      GimpBrush *brush_copy = (GimpBrush *)
-        gimp_data_factory_data_duplicate (gimp->brush_factory,
-                                          GIMP_DATA (brush));
+      PicmanBrush *brush_copy = (PicmanBrush *)
+        picman_data_factory_data_duplicate (picman->brush_factory,
+                                          PICMAN_DATA (brush));
 
       if (brush_copy)
-        copy_name = g_strdup (gimp_object_get_name (brush_copy));
+        copy_name = g_strdup (picman_object_get_name (brush_copy));
       else
         success = FALSE;
     }
@@ -105,10 +105,10 @@ sub brush_is_generated {
     %invoke = (
         code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
   if (brush)
-    generated = GIMP_IS_BRUSH_GENERATED (brush);
+    generated = PICMAN_IS_BRUSH_GENERATED (brush);
   else
     success = FALSE;
 }
@@ -135,10 +135,10 @@ sub brush_is_editable {
     %invoke = (
         code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
   if (brush)
-    editable = gimp_data_is_writable (GIMP_DATA (brush));
+    editable = picman_data_is_writable (PICMAN_DATA (brush));
   else
     success = FALSE;
 }
@@ -167,12 +167,12 @@ sub brush_rename {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_brush (gimp, name, TRUE, error);
+  PicmanBrush *brush = picman_pdb_get_brush (picman, name, TRUE, error);
 
   if (brush)
     {
-      gimp_object_set_name (GIMP_OBJECT (brush), new_name);
-      actual_name = g_strdup (gimp_object_get_name (brush));
+      picman_object_set_name (PICMAN_OBJECT (brush), new_name);
+      actual_name = g_strdup (picman_object_get_name (brush));
     }
   else
     success = FALSE;
@@ -195,11 +195,11 @@ sub brush_delete {
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
-  if (brush && gimp_data_is_deletable (GIMP_DATA (brush)))
-    success = gimp_data_factory_data_delete (gimp->brush_factory,
-                                             GIMP_DATA (brush),
+  if (brush && picman_data_is_deletable (PICMAN_DATA (brush)))
+    success = picman_data_factory_data_delete (picman->brush_factory,
+                                             PICMAN_DATA (brush),
                                              TRUE, error);
   else
     success = FALSE;
@@ -237,14 +237,14 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
   if (brush)
     {
-      width     = gimp_temp_buf_get_width  (brush->mask);
-      height    = gimp_temp_buf_get_height (brush->mask);
-      mask_bpp  = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (brush->mask));
-      color_bpp = brush->pixmap ? babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (brush->pixmap)) : 0;
+      width     = picman_temp_buf_get_width  (brush->mask);
+      height    = picman_temp_buf_get_height (brush->mask);
+      mask_bpp  = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (brush->mask));
+      color_bpp = brush->pixmap ? babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (brush->pixmap)) : 0;
     }
   else
     success = FALSE;
@@ -288,25 +288,25 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
   if (brush)
     {
-      width          = gimp_temp_buf_get_width  (brush->mask);
-      height         = gimp_temp_buf_get_height (brush->mask);
-      mask_bpp       = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (brush->mask));
-      num_mask_bytes = gimp_temp_buf_get_height (brush->mask) *
-                       gimp_temp_buf_get_width  (brush->mask) * mask_bpp;
-      mask_bytes     = g_memdup (gimp_temp_buf_get_data (brush->mask),
+      width          = picman_temp_buf_get_width  (brush->mask);
+      height         = picman_temp_buf_get_height (brush->mask);
+      mask_bpp       = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (brush->mask));
+      num_mask_bytes = picman_temp_buf_get_height (brush->mask) *
+                       picman_temp_buf_get_width  (brush->mask) * mask_bpp;
+      mask_bytes     = g_memdup (picman_temp_buf_get_data (brush->mask),
                                  num_mask_bytes);
 
       if (brush->pixmap)
         {
-          color_bpp       = babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (brush->pixmap));
-          num_color_bytes = gimp_temp_buf_get_height (brush->pixmap) *
-                            gimp_temp_buf_get_width  (brush->pixmap) *
+          color_bpp       = babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (brush->pixmap));
+          num_color_bytes = picman_temp_buf_get_height (brush->pixmap) *
+                            picman_temp_buf_get_width  (brush->pixmap) *
                             color_bpp;
-          color_bytes     = g_memdup (gimp_temp_buf_get_data (brush->pixmap),
+          color_bytes     = g_memdup (picman_temp_buf_get_data (brush->pixmap),
                                       num_color_bytes);
         }
     }
@@ -341,10 +341,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_brush (picman, name, FALSE, error);
 
   if (brush)
-    spacing = gimp_brush_get_spacing (brush);
+    spacing = picman_brush_get_spacing (brush);
   else
     success = FALSE;
 }
@@ -358,9 +358,9 @@ sub brush_get_shape {
     $help = <<'HELP';
 This procedure gets the shape value for a generated brush. If
 called for any other type of brush, it does not succeed.  The
-current possibilities are Circle (GIMP_BRUSH_GENERATED_CIRCLE),
-Square (GIMP_BRUSH_GENERATED_SQUARE), and Diamond
-(GIMP_BRUSH_GENERATED_DIAMOND).  Other shapes are likely to be
+current possibilities are Circle (PICMAN_BRUSH_GENERATED_CIRCLE),
+Square (PICMAN_BRUSH_GENERATED_SQUARE), and Diamond
+(PICMAN_BRUSH_GENERATED_DIAMOND).  Other shapes are likely to be
 added in the future. 
 HELP
 
@@ -372,17 +372,17 @@ HELP
     );
 
     @outargs = (
-	{ name => 'shape', type => 'enum GimpBrushGeneratedShape',
+	{ name => 'shape', type => 'enum PicmanBrushGeneratedShape',
           desc => 'The brush shape' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, FALSE, error);
 
   if (brush)
-    shape = GIMP_BRUSH_GENERATED (brush)->shape;
+    shape = PICMAN_BRUSH_GENERATED (brush)->shape;
   else
     success = FALSE;
 }
@@ -413,10 +413,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, FALSE, error);
 
   if (brush)
-    radius = GIMP_BRUSH_GENERATED (brush)->radius;
+    radius = PICMAN_BRUSH_GENERATED (brush)->radius;
   else
     success = FALSE;
 }
@@ -447,10 +447,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, FALSE, error);
 
   if (brush)
-    spikes = GIMP_BRUSH_GENERATED (brush)->spikes;
+    spikes = PICMAN_BRUSH_GENERATED (brush)->spikes;
   else
     success = FALSE;
 }
@@ -483,10 +483,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, FALSE, error);
 
   if (brush)
-    hardness = GIMP_BRUSH_GENERATED (brush)->hardness;
+    hardness = PICMAN_BRUSH_GENERATED (brush)->hardness;
   else
     success = FALSE;
 }
@@ -517,10 +517,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, FALSE, error);
 
   if (brush)
-    aspect_ratio = GIMP_BRUSH_GENERATED (brush)->aspect_ratio;
+    aspect_ratio = PICMAN_BRUSH_GENERATED (brush)->aspect_ratio;
   else
     success = FALSE;
 }
@@ -551,10 +551,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, FALSE, error);
+  PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, FALSE, error);
 
   if (brush)
-    angle = GIMP_BRUSH_GENERATED (brush)->angle;
+    angle = PICMAN_BRUSH_GENERATED (brush)->angle;
   else
     success = FALSE;
 }
@@ -582,10 +582,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_brush (gimp, name, TRUE, error);
+  PicmanBrush *brush = picman_pdb_get_brush (picman, name, TRUE, error);
 
   if (brush)
-    gimp_brush_set_spacing (brush, spacing);
+    picman_brush_set_spacing (brush, spacing);
   else
     success = FALSE;
 }
@@ -599,9 +599,9 @@ sub brush_set_shape {
     $help = <<'HELP';
 This procedure sets the shape value for a generated brush. If
 called for any other type of brush, it does not succeed. The
-current possibilities are Circle (GIMP_BRUSH_GENERATED_CIRCLE),
-Square (GIMP_BRUSH_GENERATED_SQUARE), and Diamond
-(GIMP_BRUSH_GENERATED_DIAMOND). Other shapes are likely to be
+current possibilities are Circle (PICMAN_BRUSH_GENERATED_CIRCLE),
+Square (PICMAN_BRUSH_GENERATED_SQUARE), and Diamond
+(PICMAN_BRUSH_GENERATED_DIAMOND). Other shapes are likely to be
 added in the future. 
 HELP
 
@@ -610,25 +610,25 @@ HELP
     @inargs = (
 	{ name => 'name', type => 'string', non_empty => 1,
 	  desc => 'The brush name' },
-	{ name => 'shape_in', type => 'enum GimpBrushGeneratedShape',
+	{ name => 'shape_in', type => 'enum PicmanBrushGeneratedShape',
           desc => 'The brush shape' }
     );
 
     @outargs = (
-	{ name => 'shape_out', type => 'enum GimpBrushGeneratedShape',
+	{ name => 'shape_out', type => 'enum PicmanBrushGeneratedShape',
           desc => 'The brush shape actually assigned' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, TRUE, error);
+  PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, TRUE, error);
 
   if (brush)
     {
-      gimp_brush_generated_set_shape (GIMP_BRUSH_GENERATED (brush),
+      picman_brush_generated_set_shape (PICMAN_BRUSH_GENERATED (brush),
                                       shape_in);
-      shape_out = GIMP_BRUSH_GENERATED (brush)->shape;
+      shape_out = PICMAN_BRUSH_GENERATED (brush)->shape;
     }
   else
     success = FALSE;
@@ -662,13 +662,13 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, TRUE, error);
+  PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, TRUE, error);
 
   if (brush)
     {
-      gimp_brush_generated_set_radius (GIMP_BRUSH_GENERATED (brush),
+      picman_brush_generated_set_radius (PICMAN_BRUSH_GENERATED (brush),
                                        radius_in);
-      radius_out = GIMP_BRUSH_GENERATED (brush)->radius;
+      radius_out = PICMAN_BRUSH_GENERATED (brush)->radius;
     }
   else
     success = FALSE;
@@ -702,13 +702,13 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, TRUE, error);
+  PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, TRUE, error);
 
   if (brush)
     {
-      gimp_brush_generated_set_spikes (GIMP_BRUSH_GENERATED (brush),
+      picman_brush_generated_set_spikes (PICMAN_BRUSH_GENERATED (brush),
                                        spikes_in);
-      spikes_out = GIMP_BRUSH_GENERATED (brush)->spikes;
+      spikes_out = PICMAN_BRUSH_GENERATED (brush)->spikes;
     }
   else
     success = FALSE;
@@ -742,13 +742,13 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, TRUE, error);
+  PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, TRUE, error);
 
   if (brush)
     {
-      gimp_brush_generated_set_hardness (GIMP_BRUSH_GENERATED (brush),
+      picman_brush_generated_set_hardness (PICMAN_BRUSH_GENERATED (brush),
                                          hardness_in);
-      hardness_out = GIMP_BRUSH_GENERATED (brush)->hardness;
+      hardness_out = PICMAN_BRUSH_GENERATED (brush)->hardness;
     }
   else
     success = FALSE;
@@ -782,13 +782,13 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, TRUE, error);
+  PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, TRUE, error);
 
   if (brush)
     {
-      gimp_brush_generated_set_aspect_ratio (GIMP_BRUSH_GENERATED (brush),
+      picman_brush_generated_set_aspect_ratio (PICMAN_BRUSH_GENERATED (brush),
                                              aspect_ratio_in);
-      aspect_ratio_out = GIMP_BRUSH_GENERATED (brush)->aspect_ratio;
+      aspect_ratio_out = PICMAN_BRUSH_GENERATED (brush)->aspect_ratio;
     }
   else
     success = FALSE;
@@ -822,13 +822,13 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpBrush *brush = gimp_pdb_get_generated_brush (gimp, name, TRUE, error);
+  PicmanBrush *brush = picman_pdb_get_generated_brush (picman, name, TRUE, error);
 
   if (brush)
     {
-      gimp_brush_generated_set_angle (GIMP_BRUSH_GENERATED (brush),
+      picman_brush_generated_set_angle (PICMAN_BRUSH_GENERATED (brush),
                                       angle_in);
-      angle_out = GIMP_BRUSH_GENERATED (brush)->angle;
+      angle_out = PICMAN_BRUSH_GENERATED (brush)->angle;
     }
   else
     success = FALSE;
@@ -839,13 +839,13 @@ CODE
 
 
 @headers = qw(<string.h>
-              "core/gimp.h"
-              "core/gimpbrush.h"
-              "core/gimpbrushgenerated.h"
-              "core/gimpcontext.h" 
-              "core/gimpdatafactory.h"
-              "core/gimptempbuf.h"
-              "gimppdb-utils.h");
+              "core/picman.h"
+              "core/picmanbrush.h"
+              "core/picmanbrushgenerated.h"
+              "core/picmancontext.h" 
+              "core/picmandatafactory.h"
+              "core/picmantempbuf.h"
+              "picmanpdb-utils.h");
 
 @procs = qw(brush_new
             brush_duplicate
@@ -866,7 +866,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Brush';
-$doc_title = 'gimpbrush';
+$doc_title = 'picmanbrush';
 $doc_short_desc = 'Functions operating on a single brush.';
 $doc_long_desc = 'Functions operating on a single brush.';
 

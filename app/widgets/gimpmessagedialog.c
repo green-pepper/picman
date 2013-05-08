@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpmessagedialog.c
- * Copyright (C) 2004 Sven Neumann <sven@gimp.org>
+ * picmanmessagedialog.c
+ * Copyright (C) 2004 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,24 +22,24 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "gimpmessagebox.h"
-#include "gimpmessagedialog.h"
+#include "picmanmessagebox.h"
+#include "picmanmessagedialog.h"
 
 
-G_DEFINE_TYPE (GimpMessageDialog, gimp_message_dialog, GIMP_TYPE_DIALOG)
+G_DEFINE_TYPE (PicmanMessageDialog, picman_message_dialog, PICMAN_TYPE_DIALOG)
 
 
 static void
-gimp_message_dialog_class_init (GimpMessageDialogClass *klass)
+picman_message_dialog_class_init (PicmanMessageDialogClass *klass)
 {
 }
 
 static void
-gimp_message_dialog_init (GimpMessageDialog *dialog)
+picman_message_dialog_init (PicmanMessageDialog *dialog)
 {
 }
 
@@ -47,23 +47,23 @@ gimp_message_dialog_init (GimpMessageDialog *dialog)
 /*  public functions  */
 
 GtkWidget *
-gimp_message_dialog_new (const gchar    *title,
+picman_message_dialog_new (const gchar    *title,
                          const gchar    *stock_id,
                          GtkWidget      *parent,
                          GtkDialogFlags  flags,
-                         GimpHelpFunc    help_func,
+                         PicmanHelpFunc    help_func,
                          const gchar    *help_id,
                          ...)
 {
-  GimpMessageDialog *dialog;
+  PicmanMessageDialog *dialog;
   va_list            args;
 
   g_return_val_if_fail (title != NULL, NULL);
   g_return_val_if_fail (parent == NULL || GTK_IS_WIDGET (parent), NULL);
 
-  dialog = g_object_new (GIMP_TYPE_MESSAGE_DIALOG,
+  dialog = g_object_new (PICMAN_TYPE_MESSAGE_DIALOG,
                          "title",     title,
-                         "role",      "gimp-message-dialog",
+                         "role",      "picman-message-dialog",
                          "modal",     (flags & GTK_DIALOG_MODAL),
                          "help-func", help_func,
                          "help-id",   help_id,
@@ -91,11 +91,11 @@ gimp_message_dialog_new (const gchar    *title,
 
   va_start (args, help_id);
 
-  gimp_dialog_add_buttons_valist (GIMP_DIALOG (dialog), args);
+  picman_dialog_add_buttons_valist (PICMAN_DIALOG (dialog), args);
 
   va_end (args);
 
-  dialog->box = g_object_new (GIMP_TYPE_MESSAGE_BOX,
+  dialog->box = g_object_new (PICMAN_TYPE_MESSAGE_BOX,
                               "stock-id",  stock_id,
                               NULL);
 

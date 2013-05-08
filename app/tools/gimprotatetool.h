@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,43 +15,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ROTATE_TOOL_H__
-#define __GIMP_ROTATE_TOOL_H__
+#ifndef __PICMAN_ROTATE_TOOL_H__
+#define __PICMAN_ROTATE_TOOL_H__
 
 
-#include "gimptransformtool.h"
+#include "picmantransformtool.h"
 
 
-#define GIMP_TYPE_ROTATE_TOOL            (gimp_rotate_tool_get_type ())
-#define GIMP_ROTATE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ROTATE_TOOL, GimpRotateTool))
-#define GIMP_ROTATE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ROTATE_TOOL, GimpRotateToolClass))
-#define GIMP_IS_ROTATE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ROTATE_TOOL))
-#define GIMP_IS_ROTATE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ROTATE_TOOL))
-#define GIMP_ROTATE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ROTATE_TOOL, GimpRotateToolClass))
+#define PICMAN_TYPE_ROTATE_TOOL            (picman_rotate_tool_get_type ())
+#define PICMAN_ROTATE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ROTATE_TOOL, PicmanRotateTool))
+#define PICMAN_ROTATE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ROTATE_TOOL, PicmanRotateToolClass))
+#define PICMAN_IS_ROTATE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ROTATE_TOOL))
+#define PICMAN_IS_ROTATE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ROTATE_TOOL))
+#define PICMAN_ROTATE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ROTATE_TOOL, PicmanRotateToolClass))
 
 
-typedef struct _GimpRotateTool      GimpRotateTool;
-typedef struct _GimpRotateToolClass GimpRotateToolClass;
+typedef struct _PicmanRotateTool      PicmanRotateTool;
+typedef struct _PicmanRotateToolClass PicmanRotateToolClass;
 
-struct _GimpRotateTool
+struct _PicmanRotateTool
 {
-  GimpTransformTool  parent_instance;
+  PicmanTransformTool  parent_instance;
 
   GtkAdjustment     *angle_adj;
   GtkWidget         *angle_spin_button;
   GtkWidget         *sizeentry;
 };
 
-struct _GimpRotateToolClass
+struct _PicmanRotateToolClass
 {
-  GimpTransformToolClass  parent_class;
+  PicmanTransformToolClass  parent_class;
 };
 
 
-void    gimp_rotate_tool_register (GimpToolRegisterCallback  callback,
+void    picman_rotate_tool_register (PicmanToolRegisterCallback  callback,
                                    gpointer                  data);
 
-GType   gimp_rotate_tool_get_type (void) G_GNUC_CONST;
+GType   picman_rotate_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_ROTATE_TOOL_H__  */
+#endif  /*  __PICMAN_ROTATE_TOOL_H__  */

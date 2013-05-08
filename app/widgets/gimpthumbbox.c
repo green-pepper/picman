@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,103 +22,103 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpthumb/gimpthumb.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanthumb/picmanthumb.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimagefile.h"
-#include "core/gimpprogress.h"
-#include "core/gimpsubprogress.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanimagefile.h"
+#include "core/picmanprogress.h"
+#include "core/picmansubprogress.h"
 
-#include "plug-in/gimppluginmanager.h"
+#include "plug-in/picmanpluginmanager.h"
 
 #include "file/file-procedure.h"
 #include "file/file-utils.h"
 
-#include "gimpfiledialog.h" /* eek */
-#include "gimpthumbbox.h"
-#include "gimpview.h"
-#include "gimpviewrenderer-frame.h"
-#include "gimpwidgets-utils.h"
+#include "picmanfiledialog.h" /* eek */
+#include "picmanthumbbox.h"
+#include "picmanview.h"
+#include "picmanviewrenderer-frame.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void     gimp_thumb_box_progress_iface_init (GimpProgressInterface *iface);
+static void     picman_thumb_box_progress_iface_init (PicmanProgressInterface *iface);
 
-static void     gimp_thumb_box_dispose            (GObject           *object);
-static void     gimp_thumb_box_finalize           (GObject           *object);
+static void     picman_thumb_box_dispose            (GObject           *object);
+static void     picman_thumb_box_finalize           (GObject           *object);
 
-static void     gimp_thumb_box_style_set          (GtkWidget         *widget,
+static void     picman_thumb_box_style_set          (GtkWidget         *widget,
                                                    GtkStyle          *prev_style);
 
-static GimpProgress *
-                gimp_thumb_box_progress_start     (GimpProgress      *progress,
+static PicmanProgress *
+                picman_thumb_box_progress_start     (PicmanProgress      *progress,
                                                    const gchar       *message,
                                                    gboolean           cancelable);
-static void     gimp_thumb_box_progress_end       (GimpProgress      *progress);
-static gboolean gimp_thumb_box_progress_is_active (GimpProgress      *progress);
-static void     gimp_thumb_box_progress_set_value (GimpProgress      *progress,
+static void     picman_thumb_box_progress_end       (PicmanProgress      *progress);
+static gboolean picman_thumb_box_progress_is_active (PicmanProgress      *progress);
+static void     picman_thumb_box_progress_set_value (PicmanProgress      *progress,
                                                    gdouble            percentage);
-static gdouble  gimp_thumb_box_progress_get_value (GimpProgress      *progress);
-static void     gimp_thumb_box_progress_pulse     (GimpProgress      *progress);
+static gdouble  picman_thumb_box_progress_get_value (PicmanProgress      *progress);
+static void     picman_thumb_box_progress_pulse     (PicmanProgress      *progress);
 
-static gboolean gimp_thumb_box_progress_message   (GimpProgress      *progress,
-                                                   Gimp              *gimp,
-                                                   GimpMessageSeverity  severity,
+static gboolean picman_thumb_box_progress_message   (PicmanProgress      *progress,
+                                                   Picman              *picman,
+                                                   PicmanMessageSeverity  severity,
                                                    const gchar       *domain,
                                                    const gchar       *message);
 
-static gboolean gimp_thumb_box_ebox_button_press  (GtkWidget         *widget,
+static gboolean picman_thumb_box_ebox_button_press  (GtkWidget         *widget,
                                                    GdkEventButton    *bevent,
-                                                   GimpThumbBox      *box);
-static void gimp_thumb_box_thumbnail_clicked      (GtkWidget         *widget,
+                                                   PicmanThumbBox      *box);
+static void picman_thumb_box_thumbnail_clicked      (GtkWidget         *widget,
                                                    GdkModifierType    state,
-                                                   GimpThumbBox      *box);
-static void gimp_thumb_box_imagefile_info_changed (GimpImagefile     *imagefile,
-                                                   GimpThumbBox      *box);
-static void gimp_thumb_box_thumb_state_notify     (GimpThumbnail     *thumb,
+                                                   PicmanThumbBox      *box);
+static void picman_thumb_box_imagefile_info_changed (PicmanImagefile     *imagefile,
+                                                   PicmanThumbBox      *box);
+static void picman_thumb_box_thumb_state_notify     (PicmanThumbnail     *thumb,
                                                    GParamSpec        *pspec,
-                                                   GimpThumbBox      *box);
-static void gimp_thumb_box_create_thumbnails      (GimpThumbBox      *box,
+                                                   PicmanThumbBox      *box);
+static void picman_thumb_box_create_thumbnails      (PicmanThumbBox      *box,
                                                    gboolean           force);
-static void gimp_thumb_box_create_thumbnail       (GimpThumbBox      *box,
+static void picman_thumb_box_create_thumbnail       (PicmanThumbBox      *box,
                                                    const gchar       *uri,
-                                                   GimpThumbnailSize  size,
+                                                   PicmanThumbnailSize  size,
                                                    gboolean           force,
-                                                   GimpProgress      *progress);
-static gboolean gimp_thumb_box_auto_thumbnail     (GimpThumbBox      *box);
+                                                   PicmanProgress      *progress);
+static gboolean picman_thumb_box_auto_thumbnail     (PicmanThumbBox      *box);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpThumbBox, gimp_thumb_box, GTK_TYPE_FRAME,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PROGRESS,
-                                                gimp_thumb_box_progress_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanThumbBox, picman_thumb_box, GTK_TYPE_FRAME,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PROGRESS,
+                                                picman_thumb_box_progress_iface_init))
 
-#define parent_class gimp_thumb_box_parent_class
+#define parent_class picman_thumb_box_parent_class
 
 
 static void
-gimp_thumb_box_class_init (GimpThumbBoxClass *klass)
+picman_thumb_box_class_init (PicmanThumbBoxClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->dispose     = gimp_thumb_box_dispose;
-  object_class->finalize    = gimp_thumb_box_finalize;
+  object_class->dispose     = picman_thumb_box_dispose;
+  object_class->finalize    = picman_thumb_box_finalize;
 
-  widget_class->style_set   = gimp_thumb_box_style_set;
+  widget_class->style_set   = picman_thumb_box_style_set;
 }
 
 static void
-gimp_thumb_box_init (GimpThumbBox *box)
+picman_thumb_box_init (PicmanThumbBox *box)
 {
   gtk_frame_set_shadow_type (GTK_FRAME (box), GTK_SHADOW_IN);
 
@@ -126,21 +126,21 @@ gimp_thumb_box_init (GimpThumbBox *box)
 }
 
 static void
-gimp_thumb_box_progress_iface_init (GimpProgressInterface *iface)
+picman_thumb_box_progress_iface_init (PicmanProgressInterface *iface)
 {
-  iface->start     = gimp_thumb_box_progress_start;
-  iface->end       = gimp_thumb_box_progress_end;
-  iface->is_active = gimp_thumb_box_progress_is_active;
-  iface->set_value = gimp_thumb_box_progress_set_value;
-  iface->get_value = gimp_thumb_box_progress_get_value;
-  iface->pulse     = gimp_thumb_box_progress_pulse;
-  iface->message   = gimp_thumb_box_progress_message;
+  iface->start     = picman_thumb_box_progress_start;
+  iface->end       = picman_thumb_box_progress_end;
+  iface->is_active = picman_thumb_box_progress_is_active;
+  iface->set_value = picman_thumb_box_progress_set_value;
+  iface->get_value = picman_thumb_box_progress_get_value;
+  iface->pulse     = picman_thumb_box_progress_pulse;
+  iface->message   = picman_thumb_box_progress_message;
 }
 
 static void
-gimp_thumb_box_dispose (GObject *object)
+picman_thumb_box_dispose (GObject *object)
 {
-  GimpThumbBox *box = GIMP_THUMB_BOX (object);
+  PicmanThumbBox *box = PICMAN_THUMB_BOX (object);
 
   if (box->idle_id)
     {
@@ -154,11 +154,11 @@ gimp_thumb_box_dispose (GObject *object)
 }
 
 static void
-gimp_thumb_box_finalize (GObject *object)
+picman_thumb_box_finalize (GObject *object)
 {
-  GimpThumbBox *box = GIMP_THUMB_BOX (object);
+  PicmanThumbBox *box = PICMAN_THUMB_BOX (object);
 
-  gimp_thumb_box_take_uris (box, NULL);
+  picman_thumb_box_take_uris (box, NULL);
 
   if (box->imagefile)
     {
@@ -170,10 +170,10 @@ gimp_thumb_box_finalize (GObject *object)
 }
 
 static void
-gimp_thumb_box_style_set (GtkWidget *widget,
+picman_thumb_box_style_set (GtkWidget *widget,
                           GtkStyle  *prev_style)
 {
-  GimpThumbBox *box   = GIMP_THUMB_BOX (widget);
+  PicmanThumbBox *box   = PICMAN_THUMB_BOX (widget);
   GtkStyle     *style = gtk_widget_get_style (widget);
   GtkWidget    *ebox;
 
@@ -192,12 +192,12 @@ gimp_thumb_box_style_set (GtkWidget *widget,
                         &style->base[GTK_STATE_NORMAL]);
 }
 
-static GimpProgress *
-gimp_thumb_box_progress_start (GimpProgress *progress,
+static PicmanProgress *
+picman_thumb_box_progress_start (PicmanProgress *progress,
                                const gchar  *message,
                                gboolean      cancelable)
 {
-  GimpThumbBox *box = GIMP_THUMB_BOX (progress);
+  PicmanThumbBox *box = PICMAN_THUMB_BOX (progress);
 
   if (! box->progress)
     return NULL;
@@ -213,7 +213,7 @@ gimp_thumb_box_progress_start (GimpProgress *progress,
 
       toplevel = gtk_widget_get_toplevel (GTK_WIDGET (box));
 
-      if (GIMP_IS_FILE_DIALOG (toplevel))
+      if (PICMAN_IS_FILE_DIALOG (toplevel))
         gtk_dialog_set_response_sensitive (GTK_DIALOG (toplevel),
                                            GTK_RESPONSE_CANCEL, cancelable);
 
@@ -224,11 +224,11 @@ gimp_thumb_box_progress_start (GimpProgress *progress,
 }
 
 static void
-gimp_thumb_box_progress_end (GimpProgress *progress)
+picman_thumb_box_progress_end (PicmanProgress *progress)
 {
-  if (gimp_thumb_box_progress_is_active (progress))
+  if (picman_thumb_box_progress_is_active (progress))
     {
-      GimpThumbBox   *box = GIMP_THUMB_BOX (progress);
+      PicmanThumbBox   *box = PICMAN_THUMB_BOX (progress);
       GtkProgressBar *bar = GTK_PROGRESS_BAR (box->progress);
 
       gtk_progress_bar_set_fraction (bar, 0.0);
@@ -238,20 +238,20 @@ gimp_thumb_box_progress_end (GimpProgress *progress)
 }
 
 static gboolean
-gimp_thumb_box_progress_is_active (GimpProgress *progress)
+picman_thumb_box_progress_is_active (PicmanProgress *progress)
 {
-  GimpThumbBox *box = GIMP_THUMB_BOX (progress);
+  PicmanThumbBox *box = PICMAN_THUMB_BOX (progress);
 
   return (box->progress && box->progress_active);
 }
 
 static void
-gimp_thumb_box_progress_set_value (GimpProgress *progress,
+picman_thumb_box_progress_set_value (PicmanProgress *progress,
                                    gdouble       percentage)
 {
-  if (gimp_thumb_box_progress_is_active (progress))
+  if (picman_thumb_box_progress_is_active (progress))
     {
-      GimpThumbBox   *box = GIMP_THUMB_BOX (progress);
+      PicmanThumbBox   *box = PICMAN_THUMB_BOX (progress);
       GtkProgressBar *bar = GTK_PROGRESS_BAR (box->progress);
 
       gtk_progress_bar_set_fraction (bar, percentage);
@@ -259,11 +259,11 @@ gimp_thumb_box_progress_set_value (GimpProgress *progress,
 }
 
 static gdouble
-gimp_thumb_box_progress_get_value (GimpProgress *progress)
+picman_thumb_box_progress_get_value (PicmanProgress *progress)
 {
-  if (gimp_thumb_box_progress_is_active (progress))
+  if (picman_thumb_box_progress_is_active (progress))
     {
-      GimpThumbBox   *box = GIMP_THUMB_BOX (progress);
+      PicmanThumbBox   *box = PICMAN_THUMB_BOX (progress);
       GtkProgressBar *bar = GTK_PROGRESS_BAR (box->progress);
 
       return gtk_progress_bar_get_fraction (bar);
@@ -273,11 +273,11 @@ gimp_thumb_box_progress_get_value (GimpProgress *progress)
 }
 
 static void
-gimp_thumb_box_progress_pulse (GimpProgress *progress)
+picman_thumb_box_progress_pulse (PicmanProgress *progress)
 {
-  if (gimp_thumb_box_progress_is_active (progress))
+  if (picman_thumb_box_progress_is_active (progress))
     {
-      GimpThumbBox   *box = GIMP_THUMB_BOX (progress);
+      PicmanThumbBox   *box = PICMAN_THUMB_BOX (progress);
       GtkProgressBar *bar = GTK_PROGRESS_BAR (box->progress);
 
       gtk_progress_bar_pulse (bar);
@@ -285,13 +285,13 @@ gimp_thumb_box_progress_pulse (GimpProgress *progress)
 }
 
 static gboolean
-gimp_thumb_box_progress_message (GimpProgress        *progress,
-                                 Gimp                *gimp,
-                                 GimpMessageSeverity  severity,
+picman_thumb_box_progress_message (PicmanProgress        *progress,
+                                 Picman                *picman,
+                                 PicmanMessageSeverity  severity,
                                  const gchar         *domain,
                                  const gchar         *message)
 {
-  /*  GimpThumbBox never shows any messages  */
+  /*  PicmanThumbBox never shows any messages  */
 
   return TRUE;
 }
@@ -300,9 +300,9 @@ gimp_thumb_box_progress_message (GimpProgress        *progress,
 /*  public functions  */
 
 GtkWidget *
-gimp_thumb_box_new (GimpContext *context)
+picman_thumb_box_new (PicmanContext *context)
 {
-  GimpThumbBox   *box;
+  PicmanThumbBox   *box;
   GtkWidget      *vbox;
   GtkWidget      *vbox2;
   GtkWidget      *ebox;
@@ -314,9 +314,9 @@ gimp_thumb_box_new (GimpContext *context)
   GtkRequisition  info_requisition;
   GtkRequisition  progress_requisition;
 
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
-  box = g_object_new (GIMP_TYPE_THUMB_BOX, NULL);
+  box = g_object_new (PICMAN_TYPE_THUMB_BOX, NULL);
 
   box->context = context;
 
@@ -325,15 +325,15 @@ gimp_thumb_box_new (GimpContext *context)
   gtk_widget_show (ebox);
 
   g_signal_connect (ebox, "button-press-event",
-                    G_CALLBACK (gimp_thumb_box_ebox_button_press),
+                    G_CALLBACK (picman_thumb_box_ebox_button_press),
                     box);
 
   str = g_strdup_printf (_("Click to update preview\n"
                            "%s-Click to force update even "
                            "if preview is up-to-date"),
-                         gimp_get_mod_string (gimp_get_toggle_behavior_mask ()));
+                         picman_get_mod_string (picman_get_toggle_behavior_mask ()));
 
-  gimp_help_set_help_data (ebox, str, NULL);
+  picman_help_set_help_data (ebox, str, NULL);
 
   g_free (str);
 
@@ -373,23 +373,23 @@ gimp_thumb_box_new (GimpContext *context)
   gtk_box_pack_start (GTK_BOX (vbox2), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  box->imagefile = gimp_imagefile_new (context->gimp, NULL);
+  box->imagefile = picman_imagefile_new (context->picman, NULL);
 
   g_signal_connect (box->imagefile, "info-changed",
-                    G_CALLBACK (gimp_thumb_box_imagefile_info_changed),
+                    G_CALLBACK (picman_thumb_box_imagefile_info_changed),
                     box);
 
-  g_signal_connect (gimp_imagefile_get_thumbnail (box->imagefile),
+  g_signal_connect (picman_imagefile_get_thumbnail (box->imagefile),
                     "notify::thumb-state",
-                    G_CALLBACK (gimp_thumb_box_thumb_state_notify),
+                    G_CALLBACK (picman_thumb_box_thumb_state_notify),
                     box);
 
-  gimp_view_renderer_get_frame_size (&h, &v);
+  picman_view_renderer_get_frame_size (&h, &v);
 
-  box->preview = gimp_view_new (context,
-                                GIMP_VIEWABLE (box->imagefile),
+  box->preview = picman_view_new (context,
+                                PICMAN_VIEWABLE (box->imagefile),
                                 /* add padding for the shadow frame */
-                                context->gimp->config->thumbnail_size +
+                                context->picman->config->thumbnail_size +
                                 MAX (h, v),
                                 0, FALSE);
 
@@ -399,13 +399,13 @@ gimp_thumb_box_new (GimpContext *context)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), box->preview);
 
   g_signal_connect (box->preview, "clicked",
-                    G_CALLBACK (gimp_thumb_box_thumbnail_clicked),
+                    G_CALLBACK (picman_thumb_box_thumbnail_clicked),
                     box);
 
   box->filename = gtk_label_new (_("No selection"));
   gtk_label_set_ellipsize (GTK_LABEL (box->filename), PANGO_ELLIPSIZE_MIDDLE);
   gtk_label_set_justify (GTK_LABEL (box->filename), GTK_JUSTIFY_CENTER);
-  gimp_label_set_attributes (GTK_LABEL (box->filename),
+  picman_label_set_attributes (GTK_LABEL (box->filename),
                              PANGO_ATTR_STYLE, PANGO_STYLE_OBLIQUE,
                              -1);
   gtk_box_pack_start (GTK_BOX (vbox2), box->filename, FALSE, FALSE, 0);
@@ -415,7 +415,7 @@ gimp_thumb_box_new (GimpContext *context)
   gtk_misc_set_alignment (GTK_MISC (box->info), 0.5, 0.0);
   gtk_label_set_justify (GTK_LABEL (box->info), GTK_JUSTIFY_CENTER);
   gtk_label_set_line_wrap (GTK_LABEL (box->info), TRUE);
-  gimp_label_set_attributes (GTK_LABEL (box->info),
+  picman_label_set_attributes (GTK_LABEL (box->info),
                              PANGO_ATTR_SCALE, PANGO_SCALE_SMALL,
                              -1);
   gtk_box_pack_start (GTK_BOX (vbox2), box->info, FALSE, FALSE, 0);
@@ -444,10 +444,10 @@ gimp_thumb_box_new (GimpContext *context)
 }
 
 void
-gimp_thumb_box_take_uri (GimpThumbBox *box,
+picman_thumb_box_take_uri (PicmanThumbBox *box,
                          gchar        *uri)
 {
-  g_return_if_fail (GIMP_IS_THUMB_BOX (box));
+  g_return_if_fail (PICMAN_IS_THUMB_BOX (box));
 
   if (box->idle_id)
     {
@@ -455,7 +455,7 @@ gimp_thumb_box_take_uri (GimpThumbBox *box,
       box->idle_id = 0;
     }
 
-  gimp_object_take_name (GIMP_OBJECT (box->imagefile), uri);
+  picman_object_take_name (PICMAN_OBJECT (box->imagefile), uri);
 
   if (uri)
     {
@@ -470,14 +470,14 @@ gimp_thumb_box_take_uri (GimpThumbBox *box,
     }
 
   gtk_widget_set_sensitive (GTK_WIDGET (box), uri != NULL);
-  gimp_imagefile_update (box->imagefile);
+  picman_imagefile_update (box->imagefile);
 }
 
 void
-gimp_thumb_box_take_uris (GimpThumbBox *box,
+picman_thumb_box_take_uris (PicmanThumbBox *box,
                           GSList       *uris)
 {
-  g_return_if_fail (GIMP_IS_THUMB_BOX (box));
+  g_return_if_fail (PICMAN_IS_THUMB_BOX (box));
 
   if (box->uris)
     {
@@ -492,51 +492,51 @@ gimp_thumb_box_take_uris (GimpThumbBox *box,
 /*  private functions  */
 
 static gboolean
-gimp_thumb_box_ebox_button_press (GtkWidget      *widget,
+picman_thumb_box_ebox_button_press (GtkWidget      *widget,
                                   GdkEventButton *bevent,
-                                  GimpThumbBox   *box)
+                                  PicmanThumbBox   *box)
 {
-  gimp_thumb_box_thumbnail_clicked (widget, bevent->state, box);
+  picman_thumb_box_thumbnail_clicked (widget, bevent->state, box);
 
   return TRUE;
 }
 
 static void
-gimp_thumb_box_thumbnail_clicked (GtkWidget       *widget,
+picman_thumb_box_thumbnail_clicked (GtkWidget       *widget,
                                   GdkModifierType  state,
-                                  GimpThumbBox    *box)
+                                  PicmanThumbBox    *box)
 {
-  gimp_thumb_box_create_thumbnails (box,
-                                    (state & gimp_get_toggle_behavior_mask ()) ?
+  picman_thumb_box_create_thumbnails (box,
+                                    (state & picman_get_toggle_behavior_mask ()) ?
                                     TRUE : FALSE);
 }
 
 static void
-gimp_thumb_box_imagefile_info_changed (GimpImagefile *imagefile,
-                                       GimpThumbBox  *box)
+picman_thumb_box_imagefile_info_changed (PicmanImagefile *imagefile,
+                                       PicmanThumbBox  *box)
 {
   gtk_label_set_text (GTK_LABEL (box->info),
-                      gimp_imagefile_get_desc_string (imagefile));
+                      picman_imagefile_get_desc_string (imagefile));
 }
 
 static void
-gimp_thumb_box_thumb_state_notify (GimpThumbnail *thumb,
+picman_thumb_box_thumb_state_notify (PicmanThumbnail *thumb,
                                    GParamSpec    *pspec,
-                                   GimpThumbBox  *box)
+                                   PicmanThumbBox  *box)
 {
   if (box->idle_id)
     return;
 
-  if (thumb->image_state == GIMP_THUMB_STATE_REMOTE)
+  if (thumb->image_state == PICMAN_THUMB_STATE_REMOTE)
     return;
 
   switch (thumb->thumb_state)
     {
-    case GIMP_THUMB_STATE_NOT_FOUND:
-    case GIMP_THUMB_STATE_OLD:
+    case PICMAN_THUMB_STATE_NOT_FOUND:
+    case PICMAN_THUMB_STATE_OLD:
       box->idle_id =
         g_idle_add_full (G_PRIORITY_LOW,
-                         (GSourceFunc) gimp_thumb_box_auto_thumbnail,
+                         (GSourceFunc) picman_thumb_box_auto_thumbnail,
                          box, NULL);
       break;
 
@@ -546,29 +546,29 @@ gimp_thumb_box_thumb_state_notify (GimpThumbnail *thumb,
 }
 
 static void
-gimp_thumb_box_create_thumbnails (GimpThumbBox *box,
+picman_thumb_box_create_thumbnails (PicmanThumbBox *box,
                                   gboolean      force)
 {
-  Gimp           *gimp     = box->context->gimp;
-  GimpProgress   *progress = GIMP_PROGRESS (box);
-  GimpFileDialog *dialog   = NULL;
+  Picman           *picman     = box->context->picman;
+  PicmanProgress   *progress = PICMAN_PROGRESS (box);
+  PicmanFileDialog *dialog   = NULL;
   GtkWidget      *toplevel;
   GSList         *list;
   gint            n_uris;
   gint            i;
 
-  if (gimp->config->thumbnail_size == GIMP_THUMBNAIL_SIZE_NONE)
+  if (picman->config->thumbnail_size == PICMAN_THUMBNAIL_SIZE_NONE)
     return;
 
   toplevel = gtk_widget_get_toplevel (GTK_WIDGET (box));
 
-  if (GIMP_IS_FILE_DIALOG (toplevel))
-    dialog = GIMP_FILE_DIALOG (toplevel);
+  if (PICMAN_IS_FILE_DIALOG (toplevel))
+    dialog = PICMAN_FILE_DIALOG (toplevel);
 
-  gimp_set_busy (gimp);
+  picman_set_busy (picman);
 
   if (dialog)
-    gimp_file_dialog_set_sensitive (dialog, FALSE);
+    picman_file_dialog_set_sensitive (dialog, FALSE);
   else
     gtk_widget_set_sensitive (toplevel, FALSE);
 
@@ -584,11 +584,11 @@ gimp_thumb_box_create_thumbnails (GimpThumbBox *box,
     {
       gchar *str;
 
-      gimp_progress_start (GIMP_PROGRESS (box), "", TRUE);
+      picman_progress_start (PICMAN_PROGRESS (box), "", TRUE);
 
-      progress = gimp_sub_progress_new (GIMP_PROGRESS (box));
+      progress = picman_sub_progress_new (PICMAN_PROGRESS (box));
 
-      gimp_sub_progress_set_step (GIMP_SUB_PROGRESS (progress), 0, n_uris);
+      picman_sub_progress_set_step (PICMAN_SUB_PROGRESS (progress), 0, n_uris);
 
       for (list = box->uris->next, i = 1;
            list;
@@ -598,28 +598,28 @@ gimp_thumb_box_create_thumbnails (GimpThumbBox *box,
           gtk_progress_bar_set_text (GTK_PROGRESS_BAR (box->progress), str);
           g_free (str);
 
-          gimp_progress_set_value (progress, 0.0);
+          picman_progress_set_value (progress, 0.0);
 
           while (gtk_events_pending ())
             gtk_main_iteration ();
 
-          gimp_thumb_box_create_thumbnail (box,
+          picman_thumb_box_create_thumbnail (box,
                                            list->data,
-                                           gimp->config->thumbnail_size,
+                                           picman->config->thumbnail_size,
                                            force,
                                            progress);
 
           if (dialog && dialog->canceled)
             goto canceled;
 
-          gimp_sub_progress_set_step (GIMP_SUB_PROGRESS (progress), i, n_uris);
+          picman_sub_progress_set_step (PICMAN_SUB_PROGRESS (progress), i, n_uris);
         }
 
       str = g_strdup_printf (_("Thumbnail %d of %d"), n_uris, n_uris);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (box->progress), str);
       g_free (str);
 
-      gimp_progress_set_value (progress, 0.0);
+      picman_progress_set_value (progress, 0.0);
 
       while (gtk_events_pending ())
         gtk_main_iteration ();
@@ -627,13 +627,13 @@ gimp_thumb_box_create_thumbnails (GimpThumbBox *box,
 
   if (box->uris)
     {
-      gimp_thumb_box_create_thumbnail (box,
+      picman_thumb_box_create_thumbnail (box,
                                        box->uris->data,
-                                       gimp->config->thumbnail_size,
+                                       picman->config->thumbnail_size,
                                        force,
                                        progress);
 
-      gimp_progress_set_value (progress, 1.0);
+      picman_progress_set_value (progress, 1.0);
     }
 
  canceled:
@@ -642,7 +642,7 @@ gimp_thumb_box_create_thumbnails (GimpThumbBox *box,
     {
       g_object_unref (progress);
 
-      gimp_progress_end (GIMP_PROGRESS (box));
+      picman_progress_end (PICMAN_PROGRESS (box));
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (box->progress), "");
     }
 
@@ -653,22 +653,22 @@ gimp_thumb_box_create_thumbnails (GimpThumbBox *box,
     }
 
   if (dialog)
-    gimp_file_dialog_set_sensitive (dialog, TRUE);
+    picman_file_dialog_set_sensitive (dialog, TRUE);
   else
     gtk_widget_set_sensitive (toplevel, TRUE);
 
-  gimp_unset_busy (gimp);
+  picman_unset_busy (picman);
 }
 
 static void
-gimp_thumb_box_create_thumbnail (GimpThumbBox      *box,
+picman_thumb_box_create_thumbnail (PicmanThumbBox      *box,
                                  const gchar       *uri,
-                                 GimpThumbnailSize  size,
+                                 PicmanThumbnailSize  size,
                                  gboolean           force,
-                                 GimpProgress      *progress)
+                                 PicmanProgress      *progress)
 {
   gchar         *filename = file_utils_filename_from_uri (uri);
-  GimpThumbnail *thumb;
+  PicmanThumbnail *thumb;
   gchar         *basename;
 
   if (filename)
@@ -681,19 +681,19 @@ gimp_thumb_box_create_thumbnail (GimpThumbBox      *box,
         return;
     }
 
-  thumb = gimp_imagefile_get_thumbnail (box->imagefile);
+  thumb = picman_imagefile_get_thumbnail (box->imagefile);
 
   basename = file_utils_uri_display_basename (uri);
   gtk_label_set_text (GTK_LABEL (box->filename), basename);
   g_free (basename);
 
-  gimp_object_set_name (GIMP_OBJECT (box->imagefile), uri);
+  picman_object_set_name (PICMAN_OBJECT (box->imagefile), uri);
 
   if (force ||
-      (gimp_thumbnail_peek_thumb (thumb, size) < GIMP_THUMB_STATE_FAILED &&
-       ! gimp_thumbnail_has_failed (thumb)))
+      (picman_thumbnail_peek_thumb (thumb, size) < PICMAN_THUMB_STATE_FAILED &&
+       ! picman_thumbnail_has_failed (thumb)))
     {
-      gimp_imagefile_create_thumbnail (box->imagefile, box->context,
+      picman_imagefile_create_thumbnail (box->imagefile, box->context,
                                        progress,
                                        size,
                                        !force);
@@ -701,24 +701,24 @@ gimp_thumb_box_create_thumbnail (GimpThumbBox      *box,
 }
 
 static gboolean
-gimp_thumb_box_auto_thumbnail (GimpThumbBox *box)
+picman_thumb_box_auto_thumbnail (PicmanThumbBox *box)
 {
-  Gimp          *gimp  = box->context->gimp;
-  GimpThumbnail *thumb = gimp_imagefile_get_thumbnail (box->imagefile);
-  const gchar   *uri   = gimp_object_get_name (box->imagefile);
+  Picman          *picman  = box->context->picman;
+  PicmanThumbnail *thumb = picman_imagefile_get_thumbnail (box->imagefile);
+  const gchar   *uri   = picman_object_get_name (box->imagefile);
 
   box->idle_id = 0;
 
-  if (thumb->image_state == GIMP_THUMB_STATE_NOT_FOUND)
+  if (thumb->image_state == PICMAN_THUMB_STATE_NOT_FOUND)
     return FALSE;
 
   switch (thumb->thumb_state)
     {
-    case GIMP_THUMB_STATE_NOT_FOUND:
-    case GIMP_THUMB_STATE_OLD:
-      if (thumb->image_filesize < gimp->config->thumbnail_filesize_limit &&
-          ! gimp_thumbnail_has_failed (thumb)                            &&
-          file_procedure_find_by_extension (gimp->plug_in_manager->load_procs,
+    case PICMAN_THUMB_STATE_NOT_FOUND:
+    case PICMAN_THUMB_STATE_OLD:
+      if (thumb->image_filesize < picman->config->thumbnail_filesize_limit &&
+          ! picman_thumbnail_has_failed (thumb)                            &&
+          file_procedure_find_by_extension (picman->plug_in_manager->load_procs,
                                             uri))
         {
           if (thumb->image_filesize > 0)
@@ -741,9 +741,9 @@ gimp_thumb_box_auto_thumbnail (GimpThumbBox *box)
                                   _("Creating preview..."));
             }
 
-          gimp_imagefile_create_thumbnail_weak (box->imagefile, box->context,
-                                                GIMP_PROGRESS (box),
-                                                gimp->config->thumbnail_size,
+          picman_imagefile_create_thumbnail_weak (box->imagefile, box->context,
+                                                PICMAN_PROGRESS (box),
+                                                picman->config->thumbnail_size,
                                                 TRUE);
         }
       break;

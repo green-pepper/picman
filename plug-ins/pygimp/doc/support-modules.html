@@ -7,11 +7,11 @@
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet"><LINK
 REL="HOME"
-TITLE="Gimp Python Documentation"
-HREF="pygimp.html"><LINK
+TITLE="Picman Python Documentation"
+HREF="pypicman.html"><LINK
 REL="PREVIOUS"
-TITLE="Gimp Objects"
-HREF="gimp-objects.html"><LINK
+TITLE="Picman Objects"
+HREF="picman-objects.html"><LINK
 REL="NEXT"
 TITLE="End Note"
 HREF="end-note.html"></HEAD
@@ -27,7 +27,7 @@ CELLSPACING="0"
 ><TH
 COLSPAN="3"
 ALIGN="center"
->Gimp Python Documentation</TH
+>Picman Python Documentation</TH
 ></TR
 ><TR
 ><TD
@@ -35,7 +35,7 @@ WIDTH="10%"
 ALIGN="left"
 VALIGN="bottom"
 ><A
-HREF="gimp-objects.html"
+HREF="picman-objects.html"
 >Prev</A
 ></TD
 ><TD
@@ -68,7 +68,7 @@ NAME="SUPPORT-MODULES"
 >This section describes the modules that help make using the
     <TT
 CLASS="FILENAME"
->gimp</TT
+>picman</TT
 > module easier.  These range from a set
     of constants to storing persistent data.</P
 ><DIV
@@ -76,14 +76,14 @@ CLASS="SECT2"
 ><H2
 CLASS="SECT2"
 ><A
-NAME="GIMPENUMS-MODULE"
->The gimpenums Module</A
+NAME="PICMANENUMS-MODULE"
+>The picmanenums Module</A
 ></H2
 ><P
 >This module contains all the constants found in the header
       <TT
 CLASS="FILENAME"
->libgimp/gimpenums.h</TT
+>libpicman/picmanenums.h</TT
 >, as well as some extra
       constants that are available in Script-Fu.</P
 ></DIV
@@ -93,7 +93,7 @@ CLASS="SECT2"
 CLASS="SECT2"
 ><A
 NAME="AEN1468"
->The gimpfu Module</A
+>The picmanfu Module</A
 ></H2
 ><P
 >This module was fully described in an earlier section.  It
@@ -106,20 +106,20 @@ CLASS="SECT2"
 ><H2
 CLASS="SECT2"
 ><A
-NAME="GIMPPLUGIN-MODULE"
->The gimpplugin Module</A
+NAME="PICMANPLUGIN-MODULE"
+>The picmanplugin Module</A
 ></H2
 ><P
->This module provides the framework for writing Gimp
+>This module provides the framework for writing Picman
       plugins in Python.  It gives more flexibility for writing
-      plugins than the gimpfu module, but does not offer as many
+      plugins than the picmanfu module, but does not offer as many
       features (such as automatic GUI building).</P
 ><P
 >To use this framework you subclass
       <TT
 CLASS="FUNCTION"
 ><B
->gimpplugin.plugin</B
+>picmanplugin.plugin</B
 ></TT
 > like so:</P
 ><TABLE
@@ -130,19 +130,19 @@ WIDTH="100%"
 ><TD
 ><PRE
 CLASS="PROGRAMLISTING"
->import gimpplugin
-class myplugin(gimpplugin.plugin):
+>import picmanplugin
+class myplugin(picmanplugin.plugin):
 	def init(self):
 		# initialisation routines
-		# called when gimp starts.
+		# called when picman starts.
 	def quit(self):
 		# clean up routines
-		# called when gimp exits (normally).
+		# called when picman exits (normally).
 	def query(self):
 		# called to find what functionality the plugin provides.
-		gimp.install_procedure("procname", ...)
+		picman.install_procedure("procname", ...)
 	# note that this method name matches the first arg of
-	# gimp.install_procedure
+	# picman.install_procedure
 	def procname(self, arg1, ...):
 		# do what ever this plugin should do</PRE
 ></TD
@@ -154,15 +154,15 @@ CLASS="SECT2"
 ><H2
 CLASS="SECT2"
 ><A
-NAME="GIMPSHELF-MODULE"
->The gimpshelf Module</A
+NAME="PICMANSHELF-MODULE"
+>The picmanshelf Module</A
 ></H2
 ><P
 >This module gives a nicer interface to the persistent
-      storage interface for Gimp plugins.  Due to the complicated
+      storage interface for Picman plugins.  Due to the complicated
       nature of Python objects (there is often a lot of connections
       between them), it can be dificult to work out what to store in
-      gimp's persistent storage.  The python interface only allows
+      picman's persistent storage.  The python interface only allows
       storage of strings, so this module wraps pickle and unpickle to
       allow persistentstorage of any python object.</P
 ><P
@@ -175,7 +175,7 @@ WIDTH="100%"
 ><TD
 ><PRE
 CLASS="SCREEN"
->&#62;&#62;&#62; from gimpshelf import shelf
+>&#62;&#62;&#62; from picmanshelf import shelf
 &#62;&#62;&#62; shelf['james'] = ['forty-two', (42, 42L, 42.0)]
 &#62;&#62;&#62; shelf.has_key('james')
 1
@@ -189,9 +189,9 @@ CLASS="SCREEN"
       <TT
 CLASS="FUNCTION"
 ><B
->gimpshelf.shelf</B
+>picmanshelf.shelf</B
 ></TT
-> will exist until Gimp
+> will exist until Picman
       exits.  This makes this interface perfect for when a plugin is
       executed with the run mode
       <TT
@@ -215,7 +215,7 @@ WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
 ><A
-HREF="gimp-objects.html"
+HREF="picman-objects.html"
 >Prev</A
 ></TD
 ><TD
@@ -223,7 +223,7 @@ WIDTH="34%"
 ALIGN="center"
 VALIGN="top"
 ><A
-HREF="pygimp.html"
+HREF="pypicman.html"
 >Home</A
 ></TD
 ><TD
@@ -240,7 +240,7 @@ HREF="end-note.html"
 WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
->Gimp Objects</TD
+>Picman Objects</TD
 ><TD
 WIDTH="34%"
 ALIGN="center"

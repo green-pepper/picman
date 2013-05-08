@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpunitcache.c
- * Copyright (C) 1999-2000 Michael Natterer <mitch@gimp.org>
+ * picmanunitcache.c
+ * Copyright (C) 1999-2000 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,12 +23,12 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpunitcache.h"
-#include "gimpunit_pdb.h"
+#include "picmanunitcache.h"
+#include "picmanunit_pdb.h"
 
-#include "libgimp-intl.h"
+#include "libpicman-intl.h"
 
 /*  internal structures  */
 
@@ -41,76 +41,76 @@ typedef struct
   const gchar *abbreviation;
   const gchar *singular;
   const gchar *plural;
-} GimpUnitDef;
+} PicmanUnitDef;
 
 
-static GimpUnitDef * gimp_unit_defs         = NULL;
-static GimpUnit      gimp_units_initialized = 0;
+static PicmanUnitDef * picman_unit_defs         = NULL;
+static PicmanUnit      picman_units_initialized = 0;
 
 /*  not a unit at all but kept here to have the strings in one place
  */
-static const GimpUnitDef gimp_unit_percent =
+static const PicmanUnitDef picman_unit_percent =
 {
   0.0, 0, "percent", "%", "%",  N_("percent"), N_("percent")
 };
 
 
-static void  gimp_unit_def_init (GimpUnitDef *unit_def,
-                                 GimpUnit     unit);
+static void  picman_unit_def_init (PicmanUnitDef *unit_def,
+                                 PicmanUnit     unit);
 
 
 static gboolean
-gimp_unit_init (GimpUnit unit)
+picman_unit_init (PicmanUnit unit)
 {
   gint i, n;
 
-  if (unit < gimp_units_initialized)
+  if (unit < picman_units_initialized)
     return TRUE;
 
-  n = _gimp_unit_get_number_of_units ();
+  n = _picman_unit_get_number_of_units ();
 
   if (unit >= n)
     return FALSE;
 
-  gimp_unit_defs = g_renew (GimpUnitDef, gimp_unit_defs, n);
+  picman_unit_defs = g_renew (PicmanUnitDef, picman_unit_defs, n);
 
-  for (i = gimp_units_initialized; i < n; i++)
+  for (i = picman_units_initialized; i < n; i++)
     {
-      gimp_unit_def_init (&gimp_unit_defs[i], i);
+      picman_unit_def_init (&picman_unit_defs[i], i);
     }
 
-  gimp_units_initialized = n;
+  picman_units_initialized = n;
 
   return TRUE;
 }
 
 static void
-gimp_unit_def_init (GimpUnitDef *unit_def,
-                    GimpUnit     unit)
+picman_unit_def_init (PicmanUnitDef *unit_def,
+                    PicmanUnit     unit)
 {
-  unit_def->factor       = _gimp_unit_get_factor (unit);
-  unit_def->digits       = _gimp_unit_get_digits (unit);
-  unit_def->identifier   = _gimp_unit_get_identifier (unit);
-  unit_def->symbol       = _gimp_unit_get_symbol (unit);
-  unit_def->abbreviation = _gimp_unit_get_abbreviation (unit);
-  unit_def->singular     = _gimp_unit_get_singular (unit);
-  unit_def->plural       = _gimp_unit_get_plural (unit);
+  unit_def->factor       = _picman_unit_get_factor (unit);
+  unit_def->digits       = _picman_unit_get_digits (unit);
+  unit_def->identifier   = _picman_unit_get_identifier (unit);
+  unit_def->symbol       = _picman_unit_get_symbol (unit);
+  unit_def->abbreviation = _picman_unit_get_abbreviation (unit);
+  unit_def->singular     = _picman_unit_get_singular (unit);
+  unit_def->plural       = _picman_unit_get_plural (unit);
 }
 
 gint
-_gimp_unit_cache_get_number_of_units (void)
+_picman_unit_cache_get_number_of_units (void)
 {
-  return _gimp_unit_get_number_of_units ();
+  return _picman_unit_get_number_of_units ();
 }
 
 gint
-_gimp_unit_cache_get_number_of_built_in_units (void)
+_picman_unit_cache_get_number_of_built_in_units (void)
 {
-  return GIMP_UNIT_END;
+  return PICMAN_UNIT_END;
 }
 
-GimpUnit
-_gimp_unit_cache_new (gchar   *identifier,
+PicmanUnit
+_picman_unit_cache_new (gchar   *identifier,
                       gdouble  factor,
                       gint     digits,
                       gchar   *symbol,
@@ -118,7 +118,7 @@ _gimp_unit_cache_new (gchar   *identifier,
                       gchar   *singular,
                       gchar   *plural)
 {
-  return _gimp_unit_new (identifier,
+  return _picman_unit_new (identifier,
                          factor,
                          digits,
                          symbol,
@@ -128,109 +128,109 @@ _gimp_unit_cache_new (gchar   *identifier,
 }
 
 gboolean
-_gimp_unit_cache_get_deletion_flag (GimpUnit unit)
+_picman_unit_cache_get_deletion_flag (PicmanUnit unit)
 {
-  if (unit < GIMP_UNIT_END)
+  if (unit < PICMAN_UNIT_END)
     return FALSE;
 
-  return _gimp_unit_get_deletion_flag (unit);
+  return _picman_unit_get_deletion_flag (unit);
 }
 
 void
-_gimp_unit_cache_set_deletion_flag (GimpUnit unit,
+_picman_unit_cache_set_deletion_flag (PicmanUnit unit,
                                     gboolean deletion_flag)
 {
-  if (unit < GIMP_UNIT_END)
+  if (unit < PICMAN_UNIT_END)
     return;
 
-  _gimp_unit_set_deletion_flag (unit,
+  _picman_unit_set_deletion_flag (unit,
                                 deletion_flag);
 }
 
 gdouble
-_gimp_unit_cache_get_factor (GimpUnit unit)
+_picman_unit_cache_get_factor (PicmanUnit unit)
 {
-  g_return_val_if_fail (unit >= GIMP_UNIT_INCH, 1.0);
+  g_return_val_if_fail (unit >= PICMAN_UNIT_INCH, 1.0);
 
-  if (unit == GIMP_UNIT_PERCENT)
-    return gimp_unit_percent.factor;
+  if (unit == PICMAN_UNIT_PERCENT)
+    return picman_unit_percent.factor;
 
-  if (!gimp_unit_init (unit))
+  if (!picman_unit_init (unit))
     return 1.0;
 
-  return gimp_unit_defs[unit].factor;
+  return picman_unit_defs[unit].factor;
 }
 
 gint
-_gimp_unit_cache_get_digits (GimpUnit unit)
+_picman_unit_cache_get_digits (PicmanUnit unit)
 {
-  g_return_val_if_fail (unit >= GIMP_UNIT_INCH, 0);
+  g_return_val_if_fail (unit >= PICMAN_UNIT_INCH, 0);
 
-  if (unit == GIMP_UNIT_PERCENT)
-    return gimp_unit_percent.digits;
+  if (unit == PICMAN_UNIT_PERCENT)
+    return picman_unit_percent.digits;
 
-  if (!gimp_unit_init (unit))
+  if (!picman_unit_init (unit))
     return 0;
 
-  return gimp_unit_defs[unit].digits;
+  return picman_unit_defs[unit].digits;
 }
 
 const gchar *
-_gimp_unit_cache_get_identifier (GimpUnit unit)
+_picman_unit_cache_get_identifier (PicmanUnit unit)
 {
-  if (unit == GIMP_UNIT_PERCENT)
-    return gimp_unit_percent.identifier;
+  if (unit == PICMAN_UNIT_PERCENT)
+    return picman_unit_percent.identifier;
 
-  if (!gimp_unit_init (unit))
+  if (!picman_unit_init (unit))
     return NULL;
 
-  return gimp_unit_defs[unit].identifier;
+  return picman_unit_defs[unit].identifier;
 }
 
 const gchar *
-_gimp_unit_cache_get_symbol (GimpUnit unit)
+_picman_unit_cache_get_symbol (PicmanUnit unit)
 {
-  if (unit == GIMP_UNIT_PERCENT)
-    return gimp_unit_percent.symbol;
+  if (unit == PICMAN_UNIT_PERCENT)
+    return picman_unit_percent.symbol;
 
-  if (!gimp_unit_init (unit))
+  if (!picman_unit_init (unit))
     return NULL;
 
-  return gimp_unit_defs[unit].symbol;
+  return picman_unit_defs[unit].symbol;
 }
 
 const gchar *
-_gimp_unit_cache_get_abbreviation (GimpUnit unit)
+_picman_unit_cache_get_abbreviation (PicmanUnit unit)
 {
-  if (unit == GIMP_UNIT_PERCENT)
-    return gimp_unit_percent.abbreviation;
+  if (unit == PICMAN_UNIT_PERCENT)
+    return picman_unit_percent.abbreviation;
 
-  if (!gimp_unit_init (unit))
+  if (!picman_unit_init (unit))
     return NULL;
 
-  return gimp_unit_defs[unit].abbreviation;
+  return picman_unit_defs[unit].abbreviation;
 }
 
 const gchar *
-_gimp_unit_cache_get_singular (GimpUnit unit)
+_picman_unit_cache_get_singular (PicmanUnit unit)
 {
-  if (unit == GIMP_UNIT_PERCENT)
-    return gettext (gimp_unit_percent.singular);
+  if (unit == PICMAN_UNIT_PERCENT)
+    return gettext (picman_unit_percent.singular);
 
-  if (!gimp_unit_init (unit))
+  if (!picman_unit_init (unit))
     return NULL;
 
-  return gettext (gimp_unit_defs[unit].singular);
+  return gettext (picman_unit_defs[unit].singular);
 }
 
 const gchar *
-_gimp_unit_cache_get_plural (GimpUnit unit)
+_picman_unit_cache_get_plural (PicmanUnit unit)
 {
-  if (unit == GIMP_UNIT_PERCENT)
-    return gettext (gimp_unit_percent.plural);
+  if (unit == PICMAN_UNIT_PERCENT)
+    return gettext (picman_unit_percent.plural);
 
-  if (!gimp_unit_init (unit))
+  if (!picman_unit_init (unit))
     return NULL;
 
-  return gettext (gimp_unit_defs[unit].plural);
+  return gettext (picman_unit_defs[unit].plural);
 }

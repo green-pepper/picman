@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,41 +22,41 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimp-utils.h"
-#include "core/gimpbrush.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcurve.h"
-#include "core/gimpdatafactory.h"
-#include "core/gimpgradient.h"
-#include "core/gimpimage.h"
-#include "core/gimpimagefile.h"
-#include "core/gimpitem.h"
-#include "core/gimppalette.h"
-#include "core/gimppattern.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picman-utils.h"
+#include "core/picmanbrush.h"
+#include "core/picmancontainer.h"
+#include "core/picmancurve.h"
+#include "core/picmandatafactory.h"
+#include "core/picmangradient.h"
+#include "core/picmanimage.h"
+#include "core/picmanimagefile.h"
+#include "core/picmanitem.h"
+#include "core/picmanpalette.h"
+#include "core/picmanpattern.h"
+#include "core/picmantoolinfo.h"
 
-#include "text/gimpfont.h"
+#include "text/picmanfont.h"
 
-#include "gimpselectiondata.h"
+#include "picmanselectiondata.h"
 
-#include "gimp-log.h"
-#include "gimp-intl.h"
+#include "picman-log.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static const gchar * gimp_selection_data_get_name   (GtkSelectionData *selection,
+static const gchar * picman_selection_data_get_name   (GtkSelectionData *selection,
                                                      const gchar      *strfunc);
-static GimpObject  * gimp_selection_data_get_object (GtkSelectionData *selection,
-                                                     GimpContainer    *container,
-                                                     GimpObject       *additional);
-static gchar       * gimp_unescape_uri_string       (const char       *escaped,
+static PicmanObject  * picman_selection_data_get_object (GtkSelectionData *selection,
+                                                     PicmanContainer    *container,
+                                                     PicmanObject       *additional);
+static gchar       * picman_unescape_uri_string       (const char       *escaped,
                                                      int               len,
                                                      const char       *illegal_escaped_characters,
                                                      gboolean          ascii_must_not_be_escaped);
@@ -65,7 +65,7 @@ static gchar       * gimp_unescape_uri_string       (const char       *escaped,
 /*  public functions  */
 
 void
-gimp_selection_data_set_uri_list (GtkSelectionData *selection,
+picman_selection_data_set_uri_list (GtkSelectionData *selection,
                                   GList            *uri_list)
 {
   GList *list;
@@ -101,7 +101,7 @@ gimp_selection_data_set_uri_list (GtkSelectionData *selection,
 }
 
 GList *
-gimp_selection_data_get_uri_list (GtkSelectionData *selection)
+picman_selection_data_get_uri_list (GtkSelectionData *selection)
 {
   GList       *crap_list = NULL;
   GList       *uri_list  = NULL;
@@ -122,7 +122,7 @@ gimp_selection_data_get_uri_list (GtkSelectionData *selection)
 
   data = buffer = (const gchar *) gtk_selection_data_get_data (selection);
 
-  GIMP_LOG (DND, "raw buffer >>%s<<", buffer);
+  PICMAN_LOG (DND, "raw buffer >>%s<<", buffer);
 
   {
     gchar name_buffer[1024];
@@ -165,7 +165,7 @@ gimp_selection_data_get_uri_list (GtkSelectionData *selection)
       gchar       *uri   = NULL;
       GError      *error = NULL;
 
-      GIMP_LOG (DND, "trying to convert \"%s\" to an uri", dnd_crap);
+      PICMAN_LOG (DND, "trying to convert \"%s\" to an uri", dnd_crap);
 
       filename = g_filename_from_uri (dnd_crap, &hostname, NULL);
 
@@ -216,7 +216,7 @@ gimp_selection_data_get_uri_list (GtkSelectionData *selection)
                 {
                   gchar *local_filename;
 
-                  unescaped_filename = gimp_unescape_uri_string (start, -1,
+                  unescaped_filename = picman_unescape_uri_string (start, -1,
                                                                  "/", FALSE);
 
                   /*  check if we got a drop from an application that
@@ -277,8 +277,8 @@ gimp_selection_data_get_uri_list (GtkSelectionData *selection)
 }
 
 void
-gimp_selection_data_set_color (GtkSelectionData *selection,
-                               const GimpRGB    *color)
+picman_selection_data_set_color (GtkSelectionData *selection,
+                               const PicmanRGB    *color)
 {
   guint16  vals[4];
   guchar   r, g, b, a;
@@ -286,7 +286,7 @@ gimp_selection_data_set_color (GtkSelectionData *selection,
   g_return_if_fail (selection != NULL);
   g_return_if_fail (color != NULL);
 
-  gimp_rgba_get_uchar (color, &r, &g, &b, &a);
+  picman_rgba_get_uchar (color, &r, &g, &b, &a);
 
   vals[0] = r + (r << 8);
   vals[1] = g + (g << 8);
@@ -299,8 +299,8 @@ gimp_selection_data_set_color (GtkSelectionData *selection,
 }
 
 gboolean
-gimp_selection_data_get_color (GtkSelectionData *selection,
-                               GimpRGB          *color)
+picman_selection_data_get_color (GtkSelectionData *selection,
+                               PicmanRGB          *color)
 {
   const guint16 *color_vals;
 
@@ -316,7 +316,7 @@ gimp_selection_data_get_color (GtkSelectionData *selection,
 
   color_vals = (const guint16 *) gtk_selection_data_get_data (selection);
 
-  gimp_rgba_set_uchar (color,
+  picman_rgba_set_uchar (color,
                        (guchar) (color_vals[0] >> 8),
                        (guchar) (color_vals[1] >> 8),
                        (guchar) (color_vals[2] >> 8),
@@ -326,7 +326,7 @@ gimp_selection_data_get_color (GtkSelectionData *selection,
 }
 
 void
-gimp_selection_data_set_stream (GtkSelectionData *selection,
+picman_selection_data_set_stream (GtkSelectionData *selection,
                                 const guchar     *stream,
                                 gsize             stream_length)
 {
@@ -340,7 +340,7 @@ gimp_selection_data_set_stream (GtkSelectionData *selection,
 }
 
 const guchar *
-gimp_selection_data_get_stream (GtkSelectionData *selection,
+picman_selection_data_get_stream (GtkSelectionData *selection,
                                 gsize            *stream_length)
 {
   gint length;
@@ -362,15 +362,15 @@ gimp_selection_data_get_stream (GtkSelectionData *selection,
 }
 
 void
-gimp_selection_data_set_curve (GtkSelectionData *selection,
-                               GimpCurve        *curve)
+picman_selection_data_set_curve (GtkSelectionData *selection,
+                               PicmanCurve        *curve)
 {
   gchar *str;
 
   g_return_if_fail (selection != NULL);
-  g_return_if_fail (GIMP_IS_CURVE (curve));
+  g_return_if_fail (PICMAN_IS_CURVE (curve));
 
-  str = gimp_config_serialize_to_string (GIMP_CONFIG (curve), NULL);
+  str = picman_config_serialize_to_string (PICMAN_CONFIG (curve), NULL);
 
   gtk_selection_data_set (selection,
                           gtk_selection_data_get_target (selection),
@@ -379,10 +379,10 @@ gimp_selection_data_set_curve (GtkSelectionData *selection,
   g_free (str);
 }
 
-GimpCurve *
-gimp_selection_data_get_curve (GtkSelectionData *selection)
+PicmanCurve *
+picman_selection_data_get_curve (GtkSelectionData *selection)
 {
-  GimpCurve *curve;
+  PicmanCurve *curve;
   gint       length;
   GError    *error = NULL;
 
@@ -396,9 +396,9 @@ gimp_selection_data_get_curve (GtkSelectionData *selection)
       return NULL;
     }
 
-  curve = GIMP_CURVE (gimp_curve_new ("pasted curve"));
+  curve = PICMAN_CURVE (picman_curve_new ("pasted curve"));
 
-  if (! gimp_config_deserialize_string (GIMP_CONFIG (curve),
+  if (! picman_config_deserialize_string (PICMAN_CONFIG (curve),
                                         (const gchar *)
                                         gtk_selection_data_get_data (selection),
                                         length,
@@ -415,15 +415,15 @@ gimp_selection_data_get_curve (GtkSelectionData *selection)
 }
 
 void
-gimp_selection_data_set_image (GtkSelectionData *selection,
-                               GimpImage        *image)
+picman_selection_data_set_image (GtkSelectionData *selection,
+                               PicmanImage        *image)
 {
   gchar *str;
 
   g_return_if_fail (selection != NULL);
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  str = g_strdup_printf ("%d:%d", gimp_get_pid (), gimp_image_get_ID (image));
+  str = g_strdup_printf ("%d:%d", picman_get_pid (), picman_image_get_ID (image));
 
   gtk_selection_data_set (selection,
                           gtk_selection_data_get_target (selection),
@@ -432,16 +432,16 @@ gimp_selection_data_set_image (GtkSelectionData *selection,
   g_free (str);
 }
 
-GimpImage *
-gimp_selection_data_get_image (GtkSelectionData *selection,
-                               Gimp             *gimp)
+PicmanImage *
+picman_selection_data_get_image (GtkSelectionData *selection,
+                               Picman             *picman)
 {
   const gchar *str;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (selection != NULL, NULL);
 
-  str = gimp_selection_data_get_name (selection, G_STRFUNC);
+  str = picman_selection_data_get_name (selection, G_STRFUNC);
 
   if (str)
     {
@@ -449,9 +449,9 @@ gimp_selection_data_get_image (GtkSelectionData *selection,
       gint ID;
 
       if (sscanf (str, "%i:%i", &pid, &ID) == 2 &&
-          pid == gimp_get_pid ())
+          pid == picman_get_pid ())
         {
-          return gimp_image_get_by_ID (gimp, ID);
+          return picman_image_get_by_ID (picman, ID);
         }
     }
 
@@ -459,16 +459,16 @@ gimp_selection_data_get_image (GtkSelectionData *selection,
 }
 
 void
-gimp_selection_data_set_component (GtkSelectionData *selection,
-                                   GimpImage        *image,
-                                   GimpChannelType   channel)
+picman_selection_data_set_component (GtkSelectionData *selection,
+                                   PicmanImage        *image,
+                                   PicmanChannelType   channel)
 {
   gchar *str;
 
   g_return_if_fail (selection != NULL);
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  str = g_strdup_printf ("%d:%d:%d", gimp_get_pid (), gimp_image_get_ID (image),
+  str = g_strdup_printf ("%d:%d:%d", picman_get_pid (), picman_image_get_ID (image),
                          (gint) channel);
 
   gtk_selection_data_set (selection,
@@ -478,20 +478,20 @@ gimp_selection_data_set_component (GtkSelectionData *selection,
   g_free (str);
 }
 
-GimpImage *
-gimp_selection_data_get_component (GtkSelectionData *selection,
-                                   Gimp             *gimp,
-                                   GimpChannelType  *channel)
+PicmanImage *
+picman_selection_data_get_component (GtkSelectionData *selection,
+                                   Picman             *picman,
+                                   PicmanChannelType  *channel)
 {
   const gchar *str;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (selection != NULL, NULL);
 
   if (channel)
     *channel = 0;
 
-  str = gimp_selection_data_get_name (selection, G_STRFUNC);
+  str = picman_selection_data_get_name (selection, G_STRFUNC);
 
   if (str)
     {
@@ -500,9 +500,9 @@ gimp_selection_data_get_component (GtkSelectionData *selection,
       gint ch;
 
       if (sscanf (str, "%i:%i:%i", &pid, &ID, &ch) == 3 &&
-          pid == gimp_get_pid ())
+          pid == picman_get_pid ())
         {
-          GimpImage *image = gimp_image_get_by_ID (gimp, ID);
+          PicmanImage *image = picman_image_get_by_ID (picman, ID);
 
           if (image && channel)
             *channel = ch;
@@ -515,15 +515,15 @@ gimp_selection_data_get_component (GtkSelectionData *selection,
 }
 
 void
-gimp_selection_data_set_item (GtkSelectionData *selection,
-                              GimpItem         *item)
+picman_selection_data_set_item (GtkSelectionData *selection,
+                              PicmanItem         *item)
 {
   gchar *str;
 
   g_return_if_fail (selection != NULL);
-  g_return_if_fail (GIMP_IS_ITEM (item));
+  g_return_if_fail (PICMAN_IS_ITEM (item));
 
-  str = g_strdup_printf ("%d:%d", gimp_get_pid (), gimp_item_get_ID (item));
+  str = g_strdup_printf ("%d:%d", picman_get_pid (), picman_item_get_ID (item));
 
   gtk_selection_data_set (selection,
                           gtk_selection_data_get_target (selection),
@@ -532,16 +532,16 @@ gimp_selection_data_set_item (GtkSelectionData *selection,
   g_free (str);
 }
 
-GimpItem *
-gimp_selection_data_get_item (GtkSelectionData *selection,
-                              Gimp             *gimp)
+PicmanItem *
+picman_selection_data_get_item (GtkSelectionData *selection,
+                              Picman             *picman)
 {
   const gchar *str;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (selection != NULL, NULL);
 
-  str = gimp_selection_data_get_name (selection, G_STRFUNC);
+  str = picman_selection_data_get_name (selection, G_STRFUNC);
 
   if (str)
     {
@@ -549,9 +549,9 @@ gimp_selection_data_get_item (GtkSelectionData *selection,
       gint ID;
 
       if (sscanf (str, "%i:%i", &pid, &ID) == 2 &&
-          pid == gimp_get_pid ())
+          pid == picman_get_pid ())
         {
-          return gimp_item_get_by_ID (gimp, ID);
+          return picman_item_get_by_ID (picman, ID);
         }
     }
 
@@ -559,21 +559,21 @@ gimp_selection_data_get_item (GtkSelectionData *selection,
 }
 
 void
-gimp_selection_data_set_object (GtkSelectionData *selection,
-                                GimpObject       *object)
+picman_selection_data_set_object (GtkSelectionData *selection,
+                                PicmanObject       *object)
 {
   const gchar *name;
 
   g_return_if_fail (selection != NULL);
-  g_return_if_fail (GIMP_IS_OBJECT (object));
+  g_return_if_fail (PICMAN_IS_OBJECT (object));
 
-  name = gimp_object_get_name (object);
+  name = picman_object_get_name (object);
 
   if (name)
     {
       gchar *str;
 
-      str = g_strdup_printf ("%d:%p:%s", gimp_get_pid (), object, name);
+      str = g_strdup_printf ("%d:%p:%s", picman_get_pid (), object, name);
 
       gtk_selection_data_set (selection,
                               gtk_selection_data_get_target (selection),
@@ -583,126 +583,126 @@ gimp_selection_data_set_object (GtkSelectionData *selection,
     }
 }
 
-GimpBrush *
-gimp_selection_data_get_brush (GtkSelectionData *selection,
-                               Gimp             *gimp)
+PicmanBrush *
+picman_selection_data_get_brush (GtkSelectionData *selection,
+                               Picman             *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (selection != NULL, NULL);
 
-  return (GimpBrush *)
-    gimp_selection_data_get_object (selection,
-                                    gimp_data_factory_get_container (gimp->brush_factory),
-                                    GIMP_OBJECT (gimp_brush_get_standard (gimp_get_user_context (gimp))));
+  return (PicmanBrush *)
+    picman_selection_data_get_object (selection,
+                                    picman_data_factory_get_container (picman->brush_factory),
+                                    PICMAN_OBJECT (picman_brush_get_standard (picman_get_user_context (picman))));
 }
 
-GimpPattern *
-gimp_selection_data_get_pattern (GtkSelectionData *selection,
-                                 Gimp             *gimp)
+PicmanPattern *
+picman_selection_data_get_pattern (GtkSelectionData *selection,
+                                 Picman             *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (selection != NULL, NULL);
 
-  return (GimpPattern *)
-    gimp_selection_data_get_object (selection,
-                                    gimp_data_factory_get_container (gimp->pattern_factory),
-                                    GIMP_OBJECT (gimp_pattern_get_standard (gimp_get_user_context (gimp))));
+  return (PicmanPattern *)
+    picman_selection_data_get_object (selection,
+                                    picman_data_factory_get_container (picman->pattern_factory),
+                                    PICMAN_OBJECT (picman_pattern_get_standard (picman_get_user_context (picman))));
 }
 
-GimpGradient *
-gimp_selection_data_get_gradient (GtkSelectionData *selection,
-                                  Gimp             *gimp)
+PicmanGradient *
+picman_selection_data_get_gradient (GtkSelectionData *selection,
+                                  Picman             *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (selection != NULL, NULL);
 
-  return (GimpGradient *)
-    gimp_selection_data_get_object (selection,
-                                    gimp_data_factory_get_container (gimp->gradient_factory),
-                                    GIMP_OBJECT (gimp_gradient_get_standard (gimp_get_user_context (gimp))));
+  return (PicmanGradient *)
+    picman_selection_data_get_object (selection,
+                                    picman_data_factory_get_container (picman->gradient_factory),
+                                    PICMAN_OBJECT (picman_gradient_get_standard (picman_get_user_context (picman))));
 }
 
-GimpPalette *
-gimp_selection_data_get_palette (GtkSelectionData *selection,
-                                 Gimp             *gimp)
+PicmanPalette *
+picman_selection_data_get_palette (GtkSelectionData *selection,
+                                 Picman             *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (selection != NULL, NULL);
 
-  return (GimpPalette *)
-    gimp_selection_data_get_object (selection,
-                                    gimp_data_factory_get_container (gimp->palette_factory),
-                                    GIMP_OBJECT (gimp_palette_get_standard (gimp_get_user_context (gimp))));
+  return (PicmanPalette *)
+    picman_selection_data_get_object (selection,
+                                    picman_data_factory_get_container (picman->palette_factory),
+                                    PICMAN_OBJECT (picman_palette_get_standard (picman_get_user_context (picman))));
 }
 
-GimpFont *
-gimp_selection_data_get_font (GtkSelectionData *selection,
-                              Gimp             *gimp)
+PicmanFont *
+picman_selection_data_get_font (GtkSelectionData *selection,
+                              Picman             *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (selection != NULL, NULL);
 
-  return (GimpFont *)
-    gimp_selection_data_get_object (selection,
-                                    gimp->fonts,
-                                    GIMP_OBJECT (gimp_font_get_standard ()));
+  return (PicmanFont *)
+    picman_selection_data_get_object (selection,
+                                    picman->fonts,
+                                    PICMAN_OBJECT (picman_font_get_standard ()));
 }
 
-GimpBuffer *
-gimp_selection_data_get_buffer (GtkSelectionData *selection,
-                                Gimp             *gimp)
+PicmanBuffer *
+picman_selection_data_get_buffer (GtkSelectionData *selection,
+                                Picman             *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (selection != NULL, NULL);
 
-  return (GimpBuffer *)
-    gimp_selection_data_get_object (selection,
-                                    gimp->named_buffers,
-                                    GIMP_OBJECT (gimp->global_buffer));
+  return (PicmanBuffer *)
+    picman_selection_data_get_object (selection,
+                                    picman->named_buffers,
+                                    PICMAN_OBJECT (picman->global_buffer));
 }
 
-GimpImagefile *
-gimp_selection_data_get_imagefile (GtkSelectionData *selection,
-                                   Gimp             *gimp)
+PicmanImagefile *
+picman_selection_data_get_imagefile (GtkSelectionData *selection,
+                                   Picman             *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (selection != NULL, NULL);
 
-  return (GimpImagefile *) gimp_selection_data_get_object (selection,
-                                                           gimp->documents,
+  return (PicmanImagefile *) picman_selection_data_get_object (selection,
+                                                           picman->documents,
                                                            NULL);
 }
 
-GimpTemplate *
-gimp_selection_data_get_template (GtkSelectionData *selection,
-                                  Gimp             *gimp)
+PicmanTemplate *
+picman_selection_data_get_template (GtkSelectionData *selection,
+                                  Picman             *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (selection != NULL, NULL);
 
-  return (GimpTemplate *) gimp_selection_data_get_object (selection,
-                                                          gimp->templates,
+  return (PicmanTemplate *) picman_selection_data_get_object (selection,
+                                                          picman->templates,
                                                           NULL);
 }
 
-GimpToolInfo *
-gimp_selection_data_get_tool_info (GtkSelectionData *selection,
-                                   Gimp             *gimp)
+PicmanToolInfo *
+picman_selection_data_get_tool_info (GtkSelectionData *selection,
+                                   Picman             *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (selection != NULL, NULL);
 
-  return (GimpToolInfo *)
-    gimp_selection_data_get_object (selection,
-                                    gimp->tool_info_list,
-                                    GIMP_OBJECT (gimp_tool_info_get_standard (gimp)));
+  return (PicmanToolInfo *)
+    picman_selection_data_get_object (selection,
+                                    picman->tool_info_list,
+                                    PICMAN_OBJECT (picman_tool_info_get_standard (picman)));
 }
 
 
 /*  private functions  */
 
 static const gchar *
-gimp_selection_data_get_name (GtkSelectionData *selection,
+picman_selection_data_get_name (GtkSelectionData *selection,
                               const gchar      *strfunc)
 {
   const gchar *name;
@@ -723,19 +723,19 @@ gimp_selection_data_get_name (GtkSelectionData *selection,
       return NULL;
     }
 
-  GIMP_LOG (DND, "name = '%s'", name);
+  PICMAN_LOG (DND, "name = '%s'", name);
 
   return name;
 }
 
-static GimpObject *
-gimp_selection_data_get_object (GtkSelectionData *selection,
-                                GimpContainer    *container,
-                                GimpObject       *additional)
+static PicmanObject *
+picman_selection_data_get_object (GtkSelectionData *selection,
+                                PicmanContainer    *container,
+                                PicmanObject       *additional)
 {
   const gchar *str;
 
-  str = gimp_selection_data_get_name (selection, G_STRFUNC);
+  str = picman_selection_data_get_name (selection, G_STRFUNC);
 
   if (str)
     {
@@ -744,24 +744,24 @@ gimp_selection_data_get_object (GtkSelectionData *selection,
       gint     name_offset = 0;
 
       if (sscanf (str, "%i:%p:%n", &pid, &object_addr, &name_offset) >= 2 &&
-          pid == gimp_get_pid () && name_offset > 0)
+          pid == picman_get_pid () && name_offset > 0)
         {
           const gchar *name = str + name_offset;
 
-          GIMP_LOG (DND, "pid = %d, addr = %p, name = '%s'",
+          PICMAN_LOG (DND, "pid = %d, addr = %p, name = '%s'",
                     pid, object_addr, name);
 
           if (additional &&
-              strcmp (name, gimp_object_get_name (additional)) == 0 &&
+              strcmp (name, picman_object_get_name (additional)) == 0 &&
               object_addr == (gpointer) additional)
             {
               return additional;
             }
           else
             {
-              GimpObject *object;
+              PicmanObject *object;
 
-              object = gimp_container_get_child_by_name (container, name);
+              object = picman_container_get_child_by_name (container, name);
 
               if (object_addr == (gpointer) object)
                 return object;
@@ -773,7 +773,7 @@ gimp_selection_data_get_object (GtkSelectionData *selection,
 }
 
 /*  the next two functions are straight cut'n'paste from glib/glib/gconvert.c,
- *  except that gimp_unescape_uri_string() does not try to UTF-8 validate
+ *  except that picman_unescape_uri_string() does not try to UTF-8 validate
  *  the unescaped result.
  */
 static int
@@ -794,7 +794,7 @@ unescape_character (const char *scanner)
 }
 
 static gchar *
-gimp_unescape_uri_string (const char *escaped,
+picman_unescape_uri_string (const char *escaped,
                           int         len,
                           const char *illegal_escaped_characters,
                           gboolean    ascii_must_not_be_escaped)

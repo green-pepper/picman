@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpdocked.h
- * Copyright (C) 2003  Michael Natterer <mitch@gimp.org>
+ * picmandocked.h
+ * Copyright (C) 2003  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,78 +18,78 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DOCKED_H__
-#define __GIMP_DOCKED_H__
+#ifndef __PICMAN_DOCKED_H__
+#define __PICMAN_DOCKED_H__
 
 
-#define GIMP_TYPE_DOCKED               (gimp_docked_interface_get_type ())
-#define GIMP_IS_DOCKED(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DOCKED))
-#define GIMP_DOCKED(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DOCKED, GimpDocked))
-#define GIMP_DOCKED_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GIMP_TYPE_DOCKED, GimpDockedInterface))
+#define PICMAN_TYPE_DOCKED               (picman_docked_interface_get_type ())
+#define PICMAN_IS_DOCKED(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DOCKED))
+#define PICMAN_DOCKED(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DOCKED, PicmanDocked))
+#define PICMAN_DOCKED_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), PICMAN_TYPE_DOCKED, PicmanDockedInterface))
 
 
-typedef struct _GimpDockedInterface GimpDockedInterface;
+typedef struct _PicmanDockedInterface PicmanDockedInterface;
 
 /**
- * GimpDockedInterface:
+ * PicmanDockedInterface:
  *
  * Interface with common methods for stuff that is docked.
  */
-struct _GimpDockedInterface
+struct _PicmanDockedInterface
 {
   GTypeInterface base_iface;
 
   /*  signals  */
-  void            (* title_changed)       (GimpDocked   *docked);
+  void            (* title_changed)       (PicmanDocked   *docked);
 
   /*  virtual functions  */
-  void            (* set_aux_info)        (GimpDocked   *docked,
+  void            (* set_aux_info)        (PicmanDocked   *docked,
                                            GList        *aux_info);
-  GList         * (* get_aux_info)        (GimpDocked   *docked);
+  GList         * (* get_aux_info)        (PicmanDocked   *docked);
 
-  GtkWidget     * (* get_preview)         (GimpDocked   *docked,
-                                           GimpContext  *context,
+  GtkWidget     * (* get_preview)         (PicmanDocked   *docked,
+                                           PicmanContext  *context,
                                            GtkIconSize   size);
-  gboolean        (* get_prefer_icon)     (GimpDocked   *docked);
-  GimpUIManager * (* get_menu)            (GimpDocked   *docked,
+  gboolean        (* get_prefer_icon)     (PicmanDocked   *docked);
+  PicmanUIManager * (* get_menu)            (PicmanDocked   *docked,
                                            const gchar **ui_path,
                                            gpointer     *popup_data);
-  gchar         * (* get_title)           (GimpDocked   *docked);
+  gchar         * (* get_title)           (PicmanDocked   *docked);
 
-  void            (* set_context)         (GimpDocked   *docked,
-                                           GimpContext  *context);
+  void            (* set_context)         (PicmanDocked   *docked,
+                                           PicmanContext  *context);
 
-  gboolean        (* has_button_bar)      (GimpDocked   *docked);
-  void            (* set_show_button_bar) (GimpDocked   *docked,
+  gboolean        (* has_button_bar)      (PicmanDocked   *docked);
+  void            (* set_show_button_bar) (PicmanDocked   *docked,
                                            gboolean      show);
-  gboolean        (* get_show_button_bar) (GimpDocked   *docked);
+  gboolean        (* get_show_button_bar) (PicmanDocked   *docked);
 };
 
 
-GType           gimp_docked_interface_get_type  (void) G_GNUC_CONST;
+GType           picman_docked_interface_get_type  (void) G_GNUC_CONST;
 
-void            gimp_docked_title_changed       (GimpDocked   *docked);
+void            picman_docked_title_changed       (PicmanDocked   *docked);
 
-void            gimp_docked_set_aux_info        (GimpDocked   *docked,
+void            picman_docked_set_aux_info        (PicmanDocked   *docked,
                                                  GList        *aux_info);
-GList         * gimp_docked_get_aux_info        (GimpDocked   *docked);
+GList         * picman_docked_get_aux_info        (PicmanDocked   *docked);
 
-GtkWidget     * gimp_docked_get_preview         (GimpDocked   *docked,
-                                                 GimpContext  *context,
+GtkWidget     * picman_docked_get_preview         (PicmanDocked   *docked,
+                                                 PicmanContext  *context,
                                                  GtkIconSize   size);
-gboolean        gimp_docked_get_prefer_icon     (GimpDocked   *docked);
-GimpUIManager * gimp_docked_get_menu            (GimpDocked   *docked,
+gboolean        picman_docked_get_prefer_icon     (PicmanDocked   *docked);
+PicmanUIManager * picman_docked_get_menu            (PicmanDocked   *docked,
                                                  const gchar **ui_path,
                                                  gpointer     *popup_data);
-gchar         * gimp_docked_get_title           (GimpDocked   *docked);
+gchar         * picman_docked_get_title           (PicmanDocked   *docked);
 
-void            gimp_docked_set_context         (GimpDocked   *docked,
-                                                 GimpContext  *context);
+void            picman_docked_set_context         (PicmanDocked   *docked,
+                                                 PicmanContext  *context);
 
-gboolean        gimp_docked_has_button_bar      (GimpDocked   *docked);
-void            gimp_docked_set_show_button_bar (GimpDocked   *docked,
+gboolean        picman_docked_has_button_bar      (PicmanDocked   *docked);
+void            picman_docked_set_show_button_bar (PicmanDocked   *docked,
                                                  gboolean      show);
-gboolean        gimp_docked_get_show_button_bar (GimpDocked   *docked);
+gboolean        picman_docked_get_show_button_bar (PicmanDocked   *docked);
 
 
-#endif  /* __GIMP_DOCKED_H__ */
+#endif  /* __PICMAN_DOCKED_H__ */

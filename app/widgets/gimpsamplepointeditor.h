@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpsamplepointeditor.h
- * Copyright (C) 2005 Michael Natterer <mitch@gimp.org>
+ * picmansamplepointeditor.h
+ * Copyright (C) 2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SAMPLE_POINT_EDITOR_H__
-#define __GIMP_SAMPLE_POINT_EDITOR_H__
+#ifndef __PICMAN_SAMPLE_POINT_EDITOR_H__
+#define __PICMAN_SAMPLE_POINT_EDITOR_H__
 
 
-#include "gimpimageeditor.h"
+#include "picmanimageeditor.h"
 
 
-#define GIMP_TYPE_SAMPLE_POINT_EDITOR            (gimp_sample_point_editor_get_type ())
-#define GIMP_SAMPLE_POINT_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SAMPLE_POINT_EDITOR, GimpSamplePointEditor))
-#define GIMP_SAMPLE_POINT_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SAMPLE_POINT_EDITOR, GimpSamplePointEditorClass))
-#define GIMP_IS_SAMPLE_POINT_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SAMPLE_POINT_EDITOR))
-#define GIMP_IS_SAMPLE_POINT_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SAMPLE_POINT_EDITOR))
-#define GIMP_SAMPLE_POINT_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SAMPLE_POINT_EDITOR, GimpSamplePointEditorClass))
+#define PICMAN_TYPE_SAMPLE_POINT_EDITOR            (picman_sample_point_editor_get_type ())
+#define PICMAN_SAMPLE_POINT_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SAMPLE_POINT_EDITOR, PicmanSamplePointEditor))
+#define PICMAN_SAMPLE_POINT_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SAMPLE_POINT_EDITOR, PicmanSamplePointEditorClass))
+#define PICMAN_IS_SAMPLE_POINT_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SAMPLE_POINT_EDITOR))
+#define PICMAN_IS_SAMPLE_POINT_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SAMPLE_POINT_EDITOR))
+#define PICMAN_SAMPLE_POINT_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SAMPLE_POINT_EDITOR, PicmanSamplePointEditorClass))
 
 
-typedef struct _GimpSamplePointEditorClass GimpSamplePointEditorClass;
+typedef struct _PicmanSamplePointEditorClass PicmanSamplePointEditorClass;
 
-struct _GimpSamplePointEditor
+struct _PicmanSamplePointEditor
 {
-  GimpImageEditor  parent_instance;
+  PicmanImageEditor  parent_instance;
 
   GtkWidget       *table;
   GtkWidget       *color_frames[4];
@@ -48,19 +48,19 @@ struct _GimpSamplePointEditor
   gboolean         sample_merged;
 };
 
-struct _GimpSamplePointEditorClass
+struct _PicmanSamplePointEditorClass
 {
-  GimpImageEditorClass  parent_class;
+  PicmanImageEditorClass  parent_class;
 };
 
 
-GType       gimp_sample_point_editor_get_type          (void) G_GNUC_CONST;
+GType       picman_sample_point_editor_get_type          (void) G_GNUC_CONST;
 
-GtkWidget * gimp_sample_point_editor_new               (GimpMenuFactory *menu_factory);
+GtkWidget * picman_sample_point_editor_new               (PicmanMenuFactory *menu_factory);
 
-void        gimp_sample_point_editor_set_sample_merged (GimpSamplePointEditor *editor,
+void        picman_sample_point_editor_set_sample_merged (PicmanSamplePointEditor *editor,
                                                         gboolean               sample_merged);
-gboolean    gimp_sample_point_editor_get_sample_merged (GimpSamplePointEditor *editor);
+gboolean    picman_sample_point_editor_get_sample_merged (PicmanSamplePointEditor *editor);
 
 
-#endif /* __GIMP_SAMPLE_POINT_EDITOR_H__ */
+#endif /* __PICMAN_SAMPLE_POINT_EDITOR_H__ */

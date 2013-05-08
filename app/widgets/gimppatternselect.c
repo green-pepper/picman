@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppatternselect.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanpatternselect.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,71 +23,71 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimppattern.h"
-#include "core/gimptempbuf.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanpattern.h"
+#include "core/picmantempbuf.h"
 
-#include "pdb/gimppdb.h"
+#include "pdb/picmanpdb.h"
 
-#include "gimpcontainerbox.h"
-#include "gimppatternfactoryview.h"
-#include "gimppatternselect.h"
+#include "picmancontainerbox.h"
+#include "picmanpatternfactoryview.h"
+#include "picmanpatternselect.h"
 
 
-static void             gimp_pattern_select_constructed  (GObject        *object);
+static void             picman_pattern_select_constructed  (GObject        *object);
 
-static GimpValueArray * gimp_pattern_select_run_callback (GimpPdbDialog  *dialog,
-                                                          GimpObject     *object,
+static PicmanValueArray * picman_pattern_select_run_callback (PicmanPdbDialog  *dialog,
+                                                          PicmanObject     *object,
                                                           gboolean        closing,
                                                           GError        **error);
 
 
-G_DEFINE_TYPE (GimpPatternSelect, gimp_pattern_select, GIMP_TYPE_PDB_DIALOG)
+G_DEFINE_TYPE (PicmanPatternSelect, picman_pattern_select, PICMAN_TYPE_PDB_DIALOG)
 
-#define parent_class gimp_pattern_select_parent_class
+#define parent_class picman_pattern_select_parent_class
 
 
 static void
-gimp_pattern_select_class_init (GimpPatternSelectClass *klass)
+picman_pattern_select_class_init (PicmanPatternSelectClass *klass)
 {
   GObjectClass       *object_class = G_OBJECT_CLASS (klass);
-  GimpPdbDialogClass *pdb_class    = GIMP_PDB_DIALOG_CLASS (klass);
+  PicmanPdbDialogClass *pdb_class    = PICMAN_PDB_DIALOG_CLASS (klass);
 
-  object_class->constructed = gimp_pattern_select_constructed;
+  object_class->constructed = picman_pattern_select_constructed;
 
-  pdb_class->run_callback   = gimp_pattern_select_run_callback;
+  pdb_class->run_callback   = picman_pattern_select_run_callback;
 }
 
 static void
-gimp_pattern_select_init (GimpPatternSelect *select)
+picman_pattern_select_init (PicmanPatternSelect *select)
 {
 }
 
 static void
-gimp_pattern_select_constructed (GObject *object)
+picman_pattern_select_constructed (GObject *object)
 {
-  GimpPdbDialog *dialog = GIMP_PDB_DIALOG (object);
+  PicmanPdbDialog *dialog = PICMAN_PDB_DIALOG (object);
   GtkWidget     *content_area;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
   dialog->view =
-    gimp_pattern_factory_view_new (GIMP_VIEW_TYPE_GRID,
-                                   dialog->context->gimp->pattern_factory,
+    picman_pattern_factory_view_new (PICMAN_VIEW_TYPE_GRID,
+                                   dialog->context->picman->pattern_factory,
                                    dialog->context,
-                                   GIMP_VIEW_SIZE_MEDIUM, 1,
+                                   PICMAN_VIEW_SIZE_MEDIUM, 1,
                                    dialog->menu_factory);
 
-  gimp_container_box_set_size_request (GIMP_CONTAINER_BOX (GIMP_CONTAINER_EDITOR (dialog->view)->view),
-                                       6 * (GIMP_VIEW_SIZE_MEDIUM + 2),
-                                       6 * (GIMP_VIEW_SIZE_MEDIUM + 2));
+  picman_container_box_set_size_request (PICMAN_CONTAINER_BOX (PICMAN_CONTAINER_EDITOR (dialog->view)->view),
+                                       6 * (PICMAN_VIEW_SIZE_MEDIUM + 2),
+                                       6 * (PICMAN_VIEW_SIZE_MEDIUM + 2));
 
   gtk_container_set_border_width (GTK_CONTAINER (dialog->view), 12);
 
@@ -96,35 +96,35 @@ gimp_pattern_select_constructed (GObject *object)
   gtk_widget_show (dialog->view);
 }
 
-static GimpValueArray *
-gimp_pattern_select_run_callback (GimpPdbDialog  *dialog,
-                                  GimpObject     *object,
+static PicmanValueArray *
+picman_pattern_select_run_callback (PicmanPdbDialog  *dialog,
+                                  PicmanObject     *object,
                                   gboolean        closing,
                                   GError        **error)
 {
-  GimpPattern    *pattern = GIMP_PATTERN (object);
-  GimpArray      *array;
-  GimpValueArray *return_vals;
+  PicmanPattern    *pattern = PICMAN_PATTERN (object);
+  PicmanArray      *array;
+  PicmanValueArray *return_vals;
 
-  array = gimp_array_new (gimp_temp_buf_get_data (pattern->mask),
-                          gimp_temp_buf_get_data_size (pattern->mask),
+  array = picman_array_new (picman_temp_buf_get_data (pattern->mask),
+                          picman_temp_buf_get_data_size (pattern->mask),
                           TRUE);
 
   return_vals =
-    gimp_pdb_execute_procedure_by_name (dialog->pdb,
+    picman_pdb_execute_procedure_by_name (dialog->pdb,
                                         dialog->caller_context,
                                         NULL, error,
                                         dialog->callback_name,
-                                        G_TYPE_STRING,        gimp_object_get_name (object),
-                                        GIMP_TYPE_INT32,      gimp_temp_buf_get_width  (pattern->mask),
-                                        GIMP_TYPE_INT32,      gimp_temp_buf_get_height (pattern->mask),
-                                        GIMP_TYPE_INT32,      babl_format_get_bytes_per_pixel (gimp_temp_buf_get_format (pattern->mask)),
-                                        GIMP_TYPE_INT32,      array->length,
-                                        GIMP_TYPE_INT8_ARRAY, array,
-                                        GIMP_TYPE_INT32,      closing,
+                                        G_TYPE_STRING,        picman_object_get_name (object),
+                                        PICMAN_TYPE_INT32,      picman_temp_buf_get_width  (pattern->mask),
+                                        PICMAN_TYPE_INT32,      picman_temp_buf_get_height (pattern->mask),
+                                        PICMAN_TYPE_INT32,      babl_format_get_bytes_per_pixel (picman_temp_buf_get_format (pattern->mask)),
+                                        PICMAN_TYPE_INT32,      array->length,
+                                        PICMAN_TYPE_INT8_ARRAY, array,
+                                        PICMAN_TYPE_INT32,      closing,
                                         G_TYPE_NONE);
 
-  gimp_array_free (array);
+  picman_array_free (array);
 
   return return_vals;
 }

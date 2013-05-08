@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimphistogram module Copyright (C) 1999 Jay Cox <jaycox@gimp.org>
+ * picmanhistogram module Copyright (C) 1999 Jay Cox <jaycox@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DRAWABLE_HISTOGRAM_H__
-#define __GIMP_DRAWABLE_HISTOGRAM_H__
+#ifndef __PICMAN_DRAWABLE_HISTOGRAM_H__
+#define __PICMAN_DRAWABLE_HISTOGRAM_H__
 
 
-void   gimp_drawable_calculate_histogram (GimpDrawable  *drawable,
-                                          GimpHistogram *histogram);
+void   picman_drawable_calculate_histogram (PicmanDrawable  *drawable,
+                                          PicmanHistogram *histogram);
 
 
-#endif /* __GIMP_HISTOGRAM_H__ */
+#endif /* __PICMAN_HISTOGRAM_H__ */

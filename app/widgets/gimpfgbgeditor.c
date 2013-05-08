@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfgbgeditor.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanfgbgeditor.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,16 +25,16 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpmarshal.h"
+#include "core/picmancontext.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpdnd.h"
-#include "gimpfgbgeditor.h"
+#include "picmandnd.h"
+#include "picmanfgbgeditor.h"
 
 
 enum
@@ -60,47 +60,47 @@ typedef enum
 } FgBgTarget;
 
 
-static void     gimp_fg_bg_editor_dispose         (GObject        *object);
-static void     gimp_fg_bg_editor_set_property    (GObject        *object,
+static void     picman_fg_bg_editor_dispose         (GObject        *object);
+static void     picman_fg_bg_editor_set_property    (GObject        *object,
                                                    guint           property_id,
                                                    const GValue   *value,
                                                    GParamSpec     *pspec);
-static void     gimp_fg_bg_editor_get_property    (GObject        *object,
+static void     picman_fg_bg_editor_get_property    (GObject        *object,
                                                    guint           property_id,
                                                    GValue         *value,
                                                    GParamSpec     *pspec);
 
-static gboolean gimp_fg_bg_editor_expose          (GtkWidget      *widget,
+static gboolean picman_fg_bg_editor_expose          (GtkWidget      *widget,
                                                    GdkEventExpose *eevent);
-static gboolean gimp_fg_bg_editor_button_press    (GtkWidget      *widget,
+static gboolean picman_fg_bg_editor_button_press    (GtkWidget      *widget,
                                                    GdkEventButton *bevent);
-static gboolean gimp_fg_bg_editor_button_release  (GtkWidget      *widget,
+static gboolean picman_fg_bg_editor_button_release  (GtkWidget      *widget,
                                                    GdkEventButton *bevent);
-static gboolean gimp_fg_bg_editor_drag_motion     (GtkWidget      *widget,
+static gboolean picman_fg_bg_editor_drag_motion     (GtkWidget      *widget,
                                                    GdkDragContext *context,
                                                    gint            x,
                                                    gint            y,
                                                    guint           time);
 
-static void     gimp_fg_bg_editor_drag_color      (GtkWidget      *widget,
-                                                   GimpRGB        *color,
+static void     picman_fg_bg_editor_drag_color      (GtkWidget      *widget,
+                                                   PicmanRGB        *color,
                                                    gpointer        data);
-static void     gimp_fg_bg_editor_drop_color      (GtkWidget      *widget,
+static void     picman_fg_bg_editor_drop_color      (GtkWidget      *widget,
                                                    gint            x,
                                                    gint            y,
-                                                   const GimpRGB  *color,
+                                                   const PicmanRGB  *color,
                                                    gpointer        data);
 
 
-G_DEFINE_TYPE (GimpFgBgEditor, gimp_fg_bg_editor, GTK_TYPE_DRAWING_AREA)
+G_DEFINE_TYPE (PicmanFgBgEditor, picman_fg_bg_editor, GTK_TYPE_DRAWING_AREA)
 
-#define parent_class gimp_fg_bg_editor_parent_class
+#define parent_class picman_fg_bg_editor_parent_class
 
 static guint  editor_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_fg_bg_editor_class_init (GimpFgBgEditorClass *klass)
+picman_fg_bg_editor_class_init (PicmanFgBgEditorClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
@@ -109,58 +109,58 @@ gimp_fg_bg_editor_class_init (GimpFgBgEditorClass *klass)
     g_signal_new ("color-clicked",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpFgBgEditorClass, color_clicked),
+                  G_STRUCT_OFFSET (PicmanFgBgEditorClass, color_clicked),
                   NULL, NULL,
-                  gimp_marshal_VOID__ENUM,
+                  picman_marshal_VOID__ENUM,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_ACTIVE_COLOR);
+                  PICMAN_TYPE_ACTIVE_COLOR);
 
-  object_class->dispose              = gimp_fg_bg_editor_dispose;
-  object_class->set_property         = gimp_fg_bg_editor_set_property;
-  object_class->get_property         = gimp_fg_bg_editor_get_property;
+  object_class->dispose              = picman_fg_bg_editor_dispose;
+  object_class->set_property         = picman_fg_bg_editor_set_property;
+  object_class->get_property         = picman_fg_bg_editor_get_property;
 
-  widget_class->expose_event         = gimp_fg_bg_editor_expose;
-  widget_class->button_press_event   = gimp_fg_bg_editor_button_press;
-  widget_class->button_release_event = gimp_fg_bg_editor_button_release;
-  widget_class->drag_motion          = gimp_fg_bg_editor_drag_motion;
+  widget_class->expose_event         = picman_fg_bg_editor_expose;
+  widget_class->button_press_event   = picman_fg_bg_editor_button_press;
+  widget_class->button_release_event = picman_fg_bg_editor_button_release;
+  widget_class->drag_motion          = picman_fg_bg_editor_drag_motion;
 
   g_object_class_install_property (object_class, PROP_CONTEXT,
                                    g_param_spec_object ("context",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_CONTEXT,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_CONTEXT,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_ACTIVE_COLOR,
                                    g_param_spec_enum ("active-color",
                                                       NULL, NULL,
-                                                      GIMP_TYPE_ACTIVE_COLOR,
-                                                      GIMP_ACTIVE_COLOR_FOREGROUND,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_TYPE_ACTIVE_COLOR,
+                                                      PICMAN_ACTIVE_COLOR_FOREGROUND,
+                                                      PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_fg_bg_editor_init (GimpFgBgEditor *editor)
+picman_fg_bg_editor_init (PicmanFgBgEditor *editor)
 {
   editor->context      = NULL;
-  editor->active_color = GIMP_ACTIVE_COLOR_FOREGROUND;
+  editor->active_color = PICMAN_ACTIVE_COLOR_FOREGROUND;
 
   gtk_widget_add_events (GTK_WIDGET (editor),
                          GDK_BUTTON_PRESS_MASK |
                          GDK_BUTTON_RELEASE_MASK);
 
-  gimp_dnd_color_source_add (GTK_WIDGET (editor),
-                             gimp_fg_bg_editor_drag_color, NULL);
-  gimp_dnd_color_dest_add (GTK_WIDGET (editor),
-                           gimp_fg_bg_editor_drop_color, NULL);
+  picman_dnd_color_source_add (GTK_WIDGET (editor),
+                             picman_fg_bg_editor_drag_color, NULL);
+  picman_dnd_color_dest_add (GTK_WIDGET (editor),
+                           picman_fg_bg_editor_drop_color, NULL);
 }
 
 static void
-gimp_fg_bg_editor_dispose (GObject *object)
+picman_fg_bg_editor_dispose (GObject *object)
 {
-  GimpFgBgEditor *editor = GIMP_FG_BG_EDITOR (object);
+  PicmanFgBgEditor *editor = PICMAN_FG_BG_EDITOR (object);
 
   if (editor->context)
-    gimp_fg_bg_editor_set_context (editor, NULL);
+    picman_fg_bg_editor_set_context (editor, NULL);
 
   if (editor->default_icon)
     {
@@ -178,20 +178,20 @@ gimp_fg_bg_editor_dispose (GObject *object)
 }
 
 static void
-gimp_fg_bg_editor_set_property (GObject      *object,
+picman_fg_bg_editor_set_property (GObject      *object,
                                 guint         property_id,
                                 const GValue *value,
                                 GParamSpec   *pspec)
 {
-  GimpFgBgEditor *editor = GIMP_FG_BG_EDITOR (object);
+  PicmanFgBgEditor *editor = PICMAN_FG_BG_EDITOR (object);
 
   switch (property_id)
     {
     case PROP_CONTEXT:
-      gimp_fg_bg_editor_set_context (editor, g_value_get_object (value));
+      picman_fg_bg_editor_set_context (editor, g_value_get_object (value));
       break;
     case PROP_ACTIVE_COLOR:
-      gimp_fg_bg_editor_set_active (editor, g_value_get_enum (value));
+      picman_fg_bg_editor_set_active (editor, g_value_get_enum (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -200,12 +200,12 @@ gimp_fg_bg_editor_set_property (GObject      *object,
 }
 
 static void
-gimp_fg_bg_editor_get_property (GObject    *object,
+picman_fg_bg_editor_get_property (GObject    *object,
                                 guint       property_id,
                                 GValue     *value,
                                 GParamSpec *pspec)
 {
-  GimpFgBgEditor *editor = GIMP_FG_BG_EDITOR (object);
+  PicmanFgBgEditor *editor = PICMAN_FG_BG_EDITOR (object);
 
   switch (property_id)
     {
@@ -222,10 +222,10 @@ gimp_fg_bg_editor_get_property (GObject    *object,
 }
 
 static gboolean
-gimp_fg_bg_editor_expose (GtkWidget      *widget,
+picman_fg_bg_editor_expose (GtkWidget      *widget,
                           GdkEventExpose *eevent)
 {
-  GimpFgBgEditor *editor = GIMP_FG_BG_EDITOR (widget);
+  PicmanFgBgEditor *editor = PICMAN_FG_BG_EDITOR (widget);
   GtkStyle       *style  = gtk_widget_get_style (widget);
   GdkWindow      *window = gtk_widget_get_window (widget);
   cairo_t        *cr;
@@ -234,7 +234,7 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
   gint            default_w, default_h;
   gint            swap_w, swap_h;
   gint            rect_w, rect_h;
-  GimpRGB         color;
+  PicmanRGB         color;
 
   if (! gtk_widget_is_drawable (widget))
     return FALSE;
@@ -252,7 +252,7 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
   /*  draw the default colors pixbuf  */
   if (! editor->default_icon)
     editor->default_icon = gtk_widget_render_icon (widget,
-                                                   GIMP_STOCK_DEFAULT_COLORS,
+                                                   PICMAN_STOCK_DEFAULT_COLORS,
                                                    GTK_ICON_SIZE_MENU, NULL);
 
   default_w = gdk_pixbuf_get_width  (editor->default_icon);
@@ -272,7 +272,7 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
   /*  draw the swap colors pixbuf  */
   if (! editor->swap_icon)
     editor->swap_icon = gtk_widget_render_icon (widget,
-                                                GIMP_STOCK_SWAP_COLORS,
+                                                PICMAN_STOCK_SWAP_COLORS,
                                                 GTK_ICON_SIZE_MENU, NULL);
 
   swap_w = gdk_pixbuf_get_width  (editor->swap_icon);
@@ -304,8 +304,8 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
 
   if (editor->context)
     {
-      gimp_context_get_background (editor->context, &color);
-      gimp_cairo_set_source_rgb (cr, &color);
+      picman_context_get_background (editor->context, &color);
+      picman_cairo_set_source_rgb (cr, &color);
 
       cairo_rectangle (cr,
                        width - rect_w,
@@ -316,7 +316,7 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
     }
 
   gtk_paint_shadow (style, window, GTK_STATE_NORMAL,
-                    editor->active_color == GIMP_ACTIVE_COLOR_FOREGROUND ?
+                    editor->active_color == PICMAN_ACTIVE_COLOR_FOREGROUND ?
                     GTK_SHADOW_OUT : GTK_SHADOW_IN,
                     NULL, widget, NULL,
                     (width - rect_w),
@@ -328,8 +328,8 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
 
   if (editor->context)
     {
-      gimp_context_get_foreground (editor->context, &color);
-      gimp_cairo_set_source_rgb (cr, &color);
+      picman_context_get_foreground (editor->context, &color);
+      picman_cairo_set_source_rgb (cr, &color);
 
       cairo_rectangle (cr,
                        0, 0,
@@ -338,7 +338,7 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
     }
 
   gtk_paint_shadow (style, window, GTK_STATE_NORMAL,
-                    editor->active_color == GIMP_ACTIVE_COLOR_BACKGROUND ?
+                    editor->active_color == PICMAN_ACTIVE_COLOR_BACKGROUND ?
                     GTK_SHADOW_OUT : GTK_SHADOW_IN,
                     NULL, widget, NULL,
                     0, 0,
@@ -350,7 +350,7 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
 }
 
 static FgBgTarget
-gimp_fg_bg_editor_target (GimpFgBgEditor *editor,
+picman_fg_bg_editor_target (PicmanFgBgEditor *editor,
                           gint            x,
                           gint            y)
 {
@@ -381,14 +381,14 @@ gimp_fg_bg_editor_target (GimpFgBgEditor *editor,
 }
 
 static gboolean
-gimp_fg_bg_editor_button_press (GtkWidget      *widget,
+picman_fg_bg_editor_button_press (GtkWidget      *widget,
                                 GdkEventButton *bevent)
 {
-  GimpFgBgEditor *editor = GIMP_FG_BG_EDITOR (widget);
+  PicmanFgBgEditor *editor = PICMAN_FG_BG_EDITOR (widget);
 
   if (bevent->button == 1 && bevent->type == GDK_BUTTON_PRESS)
     {
-      FgBgTarget target = gimp_fg_bg_editor_target (editor,
+      FgBgTarget target = picman_fg_bg_editor_target (editor,
                                                     bevent->x, bevent->y);
 
       editor->click_target = INVALID_AREA;
@@ -396,27 +396,27 @@ gimp_fg_bg_editor_button_press (GtkWidget      *widget,
       switch (target)
         {
         case FOREGROUND_AREA:
-          if (editor->active_color != GIMP_ACTIVE_COLOR_FOREGROUND)
-            gimp_fg_bg_editor_set_active (editor,
-                                          GIMP_ACTIVE_COLOR_FOREGROUND);
+          if (editor->active_color != PICMAN_ACTIVE_COLOR_FOREGROUND)
+            picman_fg_bg_editor_set_active (editor,
+                                          PICMAN_ACTIVE_COLOR_FOREGROUND);
           editor->click_target = FOREGROUND_AREA;
           break;
 
         case BACKGROUND_AREA:
-          if (editor->active_color != GIMP_ACTIVE_COLOR_BACKGROUND)
-            gimp_fg_bg_editor_set_active (editor,
-                                          GIMP_ACTIVE_COLOR_BACKGROUND);
+          if (editor->active_color != PICMAN_ACTIVE_COLOR_BACKGROUND)
+            picman_fg_bg_editor_set_active (editor,
+                                          PICMAN_ACTIVE_COLOR_BACKGROUND);
           editor->click_target = BACKGROUND_AREA;
           break;
 
         case SWAP_AREA:
           if (editor->context)
-            gimp_context_swap_colors (editor->context);
+            picman_context_swap_colors (editor->context);
           break;
 
         case DEFAULT_AREA:
           if (editor->context)
-            gimp_context_set_default_colors (editor->context);
+            picman_context_set_default_colors (editor->context);
           break;
 
         default:
@@ -428,14 +428,14 @@ gimp_fg_bg_editor_button_press (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_fg_bg_editor_button_release (GtkWidget      *widget,
+picman_fg_bg_editor_button_release (GtkWidget      *widget,
                                   GdkEventButton *bevent)
 {
-  GimpFgBgEditor *editor = GIMP_FG_BG_EDITOR (widget);
+  PicmanFgBgEditor *editor = PICMAN_FG_BG_EDITOR (widget);
 
   if (bevent->button == 1)
     {
-      FgBgTarget target = gimp_fg_bg_editor_target (editor,
+      FgBgTarget target = picman_fg_bg_editor_target (editor,
                                                     bevent->x, bevent->y);
 
       if (target == editor->click_target)
@@ -444,12 +444,12 @@ gimp_fg_bg_editor_button_release (GtkWidget      *widget,
             {
             case FOREGROUND_AREA:
               g_signal_emit (editor, editor_signals[COLOR_CLICKED], 0,
-                             GIMP_ACTIVE_COLOR_FOREGROUND);
+                             PICMAN_ACTIVE_COLOR_FOREGROUND);
               break;
 
             case BACKGROUND_AREA:
               g_signal_emit (editor, editor_signals[COLOR_CLICKED], 0,
-                             GIMP_ACTIVE_COLOR_BACKGROUND);
+                             PICMAN_ACTIVE_COLOR_BACKGROUND);
               break;
 
             default:
@@ -464,14 +464,14 @@ gimp_fg_bg_editor_button_release (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_fg_bg_editor_drag_motion (GtkWidget      *widget,
+picman_fg_bg_editor_drag_motion (GtkWidget      *widget,
                                GdkDragContext *context,
                                gint            x,
                                gint            y,
                                guint           time)
 {
-  GimpFgBgEditor *editor = GIMP_FG_BG_EDITOR (widget);
-  FgBgTarget      target = gimp_fg_bg_editor_target (editor, x, y);
+  PicmanFgBgEditor *editor = PICMAN_FG_BG_EDITOR (widget);
+  FgBgTarget      target = picman_fg_bg_editor_target (editor, x, y);
 
   if (target == FOREGROUND_AREA || target == BACKGROUND_AREA)
     {
@@ -489,21 +489,21 @@ gimp_fg_bg_editor_drag_motion (GtkWidget      *widget,
 /*  public functions  */
 
 GtkWidget *
-gimp_fg_bg_editor_new (GimpContext *context)
+picman_fg_bg_editor_new (PicmanContext *context)
 {
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), NULL);
 
-  return g_object_new (GIMP_TYPE_FG_BG_EDITOR,
+  return g_object_new (PICMAN_TYPE_FG_BG_EDITOR,
                        "context", context,
                        NULL);
 }
 
 void
-gimp_fg_bg_editor_set_context (GimpFgBgEditor *editor,
-                               GimpContext    *context)
+picman_fg_bg_editor_set_context (PicmanFgBgEditor *editor,
+                               PicmanContext    *context)
 {
-  g_return_if_fail (GIMP_IS_FG_BG_EDITOR (editor));
-  g_return_if_fail (context == NULL || GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_FG_BG_EDITOR (editor));
+  g_return_if_fail (context == NULL || PICMAN_IS_CONTEXT (context));
 
   if (context == editor->context)
     return;
@@ -535,10 +535,10 @@ gimp_fg_bg_editor_set_context (GimpFgBgEditor *editor,
 }
 
 void
-gimp_fg_bg_editor_set_active (GimpFgBgEditor  *editor,
-                              GimpActiveColor  active)
+picman_fg_bg_editor_set_active (PicmanFgBgEditor  *editor,
+                              PicmanActiveColor  active)
 {
-  g_return_if_fail (GIMP_IS_FG_BG_EDITOR (editor));
+  g_return_if_fail (PICMAN_IS_FG_BG_EDITOR (editor));
 
   editor->active_color = active;
   gtk_widget_queue_draw (GTK_WIDGET (editor));
@@ -549,46 +549,46 @@ gimp_fg_bg_editor_set_active (GimpFgBgEditor  *editor,
 /*  private functions  */
 
 static void
-gimp_fg_bg_editor_drag_color (GtkWidget *widget,
-                              GimpRGB   *color,
+picman_fg_bg_editor_drag_color (GtkWidget *widget,
+                              PicmanRGB   *color,
                               gpointer   data)
 {
-  GimpFgBgEditor *editor = GIMP_FG_BG_EDITOR (widget);
+  PicmanFgBgEditor *editor = PICMAN_FG_BG_EDITOR (widget);
 
   if (editor->context)
     {
       switch (editor->active_color)
         {
-        case GIMP_ACTIVE_COLOR_FOREGROUND:
-          gimp_context_get_foreground (editor->context, color);
+        case PICMAN_ACTIVE_COLOR_FOREGROUND:
+          picman_context_get_foreground (editor->context, color);
           break;
 
-        case GIMP_ACTIVE_COLOR_BACKGROUND:
-          gimp_context_get_background (editor->context, color);
+        case PICMAN_ACTIVE_COLOR_BACKGROUND:
+          picman_context_get_background (editor->context, color);
           break;
         }
     }
 }
 
 static void
-gimp_fg_bg_editor_drop_color (GtkWidget     *widget,
+picman_fg_bg_editor_drop_color (GtkWidget     *widget,
                               gint           x,
                               gint           y,
-                              const GimpRGB *color,
+                              const PicmanRGB *color,
                               gpointer       data)
 {
-  GimpFgBgEditor *editor = GIMP_FG_BG_EDITOR (widget);
+  PicmanFgBgEditor *editor = PICMAN_FG_BG_EDITOR (widget);
 
   if (editor->context)
     {
-      switch (gimp_fg_bg_editor_target (editor, x, y))
+      switch (picman_fg_bg_editor_target (editor, x, y))
         {
         case FOREGROUND_AREA:
-          gimp_context_set_foreground (editor->context, color);
+          picman_context_set_foreground (editor->context, color);
           break;
 
         case BACKGROUND_AREA:
-          gimp_context_set_background (editor->context, color);
+          picman_context_set_background (editor->context, color);
           break;
 
         default:

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,40 +20,40 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "display-types.h"
 
-#include "config/gimpdisplayconfig.h"
+#include "config/picmandisplayconfig.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "core/gimpdrawable.h"
-#include "core/gimpimage.h"
-#include "core/gimppickable.h"
-#include "core/gimpprojectable.h"
-#include "core/gimpprojection.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage.h"
+#include "core/picmanpickable.h"
+#include "core/picmanprojectable.h"
+#include "core/picmanprojection.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-transform.h"
-#include "gimpdisplayshell-filter.h"
-#include "gimpdisplayshell-render.h"
-#include "gimpdisplayshell-scroll.h"
-#include "gimpdisplayxfer.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-transform.h"
+#include "picmandisplayshell-filter.h"
+#include "picmandisplayshell-render.h"
+#include "picmandisplayshell-scroll.h"
+#include "picmandisplayxfer.h"
 
 
 void
-gimp_display_shell_render (GimpDisplayShell *shell,
+picman_display_shell_render (PicmanDisplayShell *shell,
                            cairo_t          *cr,
                            gint              x,
                            gint              y,
                            gint              w,
                            gint              h)
 {
-  GimpImage       *image;
-  GimpProjection  *projection;
+  PicmanImage       *image;
+  PicmanProjection  *projection;
   GeglBuffer      *buffer;
   gdouble          window_scale = 1.0;
   gint             viewport_offset_x;
@@ -68,22 +68,22 @@ gimp_display_shell_render (GimpDisplayShell *shell,
   gint             stride;
   guchar          *data;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (cr != NULL);
   g_return_if_fail (w > 0 && h > 0);
 
-  image      = gimp_display_get_image (shell->display);
-  projection = gimp_image_get_projection (image);
-  buffer     = gimp_pickable_get_buffer (GIMP_PICKABLE (projection));
+  image      = picman_display_get_image (shell->display);
+  projection = picman_image_get_projection (image);
+  buffer     = picman_pickable_get_buffer (PICMAN_PICKABLE (projection));
 
-#ifdef GIMP_DISPLAY_RENDER_ENABLE_SCALING
+#ifdef PICMAN_DISPLAY_RENDER_ENABLE_SCALING
   /* if we had this future API, things would look pretty on hires (retina) */
   window_scale = gdk_window_get_scale_factor (gtk_widget_get_window (gtk_widget_get_toplevel (GTK_WIDGET (shell))));
 #endif
 
-  window_scale = MIN (window_scale, GIMP_DISPLAY_RENDER_MAX_SCALE);
+  window_scale = MIN (window_scale, PICMAN_DISPLAY_RENDER_MAX_SCALE);
 
-  gimp_display_shell_scroll_get_scaled_viewport (shell,
+  picman_display_shell_scroll_get_scaled_viewport (shell,
                                                  &viewport_offset_x,
                                                  &viewport_offset_y,
                                                  &viewport_width,
@@ -100,7 +100,7 @@ gimp_display_shell_render (GimpDisplayShell *shell,
     }
   else
     {
-      xfer = gimp_display_xfer_get_surface (shell->xfer,
+      xfer = picman_display_xfer_get_surface (shell->xfer,
                                             w * window_scale,
                                             h * window_scale,
                                             &src_x, &src_y);
@@ -128,7 +128,7 @@ gimp_display_shell_render (GimpDisplayShell *shell,
 					     w * window_scale,
 					     h * window_scale,
 					     stride);
-      gimp_color_display_stack_convert_surface (shell->filter_stack, image);
+      picman_color_display_stack_convert_surface (shell->filter_stack, image);
       cairo_surface_destroy (image);
     }
 
@@ -138,15 +138,15 @@ gimp_display_shell_render (GimpDisplayShell *shell,
         {
           shell->mask_surface =
             cairo_image_surface_create (CAIRO_FORMAT_A8,
-                                        GIMP_DISPLAY_RENDER_BUF_WIDTH  *
-                                        GIMP_DISPLAY_RENDER_MAX_SCALE,
-                                        GIMP_DISPLAY_RENDER_BUF_HEIGHT *
-                                        GIMP_DISPLAY_RENDER_MAX_SCALE);
+                                        PICMAN_DISPLAY_RENDER_BUF_WIDTH  *
+                                        PICMAN_DISPLAY_RENDER_MAX_SCALE,
+                                        PICMAN_DISPLAY_RENDER_BUF_HEIGHT *
+                                        PICMAN_DISPLAY_RENDER_MAX_SCALE);
         }
 
       cairo_surface_mark_dirty (shell->mask_surface);
 
-      buffer = gimp_drawable_get_buffer (shell->mask);
+      buffer = picman_drawable_get_buffer (shell->mask);
 
       stride = cairo_image_surface_get_stride (shell->mask_surface);
       data = cairo_image_surface_get_data (shell->mask_surface);
@@ -192,7 +192,7 @@ gimp_display_shell_render (GimpDisplayShell *shell,
 
   if (shell->mask)
     {
-      gimp_cairo_set_source_rgba (cr, &shell->mask_color);
+      picman_cairo_set_source_rgba (cr, &shell->mask_color);
       cairo_mask_surface (cr, shell->mask_surface,
                           (x - mask_src_x) * window_scale,
                           (y - mask_src_y) * window_scale);

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimperrordialog.c
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanerrordialog.c
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ERROR_DIALOG_H__
-#define __GIMP_ERROR_DIALOG_H__
+#ifndef __PICMAN_ERROR_DIALOG_H__
+#define __PICMAN_ERROR_DIALOG_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_ERROR_DIALOG            (gimp_error_dialog_get_type ())
-#define GIMP_ERROR_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ERROR_DIALOG, GimpErrorDialog))
-#define GIMP_ERROR_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ERROR_DIALOG, GimpErrorDialogClass))
-#define GIMP_IS_ERROR_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ERROR_DIALOG))
-#define GIMP_IS_ERROR_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ERROR_DIALOG))
-#define GIMP_ERROR_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ERROR_DIALOG, GimpErrorDialogClass))
+#define PICMAN_TYPE_ERROR_DIALOG            (picman_error_dialog_get_type ())
+#define PICMAN_ERROR_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ERROR_DIALOG, PicmanErrorDialog))
+#define PICMAN_ERROR_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ERROR_DIALOG, PicmanErrorDialogClass))
+#define PICMAN_IS_ERROR_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ERROR_DIALOG))
+#define PICMAN_IS_ERROR_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ERROR_DIALOG))
+#define PICMAN_ERROR_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ERROR_DIALOG, PicmanErrorDialogClass))
 
 
-typedef struct _GimpErrorDialogClass  GimpErrorDialogClass;
+typedef struct _PicmanErrorDialogClass  PicmanErrorDialogClass;
 
-struct _GimpErrorDialog
+struct _PicmanErrorDialog
 {
-  GimpDialog       parent_instance;
+  PicmanDialog       parent_instance;
 
   GtkWidget       *vbox;
 
@@ -46,16 +46,16 @@ struct _GimpErrorDialog
   gint             num_messages;
 };
 
-struct _GimpErrorDialogClass
+struct _PicmanErrorDialogClass
 {
-  GimpDialogClass  parent_class;
+  PicmanDialogClass  parent_class;
 };
 
 
-GType       gimp_error_dialog_get_type (void) G_GNUC_CONST;
+GType       picman_error_dialog_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_error_dialog_new      (const gchar     *title);
-void        gimp_error_dialog_add      (GimpErrorDialog *dialog,
+GtkWidget * picman_error_dialog_new      (const gchar     *title);
+void        picman_error_dialog_add      (PicmanErrorDialog *dialog,
                                         const gchar     *stock_id,
                                         const gchar     *domain,
                                         const gchar     *message);
@@ -64,4 +64,4 @@ void        gimp_error_dialog_add      (GimpErrorDialog *dialog,
 
 G_END_DECLS
 
-#endif /* __GIMP_ERROR_DIALOG_H__ */
+#endif /* __PICMAN_ERROR_DIALOG_H__ */

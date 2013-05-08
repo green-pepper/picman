@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,26 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PALETTE_EDITOR_H__
-#define __GIMP_PALETTE_EDITOR_H__
+#ifndef __PICMAN_PALETTE_EDITOR_H__
+#define __PICMAN_PALETTE_EDITOR_H__
 
 
-#include "gimpdataeditor.h"
+#include "picmandataeditor.h"
 
 
-#define GIMP_TYPE_PALETTE_EDITOR            (gimp_palette_editor_get_type ())
-#define GIMP_PALETTE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PALETTE_EDITOR, GimpPaletteEditor))
-#define GIMP_PALETTE_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PALETTE_EDITOR, GimpPaletteEditorClass))
-#define GIMP_IS_PALETTE_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PALETTE_EDITOR))
-#define GIMP_IS_PALETTE_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PALETTE_EDITOR))
-#define GIMP_PALETTE_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PALETTE_EDITOR, GimpPaletteEditorClass))
+#define PICMAN_TYPE_PALETTE_EDITOR            (picman_palette_editor_get_type ())
+#define PICMAN_PALETTE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PALETTE_EDITOR, PicmanPaletteEditor))
+#define PICMAN_PALETTE_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PALETTE_EDITOR, PicmanPaletteEditorClass))
+#define PICMAN_IS_PALETTE_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PALETTE_EDITOR))
+#define PICMAN_IS_PALETTE_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PALETTE_EDITOR))
+#define PICMAN_PALETTE_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PALETTE_EDITOR, PicmanPaletteEditorClass))
 
 
-typedef struct _GimpPaletteEditorClass GimpPaletteEditorClass;
+typedef struct _PicmanPaletteEditorClass PicmanPaletteEditorClass;
 
-struct _GimpPaletteEditor
+struct _PicmanPaletteEditor
 {
-  GimpDataEditor    parent_instance;
+  PicmanDataEditor    parent_instance;
 
   GtkWidget        *view;
 
@@ -43,7 +43,7 @@ struct _GimpPaletteEditor
 
   GtkWidget        *color_dialog;
 
-  GimpPaletteEntry *color;
+  PicmanPaletteEntry *color;
 
   gfloat            zoom_factor;  /* range from 0.1 to 4.0 */
   gint              col_width;
@@ -51,30 +51,30 @@ struct _GimpPaletteEditor
   gint              columns;
 };
 
-struct _GimpPaletteEditorClass
+struct _PicmanPaletteEditorClass
 {
-  GimpDataEditorClass  parent_class;
+  PicmanDataEditorClass  parent_class;
 };
 
 
-GType       gimp_palette_editor_get_type   (void) G_GNUC_CONST;
+GType       picman_palette_editor_get_type   (void) G_GNUC_CONST;
 
-GtkWidget * gimp_palette_editor_new        (GimpContext        *context,
-                                            GimpMenuFactory    *menu_factory);
+GtkWidget * picman_palette_editor_new        (PicmanContext        *context,
+                                            PicmanMenuFactory    *menu_factory);
 
-void        gimp_palette_editor_pick_color (GimpPaletteEditor  *editor,
-                                            const GimpRGB      *color,
-                                            GimpColorPickState  pick_state);
-void        gimp_palette_editor_zoom       (GimpPaletteEditor  *editor,
-                                            GimpZoomType        zoom_type);
+void        picman_palette_editor_pick_color (PicmanPaletteEditor  *editor,
+                                            const PicmanRGB      *color,
+                                            PicmanColorPickState  pick_state);
+void        picman_palette_editor_zoom       (PicmanPaletteEditor  *editor,
+                                            PicmanZoomType        zoom_type);
 
-gint        gimp_palette_editor_get_index  (GimpPaletteEditor *editor,
-                                            const GimpRGB     *search);
-gboolean    gimp_palette_editor_set_index  (GimpPaletteEditor *editor,
+gint        picman_palette_editor_get_index  (PicmanPaletteEditor *editor,
+                                            const PicmanRGB     *search);
+gboolean    picman_palette_editor_set_index  (PicmanPaletteEditor *editor,
                                             gint               index,
-                                            GimpRGB           *color);
+                                            PicmanRGB           *color);
 
-gint        gimp_palette_editor_max_index  (GimpPaletteEditor *editor);
+gint        picman_palette_editor_max_index  (PicmanPaletteEditor *editor);
 
 
-#endif /* __GIMP_PALETTE_EDITOR_H__ */
+#endif /* __PICMAN_PALETTE_EDITOR_H__ */

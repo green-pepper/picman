@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis, and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,48 +23,48 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpboundary.h"
-#include "core/gimpcontext.h"
-#include "core/gimpchannel.h"
-#include "core/gimpdrawable-transform.h"
-#include "core/gimperror.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimpimage-undo-push.h"
-#include "core/gimpitem-linked.h"
-#include "core/gimplayer.h"
-#include "core/gimpprogress.h"
-#include "core/gimptoolinfo.h"
-#include "core/gimp-transform-utils.h"
-#include "core/gimp-utils.h"
+#include "core/picman.h"
+#include "core/picmanboundary.h"
+#include "core/picmancontext.h"
+#include "core/picmanchannel.h"
+#include "core/picmandrawable-transform.h"
+#include "core/picmanerror.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanimage-undo-push.h"
+#include "core/picmanitem-linked.h"
+#include "core/picmanlayer.h"
+#include "core/picmanprogress.h"
+#include "core/picmantoolinfo.h"
+#include "core/picman-transform-utils.h"
+#include "core/picman-utils.h"
 
-#include "vectors/gimpvectors.h"
-#include "vectors/gimpstroke.h"
+#include "vectors/picmanvectors.h"
+#include "vectors/picmanstroke.h"
 
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpcanvasgroup.h"
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-transform.h"
-#include "display/gimptooldialog.h"
+#include "display/picmancanvasgroup.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-transform.h"
+#include "display/picmantooldialog.h"
 
-#include "gimptoolcontrol.h"
-#include "gimpperspectivetool.h"
-#include "gimpunifiedtransformtool.h"
-#include "gimptransformoptions.h"
-#include "gimptransformtool.h"
-#include "gimptransformtoolundo.h"
+#include "picmantoolcontrol.h"
+#include "picmanperspectivetool.h"
+#include "picmanunifiedtransformtool.h"
+#include "picmantransformoptions.h"
+#include "picmantransformtool.h"
+#include "picmantransformtoolundo.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define RESPONSE_RESET  1
@@ -73,123 +73,123 @@
 #define MIN_HANDLE_SIZE 6
 
 
-static void      gimp_transform_tool_finalize               (GObject               *object);
+static void      picman_transform_tool_finalize               (GObject               *object);
 
-static gboolean  gimp_transform_tool_initialize             (GimpTool              *tool,
-                                                             GimpDisplay           *display,
+static gboolean  picman_transform_tool_initialize             (PicmanTool              *tool,
+                                                             PicmanDisplay           *display,
                                                              GError               **error);
-static void      gimp_transform_tool_control                (GimpTool              *tool,
-                                                             GimpToolAction         action,
-                                                             GimpDisplay           *display);
-static void      gimp_transform_tool_button_press           (GimpTool              *tool,
-                                                             const GimpCoords      *coords,
+static void      picman_transform_tool_control                (PicmanTool              *tool,
+                                                             PicmanToolAction         action,
+                                                             PicmanDisplay           *display);
+static void      picman_transform_tool_button_press           (PicmanTool              *tool,
+                                                             const PicmanCoords      *coords,
                                                              guint32                time,
                                                              GdkModifierType        state,
-                                                             GimpButtonPressType    press_type,
-                                                             GimpDisplay           *display);
-static void      gimp_transform_tool_button_release         (GimpTool              *tool,
-                                                             const GimpCoords      *coords,
+                                                             PicmanButtonPressType    press_type,
+                                                             PicmanDisplay           *display);
+static void      picman_transform_tool_button_release         (PicmanTool              *tool,
+                                                             const PicmanCoords      *coords,
                                                              guint32                time,
                                                              GdkModifierType        state,
-                                                             GimpButtonReleaseType  release_type,
-                                                             GimpDisplay           *display);
-static void      gimp_transform_tool_motion                 (GimpTool              *tool,
-                                                             const GimpCoords      *coords,
+                                                             PicmanButtonReleaseType  release_type,
+                                                             PicmanDisplay           *display);
+static void      picman_transform_tool_motion                 (PicmanTool              *tool,
+                                                             const PicmanCoords      *coords,
                                                              guint32                time,
                                                              GdkModifierType        state,
-                                                             GimpDisplay           *display);
-static gboolean  gimp_transform_tool_key_press              (GimpTool              *tool,
+                                                             PicmanDisplay           *display);
+static gboolean  picman_transform_tool_key_press              (PicmanTool              *tool,
                                                              GdkEventKey           *kevent,
-                                                             GimpDisplay           *display);
-static void      gimp_transform_tool_modifier_key           (GimpTool              *tool,
+                                                             PicmanDisplay           *display);
+static void      picman_transform_tool_modifier_key           (PicmanTool              *tool,
                                                              GdkModifierType        key,
                                                              gboolean               press,
                                                              GdkModifierType        state,
-                                                             GimpDisplay           *display);
-static void      gimp_transform_tool_oper_update            (GimpTool              *tool,
-                                                             const GimpCoords      *coords,
+                                                             PicmanDisplay           *display);
+static void      picman_transform_tool_oper_update            (PicmanTool              *tool,
+                                                             const PicmanCoords      *coords,
                                                              GdkModifierType        state,
                                                              gboolean               proximity,
-                                                             GimpDisplay           *display);
-static void      gimp_transform_tool_cursor_update          (GimpTool              *tool,
-                                                             const GimpCoords      *coords,
+                                                             PicmanDisplay           *display);
+static void      picman_transform_tool_cursor_update          (PicmanTool              *tool,
+                                                             const PicmanCoords      *coords,
                                                              GdkModifierType        state,
-                                                             GimpDisplay           *display);
-static void      gimp_transform_tool_options_notify         (GimpTool              *tool,
-                                                             GimpToolOptions       *options,
+                                                             PicmanDisplay           *display);
+static void      picman_transform_tool_options_notify         (PicmanTool              *tool,
+                                                             PicmanToolOptions       *options,
                                                              const GParamSpec      *pspec);
 
-static void      gimp_transform_tool_draw                   (GimpDrawTool          *draw_tool);
+static void      picman_transform_tool_draw                   (PicmanDrawTool          *draw_tool);
 
-static void      gimp_transform_tool_dialog_update          (GimpTransformTool     *tr_tool);
+static void      picman_transform_tool_dialog_update          (PicmanTransformTool     *tr_tool);
 
 static GeglBuffer *
-                 gimp_transform_tool_real_transform         (GimpTransformTool     *tr_tool,
-                                                             GimpItem              *item,
+                 picman_transform_tool_real_transform         (PicmanTransformTool     *tr_tool,
+                                                             PicmanItem              *item,
                                                              GeglBuffer            *orig_buffer,
                                                              gint                   orig_offset_x,
                                                              gint                   orig_offset_y,
                                                              gint                  *new_offset_x,
                                                              gint                  *new_offset_y);
-static void      gimp_transform_tool_real_draw_gui          (GimpTransformTool     *tr_tool,
+static void      picman_transform_tool_real_draw_gui          (PicmanTransformTool     *tr_tool,
                                                              gint                   handle_w,
                                                              gint                   handle_h);
 static TransformAction
-                 gimp_transform_tool_real_pick_function     (GimpTransformTool     *tr_tool,
-                                                             const GimpCoords      *coords,
+                 picman_transform_tool_real_pick_function     (PicmanTransformTool     *tr_tool,
+                                                             const PicmanCoords      *coords,
                                                              GdkModifierType        state,
-                                                             GimpDisplay           *display);
+                                                             PicmanDisplay           *display);
 
-static void      gimp_transform_tool_set_function           (GimpTransformTool     *tr_tool,
+static void      picman_transform_tool_set_function           (PicmanTransformTool     *tr_tool,
                                                              TransformAction        function);
-static void      gimp_transform_tool_bounds                 (GimpTransformTool     *tr_tool,
-                                                             GimpDisplay           *display);
-static void      gimp_transform_tool_dialog                 (GimpTransformTool     *tr_tool);
-static void      gimp_transform_tool_prepare                (GimpTransformTool     *tr_tool,
-                                                             GimpDisplay           *display);
-static void      gimp_transform_tool_transform              (GimpTransformTool     *tr_tool,
-                                                             GimpDisplay           *display);
-static void      gimp_transform_tool_transform_bounding_box (GimpTransformTool     *tr_tool);
+static void      picman_transform_tool_bounds                 (PicmanTransformTool     *tr_tool,
+                                                             PicmanDisplay           *display);
+static void      picman_transform_tool_dialog                 (PicmanTransformTool     *tr_tool);
+static void      picman_transform_tool_prepare                (PicmanTransformTool     *tr_tool,
+                                                             PicmanDisplay           *display);
+static void      picman_transform_tool_transform              (PicmanTransformTool     *tr_tool,
+                                                             PicmanDisplay           *display);
+static void      picman_transform_tool_transform_bounding_box (PicmanTransformTool     *tr_tool);
 
-static void      gimp_transform_tool_handles_recalc         (GimpTransformTool     *tr_tool,
-                                                             GimpDisplay           *display,
+static void      picman_transform_tool_handles_recalc         (PicmanTransformTool     *tr_tool,
+                                                             PicmanDisplay           *display,
                                                              gint                  *handle_w,
                                                              gint                  *handle_h);
-static void      gimp_transform_tool_response               (GtkWidget             *widget,
+static void      picman_transform_tool_response               (GtkWidget             *widget,
                                                              gint                   response_id,
-                                                             GimpTransformTool     *tr_tool);
+                                                             PicmanTransformTool     *tr_tool);
 
 static void free_trans         (gpointer           data);
-static void update_sensitivity (GimpTransformTool *tr_tool);
+static void update_sensitivity (PicmanTransformTool *tr_tool);
 
 
-G_DEFINE_TYPE (GimpTransformTool, gimp_transform_tool, GIMP_TYPE_DRAW_TOOL)
+G_DEFINE_TYPE (PicmanTransformTool, picman_transform_tool, PICMAN_TYPE_DRAW_TOOL)
 
-#define parent_class gimp_transform_tool_parent_class
+#define parent_class picman_transform_tool_parent_class
 
 
 static void
-gimp_transform_tool_class_init (GimpTransformToolClass *klass)
+picman_transform_tool_class_init (PicmanTransformToolClass *klass)
 {
   GObjectClass      *object_class = G_OBJECT_CLASS (klass);
-  GimpToolClass     *tool_class   = GIMP_TOOL_CLASS (klass);
-  GimpDrawToolClass *draw_class   = GIMP_DRAW_TOOL_CLASS (klass);
+  PicmanToolClass     *tool_class   = PICMAN_TOOL_CLASS (klass);
+  PicmanDrawToolClass *draw_class   = PICMAN_DRAW_TOOL_CLASS (klass);
 
-  object_class->finalize          = gimp_transform_tool_finalize;
+  object_class->finalize          = picman_transform_tool_finalize;
 
-  tool_class->initialize          = gimp_transform_tool_initialize;
-  tool_class->control             = gimp_transform_tool_control;
-  tool_class->button_press        = gimp_transform_tool_button_press;
-  tool_class->button_release      = gimp_transform_tool_button_release;
-  tool_class->motion              = gimp_transform_tool_motion;
-  tool_class->key_press           = gimp_transform_tool_key_press;
-  tool_class->modifier_key        = gimp_transform_tool_modifier_key;
-  tool_class->active_modifier_key = gimp_transform_tool_modifier_key;
-  tool_class->oper_update         = gimp_transform_tool_oper_update;
-  tool_class->cursor_update       = gimp_transform_tool_cursor_update;
-  tool_class->options_notify      = gimp_transform_tool_options_notify;
+  tool_class->initialize          = picman_transform_tool_initialize;
+  tool_class->control             = picman_transform_tool_control;
+  tool_class->button_press        = picman_transform_tool_button_press;
+  tool_class->button_release      = picman_transform_tool_button_release;
+  tool_class->motion              = picman_transform_tool_motion;
+  tool_class->key_press           = picman_transform_tool_key_press;
+  tool_class->modifier_key        = picman_transform_tool_modifier_key;
+  tool_class->active_modifier_key = picman_transform_tool_modifier_key;
+  tool_class->oper_update         = picman_transform_tool_oper_update;
+  tool_class->cursor_update       = picman_transform_tool_cursor_update;
+  tool_class->options_notify      = picman_transform_tool_options_notify;
 
-  draw_class->draw                = gimp_transform_tool_draw;
+  draw_class->draw                = picman_transform_tool_draw;
 
   klass->dialog                   = NULL;
   klass->dialog_update            = NULL;
@@ -197,39 +197,39 @@ gimp_transform_tool_class_init (GimpTransformToolClass *klass)
   klass->motion                   = NULL;
   klass->recalc_matrix            = NULL;
   klass->get_undo_desc            = NULL;
-  klass->transform                = gimp_transform_tool_real_transform;
-  klass->pick_function            = gimp_transform_tool_real_pick_function;
-  klass->draw_gui                 = gimp_transform_tool_real_draw_gui;
+  klass->transform                = picman_transform_tool_real_transform;
+  klass->pick_function            = picman_transform_tool_real_pick_function;
+  klass->draw_gui                 = picman_transform_tool_real_draw_gui;
 }
 
 static void
-gimp_transform_tool_init (GimpTransformTool *tr_tool)
+picman_transform_tool_init (PicmanTransformTool *tr_tool)
 {
-  GimpTool *tool = GIMP_TOOL (tr_tool);
+  PicmanTool *tool = PICMAN_TOOL (tr_tool);
 
-  gimp_tool_control_set_action_value_1 (tool->control,
+  picman_tool_control_set_action_value_1 (tool->control,
                                         "tools/tools-transform-preview-opacity-set");
 
-  gimp_tool_control_set_scroll_lock (tool->control, TRUE);
-  gimp_tool_control_set_preserve    (tool->control, FALSE);
-  gimp_tool_control_set_dirty_mask  (tool->control,
-                                     GIMP_DIRTY_IMAGE_SIZE |
-                                     GIMP_DIRTY_DRAWABLE   |
-                                     GIMP_DIRTY_SELECTION  |
-                                     GIMP_DIRTY_ACTIVE_DRAWABLE);
-  gimp_tool_control_set_precision   (tool->control,
-                                     GIMP_CURSOR_PRECISION_SUBPIXEL);
+  picman_tool_control_set_scroll_lock (tool->control, TRUE);
+  picman_tool_control_set_preserve    (tool->control, FALSE);
+  picman_tool_control_set_dirty_mask  (tool->control,
+                                     PICMAN_DIRTY_IMAGE_SIZE |
+                                     PICMAN_DIRTY_DRAWABLE   |
+                                     PICMAN_DIRTY_SELECTION  |
+                                     PICMAN_DIRTY_ACTIVE_DRAWABLE);
+  picman_tool_control_set_precision   (tool->control,
+                                     PICMAN_CURSOR_PRECISION_SUBPIXEL);
 
   tr_tool->function      = TRANSFORM_CREATING;
   tr_tool->progress_text = _("Transforming");
 
-  gimp_matrix3_identity (&tr_tool->transform);
+  picman_matrix3_identity (&tr_tool->transform);
 }
 
 static void
-gimp_transform_tool_finalize (GObject *object)
+picman_transform_tool_finalize (GObject *object)
 {
-  GimpTransformTool *tr_tool = GIMP_TRANSFORM_TOOL (object);
+  PicmanTransformTool *tr_tool = PICMAN_TRANSFORM_TOOL (object);
 
   if (tr_tool->dialog)
     {
@@ -244,29 +244,29 @@ gimp_transform_tool_finalize (GObject *object)
 }
 
 static gboolean
-gimp_transform_tool_initialize (GimpTool     *tool,
-                                GimpDisplay  *display,
+picman_transform_tool_initialize (PicmanTool     *tool,
+                                PicmanDisplay  *display,
                                 GError      **error)
 {
-  GimpTransformTool *tr_tool  = GIMP_TRANSFORM_TOOL (tool);
-  GimpImage         *image    = gimp_display_get_image (display);
-  GimpDrawable      *drawable = gimp_image_get_active_drawable (image);
+  PicmanTransformTool *tr_tool  = PICMAN_TRANSFORM_TOOL (tool);
+  PicmanImage         *image    = picman_display_get_image (display);
+  PicmanDrawable      *drawable = picman_image_get_active_drawable (image);
 
-  if (! GIMP_TOOL_CLASS (parent_class)->initialize (tool, display, error))
+  if (! PICMAN_TOOL_CLASS (parent_class)->initialize (tool, display, error))
     {
       return FALSE;
     }
 
-  if (gimp_item_is_content_locked (GIMP_ITEM (drawable)))
+  if (picman_item_is_content_locked (PICMAN_ITEM (drawable)))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
                            _("The active layer's pixels are locked."));
       return FALSE;
     }
 
-  if (gimp_item_is_position_locked (GIMP_ITEM (drawable)))
+  if (picman_item_is_position_locked (PICMAN_ITEM (drawable)))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
                            _("The active layer's position and size are locked."));
       return FALSE;
     }
@@ -281,23 +281,23 @@ gimp_transform_tool_initialize (GimpTool     *tool,
 
       /*  Initialize the transform tool dialog */
       if (! tr_tool->dialog)
-        gimp_transform_tool_dialog (tr_tool);
+        picman_transform_tool_dialog (tr_tool);
 
       /*  Find the transform bounds for some tools (like scale,
        *  perspective) that actually need the bounds for initializing
        */
-      gimp_transform_tool_bounds (tr_tool, display);
+      picman_transform_tool_bounds (tr_tool, display);
 
       /*  Inizialize the tool-specific trans_info, and adjust the
        *  tool dialog
        */
-      gimp_transform_tool_prepare (tr_tool, display);
+      picman_transform_tool_prepare (tr_tool, display);
 
       /*  Recalculate the transform tool  */
-      gimp_transform_tool_recalc_matrix (tr_tool);
+      picman_transform_tool_recalc_matrix (tr_tool);
 
       /*  start drawing the bounding box and handles...  */
-      gimp_draw_tool_start (GIMP_DRAW_TOOL (tool), display);
+      picman_draw_tool_start (PICMAN_DRAW_TOOL (tool), display);
 
       tr_tool->function = TRANSFORM_CREATING;
 
@@ -319,55 +319,55 @@ gimp_transform_tool_initialize (GimpTool     *tool,
 }
 
 static void
-gimp_transform_tool_control (GimpTool       *tool,
-                             GimpToolAction  action,
-                             GimpDisplay    *display)
+picman_transform_tool_control (PicmanTool       *tool,
+                             PicmanToolAction  action,
+                             PicmanDisplay    *display)
 {
-  GimpTransformTool *tr_tool = GIMP_TRANSFORM_TOOL (tool);
+  PicmanTransformTool *tr_tool = PICMAN_TRANSFORM_TOOL (tool);
 
   switch (action)
     {
-    case GIMP_TOOL_ACTION_PAUSE:
+    case PICMAN_TOOL_ACTION_PAUSE:
       break;
 
-    case GIMP_TOOL_ACTION_RESUME:
-      gimp_transform_tool_bounds (tr_tool, display);
-      gimp_transform_tool_recalc_matrix (tr_tool);
+    case PICMAN_TOOL_ACTION_RESUME:
+      picman_transform_tool_bounds (tr_tool, display);
+      picman_transform_tool_recalc_matrix (tr_tool);
       break;
 
-    case GIMP_TOOL_ACTION_HALT:
+    case PICMAN_TOOL_ACTION_HALT:
       tr_tool->function = TRANSFORM_CREATING;
 
       if (tr_tool->dialog)
-        gimp_dialog_factory_hide_dialog (tr_tool->dialog);
+        picman_dialog_factory_hide_dialog (tr_tool->dialog);
 
       tool->drawable = NULL;
       break;
     }
 
-  GIMP_TOOL_CLASS (parent_class)->control (tool, action, display);
+  PICMAN_TOOL_CLASS (parent_class)->control (tool, action, display);
 }
 
 static void
-gimp_transform_tool_button_press (GimpTool            *tool,
-                                  const GimpCoords    *coords,
+picman_transform_tool_button_press (PicmanTool            *tool,
+                                  const PicmanCoords    *coords,
                                   guint32              time,
                                   GdkModifierType      state,
-                                  GimpButtonPressType  press_type,
-                                  GimpDisplay         *display)
+                                  PicmanButtonPressType  press_type,
+                                  PicmanDisplay         *display)
 {
-  GimpTransformTool *tr_tool = GIMP_TRANSFORM_TOOL (tool);
+  PicmanTransformTool *tr_tool = PICMAN_TRANSFORM_TOOL (tool);
 
   if (tr_tool->function == TRANSFORM_CREATING)
-    GIMP_TOOL_GET_CLASS (tool)->oper_update (tool, coords, state, TRUE, display);
+    PICMAN_TOOL_GET_CLASS (tool)->oper_update (tool, coords, state, TRUE, display);
 
   tr_tool->lastx = tr_tool->mousex = coords->x;
   tr_tool->lasty = tr_tool->mousey = coords->y;
 
-  gimp_tool_control_activate (tool->control);
+  picman_tool_control_activate (tool->control);
 }
 
-void gimp_transform_tool_push_internal_undo (GimpTransformTool *tr_tool)
+void picman_transform_tool_push_internal_undo (PicmanTransformTool *tr_tool)
 {
   gint i;
 
@@ -397,90 +397,90 @@ void gimp_transform_tool_push_internal_undo (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_transform_tool_button_release (GimpTool              *tool,
-                                    const GimpCoords      *coords,
+picman_transform_tool_button_release (PicmanTool              *tool,
+                                    const PicmanCoords      *coords,
                                     guint32                time,
                                     GdkModifierType        state,
-                                    GimpButtonReleaseType  release_type,
-                                    GimpDisplay           *display)
+                                    PicmanButtonReleaseType  release_type,
+                                    PicmanDisplay           *display)
 {
-  GimpTransformTool *tr_tool = GIMP_TRANSFORM_TOOL (tool);
+  PicmanTransformTool *tr_tool = PICMAN_TRANSFORM_TOOL (tool);
   gint               i;
 
-  gimp_tool_control_halt (tool->control);
+  picman_tool_control_halt (tool->control);
 
   /*  if we are creating, there is nothing to be done...exit  */
   if (tr_tool->function == TRANSFORM_CREATING && tr_tool->use_grid)
     return;
 
-  if (release_type != GIMP_BUTTON_RELEASE_CANCEL)
+  if (release_type != PICMAN_BUTTON_RELEASE_CANCEL)
     {
       /* This hack is to perform the flip immediately with the flip tool */
       if (! tr_tool->use_grid)
         {
-          gimp_transform_tool_response (NULL, GTK_RESPONSE_OK, tr_tool);
+          picman_transform_tool_response (NULL, GTK_RESPONSE_OK, tr_tool);
         }
 
       /* We're done with an interaction, save it on the undo list */
-      gimp_transform_tool_push_internal_undo (tr_tool);
+      picman_transform_tool_push_internal_undo (tr_tool);
     }
   else
     {
-      gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
+      picman_draw_tool_pause (PICMAN_DRAW_TOOL (tool));
 
       /*  Restore the last saved state  */
       for (i = 0; i < TRANS_INFO_SIZE; i++)
         tr_tool->trans_info[i] = (*tr_tool->prev_trans_info)[i];
 
       /*  reget the selection bounds  */
-      gimp_transform_tool_bounds (tr_tool, display);
+      picman_transform_tool_bounds (tr_tool, display);
 
       /*  recalculate the tool's transformation matrix  */
-      gimp_transform_tool_recalc_matrix (tr_tool);
+      picman_transform_tool_recalc_matrix (tr_tool);
 
-      gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
+      picman_draw_tool_resume (PICMAN_DRAW_TOOL (tool));
     }
 }
 
 static void
-gimp_transform_tool_motion (GimpTool         *tool,
-                            const GimpCoords *coords,
+picman_transform_tool_motion (PicmanTool         *tool,
+                            const PicmanCoords *coords,
                             guint32           time,
                             GdkModifierType   state,
-                            GimpDisplay      *display)
+                            PicmanDisplay      *display)
 {
-  GimpTransformTool *tr_tool = GIMP_TRANSFORM_TOOL (tool);
+  PicmanTransformTool *tr_tool = PICMAN_TRANSFORM_TOOL (tool);
 
   /*  if we are creating, there is nothing to be done so exit.  */
   if (tr_tool->function == TRANSFORM_CREATING || ! tr_tool->use_grid)
     return;
 
-  gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
+  picman_draw_tool_pause (PICMAN_DRAW_TOOL (tool));
 
   tr_tool->curx = coords->x;
   tr_tool->cury = coords->y;
 
   /*  recalculate the tool's transformation matrix  */
-  if (GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->motion)
+  if (PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->motion)
     {
-      GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->motion (tr_tool);
+      PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->motion (tr_tool);
 
-      gimp_transform_tool_recalc_matrix (tr_tool);
+      picman_transform_tool_recalc_matrix (tr_tool);
     }
 
   tr_tool->lastx = tr_tool->curx;
   tr_tool->lasty = tr_tool->cury;
 
-  gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
+  picman_draw_tool_resume (PICMAN_DRAW_TOOL (tool));
 }
 
 static gboolean
-gimp_transform_tool_key_press (GimpTool    *tool,
+picman_transform_tool_key_press (PicmanTool    *tool,
                                GdkEventKey *kevent,
-                               GimpDisplay *display)
+                               PicmanDisplay *display)
 {
-  GimpTransformTool *trans_tool = GIMP_TRANSFORM_TOOL (tool);
-  GimpDrawTool      *draw_tool  = GIMP_DRAW_TOOL (tool);
+  PicmanTransformTool *trans_tool = PICMAN_TRANSFORM_TOOL (tool);
+  PicmanDrawTool      *draw_tool  = PICMAN_DRAW_TOOL (tool);
 
   if (display == draw_tool->display)
     {
@@ -489,19 +489,19 @@ gimp_transform_tool_key_press (GimpTool    *tool,
         case GDK_KEY_Return:
         case GDK_KEY_KP_Enter:
         case GDK_KEY_ISO_Enter:
-          gimp_transform_tool_response (NULL, GTK_RESPONSE_OK, trans_tool);
+          picman_transform_tool_response (NULL, GTK_RESPONSE_OK, trans_tool);
           return TRUE;
 
         case GDK_KEY_BackSpace:
-          gimp_transform_tool_response (NULL, RESPONSE_UNDO, trans_tool);
+          picman_transform_tool_response (NULL, RESPONSE_UNDO, trans_tool);
           return TRUE;
 
         case GDK_KEY_space:
-          gimp_transform_tool_response (NULL, RESPONSE_REDO, trans_tool);
+          picman_transform_tool_response (NULL, RESPONSE_REDO, trans_tool);
           return TRUE;
 
         case GDK_KEY_Escape:
-          gimp_transform_tool_response (NULL, GTK_RESPONSE_CANCEL, trans_tool);
+          picman_transform_tool_response (NULL, GTK_RESPONSE_CANCEL, trans_tool);
           return TRUE;
         }
     }
@@ -510,15 +510,15 @@ gimp_transform_tool_key_press (GimpTool    *tool,
 }
 
 static void
-gimp_transform_tool_modifier_key (GimpTool        *tool,
+picman_transform_tool_modifier_key (PicmanTool        *tool,
                                   GdkModifierType  key,
                                   gboolean         press,
                                   GdkModifierType  state,
-                                  GimpDisplay     *display)
+                                  PicmanDisplay     *display)
 {
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tool);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (tool);
 
-  if (key == gimp_get_constrain_behavior_mask ())
+  if (key == picman_get_constrain_behavior_mask ())
     {
       g_object_set (options,
                     "frompivot-scale", ! options->frompivot_scale,
@@ -531,7 +531,7 @@ gimp_transform_tool_modifier_key (GimpTool        *tool,
                     NULL);
     }
 
-  if (key == gimp_get_extend_selection_mask ())
+  if (key == picman_get_extend_selection_mask ())
     {
       g_object_set (options,
                     "cornersnap", ! options->cornersnap,
@@ -556,12 +556,12 @@ gimp_transform_tool_modifier_key (GimpTool        *tool,
 }
 
 static TransformAction
-gimp_transform_tool_real_pick_function (GimpTransformTool *tr_tool,
-                                        const GimpCoords  *coords,
+picman_transform_tool_real_pick_function (PicmanTransformTool *tr_tool,
+                                        const PicmanCoords  *coords,
                                         GdkModifierType    state,
-                                        GimpDisplay       *display)
+                                        PicmanDisplay       *display)
 {
-  GimpDrawTool   *draw_tool = GIMP_DRAW_TOOL (tr_tool);
+  PicmanDrawTool   *draw_tool = PICMAN_DRAW_TOOL (tr_tool);
   TransformAction function  = TRANSFORM_HANDLE_NONE;
 
   if (tr_tool->use_handles)
@@ -569,13 +569,13 @@ gimp_transform_tool_real_pick_function (GimpTransformTool *tr_tool,
         gdouble closest_dist;
         gdouble dist;
 
-        dist = gimp_draw_tool_calc_distance_square (draw_tool, display,
+        dist = picman_draw_tool_calc_distance_square (draw_tool, display,
                                                     coords->x, coords->y,
                                                     tr_tool->tx1, tr_tool->ty1);
         closest_dist = dist;
         function = TRANSFORM_HANDLE_NW;
 
-        dist = gimp_draw_tool_calc_distance_square (draw_tool, display,
+        dist = picman_draw_tool_calc_distance_square (draw_tool, display,
                                                     coords->x, coords->y,
                                                     tr_tool->tx2, tr_tool->ty2);
         if (dist < closest_dist)
@@ -584,7 +584,7 @@ gimp_transform_tool_real_pick_function (GimpTransformTool *tr_tool,
             function = TRANSFORM_HANDLE_NE;
           }
 
-        dist = gimp_draw_tool_calc_distance_square (draw_tool, display,
+        dist = picman_draw_tool_calc_distance_square (draw_tool, display,
                                                     coords->x, coords->y,
                                                     tr_tool->tx3, tr_tool->ty3);
         if (dist < closest_dist)
@@ -593,7 +593,7 @@ gimp_transform_tool_real_pick_function (GimpTransformTool *tr_tool,
             function = TRANSFORM_HANDLE_SW;
           }
 
-        dist = gimp_draw_tool_calc_distance_square (draw_tool, display,
+        dist = picman_draw_tool_calc_distance_square (draw_tool, display,
                                                     coords->x, coords->y,
                                                     tr_tool->tx4, tr_tool->ty4);
         if (dist < closest_dist)
@@ -604,22 +604,22 @@ gimp_transform_tool_real_pick_function (GimpTransformTool *tr_tool,
 
         if (tr_tool->use_mid_handles)
           {
-            if (gimp_canvas_item_hit (tr_tool->handles[TRANSFORM_HANDLE_N],
+            if (picman_canvas_item_hit (tr_tool->handles[TRANSFORM_HANDLE_N],
                                       coords->x, coords->y))
               {
                 function = TRANSFORM_HANDLE_N;
               }
-            else if (gimp_canvas_item_hit (tr_tool->handles[TRANSFORM_HANDLE_E],
+            else if (picman_canvas_item_hit (tr_tool->handles[TRANSFORM_HANDLE_E],
                                            coords->x, coords->y))
               {
                 function = TRANSFORM_HANDLE_E;
               }
-            else if (gimp_canvas_item_hit (tr_tool->handles[TRANSFORM_HANDLE_S],
+            else if (picman_canvas_item_hit (tr_tool->handles[TRANSFORM_HANDLE_S],
                                            coords->x, coords->y))
               {
                 function = TRANSFORM_HANDLE_S;
               }
-            else if (gimp_canvas_item_hit (tr_tool->handles[TRANSFORM_HANDLE_W],
+            else if (picman_canvas_item_hit (tr_tool->handles[TRANSFORM_HANDLE_W],
                                            coords->x, coords->y))
               {
                 function = TRANSFORM_HANDLE_W;
@@ -629,7 +629,7 @@ gimp_transform_tool_real_pick_function (GimpTransformTool *tr_tool,
 
   if (tr_tool->use_pivot)
     {
-      if (gimp_canvas_item_hit (tr_tool->handles[TRANSFORM_HANDLE_PIVOT],
+      if (picman_canvas_item_hit (tr_tool->handles[TRANSFORM_HANDLE_PIVOT],
                                 coords->x, coords->y))
         {
           function = TRANSFORM_HANDLE_PIVOT;
@@ -637,7 +637,7 @@ gimp_transform_tool_real_pick_function (GimpTransformTool *tr_tool,
     }
 
   if (tr_tool->use_center &&
-      gimp_canvas_item_hit (tr_tool->handles[TRANSFORM_HANDLE_CENTER],
+      picman_canvas_item_hit (tr_tool->handles[TRANSFORM_HANDLE_CENTER],
                             coords->x, coords->y))
     {
       function = TRANSFORM_HANDLE_CENTER;
@@ -647,135 +647,135 @@ gimp_transform_tool_real_pick_function (GimpTransformTool *tr_tool,
 }
 
 static void
-gimp_transform_tool_oper_update (GimpTool         *tool,
-                                 const GimpCoords *coords,
+picman_transform_tool_oper_update (PicmanTool         *tool,
+                                 const PicmanCoords *coords,
                                  GdkModifierType   state,
                                  gboolean          proximity,
-                                 GimpDisplay      *display)
+                                 PicmanDisplay      *display)
 {
-  GimpTransformTool *tr_tool   = GIMP_TRANSFORM_TOOL (tool);
-  GimpDrawTool      *draw_tool = GIMP_DRAW_TOOL (tool);
+  PicmanTransformTool *tr_tool   = PICMAN_TRANSFORM_TOOL (tool);
+  PicmanDrawTool      *draw_tool = PICMAN_DRAW_TOOL (tool);
   TransformAction    function  = TRANSFORM_HANDLE_NONE;
 
   if (display != tool->display || draw_tool->item == NULL)
     {
-      gimp_transform_tool_set_function (tr_tool, function);
+      picman_transform_tool_set_function (tr_tool, function);
       return;
     }
 
-  function = GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->pick_function (tr_tool, coords, state, display);
+  function = PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->pick_function (tr_tool, coords, state, display);
 
-  gimp_transform_tool_set_function (tr_tool, function);
+  picman_transform_tool_set_function (tr_tool, function);
 }
 
 static void
-gimp_transform_tool_cursor_update (GimpTool         *tool,
-                                   const GimpCoords *coords,
+picman_transform_tool_cursor_update (PicmanTool         *tool,
+                                   const PicmanCoords *coords,
                                    GdkModifierType   state,
-                                   GimpDisplay      *display)
+                                   PicmanDisplay      *display)
 {
-  GimpTransformTool    *tr_tool = GIMP_TRANSFORM_TOOL (tool);
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tool);
-  GimpCursorType        cursor;
-  GimpCursorModifier    modifier = GIMP_CURSOR_MODIFIER_NONE;
-  GimpImage            *image    = gimp_display_get_image (display);
+  PicmanTransformTool    *tr_tool = PICMAN_TRANSFORM_TOOL (tool);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (tool);
+  PicmanCursorType        cursor;
+  PicmanCursorModifier    modifier = PICMAN_CURSOR_MODIFIER_NONE;
+  PicmanImage            *image    = picman_display_get_image (display);
 
-  cursor = gimp_tool_control_get_cursor (tool->control);
+  cursor = picman_tool_control_get_cursor (tool->control);
 
   if (tr_tool->use_handles)
     {
       switch (tr_tool->function)
         {
         case TRANSFORM_HANDLE_NW:
-          cursor = GIMP_CURSOR_CORNER_TOP_LEFT;
+          cursor = PICMAN_CURSOR_CORNER_TOP_LEFT;
           break;
 
         case TRANSFORM_HANDLE_NE:
-          cursor = GIMP_CURSOR_CORNER_TOP_RIGHT;
+          cursor = PICMAN_CURSOR_CORNER_TOP_RIGHT;
           break;
 
         case TRANSFORM_HANDLE_SW:
-          cursor = GIMP_CURSOR_CORNER_BOTTOM_LEFT;
+          cursor = PICMAN_CURSOR_CORNER_BOTTOM_LEFT;
           break;
 
         case TRANSFORM_HANDLE_SE:
-          cursor = GIMP_CURSOR_CORNER_BOTTOM_RIGHT;
+          cursor = PICMAN_CURSOR_CORNER_BOTTOM_RIGHT;
           break;
 
         case TRANSFORM_HANDLE_N:
-          cursor = GIMP_CURSOR_SIDE_TOP;
+          cursor = PICMAN_CURSOR_SIDE_TOP;
           break;
 
         case TRANSFORM_HANDLE_E:
-          cursor = GIMP_CURSOR_SIDE_RIGHT;
+          cursor = PICMAN_CURSOR_SIDE_RIGHT;
           break;
 
         case TRANSFORM_HANDLE_S:
-          cursor = GIMP_CURSOR_SIDE_BOTTOM;
+          cursor = PICMAN_CURSOR_SIDE_BOTTOM;
           break;
 
         case TRANSFORM_HANDLE_W:
-          cursor = GIMP_CURSOR_SIDE_LEFT;
+          cursor = PICMAN_CURSOR_SIDE_LEFT;
           break;
 
         default:
-          cursor = GIMP_CURSOR_CROSSHAIR_SMALL;
+          cursor = PICMAN_CURSOR_CROSSHAIR_SMALL;
           break;
         }
     }
 
   if (tr_tool->use_center && tr_tool->function == TRANSFORM_HANDLE_CENTER)
     {
-      modifier = GIMP_CURSOR_MODIFIER_MOVE;
+      modifier = PICMAN_CURSOR_MODIFIER_MOVE;
     }
 
-  if (GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->cursor_update)
+  if (PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->cursor_update)
     {
-      GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->cursor_update (tr_tool, &cursor, &modifier);
+      PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->cursor_update (tr_tool, &cursor, &modifier);
     }
 
   switch (options->type)
     {
-      GimpDrawable *drawable = NULL;
-      GimpVectors  *vectors  = NULL;
+      PicmanDrawable *drawable = NULL;
+      PicmanVectors  *vectors  = NULL;
 
-    case GIMP_TRANSFORM_TYPE_LAYER:
-      drawable = gimp_image_get_active_drawable (image);
-      if (gimp_item_is_content_locked (GIMP_ITEM (drawable)) ||
-          gimp_item_is_position_locked (GIMP_ITEM (drawable)))
-        modifier = GIMP_CURSOR_MODIFIER_BAD;
+    case PICMAN_TRANSFORM_TYPE_LAYER:
+      drawable = picman_image_get_active_drawable (image);
+      if (picman_item_is_content_locked (PICMAN_ITEM (drawable)) ||
+          picman_item_is_position_locked (PICMAN_ITEM (drawable)))
+        modifier = PICMAN_CURSOR_MODIFIER_BAD;
       break;
 
-    case GIMP_TRANSFORM_TYPE_SELECTION:
+    case PICMAN_TRANSFORM_TYPE_SELECTION:
       break;
 
-    case GIMP_TRANSFORM_TYPE_PATH:
-      vectors = gimp_image_get_active_vectors (image);
+    case PICMAN_TRANSFORM_TYPE_PATH:
+      vectors = picman_image_get_active_vectors (image);
       if (! vectors ||
-          gimp_item_is_content_locked (GIMP_ITEM (vectors)) ||
-          gimp_item_is_position_locked (GIMP_ITEM (vectors)))
-        modifier = GIMP_CURSOR_MODIFIER_BAD;
+          picman_item_is_content_locked (PICMAN_ITEM (vectors)) ||
+          picman_item_is_position_locked (PICMAN_ITEM (vectors)))
+        modifier = PICMAN_CURSOR_MODIFIER_BAD;
       break;
     }
 
-  gimp_tool_control_set_cursor          (tool->control, cursor);
-  gimp_tool_control_set_cursor_modifier (tool->control, modifier);
+  picman_tool_control_set_cursor          (tool->control, cursor);
+  picman_tool_control_set_cursor_modifier (tool->control, modifier);
 
-  GIMP_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
+  PICMAN_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
 }
 
 static void
-gimp_transform_tool_options_notify (GimpTool         *tool,
-                                    GimpToolOptions  *options,
+picman_transform_tool_options_notify (PicmanTool         *tool,
+                                    PicmanToolOptions  *options,
                                     const GParamSpec *pspec)
 {
-  GimpTransformTool *tr_tool = GIMP_TRANSFORM_TOOL (tool);
+  PicmanTransformTool *tr_tool = PICMAN_TRANSFORM_TOOL (tool);
 
-  GIMP_TOOL_CLASS (parent_class)->options_notify (tool, options, pspec);
+  PICMAN_TOOL_CLASS (parent_class)->options_notify (tool, options, pspec);
 
   if (tr_tool->use_grid)
     {
-      gimp_draw_tool_pause (GIMP_DRAW_TOOL (tr_tool));
+      picman_draw_tool_pause (PICMAN_DRAW_TOOL (tr_tool));
 
       if (! strcmp (pspec->name, "type") ||
           ! strcmp (pspec->name, "direction"))
@@ -785,20 +785,20 @@ gimp_transform_tool_options_notify (GimpTool         *tool,
               if (tool->display)
                 {
                   /*  reget the selection bounds  */
-                  gimp_transform_tool_bounds (tr_tool, tool->display);
+                  picman_transform_tool_bounds (tr_tool, tool->display);
 
                   /*  recalculate the tool's transformation matrix  */
-                  gimp_transform_tool_recalc_matrix (tr_tool);
+                  picman_transform_tool_recalc_matrix (tr_tool);
                 }
             }
         }
 
       if (tr_tool->function != TRANSFORM_CREATING)
         {
-          gimp_transform_tool_transform_bounding_box (tr_tool);
+          picman_transform_tool_transform_bounding_box (tr_tool);
         }
 
-      gimp_draw_tool_resume (GIMP_DRAW_TOOL (tr_tool));
+      picman_draw_tool_resume (PICMAN_DRAW_TOOL (tr_tool));
     }
 
   if (g_str_has_prefix (pspec->name, "constrain-") ||
@@ -806,45 +806,45 @@ gimp_transform_tool_options_notify (GimpTool         *tool,
       ! strcmp (pspec->name, "fixedpivot") ||
       ! strcmp (pspec->name, "cornersnap"))
     {
-      gimp_transform_tool_dialog_update (tr_tool);
+      picman_transform_tool_dialog_update (tr_tool);
     }
 }
 
 static void
-gimp_transform_tool_real_draw_gui (GimpTransformTool *tr_tool, gint handle_w, gint handle_h)
+picman_transform_tool_real_draw_gui (PicmanTransformTool *tr_tool, gint handle_w, gint handle_h)
 {
-  GimpDrawTool *draw_tool = GIMP_DRAW_TOOL (tr_tool);
+  PicmanDrawTool *draw_tool = PICMAN_DRAW_TOOL (tr_tool);
 
   if (tr_tool->use_handles)
     {
       /*  draw the tool handles  */
       tr_tool->handles[TRANSFORM_HANDLE_NW] =
-        gimp_draw_tool_add_handle (draw_tool,
-                                   GIMP_HANDLE_SQUARE,
+        picman_draw_tool_add_handle (draw_tool,
+                                   PICMAN_HANDLE_SQUARE,
                                    tr_tool->tx1, tr_tool->ty1,
                                    handle_w, handle_h,
-                                   GIMP_HANDLE_ANCHOR_CENTER);
+                                   PICMAN_HANDLE_ANCHOR_CENTER);
 
       tr_tool->handles[TRANSFORM_HANDLE_NE] =
-        gimp_draw_tool_add_handle (draw_tool,
-                                   GIMP_HANDLE_SQUARE,
+        picman_draw_tool_add_handle (draw_tool,
+                                   PICMAN_HANDLE_SQUARE,
                                    tr_tool->tx2, tr_tool->ty2,
                                    handle_w, handle_h,
-                                   GIMP_HANDLE_ANCHOR_CENTER);
+                                   PICMAN_HANDLE_ANCHOR_CENTER);
 
       tr_tool->handles[TRANSFORM_HANDLE_SW] =
-        gimp_draw_tool_add_handle (draw_tool,
-                                   GIMP_HANDLE_SQUARE,
+        picman_draw_tool_add_handle (draw_tool,
+                                   PICMAN_HANDLE_SQUARE,
                                    tr_tool->tx3, tr_tool->ty3,
                                    handle_w, handle_h,
-                                   GIMP_HANDLE_ANCHOR_CENTER);
+                                   PICMAN_HANDLE_ANCHOR_CENTER);
 
       tr_tool->handles[TRANSFORM_HANDLE_SE] =
-        gimp_draw_tool_add_handle (draw_tool,
-                                   GIMP_HANDLE_SQUARE,
+        picman_draw_tool_add_handle (draw_tool,
+                                   PICMAN_HANDLE_SQUARE,
                                    tr_tool->tx4, tr_tool->ty4,
                                    handle_w, handle_h,
-                                   GIMP_HANDLE_ANCHOR_CENTER);
+                                   PICMAN_HANDLE_ANCHOR_CENTER);
 
       if (tr_tool->use_mid_handles)
         {
@@ -854,105 +854,105 @@ gimp_transform_tool_real_draw_gui (GimpTransformTool *tr_tool, gint handle_w, gi
           y = (tr_tool->ty1 + tr_tool->ty2) / 2.0;
 
           tr_tool->handles[TRANSFORM_HANDLE_N] =
-            gimp_draw_tool_add_handle (draw_tool,
-                                       GIMP_HANDLE_SQUARE,
+            picman_draw_tool_add_handle (draw_tool,
+                                       PICMAN_HANDLE_SQUARE,
                                        x, y,
                                        handle_w, handle_h,
-                                       GIMP_HANDLE_ANCHOR_CENTER);
+                                       PICMAN_HANDLE_ANCHOR_CENTER);
 
           x = (tr_tool->tx2 + tr_tool->tx4) / 2.0;
           y = (tr_tool->ty2 + tr_tool->ty4) / 2.0;
 
           tr_tool->handles[TRANSFORM_HANDLE_E] =
-            gimp_draw_tool_add_handle (draw_tool,
-                                       GIMP_HANDLE_SQUARE,
+            picman_draw_tool_add_handle (draw_tool,
+                                       PICMAN_HANDLE_SQUARE,
                                        x, y,
                                        handle_w, handle_h,
-                                       GIMP_HANDLE_ANCHOR_CENTER);
+                                       PICMAN_HANDLE_ANCHOR_CENTER);
 
           x = (tr_tool->tx3 + tr_tool->tx4) / 2.0;
           y = (tr_tool->ty3 + tr_tool->ty4) / 2.0;
 
           tr_tool->handles[TRANSFORM_HANDLE_S] =
-            gimp_draw_tool_add_handle (draw_tool,
-                                       GIMP_HANDLE_SQUARE,
+            picman_draw_tool_add_handle (draw_tool,
+                                       PICMAN_HANDLE_SQUARE,
                                        x, y,
                                        handle_w, handle_h,
-                                       GIMP_HANDLE_ANCHOR_CENTER);
+                                       PICMAN_HANDLE_ANCHOR_CENTER);
 
           x = (tr_tool->tx3 + tr_tool->tx1) / 2.0;
           y = (tr_tool->ty3 + tr_tool->ty1) / 2.0;
 
           tr_tool->handles[TRANSFORM_HANDLE_W] =
-            gimp_draw_tool_add_handle (draw_tool,
-                                       GIMP_HANDLE_SQUARE,
+            picman_draw_tool_add_handle (draw_tool,
+                                       PICMAN_HANDLE_SQUARE,
                                        x, y,
                                        handle_w, handle_h,
-                                       GIMP_HANDLE_ANCHOR_CENTER);
+                                       PICMAN_HANDLE_ANCHOR_CENTER);
         }
     }
 
   if (tr_tool->use_pivot)
     {
-      GimpCanvasGroup *stroke_group;
+      PicmanCanvasGroup *stroke_group;
       gint d = MIN (handle_w, handle_h);
       if (tr_tool->use_center)
         d *= 2; /* so you can grab it from under the center handle */
 
-      stroke_group = gimp_draw_tool_add_stroke_group (draw_tool);
+      stroke_group = picman_draw_tool_add_stroke_group (draw_tool);
 
-      tr_tool->handles[TRANSFORM_HANDLE_PIVOT] = GIMP_CANVAS_ITEM (stroke_group);
+      tr_tool->handles[TRANSFORM_HANDLE_PIVOT] = PICMAN_CANVAS_ITEM (stroke_group);
 
-      gimp_draw_tool_push_group (draw_tool, stroke_group);
+      picman_draw_tool_push_group (draw_tool, stroke_group);
 
-      gimp_draw_tool_add_handle (draw_tool,
-                                 GIMP_HANDLE_CIRCLE,
+      picman_draw_tool_add_handle (draw_tool,
+                                 PICMAN_HANDLE_CIRCLE,
                                  tr_tool->tpx, tr_tool->tpy,
                                  d, d,
-                                 GIMP_HANDLE_ANCHOR_CENTER);
-      gimp_draw_tool_add_handle (draw_tool,
-                                 GIMP_HANDLE_CROSS,
+                                 PICMAN_HANDLE_ANCHOR_CENTER);
+      picman_draw_tool_add_handle (draw_tool,
+                                 PICMAN_HANDLE_CROSS,
                                  tr_tool->tpx, tr_tool->tpy,
                                  d, d,
-                                 GIMP_HANDLE_ANCHOR_CENTER);
+                                 PICMAN_HANDLE_ANCHOR_CENTER);
 
-      gimp_draw_tool_pop_group (draw_tool);
+      picman_draw_tool_pop_group (draw_tool);
     }
 
   /*  draw the center  */
   if (tr_tool->use_center)
     {
-      GimpCanvasGroup *stroke_group;
+      PicmanCanvasGroup *stroke_group;
       gint             d = MIN (handle_w, handle_h);
 
-      stroke_group = gimp_draw_tool_add_stroke_group (draw_tool);
+      stroke_group = picman_draw_tool_add_stroke_group (draw_tool);
 
-      tr_tool->handles[TRANSFORM_HANDLE_CENTER] = GIMP_CANVAS_ITEM (stroke_group);
+      tr_tool->handles[TRANSFORM_HANDLE_CENTER] = PICMAN_CANVAS_ITEM (stroke_group);
 
-      gimp_draw_tool_push_group (draw_tool, stroke_group);
+      picman_draw_tool_push_group (draw_tool, stroke_group);
 
-      gimp_draw_tool_add_handle (draw_tool,
-                                 GIMP_HANDLE_SQUARE,
+      picman_draw_tool_add_handle (draw_tool,
+                                 PICMAN_HANDLE_SQUARE,
                                  tr_tool->tcx, tr_tool->tcy,
                                  d, d,
-                                 GIMP_HANDLE_ANCHOR_CENTER);
-      gimp_draw_tool_add_handle (draw_tool,
-                                 GIMP_HANDLE_CROSS,
+                                 PICMAN_HANDLE_ANCHOR_CENTER);
+      picman_draw_tool_add_handle (draw_tool,
+                                 PICMAN_HANDLE_CROSS,
                                  tr_tool->tcx, tr_tool->tcy,
                                  d, d,
-                                 GIMP_HANDLE_ANCHOR_CENTER);
+                                 PICMAN_HANDLE_ANCHOR_CENTER);
 
-      gimp_draw_tool_pop_group (draw_tool);
+      picman_draw_tool_pop_group (draw_tool);
     }
 }
 
 static void
-gimp_transform_tool_draw (GimpDrawTool *draw_tool)
+picman_transform_tool_draw (PicmanDrawTool *draw_tool)
 {
-  GimpTool             *tool    = GIMP_TOOL (draw_tool);
-  GimpTransformTool    *tr_tool = GIMP_TRANSFORM_TOOL (draw_tool);
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tool);
-  GimpImage            *image   = gimp_display_get_image (tool->display);
+  PicmanTool             *tool    = PICMAN_TOOL (draw_tool);
+  PicmanTransformTool    *tr_tool = PICMAN_TRANSFORM_TOOL (draw_tool);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (tool);
+  PicmanImage            *image   = picman_display_get_image (tool->display);
   gint                  handle_w;
   gint                  handle_h;
   gint                  i;
@@ -962,26 +962,26 @@ gimp_transform_tool_draw (GimpDrawTool *draw_tool)
 
   if (tr_tool->use_grid)
     {
-      if (gimp_transform_options_show_preview (options))
+      if (picman_transform_options_show_preview (options))
         {
-          GimpMatrix3 matrix = tr_tool->transform;
+          PicmanMatrix3 matrix = tr_tool->transform;
 
-          if (options->direction == GIMP_TRANSFORM_BACKWARD)
-            gimp_matrix3_invert (&matrix);
+          if (options->direction == PICMAN_TRANSFORM_BACKWARD)
+            picman_matrix3_invert (&matrix);
 
-          gimp_draw_tool_add_transform_preview (draw_tool,
+          picman_draw_tool_add_transform_preview (draw_tool,
                                                 tool->drawable,
                                                 &matrix,
                                                 tr_tool->x1,
                                                 tr_tool->y1,
                                                 tr_tool->x2,
                                                 tr_tool->y2,
-                                                GIMP_IS_PERSPECTIVE_TOOL (tr_tool) ||
-                                                GIMP_IS_UNIFIED_TRANSFORM_TOOL (tr_tool),
+                                                PICMAN_IS_PERSPECTIVE_TOOL (tr_tool) ||
+                                                PICMAN_IS_UNIFIED_TRANSFORM_TOOL (tr_tool),
                                                 options->preview_opacity);
         }
 
-      gimp_draw_tool_add_transform_guides (draw_tool,
+      picman_draw_tool_add_transform_guides (draw_tool,
                                            &tr_tool->transform,
                                            options->grid_type,
                                            options->grid_size,
@@ -991,37 +991,37 @@ gimp_transform_tool_draw (GimpDrawTool *draw_tool)
                                            tr_tool->y2);
     }
 
-  gimp_transform_tool_handles_recalc (tr_tool, tool->display,
+  picman_transform_tool_handles_recalc (tr_tool, tool->display,
                                       &handle_w, &handle_h);
 
-  GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->draw_gui (tr_tool, handle_w, handle_h);
+  PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->draw_gui (tr_tool, handle_w, handle_h);
 
   if (tr_tool->handles[tr_tool->function])
     {
-      gimp_canvas_item_set_highlight (tr_tool->handles[tr_tool->function],
+      picman_canvas_item_set_highlight (tr_tool->handles[tr_tool->function],
                                       TRUE);
     }
 
-  if (options->type == GIMP_TRANSFORM_TYPE_SELECTION)
+  if (options->type == PICMAN_TRANSFORM_TYPE_SELECTION)
     {
-      GimpMatrix3         matrix = tr_tool->transform;
-      const GimpBoundSeg *orig_in;
-      const GimpBoundSeg *orig_out;
-      GimpBoundSeg       *segs_in;
-      GimpBoundSeg       *segs_out;
+      PicmanMatrix3         matrix = tr_tool->transform;
+      const PicmanBoundSeg *orig_in;
+      const PicmanBoundSeg *orig_out;
+      PicmanBoundSeg       *segs_in;
+      PicmanBoundSeg       *segs_out;
       gint                num_segs_in;
       gint                num_segs_out;
 
-      if (options->direction == GIMP_TRANSFORM_BACKWARD)
-        gimp_matrix3_invert (&matrix);
+      if (options->direction == PICMAN_TRANSFORM_BACKWARD)
+        picman_matrix3_invert (&matrix);
 
-      gimp_channel_boundary (gimp_image_get_mask (image),
+      picman_channel_boundary (picman_image_get_mask (image),
                              &orig_in, &orig_out,
                              &num_segs_in, &num_segs_out,
                              0, 0, 0, 0);
 
-      segs_in  = g_memdup (orig_in,  num_segs_in  * sizeof (GimpBoundSeg));
-      segs_out = g_memdup (orig_out, num_segs_out * sizeof (GimpBoundSeg));
+      segs_in  = g_memdup (orig_in,  num_segs_in  * sizeof (PicmanBoundSeg));
+      segs_out = g_memdup (orig_out, num_segs_out * sizeof (PicmanBoundSeg));
 
       if (segs_in)
         {
@@ -1029,20 +1029,20 @@ gimp_transform_tool_draw (GimpDrawTool *draw_tool)
             {
               gdouble tx, ty;
 
-              gimp_matrix3_transform_point (&matrix,
+              picman_matrix3_transform_point (&matrix,
                                             segs_in[i].x1, segs_in[i].y1,
                                             &tx, &ty);
               segs_in[i].x1 = RINT (tx);
               segs_in[i].y1 = RINT (ty);
 
-              gimp_matrix3_transform_point (&matrix,
+              picman_matrix3_transform_point (&matrix,
                                             segs_in[i].x2, segs_in[i].y2,
                                             &tx, &ty);
               segs_in[i].x2 = RINT (tx);
               segs_in[i].y2 = RINT (ty);
             }
 
-          gimp_draw_tool_add_boundary (draw_tool,
+          picman_draw_tool_add_boundary (draw_tool,
                                        segs_in, num_segs_in,
                                        NULL,
                                        0, 0);
@@ -1055,45 +1055,45 @@ gimp_transform_tool_draw (GimpDrawTool *draw_tool)
             {
               gdouble tx, ty;
 
-              gimp_matrix3_transform_point (&matrix,
+              picman_matrix3_transform_point (&matrix,
                                             segs_out[i].x1, segs_out[i].y1,
                                             &tx, &ty);
               segs_out[i].x1 = RINT (tx);
               segs_out[i].y1 = RINT (ty);
 
-              gimp_matrix3_transform_point (&matrix,
+              picman_matrix3_transform_point (&matrix,
                                             segs_out[i].x2, segs_out[i].y2,
                                             &tx, &ty);
               segs_out[i].x2 = RINT (tx);
               segs_out[i].y2 = RINT (ty);
             }
 
-          gimp_draw_tool_add_boundary (draw_tool,
+          picman_draw_tool_add_boundary (draw_tool,
                                        segs_out, num_segs_out,
                                        NULL,
                                        0, 0);
           g_free (segs_out);
         }
     }
-  else if (options->type == GIMP_TRANSFORM_TYPE_PATH)
+  else if (options->type == PICMAN_TRANSFORM_TYPE_PATH)
     {
-      GimpVectors *vectors;
-      GimpStroke  *stroke = NULL;
-      GimpMatrix3  matrix = tr_tool->transform;
+      PicmanVectors *vectors;
+      PicmanStroke  *stroke = NULL;
+      PicmanMatrix3  matrix = tr_tool->transform;
 
-      vectors = gimp_image_get_active_vectors (image);
+      vectors = picman_image_get_active_vectors (image);
 
       if (vectors)
         {
-          if (options->direction == GIMP_TRANSFORM_BACKWARD)
-            gimp_matrix3_invert (&matrix);
+          if (options->direction == PICMAN_TRANSFORM_BACKWARD)
+            picman_matrix3_invert (&matrix);
 
-          while ((stroke = gimp_vectors_stroke_get_next (vectors, stroke)))
+          while ((stroke = picman_vectors_stroke_get_next (vectors, stroke)))
             {
               GArray   *coords;
               gboolean  closed;
 
-              coords = gimp_stroke_interpolate (stroke, 1.0, &closed);
+              coords = picman_stroke_interpolate (stroke, 1.0, &closed);
 
               if (coords && coords->len)
                 {
@@ -1101,16 +1101,16 @@ gimp_transform_tool_draw (GimpDrawTool *draw_tool)
 
                   for (i = 0; i < coords->len; i++)
                     {
-                      GimpCoords *curr = &g_array_index (coords, GimpCoords, i);
+                      PicmanCoords *curr = &g_array_index (coords, PicmanCoords, i);
 
-                      gimp_matrix3_transform_point (&matrix,
+                      picman_matrix3_transform_point (&matrix,
                                                     curr->x, curr->y,
                                                     &curr->x, &curr->y);
                     }
 
-                  gimp_draw_tool_add_strokes (draw_tool,
+                  picman_draw_tool_add_strokes (draw_tool,
                                               &g_array_index (coords,
-                                                              GimpCoords, 0),
+                                                              PicmanCoords, 0),
                                               coords->len, FALSE);
                 }
 
@@ -1122,36 +1122,36 @@ gimp_transform_tool_draw (GimpDrawTool *draw_tool)
 }
 
 static void
-gimp_transform_tool_dialog_update (GimpTransformTool *tr_tool)
+picman_transform_tool_dialog_update (PicmanTransformTool *tr_tool)
 {
   if (tr_tool->dialog &&
-      GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->dialog_update)
+      PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->dialog_update)
     {
-      GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->dialog_update (tr_tool);
+      PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->dialog_update (tr_tool);
     }
 }
 
 static GeglBuffer *
-gimp_transform_tool_real_transform (GimpTransformTool *tr_tool,
-                                    GimpItem          *active_item,
+picman_transform_tool_real_transform (PicmanTransformTool *tr_tool,
+                                    PicmanItem          *active_item,
                                     GeglBuffer        *orig_buffer,
                                     gint               orig_offset_x,
                                     gint               orig_offset_y,
                                     gint              *new_offset_x,
                                     gint              *new_offset_y)
 {
-  GimpTool             *tool    = GIMP_TOOL (tr_tool);
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tool);
-  GimpContext          *context = GIMP_CONTEXT (options);
+  PicmanTool             *tool    = PICMAN_TOOL (tr_tool);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (tool);
+  PicmanContext          *context = PICMAN_CONTEXT (options);
   GeglBuffer           *ret     = NULL;
-  GimpTransformResize   clip    = options->clip;
-  GimpProgress         *progress;
+  PicmanTransformResize   clip    = options->clip;
+  PicmanProgress         *progress;
 
-  progress = gimp_progress_start (GIMP_PROGRESS (tool),
+  progress = picman_progress_start (PICMAN_PROGRESS (tool),
                                   tr_tool->progress_text, FALSE);
 
-  if (gimp_item_get_linked (active_item))
-    gimp_item_linked_transform (active_item, context,
+  if (picman_item_get_linked (active_item))
+    picman_item_linked_transform (active_item, context,
                                 &tr_tool->transform,
                                 options->direction,
                                 options->interpolation,
@@ -1168,11 +1168,11 @@ gimp_transform_tool_real_transform (GimpTransformTool *tr_tool,
       /*  always clip the selction and unfloated channels
        *  so they keep their size
        */
-      if (GIMP_IS_CHANNEL (active_item) &&
+      if (PICMAN_IS_CHANNEL (active_item) &&
           ! babl_format_has_alpha (gegl_buffer_get_format (orig_buffer)))
-        clip = GIMP_TRANSFORM_RESIZE_CLIP;
+        clip = PICMAN_TRANSFORM_RESIZE_CLIP;
 
-      ret = gimp_drawable_transform_buffer_affine (GIMP_DRAWABLE (active_item),
+      ret = picman_drawable_transform_buffer_affine (PICMAN_DRAWABLE (active_item),
                                                    context,
                                                    orig_buffer,
                                                    orig_offset_x,
@@ -1192,10 +1192,10 @@ gimp_transform_tool_real_transform (GimpTransformTool *tr_tool,
 
       /*  always clip layer masks so they keep their size
        */
-      if (GIMP_IS_CHANNEL (active_item))
-        clip = GIMP_TRANSFORM_RESIZE_CLIP;
+      if (PICMAN_IS_CHANNEL (active_item))
+        clip = PICMAN_TRANSFORM_RESIZE_CLIP;
 
-      gimp_item_transform (active_item, context,
+      picman_item_transform (active_item, context,
                            &tr_tool->transform,
                            options->direction,
                            options->interpolation,
@@ -1205,20 +1205,20 @@ gimp_transform_tool_real_transform (GimpTransformTool *tr_tool,
     }
 
   if (progress)
-    gimp_progress_end (progress);
+    picman_progress_end (progress);
 
   return ret;
 }
 
 static void
-gimp_transform_tool_transform (GimpTransformTool *tr_tool,
-                               GimpDisplay       *display)
+picman_transform_tool_transform (PicmanTransformTool *tr_tool,
+                               PicmanDisplay       *display)
 {
-  GimpTool             *tool           = GIMP_TOOL (tr_tool);
-  GimpTransformOptions *options        = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tool);
-  GimpContext          *context        = GIMP_CONTEXT (options);
-  GimpImage            *image          = gimp_display_get_image (display);
-  GimpItem             *active_item    = NULL;
+  PicmanTool             *tool           = PICMAN_TOOL (tr_tool);
+  PicmanTransformOptions *options        = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (tool);
+  PicmanContext          *context        = PICMAN_CONTEXT (options);
+  PicmanImage            *image          = picman_display_get_image (display);
+  PicmanItem             *active_item    = NULL;
   GeglBuffer           *orig_buffer    = NULL;
   gint                  orig_offset_x;
   gint                  orig_offset_y;
@@ -1232,32 +1232,32 @@ gimp_transform_tool_transform (GimpTransformTool *tr_tool,
 
   switch (options->type)
     {
-    case GIMP_TRANSFORM_TYPE_LAYER:
-      active_item  = GIMP_ITEM (gimp_image_get_active_drawable (image));
+    case PICMAN_TRANSFORM_TYPE_LAYER:
+      active_item  = PICMAN_ITEM (picman_image_get_active_drawable (image));
       null_message = _("There is no layer to transform.");
 
-      if (gimp_item_is_content_locked (active_item))
+      if (picman_item_is_content_locked (active_item))
         locked_message = _("The active layer's pixels are locked.");
       else
         locked_message = _("The active layer's position and size are locked.");
       break;
 
-    case GIMP_TRANSFORM_TYPE_SELECTION:
-      active_item  = GIMP_ITEM (gimp_image_get_mask (image));
+    case PICMAN_TRANSFORM_TYPE_SELECTION:
+      active_item  = PICMAN_ITEM (picman_image_get_mask (image));
       /* cannot happen, so don't translate these messages */
       null_message = "There is no selection to transform.";
 
-      if (gimp_item_is_content_locked (active_item))
+      if (picman_item_is_content_locked (active_item))
         locked_message = "The selection's pixels are locked.";
       else
         locked_message = "The selection's position and size are locked.";
       break;
 
-    case GIMP_TRANSFORM_TYPE_PATH:
-      active_item  = GIMP_ITEM (gimp_image_get_active_vectors (image));
+    case PICMAN_TRANSFORM_TYPE_PATH:
+      active_item  = PICMAN_ITEM (picman_image_get_active_vectors (image));
       null_message = _("There is no path to transform.");
 
-      if (gimp_item_is_content_locked (active_item))
+      if (picman_item_is_content_locked (active_item))
         locked_message = _("The active path's strokes are locked.");
       else
         locked_message = _("The active path's position is locked.");
@@ -1266,41 +1266,41 @@ gimp_transform_tool_transform (GimpTransformTool *tr_tool,
 
   if (! active_item)
     {
-      gimp_tool_message_literal (tool, display, null_message);
-      gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, display);
+      picman_tool_message_literal (tool, display, null_message);
+      picman_tool_control (tool, PICMAN_TOOL_ACTION_HALT, display);
       return;
     }
 
-  if (gimp_item_is_content_locked (active_item) ||
-      gimp_item_is_position_locked (active_item))
+  if (picman_item_is_content_locked (active_item) ||
+      picman_item_is_position_locked (active_item))
     {
-      gimp_tool_message_literal (tool, display, locked_message);
-      gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, display);
+      picman_tool_message_literal (tool, display, locked_message);
+      picman_tool_control (tool, PICMAN_TOOL_ACTION_HALT, display);
       return;
     }
 
   if (tr_tool->dialog)
-    gimp_dialog_factory_hide_dialog (tr_tool->dialog);
+    picman_dialog_factory_hide_dialog (tr_tool->dialog);
 
-  gimp_set_busy (display->gimp);
+  picman_set_busy (display->picman);
 
   /* undraw the tool before we muck around with the transform matrix */
-  gimp_draw_tool_stop (GIMP_DRAW_TOOL (tr_tool));
+  picman_draw_tool_stop (PICMAN_DRAW_TOOL (tr_tool));
 
   /*  We're going to dirty this image, but we want to keep the tool around  */
-  gimp_tool_control_push_preserve (tool->control, TRUE);
+  picman_tool_control_push_preserve (tool->control, TRUE);
 
-  undo_desc = GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->get_undo_desc (tr_tool);
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_TRANSFORM, undo_desc);
+  undo_desc = PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->get_undo_desc (tr_tool);
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_TRANSFORM, undo_desc);
   g_free (undo_desc);
 
   switch (options->type)
     {
-    case GIMP_TRANSFORM_TYPE_LAYER:
-      if (! gimp_viewable_get_children (GIMP_VIEWABLE (tool->drawable)) &&
-          ! gimp_channel_is_empty (gimp_image_get_mask (image)))
+    case PICMAN_TRANSFORM_TYPE_LAYER:
+      if (! picman_viewable_get_children (PICMAN_VIEWABLE (tool->drawable)) &&
+          ! picman_channel_is_empty (picman_image_get_mask (image)))
         {
-          orig_buffer = gimp_drawable_transform_cut (tool->drawable,
+          orig_buffer = picman_drawable_transform_cut (tool->drawable,
                                                      context,
                                                      &orig_offset_x,
                                                      &orig_offset_y,
@@ -1308,19 +1308,19 @@ gimp_transform_tool_transform (GimpTransformTool *tr_tool,
         }
       break;
 
-    case GIMP_TRANSFORM_TYPE_SELECTION:
-      orig_buffer = g_object_ref (gimp_drawable_get_buffer (GIMP_DRAWABLE (active_item)));
+    case PICMAN_TRANSFORM_TYPE_SELECTION:
+      orig_buffer = g_object_ref (picman_drawable_get_buffer (PICMAN_DRAWABLE (active_item)));
       orig_offset_x = 0;
       orig_offset_y = 0;
       break;
 
-    case GIMP_TRANSFORM_TYPE_PATH:
+    case PICMAN_TRANSFORM_TYPE_PATH:
       break;
     }
 
   /*  Send the request for the transformation to the tool...
    */
-  new_buffer = GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->transform (tr_tool,
+  new_buffer = PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->transform (tr_tool,
                                                                    active_item,
                                                                    orig_buffer,
                                                                    orig_offset_x,
@@ -1333,97 +1333,97 @@ gimp_transform_tool_transform (GimpTransformTool *tr_tool,
 
   switch (options->type)
     {
-    case GIMP_TRANSFORM_TYPE_LAYER:
+    case PICMAN_TRANSFORM_TYPE_LAYER:
       if (new_buffer)
         {
           /*  paste the new transformed image to the image...also implement
            *  undo...
            */
-          gimp_drawable_transform_paste (tool->drawable, new_buffer,
+          picman_drawable_transform_paste (tool->drawable, new_buffer,
                                          new_offset_x, new_offset_y,
                                          new_layer);
           g_object_unref (new_buffer);
         }
       break;
 
-     case GIMP_TRANSFORM_TYPE_SELECTION:
+     case PICMAN_TRANSFORM_TYPE_SELECTION:
       if (new_buffer)
         {
-          gimp_channel_push_undo (GIMP_CHANNEL (active_item), NULL);
+          picman_channel_push_undo (PICMAN_CHANNEL (active_item), NULL);
 
-          gimp_drawable_set_buffer (GIMP_DRAWABLE (active_item),
+          picman_drawable_set_buffer (PICMAN_DRAWABLE (active_item),
                                     FALSE, NULL, new_buffer);
           g_object_unref (new_buffer);
         }
       break;
 
-    case GIMP_TRANSFORM_TYPE_PATH:
+    case PICMAN_TRANSFORM_TYPE_PATH:
       /*  Nothing to be done  */
       break;
     }
 
-  gimp_image_undo_push (image, GIMP_TYPE_TRANSFORM_TOOL_UNDO,
-                        GIMP_UNDO_TRANSFORM, NULL,
+  picman_image_undo_push (image, PICMAN_TYPE_TRANSFORM_TOOL_UNDO,
+                        PICMAN_UNDO_TRANSFORM, NULL,
                         0,
                         "transform-tool", tr_tool,
                         NULL);
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
   /*  We're done dirtying the image, and would like to be restarted if
    *  the image gets dirty while the tool exists
    */
-  gimp_tool_control_pop_preserve (tool->control);
+  picman_tool_control_pop_preserve (tool->control);
 
-  gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, display);
+  picman_tool_control (tool, PICMAN_TOOL_ACTION_HALT, display);
 
-  gimp_unset_busy (display->gimp);
+  picman_unset_busy (display->picman);
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 }
 
 static void
-gimp_transform_tool_set_function (GimpTransformTool *tr_tool,
+picman_transform_tool_set_function (PicmanTransformTool *tr_tool,
                                   TransformAction    function)
 {
   if (function != tr_tool->function)
     {
       if (tr_tool->handles[tr_tool->function] &&
-          gimp_draw_tool_is_active (GIMP_DRAW_TOOL (tr_tool)))
+          picman_draw_tool_is_active (PICMAN_DRAW_TOOL (tr_tool)))
         {
-          gimp_canvas_item_set_highlight (tr_tool->handles[tr_tool->function],
+          picman_canvas_item_set_highlight (tr_tool->handles[tr_tool->function],
                                           FALSE);
         }
 
       tr_tool->function = function;
 
       if (tr_tool->handles[tr_tool->function] &&
-          gimp_draw_tool_is_active (GIMP_DRAW_TOOL (tr_tool)))
+          picman_draw_tool_is_active (PICMAN_DRAW_TOOL (tr_tool)))
         {
-          gimp_canvas_item_set_highlight (tr_tool->handles[tr_tool->function],
+          picman_canvas_item_set_highlight (tr_tool->handles[tr_tool->function],
                                           TRUE);
         }
     }
 }
 
 static void
-gimp_transform_tool_transform_bounding_box (GimpTransformTool *tr_tool)
+picman_transform_tool_transform_bounding_box (PicmanTransformTool *tr_tool)
 {
-  g_return_if_fail (GIMP_IS_TRANSFORM_TOOL (tr_tool));
+  g_return_if_fail (PICMAN_IS_TRANSFORM_TOOL (tr_tool));
 
-  gimp_matrix3_transform_point (&tr_tool->transform,
+  picman_matrix3_transform_point (&tr_tool->transform,
                                 tr_tool->x1, tr_tool->y1,
                                 &tr_tool->tx1, &tr_tool->ty1);
-  gimp_matrix3_transform_point (&tr_tool->transform,
+  picman_matrix3_transform_point (&tr_tool->transform,
                                 tr_tool->x2, tr_tool->y1,
                                 &tr_tool->tx2, &tr_tool->ty2);
-  gimp_matrix3_transform_point (&tr_tool->transform,
+  picman_matrix3_transform_point (&tr_tool->transform,
                                 tr_tool->x1, tr_tool->y2,
                                 &tr_tool->tx3, &tr_tool->ty3);
-  gimp_matrix3_transform_point (&tr_tool->transform,
+  picman_matrix3_transform_point (&tr_tool->transform,
                                 tr_tool->x2, tr_tool->y2,
                                 &tr_tool->tx4, &tr_tool->ty4);
-  gimp_matrix3_transform_point (&tr_tool->transform,
+  picman_matrix3_transform_point (&tr_tool->transform,
                                 tr_tool->px, tr_tool->py,
                                 &tr_tool->tpx, &tr_tool->tpy);
 
@@ -1442,25 +1442,25 @@ gimp_transform_tool_transform_bounding_box (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_transform_tool_bounds (GimpTransformTool *tr_tool,
-                            GimpDisplay       *display)
+picman_transform_tool_bounds (PicmanTransformTool *tr_tool,
+                            PicmanDisplay       *display)
 {
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
-  GimpImage            *image   = gimp_display_get_image (display);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
+  PicmanImage            *image   = picman_display_get_image (display);
 
   switch (options->type)
     {
-    case GIMP_TRANSFORM_TYPE_LAYER:
+    case PICMAN_TRANSFORM_TYPE_LAYER:
       {
-        GimpDrawable *drawable;
+        PicmanDrawable *drawable;
         gint          offset_x;
         gint          offset_y;
 
-        drawable = gimp_image_get_active_drawable (image);
+        drawable = picman_image_get_active_drawable (image);
 
-        gimp_item_get_offset (GIMP_ITEM (drawable), &offset_x, &offset_y);
+        picman_item_get_offset (PICMAN_ITEM (drawable), &offset_x, &offset_y);
 
-        gimp_item_mask_bounds (GIMP_ITEM (drawable),
+        picman_item_mask_bounds (PICMAN_ITEM (drawable),
                                &tr_tool->x1, &tr_tool->y1,
                                &tr_tool->x2, &tr_tool->y2);
         tr_tool->x1 += offset_x;
@@ -1470,9 +1470,9 @@ gimp_transform_tool_bounds (GimpTransformTool *tr_tool,
       }
       break;
 
-    case GIMP_TRANSFORM_TYPE_SELECTION:
-    case GIMP_TRANSFORM_TYPE_PATH:
-      gimp_channel_bounds (gimp_image_get_mask (image),
+    case PICMAN_TRANSFORM_TYPE_SELECTION:
+    case PICMAN_TRANSFORM_TYPE_PATH:
+      picman_channel_bounds (picman_image_get_mask (image),
                            &tr_tool->x1, &tr_tool->y1,
                            &tr_tool->x2, &tr_tool->y2);
       break;
@@ -1483,8 +1483,8 @@ gimp_transform_tool_bounds (GimpTransformTool *tr_tool,
 }
 
 static void
-gimp_transform_tool_handles_recalc (GimpTransformTool *tr_tool,
-                                    GimpDisplay       *display,
+picman_transform_tool_handles_recalc (PicmanTransformTool *tr_tool,
+                                    PicmanDisplay       *display,
                                     gint              *handle_w,
                                     gint              *handle_h)
 {
@@ -1495,16 +1495,16 @@ gimp_transform_tool_handles_recalc (GimpTransformTool *tr_tool,
   gint x1, y1;
   gint x2, y2;
 
-  gimp_display_shell_transform_xy (gimp_display_get_shell (display),
+  picman_display_shell_transform_xy (picman_display_get_shell (display),
                                    tr_tool->tx1, tr_tool->ty1,
                                    &dx1, &dy1);
-  gimp_display_shell_transform_xy (gimp_display_get_shell (display),
+  picman_display_shell_transform_xy (picman_display_get_shell (display),
                                    tr_tool->tx2, tr_tool->ty2,
                                    &dx2, &dy2);
-  gimp_display_shell_transform_xy (gimp_display_get_shell (display),
+  picman_display_shell_transform_xy (picman_display_get_shell (display),
                                    tr_tool->tx3, tr_tool->ty3,
                                    &dx3, &dy3);
-  gimp_display_shell_transform_xy (gimp_display_get_shell (display),
+  picman_display_shell_transform_xy (picman_display_get_shell (display),
                                    tr_tool->tx4, tr_tool->ty4,
                                    &dx4, &dy4);
 
@@ -1514,27 +1514,27 @@ gimp_transform_tool_handles_recalc (GimpTransformTool *tr_tool,
   y2 = MAX4 (dy1, dy2, dy3, dy4);
 
   *handle_w = CLAMP ((x2 - x1) / 3,
-                     MIN_HANDLE_SIZE, GIMP_TOOL_HANDLE_SIZE_LARGE);
+                     MIN_HANDLE_SIZE, PICMAN_TOOL_HANDLE_SIZE_LARGE);
   *handle_h = CLAMP ((y2 - y1) / 3,
-                     MIN_HANDLE_SIZE, GIMP_TOOL_HANDLE_SIZE_LARGE);
+                     MIN_HANDLE_SIZE, PICMAN_TOOL_HANDLE_SIZE_LARGE);
 }
 
 static void
-gimp_transform_tool_dialog (GimpTransformTool *tr_tool)
+picman_transform_tool_dialog (PicmanTransformTool *tr_tool)
 {
-  GimpTool     *tool      = GIMP_TOOL (tr_tool);
-  GimpToolInfo *tool_info = tool->tool_info;
+  PicmanTool     *tool      = PICMAN_TOOL (tr_tool);
+  PicmanToolInfo *tool_info = tool->tool_info;
   const gchar  *stock_id;
 
-  if (! GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->dialog)
+  if (! PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->dialog)
     return;
 
-  stock_id = gimp_viewable_get_stock_id (GIMP_VIEWABLE (tool_info));
+  stock_id = picman_viewable_get_stock_id (PICMAN_VIEWABLE (tool_info));
 
-  tr_tool->dialog = gimp_tool_dialog_new (tool_info,
-                                          gimp_display_get_shell (tool->display),
+  tr_tool->dialog = picman_tool_dialog_new (tool_info,
+                                          picman_display_get_shell (tool->display),
                                           tool_info->blurb,
-                                          GIMP_STOCK_RESET, RESPONSE_RESET,
+                                          PICMAN_STOCK_RESET, RESPONSE_RESET,
                                           GTK_STOCK_UNDO, RESPONSE_UNDO,
                                           GTK_STOCK_REDO, RESPONSE_REDO,
                                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -1551,55 +1551,55 @@ gimp_transform_tool_dialog (GimpTransformTool *tr_tool)
                                            -1);
 
   g_signal_connect (tr_tool->dialog, "response",
-                    G_CALLBACK (gimp_transform_tool_response),
+                    G_CALLBACK (picman_transform_tool_response),
                     tr_tool);
 
-  GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->dialog (tr_tool);
+  PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->dialog (tr_tool);
 }
 
 static void
-gimp_transform_tool_prepare (GimpTransformTool *tr_tool,
-                             GimpDisplay       *display)
+picman_transform_tool_prepare (PicmanTransformTool *tr_tool,
+                             PicmanDisplay       *display)
 {
   if (tr_tool->dialog)
     {
-      GimpTransformOptions *options  = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
-      GimpImage            *image    = gimp_display_get_image (display);
-      GimpDrawable         *drawable = gimp_image_get_active_drawable (image);
+      PicmanTransformOptions *options  = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
+      PicmanImage            *image    = picman_display_get_image (display);
+      PicmanDrawable         *drawable = picman_image_get_active_drawable (image);
 
-      gimp_viewable_dialog_set_viewable (GIMP_VIEWABLE_DIALOG (tr_tool->dialog),
-                                         GIMP_VIEWABLE (drawable),
-                                         GIMP_CONTEXT (options));
-      gimp_tool_dialog_set_shell (GIMP_TOOL_DIALOG (tr_tool->dialog),
-                                  gimp_display_get_shell (display));
+      picman_viewable_dialog_set_viewable (PICMAN_VIEWABLE_DIALOG (tr_tool->dialog),
+                                         PICMAN_VIEWABLE (drawable),
+                                         PICMAN_CONTEXT (options));
+      picman_tool_dialog_set_shell (PICMAN_TOOL_DIALOG (tr_tool->dialog),
+                                  picman_display_get_shell (display));
     }
 
-  if (GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->prepare)
-    GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->prepare (tr_tool);
+  if (PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->prepare)
+    PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->prepare (tr_tool);
 }
 
 void
-gimp_transform_tool_recalc_matrix (GimpTransformTool *tr_tool)
+picman_transform_tool_recalc_matrix (PicmanTransformTool *tr_tool)
 {
-  g_return_if_fail (GIMP_IS_TRANSFORM_TOOL (tr_tool));
+  g_return_if_fail (PICMAN_IS_TRANSFORM_TOOL (tr_tool));
 
-  if (GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->recalc_matrix)
-    GIMP_TRANSFORM_TOOL_GET_CLASS (tr_tool)->recalc_matrix (tr_tool);
+  if (PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->recalc_matrix)
+    PICMAN_TRANSFORM_TOOL_GET_CLASS (tr_tool)->recalc_matrix (tr_tool);
 
-  gimp_transform_tool_transform_bounding_box (tr_tool);
+  picman_transform_tool_transform_bounding_box (tr_tool);
 
-  gimp_transform_tool_dialog_update (tr_tool);
+  picman_transform_tool_dialog_update (tr_tool);
 
   if (tr_tool->dialog)
     gtk_widget_show (tr_tool->dialog);
 }
 
 static void
-gimp_transform_tool_response (GtkWidget         *widget,
+picman_transform_tool_response (GtkWidget         *widget,
                               gint               response_id,
-                              GimpTransformTool *tr_tool)
+                              PicmanTransformTool *tr_tool)
 {
-  GimpTool *tool = GIMP_TOOL (tr_tool);
+  PicmanTool *tool = PICMAN_TOOL (tr_tool);
   GList    *it   = tr_tool->redo_list;
   gint      i;
 
@@ -1647,7 +1647,7 @@ gimp_transform_tool_response (GtkWidget         *widget,
               }
             update_sensitivity (tr_tool);
 
-            gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
+            picman_draw_tool_pause (PICMAN_DRAW_TOOL (tool));
 
             /*  Restore the previous transformation info  */
             for (i = 0; i < TRANS_INFO_SIZE; i++)
@@ -1656,23 +1656,23 @@ gimp_transform_tool_response (GtkWidget         *widget,
               }
 
             /*  reget the selection bounds  */
-            gimp_transform_tool_bounds (tr_tool, tool->display);
+            picman_transform_tool_bounds (tr_tool, tool->display);
 
             /*  recalculate the tool's transformation matrix  */
-            gimp_transform_tool_recalc_matrix (tr_tool);
+            picman_transform_tool_recalc_matrix (tr_tool);
 
-            gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
+            picman_draw_tool_resume (PICMAN_DRAW_TOOL (tool));
           }
       }
       break;
 
     case GTK_RESPONSE_OK:
       g_return_if_fail (tool->display != NULL);
-      gimp_transform_tool_transform (tr_tool, tool->display);
+      picman_transform_tool_transform (tr_tool, tool->display);
       break;
 
     default:
-      gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, tool->display);
+      picman_tool_control (tool, PICMAN_TOOL_ACTION_HALT, tool->display);
       break;
     }
 }
@@ -1684,7 +1684,7 @@ free_trans (gpointer data)
 }
 
 static void
-update_sensitivity (GimpTransformTool *tr_tool)
+update_sensitivity (PicmanTransformTool *tr_tool)
 {
   if (!tr_tool->dialog)
     return;

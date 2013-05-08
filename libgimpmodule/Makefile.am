@@ -1,49 +1,49 @@
 ## Process this file with automake to produce Makefile.in
 
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
 
 if PLATFORM_WIN32
 no_undefined = -no-undefined
 endif
 
 if OS_WIN32
-gimpmodule_def = gimpmodule.def
-libgimpmodule_export_symbols = -export-symbols gimpmodule.def
+picmanmodule_def = picmanmodule.def
+libpicmanmodule_export_symbols = -export-symbols picmanmodule.def
 
 install-libtool-import-lib:
-	$(INSTALL) .libs/libgimpmodule-$(GIMP_API_VERSION).dll.a $(DESTDIR)$(libdir)
-	$(INSTALL) gimpmodule.def $(DESTDIR)$(libdir)
+	$(INSTALL) .libs/libpicmanmodule-$(PICMAN_API_VERSION).dll.a $(DESTDIR)$(libdir)
+	$(INSTALL) picmanmodule.def $(DESTDIR)$(libdir)
 
 uninstall-libtool-import-lib:
-	-rm $(DESTDIR)$(libdir)/libgimpmodule-$(GIMP_API_VERSION).dll.a
-	-rm $(DESTDIR)$(libdir)/gimpmodule.def
+	-rm $(DESTDIR)$(libdir)/libpicmanmodule-$(PICMAN_API_VERSION).dll.a
+	-rm $(DESTDIR)$(libdir)/picmanmodule.def
 else
 install-libtool-import-lib:
 uninstall-libtool-import-lib:
 endif
 
 if MS_LIB_AVAILABLE
-noinst_DATA = gimpmodule-$(GIMP_API_VERSION).lib
+noinst_DATA = picmanmodule-$(PICMAN_API_VERSION).lib
 
 install-ms-lib:
-	$(INSTALL) gimpmodule-$(GIMP_API_VERSION).lib $(DESTDIR)$(libdir)
+	$(INSTALL) picmanmodule-$(PICMAN_API_VERSION).lib $(DESTDIR)$(libdir)
 
 uninstall-ms-lib:
-	-rm $(DESTDIR)$(libdir)/gimpmodule-$(GIMP_API_VERSION).lib
+	-rm $(DESTDIR)$(libdir)/picmanmodule-$(PICMAN_API_VERSION).lib
 
-gimpmodule-@GIMP_API_VERSION@.lib: gimpmodule.def
-	lib -name:libgimpmodule-$(GIMP_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:gimpmodule.def -out:$@
+picmanmodule-@PICMAN_API_VERSION@.lib: picmanmodule.def
+	lib -name:libpicmanmodule-$(PICMAN_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:picmanmodule.def -out:$@
 
 else
 install-ms-lib:
 uninstall-ms-lib:
 endif
 
-libgimpmoduleincludedir = $(includedir)/gimp-$(GIMP_API_VERSION)/libgimpmodule
+libpicmanmoduleincludedir = $(includedir)/picman-$(PICMAN_API_VERSION)/libpicmanmodule
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"LibGimpModule\"	\
-	-DGIMP_MODULE_COMPILATION
+	-DG_LOG_DOMAIN=\"LibPicmanModule\"	\
+	-DPICMAN_MODULE_COMPILATION
 
 INCLUDES = \
 	-I$(top_srcdir)			\
@@ -52,31 +52,31 @@ INCLUDES = \
 	-I$(includedir)
 
 EXTRA_DIST = \
-	gimpmodule.def
+	picmanmodule.def
 
-lib_LTLIBRARIES = libgimpmodule-@GIMP_API_VERSION@.la
+lib_LTLIBRARIES = libpicmanmodule-@PICMAN_API_VERSION@.la
 
-libgimpmodule_@GIMP_API_VERSION@_la_SOURCES = \
-	gimpmoduletypes.h	\
-	gimpmodule.c		\
-	gimpmodule.h		\
-	gimpmoduledb.c		\
-	gimpmoduledb.h
+libpicmanmodule_@PICMAN_API_VERSION@_la_SOURCES = \
+	picmanmoduletypes.h	\
+	picmanmodule.c		\
+	picmanmodule.h		\
+	picmanmoduledb.c		\
+	picmanmoduledb.h
 
-libgimpmoduleinclude_HEADERS = \
-	gimpmoduletypes.h	\
-	gimpmodule.h		\
-	gimpmoduledb.h
+libpicmanmoduleinclude_HEADERS = \
+	picmanmoduletypes.h	\
+	picmanmodule.h		\
+	picmanmoduledb.h
 
-libgimpmodule_@GIMP_API_VERSION@_la_LDFLAGS = \
+libpicmanmodule_@PICMAN_API_VERSION@_la_LDFLAGS = \
 	-version-info $(LT_VERSION_INFO)	\
 	$(no_undefined) 			\
-	$(libgimpmodule_export_symbols)
+	$(libpicmanmodule_export_symbols)
 
-libgimpmodule_@GIMP_API_VERSION@_la_DEPENDENCIES = $(gimpmodule_def)
+libpicmanmodule_@PICMAN_API_VERSION@_la_DEPENDENCIES = $(picmanmodule_def)
 
-libgimpmodule_@GIMP_API_VERSION@_la_LIBADD = \
-	$(libgimpbase)			\
+libpicmanmodule_@PICMAN_API_VERSION@_la_LIBADD = \
+	$(libpicmanbase)			\
 	$(GMODULE_NO_EXPORT_LIBS) 	\
 	$(GLIB_LIBS)
 

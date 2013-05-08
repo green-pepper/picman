@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpGrid
- * Copyright (C) 2003  Henrik Brix Andersen <brix@gimp.org>
+ * PicmanGrid
+ * Copyright (C) 2003  Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,49 +18,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GRID_H__
-#define __GIMP_GRID_H__
+#ifndef __PICMAN_GRID_H__
+#define __PICMAN_GRID_H__
 
 
-#include "gimpobject.h"
+#include "picmanobject.h"
 
 
-#define GIMP_TYPE_GRID            (gimp_grid_get_type ())
-#define GIMP_GRID(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_GRID, GimpGrid))
-#define GIMP_GRID_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_GRID, GimpGridClass))
-#define GIMP_IS_GRID(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_GRID))
-#define GIMP_IS_GRID_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_GRID))
-#define GIMP_GRID_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_GRID, GimpGridClass))
+#define PICMAN_TYPE_GRID            (picman_grid_get_type ())
+#define PICMAN_GRID(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_GRID, PicmanGrid))
+#define PICMAN_GRID_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_GRID, PicmanGridClass))
+#define PICMAN_IS_GRID(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_GRID))
+#define PICMAN_IS_GRID_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_GRID))
+#define PICMAN_GRID_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_GRID, PicmanGridClass))
 
 
-typedef struct _GimpGridClass  GimpGridClass;
+typedef struct _PicmanGridClass  PicmanGridClass;
 
-struct _GimpGrid
+struct _PicmanGrid
 {
-  GimpObject     parent_instance;
+  PicmanObject     parent_instance;
 
-  GimpGridStyle  style;
-  GimpRGB        fgcolor;
-  GimpRGB        bgcolor;
+  PicmanGridStyle  style;
+  PicmanRGB        fgcolor;
+  PicmanRGB        bgcolor;
   gdouble        xspacing;
   gdouble        yspacing;
-  GimpUnit       spacing_unit;
+  PicmanUnit       spacing_unit;
   gdouble        xoffset;
   gdouble        yoffset;
-  GimpUnit       offset_unit;
+  PicmanUnit       offset_unit;
 };
 
 
-struct _GimpGridClass
+struct _PicmanGridClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType          gimp_grid_get_type               (void) G_GNUC_CONST;
-const gchar  * gimp_grid_parasite_name          (void) G_GNUC_CONST;
-GimpParasite * gimp_grid_to_parasite            (const GimpGrid     *grid);
-GimpGrid     * gimp_grid_from_parasite          (const GimpParasite *parasite);
+GType          picman_grid_get_type               (void) G_GNUC_CONST;
+const gchar  * picman_grid_parasite_name          (void) G_GNUC_CONST;
+PicmanParasite * picman_grid_to_parasite            (const PicmanGrid     *grid);
+PicmanGrid     * picman_grid_from_parasite          (const PicmanParasite *parasite);
 
 
-#endif /* __GIMP_GRID_H__ */
+#endif /* __PICMAN_GRID_H__ */

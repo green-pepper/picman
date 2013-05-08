@@ -1,22 +1,22 @@
 
-                        How to do a GIMP release
+                        How to do a PICMAN release
                       ----------------------------
-                  a check-list for doing a GIMP release
+                  a check-list for doing a PICMAN release
 
 
- ( ) Check that you have working ssh access to ftp.gimp.org and that you
+ ( ) Check that you have working ssh access to ftp.picman.org and that you
      are a member of the ftp group.
 
- ( ) Check that ftp.gimp.org has enough space to upload the release and to
+ ( ) Check that ftp.picman.org has enough space to upload the release and to
      place it into the FTP area. If not, make place or ask Yosh to do that.
 
- ( ) Check that you have admin access to the GIMP product on
-     bugzilla.gimp.org and to the news section on www.gimp.org, or that
+ ( ) Check that you have admin access to the PICMAN product on
+     bugzilla.picman.org and to the news section on www.picman.org, or that
      someone can do the changes for you.
 
  ( ) Check if NEWS, authors.xml (and the generated AUTHORS), README or
      INSTALL need to be updated, as well as any release notes on
-     gimp.org. Don't forget to add any "Index of new symbols in GIMP
+     picman.org. Don't forget to add any "Index of new symbols in PICMAN
      2.x" to the gtk-doc generated devel-docs.
 
  ( ) Does the splash screen need to be changed?
@@ -28,7 +28,7 @@
 
  ( ) Make dist tarballs:
 
-     [ ] Start with a checkout of the GIMP tree. Make sure the checkout
+     [ ] Start with a checkout of the PICMAN tree. Make sure the checkout
          is up to date, clean from uncommitted changes.
 
      [ ] Run 'git clean -x -d -f' (Warning: you will lose any files that
@@ -64,14 +64,14 @@
  ( ) Use md5sum to create a checksum of the tarball (tar.bz2).
 
  ( ) Upload the tarball (tar.bz2) and the .md5 file to your home directory
-     on ftp.gimp.org.  Keep a copy of the .md5 file around.
+     on ftp.picman.org.  Keep a copy of the .md5 file around.
 
  ( ) Tag the release (don't forget to push the tag)
-        git tag -s GIMP_2_x_y
-        git push origin GIMP_2_x_y
+        git tag -s PICMAN_2_x_y
+        git push origin PICMAN_2_x_y
 
  ( ) Move the tarball and the .md5 file to its final destination in the
-     FTP area (/ftp/pub/gimp/v2.x).
+     FTP area (/ftp/pub/picman/v2.x).
 
  ( ) Update the 0.0_LATEST-IS- file in the directory on the FTP server.
 
@@ -79,9 +79,9 @@
      group. This will allow other members of this group to correct mistakes
      and to update the 0.0_LATEST-IS- file next time.
 
- ( ) Add the new version to the GIMP product on bugzilla.gimp.org.
+ ( ) Add the new version to the PICMAN product on bugzilla.picman.org.
 
- ( ) Check out or update the 'gimp-web' module and change
+ ( ) Check out or update the 'picman-web' module and change
      downloads/index.htrw.  Commit this change, the web server should
      then update itself soon (usually less than an hour).
 
@@ -92,5 +92,5 @@
  ( ) Grab a properly chilled beverage and enjoy yourself.
 
  ( ) Give the mirrors a reasonably long time to update, then announce the
-     release on gimp.org and on the GIMP mailing lists (don't forget
-     gimp-announce).
+     release on picman.org and on the PICMAN mailing lists (don't forget
+     picman-announce).

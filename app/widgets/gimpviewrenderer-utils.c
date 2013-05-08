@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewrenderer-utils.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmanviewrenderer-utils.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,70 +25,70 @@
 
 #include "widgets-types.h"
 
-#include "core/gimpbrush.h"
-#include "core/gimpbuffer.h"
-#include "core/gimpgradient.h"
-#include "core/gimpimage.h"
-#include "core/gimpimagefile.h"
-#include "core/gimplayer.h"
-#include "core/gimppalette.h"
+#include "core/picmanbrush.h"
+#include "core/picmanbuffer.h"
+#include "core/picmangradient.h"
+#include "core/picmanimage.h"
+#include "core/picmanimagefile.h"
+#include "core/picmanlayer.h"
+#include "core/picmanpalette.h"
 
-#include "vectors/gimpvectors.h"
+#include "vectors/picmanvectors.h"
 
-#include "gimpviewrenderer-utils.h"
-#include "gimpviewrendererbrush.h"
-#include "gimpviewrendererbuffer.h"
-#include "gimpviewrendererlayer.h"
-#include "gimpviewrenderergradient.h"
-#include "gimpviewrendererimage.h"
-#include "gimpviewrendererimagefile.h"
-#include "gimpviewrendererpalette.h"
-#include "gimpviewrenderervectors.h"
+#include "picmanviewrenderer-utils.h"
+#include "picmanviewrendererbrush.h"
+#include "picmanviewrendererbuffer.h"
+#include "picmanviewrendererlayer.h"
+#include "picmanviewrenderergradient.h"
+#include "picmanviewrendererimage.h"
+#include "picmanviewrendererimagefile.h"
+#include "picmanviewrendererpalette.h"
+#include "picmanviewrenderervectors.h"
 
 
 GType
-gimp_view_renderer_type_from_viewable_type (GType viewable_type)
+picman_view_renderer_type_from_viewable_type (GType viewable_type)
 {
-  GType type = GIMP_TYPE_VIEW_RENDERER;
+  GType type = PICMAN_TYPE_VIEW_RENDERER;
 
-  g_return_val_if_fail (g_type_is_a (viewable_type, GIMP_TYPE_VIEWABLE),
+  g_return_val_if_fail (g_type_is_a (viewable_type, PICMAN_TYPE_VIEWABLE),
                         G_TYPE_NONE);
 
-  if (g_type_is_a (viewable_type, GIMP_TYPE_BRUSH))
+  if (g_type_is_a (viewable_type, PICMAN_TYPE_BRUSH))
     {
-      type = GIMP_TYPE_VIEW_RENDERER_BRUSH;
+      type = PICMAN_TYPE_VIEW_RENDERER_BRUSH;
     }
-  else if (g_type_is_a (viewable_type, GIMP_TYPE_BUFFER))
+  else if (g_type_is_a (viewable_type, PICMAN_TYPE_BUFFER))
     {
-      type = GIMP_TYPE_VIEW_RENDERER_BUFFER;
+      type = PICMAN_TYPE_VIEW_RENDERER_BUFFER;
     }
-  else if (g_type_is_a (viewable_type, GIMP_TYPE_IMAGE))
+  else if (g_type_is_a (viewable_type, PICMAN_TYPE_IMAGE))
     {
-      type = GIMP_TYPE_VIEW_RENDERER_IMAGE;
+      type = PICMAN_TYPE_VIEW_RENDERER_IMAGE;
     }
-  else if (g_type_is_a (viewable_type, GIMP_TYPE_LAYER))
+  else if (g_type_is_a (viewable_type, PICMAN_TYPE_LAYER))
     {
-      type = GIMP_TYPE_VIEW_RENDERER_LAYER;
+      type = PICMAN_TYPE_VIEW_RENDERER_LAYER;
     }
-  else if (g_type_is_a (viewable_type, GIMP_TYPE_DRAWABLE))
+  else if (g_type_is_a (viewable_type, PICMAN_TYPE_DRAWABLE))
     {
-      type = GIMP_TYPE_VIEW_RENDERER_DRAWABLE;
+      type = PICMAN_TYPE_VIEW_RENDERER_DRAWABLE;
     }
-  else if (g_type_is_a (viewable_type, GIMP_TYPE_GRADIENT))
+  else if (g_type_is_a (viewable_type, PICMAN_TYPE_GRADIENT))
     {
-      type = GIMP_TYPE_VIEW_RENDERER_GRADIENT;
+      type = PICMAN_TYPE_VIEW_RENDERER_GRADIENT;
     }
-  else if (g_type_is_a (viewable_type, GIMP_TYPE_VECTORS))
+  else if (g_type_is_a (viewable_type, PICMAN_TYPE_VECTORS))
     {
-      type = GIMP_TYPE_VIEW_RENDERER_VECTORS;
+      type = PICMAN_TYPE_VIEW_RENDERER_VECTORS;
     }
-  else if (g_type_is_a (viewable_type, GIMP_TYPE_IMAGEFILE))
+  else if (g_type_is_a (viewable_type, PICMAN_TYPE_IMAGEFILE))
     {
-      type = GIMP_TYPE_VIEW_RENDERER_IMAGEFILE;
+      type = PICMAN_TYPE_VIEW_RENDERER_IMAGEFILE;
     }
-  else if (g_type_is_a (viewable_type, GIMP_TYPE_PALETTE))
+  else if (g_type_is_a (viewable_type, PICMAN_TYPE_PALETTE))
     {
-      type = GIMP_TYPE_VIEW_RENDERER_PALETTE;
+      type = PICMAN_TYPE_VIEW_RENDERER_PALETTE;
     }
 
   return type;

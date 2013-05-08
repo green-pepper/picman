@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,49 +15,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_LAYER_MASK_H__
-#define __GIMP_LAYER_MASK_H__
+#ifndef __PICMAN_LAYER_MASK_H__
+#define __PICMAN_LAYER_MASK_H__
 
 
-#include "gimpchannel.h"
+#include "picmanchannel.h"
 
 
-#define GIMP_TYPE_LAYER_MASK            (gimp_layer_mask_get_type ())
-#define GIMP_LAYER_MASK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_LAYER_MASK, GimpLayerMask))
-#define GIMP_LAYER_MASK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_LAYER_MASK, GimpLayerMaskClass))
-#define GIMP_IS_LAYER_MASK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_LAYER_MASK))
-#define GIMP_IS_LAYER_MASK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_LAYER_MASK))
-#define GIMP_LAYER_MASK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_LAYER_MASK, GimpLayerMaskClass))
+#define PICMAN_TYPE_LAYER_MASK            (picman_layer_mask_get_type ())
+#define PICMAN_LAYER_MASK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_LAYER_MASK, PicmanLayerMask))
+#define PICMAN_LAYER_MASK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_LAYER_MASK, PicmanLayerMaskClass))
+#define PICMAN_IS_LAYER_MASK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_LAYER_MASK))
+#define PICMAN_IS_LAYER_MASK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_LAYER_MASK))
+#define PICMAN_LAYER_MASK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_LAYER_MASK, PicmanLayerMaskClass))
 
 
-typedef struct _GimpLayerMaskClass  GimpLayerMaskClass;
+typedef struct _PicmanLayerMaskClass  PicmanLayerMaskClass;
 
-struct _GimpLayerMask
+struct _PicmanLayerMask
 {
-  GimpChannel  parent_instance;
+  PicmanChannel  parent_instance;
 
-  GimpLayer   *layer;
+  PicmanLayer   *layer;
 };
 
-struct _GimpLayerMaskClass
+struct _PicmanLayerMaskClass
 {
-  GimpChannelClass  parent_class;
+  PicmanChannelClass  parent_class;
 };
 
 
 /*  function declarations  */
 
-GType           gimp_layer_mask_get_type  (void) G_GNUC_CONST;
+GType           picman_layer_mask_get_type  (void) G_GNUC_CONST;
 
-GimpLayerMask * gimp_layer_mask_new       (GimpImage           *image,
+PicmanLayerMask * picman_layer_mask_new       (PicmanImage           *image,
                                            gint                 width,
                                            gint                 height,
                                            const gchar         *name,
-                                           const GimpRGB       *color);
+                                           const PicmanRGB       *color);
 
-void            gimp_layer_mask_set_layer (GimpLayerMask       *layer_mask,
-                                           GimpLayer           *layer);
-GimpLayer     * gimp_layer_mask_get_layer (const GimpLayerMask *layer_mask);
+void            picman_layer_mask_set_layer (PicmanLayerMask       *layer_mask,
+                                           PicmanLayer           *layer);
+PicmanLayer     * picman_layer_mask_get_layer (const PicmanLayerMask *layer_mask);
 
 
-#endif /* __GIMP_LAYER_MASK_H__ */
+#endif /* __PICMAN_LAYER_MASK_H__ */

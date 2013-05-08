@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,16 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GEGL_CONFIG_PROXY_H__
-#define __GIMP_GEGL_CONFIG_PROXY_H__
+#ifndef __PICMAN_GEGL_CONFIG_PROXY_H__
+#define __PICMAN_GEGL_CONFIG_PROXY_H__
 
 
-GimpObject    * gimp_gegl_get_config_proxy     (const gchar *operation,
+PicmanObject    * picman_gegl_get_config_proxy     (const gchar *operation,
                                                 GType        parent_type);
-GimpContainer * gimp_gegl_get_config_container (GType        config_type);
+PicmanContainer * picman_gegl_get_config_container (GType        config_type);
 
-void            gimp_gegl_config_proxy_sync    (GimpObject  *proxy,
+void            picman_gegl_config_proxy_sync    (PicmanObject  *proxy,
                                                 GeglNode    *node);
 
 
-#endif /* __GIMP_GEGL_CONFIG_PROXY_H__ */
+#endif /* __PICMAN_GEGL_CONFIG_PROXY_H__ */

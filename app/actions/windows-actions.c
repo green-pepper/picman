@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,63 +21,63 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "config/gimpdisplayconfig.h"
-#include "config/gimpguiconfig.h"
+#include "config/picmandisplayconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
-#include "core/gimplist.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
+#include "core/picmanlist.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpdock.h"
-#include "widgets/gimpdockwindow.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmandock.h"
+#include "widgets/picmandockwindow.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
 #include "dialogs/dialogs.h"
 
 #include "windows-actions.h"
 #include "windows-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void  windows_actions_display_add               (GimpContainer     *container,
-                                                        GimpDisplay       *display,
-                                                        GimpActionGroup   *group);
-static void  windows_actions_display_remove            (GimpContainer     *container,
-                                                        GimpDisplay       *display,
-                                                        GimpActionGroup   *group);
-static void  windows_actions_image_notify              (GimpDisplay       *display,
+static void  windows_actions_display_add               (PicmanContainer     *container,
+                                                        PicmanDisplay       *display,
+                                                        PicmanActionGroup   *group);
+static void  windows_actions_display_remove            (PicmanContainer     *container,
+                                                        PicmanDisplay       *display,
+                                                        PicmanActionGroup   *group);
+static void  windows_actions_image_notify              (PicmanDisplay       *display,
                                                         const GParamSpec  *unused,
-                                                        GimpActionGroup   *group);
-static void  windows_actions_update_display_accels     (GimpActionGroup   *group);
+                                                        PicmanActionGroup   *group);
+static void  windows_actions_update_display_accels     (PicmanActionGroup   *group);
 
-static void  windows_actions_dock_window_added         (GimpDialogFactory *factory,
-                                                        GimpDockWindow    *dock_window,
-                                                        GimpActionGroup   *group);
-static void  windows_actions_dock_window_removed       (GimpDialogFactory *factory,
-                                                        GimpDockWindow    *dock_window,
-                                                        GimpActionGroup   *group);
-static void  windows_actions_dock_window_notify        (GimpDockWindow    *dock,
+static void  windows_actions_dock_window_added         (PicmanDialogFactory *factory,
+                                                        PicmanDockWindow    *dock_window,
+                                                        PicmanActionGroup   *group);
+static void  windows_actions_dock_window_removed       (PicmanDialogFactory *factory,
+                                                        PicmanDockWindow    *dock_window,
+                                                        PicmanActionGroup   *group);
+static void  windows_actions_dock_window_notify        (PicmanDockWindow    *dock,
                                                         const GParamSpec  *pspec,
-                                                        GimpActionGroup   *group);
-static void  windows_actions_recent_add                (GimpContainer     *container,
-                                                        GimpSessionInfo   *info,
-                                                        GimpActionGroup   *group);
-static void  windows_actions_recent_remove             (GimpContainer     *container,
-                                                        GimpSessionInfo   *info,
-                                                        GimpActionGroup   *group);
-static void  windows_actions_single_window_mode_notify (GimpDisplayConfig *config,
+                                                        PicmanActionGroup   *group);
+static void  windows_actions_recent_add                (PicmanContainer     *container,
+                                                        PicmanSessionInfo   *info,
+                                                        PicmanActionGroup   *group);
+static void  windows_actions_recent_remove             (PicmanContainer     *container,
+                                                        PicmanSessionInfo   *info,
+                                                        PicmanActionGroup   *group);
+static void  windows_actions_single_window_mode_notify (PicmanDisplayConfig *config,
                                                         GParamSpec        *pspec,
-                                                        GimpActionGroup   *group);
+                                                        PicmanActionGroup   *group);
 
 
 /* The only reason we have "Tab" in the action entries below is to
@@ -87,7 +87,7 @@ static void  windows_actions_single_window_mode_notify (GimpDisplayConfig *confi
  * gtk_accelerator_valid() returns FALSE for GDK_tab.
  */
 
-static const GimpActionEntry windows_actions[] =
+static const PicmanActionEntry windows_actions[] =
 {
   { "windows-menu",         NULL, NC_("windows-action",
                                       "_Windows")               },
@@ -109,70 +109,70 @@ static const GimpActionEntry windows_actions[] =
     NULL }
 };
 
-static const GimpToggleActionEntry windows_toggle_actions[] =
+static const PicmanToggleActionEntry windows_toggle_actions[] =
 {
   { "windows-hide-docks", NULL,
     NC_("windows-action", "Hide Docks"), "Tab",
     NC_("windows-action", "When enabled docks and other dialogs are hidden, leaving only image windows."),
     G_CALLBACK (windows_hide_docks_cmd_callback),
     FALSE,
-    GIMP_HELP_WINDOWS_HIDE_DOCKS },
+    PICMAN_HELP_WINDOWS_HIDE_DOCKS },
 
   { "windows-use-single-window-mode", NULL,
     NC_("windows-action", "Single-Window Mode"), NULL,
-    NC_("windows-action", "When enabled GIMP is in a single-window mode."),
+    NC_("windows-action", "When enabled PICMAN is in a single-window mode."),
     G_CALLBACK (windows_use_single_window_mode_cmd_callback),
     FALSE,
-    GIMP_HELP_WINDOWS_USE_SINGLE_WINDOW_MODE }
+    PICMAN_HELP_WINDOWS_USE_SINGLE_WINDOW_MODE }
 };
 
 
 void
-windows_actions_setup (GimpActionGroup *group)
+windows_actions_setup (PicmanActionGroup *group)
 {
   GList *list;
 
-  gimp_action_group_add_actions (group, "windows-action",
+  picman_action_group_add_actions (group, "windows-action",
                                  windows_actions,
                                  G_N_ELEMENTS (windows_actions));
 
-  gimp_action_group_add_toggle_actions (group, "windows-action",
+  picman_action_group_add_toggle_actions (group, "windows-action",
                                         windows_toggle_actions,
                                         G_N_ELEMENTS (windows_toggle_actions));
 
-  gimp_action_group_set_action_hide_empty (group, "windows-docks-menu", FALSE);
+  picman_action_group_set_action_hide_empty (group, "windows-docks-menu", FALSE);
 
-  g_signal_connect_object (group->gimp->displays, "add",
+  g_signal_connect_object (group->picman->displays, "add",
                            G_CALLBACK (windows_actions_display_add),
                            group, 0);
-  g_signal_connect_object (group->gimp->displays, "remove",
+  g_signal_connect_object (group->picman->displays, "remove",
                            G_CALLBACK (windows_actions_display_remove),
                            group, 0);
 
-  for (list = gimp_get_display_iter (group->gimp);
+  for (list = picman_get_display_iter (group->picman);
        list;
        list = g_list_next (list))
     {
-      GimpDisplay *display = list->data;
+      PicmanDisplay *display = list->data;
 
-      windows_actions_display_add (group->gimp->displays, display, group);
+      windows_actions_display_add (group->picman->displays, display, group);
     }
 
-  g_signal_connect_object (gimp_dialog_factory_get_singleton (), "dock-window-added",
+  g_signal_connect_object (picman_dialog_factory_get_singleton (), "dock-window-added",
                            G_CALLBACK (windows_actions_dock_window_added),
                            group, 0);
-  g_signal_connect_object (gimp_dialog_factory_get_singleton (), "dock-window-removed",
+  g_signal_connect_object (picman_dialog_factory_get_singleton (), "dock-window-removed",
                            G_CALLBACK (windows_actions_dock_window_removed),
                            group, 0);
 
-  for (list = gimp_dialog_factory_get_open_dialogs (gimp_dialog_factory_get_singleton ());
+  for (list = picman_dialog_factory_get_open_dialogs (picman_dialog_factory_get_singleton ());
        list;
        list = g_list_next (list))
     {
-      GimpDockWindow *dock_window = list->data;
+      PicmanDockWindow *dock_window = list->data;
 
-      if (GIMP_IS_DOCK_WINDOW (dock_window))
-        windows_actions_dock_window_added (gimp_dialog_factory_get_singleton (),
+      if (PICMAN_IS_DOCK_WINDOW (dock_window))
+        windows_actions_dock_window_added (picman_dialog_factory_get_singleton (),
                                            dock_window,
                                            group);
     }
@@ -184,28 +184,28 @@ windows_actions_setup (GimpActionGroup *group)
                            G_CALLBACK (windows_actions_recent_remove),
                            group, 0);
 
-  for (list = GIMP_LIST (global_recent_docks)->list;
+  for (list = PICMAN_LIST (global_recent_docks)->list;
        list;
        list = g_list_next (list))
     {
-      GimpSessionInfo *info = list->data;
+      PicmanSessionInfo *info = list->data;
 
       windows_actions_recent_add (global_recent_docks, info, group);
     }
 
-  g_signal_connect_object (group->gimp->config, "notify::single-window-mode",
+  g_signal_connect_object (group->picman->config, "notify::single-window-mode",
                            G_CALLBACK (windows_actions_single_window_mode_notify),
                            group, 0);
 }
 
 void
-windows_actions_update (GimpActionGroup *group,
+windows_actions_update (PicmanActionGroup *group,
                         gpointer         data)
 {
-  GimpGuiConfig *config = GIMP_GUI_CONFIG (group->gimp->config);
+  PicmanGuiConfig *config = PICMAN_GUI_CONFIG (group->picman->config);
 
 #define SET_ACTIVE(action,condition) \
-        gimp_action_group_set_action_active (group, action, (condition) != 0)
+        picman_action_group_set_action_active (group, action, (condition) != 0)
 
   SET_ACTIVE ("windows-use-single-window-mode", config->single_window_mode);
   SET_ACTIVE ("windows-hide-docks", config->hide_docks);
@@ -214,35 +214,35 @@ windows_actions_update (GimpActionGroup *group,
 }
 
 gchar *
-windows_actions_dock_window_to_action_name (GimpDockWindow *dock_window)
+windows_actions_dock_window_to_action_name (PicmanDockWindow *dock_window)
 {
   return g_strdup_printf ("windows-dock-%04d",
-                          gimp_dock_window_get_id (dock_window));
+                          picman_dock_window_get_id (dock_window));
 }
 
 
 /*  private functions  */
 
 static void
-windows_actions_display_add (GimpContainer   *container,
-                             GimpDisplay     *display,
-                             GimpActionGroup *group)
+windows_actions_display_add (PicmanContainer   *container,
+                             PicmanDisplay     *display,
+                             PicmanActionGroup *group)
 {
   g_signal_connect_object (display, "notify::image",
                            G_CALLBACK (windows_actions_image_notify),
                            group, 0);
 
-  if (gimp_display_get_image (display))
+  if (picman_display_get_image (display))
     windows_actions_image_notify (display, NULL, group);
 }
 
 static void
-windows_actions_display_remove (GimpContainer   *container,
-                                GimpDisplay     *display,
-                                GimpActionGroup *group)
+windows_actions_display_remove (PicmanContainer   *container,
+                                PicmanDisplay     *display,
+                                PicmanActionGroup *group)
 {
   GtkAction *action;
-  gchar     *action_name = gimp_display_get_action_name (display);
+  gchar     *action_name = picman_display_get_action_name (display);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group), action_name);
 
@@ -255,35 +255,35 @@ windows_actions_display_remove (GimpContainer   *container,
 }
 
 static void
-windows_actions_image_notify (GimpDisplay      *display,
+windows_actions_image_notify (PicmanDisplay      *display,
                               const GParamSpec *unused,
-                              GimpActionGroup  *group)
+                              PicmanActionGroup  *group)
 {
-  GimpImage *image = gimp_display_get_image (display);
+  PicmanImage *image = picman_display_get_image (display);
 
   if (image)
     {
       GtkAction *action;
-      gchar     *action_name = gimp_display_get_action_name (display);
+      gchar     *action_name = picman_display_get_action_name (display);
 
       action = gtk_action_group_get_action (GTK_ACTION_GROUP (group),
                                             action_name);
 
       if (! action)
         {
-          GimpActionEntry entry;
+          PicmanActionEntry entry;
 
           entry.name        = action_name;
-          entry.stock_id    = GIMP_STOCK_IMAGE;
+          entry.stock_id    = PICMAN_STOCK_IMAGE;
           entry.label       = "";
           entry.accelerator = NULL;
           entry.tooltip     = NULL;
           entry.callback    = G_CALLBACK (windows_show_display_cmd_callback);
           entry.help_id     = NULL;
 
-          gimp_action_group_add_actions (group, NULL, &entry, 1);
+          picman_action_group_add_actions (group, NULL, &entry, 1);
 
-          gimp_action_group_set_action_always_show_image (group, action_name,
+          picman_action_group_set_action_always_show_image (group, action_name,
                                                           TRUE);
 
           action = gtk_action_group_get_action (GTK_ACTION_GROUP (group),
@@ -297,19 +297,19 @@ windows_actions_image_notify (GimpDisplay      *display,
         gchar       *escaped;
         gchar       *title;
 
-        display_name = gimp_image_get_display_name (image);
-        escaped = gimp_escape_uline (display_name);
+        display_name = picman_image_get_display_name (image);
+        escaped = picman_escape_uline (display_name);
 
         title = g_strdup_printf ("%s-%d.%d", escaped,
-                                 gimp_image_get_ID (image),
-                                 gimp_display_get_instance (display));
+                                 picman_image_get_ID (image),
+                                 picman_display_get_instance (display));
         g_free (escaped);
 
         g_object_set (action,
                       "label",    title,
-                      "tooltip",  gimp_image_get_display_path (image),
+                      "tooltip",  picman_image_get_display_path (image),
                       "viewable", image,
-                      "context",  gimp_get_user_context (group->gimp),
+                      "context",  picman_get_user_context (group->picman),
                       NULL);
 
         g_free (title);
@@ -321,28 +321,28 @@ windows_actions_image_notify (GimpDisplay      *display,
     }
   else
     {
-      windows_actions_display_remove (group->gimp->displays, display, group);
+      windows_actions_display_remove (group->picman->displays, display, group);
     }
 }
 
 static void
-windows_actions_update_display_accels (GimpActionGroup *group)
+windows_actions_update_display_accels (PicmanActionGroup *group)
 {
   GList *list;
   gint   i;
 
-  for (list = gimp_get_display_iter (group->gimp), i = 0;
+  for (list = picman_get_display_iter (group->picman), i = 0;
        list && i < 10;
        list = g_list_next (list), i++)
     {
-      GimpDisplay *display = list->data;
+      PicmanDisplay *display = list->data;
       GtkAction   *action;
       gchar       *action_name;
 
-      if (! gimp_display_get_image (display))
+      if (! picman_display_get_image (display))
         break;
 
-      action_name = gimp_display_get_action_name (display);
+      action_name = picman_display_get_action_name (display);
 
       action = gtk_action_group_get_action (GTK_ACTION_GROUP (group),
                                             action_name);
@@ -368,12 +368,12 @@ windows_actions_update_display_accels (GimpActionGroup *group)
 }
 
 static void
-windows_actions_dock_window_added (GimpDialogFactory *factory,
-                                   GimpDockWindow    *dock_window,
-                                   GimpActionGroup   *group)
+windows_actions_dock_window_added (PicmanDialogFactory *factory,
+                                   PicmanDockWindow    *dock_window,
+                                   PicmanActionGroup   *group)
 {
   GtkAction       *action;
-  GimpActionEntry  entry;
+  PicmanActionEntry  entry;
   gchar           *action_name = windows_actions_dock_window_to_action_name (dock_window);
 
   entry.name        = action_name;
@@ -382,9 +382,9 @@ windows_actions_dock_window_added (GimpDialogFactory *factory,
   entry.accelerator = NULL;
   entry.tooltip     = NULL;
   entry.callback    = G_CALLBACK (windows_show_dock_cmd_callback);
-  entry.help_id     = GIMP_HELP_WINDOWS_SHOW_DOCK;
+  entry.help_id     = PICMAN_HELP_WINDOWS_SHOW_DOCK;
 
-  gimp_action_group_add_actions (group, NULL, &entry, 1);
+  picman_action_group_add_actions (group, NULL, &entry, 1);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group),
                                         action_name);
@@ -406,9 +406,9 @@ windows_actions_dock_window_added (GimpDialogFactory *factory,
 }
 
 static void
-windows_actions_dock_window_removed (GimpDialogFactory *factory,
-                                     GimpDockWindow    *dock_window,
-                                     GimpActionGroup   *group)
+windows_actions_dock_window_removed (PicmanDialogFactory *factory,
+                                     PicmanDockWindow    *dock_window,
+                                     PicmanActionGroup   *group)
 {
   GtkAction *action;
   gchar     *action_name = windows_actions_dock_window_to_action_name (dock_window);
@@ -422,9 +422,9 @@ windows_actions_dock_window_removed (GimpDialogFactory *factory,
 }
 
 static void
-windows_actions_dock_window_notify (GimpDockWindow   *dock_window,
+windows_actions_dock_window_notify (PicmanDockWindow   *dock_window,
                                     const GParamSpec *pspec,
-                                    GimpActionGroup  *group)
+                                    PicmanActionGroup  *group)
 {
   GtkAction *action;
   gchar     *action_name;
@@ -441,12 +441,12 @@ windows_actions_dock_window_notify (GimpDockWindow   *dock_window,
 }
 
 static void
-windows_actions_recent_add (GimpContainer   *container,
-                            GimpSessionInfo *info,
-                            GimpActionGroup *group)
+windows_actions_recent_add (PicmanContainer   *container,
+                            PicmanSessionInfo *info,
+                            PicmanActionGroup *group)
 {
   GtkAction       *action;
-  GimpActionEntry  entry;
+  PicmanActionEntry  entry;
   gint             info_id;
   static gint      info_id_counter = 1;
   gchar           *action_name;
@@ -466,13 +466,13 @@ windows_actions_recent_add (GimpContainer   *container,
 
   entry.name        = action_name;
   entry.stock_id    = NULL;
-  entry.label       = gimp_object_get_name (info);
+  entry.label       = picman_object_get_name (info);
   entry.accelerator = NULL;
-  entry.tooltip     = gimp_object_get_name (info);
+  entry.tooltip     = picman_object_get_name (info);
   entry.callback    = G_CALLBACK (windows_open_recent_cmd_callback);
-  entry.help_id     = GIMP_HELP_WINDOWS_OPEN_RECENT_DOCK;
+  entry.help_id     = PICMAN_HELP_WINDOWS_OPEN_RECENT_DOCK;
 
-  gimp_action_group_add_actions (group, NULL, &entry, 1);
+  picman_action_group_add_actions (group, NULL, &entry, 1);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group),
                                         action_name);
@@ -488,9 +488,9 @@ windows_actions_recent_add (GimpContainer   *container,
 }
 
 static void
-windows_actions_recent_remove (GimpContainer   *container,
-                               GimpSessionInfo *info,
-                               GimpActionGroup *group)
+windows_actions_recent_remove (PicmanContainer   *container,
+                               PicmanSessionInfo *info,
+                               PicmanActionGroup *group)
 {
   GtkAction *action;
   gint       info_id;
@@ -510,11 +510,11 @@ windows_actions_recent_remove (GimpContainer   *container,
 }
 
 static void
-windows_actions_single_window_mode_notify (GimpDisplayConfig *config,
+windows_actions_single_window_mode_notify (PicmanDisplayConfig *config,
                                            GParamSpec        *pspec,
-                                           GimpActionGroup   *group)
+                                           PicmanActionGroup   *group)
 {
-  gimp_action_group_set_action_active (group,
+  picman_action_group_set_action_active (group,
                                        "windows-use-single-window-mode",
-                                       GIMP_GUI_CONFIG (config)->single_window_mode);
+                                       PICMAN_GUI_CONFIG (config)->single_window_mode);
 }

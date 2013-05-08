@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptagpopup.h
+ * picmantagpopup.h
  * Copyright (C) 2008 Aurimas Juška <aurisj@svn.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,27 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TAG_POPUP_H__
-#define __GIMP_TAG_POPUP_H__
+#ifndef __PICMAN_TAG_POPUP_H__
+#define __PICMAN_TAG_POPUP_H__
 
 
-#define GIMP_TYPE_TAG_POPUP            (gimp_tag_popup_get_type ())
-#define GIMP_TAG_POPUP(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TAG_POPUP, GimpTagPopup))
-#define GIMP_TAG_POPUP_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TAG_POPUP, GimpTagPopupClass))
-#define GIMP_IS_TAG_POPUP(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TAG_POPUP))
-#define GIMP_IS_TAG_POPUP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TAG_POPUP))
-#define GIMP_TAG_POPUP_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TAG_POPUP, GimpTagPopupClass))
+#define PICMAN_TYPE_TAG_POPUP            (picman_tag_popup_get_type ())
+#define PICMAN_TAG_POPUP(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TAG_POPUP, PicmanTagPopup))
+#define PICMAN_TAG_POPUP_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TAG_POPUP, PicmanTagPopupClass))
+#define PICMAN_IS_TAG_POPUP(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TAG_POPUP))
+#define PICMAN_IS_TAG_POPUP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TAG_POPUP))
+#define PICMAN_TAG_POPUP_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TAG_POPUP, PicmanTagPopupClass))
 
 
-typedef struct _GimpTagPopupClass  GimpTagPopupClass;
+typedef struct _PicmanTagPopupClass  PicmanTagPopupClass;
 
 typedef struct _PopupTagData PopupTagData;
 
-struct _GimpTagPopup
+struct _PicmanTagPopup
 {
   GtkWindow          parent_instance;
 
-  GimpComboTagEntry *combo_entry;
+  PicmanComboTagEntry *combo_entry;
 
   GtkWidget         *frame;
   GtkWidget         *alignment;
@@ -67,17 +67,17 @@ struct _GimpTagPopup
   GtkStateType       lower_arrow_state;
 };
 
-struct _GimpTagPopupClass
+struct _PicmanTagPopupClass
 {
   GtkWindowClass  parent_class;
 };
 
 
-GType       gimp_tag_popup_get_type (void) G_GNUC_CONST;
+GType       picman_tag_popup_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_tag_popup_new      (GimpComboTagEntry *entry);
+GtkWidget * picman_tag_popup_new      (PicmanComboTagEntry *entry);
 
-void        gimp_tag_popup_show     (GimpTagPopup      *popup);
+void        picman_tag_popup_show     (PicmanTagPopup      *popup);
 
 
-#endif  /*  __GIMP_TAG_POPUP_H__  */
+#endif  /*  __PICMAN_TAG_POPUP_H__  */

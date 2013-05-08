@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 # The name of the module.
-DOC_MODULE = libgimpmath
+DOC_MODULE = libpicmanmath
 
 # The top-level SGML file.
 DOC_MAIN_SGML_FILE = $(DOC_MODULE)-docs.sgml
@@ -16,7 +16,7 @@ SCANGOBJ_OPTIONS =
 SCAN_OPTIONS =
 
 # Extra options to supply to gtkdoc-mkdb
-MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=gimp
+MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=picman
 
 # Extra options to supply to gtkdoc-fixref
 FIXXREF_OPTIONS =

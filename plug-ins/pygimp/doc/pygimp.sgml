@@ -1,10 +1,10 @@
 <!DOCTYPE Article PUBLIC "-//Davenport//DTD DocBook V3.0//EN">
 
-<Article id=pygimp>
+<Article id=pypicman>
 
   <ArtHeader>
 
-    <Title>GIMP Python Documentation</Title>
+    <Title>PICMAN Python Documentation</Title>
     <AUTHOR>
       <FirstName>James</FirstName>
       <surname>Henstridge</surname>
@@ -19,10 +19,10 @@
 
     <Abstract>
 
-      <Para>This document outlines the interfaces to Gimp-Python,
+      <Para>This document outlines the interfaces to Picman-Python,
       which is a set of Python modules that act as a wrapper to
-      <filename>libgimp</filename> allowing the writing of
-      plug-ins for GIMP.  In this way, Gimp-Python is similar to
+      <filename>libpicman</filename> allowing the writing of
+      plug-ins for PICMAN.  In this way, Picman-Python is similar to
       Script-Fu, except that you can use the full set of Python
       extension modules from the plug-in.</Para>
 
@@ -36,26 +36,26 @@
     <Sect2 id=what-is-it>
       <Title>What is it?</Title>
 
-      <Para>Gimp-Python is a scripting extension for GIMP, similar to
+      <Para>Picman-Python is a scripting extension for PICMAN, similar to
       Script-Fu.  The main difference is in what is called first.  In
       Script-Fu, the script-fu plugin executes the script, while in
-      Gimp-Python the script is in control.</Para>
+      Picman-Python the script is in control.</Para>
 
-      <Para>In fact, you will find that the Gimp-Python scripts start
+      <Para>In fact, you will find that the Picman-Python scripts start
       with the line <Literal>&num;!/usr/bin/python</Literal>.  The
-      gimp extension is loaded with the familiar
+      picman extension is loaded with the familiar
       <Literal>import</Literal> command.</Para>
 
-      <Para>Another point of difference between Gimp-Python and
-      Script-Fu is that Gimp-Python stores images, layers, channels
+      <Para>Another point of difference between Picman-Python and
+      Script-Fu is that Picman-Python stores images, layers, channels
       and other types as objects rather than just storing their ID.
       This allows better type checking that is missing from Script-Fu,
       and allows those types to act as objects, complete with
       attributes and methods.</Para>
 
-      <Para>Also, Gimp-Python is not limited to just calling
+      <Para>Also, Picman-Python is not limited to just calling
       procedures from the PDB.  It also implements the rest of
-      <filename>libgimp</filename>, including tiles and pixel regions,
+      <filename>libpicman</filename>, including tiles and pixel regions,
       and access to other lower level functions.</Para>
       
     </Sect2>
@@ -63,8 +63,8 @@
     <Sect2 id=installation>
       <Title>Installation</Title>
 
-      <Para>Gimp-python consists of a Python module written in C and
-      some native python support modules.  You can build pygimp with
+      <Para>Picman-python consists of a Python module written in C and
+      some native python support modules.  You can build pypicman with
       the commands:</Para>
 <programlisting>
 ./configure
@@ -72,8 +72,8 @@ make
 make install
 </programlisting>
 
-      <Para>This will build and install gimpmodule and its supporting
-      modules, and install the sample plugins in gimp's plugin
+      <Para>This will build and install picmanmodule and its supporting
+      modules, and install the sample plugins in picman's plugin
       directory.</Para>
 
     </Sect2>
@@ -84,7 +84,7 @@ make install
     <Title>The Structure Of A Plugin</Title>
 
     <Para>The majority of code in this package resides in
-    <filename>gimpmodule.c</filename>, but this provides a poor
+    <filename>picmanmodule.c</filename>, but this provides a poor
     interface for implementing some portions of a plugin.  For this
     reason, there is a python module called
     <filename>plugin.py</filename> that sets out a structure for
@@ -94,8 +94,8 @@ make install
     <Para>The main purpose of <filename>plugin.py</filename> was to
     implement an object oriented structure for plug-ins.  As well as
     this, it handles tracebacks, which are otherwise ignored by
-    <filename>libgimp</filename>, and gives a method to call
-    other Gimp-Python plug-ins without going through the procedural
+    <filename>libpicman</filename>, and gives a method to call
+    other Picman-Python plug-ins without going through the procedural
     database.</Para>
 
     <Sect2 id=example-plugin>
@@ -112,24 +112,24 @@ make install
 <ProgramListing role="python">
 #!/usr/bin/python
 import math
-from gimpfu import *
+from picmanfu import *
 
-have_gimp11 = gimp.major_version > 1 or \
-	      gimp.major_version == 1 and gimp.minor_version >= 1
+have_picman11 = picman.major_version > 1 or \
+	      picman.major_version == 1 and picman.minor_version >= 1
 
 def python_clothify(timg, tdrawable, bx=9, by=9,
 		    azimuth=135, elevation=45, depth=3):
 	bx = 9 ; by = 9 ; azimuth = 135 ; elevation = 45 ; depth = 3
 	width = tdrawable.width
 	height = tdrawable.height
-	img = gimp.image(width, height, RGB)
-	layer_one = gimp.layer(img, "X Dots", width, height, RGB_IMAGE,
+	img = picman.image(width, height, RGB)
+	layer_one = picman.layer(img, "X Dots", width, height, RGB_IMAGE,
 			       100, NORMAL_MODE)
 	img.disable_undo()
-	if have_gimp11:
-		pdb.gimp_edit_fill(layer_one)
+	if have_picman11:
+		pdb.picman_edit_fill(layer_one)
 	else:
-		pdb.gimp_edit_fill(img, layer_one)
+		pdb.picman_edit_fill(img, layer_one)
 	img.add_layer(layer_one, 0)
 	pdb.plug_in_noisify(img, layer_one, 0, 0.7, 0.7, 0.7, 0.7)
 	layer_two = layer_one.copy()
@@ -144,7 +144,7 @@ def python_clothify(timg, tdrawable, bx=9, by=9,
 	pdb.plug_in_noisify(img, bump_layer, 0, 0.2, 0.2, 0.2, 0.2)
 	pdb.plug_in_bump_map(img, tdrawable, bump_layer, azimuth,
 			     elevation, depth, 0, 0, 0, 0, TRUE, FALSE, 0)
-	gimp.delete(img)
+	picman.delete(img)
 
 register(
 	"python_fu_clothify",
@@ -179,43 +179,43 @@ main()
 
       <ItemizedList>
 	<ListItem>
-	  <para><filename>gimpfu</filename>: this module provides a
+	  <para><filename>picmanfu</filename>: this module provides a
 	  simple interface for writing plugins, similar to what
 	  script-fu provides.  It provides the GUI for entering in
 	  parameters in interactive mode and performs some sanity
 	  checks when registering the plugin.</para>
 
-	  <para>By using "from gimpfu import *", this module also
+	  <para>By using "from picmanfu import *", this module also
 	  provides an easy way to get all the commonly used symbols
 	  into the plugin's namespace.</para>
 	</ListItem>
 	<ListItem>
-	  <Para><filename>gimp</filename>: the main part of the gimp
-	  extension.  This is imported with gimpfu.</Para>
+	  <Para><filename>picman</filename>: the main part of the picman
+	  extension.  This is imported with picmanfu.</Para>
 	</ListItem>
 	<ListItem>
-	  <Para><filename>gimpenums</filename>: a number of useful
+	  <Para><filename>picmanenums</filename>: a number of useful
 	  constants.  This is also automatically imported with
-	  gimpfu.</Para>
+	  picmanfu.</Para>
 	</ListItem>
       </ItemizedList>
 
       <para>The pdb variable is a variable for accessing the
       procedural database.  It is imported into the plugin's namespace
-      with gimpfu for convenience.</para>
+      with picmanfu for convenience.</para>
 
     </Sect2>
 
     <Sect2 id=plugin-framework>
       <Title>Plugin Framework</Title>
 
-      <Para>With pygimp-0.4, the gimpfu module was introduced.  It
+      <Para>With pypicman-0.4, the picmanfu module was introduced.  It
       simplifies writing plugins a lot.  It handles the run mode
       (interactive, non interactive or run with last values),
       providing a GUI for interactive mode and saving the last used
       settings.</Para>
 
-      <Para>Using the gimpfu plugin, all you need to do is write the
+      <Para>Using the picmanfu plugin, all you need to do is write the
       function that should be run, make a call to
       <function>register</function>, and finally a call to
       <function>main</function> to get the plugin started.</Para>
@@ -229,9 +229,9 @@ main()
       plugin.</Para>
 
       <Para>After defining the plugin function, you need to call
-      <function>register</function> to register the plugin with gimp
+      <function>register</function> to register the plugin with picman
       (When the plugin is run to query it, this information is passed
-      to gimp.  When it is run interactively, this information is used
+      to picman.  When it is run interactively, this information is used
       to construct the GUI).  The parameters to
       <function>register</function> are:</Para>
       <SimpleList>
@@ -255,7 +255,7 @@ main()
 
       <Para>The params parameter holds a list parameters for the
       function.  It is a list of tuples.  Note that you do not have to
-      specify the run_type, image or drawable parameters, as gimpfu
+      specify the run_type, image or drawable parameters, as picmanfu
       will add these automatically for you.  The tuple format is
       (type, name, description, default [, extra]).  The allowed type
       codes are:</Para>
@@ -293,7 +293,7 @@ main()
       </SimpleList>
 
       <Para>These values map onto the standard PARAM_* constants.  The
-      reason to use the extra constants is that they give gimpfu more
+      reason to use the extra constants is that they give picmanfu more
       information, so it can produce a better interface (for instance,
       the PF_FONT type is equivalent to PARAM_STRING, but in the GUI
       you get a small button that will bring up a font selection
@@ -325,7 +325,7 @@ main()
   <Sect1 id=procedural-database>
     <Title>The Procedural Database</Title>
 
-    <Para>The procedural database is a registry of things gimp and its
+    <Para>The procedural database is a registry of things picman and its
     plugins can do.  When you install a procedure for your plugin, you
     are extending the procedural database.</Para>
 
@@ -333,12 +333,12 @@ main()
     you install a procedure in it, you also add documentation for it,
     its parameters and return values.</Para>
 
-    <Sect2 id=gimp-python-model>
-      <Title>The Gimp-Python Model</Title>
+    <Sect2 id=picman-python-model>
+      <Title>The Picman-Python Model</Title>
 
-      <Para>In Gimp-Python, the procedural database is represented by
-      the object <parameter>gimp.pdb</parameter>.  In most of my
-      plugins, I make an assignment from <parameter>gimp.pdb</parameter>
+      <Para>In Picman-Python, the procedural database is represented by
+      the object <parameter>picman.pdb</parameter>.  In most of my
+      plugins, I make an assignment from <parameter>picman.pdb</parameter>
       to <parameter>pdb</parameter> for convenience.</Para>
 
       <Para>You can query the procedural database with
@@ -362,9 +362,9 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 
       <Para>Procedures can be accessed as procedures, or by treating
       <parameter>pdb</parameter> as a mapping objest.  As an example,
-      the probedure <function>gimp_edit_fill</function> can be
-      accessed as either <function>pdb.gimp_edit_fill</function> or
-      <function>pdb['gimp_edit_fill']</function>.  The second form is
+      the probedure <function>picman_edit_fill</function> can be
+      accessed as either <function>pdb.picman_edit_fill</function> or
+      <function>pdb['picman_edit_fill']</function>.  The second form is
       mainly for procedures whose names are not valid Python names (eg
       in script-fu-..., the dashes are interpreted as minuses).</Para>
 
@@ -449,7 +449,7 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
       </VariableList>
 
       <Para>A procedure object may also be called.  At this point,
-      Gimp-Python doesn't support keyword arguments for PDB
+      Picman-Python doesn't support keyword arguments for PDB
       procedures.  Arguments are passed to the procedure in the normal
       method.  The return depends on the number of return values:</para>
 
@@ -483,11 +483,11 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 
   </Sect1>
   
-  <Sect1 id=gimp-module-procedures>
-    <Title>GIMP Module Procedures</Title>
+  <Sect1 id=picman-module-procedures>
+    <Title>PICMAN Module Procedures</Title>
 
-    <Para>The <filename>gimp</filename> module contains a number of
-    procedures and functions, as well as the definitions of many gimp
+    <Para>The <filename>picman</filename> module contains a number of
+    procedures and functions, as well as the definitions of many picman
     types such as images, and the procedural database.  This section
     explains the base level procedures.</Para>
 
@@ -495,13 +495,13 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
       <Title>Constructors and Object Deletion</Title>
 
       <Para>There are a number of functions in the
-      <filename>gimp</filename> module that are used to create the objects
-      used to make up an image in GIMP.  Here is a set of descriptions
+      <filename>picman</filename> module that are used to create the objects
+      used to make up an image in PICMAN.  Here is a set of descriptions
       of these constructors:</para>
 
       <VariableList>
 	<VarListEntry>
-	  <Term><function>gimp.image</function>(<parameter>width</parameter>,
+	  <Term><function>picman.image</function>(<parameter>width</parameter>,
 	  <parameter>height</parameter>,
 	  <parameter>type</parameter>)</term>
 	  <ListItem>
@@ -512,7 +512,7 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.layer</function>(<parameter>img</parameter>,
+	  <Term><function>picman.layer</function>(<parameter>img</parameter>,
 	  <parameter>name</parameter>, <parameter>width</parameter>,
 	  <parameter>height</parameter>, <parameter>type</parameter>,
 	  <parameter>opacity</parameter>,
@@ -530,7 +530,7 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.channel</function>(<parameter>img</parameter>,
+	  <Term><function>picman.channel</function>(<parameter>img</parameter>,
 	  <parameter>name</parameter>, <parameter>width</parameter>,
 	  <parameter>height</parameter>,
 	  <parameter>opacity</parameter>,
@@ -544,32 +544,32 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.display</function>(<parameter>img</parameter>)</Term>
+	  <Term><function>picman.display</function>(<parameter>img</parameter>)</Term>
 	  <ListItem>
 	    <Para>Create a new display window for the given image.
             The window will not be displayed until a call to
-            <function>gimp.displays_flush</function> is made.</Para>
+            <function>picman.displays_flush</function> is made.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.parasite(name, flags, data)</function></Term>
+	  <Term><function>picman.parasite(name, flags, data)</function></Term>
 	  <ListItem>
 	    <Para>Create a new parasite.  The parasite can then be
-	    attached to gimp, an image or a drawable.  This is only
-	    available in gimp >= 1.1</Para>
+	    attached to picman, an image or a drawable.  This is only
+	    available in picman >= 1.1</Para>
 	  </ListItem>
 	</VarListEntry>
       </VariableList>
 
       <Para>When any of these objects get removed from memory (such as
-      when their name goes out of range), the gimp thing it represents
+      when their name goes out of range), the picman thing it represents
       does not get deleted with it (otherwise when your plugin
       finished running, it would delete all its work).  In order to
       delete the thing the Python object represents, you should use
-      the <function>gimp.delete</function> procedure.  It deletes the
-      gimp thing associated with the Python object given as a
+      the <function>picman.delete</function> procedure.  It deletes the
+      picman thing associated with the Python object given as a
       parameter.  If the object is not an image, layer, channel,
-      drawable or display <function>gimp.delete</function> does
+      drawable or display <function>picman.delete</function> does
       nothing.</Para>
 
     </Sect2>
@@ -582,34 +582,34 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 
       <VariableList>
 	<VarListEntry>
-	  <Term><function>gimp.color_cube</function>() or
-	  <function>gimp.colour_cube</function>()</Term>
+	  <Term><function>picman.color_cube</function>() or
+	  <function>picman.colour_cube</function>()</Term>
 	  <ListItem>
 	    <Para>Returns the current colour cube.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.gamma</function>()</Term>
+	  <Term><function>picman.gamma</function>()</Term>
 	  <ListItem>
 	    <Para>Returns the current gamma correction.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.install_cmap</function>()</Term>
+	  <Term><function>picman.install_cmap</function>()</Term>
 	  <ListItem>
 	    <Para>Returns non-zero if a colour map has been
 	    installed.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.use_xshm</function>()</Term>
+	  <Term><function>picman.use_xshm</function>()</Term>
 	  <ListItem>
-	    <Para>Returns non-zero if GIMP is using X shared
+	    <Para>Returns non-zero if PICMAN is using X shared
 	    memory.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.gtkrc</function>()</Term>
+	  <Term><function>picman.gtkrc</function>()</Term>
 	  <ListItem>
 	    <Para>Returns the file name of the GTK configuration
 	    file.</Para>
@@ -627,34 +627,34 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 
       <VariableList>
 	<VarListEntry>
-	  <Term><function>gimp.get_background</function>()</Term>
+	  <Term><function>picman.get_background</function>()</Term>
 	  <ListItem>
 	    <Para>Returns a 3-tuple containing the current background
 	    colour in RGB form.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.get_foreground</function>()</Term>
+	  <Term><function>picman.get_foreground</function>()</Term>
 	  <ListItem>
 	    <Para>Returns a 3-tuple containing the current foreground
 	    colour in RGB form.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.set_background</function>(<parameter>r</parameter>,
+	  <Term><function>picman.set_background</function>(<parameter>r</parameter>,
 	  <parameter>g</parameter>, <parameter>b</parameter>)</Term>
 	  <ListItem>
 	    <Para>Sets the current background colour.  The three
             arguments can be replaced by a single 3-tuple like that
-            returned by <function>gimp.get_background</function>.</Para>
+            returned by <function>picman.get_background</function>.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.set_foreground</function>(<parameter>r</parameter>,
+	  <Term><function>picman.set_foreground</function>(<parameter>r</parameter>,
 	  <parameter>g</parameter>, <parameter>b</parameter>)</Term>
 	  <ListItem>
 	    <Para>Sets the current foreground colour.  Like
-            <function>gimp.set_background</function>, the arguments may
+            <function>picman.set_background</function>, the arguments may
             be replaced by a 3-tuple.</para>
 	  </listitem>
 	</VarListEntry>
@@ -669,26 +669,26 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 
       <VariableList>
 	<VarListEntry>
-	  <Term><function>gimp.gradients_get_active</function>()</Term>
+	  <Term><function>picman.gradients_get_active</function>()</Term>
 	  <ListItem>
 	    <Para>Returns the name of the active gradient.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.gradients_set_active</function>(<parameter>name</parameter>)</Term>
+	  <Term><function>picman.gradients_set_active</function>(<parameter>name</parameter>)</Term>
 	  <ListItem>
 	    <Para>Sets the active gradient.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.gradients_get_list</function>()</Term>
+	  <Term><function>picman.gradients_get_list</function>()</Term>
 	  <ListItem>
 	    <Para>Returns a list of the names of the available
 	    gradients.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.gradients_sample_uniform</function>(<parameter>num</parameter>)</Term>
+	  <Term><function>picman.gradients_sample_uniform</function>(<parameter>num</parameter>)</Term>
 	  <ListItem>
 	    <Para>Returns a list of <parameter>num</parameter>
             samples, where samples consist of 4-tuples of floats
@@ -697,10 +697,10 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.gradients_sample_custom</function>(<parameter>pos</parameter>)</Term>
+	  <Term><function>picman.gradients_sample_custom</function>(<parameter>pos</parameter>)</Term>
 	  <ListItem>
 	    <Para>Similar to
-            <function>gimp.gradients_sample_uniform</function>, except
+            <function>picman.gradients_sample_uniform</function>, except
             the samples are taken at the positions given in the list
             of floats <parameter>pos</parameter> instead of uniformly
             through the gradient.</Para>
@@ -714,14 +714,14 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
       <Title>PDB Registration Functions</Title>
 
       <Para>These functions either install procedures into the PDB or
-      alert gimp to their special use (eg as file handlers).</Para>
+      alert picman to their special use (eg as file handlers).</Para>
 
       <Para>For simple plugins, you will usually only need to use
-      <function>register</function> from gimpfu.</Para>
+      <function>register</function> from picmanfu.</Para>
 
       <VariableList>
 	<VarListEntry>
-	  <Term><function>gimp.install_procedure</function>(<parameter>name</parameter>,
+	  <Term><function>picman.install_procedure</function>(<parameter>name</parameter>,
           <parameter>blurb</parameter>, <parameter>help</parameter>,
           <parameter>author</parameter>,
           <parameter>copyright</parameter>,
@@ -741,7 +741,7 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.install_temp_proc</function>(<parameter>name</parameter>,
+	  <Term><function>picman.install_temp_proc</function>(<parameter>name</parameter>,
           <parameter>blurb</parameter>, <parameter>help</parameter>,
           <parameter>author</parameter>,
           <parameter>copyright</parameter>,
@@ -752,24 +752,24 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 	  <ListItem>
 	    <Para>This procedure is used to install a procedure into
             the PDB temporarily.  That is, it must be added again
-            every time gimp is run.  This procedure will be called the
+            every time picman is run.  This procedure will be called the
             same way as all other procedures for a plugin.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.uninstall_temp_proc</function>(<parameter>name</parameter>)</Term>
+	  <Term><function>picman.uninstall_temp_proc</function>(<parameter>name</parameter>)</Term>
 	  <ListItem>
 	    <Para>This removes a temporary procedure from the
 	    PDB.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.register_magic_load_handle</function>r(<parameter>name</parameter>,
+	  <Term><function>picman.register_magic_load_handle</function>r(<parameter>name</parameter>,
 	  <parameter>extensions</parameter>,
 	  <parameter>prefixes</parameter>,
 	  <parameter>magics</parameter>)</Term>
 	  <ListItem>
-	    <Para>This procedure tells GIMP that the PDB procedure
+	    <Para>This procedure tells PICMAN that the PDB procedure
             <parameter>name</parameter> can load files with
             <parameter>extensions</parameter> and
             <parameter>prefixes</parameter> (eg http:) with magic
@@ -777,22 +777,22 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.register_load_handler</function>(<parameter>name</parameter>,
+	  <Term><function>picman.register_load_handler</function>(<parameter>name</parameter>,
 	  <parameter>extensions</parameter>,
 	  <parameter>prefixes</parameter>)</Term>
 	  <ListItem>
-	    <Para>This procedure tells GIMP that the PDB procedure
+	    <Para>This procedure tells PICMAN that the PDB procedure
             <parameter>name</parameter> can load files with
             <parameter>extensions</parameter> and
             <parameter>prefixes</parameter> (eg http:).</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.register_save_handler</function>(<parameter>name</parameter>,
+	  <Term><function>picman.register_save_handler</function>(<parameter>name</parameter>,
 	  <parameter>extensions</parameter>,
 	  <parameter>prefixes</parameter>)</Term>
 	  <ListItem>
-	    <Para>This procedure tells GIMP that the PDB procedure
+	    <Para>This procedure tells PICMAN that the PDB procedure
             <parameter>name</parameter> can save files with
             <parameter>extensions</parameter> and
             <parameter>prefixes</parameter> (eg http:).</Para>
@@ -806,29 +806,29 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
       <Title>Other Functions</Title>
 
       <Para>These are the other functions in the
-      <filename>gimp</filename> module.</para>
+      <filename>picman</filename> module.</para>
 
       <VariableList>
 	<VarListEntry>
-	  <Term><function>gimp.main</function>(<parameter>init_func</parameter>,
+	  <Term><function>picman.main</function>(<parameter>init_func</parameter>,
 	  <parameter>quit_func</parameter>,
 	  <parameter>query_func</parameter>,
 	  <parameter>run_func</parameter>)</Term>
 	  <ListItem>
 	    <Para>This function is the one that controls the execution
-            of a Gimp-Python plugin.  It is better to not use this
+            of a Picman-Python plugin.  It is better to not use this
             directly but rather subclass the plugin class, defined in
-            the <XRef LinkEnd="gimpplugin-module">.</Para>
+            the <XRef LinkEnd="picmanplugin-module">.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><parameter>gimp.pdb</parameter></Term>
+	  <Term><parameter>picman.pdb</parameter></Term>
 	  <ListItem>
 	    <Para>The procedural database object.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.progress_init</function>(<parameter>[label]</parameter>)</Term>
+	  <Term><function>picman.progress_init</function>(<parameter>[label]</parameter>)</Term>
 	  <ListItem>
 	    <Para>(Re)Initialise the progress meter with
             <parameter>label</parameter> (or the plugin name) as a
@@ -836,92 +836,92 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.progress_update</function>(<parameter>percnt</parameter>)</Term>
+	  <Term><function>picman.progress_update</function>(<parameter>percnt</parameter>)</Term>
 	  <ListItem>
 	    <Para>Set the progress meter to
 	    <parameter>percnt</parameter> done.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.query_images</function>()</Term>
+	  <Term><function>picman.query_images</function>()</Term>
 	  <ListItem>
 	    <Para>Returns a list of all the image objects.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.quit</function>()</Term>
+	  <Term><function>picman.quit</function>()</Term>
 	  <ListItem>
 	    <Para>Stops execution immediately and exits.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.displays_flush</function>()</Term>
+	  <Term><function>picman.displays_flush</function>()</Term>
 	  <ListItem>
 	    <Para>Update all the display windows.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.tile_width</function>()</Term>
+	  <Term><function>picman.tile_width</function>()</Term>
 	  <ListItem>
 	    <Para>The maximum width of a tile.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.tile_height</function>()</Term>
+	  <Term><function>picman.tile_height</function>()</Term>
 	  <ListItem>
 	    <Para>The maximum height of a tile.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.tile_cache_size</function>(<parameter>kb</parameter>)</Term>
+	  <Term><function>picman.tile_cache_size</function>(<parameter>kb</parameter>)</Term>
 	  <ListItem>
 	    <Para>Set the size of the tile cache in kilobytes.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.tile_cache_ntiles</function>(<parameter>n</parameter>)</Term>
+	  <Term><function>picman.tile_cache_ntiles</function>(<parameter>n</parameter>)</Term>
 	  <ListItem>
 	    <Para>Set the size of the tile cache in tiles.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.get_data</function>(<parameter>key</parameter>)</Term>
+	  <Term><function>picman.get_data</function>(<parameter>key</parameter>)</Term>
 	  <ListItem>
 	    <Para>Get the information associated with
             <parameter>key</parameter>.  The data will be a string.
             This function should probably be used through the <XRef
-            LinkEnd="gimpshelf-module">.</Para>
+            LinkEnd="picmanshelf-module">.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.set_data</function>(<parameter>key</parameter>,
+	  <Term><function>picman.set_data</function>(<parameter>key</parameter>,
 	  <parameter>data</parameter>)</Term>
 	  <ListItem>
 	    <Para>Set the information in the string
             <parameter>data</parameter> with
             <parameter>key</parameter>.  The data will persist for the
-            whole gimp session.  Rather than directly accessing this
+            whole picman session.  Rather than directly accessing this
             function, it is better to go through the <XRef
-            LinkEnd="gimpshelf-module">.</Para>
+            LinkEnd="picmanshelf-module">.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.extension_ack</function>()</Term>
+	  <Term><function>picman.extension_ack</function>()</Term>
 	  <ListItem>
-	    <Para>Tells gimp that the plugin has finished its work,
+	    <Para>Tells picman that the plugin has finished its work,
             while keeping the plugin connection open.  This is used by
-            an extension plugin to tell gimp it can continue, while
+            an extension plugin to tell picman it can continue, while
             leaving the plugin connection open.  This is what the
             script-fu plugin does so that only one scheme interpretter
             is needed.</Para>
 	  </listitem>
 	</VarListEntry>
 	<VarListEntry>
-	  <Term><function>gimp.extension_process</function>(<parameter>timeout</parameter>)</Term>
+	  <Term><function>picman.extension_process</function>(<parameter>timeout</parameter>)</Term>
 	  <ListItem>
-	    <Para>Makes the plugin check for messages from gimp.
+	    <Para>Makes the plugin check for messages from picman.
             generally this is not needed, as messages are checked
-            during most calls in the gimp module.</Para>
+            during most calls in the picman module.</Para>
 	  </listitem>
 	</VarListEntry>
       </VariableList>
@@ -931,7 +931,7 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
     <Sect2 id=parasites>
       <Title>Parasites</Title>
 
-      <Para>In gimp >= 1.1, it is possible to attach arbitrary data to
+      <Para>In picman >= 1.1, it is possible to attach arbitrary data to
       an image through the use of parasites.  Parasites are simply
       wrappers for the data, containing its name and some flags.
       Parasites have the following parameters:</Para>
@@ -974,7 +974,7 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 
       <Para>There is a set of four functions that are used to
       manipulate parasites.  They exist as functions in the
-      <filename>gimp</filename> module, and methods for image and
+      <filename>picman</filename> module, and methods for image and
       drawable objects.  They are:</Para>
       <VariableList>
 	<varlistentry>
@@ -1007,10 +1007,10 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 
   </Sect1>
 
-  <Sect1 id=gimp-objects>
-    <Title>GIMP Objects</Title>
+  <Sect1 id=picman-objects>
+    <Title>PICMAN Objects</Title>
 
-    <Para>Gimp-Python implements a number of special object types that
+    <Para>Picman-Python implements a number of special object types that
     represent the different types of parameters you can pass to a PDB
     procedure.  Rather than just making these place holders, I have
     added a number of members and methods to them that allow a lot of
@@ -1292,7 +1292,7 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
     <Sect2 id=channel-object>
       <Title>Channel Objects</Title>
 
-      <Para>These objects represent a GIMP Image's colour channels.
+      <Para>These objects represent a PICMAN Image's colour channels.
       In this section, <replaceable>channel</replaceable> will refer
       to a generic channel object.</Para>
 
@@ -1392,7 +1392,7 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
     <Sect2 id=layer-object>
       <Title>Layer Objects</Title>
 
-      <Para>Layer objects represent the layers of a GIMP image.  In
+      <Para>Layer objects represent the layers of a PICMAN image.  In
       this section I will refer to a generic layer called
       <replaceable>layer</replaceable>.</Para>
 
@@ -1734,16 +1734,16 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
     <Sect2 id=tile-object>
       <Title>Tile Objects</Title>
 
-      <Para>Tile objects represent the way GIMP stores information.  A
+      <Para>Tile objects represent the way PICMAN stores information.  A
       tile is basically just a 64x64 pixel region of the drawable.
-      The reason GIMP breaks the image into small pieces like this is
+      The reason PICMAN breaks the image into small pieces like this is
       so that the whole image doesn't have to be loaded into memory in
       order to alter one part of it.  This becomes important with
       larger images.</Para>
 
-      <Para>In Gimp-Python, you would use Tiles if you wanted to
+      <Para>In Picman-Python, you would use Tiles if you wanted to
       perform some low level operation on the image, instead of using
-      procedures in the PDB.  This type of object gives a Gimp-Python
+      procedures in the PDB.  This type of object gives a Picman-Python
       plugin the power of a C plugin, rather than just the power of a
       Script-Fu script.  Tile objects are created with either the
       <replaceable>drawable</replaceable>.<function>get_tile</function>()
@@ -2005,20 +2005,20 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
     <Title>Support Modules</Title>
 
     <Para>This section describes the modules that help make using the
-    <filename>gimp</filename> module easier.  These range from a set
+    <filename>picman</filename> module easier.  These range from a set
     of constants to storing persistent data.</Para>
 
-    <Sect2 id=gimpenums-module>
-      <Title>The gimpenums Module</Title>
+    <Sect2 id=picmanenums-module>
+      <Title>The picmanenums Module</Title>
 
       <Para>This module contains all the constants found in the header
-      <filename>libgimp/gimpenums.h</filename>, as well as some extra
+      <filename>libpicman/picmanenums.h</filename>, as well as some extra
       constants that are available in Script-Fu.</Para>
 
     </Sect2>
 
     <Sect2>
-      <Title>The gimpfu Module</Title>
+      <Title>The picmanfu Module</Title>
 
       <Para>This module was fully described in an earlier section.  It
       provides an easy interface for writing plugins, where you do not
@@ -2027,52 +2027,52 @@ pdb.query(name, [blurb, [help, [author, [copyright, [date, [type]]]]]])
 
     </Sect2>
 
-    <Sect2 id=gimpplugin-module>
-      <Title>The gimpplugin Module</Title>
+    <Sect2 id=picmanplugin-module>
+      <Title>The picmanplugin Module</Title>
 
-      <Para>This module provides the framework for writing GIMP
+      <Para>This module provides the framework for writing PICMAN
       plugins in Python.  It gives more flexibility for writing
-      plugins than the gimpfu module, but does not offer as many
+      plugins than the picmanfu module, but does not offer as many
       features (such as automatic GUI building).</Para>
 
       <Para>To use this framework you subclass
-      <function>gimpplugin.plugin</function> like so:</Para>
+      <function>picmanplugin.plugin</function> like so:</Para>
 
 <ProgramListing>
-import gimpplugin
-class myplugin(gimpplugin.plugin):
+import picmanplugin
+class myplugin(picmanplugin.plugin):
 	def init(self):
 		# initialisation routines
-		# called when gimp starts.
+		# called when picman starts.
 	def quit(self):
 		# clean up routines
-		# called when gimp exits (normally).
+		# called when picman exits (normally).
 	def query(self):
 		# called to find what functionality the plugin provides.
-		gimp.install_procedure("procname", ...)
+		picman.install_procedure("procname", ...)
 	# note that this method name matches the first arg of
-	# gimp.install_procedure
+	# picman.install_procedure
 	def procname(self, arg1, ...):
 		# do what ever this plugin should do
 </ProgramListing>
 
     </Sect2>
 
-    <Sect2 id="gimpshelf-module">
-      <Title>The gimpshelf Module</Title>
+    <Sect2 id="picmanshelf-module">
+      <Title>The picmanshelf Module</Title>
 
       <Para>This module gives a nicer interface to the persistent
-      storage interface for GIMP plugins.  Due to the complicated
+      storage interface for PICMAN plugins.  Due to the complicated
       nature of Python objects (there is often a lot of connections
       between them), it can be dificult to work out what to store in
-      gimp's persistent storage.  The python interface only allows
+      picman's persistent storage.  The python interface only allows
       storage of strings, so this module wraps pickle and unpickle to
       allow persistentstorage of any python object.</Para>
 
       <Para>Here is some examples of using this module:</Para>
 
 <Screen>
-&gt;&gt;&gt; from gimpshelf import shelf
+&gt;&gt;&gt; from picmanshelf import shelf
 &gt;&gt;&gt; shelf['james'] = ['forty-two', (42, 42L, 42.0)]
 &gt;&gt;&gt; shelf.has_key('james')
 1
@@ -2081,7 +2081,7 @@ class myplugin(gimpplugin.plugin):
 </Screen>
 
       <Para>Anything you store with
-      <function>gimpshelf.shelf</function> will exist until GIMP
+      <function>picmanshelf.shelf</function> will exist until PICMAN
       exits.  This makes this interface perfect for when a plugin is
       executed with the run mode
       <literal>RUN_WITH_LAST_VALS</literal>.</Para>
@@ -2094,16 +2094,16 @@ class myplugin(gimpplugin.plugin):
     <Title>Script-Fu Invocation</Title> 
 
     <Sect2>
-    <Title>The Script-Fu to GIMP Python Interface</Title>
+    <Title>The Script-Fu to PICMAN Python Interface</Title>
 
-        <Para>As all other plug-ins, the ones written with GIMP Python are
+        <Para>As all other plug-ins, the ones written with PICMAN Python are
 	registered in the procedural database (See <XRef
 	LinkEnd="procedural-database">).  As such, they can be easily interfaced
-	using Script-Fu; let's consider this GIMP Python plug-in:</Para>
+	using Script-Fu; let's consider this PICMAN Python plug-in:</Para>
 
 <ProgramListing role="python">
 #! /usr/bin/env python
-from gimpfu import *
+from picmanfu import *
 
 def echo(*args):
   """Print the arguments on standard output"""
@@ -2146,7 +2146,7 @@ main()
 	    <Para>The mandatory first parameter to any pdb call (Script-Fu
 	    constant <Literal>RUN-INTERACTIVE</Literal>, or
 	    <Literal>RUN-NONINTERACTIVE</Literal>) discriminates between
-	    user-driven or scripted calls. In the case of gimpfu-based plug-ins,
+	    user-driven or scripted calls. In the case of picmanfu-based plug-ins,
 	    it is automatically taken care of internally -- interactive calls
 	    will dismiss all the remaning arguments, and an interface will be
 	    presented (when possible) to the user. The plug-in core Python
@@ -2163,7 +2163,7 @@ main()
 	    a 3-tuple of integers representing a pure red color).</Para>
 	  </ListItem>
 	  <ListItem>
-	    <Para>All other special purposes gimpfu parameter types
+	    <Para>All other special purposes picmanfu parameter types
 	    (<Literal>PF_FILE</Literal>, etc.) can be constructed using those
 	    simple literals and list constructs, and received as appropriate
 	    objects in Python. If you need booleans, pass them as
@@ -2173,20 +2173,20 @@ main()
      </Sect2>
 
      <Sect2>
-     <Title>GIMP Python Invocation from the Shell</Title>
+     <Title>PICMAN Python Invocation from the Shell</Title>
 
-       <Para>All this means that you could easily invoke a GIMP Python plug-in
+       <Para>All this means that you could easily invoke a PICMAN Python plug-in
        such as the one above directly from your shell using the
        <Literal>(plug-in-script-fu-eval ...)</Literal> evaluator:</Para>
 
 <programlisting>
-gimp --no-interface --batch='(python-fu-console-echo RUN-NONINTERACTIVE "another string" 777 3.1416 (list 1 0 0))' --batch='(gimp-quit 1)'
+picman --no-interface --batch='(python-fu-console-echo RUN-NONINTERACTIVE "another string" 777 3.1416 (list 1 0 0))' --batch='(picman-quit 1)'
 </programlisting>
 
        <Para>The invocation here was done without an interface since this specific
        procedure didn't need any.</Para>
 
-       <Para>See the GIMP Script-Fu Documentation to learn more about it.</Para>
+       <Para>See the PICMAN Script-Fu Documentation to learn more about it.</Para>
 
     </Sect2>
 
@@ -2196,7 +2196,7 @@ gimp --no-interface --batch='(python-fu-console-echo RUN-NONINTERACTIVE "another
     <Title>End Note</Title>
 
     <Para>This package is not yet complete, but it has enough in it to
-    be useful for writing plugins for GIMP.  If you write any plugins
+    be useful for writing plugins for PICMAN.  If you write any plugins
     that might be useful as examples, please mail me at <ULink
     URL="mailto:james@daa.com.au" >james@daa.com.au</ULink>.</Para>
 

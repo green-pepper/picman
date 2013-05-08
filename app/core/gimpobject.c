@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,15 +21,15 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
-#include "gimp-utils.h"
-#include "gimpmarshal.h"
-#include "gimpobject.h"
+#include "picman-utils.h"
+#include "picmanmarshal.h"
+#include "picmanobject.h"
 
-#include "gimp-debug.h"
+#include "picman-debug.h"
 
 
 enum
@@ -46,7 +46,7 @@ enum
 };
 
 
-struct _GimpObjectPrivate
+struct _PicmanObjectPrivate
 {
   gchar *name;
   gchar *normalized;
@@ -55,22 +55,22 @@ struct _GimpObjectPrivate
 };
 
 
-static void    gimp_object_class_init       (GimpObjectClass *klass);
-static void    gimp_object_init             (GimpObject      *object,
-                                             GimpObjectClass *klass);
-static void    gimp_object_dispose          (GObject         *object);
-static void    gimp_object_finalize         (GObject         *object);
-static void    gimp_object_set_property     (GObject         *object,
+static void    picman_object_class_init       (PicmanObjectClass *klass);
+static void    picman_object_init             (PicmanObject      *object,
+                                             PicmanObjectClass *klass);
+static void    picman_object_dispose          (GObject         *object);
+static void    picman_object_finalize         (GObject         *object);
+static void    picman_object_set_property     (GObject         *object,
                                              guint            property_id,
                                              const GValue    *value,
                                              GParamSpec      *pspec);
-static void    gimp_object_get_property     (GObject         *object,
+static void    picman_object_get_property     (GObject         *object,
                                              guint            property_id,
                                              GValue          *value,
                                              GParamSpec      *pspec);
-static gint64  gimp_object_real_get_memsize (GimpObject      *object,
+static gint64  picman_object_real_get_memsize (PicmanObject      *object,
                                              gint64          *gui_size);
-static void    gimp_object_name_normalize   (GimpObject      *object);
+static void    picman_object_name_normalize   (PicmanObject      *object);
 
 
 static GObjectClass *parent_class = NULL;
@@ -79,7 +79,7 @@ static guint object_signals[LAST_SIGNAL] = { 0 };
 
 
 GType
-gimp_object_get_type (void)
+picman_object_get_type (void)
 {
   static GType object_type = 0;
 
@@ -87,19 +87,19 @@ gimp_object_get_type (void)
     {
       const GTypeInfo object_info =
       {
-        sizeof (GimpObjectClass),
+        sizeof (PicmanObjectClass),
         (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) gimp_object_class_init,
+        (GClassInitFunc) picman_object_class_init,
         NULL,           /* class_finalize */
         NULL,           /* class_data     */
-        sizeof (GimpObject),
+        sizeof (PicmanObject),
         0,              /* n_preallocs    */
-        (GInstanceInitFunc) gimp_object_init,
+        (GInstanceInitFunc) picman_object_init,
       };
 
       object_type = g_type_register_static (G_TYPE_OBJECT,
-                                            "GimpObject",
+                                            "PicmanObject",
                                             &object_info, 0);
     }
 
@@ -107,7 +107,7 @@ gimp_object_get_type (void)
 }
 
 static void
-gimp_object_class_init (GimpObjectClass *klass)
+picman_object_class_init (PicmanObjectClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -117,89 +117,89 @@ gimp_object_class_init (GimpObjectClass *klass)
     g_signal_new ("disconnect",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpObjectClass, disconnect),
+                  G_STRUCT_OFFSET (PicmanObjectClass, disconnect),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
   object_signals[NAME_CHANGED] =
     g_signal_new ("name-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpObjectClass, name_changed),
+                  G_STRUCT_OFFSET (PicmanObjectClass, name_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->dispose      = gimp_object_dispose;
-  object_class->finalize     = gimp_object_finalize;
-  object_class->set_property = gimp_object_set_property;
-  object_class->get_property = gimp_object_get_property;
+  object_class->dispose      = picman_object_dispose;
+  object_class->finalize     = picman_object_finalize;
+  object_class->set_property = picman_object_set_property;
+  object_class->get_property = picman_object_get_property;
 
   klass->disconnect          = NULL;
   klass->name_changed        = NULL;
-  klass->get_memsize         = gimp_object_real_get_memsize;
+  klass->get_memsize         = picman_object_real_get_memsize;
 
   g_object_class_install_property (object_class, PROP_NAME,
                                    g_param_spec_string ("name",
                                                         NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
   g_type_class_add_private (klass,
-                            sizeof (GimpObjectPrivate));
+                            sizeof (PicmanObjectPrivate));
 }
 
 static void
-gimp_object_init (GimpObject      *object,
-                  GimpObjectClass *klass)
+picman_object_init (PicmanObject      *object,
+                  PicmanObjectClass *klass)
 {
   object->p = G_TYPE_INSTANCE_GET_PRIVATE (object,
-                                           GIMP_TYPE_OBJECT,
-                                           GimpObjectPrivate);
+                                           PICMAN_TYPE_OBJECT,
+                                           PicmanObjectPrivate);
   object->p->name       = NULL;
   object->p->normalized = NULL;
 
-  gimp_debug_add_instance (G_OBJECT (object), G_OBJECT_CLASS (klass));
+  picman_debug_add_instance (G_OBJECT (object), G_OBJECT_CLASS (klass));
 }
 
 static void
-gimp_object_dispose (GObject *object)
+picman_object_dispose (GObject *object)
 {
-  GimpObject *gimp_object = GIMP_OBJECT (object);
+  PicmanObject *picman_object = PICMAN_OBJECT (object);
 
-  if (! gimp_object->p->disconnected)
+  if (! picman_object->p->disconnected)
     {
       g_signal_emit (object, object_signals[DISCONNECT], 0);
 
-      gimp_object->p->disconnected = TRUE;
+      picman_object->p->disconnected = TRUE;
     }
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_object_finalize (GObject *object)
+picman_object_finalize (GObject *object)
 {
-  gimp_object_name_free (GIMP_OBJECT (object));
+  picman_object_name_free (PICMAN_OBJECT (object));
 
-  gimp_debug_remove_instance (object);
+  picman_debug_remove_instance (object);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
-gimp_object_set_property (GObject      *object,
+picman_object_set_property (GObject      *object,
                           guint         property_id,
                           const GValue *value,
                           GParamSpec   *pspec)
 {
-  GimpObject *gimp_object = GIMP_OBJECT (object);
+  PicmanObject *picman_object = PICMAN_OBJECT (object);
 
   switch (property_id)
     {
     case PROP_NAME:
-      gimp_object_set_name (gimp_object, g_value_get_string (value));
+      picman_object_set_name (picman_object, g_value_get_string (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -208,20 +208,20 @@ gimp_object_set_property (GObject      *object,
 }
 
 static void
-gimp_object_get_property (GObject    *object,
+picman_object_get_property (GObject    *object,
                           guint       property_id,
                           GValue     *value,
                           GParamSpec *pspec)
 {
-  GimpObject *gimp_object = GIMP_OBJECT (object);
+  PicmanObject *picman_object = PICMAN_OBJECT (object);
 
   switch (property_id)
     {
     case PROP_NAME:
-      if (gimp_object->p->static_name)
-        g_value_set_static_string (value, gimp_object->p->name);
+      if (picman_object->p->static_name)
+        g_value_set_static_string (value, picman_object->p->name);
       else
-        g_value_set_string (value, gimp_object->p->name);
+        g_value_set_string (value, picman_object->p->name);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -230,134 +230,134 @@ gimp_object_get_property (GObject    *object,
 }
 
 /**
- * gimp_object_set_name:
- * @object: a #GimpObject
+ * picman_object_set_name:
+ * @object: a #PicmanObject
  * @name: the @object's new name
  *
  * Sets the @object's name. Takes care of freeing the old name and
  * emitting the ::name_changed signal if the old and new name differ.
  **/
 void
-gimp_object_set_name (GimpObject  *object,
+picman_object_set_name (PicmanObject  *object,
                       const gchar *name)
 {
-  g_return_if_fail (GIMP_IS_OBJECT (object));
+  g_return_if_fail (PICMAN_IS_OBJECT (object));
 
   if (! g_strcmp0 (object->p->name, name))
     return;
 
-  gimp_object_name_free (object);
+  picman_object_name_free (object);
 
   object->p->name = g_strdup (name);
   object->p->static_name = FALSE;
 
-  gimp_object_name_changed (object);
+  picman_object_name_changed (object);
   g_object_notify (G_OBJECT (object), "name");
 }
 
 /**
- * gimp_object_set_name_safe:
- * @object: a #GimpObject
+ * picman_object_set_name_safe:
+ * @object: a #PicmanObject
  * @name: the @object's new name
  *
- * A safe version of gimp_object_set_name() that takes care of
+ * A safe version of picman_object_set_name() that takes care of
  * handling newlines and overly long names. The actual name set
  * may be different to the @name you pass.
  **/
 void
-gimp_object_set_name_safe (GimpObject  *object,
+picman_object_set_name_safe (PicmanObject  *object,
                            const gchar *name)
 {
-  g_return_if_fail (GIMP_IS_OBJECT (object));
+  g_return_if_fail (PICMAN_IS_OBJECT (object));
 
   if (! g_strcmp0 (object->p->name, name))
     return;
 
-  gimp_object_name_free (object);
+  picman_object_name_free (object);
 
-  object->p->name = gimp_utf8_strtrim (name, 30);
+  object->p->name = picman_utf8_strtrim (name, 30);
   object->p->static_name = FALSE;
 
-  gimp_object_name_changed (object);
+  picman_object_name_changed (object);
   g_object_notify (G_OBJECT (object), "name");
 }
 
 void
-gimp_object_set_static_name (GimpObject  *object,
+picman_object_set_static_name (PicmanObject  *object,
                              const gchar *name)
 {
-  g_return_if_fail (GIMP_IS_OBJECT (object));
+  g_return_if_fail (PICMAN_IS_OBJECT (object));
 
-  gimp_object_name_free (object);
+  picman_object_name_free (object);
 
   object->p->name = (gchar *) name;
   object->p->static_name = TRUE;
 
-  gimp_object_name_changed (object);
+  picman_object_name_changed (object);
   g_object_notify (G_OBJECT (object), "name");
 }
 
 void
-gimp_object_take_name (GimpObject *object,
+picman_object_take_name (PicmanObject *object,
                        gchar      *name)
 {
-  g_return_if_fail (GIMP_IS_OBJECT (object));
+  g_return_if_fail (PICMAN_IS_OBJECT (object));
 
-  gimp_object_name_free (object);
+  picman_object_name_free (object);
 
   object->p->name = name;
   object->p->static_name = FALSE;
 
-  gimp_object_name_changed (object);
+  picman_object_name_changed (object);
   g_object_notify (G_OBJECT (object), "name");
 }
 
 /**
- * gimp_object_get_name:
- * @object: a #GimpObject
+ * picman_object_get_name:
+ * @object: a #PicmanObject
  *
- * This function gives access to the name of a GimpObject. The
+ * This function gives access to the name of a PicmanObject. The
  * returned name belongs to the object and must not be freed.
  *
  * Return value: a pointer to the @object's name
  **/
 const gchar *
-gimp_object_get_name (gconstpointer object)
+picman_object_get_name (gconstpointer object)
 {
-  const GimpObject *object_typed = object;
-  g_return_val_if_fail (GIMP_IS_OBJECT (object_typed), NULL);
+  const PicmanObject *object_typed = object;
+  g_return_val_if_fail (PICMAN_IS_OBJECT (object_typed), NULL);
 
   return object_typed->p->name;
 }
 
 /**
- * gimp_object_name_changed:
- * @object: a #GimpObject
+ * picman_object_name_changed:
+ * @object: a #PicmanObject
  *
  * Causes the ::name-changed signal to be emitted.
  **/
 void
-gimp_object_name_changed (GimpObject *object)
+picman_object_name_changed (PicmanObject *object)
 {
-  g_return_if_fail (GIMP_IS_OBJECT (object));
+  g_return_if_fail (PICMAN_IS_OBJECT (object));
 
   g_signal_emit (object, object_signals[NAME_CHANGED], 0);
 }
 
 /**
- * gimp_object_name_free:
- * @object: a #GimpObject
+ * picman_object_name_free:
+ * @object: a #PicmanObject
  *
  * Frees the name of @object and sets the name pointer to %NULL. Also
  * takes care of the normalized name that the object might be caching.
  *
- * In general you should be using gimp_object_set_name() instead. But
+ * In general you should be using picman_object_set_name() instead. But
  * if you ever need to free the object name but don't want the
  * ::name-changed signal to be emitted, then use this function. Never
  * ever free the object name directly!
  **/
 void
-gimp_object_name_free (GimpObject *object)
+picman_object_name_free (PicmanObject *object)
 {
   if (object->p->normalized)
     {
@@ -378,9 +378,9 @@ gimp_object_name_free (GimpObject *object)
 }
 
 /**
- * gimp_object_name_collate:
- * @object1: a #GimpObject
- * @object2: another #GimpObject
+ * picman_object_name_collate:
+ * @object1: a #PicmanObject
+ * @object2: another #PicmanObject
  *
  * Compares two object names for ordering using the linguistically
  * correct rules for the current locale. It caches the normalized
@@ -391,20 +391,20 @@ gimp_object_name_free (GimpObject *object)
  *                1 if object1 compares after object2.
  **/
 gint
-gimp_object_name_collate (GimpObject *object1,
-                          GimpObject *object2)
+picman_object_name_collate (PicmanObject *object1,
+                          PicmanObject *object2)
 {
   if (! object1->p->normalized)
-    gimp_object_name_normalize (object1);
+    picman_object_name_normalize (object1);
 
   if (! object2->p->normalized)
-    gimp_object_name_normalize (object2);
+    picman_object_name_normalize (object2);
 
   return strcmp (object1->p->normalized, object2->p->normalized);
 }
 
 static void
-gimp_object_name_normalize (GimpObject *object)
+picman_object_name_normalize (PicmanObject *object)
 {
   g_return_if_fail (object->p->normalized == NULL);
 
@@ -428,17 +428,17 @@ gimp_object_name_normalize (GimpObject *object)
 #define DEBUG_MEMSIZE 1
 
 #ifdef DEBUG_MEMSIZE
-gboolean gimp_debug_memsize = FALSE;
+gboolean picman_debug_memsize = FALSE;
 #endif
 
 gint64
-gimp_object_get_memsize (GimpObject *object,
+picman_object_get_memsize (PicmanObject *object,
                          gint64     *gui_size)
 {
   gint64 my_size     = 0;
   gint64 my_gui_size = 0;
 
-  g_return_val_if_fail (object == NULL || GIMP_IS_OBJECT (object), 0);
+  g_return_val_if_fail (object == NULL || PICMAN_IS_OBJECT (object), 0);
 
   if (! object)
     {
@@ -449,7 +449,7 @@ gimp_object_get_memsize (GimpObject *object,
     }
 
 #ifdef DEBUG_MEMSIZE
-  if (gimp_debug_memsize)
+  if (picman_debug_memsize)
     {
       static gint   indent_level     = 0;
       static GList *aggregation_tree = NULL;
@@ -465,7 +465,7 @@ gimp_object_get_memsize (GimpObject *object,
 
       my_indent_level = indent_level;
 
-      memsize = GIMP_OBJECT_GET_CLASS (object)->get_memsize (object,
+      memsize = PICMAN_OBJECT_GET_CLASS (object)->get_memsize (object,
                                                              &gui_memsize);
 
       indent_level--;
@@ -504,7 +504,7 @@ gimp_object_get_memsize (GimpObject *object,
     }
 #endif /* DEBUG_MEMSIZE */
 
-  my_size = GIMP_OBJECT_GET_CLASS (object)->get_memsize (object,
+  my_size = PICMAN_OBJECT_GET_CLASS (object)->get_memsize (object,
                                                          &my_gui_size);
 
   if (gui_size)
@@ -514,13 +514,13 @@ gimp_object_get_memsize (GimpObject *object,
 }
 
 static gint64
-gimp_object_real_get_memsize (GimpObject *object,
+picman_object_real_get_memsize (PicmanObject *object,
                               gint64     *gui_size)
 {
   gint64 memsize = 0;
 
   if (! object->p->static_name)
-    memsize += gimp_string_get_memsize (object->p->name);
+    memsize += picman_string_get_memsize (object->p->name);
 
-  return memsize + gimp_g_object_get_memsize ((GObject *) object);
+  return memsize + picman_g_object_get_memsize ((GObject *) object);
 }

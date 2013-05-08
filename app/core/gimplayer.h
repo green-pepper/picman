@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,32 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_LAYER_H__
-#define __GIMP_LAYER_H__
+#ifndef __PICMAN_LAYER_H__
+#define __PICMAN_LAYER_H__
 
 
-#include "gimpdrawable.h"
+#include "picmandrawable.h"
 
 
-#define GIMP_TYPE_LAYER            (gimp_layer_get_type ())
-#define GIMP_LAYER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_LAYER, GimpLayer))
-#define GIMP_LAYER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_LAYER, GimpLayerClass))
-#define GIMP_IS_LAYER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_LAYER))
-#define GIMP_IS_LAYER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_LAYER))
-#define GIMP_LAYER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_LAYER, GimpLayerClass))
+#define PICMAN_TYPE_LAYER            (picman_layer_get_type ())
+#define PICMAN_LAYER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_LAYER, PicmanLayer))
+#define PICMAN_LAYER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_LAYER, PicmanLayerClass))
+#define PICMAN_IS_LAYER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_LAYER))
+#define PICMAN_IS_LAYER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_LAYER))
+#define PICMAN_LAYER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_LAYER, PicmanLayerClass))
 
 
-typedef struct _GimpLayerClass GimpLayerClass;
+typedef struct _PicmanLayerClass PicmanLayerClass;
 
-struct _GimpLayer
+struct _PicmanLayer
 {
-  GimpDrawable          parent_instance;
+  PicmanDrawable          parent_instance;
 
   gdouble               opacity;          /*  layer opacity              */
-  GimpLayerModeEffects  mode;             /*  layer combination mode     */
+  PicmanLayerModeEffects  mode;             /*  layer combination mode     */
   gboolean              lock_alpha;       /*  lock the alpha channel     */
 
-  GimpLayerMask        *mask;             /*  possible layer mask        */
+  PicmanLayerMask        *mask;             /*  possible layer mask        */
   gboolean              apply_mask;       /*  controls mask application  */
   gboolean              edit_mask;        /*  edit mask or layer?        */
   gboolean              show_mask;        /*  show mask or layer?        */
@@ -51,107 +51,107 @@ struct _GimpLayer
   /*  Floating selections  */
   struct
   {
-    GimpDrawable *drawable;           /*  floating sel is attached to    */
+    PicmanDrawable *drawable;           /*  floating sel is attached to    */
     gboolean      boundary_known;     /*  is the current boundary valid  */
-    GimpBoundSeg *segs;               /*  boundary of floating sel       */
+    PicmanBoundSeg *segs;               /*  boundary of floating sel       */
     gint          num_segs;           /*  number of segs in boundary     */
   } fs;
 };
 
-struct _GimpLayerClass
+struct _PicmanLayerClass
 {
-  GimpDrawableClass  parent_class;
+  PicmanDrawableClass  parent_class;
 
-  void (* opacity_changed)    (GimpLayer *layer);
-  void (* mode_changed)       (GimpLayer *layer);
-  void (* lock_alpha_changed) (GimpLayer *layer);
-  void (* mask_changed)       (GimpLayer *layer);
-  void (* apply_mask_changed) (GimpLayer *layer);
-  void (* edit_mask_changed)  (GimpLayer *layer);
-  void (* show_mask_changed)  (GimpLayer *layer);
+  void (* opacity_changed)    (PicmanLayer *layer);
+  void (* mode_changed)       (PicmanLayer *layer);
+  void (* lock_alpha_changed) (PicmanLayer *layer);
+  void (* mask_changed)       (PicmanLayer *layer);
+  void (* apply_mask_changed) (PicmanLayer *layer);
+  void (* edit_mask_changed)  (PicmanLayer *layer);
+  void (* show_mask_changed)  (PicmanLayer *layer);
 };
 
 
 /*  function declarations  */
 
-GType           gimp_layer_get_type            (void) G_GNUC_CONST;
+GType           picman_layer_get_type            (void) G_GNUC_CONST;
 
-GimpLayer     * gimp_layer_new                 (GimpImage            *image,
+PicmanLayer     * picman_layer_new                 (PicmanImage            *image,
                                                 gint                  width,
                                                 gint                  height,
                                                 const Babl           *format,
                                                 const gchar          *name,
                                                 gdouble               opacity,
-                                                GimpLayerModeEffects  mode);
+                                                PicmanLayerModeEffects  mode);
 
-GimpLayer     * gimp_layer_new_from_buffer     (GeglBuffer           *buffer,
-                                                GimpImage            *dest_image,
+PicmanLayer     * picman_layer_new_from_buffer     (GeglBuffer           *buffer,
+                                                PicmanImage            *dest_image,
                                                 const Babl           *format,
                                                 const gchar          *name,
                                                 gdouble               opacity,
-                                                GimpLayerModeEffects  mode);
-GimpLayer     * gimp_layer_new_from_pixbuf     (GdkPixbuf            *pixbuf,
-                                                GimpImage            *dest_image,
+                                                PicmanLayerModeEffects  mode);
+PicmanLayer     * picman_layer_new_from_pixbuf     (GdkPixbuf            *pixbuf,
+                                                PicmanImage            *dest_image,
                                                 const Babl           *format,
                                                 const gchar          *name,
                                                 gdouble               opacity,
-                                                GimpLayerModeEffects  mode);
+                                                PicmanLayerModeEffects  mode);
 
-GimpLayer     * gimp_layer_get_parent          (GimpLayer            *layer);
+PicmanLayer     * picman_layer_get_parent          (PicmanLayer            *layer);
 
-GimpLayerMask * gimp_layer_get_mask            (const GimpLayer      *layer);
-GimpLayerMask * gimp_layer_create_mask         (const GimpLayer      *layer,
-                                                GimpAddMaskType       mask_type,
-                                                GimpChannel          *channel);
-GimpLayerMask * gimp_layer_add_mask            (GimpLayer            *layer,
-                                                GimpLayerMask        *mask,
+PicmanLayerMask * picman_layer_get_mask            (const PicmanLayer      *layer);
+PicmanLayerMask * picman_layer_create_mask         (const PicmanLayer      *layer,
+                                                PicmanAddMaskType       mask_type,
+                                                PicmanChannel          *channel);
+PicmanLayerMask * picman_layer_add_mask            (PicmanLayer            *layer,
+                                                PicmanLayerMask        *mask,
                                                 gboolean              push_undo,
                                                 GError              **error);
-void            gimp_layer_apply_mask          (GimpLayer            *layer,
-                                                GimpMaskApplyMode     mode,
+void            picman_layer_apply_mask          (PicmanLayer            *layer,
+                                                PicmanMaskApplyMode     mode,
                                                 gboolean              push_undo);
 
-void            gimp_layer_set_apply_mask      (GimpLayer           *layer,
+void            picman_layer_set_apply_mask      (PicmanLayer           *layer,
                                                 gboolean             apply,
                                                 gboolean             push_undo);
-gboolean        gimp_layer_get_apply_mask      (const GimpLayer     *layer);
+gboolean        picman_layer_get_apply_mask      (const PicmanLayer     *layer);
 
-void            gimp_layer_set_edit_mask       (GimpLayer           *layer,
+void            picman_layer_set_edit_mask       (PicmanLayer           *layer,
                                                 gboolean             edit);
-gboolean        gimp_layer_get_edit_mask       (const GimpLayer     *layer);
+gboolean        picman_layer_get_edit_mask       (const PicmanLayer     *layer);
 
-void            gimp_layer_set_show_mask       (GimpLayer           *layer,
+void            picman_layer_set_show_mask       (PicmanLayer           *layer,
                                                 gboolean             show,
                                                 gboolean             push_undo);
-gboolean        gimp_layer_get_show_mask       (const GimpLayer     *layer);
+gboolean        picman_layer_get_show_mask       (const PicmanLayer     *layer);
 
-void            gimp_layer_add_alpha           (GimpLayer            *layer);
-void            gimp_layer_flatten             (GimpLayer            *layer,
-                                                GimpContext          *context);
+void            picman_layer_add_alpha           (PicmanLayer            *layer);
+void            picman_layer_flatten             (PicmanLayer            *layer,
+                                                PicmanContext          *context);
 
-void            gimp_layer_resize_to_image     (GimpLayer            *layer,
-                                                GimpContext          *context);
+void            picman_layer_resize_to_image     (PicmanLayer            *layer,
+                                                PicmanContext          *context);
 
-GimpDrawable * gimp_layer_get_floating_sel_drawable (const GimpLayer *layer);
-void           gimp_layer_set_floating_sel_drawable (GimpLayer       *layer,
-                                                     GimpDrawable    *drawable);
-gboolean        gimp_layer_is_floating_sel     (const GimpLayer      *layer);
+PicmanDrawable * picman_layer_get_floating_sel_drawable (const PicmanLayer *layer);
+void           picman_layer_set_floating_sel_drawable (PicmanLayer       *layer,
+                                                     PicmanDrawable    *drawable);
+gboolean        picman_layer_is_floating_sel     (const PicmanLayer      *layer);
 
-void            gimp_layer_set_opacity         (GimpLayer            *layer,
+void            picman_layer_set_opacity         (PicmanLayer            *layer,
                                                 gdouble               opacity,
                                                 gboolean              push_undo);
-gdouble         gimp_layer_get_opacity         (const GimpLayer      *layer);
+gdouble         picman_layer_get_opacity         (const PicmanLayer      *layer);
 
-void            gimp_layer_set_mode            (GimpLayer            *layer,
-                                                GimpLayerModeEffects  mode,
+void            picman_layer_set_mode            (PicmanLayer            *layer,
+                                                PicmanLayerModeEffects  mode,
                                                 gboolean              push_undo);
-GimpLayerModeEffects gimp_layer_get_mode       (const GimpLayer      *layer);
+PicmanLayerModeEffects picman_layer_get_mode       (const PicmanLayer      *layer);
 
-void            gimp_layer_set_lock_alpha      (GimpLayer            *layer,
+void            picman_layer_set_lock_alpha      (PicmanLayer            *layer,
                                                 gboolean              lock_alpha,
                                                 gboolean              push_undo);
-gboolean        gimp_layer_get_lock_alpha      (const GimpLayer      *layer);
-gboolean        gimp_layer_can_lock_alpha      (const GimpLayer      *layer);
+gboolean        picman_layer_get_lock_alpha      (const PicmanLayer      *layer);
+gboolean        picman_layer_can_lock_alpha      (const PicmanLayer      *layer);
 
 
-#endif /* __GIMP_LAYER_H__ */
+#endif /* __PICMAN_LAYER_H__ */

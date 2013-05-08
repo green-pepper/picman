@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpposterizeconfig.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanposterizeconfig.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "operations-types.h"
 
-#include "gimpposterizeconfig.h"
+#include "picmanposterizeconfig.h"
 
 
 enum
@@ -36,52 +36,52 @@ enum
 };
 
 
-static void   gimp_posterize_config_get_property (GObject      *object,
+static void   picman_posterize_config_get_property (GObject      *object,
                                                   guint         property_id,
                                                   GValue       *value,
                                                   GParamSpec   *pspec);
-static void   gimp_posterize_config_set_property (GObject      *object,
+static void   picman_posterize_config_set_property (GObject      *object,
                                                   guint         property_id,
                                                   const GValue *value,
                                                   GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpPosterizeConfig, gimp_posterize_config,
-                         GIMP_TYPE_IMAGE_MAP_CONFIG,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanPosterizeConfig, picman_posterize_config,
+                         PICMAN_TYPE_IMAGE_MAP_CONFIG,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL))
 
-#define parent_class gimp_posterize_config_parent_class
+#define parent_class picman_posterize_config_parent_class
 
 
 static void
-gimp_posterize_config_class_init (GimpPosterizeConfigClass *klass)
+picman_posterize_config_class_init (PicmanPosterizeConfigClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->set_property       = gimp_posterize_config_set_property;
-  object_class->get_property       = gimp_posterize_config_get_property;
+  object_class->set_property       = picman_posterize_config_set_property;
+  object_class->get_property       = picman_posterize_config_get_property;
 
-  viewable_class->default_stock_id = "gimp-tool-posterize";
+  viewable_class->default_stock_id = "picman-tool-posterize";
 
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_LEVELS,
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_LEVELS,
                                 "levels",
                                 "Posterize levels",
                                 2, 256, 3, 0);
 }
 
 static void
-gimp_posterize_config_init (GimpPosterizeConfig *self)
+picman_posterize_config_init (PicmanPosterizeConfig *self)
 {
 }
 
 static void
-gimp_posterize_config_get_property (GObject    *object,
+picman_posterize_config_get_property (GObject    *object,
                                     guint       property_id,
                                     GValue     *value,
                                     GParamSpec *pspec)
 {
-  GimpPosterizeConfig *self = GIMP_POSTERIZE_CONFIG (object);
+  PicmanPosterizeConfig *self = PICMAN_POSTERIZE_CONFIG (object);
 
   switch (property_id)
     {
@@ -96,12 +96,12 @@ gimp_posterize_config_get_property (GObject    *object,
 }
 
 static void
-gimp_posterize_config_set_property (GObject      *object,
+picman_posterize_config_set_property (GObject      *object,
                                     guint         property_id,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
-  GimpPosterizeConfig *self = GIMP_POSTERIZE_CONFIG (object);
+  PicmanPosterizeConfig *self = PICMAN_POSTERIZE_CONFIG (object);
 
   switch (property_id)
     {

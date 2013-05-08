@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,29 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DEVICE_INFO_COORDS_H__
-#define __GIMP_DEVICE_INFO_COORDS_H__
+#ifndef __PICMAN_DEVICE_INFO_COORDS_H__
+#define __PICMAN_DEVICE_INFO_COORDS_H__
 
 
-gboolean gimp_device_info_get_event_coords   (GimpDeviceInfo  *info,
+gboolean picman_device_info_get_event_coords   (PicmanDeviceInfo  *info,
                                               GdkWindow       *window,
                                               const GdkEvent  *event,
-                                              GimpCoords      *coords);
-void     gimp_device_info_get_device_coords  (GimpDeviceInfo  *info,
+                                              PicmanCoords      *coords);
+void     picman_device_info_get_device_coords  (PicmanDeviceInfo  *info,
                                               GdkWindow       *window,
-                                              GimpCoords      *coords);
+                                              PicmanCoords      *coords);
 
-void     gimp_device_info_get_time_coords    (GimpDeviceInfo  *info,
+void     picman_device_info_get_time_coords    (PicmanDeviceInfo  *info,
                                               GdkTimeCoord    *event,
-                                              GimpCoords      *coords);
+                                              PicmanCoords      *coords);
 
-gboolean gimp_device_info_get_event_state    (GimpDeviceInfo  *info,
+gboolean picman_device_info_get_event_state    (PicmanDeviceInfo  *info,
                                               GdkWindow       *window,
                                               const GdkEvent  *event,
                                               GdkModifierType *state);
-void     gimp_device_info_get_device_state   (GimpDeviceInfo  *info,
+void     picman_device_info_get_device_state   (PicmanDeviceInfo  *info,
                                               GdkWindow       *window,
                                               GdkModifierType *state);
 
 
-#endif /* __GIMP_DEVICE_INFO_COORDS_H__ */
+#endif /* __PICMAN_DEVICE_INFO_COORDS_H__ */

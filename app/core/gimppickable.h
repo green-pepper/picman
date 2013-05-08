@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimppickable.h
- * Copyright (C) 2004  Michael Natterer <mitch@gimp.org>
+ * picmanpickable.h
+ * Copyright (C) 2004  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,66 +18,66 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PICKABLE_H__
-#define __GIMP_PICKABLE_H__
+#ifndef __PICMAN_PICKABLE_H__
+#define __PICMAN_PICKABLE_H__
 
 
-#define GIMP_TYPE_PICKABLE               (gimp_pickable_interface_get_type ())
-#define GIMP_IS_PICKABLE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PICKABLE))
-#define GIMP_PICKABLE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PICKABLE, GimpPickable))
-#define GIMP_PICKABLE_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GIMP_TYPE_PICKABLE, GimpPickableInterface))
+#define PICMAN_TYPE_PICKABLE               (picman_pickable_interface_get_type ())
+#define PICMAN_IS_PICKABLE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PICKABLE))
+#define PICMAN_PICKABLE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PICKABLE, PicmanPickable))
+#define PICMAN_PICKABLE_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), PICMAN_TYPE_PICKABLE, PicmanPickableInterface))
 
 
-typedef struct _GimpPickableInterface GimpPickableInterface;
+typedef struct _PicmanPickableInterface PicmanPickableInterface;
 
-struct _GimpPickableInterface
+struct _PicmanPickableInterface
 {
   GTypeInterface base_iface;
 
   /*  virtual functions  */
-  void            (* flush)                 (GimpPickable *pickable);
-  GimpImage     * (* get_image)             (GimpPickable *pickable);
-  const Babl    * (* get_format)            (GimpPickable *pickable);
-  const Babl    * (* get_format_with_alpha) (GimpPickable *pickable);
-  GeglBuffer    * (* get_buffer)            (GimpPickable *pickable);
-  gboolean        (* get_pixel_at)          (GimpPickable *pickable,
+  void            (* flush)                 (PicmanPickable *pickable);
+  PicmanImage     * (* get_image)             (PicmanPickable *pickable);
+  const Babl    * (* get_format)            (PicmanPickable *pickable);
+  const Babl    * (* get_format_with_alpha) (PicmanPickable *pickable);
+  GeglBuffer    * (* get_buffer)            (PicmanPickable *pickable);
+  gboolean        (* get_pixel_at)          (PicmanPickable *pickable,
                                              gint          x,
                                              gint          y,
                                              const Babl   *format,
                                              gpointer      pixel);
-  gdouble         (* get_opacity_at)        (GimpPickable *pickable,
+  gdouble         (* get_opacity_at)        (PicmanPickable *pickable,
                                              gint          x,
                                              gint          y);
 };
 
 
-GType           gimp_pickable_interface_get_type    (void) G_GNUC_CONST;
+GType           picman_pickable_interface_get_type    (void) G_GNUC_CONST;
 
-void            gimp_pickable_flush                 (GimpPickable *pickable);
-GimpImage     * gimp_pickable_get_image             (GimpPickable *pickable);
-const Babl    * gimp_pickable_get_format            (GimpPickable *pickable);
-const Babl    * gimp_pickable_get_format_with_alpha (GimpPickable *pickable);
-GeglBuffer    * gimp_pickable_get_buffer            (GimpPickable *pickable);
-gboolean        gimp_pickable_get_pixel_at          (GimpPickable *pickable,
+void            picman_pickable_flush                 (PicmanPickable *pickable);
+PicmanImage     * picman_pickable_get_image             (PicmanPickable *pickable);
+const Babl    * picman_pickable_get_format            (PicmanPickable *pickable);
+const Babl    * picman_pickable_get_format_with_alpha (PicmanPickable *pickable);
+GeglBuffer    * picman_pickable_get_buffer            (PicmanPickable *pickable);
+gboolean        picman_pickable_get_pixel_at          (PicmanPickable *pickable,
                                                      gint          x,
                                                      gint          y,
                                                      const Babl   *format,
                                                      gpointer      pixel);
-gboolean        gimp_pickable_get_color_at          (GimpPickable *pickable,
+gboolean        picman_pickable_get_color_at          (PicmanPickable *pickable,
                                                      gint          x,
                                                      gint          y,
-                                                     GimpRGB      *color);
-gdouble         gimp_pickable_get_opacity_at        (GimpPickable *pickable,
+                                                     PicmanRGB      *color);
+gdouble         picman_pickable_get_opacity_at        (PicmanPickable *pickable,
                                                      gint          x,
                                                      gint          y);
 
-gboolean        gimp_pickable_pick_color            (GimpPickable *pickable,
+gboolean        picman_pickable_pick_color            (PicmanPickable *pickable,
                                                      gint          x,
                                                      gint          y,
                                                      gboolean      sample_average,
                                                      gdouble       average_radius,
-                                                     GimpRGB      *color,
+                                                     PicmanRGB      *color,
                                                      gint         *color_index);
 
 
-#endif  /* __GIMP_PICKABLE_H__ */
+#endif  /* __PICMAN_PICKABLE_H__ */

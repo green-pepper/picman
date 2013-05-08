@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-apply-operation.c
- * Copyright (C) 2012 Øyvind Kolås <pippin@gimp.org>
- *                    Sven Neumann <sven@gimp.org>
- *                    Michael Natterer <mitch@gimp.org>
+ * picman-apply-operation.c
+ * Copyright (C) 2012 Øyvind Kolås <pippin@picman.org>
+ *                    Sven Neumann <sven@picman.org>
+ *                    Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,19 +24,19 @@
 
 #include <gegl.h>
 
-#include "gimp-gegl-types.h"
+#include "picman-gegl-types.h"
 
-#include "core/gimp-utils.h"
-#include "core/gimpprogress.h"
+#include "core/picman-utils.h"
+#include "core/picmanprogress.h"
 
-#include "gimp-gegl-apply-operation.h"
-#include "gimp-gegl-nodes.h"
-#include "gegl/gimp-gegl-utils.h"
+#include "picman-gegl-apply-operation.h"
+#include "picman-gegl-nodes.h"
+#include "gegl/picman-gegl-utils.h"
 
 
 void
-gimp_gegl_apply_operation (GeglBuffer          *src_buffer,
-                           GimpProgress        *progress,
+picman_gegl_apply_operation (GeglBuffer          *src_buffer,
+                           PicmanProgress        *progress,
                            const gchar         *undo_desc,
                            GeglNode            *operation,
                            GeglBuffer          *dest_buffer,
@@ -49,7 +49,7 @@ gimp_gegl_apply_operation (GeglBuffer          *src_buffer,
   gboolean       progress_active = FALSE;
 
   g_return_if_fail (src_buffer == NULL || GEGL_IS_BUFFER (src_buffer));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (GEGL_IS_NODE (operation));
   g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
 
@@ -96,20 +96,20 @@ gimp_gegl_apply_operation (GeglBuffer          *src_buffer,
 
       processor = gegl_node_new_processor (dest_node, &rect);
 
-      progress_active = gimp_progress_is_active (progress);
+      progress_active = picman_progress_is_active (progress);
 
       if (progress_active)
         {
           if (undo_desc)
-            gimp_progress_set_text (progress, undo_desc);
+            picman_progress_set_text (progress, undo_desc);
         }
       else
         {
-          gimp_progress_start (progress, undo_desc, FALSE);
+          picman_progress_start (progress, undo_desc, FALSE);
         }
 
       while (gegl_processor_work (processor, &value))
-        gimp_progress_set_value (progress, value);
+        picman_progress_set_value (progress, value);
 
       g_object_unref (processor);
     }
@@ -122,12 +122,12 @@ gimp_gegl_apply_operation (GeglBuffer          *src_buffer,
   g_object_unref (gegl);
 
   if (progress && ! progress_active)
-    gimp_progress_end (progress);
+    picman_progress_end (progress);
 }
 
 void
-gimp_gegl_apply_color_reduction (GeglBuffer   *src_buffer,
-                                 GimpProgress *progress,
+picman_gegl_apply_color_reduction (GeglBuffer   *src_buffer,
+                                 PicmanProgress *progress,
                                  const gchar  *undo_desc,
                                  GeglBuffer   *dest_buffer,
                                  gint          bits,
@@ -136,7 +136,7 @@ gimp_gegl_apply_color_reduction (GeglBuffer   *src_buffer,
   GeglNode *node;
 
   g_return_if_fail (GEGL_IS_BUFFER (src_buffer));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
 
   node = gegl_node_new_child (NULL,
@@ -148,48 +148,48 @@ gimp_gegl_apply_color_reduction (GeglBuffer   *src_buffer,
                               "dither-strategy", dither_type,
                               NULL);
 
-  gimp_gegl_apply_operation (src_buffer, progress, undo_desc,
+  picman_gegl_apply_operation (src_buffer, progress, undo_desc,
                              node, dest_buffer, NULL);
   g_object_unref (node);
 }
 
 void
-gimp_gegl_apply_flatten (GeglBuffer    *src_buffer,
-                         GimpProgress  *progress,
+picman_gegl_apply_flatten (GeglBuffer    *src_buffer,
+                         PicmanProgress  *progress,
                          const gchar   *undo_desc,
                          GeglBuffer    *dest_buffer,
-                         const GimpRGB *background)
+                         const PicmanRGB *background)
 {
   GeglNode *node;
 
   g_return_if_fail (GEGL_IS_BUFFER (src_buffer));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
   g_return_if_fail (background != NULL);
 
-  node = gimp_gegl_create_flatten_node (background);
+  node = picman_gegl_create_flatten_node (background);
 
-  gimp_gegl_apply_operation (src_buffer, progress, undo_desc,
+  picman_gegl_apply_operation (src_buffer, progress, undo_desc,
                              node, dest_buffer, NULL);
   g_object_unref (node);
 }
 
 void
-gimp_gegl_apply_feather (GeglBuffer   *src_buffer,
-                         GimpProgress *progress,
+picman_gegl_apply_feather (GeglBuffer   *src_buffer,
+                         PicmanProgress *progress,
                          const gchar  *undo_desc,
                          GeglBuffer   *dest_buffer,
                          gdouble       radius_x,
                          gdouble       radius_y)
 {
   g_return_if_fail (GEGL_IS_BUFFER (src_buffer));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
 
   /* 3.5 is completely magic and picked to visually match the old
    * gaussian_blur_region() on a crappy laptop display
    */
-  gimp_gegl_apply_gaussian_blur (src_buffer,
+  picman_gegl_apply_gaussian_blur (src_buffer,
                                  progress, undo_desc,
                                  dest_buffer,
                                  radius_x / 3.5,
@@ -197,8 +197,8 @@ gimp_gegl_apply_feather (GeglBuffer   *src_buffer,
 }
 
 void
-gimp_gegl_apply_gaussian_blur (GeglBuffer   *src_buffer,
-                               GimpProgress *progress,
+picman_gegl_apply_gaussian_blur (GeglBuffer   *src_buffer,
+                               PicmanProgress *progress,
                                const gchar  *undo_desc,
                                GeglBuffer   *dest_buffer,
                                gdouble       std_dev_x,
@@ -207,7 +207,7 @@ gimp_gegl_apply_gaussian_blur (GeglBuffer   *src_buffer,
   GeglNode *node;
 
   g_return_if_fail (GEGL_IS_BUFFER (src_buffer));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
 
   node = gegl_node_new_child (NULL,
@@ -216,36 +216,36 @@ gimp_gegl_apply_gaussian_blur (GeglBuffer   *src_buffer,
                               "std-dev-y", std_dev_y,
                               NULL);
 
-  gimp_gegl_apply_operation (src_buffer, progress, undo_desc,
+  picman_gegl_apply_operation (src_buffer, progress, undo_desc,
                              node, dest_buffer, NULL);
   g_object_unref (node);
 }
 
 void
-gimp_gegl_apply_invert (GeglBuffer    *src_buffer,
-                        GimpProgress  *progress,
+picman_gegl_apply_invert (GeglBuffer    *src_buffer,
+                        PicmanProgress  *progress,
                         const gchar   *undo_desc,
                         GeglBuffer    *dest_buffer)
 {
   GeglNode *node;
 
   g_return_if_fail (GEGL_IS_BUFFER (src_buffer));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
 
   node = gegl_node_new_child (NULL,
                               "operation", "gegl:invert",
                               NULL);
 
-  gimp_gegl_apply_operation (src_buffer, progress, undo_desc,
+  picman_gegl_apply_operation (src_buffer, progress, undo_desc,
                              node, dest_buffer, NULL);
   g_object_unref (node);
 }
 
 
 void
-gimp_gegl_apply_opacity (GeglBuffer    *src_buffer,
-                         GimpProgress  *progress,
+picman_gegl_apply_opacity (GeglBuffer    *src_buffer,
+                         PicmanProgress  *progress,
                          const gchar   *undo_desc,
                          GeglBuffer    *dest_buffer,
                          GeglBuffer    *mask,
@@ -256,53 +256,53 @@ gimp_gegl_apply_opacity (GeglBuffer    *src_buffer,
   GeglNode *node;
 
   g_return_if_fail (GEGL_IS_BUFFER (src_buffer));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
   g_return_if_fail (mask == NULL || GEGL_IS_BUFFER (mask));
 
-  node = gimp_gegl_create_apply_opacity_node (mask,
+  node = picman_gegl_create_apply_opacity_node (mask,
                                               mask_offset_x,
                                               mask_offset_y,
                                               opacity);
 
-  gimp_gegl_apply_operation (src_buffer, progress, undo_desc,
+  picman_gegl_apply_operation (src_buffer, progress, undo_desc,
                              node, dest_buffer, NULL);
   g_object_unref (node);
 }
 
 void
-gimp_gegl_apply_scale (GeglBuffer            *src_buffer,
-                       GimpProgress          *progress,
+picman_gegl_apply_scale (GeglBuffer            *src_buffer,
+                       PicmanProgress          *progress,
                        const gchar           *undo_desc,
                        GeglBuffer            *dest_buffer,
-                       GimpInterpolationType  interpolation_type,
+                       PicmanInterpolationType  interpolation_type,
                        gdouble                x,
                        gdouble                y)
 {
   GeglNode *node;
 
   g_return_if_fail (GEGL_IS_BUFFER (src_buffer));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
 
   node = gegl_node_new_child (NULL,
                               "operation", "gegl:scale",
                               "origin-x",   0.0,
                               "origin-y",   0.0,
-                              "filter",     gimp_interpolation_to_gegl_filter (interpolation_type),
+                              "filter",     picman_interpolation_to_gegl_filter (interpolation_type),
                               "hard-edges", TRUE,
                               "x",          x,
                               "y",          y,
                               NULL);
 
-  gimp_gegl_apply_operation (src_buffer, progress, undo_desc,
+  picman_gegl_apply_operation (src_buffer, progress, undo_desc,
                              node, dest_buffer, NULL);
   g_object_unref (node);
 }
 
 void
-gimp_gegl_apply_set_alpha (GeglBuffer    *src_buffer,
-                           GimpProgress  *progress,
+picman_gegl_apply_set_alpha (GeglBuffer    *src_buffer,
+                           PicmanProgress  *progress,
                            const gchar   *undo_desc,
                            GeglBuffer    *dest_buffer,
                            gdouble        value)
@@ -310,22 +310,22 @@ gimp_gegl_apply_set_alpha (GeglBuffer    *src_buffer,
   GeglNode *node;
 
   g_return_if_fail (GEGL_IS_BUFFER (src_buffer));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
 
   node = gegl_node_new_child (NULL,
-                              "operation", "gimp:set-alpha",
+                              "operation", "picman:set-alpha",
                               "value",     value,
                               NULL);
 
-  gimp_gegl_apply_operation (src_buffer, progress, undo_desc,
+  picman_gegl_apply_operation (src_buffer, progress, undo_desc,
                              node, dest_buffer, NULL);
   g_object_unref (node);
 }
 
 void
-gimp_gegl_apply_threshold (GeglBuffer    *src_buffer,
-                           GimpProgress  *progress,
+picman_gegl_apply_threshold (GeglBuffer    *src_buffer,
+                           PicmanProgress  *progress,
                            const gchar   *undo_desc,
                            GeglBuffer    *dest_buffer,
                            gdouble        value)
@@ -333,7 +333,7 @@ gimp_gegl_apply_threshold (GeglBuffer    *src_buffer,
   GeglNode *node;
 
   g_return_if_fail (GEGL_IS_BUFFER (src_buffer));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
 
   node = gegl_node_new_child (NULL,
@@ -341,34 +341,34 @@ gimp_gegl_apply_threshold (GeglBuffer    *src_buffer,
                               "value",     value,
                               NULL);
 
-  gimp_gegl_apply_operation (src_buffer, progress, undo_desc,
+  picman_gegl_apply_operation (src_buffer, progress, undo_desc,
                              node, dest_buffer, NULL);
   g_object_unref (node);
 }
 
 void
-gimp_gegl_apply_transform (GeglBuffer            *src_buffer,
-                           GimpProgress          *progress,
+picman_gegl_apply_transform (GeglBuffer            *src_buffer,
+                           PicmanProgress          *progress,
                            const gchar           *undo_desc,
                            GeglBuffer            *dest_buffer,
-                           GimpInterpolationType  interpolation_type,
-                           GimpMatrix3           *transform)
+                           PicmanInterpolationType  interpolation_type,
+                           PicmanMatrix3           *transform)
 {
   GeglNode *node;
 
   g_return_if_fail (GEGL_IS_BUFFER (src_buffer));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
   g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
 
   node = gegl_node_new_child (NULL,
                               "operation", "gegl:transform",
-                              "filter",     gimp_interpolation_to_gegl_filter (interpolation_type),
+                              "filter",     picman_interpolation_to_gegl_filter (interpolation_type),
                               "hard-edges", TRUE,
                               NULL);
 
-  gimp_gegl_node_set_matrix (node, transform);
+  picman_gegl_node_set_matrix (node, transform);
 
-  gimp_gegl_apply_operation (src_buffer, progress, undo_desc,
+  picman_gegl_apply_operation (src_buffer, progress, undo_desc,
                              node, dest_buffer, NULL);
   g_object_unref (node);
 }

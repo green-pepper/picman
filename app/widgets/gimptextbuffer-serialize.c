@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpTextBuffer-serialize
- * Copyright (C) 2010  Michael Natterer <mitch@gimp.org>
+ * PicmanTextBuffer-serialize
+ * Copyright (C) 2010  Michael Natterer <mitch@picman.org>
  *
  * inspired by
  * gtktextbufferserialize.c
@@ -30,10 +30,10 @@
 
 #include "widgets-types.h"
 
-#include "gimptextbuffer.h"
-#include "gimptextbuffer-serialize.h"
+#include "picmantextbuffer.h"
+#include "picmantextbuffer-serialize.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  serialize  */
@@ -69,7 +69,7 @@ find_list_delta (GSList  *old_list,
 }
 
 static gboolean
-open_tag (GimpTextBuffer *buffer,
+open_tag (PicmanTextBuffer *buffer,
           GString        *string,
           GtkTextTag     *tag)
 {
@@ -77,7 +77,7 @@ open_tag (GimpTextBuffer *buffer,
   const gchar *attribute;
   gchar       *attribute_value;
 
-  name = gimp_text_buffer_tag_to_name (buffer, tag,
+  name = picman_text_buffer_tag_to_name (buffer, tag,
                                        &attribute,
                                        &attribute_value);
 
@@ -105,11 +105,11 @@ open_tag (GimpTextBuffer *buffer,
 }
 
 static gboolean
-close_tag (GimpTextBuffer *buffer,
+close_tag (PicmanTextBuffer *buffer,
            GString        *string,
            GtkTextTag     *tag)
 {
-  const gchar *name = gimp_text_buffer_tag_to_name (buffer, tag, NULL, NULL);
+  const gchar *name = picman_text_buffer_tag_to_name (buffer, tag, NULL, NULL);
 
   if (name)
     {
@@ -122,7 +122,7 @@ close_tag (GimpTextBuffer *buffer,
 }
 
 guint8 *
-gimp_text_buffer_serialize (GtkTextBuffer     *register_buffer,
+picman_text_buffer_serialize (GtkTextBuffer     *register_buffer,
                             GtkTextBuffer     *content_buffer,
                             const GtkTextIter *start,
                             const GtkTextIter *end,
@@ -167,7 +167,7 @@ gimp_text_buffer_serialize (GtkTextBuffer     *register_buffer,
                */
               while (active_tags->data != tag)
                 {
-                  close_tag (GIMP_TEXT_BUFFER (register_buffer),
+                  close_tag (PICMAN_TEXT_BUFFER (register_buffer),
                              string, active_tags->data);
 
                   /* if it also in the list of removed tags, *don't* add
@@ -180,7 +180,7 @@ gimp_text_buffer_serialize (GtkTextBuffer     *register_buffer,
                 }
 
               /*  then, close the tag itself  */
-              close_tag (GIMP_TEXT_BUFFER (register_buffer), string, tag);
+              close_tag (PICMAN_TEXT_BUFFER (register_buffer), string, tag);
 
               active_tags = g_slist_remove (active_tags, active_tags->data);
             }
@@ -191,7 +191,7 @@ gimp_text_buffer_serialize (GtkTextBuffer     *register_buffer,
 	{
 	  GtkTextTag *tag = tmp->data;
 
-          open_tag (GIMP_TEXT_BUFFER (register_buffer), string, tag);
+          open_tag (PICMAN_TEXT_BUFFER (register_buffer), string, tag);
 
 	  active_tags = g_slist_prepend (active_tags, tag);
 	}
@@ -244,7 +244,7 @@ gimp_text_buffer_serialize (GtkTextBuffer     *register_buffer,
 
   /* Close any open tags */
   for (tag_list = active_tags; tag_list; tag_list = tag_list->next)
-    close_tag (GIMP_TEXT_BUFFER (register_buffer), string, tag_list->data);
+    close_tag (PICMAN_TEXT_BUFFER (register_buffer), string, tag_list->data);
 
   g_slist_free (active_tags);
 
@@ -378,7 +378,7 @@ parse_tag_element (GMarkupParseContext  *context,
   if (attribute_values)
     attribute_value = attribute_values[0];
 
-  tag = gimp_text_buffer_name_to_tag (GIMP_TEXT_BUFFER (info->register_buffer),
+  tag = picman_text_buffer_name_to_tag (PICMAN_TEXT_BUFFER (info->register_buffer),
                                       element_name,
                                       attribute_name, attribute_value);
 
@@ -608,7 +608,7 @@ insert_text (ParseInfo   *info,
 }
 
 gboolean
-gimp_text_buffer_deserialize (GtkTextBuffer *register_buffer,
+picman_text_buffer_deserialize (GtkTextBuffer *register_buffer,
                               GtkTextBuffer *content_buffer,
                               GtkTextIter   *iter,
                               const guint8  *text,
@@ -656,12 +656,12 @@ gimp_text_buffer_deserialize (GtkTextBuffer *register_buffer,
 }
 
 void
-gimp_text_buffer_pre_serialize (GimpTextBuffer *buffer,
+picman_text_buffer_pre_serialize (PicmanTextBuffer *buffer,
                                 GtkTextBuffer  *content)
 {
   GtkTextIter iter;
 
-  g_return_if_fail (GIMP_IS_TEXT_BUFFER (buffer));
+  g_return_if_fail (PICMAN_IS_TEXT_BUFFER (buffer));
   g_return_if_fail (GTK_IS_TEXT_BUFFER (content));
 
   gtk_text_buffer_get_start_iter (content, &iter);
@@ -697,12 +697,12 @@ gimp_text_buffer_pre_serialize (GimpTextBuffer *buffer,
 }
 
 void
-gimp_text_buffer_post_deserialize (GimpTextBuffer *buffer,
+picman_text_buffer_post_deserialize (PicmanTextBuffer *buffer,
                                    GtkTextBuffer  *content)
 {
   GtkTextIter iter;
 
-  g_return_if_fail (GIMP_IS_TEXT_BUFFER (buffer));
+  g_return_if_fail (PICMAN_IS_TEXT_BUFFER (buffer));
   g_return_if_fail (GTK_IS_TEXT_BUFFER (content));
 
   gtk_text_buffer_get_start_iter (content, &iter);

@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimputils.c
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * picmanutils.c
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,15 +26,15 @@
 
 #include <glib-object.h>
 
-#include "gimpbasetypes.h"
-#include "gimputils.h"
+#include "picmanbasetypes.h"
+#include "picmanutils.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimputils
- * @title: gimputils
+ * SECTION: picmanutils
+ * @title: picmanutils
  * @short_description: Utilities of general interest
  *
  * Utilities of general interest
@@ -42,7 +42,7 @@
 
 
 /**
- * gimp_utf8_strtrim:
+ * picman_utf8_strtrim:
  * @str: an UTF-8 encoded string (or %NULL)
  * @max_chars: the maximum number of characters before the string get
  * trimmed
@@ -55,7 +55,7 @@
  * using g_free() when it is not needed any longer.
  **/
 gchar *
-gimp_utf8_strtrim (const gchar *str,
+picman_utf8_strtrim (const gchar *str,
                    gint         max_chars)
 {
   /* FIXME: should we make this translatable? */
@@ -110,7 +110,7 @@ gimp_utf8_strtrim (const gchar *str,
 }
 
 /**
- * gimp_any_to_utf8:
+ * picman_any_to_utf8:
  * @str:            The string to be converted to UTF-8.
  * @len:            The length of the string, or -1 if the string
  *                  is nul-terminated.
@@ -134,7 +134,7 @@ gimp_utf8_strtrim (const gchar *str,
  * Return value: The UTF-8 string as described above.
  **/
 gchar *
-gimp_any_to_utf8 (const gchar  *str,
+picman_any_to_utf8 (const gchar  *str,
                   gssize        len,
                   const gchar  *warning_format,
                   ...)
@@ -188,13 +188,13 @@ gimp_any_to_utf8 (const gchar  *str,
 }
 
 /**
- * gimp_filename_to_utf8:
+ * picman_filename_to_utf8:
  * @filename: The filename to be converted to UTF-8.
  *
  * Convert a filename in the filesystem's encoding to UTF-8
  * temporarily.  The return value is a pointer to a string that is
  * guaranteed to be valid only during the current iteration of the
- * main loop or until the next call to gimp_filename_to_utf8().
+ * main loop or until the next call to picman_filename_to_utf8().
  *
  * The only purpose of this function is to provide an easy way to pass
  * a filename in the filesystem encoding to a function that expects an
@@ -204,7 +204,7 @@ gimp_any_to_utf8 (const gchar  *str,
  *               This string must not be changed or freed.
  **/
 const gchar *
-gimp_filename_to_utf8 (const gchar *filename)
+picman_filename_to_utf8 (const gchar *filename)
 {
   /* Simpleminded implementation, but at least allocates just one copy
    * of each translation. Could check if already UTF-8, and if so
@@ -235,7 +235,7 @@ gimp_filename_to_utf8 (const gchar *filename)
 
 
 /**
- * gimp_strip_uline:
+ * picman_strip_uline:
  * @str: underline infested string (or %NULL)
  *
  * This function returns a copy of @str stripped of underline
@@ -251,7 +251,7 @@ gimp_filename_to_utf8 (const gchar *filename)
  *               freed using g_free() when it is not needed any longer.
  **/
 gchar *
-gimp_strip_uline (const gchar *str)
+picman_strip_uline (const gchar *str)
 {
   gchar    *escaped;
   gchar    *p;
@@ -299,7 +299,7 @@ gimp_strip_uline (const gchar *str)
 }
 
 /**
- * gimp_escape_uline:
+ * picman_escape_uline:
  * @str: Underline infested string (or %NULL)
  *
  * This function returns a copy of @str with all underline converted
@@ -310,10 +310,10 @@ gimp_strip_uline (const gchar *str)
  * Return value: A (possibly escaped) copy of @str which should be
  * freed using g_free() when it is not needed any longer.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_escape_uline (const gchar *str)
+picman_escape_uline (const gchar *str)
 {
   gchar *escaped;
   gchar *p;
@@ -342,7 +342,7 @@ gimp_escape_uline (const gchar *str)
 }
 
 /**
- * gimp_canonicalize_identifier:
+ * picman_canonicalize_identifier:
  * @identifier: The identifier string to canonicalize.
  *
  * Turns any input string into a canonicalized string.
@@ -355,10 +355,10 @@ gimp_escape_uline (const gchar *str)
  *               allocated string that should be freed with g_free()
  *               when no longer needed.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gchar *
-gimp_canonicalize_identifier (const gchar *identifier)
+picman_canonicalize_identifier (const gchar *identifier)
 {
   gchar *canonicalized = NULL;
 
@@ -384,33 +384,33 @@ gimp_canonicalize_identifier (const gchar *identifier)
 }
 
 /**
- * gimp_enum_get_desc:
+ * picman_enum_get_desc:
  * @enum_class: a #GEnumClass
  * @value:      a value from @enum_class
  *
- * Retrieves #GimpEnumDesc associated with the given value, or %NULL.
+ * Retrieves #PicmanEnumDesc associated with the given value, or %NULL.
  *
- * Return value: the value's #GimpEnumDesc.
+ * Return value: the value's #PicmanEnumDesc.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
-GimpEnumDesc *
-gimp_enum_get_desc (GEnumClass *enum_class,
+PicmanEnumDesc *
+picman_enum_get_desc (GEnumClass *enum_class,
                     gint        value)
 {
-  const GimpEnumDesc *value_desc;
+  const PicmanEnumDesc *value_desc;
 
   g_return_val_if_fail (G_IS_ENUM_CLASS (enum_class), NULL);
 
   value_desc =
-    gimp_enum_get_value_descriptions (G_TYPE_FROM_CLASS (enum_class));
+    picman_enum_get_value_descriptions (G_TYPE_FROM_CLASS (enum_class));
 
   if (value_desc)
     {
       while (value_desc->value_desc)
         {
           if (value_desc->value == value)
-            return (GimpEnumDesc *) value_desc;
+            return (PicmanEnumDesc *) value_desc;
 
           value_desc++;
         }
@@ -420,7 +420,7 @@ gimp_enum_get_desc (GEnumClass *enum_class,
 }
 
 /**
- * gimp_enum_get_value:
+ * picman_enum_get_value:
  * @enum_type:  the #GType of a registered enum
  * @value:      an integer value
  * @value_name: return location for the value's name (or %NULL)
@@ -436,10 +436,10 @@ gimp_enum_get_desc (GEnumClass *enum_class,
  * Return value: %TRUE if @value is valid for the @enum_type,
  *               %FALSE otherwise
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_enum_get_value (GType         enum_type,
+picman_enum_get_value (GType         enum_type,
                      gint          value,
                      const gchar **value_name,
                      const gchar **value_nick,
@@ -465,9 +465,9 @@ gimp_enum_get_value (GType         enum_type,
 
       if (value_desc || value_help)
         {
-          GimpEnumDesc *enum_desc;
+          PicmanEnumDesc *enum_desc;
 
-          enum_desc = gimp_enum_get_desc (enum_class, value);
+          enum_desc = picman_enum_get_desc (enum_class, value);
 
           if (value_desc)
             {
@@ -475,15 +475,15 @@ gimp_enum_get_value (GType         enum_type,
                 {
                   const gchar *context;
 
-                  context = gimp_type_get_translation_context (enum_type);
+                  context = picman_type_get_translation_context (enum_type);
 
                   if (context)  /*  the new way, using NC_()    */
-                    *value_desc = g_dpgettext2 (gimp_type_get_translation_domain (enum_type),
+                    *value_desc = g_dpgettext2 (picman_type_get_translation_domain (enum_type),
                                                 context,
                                                 enum_desc->value_desc);
                   else          /*  for backward compatibility  */
                     *value_desc = g_strip_context (enum_desc->value_desc,
-                                                   dgettext (gimp_type_get_translation_domain (enum_type),
+                                                   dgettext (picman_type_get_translation_domain (enum_type),
                                                              enum_desc->value_desc));
                 }
               else
@@ -495,7 +495,7 @@ gimp_enum_get_value (GType         enum_type,
           if (value_help)
             {
               *value_help = ((enum_desc && enum_desc->value_help) ?
-                             dgettext (gimp_type_get_translation_domain (enum_type),
+                             dgettext (picman_type_get_translation_domain (enum_type),
                                        enum_desc->value_help) :
                              NULL);
             }
@@ -510,7 +510,7 @@ gimp_enum_get_value (GType         enum_type,
 }
 
 /**
- * gimp_enum_value_get_desc:
+ * picman_enum_value_get_desc:
  * @enum_class: a #GEnumClass
  * @enum_value: a #GEnumValue from @enum_class
  *
@@ -518,30 +518,30 @@ gimp_enum_get_value (GType         enum_type,
  *
  * Return value: the translated description of the enum value
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 const gchar *
-gimp_enum_value_get_desc (GEnumClass *enum_class,
+picman_enum_value_get_desc (GEnumClass *enum_class,
                           GEnumValue *enum_value)
 {
   GType         type = G_TYPE_FROM_CLASS (enum_class);
-  GimpEnumDesc *enum_desc;
+  PicmanEnumDesc *enum_desc;
 
-  enum_desc = gimp_enum_get_desc (enum_class, enum_value->value);
+  enum_desc = picman_enum_get_desc (enum_class, enum_value->value);
 
   if (enum_desc && enum_desc->value_desc)
     {
       const gchar *context;
 
-      context = gimp_type_get_translation_context (type);
+      context = picman_type_get_translation_context (type);
 
       if (context)  /*  the new way, using NC_()    */
-        return g_dpgettext2 (gimp_type_get_translation_domain (type),
+        return g_dpgettext2 (picman_type_get_translation_domain (type),
                              context,
                              enum_desc->value_desc);
       else          /*  for backward compatibility  */
         return g_strip_context (enum_desc->value_desc,
-                                dgettext (gimp_type_get_translation_domain (type),
+                                dgettext (picman_type_get_translation_domain (type),
                                           enum_desc->value_desc));
     }
 
@@ -549,7 +549,7 @@ gimp_enum_value_get_desc (GEnumClass *enum_class,
 }
 
 /**
- * gimp_enum_value_get_help:
+ * picman_enum_value_get_help:
  * @enum_class: a #GEnumClass
  * @enum_value: a #GEnumValue from @enum_class
  *
@@ -557,52 +557,52 @@ gimp_enum_value_get_desc (GEnumClass *enum_class,
  *
  * Return value: the translated help of the enum value
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 const gchar *
-gimp_enum_value_get_help (GEnumClass *enum_class,
+picman_enum_value_get_help (GEnumClass *enum_class,
                           GEnumValue *enum_value)
 {
   GType         type = G_TYPE_FROM_CLASS (enum_class);
-  GimpEnumDesc *enum_desc;
+  PicmanEnumDesc *enum_desc;
 
-  enum_desc = gimp_enum_get_desc (enum_class, enum_value->value);
+  enum_desc = picman_enum_get_desc (enum_class, enum_value->value);
 
   if (enum_desc && enum_desc->value_help)
-    return dgettext (gimp_type_get_translation_domain (type),
+    return dgettext (picman_type_get_translation_domain (type),
                      enum_desc->value_help);
 
   return NULL;
 }
 
 /**
- * gimp_flags_get_first_desc:
+ * picman_flags_get_first_desc:
  * @flags_class: a #GFlagsClass
  * @value:       a value from @flags_class
  *
- * Retrieves the first #GimpFlagsDesc that matches the given value, or %NULL.
+ * Retrieves the first #PicmanFlagsDesc that matches the given value, or %NULL.
  *
- * Return value: the value's #GimpFlagsDesc.
+ * Return value: the value's #PicmanFlagsDesc.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
-GimpFlagsDesc *
-gimp_flags_get_first_desc (GFlagsClass *flags_class,
+PicmanFlagsDesc *
+picman_flags_get_first_desc (GFlagsClass *flags_class,
                            guint        value)
 {
-  const GimpFlagsDesc *value_desc;
+  const PicmanFlagsDesc *value_desc;
 
   g_return_val_if_fail (G_IS_FLAGS_CLASS (flags_class), NULL);
 
   value_desc =
-    gimp_flags_get_value_descriptions (G_TYPE_FROM_CLASS (flags_class));
+    picman_flags_get_value_descriptions (G_TYPE_FROM_CLASS (flags_class));
 
   if (value_desc)
     {
       while (value_desc->value_desc)
         {
           if ((value_desc->value & value) == value_desc->value)
-            return (GimpFlagsDesc *) value_desc;
+            return (PicmanFlagsDesc *) value_desc;
 
           value_desc++;
         }
@@ -612,7 +612,7 @@ gimp_flags_get_first_desc (GFlagsClass *flags_class,
 }
 
 /**
- * gimp_flags_get_first_value:
+ * picman_flags_get_first_value:
  * @flags_type: the #GType of registered flags
  * @value:      an integer value
  * @value_name: return location for the value's name (or %NULL)
@@ -628,10 +628,10 @@ gimp_flags_get_first_desc (GFlagsClass *flags_class,
  * Return value: %TRUE if @value is valid for the @flags_type,
  *               %FALSE otherwise
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_flags_get_first_value (GType         flags_type,
+picman_flags_get_first_value (GType         flags_type,
                             guint         value,
                             const gchar **value_name,
                             const gchar **value_nick,
@@ -656,19 +656,19 @@ gimp_flags_get_first_value (GType         flags_type,
 
       if (value_desc || value_help)
         {
-          GimpFlagsDesc *flags_desc;
+          PicmanFlagsDesc *flags_desc;
 
-          flags_desc = gimp_flags_get_first_desc (flags_class, value);
+          flags_desc = picman_flags_get_first_desc (flags_class, value);
 
           if (value_desc)
             *value_desc = ((flags_desc && flags_desc->value_desc) ?
-                           dgettext (gimp_type_get_translation_domain (flags_type),
+                           dgettext (picman_type_get_translation_domain (flags_type),
                                      flags_desc->value_desc) :
                            NULL);
 
           if (value_help)
             *value_help = ((flags_desc && flags_desc->value_desc) ?
-                           dgettext (gimp_type_get_translation_domain (flags_type),
+                           dgettext (picman_type_get_translation_domain (flags_type),
                                      flags_desc->value_help) :
                            NULL);
         }
@@ -680,7 +680,7 @@ gimp_flags_get_first_value (GType         flags_type,
 }
 
 /**
- * gimp_flags_value_get_desc:
+ * picman_flags_value_get_desc:
  * @flags_class: a #GFlagsClass
  * @flags_value: a #GFlagsValue from @flags_class
  *
@@ -688,26 +688,26 @@ gimp_flags_get_first_value (GType         flags_type,
  *
  * Return value: the translated description of the flags value
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 const gchar *
-gimp_flags_value_get_desc (GFlagsClass *flags_class,
+picman_flags_value_get_desc (GFlagsClass *flags_class,
                            GFlagsValue *flags_value)
 {
   GType         type = G_TYPE_FROM_CLASS (flags_class);
-  GimpFlagsDesc *flags_desc;
+  PicmanFlagsDesc *flags_desc;
 
-  flags_desc = gimp_flags_get_first_desc (flags_class, flags_value->value);
+  flags_desc = picman_flags_get_first_desc (flags_class, flags_value->value);
 
   if (flags_desc->value_desc)
-    return dgettext (gimp_type_get_translation_domain (type),
+    return dgettext (picman_type_get_translation_domain (type),
                      flags_desc->value_desc);
 
   return flags_value->value_name;
 }
 
 /**
- * gimp_flags_value_get_help:
+ * picman_flags_value_get_help:
  * @flags_class: a #GFlagsClass
  * @flags_value: a #GFlagsValue from @flags_class
  *
@@ -715,19 +715,19 @@ gimp_flags_value_get_desc (GFlagsClass *flags_class,
  *
  * Return value: the translated help of the flags value
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 const gchar *
-gimp_flags_value_get_help (GFlagsClass *flags_class,
+picman_flags_value_get_help (GFlagsClass *flags_class,
                            GFlagsValue *flags_value)
 {
   GType         type = G_TYPE_FROM_CLASS (flags_class);
-  GimpFlagsDesc *flags_desc;
+  PicmanFlagsDesc *flags_desc;
 
-  flags_desc = gimp_flags_get_first_desc (flags_class, flags_value->value);
+  flags_desc = picman_flags_get_first_desc (flags_class, flags_value->value);
 
   if (flags_desc->value_help)
-    return dgettext (gimp_type_get_translation_domain (type),
+    return dgettext (picman_type_get_translation_domain (type),
                      flags_desc->value_help);
 
   return NULL;

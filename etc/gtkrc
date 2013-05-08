@@ -10,15 +10,15 @@
 # widget <widget_set>       style <style_name>
 # class  <widget_class_set> style <style_name>
 #
-# You can add your own GIMP-specific GTK styles here.
+# You can add your own PICMAN-specific GTK styles here.
 
 
 #
 # Adjust the size of previews in plug-in dialogs:
 #
-style "gimp-large-preview"
+style "picman-large-preview"
 {
-  GimpPreview::size = 256
+  PicmanPreview::size = 256
 }
 
-# class "GimpPreview" style "gimp-large-preview"
+# class "PicmanPreview" style "picman-large-preview"

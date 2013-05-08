@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-tags.c
+ * picman-tags.c
  * Copyright (C) 2009 Aurimas Juška <aurisj@svn.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,40 +25,40 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "config/gimpxmlparser.h"
+#include "config/picmanxmlparser.h"
 
-#include "gimp-utils.h"
-#include "gimp-tags.h"
+#include "picman-utils.h"
+#include "picman-tags.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-#define GIMP_TAGS_FILE "tags.xml"
+#define PICMAN_TAGS_FILE "tags.xml"
 
 typedef struct
 {
   const gchar *locale;
   GString     *buf;
   gboolean     locale_matches;
-} GimpTagsInstaller;
+} PicmanTagsInstaller;
 
 
-static  void        gimp_tags_installer_load_start_element (GMarkupParseContext *context,
+static  void        picman_tags_installer_load_start_element (GMarkupParseContext *context,
                                                             const gchar         *element_name,
                                                             const gchar        **attribute_names,
                                                             const gchar        **attribute_values,
                                                             gpointer             user_data,
                                                             GError             **error);
-static void         gimp_tags_installer_load_end_element   (GMarkupParseContext *context,
+static void         picman_tags_installer_load_end_element   (GMarkupParseContext *context,
                                                             const gchar         *element_name,
                                                             gpointer             user_data,
                                                             GError             **error);
-static void         gimp_tags_installer_load_text          (GMarkupParseContext *context,
+static void         picman_tags_installer_load_text          (GMarkupParseContext *context,
                                                             const gchar         *text,
                                                             gsize                text_len,
                                                             gpointer             user_data,
@@ -69,20 +69,20 @@ static const gchar* attribute_name_to_value                (const gchar        *
 
 
 gboolean
-gimp_tags_user_install (void)
+picman_tags_user_install (void)
 {
   gchar             *filename;
   GMarkupParser      markup_parser;
-  GimpXmlParser     *xml_parser;
+  PicmanXmlParser     *xml_parser;
   const char        *tags_locale;
-  GimpTagsInstaller  tags_installer = { 0, };
+  PicmanTagsInstaller  tags_installer = { 0, };
   GError            *error          = NULL;
   gboolean           result         = TRUE;
 
   /* This is a special string to specify the language identifier to
-   * look for in the gimp-tags-default.xml file. Please translate the
+   * look for in the picman-tags-default.xml file. Please translate the
    * C in it according to the name of the po file used for
-   * gimp-tags-default.xml. E.g. lithuanian for the translation,
+   * picman-tags-default.xml. E.g. lithuanian for the translation,
    * that would be "tags-locale:lt".
    */
   tags_locale = _("tags-locale:C");
@@ -104,21 +104,21 @@ gimp_tags_user_install (void)
   g_string_append (tags_installer.buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
   g_string_append (tags_installer.buf, "<tags>\n");
 
-  filename = g_build_filename (gimp_data_directory (), "tags",
-                               "gimp-tags-default.xml", NULL);
+  filename = g_build_filename (picman_data_directory (), "tags",
+                               "picman-tags-default.xml", NULL);
 
-  markup_parser.start_element = gimp_tags_installer_load_start_element;
-  markup_parser.end_element   = gimp_tags_installer_load_end_element;
-  markup_parser.text          = gimp_tags_installer_load_text;
+  markup_parser.start_element = picman_tags_installer_load_start_element;
+  markup_parser.end_element   = picman_tags_installer_load_end_element;
+  markup_parser.text          = picman_tags_installer_load_text;
   markup_parser.passthrough   = NULL;
   markup_parser.error         = NULL;
 
-  xml_parser = gimp_xml_parser_new (&markup_parser, &tags_installer);
+  xml_parser = picman_xml_parser_new (&markup_parser, &tags_installer);
 
-  result = gimp_xml_parser_parse_file (xml_parser, filename, &error);
+  result = picman_xml_parser_parse_file (xml_parser, filename, &error);
 
   g_free (filename);
-  gimp_xml_parser_free (xml_parser);
+  picman_xml_parser_free (xml_parser);
 
   if (! result)
     {
@@ -128,7 +128,7 @@ gimp_tags_user_install (void)
 
   g_string_append (tags_installer.buf, "\n</tags>\n");
 
-  filename = g_build_filename (gimp_directory (), GIMP_TAGS_FILE, NULL);
+  filename = g_build_filename (picman_directory (), PICMAN_TAGS_FILE, NULL);
 
   result = g_file_set_contents (filename, tags_installer.buf->str,
                                 tags_installer.buf->len, &error);
@@ -147,14 +147,14 @@ gimp_tags_user_install (void)
 }
 
 static  void
-gimp_tags_installer_load_start_element (GMarkupParseContext  *context,
+picman_tags_installer_load_start_element (GMarkupParseContext  *context,
                                         const gchar          *element_name,
                                         const gchar         **attribute_names,
                                         const gchar         **attribute_values,
                                         gpointer              user_data,
                                         GError              **error)
 {
-  GimpTagsInstaller *tags_installer = user_data;
+  PicmanTagsInstaller *tags_installer = user_data;
 
   if (! strcmp (element_name, "resource"))
     {
@@ -192,12 +192,12 @@ gimp_tags_installer_load_start_element (GMarkupParseContext  *context,
 }
 
 static void
-gimp_tags_installer_load_end_element (GMarkupParseContext  *context,
+picman_tags_installer_load_end_element (GMarkupParseContext  *context,
                                       const gchar          *element_name,
                                       gpointer              user_data,
                                       GError              **error)
 {
-  GimpTagsInstaller *tags_installer = user_data;
+  PicmanTagsInstaller *tags_installer = user_data;
 
   if (strcmp (element_name, "resource") == 0)
     {
@@ -206,13 +206,13 @@ gimp_tags_installer_load_end_element (GMarkupParseContext  *context,
 }
 
 static void
-gimp_tags_installer_load_text (GMarkupParseContext  *context,
+picman_tags_installer_load_text (GMarkupParseContext  *context,
                                const gchar          *text,
                                gsize                 text_len,
                                gpointer              user_data,
                                GError              **error)
 {
-  GimpTagsInstaller *tags_installer = user_data;
+  PicmanTagsInstaller *tags_installer = user_data;
   const gchar       *current_element;
   gchar             *tag_string;
 

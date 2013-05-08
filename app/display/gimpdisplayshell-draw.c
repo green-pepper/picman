@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,69 +20,69 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "display-types.h"
 
-#include "core/gimp-cairo.h"
-#include "core/gimp-utils.h"
+#include "core/picman-cairo.h"
+#include "core/picman-utils.h"
 
-#include "gimpcanvas.h"
-#include "gimpcanvas-style.h"
-#include "gimpcanvaspath.h"
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-draw.h"
-#include "gimpdisplayshell-render.h"
-#include "gimpdisplayshell-scale.h"
-#include "gimpdisplayshell-transform.h"
-#include "gimpdisplayxfer.h"
+#include "picmancanvas.h"
+#include "picmancanvas-style.h"
+#include "picmancanvaspath.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-draw.h"
+#include "picmandisplayshell-render.h"
+#include "picmandisplayshell-scale.h"
+#include "picmandisplayshell-transform.h"
+#include "picmandisplayxfer.h"
 
 
 /*  public functions  */
 
 void
-gimp_display_shell_draw_selection_out (GimpDisplayShell *shell,
+picman_display_shell_draw_selection_out (PicmanDisplayShell *shell,
                                        cairo_t          *cr,
-                                       GimpSegment      *segs,
+                                       PicmanSegment      *segs,
                                        gint              n_segs)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (cr != NULL);
   g_return_if_fail (segs != NULL && n_segs > 0);
 
-  gimp_canvas_set_selection_out_style (shell->canvas, cr);
+  picman_canvas_set_selection_out_style (shell->canvas, cr);
 
-  gimp_cairo_add_segments (cr, segs, n_segs);
+  picman_cairo_add_segments (cr, segs, n_segs);
   cairo_stroke (cr);
 }
 
 void
-gimp_display_shell_draw_selection_in (GimpDisplayShell   *shell,
+picman_display_shell_draw_selection_in (PicmanDisplayShell   *shell,
                                       cairo_t            *cr,
                                       cairo_pattern_t    *mask,
                                       gint                index)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (cr != NULL);
   g_return_if_fail (mask != NULL);
 
-  gimp_canvas_set_selection_in_style (shell->canvas, cr, index);
+  picman_canvas_set_selection_in_style (shell->canvas, cr, index);
 
   cairo_mask (cr, mask);
 }
 
 void
-gimp_display_shell_draw_background (GimpDisplayShell *shell,
+picman_display_shell_draw_background (PicmanDisplayShell *shell,
                                     cairo_t          *cr)
 {
   GdkWindow       *window;
   cairo_pattern_t *bg_pattern;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (cr != NULL);
 
   window     = gtk_widget_get_window (shell->canvas);
@@ -93,32 +93,32 @@ gimp_display_shell_draw_background (GimpDisplayShell *shell,
 }
 
 void
-gimp_display_shell_draw_checkerboard (GimpDisplayShell *shell,
+picman_display_shell_draw_checkerboard (PicmanDisplayShell *shell,
                                       cairo_t          *cr)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (cr != NULL);
 
   if (G_UNLIKELY (! shell->checkerboard))
     {
-      GimpCheckSize  check_size;
-      GimpCheckType  check_type;
+      PicmanCheckSize  check_size;
+      PicmanCheckType  check_type;
       guchar         check_light;
       guchar         check_dark;
-      GimpRGB        light;
-      GimpRGB        dark;
+      PicmanRGB        light;
+      PicmanRGB        dark;
 
       g_object_get (shell->display->config,
                     "transparency-size", &check_size,
                     "transparency-type", &check_type,
                     NULL);
 
-      gimp_checks_get_shades (check_type, &check_light, &check_dark);
-      gimp_rgb_set_uchar (&light, check_light, check_light, check_light);
-      gimp_rgb_set_uchar (&dark,  check_dark,  check_dark,  check_dark);
+      picman_checks_get_shades (check_type, &check_light, &check_dark);
+      picman_rgb_set_uchar (&light, check_light, check_light, check_light);
+      picman_rgb_set_uchar (&dark,  check_dark,  check_dark,  check_dark);
 
       shell->checkerboard =
-        gimp_cairo_checkerboard_create (cr,
+        picman_cairo_checkerboard_create (cr,
                                         1 << (check_size + 2), &light, &dark);
     }
 
@@ -128,7 +128,7 @@ gimp_display_shell_draw_checkerboard (GimpDisplayShell *shell,
 }
 
 void
-gimp_display_shell_draw_image (GimpDisplayShell *shell,
+picman_display_shell_draw_image (PicmanDisplayShell *shell,
                                cairo_t          *cr,
                                gint              x,
                                gint              y,
@@ -138,8 +138,8 @@ gimp_display_shell_draw_image (GimpDisplayShell *shell,
   gint x1, y1, x2, y2;
   gint i, j;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
-  g_return_if_fail (gimp_display_get_image (shell->display));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (picman_display_get_image (shell->display));
   g_return_if_fail (cr != NULL);
 
   if (shell->rotate_untransform)
@@ -149,7 +149,7 @@ gimp_display_shell_draw_image (GimpDisplayShell *shell,
       gint    image_width;
       gint    image_height;
 
-      gimp_display_shell_unrotate_bounds (shell,
+      picman_display_shell_unrotate_bounds (shell,
                                           x, y, x + w, y + h,
                                           &tx1, &ty1, &tx2, &ty2);
 
@@ -158,7 +158,7 @@ gimp_display_shell_draw_image (GimpDisplayShell *shell,
       x2 = ceil (tx2 + 0.5);
       y2 = ceil (ty2 + 0.5);
 
-      gimp_display_shell_scale_get_image_size (shell,
+      picman_display_shell_scale_get_image_size (shell,
                                                &image_width, &image_height);
 
       x1 = CLAMP (x1, -shell->offset_x, -shell->offset_x + image_width);
@@ -180,16 +180,16 @@ gimp_display_shell_draw_image (GimpDisplayShell *shell,
   /*  display the image in RENDER_BUF_WIDTH x RENDER_BUF_HEIGHT
    *  sized chunks
    */
-  for (i = y1; i < y2; i += GIMP_DISPLAY_RENDER_BUF_HEIGHT)
+  for (i = y1; i < y2; i += PICMAN_DISPLAY_RENDER_BUF_HEIGHT)
     {
-      for (j = x1; j < x2; j += GIMP_DISPLAY_RENDER_BUF_WIDTH)
+      for (j = x1; j < x2; j += PICMAN_DISPLAY_RENDER_BUF_WIDTH)
         {
           gint dx, dy;
 
-          dx = MIN (x2 - j, GIMP_DISPLAY_RENDER_BUF_WIDTH);
-          dy = MIN (y2 - i, GIMP_DISPLAY_RENDER_BUF_HEIGHT);
+          dx = MIN (x2 - j, PICMAN_DISPLAY_RENDER_BUF_WIDTH);
+          dy = MIN (y2 - i, PICMAN_DISPLAY_RENDER_BUF_HEIGHT);
 
-          gimp_display_shell_render (shell, cr, j, i, dx, dy);
+          picman_display_shell_render (shell, cr, j, i, dx, dy);
         }
     }
 }

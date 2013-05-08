@@ -1,6 +1,6 @@
 /* xmp-encode.c - generate XMP metadata from the tree model
  *
- * Copyright (C) 2005, Raphaël Quinet <raphael@gimp.org>
+ * Copyright (C) 2005, Raphaël Quinet <raphael@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,9 +23,9 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #include "xmp-encode.h"
 #include "xmp-schemas.h"
@@ -83,7 +83,7 @@ gen_element (GString     *buffer,
   va_end (args);
 
   if (value && *value)
-    utf8 = gimp_any_to_utf8 (value, -1,  NULL);
+    utf8 = picman_any_to_utf8 (value, -1,  NULL);
 
   if (utf8 && *utf8)
     {

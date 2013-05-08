@@ -1,5 +1,5 @@
 /*
- * illusion.c  -- This is a plug-in for GIMP 1.0
+ * illusion.c  -- This is a plug-in for PICMAN 1.0
  *
  * Copyright (C) 1997  Hirotsuna Mizuno
  *                     s1041150@u-aizu.ac.jp
@@ -27,29 +27,29 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC    "plug-in-illusion"
 #define PLUG_IN_BINARY  "illusion"
-#define PLUG_IN_ROLE    "gimp-illusion"
+#define PLUG_IN_ROLE    "picman-illusion"
 #define PLUG_IN_VERSION "v0.8 (May 14 2000)"
 
 
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparam,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
-static void      illusion         (GimpDrawable *drawable);
-static void      illusion_preview (GimpPreview  *preview,
-                                   GimpDrawable *drawable);
-static gboolean  illusion_dialog  (GimpDrawable *drawable);
+static void      illusion         (PicmanDrawable *drawable);
+static void      illusion_preview (PicmanPreview  *preview,
+                                   PicmanDrawable *drawable);
+static gboolean  illusion_dialog  (PicmanDrawable *drawable);
 
 typedef struct
 {
@@ -58,7 +58,7 @@ typedef struct
   gboolean type2;
 } IllValues;
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -78,16 +78,16 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",     "Input image"                            },
-    { GIMP_PDB_DRAWABLE, "drawable",  "Input drawable"                         },
-    { GIMP_PDB_INT32,    "division",  "The number of divisions"                },
-    { GIMP_PDB_INT32,    "type",      "Illusion type { TYPE1 (0), TYPE2 (1) }" }
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",     "Input image"                            },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "Input drawable"                         },
+    { PICMAN_PDB_INT32,    "division",  "The number of divisions"                },
+    { PICMAN_PDB_INT32,    "type",      "Illusion type { TYPE1 (0), TYPE2 (1) }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Superimpose many altered copies of the image"),
                           "produce illusion",
                           "Hirotsuna Mizuno <s1041150@u-aizu.ac.jp>",
@@ -95,30 +95,30 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("_Illusion..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Map");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Map");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *params,
+     const PicmanParam  *params,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   returnv[1];
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpRunMode        run_mode;
-  GimpDrawable      *drawable;
+  static PicmanParam   returnv[1];
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
+  PicmanDrawable      *drawable;
 
   INIT_I18N ();
 
   /* get the drawable info */
   run_mode = params[0].data.d_int32;
-  drawable = gimp_drawable_get (params[2].data.d_drawable);
+  drawable = picman_drawable_get (params[2].data.d_drawable);
 
   *nreturn_vals = 1;
   *return_vals  = returnv;
@@ -126,17 +126,17 @@ run (const gchar      *name,
   /* switch the run mode */
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &parameters);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &parameters);
       if (! illusion_dialog (drawable))
         return;
-      gimp_set_data (PLUG_IN_PROC, &parameters, sizeof (IllValues));
+      picman_set_data (PLUG_IN_PROC, &parameters, sizeof (IllValues));
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams != 5)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
@@ -154,36 +154,36 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &parameters);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &parameters);
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width() + 1));
-          gimp_progress_init (_("Illusion"));
+          picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width() + 1));
+          picman_progress_init (_("Illusion"));
           illusion (drawable);
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
-  returnv[0].type          = GIMP_PDB_STATUS;
+  returnv[0].type          = PICMAN_PDB_STATUS;
   returnv[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 typedef struct {
-  GimpPixelFetcher *pft;
+  PicmanPixelFetcher *pft;
   gdouble           center_x;
   gdouble           center_y;
   gdouble           scale;
@@ -222,7 +222,7 @@ illusion_func (gint          x,
       yy = y - param->offset * cos (angle);
     }
 
-  gimp_pixel_fetcher_get_pixel (param->pft, xx, yy, pixel);
+  picman_pixel_fetcher_get_pixel (param->pft, xx, yy, pixel);
 
   if (param->has_alpha)
     {
@@ -245,36 +245,36 @@ illusion_func (gint          x,
 }
 
 static void
-illusion (GimpDrawable *drawable)
+illusion (PicmanDrawable *drawable)
 {
   IllusionParam_t  param;
-  GimpRgnIterator *iter;
+  PicmanRgnIterator *iter;
   gint             width, height;
   gint             x1, y1, x2, y2;
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
   width  = x2 - x1;
   height = y2 - y1;
 
-  param.pft = gimp_pixel_fetcher_new (drawable, FALSE);
-  gimp_pixel_fetcher_set_edge_mode (param.pft, GIMP_PIXEL_FETCHER_EDGE_SMEAR);
+  param.pft = picman_pixel_fetcher_new (drawable, FALSE);
+  picman_pixel_fetcher_set_edge_mode (param.pft, PICMAN_PIXEL_FETCHER_EDGE_SMEAR);
 
-  param.has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  param.has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   param.center_x = (x1 + x2) / 2.0;
   param.center_y = (y1 + y2) / 2.0;
   param.scale = sqrt (width * width + height * height) / 2;
   param.offset = (gint) (param.scale / 2);
 
-  iter = gimp_rgn_iterator_new (drawable, 0);
-  gimp_rgn_iterator_src_dest (iter, illusion_func, &param);
-  gimp_rgn_iterator_free (iter);
+  iter = picman_rgn_iterator_new (drawable, 0);
+  picman_rgn_iterator_src_dest (iter, illusion_func, &param);
+  picman_rgn_iterator_free (iter);
 
-  gimp_pixel_fetcher_destroy (param.pft);
+  picman_pixel_fetcher_destroy (param.pft);
 }
 
 static void
-illusion_preview (GimpPreview  *preview,
-                  GimpDrawable *drawable)
+illusion_preview (PicmanPreview  *preview,
+                  PicmanDrawable *drawable)
 
 {
   gint                  x, y;
@@ -289,20 +289,20 @@ illusion_preview (GimpPreview  *preview,
   gint                  width, height;
   gint                  x1, y1, x2, y2;
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
   width  = x2 - x1;
   height = y2 - y1;
 
-  param.pft = gimp_pixel_fetcher_new (drawable, FALSE);
-  gimp_pixel_fetcher_set_edge_mode (param.pft, GIMP_PIXEL_FETCHER_EDGE_SMEAR);
+  param.pft = picman_pixel_fetcher_new (drawable, FALSE);
+  picman_pixel_fetcher_set_edge_mode (param.pft, PICMAN_PIXEL_FETCHER_EDGE_SMEAR);
 
-  param.has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  param.has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   param.center_x = (x1 + x2) / 2.0;
   param.center_y = (y1 + y2) / 2.0;
   param.scale = sqrt (width * width + height * height) / 2;
   param.offset = (gint) (param.scale / 2);
 
-  src = gimp_zoom_preview_get_source (GIMP_ZOOM_PREVIEW (preview),
+  src = picman_zoom_preview_get_source (PICMAN_ZOOM_PREVIEW (preview),
                                       &preview_width, &preview_height, &bpp);
   dest = g_malloc (preview_width * preview_height * bpp);
 
@@ -313,7 +313,7 @@ illusion_preview (GimpPreview  *preview,
     {
       for (x = 0; x < preview_width; x++)
         {
-          gimp_preview_untransform (preview, x, y, &sx, &sy);
+          picman_preview_untransform (preview, x, y, &sx, &sy);
 
           illusion_func (sx, sy,
                          src_pixel, dest_pixel,
@@ -325,15 +325,15 @@ illusion_preview (GimpPreview  *preview,
         }
     }
 
-  gimp_pixel_fetcher_destroy (param.pft);
+  picman_pixel_fetcher_destroy (param.pft);
 
-  gimp_preview_draw_buffer (preview, dest, preview_width * bpp);
+  picman_preview_draw_buffer (preview, dest, preview_width * bpp);
   g_free (dest);
   g_free (src);
 }
 
 static gboolean
-illusion_dialog (GimpDrawable *drawable)
+illusion_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -345,11 +345,11 @@ illusion_dialog (GimpDrawable *drawable)
   GSList    *group = NULL;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Illusion"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Illusion"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -361,7 +361,7 @@ illusion_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -369,7 +369,7 @@ illusion_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_zoom_preview_new (drawable);
+  preview = picman_zoom_preview_new (drawable);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -383,17 +383,17 @@ illusion_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  spinbutton = gimp_spin_button_new (&adj, parameters.division,
+  spinbutton = picman_spin_button_new (&adj, parameters.division,
                                      -32, 64, 1, 10, 0, 1, 0);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("_Divisions:"), 0.0, 0.5,
                              spinbutton, 1, TRUE);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &parameters.division);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   radio = gtk_radio_button_new_with_mnemonic (group, _("Mode _1"));
@@ -403,10 +403,10 @@ illusion_dialog (GimpDrawable *drawable)
   gtk_widget_show (radio);
 
   g_signal_connect (radio, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &parameters.type1);
   g_signal_connect_swapped (radio, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (radio), parameters.type1);
@@ -418,17 +418,17 @@ illusion_dialog (GimpDrawable *drawable)
   gtk_widget_show (radio);
 
   g_signal_connect (radio, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &parameters.type2);
   g_signal_connect_swapped (radio, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (radio), parameters.type2);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

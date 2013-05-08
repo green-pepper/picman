@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpThrobberAction
- * Copyright (C) 2005  Sven Neumann <sven@gimp.org>
+ * PicmanThrobberAction
+ * Copyright (C) 2005  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,16 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpthrobberaction.h"
-#include "gimpthrobber.h"
+#include "picmanthrobberaction.h"
+#include "picmanthrobber.h"
 
 
 
-static void gimp_throbber_action_class_init    (GimpThrobberActionClass *klass);
+static void picman_throbber_action_class_init    (PicmanThrobberActionClass *klass);
 
-static void gimp_throbber_action_connect_proxy (GtkAction  *action,
+static void picman_throbber_action_connect_proxy (GtkAction  *action,
                                                 GtkWidget  *proxy);
-static void gimp_throbber_action_sync_property (GtkAction  *action,
+static void picman_throbber_action_sync_property (GtkAction  *action,
                                                 GParamSpec *pspec,
                                                 GtkWidget  *proxy);
 
@@ -40,7 +40,7 @@ static GtkActionClass *parent_class = NULL;
 
 
 GType
-gimp_throbber_action_get_type (void)
+picman_throbber_action_get_type (void)
 {
   static GType type = 0;
 
@@ -51,7 +51,7 @@ gimp_throbber_action_get_type (void)
         sizeof (GtkActionClass),
         (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) gimp_throbber_action_class_init,
+        (GClassInitFunc) picman_throbber_action_class_init,
         (GClassFinalizeFunc) NULL,
         NULL,
         sizeof (GtkAction),
@@ -60,7 +60,7 @@ gimp_throbber_action_get_type (void)
       };
 
       type = g_type_register_static (GTK_TYPE_ACTION,
-                                     "GimpThrobberAction",
+                                     "PicmanThrobberAction",
                                      &type_info, 0);
     }
 
@@ -68,33 +68,33 @@ gimp_throbber_action_get_type (void)
 }
 
 static void
-gimp_throbber_action_class_init (GimpThrobberActionClass *klass)
+picman_throbber_action_class_init (PicmanThrobberActionClass *klass)
 {
   GtkActionClass *action_class = GTK_ACTION_CLASS (klass);
 
   parent_class = g_type_class_peek_parent (klass);
 
-  action_class->connect_proxy     = gimp_throbber_action_connect_proxy;
-  action_class->toolbar_item_type = GIMP_TYPE_THROBBER;
+  action_class->connect_proxy     = picman_throbber_action_connect_proxy;
+  action_class->toolbar_item_type = PICMAN_TYPE_THROBBER;
 }
 
 static void
-gimp_throbber_action_connect_proxy (GtkAction *action,
+picman_throbber_action_connect_proxy (GtkAction *action,
                                     GtkWidget *proxy)
 {
 
   GTK_ACTION_CLASS (parent_class)->connect_proxy (action, proxy);
 
-  if (GIMP_IS_THROBBER (proxy))
+  if (PICMAN_IS_THROBBER (proxy))
     {
       GParamSpec *pspec;
 
       pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (action),
                                             "stock-id");
 
-      gimp_throbber_action_sync_property (action, pspec, proxy);
+      picman_throbber_action_sync_property (action, pspec, proxy);
       g_signal_connect_object (action, "notify::stock-id",
-                               G_CALLBACK (gimp_throbber_action_sync_property),
+                               G_CALLBACK (picman_throbber_action_sync_property),
                                proxy, 0);
 
       g_signal_connect_object (proxy, "clicked",
@@ -104,7 +104,7 @@ gimp_throbber_action_connect_proxy (GtkAction *action,
 }
 
 static void
-gimp_throbber_action_sync_property (GtkAction  *action,
+picman_throbber_action_sync_property (GtkAction  *action,
                                     GParamSpec *pspec,
                                     GtkWidget  *proxy)
 {
@@ -119,12 +119,12 @@ gimp_throbber_action_sync_property (GtkAction  *action,
 }
 
 GtkAction *
-gimp_throbber_action_new (const gchar *name,
+picman_throbber_action_new (const gchar *name,
                           const gchar *label,
                           const gchar *tooltip,
                           const gchar *stock_id)
 {
-  return g_object_new (GIMP_TYPE_THROBBER_ACTION,
+  return g_object_new (PICMAN_TYPE_THROBBER_ACTION,
                        "name",     name,
                        "label",    label,
                        "tooltip",  tooltip,

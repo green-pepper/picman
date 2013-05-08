@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,41 +15,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEXT_UNDO_H__
-#define __GIMP_TEXT_UNDO_H__
+#ifndef __PICMAN_TEXT_UNDO_H__
+#define __PICMAN_TEXT_UNDO_H__
 
 
-#include "core/gimpitemundo.h"
+#include "core/picmanitemundo.h"
 
 
-#define GIMP_TYPE_TEXT_UNDO            (gimp_text_undo_get_type ())
-#define GIMP_TEXT_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TEXT_UNDO, GimpTextUndo))
-#define GIMP_TEXT_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TEXT_UNDO, GimpTextUndoClass))
-#define GIMP_IS_TEXT_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TEXT_UNDO))
-#define GIMP_IS_TEXT_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TEXT_UNDO))
-#define GIMP_TEXT_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TEXT_UNDO, GimpTextUndoClass))
+#define PICMAN_TYPE_TEXT_UNDO            (picman_text_undo_get_type ())
+#define PICMAN_TEXT_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TEXT_UNDO, PicmanTextUndo))
+#define PICMAN_TEXT_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TEXT_UNDO, PicmanTextUndoClass))
+#define PICMAN_IS_TEXT_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TEXT_UNDO))
+#define PICMAN_IS_TEXT_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TEXT_UNDO))
+#define PICMAN_TEXT_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TEXT_UNDO, PicmanTextUndoClass))
 
 
-typedef struct _GimpTextUndoClass GimpTextUndoClass;
+typedef struct _PicmanTextUndoClass PicmanTextUndoClass;
 
-struct _GimpTextUndo
+struct _PicmanTextUndo
 {
-  GimpItemUndo      parent_instance;
+  PicmanItemUndo      parent_instance;
 
-  GimpText         *text;
+  PicmanText         *text;
   const GParamSpec *pspec;
   GValue           *value;
   gboolean          modified;
   const Babl       *format;
 };
 
-struct _GimpTextUndoClass
+struct _PicmanTextUndoClass
 {
-  GimpItemClass  parent_class;
+  PicmanItemClass  parent_class;
 };
 
 
-GType      gimp_text_undo_get_type (void) G_GNUC_CONST;
+GType      picman_text_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_TEXT_UNDO_H__ */
+#endif /* __PICMAN_TEXT_UNDO_H__ */

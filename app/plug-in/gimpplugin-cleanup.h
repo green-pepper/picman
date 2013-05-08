@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpplugin-cleanup.h
+ * picmanplugin-cleanup.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,22 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_CLEANUP_H__
-#define __GIMP_PLUG_IN_CLEANUP_H__
+#ifndef __PICMAN_PLUG_IN_CLEANUP_H__
+#define __PICMAN_PLUG_IN_CLEANUP_H__
 
 
-gboolean   gimp_plug_in_cleanup_undo_group_start (GimpPlugIn          *plug_in,
-                                                  GimpImage           *image);
-gboolean   gimp_plug_in_cleanup_undo_group_end   (GimpPlugIn          *plug_in,
-                                                  GimpImage           *image);
+gboolean   picman_plug_in_cleanup_undo_group_start (PicmanPlugIn          *plug_in,
+                                                  PicmanImage           *image);
+gboolean   picman_plug_in_cleanup_undo_group_end   (PicmanPlugIn          *plug_in,
+                                                  PicmanImage           *image);
 
-gboolean   gimp_plug_in_cleanup_add_shadow       (GimpPlugIn          *plug_in,
-                                                  GimpDrawable        *drawable);
-gboolean   gimp_plug_in_cleanup_remove_shadow    (GimpPlugIn          *plug_in,
-                                                  GimpDrawable        *drawable);
+gboolean   picman_plug_in_cleanup_add_shadow       (PicmanPlugIn          *plug_in,
+                                                  PicmanDrawable        *drawable);
+gboolean   picman_plug_in_cleanup_remove_shadow    (PicmanPlugIn          *plug_in,
+                                                  PicmanDrawable        *drawable);
 
-void       gimp_plug_in_cleanup                  (GimpPlugIn          *plug_in,
-                                                  GimpPlugInProcFrame *proc_frame);
+void       picman_plug_in_cleanup                  (PicmanPlugIn          *plug_in,
+                                                  PicmanPlugInProcFrame *proc_frame);
 
 
-#endif /* __GIMP_PLUG_IN_CLEANUP_H__ */
+#endif /* __PICMAN_PLUG_IN_CLEANUP_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,29 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_XFER_H__
-#define __GIMP_DISPLAY_XFER_H__
+#ifndef __PICMAN_DISPLAY_XFER_H__
+#define __PICMAN_DISPLAY_XFER_H__
 
 
-/* #define GIMP_DISPLAY_RENDER_ENABLE_SCALING 1 */
+/* #define PICMAN_DISPLAY_RENDER_ENABLE_SCALING 1 */
 
-#define GIMP_DISPLAY_RENDER_BUF_WIDTH  256
-#define GIMP_DISPLAY_RENDER_BUF_HEIGHT 256
+#define PICMAN_DISPLAY_RENDER_BUF_WIDTH  256
+#define PICMAN_DISPLAY_RENDER_BUF_HEIGHT 256
 
-#ifdef GIMP_DISPLAY_RENDER_ENABLE_SCALING
-#define GIMP_DISPLAY_RENDER_MAX_SCALE 2.0
+#ifdef PICMAN_DISPLAY_RENDER_ENABLE_SCALING
+#define PICMAN_DISPLAY_RENDER_MAX_SCALE 2.0
 #else
-#define GIMP_DISPLAY_RENDER_MAX_SCALE 1.0
+#define PICMAN_DISPLAY_RENDER_MAX_SCALE 1.0
 #endif
 
 
-GimpDisplayXfer * gimp_display_xfer_realize     (GtkWidget       *widget);
+PicmanDisplayXfer * picman_display_xfer_realize     (GtkWidget       *widget);
 
-cairo_surface_t * gimp_display_xfer_get_surface (GimpDisplayXfer *xfer,
+cairo_surface_t * picman_display_xfer_get_surface (PicmanDisplayXfer *xfer,
                                                  gint             w,
                                                  gint             h,
                                                  gint            *src_x,
                                                  gint            *src_y);
 
 
-#endif  /*  __GIMP_DISPLAY_XFER_H__  */
+#endif  /*  __PICMAN_DISPLAY_XFER_H__  */

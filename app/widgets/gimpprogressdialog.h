@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpprogressdialog.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanprogressdialog.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PROGRESS_DIALOG_H__
-#define __GIMP_PROGRESS_DIALOG_H__
+#ifndef __PICMAN_PROGRESS_DIALOG_H__
+#define __PICMAN_PROGRESS_DIALOG_H__
 
 
-#define GIMP_TYPE_PROGRESS_DIALOG            (gimp_progress_dialog_get_type ())
-#define GIMP_PROGRESS_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PROGRESS_DIALOG, GimpProgressDialog))
-#define GIMP_PROGRESS_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PROGRESS_DIALOG, GimpProgressDialogClass))
-#define GIMP_IS_PROGRESS_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PROGRESS_DIALOG))
-#define GIMP_IS_PROGRESS_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PROGRESS_DIALOG))
-#define GIMP_PROGRESS_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PROGRESS_DIALOG, GimpProgressDialogClass))
+#define PICMAN_TYPE_PROGRESS_DIALOG            (picman_progress_dialog_get_type ())
+#define PICMAN_PROGRESS_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PROGRESS_DIALOG, PicmanProgressDialog))
+#define PICMAN_PROGRESS_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PROGRESS_DIALOG, PicmanProgressDialogClass))
+#define PICMAN_IS_PROGRESS_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PROGRESS_DIALOG))
+#define PICMAN_IS_PROGRESS_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PROGRESS_DIALOG))
+#define PICMAN_PROGRESS_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PROGRESS_DIALOG, PicmanProgressDialogClass))
 
 
-typedef struct _GimpProgressDialogClass  GimpProgressDialogClass;
+typedef struct _PicmanProgressDialogClass  PicmanProgressDialogClass;
 
-struct _GimpProgressDialog
+struct _PicmanProgressDialog
 {
-  GimpDialog  parent_instance;
+  PicmanDialog  parent_instance;
 
   GtkWidget  *box;
 };
 
-struct _GimpProgressDialogClass
+struct _PicmanProgressDialogClass
 {
-  GimpDialogClass  parent_class;
+  PicmanDialogClass  parent_class;
 };
 
 
-GType       gimp_progress_dialog_get_type (void) G_GNUC_CONST;
+GType       picman_progress_dialog_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_progress_dialog_new      (void);
+GtkWidget * picman_progress_dialog_new      (void);
 
 
-#endif /* __GIMP_PROGRESS_DIALOG_H__ */
+#endif /* __PICMAN_PROGRESS_DIALOG_H__ */

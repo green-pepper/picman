@@ -1,7 +1,7 @@
-/* The GIMP -- an image manipulation program
+/* The PICMAN -- an image manipulation program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimpfilloptions.h
+ * picmanfilloptions.h
  * Copyright (C) 2003 Simon Budig
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,40 +18,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FILL_OPTIONS_H__
-#define __GIMP_FILL_OPTIONS_H__
+#ifndef __PICMAN_FILL_OPTIONS_H__
+#define __PICMAN_FILL_OPTIONS_H__
 
 
-#include "gimpcontext.h"
+#include "picmancontext.h"
 
 
-#define GIMP_TYPE_FILL_OPTIONS            (gimp_fill_options_get_type ())
-#define GIMP_FILL_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FILL_OPTIONS, GimpFillOptions))
-#define GIMP_FILL_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FILL_OPTIONS, GimpFillOptionsClass))
-#define GIMP_IS_FILL_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FILL_OPTIONS))
-#define GIMP_IS_FILL_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FILL_OPTIONS))
-#define GIMP_FILL_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FILL_OPTIONS, GimpFillOptionsClass))
+#define PICMAN_TYPE_FILL_OPTIONS            (picman_fill_options_get_type ())
+#define PICMAN_FILL_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FILL_OPTIONS, PicmanFillOptions))
+#define PICMAN_FILL_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FILL_OPTIONS, PicmanFillOptionsClass))
+#define PICMAN_IS_FILL_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FILL_OPTIONS))
+#define PICMAN_IS_FILL_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FILL_OPTIONS))
+#define PICMAN_FILL_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FILL_OPTIONS, PicmanFillOptionsClass))
 
 
-typedef struct _GimpFillOptionsClass GimpFillOptionsClass;
+typedef struct _PicmanFillOptionsClass PicmanFillOptionsClass;
 
-struct _GimpFillOptions
+struct _PicmanFillOptions
 {
-  GimpContext  parent_instance;
+  PicmanContext  parent_instance;
 };
 
-struct _GimpFillOptionsClass
+struct _PicmanFillOptionsClass
 {
-  GimpContextClass  parent_class;
+  PicmanContextClass  parent_class;
 };
 
 
-GType             gimp_fill_options_get_type      (void) G_GNUC_CONST;
+GType             picman_fill_options_get_type      (void) G_GNUC_CONST;
 
-GimpFillOptions * gimp_fill_options_new           (Gimp *gimp);
+PicmanFillOptions * picman_fill_options_new           (Picman *picman);
 
-GimpFillStyle     gimp_fill_options_get_style     (GimpFillOptions *options);
-gboolean          gimp_fill_options_get_antialias (GimpFillOptions *options);
+PicmanFillStyle     picman_fill_options_get_style     (PicmanFillOptions *options);
+gboolean          picman_fill_options_get_antialias (PicmanFillOptions *options);
 
 
-#endif /* __GIMP_FILL_OPTIONS_H__ */
+#endif /* __PICMAN_FILL_OPTIONS_H__ */

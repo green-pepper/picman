@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,36 +22,36 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpthumb/gimpthumb.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanthumb/picmanthumb.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimagefile.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimagefile.h"
 
 #include "file/file-open.h"
 #include "file/file-utils.h"
 
-#include "widgets/gimpclipboard.h"
-#include "widgets/gimpcontainerview.h"
-#include "widgets/gimpcontainerview-utils.h"
-#include "widgets/gimpdocumentview.h"
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
+#include "widgets/picmanclipboard.h"
+#include "widgets/picmancontainerview.h"
+#include "widgets/picmancontainerview-utils.h"
+#include "widgets/picmandocumentview.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplay-foreach.h"
-#include "display/gimpdisplayshell.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplay-foreach.h"
+#include "display/picmandisplayshell.h"
 
 #include "documents-commands.h"
 #include "file-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 typedef struct
@@ -64,9 +64,9 @@ typedef struct
 /*  local function prototypes  */
 
 static void   documents_open_image    (GtkWidget     *editor,
-                                       GimpContext   *context,
-                                       GimpImagefile *imagefile);
-static void   documents_raise_display (GimpDisplay   *display,
+                                       PicmanContext   *context,
+                                       PicmanImagefile *imagefile);
+static void   documents_raise_display (PicmanDisplay   *display,
                                        RaiseClosure  *closure);
 
 
@@ -77,23 +77,23 @@ void
 documents_open_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContext         *context;
-  GimpContainer       *container;
-  GimpImagefile       *imagefile;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContext         *context;
+  PicmanContainer       *container;
+  PicmanImagefile       *imagefile;
 
-  context   = gimp_container_view_get_context (editor->view);
-  container = gimp_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
 
-  imagefile = gimp_context_get_imagefile (context);
+  imagefile = picman_context_get_imagefile (context);
 
-  if (imagefile && gimp_container_have (container, GIMP_OBJECT (imagefile)))
+  if (imagefile && picman_container_have (container, PICMAN_OBJECT (imagefile)))
     {
       documents_open_image (GTK_WIDGET (editor), context, imagefile);
     }
   else
     {
-      file_file_open_dialog (context->gimp, NULL, GTK_WIDGET (editor));
+      file_file_open_dialog (context->picman, NULL, GTK_WIDGET (editor));
     }
 }
 
@@ -101,24 +101,24 @@ void
 documents_raise_or_open_cmd_callback (GtkAction *action,
                                       gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContext         *context;
-  GimpContainer       *container;
-  GimpImagefile       *imagefile;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContext         *context;
+  PicmanContainer       *container;
+  PicmanImagefile       *imagefile;
 
-  context   = gimp_container_view_get_context (editor->view);
-  container = gimp_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
 
-  imagefile = gimp_context_get_imagefile (context);
+  imagefile = picman_context_get_imagefile (context);
 
-  if (imagefile && gimp_container_have (container, GIMP_OBJECT (imagefile)))
+  if (imagefile && picman_container_have (container, PICMAN_OBJECT (imagefile)))
     {
       RaiseClosure closure;
 
-      closure.name  = gimp_object_get_name (imagefile);
+      closure.name  = picman_object_get_name (imagefile);
       closure.found = FALSE;
 
-      gimp_container_foreach (context->gimp->displays,
+      picman_container_foreach (context->picman->displays,
                               (GFunc) documents_raise_display,
                               &closure);
 
@@ -131,20 +131,20 @@ void
 documents_file_open_dialog_cmd_callback (GtkAction *action,
                                          gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContext         *context;
-  GimpContainer       *container;
-  GimpImagefile       *imagefile;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContext         *context;
+  PicmanContainer       *container;
+  PicmanImagefile       *imagefile;
 
-  context   = gimp_container_view_get_context (editor->view);
-  container = gimp_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
 
-  imagefile = gimp_context_get_imagefile (context);
+  imagefile = picman_context_get_imagefile (context);
 
-  if (imagefile && gimp_container_have (container, GIMP_OBJECT (imagefile)))
+  if (imagefile && picman_container_have (container, PICMAN_OBJECT (imagefile)))
     {
-      file_file_open_dialog (context->gimp,
-                             gimp_object_get_name (imagefile),
+      file_file_open_dialog (context->picman,
+                             picman_object_get_name (imagefile),
                              GTK_WIDGET (editor));
     }
 }
@@ -153,49 +153,49 @@ void
 documents_copy_location_cmd_callback (GtkAction *action,
                                       gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContext         *context;
-  GimpImagefile       *imagefile;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContext         *context;
+  PicmanImagefile       *imagefile;
 
-  context   = gimp_container_view_get_context (editor->view);
-  imagefile = gimp_context_get_imagefile (context);
+  context   = picman_container_view_get_context (editor->view);
+  imagefile = picman_context_get_imagefile (context);
 
   if (imagefile)
-    gimp_clipboard_set_text (context->gimp,
-                             gimp_object_get_name (imagefile));
+    picman_clipboard_set_text (context->picman,
+                             picman_object_get_name (imagefile));
 }
 
 void
 documents_remove_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpContainerEditor *editor  = GIMP_CONTAINER_EDITOR (data);
-  GimpContext         *context = gimp_container_view_get_context (editor->view);
-  GimpImagefile       *imagefile = gimp_context_get_imagefile (context);
+  PicmanContainerEditor *editor  = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContext         *context = picman_container_view_get_context (editor->view);
+  PicmanImagefile       *imagefile = picman_context_get_imagefile (context);
   const gchar         *uri;
 
-  uri = gimp_object_get_name (imagefile);
+  uri = picman_object_get_name (imagefile);
 
   gtk_recent_manager_remove_item (gtk_recent_manager_get_default (), uri, NULL);
 
-  gimp_container_view_remove_active (editor->view);
+  picman_container_view_remove_active (editor->view);
 }
 
 void
 documents_clear_cmd_callback (GtkAction *action,
                               gpointer   data)
 {
-  GimpContainerEditor *editor  = GIMP_CONTAINER_EDITOR (data);
-  GimpContext         *context = gimp_container_view_get_context (editor->view);
-  Gimp                *gimp    = context->gimp;
+  PicmanContainerEditor *editor  = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContext         *context = picman_container_view_get_context (editor->view);
+  Picman                *picman    = context->picman;
   GtkWidget           *dialog;
 
-  dialog = gimp_message_dialog_new (_("Clear Document History"),
+  dialog = picman_message_dialog_new (_("Clear Document History"),
                                     GTK_STOCK_CLEAR,
                                     GTK_WIDGET (editor),
                                     GTK_DIALOG_MODAL |
                                     GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    gimp_standard_help_func, NULL,
+                                    picman_standard_help_func, NULL,
 
                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                     GTK_STOCK_CLEAR,  GTK_RESPONSE_OK,
@@ -212,15 +212,15 @@ documents_clear_cmd_callback (GtkAction *action,
                            G_CALLBACK (gtk_widget_destroy),
                            dialog, G_CONNECT_SWAPPED);
 
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                      _("Clear the Recent Documents list?"));
 
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                              _("Clearing the document history will "
                                "permanently remove all images from "
                                "the recent documents list."));
 
-  if (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK)
+  if (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK)
     {
       GtkRecentManager *manager = gtk_recent_manager_get_default ();
       GList            *items;
@@ -245,7 +245,7 @@ documents_clear_cmd_callback (GtkAction *action,
 
       g_list_free (items);
 
-      gimp_container_clear (gimp->documents);
+      picman_container_clear (picman->documents);
     }
 
   gtk_widget_destroy (dialog);
@@ -255,21 +255,21 @@ void
 documents_recreate_preview_cmd_callback (GtkAction *action,
                                          gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContext         *context;
-  GimpContainer       *container;
-  GimpImagefile       *imagefile;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContext         *context;
+  PicmanContainer       *container;
+  PicmanImagefile       *imagefile;
 
-  context   = gimp_container_view_get_context (editor->view);
-  container = gimp_container_view_get_container (editor->view);
+  context   = picman_container_view_get_context (editor->view);
+  container = picman_container_view_get_container (editor->view);
 
-  imagefile = gimp_context_get_imagefile (context);
+  imagefile = picman_context_get_imagefile (context);
 
-  if (imagefile && gimp_container_have (container, GIMP_OBJECT (imagefile)))
+  if (imagefile && picman_container_have (container, PICMAN_OBJECT (imagefile)))
     {
-      gimp_imagefile_create_thumbnail (imagefile,
+      picman_imagefile_create_thumbnail (imagefile,
                                        context, NULL,
-                                       context->gimp->config->thumbnail_size,
+                                       context->picman->config->thumbnail_size,
                                        FALSE);
     }
 }
@@ -278,30 +278,30 @@ void
 documents_reload_previews_cmd_callback (GtkAction *action,
                                         gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContainer       *container;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContainer       *container;
 
-  container = gimp_container_view_get_container (editor->view);
+  container = picman_container_view_get_container (editor->view);
 
-  gimp_container_foreach (container,
-                          (GFunc) gimp_imagefile_update,
+  picman_container_foreach (container,
+                          (GFunc) picman_imagefile_update,
                           editor->view);
 }
 
 static void
-documents_remove_dangling_foreach (GimpImagefile *imagefile,
-                                   GimpContainer *container)
+documents_remove_dangling_foreach (PicmanImagefile *imagefile,
+                                   PicmanContainer *container)
 {
-  GimpThumbnail *thumbnail = gimp_imagefile_get_thumbnail (imagefile);
+  PicmanThumbnail *thumbnail = picman_imagefile_get_thumbnail (imagefile);
 
-  if (gimp_thumbnail_peek_image (thumbnail) == GIMP_THUMB_STATE_NOT_FOUND)
+  if (picman_thumbnail_peek_image (thumbnail) == PICMAN_THUMB_STATE_NOT_FOUND)
     {
-      const gchar *uri = gimp_object_get_name (imagefile);
+      const gchar *uri = picman_object_get_name (imagefile);
 
       gtk_recent_manager_remove_item (gtk_recent_manager_get_default (), uri,
                                       NULL);
 
-      gimp_container_remove (container, GIMP_OBJECT (imagefile));
+      picman_container_remove (container, PICMAN_OBJECT (imagefile));
     }
 }
 
@@ -309,12 +309,12 @@ void
 documents_remove_dangling_cmd_callback (GtkAction *action,
                                         gpointer   data)
 {
-  GimpContainerEditor *editor = GIMP_CONTAINER_EDITOR (data);
-  GimpContainer       *container;
+  PicmanContainerEditor *editor = PICMAN_CONTAINER_EDITOR (data);
+  PicmanContainer       *container;
 
-  container = gimp_container_view_get_container (editor->view);
+  container = picman_container_view_get_container (editor->view);
 
-  gimp_container_foreach (container,
+  picman_container_foreach (container,
                           (GFunc) documents_remove_dangling_foreach,
                           container);
 }
@@ -324,24 +324,24 @@ documents_remove_dangling_cmd_callback (GtkAction *action,
 
 static void
 documents_open_image (GtkWidget     *editor,
-                      GimpContext   *context,
-                      GimpImagefile *imagefile)
+                      PicmanContext   *context,
+                      PicmanImagefile *imagefile)
 {
   const gchar        *uri;
-  GimpImage          *image;
-  GimpPDBStatusType   status;
+  PicmanImage          *image;
+  PicmanPDBStatusType   status;
   GError             *error = NULL;
 
-  uri = gimp_object_get_name (imagefile);
+  uri = picman_object_get_name (imagefile);
 
-  image = file_open_with_display (context->gimp, context, NULL, uri, FALSE,
+  image = file_open_with_display (context->picman, context, NULL, uri, FALSE,
                                   &status, &error);
 
-  if (! image && status != GIMP_PDB_CANCEL)
+  if (! image && status != PICMAN_PDB_CANCEL)
     {
       gchar *filename = file_utils_uri_display_name (uri);
 
-      gimp_message (context->gimp, G_OBJECT (editor), GIMP_MESSAGE_ERROR,
+      picman_message (context->picman, G_OBJECT (editor), PICMAN_MESSAGE_ERROR,
                     _("Opening '%s' failed:\n\n%s"),
                     filename, error->message);
       g_clear_error (&error);
@@ -351,14 +351,14 @@ documents_open_image (GtkWidget     *editor,
 }
 
 static void
-documents_raise_display (GimpDisplay  *display,
+documents_raise_display (PicmanDisplay  *display,
                          RaiseClosure *closure)
 {
-  const gchar *uri = gimp_object_get_name (gimp_display_get_image (display));
+  const gchar *uri = picman_object_get_name (picman_display_get_image (display));
 
   if (! g_strcmp0 (closure->name, uri))
     {
       closure->found = TRUE;
-      gimp_display_shell_present (gimp_display_get_shell (display));
+      picman_display_shell_present (picman_display_get_shell (display));
     }
 }

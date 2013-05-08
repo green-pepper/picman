@@ -16,7 +16,7 @@
 /INSTALL
 /mkinstalldirs
 /install-sh
-/gimpui.c
-/gimpthumb.c
+/picmanui.c
+/picmanthumb.c
 /.libs
 /.deps

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,24 +19,24 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimptoolpreset.h"
-#include "gimptoolpreset-save.h"
+#include "picmantoolpreset.h"
+#include "picmantoolpreset-save.h"
 
 
 gboolean
-gimp_tool_preset_save (GimpData  *data,
+picman_tool_preset_save (PicmanData  *data,
                        GError   **error)
 {
-  g_return_val_if_fail (GIMP_IS_TOOL_PRESET (data), FALSE);
+  g_return_val_if_fail (PICMAN_IS_TOOL_PRESET (data), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  return gimp_config_serialize_to_file (GIMP_CONFIG (data),
-                                        gimp_data_get_filename (data),
-                                        "GIMP tool preset file",
-                                        "end of GIMP tool preset file",
+  return picman_config_serialize_to_file (PICMAN_CONFIG (data),
+                                        picman_data_get_filename (data),
+                                        "PICMAN tool preset file",
+                                        "end of PICMAN tool preset file",
                                         NULL, error);
 }

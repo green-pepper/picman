@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,26 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_TOOL_H__
-#define __GIMP_BRUSH_TOOL_H__
+#ifndef __PICMAN_BRUSH_TOOL_H__
+#define __PICMAN_BRUSH_TOOL_H__
 
 
-#include "gimppainttool.h"
+#include "picmanpainttool.h"
 
 
-#define GIMP_TYPE_BRUSH_TOOL            (gimp_brush_tool_get_type ())
-#define GIMP_BRUSH_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BRUSH_TOOL, GimpBrushTool))
-#define GIMP_BRUSH_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BRUSH_TOOL, GimpBrushToolClass))
-#define GIMP_IS_BRUSH_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BRUSH_TOOL))
-#define GIMP_IS_BRUSH_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BRUSH_TOOL))
-#define GIMP_BRUSH_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BRUSH_TOOL, GimpBrushToolClass))
+#define PICMAN_TYPE_BRUSH_TOOL            (picman_brush_tool_get_type ())
+#define PICMAN_BRUSH_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BRUSH_TOOL, PicmanBrushTool))
+#define PICMAN_BRUSH_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BRUSH_TOOL, PicmanBrushToolClass))
+#define PICMAN_IS_BRUSH_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BRUSH_TOOL))
+#define PICMAN_IS_BRUSH_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BRUSH_TOOL))
+#define PICMAN_BRUSH_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BRUSH_TOOL, PicmanBrushToolClass))
 
 
-typedef struct _GimpBrushToolClass GimpBrushToolClass;
+typedef struct _PicmanBrushToolClass PicmanBrushToolClass;
 
-struct _GimpBrushTool
+struct _PicmanBrushTool
 {
-  GimpPaintTool  parent_instance;
+  PicmanPaintTool  parent_instance;
 
   gboolean       show_cursor;
   gboolean       draw_brush;
@@ -42,19 +42,19 @@ struct _GimpBrushTool
   gdouble        brush_y;
 };
 
-struct _GimpBrushToolClass
+struct _PicmanBrushToolClass
 {
-  GimpPaintToolClass  parent_class;
+  PicmanPaintToolClass  parent_class;
 };
 
 
-GType            gimp_brush_tool_get_type       (void) G_GNUC_CONST;
+GType            picman_brush_tool_get_type       (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_brush_tool_create_outline (GimpBrushTool *brush_tool,
-                                                 GimpDisplay   *display,
+PicmanCanvasItem * picman_brush_tool_create_outline (PicmanBrushTool *brush_tool,
+                                                 PicmanDisplay   *display,
                                                  gdouble        x,
                                                  gdouble        y,
                                                  gboolean       draw_fallback);
 
 
-#endif  /*  __GIMP_BRUSH_TOOL_H__  */
+#endif  /*  __PICMAN_BRUSH_TOOL_H__  */

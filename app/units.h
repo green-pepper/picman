@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 #define __UNITS_H__
 
 
-#ifndef GIMP_APP_GLUE_COMPILATION
+#ifndef PICMAN_APP_GLUE_COMPILATION
 #error You must not #include "units.h" from an app/ subdir
 #endif
 
 
-void   units_init (Gimp *gimp);
+void   units_init (Picman *picman);
 
 
 #endif /* __UNITS_H__ */

@@ -3,6 +3,6 @@
 /.deps
 /.libs
 /*.lo
-/gimpdbusservice-glue.h
+/picmandbusservice-glue.h
 /libappgui.a
 /libappgui.la

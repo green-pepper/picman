@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasrectangle.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasrectangle.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "gimpcanvasrectangle.h"
-#include "gimpdisplayshell.h"
+#include "picmancanvasrectangle.h"
+#include "picmandisplayshell.h"
 
 
 enum
@@ -43,9 +43,9 @@ enum
 };
 
 
-typedef struct _GimpCanvasRectanglePrivate GimpCanvasRectanglePrivate;
+typedef struct _PicmanCanvasRectanglePrivate PicmanCanvasRectanglePrivate;
 
-struct _GimpCanvasRectanglePrivate
+struct _PicmanCanvasRectanglePrivate
 {
   gdouble  x;
   gdouble  y;
@@ -56,87 +56,87 @@ struct _GimpCanvasRectanglePrivate
 
 #define GET_PRIVATE(rectangle) \
         G_TYPE_INSTANCE_GET_PRIVATE (rectangle, \
-                                     GIMP_TYPE_CANVAS_RECTANGLE, \
-                                     GimpCanvasRectanglePrivate)
+                                     PICMAN_TYPE_CANVAS_RECTANGLE, \
+                                     PicmanCanvasRectanglePrivate)
 
 
 /*  local function prototypes  */
 
-static void             gimp_canvas_rectangle_set_property (GObject        *object,
+static void             picman_canvas_rectangle_set_property (GObject        *object,
                                                             guint           property_id,
                                                             const GValue   *value,
                                                             GParamSpec     *pspec);
-static void             gimp_canvas_rectangle_get_property (GObject        *object,
+static void             picman_canvas_rectangle_get_property (GObject        *object,
                                                             guint           property_id,
                                                             GValue         *value,
                                                             GParamSpec     *pspec);
-static void             gimp_canvas_rectangle_draw         (GimpCanvasItem *item,
+static void             picman_canvas_rectangle_draw         (PicmanCanvasItem *item,
                                                             cairo_t        *cr);
-static cairo_region_t * gimp_canvas_rectangle_get_extents  (GimpCanvasItem *item);
+static cairo_region_t * picman_canvas_rectangle_get_extents  (PicmanCanvasItem *item);
 
 
-G_DEFINE_TYPE (GimpCanvasRectangle, gimp_canvas_rectangle,
-               GIMP_TYPE_CANVAS_ITEM)
+G_DEFINE_TYPE (PicmanCanvasRectangle, picman_canvas_rectangle,
+               PICMAN_TYPE_CANVAS_ITEM)
 
-#define parent_class gimp_canvas_rectangle_parent_class
+#define parent_class picman_canvas_rectangle_parent_class
 
 
 static void
-gimp_canvas_rectangle_class_init (GimpCanvasRectangleClass *klass)
+picman_canvas_rectangle_class_init (PicmanCanvasRectangleClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpCanvasItemClass *item_class   = GIMP_CANVAS_ITEM_CLASS (klass);
+  PicmanCanvasItemClass *item_class   = PICMAN_CANVAS_ITEM_CLASS (klass);
 
-  object_class->set_property = gimp_canvas_rectangle_set_property;
-  object_class->get_property = gimp_canvas_rectangle_get_property;
+  object_class->set_property = picman_canvas_rectangle_set_property;
+  object_class->get_property = picman_canvas_rectangle_get_property;
 
-  item_class->draw           = gimp_canvas_rectangle_draw;
-  item_class->get_extents    = gimp_canvas_rectangle_get_extents;
+  item_class->draw           = picman_canvas_rectangle_draw;
+  item_class->get_extents    = picman_canvas_rectangle_get_extents;
 
   g_object_class_install_property (object_class, PROP_X,
                                    g_param_spec_double ("x", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_Y,
                                    g_param_spec_double ("y", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_WIDTH,
                                    g_param_spec_double ("width", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_HEIGHT,
                                    g_param_spec_double ("height", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_FILLED,
                                    g_param_spec_boolean ("filled", NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpCanvasRectanglePrivate));
+  g_type_class_add_private (klass, sizeof (PicmanCanvasRectanglePrivate));
 }
 
 static void
-gimp_canvas_rectangle_init (GimpCanvasRectangle *rectangle)
+picman_canvas_rectangle_init (PicmanCanvasRectangle *rectangle)
 {
 }
 
 static void
-gimp_canvas_rectangle_set_property (GObject      *object,
+picman_canvas_rectangle_set_property (GObject      *object,
                                     guint         property_id,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
-  GimpCanvasRectanglePrivate *private = GET_PRIVATE (object);
+  PicmanCanvasRectanglePrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -163,12 +163,12 @@ gimp_canvas_rectangle_set_property (GObject      *object,
 }
 
 static void
-gimp_canvas_rectangle_get_property (GObject    *object,
+picman_canvas_rectangle_get_property (GObject    *object,
                                     guint       property_id,
                                     GValue     *value,
                                     GParamSpec *pspec)
 {
-  GimpCanvasRectanglePrivate *private = GET_PRIVATE (object);
+  PicmanCanvasRectanglePrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -195,23 +195,23 @@ gimp_canvas_rectangle_get_property (GObject    *object,
 }
 
 static void
-gimp_canvas_rectangle_transform (GimpCanvasItem *item,
+picman_canvas_rectangle_transform (PicmanCanvasItem *item,
                                  gdouble        *x,
                                  gdouble        *y,
                                  gdouble        *w,
                                  gdouble        *h)
 {
-  GimpCanvasRectanglePrivate *private = GET_PRIVATE (item);
+  PicmanCanvasRectanglePrivate *private = GET_PRIVATE (item);
   gdouble                     x1, y1;
   gdouble                     x2, y2;
 
-  gimp_canvas_item_transform_xy_f (item,
+  picman_canvas_item_transform_xy_f (item,
                                    MIN (private->x,
                                         private->x + private->width),
                                    MIN (private->y,
                                         private->y + private->height),
                                    &x1, &y1);
-  gimp_canvas_item_transform_xy_f (item,
+  picman_canvas_item_transform_xy_f (item,
                                    MAX (private->x,
                                         private->x + private->width),
                                    MAX (private->y,
@@ -243,32 +243,32 @@ gimp_canvas_rectangle_transform (GimpCanvasItem *item,
 }
 
 static void
-gimp_canvas_rectangle_draw (GimpCanvasItem *item,
+picman_canvas_rectangle_draw (PicmanCanvasItem *item,
                             cairo_t        *cr)
 {
-  GimpCanvasRectanglePrivate *private = GET_PRIVATE (item);
+  PicmanCanvasRectanglePrivate *private = GET_PRIVATE (item);
   gdouble                     x, y;
   gdouble                     w, h;
 
-  gimp_canvas_rectangle_transform (item, &x, &y, &w, &h);
+  picman_canvas_rectangle_transform (item, &x, &y, &w, &h);
 
   cairo_rectangle (cr, x, y, w, h);
 
   if (private->filled)
-    _gimp_canvas_item_fill (item, cr);
+    _picman_canvas_item_fill (item, cr);
   else
-    _gimp_canvas_item_stroke (item, cr);
+    _picman_canvas_item_stroke (item, cr);
 }
 
 static cairo_region_t *
-gimp_canvas_rectangle_get_extents (GimpCanvasItem *item)
+picman_canvas_rectangle_get_extents (PicmanCanvasItem *item)
 {
-  GimpCanvasRectanglePrivate *private = GET_PRIVATE (item);
+  PicmanCanvasRectanglePrivate *private = GET_PRIVATE (item);
   cairo_rectangle_int_t       rectangle;
   gdouble                     x, y;
   gdouble                     w, h;
 
-  gimp_canvas_rectangle_transform (item, &x, &y, &w, &h);
+  picman_canvas_rectangle_transform (item, &x, &y, &w, &h);
 
   if (private->filled)
     {
@@ -322,17 +322,17 @@ gimp_canvas_rectangle_get_extents (GimpCanvasItem *item)
     }
 }
 
-GimpCanvasItem *
-gimp_canvas_rectangle_new (GimpDisplayShell *shell,
+PicmanCanvasItem *
+picman_canvas_rectangle_new (PicmanDisplayShell *shell,
                            gdouble           x,
                            gdouble           y,
                            gdouble           width,
                            gdouble           height,
                            gboolean          filled)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
 
-  return g_object_new (GIMP_TYPE_CANVAS_RECTANGLE,
+  return g_object_new (PICMAN_TYPE_CANVAS_RECTANGLE,
                        "shell",  shell,
                        "x",      x,
                        "y",      y,
@@ -343,15 +343,15 @@ gimp_canvas_rectangle_new (GimpDisplayShell *shell,
 }
 
 void
-gimp_canvas_rectangle_set (GimpCanvasItem *rectangle,
+picman_canvas_rectangle_set (PicmanCanvasItem *rectangle,
                            gdouble         x,
                            gdouble         y,
                            gdouble         width,
                            gdouble         height)
 {
-  g_return_if_fail (GIMP_IS_CANVAS_RECTANGLE (rectangle));
+  g_return_if_fail (PICMAN_IS_CANVAS_RECTANGLE (rectangle));
 
-  gimp_canvas_item_begin_change (rectangle);
+  picman_canvas_item_begin_change (rectangle);
 
   g_object_set (rectangle,
                 "x",      x,
@@ -360,5 +360,5 @@ gimp_canvas_rectangle_set (GimpCanvasItem *rectangle,
                 "height", height,
                 NULL);
 
-  gimp_canvas_item_end_change (rectangle);
+  picman_canvas_item_end_change (rectangle);
 }

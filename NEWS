@@ -3,17 +3,17 @@
                           2.8 Stable Branch
                    ------------------------------
 
-This is the stable branch of GIMP. No new features are being added
+This is the stable branch of PICMAN. No new features are being added
 here, just bug-fixes.
 
 
-Changes in GIMP 2.8.0
+Changes in PICMAN 2.8.0
 =====================
 
 
 Core:
 
- - Add our own GimpOperationBrightnessContrast because GEGL one is different
+ - Add our own PicmanOperationBrightnessContrast because GEGL one is different
 
 
 Plug-ins:
@@ -32,7 +32,7 @@ General:
  - Translation updates
 
 
-Changes in GIMP 2.7.5
+Changes in PICMAN 2.7.5
 =====================
 
 
@@ -65,7 +65,7 @@ Plug-ins:
  - Port Gfig to cairo
 
 
-Libgimp:
+Libpicman:
 
  - Add PDB API to modify a lot of paint and ink options
 
@@ -93,7 +93,7 @@ General:
  - Tons and tons of translation updates
 
 
-Changes in GIMP 2.7.4
+Changes in PICMAN 2.7.4
 =====================
 
 
@@ -123,7 +123,7 @@ Core:
  - Stop using motion hints, they are a concept from the dark ages
 
 
-Libgimp:
+Libpicman:
 
  - Add a basic paint dynamics PDB interface
 
@@ -153,26 +153,26 @@ Source and build system:
 
 General:
 
- - Make gimptool install scripts in the correct system-wide directory
+ - Make picmantool install scripts in the correct system-wide directory
  - Fix lots and lots of stuff found by static code analysis
 
 
-Changes in GIMP 2.7.3
+Changes in PICMAN 2.7.3
 =====================
 
 
 UI:
 
- - Use GimpSpinScales instead of scale entries in all dockable widgets
+ - Use PicmanSpinScales instead of scale entries in all dockable widgets
  - Allow the spin scale to control a range larger than its scale's range
- - Implement RTL mode in GimpSpinScale
+ - Implement RTL mode in PicmanSpinScale
  - Add lots of tooltips to tool options
  - Allow to drop more things to the empty image window, and simply
    create new images from them
  - Cage tool: allow to add handle to the cage when clicking on an edge
  - Cage tool: allow to remove selected handles from the cage by hitting delete
  - Remember column widths in multi-column dock windows
- - Support starting GIMP in single-window mode
+ - Support starting PICMAN in single-window mode
  - When the brush is shared among paint tools, also share all
    brush-modifying paint options
  - Use ALT+number and ALT+Tab shortcuts to navigate between images
@@ -197,20 +197,20 @@ UI:
 
 Core:
 
- - Add GimpMotionBuffer which abstracts away stroke smoothing behind
-   a simple API and takes it out of GimpDisplayShell
- - Add a GimpIdTable utility class
- - Add a GimpDockContainer interface
- - Add a GimpSessionManaged interface
- - Add GimpCanvasRectangleGuides which makes the rectangle tool's
+ - Add PicmanMotionBuffer which abstracts away stroke smoothing behind
+   a simple API and takes it out of PicmanDisplayShell
+ - Add a PicmanIdTable utility class
+ - Add a PicmanDockContainer interface
+ - Add a PicmanSessionManaged interface
+ - Add PicmanCanvasRectangleGuides which makes the rectangle tool's
    guides draw properly
 
 
-Libgimp:
+Libpicman:
 
- - Make libgimp depend on GdkPixbuf
+ - Make libpicman depend on GdkPixbuf
  - Add API to create layers from cairo surfaces
- - Make it impossible to include individual files from any GIMP
+ - Make it impossible to include individual files from any PICMAN
    library. This was always forbidden and designed so it most
    probably breaks, but now it reliably breaks using #error
  - Deprecate the "set_sensitive" logic and use g_object_bind_property()
@@ -223,9 +223,9 @@ Plug-ins:
  - Fix the annoying parser build warnings in imagemap
  - Add a check-for-deprecated-procedures-in-script-fu make target
  - Update libpng code to not use deprecated API (file-mng and file-png)
- - Add an Item class to pygimp
+ - Add an Item class to pypicman
  - Correct/update some labels and defaults in the JPEG plug-in's save dialog UI
- - Fix "Bug 596410 - gimp-image-get-filename returns NULL for imported files"
+ - Fix "Bug 596410 - picman-image-get-filename returns NULL for imported files"
 
 
 Developer documentation:
@@ -235,9 +235,9 @@ Developer documentation:
 
 Source and build system:
 
- - Make cairo a global dependency, starting at libgimpcolor
+ - Make cairo a global dependency, starting at libpicmancolor
  - Require poppler >= 0.12.4
- - Remove gimp-remote for good, it has been disabled for years
+ - Remove picman-remote for good, it has been disabled for years
 
 
 General:
@@ -248,7 +248,7 @@ General:
  - Lots of translation updates
 
 
-Changes in GIMP 2.7.2
+Changes in PICMAN 2.7.2
 =====================
 
 
@@ -259,116 +259,116 @@ UI:
  - Merge the cage transform tool from GSoC
  - Remove the old bitmap cursors completely and always use RGBA cursors
    also for compat cursors for old X servers
- - Add new GimpCanvasItem infrastructure with subclasses for everything
+ - Add new PicmanCanvasItem infrastructure with subclasses for everything
    that needs to be drawn on the canvas and port all tools to canvas items,
    this is a huge change that touches all tools and almost all display
    code, and which finally gets rid of XOR drawing altogether
  - Switch from purely idle-rendering the display to something that ensures
    a minimum framerate, so we don't fail to update under heavy load
  - Make the text tool handle RTL mode better
- - Change GimpColorMapEditor to use the newly added proxy GimpPalette
+ - Change PicmanColorMapEditor to use the newly added proxy PicmanPalette
  - Replace the brush scale control in tool options by a brush size
    one that works in pixels, and does the right thing when the brush
    changes
- - Add new widget GimpSpinScale which is a scale with number entry,
+ - Add new widget PicmanSpinScale which is a scale with number entry,
    and use it in all tool options
  - Make the brush, pattern etc. selectors in tool options more
    compact and allow to directly jump to the editor dialogs
  - Make handle sizes in tools consistent
  - Add an on-canvas progress and use it for tool progress instead of
    the statusbar
- - Add a new GimpToolPalette class with lots of code that was
-   in GimpToolBox
+ - Add a new PicmanToolPalette class with lots of code that was
+   in PicmanToolBox
  - Allow to properly drop into and after a layer group
  - Refactor and clean up the dynamics editor widget, and add colors
    for the curves
  - Add support for F2 to rename items in lists
- - Clean up GimpDeviceStatus internally and visually
- - Allow to set GimpToolPreset's icon using the new GimpIconPicker widget
+ - Clean up PicmanDeviceStatus internally and visually
+ - Allow to set PicmanToolPreset's icon using the new PicmanIconPicker widget
  - Make the text tool's style overlay show default values from the
    text object if there is no style active at the cursor position/selection
  - Show the the text size's unit in the text style overlay
  - Make tool dialogs transient to the image window again
- - Consistently add a "gimp-" prefix to all window roles
+ - Consistently add a "picman-" prefix to all window roles
  - Make the preset buttons in tool options work on the global tool
    presets instead of the removed per-tool preset lists
- - Add GimpControllerMouse, which allows to bind extra mouse buttons to
+ - Add PicmanControllerMouse, which allows to bind extra mouse buttons to
    arbitrary actions
 
 
 Core:
 
- - Add uniform API to turn any GimpItem's outline into a selection
+ - Add uniform API to turn any PicmanItem's outline into a selection
  - Add support for color tags in text layers
- - Remove the selection_control() stuff from GimpImage and with it
+ - Remove the selection_control() stuff from PicmanImage and with it
    maybe last piece of UI code still not properly separated
  - Add more validation code for XCF loading
- - Add accessors to GimpPalette and use them globally
- - Keep a proxy GimpPalette around for the image's colormap
+ - Add accessors to PicmanPalette and use them globally
+ - Keep a proxy PicmanPalette around for the image's colormap
  - Don't scale SVGs when pasting or importing them
  - A lot of changes to the input device handling code, partly
-   merged from the gtk3-port branch, add GimpDeviceManager class
+   merged from the gtk3-port branch, add PicmanDeviceManager class
  - Add smoothing of paint strokes
  - Fix display filters to work on a cairo surface
- - Fix and enhance GimpImage's URI/filename handling API
+ - Fix and enhance PicmanImage's URI/filename handling API
  - Unset "removed" flag on items when they get added back to
    the image from the undo stack
  - Change item creation to properly use GObject properties and
    remove item_configure() and drawable_configure()
  - Refactor tool event handling and move lots of stuff into
    utility functions
- - Clean up GimpViewRenderer API
+ - Clean up PicmanViewRenderer API
  - Implement transforms on group layers
  - Clean up the transform tool a lot, and refactor away old junk
  - Tool and tool event cleanup: enforce tool activate/halt invariants,
    consistently shutdown all tools in control(HALT), and many other
    tool fixes
- - Remove GimpToolPresets object, this functionality got merged into
-   the new GimpToolPreset system
- - Rename GimpFilteredContainer to GimpTaggedContainer and add a new
-   GimpFilteredContainer parent class which is a generic filter
+ - Remove PicmanToolPresets object, this functionality got merged into
+   the new PicmanToolPreset system
+ - Rename PicmanFilteredContainer to PicmanTaggedContainer and add a new
+   PicmanFilteredContainer parent class which is a generic filter
  - Remove the concept of an "offset" from TileManager and instead
    pass around the offsets explicitly when needed, like when
    transforming
- - Move GimpBezier desc from vectors/ to core/ and add API to create
+ - Move PicmanBezier desc from vectors/ to core/ and add API to create
    one from sorted BoundSegs
- - Change GimpBrush boundary API to return a GimpBezierDesc
- - Add GimpBrushCache object and use it to cache a brush's transformed
-   pixels and its outline, remove the caching code from GimpBrushCore
- - Add GimpBezierDesc based API to GimpScanConvert and use it
+ - Change PicmanBrush boundary API to return a PicmanBezierDesc
+ - Add PicmanBrushCache object and use it to cache a brush's transformed
+   pixels and its outline, remove the caching code from PicmanBrushCore
+ - Add PicmanBezierDesc based API to PicmanScanConvert and use it
 
 
 GEGL:
 
  - Add operations and gegl infrastructure for the cage tool
  - Disable View -> Use GEGL as we will not have time to finish the
-   GEGL projection code for GIMP 2.8
+   GEGL projection code for PICMAN 2.8
 
 
-Libgimp:
+Libpicman:
 
- - Introduce an "item" type in the PDB and libgimp and deprecate
+ - Introduce an "item" type in the PDB and libpicman and deprecate
    lots of old API in favor of item API
  - Add procedures to create, traverse and manipulate layer trees
  - Add more state to the context API, and deprecate functions with
    too many parameters in favor of simpler ones that use context states,
    particularly the entire transform and selection API
- - Move GimpUnitStore and GimpUnitComboBox to libgimpwidgets, and
-   use them in GimpSizeEntry, deprecate GimpUnitMenu.
- - Deprecate gimp_min_colors() and gimp_install_cmap()
- - Add API that enables GimpRuler to track motion events by itself
+ - Move PicmanUnitStore and PicmanUnitComboBox to libpicmanwidgets, and
+   use them in PicmanSizeEntry, deprecate PicmanUnitMenu.
+ - Deprecate picman_min_colors() and picman_install_cmap()
+ - Add API that enables PicmanRuler to track motion events by itself
  - Add new selection API and deprecate all old selection functions
  - Move around and rename all parasite functions, deprecate the old ones
- - Add a generated PDB file in the "gimp" namespace and get rid
-   of "gimpmisc"
- - Add unit conversion functions to libgimpbase
+ - Add a generated PDB file in the "picman" namespace and get rid
+   of "picmanmisc"
+ - Add unit conversion functions to libpicmanbase
  - Add function to reset a plug-in's context to default values
 
 
 Plug-ins:
 
  - Make script-fu server IPv6 aware
- - Follow libgimp deprecations in plug-ins and scripts
+ - Follow libpicman deprecations in plug-ins and scripts
  - Add PDF export plugin
  - Lots of cairo porting here too
  - UTF-8 fixes in script-fu
@@ -387,7 +387,7 @@ Data:
 
 Developer documentation:
 
- - Move libgimp documentation from templates to inline comments
+ - Move libpicman documentation from templates to inline comments
  - Generate standard deprecated sections
 
 
@@ -402,7 +402,7 @@ Source and build system:
  - Run UI tests on Xvfb if available
  - Check for GdkPixbuf separately because it's now a separate library
  - Allow tests to use uninstalled plug-ins from the build dir
- - Remove, comment out, or build for GIMP_UNSTABLE some stuff that
+ - Remove, comment out, or build for PICMAN_UNSTABLE some stuff that
    should not be in a stable release
 
 
@@ -413,7 +413,7 @@ General:
  - Switch from GtkObject::destroy() to GObject::dispose() all over
    the place
  - Various changes that make maintaining the gtk3-port branch easier,
-   such as s/GtkAnchorType/GimpHandleAnchor/ and s/GtkObject/GtkAdjustment/
+   such as s/GtkAnchorType/PicmanHandleAnchor/ and s/GtkObject/GtkAdjustment/
  - Don't use gtk_container_add() for adding to GtkBoxes
  - Inherit from GtkBox directly, not from GtkHBox/GtkVBox
  - Add namespace to the ink blob types and functions
@@ -431,7 +431,7 @@ General:
  - Lots of translation updates
 
 
-Changes in GIMP 2.7.1
+Changes in PICMAN 2.7.1
 =====================
 
 
@@ -443,13 +443,13 @@ UI:
  - Add support for layer groups
  - Improve internals and GUI of the save/export functionality
  - Move the shortcut dialog's "clear" button into the entry
- - Clean up UI code by introducing GimpDockWindow and GimpImageWindow
+ - Clean up UI code by introducing PicmanDockWindow and PicmanImageWindow
    classes
  - Support multi-column dock windows
  - Get rid of docking bars, use highlights in existing widget hierarchy instead
- - Remove toolbox-window-hint gimprc setting and use dock-window-hint
+ - Remove toolbox-window-hint picmanrc setting and use dock-window-hint
    for both toolbox and docks instead
- - Move GimpDock::default-height style property to GimpDockWindow
+ - Move PicmanDock::default-height style property to PicmanDockWindow
  - Polish save+export path-part precedence rules
  - Merge the GSoC 2009 Advanced GUI for Brush Dynamics project
  - Default to non-fixed-aspect in Canvas Size dialog
@@ -464,7 +464,7 @@ UI:
    directly in the Windows menu
  - Support selecting and tagging multiple objects in resource lists
  - Improve on-canvas text editing and text attribute setting
- - Add GimpContainerTreeStore and use it in all GtkTreeStore based views
+ - Add PicmanContainerTreeStore and use it in all GtkTreeStore based views
  - Add a new default "automatic" tab style that makes sure dockable tabs
    always show as much detail as possible
  - Remove the dockable title bar and add the menu arrow button next to the
@@ -476,15 +476,15 @@ UI:
 
 Core:
 
- - Make all GimpItems lockable so their contents can't be changed
+ - Make all PicmanItems lockable so their contents can't be changed
  - Make more sense when naming imported layers
  - Make group layers work except for layer masks and save them in
    the XCF
- - Change GimpProjectable::update to GimpProjectable:invalidate
+ - Change PicmanProjectable::update to PicmanProjectable:invalidate
  - Make sure we don't mix font backends (and crash) by explicitly
    asking for FT/Fontconfig backends
- - Move members of GimpObject to a private struct
- - gimp_object_get_name() takes a gconstpointer now, remove casts
+ - Move members of PicmanObject to a private struct
+ - picman_object_get_name() takes a gconstpointer now, remove casts
    from all callers
  - Let drawables connect to their floating selection's "update" signal
    instead of letting the image do this job
@@ -517,8 +517,8 @@ Data:
 
 Developer documentation:
 
- - Explain GimpContext
- - Add SVG graphic with GIMP application core module dependencies
+ - Explain PicmanContext
+ - Add SVG graphic with PICMAN application core module dependencies
  - Add a schedule for 2.8 development
 
 
@@ -532,19 +532,19 @@ Source and build system:
  - Depend on GLib 2.24.0 and GTK+ 2.20.0
  - Add git commit hash in --verbose --version output
  - Don't version control gtk-doc.m4, get it from gtkdocize
- - Add GimpObject tracking code
+ - Add PicmanObject tracking code
  - Plug memory leaks
  - Lots of bug fixes and cleanup
  - Lots of translation updates
 
 
-Changes in GIMP 2.7.0
+Changes in PICMAN 2.7.0
 =====================
 
 UI:
  - Change the Text Tool to perform text editing on-canvas (GSoC 2008)
    and add the ability to mix different text styles in the same layer
- - Add support for tagging GIMP resources such as brushes and allow
+ - Add support for tagging PICMAN resources such as brushes and allow
    filtering based on these tags (GSoC 2008)
  - Separate the activities of saving an image and exporting it, there is
    now a 'File->Export...' for example
@@ -580,7 +580,7 @@ UI:
 Plug-ins:
 
  - Map the 'Linear Dodge' layer mode in PSD files to the 'Addition'
-   layer mode in GIMP
+   layer mode in PICMAN
  - Add JPEG2000 load plug-in
  - Add X11 mouse cursor plug-in
  - Add support for loading 16bit (RGB565) raw data
@@ -590,7 +590,7 @@ Plug-ins:
    text layers, for getting and setting text layer hint, and for
    unified export dialog appearance
  - Add an 'As Animation' toggle to the GIF export options
- - Add 'active_vectors' getsetter to Python 'gimp.Image'
+ - Add 'active_vectors' getsetter to Python 'picman.Image'
 
 
 Data:
@@ -629,11 +629,11 @@ Core:
  - Allow to dump keyboard shortcuts with File->Debug->Dump Keyboard
    Shortcuts
  - Prepare data structures for layer groups
- - Remove gimprc setting "menu-mnemonics",
+ - Remove picmanrc setting "menu-mnemonics",
    "GtkSettings:gtk-enable-mnemonics" shall be used instead
- - Remove "transient-docks" gimprc setting, the 'Utility window' hint
+ - Remove "transient-docks" picmanrc setting, the 'Utility window' hint
    and a sane window manager does a better job
- - Remove "web-browser" gimprc setting and use gtk_show_uri() instead
+ - Remove "web-browser" picmanrc setting and use gtk_show_uri() instead
 
 
 General:

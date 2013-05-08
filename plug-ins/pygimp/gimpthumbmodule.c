@@ -1,6 +1,6 @@
 /* -*- Mode: C; c-basic-offset: 4 -*-
- * Gimp-Python - allows the writing of Gimp plugins in Python.
- * Copyright (C) 2005-2006  Manish Singh <yosh@gimp.org>
+ * Picman-Python - allows the writing of Picman plugins in Python.
+ * Copyright (C) 2005-2006  Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,35 +26,35 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include <libgimpthumb/gimpthumb.h>
+#include <libpicmanthumb/picmanthumb.h>
 
-#include "pygimp-util.h"
-
-
-void gimpthumb_register_classes(PyObject *d);
-void gimpthumb_add_constants(PyObject *module, const gchar *strip_prefix);
-extern PyMethodDef gimpthumb_functions[];
+#include "pypicman-util.h"
 
 
-static char gimpthumb_doc[] =
-"This module provides interfaces to allow you to write gimp plugins"
+void picmanthumb_register_classes(PyObject *d);
+void picmanthumb_add_constants(PyObject *module, const gchar *strip_prefix);
+extern PyMethodDef picmanthumb_functions[];
+
+
+static char picmanthumb_doc[] =
+"This module provides interfaces to allow you to write picman plugins"
 ;
 
-void initgimpthumb(void);
+void initpicmanthumb(void);
 
 PyMODINIT_FUNC
-initgimpthumb(void)
+initpicmanthumb(void)
 {
     PyObject *m, *d;
 
-    pygimp_init_pygobject();
+    pypicman_init_pygobject();
 
-    m = Py_InitModule3("gimpthumb", gimpthumb_functions, gimpthumb_doc);
+    m = Py_InitModule3("picmanthumb", picmanthumb_functions, picmanthumb_doc);
     d = PyModule_GetDict(m);
 
-    gimpthumb_register_classes(d);
-    gimpthumb_add_constants(m, "GIMP_THUMB_");
+    picmanthumb_register_classes(d);
+    picmanthumb_add_constants(m, "PICMAN_THUMB_");
 
     if (PyErr_Occurred())
-	Py_FatalError("can't initialize module gimpthumb");
+	Py_FatalError("can't initialize module picmanthumb");
 }

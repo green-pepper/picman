@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * The GIMP Help plug-in
- * Copyright (C) 1999-2008 Sven Neumann <sven@gimp.org>
- *                         Michael Natterer <mitch@gimp.org>
- *                         Henrik Brix Andersen <brix@gimp.org>
+ * The PICMAN Help plug-in
+ * Copyright (C) 1999-2008 Sven Neumann <sven@picman.org>
+ *                         Michael Natterer <mitch@picman.org>
+ *                         Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 
 /*  This code is written so that it can also be compiled standalone.
- *  It shouldn't depend on libgimp.
+ *  It shouldn't depend on libpicman.
  */
 
 #include "config.h"
@@ -31,13 +31,13 @@
 #include <glib-object.h>
 #include <gio/gio.h>
 
-#include "gimphelp.h"
-#include "gimphelpprogress-private.h"
+#include "picmanhelp.h"
+#include "picmanhelpprogress-private.h"
 
 #ifdef DISABLE_NLS
 #define _(String)  (String)
 #else
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 #endif
 
 
@@ -50,10 +50,10 @@ static void   locale_set_error (GError      **error,
 
 /*  public functions  */
 
-GimpHelpLocale *
-gimp_help_locale_new (const gchar *locale_id)
+PicmanHelpLocale *
+picman_help_locale_new (const gchar *locale_id)
 {
-  GimpHelpLocale *locale = g_slice_new0 (GimpHelpLocale);
+  PicmanHelpLocale *locale = g_slice_new0 (PicmanHelpLocale);
 
   locale->locale_id = g_strdup (locale_id);
 
@@ -61,7 +61,7 @@ gimp_help_locale_new (const gchar *locale_id)
 }
 
 void
-gimp_help_locale_free (GimpHelpLocale *locale)
+picman_help_locale_free (PicmanHelpLocale *locale)
 {
   g_return_if_fail (locale != NULL);
 
@@ -73,11 +73,11 @@ gimp_help_locale_free (GimpHelpLocale *locale)
 
   g_list_free (locale->toplevel_items);
 
-  g_slice_free (GimpHelpLocale, locale);
+  g_slice_free (PicmanHelpLocale, locale);
 }
 
 const gchar *
-gimp_help_locale_map (GimpHelpLocale *locale,
+picman_help_locale_map (PicmanHelpLocale *locale,
                       const gchar    *help_id)
 {
   g_return_val_if_fail (locale != NULL, NULL);
@@ -85,7 +85,7 @@ gimp_help_locale_map (GimpHelpLocale *locale,
 
   if (locale->help_id_mapping)
     {
-      GimpHelpItem *item = g_hash_table_lookup (locale->help_id_mapping,
+      PicmanHelpItem *item = g_hash_table_lookup (locale->help_id_mapping,
                                                 help_id);
 
       if (item)
@@ -116,13 +116,13 @@ typedef struct
   gint               unknown_depth;
   GString           *value;
 
-  GimpHelpLocale    *locale;
+  PicmanHelpLocale    *locale;
   const gchar       *help_domain;
   gchar             *id_attr_name;
 } LocaleParser;
 
 static gboolean  locale_parser_parse       (GMarkupParseContext  *context,
-                                            GimpHelpProgress     *progress,
+                                            PicmanHelpProgress     *progress,
                                             GInputStream         *stream,
                                             goffset               size,
                                             GCancellable         *cancellable,
@@ -162,10 +162,10 @@ static const GMarkupParser markup_parser =
 };
 
 gboolean
-gimp_help_locale_parse (GimpHelpLocale    *locale,
+picman_help_locale_parse (PicmanHelpLocale    *locale,
                         const gchar       *uri,
                         const gchar       *help_domain,
-                        GimpHelpProgress  *progress,
+                        PicmanHelpProgress  *progress,
                         GError           **error)
 {
   GMarkupParseContext *context;
@@ -192,7 +192,7 @@ gimp_help_locale_parse (GimpHelpLocale    *locale,
       locale->help_missing = NULL;
     }
 
-#ifdef GIMP_HELP_DEBUG
+#ifdef PICMAN_HELP_DEBUG
   g_printerr ("help (%s): parsing '%s' for \"%s\"\n",
               locale->locale_id, uri, help_domain);
 #endif
@@ -204,7 +204,7 @@ gimp_help_locale_parse (GimpHelpLocale    *locale,
       gchar *name = g_file_get_parse_name (file);
 
       cancellable = g_cancellable_new ();
-      _gimp_help_progress_start (progress, cancellable,
+      _picman_help_progress_start (progress, cancellable,
                                  _("Loading index from '%s'"), name);
 
       g_object_unref (cancellable);
@@ -254,7 +254,7 @@ gimp_help_locale_parse (GimpHelpLocale    *locale,
                                  cancellable, error);
 
   if (progress)
-    _gimp_help_progress_finish (progress);
+    _picman_help_progress_finish (progress);
 
   g_markup_parse_context_free (context);
   g_object_unref (stream);
@@ -272,7 +272,7 @@ gimp_help_locale_parse (GimpHelpLocale    *locale,
 
 static gboolean
 locale_parser_parse (GMarkupParseContext  *context,
-                     GimpHelpProgress     *progress,
+                     PicmanHelpProgress     *progress,
                      GInputStream         *stream,
                      goffset               size,
                      GCancellable         *cancellable,
@@ -296,9 +296,9 @@ locale_parser_parse (GMarkupParseContext  *context,
           if (progress)
             {
               if (size > 0)
-                _gimp_help_progress_update (progress, (gdouble) done / size);
+                _picman_help_progress_update (progress, (gdouble) done / size);
               else
-                _gimp_help_progress_pulse (progress);
+                _picman_help_progress_pulse (progress);
             }
 
           if (! g_markup_parse_context_parse (context, buffer, len, error))
@@ -322,7 +322,7 @@ locale_parser_start_element (GMarkupParseContext *context,
   switch (parser->state)
     {
     case LOCALE_START:
-      if (strcmp (element_name, "gimp-help") == 0)
+      if (strcmp (element_name, "picman-help") == 0)
         {
           parser->state = LOCALE_IN_HELP;
           locale_parser_parse_namespace (parser,
@@ -433,7 +433,7 @@ locale_parser_parse_namespace (LocaleParser  *parser,
           g_free (parser->id_attr_name);
           parser->id_attr_name = g_strdup_printf ("%s:id", *names + 6);
 
-#ifdef GIMP_HELP_DEBUG
+#ifdef PICMAN_HELP_DEBUG
           g_printerr ("help (%s): id attribute name for \"%s\" is \"%s\"\n",
                       parser->locale->locale_id,
                       parser->help_domain,
@@ -479,13 +479,13 @@ locale_parser_parse_item (LocaleParser  *parser,
           g_hash_table_new_full (g_str_hash,
                                  g_str_equal,
                                  g_free,
-                                 (GDestroyNotify) gimp_help_item_free);
+                                 (GDestroyNotify) picman_help_item_free);
 
       g_hash_table_insert (parser->locale->help_id_mapping,
                            g_strdup (id),
-                           gimp_help_item_new (ref, title, sort, parent));
+                           picman_help_item_new (ref, title, sort, parent));
 
-#ifdef GIMP_HELP_DEBUG
+#ifdef PICMAN_HELP_DEBUG
       g_printerr ("help (%s): added mapping \"%s\" -> \"%s\"\n",
                   parser->locale->locale_id, id, ref);
 #endif
@@ -510,7 +510,7 @@ locale_parser_parse_missing (LocaleParser  *parser,
     {
       parser->locale->help_missing = g_strdup (ref);
 
-#ifdef GIMP_HELP_DEBUG
+#ifdef PICMAN_HELP_DEBUG
       g_printerr ("help (%s): added fallback for missing help -> \"%s\"\n",
                   parser->locale->locale_id, ref);
 #endif

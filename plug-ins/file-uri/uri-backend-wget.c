@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,12 +29,12 @@
 #include <unistd.h>
 #endif
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "uri-backend.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define TIMEOUT  300
@@ -44,7 +44,7 @@
 gboolean
 uri_backend_init (const gchar  *plugin_name,
                   gboolean      run,
-                  GimpRunMode   run_mode,
+                  PicmanRunMode   run_mode,
                   GError      **error)
 {
   return TRUE;
@@ -82,7 +82,7 @@ uri_backend_get_save_protocols (void)
 gboolean
 uri_backend_load_image (const gchar  *uri,
                         const gchar  *tmpname,
-                        GimpRunMode   run_mode,
+                        PicmanRunMode   run_mode,
                         GError      **error)
 {
   gint pid;
@@ -196,7 +196,7 @@ uri_backend_load_image (const gchar  *uri,
                                                "(timeout is %d seconds)",
                                                TIMEOUT), TIMEOUT);
 
-      gimp_progress_init_printf ("%s %s",
+      picman_progress_init_printf ("%s %s",
                                  _("Connecting to server"), timeout_msg);
 
     read_connect:
@@ -221,7 +221,7 @@ uri_backend_load_image (const gchar  *uri,
 
       /*  The fourth line is either the network request or an error  */
 
-      gimp_progress_set_text_printf ("%s %s", _("Opening URI"), timeout_msg);
+      picman_progress_set_text_printf ("%s %s", _("Opening URI"), timeout_msg);
 
       if (fgets (buf, sizeof (buf), input) == NULL)
         {
@@ -367,7 +367,7 @@ uri_backend_load_image (const gchar  *uri,
           memsize = NULL;
         }
 
-      gimp_progress_set_text_printf ("%s %s", message, timeout_msg);
+      picman_progress_set_text_printf ("%s %s", message, timeout_msg);
 
       g_free (message);
       g_free (memsize);
@@ -393,16 +393,16 @@ uri_backend_load_image (const gchar  *uri,
 
               if (size > 0)
                 {
-                  gimp_progress_update ((gdouble) (kilobytes * 1024) /
+                  picman_progress_update ((gdouble) (kilobytes * 1024) /
                                         (gdouble) size);
                 }
               else
                 {
                   memsize = g_format_size (kilobytes * 1024);
 
-                  gimp_progress_set_text_printf
+                  picman_progress_set_text_printf
                     (_("Downloaded %s of image data"), memsize);
-                  gimp_progress_pulse ();
+                  picman_progress_pulse ();
 
                   g_free (memsize);
                 }
@@ -416,7 +416,7 @@ uri_backend_load_image (const gchar  *uri,
               if (! strstr (buf, "error"))
                 {
                   finished = TRUE;
-                  gimp_progress_update (1.0);
+                  picman_progress_update (1.0);
                 }
 
               break;
@@ -438,7 +438,7 @@ uri_backend_load_image (const gchar  *uri,
 gboolean
 uri_backend_save_image (const gchar  *uri,
                         const gchar  *tmpname,
-                        GimpRunMode   run_mode,
+                        PicmanRunMode   run_mode,
                         GError      **error)
 {
   g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, "not implemented");
@@ -448,7 +448,7 @@ uri_backend_save_image (const gchar  *uri,
 
 gchar *
 uri_backend_map_image (const gchar  *uri,
-                       GimpRunMode   run_mode)
+                       PicmanRunMode   run_mode)
 {
   return NULL;
 }

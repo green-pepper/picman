@@ -1,9 +1,9 @@
-# GIMP tool preset file
+# PICMAN tool preset file
 
-(stock-id "gimp-tool-paintbrush")
+(stock-id "picman-tool-paintbrush")
 (name "Basic Knife")
-(tool-options "GimpPaintOptions"
-    (tool "gimp-paintbrush-tool")
+(tool-options "PicmanPaintOptions"
+    (tool "picman-paintbrush-tool")
     (foreground (color-rgb 0.000000 0.023605 0.142004))
     (brush "2. Block 03")
     (dynamics "Pressure Opacity")
@@ -20,4 +20,4 @@
 (use-palette no)
 (use-font no)
 
-# end of GIMP tool preset file
+# end of PICMAN tool preset file

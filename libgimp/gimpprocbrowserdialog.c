@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpprocbrowserdialog.c
+ * picmanprocbrowserdialog.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,20 +24,20 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "gimp.h"
+#include "picman.h"
 
-#include "gimpuitypes.h"
-#include "gimpprocbrowserdialog.h"
-#include "gimpprocview.h"
+#include "picmanuitypes.h"
+#include "picmanprocbrowserdialog.h"
+#include "picmanprocview.h"
 
-#include "libgimp-intl.h"
+#include "libpicman-intl.h"
 
 
 /**
- * SECTION: gimpprocbrowserdialog
- * @title: GimpProcBrowserDialog
+ * SECTION: picmanprocbrowserdialog
+ * @title: PicmanProcBrowserDialog
  * @short_description: The dialog for the procedure and plugin browsers.
  *
  * The dialog for the procedure and plugin browsers.
@@ -76,32 +76,32 @@ enum
 
 
 static void       browser_selection_changed (GtkTreeSelection      *sel,
-                                             GimpProcBrowserDialog *dialog);
+                                             PicmanProcBrowserDialog *dialog);
 static void       browser_row_activated     (GtkTreeView           *treeview,
                                              GtkTreePath           *path,
                                              GtkTreeViewColumn     *column,
-                                             GimpProcBrowserDialog *dialog);
-static void       browser_show_procedure    (GimpProcBrowserDialog *dialog,
+                                             PicmanProcBrowserDialog *dialog);
+static void       browser_show_procedure    (PicmanProcBrowserDialog *dialog,
                                              const gchar           *proc_name);
-static void       browser_search            (GimpBrowser           *browser,
+static void       browser_search            (PicmanBrowser           *browser,
                                              const gchar           *query_text,
                                              gint                   search_type,
-                                             GimpProcBrowserDialog *dialog);
+                                             PicmanProcBrowserDialog *dialog);
 
 
-G_DEFINE_TYPE (GimpProcBrowserDialog, gimp_proc_browser_dialog,
-               GIMP_TYPE_DIALOG)
+G_DEFINE_TYPE (PicmanProcBrowserDialog, picman_proc_browser_dialog,
+               PICMAN_TYPE_DIALOG)
 
-#define parent_class gimp_proc_browser_dialog_parent_class
+#define parent_class picman_proc_browser_dialog_parent_class
 
 static guint dialog_signals[LAST_SIGNAL] = { 0, };
 
 
 static void
-gimp_proc_browser_dialog_class_init (GimpProcBrowserDialogClass *klass)
+picman_proc_browser_dialog_class_init (PicmanProcBrowserDialogClass *klass)
 {
   /**
-   * GimpProcBrowserDialog::selection-changed:
+   * PicmanProcBrowserDialog::selection-changed:
    * @dialog: the object that received the signal
    *
    * Emitted when the selection in the contained #GtkTreeView changes.
@@ -110,14 +110,14 @@ gimp_proc_browser_dialog_class_init (GimpProcBrowserDialogClass *klass)
     g_signal_new ("selection-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpProcBrowserDialogClass,
+                  G_STRUCT_OFFSET (PicmanProcBrowserDialogClass,
                                    selection_changed),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
   /**
-   * GimpProcBrowserDialog::row-activated:
+   * PicmanProcBrowserDialog::row-activated:
    * @dialog: the object that received the signal
    *
    * Emitted when one of the rows in the contained #GtkTreeView is activated.
@@ -126,7 +126,7 @@ gimp_proc_browser_dialog_class_init (GimpProcBrowserDialogClass *klass)
     g_signal_new ("row-activated",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpProcBrowserDialogClass,
+                  G_STRUCT_OFFSET (PicmanProcBrowserDialogClass,
                                    row_activated),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
@@ -137,15 +137,15 @@ gimp_proc_browser_dialog_class_init (GimpProcBrowserDialogClass *klass)
 }
 
 static void
-gimp_proc_browser_dialog_init (GimpProcBrowserDialog *dialog)
+picman_proc_browser_dialog_init (PicmanProcBrowserDialog *dialog)
 {
   GtkWidget        *scrolled_window;
   GtkCellRenderer  *renderer;
   GtkTreeSelection *selection;
   GtkWidget        *parent;
 
-  dialog->browser = gimp_browser_new ();
-  gimp_browser_add_search_types (GIMP_BROWSER (dialog->browser),
+  dialog->browser = picman_browser_new ();
+  picman_browser_add_search_types (PICMAN_BROWSER (dialog->browser),
                                  _("by name"),        SEARCH_TYPE_NAME,
                                  _("by description"), SEARCH_TYPE_BLURB,
                                  _("by help"),        SEARCH_TYPE_HELP,
@@ -171,7 +171,7 @@ gimp_proc_browser_dialog_init (GimpProcBrowserDialog *dialog)
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                   GTK_POLICY_AUTOMATIC,
                                   GTK_POLICY_ALWAYS);
-  gtk_box_pack_start (GTK_BOX (GIMP_BROWSER (dialog->browser)->left_vbox),
+  gtk_box_pack_start (GTK_BOX (PICMAN_BROWSER (dialog->browser)->left_vbox),
                       scrolled_window, TRUE, TRUE, 0);
   gtk_widget_show (scrolled_window);
 
@@ -202,7 +202,7 @@ gimp_proc_browser_dialog_init (GimpProcBrowserDialog *dialog)
                     G_CALLBACK (browser_selection_changed),
                     dialog);
 
-  parent = gtk_widget_get_parent (GIMP_BROWSER (dialog->browser)->right_vbox);
+  parent = gtk_widget_get_parent (PICMAN_BROWSER (dialog->browser)->right_vbox);
   parent = gtk_widget_get_parent (parent);
 
     gtk_widget_set_size_request (parent, DBL_WIDTH - DBL_LIST_WIDTH, -1);
@@ -212,66 +212,66 @@ gimp_proc_browser_dialog_init (GimpProcBrowserDialog *dialog)
 /*  public functions  */
 
 /**
- * gimp_proc_browser_dialog_new:
+ * picman_proc_browser_dialog_new:
  * @title:     The dialog's title.
  * @role:      The dialog's role, see gtk_window_set_role().
  * @help_func: The function which will be called if the user presses "F1".
  * @help_id:   The help_id which will be passed to @help_func.
  * @...:       A %NULL-terminated list destribing the action_area buttons.
  *
- * Create a new #GimpProcBrowserDialog.
+ * Create a new #PicmanProcBrowserDialog.
  *
- * Return Value: a newly created #GimpProcBrowserDialog.
+ * Return Value: a newly created #PicmanProcBrowserDialog.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_proc_browser_dialog_new (const gchar  *title,
+picman_proc_browser_dialog_new (const gchar  *title,
                               const gchar  *role,
-                              GimpHelpFunc  help_func,
+                              PicmanHelpFunc  help_func,
                               const gchar  *help_id,
                               ...)
 {
-  GimpProcBrowserDialog *dialog;
+  PicmanProcBrowserDialog *dialog;
   va_list                args;
 
   va_start (args, help_id);
 
-  dialog = g_object_new (GIMP_TYPE_PROC_BROWSER_DIALOG,
+  dialog = g_object_new (PICMAN_TYPE_PROC_BROWSER_DIALOG,
                          "title",     title,
                          "role",      role,
                          "help-func", help_func,
                          "help-id",   help_id,
                          NULL);
 
-  gimp_dialog_add_buttons_valist (GIMP_DIALOG (dialog), args);
+  picman_dialog_add_buttons_valist (PICMAN_DIALOG (dialog), args);
 
   va_end (args);
 
   /* first search (all procedures) */
-  browser_search (GIMP_BROWSER (dialog->browser), "", SEARCH_TYPE_ALL, dialog);
+  browser_search (PICMAN_BROWSER (dialog->browser), "", SEARCH_TYPE_ALL, dialog);
 
   return GTK_WIDGET (dialog);
 }
 
 /**
- * gimp_proc_browser_dialog_get_selected:
- * @dialog: a #GimpProcBrowserDialog
+ * picman_proc_browser_dialog_get_selected:
+ * @dialog: a #PicmanProcBrowserDialog
  *
  * Retrieves the name of the currently selected procedure.
  *
  * Return Value: The name of the selected procedure of %NULL if no
  *               procedure is selected.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gchar *
-gimp_proc_browser_dialog_get_selected (GimpProcBrowserDialog *dialog)
+picman_proc_browser_dialog_get_selected (PicmanProcBrowserDialog *dialog)
 {
   GtkTreeSelection *sel;
   GtkTreeIter       iter;
 
-  g_return_val_if_fail (GIMP_IS_PROC_BROWSER_DIALOG (dialog), NULL);
+  g_return_val_if_fail (PICMAN_IS_PROC_BROWSER_DIALOG (dialog), NULL);
 
   sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->tree_view));
 
@@ -294,7 +294,7 @@ gimp_proc_browser_dialog_get_selected (GimpProcBrowserDialog *dialog)
 
 static void
 browser_selection_changed (GtkTreeSelection      *sel,
-                           GimpProcBrowserDialog *dialog)
+                           PicmanProcBrowserDialog *dialog)
 {
   GtkTreeIter iter;
 
@@ -316,13 +316,13 @@ static void
 browser_row_activated (GtkTreeView           *treeview,
                        GtkTreePath           *path,
                        GtkTreeViewColumn     *column,
-                       GimpProcBrowserDialog *dialog)
+                       PicmanProcBrowserDialog *dialog)
 {
   g_signal_emit (dialog, dialog_signals[ROW_ACTIVATED], 0);
 }
 
 static void
-browser_show_procedure (GimpProcBrowserDialog *dialog,
+browser_show_procedure (PicmanProcBrowserDialog *dialog,
                         const gchar           *proc_name)
 {
   gchar           *proc_blurb;
@@ -330,13 +330,13 @@ browser_show_procedure (GimpProcBrowserDialog *dialog,
   gchar           *proc_author;
   gchar           *proc_copyright;
   gchar           *proc_date;
-  GimpPDBProcType  proc_type;
+  PicmanPDBProcType  proc_type;
   gint             n_params;
   gint             n_return_vals;
-  GimpParamDef    *params;
-  GimpParamDef    *return_vals;
+  PicmanParamDef    *params;
+  PicmanParamDef    *return_vals;
 
-  gimp_procedural_db_proc_info (proc_name,
+  picman_procedural_db_proc_info (proc_name,
                                 &proc_blurb,
                                 &proc_help,
                                 &proc_author,
@@ -348,8 +348,8 @@ browser_show_procedure (GimpProcBrowserDialog *dialog,
                                 &params,
                                 &return_vals);
 
-  gimp_browser_set_widget (GIMP_BROWSER (dialog->browser),
-                           gimp_proc_view_new (proc_name,
+  picman_browser_set_widget (PICMAN_BROWSER (dialog->browser),
+                           picman_proc_view_new (proc_name,
                                                NULL,
                                                proc_blurb,
                                                proc_help,
@@ -368,15 +368,15 @@ browser_show_procedure (GimpProcBrowserDialog *dialog,
   g_free (proc_copyright);
   g_free (proc_date);
 
-  gimp_destroy_paramdefs (params,      n_params);
-  gimp_destroy_paramdefs (return_vals, n_return_vals);
+  picman_destroy_paramdefs (params,      n_params);
+  picman_destroy_paramdefs (return_vals, n_return_vals);
 }
 
 static void
-browser_search (GimpBrowser           *browser,
+browser_search (PicmanBrowser           *browser,
                 const gchar           *query_text,
                 gint                   search_type,
-                GimpProcBrowserDialog *dialog)
+                PicmanProcBrowserDialog *dialog)
 {
   gchar  **proc_list;
   gint     num_procs;
@@ -391,7 +391,7 @@ browser_search (GimpBrowser           *browser,
       gtk_tree_view_set_model (GTK_TREE_VIEW (dialog->tree_view), NULL);
       dialog->store = NULL;
 
-      gimp_browser_show_message (browser, _("No matches"));
+      picman_browser_show_message (browser, _("No matches"));
 
       gtk_label_set_text (GTK_LABEL (browser->count_label),
                           _("Search term invalid or incomplete"));
@@ -403,9 +403,9 @@ browser_search (GimpBrowser           *browser,
   switch (search_type)
     {
     case SEARCH_TYPE_ALL:
-      gimp_browser_show_message (browser, _("Searching"));
+      picman_browser_show_message (browser, _("Searching"));
 
-      gimp_procedural_db_query (".*", ".*", ".*", ".*", ".*", ".*", ".*",
+      picman_procedural_db_query (".*", ".*", ".*", ".*", ".*", ".*", ".*",
                                 &num_procs, &proc_list);
       break;
 
@@ -414,7 +414,7 @@ browser_search (GimpBrowser           *browser,
         GString     *query = g_string_new ("");
         const gchar *q     = query_text;
 
-        gimp_browser_show_message (browser, _("Searching by name"));
+        picman_browser_show_message (browser, _("Searching by name"));
 
         while (*q)
           {
@@ -426,7 +426,7 @@ browser_search (GimpBrowser           *browser,
             q++;
           }
 
-        gimp_procedural_db_query (query->str,
+        picman_procedural_db_query (query->str,
                                   ".*", ".*", ".*", ".*", ".*", ".*",
                                   &num_procs, &proc_list);
 
@@ -435,51 +435,51 @@ browser_search (GimpBrowser           *browser,
       break;
 
     case SEARCH_TYPE_BLURB:
-      gimp_browser_show_message (browser, _("Searching by description"));
+      picman_browser_show_message (browser, _("Searching by description"));
 
-      gimp_procedural_db_query (".*", query_text, ".*", ".*", ".*", ".*", ".*",
+      picman_procedural_db_query (".*", query_text, ".*", ".*", ".*", ".*", ".*",
                                 &num_procs, &proc_list);
       break;
 
     case SEARCH_TYPE_HELP:
-      gimp_browser_show_message (browser, _("Searching by help"));
+      picman_browser_show_message (browser, _("Searching by help"));
 
-      gimp_procedural_db_query (".*", ".*", query_text, ".*", ".*", ".*", ".*",
+      picman_procedural_db_query (".*", ".*", query_text, ".*", ".*", ".*", ".*",
                                 &num_procs, &proc_list);
       break;
 
     case SEARCH_TYPE_AUTHOR:
-      gimp_browser_show_message (browser, _("Searching by author"));
+      picman_browser_show_message (browser, _("Searching by author"));
 
-      gimp_procedural_db_query (".*", ".*", ".*", query_text, ".*", ".*", ".*",
+      picman_procedural_db_query (".*", ".*", ".*", query_text, ".*", ".*", ".*",
                                 &num_procs, &proc_list);
       break;
 
     case SEARCH_TYPE_COPYRIGHT:
-      gimp_browser_show_message (browser, _("Searching by copyright"));
+      picman_browser_show_message (browser, _("Searching by copyright"));
 
-      gimp_procedural_db_query (".*", ".*", ".*", ".*", query_text, ".*", ".*",
+      picman_procedural_db_query (".*", ".*", ".*", ".*", query_text, ".*", ".*",
                                 &num_procs, &proc_list);
       break;
 
     case SEARCH_TYPE_DATE:
-      gimp_browser_show_message (browser, _("Searching by date"));
+      picman_browser_show_message (browser, _("Searching by date"));
 
-      gimp_procedural_db_query (".*", ".*", ".*", ".*", ".*", query_text, ".*",
+      picman_procedural_db_query (".*", ".*", ".*", ".*", ".*", query_text, ".*",
                                 &num_procs, &proc_list);
       break;
 
     case SEARCH_TYPE_PROC_TYPE:
-      gimp_browser_show_message (browser, _("Searching by type"));
+      picman_browser_show_message (browser, _("Searching by type"));
 
-      gimp_procedural_db_query (".*", ".*", ".*", ".*", ".*", ".*", query_text,
+      picman_procedural_db_query (".*", ".*", ".*", ".*", ".*", ".*", query_text,
                                 &num_procs, &proc_list);
       break;
     }
 
   if (! query_text || strlen (query_text) == 0)
     {
-      str = g_strdup_printf (dngettext (GETTEXT_PACKAGE "-libgimp",
+      str = g_strdup_printf (dngettext (GETTEXT_PACKAGE "-libpicman",
                                         "%d procedure",
                                         "%d procedures",
                                         num_procs), num_procs);
@@ -492,7 +492,7 @@ browser_search (GimpBrowser           *browser,
           str = g_strdup (_("No matches for your query"));
           break;
         default:
-          str = g_strdup_printf (dngettext (GETTEXT_PACKAGE "-libgimp",
+          str = g_strdup_printf (dngettext (GETTEXT_PACKAGE "-libpicman",
                                             "%d procedure matches your query",
                                             "%d procedures match your query",
                                             num_procs), num_procs);
@@ -540,6 +540,6 @@ browser_search (GimpBrowser           *browser,
       gtk_tree_view_set_model (GTK_TREE_VIEW (dialog->tree_view), NULL);
       dialog->store = NULL;
 
-      gimp_browser_show_message (browser, _("No matches"));
+      picman_browser_show_message (browser, _("No matches"));
     }
 }

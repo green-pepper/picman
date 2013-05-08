@@ -18,31 +18,31 @@
 (define (script-fu-coffee-stain inImage inLayer inNumber inDark)
   (let* (
         (theImage inImage)
-        (theHeight (car (gimp-image-height theImage)))
-        (theWidth (car (gimp-image-width theImage)))
+        (theHeight (car (picman-image-height theImage)))
+        (theWidth (car (picman-image-width theImage)))
         (theNumber inNumber)
         (theSize (min theWidth theHeight))
         (theStain 0)
         )
 
-    (gimp-context-push)
-    (gimp-context-set-defaults)
+    (picman-context-push)
+    (picman-context-set-defaults)
 
-    (gimp-image-undo-group-start theImage)
+    (picman-image-undo-group-start theImage)
 
     (while (> theNumber 0)
       (set! theNumber (- theNumber 1))
-      (set! theStain (car (gimp-layer-new theImage theSize theSize
+      (set! theStain (car (picman-layer-new theImage theSize theSize
                                           RGBA-IMAGE _"Stain" 100
                                           (if (= inDark TRUE)
                                               DARKEN-ONLY-MODE NORMAL-MODE))))
 
-      (gimp-image-insert-layer theImage theStain 0 0)
-      (gimp-selection-all theImage)
-      (gimp-edit-clear theStain)
+      (picman-image-insert-layer theImage theStain 0 0)
+      (picman-selection-all theImage)
+      (picman-edit-clear theStain)
 
       (let ((blobSize (/ (rand (- theSize 40)) (+ (rand 3) 1))))
-        (gimp-image-select-ellipse theImage
+        (picman-image-select-ellipse theImage
                              CHANNEL-OP-REPLACE
                              (/ (- theSize blobSize) 2)
                              (/ (- theSize blobSize) 2)
@@ -53,29 +53,29 @@
                                     (* (+ (rand 15) 1) (+ (rand 15) 1))
                                     (/ theSize 25) 4 2 TRUE TRUE)
 
-      (gimp-context-set-gradient "Coffee")
+      (picman-context-set-gradient "Coffee")
 
-      (gimp-edit-blend theStain CUSTOM-MODE NORMAL-MODE
+      (picman-edit-blend theStain CUSTOM-MODE NORMAL-MODE
                        GRADIENT-SHAPEBURST-DIMPLED 100 0 REPEAT-NONE FALSE
                        FALSE 0 0 TRUE
                        0 0 0 0)
 
-      (gimp-layer-set-offsets theStain
+      (picman-layer-set-offsets theStain
                               (- (rand theWidth) (/ theSize 2))
                               (- (rand theHeight) (/ theSize 2)))
     )
 
-    (gimp-selection-none theImage)
+    (picman-selection-none theImage)
 
-    (gimp-image-undo-group-end theImage)
+    (picman-image-undo-group-end theImage)
 
-    (gimp-displays-flush)
+    (picman-displays-flush)
 
-    (gimp-context-pop)
+    (picman-context-pop)
   )
 )
 
-; Register the function with GIMP:
+; Register the function with PICMAN:
 
 (script-fu-register "script-fu-coffee-stain"
   _"_Coffee Stain..."

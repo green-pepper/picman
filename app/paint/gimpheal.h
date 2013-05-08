@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,38 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_HEAL_H__
-#define __GIMP_HEAL_H__
+#ifndef __PICMAN_HEAL_H__
+#define __PICMAN_HEAL_H__
 
 
-#include "gimpsourcecore.h"
+#include "picmansourcecore.h"
 
 
-#define GIMP_TYPE_HEAL            (gimp_heal_get_type ())
-#define GIMP_HEAL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_HEAL, GimpHeal))
-#define GIMP_HEAL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_HEAL, GimpHealClass))
-#define GIMP_IS_HEAL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_HEAL))
-#define GIMP_IS_HEAL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_HEAL))
-#define GIMP_HEAL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_HEAL, GimpHealClass))
+#define PICMAN_TYPE_HEAL            (picman_heal_get_type ())
+#define PICMAN_HEAL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_HEAL, PicmanHeal))
+#define PICMAN_HEAL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_HEAL, PicmanHealClass))
+#define PICMAN_IS_HEAL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_HEAL))
+#define PICMAN_IS_HEAL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_HEAL))
+#define PICMAN_HEAL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_HEAL, PicmanHealClass))
 
 
-typedef struct _GimpHealClass GimpHealClass;
+typedef struct _PicmanHealClass PicmanHealClass;
 
-struct _GimpHeal
+struct _PicmanHeal
 {
-  GimpSourceCore  parent_instance;
+  PicmanSourceCore  parent_instance;
 };
 
-struct _GimpHealClass
+struct _PicmanHealClass
 {
-  GimpSourceCoreClass  parent_class;
+  PicmanSourceCoreClass  parent_class;
 };
 
 
-void    gimp_heal_register (Gimp                      *gimp,
-                            GimpPaintRegisterCallback  callback);
+void    picman_heal_register (Picman                      *picman,
+                            PicmanPaintRegisterCallback  callback);
 
-GType   gimp_heal_get_type (void) G_GNUC_CONST;
+GType   picman_heal_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_HEAL_H__  */
+#endif  /*  __PICMAN_HEAL_H__  */

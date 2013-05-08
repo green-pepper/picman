@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,131 +22,131 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "operations/gimpcolorbalanceconfig.h"
+#include "operations/picmancolorbalanceconfig.h"
 
-#include "core/gimpdrawable.h"
-#include "core/gimperror.h"
-#include "core/gimpimage.h"
+#include "core/picmandrawable.h"
+#include "core/picmanerror.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimpcolorbalancetool.h"
-#include "gimpimagemapoptions.h"
+#include "picmancolorbalancetool.h"
+#include "picmanimagemapoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static gboolean   gimp_color_balance_tool_initialize    (GimpTool         *tool,
-                                                         GimpDisplay      *display,
+static gboolean   picman_color_balance_tool_initialize    (PicmanTool         *tool,
+                                                         PicmanDisplay      *display,
                                                          GError          **error);
 
-static GeglNode * gimp_color_balance_tool_get_operation (GimpImageMapTool *im_tool,
+static GeglNode * picman_color_balance_tool_get_operation (PicmanImageMapTool *im_tool,
                                                          GObject         **config,
                                                          gchar           **undo_desc);
-static void       gimp_color_balance_tool_dialog        (GimpImageMapTool *im_tool);
-static void       gimp_color_balance_tool_reset         (GimpImageMapTool *im_tool);
+static void       picman_color_balance_tool_dialog        (PicmanImageMapTool *im_tool);
+static void       picman_color_balance_tool_reset         (PicmanImageMapTool *im_tool);
 
 static void     color_balance_config_notify        (GObject              *object,
                                                     GParamSpec           *pspec,
-                                                    GimpColorBalanceTool *cb_tool);
+                                                    PicmanColorBalanceTool *cb_tool);
 
 static void     color_balance_range_callback       (GtkWidget            *widget,
-                                                    GimpColorBalanceTool *cb_tool);
+                                                    PicmanColorBalanceTool *cb_tool);
 static void     color_balance_range_reset_callback (GtkWidget            *widget,
-                                                    GimpColorBalanceTool *cb_tool);
+                                                    PicmanColorBalanceTool *cb_tool);
 static void     color_balance_preserve_toggled     (GtkWidget            *widget,
-                                                    GimpColorBalanceTool *cb_tool);
+                                                    PicmanColorBalanceTool *cb_tool);
 static void     color_balance_cr_changed           (GtkAdjustment        *adj,
-                                                    GimpColorBalanceTool *cb_tool);
+                                                    PicmanColorBalanceTool *cb_tool);
 static void     color_balance_mg_changed           (GtkAdjustment        *adj,
-                                                    GimpColorBalanceTool *cb_tool);
+                                                    PicmanColorBalanceTool *cb_tool);
 static void     color_balance_yb_changed           (GtkAdjustment        *adj,
-                                                    GimpColorBalanceTool *cb_tool);
+                                                    PicmanColorBalanceTool *cb_tool);
 
 
-G_DEFINE_TYPE (GimpColorBalanceTool, gimp_color_balance_tool,
-               GIMP_TYPE_IMAGE_MAP_TOOL)
+G_DEFINE_TYPE (PicmanColorBalanceTool, picman_color_balance_tool,
+               PICMAN_TYPE_IMAGE_MAP_TOOL)
 
-#define parent_class gimp_color_balance_tool_parent_class
+#define parent_class picman_color_balance_tool_parent_class
 
 
 void
-gimp_color_balance_tool_register (GimpToolRegisterCallback  callback,
+picman_color_balance_tool_register (PicmanToolRegisterCallback  callback,
                                   gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_COLOR_BALANCE_TOOL,
-                GIMP_TYPE_IMAGE_MAP_OPTIONS, NULL,
+  (* callback) (PICMAN_TYPE_COLOR_BALANCE_TOOL,
+                PICMAN_TYPE_IMAGE_MAP_OPTIONS, NULL,
                 0,
-                "gimp-color-balance-tool",
+                "picman-color-balance-tool",
                 _("Color Balance"),
                 _("Color Balance Tool: Adjust color distribution"),
                 N_("Color _Balance..."), NULL,
-                NULL, GIMP_HELP_TOOL_COLOR_BALANCE,
-                GIMP_STOCK_TOOL_COLOR_BALANCE,
+                NULL, PICMAN_HELP_TOOL_COLOR_BALANCE,
+                PICMAN_STOCK_TOOL_COLOR_BALANCE,
                 data);
 }
 
 static void
-gimp_color_balance_tool_class_init (GimpColorBalanceToolClass *klass)
+picman_color_balance_tool_class_init (PicmanColorBalanceToolClass *klass)
 {
-  GimpToolClass         *tool_class    = GIMP_TOOL_CLASS (klass);
-  GimpImageMapToolClass *im_tool_class = GIMP_IMAGE_MAP_TOOL_CLASS (klass);
+  PicmanToolClass         *tool_class    = PICMAN_TOOL_CLASS (klass);
+  PicmanImageMapToolClass *im_tool_class = PICMAN_IMAGE_MAP_TOOL_CLASS (klass);
 
-  tool_class->initialize             = gimp_color_balance_tool_initialize;
+  tool_class->initialize             = picman_color_balance_tool_initialize;
 
   im_tool_class->dialog_desc         = _("Adjust Color Balance");
   im_tool_class->settings_name       = "color-balance";
   im_tool_class->import_dialog_title = _("Import Color Balance Settings");
   im_tool_class->export_dialog_title = _("Export Color Balance Settings");
 
-  im_tool_class->get_operation       = gimp_color_balance_tool_get_operation;
-  im_tool_class->dialog              = gimp_color_balance_tool_dialog;
-  im_tool_class->reset               = gimp_color_balance_tool_reset;
+  im_tool_class->get_operation       = picman_color_balance_tool_get_operation;
+  im_tool_class->dialog              = picman_color_balance_tool_dialog;
+  im_tool_class->reset               = picman_color_balance_tool_reset;
 }
 
 static void
-gimp_color_balance_tool_init (GimpColorBalanceTool *cb_tool)
+picman_color_balance_tool_init (PicmanColorBalanceTool *cb_tool)
 {
 }
 
 static gboolean
-gimp_color_balance_tool_initialize (GimpTool     *tool,
-                                    GimpDisplay  *display,
+picman_color_balance_tool_initialize (PicmanTool     *tool,
+                                    PicmanDisplay  *display,
                                     GError      **error)
 {
-  GimpImage    *image    = gimp_display_get_image (display);
-  GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+  PicmanImage    *image    = picman_display_get_image (display);
+  PicmanDrawable *drawable = picman_image_get_active_drawable (image);
 
   if (! drawable)
     return FALSE;
 
-  if (! gimp_drawable_is_rgb (drawable))
+  if (! picman_drawable_is_rgb (drawable))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			   _("Color Balance operates only on RGB color layers."));
       return FALSE;
     }
 
-  return GIMP_TOOL_CLASS (parent_class)->initialize (tool, display, error);
+  return PICMAN_TOOL_CLASS (parent_class)->initialize (tool, display, error);
 }
 
 static GeglNode *
-gimp_color_balance_tool_get_operation (GimpImageMapTool  *im_tool,
+picman_color_balance_tool_get_operation (PicmanImageMapTool  *im_tool,
                                        GObject          **config,
                                        gchar            **undo_desc)
 {
-  GimpColorBalanceTool *cb_tool = GIMP_COLOR_BALANCE_TOOL (im_tool);
+  PicmanColorBalanceTool *cb_tool = PICMAN_COLOR_BALANCE_TOOL (im_tool);
 
-  cb_tool->config = g_object_new (GIMP_TYPE_COLOR_BALANCE_CONFIG, NULL);
+  cb_tool->config = g_object_new (PICMAN_TYPE_COLOR_BALANCE_CONFIG, NULL);
 
   g_signal_connect_object (cb_tool->config, "notify",
                            G_CALLBACK (color_balance_config_notify),
@@ -155,7 +155,7 @@ gimp_color_balance_tool_get_operation (GimpImageMapTool  *im_tool,
   *config = G_OBJECT (cb_tool->config);
 
   return gegl_node_new_child (NULL,
-                              "operation", "gimp:color-balance",
+                              "operation", "picman:color-balance",
                               "config",    cb_tool->config,
                               NULL);
 }
@@ -183,7 +183,7 @@ create_levels_scale (gdouble        value,
                     GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  spinbutton = gimp_spin_button_new ((GtkObject **) &adj,
+  spinbutton = picman_spin_button_new ((GtkObject **) &adj,
                                      value, -100.0, 100.0,
                                      1.0, 10.0, 0.0, 1.0, 0);
 
@@ -207,10 +207,10 @@ create_levels_scale (gdouble        value,
 }
 
 static void
-gimp_color_balance_tool_dialog (GimpImageMapTool *image_map_tool)
+picman_color_balance_tool_dialog (PicmanImageMapTool *image_map_tool)
 {
-  GimpColorBalanceTool   *cb_tool = GIMP_COLOR_BALANCE_TOOL (image_map_tool);
-  GimpColorBalanceConfig *config  = cb_tool->config;
+  PicmanColorBalanceTool   *cb_tool = PICMAN_COLOR_BALANCE_TOOL (image_map_tool);
+  PicmanColorBalanceConfig *config  = cb_tool->config;
   GtkWidget              *main_vbox;
   GtkWidget              *vbox;
   GtkWidget              *hbox;
@@ -218,19 +218,19 @@ gimp_color_balance_tool_dialog (GimpImageMapTool *image_map_tool)
   GtkWidget              *button;
   GtkWidget              *frame;
 
-  main_vbox = gimp_image_map_tool_dialog_get_vbox (image_map_tool);
+  main_vbox = picman_image_map_tool_dialog_get_vbox (image_map_tool);
 
-  frame = gimp_enum_radio_frame_new (GIMP_TYPE_TRANSFER_MODE,
+  frame = picman_enum_radio_frame_new (PICMAN_TYPE_TRANSFER_MODE,
                                      gtk_label_new (_("Select Range to Adjust")),
                                      G_CALLBACK (color_balance_range_callback),
                                      cb_tool,
                                      &cb_tool->range_radio);
-  gimp_int_radio_group_set_active (GTK_RADIO_BUTTON (cb_tool->range_radio),
+  picman_int_radio_group_set_active (GTK_RADIO_BUTTON (cb_tool->range_radio),
                                    config->range);
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  frame = gimp_frame_new (_("Adjust Color Levels"));
+  frame = picman_frame_new (_("Adjust Color Levels"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -298,22 +298,22 @@ gimp_color_balance_tool_dialog (GimpImageMapTool *image_map_tool)
 }
 
 static void
-gimp_color_balance_tool_reset (GimpImageMapTool *im_tool)
+picman_color_balance_tool_reset (PicmanImageMapTool *im_tool)
 {
-  GimpColorBalanceTool *cb_tool = GIMP_COLOR_BALANCE_TOOL (im_tool);
-  GimpTransferMode      range   = cb_tool->config->range;
+  PicmanColorBalanceTool *cb_tool = PICMAN_COLOR_BALANCE_TOOL (im_tool);
+  PicmanTransferMode      range   = cb_tool->config->range;
 
   g_object_freeze_notify (im_tool->config);
 
   if (im_tool->default_config)
     {
-      gimp_config_copy (GIMP_CONFIG (im_tool->default_config),
-                        GIMP_CONFIG (im_tool->config),
+      picman_config_copy (PICMAN_CONFIG (im_tool->default_config),
+                        PICMAN_CONFIG (im_tool->config),
                         0);
     }
   else
     {
-      gimp_config_reset (GIMP_CONFIG (im_tool->config));
+      picman_config_reset (PICMAN_CONFIG (im_tool->config));
     }
 
   g_object_set (cb_tool->config,
@@ -326,16 +326,16 @@ gimp_color_balance_tool_reset (GimpImageMapTool *im_tool)
 static void
 color_balance_config_notify (GObject              *object,
                              GParamSpec           *pspec,
-                             GimpColorBalanceTool *cb_tool)
+                             PicmanColorBalanceTool *cb_tool)
 {
-  GimpColorBalanceConfig *config = GIMP_COLOR_BALANCE_CONFIG (object);
+  PicmanColorBalanceConfig *config = PICMAN_COLOR_BALANCE_CONFIG (object);
 
   if (! cb_tool->cyan_red_adj)
     return;
 
   if (! strcmp (pspec->name, "range"))
     {
-      gimp_int_radio_group_set_active (GTK_RADIO_BUTTON (cb_tool->range_radio),
+      picman_int_radio_group_set_active (GTK_RADIO_BUTTON (cb_tool->range_radio),
                                        config->range);
     }
   else if (! strcmp (pspec->name, "cyan-red"))
@@ -362,13 +362,13 @@ color_balance_config_notify (GObject              *object,
 
 static void
 color_balance_range_callback (GtkWidget            *widget,
-                              GimpColorBalanceTool *cb_tool)
+                              PicmanColorBalanceTool *cb_tool)
 {
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
     {
-      GimpTransferMode range;
+      PicmanTransferMode range;
 
-      gimp_radio_button_update (widget, &range);
+      picman_radio_button_update (widget, &range);
       g_object_set (cb_tool->config,
                     "range", range,
                     NULL);
@@ -377,14 +377,14 @@ color_balance_range_callback (GtkWidget            *widget,
 
 static void
 color_balance_range_reset_callback (GtkWidget            *widget,
-                                    GimpColorBalanceTool *cb_tool)
+                                    PicmanColorBalanceTool *cb_tool)
 {
-  gimp_color_balance_config_reset_range (cb_tool->config);
+  picman_color_balance_config_reset_range (cb_tool->config);
 }
 
 static void
 color_balance_preserve_toggled (GtkWidget            *widget,
-                                GimpColorBalanceTool *cb_tool)
+                                PicmanColorBalanceTool *cb_tool)
 {
   gboolean active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
 
@@ -398,7 +398,7 @@ color_balance_preserve_toggled (GtkWidget            *widget,
 
 static void
 color_balance_cr_changed (GtkAdjustment        *adjustment,
-                          GimpColorBalanceTool *cb_tool)
+                          PicmanColorBalanceTool *cb_tool)
 {
   gdouble value = gtk_adjustment_get_value (adjustment) / 100.0;
 
@@ -412,7 +412,7 @@ color_balance_cr_changed (GtkAdjustment        *adjustment,
 
 static void
 color_balance_mg_changed (GtkAdjustment        *adjustment,
-                          GimpColorBalanceTool *cb_tool)
+                          PicmanColorBalanceTool *cb_tool)
 {
   gdouble value = gtk_adjustment_get_value (adjustment) / 100.0;
 
@@ -426,7 +426,7 @@ color_balance_mg_changed (GtkAdjustment        *adjustment,
 
 static void
 color_balance_yb_changed (GtkAdjustment        *adjustment,
-                          GimpColorBalanceTool *cb_tool)
+                          PicmanColorBalanceTool *cb_tool)
 {
   gdouble value = gtk_adjustment_get_value (adjustment) / 100.0;
 

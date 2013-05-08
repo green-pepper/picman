@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationlighten_onlymode.h
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanoperationlighten_onlymode.h
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,36 +19,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GIMP_OPERATION_LIGHTEN_ONLY_MODE_H__
-#define __GIMP_OPERATION_LIGHTEN_ONLY_MODE_H__
+#ifndef __PICMAN_OPERATION_LIGHTEN_ONLY_MODE_H__
+#define __PICMAN_OPERATION_LIGHTEN_ONLY_MODE_H__
 
 
-#include "gimpoperationpointlayermode.h"
+#include "picmanoperationpointlayermode.h"
 
 
-#define GIMP_TYPE_OPERATION_LIGHTEN_ONLY_MODE            (gimp_operation_lighten_only_mode_get_type ())
-#define GIMP_OPERATION_LIGHTEN_ONLY_MODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_LIGHTEN_ONLY_MODE, GimpOperationLightenOnlyMode))
-#define GIMP_OPERATION_LIGHTEN_ONLY_MODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_LIGHTEN_ONLY_MODE, GimpOperationLightenOnlyModeClass))
-#define GIMP_IS_OPERATION_LIGHTEN_ONLY_MODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_LIGHTEN_ONLY_MODE))
-#define GIMP_IS_OPERATION_LIGHTEN_ONLY_MODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_LIGHTEN_ONLY_MODE))
-#define GIMP_OPERATION_LIGHTEN_ONLY_MODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_LIGHTEN_ONLY_MODE, GimpOperationLightenOnlyModeClass))
+#define PICMAN_TYPE_OPERATION_LIGHTEN_ONLY_MODE            (picman_operation_lighten_only_mode_get_type ())
+#define PICMAN_OPERATION_LIGHTEN_ONLY_MODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_LIGHTEN_ONLY_MODE, PicmanOperationLightenOnlyMode))
+#define PICMAN_OPERATION_LIGHTEN_ONLY_MODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_LIGHTEN_ONLY_MODE, PicmanOperationLightenOnlyModeClass))
+#define PICMAN_IS_OPERATION_LIGHTEN_ONLY_MODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_LIGHTEN_ONLY_MODE))
+#define PICMAN_IS_OPERATION_LIGHTEN_ONLY_MODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_LIGHTEN_ONLY_MODE))
+#define PICMAN_OPERATION_LIGHTEN_ONLY_MODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_LIGHTEN_ONLY_MODE, PicmanOperationLightenOnlyModeClass))
 
 
-typedef struct _GimpOperationLightenOnlyMode      GimpOperationLightenOnlyMode;
-typedef struct _GimpOperationLightenOnlyModeClass GimpOperationLightenOnlyModeClass;
+typedef struct _PicmanOperationLightenOnlyMode      PicmanOperationLightenOnlyMode;
+typedef struct _PicmanOperationLightenOnlyModeClass PicmanOperationLightenOnlyModeClass;
 
-struct _GimpOperationLightenOnlyMode
+struct _PicmanOperationLightenOnlyMode
 {
-  GimpOperationPointLayerMode  parent_instance;
+  PicmanOperationPointLayerMode  parent_instance;
 };
 
-struct _GimpOperationLightenOnlyModeClass
+struct _PicmanOperationLightenOnlyModeClass
 {
-  GimpOperationPointLayerModeClass  parent_class;
+  PicmanOperationPointLayerModeClass  parent_class;
 };
 
 
-GType   gimp_operation_lighten_only_mode_get_type (void) G_GNUC_CONST;
+GType   picman_operation_lighten_only_mode_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_LIGHTEN_ONLY_MODE_H__ */
+#endif /* __PICMAN_OPERATION_LIGHTEN_ONLY_MODE_H__ */

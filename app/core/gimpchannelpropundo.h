@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,37 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CHANNEL_PROP_UNDO_H__
-#define __GIMP_CHANNEL_PROP_UNDO_H__
+#ifndef __PICMAN_CHANNEL_PROP_UNDO_H__
+#define __PICMAN_CHANNEL_PROP_UNDO_H__
 
 
-#include "gimpitemundo.h"
+#include "picmanitemundo.h"
 
 
-#define GIMP_TYPE_CHANNEL_PROP_UNDO            (gimp_channel_prop_undo_get_type ())
-#define GIMP_CHANNEL_PROP_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CHANNEL_PROP_UNDO, GimpChannelPropUndo))
-#define GIMP_CHANNEL_PROP_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CHANNEL_PROP_UNDO, GimpChannelPropUndoClass))
-#define GIMP_IS_CHANNEL_PROP_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CHANNEL_PROP_UNDO))
-#define GIMP_IS_CHANNEL_PROP_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CHANNEL_PROP_UNDO))
-#define GIMP_CHANNEL_PROP_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CHANNEL_PROP_UNDO, GimpChannelPropUndoClass))
+#define PICMAN_TYPE_CHANNEL_PROP_UNDO            (picman_channel_prop_undo_get_type ())
+#define PICMAN_CHANNEL_PROP_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CHANNEL_PROP_UNDO, PicmanChannelPropUndo))
+#define PICMAN_CHANNEL_PROP_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CHANNEL_PROP_UNDO, PicmanChannelPropUndoClass))
+#define PICMAN_IS_CHANNEL_PROP_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CHANNEL_PROP_UNDO))
+#define PICMAN_IS_CHANNEL_PROP_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CHANNEL_PROP_UNDO))
+#define PICMAN_CHANNEL_PROP_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CHANNEL_PROP_UNDO, PicmanChannelPropUndoClass))
 
 
-typedef struct _GimpChannelPropUndoClass GimpChannelPropUndoClass;
+typedef struct _PicmanChannelPropUndoClass PicmanChannelPropUndoClass;
 
-struct _GimpChannelPropUndo
+struct _PicmanChannelPropUndo
 {
-  GimpItemUndo  parent_instance;
+  PicmanItemUndo  parent_instance;
 
-  GimpRGB       color;
+  PicmanRGB       color;
 };
 
-struct _GimpChannelPropUndoClass
+struct _PicmanChannelPropUndoClass
 {
-  GimpItemUndoClass  parent_class;
+  PicmanItemUndoClass  parent_class;
 };
 
 
-GType   gimp_channel_prop_undo_get_type (void) G_GNUC_CONST;
+GType   picman_channel_prop_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_CHANNEL_PROP_UNDO_H__ */
+#endif /* __PICMAN_CHANNEL_PROP_UNDO_H__ */

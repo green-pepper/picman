@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewablebutton.c
- * Copyright (C) 2003-2005 Michael Natterer <mitch@gimp.org>
+ * picmanviewablebutton.c
+ * Copyright (C) 2003-2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,21 +23,21 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpviewable.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanviewable.h"
 
-#include "gimpcontainerpopup.h"
-#include "gimpdialogfactory.h"
-#include "gimppropwidgets.h"
-#include "gimpviewrenderer.h"
-#include "gimpviewablebutton.h"
+#include "picmancontainerpopup.h"
+#include "picmandialogfactory.h"
+#include "picmanpropwidgets.h"
+#include "picmanviewrenderer.h"
+#include "picmanviewablebutton.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -48,73 +48,73 @@ enum
 };
 
 
-static void     gimp_viewable_button_finalize     (GObject            *object);
-static void     gimp_viewable_button_set_property (GObject            *object,
+static void     picman_viewable_button_finalize     (GObject            *object);
+static void     picman_viewable_button_set_property (GObject            *object,
                                                    guint               property_id,
                                                    const GValue       *value,
                                                    GParamSpec         *pspec);
-static void     gimp_viewable_button_get_property (GObject            *object,
+static void     picman_viewable_button_get_property (GObject            *object,
                                                    guint               property_id,
                                                    GValue             *value,
                                                    GParamSpec         *pspec);
-static gboolean gimp_viewable_button_scroll_event (GtkWidget          *widget,
+static gboolean picman_viewable_button_scroll_event (GtkWidget          *widget,
                                                    GdkEventScroll     *sevent);
-static void     gimp_viewable_button_clicked      (GtkButton          *button);
+static void     picman_viewable_button_clicked      (GtkButton          *button);
 
-static void     gimp_viewable_button_popup_closed (GimpContainerPopup *popup,
-                                                   GimpViewableButton *button);
+static void     picman_viewable_button_popup_closed (PicmanContainerPopup *popup,
+                                                   PicmanViewableButton *button);
 
 
-G_DEFINE_TYPE (GimpViewableButton, gimp_viewable_button, GIMP_TYPE_BUTTON)
+G_DEFINE_TYPE (PicmanViewableButton, picman_viewable_button, PICMAN_TYPE_BUTTON)
 
-#define parent_class gimp_viewable_button_parent_class
+#define parent_class picman_viewable_button_parent_class
 
 
 static void
-gimp_viewable_button_class_init (GimpViewableButtonClass *klass)
+picman_viewable_button_class_init (PicmanViewableButtonClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   GtkButtonClass *button_class = GTK_BUTTON_CLASS (klass);
 
-  object_class->finalize     = gimp_viewable_button_finalize;
-  object_class->get_property = gimp_viewable_button_get_property;
-  object_class->set_property = gimp_viewable_button_set_property;
+  object_class->finalize     = picman_viewable_button_finalize;
+  object_class->get_property = picman_viewable_button_get_property;
+  object_class->set_property = picman_viewable_button_set_property;
 
-  widget_class->scroll_event = gimp_viewable_button_scroll_event;
+  widget_class->scroll_event = picman_viewable_button_scroll_event;
 
-  button_class->clicked      = gimp_viewable_button_clicked;
+  button_class->clicked      = picman_viewable_button_clicked;
 
   g_object_class_install_property (object_class, PROP_POPUP_VIEW_TYPE,
                                    g_param_spec_enum ("popup-view-type",
                                                       NULL, NULL,
-                                                      GIMP_TYPE_VIEW_TYPE,
-                                                      GIMP_VIEW_TYPE_LIST,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_TYPE_VIEW_TYPE,
+                                                      PICMAN_VIEW_TYPE_LIST,
+                                                      PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_POPUP_VIEW_SIZE,
                                    g_param_spec_int ("popup-view-size",
                                                      NULL, NULL,
-                                                     GIMP_VIEW_SIZE_TINY,
-                                                     GIMP_VIEW_SIZE_GIGANTIC,
-                                                     GIMP_VIEW_SIZE_SMALL,
-                                                     GIMP_PARAM_READWRITE));
+                                                     PICMAN_VIEW_SIZE_TINY,
+                                                     PICMAN_VIEW_SIZE_GIGANTIC,
+                                                     PICMAN_VIEW_SIZE_SMALL,
+                                                     PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_viewable_button_init (GimpViewableButton *button)
+picman_viewable_button_init (PicmanViewableButton *button)
 {
-  button->popup_view_type   = GIMP_VIEW_TYPE_LIST;
-  button->popup_view_size   = GIMP_VIEW_SIZE_SMALL;
+  button->popup_view_type   = PICMAN_VIEW_TYPE_LIST;
+  button->popup_view_size   = PICMAN_VIEW_SIZE_SMALL;
 
-  button->button_view_size  = GIMP_VIEW_SIZE_SMALL;
+  button->button_view_size  = PICMAN_VIEW_SIZE_SMALL;
   button->view_border_width = 1;
 }
 
 static void
-gimp_viewable_button_finalize (GObject *object)
+picman_viewable_button_finalize (GObject *object)
 {
-  GimpViewableButton *button = GIMP_VIEWABLE_BUTTON (object);
+  PicmanViewableButton *button = PICMAN_VIEWABLE_BUTTON (object);
 
   if (button->dialog_identifier)
     {
@@ -138,20 +138,20 @@ gimp_viewable_button_finalize (GObject *object)
 }
 
 static void
-gimp_viewable_button_set_property (GObject      *object,
+picman_viewable_button_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpViewableButton *button = GIMP_VIEWABLE_BUTTON (object);
+  PicmanViewableButton *button = PICMAN_VIEWABLE_BUTTON (object);
 
   switch (property_id)
     {
     case PROP_POPUP_VIEW_TYPE:
-      gimp_viewable_button_set_view_type (button, g_value_get_enum (value));
+      picman_viewable_button_set_view_type (button, g_value_get_enum (value));
       break;
     case PROP_POPUP_VIEW_SIZE:
-      gimp_viewable_button_set_view_size (button, g_value_get_int (value));
+      picman_viewable_button_set_view_size (button, g_value_get_int (value));
       break;
    default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -160,12 +160,12 @@ gimp_viewable_button_set_property (GObject      *object,
 }
 
 static void
-gimp_viewable_button_get_property (GObject    *object,
+picman_viewable_button_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpViewableButton *button = GIMP_VIEWABLE_BUTTON (object);
+  PicmanViewableButton *button = PICMAN_VIEWABLE_BUTTON (object);
 
   switch (property_id)
     {
@@ -182,24 +182,24 @@ gimp_viewable_button_get_property (GObject    *object,
 }
 
 static gboolean
-gimp_viewable_button_scroll_event (GtkWidget      *widget,
+picman_viewable_button_scroll_event (GtkWidget      *widget,
                                    GdkEventScroll *sevent)
 {
-  GimpViewableButton *button = GIMP_VIEWABLE_BUTTON (widget);
-  GimpObject         *object;
+  PicmanViewableButton *button = PICMAN_VIEWABLE_BUTTON (widget);
+  PicmanObject         *object;
   gint                index;
 
-  object = gimp_context_get_by_type (button->context,
-                                     gimp_container_get_children_type (button->container));
+  object = picman_context_get_by_type (button->context,
+                                     picman_container_get_children_type (button->container));
 
-  index = gimp_container_get_child_index (button->container, object);
+  index = picman_container_get_child_index (button->container, object);
 
   if (index != -1)
     {
       gint n_children;
       gint new_index = index;
 
-      n_children = gimp_container_get_n_children (button->container);
+      n_children = picman_container_get_n_children (button->container);
 
       if (sevent->direction == GDK_SCROLL_UP)
         {
@@ -218,12 +218,12 @@ gimp_viewable_button_scroll_event (GtkWidget      *widget,
 
       if (new_index != index)
         {
-          object = gimp_container_get_child_by_index (button->container,
+          object = picman_container_get_child_by_index (button->container,
                                                       new_index);
 
           if (object)
-            gimp_context_set_by_type (button->context,
-                                      gimp_container_get_children_type (button->container),
+            picman_context_set_by_type (button->context,
+                                      picman_container_get_children_type (button->container),
                                       object);
         }
     }
@@ -232,12 +232,12 @@ gimp_viewable_button_scroll_event (GtkWidget      *widget,
 }
 
 static void
-gimp_viewable_button_clicked (GtkButton *button)
+picman_viewable_button_clicked (GtkButton *button)
 {
-  GimpViewableButton *viewable_button = GIMP_VIEWABLE_BUTTON (button);
+  PicmanViewableButton *viewable_button = PICMAN_VIEWABLE_BUTTON (button);
   GtkWidget          *popup;
 
-  popup = gimp_container_popup_new (viewable_button->container,
+  popup = picman_container_popup_new (viewable_button->container,
                                     viewable_button->context,
                                     viewable_button->popup_view_type,
                                     viewable_button->button_view_size,
@@ -249,52 +249,52 @@ gimp_viewable_button_clicked (GtkButton *button)
                                     viewable_button->dialog_tooltip);
 
   g_signal_connect (popup, "cancel",
-                    G_CALLBACK (gimp_viewable_button_popup_closed),
+                    G_CALLBACK (picman_viewable_button_popup_closed),
                     button);
   g_signal_connect (popup, "confirm",
-                    G_CALLBACK (gimp_viewable_button_popup_closed),
+                    G_CALLBACK (picman_viewable_button_popup_closed),
                     button);
 
-  gimp_container_popup_show (GIMP_CONTAINER_POPUP (popup), GTK_WIDGET (button));
+  picman_container_popup_show (PICMAN_CONTAINER_POPUP (popup), GTK_WIDGET (button));
 }
 
 static void
-gimp_viewable_button_popup_closed (GimpContainerPopup *popup,
-                                   GimpViewableButton *button)
+picman_viewable_button_popup_closed (PicmanContainerPopup *popup,
+                                   PicmanViewableButton *button)
 {
-  gimp_viewable_button_set_view_type (button,
-                                      gimp_container_popup_get_view_type (popup));
-  gimp_viewable_button_set_view_size (button,
-                                      gimp_container_popup_get_view_size (popup));
+  picman_viewable_button_set_view_type (button,
+                                      picman_container_popup_get_view_type (popup));
+  picman_viewable_button_set_view_size (button,
+                                      picman_container_popup_get_view_size (popup));
 }
 
 
 /*  public functions  */
 
 GtkWidget *
-gimp_viewable_button_new (GimpContainer     *container,
-                          GimpContext       *context,
-                          GimpViewType       view_type,
+picman_viewable_button_new (PicmanContainer     *container,
+                          PicmanContext       *context,
+                          PicmanViewType       view_type,
                           gint               button_view_size,
                           gint               view_size,
                           gint               view_border_width,
-                          GimpDialogFactory *dialog_factory,
+                          PicmanDialogFactory *dialog_factory,
                           const gchar       *dialog_identifier,
                           const gchar       *dialog_stock_id,
                           const gchar       *dialog_tooltip)
 {
-  GimpViewableButton *button;
+  PicmanViewableButton *button;
   const gchar        *prop_name;
 
-  g_return_val_if_fail (GIMP_IS_CONTAINER (container), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTAINER (container), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (view_size >  0 &&
-                        view_size <= GIMP_VIEWABLE_MAX_BUTTON_SIZE, NULL);
+                        view_size <= PICMAN_VIEWABLE_MAX_BUTTON_SIZE, NULL);
   g_return_val_if_fail (view_border_width >= 0 &&
-                        view_border_width <= GIMP_VIEW_MAX_BORDER_WIDTH,
+                        view_border_width <= PICMAN_VIEW_MAX_BORDER_WIDTH,
                         NULL);
   g_return_val_if_fail (dialog_factory == NULL ||
-                        GIMP_IS_DIALOG_FACTORY (dialog_factory), NULL);
+                        PICMAN_IS_DIALOG_FACTORY (dialog_factory), NULL);
   if (dialog_factory)
     {
       g_return_val_if_fail (dialog_identifier != NULL, NULL);
@@ -302,7 +302,7 @@ gimp_viewable_button_new (GimpContainer     *container,
       g_return_val_if_fail (dialog_tooltip != NULL, NULL);
     }
 
-  button = g_object_new (GIMP_TYPE_VIEWABLE_BUTTON,
+  button = g_object_new (PICMAN_TYPE_VIEWABLE_BUTTON,
                          "popup-view-type", view_type,
                          "popup-view-size", view_size,
                          NULL);
@@ -321,9 +321,9 @@ gimp_viewable_button_new (GimpContainer     *container,
       button->dialog_tooltip    = g_strdup (dialog_tooltip);
     }
 
-  prop_name = gimp_context_type_to_prop_name (gimp_container_get_children_type (container));
+  prop_name = picman_context_type_to_prop_name (picman_container_get_children_type (container));
 
-  button->view = gimp_prop_view_new (G_OBJECT (context), prop_name,
+  button->view = picman_prop_view_new (G_OBJECT (context), prop_name,
                                      context, button->button_view_size);
   gtk_container_add (GTK_CONTAINER (button), button->view);
   gtk_widget_show (button->view);
@@ -331,19 +331,19 @@ gimp_viewable_button_new (GimpContainer     *container,
   return GTK_WIDGET (button);
 }
 
-GimpViewType
-gimp_viewable_button_get_view_type (GimpViewableButton *button)
+PicmanViewType
+picman_viewable_button_get_view_type (PicmanViewableButton *button)
 {
-  g_return_val_if_fail (GIMP_IS_VIEWABLE_BUTTON (button), GIMP_VIEW_TYPE_LIST);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE_BUTTON (button), PICMAN_VIEW_TYPE_LIST);
 
   return button->popup_view_type;
 }
 
 void
-gimp_viewable_button_set_view_type (GimpViewableButton *button,
-                                    GimpViewType        view_type)
+picman_viewable_button_set_view_type (PicmanViewableButton *button,
+                                    PicmanViewType        view_type)
 {
-  g_return_if_fail (GIMP_IS_VIEWABLE_BUTTON (button));
+  g_return_if_fail (PICMAN_IS_VIEWABLE_BUTTON (button));
 
   if (view_type != button->popup_view_type)
     {
@@ -354,18 +354,18 @@ gimp_viewable_button_set_view_type (GimpViewableButton *button,
 }
 
 gint
-gimp_viewable_button_get_view_size (GimpViewableButton *button)
+picman_viewable_button_get_view_size (PicmanViewableButton *button)
 {
-  g_return_val_if_fail (GIMP_IS_VIEWABLE_BUTTON (button), GIMP_VIEW_SIZE_SMALL);
+  g_return_val_if_fail (PICMAN_IS_VIEWABLE_BUTTON (button), PICMAN_VIEW_SIZE_SMALL);
 
   return button->popup_view_size;
 }
 
 void
-gimp_viewable_button_set_view_size (GimpViewableButton *button,
+picman_viewable_button_set_view_size (PicmanViewableButton *button,
                                     gint                view_size)
 {
-  g_return_if_fail (GIMP_IS_VIEWABLE_BUTTON (button));
+  g_return_if_fail (PICMAN_IS_VIEWABLE_BUTTON (button));
 
   if (view_size != button->popup_view_size)
     {

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpanchor.h
- * Copyright (C) 2002 Simon Budig  <simon@gimp.org>
+ * picmananchor.h
+ * Copyright (C) 2002 Simon Budig  <simon@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,31 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ANCHOR_H__
-#define __GIMP_ANCHOR_H__
+#ifndef __PICMAN_ANCHOR_H__
+#define __PICMAN_ANCHOR_H__
 
-#define GIMP_ANCHOR(anchor)  ((GimpAnchor *) (anchor))
+#define PICMAN_ANCHOR(anchor)  ((PicmanAnchor *) (anchor))
 
-#define GIMP_TYPE_ANCHOR               (gimp_anchor_get_type ())
-#define GIMP_VALUE_HOLDS_ANCHOR(value) (G_TYPE_CHECK_VALUE_TYPE ((value), GIMP_TYPE_ANCHOR))
+#define PICMAN_TYPE_ANCHOR               (picman_anchor_get_type ())
+#define PICMAN_VALUE_HOLDS_ANCHOR(value) (G_TYPE_CHECK_VALUE_TYPE ((value), PICMAN_TYPE_ANCHOR))
 
-GType   gimp_anchor_get_type           (void) G_GNUC_CONST;
+GType   picman_anchor_get_type           (void) G_GNUC_CONST;
 
 
-struct _GimpAnchor
+struct _PicmanAnchor
 {
-  GimpCoords        position;
+  PicmanCoords        position;
 
-  GimpAnchorType    type;   /* Interpretation dependent on GimpStroke type */
+  PicmanAnchorType    type;   /* Interpretation dependent on PicmanStroke type */
   gboolean          selected;
 };
 
 
-GimpAnchor  * gimp_anchor_new  (GimpAnchorType    type,
-                                const GimpCoords *position);
+PicmanAnchor  * picman_anchor_new  (PicmanAnchorType    type,
+                                const PicmanCoords *position);
 
-GimpAnchor  * gimp_anchor_copy (const GimpAnchor *anchor);
-void          gimp_anchor_free (GimpAnchor       *anchor);
+PicmanAnchor  * picman_anchor_copy (const PicmanAnchor *anchor);
+void          picman_anchor_free (PicmanAnchor       *anchor);
 
 
-#endif /* __GIMP_ANCHOR_H__ */
+#endif /* __PICMAN_ANCHOR_H__ */

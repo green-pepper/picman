@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfgbgview.c
- * Copyright (C) 2005  Sven Neumann <sven@gimp.org>
+ * picmanfgbgview.c
+ * Copyright (C) 2005  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,16 +25,16 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpmarshal.h"
+#include "core/picmancontext.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpdnd.h"
-#include "gimpfgbgview.h"
+#include "picmandnd.h"
+#include "picmanfgbgview.h"
 
 
 enum
@@ -44,46 +44,46 @@ enum
 };
 
 
-static void     gimp_fg_bg_view_dispose      (GObject        *object);
-static void     gimp_fg_bg_view_set_property (GObject        *object,
+static void     picman_fg_bg_view_dispose      (GObject        *object);
+static void     picman_fg_bg_view_set_property (GObject        *object,
                                               guint           property_id,
                                               const GValue   *value,
                                               GParamSpec     *pspec);
-static void     gimp_fg_bg_view_get_property (GObject        *object,
+static void     picman_fg_bg_view_get_property (GObject        *object,
                                               guint           property_id,
                                               GValue         *value,
                                               GParamSpec     *pspec);
 
-static gboolean gimp_fg_bg_view_expose       (GtkWidget      *widget,
+static gboolean picman_fg_bg_view_expose       (GtkWidget      *widget,
                                               GdkEventExpose *eevent);
 
 
-G_DEFINE_TYPE (GimpFgBgView, gimp_fg_bg_view, GTK_TYPE_WIDGET)
+G_DEFINE_TYPE (PicmanFgBgView, picman_fg_bg_view, GTK_TYPE_WIDGET)
 
-#define parent_class gimp_fg_bg_view_parent_class
+#define parent_class picman_fg_bg_view_parent_class
 
 
 static void
-gimp_fg_bg_view_class_init (GimpFgBgViewClass *klass)
+picman_fg_bg_view_class_init (PicmanFgBgViewClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->dispose      = gimp_fg_bg_view_dispose;
-  object_class->set_property = gimp_fg_bg_view_set_property;
-  object_class->get_property = gimp_fg_bg_view_get_property;
+  object_class->dispose      = picman_fg_bg_view_dispose;
+  object_class->set_property = picman_fg_bg_view_set_property;
+  object_class->get_property = picman_fg_bg_view_get_property;
 
-  widget_class->expose_event = gimp_fg_bg_view_expose;
+  widget_class->expose_event = picman_fg_bg_view_expose;
 
   g_object_class_install_property (object_class, PROP_CONTEXT,
                                    g_param_spec_object ("context",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_CONTEXT,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_TYPE_CONTEXT,
+                                                        PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_fg_bg_view_init (GimpFgBgView *view)
+picman_fg_bg_view_init (PicmanFgBgView *view)
 {
   gtk_widget_set_has_window (GTK_WIDGET (view), FALSE);
 
@@ -91,28 +91,28 @@ gimp_fg_bg_view_init (GimpFgBgView *view)
 }
 
 static void
-gimp_fg_bg_view_dispose (GObject *object)
+picman_fg_bg_view_dispose (GObject *object)
 {
-  GimpFgBgView *view = GIMP_FG_BG_VIEW (object);
+  PicmanFgBgView *view = PICMAN_FG_BG_VIEW (object);
 
   if (view->context)
-    gimp_fg_bg_view_set_context (view, NULL);
+    picman_fg_bg_view_set_context (view, NULL);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_fg_bg_view_set_property (GObject      *object,
+picman_fg_bg_view_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  GimpFgBgView *view = GIMP_FG_BG_VIEW (object);
+  PicmanFgBgView *view = PICMAN_FG_BG_VIEW (object);
 
   switch (property_id)
     {
     case PROP_CONTEXT:
-      gimp_fg_bg_view_set_context (view, g_value_get_object (value));
+      picman_fg_bg_view_set_context (view, g_value_get_object (value));
       break;
 
     default:
@@ -122,12 +122,12 @@ gimp_fg_bg_view_set_property (GObject      *object,
 }
 
 static void
-gimp_fg_bg_view_get_property (GObject    *object,
+picman_fg_bg_view_get_property (GObject    *object,
                               guint       property_id,
                               GValue     *value,
                               GParamSpec *pspec)
 {
-  GimpFgBgView *view = GIMP_FG_BG_VIEW (object);
+  PicmanFgBgView *view = PICMAN_FG_BG_VIEW (object);
 
   switch (property_id)
     {
@@ -142,16 +142,16 @@ gimp_fg_bg_view_get_property (GObject    *object,
 }
 
 static gboolean
-gimp_fg_bg_view_expose (GtkWidget      *widget,
+picman_fg_bg_view_expose (GtkWidget      *widget,
                         GdkEventExpose *eevent)
 {
-  GimpFgBgView *view   = GIMP_FG_BG_VIEW (widget);
+  PicmanFgBgView *view   = PICMAN_FG_BG_VIEW (widget);
   GtkStyle     *style  = gtk_widget_get_style (widget);
   GdkWindow    *window = gtk_widget_get_window (widget);
   cairo_t      *cr;
   GtkAllocation allocation;
   gint          rect_w, rect_h;
-  GimpRGB       color;
+  PicmanRGB       color;
 
   if (! gtk_widget_is_drawable (widget))
     return FALSE;
@@ -172,8 +172,8 @@ gimp_fg_bg_view_expose (GtkWidget      *widget,
 
   if (view->context)
     {
-      gimp_context_get_background (view->context, &color);
-      gimp_cairo_set_source_rgb (cr, &color);
+      picman_context_get_background (view->context, &color);
+      picman_cairo_set_source_rgb (cr, &color);
 
       cairo_rectangle (cr,
                        allocation.width  - rect_w + 1,
@@ -194,8 +194,8 @@ gimp_fg_bg_view_expose (GtkWidget      *widget,
 
   if (view->context)
     {
-      gimp_context_get_foreground (view->context, &color);
-      gimp_cairo_set_source_rgb (cr, &color);
+      picman_context_get_foreground (view->context, &color);
+      picman_cairo_set_source_rgb (cr, &color);
 
       cairo_rectangle (cr, 1, 1, rect_w - 2, rect_h - 2);
       cairo_fill (cr);
@@ -214,21 +214,21 @@ gimp_fg_bg_view_expose (GtkWidget      *widget,
 /*  public functions  */
 
 GtkWidget *
-gimp_fg_bg_view_new (GimpContext *context)
+picman_fg_bg_view_new (PicmanContext *context)
 {
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), NULL);
 
-  return g_object_new (GIMP_TYPE_FG_BG_VIEW,
+  return g_object_new (PICMAN_TYPE_FG_BG_VIEW,
                        "context", context,
                        NULL);
 }
 
 void
-gimp_fg_bg_view_set_context (GimpFgBgView *view,
-                             GimpContext  *context)
+picman_fg_bg_view_set_context (PicmanFgBgView *view,
+                             PicmanContext  *context)
 {
-  g_return_if_fail (GIMP_IS_FG_BG_VIEW (view));
-  g_return_if_fail (context == NULL || GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_FG_BG_VIEW (view));
+  g_return_if_fail (context == NULL || PICMAN_IS_CONTEXT (context));
 
   if (context == view->context)
     return;

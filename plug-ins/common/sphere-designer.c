@@ -1,5 +1,5 @@
 /*
- * GIMP - The GNU Image Manipulation Program
+ * PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -42,15 +42,15 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-spheredesigner"
 #define PLUG_IN_BINARY "sphere-designer"
-#define PLUG_IN_ROLE   "gimp-sphere-designer"
+#define PLUG_IN_ROLE   "picman-sphere-designer"
 
 #define RESPONSE_RESET 1
 
@@ -69,11 +69,11 @@
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparams,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,   /* init_proc  */
   NULL,   /* quit_proc  */
@@ -148,7 +148,7 @@ typedef struct
 {
   gshort        numcol;
   gdouble       pos[MAXCOLPERGRADIENT];
-  GimpVector4   color[MAXCOLPERGRADIENT];
+  PicmanVector4   color[MAXCOLPERGRADIENT];
 } gradient;
 
 typedef struct
@@ -156,28 +156,28 @@ typedef struct
   gint          majtype;
   gint          type;
   gulong        flags;
-  GimpVector4   color1, color2;
+  PicmanVector4   color1, color2;
   gradient      gradient;
-  GimpVector4   ambient, diffuse;
+  PicmanVector4   ambient, diffuse;
   gdouble       oscale;
-  GimpVector4   scale, translate, rotate;
+  PicmanVector4   scale, translate, rotate;
   image         image;
-  GimpVector4   reflection;
-  GimpVector4   refraction;
-  GimpVector4   transparent;
+  PicmanVector4   reflection;
+  PicmanVector4   refraction;
+  PicmanVector4   transparent;
   gdouble       ior;
-  GimpVector4   phongcolor;
+  PicmanVector4   phongcolor;
   gdouble       phongsize;
   gdouble       amount;
   gdouble       exp;
-  GimpVector4   turbulence;
+  PicmanVector4   turbulence;
 } texture;
 
 typedef struct
 {
   gshort  type;
   gdouble density;
-  GimpVector4  color;
+  PicmanVector4  color;
   gdouble turbulence;
 } atmos;
 
@@ -194,46 +194,46 @@ typedef struct
 typedef struct
 {
   common com;
-  GimpVector4 a, b, c;
+  PicmanVector4 a, b, c;
 } triangle;
 
 typedef struct
 {
   common        com;
-  GimpVector4   a;
+  PicmanVector4   a;
   gdouble       b, r;
 } disc;
 
 typedef struct
 {
   common        com;
-  GimpVector4   a;
+  PicmanVector4   a;
   gdouble       r;
 } sphere;
 
 typedef struct
 {
   common        com;
-  GimpVector4   a, b, c;
+  PicmanVector4   a, b, c;
 } cylinder;
 
 typedef struct
 {
   common        com;
-  GimpVector4   a;
+  PicmanVector4   a;
   gdouble       b;
 } plane;
 
 typedef struct
 {
   common        com;
-  GimpVector4   color;
-  GimpVector4   a;
+  PicmanVector4   color;
+  PicmanVector4   a;
 } light;
 
 typedef struct
 {
-  GimpVector4   v1, v2;
+  PicmanVector4   v1, v2;
   gshort        inside;
   gdouble       ior;
 } ray;
@@ -266,7 +266,7 @@ struct world_t
 
 struct camera_t
 {
-  GimpVector4 location, lookat, up, right;
+  PicmanVector4 location, lookat, up, right;
   short  type;
   double fov, tilt;
 };
@@ -302,7 +302,7 @@ static struct textures_t textures[] =
   { 0, NULL,          0       }
 };
 
-static inline void vset        (GimpVector4          *v,
+static inline void vset        (PicmanVector4          *v,
                                 gdouble               a,
                                 gdouble               b,
                                 gdouble               c);
@@ -310,11 +310,11 @@ static void      restartrender (void);
 static void      drawcolor1    (GtkWidget            *widget);
 static void      drawcolor2    (GtkWidget            *widget);
 static gboolean  render        (void);
-static void      realrender    (GimpDrawable         *drawable);
+static void      realrender    (PicmanDrawable         *drawable);
 static void      fileselect    (GtkFileChooserAction  action,
                                 GtkWidget            *parent);
 static gint      traceray      (ray                  *r,
-                                GimpVector4          *col,
+                                PicmanVector4          *col,
                                 gint                  level,
                                 gdouble               imp);
 static gdouble   turbulence    (gdouble              *point,
@@ -492,13 +492,13 @@ turbulence (gdouble * point, gdouble lofreq, gdouble hifreq)
 static struct world_t  world;
 
 static inline void
-vcopy (GimpVector4 *a, GimpVector4 *b)
+vcopy (PicmanVector4 *a, PicmanVector4 *b)
 {
   *a = *b;
 }
 
 static inline void
-vcross (GimpVector4 *r, GimpVector4 *a, GimpVector4 *b)
+vcross (PicmanVector4 *r, PicmanVector4 *a, PicmanVector4 *b)
 {
   r->x = a->y * b->z - a->z * b->y;
   r->y = -(a->x * b->z - a->z * b->x);
@@ -506,13 +506,13 @@ vcross (GimpVector4 *r, GimpVector4 *a, GimpVector4 *b)
 }
 
 static inline gdouble
-vdot (GimpVector4 *a, GimpVector4 *b)
+vdot (PicmanVector4 *a, PicmanVector4 *b)
 {
   return a->x * b->x + a->y * b->y + a->z * b->z;
 }
 
 static inline gdouble
-vdist (GimpVector4 *a, GimpVector4 *b)
+vdist (PicmanVector4 *a, PicmanVector4 *b)
 {
   gdouble x, y, z;
 
@@ -524,7 +524,7 @@ vdist (GimpVector4 *a, GimpVector4 *b)
 }
 
 static inline gdouble
-vdist2 (GimpVector4 *a, GimpVector4 *b)
+vdist2 (PicmanVector4 *a, PicmanVector4 *b)
 {
   gdouble x, y, z;
 
@@ -536,13 +536,13 @@ vdist2 (GimpVector4 *a, GimpVector4 *b)
 }
 
 static inline gdouble
-vlen (GimpVector4 *a)
+vlen (PicmanVector4 *a)
 {
   return sqrt (a->x * a->x + a->y * a->y + a->z * a->z);
 }
 
 static inline void
-vnorm (GimpVector4 *a, gdouble v)
+vnorm (PicmanVector4 *a, gdouble v)
 {
   gdouble d;
 
@@ -553,7 +553,7 @@ vnorm (GimpVector4 *a, gdouble v)
 }
 
 static inline void
-vrotate (GimpVector4 *axis, gdouble ang, GimpVector4 *vector)
+vrotate (PicmanVector4 *axis, gdouble ang, PicmanVector4 *vector)
 {
   gdouble rad = ang / 180.0 * G_PI;
   gdouble ax  = vector->x;
@@ -581,7 +581,7 @@ vrotate (GimpVector4 *axis, gdouble ang, GimpVector4 *vector)
 }
 
 static inline void
-vset (GimpVector4 *v, gdouble a, gdouble b, gdouble c)
+vset (PicmanVector4 *v, gdouble a, gdouble b, gdouble c)
 {
   v->x = a;
   v->y = b;
@@ -590,7 +590,7 @@ vset (GimpVector4 *v, gdouble a, gdouble b, gdouble c)
 }
 
 static inline void
-vcset (GimpVector4 *v, gdouble a, gdouble b, gdouble c, gdouble d)
+vcset (PicmanVector4 *v, gdouble a, gdouble b, gdouble c, gdouble d)
 {
   v->x = a;
   v->y = b;
@@ -599,9 +599,9 @@ vcset (GimpVector4 *v, gdouble a, gdouble b, gdouble c, gdouble d)
 }
 
 static inline void
-vvrotate (GimpVector4 *p, GimpVector4 *rot)
+vvrotate (PicmanVector4 *p, PicmanVector4 *rot)
 {
-  GimpVector4 axis;
+  PicmanVector4 axis;
 
   if (rot->x != 0.0)
     {
@@ -621,7 +621,7 @@ vvrotate (GimpVector4 *p, GimpVector4 *rot)
 }
 
 static inline void
-vsub (GimpVector4 *a, GimpVector4 *b)
+vsub (PicmanVector4 *a, PicmanVector4 *b)
 {
   a->x -= b->x;
   a->y -= b->y;
@@ -630,7 +630,7 @@ vsub (GimpVector4 *a, GimpVector4 *b)
 }
 
 static inline void
-vadd (GimpVector4 *a, GimpVector4 *b)
+vadd (PicmanVector4 *a, PicmanVector4 *b)
 {
   a->x += b->x;
   a->y += b->y;
@@ -639,7 +639,7 @@ vadd (GimpVector4 *a, GimpVector4 *b)
 }
 
 static inline void
-vneg (GimpVector4 *a)
+vneg (PicmanVector4 *a)
 {
   a->x = -a->x;
   a->y = -a->y;
@@ -648,7 +648,7 @@ vneg (GimpVector4 *a)
 }
 
 static inline void
-vmul (GimpVector4 *v, gdouble a)
+vmul (PicmanVector4 *v, gdouble a)
 {
   v->x *= a;
   v->y *= a;
@@ -657,7 +657,7 @@ vmul (GimpVector4 *v, gdouble a)
 }
 
 static inline void
-vvmul (GimpVector4 *a, GimpVector4 *b)
+vvmul (PicmanVector4 *a, PicmanVector4 *b)
 {
   a->x *= b->x;
   a->y *= b->y;
@@ -666,7 +666,7 @@ vvmul (GimpVector4 *a, GimpVector4 *b)
 }
 
 static inline void
-vvdiv (GimpVector4 *a, GimpVector4 *b)
+vvdiv (PicmanVector4 *a, PicmanVector4 *b)
 {
   a->x /= b->x;
   a->y /= b->y;
@@ -674,7 +674,7 @@ vvdiv (GimpVector4 *a, GimpVector4 *b)
 }
 
 static void
-vmix (GimpVector4 *r, GimpVector4 *a, GimpVector4 *b, gdouble v)
+vmix (PicmanVector4 *r, PicmanVector4 *a, PicmanVector4 *b, gdouble v)
 {
   gdouble i = 1.0 - v;
 
@@ -685,7 +685,7 @@ vmix (GimpVector4 *r, GimpVector4 *a, GimpVector4 *b, gdouble v)
 }
 
 static double
-vmax (GimpVector4 *a)
+vmax (PicmanVector4 *a)
 {
   gdouble max = fabs (a->x);
 
@@ -701,7 +701,7 @@ vmax (GimpVector4 *a)
 
 #if 0
 static void
-vavg (GimpVector4 * a)
+vavg (PicmanVector4 * a)
 {
   gdouble s;
 
@@ -711,7 +711,7 @@ vavg (GimpVector4 * a)
 #endif
 
 static void
-trianglenormal (GimpVector4 * n, gdouble *t, triangle * tri)
+trianglenormal (PicmanVector4 * n, gdouble *t, triangle * tri)
 {
   triangle tmp;
   vcopy (&tmp.b, &tri->b);
@@ -727,7 +727,7 @@ trianglenormal (GimpVector4 * n, gdouble *t, triangle * tri)
 static gdouble
 checkdisc (ray * r, disc * disc)
 {
-  GimpVector4 p, *v = &disc->a;
+  PicmanVector4 p, *v = &disc->a;
   gdouble t, d2;
   gdouble i, j, k;
 
@@ -753,7 +753,7 @@ checkdisc (ray * r, disc * disc)
 static gdouble
 checksphere (ray * r, sphere * sphere)
 {
-  GimpVector4 cendir, rdir;
+  PicmanVector4 cendir, rdir;
   gdouble dirproj, cdlensq;
   gdouble linear, constant, rsq, quadratic, discriminant;
   gdouble smallzero, solmin, solmax, tolerance = 0.001;
@@ -832,7 +832,7 @@ checkcylinder (ray * r, cylinder * cylinder)
 static gdouble
 checkplane (ray * r, plane * plane)
 {
-  GimpVector4 *v = &plane->a;
+  PicmanVector4 *v = &plane->a;
   gdouble t;
   gdouble i, j, k;
 
@@ -849,10 +849,10 @@ checkplane (ray * r, plane * plane)
 static gdouble
 checktri (ray * r, triangle * tri)
 {
-  GimpVector4  ed1, ed2;
-  GimpVector4  tvec, pvec, qvec;
+  PicmanVector4  ed1, ed2;
+  PicmanVector4  tvec, pvec, qvec;
   gdouble det, idet, t, u, v;
-  GimpVector4 *orig, dir;
+  PicmanVector4 *orig, dir;
 
   orig = &r->v1;
   dir = r->v2;
@@ -892,7 +892,7 @@ checktri (ray * r, triangle * tri)
 }
 
 static void
-transformpoint (GimpVector4 * p, texture * t)
+transformpoint (PicmanVector4 * p, texture * t)
 {
   gdouble point[3], f;
 
@@ -916,10 +916,10 @@ transformpoint (GimpVector4 * p, texture * t)
 }
 
 static void
-checker (GimpVector4 *q, GimpVector4 *col, texture *t)
+checker (PicmanVector4 *q, PicmanVector4 *col, texture *t)
 {
   gint   c = 0;
-  GimpVector4 p;
+  PicmanVector4 p;
 
   p = *q;
   transformpoint (&p, t);
@@ -948,11 +948,11 @@ checker (GimpVector4 *q, GimpVector4 *col, texture *t)
 }
 
 static void
-gradcolor (GimpVector4 *col, gradient *t, gdouble val)
+gradcolor (PicmanVector4 *col, gradient *t, gdouble val)
 {
   gint    i;
   gdouble d;
-  GimpVector4  tmpcol;
+  PicmanVector4  tmpcol;
 
   val = CLAMP (val, 0.0, 1.0);
 
@@ -980,10 +980,10 @@ gradcolor (GimpVector4 *col, gradient *t, gdouble val)
 }
 
 static void
-marble (GimpVector4 *q, GimpVector4 *col, texture *t)
+marble (PicmanVector4 *q, PicmanVector4 *col, texture *t)
 {
   gdouble f;
-  GimpVector4 p;
+  PicmanVector4 p;
 
   p = *q;
   transformpoint (&p, t);
@@ -998,10 +998,10 @@ marble (GimpVector4 *q, GimpVector4 *col, texture *t)
 }
 
 static void
-lizard (GimpVector4 *q, GimpVector4 *col, texture *t)
+lizard (PicmanVector4 *q, PicmanVector4 *col, texture *t)
 {
   gdouble f;
-  GimpVector4 p;
+  PicmanVector4 p;
 
   p = *q;
   transformpoint (&p, t);
@@ -1019,10 +1019,10 @@ lizard (GimpVector4 *q, GimpVector4 *col, texture *t)
 }
 
 static void
-wood (GimpVector4 *q, GimpVector4 *col, texture *t)
+wood (PicmanVector4 *q, PicmanVector4 *col, texture *t)
 {
   gdouble f;
-  GimpVector4 p;
+  PicmanVector4 p;
 
   p = *q;
   transformpoint (&p, t);
@@ -1039,10 +1039,10 @@ wood (GimpVector4 *q, GimpVector4 *col, texture *t)
 }
 
 static void
-spiral (GimpVector4 *q, GimpVector4 *col, texture *t)
+spiral (PicmanVector4 *q, PicmanVector4 *col, texture *t)
 {
   gdouble f;
-  GimpVector4 p;
+  PicmanVector4 p;
 
   p = *q;
   transformpoint (&p, t);
@@ -1059,10 +1059,10 @@ spiral (GimpVector4 *q, GimpVector4 *col, texture *t)
 }
 
 static void
-spots (GimpVector4 *q, GimpVector4 *col, texture *t)
+spots (PicmanVector4 *q, PicmanVector4 *col, texture *t)
 {
   gdouble f;
-  GimpVector4 p, r;
+  PicmanVector4 p, r;
 
   p = *q;
   transformpoint (&p, t);
@@ -1084,10 +1084,10 @@ spots (GimpVector4 *q, GimpVector4 *col, texture *t)
 }
 
 static void
-perlin (GimpVector4 * q, GimpVector4 * col, texture * t)
+perlin (PicmanVector4 * q, PicmanVector4 * col, texture * t)
 {
   gdouble f, point[3];
-  GimpVector4  p;
+  PicmanVector4  p;
 
   p = *q;
   transformpoint (&p, t);
@@ -1107,9 +1107,9 @@ perlin (GimpVector4 * q, GimpVector4 * col, texture * t)
 }
 
 static void
-imagepixel (GimpVector4 * q, GimpVector4 * col, texture * t)
+imagepixel (PicmanVector4 * q, PicmanVector4 * col, texture * t)
 {
-  GimpVector4 p;
+  PicmanVector4 p;
   gint x, y;
   guchar *rgb;
 
@@ -1127,11 +1127,11 @@ imagepixel (GimpVector4 * q, GimpVector4 * col, texture * t)
 }
 
 static void
-objcolor (GimpVector4 *col, GimpVector4 *p, common *obj)
+objcolor (PicmanVector4 *col, PicmanVector4 *p, common *obj)
 {
   gint     i;
   texture *t;
-  GimpVector4   tmpcol;
+  PicmanVector4   tmpcol;
 
   vcset (col, 0, 0, 0, 0);
 
@@ -1197,7 +1197,7 @@ objcolor (GimpVector4 *col, GimpVector4 *p, common *obj)
 }
 
 static void
-objnormal (GimpVector4 *res, common *obj, GimpVector4 *p)
+objnormal (PicmanVector4 *res, common *obj, PicmanVector4 *p)
 {
   gint i;
 
@@ -1227,8 +1227,8 @@ objnormal (GimpVector4 *res, common *obj, GimpVector4 *p)
   for (i = 0; i < obj->numnormal; i++)
     {
       gint     k;
-      GimpVector4   tmpcol[6];
-      GimpVector4   q[6], nres;
+      PicmanVector4   tmpcol[6];
+      PicmanVector4   q[6], nres;
       texture *t = &obj->normal[i];
       gdouble  nstep = 0.1;
 
@@ -1310,14 +1310,14 @@ objnormal (GimpVector4 *res, common *obj, GimpVector4 *p)
  */
 
 static void
-calclight (GimpVector4 * col, GimpVector4 * point, common * obj)
+calclight (PicmanVector4 * col, PicmanVector4 * point, common * obj)
 {
   gint i, j;
   ray r;
   gdouble b, a;
-  GimpVector4 lcol;
-  GimpVector4 norm;
-  GimpVector4 pcol;
+  PicmanVector4 lcol;
+  PicmanVector4 norm;
+  PicmanVector4 pcol;
 
   vcset (col, 0, 0, 0, 0);
 
@@ -1389,14 +1389,14 @@ calclight (GimpVector4 * col, GimpVector4 * point, common * obj)
 }
 
 static void
-calcphong (common * obj, ray * r2, GimpVector4 * col)
+calcphong (common * obj, ray * r2, PicmanVector4 * col)
 {
   gint    i, j;
   ray     r;
   gdouble b;
-  GimpVector4  lcol;
-  GimpVector4  norm;
-  GimpVector4  pcol;
+  PicmanVector4  lcol;
+  PicmanVector4  norm;
+  PicmanVector4  pcol;
   gdouble ps;
 
   vcopy (&pcol, col);
@@ -1443,13 +1443,13 @@ calcphong (common * obj, ray * r2, GimpVector4 * col)
 }
 
 static int
-traceray (ray * r, GimpVector4 * col, gint level, gdouble imp)
+traceray (ray * r, PicmanVector4 * col, gint level, gdouble imp)
 {
   gint     i, b = -1;
   gdouble  t = -1.0, min = 0.0;
   common  *obj, *bobj = NULL;
   gint     hits = 0;
-  GimpVector4   p;
+  PicmanVector4   p;
 
   if ((level == 0) || (imp < 0.005))
     {
@@ -1511,7 +1511,7 @@ traceray (ray * r, GimpVector4 * col, gint level, gdouble imp)
       if (world.flags & SMARTAMBIENT)
         {
           gdouble ambient = 0.3 * exp (-min / world.smartambient);
-          GimpVector4 lcol;
+          PicmanVector4 lcol;
           objcolor (&lcol, &p, bobj);
           vmul (&lcol, ambient);
           vadd (col, &lcol);
@@ -1525,7 +1525,7 @@ traceray (ray * r, GimpVector4 * col, gint level, gdouble imp)
                   || (bobj->texture[i].type == PHONG)))
             {
 
-              GimpVector4 refcol, norm, ocol;
+              PicmanVector4 refcol, norm, ocol;
               ray ref;
 
               objcolor (&ocol, &p, bobj);
@@ -1569,7 +1569,7 @@ traceray (ray * r, GimpVector4 * col, gint level, gdouble imp)
 
           if ((world.quality >= 5) && (col->w < 1.0))
             {
-              GimpVector4 refcol;
+              PicmanVector4 refcol;
               ray ref;
 
               vcopy (&ref.v1, &p);
@@ -1586,7 +1586,7 @@ traceray (ray * r, GimpVector4 * col, gint level, gdouble imp)
 
           if ((world.quality >= 5) && (bobj->texture[i].type == TRANSPARENT))
             {
-              GimpVector4 refcol;
+              PicmanVector4 refcol;
               ray ref;
 
               vcopy (&ref.v1, &p);
@@ -1606,7 +1606,7 @@ traceray (ray * r, GimpVector4 * col, gint level, gdouble imp)
 
           if ((world.quality >= 5) && (bobj->texture[i].type == SMOKE))
             {
-              GimpVector4 smcol, raydir, norm;
+              PicmanVector4 smcol, raydir, norm;
               double tran;
               ray ref;
 
@@ -1631,7 +1631,7 @@ traceray (ray * r, GimpVector4 * col, gint level, gdouble imp)
 
           if ((world.quality >= 5) && (bobj->texture[i].type == REFRACTION))
             {
-              GimpVector4 refcol, norm, tmpv;
+              PicmanVector4 refcol, norm, tmpv;
               ray ref;
               double c1, c2, n1, n2, n;
 
@@ -1702,7 +1702,7 @@ traceray (ray * r, GimpVector4 * col, gint level, gdouble imp)
 
   for (i = 0; i < world.numatmos; i++)
     {
-      GimpVector4 tmpcol;
+      PicmanVector4 tmpcol;
       if (world.atmos[i].type == FOG)
         {
           gdouble v, pt[3];
@@ -1851,14 +1851,14 @@ setvals (texture *t)
     {
       if (l->n == t->type)
         {
-          gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (texturemenu),
+          picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (texturemenu),
                                          l->index);
           break;
         }
       l++;
     }
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (typemenu), t->majtype);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (typemenu), t->majtype);
 
   noupdate = FALSE;
 }
@@ -2008,14 +2008,14 @@ loadit (const gchar * fn)
   if (! f)
     {
       g_message (_("Could not open '%s' for reading: %s"),
-                 gimp_filename_to_utf8 (fn), g_strerror (errno));
+                 picman_filename_to_utf8 (fn), g_strerror (errno));
       return;
     }
 
   if (2 != fscanf (f, "%d %d", &majtype, &type) || majtype < 0 || majtype > 2)
     {
       g_message (_("File '%s' is not a valid save file."),
-                 gimp_filename_to_utf8 (fn));
+                 picman_filename_to_utf8 (fn));
       fclose (f);
       return;
     }
@@ -2119,7 +2119,7 @@ saveit (const gchar *fn)
   if (!f)
     {
       g_message (_("Could not open '%s' for writing: %s"),
-                 gimp_filename_to_utf8 (fn), g_strerror (errno));
+                 picman_filename_to_utf8 (fn), g_strerror (errno));
       return;
     }
 
@@ -2339,7 +2339,7 @@ selecttexture (GtkWidget *widget,
   if (!t)
     return;
 
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &t->type);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &t->type);
 
   relabel ();
   restartrender ();
@@ -2358,7 +2358,7 @@ selecttype (GtkWidget *widget,
   if (!t)
     return;
 
-  gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &t->majtype);
+  picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &t->majtype);
 
   relabel ();
   restartrender ();
@@ -2403,15 +2403,15 @@ getscales (GtkWidget *widget,
 
 
 static void
-color1_changed (GimpColorButton *button)
+color1_changed (PicmanColorButton *button)
 {
   texture *t = currenttexture ();
 
   if (t)
     {
-      GimpRGB color;
+      PicmanRGB color;
 
-      gimp_color_button_get_color (button, &color);
+      picman_color_button_get_color (button, &color);
 
       t->color1.x = color.r;
       t->color1.y = color.g;
@@ -2423,15 +2423,15 @@ color1_changed (GimpColorButton *button)
 }
 
 static void
-color2_changed (GimpColorButton *button)
+color2_changed (PicmanColorButton *button)
 {
   texture *t = currenttexture ();
 
   if (t)
     {
-      GimpRGB color;
+      PicmanRGB color;
 
-      gimp_color_button_get_color (button, &color);
+      picman_color_button_get_color (button, &color);
 
       t->color2.x = color.r;
       t->color2.y = color.g;
@@ -2447,7 +2447,7 @@ drawcolor1 (GtkWidget *w)
 {
   static GtkWidget *lastw = NULL;
 
-  GimpRGB  color;
+  PicmanRGB  color;
   texture *t = currenttexture ();
 
   if (w)
@@ -2460,10 +2460,10 @@ drawcolor1 (GtkWidget *w)
   if (!t)
     return;
 
-  gimp_rgba_set (&color,
+  picman_rgba_set (&color,
                  t->color1.x, t->color1.y, t->color1.z, t->color1.w);
 
-  gimp_color_button_set_color (GIMP_COLOR_BUTTON (w), &color);
+  picman_color_button_set_color (PICMAN_COLOR_BUTTON (w), &color);
 }
 
 static void
@@ -2471,7 +2471,7 @@ drawcolor2 (GtkWidget *w)
 {
   static GtkWidget *lastw = NULL;
 
-  GimpRGB  color;
+  PicmanRGB  color;
   texture *t = currenttexture ();
 
   if (w)
@@ -2484,10 +2484,10 @@ drawcolor2 (GtkWidget *w)
   if (!t)
     return;
 
-  gimp_rgba_set (&color,
+  picman_rgba_set (&color,
                  t->color2.x, t->color2.y, t->color2.z, t->color2.w);
 
-  gimp_color_button_set_color (GIMP_COLOR_BUTTON (w), &color);
+  picman_color_button_set_color (PICMAN_COLOR_BUTTON (w), &color);
 }
 
 static gboolean do_run = FALSE;
@@ -2551,13 +2551,13 @@ makewindow (void)
   GtkWidget  *vbox;
   GtkWidget  *button;
   GtkWidget  *list;
-  GimpRGB     rgb = { 0, 0, 0, 0 };
+  PicmanRGB     rgb = { 0, 0, 0, 0 };
 
-  window = gimp_dialog_new (_("Sphere Designer"), PLUG_IN_ROLE,
+  window = picman_dialog_new (_("Sphere Designer"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
-                            GIMP_STOCK_RESET, RESPONSE_RESET,
+                            PICMAN_STOCK_RESET, RESPONSE_RESET,
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -2569,7 +2569,7 @@ makewindow (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (window));
+  picman_window_set_transient (GTK_WINDOW (window));
 
   g_signal_connect (window, "response",
                     G_CALLBACK (sphere_response),
@@ -2671,7 +2671,7 @@ makewindow (void)
                             G_CALLBACK (addtexture), NULL);
   gtk_widget_show (button);
 
-  button = gtk_button_new_from_stock (GIMP_STOCK_DUPLICATE);
+  button = gtk_button_new_from_stock (PICMAN_STOCK_DUPLICATE);
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
   g_signal_connect_swapped (button, "clicked",
                             G_CALLBACK (duptexture), NULL);
@@ -2687,7 +2687,7 @@ makewindow (void)
   gtk_box_pack_start (GTK_BOX (main_vbox), main_hbox, FALSE, FALSE, 0);
   gtk_widget_show (main_hbox);
 
-  frame = gimp_frame_new (_("Properties"));
+  frame = picman_frame_new (_("Properties"));
   gtk_box_pack_start (GTK_BOX (main_hbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -2702,45 +2702,45 @@ makewindow (void)
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  typemenu = gimp_int_combo_box_new (_("Texture"), 0,
+  typemenu = picman_int_combo_box_new (_("Texture"), 0,
                                      _("Bump"),    1,
                                      _("Light"),   2,
                                      NULL);
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (typemenu), 0,
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (typemenu), 0,
                               G_CALLBACK (selecttype),
                               NULL);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("Type:"), 0.0, 0.5,
                              typemenu, 2, FALSE);
 
-  texturemenu = g_object_new (GIMP_TYPE_INT_COMBO_BOX, NULL);
+  texturemenu = g_object_new (PICMAN_TYPE_INT_COMBO_BOX, NULL);
   {
     struct textures_t *t;
 
     for (t = textures; t->s; t++)
-      gimp_int_combo_box_append (GIMP_INT_COMBO_BOX (texturemenu),
-                                 GIMP_INT_STORE_VALUE, t->n,
-                                 GIMP_INT_STORE_LABEL, gettext (t->s),
+      picman_int_combo_box_append (PICMAN_INT_COMBO_BOX (texturemenu),
+                                 PICMAN_INT_STORE_VALUE, t->n,
+                                 PICMAN_INT_STORE_LABEL, gettext (t->s),
                                  -1);
   }
 
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (texturemenu), 0,
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (texturemenu), 0,
                               G_CALLBACK (selecttexture),
                               NULL);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("Texture:"), 0.0, 0.5,
                              texturemenu, 2, FALSE);
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 2,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 2,
                              _("Colors:"), 0.0, 0.5,
                              hbox, 2, FALSE);
 
-  button = gimp_color_button_new (_("Color Selection Dialog"),
+  button = picman_color_button_new (_("Color Selection Dialog"),
                                   COLORBUTTONWIDTH, COLORBUTTONHEIGHT, &rgb,
-                                  GIMP_COLOR_AREA_FLAT);
+                                  PICMAN_COLOR_AREA_FLAT);
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
   drawcolor1 (button);
@@ -2749,9 +2749,9 @@ makewindow (void)
                     G_CALLBACK (color1_changed),
                     NULL);
 
-  button = gimp_color_button_new (_("Color Selection Dialog"),
+  button = picman_color_button_new (_("Color Selection Dialog"),
                                   COLORBUTTONWIDTH, COLORBUTTONHEIGHT, &rgb,
-                                  GIMP_COLOR_AREA_FLAT);
+                                  PICMAN_COLOR_AREA_FLAT);
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
   drawcolor2 (button);
@@ -2760,14 +2760,14 @@ makewindow (void)
                     G_CALLBACK (color2_changed),
                     NULL);
 
-  scalescale = gimp_scale_entry_new (GTK_TABLE (table), 0, 3, _("Scale:"),
+  scalescale = picman_scale_entry_new (GTK_TABLE (table), 0, 3, _("Scale:"),
                                      100, -1, 1.0, 0.0, 10.0, 0.1, 1.0, 1,
                                      TRUE, 0.0, 0.0, NULL, NULL);
   g_signal_connect (scalescale, "value-changed",
                     G_CALLBACK (getscales),
                     NULL);
 
-  turbulencescale = gimp_scale_entry_new (GTK_TABLE (table), 0, 4,
+  turbulencescale = picman_scale_entry_new (GTK_TABLE (table), 0, 4,
                                           _("Turbulence:"),
                                           100, -1, 1.0, 0.0, 10.0, 0.1, 1.0, 1,
                                           TRUE, 0.0, 0.0, NULL, NULL);
@@ -2775,21 +2775,21 @@ makewindow (void)
                     G_CALLBACK (getscales),
                     NULL);
 
-  amountscale = gimp_scale_entry_new (GTK_TABLE (table), 0, 5, _("Amount:"),
+  amountscale = picman_scale_entry_new (GTK_TABLE (table), 0, 5, _("Amount:"),
                                        100, -1, 1.0, 0.0, 1.0, 0.01, 0.1, 2,
                                        TRUE, 0.0, 0.0, NULL, NULL);
   g_signal_connect (amountscale, "value-changed",
                     G_CALLBACK (getscales),
                     NULL);
 
-  expscale = gimp_scale_entry_new (GTK_TABLE (table), 0, 6, _("Exp.:"),
+  expscale = picman_scale_entry_new (GTK_TABLE (table), 0, 6, _("Exp.:"),
                                    100, -1, 1.0, 0.0, 1.0, 0.01, 0.1, 2,
                                    TRUE, 0.0, 0.0, NULL, NULL);
   g_signal_connect (expscale, "value-changed",
                     G_CALLBACK (getscales),
                     NULL);
 
-  frame = gimp_frame_new (_("Transformations"));
+  frame = picman_frame_new (_("Transformations"));
   gtk_box_pack_start (GTK_BOX (main_hbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -2805,62 +2805,62 @@ makewindow (void)
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  scalexscale = gimp_scale_entry_new (GTK_TABLE (table), 0, 0, _("Scale X:"),
+  scalexscale = picman_scale_entry_new (GTK_TABLE (table), 0, 0, _("Scale X:"),
                                       100, -1, 1.0, 0.0, 10.0, 0.1, 1.0, 2,
                                       TRUE, 0.0, 0.0, NULL, NULL);
   g_signal_connect (scalexscale, "value-changed",
                     G_CALLBACK (getscales),
                     NULL);
 
-  scaleyscale = gimp_scale_entry_new (GTK_TABLE (table), 0, 1, _("Scale Y:"),
+  scaleyscale = picman_scale_entry_new (GTK_TABLE (table), 0, 1, _("Scale Y:"),
                                       100, -1, 1.0, 0.0, 10.0, 0.1, 1.0, 2,
                                       TRUE, 0.0, 0.0, NULL, NULL);
   g_signal_connect (scaleyscale, "value-changed",
                     G_CALLBACK (getscales),
                     NULL);
-  scalezscale = gimp_scale_entry_new (GTK_TABLE (table), 0, 2, _("Scale Z:"),
+  scalezscale = picman_scale_entry_new (GTK_TABLE (table), 0, 2, _("Scale Z:"),
                                       100, -1, 1.0, 0.0, 10.0, 0.1, 1.0, 2,
                                       TRUE, 0.0, 0.0, NULL, NULL);
   g_signal_connect (scalezscale, "value-changed",
                     G_CALLBACK (getscales),
                     NULL);
 
-  rotxscale = gimp_scale_entry_new (GTK_TABLE (table), 0, 3, _("Rotate X:"),
+  rotxscale = picman_scale_entry_new (GTK_TABLE (table), 0, 3, _("Rotate X:"),
                                     100, -1, 0.0, 0.0, 360.0, 1.0, 10.0, 1,
                                     TRUE, 0.0, 0.0, NULL, NULL);
   g_signal_connect (rotxscale, "value-changed",
                     G_CALLBACK (getscales),
                     NULL);
 
-  rotyscale = gimp_scale_entry_new (GTK_TABLE (table), 0, 4, _("Rotate Y:"),
+  rotyscale = picman_scale_entry_new (GTK_TABLE (table), 0, 4, _("Rotate Y:"),
                                     100, -1, 0.0, 0.0, 360.0, 1.0, 10.0, 1,
                                     TRUE, 0.0, 0.0, NULL, NULL);
   g_signal_connect (rotyscale, "value-changed",
                     G_CALLBACK (getscales),
                     NULL);
 
-  rotzscale = gimp_scale_entry_new (GTK_TABLE (table), 0, 5, _("Rotate Z:"),
+  rotzscale = picman_scale_entry_new (GTK_TABLE (table), 0, 5, _("Rotate Z:"),
                                     100, -1, 0.0, 0.0, 360.0, 1.0, 10.0, 1,
                                     TRUE, 0.0, 0.0, NULL, NULL);
   g_signal_connect (rotzscale, "value-changed",
                     G_CALLBACK (getscales),
                     NULL);
 
-  posxscale = gimp_scale_entry_new (GTK_TABLE (table), 0, 6, _("Position X:"),
+  posxscale = picman_scale_entry_new (GTK_TABLE (table), 0, 6, _("Position X:"),
                                     100, -1, 0.0, -20.0, 20.0, 0.1, 1.0, 1,
                                     TRUE, 0.0, 0.0, NULL, NULL);
   g_signal_connect (posxscale, "value-changed",
                     G_CALLBACK (getscales),
                     NULL);
 
-  posyscale = gimp_scale_entry_new (GTK_TABLE (table), 0, 7, _("Position Y:"),
+  posyscale = picman_scale_entry_new (GTK_TABLE (table), 0, 7, _("Position Y:"),
                                     100, -1, 0.0, -20.0, 20.0, 0.1, 1.0, 1,
                                     TRUE, 0.0, 0.0, NULL, NULL);
   g_signal_connect (posyscale, "value-changed",
                     G_CALLBACK (getscales),
                     NULL);
 
-  poszscale = gimp_scale_entry_new (GTK_TABLE (table), 0, 8, _("Position Z:"),
+  poszscale = picman_scale_entry_new (GTK_TABLE (table), 0, 8, _("Position Z:"),
                                     100, -1, 0.0, -20.0, 20.0, 0.1, 1.0, 1,
                                     TRUE, 0.0, 0.0, NULL, NULL);
   g_signal_connect (poszscale, "value-changed",
@@ -2886,7 +2886,7 @@ pixelval (gdouble v)
 static gboolean
 render (void)
 {
-  GimpVector4  col;
+  PicmanVector4  col;
   guchar *dest_row;
   ray     r;
   gint    x, y, p;
@@ -2927,7 +2927,7 @@ render (void)
               else if (col.w > 1.0)
                 col.w = 1.0;
 
-              GIMP_CAIRO_RGB24_SET_PIXEL ((dest_row + p),
+              PICMAN_CAIRO_RGB24_SET_PIXEL ((dest_row + p),
                 pixelval (255 * col.x) * col.w + g * (1.0 - col.w),
                 pixelval (255 * col.y) * col.w + g * (1.0 - col.w),
                 pixelval (255 * col.z) * col.w + g * (1.0 - col.w));
@@ -2943,16 +2943,16 @@ render (void)
 }
 
 static void
-realrender (GimpDrawable *drawable)
+realrender (PicmanDrawable *drawable)
 {
   gint          x, y;
   ray           r;
-  GimpVector4   rcol;
+  PicmanVector4   rcol;
   gint          tx, ty;
   gint          x1, y1, x2, y2;
   guchar       *dest;
   gint          bpp;
-  GimpPixelRgn  pr, dpr;
+  PicmanPixelRgn  pr, dpr;
   guchar       *buffer, *ibuffer;
 
   initworld ();
@@ -2960,23 +2960,23 @@ realrender (GimpDrawable *drawable)
   r.v1.z = -10.0;
   r.v2.z = 0.0;
 
-  gimp_pixel_rgn_init (&pr, drawable, 0, 0,
-                       gimp_drawable_width (drawable->drawable_id),
-                       gimp_drawable_height (drawable->drawable_id), FALSE,
+  picman_pixel_rgn_init (&pr, drawable, 0, 0,
+                       picman_drawable_width (drawable->drawable_id),
+                       picman_drawable_height (drawable->drawable_id), FALSE,
                        FALSE);
-  gimp_pixel_rgn_init (&dpr, drawable, 0, 0,
-                       gimp_drawable_width (drawable->drawable_id),
-                       gimp_drawable_height (drawable->drawable_id), TRUE,
+  picman_pixel_rgn_init (&dpr, drawable, 0, 0,
+                       picman_drawable_width (drawable->drawable_id),
+                       picman_drawable_height (drawable->drawable_id), TRUE,
                        TRUE);
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
-  bpp = gimp_drawable_bpp (drawable->drawable_id);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  bpp = picman_drawable_bpp (drawable->drawable_id);
   buffer = g_malloc ((x2 - x1) * 4);
   ibuffer = g_malloc ((x2 - x1) * 4);
 
   tx = x2 - x1;
   ty = y2 - y1;
 
-  gimp_progress_init (_("Rendering sphere"));
+  picman_progress_init (_("Rendering sphere"));
 
   for (y = 0; y < ty; y++)
     {
@@ -2993,7 +2993,7 @@ realrender (GimpDrawable *drawable)
           dest[3] = pixelval (255 * rcol.w);
           dest += 4;
         }
-      gimp_pixel_rgn_get_row (&pr, ibuffer, x1, y1 + y, x2 - x1);
+      picman_pixel_rgn_get_row (&pr, ibuffer, x1, y1 + y, x2 - x1);
       for (x = 0; x < (x2 - x1); x++)
         {
           gint   k, dx = x * 4, sx = x * bpp;
@@ -3005,28 +3005,28 @@ realrender (GimpDrawable *drawable)
                 buffer[dx + k] * a + ibuffer[sx + k] * (1.0 - a);
             }
         }
-      gimp_pixel_rgn_set_row (&dpr, ibuffer, x1, y1 + y, x2 - x1);
-      gimp_progress_update ((gdouble) y / (gdouble) ty);
+      picman_pixel_rgn_set_row (&dpr, ibuffer, x1, y1 + y, x2 - x1);
+      picman_progress_update ((gdouble) y / (gdouble) ty);
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
   g_free (buffer);
   g_free (ibuffer);
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
 }
 
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)"         },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"               }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)"         },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"               }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Create an image of a textured sphere"),
                           "This plugin can be used to create textured and/or "
                           "bumpmapped spheres, and uses a small lightweight "
@@ -3036,15 +3036,15 @@ query (void)
                           "1999",
                           N_("Sphere _Designer..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
 
 static gboolean
-sphere_main (GimpDrawable *drawable)
+sphere_main (PicmanDrawable *drawable)
 {
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
   img_stride = cairo_format_stride_for_width (CAIRO_FORMAT_RGB24, PREVIEWSIZE);
   img = g_malloc0 (img_stride * PREVIEWSIZE);
@@ -3078,14 +3078,14 @@ sphere_main (GimpDrawable *drawable)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint               x, y, w, h;
 
   run_mode = param[0].data.d_int32;
@@ -3095,12 +3095,12 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id, &x, &y, &w, &h))
+  if (! picman_drawable_mask_intersect (drawable->drawable_id, &x, &y, &w, &h))
     {
       g_message (_("Region selected for plug-in is empty"));
       return;
@@ -3108,43 +3108,43 @@ run (const gchar      *name,
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       s.com.numtexture = 0;
-      gimp_get_data (PLUG_IN_PROC, &s);
+      picman_get_data (PLUG_IN_PROC, &s);
       if (!sphere_main (drawable))
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       s.com.numtexture = 0;
-      gimp_get_data (PLUG_IN_PROC, &s);
+      picman_get_data (PLUG_IN_PROC, &s);
       if (s.com.numtexture == 0)
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
     default:
       /* Not implementet yet... */
-      gimp_drawable_detach (drawable);
+      picman_drawable_detach (drawable);
       return;
     }
 
-  gimp_set_data (PLUG_IN_PROC, &s, sizeof (s));
+  picman_set_data (PLUG_IN_PROC, &s, sizeof (s));
 
   realrender (drawable);
-  gimp_displays_flush ();
+  picman_displays_flush ();
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 MAIN ()

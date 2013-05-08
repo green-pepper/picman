@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdrawable-filter.c
+ * picmandrawable-filter.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,89 +23,89 @@
 
 #include "core-types.h"
 
-#include "gegl/gimpapplicator.h"
-#include "gegl/gimp-gegl-apply-operation.h"
+#include "gegl/picmanapplicator.h"
+#include "gegl/picman-gegl-apply-operation.h"
 
-#include "gimpdrawable.h"
-#include "gimpdrawable-filter.h"
-#include "gimpdrawable-private.h"
-#include "gimpdrawableundo.h"
-#include "gimpfilter.h"
-#include "gimpfilterstack.h"
-#include "gimpimage-undo.h"
-#include "gimpprogress.h"
+#include "picmandrawable.h"
+#include "picmandrawable-filter.h"
+#include "picmandrawable-private.h"
+#include "picmandrawableundo.h"
+#include "picmanfilter.h"
+#include "picmanfilterstack.h"
+#include "picmanimage-undo.h"
+#include "picmanprogress.h"
 
 
-GimpContainer *
-gimp_drawable_get_filters (GimpDrawable *drawable)
+PicmanContainer *
+picman_drawable_get_filters (PicmanDrawable *drawable)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
   return drawable->private->filter_stack;
 }
 
 void
-gimp_drawable_add_filter (GimpDrawable *drawable,
-                          GimpFilter   *filter)
+picman_drawable_add_filter (PicmanDrawable *drawable,
+                          PicmanFilter   *filter)
 {
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (GIMP_IS_FILTER (filter));
-  g_return_if_fail (gimp_drawable_has_filter (drawable, filter) == FALSE);
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_FILTER (filter));
+  g_return_if_fail (picman_drawable_has_filter (drawable, filter) == FALSE);
 
-  gimp_container_add (drawable->private->filter_stack,
-                      GIMP_OBJECT (filter));
+  picman_container_add (drawable->private->filter_stack,
+                      PICMAN_OBJECT (filter));
 }
 
 void
-gimp_drawable_remove_filter (GimpDrawable *drawable,
-                             GimpFilter   *filter)
+picman_drawable_remove_filter (PicmanDrawable *drawable,
+                             PicmanFilter   *filter)
 {
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (GIMP_IS_FILTER (filter));
-  g_return_if_fail (gimp_drawable_has_filter (drawable, filter) == TRUE);
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_FILTER (filter));
+  g_return_if_fail (picman_drawable_has_filter (drawable, filter) == TRUE);
 
-  gimp_container_remove (drawable->private->filter_stack,
-                         GIMP_OBJECT (filter));
+  picman_container_remove (drawable->private->filter_stack,
+                         PICMAN_OBJECT (filter));
 }
 
 gboolean
-gimp_drawable_has_filter (GimpDrawable *drawable,
-                          GimpFilter   *filter)
+picman_drawable_has_filter (PicmanDrawable *drawable,
+                          PicmanFilter   *filter)
 {
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
-  g_return_val_if_fail (GIMP_IS_FILTER (filter), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_FILTER (filter), FALSE);
 
-  return gimp_container_have (drawable->private->filter_stack,
-                              GIMP_OBJECT (filter));
+  return picman_container_have (drawable->private->filter_stack,
+                              PICMAN_OBJECT (filter));
 }
 
 void
-gimp_drawable_merge_filter (GimpDrawable *drawable,
-                            GimpFilter   *filter,
-                            GimpProgress *progress,
+picman_drawable_merge_filter (PicmanDrawable *drawable,
+                            PicmanFilter   *filter,
+                            PicmanProgress *progress,
                             const gchar  *undo_desc)
 {
   GeglRectangle rect;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (GIMP_IS_FILTER (filter));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_FILTER (filter));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
-  if (gimp_item_mask_intersect (GIMP_ITEM (drawable),
+  if (picman_item_mask_intersect (PICMAN_ITEM (drawable),
                                 &rect.x, &rect.y,
                                 &rect.width, &rect.height))
     {
-      GimpApplicator *applicator;
+      PicmanApplicator *applicator;
       GeglBuffer     *buffer;
       GeglNode       *node;
       GeglNode       *src_node;
 
-      gimp_drawable_push_undo (drawable, undo_desc, NULL,
+      picman_drawable_push_undo (drawable, undo_desc, NULL,
                                rect.x, rect.y,
                                rect.width, rect.height);
 
-      node   = gimp_filter_get_node (filter);
-      buffer = gimp_drawable_get_buffer (drawable);
+      node   = picman_filter_get_node (filter);
+      buffer = picman_drawable_get_buffer (drawable);
 
       src_node = gegl_node_new_child (NULL,
                                       "operation", "gegl:buffer-source",
@@ -115,14 +115,14 @@ gimp_drawable_merge_filter (GimpDrawable *drawable,
       gegl_node_connect_to (src_node, "output",
                             node,     "input");
 
-      applicator = gimp_filter_get_applicator (filter);
+      applicator = picman_filter_get_applicator (filter);
 
       if (applicator)
         {
-          GimpImage        *image = gimp_item_get_image (GIMP_ITEM (drawable));
-          GimpDrawableUndo *undo;
+          PicmanImage        *image = picman_item_get_image (PICMAN_ITEM (drawable));
+          PicmanDrawableUndo *undo;
 
-          undo = GIMP_DRAWABLE_UNDO (gimp_image_undo_get_fadeable (image));
+          undo = PICMAN_DRAWABLE_UNDO (picman_image_undo_get_fadeable (image));
 
           if (undo)
             {
@@ -130,11 +130,11 @@ gimp_drawable_merge_filter (GimpDrawable *drawable,
               undo->opacity    = applicator->opacity;
 
               undo->applied_buffer =
-                gimp_applicator_dup_apply_buffer (applicator, &rect);
+                picman_applicator_dup_apply_buffer (applicator, &rect);
             }
         }
 
-      gimp_gegl_apply_operation (NULL,
+      picman_gegl_apply_operation (NULL,
                                  progress, undo_desc,
                                  node,
                                  buffer,
@@ -142,7 +142,7 @@ gimp_drawable_merge_filter (GimpDrawable *drawable,
 
       g_object_unref (src_node);
 
-      gimp_drawable_update (drawable,
+      picman_drawable_update (drawable,
                             rect.x, rect.y,
                             rect.width, rect.height);
     }

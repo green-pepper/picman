@@ -1,9 +1,9 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpsizeentry.h
- * Copyright (C) 1999-2000 Sven Neumann <sven@gimp.org>
- *                         Michael Natterer <mitch@gimp.org>
+ * picmansizeentry.h
+ * Copyright (C) 1999-2000 Sven Neumann <sven@picman.org>
+ *                         Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,31 +20,31 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_SIZE_ENTRY_H__
-#define __GIMP_SIZE_ENTRY_H__
+#ifndef __PICMAN_SIZE_ENTRY_H__
+#define __PICMAN_SIZE_ENTRY_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_SIZE_ENTRY            (gimp_size_entry_get_type ())
-#define GIMP_SIZE_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SIZE_ENTRY, GimpSizeEntry))
-#define GIMP_SIZE_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SIZE_ENTRY, GimpSizeEntryClass))
-#define GIMP_IS_SIZE_ENTRY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, GIMP_TYPE_SIZE_ENTRY))
-#define GIMP_IS_SIZE_ENTRY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SIZE_ENTRY))
-#define GIMP_SIZE_ENTRY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SIZE_ENTRY, GimpSizeEntryClass))
+#define PICMAN_TYPE_SIZE_ENTRY            (picman_size_entry_get_type ())
+#define PICMAN_SIZE_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SIZE_ENTRY, PicmanSizeEntry))
+#define PICMAN_SIZE_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SIZE_ENTRY, PicmanSizeEntryClass))
+#define PICMAN_IS_SIZE_ENTRY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE (obj, PICMAN_TYPE_SIZE_ENTRY))
+#define PICMAN_IS_SIZE_ENTRY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SIZE_ENTRY))
+#define PICMAN_SIZE_ENTRY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SIZE_ENTRY, PicmanSizeEntryClass))
 
 
-typedef struct _GimpSizeEntryClass  GimpSizeEntryClass;
+typedef struct _PicmanSizeEntryClass  PicmanSizeEntryClass;
 
-typedef struct _GimpSizeEntryField  GimpSizeEntryField;
+typedef struct _PicmanSizeEntryField  PicmanSizeEntryField;
 
-struct _GimpSizeEntry
+struct _PicmanSizeEntry
 {
   GtkTable   parent_instance;
 
@@ -52,104 +52,104 @@ struct _GimpSizeEntry
   gint       number_of_fields;
 
   GtkWidget *unitmenu;
-  GimpUnit   unit;
+  PicmanUnit   unit;
   gboolean   menu_show_pixels;
   gboolean   menu_show_percent;
 
   gboolean                   show_refval;
-  GimpSizeEntryUpdatePolicy  update_policy;
+  PicmanSizeEntryUpdatePolicy  update_policy;
 };
 
-struct _GimpSizeEntryClass
+struct _PicmanSizeEntryClass
 {
   GtkTableClass  parent_class;
 
-  void (* value_changed)  (GimpSizeEntry *gse);
-  void (* refval_changed) (GimpSizeEntry *gse);
-  void (* unit_changed)   (GimpSizeEntry *gse);
+  void (* value_changed)  (PicmanSizeEntry *gse);
+  void (* refval_changed) (PicmanSizeEntry *gse);
+  void (* unit_changed)   (PicmanSizeEntry *gse);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
 /* For information look into the C source or the html documentation */
 
-GType       gimp_size_entry_get_type (void) G_GNUC_CONST;
+GType       picman_size_entry_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_size_entry_new (gint                       number_of_fields,
-                                 GimpUnit                   unit,
+GtkWidget * picman_size_entry_new (gint                       number_of_fields,
+                                 PicmanUnit                   unit,
                                  const gchar               *unit_format,
                                  gboolean                   menu_show_pixels,
                                  gboolean                   menu_show_percent,
                                  gboolean                   show_refval,
                                  gint                       spinbutton_width,
-                                 GimpSizeEntryUpdatePolicy  update_policy);
+                                 PicmanSizeEntryUpdatePolicy  update_policy);
 
-void        gimp_size_entry_add_field  (GimpSizeEntry   *gse,
+void        picman_size_entry_add_field  (PicmanSizeEntry   *gse,
                                         GtkSpinButton   *value_spinbutton,
                                         GtkSpinButton   *refval_spinbutton);
 
-GtkWidget * gimp_size_entry_attach_label          (GimpSizeEntry *gse,
+GtkWidget * picman_size_entry_attach_label          (PicmanSizeEntry *gse,
                                                    const gchar   *text,
                                                    gint           row,
                                                    gint           column,
                                                    gfloat         alignment);
 
-void        gimp_size_entry_set_resolution        (GimpSizeEntry *gse,
+void        picman_size_entry_set_resolution        (PicmanSizeEntry *gse,
                                                    gint           field,
                                                    gdouble        resolution,
                                                    gboolean       keep_size);
 
-void        gimp_size_entry_set_size              (GimpSizeEntry *gse,
+void        picman_size_entry_set_size              (PicmanSizeEntry *gse,
                                                    gint           field,
                                                    gdouble        lower,
                                                    gdouble        upper);
 
-void        gimp_size_entry_set_value_boundaries  (GimpSizeEntry *gse,
+void        picman_size_entry_set_value_boundaries  (PicmanSizeEntry *gse,
                                                    gint           field,
                                                    gdouble        lower,
                                                    gdouble        upper);
 
-gdouble     gimp_size_entry_get_value             (GimpSizeEntry *gse,
+gdouble     picman_size_entry_get_value             (PicmanSizeEntry *gse,
                                                    gint           field);
-void        gimp_size_entry_set_value             (GimpSizeEntry *gse,
+void        picman_size_entry_set_value             (PicmanSizeEntry *gse,
                                                    gint           field,
                                                    gdouble        value);
 
-void        gimp_size_entry_set_refval_boundaries (GimpSizeEntry *gse,
+void        picman_size_entry_set_refval_boundaries (PicmanSizeEntry *gse,
                                                    gint           field,
                                                    gdouble        lower,
                                                    gdouble        upper);
-void        gimp_size_entry_set_refval_digits     (GimpSizeEntry *gse,
+void        picman_size_entry_set_refval_digits     (PicmanSizeEntry *gse,
                                                    gint           field,
                                                    gint           digits);
 
-gdouble     gimp_size_entry_get_refval            (GimpSizeEntry *gse,
+gdouble     picman_size_entry_get_refval            (PicmanSizeEntry *gse,
                                                    gint           field);
-void        gimp_size_entry_set_refval            (GimpSizeEntry *gse,
+void        picman_size_entry_set_refval            (PicmanSizeEntry *gse,
                                                    gint           field,
                                                    gdouble        refval);
 
-GimpUnit    gimp_size_entry_get_unit              (GimpSizeEntry *gse);
-void        gimp_size_entry_set_unit              (GimpSizeEntry *gse,
-                                                   GimpUnit       unit);
-void        gimp_size_entry_show_unit_menu        (GimpSizeEntry *gse,
+PicmanUnit    picman_size_entry_get_unit              (PicmanSizeEntry *gse);
+void        picman_size_entry_set_unit              (PicmanSizeEntry *gse,
+                                                   PicmanUnit       unit);
+void        picman_size_entry_show_unit_menu        (PicmanSizeEntry *gse,
                                                    gboolean       show);
 
-void        gimp_size_entry_set_pixel_digits      (GimpSizeEntry *gse,
+void        picman_size_entry_set_pixel_digits      (PicmanSizeEntry *gse,
                                                    gint           digits);
 
-void        gimp_size_entry_grab_focus            (GimpSizeEntry *gse);
-void        gimp_size_entry_set_activates_default (GimpSizeEntry *gse,
+void        picman_size_entry_grab_focus            (PicmanSizeEntry *gse);
+void        picman_size_entry_set_activates_default (PicmanSizeEntry *gse,
                                                    gboolean       setting);
-GtkWidget * gimp_size_entry_get_help_widget       (GimpSizeEntry *gse,
+GtkWidget * picman_size_entry_get_help_widget       (PicmanSizeEntry *gse,
                                                    gint           field);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_SIZE_ENTRY_H__ */
+#endif /* __PICMAN_SIZE_ENTRY_H__ */

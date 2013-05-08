@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,71 +23,71 @@
 
 #include "paint-types.h"
 
-#include "gimpink.h"
-#include "gimpink-blob.h"
-#include "gimpinkundo.h"
+#include "picmanink.h"
+#include "picmanink-blob.h"
+#include "picmaninkundo.h"
 
 
-static void   gimp_ink_undo_constructed (GObject             *object);
+static void   picman_ink_undo_constructed (GObject             *object);
 
-static void   gimp_ink_undo_pop         (GimpUndo            *undo,
-                                         GimpUndoMode         undo_mode,
-                                         GimpUndoAccumulator *accum);
-static void   gimp_ink_undo_free        (GimpUndo            *undo,
-                                         GimpUndoMode         undo_mode);
+static void   picman_ink_undo_pop         (PicmanUndo            *undo,
+                                         PicmanUndoMode         undo_mode,
+                                         PicmanUndoAccumulator *accum);
+static void   picman_ink_undo_free        (PicmanUndo            *undo,
+                                         PicmanUndoMode         undo_mode);
 
 
-G_DEFINE_TYPE (GimpInkUndo, gimp_ink_undo, GIMP_TYPE_PAINT_CORE_UNDO)
+G_DEFINE_TYPE (PicmanInkUndo, picman_ink_undo, PICMAN_TYPE_PAINT_CORE_UNDO)
 
-#define parent_class gimp_ink_undo_parent_class
+#define parent_class picman_ink_undo_parent_class
 
 
 static void
-gimp_ink_undo_class_init (GimpInkUndoClass *klass)
+picman_ink_undo_class_init (PicmanInkUndoClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
-  GimpUndoClass *undo_class   = GIMP_UNDO_CLASS (klass);
+  PicmanUndoClass *undo_class   = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed = gimp_ink_undo_constructed;
+  object_class->constructed = picman_ink_undo_constructed;
 
-  undo_class->pop           = gimp_ink_undo_pop;
-  undo_class->free          = gimp_ink_undo_free;
+  undo_class->pop           = picman_ink_undo_pop;
+  undo_class->free          = picman_ink_undo_free;
 }
 
 static void
-gimp_ink_undo_init (GimpInkUndo *undo)
+picman_ink_undo_init (PicmanInkUndo *undo)
 {
 }
 
 static void
-gimp_ink_undo_constructed (GObject *object)
+picman_ink_undo_constructed (GObject *object)
 {
-  GimpInkUndo *ink_undo = GIMP_INK_UNDO (object);
-  GimpInk     *ink;
+  PicmanInkUndo *ink_undo = PICMAN_INK_UNDO (object);
+  PicmanInk     *ink;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_INK (GIMP_PAINT_CORE_UNDO (ink_undo)->paint_core));
+  g_assert (PICMAN_IS_INK (PICMAN_PAINT_CORE_UNDO (ink_undo)->paint_core));
 
-  ink = GIMP_INK (GIMP_PAINT_CORE_UNDO (ink_undo)->paint_core);
+  ink = PICMAN_INK (PICMAN_PAINT_CORE_UNDO (ink_undo)->paint_core);
 
   if (ink->start_blob)
-    ink_undo->last_blob = gimp_blob_duplicate (ink->start_blob);
+    ink_undo->last_blob = picman_blob_duplicate (ink->start_blob);
 }
 
 static void
-gimp_ink_undo_pop (GimpUndo              *undo,
-                   GimpUndoMode           undo_mode,
-                   GimpUndoAccumulator   *accum)
+picman_ink_undo_pop (PicmanUndo              *undo,
+                   PicmanUndoMode           undo_mode,
+                   PicmanUndoAccumulator   *accum)
 {
-  GimpInkUndo *ink_undo = GIMP_INK_UNDO (undo);
+  PicmanInkUndo *ink_undo = PICMAN_INK_UNDO (undo);
 
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 
-  if (GIMP_PAINT_CORE_UNDO (ink_undo)->paint_core)
+  if (PICMAN_PAINT_CORE_UNDO (ink_undo)->paint_core)
     {
-      GimpInk  *ink = GIMP_INK (GIMP_PAINT_CORE_UNDO (ink_undo)->paint_core);
-      GimpBlob *tmp_blob;
+      PicmanInk  *ink = PICMAN_INK (PICMAN_PAINT_CORE_UNDO (ink_undo)->paint_core);
+      PicmanBlob *tmp_blob;
 
       tmp_blob = ink->last_blob;
       ink->last_blob = ink_undo->last_blob;
@@ -97,10 +97,10 @@ gimp_ink_undo_pop (GimpUndo              *undo,
 }
 
 static void
-gimp_ink_undo_free (GimpUndo     *undo,
-                    GimpUndoMode  undo_mode)
+picman_ink_undo_free (PicmanUndo     *undo,
+                    PicmanUndoMode  undo_mode)
 {
-  GimpInkUndo *ink_undo = GIMP_INK_UNDO (undo);
+  PicmanInkUndo *ink_undo = PICMAN_INK_UNDO (undo);
 
   if (ink_undo->last_blob)
     {
@@ -108,5 +108,5 @@ gimp_ink_undo_free (GimpUndo     *undo,
       ink_undo->last_blob = NULL;
     }
 
-  GIMP_UNDO_CLASS (parent_class)->free (undo, undo_mode);
+  PICMAN_UNDO_CLASS (parent_class)->free (undo, undo_mode);
 }

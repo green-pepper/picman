@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995, 1996, 1997 Spencer Kimball and Peter Mattis
  * Copyright (C) 1997 Josh MacDonald
  *
@@ -37,16 +37,16 @@
 #include <glib-object.h>
 #include <glib/gstdio.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core/core-types.h"
 
-#include "plug-in/gimppluginprocedure.h"
+#include "plug-in/picmanpluginprocedure.h"
 
 #include "file-procedure.h"
 #include "file-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 typedef enum
@@ -59,14 +59,14 @@ typedef enum
 
 /*  local function prototypes  */
 
-static GimpPlugInProcedure * file_proc_find_by_prefix    (GSList       *procs,
+static PicmanPlugInProcedure * file_proc_find_by_prefix    (GSList       *procs,
                                                           const gchar  *uri,
                                                           gboolean      skip_magic);
-static GimpPlugInProcedure * file_proc_find_by_extension (GSList       *procs,
+static PicmanPlugInProcedure * file_proc_find_by_extension (GSList       *procs,
                                                           const gchar  *uri,
                                                           gboolean      skip_magic,
                                                           gboolean      uri_procs_only);
-static GimpPlugInProcedure * file_proc_find_by_name      (GSList       *procs,
+static PicmanPlugInProcedure * file_proc_find_by_name      (GSList       *procs,
                                                           const gchar  *uri,
                                                           gboolean      skip_magic);
 
@@ -88,12 +88,12 @@ static FileMatchType         file_check_magic_list       (GSList       *magics_l
 
 /*  public functions  */
 
-GimpPlugInProcedure *
+PicmanPlugInProcedure *
 file_procedure_find (GSList       *procs,
                      const gchar  *uri,
                      GError      **error)
 {
-  GimpPlugInProcedure *file_proc;
+  PicmanPlugInProcedure *file_proc;
   gchar               *filename;
 
   g_return_val_if_fail (procs != NULL, NULL);
@@ -127,7 +127,7 @@ file_procedure_find (GSList       *procs,
   if (filename)
     {
       GSList              *list;
-      GimpPlugInProcedure *size_matched_proc = NULL;
+      PicmanPlugInProcedure *size_matched_proc = NULL;
       FILE                *ifp               = NULL;
       gboolean             opened            = FALSE;
       gint                 head_size         = 0;
@@ -213,7 +213,7 @@ file_procedure_find (GSList       *procs,
   return file_proc;
 }
 
-GimpPlugInProcedure *
+PicmanPlugInProcedure *
 file_procedure_find_by_prefix (GSList      *procs,
                                const gchar *uri)
 {
@@ -222,7 +222,7 @@ file_procedure_find_by_prefix (GSList      *procs,
   return file_proc_find_by_prefix (procs, uri, FALSE);
 }
 
-GimpPlugInProcedure *
+PicmanPlugInProcedure *
 file_procedure_find_by_extension (GSList      *procs,
                                   const gchar *uri)
 {
@@ -232,15 +232,15 @@ file_procedure_find_by_extension (GSList      *procs,
 }
 
 gboolean
-file_procedure_in_group (GimpPlugInProcedure *file_proc,
+file_procedure_in_group (PicmanPlugInProcedure *file_proc,
                          FileProcedureGroup   group)
 {
-  const gchar *name        = gimp_object_get_name (file_proc);
+  const gchar *name        = picman_object_get_name (file_proc);
   gboolean     is_xcf_save = FALSE;
   gboolean     is_filter   = FALSE;
   gboolean     is_uri      = FALSE;
 
-  is_xcf_save = (strcmp (name, "gimp-xcf-save") == 0);
+  is_xcf_save = (strcmp (name, "picman-xcf-save") == 0);
 
   is_filter   = (strcmp (name, "file-gz-save")  == 0 ||
                  strcmp (name, "file-bz2-save") == 0 ||
@@ -271,7 +271,7 @@ file_procedure_in_group (GimpPlugInProcedure *file_proc,
 
 /*  private functions  */
 
-static GimpPlugInProcedure *
+static PicmanPlugInProcedure *
 file_proc_find_by_prefix (GSList      *procs,
                           const gchar *uri,
                           gboolean     skip_magic)
@@ -280,7 +280,7 @@ file_proc_find_by_prefix (GSList      *procs,
 
   for (p = procs; p; p = g_slist_next (p))
     {
-      GimpPlugInProcedure *proc = p->data;
+      PicmanPlugInProcedure *proc = p->data;
       GSList              *prefixes;
 
       if (skip_magic && proc->magics_list)
@@ -298,7 +298,7 @@ file_proc_find_by_prefix (GSList      *procs,
   return NULL;
 }
 
-static GimpPlugInProcedure *
+static PicmanPlugInProcedure *
 file_proc_find_by_extension (GSList      *procs,
                              const gchar *uri,
                              gboolean     skip_magic,
@@ -316,7 +316,7 @@ file_proc_find_by_extension (GSList      *procs,
 
   for (p = procs; p; p = g_slist_next (p))
     {
-      GimpPlugInProcedure *proc = p->data;
+      PicmanPlugInProcedure *proc = p->data;
       GSList              *extensions;
 
       if (uri_procs_only && ! proc->handles_uri)
@@ -349,12 +349,12 @@ file_proc_find_by_extension (GSList      *procs,
   return NULL;
 }
 
-static GimpPlugInProcedure *
+static PicmanPlugInProcedure *
 file_proc_find_by_name (GSList      *procs,
                         const gchar *uri,
                         gboolean     skip_magic)
 {
-  GimpPlugInProcedure *proc;
+  PicmanPlugInProcedure *proc;
 
   proc = file_proc_find_by_extension (procs, uri, skip_magic, TRUE);
 

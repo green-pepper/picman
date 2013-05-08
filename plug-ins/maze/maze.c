@@ -1,12 +1,12 @@
 /* $Id$
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  * It draws mazes...
  *
- * Implemented as a GIMP 0.99 Plugin by
+ * Implemented as a PICMAN 0.99 Plugin by
  * Kevin Turner <acapnotic@users.sourceforge.net>
- * http://gimp-plug-ins.sourceforge.net/maze/
+ * http://picman-plug-ins.sourceforge.net/maze/
  *
- * Code generously borrowed from assorted GIMP plugins
+ * Code generously borrowed from assorted PICMAN plugins
  * and used as a template to get me started on this one.  :)
  *
  * TO DO:
@@ -38,25 +38,25 @@
 
 #include "config.h"
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
 #include "maze.h"
 #include "maze-algorithms.h"
 #include "maze-dialog.h"
 #include "maze-utils.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 static void      query     (void);
 static void      run       (const gchar      *name,
                             gint              nparams,
-                            const GimpParam  *param,
+                            const PicmanParam  *param,
                             gint             *nreturn_vals,
-                            GimpParam       **return_vals);
+                            PicmanParam       **return_vals);
 
-static void      maze      (GimpDrawable     *drawable);
+static void      maze      (PicmanDrawable     *drawable);
 
 static void      mask_maze (gint32  selection_ID,
 			    guchar *maz,
@@ -70,7 +70,7 @@ static void      mask_maze (gint32  selection_ID,
 			    gint    deady);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,    /* init_proc */
   NULL,    /* quit_proc */
@@ -102,23 +102,23 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",     "(unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",  "ID of drawable" },
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",     "(unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "ID of drawable" },
     /* If we did have parameters, these be them: */
-    { GIMP_PDB_INT16,    "width",     "Width of the passages" },
-    { GIMP_PDB_INT16,    "height",    "Height of the passages"},
-    { GIMP_PDB_INT8,     "tileable",  "Tileable maze?"},
-    { GIMP_PDB_INT8,     "algorithm", "Generation algorithm"
+    { PICMAN_PDB_INT16,    "width",     "Width of the passages" },
+    { PICMAN_PDB_INT16,    "height",    "Height of the passages"},
+    { PICMAN_PDB_INT8,     "tileable",  "Tileable maze?"},
+    { PICMAN_PDB_INT8,     "algorithm", "Generation algorithm"
                                       "(0=DEPTH FIRST, 1=PRIM'S ALGORITHM)" },
-    { GIMP_PDB_INT32,    "seed",      "Random Seed"},
-    { GIMP_PDB_INT16,    "multiple",  "Multiple (use 57)" },
-    { GIMP_PDB_INT16,    "offset",    "Offset (use 1)" }
+    { PICMAN_PDB_INT32,    "seed",      "Random Seed"},
+    { PICMAN_PDB_INT16,    "multiple",  "Multiple (use 57)" },
+    { PICMAN_PDB_INT16,    "offset",    "Offset (use 1)" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
 			  N_("Draw a labyrinth"),
 			  "Generates a maze using either the depth-first "
                           "search method or Prim's algorithm.  Can make "
@@ -128,25 +128,25 @@ query (void)
 			  "1997, 1998",
 			  N_("_Maze..."),
 			  "RGB*, GRAY*, INDEXED*",
-			  GIMP_PLUGIN,
+			  PICMAN_PLUGIN,
 			  G_N_ELEMENTS (args), 0,
 			  args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC,
+  picman_plugin_menu_register (PLUG_IN_PROC,
                              "<Image>/Filters/Render/Pattern");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint               x, y;
 
 #ifdef MAZE_DEBUG
@@ -161,37 +161,37 @@ run (const gchar      *name,
 
   gr = g_rand_new ();
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /* get the selection width and height for the GUI. Return if the
    * selection and drawable do not intersect.
    */
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &x, &y, &sel_w, &sel_h))
     return;
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /* Possibly retrieve data */
-      gimp_get_data (PLUG_IN_PROC, &mvals);
+      picman_get_data (PLUG_IN_PROC, &mvals);
 
       /* Acquire info with a dialog */
       if (! maze_dialog ())
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams != 10)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
 	{
 	  mvals.width     = (gint16)  param[3].data.d_int16;
 	  mvals.height    = (gint16)  param[4].data.d_int16;
@@ -206,9 +206,9 @@ run (const gchar      *name,
 	}
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /* Possibly retrieve data */
-      gimp_get_data (PLUG_IN_PROC, &mvals);
+      picman_get_data (PLUG_IN_PROC, &mvals);
 
       if (mvals.random_seed)
         mvals.seed = g_random_int ();
@@ -219,29 +219,29 @@ run (const gchar      *name,
   }
 
   /* color, gray, or indexed... hmm, miss anything?  ;)  */
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id) ||
-      gimp_drawable_is_indexed (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id) ||
+      picman_drawable_is_indexed (drawable->drawable_id))
     {
       maze (drawable);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-	gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+	picman_displays_flush ();
 
-      if (run_mode == GIMP_RUN_INTERACTIVE ||
-	  run_mode == GIMP_RUN_WITH_LAST_VALS)
+      if (run_mode == PICMAN_RUN_INTERACTIVE ||
+	  run_mode == PICMAN_RUN_WITH_LAST_VALS)
         {
-          gimp_set_data (PLUG_IN_PROC, &mvals, sizeof (MazeValues));
+          picman_set_data (PLUG_IN_PROC, &mvals, sizeof (MazeValues));
         }
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   g_rand_free (gr);
 }
@@ -281,9 +281,9 @@ maze_dumpX (guchar *maz,
 #endif
 
 static void
-maze (GimpDrawable * drawable)
+maze (PicmanDrawable * drawable)
 {
-  GimpPixelRgn dest_rgn;
+  PicmanPixelRgn dest_rgn;
   guint        mw, mh;
   gint         deadx, deady;
   guint        cur_progress, max_progress;
@@ -299,7 +299,7 @@ maze (GimpDrawable * drawable)
   guint        pos;
 
   /* Gets the input area... */
-  active_selection = gimp_drawable_mask_bounds (drawable->drawable_id,
+  active_selection = picman_drawable_mask_bounds (drawable->drawable_id,
 						&x1, &y1, &x2, &y2);
 
   /***************** Maze Stuff Happens Here ***************/
@@ -414,7 +414,7 @@ maze (GimpDrawable * drawable)
   /************** Begin Drawing *********************/
 
   /* Initialize pixel region (?) */
-  gimp_pixel_rgn_init (&dest_rgn, drawable, x1, y1, (x2 - x1), (y2 - y1),
+  picman_pixel_rgn_init (&dest_rgn, drawable, x1, y1, (x2 - x1), (y2 - y1),
                        TRUE, TRUE);
 
   cur_progress = 0;
@@ -424,11 +424,11 @@ maze (GimpDrawable * drawable)
   /* Get the foreground and background colors */
   get_colors (drawable, fg, bg);
 
-  gimp_progress_init (_("Drawing maze"));
+  picman_progress_init (_("Drawing maze"));
 
-  for (pr = gimp_pixel_rgns_register (1, &dest_rgn);
+  for (pr = picman_pixel_rgns_register (1, &dest_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       x = dest_rgn.x - x1 - deadx;
       y = dest_rgn.y - y1 - deady;
@@ -482,14 +482,14 @@ maze (GimpDrawable * drawable)
         {
           cur_progress = cur_progress - max_progress;
           per_progress = per_progress + 0.01;
-          gimp_progress_update (per_progress);
+          picman_progress_update (per_progress);
         }
     }
 
-  gimp_progress_update (1.0);
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
+  picman_progress_update (1.0);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
 }
 
 /* Shaped mazes: */
@@ -553,7 +553,7 @@ mask_maze (gint32  drawable_ID,
            gint    deady)
 {
   gint32       selection_ID;
-  GimpPixelRgn sel_rgn;
+  PicmanPixelRgn sel_rgn;
   gint         xx0 = 0;
   gint         yy0 = 0;
   gint         xoff;
@@ -567,15 +567,15 @@ mask_maze (gint32  drawable_ID,
   guchar      *linebuf;
 
   selection_ID =
-    gimp_image_get_selection (gimp_item_get_image (drawable_ID));
+    picman_image_get_selection (picman_item_get_image (drawable_ID));
 
   if (selection_ID == -1)
     return;
 
-  gimp_pixel_rgn_init (&sel_rgn, gimp_drawable_get (selection_ID),
+  picman_pixel_rgn_init (&sel_rgn, picman_drawable_get (selection_ID),
                        x1, y1, (x2-x1), (y2-y1),
                        FALSE, FALSE);
-  gimp_drawable_offsets (drawable_ID, &xoff, &yoff);
+  picman_drawable_offsets (drawable_ID, &xoff, &yoff);
 
   /* Special cases:  If mw or mh < 3 */
   /* FIXME (Currently works, but inefficiently.) */
@@ -600,7 +600,7 @@ mask_maze (gint32  drawable_ID,
 
   for (cur_row=1; cur_row < mh; cur_row += 2)
     {
-      gimp_pixel_rgn_get_row (&sel_rgn, linebuf, x1+xoff, yy, (x2 - x1));
+      picman_pixel_rgn_get_row (&sel_rgn, linebuf, x1+xoff, yy, (x2 - x1));
 
       cur_col = 1; xx = mvals.width;
 
@@ -638,7 +638,7 @@ mask_maze (gint32  drawable_ID,
   xx=xx0 + x1half;
   for (cur_col = 1; cur_col < mw; cur_col += 2)
     {
-      gimp_pixel_rgn_get_col (&sel_rgn, linebuf, xx, y1, (y2-y1));
+      picman_pixel_rgn_get_col (&sel_rgn, linebuf, xx, y1, (y2-y1));
 
       cur_row = 1; yy = mvals.height;
 
@@ -689,12 +689,12 @@ mask_maze (gint32  drawable_ID,
    * halfway through a block?  What if we get a narrow edge-tile
    * that..." etc, etc.  I shall investigate other options.
    * Possibly a row buffer, or can we use something other than this
-   * black-magic gimp_pixel_rgns_register call to get tiles of
+   * black-magic picman_pixel_rgns_register call to get tiles of
    * different sizes?  Now that'd be nice...  */
 
-  for (pr = gimp_pixel_rgns_register (1, &sel_rgn);
+  for (pr = picman_pixel_rgns_register (1, &sel_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       /* This gives us coordinates relative to the starting point
        * of the maze grid.  Negative values happen here if there

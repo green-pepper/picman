@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PARAM_SPECS_DESC_H__
-#define __GIMP_PARAM_SPECS_DESC_H__
+#ifndef __PICMAN_PARAM_SPECS_DESC_H__
+#define __PICMAN_PARAM_SPECS_DESC_H__
 
 
-gchar * gimp_param_spec_get_desc (GParamSpec *pspec);
+gchar * picman_param_spec_get_desc (GParamSpec *pspec);
 
 
-#endif  /*  __GIMP_PARAM_SPECS_DESC_H__  */
+#endif  /*  __PICMAN_PARAM_SPECS_DESC_H__  */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 
 #include "config.h"
 
-#include "libgimp/gimp.h"
+#include "libpicman/picman.h"
 
 #include "scheme-wrapper.h"
 #include "script-fu-eval.h"
@@ -28,19 +28,19 @@
 void
 script_fu_eval_run (const gchar      *name,
                     gint              nparams,
-                    const GimpParam  *params,
+                    const PicmanParam  *params,
                     gint             *nreturn_vals,
-                    GimpParam       **return_vals)
+                    PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
+  static PicmanParam   values[2];
   GString           *output = g_string_new (NULL);
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
 
   run_mode = params[0].data.d_int32;
 
@@ -49,14 +49,14 @@ script_fu_eval_run (const gchar      *name,
 
   switch (run_mode)
     {
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (ts_interpret_string (params[1].data.d_string) != 0)
-        status = GIMP_PDB_EXECUTION_ERROR;
+        status = PICMAN_PDB_EXECUTION_ERROR;
       break;
 
-    case GIMP_RUN_INTERACTIVE:
-    case GIMP_RUN_WITH_LAST_VALS:
-      status        = GIMP_PDB_CALLING_ERROR;
+    case PICMAN_RUN_INTERACTIVE:
+    case PICMAN_RUN_WITH_LAST_VALS:
+      status        = PICMAN_PDB_CALLING_ERROR;
       g_string_assign (output, _("Script-Fu evaluation mode only allows "
                                  "non-interactive invocation"));
       break;
@@ -67,10 +67,10 @@ script_fu_eval_run (const gchar      *name,
 
   values[0].data.d_status = status;
 
-  if (status != GIMP_PDB_SUCCESS && output->len > 0)
+  if (status != PICMAN_PDB_SUCCESS && output->len > 0)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = g_string_free (output, FALSE);
     }
   else

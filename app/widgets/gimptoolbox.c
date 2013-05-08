@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,38 +24,38 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
 
 #include "file/file-open.h"
 #include "file/file-utils.h"
 
-#include "gimpcairo-wilber.h"
-#include "gimpdevices.h"
-#include "gimpdialogfactory.h"
-#include "gimpdockwindow.h"
-#include "gimphelp-ids.h"
-#include "gimppanedbox.h"
-#include "gimptoolbox.h"
-#include "gimptoolbox-color-area.h"
-#include "gimptoolbox-dnd.h"
-#include "gimptoolbox-image-area.h"
-#include "gimptoolbox-indicator-area.h"
-#include "gimptoolpalette.h"
-#include "gimpuimanager.h"
-#include "gimpwidgets-utils.h"
+#include "picmancairo-wilber.h"
+#include "picmandevices.h"
+#include "picmandialogfactory.h"
+#include "picmandockwindow.h"
+#include "picmanhelp-ids.h"
+#include "picmanpanedbox.h"
+#include "picmantoolbox.h"
+#include "picmantoolbox-color-area.h"
+#include "picmantoolbox-dnd.h"
+#include "picmantoolbox-image-area.h"
+#include "picmantoolbox-indicator-area.h"
+#include "picmantoolpalette.h"
+#include "picmanuimanager.h"
+#include "picmanwidgets-utils.h"
 #include "gtkhwrapbox.h"
 
 #include "about.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -65,9 +65,9 @@ enum
 };
 
 
-struct _GimpToolboxPrivate
+struct _PicmanToolboxPrivate
 {
-  GimpContext       *context;
+  PicmanContext       *context;
 
   GtkWidget         *vbox;
 
@@ -81,62 +81,62 @@ struct _GimpToolboxPrivate
   gint               area_rows;
   gint               area_columns;
 
-  GimpPanedBox      *drag_handler;
+  PicmanPanedBox      *drag_handler;
 
   gboolean           in_destruction;
 };
 
 
-static void        gimp_toolbox_constructed             (GObject        *object);
-static void        gimp_toolbox_dispose                 (GObject        *object);
-static void        gimp_toolbox_set_property            (GObject        *object,
+static void        picman_toolbox_constructed             (GObject        *object);
+static void        picman_toolbox_dispose                 (GObject        *object);
+static void        picman_toolbox_set_property            (GObject        *object,
                                                          guint           property_id,
                                                          const GValue   *value,
                                                          GParamSpec     *pspec);
-static void        gimp_toolbox_get_property            (GObject        *object,
+static void        picman_toolbox_get_property            (GObject        *object,
                                                          guint           property_id,
                                                          GValue         *value,
                                                          GParamSpec     *pspec);
-static void        gimp_toolbox_size_allocate           (GtkWidget      *widget,
+static void        picman_toolbox_size_allocate           (GtkWidget      *widget,
                                                          GtkAllocation  *allocation);
-static gboolean    gimp_toolbox_button_press_event      (GtkWidget      *widget,
+static gboolean    picman_toolbox_button_press_event      (GtkWidget      *widget,
                                                          GdkEventButton *event);
-static void        gimp_toolbox_drag_leave              (GtkWidget      *widget,
+static void        picman_toolbox_drag_leave              (GtkWidget      *widget,
                                                          GdkDragContext *context,
                                                          guint           time,
-                                                         GimpToolbox    *toolbox);
-static gboolean    gimp_toolbox_drag_motion             (GtkWidget      *widget,
-                                                         GdkDragContext *context,
-                                                         gint            x,
-                                                         gint            y,
-                                                         guint           time,
-                                                         GimpToolbox    *toolbox);
-static gboolean    gimp_toolbox_drag_drop               (GtkWidget      *widget,
+                                                         PicmanToolbox    *toolbox);
+static gboolean    picman_toolbox_drag_motion             (GtkWidget      *widget,
                                                          GdkDragContext *context,
                                                          gint            x,
                                                          gint            y,
                                                          guint           time,
-                                                         GimpToolbox    *toolbox);
-static gchar     * gimp_toolbox_get_description         (GimpDock       *dock,
+                                                         PicmanToolbox    *toolbox);
+static gboolean    picman_toolbox_drag_drop               (GtkWidget      *widget,
+                                                         GdkDragContext *context,
+                                                         gint            x,
+                                                         gint            y,
+                                                         guint           time,
+                                                         PicmanToolbox    *toolbox);
+static gchar     * picman_toolbox_get_description         (PicmanDock       *dock,
                                                          gboolean        complete);
-static void        gimp_toolbox_set_host_geometry_hints (GimpDock       *dock,
+static void        picman_toolbox_set_host_geometry_hints (PicmanDock       *dock,
                                                          GtkWindow      *window);
-static void        gimp_toolbox_book_added              (GimpDock       *dock,
-                                                         GimpDockbook   *dockbook);
-static void        gimp_toolbox_book_removed            (GimpDock       *dock,
-                                                         GimpDockbook   *dockbook);
-static void        gimp_toolbox_size_request_wilber     (GtkWidget      *widget,
+static void        picman_toolbox_book_added              (PicmanDock       *dock,
+                                                         PicmanDockbook   *dockbook);
+static void        picman_toolbox_book_removed            (PicmanDock       *dock,
+                                                         PicmanDockbook   *dockbook);
+static void        picman_toolbox_size_request_wilber     (GtkWidget      *widget,
                                                          GtkRequisition *requisition,
-                                                         GimpToolbox    *toolbox);
-static gboolean    gimp_toolbox_expose_wilber           (GtkWidget      *widget,
+                                                         PicmanToolbox    *toolbox);
+static gboolean    picman_toolbox_expose_wilber           (GtkWidget      *widget,
                                                          GdkEventExpose *event);
-static GtkWidget * toolbox_create_color_area            (GimpToolbox    *toolbox,
-                                                         GimpContext    *context);
-static GtkWidget * toolbox_create_foo_area              (GimpToolbox    *toolbox,
-                                                         GimpContext    *context);
-static GtkWidget * toolbox_create_image_area            (GimpToolbox    *toolbox,
-                                                         GimpContext    *context);
-static void        toolbox_area_notify                  (GimpGuiConfig  *config,
+static GtkWidget * toolbox_create_color_area            (PicmanToolbox    *toolbox,
+                                                         PicmanContext    *context);
+static GtkWidget * toolbox_create_foo_area              (PicmanToolbox    *toolbox,
+                                                         PicmanContext    *context);
+static GtkWidget * toolbox_create_image_area            (PicmanToolbox    *toolbox,
+                                                         PicmanContext    *context);
+static void        toolbox_area_notify                  (PicmanGuiConfig  *config,
                                                          GParamSpec     *pspec,
                                                          GtkWidget      *area);
 static void        toolbox_paste_received               (GtkClipboard   *clipboard,
@@ -144,66 +144,66 @@ static void        toolbox_paste_received               (GtkClipboard   *clipboa
                                                          gpointer        data);
 
 
-G_DEFINE_TYPE (GimpToolbox, gimp_toolbox, GIMP_TYPE_DOCK)
+G_DEFINE_TYPE (PicmanToolbox, picman_toolbox, PICMAN_TYPE_DOCK)
 
-#define parent_class gimp_toolbox_parent_class
+#define parent_class picman_toolbox_parent_class
 
 
 static void
-gimp_toolbox_class_init (GimpToolboxClass *klass)
+picman_toolbox_class_init (PicmanToolboxClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-  GimpDockClass  *dock_class   = GIMP_DOCK_CLASS (klass);
+  PicmanDockClass  *dock_class   = PICMAN_DOCK_CLASS (klass);
 
-  object_class->constructed           = gimp_toolbox_constructed;
-  object_class->dispose               = gimp_toolbox_dispose;
-  object_class->set_property          = gimp_toolbox_set_property;
-  object_class->get_property          = gimp_toolbox_get_property;
+  object_class->constructed           = picman_toolbox_constructed;
+  object_class->dispose               = picman_toolbox_dispose;
+  object_class->set_property          = picman_toolbox_set_property;
+  object_class->get_property          = picman_toolbox_get_property;
 
-  widget_class->size_allocate         = gimp_toolbox_size_allocate;
-  widget_class->button_press_event    = gimp_toolbox_button_press_event;
+  widget_class->size_allocate         = picman_toolbox_size_allocate;
+  widget_class->button_press_event    = picman_toolbox_button_press_event;
 
-  dock_class->get_description         = gimp_toolbox_get_description;
-  dock_class->set_host_geometry_hints = gimp_toolbox_set_host_geometry_hints;
-  dock_class->book_added              = gimp_toolbox_book_added;
-  dock_class->book_removed            = gimp_toolbox_book_removed;
+  dock_class->get_description         = picman_toolbox_get_description;
+  dock_class->set_host_geometry_hints = picman_toolbox_set_host_geometry_hints;
+  dock_class->book_added              = picman_toolbox_book_added;
+  dock_class->book_removed            = picman_toolbox_book_removed;
 
   g_object_class_install_property (object_class, PROP_CONTEXT,
                                    g_param_spec_object ("context",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_CONTEXT,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_CONTEXT,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 
-  g_type_class_add_private (klass, sizeof (GimpToolboxPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanToolboxPrivate));
 }
 
 static void
-gimp_toolbox_init (GimpToolbox *toolbox)
+picman_toolbox_init (PicmanToolbox *toolbox)
 {
   toolbox->p = G_TYPE_INSTANCE_GET_PRIVATE (toolbox,
-                                            GIMP_TYPE_TOOLBOX,
-                                            GimpToolboxPrivate);
+                                            PICMAN_TYPE_TOOLBOX,
+                                            PicmanToolboxPrivate);
 
-  gimp_help_connect (GTK_WIDGET (toolbox), gimp_standard_help_func,
-                     GIMP_HELP_TOOLBOX, NULL);
+  picman_help_connect (GTK_WIDGET (toolbox), picman_standard_help_func,
+                     PICMAN_HELP_TOOLBOX, NULL);
 }
 
 static void
-gimp_toolbox_constructed (GObject *object)
+picman_toolbox_constructed (GObject *object)
 {
-  GimpToolbox   *toolbox = GIMP_TOOLBOX (object);
-  GimpGuiConfig *config;
+  PicmanToolbox   *toolbox = PICMAN_TOOLBOX (object);
+  PicmanGuiConfig *config;
   GtkWidget     *main_vbox;
   GdkDisplay    *display;
   GList         *list;
 
-  g_assert (GIMP_IS_CONTEXT (toolbox->p->context));
+  g_assert (PICMAN_IS_CONTEXT (toolbox->p->context));
 
-  config = GIMP_GUI_CONFIG (toolbox->p->context->gimp->config);
+  config = PICMAN_GUI_CONFIG (toolbox->p->context->picman->config);
 
-  main_vbox = gimp_dock_get_main_vbox (GIMP_DOCK (toolbox));
+  main_vbox = picman_dock_get_main_vbox (PICMAN_DOCK (toolbox));
 
   toolbox->p->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
   gtk_box_pack_start (GTK_BOX (main_vbox), toolbox->p->vbox, FALSE, FALSE, 0);
@@ -214,22 +214,22 @@ gimp_toolbox_constructed (GObject *object)
    * data and reuse the same function for the vbox
    */
   g_signal_connect (toolbox, "drag-leave",
-                    G_CALLBACK (gimp_toolbox_drag_leave),
+                    G_CALLBACK (picman_toolbox_drag_leave),
                     toolbox);
   g_signal_connect (toolbox, "drag-motion",
-                    G_CALLBACK (gimp_toolbox_drag_motion),
+                    G_CALLBACK (picman_toolbox_drag_motion),
                     toolbox);
   g_signal_connect (toolbox, "drag-drop",
-                    G_CALLBACK (gimp_toolbox_drag_drop),
+                    G_CALLBACK (picman_toolbox_drag_drop),
                     toolbox);
   g_signal_connect (toolbox->p->vbox, "drag-leave",
-                    G_CALLBACK (gimp_toolbox_drag_leave),
+                    G_CALLBACK (picman_toolbox_drag_leave),
                     toolbox);
   g_signal_connect (toolbox->p->vbox, "drag-motion",
-                    G_CALLBACK (gimp_toolbox_drag_motion),
+                    G_CALLBACK (picman_toolbox_drag_motion),
                     toolbox);
   g_signal_connect (toolbox->p->vbox, "drag-drop",
-                    G_CALLBACK (gimp_toolbox_drag_drop),
+                    G_CALLBACK (picman_toolbox_drag_drop),
                     toolbox);
 
   toolbox->p->header = gtk_frame_new (NULL);
@@ -242,17 +242,17 @@ gimp_toolbox_constructed (GObject *object)
                           G_BINDING_SYNC_CREATE);
 
   g_signal_connect (toolbox->p->header, "size-request",
-                    G_CALLBACK (gimp_toolbox_size_request_wilber),
+                    G_CALLBACK (picman_toolbox_size_request_wilber),
                     toolbox);
   g_signal_connect (toolbox->p->header, "expose-event",
-                    G_CALLBACK (gimp_toolbox_expose_wilber),
+                    G_CALLBACK (picman_toolbox_expose_wilber),
                     toolbox);
 
-  gimp_help_set_help_data (toolbox->p->header,
+  picman_help_set_help_data (toolbox->p->header,
                            _("Drop image files here to open them"), NULL);
 
-  toolbox->p->tool_palette = gimp_tool_palette_new ();
-  gimp_tool_palette_set_toolbox (GIMP_TOOL_PALETTE (toolbox->p->tool_palette),
+  toolbox->p->tool_palette = picman_tool_palette_new ();
+  picman_tool_palette_set_toolbox (PICMAN_TOOL_PALETTE (toolbox->p->tool_palette),
                                  toolbox);
   gtk_box_pack_start (GTK_BOX (toolbox->p->vbox), toolbox->p->tool_palette,
                       FALSE, FALSE, 0);
@@ -284,7 +284,7 @@ gimp_toolbox_constructed (GObject *object)
   if (! list)  /* all devices have cursor */
     {
       gtk_widget_add_events (GTK_WIDGET (toolbox), GDK_POINTER_MOTION_MASK);
-      gimp_devices_add_widget (toolbox->p->context->gimp, GTK_WIDGET (toolbox));
+      picman_devices_add_widget (toolbox->p->context->picman, GTK_WIDGET (toolbox));
     }
 
   toolbox->p->color_area = toolbox_create_color_area (toolbox,
@@ -320,13 +320,13 @@ gimp_toolbox_constructed (GObject *object)
                            G_CALLBACK (toolbox_area_notify),
                            toolbox->p->image_area, 0);
 
-  gimp_toolbox_dnd_init (GIMP_TOOLBOX (toolbox), toolbox->p->vbox);
+  picman_toolbox_dnd_init (PICMAN_TOOLBOX (toolbox), toolbox->p->vbox);
 }
 
 static void
-gimp_toolbox_dispose (GObject *object)
+picman_toolbox_dispose (GObject *object)
 {
-  GimpToolbox *toolbox = GIMP_TOOLBOX (object);
+  PicmanToolbox *toolbox = PICMAN_TOOLBOX (object);
 
   toolbox->p->in_destruction = TRUE;
 
@@ -342,12 +342,12 @@ gimp_toolbox_dispose (GObject *object)
 }
 
 static void
-gimp_toolbox_set_property (GObject      *object,
+picman_toolbox_set_property (GObject      *object,
                            guint         property_id,
                            const GValue *value,
                            GParamSpec   *pspec)
 {
-  GimpToolbox *toolbox = GIMP_TOOLBOX (object);
+  PicmanToolbox *toolbox = PICMAN_TOOLBOX (object);
 
   switch (property_id)
     {
@@ -362,12 +362,12 @@ gimp_toolbox_set_property (GObject      *object,
 }
 
 static void
-gimp_toolbox_get_property (GObject    *object,
+picman_toolbox_get_property (GObject    *object,
                            guint       property_id,
                            GValue     *value,
                            GParamSpec *pspec)
 {
-  GimpToolbox *toolbox = GIMP_TOOLBOX (object);
+  PicmanToolbox *toolbox = PICMAN_TOOLBOX (object);
 
   switch (property_id)
     {
@@ -382,11 +382,11 @@ gimp_toolbox_get_property (GObject    *object,
 }
 
 static void
-gimp_toolbox_size_allocate (GtkWidget     *widget,
+picman_toolbox_size_allocate (GtkWidget     *widget,
                             GtkAllocation *allocation)
 {
-  GimpToolbox    *toolbox = GIMP_TOOLBOX (widget);
-  GimpGuiConfig  *config;
+  PicmanToolbox    *toolbox = PICMAN_TOOLBOX (widget);
+  PicmanGuiConfig  *config;
   GtkRequisition  color_requisition;
   GtkRequisition  foo_requisition;
   GtkRequisition  image_requisition;
@@ -398,7 +398,7 @@ gimp_toolbox_size_allocate (GtkWidget     *widget,
 
   GTK_WIDGET_CLASS (parent_class)->size_allocate (widget, allocation);
 
-  config = GIMP_GUI_CONFIG (toolbox->p->context->gimp->config);
+  config = PICMAN_GUI_CONFIG (toolbox->p->context->picman->config);
 
   gtk_widget_size_request (toolbox->p->color_area, &color_requisition);
   gtk_widget_size_request (toolbox->p->foo_area,   &foo_requisition);
@@ -433,10 +433,10 @@ gimp_toolbox_size_allocate (GtkWidget     *widget,
 }
 
 static gboolean
-gimp_toolbox_button_press_event (GtkWidget      *widget,
+picman_toolbox_button_press_event (GtkWidget      *widget,
                                  GdkEventButton *event)
 {
-  GimpToolbox *toolbox = GIMP_TOOLBOX (widget);
+  PicmanToolbox *toolbox = PICMAN_TOOLBOX (widget);
 
   if (event->type == GDK_BUTTON_PRESS && event->button == 2)
     {
@@ -454,27 +454,27 @@ gimp_toolbox_button_press_event (GtkWidget      *widget,
 }
 
 static void
-gimp_toolbox_drag_leave (GtkWidget      *widget,
+picman_toolbox_drag_leave (GtkWidget      *widget,
                          GdkDragContext *context,
                          guint           time,
-                         GimpToolbox    *toolbox)
+                         PicmanToolbox    *toolbox)
 {
-  gimp_highlight_widget (widget, FALSE);
+  picman_highlight_widget (widget, FALSE);
 }
 
 static gboolean
-gimp_toolbox_drag_motion (GtkWidget      *widget,
+picman_toolbox_drag_motion (GtkWidget      *widget,
                           GdkDragContext *context,
                           gint            x,
                           gint            y,
                           guint           time,
-                          GimpToolbox    *toolbox)
+                          PicmanToolbox    *toolbox)
 {
   gboolean other_will_handle = FALSE;
   gboolean we_will_handle    = FALSE;
   gboolean handled           = FALSE;
 
-  other_will_handle = gimp_paned_box_will_handle_drag (toolbox->p->drag_handler,
+  other_will_handle = picman_paned_box_will_handle_drag (toolbox->p->drag_handler,
                                                        widget,
                                                        context,
                                                        x, y,
@@ -484,21 +484,21 @@ gimp_toolbox_drag_motion (GtkWidget      *widget,
 
   handled = ! other_will_handle && we_will_handle;
   gdk_drag_status (context, handled ? GDK_ACTION_MOVE : 0, time);
-  gimp_highlight_widget (widget, handled);
+  picman_highlight_widget (widget, handled);
   return handled;
 }
 
 static gboolean
-gimp_toolbox_drag_drop (GtkWidget      *widget,
+picman_toolbox_drag_drop (GtkWidget      *widget,
                         GdkDragContext *context,
                         gint            x,
                         gint            y,
                         guint           time,
-                        GimpToolbox    *toolbox)
+                        PicmanToolbox    *toolbox)
 {
   gboolean handled = FALSE;
 
-  if (gimp_paned_box_will_handle_drag (toolbox->p->drag_handler,
+  if (picman_paned_box_will_handle_drag (toolbox->p->drag_handler,
                                        widget,
                                        context,
                                        x, y,
@@ -529,16 +529,16 @@ gimp_toolbox_drag_drop (GtkWidget      *widget,
 }
 
 static gchar *
-gimp_toolbox_get_description (GimpDock *dock,
+picman_toolbox_get_description (PicmanDock *dock,
                               gboolean  complete)
 {
   GString *desc      = g_string_new (_("Toolbox"));
-  gchar   *dock_desc = GIMP_DOCK_CLASS (parent_class)->get_description (dock,
+  gchar   *dock_desc = PICMAN_DOCK_CLASS (parent_class)->get_description (dock,
                                                                         complete);
 
   if (dock_desc && strlen (dock_desc) > 0)
     {
-      g_string_append (desc, GIMP_DOCK_BOOK_SEPARATOR);
+      g_string_append (desc, PICMAN_DOCK_BOOK_SEPARATOR);
       g_string_append (desc, dock_desc);
     }
 
@@ -548,43 +548,43 @@ gimp_toolbox_get_description (GimpDock *dock,
 }
 
 static void
-gimp_toolbox_book_added (GimpDock     *dock,
-                         GimpDockbook *dockbook)
+picman_toolbox_book_added (PicmanDock     *dock,
+                         PicmanDockbook *dockbook)
 {
-  if (GIMP_DOCK_CLASS (parent_class)->book_added)
-    GIMP_DOCK_CLASS (parent_class)->book_added (dock, dockbook);
+  if (PICMAN_DOCK_CLASS (parent_class)->book_added)
+    PICMAN_DOCK_CLASS (parent_class)->book_added (dock, dockbook);
 
-  if (g_list_length (gimp_dock_get_dockbooks (dock)) == 1)
+  if (g_list_length (picman_dock_get_dockbooks (dock)) == 1)
     {
-      gimp_dock_invalidate_geometry (dock);
+      picman_dock_invalidate_geometry (dock);
     }
 }
 
 static void
-gimp_toolbox_book_removed (GimpDock     *dock,
-                           GimpDockbook *dockbook)
+picman_toolbox_book_removed (PicmanDock     *dock,
+                           PicmanDockbook *dockbook)
 {
-  GimpToolbox *toolbox = GIMP_TOOLBOX (dock);
+  PicmanToolbox *toolbox = PICMAN_TOOLBOX (dock);
 
-  if (GIMP_DOCK_CLASS (parent_class)->book_removed)
-    GIMP_DOCK_CLASS (parent_class)->book_removed (dock, dockbook);
+  if (PICMAN_DOCK_CLASS (parent_class)->book_removed)
+    PICMAN_DOCK_CLASS (parent_class)->book_removed (dock, dockbook);
 
-  if (! gimp_dock_get_dockbooks (dock) &&
+  if (! picman_dock_get_dockbooks (dock) &&
       ! toolbox->p->in_destruction)
     {
-      gimp_dock_invalidate_geometry (dock);
+      picman_dock_invalidate_geometry (dock);
     }
 }
 
 static void
-gimp_toolbox_set_host_geometry_hints (GimpDock  *dock,
+picman_toolbox_set_host_geometry_hints (PicmanDock  *dock,
                                       GtkWindow *window)
 {
-  GimpToolbox *toolbox = GIMP_TOOLBOX (dock);
+  PicmanToolbox *toolbox = PICMAN_TOOLBOX (dock);
   gint         button_width;
   gint         button_height;
 
-  if (gimp_tool_palette_get_button_size (GIMP_TOOL_PALETTE (toolbox->p->tool_palette),
+  if (picman_tool_palette_get_button_size (PICMAN_TOOL_PALETTE (toolbox->p->tool_palette),
                                          &button_width, &button_height))
     {
       GdkGeometry geometry;
@@ -604,37 +604,37 @@ gimp_toolbox_set_host_geometry_hints (GimpDock  *dock,
                                      GDK_HINT_RESIZE_INC |
                                      GDK_HINT_USER_POS);
 
-      gimp_dialog_factory_set_has_min_size (window, TRUE);
+      picman_dialog_factory_set_has_min_size (window, TRUE);
     }
 }
 
 GtkWidget *
-gimp_toolbox_new (GimpDialogFactory *factory,
-                  GimpContext       *context,
-                  GimpUIManager     *ui_manager)
+picman_toolbox_new (PicmanDialogFactory *factory,
+                  PicmanContext       *context,
+                  PicmanUIManager     *ui_manager)
 {
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
-  g_return_val_if_fail (GIMP_IS_UI_MANAGER (ui_manager), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_UI_MANAGER (ui_manager), NULL);
 
-  return g_object_new (GIMP_TYPE_TOOLBOX,
+  return g_object_new (PICMAN_TYPE_TOOLBOX,
                        "context", context,
                        NULL);
 }
 
-GimpContext *
-gimp_toolbox_get_context (GimpToolbox *toolbox)
+PicmanContext *
+picman_toolbox_get_context (PicmanToolbox *toolbox)
 {
-  g_return_val_if_fail (GIMP_IS_TOOLBOX (toolbox), NULL);
+  g_return_val_if_fail (PICMAN_IS_TOOLBOX (toolbox), NULL);
 
   return toolbox->p->context;
 }
 
 void
-gimp_toolbox_set_drag_handler (GimpToolbox  *toolbox,
-                               GimpPanedBox *drag_handler)
+picman_toolbox_set_drag_handler (PicmanToolbox  *toolbox,
+                               PicmanPanedBox *drag_handler)
 {
-  g_return_if_fail (GIMP_IS_TOOLBOX (toolbox));
+  g_return_if_fail (PICMAN_IS_TOOLBOX (toolbox));
 
   toolbox->p->drag_handler = drag_handler;
 }
@@ -643,14 +643,14 @@ gimp_toolbox_set_drag_handler (GimpToolbox  *toolbox,
 /*  private functions  */
 
 static void
-gimp_toolbox_size_request_wilber (GtkWidget      *widget,
+picman_toolbox_size_request_wilber (GtkWidget      *widget,
                                   GtkRequisition *requisition,
-                                  GimpToolbox    *toolbox)
+                                  PicmanToolbox    *toolbox)
 {
   gint button_width;
   gint button_height;
 
-  if (gimp_tool_palette_get_button_size (GIMP_TOOL_PALETTE (toolbox->p->tool_palette),
+  if (picman_tool_palette_get_button_size (PICMAN_TOOL_PALETTE (toolbox->p->tool_palette),
                                          &button_width, &button_height))
     {
       requisition->width  = button_width  * PANGO_SCALE_SMALL;
@@ -664,7 +664,7 @@ gimp_toolbox_size_request_wilber (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_toolbox_expose_wilber (GtkWidget      *widget,
+picman_toolbox_expose_wilber (GtkWidget      *widget,
                             GdkEventExpose *event)
 {
   cairo_t *cr;
@@ -673,7 +673,7 @@ gimp_toolbox_expose_wilber (GtkWidget      *widget,
   gdk_cairo_region (cr, event->region);
   cairo_clip (cr);
 
-  gimp_cairo_draw_toolbox_wilber (widget, cr);
+  picman_cairo_draw_toolbox_wilber (widget, cr);
 
   cairo_destroy (cr);
 
@@ -681,8 +681,8 @@ gimp_toolbox_expose_wilber (GtkWidget      *widget,
 }
 
 static GtkWidget *
-toolbox_create_color_area (GimpToolbox *toolbox,
-                           GimpContext *context)
+toolbox_create_color_area (PicmanToolbox *toolbox,
+                           PicmanContext *context)
 {
   GtkWidget *alignment;
   GtkWidget *col_area;
@@ -690,9 +690,9 @@ toolbox_create_color_area (GimpToolbox *toolbox,
   alignment = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
   gtk_container_set_border_width (GTK_CONTAINER (alignment), 2);
 
-  gimp_help_set_help_data (alignment, NULL, GIMP_HELP_TOOLBOX_COLOR_AREA);
+  picman_help_set_help_data (alignment, NULL, PICMAN_HELP_TOOLBOX_COLOR_AREA);
 
-  col_area = gimp_toolbox_color_area_create (toolbox, 54, 42);
+  col_area = picman_toolbox_color_area_create (toolbox, 54, 42);
   gtk_container_add (GTK_CONTAINER (alignment), col_area);
   gtk_widget_show (col_area);
 
@@ -700,8 +700,8 @@ toolbox_create_color_area (GimpToolbox *toolbox,
 }
 
 static GtkWidget *
-toolbox_create_foo_area (GimpToolbox *toolbox,
-                         GimpContext *context)
+toolbox_create_foo_area (PicmanToolbox *toolbox,
+                         PicmanContext *context)
 {
   GtkWidget *alignment;
   GtkWidget *foo_area;
@@ -709,9 +709,9 @@ toolbox_create_foo_area (GimpToolbox *toolbox,
   alignment = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
   gtk_container_set_border_width (GTK_CONTAINER (alignment), 2);
 
-  gimp_help_set_help_data (alignment, NULL, GIMP_HELP_TOOLBOX_INDICATOR_AREA);
+  picman_help_set_help_data (alignment, NULL, PICMAN_HELP_TOOLBOX_INDICATOR_AREA);
 
-  foo_area = gimp_toolbox_indicator_area_create (toolbox);
+  foo_area = picman_toolbox_indicator_area_create (toolbox);
   gtk_container_add (GTK_CONTAINER (alignment), foo_area);
   gtk_widget_show (foo_area);
 
@@ -719,8 +719,8 @@ toolbox_create_foo_area (GimpToolbox *toolbox,
 }
 
 static GtkWidget *
-toolbox_create_image_area (GimpToolbox *toolbox,
-                           GimpContext *context)
+toolbox_create_image_area (PicmanToolbox *toolbox,
+                           PicmanContext *context)
 {
   GtkWidget *alignment;
   GtkWidget *image_area;
@@ -728,9 +728,9 @@ toolbox_create_image_area (GimpToolbox *toolbox,
   alignment = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
   gtk_container_set_border_width (GTK_CONTAINER (alignment), 2);
 
-  gimp_help_set_help_data (alignment, NULL, GIMP_HELP_TOOLBOX_IMAGE_AREA);
+  picman_help_set_help_data (alignment, NULL, PICMAN_HELP_TOOLBOX_IMAGE_AREA);
 
-  image_area = gimp_toolbox_image_area_create (toolbox, 52, 42);
+  image_area = picman_toolbox_image_area_create (toolbox, 52, 42);
   gtk_container_add (GTK_CONTAINER (alignment), image_area);
   gtk_widget_show (image_area);
 
@@ -738,7 +738,7 @@ toolbox_create_image_area (GimpToolbox *toolbox,
 }
 
 static void
-toolbox_area_notify (GimpGuiConfig *config,
+toolbox_area_notify (PicmanGuiConfig *config,
                      GParamSpec    *pspec,
                      GtkWidget     *area)
 {
@@ -771,7 +771,7 @@ toolbox_paste_received (GtkClipboard *clipboard,
                         const gchar  *text,
                         gpointer      data)
 {
-  GimpContext *context = GIMP_CONTEXT (data);
+  PicmanContext *context = PICMAN_CONTEXT (data);
 
   if (text)
     {
@@ -787,18 +787,18 @@ toolbox_paste_received (GtkClipboard *clipboard,
 
       if (strlen (copy))
         {
-          GimpImage         *image;
-          GimpPDBStatusType  status;
+          PicmanImage         *image;
+          PicmanPDBStatusType  status;
           GError            *error = NULL;
 
-          image = file_open_with_display (context->gimp, context, NULL,
+          image = file_open_with_display (context->picman, context, NULL,
                                           copy, FALSE, &status, &error);
 
-          if (! image && status != GIMP_PDB_CANCEL)
+          if (! image && status != PICMAN_PDB_CANCEL)
             {
               gchar *filename = file_utils_uri_display_name (copy);
 
-              gimp_message (context->gimp, NULL, GIMP_MESSAGE_ERROR,
+              picman_message (context->picman, NULL, PICMAN_MESSAGE_ERROR,
                             _("Opening '%s' failed:\n\n%s"),
                             filename, error->message);
 

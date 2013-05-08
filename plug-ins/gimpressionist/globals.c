@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,20 +17,20 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "gimpressionist.h"
+#include "picmanressionist.h"
 #include "ppmtool.h"
 
 gboolean               img_has_alpha = FALSE;
 GRand                 *random_generator;
-gimpressionist_vals_t  pcvals;
+picmanressionist_vals_t  pcvals;
 
 /*
  * The default values for the application, to be initialized at startup.
  * */
-static const gimpressionist_vals_t defaultpcvals = {
+static const picmanressionist_vals_t defaultpcvals = {
   4,
   0.0,
   60.0,

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,22 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_BOUNDARY_H__
-#define  __GIMP_BOUNDARY_H__
+#ifndef  __PICMAN_BOUNDARY_H__
+#define  __PICMAN_BOUNDARY_H__
 
 
 /* half intensity for mask */
-#define GIMP_BOUNDARY_HALF_WAY 0.5
+#define PICMAN_BOUNDARY_HALF_WAY 0.5
 
 
 typedef enum
 {
-  GIMP_BOUNDARY_WITHIN_BOUNDS,
-  GIMP_BOUNDARY_IGNORE_BOUNDS
-} GimpBoundaryType;
+  PICMAN_BOUNDARY_WITHIN_BOUNDS,
+  PICMAN_BOUNDARY_IGNORE_BOUNDS
+} PicmanBoundaryType;
 
 
-struct _GimpBoundSeg
+struct _PicmanBoundSeg
 {
   gint   x1;
   gint   y1;
@@ -41,28 +41,28 @@ struct _GimpBoundSeg
 };
 
 
-GimpBoundSeg * gimp_boundary_find      (GeglBuffer          *buffer,
+PicmanBoundSeg * picman_boundary_find      (GeglBuffer          *buffer,
                                         const GeglRectangle *region,
                                         const Babl          *format,
-                                        GimpBoundaryType     type,
+                                        PicmanBoundaryType     type,
                                         gint                 x1,
                                         gint                 y1,
                                         gint                 x2,
                                         gint                 y2,
                                         gfloat               threshold,
                                         gint                *num_segs);
-GimpBoundSeg * gimp_boundary_sort      (const GimpBoundSeg  *segs,
+PicmanBoundSeg * picman_boundary_sort      (const PicmanBoundSeg  *segs,
                                         gint                 num_segs,
                                         gint                *num_groups);
-GimpBoundSeg * gimp_boundary_simplify  (GimpBoundSeg        *sorted_segs,
+PicmanBoundSeg * picman_boundary_simplify  (PicmanBoundSeg        *sorted_segs,
                                         gint                 num_groups,
                                         gint                *num_segs);
 
 /* offsets in-place */
-void       gimp_boundary_offset        (GimpBoundSeg        *segs,
+void       picman_boundary_offset        (PicmanBoundSeg        *segs,
                                         gint                 num_segs,
                                         gint                 off_x,
                                         gint                 off_y);
 
 
-#endif  /*  __GIMP_BOUNDARY_H__  */
+#endif  /*  __PICMAN_BOUNDARY_H__  */

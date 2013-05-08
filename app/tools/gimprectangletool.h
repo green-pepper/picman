@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,150 +15,150 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_RECTANGLE_TOOL_H__
-#define  __GIMP_RECTANGLE_TOOL_H__
+#ifndef  __PICMAN_RECTANGLE_TOOL_H__
+#define  __PICMAN_RECTANGLE_TOOL_H__
 
 
 typedef enum
 {
-  GIMP_RECTANGLE_TOOL_PROP_0,
-  GIMP_RECTANGLE_TOOL_PROP_X1,
-  GIMP_RECTANGLE_TOOL_PROP_Y1,
-  GIMP_RECTANGLE_TOOL_PROP_X2,
-  GIMP_RECTANGLE_TOOL_PROP_Y2,
-  GIMP_RECTANGLE_TOOL_PROP_CONSTRAINT,
-  GIMP_RECTANGLE_TOOL_PROP_PRECISION,
-  GIMP_RECTANGLE_TOOL_PROP_NARROW_MODE,
-  GIMP_RECTANGLE_TOOL_PROP_LAST = GIMP_RECTANGLE_TOOL_PROP_NARROW_MODE
-} GimpRectangleToolProp;
+  PICMAN_RECTANGLE_TOOL_PROP_0,
+  PICMAN_RECTANGLE_TOOL_PROP_X1,
+  PICMAN_RECTANGLE_TOOL_PROP_Y1,
+  PICMAN_RECTANGLE_TOOL_PROP_X2,
+  PICMAN_RECTANGLE_TOOL_PROP_Y2,
+  PICMAN_RECTANGLE_TOOL_PROP_CONSTRAINT,
+  PICMAN_RECTANGLE_TOOL_PROP_PRECISION,
+  PICMAN_RECTANGLE_TOOL_PROP_NARROW_MODE,
+  PICMAN_RECTANGLE_TOOL_PROP_LAST = PICMAN_RECTANGLE_TOOL_PROP_NARROW_MODE
+} PicmanRectangleToolProp;
 
 
 typedef enum
 {
-  GIMP_RECTANGLE_TOOL_INACTIVE,
-  GIMP_RECTANGLE_TOOL_DEAD,
-  GIMP_RECTANGLE_TOOL_CREATING,
-  GIMP_RECTANGLE_TOOL_MOVING,
-  GIMP_RECTANGLE_TOOL_RESIZING_UPPER_LEFT,
-  GIMP_RECTANGLE_TOOL_RESIZING_UPPER_RIGHT,
-  GIMP_RECTANGLE_TOOL_RESIZING_LOWER_LEFT,
-  GIMP_RECTANGLE_TOOL_RESIZING_LOWER_RIGHT,
-  GIMP_RECTANGLE_TOOL_RESIZING_LEFT,
-  GIMP_RECTANGLE_TOOL_RESIZING_RIGHT,
-  GIMP_RECTANGLE_TOOL_RESIZING_TOP,
-  GIMP_RECTANGLE_TOOL_RESIZING_BOTTOM,
-  GIMP_RECTANGLE_TOOL_AUTO_SHRINK,
-  GIMP_RECTANGLE_TOOL_EXECUTING
-} GimpRectangleFunction;
+  PICMAN_RECTANGLE_TOOL_INACTIVE,
+  PICMAN_RECTANGLE_TOOL_DEAD,
+  PICMAN_RECTANGLE_TOOL_CREATING,
+  PICMAN_RECTANGLE_TOOL_MOVING,
+  PICMAN_RECTANGLE_TOOL_RESIZING_UPPER_LEFT,
+  PICMAN_RECTANGLE_TOOL_RESIZING_UPPER_RIGHT,
+  PICMAN_RECTANGLE_TOOL_RESIZING_LOWER_LEFT,
+  PICMAN_RECTANGLE_TOOL_RESIZING_LOWER_RIGHT,
+  PICMAN_RECTANGLE_TOOL_RESIZING_LEFT,
+  PICMAN_RECTANGLE_TOOL_RESIZING_RIGHT,
+  PICMAN_RECTANGLE_TOOL_RESIZING_TOP,
+  PICMAN_RECTANGLE_TOOL_RESIZING_BOTTOM,
+  PICMAN_RECTANGLE_TOOL_AUTO_SHRINK,
+  PICMAN_RECTANGLE_TOOL_EXECUTING
+} PicmanRectangleFunction;
 
 
-#define GIMP_TYPE_RECTANGLE_TOOL               (gimp_rectangle_tool_interface_get_type ())
-#define GIMP_IS_RECTANGLE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_RECTANGLE_TOOL))
-#define GIMP_RECTANGLE_TOOL(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_RECTANGLE_TOOL, GimpRectangleTool))
-#define GIMP_RECTANGLE_TOOL_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GIMP_TYPE_RECTANGLE_TOOL, GimpRectangleToolInterface))
+#define PICMAN_TYPE_RECTANGLE_TOOL               (picman_rectangle_tool_interface_get_type ())
+#define PICMAN_IS_RECTANGLE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_RECTANGLE_TOOL))
+#define PICMAN_RECTANGLE_TOOL(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_RECTANGLE_TOOL, PicmanRectangleTool))
+#define PICMAN_RECTANGLE_TOOL_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), PICMAN_TYPE_RECTANGLE_TOOL, PicmanRectangleToolInterface))
 
-#define GIMP_RECTANGLE_TOOL_GET_OPTIONS(t)     (GIMP_RECTANGLE_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_RECTANGLE_TOOL_GET_OPTIONS(t)     (PICMAN_RECTANGLE_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpRectangleTool          GimpRectangleTool;
-typedef struct _GimpRectangleToolInterface GimpRectangleToolInterface;
+typedef struct _PicmanRectangleTool          PicmanRectangleTool;
+typedef struct _PicmanRectangleToolInterface PicmanRectangleToolInterface;
 
-struct _GimpRectangleToolInterface
+struct _PicmanRectangleToolInterface
 {
   GTypeInterface base_iface;
 
   /*  virtual functions  */
-  gboolean (* execute)           (GimpRectangleTool *rect_tool,
+  gboolean (* execute)           (PicmanRectangleTool *rect_tool,
                                   gint               x,
                                   gint               y,
                                   gint               w,
                                   gint               h);
-  void     (* cancel)            (GimpRectangleTool *rect_tool);
+  void     (* cancel)            (PicmanRectangleTool *rect_tool);
 
   /*  signals  */
-  gboolean (* rectangle_change_complete) (GimpRectangleTool *rect_tool);
+  gboolean (* rectangle_change_complete) (PicmanRectangleTool *rect_tool);
 };
 
 
-GType       gimp_rectangle_tool_interface_get_type  (void) G_GNUC_CONST;
+GType       picman_rectangle_tool_interface_get_type  (void) G_GNUC_CONST;
 
-void        gimp_rectangle_tool_constructor         (GObject                 *object);
+void        picman_rectangle_tool_constructor         (GObject                 *object);
 
-void        gimp_rectangle_tool_init                (GimpRectangleTool       *rect_tool);
-void        gimp_rectangle_tool_control             (GimpTool                *tool,
-                                                     GimpToolAction           action,
-                                                     GimpDisplay             *display);
-void        gimp_rectangle_tool_button_press        (GimpTool                *tool,
-                                                     const GimpCoords        *coords,
+void        picman_rectangle_tool_init                (PicmanRectangleTool       *rect_tool);
+void        picman_rectangle_tool_control             (PicmanTool                *tool,
+                                                     PicmanToolAction           action,
+                                                     PicmanDisplay             *display);
+void        picman_rectangle_tool_button_press        (PicmanTool                *tool,
+                                                     const PicmanCoords        *coords,
                                                      guint32                  time,
                                                      GdkModifierType          state,
-                                                     GimpDisplay             *display);
-void        gimp_rectangle_tool_button_release      (GimpTool                *tool,
-                                                     const GimpCoords        *coords,
+                                                     PicmanDisplay             *display);
+void        picman_rectangle_tool_button_release      (PicmanTool                *tool,
+                                                     const PicmanCoords        *coords,
                                                      guint32                  time,
                                                      GdkModifierType          state,
-                                                     GimpButtonReleaseType    release_type,
-                                                     GimpDisplay             *display);
-void        gimp_rectangle_tool_motion              (GimpTool                *tool,
-                                                     const GimpCoords        *coords,
+                                                     PicmanButtonReleaseType    release_type,
+                                                     PicmanDisplay             *display);
+void        picman_rectangle_tool_motion              (PicmanTool                *tool,
+                                                     const PicmanCoords        *coords,
                                                      guint32                  time,
                                                      GdkModifierType          state,
-                                                     GimpDisplay             *display);
-gboolean    gimp_rectangle_tool_key_press           (GimpTool                *tool,
+                                                     PicmanDisplay             *display);
+gboolean    picman_rectangle_tool_key_press           (PicmanTool                *tool,
                                                      GdkEventKey             *kevent,
-                                                     GimpDisplay             *display);
-void        gimp_rectangle_tool_active_modifier_key (GimpTool                *tool,
+                                                     PicmanDisplay             *display);
+void        picman_rectangle_tool_active_modifier_key (PicmanTool                *tool,
                                                      GdkModifierType          key,
                                                      gboolean                 press,
                                                      GdkModifierType          state,
-                                                     GimpDisplay             *display);
-void        gimp_rectangle_tool_oper_update         (GimpTool                *tool,
-                                                     const GimpCoords        *coords,
+                                                     PicmanDisplay             *display);
+void        picman_rectangle_tool_oper_update         (PicmanTool                *tool,
+                                                     const PicmanCoords        *coords,
                                                      GdkModifierType          state,
                                                      gboolean                 proximity,
-                                                     GimpDisplay             *display);
-void        gimp_rectangle_tool_cursor_update       (GimpTool                *tool,
-                                                     const GimpCoords        *coords,
+                                                     PicmanDisplay             *display);
+void        picman_rectangle_tool_cursor_update       (PicmanTool                *tool,
+                                                     const PicmanCoords        *coords,
                                                      GdkModifierType          state,
-                                                     GimpDisplay             *display);
-void        gimp_rectangle_tool_draw                (GimpDrawTool            *draw,
-                                                     GimpCanvasGroup         *stroke_group);
-gboolean    gimp_rectangle_tool_execute             (GimpRectangleTool       *rect_tool);
-void        gimp_rectangle_tool_cancel              (GimpRectangleTool       *rect_tool);
-void        gimp_rectangle_tool_set_constraint      (GimpRectangleTool       *rectangle,
-                                                     GimpRectangleConstraint  constraint);
-GimpRectangleConstraint gimp_rectangle_tool_get_constraint
-                                                    (GimpRectangleTool       *rectangle);
-GimpRectangleFunction gimp_rectangle_tool_get_function (GimpRectangleTool    *rectangle);
-void        gimp_rectangle_tool_set_function        (GimpRectangleTool       *rectangle,
-                                                     GimpRectangleFunction    function);
-void        gimp_rectangle_tool_pending_size_set    (GimpRectangleTool       *rectangle,
+                                                     PicmanDisplay             *display);
+void        picman_rectangle_tool_draw                (PicmanDrawTool            *draw,
+                                                     PicmanCanvasGroup         *stroke_group);
+gboolean    picman_rectangle_tool_execute             (PicmanRectangleTool       *rect_tool);
+void        picman_rectangle_tool_cancel              (PicmanRectangleTool       *rect_tool);
+void        picman_rectangle_tool_set_constraint      (PicmanRectangleTool       *rectangle,
+                                                     PicmanRectangleConstraint  constraint);
+PicmanRectangleConstraint picman_rectangle_tool_get_constraint
+                                                    (PicmanRectangleTool       *rectangle);
+PicmanRectangleFunction picman_rectangle_tool_get_function (PicmanRectangleTool    *rectangle);
+void        picman_rectangle_tool_set_function        (PicmanRectangleTool       *rectangle,
+                                                     PicmanRectangleFunction    function);
+void        picman_rectangle_tool_pending_size_set    (PicmanRectangleTool       *rectangle,
                                                      GObject                 *object,
                                                      const gchar             *width_property,
                                                      const gchar             *height_property);
-void        gimp_rectangle_tool_constraint_size_set (GimpRectangleTool       *rectangle,
+void        picman_rectangle_tool_constraint_size_set (PicmanRectangleTool       *rectangle,
                                                      GObject                 *object,
                                                      const gchar             *width_property,
                                                      const gchar             *height_property);
-gboolean    gimp_rectangle_tool_rectangle_is_new    (GimpRectangleTool       *rect_tool);
-gboolean    gimp_rectangle_tool_point_in_rectangle  (GimpRectangleTool       *rect_tool,
+gboolean    picman_rectangle_tool_rectangle_is_new    (PicmanRectangleTool       *rect_tool);
+gboolean    picman_rectangle_tool_point_in_rectangle  (PicmanRectangleTool       *rect_tool,
                                                      gdouble                  x,
                                                      gdouble                  y);
-void        gimp_rectangle_tool_frame_item          (GimpRectangleTool       *rect_tool,
-                                                     GimpItem                *item);
+void        picman_rectangle_tool_frame_item          (PicmanRectangleTool       *rect_tool,
+                                                     PicmanItem                *item);
 
 
 /*  convenience functions  */
 
-void        gimp_rectangle_tool_install_properties  (GObjectClass *klass);
-void        gimp_rectangle_tool_set_property        (GObject      *object,
+void        picman_rectangle_tool_install_properties  (GObjectClass *klass);
+void        picman_rectangle_tool_set_property        (GObject      *object,
                                                      guint         property_id,
                                                      const GValue *value,
                                                      GParamSpec   *pspec);
-void        gimp_rectangle_tool_get_property        (GObject      *object,
+void        picman_rectangle_tool_get_property        (GObject      *object,
                                                      guint         property_id,
                                                      GValue       *value,
                                                      GParamSpec   *pspec);
 
 
-#endif  /*  __GIMP_RECTANGLE_TOOL_H__  */
+#endif  /*  __PICMAN_RECTANGLE_TOOL_H__  */

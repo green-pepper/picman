@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpText-vectors
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * PicmanText-vectors
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,71 +26,71 @@
 
 #include "text-types.h"
 
-#include "core/gimpimage.h"
+#include "core/picmanimage.h"
 
-#include "vectors/gimpbezierstroke.h"
-#include "vectors/gimpvectors.h"
-#include "vectors/gimpanchor.h"
+#include "vectors/picmanbezierstroke.h"
+#include "vectors/picmanvectors.h"
+#include "vectors/picmananchor.h"
 
-#include "gimptext.h"
-#include "gimptext-vectors.h"
-#include "gimptextlayout.h"
-#include "gimptextlayout-render.h"
+#include "picmantext.h"
+#include "picmantext-vectors.h"
+#include "picmantextlayout.h"
+#include "picmantextlayout-render.h"
 
 
 typedef struct
 {
-  GimpVectors *vectors;
-  GimpStroke  *stroke;
-  GimpAnchor  *anchor;
+  PicmanVectors *vectors;
+  PicmanStroke  *stroke;
+  PicmanAnchor  *anchor;
 } RenderContext;
 
 
-static void  gimp_text_render_vectors (cairo_t       *cr,
+static void  picman_text_render_vectors (cairo_t       *cr,
                                        RenderContext *context);
 
 
-GimpVectors *
-gimp_text_vectors_new (GimpImage *image,
-                       GimpText  *text)
+PicmanVectors *
+picman_text_vectors_new (PicmanImage *image,
+                       PicmanText  *text)
 {
-  GimpVectors   *vectors;
+  PicmanVectors   *vectors;
   RenderContext  context = { NULL, };
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_TEXT (text), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEXT (text), NULL);
 
-  vectors = gimp_vectors_new (image, NULL);
+  vectors = picman_vectors_new (image, NULL);
 
   if (text->text || text->markup)
     {
-      GimpTextLayout  *layout;
+      PicmanTextLayout  *layout;
       cairo_surface_t *surface;
       cairo_t         *cr;
       gdouble          xres;
       gdouble          yres;
 
       if (text->text)
-        gimp_object_set_name_safe (GIMP_OBJECT (vectors), text->text);
+        picman_object_set_name_safe (PICMAN_OBJECT (vectors), text->text);
 
       context.vectors = vectors;
 
       surface = cairo_recording_surface_create (CAIRO_CONTENT_ALPHA, NULL);
       cr = cairo_create (surface);
 
-      gimp_image_get_resolution (image, &xres, &yres);
+      picman_image_get_resolution (image, &xres, &yres);
 
-      layout = gimp_text_layout_new (text, xres, yres);
-      gimp_text_layout_render (layout, cr, text->base_dir, TRUE);
+      layout = picman_text_layout_new (text, xres, yres);
+      picman_text_layout_render (layout, cr, text->base_dir, TRUE);
       g_object_unref (layout);
 
-      gimp_text_render_vectors (cr, &context);
+      picman_text_render_vectors (cr, &context);
 
       cairo_destroy (cr);
       cairo_surface_destroy (surface);
 
       if (context.stroke)
-        gimp_stroke_close (context.stroke);
+        picman_stroke_close (context.stroke);
     }
 
   return vectors;
@@ -98,11 +98,11 @@ gimp_text_vectors_new (GimpImage *image,
 
 
 static inline void
-gimp_text_vector_coords (const double  x,
+picman_text_vector_coords (const double  x,
                          const double  y,
-                         GimpCoords   *coords)
+                         PicmanCoords   *coords)
 {
-  const GimpCoords default_values = GIMP_COORDS_DEFAULT_VALUES;
+  const PicmanCoords default_values = PICMAN_COORDS_DEFAULT_VALUES;
 
   *coords = default_values;
 
@@ -115,20 +115,20 @@ moveto (RenderContext *context,
         const double   x,
         const double   y)
 {
-  GimpCoords     start;
+  PicmanCoords     start;
 
-#if GIMP_TEXT_DEBUG
+#if PICMAN_TEXT_DEBUG
   g_printerr ("moveto  %f, %f\n", x, y);
 #endif
 
-  gimp_text_vector_coords (x, y, &start);
+  picman_text_vector_coords (x, y, &start);
 
   if (context->stroke)
-    gimp_stroke_close (context->stroke);
+    picman_stroke_close (context->stroke);
 
-  context->stroke = gimp_bezier_stroke_new_moveto (&start);
+  context->stroke = picman_bezier_stroke_new_moveto (&start);
 
-  gimp_vectors_stroke_add (context->vectors, context->stroke);
+  picman_vectors_stroke_add (context->vectors, context->stroke);
   g_object_unref (context->stroke);
 
   return 0;
@@ -139,18 +139,18 @@ lineto (RenderContext *context,
         const double   x,
         const double   y)
 {
-  GimpCoords     end;
+  PicmanCoords     end;
 
-#if GIMP_TEXT_DEBUG
+#if PICMAN_TEXT_DEBUG
   g_printerr ("lineto  %f, %f\n", x, y);
 #endif
 
   if (! context->stroke)
     return 0;
 
-  gimp_text_vector_coords (x, y, &end);
+  picman_text_vector_coords (x, y, &end);
 
-  gimp_bezier_stroke_lineto (context->stroke, &end);
+  picman_bezier_stroke_lineto (context->stroke, &end);
 
   return 0;
 }
@@ -164,22 +164,22 @@ cubicto (RenderContext *context,
          const double   x3,
          const double   y3)
 {
-  GimpCoords     control1;
-  GimpCoords     control2;
-  GimpCoords     end;
+  PicmanCoords     control1;
+  PicmanCoords     control2;
+  PicmanCoords     end;
 
-#if GIMP_TEXT_DEBUG
+#if PICMAN_TEXT_DEBUG
   g_printerr ("cubicto %f, %f\n", x3, y3);
 #endif
 
   if (! context->stroke)
     return 0;
 
-  gimp_text_vector_coords (x1, y1, &control1);
-  gimp_text_vector_coords (x2, y2, &control2);
-  gimp_text_vector_coords (x3, y3, &end);
+  picman_text_vector_coords (x1, y1, &control1);
+  picman_text_vector_coords (x2, y2, &control2);
+  picman_text_vector_coords (x3, y3, &end);
 
-  gimp_bezier_stroke_cubicto (context->stroke, &control1, &control2, &end);
+  picman_bezier_stroke_cubicto (context->stroke, &control1, &control2, &end);
 
   return 0;
 }
@@ -187,14 +187,14 @@ cubicto (RenderContext *context,
 static gint
 closepath (RenderContext *context)
 {
-#if GIMP_TEXT_DEBUG
+#if PICMAN_TEXT_DEBUG
   g_printerr ("moveto\n");
 #endif
 
   if (! context->stroke)
     return 0;
 
-  gimp_stroke_close (context->stroke);
+  picman_stroke_close (context->stroke);
 
   context->stroke = NULL;
 
@@ -202,7 +202,7 @@ closepath (RenderContext *context)
 }
 
 static void
-gimp_text_render_vectors (cairo_t       *cr,
+picman_text_render_vectors (cairo_t       *cr,
                           RenderContext *context)
 {
   cairo_path_t *path;

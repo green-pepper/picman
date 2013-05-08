@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub image_convert_rgb {
     $blurb = 'Convert specified image to RGB color';
@@ -35,9 +35,9 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_image_is_not_base_type (image, GIMP_RGB, error))
+  if (picman_pdb_image_is_not_base_type (image, PICMAN_RGB, error))
     {
-      success = gimp_image_convert_type (image, GIMP_RGB,
+      success = picman_image_convert_type (image, PICMAN_RGB,
                                          0, 0, FALSE, FALSE, FALSE, 0, NULL,
                                          NULL, error);
     }
@@ -69,9 +69,9 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_image_is_not_base_type (image, GIMP_GRAY, error))
+  if (picman_pdb_image_is_not_base_type (image, PICMAN_GRAY, error))
     {
-      success = gimp_image_convert_type (image, GIMP_GRAY,
+      success = picman_image_convert_type (image, PICMAN_GRAY,
 				         0, 0, FALSE, FALSE, FALSE, 0, NULL,
 				         NULL, error);
     }
@@ -95,7 +95,7 @@ optimal palette of 'num_cols' generated from the colors in the
 image. A type of '1' means to re-use the previous palette (not
 currently implemented). A type of '2' means to use the so-called
 WWW-optimized palette. Type '3' means to use only black and white
-colors. A type of '4' means to use a palette from the gimp palettes
+colors. A type of '4' means to use a palette from the picman palettes
 directories.  The 'dither type' specifies what kind of dithering to
 use.  '0' means no dithering, '1' means standard Floyd-Steinberg error
 diffusion, '2' means Floyd-Steinberg error diffusion with reduced
@@ -108,41 +108,41 @@ HELP
     @inargs = (
 	{ name => 'image', type => 'image',
 	  desc => 'The image' },
-	{ name => 'dither_type', type => 'enum GimpConvertDitherType',
+	{ name => 'dither_type', type => 'enum PicmanConvertDitherType',
 	  desc => 'The dither type to use' },
-	{ name => 'palette_type', type => 'enum GimpConvertPaletteType',
+	{ name => 'palette_type', type => 'enum PicmanConvertPaletteType',
 	  desc => 'The type of palette to use' },
 	{ name => 'num_cols', type => 'int32',
 	  desc => 'The number of colors to quantize to, ignored unless
-		   (palette_type == GIMP_MAKE_PALETTE)' },
+		   (palette_type == PICMAN_MAKE_PALETTE)' },
 	{ name => 'alpha_dither', type => 'boolean',
 	  desc => 'Dither transparency to fake partial opacity' },
 	{ name => 'remove_unused', type => 'boolean',
 	  desc => 'Remove unused or duplicate color entries from final
-		   palette, ignored if (palette_type == GIMP_MAKE_PALETTE)' },
+		   palette, ignored if (palette_type == PICMAN_MAKE_PALETTE)' },
 	{ name => 'palette', type => 'string',
 	  desc => 'The name of the custom palette to use, ignored unless
-		   (palette_type == GIMP_CUSTOM_PALETTE)' }
+		   (palette_type == PICMAN_CUSTOM_PALETTE)' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  GimpPalette *pal = NULL;
+  PicmanPalette *pal = NULL;
 
-  if (gimp_pdb_image_is_not_base_type (image, GIMP_INDEXED, error) &&
-      gimp_pdb_image_is_precision (image, GIMP_PRECISION_U8, error) &&
-      gimp_item_stack_is_flat (GIMP_ITEM_STACK (gimp_image_get_layers (image))))
+  if (picman_pdb_image_is_not_base_type (image, PICMAN_INDEXED, error) &&
+      picman_pdb_image_is_precision (image, PICMAN_PRECISION_U8, error) &&
+      picman_item_stack_is_flat (PICMAN_ITEM_STACK (picman_image_get_layers (image))))
     {
       switch (palette_type)
 	{
-	case GIMP_MAKE_PALETTE:
+	case PICMAN_MAKE_PALETTE:
 	  if (num_cols < 1 || num_cols > MAXNUMCOLORS)
 	    success = FALSE;
 	  break;
 
-	case GIMP_CUSTOM_PALETTE:
-          pal = gimp_pdb_get_palette (gimp, palette, FALSE, error);
+	case PICMAN_CUSTOM_PALETTE:
+          pal = picman_pdb_get_palette (picman, palette, FALSE, error);
 	  if (! pal)
             {
               success = FALSE;
@@ -150,8 +150,8 @@ HELP
           else if (pal->n_colors > MAXNUMCOLORS)
             {
               g_set_error_literal (error,
-	                           GIMP_PDB_ERROR,
-                                   GIMP_PDB_ERROR_INVALID_ARGUMENT,
+	                           PICMAN_PDB_ERROR,
+                                   PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                                    _("Cannot convert to a palette "
                                      "with more than 256 colors."));
               success = FALSE;
@@ -168,7 +168,7 @@ HELP
     }
 
   if (success)
-    success = gimp_image_convert_type (image, GIMP_INDEXED,
+    success = picman_image_convert_type (image, PICMAN_INDEXED,
                                        num_cols, dither_type,
                                        alpha_dither, FALSE, remove_unused,
 				       palette_type, pal,
@@ -205,12 +205,12 @@ HELP
 {
   if (width == 0 || height == 0 || matrix_length == width * height)
     {
-      gimp_image_convert_type_set_dither_matrix (matrix, width, height);
+      picman_image_convert_type_set_dither_matrix (matrix, width, height);
     }
   else
     {
-      g_set_error_literal (error, GIMP_PDB_ERROR,
-                           GIMP_PDB_ERROR_INVALID_ARGUMENT,
+      g_set_error_literal (error, PICMAN_PDB_ERROR,
+                           PICMAN_PDB_ERROR_INVALID_ARGUMENT,
                            "Dither matrix length must be width * height");
       success = FALSE;
     }
@@ -225,7 +225,7 @@ sub image_convert_precision {
     $help = <<'HELP';
 This procedure converts the image to the specified precision. Note
 that indexed images cannot be converted and are always in
-GIMP_PRECISION_U8.
+PICMAN_PRECISION_U8.
 HELP
 
     &mitch_pdb_misc('2012', '2.10');
@@ -233,20 +233,20 @@ HELP
     @inargs = (
 	{ name => 'image', type => 'image',
 	  desc => 'The image' },
-	{ name => 'precision', type => 'enum GimpPrecision',
+	{ name => 'precision', type => 'enum PicmanPrecision',
 	  desc => 'The new precision' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp->plug_in_manager->current_plug_in)
-    gimp_plug_in_enable_precision (gimp->plug_in_manager->current_plug_in);
+  if (picman->plug_in_manager->current_plug_in)
+    picman_plug_in_enable_precision (picman->plug_in_manager->current_plug_in);
 
-  if (gimp_pdb_image_is_not_base_type (image, GIMP_INDEXED, error) &&
-      gimp_pdb_image_is_not_precision (image, precision, error))
+  if (picman_pdb_image_is_not_base_type (image, PICMAN_INDEXED, error) &&
+      picman_pdb_image_is_not_precision (image, precision, error))
     {
-      gimp_image_convert_precision (image, precision, 0, 0, 0, NULL);
+      picman_image_convert_precision (image, precision, 0, 0, 0, NULL);
     }
   else
     {
@@ -257,17 +257,17 @@ CODE
     );
 }
 
-@headers = qw("core/gimp.h"
-              "core/gimpimage.h"
-              "core/gimpimage-convert-precision.h"
-              "core/gimpimage-convert-type.h"
-              "core/gimpitemstack.h"
-              "core/gimppalette.h"
-              "plug-in/gimpplugin.h"
-              "plug-in/gimppluginmanager.h"
-              "gimppdberror.h"
-              "gimppdb-utils.h"
-              "gimp-intl.h");
+@headers = qw("core/picman.h"
+              "core/picmanimage.h"
+              "core/picmanimage-convert-precision.h"
+              "core/picmanimage-convert-type.h"
+              "core/picmanitemstack.h"
+              "core/picmanpalette.h"
+              "plug-in/picmanplugin.h"
+              "plug-in/picmanpluginmanager.h"
+              "picmanpdberror.h"
+              "picmanpdb-utils.h"
+              "picman-intl.h");
 
 @procs = qw(image_convert_rgb
             image_convert_grayscale
@@ -278,7 +278,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Convert';
-$doc_title = 'gimpconvert';
+$doc_title = 'picmanconvert';
 $doc_short_desc = 'Conversions between RGB, indexed, and grayscale modes.';
 $doc_long_desc = 'Conversions between RGB, indexed, and grayscale modes.';
 

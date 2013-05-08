@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,25 +24,25 @@
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmantoolinfo.h"
 
-#include "paint/gimpinkoptions.h"
+#include "paint/picmaninkoptions.h"
 
-#include "widgets/gimpenumaction.h"
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmanenumaction.h"
+#include "widgets/picmanuimanager.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "tools/gimp-tools.h"
-#include "tools/gimpcoloroptions.h"
-#include "tools/gimpforegroundselectoptions.h"
-#include "tools/gimprectangleoptions.h"
-#include "tools/gimpimagemaptool.h"
-#include "tools/gimptoolcontrol.h"
-#include "tools/gimptransformoptions.h"
+#include "tools/picman-tools.h"
+#include "tools/picmancoloroptions.h"
+#include "tools/picmanforegroundselectoptions.h"
+#include "tools/picmanrectangleoptions.h"
+#include "tools/picmanimagemaptool.h"
+#include "tools/picmantoolcontrol.h"
+#include "tools/picmantransformoptions.h"
 #include "tools/tool_manager.h"
 
 #include "actions.h"
@@ -62,44 +62,44 @@ tools_select_cmd_callback (GtkAction   *action,
                            const gchar *value,
                            gpointer     data)
 {
-  Gimp         *gimp;
-  GimpToolInfo *tool_info;
-  GimpContext  *context;
-  GimpDisplay  *display;
+  Picman         *picman;
+  PicmanToolInfo *tool_info;
+  PicmanContext  *context;
+  PicmanDisplay  *display;
   gboolean      rotate_layer = FALSE;
-  return_if_no_gimp (gimp, data);
+  return_if_no_picman (picman, data);
 
-  /*  special case gimp-rotate-tool being called from the Layer menu  */
-  if (strcmp (value, "gimp-rotate-layer") == 0)
+  /*  special case picman-rotate-tool being called from the Layer menu  */
+  if (strcmp (value, "picman-rotate-layer") == 0)
     {
       rotate_layer = TRUE;
-      value = "gimp-rotate-tool";
+      value = "picman-rotate-tool";
     }
 
-  tool_info = gimp_get_tool_info (gimp, value);
+  tool_info = picman_get_tool_info (picman, value);
 
-  context = gimp_get_user_context (gimp);
+  context = picman_get_user_context (picman);
 
   /*  always allocate a new tool when selected from the image menu
    */
-  if (gimp_context_get_tool (context) != tool_info)
+  if (picman_context_get_tool (context) != tool_info)
     {
-      gimp_context_set_tool (context, tool_info);
+      picman_context_set_tool (context, tool_info);
 
       if (rotate_layer)
         g_object_set (tool_info->tool_options,
-                      "type", GIMP_TRANSFORM_TYPE_LAYER,
+                      "type", PICMAN_TRANSFORM_TYPE_LAYER,
                       NULL);
     }
   else
     {
-      gimp_context_tool_changed (context);
+      picman_context_tool_changed (context);
     }
 
-  display = gimp_context_get_display (context);
+  display = picman_context_get_display (context);
 
-  if (display && gimp_display_get_image (display))
-    tool_manager_initialize_active (gimp, display);
+  if (display && picman_display_get_image (display))
+    tool_manager_initialize_active (picman, display);
 }
 
 void
@@ -107,15 +107,15 @@ tools_color_average_radius_cmd_callback (GtkAction *action,
                                          gint       value,
                                          gpointer   data)
 {
-  GimpContext  *context;
-  GimpToolInfo *tool_info;
+  PicmanContext  *context;
+  PicmanToolInfo *tool_info;
   return_if_no_context (context, data);
 
-  tool_info = gimp_context_get_tool (context);
+  tool_info = picman_context_get_tool (context);
 
-  if (tool_info && GIMP_IS_COLOR_OPTIONS (tool_info->tool_options))
+  if (tool_info && PICMAN_IS_COLOR_OPTIONS (tool_info->tool_options))
     {
-      action_select_property ((GimpActionSelectType) value,
+      action_select_property ((PicmanActionSelectType) value,
                               action_data_get_display (data),
                               G_OBJECT (tool_info->tool_options),
                               "average-radius",
@@ -128,15 +128,15 @@ tools_paint_brush_size_cmd_callback (GtkAction *action,
                                      gint       value,
                                      gpointer   data)
 {
-  GimpContext  *context;
-  GimpToolInfo *tool_info;
+  PicmanContext  *context;
+  PicmanToolInfo *tool_info;
   return_if_no_context (context, data);
 
-  tool_info = gimp_context_get_tool (context);
+  tool_info = picman_context_get_tool (context);
 
-  if (tool_info && GIMP_IS_PAINT_OPTIONS (tool_info->tool_options))
+  if (tool_info && PICMAN_IS_PAINT_OPTIONS (tool_info->tool_options))
     {
-      action_select_property ((GimpActionSelectType) value,
+      action_select_property ((PicmanActionSelectType) value,
                               action_data_get_display (data),
                               G_OBJECT (tool_info->tool_options),
                               "brush-size",
@@ -149,15 +149,15 @@ tools_paint_brush_angle_cmd_callback (GtkAction *action,
                                       gint       value,
                                       gpointer   data)
 {
-  GimpContext  *context;
-  GimpToolInfo *tool_info;
+  PicmanContext  *context;
+  PicmanToolInfo *tool_info;
   return_if_no_context (context, data);
 
-  tool_info = gimp_context_get_tool (context);
+  tool_info = picman_context_get_tool (context);
 
-  if (tool_info && GIMP_IS_PAINT_OPTIONS (tool_info->tool_options))
+  if (tool_info && PICMAN_IS_PAINT_OPTIONS (tool_info->tool_options))
     {
-      action_select_property ((GimpActionSelectType) value,
+      action_select_property ((PicmanActionSelectType) value,
                               action_data_get_display (data),
                               G_OBJECT (tool_info->tool_options),
                               "brush-angle",
@@ -170,15 +170,15 @@ tools_paint_brush_aspect_ratio_cmd_callback (GtkAction *action,
                                              gint       value,
                                              gpointer   data)
 {
-  GimpContext  *context;
-  GimpToolInfo *tool_info;
+  PicmanContext  *context;
+  PicmanToolInfo *tool_info;
   return_if_no_context (context, data);
 
-  tool_info = gimp_context_get_tool (context);
+  tool_info = picman_context_get_tool (context);
 
-  if (tool_info && GIMP_IS_PAINT_OPTIONS (tool_info->tool_options))
+  if (tool_info && PICMAN_IS_PAINT_OPTIONS (tool_info->tool_options))
     {
-      action_select_property ((GimpActionSelectType) value,
+      action_select_property ((PicmanActionSelectType) value,
                               action_data_get_display (data),
                               G_OBJECT (tool_info->tool_options),
                               "brush-aspect-ratio",
@@ -191,15 +191,15 @@ tools_ink_blob_size_cmd_callback (GtkAction *action,
                                   gint       value,
                                   gpointer   data)
 {
-  GimpContext  *context;
-  GimpToolInfo *tool_info;
+  PicmanContext  *context;
+  PicmanToolInfo *tool_info;
   return_if_no_context (context, data);
 
-  tool_info = gimp_context_get_tool (context);
+  tool_info = picman_context_get_tool (context);
 
-  if (tool_info && GIMP_IS_INK_OPTIONS (tool_info->tool_options))
+  if (tool_info && PICMAN_IS_INK_OPTIONS (tool_info->tool_options))
     {
-      action_select_property ((GimpActionSelectType) value,
+      action_select_property ((PicmanActionSelectType) value,
                               action_data_get_display (data),
                               G_OBJECT (tool_info->tool_options),
                               "size",
@@ -212,15 +212,15 @@ tools_ink_blob_aspect_cmd_callback (GtkAction *action,
                                     gint       value,
                                     gpointer   data)
 {
-  GimpContext  *context;
-  GimpToolInfo *tool_info;
+  PicmanContext  *context;
+  PicmanToolInfo *tool_info;
   return_if_no_context (context, data);
 
-  tool_info = gimp_context_get_tool (context);
+  tool_info = picman_context_get_tool (context);
 
-  if (tool_info && GIMP_IS_INK_OPTIONS (tool_info->tool_options))
+  if (tool_info && PICMAN_IS_INK_OPTIONS (tool_info->tool_options))
     {
-      action_select_property ((GimpActionSelectType) value,
+      action_select_property ((PicmanActionSelectType) value,
                               action_data_get_display (data),
                               G_OBJECT (tool_info->tool_options),
                               "blob-aspect",
@@ -233,15 +233,15 @@ tools_ink_blob_angle_cmd_callback (GtkAction *action,
                                    gint       value,
                                    gpointer   data)
 {
-  GimpContext  *context;
-  GimpToolInfo *tool_info;
+  PicmanContext  *context;
+  PicmanToolInfo *tool_info;
   return_if_no_context (context, data);
 
-  tool_info = gimp_context_get_tool (context);
+  tool_info = picman_context_get_tool (context);
 
-  if (tool_info && GIMP_IS_INK_OPTIONS (tool_info->tool_options))
+  if (tool_info && PICMAN_IS_INK_OPTIONS (tool_info->tool_options))
     {
-      action_select_property ((GimpActionSelectType) value,
+      action_select_property ((PicmanActionSelectType) value,
                               action_data_get_display (data),
                               G_OBJECT (tool_info->tool_options),
                               "blob-angle",
@@ -254,16 +254,16 @@ tools_fg_select_brush_size_cmd_callback (GtkAction *action,
                                          gint       value,
                                          gpointer   data)
 {
-  GimpContext  *context;
-  GimpToolInfo *tool_info;
+  PicmanContext  *context;
+  PicmanToolInfo *tool_info;
   return_if_no_context (context, data);
 
-  tool_info = gimp_context_get_tool (context);
+  tool_info = picman_context_get_tool (context);
 
 #if 0
-  if (tool_info && GIMP_IS_FOREGROUND_SELECT_OPTIONS (tool_info->tool_options))
+  if (tool_info && PICMAN_IS_FOREGROUND_SELECT_OPTIONS (tool_info->tool_options))
     {
-      action_select_property ((GimpActionSelectType) value,
+      action_select_property ((PicmanActionSelectType) value,
                               action_data_get_display (data),
                               G_OBJECT (tool_info->tool_options),
                               "stroke-width",
@@ -277,15 +277,15 @@ tools_transform_preview_opacity_cmd_callback (GtkAction *action,
                                               gint       value,
                                               gpointer   data)
 {
-  GimpContext  *context;
-  GimpToolInfo *tool_info;
+  PicmanContext  *context;
+  PicmanToolInfo *tool_info;
   return_if_no_context (context, data);
 
-  tool_info = gimp_context_get_tool (context);
+  tool_info = picman_context_get_tool (context);
 
-  if (tool_info && GIMP_IS_TRANSFORM_OPTIONS (tool_info->tool_options))
+  if (tool_info && PICMAN_IS_TRANSFORM_OPTIONS (tool_info->tool_options))
     {
-      action_select_property ((GimpActionSelectType) value,
+      action_select_property ((PicmanActionSelectType) value,
                               action_data_get_display (data),
                               G_OBJECT (tool_info->tool_options),
                               "preview-opacity",
@@ -298,17 +298,17 @@ tools_value_1_cmd_callback (GtkAction *action,
                             gint       value,
                             gpointer   data)
 {
-  GimpContext *context;
-  GimpTool    *tool;
+  PicmanContext *context;
+  PicmanTool    *tool;
   return_if_no_context (context, data);
 
-  tool = tool_manager_get_active (context->gimp);
+  tool = tool_manager_get_active (context->picman);
 
   if (tool)
     {
       const gchar *action_desc;
 
-      action_desc = gimp_tool_control_get_action_value_1 (tool->control);
+      action_desc = picman_tool_control_get_action_value_1 (tool->control);
 
       if (action_desc)
         tools_activate_enum_action (action_desc, value);
@@ -320,17 +320,17 @@ tools_value_2_cmd_callback (GtkAction *action,
                             gint       value,
                             gpointer   data)
 {
-  GimpContext *context;
-  GimpTool    *tool;
+  PicmanContext *context;
+  PicmanTool    *tool;
   return_if_no_context (context, data);
 
-  tool = tool_manager_get_active (context->gimp);
+  tool = tool_manager_get_active (context->picman);
 
   if (tool)
     {
       const gchar *action_desc;
 
-      action_desc = gimp_tool_control_get_action_value_2 (tool->control);
+      action_desc = picman_tool_control_get_action_value_2 (tool->control);
 
       if (action_desc)
         tools_activate_enum_action (action_desc, value);
@@ -342,17 +342,17 @@ tools_value_3_cmd_callback (GtkAction *action,
                             gint       value,
                             gpointer   data)
 {
-  GimpContext *context;
-  GimpTool    *tool;
+  PicmanContext *context;
+  PicmanTool    *tool;
   return_if_no_context (context, data);
 
-  tool = tool_manager_get_active (context->gimp);
+  tool = tool_manager_get_active (context->picman);
 
   if (tool)
     {
       const gchar *action_desc;
 
-      action_desc = gimp_tool_control_get_action_value_3 (tool->control);
+      action_desc = picman_tool_control_get_action_value_3 (tool->control);
 
       if (action_desc)
         tools_activate_enum_action (action_desc, value);
@@ -364,17 +364,17 @@ tools_value_4_cmd_callback (GtkAction *action,
                             gint       value,
                             gpointer   data)
 {
-  GimpContext *context;
-  GimpTool    *tool;
+  PicmanContext *context;
+  PicmanTool    *tool;
   return_if_no_context (context, data);
 
-  tool = tool_manager_get_active (context->gimp);
+  tool = tool_manager_get_active (context->picman);
 
   if (tool)
     {
       const gchar *action_desc;
 
-      action_desc = gimp_tool_control_get_action_value_4 (tool->control);
+      action_desc = picman_tool_control_get_action_value_4 (tool->control);
 
       if (action_desc)
         tools_activate_enum_action (action_desc, value);
@@ -386,17 +386,17 @@ tools_object_1_cmd_callback (GtkAction *action,
                              gint       value,
                              gpointer   data)
 {
-  GimpContext *context;
-  GimpTool    *tool;
+  PicmanContext *context;
+  PicmanTool    *tool;
   return_if_no_context (context, data);
 
-  tool = tool_manager_get_active (context->gimp);
+  tool = tool_manager_get_active (context->picman);
 
   if (tool)
     {
       const gchar *action_desc;
 
-      action_desc = gimp_tool_control_get_action_object_1 (tool->control);
+      action_desc = picman_tool_control_get_action_object_1 (tool->control);
 
       if (action_desc)
         tools_activate_enum_action (action_desc, value);
@@ -408,17 +408,17 @@ tools_object_2_cmd_callback (GtkAction *action,
                              gint       value,
                              gpointer   data)
 {
-  GimpContext *context;
-  GimpTool    *tool;
+  PicmanContext *context;
+  PicmanTool    *tool;
   return_if_no_context (context, data);
 
-  tool = tool_manager_get_active (context->gimp);
+  tool = tool_manager_get_active (context->picman);
 
   if (tool)
     {
       const gchar *action_desc;
 
-      action_desc = gimp_tool_control_get_action_object_2 (tool->control);
+      action_desc = picman_tool_control_get_action_object_2 (tool->control);
 
       if (action_desc)
         tools_activate_enum_action (action_desc, value);
@@ -445,15 +445,15 @@ tools_activate_enum_action (const gchar *action_desc,
 
       *action_name++ = '\0';
 
-      managers = gimp_ui_managers_from_name ("<Image>");
+      managers = picman_ui_managers_from_name ("<Image>");
 
-      action = gimp_ui_manager_find_action (managers->data,
+      action = picman_ui_manager_find_action (managers->data,
                                             group_name, action_name);
 
-      if (GIMP_IS_ENUM_ACTION (action) &&
-          GIMP_ENUM_ACTION (action)->value_variable)
+      if (PICMAN_IS_ENUM_ACTION (action) &&
+          PICMAN_ENUM_ACTION (action)->value_variable)
         {
-          gimp_enum_action_selected (GIMP_ENUM_ACTION (action), value);
+          picman_enum_action_selected (PICMAN_ENUM_ACTION (action), value);
         }
     }
 

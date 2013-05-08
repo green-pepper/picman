@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,22 +21,22 @@
 
 #include "core/core-types.h"
 
-#include "core/gimpidtable.h"
+#include "core/picmanidtable.h"
 
 
 #define ADD_TEST(function) \
-  g_test_add ("/gimpidtable/" #function, \
-              GimpTestFixture, \
+  g_test_add ("/picmanidtable/" #function, \
+              PicmanTestFixture, \
               NULL, \
-              gimp_test_id_table_setup, \
+              picman_test_id_table_setup, \
               function, \
-              gimp_test_id_table_teardown);
+              picman_test_id_table_teardown);
 
 
 typedef struct
 {
-  GimpIdTable *id_table;
-} GimpTestFixture;
+  PicmanIdTable *id_table;
+} PicmanTestFixture;
 
 
 static gpointer data1 = (gpointer) 0x00000001;
@@ -44,14 +44,14 @@ static gpointer data2 = (gpointer) 0x00000002;
 
 
 static void
-gimp_test_id_table_setup (GimpTestFixture *fixture,
+picman_test_id_table_setup (PicmanTestFixture *fixture,
                           gconstpointer    data)
 {
-  fixture->id_table = gimp_id_table_new ();
+  fixture->id_table = picman_id_table_new ();
 }
 
 static void
-gimp_test_id_table_teardown (GimpTestFixture *fixture,
+picman_test_id_table_teardown (PicmanTestFixture *fixture,
                              gconstpointer    data)
 {
   g_object_unref (fixture->id_table);
@@ -64,11 +64,11 @@ gimp_test_id_table_teardown (GimpTestFixture *fixture,
  * Test that insert and lookup works.
  **/
 static void
-insert_and_lookup (GimpTestFixture *f,
+insert_and_lookup (PicmanTestFixture *f,
                    gconstpointer    data)
 {
-  gint     ret_id   = gimp_id_table_insert (f->id_table, data1);
-  gpointer ret_data = gimp_id_table_lookup (f->id_table, ret_id);
+  gint     ret_id   = picman_id_table_insert (f->id_table, data1);
+  gpointer ret_data = picman_id_table_lookup (f->id_table, ret_id);
 
   g_assert (ret_data == data1);
 }
@@ -79,13 +79,13 @@ insert_and_lookup (GimpTestFixture *f,
  * Test that two consecutive inserts generates different IDs.
  **/
 static void
-insert_twice (GimpTestFixture *f,
+insert_twice (PicmanTestFixture *f,
               gconstpointer    data)
 {
-  gint     ret_id    = gimp_id_table_insert (f->id_table, data1);
-  gpointer ret_data  = gimp_id_table_lookup (f->id_table, ret_id);
-  gint     ret_id2   = gimp_id_table_insert (f->id_table, data2);
-  gpointer ret_data2 = gimp_id_table_lookup (f->id_table, ret_id2);
+  gint     ret_id    = picman_id_table_insert (f->id_table, data1);
+  gpointer ret_data  = picman_id_table_lookup (f->id_table, ret_id);
+  gint     ret_id2   = picman_id_table_insert (f->id_table, data2);
+  gpointer ret_data2 = picman_id_table_lookup (f->id_table, ret_id2);
 
   g_assert (ret_id    != ret_id2);
   g_assert (ret_data  == data1);
@@ -98,13 +98,13 @@ insert_twice (GimpTestFixture *f,
  * Test that it is possible to insert data with a specific ID.
  **/
 static void
-insert_with_id (GimpTestFixture *f,
+insert_with_id (PicmanTestFixture *f,
                 gconstpointer    data)
 {
   const int id = 10;
 
-  int      ret_id   = gimp_id_table_insert_with_id (f->id_table, id, data1);
-  gpointer ret_data = gimp_id_table_lookup (f->id_table, id);
+  int      ret_id   = picman_id_table_insert_with_id (f->id_table, id, data1);
+  gpointer ret_data = picman_id_table_lookup (f->id_table, id);
 
   g_assert (ret_id   == id);
   g_assert (ret_data == data1);
@@ -117,15 +117,15 @@ insert_with_id (GimpTestFixture *f,
  * that ID already is inserted.
  **/
 static void
-insert_with_id_existing (GimpTestFixture *f,
+insert_with_id_existing (PicmanTestFixture *f,
                          gconstpointer    data)
 {
   const int id = 10;
 
-  int      ret_id    = gimp_id_table_insert_with_id (f->id_table, id, data1);
-  gpointer ret_data  = gimp_id_table_lookup (f->id_table, ret_id);
-  int      ret_id2   = gimp_id_table_insert_with_id (f->id_table, id, data2);
-  gpointer ret_data2 = gimp_id_table_lookup (f->id_table, ret_id2);
+  int      ret_id    = picman_id_table_insert_with_id (f->id_table, id, data1);
+  gpointer ret_data  = picman_id_table_lookup (f->id_table, ret_id);
+  int      ret_id2   = picman_id_table_insert_with_id (f->id_table, id, data2);
+  gpointer ret_data2 = picman_id_table_lookup (f->id_table, ret_id2);
 
   g_assert (id        == ret_id);
   g_assert (ret_id2   == -1);
@@ -140,14 +140,14 @@ insert_with_id_existing (GimpTestFixture *f,
  * different data.
  **/
 static void
-replace (GimpTestFixture *f,
+replace (PicmanTestFixture *f,
          gconstpointer    data)
 {
-  int ret_id = gimp_id_table_insert (f->id_table, data1);
+  int ret_id = picman_id_table_insert (f->id_table, data1);
   gpointer ret_data;
 
-  gimp_id_table_replace (f->id_table, ret_id, data2);
-  ret_data = gimp_id_table_lookup (f->id_table, ret_id);
+  picman_id_table_replace (f->id_table, ret_id, data2);
+  ret_data = picman_id_table_lookup (f->id_table, ret_id);
 
   g_assert (ret_data  == data2);
 }
@@ -159,15 +159,15 @@ replace (GimpTestFixture *f,
  * replace.
  **/
 static void
-replace_as_insert (GimpTestFixture *f,
+replace_as_insert (PicmanTestFixture *f,
                    gconstpointer    data)
 {
   const int id = 10;
 
   gpointer ret_data;
 
-  gimp_id_table_replace (f->id_table, id, data1);
-  ret_data = gimp_id_table_lookup (f->id_table, id);
+  picman_id_table_replace (f->id_table, id, data1);
+  ret_data = picman_id_table_lookup (f->id_table, id);
 
   g_assert (ret_data  == data1);
 }
@@ -178,13 +178,13 @@ replace_as_insert (GimpTestFixture *f,
  * Test that it is possible to remove data identified by the ID:
  **/
 static void
-remove (GimpTestFixture *f,
+remove (PicmanTestFixture *f,
         gconstpointer    data)
 {
-  gint     ret_id            = gimp_id_table_insert (f->id_table, data1);
-  void    *ret_data          = gimp_id_table_lookup (f->id_table, ret_id);
-  gboolean remove_successful = gimp_id_table_remove (f->id_table, ret_id);
-  void    *ret_data2         = gimp_id_table_lookup (f->id_table, ret_id);
+  gint     ret_id            = picman_id_table_insert (f->id_table, data1);
+  void    *ret_data          = picman_id_table_lookup (f->id_table, ret_id);
+  gboolean remove_successful = picman_id_table_remove (f->id_table, ret_id);
+  void    *ret_data2         = picman_id_table_lookup (f->id_table, ret_id);
   
   g_assert (remove_successful);
   g_assert (ret_data == data1);
@@ -198,13 +198,13 @@ remove (GimpTestFixture *f,
  * ID that doesn't exist.
  **/
 static void
-remove_non_existing (GimpTestFixture *f,
+remove_non_existing (PicmanTestFixture *f,
                      gconstpointer    data)
 {
   const int id = 10;
 
-  gboolean remove_successful = gimp_id_table_remove (f->id_table, id);
-  void    *ret_data          = gimp_id_table_lookup (f->id_table, id);
+  gboolean remove_successful = picman_id_table_remove (f->id_table, id);
+  void    *ret_data          = picman_id_table_lookup (f->id_table, id);
   
   g_assert (! remove_successful);
   g_assert (ret_data == NULL);

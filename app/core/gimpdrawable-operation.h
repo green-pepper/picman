@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdrawable-operation.h
- * Copyright (C) 2007 Øyvind Kolås <pippin@gimp.org>
- *                    Sven Neumann <sven@gimp.org>
- *                    Michael Natterer <mitch@gimp.org>
+ * picmandrawable-operation.h
+ * Copyright (C) 2007 Øyvind Kolås <pippin@picman.org>
+ *                    Sven Neumann <sven@picman.org>
+ *                    Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DRAWABLE_OPERATION_H__
-#define __GIMP_DRAWABLE_OPERATION_H__
+#ifndef __PICMAN_DRAWABLE_OPERATION_H__
+#define __PICMAN_DRAWABLE_OPERATION_H__
 
 
-void   gimp_drawable_apply_operation         (GimpDrawable *drawable,
-                                              GimpProgress *progress,
+void   picman_drawable_apply_operation         (PicmanDrawable *drawable,
+                                              PicmanProgress *progress,
                                               const gchar  *undo_desc,
                                               GeglNode     *operation);
-void   gimp_drawable_apply_operation_by_name (GimpDrawable *drawable,
-                                              GimpProgress *progress,
+void   picman_drawable_apply_operation_by_name (PicmanDrawable *drawable,
+                                              PicmanProgress *progress,
                                               const gchar  *undo_desc,
                                               const gchar  *operation_type,
                                               GObject      *config);
 
 
-#endif /* __GIMP_DRAWABLE_OPERATION_H__ */
+#endif /* __PICMAN_DRAWABLE_OPERATION_H__ */

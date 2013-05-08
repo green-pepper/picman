@@ -1,17 +1,17 @@
-# Files from the Gimp distribution which have already been
+# Files from the Picman distribution which have already been
 # marked to allow runtime translation of messages
 
 [encoding: UTF-8]
 
-plug-ins/pygimp/gimpfu.py
-plug-ins/pygimp/gimpui.py
+plug-ins/pypicman/picmanfu.py
+plug-ins/pypicman/picmanui.py
 
-plug-ins/pygimp/plug-ins/colorxhtml.py
-plug-ins/pygimp/plug-ins/gradients-save-as-css.py
-plug-ins/pygimp/plug-ins/foggify.py
-plug-ins/pygimp/plug-ins/palette-offset.py
-plug-ins/pygimp/plug-ins/palette-sort.py
-plug-ins/pygimp/plug-ins/palette-to-gradient.py
-plug-ins/pygimp/plug-ins/py-slice.py
-plug-ins/pygimp/plug-ins/python-console.py
-plug-ins/pygimp/plug-ins/shadow_bevel.py
+plug-ins/pypicman/plug-ins/colorxhtml.py
+plug-ins/pypicman/plug-ins/gradients-save-as-css.py
+plug-ins/pypicman/plug-ins/foggify.py
+plug-ins/pypicman/plug-ins/palette-offset.py
+plug-ins/pypicman/plug-ins/palette-sort.py
+plug-ins/pypicman/plug-ins/palette-to-gradient.py
+plug-ins/pypicman/plug-ins/py-slice.py
+plug-ins/pypicman/plug-ins/python-console.py
+plug-ins/pypicman/plug-ins/shadow_bevel.py

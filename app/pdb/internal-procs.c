@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 
 #include "pdb-types.h"
 
-#include "gimppdb.h"
+#include "picmanpdb.h"
 
 #include "internal-procs.h"
 
@@ -31,9 +31,9 @@
 /* 684 procedures registered total */
 
 void
-internal_procs_init (GimpPDB *pdb)
+internal_procs_init (PicmanPDB *pdb)
 {
-  g_return_if_fail (GIMP_IS_PDB (pdb));
+  g_return_if_fail (PICMAN_IS_PDB (pdb));
 
   register_brush_procs (pdb);
   register_brush_select_procs (pdb);
@@ -52,8 +52,8 @@ internal_procs_init (GimpPDB *pdb)
   register_floating_sel_procs (pdb);
   register_font_select_procs (pdb);
   register_fonts_procs (pdb);
-  register_gimp_procs (pdb);
-  register_gimprc_procs (pdb);
+  register_picman_procs (pdb);
+  register_picmanrc_procs (pdb);
   register_gradient_procs (pdb);
   register_gradient_select_procs (pdb);
   register_gradients_procs (pdb);

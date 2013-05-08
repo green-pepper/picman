@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PICKABLE_AUTO_SHRINK_H__
-#define __GIMP_PICKABLE_AUTO_SHRINK_H__
+#ifndef __PICMAN_PICKABLE_AUTO_SHRINK_H__
+#define __PICMAN_PICKABLE_AUTO_SHRINK_H__
 
 
-gboolean   gimp_pickable_auto_shrink (GimpPickable *pickable,
+gboolean   picman_pickable_auto_shrink (PicmanPickable *pickable,
                                       gint         x1,
                                       gint         y1,
                                       gint         x2,
@@ -30,4 +30,4 @@ gboolean   gimp_pickable_auto_shrink (GimpPickable *pickable,
                                       gint        *shrunk_y2);
 
 
-#endif  /* __GIMP_PICKABLE_AUTO_SHRINK_H__ */
+#endif  /* __PICMAN_PICKABLE_AUTO_SHRINK_H__ */

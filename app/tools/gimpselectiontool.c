@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,88 +20,88 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimpchannel.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-pick-layer.h"
-#include "core/gimppickable.h"
+#include "core/picmanchannel.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-pick-layer.h"
+#include "core/picmanpickable.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimpeditselectiontool.h"
-#include "gimpselectiontool.h"
-#include "gimpselectionoptions.h"
-#include "gimptoolcontrol.h"
+#include "picmaneditselectiontool.h"
+#include "picmanselectiontool.h"
+#include "picmanselectionoptions.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void   gimp_selection_tool_modifier_key  (GimpTool         *tool,
+static void   picman_selection_tool_modifier_key  (PicmanTool         *tool,
                                                  GdkModifierType   key,
                                                  gboolean          press,
                                                  GdkModifierType   state,
-                                                 GimpDisplay      *display);
-static void   gimp_selection_tool_oper_update   (GimpTool         *tool,
-                                                 const GimpCoords *coords,
+                                                 PicmanDisplay      *display);
+static void   picman_selection_tool_oper_update   (PicmanTool         *tool,
+                                                 const PicmanCoords *coords,
                                                  GdkModifierType   state,
                                                  gboolean          proximity,
-                                                 GimpDisplay      *display);
-static void   gimp_selection_tool_cursor_update (GimpTool         *tool,
-                                                 const GimpCoords *coords,
+                                                 PicmanDisplay      *display);
+static void   picman_selection_tool_cursor_update (PicmanTool         *tool,
+                                                 const PicmanCoords *coords,
                                                  GdkModifierType   state,
-                                                 GimpDisplay      *display);
+                                                 PicmanDisplay      *display);
 
 
-G_DEFINE_TYPE (GimpSelectionTool, gimp_selection_tool, GIMP_TYPE_DRAW_TOOL)
+G_DEFINE_TYPE (PicmanSelectionTool, picman_selection_tool, PICMAN_TYPE_DRAW_TOOL)
 
-#define parent_class gimp_selection_tool_parent_class
+#define parent_class picman_selection_tool_parent_class
 
 
 static void
-gimp_selection_tool_class_init (GimpSelectionToolClass *klass)
+picman_selection_tool_class_init (PicmanSelectionToolClass *klass)
 {
-  GimpToolClass *tool_class = GIMP_TOOL_CLASS (klass);
+  PicmanToolClass *tool_class = PICMAN_TOOL_CLASS (klass);
 
-  tool_class->modifier_key  = gimp_selection_tool_modifier_key;
-  tool_class->key_press     = gimp_edit_selection_tool_key_press;
-  tool_class->oper_update   = gimp_selection_tool_oper_update;
-  tool_class->cursor_update = gimp_selection_tool_cursor_update;
+  tool_class->modifier_key  = picman_selection_tool_modifier_key;
+  tool_class->key_press     = picman_edit_selection_tool_key_press;
+  tool_class->oper_update   = picman_selection_tool_oper_update;
+  tool_class->cursor_update = picman_selection_tool_cursor_update;
 }
 
 static void
-gimp_selection_tool_init (GimpSelectionTool *selection_tool)
+picman_selection_tool_init (PicmanSelectionTool *selection_tool)
 {
   selection_tool->function        = SELECTION_SELECT;
-  selection_tool->saved_operation = GIMP_CHANNEL_OP_REPLACE;
+  selection_tool->saved_operation = PICMAN_CHANNEL_OP_REPLACE;
 
   selection_tool->allow_move      = TRUE;
 }
 
 static void
-gimp_selection_tool_modifier_key (GimpTool        *tool,
+picman_selection_tool_modifier_key (PicmanTool        *tool,
                                   GdkModifierType  key,
                                   gboolean         press,
                                   GdkModifierType  state,
-                                  GimpDisplay     *display)
+                                  PicmanDisplay     *display)
 {
-  GimpSelectionTool    *selection_tool = GIMP_SELECTION_TOOL (tool);
-  GimpSelectionOptions *options        = GIMP_SELECTION_TOOL_GET_OPTIONS (tool);
+  PicmanSelectionTool    *selection_tool = PICMAN_SELECTION_TOOL (tool);
+  PicmanSelectionOptions *options        = PICMAN_SELECTION_TOOL_GET_OPTIONS (tool);
   GdkModifierType       extend_mask;
   GdkModifierType       modify_mask;
 
-  extend_mask = gimp_get_extend_selection_mask ();
-  modify_mask = gimp_get_modify_selection_mask ();
+  extend_mask = picman_get_extend_selection_mask ();
+  modify_mask = picman_get_modify_selection_mask ();
 
   if (key == extend_mask ||
       key == modify_mask ||
       key == GDK_MOD1_MASK)
     {
-      GimpChannelOps button_op = options->operation;
+      PicmanChannelOps button_op = options->operation;
 
       if (press)
         {
@@ -140,7 +140,7 @@ gimp_selection_tool_modifier_key (GimpTool        *tool,
            *  if there is actually a modifier pressed, so we don't
            *  override the "last modifier released" assignment above
            */
-          button_op = gimp_modifiers_to_channel_op (state);
+          button_op = picman_modifiers_to_channel_op (state);
         }
 
       if (button_op != options->operation)
@@ -151,33 +151,33 @@ gimp_selection_tool_modifier_key (GimpTool        *tool,
 }
 
 static void
-gimp_selection_tool_oper_update (GimpTool         *tool,
-                                 const GimpCoords *coords,
+picman_selection_tool_oper_update (PicmanTool         *tool,
+                                 const PicmanCoords *coords,
                                  GdkModifierType   state,
                                  gboolean          proximity,
-                                 GimpDisplay      *display)
+                                 PicmanDisplay      *display)
 {
-  GimpSelectionTool    *selection_tool = GIMP_SELECTION_TOOL (tool);
-  GimpSelectionOptions *options        = GIMP_SELECTION_TOOL_GET_OPTIONS (tool);
-  GimpImage            *image;
-  GimpChannel          *selection;
-  GimpDrawable         *drawable;
-  GimpLayer            *layer;
-  GimpLayer            *floating_sel;
+  PicmanSelectionTool    *selection_tool = PICMAN_SELECTION_TOOL (tool);
+  PicmanSelectionOptions *options        = PICMAN_SELECTION_TOOL_GET_OPTIONS (tool);
+  PicmanImage            *image;
+  PicmanChannel          *selection;
+  PicmanDrawable         *drawable;
+  PicmanLayer            *layer;
+  PicmanLayer            *floating_sel;
   GdkModifierType       extend_mask;
   GdkModifierType       modify_mask;
   gboolean              move_layer        = FALSE;
   gboolean              move_floating_sel = FALSE;
   gboolean              selection_empty;
 
-  image        = gimp_display_get_image (display);
-  selection    = gimp_image_get_mask (image);
-  drawable     = gimp_image_get_active_drawable (image);
-  layer        = gimp_image_pick_layer (image, coords->x, coords->y);
-  floating_sel = gimp_image_get_floating_selection (image);
+  image        = picman_display_get_image (display);
+  selection    = picman_image_get_mask (image);
+  drawable     = picman_image_get_active_drawable (image);
+  layer        = picman_image_pick_layer (image, coords->x, coords->y);
+  floating_sel = picman_image_get_floating_selection (image);
 
-  extend_mask = gimp_get_extend_selection_mask ();
-  modify_mask = gimp_get_modify_selection_mask ();
+  extend_mask = picman_get_extend_selection_mask ();
+  modify_mask = picman_get_modify_selection_mask ();
 
   if (drawable)
     {
@@ -186,14 +186,14 @@ gimp_selection_tool_oper_update (GimpTool         *tool,
           if (layer == floating_sel)
             move_floating_sel = TRUE;
         }
-      else if (gimp_item_mask_intersect (GIMP_ITEM (drawable),
+      else if (picman_item_mask_intersect (PICMAN_ITEM (drawable),
                                          NULL, NULL, NULL, NULL))
         {
           move_layer = TRUE;
         }
     }
 
-  selection_empty = gimp_channel_is_empty (selection);
+  selection_empty = picman_channel_is_empty (selection);
 
   selection_tool->function = SELECTION_SELECT;
 
@@ -233,7 +233,7 @@ gimp_selection_tool_oper_update (GimpTool         *tool,
       selection_tool->function = SELECTION_ANCHOR;
     }
 
-  gimp_tool_pop_status (tool, display);
+  picman_tool_pop_status (tool, display);
 
   if (proximity)
     {
@@ -249,10 +249,10 @@ gimp_selection_tool_oper_update (GimpTool         *tool,
         case SELECTION_SELECT:
           switch (options->operation)
             {
-            case GIMP_CHANNEL_OP_REPLACE:
+            case PICMAN_CHANNEL_OP_REPLACE:
               if (! selection_empty)
                 {
-                  status = gimp_suggest_modifiers (_("Click-Drag to replace the "
+                  status = picman_suggest_modifiers (_("Click-Drag to replace the "
                                                      "current selection"),
                                                    modifiers & ~state,
                                                    NULL, NULL, NULL);
@@ -264,8 +264,8 @@ gimp_selection_tool_oper_update (GimpTool         *tool,
                 }
               break;
 
-            case GIMP_CHANNEL_OP_ADD:
-              status = gimp_suggest_modifiers (_("Click-Drag to add to the "
+            case PICMAN_CHANNEL_OP_ADD:
+              status = picman_suggest_modifiers (_("Click-Drag to add to the "
                                                  "current selection"),
                                                modifiers
                                                & ~(state | extend_mask),
@@ -273,8 +273,8 @@ gimp_selection_tool_oper_update (GimpTool         *tool,
               free_status = TRUE;
               break;
 
-            case GIMP_CHANNEL_OP_SUBTRACT:
-              status = gimp_suggest_modifiers (_("Click-Drag to subtract from the "
+            case PICMAN_CHANNEL_OP_SUBTRACT:
+              status = picman_suggest_modifiers (_("Click-Drag to subtract from the "
                                                  "current selection"),
                                                modifiers
                                                & ~(state | modify_mask),
@@ -282,8 +282,8 @@ gimp_selection_tool_oper_update (GimpTool         *tool,
               free_status = TRUE;
               break;
 
-            case GIMP_CHANNEL_OP_INTERSECT:
-              status = gimp_suggest_modifiers (_("Click-Drag to intersect with "
+            case PICMAN_CHANNEL_OP_INTERSECT:
+              status = picman_suggest_modifiers (_("Click-Drag to intersect with "
                                                  "the current selection"),
                                                modifiers & ~state,
                                                NULL, NULL, NULL);
@@ -293,7 +293,7 @@ gimp_selection_tool_oper_update (GimpTool         *tool,
           break;
 
         case SELECTION_MOVE_MASK:
-          status = gimp_suggest_modifiers (_("Click-Drag to move the "
+          status = picman_suggest_modifiers (_("Click-Drag to move the "
                                              "selection mask"),
                                            modifiers & ~state,
                                            NULL, NULL, NULL);
@@ -317,7 +317,7 @@ gimp_selection_tool_oper_update (GimpTool         *tool,
         }
 
       if (status)
-        gimp_tool_push_status (tool, display, "%s", status);
+        picman_tool_push_status (tool, display, "%s", status);
 
       if (free_status)
         g_free ((gchar *) status);
@@ -325,51 +325,51 @@ gimp_selection_tool_oper_update (GimpTool         *tool,
 }
 
 static void
-gimp_selection_tool_cursor_update (GimpTool         *tool,
-                                   const GimpCoords *coords,
+picman_selection_tool_cursor_update (PicmanTool         *tool,
+                                   const PicmanCoords *coords,
                                    GdkModifierType   state,
-                                   GimpDisplay      *display)
+                                   PicmanDisplay      *display)
 {
-  GimpSelectionTool    *selection_tool = GIMP_SELECTION_TOOL (tool);
-  GimpSelectionOptions *options;
-  GimpToolCursorType    tool_cursor;
-  GimpCursorModifier    modifier;
+  PicmanSelectionTool    *selection_tool = PICMAN_SELECTION_TOOL (tool);
+  PicmanSelectionOptions *options;
+  PicmanToolCursorType    tool_cursor;
+  PicmanCursorModifier    modifier;
 
-  options = GIMP_SELECTION_TOOL_GET_OPTIONS (tool);
+  options = PICMAN_SELECTION_TOOL_GET_OPTIONS (tool);
 
-  tool_cursor = gimp_tool_control_get_tool_cursor (tool->control);
-  modifier    = GIMP_CURSOR_MODIFIER_NONE;
+  tool_cursor = picman_tool_control_get_tool_cursor (tool->control);
+  modifier    = PICMAN_CURSOR_MODIFIER_NONE;
 
   switch (selection_tool->function)
     {
     case SELECTION_SELECT:
       switch (options->operation)
         {
-        case GIMP_CHANNEL_OP_REPLACE:
+        case PICMAN_CHANNEL_OP_REPLACE:
           break;
-        case GIMP_CHANNEL_OP_ADD:
-          modifier = GIMP_CURSOR_MODIFIER_PLUS;
+        case PICMAN_CHANNEL_OP_ADD:
+          modifier = PICMAN_CURSOR_MODIFIER_PLUS;
           break;
-        case GIMP_CHANNEL_OP_SUBTRACT:
-          modifier = GIMP_CURSOR_MODIFIER_MINUS;
+        case PICMAN_CHANNEL_OP_SUBTRACT:
+          modifier = PICMAN_CURSOR_MODIFIER_MINUS;
           break;
-        case GIMP_CHANNEL_OP_INTERSECT:
-          modifier = GIMP_CURSOR_MODIFIER_INTERSECT;
+        case PICMAN_CHANNEL_OP_INTERSECT:
+          modifier = PICMAN_CURSOR_MODIFIER_INTERSECT;
           break;
         }
       break;
 
     case SELECTION_MOVE_MASK:
-      modifier = GIMP_CURSOR_MODIFIER_MOVE;
+      modifier = PICMAN_CURSOR_MODIFIER_MOVE;
       break;
 
     case SELECTION_MOVE:
     case SELECTION_MOVE_COPY:
-      tool_cursor = GIMP_TOOL_CURSOR_MOVE;
+      tool_cursor = PICMAN_TOOL_CURSOR_MOVE;
       break;
 
     case SELECTION_ANCHOR:
-      modifier = GIMP_CURSOR_MODIFIER_ANCHOR;
+      modifier = PICMAN_CURSOR_MODIFIER_ANCHOR;
       break;
     }
 
@@ -377,14 +377,14 @@ gimp_selection_tool_cursor_update (GimpTool         *tool,
    *  it, always leave it there since it's more important than what we
    *  have to say.
    */
-  if (gimp_tool_control_get_cursor_modifier (tool->control) ==
-      GIMP_CURSOR_MODIFIER_BAD)
+  if (picman_tool_control_get_cursor_modifier (tool->control) ==
+      PICMAN_CURSOR_MODIFIER_BAD)
     {
-      modifier = GIMP_CURSOR_MODIFIER_BAD;
+      modifier = PICMAN_CURSOR_MODIFIER_BAD;
     }
 
-  gimp_tool_set_cursor (tool, display,
-                        gimp_tool_control_get_cursor (tool->control),
+  picman_tool_set_cursor (tool, display,
+                        picman_tool_control_get_cursor (tool->control),
                         tool_cursor,
                         modifier);
 }
@@ -393,54 +393,54 @@ gimp_selection_tool_cursor_update (GimpTool         *tool,
 /*  public functions  */
 
 gboolean
-gimp_selection_tool_start_edit (GimpSelectionTool *sel_tool,
-                                GimpDisplay       *display,
-                                const GimpCoords  *coords)
+picman_selection_tool_start_edit (PicmanSelectionTool *sel_tool,
+                                PicmanDisplay       *display,
+                                const PicmanCoords  *coords)
 {
-  GimpTool *tool;
+  PicmanTool *tool;
 
-  g_return_val_if_fail (GIMP_IS_SELECTION_TOOL (sel_tool), FALSE);
-  g_return_val_if_fail (GIMP_IS_DISPLAY (display), FALSE);
+  g_return_val_if_fail (PICMAN_IS_SELECTION_TOOL (sel_tool), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY (display), FALSE);
   g_return_val_if_fail (coords != NULL, FALSE);
 
-  tool = GIMP_TOOL (sel_tool);
+  tool = PICMAN_TOOL (sel_tool);
 
-  g_return_val_if_fail (gimp_tool_control_is_active (tool->control) == FALSE,
+  g_return_val_if_fail (picman_tool_control_is_active (tool->control) == FALSE,
                         FALSE);
 
   switch (sel_tool->function)
     {
     case SELECTION_MOVE_MASK:
-      gimp_edit_selection_tool_start (tool, display, coords,
-                                      GIMP_TRANSLATE_MODE_MASK, FALSE);
+      picman_edit_selection_tool_start (tool, display, coords,
+                                      PICMAN_TRANSLATE_MODE_MASK, FALSE);
       return TRUE;
 
     case SELECTION_MOVE:
     case SELECTION_MOVE_COPY:
       {
-        GimpImage    *image    = gimp_display_get_image (display);
-        GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+        PicmanImage    *image    = picman_display_get_image (display);
+        PicmanDrawable *drawable = picman_image_get_active_drawable (image);
 
-        if (gimp_viewable_get_children (GIMP_VIEWABLE (drawable)))
+        if (picman_viewable_get_children (PICMAN_VIEWABLE (drawable)))
           {
-            gimp_tool_message_literal (tool, display,
+            picman_tool_message_literal (tool, display,
                                        _("Cannot modify the pixels of layer groups."));
           }
-        else if (gimp_item_is_content_locked (GIMP_ITEM (drawable)))
+        else if (picman_item_is_content_locked (PICMAN_ITEM (drawable)))
           {
-            gimp_tool_message_literal (tool, display,
+            picman_tool_message_literal (tool, display,
                                        _("The active layer's pixels are locked."));
           }
         else
           {
-            GimpTranslateMode edit_mode;
+            PicmanTranslateMode edit_mode;
 
             if (sel_tool->function == SELECTION_MOVE)
-              edit_mode = GIMP_TRANSLATE_MODE_MASK_TO_LAYER;
+              edit_mode = PICMAN_TRANSLATE_MODE_MASK_TO_LAYER;
             else
-              edit_mode = GIMP_TRANSLATE_MODE_MASK_COPY_TO_LAYER;
+              edit_mode = PICMAN_TRANSLATE_MODE_MASK_COPY_TO_LAYER;
 
-            gimp_edit_selection_tool_start (tool, display, coords,
+            picman_edit_selection_tool_start (tool, display, coords,
                                             edit_mode, FALSE);
          }
 

@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates clickable image maps.
  *
@@ -26,8 +26,8 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimp/gimp.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicman/picman.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "imap_commands.h"
 #include "imap_default_dialog.h"
@@ -35,13 +35,13 @@
 #include "imap_rectangle.h"
 #include "imap_table.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 typedef struct {
    DefaultDialog_t      *dialog;
 
    ObjectList_t         *list;
-   GimpDrawable         *drawable;
+   PicmanDrawable         *drawable;
 
    GtkWidget            *alternate;
    GtkWidget            *all;
@@ -50,7 +50,7 @@ typedef struct {
    GtkWidget            *upper_border;
    GtkWidget            *lower_border;
    GtkWidget            *url;
-} GimpGuidesDialog_t;
+} PicmanGuidesDialog_t;
 
 static gint
 guide_sort_func(gconstpointer a, gconstpointer b)
@@ -59,15 +59,15 @@ guide_sort_func(gconstpointer a, gconstpointer b)
 }
 
 static void
-gimp_guides_ok_cb(gpointer data)
+picman_guides_ok_cb(gpointer data)
 {
-   GimpGuidesDialog_t *param = (GimpGuidesDialog_t*) data;
+   PicmanGuidesDialog_t *param = (PicmanGuidesDialog_t*) data;
    gint  guide_num;
    GSList *hguides, *hg;
    GSList *vguides, *vg;
    gboolean all;
    const gchar *url;
-   gint32 image_ID = gimp_item_get_image (param->drawable->drawable_id);
+   gint32 image_ID = picman_item_get_image (param->drawable->drawable_id);
 
    /* First get some dialog values */
 
@@ -80,7 +80,7 @@ gimp_guides_ok_cb(gpointer data)
 
    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(param->right_border)))
       vguides = g_slist_append(vguides,
-                               GINT_TO_POINTER(gimp_image_width(image_ID)));
+                               GINT_TO_POINTER(picman_image_width(image_ID)));
 
    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(param->upper_border)))
       hguides = g_slist_append(NULL, GINT_TO_POINTER(0));
@@ -89,31 +89,31 @@ gimp_guides_ok_cb(gpointer data)
 
    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(param->lower_border)))
       hguides = g_slist_append(hguides,
-                               GINT_TO_POINTER(gimp_image_height(image_ID)));
+                               GINT_TO_POINTER(picman_image_height(image_ID)));
 
    url = gtk_entry_get_text(GTK_ENTRY(param->url));
 
-   /* Next get all the GIMP guides */
+   /* Next get all the PICMAN guides */
 
-   guide_num = gimp_image_find_next_guide(image_ID, 0);
+   guide_num = picman_image_find_next_guide(image_ID, 0);
 
    while (guide_num > 0) {
-      gint position = gimp_image_get_guide_position(image_ID, guide_num);
+      gint position = picman_image_get_guide_position(image_ID, guide_num);
 
-      if (gimp_image_get_guide_orientation(image_ID, guide_num)
-          == GIMP_ORIENTATION_HORIZONTAL) {
+      if (picman_image_get_guide_orientation(image_ID, guide_num)
+          == PICMAN_ORIENTATION_HORIZONTAL) {
          hguides = g_slist_insert_sorted(hguides, GINT_TO_POINTER(position),
                                          guide_sort_func);
-      } else {                  /* GIMP_ORIENTATION_VERTICAL */
+      } else {                  /* PICMAN_ORIENTATION_VERTICAL */
          vguides = g_slist_insert_sorted(vguides, GINT_TO_POINTER(position),
                                          guide_sort_func);
       }
-      guide_num = gimp_image_find_next_guide(image_ID, guide_num);
+      guide_num = picman_image_find_next_guide(image_ID, guide_num);
    }
 
    /* Create the areas */
 
-   subcommand_start(_("Use Gimp Guides"));
+   subcommand_start(_("Use Picman Guides"));
 
    for (hg = hguides; hg && hg->next;
         hg = (all) ? hg->next : hg->next->next) {
@@ -135,19 +135,19 @@ gimp_guides_ok_cb(gpointer data)
    preview_redraw();
 }
 
-static GimpGuidesDialog_t*
-make_gimp_guides_dialog(void)
+static PicmanGuidesDialog_t*
+make_picman_guides_dialog(void)
 {
-   GimpGuidesDialog_t *data = g_new(GimpGuidesDialog_t, 1);
+   PicmanGuidesDialog_t *data = g_new(PicmanGuidesDialog_t, 1);
    DefaultDialog_t *dialog;
    GtkWidget *table, *frame, *hbox, *vbox;
    GtkWidget *label;
 
-   dialog = data->dialog = make_default_dialog(_("Use Gimp Guides"));
-   default_dialog_set_ok_cb(dialog, gimp_guides_ok_cb, data);
+   dialog = data->dialog = make_default_dialog(_("Use Picman Guides"));
+   default_dialog_set_ok_cb(dialog, picman_guides_ok_cb, data);
    table = default_dialog_add_table(dialog, 3, 2);
 
-   frame = gimp_frame_new(_("Create"));
+   frame = picman_frame_new(_("Create"));
    gtk_widget_show(frame);
    gtk_table_attach_defaults(GTK_TABLE(table), frame, 0, 1, 0, 1);
 
@@ -165,7 +165,7 @@ make_gimp_guides_dialog(void)
    gtk_box_pack_start(GTK_BOX(hbox), data->all, FALSE, FALSE, 0);
    gtk_widget_show(data->all);
 
-   frame = gimp_frame_new(_("Add Additional Guides"));
+   frame = picman_frame_new(_("Add Additional Guides"));
    gtk_widget_show(frame);
    gtk_table_attach_defaults(GTK_TABLE(table), frame, 0, 1, 1, 2);
 
@@ -207,30 +207,30 @@ make_gimp_guides_dialog(void)
 }
 
 static void
-init_gimp_guides_dialog(GimpGuidesDialog_t *dialog, ObjectList_t *list,
-                        GimpDrawable *drawable)
+init_picman_guides_dialog(PicmanGuidesDialog_t *dialog, ObjectList_t *list,
+                        PicmanDrawable *drawable)
 {
    dialog->list = list;
    dialog->drawable = drawable;
 }
 
 static void
-do_create_gimp_guides_dialog(ObjectList_t *list, GimpDrawable *drawable)
+do_create_picman_guides_dialog(ObjectList_t *list, PicmanDrawable *drawable)
 {
-   static GimpGuidesDialog_t *dialog;
+   static PicmanGuidesDialog_t *dialog;
 
    if (!dialog)
-      dialog = make_gimp_guides_dialog();
+      dialog = make_picman_guides_dialog();
 
-   init_gimp_guides_dialog(dialog, list, drawable);
+   init_picman_guides_dialog(dialog, list, drawable);
    default_dialog_show(dialog->dialog);
 }
 
-static CmdExecuteValue_t gimp_guides_command_execute(Command_t *parent);
+static CmdExecuteValue_t picman_guides_command_execute(Command_t *parent);
 
-static CommandClass_t gimp_guides_command_class = {
+static CommandClass_t picman_guides_command_class = {
    NULL,                        /* guides_command_destruct */
-   gimp_guides_command_execute,
+   picman_guides_command_execute,
    NULL,                        /* guides_command_undo */
    NULL                         /* guides_command_redo */
 };
@@ -238,23 +238,23 @@ static CommandClass_t gimp_guides_command_class = {
 typedef struct {
    Command_t parent;
    ObjectList_t *list;
-   GimpDrawable *drawable;
-} GimpGuidesCommand_t;
+   PicmanDrawable *drawable;
+} PicmanGuidesCommand_t;
 
 Command_t*
-gimp_guides_command_new(ObjectList_t *list, GimpDrawable *drawable)
+picman_guides_command_new(ObjectList_t *list, PicmanDrawable *drawable)
 {
-   GimpGuidesCommand_t *command = g_new(GimpGuidesCommand_t, 1);
+   PicmanGuidesCommand_t *command = g_new(PicmanGuidesCommand_t, 1);
    command->list = list;
    command->drawable = drawable;
-   return command_init(&command->parent, _("Use Gimp Guides"),
-                       &gimp_guides_command_class);
+   return command_init(&command->parent, _("Use Picman Guides"),
+                       &picman_guides_command_class);
 }
 
 static CmdExecuteValue_t
-gimp_guides_command_execute(Command_t *parent)
+picman_guides_command_execute(Command_t *parent)
 {
-   GimpGuidesCommand_t *command = (GimpGuidesCommand_t*) parent;
-   do_create_gimp_guides_dialog(command->list, command->drawable);
+   PicmanGuidesCommand_t *command = (PicmanGuidesCommand_t*) parent;
+   do_create_picman_guides_dialog(command->list, command->drawable);
    return CMD_DESTRUCT;
 }

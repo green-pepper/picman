@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,19 +16,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_BASE_H_INSIDE__) && !defined (GIMP_BASE_COMPILATION)
-#error "Only <libgimpbase/gimpbase.h> can be included directly."
+#if !defined (__PICMAN_BASE_H_INSIDE__) && !defined (PICMAN_BASE_COMPILATION)
+#error "Only <libpicmanbase/picmanbase.h> can be included directly."
 #endif
 
-#ifndef __GIMP_RECTANGLE_H__
-#define __GIMP_RECTANGLE_H__
+#ifndef __PICMAN_RECTANGLE_H__
+#define __PICMAN_RECTANGLE_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-gboolean  gimp_rectangle_intersect (gint  x1,
+gboolean  picman_rectangle_intersect (gint  x1,
                                     gint  y1,
                                     gint  width1,
                                     gint  height1,
@@ -41,7 +41,7 @@ gboolean  gimp_rectangle_intersect (gint  x1,
                                     gint *dest_width,
                                     gint *dest_height);
 
-void      gimp_rectangle_union     (gint  x1,
+void      picman_rectangle_union     (gint  x1,
                                     gint  y1,
                                     gint  width1,
                                     gint  height1,
@@ -57,4 +57,4 @@ void      gimp_rectangle_union     (gint  x1,
 
 G_END_DECLS
 
-#endif  /* __GIMP_RECTANGLE_H__ */
+#endif  /* __PICMAN_RECTANGLE_H__ */

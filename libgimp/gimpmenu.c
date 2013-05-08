@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpmenu.c
+ * picmanmenu.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,21 +22,21 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "gimp.h"
+#include "picman.h"
 
-#include "gimppixbuf.h"
+#include "picmanpixbuf.h"
 
-#undef GIMP_DISABLE_DEPRECATED
-#include "gimpmenu.h"
+#undef PICMAN_DISABLE_DEPRECATED
+#include "picmanmenu.h"
 
-#include "libgimp-intl.h"
+#include "libpicman-intl.h"
 
 
 /**
- * SECTION: gimpmenu
- * @title: gimpmenu
+ * SECTION: picmanmenu
+ * @title: picmanmenu
  * @short_description: Menus for selecting images, layers, channels
  *                     and drawables.
  *
@@ -50,37 +50,37 @@
 
 /*  local function prototypes  */
 
-static GtkWidget * gimp_menu_make_menu     (GimpMenuCallback    callback,
+static GtkWidget * picman_menu_make_menu     (PicmanMenuCallback    callback,
                                             gpointer            data);
-static GtkWidget * gimp_menu_add_item      (GtkWidget          *menu,
+static GtkWidget * picman_menu_add_item      (GtkWidget          *menu,
                                             const gchar        *image_name,
                                             const gchar        *drawable_name,
                                             gint32              any_ID);
-static GtkWidget * gimp_menu_add_empty     (GtkWidget          *menu);
-static GtkWidget * gimp_menu_make_preview  (gint32              any_ID,
+static GtkWidget * picman_menu_add_empty     (GtkWidget          *menu);
+static GtkWidget * picman_menu_make_preview  (gint32              any_ID,
                                             gboolean            is_image,
                                             gint                width,
                                             gint                height);
-static void        gimp_menu_callback      (GtkWidget          *widget,
+static void        picman_menu_callback      (GtkWidget          *widget,
                                             gpointer            any_ID);
 
 
 /*  public functions  */
 
 /**
- * gimp_image_menu_new:
+ * picman_image_menu_new:
  * @constraint:   a function to filter the menu contents
  * @callback:     the callback to call when an image is selected
  * @data:         the callback's user_data
  * @active_image: an image to preselect
  *
- * Deprecated: Use gimp_image_combo_box_new() instead.
+ * Deprecated: Use picman_image_combo_box_new() instead.
  *
  * Returns: the image menu.
  */
 GtkWidget *
-gimp_image_menu_new (GimpConstraintFunc constraint,
-                     GimpMenuCallback   callback,
+picman_image_menu_new (PicmanConstraintFunc constraint,
+                     PicmanMenuCallback   callback,
                      gpointer           data,
                      gint32             active_image)
 {
@@ -94,18 +94,18 @@ gimp_image_menu_new (GimpConstraintFunc constraint,
 
   g_return_val_if_fail (callback != NULL, NULL);
 
-  menu = gimp_menu_make_menu (callback, data);
+  menu = picman_menu_make_menu (callback, data);
 
-  images = gimp_image_list (&n_images);
+  images = picman_image_list (&n_images);
 
   for (i = 0, k = 0; i < n_images; i++)
     if (! constraint || (* constraint) (images[i], -1, data))
       {
-        name = gimp_image_get_name (images[i]);
+        name = picman_image_get_name (images[i]);
         label = g_strdup_printf ("%s-%d", name, images[i]);
         g_free (name);
 
-        gimp_menu_add_item (menu, label, NULL, images[i]);
+        picman_menu_add_item (menu, label, NULL, images[i]);
 
         g_free (label);
 
@@ -123,7 +123,7 @@ gimp_image_menu_new (GimpConstraintFunc constraint,
       }
 
   if (k == 0)
-    gimp_menu_add_empty (menu);
+    picman_menu_add_empty (menu);
 
   (* callback) (image, data);
 
@@ -133,19 +133,19 @@ gimp_image_menu_new (GimpConstraintFunc constraint,
 }
 
 /**
- * gimp_layer_menu_new:
+ * picman_layer_menu_new:
  * @constraint:   a function to filter the menu contents
  * @callback:     the callback to call when a channel is selected
  * @data:         the callback's user_data
  * @active_layer: a layer to preselect
  *
- * Deprecated: Use gimp_layer_combo_box_new() instead.
+ * Deprecated: Use picman_layer_combo_box_new() instead.
  *
  * Returns: the layer menu.
  */
 GtkWidget *
-gimp_layer_menu_new (GimpConstraintFunc constraint,
-                     GimpMenuCallback   callback,
+picman_layer_menu_new (PicmanConstraintFunc constraint,
+                     PicmanMenuCallback   callback,
                      gpointer           data,
                      gint32             active_layer)
 {
@@ -160,26 +160,26 @@ gimp_layer_menu_new (GimpConstraintFunc constraint,
 
   g_return_val_if_fail (callback != NULL, NULL);
 
-  menu = gimp_menu_make_menu (callback, data);
+  menu = picman_menu_make_menu (callback, data);
 
-  images = gimp_image_list (&n_images);
+  images = picman_image_list (&n_images);
 
   for (i = 0, k = 0; i < n_images; i++)
     if (! constraint || (* constraint) (images[i], -1, data))
       {
         gchar *name;
 
-        name = gimp_image_get_name (images[i]);
+        name = picman_image_get_name (images[i]);
         image_label = g_strdup_printf ("%s-%d", name, images[i]);
         g_free (name);
 
-        layers = gimp_image_get_layers (images[i], &n_layers);
+        layers = picman_image_get_layers (images[i], &n_layers);
 
         for (j = 0; j < n_layers; j++)
           if (! constraint || (* constraint) (images[i], layers[j], data))
             {
-              name = gimp_item_get_name (layers[j]);
-              gimp_menu_add_item (menu, image_label, name, layers[j]);
+              name = picman_item_get_name (layers[j]);
+              picman_menu_add_item (menu, image_label, name, layers[j]);
               g_free (name);
 
               if (layers[j] == active_layer)
@@ -202,7 +202,7 @@ gimp_layer_menu_new (GimpConstraintFunc constraint,
   g_free (images);
 
   if (k == 0)
-    gimp_menu_add_empty (menu);
+    picman_menu_add_empty (menu);
 
   (* callback) (layer, data);
 
@@ -210,19 +210,19 @@ gimp_layer_menu_new (GimpConstraintFunc constraint,
 }
 
 /**
- * gimp_channel_menu_new:
+ * picman_channel_menu_new:
  * @constraint:     a function to filter the menu contents
  * @callback:       the callback to call when a channel is selected
  * @data:           the callback's user_data
  * @active_channel: a channel to preselect
  *
- * Deprecated: Use gimp_channel_combo_box_new() instead.
+ * Deprecated: Use picman_channel_combo_box_new() instead.
  *
  * Returns: the channel menu.
  */
 GtkWidget *
-gimp_channel_menu_new (GimpConstraintFunc constraint,
-                       GimpMenuCallback   callback,
+picman_channel_menu_new (PicmanConstraintFunc constraint,
+                       PicmanMenuCallback   callback,
                        gpointer           data,
                        gint32             active_channel)
 {
@@ -237,28 +237,28 @@ gimp_channel_menu_new (GimpConstraintFunc constraint,
 
   g_return_val_if_fail (callback != NULL, NULL);
 
-  menu = gimp_menu_make_menu (callback, data);
+  menu = picman_menu_make_menu (callback, data);
 
   channel = -1;
 
-  images = gimp_image_list (&n_images);
+  images = picman_image_list (&n_images);
 
   for (i = 0, k = 0; i < n_images; i++)
     if (! constraint || (* constraint) (images[i], -1, data))
       {
         gchar *name;
 
-        name = gimp_image_get_name (images[i]);
+        name = picman_image_get_name (images[i]);
         image_label = g_strdup_printf ("%s-%d", name, images[i]);
         g_free (name);
 
-        channels = gimp_image_get_channels (images[i], &n_channels);
+        channels = picman_image_get_channels (images[i], &n_channels);
 
         for (j = 0; j < n_channels; j++)
           if (! constraint || (* constraint) (images[i], channels[j], data))
             {
-              name = gimp_item_get_name (channels[j]);
-              gimp_menu_add_item (menu, image_label, name, channels[j]);
+              name = picman_item_get_name (channels[j]);
+              picman_menu_add_item (menu, image_label, name, channels[j]);
               g_free (name);
 
               if (channels[j] == active_channel)
@@ -281,7 +281,7 @@ gimp_channel_menu_new (GimpConstraintFunc constraint,
   g_free (images);
 
   if (k == 0)
-    gimp_menu_add_empty (menu);
+    picman_menu_add_empty (menu);
 
   (* callback) (channel, data);
 
@@ -289,19 +289,19 @@ gimp_channel_menu_new (GimpConstraintFunc constraint,
 }
 
 /**
- * gimp_drawable_menu_new:
+ * picman_drawable_menu_new:
  * @constraint:      a function to filter the menu contents
  * @callback:        the callback to call when a channel is selected
  * @data:            the callback's user_data
  * @active_drawable: a drawable to preselect
  *
- * Deprecated: Use gimp_drawable_combo_box_new() instead.
+ * Deprecated: Use picman_drawable_combo_box_new() instead.
  *
  * Returns: the drawable menu.
  */
 GtkWidget *
-gimp_drawable_menu_new (GimpConstraintFunc constraint,
-                        GimpMenuCallback   callback,
+picman_drawable_menu_new (PicmanConstraintFunc constraint,
+                        PicmanMenuCallback   callback,
                         gpointer           data,
                         gint32             active_drawable)
 {
@@ -317,27 +317,27 @@ gimp_drawable_menu_new (GimpConstraintFunc constraint,
   gint       n_channels;
   gint       i, j, k;
 
-  menu = gimp_menu_make_menu (callback, data);
+  menu = picman_menu_make_menu (callback, data);
 
   drawable = -1;
 
-  images = gimp_image_list (&n_images);
+  images = picman_image_list (&n_images);
 
   for (i = 0, k = 0; i < n_images; i++)
     if (! constraint || (* constraint) (images[i], -1, data))
       {
-        name = gimp_image_get_name (images[i]);
+        name = picman_image_get_name (images[i]);
         image_label = g_strdup_printf ("%s-%d", name, images[i]);
         g_free (name);
 
-        layers   = gimp_image_get_layers   (images[i], &n_layers);
-        channels = gimp_image_get_channels (images[i], &n_channels);
+        layers   = picman_image_get_layers   (images[i], &n_layers);
+        channels = picman_image_get_channels (images[i], &n_channels);
 
         for (j = 0; j < n_layers; j++)
           if (! constraint || (* constraint) (images[i], layers[j], data))
             {
-              name = gimp_item_get_name (layers[j]);
-              gimp_menu_add_item (menu, image_label, name, layers[j]);
+              name = picman_item_get_name (layers[j]);
+              picman_menu_add_item (menu, image_label, name, layers[j]);
               g_free (name);
 
               if (layers[j] == active_drawable)
@@ -356,8 +356,8 @@ gimp_drawable_menu_new (GimpConstraintFunc constraint,
         for (j = 0; j < n_channels; j++)
           if (! constraint || (* constraint) (images[i], channels[j], data))
             {
-              name = gimp_item_get_name (channels[j]);
-              gimp_menu_add_item (menu, image_label, name, channels[j]);
+              name = picman_item_get_name (channels[j]);
+              picman_menu_add_item (menu, image_label, name, channels[j]);
               g_free (name);
 
               if (channels[j] == active_drawable)
@@ -381,7 +381,7 @@ gimp_drawable_menu_new (GimpConstraintFunc constraint,
   g_free (images);
 
   if (k == 0)
-    gimp_menu_add_empty (menu);
+    picman_menu_add_empty (menu);
 
   (* callback) (drawable, data);
 
@@ -392,20 +392,20 @@ gimp_drawable_menu_new (GimpConstraintFunc constraint,
 /*  private functions  */
 
 static GtkWidget *
-gimp_menu_make_menu (GimpMenuCallback callback,
+picman_menu_make_menu (PicmanMenuCallback callback,
                      gpointer         data)
 {
   GtkWidget *menu;
 
   menu = gtk_menu_new ();
-  g_object_set_data (G_OBJECT (menu), "gimp-menu-callback",      callback);
-  g_object_set_data (G_OBJECT (menu), "gimp-menu-callback-data", data);
+  g_object_set_data (G_OBJECT (menu), "picman-menu-callback",      callback);
+  g_object_set_data (G_OBJECT (menu), "picman-menu-callback-data", data);
 
   return menu;
 }
 
 static GtkWidget *
-gimp_menu_add_item (GtkWidget   *menu,
+picman_menu_add_item (GtkWidget   *menu,
                     const gchar *image_name,
                     const gchar *drawable_name,
                     gint32       any_ID)
@@ -427,7 +427,7 @@ gimp_menu_add_item (GtkWidget   *menu,
   gtk_widget_show (menuitem);
 
   g_signal_connect (menuitem, "activate",
-                    G_CALLBACK (gimp_menu_callback),
+                    G_CALLBACK (picman_menu_callback),
                     GINT_TO_POINTER (any_ID));
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 4);
@@ -438,7 +438,7 @@ gimp_menu_add_item (GtkWidget   *menu,
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
   gtk_widget_show (vbox);
 
-  preview = gimp_menu_make_preview (any_ID, drawable_name == NULL,
+  preview = picman_menu_make_preview (any_ID, drawable_name == NULL,
                                     MENU_THUMBNAIL_WIDTH,
                                     MENU_THUMBNAIL_HEIGHT);
   gtk_box_pack_start (GTK_BOX (vbox), preview, TRUE, TRUE, 0);
@@ -454,7 +454,7 @@ gimp_menu_add_item (GtkWidget   *menu,
 }
 
 static GtkWidget *
-gimp_menu_add_empty (GtkWidget *menu)
+picman_menu_add_empty (GtkWidget *menu)
 {
   GtkWidget *menuitem;
 
@@ -467,7 +467,7 @@ gimp_menu_add_empty (GtkWidget *menu)
 }
 
 static GtkWidget *
-gimp_menu_make_preview (gint32     any_ID,
+picman_menu_make_preview (gint32     any_ID,
                         gboolean   is_image,
                         gint       width,
                         gint       height)
@@ -476,13 +476,13 @@ gimp_menu_make_preview (gint32     any_ID,
   GdkPixbuf *pixbuf;
 
   if (is_image)
-    pixbuf = gimp_image_get_thumbnail (any_ID,
+    pixbuf = picman_image_get_thumbnail (any_ID,
                                        width, height,
-                                       GIMP_PIXBUF_SMALL_CHECKS);
+                                       PICMAN_PIXBUF_SMALL_CHECKS);
   else
-    pixbuf = gimp_drawable_get_thumbnail (any_ID,
+    pixbuf = picman_drawable_get_thumbnail (any_ID,
                                           width, height,
-                                          GIMP_PIXBUF_SMALL_CHECKS);
+                                          PICMAN_PIXBUF_SMALL_CHECKS);
 
   image = gtk_image_new_from_pixbuf (pixbuf);
 
@@ -492,17 +492,17 @@ gimp_menu_make_preview (gint32     any_ID,
 }
 
 static void
-gimp_menu_callback (GtkWidget *widget,
+picman_menu_callback (GtkWidget *widget,
                     gpointer   any_ID)
 {
   GtkWidget        *parent = gtk_widget_get_parent (widget);
-  GimpMenuCallback  callback;
+  PicmanMenuCallback  callback;
   gpointer          callback_data;
 
-  callback = (GimpMenuCallback) g_object_get_data (G_OBJECT (parent),
-                                                   "gimp-menu-callback");
+  callback = (PicmanMenuCallback) g_object_get_data (G_OBJECT (parent),
+                                                   "picman-menu-callback");
   callback_data = g_object_get_data (G_OBJECT (parent),
-                                     "gimp-menu-callback-data");
+                                     "picman-menu-callback-data");
 
   (* callback) (GPOINTER_TO_INT (any_ID), callback_data);
 }

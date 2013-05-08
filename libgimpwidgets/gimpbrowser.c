@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpbrowser.c
- * Copyright (C) 2005 Michael Natterer <mitch@gimp.org>
+ * picmanbrowser.c
+ * Copyright (C) 2005 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,17 +25,17 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpwidgets.h"
-#include "gimpwidgetsmarshal.h"
+#include "picmanwidgets.h"
+#include "picmanwidgetsmarshal.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpbrowser
- * @title: GimpBrowser
+ * SECTION: picmanbrowser
+ * @title: PicmanBrowser
  * @short_description: A base class for a documentation browser.
  *
  * A base class for a documentation browser.
@@ -49,28 +49,28 @@ enum
 };
 
 
-static void      gimp_browser_dispose          (GObject               *object);
+static void      picman_browser_dispose          (GObject               *object);
 
-static void      gimp_browser_combo_changed    (GtkComboBox           *combo,
-                                                GimpBrowser           *browser);
-static void      gimp_browser_entry_changed    (GtkEntry              *entry,
-                                                GimpBrowser           *browser);
-static void      gimp_browser_entry_icon_press (GtkEntry              *entry,
+static void      picman_browser_combo_changed    (GtkComboBox           *combo,
+                                                PicmanBrowser           *browser);
+static void      picman_browser_entry_changed    (GtkEntry              *entry,
+                                                PicmanBrowser           *browser);
+static void      picman_browser_entry_icon_press (GtkEntry              *entry,
                                                 GtkEntryIconPosition   icon_pos,
                                                 GdkEvent              *event,
-                                                GimpBrowser           *browser);
-static gboolean  gimp_browser_search_timeout   (gpointer               data);
+                                                PicmanBrowser           *browser);
+static gboolean  picman_browser_search_timeout   (gpointer               data);
 
 
-G_DEFINE_TYPE (GimpBrowser, gimp_browser, GTK_TYPE_HPANED)
+G_DEFINE_TYPE (PicmanBrowser, picman_browser, GTK_TYPE_HPANED)
 
-#define parent_class gimp_browser_parent_class
+#define parent_class picman_browser_parent_class
 
 static guint browser_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_browser_class_init (GimpBrowserClass *klass)
+picman_browser_class_init (PicmanBrowserClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -78,20 +78,20 @@ gimp_browser_class_init (GimpBrowserClass *klass)
     g_signal_new ("search",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpBrowserClass, search),
+                  G_STRUCT_OFFSET (PicmanBrowserClass, search),
                   NULL, NULL,
-                  _gimp_widgets_marshal_VOID__STRING_INT,
+                  _picman_widgets_marshal_VOID__STRING_INT,
                   G_TYPE_NONE, 2,
                   G_TYPE_STRING,
                   G_TYPE_INT);
 
-  object_class->dispose = gimp_browser_dispose;
+  object_class->dispose = picman_browser_dispose;
 
   klass->search         = NULL;
 }
 
 static void
-gimp_browser_init (GimpBrowser *browser)
+picman_browser_init (PicmanBrowser *browser)
 {
   GtkWidget *hbox;
   GtkWidget *label;
@@ -120,7 +120,7 @@ gimp_browser_init (GimpBrowser *browser)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), browser->search_entry);
 
   g_signal_connect (browser->search_entry, "changed",
-                    G_CALLBACK (gimp_browser_entry_changed),
+                    G_CALLBACK (picman_browser_entry_changed),
                     browser);
 
   gtk_entry_set_icon_from_stock (GTK_ENTRY (browser->search_entry),
@@ -131,14 +131,14 @@ gimp_browser_init (GimpBrowser *browser)
                                 GTK_ENTRY_ICON_SECONDARY, FALSE);
 
   g_signal_connect (browser->search_entry, "icon-press",
-                    G_CALLBACK (gimp_browser_entry_icon_press),
+                    G_CALLBACK (picman_browser_entry_icon_press),
                     browser);
 
   /* count label */
 
   browser->count_label = gtk_label_new (_("No matches"));
   gtk_misc_set_alignment (GTK_MISC (browser->count_label), 0.0, 0.5);
-  gimp_label_set_attributes (GTK_LABEL (browser->count_label),
+  picman_label_set_attributes (GTK_LABEL (browser->count_label),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              -1);
   gtk_box_pack_end (GTK_BOX (browser->left_vbox), browser->count_label,
@@ -164,9 +164,9 @@ gimp_browser_init (GimpBrowser *browser)
 }
 
 static void
-gimp_browser_dispose (GObject *object)
+picman_browser_dispose (GObject *object)
 {
-  GimpBrowser *browser = GIMP_BROWSER (object);
+  PicmanBrowser *browser = PICMAN_BROWSER (object);
 
   if (browser->search_timeout_id)
     {
@@ -182,38 +182,38 @@ gimp_browser_dispose (GObject *object)
 
 
 /**
- * gimp_browser_new:
+ * picman_browser_new:
  *
- * Create a new #GimpBrowser widget.
+ * Create a new #PicmanBrowser widget.
  *
- * Return Value: a newly created #GimpBrowser.
+ * Return Value: a newly created #PicmanBrowser.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkWidget *
-gimp_browser_new (void)
+picman_browser_new (void)
 {
-  return g_object_new (GIMP_TYPE_BROWSER, NULL);
+  return g_object_new (PICMAN_TYPE_BROWSER, NULL);
 }
 
 /**
- * gimp_browser_add_search_types:
- * @browser:          a #GimpBrowser widget
+ * picman_browser_add_search_types:
+ * @browser:          a #PicmanBrowser widget
  * @first_type_label: the label of the first search type
  * @first_type_id:    an integer that identifies the first search type
  * @...:              a %NULL-terminated list of more labels and ids.
  *
  * Populates the #GtkComboBox with search types.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_browser_add_search_types (GimpBrowser *browser,
+picman_browser_add_search_types (PicmanBrowser *browser,
                                const gchar *first_type_label,
                                gint         first_type_id,
                                ...)
 {
-  g_return_if_fail (GIMP_IS_BROWSER (browser));
+  g_return_if_fail (PICMAN_IS_BROWSER (browser));
   g_return_if_fail (first_type_label != NULL);
 
   if (! browser->search_type_combo)
@@ -222,7 +222,7 @@ gimp_browser_add_search_types (GimpBrowser *browser,
       va_list    args;
 
       va_start (args, first_type_id);
-      combo = gimp_int_combo_box_new_valist (first_type_label,
+      combo = picman_int_combo_box_new_valist (first_type_label,
                                              first_type_id,
                                              args);
       va_end (args);
@@ -236,37 +236,37 @@ gimp_browser_add_search_types (GimpBrowser *browser,
                         combo, FALSE, FALSE, 0);
       gtk_widget_show (combo);
 
-      gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+      picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                                   browser->search_type,
-                                  G_CALLBACK (gimp_int_combo_box_get_active),
+                                  G_CALLBACK (picman_int_combo_box_get_active),
                                   &browser->search_type);
 
       g_signal_connect (combo, "changed",
-                        G_CALLBACK (gimp_browser_combo_changed),
+                        G_CALLBACK (picman_browser_combo_changed),
                         browser);
     }
   else
     {
-      gimp_int_combo_box_append (GIMP_INT_COMBO_BOX (browser->search_type_combo),
+      picman_int_combo_box_append (PICMAN_INT_COMBO_BOX (browser->search_type_combo),
                                  first_type_label, first_type_id,
                                  NULL);
     }
 }
 
 /**
- * gimp_browser_set_widget:
- * @browser: a #GimpBrowser widget
+ * picman_browser_set_widget:
+ * @browser: a #PicmanBrowser widget
  * @widget:  a #GtkWidget
  *
  * Sets the widget to appear on the right side of the @browser.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_browser_set_widget (GimpBrowser *browser,
+picman_browser_set_widget (PicmanBrowser *browser,
                          GtkWidget   *widget)
 {
-  g_return_if_fail (GIMP_IS_BROWSER (browser));
+  g_return_if_fail (PICMAN_IS_BROWSER (browser));
   g_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
 
   if (widget == browser->right_widget)
@@ -287,21 +287,21 @@ gimp_browser_set_widget (GimpBrowser *browser,
 }
 
 /**
- * gimp_browser_show_message:
- * @browser: a #GimpBrowser widget
+ * picman_browser_show_message:
+ * @browser: a #PicmanBrowser widget
  * @message: text message
  *
  * Displays @message in the right side of the @browser. Unless the right
  * side already contains a #GtkLabel, the widget previously added with
- * gimp_browser_set_widget() is removed and replaced by a #GtkLabel.
+ * picman_browser_set_widget() is removed and replaced by a #GtkLabel.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_browser_show_message (GimpBrowser *browser,
+picman_browser_show_message (PicmanBrowser *browser,
                            const gchar *message)
 {
-  g_return_if_fail (GIMP_IS_BROWSER (browser));
+  g_return_if_fail (PICMAN_IS_BROWSER (browser));
   g_return_if_fail (message != NULL);
 
   if (GTK_IS_LABEL (browser->right_widget))
@@ -312,10 +312,10 @@ gimp_browser_show_message (GimpBrowser *browser,
     {
       GtkWidget *label = gtk_label_new (message);
 
-      gimp_label_set_attributes (GTK_LABEL (label),
+      picman_label_set_attributes (GTK_LABEL (label),
                                  PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                                  -1);
-      gimp_browser_set_widget (browser, label);
+      picman_browser_set_widget (browser, label);
     }
 
   while (gtk_events_pending ())
@@ -326,27 +326,27 @@ gimp_browser_show_message (GimpBrowser *browser,
 /*  private functions  */
 
 static void
-gimp_browser_queue_search (GimpBrowser *browser)
+picman_browser_queue_search (PicmanBrowser *browser)
 {
   if (browser->search_timeout_id)
     g_source_remove (browser->search_timeout_id);
 
   browser->search_timeout_id =
-    g_timeout_add (100, gimp_browser_search_timeout, browser);
+    g_timeout_add (100, picman_browser_search_timeout, browser);
 }
 
 static void
-gimp_browser_combo_changed (GtkComboBox *combo,
-                            GimpBrowser *browser)
+picman_browser_combo_changed (GtkComboBox *combo,
+                            PicmanBrowser *browser)
 {
-  gimp_browser_queue_search (browser);
+  picman_browser_queue_search (browser);
 }
 
 static void
-gimp_browser_entry_changed (GtkEntry    *entry,
-                            GimpBrowser *browser)
+picman_browser_entry_changed (GtkEntry    *entry,
+                            PicmanBrowser *browser)
 {
-  gimp_browser_queue_search (browser);
+  picman_browser_queue_search (browser);
 
   gtk_entry_set_icon_sensitive (entry,
                                 GTK_ENTRY_ICON_SECONDARY,
@@ -354,10 +354,10 @@ gimp_browser_entry_changed (GtkEntry    *entry,
 }
 
 static void
-gimp_browser_entry_icon_press (GtkEntry              *entry,
+picman_browser_entry_icon_press (GtkEntry              *entry,
                                GtkEntryIconPosition   icon_pos,
                                GdkEvent              *event,
-                               GimpBrowser           *browser)
+                               PicmanBrowser           *browser)
 {
   GdkEventButton *bevent = (GdkEventButton *) event;
 
@@ -368,9 +368,9 @@ gimp_browser_entry_icon_press (GtkEntry              *entry,
 }
 
 static gboolean
-gimp_browser_search_timeout (gpointer data)
+picman_browser_search_timeout (gpointer data)
 {
-  GimpBrowser *browser = GIMP_BROWSER (data);
+  PicmanBrowser *browser = PICMAN_BROWSER (data);
   const gchar *search_string;
 
   GDK_THREADS_ENTER();

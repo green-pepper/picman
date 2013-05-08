@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,38 +21,38 @@
 
 #include "core-types.h"
 
-#include "gimpdrawable.h"
-#include "gimpdrawable-equalize.h"
-#include "gimpdrawable-histogram.h"
-#include "gimpdrawable-operation.h"
-#include "gimphistogram.h"
+#include "picmandrawable.h"
+#include "picmandrawable-equalize.h"
+#include "picmandrawable-histogram.h"
+#include "picmandrawable-operation.h"
+#include "picmanhistogram.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 void
-gimp_drawable_equalize (GimpDrawable *drawable,
+picman_drawable_equalize (PicmanDrawable *drawable,
                         gboolean      mask_only)
 {
-  GimpHistogram *hist;
+  PicmanHistogram *hist;
   GeglNode      *equalize;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)));
 
-  hist = gimp_histogram_new ();
-  gimp_drawable_calculate_histogram (drawable, hist);
+  hist = picman_histogram_new ();
+  picman_drawable_calculate_histogram (drawable, hist);
 
   equalize = gegl_node_new_child (NULL,
-                                  "operation", "gimp:equalize",
+                                  "operation", "picman:equalize",
                                   "histogram", hist,
                                   NULL);
 
-  gimp_drawable_apply_operation (drawable, NULL,
+  picman_drawable_apply_operation (drawable, NULL,
                                  C_("undo-type", "Equalize"),
                                  equalize);
 
   g_object_unref (equalize);
 
-  gimp_histogram_unref (hist);
+  picman_histogram_unref (hist);
 }

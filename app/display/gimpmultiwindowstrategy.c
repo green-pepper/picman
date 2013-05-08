@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpmultiwindowstrategy.c
+ * picmanmultiwindowstrategy.c
  * Copyright (C) 2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,62 +25,62 @@
 
 #include "display-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpwindowstrategy.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmanwindowstrategy.h"
 
-#include "gimpmultiwindowstrategy.h"
+#include "picmanmultiwindowstrategy.h"
 
 
-static void        gimp_multi_window_strategy_window_strategy_iface_init (GimpWindowStrategyInterface *iface);
-static GtkWidget * gimp_multi_window_strategy_show_dockable_dialog       (GimpWindowStrategy          *strategy,
-                                                                          Gimp                        *gimp,
-                                                                          GimpDialogFactory           *factory,
+static void        picman_multi_window_strategy_window_strategy_iface_init (PicmanWindowStrategyInterface *iface);
+static GtkWidget * picman_multi_window_strategy_show_dockable_dialog       (PicmanWindowStrategy          *strategy,
+                                                                          Picman                        *picman,
+                                                                          PicmanDialogFactory           *factory,
                                                                           GdkScreen                   *screen,
                                                                           const gchar                 *identifiers);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpMultiWindowStrategy, gimp_multi_window_strategy, GIMP_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_WINDOW_STRATEGY,
-                                                gimp_multi_window_strategy_window_strategy_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanMultiWindowStrategy, picman_multi_window_strategy, PICMAN_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_WINDOW_STRATEGY,
+                                                picman_multi_window_strategy_window_strategy_iface_init))
 
-#define parent_class gimp_multi_window_strategy_parent_class
+#define parent_class picman_multi_window_strategy_parent_class
 
 
 static void
-gimp_multi_window_strategy_class_init (GimpMultiWindowStrategyClass *klass)
+picman_multi_window_strategy_class_init (PicmanMultiWindowStrategyClass *klass)
 {
 }
 
 static void
-gimp_multi_window_strategy_init (GimpMultiWindowStrategy *strategy)
+picman_multi_window_strategy_init (PicmanMultiWindowStrategy *strategy)
 {
 }
 
 static void
-gimp_multi_window_strategy_window_strategy_iface_init (GimpWindowStrategyInterface *iface)
+picman_multi_window_strategy_window_strategy_iface_init (PicmanWindowStrategyInterface *iface)
 {
-  iface->show_dockable_dialog = gimp_multi_window_strategy_show_dockable_dialog;
+  iface->show_dockable_dialog = picman_multi_window_strategy_show_dockable_dialog;
 }
 
 static GtkWidget *
-gimp_multi_window_strategy_show_dockable_dialog (GimpWindowStrategy *strategy,
-                                                 Gimp               *gimp,
-                                                 GimpDialogFactory  *factory,
+picman_multi_window_strategy_show_dockable_dialog (PicmanWindowStrategy *strategy,
+                                                 Picman               *picman,
+                                                 PicmanDialogFactory  *factory,
                                                  GdkScreen          *screen,
                                                  const gchar        *identifiers)
 {
-  return gimp_dialog_factory_dialog_raise (factory, screen, identifiers, -1);
+  return picman_dialog_factory_dialog_raise (factory, screen, identifiers, -1);
 }
 
-GimpObject *
-gimp_multi_window_strategy_get_singleton (void)
+PicmanObject *
+picman_multi_window_strategy_get_singleton (void)
 {
-  static GimpObject *singleton = NULL;
+  static PicmanObject *singleton = NULL;
 
   if (! singleton)
-    singleton = g_object_new (GIMP_TYPE_MULTI_WINDOW_STRATEGY, NULL);
+    singleton = g_object_new (PICMAN_TYPE_MULTI_WINDOW_STRATEGY, NULL);
 
   return singleton;
 }

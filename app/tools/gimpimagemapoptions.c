@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis, and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,11 +20,11 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "tools-types.h"
 
-#include "gimpimagemapoptions.h"
+#include "picmanimagemapoptions.h"
 
 
 enum
@@ -35,52 +35,52 @@ enum
 };
 
 
-static void   gimp_image_map_options_finalize     (GObject      *object);
-static void   gimp_image_map_options_set_property (GObject      *object,
+static void   picman_image_map_options_finalize     (GObject      *object);
+static void   picman_image_map_options_set_property (GObject      *object,
                                                    guint         property_id,
                                                    const GValue *value,
                                                    GParamSpec   *pspec);
-static void   gimp_image_map_options_get_property (GObject      *object,
+static void   picman_image_map_options_get_property (GObject      *object,
                                                    guint         property_id,
                                                    GValue       *value,
                                                    GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpImageMapOptions, gimp_image_map_options,
-               GIMP_TYPE_TOOL_OPTIONS)
+G_DEFINE_TYPE (PicmanImageMapOptions, picman_image_map_options,
+               PICMAN_TYPE_TOOL_OPTIONS)
 
-#define parent_class gimp_image_map_options_parent_class
+#define parent_class picman_image_map_options_parent_class
 
 
 static void
-gimp_image_map_options_class_init (GimpImageMapOptionsClass *klass)
+picman_image_map_options_class_init (PicmanImageMapOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize     = gimp_image_map_options_finalize;
-  object_class->set_property = gimp_image_map_options_set_property;
-  object_class->get_property = gimp_image_map_options_get_property;
+  object_class->finalize     = picman_image_map_options_finalize;
+  object_class->set_property = picman_image_map_options_set_property;
+  object_class->get_property = picman_image_map_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_PREVIEW,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_PREVIEW,
                                     "preview", NULL,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
   g_object_class_install_property (object_class, PROP_SETTINGS,
                                    g_param_spec_string ("settings",
                                                         NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_image_map_options_init (GimpImageMapOptions *options)
+picman_image_map_options_init (PicmanImageMapOptions *options)
 {
 }
 
 static void
-gimp_image_map_options_finalize (GObject *object)
+picman_image_map_options_finalize (GObject *object)
 {
-  GimpImageMapOptions *options = GIMP_IMAGE_MAP_OPTIONS (object);
+  PicmanImageMapOptions *options = PICMAN_IMAGE_MAP_OPTIONS (object);
 
   if (options->settings)
     {
@@ -93,12 +93,12 @@ gimp_image_map_options_finalize (GObject *object)
 
 
 static void
-gimp_image_map_options_set_property (GObject      *object,
+picman_image_map_options_set_property (GObject      *object,
                                      guint         property_id,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  GimpImageMapOptions *options = GIMP_IMAGE_MAP_OPTIONS (object);
+  PicmanImageMapOptions *options = PICMAN_IMAGE_MAP_OPTIONS (object);
 
   switch (property_id)
     {
@@ -116,12 +116,12 @@ gimp_image_map_options_set_property (GObject      *object,
 }
 
 static void
-gimp_image_map_options_get_property (GObject    *object,
+picman_image_map_options_get_property (GObject    *object,
                                      guint       property_id,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  GimpImageMapOptions *options = GIMP_IMAGE_MAP_OPTIONS (object);
+  PicmanImageMapOptions *options = PICMAN_IMAGE_MAP_OPTIONS (object);
 
   switch (property_id)
     {

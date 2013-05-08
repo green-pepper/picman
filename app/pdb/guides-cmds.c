@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,443 +23,443 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimpguide.h"
-#include "core/gimpimage-guides.h"
-#include "core/gimpimage-undo-push.h"
-#include "core/gimpimage.h"
-#include "core/gimpparamspecs.h"
+#include "core/picmanguide.h"
+#include "core/picmanimage-guides.h"
+#include "core/picmanimage-undo-push.h"
+#include "core/picmanimage.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-image_add_hguide_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+image_add_hguide_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gint32 yposition;
   gint32 guide = 0;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  yposition = g_value_get_int (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  yposition = g_value_get_int (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (yposition <= gimp_image_get_height (image))
+      if (yposition <= picman_image_get_height (image))
         {
-          GimpGuide *g;
+          PicmanGuide *g;
 
-          g = gimp_image_add_hguide (image, yposition, TRUE);
-          guide = gimp_guide_get_ID (g);
+          g = picman_image_add_hguide (image, yposition, TRUE);
+          guide = picman_guide_get_ID (g);
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_uint (gimp_value_array_index (return_vals, 1), guide);
+    g_value_set_uint (picman_value_array_index (return_vals, 1), guide);
 
   return return_vals;
 }
 
-static GimpValueArray *
-image_add_vguide_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+image_add_vguide_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gint32 xposition;
   gint32 guide = 0;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  xposition = g_value_get_int (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  xposition = g_value_get_int (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (xposition <= gimp_image_get_width (image))
+      if (xposition <= picman_image_get_width (image))
         {
-          GimpGuide *g;
+          PicmanGuide *g;
 
-          g = gimp_image_add_vguide (image, xposition, TRUE);
-          guide = gimp_guide_get_ID (g);
+          g = picman_image_add_vguide (image, xposition, TRUE);
+          guide = picman_guide_get_ID (g);
         }
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_uint (gimp_value_array_index (return_vals, 1), guide);
+    g_value_set_uint (picman_value_array_index (return_vals, 1), guide);
 
   return return_vals;
 }
 
-static GimpValueArray *
-image_delete_guide_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+image_delete_guide_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
+  PicmanImage *image;
   gint32 guide;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  guide = g_value_get_uint (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  guide = g_value_get_uint (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpGuide *g = gimp_image_get_guide (image, guide);
+      PicmanGuide *g = picman_image_get_guide (image, guide);
 
       if (g)
-        gimp_image_remove_guide (image, g, TRUE);
+        picman_image_remove_guide (image, g, TRUE);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-image_find_next_guide_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+image_find_next_guide_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gint32 guide;
   gint32 next_guide = 0;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  guide = g_value_get_uint (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  guide = g_value_get_uint (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpGuide *g = gimp_image_get_next_guide (image, guide, &success);
+      PicmanGuide *g = picman_image_get_next_guide (image, guide, &success);
 
       if (g)
-        next_guide = gimp_guide_get_ID (g);
+        next_guide = picman_guide_get_ID (g);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_uint (gimp_value_array_index (return_vals, 1), next_guide);
+    g_value_set_uint (picman_value_array_index (return_vals, 1), next_guide);
 
   return return_vals;
 }
 
-static GimpValueArray *
-image_get_guide_orientation_invoker (GimpProcedure         *procedure,
-                                     Gimp                  *gimp,
-                                     GimpContext           *context,
-                                     GimpProgress          *progress,
-                                     const GimpValueArray  *args,
+static PicmanValueArray *
+image_get_guide_orientation_invoker (PicmanProcedure         *procedure,
+                                     Picman                  *picman,
+                                     PicmanContext           *context,
+                                     PicmanProgress          *progress,
+                                     const PicmanValueArray  *args,
                                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gint32 guide;
   gint32 orientation = 0;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  guide = g_value_get_uint (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  guide = g_value_get_uint (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpGuide *g = gimp_image_get_guide (image, guide);
+      PicmanGuide *g = picman_image_get_guide (image, guide);
 
       if (g)
-        orientation = gimp_guide_get_orientation (g);
+        orientation = picman_guide_get_orientation (g);
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_enum (gimp_value_array_index (return_vals, 1), orientation);
+    g_value_set_enum (picman_value_array_index (return_vals, 1), orientation);
 
   return return_vals;
 }
 
-static GimpValueArray *
-image_get_guide_position_invoker (GimpProcedure         *procedure,
-                                  Gimp                  *gimp,
-                                  GimpContext           *context,
-                                  GimpProgress          *progress,
-                                  const GimpValueArray  *args,
+static PicmanValueArray *
+image_get_guide_position_invoker (PicmanProcedure         *procedure,
+                                  Picman                  *picman,
+                                  PicmanContext           *context,
+                                  PicmanProgress          *progress,
+                                  const PicmanValueArray  *args,
                                   GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
+  PicmanValueArray *return_vals;
+  PicmanImage *image;
   gint32 guide;
   gint32 position = 0;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  guide = g_value_get_uint (gimp_value_array_index (args, 1));
+  image = picman_value_get_image (picman_value_array_index (args, 0), picman);
+  guide = g_value_get_uint (picman_value_array_index (args, 1));
 
   if (success)
     {
-      GimpGuide *g = gimp_image_get_guide (image, guide);
+      PicmanGuide *g = picman_image_get_guide (image, guide);
 
       if (g)
-        position = gimp_guide_get_position (g);
+        position = picman_guide_get_position (g);
       else
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_int (gimp_value_array_index (return_vals, 1), position);
+    g_value_set_int (picman_value_array_index (return_vals, 1), position);
 
   return return_vals;
 }
 
 void
-register_guides_procs (GimpPDB *pdb)
+register_guides_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-image-add-hguide
+   * picman-image-add-hguide
    */
-  procedure = gimp_procedure_new (image_add_hguide_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-add-hguide");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-add-hguide",
+  procedure = picman_procedure_new (image_add_hguide_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-add-hguide");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-add-hguide",
                                      "Add a horizontal guide to an image.",
                                      "This procedure adds a horizontal guide to an image. It takes the input image and the y-position of the new guide as parameters. It returns the guide ID of the new guide.",
                                      "Adam D. Moss",
                                      "Adam D. Moss",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("yposition",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("yposition",
                                                       "yposition",
                                                       "The guide's y-offset from top of image",
                                                       0, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_uint ("guide",
                                                       "guide",
                                                       "The new guide",
                                                       1, G_MAXUINT32, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-add-vguide
+   * picman-image-add-vguide
    */
-  procedure = gimp_procedure_new (image_add_vguide_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-add-vguide");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-add-vguide",
+  procedure = picman_procedure_new (image_add_vguide_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-add-vguide");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-add-vguide",
                                      "Add a vertical guide to an image.",
                                      "This procedure adds a vertical guide to an image. It takes the input image and the x-position of the new guide as parameters. It returns the guide ID of the new guide.",
                                      "Adam D. Moss",
                                      "Adam D. Moss",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("xposition",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("xposition",
                                                       "xposition",
                                                       "The guide's x-offset from left of image",
                                                       0, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_uint ("guide",
                                                       "guide",
                                                       "The new guide",
                                                       1, G_MAXUINT32, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-delete-guide
+   * picman-image-delete-guide
    */
-  procedure = gimp_procedure_new (image_delete_guide_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-delete-guide");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-delete-guide",
+  procedure = picman_procedure_new (image_delete_guide_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-delete-guide");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-delete-guide",
                                      "Deletes a guide from an image.",
                                      "This procedure takes an image and a guide ID as input and removes the specified guide from the specified image.",
                                      "Adam D. Moss",
                                      "Adam D. Moss",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_uint ("guide",
                                                   "guide",
                                                   "The ID of the guide to be removed",
                                                   1, G_MAXUINT32, 1,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-find-next-guide
+   * picman-image-find-next-guide
    */
-  procedure = gimp_procedure_new (image_find_next_guide_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-find-next-guide");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-find-next-guide",
+  procedure = picman_procedure_new (image_find_next_guide_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-find-next-guide");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-find-next-guide",
                                      "Find next guide on an image.",
                                      "This procedure takes an image and a guide ID as input and finds the guide ID of the successor of the given guide ID in the image's guide list. If the supplied guide ID is 0, the procedure will return the first Guide. The procedure will return 0 if given the final guide ID as an argument or the image has no guides.",
                                      "Adam D. Moss",
                                      "Adam D. Moss",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_uint ("guide",
                                                   "guide",
                                                   "The ID of the current guide (0 if first invocation)",
                                                   1, G_MAXUINT32, 1,
-                                                  GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_return_value (procedure,
+                                                  PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_uint ("next-guide",
                                                       "next guide",
                                                       "The next guide's ID",
                                                       1, G_MAXUINT32, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-get-guide-orientation
+   * picman-image-get-guide-orientation
    */
-  procedure = gimp_procedure_new (image_get_guide_orientation_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-get-guide-orientation");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-get-guide-orientation",
+  procedure = picman_procedure_new (image_get_guide_orientation_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-get-guide-orientation");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-get-guide-orientation",
                                      "Get orientation of a guide on an image.",
                                      "This procedure takes an image and a guide ID as input and returns the orientations of the guide.",
                                      "Adam D. Moss",
                                      "Adam D. Moss",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_uint ("guide",
                                                   "guide",
                                                   "The guide",
                                                   1, G_MAXUINT32, 1,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_enum ("orientation",
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_enum ("orientation",
                                                          "orientation",
                                                          "The guide's orientation",
-                                                         GIMP_TYPE_ORIENTATION_TYPE,
-                                                         GIMP_ORIENTATION_HORIZONTAL,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->values[0]),
-                                      GIMP_ORIENTATION_UNKNOWN);
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_TYPE_ORIENTATION_TYPE,
+                                                         PICMAN_ORIENTATION_HORIZONTAL,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_param_spec_enum_exclude_value (PICMAN_PARAM_SPEC_ENUM (procedure->values[0]),
+                                      PICMAN_ORIENTATION_UNKNOWN);
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-image-get-guide-position
+   * picman-image-get-guide-position
    */
-  procedure = gimp_procedure_new (image_get_guide_position_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-get-guide-position");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-get-guide-position",
+  procedure = picman_procedure_new (image_get_guide_position_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-image-get-guide-position");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-image-get-guide-position",
                                      "Get position of a guide on an image.",
                                      "This procedure takes an image and a guide ID as input and returns the position of the guide relative to the top or left of the image.",
                                      "Adam D. Moss",
                                      "Adam D. Moss",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_uint ("guide",
                                                   "guide",
                                                   "The guide",
                                                   1, G_MAXUINT32, 1,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("position",
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("position",
                                                           "position",
                                                           "The guide's position relative to top or left of image",
                                                           G_MININT32, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                          PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

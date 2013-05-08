@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpColorConfig class
+ * PicmanColorConfig class
  * Copyright (C) 2004  Stefan Döhla <stefan@doehla.de>
  *
  * This library is free software: you can redistribute it and/or
@@ -19,61 +19,61 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_CONFIG_H_INSIDE__) && !defined (GIMP_CONFIG_COMPILATION)
-#error "Only <libgimpconfig/gimpconfig.h> can be included directly."
+#if !defined (__PICMAN_CONFIG_H_INSIDE__) && !defined (PICMAN_CONFIG_COMPILATION)
+#error "Only <libpicmanconfig/picmanconfig.h> can be included directly."
 #endif
 
-#ifndef __GIMP_COLOR_CONFIG_H__
-#define __GIMP_COLOR_CONFIG_H__
+#ifndef __PICMAN_COLOR_CONFIG_H__
+#define __PICMAN_COLOR_CONFIG_H__
 
 
-#define GIMP_TYPE_COLOR_CONFIG            (gimp_color_config_get_type ())
-#define GIMP_COLOR_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_CONFIG, GimpColorConfig))
-#define GIMP_COLOR_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_CONFIG, GimpColorConfigClass))
-#define GIMP_IS_COLOR_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_CONFIG))
-#define GIMP_IS_COLOR_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_CONFIG))
+#define PICMAN_TYPE_COLOR_CONFIG            (picman_color_config_get_type ())
+#define PICMAN_COLOR_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_CONFIG, PicmanColorConfig))
+#define PICMAN_COLOR_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_CONFIG, PicmanColorConfigClass))
+#define PICMAN_IS_COLOR_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_CONFIG))
+#define PICMAN_IS_COLOR_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_CONFIG))
 
 
-typedef struct _GimpColorConfigClass GimpColorConfigClass;
+typedef struct _PicmanColorConfigClass PicmanColorConfigClass;
 
-struct _GimpColorConfig
+struct _PicmanColorConfig
 {
   GObject                     parent_instance;
 
   /*< public >*/
-  GimpColorManagementMode     mode;
+  PicmanColorManagementMode     mode;
   gchar                      *rgb_profile;
   gchar                      *cmyk_profile;
   gchar                      *display_profile;
   gboolean                    display_profile_from_gdk;
   gchar                      *printer_profile;
-  GimpColorRenderingIntent    display_intent;
-  GimpColorRenderingIntent    simulation_intent;
+  PicmanColorRenderingIntent    display_intent;
+  PicmanColorRenderingIntent    simulation_intent;
 
   gchar                      *display_module;
 
   gboolean                    simulation_gamut_check;
-  GimpRGB                     out_of_gamut_color;
+  PicmanRGB                     out_of_gamut_color;
 
   /*< private >*/
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
-  void (* _gimp_reserved5) (void);
-  void (* _gimp_reserved6) (void);
-  void (* _gimp_reserved7) (void);
-  void (* _gimp_reserved8) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
+  void (* _picman_reserved5) (void);
+  void (* _picman_reserved6) (void);
+  void (* _picman_reserved7) (void);
+  void (* _picman_reserved8) (void);
 };
 
-struct _GimpColorConfigClass
+struct _PicmanColorConfigClass
 {
   GObjectClass                parent_class;
 };
 
 
-GType  gimp_color_config_get_type (void) G_GNUC_CONST;
+GType  picman_color_config_get_type (void) G_GNUC_CONST;
 
 
-#endif /* GIMP_COLOR_CONFIG_H__ */
+#endif /* PICMAN_COLOR_CONFIG_H__ */

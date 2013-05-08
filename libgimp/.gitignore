@@ -6,6 +6,6 @@
 /.libs
 /.deps
 /*.la
-/gimpenums.c
-/gimpuimarshal.h
-/gimpuimarshal.c
+/picmanenums.c
+/picmanuimarshal.h
+/picmanuimarshal.c

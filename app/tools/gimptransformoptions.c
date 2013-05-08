@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,26 +20,26 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmantoolinfo.h"
 
-#include "widgets/gimppropwidgets.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanpropwidgets.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimprotatetool.h"
-#include "gimpscaletool.h"
-#include "gimpunifiedtransformtool.h"
-#include "gimptooloptions-gui.h"
-#include "gimptransformoptions.h"
+#include "picmanrotatetool.h"
+#include "picmanscaletool.h"
+#include "picmanunifiedtransformtool.h"
+#include "picmantooloptions-gui.h"
+#include "picmantransformoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -66,149 +66,149 @@ enum
 };
 
 
-static void     gimp_transform_options_set_property (GObject         *object,
+static void     picman_transform_options_set_property (GObject         *object,
                                                      guint            property_id,
                                                      const GValue    *value,
                                                      GParamSpec      *pspec);
-static void     gimp_transform_options_get_property (GObject         *object,
+static void     picman_transform_options_get_property (GObject         *object,
                                                      guint            property_id,
                                                      GValue          *value,
                                                      GParamSpec      *pspec);
 
-static void     gimp_transform_options_reset        (GimpToolOptions *tool_options);
+static void     picman_transform_options_reset        (PicmanToolOptions *tool_options);
 
-static gboolean gimp_transform_options_sync_grid    (GBinding        *binding,
+static gboolean picman_transform_options_sync_grid    (GBinding        *binding,
                                                      const GValue    *source_value,
                                                      GValue          *target_value,
                                                      gpointer         user_data);
 
 
-G_DEFINE_TYPE (GimpTransformOptions, gimp_transform_options,
-               GIMP_TYPE_TOOL_OPTIONS)
+G_DEFINE_TYPE (PicmanTransformOptions, picman_transform_options,
+               PICMAN_TYPE_TOOL_OPTIONS)
 
-#define parent_class gimp_transform_options_parent_class
+#define parent_class picman_transform_options_parent_class
 
 
 static void
-gimp_transform_options_class_init (GimpTransformOptionsClass *klass)
+picman_transform_options_class_init (PicmanTransformOptionsClass *klass)
 {
   GObjectClass         *object_class  = G_OBJECT_CLASS (klass);
-  GimpToolOptionsClass *options_class = GIMP_TOOL_OPTIONS_CLASS (klass);
+  PicmanToolOptionsClass *options_class = PICMAN_TOOL_OPTIONS_CLASS (klass);
 
-  object_class->set_property = gimp_transform_options_set_property;
-  object_class->get_property = gimp_transform_options_get_property;
+  object_class->set_property = picman_transform_options_set_property;
+  object_class->get_property = picman_transform_options_get_property;
 
-  options_class->reset       = gimp_transform_options_reset;
+  options_class->reset       = picman_transform_options_reset;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TYPE,
                                  "type", NULL,
-                                 GIMP_TYPE_TRANSFORM_TYPE,
-                                 GIMP_TRANSFORM_TYPE_LAYER,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_DIRECTION,
+                                 PICMAN_TYPE_TRANSFORM_TYPE,
+                                 PICMAN_TRANSFORM_TYPE_LAYER,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_DIRECTION,
                                  "direction",
                                  N_("Direction of transformation"),
-                                 GIMP_TYPE_TRANSFORM_DIRECTION,
-                                 GIMP_TRANSFORM_FORWARD,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_INTERPOLATION,
+                                 PICMAN_TYPE_TRANSFORM_DIRECTION,
+                                 PICMAN_TRANSFORM_FORWARD,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_INTERPOLATION,
                                  "interpolation",
                                  N_("Interpolation method"),
-                                 GIMP_TYPE_INTERPOLATION_TYPE,
-                                 GIMP_INTERPOLATION_LINEAR,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CLIP,
+                                 PICMAN_TYPE_INTERPOLATION_TYPE,
+                                 PICMAN_INTERPOLATION_LINEAR,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CLIP,
                                  "clip",
                                  N_("How to clip"),
-                                 GIMP_TYPE_TRANSFORM_RESIZE,
-                                 GIMP_TRANSFORM_RESIZE_ADJUST,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_PREVIEW,
+                                 PICMAN_TYPE_TRANSFORM_RESIZE,
+                                 PICMAN_TRANSFORM_RESIZE_ADJUST,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_PREVIEW,
                                     "show-preview",
                                     N_("Show a preview of the transformed image"),
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_PREVIEW_OPACITY,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_PREVIEW_OPACITY,
                                    "preview-opacity",
                                    N_("Opacity of the preview image"),
                                    0.0, 1.0, 1.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_GRID_TYPE,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_GRID_TYPE,
                                  "grid-type",
                                  N_("Composition guides such as rule of thirds"),
-                                 GIMP_TYPE_GUIDES_TYPE,
-                                 GIMP_GUIDES_N_LINES,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_GRID_SIZE,
+                                 PICMAN_TYPE_GUIDES_TYPE,
+                                 PICMAN_GUIDES_N_LINES,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_GRID_SIZE,
                                 "grid-size",
                                 N_("Size of a grid cell for variable number of composition guides"),
                                 1, 128, 15,
-                                GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONSTRAIN_MOVE,
+                                PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONSTRAIN_MOVE,
                                     "constrain-move",
                                     NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONSTRAIN_SCALE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONSTRAIN_SCALE,
                                     "constrain-scale",
                                     NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONSTRAIN_ROTATE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONSTRAIN_ROTATE,
                                     "constrain-rotate",
                                     NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONSTRAIN_SHEAR,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONSTRAIN_SHEAR,
                                     "constrain-shear",
                                     NULL,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONSTRAIN_PERSPECTIVE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONSTRAIN_PERSPECTIVE,
                                     "constrain-perspective",
                                     NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FROMPIVOT_SCALE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FROMPIVOT_SCALE,
                                     "frompivot-scale",
                                     NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FROMPIVOT_SHEAR,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FROMPIVOT_SHEAR,
                                     "frompivot-shear",
                                     NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FROMPIVOT_PERSPECTIVE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FROMPIVOT_PERSPECTIVE,
                                     "frompivot-perspective",
                                     NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CORNERSNAP,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CORNERSNAP,
                                     "cornersnap",
                                     NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FIXEDPIVOT,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_FIXEDPIVOT,
                                     "fixedpivot",
                                     NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_transform_options_init (GimpTransformOptions *options)
+picman_transform_options_init (PicmanTransformOptions *options)
 {
   options->recursion_level = 3;
 }
 
 static void
-gimp_transform_options_set_property (GObject      *object,
+picman_transform_options_set_property (GObject      *object,
                                      guint         property_id,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  GimpTransformOptions *options = GIMP_TRANSFORM_OPTIONS (object);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_OPTIONS (object);
 
   switch (property_id)
     {
@@ -273,12 +273,12 @@ gimp_transform_options_set_property (GObject      *object,
 }
 
 static void
-gimp_transform_options_get_property (GObject    *object,
+picman_transform_options_get_property (GObject    *object,
                                      guint       property_id,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  GimpTransformOptions *options = GIMP_TRANSFORM_OPTIONS (object);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_OPTIONS (object);
 
   switch (property_id)
     {
@@ -343,7 +343,7 @@ gimp_transform_options_get_property (GObject    *object,
 }
 
 static void
-gimp_transform_options_reset (GimpToolOptions *tool_options)
+picman_transform_options_reset (PicmanToolOptions *tool_options)
 {
   GParamSpec *pspec;
 
@@ -352,24 +352,24 @@ gimp_transform_options_reset (GimpToolOptions *tool_options)
 
   if (pspec)
     G_PARAM_SPEC_ENUM (pspec)->default_value =
-      tool_options->tool_info->gimp->config->interpolation_type;
+      tool_options->tool_info->picman->config->interpolation_type;
 
-  GIMP_TOOL_OPTIONS_CLASS (parent_class)->reset (tool_options);
+  PICMAN_TOOL_OPTIONS_CLASS (parent_class)->reset (tool_options);
 }
 
 /**
- * gimp_transform_options_gui:
- * @tool_options: a #GimpToolOptions
+ * picman_transform_options_gui:
+ * @tool_options: a #PicmanToolOptions
  *
  * Build the Transform Tool Options.
  *
  * Return value: a container holding the transform tool options
  **/
 GtkWidget *
-gimp_transform_options_gui (GimpToolOptions *tool_options)
+picman_transform_options_gui (PicmanToolOptions *tool_options)
 {
   GObject     *config = G_OBJECT (tool_options);
-  GtkWidget   *vbox   = gimp_tool_options_gui (tool_options);
+  GtkWidget   *vbox   = picman_tool_options_gui (tool_options);
   GtkWidget   *hbox;
   GtkWidget   *box;
   GtkWidget   *label;
@@ -389,44 +389,44 @@ gimp_transform_options_gui (GimpToolOptions *tool_options)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  box = gimp_prop_enum_stock_box_new (config, "type", "gimp", 0, 0);
+  box = picman_prop_enum_stock_box_new (config, "type", "picman", 0, 0);
   gtk_box_pack_start (GTK_BOX (hbox), box, FALSE, FALSE, 0);
   gtk_widget_show (box);
 
-  frame = gimp_prop_enum_radio_frame_new (config, "direction",
+  frame = picman_prop_enum_radio_frame_new (config, "direction",
                                           _("Direction"), 0, 0);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
   /*  the interpolation menu  */
-  frame = gimp_frame_new (_("Interpolation:"));
+  frame = picman_frame_new (_("Interpolation:"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  combo = gimp_prop_enum_combo_box_new (config, "interpolation", 0, 0);
+  combo = picman_prop_enum_combo_box_new (config, "interpolation", 0, 0);
   gtk_container_add (GTK_CONTAINER (frame), combo);
   gtk_widget_show (combo);
 
   /*  the clipping menu  */
-  frame = gimp_frame_new (_("Clipping:"));
+  frame = picman_frame_new (_("Clipping:"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  combo = gimp_prop_enum_combo_box_new (config, "clip", 0, 0);
+  combo = picman_prop_enum_combo_box_new (config, "clip", 0, 0);
   gtk_container_add (GTK_CONTAINER (frame), combo);
   gtk_widget_show (combo);
 
   /*  the preview frame  */
-  scale = gimp_prop_opacity_spin_scale_new (config, "preview-opacity",
+  scale = picman_prop_opacity_spin_scale_new (config, "preview-opacity",
                                             _("Image opacity"));
-  frame = gimp_prop_expanding_frame_new (config, "show-preview",
+  frame = picman_prop_expanding_frame_new (config, "show-preview",
                                          _("Show image preview"),
                                          scale, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
   /*  the guides frame  */
-  frame = gimp_frame_new (_("Guides"));
+  frame = picman_frame_new (_("Guides"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -435,12 +435,12 @@ gimp_transform_options_gui (GimpToolOptions *tool_options)
   gtk_widget_show (grid_box);
 
   /*  the guides type menu  */
-  combo = gimp_prop_enum_combo_box_new (config, "grid-type", 0, 0);
+  combo = picman_prop_enum_combo_box_new (config, "grid-type", 0, 0);
   gtk_box_pack_start (GTK_BOX (grid_box), combo, FALSE, FALSE, 0);
   gtk_widget_show (combo);
 
   /*  the grid density scale  */
-  scale = gimp_prop_spin_scale_new (config, "grid-size", NULL,
+  scale = picman_prop_spin_scale_new (config, "grid-size", NULL,
                                     1.8, 8.0, 0);
   gtk_box_pack_start (GTK_BOX (grid_box), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
@@ -448,28 +448,28 @@ gimp_transform_options_gui (GimpToolOptions *tool_options)
   g_object_bind_property_full (config, "grid-type",
                                scale,  "visible",
                                G_BINDING_SYNC_CREATE,
-                               gimp_transform_options_sync_grid,
+                               picman_transform_options_sync_grid,
                                NULL,
                                NULL, NULL);
 
-  if (tool_options->tool_info->tool_type == GIMP_TYPE_ROTATE_TOOL)
+  if (tool_options->tool_info->tool_type == PICMAN_TYPE_ROTATE_TOOL)
     {
       constrain_name  = "constrain-rotate";
       constrain_label = _("15 degrees  (%s)");
       constrain_tip   = _("Limit rotation steps to 15 degrees");
     }
-  else if (tool_options->tool_info->tool_type == GIMP_TYPE_SCALE_TOOL)
+  else if (tool_options->tool_info->tool_type == PICMAN_TYPE_SCALE_TOOL)
     {
       constrain_name  = "constrain-scale";
       constrain_label = _("Keep aspect  (%s)");
       constrain_tip   = _("Keep the original aspect ratio");
     }
 
-  //TODO: check that the selection tools use the gimp_get_*_mask() functions for constrain/etc or change to what they use
-  else if (tool_options->tool_info->tool_type == GIMP_TYPE_UNIFIED_TRANSFORM_TOOL)
+  //TODO: check that the selection tools use the picman_get_*_mask() functions for constrain/etc or change to what they use
+  else if (tool_options->tool_info->tool_type == PICMAN_TYPE_UNIFIED_TRANSFORM_TOOL)
     {
-      GdkModifierType shift = gimp_get_extend_selection_mask ();
-      GdkModifierType ctrl  = gimp_get_constrain_behavior_mask ();
+      GdkModifierType shift = picman_get_extend_selection_mask ();
+      GdkModifierType ctrl  = picman_get_constrain_behavior_mask ();
 
       struct
       {
@@ -524,11 +524,11 @@ gimp_transform_options_gui (GimpToolOptions *tool_options)
             }
 
           label = g_strdup_printf (opt_list[i].desc,
-                                   gimp_get_mod_string (opt_list[i].mod));
+                                   picman_get_mod_string (opt_list[i].mod));
 
           if (opt_list[i].name)
             {
-              button = gimp_prop_check_button_new (config, opt_list[i].name,
+              button = picman_prop_check_button_new (config, opt_list[i].name,
                                                    label);
 
               gtk_box_pack_start (GTK_BOX (frame ? grid_box : vbox),
@@ -538,13 +538,13 @@ gimp_transform_options_gui (GimpToolOptions *tool_options)
 
               g_free (label);
               label = g_strdup_printf (opt_list[i].tip,
-                                       gimp_get_mod_string (opt_list[i].mod));
+                                       picman_get_mod_string (opt_list[i].mod));
 
-              gimp_help_set_help_data (button, label, NULL);
+              picman_help_set_help_data (button, label, NULL);
             }
           else
             {
-              frame = gimp_frame_new (label);
+              frame = picman_frame_new (label);
               gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
               gtk_widget_show (frame);
 
@@ -563,16 +563,16 @@ gimp_transform_options_gui (GimpToolOptions *tool_options)
       gchar           *label;
       GdkModifierType  constrain_mask;
 
-      constrain_mask = gimp_get_extend_selection_mask ();
+      constrain_mask = picman_get_extend_selection_mask ();
 
       label = g_strdup_printf (constrain_label,
-                               gimp_get_mod_string (constrain_mask));
+                               picman_get_mod_string (constrain_mask));
 
-      button = gimp_prop_check_button_new (config, constrain_name, label);
+      button = picman_prop_check_button_new (config, constrain_name, label);
       gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
       gtk_widget_show (button);
 
-      gimp_help_set_help_data (button, constrain_tip, NULL);
+      picman_help_set_help_data (button, constrain_tip, NULL);
 
       g_free (label);
     }
@@ -581,28 +581,28 @@ gimp_transform_options_gui (GimpToolOptions *tool_options)
 }
 
 gboolean
-gimp_transform_options_show_preview (GimpTransformOptions *options)
+picman_transform_options_show_preview (PicmanTransformOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_TRANSFORM_OPTIONS (options), FALSE);
+  g_return_val_if_fail (PICMAN_IS_TRANSFORM_OPTIONS (options), FALSE);
 
   return (options->show_preview                           &&
-          options->type      == GIMP_TRANSFORM_TYPE_LAYER);
+          options->type      == PICMAN_TRANSFORM_TYPE_LAYER);
 }
 
 
 /*  private functions  */
 
 static gboolean
-gimp_transform_options_sync_grid (GBinding     *binding,
+picman_transform_options_sync_grid (GBinding     *binding,
                                   const GValue *source_value,
                                   GValue       *target_value,
                                   gpointer      user_data)
 {
-  GimpGuidesType type = g_value_get_enum (source_value);
+  PicmanGuidesType type = g_value_get_enum (source_value);
 
   g_value_set_boolean (target_value,
-                       type == GIMP_GUIDES_N_LINES ||
-                       type == GIMP_GUIDES_SPACING);
+                       type == PICMAN_GUIDES_N_LINES ||
+                       type == PICMAN_GUIDES_SPACING);
 
   return TRUE;
 }

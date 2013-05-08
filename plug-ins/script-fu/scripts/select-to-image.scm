@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; Selection to Image
@@ -24,9 +24,9 @@
 
 (define (script-fu-selection-to-image image drawable)
   (let* (
-        (draw-type (car (gimp-drawable-type-with-alpha drawable)))
-        (image-type (car (gimp-image-base-type image)))
-        (selection-bounds (gimp-selection-bounds image))
+        (draw-type (car (picman-drawable-type-with-alpha drawable)))
+        (image-type (car (picman-image-base-type image)))
+        (selection-bounds (picman-selection-bounds image))
         (select-offset-x (cadr selection-bounds))
         (select-offset-y (caddr selection-bounds))
         (selection-width (- (cadr (cddr selection-bounds)) select-offset-x))
@@ -37,50 +37,50 @@
         (new-draw 0)
         )
 
-    (gimp-context-push)
-    (gimp-context-set-defaults)
+    (picman-context-push)
+    (picman-context-set-defaults)
 
-    (gimp-image-undo-disable image)
+    (picman-image-undo-disable image)
 
-    (if (= (car (gimp-selection-is-empty image)) TRUE)
+    (if (= (car (picman-selection-is-empty image)) TRUE)
         (begin
-          (gimp-image-select-item image CHANNEL-OP-REPLACE drawable)
-          (set! active-selection (car (gimp-selection-save image)))
+          (picman-image-select-item image CHANNEL-OP-REPLACE drawable)
+          (set! active-selection (car (picman-selection-save image)))
           (set! from-selection FALSE)
         )
         (begin
           (set! from-selection TRUE)
-          (set! active-selection (car (gimp-selection-save image)))
+          (set! active-selection (car (picman-selection-save image)))
         )
     )
 
-    (gimp-edit-copy drawable)
+    (picman-edit-copy drawable)
 
-    (set! new-image (car (gimp-image-new selection-width
+    (set! new-image (car (picman-image-new selection-width
                                          selection-height image-type)))
-    (set! new-draw (car (gimp-layer-new new-image
+    (set! new-draw (car (picman-layer-new new-image
                                         selection-width selection-height
                                         draw-type "Selection" 100 NORMAL-MODE)))
-    (gimp-image-insert-layer new-image new-draw 0 0)
-    (gimp-drawable-fill new-draw BACKGROUND-FILL)
+    (picman-image-insert-layer new-image new-draw 0 0)
+    (picman-drawable-fill new-draw BACKGROUND-FILL)
 
-    (let ((floating-sel (car (gimp-edit-paste new-draw FALSE))))
-      (gimp-floating-sel-anchor floating-sel)
+    (let ((floating-sel (car (picman-edit-paste new-draw FALSE))))
+      (picman-floating-sel-anchor floating-sel)
     )
 
-    (gimp-image-undo-enable image)
-    (gimp-image-set-active-layer image drawable)
-    (gimp-display-new new-image)
-    (gimp-displays-flush)
+    (picman-image-undo-enable image)
+    (picman-image-set-active-layer image drawable)
+    (picman-display-new new-image)
+    (picman-displays-flush)
 
-    (gimp-context-pop)
+    (picman-context-pop)
   )
 )
 
 (script-fu-register "script-fu-selection-to-image"
   _"To _Image"
   _"Convert a selection to an image"
-  "Adrian Likins <adrian@gimp.org>"
+  "Adrian Likins <adrian@picman.org>"
   "Adrian Likins"
   "10/07/97"
   "RGB* GRAY*"

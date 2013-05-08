@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpparasite.h
- * Copyright (C) 1998 Jay Cox <jaycox@gimp.org>
+ * picmanparasite.h
+ * Copyright (C) 1998 Jay Cox <jaycox@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_BASE_H_INSIDE__) && !defined (GIMP_BASE_COMPILATION)
-#error "Only <libgimpbase/gimpbase.h> can be included directly."
+#if !defined (__PICMAN_BASE_H_INSIDE__) && !defined (PICMAN_BASE_COMPILATION)
+#error "Only <libpicmanbase/picmanbase.h> can be included directly."
 #endif
 
-#ifndef __GIMP_PARASITE_H__
-#define __GIMP_PARASITE_H__
+#ifndef __PICMAN_PARASITE_H__
+#define __PICMAN_PARASITE_H__
 
 G_BEGIN_DECLS
 
@@ -32,43 +32,43 @@ G_BEGIN_DECLS
 
 
 /*
- * GIMP_TYPE_PARASITE
+ * PICMAN_TYPE_PARASITE
  */
 
-#define GIMP_TYPE_PARASITE               (gimp_parasite_get_type ())
-#define GIMP_VALUE_HOLDS_PARASITE(value) (G_TYPE_CHECK_VALUE_TYPE ((value), GIMP_TYPE_PARASITE))
+#define PICMAN_TYPE_PARASITE               (picman_parasite_get_type ())
+#define PICMAN_VALUE_HOLDS_PARASITE(value) (G_TYPE_CHECK_VALUE_TYPE ((value), PICMAN_TYPE_PARASITE))
 
-GType   gimp_parasite_get_type           (void) G_GNUC_CONST;
+GType   picman_parasite_get_type           (void) G_GNUC_CONST;
 
 
 /*
- * GIMP_TYPE_PARAM_PARASITE
+ * PICMAN_TYPE_PARAM_PARASITE
  */
 
-#define GIMP_TYPE_PARAM_PARASITE           (gimp_param_parasite_get_type ())
-#define GIMP_IS_PARAM_SPEC_PARASITE(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GIMP_TYPE_PARAM_PARASITE))
+#define PICMAN_TYPE_PARAM_PARASITE           (picman_param_parasite_get_type ())
+#define PICMAN_IS_PARAM_SPEC_PARASITE(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), PICMAN_TYPE_PARAM_PARASITE))
 
-GType        gimp_param_parasite_get_type  (void) G_GNUC_CONST;
+GType        picman_param_parasite_get_type  (void) G_GNUC_CONST;
 
-GParamSpec * gimp_param_spec_parasite      (const gchar  *name,
+GParamSpec * picman_param_spec_parasite      (const gchar  *name,
                                             const gchar  *nick,
                                             const gchar  *blurb,
                                             GParamFlags   flags);
 
 
-#define GIMP_PARASITE_PERSISTENT 1
-#define GIMP_PARASITE_UNDOABLE   2
+#define PICMAN_PARASITE_PERSISTENT 1
+#define PICMAN_PARASITE_UNDOABLE   2
 
-#define GIMP_PARASITE_ATTACH_PARENT     (0x80 << 8)
-#define GIMP_PARASITE_PARENT_PERSISTENT (GIMP_PARASITE_PERSISTENT << 8)
-#define GIMP_PARASITE_PARENT_UNDOABLE   (GIMP_PARASITE_UNDOABLE << 8)
+#define PICMAN_PARASITE_ATTACH_PARENT     (0x80 << 8)
+#define PICMAN_PARASITE_PARENT_PERSISTENT (PICMAN_PARASITE_PERSISTENT << 8)
+#define PICMAN_PARASITE_PARENT_UNDOABLE   (PICMAN_PARASITE_UNDOABLE << 8)
 
-#define GIMP_PARASITE_ATTACH_GRANDPARENT     (0x80 << 16)
-#define GIMP_PARASITE_GRANDPARENT_PERSISTENT (GIMP_PARASITE_PERSISTENT << 16)
-#define GIMP_PARASITE_GRANDPARENT_UNDOABLE   (GIMP_PARASITE_UNDOABLE << 16)
+#define PICMAN_PARASITE_ATTACH_GRANDPARENT     (0x80 << 16)
+#define PICMAN_PARASITE_GRANDPARENT_PERSISTENT (PICMAN_PARASITE_PERSISTENT << 16)
+#define PICMAN_PARASITE_GRANDPARENT_UNDOABLE   (PICMAN_PARASITE_UNDOABLE << 16)
 
 
-struct _GimpParasite
+struct _PicmanParasite
 {
   gchar    *name;   /* The name of the parasite. USE A UNIQUE PREFIX! */
   guint32   flags;  /* save Parasite in XCF file, etc.                */
@@ -78,29 +78,29 @@ struct _GimpParasite
 };
 
 
-GimpParasite * gimp_parasite_new           (const gchar        *name,
+PicmanParasite * picman_parasite_new           (const gchar        *name,
                                             guint32             flags,
                                             guint32             size,
                                             gconstpointer       data);
-void           gimp_parasite_free          (GimpParasite       *parasite);
+void           picman_parasite_free          (PicmanParasite       *parasite);
 
-GimpParasite * gimp_parasite_copy          (const GimpParasite *parasite);
+PicmanParasite * picman_parasite_copy          (const PicmanParasite *parasite);
 
-gboolean       gimp_parasite_compare       (const GimpParasite *a,
-                                            const GimpParasite *b);
+gboolean       picman_parasite_compare       (const PicmanParasite *a,
+                                            const PicmanParasite *b);
 
-gboolean       gimp_parasite_is_type       (const GimpParasite *parasite,
+gboolean       picman_parasite_is_type       (const PicmanParasite *parasite,
                                             const gchar        *name);
-gboolean       gimp_parasite_is_persistent (const GimpParasite *parasite);
-gboolean       gimp_parasite_is_undoable   (const GimpParasite *parasite);
-gboolean       gimp_parasite_has_flag      (const GimpParasite *parasite,
+gboolean       picman_parasite_is_persistent (const PicmanParasite *parasite);
+gboolean       picman_parasite_is_undoable   (const PicmanParasite *parasite);
+gboolean       picman_parasite_has_flag      (const PicmanParasite *parasite,
                                             gulong              flag);
-gulong         gimp_parasite_flags         (const GimpParasite *parasite);
-const gchar  * gimp_parasite_name          (const GimpParasite *parasite);
-gconstpointer  gimp_parasite_data          (const GimpParasite *parasite);
-glong          gimp_parasite_data_size     (const GimpParasite *parasite);
+gulong         picman_parasite_flags         (const PicmanParasite *parasite);
+const gchar  * picman_parasite_name          (const PicmanParasite *parasite);
+gconstpointer  picman_parasite_data          (const PicmanParasite *parasite);
+glong          picman_parasite_data_size     (const PicmanParasite *parasite);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_PARASITE_H__ */
+#endif /* __PICMAN_PARASITE_H__ */

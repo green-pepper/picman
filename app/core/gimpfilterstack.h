@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpfilterstack.h
- * Copyright (C) 2008-2013 Michael Natterer <mitch@gimp.org>
+ * picmanfilterstack.h
+ * Copyright (C) 2008-2013 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,38 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FILTER_STACK_H__
-#define __GIMP_FILTER_STACK_H__
+#ifndef __PICMAN_FILTER_STACK_H__
+#define __PICMAN_FILTER_STACK_H__
 
-#include "gimplist.h"
-
-
-#define GIMP_TYPE_FILTER_STACK            (gimp_filter_stack_get_type ())
-#define GIMP_FILTER_STACK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FILTER_STACK, GimpFilterStack))
-#define GIMP_FILTER_STACK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FILTER_STACK, GimpFilterStackClass))
-#define GIMP_IS_FILTER_STACK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FILTER_STACK))
-#define GIMP_IS_FILTER_STACK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FILTER_STACK))
+#include "picmanlist.h"
 
 
-typedef struct _GimpFilterStackClass GimpFilterStackClass;
+#define PICMAN_TYPE_FILTER_STACK            (picman_filter_stack_get_type ())
+#define PICMAN_FILTER_STACK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FILTER_STACK, PicmanFilterStack))
+#define PICMAN_FILTER_STACK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FILTER_STACK, PicmanFilterStackClass))
+#define PICMAN_IS_FILTER_STACK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FILTER_STACK))
+#define PICMAN_IS_FILTER_STACK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FILTER_STACK))
 
-struct _GimpFilterStack
+
+typedef struct _PicmanFilterStackClass PicmanFilterStackClass;
+
+struct _PicmanFilterStack
 {
-  GimpList  parent_instance;
+  PicmanList  parent_instance;
 
   GeglNode *graph;
 };
 
-struct _GimpFilterStackClass
+struct _PicmanFilterStackClass
 {
-  GimpListClass  parent_class;
+  PicmanListClass  parent_class;
 };
 
 
-GType           gimp_filter_stack_get_type  (void) G_GNUC_CONST;
-GimpContainer * gimp_filter_stack_new       (GType            filter_type);
+GType           picman_filter_stack_get_type  (void) G_GNUC_CONST;
+PicmanContainer * picman_filter_stack_new       (GType            filter_type);
 
-GeglNode *      gimp_filter_stack_get_graph (GimpFilterStack *stack);
+GeglNode *      picman_filter_stack_get_graph (PicmanFilterStack *stack);
 
 
-#endif  /*  __GIMP_FILTER_STACK_H__  */
+#endif  /*  __PICMAN_FILTER_STACK_H__  */

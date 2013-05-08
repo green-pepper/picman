@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimppdbcontext.h
+ * picmanpdbcontext.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,60 +17,60 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PDB_CONTEXT_H__
-#define __GIMP_PDB_CONTEXT_H__
+#ifndef __PICMAN_PDB_CONTEXT_H__
+#define __PICMAN_PDB_CONTEXT_H__
 
 
-#include "core/gimpcontext.h"
+#include "core/picmancontext.h"
 
 
-#define GIMP_TYPE_PDB_CONTEXT            (gimp_pdb_context_get_type ())
-#define GIMP_PDB_CONTEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PDB_CONTEXT, GimpPDBContext))
-#define GIMP_PDB_CONTEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PDB_CONTEXT, GimpPDBContextClass))
-#define GIMP_IS_PDB_CONTEXT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PDB_CONTEXT))
-#define GIMP_IS_PDB_CONTEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PDB_CONTEXT))
-#define GIMP_PDB_CONTEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PDB_CONTEXT, GimpPDBContextClass))
+#define PICMAN_TYPE_PDB_CONTEXT            (picman_pdb_context_get_type ())
+#define PICMAN_PDB_CONTEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PDB_CONTEXT, PicmanPDBContext))
+#define PICMAN_PDB_CONTEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PDB_CONTEXT, PicmanPDBContextClass))
+#define PICMAN_IS_PDB_CONTEXT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PDB_CONTEXT))
+#define PICMAN_IS_PDB_CONTEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PDB_CONTEXT))
+#define PICMAN_PDB_CONTEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PDB_CONTEXT, PicmanPDBContextClass))
 
 
-typedef struct _GimpPDBContext      GimpPDBContext;
-typedef struct _GimpPDBContextClass GimpPDBContextClass;
+typedef struct _PicmanPDBContext      PicmanPDBContext;
+typedef struct _PicmanPDBContextClass PicmanPDBContextClass;
 
-struct _GimpPDBContext
+struct _PicmanPDBContext
 {
-  GimpContext             parent_instance;
+  PicmanContext             parent_instance;
 
   gboolean                antialias;
   gboolean                feather;
   gdouble                 feather_radius_x;
   gdouble                 feather_radius_y;
   gboolean                sample_merged;
-  GimpSelectCriterion     sample_criterion;
+  PicmanSelectCriterion     sample_criterion;
   gdouble                 sample_threshold;
   gboolean                sample_transparent;
 
-  GimpInterpolationType   interpolation;
-  GimpTransformDirection  transform_direction;
-  GimpTransformResize     transform_resize;
+  PicmanInterpolationType   interpolation;
+  PicmanTransformDirection  transform_direction;
+  PicmanTransformResize     transform_resize;
   gint                    transform_recursion;
 
-  GimpContainer          *paint_options_list;
+  PicmanContainer          *paint_options_list;
 };
 
-struct _GimpPDBContextClass
+struct _PicmanPDBContextClass
 {
-  GimpContextClass  parent_class;
+  PicmanContextClass  parent_class;
 };
 
 
-GType              gimp_pdb_context_get_type          (void) G_GNUC_CONST;
+GType              picman_pdb_context_get_type          (void) G_GNUC_CONST;
 
-GimpContext      * gimp_pdb_context_new               (Gimp           *gimp,
-                                                       GimpContext    *parent,
+PicmanContext      * picman_pdb_context_new               (Picman           *picman,
+                                                       PicmanContext    *parent,
                                                        gboolean        set_parent);
 
-GimpPaintOptions * gimp_pdb_context_get_paint_options (GimpPDBContext *context,
+PicmanPaintOptions * picman_pdb_context_get_paint_options (PicmanPDBContext *context,
                                                        const gchar    *name);
-GList            * gimp_pdb_context_get_brush_options (GimpPDBContext *context);
+GList            * picman_pdb_context_get_brush_options (PicmanPDBContext *context);
 
 
-#endif  /*  __GIMP_PDB_CONTEXT_H__  */
+#endif  /*  __PICMAN_PDB_CONTEXT_H__  */

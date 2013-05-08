@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcomponenteditor.c
- * Copyright (C) 2003-2005 Michael Natterer <mitch@gimp.org>
+ * picmancomponenteditor.c
+ * Copyright (C) 2003-2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,23 +23,23 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpchannel.h"
-#include "core/gimpimage.h"
+#include "core/picmanchannel.h"
+#include "core/picmanimage.h"
 
-#include "gimpcellrendererviewable.h"
-#include "gimpcomponenteditor.h"
-#include "gimpdnd.h"
-#include "gimpdocked.h"
-#include "gimpmenufactory.h"
-#include "gimpviewrendererimage.h"
-#include "gimpwidgets-utils.h"
+#include "picmancellrendererviewable.h"
+#include "picmancomponenteditor.h"
+#include "picmandnd.h"
+#include "picmandocked.h"
+#include "picmanmenufactory.h"
+#include "picmanviewrendererimage.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -52,66 +52,66 @@ enum
 };
 
 
-static void gimp_component_editor_docked_iface_init (GimpDockedInterface *iface);
+static void picman_component_editor_docked_iface_init (PicmanDockedInterface *iface);
 
-static void gimp_component_editor_set_context       (GimpDocked          *docked,
-                                                     GimpContext         *context);
+static void picman_component_editor_set_context       (PicmanDocked          *docked,
+                                                     PicmanContext         *context);
 
-static void gimp_component_editor_set_image         (GimpImageEditor     *editor,
-                                                     GimpImage           *image);
+static void picman_component_editor_set_image         (PicmanImageEditor     *editor,
+                                                     PicmanImage           *image);
 
-static void gimp_component_editor_create_components (GimpComponentEditor *editor);
-static void gimp_component_editor_clear_components  (GimpComponentEditor *editor);
-static void gimp_component_editor_clicked         (GtkCellRendererToggle *cellrenderertoggle,
+static void picman_component_editor_create_components (PicmanComponentEditor *editor);
+static void picman_component_editor_clear_components  (PicmanComponentEditor *editor);
+static void picman_component_editor_clicked         (GtkCellRendererToggle *cellrenderertoggle,
                                                    gchar                 *path,
                                                    GdkModifierType        state,
-                                                   GimpComponentEditor   *editor);
-static gboolean gimp_component_editor_select        (GtkTreeSelection    *selection,
+                                                   PicmanComponentEditor   *editor);
+static gboolean picman_component_editor_select        (GtkTreeSelection    *selection,
                                                      GtkTreeModel        *model,
                                                      GtkTreePath         *path,
                                                      gboolean             path_currently_selected,
                                                      gpointer             data);
-static gboolean gimp_component_editor_button_press  (GtkWidget           *widget,
+static gboolean picman_component_editor_button_press  (GtkWidget           *widget,
                                                      GdkEventButton      *bevent,
-                                                     GimpComponentEditor *editor);
-static void gimp_component_editor_renderer_update   (GimpViewRenderer    *renderer,
-                                                     GimpComponentEditor *editor);
-static void gimp_component_editor_mode_changed      (GimpImage           *image,
-                                                     GimpComponentEditor *editor);
-static void gimp_component_editor_alpha_changed     (GimpImage           *image,
-                                                     GimpComponentEditor *editor);
-static void gimp_component_editor_visibility_changed(GimpImage           *image,
-                                                     GimpChannelType      channel,
-                                                     GimpComponentEditor *editor);
-static void gimp_component_editor_active_changed    (GimpImage           *image,
-                                                     GimpChannelType      channel,
-                                                     GimpComponentEditor *editor);
-static GimpImage * gimp_component_editor_drag_component (GtkWidget       *widget,
-                                                         GimpContext    **context,
-                                                         GimpChannelType *channel,
+                                                     PicmanComponentEditor *editor);
+static void picman_component_editor_renderer_update   (PicmanViewRenderer    *renderer,
+                                                     PicmanComponentEditor *editor);
+static void picman_component_editor_mode_changed      (PicmanImage           *image,
+                                                     PicmanComponentEditor *editor);
+static void picman_component_editor_alpha_changed     (PicmanImage           *image,
+                                                     PicmanComponentEditor *editor);
+static void picman_component_editor_visibility_changed(PicmanImage           *image,
+                                                     PicmanChannelType      channel,
+                                                     PicmanComponentEditor *editor);
+static void picman_component_editor_active_changed    (PicmanImage           *image,
+                                                     PicmanChannelType      channel,
+                                                     PicmanComponentEditor *editor);
+static PicmanImage * picman_component_editor_drag_component (GtkWidget       *widget,
+                                                         PicmanContext    **context,
+                                                         PicmanChannelType *channel,
                                                          gpointer         data);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpComponentEditor, gimp_component_editor,
-                         GIMP_TYPE_IMAGE_EDITOR,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_DOCKED,
-                                                gimp_component_editor_docked_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanComponentEditor, picman_component_editor,
+                         PICMAN_TYPE_IMAGE_EDITOR,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_DOCKED,
+                                                picman_component_editor_docked_iface_init))
 
-#define parent_class gimp_component_editor_parent_class
+#define parent_class picman_component_editor_parent_class
 
-static GimpDockedInterface *parent_docked_iface = NULL;
+static PicmanDockedInterface *parent_docked_iface = NULL;
 
 
 static void
-gimp_component_editor_class_init (GimpComponentEditorClass *klass)
+picman_component_editor_class_init (PicmanComponentEditorClass *klass)
 {
-  GimpImageEditorClass *image_editor_class = GIMP_IMAGE_EDITOR_CLASS (klass);
+  PicmanImageEditorClass *image_editor_class = PICMAN_IMAGE_EDITOR_CLASS (klass);
 
-  image_editor_class->set_image = gimp_component_editor_set_image;
+  image_editor_class->set_image = picman_component_editor_set_image;
 }
 
 static void
-gimp_component_editor_init (GimpComponentEditor *editor)
+picman_component_editor_init (PicmanComponentEditor *editor)
 {
   GtkWidget    *frame;
   GtkListStore *list;
@@ -124,7 +124,7 @@ gimp_component_editor_init (GimpComponentEditor *editor)
   list = gtk_list_store_new (N_COLUMNS,
                              G_TYPE_INT,
                              G_TYPE_BOOLEAN,
-                             GIMP_TYPE_VIEW_RENDERER,
+                             PICMAN_TYPE_VIEW_RENDERER,
                              G_TYPE_STRING);
   editor->model = GTK_TREE_MODEL (list);
 
@@ -136,7 +136,7 @@ gimp_component_editor_init (GimpComponentEditor *editor)
   editor->eye_column = gtk_tree_view_column_new ();
   gtk_tree_view_append_column (editor->view, editor->eye_column);
 
-  editor->eye_cell = gimp_cell_renderer_toggle_new (GIMP_STOCK_VISIBLE);
+  editor->eye_cell = picman_cell_renderer_toggle_new (PICMAN_STOCK_VISIBLE);
   gtk_tree_view_column_pack_start (editor->eye_column, editor->eye_cell,
                                    FALSE);
   gtk_tree_view_column_set_attributes (editor->eye_column, editor->eye_cell,
@@ -144,10 +144,10 @@ gimp_component_editor_init (GimpComponentEditor *editor)
                                        NULL);
 
   g_signal_connect (editor->eye_cell, "clicked",
-                    G_CALLBACK (gimp_component_editor_clicked),
+                    G_CALLBACK (picman_component_editor_clicked),
                     editor);
 
-  editor->renderer_cell = gimp_cell_renderer_viewable_new ();
+  editor->renderer_cell = picman_cell_renderer_viewable_new ();
   gtk_tree_view_insert_column_with_attributes (editor->view,
                                                -1, NULL,
                                                editor->renderer_cell,
@@ -164,37 +164,37 @@ gimp_component_editor_init (GimpComponentEditor *editor)
   gtk_widget_show (GTK_WIDGET (editor->view));
 
   g_signal_connect (editor->view, "button-press-event",
-                    G_CALLBACK (gimp_component_editor_button_press),
+                    G_CALLBACK (picman_component_editor_button_press),
                     editor);
 
   editor->selection = gtk_tree_view_get_selection (editor->view);
   gtk_tree_selection_set_mode (editor->selection, GTK_SELECTION_MULTIPLE);
 
   gtk_tree_selection_set_select_function (editor->selection,
-                                          gimp_component_editor_select,
+                                          picman_component_editor_select,
                                           editor, NULL);
 
-  gimp_dnd_component_source_add (GTK_WIDGET (editor->view),
-                                 gimp_component_editor_drag_component,
+  picman_dnd_component_source_add (GTK_WIDGET (editor->view),
+                                 picman_component_editor_drag_component,
                                  editor);
 }
 
 static void
-gimp_component_editor_docked_iface_init (GimpDockedInterface *iface)
+picman_component_editor_docked_iface_init (PicmanDockedInterface *iface)
 {
   parent_docked_iface = g_type_interface_peek_parent (iface);
 
   if (! parent_docked_iface)
-    parent_docked_iface = g_type_default_interface_peek (GIMP_TYPE_DOCKED);
+    parent_docked_iface = g_type_default_interface_peek (PICMAN_TYPE_DOCKED);
 
-  iface->set_context = gimp_component_editor_set_context;
+  iface->set_context = picman_component_editor_set_context;
 }
 
 static void
-gimp_component_editor_set_context (GimpDocked  *docked,
-                                   GimpContext *context)
+picman_component_editor_set_context (PicmanDocked  *docked,
+                                   PicmanContext *context)
 {
-  GimpComponentEditor *editor = GIMP_COMPONENT_EDITOR (docked);
+  PicmanComponentEditor *editor = PICMAN_COMPONENT_EDITOR (docked);
   GtkTreeIter          iter;
   gboolean             iter_valid;
 
@@ -204,85 +204,85 @@ gimp_component_editor_set_context (GimpDocked  *docked,
        iter_valid;
        iter_valid = gtk_tree_model_iter_next (editor->model, &iter))
     {
-      GimpViewRenderer *renderer;
+      PicmanViewRenderer *renderer;
 
       gtk_tree_model_get (editor->model, &iter,
                           COLUMN_RENDERER, &renderer,
                           -1);
 
-      gimp_view_renderer_set_context (renderer, context);
+      picman_view_renderer_set_context (renderer, context);
       g_object_unref (renderer);
     }
 }
 
 static void
-gimp_component_editor_set_image (GimpImageEditor *editor,
-                                 GimpImage       *image)
+picman_component_editor_set_image (PicmanImageEditor *editor,
+                                 PicmanImage       *image)
 {
-  GimpComponentEditor *component_editor = GIMP_COMPONENT_EDITOR (editor);
+  PicmanComponentEditor *component_editor = PICMAN_COMPONENT_EDITOR (editor);
 
   if (editor->image)
     {
-      gimp_component_editor_clear_components (component_editor);
+      picman_component_editor_clear_components (component_editor);
 
       g_signal_handlers_disconnect_by_func (editor->image,
-                                            gimp_component_editor_mode_changed,
+                                            picman_component_editor_mode_changed,
                                             component_editor);
       g_signal_handlers_disconnect_by_func (editor->image,
-                                            gimp_component_editor_alpha_changed,
+                                            picman_component_editor_alpha_changed,
                                             component_editor);
       g_signal_handlers_disconnect_by_func (editor->image,
-                                            gimp_component_editor_visibility_changed,
+                                            picman_component_editor_visibility_changed,
                                             component_editor);
       g_signal_handlers_disconnect_by_func (editor->image,
-                                            gimp_component_editor_active_changed,
+                                            picman_component_editor_active_changed,
                                             component_editor);
     }
 
-  GIMP_IMAGE_EDITOR_CLASS (parent_class)->set_image (editor, image);
+  PICMAN_IMAGE_EDITOR_CLASS (parent_class)->set_image (editor, image);
 
   if (editor->image)
     {
-      gimp_component_editor_create_components (component_editor);
+      picman_component_editor_create_components (component_editor);
 
       g_signal_connect (editor->image, "mode-changed",
-                        G_CALLBACK (gimp_component_editor_mode_changed),
+                        G_CALLBACK (picman_component_editor_mode_changed),
                         component_editor);
       g_signal_connect (editor->image, "alpha-changed",
-                        G_CALLBACK (gimp_component_editor_alpha_changed),
+                        G_CALLBACK (picman_component_editor_alpha_changed),
                         component_editor);
       g_signal_connect (editor->image, "component-visibility-changed",
-                        G_CALLBACK (gimp_component_editor_visibility_changed),
+                        G_CALLBACK (picman_component_editor_visibility_changed),
                         component_editor);
       g_signal_connect (editor->image, "component-active-changed",
-                        G_CALLBACK (gimp_component_editor_active_changed),
+                        G_CALLBACK (picman_component_editor_active_changed),
                         component_editor);
     }
 }
 
 GtkWidget *
-gimp_component_editor_new (gint             view_size,
-                           GimpMenuFactory *menu_factory)
+picman_component_editor_new (gint             view_size,
+                           PicmanMenuFactory *menu_factory)
 {
-  GimpComponentEditor *editor;
+  PicmanComponentEditor *editor;
 
   g_return_val_if_fail (view_size > 0 &&
-                        view_size <= GIMP_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
-  g_return_val_if_fail (GIMP_IS_MENU_FACTORY (menu_factory), NULL);
+                        view_size <= PICMAN_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
+  g_return_val_if_fail (PICMAN_IS_MENU_FACTORY (menu_factory), NULL);
 
-  editor = g_object_new (GIMP_TYPE_COMPONENT_EDITOR,
+  editor = g_object_new (PICMAN_TYPE_COMPONENT_EDITOR,
                          "menu-factory",    menu_factory,
                          "menu-identifier", "<Channels>",
                          "ui-path",         "/channels-popup",
                          NULL);
 
-  gimp_component_editor_set_view_size (editor, view_size);
+  picman_component_editor_set_view_size (editor, view_size);
 
   return GTK_WIDGET (editor);
 }
 
 void
-gimp_component_editor_set_view_size (GimpComponentEditor *editor,
+picman_component_editor_set_view_size (PicmanComponentEditor *editor,
                                      gint                 view_size)
 {
   GtkWidget   *tree_widget;
@@ -291,15 +291,15 @@ gimp_component_editor_set_view_size (GimpComponentEditor *editor,
   GtkTreeIter  iter;
   gboolean     iter_valid;
 
-  g_return_if_fail (GIMP_IS_COMPONENT_EDITOR (editor));
+  g_return_if_fail (PICMAN_IS_COMPONENT_EDITOR (editor));
   g_return_if_fail (view_size >  0 &&
-                    view_size <= GIMP_VIEWABLE_MAX_PREVIEW_SIZE);
+                    view_size <= PICMAN_VIEWABLE_MAX_PREVIEW_SIZE);
 
   tree_widget = GTK_WIDGET (editor->view);
   tree_style  = gtk_widget_get_style (tree_widget);
 
-  icon_size = gimp_get_icon_size (tree_widget,
-                                  GIMP_STOCK_VISIBLE,
+  icon_size = picman_get_icon_size (tree_widget,
+                                  PICMAN_STOCK_VISIBLE,
                                   GTK_ICON_SIZE_BUTTON,
                                   view_size -
                                   2 * tree_style->xthickness,
@@ -314,13 +314,13 @@ gimp_component_editor_set_view_size (GimpComponentEditor *editor,
        iter_valid;
        iter_valid = gtk_tree_model_iter_next (editor->model, &iter))
     {
-      GimpViewRenderer *renderer;
+      PicmanViewRenderer *renderer;
 
       gtk_tree_model_get (editor->model, &iter,
                           COLUMN_RENDERER, &renderer,
                           -1);
 
-      gimp_view_renderer_set_size (renderer, view_size, 1);
+      picman_view_renderer_set_size (renderer, view_size, 1);
       g_object_unref (renderer);
     }
 
@@ -330,63 +330,63 @@ gimp_component_editor_set_view_size (GimpComponentEditor *editor,
 }
 
 static void
-gimp_component_editor_create_components (GimpComponentEditor *editor)
+picman_component_editor_create_components (PicmanComponentEditor *editor)
 {
-  GimpImage       *image        = GIMP_IMAGE_EDITOR (editor)->image;
+  PicmanImage       *image        = PICMAN_IMAGE_EDITOR (editor)->image;
   gint             n_components = 0;
-  GimpChannelType  components[MAX_CHANNELS];
+  PicmanChannelType  components[MAX_CHANNELS];
   GEnumClass      *enum_class;
   gint             i;
 
-  switch (gimp_image_get_base_type (image))
+  switch (picman_image_get_base_type (image))
     {
-    case GIMP_RGB:
+    case PICMAN_RGB:
       n_components  = 3;
-      components[0] = GIMP_RED_CHANNEL;
-      components[1] = GIMP_GREEN_CHANNEL;
-      components[2] = GIMP_BLUE_CHANNEL;
+      components[0] = PICMAN_RED_CHANNEL;
+      components[1] = PICMAN_GREEN_CHANNEL;
+      components[2] = PICMAN_BLUE_CHANNEL;
       break;
 
-    case GIMP_GRAY:
+    case PICMAN_GRAY:
       n_components  = 1;
-      components[0] = GIMP_GRAY_CHANNEL;
+      components[0] = PICMAN_GRAY_CHANNEL;
       break;
 
-    case GIMP_INDEXED:
+    case PICMAN_INDEXED:
       n_components  = 1;
-      components[0] = GIMP_INDEXED_CHANNEL;
+      components[0] = PICMAN_INDEXED_CHANNEL;
       break;
     }
 
-  if (gimp_image_has_alpha (image))
-    components[n_components++] = GIMP_ALPHA_CHANNEL;
+  if (picman_image_has_alpha (image))
+    components[n_components++] = PICMAN_ALPHA_CHANNEL;
 
-  enum_class = g_type_class_ref (GIMP_TYPE_CHANNEL_TYPE);
+  enum_class = g_type_class_ref (PICMAN_TYPE_CHANNEL_TYPE);
 
   for (i = 0; i < n_components; i++)
     {
-      GimpViewRenderer *renderer;
+      PicmanViewRenderer *renderer;
       GtkTreeIter       iter;
       GEnumValue       *enum_value;
       const gchar      *desc;
       gboolean          visible;
 
-      visible = gimp_image_get_component_visible (image, components[i]);
+      visible = picman_image_get_component_visible (image, components[i]);
 
-      renderer = gimp_view_renderer_new (GIMP_IMAGE_EDITOR (editor)->context,
+      renderer = picman_view_renderer_new (PICMAN_IMAGE_EDITOR (editor)->context,
                                          G_TYPE_FROM_INSTANCE (image),
                                          editor->view_size, 1, FALSE);
-      gimp_view_renderer_set_viewable (renderer, GIMP_VIEWABLE (image));
-      gimp_view_renderer_remove_idle (renderer);
+      picman_view_renderer_set_viewable (renderer, PICMAN_VIEWABLE (image));
+      picman_view_renderer_remove_idle (renderer);
 
-      GIMP_VIEW_RENDERER_IMAGE (renderer)->channel = components[i];
+      PICMAN_VIEW_RENDERER_IMAGE (renderer)->channel = components[i];
 
       g_signal_connect (renderer, "update",
-                        G_CALLBACK (gimp_component_editor_renderer_update),
+                        G_CALLBACK (picman_component_editor_renderer_update),
                         editor);
 
       enum_value = g_enum_get_value (enum_class, components[i]);
-      desc = gimp_enum_value_get_desc (enum_class, enum_value);
+      desc = picman_enum_value_get_desc (enum_class, enum_value);
 
       gtk_list_store_append (GTK_LIST_STORE (editor->model), &iter);
 
@@ -399,7 +399,7 @@ gimp_component_editor_create_components (GimpComponentEditor *editor)
 
       g_object_unref (renderer);
 
-      if (gimp_image_get_component_active (image, components[i]))
+      if (picman_image_get_component_active (image, components[i]))
         gtk_tree_selection_select_iter (editor->selection, &iter);
     }
 
@@ -407,7 +407,7 @@ gimp_component_editor_create_components (GimpComponentEditor *editor)
 }
 
 static void
-gimp_component_editor_clear_components (GimpComponentEditor *editor)
+picman_component_editor_clear_components (PicmanComponentEditor *editor)
 {
   gtk_list_store_clear (GTK_LIST_STORE (editor->model));
 
@@ -418,10 +418,10 @@ gimp_component_editor_clear_components (GimpComponentEditor *editor)
 }
 
 static void
-gimp_component_editor_clicked (GtkCellRendererToggle *cellrenderertoggle,
+picman_component_editor_clicked (GtkCellRendererToggle *cellrenderertoggle,
                                gchar                 *path_str,
                                GdkModifierType        state,
-                               GimpComponentEditor   *editor)
+                               PicmanComponentEditor   *editor)
 {
   GtkTreePath *path;
   GtkTreeIter  iter;
@@ -430,8 +430,8 @@ gimp_component_editor_clicked (GtkCellRendererToggle *cellrenderertoggle,
 
   if (gtk_tree_model_get_iter (editor->model, &iter, path))
     {
-      GimpImage       *image = GIMP_IMAGE_EDITOR (editor)->image;
-      GimpChannelType  channel;
+      PicmanImage       *image = PICMAN_IMAGE_EDITOR (editor)->image;
+      PicmanChannelType  channel;
       gboolean         active;
 
       gtk_tree_model_get (editor->model, &iter,
@@ -441,23 +441,23 @@ gimp_component_editor_clicked (GtkCellRendererToggle *cellrenderertoggle,
                     "active", &active,
                     NULL);
 
-      gimp_image_set_component_visible (image, channel, !active);
-      gimp_image_flush (image);
+      picman_image_set_component_visible (image, channel, !active);
+      picman_image_flush (image);
     }
 
   gtk_tree_path_free (path);
 }
 
 static gboolean
-gimp_component_editor_select (GtkTreeSelection *selection,
+picman_component_editor_select (GtkTreeSelection *selection,
                               GtkTreeModel     *model,
                               GtkTreePath      *path,
                               gboolean          path_currently_selected,
                               gpointer          data)
 {
-  GimpComponentEditor *editor = GIMP_COMPONENT_EDITOR (data);
+  PicmanComponentEditor *editor = PICMAN_COMPONENT_EDITOR (data);
   GtkTreeIter          iter;
-  GimpChannelType      channel;
+  PicmanChannelType      channel;
   gboolean             active;
 
   gtk_tree_model_get_iter (editor->model, &iter, path);
@@ -465,16 +465,16 @@ gimp_component_editor_select (GtkTreeSelection *selection,
                       COLUMN_CHANNEL, &channel,
                       -1);
 
-  active = gimp_image_get_component_active (GIMP_IMAGE_EDITOR (editor)->image,
+  active = picman_image_get_component_active (PICMAN_IMAGE_EDITOR (editor)->image,
                                             channel);
 
   return active != path_currently_selected;
 }
 
 static gboolean
-gimp_component_editor_button_press (GtkWidget           *widget,
+picman_component_editor_button_press (GtkWidget           *widget,
                                     GdkEventButton      *bevent,
-                                    GimpComponentEditor *editor)
+                                    PicmanComponentEditor *editor)
 {
   GtkTreeViewColumn *column;
   GtkTreePath       *path;
@@ -487,7 +487,7 @@ gimp_component_editor_button_press (GtkWidget           *widget,
                                      &path, &column, NULL, NULL))
     {
       GtkTreeIter     iter;
-      GimpChannelType channel;
+      PicmanChannelType channel;
       gboolean        active;
 
       active = gtk_tree_selection_path_is_selected (editor->selection, path);
@@ -504,15 +504,15 @@ gimp_component_editor_button_press (GtkWidget           *widget,
 
       if (gdk_event_triggers_context_menu ((GdkEvent *) bevent))
         {
-          gimp_editor_popup_menu (GIMP_EDITOR (editor), NULL, NULL);
+          picman_editor_popup_menu (PICMAN_EDITOR (editor), NULL, NULL);
         }
       else if (bevent->type == GDK_BUTTON_PRESS && bevent->button == 1 &&
                column != editor->eye_column)
         {
-          GimpImage *image = GIMP_IMAGE_EDITOR (editor)->image;
+          PicmanImage *image = PICMAN_IMAGE_EDITOR (editor)->image;
 
-          gimp_image_set_component_active (image, channel, ! active);
-          gimp_image_flush (image);
+          picman_image_set_component_active (image, channel, ! active);
+          picman_image_flush (image);
         }
     }
 
@@ -520,13 +520,13 @@ gimp_component_editor_button_press (GtkWidget           *widget,
 }
 
 static gboolean
-gimp_component_editor_get_iter (GimpComponentEditor *editor,
-                                GimpChannelType      channel,
+picman_component_editor_get_iter (PicmanComponentEditor *editor,
+                                PicmanChannelType      channel,
                                 GtkTreeIter         *iter)
 {
   gint index;
 
-  index = gimp_image_get_component_index (GIMP_IMAGE_EDITOR (editor)->image,
+  index = picman_image_get_component_index (PICMAN_IMAGE_EDITOR (editor)->image,
                                           channel);
 
   if (index != -1)
@@ -536,13 +536,13 @@ gimp_component_editor_get_iter (GimpComponentEditor *editor,
 }
 
 static void
-gimp_component_editor_renderer_update (GimpViewRenderer    *renderer,
-                                       GimpComponentEditor *editor)
+picman_component_editor_renderer_update (PicmanViewRenderer    *renderer,
+                                       PicmanComponentEditor *editor)
 {
-  GimpChannelType channel = GIMP_VIEW_RENDERER_IMAGE (renderer)->channel;
+  PicmanChannelType channel = PICMAN_VIEW_RENDERER_IMAGE (renderer)->channel;
   GtkTreeIter     iter;
 
-  if (gimp_component_editor_get_iter (editor, channel, &iter))
+  if (picman_component_editor_get_iter (editor, channel, &iter))
     {
       GtkTreePath *path;
 
@@ -553,31 +553,31 @@ gimp_component_editor_renderer_update (GimpViewRenderer    *renderer,
 }
 
 static void
-gimp_component_editor_mode_changed (GimpImage           *image,
-                                    GimpComponentEditor *editor)
+picman_component_editor_mode_changed (PicmanImage           *image,
+                                    PicmanComponentEditor *editor)
 {
-  gimp_component_editor_clear_components (editor);
-  gimp_component_editor_create_components (editor);
+  picman_component_editor_clear_components (editor);
+  picman_component_editor_create_components (editor);
 }
 
 static void
-gimp_component_editor_alpha_changed (GimpImage           *image,
-                                     GimpComponentEditor *editor)
+picman_component_editor_alpha_changed (PicmanImage           *image,
+                                     PicmanComponentEditor *editor)
 {
-  gimp_component_editor_clear_components (editor);
-  gimp_component_editor_create_components (editor);
+  picman_component_editor_clear_components (editor);
+  picman_component_editor_create_components (editor);
 }
 
 static void
-gimp_component_editor_visibility_changed (GimpImage           *image,
-                                          GimpChannelType      channel,
-                                          GimpComponentEditor *editor)
+picman_component_editor_visibility_changed (PicmanImage           *image,
+                                          PicmanChannelType      channel,
+                                          PicmanComponentEditor *editor)
 {
   GtkTreeIter iter;
 
-  if (gimp_component_editor_get_iter (editor, channel, &iter))
+  if (picman_component_editor_get_iter (editor, channel, &iter))
     {
-      gboolean visible = gimp_image_get_component_visible (image, channel);
+      gboolean visible = picman_image_get_component_visible (image, channel);
 
       gtk_list_store_set (GTK_LIST_STORE (editor->model), &iter,
                           COLUMN_VISIBLE, visible,
@@ -586,15 +586,15 @@ gimp_component_editor_visibility_changed (GimpImage           *image,
 }
 
 static void
-gimp_component_editor_active_changed (GimpImage           *image,
-                                      GimpChannelType      channel,
-                                      GimpComponentEditor *editor)
+picman_component_editor_active_changed (PicmanImage           *image,
+                                      PicmanChannelType      channel,
+                                      PicmanComponentEditor *editor)
 {
   GtkTreeIter iter;
 
-  if (gimp_component_editor_get_iter (editor, channel, &iter))
+  if (picman_component_editor_get_iter (editor, channel, &iter))
     {
-      gboolean active = gimp_image_get_component_active (image, channel);
+      gboolean active = picman_image_get_component_active (image, channel);
 
       if (gtk_tree_selection_iter_is_selected (editor->selection, &iter) !=
           active)
@@ -607,24 +607,24 @@ gimp_component_editor_active_changed (GimpImage           *image,
     }
 }
 
-static GimpImage *
-gimp_component_editor_drag_component (GtkWidget        *widget,
-                                      GimpContext     **context,
-                                      GimpChannelType  *channel,
+static PicmanImage *
+picman_component_editor_drag_component (GtkWidget        *widget,
+                                      PicmanContext     **context,
+                                      PicmanChannelType  *channel,
                                       gpointer          data)
 {
-  GimpComponentEditor *editor = GIMP_COMPONENT_EDITOR (data);
+  PicmanComponentEditor *editor = PICMAN_COMPONENT_EDITOR (data);
 
-  if (GIMP_IMAGE_EDITOR (editor)->image &&
+  if (PICMAN_IMAGE_EDITOR (editor)->image &&
       editor->clicked_component != -1)
     {
       if (channel)
         *channel = editor->clicked_component;
 
       if (context)
-        *context = GIMP_IMAGE_EDITOR (editor)->context;
+        *context = PICMAN_IMAGE_EDITOR (editor)->context;
 
-      return GIMP_IMAGE_EDITOR (editor)->image;
+      return PICMAN_IMAGE_EDITOR (editor)->image;
     }
 
   return NULL;

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,44 +15,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DESATURATE_TOOL_H__
-#define __GIMP_DESATURATE_TOOL_H__
+#ifndef __PICMAN_DESATURATE_TOOL_H__
+#define __PICMAN_DESATURATE_TOOL_H__
 
 
-#include "gimpimagemaptool.h"
+#include "picmanimagemaptool.h"
 
 
-#define GIMP_TYPE_DESATURATE_TOOL            (gimp_desaturate_tool_get_type ())
-#define GIMP_DESATURATE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DESATURATE_TOOL, GimpDesaturateTool))
-#define GIMP_DESATURATE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DESATURATE_TOOL, GimpDesaturateToolClass))
-#define GIMP_IS_DESATURATE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DESATURATE_TOOL))
-#define GIMP_IS_DESATURATE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DESATURATE_TOOL))
-#define GIMP_DESATURATE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DESATURATE_TOOL, GimpDesaturateToolClass))
+#define PICMAN_TYPE_DESATURATE_TOOL            (picman_desaturate_tool_get_type ())
+#define PICMAN_DESATURATE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DESATURATE_TOOL, PicmanDesaturateTool))
+#define PICMAN_DESATURATE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DESATURATE_TOOL, PicmanDesaturateToolClass))
+#define PICMAN_IS_DESATURATE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DESATURATE_TOOL))
+#define PICMAN_IS_DESATURATE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DESATURATE_TOOL))
+#define PICMAN_DESATURATE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DESATURATE_TOOL, PicmanDesaturateToolClass))
 
 
-typedef struct _GimpDesaturateTool      GimpDesaturateTool;
-typedef struct _GimpDesaturateToolClass GimpDesaturateToolClass;
+typedef struct _PicmanDesaturateTool      PicmanDesaturateTool;
+typedef struct _PicmanDesaturateToolClass PicmanDesaturateToolClass;
 
-struct _GimpDesaturateTool
+struct _PicmanDesaturateTool
 {
-  GimpImageMapTool       parent_instance;
+  PicmanImageMapTool       parent_instance;
 
-  GimpDesaturateConfig  *config;
+  PicmanDesaturateConfig  *config;
 
   /*  dialog  */
   GtkWidget             *button;
 };
 
-struct _GimpDesaturateToolClass
+struct _PicmanDesaturateToolClass
 {
-  GimpImageMapToolClass  parent_class;
+  PicmanImageMapToolClass  parent_class;
 };
 
 
-void    gimp_desaturate_tool_register (GimpToolRegisterCallback  callback,
+void    picman_desaturate_tool_register (PicmanToolRegisterCallback  callback,
                                        gpointer                  data);
 
-GType   gimp_desaturate_tool_get_type (void) G_GNUC_CONST;
+GType   picman_desaturate_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_DESATURATE_TOOL_H__  */
+#endif  /*  __PICMAN_DESATURATE_TOOL_H__  */

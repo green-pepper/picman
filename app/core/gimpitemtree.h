@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpitemtree.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmanitemtree.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,72 +18,72 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ITEM_TREE_H__
-#define __GIMP_ITEM_TREE_H__
+#ifndef __PICMAN_ITEM_TREE_H__
+#define __PICMAN_ITEM_TREE_H__
 
 
-#include "gimpobject.h"
+#include "picmanobject.h"
 
 
-#define GIMP_TYPE_ITEM_TREE            (gimp_item_tree_get_type ())
-#define GIMP_ITEM_TREE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ITEM_TREE, GimpItemTree))
-#define GIMP_ITEM_TREE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ITEM_TREE, GimpItemTreeClass))
-#define GIMP_IS_ITEM_TREE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ITEM_TREE))
-#define GIMP_IS_ITEM_TREE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ITEM_TREE))
+#define PICMAN_TYPE_ITEM_TREE            (picman_item_tree_get_type ())
+#define PICMAN_ITEM_TREE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ITEM_TREE, PicmanItemTree))
+#define PICMAN_ITEM_TREE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ITEM_TREE, PicmanItemTreeClass))
+#define PICMAN_IS_ITEM_TREE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ITEM_TREE))
+#define PICMAN_IS_ITEM_TREE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ITEM_TREE))
 
 
-typedef struct _GimpItemTreeClass GimpItemTreeClass;
+typedef struct _PicmanItemTreeClass PicmanItemTreeClass;
 
-struct _GimpItemTree
+struct _PicmanItemTree
 {
-  GimpObject     parent_instance;
+  PicmanObject     parent_instance;
 
-  GimpContainer *container;
+  PicmanContainer *container;
 };
 
-struct _GimpItemTreeClass
+struct _PicmanItemTreeClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType          gimp_item_tree_get_type         (void) G_GNUC_CONST;
-GimpItemTree * gimp_item_tree_new              (GimpImage     *image,
+GType          picman_item_tree_get_type         (void) G_GNUC_CONST;
+PicmanItemTree * picman_item_tree_new              (PicmanImage     *image,
                                                 GType          container_type,
                                                 GType          item_type);
 
-GimpItem     * gimp_item_tree_get_active_item  (GimpItemTree  *tree);
-void           gimp_item_tree_set_active_item  (GimpItemTree  *tree,
-                                                GimpItem      *item);
+PicmanItem     * picman_item_tree_get_active_item  (PicmanItemTree  *tree);
+void           picman_item_tree_set_active_item  (PicmanItemTree  *tree,
+                                                PicmanItem      *item);
 
-GimpItem     * gimp_item_tree_get_item_by_name (GimpItemTree  *tree,
+PicmanItem     * picman_item_tree_get_item_by_name (PicmanItemTree  *tree,
                                                 const gchar   *name);
 
-gboolean       gimp_item_tree_get_insert_pos   (GimpItemTree  *tree,
-                                                GimpItem      *item,
-                                                GimpItem     **parent,
+gboolean       picman_item_tree_get_insert_pos   (PicmanItemTree  *tree,
+                                                PicmanItem      *item,
+                                                PicmanItem     **parent,
                                                 gint          *position);
 
-void           gimp_item_tree_add_item         (GimpItemTree  *tree,
-                                                GimpItem      *item,
-                                                GimpItem      *parent,
+void           picman_item_tree_add_item         (PicmanItemTree  *tree,
+                                                PicmanItem      *item,
+                                                PicmanItem      *parent,
                                                 gint           position);
-GimpItem     * gimp_item_tree_remove_item      (GimpItemTree  *tree,
-                                                GimpItem      *item,
-                                                GimpItem      *new_active);
+PicmanItem     * picman_item_tree_remove_item      (PicmanItemTree  *tree,
+                                                PicmanItem      *item,
+                                                PicmanItem      *new_active);
 
-gboolean       gimp_item_tree_reorder_item     (GimpItemTree  *tree,
-                                                GimpItem      *item,
-                                                GimpItem      *new_parent,
+gboolean       picman_item_tree_reorder_item     (PicmanItemTree  *tree,
+                                                PicmanItem      *item,
+                                                PicmanItem      *new_parent,
                                                 gint           new_index,
                                                 gboolean       push_undo,
                                                 const gchar   *undo_desc);
 
-void           gimp_item_tree_rename_item      (GimpItemTree  *tree,
-                                                GimpItem      *item,
+void           picman_item_tree_rename_item      (PicmanItemTree  *tree,
+                                                PicmanItem      *item,
                                                 const gchar   *new_name,
                                                 gboolean       push_undo,
                                                 const gchar   *undo_desc);
 
 
-#endif  /*  __GIMP_ITEM_TREE_H__  */
+#endif  /*  __PICMAN_ITEM_TREE_H__  */

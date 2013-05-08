@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdevicemanager.c
+ * picmandevicemanager.c
  * Copyright (C) 2011 Michael Natterer
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,106 +27,106 @@
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpmarshal.h"
+#include "core/picman.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpdeviceinfo.h"
-#include "gimpdevicemanager.h"
+#include "picmandeviceinfo.h"
+#include "picmandevicemanager.h"
 
 
 enum
 {
   PROP_0,
-  PROP_GIMP,
+  PROP_PICMAN,
   PROP_CURRENT_DEVICE
 };
 
 
-typedef struct _GimpDeviceManagerPrivate GimpDeviceManagerPrivate;
+typedef struct _PicmanDeviceManagerPrivate PicmanDeviceManagerPrivate;
 
-struct _GimpDeviceManagerPrivate
+struct _PicmanDeviceManagerPrivate
 {
-  Gimp           *gimp;
-  GimpDeviceInfo *current_device;
+  Picman           *picman;
+  PicmanDeviceInfo *current_device;
 };
 
 #define GET_PRIVATE(manager) \
         G_TYPE_INSTANCE_GET_PRIVATE (manager, \
-                                     GIMP_TYPE_DEVICE_MANAGER, \
-                                     GimpDeviceManagerPrivate)
+                                     PICMAN_TYPE_DEVICE_MANAGER, \
+                                     PicmanDeviceManagerPrivate)
 
 
-static void   gimp_device_manager_constructed    (GObject           *object);
-static void   gimp_device_manager_dispose        (GObject           *object);
-static void   gimp_device_manager_finalize       (GObject           *object);
-static void   gimp_device_manager_set_property   (GObject           *object,
+static void   picman_device_manager_constructed    (GObject           *object);
+static void   picman_device_manager_dispose        (GObject           *object);
+static void   picman_device_manager_finalize       (GObject           *object);
+static void   picman_device_manager_set_property   (GObject           *object,
                                                   guint              property_id,
                                                   const GValue      *value,
                                                   GParamSpec        *pspec);
-static void   gimp_device_manager_get_property   (GObject           *object,
+static void   picman_device_manager_get_property   (GObject           *object,
                                                   guint              property_id,
                                                   GValue            *value,
                                                   GParamSpec        *pspec);
 
-static void   gimp_device_manager_display_opened (GdkDisplayManager *disp_manager,
+static void   picman_device_manager_display_opened (GdkDisplayManager *disp_manager,
                                                   GdkDisplay        *display,
-                                                  GimpDeviceManager *manager);
-static void   gimp_device_manager_display_closed (GdkDisplay        *display,
+                                                  PicmanDeviceManager *manager);
+static void   picman_device_manager_display_closed (GdkDisplay        *display,
                                                   gboolean           is_error,
-                                                  GimpDeviceManager *manager);
+                                                  PicmanDeviceManager *manager);
 
-static void   gimp_device_manager_device_added   (GdkDisplay        *gdk_display,
+static void   picman_device_manager_device_added   (GdkDisplay        *gdk_display,
                                                   GdkDevice         *device,
-                                                  GimpDeviceManager *manager);
-static void   gimp_device_manager_device_removed (GdkDisplay        *gdk_display,
+                                                  PicmanDeviceManager *manager);
+static void   picman_device_manager_device_removed (GdkDisplay        *gdk_display,
                                                   GdkDevice         *device,
-                                                  GimpDeviceManager *manager);
+                                                  PicmanDeviceManager *manager);
 
 
-G_DEFINE_TYPE (GimpDeviceManager, gimp_device_manager, GIMP_TYPE_LIST)
+G_DEFINE_TYPE (PicmanDeviceManager, picman_device_manager, PICMAN_TYPE_LIST)
 
-#define parent_class gimp_device_manager_parent_class
+#define parent_class picman_device_manager_parent_class
 
 
 static void
-gimp_device_manager_class_init (GimpDeviceManagerClass *klass)
+picman_device_manager_class_init (PicmanDeviceManagerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed        = gimp_device_manager_constructed;
-  object_class->dispose            = gimp_device_manager_dispose;
-  object_class->finalize           = gimp_device_manager_finalize;
-  object_class->set_property       = gimp_device_manager_set_property;
-  object_class->get_property       = gimp_device_manager_get_property;
+  object_class->constructed        = picman_device_manager_constructed;
+  object_class->dispose            = picman_device_manager_dispose;
+  object_class->finalize           = picman_device_manager_finalize;
+  object_class->set_property       = picman_device_manager_set_property;
+  object_class->get_property       = picman_device_manager_get_property;
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp",
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_STATIC_STRINGS |
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_STATIC_STRINGS |
                                                         G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_CURRENT_DEVICE,
                                    g_param_spec_object ("current-device",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_DEVICE_INFO,
-                                                        GIMP_PARAM_STATIC_STRINGS |
+                                                        PICMAN_TYPE_DEVICE_INFO,
+                                                        PICMAN_PARAM_STATIC_STRINGS |
                                                         G_PARAM_READABLE));
 
-  g_type_class_add_private (object_class, sizeof (GimpDeviceManagerPrivate));
+  g_type_class_add_private (object_class, sizeof (PicmanDeviceManagerPrivate));
 }
 
 static void
-gimp_device_manager_init (GimpDeviceManager *manager)
+picman_device_manager_init (PicmanDeviceManager *manager)
 {
 }
 
 static void
-gimp_device_manager_constructed (GObject *object)
+picman_device_manager_constructed (GObject *object)
 {
-  GimpDeviceManager        *manager = GIMP_DEVICE_MANAGER (object);
-  GimpDeviceManagerPrivate *private = GET_PRIVATE (object);
+  PicmanDeviceManager        *manager = PICMAN_DEVICE_MANAGER (object);
+  PicmanDeviceManagerPrivate *private = GET_PRIVATE (object);
   GdkDisplayManager        *disp_manager;
   GSList                   *displays;
   GSList                   *list;
@@ -134,7 +134,7 @@ gimp_device_manager_constructed (GObject *object)
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_GIMP (private->gimp));
+  g_assert (PICMAN_IS_PICMAN (private->picman));
 
   disp_manager = gdk_display_manager_get ();
 
@@ -145,49 +145,49 @@ gimp_device_manager_constructed (GObject *object)
 
   for (list = displays; list; list = g_slist_next (list))
     {
-      gimp_device_manager_display_opened (disp_manager, list->data, manager);
+      picman_device_manager_display_opened (disp_manager, list->data, manager);
     }
 
   g_slist_free (displays);
 
   g_signal_connect (disp_manager, "display-opened",
-                    G_CALLBACK (gimp_device_manager_display_opened),
+                    G_CALLBACK (picman_device_manager_display_opened),
                     manager);
 
   display = gdk_display_get_default ();
 
   private->current_device =
-    gimp_device_info_get_by_device (gdk_display_get_core_pointer (display));
+    picman_device_info_get_by_device (gdk_display_get_core_pointer (display));
 }
 
 static void
-gimp_device_manager_dispose (GObject *object)
+picman_device_manager_dispose (GObject *object)
 {
   g_signal_handlers_disconnect_by_func (gdk_display_manager_get (),
-                                        gimp_device_manager_display_opened,
+                                        picman_device_manager_display_opened,
                                         object);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_device_manager_finalize (GObject *object)
+picman_device_manager_finalize (GObject *object)
 {
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
-gimp_device_manager_set_property (GObject      *object,
+picman_device_manager_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  GimpDeviceManagerPrivate *private = GET_PRIVATE (object);
+  PicmanDeviceManagerPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      private->gimp = g_value_get_object (value);
+    case PROP_PICMAN:
+      private->picman = g_value_get_object (value);
       break;
 
     default:
@@ -197,17 +197,17 @@ gimp_device_manager_set_property (GObject      *object,
 }
 
 static void
-gimp_device_manager_get_property (GObject    *object,
+picman_device_manager_get_property (GObject    *object,
                                   guint       property_id,
                                   GValue     *value,
                                   GParamSpec *pspec)
 {
-  GimpDeviceManagerPrivate *private = GET_PRIVATE (object);
+  PicmanDeviceManagerPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      g_value_set_object (value, private->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, private->picman);
       break;
 
     case PROP_CURRENT_DEVICE:
@@ -223,49 +223,49 @@ gimp_device_manager_get_property (GObject    *object,
 
 /*  public functions  */
 
-GimpDeviceManager *
-gimp_device_manager_new (Gimp *gimp)
+PicmanDeviceManager *
+picman_device_manager_new (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  return g_object_new (GIMP_TYPE_DEVICE_MANAGER,
-                       "gimp",          gimp,
-                       "children-type", GIMP_TYPE_DEVICE_INFO,
-                       "policy",        GIMP_CONTAINER_POLICY_STRONG,
+  return g_object_new (PICMAN_TYPE_DEVICE_MANAGER,
+                       "picman",          picman,
+                       "children-type", PICMAN_TYPE_DEVICE_INFO,
+                       "policy",        PICMAN_CONTAINER_POLICY_STRONG,
                        "unique-names",  FALSE,
-                       "sort-func",     gimp_device_info_compare,
+                       "sort-func",     picman_device_info_compare,
                        NULL);
 }
 
-GimpDeviceInfo *
-gimp_device_manager_get_current_device (GimpDeviceManager *manager)
+PicmanDeviceInfo *
+picman_device_manager_get_current_device (PicmanDeviceManager *manager)
 {
-  g_return_val_if_fail (GIMP_IS_DEVICE_MANAGER (manager), NULL);
+  g_return_val_if_fail (PICMAN_IS_DEVICE_MANAGER (manager), NULL);
 
   return GET_PRIVATE (manager)->current_device;
 }
 
 void
-gimp_device_manager_set_current_device (GimpDeviceManager *manager,
-                                        GimpDeviceInfo    *info)
+picman_device_manager_set_current_device (PicmanDeviceManager *manager,
+                                        PicmanDeviceInfo    *info)
 {
-  GimpDeviceManagerPrivate *private;
-  GimpContext              *user_context;
+  PicmanDeviceManagerPrivate *private;
+  PicmanContext              *user_context;
 
-  g_return_if_fail (GIMP_IS_DEVICE_MANAGER (manager));
-  g_return_if_fail (GIMP_IS_DEVICE_INFO (info));
+  g_return_if_fail (PICMAN_IS_DEVICE_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_DEVICE_INFO (info));
 
   private = GET_PRIVATE (manager);
 
-  gimp_context_set_parent (GIMP_CONTEXT (private->current_device), NULL);
+  picman_context_set_parent (PICMAN_CONTEXT (private->current_device), NULL);
 
   private->current_device = info;
 
-  user_context = gimp_get_user_context (private->gimp);
+  user_context = picman_get_user_context (private->picman);
 
-  gimp_context_copy_properties (GIMP_CONTEXT (info), user_context,
-                                GIMP_DEVICE_INFO_CONTEXT_MASK);
-  gimp_context_set_parent (GIMP_CONTEXT (info), user_context);
+  picman_context_copy_properties (PICMAN_CONTEXT (info), user_context,
+                                PICMAN_DEVICE_INFO_CONTEXT_MASK);
+  picman_context_set_parent (PICMAN_CONTEXT (info), user_context);
 
   g_object_notify (G_OBJECT (manager), "current-device");
 }
@@ -275,9 +275,9 @@ gimp_device_manager_set_current_device (GimpDeviceManager *manager,
 
 
 static void
-gimp_device_manager_display_opened (GdkDisplayManager *disp_manager,
+picman_device_manager_display_opened (GdkDisplayManager *disp_manager,
                                     GdkDisplay        *gdk_display,
-                                    GimpDeviceManager *manager)
+                                    PicmanDeviceManager *manager)
 {
   GList *list;
 
@@ -286,18 +286,18 @@ gimp_device_manager_display_opened (GdkDisplayManager *disp_manager,
     {
       GdkDevice *device = list->data;
 
-      gimp_device_manager_device_added (gdk_display, device, manager);
+      picman_device_manager_device_added (gdk_display, device, manager);
     }
 
   g_signal_connect (gdk_display, "closed",
-                    G_CALLBACK (gimp_device_manager_display_closed),
+                    G_CALLBACK (picman_device_manager_display_closed),
                     manager);
 }
 
 static void
-gimp_device_manager_display_closed (GdkDisplay        *gdk_display,
+picman_device_manager_display_closed (GdkDisplay        *gdk_display,
                                     gboolean           is_error,
-                                    GimpDeviceManager *manager)
+                                    PicmanDeviceManager *manager)
 {
   GList *list;
 
@@ -305,59 +305,59 @@ gimp_device_manager_display_closed (GdkDisplay        *gdk_display,
     {
       GdkDevice *device = list->data;
 
-      gimp_device_manager_device_removed (gdk_display, device, manager);
+      picman_device_manager_device_removed (gdk_display, device, manager);
     }
 }
 
 static void
-gimp_device_manager_device_added (GdkDisplay        *gdk_display,
+picman_device_manager_device_added (GdkDisplay        *gdk_display,
                                   GdkDevice         *device,
-                                  GimpDeviceManager *manager)
+                                  PicmanDeviceManager *manager)
 {
-  GimpDeviceManagerPrivate *private = GET_PRIVATE (manager);
-  GimpDeviceInfo           *device_info;
+  PicmanDeviceManagerPrivate *private = GET_PRIVATE (manager);
+  PicmanDeviceInfo           *device_info;
 
   device_info =
-    GIMP_DEVICE_INFO (gimp_container_get_child_by_name (GIMP_CONTAINER (manager),
+    PICMAN_DEVICE_INFO (picman_container_get_child_by_name (PICMAN_CONTAINER (manager),
                                                         device->name));
 
   if (device_info)
     {
-      gimp_device_info_set_device (device_info, device, gdk_display);
+      picman_device_info_set_device (device_info, device, gdk_display);
     }
   else
     {
-      device_info = gimp_device_info_new (private->gimp, device, gdk_display);
+      device_info = picman_device_info_new (private->picman, device, gdk_display);
 
-      gimp_device_info_set_default_tool (device_info);
+      picman_device_info_set_default_tool (device_info);
 
-      gimp_container_add (GIMP_CONTAINER (manager), GIMP_OBJECT (device_info));
+      picman_container_add (PICMAN_CONTAINER (manager), PICMAN_OBJECT (device_info));
       g_object_unref (device_info);
     }
 }
 
 static void
-gimp_device_manager_device_removed (GdkDisplay        *gdk_display,
+picman_device_manager_device_removed (GdkDisplay        *gdk_display,
                                     GdkDevice         *device,
-                                    GimpDeviceManager *manager)
+                                    PicmanDeviceManager *manager)
 {
-  GimpDeviceManagerPrivate *private = GET_PRIVATE (manager);
-  GimpDeviceInfo           *device_info;
+  PicmanDeviceManagerPrivate *private = GET_PRIVATE (manager);
+  PicmanDeviceInfo           *device_info;
 
   device_info =
-    GIMP_DEVICE_INFO (gimp_container_get_child_by_name (GIMP_CONTAINER (manager),
+    PICMAN_DEVICE_INFO (picman_container_get_child_by_name (PICMAN_CONTAINER (manager),
                                                         device->name));
 
   if (device_info)
     {
-      gimp_device_info_set_device (device_info, NULL, NULL);
+      picman_device_info_set_device (device_info, NULL, NULL);
 
       if (device_info == private->current_device)
         {
           device      = gdk_display_get_core_pointer (gdk_display);
-          device_info = gimp_device_info_get_by_device (device);
+          device_info = picman_device_info_get_by_device (device);
 
-          gimp_device_manager_set_current_device (manager, device_info);
+          picman_device_manager_set_current_device (manager, device_info);
         }
     }
 }

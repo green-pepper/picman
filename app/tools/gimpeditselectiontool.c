@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,60 +24,60 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimp.h"
-#include "core/gimp-utils.h"
-#include "core/gimpboundary.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-guides.h"
-#include "core/gimpimage-item-list.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimpitem-linked.h"
-#include "core/gimplayer.h"
-#include "core/gimplayermask.h"
-#include "core/gimpprojection.h"
-#include "core/gimpselection.h"
-#include "core/gimpundostack.h"
+#include "core/picman.h"
+#include "core/picman-utils.h"
+#include "core/picmanboundary.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-guides.h"
+#include "core/picmanimage-item-list.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanitem-linked.h"
+#include "core/picmanlayer.h"
+#include "core/picmanlayermask.h"
+#include "core/picmanprojection.h"
+#include "core/picmanselection.h"
+#include "core/picmanundostack.h"
 
-#include "vectors/gimpvectors.h"
+#include "vectors/picmanvectors.h"
 
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-appearance.h"
-#include "display/gimpdisplayshell-selection.h"
-#include "display/gimpdisplayshell-transform.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-appearance.h"
+#include "display/picmandisplayshell-selection.h"
+#include "display/picmandisplayshell-transform.h"
 
-#include "gimpdrawtool.h"
-#include "gimpeditselectiontool.h"
-#include "gimptoolcontrol.h"
+#include "picmandrawtool.h"
+#include "picmaneditselectiontool.h"
+#include "picmantoolcontrol.h"
 #include "tool_manager.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define ARROW_VELOCITY 25
 
 
-typedef struct _GimpEditSelectionTool      GimpEditSelectionTool;
-typedef struct _GimpEditSelectionToolClass GimpEditSelectionToolClass;
+typedef struct _PicmanEditSelectionTool      PicmanEditSelectionTool;
+typedef struct _PicmanEditSelectionToolClass PicmanEditSelectionToolClass;
 
-struct _GimpEditSelectionTool
+struct _PicmanEditSelectionTool
 {
-  GimpDrawTool        parent_instance;
+  PicmanDrawTool        parent_instance;
 
   gint                origx, origy;    /*  Last x and y coords               */
   gint                cumlx, cumly;    /*  Cumulative changes to x and yed   */
   gint                x, y;            /*  Current x and y coords            */
   gint                num_segs_in;     /*  Num seg in selection boundary     */
   gint                num_segs_out;    /*  Num seg in selection boundary     */
-  GimpBoundSeg       *segs_in;         /*  Pointer to the channel sel. segs  */
-  GimpBoundSeg       *segs_out;        /*  Pointer to the channel sel. segs  */
+  PicmanBoundSeg       *segs_in;         /*  Pointer to the channel sel. segs  */
+  PicmanBoundSeg       *segs_out;        /*  Pointer to the channel sel. segs  */
 
   gint                x1, y1;          /*  Bounding box of selection mask    */
   gint                x2, y2;
@@ -85,7 +85,7 @@ struct _GimpEditSelectionTool
   gdouble             center_x;        /*  Where to draw the mark of center  */
   gdouble             center_y;
 
-  GimpTranslateMode   edit_mode;       /*  Translate the mask or layer?      */
+  PicmanTranslateMode   edit_mode;       /*  Translate the mask or layer?      */
 
   gboolean            first_move;      /*  Don't push undos after the first  */
 
@@ -96,59 +96,59 @@ struct _GimpEditSelectionTool
   gdouble             last_x,  last_y; /*  Previous coords sent to _motion   */
 };
 
-struct _GimpEditSelectionToolClass
+struct _PicmanEditSelectionToolClass
 {
-  GimpDrawToolClass   parent_class;
+  PicmanDrawToolClass   parent_class;
 };
 
 
-static void       gimp_edit_selection_tool_button_release      (GimpTool                    *tool,
-                                                                const GimpCoords            *coords,
+static void       picman_edit_selection_tool_button_release      (PicmanTool                    *tool,
+                                                                const PicmanCoords            *coords,
                                                                 guint32                      time,
                                                                 GdkModifierType              state,
-                                                                GimpButtonReleaseType        release_type,
-                                                                GimpDisplay                 *display);
-static void       gimp_edit_selection_tool_motion              (GimpTool                    *tool,
-                                                                const GimpCoords            *coords,
+                                                                PicmanButtonReleaseType        release_type,
+                                                                PicmanDisplay                 *display);
+static void       picman_edit_selection_tool_motion              (PicmanTool                    *tool,
+                                                                const PicmanCoords            *coords,
                                                                 guint32                      time,
                                                                 GdkModifierType              state,
-                                                                GimpDisplay                 *display);
-static void       gimp_edit_selection_tool_active_modifier_key (GimpTool                    *tool,
+                                                                PicmanDisplay                 *display);
+static void       picman_edit_selection_tool_active_modifier_key (PicmanTool                    *tool,
                                                                 GdkModifierType              key,
                                                                 gboolean                     press,
                                                                 GdkModifierType              state,
-                                                                GimpDisplay                 *display);
-static void       gimp_edit_selection_tool_draw                (GimpDrawTool                *tool);
+                                                                PicmanDisplay                 *display);
+static void       picman_edit_selection_tool_draw                (PicmanDrawTool                *tool);
 
-static GimpItem * gimp_edit_selection_tool_get_active_item     (const GimpEditSelectionTool *edit_select,
-                                                                const GimpImage             *image);
+static PicmanItem * picman_edit_selection_tool_get_active_item     (const PicmanEditSelectionTool *edit_select,
+                                                                const PicmanImage             *image);
 
 
-G_DEFINE_TYPE (GimpEditSelectionTool, gimp_edit_selection_tool,
-               GIMP_TYPE_DRAW_TOOL)
+G_DEFINE_TYPE (PicmanEditSelectionTool, picman_edit_selection_tool,
+               PICMAN_TYPE_DRAW_TOOL)
 
-#define parent_class gimp_edit_selection_tool_parent_class
+#define parent_class picman_edit_selection_tool_parent_class
 
 
 static void
-gimp_edit_selection_tool_class_init (GimpEditSelectionToolClass *klass)
+picman_edit_selection_tool_class_init (PicmanEditSelectionToolClass *klass)
 {
-  GimpToolClass     *tool_class   = GIMP_TOOL_CLASS (klass);
-  GimpDrawToolClass *draw_class   = GIMP_DRAW_TOOL_CLASS (klass);
+  PicmanToolClass     *tool_class   = PICMAN_TOOL_CLASS (klass);
+  PicmanDrawToolClass *draw_class   = PICMAN_DRAW_TOOL_CLASS (klass);
 
-  tool_class->button_release      = gimp_edit_selection_tool_button_release;
-  tool_class->motion              = gimp_edit_selection_tool_motion;
-  tool_class->active_modifier_key = gimp_edit_selection_tool_active_modifier_key;
+  tool_class->button_release      = picman_edit_selection_tool_button_release;
+  tool_class->motion              = picman_edit_selection_tool_motion;
+  tool_class->active_modifier_key = picman_edit_selection_tool_active_modifier_key;
 
-  draw_class->draw                = gimp_edit_selection_tool_draw;
+  draw_class->draw                = picman_edit_selection_tool_draw;
 }
 
 static void
-gimp_edit_selection_tool_init (GimpEditSelectionTool *edit_selection_tool)
+picman_edit_selection_tool_init (PicmanEditSelectionTool *edit_selection_tool)
 {
-  GimpTool *tool = GIMP_TOOL (edit_selection_tool);
+  PicmanTool *tool = PICMAN_TOOL (edit_selection_tool);
 
-  gimp_tool_control_set_motion_mode (tool->control, GIMP_MOTION_MODE_COMPRESS);
+  picman_tool_control_set_motion_mode (tool->control, PICMAN_MOTION_MODE_COMPRESS);
 
   edit_selection_tool->origx      = 0;
   edit_selection_tool->origy      = 0;
@@ -162,7 +162,7 @@ gimp_edit_selection_tool_init (GimpEditSelectionTool *edit_selection_tool)
 }
 
 static void
-gimp_edit_selection_tool_calc_coords (GimpEditSelectionTool *edit_select,
+picman_edit_selection_tool_calc_coords (PicmanEditSelectionTool *edit_select,
                                       gdouble                x,
                                       gdouble                y)
 {
@@ -180,64 +180,64 @@ gimp_edit_selection_tool_calc_coords (GimpEditSelectionTool *edit_select,
 }
 
 void
-gimp_edit_selection_tool_start (GimpTool          *parent_tool,
-                                GimpDisplay       *display,
-                                const GimpCoords  *coords,
-                                GimpTranslateMode  edit_mode,
+picman_edit_selection_tool_start (PicmanTool          *parent_tool,
+                                PicmanDisplay       *display,
+                                const PicmanCoords  *coords,
+                                PicmanTranslateMode  edit_mode,
                                 gboolean           propagate_release)
 {
-  GimpEditSelectionTool *edit_select;
-  GimpTool              *tool;
-  GimpDisplayShell      *shell;
-  GimpImage             *image;
-  GimpItem              *active_item;
-  GimpChannel           *channel;
+  PicmanEditSelectionTool *edit_select;
+  PicmanTool              *tool;
+  PicmanDisplayShell      *shell;
+  PicmanImage             *image;
+  PicmanItem              *active_item;
+  PicmanChannel           *channel;
   gint                   off_x, off_y;
-  const GimpBoundSeg    *segs_in;
-  const GimpBoundSeg    *segs_out;
+  const PicmanBoundSeg    *segs_in;
+  const PicmanBoundSeg    *segs_out;
   const gchar           *undo_desc;
 
-  edit_select = g_object_new (GIMP_TYPE_EDIT_SELECTION_TOOL,
+  edit_select = g_object_new (PICMAN_TYPE_EDIT_SELECTION_TOOL,
                               "tool-info", parent_tool->tool_info,
                               NULL);
 
   edit_select->propagate_release = propagate_release;
 
-  tool = GIMP_TOOL (edit_select);
+  tool = PICMAN_TOOL (edit_select);
 
-  shell = gimp_display_get_shell (display);
-  image = gimp_display_get_image (display);
+  shell = picman_display_get_shell (display);
+  image = picman_display_get_image (display);
 
   /*  Make a check to see if it should be a floating selection translation  */
-  if ((edit_mode == GIMP_TRANSLATE_MODE_MASK_TO_LAYER ||
-       edit_mode == GIMP_TRANSLATE_MODE_MASK_COPY_TO_LAYER) &&
-      gimp_image_get_floating_selection (image))
+  if ((edit_mode == PICMAN_TRANSLATE_MODE_MASK_TO_LAYER ||
+       edit_mode == PICMAN_TRANSLATE_MODE_MASK_COPY_TO_LAYER) &&
+      picman_image_get_floating_selection (image))
     {
-      edit_mode = GIMP_TRANSLATE_MODE_FLOATING_SEL;
+      edit_mode = PICMAN_TRANSLATE_MODE_FLOATING_SEL;
     }
 
-  if (edit_mode == GIMP_TRANSLATE_MODE_LAYER)
+  if (edit_mode == PICMAN_TRANSLATE_MODE_LAYER)
     {
-      GimpLayer *layer = gimp_image_get_active_layer (image);
+      PicmanLayer *layer = picman_image_get_active_layer (image);
 
-      if (gimp_layer_is_floating_sel (layer))
-        edit_mode = GIMP_TRANSLATE_MODE_FLOATING_SEL;
+      if (picman_layer_is_floating_sel (layer))
+        edit_mode = PICMAN_TRANSLATE_MODE_FLOATING_SEL;
     }
 
   edit_select->edit_mode = edit_mode;
 
-  active_item = gimp_edit_selection_tool_get_active_item (edit_select, image);
+  active_item = picman_edit_selection_tool_get_active_item (edit_select, image);
 
   switch (edit_select->edit_mode)
     {
-    case GIMP_TRANSLATE_MODE_VECTORS:
-    case GIMP_TRANSLATE_MODE_CHANNEL:
-    case GIMP_TRANSLATE_MODE_LAYER_MASK:
-    case GIMP_TRANSLATE_MODE_LAYER:
-      undo_desc = GIMP_ITEM_GET_CLASS (active_item)->translate_desc;
+    case PICMAN_TRANSLATE_MODE_VECTORS:
+    case PICMAN_TRANSLATE_MODE_CHANNEL:
+    case PICMAN_TRANSLATE_MODE_LAYER_MASK:
+    case PICMAN_TRANSLATE_MODE_LAYER:
+      undo_desc = PICMAN_ITEM_GET_CLASS (active_item)->translate_desc;
       break;
 
-    case GIMP_TRANSLATE_MODE_MASK:
+    case PICMAN_TRANSLATE_MODE_MASK:
       undo_desc = _("Move Selection");
       break;
 
@@ -246,14 +246,14 @@ gimp_edit_selection_tool_start (GimpTool          *parent_tool,
       break;
     }
 
-  gimp_image_undo_group_start (image,
+  picman_image_undo_group_start (image,
                                edit_select->edit_mode ==
-                               GIMP_TRANSLATE_MODE_MASK ?
-                               GIMP_UNDO_GROUP_MASK :
-                               GIMP_UNDO_GROUP_ITEM_DISPLACE,
+                               PICMAN_TRANSLATE_MODE_MASK ?
+                               PICMAN_UNDO_GROUP_MASK :
+                               PICMAN_UNDO_GROUP_ITEM_DISPLACE,
                                undo_desc);
 
-  gimp_item_get_offset (active_item, &off_x, &off_y);
+  picman_item_get_offset (active_item, &off_x, &off_y);
 
   edit_select->x = edit_select->origx = coords->x - off_x;
   edit_select->y = edit_select->origy = coords->y - off_y;
@@ -266,47 +266,47 @@ gimp_edit_selection_tool_start (GimpTool          *parent_tool,
 
   switch (edit_select->edit_mode)
     {
-    case GIMP_TRANSLATE_MODE_CHANNEL:
-    case GIMP_TRANSLATE_MODE_LAYER_MASK:
-      channel = GIMP_CHANNEL (active_item);
+    case PICMAN_TRANSLATE_MODE_CHANNEL:
+    case PICMAN_TRANSLATE_MODE_LAYER_MASK:
+      channel = PICMAN_CHANNEL (active_item);
      break;
 
     default:
-      channel = gimp_image_get_mask (image);
+      channel = picman_image_get_mask (image);
       break;
     }
 
-  gimp_channel_boundary (channel,
+  picman_channel_boundary (channel,
                          &segs_in, &segs_out,
                          &edit_select->num_segs_in, &edit_select->num_segs_out,
                          0, 0, 0, 0);
 
   edit_select->segs_in = g_memdup (segs_in,
-                                   edit_select->num_segs_in * sizeof (GimpBoundSeg));
+                                   edit_select->num_segs_in * sizeof (PicmanBoundSeg));
 
   edit_select->segs_out = g_memdup (segs_out,
-                                    edit_select->num_segs_out * sizeof (GimpBoundSeg));
+                                    edit_select->num_segs_out * sizeof (PicmanBoundSeg));
 
-  if (edit_select->edit_mode == GIMP_TRANSLATE_MODE_VECTORS)
+  if (edit_select->edit_mode == PICMAN_TRANSLATE_MODE_VECTORS)
     {
       edit_select->x1 = 0;
       edit_select->y1 = 0;
-      edit_select->x2 = gimp_image_get_width  (image);
-      edit_select->y2 = gimp_image_get_height (image);
+      edit_select->x2 = picman_image_get_width  (image);
+      edit_select->y2 = picman_image_get_height (image);
     }
   else
     {
       /*  find the bounding box of the selection mask -
-       *  this is used for the case of a GIMP_TRANSLATE_MODE_MASK_TO_LAYER,
+       *  this is used for the case of a PICMAN_TRANSLATE_MODE_MASK_TO_LAYER,
        *  where the translation will result in floating the selection
        *  mask and translating the resulting layer
        */
-      gimp_item_mask_bounds (active_item,
+      picman_item_mask_bounds (active_item,
                              &edit_select->x1, &edit_select->y1,
                              &edit_select->x2, &edit_select->y2);
     }
 
-  gimp_edit_selection_tool_calc_coords (edit_select,
+  picman_edit_selection_tool_calc_coords (edit_select,
                                         edit_select->origx,
                                         edit_select->origy);
 
@@ -315,13 +315,13 @@ gimp_edit_selection_tool_start (GimpTool          *parent_tool,
 
     switch (edit_select->edit_mode)
       {
-      case GIMP_TRANSLATE_MODE_CHANNEL:
-        gimp_channel_bounds (GIMP_CHANNEL (active_item),
+      case PICMAN_TRANSLATE_MODE_CHANNEL:
+        picman_channel_bounds (PICMAN_CHANNEL (active_item),
                              &x1, &y1, &x2, &y2);
         break;
 
-      case GIMP_TRANSLATE_MODE_LAYER_MASK:
-        gimp_channel_bounds (GIMP_CHANNEL (active_item),
+      case PICMAN_TRANSLATE_MODE_LAYER_MASK:
+        picman_channel_bounds (PICMAN_CHANNEL (active_item),
                              &x1, &y1, &x2, &y2);
         x1 += off_x;
         y1 += off_y;
@@ -329,50 +329,50 @@ gimp_edit_selection_tool_start (GimpTool          *parent_tool,
         y2 += off_y;
         break;
 
-      case GIMP_TRANSLATE_MODE_MASK:
-        gimp_channel_bounds (gimp_image_get_mask (image),
+      case PICMAN_TRANSLATE_MODE_MASK:
+        picman_channel_bounds (picman_image_get_mask (image),
                              &x1, &y1, &x2, &y2);
         break;
 
-      case GIMP_TRANSLATE_MODE_MASK_TO_LAYER:
-      case GIMP_TRANSLATE_MODE_MASK_COPY_TO_LAYER:
+      case PICMAN_TRANSLATE_MODE_MASK_TO_LAYER:
+      case PICMAN_TRANSLATE_MODE_MASK_COPY_TO_LAYER:
         x1 = edit_select->x1 + off_x;
         y1 = edit_select->y1 + off_y;
         x2 = edit_select->x2 + off_x;
         y2 = edit_select->y2 + off_y;
         break;
 
-      case GIMP_TRANSLATE_MODE_LAYER:
-      case GIMP_TRANSLATE_MODE_FLOATING_SEL:
+      case PICMAN_TRANSLATE_MODE_LAYER:
+      case PICMAN_TRANSLATE_MODE_FLOATING_SEL:
         x1 = off_x;
         y1 = off_y;
-        x2 = x1 + gimp_item_get_width  (active_item);
-        y2 = y1 + gimp_item_get_height (active_item);
+        x2 = x1 + picman_item_get_width  (active_item);
+        y2 = y1 + picman_item_get_height (active_item);
 
-        if (gimp_item_get_linked (active_item))
+        if (picman_item_get_linked (active_item))
           {
             GList *linked;
             GList *list;
 
-            linked = gimp_image_item_list_get_list (image,
+            linked = picman_image_item_list_get_list (image,
                                                     active_item,
-                                                    GIMP_ITEM_TYPE_LAYERS,
-                                                    GIMP_ITEM_SET_LINKED);
+                                                    PICMAN_ITEM_TYPE_LAYERS,
+                                                    PICMAN_ITEM_SET_LINKED);
 
-            linked = gimp_image_item_list_filter (active_item, linked,
+            linked = picman_image_item_list_filter (active_item, linked,
                                                   TRUE, FALSE);
 
             /*  Expand the rectangle to include all linked layers as well  */
             for (list = linked; list; list = g_list_next (list))
               {
-                GimpItem *item = list->data;
+                PicmanItem *item = list->data;
                 gint      x3, y3;
                 gint      x4, y4;
 
-                gimp_item_get_offset (item, &x3, &y3);
+                picman_item_get_offset (item, &x3, &y3);
 
-                x4 = x3 + gimp_item_get_width  (item);
-                y4 = y3 + gimp_item_get_height (item);
+                x4 = x3 + picman_item_get_width  (item);
+                y4 = y3 + picman_item_get_height (item);
 
                 x1 = MIN (x1, x3);
                 y1 = MIN (y1, y3);
@@ -384,35 +384,35 @@ gimp_edit_selection_tool_start (GimpTool          *parent_tool,
           }
         break;
 
-      case GIMP_TRANSLATE_MODE_VECTORS:
+      case PICMAN_TRANSLATE_MODE_VECTORS:
         {
           gdouble  xd1, yd1, xd2, yd2;
 
-          gimp_vectors_bounds (GIMP_VECTORS (active_item),
+          picman_vectors_bounds (PICMAN_VECTORS (active_item),
                                &xd1, &yd1, &xd2, &yd2);
 
-          if (gimp_item_get_linked (active_item))
+          if (picman_item_get_linked (active_item))
             {
               /*  Expand the rectangle to include all linked layers as well  */
 
               GList *linked;
               GList *list;
 
-              linked = gimp_image_item_list_get_list (image,
+              linked = picman_image_item_list_get_list (image,
                                                       active_item,
-                                                      GIMP_ITEM_TYPE_VECTORS,
-                                                      GIMP_ITEM_SET_LINKED);
+                                                      PICMAN_ITEM_TYPE_VECTORS,
+                                                      PICMAN_ITEM_SET_LINKED);
 
-              linked = gimp_image_item_list_filter (active_item, linked,
+              linked = picman_image_item_list_filter (active_item, linked,
                                                     TRUE, FALSE);
 
               for (list = linked; list; list = g_list_next (list))
                 {
-                  GimpItem *item = list->data;
+                  PicmanItem *item = list->data;
                   gdouble   x3, y3;
                   gdouble   x4, y4;
 
-                  gimp_vectors_bounds (GIMP_VECTORS (item), &x3, &y3, &x4, &y4);
+                  picman_vectors_bounds (PICMAN_VECTORS (item), &x3, &y3, &x4, &y4);
 
                   xd1 = MIN (xd1, x3);
                   yd1 = MIN (yd1, y3);
@@ -429,7 +429,7 @@ gimp_edit_selection_tool_start (GimpTool          *parent_tool,
         break;
       }
 
-    gimp_tool_control_set_snap_offsets (tool->control,
+    picman_tool_control_set_snap_offsets (tool->control,
                                         x1 - coords->x,
                                         y1 - coords->y,
                                         x2 - x1,
@@ -440,106 +440,106 @@ gimp_edit_selection_tool_start (GimpTool          *parent_tool,
     edit_select->center_y = (y1 + y2) / 2.0;
   }
 
-  tool_manager_push_tool (display->gimp, tool);
+  tool_manager_push_tool (display->picman, tool);
 
-  gimp_tool_control_activate (tool->control);
+  picman_tool_control_activate (tool->control);
   tool->display = display;
 
   /*  pause the current selection  */
-  gimp_display_shell_selection_pause (shell);
+  picman_display_shell_selection_pause (shell);
 
   /* initialize the statusbar display */
-  gimp_tool_push_status_coords (tool, display,
-                                gimp_tool_control_get_precision (tool->control),
+  picman_tool_push_status_coords (tool, display,
+                                picman_tool_control_get_precision (tool->control),
                                 _("Move: "), 0, ", ", 0, NULL);
 
-  gimp_draw_tool_start (GIMP_DRAW_TOOL (edit_select), display);
+  picman_draw_tool_start (PICMAN_DRAW_TOOL (edit_select), display);
 }
 
 
 static void
-gimp_edit_selection_tool_button_release (GimpTool              *tool,
-                                         const GimpCoords      *coords,
+picman_edit_selection_tool_button_release (PicmanTool              *tool,
+                                         const PicmanCoords      *coords,
                                          guint32                time,
                                          GdkModifierType        state,
-                                         GimpButtonReleaseType  release_type,
-                                         GimpDisplay           *display)
+                                         PicmanButtonReleaseType  release_type,
+                                         PicmanDisplay           *display)
 {
-  GimpEditSelectionTool *edit_select = GIMP_EDIT_SELECTION_TOOL (tool);
-  GimpDisplayShell      *shell       = gimp_display_get_shell (display);
-  GimpImage             *image       = gimp_display_get_image (display);
-  GimpItem              *active_item;
+  PicmanEditSelectionTool *edit_select = PICMAN_EDIT_SELECTION_TOOL (tool);
+  PicmanDisplayShell      *shell       = picman_display_get_shell (display);
+  PicmanImage             *image       = picman_display_get_image (display);
+  PicmanItem              *active_item;
 
   /*  resume the current selection  */
-  gimp_display_shell_selection_resume (shell);
+  picman_display_shell_selection_resume (shell);
 
-  gimp_tool_pop_status (tool, display);
+  picman_tool_pop_status (tool, display);
 
-  gimp_tool_control_halt (tool->control);
+  picman_tool_control_halt (tool->control);
 
   /*  Stop and free the selection core  */
-  gimp_draw_tool_stop (GIMP_DRAW_TOOL (edit_select));
+  picman_draw_tool_stop (PICMAN_DRAW_TOOL (edit_select));
 
-  tool_manager_pop_tool (display->gimp);
+  tool_manager_pop_tool (display->picman);
 
-  active_item = gimp_edit_selection_tool_get_active_item (edit_select, image);
+  active_item = picman_edit_selection_tool_get_active_item (edit_select, image);
 
-  gimp_edit_selection_tool_calc_coords (edit_select,
+  picman_edit_selection_tool_calc_coords (edit_select,
                                         coords->x,
                                         coords->y);
 
-  /* GIMP_TRANSLATE_MODE_MASK is performed here at movement end, not 'live' like
+  /* PICMAN_TRANSLATE_MODE_MASK is performed here at movement end, not 'live' like
    *  the other translation types.
    */
-  if (edit_select->edit_mode == GIMP_TRANSLATE_MODE_MASK)
+  if (edit_select->edit_mode == PICMAN_TRANSLATE_MODE_MASK)
     {
       /* move the selection -- whether there has been movement or not!
        * (to ensure that there's something on the undo stack)
        */
-      gimp_item_translate (GIMP_ITEM (gimp_image_get_mask (image)),
+      picman_item_translate (PICMAN_ITEM (picman_image_get_mask (image)),
                            edit_select->cumlx,
                            edit_select->cumly,
                            TRUE);
     }
 
-  /*  GIMP_TRANSLATE_MODE_CHANNEL and GIMP_TRANSLATE_MODE_LAYER_MASK
+  /*  PICMAN_TRANSLATE_MODE_CHANNEL and PICMAN_TRANSLATE_MODE_LAYER_MASK
    *  need to be preformed after thawing the undo.
    */
-  if (edit_select->edit_mode == GIMP_TRANSLATE_MODE_CHANNEL ||
-      edit_select->edit_mode == GIMP_TRANSLATE_MODE_LAYER_MASK)
+  if (edit_select->edit_mode == PICMAN_TRANSLATE_MODE_CHANNEL ||
+      edit_select->edit_mode == PICMAN_TRANSLATE_MODE_LAYER_MASK)
     {
       /* move the channel -- whether there has been movement or not!
        * (to ensure that there's something on the undo stack)
        */
-      gimp_item_translate (active_item,
+      picman_item_translate (active_item,
                            edit_select->cumlx,
                            edit_select->cumly,
                            TRUE);
     }
 
-  if (edit_select->edit_mode == GIMP_TRANSLATE_MODE_VECTORS ||
-      edit_select->edit_mode == GIMP_TRANSLATE_MODE_CHANNEL ||
-      edit_select->edit_mode == GIMP_TRANSLATE_MODE_LAYER)
+  if (edit_select->edit_mode == PICMAN_TRANSLATE_MODE_VECTORS ||
+      edit_select->edit_mode == PICMAN_TRANSLATE_MODE_CHANNEL ||
+      edit_select->edit_mode == PICMAN_TRANSLATE_MODE_LAYER)
     {
-      if ((release_type != GIMP_BUTTON_RELEASE_CANCEL) &&
+      if ((release_type != PICMAN_BUTTON_RELEASE_CANCEL) &&
           (edit_select->cumlx != 0 ||
            edit_select->cumly != 0))
         {
-          if (gimp_item_get_linked (active_item))
+          if (picman_item_get_linked (active_item))
             {
               /*  translate all linked channels as well  */
 
               GList *linked;
 
-              linked = gimp_image_item_list_get_list (image,
+              linked = picman_image_item_list_get_list (image,
                                                       active_item,
-                                                      GIMP_ITEM_TYPE_CHANNELS,
-                                                      GIMP_ITEM_SET_LINKED);
+                                                      PICMAN_ITEM_TYPE_CHANNELS,
+                                                      PICMAN_ITEM_SET_LINKED);
 
-              linked = gimp_image_item_list_filter (active_item, linked,
+              linked = picman_image_item_list_filter (active_item, linked,
                                                     TRUE, FALSE);
 
-              gimp_image_item_list_translate (image,
+              picman_image_item_list_translate (image,
                                               linked,
                                               edit_select->cumlx,
                                               edit_select->cumly,
@@ -550,15 +550,15 @@ gimp_edit_selection_tool_button_release (GimpTool              *tool,
         }
     }
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
-  if (release_type == GIMP_BUTTON_RELEASE_CANCEL)
+  if (release_type == PICMAN_BUTTON_RELEASE_CANCEL)
     {
       /* Operation cancelled - undo the undo-group! */
-      gimp_image_undo (image);
+      picman_image_undo (image);
     }
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 
   g_free (edit_select->segs_in);
   g_free (edit_select->segs_out);
@@ -569,9 +569,9 @@ gimp_edit_selection_tool_button_release (GimpTool              *tool,
   edit_select->num_segs_out = 0;
 
   if (edit_select->propagate_release &&
-      tool_manager_get_active (display->gimp))
+      tool_manager_get_active (display->picman))
     {
-      tool_manager_button_release_active (display->gimp,
+      tool_manager_button_release_active (display->picman,
                                           coords, time, state,
                                           display);
     }
@@ -580,32 +580,32 @@ gimp_edit_selection_tool_button_release (GimpTool              *tool,
 }
 
 static void
-gimp_edit_selection_tool_update_motion (GimpEditSelectionTool *edit_select,
+picman_edit_selection_tool_update_motion (PicmanEditSelectionTool *edit_select,
                                         gdouble                new_x,
                                         gdouble                new_y,
-                                        GimpDisplay           *display)
+                                        PicmanDisplay           *display)
 {
-  GimpDrawTool *draw_tool = GIMP_DRAW_TOOL (edit_select);
-  GimpTool     *tool      = GIMP_TOOL (edit_select);
-  GimpImage    *image     = gimp_display_get_image (display);
-  GimpItem     *active_item;
+  PicmanDrawTool *draw_tool = PICMAN_DRAW_TOOL (edit_select);
+  PicmanTool     *tool      = PICMAN_TOOL (edit_select);
+  PicmanImage    *image     = picman_display_get_image (display);
+  PicmanItem     *active_item;
   gint          off_x, off_y;
   gdouble       motion_x, motion_y;
   gint          x, y;
 
   gdk_flush ();
 
-  gimp_draw_tool_pause (draw_tool);
+  picman_draw_tool_pause (draw_tool);
 
-  active_item = gimp_edit_selection_tool_get_active_item (edit_select, image);
+  active_item = picman_edit_selection_tool_get_active_item (edit_select, image);
 
-  gimp_item_get_offset (active_item, &off_x, &off_y);
+  picman_item_get_offset (active_item, &off_x, &off_y);
 
   if (edit_select->constrain)
     {
-      gimp_constrain_line (edit_select->start_x, edit_select->start_y,
+      picman_constrain_line (edit_select->start_x, edit_select->start_y,
                            &new_x, &new_y,
-                           GIMP_CONSTRAIN_LINE_45_DEGREES);
+                           PICMAN_CONSTRAIN_LINE_45_DEGREES);
     }
 
   motion_x = new_x - off_x;
@@ -613,7 +613,7 @@ gimp_edit_selection_tool_update_motion (GimpEditSelectionTool *edit_select,
 
   /* now do the actual move. */
 
-  gimp_edit_selection_tool_calc_coords (edit_select,
+  picman_edit_selection_tool_calc_coords (edit_select,
                                         motion_x,
                                         motion_y);
   x = edit_select->x;
@@ -634,45 +634,45 @@ gimp_edit_selection_tool_update_motion (GimpEditSelectionTool *edit_select,
 
       switch (edit_select->edit_mode)
         {
-        case GIMP_TRANSLATE_MODE_LAYER_MASK:
-        case GIMP_TRANSLATE_MODE_MASK:
+        case PICMAN_TRANSLATE_MODE_LAYER_MASK:
+        case PICMAN_TRANSLATE_MODE_MASK:
           /*  we don't do the actual edit selection move here.  */
           edit_select->origx = x;
           edit_select->origy = y;
           break;
 
-        case GIMP_TRANSLATE_MODE_VECTORS:
-        case GIMP_TRANSLATE_MODE_CHANNEL:
+        case PICMAN_TRANSLATE_MODE_VECTORS:
+        case PICMAN_TRANSLATE_MODE_CHANNEL:
           edit_select->origx = x;
           edit_select->origy = y;
 
           /*  fallthru  */
 
-        case GIMP_TRANSLATE_MODE_LAYER:
+        case PICMAN_TRANSLATE_MODE_LAYER:
           /*  for CHANNEL_TRANSLATE, only translate the linked layers
            *  and vectors on-the-fly, the channel is translated
            *  on button_release.
            */
-          if (edit_select->edit_mode != GIMP_TRANSLATE_MODE_CHANNEL)
-            gimp_item_translate (active_item, xoffset, yoffset,
+          if (edit_select->edit_mode != PICMAN_TRANSLATE_MODE_CHANNEL)
+            picman_item_translate (active_item, xoffset, yoffset,
                                  edit_select->first_move);
 
-          if (gimp_item_get_linked (active_item))
+          if (picman_item_get_linked (active_item))
             {
               /*  translate all linked layers & vectors as well  */
 
               GList *linked;
 
-              linked = gimp_image_item_list_get_list (image,
+              linked = picman_image_item_list_get_list (image,
                                                       active_item,
-                                                      GIMP_ITEM_TYPE_LAYERS |
-                                                      GIMP_ITEM_TYPE_VECTORS,
-                                                      GIMP_ITEM_SET_LINKED);
+                                                      PICMAN_ITEM_TYPE_LAYERS |
+                                                      PICMAN_ITEM_TYPE_VECTORS,
+                                                      PICMAN_ITEM_SET_LINKED);
 
-              linked = gimp_image_item_list_filter (active_item, linked,
+              linked = picman_image_item_list_filter (active_item, linked,
                                                     TRUE, FALSE);
 
-              gimp_image_item_list_translate (image,
+              picman_image_item_list_translate (image,
                                               linked,
                                               xoffset, yoffset,
                                               edit_select->first_move);
@@ -681,21 +681,21 @@ gimp_edit_selection_tool_update_motion (GimpEditSelectionTool *edit_select,
             }
           break;
 
-        case GIMP_TRANSLATE_MODE_MASK_TO_LAYER:
-        case GIMP_TRANSLATE_MODE_MASK_COPY_TO_LAYER:
-          if (! gimp_selection_float (GIMP_SELECTION (gimp_image_get_mask (image)),
-                                      GIMP_DRAWABLE (active_item),
-                                      gimp_get_user_context (display->gimp),
+        case PICMAN_TRANSLATE_MODE_MASK_TO_LAYER:
+        case PICMAN_TRANSLATE_MODE_MASK_COPY_TO_LAYER:
+          if (! picman_selection_float (PICMAN_SELECTION (picman_image_get_mask (image)),
+                                      PICMAN_DRAWABLE (active_item),
+                                      picman_get_user_context (display->picman),
                                       edit_select->edit_mode ==
-                                      GIMP_TRANSLATE_MODE_MASK_TO_LAYER,
+                                      PICMAN_TRANSLATE_MODE_MASK_TO_LAYER,
                                       0, 0, &error))
             {
               /* no region to float, abort safely */
-              gimp_message_literal (display->gimp, G_OBJECT (display),
-				    GIMP_MESSAGE_WARNING,
+              picman_message_literal (display->picman, G_OBJECT (display),
+				    PICMAN_MESSAGE_WARNING,
 				    error->message);
               g_clear_error (&error);
-              gimp_draw_tool_resume (draw_tool);
+              picman_draw_tool_resume (draw_tool);
 
               return;
             }
@@ -707,15 +707,15 @@ gimp_edit_selection_tool_update_motion (GimpEditSelectionTool *edit_select,
           edit_select->x1     = 0;
           edit_select->y1     = 0;
 
-          edit_select->edit_mode = GIMP_TRANSLATE_MODE_FLOATING_SEL;
+          edit_select->edit_mode = PICMAN_TRANSLATE_MODE_FLOATING_SEL;
 
           active_item =
-            GIMP_ITEM (gimp_image_get_active_drawable (image));
+            PICMAN_ITEM (picman_image_get_active_drawable (image));
 
           /* fall through */
 
-        case GIMP_TRANSLATE_MODE_FLOATING_SEL:
-          gimp_item_translate (active_item, xoffset, yoffset,
+        case PICMAN_TRANSLATE_MODE_FLOATING_SEL:
+          picman_item_translate (active_item, xoffset, yoffset,
                                edit_select->first_move);
           break;
         }
@@ -723,48 +723,48 @@ gimp_edit_selection_tool_update_motion (GimpEditSelectionTool *edit_select,
       edit_select->first_move = FALSE;
     }
 
-  gimp_projection_flush (gimp_image_get_projection (image));
+  picman_projection_flush (picman_image_get_projection (image));
 
-  gimp_tool_pop_status (tool, display);
-  gimp_tool_push_status_coords (tool, display,
-                                gimp_tool_control_get_precision (tool->control),
+  picman_tool_pop_status (tool, display);
+  picman_tool_push_status_coords (tool, display,
+                                picman_tool_control_get_precision (tool->control),
                                 _("Move: "),
                                 edit_select->cumlx,
                                 ", ",
                                 edit_select->cumly,
                                 NULL);
 
-  gimp_draw_tool_resume (draw_tool);
+  picman_draw_tool_resume (draw_tool);
 }
 
 
 static void
-gimp_edit_selection_tool_motion (GimpTool         *tool,
-                                 const GimpCoords *coords,
+picman_edit_selection_tool_motion (PicmanTool         *tool,
+                                 const PicmanCoords *coords,
                                  guint32           time,
                                  GdkModifierType   state,
-                                 GimpDisplay      *display)
+                                 PicmanDisplay      *display)
 {
-  GimpEditSelectionTool *edit_select = GIMP_EDIT_SELECTION_TOOL (tool);
+  PicmanEditSelectionTool *edit_select = PICMAN_EDIT_SELECTION_TOOL (tool);
 
   edit_select->last_x = coords->x;
   edit_select->last_y = coords->y;
 
-  gimp_edit_selection_tool_update_motion (edit_select,
+  picman_edit_selection_tool_update_motion (edit_select,
                                           coords->x, coords->y,
                                           display);
 }
 
 static void
-gimp_edit_selection_tool_active_modifier_key (GimpTool        *tool,
+picman_edit_selection_tool_active_modifier_key (PicmanTool        *tool,
                                               GdkModifierType  key,
                                               gboolean         press,
                                               GdkModifierType  state,
-                                              GimpDisplay     *display)
+                                              PicmanDisplay     *display)
 {
-  GimpEditSelectionTool *edit_select = GIMP_EDIT_SELECTION_TOOL (tool);
+  PicmanEditSelectionTool *edit_select = PICMAN_EDIT_SELECTION_TOOL (tool);
 
-  edit_select->constrain = (state & gimp_get_constrain_behavior_mask () ?
+  edit_select->constrain = (state & picman_get_constrain_behavior_mask () ?
                             TRUE : FALSE);
 
   /* If we didn't came here due to a mouse release, immediately update
@@ -772,7 +772,7 @@ gimp_edit_selection_tool_active_modifier_key (GimpTool        *tool,
    */
   if (state & GDK_BUTTON1_MASK)
     {
-      gimp_edit_selection_tool_update_motion (edit_select,
+      picman_edit_selection_tool_update_motion (edit_select,
                                               edit_select->last_x,
                                               edit_select->last_y,
                                               display);
@@ -780,40 +780,40 @@ gimp_edit_selection_tool_active_modifier_key (GimpTool        *tool,
 }
 
 static void
-gimp_edit_selection_tool_draw (GimpDrawTool *draw_tool)
+picman_edit_selection_tool_draw (PicmanDrawTool *draw_tool)
 {
-  GimpEditSelectionTool *edit_select = GIMP_EDIT_SELECTION_TOOL (draw_tool);
-  GimpDisplay           *display     = GIMP_TOOL (draw_tool)->display;
-  GimpImage             *image       = gimp_display_get_image (display);
-  GimpItem              *active_item;
+  PicmanEditSelectionTool *edit_select = PICMAN_EDIT_SELECTION_TOOL (draw_tool);
+  PicmanDisplay           *display     = PICMAN_TOOL (draw_tool)->display;
+  PicmanImage             *image       = picman_display_get_image (display);
+  PicmanItem              *active_item;
 
-  active_item = gimp_edit_selection_tool_get_active_item (edit_select, image);
+  active_item = picman_edit_selection_tool_get_active_item (edit_select, image);
 
   switch (edit_select->edit_mode)
     {
-    case GIMP_TRANSLATE_MODE_CHANNEL:
-    case GIMP_TRANSLATE_MODE_LAYER_MASK:
-    case GIMP_TRANSLATE_MODE_MASK:
+    case PICMAN_TRANSLATE_MODE_CHANNEL:
+    case PICMAN_TRANSLATE_MODE_LAYER_MASK:
+    case PICMAN_TRANSLATE_MODE_MASK:
       {
         gboolean floating_sel = FALSE;
         gint     off_x        = 0;
         gint     off_y        = 0;
 
-        if (edit_select->edit_mode == GIMP_TRANSLATE_MODE_MASK)
+        if (edit_select->edit_mode == PICMAN_TRANSLATE_MODE_MASK)
           {
-            GimpLayer *layer = gimp_image_get_active_layer (image);
+            PicmanLayer *layer = picman_image_get_active_layer (image);
 
             if (layer)
-              floating_sel = gimp_layer_is_floating_sel (layer);
+              floating_sel = picman_layer_is_floating_sel (layer);
           }
         else
           {
-            gimp_item_get_offset (active_item, &off_x, &off_y);
+            picman_item_get_offset (active_item, &off_x, &off_y);
           }
 
         if (! floating_sel && edit_select->segs_in)
           {
-            gimp_draw_tool_add_boundary (draw_tool,
+            picman_draw_tool_add_boundary (draw_tool,
                                          edit_select->segs_in,
                                          edit_select->num_segs_in,
                                          NULL,
@@ -823,34 +823,34 @@ gimp_edit_selection_tool_draw (GimpDrawTool *draw_tool)
 
         if (edit_select->segs_out)
           {
-            gimp_draw_tool_add_boundary (draw_tool,
+            picman_draw_tool_add_boundary (draw_tool,
                                          edit_select->segs_out,
                                          edit_select->num_segs_out,
                                          NULL,
                                          edit_select->cumlx + off_x,
                                          edit_select->cumly + off_y);
           }
-        else if (edit_select->edit_mode != GIMP_TRANSLATE_MODE_MASK)
+        else if (edit_select->edit_mode != PICMAN_TRANSLATE_MODE_MASK)
           {
-            gimp_draw_tool_add_rectangle (draw_tool,
+            picman_draw_tool_add_rectangle (draw_tool,
                                           FALSE,
                                           edit_select->cumlx + off_x,
                                           edit_select->cumly + off_y,
-                                          gimp_item_get_width  (active_item),
-                                          gimp_item_get_height (active_item));
+                                          picman_item_get_width  (active_item),
+                                          picman_item_get_height (active_item));
           }
       }
       break;
 
-    case GIMP_TRANSLATE_MODE_MASK_TO_LAYER:
-    case GIMP_TRANSLATE_MODE_MASK_COPY_TO_LAYER:
+    case PICMAN_TRANSLATE_MODE_MASK_TO_LAYER:
+    case PICMAN_TRANSLATE_MODE_MASK_COPY_TO_LAYER:
       {
         gint off_x;
         gint off_y;
 
-        gimp_item_get_offset (active_item, &off_x, &off_y);
+        picman_item_get_offset (active_item, &off_x, &off_y);
 
-        gimp_draw_tool_add_rectangle (draw_tool,
+        picman_draw_tool_add_rectangle (draw_tool,
                                       FALSE,
                                       edit_select->x1 + off_x,
                                       edit_select->y1 + off_y,
@@ -859,43 +859,43 @@ gimp_edit_selection_tool_draw (GimpDrawTool *draw_tool)
       }
       break;
 
-    case GIMP_TRANSLATE_MODE_LAYER:
+    case PICMAN_TRANSLATE_MODE_LAYER:
       {
-        GimpItem *active_item;
+        PicmanItem *active_item;
         gint      x1, y1, x2, y2;
 
-        active_item = GIMP_ITEM (gimp_image_get_active_layer (image));
+        active_item = PICMAN_ITEM (picman_image_get_active_layer (image));
 
-        gimp_item_get_offset (active_item, &x1, &y1);
+        picman_item_get_offset (active_item, &x1, &y1);
 
-        x2 = x1 + gimp_item_get_width  (active_item);
-        y2 = y1 + gimp_item_get_height (active_item);
+        x2 = x1 + picman_item_get_width  (active_item);
+        y2 = y1 + picman_item_get_height (active_item);
 
-        if (gimp_item_get_linked (active_item))
+        if (picman_item_get_linked (active_item))
           {
             /*  Expand the rectangle to include all linked layers as well  */
 
             GList *linked;
             GList *list;
 
-            linked = gimp_image_item_list_get_list (image,
+            linked = picman_image_item_list_get_list (image,
                                                     active_item,
-                                                    GIMP_ITEM_TYPE_LAYERS,
-                                                    GIMP_ITEM_SET_LINKED);
+                                                    PICMAN_ITEM_TYPE_LAYERS,
+                                                    PICMAN_ITEM_SET_LINKED);
 
-            linked = gimp_image_item_list_filter (active_item, linked,
+            linked = picman_image_item_list_filter (active_item, linked,
                                                   TRUE, FALSE);
 
             for (list = linked; list; list = g_list_next (list))
               {
-                GimpItem *item = list->data;
+                PicmanItem *item = list->data;
                 gint      x3, y3;
                 gint      x4, y4;
 
-                gimp_item_get_offset (item, &x3, &y3);
+                picman_item_get_offset (item, &x3, &y3);
 
-                x4 = x3 + gimp_item_get_width  (item);
-                y4 = y3 + gimp_item_get_height (item);
+                x4 = x3 + picman_item_get_width  (item);
+                y4 = y3 + picman_item_get_height (item);
 
                 x1 = MIN (x1, x3);
                 y1 = MIN (y1, y3);
@@ -906,43 +906,43 @@ gimp_edit_selection_tool_draw (GimpDrawTool *draw_tool)
             g_list_free (linked);
           }
 
-        gimp_draw_tool_add_rectangle (draw_tool, FALSE,
+        picman_draw_tool_add_rectangle (draw_tool, FALSE,
                                       x1, y1,
                                       x2 - x1, y2 - y1);
       }
       break;
 
-    case GIMP_TRANSLATE_MODE_VECTORS:
+    case PICMAN_TRANSLATE_MODE_VECTORS:
       {
-        GimpItem *active_item;
+        PicmanItem *active_item;
         gdouble   x1, y1, x2, y2;
 
-        active_item = GIMP_ITEM (gimp_image_get_active_vectors (image));
+        active_item = PICMAN_ITEM (picman_image_get_active_vectors (image));
 
-        gimp_vectors_bounds (GIMP_VECTORS (active_item), &x1, &y1, &x2, &y2);
+        picman_vectors_bounds (PICMAN_VECTORS (active_item), &x1, &y1, &x2, &y2);
 
-        if (gimp_item_get_linked (active_item))
+        if (picman_item_get_linked (active_item))
           {
             /*  Expand the rectangle to include all linked vectors as well  */
 
             GList *linked;
             GList *list;
 
-            linked = gimp_image_item_list_get_list (image,
+            linked = picman_image_item_list_get_list (image,
                                                     active_item,
-                                                    GIMP_ITEM_TYPE_VECTORS,
-                                                    GIMP_ITEM_SET_LINKED);
+                                                    PICMAN_ITEM_TYPE_VECTORS,
+                                                    PICMAN_ITEM_SET_LINKED);
 
-            linked = gimp_image_item_list_filter (active_item, linked,
+            linked = picman_image_item_list_filter (active_item, linked,
                                                   TRUE, FALSE);
 
             for (list = linked; list; list = g_list_next (list))
               {
-                GimpItem *item = list->data;
+                PicmanItem *item = list->data;
                 gdouble   x3, y3;
                 gdouble   x4, y4;
 
-                gimp_vectors_bounds (GIMP_VECTORS (item), &x3, &y3, &x4, &y4);
+                picman_vectors_bounds (PICMAN_VECTORS (item), &x3, &y3, &x4, &y4);
 
                 x1 = MIN (x1, x3);
                 y1 = MIN (y1, y3);
@@ -958,14 +958,14 @@ gimp_edit_selection_tool_draw (GimpDrawTool *draw_tool)
         x2 = ceil (x2);
         y2 = ceil (y2);
 
-        gimp_draw_tool_add_rectangle (draw_tool, FALSE,
+        picman_draw_tool_add_rectangle (draw_tool, FALSE,
                                       x1, y1,
                                       x2 - x1, y2 - y1);
       }
       break;
 
-    case GIMP_TRANSLATE_MODE_FLOATING_SEL:
-      gimp_draw_tool_add_boundary (draw_tool,
+    case PICMAN_TRANSLATE_MODE_FLOATING_SEL:
+      picman_draw_tool_add_boundary (draw_tool,
                                    edit_select->segs_in,
                                    edit_select->num_segs_in,
                                    NULL,
@@ -975,27 +975,27 @@ gimp_edit_selection_tool_draw (GimpDrawTool *draw_tool)
     }
 
   /* Mark the center because we snap to it */
-  gimp_draw_tool_add_handle (draw_tool,
-                             GIMP_HANDLE_CROSS,
+  picman_draw_tool_add_handle (draw_tool,
+                             PICMAN_HANDLE_CROSS,
                              edit_select->center_x + edit_select->cumlx,
                              edit_select->center_y + edit_select->cumly,
-                             GIMP_TOOL_HANDLE_SIZE_SMALL,
-                             GIMP_TOOL_HANDLE_SIZE_SMALL,
-                             GIMP_HANDLE_ANCHOR_CENTER);
+                             PICMAN_TOOL_HANDLE_SIZE_SMALL,
+                             PICMAN_TOOL_HANDLE_SIZE_SMALL,
+                             PICMAN_HANDLE_ANCHOR_CENTER);
 
-  GIMP_DRAW_TOOL_CLASS (parent_class)->draw (draw_tool);
+  PICMAN_DRAW_TOOL_CLASS (parent_class)->draw (draw_tool);
 }
 
-static GimpItem *
-gimp_edit_selection_tool_get_active_item (const GimpEditSelectionTool *edit_select,
-                                          const GimpImage             *image)
+static PicmanItem *
+picman_edit_selection_tool_get_active_item (const PicmanEditSelectionTool *edit_select,
+                                          const PicmanImage             *image)
 {
-  GimpItem *active_item;
+  PicmanItem *active_item;
 
-  if (edit_select->edit_mode == GIMP_TRANSLATE_MODE_VECTORS)
-    active_item = GIMP_ITEM (gimp_image_get_active_vectors (image));
+  if (edit_select->edit_mode == PICMAN_TRANSLATE_MODE_VECTORS)
+    active_item = PICMAN_ITEM (picman_image_get_active_vectors (image));
   else
-    active_item = GIMP_ITEM (gimp_image_get_active_drawable (image));
+    active_item = PICMAN_ITEM (picman_image_get_active_drawable (image));
 
   return active_item;
 }
@@ -1096,37 +1096,37 @@ process_event_queue_keys (GdkEventKey *kevent,
 }
 
 gboolean
-gimp_edit_selection_tool_key_press (GimpTool    *tool,
+picman_edit_selection_tool_key_press (PicmanTool    *tool,
                                     GdkEventKey *kevent,
-                                    GimpDisplay *display)
+                                    PicmanDisplay *display)
 {
-  GimpTransformType translate_type;
+  PicmanTransformType translate_type;
 
   if (kevent->state & GDK_MOD1_MASK)
-    translate_type = GIMP_TRANSFORM_TYPE_SELECTION;
-  else if (kevent->state & gimp_get_toggle_behavior_mask ())
-    translate_type = GIMP_TRANSFORM_TYPE_PATH;
+    translate_type = PICMAN_TRANSFORM_TYPE_SELECTION;
+  else if (kevent->state & picman_get_toggle_behavior_mask ())
+    translate_type = PICMAN_TRANSFORM_TYPE_PATH;
   else
-    translate_type = GIMP_TRANSFORM_TYPE_LAYER;
+    translate_type = PICMAN_TRANSFORM_TYPE_LAYER;
 
-  return gimp_edit_selection_tool_translate (tool, kevent, translate_type,
+  return picman_edit_selection_tool_translate (tool, kevent, translate_type,
                                              display);
 }
 
 gboolean
-gimp_edit_selection_tool_translate (GimpTool          *tool,
+picman_edit_selection_tool_translate (PicmanTool          *tool,
                                     GdkEventKey       *kevent,
-                                    GimpTransformType  translate_type,
-                                    GimpDisplay       *display)
+                                    PicmanTransformType  translate_type,
+                                    PicmanDisplay       *display)
 {
   gint               inc_x     = 0;
   gint               inc_y     = 0;
-  GimpUndo          *undo;
+  PicmanUndo          *undo;
   gboolean           push_undo = TRUE;
-  GimpImage         *image     = gimp_display_get_image (display);
-  GimpItem          *item      = NULL;
-  GimpTranslateMode  edit_mode = GIMP_TRANSLATE_MODE_MASK;
-  GimpUndoType       undo_type = GIMP_UNDO_GROUP_MASK;
+  PicmanImage         *image     = picman_display_get_image (display);
+  PicmanItem          *item      = NULL;
+  PicmanTranslateMode  edit_mode = PICMAN_TRANSLATE_MODE_MASK;
+  PicmanUndoType       undo_type = PICMAN_UNDO_GROUP_MASK;
   const gchar       *undo_desc = NULL;
   gint               velocity;
 
@@ -1140,7 +1140,7 @@ gimp_edit_selection_tool_translate (GimpTool          *tool,
 
   /*  adapt arrow velocity to the zoom factor when holding <shift>  */
   velocity = (ARROW_VELOCITY /
-              gimp_zoom_model_get_factor (gimp_display_get_shell (display)->zoom));
+              picman_zoom_model_get_factor (picman_display_get_shell (display)->zoom));
   velocity = MAX (1.0, velocity);
 
   /*  check the event queue for key events with the same modifier mask
@@ -1189,43 +1189,43 @@ gimp_edit_selection_tool_translate (GimpTool          *tool,
     {
       switch (translate_type)
         {
-        case GIMP_TRANSFORM_TYPE_SELECTION:
-          item = GIMP_ITEM (gimp_image_get_mask (image));
+        case PICMAN_TRANSFORM_TYPE_SELECTION:
+          item = PICMAN_ITEM (picman_image_get_mask (image));
 
-          edit_mode = GIMP_TRANSLATE_MODE_MASK;
-          undo_type = GIMP_UNDO_GROUP_MASK;
+          edit_mode = PICMAN_TRANSLATE_MODE_MASK;
+          undo_type = PICMAN_UNDO_GROUP_MASK;
           break;
 
-        case GIMP_TRANSFORM_TYPE_PATH:
-          item = GIMP_ITEM (gimp_image_get_active_vectors (image));
+        case PICMAN_TRANSFORM_TYPE_PATH:
+          item = PICMAN_ITEM (picman_image_get_active_vectors (image));
 
-          edit_mode = GIMP_TRANSLATE_MODE_VECTORS;
-          undo_type = GIMP_UNDO_GROUP_ITEM_DISPLACE;
+          edit_mode = PICMAN_TRANSLATE_MODE_VECTORS;
+          undo_type = PICMAN_UNDO_GROUP_ITEM_DISPLACE;
           break;
 
-        case GIMP_TRANSFORM_TYPE_LAYER:
-          item = GIMP_ITEM (gimp_image_get_active_drawable (image));
+        case PICMAN_TRANSFORM_TYPE_LAYER:
+          item = PICMAN_ITEM (picman_image_get_active_drawable (image));
 
           if (item)
             {
-              if (GIMP_IS_LAYER_MASK (item))
+              if (PICMAN_IS_LAYER_MASK (item))
                 {
-                  edit_mode = GIMP_TRANSLATE_MODE_LAYER_MASK;
+                  edit_mode = PICMAN_TRANSLATE_MODE_LAYER_MASK;
                 }
-              else if (GIMP_IS_CHANNEL (item))
+              else if (PICMAN_IS_CHANNEL (item))
                 {
-                  edit_mode = GIMP_TRANSLATE_MODE_CHANNEL;
+                  edit_mode = PICMAN_TRANSLATE_MODE_CHANNEL;
                 }
-              else if (gimp_layer_is_floating_sel (GIMP_LAYER (item)))
+              else if (picman_layer_is_floating_sel (PICMAN_LAYER (item)))
                 {
-                  edit_mode = GIMP_TRANSLATE_MODE_FLOATING_SEL;
+                  edit_mode = PICMAN_TRANSLATE_MODE_FLOATING_SEL;
                 }
               else
                 {
-                  edit_mode = GIMP_TRANSLATE_MODE_LAYER;
+                  edit_mode = PICMAN_TRANSLATE_MODE_LAYER;
                 }
 
-              undo_type = GIMP_UNDO_GROUP_ITEM_DISPLACE;
+              undo_type = PICMAN_UNDO_GROUP_ITEM_DISPLACE;
             }
           break;
         }
@@ -1236,17 +1236,17 @@ gimp_edit_selection_tool_translate (GimpTool          *tool,
 
   switch (edit_mode)
     {
-    case GIMP_TRANSLATE_MODE_FLOATING_SEL:
+    case PICMAN_TRANSLATE_MODE_FLOATING_SEL:
       undo_desc = _("Move Floating Selection");
       break;
 
     default:
-      undo_desc = GIMP_ITEM_GET_CLASS (item)->translate_desc;
+      undo_desc = PICMAN_ITEM_GET_CLASS (item)->translate_desc;
       break;
     }
 
   /* compress undo */
-  undo = gimp_image_undo_can_compress (image, GIMP_TYPE_UNDO_STACK, undo_type);
+  undo = picman_image_undo_can_compress (image, PICMAN_TYPE_UNDO_STACK, undo_type);
 
   if (undo                                                         &&
       g_object_get_data (G_OBJECT (undo),
@@ -1261,10 +1261,10 @@ gimp_edit_selection_tool_translate (GimpTool          *tool,
 
   if (push_undo)
     {
-      if (gimp_image_undo_group_start (image, undo_type, undo_desc))
+      if (picman_image_undo_group_start (image, undo_type, undo_desc))
         {
-          undo = gimp_image_undo_can_compress (image,
-                                               GIMP_TYPE_UNDO_STACK,
+          undo = picman_image_undo_can_compress (image,
+                                               PICMAN_TYPE_UNDO_STACK,
                                                undo_type);
 
           if (undo)
@@ -1281,38 +1281,38 @@ gimp_edit_selection_tool_translate (GimpTool          *tool,
 
   switch (edit_mode)
     {
-    case GIMP_TRANSLATE_MODE_LAYER_MASK:
-    case GIMP_TRANSLATE_MODE_MASK:
-      gimp_item_translate (item, inc_x, inc_y, push_undo);
+    case PICMAN_TRANSLATE_MODE_LAYER_MASK:
+    case PICMAN_TRANSLATE_MODE_MASK:
+      picman_item_translate (item, inc_x, inc_y, push_undo);
       break;
 
-    case GIMP_TRANSLATE_MODE_MASK_TO_LAYER:
-    case GIMP_TRANSLATE_MODE_MASK_COPY_TO_LAYER:
+    case PICMAN_TRANSLATE_MODE_MASK_TO_LAYER:
+    case PICMAN_TRANSLATE_MODE_MASK_COPY_TO_LAYER:
       /*  this won't happen  */
       break;
 
-    case GIMP_TRANSLATE_MODE_VECTORS:
-    case GIMP_TRANSLATE_MODE_CHANNEL:
-    case GIMP_TRANSLATE_MODE_LAYER:
-      gimp_item_translate (item, inc_x, inc_y, push_undo);
+    case PICMAN_TRANSLATE_MODE_VECTORS:
+    case PICMAN_TRANSLATE_MODE_CHANNEL:
+    case PICMAN_TRANSLATE_MODE_LAYER:
+      picman_item_translate (item, inc_x, inc_y, push_undo);
 
       /*  translate all linked items as well  */
-      if (gimp_item_get_linked (item))
-        gimp_item_linked_translate (item, inc_x, inc_y, push_undo);
+      if (picman_item_get_linked (item))
+        picman_item_linked_translate (item, inc_x, inc_y, push_undo);
       break;
 
-    case GIMP_TRANSLATE_MODE_FLOATING_SEL:
-      gimp_item_translate (item, inc_x, inc_y, push_undo);
+    case PICMAN_TRANSLATE_MODE_FLOATING_SEL:
+      picman_item_translate (item, inc_x, inc_y, push_undo);
       break;
     }
 
   if (push_undo)
-    gimp_image_undo_group_end (image);
+    picman_image_undo_group_end (image);
   else
-    gimp_undo_refresh_preview (undo,
-                               gimp_get_user_context (display->gimp));
+    picman_undo_refresh_preview (undo,
+                               picman_get_user_context (display->picman));
 
-  gimp_image_flush (image);
+  picman_image_flush (image);
 
   return TRUE;
 }

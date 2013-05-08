@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimphelp.h
- * Copyright (C) 1999-2000 Michael Natterer <mitch@gimp.org>
+ * picmanhelp.h
+ * Copyright (C) 1999-2000 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_HELP_H__
-#define __GIMP_HELP_H__
+#ifndef __PICMAN_HELP_H__
+#define __PICMAN_HELP_H__
 
 
 /*  the main help function
  *
  *  there should be no need to use it directly
  */
-void       gimp_help_show (Gimp         *gimp,
-                           GimpProgress *progress,
+void       picman_help_show (Picman         *picman,
+                           PicmanProgress *progress,
                            const gchar  *help_domain,
                            const gchar  *help_id);
 
 
 /*  checks if the user manual is installed locally
  */
-gboolean   gimp_help_user_manual_is_installed (Gimp *gimp);
+gboolean   picman_help_user_manual_is_installed (Picman *picman);
 
 /*  the configuration changed with respect to the location
  *  of the user manual, invalidate the cached information
  */
-void       gimp_help_user_manual_changed      (Gimp *gimp);
+void       picman_help_user_manual_changed      (Picman *picman);
 
 
-#endif /* __GIMP_HELP_H__ */
+#endif /* __PICMAN_HELP_H__ */

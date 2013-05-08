@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,29 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_H__
-#define __GIMP_H__
+#ifndef __PICMAN_H__
+#define __PICMAN_H__
 
 
-#include "gimpobject.h"
-#include "gimp-gui.h"
+#include "picmanobject.h"
+#include "picman-gui.h"
 
 
-#define GIMP_TYPE_GIMP            (gimp_get_type ())
-#define GIMP(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_GIMP, Gimp))
-#define GIMP_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_GIMP, GimpClass))
-#define GIMP_IS_GIMP(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_GIMP))
-#define GIMP_IS_GIMP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_GIMP))
+#define PICMAN_TYPE_PICMAN            (picman_get_type ())
+#define PICMAN(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PICMAN, Picman))
+#define PICMAN_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PICMAN, PicmanClass))
+#define PICMAN_IS_PICMAN(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PICMAN))
+#define PICMAN_IS_PICMAN_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PICMAN))
 
 
-typedef struct _GimpClass GimpClass;
+typedef struct _PicmanClass PicmanClass;
 
-struct _Gimp
+struct _Picman
 {
-  GimpObject              parent_instance;
+  PicmanObject              parent_instance;
 
-  GimpCoreConfig         *config;
-  GimpCoreConfig         *edit_config; /* don't use this one, it's just
+  PicmanCoreConfig         *config;
+  PicmanCoreConfig         *edit_config; /* don't use this one, it's just
                                         * for the preferences dialog
                                         */
   gchar                  *session_name;
@@ -49,14 +49,14 @@ struct _Gimp
   gboolean                no_interface;
   gboolean                show_gui;
   gboolean                use_shm;
-  GimpMessageHandlerType  message_handler;
+  PicmanMessageHandlerType  message_handler;
   gboolean                console_messages;
-  GimpStackTraceMode      stack_trace_mode;
-  GimpPDBCompatMode       pdb_compat_mode;
+  PicmanStackTraceMode      stack_trace_mode;
+  PicmanPDBCompatMode       pdb_compat_mode;
 
-  GimpGui                 gui;         /* gui vtable */
+  PicmanGui                 gui;         /* gui vtable */
 
-  gboolean                restored;    /* becomes TRUE in gimp_restore() */
+  gboolean                restored;    /* becomes TRUE in picman_restore() */
 
   gint                    busy;
   guint                   busy_idle_id;
@@ -64,86 +64,86 @@ struct _Gimp
   GList                  *user_units;
   gint                    n_user_units;
 
-  GimpParasiteList       *parasites;
+  PicmanParasiteList       *parasites;
 
-  GimpContainer          *paint_info_list;
-  GimpPaintInfo          *standard_paint_info;
+  PicmanContainer          *paint_info_list;
+  PicmanPaintInfo          *standard_paint_info;
 
-  GimpModuleDB           *module_db;
+  PicmanModuleDB           *module_db;
   gboolean                write_modulerc;
 
-  GimpPlugInManager      *plug_in_manager;
+  PicmanPlugInManager      *plug_in_manager;
 
-  GimpContainer          *images;
+  PicmanContainer          *images;
   guint32                 next_guide_ID;
   guint32                 next_sample_point_ID;
-  GimpIdTable            *image_table;
+  PicmanIdTable            *image_table;
 
-  GimpIdTable            *item_table;
+  PicmanIdTable            *item_table;
 
-  GimpContainer          *displays;
+  PicmanContainer          *displays;
   gint                    next_display_ID;
 
   GList                  *image_windows;
 
-  GimpBuffer             *global_buffer;
-  GimpContainer          *named_buffers;
+  PicmanBuffer             *global_buffer;
+  PicmanContainer          *named_buffers;
 
-  GimpContainer          *fonts;
+  PicmanContainer          *fonts;
 
-  GimpDataFactory        *brush_factory;
-  GimpDataFactory        *dynamics_factory;
-  GimpDataFactory        *pattern_factory;
-  GimpDataFactory        *gradient_factory;
-  GimpDataFactory        *palette_factory;
-  GimpDataFactory        *tool_preset_factory;
+  PicmanDataFactory        *brush_factory;
+  PicmanDataFactory        *dynamics_factory;
+  PicmanDataFactory        *pattern_factory;
+  PicmanDataFactory        *gradient_factory;
+  PicmanDataFactory        *palette_factory;
+  PicmanDataFactory        *tool_preset_factory;
 
-  GimpTagCache           *tag_cache;
+  PicmanTagCache           *tag_cache;
 
-  GimpPDB                *pdb;
+  PicmanPDB                *pdb;
 
-  GimpContainer          *tool_info_list;
-  GimpToolInfo           *standard_tool_info;
+  PicmanContainer          *tool_info_list;
+  PicmanToolInfo           *standard_tool_info;
 
   /*  the opened and saved images in MRU order  */
-  GimpContainer          *documents;
+  PicmanContainer          *documents;
 
   /*  image_new values  */
-  GimpContainer          *templates;
-  GimpTemplate           *image_new_last_template;
+  PicmanContainer          *templates;
+  PicmanTemplate           *image_new_last_template;
 
   /*  the list of all contexts  */
   GList                  *context_list;
 
-  /*  the default context which is initialized from gimprc  */
-  GimpContext            *default_context;
+  /*  the default context which is initialized from picmanrc  */
+  PicmanContext            *default_context;
 
   /*  the context used by the interface  */
-  GimpContext            *user_context;
+  PicmanContext            *user_context;
 };
 
-struct _GimpClass
+struct _PicmanClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 
-  void     (* initialize)     (Gimp               *gimp,
-                               GimpInitStatusFunc  status_callback);
-  void     (* restore)        (Gimp               *gimp,
-                               GimpInitStatusFunc  status_callback);
-  gboolean (* exit)           (Gimp               *gimp,
+  void     (* initialize)     (Picman               *picman,
+                               PicmanInitStatusFunc  status_callback);
+  void     (* restore)        (Picman               *picman,
+                               PicmanInitStatusFunc  status_callback);
+  gboolean (* exit)           (Picman               *picman,
                                gboolean            force);
 
-  void     (* buffer_changed) (Gimp               *gimp);
+  void     (* buffer_changed) (Picman               *picman);
 
   /*  emitted if an image is loaded and opened with a display  */
-  void     (* image_opened)   (Gimp               *gimp,
+  void     (* image_opened)   (Picman               *picman,
                                const gchar        *uri);
 };
 
 
-GType          gimp_get_type             (void) G_GNUC_CONST;
+GType          picman_get_type             (void) G_GNUC_CONST;
 
-Gimp         * gimp_new                  (const gchar         *name,
+Picman         * picman_new                  (const gchar         *name,
                                           const gchar         *session_name,
                                           const gchar         *default_folder,
                                           gboolean             be_verbose,
@@ -152,71 +152,71 @@ Gimp         * gimp_new                  (const gchar         *name,
                                           gboolean             no_interface,
                                           gboolean             use_shm,
                                           gboolean             console_messages,
-                                          GimpStackTraceMode   stack_trace_mode,
-                                          GimpPDBCompatMode    pdb_compat_mode);
-void           gimp_set_show_gui         (Gimp                *gimp,
+                                          PicmanStackTraceMode   stack_trace_mode,
+                                          PicmanPDBCompatMode    pdb_compat_mode);
+void           picman_set_show_gui         (Picman                *picman,
                                           gboolean             show_gui);
-gboolean       gimp_get_show_gui         (Gimp                *gimp);
+gboolean       picman_get_show_gui         (Picman                *picman);
 
-void           gimp_load_config          (Gimp                *gimp,
-                                          const gchar         *alternate_system_gimprc,
-                                          const gchar         *alternate_gimprc);
-void           gimp_initialize           (Gimp                *gimp,
-                                          GimpInitStatusFunc   status_callback);
-void           gimp_restore              (Gimp                *gimp,
-                                          GimpInitStatusFunc   status_callback);
-gboolean       gimp_is_restored          (Gimp                *gimp);
+void           picman_load_config          (Picman                *picman,
+                                          const gchar         *alternate_system_picmanrc,
+                                          const gchar         *alternate_picmanrc);
+void           picman_initialize           (Picman                *picman,
+                                          PicmanInitStatusFunc   status_callback);
+void           picman_restore              (Picman                *picman,
+                                          PicmanInitStatusFunc   status_callback);
+gboolean       picman_is_restored          (Picman                *picman);
 
-void           gimp_exit                 (Gimp                *gimp,
+void           picman_exit                 (Picman                *picman,
                                           gboolean             force);
 
-GList        * gimp_get_image_iter       (Gimp                *gimp);
-GList        * gimp_get_display_iter     (Gimp                *gimp);
-GList        * gimp_get_image_windows    (Gimp                *gimp);
-GList        * gimp_get_paint_info_iter  (Gimp                *gimp);
-GList        * gimp_get_tool_info_iter   (Gimp                *gimp);
+GList        * picman_get_image_iter       (Picman                *picman);
+GList        * picman_get_display_iter     (Picman                *picman);
+GList        * picman_get_image_windows    (Picman                *picman);
+GList        * picman_get_paint_info_iter  (Picman                *picman);
+GList        * picman_get_tool_info_iter   (Picman                *picman);
 
-void           gimp_set_global_buffer    (Gimp                *gimp,
-                                          GimpBuffer          *buffer);
+void           picman_set_global_buffer    (Picman                *picman,
+                                          PicmanBuffer          *buffer);
 
-GimpImage    * gimp_create_image         (Gimp                *gimp,
+PicmanImage    * picman_create_image         (Picman                *picman,
                                           gint                 width,
                                           gint                 height,
-                                          GimpImageBaseType    type,
-                                          GimpPrecision        precision,
+                                          PicmanImageBaseType    type,
+                                          PicmanPrecision        precision,
                                           gboolean             attach_comment);
 
-void           gimp_set_default_context  (Gimp                *gimp,
-                                          GimpContext         *context);
-GimpContext  * gimp_get_default_context  (Gimp                *gimp);
+void           picman_set_default_context  (Picman                *picman,
+                                          PicmanContext         *context);
+PicmanContext  * picman_get_default_context  (Picman                *picman);
 
-void           gimp_set_user_context     (Gimp                *gimp,
-                                          GimpContext         *context);
-GimpContext  * gimp_get_user_context     (Gimp                *gimp);
+void           picman_set_user_context     (Picman                *picman,
+                                          PicmanContext         *context);
+PicmanContext  * picman_get_user_context     (Picman                *picman);
 
-GimpToolInfo * gimp_get_tool_info        (Gimp                *gimp,
+PicmanToolInfo * picman_get_tool_info        (Picman                *picman,
                                           const gchar         *tool_name);
 
-void           gimp_message              (Gimp                *gimp,
+void           picman_message              (Picman                *picman,
                                           GObject             *handler,
-                                          GimpMessageSeverity  severity,
+                                          PicmanMessageSeverity  severity,
                                           const gchar         *format,
                                           ...) G_GNUC_PRINTF(4,5);
-void           gimp_message_valist       (Gimp                *gimp,
+void           picman_message_valist       (Picman                *picman,
                                           GObject             *handler,
-                                          GimpMessageSeverity  severity,
+                                          PicmanMessageSeverity  severity,
                                           const gchar         *format,
                                           va_list              args);
-void           gimp_message_literal      (Gimp                *gimp,
+void           picman_message_literal      (Picman                *picman,
                                           GObject             *handler,
-                                          GimpMessageSeverity  severity,
+                                          PicmanMessageSeverity  severity,
                                           const gchar         *message);
 
-void           gimp_image_opened         (Gimp                *gimp,
+void           picman_image_opened         (Picman                *picman,
                                           const gchar         *uri);
 
-gchar        * gimp_get_temp_filename    (Gimp                *gimp,
+gchar        * picman_get_temp_filename    (Picman                *picman,
                                           const gchar         *extension);
 
 
-#endif  /* __GIMP_H__ */
+#endif  /* __PICMAN_H__ */

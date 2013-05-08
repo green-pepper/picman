@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis, and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gimp-transform-resize.h"
-#include "gimp-utils.h"
+#include "picman-transform-resize.h"
+#include "picman-utils.h"
 
 
 #if defined (HAVE_FINITE)
@@ -53,7 +53,7 @@ typedef struct
 } Rectangle;
 
 
-static void      gimp_transform_resize_adjust        (gdouble    dx1,
+static void      picman_transform_resize_adjust        (gdouble    dx1,
                                                       gdouble    dy1,
                                                       gdouble    dx2,
                                                       gdouble    dy2,
@@ -65,7 +65,7 @@ static void      gimp_transform_resize_adjust        (gdouble    dx1,
                                                       gint      *y1,
                                                       gint      *x2,
                                                       gint      *y2);
-static void      gimp_transform_resize_crop          (gdouble    dx1,
+static void      picman_transform_resize_crop          (gdouble    dx1,
                                                       gdouble    dy1,
                                                       gdouble    dx2,
                                                       gdouble    dy2,
@@ -124,8 +124,8 @@ static void      find_maximum_aspect_rectangle       (Rectangle *r,
  * This function wants to be passed the inverse transformation matrix!!
  */
 void
-gimp_transform_resize_boundary (const GimpMatrix3   *inv,
-                                GimpTransformResize  resize,
+picman_transform_resize_boundary (const PicmanMatrix3   *inv,
+                                PicmanTransformResize  resize,
                                 gint                 u1,
                                 gint                 v1,
                                 gint                 u2,
@@ -147,13 +147,13 @@ gimp_transform_resize_boundary (const GimpMatrix3   *inv,
   *y2 = v2;
 
   /* if clipping then just return the original rectangle */
-  if (resize == GIMP_TRANSFORM_RESIZE_CLIP)
+  if (resize == PICMAN_TRANSFORM_RESIZE_CLIP)
     return;
 
-  gimp_matrix3_transform_point (inv, u1, v1, &dx1, &dy1);
-  gimp_matrix3_transform_point (inv, u2, v1, &dx2, &dy2);
-  gimp_matrix3_transform_point (inv, u1, v2, &dx3, &dy3);
-  gimp_matrix3_transform_point (inv, u2, v2, &dx4, &dy4);
+  picman_matrix3_transform_point (inv, u1, v1, &dx1, &dy1);
+  picman_matrix3_transform_point (inv, u2, v1, &dx2, &dy2);
+  picman_matrix3_transform_point (inv, u1, v2, &dx3, &dy3);
+  picman_matrix3_transform_point (inv, u2, v2, &dx4, &dy4);
 
   /*  check if the transformation matrix is valid at all  */
   if (! FINITE (dx1) || ! FINITE (dy1) ||
@@ -163,33 +163,33 @@ gimp_transform_resize_boundary (const GimpMatrix3   *inv,
     {
       g_warning ("invalid transform matrix");
       /* since there is no sensible way to deal with this, just do the same as
-       * with GIMP_TRANSFORM_RESIZE_CLIP: return
+       * with PICMAN_TRANSFORM_RESIZE_CLIP: return
        */
       return;
     }
 
   switch (resize)
     {
-    case GIMP_TRANSFORM_RESIZE_ADJUST:
+    case PICMAN_TRANSFORM_RESIZE_ADJUST:
       /* return smallest rectangle (with sides parallel to x- and y-axis)
        * that surrounds the new points */
-      gimp_transform_resize_adjust (dx1, dy1, dx2, dy2, dx3, dy3, dx4, dy4,
+      picman_transform_resize_adjust (dx1, dy1, dx2, dy2, dx3, dy3, dx4, dy4,
                                     x1, y1, x2, y2);
       break;
 
-    case GIMP_TRANSFORM_RESIZE_CROP:
-      gimp_transform_resize_crop (dx1, dy1, dx2, dy2, dx3, dy3, dx4, dy4,
+    case PICMAN_TRANSFORM_RESIZE_CROP:
+      picman_transform_resize_crop (dx1, dy1, dx2, dy2, dx3, dy3, dx4, dy4,
                                   0.0,
                                   x1, y1, x2, y2);
       break;
 
-    case GIMP_TRANSFORM_RESIZE_CROP_WITH_ASPECT:
-      gimp_transform_resize_crop (dx1, dy1, dx2, dy2, dx3, dy3, dx4, dy4,
+    case PICMAN_TRANSFORM_RESIZE_CROP_WITH_ASPECT:
+      picman_transform_resize_crop (dx1, dy1, dx2, dy2, dx3, dy3, dx4, dy4,
                                   ((gdouble) u2 - u1) / (v2 - v1),
                                   x1, y1, x2, y2);
       break;
 
-    case GIMP_TRANSFORM_RESIZE_CLIP:
+    case PICMAN_TRANSFORM_RESIZE_CLIP:
       /* Remove warning about not handling all enum values. We handle
        * this case in the beginning of the function
        */
@@ -208,7 +208,7 @@ gimp_transform_resize_boundary (const GimpMatrix3   *inv,
  * y-axis) that contains the points d1 to d4
  */
 static void
-gimp_transform_resize_adjust (gdouble  dx1,
+picman_transform_resize_adjust (gdouble  dx1,
                               gdouble  dy1,
                               gdouble  dx2,
                               gdouble  dy2,
@@ -229,7 +229,7 @@ gimp_transform_resize_adjust (gdouble  dx1,
 }
 
 static void
-gimp_transform_resize_crop (gdouble  dx1,
+picman_transform_resize_crop (gdouble  dx1,
                             gdouble  dy1,
                             gdouble  dx2,
                             gdouble  dy2,
@@ -279,7 +279,7 @@ gimp_transform_resize_crop (gdouble  dx1,
     }
 
   /* find the convex hull using Jarvis's March as the points are passed
-   * in different orders due to gimp_matrix3_transform_point()
+   * in different orders due to picman_matrix3_transform_point()
    */
   min = 0;
   for (i = 0; i < 4; i++)
@@ -366,7 +366,7 @@ gimp_transform_resize_crop (gdouble  dx1,
   if (r.area == 0)
     {
       /* saveguard if something went wrong, adjust and give warning */
-      gimp_transform_resize_adjust (dx1, dy1, dx2, dy2, dx3, dy3, dx4, dy4,
+      picman_transform_resize_adjust (dx1, dy1, dx2, dy2, dx3, dy3, dx4, dy4,
                                     x1, y1, x2, y2);
       g_warning ("no rectangle found by algorithm, no cropping done");
       return;

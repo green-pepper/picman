@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppixelrgn.c
+ * picmanpixelrgn.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,14 +23,14 @@
 #include <string.h>
 #include <stdarg.h>
 
-#define GIMP_DISABLE_DEPRECATION_WARNINGS
+#define PICMAN_DISABLE_DEPRECATION_WARNINGS
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimppixelrgn
- * @title: gimppixelrgn
+ * SECTION: picmanpixelrgn
+ * @title: picmanpixelrgn
  * @short_description: Functions for operating on pixel regions.
  *
  * Functions for operating on pixel regions. These functions provide
@@ -38,23 +38,23 @@
  **/
 
 
-#define TILE_WIDTH  gimp_tile_width()
-#define TILE_HEIGHT gimp_tile_height()
+#define TILE_WIDTH  picman_tile_width()
+#define TILE_HEIGHT picman_tile_height()
 
 
-typedef struct _GimpPixelRgnHolder    GimpPixelRgnHolder;
-typedef struct _GimpPixelRgnIterator  GimpPixelRgnIterator;
+typedef struct _PicmanPixelRgnHolder    PicmanPixelRgnHolder;
+typedef struct _PicmanPixelRgnIterator  PicmanPixelRgnIterator;
 
-struct _GimpPixelRgnHolder
+struct _PicmanPixelRgnHolder
 {
-  GimpPixelRgn *pr;
+  PicmanPixelRgn *pr;
   guchar       *original_data;
   gint          startx;
   gint          starty;
   gint          count;
 };
 
-struct _GimpPixelRgnIterator
+struct _PicmanPixelRgnIterator
 {
   GSList *pixel_regions;
   gint    region_width;
@@ -65,16 +65,16 @@ struct _GimpPixelRgnIterator
 };
 
 
-static gint     gimp_get_portion_width    (GimpPixelRgnIterator *pri);
-static gint     gimp_get_portion_height   (GimpPixelRgnIterator *pri);
-static gpointer gimp_pixel_rgns_configure (GimpPixelRgnIterator *pri);
-static void     gimp_pixel_rgn_configure  (GimpPixelRgnHolder   *prh,
-                                           GimpPixelRgnIterator *pri);
+static gint     picman_get_portion_width    (PicmanPixelRgnIterator *pri);
+static gint     picman_get_portion_height   (PicmanPixelRgnIterator *pri);
+static gpointer picman_pixel_rgns_configure (PicmanPixelRgnIterator *pri);
+static void     picman_pixel_rgn_configure  (PicmanPixelRgnHolder   *prh,
+                                           PicmanPixelRgnIterator *pri);
 
 /**
- * gimp_pixel_rgn_init:
- * @pr:        a pointer to a #GimpPixelRgn variable.
- * @drawable:  the #GimpDrawable the new region will be attached to.
+ * picman_pixel_rgn_init:
+ * @pr:        a pointer to a #PicmanPixelRgn variable.
+ * @drawable:  the #PicmanDrawable the new region will be attached to.
  * @x:         the x coordinate of the top-left pixel of the region in the
  *             @drawable.
  * @y:         the y coordinate of the top-left pixel of the region in the
@@ -109,7 +109,7 @@ static void     gimp_pixel_rgn_configure  (GimpPixelRgnHolder   *prh,
  *                                    the shadow tiles. It is common
  *                                    practice to write to the shadow
  *                                    tiles and then use
- *                                    gimp_drawable_merge_shadow() to
+ *                                    picman_drawable_merge_shadow() to
  *                                    merge the changes from the shadow
  *                                    tiles using the current selection
  *                                    as a mask.
@@ -121,8 +121,8 @@ static void     gimp_pixel_rgn_configure  (GimpPixelRgnHolder   *prh,
  *                                    expected.
  **/
 void
-gimp_pixel_rgn_init (GimpPixelRgn *pr,
-                     GimpDrawable *drawable,
+picman_pixel_rgn_init (PicmanPixelRgn *pr,
+                     PicmanDrawable *drawable,
                      gint          x,
                      gint          y,
                      gint          width,
@@ -148,8 +148,8 @@ gimp_pixel_rgn_init (GimpPixelRgn *pr,
 }
 
 /**
- * gimp_pixel_rgn_resize:
- * @pr:      a pointer to a previously initialized #GimpPixelRgn.
+ * picman_pixel_rgn_resize:
+ * @pr:      a pointer to a previously initialized #PicmanPixelRgn.
  * @x:       the x coordinate of the new position of the region's
  *           top-left corner.
  * @y:       the y coordinate of the new position of the region's
@@ -160,7 +160,7 @@ gimp_pixel_rgn_init (GimpPixelRgn *pr,
  * Change the position and size of a previously initialized pixel region.
  **/
 void
-gimp_pixel_rgn_resize (GimpPixelRgn *pr,
+picman_pixel_rgn_resize (PicmanPixelRgn *pr,
                        gint          x,
                        gint          y,
                        gint          width,
@@ -177,8 +177,8 @@ gimp_pixel_rgn_resize (GimpPixelRgn *pr,
 }
 
 /**
- * gimp_pixel_rgn_get_pixel:
- * @pr:    a pointer to a previously initialized #GimpPixelRgn.
+ * picman_pixel_rgn_get_pixel:
+ * @pr:    a pointer to a previously initialized #PicmanPixelRgn.
  * @buf:   a pointer to an array of #guchar
  * @x:     the x coordinate of the wanted pixel (relative to the drawable)
  * @y:     the y coordinate of the wanted pixel (relative to the drawable)
@@ -190,12 +190,12 @@ gimp_pixel_rgn_resize (GimpPixelRgn *pr,
  * rgb drawable and 4 #guchar for rgb with alpha drawable.
  **/
 void
-gimp_pixel_rgn_get_pixel (GimpPixelRgn *pr,
+picman_pixel_rgn_get_pixel (PicmanPixelRgn *pr,
                           guchar       *buf,
                           gint          x,
                           gint          y)
 {
-  GimpTile     *tile;
+  PicmanTile     *tile;
   const guchar *tile_data;
   gint          b;
 
@@ -203,8 +203,8 @@ gimp_pixel_rgn_get_pixel (GimpPixelRgn *pr,
   g_return_if_fail (x >= 0 && x < pr->drawable->width);
   g_return_if_fail (y >= 0 && y < pr->drawable->height);
 
-  tile = gimp_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
-  gimp_tile_ref (tile);
+  tile = picman_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
+  picman_tile_ref (tile);
 
   tile_data = (tile->data +
                tile->bpp * (tile->ewidth * (y % TILE_HEIGHT) + (x % TILE_WIDTH)));
@@ -212,12 +212,12 @@ gimp_pixel_rgn_get_pixel (GimpPixelRgn *pr,
   for (b = 0; b < tile->bpp; b++)
     *buf++ = *tile_data++;
 
-  gimp_tile_unref (tile, FALSE);
+  picman_tile_unref (tile, FALSE);
 }
 
 /**
- * gimp_pixel_rgn_get_row:
- * @pr:     a pointer to a previously initialized #GimpPixelRgn.
+ * picman_pixel_rgn_get_row:
+ * @pr:     a pointer to a previously initialized #PicmanPixelRgn.
  * @buf:    a pointer to an array of #guchar
  * @x:      the x coordinate of the first pixel (relative to the drawable).
  * @y:      the y coordinate of the first pixel (relative to the drawable).
@@ -228,7 +228,7 @@ gimp_pixel_rgn_get_pixel (GimpPixelRgn *pr,
  * @buf should be large enough to hold all these values.
  **/
 void
-gimp_pixel_rgn_get_row (GimpPixelRgn *pr,
+picman_pixel_rgn_get_row (PicmanPixelRgn *pr,
                         guchar       *buf,
                         gint          x,
                         gint          y,
@@ -246,13 +246,13 @@ gimp_pixel_rgn_get_row (GimpPixelRgn *pr,
 
   while (x < end)
     {
-      GimpTile     *tile;
+      PicmanTile     *tile;
       const guchar *tile_data;
       gint          inc, min;
       gint          boundary;
 
-      tile = gimp_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
-      gimp_tile_ref (tile);
+      tile = picman_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
+      picman_tile_ref (tile);
 
       tile_data = (tile->data +
                    tile->bpp * (tile->ewidth * (y % TILE_HEIGHT) + (x % TILE_WIDTH)));
@@ -267,13 +267,13 @@ gimp_pixel_rgn_get_row (GimpPixelRgn *pr,
       x = min;
       buf += inc;
 
-      gimp_tile_unref (tile, FALSE);
+      picman_tile_unref (tile, FALSE);
     }
 }
 
 /**
- * gimp_pixel_rgn_get_col:
- * @pr:     a pointer to a previously initialized #GimpPixelRgn.
+ * picman_pixel_rgn_get_col:
+ * @pr:     a pointer to a previously initialized #PicmanPixelRgn.
  * @buf:    a pointer to an array of #guchar
  * @x:      the x coordinate of the first pixel (relative to the drawable).
  * @y:      the y coordinate of the first pixel (relative to the drawable).
@@ -285,7 +285,7 @@ gimp_pixel_rgn_get_row (GimpPixelRgn *pr,
  *
  **/
 void
-gimp_pixel_rgn_get_col (GimpPixelRgn *pr,
+picman_pixel_rgn_get_col (PicmanPixelRgn *pr,
                         guchar       *buf,
                         gint          x,
                         gint          y,
@@ -303,14 +303,14 @@ gimp_pixel_rgn_get_col (GimpPixelRgn *pr,
 
   while (y < end)
     {
-      GimpTile     *tile;
+      PicmanTile     *tile;
       const guchar *tile_data;
       gint          inc;
       gint          boundary;
       gint          b;
 
-      tile = gimp_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
-      gimp_tile_ref (tile);
+      tile = picman_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
+      picman_tile_ref (tile);
 
       tile_data = (tile->data +
                    tile->bpp * (tile->ewidth * (y % TILE_HEIGHT) + (x % TILE_WIDTH)));
@@ -326,13 +326,13 @@ gimp_pixel_rgn_get_col (GimpPixelRgn *pr,
           tile_data += inc;
         }
 
-      gimp_tile_unref (tile, FALSE);
+      picman_tile_unref (tile, FALSE);
     }
 }
 
 /**
- * gimp_pixel_rgn_get_rect:
- * @pr:     a pointer to a previously initialized #GimpPixelRgn.
+ * picman_pixel_rgn_get_rect:
+ * @pr:     a pointer to a previously initialized #PicmanPixelRgn.
  * @buf:    a pointer to an array of #guchar
  * @x:      the x coordinate of the first pixel (relative to the drawable).
  * @y:      the y coordinate of the first pixel (relative to the drawable).
@@ -345,7 +345,7 @@ gimp_pixel_rgn_get_col (GimpPixelRgn *pr,
  * @buf should be large enough to hold all these values (@width*@height*bpp).
  **/
 void
-gimp_pixel_rgn_get_rect (GimpPixelRgn *pr,
+picman_pixel_rgn_get_rect (PicmanPixelRgn *pr,
                          guchar       *buf,
                          gint          x,
                          gint          y,
@@ -382,10 +382,10 @@ gimp_pixel_rgn_get_rect (GimpPixelRgn *pr,
 
       while (x < xend)
         {
-          GimpTile *tile;
+          PicmanTile *tile;
 
-          tile = gimp_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
-          gimp_tile_ref (tile);
+          tile = picman_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
+          picman_tile_ref (tile);
 
           xstep = tile->ewidth - (x % TILE_WIDTH);
           ystep = tile->eheight - (y % TILE_HEIGHT);
@@ -406,7 +406,7 @@ gimp_pixel_rgn_get_rect (GimpPixelRgn *pr,
               memcpy (dest, src, (xboundary - x) * bpp);
             }
 
-          gimp_tile_unref (tile, FALSE);
+          picman_tile_unref (tile, FALSE);
           x += xstep;
         }
 
@@ -415,8 +415,8 @@ gimp_pixel_rgn_get_rect (GimpPixelRgn *pr,
 }
 
 /**
- * gimp_pixel_rgn_set_pixel:
- * @pr:   a pointer to a previously initialized #GimpPixelRgn.
+ * picman_pixel_rgn_set_pixel:
+ * @pr:   a pointer to a previously initialized #PicmanPixelRgn.
  * @buf:  a pointer to an array of #guchar.
  * @x:    the x coordinate of the pixel (relative to the drawable).
  * @y:    the y coordinate of the pixel (relative to the drawable).
@@ -424,12 +424,12 @@ gimp_pixel_rgn_get_rect (GimpPixelRgn *pr,
  * Set the pixel at (@x, @y) to the values from @buf.
  **/
 void
-gimp_pixel_rgn_set_pixel (GimpPixelRgn *pr,
+picman_pixel_rgn_set_pixel (PicmanPixelRgn *pr,
                           const guchar *buf,
                           gint          x,
                           gint          y)
 {
-  GimpTile *tile;
+  PicmanTile *tile;
   guchar   *tile_data;
   gint      b;
 
@@ -438,8 +438,8 @@ gimp_pixel_rgn_set_pixel (GimpPixelRgn *pr,
   g_return_if_fail (x >= 0 && x < pr->drawable->width);
   g_return_if_fail (y >= 0 && y < pr->drawable->height);
 
-  tile = gimp_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
-  gimp_tile_ref (tile);
+  tile = picman_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
+  picman_tile_ref (tile);
 
   tile_data = tile->data + tile->bpp * (tile->ewidth *
                                         (y % TILE_HEIGHT) + (x % TILE_WIDTH));
@@ -447,12 +447,12 @@ gimp_pixel_rgn_set_pixel (GimpPixelRgn *pr,
   for (b = 0; b < tile->bpp; b++)
     *tile_data++ = *buf++;
 
-  gimp_tile_unref (tile, TRUE);
+  picman_tile_unref (tile, TRUE);
 }
 
 /**
- * gimp_pixel_rgn_set_row:
- * @pr:     a pointer to a previously initialized #GimpPixelRgn.
+ * picman_pixel_rgn_set_row:
+ * @pr:     a pointer to a previously initialized #PicmanPixelRgn.
  * @buf:    a pointer to an array of #guchar
  * @x:      the x coordinate of the first pixel (relative to the drawable).
  * @y:      the y coordinate of the first pixel (relative to the drawable).
@@ -463,13 +463,13 @@ gimp_pixel_rgn_set_pixel (GimpPixelRgn *pr,
  * @buf should be large enough to hold all these values.
  **/
 void
-gimp_pixel_rgn_set_row (GimpPixelRgn *pr,
+picman_pixel_rgn_set_row (PicmanPixelRgn *pr,
                         const guchar *buf,
                         gint          x,
                         gint          y,
                         gint          width)
 {
-  GimpTile *tile;
+  PicmanTile *tile;
   guchar   *tile_data;
   gint      inc, min;
   gint      end;
@@ -485,8 +485,8 @@ gimp_pixel_rgn_set_row (GimpPixelRgn *pr,
 
   while (x < end)
     {
-      tile = gimp_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
-      gimp_tile_ref (tile);
+      tile = picman_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
+      picman_tile_ref (tile);
 
       tile_data = (tile->data +
                    tile->bpp * (tile->ewidth * (y % TILE_HEIGHT) + (x % TILE_WIDTH)));
@@ -501,13 +501,13 @@ gimp_pixel_rgn_set_row (GimpPixelRgn *pr,
       x = min;
       buf += inc;
 
-      gimp_tile_unref (tile, TRUE);
+      picman_tile_unref (tile, TRUE);
     }
 }
 
 /**
- * gimp_pixel_rgn_set_col:
- * @pr:     a pointer to a previously initialized #GimpPixelRgn.
+ * picman_pixel_rgn_set_col:
+ * @pr:     a pointer to a previously initialized #PicmanPixelRgn.
  * @buf:    a pointer to an array of #guchar
  * @x:      the x coordinate of the first pixel (relative to the drawable).
  * @y:      the y coordinate of the first pixel (relative to the drawable).
@@ -518,7 +518,7 @@ gimp_pixel_rgn_set_row (GimpPixelRgn *pr,
  * @buf should be large enough to hold all these values.
  **/
 void
-gimp_pixel_rgn_set_col (GimpPixelRgn *pr,
+picman_pixel_rgn_set_col (PicmanPixelRgn *pr,
                         const guchar *buf,
                         gint          x,
                         gint          y,
@@ -536,13 +536,13 @@ gimp_pixel_rgn_set_col (GimpPixelRgn *pr,
 
   while (y < end)
     {
-      GimpTile *tile;
+      PicmanTile *tile;
       guchar   *tile_data;
       gint      inc;
       gint      boundary;
 
-      tile = gimp_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
-      gimp_tile_ref (tile);
+      tile = picman_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
+      picman_tile_ref (tile);
 
       tile_data = (tile->data +
                    tile->bpp * (tile->ewidth * (y % TILE_HEIGHT) + (x % TILE_WIDTH)));
@@ -560,13 +560,13 @@ gimp_pixel_rgn_set_col (GimpPixelRgn *pr,
           tile_data += inc;
         }
 
-      gimp_tile_unref (tile, TRUE);
+      picman_tile_unref (tile, TRUE);
     }
 }
 
 /**
- * gimp_pixel_rgn_set_rect:
- * @pr:     a pointer to a previously initialized #GimpPixelRgn.
+ * picman_pixel_rgn_set_rect:
+ * @pr:     a pointer to a previously initialized #PicmanPixelRgn.
  * @buf:    a pointer to an array of #guchar
  * @x:      the x coordinate of the first pixel (relative to the drawable).
  * @y:      the y coordinate of the first pixel (relative to the drawable).
@@ -579,7 +579,7 @@ gimp_pixel_rgn_set_col (GimpPixelRgn *pr,
  * @buf should be large enough to hold all these values (@width*@height*bpp).
  **/
 void
-gimp_pixel_rgn_set_rect (GimpPixelRgn *pr,
+picman_pixel_rgn_set_rect (PicmanPixelRgn *pr,
                          const guchar *buf,
                          gint          x,
                          gint          y,
@@ -616,10 +616,10 @@ gimp_pixel_rgn_set_rect (GimpPixelRgn *pr,
 
       while (x < xend)
         {
-          GimpTile *tile;
+          PicmanTile *tile;
 
-          tile = gimp_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
-          gimp_tile_ref (tile);
+          tile = picman_drawable_get_tile2 (pr->drawable, pr->shadow, x, y);
+          picman_tile_ref (tile);
 
           xstep = tile->ewidth - (x % TILE_WIDTH);
           ystep = tile->eheight - (y % TILE_HEIGHT);
@@ -640,7 +640,7 @@ gimp_pixel_rgn_set_rect (GimpPixelRgn *pr,
               memcpy (dest, src, (xboundary - x) * bpp);
             }
 
-          gimp_tile_unref (tile, TRUE);
+          picman_tile_unref (tile, TRUE);
           x += xstep;
         }
 
@@ -649,9 +649,9 @@ gimp_pixel_rgn_set_rect (GimpPixelRgn *pr,
 }
 
 /**
- * gimp_pixel_rgns_register2:
+ * picman_pixel_rgns_register2:
  * @nrgns: the number of regions to register.
- * @prs:   an array of @nrgns pointers to initialized #GimpPixelRgn.
+ * @prs:   an array of @nrgns pointers to initialized #PicmanPixelRgn.
  *
  * It takes a number of initialized regions of the same size and provides a
  * pixel region iterator the iterator can be used to iterate over the
@@ -662,27 +662,27 @@ gimp_pixel_rgn_set_rect (GimpPixelRgn *pr,
  * Note that the given regions themselves are changed by this function, so
  * they are resized to the first subsets.
  *
- * This function has to be used together with gimp_pixel_rgns_process in a loop.
+ * This function has to be used together with picman_pixel_rgns_process in a loop.
  *
  * Returns: a #gpointer to a regions iterator.
  **/
 gpointer
-gimp_pixel_rgns_register2 (gint           nrgns,
-                           GimpPixelRgn **prs)
+picman_pixel_rgns_register2 (gint           nrgns,
+                           PicmanPixelRgn **prs)
 {
-  GimpPixelRgnIterator *pri;
+  PicmanPixelRgnIterator *pri;
   gboolean              found;
 
   g_return_val_if_fail (nrgns > 0, NULL);
   g_return_val_if_fail (prs != NULL, NULL);
 
-  pri = g_slice_new0 (GimpPixelRgnIterator);
+  pri = g_slice_new0 (PicmanPixelRgnIterator);
 
   found = FALSE;
   while (nrgns --)
     {
-      GimpPixelRgn       *pr  = prs[nrgns];
-      GimpPixelRgnHolder *prh = g_slice_new0 (GimpPixelRgnHolder);
+      PicmanPixelRgn       *pr  = prs[nrgns];
+      PicmanPixelRgnHolder *prh = g_slice_new0 (PicmanPixelRgnHolder);
 
       prh->pr = pr;
 
@@ -709,67 +709,67 @@ gimp_pixel_rgns_register2 (gint           nrgns,
       pri->pixel_regions = g_slist_prepend (pri->pixel_regions, prh);
     }
 
-  return gimp_pixel_rgns_configure (pri);
+  return picman_pixel_rgns_configure (pri);
 }
 
 /**
- * gimp_pixel_rgns_register:
+ * picman_pixel_rgns_register:
  * @nrgns: the number of regions to register.
- * @...:   @nrgns pointers to #GimpPixelRgn.
+ * @...:   @nrgns pointers to #PicmanPixelRgn.
  *
- * This is the varargs version of #gimp_pixel_rgns_register2.
+ * This is the varargs version of #picman_pixel_rgns_register2.
  *
  * Returns: a #gpointer to a regions iterator.
  **/
 gpointer
-gimp_pixel_rgns_register (gint nrgns,
+picman_pixel_rgns_register (gint nrgns,
                           ...)
 {
-  GimpPixelRgn **prs;
+  PicmanPixelRgn **prs;
   gint           n;
   va_list        ap;
 
   g_return_val_if_fail (nrgns > 0, NULL);
 
-  prs = g_newa (GimpPixelRgn *, nrgns);
+  prs = g_newa (PicmanPixelRgn *, nrgns);
 
   va_start (ap, nrgns);
 
   for (n = nrgns; n--; )
-    prs[n] = va_arg (ap, GimpPixelRgn *);
+    prs[n] = va_arg (ap, PicmanPixelRgn *);
 
   va_end (ap);
 
-  return gimp_pixel_rgns_register2 (nrgns, prs);
+  return picman_pixel_rgns_register2 (nrgns, prs);
 }
 
 /**
- * gimp_pixel_rgns_process:
- * @pri_ptr: a regions iterator returned by #gimp_pixel_rgns_register,
- *           #gimp_pixel_rgns_register2 or #gimp_pixel_rgns_process.
+ * picman_pixel_rgns_process:
+ * @pri_ptr: a regions iterator returned by #picman_pixel_rgns_register,
+ *           #picman_pixel_rgns_register2 or #picman_pixel_rgns_process.
  *
  * This function update the regions registered previously with one of the
- * #gimp_pixel_rgns_register* functions to their next tile.
+ * #picman_pixel_rgns_register* functions to their next tile.
  *
  * Returns: a #gpointer to a new regions iterator or #NULL if there isn't
  * any tiles left.
  **/
 gpointer
-gimp_pixel_rgns_process (gpointer pri_ptr)
+picman_pixel_rgns_process (gpointer pri_ptr)
 {
-  GimpPixelRgnIterator *pri;
+  PicmanPixelRgnIterator *pri;
   GSList               *list;
 
   g_return_val_if_fail (pri_ptr != NULL, NULL);
 
-  pri = (GimpPixelRgnIterator*) pri_ptr;
+  pri = (PicmanPixelRgnIterator*) pri_ptr;
   pri->process_count++;
 
   /*  Unref all referenced tiles and increment the offsets  */
 
   for (list = pri->pixel_regions; list; list = list->next)
     {
-      GimpPixelRgnHolder *prh = list->data;
+      PicmanPixelRgnHolder *prh = list->data;
 
       if ((prh->pr != NULL) && (prh->pr->process_count != pri->process_count))
         {
@@ -783,11 +783,11 @@ gimp_pixel_rgns_process (gpointer pri_ptr)
            */
           if (prh->pr->drawable)
             {
-              GimpTile *tile = gimp_drawable_get_tile2 (prh->pr->drawable,
+              PicmanTile *tile = picman_drawable_get_tile2 (prh->pr->drawable,
                                                         prh->pr->shadow,
                                                         prh->pr->x,
                                                         prh->pr->y);
-              gimp_tile_unref (tile, prh->pr->dirty);
+              picman_tile_unref (tile, prh->pr->dirty);
             }
 
           prh->pr->x += pri->portion_width;
@@ -800,12 +800,12 @@ gimp_pixel_rgns_process (gpointer pri_ptr)
         }
     }
 
-  return gimp_pixel_rgns_configure (pri);
+  return picman_pixel_rgns_configure (pri);
 }
 
 
 static gint
-gimp_get_portion_width (GimpPixelRgnIterator *pri)
+picman_get_portion_width (PicmanPixelRgnIterator *pri)
 {
   GSList *list;
   gint    min_width = G_MAXINT;
@@ -818,7 +818,7 @@ gimp_get_portion_width (GimpPixelRgnIterator *pri)
 
   for (list = pri->pixel_regions; list; list = list->next)
     {
-      GimpPixelRgnHolder *prh = list->data;
+      PicmanPixelRgnHolder *prh = list->data;
 
       if (prh->pr)
         {
@@ -847,7 +847,7 @@ gimp_get_portion_width (GimpPixelRgnIterator *pri)
 }
 
 static gint
-gimp_get_portion_height (GimpPixelRgnIterator *pri)
+picman_get_portion_height (PicmanPixelRgnIterator *pri)
 {
   GSList *list;
   gint    min_height = G_MAXINT;
@@ -860,7 +860,7 @@ gimp_get_portion_height (GimpPixelRgnIterator *pri)
 
   for (list = pri->pixel_regions; list; list = list->next)
     {
-      GimpPixelRgnHolder *prh = list->data;
+      PicmanPixelRgnHolder *prh = list->data;
 
       if (prh->pr)
         {
@@ -889,23 +889,23 @@ gimp_get_portion_height (GimpPixelRgnIterator *pri)
 }
 
 static gpointer
-gimp_pixel_rgns_configure (GimpPixelRgnIterator *pri)
+picman_pixel_rgns_configure (PicmanPixelRgnIterator *pri)
 {
   GSList *list;
 
   /*  Determine the portion width and height  */
-  pri->portion_width  = gimp_get_portion_width (pri);
-  pri->portion_height = gimp_get_portion_height (pri);
+  pri->portion_width  = picman_get_portion_width (pri);
+  pri->portion_height = picman_get_portion_height (pri);
 
   if (pri->portion_width  == 0 ||
       pri->portion_height == 0)
     {
       /*  free the pixel regions list  */
       for (list = pri->pixel_regions; list; list = list->next)
-        g_slice_free (GimpPixelRgnHolder, list->data);
+        g_slice_free (PicmanPixelRgnHolder, list->data);
 
       g_slist_free (pri->pixel_regions);
-      g_slice_free (GimpPixelRgnIterator, pri);
+      g_slice_free (PicmanPixelRgnIterator, pri);
 
       return NULL;
     }
@@ -914,12 +914,12 @@ gimp_pixel_rgns_configure (GimpPixelRgnIterator *pri)
 
   for (list = pri->pixel_regions; list; list = list->next)
     {
-      GimpPixelRgnHolder *prh = list->data;
+      PicmanPixelRgnHolder *prh = list->data;
 
       if ((prh->pr != NULL) && (prh->pr->process_count != pri->process_count))
         {
           prh->pr->process_count++;
-          gimp_pixel_rgn_configure (prh, pri);
+          picman_pixel_rgn_configure (prh, pri);
         }
     }
 
@@ -927,8 +927,8 @@ gimp_pixel_rgns_configure (GimpPixelRgnIterator *pri)
 }
 
 static void
-gimp_pixel_rgn_configure (GimpPixelRgnHolder   *prh,
-                          GimpPixelRgnIterator *pri)
+picman_pixel_rgn_configure (PicmanPixelRgnHolder   *prh,
+                          PicmanPixelRgnIterator *pri)
 {
   /* Configure the rowstride and data pointer for the pixel region
    * based on the current offsets into the region and whether the
@@ -936,15 +936,15 @@ gimp_pixel_rgn_configure (GimpPixelRgnHolder   *prh,
    */
   if (prh->pr->drawable)
     {
-      GimpTile *tile;
+      PicmanTile *tile;
       gint      offx;
       gint      offy;
 
-      tile = gimp_drawable_get_tile2 (prh->pr->drawable,
+      tile = picman_drawable_get_tile2 (prh->pr->drawable,
                                       prh->pr->shadow,
                                       prh->pr->x,
                                       prh->pr->y);
-      gimp_tile_ref (tile);
+      picman_tile_ref (tile);
 
       offx = prh->pr->x % TILE_WIDTH;
       offy = prh->pr->y % TILE_HEIGHT;

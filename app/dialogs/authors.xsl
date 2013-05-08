@@ -13,7 +13,7 @@
     <xsl:apply-templates select="dc:contributor[contains(@role, $role) and number(@last-active) >= 2.8]" />
   </xsl:template>
 
-  <xsl:template match="/dc:gimp-authors">
+  <xsl:template match="/dc:picman-authors">
 <xsl:text>
 /* NOTE: This file is auto-generated from authors.xml, do not edit it. */
 

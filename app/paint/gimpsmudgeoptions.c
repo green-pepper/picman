@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "paint-types.h"
 
-#include "gimpsmudgeoptions.h"
+#include "picmansmudgeoptions.h"
 
 
 #define SMUDGE_DEFAULT_RATE 50.0
@@ -36,46 +36,46 @@ enum
 };
 
 
-static void   gimp_smudge_options_set_property (GObject      *object,
+static void   picman_smudge_options_set_property (GObject      *object,
                                                 guint         property_id,
                                                 const GValue *value,
                                                 GParamSpec   *pspec);
-static void   gimp_smudge_options_get_property (GObject      *object,
+static void   picman_smudge_options_get_property (GObject      *object,
                                                 guint         property_id,
                                                 GValue       *value,
                                                 GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpSmudgeOptions, gimp_smudge_options,
-               GIMP_TYPE_PAINT_OPTIONS)
+G_DEFINE_TYPE (PicmanSmudgeOptions, picman_smudge_options,
+               PICMAN_TYPE_PAINT_OPTIONS)
 
 
 static void
-gimp_smudge_options_class_init (GimpSmudgeOptionsClass *klass)
+picman_smudge_options_class_init (PicmanSmudgeOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_smudge_options_set_property;
-  object_class->get_property = gimp_smudge_options_get_property;
+  object_class->set_property = picman_smudge_options_set_property;
+  object_class->get_property = picman_smudge_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_RATE,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_RATE,
                                    "rate", NULL,
                                    0.0, 100.0, SMUDGE_DEFAULT_RATE,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_smudge_options_init (GimpSmudgeOptions *options)
+picman_smudge_options_init (PicmanSmudgeOptions *options)
 {
 }
 
 static void
-gimp_smudge_options_set_property (GObject      *object,
+picman_smudge_options_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  GimpSmudgeOptions *options = GIMP_SMUDGE_OPTIONS (object);
+  PicmanSmudgeOptions *options = PICMAN_SMUDGE_OPTIONS (object);
 
   switch (property_id)
     {
@@ -89,12 +89,12 @@ gimp_smudge_options_set_property (GObject      *object,
 }
 
 static void
-gimp_smudge_options_get_property (GObject    *object,
+picman_smudge_options_get_property (GObject    *object,
                                     guint       property_id,
                                     GValue     *value,
                                     GParamSpec *pspec)
 {
-  GimpSmudgeOptions *options = GIMP_SMUDGE_OPTIONS (object);
+  PicmanSmudgeOptions *options = PICMAN_SMUDGE_OPTIONS (object);
 
   switch (property_id)
     {

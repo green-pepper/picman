@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimphintbox.h
- * Copyright (C) 2006 Sven Neumann <sven@gimp.org>
+ * picmanhintbox.h
+ * Copyright (C) 2006 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,25 +19,25 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_HINT_BOX_H__
-#define __GIMP_HINT_BOX_H__
+#ifndef __PICMAN_HINT_BOX_H__
+#define __PICMAN_HINT_BOX_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_HINT_BOX  (gimp_hint_box_get_type ())
+#define PICMAN_TYPE_HINT_BOX  (picman_hint_box_get_type ())
 
-GType       gimp_hint_box_get_type (void) G_GNUC_CONST;
+GType       picman_hint_box_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_hint_box_new      (const gchar *hint);
+GtkWidget * picman_hint_box_new      (const gchar *hint);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_HINT_BOX_H__ */
+#endif /* __PICMAN_HINT_BOX_H__ */

@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub image_add_hguide {
     $blurb = 'Add a horizontal guide to an image.';
@@ -42,12 +42,12 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (yposition <= gimp_image_get_height (image))
+  if (yposition <= picman_image_get_height (image))
     {
-      GimpGuide *g;
+      PicmanGuide *g;
 
-      g = gimp_image_add_hguide (image, yposition, TRUE);
-      guide = gimp_guide_get_ID (g);
+      g = picman_image_add_hguide (image, yposition, TRUE);
+      guide = picman_guide_get_ID (g);
     }
   else
     success = FALSE;
@@ -82,12 +82,12 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (xposition <= gimp_image_get_width (image))
+  if (xposition <= picman_image_get_width (image))
     {
-      GimpGuide *g;
+      PicmanGuide *g;
 
-      g = gimp_image_add_vguide (image, xposition, TRUE);
-      guide = gimp_guide_get_ID (g);
+      g = picman_image_add_vguide (image, xposition, TRUE);
+      guide = picman_guide_get_ID (g);
     }
   else
     success = FALSE;
@@ -116,10 +116,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpGuide *g = gimp_image_get_guide (image, guide);
+  PicmanGuide *g = picman_image_get_guide (image, guide);
 
   if (g)
-    gimp_image_remove_guide (image, g, TRUE);
+    picman_image_remove_guide (image, g, TRUE);
   else
     success = FALSE;
 }
@@ -154,10 +154,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpGuide *g = gimp_image_get_next_guide (image, guide, &success);
+  PicmanGuide *g = picman_image_get_next_guide (image, guide, &success);
 
   if (g)
-    next_guide = gimp_guide_get_ID (g);
+    next_guide = picman_guide_get_ID (g);
 }
 CODE
     );
@@ -182,18 +182,18 @@ HELP
 
     @outargs = (
 	{ name => 'orientation',
-	  type => 'enum GimpOrientationType (no GIMP_ORIENTATION_UNKNOWN)',
+	  type => 'enum PicmanOrientationType (no PICMAN_ORIENTATION_UNKNOWN)',
 	  desc => "The guide's orientation",
-	  libdef => 'GIMP_ORIENTATION_UNKNOWN' }
+	  libdef => 'PICMAN_ORIENTATION_UNKNOWN' }
     );
 
     %invoke = (
 	code => <<'CODE'
 {
-  GimpGuide *g = gimp_image_get_guide (image, guide);
+  PicmanGuide *g = picman_image_get_guide (image, guide);
 
   if (g)
-    orientation = gimp_guide_get_orientation (g);
+    orientation = picman_guide_get_orientation (g);
   else
     success = FALSE;
 }
@@ -226,10 +226,10 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  GimpGuide *g = gimp_image_get_guide (image, guide);
+  PicmanGuide *g = picman_image_get_guide (image, guide);
 
   if (g)
-    position = gimp_guide_get_position (g);
+    position = picman_guide_get_position (g);
   else
     success = FALSE;
 }
@@ -238,7 +238,7 @@ CODE
 }
 
 
-@headers = qw("core/gimpguide.h" "core/gimpimage-guides.h" "core/gimpimage-undo-push.h");
+@headers = qw("core/picmanguide.h" "core/picmanimage-guides.h" "core/picmanimage-undo-push.h");
 
 @procs = qw(image_add_hguide image_add_vguide image_delete_guide
 	    image_find_next_guide image_get_guide_orientation
@@ -247,7 +247,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Guide procedures';
-$doc_title = 'gimpguides';
+$doc_title = 'picmanguides';
 $doc_short_desc = 'Functions for manipulating guides.';
 $doc_long_desc = 'Functions for manipulating guides.';
 

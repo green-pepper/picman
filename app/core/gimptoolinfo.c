@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,18 +21,18 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimpdatafactory.h"
-#include "gimpfilteredcontainer.h"
-#include "gimppaintinfo.h"
-#include "gimptoolinfo.h"
-#include "gimptooloptions.h"
-#include "gimptoolpreset.h"
+#include "picman.h"
+#include "picmandatafactory.h"
+#include "picmanfilteredcontainer.h"
+#include "picmanpaintinfo.h"
+#include "picmantoolinfo.h"
+#include "picmantooloptions.h"
+#include "picmantoolpreset.h"
 
 
 enum
@@ -42,47 +42,47 @@ enum
 };
 
 
-static void    gimp_tool_info_dispose         (GObject       *object);
-static void    gimp_tool_info_finalize        (GObject       *object);
-static void    gimp_tool_info_get_property    (GObject       *object,
+static void    picman_tool_info_dispose         (GObject       *object);
+static void    picman_tool_info_finalize        (GObject       *object);
+static void    picman_tool_info_get_property    (GObject       *object,
                                                guint          property_id,
                                                GValue        *value,
                                                GParamSpec    *pspec);
-static void    gimp_tool_info_set_property    (GObject       *object,
+static void    picman_tool_info_set_property    (GObject       *object,
                                                guint          property_id,
                                                const GValue  *value,
                                                GParamSpec    *pspec);
-static gchar * gimp_tool_info_get_description (GimpViewable  *viewable,
+static gchar * picman_tool_info_get_description (PicmanViewable  *viewable,
                                                gchar        **tooltip);
 
 
-G_DEFINE_TYPE (GimpToolInfo, gimp_tool_info, GIMP_TYPE_VIEWABLE)
+G_DEFINE_TYPE (PicmanToolInfo, picman_tool_info, PICMAN_TYPE_VIEWABLE)
 
-#define parent_class gimp_tool_info_parent_class
+#define parent_class picman_tool_info_parent_class
 
 
 static void
-gimp_tool_info_class_init (GimpToolInfoClass *klass)
+picman_tool_info_class_init (PicmanToolInfoClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->dispose           = gimp_tool_info_dispose;
-  object_class->finalize          = gimp_tool_info_finalize;
-  object_class->get_property      = gimp_tool_info_get_property;
-  object_class->set_property      = gimp_tool_info_set_property;
+  object_class->dispose           = picman_tool_info_dispose;
+  object_class->finalize          = picman_tool_info_finalize;
+  object_class->get_property      = picman_tool_info_get_property;
+  object_class->set_property      = picman_tool_info_set_property;
 
-  viewable_class->get_description = gimp_tool_info_get_description;
+  viewable_class->get_description = picman_tool_info_get_description;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_VISIBLE, "visible",
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_VISIBLE, "visible",
                                     NULL, TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_tool_info_init (GimpToolInfo *tool_info)
+picman_tool_info_init (PicmanToolInfo *tool_info)
 {
-  tool_info->gimp              = NULL;
+  tool_info->picman              = NULL;
 
   tool_info->tool_type         = G_TYPE_NONE;
   tool_info->tool_options_type = G_TYPE_NONE;
@@ -103,9 +103,9 @@ gimp_tool_info_init (GimpToolInfo *tool_info)
 }
 
 static void
-gimp_tool_info_dispose (GObject *object)
+picman_tool_info_dispose (GObject *object)
 {
-  GimpToolInfo *tool_info = GIMP_TOOL_INFO (object);
+  PicmanToolInfo *tool_info = PICMAN_TOOL_INFO (object);
 
   if (tool_info->tool_options)
     {
@@ -124,9 +124,9 @@ gimp_tool_info_dispose (GObject *object)
 }
 
 static void
-gimp_tool_info_finalize (GObject *object)
+picman_tool_info_finalize (GObject *object)
 {
-  GimpToolInfo *tool_info = GIMP_TOOL_INFO (object);
+  PicmanToolInfo *tool_info = PICMAN_TOOL_INFO (object);
 
   if (tool_info->blurb)
     {
@@ -165,12 +165,12 @@ gimp_tool_info_finalize (GObject *object)
 }
 
 static void
-gimp_tool_info_get_property (GObject    *object,
+picman_tool_info_get_property (GObject    *object,
                              guint       property_id,
                              GValue     *value,
                              GParamSpec *pspec)
 {
-  GimpToolInfo *tool_info = GIMP_TOOL_INFO (object);
+  PicmanToolInfo *tool_info = PICMAN_TOOL_INFO (object);
 
   switch (property_id)
     {
@@ -184,12 +184,12 @@ gimp_tool_info_get_property (GObject    *object,
 }
 
 static void
-gimp_tool_info_set_property (GObject      *object,
+picman_tool_info_set_property (GObject      *object,
                              guint         property_id,
                              const GValue *value,
                              GParamSpec   *pspec)
 {
-  GimpToolInfo *tool_info = GIMP_TOOL_INFO (object);
+  PicmanToolInfo *tool_info = PICMAN_TOOL_INFO (object);
 
   switch (property_id)
     {
@@ -203,29 +203,29 @@ gimp_tool_info_set_property (GObject      *object,
 }
 
 static gchar *
-gimp_tool_info_get_description (GimpViewable  *viewable,
+picman_tool_info_get_description (PicmanViewable  *viewable,
                                 gchar        **tooltip)
 {
-  GimpToolInfo *tool_info = GIMP_TOOL_INFO (viewable);
+  PicmanToolInfo *tool_info = PICMAN_TOOL_INFO (viewable);
 
   return g_strdup (tool_info->blurb);
 }
 
 static gboolean
-gimp_tool_info_filter_preset (const GimpObject *object,
+picman_tool_info_filter_preset (const PicmanObject *object,
                               gpointer          user_data)
 {
-  GimpToolPreset *preset    = GIMP_TOOL_PRESET (object);
-  GimpToolInfo   *tool_info = user_data;
+  PicmanToolPreset *preset    = PICMAN_TOOL_PRESET (object);
+  PicmanToolInfo   *tool_info = user_data;
 
   return preset->tool_options->tool_info == tool_info;
 }
 
-GimpToolInfo *
-gimp_tool_info_new (Gimp                *gimp,
+PicmanToolInfo *
+picman_tool_info_new (Picman                *picman,
                     GType                tool_type,
                     GType                tool_options_type,
-                    GimpContextPropMask  context_props,
+                    PicmanContextPropMask  context_props,
                     const gchar         *identifier,
                     const gchar         *blurb,
                     const gchar         *help,
@@ -236,10 +236,10 @@ gimp_tool_info_new (Gimp                *gimp,
                     const gchar         *paint_core_name,
                     const gchar         *stock_id)
 {
-  GimpPaintInfo *paint_info;
-  GimpToolInfo  *tool_info;
+  PicmanPaintInfo *paint_info;
+  PicmanToolInfo  *tool_info;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (identifier != NULL, NULL);
   g_return_val_if_fail (blurb != NULL, NULL);
   g_return_val_if_fail (help != NULL, NULL);
@@ -248,17 +248,17 @@ gimp_tool_info_new (Gimp                *gimp,
   g_return_val_if_fail (paint_core_name != NULL, NULL);
   g_return_val_if_fail (stock_id != NULL, NULL);
 
-  paint_info = (GimpPaintInfo *)
-    gimp_container_get_child_by_name (gimp->paint_info_list, paint_core_name);
+  paint_info = (PicmanPaintInfo *)
+    picman_container_get_child_by_name (picman->paint_info_list, paint_core_name);
 
-  g_return_val_if_fail (GIMP_IS_PAINT_INFO (paint_info), NULL);
+  g_return_val_if_fail (PICMAN_IS_PAINT_INFO (paint_info), NULL);
 
-  tool_info = g_object_new (GIMP_TYPE_TOOL_INFO,
+  tool_info = g_object_new (PICMAN_TYPE_TOOL_INFO,
                             "name",     identifier,
                             "stock-id", stock_id,
                             NULL);
 
-  tool_info->gimp              = gimp;
+  tool_info->picman              = picman;
   tool_info->tool_type         = tool_type;
   tool_info->tool_options_type = tool_options_type;
   tool_info->context_props     = context_props;
@@ -281,7 +281,7 @@ gimp_tool_info_new (Gimp                *gimp,
   else
     {
       tool_info->tool_options = g_object_new (tool_info->tool_options_type,
-                                              "gimp", gimp,
+                                              "picman", picman,
                                               "name", identifier,
                                               NULL);
     }
@@ -290,15 +290,15 @@ gimp_tool_info_new (Gimp                *gimp,
                 "tool",      tool_info,
                 "tool-info", tool_info, NULL);
 
-  if (tool_info->tool_options_type != GIMP_TYPE_TOOL_OPTIONS)
+  if (tool_info->tool_options_type != PICMAN_TYPE_TOOL_OPTIONS)
     {
-      GimpContainer *presets;
+      PicmanContainer *presets;
 
-      presets = gimp_data_factory_get_container (gimp->tool_preset_factory);
+      presets = picman_data_factory_get_container (picman->tool_preset_factory);
 
       tool_info->presets =
-        gimp_filtered_container_new (presets,
-                                     gimp_tool_info_filter_preset,
+        picman_filtered_container_new (presets,
+                                     picman_tool_info_filter_preset,
                                      tool_info);
     }
 
@@ -306,50 +306,50 @@ gimp_tool_info_new (Gimp                *gimp,
 }
 
 void
-gimp_tool_info_set_standard (Gimp         *gimp,
-                             GimpToolInfo *tool_info)
+picman_tool_info_set_standard (Picman         *picman,
+                             PicmanToolInfo *tool_info)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (! tool_info || GIMP_IS_TOOL_INFO (tool_info));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (! tool_info || PICMAN_IS_TOOL_INFO (tool_info));
 
-  if (tool_info != gimp->standard_tool_info)
+  if (tool_info != picman->standard_tool_info)
     {
-      if (gimp->standard_tool_info)
-        g_object_unref (gimp->standard_tool_info);
+      if (picman->standard_tool_info)
+        g_object_unref (picman->standard_tool_info);
 
-      gimp->standard_tool_info = tool_info;
+      picman->standard_tool_info = tool_info;
 
-      if (gimp->standard_tool_info)
-        g_object_ref (gimp->standard_tool_info);
+      if (picman->standard_tool_info)
+        g_object_ref (picman->standard_tool_info);
     }
 }
 
-GimpToolInfo *
-gimp_tool_info_get_standard (Gimp *gimp)
+PicmanToolInfo *
+picman_tool_info_get_standard (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  return gimp->standard_tool_info;
+  return picman->standard_tool_info;
 }
 
 gchar *
-gimp_tool_info_build_options_filename (GimpToolInfo *tool_info,
+picman_tool_info_build_options_filename (PicmanToolInfo *tool_info,
                                        const gchar  *suffix)
 {
   const gchar *name;
   gchar       *filename;
   gchar       *basename;
 
-  g_return_val_if_fail (GIMP_IS_TOOL_INFO (tool_info), NULL);
+  g_return_val_if_fail (PICMAN_IS_TOOL_INFO (tool_info), NULL);
 
-  name = gimp_object_get_name (tool_info);
+  name = picman_object_get_name (tool_info);
 
   if (suffix)
     basename = g_strconcat (name, suffix, NULL);
   else
     basename = g_strdup (name);
 
-  filename = g_build_filename (gimp_directory (),
+  filename = g_build_filename (picman_directory (),
                                "tool-options",
                                basename,
                                NULL);

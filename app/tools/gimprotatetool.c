@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,24 +23,24 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimp-transform-utils.h"
-#include "core/gimpimage.h"
+#include "core/picman-transform-utils.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
 
-#include "gimprotatetool.h"
-#include "gimptoolcontrol.h"
-#include "gimptransformoptions.h"
+#include "picmanrotatetool.h"
+#include "picmantoolcontrol.h"
+#include "picmantransformoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  index into trans_info array  */
@@ -59,68 +59,68 @@ enum
 
 /*  local function prototypes  */
 
-static gboolean  gimp_rotate_tool_key_press     (GimpTool           *tool,
+static gboolean  picman_rotate_tool_key_press     (PicmanTool           *tool,
                                                  GdkEventKey        *kevent,
-                                                 GimpDisplay        *display);
+                                                 PicmanDisplay        *display);
 
-static void      gimp_rotate_tool_dialog        (GimpTransformTool  *tr_tool);
-static void      gimp_rotate_tool_dialog_update (GimpTransformTool  *tr_tool);
-static void      gimp_rotate_tool_prepare       (GimpTransformTool  *tr_tool);
-static void      gimp_rotate_tool_motion        (GimpTransformTool  *tr_tool);
-static void      gimp_rotate_tool_recalc_matrix (GimpTransformTool  *tr_tool);
-static gchar   * gimp_rotate_tool_get_undo_desc (GimpTransformTool  *tr_tool);
+static void      picman_rotate_tool_dialog        (PicmanTransformTool  *tr_tool);
+static void      picman_rotate_tool_dialog_update (PicmanTransformTool  *tr_tool);
+static void      picman_rotate_tool_prepare       (PicmanTransformTool  *tr_tool);
+static void      picman_rotate_tool_motion        (PicmanTransformTool  *tr_tool);
+static void      picman_rotate_tool_recalc_matrix (PicmanTransformTool  *tr_tool);
+static gchar   * picman_rotate_tool_get_undo_desc (PicmanTransformTool  *tr_tool);
 
 static void      rotate_angle_changed           (GtkAdjustment      *adj,
-                                                 GimpTransformTool  *tr_tool);
+                                                 PicmanTransformTool  *tr_tool);
 static void      rotate_center_changed          (GtkWidget          *entry,
-                                                GimpTransformTool   *tr_tool);
+                                                PicmanTransformTool   *tr_tool);
 
 
-G_DEFINE_TYPE (GimpRotateTool, gimp_rotate_tool, GIMP_TYPE_TRANSFORM_TOOL)
+G_DEFINE_TYPE (PicmanRotateTool, picman_rotate_tool, PICMAN_TYPE_TRANSFORM_TOOL)
 
-#define parent_class gimp_rotate_tool_parent_class
+#define parent_class picman_rotate_tool_parent_class
 
 
 void
-gimp_rotate_tool_register (GimpToolRegisterCallback  callback,
+picman_rotate_tool_register (PicmanToolRegisterCallback  callback,
                            gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_ROTATE_TOOL,
-                GIMP_TYPE_TRANSFORM_OPTIONS,
-                gimp_transform_options_gui,
-                GIMP_CONTEXT_BACKGROUND_MASK,
-                "gimp-rotate-tool",
+  (* callback) (PICMAN_TYPE_ROTATE_TOOL,
+                PICMAN_TYPE_TRANSFORM_OPTIONS,
+                picman_transform_options_gui,
+                PICMAN_CONTEXT_BACKGROUND_MASK,
+                "picman-rotate-tool",
                 _("Rotate"),
                 _("Rotate Tool: Rotate the layer, selection or path"),
                 N_("_Rotate"), "<shift>R",
-                NULL, GIMP_HELP_TOOL_ROTATE,
-                GIMP_STOCK_TOOL_ROTATE,
+                NULL, PICMAN_HELP_TOOL_ROTATE,
+                PICMAN_STOCK_TOOL_ROTATE,
                 data);
 }
 
 static void
-gimp_rotate_tool_class_init (GimpRotateToolClass *klass)
+picman_rotate_tool_class_init (PicmanRotateToolClass *klass)
 {
-  GimpToolClass          *tool_class  = GIMP_TOOL_CLASS (klass);
-  GimpTransformToolClass *trans_class = GIMP_TRANSFORM_TOOL_CLASS (klass);
+  PicmanToolClass          *tool_class  = PICMAN_TOOL_CLASS (klass);
+  PicmanTransformToolClass *trans_class = PICMAN_TRANSFORM_TOOL_CLASS (klass);
 
-  tool_class->key_press      = gimp_rotate_tool_key_press;
+  tool_class->key_press      = picman_rotate_tool_key_press;
 
-  trans_class->dialog        = gimp_rotate_tool_dialog;
-  trans_class->dialog_update = gimp_rotate_tool_dialog_update;
-  trans_class->prepare       = gimp_rotate_tool_prepare;
-  trans_class->motion        = gimp_rotate_tool_motion;
-  trans_class->recalc_matrix = gimp_rotate_tool_recalc_matrix;
-  trans_class->get_undo_desc = gimp_rotate_tool_get_undo_desc;
+  trans_class->dialog        = picman_rotate_tool_dialog;
+  trans_class->dialog_update = picman_rotate_tool_dialog_update;
+  trans_class->prepare       = picman_rotate_tool_prepare;
+  trans_class->motion        = picman_rotate_tool_motion;
+  trans_class->recalc_matrix = picman_rotate_tool_recalc_matrix;
+  trans_class->get_undo_desc = picman_rotate_tool_get_undo_desc;
 }
 
 static void
-gimp_rotate_tool_init (GimpRotateTool *rotate_tool)
+picman_rotate_tool_init (PicmanRotateTool *rotate_tool)
 {
-  GimpTool          *tool    = GIMP_TOOL (rotate_tool);
-  GimpTransformTool *tr_tool = GIMP_TRANSFORM_TOOL (rotate_tool);
+  PicmanTool          *tool    = PICMAN_TOOL (rotate_tool);
+  PicmanTransformTool *tr_tool = PICMAN_TRANSFORM_TOOL (rotate_tool);
 
-  gimp_tool_control_set_tool_cursor (tool->control, GIMP_TOOL_CURSOR_ROTATE);
+  picman_tool_control_set_tool_cursor (tool->control, PICMAN_TOOL_CURSOR_ROTATE);
 
   tr_tool->progress_text = _("Rotating");
 
@@ -129,15 +129,15 @@ gimp_rotate_tool_init (GimpRotateTool *rotate_tool)
 }
 
 static gboolean
-gimp_rotate_tool_key_press (GimpTool    *tool,
+picman_rotate_tool_key_press (PicmanTool    *tool,
                             GdkEventKey *kevent,
-                            GimpDisplay *display)
+                            PicmanDisplay *display)
 {
-  GimpDrawTool *draw_tool = GIMP_DRAW_TOOL (tool);
+  PicmanDrawTool *draw_tool = PICMAN_DRAW_TOOL (tool);
 
   if (display == draw_tool->display)
     {
-      GimpRotateTool *rotate     = GIMP_ROTATE_TOOL (tool);
+      PicmanRotateTool *rotate     = PICMAN_ROTATE_TOOL (tool);
       GtkSpinButton  *angle_spin = GTK_SPIN_BUTTON (rotate->angle_spin_button);
 
       switch (kevent->keyval)
@@ -163,13 +163,13 @@ gimp_rotate_tool_key_press (GimpTool    *tool,
         }
     }
 
-  return GIMP_TOOL_CLASS (parent_class)->key_press (tool, kevent, display);
+  return PICMAN_TOOL_CLASS (parent_class)->key_press (tool, kevent, display);
 }
 
 static void
-gimp_rotate_tool_dialog (GimpTransformTool *tr_tool)
+picman_rotate_tool_dialog (PicmanTransformTool *tr_tool)
 {
-  GimpRotateTool *rotate = GIMP_ROTATE_TOOL (tr_tool);
+  PicmanRotateTool *rotate = PICMAN_ROTATE_TOOL (tr_tool);
   GtkWidget      *table;
   GtkWidget      *button;
   GtkWidget      *scale;
@@ -184,11 +184,11 @@ gimp_rotate_tool_dialog (GimpTransformTool *tr_tool)
                       table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  button = gimp_spin_button_new ((GtkObject **) &rotate->angle_adj,
+  button = picman_spin_button_new ((GtkObject **) &rotate->angle_adj,
                                  0, -180, 180, 0.1, 15, 0, 2, 2);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (button), TRUE);
   gtk_entry_set_width_chars (GTK_ENTRY (button), SB_WIDTH);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0, _("_Angle:"),
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0, _("_Angle:"),
                              0.0, 0.5, button, 1, TRUE);
   rotate->angle_spin_button = button;
 
@@ -202,18 +202,18 @@ gimp_rotate_tool_dialog (GimpTransformTool *tr_tool)
                     GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
   gtk_widget_show (scale);
 
-  button = gimp_spin_button_new (&adj, 0, -1, 1, 1, 10, 0, 1, 2);
+  button = picman_spin_button_new (&adj, 0, -1, 1, 1, 10, 0, 1, 2);
   gtk_entry_set_width_chars (GTK_ENTRY (button), SB_WIDTH);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 2, _("Center _X:"),
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 2, _("Center _X:"),
                              0.0, 0.5, button, 1, TRUE);
 
-  rotate->sizeentry = gimp_size_entry_new (1, GIMP_UNIT_PIXEL, "%a",
+  rotate->sizeentry = picman_size_entry_new (1, PICMAN_UNIT_PIXEL, "%a",
                                            TRUE, TRUE, FALSE, SB_WIDTH,
-                                           GIMP_SIZE_ENTRY_UPDATE_SIZE);
-  gimp_size_entry_add_field (GIMP_SIZE_ENTRY (rotate->sizeentry),
+                                           PICMAN_SIZE_ENTRY_UPDATE_SIZE);
+  picman_size_entry_add_field (PICMAN_SIZE_ENTRY (rotate->sizeentry),
                              GTK_SPIN_BUTTON (button), NULL);
-  gimp_size_entry_set_pixel_digits (GIMP_SIZE_ENTRY (rotate->sizeentry), 2);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 3, _("Center _Y:"),
+  picman_size_entry_set_pixel_digits (PICMAN_SIZE_ENTRY (rotate->sizeentry), 2);
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 3, _("Center _Y:"),
                              0.0, 0.5, rotate->sizeentry, 1, TRUE);
 
   g_signal_connect (rotate->sizeentry, "value-changed",
@@ -222,20 +222,20 @@ gimp_rotate_tool_dialog (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_rotate_tool_dialog_update (GimpTransformTool *tr_tool)
+picman_rotate_tool_dialog_update (PicmanTransformTool *tr_tool)
 {
-  GimpRotateTool *rotate = GIMP_ROTATE_TOOL (tr_tool);
+  PicmanRotateTool *rotate = PICMAN_ROTATE_TOOL (tr_tool);
 
   gtk_adjustment_set_value (rotate->angle_adj,
-                            gimp_rad_to_deg (tr_tool->trans_info[ANGLE]));
+                            picman_rad_to_deg (tr_tool->trans_info[ANGLE]));
 
   g_signal_handlers_block_by_func (rotate->sizeentry,
                                    rotate_center_changed,
                                    tr_tool);
 
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (rotate->sizeentry), 0,
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (rotate->sizeentry), 0,
                               tr_tool->trans_info[PIVOT_X]);
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (rotate->sizeentry), 1,
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (rotate->sizeentry), 1,
                               tr_tool->trans_info[PIVOT_Y]);
 
   g_signal_handlers_unblock_by_func (rotate->sizeentry,
@@ -244,11 +244,11 @@ gimp_rotate_tool_dialog_update (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_rotate_tool_prepare (GimpTransformTool *tr_tool)
+picman_rotate_tool_prepare (PicmanTransformTool *tr_tool)
 {
-  GimpRotateTool *rotate  = GIMP_ROTATE_TOOL (tr_tool);
-  GimpDisplay    *display = GIMP_TOOL (tr_tool)->display;
-  GimpImage      *image   = gimp_display_get_image (display);
+  PicmanRotateTool *rotate  = PICMAN_ROTATE_TOOL (tr_tool);
+  PicmanDisplay    *display = PICMAN_TOOL (tr_tool)->display;
+  PicmanImage      *image   = picman_display_get_image (display);
   gdouble         xres;
   gdouble         yres;
 
@@ -260,32 +260,32 @@ gimp_rotate_tool_prepare (GimpTransformTool *tr_tool)
   tr_tool->trans_info[PIVOT_X]    = tr_tool->px;
   tr_tool->trans_info[PIVOT_Y]    = tr_tool->py;
 
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
 
   g_signal_handlers_block_by_func (rotate->sizeentry,
                                    rotate_center_changed,
                                    tr_tool);
 
-  gimp_size_entry_set_unit (GIMP_SIZE_ENTRY (rotate->sizeentry),
-                            gimp_display_get_shell (display)->unit);
+  picman_size_entry_set_unit (PICMAN_SIZE_ENTRY (rotate->sizeentry),
+                            picman_display_get_shell (display)->unit);
 
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (rotate->sizeentry), 0,
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (rotate->sizeentry), 0,
                                   xres, FALSE);
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (rotate->sizeentry), 1,
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (rotate->sizeentry), 1,
                                   yres, FALSE);
 
-  gimp_size_entry_set_refval_boundaries (GIMP_SIZE_ENTRY (rotate->sizeentry), 0,
+  picman_size_entry_set_refval_boundaries (PICMAN_SIZE_ENTRY (rotate->sizeentry), 0,
                                          -65536,
                                          65536 +
-                                         gimp_image_get_width (image));
-  gimp_size_entry_set_refval_boundaries (GIMP_SIZE_ENTRY (rotate->sizeentry), 1,
+                                         picman_image_get_width (image));
+  picman_size_entry_set_refval_boundaries (PICMAN_SIZE_ENTRY (rotate->sizeentry), 1,
                                          -65536,
                                          65536 +
-                                         gimp_image_get_height (image));
+                                         picman_image_get_height (image));
 
-  gimp_size_entry_set_size (GIMP_SIZE_ENTRY (rotate->sizeentry), 0,
+  picman_size_entry_set_size (PICMAN_SIZE_ENTRY (rotate->sizeentry), 0,
                             tr_tool->x1, tr_tool->x2);
-  gimp_size_entry_set_size (GIMP_SIZE_ENTRY (rotate->sizeentry), 1,
+  picman_size_entry_set_size (PICMAN_SIZE_ENTRY (rotate->sizeentry), 1,
                             tr_tool->y1, tr_tool->y2);
 
   g_signal_handlers_unblock_by_func (rotate->sizeentry,
@@ -294,9 +294,9 @@ gimp_rotate_tool_prepare (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_rotate_tool_motion (GimpTransformTool *tr_tool)
+picman_rotate_tool_motion (PicmanTransformTool *tr_tool)
 {
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
+  PicmanTransformOptions *options = PICMAN_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
   gdouble               angle1, angle2, angle;
   gdouble               px, py;
   gdouble               x1, y1, x2, y2;
@@ -355,47 +355,47 @@ gimp_rotate_tool_motion (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_rotate_tool_recalc_matrix (GimpTransformTool *tr_tool)
+picman_rotate_tool_recalc_matrix (PicmanTransformTool *tr_tool)
 {
   tr_tool->px = tr_tool->trans_info[PIVOT_X];
   tr_tool->py = tr_tool->trans_info[PIVOT_Y];
 
-  gimp_matrix3_identity (&tr_tool->transform);
-  gimp_transform_matrix_rotate_center (&tr_tool->transform,
+  picman_matrix3_identity (&tr_tool->transform);
+  picman_transform_matrix_rotate_center (&tr_tool->transform,
                                        tr_tool->px,
                                        tr_tool->py,
                                        tr_tool->trans_info[ANGLE]);
 }
 
 static gchar *
-gimp_rotate_tool_get_undo_desc (GimpTransformTool  *tr_tool)
+picman_rotate_tool_get_undo_desc (PicmanTransformTool  *tr_tool)
 {
   return g_strdup_printf (C_("undo-type",
                              "Rotate by %-3.3g° around (%g, %g)"),
-                          gimp_rad_to_deg (tr_tool->trans_info[ANGLE]),
+                          picman_rad_to_deg (tr_tool->trans_info[ANGLE]),
                           tr_tool->trans_info[PIVOT_X],
                           tr_tool->trans_info[PIVOT_Y]);
 }
 
 static void
 rotate_angle_changed (GtkAdjustment     *adj,
-                      GimpTransformTool *tr_tool)
+                      PicmanTransformTool *tr_tool)
 {
-  gdouble value = gimp_deg_to_rad (gtk_adjustment_get_value (adj));
+  gdouble value = picman_deg_to_rad (gtk_adjustment_get_value (adj));
 
 #define ANGLE_EPSILON 0.0001
 
   if (ABS (value - tr_tool->trans_info[ANGLE]) > ANGLE_EPSILON)
     {
-      gimp_draw_tool_pause (GIMP_DRAW_TOOL (tr_tool));
+      picman_draw_tool_pause (PICMAN_DRAW_TOOL (tr_tool));
 
       tr_tool->trans_info[REAL_ANGLE] = tr_tool->trans_info[ANGLE] = value;
 
-      gimp_transform_tool_push_internal_undo (tr_tool);
+      picman_transform_tool_push_internal_undo (tr_tool);
 
-      gimp_transform_tool_recalc_matrix (tr_tool);
+      picman_transform_tool_recalc_matrix (tr_tool);
 
-      gimp_draw_tool_resume (GIMP_DRAW_TOOL (tr_tool));
+      picman_draw_tool_resume (PICMAN_DRAW_TOOL (tr_tool));
     }
 
 #undef ANGLE_EPSILON
@@ -403,25 +403,25 @@ rotate_angle_changed (GtkAdjustment     *adj,
 
 static void
 rotate_center_changed (GtkWidget         *widget,
-                       GimpTransformTool *tr_tool)
+                       PicmanTransformTool *tr_tool)
 {
-  gdouble px = gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (widget), 0);
-  gdouble py = gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (widget), 1);
+  gdouble px = picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (widget), 0);
+  gdouble py = picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (widget), 1);
 
   if ((px != tr_tool->trans_info[PIVOT_X]) ||
       (py != tr_tool->trans_info[PIVOT_Y]))
     {
-      gimp_draw_tool_pause (GIMP_DRAW_TOOL (tr_tool));
+      picman_draw_tool_pause (PICMAN_DRAW_TOOL (tr_tool));
 
       tr_tool->trans_info[PIVOT_X] = px;
       tr_tool->trans_info[PIVOT_Y] = py;
       tr_tool->px = px;
       tr_tool->py = py;
 
-      gimp_transform_tool_push_internal_undo (tr_tool);
+      picman_transform_tool_push_internal_undo (tr_tool);
 
-      gimp_transform_tool_recalc_matrix (tr_tool);
+      picman_transform_tool_recalc_matrix (tr_tool);
 
-      gimp_draw_tool_resume (GIMP_DRAW_TOOL (tr_tool));
+      picman_draw_tool_resume (PICMAN_DRAW_TOOL (tr_tool));
     }
 }

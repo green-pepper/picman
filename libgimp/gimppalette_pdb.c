@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimppalette_pdb.c
+ * picmanpalette_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,12 @@
 
 #include <string.h>
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimppalette
- * @title: gimppalette
+ * SECTION: picmanpalette
+ * @title: picmanpalette
  * @short_description: Functions operating on a single palette.
  *
  * Functions operating on a single palette.
@@ -37,7 +37,7 @@
 
 
 /**
- * gimp_palette_new:
+ * picman_palette_new:
  * @name: The requested name of the new palette.
  *
  * Creates a new palette
@@ -46,30 +46,30 @@
  *
  * Returns: The actual new palette name.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_palette_new (const gchar *name)
+picman_palette_new (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *actual_name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-palette-new",
+  return_vals = picman_run_procedure ("picman-palette-new",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     actual_name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return actual_name;
 }
 
 /**
- * gimp_palette_duplicate:
+ * picman_palette_duplicate:
  * @name: The palette name.
  *
  * Duplicates a palette
@@ -78,30 +78,30 @@ gimp_palette_new (const gchar *name)
  *
  * Returns: The name of the palette's copy.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_palette_duplicate (const gchar *name)
+picman_palette_duplicate (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *copy_name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-palette-duplicate",
+  return_vals = picman_run_procedure ("picman-palette-duplicate",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     copy_name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return copy_name;
 }
 
 /**
- * gimp_palette_rename:
+ * picman_palette_rename:
  * @name: The palette name.
  * @new_name: The new name of the palette.
  *
@@ -111,32 +111,32 @@ gimp_palette_duplicate (const gchar *name)
  *
  * Returns: The actual new name of the palette.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gchar *
-gimp_palette_rename (const gchar *name,
+picman_palette_rename (const gchar *name,
                      const gchar *new_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *actual_name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-palette-rename",
+  return_vals = picman_run_procedure ("picman-palette-rename",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_STRING, new_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_STRING, new_name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     actual_name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return actual_name;
 }
 
 /**
- * gimp_palette_delete:
+ * picman_palette_delete:
  * @name: The palette name.
  *
  * Deletes a palette
@@ -145,29 +145,29 @@ gimp_palette_rename (const gchar *name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_palette_delete (const gchar *name)
+picman_palette_delete (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-palette-delete",
+  return_vals = picman_run_procedure ("picman-palette-delete",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_palette_is_editable:
+ * picman_palette_is_editable:
  * @name: The palette name.
  *
  * Tests if palette can be edited
@@ -176,30 +176,30 @@ gimp_palette_delete (const gchar *name)
  *
  * Returns: TRUE if the palette can be edited.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_palette_is_editable (const gchar *name)
+picman_palette_is_editable (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean editable = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-palette-is-editable",
+  return_vals = picman_run_procedure ("picman-palette-is-editable",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     editable = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return editable;
 }
 
 /**
- * gimp_palette_get_info:
+ * picman_palette_get_info:
  * @name: The palette name.
  * @num_colors: The number of colors in the palette.
  *
@@ -210,35 +210,35 @@ gimp_palette_is_editable (const gchar *name)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_palette_get_info (const gchar *name,
+picman_palette_get_info (const gchar *name,
                        gint        *num_colors)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-palette-get-info",
+  return_vals = picman_run_procedure ("picman-palette-get-info",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
   *num_colors = 0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     *num_colors = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_palette_get_colors:
+ * picman_palette_get_colors:
  * @name: The palette name.
  * @num_colors: Length of the colors array.
  *
@@ -248,39 +248,39 @@ gimp_palette_get_info (const gchar *name,
  *
  * Returns: The colors in the palette.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
-GimpRGB *
-gimp_palette_get_colors (const gchar *name,
+PicmanRGB *
+picman_palette_get_colors (const gchar *name,
                          gint        *num_colors)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpRGB *colors = NULL;
+  PicmanRGB *colors = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-palette-get-colors",
+  return_vals = picman_run_procedure ("picman-palette-get-colors",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
   *num_colors = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_colors = return_vals[1].data.d_int32;
-      colors = g_new (GimpRGB, *num_colors);
+      colors = g_new (PicmanRGB, *num_colors);
       memcpy (colors,
               return_vals[2].data.d_colorarray,
-              *num_colors * sizeof (GimpRGB));
+              *num_colors * sizeof (PicmanRGB));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return colors;
 }
 
 /**
- * gimp_palette_get_columns:
+ * picman_palette_get_columns:
  * @name: The palette name.
  *
  * Retrieves the number of columns to use to display this palette
@@ -290,30 +290,30 @@ gimp_palette_get_colors (const gchar *name,
  *
  * Returns: The number of columns used to display this palette.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint
-gimp_palette_get_columns (const gchar *name)
+picman_palette_get_columns (const gchar *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint num_columns = 0;
 
-  return_vals = gimp_run_procedure ("gimp-palette-get-columns",
+  return_vals = picman_run_procedure ("picman-palette-get-columns",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     num_columns = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return num_columns;
 }
 
 /**
- * gimp_palette_set_columns:
+ * picman_palette_set_columns:
  * @name: The palette name.
  * @columns: The new number of columns.
  *
@@ -325,31 +325,31 @@ gimp_palette_get_columns (const gchar *name)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_palette_set_columns (const gchar *name,
+picman_palette_set_columns (const gchar *name,
                           gint         columns)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-palette-set-columns",
+  return_vals = picman_run_procedure ("picman-palette-set-columns",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_INT32, columns,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_INT32, columns,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_palette_add_entry:
+ * picman_palette_add_entry:
  * @name: The palette name.
  * @entry_name: The name of the entry.
  * @color: The new entry's color color.
@@ -362,39 +362,39 @@ gimp_palette_set_columns (const gchar *name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_palette_add_entry (const gchar   *name,
+picman_palette_add_entry (const gchar   *name,
                         const gchar   *entry_name,
-                        const GimpRGB *color,
+                        const PicmanRGB *color,
                         gint          *entry_num)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-palette-add-entry",
+  return_vals = picman_run_procedure ("picman-palette-add-entry",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_STRING, entry_name,
-                                    GIMP_PDB_COLOR, color,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_STRING, entry_name,
+                                    PICMAN_PDB_COLOR, color,
+                                    PICMAN_PDB_END);
 
   *entry_num = 0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     *entry_num = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_palette_delete_entry:
+ * picman_palette_delete_entry:
  * @name: The palette name.
  * @entry_num: The index of the added entry.
  *
@@ -405,31 +405,31 @@ gimp_palette_add_entry (const gchar   *name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_palette_delete_entry (const gchar *name,
+picman_palette_delete_entry (const gchar *name,
                            gint         entry_num)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-palette-delete-entry",
+  return_vals = picman_run_procedure ("picman-palette-delete-entry",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_INT32, entry_num,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_INT32, entry_num,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_palette_entry_get_color:
+ * picman_palette_entry_get_color:
  * @name: The palette name.
  * @entry_num: The entry to retrieve.
  * @color: The color requested.
@@ -442,35 +442,35 @@ gimp_palette_delete_entry (const gchar *name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_palette_entry_get_color (const gchar *name,
+picman_palette_entry_get_color (const gchar *name,
                               gint         entry_num,
-                              GimpRGB     *color)
+                              PicmanRGB     *color)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-palette-entry-get-color",
+  return_vals = picman_run_procedure ("picman-palette-entry-get-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_INT32, entry_num,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_INT32, entry_num,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     *color = return_vals[1].data.d_color;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_palette_entry_set_color:
+ * picman_palette_entry_set_color:
  * @name: The palette name.
  * @entry_num: The entry to retrieve.
  * @color: The new color.
@@ -483,33 +483,33 @@ gimp_palette_entry_get_color (const gchar *name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_palette_entry_set_color (const gchar   *name,
+picman_palette_entry_set_color (const gchar   *name,
                               gint           entry_num,
-                              const GimpRGB *color)
+                              const PicmanRGB *color)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-palette-entry-set-color",
+  return_vals = picman_run_procedure ("picman-palette-entry-set-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_INT32, entry_num,
-                                    GIMP_PDB_COLOR, color,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_INT32, entry_num,
+                                    PICMAN_PDB_COLOR, color,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_palette_entry_get_name:
+ * picman_palette_entry_get_name:
  * @name: The palette name.
  * @entry_num: The entry to retrieve.
  * @entry_name: The name requested.
@@ -522,37 +522,37 @@ gimp_palette_entry_set_color (const gchar   *name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_palette_entry_get_name (const gchar  *name,
+picman_palette_entry_get_name (const gchar  *name,
                              gint          entry_num,
                              gchar       **entry_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-palette-entry-get-name",
+  return_vals = picman_run_procedure ("picman-palette-entry-get-name",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_INT32, entry_num,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_INT32, entry_num,
+                                    PICMAN_PDB_END);
 
   *entry_name = NULL;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     *entry_name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_palette_entry_set_name:
+ * picman_palette_entry_set_name:
  * @name: The palette name.
  * @entry_num: The entry to retrieve.
  * @entry_name: The new name.
@@ -565,27 +565,27 @@ gimp_palette_entry_get_name (const gchar  *name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_palette_entry_set_name (const gchar *name,
+picman_palette_entry_set_name (const gchar *name,
                              gint         entry_num,
                              const gchar *entry_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-palette-entry-set-name",
+  return_vals = picman_run_procedure ("picman-palette-entry-set-name",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_INT32, entry_num,
-                                    GIMP_PDB_STRING, entry_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_INT32, entry_num,
+                                    PICMAN_PDB_STRING, entry_name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

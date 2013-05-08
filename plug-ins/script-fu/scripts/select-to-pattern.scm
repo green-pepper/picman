@@ -1,4 +1,4 @@
-; GIMP - The GNU Image Manipulation Program
+; PICMAN - The GNU Image Manipulation Program
 ; Copyright (C) 1995 Spencer Kimball and Peter Mattis
 ;
 ; Based on select-to-brush by
@@ -37,13 +37,13 @@
         (filename2 0)
         )
 
-  (if (= (car (gimp-selection-is-empty image)) TRUE)
+  (if (= (car (picman-selection-is-empty image)) TRUE)
       (begin
-        (set! selection-width (car (gimp-drawable-width drawable)))
-        (set! selection-height (car (gimp-drawable-height drawable)))
+        (set! selection-width (car (picman-drawable-width drawable)))
+        (set! selection-height (car (picman-drawable-height drawable)))
       )
       (begin
-        (set! selection-bounds (gimp-drawable-mask-bounds drawable))
+        (set! selection-bounds (picman-drawable-mask-bounds drawable))
         (set! select-offset-x (cadr selection-bounds))
         (set! select-offset-y (caddr selection-bounds))
         (set! selection-width (- (cadr (cddr selection-bounds)) select-offset-x))
@@ -51,41 +51,41 @@
       )
   )
 
-  (if (= (car (gimp-drawable-has-alpha drawable)) TRUE)
+  (if (= (car (picman-drawable-has-alpha drawable)) TRUE)
       (set! pattern-draw-type RGBA-IMAGE)
       (set! pattern-draw-type RGB-IMAGE)
   )
 
   (set! pattern-image-type RGB)
 
-  (set! pattern-image (car (gimp-image-new selection-width selection-height
+  (set! pattern-image (car (picman-image-new selection-width selection-height
                                            pattern-image-type)))
 
   (set! pattern-draw
-        (car (gimp-layer-new pattern-image selection-width selection-height
+        (car (picman-layer-new pattern-image selection-width selection-height
                              pattern-draw-type "Pattern" 100 NORMAL-MODE)))
 
-  (gimp-drawable-fill pattern-draw TRANSPARENT-FILL)
+  (picman-drawable-fill pattern-draw TRANSPARENT-FILL)
 
-  (gimp-image-insert-layer pattern-image pattern-draw 0 0)
+  (picman-image-insert-layer pattern-image pattern-draw 0 0)
 
-  (gimp-edit-copy drawable)
+  (picman-edit-copy drawable)
 
-  (let ((floating-sel (car (gimp-edit-paste pattern-draw FALSE))))
-    (gimp-floating-sel-anchor floating-sel))
+  (let ((floating-sel (car (picman-edit-paste pattern-draw FALSE))))
+    (picman-floating-sel-anchor floating-sel))
 
-  (set! filename2 (string-append gimp-directory
+  (set! filename2 (string-append picman-directory
                                  "/patterns/"
                                  filename
                                  (number->string image)
                                  ".pat"))
 
   (file-pat-save 1 pattern-image pattern-draw filename2 "" desc)
-  (gimp-patterns-refresh)
-  (gimp-context-set-pattern desc)
+  (picman-patterns-refresh)
+  (picman-context-set-pattern desc)
 
-  (gimp-image-delete pattern-image)
-  (gimp-displays-flush)
+  (picman-image-delete pattern-image)
+  (picman-displays-flush)
   )
 )
 

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,80 +20,80 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "core/gimp.h"
-#include "core/gimp-contexts.h"
-#include "core/gimplist.h"
-#include "core/gimptoolinfo.h"
-#include "core/gimptooloptions.h"
+#include "core/picman.h"
+#include "core/picman-contexts.h"
+#include "core/picmanlist.h"
+#include "core/picmantoolinfo.h"
+#include "core/picmantooloptions.h"
 
-#include "gimp-tools.h"
-#include "gimptooloptions-gui.h"
+#include "picman-tools.h"
+#include "picmantooloptions-gui.h"
 #include "tool_manager.h"
 
-#include "gimpairbrushtool.h"
-#include "gimpaligntool.h"
-#include "gimpblendtool.h"
-#include "gimpbrightnesscontrasttool.h"
-#include "gimpbucketfilltool.h"
-#include "gimpbycolorselecttool.h"
-#include "gimpcagetool.h"
-#include "gimpclonetool.h"
-#include "gimpcolorbalancetool.h"
-#include "gimpcolorizetool.h"
-#include "gimpcolorpickertool.h"
-#include "gimpconvolvetool.h"
-#include "gimpcroptool.h"
-#include "gimpcurvestool.h"
-#include "gimpdesaturatetool.h"
-#include "gimpdodgeburntool.h"
-#include "gimpellipseselecttool.h"
-#include "gimperasertool.h"
-#include "gimpfliptool.h"
-#include "gimpfreeselecttool.h"
-#include "gimpforegroundselecttool.h"
-#include "gimpfuzzyselecttool.h"
-#include "gimpgegltool.h"
-#include "gimphealtool.h"
-#include "gimphuesaturationtool.h"
-#include "gimpinktool.h"
-#include "gimpiscissorstool.h"
-#include "gimplevelstool.h"
-#include "gimpoperationtool.h"
-#include "gimpmagnifytool.h"
-#include "gimpmeasuretool.h"
-#include "gimpmovetool.h"
-#include "gimppaintbrushtool.h"
-#include "gimppenciltool.h"
-#include "gimpperspectiveclonetool.h"
-#include "gimpperspectivetool.h"
-#include "gimpposterizetool.h"
-#include "gimpthresholdtool.h"
-#include "gimprectangleselecttool.h"
-#include "gimprotatetool.h"
-#include "gimpscaletool.h"
-#include "gimpsheartool.h"
-#include "gimpsmudgetool.h"
-#include "gimptexttool.h"
-#include "gimpunifiedtransformtool.h"
-#include "gimpvectortool.h"
+#include "picmanairbrushtool.h"
+#include "picmanaligntool.h"
+#include "picmanblendtool.h"
+#include "picmanbrightnesscontrasttool.h"
+#include "picmanbucketfilltool.h"
+#include "picmanbycolorselecttool.h"
+#include "picmancagetool.h"
+#include "picmanclonetool.h"
+#include "picmancolorbalancetool.h"
+#include "picmancolorizetool.h"
+#include "picmancolorpickertool.h"
+#include "picmanconvolvetool.h"
+#include "picmancroptool.h"
+#include "picmancurvestool.h"
+#include "picmandesaturatetool.h"
+#include "picmandodgeburntool.h"
+#include "picmanellipseselecttool.h"
+#include "picmanerasertool.h"
+#include "picmanfliptool.h"
+#include "picmanfreeselecttool.h"
+#include "picmanforegroundselecttool.h"
+#include "picmanfuzzyselecttool.h"
+#include "picmangegltool.h"
+#include "picmanhealtool.h"
+#include "picmanhuesaturationtool.h"
+#include "picmaninktool.h"
+#include "picmaniscissorstool.h"
+#include "picmanlevelstool.h"
+#include "picmanoperationtool.h"
+#include "picmanmagnifytool.h"
+#include "picmanmeasuretool.h"
+#include "picmanmovetool.h"
+#include "picmanpaintbrushtool.h"
+#include "picmanpenciltool.h"
+#include "picmanperspectiveclonetool.h"
+#include "picmanperspectivetool.h"
+#include "picmanposterizetool.h"
+#include "picmanthresholdtool.h"
+#include "picmanrectangleselecttool.h"
+#include "picmanrotatetool.h"
+#include "picmanscaletool.h"
+#include "picmansheartool.h"
+#include "picmansmudgetool.h"
+#include "picmantexttool.h"
+#include "picmanunifiedtransformtool.h"
+#include "picmanvectortool.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   gimp_tools_register (GType                   tool_type,
+static void   picman_tools_register (GType                   tool_type,
                                    GType                   tool_options_type,
-                                   GimpToolOptionsGUIFunc  options_gui_func,
-                                   GimpContextPropMask     context_props,
+                                   PicmanToolOptionsGUIFunc  options_gui_func,
+                                   PicmanContextPropMask     context_props,
                                    const gchar            *identifier,
                                    const gchar            *blurb,
                                    const gchar            *help,
@@ -113,216 +113,216 @@ static gboolean   tool_options_deleted = FALSE;
 /*  public functions  */
 
 void
-gimp_tools_init (Gimp *gimp)
+picman_tools_init (Picman *picman)
 {
-  GimpToolRegisterFunc register_funcs[] =
+  PicmanToolRegisterFunc register_funcs[] =
   {
     /*  register tools in reverse order  */
 
     /*  color tools  */
-    gimp_operation_tool_register,
-    gimp_gegl_tool_register,
-    gimp_posterize_tool_register,
-    gimp_curves_tool_register,
-    gimp_levels_tool_register,
-    gimp_threshold_tool_register,
-    gimp_brightness_contrast_tool_register,
-    gimp_colorize_tool_register,
-    gimp_hue_saturation_tool_register,
-    gimp_color_balance_tool_register,
-    gimp_desaturate_tool_register,
+    picman_operation_tool_register,
+    picman_gegl_tool_register,
+    picman_posterize_tool_register,
+    picman_curves_tool_register,
+    picman_levels_tool_register,
+    picman_threshold_tool_register,
+    picman_brightness_contrast_tool_register,
+    picman_colorize_tool_register,
+    picman_hue_saturation_tool_register,
+    picman_color_balance_tool_register,
+    picman_desaturate_tool_register,
 
     /*  paint tools  */
 
-    gimp_dodge_burn_tool_register,
-    gimp_smudge_tool_register,
-    gimp_convolve_tool_register,
-    gimp_perspective_clone_tool_register,
-    gimp_heal_tool_register,
-    gimp_clone_tool_register,
-    gimp_ink_tool_register,
-    gimp_airbrush_tool_register,
-    gimp_eraser_tool_register,
-    gimp_paintbrush_tool_register,
-    gimp_pencil_tool_register,
-    gimp_blend_tool_register,
-    gimp_bucket_fill_tool_register,
-    gimp_text_tool_register,
+    picman_dodge_burn_tool_register,
+    picman_smudge_tool_register,
+    picman_convolve_tool_register,
+    picman_perspective_clone_tool_register,
+    picman_heal_tool_register,
+    picman_clone_tool_register,
+    picman_ink_tool_register,
+    picman_airbrush_tool_register,
+    picman_eraser_tool_register,
+    picman_paintbrush_tool_register,
+    picman_pencil_tool_register,
+    picman_blend_tool_register,
+    picman_bucket_fill_tool_register,
+    picman_text_tool_register,
 
     /*  transform tools  */
 
-    gimp_cage_tool_register,
-    gimp_flip_tool_register,
-    gimp_perspective_tool_register,
-    gimp_shear_tool_register,
-    gimp_scale_tool_register,
-    gimp_rotate_tool_register,
-    gimp_unified_transform_tool_register,
-    gimp_crop_tool_register,
-    gimp_align_tool_register,
-    gimp_move_tool_register,
+    picman_cage_tool_register,
+    picman_flip_tool_register,
+    picman_perspective_tool_register,
+    picman_shear_tool_register,
+    picman_scale_tool_register,
+    picman_rotate_tool_register,
+    picman_unified_transform_tool_register,
+    picman_crop_tool_register,
+    picman_align_tool_register,
+    picman_move_tool_register,
 
     /*  non-modifying tools  */
 
-    gimp_measure_tool_register,
-    gimp_magnify_tool_register,
-    gimp_color_picker_tool_register,
+    picman_measure_tool_register,
+    picman_magnify_tool_register,
+    picman_color_picker_tool_register,
 
     /*  path tool */
 
-    gimp_vector_tool_register,
+    picman_vector_tool_register,
 
     /*  selection tools */
 
-    gimp_foreground_select_tool_register,
+    picman_foreground_select_tool_register,
 #if 0
-    gimp_iscissors_tool_register,
+    picman_iscissors_tool_register,
 #endif
-    gimp_by_color_select_tool_register,
-    gimp_fuzzy_select_tool_register,
-    gimp_free_select_tool_register,
-    gimp_ellipse_select_tool_register,
-    gimp_rectangle_select_tool_register
+    picman_by_color_select_tool_register,
+    picman_fuzzy_select_tool_register,
+    picman_free_select_tool_register,
+    picman_ellipse_select_tool_register,
+    picman_rectangle_select_tool_register
   };
 
   GList *default_order = NULL;
   GList *list;
   gint   i;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  gimp_tool_options_create_folder ();
+  picman_tool_options_create_folder ();
 
-  tool_manager_init (gimp);
+  tool_manager_init (picman);
 
-  gimp_container_freeze (gimp->tool_info_list);
+  picman_container_freeze (picman->tool_info_list);
 
   for (i = 0; i < G_N_ELEMENTS (register_funcs); i++)
     {
-      register_funcs[i] (gimp_tools_register, gimp);
+      register_funcs[i] (picman_tools_register, picman);
     }
 
-  gimp_container_thaw (gimp->tool_info_list);
+  picman_container_thaw (picman->tool_info_list);
 
-  for (list = gimp_get_tool_info_iter (gimp);
+  for (list = picman_get_tool_info_iter (picman);
        list;
        list = g_list_next (list))
     {
-      const gchar *identifier = gimp_object_get_name (list->data);
+      const gchar *identifier = picman_object_get_name (list->data);
 
       default_order = g_list_prepend (default_order, g_strdup (identifier));
     }
 
   default_order = g_list_reverse (default_order);
 
-  g_object_set_data (G_OBJECT (gimp),
-                     "gimp-tools-default-order", default_order);
+  g_object_set_data (G_OBJECT (picman),
+                     "picman-tools-default-order", default_order);
 }
 
 void
-gimp_tools_exit (Gimp *gimp)
+picman_tools_exit (Picman *picman)
 {
   GList *default_order;
   GList *list;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  default_order = g_object_get_data (G_OBJECT (gimp),
-                                     "gimp-tools-default-order");
+  default_order = g_object_get_data (G_OBJECT (picman),
+                                     "picman-tools-default-order");
 
   g_list_free_full (default_order, (GDestroyNotify) g_free);
 
-  g_object_set_data (G_OBJECT (gimp), "gimp-tools-default-order", NULL);
+  g_object_set_data (G_OBJECT (picman), "picman-tools-default-order", NULL);
 
-  for (list = gimp_get_tool_info_iter (gimp);
+  for (list = picman_get_tool_info_iter (picman);
        list;
        list = g_list_next (list))
     {
-      GimpToolInfo *tool_info = list->data;
+      PicmanToolInfo *tool_info = list->data;
       GtkWidget    *options_gui;
 
-      options_gui = gimp_tools_get_tool_options_gui (tool_info->tool_options);
+      options_gui = picman_tools_get_tool_options_gui (tool_info->tool_options);
       gtk_widget_destroy (options_gui);
-      gimp_tools_set_tool_options_gui (tool_info->tool_options, NULL);
+      picman_tools_set_tool_options_gui (tool_info->tool_options, NULL);
     }
 
-  tool_manager_exit (gimp);
+  tool_manager_exit (picman);
 }
 
 void
-gimp_tools_restore (Gimp *gimp)
+picman_tools_restore (Picman *picman)
 {
-  GimpContainer *gimp_list;
+  PicmanContainer *picman_list;
   gchar         *filename;
   GList         *list;
   GError        *error = NULL;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  gimp_list = gimp_list_new (GIMP_TYPE_TOOL_INFO, FALSE);
+  picman_list = picman_list_new (PICMAN_TYPE_TOOL_INFO, FALSE);
 
-  filename = gimp_personal_rc_file ("toolrc");
+  filename = picman_personal_rc_file ("toolrc");
 
-  if (gimp->be_verbose)
-    g_print ("Parsing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Parsing '%s'\n", picman_filename_to_utf8 (filename));
 
-  if (gimp_config_deserialize_file (GIMP_CONFIG (gimp_list), filename,
+  if (picman_config_deserialize_file (PICMAN_CONFIG (picman_list), filename,
                                     NULL, NULL))
     {
-      gint n = gimp_container_get_n_children (gimp->tool_info_list);
+      gint n = picman_container_get_n_children (picman->tool_info_list);
       gint i;
 
-      gimp_list_reverse (GIMP_LIST (gimp_list));
+      picman_list_reverse (PICMAN_LIST (picman_list));
 
-      for (list = GIMP_LIST (gimp_list)->list, i = 0;
+      for (list = PICMAN_LIST (picman_list)->list, i = 0;
            list;
            list = g_list_next (list), i++)
         {
           const gchar *name;
-          GimpObject  *object;
+          PicmanObject  *object;
 
-          name = gimp_object_get_name (list->data);
+          name = picman_object_get_name (list->data);
 
-          object = gimp_container_get_child_by_name (gimp->tool_info_list,
+          object = picman_container_get_child_by_name (picman->tool_info_list,
                                                      name);
 
           if (object)
             {
               g_object_set (object,
-                            "visible", GIMP_TOOL_INFO (list->data)->visible,
+                            "visible", PICMAN_TOOL_INFO (list->data)->visible,
                             NULL);
 
-              gimp_container_reorder (gimp->tool_info_list,
+              picman_container_reorder (picman->tool_info_list,
                                       object, MIN (i, n - 1));
             }
         }
     }
 
   g_free (filename);
-  g_object_unref (gimp_list);
+  g_object_unref (picman_list);
 
-  for (list = gimp_get_tool_info_iter (gimp);
+  for (list = picman_get_tool_info_iter (picman);
        list;
        list = g_list_next (list))
     {
-      GimpToolInfo *tool_info = GIMP_TOOL_INFO (list->data);
+      PicmanToolInfo *tool_info = PICMAN_TOOL_INFO (list->data);
 
       /*  get default values from prefs (see bug #120832)  */
-      gimp_tool_options_reset (tool_info->tool_options);
+      picman_tool_options_reset (tool_info->tool_options);
     }
 
-  if (! gimp_contexts_load (gimp, &error))
+  if (! picman_contexts_load (picman, &error))
     {
-      gimp_message_literal (gimp, NULL, GIMP_MESSAGE_WARNING, error->message);
+      picman_message_literal (picman, NULL, PICMAN_MESSAGE_WARNING, error->message);
       g_clear_error (&error);
     }
 
-  for (list = gimp_get_tool_info_iter (gimp);
+  for (list = picman_get_tool_info_iter (picman);
        list;
        list = g_list_next (list))
     {
-      GimpToolInfo           *tool_info = GIMP_TOOL_INFO (list->data);
-      GimpToolOptionsGUIFunc  options_gui_func;
+      PicmanToolInfo           *tool_info = PICMAN_TOOL_INFO (list->data);
+      PicmanToolOptionsGUIFunc  options_gui_func;
       GtkWidget              *options_gui;
 
       /*  copy all context properties except those the tool actually
@@ -332,17 +332,17 @@ gimp_tools_restore (Gimp *gimp)
        *  keep these default values as if they have been saved.
        * (see bug #541586).
        */
-      gimp_context_copy_properties (gimp_get_user_context (gimp),
-                                    GIMP_CONTEXT (tool_info->tool_options),
-                                    GIMP_CONTEXT_ALL_PROPS_MASK &~
+      picman_context_copy_properties (picman_get_user_context (picman),
+                                    PICMAN_CONTEXT (tool_info->tool_options),
+                                    PICMAN_CONTEXT_ALL_PROPS_MASK &~
                                     (tool_info->context_props |
-                                     GIMP_CONTEXT_TOOL_MASK   |
-                                     GIMP_CONTEXT_PAINT_INFO_MASK));
+                                     PICMAN_CONTEXT_TOOL_MASK   |
+                                     PICMAN_CONTEXT_PAINT_INFO_MASK));
 
-      gimp_tool_options_deserialize (tool_info->tool_options, NULL);
+      picman_tool_options_deserialize (tool_info->tool_options, NULL);
 
       options_gui_func = g_object_get_data (G_OBJECT (tool_info),
-                                            "gimp-tool-options-gui-func");
+                                            "picman-tool-options-gui-func");
 
       if (options_gui_func)
         {
@@ -352,88 +352,88 @@ gimp_tools_restore (Gimp *gimp)
         {
           GtkWidget *label;
 
-          options_gui = gimp_tool_options_gui (tool_info->tool_options);
+          options_gui = picman_tool_options_gui (tool_info->tool_options);
 
           label = gtk_label_new (_("This tool has\nno options."));
           gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_CENTER);
-          gimp_label_set_attributes (GTK_LABEL (label),
+          picman_label_set_attributes (GTK_LABEL (label),
                                      PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                                      -1);
           gtk_box_pack_start (GTK_BOX (options_gui), label, FALSE, FALSE, 6);
           gtk_widget_show (label);
         }
 
-      gimp_tools_set_tool_options_gui (tool_info->tool_options,
+      picman_tools_set_tool_options_gui (tool_info->tool_options,
                                        g_object_ref_sink (options_gui));
     }
 }
 
 void
-gimp_tools_save (Gimp     *gimp,
+picman_tools_save (Picman     *picman,
                  gboolean  save_tool_options,
                  gboolean  always_save)
 {
   gchar *filename;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
   if (save_tool_options && (! tool_options_deleted || always_save))
     {
       GList  *list;
       GError *error = NULL;
 
-      if (! gimp_contexts_save (gimp, &error))
+      if (! picman_contexts_save (picman, &error))
         {
-          gimp_message_literal (gimp, NULL, GIMP_MESSAGE_WARNING,
+          picman_message_literal (picman, NULL, PICMAN_MESSAGE_WARNING,
 				error->message);
           g_clear_error (&error);
         }
 
-      gimp_tool_options_create_folder ();
+      picman_tool_options_create_folder ();
 
-      for (list = gimp_get_tool_info_iter (gimp);
+      for (list = picman_get_tool_info_iter (picman);
            list;
            list = g_list_next (list))
         {
-          GimpToolInfo *tool_info = GIMP_TOOL_INFO (list->data);
+          PicmanToolInfo *tool_info = PICMAN_TOOL_INFO (list->data);
 
-          gimp_tool_options_serialize (tool_info->tool_options, NULL);
+          picman_tool_options_serialize (tool_info->tool_options, NULL);
         }
     }
 
-  filename = gimp_personal_rc_file ("toolrc");
+  filename = picman_personal_rc_file ("toolrc");
 
-  if (gimp->be_verbose)
-    g_print ("Writing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Writing '%s'\n", picman_filename_to_utf8 (filename));
 
-  gimp_config_serialize_to_file (GIMP_CONFIG (gimp->tool_info_list),
+  picman_config_serialize_to_file (PICMAN_CONFIG (picman->tool_info_list),
                                  filename,
-                                 "GIMP toolrc",
+                                 "PICMAN toolrc",
                                  "end of toolrc",
                                  NULL, NULL);
   g_free (filename);
 }
 
 gboolean
-gimp_tools_clear (Gimp    *gimp,
+picman_tools_clear (Picman    *picman,
                   GError **error)
 {
   GList    *list;
   gboolean  success = TRUE;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
 
-  for (list = gimp_get_tool_info_iter (gimp);
+  for (list = picman_get_tool_info_iter (picman);
        list && success;
        list = g_list_next (list))
     {
-      GimpToolInfo *tool_info = GIMP_TOOL_INFO (list->data);
+      PicmanToolInfo *tool_info = PICMAN_TOOL_INFO (list->data);
 
-      success = gimp_tool_options_delete (tool_info->tool_options, NULL);
+      success = picman_tool_options_delete (tool_info->tool_options, NULL);
     }
 
   if (success)
-    success = gimp_contexts_clear (gimp, error);
+    success = picman_contexts_clear (picman, error);
 
   if (success)
     tool_options_deleted = TRUE;
@@ -442,22 +442,22 @@ gimp_tools_clear (Gimp    *gimp,
 }
 
 GList *
-gimp_tools_get_default_order (Gimp *gimp)
+picman_tools_get_default_order (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  return g_object_get_data (G_OBJECT (gimp),
-                            "gimp-tools-default-order");
+  return g_object_get_data (G_OBJECT (picman),
+                            "picman-tools-default-order");
 }
 
 
 /*  private functions  */
 
 static void
-gimp_tools_register (GType                   tool_type,
+picman_tools_register (GType                   tool_type,
                      GType                   tool_options_type,
-                     GimpToolOptionsGUIFunc  options_gui_func,
-                     GimpContextPropMask     context_props,
+                     PicmanToolOptionsGUIFunc  options_gui_func,
+                     PicmanContextPropMask     context_props,
                      const gchar            *identifier,
                      const gchar            *blurb,
                      const gchar            *help,
@@ -468,69 +468,69 @@ gimp_tools_register (GType                   tool_type,
                      const gchar            *stock_id,
                      gpointer                data)
 {
-  Gimp         *gimp = (Gimp *) data;
-  GimpToolInfo *tool_info;
+  Picman         *picman = (Picman *) data;
+  PicmanToolInfo *tool_info;
   const gchar  *paint_core_name;
   gboolean      visible;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (g_type_is_a (tool_type, GIMP_TYPE_TOOL));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (g_type_is_a (tool_type, PICMAN_TYPE_TOOL));
   g_return_if_fail (tool_options_type == G_TYPE_NONE ||
-                    g_type_is_a (tool_options_type, GIMP_TYPE_TOOL_OPTIONS));
+                    g_type_is_a (tool_options_type, PICMAN_TYPE_TOOL_OPTIONS));
 
   if (tool_options_type == G_TYPE_NONE)
-    tool_options_type = GIMP_TYPE_TOOL_OPTIONS;
+    tool_options_type = PICMAN_TYPE_TOOL_OPTIONS;
 
-  if (tool_type == GIMP_TYPE_PENCIL_TOOL)
+  if (tool_type == PICMAN_TYPE_PENCIL_TOOL)
     {
-      paint_core_name = "gimp-pencil";
+      paint_core_name = "picman-pencil";
     }
-  else if (tool_type == GIMP_TYPE_PAINTBRUSH_TOOL)
+  else if (tool_type == PICMAN_TYPE_PAINTBRUSH_TOOL)
     {
-      paint_core_name = "gimp-paintbrush";
+      paint_core_name = "picman-paintbrush";
     }
-  else if (tool_type == GIMP_TYPE_ERASER_TOOL)
+  else if (tool_type == PICMAN_TYPE_ERASER_TOOL)
     {
-      paint_core_name = "gimp-eraser";
+      paint_core_name = "picman-eraser";
     }
-  else if (tool_type == GIMP_TYPE_AIRBRUSH_TOOL)
+  else if (tool_type == PICMAN_TYPE_AIRBRUSH_TOOL)
     {
-      paint_core_name = "gimp-airbrush";
+      paint_core_name = "picman-airbrush";
     }
-  else if (tool_type == GIMP_TYPE_CLONE_TOOL)
+  else if (tool_type == PICMAN_TYPE_CLONE_TOOL)
     {
-      paint_core_name = "gimp-clone";
+      paint_core_name = "picman-clone";
     }
-  else if (tool_type == GIMP_TYPE_HEAL_TOOL)
+  else if (tool_type == PICMAN_TYPE_HEAL_TOOL)
     {
-      paint_core_name = "gimp-heal";
+      paint_core_name = "picman-heal";
     }
-  else if (tool_type == GIMP_TYPE_PERSPECTIVE_CLONE_TOOL)
+  else if (tool_type == PICMAN_TYPE_PERSPECTIVE_CLONE_TOOL)
     {
-      paint_core_name = "gimp-perspective-clone";
+      paint_core_name = "picman-perspective-clone";
     }
-  else if (tool_type == GIMP_TYPE_CONVOLVE_TOOL)
+  else if (tool_type == PICMAN_TYPE_CONVOLVE_TOOL)
     {
-      paint_core_name = "gimp-convolve";
+      paint_core_name = "picman-convolve";
     }
-  else if (tool_type == GIMP_TYPE_SMUDGE_TOOL)
+  else if (tool_type == PICMAN_TYPE_SMUDGE_TOOL)
     {
-      paint_core_name = "gimp-smudge";
+      paint_core_name = "picman-smudge";
     }
-  else if (tool_type == GIMP_TYPE_DODGE_BURN_TOOL)
+  else if (tool_type == PICMAN_TYPE_DODGE_BURN_TOOL)
     {
-      paint_core_name = "gimp-dodge-burn";
+      paint_core_name = "picman-dodge-burn";
     }
-  else if (tool_type == GIMP_TYPE_INK_TOOL)
+  else if (tool_type == PICMAN_TYPE_INK_TOOL)
     {
-      paint_core_name = "gimp-ink";
+      paint_core_name = "picman-ink";
     }
   else
     {
-      paint_core_name = "gimp-paintbrush";
+      paint_core_name = "picman-paintbrush";
     }
 
-  tool_info = gimp_tool_info_new (gimp,
+  tool_info = picman_tool_info_new (picman,
                                   tool_type,
                                   tool_options_type,
                                   context_props,
@@ -544,18 +544,18 @@ gimp_tools_register (GType                   tool_type,
                                   paint_core_name,
                                   stock_id);
 
-  visible = (! g_type_is_a (tool_type, GIMP_TYPE_IMAGE_MAP_TOOL));
+  visible = (! g_type_is_a (tool_type, PICMAN_TYPE_IMAGE_MAP_TOOL));
 
   g_object_set (tool_info, "visible", visible, NULL);
-  g_object_set_data (G_OBJECT (tool_info), "gimp-tool-default-visible",
+  g_object_set_data (G_OBJECT (tool_info), "picman-tool-default-visible",
                      GINT_TO_POINTER (visible));
 
-  g_object_set_data (G_OBJECT (tool_info), "gimp-tool-options-gui-func",
+  g_object_set_data (G_OBJECT (tool_info), "picman-tool-options-gui-func",
                      options_gui_func);
 
-  gimp_container_add (gimp->tool_info_list, GIMP_OBJECT (tool_info));
+  picman_container_add (picman->tool_info_list, PICMAN_OBJECT (tool_info));
   g_object_unref (tool_info);
 
-  if (tool_type == GIMP_TYPE_PAINTBRUSH_TOOL)
-    gimp_tool_info_set_standard (gimp, tool_info);
+  if (tool_type == PICMAN_TYPE_PAINTBRUSH_TOOL)
+    picman_tool_info_set_standard (picman, tool_info);
 }

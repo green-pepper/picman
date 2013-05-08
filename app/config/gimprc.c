@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpRc, the object for GIMPs user configuration file gimprc.
- * Copyright (C) 2001-2002  Sven Neumann <sven@gimp.org>
+ * PicmanRc, the object for PICMANs user configuration file picmanrc.
+ * Copyright (C) 2001-2002  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,66 +24,66 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "config-types.h"
 
-#include "gimpconfig-file.h"
-#include "gimprc.h"
-#include "gimprc-deserialize.h"
-#include "gimprc-serialize.h"
-#include "gimprc-unknown.h"
+#include "picmanconfig-file.h"
+#include "picmanrc.h"
+#include "picmanrc-deserialize.h"
+#include "picmanrc-serialize.h"
+#include "picmanrc-unknown.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
 {
   PROP_0,
   PROP_VERBOSE,
-  PROP_SYSTEM_GIMPRC,
-  PROP_USER_GIMPRC
+  PROP_SYSTEM_PICMANRC,
+  PROP_USER_PICMANRC
 };
 
 
-static void         gimp_rc_config_iface_init (GimpConfigInterface *iface);
+static void         picman_rc_config_iface_init (PicmanConfigInterface *iface);
 
-static void         gimp_rc_dispose           (GObject      *object);
-static void         gimp_rc_finalize          (GObject      *object);
-static void         gimp_rc_set_property      (GObject      *object,
+static void         picman_rc_dispose           (GObject      *object);
+static void         picman_rc_finalize          (GObject      *object);
+static void         picman_rc_set_property      (GObject      *object,
                                                guint         property_id,
                                                const GValue *value,
                                                GParamSpec   *pspec);
-static void         gimp_rc_get_property      (GObject      *object,
+static void         picman_rc_get_property      (GObject      *object,
                                                guint         property_id,
                                                GValue       *value,
                                                GParamSpec   *pspec);
 
-static GimpConfig * gimp_rc_duplicate         (GimpConfig   *object);
-static void         gimp_rc_load              (GimpRc       *rc);
-static gboolean     gimp_rc_idle_save         (GimpRc       *rc);
-static void         gimp_rc_notify            (GimpRc       *rc,
+static PicmanConfig * picman_rc_duplicate         (PicmanConfig   *object);
+static void         picman_rc_load              (PicmanRc       *rc);
+static gboolean     picman_rc_idle_save         (PicmanRc       *rc);
+static void         picman_rc_notify            (PicmanRc       *rc,
                                                GParamSpec   *param,
                                                gpointer      data);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpRc, gimp_rc, GIMP_TYPE_PLUGIN_CONFIG,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG,
-                                                gimp_rc_config_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanRc, picman_rc, PICMAN_TYPE_PLUGIN_CONFIG,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG,
+                                                picman_rc_config_iface_init))
 
-#define parent_class gimp_rc_parent_class
+#define parent_class picman_rc_parent_class
 
 
 static void
-gimp_rc_class_init (GimpRcClass *klass)
+picman_rc_class_init (PicmanRcClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->dispose      = gimp_rc_dispose;
-  object_class->finalize     = gimp_rc_finalize;
-  object_class->set_property = gimp_rc_set_property;
-  object_class->get_property = gimp_rc_get_property;
+  object_class->dispose      = picman_rc_dispose;
+  object_class->finalize     = picman_rc_finalize;
+  object_class->set_property = picman_rc_set_property;
+  object_class->get_property = picman_rc_get_property;
 
   g_object_class_install_property (object_class, PROP_VERBOSE,
                                    g_param_spec_boolean ("verbose",
@@ -92,15 +92,15 @@ gimp_rc_class_init (GimpRcClass *klass)
                                                          G_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT));
 
-  g_object_class_install_property (object_class, PROP_SYSTEM_GIMPRC,
-                                   g_param_spec_string ("system-gimprc",
+  g_object_class_install_property (object_class, PROP_SYSTEM_PICMANRC,
+                                   g_param_spec_string ("system-picmanrc",
                                                         NULL, NULL,
                                                         NULL,
                                                         G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 
-  g_object_class_install_property (object_class, PROP_USER_GIMPRC,
-                                   g_param_spec_string ("user-gimprc",
+  g_object_class_install_property (object_class, PROP_USER_PICMANRC,
+                                   g_param_spec_string ("user-picmanrc",
                                                         NULL, NULL,
                                                         NULL,
                                                         G_PARAM_READWRITE |
@@ -108,55 +108,55 @@ gimp_rc_class_init (GimpRcClass *klass)
 }
 
 static void
-gimp_rc_init (GimpRc *rc)
+picman_rc_init (PicmanRc *rc)
 {
   rc->autosave     = FALSE;
   rc->save_idle_id = 0;
 }
 
 static void
-gimp_rc_dispose (GObject *object)
+picman_rc_dispose (GObject *object)
 {
-  GimpRc *rc = GIMP_RC (object);
+  PicmanRc *rc = PICMAN_RC (object);
 
   if (rc->save_idle_id)
-    gimp_rc_idle_save (rc);
+    picman_rc_idle_save (rc);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_rc_finalize (GObject *object)
+picman_rc_finalize (GObject *object)
 {
-  GimpRc *rc = GIMP_RC (object);
+  PicmanRc *rc = PICMAN_RC (object);
 
-  if (rc->system_gimprc)
+  if (rc->system_picmanrc)
     {
-      g_free (rc->system_gimprc);
-      rc->system_gimprc = NULL;
+      g_free (rc->system_picmanrc);
+      rc->system_picmanrc = NULL;
     }
-  if (rc->user_gimprc)
+  if (rc->user_picmanrc)
     {
-      g_free (rc->user_gimprc);
-      rc->user_gimprc = NULL;
+      g_free (rc->user_picmanrc);
+      rc->user_picmanrc = NULL;
     }
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
-gimp_rc_set_property (GObject      *object,
+picman_rc_set_property (GObject      *object,
                       guint         property_id,
                       const GValue *value,
                       GParamSpec   *pspec)
 {
-  GimpRc      *rc       = GIMP_RC (object);
+  PicmanRc      *rc       = PICMAN_RC (object);
   const gchar *filename = NULL;
 
   switch (property_id)
     {
-    case PROP_SYSTEM_GIMPRC:
-    case PROP_USER_GIMPRC:
+    case PROP_SYSTEM_PICMANRC:
+    case PROP_USER_PICMANRC:
       filename = g_value_get_string (value);
       break;
     default:
@@ -169,23 +169,23 @@ gimp_rc_set_property (GObject      *object,
       rc->verbose = g_value_get_boolean (value);
       break;
 
-    case PROP_SYSTEM_GIMPRC:
-      g_free (rc->system_gimprc);
+    case PROP_SYSTEM_PICMANRC:
+      g_free (rc->system_picmanrc);
 
       if (filename)
-        rc->system_gimprc = g_strdup (filename);
+        rc->system_picmanrc = g_strdup (filename);
       else
-        rc->system_gimprc = g_build_filename (gimp_sysconf_directory (),
-                                              "gimprc", NULL);
+        rc->system_picmanrc = g_build_filename (picman_sysconf_directory (),
+                                              "picmanrc", NULL);
       break;
 
-    case PROP_USER_GIMPRC:
-      g_free (rc->user_gimprc);
+    case PROP_USER_PICMANRC:
+      g_free (rc->user_picmanrc);
 
       if (filename)
-        rc->user_gimprc = g_strdup (filename);
+        rc->user_picmanrc = g_strdup (filename);
       else
-        rc->user_gimprc = gimp_personal_rc_file ("gimprc");
+        rc->user_picmanrc = picman_personal_rc_file ("picmanrc");
       break;
 
    default:
@@ -195,23 +195,23 @@ gimp_rc_set_property (GObject      *object,
 }
 
 static void
-gimp_rc_get_property (GObject    *object,
+picman_rc_get_property (GObject    *object,
                       guint       property_id,
                       GValue     *value,
                       GParamSpec *pspec)
 {
-  GimpRc *rc = GIMP_RC (object);
+  PicmanRc *rc = PICMAN_RC (object);
 
   switch (property_id)
     {
     case PROP_VERBOSE:
       g_value_set_boolean (value, rc->verbose);
       break;
-    case PROP_SYSTEM_GIMPRC:
-      g_value_set_string (value, rc->system_gimprc);
+    case PROP_SYSTEM_PICMANRC:
+      g_value_set_string (value, rc->system_picmanrc);
       break;
-    case PROP_USER_GIMPRC:
-      g_value_set_string (value, rc->user_gimprc);
+    case PROP_USER_PICMANRC:
+      g_value_set_string (value, rc->user_picmanrc);
       break;
    default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -220,49 +220,49 @@ gimp_rc_get_property (GObject    *object,
 }
 
 static void
-gimp_rc_config_iface_init (GimpConfigInterface *iface)
+picman_rc_config_iface_init (PicmanConfigInterface *iface)
 {
-  iface->serialize   = gimp_rc_serialize;
-  iface->deserialize = gimp_rc_deserialize;
-  iface->duplicate   = gimp_rc_duplicate;
+  iface->serialize   = picman_rc_serialize;
+  iface->deserialize = picman_rc_deserialize;
+  iface->duplicate   = picman_rc_duplicate;
 }
 
 static void
-gimp_rc_duplicate_unknown_token (const gchar *key,
+picman_rc_duplicate_unknown_token (const gchar *key,
                                  const gchar *value,
                                  gpointer     user_data)
 {
-  gimp_rc_add_unknown_token (GIMP_CONFIG (user_data), key, value);
+  picman_rc_add_unknown_token (PICMAN_CONFIG (user_data), key, value);
 }
 
-static GimpConfig *
-gimp_rc_duplicate (GimpConfig *config)
+static PicmanConfig *
+picman_rc_duplicate (PicmanConfig *config)
 {
-  GimpConfig *dup = g_object_new (GIMP_TYPE_RC, NULL);
+  PicmanConfig *dup = g_object_new (PICMAN_TYPE_RC, NULL);
 
-  gimp_config_sync (G_OBJECT (config), G_OBJECT (dup), 0);
+  picman_config_sync (G_OBJECT (config), G_OBJECT (dup), 0);
 
-  gimp_rc_foreach_unknown_token (config,
-                                 gimp_rc_duplicate_unknown_token, dup);
+  picman_rc_foreach_unknown_token (config,
+                                 picman_rc_duplicate_unknown_token, dup);
 
   return dup;
 }
 
 static void
-gimp_rc_load (GimpRc *rc)
+picman_rc_load (PicmanRc *rc)
 {
   GError *error = NULL;
 
-  g_return_if_fail (GIMP_IS_RC (rc));
+  g_return_if_fail (PICMAN_IS_RC (rc));
 
   if (rc->verbose)
     g_print ("Parsing '%s'\n",
-             gimp_filename_to_utf8 (rc->system_gimprc));
+             picman_filename_to_utf8 (rc->system_picmanrc));
 
-  if (! gimp_config_deserialize_file (GIMP_CONFIG (rc),
-                                      rc->system_gimprc, NULL, &error))
+  if (! picman_config_deserialize_file (PICMAN_CONFIG (rc),
+                                      rc->system_picmanrc, NULL, &error))
     {
-      if (error->code != GIMP_CONFIG_ERROR_OPEN_ENOENT)
+      if (error->code != PICMAN_CONFIG_ERROR_OPEN_ENOENT)
         g_message ("%s", error->message);
 
       g_clear_error (&error);
@@ -270,16 +270,16 @@ gimp_rc_load (GimpRc *rc)
 
   if (rc->verbose)
     g_print ("Parsing '%s'\n",
-             gimp_filename_to_utf8 (rc->user_gimprc));
+             picman_filename_to_utf8 (rc->user_picmanrc));
 
-  if (! gimp_config_deserialize_file (GIMP_CONFIG (rc),
-                                      rc->user_gimprc, NULL, &error))
+  if (! picman_config_deserialize_file (PICMAN_CONFIG (rc),
+                                      rc->user_picmanrc, NULL, &error))
     {
-      if (error->code != GIMP_CONFIG_ERROR_OPEN_ENOENT)
+      if (error->code != PICMAN_CONFIG_ERROR_OPEN_ENOENT)
         {
           g_message ("%s", error->message);
 
-          gimp_config_file_backup_on_error (rc->user_gimprc, "gimprc", NULL);
+          picman_config_file_backup_on_error (rc->user_picmanrc, "picmanrc", NULL);
         }
 
       g_clear_error (&error);
@@ -287,9 +287,9 @@ gimp_rc_load (GimpRc *rc)
 }
 
 static gboolean
-gimp_rc_idle_save (GimpRc *rc)
+picman_rc_idle_save (PicmanRc *rc)
 {
-  gimp_rc_save (rc);
+  picman_rc_save (rc);
 
   rc->save_idle_id = 0;
 
@@ -297,7 +297,7 @@ gimp_rc_idle_save (GimpRc *rc)
 }
 
 static void
-gimp_rc_notify (GimpRc     *rc,
+picman_rc_notify (PicmanRc     *rc,
                 GParamSpec *param,
                 gpointer    data)
 {
@@ -305,43 +305,43 @@ gimp_rc_notify (GimpRc     *rc,
     return;
 
   if (!rc->save_idle_id)
-    rc->save_idle_id = g_idle_add ((GSourceFunc) gimp_rc_idle_save, rc);
+    rc->save_idle_id = g_idle_add ((GSourceFunc) picman_rc_idle_save, rc);
 }
 
 /**
- * gimp_rc_new:
- * @system_gimprc: the name of the system-wide gimprc file or %NULL to
+ * picman_rc_new:
+ * @system_picmanrc: the name of the system-wide picmanrc file or %NULL to
  *                 use the standard location
- * @user_gimprc:   the name of the user gimprc file or %NULL to use the
+ * @user_picmanrc:   the name of the user picmanrc file or %NULL to use the
  *                 standard location
  * @verbose:       enable console messages about loading and saving
  *
- * Creates a new GimpRc object and loads the system-wide and the user
+ * Creates a new PicmanRc object and loads the system-wide and the user
  * configuration files.
  *
- * Returns: the new #GimpRc.
+ * Returns: the new #PicmanRc.
  */
-GimpRc *
-gimp_rc_new (const gchar *system_gimprc,
-             const gchar *user_gimprc,
+PicmanRc *
+picman_rc_new (const gchar *system_picmanrc,
+             const gchar *user_picmanrc,
              gboolean     verbose)
 {
-  GimpRc *rc = g_object_new (GIMP_TYPE_RC,
+  PicmanRc *rc = g_object_new (PICMAN_TYPE_RC,
                              "verbose",       verbose,
-                             "system-gimprc", system_gimprc,
-                             "user-gimprc",   user_gimprc,
+                             "system-picmanrc", system_picmanrc,
+                             "user-picmanrc",   user_picmanrc,
                              NULL);
 
-  gimp_rc_load (rc);
+  picman_rc_load (rc);
 
   return rc;
 }
 
 void
-gimp_rc_set_autosave (GimpRc   *rc,
+picman_rc_set_autosave (PicmanRc   *rc,
                       gboolean  autosave)
 {
-  g_return_if_fail (GIMP_IS_RC (rc));
+  g_return_if_fail (PICMAN_IS_RC (rc));
 
   autosave = autosave ? TRUE : FALSE;
 
@@ -350,18 +350,18 @@ gimp_rc_set_autosave (GimpRc   *rc,
 
   if (autosave)
     g_signal_connect (rc, "notify",
-                      G_CALLBACK (gimp_rc_notify),
+                      G_CALLBACK (picman_rc_notify),
                       NULL);
   else
-    g_signal_handlers_disconnect_by_func (rc, gimp_rc_notify, NULL);
+    g_signal_handlers_disconnect_by_func (rc, picman_rc_notify, NULL);
 
   rc->autosave = autosave;
 }
 
 
 /**
- * gimp_rc_query:
- * @rc:  a #GimpRc object.
+ * picman_rc_query:
+ * @rc:  a #PicmanRc object.
  * @key: a string used as a key for the lookup.
  *
  * This function looks up @key in the object properties of @rc. If
@@ -373,7 +373,7 @@ gimp_rc_set_autosave (GimpRc   *rc,
  *               if the key couldn't be found.
  **/
 gchar *
-gimp_rc_query (GimpRc      *rc,
+picman_rc_query (PicmanRc      *rc,
                const gchar *key)
 {
   GObjectClass  *klass;
@@ -383,7 +383,7 @@ gimp_rc_query (GimpRc      *rc,
   guint          i, n_property_specs;
   gchar         *retval = NULL;
 
-  g_return_val_if_fail (GIMP_IS_RC (rc), NULL);
+  g_return_val_if_fail (PICMAN_IS_RC (rc), NULL);
   g_return_val_if_fail (key != NULL, NULL);
 
   rc_object = G_OBJECT (rc);
@@ -398,7 +398,7 @@ gimp_rc_query (GimpRc      *rc,
     {
       prop_spec = property_specs[i];
 
-      if (! (prop_spec->flags & GIMP_CONFIG_PARAM_SERIALIZE) ||
+      if (! (prop_spec->flags & PICMAN_CONFIG_PARAM_SERIALIZE) ||
           strcmp (prop_spec->name, key))
         {
           prop_spec = NULL;
@@ -413,7 +413,7 @@ gimp_rc_query (GimpRc      *rc,
       g_value_init (&value, prop_spec->value_type);
       g_object_get_property (rc_object, prop_spec->name, &value);
 
-      if (gimp_config_serialize_value (&value, str, FALSE))
+      if (picman_config_serialize_value (&value, str, FALSE))
         retval = g_string_free (str, FALSE);
       else
         g_string_free (str, TRUE);
@@ -422,7 +422,7 @@ gimp_rc_query (GimpRc      *rc,
     }
   else
     {
-      retval = g_strdup (gimp_rc_lookup_unknown_token (GIMP_CONFIG (rc), key));
+      retval = g_strdup (picman_rc_lookup_unknown_token (PICMAN_CONFIG (rc), key));
     }
 
   g_free (property_specs);
@@ -431,11 +431,11 @@ gimp_rc_query (GimpRc      *rc,
     {
       const gchar * const path_tokens[] =
       {
-        "gimp_dir",
-        "gimp_data_dir",
-        "gimp_plug_in_dir",
-        "gimp_plugin_dir",
-        "gimp_sysconf_dir"
+        "picman_dir",
+        "picman_data_dir",
+        "picman_plug_in_dir",
+        "picman_plugin_dir",
+        "picman_sysconf_dir"
       };
 
       for (i = 0; !retval && i < G_N_ELEMENTS (path_tokens); i++)
@@ -445,7 +445,7 @@ gimp_rc_query (GimpRc      *rc,
 
   if (retval)
     {
-      gchar *tmp = gimp_config_path_expand (retval, FALSE, NULL);
+      gchar *tmp = picman_config_path_expand (retval, FALSE, NULL);
 
       if (tmp)
         {
@@ -458,68 +458,68 @@ gimp_rc_query (GimpRc      *rc,
 }
 
 /**
- * gimp_rc_set_unknown_token:
- * @gimprc: a #GimpRc object.
+ * picman_rc_set_unknown_token:
+ * @picmanrc: a #PicmanRc object.
  * @token:
  * @value:
  *
- * Calls gimp_rc_add_unknown_token() and triggers an idle-save if
- * autosave is enabled on @gimprc.
+ * Calls picman_rc_add_unknown_token() and triggers an idle-save if
+ * autosave is enabled on @picmanrc.
  **/
 void
-gimp_rc_set_unknown_token (GimpRc      *rc,
+picman_rc_set_unknown_token (PicmanRc      *rc,
                            const gchar *token,
                            const gchar *value)
 {
-  g_return_if_fail (GIMP_IS_RC (rc));
+  g_return_if_fail (PICMAN_IS_RC (rc));
 
-  gimp_rc_add_unknown_token (GIMP_CONFIG (rc), token, value);
+  picman_rc_add_unknown_token (PICMAN_CONFIG (rc), token, value);
 
   if (rc->autosave)
-    gimp_rc_notify (rc, NULL, NULL);
+    picman_rc_notify (rc, NULL, NULL);
 }
 
 /**
- * gimp_rc_save:
- * @gimprc: a #GimpRc object.
+ * picman_rc_save:
+ * @picmanrc: a #PicmanRc object.
  *
  * Saves any settings that differ from the system-wide defined
- * defaults to the users personal gimprc file.
+ * defaults to the users personal picmanrc file.
  **/
 void
-gimp_rc_save (GimpRc *rc)
+picman_rc_save (PicmanRc *rc)
 {
-  GimpRc *global;
+  PicmanRc *global;
   gchar  *header;
   GError *error = NULL;
 
   const gchar *top =
-    "GIMP gimprc\n"
+    "PICMAN picmanrc\n"
     "\n"
-    "This is your personal gimprc file.  Any variable defined in this file "
-    "takes precedence over the value defined in the system-wide gimprc: ";
+    "This is your personal picmanrc file.  Any variable defined in this file "
+    "takes precedence over the value defined in the system-wide picmanrc: ";
   const gchar *bottom =
     "\n"
-    "Most values can be set within GIMP by changing some options in "
+    "Most values can be set within PICMAN by changing some options in "
     "the Preferences dialog.";
   const gchar *footer =
-    "end of gimprc";
+    "end of picmanrc";
 
-  g_return_if_fail (GIMP_IS_RC (rc));
+  g_return_if_fail (PICMAN_IS_RC (rc));
 
-  global = g_object_new (GIMP_TYPE_RC, NULL);
+  global = g_object_new (PICMAN_TYPE_RC, NULL);
 
-  gimp_config_deserialize_file (GIMP_CONFIG (global),
-                                rc->system_gimprc, NULL, NULL);
+  picman_config_deserialize_file (PICMAN_CONFIG (global),
+                                rc->system_picmanrc, NULL, NULL);
 
-  header = g_strconcat (top, rc->system_gimprc, bottom, NULL);
+  header = g_strconcat (top, rc->system_picmanrc, bottom, NULL);
 
   if (rc->verbose)
     g_print ("Writing '%s'\n",
-             gimp_filename_to_utf8 (rc->user_gimprc));
+             picman_filename_to_utf8 (rc->user_picmanrc));
 
-  if (! gimp_config_serialize_to_file (GIMP_CONFIG (rc),
-                                       rc->user_gimprc,
+  if (! picman_config_serialize_to_file (PICMAN_CONFIG (rc),
+                                       rc->user_picmanrc,
                                        header, footer, global,
                                        &error))
     {
@@ -532,21 +532,21 @@ gimp_rc_save (GimpRc *rc)
 }
 
 /**
- * gimp_rc_migrate:
- * @rc: a #GimpRc object.
+ * picman_rc_migrate:
+ * @rc: a #PicmanRc object.
  *
- * Resets all GimpParamConfigPath properties of the passed rc object
+ * Resets all PicmanParamConfigPath properties of the passed rc object
  * to their default values, in order to prevent paths in a migrated
- * gimprc to refer to folders in the old GIMP's user directory.
+ * picmanrc to refer to folders in the old PICMAN's user directory.
  **/
 void
-gimp_rc_migrate (GimpRc *rc)
+picman_rc_migrate (PicmanRc *rc)
 {
   GParamSpec **pspecs;
   guint        n_pspecs;
   gint         i;
 
-  g_return_if_fail (GIMP_IS_RC (rc));
+  g_return_if_fail (PICMAN_IS_RC (rc));
 
   pspecs = g_object_class_list_properties (G_OBJECT_GET_CLASS (rc), &n_pspecs);
 
@@ -554,7 +554,7 @@ gimp_rc_migrate (GimpRc *rc)
     {
       GParamSpec *pspec = pspecs[i];
 
-      if (GIMP_IS_PARAM_SPEC_CONFIG_PATH (pspec))
+      if (PICMAN_IS_PARAM_SPEC_CONFIG_PATH (pspec))
         {
           GValue value = { 0, };
 

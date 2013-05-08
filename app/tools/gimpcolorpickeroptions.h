@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,36 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_COLOR_PICKER_OPTIONS_H__
-#define  __GIMP_COLOR_PICKER_OPTIONS_H__
+#ifndef  __PICMAN_COLOR_PICKER_OPTIONS_H__
+#define  __PICMAN_COLOR_PICKER_OPTIONS_H__
 
 
-#include "gimpcoloroptions.h"
+#include "picmancoloroptions.h"
 
 
-#define GIMP_TYPE_COLOR_PICKER_OPTIONS            (gimp_color_picker_options_get_type ())
-#define GIMP_COLOR_PICKER_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_PICKER_OPTIONS, GimpColorPickerOptions))
-#define GIMP_COLOR_PICKER_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_PICKER_OPTIONS, GimpColorPickerOptionsClass))
-#define GIMP_IS_COLOR_PICKER_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_PICKER_OPTIONS))
-#define GIMP_IS_COLOR_PICKER_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_PICKER_OPTIONS))
-#define GIMP_COLOR_PICKER_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_PICKER_OPTIONS, GimpColorPickerOptionsClass))
+#define PICMAN_TYPE_COLOR_PICKER_OPTIONS            (picman_color_picker_options_get_type ())
+#define PICMAN_COLOR_PICKER_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_PICKER_OPTIONS, PicmanColorPickerOptions))
+#define PICMAN_COLOR_PICKER_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_PICKER_OPTIONS, PicmanColorPickerOptionsClass))
+#define PICMAN_IS_COLOR_PICKER_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_PICKER_OPTIONS))
+#define PICMAN_IS_COLOR_PICKER_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_PICKER_OPTIONS))
+#define PICMAN_COLOR_PICKER_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_PICKER_OPTIONS, PicmanColorPickerOptionsClass))
 
 
-typedef struct _GimpColorPickerOptions GimpColorPickerOptions;
-typedef struct _GimpToolOptionsClass   GimpColorPickerOptionsClass;
+typedef struct _PicmanColorPickerOptions PicmanColorPickerOptions;
+typedef struct _PicmanToolOptionsClass   PicmanColorPickerOptionsClass;
 
-struct _GimpColorPickerOptions
+struct _PicmanColorPickerOptions
 {
-  GimpColorOptions   parent_instance;
+  PicmanColorOptions   parent_instance;
 
-  GimpColorPickMode  pick_mode;
+  PicmanColorPickMode  pick_mode;
   gboolean           use_info_window;
 };
 
 
-GType       gimp_color_picker_options_get_type (void) G_GNUC_CONST;
+GType       picman_color_picker_options_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_color_picker_options_gui      (GimpToolOptions *tool_options);
+GtkWidget * picman_color_picker_options_gui      (PicmanToolOptions *tool_options);
 
 
-#endif  /*  __GIMP_COLOR_PICKER_OPTIONS_H__  */
+#endif  /*  __PICMAN_COLOR_PICKER_OPTIONS_H__  */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbrightnesscontrastconfig.h
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanbrightnesscontrastconfig.h
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,41 +18,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRIGHTNESS_CONTRAST_CONFIG_H__
-#define __GIMP_BRIGHTNESS_CONTRAST_CONFIG_H__
+#ifndef __PICMAN_BRIGHTNESS_CONTRAST_CONFIG_H__
+#define __PICMAN_BRIGHTNESS_CONTRAST_CONFIG_H__
 
 
-#include "core/gimpimagemapconfig.h"
+#include "core/picmanimagemapconfig.h"
 
 
-#define GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG            (gimp_brightness_contrast_config_get_type ())
-#define GIMP_BRIGHTNESS_CONTRAST_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG, GimpBrightnessContrastConfig))
-#define GIMP_BRIGHTNESS_CONTRAST_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG, GimpBrightnessContrastConfigClass))
-#define GIMP_IS_BRIGHTNESS_CONTRAST_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG))
-#define GIMP_IS_BRIGHTNESS_CONTRAST_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG))
-#define GIMP_BRIGHTNESS_CONTRAST_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG, GimpBrightnessContrastConfigClass))
+#define PICMAN_TYPE_BRIGHTNESS_CONTRAST_CONFIG            (picman_brightness_contrast_config_get_type ())
+#define PICMAN_BRIGHTNESS_CONTRAST_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BRIGHTNESS_CONTRAST_CONFIG, PicmanBrightnessContrastConfig))
+#define PICMAN_BRIGHTNESS_CONTRAST_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_BRIGHTNESS_CONTRAST_CONFIG, PicmanBrightnessContrastConfigClass))
+#define PICMAN_IS_BRIGHTNESS_CONTRAST_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BRIGHTNESS_CONTRAST_CONFIG))
+#define PICMAN_IS_BRIGHTNESS_CONTRAST_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_BRIGHTNESS_CONTRAST_CONFIG))
+#define PICMAN_BRIGHTNESS_CONTRAST_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_BRIGHTNESS_CONTRAST_CONFIG, PicmanBrightnessContrastConfigClass))
 
 
-typedef struct _GimpBrightnessContrastConfigClass GimpBrightnessContrastConfigClass;
+typedef struct _PicmanBrightnessContrastConfigClass PicmanBrightnessContrastConfigClass;
 
-struct _GimpBrightnessContrastConfig
+struct _PicmanBrightnessContrastConfig
 {
-  GimpImageMapConfig  parent_instance;
+  PicmanImageMapConfig  parent_instance;
 
   gdouble             brightness;
   gdouble             contrast;
 };
 
-struct _GimpBrightnessContrastConfigClass
+struct _PicmanBrightnessContrastConfigClass
 {
-  GimpImageMapConfigClass  parent_class;
+  PicmanImageMapConfigClass  parent_class;
 };
 
 
-GType   gimp_brightness_contrast_config_get_type (void) G_GNUC_CONST;
+GType   picman_brightness_contrast_config_get_type (void) G_GNUC_CONST;
 
-GimpLevelsConfig *
-gimp_brightness_contrast_config_to_levels_config (GimpBrightnessContrastConfig *config);
+PicmanLevelsConfig *
+picman_brightness_contrast_config_to_levels_config (PicmanBrightnessContrastConfig *config);
 
 
-#endif /* __GIMP_BRIGHTNESS_CONTRAST_CONFIG_H__ */
+#endif /* __PICMAN_BRIGHTNESS_CONTRAST_CONFIG_H__ */

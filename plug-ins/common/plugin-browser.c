@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Copyright (C) 1999 Andy Thomas  alt@picnic.demon.co.uk
  *
@@ -27,15 +27,15 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC    "plug-in-plug-in-details"
 #define PLUG_IN_BINARY  "plugin-browser"
-#define PLUG_IN_ROLE    "gimp-plugin-browser"
+#define PLUG_IN_ROLE    "picman-plugin-browser"
 #define DBL_LIST_WIDTH  250
 #define DBL_WIDTH       (DBL_LIST_WIDTH + 400)
 #define DBL_HEIGHT      250
@@ -89,9 +89,9 @@ typedef struct
 static void        query (void);
 static void        run   (const gchar      *name,
                           gint              nparams,
-                          const GimpParam  *param,
+                          const PicmanParam  *param,
                           gint             *nreturn_vals,
-                          GimpParam       **return_vals);
+                          PicmanParam       **return_vals);
 
 
 static GtkWidget * browser_dialog_new             (void);
@@ -110,7 +110,7 @@ static gboolean    find_existing_mpath            (GtkTreeModel     *model,
                                                    GtkTreeIter      *return_iter);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -125,12 +125,12 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32, "run-mode", "The run mode { RUN-INTERACTIVE (0) }" }
+    { PICMAN_PDB_INT32, "run-mode", "The run mode { RUN-INTERACTIVE (0) }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Display information about plug-ins"),
                           "Allows one to browse the plug-in menus system. You "
                           "can search for plug-in names, sort by name or menu "
@@ -143,29 +143,29 @@ query (void)
                           "1999",
                           N_("_Plug-In Browser"),
                           "",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Help/Programming");
-  gimp_plugin_icon_register (PLUG_IN_PROC, GIMP_ICON_TYPE_STOCK_ID,
-                             (const guint8 *) GIMP_STOCK_PLUGIN);
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Help/Programming");
+  picman_plugin_icon_register (PLUG_IN_PROC, PICMAN_ICON_TYPE_STOCK_ID,
+                             (const guint8 *) PICMAN_STOCK_PLUGIN);
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam  values[2];
+  static PicmanParam  values[2];
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
 
   INIT_I18N ();
 
@@ -173,7 +173,7 @@ run (const gchar      *name,
     {
       *nreturn_vals = 1;
 
-      values[0].data.d_status = GIMP_PDB_SUCCESS;
+      values[0].data.d_status = PICMAN_PDB_SUCCESS;
 
       browser_dialog_new ();
       gtk_main ();
@@ -347,27 +347,27 @@ insert_into_tree_view (PluginBrowser *browser,
 }
 
 static void
-browser_search (GimpBrowser   *gimp_browser,
+browser_search (PicmanBrowser   *picman_browser,
                 const gchar   *search_text,
                 gint           search_type,
                 PluginBrowser *browser)
 {
-  GimpParam    *return_vals;
+  PicmanParam    *return_vals;
   gint          nreturn_vals;
   gint          num_plugins;
   gchar        *str;
   GtkListStore *list_store;
   GtkTreeStore *tree_store;
 
-  gimp_browser_show_message (GIMP_BROWSER (browser->browser),
+  picman_browser_show_message (PICMAN_BROWSER (browser->browser),
                              _("Searching by name"));
 
-  return_vals = gimp_run_procedure ("gimp-plugins-query",
+  return_vals = picman_run_procedure ("picman-plugins-query",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, search_text,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, search_text,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     num_plugins = return_vals[1].data.d_int32;
   else
     num_plugins = 0;
@@ -393,7 +393,7 @@ browser_search (GimpBrowser   *gimp_browser,
         }
     }
 
-  gtk_label_set_text (GTK_LABEL (gimp_browser->count_label), str);
+  gtk_label_set_text (GTK_LABEL (picman_browser->count_label), str);
   g_free (str);
 
   list_store = GTK_LIST_STORE (gtk_tree_view_get_model (browser->list_view));
@@ -516,11 +516,11 @@ browser_search (GimpBrowser   *gimp_browser,
     }
   else
     {
-      gimp_browser_show_message (GIMP_BROWSER (browser->browser),
+      picman_browser_show_message (PICMAN_BROWSER (browser->browser),
                                  _("No matches"));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 }
 
 static GtkWidget *
@@ -539,13 +539,13 @@ browser_dialog_new (void)
   GtkTreeSelection  *selection;
   GtkTreeIter        iter;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
   browser = g_new0 (PluginBrowser, 1);
 
-  browser->dialog = gimp_dialog_new (_("Plug-In Browser"), PLUG_IN_ROLE,
+  browser->dialog = picman_dialog_new (_("Plug-In Browser"), PLUG_IN_ROLE,
                                      NULL, 0,
-                                     gimp_standard_help_func, PLUG_IN_PROC,
+                                     picman_standard_help_func, PLUG_IN_PROC,
 
                                      GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 
@@ -555,7 +555,7 @@ browser_dialog_new (void)
                     G_CALLBACK (browser_dialog_response),
                     browser);
 
-  browser->browser = gimp_browser_new ();
+  browser->browser = picman_browser_new ();
   gtk_container_set_border_width (GTK_CONTAINER (browser->browser), 12);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (browser->dialog))),
                       browser->browser, TRUE, TRUE, 0);
@@ -568,7 +568,7 @@ browser_dialog_new (void)
   /* left = notebook */
 
   notebook = gtk_notebook_new ();
-  gtk_box_pack_start (GTK_BOX (GIMP_BROWSER (browser->browser)->left_vbox),
+  gtk_box_pack_start (GTK_BOX (PICMAN_BROWSER (browser->browser)->left_vbox),
                       notebook, TRUE, TRUE, 0);
 
   /* list : list in a scrolled_win */
@@ -706,13 +706,13 @@ browser_dialog_new (void)
   gtk_widget_show (scrolled_window);
   gtk_widget_show (notebook);
 
-  parent = gtk_widget_get_parent (GIMP_BROWSER (browser->browser)->right_vbox);
+  parent = gtk_widget_get_parent (PICMAN_BROWSER (browser->browser)->right_vbox);
   parent = gtk_widget_get_parent (parent);
 
   gtk_widget_set_size_request (parent, DBL_WIDTH - DBL_LIST_WIDTH, -1);
 
   /* now build the list */
-  browser_search (GIMP_BROWSER (browser->browser), "", 0, browser);
+  browser_search (PICMAN_BROWSER (browser->browser), "", 0, browser);
 
   gtk_widget_show (browser->dialog);
 
@@ -872,16 +872,16 @@ browser_show_plugin (PluginBrowser *browser,
   gchar           *author        = NULL;
   gchar           *copyright     = NULL;
   gchar           *date          = NULL;
-  GimpPDBProcType  type          = 0;
+  PicmanPDBProcType  type          = 0;
   gint             n_params      = 0;
   gint             n_return_vals = 0;
-  GimpParamDef    *params        = NULL;
-  GimpParamDef    *return_vals   = NULL;
+  PicmanParamDef    *params        = NULL;
+  PicmanParamDef    *return_vals   = NULL;
 
   g_return_if_fail (browser != NULL);
   g_return_if_fail (pinfo != NULL);
 
-  gimp_procedural_db_proc_info (pinfo->realname,
+  picman_procedural_db_proc_info (pinfo->realname,
                                 &blurb,
                                 &help,
                                 &author,
@@ -893,8 +893,8 @@ browser_show_plugin (PluginBrowser *browser,
                                 &params,
                                 &return_vals);
 
-  gimp_browser_set_widget (GIMP_BROWSER (browser->browser),
-                           gimp_proc_view_new (pinfo->realname,
+  picman_browser_set_widget (PICMAN_BROWSER (browser->browser),
+                           picman_proc_view_new (pinfo->realname,
                                                pinfo->menu,
                                                blurb,
                                                help,
@@ -913,6 +913,6 @@ browser_show_plugin (PluginBrowser *browser,
   g_free (copyright);
   g_free (date);
 
-  gimp_destroy_paramdefs (params,      n_params);
-  gimp_destroy_paramdefs (return_vals, n_return_vals);
+  picman_destroy_paramdefs (params,      n_params);
+  picman_destroy_paramdefs (return_vals, n_return_vals);
 }

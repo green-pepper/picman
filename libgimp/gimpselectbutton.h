@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpselectbutton.h
+ * picmanselectbutton.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,36 +18,36 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_UI_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimpui.h> can be included directly."
+#if !defined (__PICMAN_UI_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picmanui.h> can be included directly."
 #endif
 
-#ifndef __GIMP_SELECT_BUTTON_H__
-#define __GIMP_SELECT_BUTTON_H__
+#ifndef __PICMAN_SELECT_BUTTON_H__
+#define __PICMAN_SELECT_BUTTON_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_SELECT_BUTTON            (gimp_select_button_get_type ())
-#define GIMP_SELECT_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SELECT_BUTTON, GimpSelectButton))
-#define GIMP_SELECT_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SELECT_BUTTON, GimpSelectButtonClass))
-#define GIMP_IS_SELECT_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SELECT_BUTTON))
-#define GIMP_IS_SELECT_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SELECT_BUTTON))
-#define GIMP_SELECT_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SELECT_BUTTON, GimpSelectButtonClass))
+#define PICMAN_TYPE_SELECT_BUTTON            (picman_select_button_get_type ())
+#define PICMAN_SELECT_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SELECT_BUTTON, PicmanSelectButton))
+#define PICMAN_SELECT_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SELECT_BUTTON, PicmanSelectButtonClass))
+#define PICMAN_IS_SELECT_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SELECT_BUTTON))
+#define PICMAN_IS_SELECT_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SELECT_BUTTON))
+#define PICMAN_SELECT_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SELECT_BUTTON, PicmanSelectButtonClass))
 
 
-typedef struct _GimpSelectButtonClass   GimpSelectButtonClass;
+typedef struct _PicmanSelectButtonClass   PicmanSelectButtonClass;
 
-struct _GimpSelectButton
+struct _PicmanSelectButton
 {
   GtkBox       parent_instance;
 
   const gchar *temp_callback;
 };
 
-struct _GimpSelectButtonClass
+struct _PicmanSelectButtonClass
 {
   GtkBoxClass  parent_class;
 
@@ -56,21 +56,21 @@ struct _GimpSelectButtonClass
   void (*select_destroy) (const gchar *callback);
 
   /* Padding for future expansion */
-  void (*_gimp_reserved1) (void);
-  void (*_gimp_reserved2) (void);
-  void (*_gimp_reserved3) (void);
-  void (*_gimp_reserved4) (void);
-  void (*_gimp_reserved5) (void);
-  void (*_gimp_reserved6) (void);
-  void (*_gimp_reserved7) (void);
+  void (*_picman_reserved1) (void);
+  void (*_picman_reserved2) (void);
+  void (*_picman_reserved3) (void);
+  void (*_picman_reserved4) (void);
+  void (*_picman_reserved5) (void);
+  void (*_picman_reserved6) (void);
+  void (*_picman_reserved7) (void);
 };
 
 
-GType       gimp_select_button_get_type    (void) G_GNUC_CONST;
+GType       picman_select_button_get_type    (void) G_GNUC_CONST;
 
-void        gimp_select_button_close_popup (GimpSelectButton *button);
+void        picman_select_button_close_popup (PicmanSelectButton *button);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_SELECT_BUTTON_H__ */
+#endif /* __PICMAN_SELECT_BUTTON_H__ */

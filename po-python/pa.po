@@ -1,7 +1,7 @@
 # translation of pa.po to Punjabi
-# translation of gimp-python.po to Punjabi
-# Copyright (C) 2004 THE gimp-python'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the gimp-python packageJaswinder Singh Phulewala <jaswinderlinux@netscape.net>, 2004.
+# translation of picman-python.po to Punjabi
+# Copyright (C) 2004 THE picman-python'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the picman-python packageJaswinder Singh Phulewala <jaswinderlinux@netscape.net>, 2004.
 # Amanpreet Singh Alam <aalam@redhat.com>, 2004.
 # Amanpreet Singh Alam[ਆਲਮ] <amanpreetalam@yahoo.com>, 2005.
 # Amanpreet Singh Alam[ਆਲਮ] <amanpreetalam@yahoo.com>, 2005.
@@ -63,19 +63,19 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "\n"
 
-#: ../plug-ins/pygimp/plug-ins/gimpcons.py:43
+#: ../plug-ins/pypicman/plug-ins/picmancons.py:43
 msgid "Python Console"
 msgstr "ਸਕਰਿਪਟ-Fu ਕਨਸੋਲ"
 
-#: ../plug-ins/pygimp/plug-ins/gimpcons.py:75
+#: ../plug-ins/pypicman/plug-ins/picmancons.py:75
 msgid "_Browse..."
 msgstr "ਝਲਕ(_B)..."
 
-#: ../plug-ins/pygimp/plug-ins/gtkcons.py:217
+#: ../plug-ins/pypicman/plug-ins/gtkcons.py:217
 #, fuzzy
-msgid "Gimp-Python Console"
+msgid "Picman-Python Console"
 msgstr "ਸਕਰਿਪਟ-Fu ਕਨਸੋਲ"
 
-#: ../plug-ins/pygimp/plug-ins/gtkcons.py:218
+#: ../plug-ins/pypicman/plug-ins/gtkcons.py:218
 msgid "Interactive Python Development"
 msgstr ""

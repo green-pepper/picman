@@ -6,12 +6,12 @@ else
 libm = -lm
 endif
 
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
-libgimpcolor = $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
-libgimpconfig = $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la
-libgimpmath = $(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la  $(libm)
-libgimpmodule = $(top_builddir)/libgimpmodule/libgimpmodule-$(GIMP_API_VERSION).la
-libgimpwidgets = $(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
+libpicmancolor = $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
+libpicmanconfig = $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la
+libpicmanmath = $(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la  $(libm)
+libpicmanmodule = $(top_builddir)/libpicmanmodule/libpicmanmodule-$(PICMAN_API_VERSION).la
+libpicmanwidgets = $(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la
 
 
 AM_CPPFLAGS = $(GTK_CFLAGS) -DTOP_SRCDIR=\"$(top_srcdir)\"
@@ -37,12 +37,12 @@ doc_shooter_SOURCES = \
 	widgets.h
 
 doc_shooter_LDADD = \
-	$(libgimpwidgets)	\
-	$(libgimpconfig)	\
-	$(libgimpmodule)	\
-	$(libgimpmath)		\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
+	$(libpicmanwidgets)	\
+	$(libpicmanconfig)	\
+	$(libpicmanmodule)	\
+	$(libpicmanmath)		\
+	$(libpicmancolor)		\
+	$(libpicmanbase)		\
 	$(GTK_LIBS)		\
 	$(X_LIBS) -lX11 -lXext
 

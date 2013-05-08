@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbufferview.h
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmanbufferview.h
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BUFFER_VIEW_H__
-#define __GIMP_BUFFER_VIEW_H__
+#ifndef __PICMAN_BUFFER_VIEW_H__
+#define __PICMAN_BUFFER_VIEW_H__
 
 
-#include "gimpcontainereditor.h"
+#include "picmancontainereditor.h"
 
 
-#define GIMP_TYPE_BUFFER_VIEW            (gimp_buffer_view_get_type ())
-#define GIMP_BUFFER_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BUFFER_VIEW, GimpBufferView))
-#define GIMP_BUFFER_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BUFFER_VIEW, GimpBufferViewClass))
-#define GIMP_IS_BUFFER_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BUFFER_VIEW))
-#define GIMP_IS_BUFFER_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BUFFER_VIEW))
-#define GIMP_BUFFER_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BUFFER_VIEW, GimpBufferViewClass))
+#define PICMAN_TYPE_BUFFER_VIEW            (picman_buffer_view_get_type ())
+#define PICMAN_BUFFER_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BUFFER_VIEW, PicmanBufferView))
+#define PICMAN_BUFFER_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BUFFER_VIEW, PicmanBufferViewClass))
+#define PICMAN_IS_BUFFER_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BUFFER_VIEW))
+#define PICMAN_IS_BUFFER_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BUFFER_VIEW))
+#define PICMAN_BUFFER_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BUFFER_VIEW, PicmanBufferViewClass))
 
 
-typedef struct _GimpBufferViewClass  GimpBufferViewClass;
+typedef struct _PicmanBufferViewClass  PicmanBufferViewClass;
 
-struct _GimpBufferView
+struct _PicmanBufferView
 {
-  GimpContainerEditor  parent_instance;
+  PicmanContainerEditor  parent_instance;
 
   GtkWidget           *global_view;
   GtkWidget           *global_label;
@@ -48,20 +48,20 @@ struct _GimpBufferView
   GtkWidget           *delete_button;
 };
 
-struct _GimpBufferViewClass
+struct _PicmanBufferViewClass
 {
-  GimpContainerEditorClass  parent_class;
+  PicmanContainerEditorClass  parent_class;
 };
 
 
-GType       gimp_buffer_view_get_type (void) G_GNUC_CONST;
+GType       picman_buffer_view_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_buffer_view_new      (GimpViewType     view_type,
-                                       GimpContainer   *container,
-                                       GimpContext     *context,
+GtkWidget * picman_buffer_view_new      (PicmanViewType     view_type,
+                                       PicmanContainer   *container,
+                                       PicmanContext     *context,
                                        gint             view_size,
                                        gint             view_border_width,
-                                       GimpMenuFactory *menu_factory);
+                                       PicmanMenuFactory *menu_factory);
 
 
-#endif  /*  __GIMP_BUFFER_VIEW_H__  */
+#endif  /*  __PICMAN_BUFFER_VIEW_H__  */

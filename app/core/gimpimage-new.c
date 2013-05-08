@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,49 +19,49 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "gegl/gimp-babl.h"
+#include "gegl/picman-babl.h"
 
-#include "gimp.h"
-#include "gimpbuffer.h"
-#include "gimpchannel.h"
-#include "gimpcontext.h"
-#include "gimpimage.h"
-#include "gimpimage-colormap.h"
-#include "gimpimage-new.h"
-#include "gimpimage-undo.h"
-#include "gimplayer.h"
-#include "gimptemplate.h"
+#include "picman.h"
+#include "picmanbuffer.h"
+#include "picmanchannel.h"
+#include "picmancontext.h"
+#include "picmanimage.h"
+#include "picmanimage-colormap.h"
+#include "picmanimage-new.h"
+#include "picmanimage-undo.h"
+#include "picmanlayer.h"
+#include "picmantemplate.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-GimpTemplate *
-gimp_image_new_get_last_template (Gimp      *gimp,
-                                  GimpImage *image)
+PicmanTemplate *
+picman_image_new_get_last_template (Picman      *picman,
+                                  PicmanImage *image)
 {
-  GimpTemplate *template;
+  PicmanTemplate *template;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (image == NULL || GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (image == NULL || PICMAN_IS_IMAGE (image), NULL);
 
-  template = gimp_template_new ("image new values");
+  template = picman_template_new ("image new values");
 
   if (image)
     {
-      gimp_config_sync (G_OBJECT (gimp->config->default_image),
+      picman_config_sync (G_OBJECT (picman->config->default_image),
                         G_OBJECT (template), 0);
-      gimp_template_set_from_image (template, image);
+      picman_template_set_from_image (template, image);
     }
   else
     {
-      gimp_config_sync (G_OBJECT (gimp->image_new_last_template),
+      picman_config_sync (G_OBJECT (picman->image_new_last_template),
                         G_OBJECT (template), 0);
     }
 
@@ -69,294 +69,294 @@ gimp_image_new_get_last_template (Gimp      *gimp,
 }
 
 void
-gimp_image_new_set_last_template (Gimp         *gimp,
-                                  GimpTemplate *template)
+picman_image_new_set_last_template (Picman         *picman,
+                                  PicmanTemplate *template)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (GIMP_IS_TEMPLATE (template));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (PICMAN_IS_TEMPLATE (template));
 
-  gimp_config_sync (G_OBJECT (template),
-                    G_OBJECT (gimp->image_new_last_template), 0);
+  picman_config_sync (G_OBJECT (template),
+                    G_OBJECT (picman->image_new_last_template), 0);
 }
 
-GimpImage *
-gimp_image_new_from_template (Gimp         *gimp,
-                              GimpTemplate *template,
-                              GimpContext  *context)
+PicmanImage *
+picman_image_new_from_template (Picman         *picman,
+                              PicmanTemplate *template,
+                              PicmanContext  *context)
 {
-  GimpImage   *image;
-  GimpLayer   *layer;
+  PicmanImage   *image;
+  PicmanLayer   *layer;
   gint         width, height;
   gboolean     has_alpha;
   const gchar *comment;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEMPLATE (template), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
-  image = gimp_create_image (gimp,
-                             gimp_template_get_width (template),
-                             gimp_template_get_height (template),
-                             gimp_template_get_base_type (template),
-                             gimp_template_get_precision (template),
+  image = picman_create_image (picman,
+                             picman_template_get_width (template),
+                             picman_template_get_height (template),
+                             picman_template_get_base_type (template),
+                             picman_template_get_precision (template),
                              FALSE);
 
-  gimp_image_undo_disable (image);
+  picman_image_undo_disable (image);
 
-  comment = gimp_template_get_comment (template);
+  comment = picman_template_get_comment (template);
 
   if (comment)
     {
-      GimpParasite *parasite;
+      PicmanParasite *parasite;
 
-      parasite = gimp_parasite_new ("gimp-comment",
-                                    GIMP_PARASITE_PERSISTENT,
+      parasite = picman_parasite_new ("picman-comment",
+                                    PICMAN_PARASITE_PERSISTENT,
                                     strlen (comment) + 1,
                                     comment);
-      gimp_image_parasite_attach (image, parasite);
-      gimp_parasite_free (parasite);
+      picman_image_parasite_attach (image, parasite);
+      picman_parasite_free (parasite);
     }
 
-  gimp_image_set_resolution (image,
-                             gimp_template_get_resolution_x (template),
-                             gimp_template_get_resolution_y (template));
-  gimp_image_set_unit (image, gimp_template_get_resolution_unit (template));
+  picman_image_set_resolution (image,
+                             picman_template_get_resolution_x (template),
+                             picman_template_get_resolution_y (template));
+  picman_image_set_unit (image, picman_template_get_resolution_unit (template));
 
-  width  = gimp_image_get_width (image);
-  height = gimp_image_get_height (image);
+  width  = picman_image_get_width (image);
+  height = picman_image_get_height (image);
 
-  if (gimp_template_get_fill_type (template) == GIMP_TRANSPARENT_FILL)
+  if (picman_template_get_fill_type (template) == PICMAN_TRANSPARENT_FILL)
     has_alpha = TRUE;
   else
     has_alpha = FALSE;
 
-  layer = gimp_layer_new (image, width, height,
-                          gimp_image_get_layer_format (image, has_alpha),
+  layer = picman_layer_new (image, width, height,
+                          picman_image_get_layer_format (image, has_alpha),
                           _("Background"),
-                          GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+                          PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
 
-  gimp_drawable_fill_by_type (GIMP_DRAWABLE (layer),
-                              context, gimp_template_get_fill_type (template));
+  picman_drawable_fill_by_type (PICMAN_DRAWABLE (layer),
+                              context, picman_template_get_fill_type (template));
 
-  gimp_image_add_layer (image, layer, NULL, 0, FALSE);
+  picman_image_add_layer (image, layer, NULL, 0, FALSE);
 
-  gimp_image_undo_enable (image);
-  gimp_image_clean_all (image);
+  picman_image_undo_enable (image);
+  picman_image_clean_all (image);
 
-  gimp_create_display (gimp, image, gimp_template_get_unit (template), 1.0);
+  picman_create_display (picman, image, picman_template_get_unit (template), 1.0);
 
   g_object_unref (image);
 
   return image;
 }
 
-GimpImage *
-gimp_image_new_from_drawable (Gimp         *gimp,
-                              GimpDrawable *drawable)
+PicmanImage *
+picman_image_new_from_drawable (Picman         *picman,
+                              PicmanDrawable *drawable)
 {
-  GimpItem          *item;
-  GimpImage         *image;
-  GimpImage         *new_image;
-  GimpLayer         *new_layer;
+  PicmanItem          *item;
+  PicmanImage         *image;
+  PicmanImage         *new_image;
+  PicmanLayer         *new_layer;
   GType              new_type;
   gint               off_x, off_y;
-  GimpImageBaseType  type;
+  PicmanImageBaseType  type;
   gdouble            xres;
   gdouble            yres;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
-  item  = GIMP_ITEM (drawable);
-  image = gimp_item_get_image (item);
+  item  = PICMAN_ITEM (drawable);
+  image = picman_item_get_image (item);
 
-  type = gimp_drawable_get_base_type (drawable);
+  type = picman_drawable_get_base_type (drawable);
 
-  new_image = gimp_create_image (gimp,
-                                 gimp_item_get_width  (item),
-                                 gimp_item_get_height (item),
+  new_image = picman_create_image (picman,
+                                 picman_item_get_width  (item),
+                                 picman_item_get_height (item),
                                  type,
-                                 gimp_drawable_get_precision (drawable),
+                                 picman_drawable_get_precision (drawable),
                                  TRUE);
-  gimp_image_undo_disable (new_image);
+  picman_image_undo_disable (new_image);
 
-  if (type == GIMP_INDEXED)
-    gimp_image_set_colormap (new_image,
-                             gimp_image_get_colormap (image),
-                             gimp_image_get_colormap_size (image),
+  if (type == PICMAN_INDEXED)
+    picman_image_set_colormap (new_image,
+                             picman_image_get_colormap (image),
+                             picman_image_get_colormap_size (image),
                              FALSE);
 
-  gimp_image_get_resolution (image, &xres, &yres);
-  gimp_image_set_resolution (new_image, xres, yres);
-  gimp_image_set_unit (new_image, gimp_image_get_unit (image));
+  picman_image_get_resolution (image, &xres, &yres);
+  picman_image_set_resolution (new_image, xres, yres);
+  picman_image_set_unit (new_image, picman_image_get_unit (image));
 
-  if (GIMP_IS_LAYER (drawable))
+  if (PICMAN_IS_LAYER (drawable))
     new_type = G_TYPE_FROM_INSTANCE (drawable);
   else
-    new_type = GIMP_TYPE_LAYER;
+    new_type = PICMAN_TYPE_LAYER;
 
-  new_layer = GIMP_LAYER (gimp_item_convert (GIMP_ITEM (drawable),
+  new_layer = PICMAN_LAYER (picman_item_convert (PICMAN_ITEM (drawable),
                                              new_image, new_type));
 
-  gimp_object_set_name (GIMP_OBJECT (new_layer),
-                        gimp_object_get_name (drawable));
+  picman_object_set_name (PICMAN_OBJECT (new_layer),
+                        picman_object_get_name (drawable));
 
-  gimp_item_get_offset (GIMP_ITEM (new_layer), &off_x, &off_y);
-  gimp_item_translate (GIMP_ITEM (new_layer), -off_x, -off_y, FALSE);
-  gimp_item_set_visible (GIMP_ITEM (new_layer), TRUE, FALSE);
-  gimp_item_set_linked (GIMP_ITEM (new_layer), FALSE, FALSE);
-  gimp_layer_set_mode (new_layer, GIMP_NORMAL_MODE, FALSE);
-  gimp_layer_set_opacity (new_layer, GIMP_OPACITY_OPAQUE, FALSE);
-  gimp_layer_set_lock_alpha (new_layer, FALSE, FALSE);
+  picman_item_get_offset (PICMAN_ITEM (new_layer), &off_x, &off_y);
+  picman_item_translate (PICMAN_ITEM (new_layer), -off_x, -off_y, FALSE);
+  picman_item_set_visible (PICMAN_ITEM (new_layer), TRUE, FALSE);
+  picman_item_set_linked (PICMAN_ITEM (new_layer), FALSE, FALSE);
+  picman_layer_set_mode (new_layer, PICMAN_NORMAL_MODE, FALSE);
+  picman_layer_set_opacity (new_layer, PICMAN_OPACITY_OPAQUE, FALSE);
+  picman_layer_set_lock_alpha (new_layer, FALSE, FALSE);
 
-  gimp_image_add_layer (new_image, new_layer, NULL, 0, TRUE);
+  picman_image_add_layer (new_image, new_layer, NULL, 0, TRUE);
 
-  gimp_image_undo_enable (new_image);
+  picman_image_undo_enable (new_image);
 
   return new_image;
 }
 
-GimpImage *
-gimp_image_new_from_component (Gimp            *gimp,
-                               GimpImage       *image,
-                               GimpChannelType  component)
+PicmanImage *
+picman_image_new_from_component (Picman            *picman,
+                               PicmanImage       *image,
+                               PicmanChannelType  component)
 {
-  GimpImage   *new_image;
-  GimpChannel *channel;
-  GimpLayer   *layer;
+  PicmanImage   *new_image;
+  PicmanChannel *channel;
+  PicmanLayer   *layer;
   const gchar *desc;
   gdouble      xres;
   gdouble      yres;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  new_image = gimp_create_image (gimp,
-                                 gimp_image_get_width  (image),
-                                 gimp_image_get_height (image),
-                                 GIMP_GRAY,
-                                 gimp_image_get_precision (image),
+  new_image = picman_create_image (picman,
+                                 picman_image_get_width  (image),
+                                 picman_image_get_height (image),
+                                 PICMAN_GRAY,
+                                 picman_image_get_precision (image),
                                  TRUE);
 
-  gimp_image_undo_disable (new_image);
+  picman_image_undo_disable (new_image);
 
-  gimp_image_get_resolution (image, &xres, &yres);
-  gimp_image_set_resolution (new_image, xres, yres);
-  gimp_image_set_unit (new_image, gimp_image_get_unit (image));
+  picman_image_get_resolution (image, &xres, &yres);
+  picman_image_set_resolution (new_image, xres, yres);
+  picman_image_set_unit (new_image, picman_image_get_unit (image));
 
-  channel = gimp_channel_new_from_component (image, component, NULL, NULL);
+  channel = picman_channel_new_from_component (image, component, NULL, NULL);
 
-  layer = GIMP_LAYER (gimp_item_convert (GIMP_ITEM (channel),
-                                         new_image, GIMP_TYPE_LAYER));
+  layer = PICMAN_LAYER (picman_item_convert (PICMAN_ITEM (channel),
+                                         new_image, PICMAN_TYPE_LAYER));
   g_object_unref (channel);
 
-  gimp_enum_get_value (GIMP_TYPE_CHANNEL_TYPE, component,
+  picman_enum_get_value (PICMAN_TYPE_CHANNEL_TYPE, component,
                        NULL, NULL, &desc, NULL);
-  gimp_object_take_name (GIMP_OBJECT (layer),
+  picman_object_take_name (PICMAN_OBJECT (layer),
                          g_strdup_printf (_("%s Channel Copy"), desc));
 
-  gimp_image_add_layer (new_image, layer, NULL, 0, TRUE);
+  picman_image_add_layer (new_image, layer, NULL, 0, TRUE);
 
-  gimp_image_undo_enable (new_image);
+  picman_image_undo_enable (new_image);
 
   return new_image;
 }
 
-GimpImage *
-gimp_image_new_from_buffer (Gimp       *gimp,
-                            GimpImage  *invoke,
-                            GimpBuffer *paste)
+PicmanImage *
+picman_image_new_from_buffer (Picman       *picman,
+                            PicmanImage  *invoke,
+                            PicmanBuffer *paste)
 {
-  GimpImage  *image;
-  GimpLayer  *layer;
+  PicmanImage  *image;
+  PicmanLayer  *layer;
   const Babl *format;
   gboolean    has_alpha;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (invoke == NULL || GIMP_IS_IMAGE (invoke), NULL);
-  g_return_val_if_fail (GIMP_IS_BUFFER (paste), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (invoke == NULL || PICMAN_IS_IMAGE (invoke), NULL);
+  g_return_val_if_fail (PICMAN_IS_BUFFER (paste), NULL);
 
-  format    = gimp_buffer_get_format (paste);
+  format    = picman_buffer_get_format (paste);
   has_alpha = babl_format_has_alpha (format);
 
-  /*  create a new image  (always of type GIMP_RGB)  */
-  image = gimp_create_image (gimp,
-                             gimp_buffer_get_width  (paste),
-                             gimp_buffer_get_height (paste),
-                             gimp_babl_format_get_base_type (format),
-                             gimp_babl_format_get_precision (format),
+  /*  create a new image  (always of type PICMAN_RGB)  */
+  image = picman_create_image (picman,
+                             picman_buffer_get_width  (paste),
+                             picman_buffer_get_height (paste),
+                             picman_babl_format_get_base_type (format),
+                             picman_babl_format_get_precision (format),
                              TRUE);
-  gimp_image_undo_disable (image);
+  picman_image_undo_disable (image);
 
   if (invoke)
     {
       gdouble xres;
       gdouble yres;
 
-      gimp_image_get_resolution (invoke, &xres, &yres);
-      gimp_image_set_resolution (image, xres, yres);
-      gimp_image_set_unit (image, gimp_image_get_unit (invoke));
+      picman_image_get_resolution (invoke, &xres, &yres);
+      picman_image_set_resolution (image, xres, yres);
+      picman_image_set_unit (image, picman_image_get_unit (invoke));
     }
 
-  layer = gimp_layer_new_from_buffer (gimp_buffer_get_buffer (paste),
+  layer = picman_layer_new_from_buffer (picman_buffer_get_buffer (paste),
                                       image,
-                                      gimp_image_get_layer_format (image,
+                                      picman_image_get_layer_format (image,
                                                                    has_alpha),
                                       _("Pasted Layer"),
-                                      GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+                                      PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
 
-  gimp_image_add_layer (image, layer, NULL, 0, TRUE);
+  picman_image_add_layer (image, layer, NULL, 0, TRUE);
 
-  gimp_image_undo_enable (image);
+  picman_image_undo_enable (image);
 
   return image;
 }
 
-GimpImage *
-gimp_image_new_from_pixbuf (Gimp        *gimp,
+PicmanImage *
+picman_image_new_from_pixbuf (Picman        *picman,
                             GdkPixbuf   *pixbuf,
                             const gchar *layer_name)
 {
-  GimpImage         *new_image;
-  GimpLayer         *layer;
-  GimpImageBaseType  base_type;
+  PicmanImage         *new_image;
+  PicmanLayer         *layer;
+  PicmanImageBaseType  base_type;
   gboolean           has_alpha = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (GDK_IS_PIXBUF (pixbuf), NULL);
 
   switch (gdk_pixbuf_get_n_channels (pixbuf))
     {
     case 2: has_alpha = TRUE;
-    case 1: base_type = GIMP_GRAY;
+    case 1: base_type = PICMAN_GRAY;
       break;
 
     case 4: has_alpha = TRUE;
-    case 3: base_type = GIMP_RGB;
+    case 3: base_type = PICMAN_RGB;
       break;
 
     default:
       g_return_val_if_reached (NULL);
     }
 
-  new_image = gimp_create_image (gimp,
+  new_image = picman_create_image (picman,
                                  gdk_pixbuf_get_width  (pixbuf),
                                  gdk_pixbuf_get_height (pixbuf),
                                  base_type,
-                                 GIMP_PRECISION_U8,
+                                 PICMAN_PRECISION_U8,
                                  FALSE);
 
-  gimp_image_undo_disable (new_image);
+  picman_image_undo_disable (new_image);
 
-  layer = gimp_layer_new_from_pixbuf (pixbuf, new_image,
-                                      gimp_image_get_layer_format (new_image,
+  layer = picman_layer_new_from_pixbuf (pixbuf, new_image,
+                                      picman_image_get_layer_format (new_image,
                                                                    has_alpha),
                                       layer_name,
-                                      GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+                                      PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
 
-  gimp_image_add_layer (new_image, layer, NULL, 0, TRUE);
+  picman_image_add_layer (new_image, layer, NULL, 0, TRUE);
 
-  gimp_image_undo_enable (new_image);
+  picman_image_undo_enable (new_image);
 
   return new_image;
 }

@@ -1,13 +1,13 @@
-# Indonesian translation for gimp.
-# Copyright (C) 2012 gimp's COPYRIGHT HOLDER
-# This file is distributed under the same license as the gimp package.
+# Indonesian translation for picman.
+# Copyright (C) 2012 picman's COPYRIGHT HOLDER
+# This file is distributed under the same license as the picman package.
 # Andika Triwidada <andika@gmail.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp master\n"
+"Project-Id-Version: picman master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-09-23 21:57+0000\n"
 "PO-Revision-Date: 2012-09-24 18:35+0700\n"
 "Last-Translator: Andika Triwidada <andika@gmail.com>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "X-Generator: Poedit 1.5.3\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:1
+#: ../data/tags/picman-tags-default.xml.in.h:1
 msgid "round"
 msgstr "bulat"
 
 #. fuzzy as in a feathered, blurred, unfocused, soft brush
-#: ../data/tags/gimp-tags-default.xml.in.h:3
+#: ../data/tags/picman-tags-default.xml.in.h:3
 msgid "fuzzy"
 msgstr "kabur"

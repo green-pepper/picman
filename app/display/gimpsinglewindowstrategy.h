@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpsinglewindowstrategy.h
+ * picmansinglewindowstrategy.h
  * Copyright (C) 2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,37 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SINGLE_WINDOW_STRATEGY_H__
-#define __GIMP_SINGLE_WINDOW_STRATEGY_H__
+#ifndef __PICMAN_SINGLE_WINDOW_STRATEGY_H__
+#define __PICMAN_SINGLE_WINDOW_STRATEGY_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-#define GIMP_TYPE_SINGLE_WINDOW_STRATEGY            (gimp_single_window_strategy_get_type ())
-#define GIMP_SINGLE_WINDOW_STRATEGY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SINGLE_WINDOW_STRATEGY, GimpSingleWindowStrategy))
-#define GIMP_SINGLE_WINDOW_STRATEGY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SINGLE_WINDOW_STRATEGY, GimpSingleWindowStrategyClass))
-#define GIMP_IS_SINGLE_WINDOW_STRATEGY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SINGLE_WINDOW_STRATEGY))
-#define GIMP_IS_SINGLE_WINDOW_STRATEGY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SINGLE_WINDOW_STRATEGY))
-#define GIMP_SINGLE_WINDOW_STRATEGY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SINGLE_WINDOW_STRATEGY, GimpSingleWindowStrategyClass))
+#define PICMAN_TYPE_SINGLE_WINDOW_STRATEGY            (picman_single_window_strategy_get_type ())
+#define PICMAN_SINGLE_WINDOW_STRATEGY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SINGLE_WINDOW_STRATEGY, PicmanSingleWindowStrategy))
+#define PICMAN_SINGLE_WINDOW_STRATEGY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SINGLE_WINDOW_STRATEGY, PicmanSingleWindowStrategyClass))
+#define PICMAN_IS_SINGLE_WINDOW_STRATEGY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SINGLE_WINDOW_STRATEGY))
+#define PICMAN_IS_SINGLE_WINDOW_STRATEGY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SINGLE_WINDOW_STRATEGY))
+#define PICMAN_SINGLE_WINDOW_STRATEGY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SINGLE_WINDOW_STRATEGY, PicmanSingleWindowStrategyClass))
 
 
-typedef struct _GimpSingleWindowStrategyClass GimpSingleWindowStrategyClass;
+typedef struct _PicmanSingleWindowStrategyClass PicmanSingleWindowStrategyClass;
 
-struct _GimpSingleWindowStrategy
+struct _PicmanSingleWindowStrategy
 {
-  GimpObject  parent_instance;
+  PicmanObject  parent_instance;
 };
 
-struct _GimpSingleWindowStrategyClass
+struct _PicmanSingleWindowStrategyClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType        gimp_single_window_strategy_get_type          (void) G_GNUC_CONST;
+GType        picman_single_window_strategy_get_type          (void) G_GNUC_CONST;
 
-GimpObject * gimp_single_window_strategy_get_singleton     (void);
+PicmanObject * picman_single_window_strategy_get_singleton     (void);
 
 
-#endif /* __GIMP_SINGLE_WINDOW_STRATEGY_H__ */
+#endif /* __PICMAN_SINGLE_WINDOW_STRATEGY_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,26 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_THUMB_BOX_H__
-#define __GIMP_THUMB_BOX_H__
+#ifndef __PICMAN_THUMB_BOX_H__
+#define __PICMAN_THUMB_BOX_H__
 
 
-#define GIMP_TYPE_THUMB_BOX            (gimp_thumb_box_get_type ())
-#define GIMP_THUMB_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_THUMB_BOX, GimpThumbBox))
-#define GIMP_THUMB_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_THUMB_BOX, GimpThumbBoxClass))
-#define GIMP_IS_THUMB_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_THUMB_BOX))
-#define GIMP_IS_THUMB_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_THUMB_BOX))
-#define GIMP_THUMB_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_THUMB_BOX, GimpThumbBoxClass))
+#define PICMAN_TYPE_THUMB_BOX            (picman_thumb_box_get_type ())
+#define PICMAN_THUMB_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_THUMB_BOX, PicmanThumbBox))
+#define PICMAN_THUMB_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_THUMB_BOX, PicmanThumbBoxClass))
+#define PICMAN_IS_THUMB_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_THUMB_BOX))
+#define PICMAN_IS_THUMB_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_THUMB_BOX))
+#define PICMAN_THUMB_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_THUMB_BOX, PicmanThumbBoxClass))
 
 
-typedef struct _GimpThumbBoxClass GimpThumbBoxClass;
+typedef struct _PicmanThumbBoxClass PicmanThumbBoxClass;
 
-struct _GimpThumbBox
+struct _PicmanThumbBox
 {
   GtkFrame       parent_instance;
 
-  GimpContext   *context;
-  GimpImagefile *imagefile;
+  PicmanContext   *context;
+  PicmanImagefile *imagefile;
   GSList        *uris;
 
   GtkWidget     *preview;
@@ -47,20 +47,20 @@ struct _GimpThumbBox
   guint          idle_id;
 };
 
-struct _GimpThumbBoxClass
+struct _PicmanThumbBoxClass
 {
   GtkFrameClass  parent_class;
 };
 
 
-GType       gimp_thumb_box_get_type  (void) G_GNUC_CONST;
+GType       picman_thumb_box_get_type  (void) G_GNUC_CONST;
 
-GtkWidget * gimp_thumb_box_new       (GimpContext  *context);
+GtkWidget * picman_thumb_box_new       (PicmanContext  *context);
 
-void        gimp_thumb_box_take_uri  (GimpThumbBox *box,
+void        picman_thumb_box_take_uri  (PicmanThumbBox *box,
                                       gchar        *uri);
-void        gimp_thumb_box_take_uris (GimpThumbBox *box,
+void        picman_thumb_box_take_uris (PicmanThumbBox *box,
                                       GSList       *uris);
 
 
-#endif  /*  __GIMP_THUMB_BOX_H__  */
+#endif  /*  __PICMAN_THUMB_BOX_H__  */

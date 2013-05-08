@@ -1,6 +1,6 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  *
- * gimpmd5.c
+ * picmanmd5.c
  *
  * Use of this code is deprecated! Use %GChecksum from GLib instead.
  */
@@ -9,14 +9,14 @@
 
 #include <glib-object.h>
 
-#include "gimpmathtypes.h"
+#include "picmanmathtypes.h"
 
-#include "gimpmd5.h"
+#include "picmanmd5.h"
 
 
 /**
- * SECTION: gimpmd5
- * @title: GimpMD5
+ * SECTION: picmanmd5
+ * @title: PicmanMD5
  * @short_description: The MD5 message-digest algorithm
  *
  * The MD5 message-digest algorithm
@@ -24,7 +24,7 @@
 
 
 /**
- * gimp_md5_get_digest:
+ * picman_md5_get_digest:
  * @buffer:      byte buffer
  * @buffer_size: buffer size (in bytes) or -1 if @buffer is nul-terminated.
  * @digest:      16 bytes buffer receiving the hash code.
@@ -35,7 +35,7 @@
  * buffer @digest. For more information see RFC 1321.
  **/
 void
-gimp_md5_get_digest (const gchar *buffer,
+picman_md5_get_digest (const gchar *buffer,
                      gint         buffer_size,
                      guchar       digest[16])
 {

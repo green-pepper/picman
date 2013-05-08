@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-cairo.h
- * Copyright (C) 2010-2012  Michael Natterer <mitch@gimp.org>
+ * picman-cairo.h
+ * Copyright (C) 2010-2012  Michael Natterer <mitch@picman.org>
  *
  * Some code here is based on code from librsvg that was originally
  * written by Raph Levien <raph@artofcode.com> for Gill.
@@ -21,23 +21,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __APP_GIMP_CAIRO_H__
-#define __APP_GIMP_CAIRO_H__
+#ifndef __APP_PICMAN_CAIRO_H__
+#define __APP_PICMAN_CAIRO_H__
 
 
-cairo_pattern_t * gimp_cairo_stipple_pattern_create (const GimpRGB   *fg,
-                                                     const GimpRGB   *bg,
+cairo_pattern_t * picman_cairo_stipple_pattern_create (const PicmanRGB   *fg,
+                                                     const PicmanRGB   *bg,
                                                      gint             index);
 
-void              gimp_cairo_add_arc                (cairo_t         *cr,
+void              picman_cairo_add_arc                (cairo_t         *cr,
                                                      gdouble          center_x,
                                                      gdouble          center_y,
                                                      gdouble          radius,
                                                      gdouble          start_angle,
                                                      gdouble          slice_angle);
-void              gimp_cairo_add_segments           (cairo_t         *cr,
-                                                     GimpSegment     *segs,
+void              picman_cairo_add_segments           (cairo_t         *cr,
+                                                     PicmanSegment     *segs,
                                                      gint             n_segs);
 
 
-#endif /* __APP_GIMP_CAIRO_H__ */
+#endif /* __APP_PICMAN_CAIRO_H__ */

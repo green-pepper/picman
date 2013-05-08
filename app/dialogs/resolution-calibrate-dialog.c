@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "resolution-calibrate-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 static GtkWidget *calibrate_entry = NULL;
@@ -37,12 +37,12 @@ static gint       ruler_height    = 1;
 
 /**
  * resolution_calibrate_dialog:
- * @resolution_entry: a #GimpSizeEntry to connect the dialog to
+ * @resolution_entry: a #PicmanSizeEntry to connect the dialog to
  * @pixbuf:           an optional #GdkPixbuf for the upper left corner
  *
  * Displays a dialog that allows the user to interactively determine
  * her monitor resolution. This dialog runs it's own GTK main loop and
- * is connected to a #GimpSizeEntry handling the resolution to be set.
+ * is connected to a #PicmanSizeEntry handling the resolution to be set.
  **/
 void
 resolution_calibrate_dialog (GtkWidget *resolution_entry,
@@ -58,7 +58,7 @@ resolution_calibrate_dialog (GtkWidget *resolution_entry,
   GdkRectangle  rect;
   gint          monitor;
 
-  g_return_if_fail (GIMP_IS_SIZE_ENTRY (resolution_entry));
+  g_return_if_fail (PICMAN_IS_SIZE_ENTRY (resolution_entry));
   g_return_if_fail (gtk_widget_get_realized (resolution_entry));
   g_return_if_fail (pixbuf == NULL || GDK_IS_PIXBUF (pixbuf));
 
@@ -66,8 +66,8 @@ resolution_calibrate_dialog (GtkWidget *resolution_entry,
   if (calibrate_entry)
     return;
 
-  dialog = gimp_dialog_new (_("Calibrate Monitor Resolution"),
-                            "gimp-resolution-calibration",
+  dialog = picman_dialog_new (_("Calibrate Monitor Resolution"),
+                            "picman-resolution-calibration",
                             gtk_widget_get_toplevel (resolution_entry),
                             GTK_DIALOG_DESTROY_WITH_PARENT,
                             NULL, NULL,
@@ -105,16 +105,16 @@ resolution_calibrate_dialog (GtkWidget *resolution_entry,
       gtk_widget_show (image);
     }
 
-  ruler = gimp_ruler_new (GTK_ORIENTATION_HORIZONTAL);
+  ruler = picman_ruler_new (GTK_ORIENTATION_HORIZONTAL);
   gtk_widget_set_size_request (ruler, ruler_width, 32);
-  gimp_ruler_set_range (GIMP_RULER (ruler), 0, ruler_width, ruler_width);
+  picman_ruler_set_range (PICMAN_RULER (ruler), 0, ruler_width, ruler_width);
   gtk_table_attach (GTK_TABLE (table), ruler, 1, 3, 0, 1,
                     GTK_SHRINK, GTK_SHRINK, 0, 0);
   gtk_widget_show (ruler);
 
-  ruler = gimp_ruler_new (GTK_ORIENTATION_VERTICAL);
+  ruler = picman_ruler_new (GTK_ORIENTATION_VERTICAL);
   gtk_widget_set_size_request (ruler, 32, ruler_height);
-  gimp_ruler_set_range (GIMP_RULER (ruler), 0, ruler_height, ruler_height);
+  picman_ruler_set_range (PICMAN_RULER (ruler), 0, ruler_height, ruler_height);
   gtk_table_attach (GTK_TABLE (table), ruler, 0, 1, 1, 3,
                     GTK_SHRINK, GTK_SHRINK, 0, 0);
   gtk_widget_show (ruler);
@@ -128,7 +128,7 @@ resolution_calibrate_dialog (GtkWidget *resolution_entry,
     gtk_label_new (_("Measure the rulers and enter their lengths:"));
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
   gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
-  gimp_label_set_attributes (GTK_LABEL (label),
+  picman_label_set_attributes (GTK_LABEL (label),
                              PANGO_ATTR_SCALE,  PANGO_SCALE_LARGE,
                              PANGO_ATTR_WEIGHT, PANGO_WEIGHT_BOLD,
                              -1);
@@ -140,27 +140,27 @@ resolution_calibrate_dialog (GtkWidget *resolution_entry,
   gtk_widget_show (hbox);
 
   calibrate_xres =
-    gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (resolution_entry), 0);
+    picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (resolution_entry), 0);
   calibrate_yres =
-    gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (resolution_entry), 1);
+    picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (resolution_entry), 1);
 
   calibrate_entry =
-    gimp_coordinates_new  (GIMP_UNIT_INCH, "%p",
+    picman_coordinates_new  (PICMAN_UNIT_INCH, "%p",
                            FALSE, FALSE, 10,
-                           GIMP_SIZE_ENTRY_UPDATE_SIZE,
+                           PICMAN_SIZE_ENTRY_UPDATE_SIZE,
                            FALSE,
                            FALSE,
                            _("_Horizontal:"),
                            ruler_width,
                            calibrate_xres,
-                           1, GIMP_MAX_IMAGE_SIZE,
+                           1, PICMAN_MAX_IMAGE_SIZE,
                            0, 0,
                            _("_Vertical:"),
                            ruler_height,
                            calibrate_yres,
-                           1, GIMP_MAX_IMAGE_SIZE,
+                           1, PICMAN_MAX_IMAGE_SIZE,
                            0, 0);
-  gtk_widget_hide (GTK_WIDGET (GIMP_COORDINATES_CHAINBUTTON (calibrate_entry)));
+  gtk_widget_hide (GTK_WIDGET (PICMAN_COORDINATES_CHAINBUTTON (calibrate_entry)));
   g_signal_connect (dialog, "destroy",
                     G_CALLBACK (gtk_widget_destroyed),
                     &calibrate_entry);
@@ -170,28 +170,28 @@ resolution_calibrate_dialog (GtkWidget *resolution_entry,
 
   gtk_widget_show (dialog);
 
-  switch (gimp_dialog_run (GIMP_DIALOG (dialog)))
+  switch (picman_dialog_run (PICMAN_DIALOG (dialog)))
     {
     case GTK_RESPONSE_OK:
       {
         GtkWidget *chain_button;
         gdouble    x, y;
 
-        x = gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (calibrate_entry), 0);
-        y = gimp_size_entry_get_refval (GIMP_SIZE_ENTRY (calibrate_entry), 1);
+        x = picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (calibrate_entry), 0);
+        y = picman_size_entry_get_refval (PICMAN_SIZE_ENTRY (calibrate_entry), 1);
 
         calibrate_xres = (gdouble) ruler_width  * calibrate_xres / x;
         calibrate_yres = (gdouble) ruler_height * calibrate_yres / y;
 
-        chain_button = GIMP_COORDINATES_CHAINBUTTON (resolution_entry);
+        chain_button = PICMAN_COORDINATES_CHAINBUTTON (resolution_entry);
 
-        if (ABS (x - y) > GIMP_MIN_RESOLUTION)
-          gimp_chain_button_set_active (GIMP_CHAIN_BUTTON (chain_button),
+        if (ABS (x - y) > PICMAN_MIN_RESOLUTION)
+          picman_chain_button_set_active (PICMAN_CHAIN_BUTTON (chain_button),
                                         FALSE);
 
-        gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (resolution_entry),
+        picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (resolution_entry),
                                     0, calibrate_xres);
-        gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (resolution_entry),
+        picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (resolution_entry),
                                     1, calibrate_yres);
       }
 

@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpplugin.c
+ * picmanplugin.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,11 +22,11 @@
 
 #include <string.h>
 
-#include "gimp.h"
+#include "picman.h"
 
 gboolean
-gimp_plugin_icon_register (const gchar  *procedure_name,
-                           GimpIconType  icon_type,
+picman_plugin_icon_register (const gchar  *procedure_name,
+                           PicmanIconType  icon_type,
                            const guint8 *icon_data)
 {
   gint icon_data_length;
@@ -36,12 +36,12 @@ gimp_plugin_icon_register (const gchar  *procedure_name,
 
   switch (icon_type)
     {
-    case GIMP_ICON_TYPE_STOCK_ID:
-    case GIMP_ICON_TYPE_IMAGE_FILE:
+    case PICMAN_ICON_TYPE_STOCK_ID:
+    case PICMAN_ICON_TYPE_IMAGE_FILE:
       icon_data_length = strlen ((const gchar *) icon_data) + 1;
       break;
 
-    case GIMP_ICON_TYPE_INLINE_PIXBUF:
+    case PICMAN_ICON_TYPE_INLINE_PIXBUF:
       g_return_val_if_fail (g_ntohl (*((gint32 *) icon_data)) == 0x47646b50,
                             FALSE);
 
@@ -52,6 +52,6 @@ gimp_plugin_icon_register (const gchar  *procedure_name,
       g_return_val_if_reached (FALSE);
     }
 
-  return _gimp_plugin_icon_register (procedure_name,
+  return _picman_plugin_icon_register (procedure_name,
                                      icon_type, icon_data_length, icon_data);
 }

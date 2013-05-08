@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
-libgimpcolor = $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
-libgimpconfig = $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
+libpicmancolor = $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
+libpicmanconfig = $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la
 
 if PLATFORM_WIN32
 no_undefined = -no-undefined
@@ -14,43 +14,43 @@ libm = -lm
 endif
 
 if OS_WIN32
-gimpwidgets_def = gimpwidgets.def
-libgimpwidgets_export_symbols = -export-symbols gimpwidgets.def
+picmanwidgets_def = picmanwidgets.def
+libpicmanwidgets_export_symbols = -export-symbols picmanwidgets.def
 
 install-libtool-import-lib:
-	$(INSTALL) .libs/libgimpwidgets-$(GIMP_API_VERSION).dll.a $(DESTDIR)$(libdir)
-	$(INSTALL) gimpwidgets.def $(DESTDIR)$(libdir)
+	$(INSTALL) .libs/libpicmanwidgets-$(PICMAN_API_VERSION).dll.a $(DESTDIR)$(libdir)
+	$(INSTALL) picmanwidgets.def $(DESTDIR)$(libdir)
 
 uninstall-libtool-import-lib:
-	-rm $(DESTDIR)$(libdir)/libgimpwidgets-$(GIMP_API_VERSION).dll.a
-	-rm $(DESTDIR)$(libdir)/gimpwidgets.def
+	-rm $(DESTDIR)$(libdir)/libpicmanwidgets-$(PICMAN_API_VERSION).dll.a
+	-rm $(DESTDIR)$(libdir)/picmanwidgets.def
 else
 install-libtool-import-lib:
 uninstall-libtool-import-lib:
 endif
 
 if MS_LIB_AVAILABLE
-noinst_DATA = gimpwidgets-$(GIMP_API_VERSION).lib
+noinst_DATA = picmanwidgets-$(PICMAN_API_VERSION).lib
 
 install-ms-lib:
-	$(INSTALL) gimpwidgets-$(GIMP_API_VERSION).lib $(DESTDIR)$(libdir)
+	$(INSTALL) picmanwidgets-$(PICMAN_API_VERSION).lib $(DESTDIR)$(libdir)
 
 uninstall-ms-lib:
-	-rm $(DESTDIR)$(libdir)/gimpwidgets-$(GIMP_API_VERSION).lib
+	-rm $(DESTDIR)$(libdir)/picmanwidgets-$(PICMAN_API_VERSION).lib
 
-gimpwidgets-@GIMP_API_VERSION@.lib: gimpwidgets.def
-	lib -name:libgimpwidgets-$(GIMP_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:gimpwidgets.def -out:$@
+picmanwidgets-@PICMAN_API_VERSION@.lib: picmanwidgets.def
+	lib -name:libpicmanwidgets-$(PICMAN_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:picmanwidgets.def -out:$@
 
 else
 install-ms-lib:
 uninstall-ms-lib:
 endif
 
-libgimpwidgetsincludedir = $(includedir)/gimp-$(GIMP_API_VERSION)/libgimpwidgets
+libpicmanwidgetsincludedir = $(includedir)/picman-$(PICMAN_API_VERSION)/libpicmanwidgets
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"LibGimpWidgets\"	\
-	-DGIMP_WIDGETS_COMPILATION
+	-DG_LOG_DOMAIN=\"LibPicmanWidgets\"	\
+	-DPICMAN_WIDGETS_COMPILATION
 
 INCLUDES = \
 	-I$(top_srcdir)	\
@@ -58,215 +58,215 @@ INCLUDES = \
 	$(GTK_CFLAGS)	\
 	-I$(includedir)
 
-lib_LTLIBRARIES = libgimpwidgets-@GIMP_API_VERSION@.la
+lib_LTLIBRARIES = libpicmanwidgets-@PICMAN_API_VERSION@.la
 
-libgimpwidgets_sources = \
-	gimpbrowser.c			\
-	gimpbrowser.h			\
-	gimpbutton.c			\
-	gimpbutton.h			\
-	gimpcairo-utils.c		\
-	gimpcairo-utils.h		\
-	gimpcellrenderercolor.c		\
-	gimpcellrenderercolor.h		\
-	gimpcellrenderertoggle.c	\
-	gimpcellrenderertoggle.h	\
-	gimpchainbutton.c		\
-	gimpchainbutton.h		\
-	gimpcolorarea.c			\
-	gimpcolorarea.h			\
-	gimpcolorbutton.c		\
-	gimpcolorbutton.h		\
-	gimpcolordisplay.c		\
-	gimpcolordisplay.h		\
-	gimpcolordisplaystack.c		\
-	gimpcolordisplaystack.h		\
-	gimpcolorhexentry.c		\
-	gimpcolorhexentry.h		\
-	gimpcolornotebook.c		\
-	gimpcolornotebook.h		\
-	gimpcolorprofilecombobox.c	\
-	gimpcolorprofilecombobox.h	\
-	gimpcolorprofilestore-private.h	\
-	gimpcolorprofilestore.c		\
-	gimpcolorprofilestore.h		\
-	gimpcolorscale.c		\
-	gimpcolorscale.h		\
-	gimpcolorscales.c		\
-	gimpcolorscales.h		\
-	gimpcolorselect.c		\
-	gimpcolorselect.h		\
-	gimpcolorselection.c		\
-	gimpcolorselection.h		\
-	gimpcolorselector.c		\
-	gimpcolorselector.h		\
-	gimpcontroller.c		\
-	gimpcontroller.h		\
-	gimpdialog.c			\
-	gimpdialog.h			\
-	gimpeevl.c			\
-	gimpeevl.h			\
-	gimpenumcombobox.c		\
-	gimpenumcombobox.h		\
-	gimpenumlabel.c			\
-	gimpenumlabel.h			\
-	gimpenumstore.c			\
-	gimpenumstore.h			\
-	gimpenumwidgets.c		\
-	gimpenumwidgets.h		\
-	gimpfileentry.c			\
-	gimpfileentry.h			\
-	gimpframe.c			\
-	gimpframe.h			\
-	gimphelpui.c			\
-	gimphelpui.h			\
-	gimphintbox.c			\
-	gimphintbox.h			\
-	gimpintcombobox.c		\
-	gimpintcombobox.h		\
-	gimpintstore.c			\
-	gimpintstore.h			\
-	gimpmemsizeentry.c		\
-	gimpmemsizeentry.h		\
-	gimpnumberpairentry.c		\
-	gimpnumberpairentry.h		\
-	gimpoffsetarea.c		\
-	gimpoffsetarea.h		\
-	gimpoldwidgets.c		\
-	gimpoldwidgets.h		\
-	gimppageselector.c		\
-	gimppageselector.h		\
-	gimppatheditor.c		\
-	gimppatheditor.h		\
-	gimppickbutton.c		\
-	gimppickbutton.h		\
-	gimppixmap.c			\
-	gimppixmap.h			\
-	gimppreview.c			\
-	gimppreview.h			\
-	gimppreviewarea.c		\
-	gimppreviewarea.h		\
-	gimppropwidgets.c		\
-	gimppropwidgets.h		\
-	gimpquerybox.c			\
-	gimpquerybox.h			\
-	gimpruler.c			\
-	gimpruler.h			\
-	gimpscaleentry.c		\
-	gimpscaleentry.h		\
-	gimpscrolledpreview.c		\
-	gimpscrolledpreview.h		\
-	gimpsizeentry.c			\
-	gimpsizeentry.h			\
-	gimpstock.c			\
-	gimpstock.h			\
-	gimpstringcombobox.c		\
-	gimpstringcombobox.h		\
-	gimpunitcombobox.c		\
-	gimpunitcombobox.h		\
-	gimpunitmenu.c			\
-	gimpunitmenu.h			\
-	gimpunitstore.c			\
-	gimpunitstore.h			\
-	gimpwidgets-error.c		\
-	gimpwidgets-error.h		\
-	gimpwidgets-private.c		\
-	gimpwidgets-private.h		\
-	gimpwidgets.c			\
-	gimpwidgets.h			\
-	gimpwidgetsenums.h		\
-	gimpwidgetstypes.h		\
-	gimpzoommodel.c			\
-	gimpzoommodel.h			\
-	gimp3migration.c		\
-	gimp3migration.h
+libpicmanwidgets_sources = \
+	picmanbrowser.c			\
+	picmanbrowser.h			\
+	picmanbutton.c			\
+	picmanbutton.h			\
+	picmancairo-utils.c		\
+	picmancairo-utils.h		\
+	picmancellrenderercolor.c		\
+	picmancellrenderercolor.h		\
+	picmancellrenderertoggle.c	\
+	picmancellrenderertoggle.h	\
+	picmanchainbutton.c		\
+	picmanchainbutton.h		\
+	picmancolorarea.c			\
+	picmancolorarea.h			\
+	picmancolorbutton.c		\
+	picmancolorbutton.h		\
+	picmancolordisplay.c		\
+	picmancolordisplay.h		\
+	picmancolordisplaystack.c		\
+	picmancolordisplaystack.h		\
+	picmancolorhexentry.c		\
+	picmancolorhexentry.h		\
+	picmancolornotebook.c		\
+	picmancolornotebook.h		\
+	picmancolorprofilecombobox.c	\
+	picmancolorprofilecombobox.h	\
+	picmancolorprofilestore-private.h	\
+	picmancolorprofilestore.c		\
+	picmancolorprofilestore.h		\
+	picmancolorscale.c		\
+	picmancolorscale.h		\
+	picmancolorscales.c		\
+	picmancolorscales.h		\
+	picmancolorselect.c		\
+	picmancolorselect.h		\
+	picmancolorselection.c		\
+	picmancolorselection.h		\
+	picmancolorselector.c		\
+	picmancolorselector.h		\
+	picmancontroller.c		\
+	picmancontroller.h		\
+	picmandialog.c			\
+	picmandialog.h			\
+	picmaneevl.c			\
+	picmaneevl.h			\
+	picmanenumcombobox.c		\
+	picmanenumcombobox.h		\
+	picmanenumlabel.c			\
+	picmanenumlabel.h			\
+	picmanenumstore.c			\
+	picmanenumstore.h			\
+	picmanenumwidgets.c		\
+	picmanenumwidgets.h		\
+	picmanfileentry.c			\
+	picmanfileentry.h			\
+	picmanframe.c			\
+	picmanframe.h			\
+	picmanhelpui.c			\
+	picmanhelpui.h			\
+	picmanhintbox.c			\
+	picmanhintbox.h			\
+	picmanintcombobox.c		\
+	picmanintcombobox.h		\
+	picmanintstore.c			\
+	picmanintstore.h			\
+	picmanmemsizeentry.c		\
+	picmanmemsizeentry.h		\
+	picmannumberpairentry.c		\
+	picmannumberpairentry.h		\
+	picmanoffsetarea.c		\
+	picmanoffsetarea.h		\
+	picmanoldwidgets.c		\
+	picmanoldwidgets.h		\
+	picmanpageselector.c		\
+	picmanpageselector.h		\
+	picmanpatheditor.c		\
+	picmanpatheditor.h		\
+	picmanpickbutton.c		\
+	picmanpickbutton.h		\
+	picmanpixmap.c			\
+	picmanpixmap.h			\
+	picmanpreview.c			\
+	picmanpreview.h			\
+	picmanpreviewarea.c		\
+	picmanpreviewarea.h		\
+	picmanpropwidgets.c		\
+	picmanpropwidgets.h		\
+	picmanquerybox.c			\
+	picmanquerybox.h			\
+	picmanruler.c			\
+	picmanruler.h			\
+	picmanscaleentry.c		\
+	picmanscaleentry.h		\
+	picmanscrolledpreview.c		\
+	picmanscrolledpreview.h		\
+	picmansizeentry.c			\
+	picmansizeentry.h			\
+	picmanstock.c			\
+	picmanstock.h			\
+	picmanstringcombobox.c		\
+	picmanstringcombobox.h		\
+	picmanunitcombobox.c		\
+	picmanunitcombobox.h		\
+	picmanunitmenu.c			\
+	picmanunitmenu.h			\
+	picmanunitstore.c			\
+	picmanunitstore.h			\
+	picmanwidgets-error.c		\
+	picmanwidgets-error.h		\
+	picmanwidgets-private.c		\
+	picmanwidgets-private.h		\
+	picmanwidgets.c			\
+	picmanwidgets.h			\
+	picmanwidgetsenums.h		\
+	picmanwidgetstypes.h		\
+	picmanzoommodel.c			\
+	picmanzoommodel.h			\
+	picman3migration.c		\
+	picman3migration.h
 
-libgimpwidgets_built_sources = \
-	gimp-wilber-pixbufs.h	\
-	gimpwidgetsenums.c	\
-	gimpwidgetsmarshal.c	\
-	gimpwidgetsmarshal.h
+libpicmanwidgets_built_sources = \
+	picman-wilber-pixbufs.h	\
+	picmanwidgetsenums.c	\
+	picmanwidgetsmarshal.c	\
+	picmanwidgetsmarshal.h
 
-libgimpwidgets_extra_sources = gimpwidgetsmarshal.list
+libpicmanwidgets_extra_sources = picmanwidgetsmarshal.list
 
-libgimpwidgets_@GIMP_API_VERSION@_la_SOURCES = \
-	$(libgimpwidgets_built_sources)	\
-	$(libgimpwidgets_sources)
+libpicmanwidgets_@PICMAN_API_VERSION@_la_SOURCES = \
+	$(libpicmanwidgets_built_sources)	\
+	$(libpicmanwidgets_sources)
 
-libgimpwidgetsinclude_HEADERS = \
-	gimpbrowser.h			\
-	gimpbutton.h			\
-	gimpcairo-utils.h		\
-	gimpcellrenderercolor.h		\
-	gimpcellrenderertoggle.h	\
-	gimpchainbutton.h		\
-	gimpcolorarea.h			\
-	gimpcolorbutton.h		\
-	gimpcolordisplay.h		\
-	gimpcolordisplaystack.h		\
-	gimpcolorhexentry.h		\
-	gimpcolornotebook.h		\
-	gimpcolorprofilecombobox.h	\
-	gimpcolorprofilestore.h		\
-	gimpcolorscale.h		\
-	gimpcolorscales.h		\
-	gimpcolorselect.h		\
-	gimpcolorselection.h		\
-	gimpcolorselector.h		\
-	gimpcontroller.h		\
-	gimpdialog.h			\
-	gimpenumcombobox.h		\
-	gimpenumlabel.h			\
-	gimpenumstore.h			\
-	gimpenumwidgets.h		\
-	gimpfileentry.h			\
-	gimpframe.h			\
-	gimphelpui.h			\
-	gimphintbox.h			\
-	gimpintcombobox.h		\
-	gimpintstore.h			\
-	gimpmemsizeentry.h		\
-	gimpnumberpairentry.h		\
-	gimpoffsetarea.h		\
-	gimpoldwidgets.h		\
-	gimppageselector.h		\
-	gimppatheditor.h		\
-	gimppickbutton.h		\
-	gimppixmap.h			\
-	gimppreview.h			\
-	gimppreviewarea.h		\
-	gimppropwidgets.h		\
-	gimpquerybox.h			\
-	gimpruler.h			\
-	gimpscaleentry.h		\
-	gimpscrolledpreview.h		\
-	gimpsizeentry.h			\
-	gimpstock.h			\
-	gimpstringcombobox.h		\
-	gimpunitcombobox.h		\
-	gimpunitmenu.h			\
-	gimpunitstore.h			\
-	gimpwidgets-error.h		\
-	gimpwidgets.h			\
-	gimpwidgetsenums.h		\
-	gimpwidgetstypes.h		\
-	gimpzoommodel.h			\
-	gimp3migration.h
+libpicmanwidgetsinclude_HEADERS = \
+	picmanbrowser.h			\
+	picmanbutton.h			\
+	picmancairo-utils.h		\
+	picmancellrenderercolor.h		\
+	picmancellrenderertoggle.h	\
+	picmanchainbutton.h		\
+	picmancolorarea.h			\
+	picmancolorbutton.h		\
+	picmancolordisplay.h		\
+	picmancolordisplaystack.h		\
+	picmancolorhexentry.h		\
+	picmancolornotebook.h		\
+	picmancolorprofilecombobox.h	\
+	picmancolorprofilestore.h		\
+	picmancolorscale.h		\
+	picmancolorscales.h		\
+	picmancolorselect.h		\
+	picmancolorselection.h		\
+	picmancolorselector.h		\
+	picmancontroller.h		\
+	picmandialog.h			\
+	picmanenumcombobox.h		\
+	picmanenumlabel.h			\
+	picmanenumstore.h			\
+	picmanenumwidgets.h		\
+	picmanfileentry.h			\
+	picmanframe.h			\
+	picmanhelpui.h			\
+	picmanhintbox.h			\
+	picmanintcombobox.h		\
+	picmanintstore.h			\
+	picmanmemsizeentry.h		\
+	picmannumberpairentry.h		\
+	picmanoffsetarea.h		\
+	picmanoldwidgets.h		\
+	picmanpageselector.h		\
+	picmanpatheditor.h		\
+	picmanpickbutton.h		\
+	picmanpixmap.h			\
+	picmanpreview.h			\
+	picmanpreviewarea.h		\
+	picmanpropwidgets.h		\
+	picmanquerybox.h			\
+	picmanruler.h			\
+	picmanscaleentry.h		\
+	picmanscrolledpreview.h		\
+	picmansizeentry.h			\
+	picmanstock.h			\
+	picmanstringcombobox.h		\
+	picmanunitcombobox.h		\
+	picmanunitmenu.h			\
+	picmanunitstore.h			\
+	picmanwidgets-error.h		\
+	picmanwidgets.h			\
+	picmanwidgetsenums.h		\
+	picmanwidgetstypes.h		\
+	picmanzoommodel.h			\
+	picman3migration.h
 
-libgimpwidgets_@GIMP_API_VERSION@_la_LDFLAGS = \
+libpicmanwidgets_@PICMAN_API_VERSION@_la_LDFLAGS = \
 	-version-info $(LT_VERSION_INFO)\
 	$(no_undefined) 		\
-	$(libgimpwidgets_export_symbols)
+	$(libpicmanwidgets_export_symbols)
 
-libgimpwidgets_@GIMP_API_VERSION@_la_LIBADD = \
-	$(libgimpcolor)		\
-	$(libgimpconfig)	\
-	$(libgimpbase)		\
+libpicmanwidgets_@PICMAN_API_VERSION@_la_LIBADD = \
+	$(libpicmancolor)		\
+	$(libpicmanconfig)	\
+	$(libpicmanbase)		\
 	$(GEGL_LIBS)		\
 	$(GTK_LIBS)		\
 	$(libm)
 
-libgimpwidgets_@GIMP_API_VERSION@_la_DEPENDENCIES = $(gimpwidgets_def)
+libpicmanwidgets_@PICMAN_API_VERSION@_la_DEPENDENCIES = $(picmanwidgets_def)
 
 
 ## Wilber icons for the window managaer, compiled in
@@ -285,48 +285,48 @@ WILBER_VARIABLES = \
 
 
 EXTRA_DIST = \
-	gimpwidgets.def			\
-	$(libgimpwidgets_extra_sources)	\
+	picmanwidgets.def			\
+	$(libpicmanwidgets_extra_sources)	\
 	$(WILBER_IMAGES)
 
 
-gimpwidgets-private.lo: gimp-wilber-pixbufs.h
+picmanwidgets-private.lo: picman-wilber-pixbufs.h
 
 
 #
 # rules to generate built sources
 #
 # setup autogeneration dependancies
-gen_sources = xgen-wec xgen-wmh xgen-wmc gimp-wilber-pixbufs.h
+gen_sources = xgen-wec xgen-wmh xgen-wmc picman-wilber-pixbufs.h
 CLEANFILES = $(gen_sources)
 
-gimpwidgetsenums.c: $(srcdir)/gimpwidgetsenums.h $(GIMP_MKENUMS)
-	$(AM_V_GEN) $(GIMP_MKENUMS) \
-		--fhead "#include \"config.h\"\n#include <glib-object.h>\n#include \"libgimpbase/gimpbase.h\"\n#include \"gimpwidgetsenums.h\"\n#include \"libgimp/libgimp-intl.h\"" \
+picmanwidgetsenums.c: $(srcdir)/picmanwidgetsenums.h $(PICMAN_MKENUMS)
+	$(AM_V_GEN) $(PICMAN_MKENUMS) \
+		--fhead "#include \"config.h\"\n#include <glib-object.h>\n#include \"libpicmanbase/picmanbase.h\"\n#include \"picmanwidgetsenums.h\"\n#include \"libpicman/libpicman-intl.h\"" \
 		--fprod "\n/* enumerations from \"@filename@\" */" \
 		--vhead "GType\n@enum_name@_get_type (void)\n{\n  static const G@Type@Value values[] =\n  {" \
 		--vprod "    { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
 		--vtail "    { 0, NULL, NULL }\n  };\n" \
-		--dhead "  static const Gimp@Type@Desc descs[] =\n  {" \
+		--dhead "  static const Picman@Type@Desc descs[] =\n  {" \
 		--dprod "    { @VALUENAME@, @valuedesc@, @valuehelp@ }," \
-		--dtail "    { 0, NULL, NULL }\n  };\n\n  static GType type = 0;\n\n  if (G_UNLIKELY (! type))\n    {\n      type = g_@type@_register_static (\"@EnumName@\", values);\n      gimp_type_set_translation_domain (type, GETTEXT_PACKAGE \"-libgimp\");\n      gimp_type_set_translation_context (type, \"@enumnick@\");\n      gimp_@type@_set_value_descriptions (type, descs);\n    }\n\n  return type;\n}\n" \
-		$(srcdir)/gimpwidgetsenums.h > xgen-wec \
+		--dtail "    { 0, NULL, NULL }\n  };\n\n  static GType type = 0;\n\n  if (G_UNLIKELY (! type))\n    {\n      type = g_@type@_register_static (\"@EnumName@\", values);\n      picman_type_set_translation_domain (type, GETTEXT_PACKAGE \"-libpicman\");\n      picman_type_set_translation_context (type, \"@enumnick@\");\n      picman_@type@_set_value_descriptions (type, descs);\n    }\n\n  return type;\n}\n" \
+		$(srcdir)/picmanwidgetsenums.h > xgen-wec \
 	&& cp xgen-wec $(@F) \
 	&& rm -f xgen-wec
 
-gimpwidgetsmarshal.h: $(srcdir)/gimpwidgetsmarshal.list
-	$(AM_V_GEN) $(GLIB_GENMARSHAL) --prefix=_gimp_widgets_marshal $(srcdir)/gimpwidgetsmarshal.list --header >> xgen-wmh \
+picmanwidgetsmarshal.h: $(srcdir)/picmanwidgetsmarshal.list
+	$(AM_V_GEN) $(GLIB_GENMARSHAL) --prefix=_picman_widgets_marshal $(srcdir)/picmanwidgetsmarshal.list --header >> xgen-wmh \
 	&& (cmp -s xgen-wmh $(@F) || cp xgen-wmh $(@F)) \
 	&& rm -f xgen-wmh xgen-wmh~
 
-gimpwidgetsmarshal.c: gimpwidgetsmarshal.h
-	$(AM_V_GEN) echo "#include \"gimpwidgetsmarshal.h\"" >> xgen-wmc \
-	&& $(GLIB_GENMARSHAL) --prefix=_gimp_widgets_marshal $(srcdir)/gimpwidgetsmarshal.list --body >> xgen-wmc \
+picmanwidgetsmarshal.c: picmanwidgetsmarshal.h
+	$(AM_V_GEN) echo "#include \"picmanwidgetsmarshal.h\"" >> xgen-wmc \
+	&& $(GLIB_GENMARSHAL) --prefix=_picman_widgets_marshal $(srcdir)/picmanwidgetsmarshal.list --body >> xgen-wmc \
 	&& cp xgen-wmc $(@F) \
 	&& rm -f xgen-wmc xgen-wmc~
 
 
-gimp-wilber-pixbufs.h: $(WILBER_IMAGES) Makefile.am
+picman-wilber-pixbufs.h: $(WILBER_IMAGES) Makefile.am
 	$(AM_V_GEN) $(GDK_PIXBUF_CSOURCE) --raw --build-list $(WILBER_VARIABLES) > $(@F)
 
 
@@ -342,8 +342,8 @@ EXTRA_PROGRAMS = \
 test_preview_area_SOURCES = test-preview-area.c 
 
 test_preview_area_DEPENDENCIES = \
-	$(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la	\
-	$(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la
+	$(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la	\
+	$(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la
 
 test_preview_area_LDADD = \
 	$(GTK_LIBS) \
@@ -354,7 +354,7 @@ test_eevl_SOURCES = \
 	test-eevl.c
 
 test_eevl_DEPENDENCIES = \
-	$(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la
+	$(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la
 
 test_eevl_LDADD = \
 	$(GLIB_LIBS) 		\

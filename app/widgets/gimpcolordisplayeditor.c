@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcolordisplayeditor.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmancolordisplayeditor.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,16 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "gimpcolordisplayeditor.h"
-#include "gimpeditor.h"
+#include "picmancolordisplayeditor.h"
+#include "picmaneditor.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define LIST_WIDTH  200
@@ -57,61 +57,61 @@ enum
 };
 
 
-static void   gimp_color_display_editor_dispose        (GObject               *object);
+static void   picman_color_display_editor_dispose        (GObject               *object);
 
-static void   gimp_color_display_editor_add_clicked    (GtkWidget             *widget,
-                                                        GimpColorDisplayEditor *editor);
-static void   gimp_color_display_editor_remove_clicked (GtkWidget             *widget,
-                                                        GimpColorDisplayEditor *editor);
-static void   gimp_color_display_editor_up_clicked     (GtkWidget             *widget,
-                                                        GimpColorDisplayEditor *editor);
-static void   gimp_color_display_editor_down_clicked   (GtkWidget             *widget,
-                                                        GimpColorDisplayEditor *editor);
-static void   gimp_color_display_editor_reset_clicked  (GtkWidget             *widget,
-                                                        GimpColorDisplayEditor *editor);
+static void   picman_color_display_editor_add_clicked    (GtkWidget             *widget,
+                                                        PicmanColorDisplayEditor *editor);
+static void   picman_color_display_editor_remove_clicked (GtkWidget             *widget,
+                                                        PicmanColorDisplayEditor *editor);
+static void   picman_color_display_editor_up_clicked     (GtkWidget             *widget,
+                                                        PicmanColorDisplayEditor *editor);
+static void   picman_color_display_editor_down_clicked   (GtkWidget             *widget,
+                                                        PicmanColorDisplayEditor *editor);
+static void   picman_color_display_editor_reset_clicked  (GtkWidget             *widget,
+                                                        PicmanColorDisplayEditor *editor);
 
-static void   gimp_color_display_editor_src_changed    (GtkTreeSelection       *sel,
-                                                        GimpColorDisplayEditor *editor);
-static void   gimp_color_display_editor_dest_changed   (GtkTreeSelection       *sel,
-                                                        GimpColorDisplayEditor *editor);
+static void   picman_color_display_editor_src_changed    (GtkTreeSelection       *sel,
+                                                        PicmanColorDisplayEditor *editor);
+static void   picman_color_display_editor_dest_changed   (GtkTreeSelection       *sel,
+                                                        PicmanColorDisplayEditor *editor);
 
-static void   gimp_color_display_editor_added          (GimpColorDisplayStack  *stack,
-                                                        GimpColorDisplay       *display,
+static void   picman_color_display_editor_added          (PicmanColorDisplayStack  *stack,
+                                                        PicmanColorDisplay       *display,
                                                         gint                    position,
-                                                        GimpColorDisplayEditor *editor);
-static void   gimp_color_display_editor_removed        (GimpColorDisplayStack  *stack,
-                                                        GimpColorDisplay       *display,
-                                                        GimpColorDisplayEditor *editor);
-static void   gimp_color_display_editor_reordered      (GimpColorDisplayStack  *stack,
-                                                        GimpColorDisplay       *display,
+                                                        PicmanColorDisplayEditor *editor);
+static void   picman_color_display_editor_removed        (PicmanColorDisplayStack  *stack,
+                                                        PicmanColorDisplay       *display,
+                                                        PicmanColorDisplayEditor *editor);
+static void   picman_color_display_editor_reordered      (PicmanColorDisplayStack  *stack,
+                                                        PicmanColorDisplay       *display,
                                                         gint                    position,
-                                                        GimpColorDisplayEditor *editor);
+                                                        PicmanColorDisplayEditor *editor);
 
-static void   gimp_color_display_editor_enabled        (GimpColorDisplay       *display,
+static void   picman_color_display_editor_enabled        (PicmanColorDisplay       *display,
                                                         GParamSpec             *pspec,
-                                                        GimpColorDisplayEditor *editor);
-static void   gimp_color_display_editor_enable_toggled (GtkCellRendererToggle  *toggle,
+                                                        PicmanColorDisplayEditor *editor);
+static void   picman_color_display_editor_enable_toggled (GtkCellRendererToggle  *toggle,
                                                         const gchar            *path,
-                                                        GimpColorDisplayEditor *editor);
+                                                        PicmanColorDisplayEditor *editor);
 
-static void   gimp_color_display_editor_update_buttons (GimpColorDisplayEditor *editor);
+static void   picman_color_display_editor_update_buttons (PicmanColorDisplayEditor *editor);
 
 
-G_DEFINE_TYPE (GimpColorDisplayEditor, gimp_color_display_editor, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanColorDisplayEditor, picman_color_display_editor, GTK_TYPE_BOX)
 
-#define parent_class gimp_color_display_editor_parent_class
+#define parent_class picman_color_display_editor_parent_class
 
 
 static void
-gimp_color_display_editor_class_init (GimpColorDisplayEditorClass *klass)
+picman_color_display_editor_class_init (PicmanColorDisplayEditorClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->dispose = gimp_color_display_editor_dispose;
+  object_class->dispose = picman_color_display_editor_dispose;
 }
 
 static void
-gimp_color_display_editor_init (GimpColorDisplayEditor *editor)
+picman_color_display_editor_init (PicmanColorDisplayEditor *editor)
 {
   GtkWidget         *paned;
   GtkWidget         *hbox;
@@ -175,7 +175,7 @@ gimp_color_display_editor_init (GimpColorDisplayEditor *editor)
   editor->src_sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (tv));
 
   g_signal_connect (editor->src_sel, "changed",
-                    G_CALLBACK (gimp_color_display_editor_src_changed),
+                    G_CALLBACK (picman_color_display_editor_src_changed),
                     editor);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -193,7 +193,7 @@ gimp_color_display_editor_init (GimpColorDisplayEditor *editor)
   gtk_widget_show (image);
 
   g_signal_connect (editor->add_button, "clicked",
-                    G_CALLBACK (gimp_color_display_editor_add_clicked),
+                    G_CALLBACK (picman_color_display_editor_add_clicked),
                     editor);
 
   editor->remove_button = gtk_button_new ();
@@ -206,28 +206,28 @@ gimp_color_display_editor_init (GimpColorDisplayEditor *editor)
   gtk_widget_show (image);
 
   g_signal_connect (editor->remove_button, "clicked",
-                    G_CALLBACK (gimp_color_display_editor_remove_clicked),
+                    G_CALLBACK (picman_color_display_editor_remove_clicked),
                     editor);
 
-  ed = gimp_editor_new ();
+  ed = picman_editor_new ();
   gtk_box_pack_start (GTK_BOX (hbox), ed, TRUE, TRUE, 0);
   gtk_widget_show (ed);
 
   editor->up_button =
-    gimp_editor_add_button (GIMP_EDITOR (ed),
+    picman_editor_add_button (PICMAN_EDITOR (ed),
                             GTK_STOCK_GO_UP,
                             _("Move the selected filter up"),
                             NULL,
-                            G_CALLBACK (gimp_color_display_editor_up_clicked),
+                            G_CALLBACK (picman_color_display_editor_up_clicked),
                             NULL,
                             editor);
 
   editor->down_button =
-    gimp_editor_add_button (GIMP_EDITOR (ed),
+    picman_editor_add_button (PICMAN_EDITOR (ed),
                             GTK_STOCK_GO_DOWN,
                             _("Move the selected filter down"),
                             NULL,
-                            G_CALLBACK (gimp_color_display_editor_down_clicked),
+                            G_CALLBACK (picman_color_display_editor_down_clicked),
                             NULL,
                             editor);
 
@@ -247,7 +247,7 @@ gimp_color_display_editor_init (GimpColorDisplayEditor *editor)
                                      G_TYPE_BOOLEAN,
                                      G_TYPE_STRING,
                                      G_TYPE_STRING,
-                                     GIMP_TYPE_COLOR_DISPLAY);
+                                     PICMAN_TYPE_COLOR_DISPLAY);
   tv = gtk_tree_view_new_with_model (GTK_TREE_MODEL (editor->dest));
   g_object_unref (editor->dest);
 
@@ -257,7 +257,7 @@ gimp_color_display_editor_init (GimpColorDisplayEditor *editor)
   rend = gtk_cell_renderer_toggle_new ();
 
   g_signal_connect (rend, "toggled",
-                    G_CALLBACK (gimp_color_display_editor_enable_toggled),
+                    G_CALLBACK (picman_color_display_editor_enable_toggled),
                     editor);
 
   column = gtk_tree_view_column_new_with_attributes (NULL, rend,
@@ -266,7 +266,7 @@ gimp_color_display_editor_init (GimpColorDisplayEditor *editor)
                                                      NULL);
   gtk_tree_view_insert_column (GTK_TREE_VIEW (tv), column, 0);
 
-  image = gtk_image_new_from_stock (GIMP_STOCK_VISIBLE, GTK_ICON_SIZE_MENU);
+  image = gtk_image_new_from_stock (PICMAN_STOCK_VISIBLE, GTK_ICON_SIZE_MENU);
   gtk_tree_view_column_set_widget (column, image);
   gtk_widget_show (image);
 
@@ -292,7 +292,7 @@ gimp_color_display_editor_init (GimpColorDisplayEditor *editor)
   editor->dest_sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (tv));
 
   g_signal_connect (editor->dest_sel, "changed",
-                    G_CALLBACK (gimp_color_display_editor_dest_changed),
+                    G_CALLBACK (picman_color_display_editor_dest_changed),
                     editor);
 
   /*  the config frame  */
@@ -305,7 +305,7 @@ gimp_color_display_editor_init (GimpColorDisplayEditor *editor)
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  editor->config_frame = gimp_frame_new (NULL);
+  editor->config_frame = picman_frame_new (NULL);
   gtk_box_pack_start (GTK_BOX (vbox), editor->config_frame, TRUE, TRUE, 0);
   gtk_widget_show (editor->config_frame);
 
@@ -317,25 +317,25 @@ gimp_color_display_editor_init (GimpColorDisplayEditor *editor)
   gtk_box_pack_end (GTK_BOX (editor->config_box), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  editor->reset_button = gtk_button_new_from_stock (GIMP_STOCK_RESET);
+  editor->reset_button = gtk_button_new_from_stock (PICMAN_STOCK_RESET);
   gtk_box_pack_end (GTK_BOX (hbox), editor->reset_button, FALSE, FALSE, 0);
   gtk_widget_show (editor->reset_button);
 
-  gimp_help_set_help_data (editor->reset_button,
+  picman_help_set_help_data (editor->reset_button,
                            _("Reset the selected filter to default values"),
                            NULL);
 
   g_signal_connect (editor->reset_button, "clicked",
-                    G_CALLBACK (gimp_color_display_editor_reset_clicked),
+                    G_CALLBACK (picman_color_display_editor_reset_clicked),
                     editor);
 
-  gimp_color_display_editor_dest_changed (editor->dest_sel, editor);
+  picman_color_display_editor_dest_changed (editor->dest_sel, editor);
 }
 
 static void
-gimp_color_display_editor_dispose (GObject *object)
+picman_color_display_editor_dispose (GObject *object)
 {
-  GimpColorDisplayEditor *editor = GIMP_COLOR_DISPLAY_EDITOR (object);
+  PicmanColorDisplayEditor *editor = PICMAN_COLOR_DISPLAY_EDITOR (object);
 
   if (editor->selected)
     {
@@ -366,31 +366,31 @@ gimp_color_display_editor_dispose (GObject *object)
 }
 
 GtkWidget *
-gimp_color_display_editor_new (GimpColorDisplayStack *stack,
-                               GimpColorConfig       *config,
-                               GimpColorManaged      *managed)
+picman_color_display_editor_new (PicmanColorDisplayStack *stack,
+                               PicmanColorConfig       *config,
+                               PicmanColorManaged      *managed)
 {
-  GimpColorDisplayEditor *editor;
+  PicmanColorDisplayEditor *editor;
   GType                  *display_types;
   guint                   n_display_types;
   gint                    i;
   GList                  *list;
 
-  g_return_val_if_fail (GIMP_IS_COLOR_DISPLAY_STACK (stack), NULL);
-  g_return_val_if_fail (GIMP_IS_COLOR_CONFIG (config), NULL);
-  g_return_val_if_fail (GIMP_IS_COLOR_MANAGED (managed), NULL);
+  g_return_val_if_fail (PICMAN_IS_COLOR_DISPLAY_STACK (stack), NULL);
+  g_return_val_if_fail (PICMAN_IS_COLOR_CONFIG (config), NULL);
+  g_return_val_if_fail (PICMAN_IS_COLOR_MANAGED (managed), NULL);
 
-  editor = g_object_new (GIMP_TYPE_COLOR_DISPLAY_EDITOR, NULL);
+  editor = g_object_new (PICMAN_TYPE_COLOR_DISPLAY_EDITOR, NULL);
 
   editor->stack   = g_object_ref (stack);
   editor->config  = g_object_ref (config);
   editor->managed = g_object_ref (managed);
 
-  display_types = g_type_children (GIMP_TYPE_COLOR_DISPLAY, &n_display_types);
+  display_types = g_type_children (PICMAN_TYPE_COLOR_DISPLAY, &n_display_types);
 
   for (i = 0; i < n_display_types; i++)
     {
-      GimpColorDisplayClass *display_class;
+      PicmanColorDisplayClass *display_class;
       GtkTreeIter            iter;
 
       display_class = g_type_class_ref (display_types[i]);
@@ -410,16 +410,16 @@ gimp_color_display_editor_new (GimpColorDisplayStack *stack,
 
   for (list = stack->filters; list; list = g_list_next (list))
     {
-      GimpColorDisplay *display = list->data;
+      PicmanColorDisplay *display = list->data;
       GtkTreeIter       iter;
       gboolean          enabled;
       const gchar      *name;
       const gchar      *stock_id;
 
-      enabled = gimp_color_display_get_enabled (display);
+      enabled = picman_color_display_get_enabled (display);
 
-      name     = GIMP_COLOR_DISPLAY_GET_CLASS (display)->name;
-      stock_id = GIMP_COLOR_DISPLAY_GET_CLASS (display)->stock_id;
+      name     = PICMAN_COLOR_DISPLAY_GET_CLASS (display)->name;
+      stock_id = PICMAN_COLOR_DISPLAY_GET_CLASS (display)->stock_id;
 
       gtk_list_store_append (editor->dest, &iter);
 
@@ -431,33 +431,33 @@ gimp_color_display_editor_new (GimpColorDisplayStack *stack,
                           -1);
 
       g_signal_connect_object (display, "notify::enabled",
-                               G_CALLBACK (gimp_color_display_editor_enabled),
+                               G_CALLBACK (picman_color_display_editor_enabled),
                                G_OBJECT (editor), 0);
     }
 
   g_signal_connect_object (stack, "added",
-                           G_CALLBACK (gimp_color_display_editor_added),
+                           G_CALLBACK (picman_color_display_editor_added),
                            G_OBJECT (editor), 0);
   g_signal_connect_object (stack, "removed",
-                           G_CALLBACK (gimp_color_display_editor_removed),
+                           G_CALLBACK (picman_color_display_editor_removed),
                            G_OBJECT (editor), 0);
   g_signal_connect_object (stack, "reordered",
-                           G_CALLBACK (gimp_color_display_editor_reordered),
+                           G_CALLBACK (picman_color_display_editor_reordered),
                            G_OBJECT (editor), 0);
 
   return GTK_WIDGET (editor);
 }
 
 static void
-gimp_color_display_editor_add_clicked (GtkWidget              *widget,
-                                       GimpColorDisplayEditor *editor)
+picman_color_display_editor_add_clicked (GtkWidget              *widget,
+                                       PicmanColorDisplayEditor *editor)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
 
   if (gtk_tree_selection_get_selected (editor->src_sel, &model, &iter))
     {
-      GimpColorDisplay *display;
+      PicmanColorDisplay *display;
       GType             type;
 
       gtk_tree_model_get (model, &iter, SRC_COLUMN_TYPE, &type, -1);
@@ -469,47 +469,47 @@ gimp_color_display_editor_add_clicked (GtkWidget              *widget,
 
       if (display)
         {
-          gimp_color_display_stack_add (editor->stack, display);
+          picman_color_display_stack_add (editor->stack, display);
           g_object_unref (display);
         }
     }
 }
 
 static void
-gimp_color_display_editor_remove_clicked (GtkWidget             *widget,
-                                          GimpColorDisplayEditor *editor)
+picman_color_display_editor_remove_clicked (GtkWidget             *widget,
+                                          PicmanColorDisplayEditor *editor)
 {
   if (editor->selected)
-    gimp_color_display_stack_remove (editor->stack, editor->selected);
+    picman_color_display_stack_remove (editor->stack, editor->selected);
 }
 
 static void
-gimp_color_display_editor_up_clicked (GtkWidget             *widget,
-                                      GimpColorDisplayEditor *editor)
+picman_color_display_editor_up_clicked (GtkWidget             *widget,
+                                      PicmanColorDisplayEditor *editor)
 {
   if (editor->selected)
-    gimp_color_display_stack_reorder_up (editor->stack, editor->selected);
+    picman_color_display_stack_reorder_up (editor->stack, editor->selected);
 }
 
 static void
-gimp_color_display_editor_down_clicked (GtkWidget             *widget,
-                                        GimpColorDisplayEditor *editor)
+picman_color_display_editor_down_clicked (GtkWidget             *widget,
+                                        PicmanColorDisplayEditor *editor)
 {
   if (editor->selected)
-    gimp_color_display_stack_reorder_down (editor->stack, editor->selected);
+    picman_color_display_stack_reorder_down (editor->stack, editor->selected);
 }
 
 static void
-gimp_color_display_editor_reset_clicked (GtkWidget             *widget,
-                                         GimpColorDisplayEditor *editor)
+picman_color_display_editor_reset_clicked (GtkWidget             *widget,
+                                         PicmanColorDisplayEditor *editor)
 {
   if (editor->selected)
-    gimp_color_display_configure_reset (editor->selected);
+    picman_color_display_configure_reset (editor->selected);
 }
 
 static void
-gimp_color_display_editor_src_changed (GtkTreeSelection       *sel,
-                                       GimpColorDisplayEditor *editor)
+picman_color_display_editor_src_changed (GtkTreeSelection       *sel,
+                                       PicmanColorDisplayEditor *editor)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
@@ -531,17 +531,17 @@ gimp_color_display_editor_src_changed (GtkTreeSelection       *sel,
 
   gtk_widget_set_sensitive (editor->add_button, name != NULL);
 
-  gimp_help_set_help_data (editor->add_button, tip, NULL);
+  picman_help_set_help_data (editor->add_button, tip, NULL);
   g_free (tip);
 }
 
 static void
-gimp_color_display_editor_dest_changed (GtkTreeSelection       *sel,
-                                        GimpColorDisplayEditor *editor)
+picman_color_display_editor_dest_changed (GtkTreeSelection       *sel,
+                                        PicmanColorDisplayEditor *editor)
 {
   GtkTreeModel     *model;
   GtkTreeIter       iter;
-  GimpColorDisplay *display = NULL;
+  PicmanColorDisplay *display = NULL;
   gchar            *tip     = NULL;
 
   if (editor->selected)
@@ -562,10 +562,10 @@ gimp_color_display_editor_dest_changed (GtkTreeSelection       *sel,
       g_value_unset (&val);
 
       tip = g_strdup_printf (_("Remove '%s' from the list of active filters"),
-                             GIMP_COLOR_DISPLAY_GET_CLASS (display)->name);
+                             PICMAN_COLOR_DISPLAY_GET_CLASS (display)->name);
     }
 
-  gimp_help_set_help_data (editor->remove_button, tip, NULL);
+  picman_help_set_help_data (editor->remove_button, tip, NULL);
   g_free (tip);
 
   gtk_widget_set_sensitive (editor->remove_button, display != NULL);
@@ -582,10 +582,10 @@ gimp_color_display_editor_dest_changed (GtkTreeSelection       *sel,
       g_object_add_weak_pointer (G_OBJECT (display),
                                  (gpointer) &editor->selected);
 
-      editor->config_widget = gimp_color_display_configure (display);
+      editor->config_widget = picman_color_display_configure (display);
 
       gtk_frame_set_label (GTK_FRAME (editor->config_frame),
-                           GIMP_COLOR_DISPLAY_GET_CLASS (display)->name);
+                           PICMAN_COLOR_DISPLAY_GET_CLASS (display)->name);
     }
   else
     {
@@ -605,24 +605,24 @@ gimp_color_display_editor_dest_changed (GtkTreeSelection       *sel,
                                  (gpointer) &editor->config_widget);
     }
 
-  gimp_color_display_editor_update_buttons (editor);
+  picman_color_display_editor_update_buttons (editor);
 }
 
 static void
-gimp_color_display_editor_added (GimpColorDisplayStack  *stack,
-                                 GimpColorDisplay       *display,
+picman_color_display_editor_added (PicmanColorDisplayStack  *stack,
+                                 PicmanColorDisplay       *display,
                                  gint                    position,
-                                 GimpColorDisplayEditor *editor)
+                                 PicmanColorDisplayEditor *editor)
 {
   GtkTreeIter  iter;
   gboolean     enabled;
   const gchar *name;
   const gchar *stock_id;
 
-  enabled = gimp_color_display_get_enabled (display);
+  enabled = picman_color_display_get_enabled (display);
 
-  name     = GIMP_COLOR_DISPLAY_GET_CLASS (display)->name;
-  stock_id = GIMP_COLOR_DISPLAY_GET_CLASS (display)->stock_id;
+  name     = PICMAN_COLOR_DISPLAY_GET_CLASS (display)->name;
+  stock_id = PICMAN_COLOR_DISPLAY_GET_CLASS (display)->stock_id;
 
   gtk_list_store_insert (editor->dest, &iter, position);
 
@@ -634,16 +634,16 @@ gimp_color_display_editor_added (GimpColorDisplayStack  *stack,
                       -1);
 
   g_signal_connect_object (display, "notify::enabled",
-                           G_CALLBACK (gimp_color_display_editor_enabled),
+                           G_CALLBACK (picman_color_display_editor_enabled),
                            G_OBJECT (editor), 0);
 
-  gimp_color_display_editor_update_buttons (editor);
+  picman_color_display_editor_update_buttons (editor);
 }
 
 static void
-gimp_color_display_editor_removed (GimpColorDisplayStack  *stack,
-                                   GimpColorDisplay       *display,
-                                   GimpColorDisplayEditor *editor)
+picman_color_display_editor_removed (PicmanColorDisplayStack  *stack,
+                                   PicmanColorDisplay       *display,
+                                   PicmanColorDisplayEditor *editor)
 {
   GtkTreeIter iter;
   gboolean    iter_valid;
@@ -654,7 +654,7 @@ gimp_color_display_editor_removed (GimpColorDisplayStack  *stack,
        iter_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (editor->dest),
                                               &iter))
     {
-      GimpColorDisplay *display2;
+      PicmanColorDisplay *display2;
 
       gtk_tree_model_get (GTK_TREE_MODEL (editor->dest), &iter,
                           DEST_COLUMN_FILTER, &display2,
@@ -665,22 +665,22 @@ gimp_color_display_editor_removed (GimpColorDisplayStack  *stack,
       if (display == display2)
         {
           g_signal_handlers_disconnect_by_func (display,
-                                                gimp_color_display_editor_enabled,
+                                                picman_color_display_editor_enabled,
                                                 editor);
 
           gtk_list_store_remove (editor->dest, &iter);
 
-          gimp_color_display_editor_update_buttons (editor);
+          picman_color_display_editor_update_buttons (editor);
           break;
         }
     }
 }
 
 static void
-gimp_color_display_editor_reordered (GimpColorDisplayStack  *stack,
-                                     GimpColorDisplay       *display,
+picman_color_display_editor_reordered (PicmanColorDisplayStack  *stack,
+                                     PicmanColorDisplay       *display,
                                      gint                    position,
-                                     GimpColorDisplayEditor *editor)
+                                     PicmanColorDisplayEditor *editor)
 {
   GtkTreeIter iter;
   gboolean    iter_valid;
@@ -691,7 +691,7 @@ gimp_color_display_editor_reordered (GimpColorDisplayStack  *stack,
        iter_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (editor->dest),
                                               &iter))
     {
-      GimpColorDisplay *display2;
+      PicmanColorDisplay *display2;
 
       gtk_tree_model_get (GTK_TREE_MODEL (editor->dest), &iter,
                           DEST_COLUMN_FILTER, &display2,
@@ -734,7 +734,7 @@ gimp_color_display_editor_reordered (GimpColorDisplayStack  *stack,
                 gtk_list_store_move_before (editor->dest, &iter, &place_iter);
             }
 
-          gimp_color_display_editor_update_buttons (editor);
+          picman_color_display_editor_update_buttons (editor);
 
           return;
         }
@@ -742,9 +742,9 @@ gimp_color_display_editor_reordered (GimpColorDisplayStack  *stack,
 }
 
 static void
-gimp_color_display_editor_enabled (GimpColorDisplay       *display,
+picman_color_display_editor_enabled (PicmanColorDisplay       *display,
                                    GParamSpec             *pspec,
-                                   GimpColorDisplayEditor *editor)
+                                   PicmanColorDisplayEditor *editor)
 {
   GtkTreeIter iter;
   gboolean    iter_valid;
@@ -755,7 +755,7 @@ gimp_color_display_editor_enabled (GimpColorDisplay       *display,
        iter_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (editor->dest),
                                               &iter))
     {
-      GimpColorDisplay *display2;
+      PicmanColorDisplay *display2;
 
       gtk_tree_model_get (GTK_TREE_MODEL (editor->dest), &iter,
                           DEST_COLUMN_FILTER,  &display2,
@@ -765,7 +765,7 @@ gimp_color_display_editor_enabled (GimpColorDisplay       *display,
 
       if (display == display2)
         {
-          gboolean enabled = gimp_color_display_get_enabled (display);
+          gboolean enabled = picman_color_display_get_enabled (display);
 
           gtk_list_store_set (editor->dest, &iter,
                               DEST_COLUMN_ENABLED, enabled,
@@ -777,16 +777,16 @@ gimp_color_display_editor_enabled (GimpColorDisplay       *display,
 }
 
 static void
-gimp_color_display_editor_enable_toggled (GtkCellRendererToggle  *toggle,
+picman_color_display_editor_enable_toggled (GtkCellRendererToggle  *toggle,
                                           const gchar            *path_str,
-                                          GimpColorDisplayEditor *editor)
+                                          PicmanColorDisplayEditor *editor)
 {
   GtkTreePath *path = gtk_tree_path_new_from_string (path_str);
   GtkTreeIter  iter;
 
   if (gtk_tree_model_get_iter (GTK_TREE_MODEL (editor->dest), &iter, path))
     {
-      GimpColorDisplay *display;
+      PicmanColorDisplay *display;
       gboolean          enabled;
 
       gtk_tree_model_get (GTK_TREE_MODEL (editor->dest), &iter,
@@ -794,7 +794,7 @@ gimp_color_display_editor_enable_toggled (GtkCellRendererToggle  *toggle,
                           DEST_COLUMN_ENABLED, &enabled,
                           -1);
 
-      gimp_color_display_set_enabled (display, ! enabled);
+      picman_color_display_set_enabled (display, ! enabled);
 
       g_object_unref (display);
     }
@@ -803,7 +803,7 @@ gimp_color_display_editor_enable_toggled (GtkCellRendererToggle  *toggle,
 }
 
 static void
-gimp_color_display_editor_update_buttons (GimpColorDisplayEditor *editor)
+picman_color_display_editor_update_buttons (PicmanColorDisplayEditor *editor)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;

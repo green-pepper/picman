@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,46 +22,46 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "display-types.h"
 
-#include "config/gimpdisplayconfig.h"
+#include "config/picmandisplayconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
 
 #include "file/file-utils.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
+#include "widgets/picmanuimanager.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-close.h"
-#include "gimpimagewindow.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-close.h"
+#include "picmanimagewindow.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void      gimp_display_shell_close_dialog       (GimpDisplayShell *shell,
-                                                        GimpImage        *image);
-static void      gimp_display_shell_close_name_changed (GimpImage        *image,
-                                                        GimpMessageBox   *box);
-static void      gimp_display_shell_close_exported     (GimpImage        *image,
+static void      picman_display_shell_close_dialog       (PicmanDisplayShell *shell,
+                                                        PicmanImage        *image);
+static void      picman_display_shell_close_name_changed (PicmanImage        *image,
+                                                        PicmanMessageBox   *box);
+static void      picman_display_shell_close_exported     (PicmanImage        *image,
                                                         const gchar      *uri,
-                                                        GimpMessageBox   *box);
-static gboolean  gimp_display_shell_close_time_changed (GimpMessageBox   *box);
-static void      gimp_display_shell_close_response     (GtkWidget        *widget,
+                                                        PicmanMessageBox   *box);
+static gboolean  picman_display_shell_close_time_changed (PicmanMessageBox   *box);
+static void      picman_display_shell_close_response     (GtkWidget        *widget,
                                                         gboolean          close,
-                                                        GimpDisplayShell *shell);
-static void      gimp_time_since                       (guint  then,
+                                                        PicmanDisplayShell *shell);
+static void      picman_time_since                       (guint  then,
                                                         gint  *hours,
                                                         gint  *minutes);
 
@@ -69,19 +69,19 @@ static void      gimp_time_since                       (guint  then,
 /*  public functions  */
 
 void
-gimp_display_shell_close (GimpDisplayShell *shell,
+picman_display_shell_close (PicmanDisplayShell *shell,
                           gboolean          kill_it)
 {
-  GimpImage *image;
+  PicmanImage *image;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
-  image = gimp_display_get_image (shell->display);
+  image = picman_display_get_image (shell->display);
 
-  /*  FIXME: gimp_busy HACK not really appropriate here because we only
+  /*  FIXME: picman_busy HACK not really appropriate here because we only
    *  want to prevent the busy image and display to be closed.  --Mitch
    */
-  if (shell->display->gimp->busy)
+  if (shell->display->picman->busy)
     return;
 
   /*  If the image has been modified, give the user a chance to save
@@ -90,39 +90,39 @@ gimp_display_shell_close (GimpDisplayShell *shell,
    */
   if (! kill_it                                 &&
       image                                     &&
-      gimp_image_get_display_count (image) == 1 &&
-      gimp_image_is_dirty (image))
+      picman_image_get_display_count (image) == 1 &&
+      picman_image_is_dirty (image))
     {
       /*  If there's a save dialog active for this image, then raise it.
        *  (see bug #511965)
        */
       GtkWidget *dialog = g_object_get_data (G_OBJECT (image),
-                                             "gimp-file-save-dialog");
+                                             "picman-file-save-dialog");
       if (dialog)
         {
           gtk_window_present (GTK_WINDOW (dialog));
         }
       else
         {
-          gimp_display_shell_close_dialog (shell, image);
+          picman_display_shell_close_dialog (shell, image);
         }
     }
   else if (image)
     {
-      gimp_display_close (shell->display);
+      picman_display_close (shell->display);
     }
   else
     {
-      GimpImageWindow *window = gimp_display_shell_get_window (shell);
+      PicmanImageWindow *window = picman_display_shell_get_window (shell);
 
       if (window)
         {
-          GimpUIManager *manager = gimp_image_window_get_ui_manager (window);
+          PicmanUIManager *manager = picman_image_window_get_ui_manager (window);
 
-          /* Activate the action instead of simply calling gimp_exit(), so
+          /* Activate the action instead of simply calling picman_exit(), so
            * the quit action's sensitivity is taken into account.
            */
-          gimp_ui_manager_activate_action (manager, "file", "file-quit");
+          picman_ui_manager_activate_action (manager, "file", "file-quit");
         }
     }
 }
@@ -134,11 +134,11 @@ gimp_display_shell_close (GimpDisplayShell *shell,
 
 
 static void
-gimp_display_shell_close_dialog (GimpDisplayShell *shell,
-                                 GimpImage        *image)
+picman_display_shell_close_dialog (PicmanDisplayShell *shell,
+                                 PicmanImage        *image)
 {
   GtkWidget      *dialog;
-  GimpMessageBox *box;
+  PicmanMessageBox *box;
   GClosure       *closure;
   GSource        *source;
   gchar          *title;
@@ -150,15 +150,15 @@ gimp_display_shell_close_dialog (GimpDisplayShell *shell,
       return;
     }
 
-  uri = gimp_image_get_uri (image);
+  uri = picman_image_get_uri (image);
 
-  title = g_strdup_printf (_("Close %s"), gimp_image_get_display_name (image));
+  title = g_strdup_printf (_("Close %s"), picman_image_get_display_name (image));
 
   shell->close_dialog =
-    dialog = gimp_message_dialog_new (title, GTK_STOCK_SAVE,
+    dialog = picman_message_dialog_new (title, GTK_STOCK_SAVE,
                                       GTK_WIDGET (shell),
                                       GTK_DIALOG_DESTROY_WITH_PARENT,
-                                      gimp_standard_help_func, NULL,
+                                      picman_standard_help_func, NULL,
                                       NULL);
   g_free (title);
 
@@ -183,22 +183,22 @@ gimp_display_shell_close_dialog (GimpDisplayShell *shell,
                     &shell->close_dialog);
 
   g_signal_connect (dialog, "response",
-                    G_CALLBACK (gimp_display_shell_close_response),
+                    G_CALLBACK (picman_display_shell_close_response),
                     shell);
 
-  box = GIMP_MESSAGE_DIALOG (dialog)->box;
+  box = PICMAN_MESSAGE_DIALOG (dialog)->box;
 
   g_signal_connect_object (image, "name-changed",
-                           G_CALLBACK (gimp_display_shell_close_name_changed),
+                           G_CALLBACK (picman_display_shell_close_name_changed),
                            box, 0);
   g_signal_connect_object (image, "exported",
-                           G_CALLBACK (gimp_display_shell_close_exported),
+                           G_CALLBACK (picman_display_shell_close_exported),
                            box, 0);
 
-  gimp_display_shell_close_name_changed (image, box);
+  picman_display_shell_close_name_changed (image, box);
 
   closure =
-    g_cclosure_new_object (G_CALLBACK (gimp_display_shell_close_time_changed),
+    g_cclosure_new_object (G_CALLBACK (picman_display_shell_close_time_changed),
                            G_OBJECT (box));
 
   /*  update every 10 seconds  */
@@ -210,47 +210,47 @@ gimp_display_shell_close_dialog (GimpDisplayShell *shell,
   /*  The dialog is destroyed with the shell, so it should be safe
    *  to hold an image pointer for the lifetime of the dialog.
    */
-  g_object_set_data (G_OBJECT (box), "gimp-image", image);
+  g_object_set_data (G_OBJECT (box), "picman-image", image);
 
-  gimp_display_shell_close_time_changed (box);
+  picman_display_shell_close_time_changed (box);
 
   gtk_widget_show (dialog);
 }
 
 static void
-gimp_display_shell_close_name_changed (GimpImage      *image,
-                                       GimpMessageBox *box)
+picman_display_shell_close_name_changed (PicmanImage      *image,
+                                       PicmanMessageBox *box)
 {
   GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (box));
 
   if (GTK_IS_WINDOW (window))
     {
       gchar *title = g_strdup_printf (_("Close %s"),
-				      gimp_image_get_display_name (image));
+				      picman_image_get_display_name (image));
 
       gtk_window_set_title (GTK_WINDOW (window), title);
       g_free (title);
     }
 
-  gimp_message_box_set_primary_text (box,
+  picman_message_box_set_primary_text (box,
                                      _("Save the changes to image '%s' "
                                        "before closing?"),
-                                     gimp_image_get_display_name (image));
+                                     picman_image_get_display_name (image));
 }
 
 static void
-gimp_display_shell_close_exported (GimpImage      *image,
+picman_display_shell_close_exported (PicmanImage      *image,
                                    const gchar    *uri,
-                                   GimpMessageBox *box)
+                                   PicmanMessageBox *box)
 {
-  gimp_display_shell_close_time_changed (box);
+  picman_display_shell_close_time_changed (box);
 }
 
 static gboolean
-gimp_display_shell_close_time_changed (GimpMessageBox *box)
+picman_display_shell_close_time_changed (PicmanMessageBox *box)
 {
-  GimpImage   *image       = g_object_get_data (G_OBJECT (box), "gimp-image");
-  gint         dirty_time  = gimp_image_get_dirty_time (image);
+  PicmanImage   *image       = g_object_get_data (G_OBJECT (box), "picman-image");
+  gint         dirty_time  = picman_image_get_dirty_time (image);
   gchar       *time_text   = NULL;
   gchar       *export_text = NULL;
 
@@ -259,7 +259,7 @@ gimp_display_shell_close_time_changed (GimpMessageBox *box)
       gint hours   = 0;
       gint minutes = 0;
 
-      gimp_time_since (dirty_time, &hours, &minutes);
+      picman_time_since (dirty_time, &hours, &minutes);
 
       if (hours > 0)
         {
@@ -299,12 +299,12 @@ gimp_display_shell_close_time_changed (GimpMessageBox *box)
         }
     }
 
-  if (! gimp_image_is_export_dirty (image))
+  if (! picman_image_is_export_dirty (image))
     {
-      const gchar *exported_uri = gimp_image_get_exported_uri (image);
+      const gchar *exported_uri = picman_image_get_exported_uri (image);
 
       if (! exported_uri)
-        exported_uri = gimp_image_get_imported_uri (image);
+        exported_uri = picman_image_get_imported_uri (image);
 
       export_text =
         g_strdup_printf (_("The image has been exported to '%s'."),
@@ -312,11 +312,11 @@ gimp_display_shell_close_time_changed (GimpMessageBox *box)
     }
 
   if (time_text && export_text)
-    gimp_message_box_set_text (box, "%s\n\n%s", time_text, export_text);
+    picman_message_box_set_text (box, "%s\n\n%s", time_text, export_text);
   else if (time_text || export_text)
-    gimp_message_box_set_text (box, "%s", time_text ? time_text : export_text);
+    picman_message_box_set_text (box, "%s", time_text ? time_text : export_text);
   else
-    gimp_message_box_set_text (box, "%s", time_text);
+    picman_message_box_set_text (box, "%s", time_text);
 
   g_free (time_text);
   g_free (export_text);
@@ -325,29 +325,29 @@ gimp_display_shell_close_time_changed (GimpMessageBox *box)
 }
 
 static void
-gimp_display_shell_close_response (GtkWidget        *widget,
+picman_display_shell_close_response (GtkWidget        *widget,
                                    gint              response_id,
-                                   GimpDisplayShell *shell)
+                                   PicmanDisplayShell *shell)
 {
   gtk_widget_destroy (widget);
 
   switch (response_id)
     {
     case GTK_RESPONSE_CLOSE:
-      gimp_display_close (shell->display);
+      picman_display_close (shell->display);
       break;
 
     case RESPONSE_SAVE:
       {
-        GimpImageWindow *window = gimp_display_shell_get_window (shell);
+        PicmanImageWindow *window = picman_display_shell_get_window (shell);
 
         if (window)
           {
-            GimpUIManager *manager = gimp_image_window_get_ui_manager (window);
+            PicmanUIManager *manager = picman_image_window_get_ui_manager (window);
 
-            gimp_image_window_set_active_shell (window, shell);
+            picman_image_window_set_active_shell (window, shell);
 
-            gimp_ui_manager_activate_action (manager,
+            picman_ui_manager_activate_action (manager,
                                              "file", "file-save-and-close");
           }
       }
@@ -359,7 +359,7 @@ gimp_display_shell_close_response (GtkWidget        *widget,
 }
 
 static void
-gimp_time_since (guint  then,
+picman_time_since (guint  then,
                  gint  *hours,
                  gint  *minutes)
 {

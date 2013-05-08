@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,17 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* IWarp  a plug-in for GIMP
+/* IWarp  a plug-in for PICMAN
    Version 0.1
 
-   IWarp is a gimp plug-in for interactive image warping. To apply the
+   IWarp is a picman plug-in for interactive image warping. To apply the
    selected deformation to the image, press the left mouse button and
    move the mouse pointer in the preview image.
 
    Copyright (C) 1997 Norbert Schmitz
    nobert.schmitz@student.uni-tuebingen.de
 
-   Most of the gimp and gtk specific code is taken from other plug-ins
+   Most of the picman and gtk specific code is taken from other plug-ins
 
    v0.11a
     animation of non-alpha layers (background) creates now layers with
@@ -44,15 +44,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC           "plug-in-iwarp"
 #define PLUG_IN_BINARY         "iwarp"
-#define PLUG_IN_ROLE           "gimp-iwarp"
+#define PLUG_IN_ROLE           "picman-iwarp"
 #define RESPONSE_RESET         1
 
 #define MAX_DEFORM_AREA_RADIUS 250
@@ -92,9 +92,9 @@ typedef struct
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
 static void      iwarp                    (void);
 static void      iwarp_frame              (void);
@@ -134,15 +134,15 @@ static void      iwarp_get_point          (gdouble    x,
                                            gdouble    y,
                                            guchar    *color);
 
-static gint      iwarp_supersample_test   (GimpVector2 *v0,
-                                           GimpVector2 *v1,
-                                           GimpVector2 *v2,
-                                           GimpVector2 *v3);
+static gint      iwarp_supersample_test   (PicmanVector2 *v0,
+                                           PicmanVector2 *v1,
+                                           PicmanVector2 *v2,
+                                           PicmanVector2 *v3);
 
-static void      iwarp_getsample          (GimpVector2  v0,
-                                           GimpVector2  v1,
-                                           GimpVector2  v2,
-                                           GimpVector2  v3,
+static void      iwarp_getsample          (PicmanVector2  v0,
+                                           PicmanVector2  v1,
+                                           PicmanVector2  v2,
+                                           PicmanVector2  v3,
                                            gdouble      x,
                                            gdouble      y,
                                            gint        *sample,
@@ -190,7 +190,7 @@ static gboolean iwarp_init                (void);
 static void     iwarp_preview_init        (void);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -215,8 +215,8 @@ static iwarp_vals_t iwarp_vals =
 };
 
 
-static GimpDrawable *drawable = NULL;
-static GimpDrawable *destdrawable = NULL;
+static PicmanDrawable *drawable = NULL;
+static PicmanDrawable *destdrawable = NULL;
 static GtkWidget    *preview = NULL;
 static guchar       *srcimage = NULL;
 static guchar       *dstimage = NULL;
@@ -224,8 +224,8 @@ static gint          preview_width, preview_height;
 static gint          sel_width, sel_height;
 static gint          image_bpp;
 static gint          lock_alpha;
-static GimpVector2  *deform_vectors = NULL;
-static GimpVector2  *deform_area_vectors = NULL;
+static PicmanVector2  *deform_vectors = NULL;
+static PicmanVector2  *deform_area_vectors = NULL;
 static gint          lastx, lasty;
 static gdouble       filter[MAX_DEFORM_AREA_RADIUS];
 static gboolean      do_animate = FALSE;
@@ -234,7 +234,7 @@ static gboolean      do_animate_ping_pong = FALSE;
 static gdouble       supersample_threshold_2;
 static gint          xl, yl, xh, yh;
 static gint          tile_width, tile_height;
-static GimpTile     *tile = NULL;
+static PicmanTile     *tile = NULL;
 static gdouble       pre2img, img2pre;
 static gint          preview_bpp;
 static gdouble       animate_deform_value = 1.0;
@@ -253,14 +253,14 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)"                 },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"                       }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)"                 },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"                       }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Use mouse control to warp image areas"),
                           "Interactive warping of the specified drawable",
                           "Norbert Schmitz",
@@ -268,49 +268,49 @@ query (void)
                           "1997",
                           N_("_IWarp..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
   INIT_I18N ();
 
   /*  Get the specified drawable  */
-  destdrawable = drawable = gimp_drawable_get (param[2].data.d_drawable);
+  destdrawable = drawable = picman_drawable_get (param[2].data.d_drawable);
   imageID = param[1].data.d_int32;
 
   /*  Make sure that the drawable is grayscale or RGB color  */
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_get_data (PLUG_IN_PROC, &iwarp_vals);
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_get_data (PLUG_IN_PROC, &iwarp_vals);
           if (iwarp_dialog ())
             iwarp ();
-          gimp_set_data (PLUG_IN_PROC, &iwarp_vals, sizeof (iwarp_vals_t));
-          gimp_displays_flush ();
+          picman_set_data (PLUG_IN_PROC, &iwarp_vals, sizeof (iwarp_vals_t));
+          picman_displays_flush ();
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
-          status = GIMP_PDB_CALLING_ERROR;
+        case PICMAN_RUN_NONINTERACTIVE:
+          status = PICMAN_PDB_CALLING_ERROR;
         break;
 
         default:
@@ -319,16 +319,16 @@ run (const gchar      *name,
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   g_free (srcimage);
   g_free (dstimage);
@@ -355,10 +355,10 @@ iwarp_get_pixel (gint    x,
      if (col != old_col || row != old_row)
        {
          if (tile)
-           gimp_tile_unref (tile, FALSE);
+           picman_tile_unref (tile, FALSE);
 
-         tile = gimp_drawable_get_tile (drawable, FALSE, row, col);
-         gimp_tile_ref (tile);
+         tile = picman_drawable_get_tile (drawable, FALSE, row, col);
+         picman_tile_ref (tile);
 
          old_col = col;
          old_row = row;
@@ -468,10 +468,10 @@ iwarp_get_point (gdouble  x,
 }
 
 static gboolean
-iwarp_supersample_test (GimpVector2 *v0,
-                        GimpVector2 *v1,
-                        GimpVector2 *v2,
-                        GimpVector2 *v3)
+iwarp_supersample_test (PicmanVector2 *v0,
+                        PicmanVector2 *v1,
+                        PicmanVector2 *v2,
+                        PicmanVector2 *v3)
 {
   gdouble dx, dy;
 
@@ -499,10 +499,10 @@ iwarp_supersample_test (GimpVector2 *v0,
 }
 
 static void
-iwarp_getsample (GimpVector2  v0,
-                 GimpVector2  v1,
-                 GimpVector2  v2,
-                 GimpVector2  v3,
+iwarp_getsample (PicmanVector2  v0,
+                 PicmanVector2  v1,
+                 PicmanVector2  v2,
+                 PicmanVector2  v3,
                  gdouble      x,
                  gdouble      y,
                  gint        *sample,
@@ -512,7 +512,7 @@ iwarp_getsample (GimpVector2  v0,
 {
   gint        i;
   gdouble     xv, yv;
-  GimpVector2 v01, v13, v23, v02, vm;
+  PicmanVector2 v01, v13, v23, v02, vm;
   guchar      c[4];
 
   if ((depth >= iwarp_vals.max_supersample_depth) ||
@@ -605,13 +605,13 @@ iwarp_supersample (gint    sxl,
                    gint    max_progress)
 {
   gint         i, col, row, cc;
-  GimpVector2 *srow, *srow_old, *vh;
+  PicmanVector2 *srow, *srow_old, *vh;
   gdouble      xv, yv;
   gint         color[4];
   guchar      *dest;
 
-  srow     = g_new (GimpVector2, sxr - sxl + 1);
-  srow_old = g_new (GimpVector2, sxr - sxl + 1);
+  srow     = g_new (PicmanVector2, sxr - sxl + 1);
+  srow_old = g_new (PicmanVector2, sxr - sxl + 1);
 
   for (i = sxl; i < (sxr + 1); i++)
     {
@@ -661,7 +661,7 @@ iwarp_supersample (gint    sxl,
       srow = vh;
     }
 
-  gimp_progress_update ((gdouble) (*progress) / max_progress);
+  picman_progress_update ((gdouble) (*progress) / max_progress);
 
   g_free (srow);
   g_free (srow_old);
@@ -670,7 +670,7 @@ iwarp_supersample (gint    sxl,
 static void
 iwarp_frame (void)
 {
-  GimpPixelRgn  dest_rgn;
+  PicmanPixelRgn  dest_rgn;
   gpointer   pr;
   guchar    *dest_row, *dest;
   gint       row, col;
@@ -683,7 +683,7 @@ iwarp_frame (void)
   progress = 0;
   max_progress = (yh-yl) * (xh-xl);
 
-  gimp_pixel_rgn_init (&dest_rgn, destdrawable,
+  picman_pixel_rgn_init (&dest_rgn, destdrawable,
                        xl, yl, xh-xl, yh-yl, TRUE, TRUE);
 
   /* If the source drawable doesn't have an alpha channel but the
@@ -691,14 +691,14 @@ iwarp_frame (void)
      to pad the alpha channel of the destination drawable.
    */
   padding = (!layer_alpha &&
-             gimp_drawable_has_alpha (destdrawable->drawable_id));
+             picman_drawable_has_alpha (destdrawable->drawable_id));
 
   if (!do_animate)
-    gimp_progress_init (_("Warping"));
+    picman_progress_init (_("Warping"));
 
-  for (pr = gimp_pixel_rgns_register (1, &dest_rgn);
+  for (pr = picman_pixel_rgns_register (1, &dest_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       dest_row = dest_rgn.data;
       if (!iwarp_vals.do_supersample)
@@ -737,7 +737,7 @@ iwarp_frame (void)
 
               dest_row += dest_rgn.rowstride;
             }
-          gimp_progress_update ((gdouble) (progress) / max_progress);
+          picman_progress_update ((gdouble) (progress) / max_progress);
         }
       else
         {
@@ -750,11 +750,11 @@ iwarp_frame (void)
                              &progress, max_progress);
         }
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
-  gimp_drawable_flush (destdrawable);
-  gimp_drawable_merge_shadow (destdrawable->drawable_id, TRUE);
-  gimp_drawable_update (destdrawable->drawable_id, xl, yl, (xh - xl), (yh - yl));
+  picman_drawable_flush (destdrawable);
+  picman_drawable_merge_shadow (destdrawable->drawable_id, TRUE);
+  picman_drawable_update (destdrawable->drawable_id, xl, yl, (xh - xl), (yh - yl));
 }
 
 static void
@@ -778,29 +778,29 @@ iwarp (void)
           animate_deform_value = 1.0;
           delta = -1.0 / (animate_num_frames - 1);
 
-          gimp_image_undo_group_start (imageID);
+          picman_image_undo_group_start (imageID);
         }
       else
         {
           animate_deform_value = 0.0;
           delta = 1.0 / (animate_num_frames - 1);
         }
-      layerID = gimp_image_get_active_layer (imageID);
+      layerID = picman_image_get_active_layer (imageID);
       frame_number = 0;
       for (i = 0; i < animate_num_frames; i++)
         {
           gchar *st = g_strdup_printf (_("Frame %d"), i);
 
-          animlayers[i] = gimp_layer_copy (layerID);
-          gimp_layer_add_alpha (animlayers[i]);
-          gimp_item_set_name (animlayers[i], st);
+          animlayers[i] = picman_layer_copy (layerID);
+          picman_layer_add_alpha (animlayers[i]);
+          picman_item_set_name (animlayers[i], st);
           g_free (st);
 
-          gimp_image_insert_layer (imageID, animlayers[i], -1, 0);
+          picman_image_insert_layer (imageID, animlayers[i], -1, 0);
 
-          destdrawable = gimp_drawable_get (animlayers[i]);
+          destdrawable = picman_drawable_get (animlayers[i]);
 
-          gimp_progress_init_printf (_("Warping Frame %d"),
+          picman_progress_init_printf (_("Warping Frame %d"),
                                      frame_number);
 
           if (animate_deform_value > 0.0)
@@ -812,25 +812,25 @@ iwarp (void)
 
       if (do_animate_ping_pong)
         {
-          gimp_progress_init (_("Ping pong"));
+          picman_progress_init (_("Ping pong"));
 
           for (i = 0; i < animate_num_frames; i++)
             {
               gchar *st;
 
-              gimp_progress_update ((gdouble) i / (animate_num_frames - 1));
-              layerID = gimp_layer_copy (animlayers[animate_num_frames-i-1]);
+              picman_progress_update ((gdouble) i / (animate_num_frames - 1));
+              layerID = picman_layer_copy (animlayers[animate_num_frames-i-1]);
 
-              gimp_image_undo_group_end (imageID);
+              picman_image_undo_group_end (imageID);
 
-              gimp_layer_add_alpha (layerID);
+              picman_layer_add_alpha (layerID);
               st = g_strdup_printf (_("Frame %d"), i + animate_num_frames);
-              gimp_item_set_name (layerID, st);
+              picman_item_set_name (layerID, st);
               g_free (st);
 
-              gimp_image_insert_layer (imageID, layerID, -1, 0);
+              picman_image_insert_layer (imageID, layerID, -1, 0);
             }
-          gimp_progress_update (1.0);
+          picman_progress_update (1.0);
         }
       g_free (animlayers);
     }
@@ -842,7 +842,7 @@ iwarp (void)
 
   if (tile)
     {
-      gimp_tile_unref (tile, FALSE);
+      picman_tile_unref (tile, FALSE);
       tile = NULL;
     }
 }
@@ -909,7 +909,7 @@ static void
 iwarp_preview_init (void)
 {
   gint       y, x, xi, i;
-  GimpPixelRgn  srcrgn;
+  PicmanPixelRgn  srcrgn;
   guchar    *pts;
   guchar    *linebuffer = NULL;
   gdouble    dx, dy;
@@ -943,12 +943,12 @@ iwarp_preview_init (void)
 
   linebuffer = g_new (guchar, sel_width * image_bpp);
 
-  gimp_pixel_rgn_init (&srcrgn, drawable,
+  picman_pixel_rgn_init (&srcrgn, drawable,
                        xl, yl, sel_width, sel_height, FALSE, FALSE);
 
   for (y = 0; y < preview_height; y++)
     {
-      gimp_pixel_rgn_get_row (&srcrgn, linebuffer,
+      picman_pixel_rgn_get_row (&srcrgn, linebuffer,
                               xl, (gint) (pre2img * y) + yl, sel_width);
       for (x = 0; x < preview_width; x++)
         {
@@ -968,7 +968,7 @@ iwarp_init (void)
 {
   gint  i;
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &xl, &yl, &sel_width, &sel_height))
     {
       g_message (_("Region affected by plug-in is empty"));
@@ -978,25 +978,25 @@ iwarp_init (void)
   xh = xl + sel_width;
   yh = yl + sel_height;
 
-  image_bpp = gimp_drawable_bpp (drawable->drawable_id);
+  image_bpp = picman_drawable_bpp (drawable->drawable_id);
 
-  if (gimp_item_is_layer (drawable->drawable_id))
-    lock_alpha = gimp_layer_get_lock_alpha (drawable->drawable_id);
+  if (picman_item_is_layer (drawable->drawable_id))
+    lock_alpha = picman_layer_get_lock_alpha (drawable->drawable_id);
   else
     lock_alpha = FALSE;
 
   preview_bpp = image_bpp;
 
-  tile_width  = gimp_tile_width ();
-  tile_height = gimp_tile_height ();
+  tile_width  = picman_tile_width ();
+  tile_height = picman_tile_height ();
 
-  gimp_tile_cache_ntiles (sel_width / tile_width + 1);
+  picman_tile_cache_ntiles (sel_width / tile_width + 1);
 
   iwarp_preview_init ();
   iwarp_cpy_images ();
 
-  deform_vectors = g_new0 (GimpVector2, preview_width * preview_height);
-  deform_area_vectors = g_new (GimpVector2,
+  deform_vectors = g_new0 (PicmanVector2, preview_width * preview_height);
+  deform_area_vectors = g_new (PicmanVector2,
                                (MAX_DEFORM_AREA_RADIUS * 2 + 1) *
                                (MAX_DEFORM_AREA_RADIUS * 2 + 1));
 
@@ -1023,7 +1023,7 @@ iwarp_animate_dialog (GtkWidget *dialog,
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
 
-  frame = gimp_frame_new (NULL);
+  frame = picman_frame_new (NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1033,7 +1033,7 @@ iwarp_animate_dialog (GtkWidget *dialog,
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &do_animate);
 
   table = gtk_table_new (3, 3, FALSE);
@@ -1046,14 +1046,14 @@ iwarp_animate_dialog (GtkWidget *dialog,
                           table,  "sensitive",
                           G_BINDING_SYNC_CREATE);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                      _("Number of _frames:"), SCALE_WIDTH, 0,
                                      animate_num_frames,
                                      2, MAX_NUM_FRAMES, 1, 10, 0,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &animate_num_frames);
 
   button = gtk_check_button_new_with_mnemonic (_("R_everse"));
@@ -1062,7 +1062,7 @@ iwarp_animate_dialog (GtkWidget *dialog,
   gtk_widget_show (button);
 
   g_signal_connect (button, "clicked",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &do_animate_reverse);
 
   button = gtk_check_button_new_with_mnemonic (_("_Ping pong"));
@@ -1071,7 +1071,7 @@ iwarp_animate_dialog (GtkWidget *dialog,
   gtk_widget_show (button);
 
   g_signal_connect (button, "clicked",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &do_animate_ping_pong);
 
   gtk_widget_show (vbox);
@@ -1099,7 +1099,7 @@ iwarp_settings_dialog (GtkWidget *dialog,
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
 
-  frame = gimp_frame_new (_("Deform Mode"));
+  frame = picman_frame_new (_("Deform Mode"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1108,8 +1108,8 @@ iwarp_settings_dialog (GtkWidget *dialog,
   gtk_container_add (GTK_CONTAINER (frame), hbox);
   gtk_widget_show (hbox);
 
-  vbox2 = gimp_int_radio_group_new (FALSE, NULL,
-                                    G_CALLBACK (gimp_radio_button_update),
+  vbox2 = picman_int_radio_group_new (FALSE, NULL,
+                                    G_CALLBACK (picman_radio_button_update),
                                     &iwarp_vals.deform_mode,
                                     iwarp_vals.deform_mode,
 
@@ -1146,24 +1146,24 @@ iwarp_settings_dialog (GtkWidget *dialog,
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                      _("_Deform radius:"), SCALE_WIDTH, 4,
                                      iwarp_vals.deform_area_radius,
                                      5.0, MAX_DEFORM_AREA_RADIUS, 1.0, 10.0, 0,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &iwarp_vals.deform_area_radius);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                                      _("D_eform amount:"), SCALE_WIDTH, 4,
                                      iwarp_vals.deform_amount,
                                      0.0, 1.0, 0.01, 0.1, 2,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &iwarp_vals.deform_amount);
 
   button = gtk_check_button_new_with_mnemonic (_("_Bilinear"));
@@ -1173,10 +1173,10 @@ iwarp_settings_dialog (GtkWidget *dialog,
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &iwarp_vals.do_bilinear);
 
-  frame = gimp_frame_new (NULL);
+  frame = picman_frame_new (NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1187,7 +1187,7 @@ iwarp_settings_dialog (GtkWidget *dialog,
   gtk_widget_show (button);
 
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &iwarp_vals.do_supersample);
 
   table = gtk_table_new (2, 3, FALSE);
@@ -1200,24 +1200,24 @@ iwarp_settings_dialog (GtkWidget *dialog,
                           table,  "sensitive",
                           G_BINDING_SYNC_CREATE);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                      _("Ma_x depth:"), SCALE_WIDTH, 5,
                                      iwarp_vals.max_supersample_depth,
                                      1.0, 5.0, 1.1, 1.0, 0,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &iwarp_vals.max_supersample_depth);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                                      _("Thresho_ld:"), SCALE_WIDTH, 5,
                                      iwarp_vals.supersample_threshold,
                                      1.0, 10.0, 0.01, 0.1, 2,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &iwarp_vals.supersample_threshold);
 
   gtk_widget_show (vbox);
@@ -1238,7 +1238,7 @@ iwarp_preview_build (GtkWidget *dialog,
   gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
-  preview = gimp_preview_area_new ();
+  preview = picman_preview_area_new ();
   gtk_widget_set_size_request (preview, preview_width, preview_height);
   gtk_container_add (GTK_CONTAINER (frame), preview);
   gtk_widget_show (preview);
@@ -1278,16 +1278,16 @@ iwarp_dialog (void)
   GtkWidget *hint;
   GtkWidget *notebook;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
   if (! iwarp_init ())
     return FALSE;
 
-  dialog = gimp_dialog_new (_("IWarp"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("IWarp"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
-                            GIMP_STOCK_RESET, RESPONSE_RESET,
+                            PICMAN_STOCK_RESET, RESPONSE_RESET,
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
@@ -1299,7 +1299,7 @@ iwarp_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   iwarp_dialog_response_update (dialog);
 
@@ -1321,7 +1321,7 @@ iwarp_dialog (void)
   gtk_widget_show (vbox);
 
   iwarp_preview_build (dialog, vbox);
-  hint = gimp_hint_box_new (_("Click and drag in the preview to define "
+  hint = picman_hint_box_new (_("Click and drag in the preview to define "
                               "the distortions to apply to the image."));
   gtk_box_pack_end (GTK_BOX (vbox), hint, FALSE, FALSE, 0);
   gtk_widget_show (hint);
@@ -1355,10 +1355,10 @@ iwarp_update_preview (gint x0,
   y1 = CLAMP (y1, y0, preview_height);
 
   if (x1 > x0 && y1 > y0)
-    gimp_preview_area_draw (GIMP_PREVIEW_AREA (preview),
+    picman_preview_area_draw (PICMAN_PREVIEW_AREA (preview),
                             x0, y0,
                             x1 - x0, y1 - y0,
-                            gimp_drawable_type(drawable->drawable_id),
+                            picman_drawable_type(drawable->drawable_id),
                             dstimage + (y0 * preview_width + x0) * preview_bpp,
                             preview_width * preview_bpp);
 }
@@ -1735,7 +1735,7 @@ static gboolean
 iwarp_resize_idle (GtkWidget *widget)
 {
   GtkAllocation  allocation;
-  GimpVector2   *new_deform_vectors;
+  PicmanVector2   *new_deform_vectors;
   gint           old_preview_width, old_preview_height;
   gint           new_preview_width, new_preview_height;
   gint           x, y;
@@ -1756,7 +1756,7 @@ iwarp_resize_idle (GtkWidget *widget)
   new_preview_width = preview_width;
   new_preview_height = preview_height;
 
-  new_deform_vectors = g_new0 (GimpVector2, preview_width * preview_height);
+  new_deform_vectors = g_new0 (PicmanVector2, preview_width * preview_height);
   new2old = (gdouble) old_preview_width / preview_width;
 
   /* preview_width and height are used as global variables inside

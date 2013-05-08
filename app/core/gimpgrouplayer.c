@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpGroupLayer
- * Copyright (C) 2009  Michael Natterer <mitch@gimp.org>
+ * PicmanGroupLayer
+ * Copyright (C) 2009  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,28 +24,28 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gimpgrouplayer.h"
-#include "gimpimage.h"
-#include "gimpimage-undo-push.h"
-#include "gimpdrawablestack.h"
-#include "gimppickable.h"
-#include "gimpprojectable.h"
-#include "gimpprojection.h"
+#include "picmangrouplayer.h"
+#include "picmanimage.h"
+#include "picmanimage-undo-push.h"
+#include "picmandrawablestack.h"
+#include "picmanpickable.h"
+#include "picmanprojectable.h"
+#include "picmanprojection.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-typedef struct _GimpGroupLayerPrivate GimpGroupLayerPrivate;
+typedef struct _PicmanGroupLayerPrivate PicmanGroupLayerPrivate;
 
-struct _GimpGroupLayerPrivate
+struct _PicmanGroupLayerPrivate
 {
-  GimpContainer  *children;
-  GimpProjection *projection;
+  PicmanContainer  *children;
+  PicmanProjection *projection;
   GeglNode       *graph;
   GeglNode       *offset_node;
   gint            suspend_resize;
@@ -59,165 +59,165 @@ struct _GimpGroupLayerPrivate
 };
 
 #define GET_PRIVATE(item) G_TYPE_INSTANCE_GET_PRIVATE (item, \
-                                                       GIMP_TYPE_GROUP_LAYER, \
-                                                       GimpGroupLayerPrivate)
+                                                       PICMAN_TYPE_GROUP_LAYER, \
+                                                       PicmanGroupLayerPrivate)
 
 
-static void            gimp_projectable_iface_init   (GimpProjectableInterface  *iface);
-static void            gimp_pickable_iface_init      (GimpPickableInterface     *iface);
+static void            picman_projectable_iface_init   (PicmanProjectableInterface  *iface);
+static void            picman_pickable_iface_init      (PicmanPickableInterface     *iface);
 
-static void            gimp_group_layer_finalize     (GObject         *object);
-static void            gimp_group_layer_set_property (GObject         *object,
+static void            picman_group_layer_finalize     (GObject         *object);
+static void            picman_group_layer_set_property (GObject         *object,
                                                       guint            property_id,
                                                       const GValue    *value,
                                                       GParamSpec      *pspec);
-static void            gimp_group_layer_get_property (GObject         *object,
+static void            picman_group_layer_get_property (GObject         *object,
                                                       guint            property_id,
                                                       GValue          *value,
                                                       GParamSpec      *pspec);
 
-static gint64          gimp_group_layer_get_memsize  (GimpObject      *object,
+static gint64          picman_group_layer_get_memsize  (PicmanObject      *object,
                                                       gint64          *gui_size);
 
-static gboolean        gimp_group_layer_get_size     (GimpViewable    *viewable,
+static gboolean        picman_group_layer_get_size     (PicmanViewable    *viewable,
                                                       gint            *width,
                                                       gint            *height);
-static GimpContainer * gimp_group_layer_get_children (GimpViewable    *viewable);
-static gboolean        gimp_group_layer_get_expanded (GimpViewable    *viewable);
-static void            gimp_group_layer_set_expanded (GimpViewable    *viewable,
+static PicmanContainer * picman_group_layer_get_children (PicmanViewable    *viewable);
+static gboolean        picman_group_layer_get_expanded (PicmanViewable    *viewable);
+static void            picman_group_layer_set_expanded (PicmanViewable    *viewable,
                                                       gboolean         expanded);
 
-static gboolean  gimp_group_layer_is_position_locked (const GimpItem  *item);
-static GimpItem      * gimp_group_layer_duplicate    (GimpItem        *item,
+static gboolean  picman_group_layer_is_position_locked (const PicmanItem  *item);
+static PicmanItem      * picman_group_layer_duplicate    (PicmanItem        *item,
                                                       GType            new_type);
-static void            gimp_group_layer_convert      (GimpItem        *item,
-                                                      GimpImage       *dest_image);
-static void            gimp_group_layer_translate    (GimpItem        *item,
+static void            picman_group_layer_convert      (PicmanItem        *item,
+                                                      PicmanImage       *dest_image);
+static void            picman_group_layer_translate    (PicmanItem        *item,
                                                       gint             offset_x,
                                                       gint             offset_y,
                                                       gboolean         push_undo);
-static void            gimp_group_layer_scale        (GimpItem        *item,
+static void            picman_group_layer_scale        (PicmanItem        *item,
                                                       gint             new_width,
                                                       gint             new_height,
                                                       gint             new_offset_x,
                                                       gint             new_offset_y,
-                                                      GimpInterpolationType  interp_type,
-                                                      GimpProgress    *progress);
-static void            gimp_group_layer_resize       (GimpItem        *item,
-                                                      GimpContext     *context,
+                                                      PicmanInterpolationType  interp_type,
+                                                      PicmanProgress    *progress);
+static void            picman_group_layer_resize       (PicmanItem        *item,
+                                                      PicmanContext     *context,
                                                       gint             new_width,
                                                       gint             new_height,
                                                       gint             offset_x,
                                                       gint             offset_y);
-static void            gimp_group_layer_flip         (GimpItem        *item,
-                                                      GimpContext     *context,
-                                                      GimpOrientationType flip_type,
+static void            picman_group_layer_flip         (PicmanItem        *item,
+                                                      PicmanContext     *context,
+                                                      PicmanOrientationType flip_type,
                                                       gdouble          axis,
                                                       gboolean         clip_result);
-static void            gimp_group_layer_rotate       (GimpItem        *item,
-                                                      GimpContext     *context,
-                                                      GimpRotationType rotate_type,
+static void            picman_group_layer_rotate       (PicmanItem        *item,
+                                                      PicmanContext     *context,
+                                                      PicmanRotationType rotate_type,
                                                       gdouble          center_x,
                                                       gdouble          center_y,
                                                       gboolean         clip_result);
-static void            gimp_group_layer_transform    (GimpItem        *item,
-                                                      GimpContext     *context,
-                                                      const GimpMatrix3 *matrix,
-                                                      GimpTransformDirection direction,
-                                                      GimpInterpolationType  interpolation_type,
+static void            picman_group_layer_transform    (PicmanItem        *item,
+                                                      PicmanContext     *context,
+                                                      const PicmanMatrix3 *matrix,
+                                                      PicmanTransformDirection direction,
+                                                      PicmanInterpolationType  interpolation_type,
                                                       gint             recursion_level,
-                                                      GimpTransformResize clip_result,
-                                                      GimpProgress    *progress);
+                                                      PicmanTransformResize clip_result,
+                                                      PicmanProgress    *progress);
 
-static gint64      gimp_group_layer_estimate_memsize (const GimpDrawable *drawable,
+static gint64      picman_group_layer_estimate_memsize (const PicmanDrawable *drawable,
                                                       gint             width,
                                                       gint             height);
-static void            gimp_group_layer_convert_type (GimpDrawable      *drawable,
-                                                      GimpImage         *dest_image,
+static void            picman_group_layer_convert_type (PicmanDrawable      *drawable,
+                                                      PicmanImage         *dest_image,
                                                       const Babl        *new_format,
-                                                      GimpImageBaseType  new_base_type,
-                                                      GimpPrecision      new_precision,
+                                                      PicmanImageBaseType  new_base_type,
+                                                      PicmanPrecision      new_precision,
                                                       gint               layer_dither_type,
                                                       gint               mask_dither_type,
                                                       gboolean           push_undo);
 
-static const Babl    * gimp_group_layer_get_format   (GimpProjectable *projectable);
-static GeglNode      * gimp_group_layer_get_graph    (GimpProjectable *projectable);
-static gdouble       gimp_group_layer_get_opacity_at (GimpPickable    *pickable,
+static const Babl    * picman_group_layer_get_format   (PicmanProjectable *projectable);
+static GeglNode      * picman_group_layer_get_graph    (PicmanProjectable *projectable);
+static gdouble       picman_group_layer_get_opacity_at (PicmanPickable    *pickable,
                                                       gint             x,
                                                       gint             y);
 
 
-static void            gimp_group_layer_child_add    (GimpContainer   *container,
-                                                      GimpLayer       *child,
-                                                      GimpGroupLayer  *group);
-static void            gimp_group_layer_child_remove (GimpContainer   *container,
-                                                      GimpLayer       *child,
-                                                      GimpGroupLayer  *group);
-static void            gimp_group_layer_child_move   (GimpLayer       *child,
+static void            picman_group_layer_child_add    (PicmanContainer   *container,
+                                                      PicmanLayer       *child,
+                                                      PicmanGroupLayer  *group);
+static void            picman_group_layer_child_remove (PicmanContainer   *container,
+                                                      PicmanLayer       *child,
+                                                      PicmanGroupLayer  *group);
+static void            picman_group_layer_child_move   (PicmanLayer       *child,
                                                       GParamSpec      *pspec,
-                                                      GimpGroupLayer  *group);
-static void            gimp_group_layer_child_resize (GimpLayer       *child,
-                                                      GimpGroupLayer  *group);
+                                                      PicmanGroupLayer  *group);
+static void            picman_group_layer_child_resize (PicmanLayer       *child,
+                                                      PicmanGroupLayer  *group);
 
-static void            gimp_group_layer_update       (GimpGroupLayer  *group);
-static void            gimp_group_layer_update_size  (GimpGroupLayer  *group);
+static void            picman_group_layer_update       (PicmanGroupLayer  *group);
+static void            picman_group_layer_update_size  (PicmanGroupLayer  *group);
 
-static void            gimp_group_layer_stack_update (GimpDrawableStack *stack,
+static void            picman_group_layer_stack_update (PicmanDrawableStack *stack,
                                                       gint               x,
                                                       gint               y,
                                                       gint               width,
                                                       gint               height,
-                                                      GimpGroupLayer    *group);
-static void            gimp_group_layer_proj_update  (GimpProjection    *proj,
+                                                      PicmanGroupLayer    *group);
+static void            picman_group_layer_proj_update  (PicmanProjection    *proj,
                                                       gboolean           now,
                                                       gint               x,
                                                       gint               y,
                                                       gint               width,
                                                       gint               height,
-                                                      GimpGroupLayer    *group);
+                                                      PicmanGroupLayer    *group);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpGroupLayer, gimp_group_layer, GIMP_TYPE_LAYER,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PROJECTABLE,
-                                                gimp_projectable_iface_init)
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PICKABLE,
-                                                gimp_pickable_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanGroupLayer, picman_group_layer, PICMAN_TYPE_LAYER,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PROJECTABLE,
+                                                picman_projectable_iface_init)
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PICKABLE,
+                                                picman_pickable_iface_init))
 
 
-#define parent_class gimp_group_layer_parent_class
+#define parent_class picman_group_layer_parent_class
 
 
 static void
-gimp_group_layer_class_init (GimpGroupLayerClass *klass)
+picman_group_layer_class_init (PicmanGroupLayerClass *klass)
 {
   GObjectClass      *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass   *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class    = GIMP_VIEWABLE_CLASS (klass);
-  GimpItemClass     *item_class        = GIMP_ITEM_CLASS (klass);
-  GimpDrawableClass *drawable_class    = GIMP_DRAWABLE_CLASS (klass);
+  PicmanObjectClass   *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanViewableClass *viewable_class    = PICMAN_VIEWABLE_CLASS (klass);
+  PicmanItemClass     *item_class        = PICMAN_ITEM_CLASS (klass);
+  PicmanDrawableClass *drawable_class    = PICMAN_DRAWABLE_CLASS (klass);
 
-  object_class->set_property       = gimp_group_layer_set_property;
-  object_class->get_property       = gimp_group_layer_get_property;
-  object_class->finalize           = gimp_group_layer_finalize;
+  object_class->set_property       = picman_group_layer_set_property;
+  object_class->get_property       = picman_group_layer_get_property;
+  object_class->finalize           = picman_group_layer_finalize;
 
-  gimp_object_class->get_memsize   = gimp_group_layer_get_memsize;
+  picman_object_class->get_memsize   = picman_group_layer_get_memsize;
 
   viewable_class->default_stock_id = "gtk-directory";
-  viewable_class->get_size         = gimp_group_layer_get_size;
-  viewable_class->get_children     = gimp_group_layer_get_children;
-  viewable_class->set_expanded     = gimp_group_layer_set_expanded;
-  viewable_class->get_expanded     = gimp_group_layer_get_expanded;
+  viewable_class->get_size         = picman_group_layer_get_size;
+  viewable_class->get_children     = picman_group_layer_get_children;
+  viewable_class->set_expanded     = picman_group_layer_set_expanded;
+  viewable_class->get_expanded     = picman_group_layer_get_expanded;
 
-  item_class->is_position_locked   = gimp_group_layer_is_position_locked;
-  item_class->duplicate            = gimp_group_layer_duplicate;
-  item_class->convert              = gimp_group_layer_convert;
-  item_class->translate            = gimp_group_layer_translate;
-  item_class->scale                = gimp_group_layer_scale;
-  item_class->resize               = gimp_group_layer_resize;
-  item_class->flip                 = gimp_group_layer_flip;
-  item_class->rotate               = gimp_group_layer_rotate;
-  item_class->transform            = gimp_group_layer_transform;
+  item_class->is_position_locked   = picman_group_layer_is_position_locked;
+  item_class->duplicate            = picman_group_layer_duplicate;
+  item_class->convert              = picman_group_layer_convert;
+  item_class->translate            = picman_group_layer_translate;
+  item_class->scale                = picman_group_layer_scale;
+  item_class->resize               = picman_group_layer_resize;
+  item_class->flip                 = picman_group_layer_flip;
+  item_class->rotate               = picman_group_layer_rotate;
+  item_class->transform            = picman_group_layer_transform;
 
   item_class->default_name         = _("Layer Group");
   item_class->rename_desc          = C_("undo-type", "Rename Layer Group");
@@ -228,80 +228,80 @@ gimp_group_layer_class_init (GimpGroupLayerClass *klass)
   item_class->rotate_desc          = C_("undo-type", "Rotate Layer Group");
   item_class->transform_desc       = C_("undo-type", "Transform Layer Group");
 
-  drawable_class->estimate_memsize = gimp_group_layer_estimate_memsize;
-  drawable_class->convert_type     = gimp_group_layer_convert_type;
+  drawable_class->estimate_memsize = picman_group_layer_estimate_memsize;
+  drawable_class->convert_type     = picman_group_layer_convert_type;
 
-  g_type_class_add_private (klass, sizeof (GimpGroupLayerPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanGroupLayerPrivate));
 }
 
 static void
-gimp_projectable_iface_init (GimpProjectableInterface *iface)
+picman_projectable_iface_init (PicmanProjectableInterface *iface)
 {
-  iface->get_image          = (GimpImage * (*) (GimpProjectable *)) gimp_item_get_image;
-  iface->get_format         = gimp_group_layer_get_format;
-  iface->get_offset         = (void (*) (GimpProjectable*, gint*, gint*)) gimp_item_get_offset;
-  iface->get_size           = (void (*) (GimpProjectable*, gint*, gint*)) gimp_viewable_get_size;
-  iface->get_graph          = gimp_group_layer_get_graph;
-  iface->invalidate_preview = (void (*) (GimpProjectable*)) gimp_viewable_invalidate_preview;
+  iface->get_image          = (PicmanImage * (*) (PicmanProjectable *)) picman_item_get_image;
+  iface->get_format         = picman_group_layer_get_format;
+  iface->get_offset         = (void (*) (PicmanProjectable*, gint*, gint*)) picman_item_get_offset;
+  iface->get_size           = (void (*) (PicmanProjectable*, gint*, gint*)) picman_viewable_get_size;
+  iface->get_graph          = picman_group_layer_get_graph;
+  iface->invalidate_preview = (void (*) (PicmanProjectable*)) picman_viewable_invalidate_preview;
 }
 
 static void
-gimp_pickable_iface_init (GimpPickableInterface *iface)
+picman_pickable_iface_init (PicmanPickableInterface *iface)
 {
-  iface->get_opacity_at = gimp_group_layer_get_opacity_at;
+  iface->get_opacity_at = picman_group_layer_get_opacity_at;
 }
 
 static void
-gimp_group_layer_init (GimpGroupLayer *group)
+picman_group_layer_init (PicmanGroupLayer *group)
 {
-  GimpGroupLayerPrivate *private = GET_PRIVATE (group);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (group);
 
-  private->children = gimp_drawable_stack_new (GIMP_TYPE_LAYER);
+  private->children = picman_drawable_stack_new (PICMAN_TYPE_LAYER);
   private->expanded = TRUE;
 
   g_signal_connect (private->children, "add",
-                    G_CALLBACK (gimp_group_layer_child_add),
+                    G_CALLBACK (picman_group_layer_child_add),
                     group);
   g_signal_connect (private->children, "remove",
-                    G_CALLBACK (gimp_group_layer_child_remove),
+                    G_CALLBACK (picman_group_layer_child_remove),
                     group);
 
-  gimp_container_add_handler (private->children, "notify::offset-x",
-                              G_CALLBACK (gimp_group_layer_child_move),
+  picman_container_add_handler (private->children, "notify::offset-x",
+                              G_CALLBACK (picman_group_layer_child_move),
                               group);
-  gimp_container_add_handler (private->children, "notify::offset-y",
-                              G_CALLBACK (gimp_group_layer_child_move),
+  picman_container_add_handler (private->children, "notify::offset-y",
+                              G_CALLBACK (picman_group_layer_child_move),
                               group);
-  gimp_container_add_handler (private->children, "size-changed",
-                              G_CALLBACK (gimp_group_layer_child_resize),
+  picman_container_add_handler (private->children, "size-changed",
+                              G_CALLBACK (picman_group_layer_child_resize),
                               group);
 
   g_signal_connect (private->children, "update",
-                    G_CALLBACK (gimp_group_layer_stack_update),
+                    G_CALLBACK (picman_group_layer_stack_update),
                     group);
 
-  private->projection = gimp_projection_new (GIMP_PROJECTABLE (group));
+  private->projection = picman_projection_new (PICMAN_PROJECTABLE (group));
 
   g_signal_connect (private->projection, "update",
-                    G_CALLBACK (gimp_group_layer_proj_update),
+                    G_CALLBACK (picman_group_layer_proj_update),
                     group);
 }
 
 static void
-gimp_group_layer_finalize (GObject *object)
+picman_group_layer_finalize (GObject *object)
 {
-  GimpGroupLayerPrivate *private = GET_PRIVATE (object);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (object);
 
   if (private->children)
     {
       g_signal_handlers_disconnect_by_func (private->children,
-                                            gimp_group_layer_child_add,
+                                            picman_group_layer_child_add,
                                             object);
       g_signal_handlers_disconnect_by_func (private->children,
-                                            gimp_group_layer_child_remove,
+                                            picman_group_layer_child_remove,
                                             object);
       g_signal_handlers_disconnect_by_func (private->children,
-                                            gimp_group_layer_stack_update,
+                                            picman_group_layer_stack_update,
                                             object);
 
       g_object_unref (private->children);
@@ -324,7 +324,7 @@ gimp_group_layer_finalize (GObject *object)
 }
 
 static void
-gimp_group_layer_set_property (GObject      *object,
+picman_group_layer_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
@@ -338,7 +338,7 @@ gimp_group_layer_set_property (GObject      *object,
 }
 
 static void
-gimp_group_layer_get_property (GObject    *object,
+picman_group_layer_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
@@ -352,25 +352,25 @@ gimp_group_layer_get_property (GObject    *object,
 }
 
 static gint64
-gimp_group_layer_get_memsize (GimpObject *object,
+picman_group_layer_get_memsize (PicmanObject *object,
                               gint64     *gui_size)
 {
-  GimpGroupLayerPrivate *private = GET_PRIVATE (object);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (object);
   gint64                 memsize = 0;
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->children), gui_size);
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->projection), gui_size);
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (private->children), gui_size);
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (private->projection), gui_size);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 static gboolean
-gimp_group_layer_get_size (GimpViewable *viewable,
+picman_group_layer_get_size (PicmanViewable *viewable,
                            gint         *width,
                            gint         *height)
 {
-  GimpGroupLayerPrivate *private = GET_PRIVATE (viewable);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (viewable);
 
   if (private->reallocate_width  != 0 &&
       private->reallocate_height != 0)
@@ -381,202 +381,202 @@ gimp_group_layer_get_size (GimpViewable *viewable,
       return TRUE;
     }
 
-  return GIMP_VIEWABLE_CLASS (parent_class)->get_size (viewable, width, height);
+  return PICMAN_VIEWABLE_CLASS (parent_class)->get_size (viewable, width, height);
 }
 
-static GimpContainer *
-gimp_group_layer_get_children (GimpViewable *viewable)
+static PicmanContainer *
+picman_group_layer_get_children (PicmanViewable *viewable)
 {
   return GET_PRIVATE (viewable)->children;
 }
 
 static gboolean
-gimp_group_layer_get_expanded (GimpViewable *viewable)
+picman_group_layer_get_expanded (PicmanViewable *viewable)
 {
-  GimpGroupLayer *group = GIMP_GROUP_LAYER (viewable);
+  PicmanGroupLayer *group = PICMAN_GROUP_LAYER (viewable);
 
   return GET_PRIVATE (group)->expanded;
 }
 
 static void
-gimp_group_layer_set_expanded (GimpViewable *viewable,
+picman_group_layer_set_expanded (PicmanViewable *viewable,
                                gboolean      expanded)
 {
-  GimpGroupLayer *group = GIMP_GROUP_LAYER (viewable);
+  PicmanGroupLayer *group = PICMAN_GROUP_LAYER (viewable);
 
   GET_PRIVATE (group)->expanded = expanded;
 }
 
 static gboolean
-gimp_group_layer_is_position_locked (const GimpItem *item)
+picman_group_layer_is_position_locked (const PicmanItem *item)
 {
-  GimpGroupLayerPrivate *private = GET_PRIVATE (item);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (item);
   GList                 *list;
 
-  for (list = gimp_item_stack_get_item_iter (GIMP_ITEM_STACK (private->children));
+  for (list = picman_item_stack_get_item_iter (PICMAN_ITEM_STACK (private->children));
        list;
        list = g_list_next (list))
     {
-      GimpItem *child = list->data;
+      PicmanItem *child = list->data;
 
-      if (gimp_item_is_position_locked (child))
+      if (picman_item_is_position_locked (child))
         return TRUE;
     }
 
-  return GIMP_ITEM_CLASS (parent_class)->is_position_locked (item);
+  return PICMAN_ITEM_CLASS (parent_class)->is_position_locked (item);
 }
 
-static GimpItem *
-gimp_group_layer_duplicate (GimpItem *item,
+static PicmanItem *
+picman_group_layer_duplicate (PicmanItem *item,
                             GType     new_type)
 {
-  GimpItem *new_item;
+  PicmanItem *new_item;
 
-  g_return_val_if_fail (g_type_is_a (new_type, GIMP_TYPE_DRAWABLE), NULL);
+  g_return_val_if_fail (g_type_is_a (new_type, PICMAN_TYPE_DRAWABLE), NULL);
 
-  new_item = GIMP_ITEM_CLASS (parent_class)->duplicate (item, new_type);
+  new_item = PICMAN_ITEM_CLASS (parent_class)->duplicate (item, new_type);
 
-  if (GIMP_IS_GROUP_LAYER (new_item))
+  if (PICMAN_IS_GROUP_LAYER (new_item))
     {
-      GimpGroupLayerPrivate *private     = GET_PRIVATE (item);
-      GimpGroupLayer        *new_group   = GIMP_GROUP_LAYER (new_item);
-      GimpGroupLayerPrivate *new_private = GET_PRIVATE (new_item);
+      PicmanGroupLayerPrivate *private     = GET_PRIVATE (item);
+      PicmanGroupLayer        *new_group   = PICMAN_GROUP_LAYER (new_item);
+      PicmanGroupLayerPrivate *new_private = GET_PRIVATE (new_item);
       gint                   position    = 0;
       GList                 *list;
 
-      gimp_group_layer_suspend_resize (new_group, FALSE);
+      picman_group_layer_suspend_resize (new_group, FALSE);
 
-      for (list = gimp_item_stack_get_item_iter (GIMP_ITEM_STACK (private->children));
+      for (list = picman_item_stack_get_item_iter (PICMAN_ITEM_STACK (private->children));
            list;
            list = g_list_next (list))
         {
-          GimpItem      *child = list->data;
-          GimpItem      *new_child;
-          GimpLayerMask *mask;
+          PicmanItem      *child = list->data;
+          PicmanItem      *new_child;
+          PicmanLayerMask *mask;
 
-          new_child = gimp_item_duplicate (child, G_TYPE_FROM_INSTANCE (child));
+          new_child = picman_item_duplicate (child, G_TYPE_FROM_INSTANCE (child));
 
-          gimp_object_set_name (GIMP_OBJECT (new_child),
-                                gimp_object_get_name (child));
+          picman_object_set_name (PICMAN_OBJECT (new_child),
+                                picman_object_get_name (child));
 
-          mask = gimp_layer_get_mask (GIMP_LAYER (child));
+          mask = picman_layer_get_mask (PICMAN_LAYER (child));
 
           if (mask)
             {
-              GimpLayerMask *new_mask;
+              PicmanLayerMask *new_mask;
 
-              new_mask = gimp_layer_get_mask (GIMP_LAYER (new_child));
+              new_mask = picman_layer_get_mask (PICMAN_LAYER (new_child));
 
-              gimp_object_set_name (GIMP_OBJECT (new_mask),
-                                    gimp_object_get_name (mask));
+              picman_object_set_name (PICMAN_OBJECT (new_mask),
+                                    picman_object_get_name (mask));
             }
 
-          gimp_viewable_set_parent (GIMP_VIEWABLE (new_child),
-                                    GIMP_VIEWABLE (new_group));
+          picman_viewable_set_parent (PICMAN_VIEWABLE (new_child),
+                                    PICMAN_VIEWABLE (new_group));
 
-          gimp_container_insert (new_private->children,
-                                 GIMP_OBJECT (new_child),
+          picman_container_insert (new_private->children,
+                                 PICMAN_OBJECT (new_child),
                                  position++);
         }
 
       /*  force the projection to reallocate itself  */
       GET_PRIVATE (new_group)->reallocate_projection = TRUE;
 
-      gimp_group_layer_resume_resize (new_group, FALSE);
+      picman_group_layer_resume_resize (new_group, FALSE);
     }
 
   return new_item;
 }
 
 static void
-gimp_group_layer_convert (GimpItem  *item,
-                          GimpImage *dest_image)
+picman_group_layer_convert (PicmanItem  *item,
+                          PicmanImage *dest_image)
 {
-  GimpGroupLayerPrivate *private = GET_PRIVATE (item);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (item);
   GList                 *list;
 
-  for (list = gimp_item_stack_get_item_iter (GIMP_ITEM_STACK (private->children));
+  for (list = picman_item_stack_get_item_iter (PICMAN_ITEM_STACK (private->children));
        list;
        list = g_list_next (list))
     {
-      GimpItem *child = list->data;
+      PicmanItem *child = list->data;
 
-      GIMP_ITEM_GET_CLASS (child)->convert (child, dest_image);
+      PICMAN_ITEM_GET_CLASS (child)->convert (child, dest_image);
     }
 
-  GIMP_ITEM_CLASS (parent_class)->convert (item, dest_image);
+  PICMAN_ITEM_CLASS (parent_class)->convert (item, dest_image);
 }
 
 static void
-gimp_group_layer_translate (GimpItem *item,
+picman_group_layer_translate (PicmanItem *item,
                             gint      offset_x,
                             gint      offset_y,
                             gboolean  push_undo)
 {
-  GimpGroupLayer        *group   = GIMP_GROUP_LAYER (item);
-  GimpGroupLayerPrivate *private = GET_PRIVATE (item);
-  GimpLayerMask         *mask;
+  PicmanGroupLayer        *group   = PICMAN_GROUP_LAYER (item);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (item);
+  PicmanLayerMask         *mask;
   GList                 *list;
 
   /*  don't push an undo here because undo will call us again  */
-  gimp_group_layer_suspend_resize (group, FALSE);
+  picman_group_layer_suspend_resize (group, FALSE);
 
-  for (list = gimp_item_stack_get_item_iter (GIMP_ITEM_STACK (private->children));
+  for (list = picman_item_stack_get_item_iter (PICMAN_ITEM_STACK (private->children));
        list;
        list = g_list_next (list))
     {
-      GimpItem *child = list->data;
+      PicmanItem *child = list->data;
 
-      gimp_item_translate (child, offset_x, offset_y, push_undo);
+      picman_item_translate (child, offset_x, offset_y, push_undo);
     }
 
-  mask = gimp_layer_get_mask (GIMP_LAYER (group));
+  mask = picman_layer_get_mask (PICMAN_LAYER (group));
 
   if (mask)
     {
       gint off_x, off_y;
 
-      gimp_item_get_offset (item, &off_x, &off_y);
-      gimp_item_set_offset (GIMP_ITEM (mask), off_x, off_y);
+      picman_item_get_offset (item, &off_x, &off_y);
+      picman_item_set_offset (PICMAN_ITEM (mask), off_x, off_y);
 
-      gimp_viewable_invalidate_preview (GIMP_VIEWABLE (mask));
+      picman_viewable_invalidate_preview (PICMAN_VIEWABLE (mask));
     }
 
   /*  don't push an undo here because undo will call us again  */
-  gimp_group_layer_resume_resize (group, FALSE);
+  picman_group_layer_resume_resize (group, FALSE);
 }
 
 static void
-gimp_group_layer_scale (GimpItem              *item,
+picman_group_layer_scale (PicmanItem              *item,
                         gint                   new_width,
                         gint                   new_height,
                         gint                   new_offset_x,
                         gint                   new_offset_y,
-                        GimpInterpolationType  interpolation_type,
-                        GimpProgress          *progress)
+                        PicmanInterpolationType  interpolation_type,
+                        PicmanProgress          *progress)
 {
-  GimpGroupLayer        *group   = GIMP_GROUP_LAYER (item);
-  GimpGroupLayerPrivate *private = GET_PRIVATE (item);
-  GimpLayerMask         *mask;
+  PicmanGroupLayer        *group   = PICMAN_GROUP_LAYER (item);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (item);
+  PicmanLayerMask         *mask;
   GList                 *list;
   gdouble                width_factor;
   gdouble                height_factor;
   gint                   old_offset_x;
   gint                   old_offset_y;
 
-  width_factor  = (gdouble) new_width  / (gdouble) gimp_item_get_width  (item);
-  height_factor = (gdouble) new_height / (gdouble) gimp_item_get_height (item);
+  width_factor  = (gdouble) new_width  / (gdouble) picman_item_get_width  (item);
+  height_factor = (gdouble) new_height / (gdouble) picman_item_get_height (item);
 
-  old_offset_x = gimp_item_get_offset_x (item);
-  old_offset_y = gimp_item_get_offset_y (item);
+  old_offset_x = picman_item_get_offset_x (item);
+  old_offset_y = picman_item_get_offset_y (item);
 
-  gimp_group_layer_suspend_resize (group, TRUE);
+  picman_group_layer_suspend_resize (group, TRUE);
 
-  list = gimp_item_stack_get_item_iter (GIMP_ITEM_STACK (private->children));
+  list = picman_item_stack_get_item_iter (PICMAN_ITEM_STACK (private->children));
 
   while (list)
     {
-      GimpItem *child = list->data;
+      PicmanItem *child = list->data;
       gint      child_width;
       gint      child_height;
       gint      child_offset_x;
@@ -584,11 +584,11 @@ gimp_group_layer_scale (GimpItem              *item,
 
       list = g_list_next (list);
 
-      child_width    = ROUND (width_factor  * gimp_item_get_width  (child));
-      child_height   = ROUND (height_factor * gimp_item_get_height (child));
-      child_offset_x = ROUND (width_factor  * (gimp_item_get_offset_x (child) -
+      child_width    = ROUND (width_factor  * picman_item_get_width  (child));
+      child_height   = ROUND (height_factor * picman_item_get_height (child));
+      child_offset_x = ROUND (width_factor  * (picman_item_get_offset_x (child) -
                                                old_offset_x));
-      child_offset_y = ROUND (height_factor * (gimp_item_get_offset_y (child) -
+      child_offset_y = ROUND (height_factor * (picman_item_get_offset_y (child) -
                                                old_offset_y));
 
       child_offset_x += new_offset_x;
@@ -596,58 +596,58 @@ gimp_group_layer_scale (GimpItem              *item,
 
       if (child_width > 0 && child_height > 0)
         {
-          gimp_item_scale (child,
+          picman_item_scale (child,
                            child_width, child_height,
                            child_offset_x, child_offset_y,
                            interpolation_type, progress);
         }
-      else if (gimp_item_is_attached (item))
+      else if (picman_item_is_attached (item))
         {
-          gimp_image_remove_layer (gimp_item_get_image (item),
-                                   GIMP_LAYER (child),
+          picman_image_remove_layer (picman_item_get_image (item),
+                                   PICMAN_LAYER (child),
                                    TRUE, NULL);
         }
       else
         {
-          gimp_container_remove (private->children, GIMP_OBJECT (child));
+          picman_container_remove (private->children, PICMAN_OBJECT (child));
         }
     }
 
-  mask = gimp_layer_get_mask (GIMP_LAYER (group));
+  mask = picman_layer_get_mask (PICMAN_LAYER (group));
 
   if (mask)
-    gimp_item_scale (GIMP_ITEM (mask),
+    picman_item_scale (PICMAN_ITEM (mask),
                      new_width, new_height,
                      new_offset_x, new_offset_y,
                      interpolation_type, progress);
 
-  gimp_group_layer_resume_resize (group, TRUE);
+  picman_group_layer_resume_resize (group, TRUE);
 }
 
 static void
-gimp_group_layer_resize (GimpItem    *item,
-                         GimpContext *context,
+picman_group_layer_resize (PicmanItem    *item,
+                         PicmanContext *context,
                          gint         new_width,
                          gint         new_height,
                          gint         offset_x,
                          gint         offset_y)
 {
-  GimpGroupLayer        *group   = GIMP_GROUP_LAYER (item);
-  GimpGroupLayerPrivate *private = GET_PRIVATE (item);
-  GimpLayerMask         *mask;
+  PicmanGroupLayer        *group   = PICMAN_GROUP_LAYER (item);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (item);
+  PicmanLayerMask         *mask;
   GList                 *list;
   gint                   x, y;
 
-  x = gimp_item_get_offset_x (item) - offset_x;
-  y = gimp_item_get_offset_y (item) - offset_y;
+  x = picman_item_get_offset_x (item) - offset_x;
+  y = picman_item_get_offset_y (item) - offset_y;
 
-  gimp_group_layer_suspend_resize (group, TRUE);
+  picman_group_layer_suspend_resize (group, TRUE);
 
-  list = gimp_item_stack_get_item_iter (GIMP_ITEM_STACK (private->children));
+  list = picman_item_stack_get_item_iter (PICMAN_ITEM_STACK (private->children));
 
   while (list)
     {
-      GimpItem *child = list->data;
+      PicmanItem *child = list->data;
       gint      child_width;
       gint      child_height;
       gint      child_x;
@@ -655,210 +655,210 @@ gimp_group_layer_resize (GimpItem    *item,
 
       list = g_list_next (list);
 
-      if (gimp_rectangle_intersect (x,
+      if (picman_rectangle_intersect (x,
                                     y,
                                     new_width,
                                     new_height,
-                                    gimp_item_get_offset_x (child),
-                                    gimp_item_get_offset_y (child),
-                                    gimp_item_get_width  (child),
-                                    gimp_item_get_height (child),
+                                    picman_item_get_offset_x (child),
+                                    picman_item_get_offset_y (child),
+                                    picman_item_get_width  (child),
+                                    picman_item_get_height (child),
                                     &child_x,
                                     &child_y,
                                     &child_width,
                                     &child_height))
         {
-          gint child_offset_x = gimp_item_get_offset_x (child) - child_x;
-          gint child_offset_y = gimp_item_get_offset_y (child) - child_y;
+          gint child_offset_x = picman_item_get_offset_x (child) - child_x;
+          gint child_offset_y = picman_item_get_offset_y (child) - child_y;
 
-          gimp_item_resize (child, context,
+          picman_item_resize (child, context,
                             child_width, child_height,
                             child_offset_x, child_offset_y);
         }
-      else if (gimp_item_is_attached (item))
+      else if (picman_item_is_attached (item))
         {
-          gimp_image_remove_layer (gimp_item_get_image (item),
-                                   GIMP_LAYER (child),
+          picman_image_remove_layer (picman_item_get_image (item),
+                                   PICMAN_LAYER (child),
                                    TRUE, NULL);
         }
       else
         {
-          gimp_container_remove (private->children, GIMP_OBJECT (child));
+          picman_container_remove (private->children, PICMAN_OBJECT (child));
         }
     }
 
-  mask = gimp_layer_get_mask (GIMP_LAYER (group));
+  mask = picman_layer_get_mask (PICMAN_LAYER (group));
 
   if (mask)
-    gimp_item_resize (GIMP_ITEM (mask), context,
+    picman_item_resize (PICMAN_ITEM (mask), context,
                       new_width, new_height, offset_x, offset_y);
 
-  gimp_group_layer_resume_resize (group, TRUE);
+  picman_group_layer_resume_resize (group, TRUE);
 }
 
 static void
-gimp_group_layer_flip (GimpItem            *item,
-                       GimpContext         *context,
-                       GimpOrientationType  flip_type,
+picman_group_layer_flip (PicmanItem            *item,
+                       PicmanContext         *context,
+                       PicmanOrientationType  flip_type,
                        gdouble              axis,
                        gboolean             clip_result)
 {
-  GimpGroupLayer        *group   = GIMP_GROUP_LAYER (item);
-  GimpGroupLayerPrivate *private = GET_PRIVATE (item);
-  GimpLayerMask         *mask;
+  PicmanGroupLayer        *group   = PICMAN_GROUP_LAYER (item);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (item);
+  PicmanLayerMask         *mask;
   GList                 *list;
 
-  gimp_group_layer_suspend_resize (group, TRUE);
+  picman_group_layer_suspend_resize (group, TRUE);
 
-  for (list = gimp_item_stack_get_item_iter (GIMP_ITEM_STACK (private->children));
+  for (list = picman_item_stack_get_item_iter (PICMAN_ITEM_STACK (private->children));
        list;
        list = g_list_next (list))
     {
-      GimpItem *child = list->data;
+      PicmanItem *child = list->data;
 
-      gimp_item_flip (child, context,
+      picman_item_flip (child, context,
                       flip_type, axis, clip_result);
     }
 
-  mask = gimp_layer_get_mask (GIMP_LAYER (group));
+  mask = picman_layer_get_mask (PICMAN_LAYER (group));
 
   if (mask)
-    gimp_item_flip (GIMP_ITEM (mask), context,
+    picman_item_flip (PICMAN_ITEM (mask), context,
                     flip_type, axis, clip_result);
 
-  gimp_group_layer_resume_resize (group, TRUE);
+  picman_group_layer_resume_resize (group, TRUE);
 }
 
 static void
-gimp_group_layer_rotate (GimpItem         *item,
-                         GimpContext      *context,
-                         GimpRotationType  rotate_type,
+picman_group_layer_rotate (PicmanItem         *item,
+                         PicmanContext      *context,
+                         PicmanRotationType  rotate_type,
                          gdouble           center_x,
                          gdouble           center_y,
                          gboolean          clip_result)
 {
-  GimpGroupLayer        *group   = GIMP_GROUP_LAYER (item);
-  GimpGroupLayerPrivate *private = GET_PRIVATE (item);
-  GimpLayerMask         *mask;
+  PicmanGroupLayer        *group   = PICMAN_GROUP_LAYER (item);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (item);
+  PicmanLayerMask         *mask;
   GList                 *list;
 
-  gimp_group_layer_suspend_resize (group, TRUE);
+  picman_group_layer_suspend_resize (group, TRUE);
 
-  for (list = gimp_item_stack_get_item_iter (GIMP_ITEM_STACK (private->children));
+  for (list = picman_item_stack_get_item_iter (PICMAN_ITEM_STACK (private->children));
        list;
        list = g_list_next (list))
     {
-      GimpItem *child = list->data;
+      PicmanItem *child = list->data;
 
-      gimp_item_rotate (child, context,
+      picman_item_rotate (child, context,
                         rotate_type, center_x, center_y, clip_result);
     }
 
-  mask = gimp_layer_get_mask (GIMP_LAYER (group));
+  mask = picman_layer_get_mask (PICMAN_LAYER (group));
 
   if (mask)
-    gimp_item_rotate (GIMP_ITEM (mask), context,
+    picman_item_rotate (PICMAN_ITEM (mask), context,
                       rotate_type, center_x, center_y, clip_result);
 
-  gimp_group_layer_resume_resize (group, TRUE);
+  picman_group_layer_resume_resize (group, TRUE);
 }
 
 static void
-gimp_group_layer_transform (GimpItem               *item,
-                            GimpContext            *context,
-                            const GimpMatrix3      *matrix,
-                            GimpTransformDirection  direction,
-                            GimpInterpolationType   interpolation_type,
+picman_group_layer_transform (PicmanItem               *item,
+                            PicmanContext            *context,
+                            const PicmanMatrix3      *matrix,
+                            PicmanTransformDirection  direction,
+                            PicmanInterpolationType   interpolation_type,
                             gint                    recursion_level,
-                            GimpTransformResize     clip_result,
-                            GimpProgress           *progress)
+                            PicmanTransformResize     clip_result,
+                            PicmanProgress           *progress)
 {
-  GimpGroupLayer        *group   = GIMP_GROUP_LAYER (item);
-  GimpGroupLayerPrivate *private = GET_PRIVATE (item);
-  GimpLayerMask         *mask;
+  PicmanGroupLayer        *group   = PICMAN_GROUP_LAYER (item);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (item);
+  PicmanLayerMask         *mask;
   GList                 *list;
 
-  gimp_group_layer_suspend_resize (group, TRUE);
+  picman_group_layer_suspend_resize (group, TRUE);
 
-  for (list = gimp_item_stack_get_item_iter (GIMP_ITEM_STACK (private->children));
+  for (list = picman_item_stack_get_item_iter (PICMAN_ITEM_STACK (private->children));
        list;
        list = g_list_next (list))
     {
-      GimpItem *child = list->data;
+      PicmanItem *child = list->data;
 
-      gimp_item_transform (child, context,
+      picman_item_transform (child, context,
                            matrix, direction,
                            interpolation_type, recursion_level,
                            clip_result, progress);
     }
 
-  mask = gimp_layer_get_mask (GIMP_LAYER (group));
+  mask = picman_layer_get_mask (PICMAN_LAYER (group));
 
   if (mask)
-    gimp_item_transform (GIMP_ITEM (mask), context,
+    picman_item_transform (PICMAN_ITEM (mask), context,
                          matrix, direction,
                          interpolation_type, recursion_level,
                          clip_result, progress);
 
-  gimp_group_layer_resume_resize (group, TRUE);
+  picman_group_layer_resume_resize (group, TRUE);
 }
 
 static gint64
-gimp_group_layer_estimate_memsize (const GimpDrawable *drawable,
+picman_group_layer_estimate_memsize (const PicmanDrawable *drawable,
                                    gint                width,
                                    gint                height)
 {
-  GimpGroupLayerPrivate *private = GET_PRIVATE (drawable);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (drawable);
   GList                 *list;
-  GimpImageBaseType      base_type;
+  PicmanImageBaseType      base_type;
   gint64                 memsize = 0;
 
-  for (list = gimp_item_stack_get_item_iter (GIMP_ITEM_STACK (private->children));
+  for (list = picman_item_stack_get_item_iter (PICMAN_ITEM_STACK (private->children));
        list;
        list = g_list_next (list))
     {
-      GimpDrawable *child = list->data;
+      PicmanDrawable *child = list->data;
       gint          child_width;
       gint          child_height;
 
-      child_width  = (gimp_item_get_width (GIMP_ITEM (child)) *
+      child_width  = (picman_item_get_width (PICMAN_ITEM (child)) *
                       width /
-                      gimp_item_get_width (GIMP_ITEM (drawable)));
-      child_height = (gimp_item_get_height (GIMP_ITEM (child)) *
+                      picman_item_get_width (PICMAN_ITEM (drawable)));
+      child_height = (picman_item_get_height (PICMAN_ITEM (child)) *
                       height /
-                      gimp_item_get_height (GIMP_ITEM (drawable)));
+                      picman_item_get_height (PICMAN_ITEM (drawable)));
 
-      memsize += gimp_drawable_estimate_memsize (child,
+      memsize += picman_drawable_estimate_memsize (child,
                                                  child_width,
                                                  child_height);
     }
 
-  base_type = gimp_drawable_get_base_type (drawable);
+  base_type = picman_drawable_get_base_type (drawable);
 
-  memsize += gimp_projection_estimate_memsize (base_type,
-                                               gimp_drawable_get_precision (drawable),
+  memsize += picman_projection_estimate_memsize (base_type,
+                                               picman_drawable_get_precision (drawable),
                                                width, height);
 
-  return memsize + GIMP_DRAWABLE_CLASS (parent_class)->estimate_memsize (drawable,
+  return memsize + PICMAN_DRAWABLE_CLASS (parent_class)->estimate_memsize (drawable,
                                                                          width,
                                                                          height);
 }
 
 static const Babl *
-get_projection_format (GimpProjectable   *projectable,
-                       GimpImageBaseType  base_type,
-                       GimpPrecision      precision)
+get_projection_format (PicmanProjectable   *projectable,
+                       PicmanImageBaseType  base_type,
+                       PicmanPrecision      precision)
 {
-  GimpImage *image = gimp_item_get_image (GIMP_ITEM (projectable));
+  PicmanImage *image = picman_item_get_image (PICMAN_ITEM (projectable));
 
   switch (base_type)
     {
-    case GIMP_RGB:
-    case GIMP_INDEXED:
-      return gimp_image_get_format (image, GIMP_RGB, precision, TRUE);
+    case PICMAN_RGB:
+    case PICMAN_INDEXED:
+      return picman_image_get_format (image, PICMAN_RGB, precision, TRUE);
 
-    case GIMP_GRAY:
-      return gimp_image_get_format (image, GIMP_GRAY, precision, TRUE);
+    case PICMAN_GRAY:
+      return picman_image_get_format (image, PICMAN_GRAY, precision, TRUE);
     }
 
   g_assert_not_reached ();
@@ -867,80 +867,80 @@ get_projection_format (GimpProjectable   *projectable,
 }
 
 static void
-gimp_group_layer_convert_type (GimpDrawable      *drawable,
-                               GimpImage         *dest_image,
+picman_group_layer_convert_type (PicmanDrawable      *drawable,
+                               PicmanImage         *dest_image,
                                const Babl        *new_format /* unused */,
-                               GimpImageBaseType  new_base_type,
-                               GimpPrecision      new_precision,
+                               PicmanImageBaseType  new_base_type,
+                               PicmanPrecision      new_precision,
                                gint               layer_dither_type,
                                gint               mask_dither_type,
                                gboolean           push_undo)
 {
-  GimpGroupLayer        *group   = GIMP_GROUP_LAYER (drawable);
-  GimpGroupLayerPrivate *private = GET_PRIVATE (drawable);
-  GimpLayerMask         *mask;
+  PicmanGroupLayer        *group   = PICMAN_GROUP_LAYER (drawable);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (drawable);
+  PicmanLayerMask         *mask;
   GeglBuffer            *buffer;
 
   if (push_undo)
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (group));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (group));
 
-      gimp_image_undo_push_group_layer_convert (image, NULL, group);
+      picman_image_undo_push_group_layer_convert (image, NULL, group);
     }
 
   /*  Need to temporarily set the projectable's format to the new
    *  values so the projection will create its tiles with the right
    *  depth
    */
-  private->convert_format = get_projection_format (GIMP_PROJECTABLE (drawable),
+  private->convert_format = get_projection_format (PICMAN_PROJECTABLE (drawable),
                                                    new_base_type,
                                                    new_precision);
-  gimp_projectable_structure_changed (GIMP_PROJECTABLE (drawable));
+  picman_projectable_structure_changed (PICMAN_PROJECTABLE (drawable));
 
-  buffer = gimp_pickable_get_buffer (GIMP_PICKABLE (private->projection));
+  buffer = picman_pickable_get_buffer (PICMAN_PICKABLE (private->projection));
 
-  gimp_drawable_set_buffer_full (drawable,
+  picman_drawable_set_buffer_full (drawable,
                                  FALSE, NULL,
                                  buffer,
-                                 gimp_item_get_offset_x (GIMP_ITEM (drawable)),
-                                 gimp_item_get_offset_y (GIMP_ITEM (drawable)));
+                                 picman_item_get_offset_x (PICMAN_ITEM (drawable)),
+                                 picman_item_get_offset_y (PICMAN_ITEM (drawable)));
 
   /*  reset, the actual format is right now  */
   private->convert_format = NULL;
 
-  mask = gimp_layer_get_mask (GIMP_LAYER (group));
+  mask = picman_layer_get_mask (PICMAN_LAYER (group));
 
   if (mask &&
-      new_precision != gimp_drawable_get_precision (GIMP_DRAWABLE (mask)))
+      new_precision != picman_drawable_get_precision (PICMAN_DRAWABLE (mask)))
     {
-      gimp_drawable_convert_type (GIMP_DRAWABLE (mask), dest_image,
-                                  GIMP_GRAY, new_precision,
+      picman_drawable_convert_type (PICMAN_DRAWABLE (mask), dest_image,
+                                  PICMAN_GRAY, new_precision,
                                   layer_dither_type, mask_dither_type,
                                   push_undo);
     }
 }
 
 static const Babl *
-gimp_group_layer_get_format (GimpProjectable *projectable)
+picman_group_layer_get_format (PicmanProjectable *projectable)
 {
-  GimpGroupLayerPrivate *private = GET_PRIVATE (projectable);
-  GimpImageBaseType      base_type;
-  GimpPrecision          precision;
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (projectable);
+  PicmanImageBaseType      base_type;
+  PicmanPrecision          precision;
 
   if (private->convert_format)
     return private->convert_format;
 
-  base_type = gimp_drawable_get_base_type (GIMP_DRAWABLE (projectable));
-  precision = gimp_drawable_get_precision (GIMP_DRAWABLE (projectable));
+  base_type = picman_drawable_get_base_type (PICMAN_DRAWABLE (projectable));
+  precision = picman_drawable_get_precision (PICMAN_DRAWABLE (projectable));
 
   return get_projection_format (projectable, base_type, precision);
 }
 
 static GeglNode *
-gimp_group_layer_get_graph (GimpProjectable *projectable)
+picman_group_layer_get_graph (PicmanProjectable *projectable)
 {
-  GimpGroupLayer        *group   = GIMP_GROUP_LAYER (projectable);
-  GimpGroupLayerPrivate *private = GET_PRIVATE (projectable);
+  PicmanGroupLayer        *group   = PICMAN_GROUP_LAYER (projectable);
+  PicmanGroupLayerPrivate *private = GET_PRIVATE (projectable);
   GeglNode              *layers_node;
   GeglNode              *output;
   gint                   off_x;
@@ -952,11 +952,11 @@ gimp_group_layer_get_graph (GimpProjectable *projectable)
   private->graph = gegl_node_new ();
 
   layers_node =
-    gimp_filter_stack_get_graph (GIMP_FILTER_STACK (private->children));
+    picman_filter_stack_get_graph (PICMAN_FILTER_STACK (private->children));
 
   gegl_node_add_child (private->graph, layers_node);
 
-  gimp_item_get_offset (GIMP_ITEM (group), &off_x, &off_y);
+  picman_item_get_offset (PICMAN_ITEM (group), &off_x, &off_y);
 
   private->offset_node = gegl_node_new_child (private->graph,
                                               "operation", "gegl:translate",
@@ -976,91 +976,91 @@ gimp_group_layer_get_graph (GimpProjectable *projectable)
 }
 
 static gdouble
-gimp_group_layer_get_opacity_at (GimpPickable *pickable,
+picman_group_layer_get_opacity_at (PicmanPickable *pickable,
                                  gint          x,
                                  gint          y)
 {
   /* Only consider child layers as having content */
 
-  return GIMP_OPACITY_TRANSPARENT;
+  return PICMAN_OPACITY_TRANSPARENT;
 }
 
 
 /*  public functions  */
 
-GimpLayer *
-gimp_group_layer_new (GimpImage *image)
+PicmanLayer *
+picman_group_layer_new (PicmanImage *image)
 {
-  GimpGroupLayer *group;
+  PicmanGroupLayer *group;
   const Babl     *format;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  format = gimp_image_get_layer_format (image, TRUE);
+  format = picman_image_get_layer_format (image, TRUE);
 
-  group = GIMP_GROUP_LAYER (gimp_drawable_new (GIMP_TYPE_GROUP_LAYER,
+  group = PICMAN_GROUP_LAYER (picman_drawable_new (PICMAN_TYPE_GROUP_LAYER,
                                                image, NULL,
                                                0, 0, 1, 1,
                                                format));
 
-  return GIMP_LAYER (group);
+  return PICMAN_LAYER (group);
 }
 
-GimpProjection *
-gimp_group_layer_get_projection (GimpGroupLayer *group)
+PicmanProjection *
+picman_group_layer_get_projection (PicmanGroupLayer *group)
 {
-  g_return_val_if_fail (GIMP_IS_GROUP_LAYER (group), NULL);
+  g_return_val_if_fail (PICMAN_IS_GROUP_LAYER (group), NULL);
 
   return GET_PRIVATE (group)->projection;
 }
 
 void
-gimp_group_layer_suspend_resize (GimpGroupLayer *group,
+picman_group_layer_suspend_resize (PicmanGroupLayer *group,
                                  gboolean        push_undo)
 {
-  GimpItem *item;
+  PicmanItem *item;
 
-  g_return_if_fail (GIMP_IS_GROUP_LAYER (group));
+  g_return_if_fail (PICMAN_IS_GROUP_LAYER (group));
 
-  item = GIMP_ITEM (group);
+  item = PICMAN_ITEM (group);
 
-  if (! gimp_item_is_attached (item))
+  if (! picman_item_is_attached (item))
     push_undo = FALSE;
 
   if (push_undo)
-    gimp_image_undo_push_group_layer_suspend (gimp_item_get_image (item),
+    picman_image_undo_push_group_layer_suspend (picman_item_get_image (item),
                                               NULL, group);
 
   GET_PRIVATE (group)->suspend_resize++;
 }
 
 void
-gimp_group_layer_resume_resize (GimpGroupLayer *group,
+picman_group_layer_resume_resize (PicmanGroupLayer *group,
                                 gboolean        push_undo)
 {
-  GimpGroupLayerPrivate *private;
-  GimpItem              *item;
+  PicmanGroupLayerPrivate *private;
+  PicmanItem              *item;
 
-  g_return_if_fail (GIMP_IS_GROUP_LAYER (group));
+  g_return_if_fail (PICMAN_IS_GROUP_LAYER (group));
 
   private = GET_PRIVATE (group);
 
   g_return_if_fail (private->suspend_resize > 0);
 
-  item = GIMP_ITEM (group);
+  item = PICMAN_ITEM (group);
 
-  if (! gimp_item_is_attached (item))
+  if (! picman_item_is_attached (item))
     push_undo = FALSE;
 
   if (push_undo)
-    gimp_image_undo_push_group_layer_resume (gimp_item_get_image (item),
+    picman_image_undo_push_group_layer_resume (picman_item_get_image (item),
                                              NULL, group);
 
   private->suspend_resize--;
 
   if (private->suspend_resize == 0)
     {
-      gimp_group_layer_update_size (group);
+      picman_group_layer_update_size (group);
     }
 }
 
@@ -1068,54 +1068,54 @@ gimp_group_layer_resume_resize (GimpGroupLayer *group,
 /*  private functions  */
 
 static void
-gimp_group_layer_child_add (GimpContainer  *container,
-                            GimpLayer      *child,
-                            GimpGroupLayer *group)
+picman_group_layer_child_add (PicmanContainer  *container,
+                            PicmanLayer      *child,
+                            PicmanGroupLayer *group)
 {
-  gimp_group_layer_update (group);
+  picman_group_layer_update (group);
 }
 
 static void
-gimp_group_layer_child_remove (GimpContainer  *container,
-                               GimpLayer      *child,
-                               GimpGroupLayer *group)
+picman_group_layer_child_remove (PicmanContainer  *container,
+                               PicmanLayer      *child,
+                               PicmanGroupLayer *group)
 {
-  gimp_group_layer_update (group);
+  picman_group_layer_update (group);
 }
 
 static void
-gimp_group_layer_child_move (GimpLayer      *child,
+picman_group_layer_child_move (PicmanLayer      *child,
                              GParamSpec     *pspec,
-                             GimpGroupLayer *group)
+                             PicmanGroupLayer *group)
 {
-  gimp_group_layer_update (group);
+  picman_group_layer_update (group);
 }
 
 static void
-gimp_group_layer_child_resize (GimpLayer      *child,
-                               GimpGroupLayer *group)
+picman_group_layer_child_resize (PicmanLayer      *child,
+                               PicmanGroupLayer *group)
 {
-  gimp_group_layer_update (group);
+  picman_group_layer_update (group);
 }
 
 static void
-gimp_group_layer_update (GimpGroupLayer *group)
+picman_group_layer_update (PicmanGroupLayer *group)
 {
   if (GET_PRIVATE (group)->suspend_resize == 0)
     {
-      gimp_group_layer_update_size (group);
+      picman_group_layer_update_size (group);
     }
 }
 
 static void
-gimp_group_layer_update_size (GimpGroupLayer *group)
+picman_group_layer_update_size (PicmanGroupLayer *group)
 {
-  GimpGroupLayerPrivate *private    = GET_PRIVATE (group);
-  GimpItem              *item       = GIMP_ITEM (group);
-  gint                   old_x      = gimp_item_get_offset_x (item);
-  gint                   old_y      = gimp_item_get_offset_y (item);
-  gint                   old_width  = gimp_item_get_width  (item);
-  gint                   old_height = gimp_item_get_height (item);
+  PicmanGroupLayerPrivate *private    = GET_PRIVATE (group);
+  PicmanItem              *item       = PICMAN_ITEM (group);
+  gint                   old_x      = picman_item_get_offset_x (item);
+  gint                   old_y      = picman_item_get_offset_y (item);
+  gint                   old_width  = picman_item_get_width  (item);
+  gint                   old_height = picman_item_get_height (item);
   gint                   x          = 0;
   gint                   y          = 0;
   gint                   width      = 1;
@@ -1123,28 +1123,28 @@ gimp_group_layer_update_size (GimpGroupLayer *group)
   gboolean               first      = TRUE;
   GList                 *list;
 
-  for (list = gimp_item_stack_get_item_iter (GIMP_ITEM_STACK (private->children));
+  for (list = picman_item_stack_get_item_iter (PICMAN_ITEM_STACK (private->children));
        list;
        list = g_list_next (list))
     {
-      GimpItem *child = list->data;
+      PicmanItem *child = list->data;
 
       if (first)
         {
-          x      = gimp_item_get_offset_x (child);
-          y      = gimp_item_get_offset_y (child);
-          width  = gimp_item_get_width    (child);
-          height = gimp_item_get_height   (child);
+          x      = picman_item_get_offset_x (child);
+          y      = picman_item_get_offset_y (child);
+          width  = picman_item_get_width    (child);
+          height = picman_item_get_height   (child);
 
           first = FALSE;
         }
       else
         {
-          gimp_rectangle_union (x, y, width, height,
-                                gimp_item_get_offset_x (child),
-                                gimp_item_get_offset_y (child),
-                                gimp_item_get_width    (child),
-                                gimp_item_get_height   (child),
+          picman_rectangle_union (x, y, width, height,
+                                picman_item_get_offset_x (child),
+                                picman_item_get_offset_y (child),
+                                picman_item_get_width    (child),
+                                picman_item_get_height   (child),
                                 &x, &y, &width, &height);
         }
     }
@@ -1163,17 +1163,17 @@ gimp_group_layer_update_size (GimpGroupLayer *group)
 
           private->reallocate_projection = FALSE;
 
-          /*  temporarily change the return values of gimp_viewable_get_size()
+          /*  temporarily change the return values of picman_viewable_get_size()
            *  so the projection allocates itself correctly
            */
           private->reallocate_width  = width;
           private->reallocate_height = height;
 
-          gimp_projectable_structure_changed (GIMP_PROJECTABLE (group));
+          picman_projectable_structure_changed (PICMAN_PROJECTABLE (group));
 
-          buffer = gimp_pickable_get_buffer (GIMP_PICKABLE (private->projection));
+          buffer = picman_pickable_get_buffer (PICMAN_PICKABLE (private->projection));
 
-          gimp_drawable_set_buffer_full (GIMP_DRAWABLE (group),
+          picman_drawable_set_buffer_full (PICMAN_DRAWABLE (group),
                                          FALSE, NULL,
                                          buffer,
                                          x, y);
@@ -1184,14 +1184,14 @@ gimp_group_layer_update_size (GimpGroupLayer *group)
         }
       else
         {
-          gimp_item_set_offset (item, x, y);
+          picman_item_set_offset (item, x, y);
 
           /*  invalidate the entire projection since the position of
            *  the children relative to each other might have changed
            *  in a way that happens to leave the group's width and
            *  height the same
            */
-          gimp_projectable_invalidate (GIMP_PROJECTABLE (group),
+          picman_projectable_invalidate (PICMAN_PROJECTABLE (group),
                                        x, y, width, height);
         }
 
@@ -1204,23 +1204,23 @@ gimp_group_layer_update_size (GimpGroupLayer *group)
 }
 
 static void
-gimp_group_layer_stack_update (GimpDrawableStack *stack,
+picman_group_layer_stack_update (PicmanDrawableStack *stack,
                                gint               x,
                                gint               y,
                                gint               width,
                                gint               height,
-                               GimpGroupLayer    *group)
+                               PicmanGroupLayer    *group)
 {
 #if 0
   g_printerr ("%s (%s) %d, %d (%d, %d)\n",
-              G_STRFUNC, gimp_object_get_name (group),
+              G_STRFUNC, picman_object_get_name (group),
               x, y, width, height);
 #endif
 
   /*  the layer stack's update signal speaks in image coordinates,
    *  pass to the projection as-is.
    */
-  gimp_projectable_invalidate (GIMP_PROJECTABLE (group),
+  picman_projectable_invalidate (PICMAN_PROJECTABLE (group),
                                x, y, width, height);
 
   /*  flush the pickable not the projectable because flushing the
@@ -1229,29 +1229,29 @@ gimp_group_layer_stack_update (GimpDrawableStack *stack,
    *  when the actual read happens, so this it not a performance
    *  problem)
    */
-  gimp_pickable_flush (GIMP_PICKABLE (GET_PRIVATE (group)->projection));
+  picman_pickable_flush (PICMAN_PICKABLE (GET_PRIVATE (group)->projection));
 }
 
 static void
-gimp_group_layer_proj_update (GimpProjection *proj,
+picman_group_layer_proj_update (PicmanProjection *proj,
                               gboolean        now,
                               gint            x,
                               gint            y,
                               gint            width,
                               gint            height,
-                              GimpGroupLayer *group)
+                              PicmanGroupLayer *group)
 {
 #if 0
   g_printerr ("%s (%s) %d, %d (%d, %d)\n",
-              G_STRFUNC, gimp_object_get_name (group),
+              G_STRFUNC, picman_object_get_name (group),
               x, y, width, height);
 #endif
 
   /*  the projection speaks in image coordinates, transform to layer
    *  coordinates when emitting our own update signal.
    */
-  gimp_drawable_update (GIMP_DRAWABLE (group),
-                        x - gimp_item_get_offset_x (GIMP_ITEM (group)),
-                        y - gimp_item_get_offset_y (GIMP_ITEM (group)),
+  picman_drawable_update (PICMAN_DRAWABLE (group),
+                        x - picman_item_get_offset_x (PICMAN_ITEM (group)),
+                        y - picman_item_get_offset_y (PICMAN_ITEM (group)),
                         width, height);
 }

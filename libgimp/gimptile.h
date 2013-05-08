@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimptile.h
+ * picmantile.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,19 +18,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
-#ifndef __GIMP_TILE_H__
-#define __GIMP_TILE_H__
+#ifndef __PICMAN_TILE_H__
+#define __PICMAN_TILE_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-struct _GimpTile
+struct _PicmanTile
 {
   guint         ewidth;     /* the effective width of the tile */
   guint         eheight;    /* the effective height of the tile */
@@ -40,31 +40,31 @@ struct _GimpTile
   guint         dirty : 1;  /* is the tile dirty? has it been modified? */
   guint         shadow: 1;  /* is this a shadow tile */
   guchar       *data;       /* the pixel data for the tile */
-  GimpDrawable *drawable;   /* the drawable this tile came from */
+  PicmanDrawable *drawable;   /* the drawable this tile came from */
 };
 
 
-GIMP_DEPRECATED
-void    gimp_tile_ref          (GimpTile  *tile);
-GIMP_DEPRECATED
-void    gimp_tile_ref_zero     (GimpTile  *tile);
-GIMP_DEPRECATED
-void    gimp_tile_unref        (GimpTile  *tile,
+PICMAN_DEPRECATED
+void    picman_tile_ref          (PicmanTile  *tile);
+PICMAN_DEPRECATED
+void    picman_tile_ref_zero     (PicmanTile  *tile);
+PICMAN_DEPRECATED
+void    picman_tile_unref        (PicmanTile  *tile,
                                 gboolean   dirty);
-GIMP_DEPRECATED
-void    gimp_tile_flush        (GimpTile  *tile);
+PICMAN_DEPRECATED
+void    picman_tile_flush        (PicmanTile  *tile);
 
-GIMP_DEPRECATED
-void    gimp_tile_cache_size   (gulong     kilobytes);
-GIMP_DEPRECATED
-void    gimp_tile_cache_ntiles (gulong     ntiles);
+PICMAN_DEPRECATED
+void    picman_tile_cache_size   (gulong     kilobytes);
+PICMAN_DEPRECATED
+void    picman_tile_cache_ntiles (gulong     ntiles);
 
 
 /*  private function  */
 
-G_GNUC_INTERNAL void _gimp_tile_cache_flush_drawable (GimpDrawable *drawable);
+G_GNUC_INTERNAL void _picman_tile_cache_flush_drawable (PicmanDrawable *drawable);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_TILE_H__ */
+#endif /* __PICMAN_TILE_H__ */

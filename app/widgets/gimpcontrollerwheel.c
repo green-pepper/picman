@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcontrollerwheel.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmancontrollerwheel.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,15 +22,15 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "gimpcontrollerwheel.h"
-#include "gimphelp-ids.h"
-#include "gimpwidgets-utils.h"
+#include "picmancontrollerwheel.h"
+#include "picmanhelp-ids.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define MODIFIER_MASK (GDK_MOD1_MASK | GDK_CONTROL_MASK | GDK_SHIFT_MASK)
@@ -47,19 +47,19 @@ struct _WheelEvent
 };
 
 
-static void          gimp_controller_wheel_constructed     (GObject        *object);
+static void          picman_controller_wheel_constructed     (GObject        *object);
 
-static gint          gimp_controller_wheel_get_n_events    (GimpController *controller);
-static const gchar * gimp_controller_wheel_get_event_name  (GimpController *controller,
+static gint          picman_controller_wheel_get_n_events    (PicmanController *controller);
+static const gchar * picman_controller_wheel_get_event_name  (PicmanController *controller,
                                                             gint            event_id);
-static const gchar * gimp_controller_wheel_get_event_blurb (GimpController *controller,
+static const gchar * picman_controller_wheel_get_event_blurb (PicmanController *controller,
                                                             gint            event_id);
 
 
-G_DEFINE_TYPE (GimpControllerWheel, gimp_controller_wheel,
-               GIMP_TYPE_CONTROLLER)
+G_DEFINE_TYPE (PicmanControllerWheel, picman_controller_wheel,
+               PICMAN_TYPE_CONTROLLER)
 
-#define parent_class gimp_controller_wheel_parent_class
+#define parent_class picman_controller_wheel_parent_class
 
 
 static WheelEvent wheel_events[] =
@@ -167,24 +167,24 @@ static WheelEvent wheel_events[] =
 
 
 static void
-gimp_controller_wheel_class_init (GimpControllerWheelClass *klass)
+picman_controller_wheel_class_init (PicmanControllerWheelClass *klass)
 {
   GObjectClass        *object_class     = G_OBJECT_CLASS (klass);
-  GimpControllerClass *controller_class = GIMP_CONTROLLER_CLASS (klass);
+  PicmanControllerClass *controller_class = PICMAN_CONTROLLER_CLASS (klass);
 
-  object_class->constructed         = gimp_controller_wheel_constructed;
+  object_class->constructed         = picman_controller_wheel_constructed;
 
   controller_class->name            = _("Mouse Wheel");
-  controller_class->help_id         = GIMP_HELP_CONTROLLER_WHEEL;
-  controller_class->stock_id        = GIMP_STOCK_CONTROLLER_WHEEL;
+  controller_class->help_id         = PICMAN_HELP_CONTROLLER_WHEEL;
+  controller_class->stock_id        = PICMAN_STOCK_CONTROLLER_WHEEL;
 
-  controller_class->get_n_events    = gimp_controller_wheel_get_n_events;
-  controller_class->get_event_name  = gimp_controller_wheel_get_event_name;
-  controller_class->get_event_blurb = gimp_controller_wheel_get_event_blurb;
+  controller_class->get_n_events    = picman_controller_wheel_get_n_events;
+  controller_class->get_event_name  = picman_controller_wheel_get_event_name;
+  controller_class->get_event_blurb = picman_controller_wheel_get_event_blurb;
 }
 
 static void
-gimp_controller_wheel_init (GimpControllerWheel *wheel)
+picman_controller_wheel_init (PicmanControllerWheel *wheel)
 {
   static gboolean event_names_initialized = FALSE;
 
@@ -200,7 +200,7 @@ gimp_controller_wheel_init (GimpControllerWheel *wheel)
             {
               wevent->blurb =
                 g_strdup_printf ("%s (%s)", gettext (wevent->blurb),
-                                 gimp_get_mod_string (wevent->modifiers));
+                                 picman_get_mod_string (wevent->modifiers));
             }
         }
 
@@ -209,7 +209,7 @@ gimp_controller_wheel_init (GimpControllerWheel *wheel)
 }
 
 static void
-gimp_controller_wheel_constructed (GObject *object)
+picman_controller_wheel_constructed (GObject *object)
 {
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
@@ -220,13 +220,13 @@ gimp_controller_wheel_constructed (GObject *object)
 }
 
 static gint
-gimp_controller_wheel_get_n_events (GimpController *controller)
+picman_controller_wheel_get_n_events (PicmanController *controller)
 {
   return G_N_ELEMENTS (wheel_events);
 }
 
 static const gchar *
-gimp_controller_wheel_get_event_name (GimpController *controller,
+picman_controller_wheel_get_event_name (PicmanController *controller,
                                       gint            event_id)
 {
   if (event_id < 0 || event_id >= G_N_ELEMENTS (wheel_events))
@@ -236,7 +236,7 @@ gimp_controller_wheel_get_event_name (GimpController *controller,
 }
 
 static const gchar *
-gimp_controller_wheel_get_event_blurb (GimpController *controller,
+picman_controller_wheel_get_event_blurb (PicmanController *controller,
                                        gint            event_id)
 {
   if (event_id < 0 || event_id >= G_N_ELEMENTS (wheel_events))
@@ -246,12 +246,12 @@ gimp_controller_wheel_get_event_blurb (GimpController *controller,
 }
 
 gboolean
-gimp_controller_wheel_scroll (GimpControllerWheel  *wheel,
+picman_controller_wheel_scroll (PicmanControllerWheel  *wheel,
                               const GdkEventScroll *sevent)
 {
   gint i;
 
-  g_return_val_if_fail (GIMP_IS_CONTROLLER_WHEEL (wheel), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CONTROLLER_WHEEL (wheel), FALSE);
   g_return_val_if_fail (sevent != NULL, FALSE);
 
   for (i = 0; i < G_N_ELEMENTS (wheel_events); i++)
@@ -260,16 +260,16 @@ gimp_controller_wheel_scroll (GimpControllerWheel  *wheel,
         {
           if ((sevent->state & MODIFIER_MASK) == wheel_events[i].modifiers)
             {
-              GimpControllerEvent         controller_event;
-              GimpControllerEventTrigger *trigger;
+              PicmanControllerEvent         controller_event;
+              PicmanControllerEventTrigger *trigger;
 
-              trigger = (GimpControllerEventTrigger *) &controller_event;
+              trigger = (PicmanControllerEventTrigger *) &controller_event;
 
-              trigger->type     = GIMP_CONTROLLER_EVENT_TRIGGER;
-              trigger->source   = GIMP_CONTROLLER (wheel);
+              trigger->type     = PICMAN_CONTROLLER_EVENT_TRIGGER;
+              trigger->source   = PICMAN_CONTROLLER (wheel);
               trigger->event_id = i;
 
-              return gimp_controller_event (GIMP_CONTROLLER (wheel),
+              return picman_controller_event (PICMAN_CONTROLLER (wheel),
                                             &controller_event);
             }
         }

@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorselection.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmancolorselection.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,29 +24,29 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpcolorarea.h"
-#include "gimpcolornotebook.h"
-#include "gimpcolorscales.h"
-#include "gimpcolorselect.h"
-#include "gimpcolorselection.h"
-#include "gimphelpui.h"
-#include "gimpstock.h"
-#include "gimpwidgets.h"
-#include "gimpwidgets-private.h"
+#include "picmancolorarea.h"
+#include "picmancolornotebook.h"
+#include "picmancolorscales.h"
+#include "picmancolorselect.h"
+#include "picmancolorselection.h"
+#include "picmanhelpui.h"
+#include "picmanstock.h"
+#include "picmanwidgets.h"
+#include "picmanwidgets-private.h"
 
-#include "gimpwidgetsmarshal.h"
+#include "picmanwidgetsmarshal.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpcolorselection
- * @title: GimpColorSelection
+ * SECTION: picmancolorselection
+ * @title: PicmanColorSelection
  * @short_description: Widget for doing a color selection.
  *
  * Widget for doing a color selection.
@@ -82,65 +82,65 @@ enum
 };
 
 
-static void   gimp_color_selection_set_property      (GObject            *object,
+static void   picman_color_selection_set_property      (GObject            *object,
                                                       guint               property_id,
                                                       const GValue       *value,
                                                       GParamSpec         *pspec);
 
-static void   gimp_color_selection_switch_page       (GtkWidget          *widget,
+static void   picman_color_selection_switch_page       (GtkWidget          *widget,
                                                       gpointer            page,
                                                       guint               page_num,
-                                                      GimpColorSelection *selection);
-static void   gimp_color_selection_notebook_changed  (GimpColorSelector  *selector,
-                                                      const GimpRGB      *rgb,
-                                                      const GimpHSV      *hsv,
-                                                      GimpColorSelection *selection);
-static void   gimp_color_selection_scales_changed    (GimpColorSelector  *selector,
-                                                      const GimpRGB      *rgb,
-                                                      const GimpHSV      *hsv,
-                                                      GimpColorSelection *selection);
-static void   gimp_color_selection_color_picked      (GtkWidget          *widget,
-                                                      const GimpRGB      *rgb,
-                                                      GimpColorSelection *selection);
-static void   gimp_color_selection_entry_changed     (GimpColorHexEntry  *entry,
-                                                      GimpColorSelection *selection);
-static void   gimp_color_selection_channel_changed   (GimpColorSelector  *selector,
-                                                      GimpColorSelectorChannel channel,
-                                                      GimpColorSelection *selection);
-static void   gimp_color_selection_new_color_changed (GtkWidget          *widget,
-                                                      GimpColorSelection *selection);
+                                                      PicmanColorSelection *selection);
+static void   picman_color_selection_notebook_changed  (PicmanColorSelector  *selector,
+                                                      const PicmanRGB      *rgb,
+                                                      const PicmanHSV      *hsv,
+                                                      PicmanColorSelection *selection);
+static void   picman_color_selection_scales_changed    (PicmanColorSelector  *selector,
+                                                      const PicmanRGB      *rgb,
+                                                      const PicmanHSV      *hsv,
+                                                      PicmanColorSelection *selection);
+static void   picman_color_selection_color_picked      (GtkWidget          *widget,
+                                                      const PicmanRGB      *rgb,
+                                                      PicmanColorSelection *selection);
+static void   picman_color_selection_entry_changed     (PicmanColorHexEntry  *entry,
+                                                      PicmanColorSelection *selection);
+static void   picman_color_selection_channel_changed   (PicmanColorSelector  *selector,
+                                                      PicmanColorSelectorChannel channel,
+                                                      PicmanColorSelection *selection);
+static void   picman_color_selection_new_color_changed (GtkWidget          *widget,
+                                                      PicmanColorSelection *selection);
 
-static void   gimp_color_selection_update            (GimpColorSelection *selection,
+static void   picman_color_selection_update            (PicmanColorSelection *selection,
                                                       UpdateType          update);
 
 
-G_DEFINE_TYPE (GimpColorSelection, gimp_color_selection, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanColorSelection, picman_color_selection, GTK_TYPE_BOX)
 
-#define parent_class gimp_color_selection_parent_class
+#define parent_class picman_color_selection_parent_class
 
 static guint selection_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_color_selection_class_init (GimpColorSelectionClass *klass)
+picman_color_selection_class_init (PicmanColorSelectionClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_color_selection_set_property;
+  object_class->set_property = picman_color_selection_set_property;
 
   klass->color_changed       = NULL;
 
   g_object_class_install_property (object_class, PROP_CONFIG,
                                    g_param_spec_object ("config",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_COLOR_CONFIG,
+                                                        PICMAN_TYPE_COLOR_CONFIG,
                                                         G_PARAM_WRITABLE));
 
   selection_signals[COLOR_CHANGED] =
     g_signal_new ("color-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpColorSelectionClass, color_changed),
+                  G_STRUCT_OFFSET (PicmanColorSelectionClass, color_changed),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
@@ -148,7 +148,7 @@ gimp_color_selection_class_init (GimpColorSelectionClass *klass)
 }
 
 static void
-gimp_color_selection_init (GimpColorSelection *selection)
+picman_color_selection_init (PicmanColorSelection *selection)
 {
   GtkWidget    *main_hbox;
   GtkWidget    *hbox;
@@ -165,10 +165,10 @@ gimp_color_selection_init (GimpColorSelection *selection)
   gtk_orientable_set_orientation (GTK_ORIENTABLE (selection),
                                   GTK_ORIENTATION_VERTICAL);
 
-  gimp_rgba_set (&selection->rgb, 0.0, 0.0, 0.0, 1.0);
-  gimp_rgb_to_hsv (&selection->rgb, &selection->hsv);
+  picman_rgba_set (&selection->rgb, 0.0, 0.0, 0.0, 1.0);
+  picman_rgb_to_hsv (&selection->rgb, &selection->hsv);
 
-  selection->channel = GIMP_COLOR_SELECTOR_HUE;
+  selection->channel = PICMAN_COLOR_SELECTOR_HUE;
 
   main_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   gtk_container_add (GTK_CONTAINER (selection), main_hbox);
@@ -180,32 +180,32 @@ gimp_color_selection_init (GimpColorSelection *selection)
                       TRUE, TRUE, 0);
   gtk_widget_show (selection->left_vbox);
 
-  if (_gimp_ensure_modules_func)
+  if (_picman_ensure_modules_func)
     {
-      g_type_class_ref (GIMP_TYPE_COLOR_SELECT);
-      _gimp_ensure_modules_func ();
+      g_type_class_ref (PICMAN_TYPE_COLOR_SELECT);
+      _picman_ensure_modules_func ();
     }
 
-  selection->notebook = gimp_color_selector_new (GIMP_TYPE_COLOR_NOTEBOOK,
+  selection->notebook = picman_color_selector_new (PICMAN_TYPE_COLOR_NOTEBOOK,
                                                  &selection->rgb,
                                                  &selection->hsv,
                                                  selection->channel);
 
-  if (_gimp_ensure_modules_func)
-    g_type_class_unref (g_type_class_peek (GIMP_TYPE_COLOR_SELECT));
+  if (_picman_ensure_modules_func)
+    g_type_class_unref (g_type_class_peek (PICMAN_TYPE_COLOR_SELECT));
 
-  gimp_color_selector_set_toggles_visible
-    (GIMP_COLOR_SELECTOR (selection->notebook), FALSE);
+  picman_color_selector_set_toggles_visible
+    (PICMAN_COLOR_SELECTOR (selection->notebook), FALSE);
   gtk_box_pack_start (GTK_BOX (selection->left_vbox), selection->notebook,
                       TRUE, TRUE, 0);
   gtk_widget_show (selection->notebook);
 
   g_signal_connect (selection->notebook, "color-changed",
-                    G_CALLBACK (gimp_color_selection_notebook_changed),
+                    G_CALLBACK (picman_color_selection_notebook_changed),
                     selection);
-  g_signal_connect (GIMP_COLOR_NOTEBOOK (selection->notebook)->notebook,
+  g_signal_connect (PICMAN_COLOR_NOTEBOOK (selection->notebook)->notebook,
                     "switch-page",
-                    G_CALLBACK (gimp_color_selection_switch_page),
+                    G_CALLBACK (picman_color_selection_switch_page),
                     selection);
 
   /*  The hbox for the color_areas  */
@@ -246,10 +246,10 @@ gimp_color_selection_init (GimpColorSelection *selection)
   gtk_container_add (GTK_CONTAINER (frame), vbox);
   gtk_widget_show (vbox);
 
-  selection->new_color = gimp_color_area_new (&selection->rgb,
+  selection->new_color = picman_color_area_new (&selection->rgb,
                                               selection->show_alpha ?
-                                              GIMP_COLOR_AREA_SMALL_CHECKS :
-                                              GIMP_COLOR_AREA_FLAT,
+                                              PICMAN_COLOR_AREA_SMALL_CHECKS :
+                                              PICMAN_COLOR_AREA_FLAT,
                                               GDK_BUTTON1_MASK |
                                               GDK_BUTTON2_MASK);
   gtk_size_group_add_widget (new_group, selection->new_color);
@@ -257,13 +257,13 @@ gimp_color_selection_init (GimpColorSelection *selection)
   gtk_widget_show (selection->new_color);
 
   g_signal_connect (selection->new_color, "color-changed",
-                    G_CALLBACK (gimp_color_selection_new_color_changed),
+                    G_CALLBACK (picman_color_selection_new_color_changed),
                     selection);
 
-  selection->old_color = gimp_color_area_new (&selection->rgb,
+  selection->old_color = picman_color_area_new (&selection->rgb,
                                               selection->show_alpha ?
-                                              GIMP_COLOR_AREA_SMALL_CHECKS :
-                                              GIMP_COLOR_AREA_FLAT,
+                                              PICMAN_COLOR_AREA_SMALL_CHECKS :
+                                              PICMAN_COLOR_AREA_FLAT,
                                               GDK_BUTTON1_MASK |
                                               GDK_BUTTON2_MASK);
   gtk_drag_dest_unset (selection->old_color);
@@ -277,23 +277,23 @@ gimp_color_selection_init (GimpColorSelection *selection)
                       TRUE, TRUE, 0);
   gtk_widget_show (selection->right_vbox);
 
-  selection->scales = gimp_color_selector_new (GIMP_TYPE_COLOR_SCALES,
+  selection->scales = picman_color_selector_new (PICMAN_TYPE_COLOR_SCALES,
                                                &selection->rgb,
                                                &selection->hsv,
                                                selection->channel);
-  gimp_color_selector_set_toggles_visible
-    (GIMP_COLOR_SELECTOR (selection->scales), TRUE);
-  gimp_color_selector_set_show_alpha (GIMP_COLOR_SELECTOR (selection->scales),
+  picman_color_selector_set_toggles_visible
+    (PICMAN_COLOR_SELECTOR (selection->scales), TRUE);
+  picman_color_selector_set_show_alpha (PICMAN_COLOR_SELECTOR (selection->scales),
                                       selection->show_alpha);
   gtk_box_pack_start (GTK_BOX (selection->right_vbox), selection->scales,
                       TRUE, TRUE, 0);
   gtk_widget_show (selection->scales);
 
   g_signal_connect (selection->scales, "channel-changed",
-                    G_CALLBACK (gimp_color_selection_channel_changed),
+                    G_CALLBACK (picman_color_selection_channel_changed),
                     selection);
   g_signal_connect (selection->scales, "color-changed",
-                    G_CALLBACK (gimp_color_selection_scales_changed),
+                    G_CALLBACK (picman_color_selection_scales_changed),
                     selection);
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
@@ -301,17 +301,17 @@ gimp_color_selection_init (GimpColorSelection *selection)
   gtk_widget_show (hbox);
 
   /*  The color picker  */
-  button = gimp_pick_button_new ();
+  button = picman_pick_button_new ();
   gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   g_signal_connect (button, "color-picked",
-                    G_CALLBACK (gimp_color_selection_color_picked),
+                    G_CALLBACK (picman_color_selection_color_picked),
                     selection);
 
   /* The hex triplet entry */
-  entry = gimp_color_hex_entry_new ();
-  gimp_help_set_help_data (entry,
+  entry = picman_color_hex_entry_new ();
+  picman_help_set_help_data (entry,
                            _("Hexadecimal color notation as used in HTML and "
                              "CSS.  This entry also accepts CSS color names."),
                            NULL);
@@ -326,22 +326,22 @@ gimp_color_selection_init (GimpColorSelection *selection)
   g_object_set_data (G_OBJECT (selection), "color-hex-entry", entry);
 
   g_signal_connect (entry, "color-changed",
-                    G_CALLBACK (gimp_color_selection_entry_changed),
+                    G_CALLBACK (picman_color_selection_entry_changed),
                     selection);
 }
 
 static void
-gimp_color_selection_set_property (GObject      *object,
+picman_color_selection_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpColorSelection *selection = GIMP_COLOR_SELECTION (object);
+  PicmanColorSelection *selection = PICMAN_COLOR_SELECTION (object);
 
   switch (property_id)
     {
     case PROP_CONFIG:
-      gimp_color_selection_set_config (selection, g_value_get_object (value));
+      picman_color_selection_set_config (selection, g_value_get_object (value));
       break;
 
     default:
@@ -352,345 +352,345 @@ gimp_color_selection_set_property (GObject      *object,
 
 
 /**
- * gimp_color_selection_new:
+ * picman_color_selection_new:
  *
- * Creates a new #GimpColorSelection widget.
+ * Creates a new #PicmanColorSelection widget.
  *
- * Return value: The new #GimpColorSelection widget.
+ * Return value: The new #PicmanColorSelection widget.
  **/
 GtkWidget *
-gimp_color_selection_new (void)
+picman_color_selection_new (void)
 {
-  return g_object_new (GIMP_TYPE_COLOR_SELECTION, NULL);
+  return g_object_new (PICMAN_TYPE_COLOR_SELECTION, NULL);
 }
 
 /**
- * gimp_color_selection_set_show_alpha:
- * @selection:  A #GimpColorSelection widget.
+ * picman_color_selection_set_show_alpha:
+ * @selection:  A #PicmanColorSelection widget.
  * @show_alpha: The new @show_alpha setting.
  *
  * Sets the @show_alpha property of the @selection widget.
  **/
 void
-gimp_color_selection_set_show_alpha (GimpColorSelection *selection,
+picman_color_selection_set_show_alpha (PicmanColorSelection *selection,
                                      gboolean            show_alpha)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTION (selection));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTION (selection));
 
   if (show_alpha != selection->show_alpha)
     {
       selection->show_alpha = show_alpha ? TRUE : FALSE;
 
-      gimp_color_selector_set_show_alpha
-        (GIMP_COLOR_SELECTOR (selection->notebook), selection->show_alpha);
-      gimp_color_selector_set_show_alpha
-        (GIMP_COLOR_SELECTOR (selection->scales), selection->show_alpha);
+      picman_color_selector_set_show_alpha
+        (PICMAN_COLOR_SELECTOR (selection->notebook), selection->show_alpha);
+      picman_color_selector_set_show_alpha
+        (PICMAN_COLOR_SELECTOR (selection->scales), selection->show_alpha);
 
-      gimp_color_area_set_type (GIMP_COLOR_AREA (selection->new_color),
+      picman_color_area_set_type (PICMAN_COLOR_AREA (selection->new_color),
                                 selection->show_alpha ?
-                                GIMP_COLOR_AREA_SMALL_CHECKS :
-                                GIMP_COLOR_AREA_FLAT);
-      gimp_color_area_set_type (GIMP_COLOR_AREA (selection->old_color),
+                                PICMAN_COLOR_AREA_SMALL_CHECKS :
+                                PICMAN_COLOR_AREA_FLAT);
+      picman_color_area_set_type (PICMAN_COLOR_AREA (selection->old_color),
                                 selection->show_alpha ?
-                                GIMP_COLOR_AREA_SMALL_CHECKS :
-                                GIMP_COLOR_AREA_FLAT);
+                                PICMAN_COLOR_AREA_SMALL_CHECKS :
+                                PICMAN_COLOR_AREA_FLAT);
     }
 }
 
 /**
- * gimp_color_selection_get_show_alpha:
- * @selection: A #GimpColorSelection widget.
+ * picman_color_selection_get_show_alpha:
+ * @selection: A #PicmanColorSelection widget.
  *
  * Returns the @selection's @show_alpha property.
  *
- * Return value: #TRUE if the #GimpColorSelection has alpha controls.
+ * Return value: #TRUE if the #PicmanColorSelection has alpha controls.
  **/
 gboolean
-gimp_color_selection_get_show_alpha (GimpColorSelection *selection)
+picman_color_selection_get_show_alpha (PicmanColorSelection *selection)
 {
-  g_return_val_if_fail (GIMP_IS_COLOR_SELECTION (selection), FALSE);
+  g_return_val_if_fail (PICMAN_IS_COLOR_SELECTION (selection), FALSE);
 
   return selection->show_alpha;
 }
 
 /**
- * gimp_color_selection_set_color:
- * @selection: A #GimpColorSelection widget.
+ * picman_color_selection_set_color:
+ * @selection: A #PicmanColorSelection widget.
  * @color:     The @color to set as current color.
  *
- * Sets the #GimpColorSelection's current color to the new @color.
+ * Sets the #PicmanColorSelection's current color to the new @color.
  **/
 void
-gimp_color_selection_set_color (GimpColorSelection *selection,
-                                const GimpRGB      *color)
+picman_color_selection_set_color (PicmanColorSelection *selection,
+                                const PicmanRGB      *color)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTION (selection));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTION (selection));
   g_return_if_fail (color != NULL);
 
   selection->rgb = *color;
-  gimp_rgb_to_hsv (&selection->rgb, &selection->hsv);
+  picman_rgb_to_hsv (&selection->rgb, &selection->hsv);
 
-  gimp_color_selection_update (selection, UPDATE_ALL);
+  picman_color_selection_update (selection, UPDATE_ALL);
 
-  gimp_color_selection_color_changed (selection);
+  picman_color_selection_color_changed (selection);
 }
 
 /**
- * gimp_color_selection_get_color:
- * @selection: A #GimpColorSelection widget.
+ * picman_color_selection_get_color:
+ * @selection: A #PicmanColorSelection widget.
  * @color:     Return location for the @selection's current @color.
  *
- * This function returns the #GimpColorSelection's current color.
+ * This function returns the #PicmanColorSelection's current color.
  **/
 void
-gimp_color_selection_get_color (GimpColorSelection *selection,
-                                GimpRGB            *color)
+picman_color_selection_get_color (PicmanColorSelection *selection,
+                                PicmanRGB            *color)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTION (selection));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTION (selection));
   g_return_if_fail (color != NULL);
 
   *color = selection->rgb;
 }
 
 /**
- * gimp_color_selection_set_old_color:
- * @selection: A #GimpColorSelection widget.
+ * picman_color_selection_set_old_color:
+ * @selection: A #PicmanColorSelection widget.
  * @color:     The @color to set as old color.
  *
- * Sets the #GimpColorSelection's old color.
+ * Sets the #PicmanColorSelection's old color.
  **/
 void
-gimp_color_selection_set_old_color (GimpColorSelection *selection,
-                                    const GimpRGB      *color)
+picman_color_selection_set_old_color (PicmanColorSelection *selection,
+                                    const PicmanRGB      *color)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTION (selection));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTION (selection));
   g_return_if_fail (color != NULL);
 
-  gimp_color_area_set_color (GIMP_COLOR_AREA (selection->old_color), color);
+  picman_color_area_set_color (PICMAN_COLOR_AREA (selection->old_color), color);
 }
 
 /**
- * gimp_color_selection_get_old_color:
- * @selection: A #GimpColorSelection widget.
+ * picman_color_selection_get_old_color:
+ * @selection: A #PicmanColorSelection widget.
  * @color:     Return location for the @selection's old @color.
  *
- * This function returns the #GimpColorSelection's old color.
+ * This function returns the #PicmanColorSelection's old color.
  **/
 void
-gimp_color_selection_get_old_color (GimpColorSelection *selection,
-                                    GimpRGB            *color)
+picman_color_selection_get_old_color (PicmanColorSelection *selection,
+                                    PicmanRGB            *color)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTION (selection));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTION (selection));
   g_return_if_fail (color != NULL);
 
-  gimp_color_area_get_color (GIMP_COLOR_AREA (selection->old_color), color);
+  picman_color_area_get_color (PICMAN_COLOR_AREA (selection->old_color), color);
 }
 
 /**
- * gimp_color_selection_reset:
- * @selection: A #GimpColorSelection widget.
+ * picman_color_selection_reset:
+ * @selection: A #PicmanColorSelection widget.
  *
- * Sets the #GimpColorSelection's current color to its old color.
+ * Sets the #PicmanColorSelection's current color to its old color.
  **/
 void
-gimp_color_selection_reset (GimpColorSelection *selection)
+picman_color_selection_reset (PicmanColorSelection *selection)
 {
-  GimpRGB color;
+  PicmanRGB color;
 
-  g_return_if_fail (GIMP_IS_COLOR_SELECTION (selection));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTION (selection));
 
-  gimp_color_area_get_color (GIMP_COLOR_AREA (selection->old_color), &color);
-  gimp_color_selection_set_color (selection, &color);
+  picman_color_area_get_color (PICMAN_COLOR_AREA (selection->old_color), &color);
+  picman_color_selection_set_color (selection, &color);
 }
 
 /**
- * gimp_color_selection_color_changed:
- * @selection: A #GimpColorSelection widget.
+ * picman_color_selection_color_changed:
+ * @selection: A #PicmanColorSelection widget.
  *
  * Emits the "color-changed" signal.
  **/
 void
-gimp_color_selection_color_changed (GimpColorSelection *selection)
+picman_color_selection_color_changed (PicmanColorSelection *selection)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTION (selection));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTION (selection));
 
   g_signal_emit (selection, selection_signals[COLOR_CHANGED], 0);
 }
 
 /**
- * gimp_color_selection_set_config:
- * @selection: A #GimpColorSelection widget.
- * @config:    A #GimpColorConfig object.
+ * picman_color_selection_set_config:
+ * @selection: A #PicmanColorSelection widget.
+ * @config:    A #PicmanColorConfig object.
  *
  * Sets the color management configuration to use with this color selection.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 void
-gimp_color_selection_set_config (GimpColorSelection *selection,
-                                 GimpColorConfig    *config)
+picman_color_selection_set_config (PicmanColorSelection *selection,
+                                 PicmanColorConfig    *config)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTION (selection));
-  g_return_if_fail (config == NULL || GIMP_IS_COLOR_CONFIG (config));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTION (selection));
+  g_return_if_fail (config == NULL || PICMAN_IS_COLOR_CONFIG (config));
 
-  gimp_color_selector_set_config (GIMP_COLOR_SELECTOR (selection->notebook),
+  picman_color_selector_set_config (PICMAN_COLOR_SELECTOR (selection->notebook),
                                   config);
-  gimp_color_selector_set_config (GIMP_COLOR_SELECTOR (selection->scales),
+  picman_color_selector_set_config (PICMAN_COLOR_SELECTOR (selection->scales),
                                   config);
 }
 
 /*  private functions  */
 
 static void
-gimp_color_selection_switch_page (GtkWidget          *widget,
+picman_color_selection_switch_page (GtkWidget          *widget,
                                   gpointer            page,
                                   guint               page_num,
-                                  GimpColorSelection *selection)
+                                  PicmanColorSelection *selection)
 {
-  GimpColorNotebook *notebook = GIMP_COLOR_NOTEBOOK (selection->notebook);
+  PicmanColorNotebook *notebook = PICMAN_COLOR_NOTEBOOK (selection->notebook);
   gboolean           sensitive;
 
   sensitive =
-    (GIMP_COLOR_SELECTOR_GET_CLASS (notebook->cur_page)->set_channel != NULL);
+    (PICMAN_COLOR_SELECTOR_GET_CLASS (notebook->cur_page)->set_channel != NULL);
 
-  gimp_color_selector_set_toggles_sensitive
-    (GIMP_COLOR_SELECTOR (selection->scales), sensitive);
+  picman_color_selector_set_toggles_sensitive
+    (PICMAN_COLOR_SELECTOR (selection->scales), sensitive);
 }
 
 static void
-gimp_color_selection_notebook_changed (GimpColorSelector  *selector,
-                                       const GimpRGB      *rgb,
-                                       const GimpHSV      *hsv,
-                                       GimpColorSelection *selection)
+picman_color_selection_notebook_changed (PicmanColorSelector  *selector,
+                                       const PicmanRGB      *rgb,
+                                       const PicmanHSV      *hsv,
+                                       PicmanColorSelection *selection)
 {
   selection->hsv = *hsv;
   selection->rgb = *rgb;
 
-  gimp_color_selection_update (selection,
+  picman_color_selection_update (selection,
                                UPDATE_SCALES | UPDATE_ENTRY | UPDATE_COLOR);
-  gimp_color_selection_color_changed (selection);
+  picman_color_selection_color_changed (selection);
 }
 
 static void
-gimp_color_selection_scales_changed (GimpColorSelector  *selector,
-                                     const GimpRGB      *rgb,
-                                     const GimpHSV      *hsv,
-                                     GimpColorSelection *selection)
+picman_color_selection_scales_changed (PicmanColorSelector  *selector,
+                                     const PicmanRGB      *rgb,
+                                     const PicmanHSV      *hsv,
+                                     PicmanColorSelection *selection)
 {
   selection->rgb = *rgb;
   selection->hsv = *hsv;
 
-  gimp_color_selection_update (selection,
+  picman_color_selection_update (selection,
                                UPDATE_ENTRY | UPDATE_NOTEBOOK | UPDATE_COLOR);
-  gimp_color_selection_color_changed (selection);
+  picman_color_selection_color_changed (selection);
 }
 
 static void
-gimp_color_selection_color_picked (GtkWidget          *widget,
-                                   const GimpRGB      *rgb,
-                                   GimpColorSelection *selection)
+picman_color_selection_color_picked (GtkWidget          *widget,
+                                   const PicmanRGB      *rgb,
+                                   PicmanColorSelection *selection)
 {
-  gimp_color_selection_set_color (selection, rgb);
+  picman_color_selection_set_color (selection, rgb);
 }
 
 static void
-gimp_color_selection_entry_changed (GimpColorHexEntry  *entry,
-                                    GimpColorSelection *selection)
+picman_color_selection_entry_changed (PicmanColorHexEntry  *entry,
+                                    PicmanColorSelection *selection)
 {
-  gimp_color_hex_entry_get_color (entry, &selection->rgb);
+  picman_color_hex_entry_get_color (entry, &selection->rgb);
 
-  gimp_rgb_to_hsv (&selection->rgb, &selection->hsv);
+  picman_rgb_to_hsv (&selection->rgb, &selection->hsv);
 
-  gimp_color_selection_update (selection,
+  picman_color_selection_update (selection,
                                UPDATE_NOTEBOOK | UPDATE_SCALES | UPDATE_COLOR);
-  gimp_color_selection_color_changed (selection);
+  picman_color_selection_color_changed (selection);
 }
 
 static void
-gimp_color_selection_channel_changed (GimpColorSelector        *selector,
-                                      GimpColorSelectorChannel  channel,
-                                      GimpColorSelection       *selection)
+picman_color_selection_channel_changed (PicmanColorSelector        *selector,
+                                      PicmanColorSelectorChannel  channel,
+                                      PicmanColorSelection       *selection)
 {
   selection->channel = channel;
 
-  gimp_color_selector_set_channel (GIMP_COLOR_SELECTOR (selection->notebook),
+  picman_color_selector_set_channel (PICMAN_COLOR_SELECTOR (selection->notebook),
                                    selection->channel);
 }
 
 static void
-gimp_color_selection_new_color_changed (GtkWidget          *widget,
-                                        GimpColorSelection *selection)
+picman_color_selection_new_color_changed (GtkWidget          *widget,
+                                        PicmanColorSelection *selection)
 {
-  gimp_color_area_get_color (GIMP_COLOR_AREA (widget), &selection->rgb);
-  gimp_rgb_to_hsv (&selection->rgb, &selection->hsv);
+  picman_color_area_get_color (PICMAN_COLOR_AREA (widget), &selection->rgb);
+  picman_rgb_to_hsv (&selection->rgb, &selection->hsv);
 
-  gimp_color_selection_update (selection,
+  picman_color_selection_update (selection,
                                UPDATE_NOTEBOOK | UPDATE_SCALES | UPDATE_ENTRY);
-  gimp_color_selection_color_changed (selection);
+  picman_color_selection_color_changed (selection);
 }
 
 static void
-gimp_color_selection_update (GimpColorSelection *selection,
+picman_color_selection_update (PicmanColorSelection *selection,
                              UpdateType          update)
 {
   if (update & UPDATE_NOTEBOOK)
     {
       g_signal_handlers_block_by_func (selection->notebook,
-                                       gimp_color_selection_notebook_changed,
+                                       picman_color_selection_notebook_changed,
                                        selection);
 
-      gimp_color_selector_set_color (GIMP_COLOR_SELECTOR (selection->notebook),
+      picman_color_selector_set_color (PICMAN_COLOR_SELECTOR (selection->notebook),
                                      &selection->rgb,
                                      &selection->hsv);
 
       g_signal_handlers_unblock_by_func (selection->notebook,
-                                         gimp_color_selection_notebook_changed,
+                                         picman_color_selection_notebook_changed,
                                          selection);
     }
 
   if (update & UPDATE_SCALES)
     {
       g_signal_handlers_block_by_func (selection->scales,
-                                       gimp_color_selection_scales_changed,
+                                       picman_color_selection_scales_changed,
                                        selection);
 
-      gimp_color_selector_set_color (GIMP_COLOR_SELECTOR (selection->scales),
+      picman_color_selector_set_color (PICMAN_COLOR_SELECTOR (selection->scales),
                                      &selection->rgb,
                                      &selection->hsv);
 
       g_signal_handlers_unblock_by_func (selection->scales,
-                                         gimp_color_selection_scales_changed,
+                                         picman_color_selection_scales_changed,
                                          selection);
     }
 
   if (update & UPDATE_ENTRY)
     {
-      GimpColorHexEntry *entry;
+      PicmanColorHexEntry *entry;
 
       entry = g_object_get_data (G_OBJECT (selection), "color-hex-entry");
 
       g_signal_handlers_block_by_func (entry,
-                                       gimp_color_selection_entry_changed,
+                                       picman_color_selection_entry_changed,
                                        selection);
 
-      gimp_color_hex_entry_set_color (entry, &selection->rgb);
+      picman_color_hex_entry_set_color (entry, &selection->rgb);
 
       g_signal_handlers_unblock_by_func (entry,
-                                         gimp_color_selection_entry_changed,
+                                         picman_color_selection_entry_changed,
                                          selection);
     }
 
   if (update & UPDATE_COLOR)
     {
       g_signal_handlers_block_by_func (selection->new_color,
-                                       gimp_color_selection_new_color_changed,
+                                       picman_color_selection_new_color_changed,
                                        selection);
 
-      gimp_color_area_set_color (GIMP_COLOR_AREA (selection->new_color),
+      picman_color_area_set_color (PICMAN_COLOR_AREA (selection->new_color),
                                  &selection->rgb);
 
       g_signal_handlers_unblock_by_func (selection->new_color,
-                                         gimp_color_selection_new_color_changed,
+                                         picman_color_selection_new_color_changed,
                                          selection);
     }
 }

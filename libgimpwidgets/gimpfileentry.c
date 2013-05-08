@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpfileentry.c
- * Copyright (C) 1999-2004 Michael Natterer <mitch@gimp.org>
+ * picmanfileentry.c
+ * Copyright (C) 1999-2004 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,32 +25,32 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#undef GIMP_DISABLE_DEPRECATED
-#include "gimpfileentry.h"
+#undef PICMAN_DISABLE_DEPRECATED
+#include "picmanfileentry.h"
 
-#include "gimphelpui.h"
+#include "picmanhelpui.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpfileentry
- * @title: GimpFileEntry
+ * SECTION: picmanfileentry
+ * @title: PicmanFileEntry
  * @short_description: Widget for entering a filename.
- * @see_also: #GimpPathEditor
+ * @see_also: #PicmanPathEditor
  *
  * This widget is used to enter filenames or directories.
  *
  * There is a #GtkEntry for entering the filename manually and a "..."
  * button which will pop up a #GtkFileChooserDialog.
  *
- * You can restrict the #GimpFileEntry to directories. In this
+ * You can restrict the #PicmanFileEntry to directories. In this
  * case the filename listbox of the #GtkFileChooser dialog will be
  * set to directory mode.
  *
- * If you specify @check_valid as #TRUE in gimp_file_entry_new() the
+ * If you specify @check_valid as #TRUE in picman_file_entry_new() the
  * entered filename will be checked for validity and a pixmap will be
  * shown which indicates if the file exists or not.
  *
@@ -66,51 +66,51 @@ enum
 };
 
 
-static void   gimp_file_entry_dispose         (GObject       *object);
+static void   picman_file_entry_dispose         (GObject       *object);
 
-static void   gimp_file_entry_entry_activate  (GtkWidget     *widget,
-                                               GimpFileEntry *entry);
-static gint   gimp_file_entry_entry_focus_out (GtkWidget     *widget,
+static void   picman_file_entry_entry_activate  (GtkWidget     *widget,
+                                               PicmanFileEntry *entry);
+static gint   picman_file_entry_entry_focus_out (GtkWidget     *widget,
                                                GdkEvent      *event,
-                                               GimpFileEntry *entry);
-static void   gimp_file_entry_browse_clicked  (GtkWidget     *widget,
-                                               GimpFileEntry *entry);
-static void   gimp_file_entry_check_filename  (GimpFileEntry *entry);
+                                               PicmanFileEntry *entry);
+static void   picman_file_entry_browse_clicked  (GtkWidget     *widget,
+                                               PicmanFileEntry *entry);
+static void   picman_file_entry_check_filename  (PicmanFileEntry *entry);
 
 
-G_DEFINE_TYPE (GimpFileEntry, gimp_file_entry, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanFileEntry, picman_file_entry, GTK_TYPE_BOX)
 
-#define parent_class gimp_file_entry_parent_class
+#define parent_class picman_file_entry_parent_class
 
-static guint gimp_file_entry_signals[LAST_SIGNAL] = { 0 };
+static guint picman_file_entry_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_file_entry_class_init (GimpFileEntryClass *klass)
+picman_file_entry_class_init (PicmanFileEntryClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   /**
-   * GimpFileEntry::filename-changed:
+   * PicmanFileEntry::filename-changed:
    *
    * This signal is emitted whenever the user changes the filename.
    **/
-  gimp_file_entry_signals[FILENAME_CHANGED] =
+  picman_file_entry_signals[FILENAME_CHANGED] =
     g_signal_new ("filename-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpFileEntryClass, filename_changed),
+                  G_STRUCT_OFFSET (PicmanFileEntryClass, filename_changed),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->dispose   = gimp_file_entry_dispose;
+  object_class->dispose   = picman_file_entry_dispose;
 
   klass->filename_changed = NULL;
 }
 
 static void
-gimp_file_entry_init (GimpFileEntry *entry)
+picman_file_entry_init (PicmanFileEntry *entry)
 {
   GtkWidget *image;
 
@@ -134,7 +134,7 @@ gimp_file_entry_init (GimpFileEntry *entry)
   gtk_widget_show (image);
 
   g_signal_connect (entry->browse_button, "clicked",
-                    G_CALLBACK (gimp_file_entry_browse_clicked),
+                    G_CALLBACK (picman_file_entry_browse_clicked),
                     entry);
 
   entry->entry = gtk_entry_new ();
@@ -142,17 +142,17 @@ gimp_file_entry_init (GimpFileEntry *entry)
   gtk_widget_show (entry->entry);
 
   g_signal_connect (entry->entry, "activate",
-                    G_CALLBACK (gimp_file_entry_entry_activate),
+                    G_CALLBACK (picman_file_entry_entry_activate),
                     entry);
   g_signal_connect (entry->entry, "focus-out-event",
-                    G_CALLBACK (gimp_file_entry_entry_focus_out),
+                    G_CALLBACK (picman_file_entry_entry_focus_out),
                     entry);
 }
 
 static void
-gimp_file_entry_dispose (GObject *object)
+picman_file_entry_dispose (GObject *object)
 {
-  GimpFileEntry *entry = GIMP_FILE_ENTRY (object);
+  PicmanFileEntry *entry = PICMAN_FILE_ENTRY (object);
 
   if (entry->file_dialog)
     {
@@ -170,8 +170,8 @@ gimp_file_entry_dispose (GObject *object)
 }
 
 /**
- * gimp_file_entry_new:
- * @title:       The title of the #GimpFileEntry dialog.
+ * picman_file_entry_new:
+ * @title:       The title of the #PicmanFileEntry dialog.
  * @filename:    The initial filename.
  * @dir_only:    %TRUE if the file entry should accept directories only.
  * @check_valid: %TRUE if the widget should check if the entered file
@@ -179,23 +179,23 @@ gimp_file_entry_dispose (GObject *object)
  *
  * You should use #GtkFileChooserButton instead.
  *
- * Returns: A pointer to the new #GimpFileEntry widget.
+ * Returns: A pointer to the new #PicmanFileEntry widget.
  **/
 GtkWidget *
-gimp_file_entry_new (const gchar *title,
+picman_file_entry_new (const gchar *title,
                      const gchar *filename,
                      gboolean     dir_only,
                      gboolean     check_valid)
 {
-  GimpFileEntry *entry;
+  PicmanFileEntry *entry;
 
-  entry = g_object_new (GIMP_TYPE_FILE_ENTRY, NULL);
+  entry = g_object_new (PICMAN_TYPE_FILE_ENTRY, NULL);
 
   entry->title       = g_strdup (title);
   entry->dir_only    = dir_only;
   entry->check_valid = check_valid;
 
-  gimp_help_set_help_data (entry->browse_button,
+  picman_help_set_help_data (entry->browse_button,
                            dir_only ?
                            _("Open a file selector to browse your folders") :
                            _("Open a file selector to browse your files"),
@@ -209,13 +209,13 @@ gimp_file_entry_new (const gchar *title,
       gtk_widget_show (entry->file_exists);
     }
 
-  gimp_file_entry_set_filename (entry, filename);
+  picman_file_entry_set_filename (entry, filename);
 
   return GTK_WIDGET (entry);
 }
 
 /**
- * gimp_file_entry_get_filename:
+ * picman_file_entry_get_filename:
  * @entry: The file entry you want to know the filename from.
  *
  * Note that you have to g_free() the returned string.
@@ -223,12 +223,12 @@ gimp_file_entry_new (const gchar *title,
  * Returns: The file or directory the user has entered.
  **/
 gchar *
-gimp_file_entry_get_filename (GimpFileEntry *entry)
+picman_file_entry_get_filename (PicmanFileEntry *entry)
 {
   gchar *utf8;
   gchar *filename;
 
-  g_return_val_if_fail (GIMP_IS_FILE_ENTRY (entry), NULL);
+  g_return_val_if_fail (PICMAN_IS_FILE_ENTRY (entry), NULL);
 
   utf8 = gtk_editable_get_chars (GTK_EDITABLE (entry->entry), 0, -1);
 
@@ -240,21 +240,21 @@ gimp_file_entry_get_filename (GimpFileEntry *entry)
 }
 
 /**
- * gimp_file_entry_set_filename:
+ * picman_file_entry_set_filename:
  * @entry:    The file entry you want to set the filename for.
  * @filename: The new filename.
  *
- * If you specified @check_valid as %TRUE in gimp_file_entry_new()
- * the #GimpFileEntry will immediately check the validity of the file
+ * If you specified @check_valid as %TRUE in picman_file_entry_new()
+ * the #PicmanFileEntry will immediately check the validity of the file
  * name.
  **/
 void
-gimp_file_entry_set_filename (GimpFileEntry *entry,
+picman_file_entry_set_filename (PicmanFileEntry *entry,
                               const gchar   *filename)
 {
   gchar *utf8;
 
-  g_return_if_fail (GIMP_IS_FILE_ENTRY (entry));
+  g_return_if_fail (PICMAN_IS_FILE_ENTRY (entry));
 
   if (filename)
     utf8 = g_filename_to_utf8 (filename, -1, NULL, NULL, NULL);
@@ -266,12 +266,12 @@ gimp_file_entry_set_filename (GimpFileEntry *entry,
 
   /*  update everything
    */
-  gimp_file_entry_entry_activate (entry->entry, entry);
+  picman_file_entry_entry_activate (entry->entry, entry);
 }
 
 static void
-gimp_file_entry_entry_activate (GtkWidget     *widget,
-                                GimpFileEntry *entry)
+picman_file_entry_entry_activate (GtkWidget     *widget,
+                                PicmanFileEntry *entry)
 {
   gchar *utf8;
   gchar *filename;
@@ -290,11 +290,11 @@ gimp_file_entry_entry_activate (GtkWidget     *widget,
   filename = g_filename_from_utf8 (utf8, -1, NULL, NULL, NULL);
 
   g_signal_handlers_block_by_func (entry->entry,
-                                   gimp_file_entry_entry_activate,
+                                   picman_file_entry_entry_activate,
                                    entry);
   gtk_entry_set_text (GTK_ENTRY (entry->entry), utf8);
   g_signal_handlers_unblock_by_func (entry->entry,
-                                     gimp_file_entry_entry_activate,
+                                     picman_file_entry_entry_activate,
                                      entry);
 
   if (entry->file_dialog)
@@ -304,35 +304,35 @@ gimp_file_entry_entry_activate (GtkWidget     *widget,
   g_free (filename);
   g_free (utf8);
 
-  gimp_file_entry_check_filename (entry);
+  picman_file_entry_check_filename (entry);
 
   gtk_editable_set_position (GTK_EDITABLE (entry->entry), -1);
 
-  g_signal_emit (entry, gimp_file_entry_signals[FILENAME_CHANGED], 0);
+  g_signal_emit (entry, picman_file_entry_signals[FILENAME_CHANGED], 0);
 }
 
 static gboolean
-gimp_file_entry_entry_focus_out (GtkWidget     *widget,
+picman_file_entry_entry_focus_out (GtkWidget     *widget,
                                  GdkEvent      *event,
-                                 GimpFileEntry *entry)
+                                 PicmanFileEntry *entry)
 {
-  gimp_file_entry_entry_activate (widget, entry);
+  picman_file_entry_entry_activate (widget, entry);
 
   return FALSE;
 }
 
-/*  local callback of gimp_file_entry_browse_clicked()  */
+/*  local callback of picman_file_entry_browse_clicked()  */
 static void
-gimp_file_entry_chooser_response (GtkWidget     *dialog,
+picman_file_entry_chooser_response (GtkWidget     *dialog,
                                   gint           response_id,
-                                  GimpFileEntry *entry)
+                                  PicmanFileEntry *entry)
 {
   if (response_id == GTK_RESPONSE_OK)
     {
       gchar *filename;
 
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-      gimp_file_entry_set_filename (entry, filename);
+      picman_file_entry_set_filename (entry, filename);
       g_free (filename);
     }
 
@@ -340,8 +340,8 @@ gimp_file_entry_chooser_response (GtkWidget     *dialog,
 }
 
 static void
-gimp_file_entry_browse_clicked (GtkWidget     *widget,
-                                GimpFileEntry *entry)
+picman_file_entry_browse_clicked (GtkWidget     *widget,
+                                PicmanFileEntry *entry)
 {
   GtkFileChooser *chooser;
   gchar          *utf8;
@@ -383,10 +383,10 @@ gimp_file_entry_browse_clicked (GtkWidget     *widget,
 
       gtk_window_set_position (GTK_WINDOW (chooser), GTK_WIN_POS_MOUSE);
       gtk_window_set_role (GTK_WINDOW (chooser),
-                           "gimp-file-entry-file-dialog");
+                           "picman-file-entry-file-dialog");
 
       g_signal_connect (chooser, "response",
-                        G_CALLBACK (gimp_file_entry_chooser_response),
+                        G_CALLBACK (picman_file_entry_chooser_response),
                         entry);
       g_signal_connect (chooser, "delete-event",
                         G_CALLBACK (gtk_true),
@@ -410,7 +410,7 @@ gimp_file_entry_browse_clicked (GtkWidget     *widget,
 }
 
 static void
-gimp_file_entry_check_filename (GimpFileEntry *entry)
+picman_file_entry_check_filename (PicmanFileEntry *entry)
 {
   gchar    *utf8;
   gchar    *filename;

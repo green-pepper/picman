@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * Copyright (C) 1996 Torsten Martinsen
@@ -23,17 +23,17 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
-#include <libgimpmath/gimpmath.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
+#include <libpicmanmath/picmanmath.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC          "plug-in-oilify"
 #define PLUG_IN_ENHANCED_PROC "plug-in-oilify-enhanced"
 #define PLUG_IN_BINARY        "oilify"
-#define PLUG_IN_ROLE          "gimp-oilify"
+#define PLUG_IN_ROLE          "picman-oilify"
 
 #define SCALE_WIDTH    125
 #define HISTSIZE       256
@@ -59,17 +59,17 @@ typedef struct
 static void      query          (void);
 static void      run            (const gchar      *name,
                                  gint              nparams,
-                                 const GimpParam  *param,
+                                 const PicmanParam  *param,
                                  gint             *nreturn_vals,
-                                 GimpParam       **return_vals);
+                                 PicmanParam       **return_vals);
 
-static void      oilify         (GimpDrawable     *drawable,
-                                 GimpPreview      *preview);
+static void      oilify         (PicmanDrawable     *drawable,
+                                 PicmanPreview      *preview);
 
-static gboolean  oilify_dialog  (GimpDrawable     *drawable);
+static gboolean  oilify_dialog  (PicmanDrawable     *drawable);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -94,28 +94,28 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"       },
-    { GIMP_PDB_IMAGE,    "image",     "Input image (unused)"                 },
-    { GIMP_PDB_DRAWABLE, "drawable",  "Input drawable"                       },
-    { GIMP_PDB_INT32,    "mask-size", "Oil paint mask size"                  },
-    { GIMP_PDB_INT32,    "mode",      "Algorithm { RGB (0), INTENSITY (1) }" }
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"       },
+    { PICMAN_PDB_IMAGE,    "image",     "Input image (unused)"                 },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "Input drawable"                       },
+    { PICMAN_PDB_INT32,    "mask-size", "Oil paint mask size"                  },
+    { PICMAN_PDB_INT32,    "mode",      "Algorithm { RGB (0), INTENSITY (1) }" }
   };
 
-  static const GimpParamDef args_enhanced[] =
+  static const PicmanParamDef args_enhanced[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",      "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"       },
-    { GIMP_PDB_IMAGE,    "image",         "Input image (unused)"             },
-    { GIMP_PDB_DRAWABLE, "drawable",      "Input drawable"                   },
-    { GIMP_PDB_INT32,    "mode",          "Algorithm { RGB (0), INTENSITY (1) }" },
-    { GIMP_PDB_INT32,    "mask-size",     "Oil paint mask size"              },
-    { GIMP_PDB_DRAWABLE, "mask-size-map", "Mask size control map"            },
-    { GIMP_PDB_INT32,    "exponent",      "Oil paint exponent"               },
-    { GIMP_PDB_DRAWABLE, "exponent-map",  "Exponent control map"             }
+    { PICMAN_PDB_INT32,    "run-mode",      "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }"       },
+    { PICMAN_PDB_IMAGE,    "image",         "Input image (unused)"             },
+    { PICMAN_PDB_DRAWABLE, "drawable",      "Input drawable"                   },
+    { PICMAN_PDB_INT32,    "mode",          "Algorithm { RGB (0), INTENSITY (1) }" },
+    { PICMAN_PDB_INT32,    "mask-size",     "Oil paint mask size"              },
+    { PICMAN_PDB_DRAWABLE, "mask-size-map", "Mask size control map"            },
+    { PICMAN_PDB_INT32,    "exponent",      "Oil paint exponent"               },
+    { PICMAN_PDB_DRAWABLE, "exponent-map",  "Exponent control map"             }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Smear colors to simulate an oil painting"),
                           "This function performs the well-known oil-paint "
                           "effect on the specified drawable.",
@@ -124,13 +124,13 @@ query (void)
                           "1996",
                           N_("Oili_fy..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Artistic");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Artistic");
 
-  gimp_install_procedure (PLUG_IN_ENHANCED_PROC,
+  picman_install_procedure (PLUG_IN_ENHANCED_PROC,
                           N_("Smear colors to simulate an oil painting"),
                           "This function performs the well-known oil-paint "
                           "effect on the specified drawable.",
@@ -139,7 +139,7 @@ query (void)
                           "2007",
                           NULL,
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args_enhanced), 0,
                           args_enhanced, NULL);
 }
@@ -147,47 +147,47 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
 
   run_mode = param[0].data.d_int32;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
-  gimp_tile_cache_ntiles (2 * drawable->ntile_cols);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
+  picman_tile_cache_ntiles (2 * drawable->ntile_cols);
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &ovals);
+      picman_get_data (PLUG_IN_PROC, &ovals);
 
       /*  First acquire information with a dialog  */
       if (! oilify_dialog (drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Interpret the arguments per the name used to invoke us  */
       if (! strcmp (name, PLUG_IN_PROC))
         {
           if (nparams != 5)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
@@ -199,7 +199,7 @@ run (const gchar      *name,
         {
           if (nparams < 5 || nparams > 8)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
@@ -222,17 +222,17 @@ run (const gchar      *name,
                   ovals.exponent < 1.0  ||
                   (ovals.mode != MODE_INTEN && ovals.mode != MODE_RGB) ||
                   (ovals.mode == MODE_INTEN &&
-                   ! gimp_drawable_is_rgb (drawable->drawable_id)))
+                   ! picman_drawable_is_rgb (drawable->drawable_id)))
                 {
-                  status = GIMP_PDB_CALLING_ERROR;
+                  status = PICMAN_PDB_CALLING_ERROR;
                 }
             }
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &ovals);
+      picman_get_data (PLUG_IN_PROC, &ovals);
       break;
 
     default:
@@ -240,30 +240,30 @@ run (const gchar      *name,
     }
 
   /*  Make sure that the drawable is gray or RGB color  */
-  if ((status == GIMP_PDB_SUCCESS) &&
-      (gimp_drawable_is_rgb (drawable->drawable_id) ||
-       gimp_drawable_is_gray (drawable->drawable_id)))
+  if ((status == PICMAN_PDB_SUCCESS) &&
+      (picman_drawable_is_rgb (drawable->drawable_id) ||
+       picman_drawable_is_gray (drawable->drawable_id)))
     {
-      gimp_progress_init (_("Oil painting"));
+      picman_progress_init (_("Oil painting"));
 
       oilify (drawable, NULL);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
       /*  Store data  */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &ovals, sizeof (OilifyVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &ovals, sizeof (OilifyVals));
     }
   else
     {
-      /* gimp_message ("oilify: cannot operate on indexed color images"); */
-      status = GIMP_PDB_EXECUTION_ERROR;
+      /* picman_message ("oilify: cannot operate on indexed color images"); */
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 /*
@@ -276,7 +276,7 @@ get_map_value (const guchar *src,
   gfloat value;
 
   if (bpp >= 3)
-    value = GIMP_RGB_LUMINANCE (src[0], src[1], src[2]);
+    value = PICMAN_RGB_LUMINANCE (src[0], src[1], src[2]);
   else
     value = *src;
 
@@ -433,20 +433,20 @@ weighted_average_color (gint    hist[HISTSIZE],
  * values in a circle of mask_size diameter centered at (x,y).
  */
 static void
-oilify (GimpDrawable *drawable,
-        GimpPreview  *preview)
+oilify (PicmanDrawable *drawable,
+        PicmanPreview  *preview)
 {
   gboolean      use_inten;
   gboolean      use_msmap = FALSE;
   gboolean      use_emap = FALSE;
-  GimpDrawable *mask_size_map_drawable = NULL;
-  GimpDrawable *exponent_map_drawable = NULL;
-  GimpPixelRgn  mask_size_map_rgn;
-  GimpPixelRgn  exponent_map_rgn;
+  PicmanDrawable *mask_size_map_drawable = NULL;
+  PicmanDrawable *exponent_map_drawable = NULL;
+  PicmanPixelRgn  mask_size_map_rgn;
+  PicmanPixelRgn  exponent_map_rgn;
   gint          msmap_bpp = 0;
   gint          emap_bpp = 0;
-  GimpPixelRgn  dest_rgn;
-  GimpPixelRgn *regions[3];
+  PicmanPixelRgn  dest_rgn;
+  PicmanPixelRgn *regions[3];
   gint          n_regions;
   gint          bpp;
   gint         *sqr_lut;
@@ -465,15 +465,15 @@ oilify (GimpDrawable *drawable,
   /*  Get the selection bounds  */
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
 
       x2 = x1 + width;
       y2 = y1 + height;
     }
   else
     {
-      gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+      picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
       width  = x2 - x1;
       height = y2 - y1;
     }
@@ -502,8 +502,8 @@ oilify (GimpDrawable *drawable,
     {
       use_msmap = TRUE;
 
-      mask_size_map_drawable = gimp_drawable_get (ovals.mask_size_map);
-      gimp_pixel_rgn_init (&mask_size_map_rgn, mask_size_map_drawable,
+      mask_size_map_drawable = picman_drawable_get (ovals.mask_size_map);
+      picman_pixel_rgn_init (&mask_size_map_rgn, mask_size_map_drawable,
                            x1, y1, width, height, FALSE, FALSE);
 
       msmap_bpp = mask_size_map_drawable->bpp;
@@ -513,23 +513,23 @@ oilify (GimpDrawable *drawable,
     {
       use_emap = TRUE;
 
-      exponent_map_drawable = gimp_drawable_get (ovals.exponent_map);
-      gimp_pixel_rgn_init (&exponent_map_rgn, exponent_map_drawable,
+      exponent_map_drawable = picman_drawable_get (ovals.exponent_map);
+      picman_pixel_rgn_init (&exponent_map_rgn, exponent_map_drawable,
                            x1, y1, width, height, FALSE, FALSE);
 
       emap_bpp = exponent_map_drawable->bpp;
     }
 
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        x1, y1, width, height, (preview == NULL), TRUE);
 
   {
-    GimpPixelRgn src_rgn;
+    PicmanPixelRgn src_rgn;
 
-    gimp_pixel_rgn_init (&src_rgn, drawable,
+    picman_pixel_rgn_init (&src_rgn, drawable,
                          x1, y1, width, height, FALSE, FALSE);
     src_buf = g_new (guchar, width * height * bpp);
-    gimp_pixel_rgn_get_rect (&src_rgn, src_buf, x1, y1, width, height);
+    picman_pixel_rgn_get_rect (&src_rgn, src_buf, x1, y1, width, height);
   }
 
   /*
@@ -554,7 +554,7 @@ oilify (GimpDrawable *drawable,
            src += bpp,
            dest++)
         {
-          *dest = (guchar) GIMP_RGB_LUMINANCE (src[0], src[1], src[2]);
+          *dest = (guchar) PICMAN_RGB_LUMINANCE (src[0], src[1], src[2]);
         }
     }
 
@@ -565,9 +565,9 @@ oilify (GimpDrawable *drawable,
   if (use_emap)
     regions[n_regions++] = &exponent_map_rgn;
 
-  for (pr = gimp_pixel_rgns_register2 (n_regions, regions);
+  for (pr = picman_pixel_rgns_register2 (n_regions, regions);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       gint    y;
       guchar *dest_row;
@@ -706,22 +706,22 @@ oilify (GimpDrawable *drawable,
 
       if (preview)
         {
-          gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview),
+          picman_drawable_preview_draw_region (PICMAN_DRAWABLE_PREVIEW (preview),
                                              &dest_rgn);
         }
       else
         {
           progress += dest_rgn.w * dest_rgn.h;
-          gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+          picman_progress_update ((gdouble) progress / (gdouble) max_progress);
         }
     } /* for pr */
 
   /*  Detach from the map drawables  */
   if (mask_size_map_drawable)
-    gimp_drawable_detach (mask_size_map_drawable);
+    picman_drawable_detach (mask_size_map_drawable);
 
   if (exponent_map_drawable)
-    gimp_drawable_detach (exponent_map_drawable);
+    picman_drawable_detach (exponent_map_drawable);
 
   if (src_inten_buf)
     g_free (src_inten_buf);
@@ -731,11 +731,11 @@ oilify (GimpDrawable *drawable,
 
   if (!preview)
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
       /*  Update the oil-painted region  */
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x1, y1, width, height);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x1, y1, width, height);
     }
 }
 
@@ -749,14 +749,14 @@ oilify_map_constrain (gint32   image_id G_GNUC_UNUSED,
                       gint32   drawable_id,
                       gpointer data)
 {
-  GimpDrawable *drawable = data;
+  PicmanDrawable *drawable = data;
 
-  return (gimp_drawable_width (drawable_id)  == (gint) drawable->width &&
-          gimp_drawable_height (drawable_id) == (gint) drawable->height);
+  return (picman_drawable_width (drawable_id)  == (gint) drawable->width &&
+          picman_drawable_height (drawable_id) == (gint) drawable->height);
 }
 
 static gint
-oilify_dialog (GimpDrawable *drawable)
+oilify_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -768,16 +768,16 @@ oilify_dialog (GimpDrawable *drawable)
   gboolean   can_use_mode_inten;
   gboolean   ret;
 
-  can_use_mode_inten = gimp_drawable_is_rgb (drawable->drawable_id);
+  can_use_mode_inten = picman_drawable_is_rgb (drawable->drawable_id);
 
   if (! can_use_mode_inten && ovals.mode == MODE_INTEN)
     ovals.mode = MODE_RGB;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Oilify"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Oilify"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -789,7 +789,7 @@ oilify_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -797,7 +797,7 @@ oilify_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
   g_signal_connect_swapped (preview, "invalidated",
@@ -813,16 +813,16 @@ oilify_dialog (GimpDrawable *drawable)
    * Mask-size scale
    */
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Mask size:"), SCALE_WIDTH, 0,
                               ovals.mask_size, 3.0, 50.0, 1.0, 5.0, 0,
                               TRUE, 0.0, 0.0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &ovals.mask_size);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*
@@ -836,22 +836,22 @@ oilify_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &ovals.use_mask_size_map);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*
    * Mask-size map combo
    */
 
-  combo = gimp_drawable_combo_box_new (oilify_map_constrain, drawable);
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo), ovals.mask_size_map,
-                              G_CALLBACK (gimp_int_combo_box_get_active),
+  combo = picman_drawable_combo_box_new (oilify_map_constrain, drawable);
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo), ovals.mask_size_map,
+                              G_CALLBACK (picman_int_combo_box_get_active),
                               &ovals.mask_size_map);
   g_signal_connect_swapped (combo, "changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_table_attach (GTK_TABLE (table), combo, 0, 3, 2, 3,
@@ -866,16 +866,16 @@ oilify_dialog (GimpDrawable *drawable)
    * Exponent scale
    */
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 3,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 3,
                               _("_Exponent:"), SCALE_WIDTH, 0,
                               ovals.exponent, 1.0, 20.0, 1.0, 4.0, 0,
                               TRUE, 0.0, 0.0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &ovals.exponent);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*
@@ -889,22 +889,22 @@ oilify_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &ovals.use_exponent_map);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*
    * Exponent map combo
    */
 
-  combo = gimp_drawable_combo_box_new (oilify_map_constrain, drawable);
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo), ovals.exponent_map,
-                              G_CALLBACK (gimp_int_combo_box_get_active),
+  combo = picman_drawable_combo_box_new (oilify_map_constrain, drawable);
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo), ovals.exponent_map,
+                              G_CALLBACK (picman_int_combo_box_get_active),
                               &ovals.exponent_map);
   g_signal_connect_swapped (combo, "changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_table_attach (GTK_TABLE (table), combo, 0, 3, 5, 6,
@@ -926,15 +926,15 @@ oilify_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &ovals.mode);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  ret = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  ret = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

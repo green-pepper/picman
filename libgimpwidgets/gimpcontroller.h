@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcontroller.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmancontroller.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GIMP_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
-#error GimpController is unstable API under construction
+#ifndef PICMAN_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
+#error PicmanController is unstable API under construction
 #endif
 
-#ifndef __GIMP_CONTROLLER_H__
-#define __GIMP_CONTROLLER_H__
+#ifndef __PICMAN_CONTROLLER_H__
+#define __PICMAN_CONTROLLER_H__
 
 G_BEGIN_DECLS
 
@@ -32,66 +32,66 @@ G_BEGIN_DECLS
 
 
 /**
- * GimpControllerEventType:
- * @GIMP_CONTROLLER_EVENT_TRIGGER: the event is a simple trigger
- * @GIMP_CONTROLLER_EVENT_VALUE:   the event carries a double value
+ * PicmanControllerEventType:
+ * @PICMAN_CONTROLLER_EVENT_TRIGGER: the event is a simple trigger
+ * @PICMAN_CONTROLLER_EVENT_VALUE:   the event carries a double value
  *
- * Event types for #GimpController.
+ * Event types for #PicmanController.
  **/
 typedef enum
 {
-  GIMP_CONTROLLER_EVENT_TRIGGER,
-  GIMP_CONTROLLER_EVENT_VALUE
-} GimpControllerEventType;
+  PICMAN_CONTROLLER_EVENT_TRIGGER,
+  PICMAN_CONTROLLER_EVENT_VALUE
+} PicmanControllerEventType;
 
 
-typedef struct _GimpControllerEventAny     GimpControllerEventAny;
-typedef struct _GimpControllerEventTrigger GimpControllerEventTrigger;
-typedef struct _GimpControllerEventValue   GimpControllerEventValue;
-typedef union  _GimpControllerEvent        GimpControllerEvent;
+typedef struct _PicmanControllerEventAny     PicmanControllerEventAny;
+typedef struct _PicmanControllerEventTrigger PicmanControllerEventTrigger;
+typedef struct _PicmanControllerEventValue   PicmanControllerEventValue;
+typedef union  _PicmanControllerEvent        PicmanControllerEvent;
 
-struct _GimpControllerEventAny
+struct _PicmanControllerEventAny
 {
-  GimpControllerEventType  type;
-  GimpController          *source;
+  PicmanControllerEventType  type;
+  PicmanController          *source;
   gint                     event_id;
 };
 
-struct _GimpControllerEventTrigger
+struct _PicmanControllerEventTrigger
 {
-  GimpControllerEventType  type;
-  GimpController          *source;
+  PicmanControllerEventType  type;
+  PicmanController          *source;
   gint                     event_id;
 };
 
-struct _GimpControllerEventValue
+struct _PicmanControllerEventValue
 {
-  GimpControllerEventType  type;
-  GimpController          *source;
+  PicmanControllerEventType  type;
+  PicmanController          *source;
   gint                     event_id;
   GValue                   value;
 };
 
-union _GimpControllerEvent
+union _PicmanControllerEvent
 {
-  GimpControllerEventType    type;
-  GimpControllerEventAny     any;
-  GimpControllerEventTrigger trigger;
-  GimpControllerEventValue   value;
+  PicmanControllerEventType    type;
+  PicmanControllerEventAny     any;
+  PicmanControllerEventTrigger trigger;
+  PicmanControllerEventValue   value;
 };
 
 
-#define GIMP_TYPE_CONTROLLER            (gimp_controller_get_type ())
-#define GIMP_CONTROLLER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CONTROLLER, GimpController))
-#define GIMP_CONTROLLER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CONTROLLER, GimpControllerClass))
-#define GIMP_IS_CONTROLLER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CONTROLLER))
-#define GIMP_IS_CONTROLLER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CONTROLLER))
-#define GIMP_CONTROLLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CONTROLLER, GimpControllerClass))
+#define PICMAN_TYPE_CONTROLLER            (picman_controller_get_type ())
+#define PICMAN_CONTROLLER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CONTROLLER, PicmanController))
+#define PICMAN_CONTROLLER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CONTROLLER, PicmanControllerClass))
+#define PICMAN_IS_CONTROLLER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CONTROLLER))
+#define PICMAN_IS_CONTROLLER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CONTROLLER))
+#define PICMAN_CONTROLLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CONTROLLER, PicmanControllerClass))
 
 
-typedef struct _GimpControllerClass GimpControllerClass;
+typedef struct _PicmanControllerClass PicmanControllerClass;
 
-struct _GimpController
+struct _PicmanController
 {
   GObject   parent_instance;
 
@@ -99,7 +99,7 @@ struct _GimpController
   gchar    *state;
 };
 
-struct _GimpControllerClass
+struct _PicmanControllerClass
 {
   GObjectClass  parent_class;
 
@@ -108,41 +108,41 @@ struct _GimpControllerClass
   const gchar  *help_id;
 
   /*  virtual functions  */
-  gint          (* get_n_events)    (GimpController            *controller);
-  const gchar * (* get_event_name)  (GimpController            *controller,
+  gint          (* get_n_events)    (PicmanController            *controller);
+  const gchar * (* get_event_name)  (PicmanController            *controller,
                                      gint                       event_id);
-  const gchar * (* get_event_blurb) (GimpController            *controller,
+  const gchar * (* get_event_blurb) (PicmanController            *controller,
                                      gint                       event_id);
 
   /*  signals  */
-  gboolean      (* event)           (GimpController            *controller,
-                                     const GimpControllerEvent *event);
+  gboolean      (* event)           (PicmanController            *controller,
+                                     const PicmanControllerEvent *event);
 
   const gchar  *stock_id;
 
   /* Padding for future expansion */
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType            gimp_controller_get_type        (void) G_GNUC_CONST;
-GimpController * gimp_controller_new             (GType           controller_type);
+GType            picman_controller_get_type        (void) G_GNUC_CONST;
+PicmanController * picman_controller_new             (GType           controller_type);
 
-gint             gimp_controller_get_n_events    (GimpController *controller);
-const gchar    * gimp_controller_get_event_name  (GimpController *controller,
+gint             picman_controller_get_n_events    (PicmanController *controller);
+const gchar    * picman_controller_get_event_name  (PicmanController *controller,
                                                   gint            event_id);
-const gchar    * gimp_controller_get_event_blurb (GimpController *controller,
+const gchar    * picman_controller_get_event_blurb (PicmanController *controller,
                                                   gint            event_id);
 
 
 /*  protected  */
 
-gboolean         gimp_controller_event (GimpController            *controller,
-                                        const GimpControllerEvent *event);
+gboolean         picman_controller_event (PicmanController            *controller,
+                                        const PicmanControllerEvent *event);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_CONTROLLER_H__ */
+#endif /* __PICMAN_CONTROLLER_H__ */

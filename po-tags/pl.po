@@ -8,7 +8,7 @@
 # Aviary.pl <gnomepl@aviary.pl>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-tags\n"
+"Project-Id-Version: picman-tags\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-12-28 02:25+0100\n"
 "PO-Revision-Date: 2011-01-17 16:34+0100\n"
@@ -23,10 +23,10 @@ msgstr ""
 "X-Poedit-Language: Polish\n"
 "X-Poedit-Country: Poland\n"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:1
+#: ../data/tags/picman-tags-default.xml.in.h:1
 msgid "fuzzy"
 msgstr "rozmyty"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:2
+#: ../data/tags/picman-tags-default.xml.in.h:2
 msgid "round"
 msgstr "zaokrąglony"

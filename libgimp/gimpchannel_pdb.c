@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpchannel_pdb.c
+ * picmanchannel_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpchannel
- * @title: gimpchannel
+ * SECTION: picmanchannel
+ * @title: picmanchannel
  * @short_description: Functions for manipulating channels.
  *
  * Functions for manipulating channels.
@@ -35,7 +35,7 @@
 
 
 /**
- * _gimp_channel_new:
+ * _picman_channel_new:
  * @image_ID: The image to which to add the channel.
  * @width: The channel width.
  * @height: The channel height.
@@ -48,7 +48,7 @@
  * This procedure creates a new channel with the specified width and
  * height. Name, opacity, and color are also supplied parameters. The
  * new channel still needs to be added to the image, as this is not
- * automatic. Add the new channel with the gimp_image_insert_channel()
+ * automatic. Add the new channel with the picman_image_insert_channel()
  * command. Other attributes such as channel show masked, should be set
  * with explicit procedure calls. The channel's contents are undefined
  * initially.
@@ -56,37 +56,37 @@
  * Returns: The newly created channel.
  **/
 gint32
-_gimp_channel_new (gint32         image_ID,
+_picman_channel_new (gint32         image_ID,
                    gint           width,
                    gint           height,
                    const gchar   *name,
                    gdouble        opacity,
-                   const GimpRGB *color)
+                   const PicmanRGB *color)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 channel_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-channel-new",
+  return_vals = picman_run_procedure ("picman-channel-new",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, width,
-                                    GIMP_PDB_INT32, height,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_FLOAT, opacity,
-                                    GIMP_PDB_COLOR, color,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, width,
+                                    PICMAN_PDB_INT32, height,
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_FLOAT, opacity,
+                                    PICMAN_PDB_COLOR, color,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     channel_ID = return_vals[1].data.d_channel;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return channel_ID;
 }
 
 /**
- * gimp_channel_new_from_component:
+ * picman_channel_new_from_component:
  * @image_ID: The image to which to add the channel.
  * @component: The image component.
  * @name: The channel name.
@@ -97,34 +97,34 @@ _gimp_channel_new (gint32         image_ID,
  *
  * Returns: The newly created channel.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint32
-gimp_channel_new_from_component (gint32           image_ID,
-                                 GimpChannelType  component,
+picman_channel_new_from_component (gint32           image_ID,
+                                 PicmanChannelType  component,
                                  const gchar     *name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 channel_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-channel-new-from-component",
+  return_vals = picman_run_procedure ("picman-channel-new-from-component",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, component,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, component,
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     channel_ID = return_vals[1].data.d_channel;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return channel_ID;
 }
 
 /**
- * gimp_channel_copy:
+ * picman_channel_copy:
  * @channel_ID: The channel to copy.
  *
  * Copy a channel.
@@ -134,27 +134,27 @@ gimp_channel_new_from_component (gint32           image_ID,
  * Returns: The newly copied channel.
  **/
 gint32
-gimp_channel_copy (gint32 channel_ID)
+picman_channel_copy (gint32 channel_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 channel_copy_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-channel-copy",
+  return_vals = picman_run_procedure ("picman-channel-copy",
                                     &nreturn_vals,
-                                    GIMP_PDB_CHANNEL, channel_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_CHANNEL, channel_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     channel_copy_ID = return_vals[1].data.d_channel;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return channel_copy_ID;
 }
 
 /**
- * gimp_channel_combine_masks:
+ * picman_channel_combine_masks:
  * @channel1_ID: The channel1.
  * @channel2_ID: The channel2.
  * @operation: The selection operation.
@@ -169,34 +169,34 @@ gimp_channel_copy (gint32 channel_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_channel_combine_masks (gint32         channel1_ID,
+picman_channel_combine_masks (gint32         channel1_ID,
                             gint32         channel2_ID,
-                            GimpChannelOps operation,
+                            PicmanChannelOps operation,
                             gint           offx,
                             gint           offy)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-channel-combine-masks",
+  return_vals = picman_run_procedure ("picman-channel-combine-masks",
                                     &nreturn_vals,
-                                    GIMP_PDB_CHANNEL, channel1_ID,
-                                    GIMP_PDB_CHANNEL, channel2_ID,
-                                    GIMP_PDB_INT32, operation,
-                                    GIMP_PDB_INT32, offx,
-                                    GIMP_PDB_INT32, offy,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_CHANNEL, channel1_ID,
+                                    PICMAN_PDB_CHANNEL, channel2_ID,
+                                    PICMAN_PDB_INT32, operation,
+                                    PICMAN_PDB_INT32, offx,
+                                    PICMAN_PDB_INT32, offy,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_channel_get_show_masked:
+ * picman_channel_get_show_masked:
  * @channel_ID: The channel.
  *
  * Get the composite method of the specified channel.
@@ -208,27 +208,27 @@ gimp_channel_combine_masks (gint32         channel1_ID,
  * Returns: The channel composite method.
  **/
 gboolean
-gimp_channel_get_show_masked (gint32 channel_ID)
+picman_channel_get_show_masked (gint32 channel_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean show_masked = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-channel-get-show-masked",
+  return_vals = picman_run_procedure ("picman-channel-get-show-masked",
                                     &nreturn_vals,
-                                    GIMP_PDB_CHANNEL, channel_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_CHANNEL, channel_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     show_masked = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return show_masked;
 }
 
 /**
- * gimp_channel_set_show_masked:
+ * picman_channel_set_show_masked:
  * @channel_ID: The channel.
  * @show_masked: The new channel composite method.
  *
@@ -241,28 +241,28 @@ gimp_channel_get_show_masked (gint32 channel_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_channel_set_show_masked (gint32   channel_ID,
+picman_channel_set_show_masked (gint32   channel_ID,
                               gboolean show_masked)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-channel-set-show-masked",
+  return_vals = picman_run_procedure ("picman-channel-set-show-masked",
                                     &nreturn_vals,
-                                    GIMP_PDB_CHANNEL, channel_ID,
-                                    GIMP_PDB_INT32, show_masked,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_CHANNEL, channel_ID,
+                                    PICMAN_PDB_INT32, show_masked,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_channel_get_opacity:
+ * picman_channel_get_opacity:
  * @channel_ID: The channel.
  *
  * Get the opacity of the specified channel.
@@ -272,27 +272,27 @@ gimp_channel_set_show_masked (gint32   channel_ID,
  * Returns: The channel opacity.
  **/
 gdouble
-gimp_channel_get_opacity (gint32 channel_ID)
+picman_channel_get_opacity (gint32 channel_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble opacity = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-channel-get-opacity",
+  return_vals = picman_run_procedure ("picman-channel-get-opacity",
                                     &nreturn_vals,
-                                    GIMP_PDB_CHANNEL, channel_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_CHANNEL, channel_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     opacity = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return opacity;
 }
 
 /**
- * gimp_channel_set_opacity:
+ * picman_channel_set_opacity:
  * @channel_ID: The channel.
  * @opacity: The new channel opacity.
  *
@@ -303,28 +303,28 @@ gimp_channel_get_opacity (gint32 channel_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_channel_set_opacity (gint32  channel_ID,
+picman_channel_set_opacity (gint32  channel_ID,
                           gdouble opacity)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-channel-set-opacity",
+  return_vals = picman_run_procedure ("picman-channel-set-opacity",
                                     &nreturn_vals,
-                                    GIMP_PDB_CHANNEL, channel_ID,
-                                    GIMP_PDB_FLOAT, opacity,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_CHANNEL, channel_ID,
+                                    PICMAN_PDB_FLOAT, opacity,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_channel_get_color:
+ * picman_channel_get_color:
  * @channel_ID: The channel.
  * @color: The channel compositing color.
  *
@@ -335,30 +335,30 @@ gimp_channel_set_opacity (gint32  channel_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_channel_get_color (gint32   channel_ID,
-                        GimpRGB *color)
+picman_channel_get_color (gint32   channel_ID,
+                        PicmanRGB *color)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-channel-get-color",
+  return_vals = picman_run_procedure ("picman-channel-get-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_CHANNEL, channel_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_CHANNEL, channel_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     *color = return_vals[1].data.d_color;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_channel_set_color:
+ * picman_channel_set_color:
  * @channel_ID: The channel.
  * @color: The new channel compositing color.
  *
@@ -369,22 +369,22 @@ gimp_channel_get_color (gint32   channel_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_channel_set_color (gint32         channel_ID,
-                        const GimpRGB *color)
+picman_channel_set_color (gint32         channel_ID,
+                        const PicmanRGB *color)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-channel-set-color",
+  return_vals = picman_run_procedure ("picman-channel-set-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_CHANNEL, channel_ID,
-                                    GIMP_PDB_COLOR, color,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_CHANNEL, channel_ID,
+                                    PICMAN_PDB_COLOR, color,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

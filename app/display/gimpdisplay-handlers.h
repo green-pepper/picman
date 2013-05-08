@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_HANDLERS_H__
-#define __GIMP_DISPLAY_HANDLERS_H__
+#ifndef __PICMAN_DISPLAY_HANDLERS_H__
+#define __PICMAN_DISPLAY_HANDLERS_H__
 
 
-void   gimp_display_connect    (GimpDisplay *display);
-void   gimp_display_disconnect (GimpDisplay *display);
+void   picman_display_connect    (PicmanDisplay *display);
+void   picman_display_disconnect (PicmanDisplay *display);
 
 
-#endif /*  __GIMP_DISPLAY_HANDLERS_H__  */
+#endif /*  __PICMAN_DISPLAY_HANDLERS_H__  */

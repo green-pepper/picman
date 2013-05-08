@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,38 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GROUP_LAYER_UNDO_H__
-#define __GIMP_GROUP_LAYER_UNDO_H__
+#ifndef __PICMAN_GROUP_LAYER_UNDO_H__
+#define __PICMAN_GROUP_LAYER_UNDO_H__
 
 
-#include "gimpitemundo.h"
+#include "picmanitemundo.h"
 
 
-#define GIMP_TYPE_GROUP_LAYER_UNDO            (gimp_group_layer_undo_get_type ())
-#define GIMP_GROUP_LAYER_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_GROUP_LAYER_UNDO, GimpGroupLayerUndo))
-#define GIMP_GROUP_LAYER_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_GROUP_LAYER_UNDO, GimpGroupLayerUndoClass))
-#define GIMP_IS_GROUP_LAYER_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_GROUP_LAYER_UNDO))
-#define GIMP_IS_GROUP_LAYER_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_GROUP_LAYER_UNDO))
-#define GIMP_GROUP_LAYER_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_GROUP_LAYER_UNDO, GimpGroupLayerUndoClass))
+#define PICMAN_TYPE_GROUP_LAYER_UNDO            (picman_group_layer_undo_get_type ())
+#define PICMAN_GROUP_LAYER_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_GROUP_LAYER_UNDO, PicmanGroupLayerUndo))
+#define PICMAN_GROUP_LAYER_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_GROUP_LAYER_UNDO, PicmanGroupLayerUndoClass))
+#define PICMAN_IS_GROUP_LAYER_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_GROUP_LAYER_UNDO))
+#define PICMAN_IS_GROUP_LAYER_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_GROUP_LAYER_UNDO))
+#define PICMAN_GROUP_LAYER_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_GROUP_LAYER_UNDO, PicmanGroupLayerUndoClass))
 
 
-typedef struct _GimpGroupLayerUndoClass GimpGroupLayerUndoClass;
+typedef struct _PicmanGroupLayerUndoClass PicmanGroupLayerUndoClass;
 
-struct _GimpGroupLayerUndo
+struct _PicmanGroupLayerUndo
 {
-  GimpItemUndo       parent_instance;
+  PicmanItemUndo       parent_instance;
 
-  GimpImageBaseType  prev_type;
-  GimpPrecision      prev_precision;
+  PicmanImageBaseType  prev_type;
+  PicmanPrecision      prev_precision;
 };
 
-struct _GimpGroupLayerUndoClass
+struct _PicmanGroupLayerUndoClass
 {
-  GimpItemUndoClass  parent_class;
+  PicmanItemUndoClass  parent_class;
 };
 
 
-GType   gimp_group_layer_undo_get_type (void) G_GNUC_CONST;
+GType   picman_group_layer_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_GROUP_LAYER_UNDO_H__ */
+#endif /* __PICMAN_GROUP_LAYER_UNDO_H__ */

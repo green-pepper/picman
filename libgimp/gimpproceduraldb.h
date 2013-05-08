@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2000 Peter Mattis and Spencer Kimball
  *
- * gimpproceduraldb.h
+ * picmanproceduraldb.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,36 +18,36 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
-#ifndef __GIMP_PROCEDURAL_DB_H__
-#define __GIMP_PROCEDURAL_DB_H__
+#ifndef __PICMAN_PROCEDURAL_DB_H__
+#define __PICMAN_PROCEDURAL_DB_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-gboolean gimp_procedural_db_proc_info    (const gchar      *procedure,
+gboolean picman_procedural_db_proc_info    (const gchar      *procedure,
                                           gchar           **blurb,
                                           gchar           **help,
                                           gchar           **author,
                                           gchar           **copyright,
                                           gchar           **date,
-                                          GimpPDBProcType  *proc_type,
+                                          PicmanPDBProcType  *proc_type,
                                           gint             *num_args,
                                           gint             *num_values,
-                                          GimpParamDef    **args,
-                                          GimpParamDef    **return_vals);
-gboolean gimp_procedural_db_get_data     (const gchar      *identifier,
+                                          PicmanParamDef    **args,
+                                          PicmanParamDef    **return_vals);
+gboolean picman_procedural_db_get_data     (const gchar      *identifier,
                                           gpointer          data);
-gboolean gimp_procedural_db_set_data     (const gchar      *identifier,
+gboolean picman_procedural_db_set_data     (const gchar      *identifier,
                                           gconstpointer     data,
                                           guint32           bytes);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_PROCEDURAL_DB_H__ */
+#endif /* __PICMAN_PROCEDURAL_DB_H__ */

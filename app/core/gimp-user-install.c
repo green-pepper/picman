@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-user-install.c
+ * picman-user-install.c
  * Copyright (C) 2000-2008 Michael Natterer and Sven Neumann
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
  */
 
 /* This file contains functions to help migrate the settings from a
- * previous GIMP version to be used with the current (newer) version.
+ * previous PICMAN version to be used with the current (newer) version.
  */
 
 #include "config.h"
@@ -39,24 +39,24 @@
 #include <glib-object.h>
 
 #ifdef G_OS_WIN32
-#include <libgimpbase/gimpwin32-io.h>
+#include <libpicmanbase/picmanwin32-io.h>
 #endif
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
-#include "config/gimpconfig-file.h"
-#include "config/gimprc.h"
+#include "config/picmanconfig-file.h"
+#include "config/picmanrc.h"
 
-#include "gimp-templates.h"
-#include "gimp-tags.h"
-#include "gimp-user-install.h"
+#include "picman-templates.h"
+#include "picman-tags.h"
+#include "picman-user-install.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-struct _GimpUserInstall
+struct _PicmanUserInstall
 {
   gboolean                verbose;
 
@@ -66,7 +66,7 @@ struct _GimpUserInstall
 
   const gchar            *migrate;
 
-  GimpUserInstallLogFunc  log;
+  PicmanUserInstallLogFunc  log;
   gpointer                log_data;
 };
 
@@ -74,14 +74,14 @@ typedef enum
 {
   USER_INSTALL_MKDIR, /* Create the directory        */
   USER_INSTALL_COPY   /* Copy from sysconf directory */
-} GimpUserInstallAction;
+} PicmanUserInstallAction;
 
 static const struct
 {
   const gchar           *name;
-  GimpUserInstallAction  action;
+  PicmanUserInstallAction  action;
 }
-gimp_user_install_items[] =
+picman_user_install_items[] =
 {
   { "gtkrc",           USER_INSTALL_COPY  },
   { "menurc",          USER_INSTALL_COPY  },
@@ -106,55 +106,55 @@ gimp_user_install_items[] =
   { "fractalexplorer", USER_INSTALL_MKDIR },
   { "gfig",            USER_INSTALL_MKDIR },
   { "gflare",          USER_INSTALL_MKDIR },
-  { "gimpressionist",  USER_INSTALL_MKDIR }
+  { "picmanressionist",  USER_INSTALL_MKDIR }
 };
 
 
-static gboolean  user_install_detect_old         (GimpUserInstall    *install,
-                                                  const gchar        *gimp_dir);
-static gchar *   user_install_old_style_gimpdir  (void);
+static gboolean  user_install_detect_old         (PicmanUserInstall    *install,
+                                                  const gchar        *picman_dir);
+static gchar *   user_install_old_style_picmandir  (void);
 
-static void      user_install_log                (GimpUserInstall    *install,
+static void      user_install_log                (PicmanUserInstall    *install,
                                                   const gchar        *format,
                                                   ...) G_GNUC_PRINTF (2, 3);
-static void      user_install_log_newline        (GimpUserInstall    *install);
-static void      user_install_log_error          (GimpUserInstall    *install,
+static void      user_install_log_newline        (PicmanUserInstall    *install);
+static void      user_install_log_error          (PicmanUserInstall    *install,
                                                   GError            **error);
 
-static gboolean  user_install_mkdir              (GimpUserInstall    *install,
+static gboolean  user_install_mkdir              (PicmanUserInstall    *install,
                                                   const gchar        *dirname);
-static gboolean  user_install_mkdir_with_parents (GimpUserInstall    *install,
+static gboolean  user_install_mkdir_with_parents (PicmanUserInstall    *install,
                                                   const gchar        *dirname);
-static gboolean  user_install_file_copy          (GimpUserInstall    *install,
+static gboolean  user_install_file_copy          (PicmanUserInstall    *install,
                                                   const gchar        *source,
                                                   const gchar        *dest,
                                                   const gchar        *old_options_regexp,
                                                   GRegexEvalCallback  update_callback);
-static gboolean  user_install_dir_copy           (GimpUserInstall    *install,
+static gboolean  user_install_dir_copy           (PicmanUserInstall    *install,
                                                   const gchar        *source,
                                                   const gchar        *base);
 
-static gboolean  user_install_create_files       (GimpUserInstall    *install);
-static gboolean  user_install_migrate_files      (GimpUserInstall    *install);
+static gboolean  user_install_create_files       (PicmanUserInstall    *install);
+static gboolean  user_install_migrate_files      (PicmanUserInstall    *install);
 
 
 /*  public functions  */
 
-GimpUserInstall *
-gimp_user_install_new (gboolean verbose)
+PicmanUserInstall *
+picman_user_install_new (gboolean verbose)
 {
-  GimpUserInstall *install = g_slice_new0 (GimpUserInstall);
+  PicmanUserInstall *install = g_slice_new0 (PicmanUserInstall);
 
   install->verbose = verbose;
 
-  user_install_detect_old (install, gimp_directory ());
+  user_install_detect_old (install, picman_directory ());
 
   if (! install->old_dir)
     {
       /* if the default XDG-style config directory was not found, try
        * the "old-style" path in the home folder.
        */
-      gchar *dir = user_install_old_style_gimpdir ();
+      gchar *dir = user_install_old_style_picmandir ();
       user_install_detect_old (install, dir);
       g_free (dir);
     }
@@ -163,23 +163,23 @@ gimp_user_install_new (gboolean verbose)
 }
 
 gboolean
-gimp_user_install_run (GimpUserInstall *install)
+picman_user_install_run (PicmanUserInstall *install)
 {
   gchar *dirname;
 
   g_return_val_if_fail (install != NULL, FALSE);
 
-  dirname = g_filename_display_name (gimp_directory ());
+  dirname = g_filename_display_name (picman_directory ());
 
   if (install->migrate)
     user_install_log (install,
-		      _("It seems you have used GIMP %s before.  "
-			"GIMP will now migrate your user settings to '%s'."),
+		      _("It seems you have used PICMAN %s before.  "
+			"PICMAN will now migrate your user settings to '%s'."),
 		      install->migrate, dirname);
   else
     user_install_log (install,
-		      _("It appears that you are using GIMP for the "
-			"first time.  GIMP will now create a folder "
+		      _("It appears that you are using PICMAN for the "
+			"first time.  PICMAN will now create a folder "
 			"named '%s' and copy some files to it."),
 			dirname);
 
@@ -187,7 +187,7 @@ gimp_user_install_run (GimpUserInstall *install)
 
   user_install_log_newline (install);
 
-  if (! user_install_mkdir_with_parents (install, gimp_directory ()))
+  if (! user_install_mkdir_with_parents (install, picman_directory ()))
     return FALSE;
 
   if (install->migrate)
@@ -198,18 +198,18 @@ gimp_user_install_run (GimpUserInstall *install)
 }
 
 void
-gimp_user_install_free (GimpUserInstall *install)
+picman_user_install_free (PicmanUserInstall *install)
 {
   g_return_if_fail (install != NULL);
 
   g_free (install->old_dir);
 
-  g_slice_free (GimpUserInstall, install);
+  g_slice_free (PicmanUserInstall, install);
 }
 
 void
-gimp_user_install_set_log_handler (GimpUserInstall        *install,
-                                   GimpUserInstallLogFunc  log,
+picman_user_install_set_log_handler (PicmanUserInstall        *install,
+                                   PicmanUserInstallLogFunc  log,
                                    gpointer                user_data)
 {
   g_return_if_fail (install != NULL);
@@ -222,30 +222,30 @@ gimp_user_install_set_log_handler (GimpUserInstall        *install,
 /*  Local functions  */
 
 static gboolean
-user_install_detect_old (GimpUserInstall *install,
-                         const gchar     *gimp_dir)
+user_install_detect_old (PicmanUserInstall *install,
+                         const gchar     *picman_dir)
 {
-  gchar    *dir     = g_strdup (gimp_dir);
+  gchar    *dir     = g_strdup (picman_dir);
   gchar    *version;
   gboolean  migrate = FALSE;
 
-  version = strstr (dir, GIMP_APP_VERSION);
+  version = strstr (dir, PICMAN_APP_VERSION);
 
   if (version)
     {
       gint i;
 
-      for (i = (GIMP_MINOR_VERSION & ~1); i >= 0; i -= 2)
+      for (i = (PICMAN_MINOR_VERSION & ~1); i >= 0; i -= 2)
         {
-          /*  we assume that GIMP_APP_VERSION is in the form '2.x'  */
+          /*  we assume that PICMAN_APP_VERSION is in the form '2.x'  */
           g_snprintf (version + 2, 2, "%d", i);
 
           migrate = g_file_test (dir, G_FILE_TEST_IS_DIR);
 
           if (migrate)
             {
-#ifdef GIMP_UNSTABLE
-	      g_printerr ("gimp-user-install: migrating from %s\n", dir);
+#ifdef PICMAN_UNSTABLE
+	      g_printerr ("picman-user-install: migrating from %s\n", dir);
 #endif
               install->old_major = 2;
               install->old_minor = i;
@@ -269,14 +269,14 @@ user_install_detect_old (GimpUserInstall *install,
 }
 
 static gchar *
-user_install_old_style_gimpdir (void)
+user_install_old_style_picmandir (void)
 {
   const gchar *home_dir = g_get_home_dir ();
-  gchar       *gimp_dir = NULL;
+  gchar       *picman_dir = NULL;
 
   if (home_dir)
     {
-      gimp_dir = g_build_filename (home_dir, ".gimp-" GIMP_APP_VERSION, NULL);
+      picman_dir = g_build_filename (home_dir, ".picman-" PICMAN_APP_VERSION, NULL);
     }
   else
     {
@@ -303,19 +303,19 @@ user_install_old_style_gimpdir (void)
 #ifndef G_OS_WIN32
       g_message ("warning: no home directory.");
 #endif
-      subdir_name = g_strconcat (".gimp-" GIMP_APP_VERSION ".", user_name, NULL);
-      gimp_dir = g_build_filename (gimp_data_directory (),
+      subdir_name = g_strconcat (".picman-" PICMAN_APP_VERSION ".", user_name, NULL);
+      picman_dir = g_build_filename (picman_data_directory (),
                                    subdir_name,
                                    NULL);
       g_free (user_name);
       g_free (subdir_name);
     }
 
-  return gimp_dir;
+  return picman_dir;
 }
 
 static void
-user_install_log (GimpUserInstall *install,
+user_install_log (PicmanUserInstall *install,
                   const gchar     *format,
                   ...)
 {
@@ -340,7 +340,7 @@ user_install_log (GimpUserInstall *install,
 }
 
 static void
-user_install_log_newline (GimpUserInstall *install)
+user_install_log_newline (PicmanUserInstall *install)
 {
   if (install->verbose)
     g_print ("\n");
@@ -350,7 +350,7 @@ user_install_log_newline (GimpUserInstall *install)
 }
 
 static void
-user_install_log_error (GimpUserInstall  *install,
+user_install_log_error (PicmanUserInstall  *install,
                         GError          **error)
 {
   if (error && *error)
@@ -368,7 +368,7 @@ user_install_log_error (GimpUserInstall  *install,
 }
 
 static gboolean
-user_install_file_copy (GimpUserInstall    *install,
+user_install_file_copy (PicmanUserInstall    *install,
                         const gchar        *source,
                         const gchar        *dest,
                         const gchar        *old_options_regexp,
@@ -378,10 +378,10 @@ user_install_file_copy (GimpUserInstall    *install,
   gboolean  success;
 
   user_install_log (install, _("Copying file '%s' from '%s'..."),
-                    gimp_filename_to_utf8 (dest),
-                    gimp_filename_to_utf8 (source));
+                    picman_filename_to_utf8 (dest),
+                    picman_filename_to_utf8 (source));
 
-  success = gimp_config_file_copy (source, dest, old_options_regexp, update_callback, &error);
+  success = picman_config_file_copy (source, dest, old_options_regexp, update_callback, &error);
 
   user_install_log_error (install, &error);
 
@@ -389,11 +389,11 @@ user_install_file_copy (GimpUserInstall    *install,
 }
 
 static gboolean
-user_install_mkdir (GimpUserInstall *install,
+user_install_mkdir (PicmanUserInstall *install,
                     const gchar     *dirname)
 {
   user_install_log (install, _("Creating folder '%s'..."),
-                    gimp_filename_to_utf8 (dirname));
+                    picman_filename_to_utf8 (dirname));
 
   if (g_mkdir (dirname,
                S_IRUSR | S_IWUSR | S_IXUSR |
@@ -404,7 +404,7 @@ user_install_mkdir (GimpUserInstall *install,
 
       g_set_error (&error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Cannot create folder '%s': %s"),
-                   gimp_filename_to_utf8 (dirname), g_strerror (errno));
+                   picman_filename_to_utf8 (dirname), g_strerror (errno));
 
       user_install_log_error (install, &error);
 
@@ -415,11 +415,11 @@ user_install_mkdir (GimpUserInstall *install,
 }
 
 static gboolean
-user_install_mkdir_with_parents (GimpUserInstall *install,
+user_install_mkdir_with_parents (PicmanUserInstall *install,
                                  const gchar     *dirname)
 {
   user_install_log (install, _("Creating folder '%s'..."),
-                    gimp_filename_to_utf8 (dirname));
+                    picman_filename_to_utf8 (dirname));
 
   if (g_mkdir_with_parents (dirname,
                             S_IRUSR | S_IWUSR | S_IXUSR |
@@ -430,7 +430,7 @@ user_install_mkdir_with_parents (GimpUserInstall *install,
 
       g_set_error (&error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Cannot create folder '%s': %s"),
-                   gimp_filename_to_utf8 (dirname), g_strerror (errno));
+                   picman_filename_to_utf8 (dirname), g_strerror (errno));
 
       user_install_log_error (install, &error);
 
@@ -473,7 +473,7 @@ user_update_menurc_over20 (const GMatchInfo *matched_value,
 }
 
 static gboolean
-user_install_dir_copy (GimpUserInstall *install,
+user_install_dir_copy (PicmanUserInstall *install,
                        const gchar     *source,
                        const gchar     *base)
 {
@@ -538,23 +538,23 @@ user_install_dir_copy (GimpUserInstall *install,
 }
 
 static gboolean
-user_install_create_files (GimpUserInstall *install)
+user_install_create_files (PicmanUserInstall *install)
 {
   gchar dest[1024];
   gchar source[1024];
   gint  i;
 
-  for (i = 0; i < G_N_ELEMENTS (gimp_user_install_items); i++)
+  for (i = 0; i < G_N_ELEMENTS (picman_user_install_items); i++)
     {
       g_snprintf (dest, sizeof (dest), "%s%c%s",
-                  gimp_directory (),
+                  picman_directory (),
                   G_DIR_SEPARATOR,
-                  gimp_user_install_items[i].name);
+                  picman_user_install_items[i].name);
 
       if (g_file_test (dest, G_FILE_TEST_EXISTS))
         continue;
 
-      switch (gimp_user_install_items[i].action)
+      switch (picman_user_install_items[i].action)
         {
         case USER_INSTALL_MKDIR:
           if (! user_install_mkdir (install, dest))
@@ -563,8 +563,8 @@ user_install_create_files (GimpUserInstall *install)
 
         case USER_INSTALL_COPY:
           g_snprintf (source, sizeof (source), "%s%c%s",
-                      gimp_sysconf_directory (), G_DIR_SEPARATOR,
-                      gimp_user_install_items[i].name);
+                      picman_sysconf_directory (), G_DIR_SEPARATOR,
+                      picman_user_install_items[i].name);
 
           if (! user_install_file_copy (install, source, dest, NULL, NULL))
             return FALSE;
@@ -573,13 +573,13 @@ user_install_create_files (GimpUserInstall *install)
     }
 
   g_snprintf (dest, sizeof (dest), "%s%c%s",
-              gimp_directory (), G_DIR_SEPARATOR, "tags.xml");
+              picman_directory (), G_DIR_SEPARATOR, "tags.xml");
 
   if (! g_file_test (dest, G_FILE_TEST_IS_REGULAR))
     {
       /* if there was no tags.xml, install it with default tag set.
        */
-      if (! gimp_tags_user_install ())
+      if (! picman_tags_user_install ())
         {
           return FALSE;
         }
@@ -589,12 +589,12 @@ user_install_create_files (GimpUserInstall *install)
 }
 
 static gboolean
-user_install_migrate_files (GimpUserInstall *install)
+user_install_migrate_files (PicmanUserInstall *install)
 {
   GDir        *dir;
   const gchar *basename;
   gchar        dest[1024];
-  GimpRc      *gimprc;
+  PicmanRc      *picmanrc;
   GError      *error = NULL;
 
   dir = g_dir_open (install->old_dir, 0, &error);
@@ -615,7 +615,7 @@ user_install_migrate_files (GimpUserInstall *install)
         {
           /*  skip these files for all old versions  */
           if (strcmp (basename, "documents") == 0      ||
-              g_str_has_prefix (basename, "gimpswap.") ||
+              g_str_has_prefix (basename, "picmanswap.") ||
               strcmp (basename, "pluginrc") == 0       ||
               strcmp (basename, "themerc") == 0        ||
               strcmp (basename, "toolrc") == 0)
@@ -625,7 +625,7 @@ user_install_migrate_files (GimpUserInstall *install)
 
           if (strcmp (basename, "menurc") == 0)
             {
-              /*  skip menurc for gimp 2.0 as the format has changed  */
+              /*  skip menurc for picman 2.0 as the format has changed  */
               if (install->old_minor == 0)
                 goto next_file;
               update_pattern = MENURC_OVER20_UPDATE_PATTERN;
@@ -633,7 +633,7 @@ user_install_migrate_files (GimpUserInstall *install)
             }
 
           g_snprintf (dest, sizeof (dest), "%s%c%s",
-                      gimp_directory (), G_DIR_SEPARATOR, basename);
+                      picman_directory (), G_DIR_SEPARATOR, basename);
 
           user_install_file_copy (install, source, dest, update_pattern, update_callback);
         }
@@ -646,7 +646,7 @@ user_install_migrate_files (GimpUserInstall *install)
               goto next_file;
             }
 
-          user_install_dir_copy (install, source, gimp_directory ());
+          user_install_dir_copy (install, source, picman_directory ());
         }
 
     next_file:
@@ -656,17 +656,17 @@ user_install_migrate_files (GimpUserInstall *install)
   /*  create the tmp directory that was explicitly not copied  */
 
   g_snprintf (dest, sizeof (dest), "%s%c%s",
-              gimp_directory (), G_DIR_SEPARATOR, "tmp");
+              picman_directory (), G_DIR_SEPARATOR, "tmp");
 
   user_install_mkdir (install, dest);
   g_dir_close (dir);
 
-  gimp_templates_migrate (install->old_dir);
+  picman_templates_migrate (install->old_dir);
 
-  gimprc = gimp_rc_new (NULL, NULL, FALSE);
-  gimp_rc_migrate (gimprc);
-  gimp_rc_save (gimprc);
-  g_object_unref (gimprc);
+  picmanrc = picman_rc_new (NULL, NULL, FALSE);
+  picman_rc_migrate (picmanrc);
+  picman_rc_save (picmanrc);
+  g_object_unref (picmanrc);
 
   return TRUE;
 }

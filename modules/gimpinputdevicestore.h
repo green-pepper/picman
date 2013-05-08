@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpinputdevicestore.h
- * Copyright (C) 2007  Sven Neumann <sven@gimp.org>
+ * picmaninputdevicestore.h
+ * Copyright (C) 2007  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_INPUT_DEVICE_STORE_H__
-#define __GIMP_INPUT_DEVICE_STORE_H__
+#ifndef __PICMAN_INPUT_DEVICE_STORE_H__
+#define __PICMAN_INPUT_DEVICE_STORE_H__
 
 
-#define GIMP_TYPE_INPUT_DEVICE_STORE    (gimp_input_device_store_get_type ())
-#define GIMP_INPUT_DEVICE_STORE(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_INPUT_DEVICE_STORE, GimpInputDeviceStore))
-#define GIMP_IS_INPUT_DEVICE_STORE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_INPUT_DEVICE_STORE))
+#define PICMAN_TYPE_INPUT_DEVICE_STORE    (picman_input_device_store_get_type ())
+#define PICMAN_INPUT_DEVICE_STORE(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_INPUT_DEVICE_STORE, PicmanInputDeviceStore))
+#define PICMAN_IS_INPUT_DEVICE_STORE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_INPUT_DEVICE_STORE))
 
-typedef struct _GimpInputDeviceStore GimpInputDeviceStore;
+typedef struct _PicmanInputDeviceStore PicmanInputDeviceStore;
 
 
-void                   gimp_input_device_store_register_types  (GTypeModule           *module);
+void                   picman_input_device_store_register_types  (GTypeModule           *module);
 
-GType                  gimp_input_device_store_get_type        (void);
+GType                  picman_input_device_store_get_type        (void);
 
-GimpInputDeviceStore * gimp_input_device_store_new             (void);
-gchar                * gimp_input_device_store_get_device_file (GimpInputDeviceStore  *store,
+PicmanInputDeviceStore * picman_input_device_store_new             (void);
+gchar                * picman_input_device_store_get_device_file (PicmanInputDeviceStore  *store,
                                                                 const gchar           *udi);
-GError               * gimp_input_device_store_get_error       (GimpInputDeviceStore  *store);
+GError               * picman_input_device_store_get_error       (PicmanInputDeviceStore  *store);
 
 
-#endif  /* __GIMP_INPUT_DEVICE_STORE_H__ */
+#endif  /* __PICMAN_INPUT_DEVICE_STORE_H__ */

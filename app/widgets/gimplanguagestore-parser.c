@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimplanguagestore-parser.c
- * Copyright (C) 2008, 2009  Sven Neumann <sven@gimp.org>
+ * picmanlanguagestore-parser.c
+ * Copyright (C) 2008, 2009  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +24,16 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "widgets-types.h"
 
-#include "config/gimpxmlparser.h"
+#include "config/picmanxmlparser.h"
 
-#include "gimplanguagestore.h"
-#include "gimplanguagestore-parser.h"
+#include "picmanlanguagestore.h"
+#include "picmanlanguagestore-parser.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 typedef enum
@@ -49,7 +49,7 @@ typedef struct
   IsoCodesParserState  state;
   IsoCodesParserState  last_known_state;
   gint                 unknown_depth;
-  GimpLanguageStore   *store;
+  PicmanLanguageStore   *store;
 } IsoCodesParser;
 
 
@@ -77,8 +77,8 @@ iso_codes_parser_init (void)
     return;
 
 #ifdef G_OS_WIN32
-  /*  on Win32, assume iso-codes is installed in the same location as GIMP  */
-  bindtextdomain ("iso_639", gimp_locale_directory ());
+  /*  on Win32, assume iso-codes is installed in the same location as PICMAN  */
+  bindtextdomain ("iso_639", picman_locale_directory ());
 #else
   bindtextdomain ("iso_639", ISO_CODES_LOCALEDIR);
 #endif
@@ -89,7 +89,7 @@ iso_codes_parser_init (void)
 }
 
 gboolean
-gimp_language_store_parse_iso_codes (GimpLanguageStore  *store,
+picman_language_store_parse_iso_codes (PicmanLanguageStore  *store,
                                      GError            **error)
 {
 #ifdef HAVE_ISO_CODES
@@ -102,33 +102,33 @@ gimp_language_store_parse_iso_codes (GimpLanguageStore  *store,
       NULL   /*  error        */
     };
 
-  GimpXmlParser   *xml_parser;
+  PicmanXmlParser   *xml_parser;
   gchar           *filename;
   gboolean         success;
   IsoCodesParser   parser = { 0, };
 
-  g_return_val_if_fail (GIMP_IS_LANGUAGE_STORE (store), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LANGUAGE_STORE (store), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   iso_codes_parser_init ();
 
   parser.store = g_object_ref (store);
 
-  xml_parser = gimp_xml_parser_new (&markup_parser, &parser);
+  xml_parser = picman_xml_parser_new (&markup_parser, &parser);
 
 #ifdef G_OS_WIN32
-  filename = g_build_filename (gimp_data_directory (),
+  filename = g_build_filename (picman_data_directory (),
                                "..", "..", "xml", "iso-codes", "iso_639.xml",
                                NULL);
 #else
   filename = g_build_filename (ISO_CODES_LOCATION, "iso_639.xml", NULL);
 #endif
 
-  success = gimp_xml_parser_parse_file (xml_parser, filename, error);
+  success = picman_xml_parser_parse_file (xml_parser, filename, error);
 
   g_free (filename);
 
-  gimp_xml_parser_free (xml_parser);
+  picman_xml_parser_free (xml_parser);
   g_object_unref (parser.store);
 
   return success;
@@ -173,12 +173,12 @@ iso_codes_parser_entry (IsoCodesParser  *parser,
         {
           gchar *first = g_strndup (lang, semicolon - lang);
 
-          gimp_language_store_add (parser->store, first, code);
+          picman_language_store_add (parser->store, first, code);
           g_free (first);
         }
       else
         {
-          gimp_language_store_add (parser->store, lang, code);
+          picman_language_store_add (parser->store, lang, code);
         }
     }
 }

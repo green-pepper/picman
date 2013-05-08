@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,57 +21,57 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "menus-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "plug-in/gimppluginmanager.h"
-#include "plug-in/gimppluginmanager-locale-domain.h"
-#include "plug-in/gimppluginprocedure.h"
+#include "plug-in/picmanpluginmanager.h"
+#include "plug-in/picmanpluginmanager-locale-domain.h"
+#include "plug-in/picmanpluginprocedure.h"
 
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmanuimanager.h"
 
 #include "plug-in-menus.h"
 
-#include "gimp-log.h"
-#include "gimp-intl.h"
+#include "picman-log.h"
+#include "picman-intl.h"
 
 
 typedef struct _PlugInMenuEntry PlugInMenuEntry;
 
 struct _PlugInMenuEntry
 {
-  GimpPlugInProcedure *proc;
+  PicmanPlugInProcedure *proc;
   const gchar         *menu_path;
 };
 
 
 /*  local function prototypes  */
 
-static void    plug_in_menus_register_procedure   (GimpPDB             *pdb,
-                                                   GimpProcedure       *procedure,
-                                                   GimpUIManager       *manager);
-static void    plug_in_menus_unregister_procedure (GimpPDB             *pdb,
-                                                   GimpProcedure       *procedure,
-                                                   GimpUIManager       *manager);
-static void    plug_in_menus_menu_path_added      (GimpPlugInProcedure *plug_in_proc,
+static void    plug_in_menus_register_procedure   (PicmanPDB             *pdb,
+                                                   PicmanProcedure       *procedure,
+                                                   PicmanUIManager       *manager);
+static void    plug_in_menus_unregister_procedure (PicmanPDB             *pdb,
+                                                   PicmanProcedure       *procedure,
+                                                   PicmanUIManager       *manager);
+static void    plug_in_menus_menu_path_added      (PicmanPlugInProcedure *plug_in_proc,
                                                    const gchar         *menu_path,
-                                                   GimpUIManager       *manager);
-static void    plug_in_menus_add_proc             (GimpUIManager       *manager,
+                                                   PicmanUIManager       *manager);
+static void    plug_in_menus_add_proc             (PicmanUIManager       *manager,
                                                    const gchar         *ui_path,
-                                                   GimpPlugInProcedure *proc,
+                                                   PicmanPlugInProcedure *proc,
                                                    const gchar         *menu_path);
 static void    plug_in_menus_tree_insert          (GTree               *entries,
                                                    const gchar     *    path,
                                                    PlugInMenuEntry     *entry);
 static gboolean   plug_in_menus_tree_traverse     (gpointer             key,
                                                    PlugInMenuEntry     *entry,
-                                                   GimpUIManager       *manager);
-static gchar * plug_in_menus_build_path           (GimpUIManager       *manager,
+                                                   PicmanUIManager       *manager);
+static gchar * plug_in_menus_build_path           (PicmanUIManager       *manager,
                                                    const gchar         *ui_path,
                                                    guint                merge_id,
                                                    const gchar         *menu_path,
@@ -82,23 +82,23 @@ static void    plug_in_menu_entry_free            (PlugInMenuEntry     *entry);
 /*  public functions  */
 
 void
-plug_in_menus_setup (GimpUIManager *manager,
+plug_in_menus_setup (PicmanUIManager *manager,
                      const gchar   *ui_path)
 {
-  GimpPlugInManager *plug_in_manager;
+  PicmanPlugInManager *plug_in_manager;
   GTree             *menu_entries;
   GSList            *list;
   guint              merge_id;
   gint               i;
 
-  g_return_if_fail (GIMP_IS_UI_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_UI_MANAGER (manager));
   g_return_if_fail (ui_path != NULL);
 
-  plug_in_manager = manager->gimp->plug_in_manager;
+  plug_in_manager = manager->picman->plug_in_manager;
 
   merge_id = gtk_ui_manager_new_merge_id (GTK_UI_MANAGER (manager));
 
-  for (i = 0; i < manager->gimp->config->plug_in_history_size; i++)
+  for (i = 0; i < manager->picman->config->plug_in_history_size; i++)
     {
       gchar *action_name;
       gchar *action_path;
@@ -124,7 +124,7 @@ plug_in_menus_setup (GimpUIManager *manager,
        list;
        list = g_slist_next (list))
     {
-      GimpPlugInProcedure *plug_in_proc = list->data;
+      PicmanPlugInProcedure *plug_in_proc = list->data;
 
       if (! plug_in_proc->prog)
         continue;
@@ -149,10 +149,10 @@ plug_in_menus_setup (GimpUIManager *manager,
                   entry->proc      = plug_in_proc;
                   entry->menu_path = path->data;
 
-                  progname = gimp_plug_in_procedure_get_progname (plug_in_proc);
+                  progname = picman_plug_in_procedure_get_progname (plug_in_proc);
 
                   locale_domain =
-                    gimp_plug_in_manager_get_locale_domain (plug_in_manager,
+                    picman_plug_in_manager_get_locale_domain (plug_in_manager,
                                                             progname, NULL);
 
                   if (plug_in_proc->menu_label)
@@ -191,10 +191,10 @@ plug_in_menus_setup (GimpUIManager *manager,
 
   g_tree_destroy (menu_entries);
 
-  g_signal_connect_object (manager->gimp->pdb, "register-procedure",
+  g_signal_connect_object (manager->picman->pdb, "register-procedure",
                            G_CALLBACK (plug_in_menus_register_procedure),
                            manager, 0);
-  g_signal_connect_object (manager->gimp->pdb, "unregister-procedure",
+  g_signal_connect_object (manager->picman->pdb, "unregister-procedure",
                            G_CALLBACK (plug_in_menus_unregister_procedure),
                            manager, 0);
 }
@@ -203,13 +203,13 @@ plug_in_menus_setup (GimpUIManager *manager,
 /*  private functions  */
 
 static void
-plug_in_menus_register_procedure (GimpPDB       *pdb,
-                                  GimpProcedure *procedure,
-                                  GimpUIManager *manager)
+plug_in_menus_register_procedure (PicmanPDB       *pdb,
+                                  PicmanProcedure *procedure,
+                                  PicmanUIManager *manager)
 {
-  if (GIMP_IS_PLUG_IN_PROCEDURE (procedure))
+  if (PICMAN_IS_PLUG_IN_PROCEDURE (procedure))
     {
-      GimpPlugInProcedure *plug_in_proc = GIMP_PLUG_IN_PROCEDURE (procedure);
+      PicmanPlugInProcedure *plug_in_proc = PICMAN_PLUG_IN_PROCEDURE (procedure);
 
       g_signal_connect_object (plug_in_proc, "menu-path-added",
                                G_CALLBACK (plug_in_menus_menu_path_added),
@@ -221,8 +221,8 @@ plug_in_menus_register_procedure (GimpPDB       *pdb,
           GList *list;
 
 
-          GIMP_LOG (MENUS, "register procedure: %s",
-                    gimp_object_get_name (procedure));
+          PICMAN_LOG (MENUS, "register procedure: %s",
+                    picman_object_get_name (procedure));
 
           for (list = plug_in_proc->menu_paths; list; list = g_list_next (list))
             plug_in_menus_menu_path_added (plug_in_proc, list->data, manager);
@@ -231,13 +231,13 @@ plug_in_menus_register_procedure (GimpPDB       *pdb,
 }
 
 static void
-plug_in_menus_unregister_procedure (GimpPDB       *pdb,
-                                    GimpProcedure *procedure,
-                                    GimpUIManager *manager)
+plug_in_menus_unregister_procedure (PicmanPDB       *pdb,
+                                    PicmanProcedure *procedure,
+                                    PicmanUIManager *manager)
 {
-  if (GIMP_IS_PLUG_IN_PROCEDURE (procedure))
+  if (PICMAN_IS_PLUG_IN_PROCEDURE (procedure))
     {
-      GimpPlugInProcedure *plug_in_proc = GIMP_PLUG_IN_PROCEDURE (procedure);
+      PicmanPlugInProcedure *plug_in_proc = PICMAN_PLUG_IN_PROCEDURE (procedure);
 
       g_signal_handlers_disconnect_by_func (plug_in_proc,
                                             plug_in_menus_menu_path_added,
@@ -248,8 +248,8 @@ plug_in_menus_unregister_procedure (GimpPDB       *pdb,
         {
           GList *list;
 
-          GIMP_LOG (MENUS, "unregister procedure: %s",
-                   gimp_object_get_name (procedure));
+          PICMAN_LOG (MENUS, "unregister procedure: %s",
+                   picman_object_get_name (procedure));
 
           for (list = plug_in_proc->menu_paths; list; list = g_list_next (list))
             {
@@ -259,7 +259,7 @@ plug_in_menus_unregister_procedure (GimpPDB       *pdb,
                   guint  merge_id;
 
                   merge_key = g_strdup_printf ("%s-merge-id",
-                                               gimp_object_get_name (plug_in_proc));
+                                               picman_object_get_name (plug_in_proc));
                   merge_id = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (manager),
                                                                   merge_key));
                   g_free (merge_key);
@@ -276,12 +276,12 @@ plug_in_menus_unregister_procedure (GimpPDB       *pdb,
 }
 
 static void
-plug_in_menus_menu_path_added (GimpPlugInProcedure *plug_in_proc,
+plug_in_menus_menu_path_added (PicmanPlugInProcedure *plug_in_proc,
                                const gchar         *menu_path,
-                               GimpUIManager       *manager)
+                               PicmanUIManager       *manager)
 {
-  GIMP_LOG (MENUS, "menu path added: %s (%s)",
-           gimp_object_get_name (plug_in_proc), menu_path);
+  PICMAN_LOG (MENUS, "menu path added: %s (%s)",
+           picman_object_get_name (plug_in_proc), menu_path);
 
   if (g_str_has_prefix (menu_path, manager->name))
     {
@@ -361,9 +361,9 @@ plug_in_menus_menu_path_added (GimpPlugInProcedure *plug_in_proc,
 }
 
 static void
-plug_in_menus_add_proc (GimpUIManager       *manager,
+plug_in_menus_add_proc (PicmanUIManager       *manager,
                         const gchar         *ui_path,
-                        GimpPlugInProcedure *proc,
+                        PicmanPlugInProcedure *proc,
                         const gchar         *menu_path)
 {
   gchar *path;
@@ -373,9 +373,9 @@ plug_in_menus_add_proc (GimpUIManager       *manager,
   guint  merge_id;
   guint  menu_merge_id;
 
-  g_return_if_fail (GIMP_IS_UI_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_UI_MANAGER (manager));
   g_return_if_fail (ui_path != NULL);
-  g_return_if_fail (GIMP_IS_PLUG_IN_PROCEDURE (proc));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_PROCEDURE (proc));
 
   path = g_strdup (menu_path);
 
@@ -396,7 +396,7 @@ plug_in_menus_add_proc (GimpUIManager       *manager,
       *p = '\0';
     }
 
-  merge_key = g_strdup_printf ("%s-merge-id", gimp_object_get_name (proc));
+  merge_key = g_strdup_printf ("%s-merge-id", picman_object_get_name (proc));
 
   merge_id = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (manager),
                                                   merge_key));
@@ -420,7 +420,7 @@ plug_in_menus_add_proc (GimpUIManager       *manager,
                          GUINT_TO_POINTER (menu_merge_id));
     }
 
-  stripped_path = gimp_strip_uline (path);
+  stripped_path = picman_strip_uline (path);
   action_path = plug_in_menus_build_path (manager, ui_path, menu_merge_id,
                                           stripped_path, FALSE);
   g_free (stripped_path);
@@ -431,13 +431,13 @@ plug_in_menus_add_proc (GimpUIManager       *manager,
       return;
     }
 
-  GIMP_LOG (MENUS, "adding menu item for '%s' (@ %s)",
-            gimp_object_get_name (proc), action_path);
+  PICMAN_LOG (MENUS, "adding menu item for '%s' (@ %s)",
+            picman_object_get_name (proc), action_path);
 
   gtk_ui_manager_add_ui (GTK_UI_MANAGER (manager), merge_id,
                          action_path,
-                         gimp_object_get_name (proc),
-                         gimp_object_get_name (proc),
+                         picman_object_get_name (proc),
+                         picman_object_get_name (proc),
                          GTK_UI_MANAGER_MENUITEM,
                          FALSE);
 
@@ -450,13 +450,13 @@ plug_in_menus_tree_insert (GTree           *entries,
                            const gchar     *path,
                            PlugInMenuEntry *entry)
 {
-  gchar *strip = gimp_strip_uline (path);
+  gchar *strip = picman_strip_uline (path);
   gchar *key;
 
   /* Append the procedure name to the menu path in order to get a unique
    * key even if two procedures are installed to the same menu entry.
    */
-  key = g_strconcat (strip, gimp_object_get_name (entry->proc), NULL);
+  key = g_strconcat (strip, picman_object_get_name (entry->proc), NULL);
 
   g_tree_insert (entries, g_utf8_collate_key (key, -1), entry);
 
@@ -467,7 +467,7 @@ plug_in_menus_tree_insert (GTree           *entries,
 static gboolean
 plug_in_menus_tree_traverse (gpointer         key,
                              PlugInMenuEntry *entry,
-                             GimpUIManager   *manager)
+                             PicmanUIManager   *manager)
 {
   const gchar *ui_path = g_object_get_data (G_OBJECT (manager), "ui-path");
 
@@ -477,7 +477,7 @@ plug_in_menus_tree_traverse (gpointer         key,
 }
 
 static gchar *
-plug_in_menus_build_path (GimpUIManager *manager,
+plug_in_menus_build_path (PicmanUIManager *manager,
                           const gchar   *ui_path,
                           guint          merge_id,
                           const gchar   *menu_path,
@@ -516,7 +516,7 @@ plug_in_menus_build_path (GimpUIManager *manager,
           if (! gtk_ui_manager_get_widget (GTK_UI_MANAGER (manager),
                                            action_path))
             {
-              GIMP_LOG (MENUS, "adding menu '%s' at path '%s' for action '%s'",
+              PICMAN_LOG (MENUS, "adding menu '%s' at path '%s' for action '%s'",
                         menu_item_name, action_path, menu_path);
 
               gtk_ui_manager_add_ui (GTK_UI_MANAGER (manager), merge_id,

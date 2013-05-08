@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpoffsetarea.h
- * Copyright (C) 2001  Sven Neumann <sven@gimp.org>
+ * picmanoffsetarea.h
+ * Copyright (C) 2001  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,29 +19,29 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_OFFSET_AREA_H__
-#define __GIMP_OFFSET_AREA_H__
+#ifndef __PICMAN_OFFSET_AREA_H__
+#define __PICMAN_OFFSET_AREA_H__
 
 G_BEGIN_DECLS
 
 
 /* For information look into the C source or the html documentation */
 
-#define GIMP_TYPE_OFFSET_AREA            (gimp_offset_area_get_type ())
-#define GIMP_OFFSET_AREA(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OFFSET_AREA, GimpOffsetArea))
-#define GIMP_OFFSET_AREA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_OFFSET_AREA, GimpOffsetAreaClass))
-#define GIMP_IS_OFFSET_AREA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OFFSET_AREA))
-#define GIMP_IS_OFFSET_AREA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_OFFSET_AREA))
-#define GIMP_OFFSET_AREA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_OFFSET_AREA, GimpOffsetAreaClass))
+#define PICMAN_TYPE_OFFSET_AREA            (picman_offset_area_get_type ())
+#define PICMAN_OFFSET_AREA(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OFFSET_AREA, PicmanOffsetArea))
+#define PICMAN_OFFSET_AREA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_OFFSET_AREA, PicmanOffsetAreaClass))
+#define PICMAN_IS_OFFSET_AREA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OFFSET_AREA))
+#define PICMAN_IS_OFFSET_AREA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_OFFSET_AREA))
+#define PICMAN_OFFSET_AREA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_OFFSET_AREA, PicmanOffsetAreaClass))
 
 
-typedef struct _GimpOffsetAreaClass  GimpOffsetAreaClass;
+typedef struct _PicmanOffsetAreaClass  PicmanOffsetAreaClass;
 
-struct _GimpOffsetArea
+struct _PicmanOffsetArea
 {
   GtkDrawingArea  parent_instance;
 
@@ -55,37 +55,37 @@ struct _GimpOffsetArea
   gdouble         display_ratio_y;
 };
 
-struct _GimpOffsetAreaClass
+struct _PicmanOffsetAreaClass
 {
   GtkDrawingAreaClass  parent_class;
 
-  void (* offsets_changed)  (GimpOffsetArea *offset_area,
+  void (* offsets_changed)  (PicmanOffsetArea *offset_area,
                              gint            offset_x,
                              gint            offset_y);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType       gimp_offset_area_get_type    (void) G_GNUC_CONST;
+GType       picman_offset_area_get_type    (void) G_GNUC_CONST;
 
-GtkWidget * gimp_offset_area_new         (gint            orig_width,
+GtkWidget * picman_offset_area_new         (gint            orig_width,
                                           gint            orig_height);
-void        gimp_offset_area_set_pixbuf  (GimpOffsetArea *offset_area,
+void        picman_offset_area_set_pixbuf  (PicmanOffsetArea *offset_area,
                                           GdkPixbuf      *pixbuf);
 
-void        gimp_offset_area_set_size    (GimpOffsetArea *offset_area,
+void        picman_offset_area_set_size    (PicmanOffsetArea *offset_area,
                                           gint            width,
                                           gint            height);
-void        gimp_offset_area_set_offsets (GimpOffsetArea *offset_area,
+void        picman_offset_area_set_offsets (PicmanOffsetArea *offset_area,
                                           gint            offset_x,
                                           gint            offset_y);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_OFFSET_AREA_H__ */
+#endif /* __PICMAN_OFFSET_AREA_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,16 +23,16 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
-#include "gimp-gegl-types.h"
+#include "picman-gegl-types.h"
 
-#include "core/gimplist.h"
-#include "core/gimpparamspecs-duplicate.h"
+#include "core/picmanlist.h"
+#include "core/picmanparamspecs-duplicate.h"
 
-#include "gimp-gegl-config-proxy.h"
-#include "gimp-gegl-utils.h"
+#include "picman-gegl-config-proxy.h"
+#include "picman-gegl-utils.h"
 
 
 static GHashTable *config_types      = NULL;
@@ -40,7 +40,7 @@ static GHashTable *config_containers = NULL;
 
 
 static GValue *
-gimp_gegl_config_value_new (GParamSpec *pspec)
+picman_gegl_config_value_new (GParamSpec *pspec)
 {
   GValue *value = g_slice_new0 (GValue);
 
@@ -50,14 +50,14 @@ gimp_gegl_config_value_new (GParamSpec *pspec)
 }
 
 static void
-gimp_gegl_config_value_free (GValue *value)
+picman_gegl_config_value_free (GValue *value)
 {
   g_value_unset (value);
   g_slice_free (GValue, value);
 }
 
 static GHashTable *
-gimp_gegl_config_get_properties (GObject *object)
+picman_gegl_config_get_properties (GObject *object)
 {
   GHashTable *properties = g_object_get_data (object, "properties");
 
@@ -66,7 +66,7 @@ gimp_gegl_config_get_properties (GObject *object)
       properties = g_hash_table_new_full (g_str_hash,
                                           g_str_equal,
                                           (GDestroyNotify) g_free,
-                                          (GDestroyNotify) gimp_gegl_config_value_free);
+                                          (GDestroyNotify) picman_gegl_config_value_free);
 
       g_object_set_data_full (object, "properties", properties,
                               (GDestroyNotify) g_hash_table_unref);
@@ -76,17 +76,17 @@ gimp_gegl_config_get_properties (GObject *object)
 }
 
 static GValue *
-gimp_gegl_config_value_get (GObject    *object,
+picman_gegl_config_value_get (GObject    *object,
                             GParamSpec *pspec)
 {
-  GHashTable *properties = gimp_gegl_config_get_properties (object);
+  GHashTable *properties = picman_gegl_config_get_properties (object);
   GValue     *value;
 
   value = g_hash_table_lookup (properties, pspec->name);
 
   if (! value)
     {
-      value = gimp_gegl_config_value_new (pspec);
+      value = picman_gegl_config_value_new (pspec);
       g_hash_table_insert (properties, g_strdup (pspec->name), value);
     }
 
@@ -94,37 +94,37 @@ gimp_gegl_config_value_get (GObject    *object,
 }
 
 static void
-gimp_gegl_config_set_property (GObject      *object,
+picman_gegl_config_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GValue *val = gimp_gegl_config_value_get (object, pspec);
+  GValue *val = picman_gegl_config_value_get (object, pspec);
 
   g_value_copy (value, val);
 }
 
 static void
-gimp_gegl_config_get_property (GObject    *object,
+picman_gegl_config_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GValue *val = gimp_gegl_config_value_get (object, pspec);
+  GValue *val = picman_gegl_config_value_get (object, pspec);
 
   g_value_copy (val, value);
 }
 
 static void
-gimp_gegl_config_class_init (GObjectClass *klass,
+picman_gegl_config_class_init (GObjectClass *klass,
                              const gchar  *operation)
 {
   GParamSpec **pspecs;
   guint        n_pspecs;
   gint         i;
 
-  klass->set_property = gimp_gegl_config_set_property;
-  klass->get_property = gimp_gegl_config_get_property;
+  klass->set_property = picman_gegl_config_set_property;
+  klass->get_property = picman_gegl_config_get_property;
 
   pspecs = gegl_operation_list_properties (operation, &n_pspecs);
 
@@ -137,7 +137,7 @@ gimp_gegl_config_class_init (GObjectClass *klass,
           strcmp (pspec->name, "input")     &&
           strcmp (pspec->name, "output"))
         {
-          GParamSpec *copy = gimp_param_spec_duplicate (pspec);
+          GParamSpec *copy = picman_param_spec_duplicate (pspec);
 
           if (copy)
             {
@@ -150,14 +150,14 @@ gimp_gegl_config_class_init (GObjectClass *klass,
 }
 
 static gboolean
-gimp_gegl_config_equal (GimpConfig *a,
-                        GimpConfig *b)
+picman_gegl_config_equal (PicmanConfig *a,
+                        PicmanConfig *b)
 {
   GList    *diff;
   gboolean  equal = TRUE;
 
-  diff = gimp_config_diff (G_OBJECT (a), G_OBJECT (b),
-                           GIMP_CONFIG_PARAM_SERIALIZE);
+  diff = picman_config_diff (G_OBJECT (a), G_OBJECT (b),
+                           PICMAN_CONFIG_PARAM_SERIALIZE);
 
   if (G_TYPE_FROM_INSTANCE (a) == G_TYPE_FROM_INSTANCE (b))
     {
@@ -185,19 +185,19 @@ gimp_gegl_config_equal (GimpConfig *a,
 }
 
 static void
-gimp_gegl_config_config_iface_init (GimpConfigInterface *iface)
+picman_gegl_config_config_iface_init (PicmanConfigInterface *iface)
 {
-  iface->equal = gimp_gegl_config_equal;
+  iface->equal = picman_gegl_config_equal;
 }
 
-GimpObject *
-gimp_gegl_get_config_proxy (const gchar *operation,
+PicmanObject *
+picman_gegl_get_config_proxy (const gchar *operation,
                             GType        parent_type)
 {
   GType config_type;
 
   g_return_val_if_fail (operation != NULL, NULL);
-  g_return_val_if_fail (g_type_is_a (parent_type, GIMP_TYPE_OBJECT), NULL);
+  g_return_val_if_fail (g_type_is_a (parent_type, PICMAN_TYPE_OBJECT), NULL);
 
   if (! config_types)
     config_types = g_hash_table_new_full (g_str_hash,
@@ -219,7 +219,7 @@ gimp_gegl_get_config_proxy (const gchar *operation,
             query.class_size,
             (GBaseInitFunc) NULL,
             (GBaseFinalizeFunc) NULL,
-            (GClassInitFunc) gimp_gegl_config_class_init,
+            (GClassInitFunc) picman_gegl_config_class_init,
             NULL,           /* class_finalize */
             operation,
             query.instance_size,
@@ -229,12 +229,12 @@ gimp_gegl_get_config_proxy (const gchar *operation,
 
         const GInterfaceInfo config_info =
           {
-            (GInterfaceInitFunc) gimp_gegl_config_config_iface_init,
+            (GInterfaceInitFunc) picman_gegl_config_config_iface_init,
             NULL, /* interface_finalize */
             NULL  /* interface_data     */
           };
 
-        gchar *type_name = g_strdup_printf ("GimpGegl-%s-config",
+        gchar *type_name = g_strdup_printf ("PicmanGegl-%s-config",
                                             operation);
 
         g_strcanon (type_name,
@@ -245,7 +245,7 @@ gimp_gegl_get_config_proxy (const gchar *operation,
 
         g_free (type_name);
 
-        g_type_add_interface_static (config_type, GIMP_TYPE_CONFIG,
+        g_type_add_interface_static (config_type, PICMAN_TYPE_CONFIG,
                                      &config_info);
 
         g_hash_table_insert (config_types,
@@ -257,12 +257,12 @@ gimp_gegl_get_config_proxy (const gchar *operation,
   return g_object_new (config_type, NULL);
 }
 
-GimpContainer *
-gimp_gegl_get_config_container (GType config_type)
+PicmanContainer *
+picman_gegl_get_config_container (GType config_type)
 {
-  GimpContainer *container;
+  PicmanContainer *container;
 
-  g_return_val_if_fail (g_type_is_a (config_type, GIMP_TYPE_OBJECT), NULL);
+  g_return_val_if_fail (g_type_is_a (config_type, PICMAN_TYPE_OBJECT), NULL);
 
   if (! config_containers)
     config_containers = g_hash_table_new_full (g_direct_hash,
@@ -274,7 +274,7 @@ gimp_gegl_get_config_container (GType config_type)
 
   if (! container)
     {
-      container = gimp_list_new (config_type, TRUE);
+      container = picman_list_new (config_type, TRUE);
 
       g_hash_table_insert (config_containers,
                            (gpointer) config_type, container);
@@ -284,7 +284,7 @@ gimp_gegl_get_config_container (GType config_type)
 }
 
 void
-gimp_gegl_config_proxy_sync (GimpObject  *proxy,
+picman_gegl_config_proxy_sync (PicmanObject  *proxy,
                              GeglNode    *node)
 {
   GParamSpec **pspecs;
@@ -292,7 +292,7 @@ gimp_gegl_config_proxy_sync (GimpObject  *proxy,
   guint        n_pspecs;
   gint         i;
 
-  g_return_if_fail (GIMP_IS_OBJECT (proxy));
+  g_return_if_fail (PICMAN_IS_OBJECT (proxy));
   g_return_if_fail (GEGL_IS_NODE (node));
 
   gegl_node_get (node,
@@ -307,27 +307,27 @@ gimp_gegl_config_proxy_sync (GimpObject  *proxy,
   for (i = 0; i < n_pspecs; i++)
     {
       GParamSpec *gegl_pspec = pspecs[i];
-      GParamSpec *gimp_pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (proxy),
+      GParamSpec *picman_pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (proxy),
                                                              gegl_pspec->name);
 
-      if (gimp_pspec)
+      if (picman_pspec)
         {
           GValue value = { 0, };
 
-          g_value_init (&value, gimp_pspec->value_type);
+          g_value_init (&value, picman_pspec->value_type);
 
-          g_object_get_property (G_OBJECT (proxy), gimp_pspec->name,
+          g_object_get_property (G_OBJECT (proxy), picman_pspec->name,
                                  &value);
 
           if (GEGL_IS_PARAM_SPEC_COLOR (gegl_pspec))
             {
-              GimpRGB    gimp_color;
+              PicmanRGB    picman_color;
               GeglColor *gegl_color;
 
-              gimp_value_get_rgb (&value, &gimp_color);
+              picman_value_get_rgb (&value, &picman_color);
               g_value_unset (&value);
 
-              gegl_color = gimp_gegl_color_new (&gimp_color);
+              gegl_color = picman_gegl_color_new (&picman_color);
 
               g_value_init (&value, gegl_pspec->value_type);
               g_value_take_object (&value, gegl_color);

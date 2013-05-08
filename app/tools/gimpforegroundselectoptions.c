@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
@@ -30,12 +30,12 @@
 #include "base/siox.h"
 #endif
 
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimpforegroundselectoptions.h"
-#include "gimptooloptions-gui.h"
+#include "picmanforegroundselectoptions.h"
+#include "picmantooloptions-gui.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -54,114 +54,114 @@ enum
 };
 
 
-static void   gimp_foreground_select_options_set_property (GObject      *object,
+static void   picman_foreground_select_options_set_property (GObject      *object,
                                                            guint         property_id,
                                                            const GValue *value,
                                                            GParamSpec   *pspec);
-static void   gimp_foreground_select_options_get_property (GObject      *object,
+static void   picman_foreground_select_options_get_property (GObject      *object,
                                                            guint         property_id,
                                                            GValue       *value,
                                                            GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpForegroundSelectOptions, gimp_foreground_select_options,
-               GIMP_TYPE_SELECTION_OPTIONS)
+G_DEFINE_TYPE (PicmanForegroundSelectOptions, picman_foreground_select_options,
+               PICMAN_TYPE_SELECTION_OPTIONS)
 
 
 static void
-gimp_foreground_select_options_class_init (GimpForegroundSelectOptionsClass *klass)
+picman_foreground_select_options_class_init (PicmanForegroundSelectOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_foreground_select_options_set_property;
-  object_class->get_property = gimp_foreground_select_options_get_property;
+  object_class->set_property = picman_foreground_select_options_set_property;
+  object_class->get_property = picman_foreground_select_options_get_property;
 
-  /*  override the antialias default value from GimpSelectionOptions  */
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ANTIALIAS,
+  /*  override the antialias default value from PicmanSelectionOptions  */
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ANTIALIAS,
                                     "antialias",
                                     N_("Smooth edges"),
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONTIGUOUS,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CONTIGUOUS,
                                     "contiguous",
                                     N_("Select a single contiguous area"),
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_BACKGROUND,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_BACKGROUND,
                                     "background",
                                     N_("Paint over areas to mark color values for "
                                        "inclusion or exclusion from selection"),
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_STROKE_WIDTH,
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_STROKE_WIDTH,
                                 "stroke-width",
                                 N_("Size of the brush used for refinements"),
                                 1, 80, 18,
-                                GIMP_PARAM_STATIC_STRINGS);
+                                PICMAN_PARAM_STATIC_STRINGS);
 
 #if 0
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_SMOOTHNESS,
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_SMOOTHNESS,
                                 "smoothness",
                                 N_("Smaller values give a more accurate "
                                   "selection border but may introduce holes "
                                   "in the selection"),
                                 0, 8, SIOX_DEFAULT_SMOOTHNESS,
-                                GIMP_PARAM_STATIC_STRINGS);
+                                PICMAN_PARAM_STATIC_STRINGS);
 #endif
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_MASK_COLOR,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_MASK_COLOR,
                                  "mask-color",
                                  N_("Color of selection preview mask"),
-                                 GIMP_TYPE_CHANNEL_TYPE,
-                                 GIMP_BLUE_CHANNEL,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_CHANNEL_TYPE,
+                                 PICMAN_BLUE_CHANNEL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_EXPANDED,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_EXPANDED,
                                     "expanded", NULL,
                                     FALSE,
                                     0);
 
 #if 0
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SENSITIVITY_L,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SENSITIVITY_L,
                                    "sensitivity-l",
                                    N_("Sensitivity for brightness component"),
                                    0.0, 10.0, SIOX_DEFAULT_SENSITIVITY_L,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SENSITIVITY_A,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SENSITIVITY_A,
                                    "sensitivity-a",
                                    N_("Sensitivity for red/green component"),
                                    0.0, 10.0, SIOX_DEFAULT_SENSITIVITY_A,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SENSITIVITY_B,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SENSITIVITY_B,
                                    "sensitivity-b",
                                    N_("Sensitivity for yellow/blue component"),
                                    0.0, 10.0, SIOX_DEFAULT_SENSITIVITY_B,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 #endif
 }
 
 static void
-gimp_foreground_select_options_init (GimpForegroundSelectOptions *options)
+picman_foreground_select_options_init (PicmanForegroundSelectOptions *options)
 {
 }
 
 static void
-gimp_foreground_select_options_set_property (GObject      *object,
+picman_foreground_select_options_set_property (GObject      *object,
                                              guint         property_id,
                                              const GValue *value,
                                              GParamSpec   *pspec)
 {
-  GimpForegroundSelectOptions *options = GIMP_FOREGROUND_SELECT_OPTIONS (object);
+  PicmanForegroundSelectOptions *options = PICMAN_FOREGROUND_SELECT_OPTIONS (object);
 
   switch (property_id)
     {
     case PROP_ANTIALIAS:
-      GIMP_SELECTION_OPTIONS (object)->antialias = g_value_get_boolean (value);
+      PICMAN_SELECTION_OPTIONS (object)->antialias = g_value_get_boolean (value);
       break;
 
     case PROP_CONTIGUOUS:
@@ -207,17 +207,17 @@ gimp_foreground_select_options_set_property (GObject      *object,
 }
 
 static void
-gimp_foreground_select_options_get_property (GObject    *object,
+picman_foreground_select_options_get_property (GObject    *object,
                                              guint       property_id,
                                              GValue     *value,
                                              GParamSpec *pspec)
 {
-  GimpForegroundSelectOptions *options = GIMP_FOREGROUND_SELECT_OPTIONS (object);
+  PicmanForegroundSelectOptions *options = PICMAN_FOREGROUND_SELECT_OPTIONS (object);
 
   switch (property_id)
     {
     case PROP_ANTIALIAS:
-      g_value_set_boolean (value, GIMP_SELECTION_OPTIONS (object)->antialias);
+      g_value_set_boolean (value, PICMAN_SELECTION_OPTIONS (object)->antialias);
       break;
 
     case PROP_CONTIGUOUS:
@@ -263,10 +263,10 @@ gimp_foreground_select_options_get_property (GObject    *object,
 }
 
 GtkWidget *
-gimp_foreground_select_options_gui (GimpToolOptions *tool_options)
+picman_foreground_select_options_gui (PicmanToolOptions *tool_options)
 {
   GObject         *config = G_OBJECT (tool_options);
-  GtkWidget       *vbox   = gimp_selection_options_gui (tool_options);
+  GtkWidget       *vbox   = picman_selection_options_gui (tool_options);
   GtkWidget       *hbox;
   GtkWidget       *button;
   GtkWidget       *frame;
@@ -279,21 +279,21 @@ gimp_foreground_select_options_gui (GimpToolOptions *tool_options)
   gint             row = 0;
   GdkModifierType  toggle_mask;
 
-  toggle_mask = gimp_get_toggle_behavior_mask ();
+  toggle_mask = picman_get_toggle_behavior_mask ();
 
-  gtk_widget_set_sensitive (GIMP_SELECTION_OPTIONS (tool_options)->antialias_toggle,
+  gtk_widget_set_sensitive (PICMAN_SELECTION_OPTIONS (tool_options)->antialias_toggle,
                             FALSE);
 
   /*  single / multiple objects  */
-  button = gimp_prop_check_button_new (config, "contiguous", _("Contiguous"));
+  button = picman_prop_check_button_new (config, "contiguous", _("Contiguous"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   /*  foreground / background  */
   title = g_strdup_printf (_("Interactive refinement  (%s)"),
-                           gimp_get_mod_string (toggle_mask));
+                           picman_get_mod_string (toggle_mask));
 
-  frame = gimp_prop_boolean_radio_frame_new (config, "background", title,
+  frame = picman_prop_boolean_radio_frame_new (config, "background", title,
                                              _("Mark background"),
                                              _("Mark foreground"));
   g_free (title);
@@ -312,7 +312,7 @@ gimp_foreground_select_options_gui (GimpToolOptions *tool_options)
   gtk_widget_show (hbox);
 
   label = gtk_label_new (_("Small brush"));
-  gimp_label_set_attributes (GTK_LABEL (label),
+  picman_label_set_attributes (GTK_LABEL (label),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              PANGO_ATTR_SCALE,  PANGO_SCALE_SMALL,
                              -1);
@@ -320,14 +320,14 @@ gimp_foreground_select_options_gui (GimpToolOptions *tool_options)
   gtk_widget_show (label);
 
   label = gtk_label_new (_("Large brush"));
-  gimp_label_set_attributes (GTK_LABEL (label),
+  picman_label_set_attributes (GTK_LABEL (label),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              PANGO_ATTR_SCALE,  PANGO_SCALE_SMALL,
                              -1);
   gtk_box_pack_end (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  scale = gimp_prop_hscale_new (config, "stroke-width", 1.0, 5.0, 0);
+  scale = picman_prop_hscale_new (config, "stroke-width", 1.0, 5.0, 0);
   gtk_scale_set_draw_value (GTK_SCALE (scale), FALSE);
   gtk_box_pack_start (GTK_BOX (inner_frame), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
@@ -340,25 +340,25 @@ gimp_foreground_select_options_gui (GimpToolOptions *tool_options)
   gtk_widget_show (table);
 
 #if 0
-  scale = gimp_prop_hscale_new (config, "smoothness", 0.1, 1.0, 0);
+  scale = picman_prop_hscale_new (config, "smoothness", 0.1, 1.0, 0);
   gtk_scale_set_value_pos (GTK_SCALE (scale), GTK_POS_RIGHT);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("Smoothing:"), 0.0, 0.5, scale, 2, FALSE);
 #endif
 
   /*  mask color */
-  menu = gimp_prop_enum_combo_box_new (config, "mask-color",
-                                       GIMP_RED_CHANNEL, GIMP_BLUE_CHANNEL);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  menu = picman_prop_enum_combo_box_new (config, "mask-color",
+                                       PICMAN_RED_CHANNEL, PICMAN_BLUE_CHANNEL);
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("Preview color:"), 0.0, 0.5, menu, 2, FALSE);
 
 #if 0
   /*  granularity  */
-  frame = gimp_prop_expander_new (config, "expanded", _("Color Sensitivity"));
+  frame = picman_prop_expander_new (config, "expanded", _("Color Sensitivity"));
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  inner_frame = gimp_frame_new ("<expander>");
+  inner_frame = picman_frame_new ("<expander>");
   gtk_container_add (GTK_CONTAINER (frame), inner_frame);
   gtk_widget_show (inner_frame);
 
@@ -368,13 +368,13 @@ gimp_foreground_select_options_gui (GimpToolOptions *tool_options)
   gtk_container_add (GTK_CONTAINER (inner_frame), table);
   gtk_widget_show (table);
 
-  gimp_prop_opacity_entry_new (config, "sensitivity-l",
+  picman_prop_opacity_entry_new (config, "sensitivity-l",
                                GTK_TABLE (table), 0, row++, "L");
 
-  gimp_prop_opacity_entry_new (config, "sensitivity-a",
+  picman_prop_opacity_entry_new (config, "sensitivity-a",
                                GTK_TABLE (table), 0, row++, "a");
 
-  gimp_prop_opacity_entry_new (config, "sensitivity-b",
+  picman_prop_opacity_entry_new (config, "sensitivity-b",
                                GTK_TABLE (table), 0, row++, "b");
 #endif
 
@@ -382,24 +382,24 @@ gimp_foreground_select_options_gui (GimpToolOptions *tool_options)
 }
 
 void
-gimp_foreground_select_options_get_mask_color (GimpForegroundSelectOptions *options,
-                                               GimpRGB                     *color)
+picman_foreground_select_options_get_mask_color (PicmanForegroundSelectOptions *options,
+                                               PicmanRGB                     *color)
 {
-  g_return_if_fail (GIMP_IS_FOREGROUND_SELECT_OPTIONS (options));
+  g_return_if_fail (PICMAN_IS_FOREGROUND_SELECT_OPTIONS (options));
   g_return_if_fail (color != NULL);
 
   switch (options->mask_color)
     {
-    case GIMP_RED_CHANNEL:
-      gimp_rgba_set (color, 1, 0, 0, 0.5);
+    case PICMAN_RED_CHANNEL:
+      picman_rgba_set (color, 1, 0, 0, 0.5);
       break;
 
-    case GIMP_GREEN_CHANNEL:
-      gimp_rgba_set (color, 0, 1, 0, 0.5);
+    case PICMAN_GREEN_CHANNEL:
+      picman_rgba_set (color, 0, 1, 0, 0.5);
       break;
 
-    case GIMP_BLUE_CHANNEL:
-      gimp_rgba_set (color, 0, 0, 1, 0.5);
+    case PICMAN_BLUE_CHANNEL:
+      picman_rgba_set (color, 0, 0, 1, 0.5);
       break;
 
     default:

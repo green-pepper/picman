@@ -7,14 +7,14 @@
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet"><LINK
 REL="HOME"
-TITLE="Gimp Python Documentation"
-HREF="pygimp.html"><LINK
+TITLE="Picman Python Documentation"
+HREF="pypicman.html"><LINK
 REL="PREVIOUS"
 TITLE="The Structure Of A Plugin"
 HREF="structure-of-plugin.html"><LINK
 REL="NEXT"
-TITLE="Gimp Module Procedures"
-HREF="gimp-module-procedures.html"></HEAD
+TITLE="Picman Module Procedures"
+HREF="picman-module-procedures.html"></HEAD
 ><BODY
 ><DIV
 CLASS="NAVHEADER"
@@ -27,7 +27,7 @@ CELLSPACING="0"
 ><TH
 COLSPAN="3"
 ALIGN="center"
->Gimp Python Documentation</TH
+>Picman Python Documentation</TH
 ></TR
 ><TR
 ><TD
@@ -48,7 +48,7 @@ WIDTH="10%"
 ALIGN="right"
 VALIGN="bottom"
 ><A
-HREF="gimp-module-procedures.html"
+HREF="picman-module-procedures.html"
 >Next</A
 ></TD
 ></TR
@@ -65,7 +65,7 @@ NAME="PROCEDURAL-DATABASE"
 >The Procedural Database</A
 ></H1
 ><P
->The procedural database is a registry of things gimp and its
+>The procedural database is a registry of things picman and its
     plugins can do.  When you install a procedure for your plugin, you
     are extending the procedural database.</P
 ><P
@@ -77,21 +77,21 @@ CLASS="SECT2"
 ><H2
 CLASS="SECT2"
 ><A
-NAME="GIMP-PYTHON-MODEL"
->The Gimp-Python Model</A
+NAME="PICMAN-PYTHON-MODEL"
+>The Picman-Python Model</A
 ></H2
 ><P
->In Gimp-Python, the procedural database is represented by
+>In Picman-Python, the procedural database is represented by
       the object <TT
 CLASS="PARAMETER"
 ><I
->gimp.pdb</I
+>picman.pdb</I
 ></TT
 >.  In most of my
       plugins, I make an assignment from <TT
 CLASS="PARAMETER"
 ><I
->gimp.pdb</I
+>picman.pdb</I
 ></TT
 >
       to <TT
@@ -157,19 +157,19 @@ CLASS="PARAMETER"
       the probedure <TT
 CLASS="FUNCTION"
 ><B
->gimp_edit_fill</B
+>picman_edit_fill</B
 ></TT
 > can be
       accessed as either <TT
 CLASS="FUNCTION"
 ><B
->pdb.gimp_edit_fill</B
+>pdb.picman_edit_fill</B
 ></TT
 > or
       <TT
 CLASS="FUNCTION"
 ><B
->pdb['gimp_edit_fill']</B
+>pdb['picman_edit_fill']</B
 ></TT
 >.  The second form is
       mainly for procedures whose names are not valid Python names (eg
@@ -260,7 +260,7 @@ CLASS="LITERAL"
 ></DL
 ><P
 >A procedure object may also be called.  At this point,
-      Gimp-Python doesn't support keyword arguments for PDB
+      Picman-Python doesn't support keyword arguments for PDB
       procedures.  Arguments are passed to the procedure in the normal
       method.  The return depends on the number of return values:</P
 ><P
@@ -325,7 +325,7 @@ WIDTH="34%"
 ALIGN="center"
 VALIGN="top"
 ><A
-HREF="pygimp.html"
+HREF="pypicman.html"
 >Home</A
 ></TD
 ><TD
@@ -333,7 +333,7 @@ WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
 ><A
-HREF="gimp-module-procedures.html"
+HREF="picman-module-procedures.html"
 >Next</A
 ></TD
 ></TR
@@ -352,7 +352,7 @@ VALIGN="top"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Gimp Module Procedures</TD
+>Picman Module Procedures</TD
 ></TR
 ></TABLE
 ></DIV

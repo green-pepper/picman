@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1999 Manish Singh
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,73 +20,73 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "display-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimpcolordisplayeditor.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpviewabledialog.h"
+#include "widgets/picmancolordisplayeditor.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanviewabledialog.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-filter.h"
-#include "gimpdisplayshell-filter-dialog.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-filter.h"
+#include "picmandisplayshell-filter-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 typedef struct
 {
-  GimpDisplayShell      *shell;
+  PicmanDisplayShell      *shell;
   GtkWidget             *dialog;
 
-  GimpColorDisplayStack *old_stack;
+  PicmanColorDisplayStack *old_stack;
 } ColorDisplayDialog;
 
 
 /*  local function prototypes  */
 
-static void gimp_display_shell_filter_dialog_response (GtkWidget          *widget,
+static void picman_display_shell_filter_dialog_response (GtkWidget          *widget,
                                                        gint                response_id,
                                                        ColorDisplayDialog *cdd);
 
-static void gimp_display_shell_filter_dialog_free     (ColorDisplayDialog *cdd);
+static void picman_display_shell_filter_dialog_free     (ColorDisplayDialog *cdd);
 
 
 /*  public functions  */
 
 GtkWidget *
-gimp_display_shell_filter_dialog_new (GimpDisplayShell *shell)
+picman_display_shell_filter_dialog_new (PicmanDisplayShell *shell)
 {
-  GimpDisplayConfig  *config;
-  GimpImage          *image;
+  PicmanDisplayConfig  *config;
+  PicmanImage          *image;
   ColorDisplayDialog *cdd;
   GtkWidget          *editor;
 
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
 
   config = shell->display->config;
-  image  = gimp_display_get_image (shell->display);
+  image  = picman_display_get_image (shell->display);
 
   cdd = g_slice_new0 (ColorDisplayDialog);
 
   cdd->shell  = shell;
-  cdd->dialog = gimp_viewable_dialog_new (GIMP_VIEWABLE (image),
-                                          gimp_get_user_context (shell->display->gimp),
+  cdd->dialog = picman_viewable_dialog_new (PICMAN_VIEWABLE (image),
+                                          picman_get_user_context (shell->display->picman),
                                           _("Color Display Filters"),
-                                          "gimp-display-filters",
-                                          GIMP_STOCK_DISPLAY_FILTER,
+                                          "picman-display-filters",
+                                          PICMAN_STOCK_DISPLAY_FILTER,
                                           _("Configure Color Display Filters"),
                                           GTK_WIDGET (cdd->shell),
-                                          gimp_standard_help_func,
-                                          GIMP_HELP_DISPLAY_FILTER_DIALOG,
+                                          picman_standard_help_func,
+                                          PICMAN_HELP_DISPLAY_FILTER_DIALOG,
 
                                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                           GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -101,30 +101,30 @@ gimp_display_shell_filter_dialog_new (GimpDisplayShell *shell)
   gtk_window_set_destroy_with_parent (GTK_WINDOW (cdd->dialog), TRUE);
 
   g_object_weak_ref (G_OBJECT (cdd->dialog),
-                     (GWeakNotify) gimp_display_shell_filter_dialog_free, cdd);
+                     (GWeakNotify) picman_display_shell_filter_dialog_free, cdd);
 
   g_signal_connect (cdd->dialog, "response",
-                    G_CALLBACK (gimp_display_shell_filter_dialog_response),
+                    G_CALLBACK (picman_display_shell_filter_dialog_response),
                     cdd);
 
   if (shell->filter_stack)
     {
-      cdd->old_stack = gimp_color_display_stack_clone (shell->filter_stack);
+      cdd->old_stack = picman_color_display_stack_clone (shell->filter_stack);
 
       g_object_weak_ref (G_OBJECT (cdd->dialog),
                          (GWeakNotify) g_object_unref, cdd->old_stack);
     }
   else
     {
-      GimpColorDisplayStack *stack = gimp_color_display_stack_new ();
+      PicmanColorDisplayStack *stack = picman_color_display_stack_new ();
 
-      gimp_display_shell_filter_set (shell, stack);
+      picman_display_shell_filter_set (shell, stack);
       g_object_unref (stack);
     }
 
-  editor = gimp_color_display_editor_new (shell->filter_stack,
-                                          GIMP_CORE_CONFIG (config)->color_management,
-                                          GIMP_COLOR_MANAGED (shell));
+  editor = picman_color_display_editor_new (shell->filter_stack,
+                                          PICMAN_CORE_CONFIG (config)->color_management,
+                                          PICMAN_COLOR_MANAGED (shell));
   gtk_container_set_border_width (GTK_CONTAINER (editor), 12);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (cdd->dialog))),
                       editor, TRUE, TRUE, 0);
@@ -137,18 +137,18 @@ gimp_display_shell_filter_dialog_new (GimpDisplayShell *shell)
 /*  private functions  */
 
 static void
-gimp_display_shell_filter_dialog_response (GtkWidget          *widget,
+picman_display_shell_filter_dialog_response (GtkWidget          *widget,
                                            gint                response_id,
                                            ColorDisplayDialog *cdd)
 {
   if (response_id != GTK_RESPONSE_OK)
-    gimp_display_shell_filter_set (cdd->shell, cdd->old_stack);
+    picman_display_shell_filter_set (cdd->shell, cdd->old_stack);
 
   gtk_widget_destroy (GTK_WIDGET (cdd->dialog));
 }
 
 static void
-gimp_display_shell_filter_dialog_free (ColorDisplayDialog *cdd)
+picman_display_shell_filter_dialog_free (ColorDisplayDialog *cdd)
 {
   g_slice_free (ColorDisplayDialog, cdd);
 }

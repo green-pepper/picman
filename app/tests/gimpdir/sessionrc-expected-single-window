@@ -1,23 +1,23 @@
-# GIMP sessionrc
+# PICMAN sessionrc
 # 
 # This file takes session-specific info (that is info, you want to keep
-# between two GIMP sessions).  You are not supposed to edit it manually, but
+# between two PICMAN sessions).  You are not supposed to edit it manually, but
 # of course you can do.  The sessionrc will be entirely rewritten every time
-# you quit GIMP.  If this file isn't found, defaults are used.
+# you quit PICMAN.  If this file isn't found, defaults are used.
 
 (session-info "toplevel"
-    (factory-entry "gimp-file-open-dialog")
+    (factory-entry "picman-file-open-dialog")
     (position 390 140)
     (size 900 815))
 (session-info "toplevel"
-    (factory-entry "gimp-image-new-dialog")
+    (factory-entry "picman-image-new-dialog")
     (position 100 100))
 (session-info "toplevel"
-    (factory-entry "gimp-empty-image-window")
+    (factory-entry "picman-empty-image-window")
     (position 140 30)
     (size 1285 750))
 (session-info "toplevel"
-    (factory-entry "gimp-single-image-window")
+    (factory-entry "picman-single-image-window")
     (position 140 30)
     (size 1050 770)
     (open-on-exit)
@@ -25,13 +25,13 @@
         (left-docks-width "80")
         (right-docks-position "-764")
         (maximized "no"))
-    (gimp-toolbox
+    (picman-toolbox
         (side left))
-    (gimp-dock
+    (picman-dock
         (side right)
         (book
             (current-page 0)
-            (dockable "gimp-layer-list"
+            (dockable "picman-layer-list"
                 (tab-style icon)
                 (preview-size 32)
                 (aux-info
@@ -39,29 +39,29 @@
         (book
             (position 380)
             (current-page 0)
-            (dockable "gimp-brush-grid"
+            (dockable "picman-brush-grid"
                 (tab-style preview)
                 (aux-info
                     (show-button-bar "true")))))
-    (gimp-dock
+    (picman-dock
         (side right)
         (position 200)
         (book
             (current-page 0)
-            (dockable "gimp-tool-options"
+            (dockable "picman-tool-options"
                 (tab-style icon)
                 (aux-info
                     (show-button-bar "true")))))
-    (gimp-dock
+    (picman-dock
         (side right)
         (position 550)
         (book
             (current-page 1)
-            (dockable "gimp-pattern-grid"
+            (dockable "picman-pattern-grid"
                 (tab-style preview)
                 (aux-info
                     (show-button-bar "true")))
-            (dockable "gimp-gradient-list"
+            (dockable "picman-gradient-list"
                 (tab-style preview)
                 (aux-info
                     (show-button-bar "true"))))))

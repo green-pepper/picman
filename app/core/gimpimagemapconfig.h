@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpimagemapconfig.h
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanimagemapconfig.h
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,40 +18,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_MAP_CONFIG_H__
-#define __GIMP_IMAGE_MAP_CONFIG_H__
+#ifndef __PICMAN_IMAGE_MAP_CONFIG_H__
+#define __PICMAN_IMAGE_MAP_CONFIG_H__
 
 
-#include "gimpviewable.h"
+#include "picmanviewable.h"
 
 
-#define GIMP_TYPE_IMAGE_MAP_CONFIG            (gimp_image_map_config_get_type ())
-#define GIMP_IMAGE_MAP_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_IMAGE_MAP_CONFIG, GimpImageMapConfig))
-#define GIMP_IMAGE_MAP_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_IMAGE_MAP_CONFIG, GimpImageMapConfigClass))
-#define GIMP_IS_IMAGE_MAP_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_IMAGE_MAP_CONFIG))
-#define GIMP_IS_IMAGE_MAP_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_IMAGE_MAP_CONFIG))
-#define GIMP_IMAGE_MAP_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_IMAGE_MAP_CONFIG, GimpImageMapConfigClass))
+#define PICMAN_TYPE_IMAGE_MAP_CONFIG            (picman_image_map_config_get_type ())
+#define PICMAN_IMAGE_MAP_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_IMAGE_MAP_CONFIG, PicmanImageMapConfig))
+#define PICMAN_IMAGE_MAP_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_IMAGE_MAP_CONFIG, PicmanImageMapConfigClass))
+#define PICMAN_IS_IMAGE_MAP_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_IMAGE_MAP_CONFIG))
+#define PICMAN_IS_IMAGE_MAP_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_IMAGE_MAP_CONFIG))
+#define PICMAN_IMAGE_MAP_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_IMAGE_MAP_CONFIG, PicmanImageMapConfigClass))
 
 
-typedef struct _GimpImageMapConfigClass GimpImageMapConfigClass;
+typedef struct _PicmanImageMapConfigClass PicmanImageMapConfigClass;
 
-struct _GimpImageMapConfig
+struct _PicmanImageMapConfig
 {
-  GimpViewable      parent_instance;
+  PicmanViewable      parent_instance;
 
   guint             time;
 };
 
-struct _GimpImageMapConfigClass
+struct _PicmanImageMapConfigClass
 {
-  GimpViewableClass  parent_class;
+  PicmanViewableClass  parent_class;
 };
 
 
-GType   gimp_image_map_config_get_type (void) G_GNUC_CONST;
+GType   picman_image_map_config_get_type (void) G_GNUC_CONST;
 
-gint    gimp_image_map_config_compare  (GimpImageMapConfig *a,
-                                        GimpImageMapConfig *b);
+gint    picman_image_map_config_compare  (PicmanImageMapConfig *a,
+                                        PicmanImageMapConfig *b);
 
 
-#endif /* __GIMP_IMAGE_MAP_CONFIG_H__ */
+#endif /* __PICMAN_IMAGE_MAP_CONFIG_H__ */

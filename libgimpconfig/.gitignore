@@ -6,6 +6,6 @@
 /.libs
 /.deps
 /*.la
-/gimpversion.h
+/picmanversion.h
 /*.lib
 /*.exp

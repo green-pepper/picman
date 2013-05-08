@@ -6,13 +6,13 @@
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 
-#undef GIMP_DISABLE_DEPRECATED
+#undef PICMAN_DISABLE_DEPRECATED
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpwidgets/gimpwidgets.h"
-#include "libgimpwidgets/gimpwidgets-private.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanwidgets/picmanwidgets.h"
+#include "libpicmanwidgets/picmanwidgets-private.h"
 
 
 #include "widgets.h"
@@ -137,10 +137,10 @@ new_widget_info (const char *name,
 }
 
 static void
-color_init (GimpRGB *rgb)
+color_init (PicmanRGB *rgb)
 {
-  gimp_rgb_parse_name (rgb, "goldenrod", -1);
-  gimp_rgb_set_alpha (rgb, 0.7);
+  picman_rgb_parse_name (rgb, "goldenrod", -1);
+  picman_rgb_set_alpha (rgb, 0.7);
 }
 
 static GdkPixbuf *
@@ -167,15 +167,15 @@ create_browser (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 1.0, 1.0);
-  browser = gimp_browser_new ();
-  gtk_box_pack_start (GTK_BOX (GIMP_BROWSER (browser)->left_vbox),
+  browser = picman_browser_new ();
+  gtk_box_pack_start (GTK_BOX (PICMAN_BROWSER (browser)->left_vbox),
                       gtk_label_new ("TreeView goes here"), TRUE, TRUE, 0);
   gtk_container_add (GTK_CONTAINER (align), browser);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Browser"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-browser", vbox, MEDIUM);
+  return new_widget_info ("picman-browser", vbox, MEDIUM);
 }
 
 static WidgetInfo *
@@ -184,13 +184,13 @@ create_button (void)
   GtkWidget *widget;
   GtkWidget *align;
 
-  widget = gimp_button_new ();
+  widget = picman_button_new ();
   gtk_container_add (GTK_CONTAINER (widget),
                      gtk_label_new_with_mnemonic ("_Button"));
   align = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
   gtk_container_add (GTK_CONTAINER (align), widget);
 
-  return new_widget_info ("gimp-button", align, SMALL);
+  return new_widget_info ("picman-button", align, SMALL);
 }
 
 static WidgetInfo *
@@ -210,8 +210,8 @@ create_chain_button (void)
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);
   gtk_table_set_col_spacings (GTK_TABLE (table), 6);
   gtk_container_add (GTK_CONTAINER (align), table);
-  chain = gimp_chain_button_new (GIMP_CHAIN_LEFT);
-  gimp_chain_button_set_active (GIMP_CHAIN_BUTTON (chain), TRUE);
+  chain = picman_chain_button_new (PICMAN_CHAIN_LEFT);
+  picman_chain_button_set_active (PICMAN_CHAIN_BUTTON (chain), TRUE);
   gtk_table_attach (GTK_TABLE (table), chain, 0,1, 0,2,
                     GTK_SHRINK | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
   label = gtk_label_new ("Linked ");
@@ -229,15 +229,15 @@ create_chain_button (void)
   label = gtk_label_new (" Unlinked");
   gtk_table_attach (GTK_TABLE (table), label, 3,4, 1,2,
                     GTK_SHRINK | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
-  chain = gimp_chain_button_new (GIMP_CHAIN_RIGHT);
-  gimp_chain_button_set_active (GIMP_CHAIN_BUTTON (chain), FALSE);
+  chain = picman_chain_button_new (PICMAN_CHAIN_RIGHT);
+  picman_chain_button_set_active (PICMAN_CHAIN_BUTTON (chain), FALSE);
   gtk_table_attach (GTK_TABLE (table), chain, 4,5, 0,2,
                     GTK_SHRINK | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
 
   gtk_box_pack_end (GTK_BOX (vbox), gtk_label_new ("Chain Button"),
                     TRUE, TRUE, 0);
 
-  return new_widget_info ("gimp-chain-button", vbox, MEDIUM);
+  return new_widget_info ("picman-chain-button", vbox, MEDIUM);
 }
 
 static WidgetInfo *
@@ -246,21 +246,21 @@ create_color_area (void)
   GtkWidget *vbox;
   GtkWidget *area;
   GtkWidget *align;
-  GimpRGB    color;
+  PicmanRGB    color;
 
   color_init (&color);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.5, 1.0);
-  area = gimp_color_area_new (&color, GIMP_COLOR_AREA_SMALL_CHECKS, 0);
-  gimp_color_area_set_draw_border (GIMP_COLOR_AREA (area), TRUE);
+  area = picman_color_area_new (&color, PICMAN_COLOR_AREA_SMALL_CHECKS, 0);
+  picman_color_area_set_draw_border (PICMAN_COLOR_AREA (area), TRUE);
   gtk_widget_set_size_request (area, -1, 25);
   gtk_container_add (GTK_CONTAINER (align), area);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Color Area"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-color-area", vbox, SMALL);
+  return new_widget_info ("picman-color-area", vbox, SMALL);
 }
 
 static WidgetInfo *
@@ -269,21 +269,21 @@ create_color_button (void)
   GtkWidget *vbox;
   GtkWidget *button;
   GtkWidget *align;
-  GimpRGB    color;
+  PicmanRGB    color;
 
   color_init (&color);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.5, 1.0);
-  button =  gimp_color_button_new ("Color Button",
+  button =  picman_color_button_new ("Color Button",
                                    80, 20, &color,
-                                   GIMP_COLOR_AREA_SMALL_CHECKS);
+                                   PICMAN_COLOR_AREA_SMALL_CHECKS);
   gtk_container_add (GTK_CONTAINER (align), button);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Color Button"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-color-button", vbox, SMALL);
+  return new_widget_info ("picman-color-button", vbox, SMALL);
 }
 
 static WidgetInfo *
@@ -292,20 +292,20 @@ create_color_hex_entry (void)
   GtkWidget *vbox;
   GtkWidget *entry;
   GtkWidget *align;
-  GimpRGB    color;
+  PicmanRGB    color;
 
   color_init (&color);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.5, 0.0);
-  entry = gimp_color_hex_entry_new ();
-  gimp_color_hex_entry_set_color (GIMP_COLOR_HEX_ENTRY (entry), &color);
+  entry = picman_color_hex_entry_new ();
+  picman_color_hex_entry_set_color (PICMAN_COLOR_HEX_ENTRY (entry), &color);
   gtk_container_add (GTK_CONTAINER (align), entry);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Color Hex Entry"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-color-hex-entry", vbox, SMALL);
+  return new_widget_info ("picman-color-hex-entry", vbox, SMALL);
 }
 
 static WidgetInfo *
@@ -317,8 +317,8 @@ create_color_profile_combo_box (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.5, 0.0);
-  combo = gimp_color_profile_combo_box_new (gtk_dialog_new (), NULL);
-  gimp_color_profile_combo_box_add (GIMP_COLOR_PROFILE_COMBO_BOX (combo),
+  combo = picman_color_profile_combo_box_new (gtk_dialog_new (), NULL);
+  picman_color_profile_combo_box_add (PICMAN_COLOR_PROFILE_COMBO_BOX (combo),
                                     NULL, "sRGB");
   gtk_combo_box_set_active (GTK_COMBO_BOX (combo), 0);
   gtk_container_add (GTK_CONTAINER (align), combo);
@@ -327,7 +327,7 @@ create_color_profile_combo_box (void)
                       gtk_label_new ("Color Profile Combo Box"),
                       FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-color-profile-combo-box", vbox, SMALL);
+  return new_widget_info ("picman-color-profile-combo-box", vbox, SMALL);
 }
 
 static WidgetInfo *
@@ -336,24 +336,24 @@ create_color_scale (void)
   GtkWidget *vbox;
   GtkWidget *scale;
   GtkWidget *align;
-  GimpRGB    rgb;
-  GimpHSV    hsv;
+  PicmanRGB    rgb;
+  PicmanHSV    hsv;
 
   color_init (&rgb);
-  gimp_rgb_to_hsv (&rgb, &hsv);
+  picman_rgb_to_hsv (&rgb, &hsv);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.8, 0.0);
-  scale = gimp_color_scale_new (GTK_ORIENTATION_HORIZONTAL,
-                                GIMP_COLOR_SELECTOR_HUE);
-  gimp_color_scale_set_color (GIMP_COLOR_SCALE (scale), &rgb, &hsv);
+  scale = picman_color_scale_new (GTK_ORIENTATION_HORIZONTAL,
+                                PICMAN_COLOR_SELECTOR_HUE);
+  picman_color_scale_set_color (PICMAN_COLOR_SCALE (scale), &rgb, &hsv);
   gtk_range_set_value (GTK_RANGE (scale), 40);
   gtk_container_add (GTK_CONTAINER (align), scale);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Color Scale"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-color-scale", vbox, SMALL);
+  return new_widget_info ("picman-color-scale", vbox, SMALL);
 }
 
 static WidgetInfo *
@@ -362,22 +362,22 @@ create_color_selection (void)
   GtkWidget *vbox;
   GtkWidget *selection;
   GtkWidget *align;
-  GimpRGB    color;
+  PicmanRGB    color;
 
   color_init (&color);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
-  selection = gimp_color_selection_new ();
-  gimp_color_selection_set_show_alpha(GIMP_COLOR_SELECTION (selection), TRUE);
-  gimp_color_selection_set_color  (GIMP_COLOR_SELECTION (selection), &color);
+  selection = picman_color_selection_new ();
+  picman_color_selection_set_show_alpha(PICMAN_COLOR_SELECTION (selection), TRUE);
+  picman_color_selection_set_color  (PICMAN_COLOR_SELECTION (selection), &color);
   gtk_widget_set_size_request (selection, 400, -1);
   gtk_container_add (GTK_CONTAINER (align), selection);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Color Selection"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-color-selection", vbox, ASIS);
+  return new_widget_info ("picman-color-selection", vbox, ASIS);
 }
 
 static WidgetInfo *
@@ -388,19 +388,19 @@ create_dialog (void)
   GtkWidget  *content;
   GtkWidget  *label;
 
-  widget = gimp_dialog_new ("Gimp Dialog",
-                            "gimp-dialog",
+  widget = picman_dialog_new ("Picman Dialog",
+                            "picman-dialog",
                             NULL, 0, NULL, NULL,
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
 
                             NULL);
 
-  label = gtk_label_new ("Gimp Dialog");
+  label = gtk_label_new ("Picman Dialog");
   content = gtk_dialog_get_content_area (GTK_DIALOG (widget));
   gtk_container_add (GTK_CONTAINER (content), label);
   gtk_widget_show (label);
-  info = new_widget_info ("gimp-dialog", widget, MEDIUM);
+  info = new_widget_info ("picman-dialog", widget, MEDIUM);
   info->include_decorations = TRUE;
 
   return info;
@@ -415,14 +415,14 @@ create_enum_combo_box (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.5, 0.0);
-  combo = gimp_enum_combo_box_new (GIMP_TYPE_CHANNEL_TYPE);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo), GIMP_BLUE_CHANNEL);
+  combo = picman_enum_combo_box_new (PICMAN_TYPE_CHANNEL_TYPE);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo), PICMAN_BLUE_CHANNEL);
   gtk_container_add (GTK_CONTAINER (align), combo);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Enum Combo Box"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-enum-combo-box", vbox, SMALL);
+  return new_widget_info ("picman-enum-combo-box", vbox, SMALL);
 }
 
 static WidgetInfo *
@@ -434,13 +434,13 @@ create_enum_label (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.5, 0.0);
-  label = gimp_enum_label_new (GIMP_TYPE_IMAGE_BASE_TYPE, GIMP_RGB);
+  label = picman_enum_label_new (PICMAN_TYPE_IMAGE_BASE_TYPE, PICMAN_RGB);
   gtk_container_add (GTK_CONTAINER (align), label);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Enum Label"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-enum-label", vbox, SMALL);
+  return new_widget_info ("picman-enum-label", vbox, SMALL);
 }
 
 static WidgetInfo *
@@ -452,7 +452,7 @@ create_file_entry (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.5, 0.0);
-  entry = gimp_file_entry_new ("File Entry",
+  entry = picman_file_entry_new ("File Entry",
                                "wilber.png",
                                FALSE, TRUE);
   gtk_container_add (GTK_CONTAINER (align), entry);
@@ -460,7 +460,7 @@ create_file_entry (void)
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("File Entry"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-file-entry", vbox, SMALL);
+  return new_widget_info ("picman-file-entry", vbox, SMALL);
 }
 
 static WidgetInfo *
@@ -469,20 +469,20 @@ create_frame (void)
   GtkWidget *frame;
   GtkWidget *content;
 
-  frame = gimp_frame_new ("Frame");
+  frame = picman_frame_new ("Frame");
   content = gtk_label_new ("Frame Content\nThis Frame is HIG compliant");
   gtk_misc_set_alignment (GTK_MISC (content), 0.0, 0.0);
   gtk_container_add (GTK_CONTAINER (frame), content);
 
-  return new_widget_info ("gimp-frame", frame, MEDIUM);
+  return new_widget_info ("picman-frame", frame, MEDIUM);
 }
 
 static WidgetInfo *
 create_hint_box (void)
 {
-  GtkWidget *box = gimp_hint_box_new ("This is a user hint.");
+  GtkWidget *box = picman_hint_box_new ("This is a user hint.");
 
-  return new_widget_info ("gimp-hint-box", box, MEDIUM);
+  return new_widget_info ("picman-hint-box", box, MEDIUM);
 }
 
 static WidgetInfo *
@@ -494,14 +494,14 @@ create_number_pair_entry (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.5, 0.0);
-  entry =  gimp_number_pair_entry_new (":/", TRUE, 0.001, GIMP_MAX_IMAGE_SIZE);
-  gimp_number_pair_entry_set_values (GIMP_NUMBER_PAIR_ENTRY (entry), 4, 3);
+  entry =  picman_number_pair_entry_new (":/", TRUE, 0.001, PICMAN_MAX_IMAGE_SIZE);
+  picman_number_pair_entry_set_values (PICMAN_NUMBER_PAIR_ENTRY (entry), 4, 3);
   gtk_container_add (GTK_CONTAINER (align), entry);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Number Pair Entry"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-number-pair-entry", vbox, SMALL);
+  return new_widget_info ("picman-number-pair-entry", vbox, SMALL);
 }
 
 static WidgetInfo *
@@ -513,21 +513,21 @@ create_int_combo_box (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.5, 0.0);
-  combo = gimp_int_combo_box_new ("Sobel",        1,
+  combo = picman_int_combo_box_new ("Sobel",        1,
                                   "Prewitt",      2,
                                   "Gradient",     3,
                                   "Roberts",      4,
                                   "Differential", 5,
                                   "Laplace",      6,
                                   NULL);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo), 1);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo), 1);
 
   gtk_container_add (GTK_CONTAINER (align), combo);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Int Combo Box"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-int-combo-box", vbox, SMALL);
+  return new_widget_info ("picman-int-combo-box", vbox, SMALL);
 }
 
 static WidgetInfo *
@@ -539,14 +539,14 @@ create_memsize_entry (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
-  entry = gimp_memsize_entry_new ((3 * 1024 + 512) * 1024,
+  entry = picman_memsize_entry_new ((3 * 1024 + 512) * 1024,
                                   0, 1024 * 1024 * 1024);
   gtk_container_add (GTK_CONTAINER (align), entry);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Memsize Entry"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-memsize-entry", vbox, SMALL);
+  return new_widget_info ("picman-memsize-entry", vbox, SMALL);
 }
 
 static WidgetInfo *
@@ -562,15 +562,15 @@ create_offset_area (void)
   frame = gtk_frame_new (NULL);
   gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
   gtk_container_add (GTK_CONTAINER (align), frame);
-  area = gimp_offset_area_new (100, 100);
-  gimp_offset_area_set_size (GIMP_OFFSET_AREA (area), 180, 160);
-  gimp_offset_area_set_offsets (GIMP_OFFSET_AREA (area), 30, 30);
+  area = picman_offset_area_new (100, 100);
+  picman_offset_area_set_size (PICMAN_OFFSET_AREA (area), 180, 160);
+  picman_offset_area_set_offsets (PICMAN_OFFSET_AREA (area), 30, 30);
   gtk_container_add (GTK_CONTAINER (frame), area);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Offset Area"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-offset-area", vbox, LARGE);
+  return new_widget_info ("picman-offset-area", vbox, LARGE);
 }
 
 static WidgetInfo *
@@ -580,16 +580,16 @@ create_page_selector (void)
   GtkWidget *selector;
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-  selector = gimp_page_selector_new ();
+  selector = picman_page_selector_new ();
   gtk_widget_set_size_request (selector, -1, 240);
-  gimp_page_selector_set_n_pages (GIMP_PAGE_SELECTOR (selector), 16);
-  gimp_page_selector_select_range (GIMP_PAGE_SELECTOR (selector),
+  picman_page_selector_set_n_pages (PICMAN_PAGE_SELECTOR (selector), 16);
+  picman_page_selector_select_range (PICMAN_PAGE_SELECTOR (selector),
                                    "1,3,7-9,12-15");
   gtk_box_pack_start (GTK_BOX (vbox), selector, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Page Selector"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-page-selector", vbox, ASIS);
+  return new_widget_info ("picman-page-selector", vbox, ASIS);
 }
 
 static WidgetInfo *
@@ -598,12 +598,12 @@ create_path_editor (void)
   GtkWidget *vbox;
   GtkWidget *editor;
   GtkWidget *align;
-  gchar     *config = gimp_config_build_data_path ("patterns");
-  gchar     *path   = gimp_config_path_expand (config, TRUE, NULL);
+  gchar     *config = picman_config_build_data_path ("patterns");
+  gchar     *path   = picman_config_path_expand (config, TRUE, NULL);
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
-  editor = gimp_path_editor_new ("Path Editor", path);
+  editor = picman_path_editor_new ("Path Editor", path);
   gtk_widget_set_size_request (editor, -1, 240);
   gtk_container_add (GTK_CONTAINER (align), editor);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
@@ -613,7 +613,7 @@ create_path_editor (void)
   g_free (path);
   g_free (config);
 
-  return new_widget_info ("gimp-path-editor", vbox, ASIS);
+  return new_widget_info ("picman-path-editor", vbox, ASIS);
 }
 
 static WidgetInfo *
@@ -625,25 +625,25 @@ create_pick_button (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.5, 1.0);
-  button =  gimp_pick_button_new ();
+  button =  picman_pick_button_new ();
   gtk_container_add (GTK_CONTAINER (align), button);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Pick Button"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-pick-button", vbox, SMALL);
+  return new_widget_info ("picman-pick-button", vbox, SMALL);
 }
 
 static gboolean
-area_realize (GimpPreviewArea *area)
+area_realize (PicmanPreviewArea *area)
 {
   GdkPixbuf *pixbuf;
 
   pixbuf = load_image ("wilber-wizard.png");
-  gimp_preview_area_draw (GIMP_PREVIEW_AREA (area), 0, 0,
+  picman_preview_area_draw (PICMAN_PREVIEW_AREA (area), 0, 0,
                           gdk_pixbuf_get_width (pixbuf),
                           gdk_pixbuf_get_height (pixbuf),
-                          GIMP_RGBA_IMAGE,
+                          PICMAN_RGBA_IMAGE,
                           gdk_pixbuf_get_pixels (pixbuf),
                           gdk_pixbuf_get_rowstride (pixbuf));
   g_object_unref (pixbuf);
@@ -661,7 +661,7 @@ create_preview_area (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
-  area =  gimp_preview_area_new ();
+  area =  picman_preview_area_new ();
   g_signal_connect (area, "realize",
                     G_CALLBACK (area_realize), NULL);
   gtk_container_add (GTK_CONTAINER (align), area);
@@ -674,7 +674,7 @@ create_preview_area (void)
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Preview Area"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-preview-area", vbox, MEDIUM);
+  return new_widget_info ("picman-preview-area", vbox, MEDIUM);
 }
 
 static WidgetInfo *
@@ -690,16 +690,16 @@ create_string_combo_box (void)
   store = gtk_list_store_new (1, G_TYPE_STRING);
   gtk_list_store_insert_with_values (store, NULL, 0, 0, "Foo", -1);
   gtk_list_store_insert_with_values (store, NULL, 1, 0, "Bar", -1);
-  combo = gimp_string_combo_box_new (GTK_TREE_MODEL (store), 0, 0);
+  combo = picman_string_combo_box_new (GTK_TREE_MODEL (store), 0, 0);
   g_object_unref (store);
-  gimp_string_combo_box_set_active (GIMP_STRING_COMBO_BOX (combo), "Foo");
+  picman_string_combo_box_set_active (PICMAN_STRING_COMBO_BOX (combo), "Foo");
 
   gtk_container_add (GTK_CONTAINER (align), combo);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("String Combo Box"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-string-combo-box", vbox, SMALL);
+  return new_widget_info ("picman-string-combo-box", vbox, SMALL);
 }
 
 static WidgetInfo *
@@ -711,13 +711,13 @@ create_unit_menu (void)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   align = gtk_alignment_new (0.5, 0.5, 0.5, 0.0);
-  menu =  gimp_unit_menu_new ("%p", GIMP_UNIT_MM, TRUE, FALSE, FALSE);
+  menu =  picman_unit_menu_new ("%p", PICMAN_UNIT_MM, TRUE, FALSE, FALSE);
   gtk_container_add (GTK_CONTAINER (align), menu);
   gtk_box_pack_start (GTK_BOX (vbox), align, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox),
                       gtk_label_new ("Unit Menu"), FALSE, FALSE, 0);
 
-  return new_widget_info ("gimp-unit-menu", vbox, SMALL);
+  return new_widget_info ("picman-unit-menu", vbox, SMALL);
 }
 
 GList *

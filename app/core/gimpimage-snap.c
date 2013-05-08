@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,24 +19,24 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimpguide.h"
-#include "gimpimage.h"
-#include "gimpimage-grid.h"
-#include "gimpimage-guides.h"
-#include "gimpimage-snap.h"
+#include "picman.h"
+#include "picmanguide.h"
+#include "picmanimage.h"
+#include "picmanimage-grid.h"
+#include "picmanimage-guides.h"
+#include "picmanimage-snap.h"
 
-#include "vectors/gimpstroke.h"
-#include "vectors/gimpvectors.h"
+#include "vectors/picmanstroke.h"
+#include "vectors/picmanvectors.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static gboolean  gimp_image_snap_distance (const gdouble  unsnapped,
+static gboolean  picman_image_snap_distance (const gdouble  unsnapped,
                                            const gdouble  nearest,
                                            const gdouble  epsilon,
                                            gdouble       *mindist,
@@ -47,7 +47,7 @@ static gboolean  gimp_image_snap_distance (const gdouble  unsnapped,
 /*  public functions  */
 
 gboolean
-gimp_image_snap_x (GimpImage *image,
+picman_image_snap_x (PicmanImage *image,
                    gdouble    x,
                    gdouble   *tx,
                    gdouble    epsilon_x,
@@ -58,35 +58,35 @@ gimp_image_snap_x (GimpImage *image,
   gdouble   mindist = G_MAXDOUBLE;
   gboolean  snapped = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
   g_return_val_if_fail (tx != NULL, FALSE);
 
   *tx = x;
 
-  if (! gimp_image_get_guides (image)) snap_to_guides = FALSE;
-  if (! gimp_image_get_grid (image))   snap_to_grid   = FALSE;
+  if (! picman_image_get_guides (image)) snap_to_guides = FALSE;
+  if (! picman_image_get_grid (image))   snap_to_grid   = FALSE;
 
   if (! (snap_to_guides || snap_to_grid || snap_to_canvas))
     return FALSE;
 
-  if (x < -epsilon_x || x >= (gimp_image_get_width (image) + epsilon_x))
+  if (x < -epsilon_x || x >= (picman_image_get_width (image) + epsilon_x))
     return FALSE;
 
   if (snap_to_guides)
     {
       GList *list;
 
-      for (list = gimp_image_get_guides (image); list; list = g_list_next (list))
+      for (list = picman_image_get_guides (image); list; list = g_list_next (list))
         {
-          GimpGuide *guide    = list->data;
-          gint       position = gimp_guide_get_position (guide);
+          PicmanGuide *guide    = list->data;
+          gint       position = picman_guide_get_position (guide);
 
           if (position < 0)
             continue;
 
-          if (gimp_guide_get_orientation (guide) == GIMP_ORIENTATION_VERTICAL)
+          if (picman_guide_get_orientation (guide) == PICMAN_ORIENTATION_VERTICAL)
             {
-              snapped |= gimp_image_snap_distance (x, position,
+              snapped |= picman_image_snap_distance (x, position,
                                                    epsilon_x,
                                                    &mindist, tx);
             }
@@ -95,7 +95,7 @@ gimp_image_snap_x (GimpImage *image,
 
   if (snap_to_grid)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
       gdouble   xspacing;
       gdouble   xoffset;
       gdouble   i;
@@ -109,12 +109,12 @@ gimp_image_snap_x (GimpImage *image,
       while (xoffset > xspacing)
         xoffset -= xspacing;
 
-      for (i = xoffset; i <= gimp_image_get_width (image); i += xspacing)
+      for (i = xoffset; i <= picman_image_get_width (image); i += xspacing)
         {
           if (i < 0)
             continue;
 
-          snapped |= gimp_image_snap_distance (x, i,
+          snapped |= picman_image_snap_distance (x, i,
                                                epsilon_x,
                                                &mindist, tx);
         }
@@ -122,10 +122,10 @@ gimp_image_snap_x (GimpImage *image,
 
   if (snap_to_canvas)
     {
-      snapped |= gimp_image_snap_distance (x, 0,
+      snapped |= picman_image_snap_distance (x, 0,
                                            epsilon_x,
                                            &mindist, tx);
-      snapped |= gimp_image_snap_distance (x, gimp_image_get_width (image),
+      snapped |= picman_image_snap_distance (x, picman_image_get_width (image),
                                            epsilon_x,
                                            &mindist, tx);
     }
@@ -134,7 +134,7 @@ gimp_image_snap_x (GimpImage *image,
 }
 
 gboolean
-gimp_image_snap_y (GimpImage *image,
+picman_image_snap_y (PicmanImage *image,
                    gdouble    y,
                    gdouble   *ty,
                    gdouble    epsilon_y,
@@ -145,35 +145,35 @@ gimp_image_snap_y (GimpImage *image,
   gdouble    mindist = G_MAXDOUBLE;
   gboolean   snapped = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
   g_return_val_if_fail (ty != NULL, FALSE);
 
   *ty = y;
 
-  if (! gimp_image_get_guides (image)) snap_to_guides = FALSE;
-  if (! gimp_image_get_grid (image))   snap_to_grid   = FALSE;
+  if (! picman_image_get_guides (image)) snap_to_guides = FALSE;
+  if (! picman_image_get_grid (image))   snap_to_grid   = FALSE;
 
   if (! (snap_to_guides || snap_to_grid || snap_to_canvas))
     return FALSE;
 
-  if (y < -epsilon_y || y >= (gimp_image_get_height (image) + epsilon_y))
+  if (y < -epsilon_y || y >= (picman_image_get_height (image) + epsilon_y))
     return FALSE;
 
   if (snap_to_guides)
     {
       GList *list;
 
-      for (list = gimp_image_get_guides (image); list; list = g_list_next (list))
+      for (list = picman_image_get_guides (image); list; list = g_list_next (list))
         {
-          GimpGuide *guide    = list->data;
-          gint       position = gimp_guide_get_position (guide);
+          PicmanGuide *guide    = list->data;
+          gint       position = picman_guide_get_position (guide);
 
           if (position < 0)
             continue;
 
-          if (gimp_guide_get_orientation (guide) == GIMP_ORIENTATION_HORIZONTAL)
+          if (picman_guide_get_orientation (guide) == PICMAN_ORIENTATION_HORIZONTAL)
             {
-              snapped |= gimp_image_snap_distance (y, position,
+              snapped |= picman_image_snap_distance (y, position,
                                                    epsilon_y,
                                                    &mindist, ty);
             }
@@ -182,7 +182,7 @@ gimp_image_snap_y (GimpImage *image,
 
   if (snap_to_grid)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
       gdouble    yspacing;
       gdouble    yoffset;
       gdouble    i;
@@ -195,12 +195,12 @@ gimp_image_snap_y (GimpImage *image,
       while (yoffset > yspacing)
         yoffset -= yspacing;
 
-      for (i = yoffset; i <= gimp_image_get_height (image); i += yspacing)
+      for (i = yoffset; i <= picman_image_get_height (image); i += yspacing)
         {
           if (i < 0)
             continue;
 
-          snapped |= gimp_image_snap_distance (y, i,
+          snapped |= picman_image_snap_distance (y, i,
                                                epsilon_y,
                                                &mindist, ty);
         }
@@ -208,10 +208,10 @@ gimp_image_snap_y (GimpImage *image,
 
   if (snap_to_canvas)
     {
-      snapped |= gimp_image_snap_distance (y, 0,
+      snapped |= picman_image_snap_distance (y, 0,
                                            epsilon_y,
                                            &mindist, ty);
-      snapped |= gimp_image_snap_distance (y, gimp_image_get_height (image),
+      snapped |= picman_image_snap_distance (y, picman_image_get_height (image),
                                            epsilon_y,
                                            &mindist, ty);
     }
@@ -220,7 +220,7 @@ gimp_image_snap_y (GimpImage *image,
 }
 
 gboolean
-gimp_image_snap_point (GimpImage *image,
+picman_image_snap_point (PicmanImage *image,
                        gdouble    x,
                        gdouble    y,
                        gdouble   *tx,
@@ -236,22 +236,22 @@ gimp_image_snap_point (GimpImage *image,
   gdouble  mindist_y = G_MAXDOUBLE;
   gboolean snapped   = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
   g_return_val_if_fail (tx != NULL, FALSE);
   g_return_val_if_fail (ty != NULL, FALSE);
 
   *tx = x;
   *ty = y;
 
-  if (! gimp_image_get_guides (image))         snap_to_guides  = FALSE;
-  if (! gimp_image_get_grid (image))           snap_to_grid    = FALSE;
-  if (! gimp_image_get_active_vectors (image)) snap_to_vectors = FALSE;
+  if (! picman_image_get_guides (image))         snap_to_guides  = FALSE;
+  if (! picman_image_get_grid (image))           snap_to_grid    = FALSE;
+  if (! picman_image_get_active_vectors (image)) snap_to_vectors = FALSE;
 
   if (! (snap_to_guides || snap_to_grid || snap_to_canvas || snap_to_vectors))
     return FALSE;
 
-  if (x < -epsilon_x || x >= (gimp_image_get_width  (image) + epsilon_x) ||
-      y < -epsilon_y || y >= (gimp_image_get_height (image) + epsilon_y))
+  if (x < -epsilon_x || x >= (picman_image_get_width  (image) + epsilon_x) ||
+      y < -epsilon_y || y >= (picman_image_get_height (image) + epsilon_y))
     {
       return FALSE;
     }
@@ -260,24 +260,24 @@ gimp_image_snap_point (GimpImage *image,
     {
       GList *list;
 
-      for (list = gimp_image_get_guides (image); list; list = g_list_next (list))
+      for (list = picman_image_get_guides (image); list; list = g_list_next (list))
         {
-          GimpGuide *guide    = list->data;
-          gint       position = gimp_guide_get_position (guide);
+          PicmanGuide *guide    = list->data;
+          gint       position = picman_guide_get_position (guide);
 
           if (position < 0)
             continue;
 
-          switch (gimp_guide_get_orientation (guide))
+          switch (picman_guide_get_orientation (guide))
             {
-            case GIMP_ORIENTATION_HORIZONTAL:
-              snapped |= gimp_image_snap_distance (y, position,
+            case PICMAN_ORIENTATION_HORIZONTAL:
+              snapped |= picman_image_snap_distance (y, position,
                                                    epsilon_y,
                                                    &mindist_y, ty);
               break;
 
-            case GIMP_ORIENTATION_VERTICAL:
-              snapped |= gimp_image_snap_distance (x, position,
+            case PICMAN_ORIENTATION_VERTICAL:
+              snapped |= picman_image_snap_distance (x, position,
                                                    epsilon_x,
                                                    &mindist_x, tx);
               break;
@@ -290,7 +290,7 @@ gimp_image_snap_point (GimpImage *image,
 
   if (snap_to_grid)
     {
-      GimpGrid *grid = gimp_image_get_grid (image);
+      PicmanGrid *grid = picman_image_get_grid (image);
       gdouble   xspacing, yspacing;
       gdouble   xoffset, yoffset;
       gdouble   i;
@@ -308,22 +308,22 @@ gimp_image_snap_point (GimpImage *image,
       while (yoffset > yspacing)
         yoffset -= yspacing;
 
-      for (i = xoffset; i <= gimp_image_get_width (image); i += xspacing)
+      for (i = xoffset; i <= picman_image_get_width (image); i += xspacing)
         {
           if (i < 0)
             continue;
 
-          snapped |= gimp_image_snap_distance (x, i,
+          snapped |= picman_image_snap_distance (x, i,
                                                epsilon_x,
                                                &mindist_x, tx);
         }
 
-      for (i = yoffset; i <= gimp_image_get_height (image); i += yspacing)
+      for (i = yoffset; i <= picman_image_get_height (image); i += yspacing)
         {
           if (i < 0)
             continue;
 
-          snapped |= gimp_image_snap_distance (y, i,
+          snapped |= picman_image_snap_distance (y, i,
                                                epsilon_y,
                                                &mindist_y, ty);
         }
@@ -331,42 +331,42 @@ gimp_image_snap_point (GimpImage *image,
 
   if (snap_to_canvas)
     {
-      snapped |= gimp_image_snap_distance (x, 0,
+      snapped |= picman_image_snap_distance (x, 0,
                                            epsilon_x,
                                            &mindist_x, tx);
-      snapped |= gimp_image_snap_distance (x, gimp_image_get_width (image),
+      snapped |= picman_image_snap_distance (x, picman_image_get_width (image),
                                            epsilon_x,
                                            &mindist_x, tx);
 
-      snapped |= gimp_image_snap_distance (y, 0,
+      snapped |= picman_image_snap_distance (y, 0,
                                            epsilon_y,
                                            &mindist_y, ty);
-      snapped |= gimp_image_snap_distance (y, gimp_image_get_height (image),
+      snapped |= picman_image_snap_distance (y, picman_image_get_height (image),
                                            epsilon_y,
                                            &mindist_y, ty);
     }
 
   if (snap_to_vectors)
     {
-      GimpVectors *vectors = gimp_image_get_active_vectors (image);
-      GimpStroke  *stroke  = NULL;
-      GimpCoords   coords  = { 0, 0, 0, 0, 0 };
+      PicmanVectors *vectors = picman_image_get_active_vectors (image);
+      PicmanStroke  *stroke  = NULL;
+      PicmanCoords   coords  = { 0, 0, 0, 0, 0 };
 
       coords.x = x;
       coords.y = y;
 
-      while ((stroke = gimp_vectors_stroke_get_next (vectors, stroke)))
+      while ((stroke = picman_vectors_stroke_get_next (vectors, stroke)))
         {
-          GimpCoords nearest;
+          PicmanCoords nearest;
 
-          if (gimp_stroke_nearest_point_get (stroke, &coords, 1.0,
+          if (picman_stroke_nearest_point_get (stroke, &coords, 1.0,
                                              &nearest,
                                              NULL, NULL, NULL) >= 0)
             {
-              snapped |= gimp_image_snap_distance (x, nearest.x,
+              snapped |= picman_image_snap_distance (x, nearest.x,
                                                    epsilon_x,
                                                    &mindist_x, tx);
-              snapped |= gimp_image_snap_distance (y, nearest.y,
+              snapped |= picman_image_snap_distance (y, nearest.y,
                                                    epsilon_y,
                                                    &mindist_y, ty);
             }
@@ -377,7 +377,7 @@ gimp_image_snap_point (GimpImage *image,
 }
 
 gboolean
-gimp_image_snap_rectangle (GimpImage *image,
+picman_image_snap_rectangle (PicmanImage *image,
                            gdouble    x1,
                            gdouble    y1,
                            gdouble    x2,
@@ -398,22 +398,22 @@ gimp_image_snap_rectangle (GimpImage *image,
   gdouble  y_center  = (y1 + y2) / 2.0;
   gboolean snapped   = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
   g_return_val_if_fail (tx1 != NULL, FALSE);
   g_return_val_if_fail (ty1 != NULL, FALSE);
 
   *tx1 = x1;
   *ty1 = y1;
 
-  if (! gimp_image_get_guides (image))         snap_to_guides  = FALSE;
-  if (! gimp_image_get_grid (image))           snap_to_grid    = FALSE;
-  if (! gimp_image_get_active_vectors (image)) snap_to_vectors = FALSE;
+  if (! picman_image_get_guides (image))         snap_to_guides  = FALSE;
+  if (! picman_image_get_grid (image))           snap_to_grid    = FALSE;
+  if (! picman_image_get_active_vectors (image)) snap_to_vectors = FALSE;
 
   if (! (snap_to_guides || snap_to_grid || snap_to_canvas || snap_to_vectors))
     return FALSE;
 
   /*  left edge  */
-  if (gimp_image_snap_x (image, x1, &nx,
+  if (picman_image_snap_x (image, x1, &nx,
                          MIN (epsilon_x, mindist_x),
                          snap_to_guides,
                          snap_to_grid,
@@ -425,7 +425,7 @@ gimp_image_snap_rectangle (GimpImage *image,
     }
 
   /*  right edge  */
-  if (gimp_image_snap_x (image, x2, &nx,
+  if (picman_image_snap_x (image, x2, &nx,
                          MIN (epsilon_x, mindist_x),
                          snap_to_guides,
                          snap_to_grid,
@@ -437,7 +437,7 @@ gimp_image_snap_rectangle (GimpImage *image,
     }
 
   /*  center, vertical  */
-  if (gimp_image_snap_x (image, x_center, &nx,
+  if (picman_image_snap_x (image, x_center, &nx,
                          MIN (epsilon_x, mindist_x),
                          snap_to_guides,
                          snap_to_grid,
@@ -449,7 +449,7 @@ gimp_image_snap_rectangle (GimpImage *image,
     }
 
   /*  top edge  */
-  if (gimp_image_snap_y (image, y1, &ny,
+  if (picman_image_snap_y (image, y1, &ny,
                          MIN (epsilon_y, mindist_y),
                          snap_to_guides,
                          snap_to_grid,
@@ -461,7 +461,7 @@ gimp_image_snap_rectangle (GimpImage *image,
     }
 
   /*  bottom edge  */
-  if (gimp_image_snap_y (image, y2, &ny,
+  if (picman_image_snap_y (image, y2, &ny,
                          MIN (epsilon_y, mindist_y),
                          snap_to_guides,
                          snap_to_grid,
@@ -473,7 +473,7 @@ gimp_image_snap_rectangle (GimpImage *image,
     }
 
   /*  center, horizontal  */
-  if (gimp_image_snap_y (image, y_center, &ny,
+  if (picman_image_snap_y (image, y_center, &ny,
                          MIN (epsilon_y, mindist_y),
                          snap_to_guides,
                          snap_to_grid,
@@ -486,14 +486,14 @@ gimp_image_snap_rectangle (GimpImage *image,
 
   if (snap_to_vectors)
     {
-      GimpVectors *vectors = gimp_image_get_active_vectors (image);
-      GimpStroke  *stroke  = NULL;
-      GimpCoords   coords1 = GIMP_COORDS_DEFAULT_VALUES;
-      GimpCoords   coords2 = GIMP_COORDS_DEFAULT_VALUES;
+      PicmanVectors *vectors = picman_image_get_active_vectors (image);
+      PicmanStroke  *stroke  = NULL;
+      PicmanCoords   coords1 = PICMAN_COORDS_DEFAULT_VALUES;
+      PicmanCoords   coords2 = PICMAN_COORDS_DEFAULT_VALUES;
 
-      while ((stroke = gimp_vectors_stroke_get_next (vectors, stroke)))
+      while ((stroke = picman_vectors_stroke_get_next (vectors, stroke)))
         {
-          GimpCoords nearest;
+          PicmanCoords nearest;
           gdouble    dist;
 
           /*  top edge  */
@@ -503,25 +503,25 @@ gimp_image_snap_rectangle (GimpImage *image,
           coords2.x = x2;
           coords2.y = y1;
 
-          if (gimp_stroke_nearest_tangent_get (stroke, &coords1, &coords2,
+          if (picman_stroke_nearest_tangent_get (stroke, &coords1, &coords2,
                                                1.0, &nearest,
                                                NULL, NULL, NULL) >= 0)
             {
-              snapped |= gimp_image_snap_distance (y1, nearest.y,
+              snapped |= picman_image_snap_distance (y1, nearest.y,
                                                    epsilon_y,
                                                    &mindist_y, ty1);
             }
 
-          if (gimp_stroke_nearest_intersection_get (stroke, &coords1, &coords2,
+          if (picman_stroke_nearest_intersection_get (stroke, &coords1, &coords2,
                                                     1.0, &nearest,
                                                     NULL, NULL, NULL) >= 0)
             {
-              snapped |= gimp_image_snap_distance (x1, nearest.x,
+              snapped |= picman_image_snap_distance (x1, nearest.x,
                                                    epsilon_x,
                                                    &mindist_x, tx1);
             }
 
-          if (gimp_stroke_nearest_intersection_get (stroke, &coords2, &coords1,
+          if (picman_stroke_nearest_intersection_get (stroke, &coords2, &coords1,
                                                     1.0, &nearest,
                                                     NULL, NULL, NULL) >= 0)
             {
@@ -542,7 +542,7 @@ gimp_image_snap_rectangle (GimpImage *image,
           coords2.x = x2;
           coords2.y = y2;
 
-          if (gimp_stroke_nearest_tangent_get (stroke, &coords1, &coords2,
+          if (picman_stroke_nearest_tangent_get (stroke, &coords1, &coords2,
                                                1.0, &nearest,
                                                NULL, NULL, NULL) >= 0)
             {
@@ -556,16 +556,16 @@ gimp_image_snap_rectangle (GimpImage *image,
                 }
             }
 
-          if (gimp_stroke_nearest_intersection_get (stroke, &coords1, &coords2,
+          if (picman_stroke_nearest_intersection_get (stroke, &coords1, &coords2,
                                                     1.0, &nearest,
                                                     NULL, NULL, NULL) >= 0)
             {
-              snapped |= gimp_image_snap_distance (x1, nearest.x,
+              snapped |= picman_image_snap_distance (x1, nearest.x,
                                                    epsilon_x,
                                                    &mindist_x, tx1);
             }
 
-          if (gimp_stroke_nearest_intersection_get (stroke, &coords2, &coords1,
+          if (picman_stroke_nearest_intersection_get (stroke, &coords2, &coords1,
                                                     1.0, &nearest,
                                                     NULL, NULL, NULL) >= 0)
             {
@@ -586,25 +586,25 @@ gimp_image_snap_rectangle (GimpImage *image,
           coords2.x = x1;
           coords2.y = y2;
 
-          if (gimp_stroke_nearest_tangent_get (stroke, &coords1, &coords2,
+          if (picman_stroke_nearest_tangent_get (stroke, &coords1, &coords2,
                                                1.0, &nearest,
                                                NULL, NULL, NULL) >= 0)
             {
-              snapped |= gimp_image_snap_distance (x1, nearest.x,
+              snapped |= picman_image_snap_distance (x1, nearest.x,
                                                    epsilon_x,
                                                    &mindist_x, tx1);
             }
 
-          if (gimp_stroke_nearest_intersection_get (stroke, &coords1, &coords2,
+          if (picman_stroke_nearest_intersection_get (stroke, &coords1, &coords2,
                                                     1.0, &nearest,
                                                     NULL, NULL, NULL) >= 0)
             {
-              snapped |= gimp_image_snap_distance (y1, nearest.y,
+              snapped |= picman_image_snap_distance (y1, nearest.y,
                                                    epsilon_y,
                                                    &mindist_y, ty1);
             }
 
-          if (gimp_stroke_nearest_intersection_get (stroke, &coords2, &coords1,
+          if (picman_stroke_nearest_intersection_get (stroke, &coords2, &coords1,
                                                     1.0, &nearest,
                                                     NULL, NULL, NULL) >= 0)
             {
@@ -625,7 +625,7 @@ gimp_image_snap_rectangle (GimpImage *image,
           coords2.x = x2;
           coords2.y = y2;
 
-          if (gimp_stroke_nearest_tangent_get (stroke, &coords1, &coords2,
+          if (picman_stroke_nearest_tangent_get (stroke, &coords1, &coords2,
                                                1.0, &nearest,
                                                NULL, NULL, NULL) >= 0)
             {
@@ -639,16 +639,16 @@ gimp_image_snap_rectangle (GimpImage *image,
                 }
             }
 
-          if (gimp_stroke_nearest_intersection_get (stroke, &coords1, &coords2,
+          if (picman_stroke_nearest_intersection_get (stroke, &coords1, &coords2,
                                                     1.0, &nearest,
                                                     NULL, NULL, NULL) >= 0)
             {
-              snapped |= gimp_image_snap_distance (y1, nearest.y,
+              snapped |= picman_image_snap_distance (y1, nearest.y,
                                                    epsilon_y,
                                                    &mindist_y, ty1);
             }
 
-          if (gimp_stroke_nearest_intersection_get (stroke, &coords2, &coords1,
+          if (picman_stroke_nearest_intersection_get (stroke, &coords2, &coords1,
                                                     1.0, &nearest,
                                                     NULL, NULL, NULL) >= 0)
             {
@@ -670,7 +670,7 @@ gimp_image_snap_rectangle (GimpImage *image,
 /* private functions */
 
 /**
- * gimp_image_snap_distance:
+ * picman_image_snap_distance:
  * @unsnapped: One coordinate of the unsnapped position
  * @nearest:  One coordinate of a snapping position candidate
  * @epsilon:  The snapping threshold
@@ -683,7 +683,7 @@ gimp_image_snap_rectangle (GimpImage *image,
  * Return value: %TRUE if snapping occurred, %FALSE otherwise
  */
 static gboolean
-gimp_image_snap_distance (const gdouble  unsnapped,
+picman_image_snap_distance (const gdouble  unsnapped,
                           const gdouble  nearest,
                           const gdouble  epsilon,
                           gdouble       *mindist,

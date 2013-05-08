@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "widgets-types.h"
 
-#include "gimphandlebar.h"
+#include "picmanhandlebar.h"
 
 
 enum
@@ -35,58 +35,58 @@ enum
 
 /*  local function prototypes  */
 
-static void      gimp_handle_bar_set_property       (GObject        *object,
+static void      picman_handle_bar_set_property       (GObject        *object,
                                                      guint           property_id,
                                                      const GValue   *value,
                                                      GParamSpec     *pspec);
-static void      gimp_handle_bar_get_property       (GObject        *object,
+static void      picman_handle_bar_get_property       (GObject        *object,
                                                      guint           property_id,
                                                      GValue         *value,
                                                      GParamSpec     *pspec);
 
-static gboolean  gimp_handle_bar_expose             (GtkWidget      *widget,
+static gboolean  picman_handle_bar_expose             (GtkWidget      *widget,
                                                      GdkEventExpose *eevent);
-static gboolean  gimp_handle_bar_button_press       (GtkWidget      *widget,
+static gboolean  picman_handle_bar_button_press       (GtkWidget      *widget,
                                                      GdkEventButton *bevent);
-static gboolean  gimp_handle_bar_button_release     (GtkWidget      *widget,
+static gboolean  picman_handle_bar_button_release     (GtkWidget      *widget,
                                                      GdkEventButton *bevent);
-static gboolean  gimp_handle_bar_motion_notify      (GtkWidget      *widget,
+static gboolean  picman_handle_bar_motion_notify      (GtkWidget      *widget,
                                                      GdkEventMotion *mevent);
 
-static void      gimp_handle_bar_adjustment_changed (GtkAdjustment  *adjustment,
-                                                     GimpHandleBar  *bar);
+static void      picman_handle_bar_adjustment_changed (GtkAdjustment  *adjustment,
+                                                     PicmanHandleBar  *bar);
 
 
-G_DEFINE_TYPE (GimpHandleBar, gimp_handle_bar, GTK_TYPE_EVENT_BOX)
+G_DEFINE_TYPE (PicmanHandleBar, picman_handle_bar, GTK_TYPE_EVENT_BOX)
 
-#define parent_class gimp_handle_bar_parent_class
+#define parent_class picman_handle_bar_parent_class
 
 
 static void
-gimp_handle_bar_class_init (GimpHandleBarClass *klass)
+picman_handle_bar_class_init (PicmanHandleBarClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->set_property         = gimp_handle_bar_set_property;
-  object_class->get_property         = gimp_handle_bar_get_property;
+  object_class->set_property         = picman_handle_bar_set_property;
+  object_class->get_property         = picman_handle_bar_get_property;
 
-  widget_class->expose_event         = gimp_handle_bar_expose;
-  widget_class->button_press_event   = gimp_handle_bar_button_press;
-  widget_class->button_release_event = gimp_handle_bar_button_release;
-  widget_class->motion_notify_event  = gimp_handle_bar_motion_notify;
+  widget_class->expose_event         = picman_handle_bar_expose;
+  widget_class->button_press_event   = picman_handle_bar_button_press;
+  widget_class->button_release_event = picman_handle_bar_button_release;
+  widget_class->motion_notify_event  = picman_handle_bar_motion_notify;
 
   g_object_class_install_property (object_class, PROP_ORIENTATION,
                                    g_param_spec_enum ("orientation",
                                                       NULL, NULL,
                                                       GTK_TYPE_ORIENTATION,
                                                       GTK_ORIENTATION_HORIZONTAL,
-                                                      GIMP_PARAM_READWRITE |
+                                                      PICMAN_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_handle_bar_init (GimpHandleBar *bar)
+picman_handle_bar_init (PicmanHandleBar *bar)
 {
   gtk_widget_add_events (GTK_WIDGET (bar),
                          GDK_BUTTON_PRESS_MASK   |
@@ -101,12 +101,12 @@ gimp_handle_bar_init (GimpHandleBar *bar)
 }
 
 static void
-gimp_handle_bar_set_property (GObject      *object,
+picman_handle_bar_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  GimpHandleBar *bar = GIMP_HANDLE_BAR (object);
+  PicmanHandleBar *bar = PICMAN_HANDLE_BAR (object);
 
   switch (property_id)
     {
@@ -121,12 +121,12 @@ gimp_handle_bar_set_property (GObject      *object,
 }
 
 static void
-gimp_handle_bar_get_property (GObject    *object,
+picman_handle_bar_get_property (GObject    *object,
                               guint       property_id,
                               GValue     *value,
                               GParamSpec *pspec)
 {
-  GimpHandleBar *bar = GIMP_HANDLE_BAR (object);
+  PicmanHandleBar *bar = PICMAN_HANDLE_BAR (object);
 
   switch (property_id)
     {
@@ -141,10 +141,10 @@ gimp_handle_bar_get_property (GObject    *object,
 }
 
 static gboolean
-gimp_handle_bar_expose (GtkWidget      *widget,
+picman_handle_bar_expose (GtkWidget      *widget,
                         GdkEventExpose *eevent)
 {
-  GimpHandleBar *bar = GIMP_HANDLE_BAR (widget);
+  PicmanHandleBar *bar = PICMAN_HANDLE_BAR (widget);
   GtkAllocation  allocation;
   cairo_t       *cr;
   gint           x, y;
@@ -211,10 +211,10 @@ gimp_handle_bar_expose (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_handle_bar_button_press (GtkWidget      *widget,
+picman_handle_bar_button_press (GtkWidget      *widget,
                               GdkEventButton *bevent)
 {
-  GimpHandleBar *bar= GIMP_HANDLE_BAR (widget);
+  PicmanHandleBar *bar= PICMAN_HANDLE_BAR (widget);
   GtkAllocation  allocation;
   gint           border;
   gint           width;
@@ -254,17 +254,17 @@ gimp_handle_bar_button_press (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_handle_bar_button_release (GtkWidget      *widget,
+picman_handle_bar_button_release (GtkWidget      *widget,
                                 GdkEventButton *bevent)
 {
   return TRUE;
 }
 
 static gboolean
-gimp_handle_bar_motion_notify (GtkWidget      *widget,
+picman_handle_bar_motion_notify (GtkWidget      *widget,
                                GdkEventMotion *mevent)
 {
-  GimpHandleBar *bar    = GIMP_HANDLE_BAR (widget);
+  PicmanHandleBar *bar    = PICMAN_HANDLE_BAR (widget);
   GtkAllocation  allocation;
   gint           border;
   gint           width;
@@ -291,28 +291,28 @@ gimp_handle_bar_motion_notify (GtkWidget      *widget,
 /*  public functions  */
 
 /**
- * gimp_handle_bar_new:
+ * picman_handle_bar_new:
  * @orientation: whether the bar should be oriented horizontally or
  *               vertically
  *
- * Creates a new #GimpHandleBar widget.
+ * Creates a new #PicmanHandleBar widget.
  *
- * Return value: The new #GimpHandleBar widget.
+ * Return value: The new #PicmanHandleBar widget.
  **/
 GtkWidget *
-gimp_handle_bar_new (GtkOrientation  orientation)
+picman_handle_bar_new (GtkOrientation  orientation)
 {
-  return g_object_new (GIMP_TYPE_HANDLE_BAR,
+  return g_object_new (PICMAN_TYPE_HANDLE_BAR,
                        "orientation", orientation,
                        NULL);
 }
 
 void
-gimp_handle_bar_set_adjustment (GimpHandleBar  *bar,
+picman_handle_bar_set_adjustment (PicmanHandleBar  *bar,
                                 gint            handle_no,
                                 GtkAdjustment  *adjustment)
 {
-  g_return_if_fail (GIMP_IS_HANDLE_BAR (bar));
+  g_return_if_fail (PICMAN_IS_HANDLE_BAR (bar));
   g_return_if_fail (handle_no >= 0 && handle_no <= 2);
   g_return_if_fail (adjustment == NULL || GTK_IS_ADJUSTMENT (adjustment));
 
@@ -322,7 +322,7 @@ gimp_handle_bar_set_adjustment (GimpHandleBar  *bar,
   if (bar->slider_adj[handle_no])
     {
       g_signal_handlers_disconnect_by_func (bar->slider_adj[handle_no],
-                                            gimp_handle_bar_adjustment_changed,
+                                            picman_handle_bar_adjustment_changed,
                                             bar);
       g_object_unref (bar->slider_adj[handle_no]);
       bar->slider_adj[handle_no] = NULL;
@@ -335,22 +335,22 @@ gimp_handle_bar_set_adjustment (GimpHandleBar  *bar,
       g_object_ref (bar->slider_adj[handle_no]);
 
       g_signal_connect (bar->slider_adj[handle_no], "value-changed",
-                        G_CALLBACK (gimp_handle_bar_adjustment_changed),
+                        G_CALLBACK (picman_handle_bar_adjustment_changed),
                         bar);
       g_signal_connect (bar->slider_adj[handle_no], "changed",
-                        G_CALLBACK (gimp_handle_bar_adjustment_changed),
+                        G_CALLBACK (picman_handle_bar_adjustment_changed),
                         bar);
     }
 
-  gimp_handle_bar_adjustment_changed (bar->slider_adj[handle_no], bar);
+  picman_handle_bar_adjustment_changed (bar->slider_adj[handle_no], bar);
 }
 
 
 /*  private functions  */
 
 static void
-gimp_handle_bar_adjustment_changed (GtkAdjustment *adjustment,
-                                    GimpHandleBar *bar)
+picman_handle_bar_adjustment_changed (GtkAdjustment *adjustment,
+                                    PicmanHandleBar *bar)
 {
   if (bar->slider_adj[0])
     bar->lower = gtk_adjustment_get_lower (bar->slider_adj[0]);

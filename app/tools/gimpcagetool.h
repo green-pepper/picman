@@ -1,6 +1,6 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  *
- * gimpcagetool.h
+ * picmancagetool.h
  * Copyright (C) 2010 Michael Muré <batolettre@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,31 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CAGE_TOOL_H__
-#define __GIMP_CAGE_TOOL_H__
+#ifndef __PICMAN_CAGE_TOOL_H__
+#define __PICMAN_CAGE_TOOL_H__
 
 
-#include "gimpdrawtool.h"
+#include "picmandrawtool.h"
 
 
-#define GIMP_TYPE_CAGE_TOOL            (gimp_cage_tool_get_type ())
-#define GIMP_CAGE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CAGE_TOOL, GimpCageTool))
-#define GIMP_CAGE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CAGE_TOOL, GimpCageToolClass))
-#define GIMP_IS_CAGE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CAGE_TOOL))
-#define GIMP_IS_CAGE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CAGE_TOOL))
-#define GIMP_CAGE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CAGE_TOOL, GimpCageToolClass))
+#define PICMAN_TYPE_CAGE_TOOL            (picman_cage_tool_get_type ())
+#define PICMAN_CAGE_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CAGE_TOOL, PicmanCageTool))
+#define PICMAN_CAGE_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CAGE_TOOL, PicmanCageToolClass))
+#define PICMAN_IS_CAGE_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CAGE_TOOL))
+#define PICMAN_IS_CAGE_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CAGE_TOOL))
+#define PICMAN_CAGE_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CAGE_TOOL, PicmanCageToolClass))
 
-#define GIMP_CAGE_TOOL_GET_OPTIONS(t)  (GIMP_CAGE_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_CAGE_TOOL_GET_OPTIONS(t)  (PICMAN_CAGE_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpCageTool      GimpCageTool;
-typedef struct _GimpCageToolClass GimpCageToolClass;
+typedef struct _PicmanCageTool      PicmanCageTool;
+typedef struct _PicmanCageToolClass PicmanCageToolClass;
 
-struct _GimpCageTool
+struct _PicmanCageTool
 {
-  GimpDrawTool    parent_instance;
+  PicmanDrawTool    parent_instance;
 
-  GimpCageConfig *config;
+  PicmanCageConfig *config;
 
   gint            offset_x; /* used to convert the cage point coords */
   gint            offset_y; /* to drawable coords */
@@ -68,19 +68,19 @@ struct _GimpCageTool
 
   gint            tool_state; /* Current state in statemachine */
 
-  GimpImageMap   *image_map; /* For preview */
+  PicmanImageMap   *image_map; /* For preview */
 };
 
-struct _GimpCageToolClass
+struct _PicmanCageToolClass
 {
-  GimpDrawToolClass parent_class;
+  PicmanDrawToolClass parent_class;
 };
 
 
-void    gimp_cage_tool_register (GimpToolRegisterCallback  callback,
+void    picman_cage_tool_register (PicmanToolRegisterCallback  callback,
                                  gpointer                  data);
 
-GType   gimp_cage_tool_get_type (void) G_GNUC_CONST;
+GType   picman_cage_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_CAGE_TOOL_H__  */
+#endif  /*  __PICMAN_CAGE_TOOL_H__  */

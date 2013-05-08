@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,32 +19,32 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimpcontext.h"
-#include "gimptoolpreset.h"
-#include "gimptoolpreset-load.h"
+#include "picmancontext.h"
+#include "picmantoolpreset.h"
+#include "picmantoolpreset-load.h"
 
 
 GList *
-gimp_tool_preset_load (GimpContext  *context,
+picman_tool_preset_load (PicmanContext  *context,
                        const gchar  *filename,
                        GError      **error)
 {
-  GimpToolPreset *tool_preset;
+  PicmanToolPreset *tool_preset;
 
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (filename != NULL, NULL);
   g_return_val_if_fail (g_path_is_absolute (filename), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  tool_preset = g_object_new (GIMP_TYPE_TOOL_PRESET,
-                              "gimp", context->gimp,
+  tool_preset = g_object_new (PICMAN_TYPE_TOOL_PRESET,
+                              "picman", context->picman,
                               NULL);
 
-  if (gimp_config_deserialize_file (GIMP_CONFIG (tool_preset),
+  if (picman_config_deserialize_file (PICMAN_CONFIG (tool_preset),
                                     filename,
                                     NULL, error))
     {

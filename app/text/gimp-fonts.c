@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis and others
  *
  * text.c
- * Copyright (C) 2003 Manish Singh <yosh@gimp.org>
+ * Copyright (C) 2003 Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,73 +24,73 @@
 
 #include <fontconfig/fontconfig.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "text-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "gimp-fonts.h"
-#include "gimpfontlist.h"
+#include "picman-fonts.h"
+#include "picmanfontlist.h"
 
 
 #define CONF_FNAME "fonts.conf"
 
 
-static gboolean gimp_fonts_load_fonts_conf (FcConfig    *config,
+static gboolean picman_fonts_load_fonts_conf (FcConfig    *config,
                                             gchar       *fonts_conf);
-static void     gimp_fonts_add_directories (FcConfig    *config,
+static void     picman_fonts_add_directories (FcConfig    *config,
                                             const gchar *path_str);
 
 
 void
-gimp_fonts_init (Gimp *gimp)
+picman_fonts_init (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  gimp->fonts = gimp_font_list_new (72.0, 72.0);
-  gimp_object_set_name (GIMP_OBJECT (gimp->fonts), "fonts");
+  picman->fonts = picman_font_list_new (72.0, 72.0);
+  picman_object_set_name (PICMAN_OBJECT (picman->fonts), "fonts");
 
-  g_signal_connect_swapped (gimp->config, "notify::font-path",
-                            G_CALLBACK (gimp_fonts_load), gimp);
+  g_signal_connect_swapped (picman->config, "notify::font-path",
+                            G_CALLBACK (picman_fonts_load), picman);
 }
 
 void
-gimp_fonts_load (Gimp *gimp)
+picman_fonts_load (Picman *picman)
 {
   FcConfig *config;
   gchar    *fonts_conf;
   gchar    *path;
 
-  g_return_if_fail (GIMP_IS_FONT_LIST (gimp->fonts));
+  g_return_if_fail (PICMAN_IS_FONT_LIST (picman->fonts));
 
-  gimp_set_busy (gimp);
+  picman_set_busy (picman);
 
-  if (gimp->be_verbose)
+  if (picman->be_verbose)
     g_print ("Loading fonts\n");
 
-  gimp_container_freeze (GIMP_CONTAINER (gimp->fonts));
+  picman_container_freeze (PICMAN_CONTAINER (picman->fonts));
 
-  gimp_container_clear (GIMP_CONTAINER (gimp->fonts));
+  picman_container_clear (PICMAN_CONTAINER (picman->fonts));
 
   config = FcInitLoadConfig ();
 
   if (! config)
     goto cleanup;
 
-  fonts_conf = gimp_personal_rc_file (CONF_FNAME);
-  if (! gimp_fonts_load_fonts_conf (config, fonts_conf))
+  fonts_conf = picman_personal_rc_file (CONF_FNAME);
+  if (! picman_fonts_load_fonts_conf (config, fonts_conf))
     goto cleanup;
 
-  fonts_conf = g_build_filename (gimp_sysconf_directory (), CONF_FNAME, NULL);
-  if (! gimp_fonts_load_fonts_conf (config, fonts_conf))
+  fonts_conf = g_build_filename (picman_sysconf_directory (), CONF_FNAME, NULL);
+  if (! picman_fonts_load_fonts_conf (config, fonts_conf))
     goto cleanup;
 
-  path = gimp_config_path_expand (gimp->config->font_path, TRUE, NULL);
-  gimp_fonts_add_directories (config, path);
+  path = picman_config_path_expand (picman->config->font_path, TRUE, NULL);
+  picman_fonts_add_directories (config, path);
   g_free (path);
 
   if (! FcConfigBuildFonts (config))
@@ -101,19 +101,19 @@ gimp_fonts_load (Gimp *gimp)
 
   FcConfigSetCurrent (config);
 
-  gimp_font_list_restore (GIMP_FONT_LIST (gimp->fonts));
+  picman_font_list_restore (PICMAN_FONT_LIST (picman->fonts));
 
  cleanup:
-  gimp_container_thaw (GIMP_CONTAINER (gimp->fonts));
-  gimp_unset_busy (gimp);
+  picman_container_thaw (PICMAN_CONTAINER (picman->fonts));
+  picman_unset_busy (picman);
 }
 
 void
-gimp_fonts_reset (Gimp *gimp)
+picman_fonts_reset (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  if (gimp->no_fonts)
+  if (picman->no_fonts)
     return;
 
   /* Reinit the library with defaults. */
@@ -121,7 +121,7 @@ gimp_fonts_reset (Gimp *gimp)
 }
 
 static gboolean
-gimp_fonts_load_fonts_conf (FcConfig *config,
+picman_fonts_load_fonts_conf (FcConfig *config,
                             gchar    *fonts_conf)
 {
   gboolean ret = TRUE;
@@ -138,7 +138,7 @@ gimp_fonts_load_fonts_conf (FcConfig *config,
 }
 
 static void
-gimp_fonts_add_directories (FcConfig    *config,
+picman_fonts_add_directories (FcConfig    *config,
                             const gchar *path_str)
 {
   GList *path;
@@ -147,10 +147,10 @@ gimp_fonts_add_directories (FcConfig    *config,
   g_return_if_fail (config != NULL);
   g_return_if_fail (path_str != NULL);
 
-  path = gimp_path_parse (path_str, 256, TRUE, NULL);
+  path = picman_path_parse (path_str, 256, TRUE, NULL);
 
   for (list = path; list; list = list->next)
     FcConfigAppFontAddDir (config, (const guchar *) list->data);
 
-  gimp_path_free (path);
+  picman_path_free (path);
 }

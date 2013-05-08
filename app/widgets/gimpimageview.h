@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpimageview.h
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * picmanimageview.h
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,46 +18,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_VIEW_H__
-#define __GIMP_IMAGE_VIEW_H__
+#ifndef __PICMAN_IMAGE_VIEW_H__
+#define __PICMAN_IMAGE_VIEW_H__
 
 
-#include "gimpcontainereditor.h"
+#include "picmancontainereditor.h"
 
 
-#define GIMP_TYPE_IMAGE_VIEW            (gimp_image_view_get_type ())
-#define GIMP_IMAGE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_IMAGE_VIEW, GimpImageView))
-#define GIMP_IMAGE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_IMAGE_VIEW, GimpImageViewClass))
-#define GIMP_IS_IMAGE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_IMAGE_VIEW))
-#define GIMP_IS_IMAGE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_IMAGE_VIEW))
-#define GIMP_IMAGE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_IMAGE_VIEW, GimpImageViewClass))
+#define PICMAN_TYPE_IMAGE_VIEW            (picman_image_view_get_type ())
+#define PICMAN_IMAGE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_IMAGE_VIEW, PicmanImageView))
+#define PICMAN_IMAGE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_IMAGE_VIEW, PicmanImageViewClass))
+#define PICMAN_IS_IMAGE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_IMAGE_VIEW))
+#define PICMAN_IS_IMAGE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_IMAGE_VIEW))
+#define PICMAN_IMAGE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_IMAGE_VIEW, PicmanImageViewClass))
 
 
-typedef struct _GimpImageViewClass GimpImageViewClass;
+typedef struct _PicmanImageViewClass PicmanImageViewClass;
 
-struct _GimpImageView
+struct _PicmanImageView
 {
-  GimpContainerEditor  parent_instance;
+  PicmanContainerEditor  parent_instance;
 
   GtkWidget           *raise_button;
   GtkWidget           *new_button;
   GtkWidget           *delete_button;
 };
 
-struct _GimpImageViewClass
+struct _PicmanImageViewClass
 {
-  GimpContainerEditorClass  parent_class;
+  PicmanContainerEditorClass  parent_class;
 };
 
 
-GType       gimp_image_view_get_type (void) G_GNUC_CONST;
+GType       picman_image_view_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_image_view_new      (GimpViewType     view_type,
-                                      GimpContainer   *container,
-                                      GimpContext     *context,
+GtkWidget * picman_image_view_new      (PicmanViewType     view_type,
+                                      PicmanContainer   *container,
+                                      PicmanContext     *context,
                                       gint             view_size,
                                       gint             view_border_width,
-                                      GimpMenuFactory *menu_factory);
+                                      PicmanMenuFactory *menu_factory);
 
 
-#endif  /*  __GIMP_IMAGE_VIEW_H__  */
+#endif  /*  __PICMAN_IMAGE_VIEW_H__  */

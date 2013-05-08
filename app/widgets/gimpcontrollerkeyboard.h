@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcontrollerkeyboard.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmancontrollerkeyboard.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,39 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTROLLER_KEYBOARD_H__
-#define __GIMP_CONTROLLER_KEYBOARD_H__
+#ifndef __PICMAN_CONTROLLER_KEYBOARD_H__
+#define __PICMAN_CONTROLLER_KEYBOARD_H__
 
 
-#define GIMP_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
-#include "libgimpwidgets/gimpcontroller.h"
+#define PICMAN_ENABLE_CONTROLLER_UNDER_CONSTRUCTION
+#include "libpicmanwidgets/picmancontroller.h"
 
 
-#define GIMP_TYPE_CONTROLLER_KEYBOARD            (gimp_controller_keyboard_get_type ())
-#define GIMP_CONTROLLER_KEYBOARD(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CONTROLLER_KEYBOARD, GimpControllerKeyboard))
-#define GIMP_CONTROLLER_KEYBOARD_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CONTROLLER_KEYBOARD, GimpControllerKeyboardClass))
-#define GIMP_IS_CONTROLLER_KEYBOARD(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CONTROLLER_KEYBOARD))
-#define GIMP_IS_CONTROLLER_KEYBOARD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CONTROLLER_KEYBOARD))
-#define GIMP_CONTROLLER_KEYBOARD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CONTROLLER_KEYBOARD, GimpControllerKeyboardClass))
+#define PICMAN_TYPE_CONTROLLER_KEYBOARD            (picman_controller_keyboard_get_type ())
+#define PICMAN_CONTROLLER_KEYBOARD(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CONTROLLER_KEYBOARD, PicmanControllerKeyboard))
+#define PICMAN_CONTROLLER_KEYBOARD_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CONTROLLER_KEYBOARD, PicmanControllerKeyboardClass))
+#define PICMAN_IS_CONTROLLER_KEYBOARD(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CONTROLLER_KEYBOARD))
+#define PICMAN_IS_CONTROLLER_KEYBOARD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CONTROLLER_KEYBOARD))
+#define PICMAN_CONTROLLER_KEYBOARD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CONTROLLER_KEYBOARD, PicmanControllerKeyboardClass))
 
 
-typedef struct _GimpControllerKeyboardClass GimpControllerKeyboardClass;
+typedef struct _PicmanControllerKeyboardClass PicmanControllerKeyboardClass;
 
-struct _GimpControllerKeyboard
+struct _PicmanControllerKeyboard
 {
-  GimpController parent_instance;
+  PicmanController parent_instance;
 };
 
-struct _GimpControllerKeyboardClass
+struct _PicmanControllerKeyboardClass
 {
-  GimpControllerClass parent_class;
+  PicmanControllerClass parent_class;
 };
 
 
-GType      gimp_controller_keyboard_get_type  (void) G_GNUC_CONST;
+GType      picman_controller_keyboard_get_type  (void) G_GNUC_CONST;
 
-gboolean   gimp_controller_keyboard_key_press (GimpControllerKeyboard *keyboard,
+gboolean   picman_controller_keyboard_key_press (PicmanControllerKeyboard *keyboard,
                                                const GdkEventKey      *kevent);
 
 
-#endif /* __GIMP_CONTROLLER_KEYBOARD_H__ */
+#endif /* __PICMAN_CONTROLLER_KEYBOARD_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,19 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_LAYER_FLOATING_SEL_H__
-#define __GIMP_LAYER_FLOATING_SEL_H__
+#ifndef __PICMAN_LAYER_FLOATING_SEL_H__
+#define __PICMAN_LAYER_FLOATING_SEL_H__
 
 
-void                 floating_sel_attach            (GimpLayer     *layer,
-                                                     GimpDrawable  *drawable);
-void                 floating_sel_anchor            (GimpLayer     *layer);
-gboolean             floating_sel_to_layer          (GimpLayer     *layer,
+void                 floating_sel_attach            (PicmanLayer     *layer,
+                                                     PicmanDrawable  *drawable);
+void                 floating_sel_anchor            (PicmanLayer     *layer);
+gboolean             floating_sel_to_layer          (PicmanLayer     *layer,
                                                      GError       **error);
-void                 floating_sel_activate_drawable (GimpLayer     *layer);
-const GimpBoundSeg * floating_sel_boundary          (GimpLayer     *layer,
+void                 floating_sel_activate_drawable (PicmanLayer     *layer);
+const PicmanBoundSeg * floating_sel_boundary          (PicmanLayer     *layer,
                                                      gint          *n_segs);
-void                 floating_sel_invalidate        (GimpLayer     *layer);
+void                 floating_sel_invalidate        (PicmanLayer     *layer);
 
 
-#endif /* __GIMP_LAYER_FLOATING_SEL_H__ */
+#endif /* __PICMAN_LAYER_FLOATING_SEL_H__ */

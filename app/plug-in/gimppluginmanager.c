@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2002 Spencer Kimball, Peter Mattis, and others
  *
- * gimppluginmanager.c
+ * picmanpluginmanager.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,34 +23,34 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "plug-in-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimp-utils.h"
-#include "core/gimpmarshal.h"
+#include "core/picman.h"
+#include "core/picman-utils.h"
+#include "core/picmanmarshal.h"
 
-#include "pdb/gimppdb.h"
+#include "pdb/picmanpdb.h"
 
-#include "gimpenvirontable.h"
-#include "gimpinterpreterdb.h"
-#include "gimpplugin.h"
-#include "gimpplugindebug.h"
-#include "gimpplugindef.h"
-#include "gimppluginmanager.h"
-#include "gimppluginmanager-data.h"
-#include "gimppluginmanager-help-domain.h"
-#include "gimppluginmanager-history.h"
-#include "gimppluginmanager-locale-domain.h"
-#include "gimppluginmanager-menu-branch.h"
-#include "gimppluginshm.h"
-#include "gimptemporaryprocedure.h"
+#include "picmanenvirontable.h"
+#include "picmaninterpreterdb.h"
+#include "picmanplugin.h"
+#include "picmanplugindebug.h"
+#include "picmanplugindef.h"
+#include "picmanpluginmanager.h"
+#include "picmanpluginmanager-data.h"
+#include "picmanpluginmanager-help-domain.h"
+#include "picmanpluginmanager-history.h"
+#include "picmanpluginmanager-locale-domain.h"
+#include "picmanpluginmanager-menu-branch.h"
+#include "picmanpluginshm.h"
+#include "picmantemporaryprocedure.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -63,56 +63,56 @@ enum
 };
 
 
-static void     gimp_plug_in_manager_dispose     (GObject    *object);
-static void     gimp_plug_in_manager_finalize    (GObject    *object);
+static void     picman_plug_in_manager_dispose     (GObject    *object);
+static void     picman_plug_in_manager_finalize    (GObject    *object);
 
-static gint64   gimp_plug_in_manager_get_memsize (GimpObject *object,
+static gint64   picman_plug_in_manager_get_memsize (PicmanObject *object,
                                                   gint64     *gui_size);
 
 
-G_DEFINE_TYPE (GimpPlugInManager, gimp_plug_in_manager, GIMP_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanPlugInManager, picman_plug_in_manager, PICMAN_TYPE_OBJECT)
 
-#define parent_class gimp_plug_in_manager_parent_class
+#define parent_class picman_plug_in_manager_parent_class
 
 static guint manager_signals[LAST_SIGNAL] = { 0, };
 
 
 static void
-gimp_plug_in_manager_class_init (GimpPlugInManagerClass *klass)
+picman_plug_in_manager_class_init (PicmanPlugInManagerClass *klass)
 {
   GObjectClass    *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass *gimp_object_class = GIMP_OBJECT_CLASS (klass);
+  PicmanObjectClass *picman_object_class = PICMAN_OBJECT_CLASS (klass);
 
   manager_signals[PLUG_IN_OPENED] =
     g_signal_new ("plug-in-opened",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpPlugInManagerClass,
+                  G_STRUCT_OFFSET (PicmanPlugInManagerClass,
                                    plug_in_opened),
                   NULL, NULL,
-                  gimp_marshal_VOID__OBJECT,
+                  picman_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_PLUG_IN);
+                  PICMAN_TYPE_PLUG_IN);
 
   manager_signals[PLUG_IN_CLOSED] =
     g_signal_new ("plug-in-closed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpPlugInManagerClass,
+                  G_STRUCT_OFFSET (PicmanPlugInManagerClass,
                                    plug_in_closed),
                   NULL, NULL,
-                  gimp_marshal_VOID__OBJECT,
+                  picman_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_PLUG_IN);
+                  PICMAN_TYPE_PLUG_IN);
 
   manager_signals[MENU_BRANCH_ADDED] =
     g_signal_new ("menu-branch-added",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpPlugInManagerClass,
+                  G_STRUCT_OFFSET (PicmanPlugInManagerClass,
                                    menu_branch_added),
                   NULL, NULL,
-                  gimp_marshal_VOID__STRING_STRING_STRING,
+                  picman_marshal_VOID__STRING_STRING_STRING,
                   G_TYPE_NONE, 1,
                   G_TYPE_STRING,
                   G_TYPE_STRING,
@@ -122,22 +122,22 @@ gimp_plug_in_manager_class_init (GimpPlugInManagerClass *klass)
     g_signal_new ("history-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpPlugInManagerClass,
+                  G_STRUCT_OFFSET (PicmanPlugInManagerClass,
                                    history_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->dispose          = gimp_plug_in_manager_dispose;
-  object_class->finalize         = gimp_plug_in_manager_finalize;
+  object_class->dispose          = picman_plug_in_manager_dispose;
+  object_class->finalize         = picman_plug_in_manager_finalize;
 
-  gimp_object_class->get_memsize = gimp_plug_in_manager_get_memsize;
+  picman_object_class->get_memsize = picman_plug_in_manager_get_memsize;
 }
 
 static void
-gimp_plug_in_manager_init (GimpPlugInManager *manager)
+picman_plug_in_manager_init (PicmanPlugInManager *manager)
 {
-  manager->gimp               = NULL;
+  manager->picman               = NULL;
 
   manager->plug_in_defs       = NULL;
   manager->write_pluginrc     = FALSE;
@@ -153,26 +153,26 @@ gimp_plug_in_manager_init (GimpPlugInManager *manager)
   manager->history            = NULL;
 
   manager->shm                = NULL;
-  manager->interpreter_db     = gimp_interpreter_db_new ();
-  manager->environ_table      = gimp_environ_table_new ();
+  manager->interpreter_db     = picman_interpreter_db_new ();
+  manager->environ_table      = picman_environ_table_new ();
   manager->debug              = NULL;
   manager->data_list          = NULL;
 }
 
 static void
-gimp_plug_in_manager_dispose (GObject *object)
+picman_plug_in_manager_dispose (GObject *object)
 {
-  GimpPlugInManager *manager = GIMP_PLUG_IN_MANAGER (object);
+  PicmanPlugInManager *manager = PICMAN_PLUG_IN_MANAGER (object);
 
-  gimp_plug_in_manager_history_clear (manager);
+  picman_plug_in_manager_history_clear (manager);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_plug_in_manager_finalize (GObject *object)
+picman_plug_in_manager_finalize (GObject *object)
 {
-  GimpPlugInManager *manager = GIMP_PLUG_IN_MANAGER (object);
+  PicmanPlugInManager *manager = PICMAN_PLUG_IN_MANAGER (object);
 
   if (manager->load_procs)
     {
@@ -220,136 +220,136 @@ gimp_plug_in_manager_finalize (GObject *object)
 
   if (manager->debug)
     {
-      gimp_plug_in_debug_free (manager->debug);
+      picman_plug_in_debug_free (manager->debug);
       manager->debug = NULL;
     }
 
-  gimp_plug_in_manager_menu_branch_exit (manager);
-  gimp_plug_in_manager_locale_domain_exit (manager);
-  gimp_plug_in_manager_help_domain_exit (manager);
-  gimp_plug_in_manager_data_free (manager);
+  picman_plug_in_manager_menu_branch_exit (manager);
+  picman_plug_in_manager_locale_domain_exit (manager);
+  picman_plug_in_manager_help_domain_exit (manager);
+  picman_plug_in_manager_data_free (manager);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static gint64
-gimp_plug_in_manager_get_memsize (GimpObject *object,
+picman_plug_in_manager_get_memsize (PicmanObject *object,
                                   gint64     *gui_size)
 {
-  GimpPlugInManager *manager = GIMP_PLUG_IN_MANAGER (object);
+  PicmanPlugInManager *manager = PICMAN_PLUG_IN_MANAGER (object);
   gint64             memsize = 0;
 
-  memsize += gimp_g_slist_get_memsize_foreach (manager->plug_in_defs,
-                                               (GimpMemsizeFunc)
-                                               gimp_object_get_memsize,
+  memsize += picman_g_slist_get_memsize_foreach (manager->plug_in_defs,
+                                               (PicmanMemsizeFunc)
+                                               picman_object_get_memsize,
                                                gui_size);
 
-  memsize += gimp_g_slist_get_memsize (manager->plug_in_procedures, 0);
-  memsize += gimp_g_slist_get_memsize (manager->load_procs, 0);
-  memsize += gimp_g_slist_get_memsize (manager->save_procs, 0);
-  memsize += gimp_g_slist_get_memsize (manager->export_procs, 0);
+  memsize += picman_g_slist_get_memsize (manager->plug_in_procedures, 0);
+  memsize += picman_g_slist_get_memsize (manager->load_procs, 0);
+  memsize += picman_g_slist_get_memsize (manager->save_procs, 0);
+  memsize += picman_g_slist_get_memsize (manager->export_procs, 0);
 
-  memsize += gimp_g_slist_get_memsize (manager->menu_branches,  0 /* FIXME */);
-  memsize += gimp_g_slist_get_memsize (manager->locale_domains, 0 /* FIXME */);
-  memsize += gimp_g_slist_get_memsize (manager->help_domains,   0 /* FIXME */);
+  memsize += picman_g_slist_get_memsize (manager->menu_branches,  0 /* FIXME */);
+  memsize += picman_g_slist_get_memsize (manager->locale_domains, 0 /* FIXME */);
+  memsize += picman_g_slist_get_memsize (manager->help_domains,   0 /* FIXME */);
 
-  memsize += gimp_g_slist_get_memsize_foreach (manager->open_plug_ins,
-                                               (GimpMemsizeFunc)
-                                               gimp_object_get_memsize,
+  memsize += picman_g_slist_get_memsize_foreach (manager->open_plug_ins,
+                                               (PicmanMemsizeFunc)
+                                               picman_object_get_memsize,
                                                gui_size);
-  memsize += gimp_g_slist_get_memsize (manager->plug_in_stack, 0);
-  memsize += gimp_g_slist_get_memsize (manager->history,       0);
+  memsize += picman_g_slist_get_memsize (manager->plug_in_stack, 0);
+  memsize += picman_g_slist_get_memsize (manager->history,       0);
 
   memsize += 0; /* FIXME manager->shm */
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (manager->interpreter_db),
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (manager->interpreter_db),
                                       gui_size);
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (manager->environ_table),
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (manager->environ_table),
                                       gui_size);
   memsize += 0; /* FIXME manager->plug_in_debug */
-  memsize += gimp_g_list_get_memsize (manager->data_list, 0 /* FIXME */);
+  memsize += picman_g_list_get_memsize (manager->data_list, 0 /* FIXME */);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
-GimpPlugInManager *
-gimp_plug_in_manager_new (Gimp *gimp)
+PicmanPlugInManager *
+picman_plug_in_manager_new (Picman *picman)
 {
-  GimpPlugInManager *manager;
+  PicmanPlugInManager *manager;
 
-  manager = g_object_new (GIMP_TYPE_PLUG_IN_MANAGER, NULL);
+  manager = g_object_new (PICMAN_TYPE_PLUG_IN_MANAGER, NULL);
 
-  manager->gimp = gimp;
+  manager->picman = picman;
 
   return manager;
 }
 
 void
-gimp_plug_in_manager_initialize (GimpPlugInManager  *manager,
-                                 GimpInitStatusFunc  status_callback)
+picman_plug_in_manager_initialize (PicmanPlugInManager  *manager,
+                                 PicmanInitStatusFunc  status_callback)
 {
   gchar *path;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
   g_return_if_fail (status_callback != NULL);
 
   status_callback (NULL, _("Plug-In Interpreters"), 0.8);
 
-  path = gimp_config_path_expand (manager->gimp->config->interpreter_path,
+  path = picman_config_path_expand (manager->picman->config->interpreter_path,
                                   TRUE, NULL);
-  gimp_interpreter_db_load (manager->interpreter_db, path);
+  picman_interpreter_db_load (manager->interpreter_db, path);
   g_free (path);
 
   status_callback (NULL, _("Plug-In Environment"), 0.9);
 
-  path = gimp_config_path_expand (manager->gimp->config->environ_path,
+  path = picman_config_path_expand (manager->picman->config->environ_path,
                                   TRUE, NULL);
-  gimp_environ_table_load (manager->environ_table, path);
+  picman_environ_table_load (manager->environ_table, path);
   g_free (path);
 
   /*  allocate a piece of shared memory for use in transporting tiles
    *  to plug-ins. if we can't allocate a piece of shared memory then
    *  we'll fall back on sending the data over the pipe.
    */
-  if (manager->gimp->use_shm)
-    manager->shm = gimp_plug_in_shm_new ();
+  if (manager->picman->use_shm)
+    manager->shm = picman_plug_in_shm_new ();
 
-  manager->debug = gimp_plug_in_debug_new ();
+  manager->debug = picman_plug_in_debug_new ();
 }
 
 void
-gimp_plug_in_manager_exit (GimpPlugInManager *manager)
+picman_plug_in_manager_exit (PicmanPlugInManager *manager)
 {
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
 
   while (manager->open_plug_ins)
-    gimp_plug_in_close (manager->open_plug_ins->data, TRUE);
+    picman_plug_in_close (manager->open_plug_ins->data, TRUE);
 
   /*  need to deatch from shared memory, we can't rely on exit()
    *  cleaning up behind us (see bug #609026)
    */
   if (manager->shm)
     {
-      gimp_plug_in_shm_free (manager->shm);
+      picman_plug_in_shm_free (manager->shm);
       manager->shm = NULL;
     }
 }
 
 void
-gimp_plug_in_manager_add_procedure (GimpPlugInManager   *manager,
-                                    GimpPlugInProcedure *procedure)
+picman_plug_in_manager_add_procedure (PicmanPlugInManager   *manager,
+                                    PicmanPlugInProcedure *procedure)
 {
   GSList *list;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
-  g_return_if_fail (GIMP_IS_PLUG_IN_PROCEDURE (procedure));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_PROCEDURE (procedure));
 
   for (list = manager->plug_in_procedures; list; list = list->next)
     {
-      GimpPlugInProcedure *tmp_proc = list->data;
+      PicmanPlugInProcedure *tmp_proc = list->data;
 
-      if (strcmp (gimp_object_get_name (procedure),
-                  gimp_object_get_name (tmp_proc)) == 0)
+      if (strcmp (picman_object_get_name (procedure),
+                  picman_object_get_name (tmp_proc)) == 0)
         {
           GSList *list2;
 
@@ -357,18 +357,18 @@ gimp_plug_in_manager_add_procedure (GimpPlugInManager   *manager,
 
           g_printerr ("Removing duplicate PDB procedure '%s' "
                       "registered by '%s'\n",
-                      gimp_object_get_name (tmp_proc),
-                      gimp_filename_to_utf8 (tmp_proc->prog));
+                      picman_object_get_name (tmp_proc),
+                      picman_filename_to_utf8 (tmp_proc->prog));
 
           /* search the plugin list to see if any plugins had references to
            * the tmp_proc.
            */
           for (list2 = manager->plug_in_defs; list2; list2 = list2->next)
             {
-              GimpPlugInDef *plug_in_def = list2->data;
+              PicmanPlugInDef *plug_in_def = list2->data;
 
               if (g_slist_find (plug_in_def->procedures, tmp_proc))
-                gimp_plug_in_def_remove_procedure (plug_in_def, tmp_proc);
+                picman_plug_in_def_remove_procedure (plug_in_def, tmp_proc);
             }
 
           /* also remove it from the lists of load, save and export procs */
@@ -377,7 +377,7 @@ gimp_plug_in_manager_add_procedure (GimpPlugInManager   *manager,
           manager->export_procs = g_slist_remove (manager->export_procs, tmp_proc);
 
           /* and from the history */
-          gimp_plug_in_manager_history_remove (manager, tmp_proc);
+          picman_plug_in_manager_history_remove (manager, tmp_proc);
 
           g_object_unref (tmp_proc);
 
@@ -390,43 +390,43 @@ gimp_plug_in_manager_add_procedure (GimpPlugInManager   *manager,
 }
 
 void
-gimp_plug_in_manager_add_temp_proc (GimpPlugInManager      *manager,
-                                    GimpTemporaryProcedure *procedure)
+picman_plug_in_manager_add_temp_proc (PicmanPlugInManager      *manager,
+                                    PicmanTemporaryProcedure *procedure)
 {
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
-  g_return_if_fail (GIMP_IS_TEMPORARY_PROCEDURE (procedure));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_TEMPORARY_PROCEDURE (procedure));
 
-  gimp_pdb_register_procedure (manager->gimp->pdb, GIMP_PROCEDURE (procedure));
+  picman_pdb_register_procedure (manager->picman->pdb, PICMAN_PROCEDURE (procedure));
 
   manager->plug_in_procedures = g_slist_prepend (manager->plug_in_procedures,
                                                  g_object_ref (procedure));
 }
 
 void
-gimp_plug_in_manager_remove_temp_proc (GimpPlugInManager      *manager,
-                                       GimpTemporaryProcedure *procedure)
+picman_plug_in_manager_remove_temp_proc (PicmanPlugInManager      *manager,
+                                       PicmanTemporaryProcedure *procedure)
 {
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
-  g_return_if_fail (GIMP_IS_TEMPORARY_PROCEDURE (procedure));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_TEMPORARY_PROCEDURE (procedure));
 
   manager->plug_in_procedures = g_slist_remove (manager->plug_in_procedures,
                                                 procedure);
 
-  gimp_plug_in_manager_history_remove (manager,
-                                       GIMP_PLUG_IN_PROCEDURE (procedure));
+  picman_plug_in_manager_history_remove (manager,
+                                       PICMAN_PLUG_IN_PROCEDURE (procedure));
 
-  gimp_pdb_unregister_procedure (manager->gimp->pdb,
-                                 GIMP_PROCEDURE (procedure));
+  picman_pdb_unregister_procedure (manager->picman->pdb,
+                                 PICMAN_PROCEDURE (procedure));
 
   g_object_unref (procedure);
 }
 
 void
-gimp_plug_in_manager_add_open_plug_in (GimpPlugInManager *manager,
-                                       GimpPlugIn        *plug_in)
+picman_plug_in_manager_add_open_plug_in (PicmanPlugInManager *manager,
+                                       PicmanPlugIn        *plug_in)
 {
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
-  g_return_if_fail (GIMP_IS_PLUG_IN (plug_in));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN (plug_in));
 
   manager->open_plug_ins = g_slist_prepend (manager->open_plug_ins,
                                             g_object_ref (plug_in));
@@ -436,11 +436,11 @@ gimp_plug_in_manager_add_open_plug_in (GimpPlugInManager *manager,
 }
 
 void
-gimp_plug_in_manager_remove_open_plug_in (GimpPlugInManager *manager,
-                                          GimpPlugIn        *plug_in)
+picman_plug_in_manager_remove_open_plug_in (PicmanPlugInManager *manager,
+                                          PicmanPlugIn        *plug_in)
 {
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
-  g_return_if_fail (GIMP_IS_PLUG_IN (plug_in));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN (plug_in));
 
   manager->open_plug_ins = g_slist_remove (manager->open_plug_ins, plug_in);
 
@@ -451,11 +451,11 @@ gimp_plug_in_manager_remove_open_plug_in (GimpPlugInManager *manager,
 }
 
 void
-gimp_plug_in_manager_plug_in_push (GimpPlugInManager *manager,
-                                   GimpPlugIn        *plug_in)
+picman_plug_in_manager_plug_in_push (PicmanPlugInManager *manager,
+                                   PicmanPlugIn        *plug_in)
 {
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
-  g_return_if_fail (GIMP_IS_PLUG_IN (plug_in));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN (plug_in));
 
   manager->current_plug_in = plug_in;
 
@@ -464,9 +464,9 @@ gimp_plug_in_manager_plug_in_push (GimpPlugInManager *manager,
 }
 
 void
-gimp_plug_in_manager_plug_in_pop (GimpPlugInManager *manager)
+picman_plug_in_manager_plug_in_pop (PicmanPlugInManager *manager)
 {
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
 
   if (manager->current_plug_in)
     manager->plug_in_stack = g_slist_remove (manager->plug_in_stack,
@@ -479,9 +479,9 @@ gimp_plug_in_manager_plug_in_pop (GimpPlugInManager *manager)
 }
 
 void
-gimp_plug_in_manager_history_changed (GimpPlugInManager *manager)
+picman_plug_in_manager_history_changed (PicmanPlugInManager *manager)
 {
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
 
   g_signal_emit (manager, manager_signals[HISTORY_CHANGED], 0);
 }

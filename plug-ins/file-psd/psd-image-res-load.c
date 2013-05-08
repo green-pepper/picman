@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GIMP PSD Plug-in
+ * PICMAN PSD Plug-in
  * Copyright 2007 by John Marshall
  *
  * This program is free software: you can redistribute it and/or modify
@@ -89,7 +89,7 @@
 #include <errno.h>
 
 #include <glib/gstdio.h>
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include <jpeglib.h>
 #include <jerror.h>
@@ -105,7 +105,7 @@
 #include "psd-util.h"
 #include "psd-image-res-load.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #define EXIF_HEADER_SIZE 8
 
@@ -291,7 +291,7 @@ load_image_resource (PSDimageres   *res_a,
 
           case PSD_MAC_PRINT_INFO:
           case PSD_JPEG_QUAL:
-            /* Save photoshop resources with no meaning for GIMP
+            /* Save photoshop resources with no meaning for PICMAN
               as image parasites */
             load_resource_ps_only (res_a, image_id, f, error);
             break;
@@ -431,7 +431,7 @@ load_resource_unknown (const PSDimageres  *res_a,
                        GError            **error)
 {
   /* Unknown image resources attached as parasites to re-save later */
-  GimpParasite  *parasite;
+  PicmanParasite  *parasite;
   gchar         *data;
   gchar         *name;
 
@@ -449,9 +449,9 @@ load_resource_unknown (const PSDimageres  *res_a,
                             res_a->type, res_a->id);
   IFDBG(2) g_debug ("Parasite name: %s", name);
 
-  parasite = gimp_parasite_new (name, 0, res_a->data_len, data);
-  gimp_image_attach_parasite (image_id, parasite);
-  gimp_parasite_free (parasite);
+  parasite = picman_parasite_new (name, 0, res_a->data_len, data);
+  picman_image_attach_parasite (image_id, parasite);
+  picman_parasite_free (parasite);
   g_free (data);
   g_free (name);
 
@@ -464,9 +464,9 @@ load_resource_ps_only (const PSDimageres  *res_a,
                        FILE               *f,
                        GError            **error)
 {
-  /* Save photoshop resources with no meaning for GIMP as image parasites
+  /* Save photoshop resources with no meaning for PICMAN as image parasites
      to re-save later */
-  GimpParasite  *parasite;
+  PicmanParasite  *parasite;
   gchar         *data;
   gchar         *name;
 
@@ -484,9 +484,9 @@ load_resource_ps_only (const PSDimageres  *res_a,
                             res_a->type, res_a->id);
   IFDBG(2) g_debug ("Parasite name: %s", name);
 
-  parasite = gimp_parasite_new (name, 0, res_a->data_len, data);
-  gimp_image_attach_parasite (image_id, parasite);
-  gimp_parasite_free (parasite);
+  parasite = picman_parasite_new (name, 0, res_a->data_len, data);
+  picman_image_attach_parasite (image_id, parasite);
+  picman_parasite_free (parasite);
   g_free (data);
   g_free (name);
 
@@ -504,7 +504,7 @@ load_resource_1005 (const PSDimageres  *res_a,
   /* FIXME  width unit and height unit unused at present */
 
   ResolutionInfo        res_info;
-  GimpUnit              image_unit;
+  PicmanUnit              image_unit;
 
   IFDBG(2) g_debug ("Process image resource block 1005: Resolution Info");
 
@@ -536,23 +536,23 @@ load_resource_1005 (const PSDimageres  *res_a,
   /* Resolution always recorded as pixels / inch in a fixed point implied
      decimal int32 with 16 bits before point and 16 after (i.e. cast as
      double and divide resolution by 2^16 */
-  gimp_image_set_resolution (image_id,
+  picman_image_set_resolution (image_id,
                              res_info.hRes / 65536.0, res_info.vRes / 65536.0);
 
-  /* GIMP only has one display unit so use ps horizontal resolution unit */
+  /* PICMAN only has one display unit so use ps horizontal resolution unit */
   switch (res_info.hResUnit)
     {
       case PSD_RES_INCH:
-        image_unit = GIMP_UNIT_INCH;
+        image_unit = PICMAN_UNIT_INCH;
         break;
       case PSD_RES_CM:
-        image_unit = GIMP_UNIT_MM;
+        image_unit = PICMAN_UNIT_MM;
         break;
       default:
-        image_unit = GIMP_UNIT_INCH;
+        image_unit = PICMAN_UNIT_INCH;
     }
 
-  gimp_image_set_unit (image_id, image_unit);
+  picman_image_set_unit (image_id, image_unit);
 
   return 0;
 }
@@ -610,9 +610,9 @@ load_resource_1007 (const PSDimageres  *res_a,
 
   DisplayInfo       dsp_info;
   CMColor           ps_color;
-  GimpRGB           gimp_rgb;
-  GimpHSV           gimp_hsv;
-  GimpCMYK          gimp_cmyk;
+  PicmanRGB           picman_rgb;
+  PicmanHSV           picman_hsv;
+  PicmanCMYK          picman_cmyk;
   gint16            tot_rec;
   gint              cidx;
 
@@ -644,28 +644,28 @@ load_resource_1007 (const PSDimageres  *res_a,
       switch (dsp_info.colorSpace)
         {
           case PSD_CS_RGB:
-            gimp_rgb_set (&gimp_rgb, ps_color.rgb.red / 65535.0,
+            picman_rgb_set (&picman_rgb, ps_color.rgb.red / 65535.0,
                           ps_color.rgb.green / 65535.0,
                           ps_color.rgb.blue / 65535.0);
             break;
 
           case PSD_CS_HSB:
-            gimp_hsv_set (&gimp_hsv, ps_color.hsv.hue / 65535.0,
+            picman_hsv_set (&picman_hsv, ps_color.hsv.hue / 65535.0,
                           ps_color.hsv.saturation / 65535.0,
                           ps_color.hsv.value / 65535.0);
-            gimp_hsv_to_rgb (&gimp_hsv, &gimp_rgb);
+            picman_hsv_to_rgb (&picman_hsv, &picman_rgb);
             break;
 
           case PSD_CS_CMYK:
-            gimp_cmyk_set (&gimp_cmyk, 1.0 - ps_color.cmyk.cyan / 65535.0,
+            picman_cmyk_set (&picman_cmyk, 1.0 - ps_color.cmyk.cyan / 65535.0,
                            1.0 - ps_color.cmyk.magenta / 65535.0,
                            1.0 - ps_color.cmyk.yellow / 65535.0,
                            1.0 - ps_color.cmyk.black / 65535.0);
-            gimp_cmyk_to_rgb (&gimp_cmyk, &gimp_rgb);
+            picman_cmyk_to_rgb (&picman_cmyk, &picman_rgb);
             break;
 
           case PSD_CS_GRAYSCALE:
-            gimp_rgb_set (&gimp_rgb, ps_color.gray.gray / 10000.0,
+            picman_rgb_set (&picman_rgb, ps_color.gray.gray / 10000.0,
                           ps_color.gray.gray / 10000.0,
                           ps_color.gray.gray / 10000.0);
             break;
@@ -682,10 +682,10 @@ load_resource_1007 (const PSDimageres  *res_a,
             if (CONVERSION_WARNINGS)
               g_message ("Unsupported color space: %d",
                          dsp_info.colorSpace);
-            gimp_rgb_set (&gimp_rgb, 1.0, 0.0, 0.0);
+            picman_rgb_set (&picman_rgb, 1.0, 0.0, 0.0);
         }
 
-      gimp_rgb_set_alpha (&gimp_rgb, 1.0);
+      picman_rgb_set_alpha (&picman_rgb, 1.0);
 
       IFDBG(2) g_debug ("PS cSpace: %d, col: %d %d %d %d, opacity: %d, kind: %d",
              dsp_info.colorSpace, ps_color.cmyk.cyan, ps_color.cmyk.magenta,
@@ -693,11 +693,11 @@ load_resource_1007 (const PSDimageres  *res_a,
              dsp_info.kind);
 
       IFDBG(2) g_debug ("cSpace: %d, col: %g %g %g, opacity: %d, kind: %d",
-             dsp_info.colorSpace, gimp_rgb.r * 255 , gimp_rgb.g * 255,
-             gimp_rgb.b * 255, dsp_info.opacity, dsp_info.kind);
+             dsp_info.colorSpace, picman_rgb.r * 255 , picman_rgb.g * 255,
+             picman_rgb.b * 255, dsp_info.opacity, dsp_info.kind);
 
       img_a->alpha_display_info[cidx] = g_malloc (sizeof (PSDchanneldata));
-      img_a->alpha_display_info[cidx]->gimp_color = gimp_rgb;
+      img_a->alpha_display_info[cidx]->picman_color = picman_rgb;
       img_a->alpha_display_info[cidx]->opacity = dsp_info.opacity;
       img_a->alpha_display_info[cidx]->ps_kind = dsp_info.kind;
       img_a->alpha_display_info[cidx]->ps_cspace = dsp_info.colorSpace;
@@ -714,7 +714,7 @@ load_resource_1008 (const PSDimageres  *res_a,
                     GError            **error)
 {
   /* Load image caption */
-  GimpParasite  *parasite;
+  PicmanParasite  *parasite;
   gchar         *caption;
   gint32         read_len;
   gint32         write_len;
@@ -725,10 +725,10 @@ load_resource_1008 (const PSDimageres  *res_a,
     return -1;
 
   IFDBG(3) g_debug ("Caption: %s", caption);
-  parasite = gimp_parasite_new (GIMP_PARASITE_COMMENT, GIMP_PARASITE_PERSISTENT,
+  parasite = picman_parasite_new (PICMAN_PARASITE_COMMENT, PICMAN_PARASITE_PERSISTENT,
                                 write_len, caption);
-  gimp_image_attach_parasite (image_id, parasite);
-  gimp_parasite_free (parasite);
+  picman_image_attach_parasite (image_id, parasite);
+  picman_parasite_free (parasite);
   g_free (caption);
 
   return 0;
@@ -797,7 +797,7 @@ load_resource_1028 (const PSDimageres  *res_a,
   gchar        *name;
 #endif /* HAVE_IPTCDATA */
 
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   gchar        *res_data;
 
   IFDBG(2) g_debug ("Process image resource block: 1028: IPTC data");
@@ -815,17 +815,17 @@ load_resource_1028 (const PSDimageres  *res_a,
   iptc_data = iptc_data_new_from_data (res_data, res_a->data_len);
   IFDBG (3) iptc_data_dump (iptc_data, 0);
 
-  /* Store resource data as a GIMP IPTC parasite */
-  IFDBG (2) g_debug ("Processing IPTC data as GIMP IPTC parasite");
+  /* Store resource data as a PICMAN IPTC parasite */
+  IFDBG (2) g_debug ("Processing IPTC data as PICMAN IPTC parasite");
   /* Serialize IPTC data */
   iptc_data_save (iptc_data, &iptc_buf, &iptc_buf_len);
   if (iptc_buf_len > 0)
     {
-      parasite = gimp_parasite_new (GIMP_PARASITE_IPTC,
-                                    GIMP_PARASITE_PERSISTENT,
+      parasite = picman_parasite_new (PICMAN_PARASITE_IPTC,
+                                    PICMAN_PARASITE_PERSISTENT,
                                     iptc_buf_len, iptc_buf);
-      gimp_image_attach_parasite (image_id, parasite);
-      gimp_parasite_free (parasite);
+      picman_image_attach_parasite (image_id, parasite);
+      picman_parasite_free (parasite);
     }
 
   iptc_data_unref (iptc_data);
@@ -838,9 +838,9 @@ load_resource_1028 (const PSDimageres  *res_a,
                            res_a->type, res_a->id);
   IFDBG(3) g_debug ("Parasite name: %s", name);
 
-  parasite = gimp_parasite_new (name, 0, res_a->data_len, res_data);
-  gimp_image_attach_parasite (image_id, parasite);
-  gimp_parasite_free (parasite);
+  parasite = picman_parasite_new (name, 0, res_a->data_len, res_data);
+  picman_image_attach_parasite (image_id, parasite);
+  picman_parasite_free (parasite);
   g_free (name);
 
 #endif /* HAVE_IPTCDATA */
@@ -900,9 +900,9 @@ load_resource_1032 (const PSDimageres  *res_a,
                          guide.fDirection);
 
       if (guide.fDirection == PSD_VERTICAL)
-        gimp_image_add_vguide (image_id, guide.fLocation);
+        picman_image_add_vguide (image_id, guide.fLocation);
       else
-        gimp_image_add_hguide (image_id, guide.fLocation);
+        picman_image_add_hguide (image_id, guide.fLocation);
     }
 
   return 0;
@@ -920,8 +920,8 @@ load_resource_1033 (const PSDimageres  *res_a,
   struct jpeg_error_mgr         jerr;
 
   ThumbnailInfo         thumb_info;
-  GimpDrawable         *drawable;
-  GimpPixelRgn          pixel_rgn;
+  PicmanDrawable         *drawable;
+  PicmanPixelRgn          pixel_rgn;
   gint32                layer_id;
   guchar               *buf;
   guchar               *rgb_buf;
@@ -997,13 +997,13 @@ load_resource_1033 (const PSDimageres  *res_a,
     rowbuf[i] = buf + cinfo.output_width * cinfo.output_components * i;
 
   /* Create image layer */
-  gimp_image_resize (image_id, cinfo.output_width, cinfo.output_height, 0, 0);
-  layer_id = gimp_layer_new (image_id, _("Background"),
+  picman_image_resize (image_id, cinfo.output_width, cinfo.output_height, 0, 0);
+  layer_id = picman_layer_new (image_id, _("Background"),
                              cinfo.output_width,
                              cinfo.output_height,
-                             GIMP_RGB_IMAGE, 100, GIMP_NORMAL_MODE);
-  drawable = gimp_drawable_get (layer_id);
-  gimp_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
+                             PICMAN_RGB_IMAGE, 100, PICMAN_NORMAL_MODE);
+  drawable = picman_drawable_get (layer_id);
+  picman_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
                        drawable->width, drawable->height, TRUE, FALSE);
 
   /* Step 6: while (scan lines remain to be read) */
@@ -1030,7 +1030,7 @@ load_resource_1033 (const PSDimageres  *res_a,
               *(dst++) = r;
             }
         }
-      gimp_pixel_rgn_set_rect (&pixel_rgn, rgb_buf ? rgb_buf : buf,
+      picman_pixel_rgn_set_rect (&pixel_rgn, rgb_buf ? rgb_buf : buf,
                                0, 0, drawable->width, drawable->height);
     }
 
@@ -1052,8 +1052,8 @@ load_resource_1033 (const PSDimageres  *res_a,
    * corrupt-data warnings occurred (test whether
    * jerr.num_warnings is nonzero).
    */
-  gimp_image_insert_layer (image_id, layer_id, -1, 0);
-  gimp_drawable_detach (drawable);
+  picman_image_insert_layer (image_id, layer_id, -1, 0);
+  picman_drawable_detach (drawable);
 
   return 0;
 }
@@ -1065,7 +1065,7 @@ load_resource_1039 (const PSDimageres  *res_a,
                     GError            **error)
 {
   /* Load ICC profile */
-  GimpParasite  *parasite;
+  PicmanParasite  *parasite;
   gchar         *icc_profile;
 
   IFDBG(2) g_debug ("Process image resource block: 1039: ICC Profile");
@@ -1078,11 +1078,11 @@ load_resource_1039 (const PSDimageres  *res_a,
       return -1;
     }
 
-  parasite = gimp_parasite_new (GIMP_PARASITE_ICC_PROFILE,
-                                GIMP_PARASITE_PERSISTENT,
+  parasite = picman_parasite_new (PICMAN_PARASITE_ICC_PROFILE,
+                                PICMAN_PARASITE_PERSISTENT,
                                 res_a->data_len, icc_profile);
-  gimp_image_attach_parasite (image_id, parasite);
-  gimp_parasite_free (parasite);
+  picman_image_attach_parasite (image_id, parasite);
+  picman_parasite_free (parasite);
   g_free (icc_profile);
 
   return 0;
@@ -1161,9 +1161,9 @@ load_resource_1046 (const PSDimageres  *res_a,
   /* FIXME - check that we have indexed image */
   if (index_count && index_count < 256)
     {
-      cmap = gimp_image_get_colormap (image_id, &cmap_count);
+      cmap = picman_image_get_colormap (image_id, &cmap_count);
       if (cmap && index_count < cmap_count)
-        gimp_image_set_colormap (image_id, cmap, index_count);
+        picman_image_set_colormap (image_id, cmap, index_count);
       g_free (cmap);
     }
   return 0;
@@ -1219,13 +1219,13 @@ load_resource_1058 (const PSDimageres  *res_a,
   guint         exif_buf_len;
   gint16        jpeg_len;
   gint16        jpeg_fill = 0;
-  GimpParam    *return_vals;
+  PicmanParam    *return_vals;
   gint          nreturn_vals;
 #else
   gchar        *name;
 #endif /* HAVE_LIBEXIF */
 
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   gchar        *res_data;
 
   IFDBG(2) g_debug ("Process image resource block: 1058: EXIF data");
@@ -1271,13 +1271,13 @@ load_resource_1058 (const PSDimageres  *res_a,
       memcpy (tmp_data, exif_entry->data, exif_entry->size);
       tmp_data[exif_entry->size] = 0;
       /* Merge with existing XMP data block */
-      return_vals = gimp_run_procedure (DECODE_XMP_PROC,
+      return_vals = picman_run_procedure (DECODE_XMP_PROC,
                                         &nreturn_vals,
-                                        GIMP_PDB_IMAGE,  image_id,
-                                        GIMP_PDB_STRING, tmp_data,
-                                        GIMP_PDB_END);
+                                        PICMAN_PDB_IMAGE,  image_id,
+                                        PICMAN_PDB_STRING, tmp_data,
+                                        PICMAN_PDB_END);
       g_free (tmp_data);
-      gimp_destroy_params (return_vals, nreturn_vals);
+      picman_destroy_params (return_vals, nreturn_vals);
       IFDBG(3) g_debug ("Deleting XMP block from Exif data");
       /* Delete XMP data from Exif block */
       exif_content_remove_entry (exif_data->ifd[EXIF_IFD_0],
@@ -1295,17 +1295,17 @@ load_resource_1058 (const PSDimageres  *res_a,
     }
 
   IFDBG (3) exif_data_dump (exif_data);
-  /* Store resource data as a GIMP Exif parasite */
-  IFDBG (2) g_debug ("Processing exif data as GIMP Exif parasite");
+  /* Store resource data as a PICMAN Exif parasite */
+  IFDBG (2) g_debug ("Processing exif data as PICMAN Exif parasite");
   /* Serialize exif data */
   exif_data_save_data (exif_data, &exif_buf, &exif_buf_len);
   if (exif_buf_len > EXIF_HEADER_SIZE)
     {
-      parasite = gimp_parasite_new (GIMP_PARASITE_EXIF,
-                                    GIMP_PARASITE_PERSISTENT,
+      parasite = picman_parasite_new (PICMAN_PARASITE_EXIF,
+                                    PICMAN_PARASITE_PERSISTENT,
                                     exif_buf_len, exif_buf);
-      gimp_image_attach_parasite (image_id, parasite);
-      gimp_parasite_free (parasite);
+      picman_image_attach_parasite (image_id, parasite);
+      picman_parasite_free (parasite);
     }
   exif_data_unref (exif_data);
   g_free (exif_buf);
@@ -1317,9 +1317,9 @@ load_resource_1058 (const PSDimageres  *res_a,
                            res_a->type, res_a->id);
   IFDBG(3) g_debug ("Parasite name: %s", name);
 
-  parasite = gimp_parasite_new (name, 0, res_a->data_len, res_data);
-  gimp_image_attach_parasite (image_id, parasite);
-  gimp_parasite_free (parasite);
+  parasite = picman_parasite_new (name, 0, res_a->data_len, res_data);
+  picman_image_attach_parasite (image_id, parasite);
+  picman_parasite_free (parasite);
   g_free (name);
 
 #endif /* HAVE_LIBEXIF */
@@ -1335,7 +1335,7 @@ load_resource_1060 (const PSDimageres  *res_a,
                     GError            **error)
 {
   /* Load XMP Metadata block */
-  GimpParam    *return_vals;
+  PicmanParam    *return_vals;
   gint          nreturn_vals;
   gchar        *res_data;
 
@@ -1351,13 +1351,13 @@ load_resource_1060 (const PSDimageres  *res_a,
   /* Null terminate metadata block for decode procedure */
   res_data[res_a->data_len] = 0;
 
-  return_vals = gimp_run_procedure (DECODE_XMP_PROC,
+  return_vals = picman_run_procedure (DECODE_XMP_PROC,
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE,  image_id,
-                                    GIMP_PDB_STRING, res_data,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE,  image_id,
+                                    PICMAN_PDB_STRING, res_data,
+                                    PICMAN_PDB_END);
   g_free (res_data);
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
   return 0;
 }
 
@@ -1410,22 +1410,22 @@ load_resource_2000 (const PSDimageres  *res_a,
   if (path_rec ==0)
     return 0;
 
-  image_width = gimp_image_width (image_id);
-  image_height = gimp_image_height (image_id);
+  image_width = picman_image_width (image_id);
+  image_height = picman_image_height (image_id);
 
   /* Create path */
   if (res_a->id == PSD_WORKING_PATH)
     {
       /* use "Working Path" for the path name to match the Photoshop display */
-      vector_id = gimp_vectors_new (image_id, "Working Path");
+      vector_id = picman_vectors_new (image_id, "Working Path");
     }
   else
     {
       /* Use the name stored in the PSD to name the path */
-      vector_id = gimp_vectors_new (image_id, res_a->name);
+      vector_id = picman_vectors_new (image_id, res_a->name);
     }
 
-  gimp_image_insert_vectors (image_id, vector_id, -1, -1);
+  picman_image_insert_vectors (image_id, vector_id, -1, -1);
 
   while (path_rec > 0)
     {
@@ -1540,8 +1540,8 @@ load_resource_2000 (const PSDimageres  *res_a,
               num_rec--;
             }
           /* Add sub-path */
-          gimp_vectors_stroke_new_from_points (vector_id,
-                                               GIMP_VECTORS_STROKE_TYPE_BEZIER,
+          picman_vectors_stroke_new_from_points (vector_id,
+                                               PICMAN_VECTORS_STROKE_TYPE_BEZIER,
                                                cntr, controlpoints, closed);
           g_free (controlpoints);
         }

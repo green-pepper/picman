@@ -1,12 +1,12 @@
 /*
- *   gtk-doc can't build libgimp-scan.c without PLUG_IN_INFO being defined
+ *   gtk-doc can't build libpicman-scan.c without PLUG_IN_INFO being defined
  *   so we include this file as a workaround
  */
 
 #include <glib.h>
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-GimpPlugInInfo PLUG_IN_INFO =
+PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,
   NULL,

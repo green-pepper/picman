@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,23 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CURSOR_H__
-#define __GIMP_CURSOR_H__
+#ifndef __PICMAN_CURSOR_H__
+#define __PICMAN_CURSOR_H__
 
 
-GdkCursor      * gimp_cursor_new    (GdkDisplay         *display,
-                                     GimpHandedness      cursor_handedness,
-                                     GimpCursorType      cursor_type,
-                                     GimpToolCursorType  tool_cursor,
-                                     GimpCursorModifier  modifier);
-void             gimp_cursor_set    (GtkWidget          *widget,
-                                     GimpHandedness      cursor_handedness,
-                                     GimpCursorType      cursor_type,
-                                     GimpToolCursorType  tool_cursor,
-                                     GimpCursorModifier  modifier);
+GdkCursor      * picman_cursor_new    (GdkDisplay         *display,
+                                     PicmanHandedness      cursor_handedness,
+                                     PicmanCursorType      cursor_type,
+                                     PicmanToolCursorType  tool_cursor,
+                                     PicmanCursorModifier  modifier);
+void             picman_cursor_set    (GtkWidget          *widget,
+                                     PicmanHandedness      cursor_handedness,
+                                     PicmanCursorType      cursor_type,
+                                     PicmanToolCursorType  tool_cursor,
+                                     PicmanCursorModifier  modifier);
 
-GimpCursorType   gimp_cursor_rotate (GimpCursorType      cursor,
+PicmanCursorType   picman_cursor_rotate (PicmanCursorType      cursor,
                                      gdouble             angle);
 
 
-#endif /*  __GIMP_CURSOR_H__  */
+#endif /*  __PICMAN_CURSOR_H__  */

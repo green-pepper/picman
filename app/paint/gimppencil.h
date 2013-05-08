@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,38 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PENCIL_H__
-#define __GIMP_PENCIL_H__
+#ifndef __PICMAN_PENCIL_H__
+#define __PICMAN_PENCIL_H__
 
 
-#include "gimppaintbrush.h"
+#include "picmanpaintbrush.h"
 
 
-#define GIMP_TYPE_PENCIL            (gimp_pencil_get_type ())
-#define GIMP_PENCIL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PENCIL, GimpPencil))
-#define GIMP_PENCIL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PENCIL, GimpPencilClass))
-#define GIMP_IS_PENCIL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PENCIL))
-#define GIMP_IS_PENCIL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PENCIL))
-#define GIMP_PENCIL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PENCIL, GimpPencilClass))
+#define PICMAN_TYPE_PENCIL            (picman_pencil_get_type ())
+#define PICMAN_PENCIL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PENCIL, PicmanPencil))
+#define PICMAN_PENCIL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PENCIL, PicmanPencilClass))
+#define PICMAN_IS_PENCIL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PENCIL))
+#define PICMAN_IS_PENCIL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PENCIL))
+#define PICMAN_PENCIL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PENCIL, PicmanPencilClass))
 
 
-typedef struct _GimpPencilClass GimpPencilClass;
+typedef struct _PicmanPencilClass PicmanPencilClass;
 
-struct _GimpPencil
+struct _PicmanPencil
 {
-  GimpPaintbrush  parent_instance;
+  PicmanPaintbrush  parent_instance;
 };
 
-struct _GimpPencilClass
+struct _PicmanPencilClass
 {
-  GimpPaintbrushClass  parent_class;
+  PicmanPaintbrushClass  parent_class;
 };
 
 
-void    gimp_pencil_register (Gimp                      *gimp,
-                              GimpPaintRegisterCallback  callback);
+void    picman_pencil_register (Picman                      *picman,
+                              PicmanPaintRegisterCallback  callback);
 
-GType   gimp_pencil_get_type (void) G_GNUC_CONST;
+GType   picman_pencil_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_PENCIL_H__  */
+#endif  /*  __PICMAN_PENCIL_H__  */

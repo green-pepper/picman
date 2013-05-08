@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfgbgeditor.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanfgbgeditor.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FG_BG_EDITOR_H__
-#define __GIMP_FG_BG_EDITOR_H__
+#ifndef __PICMAN_FG_BG_EDITOR_H__
+#define __PICMAN_FG_BG_EDITOR_H__
 
 
-#define GIMP_TYPE_FG_BG_EDITOR            (gimp_fg_bg_editor_get_type ())
-#define GIMP_FG_BG_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FG_BG_EDITOR, GimpFgBgEditor))
-#define GIMP_FG_BG_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FG_BG_EDITOR, GimpFgBgEditorClass))
-#define GIMP_IS_FG_BG_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FG_BG_EDITOR))
-#define GIMP_IS_FG_BG_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FG_BG_EDITOR))
-#define GIMP_FG_BG_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FG_BG_EDITOR, GimpFgBgEditorClass))
+#define PICMAN_TYPE_FG_BG_EDITOR            (picman_fg_bg_editor_get_type ())
+#define PICMAN_FG_BG_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FG_BG_EDITOR, PicmanFgBgEditor))
+#define PICMAN_FG_BG_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FG_BG_EDITOR, PicmanFgBgEditorClass))
+#define PICMAN_IS_FG_BG_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FG_BG_EDITOR))
+#define PICMAN_IS_FG_BG_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FG_BG_EDITOR))
+#define PICMAN_FG_BG_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FG_BG_EDITOR, PicmanFgBgEditorClass))
 
 
-typedef struct _GimpFgBgEditorClass GimpFgBgEditorClass;
+typedef struct _PicmanFgBgEditorClass PicmanFgBgEditorClass;
 
-struct _GimpFgBgEditor
+struct _PicmanFgBgEditor
 {
   GtkDrawingArea   parent_instance;
 
-  GimpContext     *context;
-  GimpActiveColor  active_color;
+  PicmanContext     *context;
+  PicmanActiveColor  active_color;
 
   GdkPixbuf       *default_icon;
   GdkPixbuf       *swap_icon;
@@ -47,25 +47,25 @@ struct _GimpFgBgEditor
   gint             click_target;
 };
 
-struct _GimpFgBgEditorClass
+struct _PicmanFgBgEditorClass
 {
   GtkDrawingAreaClass  parent_class;
 
   /*  signals  */
 
-  void (* color_clicked) (GimpFgBgEditor  *editor,
-                          GimpActiveColor  color);
+  void (* color_clicked) (PicmanFgBgEditor  *editor,
+                          PicmanActiveColor  color);
 };
 
 
-GType       gimp_fg_bg_editor_get_type    (void) G_GNUC_CONST;
+GType       picman_fg_bg_editor_get_type    (void) G_GNUC_CONST;
 
-GtkWidget * gimp_fg_bg_editor_new         (GimpContext     *context);
+GtkWidget * picman_fg_bg_editor_new         (PicmanContext     *context);
 
-void        gimp_fg_bg_editor_set_context (GimpFgBgEditor  *editor,
-                                           GimpContext     *context);
-void        gimp_fg_bg_editor_set_active  (GimpFgBgEditor  *editor,
-                                           GimpActiveColor  active);
+void        picman_fg_bg_editor_set_context (PicmanFgBgEditor  *editor,
+                                           PicmanContext     *context);
+void        picman_fg_bg_editor_set_active  (PicmanFgBgEditor  *editor,
+                                           PicmanActiveColor  active);
 
 
-#endif  /*  __GIMP_FG_BG_EDITOR_H__  */
+#endif  /*  __PICMAN_FG_BG_EDITOR_H__  */

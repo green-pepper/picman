@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,17 +20,17 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimpflipoptions.h"
-#include "gimptooloptions-gui.h"
+#include "picmanflipoptions.h"
+#include "picmantooloptions-gui.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -40,48 +40,48 @@ enum
 };
 
 
-static void   gimp_flip_options_set_property (GObject      *object,
+static void   picman_flip_options_set_property (GObject      *object,
                                               guint         property_id,
                                               const GValue *value,
                                               GParamSpec   *pspec);
-static void   gimp_flip_options_get_property (GObject      *object,
+static void   picman_flip_options_get_property (GObject      *object,
                                               guint         property_id,
                                               GValue       *value,
                                               GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpFlipOptions, gimp_flip_options,
-               GIMP_TYPE_TRANSFORM_OPTIONS)
+G_DEFINE_TYPE (PicmanFlipOptions, picman_flip_options,
+               PICMAN_TYPE_TRANSFORM_OPTIONS)
 
 
 static void
-gimp_flip_options_class_init (GimpFlipOptionsClass *klass)
+picman_flip_options_class_init (PicmanFlipOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_flip_options_set_property;
-  object_class->get_property = gimp_flip_options_get_property;
+  object_class->set_property = picman_flip_options_set_property;
+  object_class->get_property = picman_flip_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_FLIP_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_FLIP_TYPE,
                                  "flip-type",
                                  N_("Direction of flipping"),
-                                 GIMP_TYPE_ORIENTATION_TYPE,
-                                 GIMP_ORIENTATION_HORIZONTAL,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_ORIENTATION_TYPE,
+                                 PICMAN_ORIENTATION_HORIZONTAL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_flip_options_init (GimpFlipOptions *options)
+picman_flip_options_init (PicmanFlipOptions *options)
 {
 }
 
 static void
-gimp_flip_options_set_property (GObject      *object,
+picman_flip_options_set_property (GObject      *object,
                                 guint         property_id,
                                 const GValue *value,
                                 GParamSpec   *pspec)
 {
-  GimpFlipOptions *options = GIMP_FLIP_OPTIONS (object);
+  PicmanFlipOptions *options = PICMAN_FLIP_OPTIONS (object);
 
   switch (property_id)
     {
@@ -95,12 +95,12 @@ gimp_flip_options_set_property (GObject      *object,
 }
 
 static void
-gimp_flip_options_get_property (GObject    *object,
+picman_flip_options_get_property (GObject    *object,
                                 guint       property_id,
                                 GValue     *value,
                                 GParamSpec *pspec)
 {
-  GimpFlipOptions *options = GIMP_FLIP_OPTIONS (object);
+  PicmanFlipOptions *options = PICMAN_FLIP_OPTIONS (object);
 
   switch (property_id)
     {
@@ -114,10 +114,10 @@ gimp_flip_options_get_property (GObject    *object,
 }
 
 GtkWidget *
-gimp_flip_options_gui (GimpToolOptions *tool_options)
+picman_flip_options_gui (PicmanToolOptions *tool_options)
 {
   GObject         *config = G_OBJECT (tool_options);
-  GtkWidget       *vbox   = gimp_tool_options_gui (tool_options);
+  GtkWidget       *vbox   = picman_tool_options_gui (tool_options);
   GtkWidget       *hbox;
   GtkWidget       *box;
   GtkWidget       *label;
@@ -125,7 +125,7 @@ gimp_flip_options_gui (GimpToolOptions *tool_options)
   gchar           *str;
   GdkModifierType  toggle_mask;
 
-  toggle_mask = gimp_get_toggle_behavior_mask ();
+  toggle_mask = picman_get_toggle_behavior_mask ();
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
@@ -135,18 +135,18 @@ gimp_flip_options_gui (GimpToolOptions *tool_options)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  box = gimp_prop_enum_stock_box_new (config, "type", "gimp", 0, 0);
+  box = picman_prop_enum_stock_box_new (config, "type", "picman", 0, 0);
   gtk_box_pack_start (GTK_BOX (hbox), box, FALSE, FALSE, 0);
   gtk_widget_show (box);
 
   /*  tool toggle  */
   str = g_strdup_printf (_("Flip Type  (%s)"),
-                         gimp_get_mod_string (toggle_mask));
+                         picman_get_mod_string (toggle_mask));
 
-  frame = gimp_prop_enum_radio_frame_new (config, "flip-type",
+  frame = picman_prop_enum_radio_frame_new (config, "flip-type",
                                           str,
-                                          GIMP_ORIENTATION_HORIZONTAL,
-                                          GIMP_ORIENTATION_VERTICAL);
+                                          PICMAN_ORIENTATION_HORIZONTAL,
+                                          PICMAN_ORIENTATION_VERTICAL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpCoreConfig class
- * Copyright (C) 2001  Sven Neumann <sven@gimp.org>
+ * PicmanCoreConfig class
+ * Copyright (C) 2001  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,21 +24,21 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "config-types.h"
 
 #include "core/core-types.h"
-#include "core/gimp-utils.h"
-#include "core/gimpgrid.h"
-#include "core/gimptemplate.h"
+#include "core/picman-utils.h"
+#include "core/picmangrid.h"
+#include "core/picmantemplate.h"
 
-#include "gimprc-blurbs.h"
-#include "gimpcoreconfig.h"
+#include "picmanrc-blurbs.h"
+#include "picmancoreconfig.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define DEFAULT_BRUSH       "Round Fuzzy"
@@ -48,7 +48,7 @@
 #define DEFAULT_GRADIENT    "FG to BG (RGB)"
 #define DEFAULT_TOOL_PRESET "Current Options"
 #define DEFAULT_FONT        "Sans"
-#define DEFAULT_COMMENT     "Created with GIMP"
+#define DEFAULT_COMMENT     "Created with PICMAN"
 
 
 enum
@@ -110,386 +110,386 @@ enum
 };
 
 
-static void  gimp_core_config_finalize               (GObject      *object);
-static void  gimp_core_config_set_property           (GObject      *object,
+static void  picman_core_config_finalize               (GObject      *object);
+static void  picman_core_config_set_property           (GObject      *object,
                                                       guint         property_id,
                                                       const GValue *value,
                                                       GParamSpec   *pspec);
-static void  gimp_core_config_get_property           (GObject      *object,
+static void  picman_core_config_get_property           (GObject      *object,
                                                       guint         property_id,
                                                       GValue       *value,
                                                       GParamSpec   *pspec);
-static void gimp_core_config_default_image_notify    (GObject      *object,
+static void picman_core_config_default_image_notify    (GObject      *object,
                                                       GParamSpec   *pspec,
                                                       gpointer      data);
-static void gimp_core_config_default_grid_notify     (GObject      *object,
+static void picman_core_config_default_grid_notify     (GObject      *object,
                                                       GParamSpec   *pspec,
                                                       gpointer      data);
-static void gimp_core_config_color_management_notify (GObject      *object,
+static void picman_core_config_color_management_notify (GObject      *object,
                                                       GParamSpec   *pspec,
                                                       gpointer      data);
 
 
-G_DEFINE_TYPE (GimpCoreConfig, gimp_core_config, GIMP_TYPE_GEGL_CONFIG)
+G_DEFINE_TYPE (PicmanCoreConfig, picman_core_config, PICMAN_TYPE_GEGL_CONFIG)
 
-#define parent_class gimp_core_config_parent_class
+#define parent_class picman_core_config_parent_class
 
 
 static void
-gimp_core_config_class_init (GimpCoreConfigClass *klass)
+picman_core_config_class_init (PicmanCoreConfigClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   gchar        *path;
-  GimpRGB       red          = { 1.0, 0, 0, 0.5 };
+  PicmanRGB       red          = { 1.0, 0, 0, 0.5 };
   guint64       undo_size;
 
-  object_class->finalize     = gimp_core_config_finalize;
-  object_class->set_property = gimp_core_config_set_property;
-  object_class->get_property = gimp_core_config_get_property;
+  object_class->finalize     = picman_core_config_finalize;
+  object_class->set_property = picman_core_config_set_property;
+  object_class->get_property = picman_core_config_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_LANGUAGE,
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_LANGUAGE,
                                    "language", LANGUAGE_BLURB,
                                    NULL,  /* take from environment */
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_RESTART);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_INTERPOLATION_TYPE,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_RESTART);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_INTERPOLATION_TYPE,
                                  "interpolation-type",
                                  INTERPOLATION_TYPE_BLURB,
-                                 GIMP_TYPE_INTERPOLATION_TYPE,
-                                 GIMP_INTERPOLATION_CUBIC,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_DEFAULT_THRESHOLD,
+                                 PICMAN_TYPE_INTERPOLATION_TYPE,
+                                 PICMAN_INTERPOLATION_CUBIC,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_DEFAULT_THRESHOLD,
                                 "default-threshold", DEFAULT_THRESHOLD_BLURB,
                                 0, 255, 15,
-                                GIMP_PARAM_STATIC_STRINGS);
+                                PICMAN_PARAM_STATIC_STRINGS);
 
-  path = gimp_config_build_plug_in_path ("plug-ins");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PLUG_IN_PATH,
+  path = picman_config_build_plug_in_path ("plug-ins");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PLUG_IN_PATH,
                                  "plug-in-path", PLUG_IN_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_plug_in_path ("modules");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_MODULE_PATH,
+  path = picman_config_build_plug_in_path ("modules");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_MODULE_PATH,
                                  "module-path", MODULE_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_plug_in_path ("interpreters");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_INTERPRETER_PATH,
+  path = picman_config_build_plug_in_path ("interpreters");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_INTERPRETER_PATH,
                                  "interpreter-path", INTERPRETER_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_plug_in_path ("environ");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_ENVIRON_PATH,
+  path = picman_config_build_plug_in_path ("environ");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_ENVIRON_PATH,
                                  "environ-path", ENVIRON_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_data_path ("brushes");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_BRUSH_PATH,
+  path = picman_config_build_data_path ("brushes");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_BRUSH_PATH,
                                  "brush-path", BRUSH_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_writable_path ("brushes");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_BRUSH_PATH_WRITABLE,
+  path = picman_config_build_writable_path ("brushes");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_BRUSH_PATH_WRITABLE,
                                  "brush-path-writable",
                                  BRUSH_PATH_WRITABLE_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_data_path ("dynamics");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_DYNAMICS_PATH,
+  path = picman_config_build_data_path ("dynamics");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_DYNAMICS_PATH,
                                  "dynamics-path", DYNAMICS_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_writable_path ("dynamics");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_DYNAMICS_PATH_WRITABLE,
+  path = picman_config_build_writable_path ("dynamics");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_DYNAMICS_PATH_WRITABLE,
                                  "dynamics-path-writable",
                                  DYNAMICS_PATH_WRITABLE_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_data_path ("patterns");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PATTERN_PATH,
+  path = picman_config_build_data_path ("patterns");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PATTERN_PATH,
                                  "pattern-path", PATTERN_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_writable_path ("patterns");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PATTERN_PATH_WRITABLE,
+  path = picman_config_build_writable_path ("patterns");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PATTERN_PATH_WRITABLE,
                                  "pattern-path-writable",
                                  PATTERN_PATH_WRITABLE_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_data_path ("palettes");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PALETTE_PATH,
+  path = picman_config_build_data_path ("palettes");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PALETTE_PATH,
                                  "palette-path", PALETTE_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_writable_path ("palettes");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PALETTE_PATH_WRITABLE,
+  path = picman_config_build_writable_path ("palettes");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PALETTE_PATH_WRITABLE,
                                  "palette-path-writable",
                                  PALETTE_PATH_WRITABLE_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_data_path ("gradients");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_GRADIENT_PATH,
+  path = picman_config_build_data_path ("gradients");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_GRADIENT_PATH,
                                  "gradient-path", GRADIENT_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_writable_path ("gradients");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_GRADIENT_PATH_WRITABLE,
+  path = picman_config_build_writable_path ("gradients");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_GRADIENT_PATH_WRITABLE,
                                  "gradient-path-writable",
                                  GRADIENT_PATH_WRITABLE_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_data_path ("tool-presets");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_TOOL_PRESET_PATH,
+  path = picman_config_build_data_path ("tool-presets");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_TOOL_PRESET_PATH,
                                  "tool-preset-path", TOOL_PRESET_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_writable_path ("tool-presets");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_TOOL_PRESET_PATH_WRITABLE,
+  path = picman_config_build_writable_path ("tool-presets");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_TOOL_PRESET_PATH_WRITABLE,
                                  "tool-preset-path-writable",
                                  TOOL_PRESET_PATH_WRITABLE_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
 
-  path = gimp_config_build_data_path ("fonts");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_FONT_PATH,
+  path = picman_config_build_data_path ("fonts");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_FONT_PATH,
                                  "font-path", FONT_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_CONFIRM);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_CONFIRM);
   g_free (path);
 
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_FONT_PATH_WRITABLE,
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_FONT_PATH_WRITABLE,
                                  "font-path-writable", NULL,
-                                 GIMP_CONFIG_PATH_DIR_LIST, NULL,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_IGNORE);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_BRUSH,
+                                 PICMAN_CONFIG_PATH_DIR_LIST, NULL,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_IGNORE);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_BRUSH,
                                    "default-brush", DEFAULT_BRUSH_BLURB,
                                    DEFAULT_BRUSH,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_DYNAMICS,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_DYNAMICS,
                                    "default-dynamics", DEFAULT_DYNAMICS_BLURB,
                                    DEFAULT_DYNAMICS,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_PATTERN,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_PATTERN,
                                    "default-pattern", DEFAULT_PATTERN_BLURB,
                                    DEFAULT_PATTERN,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_PALETTE,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_PALETTE,
                                    "default-palette", DEFAULT_PALETTE_BLURB,
                                    DEFAULT_PALETTE,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_GRADIENT,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_GRADIENT,
                                    "default-gradient", DEFAULT_GRADIENT_BLURB,
                                    DEFAULT_GRADIENT,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_TOOL_PRESET,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_TOOL_PRESET,
                                    "default-tool-preset", DEFAULT_TOOL_PRESET_BLURB,
                                    DEFAULT_TOOL_PRESET,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_FONT,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_DEFAULT_FONT,
                                    "default-font", DEFAULT_FONT_BLURB,
                                    DEFAULT_FONT,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_BRUSH,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_BRUSH,
                                     "global-brush", GLOBAL_BRUSH_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_DYNAMICS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_DYNAMICS,
                                     "global-dynamics", GLOBAL_DYNAMICS_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_PATTERN,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_PATTERN,
                                     "global-pattern", GLOBAL_PATTERN_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_PALETTE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_PALETTE,
                                     "global-palette", GLOBAL_PALETTE_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_GRADIENT,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_GRADIENT,
                                     "global-gradient", GLOBAL_GRADIENT_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_FONT,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_GLOBAL_FONT,
                                     "global-font", GLOBAL_FONT_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_DEFAULT_IMAGE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_DEFAULT_IMAGE,
                                    "default-image", DEFAULT_IMAGE_BLURB,
-                                   GIMP_TYPE_TEMPLATE,
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_DEFAULT_GRID,
+                                   PICMAN_TYPE_TEMPLATE,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_DEFAULT_GRID,
                                    "default-grid", DEFAULT_GRID_BLURB,
-                                   GIMP_TYPE_GRID,
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_UNDO_LEVELS,
+                                   PICMAN_TYPE_GRID,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_UNDO_LEVELS,
                                 "undo-levels", UNDO_LEVELS_BLURB,
                                 0, 1 << 20, 5,
-                                GIMP_PARAM_STATIC_STRINGS |
-                                GIMP_CONFIG_PARAM_CONFIRM);
+                                PICMAN_PARAM_STATIC_STRINGS |
+                                PICMAN_CONFIG_PARAM_CONFIRM);
 
-  undo_size = gimp_get_physical_memory_size ();
+  undo_size = picman_get_physical_memory_size ();
 
   if (undo_size > 0)
     undo_size = undo_size / 8; /* 1/8th of the memory */
   else
     undo_size = 1 << 26; /* 64GB */
 
-  GIMP_CONFIG_INSTALL_PROP_MEMSIZE (object_class, PROP_UNDO_SIZE,
+  PICMAN_CONFIG_INSTALL_PROP_MEMSIZE (object_class, PROP_UNDO_SIZE,
                                     "undo-size", UNDO_SIZE_BLURB,
-                                    0, GIMP_MAX_MEMSIZE, undo_size,
-                                    GIMP_PARAM_STATIC_STRINGS |
-                                    GIMP_CONFIG_PARAM_CONFIRM);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_UNDO_PREVIEW_SIZE,
+                                    0, PICMAN_MAX_MEMSIZE, undo_size,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_CONFIRM);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_UNDO_PREVIEW_SIZE,
                                  "undo-preview-size", UNDO_PREVIEW_SIZE_BLURB,
-                                 GIMP_TYPE_VIEW_SIZE,
-                                 GIMP_VIEW_SIZE_LARGE,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_PLUG_IN_HISTORY_SIZE,
+                                 PICMAN_TYPE_VIEW_SIZE,
+                                 PICMAN_VIEW_SIZE_LARGE,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_PLUG_IN_HISTORY_SIZE,
                                 "plug-in-history-size",
                                 PLUG_IN_HISTORY_SIZE_BLURB,
                                 0, 256, 10,
-                                GIMP_PARAM_STATIC_STRINGS |
-                                GIMP_CONFIG_PARAM_RESTART);
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class,
+                                PICMAN_PARAM_STATIC_STRINGS |
+                                PICMAN_CONFIG_PARAM_RESTART);
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class,
                                  PROP_PLUGINRC_PATH,
                                  "pluginrc-path", PLUGINRC_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_FILE,
-                                 "${gimp_dir}" G_DIR_SEPARATOR_S "pluginrc",
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_LAYER_PREVIEWS,
+                                 PICMAN_CONFIG_PATH_FILE,
+                                 "${picman_dir}" G_DIR_SEPARATOR_S "pluginrc",
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_LAYER_PREVIEWS,
                                     "layer-previews", LAYER_PREVIEWS_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_LAYER_PREVIEW_SIZE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_LAYER_PREVIEW_SIZE,
                                  "layer-preview-size", LAYER_PREVIEW_SIZE_BLURB,
-                                 GIMP_TYPE_VIEW_SIZE,
-                                 GIMP_VIEW_SIZE_MEDIUM,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_THUMBNAIL_SIZE,
+                                 PICMAN_TYPE_VIEW_SIZE,
+                                 PICMAN_VIEW_SIZE_MEDIUM,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_THUMBNAIL_SIZE,
                                  "thumbnail-size", THUMBNAIL_SIZE_BLURB,
-                                 GIMP_TYPE_THUMBNAIL_SIZE,
-                                 GIMP_THUMBNAIL_SIZE_NORMAL,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_MEMSIZE (object_class, PROP_THUMBNAIL_FILESIZE_LIMIT,
+                                 PICMAN_TYPE_THUMBNAIL_SIZE,
+                                 PICMAN_THUMBNAIL_SIZE_NORMAL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_MEMSIZE (object_class, PROP_THUMBNAIL_FILESIZE_LIMIT,
                                     "thumbnail-filesize-limit",
                                     THUMBNAIL_FILESIZE_LIMIT_BLURB,
-                                    0, GIMP_MAX_MEMSIZE, 1 << 22,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_COLOR_MANAGEMENT,
+                                    0, PICMAN_MAX_MEMSIZE, 1 << 22,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_COLOR_MANAGEMENT,
                                    "color-management", COLOR_MANAGEMENT_BLURB,
-                                   GIMP_TYPE_COLOR_CONFIG,
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_AGGREGATE);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_COLOR_PROFILE_POLICY,
+                                   PICMAN_TYPE_COLOR_CONFIG,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_AGGREGATE);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_COLOR_PROFILE_POLICY,
                                  "color-profile-policy",
                                  COLOR_PROFILE_POLICY_BLURB,
-                                 GIMP_TYPE_COLOR_PROFILE_POLICY,
-                                 GIMP_COLOR_PROFILE_POLICY_ASK,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAVE_DOCUMENT_HISTORY,
+                                 PICMAN_TYPE_COLOR_PROFILE_POLICY,
+                                 PICMAN_COLOR_PROFILE_POLICY_ASK,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAVE_DOCUMENT_HISTORY,
                                     "save-document-history",
                                     SAVE_DOCUMENT_HISTORY_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_RGB (object_class, PROP_QUICK_MASK_COLOR,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_RGB (object_class, PROP_QUICK_MASK_COLOR,
                                 "quick-mask-color", QUICK_MASK_COLOR_BLURB,
                                 TRUE, &red,
-                                GIMP_PARAM_STATIC_STRINGS);
+                                PICMAN_PARAM_STATIC_STRINGS);
 
   /*  only for backward compatibility:  */
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_INSTALL_COLORMAP,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_INSTALL_COLORMAP,
                                     "install-colormap", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS |
-                                    GIMP_CONFIG_PARAM_IGNORE);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_MIN_COLORS,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_IGNORE);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_MIN_COLORS,
                                 "min-colors", NULL,
                                 27, 256, 144,
-                                GIMP_PARAM_STATIC_STRINGS |
-                                GIMP_CONFIG_PARAM_IGNORE);
+                                PICMAN_PARAM_STATIC_STRINGS |
+                                PICMAN_CONFIG_PARAM_IGNORE);
 }
 
 static void
-gimp_core_config_init (GimpCoreConfig *config)
+picman_core_config_init (PicmanCoreConfig *config)
 {
-  config->default_image = g_object_new (GIMP_TYPE_TEMPLATE,
+  config->default_image = g_object_new (PICMAN_TYPE_TEMPLATE,
                                         "name",    "Default Image",
                                         "comment", DEFAULT_COMMENT,
                                         NULL);
   g_signal_connect (config->default_image, "notify",
-                    G_CALLBACK (gimp_core_config_default_image_notify),
+                    G_CALLBACK (picman_core_config_default_image_notify),
                     config);
 
-  config->default_grid = g_object_new (GIMP_TYPE_GRID,
+  config->default_grid = g_object_new (PICMAN_TYPE_GRID,
                                        "name", "Default Grid",
                                        NULL);
   g_signal_connect (config->default_grid, "notify",
-                    G_CALLBACK (gimp_core_config_default_grid_notify),
+                    G_CALLBACK (picman_core_config_default_grid_notify),
                     config);
 
-  config->color_management = g_object_new (GIMP_TYPE_COLOR_CONFIG, NULL);
+  config->color_management = g_object_new (PICMAN_TYPE_COLOR_CONFIG, NULL);
   g_signal_connect (config->color_management, "notify",
-                    G_CALLBACK (gimp_core_config_color_management_notify),
+                    G_CALLBACK (picman_core_config_color_management_notify),
                     config);
 }
 
 static void
-gimp_core_config_finalize (GObject *object)
+picman_core_config_finalize (GObject *object)
 {
-  GimpCoreConfig *core_config = GIMP_CORE_CONFIG (object);
+  PicmanCoreConfig *core_config = PICMAN_CORE_CONFIG (object);
 
   g_free (core_config->language);
   g_free (core_config->plug_in_path);
@@ -532,12 +532,12 @@ gimp_core_config_finalize (GObject *object)
 }
 
 static void
-gimp_core_config_set_property (GObject      *object,
+picman_core_config_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpCoreConfig *core_config = GIMP_CORE_CONFIG (object);
+  PicmanCoreConfig *core_config = PICMAN_CORE_CONFIG (object);
 
   switch (property_id)
     {
@@ -671,12 +671,12 @@ gimp_core_config_set_property (GObject      *object,
       break;
     case PROP_DEFAULT_IMAGE:
       if (g_value_get_object (value))
-        gimp_config_sync (g_value_get_object (value) ,
+        picman_config_sync (g_value_get_object (value) ,
                           G_OBJECT (core_config->default_image), 0);
       break;
     case PROP_DEFAULT_GRID:
       if (g_value_get_object (value))
-        gimp_config_sync (g_value_get_object (value),
+        picman_config_sync (g_value_get_object (value),
                           G_OBJECT (core_config->default_grid), 0);
       break;
     case PROP_PLUG_IN_HISTORY_SIZE:
@@ -709,7 +709,7 @@ gimp_core_config_set_property (GObject      *object,
       break;
     case PROP_COLOR_MANAGEMENT:
       if (g_value_get_object (value))
-        gimp_config_sync (g_value_get_object (value),
+        picman_config_sync (g_value_get_object (value),
                           G_OBJECT (core_config->color_management), 0);
       break;
     case PROP_COLOR_PROFILE_POLICY:
@@ -719,7 +719,7 @@ gimp_core_config_set_property (GObject      *object,
       core_config->save_document_history = g_value_get_boolean (value);
       break;
     case PROP_QUICK_MASK_COLOR:
-      gimp_value_get_rgb (value, &core_config->quick_mask_color);
+      picman_value_get_rgb (value, &core_config->quick_mask_color);
       break;
 
     case PROP_INSTALL_COLORMAP:
@@ -734,12 +734,12 @@ gimp_core_config_set_property (GObject      *object,
 }
 
 static void
-gimp_core_config_get_property (GObject    *object,
+picman_core_config_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpCoreConfig *core_config = GIMP_CORE_CONFIG (object);
+  PicmanCoreConfig *core_config = PICMAN_CORE_CONFIG (object);
 
   switch (property_id)
     {
@@ -888,7 +888,7 @@ gimp_core_config_get_property (GObject    *object,
       g_value_set_boolean (value, core_config->save_document_history);
       break;
     case PROP_QUICK_MASK_COLOR:
-      gimp_value_set_rgb (value, &core_config->quick_mask_color);
+      picman_value_set_rgb (value, &core_config->quick_mask_color);
       break;
 
     case PROP_INSTALL_COLORMAP:
@@ -903,7 +903,7 @@ gimp_core_config_get_property (GObject    *object,
 }
 
 static void
-gimp_core_config_default_image_notify (GObject    *object,
+picman_core_config_default_image_notify (GObject    *object,
                                        GParamSpec *pspec,
                                        gpointer    data)
 {
@@ -911,7 +911,7 @@ gimp_core_config_default_image_notify (GObject    *object,
 }
 
 static void
-gimp_core_config_default_grid_notify (GObject    *object,
+picman_core_config_default_grid_notify (GObject    *object,
                                       GParamSpec *pspec,
                                       gpointer    data)
 {
@@ -919,7 +919,7 @@ gimp_core_config_default_grid_notify (GObject    *object,
 }
 
 static void
-gimp_core_config_color_management_notify (GObject    *object,
+picman_core_config_color_management_notify (GObject    *object,
                                           GParamSpec *pspec,
                                           gpointer    data)
 {

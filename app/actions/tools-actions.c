@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,26 +22,26 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmantoolinfo.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "actions.h"
 #include "tools-actions.h"
 #include "tools-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry tools_actions[] =
+static const PicmanActionEntry tools_actions[] =
 {
   { "tools-menu",           NULL, NC_("tools-action", "_Tools")           },
   { "tools-select-menu",    NULL, NC_("tools-action", "_Selection Tools") },
@@ -50,612 +50,612 @@ static const GimpActionEntry tools_actions[] =
   { "tools-color-menu",     NULL, NC_("tools-action", "_Color Tools")     },
 };
 
-static const GimpStringActionEntry tools_alternative_actions[] =
+static const PicmanStringActionEntry tools_alternative_actions[] =
 {
-  { "tools-by-color-select-short", GIMP_STOCK_TOOL_BY_COLOR_SELECT,
+  { "tools-by-color-select-short", PICMAN_STOCK_TOOL_BY_COLOR_SELECT,
     NC_("tools-action", "_By Color"), NULL,
     NC_("tools-action", "Select regions with similar colors"),
-    "gimp-by-color-select-tool",
-    GIMP_HELP_TOOL_BY_COLOR_SELECT },
+    "picman-by-color-select-tool",
+    PICMAN_HELP_TOOL_BY_COLOR_SELECT },
 
-  { "tools-rotate-arbitrary", GIMP_STOCK_TOOL_ROTATE,
+  { "tools-rotate-arbitrary", PICMAN_STOCK_TOOL_ROTATE,
     NC_("tools-action", "_Arbitrary Rotation..."), "",
     NC_("tools-action", "Rotate by an arbitrary angle"),
-    "gimp-rotate-layer",
-    GIMP_HELP_TOOL_ROTATE }
+    "picman-rotate-layer",
+    PICMAN_HELP_TOOL_ROTATE }
 };
 
-static const GimpEnumActionEntry tools_color_average_radius_actions[] =
+static const PicmanEnumActionEntry tools_color_average_radius_actions[] =
 {
-  { "tools-color-average-radius-set", GIMP_STOCK_TOOL_COLOR_PICKER,
+  { "tools-color-average-radius-set", PICMAN_STOCK_TOOL_COLOR_PICKER,
     "Set Color Picker Radius", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-color-average-set-to-default", GIMP_STOCK_TOOL_COLOR_PICKER,
+  { "tools-color-average-set-to-default", PICMAN_STOCK_TOOL_COLOR_PICKER,
     "Set Color Picker Radius To Default Value", NULL, NULL,
-    GIMP_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
+    PICMAN_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
     NULL },
-  { "tools-color-average-radius-minimum", GIMP_STOCK_TOOL_COLOR_PICKER,
+  { "tools-color-average-radius-minimum", PICMAN_STOCK_TOOL_COLOR_PICKER,
     "Minimize Color Picker Radius", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-color-average-radius-maximum", GIMP_STOCK_TOOL_COLOR_PICKER,
+  { "tools-color-average-radius-maximum", PICMAN_STOCK_TOOL_COLOR_PICKER,
     "Maximize Color Picker Radius", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-color-average-radius-decrease", GIMP_STOCK_TOOL_COLOR_PICKER,
+  { "tools-color-average-radius-decrease", PICMAN_STOCK_TOOL_COLOR_PICKER,
     "Decrease Color Picker Radius", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-color-average-radius-increase", GIMP_STOCK_TOOL_COLOR_PICKER,
+  { "tools-color-average-radius-increase", PICMAN_STOCK_TOOL_COLOR_PICKER,
     "Increase Color Picker Radius", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
   { "tools-color-average-radius-decrease-skip",
-    GIMP_STOCK_TOOL_COLOR_PICKER,
+    PICMAN_STOCK_TOOL_COLOR_PICKER,
     "Decrease Color Picker Radius More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
   { "tools-color-average-radius-increase-skip",
-    GIMP_STOCK_TOOL_COLOR_PICKER,
+    PICMAN_STOCK_TOOL_COLOR_PICKER,
     "Increase Color Picker Radius More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
 };
 
-static const GimpEnumActionEntry tools_paint_brush_size_actions[] =
+static const PicmanEnumActionEntry tools_paint_brush_size_actions[] =
 {
-  { "tools-paint-brush-size-set", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-size-set", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Set Brush Size", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-paint-brush-size-set-to-default", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-size-set-to-default", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Set Brush Size To Default Value", NULL, NULL,
-    GIMP_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
+    PICMAN_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
     NULL },
-  { "tools-paint-brush-size-minimum", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-size-minimum", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Minimize Brush Size", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-paint-brush-size-maximum", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-size-maximum", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Maximize Brush Size", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-paint-brush-size-decrease", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-size-decrease", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Decrease Brush Size", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-paint-brush-size-increase", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-size-increase", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Increase Brush Size", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
-  { "tools-paint-brush-size-decrease-skip", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-size-decrease-skip", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Decrease Brush Size More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
-  { "tools-paint-brush-size-increase-skip", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-size-increase-skip", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Increase Brush Size More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
 };
 
-static const GimpEnumActionEntry tools_paint_brush_angle_actions[] =
+static const PicmanEnumActionEntry tools_paint_brush_angle_actions[] =
 {
-  { "tools-paint-brush-angle-set", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-angle-set", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Set Brush Angle", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-paint-brush-angle-set-to-default", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-angle-set-to-default", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Set Brush Angle To Default Value", NULL, NULL,
-    GIMP_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
+    PICMAN_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
     NULL },
-  { "tools-paint-brush-angle-minimum", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-angle-minimum", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Minimize Brush Angle", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-paint-brush-angle-maximum", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-angle-maximum", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Maximize Brush Angle", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-paint-brush-angle-decrease", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-angle-decrease", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Decrease Brush Angle", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-paint-brush-angle-increase", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-angle-increase", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Increase Brush Angle", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
-  { "tools-paint-brush-angle-decrease-skip", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-angle-decrease-skip", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Decrease Brush Angle More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
-  { "tools-paint-brush-angle-increase-skip", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-angle-increase-skip", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Increase Brush Angle More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
-  { "tools-paint-brush-size-decrease-percent", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-size-decrease-percent", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Decrease Brush Size Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
     NULL },
-  { "tools-paint-brush-size-increase-percent", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-size-increase-percent", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Increase Brush Size Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_NEXT, FALSE,
     NULL },
 
 };
 
-static const GimpEnumActionEntry tools_paint_brush_aspect_ratio_actions[] =
+static const PicmanEnumActionEntry tools_paint_brush_aspect_ratio_actions[] =
 {
-  { "tools-paint-brush-aspect-ratio-set", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-aspect-ratio-set", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Set Brush Aspect Ratio", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-paint-brush-aspect-ratio-set-to-default", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-aspect-ratio-set-to-default", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Set Brush Aspect Ratio To Default Value", NULL, NULL,
-    GIMP_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
+    PICMAN_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
     NULL },
-  { "tools-paint-brush-aspect-ratio-minimum", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-aspect-ratio-minimum", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Minimize Brush Aspect Ratio", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-paint-brush-aspect-ratio-maximum", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-aspect-ratio-maximum", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Maximize Brush Aspect Ratio", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-paint-brush-aspect-ratio-decrease", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-aspect-ratio-decrease", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Decrease Brush Aspect Ratio", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-paint-brush-aspect-ratio-increase", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-aspect-ratio-increase", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Increase Brush Aspect Ratio", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
-  { "tools-paint-brush-aspect-ratio-decrease-skip", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-aspect-ratio-decrease-skip", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Decrease Brush Aspect Ratio More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
-  { "tools-paint-brush-aspect-ratio-increase-skip", GIMP_STOCK_TOOL_PAINTBRUSH,
+  { "tools-paint-brush-aspect-ratio-increase-skip", PICMAN_STOCK_TOOL_PAINTBRUSH,
     "Increase Brush Aspect Ratio More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
 };
 
-static const GimpEnumActionEntry tools_ink_blob_size_actions[] =
+static const PicmanEnumActionEntry tools_ink_blob_size_actions[] =
 {
-  { "tools-ink-blob-size-set", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-size-set", PICMAN_STOCK_TOOL_INK,
     "Set Ink Blob Size", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-ink-blob-size-minimum", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-size-minimum", PICMAN_STOCK_TOOL_INK,
     "Minimize Ink Blob Size", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-ink-blob-size-maximum", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-size-maximum", PICMAN_STOCK_TOOL_INK,
     "Maximize Ink Blob Size", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-ink-blob-size-decrease", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-size-decrease", PICMAN_STOCK_TOOL_INK,
     "Decrease Ink Blob Size", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-ink-blob-size-increase", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-size-increase", PICMAN_STOCK_TOOL_INK,
     "Increase Ink Blob Size", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
-  { "tools-ink-blob-size-decrease-skip", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-size-decrease-skip", PICMAN_STOCK_TOOL_INK,
     "Decrease Ink Blob Size More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
-  { "tools-ink-blob-size-increase-skip", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-size-increase-skip", PICMAN_STOCK_TOOL_INK,
     "Increase Ink Blob Size More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
-  { "tools-ink-blob-size-decrease-percent", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-size-decrease-percent", PICMAN_STOCK_TOOL_INK,
     "Decrease Ink Blob Size Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
     NULL },
-  { "tools-ink-blob-size-increase-percent", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-size-increase-percent", PICMAN_STOCK_TOOL_INK,
     "Increase Ink Blob Size Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_NEXT, FALSE,
     NULL },
 };
 
-static const GimpEnumActionEntry tools_ink_blob_aspect_actions[] =
+static const PicmanEnumActionEntry tools_ink_blob_aspect_actions[] =
 {
-  { "tools-ink-blob-aspect-set", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-aspect-set", PICMAN_STOCK_TOOL_INK,
     "Set Ink Blob Aspect", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-ink-blob-aspect-set-to-default", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-aspect-set-to-default", PICMAN_STOCK_TOOL_INK,
     "Set Ink Blob Aspect To Default Value", NULL, NULL,
-    GIMP_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
+    PICMAN_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
     NULL },
-  { "tools-ink-blob-aspect-minimum", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-aspect-minimum", PICMAN_STOCK_TOOL_INK,
     "Minimize Ink Blob Aspect", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-ink-blob-aspect-maximum", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-aspect-maximum", PICMAN_STOCK_TOOL_INK,
     "Maximize Ink Blob Aspect", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-ink-blob-aspect-decrease", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-aspect-decrease", PICMAN_STOCK_TOOL_INK,
     "Decrease Ink Blob Aspect", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-ink-blob-aspect-increase", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-aspect-increase", PICMAN_STOCK_TOOL_INK,
     "Increase Ink Blob Aspect", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
-  { "tools-ink-blob-aspect-decrease-skip", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-aspect-decrease-skip", PICMAN_STOCK_TOOL_INK,
     "Decrease Ink Blob Aspect More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
-  { "tools-ink-blob-aspect-increase-skip", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-aspect-increase-skip", PICMAN_STOCK_TOOL_INK,
     "Increase Ink Blob Aspect More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
 };
 
-static const GimpEnumActionEntry tools_ink_blob_angle_actions[] =
+static const PicmanEnumActionEntry tools_ink_blob_angle_actions[] =
 {
-  { "tools-ink-blob-angle-set", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-angle-set", PICMAN_STOCK_TOOL_INK,
     "Set Ink Blob Angle", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-ink-blob-angle-minimum", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-angle-minimum", PICMAN_STOCK_TOOL_INK,
     "Minimize Ink Blob Angle", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-ink-blob-angle-maximum", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-angle-maximum", PICMAN_STOCK_TOOL_INK,
     "Maximize Ink Blob Angle", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-ink-blob-angle-decrease", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-angle-decrease", PICMAN_STOCK_TOOL_INK,
     "Decrease Ink Blob Angle", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-ink-blob-angle-increase", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-angle-increase", PICMAN_STOCK_TOOL_INK,
     "Increase Ink Blob Angle", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
-  { "tools-ink-blob-angle-decrease-skip", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-angle-decrease-skip", PICMAN_STOCK_TOOL_INK,
     "Decrease Ink Blob Angle More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
-  { "tools-ink-blob-angle-increase-skip", GIMP_STOCK_TOOL_INK,
+  { "tools-ink-blob-angle-increase-skip", PICMAN_STOCK_TOOL_INK,
     "Increase Ink Blob Angle More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
 };
 
-static const GimpEnumActionEntry tools_foreground_select_brush_size_actions[] =
+static const PicmanEnumActionEntry tools_foreground_select_brush_size_actions[] =
 {
   { "tools-foreground-select-brush-size-set",
-    GIMP_STOCK_TOOL_FOREGROUND_SELECT,
+    PICMAN_STOCK_TOOL_FOREGROUND_SELECT,
     "Set Foreground Select Brush Size", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
   { "tools-foreground-select-brush-size-set-to-default",
-    GIMP_STOCK_TOOL_FOREGROUND_SELECT,
+    PICMAN_STOCK_TOOL_FOREGROUND_SELECT,
     "Set Foreground Select Brush Size to Default Value", NULL, NULL,
-    GIMP_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
+    PICMAN_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
     NULL },
   { "tools-foreground-select-brush-size-minimum",
-    GIMP_STOCK_TOOL_FOREGROUND_SELECT,
+    PICMAN_STOCK_TOOL_FOREGROUND_SELECT,
     "Minimize Foreground Select Brush Size", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
   { "tools-foreground-select-brush-size-maximum",
-    GIMP_STOCK_TOOL_FOREGROUND_SELECT,
+    PICMAN_STOCK_TOOL_FOREGROUND_SELECT,
     "Maximize Foreground Select Brush Size", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
   { "tools-foreground-select-brush-size-decrease",
-    GIMP_STOCK_TOOL_FOREGROUND_SELECT,
+    PICMAN_STOCK_TOOL_FOREGROUND_SELECT,
     "Decrease Foreground Select Brush Size", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
   { "tools-foreground-select-brush-size-increase",
-    GIMP_STOCK_TOOL_FOREGROUND_SELECT,
+    PICMAN_STOCK_TOOL_FOREGROUND_SELECT,
     "Increase Foreground Select Brush Size", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
   { "tools-foreground-select-brush-size-decrease-skip",
-    GIMP_STOCK_TOOL_FOREGROUND_SELECT,
+    PICMAN_STOCK_TOOL_FOREGROUND_SELECT,
     "Decrease Foreground Select Brush Size More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
   { "tools-foreground-select-brush-size-increase-skip",
-    GIMP_STOCK_TOOL_FOREGROUND_SELECT,
+    PICMAN_STOCK_TOOL_FOREGROUND_SELECT,
     "Increase Foreground Select Brush Size More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
   { "tools-foreground-select-brush-size-decrease-percent",
-    GIMP_STOCK_TOOL_FOREGROUND_SELECT,
+    PICMAN_STOCK_TOOL_FOREGROUND_SELECT,
     "Decrease Foreground Select Brush Size Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
     NULL },
   { "tools-foreground-select-brush-size-increase-percent",
-    GIMP_STOCK_TOOL_FOREGROUND_SELECT,
+    PICMAN_STOCK_TOOL_FOREGROUND_SELECT,
     "Increase Foreground Select Brush Size", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_NEXT, FALSE,
     NULL },
 };
 
-static const GimpEnumActionEntry tools_transform_preview_opacity_actions[] =
+static const PicmanEnumActionEntry tools_transform_preview_opacity_actions[] =
 {
-  { "tools-transform-preview-opacity-set", GIMP_STOCK_TOOL_PERSPECTIVE,
+  { "tools-transform-preview-opacity-set", PICMAN_STOCK_TOOL_PERSPECTIVE,
     "Set Transform Tool Preview Opacity", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-transform-preview-opacity-minimum", GIMP_STOCK_TOOL_PERSPECTIVE,
+  { "tools-transform-preview-opacity-minimum", PICMAN_STOCK_TOOL_PERSPECTIVE,
     "Minimize Transform Tool Preview Opacity", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-transform-preview-opacity-maximum", GIMP_STOCK_TOOL_PERSPECTIVE,
+  { "tools-transform-preview-opacity-maximum", PICMAN_STOCK_TOOL_PERSPECTIVE,
     "Maximize Transform Tool Preview Opacity", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-transform-preview-opacity-decrease", GIMP_STOCK_TOOL_PERSPECTIVE,
+  { "tools-transform-preview-opacity-decrease", PICMAN_STOCK_TOOL_PERSPECTIVE,
     "Decrease Transform Tool Preview Opacity", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-transform-preview-opacity-increase", GIMP_STOCK_TOOL_PERSPECTIVE,
+  { "tools-transform-preview-opacity-increase", PICMAN_STOCK_TOOL_PERSPECTIVE,
     "Increase Transform Tool Preview Opacity", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
-  { "tools-transform-preview-opacity-decrease-skip", GIMP_STOCK_TOOL_PERSPECTIVE,
+  { "tools-transform-preview-opacity-decrease-skip", PICMAN_STOCK_TOOL_PERSPECTIVE,
     "Decrease Transform Tool Preview Opacity More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
-  { "tools-transform-preview-opacity-increase-skip", GIMP_STOCK_TOOL_PERSPECTIVE,
+  { "tools-transform-preview-opacity-increase-skip", PICMAN_STOCK_TOOL_PERSPECTIVE,
     "Increase Transform Tool Preview Opacity More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
 };
 
 /* tools-value-1 is effectively used to control
  * opacity of the active tool
  */
-static const GimpEnumActionEntry tools_value_1_actions[] =
+static const PicmanEnumActionEntry tools_value_1_actions[] =
 {
-  { "tools-value-1-set", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-1-set", PICMAN_STOCK_TOOL_OPTIONS,
     "Set Value 1", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-value-1-set-to-default", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-1-set-to-default", PICMAN_STOCK_TOOL_OPTIONS,
     "Set Value 1 To Default Value", NULL, NULL,
-    GIMP_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
+    PICMAN_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
     NULL },
-  { "tools-value-1-minimum", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-1-minimum", PICMAN_STOCK_TOOL_OPTIONS,
     "Minimize Value 1", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-value-1-maximum", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-1-maximum", PICMAN_STOCK_TOOL_OPTIONS,
     "Maximize Value 1", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-value-1-decrease", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-1-decrease", PICMAN_STOCK_TOOL_OPTIONS,
     "Decrease Value 1", "less", NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-value-1-increase", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-1-increase", PICMAN_STOCK_TOOL_OPTIONS,
     "Increase Value 1", "greater", NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
-  { "tools-value-1-decrease-skip", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-1-decrease-skip", PICMAN_STOCK_TOOL_OPTIONS,
     "Decrease Value 1 More", "<primary>less", NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
-  { "tools-value-1-increase-skip", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-1-increase-skip", PICMAN_STOCK_TOOL_OPTIONS,
     "Increase Value 1 More", "<primary>greater", NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
-  { "tools-value-1-decrease-percent", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-1-decrease-percent", PICMAN_STOCK_TOOL_OPTIONS,
     "Decrease Value 1 Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
     NULL },
-  { "tools-value-1-increase-percent", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-1-increase-percent", PICMAN_STOCK_TOOL_OPTIONS,
     "Increase Value 1 Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_NEXT, FALSE,
     NULL },
 };
 
 /* tools-value-2 is effectively used to control
  * the tip size of the active tool
  */
-static const GimpEnumActionEntry tools_value_2_actions[] =
+static const PicmanEnumActionEntry tools_value_2_actions[] =
 {
-  { "tools-value-2-set", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-2-set", PICMAN_STOCK_TOOL_OPTIONS,
     "Set Value 2", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-value-2-set-to-default", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-2-set-to-default", PICMAN_STOCK_TOOL_OPTIONS,
     "Set Value 2 To Default Value", "backslash", NULL,
-    GIMP_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
+    PICMAN_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
     NULL },
-  { "tools-value-2-minimum", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-2-minimum", PICMAN_STOCK_TOOL_OPTIONS,
     "Minimize Value 2", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-value-2-maximum", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-2-maximum", PICMAN_STOCK_TOOL_OPTIONS,
     "Maximize Value 2", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-value-2-decrease", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-2-decrease", PICMAN_STOCK_TOOL_OPTIONS,
     "Decrease Value 2", "bracketleft", NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-value-2-increase", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-2-increase", PICMAN_STOCK_TOOL_OPTIONS,
     "Increase Value 2", "bracketright", NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
-  { "tools-value-2-decrease-skip", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-2-decrease-skip", PICMAN_STOCK_TOOL_OPTIONS,
     "Decrease Value 2 More", "<shift>bracketleft", NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
-  { "tools-value-2-increase-skip", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-2-increase-skip", PICMAN_STOCK_TOOL_OPTIONS,
     "Increase Value 2 More", "<shift>bracketright", NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
-  { "tools-value-2-decrease-percent", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-2-decrease-percent", PICMAN_STOCK_TOOL_OPTIONS,
     "Decrease Value 2 Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
     NULL },
-  { "tools-value-2-increase-percent", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-2-increase-percent", PICMAN_STOCK_TOOL_OPTIONS,
     "Increase Value 2 Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_NEXT, FALSE,
     NULL },
 };
 
-static const GimpEnumActionEntry tools_value_3_actions[] =
+static const PicmanEnumActionEntry tools_value_3_actions[] =
 {
-  { "tools-value-3-set", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-3-set", PICMAN_STOCK_TOOL_OPTIONS,
     "Set Value 3", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-value-3-set-to-default", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-3-set-to-default", PICMAN_STOCK_TOOL_OPTIONS,
     "Set Value 3 To Default Value", NULL, NULL,
-    GIMP_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
+    PICMAN_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
     NULL },
-  { "tools-value-3-minimum", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-3-minimum", PICMAN_STOCK_TOOL_OPTIONS,
     "Minimize Value 3", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-value-3-maximum", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-3-maximum", PICMAN_STOCK_TOOL_OPTIONS,
     "Maximize Value 3", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-value-3-decrease", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-3-decrease", PICMAN_STOCK_TOOL_OPTIONS,
     "Decrease Value 3", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-value-3-increase", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-3-increase", PICMAN_STOCK_TOOL_OPTIONS,
     "Increase Value 3", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
-  { "tools-value-3-decrease-skip", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-3-decrease-skip", PICMAN_STOCK_TOOL_OPTIONS,
     "Decrease Value 3 More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
-  { "tools-value-3-increase-skip", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-3-increase-skip", PICMAN_STOCK_TOOL_OPTIONS,
     "Increase Value 3 More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
-  { "tools-value-3-decrease-percent", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-3-decrease-percent", PICMAN_STOCK_TOOL_OPTIONS,
     "Decrease Value 3 Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
     NULL },
-  { "tools-value-3-increase-percent", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-3-increase-percent", PICMAN_STOCK_TOOL_OPTIONS,
     "Increase Value 3 Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_NEXT, FALSE,
     NULL },
 };
 
-static const GimpEnumActionEntry tools_value_4_actions[] =
+static const PicmanEnumActionEntry tools_value_4_actions[] =
 {
-  { "tools-value-4-set", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-4-set", PICMAN_STOCK_TOOL_OPTIONS,
     "Set Value 4", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-value-4-set-to-default", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-4-set-to-default", PICMAN_STOCK_TOOL_OPTIONS,
     "Set Value 4 To Default Value", NULL, NULL,
-    GIMP_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
+    PICMAN_ACTION_SELECT_SET_TO_DEFAULT, FALSE,
     NULL },
-  { "tools-value-4-minimum", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-4-minimum", PICMAN_STOCK_TOOL_OPTIONS,
     "Minimize Value 4", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-value-4-maximum", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-4-maximum", PICMAN_STOCK_TOOL_OPTIONS,
     "Maximize Value 4", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-value-4-decrease", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-4-decrease", PICMAN_STOCK_TOOL_OPTIONS,
     "Decrease Value 4", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-value-4-increase", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-4-increase", PICMAN_STOCK_TOOL_OPTIONS,
     "Increase Value 4", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL },
-  { "tools-value-4-decrease-skip", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-4-decrease-skip", PICMAN_STOCK_TOOL_OPTIONS,
     "Decrease Value 4 More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
     NULL },
-  { "tools-value-4-increase-skip", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-4-increase-skip", PICMAN_STOCK_TOOL_OPTIONS,
     "Increase Value 4 More", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_SKIP_NEXT, FALSE,
     NULL },
-  { "tools-value-4-decrease-percent", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-4-decrease-percent", PICMAN_STOCK_TOOL_OPTIONS,
     "Decrease Value 4 Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_PREVIOUS, FALSE,
     NULL },
-  { "tools-value-4-increase-percent", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-value-4-increase-percent", PICMAN_STOCK_TOOL_OPTIONS,
     "Increase Value 4 Relative", NULL, NULL,
-    GIMP_ACTION_SELECT_PERCENT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_PERCENT_NEXT, FALSE,
     NULL },
 };
 
-static const GimpEnumActionEntry tools_object_1_actions[] =
+static const PicmanEnumActionEntry tools_object_1_actions[] =
 {
-  { "tools-object-1-set", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-object-1-set", PICMAN_STOCK_TOOL_OPTIONS,
     "Select Object 1 by Index", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-object-1-first", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-object-1-first", PICMAN_STOCK_TOOL_OPTIONS,
     "First Object 1", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-object-1-last", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-object-1-last", PICMAN_STOCK_TOOL_OPTIONS,
     "Last Object 1", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-object-1-previous", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-object-1-previous", PICMAN_STOCK_TOOL_OPTIONS,
     "Previous Object 1", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-object-1-next", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-object-1-next", PICMAN_STOCK_TOOL_OPTIONS,
     "Next Object 1", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL }
 };
 
-static const GimpEnumActionEntry tools_object_2_actions[] =
+static const PicmanEnumActionEntry tools_object_2_actions[] =
 {
-  { "tools-object-2-set", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-object-2-set", PICMAN_STOCK_TOOL_OPTIONS,
     "Select Object 2 by Index", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, TRUE,
+    PICMAN_ACTION_SELECT_SET, TRUE,
     NULL },
-  { "tools-object-2-first", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-object-2-first", PICMAN_STOCK_TOOL_OPTIONS,
     "First Object 2", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
+    PICMAN_ACTION_SELECT_FIRST, FALSE,
     NULL },
-  { "tools-object-2-last", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-object-2-last", PICMAN_STOCK_TOOL_OPTIONS,
     "Last Object 2", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
+    PICMAN_ACTION_SELECT_LAST, FALSE,
     NULL },
-  { "tools-object-2-previous", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-object-2-previous", PICMAN_STOCK_TOOL_OPTIONS,
     "Previous Object 2", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    PICMAN_ACTION_SELECT_PREVIOUS, FALSE,
     NULL },
-  { "tools-object-2-next", GIMP_STOCK_TOOL_OPTIONS,
+  { "tools-object-2-next", PICMAN_STOCK_TOOL_OPTIONS,
     "Next Object 2", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
+    PICMAN_ACTION_SELECT_NEXT, FALSE,
     NULL }
 };
 
 
 void
-tools_actions_setup (GimpActionGroup *group)
+tools_actions_setup (PicmanActionGroup *group)
 {
   GtkAction *action;
   GList     *list;
 
-  gimp_action_group_add_actions (group, "tools-action",
+  picman_action_group_add_actions (group, "tools-action",
                                  tools_actions,
                                  G_N_ELEMENTS (tools_actions));
 
-  gimp_action_group_add_string_actions (group, "tools-action",
+  picman_action_group_add_string_actions (group, "tools-action",
                                         tools_alternative_actions,
                                         G_N_ELEMENTS (tools_alternative_actions),
                                         G_CALLBACK (tools_select_cmd_callback));
@@ -664,94 +664,94 @@ tools_actions_setup (GimpActionGroup *group)
                                         "tools-by-color-select-short");
   gtk_action_set_accel_path (action, "<Actions>/tools/tools-by-color-select");
 
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_color_average_radius_actions,
                                       G_N_ELEMENTS (tools_color_average_radius_actions),
                                       G_CALLBACK (tools_color_average_radius_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_paint_brush_size_actions,
                                       G_N_ELEMENTS (tools_paint_brush_size_actions),
                                       G_CALLBACK (tools_paint_brush_size_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_paint_brush_angle_actions,
                                       G_N_ELEMENTS (tools_paint_brush_angle_actions),
                                       G_CALLBACK (tools_paint_brush_angle_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_paint_brush_aspect_ratio_actions,
                                       G_N_ELEMENTS (tools_paint_brush_aspect_ratio_actions),
                                       G_CALLBACK (tools_paint_brush_aspect_ratio_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_ink_blob_size_actions,
                                       G_N_ELEMENTS (tools_ink_blob_size_actions),
                                       G_CALLBACK (tools_ink_blob_size_cmd_callback));
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_ink_blob_aspect_actions,
                                       G_N_ELEMENTS (tools_ink_blob_aspect_actions),
                                       G_CALLBACK (tools_ink_blob_aspect_cmd_callback));
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_ink_blob_angle_actions,
                                       G_N_ELEMENTS (tools_ink_blob_angle_actions),
                                       G_CALLBACK (tools_ink_blob_angle_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_foreground_select_brush_size_actions,
                                       G_N_ELEMENTS (tools_foreground_select_brush_size_actions),
                                       G_CALLBACK (tools_fg_select_brush_size_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_transform_preview_opacity_actions,
                                       G_N_ELEMENTS (tools_transform_preview_opacity_actions),
                                       G_CALLBACK (tools_transform_preview_opacity_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_value_1_actions,
                                       G_N_ELEMENTS (tools_value_1_actions),
                                       G_CALLBACK (tools_value_1_cmd_callback));
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_value_2_actions,
                                       G_N_ELEMENTS (tools_value_2_actions),
                                       G_CALLBACK (tools_value_2_cmd_callback));
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_value_3_actions,
                                       G_N_ELEMENTS (tools_value_3_actions),
                                       G_CALLBACK (tools_value_3_cmd_callback));
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_value_4_actions,
                                       G_N_ELEMENTS (tools_value_4_actions),
                                       G_CALLBACK (tools_value_4_cmd_callback));
 
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_object_1_actions,
                                       G_N_ELEMENTS (tools_object_1_actions),
                                       G_CALLBACK (tools_object_1_cmd_callback));
-  gimp_action_group_add_enum_actions (group, NULL,
+  picman_action_group_add_enum_actions (group, NULL,
                                       tools_object_2_actions,
                                       G_N_ELEMENTS (tools_object_2_actions),
                                       G_CALLBACK (tools_object_2_cmd_callback));
 
-  for (list = gimp_get_tool_info_iter (group->gimp);
+  for (list = picman_get_tool_info_iter (group->picman);
        list;
        list = g_list_next (list))
     {
-      GimpToolInfo *tool_info = list->data;
+      PicmanToolInfo *tool_info = list->data;
 
       if (tool_info->menu_label)
         {
-          GimpStringActionEntry  entry;
+          PicmanStringActionEntry  entry;
           const gchar           *stock_id;
           const gchar           *identifier;
           gchar                 *tmp;
           gchar                 *name;
 
-          stock_id   = gimp_viewable_get_stock_id (GIMP_VIEWABLE (tool_info));
-          identifier = gimp_object_get_name (tool_info);
+          stock_id   = picman_viewable_get_stock_id (PICMAN_VIEWABLE (tool_info));
+          identifier = picman_object_get_name (tool_info);
 
-          tmp = g_strndup (identifier + strlen ("gimp-"),
-                           strlen (identifier) - strlen ("gimp--tool"));
+          tmp = g_strndup (identifier + strlen ("picman-"),
+                           strlen (identifier) - strlen ("picman--tool"));
           name = g_strdup_printf ("tools-%s", tmp);
           g_free (tmp);
 
@@ -763,7 +763,7 @@ tools_actions_setup (GimpActionGroup *group)
           entry.help_id     = tool_info->help_id;
           entry.value       = identifier;
 
-          gimp_action_group_add_string_actions (group, NULL,
+          picman_action_group_add_string_actions (group, NULL,
                                                 &entry, 1,
                                                 G_CALLBACK (tools_select_cmd_callback));
 
@@ -773,7 +773,7 @@ tools_actions_setup (GimpActionGroup *group)
 }
 
 void
-tools_actions_update (GimpActionGroup *group,
+tools_actions_update (PicmanActionGroup *group,
                       gpointer         data)
 {
 }

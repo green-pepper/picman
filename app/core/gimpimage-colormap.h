@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattisbvf
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,39 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_COLORMAP_H__
-#define __GIMP_IMAGE_COLORMAP_H__
+#ifndef __PICMAN_IMAGE_COLORMAP_H__
+#define __PICMAN_IMAGE_COLORMAP_H__
 
 
-#define GIMP_IMAGE_COLORMAP_SIZE 768
+#define PICMAN_IMAGE_COLORMAP_SIZE 768
 
 
-void           gimp_image_colormap_init            (GimpImage       *image);
-void           gimp_image_colormap_dispose         (GimpImage       *image);
-void           gimp_image_colormap_free            (GimpImage       *image);
+void           picman_image_colormap_init            (PicmanImage       *image);
+void           picman_image_colormap_dispose         (PicmanImage       *image);
+void           picman_image_colormap_free            (PicmanImage       *image);
 
-const Babl   * gimp_image_colormap_get_rgb_format  (const GimpImage *image);
-const Babl   * gimp_image_colormap_get_rgba_format (const GimpImage *image);
+const Babl   * picman_image_colormap_get_rgb_format  (const PicmanImage *image);
+const Babl   * picman_image_colormap_get_rgba_format (const PicmanImage *image);
 
-GimpPalette  * gimp_image_get_colormap_palette     (GimpImage       *image);
+PicmanPalette  * picman_image_get_colormap_palette     (PicmanImage       *image);
 
-const guchar * gimp_image_get_colormap             (const GimpImage *image);
-gint           gimp_image_get_colormap_size        (const GimpImage *image);
-void           gimp_image_set_colormap             (GimpImage       *image,
+const guchar * picman_image_get_colormap             (const PicmanImage *image);
+gint           picman_image_get_colormap_size        (const PicmanImage *image);
+void           picman_image_set_colormap             (PicmanImage       *image,
                                                     const guchar    *colormap,
                                                     gint             n_colors,
                                                     gboolean         push_undo);
 
-void           gimp_image_get_colormap_entry       (GimpImage       *image,
+void           picman_image_get_colormap_entry       (PicmanImage       *image,
                                                     gint             color_index,
-                                                    GimpRGB         *color);
-void           gimp_image_set_colormap_entry       (GimpImage       *image,
+                                                    PicmanRGB         *color);
+void           picman_image_set_colormap_entry       (PicmanImage       *image,
                                                     gint             color_index,
-                                                    const GimpRGB   *color,
+                                                    const PicmanRGB   *color,
                                                     gboolean         push_undo);
 
-void           gimp_image_add_colormap_entry       (GimpImage       *image,
-                                                    const GimpRGB   *color);
+void           picman_image_add_colormap_entry       (PicmanImage       *image,
+                                                    const PicmanRGB   *color);
 
 
-#endif /* __GIMP_IMAGE_COLORMAP_H__ */
+#endif /* __PICMAN_IMAGE_COLORMAP_H__ */

@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfontlist.c
- * Copyright (C) 2003-2004  Michael Natterer <mitch@gimp.org>
- *                          Sven Neumann <sven@gimp.org>
- *                          Manish Singh <yosh@gimp.org>
+ * picmanfontlist.c
+ * Copyright (C) 2003-2004  Michael Natterer <mitch@picman.org>
+ *                          Sven Neumann <sven@picman.org>
+ *                          Manish Singh <yosh@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@
 
 #include "text-types.h"
 
-#include "gimpfont.h"
-#include "gimpfontlist.h"
+#include "picmanfont.h"
+#include "picmanfontlist.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /* Use fontconfig directly for speed. We can use the pango stuff when/if
@@ -46,55 +46,55 @@
 #endif
 
 
-static void   gimp_font_list_add_font   (GimpFontList         *list,
+static void   picman_font_list_add_font   (PicmanFontList         *list,
                                          PangoContext         *context,
                                          PangoFontDescription *desc);
 
-static void   gimp_font_list_load_names (GimpFontList         *list,
+static void   picman_font_list_load_names (PicmanFontList         *list,
                                          PangoFontMap         *fontmap,
                                          PangoContext         *context);
 
 
-G_DEFINE_TYPE (GimpFontList, gimp_font_list, GIMP_TYPE_LIST)
+G_DEFINE_TYPE (PicmanFontList, picman_font_list, PICMAN_TYPE_LIST)
 
 
 static void
-gimp_font_list_class_init (GimpFontListClass *klass)
+picman_font_list_class_init (PicmanFontListClass *klass)
 {
 }
 
 static void
-gimp_font_list_init (GimpFontList *list)
+picman_font_list_init (PicmanFontList *list)
 {
 }
 
-GimpContainer *
-gimp_font_list_new (gdouble xresolution,
+PicmanContainer *
+picman_font_list_new (gdouble xresolution,
                     gdouble yresolution)
 {
-  GimpFontList *list;
+  PicmanFontList *list;
 
   g_return_val_if_fail (xresolution > 0.0, NULL);
   g_return_val_if_fail (yresolution > 0.0, NULL);
 
-  list = g_object_new (GIMP_TYPE_FONT_LIST,
-                       "children-type", GIMP_TYPE_FONT,
-                       "policy",        GIMP_CONTAINER_POLICY_STRONG,
+  list = g_object_new (PICMAN_TYPE_FONT_LIST,
+                       "children-type", PICMAN_TYPE_FONT,
+                       "policy",        PICMAN_CONTAINER_POLICY_STRONG,
                        NULL);
 
   list->xresolution = xresolution;
   list->yresolution = yresolution;
 
-  return GIMP_CONTAINER (list);
+  return PICMAN_CONTAINER (list);
 }
 
 void
-gimp_font_list_restore (GimpFontList *list)
+picman_font_list_restore (PicmanFontList *list)
 {
   PangoFontMap *fontmap;
   PangoContext *context;
 
-  g_return_if_fail (GIMP_IS_FONT_LIST (list));
+  g_return_if_fail (PICMAN_IS_FONT_LIST (list));
 
   fontmap = pango_cairo_font_map_new_for_font_type (CAIRO_FONT_TYPE_FT);
   if (! fontmap)
@@ -106,18 +106,18 @@ gimp_font_list_restore (GimpFontList *list)
   context = pango_font_map_create_context (fontmap);
   g_object_unref (fontmap);
 
-  gimp_container_freeze (GIMP_CONTAINER (list));
+  picman_container_freeze (PICMAN_CONTAINER (list));
 
-  gimp_font_list_load_names (list, PANGO_FONT_MAP (fontmap), context);
+  picman_font_list_load_names (list, PANGO_FONT_MAP (fontmap), context);
   g_object_unref (context);
 
-  gimp_list_sort_by_name (GIMP_LIST (list));
+  picman_list_sort_by_name (PICMAN_LIST (list));
 
-  gimp_container_thaw (GIMP_CONTAINER (list));
+  picman_container_thaw (PICMAN_CONTAINER (list));
 }
 
 static void
-gimp_font_list_add_font (GimpFontList         *list,
+picman_font_list_add_font (PicmanFontList         *list,
                          PangoContext         *context,
                          PangoFontDescription *desc)
 {
@@ -130,14 +130,14 @@ gimp_font_list_add_font (GimpFontList         *list,
 
   if (g_utf8_validate (name, -1, NULL))
     {
-      GimpFont *font;
+      PicmanFont *font;
 
-      font = g_object_new (GIMP_TYPE_FONT,
+      font = g_object_new (PICMAN_TYPE_FONT,
                            "name",          name,
                            "pango-context", context,
                            NULL);
 
-      gimp_container_add (GIMP_CONTAINER (list), GIMP_OBJECT (font));
+      picman_container_add (PICMAN_CONTAINER (list), PICMAN_OBJECT (font));
       g_object_unref (font);
     }
 
@@ -148,10 +148,10 @@ gimp_font_list_add_font (GimpFontList         *list,
 /* We're really chummy here with the implementation. Oh well. */
 
 /* This is copied straight from make_alias_description in pango, plus
- * the gimp_font_list_add_font bits.
+ * the picman_font_list_add_font bits.
  */
 static void
-gimp_font_list_make_alias (GimpFontList *list,
+picman_font_list_make_alias (PicmanFontList *list,
                            PangoContext *context,
                            const gchar  *family,
                            gboolean      bold,
@@ -169,13 +169,13 @@ gimp_font_list_make_alias (GimpFontList *list,
                                      PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL);
   pango_font_description_set_stretch (desc, PANGO_STRETCH_NORMAL);
 
-  gimp_font_list_add_font (list, context, desc);
+  picman_font_list_add_font (list, context, desc);
 
   pango_font_description_free (desc);
 }
 
 static void
-gimp_font_list_load_aliases (GimpFontList *list,
+picman_font_list_load_aliases (PicmanFontList *list,
                              PangoContext *context)
 {
   const gchar *families[] = { "Sans", "Serif", "Monospace" };
@@ -183,15 +183,15 @@ gimp_font_list_load_aliases (GimpFontList *list,
 
   for (i = 0; i < 3; i++)
     {
-      gimp_font_list_make_alias (list, context, families[i], FALSE, FALSE);
-      gimp_font_list_make_alias (list, context, families[i], TRUE,  FALSE);
-      gimp_font_list_make_alias (list, context, families[i], FALSE, TRUE);
-      gimp_font_list_make_alias (list, context, families[i], TRUE,  TRUE);
+      picman_font_list_make_alias (list, context, families[i], FALSE, FALSE);
+      picman_font_list_make_alias (list, context, families[i], TRUE,  FALSE);
+      picman_font_list_make_alias (list, context, families[i], FALSE, TRUE);
+      picman_font_list_make_alias (list, context, families[i], TRUE,  TRUE);
     }
 }
 
 static void
-gimp_font_list_load_names (GimpFontList *list,
+picman_font_list_load_names (PicmanFontList *list,
                            PangoFontMap *fontmap,
                            PangoContext *context)
 {
@@ -216,13 +216,13 @@ gimp_font_list_load_names (GimpFontList *list,
       PangoFontDescription *desc;
 
       desc = pango_fc_font_description_from_pattern (fontset->fonts[i], FALSE);
-      gimp_font_list_add_font (list, context, desc);
+      picman_font_list_add_font (list, context, desc);
       pango_font_description_free (desc);
     }
 
   /*  only create aliases if there is at least one font available  */
   if (fontset->nfont > 0)
-    gimp_font_list_load_aliases (list, context);
+    picman_font_list_load_aliases (list, context);
 
   FcFontSetDestroy (fontset);
 }
@@ -230,7 +230,7 @@ gimp_font_list_load_names (GimpFontList *list,
 #else  /* ! USE_FONTCONFIG_DIRECTLY */
 
 static void
-gimp_font_list_load_names (GimpFontList *list,
+picman_font_list_load_names (PicmanFontList *list,
                            PangoFontMap *fontmap,
                            PangoContext *context)
 {
@@ -251,7 +251,7 @@ gimp_font_list_load_names (GimpFontList *list,
           PangoFontDescription *desc;
 
           desc = pango_font_face_describe (faces[j]);
-          gimp_font_list_add_font (list, context, desc);
+          picman_font_list_add_font (list, context, desc);
           pango_font_description_free (desc);
         }
     }

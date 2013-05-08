@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,55 +15,55 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PAINT_INFO_H__
-#define __GIMP_PAINT_INFO_H__
+#ifndef __PICMAN_PAINT_INFO_H__
+#define __PICMAN_PAINT_INFO_H__
 
 
-#include "gimpviewable.h"
+#include "picmanviewable.h"
 
 
-#define GIMP_TYPE_PAINT_INFO            (gimp_paint_info_get_type ())
-#define GIMP_PAINT_INFO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PAINT_INFO, GimpPaintInfo))
-#define GIMP_PAINT_INFO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PAINT_INFO, GimpPaintInfoClass))
-#define GIMP_IS_PAINT_INFO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PAINT_INFO))
-#define GIMP_IS_PAINT_INFO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PAINT_INFO))
-#define GIMP_PAINT_INFO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PAINT_INFO, GimpPaintInfoClass))
+#define PICMAN_TYPE_PAINT_INFO            (picman_paint_info_get_type ())
+#define PICMAN_PAINT_INFO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PAINT_INFO, PicmanPaintInfo))
+#define PICMAN_PAINT_INFO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PAINT_INFO, PicmanPaintInfoClass))
+#define PICMAN_IS_PAINT_INFO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PAINT_INFO))
+#define PICMAN_IS_PAINT_INFO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PAINT_INFO))
+#define PICMAN_PAINT_INFO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PAINT_INFO, PicmanPaintInfoClass))
 
 
-typedef struct _GimpPaintInfoClass GimpPaintInfoClass;
+typedef struct _PicmanPaintInfoClass PicmanPaintInfoClass;
 
-struct _GimpPaintInfo
+struct _PicmanPaintInfo
 {
-  GimpViewable      parent_instance;
+  PicmanViewable      parent_instance;
 
-  Gimp             *gimp;
+  Picman             *picman;
 
   GType             paint_type;
   GType             paint_options_type;
 
   gchar            *blurb;
 
-  GimpPaintOptions *paint_options;
+  PicmanPaintOptions *paint_options;
 };
 
-struct _GimpPaintInfoClass
+struct _PicmanPaintInfoClass
 {
-  GimpViewableClass  parent_class;
+  PicmanViewableClass  parent_class;
 };
 
 
-GType           gimp_paint_info_get_type     (void) G_GNUC_CONST;
+GType           picman_paint_info_get_type     (void) G_GNUC_CONST;
 
-GimpPaintInfo * gimp_paint_info_new          (Gimp          *gimp,
+PicmanPaintInfo * picman_paint_info_new          (Picman          *picman,
                                               GType          paint_type,
                                               GType          paint_options_type,
                                               const gchar   *identifier,
                                               const gchar   *blurb,
                                               const gchar   *stock_id);
 
-void            gimp_paint_info_set_standard (Gimp          *gimp,
-                                              GimpPaintInfo *paint_info);
-GimpPaintInfo * gimp_paint_info_get_standard (Gimp          *gimp);
+void            picman_paint_info_set_standard (Picman          *picman,
+                                              PicmanPaintInfo *paint_info);
+PicmanPaintInfo * picman_paint_info_get_standard (Picman          *picman);
 
 
-#endif  /*  __GIMP_PAINT_INFO_H__  */
+#endif  /*  __PICMAN_PAINT_INFO_H__  */

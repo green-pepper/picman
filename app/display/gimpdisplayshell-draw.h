@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,24 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_SHELL_DRAW_H__
-#define __GIMP_DISPLAY_SHELL_DRAW_H__
+#ifndef __PICMAN_DISPLAY_SHELL_DRAW_H__
+#define __PICMAN_DISPLAY_SHELL_DRAW_H__
 
 
-void   gimp_display_shell_draw_selection_out (GimpDisplayShell   *shell,
+void   picman_display_shell_draw_selection_out (PicmanDisplayShell   *shell,
                                               cairo_t            *cr,
-                                              GimpSegment        *segs,
+                                              PicmanSegment        *segs,
                                               gint                n_segs);
-void   gimp_display_shell_draw_selection_in  (GimpDisplayShell   *shell,
+void   picman_display_shell_draw_selection_in  (PicmanDisplayShell   *shell,
                                               cairo_t            *cr,
                                               cairo_pattern_t    *mask,
                                               gint                index);
 
-void   gimp_display_shell_draw_background    (GimpDisplayShell   *shell,
+void   picman_display_shell_draw_background    (PicmanDisplayShell   *shell,
                                               cairo_t            *cr);
-void   gimp_display_shell_draw_checkerboard  (GimpDisplayShell   *shell,
+void   picman_display_shell_draw_checkerboard  (PicmanDisplayShell   *shell,
                                               cairo_t            *cr);
-void   gimp_display_shell_draw_image         (GimpDisplayShell   *shell,
+void   picman_display_shell_draw_image         (PicmanDisplayShell   *shell,
                                               cairo_t            *cr,
                                               gint                x,
                                               gint                y,
@@ -40,4 +40,4 @@ void   gimp_display_shell_draw_image         (GimpDisplayShell   *shell,
                                               gint                h);
 
 
-#endif /* __GIMP_DISPLAY_SHELL_DRAW_H__ */
+#endif /* __PICMAN_DISPLAY_SHELL_DRAW_H__ */

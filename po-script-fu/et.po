@@ -1,17 +1,17 @@
-# Gimp'i eesti keele tõlge.
-# Estonian translation of Gimp.
+# Picman'i eesti keele tõlge.
+# Estonian translation of Picman.
 #
 # Copyright (C) 2001-2005 Free Software Foundation, Inc.
-# This file is distributed under the same license as the Gimp package.
+# This file is distributed under the same license as the Picman package.
 #
 # Olle Niit <olle@paalalinn.com>, 2005-2007.
 # Mattias Põldaru <mahfiaz@gmail.com< 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-script-fu\n"
+"Project-Id-Version: picman-script-fu\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-12-19 17:12+0000\n"
 "PO-Revision-Date: 2012-11-02 22:40+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz@gmail.com>\n"
@@ -35,8 +35,8 @@ msgstr "Server Script-Fu kaugoperatsioonie jaoks"
 msgid "_Start Server..."
 msgstr "_Käivita server..."
 
-msgid "_GIMP Online"
-msgstr "_GIMP veebis"
+msgid "_PICMAN Online"
+msgstr "_PICMAN veebis"
 
 msgid "_User Manual"
 msgstr "Kas_utamisjuhend"
@@ -65,8 +65,8 @@ msgstr "_Tulnukate helendus"
 msgid "_Beveled Pattern"
 msgstr "_Viltulõigatud muster"
 
-msgid "_Classic.Gimp.Org"
-msgstr "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
+msgstr "_Classic.Picman.Org"
 
 msgid "Alpha to _Logo"
 msgstr "Alfa _logoks"
@@ -845,8 +845,8 @@ msgstr "IIR"
 #~ msgid "Shadow depth"
 #~ msgstr "Varju sügavus"
 
-#~ msgid "Bookmark to the GIMP web site"
-#~ msgstr "Järjehoidja GIMPi kodulehele"
+#~ msgid "Bookmark to the PICMAN web site"
+#~ msgstr "Järjehoidja PICMANi kodulehele"
 
 #~ msgid "Bookmark to the user manual"
 #~ msgstr "Järjehoidja kasutamisjuhendisse"

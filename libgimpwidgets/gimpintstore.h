@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpintstore.c
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanintstore.c
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,49 +19,49 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_INT_STORE_H__
-#define __GIMP_INT_STORE_H__
+#ifndef __PICMAN_INT_STORE_H__
+#define __PICMAN_INT_STORE_H__
 
 G_BEGIN_DECLS
 
 
 /**
- * GimpIntStoreColumns:
- * @GIMP_INT_STORE_VALUE:       the integer value
- * @GIMP_INT_STORE_LABEL:       a human-readable label
- * @GIMP_INT_STORE_STOCK_ID:    a stock ID
- * @GIMP_INT_STORE_PIXBUF:      a #GdkPixbuf
- * @GIMP_INT_STORE_USER_DATA:   arbitrary user data
- * @GIMP_INT_STORE_NUM_COLUMNS: the number of columns
+ * PicmanIntStoreColumns:
+ * @PICMAN_INT_STORE_VALUE:       the integer value
+ * @PICMAN_INT_STORE_LABEL:       a human-readable label
+ * @PICMAN_INT_STORE_STOCK_ID:    a stock ID
+ * @PICMAN_INT_STORE_PIXBUF:      a #GdkPixbuf
+ * @PICMAN_INT_STORE_USER_DATA:   arbitrary user data
+ * @PICMAN_INT_STORE_NUM_COLUMNS: the number of columns
  *
- * The column types of #GimpIntStore.
+ * The column types of #PicmanIntStore.
  **/
 typedef enum
 {
-  GIMP_INT_STORE_VALUE,
-  GIMP_INT_STORE_LABEL,
-  GIMP_INT_STORE_STOCK_ID,
-  GIMP_INT_STORE_PIXBUF,
-  GIMP_INT_STORE_USER_DATA,
-  GIMP_INT_STORE_NUM_COLUMNS
-} GimpIntStoreColumns;
+  PICMAN_INT_STORE_VALUE,
+  PICMAN_INT_STORE_LABEL,
+  PICMAN_INT_STORE_STOCK_ID,
+  PICMAN_INT_STORE_PIXBUF,
+  PICMAN_INT_STORE_USER_DATA,
+  PICMAN_INT_STORE_NUM_COLUMNS
+} PicmanIntStoreColumns;
 
 
-#define GIMP_TYPE_INT_STORE            (gimp_int_store_get_type ())
-#define GIMP_INT_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_INT_STORE, GimpIntStore))
-#define GIMP_INT_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_INT_STORE, GimpIntStoreClass))
-#define GIMP_IS_INT_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_INT_STORE))
-#define GIMP_IS_INT_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_INT_STORE))
-#define GIMP_INT_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_INT_STORE, GimpIntStoreClass))
+#define PICMAN_TYPE_INT_STORE            (picman_int_store_get_type ())
+#define PICMAN_INT_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_INT_STORE, PicmanIntStore))
+#define PICMAN_INT_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_INT_STORE, PicmanIntStoreClass))
+#define PICMAN_IS_INT_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_INT_STORE))
+#define PICMAN_IS_INT_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_INT_STORE))
+#define PICMAN_INT_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_INT_STORE, PicmanIntStoreClass))
 
 
-typedef struct _GimpIntStoreClass  GimpIntStoreClass;
+typedef struct _PicmanIntStoreClass  PicmanIntStoreClass;
 
-struct _GimpIntStore
+struct _PicmanIntStore
 {
   GtkListStore  parent_instance;
 
@@ -69,27 +69,27 @@ struct _GimpIntStore
   GtkTreeIter  *empty_iter;
 };
 
-struct _GimpIntStoreClass
+struct _PicmanIntStoreClass
 {
   GtkListStoreClass  parent_class;
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType          gimp_int_store_get_type        (void) G_GNUC_CONST;
+GType          picman_int_store_get_type        (void) G_GNUC_CONST;
 
-GtkListStore * gimp_int_store_new             (void);
+GtkListStore * picman_int_store_new             (void);
 
-gboolean       gimp_int_store_lookup_by_value (GtkTreeModel  *model,
+gboolean       picman_int_store_lookup_by_value (GtkTreeModel  *model,
                                                gint           value,
                                                GtkTreeIter   *iter);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_INT_STORE_H__ */
+#endif  /* __PICMAN_INT_STORE_H__ */

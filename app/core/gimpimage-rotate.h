@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattisbvf
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_ROTATE_H__
-#define __GIMP_IMAGE_ROTATE_H__
+#ifndef __PICMAN_IMAGE_ROTATE_H__
+#define __PICMAN_IMAGE_ROTATE_H__
 
 
-void   gimp_image_rotate (GimpImage        *image,
-                          GimpContext      *context,
-                          GimpRotationType  rotate_type,
-                          GimpProgress     *progress);
+void   picman_image_rotate (PicmanImage        *image,
+                          PicmanContext      *context,
+                          PicmanRotationType  rotate_type,
+                          PicmanProgress     *progress);
 
 
-#endif /* __GIMP_IMAGE_ROTATE_H__ */
+#endif /* __PICMAN_IMAGE_ROTATE_H__ */

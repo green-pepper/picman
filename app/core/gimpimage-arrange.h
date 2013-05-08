@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_ARRANGE_H__
-#define __GIMP_IMAGE_ARRANGE_H__
+#ifndef __PICMAN_IMAGE_ARRANGE_H__
+#define __PICMAN_IMAGE_ARRANGE_H__
 
 
-void gimp_image_arrange_objects (GimpImage         *image,
+void picman_image_arrange_objects (PicmanImage         *image,
                                  GList             *list,
-                                 GimpAlignmentType  alignment,
+                                 PicmanAlignmentType  alignment,
                                  GObject           *reference,
-                                 GimpAlignmentType  reference_alignment,
+                                 PicmanAlignmentType  reference_alignment,
                                  gint               offset);
 
-#endif  /*  __GIMP_IMAGE_ARRANGE_H__  */
+#endif  /*  __PICMAN_IMAGE_ARRANGE_H__  */

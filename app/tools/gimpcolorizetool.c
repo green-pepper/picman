@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,26 +22,26 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "operations/gimpcolorizeconfig.h"
+#include "operations/picmancolorizeconfig.h"
 
-#include "core/gimpdrawable.h"
-#include "core/gimperror.h"
-#include "core/gimpimage.h"
+#include "core/picmandrawable.h"
+#include "core/picmanerror.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimpcolorpanel.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmancolorpanel.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimpcolorizetool.h"
-#include "gimpcoloroptions.h"
+#include "picmancolorizetool.h"
+#include "picmancoloroptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define SLIDER_WIDTH  200
@@ -50,97 +50,97 @@
 
 /*  local function prototypes  */
 
-static gboolean   gimp_colorize_tool_initialize    (GimpTool         *tool,
-                                                    GimpDisplay      *display,
+static gboolean   picman_colorize_tool_initialize    (PicmanTool         *tool,
+                                                    PicmanDisplay      *display,
                                                     GError          **error);
 
-static GeglNode * gimp_colorize_tool_get_operation (GimpImageMapTool *im_tool,
+static GeglNode * picman_colorize_tool_get_operation (PicmanImageMapTool *im_tool,
                                                     GObject         **config,
                                                     gchar           **undo_desc);
-static void       gimp_colorize_tool_dialog        (GimpImageMapTool *im_tool);
-static void       gimp_colorize_tool_color_picked  (GimpImageMapTool *im_tool,
+static void       picman_colorize_tool_dialog        (PicmanImageMapTool *im_tool);
+static void       picman_colorize_tool_color_picked  (PicmanImageMapTool *im_tool,
                                                     gpointer          identifier,
                                                     const Babl       *sample_format,
-                                                    const GimpRGB    *color);
+                                                    const PicmanRGB    *color);
 
-static void       gimp_colorize_tool_config_notify (GObject          *object,
+static void       picman_colorize_tool_config_notify (GObject          *object,
                                                     GParamSpec       *pspec,
-                                                    GimpColorizeTool *col_tool);
+                                                    PicmanColorizeTool *col_tool);
 
 static void       colorize_hue_changed             (GtkAdjustment    *adj,
-                                                    GimpColorizeTool *col_tool);
+                                                    PicmanColorizeTool *col_tool);
 static void       colorize_saturation_changed      (GtkAdjustment    *adj,
-                                                    GimpColorizeTool *col_tool);
+                                                    PicmanColorizeTool *col_tool);
 static void       colorize_lightness_changed       (GtkAdjustment    *adj,
-                                                    GimpColorizeTool *col_tool);
+                                                    PicmanColorizeTool *col_tool);
 static void       colorize_color_changed           (GtkWidget        *button,
-                                                    GimpColorizeTool *col_tool);
+                                                    PicmanColorizeTool *col_tool);
 
 
-G_DEFINE_TYPE (GimpColorizeTool, gimp_colorize_tool, GIMP_TYPE_IMAGE_MAP_TOOL)
+G_DEFINE_TYPE (PicmanColorizeTool, picman_colorize_tool, PICMAN_TYPE_IMAGE_MAP_TOOL)
 
-#define parent_class gimp_colorize_tool_parent_class
+#define parent_class picman_colorize_tool_parent_class
 
 
 void
-gimp_colorize_tool_register (GimpToolRegisterCallback  callback,
+picman_colorize_tool_register (PicmanToolRegisterCallback  callback,
                              gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_COLORIZE_TOOL,
-                GIMP_TYPE_COLOR_OPTIONS,
-                gimp_color_options_gui,
+  (* callback) (PICMAN_TYPE_COLORIZE_TOOL,
+                PICMAN_TYPE_COLOR_OPTIONS,
+                picman_color_options_gui,
                 0,
-                "gimp-colorize-tool",
+                "picman-colorize-tool",
                 _("Colorize"),
                 _("Colorize Tool: Colorize the image"),
                 N_("Colori_ze..."), NULL,
-                NULL, GIMP_HELP_TOOL_COLORIZE,
-                GIMP_STOCK_TOOL_COLORIZE,
+                NULL, PICMAN_HELP_TOOL_COLORIZE,
+                PICMAN_STOCK_TOOL_COLORIZE,
                 data);
 }
 
 static void
-gimp_colorize_tool_class_init (GimpColorizeToolClass *klass)
+picman_colorize_tool_class_init (PicmanColorizeToolClass *klass)
 {
-  GimpToolClass         *tool_class    = GIMP_TOOL_CLASS (klass);
-  GimpImageMapToolClass *im_tool_class = GIMP_IMAGE_MAP_TOOL_CLASS (klass);
+  PicmanToolClass         *tool_class    = PICMAN_TOOL_CLASS (klass);
+  PicmanImageMapToolClass *im_tool_class = PICMAN_IMAGE_MAP_TOOL_CLASS (klass);
 
-  tool_class->initialize             = gimp_colorize_tool_initialize;
+  tool_class->initialize             = picman_colorize_tool_initialize;
 
   im_tool_class->dialog_desc         = _("Colorize the Image");
   im_tool_class->settings_name       = "colorize";
   im_tool_class->import_dialog_title = _("Import Colorize Settings");
   im_tool_class->export_dialog_title = _("Export Colorize Settings");
 
-  im_tool_class->get_operation       = gimp_colorize_tool_get_operation;
-  im_tool_class->dialog              = gimp_colorize_tool_dialog;
-  im_tool_class->color_picked        = gimp_colorize_tool_color_picked;
+  im_tool_class->get_operation       = picman_colorize_tool_get_operation;
+  im_tool_class->dialog              = picman_colorize_tool_dialog;
+  im_tool_class->color_picked        = picman_colorize_tool_color_picked;
 }
 
 static void
-gimp_colorize_tool_init (GimpColorizeTool *col_tool)
+picman_colorize_tool_init (PicmanColorizeTool *col_tool)
 {
 }
 
 static gboolean
-gimp_colorize_tool_initialize (GimpTool     *tool,
-                               GimpDisplay  *display,
+picman_colorize_tool_initialize (PicmanTool     *tool,
+                               PicmanDisplay  *display,
                                GError      **error)
 {
-  GimpImage    *image    = gimp_display_get_image (display);
-  GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+  PicmanImage    *image    = picman_display_get_image (display);
+  PicmanDrawable *drawable = picman_image_get_active_drawable (image);
 
   if (! drawable)
     return FALSE;
 
-  if (gimp_drawable_is_gray (drawable))
+  if (picman_drawable_is_gray (drawable))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			   _("Colorize does not operate on grayscale layers."));
       return FALSE;
     }
 
-  if (! GIMP_TOOL_CLASS (parent_class)->initialize (tool, display, error))
+  if (! PICMAN_TOOL_CLASS (parent_class)->initialize (tool, display, error))
     {
       return FALSE;
     }
@@ -149,22 +149,22 @@ gimp_colorize_tool_initialize (GimpTool     *tool,
 }
 
 static GeglNode *
-gimp_colorize_tool_get_operation (GimpImageMapTool  *im_tool,
+picman_colorize_tool_get_operation (PicmanImageMapTool  *im_tool,
                                   GObject          **config,
                                   gchar            **undo_desc)
 {
-  GimpColorizeTool *col_tool = GIMP_COLORIZE_TOOL (im_tool);
+  PicmanColorizeTool *col_tool = PICMAN_COLORIZE_TOOL (im_tool);
 
-  col_tool->config = g_object_new (GIMP_TYPE_COLORIZE_CONFIG, NULL);
+  col_tool->config = g_object_new (PICMAN_TYPE_COLORIZE_CONFIG, NULL);
 
   g_signal_connect_object (col_tool->config, "notify",
-                           G_CALLBACK (gimp_colorize_tool_config_notify),
+                           G_CALLBACK (picman_colorize_tool_config_notify),
                            G_OBJECT (col_tool), 0);
 
   *config = G_OBJECT (col_tool->config);
 
   return gegl_node_new_child (NULL,
-                              "operation", "gimp:colorize",
+                              "operation", "picman:colorize",
                               "config",    col_tool->config,
                               NULL);
 }
@@ -175,9 +175,9 @@ gimp_colorize_tool_get_operation (GimpImageMapTool  *im_tool,
 /***************************/
 
 static void
-gimp_colorize_tool_dialog (GimpImageMapTool *image_map_tool)
+picman_colorize_tool_dialog (PicmanImageMapTool *image_map_tool)
 {
-  GimpColorizeTool *col_tool = GIMP_COLORIZE_TOOL (image_map_tool);
+  PicmanColorizeTool *col_tool = PICMAN_COLORIZE_TOOL (image_map_tool);
   GtkWidget        *main_vbox;
   GtkWidget        *table;
   GtkWidget        *frame;
@@ -185,11 +185,11 @@ gimp_colorize_tool_dialog (GimpImageMapTool *image_map_tool)
   GtkWidget        *hbox;
   GtkWidget        *button;
   GtkObject        *data;
-  GimpRGB           color;
+  PicmanRGB           color;
 
-  main_vbox = gimp_image_map_tool_dialog_get_vbox (image_map_tool);
+  main_vbox = picman_image_map_tool_dialog_get_vbox (image_map_tool);
 
-  frame = gimp_frame_new (_("Select Color"));
+  frame = picman_frame_new (_("Select Color"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -205,7 +205,7 @@ gimp_colorize_tool_dialog (GimpImageMapTool *image_map_tool)
   gtk_widget_show (table);
 
   /*  Create the hue scale widget  */
-  data = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  data = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                _("_Hue:"), SLIDER_WIDTH, SPINNER_WIDTH,
                                col_tool->config->hue * 360.0,
                                0.0, 359.99, 1.0, 15.0, 0,
@@ -218,7 +218,7 @@ gimp_colorize_tool_dialog (GimpImageMapTool *image_map_tool)
                     col_tool);
 
   /*  Create the saturation scale widget  */
-  data = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  data = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                                _("_Saturation:"), SLIDER_WIDTH, SPINNER_WIDTH,
                                col_tool->config->saturation * 100.0,
                                0.0, 100.0, 1.0, 10.0, 0,
@@ -231,7 +231,7 @@ gimp_colorize_tool_dialog (GimpImageMapTool *image_map_tool)
                     col_tool);
 
   /*  Create the lightness scale widget  */
-  data = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  data = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                                _("_Lightness:"), SLIDER_WIDTH, SPINNER_WIDTH,
                                col_tool->config->lightness * 100.0,
                                -100.0, 100.0, 1.0, 10.0, 0,
@@ -248,16 +248,16 @@ gimp_colorize_tool_dialog (GimpImageMapTool *image_map_tool)
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  gimp_colorize_config_get_color (col_tool->config, &color);
+  picman_colorize_config_get_color (col_tool->config, &color);
 
-  col_tool->color_button = gimp_color_panel_new (_("Colorize Color"),
+  col_tool->color_button = picman_color_panel_new (_("Colorize Color"),
                                                  &color,
-                                                 GIMP_COLOR_AREA_FLAT,
+                                                 PICMAN_COLOR_AREA_FLAT,
                                                  128, 24);
-  gimp_color_button_set_update (GIMP_COLOR_BUTTON (col_tool->color_button),
+  picman_color_button_set_update (PICMAN_COLOR_BUTTON (col_tool->color_button),
                                 TRUE);
-  gimp_color_panel_set_context (GIMP_COLOR_PANEL (col_tool->color_button),
-                                GIMP_CONTEXT (GIMP_TOOL_GET_OPTIONS (col_tool)));
+  picman_color_panel_set_context (PICMAN_COLOR_PANEL (col_tool->color_button),
+                                PICMAN_CONTEXT (PICMAN_TOOL_GET_OPTIONS (col_tool)));
   gtk_box_pack_start (GTK_BOX (hbox), col_tool->color_button, TRUE, TRUE, 0);
   gtk_widget_show (col_tool->color_button);
 
@@ -265,32 +265,32 @@ gimp_colorize_tool_dialog (GimpImageMapTool *image_map_tool)
                     G_CALLBACK (colorize_color_changed),
                     col_tool);
 
-  button = gimp_image_map_tool_add_color_picker (image_map_tool,
+  button = picman_image_map_tool_add_color_picker (image_map_tool,
                                                  "colorize",
-                                                 GIMP_STOCK_COLOR_PICKER_GRAY,
+                                                 PICMAN_STOCK_COLOR_PICKER_GRAY,
                                                  _("Pick color from image"));
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 }
 
 static void
-gimp_colorize_tool_color_picked (GimpImageMapTool *im_tool,
+picman_colorize_tool_color_picked (PicmanImageMapTool *im_tool,
                                  gpointer          identifier,
                                  const Babl       *sample_format,
-                                 const GimpRGB    *color)
+                                 const PicmanRGB    *color)
 {
-  GimpColorizeTool *col_tool = GIMP_COLORIZE_TOOL (im_tool);
+  PicmanColorizeTool *col_tool = PICMAN_COLORIZE_TOOL (im_tool);
 
-  gimp_colorize_config_set_color (col_tool->config, color);
+  picman_colorize_config_set_color (col_tool->config, color);
 }
 
 static void
-gimp_colorize_tool_config_notify (GObject          *object,
+picman_colorize_tool_config_notify (GObject          *object,
                                   GParamSpec       *pspec,
-                                  GimpColorizeTool *col_tool)
+                                  PicmanColorizeTool *col_tool)
 {
-  GimpColorizeConfig *config = GIMP_COLORIZE_CONFIG (object);
-  GimpRGB             color;
+  PicmanColorizeConfig *config = PICMAN_COLORIZE_CONFIG (object);
+  PicmanRGB             color;
 
   if (! col_tool->hue_data)
     return;
@@ -311,14 +311,14 @@ gimp_colorize_tool_config_notify (GObject          *object,
                                 config->lightness * 100.0);
     }
 
-  gimp_colorize_config_get_color (col_tool->config, &color);
-  gimp_color_button_set_color (GIMP_COLOR_BUTTON (col_tool->color_button),
+  picman_colorize_config_get_color (col_tool->config, &color);
+  picman_color_button_set_color (PICMAN_COLOR_BUTTON (col_tool->color_button),
                                &color);
 }
 
 static void
 colorize_hue_changed (GtkAdjustment    *adjustment,
-                      GimpColorizeTool *col_tool)
+                      PicmanColorizeTool *col_tool)
 {
   gdouble value = gtk_adjustment_get_value (adjustment) / 360.0;
 
@@ -332,7 +332,7 @@ colorize_hue_changed (GtkAdjustment    *adjustment,
 
 static void
 colorize_saturation_changed (GtkAdjustment    *adjustment,
-                             GimpColorizeTool *col_tool)
+                             PicmanColorizeTool *col_tool)
 {
   gdouble value = gtk_adjustment_get_value (adjustment) / 100.0;
 
@@ -346,7 +346,7 @@ colorize_saturation_changed (GtkAdjustment    *adjustment,
 
 static void
 colorize_lightness_changed (GtkAdjustment    *adjustment,
-                            GimpColorizeTool *col_tool)
+                            PicmanColorizeTool *col_tool)
 {
   gdouble value = gtk_adjustment_get_value (adjustment) / 100.0;
 
@@ -360,10 +360,10 @@ colorize_lightness_changed (GtkAdjustment    *adjustment,
 
 static void
 colorize_color_changed (GtkWidget        *button,
-                        GimpColorizeTool *col_tool)
+                        PicmanColorizeTool *col_tool)
 {
-  GimpRGB color;
+  PicmanRGB color;
 
-  gimp_color_button_get_color (GIMP_COLOR_BUTTON (button), &color);
-  gimp_colorize_config_set_color (col_tool->config, &color);
+  picman_color_button_get_color (PICMAN_COLOR_BUTTON (button), &color);
+  picman_colorize_config_set_color (col_tool->config, &color);
 }

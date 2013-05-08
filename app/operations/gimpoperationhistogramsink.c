@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationhistogramsink.c
+ * picmanoperationhistogramsink.c
  * Copyright (C) 2012 Øyvind Kolås
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,9 +24,9 @@
 
 #include "operations-types.h"
 
-#include "core/gimphistogram.h"
+#include "core/picmanhistogram.h"
 
-#include "gimpoperationhistogramsink.h"
+#include "picmanoperationhistogramsink.h"
 
 
 enum
@@ -37,55 +37,55 @@ enum
 };
 
 
-static void     gimp_operation_histogram_sink_finalize     (GObject             *object);
-static void     gimp_operation_histogram_sink_get_property (GObject             *object,
+static void     picman_operation_histogram_sink_finalize     (GObject             *object);
+static void     picman_operation_histogram_sink_get_property (GObject             *object,
                                                             guint                prop_id,
                                                             GValue              *value,
                                                             GParamSpec          *pspec);
-static void     gimp_operation_histogram_sink_set_property (GObject             *object,
+static void     picman_operation_histogram_sink_set_property (GObject             *object,
                                                             guint                prop_id,
                                                             const GValue        *value,
                                                             GParamSpec          *pspec);
 
-static void     gimp_operation_histogram_sink_attach       (GeglOperation       *operation);
-static void     gimp_operation_histogram_sink_prepare      (GeglOperation       *operation);
+static void     picman_operation_histogram_sink_attach       (GeglOperation       *operation);
+static void     picman_operation_histogram_sink_prepare      (GeglOperation       *operation);
 static GeglRectangle
-     gimp_operation_histogram_sink_get_required_for_output (GeglOperation        *self,
+     picman_operation_histogram_sink_get_required_for_output (GeglOperation        *self,
                                                             const gchar         *input_pad,
                                                             const GeglRectangle *roi);
-static gboolean gimp_operation_histogram_sink_process      (GeglOperation       *operation,
+static gboolean picman_operation_histogram_sink_process      (GeglOperation       *operation,
                                                             GeglOperationContext     *context,
                                                             const gchar         *output_prop,
                                                             const GeglRectangle *result,
                                                             gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationHistogramSink, gimp_operation_histogram_sink,
+G_DEFINE_TYPE (PicmanOperationHistogramSink, picman_operation_histogram_sink,
                GEGL_TYPE_OPERATION_SINK)
 
-#define parent_class gimp_operation_histogram_sink_parent_class
+#define parent_class picman_operation_histogram_sink_parent_class
 
 
 static void
-gimp_operation_histogram_sink_class_init (GimpOperationHistogramSinkClass *klass)
+picman_operation_histogram_sink_class_init (PicmanOperationHistogramSinkClass *klass)
 {
   GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  object_class->finalize     = gimp_operation_histogram_sink_finalize;
-  object_class->set_property = gimp_operation_histogram_sink_set_property;
-  object_class->get_property = gimp_operation_histogram_sink_get_property;
+  object_class->finalize     = picman_operation_histogram_sink_finalize;
+  object_class->set_property = picman_operation_histogram_sink_set_property;
+  object_class->get_property = picman_operation_histogram_sink_get_property;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name"       , "gimp:histogram-sink",
+                                 "name"       , "picman:histogram-sink",
                                  "categories" , "color",
-                                 "description", "GIMP Histogram sink operation",
+                                 "description", "PICMAN Histogram sink operation",
                                  NULL);
 
-  operation_class->attach                  = gimp_operation_histogram_sink_attach;
-  operation_class->prepare                 = gimp_operation_histogram_sink_prepare;
-  operation_class->get_required_for_output = gimp_operation_histogram_sink_get_required_for_output;
-  operation_class->process                 = gimp_operation_histogram_sink_process;
+  operation_class->attach                  = picman_operation_histogram_sink_attach;
+  operation_class->prepare                 = picman_operation_histogram_sink_prepare;
+  operation_class->get_required_for_output = picman_operation_histogram_sink_get_required_for_output;
+  operation_class->process                 = picman_operation_histogram_sink_process;
 
   g_object_class_install_property (object_class, PROP_AUX,
                                    g_param_spec_object ("aux",
@@ -103,18 +103,18 @@ gimp_operation_histogram_sink_class_init (GimpOperationHistogramSinkClass *klass
 }
 
 static void
-gimp_operation_histogram_sink_init (GimpOperationHistogramSink *self)
+picman_operation_histogram_sink_init (PicmanOperationHistogramSink *self)
 {
 }
 
 static void
-gimp_operation_histogram_sink_finalize (GObject *object)
+picman_operation_histogram_sink_finalize (GObject *object)
 {
-  GimpOperationHistogramSink *sink = GIMP_OPERATION_HISTOGRAM_SINK (object);
+  PicmanOperationHistogramSink *sink = PICMAN_OPERATION_HISTOGRAM_SINK (object);
 
   if (sink->histogram)
     {
-      gimp_histogram_unref (sink->histogram);
+      picman_histogram_unref (sink->histogram);
       sink->histogram = NULL;
     }
 
@@ -122,12 +122,12 @@ gimp_operation_histogram_sink_finalize (GObject *object)
 }
 
 static void
-gimp_operation_histogram_sink_get_property (GObject    *object,
+picman_operation_histogram_sink_get_property (GObject    *object,
                                             guint       prop_id,
                                             GValue     *value,
                                             GParamSpec *pspec)
 {
-  GimpOperationHistogramSink *sink = GIMP_OPERATION_HISTOGRAM_SINK (object);
+  PicmanOperationHistogramSink *sink = PICMAN_OPERATION_HISTOGRAM_SINK (object);
 
   switch (prop_id)
     {
@@ -145,12 +145,12 @@ gimp_operation_histogram_sink_get_property (GObject    *object,
 }
 
 static void
-gimp_operation_histogram_sink_set_property (GObject      *object,
+picman_operation_histogram_sink_set_property (GObject      *object,
                                             guint         prop_id,
                                             const GValue *value,
                                             GParamSpec   *pspec)
 {
-  GimpOperationHistogramSink *sink = GIMP_OPERATION_HISTOGRAM_SINK (object);
+  PicmanOperationHistogramSink *sink = PICMAN_OPERATION_HISTOGRAM_SINK (object);
 
   switch (prop_id)
     {
@@ -159,10 +159,10 @@ gimp_operation_histogram_sink_set_property (GObject      *object,
 
     case PROP_HISTOGRAM:
       if (sink->histogram)
-        gimp_histogram_unref (sink->histogram);
+        picman_histogram_unref (sink->histogram);
       sink->histogram = g_value_get_pointer (value);
       if (sink->histogram)
-        gimp_histogram_ref (sink->histogram);
+        picman_histogram_ref (sink->histogram);
       break;
 
     default:
@@ -172,7 +172,7 @@ gimp_operation_histogram_sink_set_property (GObject      *object,
 }
 
 static void
-gimp_operation_histogram_sink_attach (GeglOperation *self)
+picman_operation_histogram_sink_attach (GeglOperation *self)
 {
   GeglOperation *operation    = GEGL_OPERATION (self);
   GObjectClass  *object_class = G_OBJECT_GET_CLASS (self);
@@ -185,14 +185,14 @@ gimp_operation_histogram_sink_attach (GeglOperation *self)
 }
 
 static void
-gimp_operation_histogram_sink_prepare (GeglOperation *operation)
+picman_operation_histogram_sink_prepare (GeglOperation *operation)
 {
   /* XXX gegl_operation_set_format (operation, "input", babl_format ("Y u8")); */
   gegl_operation_set_format (operation, "aux",   babl_format ("Y float"));
 }
 
 static GeglRectangle
-gimp_operation_histogram_sink_get_required_for_output (GeglOperation       *self,
+picman_operation_histogram_sink_get_required_for_output (GeglOperation       *self,
                                                        const gchar         *input_pad,
                                                        const GeglRectangle *roi)
 {
@@ -201,7 +201,7 @@ gimp_operation_histogram_sink_get_required_for_output (GeglOperation       *self
 }
 
 static gboolean
-gimp_operation_histogram_sink_process (GeglOperation        *operation,
+picman_operation_histogram_sink_process (GeglOperation        *operation,
                                        GeglOperationContext *context,
                                        const gchar          *output_prop,
                                        const GeglRectangle  *result,

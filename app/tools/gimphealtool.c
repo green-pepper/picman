@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,59 +20,59 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "paint/gimpsourceoptions.h"
+#include "paint/picmansourceoptions.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "gimphealtool.h"
-#include "gimppaintoptions-gui.h"
-#include "gimptoolcontrol.h"
+#include "picmanhealtool.h"
+#include "picmanpaintoptions-gui.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
-
-
-static GtkWidget * gimp_heal_options_gui (GimpToolOptions *tool_options);
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpHealTool, gimp_heal_tool, GIMP_TYPE_SOURCE_TOOL)
+static GtkWidget * picman_heal_options_gui (PicmanToolOptions *tool_options);
+
+
+G_DEFINE_TYPE (PicmanHealTool, picman_heal_tool, PICMAN_TYPE_SOURCE_TOOL)
 
 
 void
-gimp_heal_tool_register (GimpToolRegisterCallback  callback,
+picman_heal_tool_register (PicmanToolRegisterCallback  callback,
                          gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_HEAL_TOOL,
-                GIMP_TYPE_SOURCE_OPTIONS,
-                gimp_heal_options_gui,
-                GIMP_PAINT_OPTIONS_CONTEXT_MASK,
-                "gimp-heal-tool",
+  (* callback) (PICMAN_TYPE_HEAL_TOOL,
+                PICMAN_TYPE_SOURCE_OPTIONS,
+                picman_heal_options_gui,
+                PICMAN_PAINT_OPTIONS_CONTEXT_MASK,
+                "picman-heal-tool",
                 _("Heal"),
                 _("Healing Tool: Heal image irregularities"),
                 N_("_Heal"),
                 "H",
                 NULL,
-                GIMP_HELP_TOOL_HEAL,
-                GIMP_STOCK_TOOL_HEAL,
+                PICMAN_HELP_TOOL_HEAL,
+                PICMAN_STOCK_TOOL_HEAL,
                 data);
 }
 
 static void
-gimp_heal_tool_class_init (GimpHealToolClass *klass)
+picman_heal_tool_class_init (PicmanHealToolClass *klass)
 {
 }
 
 static void
-gimp_heal_tool_init (GimpHealTool *heal)
+picman_heal_tool_init (PicmanHealTool *heal)
 {
-  GimpTool       *tool        = GIMP_TOOL (heal);
-  GimpPaintTool  *paint_tool  = GIMP_PAINT_TOOL (tool);
-  GimpSourceTool *source_tool = GIMP_SOURCE_TOOL (tool);
+  PicmanTool       *tool        = PICMAN_TOOL (heal);
+  PicmanPaintTool  *paint_tool  = PICMAN_PAINT_TOOL (tool);
+  PicmanSourceTool *source_tool = PICMAN_SOURCE_TOOL (tool);
 
-  gimp_tool_control_set_tool_cursor (tool->control, GIMP_TOOL_CURSOR_HEAL);
+  picman_tool_control_set_tool_cursor (tool->control, PICMAN_TOOL_CURSOR_HEAL);
 
   paint_tool->status      = _("Click to heal");
   paint_tool->status_ctrl = _("%s to set a new heal source");
@@ -87,17 +87,17 @@ gimp_heal_tool_init (GimpHealTool *heal)
 /*  tool options stuff  */
 
 static GtkWidget *
-gimp_heal_options_gui (GimpToolOptions *tool_options)
+picman_heal_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config = G_OBJECT (tool_options);
-  GtkWidget *vbox   = gimp_paint_options_gui (tool_options);
+  GtkWidget *vbox   = picman_paint_options_gui (tool_options);
   GtkWidget *button;
   GtkWidget *hbox;
   GtkWidget *label;
   GtkWidget *combo;
 
   /* the sample merged checkbox */
-  button = gimp_prop_check_button_new (config, "sample-merged",
+  button = picman_prop_check_button_new (config, "sample-merged",
                                        _("Sample merged"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
@@ -111,7 +111,7 @@ gimp_heal_options_gui (GimpToolOptions *tool_options)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  combo = gimp_prop_enum_combo_box_new (config, "align-mode", 0, 0);
+  combo = picman_prop_enum_combo_box_new (config, "align-mode", 0, 0);
   gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
   gtk_widget_show (combo);
 

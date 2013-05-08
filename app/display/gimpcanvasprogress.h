@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasprogress.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasprogress.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,41 +18,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_PROGRESS_H__
-#define __GIMP_CANVAS_PROGRESS_H__
+#ifndef __PICMAN_CANVAS_PROGRESS_H__
+#define __PICMAN_CANVAS_PROGRESS_H__
 
 
-#include "gimpcanvasitem.h"
+#include "picmancanvasitem.h"
 
 
-#define GIMP_TYPE_CANVAS_PROGRESS            (gimp_canvas_progress_get_type ())
-#define GIMP_CANVAS_PROGRESS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_PROGRESS, GimpCanvasProgress))
-#define GIMP_CANVAS_PROGRESS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_PROGRESS, GimpCanvasProgressClass))
-#define GIMP_IS_CANVAS_PROGRESS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_PROGRESS))
-#define GIMP_IS_CANVAS_PROGRESS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_PROGRESS))
-#define GIMP_CANVAS_PROGRESS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_PROGRESS, GimpCanvasProgressClass))
+#define PICMAN_TYPE_CANVAS_PROGRESS            (picman_canvas_progress_get_type ())
+#define PICMAN_CANVAS_PROGRESS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_PROGRESS, PicmanCanvasProgress))
+#define PICMAN_CANVAS_PROGRESS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_PROGRESS, PicmanCanvasProgressClass))
+#define PICMAN_IS_CANVAS_PROGRESS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_PROGRESS))
+#define PICMAN_IS_CANVAS_PROGRESS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_PROGRESS))
+#define PICMAN_CANVAS_PROGRESS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_PROGRESS, PicmanCanvasProgressClass))
 
 
-typedef struct _GimpCanvasProgress      GimpCanvasProgress;
-typedef struct _GimpCanvasProgressClass GimpCanvasProgressClass;
+typedef struct _PicmanCanvasProgress      PicmanCanvasProgress;
+typedef struct _PicmanCanvasProgressClass PicmanCanvasProgressClass;
 
-struct _GimpCanvasProgress
+struct _PicmanCanvasProgress
 {
-  GimpCanvasItem  parent_instance;
+  PicmanCanvasItem  parent_instance;
 };
 
-struct _GimpCanvasProgressClass
+struct _PicmanCanvasProgressClass
 {
-  GimpCanvasItemClass  parent_class;
+  PicmanCanvasItemClass  parent_class;
 };
 
 
-GType            gimp_canvas_progress_get_type (void) G_GNUC_CONST;
+GType            picman_canvas_progress_get_type (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_canvas_progress_new      (GimpDisplayShell *shell,
-                                                GimpHandleAnchor  anchor,
+PicmanCanvasItem * picman_canvas_progress_new      (PicmanDisplayShell *shell,
+                                                PicmanHandleAnchor  anchor,
                                                 gdouble           x,
                                                 gdouble           y);
 
 
-#endif /* __GIMP_CANVAS_PROGRESS_H__ */
+#endif /* __PICMAN_CANVAS_PROGRESS_H__ */

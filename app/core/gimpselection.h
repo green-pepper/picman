@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,52 +15,52 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SELECTION_H__
-#define __GIMP_SELECTION_H__
+#ifndef __PICMAN_SELECTION_H__
+#define __PICMAN_SELECTION_H__
 
 
-#include "gimpchannel.h"
+#include "picmanchannel.h"
 
 
-#define GIMP_TYPE_SELECTION            (gimp_selection_get_type ())
-#define GIMP_SELECTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SELECTION, GimpSelection))
-#define GIMP_SELECTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SELECTION, GimpSelectionClass))
-#define GIMP_IS_SELECTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SELECTION))
-#define GIMP_IS_SELECTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SELECTION))
-#define GIMP_SELECTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SELECTION, GimpSelectionClass))
+#define PICMAN_TYPE_SELECTION            (picman_selection_get_type ())
+#define PICMAN_SELECTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SELECTION, PicmanSelection))
+#define PICMAN_SELECTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SELECTION, PicmanSelectionClass))
+#define PICMAN_IS_SELECTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SELECTION))
+#define PICMAN_IS_SELECTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SELECTION))
+#define PICMAN_SELECTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SELECTION, PicmanSelectionClass))
 
 
-typedef struct _GimpSelectionClass GimpSelectionClass;
+typedef struct _PicmanSelectionClass PicmanSelectionClass;
 
-struct _GimpSelection
+struct _PicmanSelection
 {
-  GimpChannel parent_instance;
+  PicmanChannel parent_instance;
 
   gint        stroking_count;
 };
 
-struct _GimpSelectionClass
+struct _PicmanSelectionClass
 {
-  GimpChannelClass parent_class;
+  PicmanChannelClass parent_class;
 };
 
 
-GType         gimp_selection_get_type      (void) G_GNUC_CONST;
+GType         picman_selection_get_type      (void) G_GNUC_CONST;
 
-GimpChannel * gimp_selection_new           (GimpImage     *image,
+PicmanChannel * picman_selection_new           (PicmanImage     *image,
                                             gint           width,
                                             gint           height);
 
-gint          gimp_selection_push_stroking (GimpSelection *selection);
-gint          gimp_selection_pop_stroking  (GimpSelection *selection);
+gint          picman_selection_push_stroking (PicmanSelection *selection);
+gint          picman_selection_pop_stroking  (PicmanSelection *selection);
 
-void          gimp_selection_load          (GimpSelection *selection,
-                                            GimpChannel   *channel);
-GimpChannel * gimp_selection_save          (GimpSelection *selection);
+void          picman_selection_load          (PicmanSelection *selection,
+                                            PicmanChannel   *channel);
+PicmanChannel * picman_selection_save          (PicmanSelection *selection);
 
-GeglBuffer  * gimp_selection_extract       (GimpSelection *selection,
-                                            GimpPickable  *pickable,
-                                            GimpContext   *context,
+GeglBuffer  * picman_selection_extract       (PicmanSelection *selection,
+                                            PicmanPickable  *pickable,
+                                            PicmanContext   *context,
                                             gboolean       cut_image,
                                             gboolean       keep_indexed,
                                             gboolean       add_alpha,
@@ -68,13 +68,13 @@ GeglBuffer  * gimp_selection_extract       (GimpSelection *selection,
                                             gint          *offset_y,
                                             GError       **error);
 
-GimpLayer   * gimp_selection_float         (GimpSelection *selection,
-                                            GimpDrawable  *drawable,
-                                            GimpContext   *context,
+PicmanLayer   * picman_selection_float         (PicmanSelection *selection,
+                                            PicmanDrawable  *drawable,
+                                            PicmanContext   *context,
                                             gboolean       cut_image,
                                             gint           off_x,
                                             gint           off_y,
                                             GError       **error);
 
 
-#endif /* __GIMP_SELECTION_H__ */
+#endif /* __PICMAN_SELECTION_H__ */

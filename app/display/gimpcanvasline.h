@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasline.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasline.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,48 +18,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_LINE_H__
-#define __GIMP_CANVAS_LINE_H__
+#ifndef __PICMAN_CANVAS_LINE_H__
+#define __PICMAN_CANVAS_LINE_H__
 
 
-#include "gimpcanvasitem.h"
+#include "picmancanvasitem.h"
 
 
-#define GIMP_TYPE_CANVAS_LINE            (gimp_canvas_line_get_type ())
-#define GIMP_CANVAS_LINE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_LINE, GimpCanvasLine))
-#define GIMP_CANVAS_LINE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_LINE, GimpCanvasLineClass))
-#define GIMP_IS_CANVAS_LINE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_LINE))
-#define GIMP_IS_CANVAS_LINE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_LINE))
-#define GIMP_CANVAS_LINE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_LINE, GimpCanvasLineClass))
+#define PICMAN_TYPE_CANVAS_LINE            (picman_canvas_line_get_type ())
+#define PICMAN_CANVAS_LINE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_LINE, PicmanCanvasLine))
+#define PICMAN_CANVAS_LINE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_LINE, PicmanCanvasLineClass))
+#define PICMAN_IS_CANVAS_LINE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_LINE))
+#define PICMAN_IS_CANVAS_LINE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_LINE))
+#define PICMAN_CANVAS_LINE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_LINE, PicmanCanvasLineClass))
 
 
-typedef struct _GimpCanvasLine      GimpCanvasLine;
-typedef struct _GimpCanvasLineClass GimpCanvasLineClass;
+typedef struct _PicmanCanvasLine      PicmanCanvasLine;
+typedef struct _PicmanCanvasLineClass PicmanCanvasLineClass;
 
-struct _GimpCanvasLine
+struct _PicmanCanvasLine
 {
-  GimpCanvasItem  parent_instance;
+  PicmanCanvasItem  parent_instance;
 };
 
-struct _GimpCanvasLineClass
+struct _PicmanCanvasLineClass
 {
-  GimpCanvasItemClass  parent_class;
+  PicmanCanvasItemClass  parent_class;
 };
 
 
-GType            gimp_canvas_line_get_type (void) G_GNUC_CONST;
+GType            picman_canvas_line_get_type (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_canvas_line_new      (GimpDisplayShell *shell,
+PicmanCanvasItem * picman_canvas_line_new      (PicmanDisplayShell *shell,
                                             gdouble           x1,
                                             gdouble           y1,
                                             gdouble           x2,
                                             gdouble           y2);
 
-void             gimp_canvas_line_set      (GimpCanvasItem   *line,
+void             picman_canvas_line_set      (PicmanCanvasItem   *line,
                                             gdouble           x1,
                                             gdouble           y1,
                                             gdouble           x2,
                                             gdouble           y2);
 
 
-#endif /* __GIMP_CANVAS_LINE_H__ */
+#endif /* __PICMAN_CANVAS_LINE_H__ */

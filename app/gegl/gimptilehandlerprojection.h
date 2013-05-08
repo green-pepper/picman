@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,30 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TILE_HANDLER_PROJECTION_H__
-#define __GIMP_TILE_HANDLER_PROJECTION_H__
+#ifndef __PICMAN_TILE_HANDLER_PROJECTION_H__
+#define __PICMAN_TILE_HANDLER_PROJECTION_H__
 
 #include <gegl-buffer-backend.h>
 
 /***
- * GimpTileHandlerProjection is a GeglTileHandler that renders the
+ * PicmanTileHandlerProjection is a GeglTileHandler that renders the
  * projection.
  */
 
 G_BEGIN_DECLS
 
-#define GIMP_TYPE_TILE_HANDLER_PROJECTION            (gimp_tile_handler_projection_get_type ())
-#define GIMP_TILE_HANDLER_PROJECTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TILE_HANDLER_PROJECTION, GimpTileHandlerProjection))
-#define GIMP_TILE_HANDLER_PROJECTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_TILE_HANDLER_PROJECTION, GimpTileHandlerProjectionClass))
-#define GIMP_IS_TILE_HANDLER_PROJECTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TILE_HANDLER_PROJECTION))
-#define GIMP_IS_TILE_HANDLER_PROJECTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_TILE_HANDLER_PROJECTION))
-#define GIMP_TILE_HANDLER_PROJECTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_TILE_HANDLER_PROJECTION, GimpTileHandlerProjectionClass))
+#define PICMAN_TYPE_TILE_HANDLER_PROJECTION            (picman_tile_handler_projection_get_type ())
+#define PICMAN_TILE_HANDLER_PROJECTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TILE_HANDLER_PROJECTION, PicmanTileHandlerProjection))
+#define PICMAN_TILE_HANDLER_PROJECTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_TILE_HANDLER_PROJECTION, PicmanTileHandlerProjectionClass))
+#define PICMAN_IS_TILE_HANDLER_PROJECTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TILE_HANDLER_PROJECTION))
+#define PICMAN_IS_TILE_HANDLER_PROJECTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_TILE_HANDLER_PROJECTION))
+#define PICMAN_TILE_HANDLER_PROJECTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_TILE_HANDLER_PROJECTION, PicmanTileHandlerProjectionClass))
 
 
-typedef struct _GimpTileHandlerProjection      GimpTileHandlerProjection;
-typedef struct _GimpTileHandlerProjectionClass GimpTileHandlerProjectionClass;
+typedef struct _PicmanTileHandlerProjection      PicmanTileHandlerProjection;
+typedef struct _PicmanTileHandlerProjectionClass PicmanTileHandlerProjectionClass;
 
-struct _GimpTileHandlerProjection
+struct _PicmanTileHandlerProjection
 {
   GeglTileHandler  parent_instance;
 
@@ -52,18 +52,18 @@ struct _GimpTileHandlerProjection
   gint             max_z;
 };
 
-struct _GimpTileHandlerProjectionClass
+struct _PicmanTileHandlerProjectionClass
 {
   GeglTileHandlerClass  parent_class;
 };
 
 
-GType             gimp_tile_handler_projection_get_type   (void) G_GNUC_CONST;
-GeglTileHandler * gimp_tile_handler_projection_new        (GeglNode                  *graph,
+GType             picman_tile_handler_projection_get_type   (void) G_GNUC_CONST;
+GeglTileHandler * picman_tile_handler_projection_new        (GeglNode                  *graph,
                                                            gint                       proj_width,
                                                            gint                       proj_height);
 
-void              gimp_tile_handler_projection_invalidate (GimpTileHandlerProjection *projection,
+void              picman_tile_handler_projection_invalidate (PicmanTileHandlerProjection *projection,
                                                            gint                       x,
                                                            gint                       y,
                                                            gint                       width,
@@ -72,4 +72,4 @@ void              gimp_tile_handler_projection_invalidate (GimpTileHandlerProjec
 
 G_END_DECLS
 
-#endif /* __GIMP_TILE_HANDLER_PROJECTION_H__ */
+#endif /* __PICMAN_TILE_HANDLER_PROJECTION_H__ */

@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpplugin.h
+ * picmanplugin.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,34 +17,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_H__
-#define __GIMP_PLUG_IN_H__
+#ifndef __PICMAN_PLUG_IN_H__
+#define __PICMAN_PLUG_IN_H__
 
 
-#include "core/gimpobject.h"
-#include "gimppluginprocframe.h"
+#include "core/picmanobject.h"
+#include "picmanpluginprocframe.h"
 
 
 #define WRITE_BUFFER_SIZE  512
 
 
-#define GIMP_TYPE_PLUG_IN            (gimp_plug_in_get_type ())
-#define GIMP_PLUG_IN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PLUG_IN, GimpPlugIn))
-#define GIMP_PLUG_IN_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PLUG_IN, GimpPlugInClass))
-#define GIMP_IS_PLUG_IN(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PLUG_IN))
-#define GIMP_IS_PLUG_IN_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PLUG_IN))
+#define PICMAN_TYPE_PLUG_IN            (picman_plug_in_get_type ())
+#define PICMAN_PLUG_IN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PLUG_IN, PicmanPlugIn))
+#define PICMAN_PLUG_IN_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PLUG_IN, PicmanPlugInClass))
+#define PICMAN_IS_PLUG_IN(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PLUG_IN))
+#define PICMAN_IS_PLUG_IN_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PLUG_IN))
 
 
-typedef struct _GimpPlugInClass GimpPlugInClass;
+typedef struct _PicmanPlugInClass PicmanPlugInClass;
 
-struct _GimpPlugIn
+struct _PicmanPlugIn
 {
-  GimpObject           parent_instance;
+  PicmanObject           parent_instance;
 
-  GimpPlugInManager   *manager;
+  PicmanPlugInManager   *manager;
   gchar               *prog;            /*  Plug-in's full path name          */
 
-  GimpPlugInCallMode   call_mode;       /*  QUERY, INIT or RUN                */
+  PicmanPlugInCallMode   call_mode;       /*  QUERY, INIT or RUN                */
   guint                open : 1;        /*  Is the plug-in open?              */
   guint                hup : 1;         /*  Did we receive a G_IO_HUP         */
   guint                precision : 1;   /*  True drawable precision enabled   */
@@ -64,64 +64,64 @@ struct _GimpPlugIn
 
   GMainLoop           *ext_main_loop;   /*  for waiting for extension_ack     */
 
-  GimpPlugInProcFrame  main_proc_frame;
+  PicmanPlugInProcFrame  main_proc_frame;
 
   GList               *temp_proc_frames;
 
-  GimpPlugInDef       *plug_in_def;     /*  Valid during query() and init()   */
+  PicmanPlugInDef       *plug_in_def;     /*  Valid during query() and init()   */
 };
 
-struct _GimpPlugInClass
+struct _PicmanPlugInClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType         gimp_plug_in_get_type          (void) G_GNUC_CONST;
+GType         picman_plug_in_get_type          (void) G_GNUC_CONST;
 
-GimpPlugIn  * gimp_plug_in_new               (GimpPlugInManager      *manager,
-                                              GimpContext            *context,
-                                              GimpProgress           *progress,
-                                              GimpPlugInProcedure    *procedure,
+PicmanPlugIn  * picman_plug_in_new               (PicmanPlugInManager      *manager,
+                                              PicmanContext            *context,
+                                              PicmanProgress           *progress,
+                                              PicmanPlugInProcedure    *procedure,
                                               const gchar            *prog);
 
-gboolean      gimp_plug_in_open              (GimpPlugIn             *plug_in,
-                                              GimpPlugInCallMode      call_mode,
+gboolean      picman_plug_in_open              (PicmanPlugIn             *plug_in,
+                                              PicmanPlugInCallMode      call_mode,
                                               gboolean                synchronous);
-void          gimp_plug_in_close             (GimpPlugIn             *plug_in,
+void          picman_plug_in_close             (PicmanPlugIn             *plug_in,
                                               gboolean                kill_it);
 
-GimpPlugInProcFrame *
-              gimp_plug_in_get_proc_frame    (GimpPlugIn             *plug_in);
+PicmanPlugInProcFrame *
+              picman_plug_in_get_proc_frame    (PicmanPlugIn             *plug_in);
 
-GimpPlugInProcFrame *
-              gimp_plug_in_proc_frame_push   (GimpPlugIn             *plug_in,
-                                              GimpContext            *context,
-                                              GimpProgress           *progress,
-                                              GimpTemporaryProcedure *procedure);
-void          gimp_plug_in_proc_frame_pop    (GimpPlugIn             *plug_in);
+PicmanPlugInProcFrame *
+              picman_plug_in_proc_frame_push   (PicmanPlugIn             *plug_in,
+                                              PicmanContext            *context,
+                                              PicmanProgress           *progress,
+                                              PicmanTemporaryProcedure *procedure);
+void          picman_plug_in_proc_frame_pop    (PicmanPlugIn             *plug_in);
 
-void          gimp_plug_in_main_loop         (GimpPlugIn             *plug_in);
-void          gimp_plug_in_main_loop_quit    (GimpPlugIn             *plug_in);
+void          picman_plug_in_main_loop         (PicmanPlugIn             *plug_in);
+void          picman_plug_in_main_loop_quit    (PicmanPlugIn             *plug_in);
 
-const gchar * gimp_plug_in_get_undo_desc     (GimpPlugIn             *plug_in);
+const gchar * picman_plug_in_get_undo_desc     (PicmanPlugIn             *plug_in);
 
-gboolean      gimp_plug_in_menu_register     (GimpPlugIn             *plug_in,
+gboolean      picman_plug_in_menu_register     (PicmanPlugIn             *plug_in,
                                               const gchar            *proc_name,
                                               const gchar            *menu_path);
 
-void          gimp_plug_in_add_temp_proc     (GimpPlugIn             *plug_in,
-                                              GimpTemporaryProcedure *procedure);
-void          gimp_plug_in_remove_temp_proc  (GimpPlugIn             *plug_in,
-                                              GimpTemporaryProcedure *procedure);
+void          picman_plug_in_add_temp_proc     (PicmanPlugIn             *plug_in,
+                                              PicmanTemporaryProcedure *procedure);
+void          picman_plug_in_remove_temp_proc  (PicmanPlugIn             *plug_in,
+                                              PicmanTemporaryProcedure *procedure);
 
-void          gimp_plug_in_set_error_handler (GimpPlugIn             *plug_in,
-                                              GimpPDBErrorHandler     handler);
-GimpPDBErrorHandler
-              gimp_plug_in_get_error_handler (GimpPlugIn             *plug_in);
+void          picman_plug_in_set_error_handler (PicmanPlugIn             *plug_in,
+                                              PicmanPDBErrorHandler     handler);
+PicmanPDBErrorHandler
+              picman_plug_in_get_error_handler (PicmanPlugIn             *plug_in);
 
-void          gimp_plug_in_enable_precision  (GimpPlugIn             *plug_in);
-gboolean      gimp_plug_in_precision_enabled (GimpPlugIn             *plug_in);
+void          picman_plug_in_enable_precision  (PicmanPlugIn             *plug_in);
+gboolean      picman_plug_in_precision_enabled (PicmanPlugIn             *plug_in);
 
 
-#endif /* __GIMP_PLUG_IN_H__ */
+#endif /* __PICMAN_PLUG_IN_H__ */

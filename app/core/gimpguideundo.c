@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,10 @@
 
 #include "core-types.h"
 
-#include "gimpimage.h"
-#include "gimpimage-guides.h"
-#include "gimpguide.h"
-#include "gimpguideundo.h"
+#include "picmanimage.h"
+#include "picmanimage-guides.h"
+#include "picmanguide.h"
+#include "picmanguideundo.h"
 
 
 enum
@@ -34,73 +34,73 @@ enum
 };
 
 
-static void   gimp_guide_undo_constructed  (GObject            *object);
-static void   gimp_guide_undo_set_property (GObject             *object,
+static void   picman_guide_undo_constructed  (GObject            *object);
+static void   picman_guide_undo_set_property (GObject             *object,
                                             guint                property_id,
                                             const GValue        *value,
                                             GParamSpec          *pspec);
-static void   gimp_guide_undo_get_property (GObject             *object,
+static void   picman_guide_undo_get_property (GObject             *object,
                                             guint                property_id,
                                             GValue              *value,
                                             GParamSpec          *pspec);
 
-static void   gimp_guide_undo_pop          (GimpUndo            *undo,
-                                            GimpUndoMode         undo_mode,
-                                            GimpUndoAccumulator *accum);
-static void   gimp_guide_undo_free         (GimpUndo            *undo,
-                                            GimpUndoMode         undo_mode);
+static void   picman_guide_undo_pop          (PicmanUndo            *undo,
+                                            PicmanUndoMode         undo_mode,
+                                            PicmanUndoAccumulator *accum);
+static void   picman_guide_undo_free         (PicmanUndo            *undo,
+                                            PicmanUndoMode         undo_mode);
 
 
-G_DEFINE_TYPE (GimpGuideUndo, gimp_guide_undo, GIMP_TYPE_UNDO)
+G_DEFINE_TYPE (PicmanGuideUndo, picman_guide_undo, PICMAN_TYPE_UNDO)
 
-#define parent_class gimp_guide_undo_parent_class
+#define parent_class picman_guide_undo_parent_class
 
 
 static void
-gimp_guide_undo_class_init (GimpGuideUndoClass *klass)
+picman_guide_undo_class_init (PicmanGuideUndoClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
-  GimpUndoClass *undo_class   = GIMP_UNDO_CLASS (klass);
+  PicmanUndoClass *undo_class   = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed  = gimp_guide_undo_constructed;
-  object_class->set_property = gimp_guide_undo_set_property;
-  object_class->get_property = gimp_guide_undo_get_property;
+  object_class->constructed  = picman_guide_undo_constructed;
+  object_class->set_property = picman_guide_undo_set_property;
+  object_class->get_property = picman_guide_undo_get_property;
 
-  undo_class->pop            = gimp_guide_undo_pop;
-  undo_class->free           = gimp_guide_undo_free;
+  undo_class->pop            = picman_guide_undo_pop;
+  undo_class->free           = picman_guide_undo_free;
 
   g_object_class_install_property (object_class, PROP_GUIDE,
                                    g_param_spec_object ("guide", NULL, NULL,
-                                                        GIMP_TYPE_GUIDE,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_GUIDE,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_guide_undo_init (GimpGuideUndo *undo)
+picman_guide_undo_init (PicmanGuideUndo *undo)
 {
 }
 
 static void
-gimp_guide_undo_constructed (GObject *object)
+picman_guide_undo_constructed (GObject *object)
 {
-  GimpGuideUndo *guide_undo = GIMP_GUIDE_UNDO (object);
+  PicmanGuideUndo *guide_undo = PICMAN_GUIDE_UNDO (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_GUIDE (guide_undo->guide));
+  g_assert (PICMAN_IS_GUIDE (guide_undo->guide));
 
-  guide_undo->orientation = gimp_guide_get_orientation (guide_undo->guide);
-  guide_undo->position    = gimp_guide_get_position (guide_undo->guide);
+  guide_undo->orientation = picman_guide_get_orientation (guide_undo->guide);
+  guide_undo->position    = picman_guide_get_position (guide_undo->guide);
 }
 
 static void
-gimp_guide_undo_set_property (GObject      *object,
+picman_guide_undo_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  GimpGuideUndo *guide_undo = GIMP_GUIDE_UNDO (object);
+  PicmanGuideUndo *guide_undo = PICMAN_GUIDE_UNDO (object);
 
   switch (property_id)
     {
@@ -115,12 +115,12 @@ gimp_guide_undo_set_property (GObject      *object,
 }
 
 static void
-gimp_guide_undo_get_property (GObject    *object,
+picman_guide_undo_get_property (GObject    *object,
                               guint       property_id,
                               GValue     *value,
                               GParamSpec *pspec)
 {
-  GimpGuideUndo *guide_undo = GIMP_GUIDE_UNDO (object);
+  PicmanGuideUndo *guide_undo = PICMAN_GUIDE_UNDO (object);
 
   switch (property_id)
     {
@@ -135,50 +135,50 @@ gimp_guide_undo_get_property (GObject    *object,
 }
 
 static void
-gimp_guide_undo_pop (GimpUndo              *undo,
-                     GimpUndoMode           undo_mode,
-                     GimpUndoAccumulator   *accum)
+picman_guide_undo_pop (PicmanUndo              *undo,
+                     PicmanUndoMode           undo_mode,
+                     PicmanUndoAccumulator   *accum)
 {
-  GimpGuideUndo       *guide_undo = GIMP_GUIDE_UNDO (undo);
-  GimpOrientationType  orientation;
+  PicmanGuideUndo       *guide_undo = PICMAN_GUIDE_UNDO (undo);
+  PicmanOrientationType  orientation;
   gint                 position;
   gboolean             moved = FALSE;
 
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 
-  orientation = gimp_guide_get_orientation (guide_undo->guide);
-  position    = gimp_guide_get_position (guide_undo->guide);
+  orientation = picman_guide_get_orientation (guide_undo->guide);
+  position    = picman_guide_get_position (guide_undo->guide);
 
   if (position == -1)
     {
-      gimp_image_add_guide (undo->image,
+      picman_image_add_guide (undo->image,
                             guide_undo->guide, guide_undo->position);
     }
   else if (guide_undo->position == -1)
     {
-      gimp_image_remove_guide (undo->image, guide_undo->guide, FALSE);
+      picman_image_remove_guide (undo->image, guide_undo->guide, FALSE);
     }
   else
     {
-      gimp_guide_set_position (guide_undo->guide, guide_undo->position);
+      picman_guide_set_position (guide_undo->guide, guide_undo->position);
 
       moved = TRUE;
     }
 
-  gimp_guide_set_orientation (guide_undo->guide, guide_undo->orientation);
+  picman_guide_set_orientation (guide_undo->guide, guide_undo->orientation);
 
   if (moved || guide_undo->orientation != orientation)
-    gimp_image_guide_moved (undo->image, guide_undo->guide);
+    picman_image_guide_moved (undo->image, guide_undo->guide);
 
   guide_undo->position    = position;
   guide_undo->orientation = orientation;
 }
 
 static void
-gimp_guide_undo_free (GimpUndo     *undo,
-                      GimpUndoMode  undo_mode)
+picman_guide_undo_free (PicmanUndo     *undo,
+                      PicmanUndoMode  undo_mode)
 {
-  GimpGuideUndo *guide_undo = GIMP_GUIDE_UNDO (undo);
+  PicmanGuideUndo *guide_undo = PICMAN_GUIDE_UNDO (undo);
 
   if (guide_undo->guide)
     {
@@ -186,5 +186,5 @@ gimp_guide_undo_free (GimpUndo     *undo,
       guide_undo->guide = NULL;
     }
 
-  GIMP_UNDO_CLASS (parent_class)->free (undo, undo_mode);
+  PICMAN_UNDO_CLASS (parent_class)->free (undo, undo_mode);
 }

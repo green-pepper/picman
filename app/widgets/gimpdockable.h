@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdockable.h
- * Copyright (C) 2001-2003 Michael Natterer <mitch@gimp.org>
+ * picmandockable.h
+ * Copyright (C) 2001-2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,97 +18,97 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DOCKABLE_H__
-#define __GIMP_DOCKABLE_H__
+#ifndef __PICMAN_DOCKABLE_H__
+#define __PICMAN_DOCKABLE_H__
 
 
-#define GIMP_DOCKABLE_DRAG_OFFSET (-6)
+#define PICMAN_DOCKABLE_DRAG_OFFSET (-6)
 
 
-#define GIMP_TYPE_DOCKABLE            (gimp_dockable_get_type ())
-#define GIMP_DOCKABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DOCKABLE, GimpDockable))
-#define GIMP_DOCKABLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DOCKABLE, GimpDockableClass))
-#define GIMP_IS_DOCKABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DOCKABLE))
-#define GIMP_IS_DOCKABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DOCKABLE))
-#define GIMP_DOCKABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DOCKABLE, GimpDockableClass))
+#define PICMAN_TYPE_DOCKABLE            (picman_dockable_get_type ())
+#define PICMAN_DOCKABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DOCKABLE, PicmanDockable))
+#define PICMAN_DOCKABLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DOCKABLE, PicmanDockableClass))
+#define PICMAN_IS_DOCKABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DOCKABLE))
+#define PICMAN_IS_DOCKABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DOCKABLE))
+#define PICMAN_DOCKABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DOCKABLE, PicmanDockableClass))
 
 
-typedef struct _GimpDockablePrivate GimpDockablePrivate;
-typedef struct _GimpDockableClass   GimpDockableClass;
+typedef struct _PicmanDockablePrivate PicmanDockablePrivate;
+typedef struct _PicmanDockableClass   PicmanDockableClass;
 
 /**
- * GimpDockable:
+ * PicmanDockable:
  *
  * A kind of adpater to make other widgets dockable. The widget to
- * dock is put inside the GimpDockable, which is put in a
- * GimpDockbook.
+ * dock is put inside the PicmanDockable, which is put in a
+ * PicmanDockbook.
  */
-struct _GimpDockable
+struct _PicmanDockable
 {
   GtkBin               parent_instance;
 
-  GimpDockablePrivate *p;
+  PicmanDockablePrivate *p;
 };
 
-struct _GimpDockableClass
+struct _PicmanDockableClass
 {
   GtkBinClass  parent_class;
 };
 
 
-GType           gimp_dockable_get_type         (void) G_GNUC_CONST;
+GType           picman_dockable_get_type         (void) G_GNUC_CONST;
 
-GtkWidget     * gimp_dockable_new              (const gchar    *name,
+GtkWidget     * picman_dockable_new              (const gchar    *name,
                                                 const gchar    *blurb,
                                                 const gchar    *stock_id,
                                                 const gchar    *help_id);
-void            gimp_dockable_set_dockbook     (GimpDockable   *dockable,
-                                                GimpDockbook   *dockbook);
-GimpDockbook  * gimp_dockable_get_dockbook     (GimpDockable   *dockable);
-GimpTabStyle    gimp_dockable_get_tab_style    (GimpDockable   *dockable);
-const gchar   * gimp_dockable_get_name         (GimpDockable   *dockable);
-const gchar   * gimp_dockable_get_blurb        (GimpDockable   *dockable);
-const gchar   * gimp_dockable_get_help_id      (GimpDockable   *dockable);
-const gchar   * gimp_dockable_get_stock_id     (GimpDockable   *dockable);
-GtkWidget     * gimp_dockable_get_icon         (GimpDockable   *dockable,
+void            picman_dockable_set_dockbook     (PicmanDockable   *dockable,
+                                                PicmanDockbook   *dockbook);
+PicmanDockbook  * picman_dockable_get_dockbook     (PicmanDockable   *dockable);
+PicmanTabStyle    picman_dockable_get_tab_style    (PicmanDockable   *dockable);
+const gchar   * picman_dockable_get_name         (PicmanDockable   *dockable);
+const gchar   * picman_dockable_get_blurb        (PicmanDockable   *dockable);
+const gchar   * picman_dockable_get_help_id      (PicmanDockable   *dockable);
+const gchar   * picman_dockable_get_stock_id     (PicmanDockable   *dockable);
+GtkWidget     * picman_dockable_get_icon         (PicmanDockable   *dockable,
                                                 GtkIconSize     size);
 
-gboolean        gimp_dockable_get_locked       (GimpDockable   *dockable);
-void            gimp_dockable_set_drag_pos     (GimpDockable   *dockable,
+gboolean        picman_dockable_get_locked       (PicmanDockable   *dockable);
+void            picman_dockable_set_drag_pos     (PicmanDockable   *dockable,
                                                 gint            drag_x,
                                                 gint            drag_y);
-void            gimp_dockable_get_drag_pos     (GimpDockable   *dockable,
+void            picman_dockable_get_drag_pos     (PicmanDockable   *dockable,
                                                 gint           *drag_x,
                                                 gint           *drag_y);
-GimpPanedBox  * gimp_dockable_get_drag_handler (GimpDockable  *dockable);
+PicmanPanedBox  * picman_dockable_get_drag_handler (PicmanDockable  *dockable);
 
-void            gimp_dockable_set_locked       (GimpDockable   *dockable,
+void            picman_dockable_set_locked       (PicmanDockable   *dockable,
                                                 gboolean        lock);
-gboolean        gimp_dockable_is_locked        (GimpDockable   *dockable);
+gboolean        picman_dockable_is_locked        (PicmanDockable   *dockable);
 
                                                       
-void            gimp_dockable_set_tab_style           (GimpDockable   *dockable,
-                                                       GimpTabStyle    tab_style);
-gboolean        gimp_dockable_set_actual_tab_style    (GimpDockable   *dockable,
-                                                       GimpTabStyle    tab_style);
-GimpTabStyle    gimp_dockable_get_actual_tab_style    (GimpDockable   *dockable);
-GtkWidget     * gimp_dockable_create_tab_widget       (GimpDockable   *dockable,
-                                                       GimpContext    *context,
-                                                       GimpTabStyle    tab_style,
+void            picman_dockable_set_tab_style           (PicmanDockable   *dockable,
+                                                       PicmanTabStyle    tab_style);
+gboolean        picman_dockable_set_actual_tab_style    (PicmanDockable   *dockable,
+                                                       PicmanTabStyle    tab_style);
+PicmanTabStyle    picman_dockable_get_actual_tab_style    (PicmanDockable   *dockable);
+GtkWidget     * picman_dockable_create_tab_widget       (PicmanDockable   *dockable,
+                                                       PicmanContext    *context,
+                                                       PicmanTabStyle    tab_style,
                                                        GtkIconSize     size);
-GtkWidget     * gimp_dockable_create_drag_widget      (GimpDockable   *dockable);
-void            gimp_dockable_set_context             (GimpDockable   *dockable,
-                                                       GimpContext    *context);
-GimpUIManager * gimp_dockable_get_menu                (GimpDockable   *dockable,
+GtkWidget     * picman_dockable_create_drag_widget      (PicmanDockable   *dockable);
+void            picman_dockable_set_context             (PicmanDockable   *dockable,
+                                                       PicmanContext    *context);
+PicmanUIManager * picman_dockable_get_menu                (PicmanDockable   *dockable,
                                                 const gchar   **ui_path,
                                                 gpointer       *popup_data);
-void            gimp_dockable_set_drag_handler (GimpDockable   *dockable,
-                                                GimpPanedBox   *drag_handler);
+void            picman_dockable_set_drag_handler (PicmanDockable   *dockable,
+                                                PicmanPanedBox   *drag_handler);
 
-void            gimp_dockable_detach           (GimpDockable   *dockable);
+void            picman_dockable_detach           (PicmanDockable   *dockable);
 
-void            gimp_dockable_blink            (GimpDockable   *dockable);
-void            gimp_dockable_blink_cancel     (GimpDockable   *dockable);
+void            picman_dockable_blink            (PicmanDockable   *dockable);
+void            picman_dockable_blink_cancel     (PicmanDockable   *dockable);
 
 
-#endif /* __GIMP_DOCKABLE_H__ */
+#endif /* __PICMAN_DOCKABLE_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * brush_generated module Copyright 1998 Jay Cox <jaycox@earthlink.net>
@@ -17,28 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_GENERATED_H__
-#define __GIMP_BRUSH_GENERATED_H__
+#ifndef __PICMAN_BRUSH_GENERATED_H__
+#define __PICMAN_BRUSH_GENERATED_H__
 
 
-#include "gimpbrush.h"
+#include "picmanbrush.h"
 
 
-#define GIMP_TYPE_BRUSH_GENERATED            (gimp_brush_generated_get_type ())
-#define GIMP_BRUSH_GENERATED(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BRUSH_GENERATED, GimpBrushGenerated))
-#define GIMP_BRUSH_GENERATED_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BRUSH_GENERATED, GimpBrushGeneratedClass))
-#define GIMP_IS_BRUSH_GENERATED(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BRUSH_GENERATED))
-#define GIMP_IS_BRUSH_GENERATED_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BRUSH_GENERATED))
-#define GIMP_BRUSH_GENERATED_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BRUSH_GENERATED, GimpBrushGeneratedClass))
+#define PICMAN_TYPE_BRUSH_GENERATED            (picman_brush_generated_get_type ())
+#define PICMAN_BRUSH_GENERATED(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BRUSH_GENERATED, PicmanBrushGenerated))
+#define PICMAN_BRUSH_GENERATED_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BRUSH_GENERATED, PicmanBrushGeneratedClass))
+#define PICMAN_IS_BRUSH_GENERATED(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BRUSH_GENERATED))
+#define PICMAN_IS_BRUSH_GENERATED_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BRUSH_GENERATED))
+#define PICMAN_BRUSH_GENERATED_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BRUSH_GENERATED, PicmanBrushGeneratedClass))
 
 
-typedef struct _GimpBrushGeneratedClass GimpBrushGeneratedClass;
+typedef struct _PicmanBrushGeneratedClass PicmanBrushGeneratedClass;
 
-struct _GimpBrushGenerated
+struct _PicmanBrushGenerated
 {
-  GimpBrush               parent_instance;
+  PicmanBrush               parent_instance;
 
-  GimpBrushGeneratedShape shape;
+  PicmanBrushGeneratedShape shape;
   gfloat                  radius;
   gint                    spikes;       /* 2 - 20     */
   gfloat                  hardness;     /* 0.0 - 1.0  */
@@ -46,43 +46,43 @@ struct _GimpBrushGenerated
   gfloat                  angle;        /* in degrees */
 };
 
-struct _GimpBrushGeneratedClass
+struct _PicmanBrushGeneratedClass
 {
-  GimpBrushClass  parent_class;
+  PicmanBrushClass  parent_class;
 };
 
 
-GType       gimp_brush_generated_get_type     (void) G_GNUC_CONST;
+GType       picman_brush_generated_get_type     (void) G_GNUC_CONST;
 
-GimpData  * gimp_brush_generated_new          (const gchar             *name,
-                                               GimpBrushGeneratedShape  shape,
+PicmanData  * picman_brush_generated_new          (const gchar             *name,
+                                               PicmanBrushGeneratedShape  shape,
                                                gfloat                   radius,
                                                gint                     spikes,
                                                gfloat                   hardness,
                                                gfloat                   aspect_ratio,
                                                gfloat                   angle);
 
-GimpBrushGeneratedShape
-        gimp_brush_generated_set_shape        (GimpBrushGenerated      *brush,
-                                               GimpBrushGeneratedShape  shape);
-gfloat  gimp_brush_generated_set_radius       (GimpBrushGenerated      *brush,
+PicmanBrushGeneratedShape
+        picman_brush_generated_set_shape        (PicmanBrushGenerated      *brush,
+                                               PicmanBrushGeneratedShape  shape);
+gfloat  picman_brush_generated_set_radius       (PicmanBrushGenerated      *brush,
                                                gfloat                   radius);
-gint    gimp_brush_generated_set_spikes       (GimpBrushGenerated      *brush,
+gint    picman_brush_generated_set_spikes       (PicmanBrushGenerated      *brush,
                                                gint                     spikes);
-gfloat  gimp_brush_generated_set_hardness     (GimpBrushGenerated      *brush,
+gfloat  picman_brush_generated_set_hardness     (PicmanBrushGenerated      *brush,
                                                gfloat                   hardness);
-gfloat  gimp_brush_generated_set_aspect_ratio (GimpBrushGenerated      *brush,
+gfloat  picman_brush_generated_set_aspect_ratio (PicmanBrushGenerated      *brush,
                                                gfloat                   ratio);
-gfloat  gimp_brush_generated_set_angle        (GimpBrushGenerated      *brush,
+gfloat  picman_brush_generated_set_angle        (PicmanBrushGenerated      *brush,
                                                gfloat                   angle);
 
-GimpBrushGeneratedShape
-        gimp_brush_generated_get_shape        (const GimpBrushGenerated *brush);
-gfloat  gimp_brush_generated_get_radius       (const GimpBrushGenerated *brush);
-gint    gimp_brush_generated_get_spikes       (const GimpBrushGenerated *brush);
-gfloat  gimp_brush_generated_get_hardness     (const GimpBrushGenerated *brush);
-gfloat  gimp_brush_generated_get_aspect_ratio (const GimpBrushGenerated *brush);
-gfloat  gimp_brush_generated_get_angle        (const GimpBrushGenerated *brush);
+PicmanBrushGeneratedShape
+        picman_brush_generated_get_shape        (const PicmanBrushGenerated *brush);
+gfloat  picman_brush_generated_get_radius       (const PicmanBrushGenerated *brush);
+gint    picman_brush_generated_get_spikes       (const PicmanBrushGenerated *brush);
+gfloat  picman_brush_generated_get_hardness     (const PicmanBrushGenerated *brush);
+gfloat  picman_brush_generated_get_aspect_ratio (const PicmanBrushGenerated *brush);
+gfloat  picman_brush_generated_get_angle        (const PicmanBrushGenerated *brush);
 
 
-#endif  /*  __GIMP_BRUSH_GENERATED_H__  */
+#endif  /*  __PICMAN_BRUSH_GENERATED_H__  */

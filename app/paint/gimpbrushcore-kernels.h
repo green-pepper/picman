@@ -1,11 +1,11 @@
-/* gimpbrushcore-kernels.h
+/* picmanbrushcore-kernels.h
  *
  *   This file was generated using kernelgen as found in the tools dir.
  *   (threshold = 0.25)
  */
 
-#ifndef __GIMP_BRUSH_CORE_KERNELS_H__
-#define __GIMP_BRUSH_CORE_KERNELS_H__
+#ifndef __PICMAN_BRUSH_CORE_KERNELS_H__
+#define __PICMAN_BRUSH_CORE_KERNELS_H__
 
 #define KERNEL_WIDTH     3
 #define KERNEL_HEIGHT    3
@@ -53,4 +53,4 @@ static const int subsample[5][5][9] =
   }
 };
 
-#endif /* __GIMP_BRUSH_CORE_KERNELS_H__ */
+#endif /* __PICMAN_BRUSH_CORE_KERNELS_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpGuide
- * Copyright (C) 2003  Henrik Brix Andersen <brix@gimp.org>
+ * PicmanGuide
+ * Copyright (C) 2003  Henrik Brix Andersen <brix@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,55 +18,55 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GUIDE_H__
-#define __GIMP_GUIDE_H__
+#ifndef __PICMAN_GUIDE_H__
+#define __PICMAN_GUIDE_H__
 
 
-#include "gimpobject.h"
+#include "picmanobject.h"
 
 
-#define GIMP_TYPE_GUIDE            (gimp_guide_get_type ())
-#define GIMP_GUIDE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_GUIDE, GimpGuide))
-#define GIMP_GUIDE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_GUIDE, GimpGuideClass))
-#define GIMP_IS_GUIDE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_GUIDE))
-#define GIMP_IS_GUIDE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_GUIDE))
-#define GIMP_GUIDE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_GUIDE, GimpGuideClass))
+#define PICMAN_TYPE_GUIDE            (picman_guide_get_type ())
+#define PICMAN_GUIDE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_GUIDE, PicmanGuide))
+#define PICMAN_GUIDE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_GUIDE, PicmanGuideClass))
+#define PICMAN_IS_GUIDE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_GUIDE))
+#define PICMAN_IS_GUIDE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_GUIDE))
+#define PICMAN_GUIDE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_GUIDE, PicmanGuideClass))
 
 
-typedef struct _GimpGuideClass GimpGuideClass;
+typedef struct _PicmanGuideClass PicmanGuideClass;
 
-struct _GimpGuide
+struct _PicmanGuide
 {
   GObject              parent_instance;
 
   guint32              guide_ID;
-  GimpOrientationType  orientation;
+  PicmanOrientationType  orientation;
   gint                 position;
 };
 
-struct _GimpGuideClass
+struct _PicmanGuideClass
 {
   GObjectClass         parent_class;
 
   /*  signals  */
-  void (* removed)    (GimpGuide  *guide);
+  void (* removed)    (PicmanGuide  *guide);
 };
 
 
-GType               gimp_guide_get_type        (void) G_GNUC_CONST;
+GType               picman_guide_get_type        (void) G_GNUC_CONST;
 
-GimpGuide *         gimp_guide_new             (GimpOrientationType  orientation,
+PicmanGuide *         picman_guide_new             (PicmanOrientationType  orientation,
                                                 guint32              guide_ID);
 
-guint32             gimp_guide_get_ID          (GimpGuide           *guide);
+guint32             picman_guide_get_ID          (PicmanGuide           *guide);
 
-GimpOrientationType gimp_guide_get_orientation (GimpGuide           *guide);
-void                gimp_guide_set_orientation (GimpGuide           *guide,
-                                                GimpOrientationType  orientation);
+PicmanOrientationType picman_guide_get_orientation (PicmanGuide           *guide);
+void                picman_guide_set_orientation (PicmanGuide           *guide,
+                                                PicmanOrientationType  orientation);
 
-gint                gimp_guide_get_position    (GimpGuide           *guide);
-void                gimp_guide_set_position    (GimpGuide           *guide,
+gint                picman_guide_get_position    (PicmanGuide           *guide);
+void                picman_guide_set_position    (PicmanGuide           *guide,
                                                 gint                 position);
-void                gimp_guide_removed         (GimpGuide           *guide);
+void                picman_guide_removed         (PicmanGuide           *guide);
 
-#endif /* __GIMP_GUIDE_H__ */
+#endif /* __PICMAN_GUIDE_H__ */

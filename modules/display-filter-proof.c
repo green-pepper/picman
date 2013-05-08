@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,14 +24,14 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 #define CDISPLAY_TYPE_PROOF            (cdisplay_proof_get_type ())
 #define CDISPLAY_PROOF(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), CDISPLAY_TYPE_PROOF, CdisplayProof))
@@ -45,7 +45,7 @@ typedef struct _CdisplayProofClass CdisplayProofClass;
 
 struct _CdisplayProof
 {
-  GimpColorDisplay  parent_instance;
+  PicmanColorDisplay  parent_instance;
 
   gint              intent;
   gboolean          bpc;
@@ -56,7 +56,7 @@ struct _CdisplayProof
 
 struct _CdisplayProofClass
 {
-  GimpColorDisplayClass parent_instance;
+  PicmanColorDisplayClass parent_instance;
 };
 
 
@@ -82,15 +82,15 @@ static void        cdisplay_proof_set_property    (GObject          *object,
                                                    GParamSpec       *pspec);
 
 
-static void        cdisplay_proof_convert_surface (GimpColorDisplay *display,
+static void        cdisplay_proof_convert_surface (PicmanColorDisplay *display,
                                                    cairo_surface_t  *surface);
-static GtkWidget * cdisplay_proof_configure       (GimpColorDisplay *display);
-static void        cdisplay_proof_changed         (GimpColorDisplay *display);
+static GtkWidget * cdisplay_proof_configure       (PicmanColorDisplay *display);
+static void        cdisplay_proof_changed         (PicmanColorDisplay *display);
 
 
-static const GimpModuleInfo cdisplay_proof_info =
+static const PicmanModuleInfo cdisplay_proof_info =
 {
-  GIMP_MODULE_ABI_VERSION,
+  PICMAN_MODULE_ABI_VERSION,
   N_("Color proof filter using ICC color profile"),
   "Banlu Kemiyatorn <id@project-ile.net>",
   "v0.1",
@@ -100,17 +100,17 @@ static const GimpModuleInfo cdisplay_proof_info =
 
 
 G_DEFINE_DYNAMIC_TYPE (CdisplayProof, cdisplay_proof,
-                       GIMP_TYPE_COLOR_DISPLAY)
+                       PICMAN_TYPE_COLOR_DISPLAY)
 
 
-G_MODULE_EXPORT const GimpModuleInfo *
-gimp_module_query (GTypeModule *module)
+G_MODULE_EXPORT const PicmanModuleInfo *
+picman_module_query (GTypeModule *module)
 {
   return &cdisplay_proof_info;
 }
 
 G_MODULE_EXPORT gboolean
-gimp_module_register (GTypeModule *module)
+picman_module_register (GTypeModule *module)
 {
   cdisplay_proof_register_type (module);
 
@@ -121,29 +121,29 @@ static void
 cdisplay_proof_class_init (CdisplayProofClass *klass)
 {
   GObjectClass          *object_class  = G_OBJECT_CLASS (klass);
-  GimpColorDisplayClass *display_class = GIMP_COLOR_DISPLAY_CLASS (klass);
+  PicmanColorDisplayClass *display_class = PICMAN_COLOR_DISPLAY_CLASS (klass);
 
   object_class->finalize         = cdisplay_proof_finalize;
   object_class->get_property     = cdisplay_proof_get_property;
   object_class->set_property     = cdisplay_proof_set_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_INTENT,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_INTENT,
                                  "intent", NULL,
-                                 GIMP_TYPE_COLOR_RENDERING_INTENT,
-                                 GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
+                                 PICMAN_TYPE_COLOR_RENDERING_INTENT,
+                                 PICMAN_COLOR_RENDERING_INTENT_PERCEPTUAL,
                                  0);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_BPC,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_BPC,
                                     "black-point-compensation", NULL,
                                     FALSE,
                                     0);
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PROFILE,
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_PROFILE,
                                  "profile", NULL,
-                                 GIMP_CONFIG_PATH_FILE, NULL,
+                                 PICMAN_CONFIG_PATH_FILE, NULL,
                                  0);
 
   display_class->name            = _("Color Proof");
-  display_class->help_id         = "gimp-colordisplay-proof";
-  display_class->stock_id        = GIMP_STOCK_DISPLAY_FILTER_PROOF;
+  display_class->help_id         = "picman-colordisplay-proof";
+  display_class->stock_id        = PICMAN_STOCK_DISPLAY_FILTER_PROOF;
 
   display_class->convert_surface = cdisplay_proof_convert_surface;
   display_class->configure       = cdisplay_proof_configure;
@@ -232,11 +232,11 @@ cdisplay_proof_set_property (GObject      *object,
       break;
     }
 
-  gimp_color_display_changed (GIMP_COLOR_DISPLAY (proof));
+  picman_color_display_changed (PICMAN_COLOR_DISPLAY (proof));
 }
 
 static void
-cdisplay_proof_convert_surface (GimpColorDisplay *display,
+cdisplay_proof_convert_surface (PicmanColorDisplay *display,
                                 cairo_surface_t  *surface)
 {
   CdisplayProof  *proof  = CDISPLAY_PROOF (display);
@@ -264,7 +264,7 @@ cdisplay_proof_convert_surface (GimpColorDisplay *display,
        */
       for (x = 0; x < width; x++)
         {
-          GIMP_CAIRO_ARGB32_GET_PIXEL (buf + 4*x, r, g, b, a);
+          PICMAN_CAIRO_ARGB32_GET_PIXEL (buf + 4*x, r, g, b, a);
           rowbuf[4*x+0] = a;
           rowbuf[4*x+1] = r;
           rowbuf[4*x+2] = g;
@@ -280,7 +280,7 @@ cdisplay_proof_convert_surface (GimpColorDisplay *display,
           r = rowbuf[4*x+1];
           g = rowbuf[4*x+2];
           b = rowbuf[4*x+3];
-          GIMP_CAIRO_ARGB32_SET_PIXEL (buf + 4*x, r, g, b, a);
+          PICMAN_CAIRO_ARGB32_SET_PIXEL (buf + 4*x, r, g, b, a);
         }
     }
 
@@ -288,7 +288,7 @@ cdisplay_proof_convert_surface (GimpColorDisplay *display,
 }
 
 static void
-cdisplay_proof_combo_box_set_active (GimpColorProfileComboBox *combo,
+cdisplay_proof_combo_box_set_active (PicmanColorProfileComboBox *combo,
                                      const gchar              *filename)
 {
   cmsHPROFILE  profile = NULL;
@@ -310,7 +310,7 @@ cdisplay_proof_combo_box_set_active (GimpColorProfileComboBox *combo,
           descSize = cmsGetProfileInfoASCII (profile, cmsInfoDescription,
                                              "en", "US", descData, descSize);
           if (descSize > 0)
-            label = gimp_any_to_utf8 (descData, -1, NULL);
+            label = picman_any_to_utf8 (descData, -1, NULL);
 
           g_free (descData);
         }
@@ -325,7 +325,7 @@ cdisplay_proof_combo_box_set_active (GimpColorProfileComboBox *combo,
               descSize = cmsGetProfileInfoASCII (profile, cmsInfoModel,
                                                  "en", "US", descData, descSize);
               if (descSize > 0)
-                label = gimp_any_to_utf8 (descData, -1, NULL);
+                label = picman_any_to_utf8 (descData, -1, NULL);
 
               g_free (descData);
             }
@@ -334,14 +334,14 @@ cdisplay_proof_combo_box_set_active (GimpColorProfileComboBox *combo,
       cmsCloseProfile (profile);
     }
 
-  gimp_color_profile_combo_box_set_active (combo, filename, label);
+  picman_color_profile_combo_box_set_active (combo, filename, label);
   g_free (label);
 }
 
 static void
 cdisplay_proof_file_chooser_dialog_response (GtkFileChooser           *dialog,
                                              gint                      response,
-                                             GimpColorProfileComboBox *combo)
+                                             PicmanColorProfileComboBox *combo)
 {
   if (response == GTK_RESPONSE_ACCEPT)
     {
@@ -412,7 +412,7 @@ cdisplay_proof_profile_changed (GtkWidget     *combo,
 {
   gchar *profile;
 
-  profile = gimp_color_profile_combo_box_get_active (GIMP_COLOR_PROFILE_COMBO_BOX (combo));
+  profile = picman_color_profile_combo_box_get_active (PICMAN_COLOR_PROFILE_COMBO_BOX (combo));
 
   g_object_set (proof,
                 "profile", profile,
@@ -422,7 +422,7 @@ cdisplay_proof_profile_changed (GtkWidget     *combo,
 }
 
 static GtkWidget *
-cdisplay_proof_configure (GimpColorDisplay *display)
+cdisplay_proof_configure (PicmanColorDisplay *display)
 {
   CdisplayProof *proof = CDISPLAY_PROOF (display);
   GtkWidget     *table;
@@ -437,8 +437,8 @@ cdisplay_proof_configure (GimpColorDisplay *display)
 
   dialog = cdisplay_proof_file_chooser_dialog_new ();
 
-  history = gimp_personal_rc_file ("profilerc");
-  combo = gimp_color_profile_combo_box_new (dialog, history);
+  history = picman_personal_rc_file ("profilerc");
+  combo = picman_color_profile_combo_box_new (dialog, history);
   g_free (history);
 
   g_signal_connect (dialog, "response",
@@ -450,20 +450,20 @@ cdisplay_proof_configure (GimpColorDisplay *display)
                     proof);
 
   if (proof->profile)
-    cdisplay_proof_combo_box_set_active (GIMP_COLOR_PROFILE_COMBO_BOX (combo),
+    cdisplay_proof_combo_box_set_active (PICMAN_COLOR_PROFILE_COMBO_BOX (combo),
                                          proof->profile);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("_Profile:"), 0.0, 0.5,
                              combo, 1, FALSE);
 
-  combo = gimp_prop_enum_combo_box_new (G_OBJECT (proof), "intent", 0, 0);
+  combo = picman_prop_enum_combo_box_new (G_OBJECT (proof), "intent", 0, 0);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 1,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 1,
                              _("_Intent:"), 0.0, 0.5,
                              combo, 1, FALSE);
 
-  toggle = gimp_prop_check_button_new (G_OBJECT (proof),
+  toggle = picman_prop_check_button_new (G_OBJECT (proof),
                                        "black-point-compensation",
                                        _("_Black Point Compensation"));
   gtk_table_attach_defaults (GTK_TABLE (table), toggle, 1, 2, 2, 3);
@@ -473,7 +473,7 @@ cdisplay_proof_configure (GimpColorDisplay *display)
 }
 
 static void
-cdisplay_proof_changed (GimpColorDisplay *display)
+cdisplay_proof_changed (PicmanColorDisplay *display)
 {
   CdisplayProof *proof = CDISPLAY_PROOF (display);
   cmsHPROFILE    rgbProfile;

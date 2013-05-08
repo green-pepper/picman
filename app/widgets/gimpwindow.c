@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpwindow.c
+ * picmanwindow.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,47 +22,47 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
 #include "display/display-types.h"
-#include "display/gimpcanvas.h"
+#include "display/picmancanvas.h"
 
-#include "gimpwindow.h"
+#include "picmanwindow.h"
 
-#include "gimp-log.h"
+#include "picman-log.h"
 
 
-static void      gimp_window_dispose         (GObject     *object);
-static gboolean  gimp_window_key_press_event (GtkWidget   *widget,
+static void      picman_window_dispose         (GObject     *object);
+static gboolean  picman_window_key_press_event (GtkWidget   *widget,
                                               GdkEventKey *kevent);
 
-G_DEFINE_TYPE (GimpWindow, gimp_window, GTK_TYPE_WINDOW)
+G_DEFINE_TYPE (PicmanWindow, picman_window, GTK_TYPE_WINDOW)
 
-#define parent_class gimp_window_parent_class
+#define parent_class picman_window_parent_class
 
 
 static void
-gimp_window_class_init (GimpWindowClass *klass)
+picman_window_class_init (PicmanWindowClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->dispose         = gimp_window_dispose;
+  object_class->dispose         = picman_window_dispose;
 
-  widget_class->key_press_event = gimp_window_key_press_event;
+  widget_class->key_press_event = picman_window_key_press_event;
 }
 
 static void
-gimp_window_init (GimpWindow *window)
+picman_window_init (PicmanWindow *window)
 {
 }
 
 static void
-gimp_window_dispose (GObject *object)
+picman_window_dispose (GObject *object)
 {
-  gimp_window_set_primary_focus_widget (GIMP_WINDOW (object), NULL);
+  picman_window_set_primary_focus_widget (PICMAN_WINDOW (object), NULL);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
@@ -70,10 +70,10 @@ gimp_window_dispose (GObject *object)
 fnord (le);
 
 static gboolean
-gimp_window_key_press_event (GtkWidget   *widget,
+picman_window_key_press_event (GtkWidget   *widget,
                              GdkEventKey *event)
 {
-  GimpWindow      *gimp_window = GIMP_WINDOW (widget);
+  PicmanWindow      *picman_window = PICMAN_WINDOW (widget);
   GtkWindow       *window      = GTK_WINDOW (widget);
   GtkWidget       *focus       = gtk_window_get_focus (window);
   GdkModifierType  accel_mods;
@@ -89,13 +89,13 @@ gimp_window_key_press_event (GtkWidget   *widget,
   if (focus &&
       (GTK_IS_EDITABLE (focus)  ||
        GTK_IS_TEXT_VIEW (focus) ||
-       GIMP_IS_CANVAS (focus)   ||
-       gtk_widget_get_ancestor (focus, GIMP_TYPE_CANVAS)))
+       PICMAN_IS_CANVAS (focus)   ||
+       gtk_widget_get_ancestor (focus, PICMAN_TYPE_CANVAS)))
     {
       handled = gtk_window_propagate_key_event (window, event);
 
       if (handled)
-        GIMP_LOG (KEY_EVENTS,
+        PICMAN_LOG (KEY_EVENTS,
                   "handled by gtk_window_propagate_key_event(text_widget)");
     }
   else
@@ -107,10 +107,10 @@ gimp_window_key_press_event (GtkWidget   *widget,
     }
 
   if (! handled &&
-      event->keyval == GDK_KEY_Escape && gimp_window->primary_focus_widget)
+      event->keyval == GDK_KEY_Escape && picman_window->primary_focus_widget)
     {
-      if (focus != gimp_window->primary_focus_widget)
-        gtk_widget_grab_focus (gimp_window->primary_focus_widget);
+      if (focus != picman_window->primary_focus_widget)
+        gtk_widget_grab_focus (picman_window->primary_focus_widget);
       else
         gtk_widget_error_bell (widget);
 
@@ -134,7 +134,7 @@ gimp_window_key_press_event (GtkWidget   *widget,
       handled = gtk_window_activate_key (window, event);
 
       if (handled)
-        GIMP_LOG (KEY_EVENTS,
+        PICMAN_LOG (KEY_EVENTS,
                   "handled by gtk_window_activate_key(modified)");
     }
 
@@ -144,7 +144,7 @@ gimp_window_key_press_event (GtkWidget   *widget,
       handled = gtk_window_propagate_key_event (window, event);
 
       if (handled)
-        GIMP_LOG (KEY_EVENTS,
+        PICMAN_LOG (KEY_EVENTS,
                   "handled by gtk_window_propagate_key_event(other_widget)");
     }
 
@@ -154,7 +154,7 @@ gimp_window_key_press_event (GtkWidget   *widget,
       handled = gtk_window_activate_key (window, event);
 
       if (handled)
-        GIMP_LOG (KEY_EVENTS,
+        PICMAN_LOG (KEY_EVENTS,
                   "handled by gtk_window_activate_key(unmodified)");
     }
 
@@ -168,7 +168,7 @@ gimp_window_key_press_event (GtkWidget   *widget,
       handled = widget_class->key_press_event (widget, event);
 
       if (handled)
-        GIMP_LOG (KEY_EVENTS,
+        PICMAN_LOG (KEY_EVENTS,
                   "handled by widget_class->key_press_event()");
     }
 
@@ -176,10 +176,10 @@ gimp_window_key_press_event (GtkWidget   *widget,
 }
 
 void
-gimp_window_set_primary_focus_widget (GimpWindow *window,
+picman_window_set_primary_focus_widget (PicmanWindow *window,
                                       GtkWidget  *primary_focus)
 {
-  g_return_if_fail (GIMP_IS_WINDOW (window));
+  g_return_if_fail (PICMAN_IS_WINDOW (window));
   g_return_if_fail (primary_focus == NULL || GTK_IS_WIDGET (primary_focus));
   g_return_if_fail (primary_focus == NULL ||
                     gtk_widget_get_toplevel (primary_focus) ==
@@ -197,9 +197,9 @@ gimp_window_set_primary_focus_widget (GimpWindow *window,
 }
 
 GtkWidget *
-gimp_window_get_primary_focus_widget (GimpWindow *window)
+picman_window_get_primary_focus_widget (PicmanWindow *window)
 {
-  g_return_val_if_fail (GIMP_IS_WINDOW (window), NULL);
+  g_return_val_if_fail (PICMAN_IS_WINDOW (window), NULL);
 
   return window->primary_focus_widget;
 }

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpText
- * Copyright (C) 2002-2003  Sven Neumann <sven@gimp.org>
+ * PicmanText
+ * Copyright (C) 2002-2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,12 @@
 #include "text/text-enums.h"
 
 
-typedef struct _GimpFont       GimpFont;
-typedef struct _GimpFontList   GimpFontList;
-typedef struct _GimpText       GimpText;
-typedef struct _GimpTextLayer  GimpTextLayer;
-typedef struct _GimpTextLayout GimpTextLayout;
-typedef struct _GimpTextUndo   GimpTextUndo;
+typedef struct _PicmanFont       PicmanFont;
+typedef struct _PicmanFontList   PicmanFontList;
+typedef struct _PicmanText       PicmanText;
+typedef struct _PicmanTextLayer  PicmanTextLayer;
+typedef struct _PicmanTextLayout PicmanTextLayout;
+typedef struct _PicmanTextUndo   PicmanTextUndo;
 
 
 #endif /* __TEXT_TYPES_H__ */

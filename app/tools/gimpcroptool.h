@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,43 +15,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_CROP_TOOL_H__
-#define  __GIMP_CROP_TOOL_H__
+#ifndef  __PICMAN_CROP_TOOL_H__
+#define  __PICMAN_CROP_TOOL_H__
 
 
-#include "gimpdrawtool.h"
+#include "picmandrawtool.h"
 
 
-#define GIMP_TYPE_CROP_TOOL            (gimp_crop_tool_get_type ())
-#define GIMP_CROP_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CROP_TOOL, GimpCropTool))
-#define GIMP_CROP_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CROP_TOOL, GimpCropToolClass))
-#define GIMP_IS_CROP_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CROP_TOOL))
-#define GIMP_IS_CROP_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CROP_TOOL))
-#define GIMP_CROP_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CROP_TOOL, GimpCropToolClass))
+#define PICMAN_TYPE_CROP_TOOL            (picman_crop_tool_get_type ())
+#define PICMAN_CROP_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CROP_TOOL, PicmanCropTool))
+#define PICMAN_CROP_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CROP_TOOL, PicmanCropToolClass))
+#define PICMAN_IS_CROP_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CROP_TOOL))
+#define PICMAN_IS_CROP_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CROP_TOOL))
+#define PICMAN_CROP_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CROP_TOOL, PicmanCropToolClass))
 
-#define GIMP_CROP_TOOL_GET_OPTIONS(t)  (GIMP_CROP_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_CROP_TOOL_GET_OPTIONS(t)  (PICMAN_CROP_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpCropTool      GimpCropTool;
-typedef struct _GimpCropToolClass GimpCropToolClass;
+typedef struct _PicmanCropTool      PicmanCropTool;
+typedef struct _PicmanCropToolClass PicmanCropToolClass;
 
-struct _GimpCropTool
+struct _PicmanCropTool
 {
-  GimpDrawTool  parent_instance;
+  PicmanDrawTool  parent_instance;
 
-  GimpImage    *current_image;
+  PicmanImage    *current_image;
 };
 
-struct _GimpCropToolClass
+struct _PicmanCropToolClass
 {
-  GimpDrawToolClass parent_class;
+  PicmanDrawToolClass parent_class;
 };
 
 
-void    gimp_crop_tool_register (GimpToolRegisterCallback  callback,
+void    picman_crop_tool_register (PicmanToolRegisterCallback  callback,
                                  gpointer                  data);
 
-GType   gimp_crop_tool_get_type (void) G_GNUC_CONST;
+GType   picman_crop_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_CROP_TOOL_H__  */
+#endif  /*  __PICMAN_CROP_TOOL_H__  */

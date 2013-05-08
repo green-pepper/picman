@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,27 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_LOAD_H__
-#define __GIMP_BRUSH_LOAD_H__
+#ifndef __PICMAN_BRUSH_LOAD_H__
+#define __PICMAN_BRUSH_LOAD_H__
 
 
-#define GIMP_BRUSH_FILE_EXTENSION        ".gbr"
-#define GIMP_BRUSH_PIXMAP_FILE_EXTENSION ".gpb"
-#define GIMP_BRUSH_PS_FILE_EXTENSION     ".abr"
-#define GIMP_BRUSH_PSP_FILE_EXTENSION    ".jbr"
+#define PICMAN_BRUSH_FILE_EXTENSION        ".gbr"
+#define PICMAN_BRUSH_PIXMAP_FILE_EXTENSION ".gpb"
+#define PICMAN_BRUSH_PS_FILE_EXTENSION     ".abr"
+#define PICMAN_BRUSH_PSP_FILE_EXTENSION    ".jbr"
 
 
-GList     * gimp_brush_load        (GimpContext  *context,
+GList     * picman_brush_load        (PicmanContext  *context,
                                     const gchar  *filename,
                                     GError      **error);
-GimpBrush * gimp_brush_load_brush  (GimpContext  *context,
+PicmanBrush * picman_brush_load_brush  (PicmanContext  *context,
                                     gint          fd,
                                     const gchar  *filename,
                                     GError      **error);
 
-GList     * gimp_brush_load_abr    (GimpContext  *context,
+GList     * picman_brush_load_abr    (PicmanContext  *context,
                                     const gchar  *filename,
                                     GError      **error);
 
 
-#endif /* __GIMP_BRUSH_LOAD_H__ */
+#endif /* __PICMAN_BRUSH_LOAD_H__ */

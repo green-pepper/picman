@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,63 +24,63 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core/core-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "gegl/gimp-gegl-tile-compat.h"
+#include "gegl/picman-gegl-tile-compat.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpdrawable-private.h" /* eek */
-#include "core/gimpgrid.h"
-#include "core/gimpgrouplayer.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-colormap.h"
-#include "core/gimpimage-grid.h"
-#include "core/gimpimage-guides.h"
-#include "core/gimpimage-private.h"
-#include "core/gimpimage-sample-points.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimpitemstack.h"
-#include "core/gimplayer-floating-sel.h"
-#include "core/gimplayermask.h"
-#include "core/gimpparasitelist.h"
-#include "core/gimpprogress.h"
-#include "core/gimpselection.h"
-#include "core/gimptemplate.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmandrawable-private.h" /* eek */
+#include "core/picmangrid.h"
+#include "core/picmangrouplayer.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-colormap.h"
+#include "core/picmanimage-grid.h"
+#include "core/picmanimage-guides.h"
+#include "core/picmanimage-private.h"
+#include "core/picmanimage-sample-points.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanitemstack.h"
+#include "core/picmanlayer-floating-sel.h"
+#include "core/picmanlayermask.h"
+#include "core/picmanparasitelist.h"
+#include "core/picmanprogress.h"
+#include "core/picmanselection.h"
+#include "core/picmantemplate.h"
 
-#include "text/gimptextlayer.h"
-#include "text/gimptextlayer-xcf.h"
+#include "text/picmantextlayer.h"
+#include "text/picmantextlayer-xcf.h"
 
-#include "vectors/gimpanchor.h"
-#include "vectors/gimpstroke.h"
-#include "vectors/gimpbezierstroke.h"
-#include "vectors/gimpvectors.h"
-#include "vectors/gimpvectors-compat.h"
+#include "vectors/picmananchor.h"
+#include "vectors/picmanstroke.h"
+#include "vectors/picmanbezierstroke.h"
+#include "vectors/picmanvectors.h"
+#include "vectors/picmanvectors-compat.h"
 
 #include "xcf-private.h"
 #include "xcf-load.h"
 #include "xcf-read.h"
 #include "xcf-seek.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define MAX_XCF_PARASITE_DATA_LEN (256L * 1024 * 1024)
 
-/* #define GIMP_XCF_PATH_DEBUG */
+/* #define PICMAN_XCF_PATH_DEBUG */
 
 
-static void            xcf_load_add_masks     (GimpImage     *image);
+static void            xcf_load_add_masks     (PicmanImage     *image);
 static gboolean        xcf_load_image_props   (XcfInfo       *info,
-                                               GimpImage     *image);
+                                               PicmanImage     *image);
 static gboolean        xcf_load_layer_props   (XcfInfo       *info,
-                                               GimpImage     *image,
-                                               GimpLayer    **layer,
+                                               PicmanImage     *image,
+                                               PicmanLayer    **layer,
                                                GList        **item_path,
                                                gboolean      *apply_mask,
                                                gboolean      *edit_mask,
@@ -88,18 +88,18 @@ static gboolean        xcf_load_layer_props   (XcfInfo       *info,
                                                guint32       *text_layer_flags,
                                                guint32       *group_layer_flags);
 static gboolean        xcf_load_channel_props (XcfInfo       *info,
-                                               GimpImage     *image,
-                                               GimpChannel  **channel);
+                                               PicmanImage     *image,
+                                               PicmanChannel  **channel);
 static gboolean        xcf_load_prop          (XcfInfo       *info,
                                                PropType      *prop_type,
                                                guint32       *prop_size);
-static GimpLayer     * xcf_load_layer         (XcfInfo       *info,
-                                               GimpImage     *image,
+static PicmanLayer     * xcf_load_layer         (XcfInfo       *info,
+                                               PicmanImage     *image,
                                                GList        **item_path);
-static GimpChannel   * xcf_load_channel       (XcfInfo       *info,
-                                               GimpImage     *image);
-static GimpLayerMask * xcf_load_layer_mask    (XcfInfo       *info,
-                                               GimpImage     *image);
+static PicmanChannel   * xcf_load_channel       (XcfInfo       *info,
+                                               PicmanImage     *image);
+static PicmanLayerMask * xcf_load_layer_mask    (XcfInfo       *info,
+                                               PicmanImage     *image);
 static gboolean        xcf_load_buffer        (XcfInfo       *info,
                                                GeglBuffer    *buffer);
 static gboolean        xcf_load_level         (XcfInfo       *info,
@@ -113,15 +113,15 @@ static gboolean        xcf_load_tile_rle      (XcfInfo       *info,
                                                GeglRectangle *tile_rect,
                                                const Babl    *format,
                                                gint           data_length);
-static GimpParasite  * xcf_load_parasite      (XcfInfo       *info);
+static PicmanParasite  * xcf_load_parasite      (XcfInfo       *info);
 static gboolean        xcf_load_old_paths     (XcfInfo       *info,
-                                               GimpImage     *image);
+                                               PicmanImage     *image);
 static gboolean        xcf_load_old_path      (XcfInfo       *info,
-                                               GimpImage     *image);
+                                               PicmanImage     *image);
 static gboolean        xcf_load_vectors       (XcfInfo       *info,
-                                               GimpImage     *image);
+                                               PicmanImage     *image);
 static gboolean        xcf_load_vector        (XcfInfo       *info,
-                                               GimpImage     *image);
+                                               PicmanImage     *image);
 
 static gboolean        xcf_skip_unknown_prop  (XcfInfo       *info,
                                                gsize          size);
@@ -130,23 +130,23 @@ static gboolean        xcf_skip_unknown_prop  (XcfInfo       *info,
 #define xcf_progress_update(info) G_STMT_START  \
   {                                             \
     if (info->progress)                         \
-      gimp_progress_pulse (info->progress);     \
+      picman_progress_pulse (info->progress);     \
   } G_STMT_END
 
 
-GimpImage *
-xcf_load_image (Gimp     *gimp,
+PicmanImage *
+xcf_load_image (Picman     *picman,
                 XcfInfo  *info,
                 GError  **error)
 {
-  GimpImage          *image;
-  const GimpParasite *parasite;
+  PicmanImage          *image;
+  const PicmanParasite *parasite;
   guint32             saved_pos;
   guint32             offset;
   gint                width;
   gint                height;
   gint                image_type;
-  gint                precision = GIMP_PRECISION_U8;
+  gint                precision = PICMAN_PRECISION_U8;
   gint                num_successful_elements = 0;
 
   /* read in the image width, height and type */
@@ -157,10 +157,10 @@ xcf_load_image (Gimp     *gimp,
   if (info->file_version >= 4)
     info->cp += xcf_read_int32 (info->fp, (guint32 *) &precision, 1);
 
-  image = gimp_create_image (gimp, width, height, image_type, precision,
+  image = picman_create_image (picman, width, height, image_type, precision,
                              FALSE);
 
-  gimp_image_undo_disable (image);
+  picman_image_undo_disable (image);
 
   xcf_progress_update (info);
 
@@ -168,21 +168,21 @@ xcf_load_image (Gimp     *gimp,
   if (! xcf_load_image_props (info, image))
     goto hard_error;
 
-  /* check for a GimpGrid parasite */
-  parasite = gimp_image_parasite_find (GIMP_IMAGE (image),
-                                       gimp_grid_parasite_name ());
+  /* check for a PicmanGrid parasite */
+  parasite = picman_image_parasite_find (PICMAN_IMAGE (image),
+                                       picman_grid_parasite_name ());
   if (parasite)
     {
-      GimpGrid *grid = gimp_grid_from_parasite (parasite);
+      PicmanGrid *grid = picman_grid_from_parasite (parasite);
 
       if (grid)
         {
-          GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+          PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
 
-          gimp_parasite_list_remove (private->parasites,
-                                     gimp_parasite_name (parasite));
+          picman_parasite_list_remove (private->parasites,
+                                     picman_parasite_name (parasite));
 
-          gimp_image_set_grid (GIMP_IMAGE (image), grid, FALSE);
+          picman_image_set_grid (PICMAN_IMAGE (image), grid, FALSE);
           g_object_unref (grid);
         }
     }
@@ -191,7 +191,7 @@ xcf_load_image (Gimp     *gimp,
 
   while (TRUE)
     {
-      GimpLayer *layer;
+      PicmanLayer *layer;
       GList     *item_path = NULL;
 
       /* read in the offset of the next layer */
@@ -224,9 +224,9 @@ xcf_load_image (Gimp     *gimp,
       /* add the layer to the image if its not the floating selection */
       if (layer != info->floating_sel)
         {
-          GimpContainer *layers = gimp_image_get_layers (image);
-          GimpContainer *container;
-          GimpLayer     *parent;
+          PicmanContainer *layers = picman_image_get_layers (image);
+          PicmanContainer *container;
+          PicmanLayer     *parent;
 
           if (item_path)
             {
@@ -246,12 +246,12 @@ xcf_load_image (Gimp     *gimp,
                   item_path->data = GUINT_TO_POINTER (toplevel_index);
                 }
 
-              parent = GIMP_LAYER
-                (gimp_item_stack_get_parent_by_path (GIMP_ITEM_STACK (layers),
+              parent = PICMAN_LAYER
+                (picman_item_stack_get_parent_by_path (PICMAN_ITEM_STACK (layers),
                                                      item_path,
                                                      NULL));
 
-              container = gimp_viewable_get_children (GIMP_VIEWABLE (parent));
+              container = picman_viewable_get_children (PICMAN_VIEWABLE (parent));
 
               g_list_free (item_path);
             }
@@ -261,9 +261,9 @@ xcf_load_image (Gimp     *gimp,
               container = layers;
             }
 
-          gimp_image_add_layer (image, layer,
+          picman_image_add_layer (image, layer,
                                 parent,
-                                gimp_container_get_n_children (container),
+                                picman_container_get_n_children (container),
                                 FALSE);
         }
 
@@ -276,7 +276,7 @@ xcf_load_image (Gimp     *gimp,
 
   while (TRUE)
     {
-      GimpChannel *channel;
+      PicmanChannel *channel;
 
       /* read in the offset of the next channel */
       info->cp += xcf_read_int32 (info->fp, &offset, 1);
@@ -306,10 +306,10 @@ xcf_load_image (Gimp     *gimp,
       xcf_progress_update (info);
 
       /* add the channel to the image if its not the selection */
-      if (channel != gimp_image_get_mask (image))
-        gimp_image_add_channel (image, channel,
+      if (channel != picman_image_get_mask (image))
+        picman_image_add_channel (image, channel,
                                 NULL, /* FIXME tree */
-                                gimp_container_get_n_children (gimp_image_get_channels (image)),
+                                picman_container_get_n_children (picman_image_get_channels (image)),
                                 FALSE);
 
       /* restore the saved position so we'll be ready to
@@ -325,17 +325,17 @@ xcf_load_image (Gimp     *gimp,
     floating_sel_attach (info->floating_sel, info->floating_sel_drawable);
 
   if (info->active_layer)
-    gimp_image_set_active_layer (image, info->active_layer);
+    picman_image_set_active_layer (image, info->active_layer);
 
   if (info->active_channel)
-    gimp_image_set_active_channel (image, info->active_channel);
+    picman_image_set_active_channel (image, info->active_channel);
 
-  gimp_image_set_filename (image, info->filename);
+  picman_image_set_filename (image, info->filename);
 
   if (info->tattoo_state > 0)
-    gimp_image_set_tattoo_state (image, info->tattoo_state);
+    picman_image_set_tattoo_state (image, info->tattoo_state);
 
-  gimp_image_undo_enable (image);
+  picman_image_undo_enable (image);
 
   return image;
 
@@ -343,13 +343,13 @@ xcf_load_image (Gimp     *gimp,
   if (num_successful_elements == 0)
     goto hard_error;
 
-  gimp_message_literal (gimp, G_OBJECT (info->progress), GIMP_MESSAGE_WARNING,
+  picman_message_literal (picman, G_OBJECT (info->progress), PICMAN_MESSAGE_WARNING,
 			_("This XCF file is corrupt!  I have loaded as much "
 			  "of it as I can, but it is incomplete."));
 
   xcf_load_add_masks (image);
 
-  gimp_image_undo_enable (image);
+  picman_image_undo_enable (image);
 
   return image;
 
@@ -364,19 +364,19 @@ xcf_load_image (Gimp     *gimp,
 }
 
 static void
-xcf_load_add_masks (GimpImage *image)
+xcf_load_add_masks (PicmanImage *image)
 {
   GList *layers;
   GList *list;
 
-  layers = gimp_image_get_layer_list (image);
+  layers = picman_image_get_layer_list (image);
 
   for (list = layers; list; list = g_list_next (list))
     {
-      GimpLayer     *layer = list->data;
-      GimpLayerMask *mask;
+      PicmanLayer     *layer = list->data;
+      PicmanLayerMask *mask;
 
-      mask = g_object_get_data (G_OBJECT (layer), "gimp-layer-mask");
+      mask = g_object_get_data (G_OBJECT (layer), "picman-layer-mask");
 
       if (mask)
         {
@@ -385,22 +385,22 @@ xcf_load_add_masks (GimpImage *image)
           gboolean show_mask;
 
           apply_mask = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (layer),
-                                                           "gimp-layer-mask-apply"));
+                                                           "picman-layer-mask-apply"));
           edit_mask = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (layer),
-                                                          "gimp-layer-mask-edit"));
+                                                          "picman-layer-mask-edit"));
           show_mask = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (layer),
-                                                          "gimp-layer-mask-show"));
+                                                          "picman-layer-mask-show"));
 
-          gimp_layer_add_mask (layer, mask, FALSE, NULL);
+          picman_layer_add_mask (layer, mask, FALSE, NULL);
 
-          gimp_layer_set_apply_mask (layer, apply_mask, FALSE);
-          gimp_layer_set_edit_mask  (layer, edit_mask);
-          gimp_layer_set_show_mask  (layer, show_mask, FALSE);
+          picman_layer_set_apply_mask (layer, apply_mask, FALSE);
+          picman_layer_set_edit_mask  (layer, edit_mask);
+          picman_layer_set_show_mask  (layer, show_mask, FALSE);
 
-          g_object_set_data (G_OBJECT (layer), "gimp-layer-mask",       NULL);
-          g_object_set_data (G_OBJECT (layer), "gimp-layer-mask-apply", NULL);
-          g_object_set_data (G_OBJECT (layer), "gimp-layer-mask-edit",  NULL);
-          g_object_set_data (G_OBJECT (layer), "gimp-layer-mask-show",  NULL);
+          g_object_set_data (G_OBJECT (layer), "picman-layer-mask",       NULL);
+          g_object_set_data (G_OBJECT (layer), "picman-layer-mask-apply", NULL);
+          g_object_set_data (G_OBJECT (layer), "picman-layer-mask-edit",  NULL);
+          g_object_set_data (G_OBJECT (layer), "picman-layer-mask-show",  NULL);
         }
     }
 
@@ -409,7 +409,7 @@ xcf_load_add_masks (GimpImage *image)
 
 static gboolean
 xcf_load_image_props (XcfInfo   *info,
-                      GimpImage *image)
+                      PicmanImage *image)
 {
   PropType prop_type;
   guint32  prop_size;
@@ -427,16 +427,16 @@ xcf_load_image_props (XcfInfo   *info,
         case PROP_COLORMAP:
           {
             guint32 n_colors;
-            guchar  cmap[GIMP_IMAGE_COLORMAP_SIZE];
+            guchar  cmap[PICMAN_IMAGE_COLORMAP_SIZE];
 
             info->cp += xcf_read_int32 (info->fp, &n_colors, 1);
 
-            if (n_colors > (GIMP_IMAGE_COLORMAP_SIZE / 3))
+            if (n_colors > (PICMAN_IMAGE_COLORMAP_SIZE / 3))
               {
-                gimp_message (info->gimp, G_OBJECT (info->progress),
-                              GIMP_MESSAGE_ERROR,
+                picman_message (info->picman, G_OBJECT (info->progress),
+                              PICMAN_MESSAGE_ERROR,
                               "Maximum colormap size (%d) exceeded",
-			      GIMP_IMAGE_COLORMAP_SIZE);
+			      PICMAN_IMAGE_COLORMAP_SIZE);
                 return FALSE;
               }
 
@@ -444,8 +444,8 @@ xcf_load_image_props (XcfInfo   *info,
               {
                 gint i;
 
-                gimp_message_literal (info->gimp, G_OBJECT (info->progress),
-				      GIMP_MESSAGE_WARNING,
+                picman_message_literal (info->picman, G_OBJECT (info->progress),
+				      PICMAN_MESSAGE_WARNING,
 				      _("XCF warning: version 0 of XCF file format\n"
 					"did not save indexed colormaps correctly.\n"
 					"Substituting grayscale map."));
@@ -466,11 +466,11 @@ xcf_load_image_props (XcfInfo   *info,
               }
 
             /* only set color map if image is not indexed, this is
-             * just sanity checking to make sure gimp doesn't end up
+             * just sanity checking to make sure picman doesn't end up
              * with an image state that is impossible.
              */
-            if (gimp_image_get_base_type (image) == GIMP_INDEXED)
-              gimp_image_set_colormap (image, cmap, n_colors, FALSE);
+            if (picman_image_get_base_type (image) == PICMAN_INDEXED)
+              picman_image_set_colormap (image, cmap, n_colors, FALSE);
           }
           break;
 
@@ -485,8 +485,8 @@ xcf_load_image_props (XcfInfo   *info,
                 (compression != COMPRESS_ZLIB) &&
                 (compression != COMPRESS_FRACTAL))
               {
-                gimp_message (info->gimp, G_OBJECT (info->progress),
-                              GIMP_MESSAGE_ERROR,
+                picman_message (info->picman, G_OBJECT (info->progress),
+                              PICMAN_MESSAGE_ERROR,
                               "Unknown compression type: %d",
 			      (gint) compression);
                 return FALSE;
@@ -498,7 +498,7 @@ xcf_load_image_props (XcfInfo   *info,
 
         case PROP_GUIDES:
           {
-            GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+            PicmanImagePrivate *private = PICMAN_IMAGE_GET_PRIVATE (image);
             gint32            position;
             gint8             orientation;
             gint              i, nguides;
@@ -518,16 +518,16 @@ xcf_load_image_props (XcfInfo   *info,
                 switch (orientation)
                   {
                   case XCF_ORIENTATION_HORIZONTAL:
-                    gimp_image_add_hguide (image, position, FALSE);
+                    picman_image_add_hguide (image, position, FALSE);
                     break;
 
                   case XCF_ORIENTATION_VERTICAL:
-                    gimp_image_add_vguide (image, position, FALSE);
+                    picman_image_add_vguide (image, position, FALSE);
                     break;
 
                   default:
-                    gimp_message_literal (info->gimp, G_OBJECT (info->progress),
-					  GIMP_MESSAGE_WARNING,
+                    picman_message_literal (info->picman, G_OBJECT (info->progress),
+					  PICMAN_MESSAGE_WARNING,
 					  "Guide orientation out of range in XCF file");
                     continue;
                   }
@@ -552,7 +552,7 @@ xcf_load_image_props (XcfInfo   *info,
                 info->cp += xcf_read_int32 (info->fp, (guint32 *) &x, 1);
                 info->cp += xcf_read_int32 (info->fp, (guint32 *) &y, 1);
 
-                gimp_image_add_sample_point_at_pos (image, x, y, FALSE);
+                picman_image_add_sample_point_at_pos (image, x, y, FALSE);
               }
           }
           break;
@@ -564,19 +564,19 @@ xcf_load_image_props (XcfInfo   *info,
             info->cp += xcf_read_float (info->fp, &xres, 1);
             info->cp += xcf_read_float (info->fp, &yres, 1);
 
-            if (xres < GIMP_MIN_RESOLUTION || xres > GIMP_MAX_RESOLUTION ||
-                yres < GIMP_MIN_RESOLUTION || yres > GIMP_MAX_RESOLUTION)
+            if (xres < PICMAN_MIN_RESOLUTION || xres > PICMAN_MAX_RESOLUTION ||
+                yres < PICMAN_MIN_RESOLUTION || yres > PICMAN_MAX_RESOLUTION)
               {
-                GimpTemplate *template = image->gimp->config->default_image;
+                PicmanTemplate *template = image->picman->config->default_image;
 
-                gimp_message_literal (info->gimp, G_OBJECT (info->progress),
-				      GIMP_MESSAGE_WARNING,
+                picman_message_literal (info->picman, G_OBJECT (info->progress),
+				      PICMAN_MESSAGE_WARNING,
 				      "Warning, resolution out of range in XCF file");
-                xres = gimp_template_get_resolution_x (template);
-                yres = gimp_template_get_resolution_y (template);
+                xres = picman_template_get_resolution_x (template);
+                yres = picman_template_get_resolution_y (template);
               }
 
-            gimp_image_set_resolution (image, xres, yres);
+            picman_image_set_resolution (image, xres, yres);
           }
           break;
 
@@ -592,18 +592,18 @@ xcf_load_image_props (XcfInfo   *info,
 
             while (info->cp - base < prop_size)
               {
-                GimpParasite *p = xcf_load_parasite (info);
+                PicmanParasite *p = xcf_load_parasite (info);
 
                 if (! p)
                   return FALSE;
 
-                gimp_image_parasite_attach (image, p);
-                gimp_parasite_free (p);
+                picman_image_parasite_attach (image, p);
+                picman_parasite_free (p);
               }
 
             if (info->cp - base != prop_size)
-              gimp_message_literal (info->gimp, G_OBJECT (info->progress),
-				    GIMP_MESSAGE_WARNING,
+              picman_message_literal (info->picman, G_OBJECT (info->progress),
+				    PICMAN_MESSAGE_WARNING,
 				    "Error while loading an image's parasites");
           }
           break;
@@ -614,17 +614,17 @@ xcf_load_image_props (XcfInfo   *info,
 
             info->cp += xcf_read_int32 (info->fp, &unit, 1);
 
-            if ((unit <= GIMP_UNIT_PIXEL) ||
-                (unit >= gimp_unit_get_number_of_built_in_units ()))
+            if ((unit <= PICMAN_UNIT_PIXEL) ||
+                (unit >= picman_unit_get_number_of_built_in_units ()))
               {
-                gimp_message_literal (info->gimp, G_OBJECT (info->progress),
-				      GIMP_MESSAGE_WARNING,
+                picman_message_literal (info->picman, G_OBJECT (info->progress),
+				      PICMAN_MESSAGE_WARNING,
 				      "Warning, unit out of range in XCF file, "
 				      "falling back to inches");
-                unit = GIMP_UNIT_INCH;
+                unit = PICMAN_UNIT_INCH;
               }
 
-            gimp_image_set_unit (image, unit);
+            picman_image_set_unit (image, unit);
           }
           break;
 
@@ -637,7 +637,7 @@ xcf_load_image_props (XcfInfo   *info,
             gchar    *unit_strings[5];
             float     factor;
             guint32   digits;
-            GimpUnit  unit;
+            PicmanUnit  unit;
             gint      num_units;
             gint      i;
 
@@ -649,17 +649,17 @@ xcf_load_image_props (XcfInfo   *info,
               if (unit_strings[i] == NULL)
                 unit_strings[i] = g_strdup ("");
 
-            num_units = gimp_unit_get_number_of_units ();
+            num_units = picman_unit_get_number_of_units ();
 
-            for (unit = gimp_unit_get_number_of_built_in_units ();
+            for (unit = picman_unit_get_number_of_built_in_units ();
                  unit < num_units; unit++)
               {
                 /* if the factor and the identifier match some unit
                  * in unitrc, use the unitrc unit
                  */
-                if ((ABS (gimp_unit_get_factor (unit) - factor) < 1e-5) &&
+                if ((ABS (picman_unit_get_factor (unit) - factor) < 1e-5) &&
                     (strcmp (unit_strings[0],
-                             gimp_unit_get_identifier (unit)) == 0))
+                             picman_unit_get_identifier (unit)) == 0))
                   {
                     break;
                   }
@@ -667,7 +667,7 @@ xcf_load_image_props (XcfInfo   *info,
 
             /* no match */
             if (unit == num_units)
-              unit = gimp_unit_new (unit_strings[0],
+              unit = picman_unit_new (unit_strings[0],
                                     factor,
                                     digits,
                                     unit_strings[1],
@@ -675,7 +675,7 @@ xcf_load_image_props (XcfInfo   *info,
                                     unit_strings[3],
                                     unit_strings[4]);
 
-            gimp_image_set_unit (image, unit);
+            picman_image_set_unit (image, unit);
 
             for (i = 0; i < 5; i++)
               g_free (unit_strings[i]);
@@ -707,7 +707,7 @@ xcf_load_image_props (XcfInfo   *info,
           break;
 
         default:
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
           g_printerr ("unexpected/unknown image property: %d (skipping)\n",
                       prop_type);
 #endif
@@ -722,8 +722,8 @@ xcf_load_image_props (XcfInfo   *info,
 
 static gboolean
 xcf_load_layer_props (XcfInfo    *info,
-                      GimpImage  *image,
-                      GimpLayer **layer,
+                      PicmanImage  *image,
+                      PicmanLayer **layer,
                       GList     **item_path,
                       gboolean   *apply_mask,
                       gboolean   *edit_mask,
@@ -760,7 +760,7 @@ xcf_load_layer_props (XcfInfo    *info,
             guint32 opacity;
 
             info->cp += xcf_read_int32 (info->fp, &opacity, 1);
-            gimp_layer_set_opacity (*layer, (gdouble) opacity / 255.0, FALSE);
+            picman_layer_set_opacity (*layer, (gdouble) opacity / 255.0, FALSE);
           }
           break;
 
@@ -769,7 +769,7 @@ xcf_load_layer_props (XcfInfo    *info,
             gboolean visible;
 
             info->cp += xcf_read_int32 (info->fp, (guint32 *) &visible, 1);
-            gimp_item_set_visible (GIMP_ITEM (*layer), visible, FALSE);
+            picman_item_set_visible (PICMAN_ITEM (*layer), visible, FALSE);
           }
           break;
 
@@ -778,7 +778,7 @@ xcf_load_layer_props (XcfInfo    *info,
             gboolean linked;
 
             info->cp += xcf_read_int32 (info->fp, (guint32 *) &linked, 1);
-            gimp_item_set_linked (GIMP_ITEM (*layer), linked, FALSE);
+            picman_item_set_linked (PICMAN_ITEM (*layer), linked, FALSE);
           }
           break;
 
@@ -788,8 +788,8 @@ xcf_load_layer_props (XcfInfo    *info,
 
             info->cp += xcf_read_int32 (info->fp, (guint32 *) &lock_content, 1);
 
-            if (gimp_item_can_lock_content (GIMP_ITEM (*layer)))
-              gimp_item_set_lock_content (GIMP_ITEM (*layer),
+            if (picman_item_can_lock_content (PICMAN_ITEM (*layer)))
+              picman_item_set_lock_content (PICMAN_ITEM (*layer),
                                           lock_content, FALSE);
           }
           break;
@@ -800,8 +800,8 @@ xcf_load_layer_props (XcfInfo    *info,
 
             info->cp += xcf_read_int32 (info->fp, (guint32 *) &lock_alpha, 1);
 
-            if (gimp_layer_can_lock_alpha (*layer))
-              gimp_layer_set_lock_alpha (*layer, lock_alpha, FALSE);
+            if (picman_layer_can_lock_alpha (*layer))
+              picman_layer_set_lock_alpha (*layer, lock_alpha, FALSE);
           }
           break;
 
@@ -811,8 +811,8 @@ xcf_load_layer_props (XcfInfo    *info,
 
             info->cp += xcf_read_int32 (info->fp, (guint32 *) &lock_position, 1);
 
-            if (gimp_item_can_lock_position (GIMP_ITEM (*layer)))
-              gimp_item_set_lock_position (GIMP_ITEM (*layer),
+            if (picman_item_can_lock_position (PICMAN_ITEM (*layer)))
+              picman_item_set_lock_position (PICMAN_ITEM (*layer),
                                            lock_position, FALSE);
           }
           break;
@@ -837,7 +837,7 @@ xcf_load_layer_props (XcfInfo    *info,
             info->cp += xcf_read_int32 (info->fp, &offset_x, 1);
             info->cp += xcf_read_int32 (info->fp, &offset_y, 1);
 
-            gimp_item_set_offset (GIMP_ITEM (*layer), offset_x, offset_y);
+            picman_item_set_offset (PICMAN_ITEM (*layer), offset_x, offset_y);
           }
           break;
 
@@ -846,16 +846,16 @@ xcf_load_layer_props (XcfInfo    *info,
             guint32 mode;
 
             info->cp += xcf_read_int32 (info->fp, &mode, 1);
-            gimp_layer_set_mode (*layer, (GimpLayerModeEffects) mode, FALSE);
+            picman_layer_set_mode (*layer, (PicmanLayerModeEffects) mode, FALSE);
           }
           break;
 
         case PROP_TATTOO:
           {
-            GimpTattoo tattoo;
+            PicmanTattoo tattoo;
 
             info->cp += xcf_read_int32 (info->fp, (guint32 *) &tattoo, 1);
-            gimp_item_set_tattoo (GIMP_ITEM (*layer), tattoo);
+            picman_item_set_tattoo (PICMAN_ITEM (*layer), tattoo);
           }
           break;
 
@@ -865,18 +865,18 @@ xcf_load_layer_props (XcfInfo    *info,
 
             while (info->cp - base < prop_size)
               {
-                GimpParasite *p = xcf_load_parasite (info);
+                PicmanParasite *p = xcf_load_parasite (info);
 
                 if (! p)
                   return FALSE;
 
-                gimp_item_parasite_attach (GIMP_ITEM (*layer), p, FALSE);
-                gimp_parasite_free (p);
+                picman_item_parasite_attach (PICMAN_ITEM (*layer), p, FALSE);
+                picman_parasite_free (p);
               }
 
             if (info->cp - base != prop_size)
-              gimp_message_literal (info->gimp, G_OBJECT (info->progress),
-				    GIMP_MESSAGE_WARNING,
+              picman_message_literal (info->picman, G_OBJECT (info->progress),
+				    PICMAN_MESSAGE_WARNING,
 				    "Error while loading a layer's parasites");
           }
           break;
@@ -887,12 +887,12 @@ xcf_load_layer_props (XcfInfo    *info,
 
         case PROP_GROUP_ITEM:
           {
-            GimpLayer *group;
+            PicmanLayer *group;
 
-            group = gimp_group_layer_new (image);
+            group = picman_group_layer_new (image);
 
-            gimp_object_set_name (GIMP_OBJECT (group),
-                                  gimp_object_get_name (*layer));
+            picman_object_set_name (PICMAN_OBJECT (group),
+                                  picman_object_get_name (*layer));
 
             g_object_ref_sink (*layer);
             g_object_unref (*layer);
@@ -923,7 +923,7 @@ xcf_load_layer_props (XcfInfo    *info,
           break;
 
         default:
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
           g_printerr ("unexpected/unknown layer property: %d (skipping)\n",
                       prop_type);
 #endif
@@ -938,8 +938,8 @@ xcf_load_layer_props (XcfInfo    *info,
 
 static gboolean
 xcf_load_channel_props (XcfInfo      *info,
-                        GimpImage    *image,
-                        GimpChannel **channel)
+                        PicmanImage    *image,
+                        PicmanChannel **channel)
 {
   PropType prop_type;
   guint32  prop_size;
@@ -960,18 +960,18 @@ xcf_load_channel_props (XcfInfo      *info,
 
         case PROP_SELECTION:
           {
-            GimpChannel *mask;
+            PicmanChannel *mask;
 
             mask =
-              gimp_selection_new (image,
-                                  gimp_item_get_width  (GIMP_ITEM (*channel)),
-                                  gimp_item_get_height (GIMP_ITEM (*channel)));
-            gimp_image_take_mask (image, mask);
+              picman_selection_new (image,
+                                  picman_item_get_width  (PICMAN_ITEM (*channel)),
+                                  picman_item_get_height (PICMAN_ITEM (*channel)));
+            picman_image_take_mask (image, mask);
 
-            g_object_unref (GIMP_DRAWABLE (mask)->private->buffer);
-            GIMP_DRAWABLE (mask)->private->buffer =
-              GIMP_DRAWABLE (*channel)->private->buffer;
-            GIMP_DRAWABLE (*channel)->private->buffer = NULL;
+            g_object_unref (PICMAN_DRAWABLE (mask)->private->buffer);
+            PICMAN_DRAWABLE (mask)->private->buffer =
+              PICMAN_DRAWABLE (*channel)->private->buffer;
+            PICMAN_DRAWABLE (*channel)->private->buffer = NULL;
             g_object_unref (*channel);
             *channel = mask;
             (*channel)->boundary_known = FALSE;
@@ -984,7 +984,7 @@ xcf_load_channel_props (XcfInfo      *info,
             guint32 opacity;
 
             info->cp += xcf_read_int32 (info->fp, &opacity, 1);
-            gimp_channel_set_opacity (*channel, opacity / 255.0, FALSE);
+            picman_channel_set_opacity (*channel, opacity / 255.0, FALSE);
           }
           break;
 
@@ -993,7 +993,7 @@ xcf_load_channel_props (XcfInfo      *info,
             gboolean visible;
 
             info->cp += xcf_read_int32 (info->fp, (guint32 *) &visible, 1);
-            gimp_item_set_visible (GIMP_ITEM (*channel),
+            picman_item_set_visible (PICMAN_ITEM (*channel),
                                    visible ? TRUE : FALSE, FALSE);
           }
           break;
@@ -1003,7 +1003,7 @@ xcf_load_channel_props (XcfInfo      *info,
             gboolean linked;
 
             info->cp += xcf_read_int32 (info->fp, (guint32 *) &linked, 1);
-            gimp_item_set_linked (GIMP_ITEM (*channel),
+            picman_item_set_linked (PICMAN_ITEM (*channel),
                                   linked ? TRUE : FALSE, FALSE);
           }
           break;
@@ -1013,7 +1013,7 @@ xcf_load_channel_props (XcfInfo      *info,
             gboolean lock_content;
 
             info->cp += xcf_read_int32 (info->fp, (guint32 *) &lock_content, 1);
-            gimp_item_set_lock_content (GIMP_ITEM (*channel),
+            picman_item_set_lock_content (PICMAN_ITEM (*channel),
                                         lock_content ? TRUE : FALSE, FALSE);
           }
           break;
@@ -1023,7 +1023,7 @@ xcf_load_channel_props (XcfInfo      *info,
             gboolean lock_position;
 
             info->cp += xcf_read_int32 (info->fp, (guint32 *) &lock_position, 1);
-            gimp_item_set_lock_position (GIMP_ITEM (*channel),
+            picman_item_set_lock_position (PICMAN_ITEM (*channel),
                                          lock_position ? TRUE : FALSE, FALSE);
           }
           break;
@@ -1033,7 +1033,7 @@ xcf_load_channel_props (XcfInfo      *info,
             gboolean show_masked;
 
             info->cp += xcf_read_int32 (info->fp, (guint32 *) &show_masked, 1);
-            gimp_channel_set_show_masked (*channel, show_masked);
+            picman_channel_set_show_masked (*channel, show_masked);
           }
           break;
 
@@ -1042,16 +1042,16 @@ xcf_load_channel_props (XcfInfo      *info,
             guchar col[3];
 
             info->cp += xcf_read_int8 (info->fp, (guint8 *) col, 3);
-            gimp_rgb_set_uchar (&(*channel)->color, col[0], col[1], col[2]);
+            picman_rgb_set_uchar (&(*channel)->color, col[0], col[1], col[2]);
           }
           break;
 
         case PROP_TATTOO:
           {
-            GimpTattoo tattoo;
+            PicmanTattoo tattoo;
 
             info->cp += xcf_read_int32 (info->fp, (guint32 *) &tattoo, 1);
-            gimp_item_set_tattoo (GIMP_ITEM (*channel), tattoo);
+            picman_item_set_tattoo (PICMAN_ITEM (*channel), tattoo);
           }
           break;
 
@@ -1061,24 +1061,24 @@ xcf_load_channel_props (XcfInfo      *info,
 
             while ((info->cp - base) < prop_size)
               {
-                GimpParasite *p = xcf_load_parasite (info);
+                PicmanParasite *p = xcf_load_parasite (info);
 
                 if (! p)
                   return FALSE;
 
-                gimp_item_parasite_attach (GIMP_ITEM (*channel), p, FALSE);
-                gimp_parasite_free (p);
+                picman_item_parasite_attach (PICMAN_ITEM (*channel), p, FALSE);
+                picman_parasite_free (p);
               }
 
             if (info->cp - base != prop_size)
-              gimp_message_literal (info->gimp, G_OBJECT (info->progress),
-				    GIMP_MESSAGE_WARNING,
+              picman_message_literal (info->picman, G_OBJECT (info->progress),
+				    PICMAN_MESSAGE_WARNING,
 				    "Error while loading a channel's parasites");
           }
           break;
 
         default:
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
           g_printerr ("unexpected/unknown channel property: %d (skipping)\n",
                       prop_type);
 #endif
@@ -1109,13 +1109,13 @@ xcf_load_prop (XcfInfo  *info,
   return TRUE;
 }
 
-static GimpLayer *
+static PicmanLayer *
 xcf_load_layer (XcfInfo    *info,
-                GimpImage  *image,
+                PicmanImage  *image,
                 GList     **item_path)
 {
-  GimpLayer         *layer;
-  GimpLayerMask     *layer_mask;
+  PicmanLayer         *layer;
+  PicmanLayerMask     *layer_mask;
   guint32            hierarchy_offset;
   guint32            layer_mask_offset;
   gboolean           apply_mask = TRUE;
@@ -1128,7 +1128,7 @@ xcf_load_layer (XcfInfo    *info,
   gint               width;
   gint               height;
   gint               type;
-  GimpImageBaseType  base_type;
+  PicmanImageBaseType  base_type;
   gboolean           has_alpha;
   const Babl        *format;
   gboolean           is_fs_drawable;
@@ -1147,33 +1147,33 @@ xcf_load_layer (XcfInfo    *info,
 
   switch (type)
     {
-    case GIMP_RGB_IMAGE:
-      base_type = GIMP_RGB;
+    case PICMAN_RGB_IMAGE:
+      base_type = PICMAN_RGB;
       has_alpha = FALSE;
       break;
 
-    case GIMP_RGBA_IMAGE:
-      base_type = GIMP_RGB;
+    case PICMAN_RGBA_IMAGE:
+      base_type = PICMAN_RGB;
       has_alpha = TRUE;
       break;
 
-    case GIMP_GRAY_IMAGE:
-      base_type = GIMP_GRAY;
+    case PICMAN_GRAY_IMAGE:
+      base_type = PICMAN_GRAY;
       has_alpha = FALSE;
       break;
 
-    case GIMP_GRAYA_IMAGE:
-      base_type = GIMP_GRAY;
+    case PICMAN_GRAYA_IMAGE:
+      base_type = PICMAN_GRAY;
       has_alpha = TRUE;
       break;
 
-    case GIMP_INDEXED_IMAGE:
-      base_type = GIMP_INDEXED;
+    case PICMAN_INDEXED_IMAGE:
+      base_type = PICMAN_INDEXED;
       has_alpha = FALSE;
       break;
 
-    case GIMP_INDEXEDA_IMAGE:
-      base_type = GIMP_INDEXED;
+    case PICMAN_INDEXEDA_IMAGE:
+      base_type = PICMAN_INDEXED;
       has_alpha = TRUE;
       break;
 
@@ -1181,16 +1181,16 @@ xcf_load_layer (XcfInfo    *info,
       return NULL;
     }
 
-  /* do not use gimp_image_get_layer_format() because it might
+  /* do not use picman_image_get_layer_format() because it might
    * be the floating selection of a channel or mask
    */
-  format = gimp_image_get_format (image, base_type,
-                                  gimp_image_get_precision (image),
+  format = picman_image_get_format (image, base_type,
+                                  picman_image_get_precision (image),
                                   has_alpha);
 
   /* create a new layer */
-  layer = gimp_layer_new (image, width, height,
-                          format, name, 255, GIMP_NORMAL_MODE);
+  layer = picman_layer_new (image, width, height,
+                          format, name, 255, PICMAN_NORMAL_MODE);
   g_free (name);
   if (! layer)
     return NULL;
@@ -1207,9 +1207,9 @@ xcf_load_layer (XcfInfo    *info,
   active   = (info->active_layer == layer);
   floating = (info->floating_sel == layer);
 
-  if (gimp_text_layer_xcf_load_hack (&layer))
+  if (picman_text_layer_xcf_load_hack (&layer))
     {
-      gimp_text_layer_set_xcf_flags (GIMP_TEXT_LAYER (layer),
+      picman_text_layer_set_xcf_flags (PICMAN_TEXT_LAYER (layer),
                                      text_layer_flags);
 
       if (active)
@@ -1226,13 +1226,13 @@ xcf_load_layer (XcfInfo    *info,
    * optimization and because the hierarchy's extents don't match
    * the group layer's tiles)
    */
-  if (! gimp_viewable_get_children (GIMP_VIEWABLE (layer)))
+  if (! picman_viewable_get_children (PICMAN_VIEWABLE (layer)))
     {
       if (! xcf_seek_pos (info, hierarchy_offset, NULL))
         goto error;
 
       if (! xcf_load_buffer (info,
-                             gimp_drawable_get_buffer (GIMP_DRAWABLE (layer))))
+                             picman_drawable_get_buffer (PICMAN_DRAWABLE (layer))))
         goto error;
 
       xcf_progress_update (info);
@@ -1241,7 +1241,7 @@ xcf_load_layer (XcfInfo    *info,
     {
       gboolean expanded = group_layer_flags & XCF_GROUP_ITEM_EXPANDED;
 
-      gimp_viewable_set_expanded (GIMP_VIEWABLE (layer), expanded);
+      picman_viewable_set_expanded (PICMAN_VIEWABLE (layer), expanded);
     }
 
   /* read in the layer mask */
@@ -1260,20 +1260,20 @@ xcf_load_layer (XcfInfo    *info,
        * layers which update their size automatically; instead
        * attach it so it can be added when all layers are loaded
        */
-      g_object_set_data_full (G_OBJECT (layer), "gimp-layer-mask",
+      g_object_set_data_full (G_OBJECT (layer), "picman-layer-mask",
                               g_object_ref_sink (layer_mask),
                               (GDestroyNotify) g_object_unref);
-      g_object_set_data (G_OBJECT (layer), "gimp-layer-mask-apply",
+      g_object_set_data (G_OBJECT (layer), "picman-layer-mask-apply",
                          GINT_TO_POINTER (apply_mask));
-      g_object_set_data (G_OBJECT (layer), "gimp-layer-mask-edit",
+      g_object_set_data (G_OBJECT (layer), "picman-layer-mask-edit",
                          GINT_TO_POINTER (edit_mask));
-      g_object_set_data (G_OBJECT (layer), "gimp-layer-mask-show",
+      g_object_set_data (G_OBJECT (layer), "picman-layer-mask-show",
                          GINT_TO_POINTER (show_mask));
     }
 
   /* attach the floating selection... */
   if (is_fs_drawable)
-    info->floating_sel_drawable = GIMP_DRAWABLE (layer);
+    info->floating_sel_drawable = PICMAN_DRAWABLE (layer);
 
   return layer;
 
@@ -1282,17 +1282,17 @@ xcf_load_layer (XcfInfo    *info,
   return NULL;
 }
 
-static GimpChannel *
+static PicmanChannel *
 xcf_load_channel (XcfInfo   *info,
-                  GimpImage *image)
+                  PicmanImage *image)
 {
-  GimpChannel *channel;
+  PicmanChannel *channel;
   guint32      hierarchy_offset;
   gint         width;
   gint         height;
   gboolean     is_fs_drawable;
   gchar       *name;
-  GimpRGB      color = { 0.0, 0.0, 0.0, GIMP_OPACITY_OPAQUE };
+  PicmanRGB      color = { 0.0, 0.0, 0.0, PICMAN_OPACITY_OPAQUE };
 
   /* check and see if this is the drawable the floating selection
    *  is attached to. if it is then we'll do the attachment in our caller.
@@ -1305,7 +1305,7 @@ xcf_load_channel (XcfInfo   *info,
   info->cp += xcf_read_string (info->fp, &name, 1);
 
   /* create a new channel */
-  channel = gimp_channel_new (image, width, height, name, &color);
+  channel = picman_channel_new (image, width, height, name, &color);
   g_free (name);
   if (!channel)
     return NULL;
@@ -1324,13 +1324,13 @@ xcf_load_channel (XcfInfo   *info,
     goto error;
 
   if (!xcf_load_buffer (info,
-                        gimp_drawable_get_buffer (GIMP_DRAWABLE (channel))))
+                        picman_drawable_get_buffer (PICMAN_DRAWABLE (channel))))
     goto error;
 
   xcf_progress_update (info);
 
   if (is_fs_drawable)
-    info->floating_sel_drawable = GIMP_DRAWABLE (channel);
+    info->floating_sel_drawable = PICMAN_DRAWABLE (channel);
 
   return channel;
 
@@ -1339,18 +1339,18 @@ xcf_load_channel (XcfInfo   *info,
   return NULL;
 }
 
-static GimpLayerMask *
+static PicmanLayerMask *
 xcf_load_layer_mask (XcfInfo   *info,
-                     GimpImage *image)
+                     PicmanImage *image)
 {
-  GimpLayerMask *layer_mask;
-  GimpChannel   *channel;
+  PicmanLayerMask *layer_mask;
+  PicmanChannel   *channel;
   guint32        hierarchy_offset;
   gint           width;
   gint           height;
   gboolean       is_fs_drawable;
   gchar         *name;
-  GimpRGB        color = { 0.0, 0.0, 0.0, GIMP_OPACITY_OPAQUE };
+  PicmanRGB        color = { 0.0, 0.0, 0.0, PICMAN_OPACITY_OPAQUE };
 
   /* check and see if this is the drawable the floating selection
    *  is attached to. if it is then we'll do the attachment in our caller.
@@ -1363,13 +1363,13 @@ xcf_load_layer_mask (XcfInfo   *info,
   info->cp += xcf_read_string (info->fp, &name, 1);
 
   /* create a new layer mask */
-  layer_mask = gimp_layer_mask_new (image, width, height, name, &color);
+  layer_mask = picman_layer_mask_new (image, width, height, name, &color);
   g_free (name);
   if (!layer_mask)
     return NULL;
 
   /* read in the layer_mask properties */
-  channel = GIMP_CHANNEL (layer_mask);
+  channel = PICMAN_CHANNEL (layer_mask);
   if (!xcf_load_channel_props (info, image, &channel))
     goto error;
 
@@ -1383,14 +1383,14 @@ xcf_load_layer_mask (XcfInfo   *info,
     goto error;
 
   if (!xcf_load_buffer (info,
-                        gimp_drawable_get_buffer (GIMP_DRAWABLE (layer_mask))))
+                        picman_drawable_get_buffer (PICMAN_DRAWABLE (layer_mask))))
     goto error;
 
   xcf_progress_update (info);
 
   /* attach the floating selection... */
   if (is_fs_drawable)
-    info->floating_sel_drawable = GIMP_DRAWABLE (layer_mask);
+    info->floating_sel_drawable = PICMAN_DRAWABLE (layer_mask);
 
   return layer_mask;
 
@@ -1497,8 +1497,8 @@ xcf_load_level (XcfInfo    *info,
   if (offset == 0)
     return TRUE;
 
-  n_tile_rows = gimp_gegl_buffer_get_n_tile_rows (buffer, XCF_TILE_HEIGHT);
-  n_tile_cols = gimp_gegl_buffer_get_n_tile_cols (buffer, XCF_TILE_WIDTH);
+  n_tile_rows = picman_gegl_buffer_get_n_tile_rows (buffer, XCF_TILE_HEIGHT);
+  n_tile_cols = picman_gegl_buffer_get_n_tile_cols (buffer, XCF_TILE_WIDTH);
 
   ntiles = n_tile_rows * n_tile_cols;
   for (i = 0; i < ntiles; i++)
@@ -1509,8 +1509,8 @@ xcf_load_level (XcfInfo    *info,
 
       if (offset == 0)
         {
-          gimp_message_literal (info->gimp, G_OBJECT (info->progress),
-				GIMP_MESSAGE_ERROR,
+          picman_message_literal (info->picman, G_OBJECT (info->progress),
+				PICMAN_MESSAGE_ERROR,
 				"not enough tiles found in level");
           return FALSE;
         }
@@ -1536,7 +1536,7 @@ xcf_load_level (XcfInfo    *info,
         return FALSE;
 
       /* get the tile from the tile manager */
-      gimp_gegl_buffer_get_tile_rect (buffer,
+      picman_gegl_buffer_get_tile_rect (buffer,
                                       XCF_TILE_WIDTH, XCF_TILE_HEIGHT,
                                       i, &rect);
 
@@ -1577,7 +1577,7 @@ xcf_load_level (XcfInfo    *info,
 
   if (offset != 0)
     {
-      gimp_message (info->gimp, G_OBJECT (info->progress), GIMP_MESSAGE_ERROR,
+      picman_message (info->picman, G_OBJECT (info->progress), PICMAN_MESSAGE_ERROR,
                     "encountered garbage after reading level: %d", offset);
       return FALSE;
     }
@@ -1738,10 +1738,10 @@ xcf_load_tile_rle (XcfInfo       *info,
   return FALSE;
 }
 
-static GimpParasite *
+static PicmanParasite *
 xcf_load_parasite (XcfInfo *info)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
   gchar        *name;
   guint32       flags;
   guint32       size;
@@ -1762,7 +1762,7 @@ xcf_load_parasite (XcfInfo *info)
   data = g_new (gchar, size);
   info->cp += xcf_read_int8 (info->fp, data, size);
 
-  parasite = gimp_parasite_new (name, flags, size, data);
+  parasite = picman_parasite_new (name, flags, size, data);
 
   g_free (name);
   g_free (data);
@@ -1772,11 +1772,11 @@ xcf_load_parasite (XcfInfo *info)
 
 static gboolean
 xcf_load_old_paths (XcfInfo   *info,
-                    GimpImage *image)
+                    PicmanImage *image)
 {
   guint32      num_paths;
   guint32      last_selected_row;
-  GimpVectors *active_vectors;
+  PicmanVectors *active_vectors;
 
   info->cp += xcf_read_int32 (info->fp, &last_selected_row, 1);
   info->cp += xcf_read_int32 (info->fp, &num_paths, 1);
@@ -1785,18 +1785,18 @@ xcf_load_old_paths (XcfInfo   *info,
     xcf_load_old_path (info, image);
 
   active_vectors =
-    GIMP_VECTORS (gimp_container_get_child_by_index (gimp_image_get_vectors (image),
+    PICMAN_VECTORS (picman_container_get_child_by_index (picman_image_get_vectors (image),
                                                      last_selected_row));
 
   if (active_vectors)
-    gimp_image_set_active_vectors (image, active_vectors);
+    picman_image_set_active_vectors (image, active_vectors);
 
   return TRUE;
 }
 
 static gboolean
 xcf_load_old_path (XcfInfo   *info,
-                   GimpImage *image)
+                   PicmanImage *image)
 {
   gchar                  *name;
   guint32                 locked;
@@ -1804,9 +1804,9 @@ xcf_load_old_path (XcfInfo   *info,
   guint32                 closed;
   guint32                 num_points;
   guint32                 version; /* changed from num_paths */
-  GimpTattoo              tattoo = 0;
-  GimpVectors            *vectors;
-  GimpVectorsCompatPoint *points;
+  PicmanTattoo              tattoo = 0;
+  PicmanVectors            *vectors;
+  PicmanVectorsCompatPoint *points;
   gint                    i;
 
   info->cp += xcf_read_string (info->fp, &name, 1);
@@ -1845,7 +1845,7 @@ xcf_load_old_path (XcfInfo   *info,
       return FALSE;
     }
 
-  points = g_new0 (GimpVectorsCompatPoint, num_points);
+  points = g_new0 (PicmanVectorsCompatPoint, num_points);
 
   for (i = 0; i < num_points; i++)
     {
@@ -1875,19 +1875,19 @@ xcf_load_old_path (XcfInfo   *info,
         }
     }
 
-  vectors = gimp_vectors_compat_new (image, name, points, num_points, closed);
+  vectors = picman_vectors_compat_new (image, name, points, num_points, closed);
 
   g_free (name);
   g_free (points);
 
-  gimp_item_set_linked (GIMP_ITEM (vectors), locked, FALSE);
+  picman_item_set_linked (PICMAN_ITEM (vectors), locked, FALSE);
 
   if (tattoo)
-    gimp_item_set_tattoo (GIMP_ITEM (vectors), tattoo);
+    picman_item_set_tattoo (PICMAN_ITEM (vectors), tattoo);
 
-  gimp_image_add_vectors (image, vectors,
+  picman_image_add_vectors (image, vectors,
                           NULL, /* can't be a tree */
-                          gimp_container_get_n_children (gimp_image_get_vectors (image)),
+                          picman_container_get_n_children (picman_image_get_vectors (image)),
                           FALSE);
 
   return TRUE;
@@ -1895,14 +1895,14 @@ xcf_load_old_path (XcfInfo   *info,
 
 static gboolean
 xcf_load_vectors (XcfInfo   *info,
-                  GimpImage *image)
+                  PicmanImage *image)
 {
   guint32      version;
   guint32      active_index;
   guint32      num_paths;
-  GimpVectors *active_vectors;
+  PicmanVectors *active_vectors;
 
-#ifdef GIMP_XCF_PATH_DEBUG
+#ifdef PICMAN_XCF_PATH_DEBUG
   g_printerr ("xcf_load_vectors\n");
 #endif
 
@@ -1910,8 +1910,8 @@ xcf_load_vectors (XcfInfo   *info,
 
   if (version != 1)
     {
-      gimp_message (info->gimp, G_OBJECT (info->progress),
-                    GIMP_MESSAGE_WARNING,
+      picman_message (info->picman, G_OBJECT (info->progress),
+                    PICMAN_MESSAGE_WARNING,
                     "Unknown vectors version: %d (skipping)", version);
       return FALSE;
     }
@@ -1919,7 +1919,7 @@ xcf_load_vectors (XcfInfo   *info,
   info->cp += xcf_read_int32 (info->fp, &active_index, 1);
   info->cp += xcf_read_int32 (info->fp, &num_paths,    1);
 
-#ifdef GIMP_XCF_PATH_DEBUG
+#ifdef PICMAN_XCF_PATH_DEBUG
   g_printerr ("%d paths (active: %d)\n", num_paths, active_index);
 #endif
 
@@ -1929,13 +1929,13 @@ xcf_load_vectors (XcfInfo   *info,
 
   /* FIXME tree */
   active_vectors =
-    GIMP_VECTORS (gimp_container_get_child_by_index (gimp_image_get_vectors (image),
+    PICMAN_VECTORS (picman_container_get_child_by_index (picman_image_get_vectors (image),
                                                      active_index));
 
   if (active_vectors)
-    gimp_image_set_active_vectors (image, active_vectors);
+    picman_image_set_active_vectors (image, active_vectors);
 
-#ifdef GIMP_XCF_PATH_DEBUG
+#ifdef PICMAN_XCF_PATH_DEBUG
   g_printerr ("xcf_load_vectors: loaded %d bytes\n", info->cp - base);
 #endif
   return TRUE;
@@ -1943,18 +1943,18 @@ xcf_load_vectors (XcfInfo   *info,
 
 static gboolean
 xcf_load_vector (XcfInfo   *info,
-                 GimpImage *image)
+                 PicmanImage *image)
 {
   gchar       *name;
-  GimpTattoo   tattoo = 0;
+  PicmanTattoo   tattoo = 0;
   guint32      visible;
   guint32      linked;
   guint32      num_parasites;
   guint32      num_strokes;
-  GimpVectors *vectors;
+  PicmanVectors *vectors;
   gint         i;
 
-#ifdef GIMP_XCF_PATH_DEBUG
+#ifdef PICMAN_XCF_PATH_DEBUG
   g_printerr ("xcf_load_vector\n");
 #endif
 
@@ -1965,30 +1965,30 @@ xcf_load_vector (XcfInfo   *info,
   info->cp += xcf_read_int32  (info->fp, &num_parasites, 1);
   info->cp += xcf_read_int32  (info->fp, &num_strokes,   1);
 
-#ifdef GIMP_XCF_PATH_DEBUG
+#ifdef PICMAN_XCF_PATH_DEBUG
   g_printerr ("name: %s, tattoo: %d, visible: %d, linked: %d, "
               "num_parasites %d, num_strokes %d\n",
               name, tattoo, visible, linked, num_parasites, num_strokes);
 #endif
 
-  vectors = gimp_vectors_new (image, name);
+  vectors = picman_vectors_new (image, name);
   g_free (name);
 
-  gimp_item_set_visible (GIMP_ITEM (vectors), visible, FALSE);
-  gimp_item_set_linked (GIMP_ITEM (vectors), linked, FALSE);
+  picman_item_set_visible (PICMAN_ITEM (vectors), visible, FALSE);
+  picman_item_set_linked (PICMAN_ITEM (vectors), linked, FALSE);
 
   if (tattoo)
-    gimp_item_set_tattoo (GIMP_ITEM (vectors), tattoo);
+    picman_item_set_tattoo (PICMAN_ITEM (vectors), tattoo);
 
   for (i = 0; i < num_parasites; i++)
     {
-      GimpParasite *parasite = xcf_load_parasite (info);
+      PicmanParasite *parasite = xcf_load_parasite (info);
 
       if (! parasite)
         return FALSE;
 
-      gimp_item_parasite_attach (GIMP_ITEM (vectors), parasite, FALSE);
-      gimp_parasite_free (parasite);
+      picman_item_parasite_attach (PICMAN_ITEM (vectors), parasite, FALSE);
+      picman_parasite_free (parasite);
     }
 
   for (i = 0; i < num_strokes; i++)
@@ -1998,23 +1998,23 @@ xcf_load_vector (XcfInfo   *info,
       guint32      num_axes;
       guint32      num_control_points;
       guint32      type;
-      gfloat       coords[8] = GIMP_COORDS_DEFAULT_VALUES;
-      GimpStroke  *stroke;
+      gfloat       coords[8] = PICMAN_COORDS_DEFAULT_VALUES;
+      PicmanStroke  *stroke;
       gint         j;
 
-      GimpValueArray *control_points;
+      PicmanValueArray *control_points;
       GValue          value = { 0, };
-      GimpAnchor      anchor = { { 0, } };
+      PicmanAnchor      anchor = { { 0, } };
       GType           stroke_type;
 
-      g_value_init (&value, GIMP_TYPE_ANCHOR);
+      g_value_init (&value, PICMAN_TYPE_ANCHOR);
 
       info->cp += xcf_read_int32 (info->fp, &stroke_type_id,     1);
       info->cp += xcf_read_int32 (info->fp, &closed,             1);
       info->cp += xcf_read_int32 (info->fp, &num_axes,           1);
       info->cp += xcf_read_int32 (info->fp, &num_control_points, 1);
 
-#ifdef GIMP_XCF_PATH_DEBUG
+#ifdef PICMAN_XCF_PATH_DEBUG
       g_printerr ("stroke_type: %d, closed: %d, num_axes %d, len %d\n",
                   stroke_type_id, closed, num_axes, num_control_points);
 #endif
@@ -2022,7 +2022,7 @@ xcf_load_vector (XcfInfo   *info,
       switch (stroke_type_id)
         {
         case XCF_STROKETYPE_BEZIER_STROKE:
-          stroke_type = GIMP_TYPE_BEZIER_STROKE;
+          stroke_type = PICMAN_TYPE_BEZIER_STROKE;
           break;
 
         default:
@@ -2039,7 +2039,7 @@ xcf_load_vector (XcfInfo   *info,
           return FALSE;
         }
 
-      control_points = gimp_value_array_new (num_control_points);
+      control_points = picman_value_array_new (num_control_points);
 
       anchor.selected = FALSE;
 
@@ -2057,9 +2057,9 @@ xcf_load_vector (XcfInfo   *info,
           anchor.position.wheel    = coords[5];
 
           g_value_set_boxed (&value, &anchor);
-          gimp_value_array_append (control_points, &value);
+          picman_value_array_append (control_points, &value);
 
-#ifdef GIMP_XCF_PATH_DEBUG
+#ifdef PICMAN_XCF_PATH_DEBUG
           g_printerr ("Anchor: %d, (%f, %f, %f, %f, %f, %f)\n", type,
                       coords[0], coords[1], coords[2], coords[3],
                       coords[4], coords[5]);
@@ -2073,15 +2073,15 @@ xcf_load_vector (XcfInfo   *info,
                              "control-points", control_points,
                              NULL);
 
-      gimp_vectors_stroke_add (vectors, stroke);
+      picman_vectors_stroke_add (vectors, stroke);
 
       g_object_unref (stroke);
-      gimp_value_array_unref (control_points);
+      picman_value_array_unref (control_points);
     }
 
-  gimp_image_add_vectors (image, vectors,
+  picman_image_add_vectors (image, vectors,
                           NULL, /* FIXME tree */
-                          gimp_container_get_n_children (gimp_image_get_vectors (image)),
+                          picman_container_get_n_children (picman_image_get_vectors (image)),
                           FALSE);
 
   return TRUE;

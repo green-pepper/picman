@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpConfigWriter
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * PicmanConfigWriter
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,30 +38,30 @@
 #include <io.h>
 #endif
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpconfigtypes.h"
+#include "picmanconfigtypes.h"
 
-#include "gimpconfigwriter.h"
-#include "gimpconfig-iface.h"
-#include "gimpconfig-error.h"
-#include "gimpconfig-serialize.h"
-#include "gimpconfig-utils.h"
+#include "picmanconfigwriter.h"
+#include "picmanconfig-iface.h"
+#include "picmanconfig-error.h"
+#include "picmanconfig-serialize.h"
+#include "picmanconfig-utils.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpconfigwriter
- * @title: GimpConfigWriter
+ * SECTION: picmanconfigwriter
+ * @title: PicmanConfigWriter
  * @short_description: Functions for writing config info to a file for
- *                     libgimpconfig.
+ *                     libpicmanconfig.
  *
- * Functions for writing config info to a file for libgimpconfig.
+ * Functions for writing config info to a file for libpicmanconfig.
  **/
 
 
-struct _GimpConfigWriter
+struct _PicmanConfigWriter
 {
   gint      fd;
   gchar    *filename;
@@ -74,24 +74,24 @@ struct _GimpConfigWriter
 };
 
 
-static inline void  gimp_config_writer_flush      (GimpConfigWriter  *writer);
-static inline void  gimp_config_writer_newline    (GimpConfigWriter  *writer);
-static gboolean     gimp_config_writer_close_file (GimpConfigWriter  *writer,
+static inline void  picman_config_writer_flush      (PicmanConfigWriter  *writer);
+static inline void  picman_config_writer_newline    (PicmanConfigWriter  *writer);
+static gboolean     picman_config_writer_close_file (PicmanConfigWriter  *writer,
                                                    GError           **error);
 
 static inline void
-gimp_config_writer_flush (GimpConfigWriter *writer)
+picman_config_writer_flush (PicmanConfigWriter *writer)
 {
   if (write (writer->fd, writer->buffer->str, writer->buffer->len) < 0)
-    g_set_error (&writer->error, GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_WRITE,
+    g_set_error (&writer->error, PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_WRITE,
                  _("Error writing to '%s': %s"),
-                 gimp_filename_to_utf8 (writer->filename), g_strerror (errno));
+                 picman_filename_to_utf8 (writer->filename), g_strerror (errno));
 
   g_string_truncate (writer->buffer, 0);
 }
 
 static inline void
-gimp_config_writer_newline (GimpConfigWriter *writer)
+picman_config_writer_newline (PicmanConfigWriter *writer)
 {
   gint i;
 
@@ -105,28 +105,28 @@ gimp_config_writer_newline (GimpConfigWriter *writer)
 }
 
 /**
- * gimp_config_writer_new_file:
+ * picman_config_writer_new_file:
  * @filename: a filename
  * @atomic: if %TRUE the file is written atomically
  * @header: text to include as comment at the top of the file
  * @error: return location for errors
  *
- * Creates a new #GimpConfigWriter and sets it up to write to
+ * Creates a new #PicmanConfigWriter and sets it up to write to
  * @filename. If @atomic is %TRUE, a temporary file is used to avoid
  * possible race conditions. The temporary file is then moved to
  * @filename when the writer is closed.
  *
- * Return value: a new #GimpConfigWriter or %NULL in case of an error
+ * Return value: a new #PicmanConfigWriter or %NULL in case of an error
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
-GimpConfigWriter *
-gimp_config_writer_new_file (const gchar  *filename,
+PicmanConfigWriter *
+picman_config_writer_new_file (const gchar  *filename,
                              gboolean      atomic,
                              const gchar  *header,
                              GError      **error)
 {
-  GimpConfigWriter *writer;
+  PicmanConfigWriter *writer;
   gchar            *tmpname = NULL;
   gint              fd;
 
@@ -141,9 +141,9 @@ gimp_config_writer_new_file (const gchar  *filename,
 
       if (fd == -1)
         {
-          g_set_error (error, GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_WRITE,
+          g_set_error (error, PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_WRITE,
                        _("Could not create temporary file for '%s': %s"),
-                       gimp_filename_to_utf8 (filename), g_strerror (errno));
+                       picman_filename_to_utf8 (filename), g_strerror (errno));
           g_free (tmpname);
           return NULL;
         }
@@ -154,14 +154,14 @@ gimp_config_writer_new_file (const gchar  *filename,
 
       if (fd == -1)
         {
-          g_set_error (error, GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_WRITE,
+          g_set_error (error, PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_WRITE,
                        _("Could not open '%s' for writing: %s"),
-                       gimp_filename_to_utf8 (filename), g_strerror (errno));
+                       picman_filename_to_utf8 (filename), g_strerror (errno));
           return NULL;
         }
     }
 
-  writer = g_slice_new0 (GimpConfigWriter);
+  writer = g_slice_new0 (PicmanConfigWriter);
 
   writer->fd       = fd;
   writer->filename = g_strdup (filename);
@@ -170,29 +170,29 @@ gimp_config_writer_new_file (const gchar  *filename,
 
   if (header)
     {
-      gimp_config_writer_comment (writer, header);
-      gimp_config_writer_linefeed (writer);
+      picman_config_writer_comment (writer, header);
+      picman_config_writer_linefeed (writer);
     }
 
   return writer;
 }
 
 /**
- * gimp_config_writer_new_fd:
+ * picman_config_writer_new_fd:
  * @fd:
  *
- * Return value: a new #GimpConfigWriter or %NULL in case of an error
+ * Return value: a new #PicmanConfigWriter or %NULL in case of an error
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
-GimpConfigWriter *
-gimp_config_writer_new_fd (gint fd)
+PicmanConfigWriter *
+picman_config_writer_new_fd (gint fd)
 {
-  GimpConfigWriter *writer;
+  PicmanConfigWriter *writer;
 
   g_return_val_if_fail (fd > 0, NULL);
 
-  writer = g_slice_new0 (GimpConfigWriter);
+  writer = g_slice_new0 (PicmanConfigWriter);
 
   writer->fd     = fd;
   writer->buffer = g_string_new (NULL);
@@ -201,21 +201,21 @@ gimp_config_writer_new_fd (gint fd)
 }
 
 /**
- * gimp_config_writer_new_string:
+ * picman_config_writer_new_string:
  * @string:
  *
- * Return value: a new #GimpConfigWriter or %NULL in case of an error
+ * Return value: a new #PicmanConfigWriter or %NULL in case of an error
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
-GimpConfigWriter *
-gimp_config_writer_new_string (GString *string)
+PicmanConfigWriter *
+picman_config_writer_new_string (GString *string)
 {
-  GimpConfigWriter *writer;
+  PicmanConfigWriter *writer;
 
   g_return_val_if_fail (string != NULL, NULL);
 
-  writer = g_slice_new0 (GimpConfigWriter);
+  writer = g_slice_new0 (PicmanConfigWriter);
 
   writer->buffer = string;
 
@@ -223,21 +223,21 @@ gimp_config_writer_new_string (GString *string)
 }
 
 /**
- * gimp_config_writer_comment_mode:
- * @writer: a #GimpConfigWriter
+ * picman_config_writer_comment_mode:
+ * @writer: a #PicmanConfigWriter
  * @enable: %TRUE to enable comment mode, %FALSE to disable it
  *
  * This function toggles whether the @writer should create commented
  * or uncommented output. This feature is used to generate the
- * system-wide installed gimprc that documents the default settings.
+ * system-wide installed picmanrc that documents the default settings.
  *
  * Since comments have to start at the beginning of a line, this
  * function will insert a newline if necessary.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_config_writer_comment_mode (GimpConfigWriter *writer,
+picman_config_writer_comment_mode (PicmanConfigWriter *writer,
                                  gboolean          enable)
 {
   g_return_if_fail (writer != NULL);
@@ -257,24 +257,24 @@ gimp_config_writer_comment_mode (GimpConfigWriter *writer,
      if (writer->buffer->len == 0)
        g_string_append_len (writer->buffer, "# ", 2);
      else
-       gimp_config_writer_newline (writer);
+       picman_config_writer_newline (writer);
     }
 }
 
 
 /**
- * gimp_config_writer_open:
- * @writer: a #GimpConfigWriter
+ * picman_config_writer_open:
+ * @writer: a #PicmanConfigWriter
  * @name: name of the element to open
  *
  * This function writes the opening parenthese followed by @name.
  * It also increases the indentation level and sets a mark that
- * can be used by gimp_config_writer_revert().
+ * can be used by picman_config_writer_revert().
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_config_writer_open (GimpConfigWriter *writer,
+picman_config_writer_open (PicmanConfigWriter *writer,
                          const gchar      *name)
 {
   g_return_if_fail (writer != NULL);
@@ -287,7 +287,7 @@ gimp_config_writer_open (GimpConfigWriter *writer,
   writer->marker = writer->buffer->len;
 
   if (writer->depth > 0)
-    gimp_config_writer_newline (writer);
+    picman_config_writer_newline (writer);
 
   writer->depth++;
 
@@ -295,18 +295,18 @@ gimp_config_writer_open (GimpConfigWriter *writer,
 }
 
 /**
- * gimp_config_writer_print:
- * @writer: a #GimpConfigWriter
+ * picman_config_writer_print:
+ * @writer: a #PicmanConfigWriter
  * @string: a string to write
  * @len: number of bytes from @string or -1 if @string is NUL-terminated.
  *
  * Appends a space followed by @string to the @writer. Note that string
  * must not contain any special characters that might need to be escaped.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_config_writer_print (GimpConfigWriter  *writer,
+picman_config_writer_print (PicmanConfigWriter  *writer,
                           const gchar       *string,
                           gint               len)
 {
@@ -327,17 +327,17 @@ gimp_config_writer_print (GimpConfigWriter  *writer,
 }
 
 /**
- * gimp_config_writer_printf:
- * @writer: a #GimpConfigWriter
+ * picman_config_writer_printf:
+ * @writer: a #PicmanConfigWriter
  * @format: a format string as described for g_strdup_printf().
  * @...: list of arguments according to @format
  *
- * A printf-like function for #GimpConfigWriter.
+ * A printf-like function for #PicmanConfigWriter.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_config_writer_printf (GimpConfigWriter *writer,
+picman_config_writer_printf (PicmanConfigWriter *writer,
                            const gchar      *format,
                            ...)
 {
@@ -361,17 +361,17 @@ gimp_config_writer_printf (GimpConfigWriter *writer,
 }
 
 /**
- * gimp_config_writer_string:
- * @writer: a #GimpConfigWriter
+ * picman_config_writer_string:
+ * @writer: a #PicmanConfigWriter
  * @string: a NUL-terminated string
  *
  * Writes a string value to @writer. The @string is quoted and special
  * characters are escaped.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_config_writer_string (GimpConfigWriter *writer,
+picman_config_writer_string (PicmanConfigWriter *writer,
                            const gchar      *string)
 {
   g_return_if_fail (writer != NULL);
@@ -380,21 +380,21 @@ gimp_config_writer_string (GimpConfigWriter *writer,
     return;
 
   g_string_append_c (writer->buffer, ' ');
-  gimp_config_string_append_escaped (writer->buffer, string);
+  picman_config_string_append_escaped (writer->buffer, string);
 }
 
 /**
- * gimp_config_writer_identifier:
- * @writer:     a #GimpConfigWriter
+ * picman_config_writer_identifier:
+ * @writer:     a #PicmanConfigWriter
  * @identifier: a NUL-terminated string
  *
  * Writes an identifier to @writer. The @string is *not* quoted and special
  * characters are *not* escaped.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_config_writer_identifier (GimpConfigWriter *writer,
+picman_config_writer_identifier (PicmanConfigWriter *writer,
                                const gchar      *identifier)
 {
   g_return_if_fail (writer != NULL);
@@ -408,15 +408,15 @@ gimp_config_writer_identifier (GimpConfigWriter *writer,
 
 
 /**
- * gimp_config_writer_data:
- * @writer: a #GimpConfigWriter
+ * picman_config_writer_data:
+ * @writer: a #PicmanConfigWriter
  * @length:
  * @data:
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_config_writer_data (GimpConfigWriter *writer,
+picman_config_writer_data (PicmanConfigWriter *writer,
                          gint              length,
                          const guint8     *data)
 {
@@ -443,17 +443,17 @@ gimp_config_writer_data (GimpConfigWriter *writer,
 }
 
 /**
- * gimp_config_writer_revert:
- * @writer: a #GimpConfigWriter
+ * picman_config_writer_revert:
+ * @writer: a #PicmanConfigWriter
  *
  * Reverts all changes to @writer that were done since the last call
- * to gimp_config_writer_open(). This can only work if you didn't call
- * gimp_config_writer_close() yet.
+ * to picman_config_writer_open(). This can only work if you didn't call
+ * picman_config_writer_close() yet.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_config_writer_revert (GimpConfigWriter *writer)
+picman_config_writer_revert (PicmanConfigWriter *writer)
 {
   g_return_if_fail (writer != NULL);
 
@@ -470,15 +470,15 @@ gimp_config_writer_revert (GimpConfigWriter *writer)
 }
 
 /**
- * gimp_config_writer_close:
- * @writer: a #GimpConfigWriter
+ * picman_config_writer_close:
+ * @writer: a #PicmanConfigWriter
  *
- * Closes an element opened with gimp_config_writer_open().
+ * Closes an element opened with picman_config_writer_open().
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_config_writer_close (GimpConfigWriter *writer)
+picman_config_writer_close (PicmanConfigWriter *writer)
 {
   g_return_if_fail (writer != NULL);
 
@@ -494,13 +494,13 @@ gimp_config_writer_close (GimpConfigWriter *writer)
       g_string_append_c (writer->buffer, '\n');
 
       if (writer->fd)
-        gimp_config_writer_flush (writer);
+        picman_config_writer_flush (writer);
     }
 }
 
 /**
- * gimp_config_writer_finish:
- * @writer: a #GimpConfigWriter
+ * picman_config_writer_finish:
+ * @writer: a #PicmanConfigWriter
  * @footer: text to include as comment at the bottom of the file
  * @error: return location for possible errors
  *
@@ -512,10 +512,10 @@ gimp_config_writer_close (GimpConfigWriter *writer)
  * Return value: %TRUE if everything could be successfully written,
  *               %FALSE otherwise
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_config_writer_finish (GimpConfigWriter  *writer,
+picman_config_writer_finish (PicmanConfigWriter  *writer,
                            const gchar       *footer,
                            GError           **error)
 {
@@ -526,23 +526,23 @@ gimp_config_writer_finish (GimpConfigWriter  *writer,
 
   if (writer->depth < 0)
     {
-      g_warning ("gimp_config_writer_finish: depth < 0 !!");
+      g_warning ("picman_config_writer_finish: depth < 0 !!");
     }
   else
     {
       while (writer->depth)
-        gimp_config_writer_close (writer);
+        picman_config_writer_close (writer);
     }
 
   if (footer)
     {
-      gimp_config_writer_linefeed (writer);
-      gimp_config_writer_comment (writer, footer);
+      picman_config_writer_linefeed (writer);
+      picman_config_writer_comment (writer, footer);
     }
 
   if (writer->fd)
     {
-      success = gimp_config_writer_close_file (writer, error);
+      success = picman_config_writer_close_file (writer, error);
 
       g_free (writer->filename);
       g_free (writer->tmpname);
@@ -560,13 +560,13 @@ gimp_config_writer_finish (GimpConfigWriter  *writer,
       success = FALSE;
     }
 
-  g_slice_free (GimpConfigWriter, writer);
+  g_slice_free (PicmanConfigWriter, writer);
 
   return success;
 }
 
 void
-gimp_config_writer_linefeed (GimpConfigWriter *writer)
+picman_config_writer_linefeed (PicmanConfigWriter *writer)
 {
   g_return_if_fail (writer != NULL);
 
@@ -577,28 +577,28 @@ gimp_config_writer_linefeed (GimpConfigWriter *writer)
     {
       if (write (writer->fd, "\n", 1) < 0)
         g_set_error_literal (&writer->error,
-			     GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_WRITE,
+			     PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_WRITE,
 			     g_strerror (errno));
     }
   else
     {
-      gimp_config_writer_newline (writer);
+      picman_config_writer_newline (writer);
     }
 }
 
 /**
- * gimp_config_writer_comment:
- * @writer: a #GimpConfigWriter
+ * picman_config_writer_comment:
+ * @writer: a #PicmanConfigWriter
  * @comment: the comment to write (ASCII only)
  *
  * Appends the @comment to @str and inserts linebreaks and hash-marks to
  * format it as a comment. Note that this function does not handle non-ASCII
  * characters.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_config_writer_comment (GimpConfigWriter *writer,
+picman_config_writer_comment (PicmanConfigWriter *writer,
                             const gchar      *comment)
 {
   const gchar *s;
@@ -618,7 +618,7 @@ gimp_config_writer_comment (GimpConfigWriter *writer,
     return;
 
   comment_mode = writer->comment;
-  gimp_config_writer_comment_mode (writer, TRUE);
+  picman_config_writer_comment_mode (writer, TRUE);
 
   len = strlen (comment);
 
@@ -643,20 +643,20 @@ gimp_config_writer_comment (GimpConfigWriter *writer,
       len     -= i;
 
       if (len > 0)
-        gimp_config_writer_newline (writer);
+        picman_config_writer_newline (writer);
     }
 
-  gimp_config_writer_comment_mode (writer, comment_mode);
-  gimp_config_writer_newline (writer);
+  picman_config_writer_comment_mode (writer, comment_mode);
+  picman_config_writer_newline (writer);
 
   if (writer->depth == 0)
-    gimp_config_writer_flush (writer);
+    picman_config_writer_flush (writer);
 
 #undef LINE_LENGTH
 }
 
 static gboolean
-gimp_config_writer_close_file (GimpConfigWriter  *writer,
+picman_config_writer_close_file (PicmanConfigWriter  *writer,
                                GError           **error)
 {
   g_return_val_if_fail (writer->fd != 0, FALSE);
@@ -685,10 +685,10 @@ gimp_config_writer_close_file (GimpConfigWriter  *writer,
     {
       if (fsync (writer->fd) != 0)
         {
-          g_set_error (error, GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_WRITE,
+          g_set_error (error, PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_WRITE,
                        _("Error writing to temporary file for '%s': %s\n"
                          "The original file has not been touched."),
-                       gimp_filename_to_utf8 (writer->filename),
+                       picman_filename_to_utf8 (writer->filename),
                        g_strerror (errno));
 
           close (writer->fd);
@@ -705,18 +705,18 @@ gimp_config_writer_close_file (GimpConfigWriter  *writer,
         {
           if (g_file_test (writer->filename, G_FILE_TEST_EXISTS))
             {
-              g_set_error (error, GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_WRITE,
+              g_set_error (error, PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_WRITE,
                            _("Error writing to temporary file for '%s': %s\n"
                              "The original file has not been touched."),
-                           gimp_filename_to_utf8 (writer->filename),
+                           picman_filename_to_utf8 (writer->filename),
                            g_strerror (errno));
             }
           else
             {
-              g_set_error (error, GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_WRITE,
+              g_set_error (error, PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_WRITE,
                            _("Error writing to temporary file for '%s': %s\n"
                              "No file has been created."),
-                           gimp_filename_to_utf8 (writer->filename),
+                           picman_filename_to_utf8 (writer->filename),
                            g_strerror (errno));
             }
 
@@ -724,9 +724,9 @@ gimp_config_writer_close_file (GimpConfigWriter  *writer,
         }
       else
         {
-          g_set_error (error, GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_WRITE,
+          g_set_error (error, PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_WRITE,
                        _("Error writing to '%s': %s"),
-                       gimp_filename_to_utf8 (writer->filename),
+                       picman_filename_to_utf8 (writer->filename),
                        g_strerror (errno));
         }
 
@@ -737,9 +737,9 @@ gimp_config_writer_close_file (GimpConfigWriter  *writer,
     {
       if (g_rename (writer->tmpname, writer->filename) == -1)
         {
-          g_set_error (error, GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_WRITE,
+          g_set_error (error, PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_WRITE,
                        _("Could not create '%s': %s"),
-                       gimp_filename_to_utf8 (writer->filename),
+                       picman_filename_to_utf8 (writer->filename),
                        g_strerror (errno));
 
           g_unlink (writer->tmpname);

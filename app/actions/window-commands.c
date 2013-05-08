@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,12 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
 
 #include "actions.h"
 #include "window-commands.h"
@@ -65,7 +65,7 @@ window_open_display_cmd_callback (GtkAction *action,
   GtkWidget *entry;
   return_if_no_widget (widget, data);
 
-  dialog = gimp_message_dialog_new ("Open Display", GIMP_STOCK_WILBER_EEK,
+  dialog = picman_message_dialog_new ("Open Display", PICMAN_STOCK_WILBER_EEK,
                                     widget, GTK_DIALOG_MODAL,
                                     NULL, NULL,
 
@@ -79,16 +79,16 @@ window_open_display_cmd_callback (GtkAction *action,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                      "Experimental multi-display stuff!\n"
-                                     "Click OK and have fun crashing GIMP...");
+                                     "Click OK and have fun crashing PICMAN...");
 
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                              "Please enter the name of the new display:");
 
   entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
-  gtk_box_pack_start (GTK_BOX (GIMP_MESSAGE_DIALOG (dialog)->box), entry,
+  gtk_box_pack_start (GTK_BOX (PICMAN_MESSAGE_DIALOG (dialog)->box), entry,
                       TRUE, TRUE, 0);
 
   gtk_widget_grab_focus (entry);
@@ -109,7 +109,7 @@ window_open_display_cmd_callback (GtkAction *action,
           display = gdk_display_open (screen_name);
 
           if (! display)
-            gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+            picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                        "Can't open display '%s'. "
                                        "Please try another one:",
                                        screen_name);

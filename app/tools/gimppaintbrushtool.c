@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,55 +20,55 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "paint/gimppaintoptions.h"
+#include "paint/picmanpaintoptions.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "gimppaintbrushtool.h"
-#include "gimppaintoptions-gui.h"
-#include "gimptoolcontrol.h"
+#include "picmanpaintbrushtool.h"
+#include "picmanpaintoptions-gui.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpPaintbrushTool, gimp_paintbrush_tool, GIMP_TYPE_BRUSH_TOOL)
+G_DEFINE_TYPE (PicmanPaintbrushTool, picman_paintbrush_tool, PICMAN_TYPE_BRUSH_TOOL)
 
 
 void
-gimp_paintbrush_tool_register (GimpToolRegisterCallback  callback,
+picman_paintbrush_tool_register (PicmanToolRegisterCallback  callback,
                                gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_PAINTBRUSH_TOOL,
-                GIMP_TYPE_PAINT_OPTIONS,
-                gimp_paint_options_gui,
-                GIMP_PAINT_OPTIONS_CONTEXT_MASK |
-                GIMP_CONTEXT_GRADIENT_MASK,
-                "gimp-paintbrush-tool",
+  (* callback) (PICMAN_TYPE_PAINTBRUSH_TOOL,
+                PICMAN_TYPE_PAINT_OPTIONS,
+                picman_paint_options_gui,
+                PICMAN_PAINT_OPTIONS_CONTEXT_MASK |
+                PICMAN_CONTEXT_GRADIENT_MASK,
+                "picman-paintbrush-tool",
                 _("Paintbrush"),
                 _("Paintbrush Tool: Paint smooth strokes using a brush"),
                 N_("_Paintbrush"), "P",
-                NULL, GIMP_HELP_TOOL_PAINTBRUSH,
-                GIMP_STOCK_TOOL_PAINTBRUSH,
+                NULL, PICMAN_HELP_TOOL_PAINTBRUSH,
+                PICMAN_STOCK_TOOL_PAINTBRUSH,
                 data);
 }
 
 static void
-gimp_paintbrush_tool_class_init (GimpPaintbrushToolClass *klass)
+picman_paintbrush_tool_class_init (PicmanPaintbrushToolClass *klass)
 {
 }
 
 static void
-gimp_paintbrush_tool_init (GimpPaintbrushTool *paintbrush)
+picman_paintbrush_tool_init (PicmanPaintbrushTool *paintbrush)
 {
-  GimpTool *tool = GIMP_TOOL (paintbrush);
+  PicmanTool *tool = PICMAN_TOOL (paintbrush);
 
-  gimp_tool_control_set_tool_cursor (tool->control,
-                                     GIMP_TOOL_CURSOR_PAINTBRUSH);
+  picman_tool_control_set_tool_cursor (tool->control,
+                                     PICMAN_TOOL_CURSOR_PAINTBRUSH);
 
-  gimp_paint_tool_enable_color_picker (GIMP_PAINT_TOOL (paintbrush),
-                                       GIMP_COLOR_PICK_MODE_FOREGROUND);
+  picman_paint_tool_enable_color_picker (PICMAN_PAINT_TOOL (paintbrush),
+                                       PICMAN_COLOR_PICK_MODE_FOREGROUND);
 }

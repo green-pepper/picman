@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpscrolledpreview.c
+ * picmanscrolledpreview.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,25 +22,25 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimppreviewarea.h"
-#include "gimpscrolledpreview.h"
-#include "gimpstock.h"
-#include "gimp3migration.h"
+#include "picmanpreviewarea.h"
+#include "picmanscrolledpreview.h"
+#include "picmanstock.h"
+#include "picman3migration.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpscrolledpreview
- * @title: GimpScrolledPreview
- * @short_description: A widget providing a #GimpPreview enhanced by
+ * SECTION: picmanscrolledpreview
+ * @title: PicmanScrolledPreview
+ * @short_description: A widget providing a #PicmanPreview enhanced by
  *                     scrolling capabilities.
  *
- * A widget providing a #GimpPreview enhanced by scrolling capabilities.
+ * A widget providing a #PicmanPreview enhanced by scrolling capabilities.
  **/
 
 
@@ -57,51 +57,51 @@ typedef struct
   gint          drag_yoff;
   gboolean      in_drag;
   gint          frozen;
-} GimpScrolledPreviewPrivate;
+} PicmanScrolledPreviewPrivate;
 
-#define GIMP_SCROLLED_PREVIEW_GET_PRIVATE(obj) \
-  ((GimpScrolledPreviewPrivate *) ((GimpScrolledPreview *) (obj))->priv)
+#define PICMAN_SCROLLED_PREVIEW_GET_PRIVATE(obj) \
+  ((PicmanScrolledPreviewPrivate *) ((PicmanScrolledPreview *) (obj))->priv)
 
 
-static void      gimp_scrolled_preview_class_init          (GimpScrolledPreviewClass *klass);
-static void      gimp_scrolled_preview_init                (GimpScrolledPreview      *preview);
-static void      gimp_scrolled_preview_dispose             (GObject                  *object);
+static void      picman_scrolled_preview_class_init          (PicmanScrolledPreviewClass *klass);
+static void      picman_scrolled_preview_init                (PicmanScrolledPreview      *preview);
+static void      picman_scrolled_preview_dispose             (GObject                  *object);
 
-static void      gimp_scrolled_preview_area_realize        (GtkWidget                *widget,
-                                                            GimpScrolledPreview      *preview);
-static void      gimp_scrolled_preview_area_unrealize      (GtkWidget                *widget,
-                                                            GimpScrolledPreview      *preview);
-static void      gimp_scrolled_preview_area_size_allocate  (GtkWidget                *widget,
+static void      picman_scrolled_preview_area_realize        (GtkWidget                *widget,
+                                                            PicmanScrolledPreview      *preview);
+static void      picman_scrolled_preview_area_unrealize      (GtkWidget                *widget,
+                                                            PicmanScrolledPreview      *preview);
+static void      picman_scrolled_preview_area_size_allocate  (GtkWidget                *widget,
                                                             GtkAllocation            *allocation,
-                                                            GimpScrolledPreview      *preview);
-static gboolean  gimp_scrolled_preview_area_event          (GtkWidget                *area,
+                                                            PicmanScrolledPreview      *preview);
+static gboolean  picman_scrolled_preview_area_event          (GtkWidget                *area,
                                                             GdkEvent                 *event,
-                                                            GimpScrolledPreview      *preview);
+                                                            PicmanScrolledPreview      *preview);
 
-static void      gimp_scrolled_preview_h_scroll            (GtkAdjustment            *hadj,
-                                                            GimpPreview              *preview);
-static void      gimp_scrolled_preview_v_scroll            (GtkAdjustment            *vadj,
-                                                            GimpPreview              *preview);
+static void      picman_scrolled_preview_h_scroll            (GtkAdjustment            *hadj,
+                                                            PicmanPreview              *preview);
+static void      picman_scrolled_preview_v_scroll            (GtkAdjustment            *vadj,
+                                                            PicmanPreview              *preview);
 
-static gboolean  gimp_scrolled_preview_nav_button_press    (GtkWidget                *widget,
+static gboolean  picman_scrolled_preview_nav_button_press    (GtkWidget                *widget,
                                                             GdkEventButton           *event,
-                                                            GimpScrolledPreview      *preview);
+                                                            PicmanScrolledPreview      *preview);
 
-static gboolean  gimp_scrolled_preview_nav_popup_event     (GtkWidget                *widget,
+static gboolean  picman_scrolled_preview_nav_popup_event     (GtkWidget                *widget,
                                                             GdkEvent                 *event,
-                                                            GimpScrolledPreview      *preview);
-static gboolean  gimp_scrolled_preview_nav_popup_expose    (GtkWidget                *widget,
+                                                            PicmanScrolledPreview      *preview);
+static gboolean  picman_scrolled_preview_nav_popup_expose    (GtkWidget                *widget,
                                                             GdkEventExpose           *event,
-                                                            GimpScrolledPreview      *preview);
+                                                            PicmanScrolledPreview      *preview);
 
-static void      gimp_scrolled_preview_set_cursor          (GimpPreview              *preview);
+static void      picman_scrolled_preview_set_cursor          (PicmanPreview              *preview);
 
 
-static GimpPreviewClass *parent_class = NULL;
+static PicmanPreviewClass *parent_class = NULL;
 
 
 GType
-gimp_scrolled_preview_get_type (void)
+picman_scrolled_preview_get_type (void)
 {
   static GType preview_type = 0;
 
@@ -109,19 +109,19 @@ gimp_scrolled_preview_get_type (void)
     {
       const GTypeInfo preview_info =
       {
-        sizeof (GimpScrolledPreviewClass),
+        sizeof (PicmanScrolledPreviewClass),
         (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) gimp_scrolled_preview_class_init,
+        (GClassInitFunc) picman_scrolled_preview_class_init,
         NULL,           /* class_finalize */
         NULL,           /* class_data     */
-        sizeof (GimpScrolledPreview),
+        sizeof (PicmanScrolledPreview),
         0,              /* n_preallocs    */
-        (GInstanceInitFunc) gimp_scrolled_preview_init,
+        (GInstanceInitFunc) picman_scrolled_preview_init,
       };
 
-      preview_type = g_type_register_static (GIMP_TYPE_PREVIEW,
-                                             "GimpScrolledPreview",
+      preview_type = g_type_register_static (PICMAN_TYPE_PREVIEW,
+                                             "PicmanScrolledPreview",
                                              &preview_info,
                                              G_TYPE_FLAG_ABSTRACT);
     }
@@ -130,32 +130,32 @@ gimp_scrolled_preview_get_type (void)
 }
 
 static void
-gimp_scrolled_preview_class_init (GimpScrolledPreviewClass *klass)
+picman_scrolled_preview_class_init (PicmanScrolledPreviewClass *klass)
 {
   GObjectClass     *object_class  = G_OBJECT_CLASS (klass);
-  GimpPreviewClass *preview_class = GIMP_PREVIEW_CLASS (klass);
+  PicmanPreviewClass *preview_class = PICMAN_PREVIEW_CLASS (klass);
 
   parent_class = g_type_class_peek_parent (klass);
 
-  object_class->dispose     = gimp_scrolled_preview_dispose;
+  object_class->dispose     = picman_scrolled_preview_dispose;
 
-  preview_class->set_cursor = gimp_scrolled_preview_set_cursor;
+  preview_class->set_cursor = picman_scrolled_preview_set_cursor;
 
-  g_type_class_add_private (object_class, sizeof (GimpScrolledPreviewPrivate));
+  g_type_class_add_private (object_class, sizeof (PicmanScrolledPreviewPrivate));
 }
 
 static void
-gimp_scrolled_preview_init (GimpScrolledPreview *preview)
+picman_scrolled_preview_init (PicmanScrolledPreview *preview)
 {
-  GimpScrolledPreviewPrivate *priv;
+  PicmanScrolledPreviewPrivate *priv;
   GtkWidget                  *image;
   GtkAdjustment              *adj;
 
   preview->priv = G_TYPE_INSTANCE_GET_PRIVATE (preview,
-                                               GIMP_TYPE_SCROLLED_PREVIEW,
-                                               GimpScrolledPreviewPrivate);
+                                               PICMAN_TYPE_SCROLLED_PREVIEW,
+                                               PicmanScrolledPreviewPrivate);
 
-  priv = GIMP_SCROLLED_PREVIEW_GET_PRIVATE (preview);
+  priv = PICMAN_SCROLLED_PREVIEW_GET_PRIVATE (preview);
 
   preview->nav_popup = NULL;
 
@@ -166,71 +166,71 @@ gimp_scrolled_preview_init (GimpScrolledPreview *preview)
   priv->frozen      = 1;  /* we are frozen during init */
 
   /*  scrollbars  */
-  adj = GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, GIMP_PREVIEW (preview)->width - 1, 1.0,
-                                            GIMP_PREVIEW (preview)->width,
-                                            GIMP_PREVIEW (preview)->width));
+  adj = GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, PICMAN_PREVIEW (preview)->width - 1, 1.0,
+                                            PICMAN_PREVIEW (preview)->width,
+                                            PICMAN_PREVIEW (preview)->width));
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_scrolled_preview_h_scroll),
+                    G_CALLBACK (picman_scrolled_preview_h_scroll),
                     preview);
 
   preview->hscr = gtk_scrollbar_new (GTK_ORIENTATION_HORIZONTAL, adj);
-  gtk_table_attach (GTK_TABLE (GIMP_PREVIEW (preview)->table),
+  gtk_table_attach (GTK_TABLE (PICMAN_PREVIEW (preview)->table),
                     preview->hscr, 0, 1, 1, 2,
                     GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
 
-  adj = GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, GIMP_PREVIEW (preview)->height - 1, 1.0,
-                                            GIMP_PREVIEW (preview)->height,
-                                            GIMP_PREVIEW (preview)->height));
+  adj = GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, PICMAN_PREVIEW (preview)->height - 1, 1.0,
+                                            PICMAN_PREVIEW (preview)->height,
+                                            PICMAN_PREVIEW (preview)->height));
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_scrolled_preview_v_scroll),
+                    G_CALLBACK (picman_scrolled_preview_v_scroll),
                     preview);
 
   preview->vscr = gtk_scrollbar_new (GTK_ORIENTATION_VERTICAL, adj);
-  gtk_table_attach (GTK_TABLE (GIMP_PREVIEW (preview)->table),
+  gtk_table_attach (GTK_TABLE (PICMAN_PREVIEW (preview)->table),
                     preview->vscr, 1, 2, 0, 1,
                     GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
 
   /* Connect after here so that plug-ins get a chance to override the
    * default behavior. See bug #364432.
    */
-  g_signal_connect_after (GIMP_PREVIEW (preview)->area, "event",
-                          G_CALLBACK (gimp_scrolled_preview_area_event),
+  g_signal_connect_after (PICMAN_PREVIEW (preview)->area, "event",
+                          G_CALLBACK (picman_scrolled_preview_area_event),
                           preview);
 
-  g_signal_connect (GIMP_PREVIEW (preview)->area, "realize",
-                    G_CALLBACK (gimp_scrolled_preview_area_realize),
+  g_signal_connect (PICMAN_PREVIEW (preview)->area, "realize",
+                    G_CALLBACK (picman_scrolled_preview_area_realize),
                     preview);
-  g_signal_connect (GIMP_PREVIEW (preview)->area, "unrealize",
-                    G_CALLBACK (gimp_scrolled_preview_area_unrealize),
+  g_signal_connect (PICMAN_PREVIEW (preview)->area, "unrealize",
+                    G_CALLBACK (picman_scrolled_preview_area_unrealize),
                     preview);
 
-  g_signal_connect (GIMP_PREVIEW (preview)->area, "size-allocate",
-                    G_CALLBACK (gimp_scrolled_preview_area_size_allocate),
+  g_signal_connect (PICMAN_PREVIEW (preview)->area, "size-allocate",
+                    G_CALLBACK (picman_scrolled_preview_area_size_allocate),
                     preview);
 
   /*  navigation icon  */
   preview->nav_icon = gtk_event_box_new ();
-  gtk_table_attach (GTK_TABLE (GIMP_PREVIEW(preview)->table),
+  gtk_table_attach (GTK_TABLE (PICMAN_PREVIEW(preview)->table),
                     preview->nav_icon, 1,2, 1,2,
                     GTK_SHRINK, GTK_SHRINK, 0, 0);
 
-  image = gtk_image_new_from_stock (GIMP_STOCK_NAVIGATION, GTK_ICON_SIZE_MENU);
+  image = gtk_image_new_from_stock (PICMAN_STOCK_NAVIGATION, GTK_ICON_SIZE_MENU);
   gtk_container_add (GTK_CONTAINER (preview->nav_icon), image);
   gtk_widget_show (image);
 
   g_signal_connect (preview->nav_icon, "button-press-event",
-                    G_CALLBACK (gimp_scrolled_preview_nav_button_press),
+                    G_CALLBACK (picman_scrolled_preview_nav_button_press),
                     preview);
 
   priv->frozen = 0;  /* thaw without actually calling draw/invalidate */
 }
 
 static void
-gimp_scrolled_preview_dispose (GObject *object)
+picman_scrolled_preview_dispose (GObject *object)
 {
-  GimpScrolledPreview *preview = GIMP_SCROLLED_PREVIEW (object);
+  PicmanScrolledPreview *preview = PICMAN_SCROLLED_PREVIEW (object);
 
   if (preview->nav_popup)
     {
@@ -242,8 +242,8 @@ gimp_scrolled_preview_dispose (GObject *object)
 }
 
 static void
-gimp_scrolled_preview_area_realize (GtkWidget           *widget,
-                                    GimpScrolledPreview *preview)
+picman_scrolled_preview_area_realize (GtkWidget           *widget,
+                                    PicmanScrolledPreview *preview)
 {
   GdkDisplay *display = gtk_widget_get_display (widget);
 
@@ -253,8 +253,8 @@ gimp_scrolled_preview_area_realize (GtkWidget           *widget,
 }
 
 static void
-gimp_scrolled_preview_area_unrealize (GtkWidget           *widget,
-                                      GimpScrolledPreview *preview)
+picman_scrolled_preview_area_unrealize (GtkWidget           *widget,
+                                      PicmanScrolledPreview *preview)
 {
   if (preview->cursor_move)
     {
@@ -264,59 +264,59 @@ gimp_scrolled_preview_area_unrealize (GtkWidget           *widget,
 }
 
 static void
-gimp_scrolled_preview_hscr_update (GimpScrolledPreview *preview)
+picman_scrolled_preview_hscr_update (PicmanScrolledPreview *preview)
 {
   GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (preview->hscr));
   gint           width;
 
-  width = GIMP_PREVIEW (preview)->xmax - GIMP_PREVIEW (preview)->xmin;
+  width = PICMAN_PREVIEW (preview)->xmax - PICMAN_PREVIEW (preview)->xmin;
 
   gtk_adjustment_configure (adj,
                             gtk_adjustment_get_value (adj),
                             0, width,
                             1.0,
-                            MAX (GIMP_PREVIEW (preview)->width / 2.0, 1.0),
-                            GIMP_PREVIEW (preview)->width);
+                            MAX (PICMAN_PREVIEW (preview)->width / 2.0, 1.0),
+                            PICMAN_PREVIEW (preview)->width);
 }
 
 static void
-gimp_scrolled_preview_vscr_update (GimpScrolledPreview *preview)
+picman_scrolled_preview_vscr_update (PicmanScrolledPreview *preview)
 {
   GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (preview->vscr));
   gint           height;
 
-  height = GIMP_PREVIEW (preview)->ymax - GIMP_PREVIEW (preview)->ymin;
+  height = PICMAN_PREVIEW (preview)->ymax - PICMAN_PREVIEW (preview)->ymin;
 
   gtk_adjustment_configure (adj,
                             gtk_adjustment_get_value (adj),
                             0, height,
                             1.0,
-                            MAX (GIMP_PREVIEW (preview)->height / 2.0, 1.0),
-                            GIMP_PREVIEW (preview)->height);
+                            MAX (PICMAN_PREVIEW (preview)->height / 2.0, 1.0),
+                            PICMAN_PREVIEW (preview)->height);
 }
 
 static void
-gimp_scrolled_preview_area_size_allocate (GtkWidget           *widget,
+picman_scrolled_preview_area_size_allocate (GtkWidget           *widget,
                                           GtkAllocation       *allocation,
-                                          GimpScrolledPreview *preview)
+                                          PicmanScrolledPreview *preview)
 {
-  GimpScrolledPreviewPrivate *priv = GIMP_SCROLLED_PREVIEW_GET_PRIVATE (preview);
+  PicmanScrolledPreviewPrivate *priv = PICMAN_SCROLLED_PREVIEW_GET_PRIVATE (preview);
 
-  gint width  = GIMP_PREVIEW (preview)->xmax - GIMP_PREVIEW (preview)->xmin;
-  gint height = GIMP_PREVIEW (preview)->ymax - GIMP_PREVIEW (preview)->ymin;
+  gint width  = PICMAN_PREVIEW (preview)->xmax - PICMAN_PREVIEW (preview)->xmin;
+  gint height = PICMAN_PREVIEW (preview)->ymax - PICMAN_PREVIEW (preview)->ymin;
 
-  gimp_scrolled_preview_freeze (preview);
+  picman_scrolled_preview_freeze (preview);
 
-  GIMP_PREVIEW (preview)->width  = MIN (width,  allocation->width);
-  GIMP_PREVIEW (preview)->height = MIN (height, allocation->height);
+  PICMAN_PREVIEW (preview)->width  = MIN (width,  allocation->width);
+  PICMAN_PREVIEW (preview)->height = MIN (height, allocation->height);
 
-  gimp_scrolled_preview_hscr_update (preview);
+  picman_scrolled_preview_hscr_update (preview);
 
   switch (priv->hscr_policy)
     {
     case GTK_POLICY_AUTOMATIC:
       gtk_widget_set_visible (preview->hscr,
-                              width > GIMP_PREVIEW (preview)->width);
+                              width > PICMAN_PREVIEW (preview)->width);
       break;
 
     case GTK_POLICY_ALWAYS:
@@ -328,13 +328,13 @@ gimp_scrolled_preview_area_size_allocate (GtkWidget           *widget,
       break;
     }
 
-  gimp_scrolled_preview_vscr_update (preview);
+  picman_scrolled_preview_vscr_update (preview);
 
   switch (priv->vscr_policy)
     {
     case GTK_POLICY_AUTOMATIC:
       gtk_widget_set_visible (preview->vscr,
-                              height > GIMP_PREVIEW (preview)->height);
+                              height > PICMAN_PREVIEW (preview)->height);
       break;
 
     case GTK_POLICY_ALWAYS:
@@ -349,17 +349,17 @@ gimp_scrolled_preview_area_size_allocate (GtkWidget           *widget,
   gtk_widget_set_visible (preview->nav_icon,
                           gtk_widget_get_visible (preview->vscr) &&
                           gtk_widget_get_visible (preview->hscr) &&
-                          GIMP_PREVIEW_GET_CLASS (preview)->draw_thumb);
+                          PICMAN_PREVIEW_GET_CLASS (preview)->draw_thumb);
 
-  gimp_scrolled_preview_thaw (preview);
+  picman_scrolled_preview_thaw (preview);
 }
 
 static gboolean
-gimp_scrolled_preview_area_event (GtkWidget           *area,
+picman_scrolled_preview_area_event (GtkWidget           *area,
                                   GdkEvent            *event,
-                                  GimpScrolledPreview *preview)
+                                  PicmanScrolledPreview *preview)
 {
-  GimpScrolledPreviewPrivate *priv = GIMP_SCROLLED_PREVIEW_GET_PRIVATE (preview);
+  PicmanScrolledPreviewPrivate *priv = PICMAN_SCROLLED_PREVIEW_GET_PRIVATE (preview);
   GdkEventButton             *button_event = (GdkEventButton *) event;
   GdkCursor                  *cursor;
 
@@ -382,8 +382,8 @@ gimp_scrolled_preview_area_event (GtkWidget           *area,
             {
               gtk_widget_get_pointer (area, &priv->drag_x, &priv->drag_y);
 
-              priv->drag_xoff = GIMP_PREVIEW (preview)->xoff;
-              priv->drag_yoff = GIMP_PREVIEW (preview)->yoff;
+              priv->drag_xoff = PICMAN_PREVIEW (preview)->xoff;
+              priv->drag_yoff = PICMAN_PREVIEW (preview)->yoff;
               priv->in_drag   = TRUE;
               gtk_grab_add (area);
             }
@@ -434,14 +434,14 @@ gimp_scrolled_preview_area_event (GtkWidget           *area,
                      gtk_adjustment_get_upper (vadj) -
                      gtk_adjustment_get_page_size (vadj));
 
-          if (GIMP_PREVIEW (preview)->xoff != x ||
-              GIMP_PREVIEW (preview)->yoff != y)
+          if (PICMAN_PREVIEW (preview)->xoff != x ||
+              PICMAN_PREVIEW (preview)->yoff != y)
             {
               gtk_adjustment_set_value (hadj, x);
               gtk_adjustment_set_value (vadj, y);
 
-              gimp_preview_draw (GIMP_PREVIEW (preview));
-              gimp_preview_invalidate (GIMP_PREVIEW (preview));
+              picman_preview_draw (PICMAN_PREVIEW (preview));
+              picman_preview_invalidate (PICMAN_PREVIEW (preview));
             }
 
           gdk_event_request_motions (mevent);
@@ -513,47 +513,47 @@ gimp_scrolled_preview_area_event (GtkWidget           *area,
 }
 
 static void
-gimp_scrolled_preview_h_scroll (GtkAdjustment *hadj,
-                                GimpPreview   *preview)
+picman_scrolled_preview_h_scroll (GtkAdjustment *hadj,
+                                PicmanPreview   *preview)
 {
-  GimpScrolledPreviewPrivate *priv = GIMP_SCROLLED_PREVIEW_GET_PRIVATE (preview);
+  PicmanScrolledPreviewPrivate *priv = PICMAN_SCROLLED_PREVIEW_GET_PRIVATE (preview);
 
   preview->xoff = gtk_adjustment_get_value (hadj);
 
-  gimp_preview_area_set_offsets (GIMP_PREVIEW_AREA (preview->area),
+  picman_preview_area_set_offsets (PICMAN_PREVIEW_AREA (preview->area),
                                  preview->xoff, preview->yoff);
 
   if (! (priv->in_drag || priv->frozen))
     {
-      gimp_preview_draw (preview);
-      gimp_preview_invalidate (preview);
+      picman_preview_draw (preview);
+      picman_preview_invalidate (preview);
     }
 }
 
 static void
-gimp_scrolled_preview_v_scroll (GtkAdjustment *vadj,
-                                GimpPreview   *preview)
+picman_scrolled_preview_v_scroll (GtkAdjustment *vadj,
+                                PicmanPreview   *preview)
 {
-  GimpScrolledPreviewPrivate *priv = GIMP_SCROLLED_PREVIEW_GET_PRIVATE (preview);
+  PicmanScrolledPreviewPrivate *priv = PICMAN_SCROLLED_PREVIEW_GET_PRIVATE (preview);
 
   preview->yoff = gtk_adjustment_get_value (vadj);
 
-  gimp_preview_area_set_offsets (GIMP_PREVIEW_AREA (preview->area),
+  picman_preview_area_set_offsets (PICMAN_PREVIEW_AREA (preview->area),
                                  preview->xoff, preview->yoff);
 
   if (! (priv->in_drag || priv->frozen))
     {
-      gimp_preview_draw (preview);
-      gimp_preview_invalidate (preview);
+      picman_preview_draw (preview);
+      picman_preview_invalidate (preview);
     }
 }
 
 static gboolean
-gimp_scrolled_preview_nav_button_press (GtkWidget           *widget,
+picman_scrolled_preview_nav_button_press (GtkWidget           *widget,
                                         GdkEventButton      *event,
-                                        GimpScrolledPreview *preview)
+                                        PicmanScrolledPreview *preview)
 {
-  GimpPreview   *gimp_preview = GIMP_PREVIEW (preview);
+  PicmanPreview   *picman_preview = PICMAN_PREVIEW (preview);
   GtkAdjustment *adj;
 
   if (preview->nav_popup)
@@ -584,22 +584,22 @@ gimp_scrolled_preview_nav_button_press (GtkWidget           *widget,
       gtk_container_add (GTK_CONTAINER (outer), inner);
       gtk_widget_show (inner);
 
-      area = g_object_new (GIMP_TYPE_PREVIEW_AREA,
-                           "check-size", GIMP_CHECK_SIZE_SMALL_CHECKS,
-                           "check-type", GIMP_PREVIEW_AREA (gimp_preview->area)->check_type,
+      area = g_object_new (PICMAN_TYPE_PREVIEW_AREA,
+                           "check-size", PICMAN_CHECK_SIZE_SMALL_CHECKS,
+                           "check-type", PICMAN_PREVIEW_AREA (picman_preview->area)->check_type,
                            NULL);
 
       gtk_container_add (GTK_CONTAINER (inner), area);
 
       g_signal_connect (area, "event",
-                        G_CALLBACK (gimp_scrolled_preview_nav_popup_event),
+                        G_CALLBACK (picman_scrolled_preview_nav_popup_event),
                         preview);
       g_signal_connect_after (area, "expose-event",
-                              G_CALLBACK (gimp_scrolled_preview_nav_popup_expose),
+                              G_CALLBACK (picman_scrolled_preview_nav_popup_expose),
                               preview);
 
-      GIMP_PREVIEW_GET_CLASS (preview)->draw_thumb (gimp_preview,
-                                                    GIMP_PREVIEW_AREA (area),
+      PICMAN_PREVIEW_GET_CLASS (preview)->draw_thumb (picman_preview,
+                                                    PICMAN_PREVIEW_AREA (area),
                                                     POPUP_SIZE, POPUP_SIZE);
       gtk_widget_realize (area);
       gtk_widget_show (area);
@@ -618,8 +618,8 @@ gimp_scrolled_preview_nav_button_press (GtkWidget           *widget,
            (gtk_adjustment_get_page_size (adj) /
             gtk_adjustment_get_upper (adj)) / 2.0);
 
-      x += event->x - h * (gdouble) GIMP_PREVIEW_AREA (area)->width;
-      y += event->y - v * (gdouble) GIMP_PREVIEW_AREA (area)->height;
+      x += event->x - h * (gdouble) PICMAN_PREVIEW_AREA (area)->width;
+      y += event->y - v * (gdouble) PICMAN_PREVIEW_AREA (area)->height;
 
       gtk_window_move (GTK_WINDOW (preview->nav_popup),
                        x - 2 * style->xthickness,
@@ -646,9 +646,9 @@ gimp_scrolled_preview_nav_button_press (GtkWidget           *widget,
 }
 
 static gboolean
-gimp_scrolled_preview_nav_popup_event (GtkWidget           *widget,
+picman_scrolled_preview_nav_popup_event (GtkWidget           *widget,
                                        GdkEvent            *event,
-                                       GimpScrolledPreview *preview)
+                                       PicmanScrolledPreview *preview)
 {
   switch (event->type)
     {
@@ -720,9 +720,9 @@ gimp_scrolled_preview_nav_popup_event (GtkWidget           *widget,
 }
 
 static gboolean
-gimp_scrolled_preview_nav_popup_expose (GtkWidget           *widget,
+picman_scrolled_preview_nav_popup_expose (GtkWidget           *widget,
                                         GdkEventExpose      *event,
-                                        GimpScrolledPreview *preview)
+                                        PicmanScrolledPreview *preview)
 {
   GtkAdjustment *adj;
   GtkAllocation  allocation;
@@ -784,7 +784,7 @@ gimp_scrolled_preview_nav_popup_expose (GtkWidget           *widget,
 }
 
 static void
-gimp_scrolled_preview_set_cursor (GimpPreview *preview)
+picman_scrolled_preview_set_cursor (PicmanPreview *preview)
 {
   if (! gtk_widget_get_realized (preview->area))
     return;
@@ -793,7 +793,7 @@ gimp_scrolled_preview_set_cursor (GimpPreview *preview)
       preview->ymax - preview->ymin > preview->height)
     {
       gdk_window_set_cursor (gtk_widget_get_window (preview->area),
-                             GIMP_SCROLLED_PREVIEW (preview)->cursor_move);
+                             PICMAN_SCROLLED_PREVIEW (preview)->cursor_move);
     }
   else
     {
@@ -803,106 +803,106 @@ gimp_scrolled_preview_set_cursor (GimpPreview *preview)
 }
 
 /**
- * gimp_scrolled_preview_set_position:
- * @preview: a #GimpScrolledPreview
+ * picman_scrolled_preview_set_position:
+ * @preview: a #PicmanScrolledPreview
  * @x:       horizontal scroll offset
  * @y:       vertical scroll offset
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_scrolled_preview_set_position (GimpScrolledPreview *preview,
+picman_scrolled_preview_set_position (PicmanScrolledPreview *preview,
                                     gint                 x,
                                     gint                 y)
 {
   GtkAdjustment *adj;
 
-  g_return_if_fail (GIMP_IS_SCROLLED_PREVIEW (preview));
+  g_return_if_fail (PICMAN_IS_SCROLLED_PREVIEW (preview));
 
-  gimp_scrolled_preview_freeze (preview);
+  picman_scrolled_preview_freeze (preview);
 
-  gimp_scrolled_preview_hscr_update (preview);
-  gimp_scrolled_preview_vscr_update (preview);
+  picman_scrolled_preview_hscr_update (preview);
+  picman_scrolled_preview_vscr_update (preview);
 
   adj = gtk_range_get_adjustment (GTK_RANGE (preview->hscr));
-  gtk_adjustment_set_value (adj, x - GIMP_PREVIEW (preview)->xmin);
+  gtk_adjustment_set_value (adj, x - PICMAN_PREVIEW (preview)->xmin);
 
   adj = gtk_range_get_adjustment (GTK_RANGE (preview->vscr));
-  gtk_adjustment_set_value (adj, y - GIMP_PREVIEW (preview)->ymin);
+  gtk_adjustment_set_value (adj, y - PICMAN_PREVIEW (preview)->ymin);
 
-  gimp_scrolled_preview_thaw (preview);
+  picman_scrolled_preview_thaw (preview);
 }
 
 /**
- * gimp_scrolled_preview_set_policy
- * @preview:           a #GimpScrolledPreview
+ * picman_scrolled_preview_set_policy
+ * @preview:           a #PicmanScrolledPreview
  * @hscrollbar_policy: policy for horizontal scrollbar
  * @vscrollbar_policy: policy for vertical scrollbar
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_scrolled_preview_set_policy (GimpScrolledPreview *preview,
+picman_scrolled_preview_set_policy (PicmanScrolledPreview *preview,
                                   GtkPolicyType        hscrollbar_policy,
                                   GtkPolicyType        vscrollbar_policy)
 {
-  GimpScrolledPreviewPrivate *priv;
+  PicmanScrolledPreviewPrivate *priv;
 
-  g_return_if_fail (GIMP_IS_SCROLLED_PREVIEW (preview));
+  g_return_if_fail (PICMAN_IS_SCROLLED_PREVIEW (preview));
 
-  priv = GIMP_SCROLLED_PREVIEW_GET_PRIVATE (preview);
+  priv = PICMAN_SCROLLED_PREVIEW_GET_PRIVATE (preview);
 
   priv->hscr_policy = hscrollbar_policy;
   priv->vscr_policy = vscrollbar_policy;
 
-  gtk_widget_queue_resize (GIMP_PREVIEW (preview)->area);
+  gtk_widget_queue_resize (PICMAN_PREVIEW (preview)->area);
 }
 
 
 /**
- * gimp_scrolled_preview_freeze:
- * @preview: a #GimpScrolledPreview
+ * picman_scrolled_preview_freeze:
+ * @preview: a #PicmanScrolledPreview
  *
  * While the @preview is frozen, it is not going to redraw itself in
  * response to scroll events.
  *
  * This function should only be used to implement widgets derived from
- * #GimpScrolledPreview. There is no point in calling this from a plug-in.
+ * #PicmanScrolledPreview. There is no point in calling this from a plug-in.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_scrolled_preview_freeze (GimpScrolledPreview *preview)
+picman_scrolled_preview_freeze (PicmanScrolledPreview *preview)
 {
-  GimpScrolledPreviewPrivate *priv;
+  PicmanScrolledPreviewPrivate *priv;
 
-  g_return_if_fail (GIMP_IS_SCROLLED_PREVIEW (preview));
+  g_return_if_fail (PICMAN_IS_SCROLLED_PREVIEW (preview));
 
-  priv = GIMP_SCROLLED_PREVIEW_GET_PRIVATE (preview);
+  priv = PICMAN_SCROLLED_PREVIEW_GET_PRIVATE (preview);
 
   priv->frozen++;
 }
 
 /**
- * gimp_scrolled_preview_thaw:
- * @preview: a #GimpScrolledPreview
+ * picman_scrolled_preview_thaw:
+ * @preview: a #PicmanScrolledPreview
  *
  * While the @preview is frozen, it is not going to redraw itself in
  * response to scroll events.
  *
  * This function should only be used to implement widgets derived from
- * #GimpScrolledPreview. There is no point in calling this from a plug-in.
+ * #PicmanScrolledPreview. There is no point in calling this from a plug-in.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_scrolled_preview_thaw (GimpScrolledPreview *preview)
+picman_scrolled_preview_thaw (PicmanScrolledPreview *preview)
 {
-  GimpScrolledPreviewPrivate *priv;
+  PicmanScrolledPreviewPrivate *priv;
 
-  g_return_if_fail (GIMP_IS_SCROLLED_PREVIEW (preview));
+  g_return_if_fail (PICMAN_IS_SCROLLED_PREVIEW (preview));
 
-  priv = GIMP_SCROLLED_PREVIEW_GET_PRIVATE (preview);
+  priv = PICMAN_SCROLLED_PREVIEW_GET_PRIVATE (preview);
 
   g_return_if_fail (priv->frozen > 0);
 
@@ -910,7 +910,7 @@ gimp_scrolled_preview_thaw (GimpScrolledPreview *preview)
 
   if (! priv->frozen)
     {
-      gimp_preview_draw (GIMP_PREVIEW (preview));
-      gimp_preview_invalidate (GIMP_PREVIEW (preview));
+      picman_preview_draw (PICMAN_PREVIEW (preview));
+      picman_preview_invalidate (PICMAN_PREVIEW (preview));
     }
 }

@@ -1,5 +1,5 @@
-/* GIMP Wheel ColorSelector
- * Copyright (C) 2008  Michael Natterer <mitch@gimp.org>
+/* PICMAN Wheel ColorSelector
+ * Copyright (C) 2008  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "gimpcolorwheel.h"
+#include "picmancolorwheel.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 #define COLORSEL_TYPE_WHEEL            (colorsel_wheel_get_type ())
@@ -45,30 +45,30 @@ typedef struct _ColorselWheelClass ColorselWheelClass;
 
 struct _ColorselWheel
 {
-  GimpColorSelector  parent_instance;
+  PicmanColorSelector  parent_instance;
 
   GtkWidget         *hsv;
 };
 
 struct _ColorselWheelClass
 {
-  GimpColorSelectorClass  parent_class;
+  PicmanColorSelectorClass  parent_class;
 };
 
 
 static GType  colorsel_wheel_get_type      (void);
 
-static void   colorsel_wheel_set_color     (GimpColorSelector *selector,
-                                            const GimpRGB     *rgb,
-                                            const GimpHSV     *hsv);
-static void   colorsel_wheel_changed       (GimpColorWheel    *hsv,
-                                            GimpColorSelector *selector);
+static void   colorsel_wheel_set_color     (PicmanColorSelector *selector,
+                                            const PicmanRGB     *rgb,
+                                            const PicmanHSV     *hsv);
+static void   colorsel_wheel_changed       (PicmanColorWheel    *hsv,
+                                            PicmanColorSelector *selector);
 
-static const GimpModuleInfo colorsel_wheel_info =
+static const PicmanModuleInfo colorsel_wheel_info =
 {
-  GIMP_MODULE_ABI_VERSION,
+  PICMAN_MODULE_ABI_VERSION,
   N_("HSV color wheel"),
-  "Michael Natterer <mitch@gimp.org>",
+  "Michael Natterer <mitch@picman.org>",
   "v1.0",
   "(c) 2008, released under the GPL",
   "08 Aug 2008"
@@ -76,17 +76,17 @@ static const GimpModuleInfo colorsel_wheel_info =
 
 
 G_DEFINE_DYNAMIC_TYPE (ColorselWheel, colorsel_wheel,
-                       GIMP_TYPE_COLOR_SELECTOR)
+                       PICMAN_TYPE_COLOR_SELECTOR)
 
 
-G_MODULE_EXPORT const GimpModuleInfo *
-gimp_module_query (GTypeModule *module)
+G_MODULE_EXPORT const PicmanModuleInfo *
+picman_module_query (GTypeModule *module)
 {
   return &colorsel_wheel_info;
 }
 
 G_MODULE_EXPORT gboolean
-gimp_module_register (GTypeModule *module)
+picman_module_register (GTypeModule *module)
 {
   colorsel_wheel_register_type (module);
 
@@ -96,11 +96,11 @@ gimp_module_register (GTypeModule *module)
 static void
 colorsel_wheel_class_init (ColorselWheelClass *klass)
 {
-  GimpColorSelectorClass *selector_class = GIMP_COLOR_SELECTOR_CLASS (klass);
+  PicmanColorSelectorClass *selector_class = PICMAN_COLOR_SELECTOR_CLASS (klass);
 
   selector_class->name      = _("Wheel");
-  selector_class->help_id   = "gimp-colorselector-triangle";
-  selector_class->stock_id  = GIMP_STOCK_COLOR_TRIANGLE;
+  selector_class->help_id   = "picman-colorselector-triangle";
+  selector_class->stock_id  = PICMAN_STOCK_COLOR_TRIANGLE;
   selector_class->set_color = colorsel_wheel_set_color;
 }
 
@@ -119,7 +119,7 @@ colorsel_wheel_init (ColorselWheel *wheel)
   gtk_box_pack_start (GTK_BOX (wheel), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
-  wheel->hsv = gimp_color_wheel_new ();
+  wheel->hsv = picman_color_wheel_new ();
   gtk_container_add (GTK_CONTAINER (frame), wheel->hsv);
   gtk_widget_show (wheel->hsv);
 
@@ -129,25 +129,25 @@ colorsel_wheel_init (ColorselWheel *wheel)
 }
 
 static void
-colorsel_wheel_set_color (GimpColorSelector *selector,
-                          const GimpRGB     *rgb,
-                          const GimpHSV     *hsv)
+colorsel_wheel_set_color (PicmanColorSelector *selector,
+                          const PicmanRGB     *rgb,
+                          const PicmanHSV     *hsv)
 {
   ColorselWheel *wheel = COLORSEL_WHEEL (selector);
 
-  gimp_color_wheel_set_color (GIMP_COLOR_WHEEL (wheel->hsv),
+  picman_color_wheel_set_color (PICMAN_COLOR_WHEEL (wheel->hsv),
                               hsv->h, hsv->s, hsv->v);
 }
 
 static void
-colorsel_wheel_changed (GimpColorWheel    *hsv,
-                        GimpColorSelector *selector)
+colorsel_wheel_changed (PicmanColorWheel    *hsv,
+                        PicmanColorSelector *selector)
 {
-  gimp_color_wheel_get_color (hsv,
+  picman_color_wheel_get_color (hsv,
                               &selector->hsv.h,
                               &selector->hsv.s,
                               &selector->hsv.v);
-  gimp_hsv_to_rgb (&selector->hsv, &selector->rgb);
+  picman_hsv_to_rgb (&selector->hsv, &selector->rgb);
 
-  gimp_color_selector_color_changed (selector);
+  picman_color_selector_color_changed (selector);
 }

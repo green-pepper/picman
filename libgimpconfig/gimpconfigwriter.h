@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpConfigWriter
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * PicmanConfigWriter
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,49 +19,49 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_CONFIG_H_INSIDE__) && !defined (GIMP_CONFIG_COMPILATION)
-#error "Only <libgimpconfig/gimpconfig.h> can be included directly."
+#if !defined (__PICMAN_CONFIG_H_INSIDE__) && !defined (PICMAN_CONFIG_COMPILATION)
+#error "Only <libpicmanconfig/picmanconfig.h> can be included directly."
 #endif
 
-#ifndef __GIMP_CONFIG_WRITER_H__
-#define __GIMP_CONFIG_WRITER_H__
+#ifndef __PICMAN_CONFIG_WRITER_H__
+#define __PICMAN_CONFIG_WRITER_H__
 
 
-GimpConfigWriter * gimp_config_writer_new_file     (const gchar       *filename,
+PicmanConfigWriter * picman_config_writer_new_file     (const gchar       *filename,
                                                     gboolean           atomic,
                                                     const gchar       *header,
                                                     GError           **error);
-GimpConfigWriter * gimp_config_writer_new_fd       (gint               fd);
-GimpConfigWriter * gimp_config_writer_new_string   (GString           *string);
+PicmanConfigWriter * picman_config_writer_new_fd       (gint               fd);
+PicmanConfigWriter * picman_config_writer_new_string   (GString           *string);
 
-void               gimp_config_writer_open         (GimpConfigWriter  *writer,
+void               picman_config_writer_open         (PicmanConfigWriter  *writer,
                                                     const gchar       *name);
-void               gimp_config_writer_comment_mode (GimpConfigWriter  *writer,
+void               picman_config_writer_comment_mode (PicmanConfigWriter  *writer,
                                                     gboolean           enable);
 
-void               gimp_config_writer_print        (GimpConfigWriter  *writer,
+void               picman_config_writer_print        (PicmanConfigWriter  *writer,
                                                     const gchar       *string,
                                                     gint               len);
-void               gimp_config_writer_printf       (GimpConfigWriter  *writer,
+void               picman_config_writer_printf       (PicmanConfigWriter  *writer,
                                                     const gchar       *format,
                                                     ...) G_GNUC_PRINTF (2, 3);
-void               gimp_config_writer_identifier   (GimpConfigWriter  *writer,
+void               picman_config_writer_identifier   (PicmanConfigWriter  *writer,
                                                     const gchar       *identifier);
-void               gimp_config_writer_string       (GimpConfigWriter  *writer,
+void               picman_config_writer_string       (PicmanConfigWriter  *writer,
                                                     const gchar       *string);
-void               gimp_config_writer_data         (GimpConfigWriter  *writer,
+void               picman_config_writer_data         (PicmanConfigWriter  *writer,
                                                     gint               length,
                                                     const guint8      *data);
-void               gimp_config_writer_comment      (GimpConfigWriter  *writer,
+void               picman_config_writer_comment      (PicmanConfigWriter  *writer,
                                                     const gchar       *comment);
-void               gimp_config_writer_linefeed     (GimpConfigWriter  *writer);
+void               picman_config_writer_linefeed     (PicmanConfigWriter  *writer);
 
 
-void               gimp_config_writer_revert       (GimpConfigWriter  *writer);
-void               gimp_config_writer_close        (GimpConfigWriter  *writer);
-gboolean           gimp_config_writer_finish       (GimpConfigWriter  *writer,
+void               picman_config_writer_revert       (PicmanConfigWriter  *writer);
+void               picman_config_writer_close        (PicmanConfigWriter  *writer);
+gboolean           picman_config_writer_finish       (PicmanConfigWriter  *writer,
                                                     const gchar       *footer,
                                                     GError           **error);
 
 
-#endif /* __GIMP_CONFIG_WRITER_H__ */
+#endif /* __PICMAN_CONFIG_WRITER_H__ */

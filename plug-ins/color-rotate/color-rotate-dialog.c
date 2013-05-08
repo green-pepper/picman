@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Colormap-Rotation plug-in. Exchanges two color ranges.
  *
@@ -28,7 +28,7 @@
  *
  * Version 2.0, 04 April 1999.
  *  Nearly complete rewrite, made plug-in stable.
- *  (Works with GIMP 1.1 and GTK+ 1.2)
+ *  (Works with PICMAN 1.1 and GTK+ 1.2)
  *
  * Version 1.0, 27 March 1997.
  *  Initial (unstable) release by Pavel Grinfeld
@@ -37,8 +37,8 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "color-rotate.h"
 #include "color-rotate-utils.h"
@@ -49,7 +49,7 @@
 
 #include "images/color-rotate-stock-pixbufs.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Defines */
@@ -86,7 +86,7 @@ rcm_create_one_preview (GtkWidget **preview,
   gtk_container_add (GTK_CONTAINER (align), frame);
   gtk_widget_show (frame);
 
-  *preview = gimp_preview_area_new ();
+  *preview = picman_preview_area_new ();
 
   gtk_widget_set_size_request (*preview, width, height);
   gtk_container_add (GTK_CONTAINER (frame), *preview);
@@ -170,11 +170,11 @@ rcm_create_previews (void)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  combo = gimp_int_combo_box_new (_("Entire Layer"), ENTIRE_IMAGE,
+  combo = picman_int_combo_box_new (_("Entire Layer"), ENTIRE_IMAGE,
                                   _("Selection"),    SELECTION,
                                   _("Context"),      SELECTION_IN_CONTEXT,
                                   NULL);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo), Current.Slctn);
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo), Current.Slctn);
 
   gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
   gtk_widget_show (combo);
@@ -208,7 +208,7 @@ rcm_create_one_circle (gint         height,
   st->angle->cw_ccw = 1;
 
   /** Main: Circle: create (main) frame **/
-  st->frame = gimp_frame_new (label_content);
+  st->frame = picman_frame_new (label_content);
   gtk_widget_show (st->frame);
 
   /** Main: Circle: create frame & preview **/
@@ -219,7 +219,7 @@ rcm_create_one_circle (gint         height,
   gtk_widget_show (frame);
 
   /* create preview */
-  st->preview = gimp_preview_area_new ();
+  st->preview = picman_preview_area_new ();
   gtk_widget_set_size_request (st->preview, height, height);
   gtk_container_add (GTK_CONTAINER (frame), st->preview);
   gtk_widget_show (st->preview);
@@ -415,7 +415,7 @@ rcm_create_gray (void)
   gtk_container_set_border_width (GTK_CONTAINER (top_vbox), 12);
   gtk_widget_show (top_vbox);
 
-  frame = gimp_frame_new (_("Gray"));
+  frame = picman_frame_new (_("Gray"));
   gtk_box_pack_start (GTK_BOX (top_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -432,7 +432,7 @@ rcm_create_gray (void)
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  st->preview = preview = gimp_preview_area_new ();
+  st->preview = preview = picman_preview_area_new ();
   gtk_widget_set_size_request (preview, GRAY_SUM, GRAY_SUM);
   gtk_container_add (GTK_CONTAINER (frame), preview);
   gtk_widget_show (preview);
@@ -510,7 +510,7 @@ rcm_create_gray (void)
                     st);
 
   /** Gray: Operation-Mode **/
-  frame = gimp_frame_new (_("Gray Mode"));
+  frame = picman_frame_new (_("Gray Mode"));
   gtk_box_pack_start (GTK_BOX (top_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -544,7 +544,7 @@ rcm_create_gray (void)
                     &(Current.Gray_to_from));
 
   /** Gray: What is gray? **/
-  frame = gimp_frame_new (_("Gray Threshold"));
+  frame = picman_frame_new (_("Gray Threshold"));
   gtk_box_pack_start (GTK_BOX (top_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -584,7 +584,7 @@ rcm_create_units (void)
   GSList    *group = NULL;
 
   /** Misc: Used unit selection **/
-  frame = gimp_frame_new (_("Units"));
+  frame = picman_frame_new (_("Units"));
   gtk_container_set_border_width (GTK_CONTAINER (frame), 12);
   gtk_widget_show (frame);
 
@@ -645,12 +645,12 @@ color_rotate_dialog (void)
 
   Current.Bna = g_new (RcmBna, 1);
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
   color_rotate_stock_init ();
 
-  dialog = gimp_dialog_new (_("Rotate Colors"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Rotate Colors"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -662,7 +662,7 @@ color_rotate_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   Current.Bna->dlg = dialog;
 
@@ -702,7 +702,7 @@ color_rotate_dialog (void)
   rcm_render_circle (Current.To->preview, SUM, MARGIN);
   rcm_render_circle (Current.Gray->preview, GRAY_SUM, GRAY_MARGIN);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

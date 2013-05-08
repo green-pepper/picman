@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,15 +19,15 @@
 #define __FILE_SAVE_DIALOG_H__
 
 
-GtkWidget * file_save_dialog_new        (Gimp                *gimp,
+GtkWidget * file_save_dialog_new        (Picman                *picman,
                                          gboolean             export);
 
-gboolean    file_save_dialog_save_image (GimpProgress        *progress_and_handler,
-                                         Gimp                *gimp,
-                                         GimpImage           *image,
+gboolean    file_save_dialog_save_image (PicmanProgress        *progress_and_handler,
+                                         Picman                *picman,
+                                         PicmanImage           *image,
                                          const gchar         *uri,
-                                         GimpPlugInProcedure *write_proc,
-                                         GimpRunMode          run_mode,
+                                         PicmanPlugInProcedure *write_proc,
+                                         PicmanRunMode          run_mode,
                                          gboolean             save_a_copy,
                                          gboolean             export_backward,
                                          gboolean             export_forward,

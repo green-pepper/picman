@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,17 +19,17 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpsamplepointeditor.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmansamplepointeditor.h"
 
 #include "sample-points-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  public functions  */
@@ -38,10 +38,10 @@ void
 sample_points_sample_merged_cmd_callback (GtkAction *action,
                                           gpointer   data)
 {
-  GimpSamplePointEditor *editor = GIMP_SAMPLE_POINT_EDITOR (data);
+  PicmanSamplePointEditor *editor = PICMAN_SAMPLE_POINT_EDITOR (data);
   gboolean               active;
 
   active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_sample_point_editor_set_sample_merged (editor, active);
+  picman_sample_point_editor_set_sample_merged (editor, active);
 }

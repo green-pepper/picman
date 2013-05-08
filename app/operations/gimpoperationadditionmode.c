@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationadditionmode.c
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanoperationadditionmode.c
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *               2012 Ville Sokk <ville.sokk@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,10 +26,10 @@
 
 #include "operations-types.h"
 
-#include "gimpoperationadditionmode.h"
+#include "picmanoperationadditionmode.h"
 
 
-static gboolean gimp_operation_addition_mode_process (GeglOperation       *operation,
+static gboolean picman_operation_addition_mode_process (GeglOperation       *operation,
                                                       void                *in_buf,
                                                       void                *aux_buf,
                                                       void                *aux2_buf,
@@ -39,12 +39,12 @@ static gboolean gimp_operation_addition_mode_process (GeglOperation       *opera
                                                       gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationAdditionMode, gimp_operation_addition_mode,
-               GIMP_TYPE_OPERATION_POINT_LAYER_MODE)
+G_DEFINE_TYPE (PicmanOperationAdditionMode, picman_operation_addition_mode,
+               PICMAN_TYPE_OPERATION_POINT_LAYER_MODE)
 
 
 static void
-gimp_operation_addition_mode_class_init (GimpOperationAdditionModeClass *klass)
+picman_operation_addition_mode_class_init (PicmanOperationAdditionModeClass *klass)
 {
   GeglOperationClass               *operation_class;
   GeglOperationPointComposer3Class *point_class;
@@ -53,20 +53,20 @@ gimp_operation_addition_mode_class_init (GimpOperationAdditionModeClass *klass)
   point_class     = GEGL_OPERATION_POINT_COMPOSER3_CLASS (klass);
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:addition-mode",
-                                 "description", "GIMP addition mode operation",
+                                 "name",        "picman:addition-mode",
+                                 "description", "PICMAN addition mode operation",
                                  NULL);
 
-  point_class->process = gimp_operation_addition_mode_process;
+  point_class->process = picman_operation_addition_mode_process;
 }
 
 static void
-gimp_operation_addition_mode_init (GimpOperationAdditionMode *self)
+picman_operation_addition_mode_init (PicmanOperationAdditionMode *self)
 {
 }
 
 static gboolean
-gimp_operation_addition_mode_process (GeglOperation       *operation,
+picman_operation_addition_mode_process (GeglOperation       *operation,
                                       void                *in_buf,
                                       void                *aux_buf,
                                       void                *aux2_buf,
@@ -75,7 +75,7 @@ gimp_operation_addition_mode_process (GeglOperation       *operation,
                                       const GeglRectangle *roi,
                                       gint                 level)
 {
-  gdouble        opacity  = GIMP_OPERATION_POINT_LAYER_MODE (operation)->opacity;
+  gdouble        opacity  = PICMAN_OPERATION_POINT_LAYER_MODE (operation)->opacity;
   gfloat        *in       = in_buf;
   gfloat        *layer    = aux_buf;
   gfloat        *mask     = aux2_buf;

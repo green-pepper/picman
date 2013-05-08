@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpvectors-compat.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmanvectors-compat.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,47 +24,47 @@
 
 #include "vectors-types.h"
 
-#include "core/gimpimage.h"
+#include "core/picmanimage.h"
 
-#include "gimpanchor.h"
-#include "gimpbezierstroke.h"
-#include "gimpvectors.h"
-#include "gimpvectors-compat.h"
+#include "picmananchor.h"
+#include "picmanbezierstroke.h"
+#include "picmanvectors.h"
+#include "picmanvectors-compat.h"
 
 
 enum
 {
-  GIMP_VECTORS_COMPAT_ANCHOR     = 1,
-  GIMP_VECTORS_COMPAT_CONTROL    = 2,
-  GIMP_VECTORS_COMPAT_NEW_STROKE = 3
+  PICMAN_VECTORS_COMPAT_ANCHOR     = 1,
+  PICMAN_VECTORS_COMPAT_CONTROL    = 2,
+  PICMAN_VECTORS_COMPAT_NEW_STROKE = 3
 };
 
 
-static const GimpCoords default_coords = GIMP_COORDS_DEFAULT_VALUES;
+static const PicmanCoords default_coords = PICMAN_COORDS_DEFAULT_VALUES;
 
 
-GimpVectors *
-gimp_vectors_compat_new (GimpImage              *image,
+PicmanVectors *
+picman_vectors_compat_new (PicmanImage              *image,
                          const gchar            *name,
-                         GimpVectorsCompatPoint *points,
+                         PicmanVectorsCompatPoint *points,
                          gint                    n_points,
                          gboolean                closed)
 {
-  GimpVectors *vectors;
-  GimpStroke  *stroke;
-  GimpCoords  *coords;
-  GimpCoords  *curr_stroke;
-  GimpCoords  *curr_coord;
+  PicmanVectors *vectors;
+  PicmanStroke  *stroke;
+  PicmanCoords  *coords;
+  PicmanCoords  *curr_stroke;
+  PicmanCoords  *curr_coord;
   gint         i;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (name != NULL, NULL);
   g_return_val_if_fail (points != NULL || n_points == 0, NULL);
   g_return_val_if_fail (n_points >= 0, NULL);
 
-  vectors = gimp_vectors_new (image, name);
+  vectors = picman_vectors_new (image, name);
 
-  coords = g_new0 (GimpCoords, n_points + 1);
+  coords = g_new0 (PicmanCoords, n_points + 1);
 
   curr_stroke = curr_coord = coords;
 
@@ -83,16 +83,16 @@ gimp_vectors_compat_new (GimpImage              *image,
         *curr_stroke = *curr_coord;
 
       /*  found new stroke start  */
-      if (points[i].type == GIMP_VECTORS_COMPAT_NEW_STROKE)
+      if (points[i].type == PICMAN_VECTORS_COMPAT_NEW_STROKE)
         {
           /*  copy the last control point to the beginning of the stroke  */
           *curr_stroke = *(curr_coord - 1);
 
           stroke =
-            gimp_bezier_stroke_new_from_coords (curr_stroke,
+            picman_bezier_stroke_new_from_coords (curr_stroke,
                                                 curr_coord - curr_stroke - 1,
                                                 TRUE);
-          gimp_vectors_stroke_add (vectors, stroke);
+          picman_vectors_stroke_add (vectors, stroke);
           g_object_unref (stroke);
 
           /*  start a new stroke  */
@@ -112,10 +112,10 @@ gimp_vectors_compat_new (GimpImage              *image,
       *curr_stroke = *curr_coord;
     }
 
-  stroke = gimp_bezier_stroke_new_from_coords (curr_stroke,
+  stroke = picman_bezier_stroke_new_from_coords (curr_stroke,
                                                curr_coord - curr_stroke,
                                                closed);
-  gimp_vectors_stroke_add (vectors, stroke);
+  picman_vectors_stroke_add (vectors, stroke);
   g_object_unref (stroke);
 
   g_free (coords);
@@ -124,28 +124,28 @@ gimp_vectors_compat_new (GimpImage              *image,
 }
 
 gboolean
-gimp_vectors_compat_is_compatible (GimpImage *image)
+picman_vectors_compat_is_compatible (PicmanImage *image)
 {
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
 
-  for (list = gimp_image_get_vectors_iter (image);
+  for (list = picman_image_get_vectors_iter (image);
        list;
        list = g_list_next (list))
     {
-      GimpVectors *vectors    = GIMP_VECTORS (list->data);
+      PicmanVectors *vectors    = PICMAN_VECTORS (list->data);
       GList       *strokes;
       gint         open_count = 0;
 
-      if (gimp_item_get_visible (GIMP_ITEM (vectors)))
+      if (picman_item_get_visible (PICMAN_ITEM (vectors)))
         return FALSE;
 
       for (strokes = vectors->strokes; strokes; strokes = g_list_next (strokes))
         {
-           GimpStroke *stroke = GIMP_STROKE (strokes->data);
+           PicmanStroke *stroke = PICMAN_STROKE (strokes->data);
 
-          if (! GIMP_IS_BEZIER_STROKE (stroke))
+          if (! PICMAN_IS_BEZIER_STROKE (stroke))
             return FALSE;
 
           if (!stroke->closed)
@@ -159,19 +159,19 @@ gimp_vectors_compat_is_compatible (GimpImage *image)
   return TRUE;
 }
 
-GimpVectorsCompatPoint *
-gimp_vectors_compat_get_points (GimpVectors *vectors,
+PicmanVectorsCompatPoint *
+picman_vectors_compat_get_points (PicmanVectors *vectors,
                                 gint32      *n_points,
                                 gint32      *closed)
 {
-  GimpVectorsCompatPoint *points;
+  PicmanVectorsCompatPoint *points;
   GList                  *strokes;
   gint                    i;
   GList                  *postponed = NULL;  /* for the one open stroke... */
   gint                    open_count;
   gboolean                first_stroke = TRUE;
 
-  g_return_val_if_fail (GIMP_IS_VECTORS (vectors), NULL);
+  g_return_val_if_fail (PICMAN_IS_VECTORS (vectors), NULL);
   g_return_val_if_fail (n_points != NULL, NULL);
   g_return_val_if_fail (closed != NULL, NULL);
 
@@ -182,7 +182,7 @@ gimp_vectors_compat_get_points (GimpVectors *vectors,
 
   for (strokes = vectors->strokes; strokes; strokes = g_list_next (strokes))
     {
-      GimpStroke *stroke = strokes->data;
+      PicmanStroke *stroke = strokes->data;
       gint        n_anchors;
 
       if (! stroke->closed)
@@ -193,7 +193,7 @@ gimp_vectors_compat_get_points (GimpVectors *vectors,
 
           if (open_count >= 2)
             {
-              g_warning ("gimp_vectors_compat_get_points(): convert failed");
+              g_warning ("picman_vectors_compat_get_points(): convert failed");
               *n_points = 0;
               return NULL;
             }
@@ -207,7 +207,7 @@ gimp_vectors_compat_get_points (GimpVectors *vectors,
       *n_points += n_anchors;
     }
 
-  points = g_new0 (GimpVectorsCompatPoint, *n_points);
+  points = g_new0 (PicmanVectorsCompatPoint, *n_points);
 
   i = 0;
 
@@ -215,7 +215,7 @@ gimp_vectors_compat_get_points (GimpVectors *vectors,
        strokes || postponed;
        strokes = g_list_next (strokes))
     {
-      GimpStroke *stroke;
+      PicmanStroke *stroke;
       GList      *anchors;
 
       if (strokes)
@@ -224,11 +224,11 @@ gimp_vectors_compat_get_points (GimpVectors *vectors,
             /* we need to visit the open stroke last... */
             continue;
           else
-            stroke = GIMP_STROKE (strokes->data);
+            stroke = PICMAN_STROKE (strokes->data);
         }
       else
         {
-          stroke = GIMP_STROKE (postponed->data);
+          stroke = PICMAN_STROKE (postponed->data);
           postponed = NULL;
         }
 
@@ -236,7 +236,7 @@ gimp_vectors_compat_get_points (GimpVectors *vectors,
            anchors;
            anchors = g_list_next (anchors))
         {
-          GimpAnchor *anchor = anchors->data;
+          PicmanAnchor *anchor = anchors->data;
 
           /*  skip the first anchor, will add it at the end if needed  */
           if (! anchors->prev)
@@ -244,15 +244,15 @@ gimp_vectors_compat_get_points (GimpVectors *vectors,
 
           switch (anchor->type)
             {
-            case GIMP_ANCHOR_ANCHOR:
+            case PICMAN_ANCHOR_ANCHOR:
               if (anchors->prev == stroke->anchors && ! first_stroke)
-                points[i].type = GIMP_VECTORS_COMPAT_NEW_STROKE;
+                points[i].type = PICMAN_VECTORS_COMPAT_NEW_STROKE;
               else
-                points[i].type = GIMP_VECTORS_COMPAT_ANCHOR;
+                points[i].type = PICMAN_VECTORS_COMPAT_ANCHOR;
               break;
 
-            case GIMP_ANCHOR_CONTROL:
-              points[i].type = GIMP_VECTORS_COMPAT_CONTROL;
+            case PICMAN_ANCHOR_CONTROL:
+              points[i].type = PICMAN_VECTORS_COMPAT_CONTROL;
               break;
             }
 
@@ -264,9 +264,9 @@ gimp_vectors_compat_get_points (GimpVectors *vectors,
           /*  write the skipped control point  */
           if (! anchors->next && stroke->closed)
             {
-              anchor = GIMP_ANCHOR (stroke->anchors->data);
+              anchor = PICMAN_ANCHOR (stroke->anchors->data);
 
-              points[i].type = GIMP_VECTORS_COMPAT_CONTROL;
+              points[i].type = PICMAN_VECTORS_COMPAT_CONTROL;
               points[i].x    = anchor->position.x;
               points[i].y    = anchor->position.y;
 

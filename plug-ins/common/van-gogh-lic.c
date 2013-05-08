@@ -1,8 +1,8 @@
-/* LIC 0.14 -- image filter plug-in for GIMP
+/* LIC 0.14 -- image filter plug-in for PICMAN
  * Copyright (C) 1996 Tom Bech
  *
- * E-mail: tomb@gimp.org
- * You can contact the original GIMP authors at gimp@xcf.berkeley.edu
+ * E-mail: tomb@picman.org
+ * You can contact the original PICMAN authors at picman@xcf.berkeley.edu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  * -> 0.11: Fixed a bug in the convolution kernels (Tom).
  * -> 0.12: Added Quartic's bilinear interpolation stuff (Tom).
  * -> 0.13 Changed some UI stuff causing trouble with the 0.60 release, added
- *         the (GIMP) tags and changed random() calls to rand() (Tom)
+ *         the (PICMAN) tags and changed random() calls to rand() (Tom)
  * -> 0.14 Ported to 0.99.11 (Tom)
  *
  * This plug-in implements the Line Integral Convolution (LIC) as described in
@@ -37,10 +37,10 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /************/
@@ -52,7 +52,7 @@
 
 #define PLUG_IN_PROC   "plug-in-lic"
 #define PLUG_IN_BINARY "van-gogh-lic"
-#define PLUG_IN_ROLE   "gimp-van-gogh-lic"
+#define PLUG_IN_ROLE   "picman-van-gogh-lic"
 
 typedef enum
 {
@@ -102,27 +102,27 @@ static GtkWidget *dialog;
 /************************/
 
 static void
-peek (GimpPixelRgn *src_rgn,
+peek (PicmanPixelRgn *src_rgn,
       gint          x,
       gint          y,
-      GimpRGB      *color)
+      PicmanRGB      *color)
 {
   static guchar data[4] = { 0, };
 
-  gimp_pixel_rgn_get_pixel (src_rgn, data, x, y);
-  gimp_rgba_set_uchar (color, data[0], data[1], data[2], data[3]);
+  picman_pixel_rgn_get_pixel (src_rgn, data, x, y);
+  picman_rgba_set_uchar (color, data[0], data[1], data[2], data[3]);
 }
 
 static void
-poke (GimpPixelRgn *dest_rgn,
+poke (PicmanPixelRgn *dest_rgn,
       gint          x,
       gint          y,
-      GimpRGB      *color)
+      PicmanRGB      *color)
 {
   static guchar data[4];
 
-  gimp_rgba_get_uchar (color, &data[0], &data[1], &data[2], &data[3]);
-  gimp_pixel_rgn_set_pixel (dest_rgn, data, x, y);
+  picman_rgba_get_uchar (color, &data[0], &data[1], &data[2], &data[3]);
+  picman_pixel_rgn_set_pixel (dest_rgn, data, x, y);
 }
 
 static gint
@@ -327,14 +327,14 @@ lic_noise (gint    x,
 }
 
 static void
-getpixel (GimpPixelRgn *src_rgn,
-          GimpRGB      *p,
+getpixel (PicmanPixelRgn *src_rgn,
+          PicmanRGB      *p,
           gdouble       u,
           gdouble       v)
 {
   register gint x1, y1, x2, y2;
   gint width, height;
-  static GimpRGB pp[4];
+  static PicmanRGB pp[4];
 
   width = src_rgn->w;
   height = src_rgn->h;
@@ -361,24 +361,24 @@ getpixel (GimpPixelRgn *src_rgn,
   peek (src_rgn, x2, y2, &pp[3]);
 
   if (source_drw_has_alpha)
-    *p = gimp_bilinear_rgba (u, v, pp);
+    *p = picman_bilinear_rgba (u, v, pp);
   else
-    *p = gimp_bilinear_rgb (u, v, pp);
+    *p = picman_bilinear_rgb (u, v, pp);
 }
 
 static void
-lic_image (GimpPixelRgn *src_rgn,
+lic_image (PicmanPixelRgn *src_rgn,
            gint          x,
            gint          y,
            gdouble       vx,
            gdouble       vy,
-           GimpRGB      *color)
+           PicmanRGB      *color)
 {
   gdouble u, step = 2.0 * l / isteps;
   gdouble xx = (gdouble) x, yy = (gdouble) y;
   gdouble c, s;
-  GimpRGB col = { 0, 0, 0, 0 };
-  GimpRGB col1, col2, col3;
+  PicmanRGB col = { 0, 0, 0, 0 };
+  PicmanRGB col1, col2, col3;
 
   /* Get vector at x,y */
   /* ================= */
@@ -391,60 +391,60 @@ lic_image (GimpPixelRgn *src_rgn,
 
   getpixel (src_rgn, &col1, xx + l * c, yy + l * s);
   if (source_drw_has_alpha)
-    gimp_rgba_multiply (&col1, filter (-l));
+    picman_rgba_multiply (&col1, filter (-l));
   else
-    gimp_rgb_multiply (&col1, filter (-l));
+    picman_rgb_multiply (&col1, filter (-l));
 
   for (u = -l + step; u <= l; u += step)
     {
       getpixel (src_rgn, &col2, xx - u * c, yy - u * s);
       if (source_drw_has_alpha)
         {
-          gimp_rgba_multiply (&col2, filter (u));
+          picman_rgba_multiply (&col2, filter (u));
 
           col3 = col1;
-          gimp_rgba_add (&col3, &col2);
-          gimp_rgba_multiply (&col3, 0.5 * step);
-          gimp_rgba_add (&col, &col3);
+          picman_rgba_add (&col3, &col2);
+          picman_rgba_multiply (&col3, 0.5 * step);
+          picman_rgba_add (&col, &col3);
         }
       else
         {
-          gimp_rgb_multiply (&col2, filter (u));
+          picman_rgb_multiply (&col2, filter (u));
 
           col3 = col1;
-          gimp_rgb_add (&col3, &col2);
-          gimp_rgb_multiply (&col3, 0.5 * step);
-          gimp_rgb_add (&col, &col3);
+          picman_rgb_add (&col3, &col2);
+          picman_rgb_multiply (&col3, 0.5 * step);
+          picman_rgb_add (&col, &col3);
         }
       col1 = col2;
     }
   if (source_drw_has_alpha)
-    gimp_rgba_multiply (&col, 1.0 / l);
+    picman_rgba_multiply (&col, 1.0 / l);
   else
-    gimp_rgb_multiply (&col, 1.0 / l);
-  gimp_rgb_clamp (&col);
+    picman_rgb_multiply (&col, 1.0 / l);
+  picman_rgb_clamp (&col);
 
   *color = col;
 }
 
 static guchar*
-rgb_to_hsl (GimpDrawable     *drawable,
+rgb_to_hsl (PicmanDrawable     *drawable,
             LICEffectChannel  effect_channel)
 {
   guchar       *themap, data[4];
   gint          x, y;
-  GimpRGB       color;
-  GimpHSL       color_hsl;
+  PicmanRGB       color;
+  PicmanHSL       color_hsl;
   gdouble       val = 0.0;
   glong         maxc, index = 0;
-  GimpPixelRgn  region;
+  PicmanPixelRgn  region;
   GRand        *gr;
 
   gr = g_rand_new ();
 
   maxc = drawable->width * drawable->height;
 
-  gimp_pixel_rgn_init (&region, drawable, border_x1, border_y1,
+  picman_pixel_rgn_init (&region, drawable, border_x1, border_y1,
                        border_x2 - border_x1, border_y2 - border_y1, FALSE, FALSE);
 
   themap = g_new (guchar, maxc);
@@ -455,9 +455,9 @@ rgb_to_hsl (GimpDrawable     *drawable,
         {
           data[3] = 255;
 
-          gimp_pixel_rgn_get_pixel (&region, data, x, y);
-          gimp_rgba_set_uchar (&color, data[0], data[1], data[2], data[3]);
-          gimp_rgb_to_hsl (&color, &color_hsl);
+          picman_pixel_rgn_get_pixel (&region, data, x, y);
+          picman_rgba_set_uchar (&color, data[0], data[1], data[2], data[3]);
+          picman_rgb_to_hsl (&color, &color_hsl);
 
           switch (effect_channel)
             {
@@ -486,21 +486,21 @@ rgb_to_hsl (GimpDrawable     *drawable,
 
 
 static void
-compute_lic (GimpDrawable *drawable,
+compute_lic (PicmanDrawable *drawable,
              const guchar *scalarfield,
              gboolean      rotate)
 {
   gint xcount, ycount;
-  GimpRGB color;
+  PicmanRGB color;
   gdouble vx, vy, tmp;
-  GimpPixelRgn src_rgn, dest_rgn;
+  PicmanPixelRgn src_rgn, dest_rgn;
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        border_x1, border_y1,
                        border_x2 - border_x1,
                        border_y2 - border_y1, FALSE, FALSE);
 
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        border_x1, border_y1,
                        border_x2 - border_x1,
                        border_y2 - border_y1, TRUE, TRUE);
@@ -539,9 +539,9 @@ compute_lic (GimpDrawable *drawable,
               peek (&src_rgn, xcount, ycount, &color);
               tmp = lic_noise (xcount, ycount, vx, vy);
               if (source_drw_has_alpha)
-                gimp_rgba_multiply (&color, tmp);
+                picman_rgba_multiply (&color, tmp);
               else
-                gimp_rgb_multiply (&color, tmp);
+                picman_rgb_multiply (&color, tmp);
             }
           else
             {
@@ -550,23 +550,23 @@ compute_lic (GimpDrawable *drawable,
           poke (&dest_rgn, xcount, ycount, &color);
         }
 
-      gimp_progress_update ((gfloat) ycount / (gfloat) src_rgn.h);
+      picman_progress_update ((gfloat) ycount / (gfloat) src_rgn.h);
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 }
 
 static void
-compute_image (GimpDrawable *drawable)
+compute_image (PicmanDrawable *drawable)
 {
-  GimpDrawable *effect;
+  PicmanDrawable *effect;
   guchar       *scalarfield = NULL;
 
   /* Get some useful info on the input drawable */
   /* ========================================== */
-  gimp_drawable_mask_bounds (drawable->drawable_id,
+  picman_drawable_mask_bounds (drawable->drawable_id,
                              &border_x1, &border_y1, &border_x2, &border_y2);
 
-  gimp_progress_init (_("Van Gogh (LIC)"));
+  picman_progress_init (_("Van Gogh (LIC)"));
 
   if (licvals.effect_convolve == 0)
     generatevectors ();
@@ -580,9 +580,9 @@ compute_image (GimpDrawable *drawable)
   maxv = licvals.maxv / 10.0;
   isteps = licvals.intsteps;
 
-  source_drw_has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  source_drw_has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
-  effect = gimp_drawable_get (licvals.effect_image_id);
+  effect = picman_drawable_get (licvals.effect_image_id);
 
   effect_width = effect->width;
   effect_height = effect->height;
@@ -607,12 +607,12 @@ compute_image (GimpDrawable *drawable)
   /* Update image */
   /* ============ */
 
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, border_x1, border_y1,
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, border_x1, border_y1,
                         border_x2 - border_x1, border_y2 - border_y1);
 
-  gimp_displays_flush ();
+  picman_displays_flush ();
 }
 
 /**************************/
@@ -624,7 +624,7 @@ effect_image_constrain (gint32    image_id,
                         gint32    drawable_id,
                         gpointer  data)
 {
-  return gimp_drawable_is_rgb (drawable_id);
+  return picman_drawable_is_rgb (drawable_id);
 }
 
 static gboolean
@@ -639,11 +639,11 @@ create_main_dialog (void)
   gint       row;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Van Gogh (LIC)"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Van Gogh (LIC)"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -655,7 +655,7 @@ create_main_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
@@ -667,8 +667,8 @@ create_main_dialog (void)
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Effect Channel"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Effect Channel"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &licvals.effect_channel,
                                     licvals.effect_channel,
 
@@ -680,8 +680,8 @@ create_main_dialog (void)
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Effect Operator"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Effect Operator"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &licvals.effect_operator,
                                     licvals.effect_operator,
 
@@ -692,8 +692,8 @@ create_main_dialog (void)
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Convolve"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Convolve"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &licvals.effect_convolve,
                                     licvals.effect_convolve,
 
@@ -710,13 +710,13 @@ create_main_dialog (void)
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  combo = gimp_drawable_combo_box_new (effect_image_constrain, NULL);
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+  combo = picman_drawable_combo_box_new (effect_image_constrain, NULL);
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                               licvals.effect_image_id,
-                              G_CALLBACK (gimp_int_combo_box_get_active),
+                              G_CALLBACK (picman_int_combo_box_get_active),
                               &licvals.effect_image_id);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("_Effect image:"), 0.0, 0.5, combo, 2, TRUE);
 
   table = gtk_table_new (5, 3, FALSE);
@@ -727,54 +727,54 @@ create_main_dialog (void)
 
   row = 0;
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                                      _("_Filter length:"), 0, 6,
                                      licvals.filtlen, 0.1, 64, 1.0, 8.0, 1,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &licvals.filtlen);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                                      _("_Noise magnitude:"), 0, 6,
                                      licvals.noisemag, 1, 5, 0.1, 1.0, 1,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &licvals.noisemag);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                                      _("In_tegration steps:"), 0, 6,
                                      licvals.intsteps, 1, 40, 1.0, 5.0, 1,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &licvals.intsteps);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                                      _("_Minimum value:"), 0, 6,
                                      licvals.minv, -100, 0, 1, 10, 1,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &licvals.minv);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                                      _("M_aximum value:"), 0, 6,
                                      licvals.maxv, 0, 100, 1, 10, 1,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &licvals.maxv);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -802,14 +802,14 @@ set_default_settings (void)
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0) }"    },
-    { GIMP_PDB_IMAGE,    "image",    "Input image"    },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable" }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0) }"    },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image"    },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Special effects that nobody understands"),
                           "No help yet",
                           "Tom Bech & Federico Mena Quintero",
@@ -817,24 +817,24 @@ query (void)
                           "Version 0.14, September 24 1997",
                           N_("_Van Gogh (LIC)..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Artistic");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Artistic");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
@@ -843,7 +843,7 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /* Set default values */
@@ -854,34 +854,34 @@ run (const gchar      *name,
   /* Possibly retrieve data */
   /* ====================== */
 
-  gimp_get_data (PLUG_IN_PROC, &licvals);
+  picman_get_data (PLUG_IN_PROC, &licvals);
 
   /* Get the specified drawable */
   /* ========================== */
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /* Make sure that the drawable is RGBA or RGB color */
       /* ================================================ */
 
-      if (gimp_drawable_is_rgb (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id))
         {
           /* Set the tile cache size */
           /* ======================= */
 
-          gimp_tile_cache_ntiles (2*(drawable->width / gimp_tile_width () + 1));
+          picman_tile_cache_ntiles (2*(drawable->width / picman_tile_width () + 1));
 
           switch (run_mode)
             {
-              case GIMP_RUN_INTERACTIVE:
+              case PICMAN_RUN_INTERACTIVE:
                 if (create_main_dialog ())
                   compute_image (drawable);
 
-                gimp_set_data (PLUG_IN_PROC, &licvals, sizeof (LicValues));
+                picman_set_data (PLUG_IN_PROC, &licvals, sizeof (LicValues));
               break;
-              case GIMP_RUN_WITH_LAST_VALS:
+              case PICMAN_RUN_WITH_LAST_VALS:
                 compute_image (drawable);
                 break;
               default:
@@ -889,14 +889,14 @@ run (const gchar      *name,
             }
         }
       else
-        status = GIMP_PDB_EXECUTION_ERROR;
+        status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */

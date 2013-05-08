@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimplanguagecombobox.h
- * Copyright (C) 2009  Sven Neumann <sven@gimp.org>
+ * picmanlanguagecombobox.h
+ * Copyright (C) 2009  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,33 +18,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_LANGUAGE_COMBO_BOX_H__
-#define __GIMP_LANGUAGE_COMBO_BOX_H__
+#ifndef __PICMAN_LANGUAGE_COMBO_BOX_H__
+#define __PICMAN_LANGUAGE_COMBO_BOX_H__
 
 
-#define GIMP_TYPE_LANGUAGE_COMBO_BOX            (gimp_language_combo_box_get_type ())
-#define GIMP_LANGUAGE_COMBO_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_LANGUAGE_COMBO_BOX, GimpLanguageComboBox))
-#define GIMP_LANGUAGE_COMBO_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_LANGUAGE_COMBO_BOX, GimpLanguageComboBoxClass))
-#define GIMP_IS_LANGUAGE_COMBO_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_LANGUAGE_COMBO_BOX))
-#define GIMP_IS_LANGUAGE_COMBO_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_LANGUAGE_COMBO_BOX))
-#define GIMP_LANGUAGE_COMBO_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_LANGUAGE_COMBO_BOX, GimpLanguageComboBoxClass))
+#define PICMAN_TYPE_LANGUAGE_COMBO_BOX            (picman_language_combo_box_get_type ())
+#define PICMAN_LANGUAGE_COMBO_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_LANGUAGE_COMBO_BOX, PicmanLanguageComboBox))
+#define PICMAN_LANGUAGE_COMBO_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_LANGUAGE_COMBO_BOX, PicmanLanguageComboBoxClass))
+#define PICMAN_IS_LANGUAGE_COMBO_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_LANGUAGE_COMBO_BOX))
+#define PICMAN_IS_LANGUAGE_COMBO_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_LANGUAGE_COMBO_BOX))
+#define PICMAN_LANGUAGE_COMBO_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_LANGUAGE_COMBO_BOX, PicmanLanguageComboBoxClass))
 
 
-typedef struct _GimpLanguageComboBoxClass  GimpLanguageComboBoxClass;
+typedef struct _PicmanLanguageComboBoxClass  PicmanLanguageComboBoxClass;
 
-struct _GimpLanguageComboBoxClass
+struct _PicmanLanguageComboBoxClass
 {
   GtkComboBoxClass  parent_class;
 };
 
 
-GType       gimp_language_combo_box_get_type (void) G_GNUC_CONST;
+GType       picman_language_combo_box_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_language_combo_box_new      (void);
+GtkWidget * picman_language_combo_box_new      (void);
 
-gchar     * gimp_language_combo_box_get_code (GimpLanguageComboBox *combo);
-gboolean    gimp_language_combo_box_set_code (GimpLanguageComboBox *combo,
+gchar     * picman_language_combo_box_get_code (PicmanLanguageComboBox *combo);
+gboolean    picman_language_combo_box_set_code (PicmanLanguageComboBox *combo,
                                               const gchar          *code);
 
 
-#endif  /* __GIMP_LANGUAGE_COMBO_BOX_H__ */
+#endif  /* __PICMAN_LANGUAGE_COMBO_BOX_H__ */

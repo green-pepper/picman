@@ -1,14 +1,14 @@
-# Romanian GIMP translation
+# Romanian PICMAN translation
 # Copyright (C) 2010 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the GIMP package.
+# This file is distributed under the same license as the PICMAN package.
 # Lucian Adrian Grijincu <lucian.grijincu@gmail.com>, 2010.
 # Cristian Secară <cristi AT secarica DOT ro>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GIMP 2.7\n"
+"Project-Id-Version: PICMAN 2.7\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-02-06 18:37+0000\n"
 "PO-Revision-Date: 2011-12-06 01:02+0200\n"
 "Last-Translator: Cristian Secară <cristi AT secarica DOT ro>\n"
@@ -20,10 +20,10 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2;\n"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:1
+#: ../data/tags/picman-tags-default.xml.in.h:1
 msgid "round"
 msgstr "rotund"
 
-#: ../data/tags/gimp-tags-default.xml.in.h:2
+#: ../data/tags/picman-tags-default.xml.in.h:2
 msgid "fuzzy"
 msgstr "difuz"

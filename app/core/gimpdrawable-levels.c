@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,54 +21,54 @@
 
 #include "core-types.h"
 
-#include "operations/gimplevelsconfig.h"
+#include "operations/picmanlevelsconfig.h"
 
-#include "gimpdrawable.h"
-#include "gimpdrawable-histogram.h"
-#include "gimpdrawable-levels.h"
-#include "gimpdrawable-operation.h"
-#include "gimphistogram.h"
-#include "gimpprogress.h"
+#include "picmandrawable.h"
+#include "picmandrawable-histogram.h"
+#include "picmandrawable-levels.h"
+#include "picmandrawable-operation.h"
+#include "picmanhistogram.h"
+#include "picmanprogress.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  public functions  */
 
 void
-gimp_drawable_levels_stretch (GimpDrawable *drawable,
-                              GimpProgress *progress)
+picman_drawable_levels_stretch (PicmanDrawable *drawable,
+                              PicmanProgress *progress)
 {
-  GimpLevelsConfig *config;
-  GimpHistogram    *histogram;
+  PicmanLevelsConfig *config;
+  PicmanHistogram    *histogram;
   GeglNode         *levels;
 
-  g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)));
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_DRAWABLE (drawable));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)));
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
-  if (! gimp_item_mask_intersect (GIMP_ITEM (drawable), NULL, NULL, NULL, NULL))
+  if (! picman_item_mask_intersect (PICMAN_ITEM (drawable), NULL, NULL, NULL, NULL))
     return;
 
-  config = g_object_new (GIMP_TYPE_LEVELS_CONFIG, NULL);
+  config = g_object_new (PICMAN_TYPE_LEVELS_CONFIG, NULL);
 
-  histogram = gimp_histogram_new ();
-  gimp_drawable_calculate_histogram (drawable, histogram);
+  histogram = picman_histogram_new ();
+  picman_drawable_calculate_histogram (drawable, histogram);
 
-  gimp_levels_config_stretch (config, histogram,
-                              gimp_drawable_is_rgb (drawable));
+  picman_levels_config_stretch (config, histogram,
+                              picman_drawable_is_rgb (drawable));
 
-  gimp_histogram_unref (histogram);
+  picman_histogram_unref (histogram);
 
   levels = g_object_new (GEGL_TYPE_NODE,
-                         "operation", "gimp:levels",
+                         "operation", "picman:levels",
                          NULL);
 
   gegl_node_set (levels,
                  "config", config,
                  NULL);
 
-  gimp_drawable_apply_operation (drawable, progress, _("Levels"),
+  picman_drawable_apply_operation (drawable, progress, _("Levels"),
                                  levels);
 
   g_object_unref (levels);

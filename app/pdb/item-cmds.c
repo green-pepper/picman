@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,94 +23,94 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimpimage.h"
-#include "core/gimpitem.h"
-#include "core/gimplayermask.h"
-#include "core/gimplist.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimpselection.h"
-#include "text/gimptextlayer.h"
-#include "vectors/gimpvectors.h"
+#include "core/picmanimage.h"
+#include "core/picmanitem.h"
+#include "core/picmanlayermask.h"
+#include "core/picmanlist.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanselection.h"
+#include "text/picmantextlayer.h"
+#include "vectors/picmanvectors.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimppdbcontext.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanpdbcontext.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GimpValueArray *
-item_is_valid_invoker (GimpProcedure         *procedure,
-                       Gimp                  *gimp,
-                       GimpContext           *context,
-                       GimpProgress          *progress,
-                       const GimpValueArray  *args,
+static PicmanValueArray *
+item_is_valid_invoker (PicmanProcedure         *procedure,
+                       Picman                  *picman,
+                       PicmanContext           *context,
+                       PicmanProgress          *progress,
+                       const PicmanValueArray  *args,
                        GError               **error)
 {
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean valid = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
-  valid = (GIMP_IS_ITEM (item) &&
-           ! gimp_item_is_removed (GIMP_ITEM (item)));
+  valid = (PICMAN_IS_ITEM (item) &&
+           ! picman_item_is_removed (PICMAN_ITEM (item)));
 
-  return_vals = gimp_procedure_get_return_values (procedure, TRUE, NULL);
-  g_value_set_boolean (gimp_value_array_index (return_vals, 1), valid);
+  return_vals = picman_procedure_get_return_values (procedure, TRUE, NULL);
+  g_value_set_boolean (picman_value_array_index (return_vals, 1), valid);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_get_image_invoker (GimpProcedure         *procedure,
-                        Gimp                  *gimp,
-                        GimpContext           *context,
-                        GimpProgress          *progress,
-                        const GimpValueArray  *args,
+static PicmanValueArray *
+item_get_image_invoker (PicmanProcedure         *procedure,
+                        Picman                  *picman,
+                        PicmanContext           *context,
+                        PicmanProgress          *progress,
+                        const PicmanValueArray  *args,
                         GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
-  GimpImage *image = NULL;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
+  PicmanImage *image = NULL;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      image = gimp_item_get_image (GIMP_ITEM (item));
+      image = picman_item_get_image (PICMAN_ITEM (item));
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_image (gimp_value_array_index (return_vals, 1), image);
+    picman_value_set_image (picman_value_array_index (return_vals, 1), image);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_delete_invoker (GimpProcedure         *procedure,
-                     Gimp                  *gimp,
-                     GimpContext           *context,
-                     GimpProgress          *progress,
-                     const GimpValueArray  *args,
+static PicmanValueArray *
+item_delete_invoker (PicmanProcedure         *procedure,
+                     Picman                  *picman,
+                     PicmanContext           *context,
+                     PicmanProgress          *progress,
+                     const PicmanValueArray  *args,
                      GError               **error)
 {
   gboolean success = TRUE;
-  GimpItem *item;
+  PicmanItem *item;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
@@ -123,294 +123,294 @@ item_delete_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-item_is_drawable_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+item_is_drawable_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean drawable = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      drawable = GIMP_IS_DRAWABLE (item);
+      drawable = PICMAN_IS_DRAWABLE (item);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), drawable);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), drawable);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_is_layer_invoker (GimpProcedure         *procedure,
-                       Gimp                  *gimp,
-                       GimpContext           *context,
-                       GimpProgress          *progress,
-                       const GimpValueArray  *args,
+static PicmanValueArray *
+item_is_layer_invoker (PicmanProcedure         *procedure,
+                       Picman                  *picman,
+                       PicmanContext           *context,
+                       PicmanProgress          *progress,
+                       const PicmanValueArray  *args,
                        GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean layer = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      layer = GIMP_IS_LAYER (item);
+      layer = PICMAN_IS_LAYER (item);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), layer);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), layer);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_is_text_layer_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+item_is_text_layer_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean text_layer = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      text_layer = gimp_item_is_text_layer (item);
+      text_layer = picman_item_is_text_layer (item);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), text_layer);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), text_layer);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_is_channel_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+item_is_channel_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean channel = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      channel = GIMP_IS_CHANNEL (item);
+      channel = PICMAN_IS_CHANNEL (item);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), channel);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), channel);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_is_layer_mask_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
+static PicmanValueArray *
+item_is_layer_mask_invoker (PicmanProcedure         *procedure,
+                            Picman                  *picman,
+                            PicmanContext           *context,
+                            PicmanProgress          *progress,
+                            const PicmanValueArray  *args,
                             GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean layer_mask = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      layer_mask = GIMP_IS_LAYER_MASK (item);
+      layer_mask = PICMAN_IS_LAYER_MASK (item);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), layer_mask);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), layer_mask);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_is_selection_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+item_is_selection_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean selection = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      selection = GIMP_IS_SELECTION (item);
+      selection = PICMAN_IS_SELECTION (item);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), selection);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), selection);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_is_vectors_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+item_is_vectors_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean vectors = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      vectors = GIMP_IS_VECTORS (item);
+      vectors = PICMAN_IS_VECTORS (item);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), vectors);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), vectors);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_is_group_invoker (GimpProcedure         *procedure,
-                       Gimp                  *gimp,
-                       GimpContext           *context,
-                       GimpProgress          *progress,
-                       const GimpValueArray  *args,
+static PicmanValueArray *
+item_is_group_invoker (PicmanProcedure         *procedure,
+                       Picman                  *picman,
+                       PicmanContext           *context,
+                       PicmanProgress          *progress,
+                       const PicmanValueArray  *args,
                        GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean group = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      group = (gimp_viewable_get_children (GIMP_VIEWABLE (item)) != NULL);
+      group = (picman_viewable_get_children (PICMAN_VIEWABLE (item)) != NULL);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), group);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), group);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_get_parent_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+item_get_parent_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
-  GimpItem *parent = NULL;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
+  PicmanItem *parent = NULL;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      parent = gimp_item_get_parent (item);
+      parent = picman_item_get_parent (item);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    gimp_value_set_item (gimp_value_array_index (return_vals, 1), parent);
+    picman_value_set_item (picman_value_array_index (return_vals, 1), parent);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_get_children_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+item_get_children_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gint32 num_children = 0;
   gint32 *child_ids = NULL;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      GimpContainer *children = gimp_viewable_get_children (GIMP_VIEWABLE (item));
+      PicmanContainer *children = picman_viewable_get_children (PICMAN_VIEWABLE (item));
 
       if (children)
         {
-          num_children = gimp_container_get_n_children (children);
+          num_children = picman_container_get_n_children (children);
 
           if (num_children)
             {
@@ -419,11 +419,11 @@ item_get_children_invoker (GimpProcedure         *procedure,
 
               child_ids = g_new (gint32, num_children);
 
-              for (list = GIMP_LIST (children)->list, i = 0;
+              for (list = PICMAN_LIST (children)->list, i = 0;
                    list;
                    list = g_list_next (list), i++)
                 {
-                  child_ids[i] = gimp_item_get_ID (GIMP_ITEM (list->data));
+                  child_ids[i] = picman_item_get_ID (PICMAN_ITEM (list->data));
                 }
             }
         }
@@ -432,1312 +432,1312 @@ item_get_children_invoker (GimpProcedure         *procedure,
 
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_children);
-      gimp_value_take_int32array (gimp_value_array_index (return_vals, 2), child_ids, num_children);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_children);
+      picman_value_take_int32array (picman_value_array_index (return_vals, 2), child_ids, num_children);
     }
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_get_name_invoker (GimpProcedure         *procedure,
-                       Gimp                  *gimp,
-                       GimpContext           *context,
-                       GimpProgress          *progress,
-                       const GimpValueArray  *args,
+static PicmanValueArray *
+item_get_name_invoker (PicmanProcedure         *procedure,
+                       Picman                  *picman,
+                       PicmanContext           *context,
+                       PicmanProgress          *progress,
+                       const PicmanValueArray  *args,
                        GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gchar *name = NULL;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      name = g_strdup (gimp_object_get_name (item));
+      name = g_strdup (picman_object_get_name (item));
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_string (gimp_value_array_index (return_vals, 1), name);
+    g_value_take_string (picman_value_array_index (return_vals, 1), name);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_set_name_invoker (GimpProcedure         *procedure,
-                       Gimp                  *gimp,
-                       GimpContext           *context,
-                       GimpProgress          *progress,
-                       const GimpValueArray  *args,
+static PicmanValueArray *
+item_set_name_invoker (PicmanProcedure         *procedure,
+                       Picman                  *picman,
+                       PicmanContext           *context,
+                       PicmanProgress          *progress,
+                       const PicmanValueArray  *args,
                        GError               **error)
 {
   gboolean success = TRUE;
-  GimpItem *item;
+  PicmanItem *item;
   const gchar *name;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      success = gimp_item_rename (GIMP_ITEM (item), name, error);
+      success = picman_item_rename (PICMAN_ITEM (item), name, error);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-item_get_visible_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+item_get_visible_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean visible = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      visible = gimp_item_get_visible (GIMP_ITEM (item));
+      visible = picman_item_get_visible (PICMAN_ITEM (item));
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), visible);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), visible);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_set_visible_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+item_set_visible_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpItem *item;
+  PicmanItem *item;
   gboolean visible;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  visible = g_value_get_boolean (gimp_value_array_index (args, 1));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  visible = g_value_get_boolean (picman_value_array_index (args, 1));
 
   if (success)
     {
-      gimp_item_set_visible (GIMP_ITEM (item), visible, TRUE);
+      picman_item_set_visible (PICMAN_ITEM (item), visible, TRUE);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-item_get_linked_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+item_get_linked_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean linked = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      linked = gimp_item_get_linked (GIMP_ITEM (item));
+      linked = picman_item_get_linked (PICMAN_ITEM (item));
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), linked);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), linked);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_set_linked_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+item_set_linked_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpItem *item;
+  PicmanItem *item;
   gboolean linked;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  linked = g_value_get_boolean (gimp_value_array_index (args, 1));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  linked = g_value_get_boolean (picman_value_array_index (args, 1));
 
   if (success)
     {
-      gimp_item_set_linked (GIMP_ITEM (item), linked, TRUE);
+      picman_item_set_linked (PICMAN_ITEM (item), linked, TRUE);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-item_get_lock_content_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+item_get_lock_content_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean lock_content = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      lock_content = gimp_item_get_lock_content (GIMP_ITEM (item));
+      lock_content = picman_item_get_lock_content (PICMAN_ITEM (item));
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), lock_content);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), lock_content);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_set_lock_content_invoker (GimpProcedure         *procedure,
-                               Gimp                  *gimp,
-                               GimpContext           *context,
-                               GimpProgress          *progress,
-                               const GimpValueArray  *args,
+static PicmanValueArray *
+item_set_lock_content_invoker (PicmanProcedure         *procedure,
+                               Picman                  *picman,
+                               PicmanContext           *context,
+                               PicmanProgress          *progress,
+                               const PicmanValueArray  *args,
                                GError               **error)
 {
   gboolean success = TRUE;
-  GimpItem *item;
+  PicmanItem *item;
   gboolean lock_content;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  lock_content = g_value_get_boolean (gimp_value_array_index (args, 1));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  lock_content = g_value_get_boolean (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp_item_can_lock_content (GIMP_ITEM (item)))
-        gimp_item_set_lock_content (GIMP_ITEM (item), lock_content, TRUE);
+      if (picman_item_can_lock_content (PICMAN_ITEM (item)))
+        picman_item_set_lock_content (PICMAN_ITEM (item), lock_content, TRUE);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-item_get_lock_position_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+item_get_lock_position_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gboolean lock_position = FALSE;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      lock_position = gimp_item_get_lock_position (GIMP_ITEM (item));
+      lock_position = picman_item_get_lock_position (PICMAN_ITEM (item));
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), lock_position);
+    g_value_set_boolean (picman_value_array_index (return_vals, 1), lock_position);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_set_lock_position_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+item_set_lock_position_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpItem *item;
+  PicmanItem *item;
   gboolean lock_position;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  lock_position = g_value_get_boolean (gimp_value_array_index (args, 1));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  lock_position = g_value_get_boolean (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp_item_can_lock_position (GIMP_ITEM (item)))
-        gimp_item_set_lock_position (GIMP_ITEM (item), lock_position, TRUE);
+      if (picman_item_can_lock_position (PICMAN_ITEM (item)))
+        picman_item_set_lock_position (PICMAN_ITEM (item), lock_position, TRUE);
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-item_get_tattoo_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+item_get_tattoo_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gint32 tattoo = 0;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      tattoo = gimp_item_get_tattoo (GIMP_ITEM (item));
+      tattoo = picman_item_get_tattoo (PICMAN_ITEM (item));
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_set_uint (gimp_value_array_index (return_vals, 1), tattoo);
+    g_value_set_uint (picman_value_array_index (return_vals, 1), tattoo);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_set_tattoo_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+item_set_tattoo_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpItem *item;
+  PicmanItem *item;
   gint32 tattoo;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  tattoo = g_value_get_uint (gimp_value_array_index (args, 1));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  tattoo = g_value_get_uint (picman_value_array_index (args, 1));
 
   if (success)
     {
-      gimp_item_set_tattoo (GIMP_ITEM (item), tattoo);
+      picman_item_set_tattoo (PICMAN_ITEM (item), tattoo);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-item_attach_parasite_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+item_attach_parasite_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpItem *item;
-  const GimpParasite *parasite;
+  PicmanItem *item;
+  const PicmanParasite *parasite;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  parasite = g_value_get_boxed (gimp_value_array_index (args, 1));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  parasite = g_value_get_boxed (picman_value_array_index (args, 1));
 
   if (success)
     {
-      gimp_item_parasite_attach (item, parasite, TRUE);
+      picman_item_parasite_attach (item, parasite, TRUE);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-item_detach_parasite_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+item_detach_parasite_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpItem *item;
+  PicmanItem *item;
   const gchar *name;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      gimp_item_parasite_detach (item, name, TRUE);
+      picman_item_parasite_detach (item, name, TRUE);
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-item_get_parasite_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+item_get_parasite_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   const gchar *name;
-  GimpParasite *parasite = NULL;
+  PicmanParasite *parasite = NULL;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
-  name = g_value_get_string (gimp_value_array_index (args, 1));
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
+  name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      parasite = gimp_parasite_copy (gimp_item_parasite_find (item, name));
+      parasite = picman_parasite_copy (picman_item_parasite_find (item, name));
 
       if (! parasite)
         success = FALSE;
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
-    g_value_take_boxed (gimp_value_array_index (return_vals, 1), parasite);
+    g_value_take_boxed (picman_value_array_index (return_vals, 1), parasite);
 
   return return_vals;
 }
 
-static GimpValueArray *
-item_get_parasite_list_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+item_get_parasite_list_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpItem *item;
+  PicmanValueArray *return_vals;
+  PicmanItem *item;
   gint32 num_parasites = 0;
   gchar **parasites = NULL;
 
-  item = gimp_value_get_item (gimp_value_array_index (args, 0), gimp);
+  item = picman_value_get_item (picman_value_array_index (args, 0), picman);
 
   if (success)
     {
-      parasites = gimp_item_parasite_list (item, &num_parasites);
+      parasites = picman_item_parasite_list (item, &num_parasites);
     }
 
-  return_vals = gimp_procedure_get_return_values (procedure, success,
+  return_vals = picman_procedure_get_return_values (procedure, success,
                                                   error ? *error : NULL);
 
   if (success)
     {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_parasites);
-      gimp_value_take_stringarray (gimp_value_array_index (return_vals, 2), parasites, num_parasites);
+      g_value_set_int (picman_value_array_index (return_vals, 1), num_parasites);
+      picman_value_take_stringarray (picman_value_array_index (return_vals, 2), parasites, num_parasites);
     }
 
   return return_vals;
 }
 
 void
-register_item_procs (GimpPDB *pdb)
+register_item_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-item-is-valid
+   * picman-item-is-valid
    */
-  procedure = gimp_procedure_new (item_is_valid_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-is-valid");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-is-valid",
+  procedure = picman_procedure_new (item_is_valid_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-is-valid");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-is-valid",
                                      "Returns TRUE if the item is valid.",
                                      "This procedure checks if the given item ID is valid and refers to an existing item.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2007",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item to check",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE | GIMP_PARAM_NO_VALIDATE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE | PICMAN_PARAM_NO_VALIDATE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("valid",
                                                          "valid",
                                                          "Whether the item ID is valid",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-get-image
+   * picman-item-get-image
    */
-  procedure = gimp_procedure_new (item_get_image_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-get-image");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-get-image",
+  procedure = picman_procedure_new (item_get_image_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-get-image");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-get-image",
                                      "Returns the item's image.",
                                      "This procedure returns the item's image.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_image_id ("image",
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_image_id ("image",
                                                              "image",
                                                              "The item's image",
-                                                             pdb->gimp, FALSE,
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             pdb->picman, FALSE,
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-delete
+   * picman-item-delete
    */
-  procedure = gimp_procedure_new (item_delete_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-delete");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-delete",
+  procedure = picman_procedure_new (item_delete_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-delete");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-delete",
                                      "Delete a item.",
                                      "This procedure deletes the specified item. This must not be done if the image containing this item was already deleted or if the item was already removed from the image. The only case in which this procedure is useful is if you want to get rid of a item which has not yet been added to an image.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item to delete",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-is-drawable
+   * picman-item-is-drawable
    */
-  procedure = gimp_procedure_new (item_is_drawable_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-is-drawable");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-is-drawable",
+  procedure = picman_procedure_new (item_is_drawable_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-is-drawable");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-is-drawable",
                                      "Returns whether the item is a drawable.",
                                      "This procedure returns TRUE if the specified item is a drawable.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("drawable",
                                                          "drawable",
                                                          "TRUE if the item is a drawable, FALSE otherwise",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-is-layer
+   * picman-item-is-layer
    */
-  procedure = gimp_procedure_new (item_is_layer_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-is-layer");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-is-layer",
+  procedure = picman_procedure_new (item_is_layer_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-is-layer");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-is-layer",
                                      "Returns whether the item is a layer.",
                                      "This procedure returns TRUE if the specified item is a layer.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("layer",
                                                          "layer",
                                                          "TRUE if the item is a layer, FALSE otherwise",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-is-text-layer
+   * picman-item-is-text-layer
    */
-  procedure = gimp_procedure_new (item_is_text_layer_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-is-text-layer");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-is-text-layer",
+  procedure = picman_procedure_new (item_is_text_layer_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-is-text-layer");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-is-text-layer",
                                      "Returns whether the item is a text layer.",
                                      "This procedure returns TRUE if the specified item is a text layer.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("text-layer",
                                                          "text layer",
                                                          "TRUE if the item is a text layer, FALSE otherwise.",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-is-channel
+   * picman-item-is-channel
    */
-  procedure = gimp_procedure_new (item_is_channel_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-is-channel");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-is-channel",
+  procedure = picman_procedure_new (item_is_channel_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-is-channel");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-is-channel",
                                      "Returns whether the item is a channel.",
                                      "This procedure returns TRUE if the specified item is a channel.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("channel",
                                                          "channel",
                                                          "TRUE if the item is a channel, FALSE otherwise",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-is-layer-mask
+   * picman-item-is-layer-mask
    */
-  procedure = gimp_procedure_new (item_is_layer_mask_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-is-layer-mask");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-is-layer-mask",
+  procedure = picman_procedure_new (item_is_layer_mask_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-is-layer-mask");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-is-layer-mask",
                                      "Returns whether the item is a layer mask.",
                                      "This procedure returns TRUE if the specified item is a layer mask.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("layer-mask",
                                                          "layer mask",
                                                          "TRUE if the item is a layer mask, FALSE otherwise",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-is-selection
+   * picman-item-is-selection
    */
-  procedure = gimp_procedure_new (item_is_selection_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-is-selection");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-is-selection",
+  procedure = picman_procedure_new (item_is_selection_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-is-selection");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-is-selection",
                                      "Returns whether the item is a selection.",
                                      "This procedure returns TRUE if the specified item is a selection.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("selection",
                                                          "selection",
                                                          "TRUE if the item is a selection, FALSE otherwise",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-is-vectors
+   * picman-item-is-vectors
    */
-  procedure = gimp_procedure_new (item_is_vectors_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-is-vectors");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-is-vectors",
+  procedure = picman_procedure_new (item_is_vectors_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-is-vectors");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-is-vectors",
                                      "Returns whether the item is a vectors.",
                                      "This procedure returns TRUE if the specified item is a vectors.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("vectors",
                                                          "vectors",
                                                          "TRUE if the item is a vectors, FALSE otherwise",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-is-group
+   * picman-item-is-group
    */
-  procedure = gimp_procedure_new (item_is_group_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-is-group");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-is-group",
+  procedure = picman_procedure_new (item_is_group_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-is-group");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-is-group",
                                      "Returns whether the item is a group item.",
                                      "This procedure returns TRUE if the specified item is a group item which can have children.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("group",
                                                          "group",
                                                          "TRUE if the item is a group, FALSE otherwise",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-get-parent
+   * picman-item-get-parent
    */
-  procedure = gimp_procedure_new (item_get_parent_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-get-parent");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-get-parent",
+  procedure = picman_procedure_new (item_get_parent_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-get-parent");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-get-parent",
                                      "Returns the item's parent item.",
                                      "This procedure returns the item's parent item, if any.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_item_id ("parent",
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_item_id ("parent",
                                                             "parent",
                                                             "The item's parent item",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-get-children
+   * picman-item-get-children
    */
-  procedure = gimp_procedure_new (item_get_children_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-get-children");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-get-children",
+  procedure = picman_procedure_new (item_get_children_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-get-children");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-get-children",
                                      "Returns the item's list of children.",
                                      "This procedure returns the list of items which are children of the specified item. The order is topmost to bottommost.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2010",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-children",
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-children",
                                                           "num children",
                                                           "The item's number of children",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32_array ("child-ids",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32_array ("child-ids",
                                                                 "child ids",
                                                                 "The item's list of children",
-                                                                GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-get-name
+   * picman-item-get-name
    */
-  procedure = gimp_procedure_new (item_get_name_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-get-name");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-get-name",
+  procedure = picman_procedure_new (item_get_name_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-get-name");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-get-name",
                                      "Get the name of the specified item.",
                                      "This procedure returns the specified item's name.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string ("name",
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string ("name",
                                                            "name",
                                                            "The item name",
                                                            FALSE, FALSE, FALSE,
                                                            NULL,
-                                                           GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                           PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-set-name
+   * picman-item-set-name
    */
-  procedure = gimp_procedure_new (item_set_name_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-set-name");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-set-name",
+  procedure = picman_procedure_new (item_set_name_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-set-name");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-set-name",
                                      "Set the name of the specified item.",
                                      "This procedure sets the specified item's name.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The new item name",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-get-visible
+   * picman-item-get-visible
    */
-  procedure = gimp_procedure_new (item_get_visible_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-get-visible");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-get-visible",
+  procedure = picman_procedure_new (item_get_visible_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-get-visible");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-get-visible",
                                      "Get the visibility of the specified item.",
                                      "This procedure returns the specified item's visibility.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("visible",
                                                          "visible",
                                                          "The item visibility",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-set-visible
+   * picman-item-set-visible
    */
-  procedure = gimp_procedure_new (item_set_visible_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-set-visible");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-set-visible",
+  procedure = picman_procedure_new (item_set_visible_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-set-visible");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-set-visible",
                                      "Set the visibility of the specified item.",
                                      "This procedure sets the specified item's visibility.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("visible",
                                                      "visible",
                                                      "The new item visibility",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-get-linked
+   * picman-item-get-linked
    */
-  procedure = gimp_procedure_new (item_get_linked_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-get-linked");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-get-linked",
+  procedure = picman_procedure_new (item_get_linked_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-get-linked");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-get-linked",
                                      "Get the linked state of the specified item.",
                                      "This procedure returns the specified item's linked state.",
                                      "Wolfgang Hofer",
                                      "Wolfgang Hofer",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("linked",
                                                          "linked",
                                                          "The item linked state (for moves)",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-set-linked
+   * picman-item-set-linked
    */
-  procedure = gimp_procedure_new (item_set_linked_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-set-linked");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-set-linked",
+  procedure = picman_procedure_new (item_set_linked_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-set-linked");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-set-linked",
                                      "Set the linked state of the specified item.",
                                      "This procedure sets the specified item's linked state.",
                                      "Wolfgang Hofer",
                                      "Wolfgang Hofer",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("linked",
                                                      "linked",
                                                      "The new item linked state",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-get-lock-content
+   * picman-item-get-lock-content
    */
-  procedure = gimp_procedure_new (item_get_lock_content_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-get-lock-content");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-get-lock-content",
+  procedure = picman_procedure_new (item_get_lock_content_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-get-lock-content");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-get-lock-content",
                                      "Get the 'lock content' state of the specified item.",
                                      "This procedure returns the specified item's lock content state.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2009",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("lock-content",
                                                          "lock content",
                                                          "Whether the item's contents are locked",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-set-lock-content
+   * picman-item-set-lock-content
    */
-  procedure = gimp_procedure_new (item_set_lock_content_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-set-lock-content");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-set-lock-content",
+  procedure = picman_procedure_new (item_set_lock_content_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-set-lock-content");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-set-lock-content",
                                      "Set the 'lock content' state of the specified item.",
                                      "This procedure sets the specified item's lock content state.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2009",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("lock-content",
                                                      "lock content",
                                                      "The new item 'lock content' state",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-get-lock-position
+   * picman-item-get-lock-position
    */
-  procedure = gimp_procedure_new (item_get_lock_position_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-get-lock-position");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-get-lock-position",
+  procedure = picman_procedure_new (item_get_lock_position_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-get-lock-position");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-get-lock-position",
                                      "Get the 'lock position' state of the specified item.",
                                      "This procedure returns the specified item's lock position state.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2012",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("lock-position",
                                                          "lock position",
                                                          "Whether the item's position is locked",
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-set-lock-position
+   * picman-item-set-lock-position
    */
-  procedure = gimp_procedure_new (item_set_lock_position_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-set-lock-position");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-set-lock-position",
+  procedure = picman_procedure_new (item_set_lock_position_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-set-lock-position");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-set-lock-position",
                                      "Set the 'lock position' state of the specified item.",
                                      "This procedure sets the specified item's lock position state.",
-                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer <mitch@picman.org>",
                                      "Michael Natterer",
                                      "2009",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("lock-position",
                                                      "lock position",
                                                      "The new item 'lock position' state",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-get-tattoo
+   * picman-item-get-tattoo
    */
-  procedure = gimp_procedure_new (item_get_tattoo_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-get-tattoo");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-get-tattoo",
+  procedure = picman_procedure_new (item_get_tattoo_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-get-tattoo");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-get-tattoo",
                                      "Get the tattoo of the specified item.",
                                      "This procedure returns the specified item's tattoo. A tattoo is a unique and permanent identifier attached to a item that can be used to uniquely identify a item within an image even between sessions.",
                                      "Jay Cox",
                                      "Jay Cox",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
                                    g_param_spec_uint ("tattoo",
                                                       "tattoo",
                                                       "The item tattoo",
                                                       1, G_MAXUINT32, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-set-tattoo
+   * picman-item-set-tattoo
    */
-  procedure = gimp_procedure_new (item_set_tattoo_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-set-tattoo");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-set-tattoo",
+  procedure = picman_procedure_new (item_set_tattoo_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-set-tattoo");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-set-tattoo",
                                      "Set the tattoo of the specified item.",
                                      "This procedure sets the specified item's tattoo. A tattoo is a unique and permanent identifier attached to a item that can be used to uniquely identify a item within an image even between sessions.",
                                      "Jay Cox",
                                      "Jay Cox",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_uint ("tattoo",
                                                   "tattoo",
                                                   "The new item tattoo",
                                                   1, G_MAXUINT32, 1,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                  PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-attach-parasite
+   * picman-item-attach-parasite
    */
-  procedure = gimp_procedure_new (item_attach_parasite_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-attach-parasite");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-attach-parasite",
+  procedure = picman_procedure_new (item_attach_parasite_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-attach-parasite");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-attach-parasite",
                                      "Add a parasite to an item.",
                                      "This procedure attaches a parasite to an item. It has no return values.",
                                      "Jay Cox",
                                      "Jay Cox",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_parasite ("parasite",
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_parasite ("parasite",
                                                          "parasite",
                                                          "The parasite to attach to the item",
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                         PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-detach-parasite
+   * picman-item-detach-parasite
    */
-  procedure = gimp_procedure_new (item_detach_parasite_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-detach-parasite");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-detach-parasite",
+  procedure = picman_procedure_new (item_detach_parasite_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-detach-parasite");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-detach-parasite",
                                      "Removes a parasite from an item.",
                                      "This procedure detaches a parasite from an item. It has no return values.",
                                      "Jay Cox",
                                      "Jay Cox",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the parasite to detach from the item.",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-get-parasite
+   * picman-item-get-parasite
    */
-  procedure = gimp_procedure_new (item_get_parasite_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-get-parasite");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-get-parasite",
+  procedure = picman_procedure_new (item_get_parasite_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-get-parasite");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-get-parasite",
                                      "Look up a parasite in an item",
                                      "Finds and returns the parasite that is attached to an item.",
                                      "Jay Cox",
                                      "Jay Cox",
                                      "1998",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("name",
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("name",
                                                        "name",
                                                        "The name of the parasite to find",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_parasite ("parasite",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_parasite ("parasite",
                                                              "parasite",
                                                              "The found parasite",
-                                                             GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                             PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-item-get-parasite-list
+   * picman-item-get-parasite-list
    */
-  procedure = gimp_procedure_new (item_get_parasite_list_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-item-get-parasite-list");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-item-get-parasite-list",
+  procedure = picman_procedure_new (item_get_parasite_list_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-item-get-parasite-list");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-item-get-parasite-list",
                                      "List all parasites.",
                                      "Returns a list of all parasites currently attached the an item.",
                                      "Marc Lehmann",
                                      "Marc Lehmann",
                                      "1999",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_item_id ("item",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_item_id ("item",
                                                         "item",
                                                         "The item",
-                                                        pdb->gimp, FALSE,
-                                                        GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-parasites",
+                                                        pdb->picman, FALSE,
+                                                        PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_int32 ("num-parasites",
                                                           "num parasites",
                                                           "The number of attached parasites",
                                                           0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_string_array ("parasites",
+                                                          PICMAN_PARAM_READWRITE));
+  picman_procedure_add_return_value (procedure,
+                                   picman_param_spec_string_array ("parasites",
                                                                  "parasites",
                                                                  "The names of currently attached parasites",
-                                                                 GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                                 PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationhuesaturation.h
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanoperationhuesaturation.h
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,41 +18,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_HUE_SATURATION_H__
-#define __GIMP_OPERATION_HUE_SATURATION_H__
+#ifndef __PICMAN_OPERATION_HUE_SATURATION_H__
+#define __PICMAN_OPERATION_HUE_SATURATION_H__
 
 
-#include "gimpoperationpointfilter.h"
+#include "picmanoperationpointfilter.h"
 
 
-#define GIMP_TYPE_OPERATION_HUE_SATURATION            (gimp_operation_hue_saturation_get_type ())
-#define GIMP_OPERATION_HUE_SATURATION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_HUE_SATURATION, GimpOperationHueSaturation))
-#define GIMP_OPERATION_HUE_SATURATION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_HUE_SATURATION, GimpOperationHueSaturationClass))
-#define GIMP_IS_OPERATION_HUE_SATURATION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_HUE_SATURATION))
-#define GIMP_IS_OPERATION_HUE_SATURATION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_HUE_SATURATION))
-#define GIMP_OPERATION_HUE_SATURATION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_HUE_SATURATION, GimpOperationHueSaturationClass))
+#define PICMAN_TYPE_OPERATION_HUE_SATURATION            (picman_operation_hue_saturation_get_type ())
+#define PICMAN_OPERATION_HUE_SATURATION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_HUE_SATURATION, PicmanOperationHueSaturation))
+#define PICMAN_OPERATION_HUE_SATURATION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_HUE_SATURATION, PicmanOperationHueSaturationClass))
+#define PICMAN_IS_OPERATION_HUE_SATURATION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_HUE_SATURATION))
+#define PICMAN_IS_OPERATION_HUE_SATURATION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_HUE_SATURATION))
+#define PICMAN_OPERATION_HUE_SATURATION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_HUE_SATURATION, PicmanOperationHueSaturationClass))
 
 
-typedef struct _GimpOperationHueSaturation      GimpOperationHueSaturation;
-typedef struct _GimpOperationHueSaturationClass GimpOperationHueSaturationClass;
+typedef struct _PicmanOperationHueSaturation      PicmanOperationHueSaturation;
+typedef struct _PicmanOperationHueSaturationClass PicmanOperationHueSaturationClass;
 
-struct _GimpOperationHueSaturation
+struct _PicmanOperationHueSaturation
 {
-  GimpOperationPointFilter  parent_instance;
+  PicmanOperationPointFilter  parent_instance;
 };
 
-struct _GimpOperationHueSaturationClass
+struct _PicmanOperationHueSaturationClass
 {
-  GimpOperationPointFilterClass  parent_class;
+  PicmanOperationPointFilterClass  parent_class;
 };
 
 
-GType   gimp_operation_hue_saturation_get_type (void) G_GNUC_CONST;
+GType   picman_operation_hue_saturation_get_type (void) G_GNUC_CONST;
 
-void    gimp_operation_hue_saturation_map      (GimpHueSaturationConfig *config,
-                                                const GimpRGB           *color,
-                                                GimpHueRange             range,
-                                                GimpRGB                 *result);
+void    picman_operation_hue_saturation_map      (PicmanHueSaturationConfig *config,
+                                                const PicmanRGB           *color,
+                                                PicmanHueRange             range,
+                                                PicmanRGB                 *result);
 
 
-#endif /* __GIMP_OPERATION_HUE_SATURATION_H__ */
+#endif /* __PICMAN_OPERATION_HUE_SATURATION_H__ */

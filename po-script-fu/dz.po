@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp_script_fu.head.pot\n"
+"Project-Id-Version: picman_script_fu.head.pot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-06-02 03:39+0100\n"
 "PO-Revision-Date: 2007-06-19 12:36+0530\n"
@@ -152,7 +152,7 @@ msgid "_Start Server..."
 msgstr "སར་བར་འགོ་བཙུགས...(_S)"
 
 #: ../plug-ins/script-fu/script-fu.c:301
-msgid "_GIMP Online"
+msgid "_PICMAN Online"
 msgstr "ཇི་ཨའི་ཨེམ་པི་ གློག་ཐོག་ལམ་ཐོག་ལུ།(_G)"
 
 #: ../plug-ins/script-fu/script-fu.c:302
@@ -200,7 +200,7 @@ msgid "_Beveled Pattern"
 msgstr "སེར་ཁ་བཟོ་བཟོཝ་བའི་དཔེ་གཞི།(_B)"
 
 #: ../plug-ins/script-fu/script-fu.c:325
-msgid "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
 msgstr "སྔོན་སྲོལ་ཇི་ཨའེ་ཨེམ་པི་ལས་སྡེ།(_O)"
 
 #: ../plug-ins/script-fu/script-fu.c:328
@@ -299,8 +299,8 @@ msgstr "སྔོན་སྒྲིག་བཱམཔ་མེཔི་གཞི
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:6
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:7
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:5
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:7
@@ -339,8 +339,8 @@ msgstr "ཡིག་གཟུགས།"
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:7
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:7
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:6
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:6
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:7
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:8
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:8
@@ -413,8 +413,8 @@ msgstr "གྱིབ་མའི་མཐའ་འཁོར་རབ་རིབ
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:10
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:8
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:7
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:13
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:17
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:17
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:18
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:8
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:10
@@ -453,7 +453,7 @@ msgstr "ཕྱོགས་གསུམ་ ཊྲ་ཅེཊི།...(_D)"
 #: ../plug-ins/script-fu/scripts/comic-logo.scm.h:2
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:2
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:2
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:1
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:1
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:2
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:2
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:2
@@ -671,8 +671,8 @@ msgstr "བར་ཤབས།"
 #: ../plug-ins/script-fu/scripts/beveled-button.scm.h:10
 #: ../plug-ins/script-fu/scripts/beveled-pattern-button.scm.h:8
 #: ../plug-ins/script-fu/scripts/blended-logo.scm.h:18
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:14
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:18
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:18
 #: ../plug-ins/script-fu/scripts/i26-gunya2.scm.h:8
 #: ../plug-ins/script-fu/scripts/news-text.scm.h:11
 #: ../plug-ins/script-fu/scripts/pupi-button.scm.h:14
@@ -811,7 +811,7 @@ msgid "Create a beveled pattern hrule for webpages"
 msgstr "ཝེབ་ཤོག་ལེབ་ཚུའི་དོན་ལུ་ སེར་ཁ་བཟོ་བཟོཝ་བའི་དཔེ་གཞི་hrule གསར་བསྐྲུན་འབད།"
 
 #: ../plug-ins/script-fu/scripts/beveled-pattern-hrule.scm.h:2
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:8
 #: ../plug-ins/script-fu/scripts/gradient-example.scm.h:4
 #: ../plug-ins/script-fu/scripts/mkbrush.scm.h:7
 #: ../plug-ins/script-fu/scripts/swirltile.scm.h:7
@@ -887,7 +887,7 @@ msgstr "FG-དྭངས་གསལ་ཅན།"
 #: ../plug-ins/script-fu/scripts/land.scm.h:3
 #: ../plug-ins/script-fu/scripts/lava.scm.h:2
 #: ../plug-ins/script-fu/scripts/rendermap.scm.h:4
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Gradient"
 msgstr "སྟེགས་རིས།"
 
@@ -1342,17 +1342,17 @@ msgstr "མཐའ་འཁོར་རབ་རིབ།"
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:4
 #: ../plug-ins/script-fu/scripts/fuzzyborder.scm.h:5
 #: ../plug-ins/script-fu/scripts/perspective-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:5
 msgid "Color"
 msgstr "ཚོས་གཞི།"
 
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:11
 msgid "Offset X"
 msgstr "པར་ལེན་ཨེགསི།"
 
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:6
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:12
 msgid "Offset Y"
 msgstr "པར་ལེན་ཝའི།"
 
@@ -1564,89 +1564,89 @@ msgstr "གྱིབ་མ་གི་ལྗིད་ཚད།"
 msgid "_Fuzzy Border..."
 msgstr "མཐའ་མཚམས་ཕ་ཛི...(_F)"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:1
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:1
 msgid "Autocrop"
 msgstr "རང་བཞིན་བཏོག་བཅོས།"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:2
-msgid "Create an image of a large header using the gimp.org webpage theme"
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:2
+msgid "Create an image of a large header using the picman.org webpage theme"
 msgstr "ཇི་ཨའི་ཨེམ་པི་ལས་སྡེ་ཝེབ་ཤོག་ལེབ་བརྗོད་དོན་ལག་ལེན་འཐབ་ཐོག་ལས་མགོ་ཡིག་ཆེ་བ་གི་གཟུགས་བརྙན་གཅིག་གསར་བསྐྲུན་འབད།"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:3
-msgid "Create an image of a small header using the gimp.org webpage theme"
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:3
+msgid "Create an image of a small header using the picman.org webpage theme"
 msgstr "ཇི་ཨའི་ཨེམ་པི་ལས་སྡེ་ཝེབ་ཤོག་ལེབ་བརྗོད་དོན་ལག་ལེན་འཐབ་ཐོག་ལས་ མགོ་ཡིག་ཆུང་བ་གི་གཟུགས་བརྙན་གཅིག་གསར་བསྐྲུན་འབད།"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:4
 msgid "Dark color"
 msgstr "ཚོས་གཞི་གྲིབ་གནག།"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:7
 #: ../plug-ins/script-fu/scripts/xach-effect.scm.h:9
 msgid "Highlight color"
 msgstr "ཚོས་གཞི་གཙོ་རྟགས་བཀལ།"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:8
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:9
 msgid "Index image"
 msgstr "ཟུར་ཐོ་གི་གཟིགས་བརྙན།"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:9
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:10
 msgid "Number of colors"
 msgstr "ཚོས་གཞི་ཚུ་གི་ཨང་གྲངས།"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:10
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:13
 msgid "Remove background"
 msgstr "རྒྱབ་གཞི་འདི་རྩ་བསྐྲད་གཏང་།"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:11
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:14
 msgid "Select-by-color threshold"
 msgstr "ཚོས་གཞི་-ཐེརེཤ་ཧཱོལ་གི་འབད་-སེལ་འཐུ་འབད།"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:12
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:15
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:15
 msgid "Shadow color"
 msgstr "གྱིབ་མ་གི་ཚོས་གཞི།"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:15
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:15
 msgid "_Big Header..."
 msgstr "མགོ་ཡིག་སྦོམ...(_B)"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:16
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:16
 msgid "_Small Header..."
 msgstr "མགོ་ཡིག་ཆུང་ཀུ...(_S)"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:2
-msgid "Create an image of a Tube Button Label Header using the gimp.org webpage theme"
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:2
+msgid "Create an image of a Tube Button Label Header using the picman.org webpage theme"
 msgstr "ཇི་ཨའི་ཨེམ་པི་ ལས་སྡེ་ཝེབ་ཤོག་ལེབ་བརྗོད་དོན་ལག་ལེན་འཐབ་ཐོག་ལས་ དུང་ཅུང་ཨེབ་རྟ་ཁ་ཡིག་བཏགས་ནི་མགོ་ཡིག་གི་གཟུགས་བརྙན་གཅིག་གསར་བསྐྲུན་འབད།"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:3
-msgid "Create an image of a Tube Button Label using the gimp.org webpage theme"
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:3
+msgid "Create an image of a Tube Button Label using the picman.org webpage theme"
 msgstr "ཇི་ཨའི་ཨེམ་པི་ ལས་སྡེ་ཝེབ་ཤོག་ལེབ་བརྗོད་དོན་ལག་ལེན་འཐབ་ཐོག་ལས་དུང་ཅུང་ཨེབ་རྟ་ཁ་ཡིག་བཏགས་ནི་གི་གཟུགས་བརྙན་གཅིག་གསར་བསྐྲུན་འབད།"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:4
-msgid "Create an image of a second level Tube Button Label using the gimp.org webpage theme"
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:4
+msgid "Create an image of a second level Tube Button Label using the picman.org webpage theme"
 msgstr "ཇི་ཨའི་ཨེམ་པི་ ལས་སྡེ་ཝེབ་ཤོག་ལེབ་བརྗོད་དོན་ལག་ལེན་འཐབ་ཐོག་ལས་དུང་ཅུང་ཨེབ་རྟ་ཁ་ཡིག་བཏགས་ནི་གི་གཟུགས་བརྙན་གཅིག་གསར་བསྐྲུན་འབད།"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:5
-msgid "Create an image of a third level Tube Button Label using the gimp.org webpage theme"
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:5
+msgid "Create an image of a third level Tube Button Label using the picman.org webpage theme"
 msgstr "ཇི་ཨའི་ཨེམ་པི་ ལས་སྡེ་ཝེབ་ཤོག་ལེབ་བརྗོད་དོན་ལག་ལེན་འཐབ་ཐོག་ལས་དུང་ཅུང་ཨེབ་རྟ་ཁ་ཡིག་བཏགས་ནི་གི་གཟུགས་བརྙན་གཅིག་གསར་བསྐྲུན་འབད།"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:16
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:16
 msgid "T_ube Sub-Button Label..."
 msgstr "ཨེབ་རྟའི་དུང་ཅུང་འོག་མ་གི་ཁ་ཡིག...(_u)"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:19
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:19
 msgid "Tub_e Sub-Sub-Button Label..."
 msgstr "ཨེབ་རྟའི་དུང་ཅུང་འོག་གི་འོག་མའི་ཁ་ཡིག...(_e)"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:20
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:20
 msgid "_General Tube Labels..."
 msgstr "ཡོངས་ཁྱབ་གདུང་ཅུང་གི་ཁ་ཡིག...(_G)"
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:21
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:21
 msgid "_Tube Button Label..."
 msgstr "གདུང་ཅུང་ཨེབ་རྟ་གི་ཁ་ཡིག...(_T)"
 
@@ -2379,129 +2379,129 @@ msgstr "གཡོན་ལས་གཡས་ལུ་ཊཱན་འབད།"
 msgid "_Spinning Globe..."
 msgstr "འཛམ་གླིང་བསྒྱིར་འགྱོ་མི...(_S)"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:1
 msgid "Add Spirographs, Epitrochoids, and Lissajous Curves to the current layer"
 msgstr "ད་ལྟོའི་བང་རིམ་ལུ་ སིཔི་རོ་གརཕསི་ ཨི་པི་ཊོརོ་ཀོའིཊིསི་དང་ ལི་ས་ཇོསི་ གུག་གུགཔ་ཚུ་ཁ་སྐོང་བརྐྱབ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Airbrush"
 msgstr "རླུང་པྱིར།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Brush"
 msgstr "པྱིར།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Circle"
 msgstr "སྒོར་ཐིག།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:6
 msgid "Color method"
 msgstr "ཚོས་གཞི་གི་ཐབས་ལམ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid "Epitrochoid"
 msgstr "ཨི་པི་ཐོརོ་ཀོའིཊསི།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Frame"
 msgstr "གཞི་ཁྲམ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient: Loop Sawtooth"
 msgstr "སྟེགས་རིས་:འཕྲལ་བཀོལ་སོ་ཊིཏི།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: Loop Triangle"
 msgstr "སྟེགས་རིས་:འཕྲལ་བཀོལ་ཟུར་གསུམ་མ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Hexagon"
 msgstr "ཟུར་དྲུག་མ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hole ratio"
 msgstr "དཔྱ་ཚད་དོང་ཕུག"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:14
 msgid "Inner teeth"
 msgstr "ནང་གི་སོ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:15
 msgid "Lissajous"
 msgstr "ལི་ས་ཇོའོསི།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:16
 msgid "Margin (pixels)"
 msgstr "ས་སྟོང་།(པིག་སེལསི)"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Outer teeth"
 msgstr "ཕྱིའི་སོ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:18
 msgid "Pencil"
 msgstr "ཞ་སྨྱུག"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pentagon"
 msgstr "ཟུར་ལྔ་མ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:20
 msgid "Polygon: 10 sides"
 msgstr "ཟུར་མང་དབྱིབས་: ཟུར་༡༠་པ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:21
 msgid "Polygon: 7 sides"
 msgstr "ཟུར་མང་དབྱིབས་:ཟུར་༦་མ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:22
 msgid "Polygon: 8 sides"
 msgstr "ཟུར་མང་དབྱིབས་:ཟུར་༨་མ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:23
 msgid "Polygon: 9 sides"
 msgstr "ཟུར་མང་དབྱིབས་:ཟུར་༩་མ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Rendering Spyro"
 msgstr "ལྷག་སྟོན་སི་པརའོ་"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Shape"
 msgstr "དབྱིབས།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Solid Color"
 msgstr "ཚོས་གཞི་རགས་པ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Spyrograph"
 msgstr "ཨིསི་པའི་རོ་གརཕི།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:28
 msgid "Square"
 msgstr "གྲུ་བཞི།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:29
 #: ../plug-ins/script-fu/scripts/text-circle.scm.h:7
 msgid "Start angle"
 msgstr "ཟུར་ཅན་འགོ་བཙུགས།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Tool"
 msgstr "ལག་ཆས།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Triangle"
 msgstr "ཟུར་གསུམ་མ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:32
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:32
 msgid "Type"
 msgstr "དབྱེ་བ།"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:33
-msgid "_Spyrogimp..."
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:33
+msgid "_Spyropicman..."
 msgstr "ཨིསི་རོ་ཇིམ...(_S)"
 
 #: ../plug-ins/script-fu/scripts/starburst-logo.scm.h:2
@@ -2769,7 +2769,7 @@ msgid "_Weave..."
 msgstr "ཚེམ་དྲུབ...(_W)"
 
 #: ../plug-ins/script-fu/scripts/web-browser.scm.h:1
-msgid "Bookmark to the GIMP web site"
+msgid "Bookmark to the PICMAN web site"
 msgstr "ཇི་ཨའི་ཨེམ་པི་ ཝེབ་ས་ཁོངས་ལུ་ དེབ་རྟགས་བཀལ།"
 
 #: ../plug-ins/script-fu/scripts/web-browser.scm.h:2
@@ -2866,9 +2866,9 @@ msgstr "ཨེགསི་ཨེ་སི་ཨེཆ་-གི་ནུས་�
 
 #~ msgid "/Script-Fu/"
 #~ msgstr "/ཨིསི་ཀིརིཔིཊི-ཕུ།/"
-#~ msgid "This procedure is deprecated! use 'gimp-edit-copy-visible' instead."
+#~ msgid "This procedure is deprecated! use 'picman-edit-copy-visible' instead."
 #~ msgstr ""
-#~ "འ་ནི་བྱ་སྒོའི་ལམ་ལུགས་འདི་ ངོས་ལེན་མེདཔ་ཨིནམ་ལས་! ཚབ་ལུ་'gimp_edit_copy_visible'ལག་ལེན་"
+#~ "འ་ནི་བྱ་སྒོའི་ལམ་ལུགས་འདི་ ངོས་ལེན་མེདཔ་ཨིནམ་ལས་! ཚབ་ལུ་'picman_edit_copy_visible'ལག་ལེན་"
 #~ "འཐབ།"
 #~ msgid ""
 #~ "Round the corners of the current selection (deprecated, use Rounded "

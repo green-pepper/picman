@@ -1,4 +1,4 @@
-#   Gimp-Python - allows the writing of Gimp plugins in Python.
+#   Picman-Python - allows the writing of Picman plugins in Python.
 #   Copyright (C) 1997  James Henstridge <james@daa.com.au>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -14,16 +14,16 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# gimpshelf.py -- a simple module to help gimp modules written in Python
+# picmanshelf.py -- a simple module to help picman modules written in Python
 #                 store persistent data.
 #
 # Copyright (C) 1997, James Henstridge
 #
-# The gimp module provides a basic method for storing information that persists
-# for a whole gimp session, but only allows for the storage of strings.  This
+# The picman module provides a basic method for storing information that persists
+# for a whole picman session, but only allows for the storage of strings.  This
 # is because other Python types usually have pointers to other Python objects,
 # making it dificult to work out what to save.  This module gives an interface
-# to the gimp module's primitive interface, which resembles the shelve module.
+# to the picman module's primitive interface, which resembles the shelve module.
 
 # use cPickle and cStringIO if available
 
@@ -37,42 +37,42 @@ try:
 except ImportError:
     import StringIO
 
-import gimp
+import picman
 
 import copy_reg
 
 def _image_id(obj):
-    return gimp._id2image, (obj.ID,)
+    return picman._id2image, (obj.ID,)
 
 def _drawable_id(obj):
-    return gimp._id2drawable, (obj.ID,)
+    return picman._id2drawable, (obj.ID,)
 
 def _display_id(obj):
-    return gimp._id2display, (obj.ID,)
+    return picman._id2display, (obj.ID,)
 
 def _vectors_id(obj):
-    return gimp._id2vectors, (int(obj.ID),)
+    return picman._id2vectors, (int(obj.ID),)
 
-copy_reg.pickle(gimp.Image,   _image_id,    gimp._id2image)
-copy_reg.pickle(gimp.Layer,   _drawable_id, gimp._id2drawable)
-copy_reg.pickle(gimp.Channel, _drawable_id, gimp._id2drawable)
-copy_reg.pickle(gimp.Display, _display_id,  gimp._id2display)
-copy_reg.pickle(gimp.Vectors, _vectors_id,  gimp._id2vectors)
+copy_reg.pickle(picman.Image,   _image_id,    picman._id2image)
+copy_reg.pickle(picman.Layer,   _drawable_id, picman._id2drawable)
+copy_reg.pickle(picman.Channel, _drawable_id, picman._id2drawable)
+copy_reg.pickle(picman.Display, _display_id,  picman._id2display)
+copy_reg.pickle(picman.Vectors, _vectors_id,  picman._id2vectors)
 
 del copy_reg, _image_id, _drawable_id, _display_id, _vectors_id
 
-class Gimpshelf:
+class Picmanshelf:
     def has_key(self, key):
         try:
-            s = gimp.get_data(key)
+            s = picman.get_data(key)
             return 1
-        except gimp.error:
+        except picman.error:
             return 0
 
     def __getitem__(self, key):
         try:
-            s = gimp.get_data(key)
-        except gimp.error:
+            s = picman.get_data(key)
+        except picman.error:
             raise KeyError, key
 
         f = StringIO.StringIO(s)
@@ -82,10 +82,10 @@ class Gimpshelf:
         f = StringIO.StringIO()
         p = pickle.Pickler(f)
         p.dump(value)
-        gimp.set_data(key, f.getvalue())
+        picman.set_data(key, f.getvalue())
 
     def __delitem__(self, key):
-        gimp.set_data(key, '')
+        picman.set_data(key, '')
 
-shelf = Gimpshelf()
-del Gimpshelf
+shelf = Picmanshelf()
+del Picmanshelf

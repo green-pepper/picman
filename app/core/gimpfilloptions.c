@@ -1,7 +1,7 @@
-/* The GIMP -- an image manipulation program
+/* The PICMAN -- an image manipulation program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimpfilloptions.c
+ * picmanfilloptions.c
  * Copyright (C) 2003 Simon Budig
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,14 +22,14 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimpfilloptions.h"
-#include "gimpviewable.h"
+#include "picman.h"
+#include "picmanfilloptions.h"
+#include "picmanviewable.h"
 
 
 enum
@@ -42,88 +42,88 @@ enum
 };
 
 
-typedef struct _GimpFillOptionsPrivate GimpFillOptionsPrivate;
+typedef struct _PicmanFillOptionsPrivate PicmanFillOptionsPrivate;
 
-struct _GimpFillOptionsPrivate
+struct _PicmanFillOptionsPrivate
 {
-  GimpFillStyle style;
+  PicmanFillStyle style;
 
   gboolean      antialias;
 
-  GimpViewType  pattern_view_type;
-  GimpViewSize  pattern_view_size;
+  PicmanViewType  pattern_view_type;
+  PicmanViewSize  pattern_view_size;
 };
 
 #define GET_PRIVATE(options) \
         G_TYPE_INSTANCE_GET_PRIVATE (options, \
-                                     GIMP_TYPE_FILL_OPTIONS, \
-                                     GimpFillOptionsPrivate)
+                                     PICMAN_TYPE_FILL_OPTIONS, \
+                                     PicmanFillOptionsPrivate)
 
 
-static void   gimp_fill_options_set_property (GObject      *object,
+static void   picman_fill_options_set_property (GObject      *object,
                                               guint         property_id,
                                               const GValue *value,
                                               GParamSpec   *pspec);
-static void   gimp_fill_options_get_property (GObject      *object,
+static void   picman_fill_options_get_property (GObject      *object,
                                               guint         property_id,
                                               GValue       *value,
                                               GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpFillOptions, gimp_fill_options, GIMP_TYPE_CONTEXT)
+G_DEFINE_TYPE (PicmanFillOptions, picman_fill_options, PICMAN_TYPE_CONTEXT)
 
 
 static void
-gimp_fill_options_class_init (GimpFillOptionsClass *klass)
+picman_fill_options_class_init (PicmanFillOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_fill_options_set_property;
-  object_class->get_property = gimp_fill_options_get_property;
+  object_class->set_property = picman_fill_options_set_property;
+  object_class->get_property = picman_fill_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_STYLE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_STYLE,
                                  "style", NULL,
-                                 GIMP_TYPE_FILL_STYLE,
-                                 GIMP_FILL_STYLE_SOLID,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_FILL_STYLE,
+                                 PICMAN_FILL_STYLE_SOLID,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ANTIALIAS,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ANTIALIAS,
                                     "antialias", NULL,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
   g_object_class_install_property (object_class, PROP_PATTERN_VIEW_TYPE,
                                    g_param_spec_enum ("pattern-view-type",
                                                       NULL, NULL,
-                                                      GIMP_TYPE_VIEW_TYPE,
-                                                      GIMP_VIEW_TYPE_GRID,
+                                                      PICMAN_TYPE_VIEW_TYPE,
+                                                      PICMAN_VIEW_TYPE_GRID,
                                                       G_PARAM_CONSTRUCT |
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_PATTERN_VIEW_SIZE,
                                    g_param_spec_int ("pattern-view-size",
                                                      NULL, NULL,
-                                                     GIMP_VIEW_SIZE_TINY,
-                                                     GIMP_VIEWABLE_MAX_BUTTON_SIZE,
-                                                     GIMP_VIEW_SIZE_SMALL,
+                                                     PICMAN_VIEW_SIZE_TINY,
+                                                     PICMAN_VIEWABLE_MAX_BUTTON_SIZE,
+                                                     PICMAN_VIEW_SIZE_SMALL,
                                                      G_PARAM_CONSTRUCT |
-                                                     GIMP_PARAM_READWRITE));
+                                                     PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpFillOptionsPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanFillOptionsPrivate));
 }
 
 static void
-gimp_fill_options_init (GimpFillOptions *options)
+picman_fill_options_init (PicmanFillOptions *options)
 {
 }
 
 static void
-gimp_fill_options_set_property (GObject      *object,
+picman_fill_options_set_property (GObject      *object,
                                 guint         property_id,
                                 const GValue *value,
                                 GParamSpec   *pspec)
 {
-  GimpFillOptionsPrivate *private = GET_PRIVATE (object);
+  PicmanFillOptionsPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -148,12 +148,12 @@ gimp_fill_options_set_property (GObject      *object,
 }
 
 static void
-gimp_fill_options_get_property (GObject    *object,
+picman_fill_options_get_property (GObject    *object,
                                 guint       property_id,
                                 GValue     *value,
                                 GParamSpec *pspec)
 {
-  GimpFillOptionsPrivate *private = GET_PRIVATE (object);
+  PicmanFillOptionsPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -180,28 +180,28 @@ gimp_fill_options_get_property (GObject    *object,
 
 /*  public functions  */
 
-GimpFillOptions *
-gimp_fill_options_new (Gimp *gimp)
+PicmanFillOptions *
+picman_fill_options_new (Picman *picman)
 {
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
-  return g_object_new (GIMP_TYPE_FILL_OPTIONS,
-                       "gimp", gimp,
+  return g_object_new (PICMAN_TYPE_FILL_OPTIONS,
+                       "picman", picman,
                        NULL);
 }
 
-GimpFillStyle
-gimp_fill_options_get_style (GimpFillOptions *options)
+PicmanFillStyle
+picman_fill_options_get_style (PicmanFillOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_FILL_OPTIONS (options), GIMP_FILL_STYLE_SOLID);
+  g_return_val_if_fail (PICMAN_IS_FILL_OPTIONS (options), PICMAN_FILL_STYLE_SOLID);
 
   return GET_PRIVATE (options)->style;
 }
 
 gboolean
-gimp_fill_options_get_antialias (GimpFillOptions *options)
+picman_fill_options_get_antialias (PicmanFillOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_FILL_OPTIONS (options), FALSE);
+  g_return_val_if_fail (PICMAN_IS_FILL_OPTIONS (options), FALSE);
 
   return GET_PRIVATE (options)->antialias;
 }

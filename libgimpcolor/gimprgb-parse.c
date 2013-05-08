@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimprgb-parse.c
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanrgb-parse.c
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * Some of the code in here was inspired and partly copied from pango
  * and librsvg.
@@ -31,22 +31,22 @@
 #include <babl/babl.h>
 #include <glib-object.h>
 
-#include "gimpcolortypes.h"
+#include "picmancolortypes.h"
 
-#include "gimpcolorspace.h"
-#include "gimprgb.h"
+#include "picmancolorspace.h"
+#include "picmanrgb.h"
 
 
-static gchar    * gimp_rgb_parse_strip         (const gchar *str,
+static gchar    * picman_rgb_parse_strip         (const gchar *str,
                                                 gint         len);
 
-static gboolean   gimp_rgb_parse_name_internal (GimpRGB     *rgb,
+static gboolean   picman_rgb_parse_name_internal (PicmanRGB     *rgb,
                                                 const gchar *name);
-static gboolean   gimp_rgb_parse_hex_internal  (GimpRGB     *rgb,
+static gboolean   picman_rgb_parse_hex_internal  (PicmanRGB     *rgb,
                                                 const gchar *hex);
-static gboolean   gimp_rgb_parse_css_internal  (GimpRGB     *rgb,
+static gboolean   picman_rgb_parse_css_internal  (PicmanRGB     *rgb,
                                                 const gchar *css);
-static gboolean   gimp_rgba_parse_css_internal (GimpRGB     *rgb,
+static gboolean   picman_rgba_parse_css_internal (PicmanRGB     *rgb,
                                                 const gchar *css);
 
 
@@ -211,8 +211,8 @@ static const ColorEntry named_colors[] =
 
 
 /**
- * gimp_rgb_parse_name:
- * @rgb:  a #GimpRGB struct used to return the parsed color
+ * picman_rgb_parse_name:
+ * @rgb:  a #PicmanRGB struct used to return the parsed color
  * @name: a color name (in UTF-8 encoding)
  * @len:  the length of @name, in bytes. or -1 if @name is nul-terminated
  *
@@ -225,10 +225,10 @@ static const ColorEntry named_colors[] =
  * Return value: %TRUE if @name was parsed successfully and @rgb has
  *               been set, %FALSE otherwise
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_rgb_parse_name (GimpRGB     *rgb,
+picman_rgb_parse_name (PicmanRGB     *rgb,
                      const gchar *name,
                      gint         len)
 {
@@ -238,9 +238,9 @@ gimp_rgb_parse_name (GimpRGB     *rgb,
   g_return_val_if_fail (rgb != NULL, FALSE);
   g_return_val_if_fail (name != NULL, FALSE);
 
-  tmp = gimp_rgb_parse_strip (name, len);
+  tmp = picman_rgb_parse_strip (name, len);
 
-  result = gimp_rgb_parse_name_internal (rgb, tmp);
+  result = picman_rgb_parse_name_internal (rgb, tmp);
 
   g_free (tmp);
 
@@ -248,8 +248,8 @@ gimp_rgb_parse_name (GimpRGB     *rgb,
 }
 
 /**
- * gimp_rgb_parse_hex:
- * @rgb: a #GimpRGB struct used to return the parsed color
+ * picman_rgb_parse_hex:
+ * @rgb: a #PicmanRGB struct used to return the parsed color
  * @hex: a string describing a color in hexadecimal notation
  * @len: the length of @hex, in bytes. or -1 if @hex is nul-terminated
  *
@@ -261,10 +261,10 @@ gimp_rgb_parse_name (GimpRGB     *rgb,
  * Return value: %TRUE if @hex was parsed successfully and @rgb has
  *               been set, %FALSE otherwise
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_rgb_parse_hex (GimpRGB     *rgb,
+picman_rgb_parse_hex (PicmanRGB     *rgb,
                     const gchar *hex,
                     gint         len)
 {
@@ -274,9 +274,9 @@ gimp_rgb_parse_hex (GimpRGB     *rgb,
   g_return_val_if_fail (rgb != NULL, FALSE);
   g_return_val_if_fail (hex != NULL, FALSE);
 
-  tmp = gimp_rgb_parse_strip (hex, len);
+  tmp = picman_rgb_parse_strip (hex, len);
 
-  result = gimp_rgb_parse_hex_internal (rgb, tmp);
+  result = picman_rgb_parse_hex_internal (rgb, tmp);
 
   g_free (tmp);
 
@@ -284,27 +284,27 @@ gimp_rgb_parse_hex (GimpRGB     *rgb,
 }
 
 /**
- * gimp_rgb_parse_css:
- * @rgb: a #GimpRGB struct used to return the parsed color
+ * picman_rgb_parse_css:
+ * @rgb: a #PicmanRGB struct used to return the parsed color
  * @css: a string describing a color in CSS notation
  * @len: the length of @hex, in bytes. or -1 if @hex is nul-terminated
  *
  * Attempts to parse a string describing an RGB color in CSS
  * notation. This can be either a numerical representation
  * (<code>rgb(255,0,0)</code> or <code>rgb(100%,0%,0%)</code>)
- * or a hexadecimal notation as parsed by gimp_rgb_parse_hex()
+ * or a hexadecimal notation as parsed by picman_rgb_parse_hex()
  * (<code>##ff0000</code>) or a color name as parsed by
- * gimp_rgb_parse_name() (<code>red</code>).
+ * picman_rgb_parse_name() (<code>red</code>).
  *
  * This function does not touch the alpha component of @rgb.
  *
  * Return value: %TRUE if @css was parsed successfully and @rgb has been
  *               set, %FALSE otherwise
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_rgb_parse_css (GimpRGB     *rgb,
+picman_rgb_parse_css (PicmanRGB     *rgb,
                     const gchar *css,
                     gint         len)
 {
@@ -314,9 +314,9 @@ gimp_rgb_parse_css (GimpRGB     *rgb,
   g_return_val_if_fail (rgb != NULL, FALSE);
   g_return_val_if_fail (css != NULL, FALSE);
 
-  tmp = gimp_rgb_parse_strip (css, len);
+  tmp = picman_rgb_parse_strip (css, len);
 
-  result = gimp_rgb_parse_css_internal (rgb, tmp);
+  result = picman_rgb_parse_css_internal (rgb, tmp);
 
   g_free (tmp);
 
@@ -324,12 +324,12 @@ gimp_rgb_parse_css (GimpRGB     *rgb,
 }
 
 /**
- * gimp_rgba_parse_css:
- * @rgba: a #GimpRGB struct used to return the parsed color
+ * picman_rgba_parse_css:
+ * @rgba: a #PicmanRGB struct used to return the parsed color
  * @css: a string describing a color in CSS notation
  * @len: the length of @hex, in bytes. or -1 if @hex is nul-terminated
  *
- * Similar to gimp_rgb_parse_css() but handles RGB colors with alpha
+ * Similar to picman_rgb_parse_css() but handles RGB colors with alpha
  * channel in the numerical CSS notation (<code>rgba(255,0,0,255)</code>
  * or <code>rgba(100%,0%,0%,1000%)</code>).
  *
@@ -339,10 +339,10 @@ gimp_rgb_parse_css (GimpRGB     *rgb,
  * Return value: %TRUE if @css was parsed successfully and @rgb has been
  *               set, %FALSE otherwise
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_rgba_parse_css (GimpRGB     *rgba,
+picman_rgba_parse_css (PicmanRGB     *rgba,
                      const gchar *css,
                      gint         len)
 {
@@ -355,16 +355,16 @@ gimp_rgba_parse_css (GimpRGB     *rgba,
   if (len < 0)
     len = strlen (css);
 
-  tmp = gimp_rgb_parse_strip (css, len);
+  tmp = picman_rgb_parse_strip (css, len);
 
   if (strcmp (tmp, "transparent") == 0)
     {
-      gimp_rgba_set (rgba, 0.0, 0.0, 0.0, 0.0);
+      picman_rgba_set (rgba, 0.0, 0.0, 0.0, 0.0);
       result = TRUE;
     }
   else
     {
-      result = gimp_rgba_parse_css_internal (rgba, tmp);
+      result = picman_rgba_parse_css_internal (rgba, tmp);
     }
 
   g_free (tmp);
@@ -374,13 +374,13 @@ gimp_rgba_parse_css (GimpRGB     *rgba,
 
 
 /**
- * gimp_rgb_list_names:
+ * picman_rgb_list_names:
  * @names:  return location for an array of color names
- * @colors: return location for an array of GimpRGB structs
+ * @colors: return location for an array of PicmanRGB structs
  *
  * Returns the list of <ulink
  * url="http://www.w3.org/TR/SVG/types.html">SVG 1.0 color
- * keywords</ulink> that is used by gimp_rgb_parse_name().
+ * keywords</ulink> that is used by picman_rgb_parse_name().
  *
  * The returned strings are const and must not be freed. Only the two
  * arrays are allocated dynamically. You must call g_free() on the
@@ -389,11 +389,11 @@ gimp_rgba_parse_css (GimpRGB     *rgba,
  * Return value: the number of named colors
  *               (i.e. the length of the returned arrays)
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gint
-gimp_rgb_list_names (const gchar ***names,
-                     GimpRGB      **colors)
+picman_rgb_list_names (const gchar ***names,
+                     PicmanRGB      **colors)
 {
   gint i;
 
@@ -401,13 +401,13 @@ gimp_rgb_list_names (const gchar ***names,
   g_return_val_if_fail (colors != NULL, 0);
 
   *names  = g_new (const gchar *, G_N_ELEMENTS (named_colors));
-  *colors = g_new (GimpRGB, G_N_ELEMENTS (named_colors));
+  *colors = g_new (PicmanRGB, G_N_ELEMENTS (named_colors));
 
   for (i = 0; i < G_N_ELEMENTS (named_colors); i++)
     {
       (*names)[i] = named_colors[i].name;
 
-      gimp_rgba_set_uchar ((*colors) + i,
+      picman_rgba_set_uchar ((*colors) + i,
                            named_colors[i].red,
                            named_colors[i].green,
                            named_colors[i].blue,
@@ -419,7 +419,7 @@ gimp_rgb_list_names (const gchar ***names,
 
 
 static gchar *
-gimp_rgb_parse_strip (const gchar *str,
+picman_rgb_parse_strip (const gchar *str,
                       gint         len)
 {
   gchar *result;
@@ -450,7 +450,7 @@ gimp_rgb_parse_strip (const gchar *str,
 }
 
 static gint
-gimp_rgb_color_entry_compare (gconstpointer a,
+picman_rgb_color_entry_compare (gconstpointer a,
                               gconstpointer b)
 {
   const gchar      *name  = a;
@@ -460,16 +460,16 @@ gimp_rgb_color_entry_compare (gconstpointer a,
 }
 
 static gboolean
-gimp_rgb_parse_name_internal (GimpRGB     *rgb,
+picman_rgb_parse_name_internal (PicmanRGB     *rgb,
                               const gchar *name)
 {
   ColorEntry *entry = bsearch (name, named_colors,
                                G_N_ELEMENTS (named_colors), sizeof (ColorEntry),
-                               gimp_rgb_color_entry_compare);
+                               picman_rgb_color_entry_compare);
 
   if (entry)
     {
-      gimp_rgb_set_uchar (rgb, entry->red, entry->green, entry->blue);
+      picman_rgb_set_uchar (rgb, entry->red, entry->green, entry->blue);
 
       return TRUE;
     }
@@ -479,7 +479,7 @@ gimp_rgb_parse_name_internal (GimpRGB     *rgb,
 
 
 static gboolean
-gimp_rgb_parse_hex_component (const gchar *hex,
+picman_rgb_parse_hex_component (const gchar *hex,
                               gint         len,
                               gdouble     *value)
 {
@@ -508,7 +508,7 @@ gimp_rgb_parse_hex_component (const gchar *hex,
 }
 
 static gboolean
-gimp_rgb_parse_hex_internal (GimpRGB     *rgb,
+picman_rgb_parse_hex_internal (PicmanRGB     *rgb,
                              const gchar *hex)
 {
   gint     i;
@@ -526,18 +526,18 @@ gimp_rgb_parse_hex_internal (GimpRGB     *rgb,
 
   for (i = 0; i < 3; i++, hex += len)
     {
-      if (! gimp_rgb_parse_hex_component (hex, len, val + i))
+      if (! picman_rgb_parse_hex_component (hex, len, val + i))
         return FALSE;
     }
 
-  gimp_rgb_set (rgb, val[0], val[1], val[2]);
+  picman_rgb_set (rgb, val[0], val[1], val[2]);
 
   return TRUE;
 }
 
 
 static gboolean
-gimp_rgb_parse_css_numeric (GimpRGB     *rgb,
+picman_rgb_parse_css_numeric (PicmanRGB     *rgb,
                             const gchar *css)
 {
   gdouble   values[4];
@@ -604,48 +604,48 @@ else if (css[3] == '(')
     return FALSE;
 
   if (alpha)
-    gimp_rgba_set (rgb, values[0], values[1], values[2], values[3]);
+    picman_rgba_set (rgb, values[0], values[1], values[2], values[3]);
   else
-    gimp_rgb_set (rgb, values[0], values[1], values[2]);
+    picman_rgb_set (rgb, values[0], values[1], values[2]);
 
-  gimp_rgb_clamp (rgb);
+  picman_rgb_clamp (rgb);
 
   if (hsl)
     {
-      GimpHSL  tmp = (*((GimpHSL *) rgb));
+      PicmanHSL  tmp = (*((PicmanHSL *) rgb));
 
-      gimp_hsl_to_rgb (&tmp, rgb);
+      picman_hsl_to_rgb (&tmp, rgb);
     }
 
   return TRUE;
 }
 
 static gboolean
-gimp_rgb_parse_css_internal (GimpRGB     *rgb,
+picman_rgb_parse_css_internal (PicmanRGB     *rgb,
                              const gchar *css)
 {
   if (css[0] == '#')
     {
-      return gimp_rgb_parse_hex_internal (rgb, css);
+      return picman_rgb_parse_hex_internal (rgb, css);
     }
   else if (strncmp (css, "rgb(", 4) == 0 ||
            strncmp (css, "hsl(", 4) == 0)
     {
-      return gimp_rgb_parse_css_numeric (rgb, css);
+      return picman_rgb_parse_css_numeric (rgb, css);
     }
   else
     {
-      return gimp_rgb_parse_name_internal (rgb, css);
+      return picman_rgb_parse_name_internal (rgb, css);
     }
 }
 
 static gboolean
-gimp_rgba_parse_css_internal (GimpRGB     *rgba,
+picman_rgba_parse_css_internal (PicmanRGB     *rgba,
                               const gchar *css)
 {
   if (strncmp (css, "rgba(", 5) != 0 &&
       strncmp (css, "hsla(", 5) != 0)
     return FALSE;
 
-  return gimp_rgb_parse_css_numeric (rgba, css);
+  return picman_rgb_parse_css_numeric (rgba, css);
 }

@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * GIMP Plug-in for Windows Icon files.
+ * PICMAN Plug-in for Windows Icon files.
  * Copyright (C) 2002 Christian Kreibich <christian@whoop.org>.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,8 +25,8 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include <png.h>
 
@@ -37,7 +37,7 @@
 #include "ico-save.h"
 #include "ico-dialog.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 static gint     ico_write_int8         (FILE   *fp,
@@ -163,7 +163,7 @@ ico_save_init (gint32       image_ID,
   gint       i, num_colors;
   gboolean   uses_alpha_values = FALSE;
 
-  layers = gimp_image_get_layers (image_ID, &info->num_icons);
+  layers = picman_image_get_layers (image_ID, &info->num_icons);
   info->layers = layers;
   info->depths = g_new (gint, info->num_icons);
   info->default_depths = g_new (gint, info->num_icons);
@@ -207,8 +207,8 @@ ico_save_init (gint32       image_ID,
         }
 
       /* vista icons */
-      if (gimp_drawable_width (layers[i]) > 255
-          || gimp_drawable_height (layers[i]) > 255 )
+      if (picman_drawable_width (layers[i]) > 255
+          || picman_drawable_height (layers[i]) > 255 )
         {
           info->compress[i] = TRUE;
         }
@@ -233,12 +233,12 @@ ico_save_dialog (gint32          image_ID,
   gint       i;
   gint       response;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
   dialog = ico_dialog_new (info);
   for (i = 0; i < info->num_icons; i++)
     {
-      /* if (gimp_layer_get_visible(layers[i])) */
+      /* if (picman_layer_get_visible(layers[i])) */
       ico_dialog_add_icon (dialog, info->layers[i], i);
     }
 
@@ -250,7 +250,7 @@ ico_save_dialog (gint32          image_ID,
 
   gtk_widget_show (dialog);
 
-  response = gimp_dialog_run (GIMP_DIALOG (dialog));
+  response = picman_dialog_run (PICMAN_DIALOG (dialog));
 
   gtk_widget_destroy (dialog);
 
@@ -435,7 +435,7 @@ ico_get_layer_num_colors (gint32    layer,
   guint32    *colors;
   guint32    *c;
   GHashTable *hash;
-  GeglBuffer *buffer = gimp_drawable_get_buffer (layer);
+  GeglBuffer *buffer = picman_drawable_get_buffer (layer);
   const Babl *format;
 
   w = gegl_buffer_get_width  (buffer);
@@ -443,26 +443,26 @@ ico_get_layer_num_colors (gint32    layer,
 
   num_pixels = w * h;
 
-  switch (gimp_drawable_type (layer))
+  switch (picman_drawable_type (layer))
     {
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       format = babl_format ("R'G'B' u8");
       break;
 
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       format = babl_format ("R'G'B'A u8");
       break;
 
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       format = babl_format ("Y' u8");
       break;
 
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       format = babl_format ("Y'A u8");
       break;
 
-    case GIMP_INDEXED_IMAGE:
-    case GIMP_INDEXEDA_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
+    case PICMAN_INDEXEDA_IMAGE:
       format = gegl_buffer_get_format (buffer);
 
     default:
@@ -572,32 +572,32 @@ ico_image_get_reduced_buf (guint32   layer,
   gint        w, h;
   guchar     *buf;
   guchar     *cmap   = NULL;
-  GeglBuffer *buffer = gimp_drawable_get_buffer (layer);
+  GeglBuffer *buffer = picman_drawable_get_buffer (layer);
   const Babl *format;
 
   w = gegl_buffer_get_width  (buffer);
   h = gegl_buffer_get_height (buffer);
 
-  switch (gimp_drawable_type (layer))
+  switch (picman_drawable_type (layer))
     {
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       format = babl_format ("R'G'B' u8");
       break;
 
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       format = babl_format ("R'G'B'A u8");
       break;
 
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       format = babl_format ("Y' u8");
       break;
 
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       format = babl_format ("Y'A u8");
       break;
 
-    case GIMP_INDEXED_IMAGE:
-    case GIMP_INDEXEDA_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
+    case PICMAN_INDEXEDA_IMAGE:
       format = gegl_buffer_get_format (buffer);
 
     default:
@@ -610,28 +610,28 @@ ico_image_get_reduced_buf (guint32   layer,
 
   if (bpp <= 8 || bpp == 24 || babl_format_get_bytes_per_pixel (format) != 4)
     {
-      gint32      image = gimp_item_get_image (layer);
+      gint32      image = picman_item_get_image (layer);
       GeglBuffer *tmp;
 
-      tmp_image = gimp_image_new (w, h, gimp_image_base_type (image));
-      gimp_image_undo_disable (tmp_image);
+      tmp_image = picman_image_new (w, h, picman_image_base_type (image));
+      picman_image_undo_disable (tmp_image);
 
-      if (gimp_drawable_is_indexed (layer))
+      if (picman_drawable_is_indexed (layer))
         {
           guchar *cmap;
           gint    num_colors;
 
-          cmap = gimp_image_get_colormap (image, &num_colors);
-          gimp_image_set_colormap (tmp_image, cmap, num_colors);
+          cmap = picman_image_get_colormap (image, &num_colors);
+          picman_image_set_colormap (tmp_image, cmap, num_colors);
           g_free (cmap);
         }
 
-      tmp_layer = gimp_layer_new (tmp_image, "tmp", w, h,
-                                  gimp_drawable_type (layer),
-                                  100, GIMP_NORMAL_MODE);
-      gimp_image_insert_layer (tmp_image, tmp_layer, -1, 0);
+      tmp_layer = picman_layer_new (tmp_image, "tmp", w, h,
+                                  picman_drawable_type (layer),
+                                  100, PICMAN_NORMAL_MODE);
+      picman_image_insert_layer (tmp_image, tmp_layer, -1, 0);
 
-      tmp = gimp_drawable_get_buffer (tmp_layer);
+      tmp = picman_drawable_get_buffer (tmp_layer);
 
       gegl_buffer_get (buffer, GEGL_RECTANGLE (0, 0, w, h), 1.0,
                        format, buf,
@@ -641,16 +641,16 @@ ico_image_get_reduced_buf (guint32   layer,
 
       g_object_unref (tmp);
 
-      if (! gimp_drawable_is_rgb (tmp_layer))
-        gimp_image_convert_rgb (tmp_image);
+      if (! picman_drawable_is_rgb (tmp_layer))
+        picman_image_convert_rgb (tmp_image);
 
       if (bpp <= 8)
         {
-          gimp_image_convert_indexed (tmp_image,
-                                      GIMP_FS_DITHER, GIMP_MAKE_PALETTE,
+          picman_image_convert_indexed (tmp_image,
+                                      PICMAN_FS_DITHER, PICMAN_MAKE_PALETTE,
                                       1 << bpp, TRUE, FALSE, "dummy");
 
-          cmap = gimp_image_get_colormap (tmp_image, num_colors);
+          cmap = picman_image_get_colormap (tmp_image, num_colors);
 
           if (*num_colors == (1 << bpp) &&
               ! ico_cmap_contains_black (cmap, *num_colors))
@@ -659,58 +659,58 @@ ico_image_get_reduced_buf (guint32   layer,
                * We need to eliminate one more color to make room for black.
                */
 
-              if (gimp_drawable_is_indexed (layer))
+              if (picman_drawable_is_indexed (layer))
                 {
                   g_free (cmap);
-                  cmap = gimp_image_get_colormap (image, num_colors);
-                  gimp_image_set_colormap (tmp_image, cmap, *num_colors);
+                  cmap = picman_image_get_colormap (image, num_colors);
+                  picman_image_set_colormap (tmp_image, cmap, *num_colors);
                 }
-              else if (gimp_drawable_is_gray (layer))
+              else if (picman_drawable_is_gray (layer))
                 {
-                  gimp_image_convert_grayscale (tmp_image);
+                  picman_image_convert_grayscale (tmp_image);
                 }
               else
                 {
-                  gimp_image_convert_rgb (tmp_image);
+                  picman_image_convert_rgb (tmp_image);
                 }
 
-              tmp = gimp_drawable_get_buffer (tmp_layer);
+              tmp = picman_drawable_get_buffer (tmp_layer);
 
               gegl_buffer_set (tmp, GEGL_RECTANGLE (0, 0, w, h), 0,
                                format, buf, GEGL_AUTO_ROWSTRIDE);
 
               g_object_unref (tmp);
 
-              if (! gimp_drawable_is_rgb (layer))
-                gimp_image_convert_rgb (tmp_image);
+              if (! picman_drawable_is_rgb (layer))
+                picman_image_convert_rgb (tmp_image);
 
-              gimp_image_convert_indexed (tmp_image,
-                                          GIMP_FS_DITHER, GIMP_MAKE_PALETTE,
+              picman_image_convert_indexed (tmp_image,
+                                          PICMAN_FS_DITHER, PICMAN_MAKE_PALETTE,
                                           (1<<bpp) - 1, TRUE, FALSE, "dummy");
               g_free (cmap);
-              cmap = gimp_image_get_colormap (tmp_image, num_colors);
+              cmap = picman_image_get_colormap (tmp_image, num_colors);
             }
 
-          gimp_image_convert_rgb (tmp_image);
+          picman_image_convert_rgb (tmp_image);
         }
       else if (bpp == 24)
         {
-          GimpParam    *return_vals;
+          PicmanParam    *return_vals;
           gint          n_return_vals;
 
           return_vals =
-            gimp_run_procedure ("plug-in-threshold-alpha", &n_return_vals,
-                                GIMP_PDB_INT32, GIMP_RUN_NONINTERACTIVE,
-                                GIMP_PDB_IMAGE, tmp_image,
-                                GIMP_PDB_DRAWABLE, tmp_layer,
-                                GIMP_PDB_INT32, ICO_ALPHA_THRESHOLD,
-                                GIMP_PDB_END);
-          gimp_destroy_params (return_vals, n_return_vals);
+            picman_run_procedure ("plug-in-threshold-alpha", &n_return_vals,
+                                PICMAN_PDB_INT32, PICMAN_RUN_NONINTERACTIVE,
+                                PICMAN_PDB_IMAGE, tmp_image,
+                                PICMAN_PDB_DRAWABLE, tmp_layer,
+                                PICMAN_PDB_INT32, ICO_ALPHA_THRESHOLD,
+                                PICMAN_PDB_END);
+          picman_destroy_params (return_vals, n_return_vals);
         }
 
-      gimp_layer_add_alpha (tmp_layer);
+      picman_layer_add_alpha (tmp_layer);
 
-      tmp = gimp_drawable_get_buffer (tmp_layer);
+      tmp = picman_drawable_get_buffer (tmp_layer);
 
       gegl_buffer_get (tmp, GEGL_RECTANGLE (0, 0, w, h), 1.0,
                        NULL, buf,
@@ -718,7 +718,7 @@ ico_image_get_reduced_buf (guint32   layer,
 
       g_object_unref (tmp);
 
-      gimp_image_delete (tmp_image);
+      picman_image_delete (tmp_image);
     }
   else
     {
@@ -751,8 +751,8 @@ ico_write_png (FILE   *fp,
   palette = NULL;
   buf = NULL;
 
-  width = gimp_drawable_width (layer);
-  height = gimp_drawable_height (layer);
+  width = picman_drawable_width (layer);
+  height = picman_drawable_height (layer);
 
   png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if ( !png_ptr )
@@ -829,8 +829,8 @@ ico_write_icon (FILE   *fp,
   D(("Creating data structures for icon %i ------------------------\n",
      num_icon));
 
-  width = gimp_drawable_width (layer);
-  height = gimp_drawable_height (layer);
+  width = picman_drawable_width (layer);
+  height = picman_drawable_height (layer);
 
   header.header_size     = 40;
   header.width          = width;
@@ -1031,7 +1031,7 @@ ico_save_info_free (IcoSaveInfo  *info)
   memset (info, 0, sizeof (IcoSaveInfo));
 }
 
-GimpPDBStatusType
+PicmanPDBStatusType
 ico_save_image (const gchar  *filename,
                 gint32        image,
                 gint32        run_mode,
@@ -1050,22 +1050,22 @@ ico_save_image (const gchar  *filename,
 
   ico_save_init (image, &info);
 
-  if (run_mode == GIMP_RUN_INTERACTIVE)
+  if (run_mode == PICMAN_RUN_INTERACTIVE)
     {
       /* Allow user to override default values */
       if ( !ico_save_dialog (image, &info))
-        return GIMP_PDB_CANCEL;
+        return PICMAN_PDB_CANCEL;
     }
 
-  gimp_progress_init_printf (_("Saving '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Saving '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   if (! (fp = g_fopen (filename, "wb")))
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
-      return GIMP_PDB_EXECUTION_ERROR;
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
 
   header.reserved = 0;
@@ -1077,7 +1077,7 @@ ico_save_image (const gchar  *filename,
     {
       ico_save_info_free (&info);
       fclose (fp);
-      return GIMP_PDB_EXECUTION_ERROR;
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
 
   entries = g_new0 (IcoFileEntry, info.num_icons);
@@ -1086,15 +1086,15 @@ ico_save_image (const gchar  *filename,
       ico_save_info_free (&info);
       g_free (entries);
       fclose (fp);
-      return GIMP_PDB_EXECUTION_ERROR;
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
 
   for (i = 0; i < info.num_icons; i++)
     {
-      gimp_progress_update ((gdouble)i / (gdouble)info.num_icons);
+      picman_progress_update ((gdouble)i / (gdouble)info.num_icons);
 
-      width = gimp_drawable_width (info.layers[i]);
-      height = gimp_drawable_height (info.layers[i]);
+      width = picman_drawable_width (info.layers[i]);
+      height = picman_drawable_height (info.layers[i]);
       if (width <= 255 && height <= 255)
         {
           entries[i].width = width;
@@ -1123,7 +1123,7 @@ ico_save_image (const gchar  *filename,
         {
           ico_save_info_free (&info);
           fclose (fp);
-          return GIMP_PDB_EXECUTION_ERROR;
+          return PICMAN_PDB_EXECUTION_ERROR;
         }
 
       entries[i].size = ftell (fp) - entries[i].offset;
@@ -1142,14 +1142,14 @@ ico_save_image (const gchar  *filename,
     {
       ico_save_info_free (&info);
       fclose (fp);
-      return GIMP_PDB_EXECUTION_ERROR;
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   ico_save_info_free (&info);
   fclose (fp);
   g_free (entries);
 
-  return GIMP_PDB_SUCCESS;
+  return PICMAN_PDB_SUCCESS;
 }

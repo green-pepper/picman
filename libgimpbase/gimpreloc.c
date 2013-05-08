@@ -25,7 +25,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
-#include "gimpreloc.h"
+#include "picmanreloc.h"
 
 
 /*
@@ -34,11 +34,11 @@
  * not NULL, the error code will be stored there, if an error occurred.
  */
 static char *
-_br_find_exe (GimpBinrelocInitError *error)
+_br_find_exe (PicmanBinrelocInitError *error)
 {
 #ifndef ENABLE_BINRELOC
         if (error)
-                *error = GIMP_RELOC_INIT_ERROR_DISABLED;
+                *error = PICMAN_RELOC_INIT_ERROR_DISABLED;
         return NULL;
 #else
         char *path, *path2, *line, *result;
@@ -56,14 +56,14 @@ _br_find_exe (GimpBinrelocInitError *error)
         if (path == NULL) {
                 /* Cannot allocate memory. */
                 if (error)
-                        *error = GIMP_RELOC_INIT_ERROR_NOMEM;
+                        *error = PICMAN_RELOC_INIT_ERROR_NOMEM;
                 return NULL;
         }
         path2 = g_try_new (char, buf_size);
         if (path2 == NULL) {
                 /* Cannot allocate memory. */
                 if (error)
-                        *error = GIMP_RELOC_INIT_ERROR_NOMEM;
+                        *error = PICMAN_RELOC_INIT_ERROR_NOMEM;
                 g_free (path);
                 return NULL;
         }
@@ -113,7 +113,7 @@ _br_find_exe (GimpBinrelocInitError *error)
                 /* Cannot allocate memory. */
                 g_free (path);
                 if (error)
-                        *error = GIMP_RELOC_INIT_ERROR_NOMEM;
+                        *error = PICMAN_RELOC_INIT_ERROR_NOMEM;
                 return NULL;
         }
 
@@ -121,7 +121,7 @@ _br_find_exe (GimpBinrelocInitError *error)
         if (f == NULL) {
                 g_free (line);
                 if (error)
-                        *error = GIMP_RELOC_INIT_ERROR_OPEN_MAPS;
+                        *error = PICMAN_RELOC_INIT_ERROR_OPEN_MAPS;
                 return NULL;
         }
 
@@ -131,7 +131,7 @@ _br_find_exe (GimpBinrelocInitError *error)
                 fclose (f);
                 g_free (line);
                 if (error)
-                        *error = GIMP_RELOC_INIT_ERROR_READ_MAPS;
+                        *error = PICMAN_RELOC_INIT_ERROR_READ_MAPS;
                 return NULL;
         }
 
@@ -142,7 +142,7 @@ _br_find_exe (GimpBinrelocInitError *error)
                 fclose (f);
                 g_free (line);
                 if (error)
-                        *error = GIMP_RELOC_INIT_ERROR_INVALID_MAPS;
+                        *error = PICMAN_RELOC_INIT_ERROR_INVALID_MAPS;
                 return NULL;
         }
         if (line[buf_size - 1] == 10)
@@ -156,7 +156,7 @@ _br_find_exe (GimpBinrelocInitError *error)
                 fclose (f);
                 g_free (line);
                 if (error)
-                        *error = GIMP_RELOC_INIT_ERROR_INVALID_MAPS;
+                        *error = PICMAN_RELOC_INIT_ERROR_INVALID_MAPS;
                 return NULL;
         }
 
@@ -173,11 +173,11 @@ _br_find_exe (GimpBinrelocInitError *error)
  * Returns a filename which must be freed, or NULL on error.
  */
 static char *
-_br_find_exe_for_symbol (const void *symbol, GimpBinrelocInitError *error)
+_br_find_exe_for_symbol (const void *symbol, PicmanBinrelocInitError *error)
 {
 #ifndef ENABLE_BINRELOC
         if (error)
-                *error = GIMP_RELOC_INIT_ERROR_DISABLED;
+                *error = PICMAN_RELOC_INIT_ERROR_DISABLED;
         return (char *) NULL;
 #else
         #define SIZE PATH_MAX + 100
@@ -278,7 +278,7 @@ _br_find_exe_for_symbol (const void *symbol, GimpBinrelocInitError *error)
 
 static gchar *exe = NULL;
 
-static void set_gerror (GError **error, GimpBinrelocInitError errcode);
+static void set_gerror (GError **error, PicmanBinrelocInitError errcode);
 
 
 /* Initialize the BinReloc library (for applications).
@@ -287,24 +287,24 @@ static void set_gerror (GError **error, GimpBinrelocInitError errcode);
  * It attempts to locate the application's canonical filename.
  *
  * @note If you want to use BinReloc for a library, then you should call
- *       _gimp_reloc_init_lib() instead.
+ *       _picman_reloc_init_lib() instead.
  * @note Initialization failure is not fatal. BinReloc functions will just
  *       fallback to the supplied default path.
  *
  * @param error  If BinReloc failed to initialize, then the error report will
  *               be stored in this variable. Set to NULL if you don't want an
- *               error report. See the #GimpBinrelocInitError for a list of error
+ *               error report. See the #PicmanBinrelocInitError for a list of error
  *               codes.
  *
  * @returns TRUE on success, FALSE if BinReloc failed to initialize.
  */
 gboolean
-_gimp_reloc_init (GError **error)
+_picman_reloc_init (GError **error)
 {
-        GimpBinrelocInitError errcode;
+        PicmanBinrelocInitError errcode;
 
         /* Shut up compiler warning about uninitialized variable. */
-        errcode = GIMP_RELOC_INIT_ERROR_NOMEM;
+        errcode = PICMAN_RELOC_INIT_ERROR_NOMEM;
 
         /* Locate the application's filename. */
         exe = _br_find_exe (&errcode);
@@ -332,12 +332,12 @@ _gimp_reloc_init (GError **error)
  * @returns TRUE on success, FALSE if a filename cannot be found.
  */
 gboolean
-_gimp_reloc_init_lib (GError **error)
+_picman_reloc_init_lib (GError **error)
 {
-        GimpBinrelocInitError errcode;
+        PicmanBinrelocInitError errcode;
 
         /* Shut up compiler warning about uninitialized variable. */
-        errcode = GIMP_RELOC_INIT_ERROR_NOMEM;
+        errcode = PICMAN_RELOC_INIT_ERROR_NOMEM;
 
         exe = _br_find_exe_for_symbol ((const void *) "", &errcode);
         if (exe != NULL)
@@ -351,7 +351,7 @@ _gimp_reloc_init_lib (GError **error)
 }
 
 static void
-set_gerror (GError **error, GimpBinrelocInitError errcode)
+set_gerror (GError **error, PicmanBinrelocInitError errcode)
 {
         const gchar *error_message;
 
@@ -359,19 +359,19 @@ set_gerror (GError **error, GimpBinrelocInitError errcode)
                 return;
 
         switch (errcode) {
-        case GIMP_RELOC_INIT_ERROR_NOMEM:
+        case PICMAN_RELOC_INIT_ERROR_NOMEM:
                 error_message = "Cannot allocate memory.";
                 break;
-        case GIMP_RELOC_INIT_ERROR_OPEN_MAPS:
+        case PICMAN_RELOC_INIT_ERROR_OPEN_MAPS:
                 error_message = "Unable to open /proc/self/maps for reading.";
                 break;
-        case GIMP_RELOC_INIT_ERROR_READ_MAPS:
+        case PICMAN_RELOC_INIT_ERROR_READ_MAPS:
                 error_message = "Unable to read from /proc/self/maps.";
                 break;
-        case GIMP_RELOC_INIT_ERROR_INVALID_MAPS:
+        case PICMAN_RELOC_INIT_ERROR_INVALID_MAPS:
                 error_message = "The file format of /proc/self/maps is invalid.";
                 break;
-        case GIMP_RELOC_INIT_ERROR_DISABLED:
+        case PICMAN_RELOC_INIT_ERROR_DISABLED:
                 error_message = "Binary relocation support is disabled.";
                 break;
         default:
@@ -398,7 +398,7 @@ set_gerror (GError **error, GimpBinrelocInitError errcode)
  *         returned.
  */
 gchar *
-_gimp_reloc_find_prefix (const gchar *default_prefix)
+_picman_reloc_find_prefix (const gchar *default_prefix)
 {
         gchar *dir1, *dir2;
 

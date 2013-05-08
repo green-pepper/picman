@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,109 +23,109 @@
 #include <gegl-plugin.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "gegl/gimp-gegl-config-proxy.h"
+#include "gegl/picman-gegl-config-proxy.h"
 
-#include "core/gimpdrawable.h"
-#include "core/gimperror.h"
-#include "core/gimpimage.h"
-#include "core/gimpimagemap.h"
-#include "core/gimpimagemapconfig.h"
-#include "core/gimplist.h"
-#include "core/gimpparamspecs-duplicate.h"
+#include "core/picmandrawable.h"
+#include "core/picmanerror.h"
+#include "core/picmanimage.h"
+#include "core/picmanimagemap.h"
+#include "core/picmanimagemapconfig.h"
+#include "core/picmanlist.h"
+#include "core/picmanparamspecs-duplicate.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimppropwidgets.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanpropwidgets.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimpcoloroptions.h"
-#include "gimpoperationtool.h"
+#include "picmancoloroptions.h"
+#include "picmanoperationtool.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void        gimp_operation_tool_finalize        (GObject           *object);
+static void        picman_operation_tool_finalize        (GObject           *object);
 
-static GeglNode  * gimp_operation_tool_get_operation   (GimpImageMapTool  *im_tool,
+static GeglNode  * picman_operation_tool_get_operation   (PicmanImageMapTool  *im_tool,
                                                         GObject          **config,
                                                         gchar            **undo_desc);
-static void        gimp_operation_tool_map             (GimpImageMapTool  *im_tool);
-static void        gimp_operation_tool_dialog          (GimpImageMapTool  *im_tool);
-static void        gimp_operation_tool_reset           (GimpImageMapTool  *im_tool);
-static GtkWidget * gimp_operation_tool_get_settings_ui (GimpImageMapTool  *image_map_tool,
-                                                        GimpContainer     *settings,
+static void        picman_operation_tool_map             (PicmanImageMapTool  *im_tool);
+static void        picman_operation_tool_dialog          (PicmanImageMapTool  *im_tool);
+static void        picman_operation_tool_reset           (PicmanImageMapTool  *im_tool);
+static GtkWidget * picman_operation_tool_get_settings_ui (PicmanImageMapTool  *image_map_tool,
+                                                        PicmanContainer     *settings,
                                                         const gchar       *settings_filename,
                                                         const gchar       *import_dialog_title,
                                                         const gchar       *export_dialog_title,
                                                         const gchar       *file_dialog_help_id,
                                                         const gchar       *default_folder,
                                                         GtkWidget        **settings_box);
-static void        gimp_operation_tool_color_picked    (GimpImageMapTool  *im_tool,
+static void        picman_operation_tool_color_picked    (PicmanImageMapTool  *im_tool,
                                                         gpointer           identifier,
                                                         const Babl        *sample_format,
-                                                        const GimpRGB     *color);
+                                                        const PicmanRGB     *color);
 
 
-G_DEFINE_TYPE (GimpOperationTool, gimp_operation_tool,
-               GIMP_TYPE_IMAGE_MAP_TOOL)
+G_DEFINE_TYPE (PicmanOperationTool, picman_operation_tool,
+               PICMAN_TYPE_IMAGE_MAP_TOOL)
 
-#define parent_class gimp_operation_tool_parent_class
+#define parent_class picman_operation_tool_parent_class
 
 
 void
-gimp_operation_tool_register (GimpToolRegisterCallback  callback,
+picman_operation_tool_register (PicmanToolRegisterCallback  callback,
                               gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_OPERATION_TOOL,
-                GIMP_TYPE_COLOR_OPTIONS,
-                gimp_color_options_gui,
+  (* callback) (PICMAN_TYPE_OPERATION_TOOL,
+                PICMAN_TYPE_COLOR_OPTIONS,
+                picman_color_options_gui,
                 0,
-                "gimp-operation-tool",
+                "picman-operation-tool",
                 _("GEGL Operation"),
                 _("Operation Tool: Use an arbitrary GEGL operation"),
                 N_("_GEGL Operation..."), NULL,
-                NULL, GIMP_HELP_TOOL_GEGL,
-                GIMP_STOCK_GEGL,
+                NULL, PICMAN_HELP_TOOL_GEGL,
+                PICMAN_STOCK_GEGL,
                 data);
 }
 
 static void
-gimp_operation_tool_class_init (GimpOperationToolClass *klass)
+picman_operation_tool_class_init (PicmanOperationToolClass *klass)
 {
   GObjectClass          *object_class  = G_OBJECT_CLASS (klass);
-  GimpImageMapToolClass *im_tool_class = GIMP_IMAGE_MAP_TOOL_CLASS (klass);
+  PicmanImageMapToolClass *im_tool_class = PICMAN_IMAGE_MAP_TOOL_CLASS (klass);
 
-  object_class->finalize         = gimp_operation_tool_finalize;
+  object_class->finalize         = picman_operation_tool_finalize;
 
   im_tool_class->dialog_desc     = _("GEGL Operation");
 
-  im_tool_class->get_operation   = gimp_operation_tool_get_operation;
-  im_tool_class->map             = gimp_operation_tool_map;
-  im_tool_class->dialog          = gimp_operation_tool_dialog;
-  im_tool_class->reset           = gimp_operation_tool_reset;
-  im_tool_class->get_settings_ui = gimp_operation_tool_get_settings_ui;
-  im_tool_class->color_picked    = gimp_operation_tool_color_picked;
+  im_tool_class->get_operation   = picman_operation_tool_get_operation;
+  im_tool_class->map             = picman_operation_tool_map;
+  im_tool_class->dialog          = picman_operation_tool_dialog;
+  im_tool_class->reset           = picman_operation_tool_reset;
+  im_tool_class->get_settings_ui = picman_operation_tool_get_settings_ui;
+  im_tool_class->color_picked    = picman_operation_tool_color_picked;
 }
 
 static void
-gimp_operation_tool_init (GimpOperationTool *tool)
+picman_operation_tool_init (PicmanOperationTool *tool)
 {
-  GIMP_IMAGE_MAP_TOOL_GET_CLASS (tool)->settings_name = NULL; /* XXX hack */
+  PICMAN_IMAGE_MAP_TOOL_GET_CLASS (tool)->settings_name = NULL; /* XXX hack */
 }
 
 static void
-gimp_operation_tool_finalize (GObject *object)
+picman_operation_tool_finalize (GObject *object)
 {
-  GimpOperationTool *tool = GIMP_OPERATION_TOOL (object);
+  PicmanOperationTool *tool = PICMAN_OPERATION_TOOL (object);
 
   if (tool->operation)
     {
@@ -149,11 +149,11 @@ gimp_operation_tool_finalize (GObject *object)
 }
 
 static GeglNode *
-gimp_operation_tool_get_operation (GimpImageMapTool  *im_tool,
+picman_operation_tool_get_operation (PicmanImageMapTool  *im_tool,
                                    GObject          **config,
                                    gchar            **undo_desc)
 {
-  GimpOperationTool *tool = GIMP_OPERATION_TOOL (im_tool);
+  PicmanOperationTool *tool = PICMAN_OPERATION_TOOL (im_tool);
 
   if (tool->config)
     *config = g_object_ref (tool->config);
@@ -170,21 +170,21 @@ gimp_operation_tool_get_operation (GimpImageMapTool  *im_tool,
 }
 
 static void
-gimp_operation_tool_map (GimpImageMapTool *image_map_tool)
+picman_operation_tool_map (PicmanImageMapTool *image_map_tool)
 {
-  GimpOperationTool *tool = GIMP_OPERATION_TOOL (image_map_tool);
+  PicmanOperationTool *tool = PICMAN_OPERATION_TOOL (image_map_tool);
 
   if (tool->config)
-    gimp_gegl_config_proxy_sync (tool->config, image_map_tool->operation);
+    picman_gegl_config_proxy_sync (tool->config, image_map_tool->operation);
 }
 
 static void
-gimp_operation_tool_dialog (GimpImageMapTool *image_map_tool)
+picman_operation_tool_dialog (PicmanImageMapTool *image_map_tool)
 {
-  GimpOperationTool *tool = GIMP_OPERATION_TOOL (image_map_tool);
+  PicmanOperationTool *tool = PICMAN_OPERATION_TOOL (image_map_tool);
   GtkWidget         *main_vbox;
 
-  main_vbox = gimp_image_map_tool_dialog_get_vbox (image_map_tool);
+  main_vbox = picman_image_map_tool_dialog_get_vbox (image_map_tool);
 
   /*  The options vbox  */
   tool->options_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
@@ -200,23 +200,23 @@ gimp_operation_tool_dialog (GimpImageMapTool *image_map_tool)
     }
 
   if (tool->undo_desc)
-    g_object_set (GIMP_IMAGE_MAP_TOOL (tool)->dialog,
+    g_object_set (PICMAN_IMAGE_MAP_TOOL (tool)->dialog,
                   "description", tool->undo_desc,
                   NULL);
 }
 
 static void
-gimp_operation_tool_reset (GimpImageMapTool *image_map_tool)
+picman_operation_tool_reset (PicmanImageMapTool *image_map_tool)
 {
-  GimpOperationTool *tool = GIMP_OPERATION_TOOL (image_map_tool);
+  PicmanOperationTool *tool = PICMAN_OPERATION_TOOL (image_map_tool);
 
   if (tool->config)
-    gimp_config_reset (GIMP_CONFIG (tool->config));
+    picman_config_reset (PICMAN_CONFIG (tool->config));
 }
 
 static GtkWidget *
-gimp_operation_tool_get_settings_ui (GimpImageMapTool  *image_map_tool,
-                                     GimpContainer     *settings,
+picman_operation_tool_get_settings_ui (PicmanImageMapTool  *image_map_tool,
+                                     PicmanContainer     *settings,
                                      const gchar       *settings_filename,
                                      const gchar       *import_dialog_title,
                                      const gchar       *export_dialog_title,
@@ -224,7 +224,7 @@ gimp_operation_tool_get_settings_ui (GimpImageMapTool  *image_map_tool,
                                      const gchar       *default_folder,
                                      GtkWidget        **settings_box)
 {
-  GimpOperationTool *tool = GIMP_OPERATION_TOOL (image_map_tool);
+  PicmanOperationTool *tool = PICMAN_OPERATION_TOOL (image_map_tool);
   GType              type = G_TYPE_FROM_INSTANCE (tool->config);
   GtkWidget         *widget;
   gchar             *basename;
@@ -232,20 +232,20 @@ gimp_operation_tool_get_settings_ui (GimpImageMapTool  *image_map_tool,
   gchar             *import_title;
   gchar             *export_title;
 
-  settings = gimp_gegl_get_config_container (type);
-  if (! gimp_list_get_sort_func (GIMP_LIST (settings)))
-    gimp_list_set_sort_func (GIMP_LIST (settings),
-                             (GCompareFunc) gimp_image_map_config_compare);
+  settings = picman_gegl_get_config_container (type);
+  if (! picman_list_get_sort_func (PICMAN_LIST (settings)))
+    picman_list_set_sort_func (PICMAN_LIST (settings),
+                             (GCompareFunc) picman_image_map_config_compare);
 
   basename = g_strconcat (G_OBJECT_TYPE_NAME (tool->config), ".settings", NULL);
-  filename = g_build_filename (gimp_directory (), "filters", basename, NULL);
+  filename = g_build_filename (picman_directory (), "filters", basename, NULL);
   g_free (basename);
 
   import_title = g_strdup_printf (_("Import '%s' Settings"), tool->undo_desc);
   export_title = g_strdup_printf (_("Export '%s' Settings"), tool->undo_desc);
 
   widget =
-    GIMP_IMAGE_MAP_TOOL_CLASS (parent_class)->get_settings_ui (image_map_tool,
+    PICMAN_IMAGE_MAP_TOOL_CLASS (parent_class)->get_settings_ui (image_map_tool,
                                                                settings,
                                                                filename,
                                                                import_title,
@@ -262,12 +262,12 @@ gimp_operation_tool_get_settings_ui (GimpImageMapTool  *image_map_tool,
 }
 
 static void
-gimp_operation_tool_color_picked (GimpImageMapTool  *im_tool,
+picman_operation_tool_color_picked (PicmanImageMapTool  *im_tool,
                                   gpointer           identifier,
                                   const Babl        *sample_format,
-                                  const GimpRGB     *color)
+                                  const PicmanRGB     *color)
 {
-  GimpOperationTool *tool = GIMP_OPERATION_TOOL (im_tool);
+  PicmanOperationTool *tool = PICMAN_OPERATION_TOOL (im_tool);
 
   g_object_set (tool->config,
                 identifier, color,
@@ -275,11 +275,11 @@ gimp_operation_tool_color_picked (GimpImageMapTool  *im_tool,
 }
 
 void
-gimp_operation_tool_set_operation (GimpOperationTool *tool,
+picman_operation_tool_set_operation (PicmanOperationTool *tool,
                                    const gchar       *operation,
                                    const gchar       *undo_desc)
 {
-  g_return_if_fail (GIMP_IS_OPERATION_TOOL (tool));
+  g_return_if_fail (PICMAN_IS_OPERATION_TOOL (tool));
   g_return_if_fail (operation != NULL);
 
   if (tool->operation)
@@ -294,15 +294,15 @@ gimp_operation_tool_set_operation (GimpOperationTool *tool,
   if (tool->config)
     g_object_unref (tool->config);
 
-  tool->config = gimp_gegl_get_config_proxy (tool->operation,
-                                             GIMP_TYPE_IMAGE_MAP_CONFIG);
+  tool->config = picman_gegl_get_config_proxy (tool->operation,
+                                             PICMAN_TYPE_IMAGE_MAP_CONFIG);
 
-  gimp_image_map_tool_get_operation (GIMP_IMAGE_MAP_TOOL (tool));
+  picman_image_map_tool_get_operation (PICMAN_IMAGE_MAP_TOOL (tool));
 
   if (undo_desc)
-    GIMP_IMAGE_MAP_TOOL_GET_CLASS (tool)->settings_name = "yes"; /* XXX hack */
+    PICMAN_IMAGE_MAP_TOOL_GET_CLASS (tool)->settings_name = "yes"; /* XXX hack */
   else
-    GIMP_IMAGE_MAP_TOOL_GET_CLASS (tool)->settings_name = NULL; /* XXX hack */
+    PICMAN_IMAGE_MAP_TOOL_GET_CLASS (tool)->settings_name = NULL; /* XXX hack */
 
   if (tool->options_table)
     {
@@ -313,10 +313,10 @@ gimp_operation_tool_set_operation (GimpOperationTool *tool,
   if (tool->config)
     {
       tool->options_table =
-        gimp_prop_table_new (G_OBJECT (tool->config),
+        picman_prop_table_new (G_OBJECT (tool->config),
                              G_TYPE_FROM_INSTANCE (tool->config),
-                             GIMP_CONTEXT (GIMP_TOOL_GET_OPTIONS (tool)),
-                             (GimpCreatePickerFunc) gimp_image_map_tool_add_color_picker,
+                             PICMAN_CONTEXT (PICMAN_TOOL_GET_OPTIONS (tool)),
+                             (PicmanCreatePickerFunc) picman_image_map_tool_add_color_picker,
                              tool);
 
       if (tool->options_box)
@@ -327,11 +327,11 @@ gimp_operation_tool_set_operation (GimpOperationTool *tool,
         }
     }
 
-  if (undo_desc && GIMP_IMAGE_MAP_TOOL (tool)->dialog)
-    g_object_set (GIMP_IMAGE_MAP_TOOL (tool)->dialog,
+  if (undo_desc && PICMAN_IMAGE_MAP_TOOL (tool)->dialog)
+    g_object_set (PICMAN_IMAGE_MAP_TOOL (tool)->dialog,
                   "description", undo_desc,
                   NULL);
 
-  if (GIMP_TOOL (tool)->drawable)
-    gimp_image_map_tool_preview (GIMP_IMAGE_MAP_TOOL (tool));
+  if (PICMAN_TOOL (tool)->drawable)
+    picman_image_map_tool_preview (PICMAN_IMAGE_MAP_TOOL (tool));
 }

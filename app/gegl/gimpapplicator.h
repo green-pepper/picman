@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpapplicator.h
- * Copyright (C) 2012-2013 Michael Natterer <mitch@gimp.org>
+ * picmanapplicator.h
+ * Copyright (C) 2012-2013 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_APPLICATOR_H__
-#define __GIMP_APPLICATOR_H__
+#ifndef __PICMAN_APPLICATOR_H__
+#define __PICMAN_APPLICATOR_H__
 
 
-#define GIMP_TYPE_APPLICATOR            (gimp_applicator_get_type ())
-#define GIMP_APPLICATOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_APPLICATOR, GimpApplicator))
-#define GIMP_APPLICATOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_APPLICATOR, GimpApplicatorClass))
-#define GIMP_IS_APPLICATOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_APPLICATOR))
-#define GIMP_IS_APPLICATOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_APPLICATOR))
-#define GIMP_APPLICATOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_APPLICATOR, GimpApplicatorClass))
+#define PICMAN_TYPE_APPLICATOR            (picman_applicator_get_type ())
+#define PICMAN_APPLICATOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_APPLICATOR, PicmanApplicator))
+#define PICMAN_APPLICATOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_APPLICATOR, PicmanApplicatorClass))
+#define PICMAN_IS_APPLICATOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_APPLICATOR))
+#define PICMAN_IS_APPLICATOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_APPLICATOR))
+#define PICMAN_APPLICATOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_APPLICATOR, PicmanApplicatorClass))
 
 
-typedef struct _GimpApplicatorClass GimpApplicatorClass;
+typedef struct _PicmanApplicatorClass PicmanApplicatorClass;
 
-struct _GimpApplicator
+struct _PicmanApplicator
 {
   GObject               parent_instance;
 
@@ -49,11 +49,11 @@ struct _GimpApplicator
   GeglNode             *apply_offset_node;
 
   gdouble               opacity;
-  GimpLayerModeEffects  paint_mode;
+  PicmanLayerModeEffects  paint_mode;
   gboolean              linear;
   GeglNode             *mode_node;
 
-  GimpComponentMask     affect;
+  PicmanComponentMask     affect;
   GeglNode             *affect_node;
 
   GeglBuffer           *src_buffer;
@@ -70,45 +70,45 @@ struct _GimpApplicator
   GeglNode             *mask_offset_node;
 };
 
-struct _GimpApplicatorClass
+struct _PicmanApplicatorClass
 {
   GObjectClass  parent_class;
 };
 
 
-GType        gimp_applicator_get_type         (void) G_GNUC_CONST;
+GType        picman_applicator_get_type         (void) G_GNUC_CONST;
 
-GimpApplicator * gimp_applicator_new          (GeglNode             *parent,
+PicmanApplicator * picman_applicator_new          (GeglNode             *parent,
                                                gboolean              linear);
 
-void         gimp_applicator_set_src_buffer   (GimpApplicator       *applicator,
+void         picman_applicator_set_src_buffer   (PicmanApplicator       *applicator,
                                                GeglBuffer           *dest_buffer);
-void         gimp_applicator_set_dest_buffer  (GimpApplicator       *applicator,
+void         picman_applicator_set_dest_buffer  (PicmanApplicator       *applicator,
                                                GeglBuffer           *dest_buffer);
 
-void         gimp_applicator_set_mask_buffer  (GimpApplicator       *applicator,
+void         picman_applicator_set_mask_buffer  (PicmanApplicator       *applicator,
                                                GeglBuffer           *mask_buffer);
-void         gimp_applicator_set_mask_offset  (GimpApplicator       *applicator,
+void         picman_applicator_set_mask_offset  (PicmanApplicator       *applicator,
                                                gint                  mask_offset_x,
                                                gint                  mask_offset_y);
 
-void         gimp_applicator_set_apply_buffer (GimpApplicator       *applicator,
+void         picman_applicator_set_apply_buffer (PicmanApplicator       *applicator,
                                                GeglBuffer           *apply_buffer);
-void         gimp_applicator_set_apply_offset (GimpApplicator       *applicator,
+void         picman_applicator_set_apply_offset (PicmanApplicator       *applicator,
                                                gint                  apply_offset_x,
                                                gint                  apply_offset_y);
 
-void         gimp_applicator_set_mode         (GimpApplicator       *applicator,
+void         picman_applicator_set_mode         (PicmanApplicator       *applicator,
                                                gdouble               opacity,
-                                               GimpLayerModeEffects  paint_mode);
-void         gimp_applicator_set_affect       (GimpApplicator       *applicator,
-                                               GimpComponentMask     affect);
+                                               PicmanLayerModeEffects  paint_mode);
+void         picman_applicator_set_affect       (PicmanApplicator       *applicator,
+                                               PicmanComponentMask     affect);
 
-void         gimp_applicator_blit             (GimpApplicator       *applicator,
+void         picman_applicator_blit             (PicmanApplicator       *applicator,
                                                const GeglRectangle  *rect);
 
-GeglBuffer * gimp_applicator_dup_apply_buffer (GimpApplicator       *applicator,
+GeglBuffer * picman_applicator_dup_apply_buffer (PicmanApplicator       *applicator,
                                                const GeglRectangle  *rect);
 
 
-#endif  /*  __GIMP_APPLICATOR_H__  */
+#endif  /*  __PICMAN_APPLICATOR_H__  */

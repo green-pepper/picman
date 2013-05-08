@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@
 
 #include "core-types.h"
 
-#include "gimpimage.h"
-#include "gimpitem.h"
-#include "gimpitemundo.h"
+#include "picmanimage.h"
+#include "picmanitem.h"
+#include "picmanitemundo.h"
 
 
 enum
@@ -33,66 +33,66 @@ enum
 };
 
 
-static void   gimp_item_undo_constructed  (GObject      *object);
-static void   gimp_item_undo_set_property (GObject      *object,
+static void   picman_item_undo_constructed  (GObject      *object);
+static void   picman_item_undo_set_property (GObject      *object,
                                            guint         property_id,
                                            const GValue *value,
                                            GParamSpec   *pspec);
-static void   gimp_item_undo_get_property (GObject      *object,
+static void   picman_item_undo_get_property (GObject      *object,
                                            guint         property_id,
                                            GValue       *value,
                                            GParamSpec   *pspec);
 
-static void   gimp_item_undo_free         (GimpUndo     *undo,
-                                           GimpUndoMode  undo_mode);
+static void   picman_item_undo_free         (PicmanUndo     *undo,
+                                           PicmanUndoMode  undo_mode);
 
 
-G_DEFINE_TYPE (GimpItemUndo, gimp_item_undo, GIMP_TYPE_UNDO)
+G_DEFINE_TYPE (PicmanItemUndo, picman_item_undo, PICMAN_TYPE_UNDO)
 
-#define parent_class gimp_item_undo_parent_class
+#define parent_class picman_item_undo_parent_class
 
 
 static void
-gimp_item_undo_class_init (GimpItemUndoClass *klass)
+picman_item_undo_class_init (PicmanItemUndoClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
-  GimpUndoClass *undo_class   = GIMP_UNDO_CLASS (klass);
+  PicmanUndoClass *undo_class   = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed  = gimp_item_undo_constructed;
-  object_class->set_property = gimp_item_undo_set_property;
-  object_class->get_property = gimp_item_undo_get_property;
+  object_class->constructed  = picman_item_undo_constructed;
+  object_class->set_property = picman_item_undo_set_property;
+  object_class->get_property = picman_item_undo_get_property;
 
-  undo_class->free           = gimp_item_undo_free;
+  undo_class->free           = picman_item_undo_free;
 
   g_object_class_install_property (object_class, PROP_ITEM,
                                    g_param_spec_object ("item", NULL, NULL,
-                                                        GIMP_TYPE_ITEM,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_ITEM,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_item_undo_init (GimpItemUndo *undo)
+picman_item_undo_init (PicmanItemUndo *undo)
 {
 }
 
 static void
-gimp_item_undo_constructed (GObject *object)
+picman_item_undo_constructed (GObject *object)
 {
-  GimpItemUndo *item_undo = GIMP_ITEM_UNDO (object);
+  PicmanItemUndo *item_undo = PICMAN_ITEM_UNDO (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_ITEM (item_undo->item));
+  g_assert (PICMAN_IS_ITEM (item_undo->item));
 }
 
 static void
-gimp_item_undo_set_property (GObject      *object,
+picman_item_undo_set_property (GObject      *object,
                              guint         property_id,
                              const GValue *value,
                              GParamSpec   *pspec)
 {
-  GimpItemUndo *item_undo = GIMP_ITEM_UNDO (object);
+  PicmanItemUndo *item_undo = PICMAN_ITEM_UNDO (object);
 
   switch (property_id)
     {
@@ -107,12 +107,12 @@ gimp_item_undo_set_property (GObject      *object,
 }
 
 static void
-gimp_item_undo_get_property (GObject    *object,
+picman_item_undo_get_property (GObject    *object,
                              guint       property_id,
                              GValue     *value,
                              GParamSpec *pspec)
 {
-  GimpItemUndo *item_undo = GIMP_ITEM_UNDO (object);
+  PicmanItemUndo *item_undo = PICMAN_ITEM_UNDO (object);
 
   switch (property_id)
     {
@@ -127,10 +127,10 @@ gimp_item_undo_get_property (GObject    *object,
 }
 
 static void
-gimp_item_undo_free (GimpUndo     *undo,
-                     GimpUndoMode  undo_mode)
+picman_item_undo_free (PicmanUndo     *undo,
+                     PicmanUndoMode  undo_mode)
 {
-  GimpItemUndo *item_undo = GIMP_ITEM_UNDO (undo);
+  PicmanItemUndo *item_undo = PICMAN_ITEM_UNDO (undo);
 
   if (item_undo->item)
     {
@@ -138,5 +138,5 @@ gimp_item_undo_free (GimpUndo     *undo,
       item_undo->item = NULL;
     }
 
-  GIMP_UNDO_CLASS (parent_class)->free (undo, undo_mode);
+  PICMAN_UNDO_CLASS (parent_class)->free (undo, undo_mode);
 }

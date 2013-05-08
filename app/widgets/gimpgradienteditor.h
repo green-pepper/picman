@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Gradient editor module copyight (C) 1996-1997 Federico Mena Quintero
@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GRADIENT_EDITOR_H__
-#define __GIMP_GRADIENT_EDITOR_H__
+#ifndef __PICMAN_GRADIENT_EDITOR_H__
+#define __PICMAN_GRADIENT_EDITOR_H__
 
 
-#include "gimpdataeditor.h"
+#include "picmandataeditor.h"
 
 
 #define GRAD_NUM_COLORS 10
@@ -37,19 +37,19 @@ typedef enum
 } GradientEditorDragMode;
 
 
-#define GIMP_TYPE_GRADIENT_EDITOR            (gimp_gradient_editor_get_type ())
-#define GIMP_GRADIENT_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_GRADIENT_EDITOR, GimpGradientEditor))
-#define GIMP_GRADIENT_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_GRADIENT_EDITOR, GimpGradientEditorClass))
-#define GIMP_IS_GRADIENT_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_GRADIENT_EDITOR))
-#define GIMP_IS_GRADIENT_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_GRADIENT_EDITOR))
-#define GIMP_GRADIENT_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_GRADIENT_EDITOR, GimpGradientEditorClass))
+#define PICMAN_TYPE_GRADIENT_EDITOR            (picman_gradient_editor_get_type ())
+#define PICMAN_GRADIENT_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_GRADIENT_EDITOR, PicmanGradientEditor))
+#define PICMAN_GRADIENT_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_GRADIENT_EDITOR, PicmanGradientEditorClass))
+#define PICMAN_IS_GRADIENT_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_GRADIENT_EDITOR))
+#define PICMAN_IS_GRADIENT_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_GRADIENT_EDITOR))
+#define PICMAN_GRADIENT_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_GRADIENT_EDITOR, PicmanGradientEditorClass))
 
 
-typedef struct _GimpGradientEditorClass GimpGradientEditorClass;
+typedef struct _PicmanGradientEditorClass PicmanGradientEditorClass;
 
-struct _GimpGradientEditor
+struct _PicmanGradientEditor
 {
-  GimpDataEditor  parent_instance;
+  PicmanDataEditor  parent_instance;
 
   GtkWidget      *current_color;
   GtkWidget      *hint_label1;
@@ -71,9 +71,9 @@ struct _GimpGradientEditor
   gboolean        view_button_down;
 
   /*  Gradient control  */
-  GimpGradientSegment    *control_drag_segment; /* Segment which is being dragged */
-  GimpGradientSegment    *control_sel_l;        /* Left segment of selection */
-  GimpGradientSegment    *control_sel_r;        /* Right segment of selection */
+  PicmanGradientSegment    *control_drag_segment; /* Segment which is being dragged */
+  PicmanGradientSegment    *control_sel_l;        /* Left segment of selection */
+  PicmanGradientSegment    *control_sel_r;        /* Right segment of selection */
   GradientEditorDragMode  control_drag_mode;    /* What is being dragged? */
   guint32                 control_click_time;   /* Time when mouse was pressed */
   gboolean                control_compress;     /* Compressing/expanding handles */
@@ -88,30 +88,30 @@ struct _GimpGradientEditor
   gint          replicate_times;
 
   /*  Saved colors  */
-  GimpRGB       saved_colors[GRAD_NUM_COLORS];
+  PicmanRGB       saved_colors[GRAD_NUM_COLORS];
 
   /*  Color dialogs  */
-  GimpGradientSegment *left_saved_segments;
+  PicmanGradientSegment *left_saved_segments;
   gboolean             left_saved_dirty;
 
-  GimpGradientSegment *right_saved_segments;
+  PicmanGradientSegment *right_saved_segments;
   gboolean             right_saved_dirty;
 };
 
-struct _GimpGradientEditorClass
+struct _PicmanGradientEditorClass
 {
-  GimpDataEditorClass  parent_class;
+  PicmanDataEditorClass  parent_class;
 };
 
 
-GType       gimp_gradient_editor_get_type (void) G_GNUC_CONST;
+GType       picman_gradient_editor_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_gradient_editor_new      (GimpContext        *context,
-                                           GimpMenuFactory    *menu_factory);
+GtkWidget * picman_gradient_editor_new      (PicmanContext        *context,
+                                           PicmanMenuFactory    *menu_factory);
 
-void        gimp_gradient_editor_update   (GimpGradientEditor *editor);
-void        gimp_gradient_editor_zoom     (GimpGradientEditor *editor,
-                                           GimpZoomType        zoom_type);
+void        picman_gradient_editor_update   (PicmanGradientEditor *editor);
+void        picman_gradient_editor_zoom     (PicmanGradientEditor *editor,
+                                           PicmanZoomType        zoom_type);
 
 
-#endif  /* __GIMP_GRADIENT_EDITOR_H__ */
+#endif  /* __PICMAN_GRADIENT_EDITOR_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpsessioninfo.h
- * Copyright (C) 2001-2008 Michael Natterer <mitch@gimp.org>
+ * picmansessioninfo.h
+ * Copyright (C) 2001-2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,77 +18,77 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SESSION_INFO_H__
-#define __GIMP_SESSION_INFO_H__
+#ifndef __PICMAN_SESSION_INFO_H__
+#define __PICMAN_SESSION_INFO_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-#define GIMP_TYPE_SESSION_INFO            (gimp_session_info_get_type ())
-#define GIMP_SESSION_INFO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SESSION_INFO, GimpSessionInfo))
-#define GIMP_SESSION_INFO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SESSION_INFO, GimpSessionInfoClass))
-#define GIMP_IS_SESSION_INFO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SESSION_INFO))
-#define GIMP_IS_SESSION_INFO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SESSION_INFO))
-#define GIMP_SESSION_INFO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SESSION_INFO, GimpSessionInfoClass))
+#define PICMAN_TYPE_SESSION_INFO            (picman_session_info_get_type ())
+#define PICMAN_SESSION_INFO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SESSION_INFO, PicmanSessionInfo))
+#define PICMAN_SESSION_INFO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SESSION_INFO, PicmanSessionInfoClass))
+#define PICMAN_IS_SESSION_INFO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SESSION_INFO))
+#define PICMAN_IS_SESSION_INFO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SESSION_INFO))
+#define PICMAN_SESSION_INFO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SESSION_INFO, PicmanSessionInfoClass))
 
 
-typedef struct _GimpSessionInfoPrivate  GimpSessionInfoPrivate;
-typedef struct _GimpSessionInfoClass    GimpSessionInfoClass;
+typedef struct _PicmanSessionInfoPrivate  PicmanSessionInfoPrivate;
+typedef struct _PicmanSessionInfoClass    PicmanSessionInfoClass;
 
 /**
- * GimpSessionInfo:
+ * PicmanSessionInfo:
  *
  * Contains session info for one toplevel window in the interface such
  * as a dock, the empty-image-window, or the open/save dialog.
  */
-struct _GimpSessionInfo
+struct _PicmanSessionInfo
 {
-  GimpObject  parent_instance;
+  PicmanObject  parent_instance;
 
-  GimpSessionInfoPrivate *p;
+  PicmanSessionInfoPrivate *p;
 };
 
-struct _GimpSessionInfoClass
+struct _PicmanSessionInfoClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 
   gint             position_accuracy;
 };
 
 
-GType                    gimp_session_info_get_type                      (void) G_GNUC_CONST;
-GimpSessionInfo *        gimp_session_info_new                           (void);
-void                     gimp_session_info_restore                       (GimpSessionInfo        *info,
-                                                                          GimpDialogFactory      *factory);
-void                     gimp_session_info_apply_geometry                (GimpSessionInfo        *info);
-void                     gimp_session_info_read_geometry                 (GimpSessionInfo        *info,
+GType                    picman_session_info_get_type                      (void) G_GNUC_CONST;
+PicmanSessionInfo *        picman_session_info_new                           (void);
+void                     picman_session_info_restore                       (PicmanSessionInfo        *info,
+                                                                          PicmanDialogFactory      *factory);
+void                     picman_session_info_apply_geometry                (PicmanSessionInfo        *info);
+void                     picman_session_info_read_geometry                 (PicmanSessionInfo        *info,
                                                                           GdkEventConfigure      *cevent);
-void                     gimp_session_info_get_info                      (GimpSessionInfo        *info);
-void                     gimp_session_info_get_info_with_widget          (GimpSessionInfo        *info,
+void                     picman_session_info_get_info                      (PicmanSessionInfo        *info);
+void                     picman_session_info_get_info_with_widget          (PicmanSessionInfo        *info,
                                                                           GtkWidget              *widget);
-void                     gimp_session_info_clear_info                    (GimpSessionInfo        *info);
-gboolean                 gimp_session_info_is_singleton                  (GimpSessionInfo        *info);
-gboolean                 gimp_session_info_is_session_managed            (GimpSessionInfo        *info);
-gboolean                 gimp_session_info_get_remember_size             (GimpSessionInfo        *info);
-gboolean                 gimp_session_info_get_remember_if_open          (GimpSessionInfo        *info);
-GtkWidget              * gimp_session_info_get_widget                    (GimpSessionInfo        *info);
-void                     gimp_session_info_set_widget                    (GimpSessionInfo        *info,
+void                     picman_session_info_clear_info                    (PicmanSessionInfo        *info);
+gboolean                 picman_session_info_is_singleton                  (PicmanSessionInfo        *info);
+gboolean                 picman_session_info_is_session_managed            (PicmanSessionInfo        *info);
+gboolean                 picman_session_info_get_remember_size             (PicmanSessionInfo        *info);
+gboolean                 picman_session_info_get_remember_if_open          (PicmanSessionInfo        *info);
+GtkWidget              * picman_session_info_get_widget                    (PicmanSessionInfo        *info);
+void                     picman_session_info_set_widget                    (PicmanSessionInfo        *info,
                                                                           GtkWidget              *widget);
-GimpDialogFactoryEntry * gimp_session_info_get_factory_entry             (GimpSessionInfo        *info);
-void                     gimp_session_info_set_factory_entry             (GimpSessionInfo        *info,
-                                                                          GimpDialogFactoryEntry *entry);
-gboolean                 gimp_session_info_get_open                      (GimpSessionInfo        *info);
-void                     gimp_session_info_append_book                   (GimpSessionInfo        *info,
-                                                                          GimpSessionInfoBook    *book);
-gint                     gimp_session_info_get_x                         (GimpSessionInfo        *info);
-gint                     gimp_session_info_get_y                         (GimpSessionInfo        *info);
-gint                     gimp_session_info_get_width                     (GimpSessionInfo        *info);
-gint                     gimp_session_info_get_height                    (GimpSessionInfo        *info);
-void                     gimp_session_info_class_set_position_accuracy   (GimpSessionInfoClass   *klass,
+PicmanDialogFactoryEntry * picman_session_info_get_factory_entry             (PicmanSessionInfo        *info);
+void                     picman_session_info_set_factory_entry             (PicmanSessionInfo        *info,
+                                                                          PicmanDialogFactoryEntry *entry);
+gboolean                 picman_session_info_get_open                      (PicmanSessionInfo        *info);
+void                     picman_session_info_append_book                   (PicmanSessionInfo        *info,
+                                                                          PicmanSessionInfoBook    *book);
+gint                     picman_session_info_get_x                         (PicmanSessionInfo        *info);
+gint                     picman_session_info_get_y                         (PicmanSessionInfo        *info);
+gint                     picman_session_info_get_width                     (PicmanSessionInfo        *info);
+gint                     picman_session_info_get_height                    (PicmanSessionInfo        *info);
+void                     picman_session_info_class_set_position_accuracy   (PicmanSessionInfoClass   *klass,
                                                                           gint                    accuracy);
-gint                     gimp_session_info_class_apply_position_accuracy (GimpSessionInfoClass   *klass,
+gint                     picman_session_info_class_apply_position_accuracy (PicmanSessionInfoClass   *klass,
                                                                           gint                    position);
 
 
-#endif  /* __GIMP_SESSION_INFO_H__ */
+#endif  /* __PICMAN_SESSION_INFO_H__ */

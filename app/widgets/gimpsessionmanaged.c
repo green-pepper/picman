@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpsessionmanaged.c
+ * picmansessionmanaged.c
  * Copyright (C) 2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,14 +24,14 @@
 
 #include "widgets-types.h"
 
-#include "gimpsessionmanaged.h"
+#include "picmansessionmanaged.h"
 
 
-static void   gimp_session_managed_iface_base_init   (GimpSessionManagedInterface *managed_iface);
+static void   picman_session_managed_iface_base_init   (PicmanSessionManagedInterface *managed_iface);
 
 
 GType
-gimp_session_managed_interface_get_type (void)
+picman_session_managed_interface_get_type (void)
 {
   static GType iface_type = 0;
 
@@ -39,13 +39,13 @@ gimp_session_managed_interface_get_type (void)
     {
       const GTypeInfo iface_info =
       {
-        sizeof (GimpSessionManagedInterface),
-        (GBaseInitFunc)     gimp_session_managed_iface_base_init,
+        sizeof (PicmanSessionManagedInterface),
+        (GBaseInitFunc)     picman_session_managed_iface_base_init,
         (GBaseFinalizeFunc) NULL,
       };
 
       iface_type = g_type_register_static (G_TYPE_INTERFACE,
-                                           "GimpSessionManagedInterface",
+                                           "PicmanSessionManagedInterface",
                                            &iface_info,
                                            0);
 
@@ -56,7 +56,7 @@ gimp_session_managed_interface_get_type (void)
 }
 
 static void
-gimp_session_managed_iface_base_init (GimpSessionManagedInterface *managed_iface)
+picman_session_managed_iface_base_init (PicmanSessionManagedInterface *managed_iface)
 {
   static gboolean initialized = FALSE;
 
@@ -70,20 +70,20 @@ gimp_session_managed_iface_base_init (GimpSessionManagedInterface *managed_iface
 }
 
 /**
- * gimp_session_managed_get_aux_info:
- * @session_managed: A #GimpSessionManaged
+ * picman_session_managed_get_aux_info:
+ * @session_managed: A #PicmanSessionManaged
  *
- * Returns: A list of #GimpSessionInfoAux created with
- *          gimp_session_info_aux_new().
+ * Returns: A list of #PicmanSessionInfoAux created with
+ *          picman_session_info_aux_new().
  **/
 GList *
-gimp_session_managed_get_aux_info (GimpSessionManaged *session_managed)
+picman_session_managed_get_aux_info (PicmanSessionManaged *session_managed)
 {
-  GimpSessionManagedInterface *iface;
+  PicmanSessionManagedInterface *iface;
 
-  g_return_val_if_fail (GIMP_IS_SESSION_MANAGED (session_managed), NULL);
+  g_return_val_if_fail (PICMAN_IS_SESSION_MANAGED (session_managed), NULL);
 
-  iface = GIMP_SESSION_MANAGED_GET_INTERFACE (session_managed);
+  iface = PICMAN_SESSION_MANAGED_GET_INTERFACE (session_managed);
 
   if (iface->get_aux_info)
     return iface->get_aux_info (session_managed);
@@ -92,22 +92,22 @@ gimp_session_managed_get_aux_info (GimpSessionManaged *session_managed)
 }
 
 /**
- * gimp_session_managed_get_ui_manager:
- * @session_managed: A #GimpSessionManaged
- * @aux_info         A list of #GimpSessionInfoAux
+ * picman_session_managed_get_ui_manager:
+ * @session_managed: A #PicmanSessionManaged
+ * @aux_info         A list of #PicmanSessionInfoAux
  *
  * Sets aux data previously returned from
- * gimp_session_managed_get_aux_info().
+ * picman_session_managed_get_aux_info().
  **/
 void
-gimp_session_managed_set_aux_info (GimpSessionManaged *session_managed,
+picman_session_managed_set_aux_info (PicmanSessionManaged *session_managed,
                                    GList              *aux_info)
 {
-  GimpSessionManagedInterface *iface;
+  PicmanSessionManagedInterface *iface;
 
-  g_return_if_fail (GIMP_IS_SESSION_MANAGED (session_managed));
+  g_return_if_fail (PICMAN_IS_SESSION_MANAGED (session_managed));
 
-  iface = GIMP_SESSION_MANAGED_GET_INTERFACE (session_managed);
+  iface = PICMAN_SESSION_MANAGED_GET_INTERFACE (session_managed);
 
   if (iface->set_aux_info)
     iface->set_aux_info (session_managed, aux_info);

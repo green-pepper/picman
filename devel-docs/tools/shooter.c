@@ -12,11 +12,11 @@
 
 #include <X11/extensions/shape.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpmodule/gimpmodule.h"
-#include "libgimpwidgets/gimpwidgets.h"
-#include "libgimpwidgets/gimpwidgets-private.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanmodule/picmanmodule.h"
+#include "libpicmanwidgets/picmanwidgets.h"
+#include "libpicmanwidgets/picmanwidgets-private.h"
 
 #include "shadow.h"
 #include "units.h"
@@ -191,7 +191,7 @@ take_window_shot (Window   child,
 }
 
 static gboolean
-shooter_get_foreground (GimpRGB *color)
+shooter_get_foreground (PicmanRGB *color)
 {
   color->r = color->g = color->b = 0.0;
   color->a = 1.0;
@@ -199,7 +199,7 @@ shooter_get_foreground (GimpRGB *color)
 }
 
 static gboolean
-shooter_get_background (GimpRGB *color)
+shooter_get_background (PicmanRGB *color)
 {
   color->r = color->g = color->b = 1.0;
   color->a = 1.0;
@@ -215,15 +215,15 @@ shooter_standard_help (const gchar *help_id,
 static void
 shooter_ensure_modules (void)
 {
-  static GimpModuleDB *module_db = NULL;
+  static PicmanModuleDB *module_db = NULL;
 
   if (! module_db)
     {
-      gchar *config = gimp_config_build_plug_in_path ("modules");
-      gchar *path   = gimp_config_path_expand (config, TRUE, NULL);
+      gchar *config = picman_config_build_plug_in_path ("modules");
+      gchar *path   = picman_config_path_expand (config, TRUE, NULL);
 
-      module_db = gimp_module_db_new (FALSE);
-      gimp_module_db_load (module_db, path);
+      module_db = picman_module_db_new (FALSE);
+      picman_module_db_load (module_db, path);
 
       g_free (path);
       g_free (config);
@@ -237,7 +237,7 @@ main (int argc, char **argv)
   GList     *toplevels;
   GList     *node;
 
-  g_set_application_name ("GIMP documention shooter");
+  g_set_application_name ("PICMAN documention shooter");
 
   /* If there's no DISPLAY, we silently error out.
    * We don't want to break headless builds.
@@ -245,11 +245,11 @@ main (int argc, char **argv)
   if (! gtk_init_check (&argc, &argv))
     return EXIT_SUCCESS;
 
-  gtk_rc_add_default_file (gimp_gtkrc ());
+  gtk_rc_add_default_file (picman_gtkrc ());
 
   units_init ();
 
-  gimp_widgets_init (shooter_standard_help,
+  picman_widgets_init (shooter_standard_help,
                      shooter_get_foreground,
                      shooter_get_background,
                      shooter_ensure_modules);

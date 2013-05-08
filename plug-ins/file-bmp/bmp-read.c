@@ -2,7 +2,7 @@
 /* Alexander.Schulz@stud.uni-karlsruhe.de                */
 
 /*
- * GIMP - The GNU Image Manipulation Program
+ * PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,11 +27,11 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include "bmp.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #if !defined(WIN32) || defined(__MINGW32__)
@@ -152,12 +152,12 @@ ReadBMP (const gchar  *name,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (name));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (name));
 
   /* It is a File. Now is it a Bitmap? Read the shortest possible header */
 
@@ -168,7 +168,7 @@ ReadBMP (const gchar  *name,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("'%s' is not a valid BMP file"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       fclose (fd);
       return -1;
     }
@@ -179,14 +179,14 @@ ReadBMP (const gchar  *name,
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                        _("'%s' is not a valid BMP file"),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           return -1;
         }
       if (!ReadOK (fd, magick, 2))
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                        _("'%s' is not a valid BMP file"),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           return -1;
         }
     }
@@ -195,7 +195,7 @@ ReadBMP (const gchar  *name,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("'%s' is not a valid BMP file"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return -1;
     }
 
@@ -210,7 +210,7 @@ ReadBMP (const gchar  *name,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("'%s' is not a valid BMP file"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return -1;
     }
 
@@ -224,7 +224,7 @@ ReadBMP (const gchar  *name,
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                        _("Error reading BMP file header from '%s'"),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           return -1;
         }
 
@@ -251,7 +251,7 @@ ReadBMP (const gchar  *name,
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                        _("Error reading BMP file header from '%s'"),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           return -1;
         }
 
@@ -279,7 +279,7 @@ ReadBMP (const gchar  *name,
             {
               g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                            _("Error reading BMP file header from '%s'"),
-                           gimp_filename_to_utf8 (filename));
+                           picman_filename_to_utf8 (filename));
               return -1;
             }
 
@@ -344,7 +344,7 @@ ReadBMP (const gchar  *name,
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                        _("Unsupported compression (%lu) in BMP file from '%s'"),
                        Bitmap_Head.biCompr,
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
         }
     }
   else if (Bitmap_File_Head.biSize >= 56 && Bitmap_File_Head.biSize <= 64)
@@ -354,7 +354,7 @@ ReadBMP (const gchar  *name,
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                        _("Error reading BMP file header from '%s'"),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           return -1;
         }
 
@@ -384,18 +384,18 @@ ReadBMP (const gchar  *name,
         {
           gint32 layer_ID;
 
-          image_ID = gimp_image_new (gdk_pixbuf_get_width (pixbuf),
+          image_ID = picman_image_new (gdk_pixbuf_get_width (pixbuf),
                                      gdk_pixbuf_get_height (pixbuf),
-                                     GIMP_RGB);
+                                     PICMAN_RGB);
 
-          layer_ID = gimp_layer_new_from_pixbuf (image_ID, _("Background"),
+          layer_ID = picman_layer_new_from_pixbuf (image_ID, _("Background"),
                                                  pixbuf,
                                                  100.,
-                                                 GIMP_NORMAL_MODE, 0, 0);
+                                                 PICMAN_NORMAL_MODE, 0, 0);
           g_object_unref (pixbuf);
 
-          gimp_image_set_filename (image_ID, filename);
-          gimp_image_insert_layer (image_ID, layer_ID, -1, -1);
+          picman_image_set_filename (image_ID, filename);
+          picman_image_insert_layer (image_ID, layer_ID, -1, -1);
 
           return image_ID;
         }
@@ -404,7 +404,7 @@ ReadBMP (const gchar  *name,
 
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                        _("Error reading BMP file header from '%s'"),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           return -1;
         }
     }
@@ -425,7 +425,7 @@ ReadBMP (const gchar  *name,
     default:
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("'%s' is not a valid BMP file"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return -1;
     }
 
@@ -446,7 +446,7 @@ ReadBMP (const gchar  *name,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("'%s' is not a valid BMP file"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return -1;
     }
 
@@ -457,7 +457,7 @@ ReadBMP (const gchar  *name,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("'%s' is not a valid BMP file"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return -1;
     }
 
@@ -465,7 +465,7 @@ ReadBMP (const gchar  *name,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("'%s' is not a valid BMP file"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return -1;
     }
 
@@ -473,7 +473,7 @@ ReadBMP (const gchar  *name,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("'%s' is not a valid BMP file"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return -1;
     }
 
@@ -485,7 +485,7 @@ ReadBMP (const gchar  *name,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("'%s' is not a valid BMP file"),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return -1;
     }
 
@@ -541,19 +541,19 @@ ReadBMP (const gchar  *name,
       gdouble xresolution;
       gdouble yresolution;
 
-      /* I don't agree with scott's feeling that Gimp should be
+      /* I don't agree with scott's feeling that Picman should be
        * trying to "fix" metric resolution translations, in the
-       * long term Gimp should be SI (metric) anyway, but we
+       * long term Picman should be SI (metric) anyway, but we
        * haven't told the Americans that yet  */
 
       xresolution = Bitmap_Head.biXPels * 0.0254;
       yresolution = Bitmap_Head.biYPels * 0.0254;
 
-      gimp_image_set_resolution (image_ID, xresolution, yresolution);
+      picman_image_set_resolution (image_ID, xresolution, yresolution);
     }
 
   if (Bitmap_Head.biHeight < 0)
-    gimp_image_flip (image_ID, GIMP_ORIENTATION_VERTICAL);
+    picman_image_flip (image_ID, PICMAN_ORIENTATION_VERTICAL);
 
   return image_ID;
 }
@@ -578,13 +578,13 @@ ReadImage (FILE                  *fd,
   gint32             layer;
   GeglBuffer        *buffer;
   guchar            *dest, *temp, *row_buf;
-  guchar             gimp_cmap[768];
+  guchar             picman_cmap[768];
   gushort            rgb;
   glong              rowstride, channels;
   gint               i, i_max, j, cur_progress, max_progress;
   gint               total_bytes_read;
-  GimpImageBaseType  base_type;
-  GimpImageType      image_type;
+  PicmanImageBaseType  base_type;
+  PicmanImageType      image_type;
   guint32            px32;
 
   if (! (compression == BI_RGB ||
@@ -599,22 +599,22 @@ ReadImage (FILE                  *fd,
       return -1;
     }
 
-  /* Make a new image in GIMP */
+  /* Make a new image in PICMAN */
 
   switch (bpp)
     {
     case 32:
     case 24:
     case 16:
-      base_type = GIMP_RGB;
+      base_type = PICMAN_RGB;
       if (masks[3].mask != 0)
         {
-          image_type = GIMP_RGBA_IMAGE;
+          image_type = PICMAN_RGBA_IMAGE;
           channels = 4;
         }
       else
         {
-          image_type = GIMP_RGB_IMAGE;
+          image_type = PICMAN_RGB_IMAGE;
           channels = 3;
         }
       break;
@@ -624,13 +624,13 @@ ReadImage (FILE                  *fd,
     case 1:
       if (grey)
         {
-          base_type = GIMP_GRAY;
-          image_type = GIMP_GRAY_IMAGE;
+          base_type = PICMAN_GRAY;
+          image_type = PICMAN_GRAY_IMAGE;
         }
       else
         {
-          base_type = GIMP_INDEXED;
-          image_type = GIMP_INDEXED_IMAGE;
+          base_type = PICMAN_INDEXED;
+          image_type = PICMAN_INDEXED_IMAGE;
         }
 
       channels = 1;
@@ -641,26 +641,26 @@ ReadImage (FILE                  *fd,
       return -1;
     }
 
-  if ((width < 0) || (width > GIMP_MAX_IMAGE_SIZE))
+  if ((width < 0) || (width > PICMAN_MAX_IMAGE_SIZE))
     {
       g_message (_("Unsupported or invalid image width: %d"), width);
       return -1;
     }
 
-  if ((height < 0) || (height > GIMP_MAX_IMAGE_SIZE))
+  if ((height < 0) || (height > PICMAN_MAX_IMAGE_SIZE))
     {
       g_message (_("Unsupported or invalid image height: %d"), height);
       return -1;
     }
 
-  image = gimp_image_new (width, height, base_type);
-  layer = gimp_layer_new (image, _("Background"),
+  image = picman_image_new (width, height, base_type);
+  layer = picman_layer_new (image, _("Background"),
                           width, height,
-                          image_type, 100, GIMP_NORMAL_MODE);
+                          image_type, 100, PICMAN_NORMAL_MODE);
 
-  gimp_image_set_filename (image, filename);
+  picman_image_set_filename (image, filename);
 
-  gimp_image_insert_layer (image, layer, -1, 0);
+  picman_image_insert_layer (image, layer, -1, 0);
 
   /* use g_malloc0 to initialize the dest buffer so that unspecified
      pixels in RLE bitmaps show up as the zeroth element in the palette.
@@ -694,7 +694,7 @@ ReadImage (FILE                  *fd,
             --ypos; /* next line */
             cur_progress++;
             if ((cur_progress % 5) == 0)
-              gimp_progress_update ((gdouble) cur_progress /
+              picman_progress_update ((gdouble) cur_progress /
                                     (gdouble) max_progress);
           }
 
@@ -752,7 +752,7 @@ ReadImage (FILE                  *fd,
             --ypos; /* next line */
             cur_progress++;
             if ((cur_progress % 5) == 0)
-              gimp_progress_update ((gdouble) cur_progress /
+              picman_progress_update ((gdouble) cur_progress /
                                     (gdouble) max_progress);
           }
       }
@@ -777,7 +777,7 @@ ReadImage (FILE                  *fd,
             --ypos; /* next line */
             cur_progress++;
             if ((cur_progress % 5) == 0)
-              gimp_progress_update ((gdouble) cur_progress /
+              picman_progress_update ((gdouble) cur_progress /
                                     (gdouble) max_progress);
           }
       }
@@ -809,7 +809,7 @@ ReadImage (FILE                  *fd,
 
                     cur_progress++;
                     if ((cur_progress % 5) == 0)
-                      gimp_progress_update ((gdouble) cur_progress /
+                      picman_progress_update ((gdouble) cur_progress /
                                             (gdouble) max_progress);
                   }
                 if (ypos < 0)
@@ -902,7 +902,7 @@ ReadImage (FILE                  *fd,
 
                     cur_progress++;
                     if ((cur_progress % 5) == 0)
-                      gimp_progress_update ((gdouble) cur_progress /
+                      picman_progress_update ((gdouble) cur_progress /
                                             (gdouble)  max_progress);
                   }
                 if (((guchar) row_buf[0] == 0) && ((guchar) row_buf[1] == 1))
@@ -936,12 +936,12 @@ ReadImage (FILE                  *fd,
   if (bpp <= 8)
     for (i = 0, j = 0; i < ncols; i++)
       {
-        gimp_cmap[j++] = cmap[i][0];
-        gimp_cmap[j++] = cmap[i][1];
-        gimp_cmap[j++] = cmap[i][2];
+        picman_cmap[j++] = cmap[i][0];
+        picman_cmap[j++] = cmap[i][1];
+        picman_cmap[j++] = cmap[i][2];
       }
 
-  buffer = gimp_drawable_get_buffer (layer);
+  buffer = picman_drawable_get_buffer (layer);
 
   gegl_buffer_set (buffer, GEGL_RECTANGLE (0, 0, width, height), 0,
                    NULL, dest, GEGL_AUTO_ROWSTRIDE);
@@ -951,9 +951,9 @@ ReadImage (FILE                  *fd,
   g_free (dest);
 
   if ((!grey) && (bpp<= 8))
-    gimp_image_set_colormap (image, gimp_cmap, ncols);
+    picman_image_set_colormap (image, picman_cmap, ncols);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   return image;
 }

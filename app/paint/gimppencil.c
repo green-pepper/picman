@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,33 +21,33 @@
 
 #include "paint-types.h"
 
-#include "gimppencil.h"
-#include "gimppenciloptions.h"
+#include "picmanpencil.h"
+#include "picmanpenciloptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpPencil, gimp_pencil, GIMP_TYPE_PAINTBRUSH)
+G_DEFINE_TYPE (PicmanPencil, picman_pencil, PICMAN_TYPE_PAINTBRUSH)
 
 
 void
-gimp_pencil_register (Gimp                      *gimp,
-                      GimpPaintRegisterCallback  callback)
+picman_pencil_register (Picman                      *picman,
+                      PicmanPaintRegisterCallback  callback)
 {
-  (* callback) (gimp,
-                GIMP_TYPE_PENCIL,
-                GIMP_TYPE_PENCIL_OPTIONS,
-                "gimp-pencil",
+  (* callback) (picman,
+                PICMAN_TYPE_PENCIL,
+                PICMAN_TYPE_PENCIL_OPTIONS,
+                "picman-pencil",
                 _("Pencil"),
-                "gimp-tool-pencil");
+                "picman-tool-pencil");
 }
 
 static void
-gimp_pencil_class_init (GimpPencilClass *klass)
+picman_pencil_class_init (PicmanPencilClass *klass)
 {
 }
 
 static void
-gimp_pencil_init (GimpPencil *pencil)
+picman_pencil_init (PicmanPencil *pencil)
 {
 }

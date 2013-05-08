@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpstrokeeditor.h
- * Copyright (C) 2003 Sven Neumann <sven@gimp.org>
+ * picmanstrokeeditor.h
+ * Copyright (C) 2003 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,41 +18,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_STROKE_EDITOR_H__
-#define __GIMP_STROKE_EDITOR_H__
+#ifndef __PICMAN_STROKE_EDITOR_H__
+#define __PICMAN_STROKE_EDITOR_H__
 
 
-#include "gimpfilleditor.h"
+#include "picmanfilleditor.h"
 
 
-#define GIMP_TYPE_STROKE_EDITOR            (gimp_stroke_editor_get_type ())
-#define GIMP_STROKE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_STROKE_EDITOR, GimpStrokeEditor))
-#define GIMP_STROKE_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_STROKE_EDITOR, GimpStrokeEditorClass))
-#define GIMP_IS_STROKE_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_STROKE_EDITOR))
-#define GIMP_IS_STROKE_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_STROKE_EDITOR))
-#define GIMP_STROKE_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_STROKE_EDITOR, GimpStrokeEditorClass))
+#define PICMAN_TYPE_STROKE_EDITOR            (picman_stroke_editor_get_type ())
+#define PICMAN_STROKE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_STROKE_EDITOR, PicmanStrokeEditor))
+#define PICMAN_STROKE_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_STROKE_EDITOR, PicmanStrokeEditorClass))
+#define PICMAN_IS_STROKE_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_STROKE_EDITOR))
+#define PICMAN_IS_STROKE_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_STROKE_EDITOR))
+#define PICMAN_STROKE_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_STROKE_EDITOR, PicmanStrokeEditorClass))
 
 
-typedef struct _GimpStrokeEditorClass GimpStrokeEditorClass;
+typedef struct _PicmanStrokeEditorClass PicmanStrokeEditorClass;
 
-struct _GimpStrokeEditor
+struct _PicmanStrokeEditor
 {
-  GimpFillEditor  parent_instance;
+  PicmanFillEditor  parent_instance;
 
   gdouble         resolution;
 };
 
-struct _GimpStrokeEditorClass
+struct _PicmanStrokeEditorClass
 {
-  GimpFillEditorClass  parent_class;
+  PicmanFillEditorClass  parent_class;
 };
 
 
-GType       gimp_stroke_editor_get_type (void) G_GNUC_CONST;
+GType       picman_stroke_editor_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_stroke_editor_new      (GimpStrokeOptions *options,
+GtkWidget * picman_stroke_editor_new      (PicmanStrokeOptions *options,
                                          gdouble            resolution,
                                          gboolean           edit_context);
 
 
-#endif /* __GIMP_STROKE_EDITOR_H__ */
+#endif /* __PICMAN_STROKE_EDITOR_H__ */

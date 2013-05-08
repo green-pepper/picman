@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 
 #include "display-types.h"
 
-#include "gimpdisplayxfer.h"
+#include "picmandisplayxfer.h"
 
 
 #define NUM_PAGES 2
@@ -43,7 +43,7 @@ struct _RTree
   RTreeNode *available;
 };
 
-struct _GimpDisplayXfer
+struct _PicmanDisplayXfer
 {
   /* track subregions of render_surface for efficient uploads */
   RTree            rtree;
@@ -188,7 +188,7 @@ rtree_reset (RTree *rtree)
 static void
 xfer_destroy (void *data)
 {
-  GimpDisplayXfer *xfer = data;
+  PicmanDisplayXfer *xfer = data;
   gint             i;
 
   for (i = 0; i < NUM_PAGES; i++)
@@ -198,23 +198,23 @@ xfer_destroy (void *data)
   g_free (xfer);
 }
 
-GimpDisplayXfer *
-gimp_display_xfer_realize (GtkWidget *widget)
+PicmanDisplayXfer *
+picman_display_xfer_realize (GtkWidget *widget)
 {
   GdkScreen       *screen;
-  GimpDisplayXfer *xfer;
+  PicmanDisplayXfer *xfer;
 
   screen = gtk_widget_get_screen (widget);
-  xfer = g_object_get_data (G_OBJECT (screen), "gimp-display-xfer");
+  xfer = g_object_get_data (G_OBJECT (screen), "picman-display-xfer");
 
   if (xfer == NULL)
     {
       cairo_t *cr;
-      gint     w = GIMP_DISPLAY_RENDER_BUF_WIDTH  * GIMP_DISPLAY_RENDER_MAX_SCALE;
-      gint     h = GIMP_DISPLAY_RENDER_BUF_HEIGHT * GIMP_DISPLAY_RENDER_MAX_SCALE;
+      gint     w = PICMAN_DISPLAY_RENDER_BUF_WIDTH  * PICMAN_DISPLAY_RENDER_MAX_SCALE;
+      gint     h = PICMAN_DISPLAY_RENDER_BUF_HEIGHT * PICMAN_DISPLAY_RENDER_MAX_SCALE;
       int      n;
 
-      xfer = g_new (GimpDisplayXfer, 1);
+      xfer = g_new (PicmanDisplayXfer, 1);
       rtree_init (&xfer->rtree, w, h);
 
       cr = gdk_cairo_create (gtk_widget_get_window (widget));
@@ -229,7 +229,7 @@ gimp_display_xfer_realize (GtkWidget *widget)
       xfer->page = 0;
 
       g_object_set_data_full (G_OBJECT (screen),
-			      "gimp-display-xfer",
+			      "picman-display-xfer",
 			      xfer, xfer_destroy);
     }
 
@@ -237,7 +237,7 @@ gimp_display_xfer_realize (GtkWidget *widget)
 }
 
 cairo_surface_t *
-gimp_display_xfer_get_surface (GimpDisplayXfer *xfer,
+picman_display_xfer_get_surface (PicmanDisplayXfer *xfer,
 			       gint             w,
                                gint             h,
 			       gint            *src_x,
@@ -245,8 +245,8 @@ gimp_display_xfer_get_surface (GimpDisplayXfer *xfer,
 {
   RTreeNode *node;
 
-  g_assert (w <= GIMP_DISPLAY_RENDER_BUF_WIDTH * GIMP_DISPLAY_RENDER_MAX_SCALE &&
-	    h <= GIMP_DISPLAY_RENDER_BUF_HEIGHT * GIMP_DISPLAY_RENDER_MAX_SCALE);
+  g_assert (w <= PICMAN_DISPLAY_RENDER_BUF_WIDTH * PICMAN_DISPLAY_RENDER_MAX_SCALE &&
+	    h <= PICMAN_DISPLAY_RENDER_BUF_HEIGHT * PICMAN_DISPLAY_RENDER_MAX_SCALE);
 
   node = rtree_insert (&xfer->rtree, w, h);
   if (node == NULL)

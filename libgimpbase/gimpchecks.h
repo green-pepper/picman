@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,53 +16,53 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_BASE_H_INSIDE__) && !defined (GIMP_BASE_COMPILATION)
-#error "Only <libgimpbase/gimpbase.h> can be included directly."
+#if !defined (__PICMAN_BASE_H_INSIDE__) && !defined (PICMAN_BASE_COMPILATION)
+#error "Only <libpicmanbase/picmanbase.h> can be included directly."
 #endif
 
-#ifndef __GIMP_CHECKS_H__
-#define __GIMP_CHECKS_H__
+#ifndef __PICMAN_CHECKS_H__
+#define __PICMAN_CHECKS_H__
 
 G_BEGIN_DECLS
 
 
 /**
- * GIMP_CHECK_SIZE:
+ * PICMAN_CHECK_SIZE:
  *
  * The default checkerboard size in pixels. This is configurable in
- * the core but GIMP plug-ins can't access the user preference and
+ * the core but PICMAN plug-ins can't access the user preference and
  * should use this constant instead.
  **/
-#define GIMP_CHECK_SIZE     8
+#define PICMAN_CHECK_SIZE     8
 
 /**
- * GIMP_CHECK_SIZE_SM:
+ * PICMAN_CHECK_SIZE_SM:
  *
  * The default small checkerboard size in pixels.
  **/
-#define GIMP_CHECK_SIZE_SM  4
+#define PICMAN_CHECK_SIZE_SM  4
 
 
 /**
- * GIMP_CHECK_DARK:
+ * PICMAN_CHECK_DARK:
  *
  * The dark gray value for the default checkerboard pattern.
  **/
-#define GIMP_CHECK_DARK   0.4
+#define PICMAN_CHECK_DARK   0.4
 
 /**
- * GIMP_CHECK_LIGHT:
+ * PICMAN_CHECK_LIGHT:
  *
  * The dark light value for the default checkerboard pattern.
  **/
-#define GIMP_CHECK_LIGHT  0.6
+#define PICMAN_CHECK_LIGHT  0.6
 
 
-void  gimp_checks_get_shades (GimpCheckType  type,
+void  picman_checks_get_shades (PicmanCheckType  type,
                               guchar        *light,
                               guchar        *dark);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_CHECKS_H__ */
+#endif  /* __PICMAN_CHECKS_H__ */

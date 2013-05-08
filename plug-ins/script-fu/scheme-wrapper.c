@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimp/gimp.h"
+#include "libpicman/picman.h"
 
 #include "tinyscheme/scheme-private.h"
 #if USE_DL
@@ -55,7 +55,7 @@ static void     ts_init_procedures               (scheme    *sc,
 static void     convert_string                   (gchar     *str);
 static pointer  script_fu_marshal_procedure_call (scheme    *sc,
                                                   pointer    a);
-static void     script_fu_marshal_destroy_args   (GimpParam *params,
+static void     script_fu_marshal_destroy_args   (PicmanParam *params,
                                                   gint       n_params);
 
 static pointer  script_fu_register_call          (scheme    *sc,
@@ -78,22 +78,22 @@ typedef struct
 
 static const NamedConstant const script_constants[] =
 {
-  /* Useful values from libgimpbase/gimplimits.h */
-  { "MIN-IMAGE-SIZE", GIMP_MIN_IMAGE_SIZE },
-  { "MAX-IMAGE-SIZE", GIMP_MAX_IMAGE_SIZE },
-  { "MIN-RESOLUTION", GIMP_MIN_RESOLUTION },
-  { "MAX-RESOLUTION", GIMP_MAX_RESOLUTION },
+  /* Useful values from libpicmanbase/picmanlimits.h */
+  { "MIN-IMAGE-SIZE", PICMAN_MIN_IMAGE_SIZE },
+  { "MAX-IMAGE-SIZE", PICMAN_MAX_IMAGE_SIZE },
+  { "MIN-RESOLUTION", PICMAN_MIN_RESOLUTION },
+  { "MAX-RESOLUTION", PICMAN_MAX_RESOLUTION },
 
   /* Useful misc stuff */
   { "TRUE",           TRUE  },
   { "FALSE",          FALSE },
 
   /* Builtin units */
-  { "UNIT-PIXEL",     GIMP_UNIT_PIXEL },
-  { "UNIT-INCH",      GIMP_UNIT_INCH  },
-  { "UNIT-MM",        GIMP_UNIT_MM    },
-  { "UNIT-POINT",     GIMP_UNIT_POINT },
-  { "UNIT-PICA",      GIMP_UNIT_PICA  },
+  { "UNIT-PIXEL",     PICMAN_UNIT_PIXEL },
+  { "UNIT-INCH",      PICMAN_UNIT_INCH  },
+  { "UNIT-MM",        PICMAN_UNIT_MM    },
+  { "UNIT-POINT",     PICMAN_UNIT_POINT },
+  { "UNIT-PICA",      PICMAN_UNIT_PICA  },
 
   /* Script-Fu types */
   { "SF-IMAGE",       SF_IMAGE      },
@@ -127,81 +127,81 @@ static const NamedConstant const script_constants[] =
 
 /* The following constants are deprecated. They are
  * included to keep backwards compatibility with
- * older scripts used with version 2.0 of GIMP.
+ * older scripts used with version 2.0 of PICMAN.
  */
 static const NamedConstant const old_constants[] =
 {
-  { "NORMAL",               GIMP_NORMAL_MODE       },
-  { "DISSOLVE",             GIMP_DISSOLVE_MODE     },
-  { "BEHIND",               GIMP_BEHIND_MODE       },
-  { "MULTIPLY",             GIMP_MULTIPLY_MODE     },
-  { "SCREEN",               GIMP_SCREEN_MODE       },
-  { "OVERLAY",              GIMP_OVERLAY_MODE      },
-  { "DIFFERENCE",           GIMP_DIFFERENCE_MODE   },
-  { "ADDITION",             GIMP_ADDITION_MODE     },
-  { "SUBTRACT",             GIMP_SUBTRACT_MODE     },
-  { "DARKEN-ONLY",          GIMP_DARKEN_ONLY_MODE  },
-  { "LIGHTEN-ONLY",         GIMP_LIGHTEN_ONLY_MODE },
-  { "HUE",                  GIMP_HUE_MODE          },
-  { "SATURATION",           GIMP_SATURATION_MODE   },
-  { "COLOR",                GIMP_COLOR_MODE        },
-  { "VALUE",                GIMP_VALUE_MODE        },
-  { "DIVIDE",               GIMP_DIVIDE_MODE       },
+  { "NORMAL",               PICMAN_NORMAL_MODE       },
+  { "DISSOLVE",             PICMAN_DISSOLVE_MODE     },
+  { "BEHIND",               PICMAN_BEHIND_MODE       },
+  { "MULTIPLY",             PICMAN_MULTIPLY_MODE     },
+  { "SCREEN",               PICMAN_SCREEN_MODE       },
+  { "OVERLAY",              PICMAN_OVERLAY_MODE      },
+  { "DIFFERENCE",           PICMAN_DIFFERENCE_MODE   },
+  { "ADDITION",             PICMAN_ADDITION_MODE     },
+  { "SUBTRACT",             PICMAN_SUBTRACT_MODE     },
+  { "DARKEN-ONLY",          PICMAN_DARKEN_ONLY_MODE  },
+  { "LIGHTEN-ONLY",         PICMAN_LIGHTEN_ONLY_MODE },
+  { "HUE",                  PICMAN_HUE_MODE          },
+  { "SATURATION",           PICMAN_SATURATION_MODE   },
+  { "COLOR",                PICMAN_COLOR_MODE        },
+  { "VALUE",                PICMAN_VALUE_MODE        },
+  { "DIVIDE",               PICMAN_DIVIDE_MODE       },
 
-  { "BLUR",                 GIMP_BLUR_CONVOLVE     },
-  { "SHARPEN",              GIMP_SHARPEN_CONVOLVE  },
+  { "BLUR",                 PICMAN_BLUR_CONVOLVE     },
+  { "SHARPEN",              PICMAN_SHARPEN_CONVOLVE  },
 
-  { "WHITE-MASK",           GIMP_ADD_WHITE_MASK     },
-  { "BLACK-MASK",           GIMP_ADD_BLACK_MASK     },
-  { "ALPHA-MASK",           GIMP_ADD_ALPHA_MASK     },
-  { "SELECTION-MASK",       GIMP_ADD_SELECTION_MASK },
-  { "COPY-MASK",            GIMP_ADD_COPY_MASK      },
+  { "WHITE-MASK",           PICMAN_ADD_WHITE_MASK     },
+  { "BLACK-MASK",           PICMAN_ADD_BLACK_MASK     },
+  { "ALPHA-MASK",           PICMAN_ADD_ALPHA_MASK     },
+  { "SELECTION-MASK",       PICMAN_ADD_SELECTION_MASK },
+  { "COPY-MASK",            PICMAN_ADD_COPY_MASK      },
 
-  { "ADD",                  GIMP_CHANNEL_OP_ADD       },
-  { "SUB",                  GIMP_CHANNEL_OP_SUBTRACT  },
-  { "REPLACE",              GIMP_CHANNEL_OP_REPLACE   },
-  { "INTERSECT",            GIMP_CHANNEL_OP_INTERSECT },
+  { "ADD",                  PICMAN_CHANNEL_OP_ADD       },
+  { "SUB",                  PICMAN_CHANNEL_OP_SUBTRACT  },
+  { "REPLACE",              PICMAN_CHANNEL_OP_REPLACE   },
+  { "INTERSECT",            PICMAN_CHANNEL_OP_INTERSECT },
 
-  { "FG-BG-RGB",            GIMP_FG_BG_RGB_MODE       },
-  { "FG-BG-HSV",            GIMP_FG_BG_HSV_MODE       },
-  { "FG-TRANS",             GIMP_FG_TRANSPARENT_MODE  },
-  { "CUSTOM",               GIMP_CUSTOM_MODE          },
+  { "FG-BG-RGB",            PICMAN_FG_BG_RGB_MODE       },
+  { "FG-BG-HSV",            PICMAN_FG_BG_HSV_MODE       },
+  { "FG-TRANS",             PICMAN_FG_TRANSPARENT_MODE  },
+  { "CUSTOM",               PICMAN_CUSTOM_MODE          },
 
-  { "FG-IMAGE-FILL",        GIMP_FOREGROUND_FILL  },
-  { "BG-IMAGE-FILL",        GIMP_BACKGROUND_FILL  },
-  { "WHITE-IMAGE-FILL",     GIMP_WHITE_FILL       },
-  { "TRANS-IMAGE-FILL",     GIMP_TRANSPARENT_FILL },
+  { "FG-IMAGE-FILL",        PICMAN_FOREGROUND_FILL  },
+  { "BG-IMAGE-FILL",        PICMAN_BACKGROUND_FILL  },
+  { "WHITE-IMAGE-FILL",     PICMAN_WHITE_FILL       },
+  { "TRANS-IMAGE-FILL",     PICMAN_TRANSPARENT_FILL },
 
-  { "APPLY",                GIMP_MASK_APPLY   },
-  { "DISCARD",              GIMP_MASK_DISCARD },
+  { "APPLY",                PICMAN_MASK_APPLY   },
+  { "DISCARD",              PICMAN_MASK_DISCARD },
 
-  { "HARD",                 GIMP_BRUSH_HARD },
-  { "SOFT",                 GIMP_BRUSH_SOFT },
+  { "HARD",                 PICMAN_BRUSH_HARD },
+  { "SOFT",                 PICMAN_BRUSH_SOFT },
 
-  { "CONTINUOUS",           GIMP_PAINT_CONSTANT    },
-  { "INCREMENTAL",          GIMP_PAINT_INCREMENTAL },
+  { "CONTINUOUS",           PICMAN_PAINT_CONSTANT    },
+  { "INCREMENTAL",          PICMAN_PAINT_INCREMENTAL },
 
-  { "HORIZONTAL",           GIMP_ORIENTATION_HORIZONTAL },
-  { "VERTICAL",             GIMP_ORIENTATION_VERTICAL   },
-  { "UNKNOWN",              GIMP_ORIENTATION_UNKNOWN    },
+  { "HORIZONTAL",           PICMAN_ORIENTATION_HORIZONTAL },
+  { "VERTICAL",             PICMAN_ORIENTATION_VERTICAL   },
+  { "UNKNOWN",              PICMAN_ORIENTATION_UNKNOWN    },
 
-  { "LINEAR",               GIMP_GRADIENT_LINEAR               },
-  { "BILINEAR",             GIMP_GRADIENT_BILINEAR             },
-  { "RADIAL",               GIMP_GRADIENT_RADIAL               },
-  { "SQUARE",               GIMP_GRADIENT_SQUARE               },
-  { "CONICAL-SYMMETRIC",    GIMP_GRADIENT_CONICAL_SYMMETRIC    },
-  { "CONICAL-ASYMMETRIC",   GIMP_GRADIENT_CONICAL_ASYMMETRIC   },
-  { "SHAPEBURST-ANGULAR",   GIMP_GRADIENT_SHAPEBURST_ANGULAR   },
-  { "SHAPEBURST-SPHERICAL", GIMP_GRADIENT_SHAPEBURST_SPHERICAL },
-  { "SHAPEBURST-DIMPLED",   GIMP_GRADIENT_SHAPEBURST_DIMPLED   },
-  { "SPIRAL-CLOCKWISE",     GIMP_GRADIENT_SPIRAL_CLOCKWISE     },
-  { "SPIRAL-ANTICLOCKWISE", GIMP_GRADIENT_SPIRAL_ANTICLOCKWISE },
+  { "LINEAR",               PICMAN_GRADIENT_LINEAR               },
+  { "BILINEAR",             PICMAN_GRADIENT_BILINEAR             },
+  { "RADIAL",               PICMAN_GRADIENT_RADIAL               },
+  { "SQUARE",               PICMAN_GRADIENT_SQUARE               },
+  { "CONICAL-SYMMETRIC",    PICMAN_GRADIENT_CONICAL_SYMMETRIC    },
+  { "CONICAL-ASYMMETRIC",   PICMAN_GRADIENT_CONICAL_ASYMMETRIC   },
+  { "SHAPEBURST-ANGULAR",   PICMAN_GRADIENT_SHAPEBURST_ANGULAR   },
+  { "SHAPEBURST-SPHERICAL", PICMAN_GRADIENT_SHAPEBURST_SPHERICAL },
+  { "SHAPEBURST-DIMPLED",   PICMAN_GRADIENT_SHAPEBURST_DIMPLED   },
+  { "SPIRAL-CLOCKWISE",     PICMAN_GRADIENT_SPIRAL_CLOCKWISE     },
+  { "SPIRAL-ANTICLOCKWISE", PICMAN_GRADIENT_SPIRAL_ANTICLOCKWISE },
 
-  { "VALUE-LUT",            GIMP_HISTOGRAM_VALUE },
-  { "RED-LUT",              GIMP_HISTOGRAM_RED   },
-  { "GREEN-LUT",            GIMP_HISTOGRAM_GREEN },
-  { "BLUE-LUT",             GIMP_HISTOGRAM_BLUE  },
-  { "ALPHA-LUT",            GIMP_HISTOGRAM_ALPHA },
+  { "VALUE-LUT",            PICMAN_HISTOGRAM_VALUE },
+  { "RED-LUT",              PICMAN_HISTOGRAM_RED   },
+  { "GREEN-LUT",            PICMAN_HISTOGRAM_GREEN },
+  { "BLUE-LUT",             PICMAN_HISTOGRAM_BLUE  },
+  { "ALPHA-LUT",            PICMAN_HISTOGRAM_ALPHA },
 
   { NULL, 0 }
 };
@@ -229,13 +229,13 @@ tinyscheme_init (const gchar *path,
   init_ftx (&sc);
   script_fu_regex_init (&sc);
 
-  /* register in the interpreter the gimp functions and types. */
+  /* register in the interpreter the picman functions and types. */
   ts_init_constants (&sc);
   ts_init_procedures (&sc, register_scripts);
 
   if (path)
     {
-      GList *dir_list = gimp_path_parse (path, 256, TRUE, NULL);
+      GList *dir_list = picman_path_parse (path, 256, TRUE, NULL);
       GList *list;
 
       for (list = dir_list; list; list = g_list_next (list))
@@ -247,7 +247,7 @@ tinyscheme_init (const gchar *path,
                */
               ts_load_file (list->data, "script-fu-compat.init");
 
-              /*  To improve compatibility with older GIMP version,
+              /*  To improve compatibility with older PICMAN version,
                *  load plug-in-compat.init from the same directory.
                */
               ts_load_file (list->data, "plug-in-compat.init");
@@ -259,15 +259,15 @@ tinyscheme_init (const gchar *path,
       if (list == NULL)
         g_printerr ("Unable to read initialization file script-fu.init\n");
 
-      gimp_path_free (dir_list);
+      picman_path_free (dir_list);
     }
 }
 
 /* Create an SF-RUN-MODE constant for use in scripts.
- * It is set to the run mode state determined by GIMP.
+ * It is set to the run mode state determined by PICMAN.
  */
 void
-ts_set_run_mode (GimpRunMode run_mode)
+ts_set_run_mode (PicmanRunMode run_mode)
 {
   pointer symbol;
 
@@ -348,7 +348,7 @@ ts_gstring_output_func (TsOutputType  type,
 
 /*
  * Below can be found the functions responsible for registering the
- * gimp functions and types against the scheme interpreter.
+ * picman functions and types against the scheme interpreter.
  */
 static void
 ts_init_constants (scheme *sc)
@@ -358,32 +358,32 @@ ts_init_constants (scheme *sc)
   gint          i;
   pointer       symbol;
 
-  symbol = sc->vptr->mk_symbol (sc, "gimp-directory");
+  symbol = sc->vptr->mk_symbol (sc, "picman-directory");
   sc->vptr->scheme_define (sc, sc->global_env, symbol,
-                           sc->vptr->mk_string (sc, gimp_directory ()));
+                           sc->vptr->mk_string (sc, picman_directory ()));
   sc->vptr->setimmutable (symbol);
 
-  symbol = sc->vptr->mk_symbol (sc, "gimp-data-directory");
+  symbol = sc->vptr->mk_symbol (sc, "picman-data-directory");
   sc->vptr->scheme_define (sc, sc->global_env, symbol,
-                           sc->vptr->mk_string (sc, gimp_data_directory ()));
+                           sc->vptr->mk_string (sc, picman_data_directory ()));
   sc->vptr->setimmutable (symbol);
 
-  symbol = sc->vptr->mk_symbol (sc, "gimp-plug-in-directory");
+  symbol = sc->vptr->mk_symbol (sc, "picman-plug-in-directory");
   sc->vptr->scheme_define (sc, sc->global_env, symbol,
-                           sc->vptr->mk_string (sc, gimp_plug_in_directory ()));
+                           sc->vptr->mk_string (sc, picman_plug_in_directory ()));
   sc->vptr->setimmutable (symbol);
 
-  symbol = sc->vptr->mk_symbol (sc, "gimp-locale-directory");
+  symbol = sc->vptr->mk_symbol (sc, "picman-locale-directory");
   sc->vptr->scheme_define (sc, sc->global_env, symbol,
-                           sc->vptr->mk_string (sc, gimp_locale_directory ()));
+                           sc->vptr->mk_string (sc, picman_locale_directory ()));
   sc->vptr->setimmutable (symbol);
 
-  symbol = sc->vptr->mk_symbol (sc, "gimp-sysconf-directory");
+  symbol = sc->vptr->mk_symbol (sc, "picman-sysconf-directory");
   sc->vptr->scheme_define (sc, sc->global_env, symbol,
-                           sc->vptr->mk_string (sc, gimp_sysconf_directory ()));
+                           sc->vptr->mk_string (sc, picman_sysconf_directory ()));
   sc->vptr->setimmutable (symbol);
 
-  enum_type_names = gimp_enums_get_type_names (&n_enum_type_names);
+  enum_type_names = picman_enums_get_type_names (&n_enum_type_names);
 
   for (i = 0; i < n_enum_type_names; i++)
     {
@@ -394,11 +394,11 @@ ts_init_constants (scheme *sc)
 
       for (value = enum_class->values; value->value_name; value++)
         {
-          if (g_str_has_prefix (value->value_name, "GIMP_"))
+          if (g_str_has_prefix (value->value_name, "PICMAN_"))
             {
               gchar *scheme_name;
 
-              scheme_name = g_strdup (value->value_name + strlen ("GIMP_"));
+              scheme_name = g_strdup (value->value_name + strlen ("PICMAN_"));
               convert_string (scheme_name);
 
               symbol = sc->vptr->mk_symbol (sc, scheme_name);
@@ -436,19 +436,19 @@ ts_init_constants (scheme *sc)
   sc->vptr->setimmutable (symbol);
 
   /* These constants are deprecated and will be removed at a later date. */
-  symbol = sc->vptr->mk_symbol (sc, "gimp-dir");
+  symbol = sc->vptr->mk_symbol (sc, "picman-dir");
   sc->vptr->scheme_define (sc, sc->global_env, symbol,
-                           sc->vptr->mk_string (sc, gimp_directory ()));
+                           sc->vptr->mk_string (sc, picman_directory ()));
   sc->vptr->setimmutable (symbol);
 
-  symbol = sc->vptr->mk_symbol (sc, "gimp-data-dir");
+  symbol = sc->vptr->mk_symbol (sc, "picman-data-dir");
   sc->vptr->scheme_define (sc, sc->global_env, symbol,
-                           sc->vptr->mk_string (sc, gimp_data_directory ()));
+                           sc->vptr->mk_string (sc, picman_data_directory ()));
   sc->vptr->setimmutable (symbol);
 
-  symbol = sc->vptr->mk_symbol (sc, "gimp-plugin-dir");
+  symbol = sc->vptr->mk_symbol (sc, "picman-plugin-dir");
   sc->vptr->scheme_define (sc, sc->global_env, symbol,
-                           sc->vptr->mk_string (sc, gimp_plug_in_directory ()));
+                           sc->vptr->mk_string (sc, picman_plug_in_directory ()));
   sc->vptr->setimmutable (symbol);
 
   for (i = 0; old_constants[i].name != NULL; ++i)
@@ -499,13 +499,13 @@ ts_init_procedures (scheme   *sc,
   sc->vptr->setimmutable (symbol);
 
   /*  register the database execution procedure  */
-  symbol = sc->vptr->mk_symbol (sc, "gimp-proc-db-call");
+  symbol = sc->vptr->mk_symbol (sc, "picman-proc-db-call");
   sc->vptr->scheme_define (sc, sc->global_env, symbol,
                            sc->vptr->mk_foreign_func (sc,
                                                       script_fu_marshal_procedure_call));
   sc->vptr->setimmutable (symbol);
 
-  gimp_procedural_db_query (".*", ".*", ".*", ".*", ".*", ".*", ".*",
+  picman_procedural_db_query (".*", ".*", ".*", ".*", ".*", ".*", ".*",
                             &num_procs, &proc_list);
 
   /*  Register each procedure as a scheme func  */
@@ -516,14 +516,14 @@ ts_init_procedures (scheme   *sc,
       gchar           *proc_author;
       gchar           *proc_copyright;
       gchar           *proc_date;
-      GimpPDBProcType  proc_type;
+      PicmanPDBProcType  proc_type;
       gint             n_params;
       gint             n_return_vals;
-      GimpParamDef    *params;
-      GimpParamDef    *return_vals;
+      PicmanParamDef    *params;
+      PicmanParamDef    *return_vals;
 
       /*  lookup the procedure  */
-      if (gimp_procedural_db_proc_info (proc_list[i],
+      if (picman_procedural_db_proc_info (proc_list[i],
                                         &proc_blurb,
                                         &proc_help,
                                         &proc_author,
@@ -541,13 +541,13 @@ ts_init_procedures (scheme   *sc,
           if (n_params == 0)
             {
               buff = g_strdup_printf (" (define (%s)"
-                                      " (gimp-proc-db-call \"%s\"))",
+                                      " (picman-proc-db-call \"%s\"))",
                                       proc_list[i], proc_list[i]);
             }
           else
             {
               buff = g_strdup_printf (" (define %s (lambda x"
-                                      " (apply gimp-proc-db-call (cons \"%s\" x))))",
+                                      " (apply picman-proc-db-call (cons \"%s\" x))))",
                                       proc_list[i], proc_list[i]);
             }
 
@@ -563,8 +563,8 @@ ts_init_procedures (scheme   *sc,
           g_free (proc_copyright);
           g_free (proc_date);
 
-          gimp_destroy_paramdefs (params, n_params);
-          gimp_destroy_paramdefs (return_vals, n_return_vals);
+          picman_destroy_paramdefs (params, n_params);
+          picman_destroy_paramdefs (return_vals, n_return_vals);
         }
     }
 
@@ -605,13 +605,13 @@ convert_string (gchar *str)
     }
 }
 
-/* This is called by the Scheme interpreter to allow calls to GIMP functions */
+/* This is called by the Scheme interpreter to allow calls to PICMAN functions */
 static pointer
 script_fu_marshal_procedure_call (scheme  *sc,
                                   pointer  a)
 {
-  GimpParam       *args;
-  GimpParam       *values = NULL;
+  PicmanParam       *args;
+  PicmanParam       *values = NULL;
   gint             nvalues;
   gchar           *proc_name;
   gchar           *proc_blurb;
@@ -619,11 +619,11 @@ script_fu_marshal_procedure_call (scheme  *sc,
   gchar           *proc_author;
   gchar           *proc_copyright;
   gchar           *proc_date;
-  GimpPDBProcType  proc_type;
+  PicmanPDBProcType  proc_type;
   gint             nparams;
   gint             nreturn_vals;
-  GimpParamDef    *params;
-  GimpParamDef    *return_vals;
+  PicmanParamDef    *params;
+  PicmanParamDef    *return_vals;
   gchar            error_str[1024];
   gint             i;
   gint             success = TRUE;
@@ -669,7 +669,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
   script_fu_interface_report_cc (proc_name);
 
   /*  Attempt to fetch the procedure from the database  */
-  if (! gimp_procedural_db_proc_info (proc_name,
+  if (! picman_procedural_db_proc_info (proc_name,
                                       &proc_blurb,
                                       &proc_help,
                                       &proc_author,
@@ -714,7 +714,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
 
   /*  Marshall the supplied arguments  */
   if (nparams)
-    args = g_new (GimpParam, nparams);
+    args = g_new (PicmanParam, nparams);
   else
     args = NULL;
 
@@ -730,7 +730,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
       {
         const gchar *type_name;
 
-        gimp_enum_get_value (GIMP_TYPE_PDB_ARG_TYPE,
+        picman_enum_get_value (PICMAN_TYPE_PDB_ARG_TYPE,
                              params[i].type,
                              &type_name, NULL, NULL, NULL);
 
@@ -746,15 +746,15 @@ script_fu_marshal_procedure_call (scheme  *sc,
 
       switch (params[i].type)
         {
-        case GIMP_PDB_INT32:
-        case GIMP_PDB_DISPLAY:
-        case GIMP_PDB_IMAGE:
-        case GIMP_PDB_ITEM:
-        case GIMP_PDB_LAYER:
-        case GIMP_PDB_CHANNEL:
-        case GIMP_PDB_DRAWABLE:
-        case GIMP_PDB_SELECTION:
-        case GIMP_PDB_VECTORS:
+        case PICMAN_PDB_INT32:
+        case PICMAN_PDB_DISPLAY:
+        case PICMAN_PDB_IMAGE:
+        case PICMAN_PDB_ITEM:
+        case PICMAN_PDB_LAYER:
+        case PICMAN_PDB_CHANNEL:
+        case PICMAN_PDB_DRAWABLE:
+        case PICMAN_PDB_SELECTION:
+        case PICMAN_PDB_VECTORS:
           if (!sc->vptr->is_number (sc->vptr->pair_car (a)))
             success = FALSE;
           if (success)
@@ -766,7 +766,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_INT16:
+        case PICMAN_PDB_INT16:
           if (!sc->vptr->is_number (sc->vptr->pair_car (a)))
             success = FALSE;
           if (success)
@@ -778,7 +778,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_INT8:
+        case PICMAN_PDB_INT8:
           if (!sc->vptr->is_number (sc->vptr->pair_car (a)))
             success = FALSE;
           if (success)
@@ -790,7 +790,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_FLOAT:
+        case PICMAN_PDB_FLOAT:
           if (!sc->vptr->is_number (sc->vptr->pair_car (a)))
             success = FALSE;
           if (success)
@@ -802,7 +802,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_STRING:
+        case PICMAN_PDB_STRING:
           if (!sc->vptr->is_string (sc->vptr->pair_car (a)))
             success = FALSE;
           if (success)
@@ -814,7 +814,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_INT32ARRAY:
+        case PICMAN_PDB_INT32ARRAY:
           vector = sc->vptr->pair_car (a);
           if (!sc->vptr->is_vector (vector))
             success = FALSE;
@@ -868,7 +868,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_INT16ARRAY:
+        case PICMAN_PDB_INT16ARRAY:
           vector = sc->vptr->pair_car (a);
           if (!sc->vptr->is_vector (vector))
             success = FALSE;
@@ -919,7 +919,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_INT8ARRAY:
+        case PICMAN_PDB_INT8ARRAY:
           vector = sc->vptr->pair_car (a);
           if (!sc->vptr->is_vector (vector))
             success = FALSE;
@@ -972,7 +972,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_FLOATARRAY:
+        case PICMAN_PDB_FLOATARRAY:
           vector = sc->vptr->pair_car (a);
           if (!sc->vptr->is_vector (vector))
             success = FALSE;
@@ -1025,7 +1025,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_STRINGARRAY:
+        case PICMAN_PDB_STRINGARRAY:
           vector = sc->vptr->pair_car (a);  /* vector is pointing to a list */
           if (!sc->vptr->is_list (sc, vector))
             success = FALSE;
@@ -1080,15 +1080,15 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_COLOR:
+        case PICMAN_PDB_COLOR:
           if (sc->vptr->is_string (sc->vptr->pair_car (a)))
             {
-              if (! gimp_rgb_parse_css (&args[i].data.d_color,
+              if (! picman_rgb_parse_css (&args[i].data.d_color,
                                         sc->vptr->string_value (sc->vptr->pair_car (a)),
                                         -1))
                 success = FALSE;
 
-              gimp_rgb_set_alpha (&args[i].data.d_color, 1.0);
+              picman_rgb_set_alpha (&args[i].data.d_color, 1.0);
 #if DEBUG_MARSHALL
               g_printerr ("      (%s)\n",
                           sc->vptr->string_value (sc->vptr->pair_car (a)));
@@ -1107,7 +1107,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
               color_list = sc->vptr->pair_cdr (color_list);
               b = CLAMP (sc->vptr->ivalue (sc->vptr->pair_car (color_list)), 0, 255);
 
-              gimp_rgba_set_uchar (&args[i].data.d_color, r, g, b, 255);
+              picman_rgba_set_uchar (&args[i].data.d_color, r, g, b, 255);
 #if DEBUG_MARSHALL
               g_printerr ("      (%d %d %d)\n", r, g, b);
 #endif
@@ -1118,7 +1118,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_COLORARRAY:
+        case PICMAN_PDB_COLORARRAY:
           vector = sc->vptr->pair_car (a);
           if (!sc->vptr->is_vector (vector))
             success = FALSE;
@@ -1136,7 +1136,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
                   return foreign_error (sc, error_str, 0);
                 }
 
-              args[i].data.d_colorarray = g_new (GimpRGB, n_elements);
+              args[i].data.d_colorarray = g_new (PicmanRGB, n_elements);
 
               for (j = 0; j < n_elements; j++)
                 {
@@ -1166,7 +1166,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
                   b = CLAMP (sc->vptr->ivalue (sc->vptr->pair_car (color_list)),
                              0, 255);
 
-                  gimp_rgba_set_uchar (&args[i].data.d_colorarray[j],
+                  picman_rgba_set_uchar (&args[i].data.d_colorarray[j],
                                        r, g, b, 255);
                 }
 #if DEBUG_MARSHALL
@@ -1178,7 +1178,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_PARASITE:
+        case PICMAN_PDB_PARASITE:
           if (!sc->vptr->is_list (sc, sc->vptr->pair_car (a)) ||
               sc->vptr->list_length (sc, sc->vptr->pair_car (a)) != 3)
             success = FALSE;
@@ -1236,7 +1236,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
           break;
 
-        case GIMP_PDB_STATUS:
+        case PICMAN_PDB_STATUS:
           return foreign_error (sc,
                                 "Status is for return types, not arguments",
                                 sc->vptr->pair_car (a));
@@ -1264,7 +1264,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
 #if DEBUG_MARSHALL
           g_printerr ("    calling %s...", proc_name);
 #endif
-          values = gimp_run_procedure2 (proc_name, &nvalues, nparams, args);
+          values = picman_run_procedure2 (proc_name, &nvalues, nparams, args);
 #if DEBUG_MARSHALL
           g_printerr ("  done.\n");
 #endif
@@ -1298,7 +1298,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
   {
     const gchar *status_name;
 
-    gimp_enum_get_value (GIMP_TYPE_PDB_STATUS_TYPE,
+    picman_enum_get_value (PICMAN_TYPE_PDB_STATUS_TYPE,
                          values[0].data.d_status,
                          &status_name, NULL, NULL, NULL);
     g_printerr ("    return value is %s\n", status_name);
@@ -1307,8 +1307,8 @@ script_fu_marshal_procedure_call (scheme  *sc,
 
   switch (values[0].data.d_status)
     {
-    case GIMP_PDB_EXECUTION_ERROR:
-      if (nvalues > 1 && values[1].type == GIMP_PDB_STRING)
+    case PICMAN_PDB_EXECUTION_ERROR:
+      if (nvalues > 1 && values[1].type == PICMAN_PDB_STRING)
         {
           g_snprintf (error_str, sizeof (error_str),
                       "Procedure execution of %s failed: %s",
@@ -1323,8 +1323,8 @@ script_fu_marshal_procedure_call (scheme  *sc,
       return foreign_error (sc, error_str, 0);
       break;
 
-    case GIMP_PDB_CALLING_ERROR:
-      if (nvalues > 1 && values[1].type == GIMP_PDB_STRING)
+    case PICMAN_PDB_CALLING_ERROR:
+      if (nvalues > 1 && values[1].type == PICMAN_PDB_STRING)
         {
           g_snprintf (error_str, sizeof (error_str),
                       "Procedure execution of %s failed on invalid input arguments: %s",
@@ -1339,7 +1339,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
       return foreign_error (sc, error_str, 0);
       break;
 
-    case GIMP_PDB_SUCCESS:
+    case PICMAN_PDB_SUCCESS:
 #if DEBUG_MARSHALL
       g_printerr ("    values returned: %d\n", nvalues-1);
 #endif
@@ -1352,7 +1352,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
           {
             const gchar *type_name;
 
-            gimp_enum_get_value (GIMP_TYPE_PDB_ARG_TYPE,
+            picman_enum_get_value (PICMAN_TYPE_PDB_ARG_TYPE,
                                  return_vals[i].type,
                                  &type_name, NULL, NULL, NULL);
 
@@ -1362,43 +1362,43 @@ script_fu_marshal_procedure_call (scheme  *sc,
 #endif
           switch (return_vals[i].type)
             {
-            case GIMP_PDB_INT32:
-            case GIMP_PDB_DISPLAY:
-            case GIMP_PDB_IMAGE:
-            case GIMP_PDB_ITEM:
-            case GIMP_PDB_LAYER:
-            case GIMP_PDB_CHANNEL:
-            case GIMP_PDB_DRAWABLE:
-            case GIMP_PDB_SELECTION:
-            case GIMP_PDB_VECTORS:
+            case PICMAN_PDB_INT32:
+            case PICMAN_PDB_DISPLAY:
+            case PICMAN_PDB_IMAGE:
+            case PICMAN_PDB_ITEM:
+            case PICMAN_PDB_LAYER:
+            case PICMAN_PDB_CHANNEL:
+            case PICMAN_PDB_DRAWABLE:
+            case PICMAN_PDB_SELECTION:
+            case PICMAN_PDB_VECTORS:
               return_val = sc->vptr->cons (sc,
                              sc->vptr->mk_integer (sc,
                                                    values[i + 1].data.d_int32),
                              return_val);
               break;
 
-            case GIMP_PDB_INT16:
+            case PICMAN_PDB_INT16:
               return_val = sc->vptr->cons (sc,
                              sc->vptr->mk_integer (sc,
                                                    values[i + 1].data.d_int16),
                              return_val);
               break;
 
-            case GIMP_PDB_INT8:
+            case PICMAN_PDB_INT8:
               return_val = sc->vptr->cons (sc,
                              sc->vptr->mk_integer (sc,
                                                    values[i + 1].data.d_int8),
                              return_val);
               break;
 
-            case GIMP_PDB_FLOAT:
+            case PICMAN_PDB_FLOAT:
               return_val = sc->vptr->cons (sc,
                              sc->vptr->mk_real (sc,
                                                 values[i + 1].data.d_float),
                              return_val);
               break;
 
-            case GIMP_PDB_STRING:
+            case PICMAN_PDB_STRING:
               string = values[i + 1].data.d_string;
               if (! string)
                 string = "";
@@ -1407,7 +1407,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
                              return_val);
               break;
 
-            case GIMP_PDB_INT32ARRAY:
+            case PICMAN_PDB_INT32ARRAY:
               {
                 gint32  num_int32s = values[i].data.d_int32;
                 gint32 *array      = (gint32 *) values[i + 1].data.d_int32array;
@@ -1424,7 +1424,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
               }
               break;
 
-            case GIMP_PDB_INT16ARRAY:
+            case PICMAN_PDB_INT16ARRAY:
               {
                 gint32  num_int16s = values[i].data.d_int32;
                 gint16 *array      = (gint16 *) values[i + 1].data.d_int16array;
@@ -1441,7 +1441,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
               }
               break;
 
-            case GIMP_PDB_INT8ARRAY:
+            case PICMAN_PDB_INT8ARRAY:
               {
                 gint32  num_int8s = values[i].data.d_int32;
                 guint8 *array     = (guint8 *) values[i + 1].data.d_int8array;
@@ -1458,7 +1458,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
               }
               break;
 
-            case GIMP_PDB_FLOATARRAY:
+            case PICMAN_PDB_FLOATARRAY:
               {
                 gint32   num_floats = values[i].data.d_int32;
                 gdouble *array      = (gdouble *) values[i + 1].data.d_floatarray;
@@ -1475,7 +1475,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
               }
               break;
 
-            case GIMP_PDB_STRINGARRAY:
+            case PICMAN_PDB_STRINGARRAY:
               {
                 gint    num_strings = values[i].data.d_int32;
                 gchar **array       = (gchar **) values[i + 1].data.d_stringarray;
@@ -1494,12 +1494,12 @@ script_fu_marshal_procedure_call (scheme  *sc,
               }
               break;
 
-            case GIMP_PDB_COLOR:
+            case PICMAN_PDB_COLOR:
               {
                 guchar   r, g, b;
                 gpointer temp_val;
 
-                gimp_rgb_get_uchar (&values[i + 1].data.d_color, &r, &g, &b);
+                picman_rgb_get_uchar (&values[i + 1].data.d_color, &r, &g, &b);
 
                 temp_val = sc->vptr->cons (sc,
                              sc->vptr->mk_integer (sc, r),
@@ -1514,10 +1514,10 @@ script_fu_marshal_procedure_call (scheme  *sc,
                 break;
               }
 
-            case GIMP_PDB_COLORARRAY:
+            case PICMAN_PDB_COLORARRAY:
               {
                 gint32   num_colors = values[i].data.d_int32;
-                GimpRGB *array      = (GimpRGB *) values[i + 1].data.d_colorarray;
+                PicmanRGB *array      = (PicmanRGB *) values[i + 1].data.d_colorarray;
                 pointer  vector     = sc->vptr->mk_vector (sc, num_colors);
 
                 for (j = 0; j < num_colors; j++)
@@ -1525,7 +1525,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
                     guchar  r, g, b;
                     pointer temp_val;
 
-                    gimp_rgb_get_uchar (&array[j], &r, &g, &b);
+                    picman_rgb_get_uchar (&array[j], &r, &g, &b);
 
                     temp_val = sc->vptr->cons (sc,
                                  sc->vptr->mk_integer (sc, r),
@@ -1541,7 +1541,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
               }
               break;
 
-            case GIMP_PDB_PARASITE:
+            case PICMAN_PDB_PARASITE:
               {
                 if (values[i + 1].data.d_parasite.name == NULL)
                   {
@@ -1549,7 +1549,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
                   }
                 else
                   {
-                    GimpParasite *p = &values[i + 1].data.d_parasite;
+                    PicmanParasite *p = &values[i + 1].data.d_parasite;
                     gchar        *data = g_strndup (p->data, p->size);
                     gint          char_cnt = g_utf8_strlen (data, p->size);
                     pointer       temp_val;
@@ -1582,7 +1582,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
               }
               break;
 
-            case GIMP_PDB_STATUS:
+            case PICMAN_PDB_STATUS:
               return foreign_error (sc, "Procedure execution returned multiple status values", 0);
               break;
 
@@ -1591,8 +1591,8 @@ script_fu_marshal_procedure_call (scheme  *sc,
             }
         }
 
-    case GIMP_PDB_PASS_THROUGH:
-    case GIMP_PDB_CANCEL:   /*  should we do something here?  */
+    case PICMAN_PDB_PASS_THROUGH:
+    case PICMAN_PDB_CANCEL:   /*  should we do something here?  */
       break;
     }
 
@@ -1601,7 +1601,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
    */
   if (return_val == sc->NIL)
     {
-      if (values[0].data.d_status == GIMP_PDB_SUCCESS)
+      if (values[0].data.d_status == PICMAN_PDB_SUCCESS)
         return_val = sc->vptr->cons (sc, sc->T, sc->NIL);
       else
         return_val = sc->vptr->cons (sc, sc->F, sc->NIL);
@@ -1611,7 +1611,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
   g_free (proc_name);
 
   /*  free up the executed procedure return values  */
-  gimp_destroy_params (values, nvalues);
+  picman_destroy_params (values, nvalues);
 
   /*  free up arguments and values  */
   script_fu_marshal_destroy_args (args, nparams);
@@ -1639,7 +1639,7 @@ script_fu_marshal_procedure_call (scheme  *sc,
 }
 
 static void
-script_fu_marshal_destroy_args (GimpParam *params,
+script_fu_marshal_destroy_args (PicmanParam *params,
                                 gint       n_params)
 {
   gint i;
@@ -1648,49 +1648,49 @@ script_fu_marshal_destroy_args (GimpParam *params,
     {
       switch (params[i].type)
         {
-        case GIMP_PDB_INT32:
-        case GIMP_PDB_INT16:
-        case GIMP_PDB_INT8:
-        case GIMP_PDB_FLOAT:
-        case GIMP_PDB_STRING:
+        case PICMAN_PDB_INT32:
+        case PICMAN_PDB_INT16:
+        case PICMAN_PDB_INT8:
+        case PICMAN_PDB_FLOAT:
+        case PICMAN_PDB_STRING:
           break;
 
-        case GIMP_PDB_INT32ARRAY:
+        case PICMAN_PDB_INT32ARRAY:
           g_free (params[i].data.d_int32array);
           break;
 
-        case GIMP_PDB_INT16ARRAY:
+        case PICMAN_PDB_INT16ARRAY:
           g_free (params[i].data.d_int16array);
           break;
 
-        case GIMP_PDB_INT8ARRAY:
+        case PICMAN_PDB_INT8ARRAY:
           g_free (params[i].data.d_int8array);
           break;
 
-        case GIMP_PDB_FLOATARRAY:
+        case PICMAN_PDB_FLOATARRAY:
           g_free (params[i].data.d_floatarray);
           break;
 
-        case GIMP_PDB_STRINGARRAY:
+        case PICMAN_PDB_STRINGARRAY:
           g_free (params[i].data.d_stringarray);
           break;
 
-        case GIMP_PDB_COLORARRAY:
+        case PICMAN_PDB_COLORARRAY:
           g_free (params[i].data.d_colorarray);
           break;
 
-        case GIMP_PDB_COLOR:
-        case GIMP_PDB_DISPLAY:
-        case GIMP_PDB_IMAGE:
-        case GIMP_PDB_ITEM:
-        case GIMP_PDB_LAYER:
-        case GIMP_PDB_CHANNEL:
-        case GIMP_PDB_DRAWABLE:
-        case GIMP_PDB_SELECTION:
-        case GIMP_PDB_VECTORS:
-        case GIMP_PDB_PARASITE:
-        case GIMP_PDB_STATUS:
-        case GIMP_PDB_END:
+        case PICMAN_PDB_COLOR:
+        case PICMAN_PDB_DISPLAY:
+        case PICMAN_PDB_IMAGE:
+        case PICMAN_PDB_ITEM:
+        case PICMAN_PDB_LAYER:
+        case PICMAN_PDB_CHANNEL:
+        case PICMAN_PDB_DRAWABLE:
+        case PICMAN_PDB_SELECTION:
+        case PICMAN_PDB_VECTORS:
+        case PICMAN_PDB_PARASITE:
+        case PICMAN_PDB_STATUS:
+        case PICMAN_PDB_END:
           break;
         }
     }

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationcolormode.c
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanoperationcolormode.c
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *               2012 Ville Sokk <ville.sokk@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,14 +26,14 @@
 #include <cairo.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "operations-types.h"
 
-#include "gimpoperationcolormode.h"
+#include "picmanoperationcolormode.h"
 
 
-static gboolean gimp_operation_color_mode_process (GeglOperation       *operation,
+static gboolean picman_operation_color_mode_process (GeglOperation       *operation,
                                                    void                *in_buf,
                                                    void                *aux_buf,
                                                    void                *aux2_buf,
@@ -43,12 +43,12 @@ static gboolean gimp_operation_color_mode_process (GeglOperation       *operatio
                                                    gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationColorMode, gimp_operation_color_mode,
-               GIMP_TYPE_OPERATION_POINT_LAYER_MODE)
+G_DEFINE_TYPE (PicmanOperationColorMode, picman_operation_color_mode,
+               PICMAN_TYPE_OPERATION_POINT_LAYER_MODE)
 
 
 static void
-gimp_operation_color_mode_class_init (GimpOperationColorModeClass *klass)
+picman_operation_color_mode_class_init (PicmanOperationColorModeClass *klass)
 {
   GeglOperationClass               *operation_class;
   GeglOperationPointComposer3Class *point_class;
@@ -57,20 +57,20 @@ gimp_operation_color_mode_class_init (GimpOperationColorModeClass *klass)
   point_class     = GEGL_OPERATION_POINT_COMPOSER3_CLASS (klass);
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:color-mode",
-                                 "description", "GIMP color mode operation",
+                                 "name",        "picman:color-mode",
+                                 "description", "PICMAN color mode operation",
                                  NULL);
 
-  point_class->process = gimp_operation_color_mode_process;
+  point_class->process = picman_operation_color_mode_process;
 }
 
 static void
-gimp_operation_color_mode_init (GimpOperationColorMode *self)
+picman_operation_color_mode_init (PicmanOperationColorMode *self)
 {
 }
 
 static gboolean
-gimp_operation_color_mode_process (GeglOperation       *operation,
+picman_operation_color_mode_process (GeglOperation       *operation,
                                    void                *in_buf,
                                    void                *aux_buf,
                                    void                *aux2_buf,
@@ -79,7 +79,7 @@ gimp_operation_color_mode_process (GeglOperation       *operation,
                                    const GeglRectangle *roi,
                                    gint                 level)
 {
-  gdouble        opacity  = GIMP_OPERATION_POINT_LAYER_MODE (operation)->opacity;
+  gdouble        opacity  = PICMAN_OPERATION_POINT_LAYER_MODE (operation)->opacity;
   gfloat        *in       = in_buf;
   gfloat        *layer    = aux_buf;
   gfloat        *mask     = aux2_buf;
@@ -88,9 +88,9 @@ gimp_operation_color_mode_process (GeglOperation       *operation,
 
   while (samples--)
     {
-      GimpHSL layer_hsl, out_hsl;
-      GimpRGB layer_rgb = {layer[0], layer[1], layer[2]};
-      GimpRGB out_rgb   = {in[0], in[1], in[2]};
+      PicmanHSL layer_hsl, out_hsl;
+      PicmanRGB layer_rgb = {layer[0], layer[1], layer[2]};
+      PicmanRGB out_rgb   = {in[0], in[1], in[2]};
       gfloat  comp_alpha, new_alpha;
 
       comp_alpha = MIN (in[ALPHA], layer[ALPHA]) * opacity;
@@ -104,12 +104,12 @@ gimp_operation_color_mode_process (GeglOperation       *operation,
           gint   b;
           gfloat ratio = comp_alpha / new_alpha;
 
-          gimp_rgb_to_hsl (&layer_rgb, &layer_hsl);
-          gimp_rgb_to_hsl (&out_rgb, &out_hsl);
+          picman_rgb_to_hsl (&layer_rgb, &layer_hsl);
+          picman_rgb_to_hsl (&out_rgb, &out_hsl);
 
           out_hsl.h = layer_hsl.h;
           out_hsl.s = layer_hsl.s;
-          gimp_hsl_to_rgb (&out_hsl, &out_rgb);
+          picman_hsl_to_rgb (&out_hsl, &out_rgb);
 
           out[0] = out_rgb.r;
           out[1] = out_rgb.g;

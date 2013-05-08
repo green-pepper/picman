@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,16 +22,16 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
 
-#include "pdb/gimppdb.h"
+#include "pdb/picmanpdb.h"
 
 #include "about.h"
 #include "git-version.h"
@@ -39,7 +39,7 @@
 #include "about-dialog.h"
 #include "authors.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /* The first authors are the creators and maintainers, don't shuffle
@@ -66,34 +66,34 @@ typedef struct
   gint         textrange[2];
   gint         state;
   gboolean     visible;
-} GimpAboutDialog;
+} PicmanAboutDialog;
 
 
 static void        about_dialog_map           (GtkWidget       *widget,
-                                               GimpAboutDialog *dialog);
+                                               PicmanAboutDialog *dialog);
 static void        about_dialog_unmap         (GtkWidget       *widget,
-                                               GimpAboutDialog *dialog);
+                                               PicmanAboutDialog *dialog);
 static GdkPixbuf * about_dialog_load_logo     (void);
 static void        about_dialog_add_animation (GtkWidget       *vbox,
-                                               GimpAboutDialog *dialog);
+                                               PicmanAboutDialog *dialog);
 static gboolean    about_dialog_anim_expose   (GtkWidget       *widget,
                                                GdkEventExpose  *event,
-                                               GimpAboutDialog *dialog);
-static void        about_dialog_reshuffle     (GimpAboutDialog *dialog);
+                                               PicmanAboutDialog *dialog);
+static void        about_dialog_reshuffle     (PicmanAboutDialog *dialog);
 static gboolean    about_dialog_timer         (gpointer         data);
 
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
 static void        about_dialog_add_unstable_message
                                               (GtkWidget       *vbox);
-#endif /* GIMP_UNSTABLE */
+#endif /* PICMAN_UNSTABLE */
 
 
 GtkWidget *
-about_dialog_create (GimpContext *context)
+about_dialog_create (PicmanContext *context)
 {
-  static GimpAboutDialog dialog;
+  static PicmanAboutDialog dialog;
 
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
   if (! dialog.dialog)
     {
@@ -107,21 +107,21 @@ about_dialog_create (GimpContext *context)
 
       pixbuf = about_dialog_load_logo ();
 
-      copyright = g_strdup_printf (GIMP_COPYRIGHT, GIMP_GIT_LAST_COMMIT_YEAR);
+      copyright = g_strdup_printf (PICMAN_COPYRIGHT, PICMAN_GIT_LAST_COMMIT_YEAR);
 
       widget = g_object_new (GTK_TYPE_ABOUT_DIALOG,
-                             "role",               "gimp-about",
+                             "role",               "picman-about",
                              "window-position",    GTK_WIN_POS_CENTER,
-                             "title",              _("About GIMP"),
-                             "program-name",       GIMP_ACRONYM,
-                             "version",            GIMP_VERSION,
+                             "title",              _("About PICMAN"),
+                             "program-name",       PICMAN_ACRONYM,
+                             "version",            PICMAN_VERSION,
                              "copyright",          copyright,
-                             "comments",           GIMP_NAME,
-                             "license",            GIMP_LICENSE,
+                             "comments",           PICMAN_NAME,
+                             "license",            PICMAN_LICENSE,
                              "wrap-license",       TRUE,
                              "logo",               pixbuf,
-                             "website",            "http://www.gimp.org/",
-                             "website-label",      _("Visit the GIMP website"),
+                             "website",            "http://www.picman.org/",
+                             "website-label",      _("Visit the PICMAN website"),
                              "authors",            authors,
                              "artists",            artists,
                              "documenters",        documenters,
@@ -157,9 +157,9 @@ about_dialog_create (GimpContext *context)
       if (GTK_IS_BOX (children->data))
         {
           about_dialog_add_animation (children->data, &dialog);
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
           about_dialog_add_unstable_message (children->data);
-#endif /* GIMP_UNSTABLE */
+#endif /* PICMAN_UNSTABLE */
         }
       else
         g_warning ("%s: ooops, no box in this container?", G_STRLOC);
@@ -174,7 +174,7 @@ about_dialog_create (GimpContext *context)
 
 static void
 about_dialog_map (GtkWidget       *widget,
-                  GimpAboutDialog *dialog)
+                  PicmanAboutDialog *dialog)
 {
   if (dialog->layout && dialog->timer == 0)
     {
@@ -191,7 +191,7 @@ about_dialog_map (GtkWidget       *widget,
 
 static void
 about_dialog_unmap (GtkWidget       *widget,
-                    GimpAboutDialog *dialog)
+                    PicmanAboutDialog *dialog)
 {
   if (dialog->timer)
     {
@@ -206,11 +206,11 @@ about_dialog_load_logo (void)
   GdkPixbuf *pixbuf;
   gchar     *filename;
 
-  filename = g_build_filename (gimp_data_directory (), "images",
-#ifdef GIMP_UNSTABLE
-                               "gimp-devel-logo.png",
+  filename = g_build_filename (picman_data_directory (), "images",
+#ifdef PICMAN_UNSTABLE
+                               "picman-devel-logo.png",
 #else
-                               "gimp-logo.png",
+                               "picman-logo.png",
 #endif
                                NULL);
 
@@ -222,7 +222,7 @@ about_dialog_load_logo (void)
 
 static void
 about_dialog_add_animation (GtkWidget       *vbox,
-                            GimpAboutDialog *dialog)
+                            PicmanAboutDialog *dialog)
 {
   gint  height;
 
@@ -245,7 +245,7 @@ about_dialog_add_animation (GtkWidget       *vbox,
 }
 
 static void
-about_dialog_reshuffle (GimpAboutDialog *dialog)
+about_dialog_reshuffle (PicmanAboutDialog *dialog)
 {
   GRand *gr = g_rand_new ();
   gint   i;
@@ -273,7 +273,7 @@ about_dialog_reshuffle (GimpAboutDialog *dialog)
 static gboolean
 about_dialog_anim_expose (GtkWidget       *widget,
                           GdkEventExpose  *event,
-                          GimpAboutDialog *dialog)
+                          PicmanAboutDialog *dialog)
 {
   GtkStyle      *style = gtk_widget_get_style (widget);
   cairo_t       *cr;
@@ -354,7 +354,7 @@ mix_colors (const GdkColor *start,
 }
 
 static void
-decorate_text (GimpAboutDialog *dialog,
+decorate_text (PicmanAboutDialog *dialog,
                gint             anim_type,
                gdouble          time)
 {
@@ -502,7 +502,7 @@ decorate_text (GimpAboutDialog *dialog,
 static gboolean
 about_dialog_timer (gpointer data)
 {
-  GimpAboutDialog *dialog  = data;
+  PicmanAboutDialog *dialog  = data;
   gint             timeout = 0;
 
   if (dialog->animstep == 0)
@@ -519,7 +519,7 @@ about_dialog_timer (gpointer data)
           return FALSE;
 
         case 1:
-          text = insert_spacers (_("GIMP is brought to you by"));
+          text = insert_spacers (_("PICMAN is brought to you by"));
           dialog->state += 1;
           break;
 
@@ -587,7 +587,7 @@ about_dialog_timer (gpointer data)
   return TRUE;
 }
 
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
 
 static void
 about_dialog_add_unstable_message (GtkWidget *vbox)
@@ -595,7 +595,7 @@ about_dialog_add_unstable_message (GtkWidget *vbox)
   GtkWidget *label;
 
   label = gtk_label_new (_("This is an unstable development release."));
-  gimp_label_set_attributes (GTK_LABEL (label),
+  picman_label_set_attributes (GTK_LABEL (label),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              -1);
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
@@ -603,4 +603,4 @@ about_dialog_add_unstable_message (GtkWidget *vbox)
   gtk_widget_show (label);
 }
 
-#endif /* GIMP_UNSTABLE */
+#endif /* PICMAN_UNSTABLE */

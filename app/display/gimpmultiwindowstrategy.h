@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpmultiwindowstrategy.h
+ * picmanmultiwindowstrategy.h
  * Copyright (C) 2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,37 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_MULTI_WINDOW_STRATEGY_H__
-#define __GIMP_MULTI_WINDOW_STRATEGY_H__
+#ifndef __PICMAN_MULTI_WINDOW_STRATEGY_H__
+#define __PICMAN_MULTI_WINDOW_STRATEGY_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-#define GIMP_TYPE_MULTI_WINDOW_STRATEGY            (gimp_multi_window_strategy_get_type ())
-#define GIMP_MULTI_WINDOW_STRATEGY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_MULTI_WINDOW_STRATEGY, GimpMultiWindowStrategy))
-#define GIMP_MULTI_WINDOW_STRATEGY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_MULTI_WINDOW_STRATEGY, GimpMultiWindowStrategyClass))
-#define GIMP_IS_MULTI_WINDOW_STRATEGY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_MULTI_WINDOW_STRATEGY))
-#define GIMP_IS_MULTI_WINDOW_STRATEGY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_MULTI_WINDOW_STRATEGY))
-#define GIMP_MULTI_WINDOW_STRATEGY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_MULTI_WINDOW_STRATEGY, GimpMultiWindowStrategyClass))
+#define PICMAN_TYPE_MULTI_WINDOW_STRATEGY            (picman_multi_window_strategy_get_type ())
+#define PICMAN_MULTI_WINDOW_STRATEGY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_MULTI_WINDOW_STRATEGY, PicmanMultiWindowStrategy))
+#define PICMAN_MULTI_WINDOW_STRATEGY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_MULTI_WINDOW_STRATEGY, PicmanMultiWindowStrategyClass))
+#define PICMAN_IS_MULTI_WINDOW_STRATEGY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_MULTI_WINDOW_STRATEGY))
+#define PICMAN_IS_MULTI_WINDOW_STRATEGY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_MULTI_WINDOW_STRATEGY))
+#define PICMAN_MULTI_WINDOW_STRATEGY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_MULTI_WINDOW_STRATEGY, PicmanMultiWindowStrategyClass))
 
 
-typedef struct _GimpMultiWindowStrategyClass GimpMultiWindowStrategyClass;
+typedef struct _PicmanMultiWindowStrategyClass PicmanMultiWindowStrategyClass;
 
-struct _GimpMultiWindowStrategy
+struct _PicmanMultiWindowStrategy
 {
-  GimpObject  parent_instance;
+  PicmanObject  parent_instance;
 };
 
-struct _GimpMultiWindowStrategyClass
+struct _PicmanMultiWindowStrategyClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType        gimp_multi_window_strategy_get_type          (void) G_GNUC_CONST;
+GType        picman_multi_window_strategy_get_type          (void) G_GNUC_CONST;
 
-GimpObject * gimp_multi_window_strategy_get_singleton     (void);
+PicmanObject * picman_multi_window_strategy_get_singleton     (void);
 
 
-#endif /* __GIMP_MULTI_WINDOW_STRATEGY_H__ */
+#endif /* __PICMAN_MULTI_WINDOW_STRATEGY_H__ */

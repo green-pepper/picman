@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,16 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VECTORS_EXPORT_H__
-#define __GIMP_VECTORS_EXPORT_H__
+#ifndef __PICMAN_VECTORS_EXPORT_H__
+#define __PICMAN_VECTORS_EXPORT_H__
 
 
-gboolean   gimp_vectors_export_file   (const GimpImage    *image,
-                                       const GimpVectors  *vectors,
+gboolean   picman_vectors_export_file   (const PicmanImage    *image,
+                                       const PicmanVectors  *vectors,
                                        const gchar        *filename,
                                        GError            **error);
-gchar    * gimp_vectors_export_string (const GimpImage    *image,
-                                       const GimpVectors  *vectors);
+gchar    * picman_vectors_export_string (const PicmanImage    *image,
+                                       const PicmanVectors  *vectors);
 
 
-#endif /* __GIMP_VECTORS_IMPORT_H__ */
+#endif /* __PICMAN_VECTORS_IMPORT_H__ */

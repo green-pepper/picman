@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationcurves.h
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanoperationcurves.h
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_CURVES_H__
-#define __GIMP_OPERATION_CURVES_H__
+#ifndef __PICMAN_OPERATION_CURVES_H__
+#define __PICMAN_OPERATION_CURVES_H__
 
 
-#include "gimpoperationpointfilter.h"
+#include "picmanoperationpointfilter.h"
 
 
-#define GIMP_TYPE_OPERATION_CURVES            (gimp_operation_curves_get_type ())
-#define GIMP_OPERATION_CURVES(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_CURVES, GimpOperationCurves))
-#define GIMP_OPERATION_CURVES_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_CURVES, GimpOperationCurvesClass))
-#define GIMP_IS_OPERATION_CURVES(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_CURVES))
-#define GIMP_IS_OPERATION_CURVES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_CURVES))
-#define GIMP_OPERATION_CURVES_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_CURVES, GimpOperationCurvesClass))
+#define PICMAN_TYPE_OPERATION_CURVES            (picman_operation_curves_get_type ())
+#define PICMAN_OPERATION_CURVES(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_CURVES, PicmanOperationCurves))
+#define PICMAN_OPERATION_CURVES_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_CURVES, PicmanOperationCurvesClass))
+#define PICMAN_IS_OPERATION_CURVES(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_CURVES))
+#define PICMAN_IS_OPERATION_CURVES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_CURVES))
+#define PICMAN_OPERATION_CURVES_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_CURVES, PicmanOperationCurvesClass))
 
 
-typedef struct _GimpOperationCurves      GimpOperationCurves;
-typedef struct _GimpOperationCurvesClass GimpOperationCurvesClass;
+typedef struct _PicmanOperationCurves      PicmanOperationCurves;
+typedef struct _PicmanOperationCurvesClass PicmanOperationCurvesClass;
 
-struct _GimpOperationCurves
+struct _PicmanOperationCurves
 {
-  GimpOperationPointFilter  parent_instance;
+  PicmanOperationPointFilter  parent_instance;
 };
 
-struct _GimpOperationCurvesClass
+struct _PicmanOperationCurvesClass
 {
-  GimpOperationPointFilterClass  parent_class;
+  PicmanOperationPointFilterClass  parent_class;
 };
 
 
-GType   gimp_operation_curves_get_type (void) G_GNUC_CONST;
+GType   picman_operation_curves_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_CURVES_H__ */
+#endif /* __PICMAN_OPERATION_CURVES_H__ */

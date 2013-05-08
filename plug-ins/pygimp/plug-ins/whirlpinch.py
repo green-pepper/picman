@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#   Gimp-Python - allows the writing of Gimp plugins in Python.
+#   Picman-Python - allows the writing of Picman plugins in Python.
 #   Copyright (C) 1997  James Henstridge <james@daa.com.au>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,14 +16,14 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Algorithms stolen from the whirl and pinch plugin distributed with Gimp,
+# Algorithms stolen from the whirl and pinch plugin distributed with Picman,
 # by Federico Mena Quintero and Scott Goehring
 #
 # This version does the same thing, except there is no preview, and it is
 # written in python and is slower.
 
 import math, struct
-from gimpfu import *
+from picmanfu import *
 
 class pixel_fetcher:
         def __init__(self, drawable):
@@ -33,8 +33,8 @@ class pixel_fetcher:
                 self.img_height = drawable.height
                 self.img_bpp = drawable.bpp
                 self.img_has_alpha = drawable.has_alpha
-                self.tile_width = gimp.tile_width()
-                self.tile_height = gimp.tile_height()
+                self.tile_width = picman.tile_width()
+                self.tile_height = picman.tile_height()
                 self.bg_colour = '\0\0\0\0'
                 self.bounds = drawable.mask_bounds
                 self.drawable = drawable
@@ -92,7 +92,7 @@ def whirl_pinch(image, drawable, whirl, pinch, radius):
         if not drawable.is_rgb and not drawable.is_grey:
                 return
 
-        gimp.tile_cache_ntiles(2 * (1 + self.width / gimp.tile_width()))
+        picman.tile_cache_ntiles(2 * (1 + self.width / picman.tile_width()))
 
         whirl = whirl * math.pi / 180
         dest_rgn = drawable.get_pixel_rgn(self.sel_x1, self.sel_y1,
@@ -100,7 +100,7 @@ def whirl_pinch(image, drawable, whirl, pinch, radius):
         pft = pixel_fetcher(drawable)
         pfb = pixel_fetcher(drawable)
 
-        bg_colour = gimp.get_background()
+        bg_colour = picman.get_background()
 
         pft.set_bg_colour(bg_colour[0], bg_colour[1], bg_colour[2], 0)
         pfb.set_bg_colour(bg_colour[0], bg_colour[1], bg_colour[2], 0)
@@ -108,7 +108,7 @@ def whirl_pinch(image, drawable, whirl, pinch, radius):
         progress = 0
         max_progress = self.sel_w * self.sel_h
 
-        gimp.progress_init("Whirling and pinching")
+        picman.progress_init("Whirling and pinching")
 
         self.radius2 = self.radius * self.radius * radius
         pixel = ['', '', '', '']
@@ -165,7 +165,7 @@ def whirl_pinch(image, drawable, whirl, pinch, radius):
                          - (row - self.sel_y1)] = bot_p
 
                 progress = progress + self.sel_w * 2
-                gimp.progress_update(float(progress) / max_progress)
+                picman.progress_update(float(progress) / max_progress)
 
         drawable.flush()
         drawable.merge_shadow(True)

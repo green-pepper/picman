@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 2009 Martin Nordholts
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,34 +20,34 @@
 
 #include "widgets/widgets-types.h"
 
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmanuimanager.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
 
-#include "operations/gimplevelsconfig.h"
+#include "operations/picmanlevelsconfig.h"
 
 #include "tests.h"
 
-#include "gimp-app-test-utils.h"
+#include "picman-app-test-utils.h"
 
 
-#define GIMP_TEST_IMAGE_SIZE 100
+#define PICMAN_TEST_IMAGE_SIZE 100
 
 #define ADD_IMAGE_TEST(function) \
-  g_test_add ("/gimp-core/" #function, \
-              GimpTestFixture, \
-              gimp, \
-              gimp_test_image_setup, \
+  g_test_add ("/picman-core/" #function, \
+              PicmanTestFixture, \
+              picman, \
+              picman_test_image_setup, \
               function, \
-              gimp_test_image_teardown);
+              picman_test_image_teardown);
 
 #define ADD_TEST(function) \
-  g_test_add ("/gimp-core/" #function, \
-              GimpTestFixture, \
-              gimp, \
+  g_test_add ("/picman-core/" #function, \
+              PicmanTestFixture, \
+              picman, \
               NULL, \
               function, \
               NULL);
@@ -55,45 +55,45 @@
 
 typedef struct
 {
-  GimpImage *image;
-} GimpTestFixture;
+  PicmanImage *image;
+} PicmanTestFixture;
 
 
-static void gimp_test_image_setup    (GimpTestFixture *fixture,
+static void picman_test_image_setup    (PicmanTestFixture *fixture,
                                       gconstpointer    data);
-static void gimp_test_image_teardown (GimpTestFixture *fixture,
+static void picman_test_image_teardown (PicmanTestFixture *fixture,
                                       gconstpointer    data);
 
 
 /**
- * gimp_test_image_setup:
+ * picman_test_image_setup:
  * @fixture:
  * @data:
  *
  * Test fixture setup for a single image.
  **/
 static void
-gimp_test_image_setup (GimpTestFixture *fixture,
+picman_test_image_setup (PicmanTestFixture *fixture,
                        gconstpointer    data)
 {
-  Gimp *gimp = GIMP (data);
+  Picman *picman = PICMAN (data);
 
-  fixture->image = gimp_image_new (gimp,
-                                   GIMP_TEST_IMAGE_SIZE,
-                                   GIMP_TEST_IMAGE_SIZE,
-                                   GIMP_RGB,
-                                   GIMP_PRECISION_FLOAT);
+  fixture->image = picman_image_new (picman,
+                                   PICMAN_TEST_IMAGE_SIZE,
+                                   PICMAN_TEST_IMAGE_SIZE,
+                                   PICMAN_RGB,
+                                   PICMAN_PRECISION_FLOAT);
 }
 
 /**
- * gimp_test_image_teardown:
+ * picman_test_image_teardown:
  * @fixture:
  * @data:
  *
  * Test fixture teardown for a single image.
  **/
 static void
-gimp_test_image_teardown (GimpTestFixture *fixture,
+picman_test_image_teardown (PicmanTestFixture *fixture,
                           gconstpointer    data)
 {
   g_object_unref (fixture->image);
@@ -105,41 +105,41 @@ gimp_test_image_teardown (GimpTestFixture *fixture,
  * @data:
  *
  * Super basic test that makes sure we can add a layer
- * and call gimp_item_rotate with center at (0, -10)
+ * and call picman_item_rotate with center at (0, -10)
  * without triggering a failed assertion .
  **/
 static void
-rotate_non_overlapping (GimpTestFixture *fixture,
+rotate_non_overlapping (PicmanTestFixture *fixture,
                         gconstpointer    data)
 {
-  Gimp        *gimp    = GIMP (data);
-  GimpImage   *image   = fixture->image;
-  GimpLayer   *layer;
-  GimpContext *context = gimp_context_new (gimp, "Test", NULL /*template*/);
+  Picman        *picman    = PICMAN (data);
+  PicmanImage   *image   = fixture->image;
+  PicmanLayer   *layer;
+  PicmanContext *context = picman_context_new (picman, "Test", NULL /*template*/);
   gboolean     result;
 
-  g_assert_cmpint (gimp_image_get_n_layers (image), ==, 0);
+  g_assert_cmpint (picman_image_get_n_layers (image), ==, 0);
 
-  layer = gimp_layer_new (image,
-                          GIMP_TEST_IMAGE_SIZE,
-                          GIMP_TEST_IMAGE_SIZE,
+  layer = picman_layer_new (image,
+                          PICMAN_TEST_IMAGE_SIZE,
+                          PICMAN_TEST_IMAGE_SIZE,
                           babl_format ("R'G'B'A u8"),
                           "Test Layer",
                           1.0,
-                          GIMP_NORMAL_MODE);
+                          PICMAN_NORMAL_MODE);
 
-  g_assert_cmpint (GIMP_IS_LAYER (layer), ==, TRUE);
+  g_assert_cmpint (PICMAN_IS_LAYER (layer), ==, TRUE);
 
-  result = gimp_image_add_layer (image,
+  result = picman_image_add_layer (image,
                                  layer,
-                                 GIMP_IMAGE_ACTIVE_PARENT,
+                                 PICMAN_IMAGE_ACTIVE_PARENT,
                                  0,
                                  FALSE);
 
-  gimp_item_rotate (GIMP_ITEM (layer), context, GIMP_ROTATE_90, 0., -10., TRUE);
+  picman_item_rotate (PICMAN_ITEM (layer), context, PICMAN_ROTATE_90, 0., -10., TRUE);
 
   g_assert_cmpint (result, ==, TRUE);
-  g_assert_cmpint (gimp_image_get_n_layers (image), ==, 1);
+  g_assert_cmpint (picman_image_get_n_layers (image), ==, 1);
   g_object_unref (context);
 }
 
@@ -151,33 +151,33 @@ rotate_non_overlapping (GimpTestFixture *fixture,
  * Super basic test that makes sure we can add a layer.
  **/
 static void
-add_layer (GimpTestFixture *fixture,
+add_layer (PicmanTestFixture *fixture,
            gconstpointer    data)
 {
-  GimpImage *image = fixture->image;
-  GimpLayer *layer;
+  PicmanImage *image = fixture->image;
+  PicmanLayer *layer;
   gboolean   result;
 
-  g_assert_cmpint (gimp_image_get_n_layers (image), ==, 0);
+  g_assert_cmpint (picman_image_get_n_layers (image), ==, 0);
 
-  layer = gimp_layer_new (image,
-                          GIMP_TEST_IMAGE_SIZE,
-                          GIMP_TEST_IMAGE_SIZE,
+  layer = picman_layer_new (image,
+                          PICMAN_TEST_IMAGE_SIZE,
+                          PICMAN_TEST_IMAGE_SIZE,
                           babl_format ("R'G'B'A u8"),
                           "Test Layer",
                           1.0,
-                          GIMP_NORMAL_MODE);
+                          PICMAN_NORMAL_MODE);
 
-  g_assert_cmpint (GIMP_IS_LAYER (layer), ==, TRUE);
+  g_assert_cmpint (PICMAN_IS_LAYER (layer), ==, TRUE);
 
-  result = gimp_image_add_layer (image,
+  result = picman_image_add_layer (image,
                                  layer,
-                                 GIMP_IMAGE_ACTIVE_PARENT,
+                                 PICMAN_IMAGE_ACTIVE_PARENT,
                                  0,
                                  FALSE);
 
   g_assert_cmpint (result, ==, TRUE);
-  g_assert_cmpint (gimp_image_get_n_layers (image), ==, 1);
+  g_assert_cmpint (picman_image_get_n_layers (image), ==, 1);
 }
 
 /**
@@ -188,40 +188,40 @@ add_layer (GimpTestFixture *fixture,
  * Super basic test that makes sure we can remove a layer.
  **/
 static void
-remove_layer (GimpTestFixture *fixture,
+remove_layer (PicmanTestFixture *fixture,
               gconstpointer    data)
 {
-  GimpImage *image = fixture->image;
-  GimpLayer *layer;
+  PicmanImage *image = fixture->image;
+  PicmanLayer *layer;
   gboolean   result;
 
-  g_assert_cmpint (gimp_image_get_n_layers (image), ==, 0);
+  g_assert_cmpint (picman_image_get_n_layers (image), ==, 0);
 
-  layer = gimp_layer_new (image,
-                          GIMP_TEST_IMAGE_SIZE,
-                          GIMP_TEST_IMAGE_SIZE,
+  layer = picman_layer_new (image,
+                          PICMAN_TEST_IMAGE_SIZE,
+                          PICMAN_TEST_IMAGE_SIZE,
                           babl_format ("R'G'B'A u8"),
                           "Test Layer",
                           1.0,
-                          GIMP_NORMAL_MODE);
+                          PICMAN_NORMAL_MODE);
 
-  g_assert_cmpint (GIMP_IS_LAYER (layer), ==, TRUE);
+  g_assert_cmpint (PICMAN_IS_LAYER (layer), ==, TRUE);
 
-  result = gimp_image_add_layer (image,
+  result = picman_image_add_layer (image,
                                  layer,
-                                 GIMP_IMAGE_ACTIVE_PARENT,
+                                 PICMAN_IMAGE_ACTIVE_PARENT,
                                  0,
                                  FALSE);
 
   g_assert_cmpint (result, ==, TRUE);
-  g_assert_cmpint (gimp_image_get_n_layers (image), ==, 1);
+  g_assert_cmpint (picman_image_get_n_layers (image), ==, 1);
 
-  gimp_image_remove_layer (image,
+  picman_image_remove_layer (image,
                            layer,
                            FALSE,
                            NULL);
 
-  g_assert_cmpint (gimp_image_get_n_layers (image), ==, 0);
+  g_assert_cmpint (picman_image_get_n_layers (image), ==, 0);
 }
 
 /**
@@ -234,18 +234,18 @@ remove_layer (GimpTestFixture *fixture,
  * calculate what gamma will give a white graypoint.
  **/
 static void
-white_graypoint_in_red_levels (GimpTestFixture *fixture,
+white_graypoint_in_red_levels (PicmanTestFixture *fixture,
                                gconstpointer    data)
 {
-  GimpRGB              black   = { 0, 0, 0, 0 };
-  GimpRGB              gray    = { 1, 1, 1, 1 };
-  GimpRGB              white   = { 1, 1, 1, 1 };
-  GimpHistogramChannel channel = GIMP_HISTOGRAM_RED;
-  GimpLevelsConfig    *config;
+  PicmanRGB              black   = { 0, 0, 0, 0 };
+  PicmanRGB              gray    = { 1, 1, 1, 1 };
+  PicmanRGB              white   = { 1, 1, 1, 1 };
+  PicmanHistogramChannel channel = PICMAN_HISTOGRAM_RED;
+  PicmanLevelsConfig    *config;
 
-  config = g_object_new (GIMP_TYPE_LEVELS_CONFIG, NULL);
+  config = g_object_new (PICMAN_TYPE_LEVELS_CONFIG, NULL);
 
-  gimp_levels_config_adjust_by_colors (config,
+  picman_levels_config_adjust_by_colors (config,
                                        channel,
                                        &black,
                                        &gray,
@@ -261,17 +261,17 @@ int
 main (int    argc,
       char **argv)
 {
-  Gimp *gimp;
+  Picman *picman;
   int   result;
 
   g_type_init ();
   g_test_init (&argc, &argv, NULL);
 
-  gimp_test_utils_set_gimp2_directory ("GIMP_TESTING_ABS_TOP_SRCDIR",
-                                       "app/tests/gimpdir");
+  picman_test_utils_set_picman2_directory ("PICMAN_TESTING_ABS_TOP_SRCDIR",
+                                       "app/tests/picmandir");
 
   /* We share the same application instance across all tests */
-  gimp = gimp_init_for_testing ();
+  picman = picman_init_for_testing ();
 
   /* Add tests */
   ADD_IMAGE_TEST (add_layer);
@@ -283,11 +283,11 @@ main (int    argc,
   result = g_test_run ();
 
   /* Don't write files to the source dir */
-  gimp_test_utils_set_gimp2_directory ("GIMP_TESTING_ABS_TOP_BUILDDIR",
-                                       "app/tests/gimpdir-output");
+  picman_test_utils_set_picman2_directory ("PICMAN_TESTING_ABS_TOP_BUILDDIR",
+                                       "app/tests/picmandir-output");
 
   /* Exit so we don't break script-fu plug-in wire */
-  gimp_exit (gimp, TRUE);
+  picman_exit (picman, TRUE);
 
   return result;
 }

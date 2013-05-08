@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
 
 if PLATFORM_WIN32
 no_undefined = -no-undefined
@@ -12,43 +12,43 @@ libm = -lm
 endif
 
 if OS_WIN32
-gimpcolor_def = gimpcolor.def
-libgimpcolor_export_symbols = -export-symbols gimpcolor.def
+picmancolor_def = picmancolor.def
+libpicmancolor_export_symbols = -export-symbols picmancolor.def
 
 install-libtool-import-lib:
-	$(INSTALL) .libs/libgimpcolor-$(GIMP_API_VERSION).dll.a $(DESTDIR)$(libdir)
-	$(INSTALL) gimpcolor.def $(DESTDIR)$(libdir)
+	$(INSTALL) .libs/libpicmancolor-$(PICMAN_API_VERSION).dll.a $(DESTDIR)$(libdir)
+	$(INSTALL) picmancolor.def $(DESTDIR)$(libdir)
 
 uninstall-libtool-import-lib:
-	-rm $(DESTDIR)$(libdir)/libgimpcolor-$(GIMP_API_VERSION).dll.a
-	-rm $(DESTDIR)$(libdir)/gimpcolor.def
+	-rm $(DESTDIR)$(libdir)/libpicmancolor-$(PICMAN_API_VERSION).dll.a
+	-rm $(DESTDIR)$(libdir)/picmancolor.def
 else
 install-libtool-import-lib:
 uninstall-libtool-import-lib:
 endif
 
 if MS_LIB_AVAILABLE
-noinst_DATA = gimpcolor-$(GIMP_API_VERSION).lib
+noinst_DATA = picmancolor-$(PICMAN_API_VERSION).lib
 
 install-ms-lib:
-	$(INSTALL) gimpcolor-$(GIMP_API_VERSION).lib $(DESTDIR)$(libdir)
+	$(INSTALL) picmancolor-$(PICMAN_API_VERSION).lib $(DESTDIR)$(libdir)
 
 uninstall-ms-lib:
-	-rm $(DESTDIR)$(libdir)/gimpcolor-$(GIMP_API_VERSION).lib
+	-rm $(DESTDIR)$(libdir)/picmancolor-$(PICMAN_API_VERSION).lib
 
-gimpcolor-@GIMP_API_VERSION@.lib: gimpcolor.def
-	lib -name:libgimpcolor-$(GIMP_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:gimpcolor.def -out:$@
+picmancolor-@PICMAN_API_VERSION@.lib: picmancolor.def
+	lib -name:libpicmancolor-$(PICMAN_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:picmancolor.def -out:$@
 
 else
 install-ms-lib:
 uninstall-ms-lib:
 endif
 
-libgimpcolorincludedir = $(includedir)/gimp-$(GIMP_API_VERSION)/libgimpcolor
+libpicmancolorincludedir = $(includedir)/picman-$(PICMAN_API_VERSION)/libpicmancolor
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"LibGimpColor\"	\
-	-DGIMP_COLOR_COMPILATION
+	-DG_LOG_DOMAIN=\"LibPicmanColor\"	\
+	-DPICMAN_COLOR_COMPILATION
 
 INCLUDES = \
 	-I$(top_srcdir)		\
@@ -58,59 +58,59 @@ INCLUDES = \
 	-I$(includedir)
 
 EXTRA_DIST = \
-	gimpcolor.def
+	picmancolor.def
 
-lib_LTLIBRARIES = libgimpcolor-@GIMP_API_VERSION@.la
+lib_LTLIBRARIES = libpicmancolor-@PICMAN_API_VERSION@.la
 
-libgimpcolor_@GIMP_API_VERSION@_la_SOURCES = \
-	gimpcolor.h			\
-	gimpcolortypes.h		\
-	gimpadaptivesupersample.c	\
-	gimpadaptivesupersample.h	\
-	gimpbilinear.c			\
-	gimpbilinear.h			\
-	gimpcairo.c			\
-	gimpcairo.h			\
-	gimpcmyk.c			\
-	gimpcmyk.h			\
-	gimpcolormanaged.c		\
-	gimpcolormanaged.h		\
-	gimpcolorspace.c		\
-	gimpcolorspace.h		\
-	gimphsl.c			\
-	gimphsl.h			\
-	gimphsv.c			\
-	gimphsv.h			\
-	gimppixbuf.c			\
-	gimppixbuf.h			\
-	gimprgb.c			\
-	gimprgb.h			\
-	gimprgb-parse.c
+libpicmancolor_@PICMAN_API_VERSION@_la_SOURCES = \
+	picmancolor.h			\
+	picmancolortypes.h		\
+	picmanadaptivesupersample.c	\
+	picmanadaptivesupersample.h	\
+	picmanbilinear.c			\
+	picmanbilinear.h			\
+	picmancairo.c			\
+	picmancairo.h			\
+	picmancmyk.c			\
+	picmancmyk.h			\
+	picmancolormanaged.c		\
+	picmancolormanaged.h		\
+	picmancolorspace.c		\
+	picmancolorspace.h		\
+	picmanhsl.c			\
+	picmanhsl.h			\
+	picmanhsv.c			\
+	picmanhsv.h			\
+	picmanpixbuf.c			\
+	picmanpixbuf.h			\
+	picmanrgb.c			\
+	picmanrgb.h			\
+	picmanrgb-parse.c
 
-libgimpcolorinclude_HEADERS = \
-	gimpcolor.h			\
-	gimpcolortypes.h		\
-	gimpadaptivesupersample.h	\
-	gimpbilinear.h			\
-	gimpcairo.h			\
-	gimpcmyk.h			\
-	gimpcolormanaged.h		\
-	gimpcolorspace.h		\
-	gimphsl.h			\
-	gimphsv.h			\
-	gimppixbuf.h			\
-	gimprgb.h
+libpicmancolorinclude_HEADERS = \
+	picmancolor.h			\
+	picmancolortypes.h		\
+	picmanadaptivesupersample.h	\
+	picmanbilinear.h			\
+	picmancairo.h			\
+	picmancmyk.h			\
+	picmancolormanaged.h		\
+	picmancolorspace.h		\
+	picmanhsl.h			\
+	picmanhsv.h			\
+	picmanpixbuf.h			\
+	picmanrgb.h
 
-libgimpcolor_@GIMP_API_VERSION@_la_LDFLAGS = \
+libpicmancolor_@PICMAN_API_VERSION@_la_LDFLAGS = \
 	-version-info $(LT_VERSION_INFO)	\
 	$(no_undefined) 			\
-	$(libgimpcolor_export_symbols)
+	$(libpicmancolor_export_symbols)
 
-libgimpcolor_@GIMP_API_VERSION@_la_DEPENDENCIES = \
-	$(gimpcolor_def)	\
-	$(libgimpbase)
+libpicmancolor_@PICMAN_API_VERSION@_la_DEPENDENCIES = \
+	$(picmancolor_def)	\
+	$(libpicmanbase)
 
-libgimpcolor_@GIMP_API_VERSION@_la_LIBADD = \
+libpicmancolor_@PICMAN_API_VERSION@_la_LIBADD = \
 	$(GEGL_LIBS)		\
 	$(CAIRO_LIBS)		\
 	$(GDK_PIXBUF_LIBS)	\
@@ -126,7 +126,7 @@ TESTS = test-color-parser$(EXEEXT)
 EXTRA_PROGRAMS = test-color-parser
 
 test_color_parser_DEPENDENCIES = \
-	$(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
+	$(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
 
 test_color_parser_LDADD = \
 	$(CAIRO_LIBS) 		\

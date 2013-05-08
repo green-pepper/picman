@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -22,18 +22,18 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimppreviewarea.h"
+#include "picmanpreviewarea.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimppreviewarea
- * @title: GimpPreviewArea
+ * SECTION: picmanpreviewarea
+ * @title: PicmanPreviewArea
  * @short_description: A general purpose preview widget which caches
  *                     its pixel data.
  *
@@ -49,72 +49,72 @@ enum
 };
 
 
-#define DEFAULT_CHECK_SIZE  GIMP_CHECK_SIZE_MEDIUM_CHECKS
-#define DEFAULT_CHECK_TYPE  GIMP_CHECK_TYPE_GRAY_CHECKS
+#define DEFAULT_CHECK_SIZE  PICMAN_CHECK_SIZE_MEDIUM_CHECKS
+#define DEFAULT_CHECK_TYPE  PICMAN_CHECK_TYPE_GRAY_CHECKS
 
 #define CHECK_COLOR(area, row, col)        \
   (((((area)->offset_y + (row)) & size) ^  \
     (((area)->offset_x + (col)) & size)) ? dark : light)
 
 
-static void      gimp_preview_area_finalize         (GObject         *object);
-static void      gimp_preview_area_set_property     (GObject         *object,
+static void      picman_preview_area_finalize         (GObject         *object);
+static void      picman_preview_area_set_property     (GObject         *object,
                                                      guint            property_id,
                                                      const GValue    *value,
                                                      GParamSpec      *pspec);
-static void      gimp_preview_area_get_property     (GObject         *object,
+static void      picman_preview_area_get_property     (GObject         *object,
                                                      guint            property_id,
                                                      GValue          *value,
                                                      GParamSpec      *pspec);
 
-static void      gimp_preview_area_size_allocate    (GtkWidget       *widget,
+static void      picman_preview_area_size_allocate    (GtkWidget       *widget,
                                                      GtkAllocation   *allocation);
-static gboolean  gimp_preview_area_expose           (GtkWidget       *widget,
+static gboolean  picman_preview_area_expose           (GtkWidget       *widget,
                                                      GdkEventExpose  *event);
 
-static void      gimp_preview_area_queue_draw       (GimpPreviewArea *area,
+static void      picman_preview_area_queue_draw       (PicmanPreviewArea *area,
                                                      gint             x,
                                                      gint             y,
                                                      gint             width,
                                                      gint             height);
-static gint      gimp_preview_area_image_type_bytes (GimpImageType    type);
+static gint      picman_preview_area_image_type_bytes (PicmanImageType    type);
 
 
-G_DEFINE_TYPE (GimpPreviewArea, gimp_preview_area, GTK_TYPE_DRAWING_AREA)
+G_DEFINE_TYPE (PicmanPreviewArea, picman_preview_area, GTK_TYPE_DRAWING_AREA)
 
-#define parent_class gimp_preview_area_parent_class
+#define parent_class picman_preview_area_parent_class
 
 
 static void
-gimp_preview_area_class_init (GimpPreviewAreaClass *klass)
+picman_preview_area_class_init (PicmanPreviewAreaClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize      = gimp_preview_area_finalize;
-  object_class->set_property  = gimp_preview_area_set_property;
-  object_class->get_property  = gimp_preview_area_get_property;
+  object_class->finalize      = picman_preview_area_finalize;
+  object_class->set_property  = picman_preview_area_set_property;
+  object_class->get_property  = picman_preview_area_get_property;
 
-  widget_class->size_allocate = gimp_preview_area_size_allocate;
-  widget_class->expose_event  = gimp_preview_area_expose;
+  widget_class->size_allocate = picman_preview_area_size_allocate;
+  widget_class->expose_event  = picman_preview_area_expose;
 
   g_object_class_install_property (object_class, PROP_CHECK_SIZE,
                                    g_param_spec_enum ("check-size",
                                                       _("Check Size"), NULL,
-                                                      GIMP_TYPE_CHECK_SIZE,
+                                                      PICMAN_TYPE_CHECK_SIZE,
                                                       DEFAULT_CHECK_SIZE,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_CHECK_TYPE,
                                    g_param_spec_enum ("check-type",
                                                       _("Check Style"), NULL,
-                                                      GIMP_TYPE_CHECK_TYPE,
+                                                      PICMAN_TYPE_CHECK_TYPE,
                                                       DEFAULT_CHECK_TYPE,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_preview_area_init (GimpPreviewArea *area)
+picman_preview_area_init (PicmanPreviewArea *area)
 {
   area->check_size = DEFAULT_CHECK_SIZE;
   area->check_type = DEFAULT_CHECK_TYPE;
@@ -130,9 +130,9 @@ gimp_preview_area_init (GimpPreviewArea *area)
 }
 
 static void
-gimp_preview_area_finalize (GObject *object)
+picman_preview_area_finalize (GObject *object)
 {
-  GimpPreviewArea *area = GIMP_PREVIEW_AREA (object);
+  PicmanPreviewArea *area = PICMAN_PREVIEW_AREA (object);
 
   if (area->buf)
     {
@@ -149,12 +149,12 @@ gimp_preview_area_finalize (GObject *object)
 }
 
 static void
-gimp_preview_area_set_property (GObject      *object,
+picman_preview_area_set_property (GObject      *object,
                                 guint         property_id,
                                 const GValue *value,
                                 GParamSpec   *pspec)
 {
-  GimpPreviewArea *area = GIMP_PREVIEW_AREA (object);
+  PicmanPreviewArea *area = PICMAN_PREVIEW_AREA (object);
 
   switch (property_id)
     {
@@ -172,12 +172,12 @@ gimp_preview_area_set_property (GObject      *object,
 }
 
 static void
-gimp_preview_area_get_property (GObject    *object,
+picman_preview_area_get_property (GObject    *object,
                                 guint       property_id,
                                 GValue     *value,
                                 GParamSpec *pspec)
 {
-  GimpPreviewArea *area = GIMP_PREVIEW_AREA (object);
+  PicmanPreviewArea *area = PICMAN_PREVIEW_AREA (object);
 
   switch (property_id)
     {
@@ -195,10 +195,10 @@ gimp_preview_area_get_property (GObject    *object,
 }
 
 static void
-gimp_preview_area_size_allocate (GtkWidget     *widget,
+picman_preview_area_size_allocate (GtkWidget     *widget,
                                  GtkAllocation *allocation)
 {
-  GimpPreviewArea *area = GIMP_PREVIEW_AREA (widget);
+  PicmanPreviewArea *area = PICMAN_PREVIEW_AREA (widget);
   gint             width;
   gint             height;
 
@@ -226,10 +226,10 @@ gimp_preview_area_size_allocate (GtkWidget     *widget,
 }
 
 static gboolean
-gimp_preview_area_expose (GtkWidget      *widget,
+picman_preview_area_expose (GtkWidget      *widget,
                           GdkEventExpose *event)
 {
-  GimpPreviewArea *area = GIMP_PREVIEW_AREA (widget);
+  PicmanPreviewArea *area = PICMAN_PREVIEW_AREA (widget);
   GtkAllocation    allocation;
   GdkPixbuf       *pixbuf;
   GdkRectangle     rect;
@@ -268,7 +268,7 @@ gimp_preview_area_expose (GtkWidget      *widget,
 }
 
 static void
-gimp_preview_area_queue_draw (GimpPreviewArea *area,
+picman_preview_area_queue_draw (PicmanPreviewArea *area,
                               gint             x,
                               gint             y,
                               gint             width,
@@ -286,22 +286,22 @@ gimp_preview_area_queue_draw (GimpPreviewArea *area,
 }
 
 static gint
-gimp_preview_area_image_type_bytes (GimpImageType type)
+picman_preview_area_image_type_bytes (PicmanImageType type)
 {
   switch (type)
     {
-    case GIMP_GRAY_IMAGE:
-    case GIMP_INDEXED_IMAGE:
+    case PICMAN_GRAY_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
       return 1;
 
-    case GIMP_GRAYA_IMAGE:
-    case GIMP_INDEXEDA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
+    case PICMAN_INDEXEDA_IMAGE:
       return 2;
 
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       return 3;
 
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       return 4;
 
     default:
@@ -311,42 +311,42 @@ gimp_preview_area_image_type_bytes (GimpImageType type)
 }
 
 /**
- * gimp_preview_area_new:
+ * picman_preview_area_new:
  *
- * Creates a new #GimpPreviewArea widget.
+ * Creates a new #PicmanPreviewArea widget.
  *
- * Return value: a new #GimpPreviewArea widget.
+ * Return value: a new #PicmanPreviewArea widget.
  *
- * Since GIMP 2.2
+ * Since PICMAN 2.2
  **/
 GtkWidget *
-gimp_preview_area_new (void)
+picman_preview_area_new (void)
 {
-  return g_object_new (GIMP_TYPE_PREVIEW_AREA, NULL);
+  return g_object_new (PICMAN_TYPE_PREVIEW_AREA, NULL);
 }
 
 /**
- * gimp_preview_area_draw:
- * @area:      a #GimpPreviewArea widget.
+ * picman_preview_area_draw:
+ * @area:      a #PicmanPreviewArea widget.
  * @x:         x offset in preview
  * @y:         y offset in preview
  * @width:     buffer width
  * @height:    buffer height
- * @type:      the #GimpImageType of @buf
+ * @type:      the #PicmanImageType of @buf
  * @buf:       a #guchar buffer that contains the preview pixel data.
  * @rowstride: rowstride of @buf
  *
  * Draws @buf on @area and queues a redraw on the given rectangle.
  *
- * Since GIMP 2.2
+ * Since PICMAN 2.2
  **/
 void
-gimp_preview_area_draw (GimpPreviewArea *area,
+picman_preview_area_draw (PicmanPreviewArea *area,
                         gint             x,
                         gint             y,
                         gint             width,
                         gint             height,
-                        GimpImageType    type,
+                        PicmanImageType    type,
                         const guchar    *buf,
                         gint             rowstride)
 {
@@ -358,7 +358,7 @@ gimp_preview_area_draw (GimpPreviewArea *area,
   gint          row;
   gint          col;
 
-  g_return_if_fail (GIMP_IS_PREVIEW_AREA (area));
+  g_return_if_fail (PICMAN_IS_PREVIEW_AREA (area));
   g_return_if_fail (width >= 0 && height >= 0);
 
   if (width == 0 || height == 0)
@@ -375,7 +375,7 @@ gimp_preview_area_draw (GimpPreviewArea *area,
 
   if (x < 0)
     {
-      gint bpp = gimp_preview_area_image_type_bytes (type);
+      gint bpp = picman_preview_area_image_type_bytes (type);
 
       buf -= x * bpp;
       width += x;
@@ -404,14 +404,14 @@ gimp_preview_area_draw (GimpPreviewArea *area,
     }
 
   size = 1 << (2 + area->check_size);
-  gimp_checks_get_shades (area->check_type, &light, &dark);
+  picman_checks_get_shades (area->check_type, &light, &dark);
 
   src  = buf;
   dest = area->buf + x * 3 + y * area->rowstride;
 
   switch (type)
     {
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       for (row = 0; row < height; row++)
         {
           memcpy (dest, src, 3 * width);
@@ -421,7 +421,7 @@ gimp_preview_area_draw (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
        for (row = y; row < y + height; row++)
         {
           const guchar *s = src;
@@ -459,7 +459,7 @@ gimp_preview_area_draw (GimpPreviewArea *area,
         }
        break;
 
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       for (row = 0; row < height; row++)
         {
           const guchar *s = src;
@@ -475,7 +475,7 @@ gimp_preview_area_draw (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       for (row = y; row < y + height; row++)
         {
           const guchar *s = src;
@@ -510,7 +510,7 @@ gimp_preview_area_draw (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_INDEXED_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
       g_return_if_fail (area->colormap != NULL);
       for (row = 0; row < height; row++)
         {
@@ -531,7 +531,7 @@ gimp_preview_area_draw (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_INDEXEDA_IMAGE:
+    case PICMAN_INDEXEDA_IMAGE:
       g_return_if_fail (area->colormap != NULL);
       for (row = y; row < y + height; row++)
         {
@@ -573,17 +573,17 @@ gimp_preview_area_draw (GimpPreviewArea *area,
       break;
     }
 
-  gimp_preview_area_queue_draw (area, x, y, width, height);
+  picman_preview_area_queue_draw (area, x, y, width, height);
 }
 
 /**
- * gimp_preview_area_blend:
- * @area:       a #GimpPreviewArea widget.
+ * picman_preview_area_blend:
+ * @area:       a #PicmanPreviewArea widget.
  * @x:          x offset in preview
  * @y:          y offset in preview
  * @width:      buffer width
  * @height:     buffer height
- * @type:       the #GimpImageType of @buf1 and @buf2
+ * @type:       the #PicmanImageType of @buf1 and @buf2
  * @buf1:       a #guchar buffer that contains the pixel data for
  *              the lower layer
  * @rowstride1: rowstride of @buf1
@@ -595,15 +595,15 @@ gimp_preview_area_draw (GimpPreviewArea *area,
  * Composites @buf1 on @buf2 with the given @opacity, draws the result
  * to @area and queues a redraw on the given rectangle.
  *
- * Since GIMP 2.2
+ * Since PICMAN 2.2
  **/
 void
-gimp_preview_area_blend (GimpPreviewArea *area,
+picman_preview_area_blend (PicmanPreviewArea *area,
                          gint             x,
                          gint             y,
                          gint             width,
                          gint             height,
-                         GimpImageType    type,
+                         PicmanImageType    type,
                          const guchar    *buf1,
                          gint             rowstride1,
                          const guchar    *buf2,
@@ -620,7 +620,7 @@ gimp_preview_area_blend (GimpPreviewArea *area,
   gint          col;
   gint          i;
 
-  g_return_if_fail (GIMP_IS_PREVIEW_AREA (area));
+  g_return_if_fail (PICMAN_IS_PREVIEW_AREA (area));
   g_return_if_fail (width >= 0 && height >= 0);
 
   if (width == 0 || height == 0)
@@ -634,12 +634,12 @@ gimp_preview_area_blend (GimpPreviewArea *area,
   switch (opacity)
     {
     case 0:
-      gimp_preview_area_draw (area, x, y, width, height,
+      picman_preview_area_draw (area, x, y, width, height,
                               type, buf1, rowstride1);
       return;
 
     case 255:
-      gimp_preview_area_draw (area, x, y, width, height,
+      picman_preview_area_draw (area, x, y, width, height,
                               type, buf2, rowstride2);
       return;
 
@@ -655,7 +655,7 @@ gimp_preview_area_blend (GimpPreviewArea *area,
 
   if (x < 0)
     {
-      gint bpp = gimp_preview_area_image_type_bytes (type);
+      gint bpp = picman_preview_area_image_type_bytes (type);
 
       buf1 -= x * bpp;
       buf2 -= x * bpp;
@@ -686,7 +686,7 @@ gimp_preview_area_blend (GimpPreviewArea *area,
     }
 
   size = 1 << (2 + area->check_size);
-  gimp_checks_get_shades (area->check_type, &light, &dark);
+  picman_checks_get_shades (area->check_type, &light, &dark);
 
   src1 = buf1;
   src2 = buf2;
@@ -694,7 +694,7 @@ gimp_preview_area_blend (GimpPreviewArea *area,
 
   switch (type)
     {
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       for (row = 0; row < height; row++)
         {
           const guchar *s1 = src1;
@@ -714,7 +714,7 @@ gimp_preview_area_blend (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
       for (row = y; row < y + height; row++)
         {
           const guchar *s1 = src1;
@@ -780,7 +780,7 @@ gimp_preview_area_blend (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       for (row = 0; row < height; row++)
         {
           const guchar *s1 = src1;
@@ -799,7 +799,7 @@ gimp_preview_area_blend (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       for (row = y; row < y + height; row++)
         {
           const guchar *s1 = src1;
@@ -857,7 +857,7 @@ gimp_preview_area_blend (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_INDEXED_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
       g_return_if_fail (area->colormap != NULL);
       for (row = 0; row < height; row++)
         {
@@ -881,7 +881,7 @@ gimp_preview_area_blend (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_INDEXEDA_IMAGE:
+    case PICMAN_INDEXEDA_IMAGE:
       g_return_if_fail (area->colormap != NULL);
       for (row = y; row < y + height; row++)
         {
@@ -954,17 +954,17 @@ gimp_preview_area_blend (GimpPreviewArea *area,
       break;
     }
 
-  gimp_preview_area_queue_draw (area, x, y, width, height);
+  picman_preview_area_queue_draw (area, x, y, width, height);
 }
 
 /**
- * gimp_preview_area_mask:
- * @area:           a #GimpPreviewArea widget.
+ * picman_preview_area_mask:
+ * @area:           a #PicmanPreviewArea widget.
  * @x:              x offset in preview
  * @y:              y offset in preview
  * @width:          buffer width
  * @height:         buffer height
- * @type:           the #GimpImageType of @buf1 and @buf2
+ * @type:           the #PicmanImageType of @buf1 and @buf2
  * @buf1:           a #guchar buffer that contains the pixel data for
  *                  the lower layer
  * @rowstride1:     rowstride of @buf1
@@ -978,15 +978,15 @@ gimp_preview_area_blend (GimpPreviewArea *area,
  * Composites @buf1 on @buf2 with the given @mask, draws the result on
  * @area and queues a redraw on the given rectangle.
  *
- * Since GIMP 2.2
+ * Since PICMAN 2.2
  **/
 void
-gimp_preview_area_mask (GimpPreviewArea *area,
+picman_preview_area_mask (PicmanPreviewArea *area,
                         gint             x,
                         gint             y,
                         gint             width,
                         gint             height,
-                        GimpImageType    type,
+                        PicmanImageType    type,
                         const guchar    *buf1,
                         gint             rowstride1,
                         const guchar    *buf2,
@@ -1005,7 +1005,7 @@ gimp_preview_area_mask (GimpPreviewArea *area,
   gint          col;
   gint          i;
 
-  g_return_if_fail (GIMP_IS_PREVIEW_AREA (area));
+  g_return_if_fail (PICMAN_IS_PREVIEW_AREA (area));
   g_return_if_fail (width >= 0 && height >= 0);
 
   if (width == 0 || height == 0)
@@ -1026,7 +1026,7 @@ gimp_preview_area_mask (GimpPreviewArea *area,
 
   if (x < 0)
     {
-      gint bpp = gimp_preview_area_image_type_bytes (type);
+      gint bpp = picman_preview_area_image_type_bytes (type);
 
       buf1 -= x * bpp;
       buf2 -= x * bpp;
@@ -1059,7 +1059,7 @@ gimp_preview_area_mask (GimpPreviewArea *area,
     }
 
   size = 1 << (2 + area->check_size);
-  gimp_checks_get_shades (area->check_type, &light, &dark);
+  picman_checks_get_shades (area->check_type, &light, &dark);
 
   src1     = buf1;
   src2     = buf2;
@@ -1068,7 +1068,7 @@ gimp_preview_area_mask (GimpPreviewArea *area,
 
   switch (type)
     {
-    case GIMP_RGB_IMAGE:
+    case PICMAN_RGB_IMAGE:
       for (row = 0; row < height; row++)
         {
           const guchar *s1 = src1;
@@ -1090,7 +1090,7 @@ gimp_preview_area_mask (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_RGBA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
        for (row = y; row < y + height; row++)
         {
           const guchar *s1 = src1;
@@ -1220,7 +1220,7 @@ gimp_preview_area_mask (GimpPreviewArea *area,
         }
        break;
 
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       for (row = 0; row < height; row++)
         {
           const guchar *s1 = src1;
@@ -1238,7 +1238,7 @@ gimp_preview_area_mask (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       for (row = y; row < y + height; row++)
         {
           const guchar *s1 = src1;
@@ -1351,7 +1351,7 @@ gimp_preview_area_mask (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_INDEXED_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
       g_return_if_fail (area->colormap != NULL);
       for (row = 0; row < height; row++)
         {
@@ -1377,7 +1377,7 @@ gimp_preview_area_mask (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_INDEXEDA_IMAGE:
+    case PICMAN_INDEXEDA_IMAGE:
       g_return_if_fail (area->colormap != NULL);
       for (row = y; row < y + height; row++)
         {
@@ -1515,12 +1515,12 @@ gimp_preview_area_mask (GimpPreviewArea *area,
       break;
     }
 
-  gimp_preview_area_queue_draw (area, x, y, width, height);
+  picman_preview_area_queue_draw (area, x, y, width, height);
 }
 
 /**
- * gimp_preview_area_fill:
- * @area:   a #GimpPreviewArea widget.
+ * picman_preview_area_fill:
+ * @area:   a #PicmanPreviewArea widget.
  * @x:      x offset in preview
  * @y:      y offset in preview
  * @width:  width of the rectangle to fill
@@ -1532,10 +1532,10 @@ gimp_preview_area_mask (GimpPreviewArea *area,
  * Fills the given rectangle of @area in the given color and queues a
  * redraw.
  *
- * Since GIMP 2.2
+ * Since PICMAN 2.2
  **/
 void
-gimp_preview_area_fill (GimpPreviewArea *area,
+picman_preview_area_fill (PicmanPreviewArea *area,
                         gint             x,
                         gint             y,
                         gint             width,
@@ -1549,7 +1549,7 @@ gimp_preview_area_fill (GimpPreviewArea *area,
   gint    row;
   gint    col;
 
-  g_return_if_fail (GIMP_IS_PREVIEW_AREA (area));
+  g_return_if_fail (PICMAN_IS_PREVIEW_AREA (area));
   g_return_if_fail (width >= 0 && height >= 0);
 
   if (width == 0 || height == 0)
@@ -1602,49 +1602,49 @@ gimp_preview_area_fill (GimpPreviewArea *area,
       memcpy (d, dest, width * 3);
     }
 
-  gimp_preview_area_queue_draw (area, x, y, width, height);
+  picman_preview_area_queue_draw (area, x, y, width, height);
 }
 
 /**
- * gimp_preview_area_set_offsets:
- * @area: a #GimpPreviewArea
+ * picman_preview_area_set_offsets:
+ * @area: a #PicmanPreviewArea
  * @x:    horizontal offset
  * @y:    vertical offset
  *
  * Sets the offsets of the previewed area. This information is used
  * when drawing the checkerboard and to determine the dither offsets.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_preview_area_set_offsets (GimpPreviewArea *area,
+picman_preview_area_set_offsets (PicmanPreviewArea *area,
                                gint             x,
                                gint             y)
 {
-  g_return_if_fail (GIMP_IS_PREVIEW_AREA (area));
+  g_return_if_fail (PICMAN_IS_PREVIEW_AREA (area));
 
   area->offset_x = x;
   area->offset_y = y;
 }
 
 /**
- * gimp_preview_area_set_colormap:
- * @area:       a #GimpPreviewArea
+ * picman_preview_area_set_colormap:
+ * @area:       a #PicmanPreviewArea
  * @colormap:   a #guchar buffer that contains the colormap
  * @num_colors: the number of colors in the colormap
  *
- * Sets the colormap for the #GimpPreviewArea widget. You need to
- * call this function before you use gimp_preview_area_draw() with
- * an image type of %GIMP_INDEXED_IMAGE or %GIMP_INDEXEDA_IMAGE.
+ * Sets the colormap for the #PicmanPreviewArea widget. You need to
+ * call this function before you use picman_preview_area_draw() with
+ * an image type of %PICMAN_INDEXED_IMAGE or %PICMAN_INDEXEDA_IMAGE.
  *
- * Since GIMP 2.2
+ * Since PICMAN 2.2
  **/
 void
-gimp_preview_area_set_colormap (GimpPreviewArea *area,
+picman_preview_area_set_colormap (PicmanPreviewArea *area,
                                 const guchar    *colormap,
                                 gint             num_colors)
 {
-  g_return_if_fail (GIMP_IS_PREVIEW_AREA (area));
+  g_return_if_fail (PICMAN_IS_PREVIEW_AREA (area));
   g_return_if_fail (colormap != NULL || num_colors == 0);
   g_return_if_fail (num_colors >= 0 && num_colors <= 256);
 
@@ -1665,24 +1665,24 @@ gimp_preview_area_set_colormap (GimpPreviewArea *area,
 }
 
 /**
- * gimp_preview_area_set_max_size:
- * @area:   a #GimpPreviewArea widget
+ * picman_preview_area_set_max_size:
+ * @area:   a #PicmanPreviewArea widget
  * @width:  the maximum width in pixels or -1 to unset the limit
  * @height: the maximum height in pixels or -1 to unset the limit
  *
- * Usually a #GimpPreviewArea fills the size that it is
+ * Usually a #PicmanPreviewArea fills the size that it is
  * allocated. This function allows you to limit the preview area to a
  * maximum size. If a larger size is allocated for the widget, the
  * preview will draw itself centered into the allocated area.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_preview_area_set_max_size (GimpPreviewArea *area,
+picman_preview_area_set_max_size (PicmanPreviewArea *area,
                                 gint             width,
                                 gint             height)
 {
-  g_return_if_fail (GIMP_IS_PREVIEW_AREA (area));
+  g_return_if_fail (PICMAN_IS_PREVIEW_AREA (area));
 
   area->max_width  = width;
   area->max_height = height;
@@ -1693,20 +1693,20 @@ gimp_preview_area_set_max_size (GimpPreviewArea *area,
 /*  popup menu  */
 
 static void
-gimp_preview_area_menu_toggled (GtkWidget       *item,
-                                GimpPreviewArea *area)
+picman_preview_area_menu_toggled (GtkWidget       *item,
+                                PicmanPreviewArea *area)
 {
   gboolean active = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (item));
 
   if (active)
     {
       const gchar *name = g_object_get_data (G_OBJECT (item),
-                                             "gimp-preview-area-prop-name");
+                                             "picman-preview-area-prop-name");
       if (name)
         {
           gint  value =
             GPOINTER_TO_INT (g_object_get_data (G_OBJECT (item),
-                                                "gimp-preview-area-prop-value"));
+                                                "picman-preview-area-prop-value"));
           g_object_set (area,
                         name, value,
                         NULL);
@@ -1715,7 +1715,7 @@ gimp_preview_area_menu_toggled (GtkWidget       *item,
 }
 
 static GtkWidget *
-gimp_preview_area_menu_new (GimpPreviewArea *area,
+picman_preview_area_menu_new (PicmanPreviewArea *area,
                             const gchar     *property)
 {
   GParamSpec *pspec;
@@ -1740,7 +1740,7 @@ gimp_preview_area_menu_new (GimpPreviewArea *area,
 
   for (enum_value = enum_class->values; enum_value->value_name; enum_value++)
     {
-      const gchar *name = gimp_enum_value_get_desc (enum_class, enum_value);
+      const gchar *name = picman_enum_value_get_desc (enum_class, enum_value);
 
       item = gtk_radio_menu_item_new_with_label (group, name);
 
@@ -1748,18 +1748,18 @@ gimp_preview_area_menu_new (GimpPreviewArea *area,
       gtk_widget_show (item);
 
       g_object_set_data (G_OBJECT (item),
-                         "gimp-preview-area-prop-name",
+                         "picman-preview-area-prop-name",
                          (gpointer) property);
 
       g_object_set_data (G_OBJECT (item),
-                         "gimp-preview-area-prop-value",
+                         "picman-preview-area-prop-value",
                          GINT_TO_POINTER (enum_value->value));
 
       gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item),
                                       (enum_value->value == value));
 
       g_signal_connect (item, "toggled",
-                        G_CALLBACK (gimp_preview_area_menu_toggled),
+                        G_CALLBACK (picman_preview_area_menu_toggled),
                         area);
 
       group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
@@ -1775,31 +1775,31 @@ gimp_preview_area_menu_new (GimpPreviewArea *area,
 }
 
 /**
- * gimp_preview_area_menu_popup:
- * @area:  a #GimpPreviewArea
+ * picman_preview_area_menu_popup:
+ * @area:  a #PicmanPreviewArea
  * @event: the button event that causes the menu to popup or %NULL
  *
  * Creates a popup menu that allows one to configure the size and type of
  * the checkerboard pattern that the @area uses to visualize transparency.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 void
-gimp_preview_area_menu_popup (GimpPreviewArea *area,
+picman_preview_area_menu_popup (PicmanPreviewArea *area,
                               GdkEventButton  *event)
 {
   GtkWidget *menu;
 
-  g_return_if_fail (GIMP_IS_PREVIEW_AREA (area));
+  g_return_if_fail (PICMAN_IS_PREVIEW_AREA (area));
 
   menu = gtk_menu_new ();
   gtk_menu_set_screen (GTK_MENU (menu),
                        gtk_widget_get_screen (GTK_WIDGET (area)));
 
   gtk_menu_shell_append (GTK_MENU_SHELL (menu),
-                         gimp_preview_area_menu_new (area, "check-type"));
+                         picman_preview_area_menu_new (area, "check-type"));
   gtk_menu_shell_append (GTK_MENU_SHELL (menu),
-                         gimp_preview_area_menu_new (area, "check-size"));
+                         picman_preview_area_menu_new (area, "check-size"));
 
   if (event)
     gtk_menu_popup (GTK_MENU (menu),

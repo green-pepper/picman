@@ -1,5 +1,5 @@
 /*
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates clickable image maps.
  *
@@ -27,7 +27,7 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "imap_browse.h"
 #include "imap_commands.h"
@@ -37,7 +37,7 @@
 #include "imap_stock.h"
 #include "imap_table.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 static gboolean callback_lock;
 
@@ -202,7 +202,7 @@ create_link_tab(AreaInfoDialog_t *dialog, GtkWidget *notebook)
    gtk_table_set_row_spacings(GTK_TABLE(table), 6);
    gtk_widget_show(table);
 
-   frame = gimp_frame_new(_("Link Type"));
+   frame = picman_frame_new(_("Link Type"));
    gtk_table_attach_defaults(GTK_TABLE(table), frame, 0, 2, 0, 1);
    gtk_widget_show(frame);
 
@@ -282,7 +282,7 @@ create_link_tab(AreaInfoDialog_t *dialog, GtkWidget *notebook)
    label = create_label_in_table(table, 9, 0, _("ALT te_xt: (optional)"));
    dialog->comment = create_entry_in_table(table, label, 10, 0);
 
-   append_page (notebook, table, GIMP_STOCK_WEB, _("_Link"));
+   append_page (notebook, table, PICMAN_STOCK_WEB, _("_Link"));
 }
 
 static void
@@ -316,7 +316,7 @@ create_info_tab(AreaInfoDialog_t *dialog, GtkWidget *notebook)
    gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
    gtk_widget_show(vbox);
 
-   frame = gimp_frame_new(_("Dimensions"));
+   frame = picman_frame_new(_("Dimensions"));
    gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
    gtk_widget_show(frame);
 

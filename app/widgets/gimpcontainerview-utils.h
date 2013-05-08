@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcontainerview-utils.h
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmancontainerview-utils.h
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTAINER_VIEW_UTILS_H__
-#define __GIMP_CONTAINER_VIEW_UTILS_H__
+#ifndef __PICMAN_CONTAINER_VIEW_UTILS_H__
+#define __PICMAN_CONTAINER_VIEW_UTILS_H__
 
 
-GimpContainerView * gimp_container_view_get_by_dockable (GimpDockable      *dockable);
+PicmanContainerView * picman_container_view_get_by_dockable (PicmanDockable      *dockable);
 
-void                gimp_container_view_remove_active   (GimpContainerView *view);
+void                picman_container_view_remove_active   (PicmanContainerView *view);
 
 
-#endif  /*  __GIMP_CONTAINER_VIEW_UTILS_H__  */
+#endif  /*  __PICMAN_CONTAINER_VIEW_UTILS_H__  */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpcontainer-filter.c
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * picmancontainer-filter.c
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTAINER_FILTER_H__
-#define __GIMP_CONTAINER_FILTER_H__
+#ifndef __PICMAN_CONTAINER_FILTER_H__
+#define __PICMAN_CONTAINER_FILTER_H__
 
 
-GimpContainer * gimp_container_filter         (const GimpContainer  *container,
-                                               GimpObjectFilterFunc  filter,
+PicmanContainer * picman_container_filter         (const PicmanContainer  *container,
+                                               PicmanObjectFilterFunc  filter,
                                                gpointer              user_data);
-GimpContainer * gimp_container_filter_by_name (const GimpContainer  *container,
+PicmanContainer * picman_container_filter_by_name (const PicmanContainer  *container,
                                                const gchar          *regexp,
                                                GError              **error);
 
-gchar        ** gimp_container_get_filtered_name_array
-                                              (const GimpContainer  *container,
+gchar        ** picman_container_get_filtered_name_array
+                                              (const PicmanContainer  *container,
                                                const gchar          *regexp,
                                                gint                 *length);
 
 
-#endif  /* __GIMP_CONTAINER_FILTER_H__ */
+#endif  /* __PICMAN_CONTAINER_FILTER_H__ */

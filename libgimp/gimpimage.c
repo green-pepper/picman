@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2000 Peter Mattis and Spencer Kimball
  *
- * gimpimage.c
+ * picmanimage.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,11 +20,11 @@
 
 #include "config.h"
 
-#include "gimp.h"
-#include "gimpimage.h"
+#include "picman.h"
+#include "picmanimage.h"
 
 /**
- * gimp_image_get_colormap:
+ * picman_image_get_colormap:
  * @image_ID:   The image.
  * @num_colors: Returns the number of colors in the colormap array.
  *
@@ -37,13 +37,13 @@
  * Returns: The image's colormap.
  */
 guchar *
-gimp_image_get_colormap (gint32  image_ID,
+picman_image_get_colormap (gint32  image_ID,
                          gint   *num_colors)
 {
   gint    num_bytes;
   guchar *cmap;
 
-  cmap = _gimp_image_get_colormap (image_ID, &num_bytes);
+  cmap = _picman_image_get_colormap (image_ID, &num_bytes);
 
   if (num_colors)
     *num_colors = num_bytes / 3;
@@ -52,7 +52,7 @@ gimp_image_get_colormap (gint32  image_ID,
 }
 
 /**
- * gimp_image_set_colormap:
+ * picman_image_set_colormap:
  * @image_ID:   The image.
  * @colormap:   The new colormap values.
  * @num_colors: Number of colors in the colormap array.
@@ -67,15 +67,15 @@ gimp_image_get_colormap (gint32  image_ID,
  * Returns: TRUE on success.
  */
 gboolean
-gimp_image_set_colormap (gint32        image_ID,
+picman_image_set_colormap (gint32        image_ID,
                          const guchar *colormap,
                          gint          num_colors)
 {
-  return _gimp_image_set_colormap (image_ID, num_colors * 3, colormap);
+  return _picman_image_set_colormap (image_ID, num_colors * 3, colormap);
 }
 
 guchar *
-gimp_image_get_thumbnail_data (gint32  image_ID,
+picman_image_get_thumbnail_data (gint32  image_ID,
                                gint   *width,
                                gint   *height,
                                gint   *bpp)
@@ -85,7 +85,7 @@ gimp_image_get_thumbnail_data (gint32  image_ID,
   guchar *image_data;
   gint    data_size;
 
-  _gimp_image_thumbnail (image_ID,
+  _picman_image_thumbnail (image_ID,
                          *width,
                          *height,
                          &ret_width,
@@ -101,360 +101,360 @@ gimp_image_get_thumbnail_data (gint32  image_ID,
 }
 
 /**
- * gimp_image_get_cmap:
+ * picman_image_get_cmap:
  * @image_ID:   The image.
  * @num_colors: Number of colors in the colormap array.
  *
- * This procedure is deprecated! Use gimp_image_get_colormap() instead.
+ * This procedure is deprecated! Use picman_image_get_colormap() instead.
  *
  * Returns: The image's colormap.
  */
 guchar *
-gimp_image_get_cmap (gint32  image_ID,
+picman_image_get_cmap (gint32  image_ID,
                      gint   *num_colors)
 {
-  return gimp_image_get_colormap (image_ID, num_colors);
+  return picman_image_get_colormap (image_ID, num_colors);
 }
 
 /**
- * gimp_image_set_cmap:
+ * picman_image_set_cmap:
  * @image_ID:   The image.
  * @cmap:       The new colormap values.
  * @num_colors: Number of colors in the colormap array.
  *
- * This procedure is deprecated! Use gimp_image_set_colormap() instead.
+ * This procedure is deprecated! Use picman_image_set_colormap() instead.
  *
  * Returns: TRUE on success.
  */
 gboolean
-gimp_image_set_cmap (gint32        image_ID,
+picman_image_set_cmap (gint32        image_ID,
                      const guchar *cmap,
                      gint          num_colors)
 {
-  return gimp_image_set_colormap (image_ID, cmap, num_colors);
+  return picman_image_set_colormap (image_ID, cmap, num_colors);
 }
 
 /**
- * gimp_image_get_layer_position:
+ * picman_image_get_layer_position:
  * @image_ID: The image.
  * @layer_ID: The layer.
  *
- * Deprecated: Use gimp_image_get_item_position() instead.
+ * Deprecated: Use picman_image_get_item_position() instead.
  *
  * Returns: The position of the layer in the layer stack.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint
-gimp_image_get_layer_position (gint32 image_ID,
+picman_image_get_layer_position (gint32 image_ID,
                                gint32 layer_ID)
 {
-  return gimp_image_get_item_position (image_ID, layer_ID);
+  return picman_image_get_item_position (image_ID, layer_ID);
 }
 
 /**
- * gimp_image_raise_layer:
+ * picman_image_raise_layer:
  * @image_ID: The image.
  * @layer_ID: The layer to raise.
  *
- * Deprecated: Use gimp_image_raise_item() instead.
+ * Deprecated: Use picman_image_raise_item() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_raise_layer (gint32 image_ID,
+picman_image_raise_layer (gint32 image_ID,
                         gint32 layer_ID)
 {
-  return gimp_image_raise_item (image_ID, layer_ID);
+  return picman_image_raise_item (image_ID, layer_ID);
 }
 
 /**
- * gimp_image_lower_layer:
+ * picman_image_lower_layer:
  * @image_ID: The image.
  * @layer_ID: The layer to lower.
  *
- * Deprecated: Use gimp_image_lower_item() instead.
+ * Deprecated: Use picman_image_lower_item() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_lower_layer (gint32 image_ID,
+picman_image_lower_layer (gint32 image_ID,
                         gint32 layer_ID)
 {
-  return gimp_image_lower_item (image_ID, layer_ID);
+  return picman_image_lower_item (image_ID, layer_ID);
 }
 
 /**
- * gimp_image_raise_layer_to_top:
+ * picman_image_raise_layer_to_top:
  * @image_ID: The image.
  * @layer_ID: The layer to raise to top.
  *
- * Deprecated: Use gimp_image_raise_item_to_top() instead.
+ * Deprecated: Use picman_image_raise_item_to_top() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_raise_layer_to_top (gint32 image_ID,
+picman_image_raise_layer_to_top (gint32 image_ID,
                                gint32 layer_ID)
 {
-  return gimp_image_raise_item_to_top (image_ID, layer_ID);
+  return picman_image_raise_item_to_top (image_ID, layer_ID);
 }
 
 /**
- * gimp_image_lower_layer_to_bottom:
+ * picman_image_lower_layer_to_bottom:
  * @image_ID: The image.
  * @layer_ID: The layer to lower to bottom.
  *
- * Deprecated: Use gimp_image_lower_item_to_bottom() instead.
+ * Deprecated: Use picman_image_lower_item_to_bottom() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_lower_layer_to_bottom (gint32 image_ID,
+picman_image_lower_layer_to_bottom (gint32 image_ID,
                                   gint32 layer_ID)
 {
-  return gimp_image_lower_item_to_bottom (image_ID, layer_ID);
+  return picman_image_lower_item_to_bottom (image_ID, layer_ID);
 }
 
 /**
- * gimp_image_get_channel_position:
+ * picman_image_get_channel_position:
  * @image_ID: The image.
  * @channel_ID: The channel.
  *
- * Deprecated: Use gimp_image_get_item_position() instead.
+ * Deprecated: Use picman_image_get_item_position() instead.
  *
  * Returns: The position of the channel in the channel stack.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint
-gimp_image_get_channel_position (gint32 image_ID,
+picman_image_get_channel_position (gint32 image_ID,
                                  gint32 channel_ID)
 {
-  return gimp_image_get_item_position (image_ID, channel_ID);
+  return picman_image_get_item_position (image_ID, channel_ID);
 }
 
 /**
- * gimp_image_raise_channel:
+ * picman_image_raise_channel:
  * @image_ID: The image.
  * @channel_ID: The channel to raise.
  *
- * Deprecated: Use gimp_image_raise_item() instead.
+ * Deprecated: Use picman_image_raise_item() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_raise_channel (gint32 image_ID,
+picman_image_raise_channel (gint32 image_ID,
                           gint32 channel_ID)
 {
-  return gimp_image_raise_item (image_ID, channel_ID);
+  return picman_image_raise_item (image_ID, channel_ID);
 }
 
 /**
- * gimp_image_lower_channel:
+ * picman_image_lower_channel:
  * @image_ID: The image.
  * @channel_ID: The channel to lower.
  *
- * Deprecated: Use gimp_image_lower_item() instead.
+ * Deprecated: Use picman_image_lower_item() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_lower_channel (gint32 image_ID,
+picman_image_lower_channel (gint32 image_ID,
                           gint32 channel_ID)
 {
-  return gimp_image_lower_item (image_ID, channel_ID);
+  return picman_image_lower_item (image_ID, channel_ID);
 }
 
 /**
- * gimp_image_get_vectors_position:
+ * picman_image_get_vectors_position:
  * @image_ID: The image.
  * @vectors_ID: The vectors object.
  *
- * Deprecated: Use gimp_image_get_item_position() instead.
+ * Deprecated: Use picman_image_get_item_position() instead.
  *
  * Returns: The position of the vectors object in the vectors stack.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint
-gimp_image_get_vectors_position (gint32 image_ID,
+picman_image_get_vectors_position (gint32 image_ID,
                                  gint32 vectors_ID)
 {
-  return gimp_image_get_item_position (image_ID, vectors_ID);
+  return picman_image_get_item_position (image_ID, vectors_ID);
 }
 
 /**
- * gimp_image_raise_vectors:
+ * picman_image_raise_vectors:
  * @image_ID: The image.
  * @vectors_ID: The vectors object to raise.
  *
- * Deprecated: Use gimp_image_raise_item() instead.
+ * Deprecated: Use picman_image_raise_item() instead.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_raise_vectors (gint32 image_ID,
+picman_image_raise_vectors (gint32 image_ID,
                           gint32 vectors_ID)
 {
-  return gimp_image_raise_item (image_ID, vectors_ID);
+  return picman_image_raise_item (image_ID, vectors_ID);
 }
 
 /**
- * gimp_image_lower_vectors:
+ * picman_image_lower_vectors:
  * @image_ID: The image.
  * @vectors_ID: The vectors object to lower.
  *
- * Deprecated: Use gimp_image_lower_item() instead.
+ * Deprecated: Use picman_image_lower_item() instead.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_lower_vectors (gint32 image_ID,
+picman_image_lower_vectors (gint32 image_ID,
                           gint32 vectors_ID)
 {
-  return gimp_image_lower_item (image_ID, vectors_ID);
+  return picman_image_lower_item (image_ID, vectors_ID);
 }
 
 /**
- * gimp_image_raise_vectors_to_top:
+ * picman_image_raise_vectors_to_top:
  * @image_ID: The image.
  * @vectors_ID: The vectors object to raise to top.
  *
- * Deprecated: Use gimp_image_raise_item_to_top() instead.
+ * Deprecated: Use picman_image_raise_item_to_top() instead.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_raise_vectors_to_top (gint32 image_ID,
+picman_image_raise_vectors_to_top (gint32 image_ID,
                                  gint32 vectors_ID)
 {
-  return gimp_image_raise_item_to_top (image_ID, vectors_ID);
+  return picman_image_raise_item_to_top (image_ID, vectors_ID);
 }
 
 /**
- * gimp_image_lower_vectors_to_bottom:
+ * picman_image_lower_vectors_to_bottom:
  * @image_ID: The image.
  * @vectors_ID: The vectors object to lower to bottom.
  *
- * Deprecated: Use gimp_image_lower_item_to_bottom() instead.
+ * Deprecated: Use picman_image_lower_item_to_bottom() instead.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_lower_vectors_to_bottom (gint32 image_ID,
+picman_image_lower_vectors_to_bottom (gint32 image_ID,
                                     gint32 vectors_ID)
 {
-  return gimp_image_lower_item_to_bottom (image_ID, vectors_ID);
+  return picman_image_lower_item_to_bottom (image_ID, vectors_ID);
 }
 
 /**
- * gimp_image_parasite_find:
+ * picman_image_parasite_find:
  * @image_ID: The image.
  * @name: The name of the parasite to find.
  *
- * Deprecated: Use gimp_image_get_parasite() instead.
+ * Deprecated: Use picman_image_get_parasite() instead.
  *
  * Returns: The found parasite.
  **/
-GimpParasite *
-gimp_image_parasite_find (gint32       image_ID,
+PicmanParasite *
+picman_image_parasite_find (gint32       image_ID,
                           const gchar *name)
 {
-  return gimp_image_get_parasite (image_ID, name);
+  return picman_image_get_parasite (image_ID, name);
 }
 
 /**
- * gimp_image_parasite_attach:
+ * picman_image_parasite_attach:
  * @image_ID: The image.
  * @parasite: The parasite to attach to an image.
  *
- * Deprecated: Use gimp_image_attach_parasite() instead.
+ * Deprecated: Use picman_image_attach_parasite() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_parasite_attach (gint32              image_ID,
-                            const GimpParasite *parasite)
+picman_image_parasite_attach (gint32              image_ID,
+                            const PicmanParasite *parasite)
 {
-  return gimp_image_attach_parasite (image_ID, parasite);
+  return picman_image_attach_parasite (image_ID, parasite);
 }
 
 /**
- * gimp_image_parasite_detach:
+ * picman_image_parasite_detach:
  * @image_ID: The image.
  * @name: The name of the parasite to detach from an image.
  *
- * Deprecated: Use gimp_image_detach_parasite() instead.
+ * Deprecated: Use picman_image_detach_parasite() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_parasite_detach (gint32       image_ID,
+picman_image_parasite_detach (gint32       image_ID,
                             const gchar *name)
 {
-  return gimp_image_detach_parasite (image_ID, name);
+  return picman_image_detach_parasite (image_ID, name);
 }
 
 /**
- * gimp_image_parasite_list:
+ * picman_image_parasite_list:
  * @image_ID: The image.
  * @num_parasites: The number of attached parasites.
  * @parasites: The names of currently attached parasites.
  *
- * Deprecated: Use gimp_image_get_parasite_list() instead.
+ * Deprecated: Use picman_image_get_parasite_list() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_image_parasite_list (gint32    image_ID,
+picman_image_parasite_list (gint32    image_ID,
                           gint     *num_parasites,
                           gchar  ***parasites)
 {
-  *parasites = gimp_image_get_parasite_list (image_ID, num_parasites);
+  *parasites = picman_image_get_parasite_list (image_ID, num_parasites);
 
   return *parasites != NULL;
 }
 
 /**
- * gimp_image_attach_new_parasite:
- * @image_ID: the ID of the image to attach the #GimpParasite to.
- * @name: the name of the #GimpParasite to create and attach.
- * @flags: the flags set on the #GimpParasite.
+ * picman_image_attach_new_parasite:
+ * @image_ID: the ID of the image to attach the #PicmanParasite to.
+ * @name: the name of the #PicmanParasite to create and attach.
+ * @flags: the flags set on the #PicmanParasite.
  * @size: the size of the parasite data in bytes.
- * @data: a pointer to the data attached with the #GimpParasite.
+ * @data: a pointer to the data attached with the #PicmanParasite.
  *
  * Convenience function that creates a parasite and attaches it
- * to GIMP.
+ * to PICMAN.
  *
- * Deprecated: Use gimp_image_attach_parasite() instead.
+ * Deprecated: Use picman_image_attach_parasite() instead.
  *
  * Return value: TRUE on successful creation and attachment of
  * the new parasite.
  *
- * See Also: gimp_image_parasite_attach()
+ * See Also: picman_image_parasite_attach()
  */
 gboolean
-gimp_image_attach_new_parasite (gint32         image_ID,
+picman_image_attach_new_parasite (gint32         image_ID,
                                 const gchar   *name,
                                 gint           flags,
                                 gint           size,
                                 gconstpointer  data)
 {
-  GimpParasite *parasite = gimp_parasite_new (name, flags, size, data);
+  PicmanParasite *parasite = picman_parasite_new (name, flags, size, data);
   gboolean      success;
 
-  success = gimp_image_attach_parasite (image_ID, parasite);
+  success = picman_image_attach_parasite (image_ID, parasite);
 
-  gimp_parasite_free (parasite);
+  picman_parasite_free (parasite);
 
   return success;
 }

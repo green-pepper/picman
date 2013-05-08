@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpimagemapconfig.c
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanimagemapconfig.c
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,11 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimpimagemapconfig.h"
+#include "picmanimagemapconfig.h"
 
 
 enum
@@ -38,48 +38,48 @@ enum
 };
 
 
-static void   gimp_image_map_config_get_property (GObject      *object,
+static void   picman_image_map_config_get_property (GObject      *object,
                                                   guint         property_id,
                                                   GValue       *value,
                                                   GParamSpec   *pspec);
-static void   gimp_image_map_config_set_property (GObject      *object,
+static void   picman_image_map_config_set_property (GObject      *object,
                                                   guint         property_id,
                                                   const GValue *value,
                                                   GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpImageMapConfig, gimp_image_map_config,
-               GIMP_TYPE_VIEWABLE)
+G_DEFINE_TYPE (PicmanImageMapConfig, picman_image_map_config,
+               PICMAN_TYPE_VIEWABLE)
 
-#define parent_class gimp_image_map_config_parent_class
+#define parent_class picman_image_map_config_parent_class
 
 
 static void
-gimp_image_map_config_class_init (GimpImageMapConfigClass *klass)
+picman_image_map_config_class_init (PicmanImageMapConfigClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_image_map_config_set_property;
-  object_class->get_property = gimp_image_map_config_get_property;
+  object_class->set_property = picman_image_map_config_set_property;
+  object_class->get_property = picman_image_map_config_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_UINT (object_class, PROP_TIME,
+  PICMAN_CONFIG_INSTALL_PROP_UINT (object_class, PROP_TIME,
                                  "time",
                                  "Time of settings creation",
                                  0, G_MAXUINT, 0, 0);
 }
 
 static void
-gimp_image_map_config_init (GimpImageMapConfig *config)
+picman_image_map_config_init (PicmanImageMapConfig *config)
 {
 }
 
 static void
-gimp_image_map_config_get_property (GObject    *object,
+picman_image_map_config_get_property (GObject    *object,
                                     guint       property_id,
                                     GValue     *value,
                                     GParamSpec *pspec)
 {
-  GimpImageMapConfig *config = GIMP_IMAGE_MAP_CONFIG (object);
+  PicmanImageMapConfig *config = PICMAN_IMAGE_MAP_CONFIG (object);
 
   switch (property_id)
     {
@@ -94,12 +94,12 @@ gimp_image_map_config_get_property (GObject    *object,
 }
 
 static void
-gimp_image_map_config_set_property (GObject      *object,
+picman_image_map_config_set_property (GObject      *object,
                                     guint         property_id,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
-  GimpImageMapConfig *config = GIMP_IMAGE_MAP_CONFIG (object);
+  PicmanImageMapConfig *config = PICMAN_IMAGE_MAP_CONFIG (object);
 
   switch (property_id)
     {
@@ -118,7 +118,7 @@ gimp_image_map_config_set_property (GObject      *object,
           strftime (buf, sizeof (buf), "%Y-%m-%d %T", &tm);
 
           name = g_locale_to_utf8 (buf, -1, NULL, NULL, NULL);
-          gimp_object_set_name (GIMP_OBJECT (config), name);
+          picman_object_set_name (PICMAN_OBJECT (config), name);
           g_free (name);
         }
       break;
@@ -133,11 +133,11 @@ gimp_image_map_config_set_property (GObject      *object,
 /*  public functions  */
 
 gint
-gimp_image_map_config_compare (GimpImageMapConfig *a,
-                               GimpImageMapConfig *b)
+picman_image_map_config_compare (PicmanImageMapConfig *a,
+                               PicmanImageMapConfig *b)
 {
-  const gchar *name_a = gimp_object_get_name (a);
-  const gchar *name_b = gimp_object_get_name (b);
+  const gchar *name_a = picman_object_get_name (a);
+  const gchar *name_b = picman_object_get_name (b);
 
   if (a->time > 0 && b->time > 0)
     {

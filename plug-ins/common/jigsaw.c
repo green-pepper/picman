@@ -1,5 +1,5 @@
 /*
- * jigsaw - a plug-in for GIMP
+ * jigsaw - a plug-in for PICMAN
  *
  * Copyright (C) Nigel Wetten
  *
@@ -36,15 +36,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-jigsaw"
 #define PLUG_IN_BINARY "jigsaw"
-#define PLUG_IN_ROLE   "gimp-jigsaw"
+#define PLUG_IN_ROLE   "picman-jigsaw"
 
 
 typedef enum
@@ -65,14 +65,14 @@ typedef enum
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparams,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 
-static void     jigsaw             (GimpDrawable *drawable,
-                                    GimpPreview  *preview);
+static void     jigsaw             (PicmanDrawable *drawable,
+                                    PicmanPreview  *preview);
 
-static gboolean jigsaw_dialog      (GimpDrawable *drawable);
+static gboolean jigsaw_dialog      (PicmanDrawable *drawable);
 
 static void     draw_jigsaw        (guchar    *buffer,
                                     gint       bufsize,
@@ -283,7 +283,7 @@ static void check_config           (gint width, gint height);
   while (0)
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,
   NULL,
@@ -340,19 +340,19 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Input drawable" },
-    { GIMP_PDB_INT32,    "x",            "Number of tiles across > 0" },
-    { GIMP_PDB_INT32,    "y",            "Number of tiles down > 0" },
-    { GIMP_PDB_INT32,    "style",        "The style/shape of the jigsaw puzzle { 0, 1 }" },
-    { GIMP_PDB_INT32,    "blend-lines",  "Number of lines for shading bevels >= 0" },
-    { GIMP_PDB_FLOAT,    "blend-amount", "The power of the light highlights 0 =< 5" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Input drawable" },
+    { PICMAN_PDB_INT32,    "x",            "Number of tiles across > 0" },
+    { PICMAN_PDB_INT32,    "y",            "Number of tiles down > 0" },
+    { PICMAN_PDB_INT32,    "style",        "The style/shape of the jigsaw puzzle { 0, 1 }" },
+    { PICMAN_PDB_INT32,    "blend-lines",  "Number of lines for shading bevels >= 0" },
+    { PICMAN_PDB_FLOAT,    "blend-amount", "The power of the light highlights 0 =< 5" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Add a jigsaw-puzzle pattern to the image"),
                           "Jigsaw puzzle look",
                           "Nigel Wetten",
@@ -360,34 +360,34 @@ query (void)
                           "May 2000",
                           N_("_Jigsaw..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render/Pattern");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Render/Pattern");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpRunMode        run_mode;
-  GimpDrawable      *drawable;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanRunMode        run_mode;
+  PicmanDrawable      *drawable;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
 
   run_mode = param[0].data.d_int32;
-  drawable = gimp_drawable_get(param[2].data.d_drawable);
-  gimp_tile_cache_ntiles (drawable->width / gimp_tile_width () + 1);
+  drawable = picman_drawable_get(param[2].data.d_drawable);
+  picman_tile_cache_ntiles (drawable->width / picman_tile_width () + 1);
 
   switch (run_mode)
     {
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams == 8)
         {
           config.x = param[3].data.d_int32;
@@ -400,43 +400,43 @@ run (const gchar      *name,
         }
       else
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       break;
 
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &config);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &config);
       if (! jigsaw_dialog (drawable))
         {
-          status = GIMP_PDB_CANCEL;
+          status = PICMAN_PDB_CANCEL;
           break;
         }
-      gimp_progress_init (_("Assembling jigsaw"));
+      picman_progress_init (_("Assembling jigsaw"));
 
       jigsaw (drawable, NULL);
-      gimp_set_data (PLUG_IN_PROC, &config, sizeof(config_t));
-      gimp_displays_flush ();
+      picman_set_data (PLUG_IN_PROC, &config, sizeof(config_t));
+      picman_displays_flush ();
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &config);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &config);
       jigsaw (drawable, NULL);
-      gimp_displays_flush ();
+      picman_displays_flush ();
     }  /* switch */
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 
   *nreturn_vals = 1;
   *return_vals = values;
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 }
 
 static void
-jigsaw (GimpDrawable *drawable,
-        GimpPreview  *preview)
+jigsaw (PicmanDrawable *drawable,
+        PicmanPreview  *preview)
 {
-  GimpPixelRgn  src_pr, dest_pr;
+  PicmanPixelRgn  src_pr, dest_pr;
   guchar       *buffer;
   gint          width;
   gint          height;
@@ -445,9 +445,9 @@ jigsaw (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_size (preview, &width, &height);
       bytes  = drawable->bpp;
-      buffer = gimp_drawable_get_thumbnail_data (drawable->drawable_id,
+      buffer = picman_drawable_get_thumbnail_data (drawable->drawable_id,
                                                  &width, &height, &bytes);
       buffer_size = bytes * width * height;
     }
@@ -461,9 +461,9 @@ jigsaw (GimpDrawable *drawable,
       buffer_size = bytes * width * height;
       buffer = g_new (guchar, buffer_size);
 
-      gimp_pixel_rgn_init (&src_pr,  drawable, 0, 0, width, height,
+      picman_pixel_rgn_init (&src_pr,  drawable, 0, 0, width, height,
                            FALSE, FALSE);
-      gimp_pixel_rgn_get_rect (&src_pr, buffer, 0, 0, width, height);
+      picman_pixel_rgn_get_rect (&src_pr, buffer, 0, 0, width, height);
     }
 
   check_config (width, height);
@@ -478,17 +478,17 @@ jigsaw (GimpDrawable *drawable,
   /* cleanup */
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, buffer, width * bytes);
+      picman_preview_draw_buffer (preview, buffer, width * bytes);
     }
   else
     {
-      gimp_pixel_rgn_init (&dest_pr, drawable, 0, 0, width, height,
+      picman_pixel_rgn_init (&dest_pr, drawable, 0, 0, width, height,
                            TRUE, TRUE);
-      gimp_pixel_rgn_set_rect (&dest_pr, buffer, 0, 0, width, height);
+      picman_pixel_rgn_set_rect (&dest_pr, buffer, 0, 0, width, height);
 
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, 0, 0, width, height);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, 0, 0, width, height);
     }
 
   g_free(buffer);
@@ -568,14 +568,14 @@ draw_jigsaw (guchar   *buffer,
                                 x[i], ytiles,
                                 blend_lines, blend_amount);
           if (!preview_mode)
-            gimp_progress_update ((gdouble) i / (gdouble) progress_total);
+            picman_progress_update ((gdouble) i / (gdouble) progress_total);
         }
       for (i = 0; i < ylines; i++)
         {
           draw_horizontal_border (buffer, bufsize, width, bytes, y[i], xtiles,
                                   blend_lines, blend_amount);
           if (!preview_mode)
-            gimp_progress_update ((gdouble) (i + xlines) / (gdouble) progress_total);
+            picman_progress_update ((gdouble) (i + xlines) / (gdouble) progress_total);
         }
     }
   else if (style == BEZIER_2)
@@ -586,7 +586,7 @@ draw_jigsaw (guchar   *buffer,
                                        x[i], xtiles, ytiles, blend_lines,
                                        blend_amount, steps);
           if (!preview_mode)
-            gimp_progress_update ((gdouble) i / (gdouble) progress_total);
+            picman_progress_update ((gdouble) i / (gdouble) progress_total);
         }
       for (i = 0; i < ylines; i++)
         {
@@ -594,15 +594,15 @@ draw_jigsaw (guchar   *buffer,
                                          y[i], xtiles, ytiles, blend_lines,
                                          blend_amount, steps);
           if (!preview_mode)
-            gimp_progress_update ((gdouble) (i + xlines) / (gdouble) progress_total);
+            picman_progress_update ((gdouble) (i + xlines) / (gdouble) progress_total);
         }
     }
   else
     {
       printf("draw_jigsaw: bad style\n");
-      gimp_quit ();
+      picman_quit ();
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   g_free (globals.gridx);
   g_free (globals.gridy);
@@ -2375,7 +2375,7 @@ check_config (gint width,
 ********************************************************/
 
 static gboolean
-jigsaw_dialog (GimpDrawable *drawable)
+jigsaw_dialog (PicmanDrawable *drawable)
 {
   GtkWidget    *dialog;
   GtkWidget    *main_vbox;
@@ -2388,11 +2388,11 @@ jigsaw_dialog (GimpDrawable *drawable)
   GtkObject    *adj;
   gboolean      run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Jigsaw"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Jigsaw"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -2404,7 +2404,7 @@ jigsaw_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -2412,7 +2412,7 @@ jigsaw_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_aspect_preview_new (drawable, NULL);
+  preview = picman_aspect_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -2420,7 +2420,7 @@ jigsaw_dialog (GimpDrawable *drawable)
                             G_CALLBACK (jigsaw),
                             drawable);
 
-  frame = gimp_frame_new (_("Number of Tiles"));
+  frame = picman_frame_new (_("Number of Tiles"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
 
   table = gtk_table_new (2, 3, FALSE);
@@ -2431,42 +2431,42 @@ jigsaw_dialog (GimpDrawable *drawable)
   group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
   /* xtiles */
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Horizontal:"), SCALE_WIDTH, 0,
                               config.x, MIN_XTILES, MAX_XTILES, 1.0, 4.0, 0,
                               TRUE, 0, 0,
                               _("Number of pieces going across"), NULL);
 
-  gtk_size_group_add_widget (group, GIMP_SCALE_ENTRY_LABEL (adj));
+  gtk_size_group_add_widget (group, PICMAN_SCALE_ENTRY_LABEL (adj));
   g_object_unref (group);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &config.x);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /* ytiles */
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("_Vertical:"), SCALE_WIDTH, 0,
                               config.y, MIN_YTILES, MAX_YTILES, 1.0, 4.0, 0,
                               TRUE, 0, 0,
                               _("Number of pieces going down"), NULL);
 
-  gtk_size_group_add_widget (group, GIMP_SCALE_ENTRY_LABEL (adj));
+  gtk_size_group_add_widget (group, PICMAN_SCALE_ENTRY_LABEL (adj));
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &config.y);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (table);
   gtk_widget_show (frame);
 
-  frame = gimp_frame_new (_("Bevel Edges"));
+  frame = picman_frame_new (_("Bevel Edges"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
 
   table = gtk_table_new (2, 3, FALSE);
@@ -2475,24 +2475,24 @@ jigsaw_dialog (GimpDrawable *drawable)
   gtk_container_add (GTK_CONTAINER (frame), table);
 
   /* number of blending lines */
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Bevel width:"), SCALE_WIDTH, 4,
                               config.blend_lines,
                               MIN_BLEND_LINES, MAX_BLEND_LINES, 1.0, 2.0, 0,
                               TRUE, 0, 0,
                               _("Degree of slope of each piece's edge"), NULL);
 
-  gtk_size_group_add_widget (group, GIMP_SCALE_ENTRY_LABEL (adj));
+  gtk_size_group_add_widget (group, PICMAN_SCALE_ENTRY_LABEL (adj));
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &config.blend_lines);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /* blending amount */
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("H_ighlight:"), SCALE_WIDTH, 4,
                               config.blend_amount,
                               MIN_BLEND_AMOUNT, MAX_BLEND_AMOUNT, 0.05, 0.1, 2,
@@ -2500,13 +2500,13 @@ jigsaw_dialog (GimpDrawable *drawable)
                               _("The amount of highlighting on the edges "
                                 "of each piece"), NULL);
 
-  gtk_size_group_add_widget (group, GIMP_SCALE_ENTRY_LABEL (adj));
+  gtk_size_group_add_widget (group, PICMAN_SCALE_ENTRY_LABEL (adj));
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &config.blend_amount);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (table);
@@ -2514,8 +2514,8 @@ jigsaw_dialog (GimpDrawable *drawable)
 
   /* frame for primitive radio buttons */
 
-  frame = gimp_int_radio_group_new (TRUE, _("Jigsaw Style"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Jigsaw Style"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &config.style, config.style,
 
                                     _("_Square"), BEZIER_1, &rbutton1,
@@ -2523,13 +2523,13 @@ jigsaw_dialog (GimpDrawable *drawable)
 
                                     NULL);
 
-  gimp_help_set_help_data (rbutton1, _("Each piece has straight sides"), NULL);
-  gimp_help_set_help_data (rbutton2, _("Each piece has curved sides"),   NULL);
+  picman_help_set_help_data (rbutton1, _("Each piece has straight sides"), NULL);
+  picman_help_set_help_data (rbutton2, _("Each piece has curved sides"),   NULL);
   g_signal_connect_swapped (rbutton1, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (rbutton2, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
@@ -2537,7 +2537,7 @@ jigsaw_dialog (GimpDrawable *drawable)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

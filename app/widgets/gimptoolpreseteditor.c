@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,27 +20,27 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimptoolinfo.h"
-#include "core/gimptooloptions.h"
-#include "core/gimptoolpreset.h"
+#include "core/picman.h"
+#include "core/picmantoolinfo.h"
+#include "core/picmantooloptions.h"
+#include "core/picmantoolpreset.h"
 
-#include "gimpdocked.h"
-#include "gimptoolpreseteditor.h"
-#include "gimpmenufactory.h"
-#include "gimppropwidgets.h"
+#include "picmandocked.h"
+#include "picmantoolpreseteditor.h"
+#include "picmanmenufactory.h"
+#include "picmanpropwidgets.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-struct _GimpToolPresetEditorPrivate
+struct _PicmanToolPresetEditorPrivate
 {
-  GimpToolPreset *tool_preset_model;
+  PicmanToolPreset *tool_preset_model;
 
   GtkWidget      *tool_icon;
   GtkWidget      *tool_label;
@@ -57,58 +57,58 @@ struct _GimpToolPresetEditorPrivate
 
 /*  local function prototypes  */
 
-static void   gimp_tool_preset_editor_constructed  (GObject              *object);
-static void   gimp_tool_preset_editor_finalize     (GObject              *object);
+static void   picman_tool_preset_editor_constructed  (GObject              *object);
+static void   picman_tool_preset_editor_finalize     (GObject              *object);
 
-static void   gimp_tool_preset_editor_set_data     (GimpDataEditor       *editor,
-                                                    GimpData             *data);
+static void   picman_tool_preset_editor_set_data     (PicmanDataEditor       *editor,
+                                                    PicmanData             *data);
 
-static void   gimp_tool_preset_editor_sync_data    (GimpToolPresetEditor *editor);
-static void   gimp_tool_preset_editor_notify_model (GimpToolPreset       *options,
+static void   picman_tool_preset_editor_sync_data    (PicmanToolPresetEditor *editor);
+static void   picman_tool_preset_editor_notify_model (PicmanToolPreset       *options,
                                                     const GParamSpec     *pspec,
-                                                    GimpToolPresetEditor *editor);
-static void   gimp_tool_preset_editor_notify_data  (GimpToolPreset       *options,
+                                                    PicmanToolPresetEditor *editor);
+static void   picman_tool_preset_editor_notify_data  (PicmanToolPreset       *options,
                                                     const GParamSpec     *pspec,
-                                                    GimpToolPresetEditor *editor);
+                                                    PicmanToolPresetEditor *editor);
 
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpToolPresetEditor, gimp_tool_preset_editor,
-                         GIMP_TYPE_DATA_EDITOR,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_DOCKED, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanToolPresetEditor, picman_tool_preset_editor,
+                         PICMAN_TYPE_DATA_EDITOR,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_DOCKED, NULL))
 
-#define parent_class gimp_tool_preset_editor_parent_class
+#define parent_class picman_tool_preset_editor_parent_class
 
 
 static void
-gimp_tool_preset_editor_class_init (GimpToolPresetEditorClass *klass)
+picman_tool_preset_editor_class_init (PicmanToolPresetEditorClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpDataEditorClass *editor_class = GIMP_DATA_EDITOR_CLASS (klass);
+  PicmanDataEditorClass *editor_class = PICMAN_DATA_EDITOR_CLASS (klass);
 
-  object_class->constructed = gimp_tool_preset_editor_constructed;
-  object_class->finalize    = gimp_tool_preset_editor_finalize;
+  object_class->constructed = picman_tool_preset_editor_constructed;
+  object_class->finalize    = picman_tool_preset_editor_finalize;
 
-  editor_class->set_data    = gimp_tool_preset_editor_set_data;
+  editor_class->set_data    = picman_tool_preset_editor_set_data;
   editor_class->title       = _("Tool Preset Editor");
 
-  g_type_class_add_private (klass, sizeof (GimpToolPresetEditorPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanToolPresetEditorPrivate));
 }
 
 static void
-gimp_tool_preset_editor_init (GimpToolPresetEditor *editor)
+picman_tool_preset_editor_init (PicmanToolPresetEditor *editor)
 {
   editor->priv = G_TYPE_INSTANCE_GET_PRIVATE (editor,
-                                              GIMP_TYPE_TOOL_PRESET_EDITOR,
-                                              GimpToolPresetEditorPrivate);
+                                              PICMAN_TYPE_TOOL_PRESET_EDITOR,
+                                              PicmanToolPresetEditorPrivate);
 }
 
 static void
-gimp_tool_preset_editor_constructed (GObject *object)
+picman_tool_preset_editor_constructed (GObject *object)
 {
-  GimpToolPresetEditor *editor      = GIMP_TOOL_PRESET_EDITOR (object);
-  GimpDataEditor       *data_editor = GIMP_DATA_EDITOR (editor);
-  GimpToolPreset       *preset;
+  PicmanToolPresetEditor *editor      = PICMAN_TOOL_PRESET_EDITOR (object);
+  PicmanDataEditor       *data_editor = PICMAN_DATA_EDITOR (editor);
+  PicmanToolPreset       *preset;
   GtkWidget            *hbox;
   GtkWidget            *label;
   GtkWidget            *button;
@@ -116,12 +116,12 @@ gimp_tool_preset_editor_constructed (GObject *object)
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
   preset = editor->priv->tool_preset_model =
-    g_object_new (GIMP_TYPE_TOOL_PRESET,
-                  "gimp", data_editor->context->gimp,
+    g_object_new (PICMAN_TYPE_TOOL_PRESET,
+                  "picman", data_editor->context->picman,
                   NULL);
 
   g_signal_connect (preset, "notify",
-                    G_CALLBACK (gimp_tool_preset_editor_notify_model),
+                    G_CALLBACK (picman_tool_preset_editor_notify_model),
                     editor);
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
@@ -134,7 +134,7 @@ gimp_tool_preset_editor_constructed (GObject *object)
   gtk_widget_show (editor->priv->tool_icon);
 
   editor->priv->tool_label = gtk_label_new ("");
-  gimp_label_set_attributes (GTK_LABEL (editor->priv->tool_label),
+  picman_label_set_attributes (GTK_LABEL (editor->priv->tool_label),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              -1);
   gtk_box_pack_start (GTK_BOX (hbox), editor->priv->tool_label,
@@ -149,61 +149,61 @@ gimp_tool_preset_editor_constructed (GObject *object)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  button = gimp_prop_icon_picker_new (GIMP_VIEWABLE (preset),
-                                      data_editor->context->gimp);
+  button = picman_prop_icon_picker_new (PICMAN_VIEWABLE (preset),
+                                      data_editor->context->picman);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   button = editor->priv->fg_bg_toggle =
-    gimp_prop_check_button_new (G_OBJECT (preset), "use-fg-bg",
+    picman_prop_check_button_new (G_OBJECT (preset), "use-fg-bg",
                                 _("Apply stored FG/BG"));
   gtk_box_pack_start (GTK_BOX (data_editor), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   button = editor->priv->brush_toggle =
-    gimp_prop_check_button_new (G_OBJECT (preset), "use-brush",
+    picman_prop_check_button_new (G_OBJECT (preset), "use-brush",
                                 _("Apply stored brush"));
   gtk_box_pack_start (GTK_BOX (data_editor), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   button = editor->priv->dynamics_toggle =
-    gimp_prop_check_button_new (G_OBJECT (preset), "use-dynamics",
+    picman_prop_check_button_new (G_OBJECT (preset), "use-dynamics",
                                 _("Apply stored dynamics"));
   gtk_box_pack_start (GTK_BOX (data_editor), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   button = editor->priv->gradient_toggle =
-    gimp_prop_check_button_new (G_OBJECT (preset), "use-gradient",
+    picman_prop_check_button_new (G_OBJECT (preset), "use-gradient",
                                 _("Apply stored gradient"));
   gtk_box_pack_start (GTK_BOX (data_editor), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   button = editor->priv->pattern_toggle =
-    gimp_prop_check_button_new (G_OBJECT (preset), "use-pattern",
+    picman_prop_check_button_new (G_OBJECT (preset), "use-pattern",
                                 _("Apply stored pattern"));
   gtk_box_pack_start (GTK_BOX (data_editor), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   button = editor->priv->palette_toggle =
-    gimp_prop_check_button_new (G_OBJECT (preset), "use-palette",
+    picman_prop_check_button_new (G_OBJECT (preset), "use-palette",
                                 _("Apply stored palette"));
   gtk_box_pack_start (GTK_BOX (data_editor), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   button = editor->priv->font_toggle =
-    gimp_prop_check_button_new (G_OBJECT (preset), "use-font",
+    picman_prop_check_button_new (G_OBJECT (preset), "use-font",
                                 _("Apply stored font"));
   gtk_box_pack_start (GTK_BOX (data_editor), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
 
   if (data_editor->data)
-    gimp_tool_preset_editor_sync_data (editor);
+    picman_tool_preset_editor_sync_data (editor);
 }
 
 static void
-gimp_tool_preset_editor_finalize (GObject *object)
+picman_tool_preset_editor_finalize (GObject *object)
 {
-  GimpToolPresetEditor *editor = GIMP_TOOL_PRESET_EDITOR (object);
+  PicmanToolPresetEditor *editor = PICMAN_TOOL_PRESET_EDITOR (object);
 
   if (editor->priv->tool_preset_model)
     {
@@ -215,26 +215,26 @@ gimp_tool_preset_editor_finalize (GObject *object)
 }
 
 static void
-gimp_tool_preset_editor_set_data (GimpDataEditor *editor,
-                                  GimpData       *data)
+picman_tool_preset_editor_set_data (PicmanDataEditor *editor,
+                                  PicmanData       *data)
 {
-  GimpToolPresetEditor *preset_editor = GIMP_TOOL_PRESET_EDITOR (editor);
+  PicmanToolPresetEditor *preset_editor = PICMAN_TOOL_PRESET_EDITOR (editor);
 
   if (editor->data)
     g_signal_handlers_disconnect_by_func (editor->data,
-                                          gimp_tool_preset_editor_notify_data,
+                                          picman_tool_preset_editor_notify_data,
                                           editor);
 
-  GIMP_DATA_EDITOR_CLASS (parent_class)->set_data (editor, data);
+  PICMAN_DATA_EDITOR_CLASS (parent_class)->set_data (editor, data);
 
   if (editor->data)
     {
       g_signal_connect (editor->data, "notify",
-                        G_CALLBACK (gimp_tool_preset_editor_notify_data),
+                        G_CALLBACK (picman_tool_preset_editor_notify_data),
                         editor);
 
       if (preset_editor->priv->tool_preset_model)
-        gimp_tool_preset_editor_sync_data (preset_editor);
+        picman_tool_preset_editor_sync_data (preset_editor);
     }
 
   gtk_widget_set_sensitive (GTK_WIDGET (editor), editor->data_editable);
@@ -244,19 +244,19 @@ gimp_tool_preset_editor_set_data (GimpDataEditor *editor,
 /*  public functions  */
 
 GtkWidget *
-gimp_tool_preset_editor_new (GimpContext     *context,
-                             GimpMenuFactory *menu_factory)
+picman_tool_preset_editor_new (PicmanContext     *context,
+                             PicmanMenuFactory *menu_factory)
 {
-  g_return_val_if_fail (GIMP_IS_MENU_FACTORY (menu_factory), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_MENU_FACTORY (menu_factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
-  return g_object_new (GIMP_TYPE_TOOL_PRESET_EDITOR,
+  return g_object_new (PICMAN_TYPE_TOOL_PRESET_EDITOR,
                        "menu-factory",    menu_factory,
                        "menu-identifier", "<ToolPresetEditor>",
                        "ui-path",         "/tool-preset-editor-popup",
-                       "data-factory",    context->gimp->tool_preset_factory,
+                       "data-factory",    context->picman->tool_preset_factory,
                        "context",         context,
-                       "data",            gimp_context_get_tool_preset (context),
+                       "data",            picman_context_get_tool_preset (context),
                        NULL);
 }
 
@@ -264,31 +264,31 @@ gimp_tool_preset_editor_new (GimpContext     *context,
 /*  private functions  */
 
 static void
-gimp_tool_preset_editor_sync_data (GimpToolPresetEditor *editor)
+picman_tool_preset_editor_sync_data (PicmanToolPresetEditor *editor)
 {
-  GimpToolPresetEditorPrivate *priv        = editor->priv;
-  GimpDataEditor              *data_editor = GIMP_DATA_EDITOR (editor);
-  GimpToolPreset              *preset;
-  GimpToolInfo                *tool_info;
-  GimpContextPropMask          serialize_props;
+  PicmanToolPresetEditorPrivate *priv        = editor->priv;
+  PicmanDataEditor              *data_editor = PICMAN_DATA_EDITOR (editor);
+  PicmanToolPreset              *preset;
+  PicmanToolInfo                *tool_info;
+  PicmanContextPropMask          serialize_props;
   const gchar                 *stock_id;
   gchar                       *label;
 
   g_signal_handlers_block_by_func (priv->tool_preset_model,
-                                   gimp_tool_preset_editor_notify_model,
+                                   picman_tool_preset_editor_notify_model,
                                    editor);
 
-  gimp_config_copy (GIMP_CONFIG (data_editor->data),
-                    GIMP_CONFIG (priv->tool_preset_model),
-                    GIMP_CONFIG_PARAM_SERIALIZE);
+  picman_config_copy (PICMAN_CONFIG (data_editor->data),
+                    PICMAN_CONFIG (priv->tool_preset_model),
+                    PICMAN_CONFIG_PARAM_SERIALIZE);
 
   g_signal_handlers_unblock_by_func (priv->tool_preset_model,
-                                     gimp_tool_preset_editor_notify_model,
+                                     picman_tool_preset_editor_notify_model,
                                      editor);
 
   tool_info = priv->tool_preset_model->tool_options->tool_info;
 
-  stock_id = gimp_viewable_get_stock_id (GIMP_VIEWABLE (tool_info));
+  stock_id = picman_viewable_get_stock_id (PICMAN_VIEWABLE (tool_info));
   label    = g_strdup_printf (_("%s Preset"), tool_info->blurb);
 
   gtk_image_set_from_stock (GTK_IMAGE (priv->tool_icon),
@@ -297,66 +297,66 @@ gimp_tool_preset_editor_sync_data (GimpToolPresetEditor *editor)
 
   g_free (label);
 
-  preset = GIMP_TOOL_PRESET (data_editor->data);
+  preset = PICMAN_TOOL_PRESET (data_editor->data);
 
   serialize_props =
-    gimp_context_get_serialize_properties (GIMP_CONTEXT (preset->tool_options));
+    picman_context_get_serialize_properties (PICMAN_CONTEXT (preset->tool_options));
 
   gtk_widget_set_sensitive (priv->fg_bg_toggle,
-                            (serialize_props & GIMP_CONTEXT_FOREGROUND_MASK) != 0);
+                            (serialize_props & PICMAN_CONTEXT_FOREGROUND_MASK) != 0);
   gtk_widget_set_sensitive (priv->brush_toggle,
-                            (serialize_props & GIMP_CONTEXT_BRUSH_MASK) != 0);
+                            (serialize_props & PICMAN_CONTEXT_BRUSH_MASK) != 0);
   gtk_widget_set_sensitive (priv->dynamics_toggle,
-                            (serialize_props & GIMP_CONTEXT_DYNAMICS_MASK) != 0);
+                            (serialize_props & PICMAN_CONTEXT_DYNAMICS_MASK) != 0);
   gtk_widget_set_sensitive (priv->gradient_toggle,
-                            (serialize_props & GIMP_CONTEXT_GRADIENT_MASK) != 0);
+                            (serialize_props & PICMAN_CONTEXT_GRADIENT_MASK) != 0);
   gtk_widget_set_sensitive (priv->pattern_toggle,
-                            (serialize_props & GIMP_CONTEXT_PATTERN_MASK) != 0);
+                            (serialize_props & PICMAN_CONTEXT_PATTERN_MASK) != 0);
   gtk_widget_set_sensitive (priv->palette_toggle,
-                            (serialize_props & GIMP_CONTEXT_PALETTE_MASK) != 0);
+                            (serialize_props & PICMAN_CONTEXT_PALETTE_MASK) != 0);
   gtk_widget_set_sensitive (priv->font_toggle,
-                            (serialize_props & GIMP_CONTEXT_FONT_MASK) != 0);
+                            (serialize_props & PICMAN_CONTEXT_FONT_MASK) != 0);
  }
 
 static void
-gimp_tool_preset_editor_notify_model (GimpToolPreset       *options,
+picman_tool_preset_editor_notify_model (PicmanToolPreset       *options,
                                       const GParamSpec     *pspec,
-                                      GimpToolPresetEditor *editor)
+                                      PicmanToolPresetEditor *editor)
 {
-  GimpDataEditor *data_editor = GIMP_DATA_EDITOR (editor);
+  PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (editor);
 
   if (data_editor->data)
     {
       g_signal_handlers_block_by_func (data_editor->data,
-                                       gimp_tool_preset_editor_notify_data,
+                                       picman_tool_preset_editor_notify_data,
                                        editor);
 
-      gimp_config_copy (GIMP_CONFIG (editor->priv->tool_preset_model),
-                        GIMP_CONFIG (data_editor->data),
-                        GIMP_CONFIG_PARAM_SERIALIZE);
+      picman_config_copy (PICMAN_CONFIG (editor->priv->tool_preset_model),
+                        PICMAN_CONFIG (data_editor->data),
+                        PICMAN_CONFIG_PARAM_SERIALIZE);
 
       g_signal_handlers_unblock_by_func (data_editor->data,
-                                         gimp_tool_preset_editor_notify_data,
+                                         picman_tool_preset_editor_notify_data,
                                          editor);
     }
 }
 
 static void
-gimp_tool_preset_editor_notify_data (GimpToolPreset       *options,
+picman_tool_preset_editor_notify_data (PicmanToolPreset       *options,
                                      const GParamSpec     *pspec,
-                                     GimpToolPresetEditor *editor)
+                                     PicmanToolPresetEditor *editor)
 {
-  GimpDataEditor *data_editor = GIMP_DATA_EDITOR (editor);
+  PicmanDataEditor *data_editor = PICMAN_DATA_EDITOR (editor);
 
   g_signal_handlers_block_by_func (editor->priv->tool_preset_model,
-                                   gimp_tool_preset_editor_notify_model,
+                                   picman_tool_preset_editor_notify_model,
                                    editor);
 
-  gimp_config_copy (GIMP_CONFIG (data_editor->data),
-                    GIMP_CONFIG (editor->priv->tool_preset_model),
-                    GIMP_CONFIG_PARAM_SERIALIZE);
+  picman_config_copy (PICMAN_CONFIG (data_editor->data),
+                    PICMAN_CONFIG (editor->priv->tool_preset_model),
+                    PICMAN_CONFIG_PARAM_SERIALIZE);
 
   g_signal_handlers_unblock_by_func (editor->priv->tool_preset_model,
-                                     gimp_tool_preset_editor_notify_model,
+                                     picman_tool_preset_editor_notify_model,
                                      editor);
 }

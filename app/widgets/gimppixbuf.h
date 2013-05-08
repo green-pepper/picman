@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppixbuf.h
- * Copyright (C) 2005 Michael Natterer <mitch@gimp.org>
+ * picmanpixbuf.h
+ * Copyright (C) 2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __APP_GIMP_PIXBUF_H__
-#define __APP_GIMP_PIXBUF_H__
+#ifndef __APP_PICMAN_PIXBUF_H__
+#define __APP_PICMAN_PIXBUF_H__
 
 
-GSList * gimp_pixbuf_get_formats (void);
+GSList * picman_pixbuf_get_formats (void);
 
-void     gimp_pixbuf_targets_add    (GtkTargetList *target_list,
+void     picman_pixbuf_targets_add    (GtkTargetList *target_list,
                                      guint          info,
                                      gboolean       writable);
-void     gimp_pixbuf_targets_remove (GtkTargetList *target_list);
+void     picman_pixbuf_targets_remove (GtkTargetList *target_list);
 
 
-#endif /* __APP_GIMP_PIXBUF_H__ */
+#endif /* __APP_PICMAN_PIXBUF_H__ */

@@ -1,11 +1,11 @@
-# Ukrainian tranlation to gimp tips
+# Ukrainian tranlation to picman tips
 # Copyright (C) 2004 Free Software Foundation
-# This file is distributed under the same license as the gimp package.
+# This file is distributed under the same license as the picman package.
 # Maxim Dziumanenko <dziumanenko@gmail.com>, 2004-2008.
 # Korostil Daniel <ted.korostiled@gmail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp tips\n"
+"Project-Id-Version: picman tips\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-12-07 12:08+0200\n"
 "PO-Revision-Date: 2011-12-07 12:08+0300\n"
@@ -19,7 +19,7 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Virtaal 0.6.1\n"
 
-#: ../data/tips/gimp-tips.xml.in.h:1
+#: ../data/tips/picman-tips.xml.in.h:1
 msgid ""
 "<tt>Ctrl</tt>-click with the Bucket Fill tool to have it use the background "
 "color instead of the foreground color. Similarly, <tt>Ctrl</tt>-clicking "
@@ -30,7 +30,7 @@ msgstr ""
 "колір переднього плану. Аналогічно, при натиснутій клавіші <tt>Ctrl</tt> "
 "піпетка знімає колір для тла, а не для переднього плану."
 
-#: ../data/tips/gimp-tips.xml.in.h:2
+#: ../data/tips/picman-tips.xml.in.h:2
 msgid ""
 "<tt>Ctrl</tt>-clicking on the layer mask's preview in the Layers dialog "
 "toggles the effect of the layer mask. <tt>Alt</tt>-clicking on the layer "
@@ -40,7 +40,7 @@ msgstr ""
 "утримуючи при цьому клавішу <tt>Ctrl</tt>. <tt>Alt</tt>+клацання на ескізі "
 "маски"
 
-#: ../data/tips/gimp-tips.xml.in.h:3
+#: ../data/tips/picman-tips.xml.in.h:3
 msgid ""
 "<tt>Ctrl</tt>-drag with the Rotate tool will constrain the rotation to 15 "
 "degree angles."
@@ -48,7 +48,7 @@ msgstr ""
 "Натискання <tt>Ctrl</tt> у інструменті &quot;Обертання&quot; при обертанні, "
 "призводить до повороту на кут кратний 15 градусам."
 
-#: ../data/tips/gimp-tips.xml.in.h:4
+#: ../data/tips/picman-tips.xml.in.h:4
 msgid ""
 "<tt>Shift</tt>-click on the eye icon in the Layers dialog to hide all layers "
 "but that one. <tt>Shift</tt>-click again to show all layers."
@@ -58,7 +58,7 @@ msgstr ""
 "на чий значок натиснули. Щоб зробити всі шари знову видимими, натисніть на "
 "той самий значок, утримуючи клавішу <tt>Shift</tt>."
 
-#: ../data/tips/gimp-tips.xml.in.h:5
+#: ../data/tips/picman-tips.xml.in.h:5
 msgid ""
 "A floating selection must be anchored to a new layer or to the last active "
 "layer before doing other operations on the image. Click on the &quot;New "
@@ -71,13 +71,13 @@ msgstr ""
 "&quot;Шари&quot; або &quot;Прикріпити плаваючий шар&quot;, або виберіть цю "
 "функцію з меню."
 
-#: ../data/tips/gimp-tips.xml.in.h:6
+#: ../data/tips/picman-tips.xml.in.h:6
 msgid ""
 "After you enabled &quot;Dynamic Keyboard Shortcuts&quot; in the Preferences "
 "dialog, you can reassign shortcut keys. Do so by bringing up the menu, "
 "selecting a menu item, and pressing the desired key combination. If &quot;"
 "Save Keyboard Shortcuts&quot; is enabled, the key bindings are saved when "
-"you exit GIMP. You should probably disable &quot;Dynamic Keyboard "
+"you exit PICMAN. You should probably disable &quot;Dynamic Keyboard "
 "Shortcuts&quot; afterwards, to prevent accidentally assigning/reassigning "
 "shortcuts."
 msgstr ""
@@ -85,11 +85,11 @@ msgstr ""
 "Параметри\" можна перевизначати комбінації клавіш. Для цього відкрийте меню "
 "наведіть вказівник на потрібний пункт меню, та натисніть бажану комбінацію "
 "клавіш. Якщо ввімкнено «Зберігати комбінації клавіш при виході», вона буде "
-"збережена під час виходу з програми GIMP.  Після встановлення всіх "
+"збережена під час виходу з програми PICMAN.  Після встановлення всіх "
 "комбінацій, можливо, варто вимкнути динамічне запам'ятовування, щоб "
 "випадково нічого не переназначити."
 
-#: ../data/tips/gimp-tips.xml.in.h:7
+#: ../data/tips/picman-tips.xml.in.h:7
 msgid ""
 "Click and drag on a ruler to place a guide on an image. All dragged "
 "selections will snap to the guides. You can remove guides by dragging them "
@@ -100,28 +100,28 @@ msgstr ""
 "напрямних. Видалити напрямні можна перетягнувши їх за межі зображення за "
 "допомогою інструменту «Переміщення»."
 
-#: ../data/tips/gimp-tips.xml.in.h:8
+#: ../data/tips/picman-tips.xml.in.h:8
 msgid ""
-"GIMP supports gzip compression on the fly. Just add <tt>.gz</tt> (or <tt>."
+"PICMAN supports gzip compression on the fly. Just add <tt>.gz</tt> (or <tt>."
 "bz2</tt>, if you have bzip2 installed) to the filename and your image will "
 "be saved compressed. Of course loading compressed images works too."
 msgstr ""
-"GIMP підтримує стискання gzip «на ходу». Просто додайте <tt>.gz</tt> (чи "
+"PICMAN підтримує стискання gzip «на ходу». Просто додайте <tt>.gz</tt> (чи "
 "<tt>.bz2</tt>, якщо у вас встановлено bzip2) до назви файлу, та ваше "
 "зображення буде збережено стисненим. Звичайно, стиснені зображення можна "
 "відкривати як звичайні."
 
-#: ../data/tips/gimp-tips.xml.in.h:9
+#: ../data/tips/picman-tips.xml.in.h:9
 msgid ""
-"GIMP uses layers to let you organize your image. Think of them as a stack of "
+"PICMAN uses layers to let you organize your image. Think of them as a stack of "
 "slides or filters, such that looking through them you see a composite of "
 "their contents."
 msgstr ""
-"Для створення складного зображення у GIMP використовує шари. Щоб отримати "
+"Для створення складного зображення у PICMAN використовує шари. Щоб отримати "
 "про них уяву, уявіть стопку прозорих плівок із зображеннями, так що при "
 "перегляді видимий вміст одразу всіх плівок."
 
-#: ../data/tips/gimp-tips.xml.in.h:10
+#: ../data/tips/picman-tips.xml.in.h:10
 msgid ""
 "If a layer's name in the Layers dialog is displayed in <b>bold</b>, this "
 "layer doesn't have an alpha-channel. You can add an alpha-channel using "
@@ -131,7 +131,7 @@ msgstr ""
 "означає, що цей шар не має альфа-каналу. Ви можете додати альфа-канал у меню "
 "«Шар→Прозорість→Додати альфа-канал»."
 
-#: ../data/tips/gimp-tips.xml.in.h:11
+#: ../data/tips/picman-tips.xml.in.h:11
 msgid ""
 "If some of your scanned photos do not look colorful enough, you can easily "
 "improve their tonal range with the &quot;Auto&quot; button in the Levels "
@@ -143,7 +143,7 @@ msgstr ""
 "вікні «Рівні» (Колір→Рівні). Відтінки кольору можна скоригувати інструментом "
 "«Криві» (Колір→Криві)."
 
-#: ../data/tips/gimp-tips.xml.in.h:12
+#: ../data/tips/picman-tips.xml.in.h:12
 msgid ""
 "If you stroke a path (Edit→Stroke Path), the paint tools can be used with "
 "their current settings. You can use the Paintbrush in gradient mode or even "
@@ -154,7 +154,7 @@ msgstr ""
 "«Пензель» у режимі градієнта, «Штамп» з джерелом з шаблону, або навіть "
 "інструменти «Гумка» чи «Палець»."
 
-#: ../data/tips/gimp-tips.xml.in.h:13
+#: ../data/tips/picman-tips.xml.in.h:13
 msgid ""
 "If your screen is too cluttered, you can press <tt>Tab</tt> in an image "
 "window to toggle the visibility of the toolbox and other dialogs."
@@ -163,7 +163,7 @@ msgstr ""
 "зображення, щоб приховати чи показати панелі інструментів та інші діалогові "
 "вікна."
 
-#: ../data/tips/gimp-tips.xml.in.h:14
+#: ../data/tips/picman-tips.xml.in.h:14
 msgid ""
 "Most plug-ins work on the current layer of the current image. In some cases, "
 "you will have to merge all layers (Image→Flatten Image) if you want the plug-"
@@ -173,7 +173,7 @@ msgstr ""
 "необхідно об'єднувати всі шари (Зображення→Звести зображення), якщо бажаєте "
 "щоб доповнення діяло на все зображення."
 
-#: ../data/tips/gimp-tips.xml.in.h:15
+#: ../data/tips/picman-tips.xml.in.h:15
 msgid ""
 "Not all effects can be applied to all kinds of images. This is indicated by "
 "a grayed-out menu-entry. You may need to change the image mode to RGB "
@@ -186,7 +186,7 @@ msgstr ""
 "(Шар→Прозорість→Додати альфа-канал) або об'єднати шари зображення "
 "(Зображення→Звести зображення)."
 
-#: ../data/tips/gimp-tips.xml.in.h:16
+#: ../data/tips/picman-tips.xml.in.h:16
 msgid ""
 "Pressing and holding the <tt>Shift</tt> key before making a selection allows "
 "you to add to the current selection instead of replacing it. Using <tt>Ctrl</"
@@ -196,19 +196,19 @@ msgstr ""
 "<tt>Shift</tt>. Щоб відняти ділянку від виділеної, натисніть перед початком "
 "виділення клавішу <tt>Ctrl</tt>. "
 
-#: ../data/tips/gimp-tips.xml.in.h:17
+#: ../data/tips/picman-tips.xml.in.h:17
 msgid ""
-"When you save an image to work on it again later, try using XCF, GIMP's "
+"When you save an image to work on it again later, try using XCF, PICMAN's "
 "native file format (use the file extension <tt>.xcf</tt>). This preserves "
 "the layers and many aspects of your work-in-progress. Once a project is "
 "completed, you can export it as JPEG, PNG, GIF, etc."
 msgstr ""
 "Щоб зберегти зображення для подальшої роботи з ним, скористайтесь XCF, "
-"рідний формат файла для GIMP (розширення файла <tt>.xcf</tt>). Це зберігає "
+"рідний формат файла для PICMAN (розширення файла <tt>.xcf</tt>). Це зберігає "
 "шари і багато інших аспектів вашої роботи. Коли проект буде завершено, "
 "можете його експортувати у JPEG, PNG, GIF тощо."
 
-#: ../data/tips/gimp-tips.xml.in.h:18
+#: ../data/tips/picman-tips.xml.in.h:18
 msgid ""
 "You can adjust or move a selection by using <tt>Alt</tt>-drag. If this makes "
 "the window move, your window manager uses the <tt>Alt</tt> key already. Most "
@@ -222,7 +222,7 @@ msgstr ""
 "або змініть настройки віконного менеджера (змінивши <tt>Alt</tt> на "
 "<tt>Super</tt> чи клавішу з логотипом Windows)."
 
-#: ../data/tips/gimp-tips.xml.in.h:19
+#: ../data/tips/picman-tips.xml.in.h:19
 msgid ""
 "You can create and edit complex selections using the Path tool. The Paths "
 "dialog allows you to work on multiple paths and to convert them to "
@@ -232,7 +232,7 @@ msgstr ""
 "інструмент «Контур». У діалоговому вікні «Контур»; можна працювати з "
 "кількома контурами та перетворювати їх у виділення."
 
-#: ../data/tips/gimp-tips.xml.in.h:20
+#: ../data/tips/picman-tips.xml.in.h:20
 msgid ""
 "You can drag a layer from the Layers dialog and drop it onto the toolbox. "
 "This will create a new image containing only that layer."
@@ -240,17 +240,17 @@ msgstr ""
 "Можна перемістити шар з діалогового вікна «Шари» на панель інструментів. Це "
 "призведе до створення нового зображення, яке буде містити лише цей шар."
 
-#: ../data/tips/gimp-tips.xml.in.h:21
+#: ../data/tips/picman-tips.xml.in.h:21
 msgid ""
-"You can drag and drop many things in GIMP. For example, dragging a color "
+"You can drag and drop many things in PICMAN. For example, dragging a color "
 "from the toolbox or from a color palette and dropping it into an image will "
 "fill the current selection with that color."
 msgstr ""
-"У GIMP можна перетягувати мишею багато елементів. Наприклад, перетягування "
+"У PICMAN можна перетягувати мишею багато елементів. Наприклад, перетягування "
 "кольору з панелі інструментів або з палітри на зображення призводить до "
 "заповнення цим кольором зображення (або його виділеної ділянки)."
 
-#: ../data/tips/gimp-tips.xml.in.h:22
+#: ../data/tips/picman-tips.xml.in.h:22
 msgid ""
 "You can draw simple squares or circles using Edit→Stroke Selection. It "
 "strokes the edge of your current selection. More complex shapes can be drawn "
@@ -262,15 +262,15 @@ msgstr ""
 "намалювати використовуючи інструмент «Контур» або "
 "«Фільтри→Візуалізація→Gfig»."
 
-#: ../data/tips/gimp-tips.xml.in.h:23
+#: ../data/tips/picman-tips.xml.in.h:23
 msgid ""
-"You can get context-sensitive help for most of GIMP's features by pressing "
+"You can get context-sensitive help for most of PICMAN's features by pressing "
 "the F1 key at any time. This also works inside the menus."
 msgstr ""
-"Контекстну довідку для більшості функцій та меню GIMP можна викликати "
+"Контекстну довідку для більшості функцій та меню PICMAN можна викликати "
 "клавішею F1."
 
-#: ../data/tips/gimp-tips.xml.in.h:24
+#: ../data/tips/picman-tips.xml.in.h:24
 msgid ""
 "You can perform many layer operations by right-clicking on the text label of "
 "a layer in the Layers dialog."
@@ -279,7 +279,7 @@ msgstr ""
 "відкривається при натисканні правої кнопки миші на назві шару у діалоговому "
 "вікні &quot;Шари&quot;."
 
-#: ../data/tips/gimp-tips.xml.in.h:25
+#: ../data/tips/picman-tips.xml.in.h:25
 msgid ""
 "You can save a selection to a channel (Select→Save to Channel) and then "
 "modify this channel with any paint tools. Using the buttons in the Channels "
@@ -291,7 +291,7 @@ msgstr ""
 "вікні \"Канали\", можна змінити видимість каналу або перетворити його у "
 "виділену ділянку."
 
-#: ../data/tips/gimp-tips.xml.in.h:26
+#: ../data/tips/picman-tips.xml.in.h:26
 msgid ""
 "You can use <tt>Ctrl</tt>-<tt>Tab</tt> to cycle through all layers in an "
 "image (if your window manager doesn't trap those keys...)."
@@ -300,7 +300,7 @@ msgstr ""
 "<tt>Tab</tt> (якщо ваш віконний менеджер не використовує цю комбінацію "
 "клавіш)."
 
-#: ../data/tips/gimp-tips.xml.in.h:27
+#: ../data/tips/picman-tips.xml.in.h:27
 msgid ""
 "You can use the middle mouse button to pan around the image (or optionally "
 "hold <tt>Spacebar</tt> while you move the mouse)."
@@ -310,7 +310,7 @@ msgstr ""
 "програм — утримуючи натисненою клавішу <tt>пробіл</tt>, переміщувати курсор "
 "миші."
 
-#: ../data/tips/gimp-tips.xml.in.h:28
+#: ../data/tips/picman-tips.xml.in.h:28
 msgid ""
 "You can use the paint tools to change the selection. Click on the &quot;"
 "Quick Mask&quot; button at the bottom left of an image window. Change your "
@@ -323,13 +323,13 @@ msgstr ""
 "малювання, потім ще раз натиснути кнопку для переходу у звичайний режим."
 
 #~ msgid "<big>Welcome to the GNU Image Manipulation Program!</big>"
-#~ msgstr "<big>Ласкаво просимо до GIMP!</big>"
+#~ msgstr "<big>Ласкаво просимо до PICMAN!</big>"
 
 #~ msgid ""
-#~ "GIMP allows you to undo most changes to the image, so feel free to "
+#~ "PICMAN allows you to undo most changes to the image, so feel free to "
 #~ "experiment."
 #~ msgstr ""
-#~ "У GIMP можна скасувати більшість внесених змін, тому можете сміливо "
+#~ "У PICMAN можна скасувати більшість внесених змін, тому можете сміливо "
 #~ "експериментувати."
 
 #~ msgid ""

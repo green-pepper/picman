@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginaction.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanpluginaction.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,48 +18,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_ACTION_H__
-#define __GIMP_PLUG_IN_ACTION_H__
+#ifndef __PICMAN_PLUG_IN_ACTION_H__
+#define __PICMAN_PLUG_IN_ACTION_H__
 
 
-#include "gimpaction.h"
+#include "picmanaction.h"
 
 
-#define GIMP_TYPE_PLUG_IN_ACTION            (gimp_plug_in_action_get_type ())
-#define GIMP_PLUG_IN_ACTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PLUG_IN_ACTION, GimpPlugInAction))
-#define GIMP_PLUG_IN_ACTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PLUG_IN_ACTION, GimpPlugInActionClass))
-#define GIMP_IS_PLUG_IN_ACTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PLUG_IN_ACTION))
-#define GIMP_IS_PLUG_IN_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), GIMP_TYPE_PLUG_IN_ACTION))
-#define GIMP_PLUG_IN_ACTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GIMP_TYPE_PLUG_IN_ACTION, GimpPlugInActionClass))
+#define PICMAN_TYPE_PLUG_IN_ACTION            (picman_plug_in_action_get_type ())
+#define PICMAN_PLUG_IN_ACTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PLUG_IN_ACTION, PicmanPlugInAction))
+#define PICMAN_PLUG_IN_ACTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PLUG_IN_ACTION, PicmanPlugInActionClass))
+#define PICMAN_IS_PLUG_IN_ACTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PLUG_IN_ACTION))
+#define PICMAN_IS_PLUG_IN_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), PICMAN_TYPE_PLUG_IN_ACTION))
+#define PICMAN_PLUG_IN_ACTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PICMAN_TYPE_PLUG_IN_ACTION, PicmanPlugInActionClass))
 
 
-typedef struct _GimpPlugInActionClass GimpPlugInActionClass;
+typedef struct _PicmanPlugInActionClass PicmanPlugInActionClass;
 
-struct _GimpPlugInAction
+struct _PicmanPlugInAction
 {
-  GimpAction           parent_instance;
+  PicmanAction           parent_instance;
 
-  GimpPlugInProcedure *procedure;
+  PicmanPlugInProcedure *procedure;
 };
 
-struct _GimpPlugInActionClass
+struct _PicmanPlugInActionClass
 {
-  GimpActionClass parent_class;
+  PicmanActionClass parent_class;
 
-  void (* selected) (GimpPlugInAction    *action,
-                     GimpPlugInProcedure *proc);
+  void (* selected) (PicmanPlugInAction    *action,
+                     PicmanPlugInProcedure *proc);
 };
 
 
-GType              gimp_plug_in_action_get_type (void) G_GNUC_CONST;
+GType              picman_plug_in_action_get_type (void) G_GNUC_CONST;
 
-GimpPlugInAction * gimp_plug_in_action_new      (const gchar         *name,
+PicmanPlugInAction * picman_plug_in_action_new      (const gchar         *name,
                                                  const gchar         *label,
                                                  const gchar         *tooltip,
                                                  const gchar         *stock_id,
-                                                 GimpPlugInProcedure *procedure);
-void               gimp_plug_in_action_selected (GimpPlugInAction    *action,
-                                                 GimpPlugInProcedure *procedure);
+                                                 PicmanPlugInProcedure *procedure);
+void               picman_plug_in_action_selected (PicmanPlugInAction    *action,
+                                                 PicmanPlugInProcedure *procedure);
 
 
-#endif  /* __GIMP_PLUG_IN_ACTION_H__ */
+#endif  /* __PICMAN_PLUG_IN_ACTION_H__ */

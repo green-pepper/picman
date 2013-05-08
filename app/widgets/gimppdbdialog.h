@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppdbdialog.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanpdbdialog.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,69 +18,69 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PDB_DIALOG_H__
-#define __GIMP_PDB_DIALOG_H__
+#ifndef __PICMAN_PDB_DIALOG_H__
+#define __PICMAN_PDB_DIALOG_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_PDB_DIALOG            (gimp_pdb_dialog_get_type ())
-#define GIMP_PDB_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PDB_DIALOG, GimpPdbDialog))
-#define GIMP_PDB_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PDB_DIALOG, GimpPdbDialogClass))
-#define GIMP_IS_PDB_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PDB_DIALOG))
-#define GIMP_IS_PDB_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PDB_DIALOG))
-#define GIMP_PDB_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PDB_DIALOG, GimpPdbDialogClass))
+#define PICMAN_TYPE_PDB_DIALOG            (picman_pdb_dialog_get_type ())
+#define PICMAN_PDB_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PDB_DIALOG, PicmanPdbDialog))
+#define PICMAN_PDB_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PDB_DIALOG, PicmanPdbDialogClass))
+#define PICMAN_IS_PDB_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PDB_DIALOG))
+#define PICMAN_IS_PDB_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PDB_DIALOG))
+#define PICMAN_PDB_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PDB_DIALOG, PicmanPdbDialogClass))
 
 
-typedef struct _GimpPdbDialogClass  GimpPdbDialogClass;
+typedef struct _PicmanPdbDialogClass  PicmanPdbDialogClass;
 
-struct _GimpPdbDialog
+struct _PicmanPdbDialog
 {
-  GimpDialog       parent_instance;
+  PicmanDialog       parent_instance;
 
-  GimpPDB         *pdb;
+  PicmanPDB         *pdb;
 
   /*  The context we were created with. This is the context the plug-in
    *  exists in and must be used when calling the plug-in.
    */
-  GimpContext     *caller_context;
+  PicmanContext     *caller_context;
 
   /*  The dialog's private context, serves just as model for the
    *  select widgets and must not be used when calling the plug-in.
    */
-  GimpContext     *context;
+  PicmanContext     *context;
 
   GType            select_type;
-  GimpObject      *initial_object;
+  PicmanObject      *initial_object;
   gchar           *callback_name;
   gboolean         callback_busy;
 
-  GimpMenuFactory *menu_factory;
+  PicmanMenuFactory *menu_factory;
   GtkWidget       *view;
 };
 
-struct _GimpPdbDialogClass
+struct _PicmanPdbDialogClass
 {
-  GimpDialogClass  parent_class;
+  PicmanDialogClass  parent_class;
 
   GList           *dialogs;
 
-  GimpValueArray * (* run_callback) (GimpPdbDialog  *dialog,
-                                     GimpObject     *object,
+  PicmanValueArray * (* run_callback) (PicmanPdbDialog  *dialog,
+                                     PicmanObject     *object,
                                      gboolean        closing,
                                      GError        **error);
 };
 
 
-GType           gimp_pdb_dialog_get_type        (void) G_GNUC_CONST;
+GType           picman_pdb_dialog_get_type        (void) G_GNUC_CONST;
 
-void            gimp_pdb_dialog_run_callback    (GimpPdbDialog      *dialog,
+void            picman_pdb_dialog_run_callback    (PicmanPdbDialog      *dialog,
                                                  gboolean            closing);
 
-GimpPdbDialog * gimp_pdb_dialog_get_by_callback (GimpPdbDialogClass *klass,
+PicmanPdbDialog * picman_pdb_dialog_get_by_callback (PicmanPdbDialogClass *klass,
                                                  const gchar        *callback_name);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_PDB_DIALOG_H__ */
+#endif /* __PICMAN_PDB_DIALOG_H__ */

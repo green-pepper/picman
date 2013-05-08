@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpsessioninfo-dockable.h
- * Copyright (C) 2001-2007 Michael Natterer <mitch@gimp.org>
+ * picmansessioninfo-dockable.h
+ * Copyright (C) 2001-2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,42 +18,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SESSION_INFO_DOCKABLE_H__
-#define __GIMP_SESSION_INFO_DOCKABLE_H__
+#ifndef __PICMAN_SESSION_INFO_DOCKABLE_H__
+#define __PICMAN_SESSION_INFO_DOCKABLE_H__
 
 
 /**
- * GimpSessionInfoDockable:
+ * PicmanSessionInfoDockable:
  *
  * Contains information about a dockable in the interface.
  */
-struct _GimpSessionInfoDockable
+struct _PicmanSessionInfoDockable
 {
   gchar        *identifier;
   gboolean      locked;
-  GimpTabStyle  tab_style;
+  PicmanTabStyle  tab_style;
   gint          view_size;
 
-  /*  dialog specific list of GimpSessionInfoAux  */
+  /*  dialog specific list of PicmanSessionInfoAux  */
   GList        *aux_info;
 };
 
 
-GimpSessionInfoDockable *
-               gimp_session_info_dockable_new         (void);
-void           gimp_session_info_dockable_free        (GimpSessionInfoDockable  *info);
+PicmanSessionInfoDockable *
+               picman_session_info_dockable_new         (void);
+void           picman_session_info_dockable_free        (PicmanSessionInfoDockable  *info);
 
-void           gimp_session_info_dockable_serialize   (GimpConfigWriter         *writer,
-                                                       GimpSessionInfoDockable  *dockable);
-GTokenType     gimp_session_info_dockable_deserialize (GScanner                 *scanner,
+void           picman_session_info_dockable_serialize   (PicmanConfigWriter         *writer,
+                                                       PicmanSessionInfoDockable  *dockable);
+GTokenType     picman_session_info_dockable_deserialize (GScanner                 *scanner,
                                                        gint                      scope,
-                                                       GimpSessionInfoDockable **dockable);
+                                                       PicmanSessionInfoDockable **dockable);
 
-GimpSessionInfoDockable *
-               gimp_session_info_dockable_from_widget (GimpDockable             *dockable);
+PicmanSessionInfoDockable *
+               picman_session_info_dockable_from_widget (PicmanDockable             *dockable);
 
-GimpDockable * gimp_session_info_dockable_restore     (GimpSessionInfoDockable  *info,
-                                                       GimpDock                 *dock);
+PicmanDockable * picman_session_info_dockable_restore     (PicmanSessionInfoDockable  *info,
+                                                       PicmanDock                 *dock);
 
 
-#endif  /* __GIMP_SESSION_INFO_DOCKABLE_H__ */
+#endif  /* __PICMAN_SESSION_INFO_DOCKABLE_H__ */

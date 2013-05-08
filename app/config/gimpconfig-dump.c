@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpConfig object property dumper.
- * Copyright (C) 2001-2006  Sven Neumann <sven@gimp.org>
+ * PicmanConfig object property dumper.
+ * Copyright (C) 2001-2006  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,26 +31,26 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #ifdef G_OS_WIN32
-#include "libgimpbase/gimpwin32-io.h"
+#include "libpicmanbase/picmanwin32-io.h"
 #endif
 
 #include "config-types.h"
 
-#include "gimpconfig-dump.h"
-#include "gimprc.h"
+#include "picmanconfig-dump.h"
+#include "picmanrc.h"
 
 
 
-static void    dump_gimprc_system   (GimpConfig       *rc,
-                                     GimpConfigWriter *writer,
+static void    dump_picmanrc_system   (PicmanConfig       *rc,
+                                     PicmanConfigWriter *writer,
                                      gint              fd);
-static void    dump_gimprc_manpage  (GimpConfig       *rc,
-                                     GimpConfigWriter *writer,
+static void    dump_picmanrc_manpage  (PicmanConfig       *rc,
+                                     PicmanConfigWriter *writer,
                                      gint              fd);
 static gchar * dump_describe_param  (GParamSpec       *param_spec);
 static void    dump_with_linebreaks (gint              fd,
@@ -58,61 +58,61 @@ static void    dump_with_linebreaks (gint              fd,
 
 
 gboolean
-gimp_config_dump (GimpConfigDumpFormat  format)
+picman_config_dump (PicmanConfigDumpFormat  format)
 {
-  GimpConfigWriter *writer;
-  GimpConfig       *rc;
+  PicmanConfigWriter *writer;
+  PicmanConfig       *rc;
 
-  rc = g_object_new (GIMP_TYPE_RC, NULL);
-  writer = gimp_config_writer_new_fd (1);
+  rc = g_object_new (PICMAN_TYPE_RC, NULL);
+  writer = picman_config_writer_new_fd (1);
 
   switch (format)
     {
-    case GIMP_CONFIG_DUMP_NONE:
+    case PICMAN_CONFIG_DUMP_NONE:
       break;
 
-    case GIMP_CONFIG_DUMP_GIMPRC:
-      gimp_config_writer_comment (writer,
-                                  "Dump of the GIMP default configuration");
-      gimp_config_writer_linefeed (writer);
-      gimp_config_serialize_properties (rc, writer);
-      gimp_config_writer_linefeed (writer);
+    case PICMAN_CONFIG_DUMP_PICMANRC:
+      picman_config_writer_comment (writer,
+                                  "Dump of the PICMAN default configuration");
+      picman_config_writer_linefeed (writer);
+      picman_config_serialize_properties (rc, writer);
+      picman_config_writer_linefeed (writer);
       break;
 
-    case GIMP_CONFIG_DUMP_GIMPRC_SYSTEM:
-      dump_gimprc_system (rc, writer, 1);
+    case PICMAN_CONFIG_DUMP_PICMANRC_SYSTEM:
+      dump_picmanrc_system (rc, writer, 1);
       break;
 
-    case GIMP_CONFIG_DUMP_GIMPRC_MANPAGE:
-      dump_gimprc_manpage (rc, writer, 1);
+    case PICMAN_CONFIG_DUMP_PICMANRC_MANPAGE:
+      dump_picmanrc_manpage (rc, writer, 1);
       break;
     }
 
-  gimp_config_writer_finish (writer, NULL, NULL);
+  picman_config_writer_finish (writer, NULL, NULL);
   g_object_unref (rc);
 
   return TRUE;
 }
 
 
-static const gchar system_gimprc_header[] =
-"This is the system-wide gimprc file.  Any change made in this file "
+static const gchar system_picmanrc_header[] =
+"This is the system-wide picmanrc file.  Any change made in this file "
 "will affect all users of this system, provided that they are not "
-"overriding the default values in their personal gimprc file.\n"
+"overriding the default values in their personal picmanrc file.\n"
 "\n"
 "Lines that start with a '#' are comments. Blank lines are ignored.\n"
 "\n"
 "By default everything in this file is commented out.  The file then "
 "documents the default values and shows what changes are possible.\n"
 "\n"
-"The variable ${gimp_dir} is set to the value of the environment "
-"variable GIMP2_DIRECTORY or, if that is not set, the compiled-in "
-"default value is used.  If GIMP2_DIRECTORY is not an absolute path, "
+"The variable ${picman_dir} is set to the value of the environment "
+"variable PICMAN2_DIRECTORY or, if that is not set, the compiled-in "
+"default value is used.  If PICMAN2_DIRECTORY is not an absolute path, "
 "it is interpreted relative to your home directory.";
 
 static void
-dump_gimprc_system (GimpConfig       *rc,
-                    GimpConfigWriter *writer,
+dump_picmanrc_system (PicmanConfig       *rc,
+                    PicmanConfigWriter *writer,
                     gint              fd)
 {
   GObjectClass  *klass;
@@ -120,8 +120,8 @@ dump_gimprc_system (GimpConfig       *rc,
   guint          n_property_specs;
   guint          i;
 
-  gimp_config_writer_comment (writer, system_gimprc_header);
-  gimp_config_writer_linefeed (writer);
+  picman_config_writer_comment (writer, system_picmanrc_header);
+  picman_config_writer_linefeed (writer);
 
   klass = G_OBJECT_GET_CLASS (rc);
   property_specs = g_object_class_list_properties (klass, &n_property_specs);
@@ -131,26 +131,26 @@ dump_gimprc_system (GimpConfig       *rc,
       GParamSpec *prop_spec = property_specs[i];
       gchar      *comment;
 
-      if (! (prop_spec->flags & GIMP_CONFIG_PARAM_SERIALIZE))
+      if (! (prop_spec->flags & PICMAN_CONFIG_PARAM_SERIALIZE))
         continue;
 
-      if (prop_spec->flags & GIMP_CONFIG_PARAM_IGNORE)
+      if (prop_spec->flags & PICMAN_CONFIG_PARAM_IGNORE)
         continue;
 
       comment = dump_describe_param (prop_spec);
       if (comment)
         {
-          gimp_config_writer_comment (writer, comment);
+          picman_config_writer_comment (writer, comment);
           g_free (comment);
         }
 
-      gimp_config_writer_comment_mode (writer, TRUE);
-      gimp_config_writer_linefeed (writer);
+      picman_config_writer_comment_mode (writer, TRUE);
+      picman_config_writer_linefeed (writer);
 
-      gimp_config_serialize_property (rc, prop_spec, writer);
+      picman_config_serialize_property (rc, prop_spec, writer);
 
-      gimp_config_writer_comment_mode (writer, FALSE);
-      gimp_config_writer_linefeed (writer);
+      picman_config_writer_comment_mode (writer, FALSE);
+      picman_config_writer_linefeed (writer);
     }
 
   g_free (property_specs);
@@ -158,24 +158,24 @@ dump_gimprc_system (GimpConfig       *rc,
 
 
 static const gchar man_page_header[] =
-".\\\" This man-page is auto-generated by gimp --dump-gimprc-manpage.\n"
+".\\\" This man-page is auto-generated by picman --dump-picmanrc-manpage.\n"
 "\n"
-".TH GIMPRC 5 \"Version @GIMP_VERSION@\" \"GIMP Manual Pages\"\n"
+".TH PICMANRC 5 \"Version @PICMAN_VERSION@\" \"PICMAN Manual Pages\"\n"
 ".SH NAME\n"
-"gimprc \\- gimp configuration file\n"
+"picmanrc \\- picman configuration file\n"
 ".SH DESCRIPTION\n"
 "The\n"
-".B gimprc\n"
-"file is a configuration file read by GIMP when it starts up.  There\n"
+".B picmanrc\n"
+"file is a configuration file read by PICMAN when it starts up.  There\n"
 "are two of these: one system-wide one stored in\n"
-"@gimpsysconfdir@/gimprc and a per-user \\fB$HOME\\fP/@gimpdir@/gimprc\n"
+"@picmansysconfdir@/picmanrc and a per-user \\fB$HOME\\fP/@picmandir@/picmanrc\n"
 "which may override system settings.\n"
 "\n"
 "Comments are introduced by a hash sign (#), and continue until the end\n"
 "of the line.  Blank lines are ignored.\n"
 "\n"
 "The\n"
-".B gimprc\n"
+".B picmanrc\n"
 "file associates values with properties.  These properties may be set\n"
 "by lisp-like assignments of the form:\n"
 ".IP\n"
@@ -208,42 +208,42 @@ static const gchar *man_page_path =
 "${variable} is expanded to the current value of an environment variable.\n"
 "There are a few variables that are pre-defined:\n"
 ".TP\n"
-".I gimp_dir\n"
-"The personal gimp directory which is set to the value of the environment\n"
-"variable GIMP2_DIRECTORY or to ~/@gimpdir@.\n"
+".I picman_dir\n"
+"The personal picman directory which is set to the value of the environment\n"
+"variable PICMAN2_DIRECTORY or to ~/@picmandir@.\n"
 ".TP\n"
-".I gimp_data_dir\n"
+".I picman_data_dir\n"
 "Base for paths to shareable data, which is set to the value of the\n"
-"environment variable GIMP2_DATADIR or to the compiled-in default value\n"
-"@gimpdatadir@.\n"
+"environment variable PICMAN2_DATADIR or to the compiled-in default value\n"
+"@picmandatadir@.\n"
 ".TP\n"
-".I gimp_plug_in_dir\n"
+".I picman_plug_in_dir\n"
 "Base to paths for architecture-specific plugins and modules, which is set\n"
-"to the value of the environment variable GIMP2_PLUGINDIR or to the\n"
-"compiled-in default value @gimpplugindir@.\n"
+"to the value of the environment variable PICMAN2_PLUGINDIR or to the\n"
+"compiled-in default value @picmanplugindir@.\n"
 ".TP\n"
-".I gimp_sysconf_dir\n"
+".I picman_sysconf_dir\n"
 "Path to configuration files, which is set to the value of the environment\n"
-"variable GIMP2_SYSCONFDIR or to the compiled-in default value \n"
-"@gimpsysconfdir@.\n"
+"variable PICMAN2_SYSCONFDIR or to the compiled-in default value \n"
+"@picmansysconfdir@.\n"
 "\n";
 
 static const gchar man_page_footer[] =
 ".SH FILES\n"
 ".TP\n"
-".I @gimpsysconfdir@/gimprc\n"
+".I @picmansysconfdir@/picmanrc\n"
 "System-wide configuration file\n"
 ".TP\n"
-".I \\fB$HOME\\fP/@gimpdir@/gimprc\n"
+".I \\fB$HOME\\fP/@picmandir@/picmanrc\n"
 "Per-user configuration file\n"
 "\n"
 ".SH \"SEE ALSO\"\n"
-".BR gimp (1)\n";
+".BR picman (1)\n";
 
 
 static void
-dump_gimprc_manpage (GimpConfig       *rc,
-                     GimpConfigWriter *writer,
+dump_picmanrc_manpage (PicmanConfig       *rc,
+                     PicmanConfigWriter *writer,
                      gint              fd)
 {
   GObjectClass  *klass;
@@ -261,15 +261,15 @@ dump_gimprc_manpage (GimpConfig       *rc,
       GParamSpec *prop_spec = property_specs[i];
       gchar      *desc;
 
-      if (! (prop_spec->flags & GIMP_CONFIG_PARAM_SERIALIZE))
+      if (! (prop_spec->flags & PICMAN_CONFIG_PARAM_SERIALIZE))
         continue;
 
-      if (prop_spec->flags & GIMP_CONFIG_PARAM_IGNORE)
+      if (prop_spec->flags & PICMAN_CONFIG_PARAM_IGNORE)
         continue;
 
       write (fd, ".TP\n", strlen (".TP\n"));
 
-      if (gimp_config_serialize_property (rc, prop_spec, writer))
+      if (picman_config_serialize_property (rc, prop_spec, writer))
         {
           write (fd, "\n", 1);
 
@@ -334,9 +334,9 @@ dump_describe_param (GParamSpec *param_spec)
                                param_spec->name);
     }
 
-  if (GIMP_IS_PARAM_SPEC_RGB (param_spec))
+  if (PICMAN_IS_PARAM_SPEC_RGB (param_spec))
     {
-      if (gimp_param_spec_rgb_has_alpha (param_spec))
+      if (picman_param_spec_rgb_has_alpha (param_spec))
         values =
           "The color is specified in the form (color-rgba red green blue "
           "alpha) with channel values as floats in the range of 0.0 to 1.0.";
@@ -345,23 +345,23 @@ dump_describe_param (GParamSpec *param_spec)
           "The color is specified in the form (color-rgb red green blue) "
           "with channel values as floats in the range of 0.0 to 1.0.";
     }
-  else if (GIMP_IS_PARAM_SPEC_MEMSIZE (param_spec))
+  else if (PICMAN_IS_PARAM_SPEC_MEMSIZE (param_spec))
     {
       values =
         "The integer size can contain a suffix of 'B', 'K', 'M' or 'G' which "
-        "makes GIMP interpret the size as being specified in bytes, kilobytes, "
+        "makes PICMAN interpret the size as being specified in bytes, kilobytes, "
         "megabytes or gigabytes. If no suffix is specified the size defaults "
         "to being specified in kilobytes.";
     }
-  else if (GIMP_IS_PARAM_SPEC_CONFIG_PATH (param_spec))
+  else if (PICMAN_IS_PARAM_SPEC_CONFIG_PATH (param_spec))
     {
-      switch (gimp_param_spec_config_path_type (param_spec))
+      switch (picman_param_spec_config_path_type (param_spec))
         {
-        case GIMP_CONFIG_PATH_FILE:
+        case PICMAN_CONFIG_PATH_FILE:
           values = "This is a single filename.";
           break;
 
-        case GIMP_CONFIG_PATH_FILE_LIST:
+        case PICMAN_CONFIG_PATH_FILE_LIST:
           switch (G_SEARCHPATH_SEPARATOR)
             {
             case ':':
@@ -376,11 +376,11 @@ dump_describe_param (GParamSpec *param_spec)
             }
           break;
 
-        case GIMP_CONFIG_PATH_DIR:
+        case PICMAN_CONFIG_PATH_DIR:
           values = "This is a single folder.";
           break;
 
-        case GIMP_CONFIG_PATH_DIR_LIST:
+        case PICMAN_CONFIG_PATH_DIR_LIST:
           switch (G_SEARCHPATH_SEPARATOR)
             {
             case ':':
@@ -396,13 +396,13 @@ dump_describe_param (GParamSpec *param_spec)
           break;
         }
     }
-  else if (GIMP_IS_PARAM_SPEC_UNIT (param_spec))
+  else if (PICMAN_IS_PARAM_SPEC_UNIT (param_spec))
     {
       values =
         "The unit can be one inches, millimeters, points or picas plus "
         "those in your user units database.";
     }
-  else if (g_type_is_a (param_spec->value_type, GIMP_TYPE_CONFIG))
+  else if (g_type_is_a (param_spec->value_type, PICMAN_TYPE_CONFIG))
     {
       values = "This is a parameter list.";
     }

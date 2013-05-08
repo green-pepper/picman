@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpTextTag
- * Copyright (C) 2010  Michael Natterer <mitch@gimp.org>
+ * PicmanTextTag
+ * Copyright (C) 2010  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEXT_TAG_H__
-#define __GIMP_TEXT_TAG_H__
+#ifndef __PICMAN_TEXT_TAG_H__
+#define __PICMAN_TEXT_TAG_H__
 
 
 /*  GtkTextTag property names  */
 
-#define GIMP_TEXT_PROP_NAME_SIZE     "size"
-#define GIMP_TEXT_PROP_NAME_BASELINE "rise"
-#define GIMP_TEXT_PROP_NAME_KERNING  "rise" /* FIXME */
-#define GIMP_TEXT_PROP_NAME_FONT     "font"
-#define GIMP_TEXT_PROP_NAME_COLOR    "foreground-gdk"
+#define PICMAN_TEXT_PROP_NAME_SIZE     "size"
+#define PICMAN_TEXT_PROP_NAME_BASELINE "rise"
+#define PICMAN_TEXT_PROP_NAME_KERNING  "rise" /* FIXME */
+#define PICMAN_TEXT_PROP_NAME_FONT     "font"
+#define PICMAN_TEXT_PROP_NAME_COLOR    "foreground-gdk"
 
 
-gint    gimp_text_tag_get_size     (GtkTextTag *tag);
-gint    gimp_text_tag_get_baseline (GtkTextTag *tag);
-gint    gimp_text_tag_get_kerning  (GtkTextTag *tag);
-gchar * gimp_text_tag_get_font     (GtkTextTag *tag);
-void    gimp_text_tag_get_color    (GtkTextTag *tag,
-                                    GimpRGB    *color);
+gint    picman_text_tag_get_size     (GtkTextTag *tag);
+gint    picman_text_tag_get_baseline (GtkTextTag *tag);
+gint    picman_text_tag_get_kerning  (GtkTextTag *tag);
+gchar * picman_text_tag_get_font     (GtkTextTag *tag);
+void    picman_text_tag_get_color    (GtkTextTag *tag,
+                                    PicmanRGB    *color);
 
 
-#endif /* __GIMP_TEXT_TAG_H__ */
+#endif /* __PICMAN_TEXT_TAG_H__ */

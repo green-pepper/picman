@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpprogressbar.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanprogressbar.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,16 +31,16 @@
 #include <gdk/gdkx.h>
 #endif
 
-#include "gimpuitypes.h"
+#include "picmanuitypes.h"
 
-#include "gimp.h"
+#include "picman.h"
 
-#include "gimpprogressbar.h"
+#include "picmanprogressbar.h"
 
 
 /**
- * SECTION: gimpprogressbar
- * @title: GimpProgressBar
+ * SECTION: picmanprogressbar
+ * @title: PicmanProgressBar
  * @short_description: A widget providing a progress bar.
  *
  * A widget providing a progress bar that automatically redirects any
@@ -48,59 +48,59 @@
  **/
 
 
-static void     gimp_progress_bar_dispose    (GObject     *object);
+static void     picman_progress_bar_dispose    (GObject     *object);
 
-static void     gimp_progress_bar_start      (const gchar *message,
+static void     picman_progress_bar_start      (const gchar *message,
                                               gboolean     cancelable,
                                               gpointer     user_data);
-static void     gimp_progress_bar_end        (gpointer     user_data);
-static void     gimp_progress_bar_set_text   (const gchar *message,
+static void     picman_progress_bar_end        (gpointer     user_data);
+static void     picman_progress_bar_set_text   (const gchar *message,
                                               gpointer     user_data);
-static void     gimp_progress_bar_set_value  (gdouble      percentage,
+static void     picman_progress_bar_set_value  (gdouble      percentage,
                                               gpointer     user_data);
-static void     gimp_progress_bar_pulse      (gpointer     user_data);
-static guint32  gimp_progress_bar_get_window (gpointer     user_data);
+static void     picman_progress_bar_pulse      (gpointer     user_data);
+static guint32  picman_progress_bar_get_window (gpointer     user_data);
 
 
-G_DEFINE_TYPE (GimpProgressBar, gimp_progress_bar, GTK_TYPE_PROGRESS_BAR)
+G_DEFINE_TYPE (PicmanProgressBar, picman_progress_bar, GTK_TYPE_PROGRESS_BAR)
 
-#define parent_class gimp_progress_bar_parent_class
+#define parent_class picman_progress_bar_parent_class
 
 
 static void
-gimp_progress_bar_class_init (GimpProgressBarClass *klass)
+picman_progress_bar_class_init (PicmanProgressBarClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->dispose = gimp_progress_bar_dispose;
+  object_class->dispose = picman_progress_bar_dispose;
 }
 
 static void
-gimp_progress_bar_init (GimpProgressBar *bar)
+picman_progress_bar_init (PicmanProgressBar *bar)
 {
-  GimpProgressVtable vtable = { 0, };
+  PicmanProgressVtable vtable = { 0, };
 
   gtk_progress_bar_set_text (GTK_PROGRESS_BAR (bar), " ");
   gtk_progress_bar_set_ellipsize (GTK_PROGRESS_BAR (bar), PANGO_ELLIPSIZE_END);
 
-  vtable.start      = gimp_progress_bar_start;
-  vtable.end        = gimp_progress_bar_end;
-  vtable.set_text   = gimp_progress_bar_set_text;
-  vtable.set_value  = gimp_progress_bar_set_value;
-  vtable.pulse      = gimp_progress_bar_pulse;
-  vtable.get_window = gimp_progress_bar_get_window;
+  vtable.start      = picman_progress_bar_start;
+  vtable.end        = picman_progress_bar_end;
+  vtable.set_text   = picman_progress_bar_set_text;
+  vtable.set_value  = picman_progress_bar_set_value;
+  vtable.pulse      = picman_progress_bar_pulse;
+  vtable.get_window = picman_progress_bar_get_window;
 
-  bar->progress_callback = gimp_progress_install_vtable (&vtable, bar);
+  bar->progress_callback = picman_progress_install_vtable (&vtable, bar);
 }
 
 static void
-gimp_progress_bar_dispose (GObject *object)
+picman_progress_bar_dispose (GObject *object)
 {
-  GimpProgressBar *bar = GIMP_PROGRESS_BAR (object);
+  PicmanProgressBar *bar = PICMAN_PROGRESS_BAR (object);
 
   if (bar->progress_callback)
     {
-      gimp_progress_uninstall (bar->progress_callback);
+      picman_progress_uninstall (bar->progress_callback);
       bar->progress_callback = NULL;
     }
 
@@ -108,11 +108,11 @@ gimp_progress_bar_dispose (GObject *object)
 }
 
 static void
-gimp_progress_bar_start (const gchar *message,
+picman_progress_bar_start (const gchar *message,
                          gboolean     cancelable,
                          gpointer     user_data)
 {
-  GimpProgressBar *bar = GIMP_PROGRESS_BAR (user_data);
+  PicmanProgressBar *bar = PICMAN_PROGRESS_BAR (user_data);
 
   gtk_progress_bar_set_text (GTK_PROGRESS_BAR (bar), message ? message : " ");
   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (bar), 0.0);
@@ -123,9 +123,9 @@ gimp_progress_bar_start (const gchar *message,
 }
 
 static void
-gimp_progress_bar_end (gpointer user_data)
+picman_progress_bar_end (gpointer user_data)
 {
-  GimpProgressBar *bar = GIMP_PROGRESS_BAR (user_data);
+  PicmanProgressBar *bar = PICMAN_PROGRESS_BAR (user_data);
 
   gtk_progress_bar_set_text (GTK_PROGRESS_BAR (bar), " ");
   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (bar), 0.0);
@@ -136,10 +136,10 @@ gimp_progress_bar_end (gpointer user_data)
 }
 
 static void
-gimp_progress_bar_set_text (const gchar *message,
+picman_progress_bar_set_text (const gchar *message,
                             gpointer     user_data)
 {
-  GimpProgressBar *bar = GIMP_PROGRESS_BAR (user_data);
+  PicmanProgressBar *bar = PICMAN_PROGRESS_BAR (user_data);
 
   gtk_progress_bar_set_text (GTK_PROGRESS_BAR (bar), message ? message : " ");
 
@@ -149,10 +149,10 @@ gimp_progress_bar_set_text (const gchar *message,
 }
 
 static void
-gimp_progress_bar_set_value (gdouble  percentage,
+picman_progress_bar_set_value (gdouble  percentage,
                              gpointer user_data)
 {
-  GimpProgressBar *bar = GIMP_PROGRESS_BAR (user_data);
+  PicmanProgressBar *bar = PICMAN_PROGRESS_BAR (user_data);
 
   if (percentage >= 0.0)
     gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (bar), percentage);
@@ -165,9 +165,9 @@ gimp_progress_bar_set_value (gdouble  percentage,
 }
 
 static void
-gimp_progress_bar_pulse (gpointer user_data)
+picman_progress_bar_pulse (gpointer user_data)
 {
-  GimpProgressBar *bar = GIMP_PROGRESS_BAR (user_data);
+  PicmanProgressBar *bar = PICMAN_PROGRESS_BAR (user_data);
 
   gtk_progress_bar_pulse (GTK_PROGRESS_BAR (bar));
 
@@ -177,13 +177,13 @@ gimp_progress_bar_pulse (gpointer user_data)
 }
 
 static guint32
-gimp_window_get_native_id (GtkWindow *window)
+picman_window_get_native_id (GtkWindow *window)
 {
   g_return_val_if_fail (GTK_IS_WINDOW (window), 0);
 
 #ifdef GDK_NATIVE_WINDOW_POINTER
 #ifdef __GNUC__
-#warning gimp_window_get_native() unimplementable for the target windowing system
+#warning picman_window_get_native() unimplementable for the target windowing system
 #endif
 #endif
 
@@ -201,30 +201,30 @@ gimp_window_get_native_id (GtkWindow *window)
 }
 
 static guint32
-gimp_progress_bar_get_window (gpointer user_data)
+picman_progress_bar_get_window (gpointer user_data)
 {
-  GimpProgressBar *bar = GIMP_PROGRESS_BAR (user_data);
+  PicmanProgressBar *bar = PICMAN_PROGRESS_BAR (user_data);
   GtkWidget       *toplevel;
 
   toplevel = gtk_widget_get_toplevel (GTK_WIDGET (bar));
 
   if (GTK_IS_WINDOW (toplevel))
-    return gimp_window_get_native_id (GTK_WINDOW (toplevel));
+    return picman_window_get_native_id (GTK_WINDOW (toplevel));
 
   return 0;
 }
 
 /**
- * gimp_progress_bar_new:
+ * picman_progress_bar_new:
  *
- * Creates a new #GimpProgressBar widget.
+ * Creates a new #PicmanProgressBar widget.
  *
  * Return value: the new widget.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 GtkWidget *
-gimp_progress_bar_new (void)
+picman_progress_bar_new (void)
 {
-  return g_object_new (GIMP_TYPE_PROGRESS_BAR, NULL);
+  return g_object_new (PICMAN_TYPE_PROGRESS_BAR, NULL);
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,28 +21,28 @@
 
 #include "paint-types.h"
 
-#include "core/gimp.h"
-#include "core/gimplist.h"
-#include "core/gimppaintinfo.h"
+#include "core/picman.h"
+#include "core/picmanlist.h"
+#include "core/picmanpaintinfo.h"
 
-#include "gimp-paint.h"
-#include "gimpairbrush.h"
-#include "gimpclone.h"
-#include "gimpconvolve.h"
-#include "gimpdodgeburn.h"
-#include "gimperaser.h"
-#include "gimpheal.h"
-#include "gimpink.h"
-#include "gimppaintoptions.h"
-#include "gimppaintbrush.h"
-#include "gimppencil.h"
-#include "gimpperspectiveclone.h"
-#include "gimpsmudge.h"
+#include "picman-paint.h"
+#include "picmanairbrush.h"
+#include "picmanclone.h"
+#include "picmanconvolve.h"
+#include "picmandodgeburn.h"
+#include "picmaneraser.h"
+#include "picmanheal.h"
+#include "picmanink.h"
+#include "picmanpaintoptions.h"
+#include "picmanpaintbrush.h"
+#include "picmanpencil.h"
+#include "picmanperspectiveclone.h"
+#include "picmansmudge.h"
 
 
 /*  local function prototypes  */
 
-static void   gimp_paint_register (Gimp        *gimp,
+static void   picman_paint_register (Picman        *picman,
                                    GType        paint_type,
                                    GType        paint_options_type,
                                    const gchar *identifier,
@@ -53,54 +53,54 @@ static void   gimp_paint_register (Gimp        *gimp,
 /*  public functions  */
 
 void
-gimp_paint_init (Gimp *gimp)
+picman_paint_init (Picman *picman)
 {
-  GimpPaintRegisterFunc register_funcs[] =
+  PicmanPaintRegisterFunc register_funcs[] =
   {
-    gimp_dodge_burn_register,
-    gimp_smudge_register,
-    gimp_convolve_register,
-    gimp_perspective_clone_register,
-    gimp_heal_register,
-    gimp_clone_register,
-    gimp_ink_register,
-    gimp_airbrush_register,
-    gimp_eraser_register,
-    gimp_paintbrush_register,
-    gimp_pencil_register
+    picman_dodge_burn_register,
+    picman_smudge_register,
+    picman_convolve_register,
+    picman_perspective_clone_register,
+    picman_heal_register,
+    picman_clone_register,
+    picman_ink_register,
+    picman_airbrush_register,
+    picman_eraser_register,
+    picman_paintbrush_register,
+    picman_pencil_register
   };
 
   gint i;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  gimp->paint_info_list = gimp_list_new (GIMP_TYPE_PAINT_INFO, FALSE);
-  gimp_object_set_static_name (GIMP_OBJECT (gimp->paint_info_list),
+  picman->paint_info_list = picman_list_new (PICMAN_TYPE_PAINT_INFO, FALSE);
+  picman_object_set_static_name (PICMAN_OBJECT (picman->paint_info_list),
                                "paint infos");
 
-  gimp_container_freeze (gimp->paint_info_list);
+  picman_container_freeze (picman->paint_info_list);
 
   for (i = 0; i < G_N_ELEMENTS (register_funcs); i++)
     {
-      register_funcs[i] (gimp, gimp_paint_register);
+      register_funcs[i] (picman, picman_paint_register);
     }
 
-  gimp_container_thaw (gimp->paint_info_list);
+  picman_container_thaw (picman->paint_info_list);
 }
 
 void
-gimp_paint_exit (Gimp *gimp)
+picman_paint_exit (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  gimp_paint_info_set_standard (gimp, NULL);
+  picman_paint_info_set_standard (picman, NULL);
 
-  if (gimp->paint_info_list)
+  if (picman->paint_info_list)
     {
-      gimp_container_foreach (gimp->paint_info_list,
+      picman_container_foreach (picman->paint_info_list,
                               (GFunc) g_object_run_dispose, NULL);
-      g_object_unref (gimp->paint_info_list);
-      gimp->paint_info_list = NULL;
+      g_object_unref (picman->paint_info_list);
+      picman->paint_info_list = NULL;
     }
 }
 
@@ -108,31 +108,31 @@ gimp_paint_exit (Gimp *gimp)
 /*  private functions  */
 
 static void
-gimp_paint_register (Gimp        *gimp,
+picman_paint_register (Picman        *picman,
                      GType        paint_type,
                      GType        paint_options_type,
                      const gchar *identifier,
                      const gchar *blurb,
                      const gchar *stock_id)
 {
-  GimpPaintInfo *paint_info;
+  PicmanPaintInfo *paint_info;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (g_type_is_a (paint_type, GIMP_TYPE_PAINT_CORE));
-  g_return_if_fail (g_type_is_a (paint_options_type, GIMP_TYPE_PAINT_OPTIONS));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (g_type_is_a (paint_type, PICMAN_TYPE_PAINT_CORE));
+  g_return_if_fail (g_type_is_a (paint_options_type, PICMAN_TYPE_PAINT_OPTIONS));
   g_return_if_fail (identifier != NULL);
   g_return_if_fail (blurb != NULL);
 
-  paint_info = gimp_paint_info_new (gimp,
+  paint_info = picman_paint_info_new (picman,
                                     paint_type,
                                     paint_options_type,
                                     identifier,
                                     blurb,
                                     stock_id);
 
-  gimp_container_add (gimp->paint_info_list, GIMP_OBJECT (paint_info));
+  picman_container_add (picman->paint_info_list, PICMAN_OBJECT (paint_info));
   g_object_unref (paint_info);
 
-  if (paint_type == GIMP_TYPE_PAINTBRUSH)
-    gimp_paint_info_set_standard (gimp, paint_info);
+  if (paint_type == PICMAN_TYPE_PAINTBRUSH)
+    picman_paint_info_set_standard (picman, paint_info);
 }

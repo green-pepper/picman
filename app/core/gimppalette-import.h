@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,33 +15,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PALETTE_IMPORT__
-#define __GIMP_PALETTE_IMPORT__
+#ifndef __PICMAN_PALETTE_IMPORT__
+#define __PICMAN_PALETTE_IMPORT__
 
 
-GimpPalette * gimp_palette_import_from_gradient      (GimpGradient *gradient,
-                                                      GimpContext  *context,
+PicmanPalette * picman_palette_import_from_gradient      (PicmanGradient *gradient,
+                                                      PicmanContext  *context,
                                                       gboolean      reverse,
                                                       const gchar  *palette_name,
                                                       gint          n_colors);
-GimpPalette * gimp_palette_import_from_image         (GimpImage    *image,
-                                                      GimpContext  *context,
+PicmanPalette * picman_palette_import_from_image         (PicmanImage    *image,
+                                                      PicmanContext  *context,
                                                       const gchar  *palette_name,
                                                       gint          n_colors,
                                                       gint          treshold,
                                                       gboolean      selection_only);
-GimpPalette * gimp_palette_import_from_indexed_image (GimpImage    *image,
-                                                      GimpContext  *context,
+PicmanPalette * picman_palette_import_from_indexed_image (PicmanImage    *image,
+                                                      PicmanContext  *context,
                                                       const gchar  *palette_name);
-GimpPalette * gimp_palette_import_from_drawable      (GimpDrawable *drawable,
-                                                      GimpContext  *context,
+PicmanPalette * picman_palette_import_from_drawable      (PicmanDrawable *drawable,
+                                                      PicmanContext  *context,
                                                       const gchar  *palette_name,
                                                       gint          n_colors,
                                                       gint          threshold,
                                                       gboolean      selection_only);
-GimpPalette * gimp_palette_import_from_file          (GimpContext  *context,
+PicmanPalette * picman_palette_import_from_file          (PicmanContext  *context,
                                                       const gchar  *filename,
                                                       const gchar  *palette_name,
                                                       GError      **error);
 
-#endif  /* __GIMP_PALETTE_IMPORT_H__ */
+#endif  /* __PICMAN_PALETTE_IMPORT_H__ */

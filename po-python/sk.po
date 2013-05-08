@@ -1,6 +1,6 @@
-# translation of gimp-python.HEAD.po to Slovak
-# translation of gimp-python.HEAD.sk.po to Slovak
-# gimp-python sk.po
+# translation of picman-python.HEAD.po to Slovak
+# translation of picman-python.HEAD.sk.po to Slovak
+# picman-python sk.po
 # Copyright (C) 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
 # Zdenko Podobný <zdpo@mailbox.sk>, 2002,2003, 2004.
 # Marcel Telka <marcel@telka.sk>, 2005.
@@ -9,7 +9,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-python\n"
+"Project-Id-Version: picman-python\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-09-13 21:07+0200\n"
 "PO-Revision-Date: 2005-10-17 22:08+0200\n"
@@ -19,19 +19,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../plug-ins/pygimp/plug-ins/gimpcons.py:43
+#: ../plug-ins/pypicman/plug-ins/picmancons.py:43
 msgid "Python Console"
 msgstr "Python konzola"
 
-#: ../plug-ins/pygimp/plug-ins/gimpcons.py:75
+#: ../plug-ins/pypicman/plug-ins/picmancons.py:75
 msgid "_Browse..."
 msgstr "_Prechádzať..."
 
-#: ../plug-ins/pygimp/plug-ins/gtkcons.py:217
+#: ../plug-ins/pypicman/plug-ins/gtkcons.py:217
 #, fuzzy
-msgid "Gimp-Python Console"
+msgid "Picman-Python Console"
 msgstr "Python konzola"
 
-#: ../plug-ins/pygimp/plug-ins/gtkcons.py:218
+#: ../plug-ins/pypicman/plug-ins/gtkcons.py:218
 msgid "Interactive Python Development"
 msgstr ""

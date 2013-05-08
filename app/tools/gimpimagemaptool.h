@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,37 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_IMAGE_MAP_TOOL_H__
-#define  __GIMP_IMAGE_MAP_TOOL_H__
+#ifndef  __PICMAN_IMAGE_MAP_TOOL_H__
+#define  __PICMAN_IMAGE_MAP_TOOL_H__
 
 
-#include "gimpcolortool.h"
+#include "picmancolortool.h"
 
 
-#define GIMP_TYPE_IMAGE_MAP_TOOL            (gimp_image_map_tool_get_type ())
-#define GIMP_IMAGE_MAP_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_IMAGE_MAP_TOOL, GimpImageMapTool))
-#define GIMP_IMAGE_MAP_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_IMAGE_MAP_TOOL, GimpImageMapToolClass))
-#define GIMP_IS_IMAGE_MAP_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_IMAGE_MAP_TOOL))
-#define GIMP_IS_IMAGE_MAP_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_IMAGE_MAP_TOOL))
-#define GIMP_IMAGE_MAP_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_IMAGE_MAP_TOOL, GimpImageMapToolClass))
+#define PICMAN_TYPE_IMAGE_MAP_TOOL            (picman_image_map_tool_get_type ())
+#define PICMAN_IMAGE_MAP_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_IMAGE_MAP_TOOL, PicmanImageMapTool))
+#define PICMAN_IMAGE_MAP_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_IMAGE_MAP_TOOL, PicmanImageMapToolClass))
+#define PICMAN_IS_IMAGE_MAP_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_IMAGE_MAP_TOOL))
+#define PICMAN_IS_IMAGE_MAP_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_IMAGE_MAP_TOOL))
+#define PICMAN_IMAGE_MAP_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_IMAGE_MAP_TOOL, PicmanImageMapToolClass))
 
-#define GIMP_IMAGE_MAP_TOOL_GET_OPTIONS(t)  (GIMP_IMAGE_MAP_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_IMAGE_MAP_TOOL_GET_OPTIONS(t)  (PICMAN_IMAGE_MAP_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpImageMapToolClass GimpImageMapToolClass;
+typedef struct _PicmanImageMapToolClass PicmanImageMapToolClass;
 
-struct _GimpImageMapTool
+struct _PicmanImageMapTool
 {
-  GimpColorTool          parent_instance;
+  PicmanColorTool          parent_instance;
 
-  GimpDrawable          *drawable;
+  PicmanDrawable          *drawable;
 
   GeglNode              *operation;
   GObject               *config;
   GObject               *default_config;
   gchar                 *undo_desc;
 
-  GimpImageMap          *image_map;
+  PicmanImageMap          *image_map;
 
   /* dialog */
   gboolean               overlay;
@@ -56,27 +56,27 @@ struct _GimpImageMapTool
   GtkWidget             *active_picker;
 };
 
-struct _GimpImageMapToolClass
+struct _PicmanImageMapToolClass
 {
-  GimpColorToolClass  parent_class;
+  PicmanColorToolClass  parent_class;
 
   const gchar        *dialog_desc;
   const gchar        *settings_name;
   const gchar        *import_dialog_title;
   const gchar        *export_dialog_title;
 
-  GimpContainer      *recent_settings;
+  PicmanContainer      *recent_settings;
 
   /* virtual functions */
-  GeglNode  * (* get_operation)   (GimpImageMapTool  *image_map_tool,
+  GeglNode  * (* get_operation)   (PicmanImageMapTool  *image_map_tool,
                                    GObject          **config,
                                    gchar            **undo_desc);
-  void        (* map)             (GimpImageMapTool  *image_map_tool);
-  void        (* dialog)          (GimpImageMapTool  *image_map_tool);
-  void        (* reset)           (GimpImageMapTool  *image_map_tool);
+  void        (* map)             (PicmanImageMapTool  *image_map_tool);
+  void        (* dialog)          (PicmanImageMapTool  *image_map_tool);
+  void        (* reset)           (PicmanImageMapTool  *image_map_tool);
 
-  GtkWidget * (* get_settings_ui) (GimpImageMapTool  *image_map_tool,
-                                   GimpContainer     *settings,
+  GtkWidget * (* get_settings_ui) (PicmanImageMapTool  *image_map_tool,
+                                   PicmanContainer     *settings,
                                    const gchar       *settings_filename,
                                    const gchar       *import_dialog_title,
                                    const gchar       *export_dialog_title,
@@ -84,38 +84,38 @@ struct _GimpImageMapToolClass
                                    const gchar       *default_folder,
                                    GtkWidget        **settings_box);
 
-  gboolean    (* settings_import) (GimpImageMapTool  *image_map_tool,
+  gboolean    (* settings_import) (PicmanImageMapTool  *image_map_tool,
                                    const gchar       *filename,
                                    GError           **error);
-  gboolean    (* settings_export) (GimpImageMapTool  *image_map_tool,
+  gboolean    (* settings_export) (PicmanImageMapTool  *image_map_tool,
                                    const gchar       *filename,
                                    GError           **error);
 
-  void        (* color_picked)    (GimpImageMapTool  *image_map_tool,
+  void        (* color_picked)    (PicmanImageMapTool  *image_map_tool,
                                    gpointer           identifier,
                                    const Babl        *sample_format,
-                                   const GimpRGB     *color);
+                                   const PicmanRGB     *color);
 };
 
 
-GType   gimp_image_map_tool_get_type      (void) G_GNUC_CONST;
+GType   picman_image_map_tool_get_type      (void) G_GNUC_CONST;
 
-void    gimp_image_map_tool_preview       (GimpImageMapTool *image_map_tool);
+void    picman_image_map_tool_preview       (PicmanImageMapTool *image_map_tool);
 
-void    gimp_image_map_tool_get_operation (GimpImageMapTool *image_map_tool);
+void    picman_image_map_tool_get_operation (PicmanImageMapTool *image_map_tool);
 
-void    gimp_image_map_tool_edit_as       (GimpImageMapTool *image_map_tool,
+void    picman_image_map_tool_edit_as       (PicmanImageMapTool *image_map_tool,
                                            const gchar      *new_tool_id,
-                                           GimpConfig       *config);
+                                           PicmanConfig       *config);
 
 /* accessors for derived classes */
-GtkWidget    * gimp_image_map_tool_dialog_get_vbox        (GimpImageMapTool *tool);
-GtkSizeGroup * gimp_image_map_tool_dialog_get_label_group (GimpImageMapTool *tool);
+GtkWidget    * picman_image_map_tool_dialog_get_vbox        (PicmanImageMapTool *tool);
+GtkSizeGroup * picman_image_map_tool_dialog_get_label_group (PicmanImageMapTool *tool);
 
-GtkWidget    * gimp_image_map_tool_add_color_picker       (GimpImageMapTool *tool,
+GtkWidget    * picman_image_map_tool_add_color_picker       (PicmanImageMapTool *tool,
                                                            gpointer          identifier,
                                                            const gchar      *stock_id,
                                                            const gchar      *help_id);
 
 
-#endif  /*  __GIMP_IMAGE_MAP_TOOL_H__  */
+#endif  /*  __PICMAN_IMAGE_MAP_TOOL_H__  */

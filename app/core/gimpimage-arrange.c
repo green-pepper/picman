@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,35 +19,35 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "vectors/gimpvectors.h"
+#include "vectors/picmanvectors.h"
 
-#include "gimpimage.h"
-#include "gimpimage-arrange.h"
-#include "gimpimage-guides.h"
-#include "gimpimage-undo.h"
-#include "gimpitem.h"
-#include "gimpchannel.h"
-#include "gimpdrawable.h"
-#include "gimpguide.h"
+#include "picmanimage.h"
+#include "picmanimage-arrange.h"
+#include "picmanimage-guides.h"
+#include "picmanimage-undo.h"
+#include "picmanitem.h"
+#include "picmanchannel.h"
+#include "picmandrawable.h"
+#include "picmanguide.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 static GList * sort_by_offset  (GList             *list);
 static void    compute_offsets (GList             *list,
-                                GimpAlignmentType  alignment);
+                                PicmanAlignmentType  alignment);
 static void    compute_offset  (GObject           *object,
-                                GimpAlignmentType  alignment);
+                                PicmanAlignmentType  alignment);
 static gint    offset_compare  (gconstpointer      a,
                                 gconstpointer      b);
 
 
 /**
- * gimp_image_arrange_objects:
- * @image:                The #GimpImage to which the objects belong.
+ * picman_image_arrange_objects:
+ * @image:                The #PicmanImage to which the objects belong.
  * @list:                 A #GList of objects to be aligned.
  * @alignment:            The point on each target object to bring into alignment.
  * @reference:            The #GObject to align the targets with, or #NULL.
@@ -69,11 +69,11 @@ static gint    offset_compare  (gconstpointer      a,
  * between consecutive ones is given by the argument @offset.
  */
 void
-gimp_image_arrange_objects (GimpImage         *image,
+picman_image_arrange_objects (PicmanImage         *image,
                             GList             *list,
-                            GimpAlignmentType  alignment,
+                            PicmanAlignmentType  alignment,
                             GObject           *reference,
-                            GimpAlignmentType  reference_alignment,
+                            PicmanAlignmentType  reference_alignment,
                             gint               offset)
 {
   gboolean do_x               = FALSE;
@@ -81,37 +81,37 @@ gimp_image_arrange_objects (GimpImage         *image,
   gint     z0                 = 0;
   GList   *object_list;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
   g_return_if_fail (G_IS_OBJECT (reference) || reference == NULL);
 
   /* get offsets used for sorting */
   switch (alignment)
     {
       /* order vertically for horizontal alignment */
-    case GIMP_ALIGN_LEFT:
-    case GIMP_ALIGN_HCENTER:
-    case GIMP_ALIGN_RIGHT:
+    case PICMAN_ALIGN_LEFT:
+    case PICMAN_ALIGN_HCENTER:
+    case PICMAN_ALIGN_RIGHT:
       do_x = TRUE;
-      compute_offsets (list, GIMP_ALIGN_TOP);
+      compute_offsets (list, PICMAN_ALIGN_TOP);
       break;
       /* order horizontally for horizontal arrangement */
-    case GIMP_ARRANGE_LEFT:
-    case GIMP_ARRANGE_HCENTER:
-    case GIMP_ARRANGE_RIGHT:
+    case PICMAN_ARRANGE_LEFT:
+    case PICMAN_ARRANGE_HCENTER:
+    case PICMAN_ARRANGE_RIGHT:
       do_x = TRUE;
       compute_offsets (list, alignment);
       break;
       /* order horizontally for vertical alignment */
-    case GIMP_ALIGN_TOP:
-    case GIMP_ALIGN_VCENTER:
-    case GIMP_ALIGN_BOTTOM:
+    case PICMAN_ALIGN_TOP:
+    case PICMAN_ALIGN_VCENTER:
+    case PICMAN_ALIGN_BOTTOM:
       do_y = TRUE;
-      compute_offsets (list, GIMP_ALIGN_LEFT);
+      compute_offsets (list, PICMAN_ALIGN_LEFT);
       break;
       /* order vertically for vertical arrangement */
-    case GIMP_ARRANGE_TOP:
-    case GIMP_ARRANGE_VCENTER:
-    case GIMP_ARRANGE_BOTTOM:
+    case PICMAN_ARRANGE_TOP:
+    case PICMAN_ARRANGE_VCENTER:
+    case PICMAN_ARRANGE_BOTTOM:
       do_y = TRUE;
       compute_offsets (list, alignment);
       break;
@@ -138,7 +138,7 @@ gimp_image_arrange_objects (GimpImage         *image,
       gint   n;
 
       /* FIXME: undo group type is wrong */
-      gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_ITEM_DISPLACE,
+      picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_ITEM_DISPLACE,
                                    C_("undo-type", "Arrange Objects"));
 
       for (l = object_list, n = 1; l; l = g_list_next (l), n++)
@@ -158,23 +158,23 @@ gimp_image_arrange_objects (GimpImage         *image,
             ytranslate = z0 - z1 + n * offset;
 
           /* now actually align the target object */
-          if (GIMP_IS_ITEM (target))
+          if (PICMAN_IS_ITEM (target))
             {
-              gimp_item_translate (GIMP_ITEM (target),
+              picman_item_translate (PICMAN_ITEM (target),
                                    xtranslate, ytranslate, TRUE);
             }
-          else if (GIMP_IS_GUIDE (target))
+          else if (PICMAN_IS_GUIDE (target))
             {
-              GimpGuide *guide = GIMP_GUIDE (target);
+              PicmanGuide *guide = PICMAN_GUIDE (target);
 
-              switch (gimp_guide_get_orientation (guide))
+              switch (picman_guide_get_orientation (guide))
                 {
-                case GIMP_ORIENTATION_VERTICAL:
-                  gimp_image_move_guide (image, guide, z1 + xtranslate, TRUE);
+                case PICMAN_ORIENTATION_VERTICAL:
+                  picman_image_move_guide (image, guide, z1 + xtranslate, TRUE);
                   break;
 
-                case GIMP_ORIENTATION_HORIZONTAL:
-                  gimp_image_move_guide (image, guide, z1 + ytranslate, TRUE);
+                case PICMAN_ORIENTATION_HORIZONTAL:
+                  picman_image_move_guide (image, guide, z1 + ytranslate, TRUE);
                   break;
 
                 default:
@@ -183,7 +183,7 @@ gimp_image_arrange_objects (GimpImage         *image,
             }
         }
 
-      gimp_image_undo_group_end (image);
+      picman_image_undo_group_end (image);
     }
 
   g_list_free (object_list);
@@ -217,7 +217,7 @@ offset_compare (gconstpointer a,
  */
 static void
 compute_offsets (GList             *list,
-                 GimpAlignmentType  alignment)
+                 PicmanAlignmentType  alignment)
 {
   GList *l;
 
@@ -227,7 +227,7 @@ compute_offsets (GList             *list,
 
 static void
 compute_offset (GObject *object,
-                GimpAlignmentType  alignment)
+                PicmanAlignmentType  alignment)
 {
   gint object_offset_x = 0;
   gint object_offset_y = 0;
@@ -235,51 +235,51 @@ compute_offset (GObject *object,
   gint object_width    = 0;
   gint offset          = 0;
 
-  if (GIMP_IS_IMAGE (object))
+  if (PICMAN_IS_IMAGE (object))
     {
-      GimpImage *image = GIMP_IMAGE (object);
+      PicmanImage *image = PICMAN_IMAGE (object);
 
       object_offset_x = 0;
       object_offset_y = 0;
-      object_height   = gimp_image_get_height (image);
-      object_width    = gimp_image_get_width (image);
+      object_height   = picman_image_get_height (image);
+      object_width    = picman_image_get_width (image);
     }
-  else if (GIMP_IS_CHANNEL (object))
+  else if (PICMAN_IS_CHANNEL (object))
     {
       /* for channels, we use the bounds of the visible area, not
          the layer bounds.  This includes the selection channel */
 
-      GimpChannel *channel = GIMP_CHANNEL (object);
+      PicmanChannel *channel = PICMAN_CHANNEL (object);
 
-      if (gimp_channel_is_empty (channel))
+      if (picman_channel_is_empty (channel))
         {
           /* fall back on using the offsets instead */
-          GimpItem *item = GIMP_ITEM (object);
+          PicmanItem *item = PICMAN_ITEM (object);
 
-          gimp_item_get_offset (item, &object_offset_x, &object_offset_y);
-          object_width  = gimp_item_get_width  (item);
-          object_height = gimp_item_get_height (item);
+          picman_item_get_offset (item, &object_offset_x, &object_offset_y);
+          object_width  = picman_item_get_width  (item);
+          object_height = picman_item_get_height (item);
         }
       else
         {
           gint x1, x2, y1, y2;
 
-          gimp_channel_bounds (channel, &x1, &y1, &x2, &y2);
+          picman_channel_bounds (channel, &x1, &y1, &x2, &y2);
           object_offset_x = x1;
           object_offset_y = y1;
           object_width    = x2 - x1;
           object_height   = y2 - y1;
         }
     }
-  else if (GIMP_IS_ITEM (object))
+  else if (PICMAN_IS_ITEM (object))
     {
-      GimpItem *item = GIMP_ITEM (object);
+      PicmanItem *item = PICMAN_ITEM (object);
 
-      if (GIMP_IS_VECTORS (object))
+      if (PICMAN_IS_VECTORS (object))
         {
           gdouble x1_f, y1_f, x2_f, y2_f;
 
-          gimp_vectors_bounds (GIMP_VECTORS (item),
+          picman_vectors_bounds (PICMAN_VECTORS (item),
                                &x1_f, &y1_f,
                                &x2_f, &y2_f);
 
@@ -290,24 +290,24 @@ compute_offset (GObject *object,
         }
       else
         {
-          gimp_item_get_offset (item, &object_offset_x, &object_offset_y);
-          object_width  = gimp_item_get_width  (item);
-          object_height = gimp_item_get_height (item);
+          picman_item_get_offset (item, &object_offset_x, &object_offset_y);
+          object_width  = picman_item_get_width  (item);
+          object_height = picman_item_get_height (item);
         }
     }
-  else if (GIMP_IS_GUIDE (object))
+  else if (PICMAN_IS_GUIDE (object))
     {
-      GimpGuide *guide = GIMP_GUIDE (object);
+      PicmanGuide *guide = PICMAN_GUIDE (object);
 
-      switch (gimp_guide_get_orientation (guide))
+      switch (picman_guide_get_orientation (guide))
         {
-        case GIMP_ORIENTATION_VERTICAL:
-          object_offset_x = gimp_guide_get_position (guide);
+        case PICMAN_ORIENTATION_VERTICAL:
+          object_offset_x = picman_guide_get_position (guide);
           object_width = 0;
           break;
 
-        case GIMP_ORIENTATION_HORIZONTAL:
-          object_offset_y = gimp_guide_get_position (guide);
+        case PICMAN_ORIENTATION_HORIZONTAL:
+          object_offset_y = picman_guide_get_position (guide);
           object_height = 0;
           break;
 
@@ -322,28 +322,28 @@ compute_offset (GObject *object,
 
   switch (alignment)
     {
-    case GIMP_ALIGN_LEFT:
-    case GIMP_ARRANGE_LEFT:
+    case PICMAN_ALIGN_LEFT:
+    case PICMAN_ARRANGE_LEFT:
       offset = object_offset_x;
       break;
-    case GIMP_ALIGN_HCENTER:
-    case GIMP_ARRANGE_HCENTER:
+    case PICMAN_ALIGN_HCENTER:
+    case PICMAN_ARRANGE_HCENTER:
       offset = object_offset_x + object_width/2;
       break;
-    case GIMP_ALIGN_RIGHT:
-    case GIMP_ARRANGE_RIGHT:
+    case PICMAN_ALIGN_RIGHT:
+    case PICMAN_ARRANGE_RIGHT:
       offset = object_offset_x + object_width;
       break;
-    case GIMP_ALIGN_TOP:
-    case GIMP_ARRANGE_TOP:
+    case PICMAN_ALIGN_TOP:
+    case PICMAN_ARRANGE_TOP:
       offset = object_offset_y;
       break;
-    case GIMP_ALIGN_VCENTER:
-    case GIMP_ARRANGE_VCENTER:
+    case PICMAN_ALIGN_VCENTER:
+    case PICMAN_ARRANGE_VCENTER:
       offset = object_offset_y + object_height/2;
       break;
-    case GIMP_ALIGN_BOTTOM:
-    case GIMP_ARRANGE_BOTTOM:
+    case PICMAN_ALIGN_BOTTOM:
+    case PICMAN_ARRANGE_BOTTOM:
       offset = object_offset_y + object_height;
       break;
     default:

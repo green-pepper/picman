@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,30 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DEVICES_H__
-#define __GIMP_DEVICES_H__
+#ifndef __PICMAN_DEVICES_H__
+#define __PICMAN_DEVICES_H__
 
 
-void                gimp_devices_init           (Gimp      *gimp);
-void                gimp_devices_exit           (Gimp      *gimp);
+void                picman_devices_init           (Picman      *picman);
+void                picman_devices_exit           (Picman      *picman);
 
-void                gimp_devices_restore        (Gimp      *gimp);
-void                gimp_devices_save           (Gimp      *gimp,
+void                picman_devices_restore        (Picman      *picman);
+void                picman_devices_save           (Picman      *picman,
                                                  gboolean   always_save);
 
-gboolean            gimp_devices_clear          (Gimp      *gimp,
+gboolean            picman_devices_clear          (Picman      *picman,
                                                  GError   **error);
 
-GimpDeviceManager * gimp_devices_get_manager    (Gimp      *gimp);
+PicmanDeviceManager * picman_devices_get_manager    (Picman      *picman);
 
-void                gimp_devices_add_widget     (Gimp      *gimp,
+void                picman_devices_add_widget     (Picman      *picman,
                                                  GtkWidget *widget);
 
-gboolean            gimp_devices_check_callback (GtkWidget *widget,
+gboolean            picman_devices_check_callback (GtkWidget *widget,
                                                  GdkEvent  *event,
-                                                 Gimp      *gimp);
-gboolean            gimp_devices_check_change   (Gimp      *gimp,
+                                                 Picman      *picman);
+gboolean            picman_devices_check_change   (Picman      *picman,
                                                  GdkEvent  *event);
 
 
-#endif /* __GIMP_DEVICES_H__ */
+#endif /* __PICMAN_DEVICES_H__ */

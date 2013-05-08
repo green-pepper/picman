@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpvectors-compat.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmanvectors-compat.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VECTORS_COMPAT_H__
-#define __GIMP_VECTORS_COMPAT_H__
+#ifndef __PICMAN_VECTORS_COMPAT_H__
+#define __PICMAN_VECTORS_COMPAT_H__
 
 
-typedef struct _GimpVectorsCompatPoint GimpVectorsCompatPoint;
+typedef struct _PicmanVectorsCompatPoint PicmanVectorsCompatPoint;
 
-struct _GimpVectorsCompatPoint
+struct _PicmanVectorsCompatPoint
 {
   guint32 type;
   gdouble x;
@@ -32,17 +32,17 @@ struct _GimpVectorsCompatPoint
 };
 
 
-GimpVectors * gimp_vectors_compat_new (GimpImage              *image,
+PicmanVectors * picman_vectors_compat_new (PicmanImage              *image,
                                        const gchar            *name,
-                                       GimpVectorsCompatPoint *points,
+                                       PicmanVectorsCompatPoint *points,
                                        gint                    n_points,
                                        gboolean                closed);
 
-gboolean              gimp_vectors_compat_is_compatible (GimpImage   *image);
+gboolean              picman_vectors_compat_is_compatible (PicmanImage   *image);
 
-GimpVectorsCompatPoint * gimp_vectors_compat_get_points (GimpVectors *vectors,
+PicmanVectorsCompatPoint * picman_vectors_compat_get_points (PicmanVectors *vectors,
                                                          gint32      *n_points,
                                                          gint32      *closed);
 
 
-#endif /* __GIMP_VECTORS_COMPAT_H__ */
+#endif /* __PICMAN_VECTORS_COMPAT_H__ */

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#   Gimp-Python - allows the writing of Gimp plugins in Python.
+#   Picman-Python - allows the writing of Picman plugins in Python.
 #   Copyright (C) 1997  James Henstridge <james@daa.com.au>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import math
-from gimpfu import *
+from picmanfu import *
 
 def sphere(radius, light, shadow, foo, bg_colour, sphere_colour):
     if radius < 1:
@@ -26,11 +26,11 @@ def sphere(radius, light, shadow, foo, bg_colour, sphere_colour):
     width = int(radius * 3.75)
     height = int(radius * 2.5)
 
-    gimp.context_push()
+    picman.context_push()
 
-    img = gimp.Image(width, height, RGB)
+    img = picman.Image(width, height, RGB)
 
-    drawable = gimp.Layer(img, "Sphere Layer", width, height,
+    drawable = picman.Layer(img, "Sphere Layer", width, height,
                           RGB_IMAGE, 100, NORMAL_MODE)
 
     radians = light * math.pi / 180
@@ -49,12 +49,12 @@ def sphere(radius, light, shadow, foo, bg_colour, sphere_colour):
     img.disable_undo()
     img.insert_layer(drawable)
 
-    gimp.set_foreground(sphere_colour)
+    picman.set_foreground(sphere_colour)
 
-    gimp.set_background(bg_colour)
-    pdb.gimp_edit_fill(drawable, BACKGROUND_FILL)
+    picman.set_background(bg_colour)
+    pdb.picman_edit_fill(drawable, BACKGROUND_FILL)
 
-    gimp.set_background(20, 20, 20)
+    picman.set_background(20, 20, 20)
 
     if (light >= 45 and light <= 75 or light <= 135 and
         light >= 105) and shadow:
@@ -67,24 +67,24 @@ def sphere(radius, light, shadow, foo, bg_colour, sphere_colour):
             shadow_x = cx + shadow_w
             shadow_w = -shadow_w
 
-        pdb.gimp_ellipse_select(img, shadow_x, shadow_y, shadow_w, shadow_h,
+        pdb.picman_ellipse_select(img, shadow_x, shadow_y, shadow_w, shadow_h,
                                 CHANNEL_OP_REPLACE, True, True, 7.5)
-        pdb.gimp_edit_bucket_fill(drawable, BG_BUCKET_FILL,
+        pdb.picman_edit_bucket_fill(drawable, BG_BUCKET_FILL,
                                   MULTIPLY_MODE, 100, 0, False, 0, 0)
 
-    pdb.gimp_ellipse_select(img, cx - radius, cy - radius, 2 * radius,
+    pdb.picman_ellipse_select(img, cx - radius, cy - radius, 2 * radius,
                             2 * radius, CHANNEL_OP_REPLACE, True, False, 0)
-    pdb.gimp_edit_blend(drawable, FG_BG_RGB_MODE, NORMAL_MODE, GRADIENT_RADIAL,
+    pdb.picman_edit_blend(drawable, FG_BG_RGB_MODE, NORMAL_MODE, GRADIENT_RADIAL,
                         100, offset, REPEAT_NONE, False, False, 0, 0, True,
                         light_x, light_y, light_end_x, light_end_y)
 
-    pdb.gimp_selection_none(img)
+    pdb.picman_selection_none(img)
 
     img.enable_undo()
 
-    disp = gimp.Display(img)
+    disp = picman.Display(img)
 
-    gimp.context_pop()
+    picman.context_pop()
 
 
 register(

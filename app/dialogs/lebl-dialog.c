@@ -7,9 +7,9 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 static const guint8 goatpb2[];
 static const guint8 goatpb[];
@@ -767,10 +767,10 @@ inv_expose (GtkWidget *widget, GdkEventExpose *event)
 	return TRUE;
 }
 
-gboolean gimp_lebl_dialog (void);
+gboolean picman_lebl_dialog (void);
 
 gboolean
-gimp_lebl_dialog (void)
+picman_lebl_dialog (void)
 {
 	GtkWidget *vbox;
 	int i, j;

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcontainereditor.h
- * Copyright (C) 2001-2011 Michael Natterer <mitch@gimp.org>
+ * picmancontainereditor.h
+ * Copyright (C) 2001-2011 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,48 +18,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTAINER_EDITOR_H__
-#define __GIMP_CONTAINER_EDITOR_H__
+#ifndef __PICMAN_CONTAINER_EDITOR_H__
+#define __PICMAN_CONTAINER_EDITOR_H__
 
 
-#define GIMP_TYPE_CONTAINER_EDITOR            (gimp_container_editor_get_type ())
-#define GIMP_CONTAINER_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CONTAINER_EDITOR, GimpContainerEditor))
-#define GIMP_CONTAINER_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CONTAINER_EDITOR, GimpContainerEditorClass))
-#define GIMP_IS_CONTAINER_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CONTAINER_EDITOR))
-#define GIMP_IS_CONTAINER_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CONTAINER_EDITOR))
-#define GIMP_CONTAINER_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CONTAINER_EDITOR, GimpContainerEditorClass))
+#define PICMAN_TYPE_CONTAINER_EDITOR            (picman_container_editor_get_type ())
+#define PICMAN_CONTAINER_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CONTAINER_EDITOR, PicmanContainerEditor))
+#define PICMAN_CONTAINER_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CONTAINER_EDITOR, PicmanContainerEditorClass))
+#define PICMAN_IS_CONTAINER_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CONTAINER_EDITOR))
+#define PICMAN_IS_CONTAINER_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CONTAINER_EDITOR))
+#define PICMAN_CONTAINER_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CONTAINER_EDITOR, PicmanContainerEditorClass))
 
 
-typedef struct _GimpContainerEditorPrivate GimpContainerEditorPrivate;
-typedef struct _GimpContainerEditorClass   GimpContainerEditorClass;
+typedef struct _PicmanContainerEditorPrivate PicmanContainerEditorPrivate;
+typedef struct _PicmanContainerEditorClass   PicmanContainerEditorClass;
 
-struct _GimpContainerEditor
+struct _PicmanContainerEditor
 {
   GtkBox             parent_instance;
 
-  GimpContainerView *view;
+  PicmanContainerView *view;
 
-  GimpContainerEditorPrivate *priv;
+  PicmanContainerEditorPrivate *priv;
 };
 
-struct _GimpContainerEditorClass
+struct _PicmanContainerEditorClass
 {
   GtkBoxClass  parent_class;
 
-  void (* select_item)   (GimpContainerEditor *editor,
-                          GimpViewable        *object);
-  void (* activate_item) (GimpContainerEditor *editor,
-                          GimpViewable        *object);
-  void (* context_item)  (GimpContainerEditor *editor,
-                          GimpViewable        *object);
+  void (* select_item)   (PicmanContainerEditor *editor,
+                          PicmanViewable        *object);
+  void (* activate_item) (PicmanContainerEditor *editor,
+                          PicmanViewable        *object);
+  void (* context_item)  (PicmanContainerEditor *editor,
+                          PicmanViewable        *object);
 };
 
 
-GType            gimp_container_editor_get_type           (void) G_GNUC_CONST;
+GType            picman_container_editor_get_type           (void) G_GNUC_CONST;
 
-GtkSelectionMode gimp_container_editor_get_selection_mode (GimpContainerEditor *editor);
-void             gimp_container_editor_set_selection_mode (GimpContainerEditor *editor,
+GtkSelectionMode picman_container_editor_get_selection_mode (PicmanContainerEditor *editor);
+void             picman_container_editor_set_selection_mode (PicmanContainerEditor *editor,
                                                            GtkSelectionMode     mode);
 
 
-#endif  /*  __GIMP_CONTAINER_EDITOR_H__  */
+#endif  /*  __PICMAN_CONTAINER_EDITOR_H__  */

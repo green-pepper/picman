@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpactiongroup.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanactiongroup.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,110 +23,110 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpviewable.h"
+#include "core/picman.h"
+#include "core/picmanviewable.h"
 
-#include "gimpactiongroup.h"
-#include "gimpaction.h"
-#include "gimpenumaction.h"
-#include "gimppluginaction.h"
-#include "gimpradioaction.h"
-#include "gimpstringaction.h"
-#include "gimptoggleaction.h"
+#include "picmanactiongroup.h"
+#include "picmanaction.h"
+#include "picmanenumaction.h"
+#include "picmanpluginaction.h"
+#include "picmanradioaction.h"
+#include "picmanstringaction.h"
+#include "picmantoggleaction.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
 {
   PROP_0,
-  PROP_GIMP,
+  PROP_PICMAN,
   PROP_LABEL,
   PROP_STOCK_ID
 };
 
 
-static void   gimp_action_group_constructed   (GObject      *object);
-static void   gimp_action_group_dispose       (GObject      *object);
-static void   gimp_action_group_finalize      (GObject      *object);
-static void   gimp_action_group_set_property  (GObject      *object,
+static void   picman_action_group_constructed   (GObject      *object);
+static void   picman_action_group_dispose       (GObject      *object);
+static void   picman_action_group_finalize      (GObject      *object);
+static void   picman_action_group_set_property  (GObject      *object,
                                                guint         prop_id,
                                                const GValue *value,
                                                GParamSpec   *pspec);
-static void   gimp_action_group_get_property  (GObject      *object,
+static void   picman_action_group_get_property  (GObject      *object,
                                                guint         prop_id,
                                                GValue       *value,
                                                GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpActionGroup, gimp_action_group, GTK_TYPE_ACTION_GROUP)
+G_DEFINE_TYPE (PicmanActionGroup, picman_action_group, GTK_TYPE_ACTION_GROUP)
 
-#define parent_class gimp_action_group_parent_class
+#define parent_class picman_action_group_parent_class
 
 
 static void
-gimp_action_group_class_init (GimpActionGroupClass *klass)
+picman_action_group_class_init (PicmanActionGroupClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_action_group_constructed;
-  object_class->dispose      = gimp_action_group_dispose;
-  object_class->finalize     = gimp_action_group_finalize;
-  object_class->set_property = gimp_action_group_set_property;
-  object_class->get_property = gimp_action_group_get_property;
+  object_class->constructed  = picman_action_group_constructed;
+  object_class->dispose      = picman_action_group_dispose;
+  object_class->finalize     = picman_action_group_finalize;
+  object_class->set_property = picman_action_group_set_property;
+  object_class->get_property = picman_action_group_get_property;
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp",
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_LABEL,
                                    g_param_spec_string ("label",
                                                         NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (object_class, PROP_STOCK_ID,
                                    g_param_spec_string ("stock-id",
                                                         NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   klass->groups = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 }
 
 static void
-gimp_action_group_init (GimpActionGroup *group)
+picman_action_group_init (PicmanActionGroup *group)
 {
 }
 
 static void
-gimp_action_group_constructed (GObject *object)
+picman_action_group_constructed (GObject *object)
 {
-  GimpActionGroup *group = GIMP_ACTION_GROUP (object);
+  PicmanActionGroup *group = PICMAN_ACTION_GROUP (object);
   const gchar     *name;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_GIMP (group->gimp));
+  g_assert (PICMAN_IS_PICMAN (group->picman));
 
   name = gtk_action_group_get_name (GTK_ACTION_GROUP (object));
 
   if (name)
     {
-      GimpActionGroupClass *group_class;
+      PicmanActionGroupClass *group_class;
       GList                *list;
 
-      group_class = GIMP_ACTION_GROUP_GET_CLASS (object);
+      group_class = PICMAN_ACTION_GROUP_GET_CLASS (object);
 
       list = g_hash_table_lookup (group_class->groups, name);
 
@@ -138,16 +138,16 @@ gimp_action_group_constructed (GObject *object)
 }
 
 static void
-gimp_action_group_dispose (GObject *object)
+picman_action_group_dispose (GObject *object)
 {
   const gchar *name = gtk_action_group_get_name (GTK_ACTION_GROUP (object));
 
   if (name)
     {
-      GimpActionGroupClass *group_class;
+      PicmanActionGroupClass *group_class;
       GList                *list;
 
-      group_class = GIMP_ACTION_GROUP_GET_CLASS (object);
+      group_class = PICMAN_ACTION_GROUP_GET_CLASS (object);
 
       list = g_hash_table_lookup (group_class->groups, name);
 
@@ -167,9 +167,9 @@ gimp_action_group_dispose (GObject *object)
 }
 
 static void
-gimp_action_group_finalize (GObject *object)
+picman_action_group_finalize (GObject *object)
 {
-  GimpActionGroup *group = GIMP_ACTION_GROUP (object);
+  PicmanActionGroup *group = PICMAN_ACTION_GROUP (object);
 
   if (group->label)
     {
@@ -187,17 +187,17 @@ gimp_action_group_finalize (GObject *object)
 }
 
 static void
-gimp_action_group_set_property (GObject      *object,
+picman_action_group_set_property (GObject      *object,
                                 guint         prop_id,
                                 const GValue *value,
                                 GParamSpec   *pspec)
 {
-  GimpActionGroup *group = GIMP_ACTION_GROUP (object);
+  PicmanActionGroup *group = PICMAN_ACTION_GROUP (object);
 
   switch (prop_id)
     {
-    case PROP_GIMP:
-      group->gimp = g_value_get_object (value);
+    case PROP_PICMAN:
+      group->picman = g_value_get_object (value);
       break;
     case PROP_LABEL:
       group->label = g_value_dup_string (value);
@@ -213,17 +213,17 @@ gimp_action_group_set_property (GObject      *object,
 }
 
 static void
-gimp_action_group_get_property (GObject    *object,
+picman_action_group_get_property (GObject    *object,
                                 guint       prop_id,
                                 GValue     *value,
                                 GParamSpec *pspec)
 {
-  GimpActionGroup *group = GIMP_ACTION_GROUP (object);
+  PicmanActionGroup *group = PICMAN_ACTION_GROUP (object);
 
   switch (prop_id)
     {
-    case PROP_GIMP:
-      g_value_set_object (value, group->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, group->picman);
       break;
     case PROP_LABEL:
       g_value_set_string (value, group->label);
@@ -239,7 +239,7 @@ gimp_action_group_get_property (GObject    *object,
 }
 
 static gboolean
-gimp_action_group_check_unique_action (GimpActionGroup *group,
+picman_action_group_check_unique_action (PicmanActionGroup *group,
 				       const gchar     *action_name)
 {
   if (G_UNLIKELY (gtk_action_group_get_action (GTK_ACTION_GROUP (group),
@@ -256,36 +256,36 @@ gimp_action_group_check_unique_action (GimpActionGroup *group,
 }
 
 /**
- * gimp_action_group_new:
- * @gimp:        the @Gimp instance this action group belongs to
+ * picman_action_group_new:
+ * @picman:        the @Picman instance this action group belongs to
  * @name:        the name of the action group.
  * @label:       the user visible label of the action group.
  * @stock_id:    the icon of the action group.
  * @user_data:   the user_data for #GtkAction callbacks.
  * @update_func: the function that will be called on
- *               gimp_action_group_update().
+ *               picman_action_group_update().
  *
- * Creates a new #GimpActionGroup object. The name of the action group
+ * Creates a new #PicmanActionGroup object. The name of the action group
  * is used when associating <link linkend="Action-Accel">keybindings</link>
  * with the actions.
  *
- * Returns: the new #GimpActionGroup
+ * Returns: the new #PicmanActionGroup
  */
-GimpActionGroup *
-gimp_action_group_new (Gimp                      *gimp,
+PicmanActionGroup *
+picman_action_group_new (Picman                      *picman,
                        const gchar               *name,
                        const gchar               *label,
                        const gchar               *stock_id,
                        gpointer                   user_data,
-                       GimpActionGroupUpdateFunc  update_func)
+                       PicmanActionGroupUpdateFunc  update_func)
 {
-  GimpActionGroup *group;
+  PicmanActionGroup *group;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (name != NULL, NULL);
 
-  group = g_object_new (GIMP_TYPE_ACTION_GROUP,
-                        "gimp",      gimp,
+  group = g_object_new (PICMAN_TYPE_ACTION_GROUP,
+                        "picman",      picman,
                         "name",      name,
                         "label",     label,
                         "stock-id",  stock_id,
@@ -298,14 +298,14 @@ gimp_action_group_new (Gimp                      *gimp,
 }
 
 GList *
-gimp_action_groups_from_name (const gchar *name)
+picman_action_groups_from_name (const gchar *name)
 {
-  GimpActionGroupClass *group_class;
+  PicmanActionGroupClass *group_class;
   GList                *list;
 
   g_return_val_if_fail (name != NULL, NULL);
 
-  group_class = g_type_class_ref (GIMP_TYPE_ACTION_GROUP);
+  group_class = g_type_class_ref (PICMAN_TYPE_ACTION_GROUP);
 
   list = g_hash_table_lookup (group_class->groups, name);
 
@@ -315,32 +315,32 @@ gimp_action_groups_from_name (const gchar *name)
 }
 
 void
-gimp_action_group_update (GimpActionGroup *group,
+picman_action_group_update (PicmanActionGroup *group,
                           gpointer         update_data)
 {
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
 
   if (group->update_func)
     group->update_func (group, update_data);
 }
 
 void
-gimp_action_group_add_actions (GimpActionGroup       *group,
+picman_action_group_add_actions (PicmanActionGroup       *group,
 			       const gchar           *msg_context,
-                               const GimpActionEntry *entries,
+                               const PicmanActionEntry *entries,
                                guint                  n_entries)
 {
   gint i;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
 
   for (i = 0; i < n_entries; i++)
     {
-      GimpAction  *action;
+      PicmanAction  *action;
       const gchar *label;
       const gchar *tooltip = NULL;
 
-      if (! gimp_action_group_check_unique_action (group, entries[i].name))
+      if (! picman_action_group_check_unique_action (group, entries[i].name))
         continue;
 
       if (msg_context)
@@ -356,7 +356,7 @@ gimp_action_group_add_actions (GimpActionGroup       *group,
           tooltip = gettext (entries[i].tooltip);
         }
 
-      action = gimp_action_new (entries[i].name, label, tooltip,
+      action = picman_action_new (entries[i].name, label, tooltip,
                                 entries[i].stock_id);
 
       if (entries[i].callback)
@@ -369,7 +369,7 @@ gimp_action_group_add_actions (GimpActionGroup       *group,
                                               entries[i].accelerator);
 
       if (entries[i].help_id)
-        g_object_set_qdata_full (G_OBJECT (action), GIMP_HELP_ID,
+        g_object_set_qdata_full (G_OBJECT (action), PICMAN_HELP_ID,
                                  g_strdup (entries[i].help_id),
                                  (GDestroyNotify) g_free);
 
@@ -378,14 +378,14 @@ gimp_action_group_add_actions (GimpActionGroup       *group,
 }
 
 void
-gimp_action_group_add_toggle_actions (GimpActionGroup             *group,
+picman_action_group_add_toggle_actions (PicmanActionGroup             *group,
                                       const gchar                 *msg_context,
-                                      const GimpToggleActionEntry *entries,
+                                      const PicmanToggleActionEntry *entries,
                                       guint                        n_entries)
 {
   gint i;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
 
   for (i = 0; i < n_entries; i++)
     {
@@ -393,7 +393,7 @@ gimp_action_group_add_toggle_actions (GimpActionGroup             *group,
       const gchar     *label;
       const gchar     *tooltip = NULL;
 
-      if (! gimp_action_group_check_unique_action (group, entries[i].name))
+      if (! picman_action_group_check_unique_action (group, entries[i].name))
         continue;
 
       if (msg_context)
@@ -409,7 +409,7 @@ gimp_action_group_add_toggle_actions (GimpActionGroup             *group,
           tooltip = gettext (entries[i].tooltip);
         }
 
-      action = gimp_toggle_action_new (entries[i].name, label, tooltip,
+      action = picman_toggle_action_new (entries[i].name, label, tooltip,
                                        entries[i].stock_id);
 
       gtk_toggle_action_set_active (action, entries[i].is_active);
@@ -424,7 +424,7 @@ gimp_action_group_add_toggle_actions (GimpActionGroup             *group,
                                               entries[i].accelerator);
 
       if (entries[i].help_id)
-        g_object_set_qdata_full (G_OBJECT (action), GIMP_HELP_ID,
+        g_object_set_qdata_full (G_OBJECT (action), PICMAN_HELP_ID,
                                  g_strdup (entries[i].help_id),
                                  (GDestroyNotify) g_free);
 
@@ -433,9 +433,9 @@ gimp_action_group_add_toggle_actions (GimpActionGroup             *group,
 }
 
 GSList *
-gimp_action_group_add_radio_actions (GimpActionGroup            *group,
+picman_action_group_add_radio_actions (PicmanActionGroup            *group,
                                      const gchar                *msg_context,
-                                     const GimpRadioActionEntry *entries,
+                                     const PicmanRadioActionEntry *entries,
                                      guint                       n_entries,
                                      GSList                     *radio_group,
                                      gint                        value,
@@ -444,7 +444,7 @@ gimp_action_group_add_radio_actions (GimpActionGroup            *group,
   GtkRadioAction *first_action = NULL;
   gint            i;
 
-  g_return_val_if_fail (GIMP_IS_ACTION_GROUP (group), NULL);
+  g_return_val_if_fail (PICMAN_IS_ACTION_GROUP (group), NULL);
 
   for (i = 0; i < n_entries; i++)
     {
@@ -452,7 +452,7 @@ gimp_action_group_add_radio_actions (GimpActionGroup            *group,
       const gchar    *label;
       const gchar    *tooltip = NULL;
 
-      if (! gimp_action_group_check_unique_action (group, entries[i].name))
+      if (! picman_action_group_check_unique_action (group, entries[i].name))
         continue;
 
       if (msg_context)
@@ -468,7 +468,7 @@ gimp_action_group_add_radio_actions (GimpActionGroup            *group,
           tooltip = gettext (entries[i].tooltip);
         }
 
-      action = gimp_radio_action_new (entries[i].name, label, tooltip,
+      action = picman_radio_action_new (entries[i].name, label, tooltip,
                                       entries[i].stock_id,
                                       entries[i].value);
 
@@ -486,7 +486,7 @@ gimp_action_group_add_radio_actions (GimpActionGroup            *group,
                                               entries[i].accelerator);
 
       if (entries[i].help_id)
-        g_object_set_qdata_full (G_OBJECT (action), GIMP_HELP_ID,
+        g_object_set_qdata_full (G_OBJECT (action), PICMAN_HELP_ID,
                                  g_strdup (entries[i].help_id),
                                  (GDestroyNotify) g_free);
 
@@ -502,23 +502,23 @@ gimp_action_group_add_radio_actions (GimpActionGroup            *group,
 }
 
 void
-gimp_action_group_add_enum_actions (GimpActionGroup           *group,
+picman_action_group_add_enum_actions (PicmanActionGroup           *group,
                                     const gchar               *msg_context,
-                                    const GimpEnumActionEntry *entries,
+                                    const PicmanEnumActionEntry *entries,
                                     guint                      n_entries,
                                     GCallback                  callback)
 {
   gint i;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
 
   for (i = 0; i < n_entries; i++)
     {
-      GimpEnumAction *action;
+      PicmanEnumAction *action;
       const gchar    *label;
       const gchar    *tooltip = NULL;
 
-      if (! gimp_action_group_check_unique_action (group, entries[i].name))
+      if (! picman_action_group_check_unique_action (group, entries[i].name))
         continue;
 
       if (msg_context)
@@ -534,7 +534,7 @@ gimp_action_group_add_enum_actions (GimpActionGroup           *group,
           tooltip = gettext (entries[i].tooltip);
         }
 
-      action = gimp_enum_action_new (entries[i].name, label, tooltip,
+      action = picman_enum_action_new (entries[i].name, label, tooltip,
                                      entries[i].stock_id,
                                      entries[i].value,
                                      entries[i].value_variable);
@@ -549,7 +549,7 @@ gimp_action_group_add_enum_actions (GimpActionGroup           *group,
                                               entries[i].accelerator);
 
       if (entries[i].help_id)
-        g_object_set_qdata_full (G_OBJECT (action), GIMP_HELP_ID,
+        g_object_set_qdata_full (G_OBJECT (action), PICMAN_HELP_ID,
                                  g_strdup (entries[i].help_id),
                                  (GDestroyNotify) g_free);
 
@@ -558,23 +558,23 @@ gimp_action_group_add_enum_actions (GimpActionGroup           *group,
 }
 
 void
-gimp_action_group_add_string_actions (GimpActionGroup             *group,
+picman_action_group_add_string_actions (PicmanActionGroup             *group,
                                       const gchar                 *msg_context,
-                                      const GimpStringActionEntry *entries,
+                                      const PicmanStringActionEntry *entries,
                                       guint                        n_entries,
                                       GCallback                    callback)
 {
   gint i;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
 
   for (i = 0; i < n_entries; i++)
     {
-      GimpStringAction *action;
+      PicmanStringAction *action;
       const gchar      *label;
       const gchar      *tooltip = NULL;
 
-      if (! gimp_action_group_check_unique_action (group, entries[i].name))
+      if (! picman_action_group_check_unique_action (group, entries[i].name))
         continue;
 
       if (msg_context)
@@ -590,7 +590,7 @@ gimp_action_group_add_string_actions (GimpActionGroup             *group,
           tooltip = gettext (entries[i].tooltip);
         }
 
-      action = gimp_string_action_new (entries[i].name, label, tooltip,
+      action = picman_string_action_new (entries[i].name, label, tooltip,
                                        entries[i].stock_id,
                                        entries[i].value);
 
@@ -604,7 +604,7 @@ gimp_action_group_add_string_actions (GimpActionGroup             *group,
                                               entries[i].accelerator);
 
       if (entries[i].help_id)
-        g_object_set_qdata_full (G_OBJECT (action), GIMP_HELP_ID,
+        g_object_set_qdata_full (G_OBJECT (action), PICMAN_HELP_ID,
                                  g_strdup (entries[i].help_id),
                                  (GDestroyNotify) g_free);
 
@@ -613,23 +613,23 @@ gimp_action_group_add_string_actions (GimpActionGroup             *group,
 }
 
 void
-gimp_action_group_add_plug_in_actions (GimpActionGroup             *group,
-                                       const GimpPlugInActionEntry *entries,
+picman_action_group_add_plug_in_actions (PicmanActionGroup             *group,
+                                       const PicmanPlugInActionEntry *entries,
                                        guint                        n_entries,
                                        GCallback                    callback)
 {
   gint i;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
 
   for (i = 0; i < n_entries; i++)
     {
-      GimpPlugInAction *action;
+      PicmanPlugInAction *action;
 
-      if (! gimp_action_group_check_unique_action (group, entries[i].name))
+      if (! picman_action_group_check_unique_action (group, entries[i].name))
         continue;
 
-      action = gimp_plug_in_action_new (entries[i].name,
+      action = picman_plug_in_action_new (entries[i].name,
                                         entries[i].label,
                                         entries[i].tooltip,
                                         entries[i].stock_id,
@@ -645,7 +645,7 @@ gimp_action_group_add_plug_in_actions (GimpActionGroup             *group,
                                               entries[i].accelerator);
 
       if (entries[i].help_id)
-        g_object_set_qdata_full (G_OBJECT (action), GIMP_HELP_ID,
+        g_object_set_qdata_full (G_OBJECT (action), PICMAN_HELP_ID,
                                  g_strdup (entries[i].help_id),
                                  (GDestroyNotify) g_free);
 
@@ -654,12 +654,12 @@ gimp_action_group_add_plug_in_actions (GimpActionGroup             *group,
 }
 
 void
-gimp_action_group_activate_action (GimpActionGroup *group,
+picman_action_group_activate_action (PicmanActionGroup *group,
                                    const gchar     *action_name)
 {
   GtkAction *action;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
   g_return_if_fail (action_name != NULL);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group), action_name);
@@ -675,13 +675,13 @@ gimp_action_group_activate_action (GimpActionGroup *group,
 }
 
 void
-gimp_action_group_set_action_visible (GimpActionGroup *group,
+picman_action_group_set_action_visible (PicmanActionGroup *group,
                                       const gchar     *action_name,
                                       gboolean         visible)
 {
   GtkAction *action;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
   g_return_if_fail (action_name != NULL);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group), action_name);
@@ -698,13 +698,13 @@ gimp_action_group_set_action_visible (GimpActionGroup *group,
 }
 
 void
-gimp_action_group_set_action_sensitive (GimpActionGroup *group,
+picman_action_group_set_action_sensitive (PicmanActionGroup *group,
                                         const gchar     *action_name,
                                         gboolean         sensitive)
 {
   GtkAction *action;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
   g_return_if_fail (action_name != NULL);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group), action_name);
@@ -721,13 +721,13 @@ gimp_action_group_set_action_sensitive (GimpActionGroup *group,
 }
 
 void
-gimp_action_group_set_action_active (GimpActionGroup *group,
+picman_action_group_set_action_active (PicmanActionGroup *group,
                                      const gchar     *action_name,
                                      gboolean         active)
 {
   GtkAction *action;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
   g_return_if_fail (action_name != NULL);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group), action_name);
@@ -753,13 +753,13 @@ gimp_action_group_set_action_active (GimpActionGroup *group,
 }
 
 void
-gimp_action_group_set_action_label (GimpActionGroup *group,
+picman_action_group_set_action_label (PicmanActionGroup *group,
                                     const gchar     *action_name,
                                     const gchar     *label)
 {
   GtkAction *action;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
   g_return_if_fail (action_name != NULL);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group), action_name);
@@ -776,13 +776,13 @@ gimp_action_group_set_action_label (GimpActionGroup *group,
 }
 
 void
-gimp_action_group_set_action_tooltip (GimpActionGroup     *group,
+picman_action_group_set_action_tooltip (PicmanActionGroup     *group,
                                       const gchar         *action_name,
                                       const gchar         *tooltip)
 {
   GtkAction *action;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
   g_return_if_fail (action_name != NULL);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group), action_name);
@@ -799,12 +799,12 @@ gimp_action_group_set_action_tooltip (GimpActionGroup     *group,
 }
 
 const gchar *
-gimp_action_group_get_action_tooltip (GimpActionGroup     *group,
+picman_action_group_get_action_tooltip (PicmanActionGroup     *group,
                                       const gchar         *action_name)
 {
   GtkAction *action;
 
-  g_return_val_if_fail (GIMP_IS_ACTION_GROUP (group), NULL);
+  g_return_val_if_fail (PICMAN_IS_ACTION_GROUP (group), NULL);
   g_return_val_if_fail (action_name != NULL, NULL);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group), action_name);
@@ -821,14 +821,14 @@ gimp_action_group_get_action_tooltip (GimpActionGroup     *group,
 }
 
 void
-gimp_action_group_set_action_color (GimpActionGroup *group,
+picman_action_group_set_action_color (PicmanActionGroup *group,
                                     const gchar     *action_name,
-                                    const GimpRGB   *color,
+                                    const PicmanRGB   *color,
                                     gboolean         set_label)
 {
   GtkAction *action;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
   g_return_if_fail (action_name != NULL);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group), action_name);
@@ -841,10 +841,10 @@ gimp_action_group_set_action_color (GimpActionGroup *group,
       return;
     }
 
-  if (! GIMP_IS_ACTION (action))
+  if (! PICMAN_IS_ACTION (action))
     {
       g_warning ("%s: Unable to set \"color\" of action "
-                 "which is not a GimpAction: %s",
+                 "which is not a PicmanAction: %s",
                  G_STRFUNC, action_name);
       return;
     }
@@ -872,15 +872,15 @@ gimp_action_group_set_action_color (GimpActionGroup *group,
 }
 
 void
-gimp_action_group_set_action_viewable (GimpActionGroup *group,
+picman_action_group_set_action_viewable (PicmanActionGroup *group,
                                        const gchar     *action_name,
-                                       GimpViewable    *viewable)
+                                       PicmanViewable    *viewable)
 {
   GtkAction *action;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
   g_return_if_fail (action_name != NULL);
-  g_return_if_fail (viewable == NULL || GIMP_IS_VIEWABLE (viewable));
+  g_return_if_fail (viewable == NULL || PICMAN_IS_VIEWABLE (viewable));
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group), action_name);
 
@@ -892,10 +892,10 @@ gimp_action_group_set_action_viewable (GimpActionGroup *group,
       return;
     }
 
-  if (! GIMP_IS_ACTION (action))
+  if (! PICMAN_IS_ACTION (action))
     {
       g_warning ("%s: Unable to set \"viewable\" of action "
-                 "which is not a GimpAction: %s",
+                 "which is not a PicmanAction: %s",
                  G_STRFUNC, action_name);
       return;
     }
@@ -904,13 +904,13 @@ gimp_action_group_set_action_viewable (GimpActionGroup *group,
 }
 
 void
-gimp_action_group_set_action_hide_empty (GimpActionGroup *group,
+picman_action_group_set_action_hide_empty (PicmanActionGroup *group,
                                          const gchar     *action_name,
                                          gboolean         hide_empty)
 {
   GtkAction *action;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
   g_return_if_fail (action_name != NULL);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group), action_name);
@@ -927,13 +927,13 @@ gimp_action_group_set_action_hide_empty (GimpActionGroup *group,
 }
 
 void
-gimp_action_group_set_action_always_show_image (GimpActionGroup *group,
+picman_action_group_set_action_always_show_image (PicmanActionGroup *group,
                                                 const gchar     *action_name,
                                                 gboolean         always_show_image)
 {
   GtkAction *action;
 
-  g_return_if_fail (GIMP_IS_ACTION_GROUP (group));
+  g_return_if_fail (PICMAN_IS_ACTION_GROUP (group));
   g_return_if_fail (action_name != NULL);
 
   action = gtk_action_group_get_action (GTK_ACTION_GROUP (group), action_name);

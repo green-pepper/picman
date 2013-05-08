@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -20,14 +20,14 @@
 
 #include <glib-object.h>
 
-#include "gimpcolortypes.h"
+#include "picmancolortypes.h"
 
-#include "gimphsv.h"
+#include "picmanhsv.h"
 
 
 /**
- * SECTION: gimphsv
- * @title: GimpHSV
+ * SECTION: picmanhsv
+ * @title: PicmanHSV
  * @short_description: Definitions and Functions relating to HSV colors.
  *
  * Definitions and Functions relating to HSV colors.
@@ -35,36 +35,36 @@
 
 
 /*
- * GIMP_TYPE_HSV
+ * PICMAN_TYPE_HSV
  */
 
-static GimpHSV * gimp_hsv_copy (const GimpHSV *hsv);
+static PicmanHSV * picman_hsv_copy (const PicmanHSV *hsv);
 
 
 GType
-gimp_hsv_get_type (void)
+picman_hsv_get_type (void)
 {
   static GType hsv_type = 0;
 
   if (!hsv_type)
-    hsv_type = g_boxed_type_register_static ("GimpHSV",
-                                              (GBoxedCopyFunc) gimp_hsv_copy,
+    hsv_type = g_boxed_type_register_static ("PicmanHSV",
+                                              (GBoxedCopyFunc) picman_hsv_copy,
                                               (GBoxedFreeFunc) g_free);
 
   return hsv_type;
 }
 
-static GimpHSV *
-gimp_hsv_copy (const GimpHSV *hsv)
+static PicmanHSV *
+picman_hsv_copy (const PicmanHSV *hsv)
 {
-  return g_memdup (hsv, sizeof (GimpHSV));
+  return g_memdup (hsv, sizeof (PicmanHSV));
 }
 
 
 /*  HSV functions  */
 
 void
-gimp_hsv_set (GimpHSV *hsv,
+picman_hsv_set (PicmanHSV *hsv,
               gdouble  h,
               gdouble  s,
               gdouble  v)
@@ -77,7 +77,7 @@ gimp_hsv_set (GimpHSV *hsv,
 }
 
 void
-gimp_hsv_clamp (GimpHSV *hsv)
+picman_hsv_clamp (PicmanHSV *hsv)
 {
   g_return_if_fail (hsv != NULL);
 
@@ -92,7 +92,7 @@ gimp_hsv_clamp (GimpHSV *hsv)
 }
 
 void
-gimp_hsva_set (GimpHSV *hsva,
+picman_hsva_set (PicmanHSV *hsva,
                gdouble  h,
                gdouble  s,
                gdouble  v,

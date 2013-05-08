@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpgradients_pdb.c
+ * picmangradients_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,12 @@
 
 #include <string.h>
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpgradients
- * @title: gimpgradients
+ * SECTION: picmangradients
+ * @title: picmangradients
  * @short_description: Operations related to gradients.
  *
  * Operations related to gradients.
@@ -37,7 +37,7 @@
 
 
 /**
- * gimp_gradients_refresh:
+ * picman_gradients_refresh:
  *
  * Refresh current gradients. This function always succeeds.
  *
@@ -47,54 +47,54 @@
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_gradients_refresh (void)
+picman_gradients_refresh (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-gradients-refresh",
+  return_vals = picman_run_procedure ("picman-gradients-refresh",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_gradients_get_list:
+ * picman_gradients_get_list:
  * @filter: An optional regular expression used to filter the list.
  * @num_gradients: The number of loaded gradients.
  *
  * Retrieve the list of loaded gradients.
  *
  * This procedure returns a list of the gradients that are currently
- * loaded. You can later use the gimp_context_set_gradient() function
+ * loaded. You can later use the picman_context_set_gradient() function
  * to set the active gradient.
  *
  * Returns: The list of gradient names. The returned value must be
  * freed with g_strfreev().
  **/
 gchar **
-gimp_gradients_get_list (const gchar *filter,
+picman_gradients_get_list (const gchar *filter,
                          gint        *num_gradients)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar **gradient_list = NULL;
   gint i;
 
-  return_vals = gimp_run_procedure ("gimp-gradients-get-list",
+  return_vals = picman_run_procedure ("picman-gradients-get-list",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, filter,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, filter,
+                                    PICMAN_PDB_END);
 
   *num_gradients = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_gradients = return_vals[1].data.d_int32;
       gradient_list = g_new (gchar *, *num_gradients + 1);
@@ -103,36 +103,36 @@ gimp_gradients_get_list (const gchar *filter,
       gradient_list[i] = NULL;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return gradient_list;
 }
 
 /**
- * gimp_gradients_sample_uniform:
+ * picman_gradients_sample_uniform:
  * @num_samples: The number of samples to take.
  * @reverse: Use the reverse gradient.
  *
- * Deprecated: Use gimp_gradient_get_uniform_samples() instead.
+ * Deprecated: Use picman_gradient_get_uniform_samples() instead.
  *
  * Returns: Color samples: { R1, G1, B1, A1, ..., Rn, Gn, Bn, An }.
  **/
 gdouble *
-gimp_gradients_sample_uniform (gint     num_samples,
+picman_gradients_sample_uniform (gint     num_samples,
                                gboolean reverse)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble *color_samples = NULL;
   gint num_color_samples;
 
-  return_vals = gimp_run_procedure ("gimp-gradients-sample-uniform",
+  return_vals = picman_run_procedure ("picman-gradients-sample-uniform",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, num_samples,
-                                    GIMP_PDB_INT32, reverse,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, num_samples,
+                                    PICMAN_PDB_INT32, reverse,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       num_color_samples = return_vals[1].data.d_int32;
       color_samples = g_new (gdouble, num_color_samples);
@@ -141,39 +141,39 @@ gimp_gradients_sample_uniform (gint     num_samples,
               num_color_samples * sizeof (gdouble));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return color_samples;
 }
 
 /**
- * gimp_gradients_sample_custom:
+ * picman_gradients_sample_custom:
  * @num_samples: The number of samples to take.
  * @positions: The list of positions to sample along the gradient.
  * @reverse: Use the reverse gradient.
  *
- * Deprecated: Use gimp_gradient_get_custom_samples() instead.
+ * Deprecated: Use picman_gradient_get_custom_samples() instead.
  *
  * Returns: Color samples: { R1, G1, B1, A1, ..., Rn, Gn, Bn, An }.
  **/
 gdouble *
-gimp_gradients_sample_custom (gint           num_samples,
+picman_gradients_sample_custom (gint           num_samples,
                               const gdouble *positions,
                               gboolean       reverse)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble *color_samples = NULL;
   gint num_color_samples;
 
-  return_vals = gimp_run_procedure ("gimp-gradients-sample-custom",
+  return_vals = picman_run_procedure ("picman-gradients-sample-custom",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, num_samples,
-                                    GIMP_PDB_FLOATARRAY, positions,
-                                    GIMP_PDB_INT32, reverse,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, num_samples,
+                                    PICMAN_PDB_FLOATARRAY, positions,
+                                    PICMAN_PDB_INT32, reverse,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       num_color_samples = return_vals[1].data.d_int32;
       color_samples = g_new (gdouble, num_color_samples);
@@ -182,44 +182,44 @@ gimp_gradients_sample_custom (gint           num_samples,
               num_color_samples * sizeof (gdouble));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return color_samples;
 }
 
 /**
- * gimp_gradients_get_gradient_data:
+ * picman_gradients_get_gradient_data:
  * @name: The gradient name (\"\" means current active gradient).
  * @sample_size: Size of the sample to return when the gradient is changed.
  * @reverse: Use the reverse gradient.
  * @width: The gradient sample width (r,g,b,a).
  * @grad_data: The gradient sample data.
  *
- * Deprecated: Use gimp_gradient_get_uniform_samples() instead.
+ * Deprecated: Use picman_gradient_get_uniform_samples() instead.
  *
  * Returns: The gradient name.
  **/
 gchar *
-gimp_gradients_get_gradient_data (const gchar  *name,
+picman_gradients_get_gradient_data (const gchar  *name,
                                   gint          sample_size,
                                   gboolean      reverse,
                                   gint         *width,
                                   gdouble     **grad_data)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *actual_name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-gradients-get-gradient-data",
+  return_vals = picman_run_procedure ("picman-gradients-get-gradient-data",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_INT32, sample_size,
-                                    GIMP_PDB_INT32, reverse,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_INT32, sample_size,
+                                    PICMAN_PDB_INT32, reverse,
+                                    PICMAN_PDB_END);
 
   *width = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       actual_name = g_strdup (return_vals[1].data.d_string);
       *width = return_vals[2].data.d_int32;
@@ -229,7 +229,7 @@ gimp_gradients_get_gradient_data (const gchar  *name,
               *width * sizeof (gdouble));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return actual_name;
 }

@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp_brush_generated module Copyright 1998 Jay Cox <jaycox@earthlink.net>
+ * picman_brush_generated module Copyright 1998 Jay Cox <jaycox@earthlink.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,27 +30,27 @@
 #include <gegl.h>
 #include <glib/gstdio.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
-#include "gimpbrushgenerated.h"
-#include "gimpbrushgenerated-load.h"
+#include "picmanbrushgenerated.h"
+#include "picmanbrushgenerated-load.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 GList *
-gimp_brush_generated_load (GimpContext  *context,
+picman_brush_generated_load (PicmanContext  *context,
                            const gchar  *filename,
                            GError      **error)
 {
-  GimpBrush               *brush;
+  PicmanBrush               *brush;
   FILE                    *file;
   gchar                    string[256];
   gint                     linenum;
   gchar                   *name       = NULL;
-  GimpBrushGeneratedShape  shape      = GIMP_BRUSH_GENERATED_CIRCLE;
+  PicmanBrushGeneratedShape  shape      = PICMAN_BRUSH_GENERATED_CIRCLE;
   gboolean                 have_shape = FALSE;
   gint                     spikes     = 2;
   gdouble                  spacing;
@@ -67,9 +67,9 @@ gimp_brush_generated_load (GimpContext  *context,
 
   if (! file)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
@@ -79,12 +79,12 @@ gimp_brush_generated_load (GimpContext  *context,
   if (! fgets (string, sizeof (string), file))
     goto failed;
 
-  if (! g_str_has_prefix (string, "GIMP-VBR"))
+  if (! g_str_has_prefix (string, "PICMAN-VBR"))
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in brush file '%s': "
-                     "Not a GIMP brush file."),
-                   gimp_filename_to_utf8 (filename));
+                     "Not a PICMAN brush file."),
+                   picman_filename_to_utf8 (filename));
       goto failed;
     }
 
@@ -98,10 +98,10 @@ gimp_brush_generated_load (GimpContext  *context,
     {
       if (! g_str_has_prefix (string, "1.5"))
         {
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Fatal parse error in brush file '%s': "
-                         "Unknown GIMP brush version in line %d."),
-                       gimp_filename_to_utf8 (filename), linenum);
+                         "Unknown PICMAN brush version in line %d."),
+                       picman_filename_to_utf8 (filename), linenum);
           goto failed;
         }
       else
@@ -122,16 +122,16 @@ gimp_brush_generated_load (GimpContext  *context,
   if (strlen (string) < 1)
     g_strlcpy (string, _("Untitled"), sizeof (string));
 
-  name = gimp_any_to_utf8 (string, -1,
+  name = picman_any_to_utf8 (string, -1,
                            _("Invalid UTF-8 string in brush file '%s'."),
-                           gimp_filename_to_utf8 (filename));
+                           picman_filename_to_utf8 (filename));
 
   if (have_shape)
     {
       GEnumClass *enum_class;
       GEnumValue *shape_val;
 
-      enum_class = g_type_class_peek (GIMP_TYPE_BRUSH_GENERATED_SHAPE);
+      enum_class = g_type_class_peek (PICMAN_TYPE_BRUSH_GENERATED_SHAPE);
 
       /* read shape */
       errno = 0;
@@ -144,10 +144,10 @@ gimp_brush_generated_load (GimpContext  *context,
 
       if (! shape_val)
         {
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Fatal parse error in brush file '%s': "
-                         "Unknown GIMP brush shape in line %d."),
-                       gimp_filename_to_utf8 (filename), linenum);
+                         "Unknown PICMAN brush shape in line %d."),
+                       picman_filename_to_utf8 (filename), linenum);
           goto failed;
         }
 
@@ -201,7 +201,7 @@ gimp_brush_generated_load (GimpContext  *context,
 
   fclose (file);
 
-  brush = GIMP_BRUSH (gimp_brush_generated_new (name, shape, radius, spikes,
+  brush = PICMAN_BRUSH (picman_brush_generated_new (name, shape, radius, spikes,
                                                 hardness, aspect_ratio, angle));
   g_free (name);
 
@@ -225,9 +225,9 @@ gimp_brush_generated_load (GimpContext  *context,
       else
         msg = g_strdup_printf (_("File is truncated in line %d"), linenum);
 
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Error while reading brush file '%s': %s"),
-                   gimp_filename_to_utf8 (filename), msg);
+                   picman_filename_to_utf8 (filename), msg);
 
       g_free (msg);
     }

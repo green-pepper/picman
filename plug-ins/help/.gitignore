@@ -3,8 +3,8 @@
 /.deps
 /_libs
 /.libs
-/gimp-help-lookup
-/gimp-help-lookup.exe
+/picman-help-lookup
+/picman-help-lookup.exe
 /help
 /help.exe
-/libgimphelp.a
+/libpicmanhelp.a

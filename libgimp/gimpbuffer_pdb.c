@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpbuffer_pdb.c
+ * picmanbuffer_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpbuffer
- * @title: gimpbuffer
+ * SECTION: picmanbuffer
+ * @title: picmanbuffer
  * @short_description: Functions for manipulating cut buffers.
  *
  * Functions related to named cut buffers.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_buffers_get_list:
+ * picman_buffers_get_list:
  * @filter: An optional regular expression used to filter the list.
  * @num_buffers: The number of buffers.
  *
@@ -47,25 +47,25 @@
  * Returns: The list of buffer names. The returned value must be freed
  * with g_strfreev().
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gchar **
-gimp_buffers_get_list (const gchar *filter,
+picman_buffers_get_list (const gchar *filter,
                        gint        *num_buffers)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar **buffer_list = NULL;
   gint i;
 
-  return_vals = gimp_run_procedure ("gimp-buffers-get-list",
+  return_vals = picman_run_procedure ("picman-buffers-get-list",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, filter,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, filter,
+                                    PICMAN_PDB_END);
 
   *num_buffers = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_buffers = return_vals[1].data.d_int32;
       buffer_list = g_new (gchar *, *num_buffers + 1);
@@ -74,13 +74,13 @@ gimp_buffers_get_list (const gchar *filter,
       buffer_list[i] = NULL;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return buffer_list;
 }
 
 /**
- * gimp_buffer_rename:
+ * picman_buffer_rename:
  * @buffer_name: The buffer name.
  * @new_name: The buffer's new name.
  *
@@ -90,32 +90,32 @@ gimp_buffers_get_list (const gchar *filter,
  *
  * Returns: The real name given to the buffer.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gchar *
-gimp_buffer_rename (const gchar *buffer_name,
+picman_buffer_rename (const gchar *buffer_name,
                     const gchar *new_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *real_name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-buffer-rename",
+  return_vals = picman_run_procedure ("picman-buffer-rename",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, buffer_name,
-                                    GIMP_PDB_STRING, new_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, buffer_name,
+                                    PICMAN_PDB_STRING, new_name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     real_name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return real_name;
 }
 
 /**
- * gimp_buffer_delete:
+ * picman_buffer_delete:
  * @buffer_name: The buffer name.
  *
  * Deletes a named buffer.
@@ -124,29 +124,29 @@ gimp_buffer_rename (const gchar *buffer_name,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_buffer_delete (const gchar *buffer_name)
+picman_buffer_delete (const gchar *buffer_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-buffer-delete",
+  return_vals = picman_run_procedure ("picman-buffer-delete",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, buffer_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, buffer_name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_buffer_get_width:
+ * picman_buffer_get_width:
  * @buffer_name: The buffer name.
  *
  * Retrieves the specified buffer's width.
@@ -155,30 +155,30 @@ gimp_buffer_delete (const gchar *buffer_name)
  *
  * Returns: The buffer width.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint
-gimp_buffer_get_width (const gchar *buffer_name)
+picman_buffer_get_width (const gchar *buffer_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint width = 0;
 
-  return_vals = gimp_run_procedure ("gimp-buffer-get-width",
+  return_vals = picman_run_procedure ("picman-buffer-get-width",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, buffer_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, buffer_name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     width = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return width;
 }
 
 /**
- * gimp_buffer_get_height:
+ * picman_buffer_get_height:
  * @buffer_name: The buffer name.
  *
  * Retrieves the specified buffer's height.
@@ -187,30 +187,30 @@ gimp_buffer_get_width (const gchar *buffer_name)
  *
  * Returns: The buffer height.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint
-gimp_buffer_get_height (const gchar *buffer_name)
+picman_buffer_get_height (const gchar *buffer_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint height = 0;
 
-  return_vals = gimp_run_procedure ("gimp-buffer-get-height",
+  return_vals = picman_run_procedure ("picman-buffer-get-height",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, buffer_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, buffer_name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     height = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return height;
 }
 
 /**
- * gimp_buffer_get_bytes:
+ * picman_buffer_get_bytes:
  * @buffer_name: The buffer name.
  *
  * Retrieves the specified buffer's bytes.
@@ -219,30 +219,30 @@ gimp_buffer_get_height (const gchar *buffer_name)
  *
  * Returns: The buffer bpp.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint
-gimp_buffer_get_bytes (const gchar *buffer_name)
+picman_buffer_get_bytes (const gchar *buffer_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint bytes = 0;
 
-  return_vals = gimp_run_procedure ("gimp-buffer-get-bytes",
+  return_vals = picman_run_procedure ("picman-buffer-get-bytes",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, buffer_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, buffer_name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     bytes = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return bytes;
 }
 
 /**
- * gimp_buffer_get_image_type:
+ * picman_buffer_get_image_type:
  * @buffer_name: The buffer name.
  *
  * Retrieves the specified buffer's image type.
@@ -251,24 +251,24 @@ gimp_buffer_get_bytes (const gchar *buffer_name)
  *
  * Returns: The buffer image type.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
-GimpImageBaseType
-gimp_buffer_get_image_type (const gchar *buffer_name)
+PicmanImageBaseType
+picman_buffer_get_image_type (const gchar *buffer_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpImageBaseType image_type = 0;
+  PicmanImageBaseType image_type = 0;
 
-  return_vals = gimp_run_procedure ("gimp-buffer-get-image-type",
+  return_vals = picman_run_procedure ("picman-buffer-get-image-type",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, buffer_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, buffer_name,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     image_type = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return image_type;
 }

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimphuesaturationconfig.h
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanhuesaturationconfig.h
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_HUE_SATURATION_CONFIG_H__
-#define __GIMP_HUE_SATURATION_CONFIG_H__
+#ifndef __PICMAN_HUE_SATURATION_CONFIG_H__
+#define __PICMAN_HUE_SATURATION_CONFIG_H__
 
 
-#include "core/gimpimagemapconfig.h"
+#include "core/picmanimagemapconfig.h"
 
 
-#define GIMP_TYPE_HUE_SATURATION_CONFIG            (gimp_hue_saturation_config_get_type ())
-#define GIMP_HUE_SATURATION_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_HUE_SATURATION_CONFIG, GimpHueSaturationConfig))
-#define GIMP_HUE_SATURATION_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_HUE_SATURATION_CONFIG, GimpHueSaturationConfigClass))
-#define GIMP_IS_HUE_SATURATION_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_HUE_SATURATION_CONFIG))
-#define GIMP_IS_HUE_SATURATION_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_HUE_SATURATION_CONFIG))
-#define GIMP_HUE_SATURATION_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_HUE_SATURATION_CONFIG, GimpHueSaturationConfigClass))
+#define PICMAN_TYPE_HUE_SATURATION_CONFIG            (picman_hue_saturation_config_get_type ())
+#define PICMAN_HUE_SATURATION_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_HUE_SATURATION_CONFIG, PicmanHueSaturationConfig))
+#define PICMAN_HUE_SATURATION_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_HUE_SATURATION_CONFIG, PicmanHueSaturationConfigClass))
+#define PICMAN_IS_HUE_SATURATION_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_HUE_SATURATION_CONFIG))
+#define PICMAN_IS_HUE_SATURATION_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_HUE_SATURATION_CONFIG))
+#define PICMAN_HUE_SATURATION_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_HUE_SATURATION_CONFIG, PicmanHueSaturationConfigClass))
 
 
-typedef struct _GimpHueSaturationConfigClass GimpHueSaturationConfigClass;
+typedef struct _PicmanHueSaturationConfigClass PicmanHueSaturationConfigClass;
 
-struct _GimpHueSaturationConfig
+struct _PicmanHueSaturationConfig
 {
-  GimpImageMapConfig  parent_instance;
+  PicmanImageMapConfig  parent_instance;
 
-  GimpHueRange        range;
+  PicmanHueRange        range;
 
   gdouble             hue[7];
   gdouble             saturation[7];
@@ -48,15 +48,15 @@ struct _GimpHueSaturationConfig
   gdouble             overlap;
 };
 
-struct _GimpHueSaturationConfigClass
+struct _PicmanHueSaturationConfigClass
 {
-  GimpImageMapConfigClass  parent_class;
+  PicmanImageMapConfigClass  parent_class;
 };
 
 
-GType   gimp_hue_saturation_config_get_type    (void) G_GNUC_CONST;
+GType   picman_hue_saturation_config_get_type    (void) G_GNUC_CONST;
 
-void    gimp_hue_saturation_config_reset_range (GimpHueSaturationConfig *config);
+void    picman_hue_saturation_config_reset_range (PicmanHueSaturationConfig *config);
 
 
-#endif /* __GIMP_HUE_SATURATION_CONFIG_H__ */
+#endif /* __PICMAN_HUE_SATURATION_CONFIG_H__ */

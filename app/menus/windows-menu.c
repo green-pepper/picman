@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,25 +21,25 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpthumb/gimpthumb.h"
+#include "libpicmanthumb/picmanthumb.h"
 
 #include "menus-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
-#include "core/gimplist.h"
-#include "core/gimpviewable.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
+#include "core/picmanlist.h"
+#include "core/picmanviewable.h"
 
-#include "widgets/gimpaction.h"
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpdock.h"
-#include "widgets/gimpdockwindow.h"
-#include "widgets/gimpsessioninfo.h"
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmanaction.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmandock.h"
+#include "widgets/picmandockwindow.h"
+#include "widgets/picmansessioninfo.h"
+#include "widgets/picmanuimanager.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
 #include "dialogs/dialogs.h"
 
@@ -48,79 +48,79 @@
 #include "windows-menu.h"
 
 
-static void      windows_menu_display_add                (GimpContainer     *container,
-                                                          GimpDisplay       *display,
-                                                          GimpUIManager     *manager);
-static void      windows_menu_display_remove             (GimpContainer     *container,
-                                                          GimpDisplay       *display,
-                                                          GimpUIManager     *manager);
-static void      windows_menu_image_notify               (GimpDisplay       *display,
+static void      windows_menu_display_add                (PicmanContainer     *container,
+                                                          PicmanDisplay       *display,
+                                                          PicmanUIManager     *manager);
+static void      windows_menu_display_remove             (PicmanContainer     *container,
+                                                          PicmanDisplay       *display,
+                                                          PicmanUIManager     *manager);
+static void      windows_menu_image_notify               (PicmanDisplay       *display,
                                                           const GParamSpec  *unused,
-                                                          GimpUIManager     *manager);
-static void      windows_menu_dock_window_added          (GimpDialogFactory *factory,
-                                                          GimpDockWindow    *dock_window,
-                                                          GimpUIManager     *manager);
-static void      windows_menu_dock_window_removed        (GimpDialogFactory *factory,
-                                                          GimpDockWindow    *dock_window,
-                                                          GimpUIManager     *manager);
-static gchar   * windows_menu_dock_window_to_merge_id    (GimpDockWindow    *dock_window);
-static void      windows_menu_recent_add                 (GimpContainer     *container,
-                                                          GimpSessionInfo   *info,
-                                                          GimpUIManager     *manager);
-static void      windows_menu_recent_remove              (GimpContainer     *container,
-                                                          GimpSessionInfo   *info,
-                                                          GimpUIManager     *manager);
+                                                          PicmanUIManager     *manager);
+static void      windows_menu_dock_window_added          (PicmanDialogFactory *factory,
+                                                          PicmanDockWindow    *dock_window,
+                                                          PicmanUIManager     *manager);
+static void      windows_menu_dock_window_removed        (PicmanDialogFactory *factory,
+                                                          PicmanDockWindow    *dock_window,
+                                                          PicmanUIManager     *manager);
+static gchar   * windows_menu_dock_window_to_merge_id    (PicmanDockWindow    *dock_window);
+static void      windows_menu_recent_add                 (PicmanContainer     *container,
+                                                          PicmanSessionInfo   *info,
+                                                          PicmanUIManager     *manager);
+static void      windows_menu_recent_remove              (PicmanContainer     *container,
+                                                          PicmanSessionInfo   *info,
+                                                          PicmanUIManager     *manager);
 static gboolean  windows_menu_display_query_tooltip      (GtkWidget         *widget,
                                                           gint               x,
                                                           gint               y,
                                                           gboolean           keyboard_mode,
                                                           GtkTooltip        *tooltip,
-                                                          GimpAction        *action);
+                                                          PicmanAction        *action);
 
 
 void
-windows_menu_setup (GimpUIManager *manager,
+windows_menu_setup (PicmanUIManager *manager,
                     const gchar   *ui_path)
 {
   GList *list;
 
-  g_return_if_fail (GIMP_IS_UI_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_UI_MANAGER (manager));
   g_return_if_fail (ui_path != NULL);
 
   g_object_set_data (G_OBJECT (manager), "image-menu-ui-path",
                      (gpointer) ui_path);
 
-  g_signal_connect_object (manager->gimp->displays, "add",
+  g_signal_connect_object (manager->picman->displays, "add",
                            G_CALLBACK (windows_menu_display_add),
                            manager, 0);
-  g_signal_connect_object (manager->gimp->displays, "remove",
+  g_signal_connect_object (manager->picman->displays, "remove",
                            G_CALLBACK (windows_menu_display_remove),
                            manager, 0);
 
-  for (list = gimp_get_display_iter (manager->gimp);
+  for (list = picman_get_display_iter (manager->picman);
        list;
        list = g_list_next (list))
     {
-      GimpDisplay *display = list->data;
+      PicmanDisplay *display = list->data;
 
-      windows_menu_display_add (manager->gimp->displays, display, manager);
+      windows_menu_display_add (manager->picman->displays, display, manager);
     }
 
-  g_signal_connect_object (gimp_dialog_factory_get_singleton (), "dock-window-added",
+  g_signal_connect_object (picman_dialog_factory_get_singleton (), "dock-window-added",
                            G_CALLBACK (windows_menu_dock_window_added),
                            manager, 0);
-  g_signal_connect_object (gimp_dialog_factory_get_singleton (), "dock-window-removed",
+  g_signal_connect_object (picman_dialog_factory_get_singleton (), "dock-window-removed",
                            G_CALLBACK (windows_menu_dock_window_removed),
                            manager, 0);
 
-  for (list = gimp_dialog_factory_get_open_dialogs (gimp_dialog_factory_get_singleton ());
+  for (list = picman_dialog_factory_get_open_dialogs (picman_dialog_factory_get_singleton ());
        list;
        list = g_list_next (list))
     {
-      GimpDockWindow *dock_window = list->data;
+      PicmanDockWindow *dock_window = list->data;
 
-      if (GIMP_IS_DOCK_WINDOW (dock_window))
-        windows_menu_dock_window_added (gimp_dialog_factory_get_singleton (),
+      if (PICMAN_IS_DOCK_WINDOW (dock_window))
+        windows_menu_dock_window_added (picman_dialog_factory_get_singleton (),
                                         dock_window,
                                         manager);
     }
@@ -132,11 +132,11 @@ windows_menu_setup (GimpUIManager *manager,
                            G_CALLBACK (windows_menu_recent_remove),
                            manager, 0);
 
-  for (list = g_list_last (GIMP_LIST (global_recent_docks)->list);
+  for (list = g_list_last (PICMAN_LIST (global_recent_docks)->list);
        list;
        list = g_list_previous (list))
     {
-      GimpSessionInfo *info = list->data;
+      PicmanSessionInfo *info = list->data;
 
       windows_menu_recent_add (global_recent_docks, info, manager);
     }
@@ -146,25 +146,25 @@ windows_menu_setup (GimpUIManager *manager,
 /*  private functions  */
 
 static void
-windows_menu_display_add (GimpContainer *container,
-                          GimpDisplay   *display,
-                          GimpUIManager *manager)
+windows_menu_display_add (PicmanContainer *container,
+                          PicmanDisplay   *display,
+                          PicmanUIManager *manager)
 {
   g_signal_connect_object (display, "notify::image",
                            G_CALLBACK (windows_menu_image_notify),
                            manager, 0);
 
-  if (gimp_display_get_image (display))
+  if (picman_display_get_image (display))
     windows_menu_image_notify (display, NULL, manager);
 }
 
 static void
-windows_menu_display_remove (GimpContainer *container,
-                             GimpDisplay   *display,
-                             GimpUIManager *manager)
+windows_menu_display_remove (PicmanContainer *container,
+                             PicmanDisplay   *display,
+                             PicmanUIManager *manager)
 {
   gchar *merge_key = g_strdup_printf ("windows-display-%04d-merge-id",
-                                      gimp_display_get_ID (display));
+                                      picman_display_get_ID (display));
   guint  merge_id;
 
   merge_id = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (manager),
@@ -179,14 +179,14 @@ windows_menu_display_remove (GimpContainer *container,
 }
 
 static void
-windows_menu_image_notify (GimpDisplay      *display,
+windows_menu_image_notify (PicmanDisplay      *display,
                            const GParamSpec *unused,
-                           GimpUIManager    *manager)
+                           PicmanUIManager    *manager)
 {
-  if (gimp_display_get_image (display))
+  if (picman_display_get_image (display))
     {
       gchar *merge_key = g_strdup_printf ("windows-display-%04d-merge-id",
-                                          gimp_display_get_ID (display));
+                                          picman_display_get_ID (display));
       guint  merge_id;
 
       merge_id = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (manager),
@@ -203,7 +203,7 @@ windows_menu_image_notify (GimpDisplay      *display,
           ui_path = g_object_get_data (G_OBJECT (manager),
                                        "image-menu-ui-path");
 
-          action_name = gimp_display_get_action_name (display);
+          action_name = picman_display_get_action_name (display);
           action_path = g_strdup_printf ("%s/Windows/Images", ui_path);
 
           merge_id = gtk_ui_manager_new_merge_id (GTK_UI_MANAGER (manager));
@@ -225,7 +225,7 @@ windows_menu_image_notify (GimpDisplay      *display,
             {
               GtkAction *action;
 
-              action = gimp_ui_manager_find_action (manager,
+              action = picman_ui_manager_find_action (manager,
                                                     "windows", action_name);
 
               g_signal_connect_object (widget, "query-tooltip",
@@ -242,14 +242,14 @@ windows_menu_image_notify (GimpDisplay      *display,
     }
   else
     {
-      windows_menu_display_remove (manager->gimp->displays, display, manager);
+      windows_menu_display_remove (manager->picman->displays, display, manager);
     }
 }
 
 static void
-windows_menu_dock_window_added (GimpDialogFactory *factory,
-                                GimpDockWindow    *dock_window,
-                                GimpUIManager     *manager)
+windows_menu_dock_window_added (PicmanDialogFactory *factory,
+                                PicmanDockWindow    *dock_window,
+                                PicmanUIManager     *manager)
 {
   const gchar *ui_path;
   gchar       *action_name;
@@ -280,9 +280,9 @@ windows_menu_dock_window_added (GimpDialogFactory *factory,
 }
 
 static void
-windows_menu_dock_window_removed (GimpDialogFactory *factory,
-                                  GimpDockWindow    *dock_window,
-                                  GimpUIManager     *manager)
+windows_menu_dock_window_removed (PicmanDialogFactory *factory,
+                                  PicmanDockWindow    *dock_window,
+                                  PicmanUIManager     *manager)
 {
   gchar *merge_key = windows_menu_dock_window_to_merge_id (dock_window);
   guint  merge_id  = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (manager),
@@ -296,16 +296,16 @@ windows_menu_dock_window_removed (GimpDialogFactory *factory,
 }
 
 static gchar *
-windows_menu_dock_window_to_merge_id (GimpDockWindow *dock_window)
+windows_menu_dock_window_to_merge_id (PicmanDockWindow *dock_window)
 {
   return g_strdup_printf ("windows-dock-%04d-merge-id",
-                          gimp_dock_window_get_id (dock_window));
+                          picman_dock_window_get_id (dock_window));
 }
 
 static void
-windows_menu_recent_add (GimpContainer   *container,
-                         GimpSessionInfo *info,
-                         GimpUIManager   *manager)
+windows_menu_recent_add (PicmanContainer   *container,
+                         PicmanSessionInfo *info,
+                         PicmanUIManager   *manager)
 {
   const gchar *ui_path;
   gchar       *action_name;
@@ -339,9 +339,9 @@ windows_menu_recent_add (GimpContainer   *container,
 }
 
 static void
-windows_menu_recent_remove (GimpContainer   *container,
-                            GimpSessionInfo *info,
-                            GimpUIManager   *manager)
+windows_menu_recent_remove (PicmanContainer   *container,
+                            PicmanSessionInfo *info,
+                            PicmanUIManager   *manager)
 {
   gint   info_id;
   gchar *merge_key;
@@ -369,9 +369,9 @@ windows_menu_display_query_tooltip (GtkWidget  *widget,
                                     gint        y,
                                     gboolean    keyboard_mode,
                                     GtkTooltip *tooltip,
-                                    GimpAction *action)
+                                    PicmanAction *action)
 {
-  GimpImage *image = GIMP_IMAGE (action->viewable);
+  PicmanImage *image = PICMAN_IMAGE (action->viewable);
   gchar     *text;
   gdouble    xres;
   gdouble    yres;
@@ -382,16 +382,16 @@ windows_menu_display_query_tooltip (GtkWidget  *widget,
   gtk_tooltip_set_text (tooltip, text);
   g_free (text);
 
-  gimp_image_get_resolution (image, &xres, &yres);
+  picman_image_get_resolution (image, &xres, &yres);
 
-  gimp_viewable_calc_preview_size (gimp_image_get_width  (image),
-                                   gimp_image_get_height (image),
-                                   GIMP_VIEW_SIZE_HUGE, GIMP_VIEW_SIZE_HUGE,
+  picman_viewable_calc_preview_size (picman_image_get_width  (image),
+                                   picman_image_get_height (image),
+                                   PICMAN_VIEW_SIZE_HUGE, PICMAN_VIEW_SIZE_HUGE,
                                    FALSE, xres, yres,
                                    &width, &height, NULL);
 
   gtk_tooltip_set_icon (tooltip,
-                        gimp_viewable_get_pixbuf (action->viewable,
+                        picman_viewable_get_pixbuf (action->viewable,
                                                   action->context,
                                                   width, height));
 

@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpdisplay_pdb.c
+ * picmandisplay_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpdisplay
- * @title: gimpdisplay
+ * SECTION: picmandisplay
+ * @title: picmandisplay
  * @short_description: Functions to create, delete and flush displays (views) on an image.
  *
  * Functions to create, delete and flush displays (views) on an image.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_display_is_valid:
+ * picman_display_is_valid:
  * @display_ID: The display to check.
  *
  * Returns TRUE if the display is valid.
@@ -45,64 +45,64 @@
  *
  * Returns: Whether the display ID is valid.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_display_is_valid (gint32 display_ID)
+picman_display_is_valid (gint32 display_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean valid = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-display-is-valid",
+  return_vals = picman_run_procedure ("picman-display-is-valid",
                                     &nreturn_vals,
-                                    GIMP_PDB_DISPLAY, display_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DISPLAY, display_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     valid = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return valid;
 }
 
 /**
- * gimp_display_new:
+ * picman_display_new:
  * @image_ID: The image.
  *
  * Create a new display for the specified image.
  *
  * Creates a new display for the specified image. If the image already
  * has a display, another is added. Multiple displays are handled
- * transparently by GIMP. The newly created display is returned and can
- * be subsequently destroyed with a call to gimp_display_delete(). This
- * procedure only makes sense for use with the GIMP UI.
+ * transparently by PICMAN. The newly created display is returned and can
+ * be subsequently destroyed with a call to picman_display_delete(). This
+ * procedure only makes sense for use with the PICMAN UI.
  *
  * Returns: The new display.
  **/
 gint32
-gimp_display_new (gint32 image_ID)
+picman_display_new (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 display_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-display-new",
+  return_vals = picman_run_procedure ("picman-display-new",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     display_ID = return_vals[1].data.d_display;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return display_ID;
 }
 
 /**
- * gimp_display_delete:
+ * picman_display_delete:
  * @display_ID: The display to delete.
  *
  * Delete the specified display.
@@ -116,26 +116,26 @@ gimp_display_new (gint32 image_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_display_delete (gint32 display_ID)
+picman_display_delete (gint32 display_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-display-delete",
+  return_vals = picman_run_procedure ("picman-display-delete",
                                     &nreturn_vals,
-                                    GIMP_PDB_DISPLAY, display_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DISPLAY, display_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_display_get_window_handle:
+ * picman_display_get_window_handle:
  * @display_ID: The display to get the window handle from.
  *
  * Get a handle to the native window for an image display.
@@ -148,30 +148,30 @@ gimp_display_delete (gint32 display_ID)
  *
  * Returns: The native window handle or 0.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint
-gimp_display_get_window_handle (gint32 display_ID)
+picman_display_get_window_handle (gint32 display_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint window = 0;
 
-  return_vals = gimp_run_procedure ("gimp-display-get-window-handle",
+  return_vals = picman_run_procedure ("picman-display-get-window-handle",
                                     &nreturn_vals,
-                                    GIMP_PDB_DISPLAY, display_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_DISPLAY, display_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     window = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return window;
 }
 
 /**
- * gimp_displays_flush:
+ * picman_displays_flush:
  *
  * Flush all internal changes to the user interface
  *
@@ -183,25 +183,25 @@ gimp_display_get_window_handle (gint32 display_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_displays_flush (void)
+picman_displays_flush (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-displays-flush",
+  return_vals = picman_run_procedure ("picman-displays-flush",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_displays_reconnect:
+ * picman_displays_reconnect:
  * @old_image_ID: The old image (must have at least one display).
  * @new_image_ID: The new image (must not have a display).
  *
@@ -215,22 +215,22 @@ gimp_displays_flush (void)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_displays_reconnect (gint32 old_image_ID,
+picman_displays_reconnect (gint32 old_image_ID,
                          gint32 new_image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-displays-reconnect",
+  return_vals = picman_run_procedure ("picman-displays-reconnect",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, old_image_ID,
-                                    GIMP_PDB_IMAGE, new_image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, old_image_ID,
+                                    PICMAN_PDB_IMAGE, new_image_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpmeasuretool.c
- * Copyright (C) 1999 Sven Neumann <sven@gimp.org>
+ * picmanmeasuretool.c
+ * Copyright (C) 1999 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,15 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "gimpmeasureoptions.h"
-#include "gimptooloptions-gui.h"
+#include "picmanmeasureoptions.h"
+#include "picmantooloptions-gui.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -41,48 +41,48 @@ enum
 };
 
 
-static void   gimp_measure_options_set_property (GObject      *object,
+static void   picman_measure_options_set_property (GObject      *object,
                                                  guint         property_id,
                                                  const GValue *value,
                                                  GParamSpec   *pspec);
-static void   gimp_measure_options_get_property (GObject      *object,
+static void   picman_measure_options_get_property (GObject      *object,
                                                  guint         property_id,
                                                  GValue       *value,
                                                  GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpMeasureOptions, gimp_measure_options,
-               GIMP_TYPE_TOOL_OPTIONS)
+G_DEFINE_TYPE (PicmanMeasureOptions, picman_measure_options,
+               PICMAN_TYPE_TOOL_OPTIONS)
 
 
 static void
-gimp_measure_options_class_init (GimpMeasureOptionsClass *klass)
+picman_measure_options_class_init (PicmanMeasureOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_measure_options_set_property;
-  object_class->get_property = gimp_measure_options_get_property;
+  object_class->set_property = picman_measure_options_set_property;
+  object_class->get_property = picman_measure_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_INFO_WINDOW,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_INFO_WINDOW,
                                     "use-info-window",
                                     N_("Open a floating dialog to view details "
                                        "about measurements"),
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_measure_options_init (GimpMeasureOptions *options)
+picman_measure_options_init (PicmanMeasureOptions *options)
 {
 }
 
 static void
-gimp_measure_options_set_property (GObject      *object,
+picman_measure_options_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpMeasureOptions *options = GIMP_MEASURE_OPTIONS (object);
+  PicmanMeasureOptions *options = PICMAN_MEASURE_OPTIONS (object);
 
   switch (property_id)
     {
@@ -96,12 +96,12 @@ gimp_measure_options_set_property (GObject      *object,
 }
 
 static void
-gimp_measure_options_get_property (GObject    *object,
+picman_measure_options_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpMeasureOptions *options = GIMP_MEASURE_OPTIONS (object);
+  PicmanMeasureOptions *options = PICMAN_MEASURE_OPTIONS (object);
 
   switch (property_id)
     {
@@ -115,14 +115,14 @@ gimp_measure_options_get_property (GObject    *object,
 }
 
 GtkWidget *
-gimp_measure_options_gui (GimpToolOptions *tool_options)
+picman_measure_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config = G_OBJECT (tool_options);
-  GtkWidget *vbox   = gimp_tool_options_gui (tool_options);
+  GtkWidget *vbox   = picman_tool_options_gui (tool_options);
   GtkWidget *button;
 
   /*  the use_info_window toggle button  */
-  button = gimp_prop_check_button_new (config, "use-info-window",
+  button = picman_prop_check_button_new (config, "use-info-window",
                                        _("Use info window"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);

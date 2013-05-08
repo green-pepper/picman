@@ -1,11 +1,11 @@
-/* edge filter for GIMP
+/* edge filter for PICMAN
  *  -Peter Mattis
  *
  * This filter performs edge detection on the input image.
  *  The code for this filter is based on "pgmedge", a program
  *  that is part of the netpbm package.
  *
- * GIMP - The GNU Image Manipulation Program
+ * PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,38 +28,38 @@
  */
 
 /*
- *  Ported to GIMP Plug-in API 1.0
+ *  Ported to PICMAN Plug-in API 1.0
  *  version 1.07
- *  This version requires GIMP v0.99.10 or above.
+ *  This version requires PICMAN v0.99.10 or above.
  *
  *  This plug-in performs edge detection. The code is based on edge.c
- *  for GIMP 0.54 by Peter Mattis.
+ *  for PICMAN 0.54 by Peter Mattis.
  *
  *      Eiichi Takamori <taka@ma1.seikyou.ne.jp>
- *      http://ha1.seikyou.ne.jp/home/taka/gimp/
+ *      http://ha1.seikyou.ne.jp/home/taka/picman/
  *
  *  Tips: you can enter arbitrary value into entry.
  *      (not bounded between 1.0 and 10.0)
  */
 
-/*  29 July 2003   Dave Neary  <bolsh@gimp.org>
+/*  29 July 2003   Dave Neary  <bolsh@picman.org>
  *  Added more edge detection routines, from the thin_line
  *  plug-in by iccii
  */
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /* Some useful macros */
 
 #define PLUG_IN_PROC    "plug-in-edge"
 #define PLUG_IN_BINARY  "edge"
-#define PLUG_IN_ROLE    "gimp-edge"
+#define PLUG_IN_ROLE    "picman-edge"
 #define TILE_CACHE_SIZE 48
 
 enum
@@ -86,13 +86,13 @@ typedef struct
 static void       query               (void);
 static void       run                 (const gchar      *name,
                                        gint              nparams,
-                                       const GimpParam  *param,
+                                       const PicmanParam  *param,
                                        gint             *nreturn_vals,
-                                       GimpParam       **return_vals);
+                                       PicmanParam       **return_vals);
 
-static void       edge                (GimpDrawable     *drawable);
-static gboolean   edge_dialog         (GimpDrawable     *drawable);
-static void       edge_preview_update (GimpPreview      *preview);
+static void       edge                (PicmanDrawable     *drawable);
+static gboolean   edge_dialog         (PicmanDrawable     *drawable);
+static void       edge_preview_update (PicmanPreview      *preview);
 
 static gint       edge_detect         (const guchar     *data);
 static gint       prewitt             (const guchar     *data);
@@ -105,7 +105,7 @@ static gint       sobel               (const guchar     *data);
 
 /***** Local vars *****/
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init  */
   NULL,  /* quit  */
@@ -117,7 +117,7 @@ static EdgeVals evals =
 {
   2.0,                           /* amount */
   SOBEL,                         /* Edge detection algorithm */
-  GIMP_PIXEL_FETCHER_EDGE_SMEAR  /* wrapmode */
+  PICMAN_PIXEL_FETCHER_EDGE_SMEAR  /* wrapmode */
 };
 
 /***** Functions *****/
@@ -127,14 +127,14 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable" },
-    { GIMP_PDB_FLOAT,    "amount",   "Edge detection amount" },
-    { GIMP_PDB_INT32,    "wrapmode", "Edge detection behavior { WRAP (1), SMEAR (2), BLACK (3) }" },
-    { GIMP_PDB_INT32,    "edgemode", "Edge detection algorithm { SOBEL (0), PREWITT (1), GRADIENT (2), ROBERTS (3), DIFFERENTIAL (4), LAPLACE (5) }" }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable" },
+    { PICMAN_PDB_FLOAT,    "amount",   "Edge detection amount" },
+    { PICMAN_PDB_INT32,    "wrapmode", "Edge detection behavior { WRAP (1), SMEAR (2), BLACK (3) }" },
+    { PICMAN_PDB_INT32,    "edgemode", "Edge detection algorithm { SOBEL (0), PREWITT (1), GRADIENT (2), ROBERTS (3), DIFFERENTIAL (4), LAPLACE (5) }" }
   };
 
   const gchar *help_string =
@@ -144,7 +144,7 @@ query (void)
     "transform applied to the pixels, SOBEL was the method used in older "
     "versions.";
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Several simple methods for detecting edges"),
                           help_string,
                           "Peter Mattis & (ported to 1.0 by) Eiichi Takamori",
@@ -152,56 +152,56 @@ query (void)
                           "1996",
                           N_("_Edge..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Edge-Detect");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Edge-Detect");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpDrawable      *drawable;
+  static PicmanParam   values[1];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanDrawable      *drawable;
 
   run_mode = param[0].data.d_int32;
 
   INIT_I18N ();
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &evals);
+      picman_get_data (PLUG_IN_PROC, &evals);
 
       /*  First acquire information with a dialog  */
       if (! edge_dialog (drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 5 && nparams != 6)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           evals.amount   = param[3].data.d_float;
           evals.wrapmode = param[4].data.d_int32;
@@ -209,9 +209,9 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &evals);
+      picman_get_data (PLUG_IN_PROC, &evals);
       break;
 
     default:
@@ -219,33 +219,33 @@ run (const gchar      *name,
     }
 
   /* make sure the drawable exist and is not indexed */
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
-      gimp_progress_init (_("Edge detection"));
+      picman_progress_init (_("Edge detection"));
 
       /*  set the tile cache size  */
-      gimp_tile_cache_ntiles (TILE_CACHE_SIZE);
+      picman_tile_cache_ntiles (TILE_CACHE_SIZE);
 
       /*  run the edge effect  */
       edge (drawable);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
       /*  Store data  */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &evals, sizeof (EdgeVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &evals, sizeof (EdgeVals));
     }
   else
     {
-      /* gimp_message ("edge: cannot operate on indexed color images"); */
-      status = GIMP_PDB_EXECUTION_ERROR;
+      /* picman_message ("edge: cannot operate on indexed color images"); */
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 /********************************************************/
@@ -253,11 +253,11 @@ run (const gchar      *name,
 /********************************************************/
 
 static void
-edge (GimpDrawable *drawable)
+edge (PicmanDrawable *drawable)
 {
-  GimpPixelRgn      src_rgn, dest_rgn;
+  PicmanPixelRgn      src_rgn, dest_rgn;
   gpointer          pr;
-  GimpPixelFetcher *pft;
+  PicmanPixelFetcher *pft;
   guchar           *srcrow, *src;
   guchar           *destrow, *dest;
   guchar            pix00[4], pix01[4], pix02[4];
@@ -275,13 +275,13 @@ edge (GimpDrawable *drawable)
   if (evals.amount < 1.0)
     evals.amount = 1.0;
 
-  pft = gimp_pixel_fetcher_new (drawable, FALSE);
-  gimp_pixel_fetcher_set_edge_mode (pft, evals.wrapmode);
+  pft = picman_pixel_fetcher_new (drawable, FALSE);
+  picman_pixel_fetcher_set_edge_mode (pft, evals.wrapmode);
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
 
-  alpha     = gimp_drawable_bpp (drawable->drawable_id);
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  alpha     = picman_drawable_bpp (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   if (has_alpha)
     alpha--;
 
@@ -289,12 +289,12 @@ edge (GimpDrawable *drawable)
   per_progress = 0.0;
   max_progress = (x2 - x1) * (y2 - y1) / 100;
 
-  gimp_pixel_rgn_init (&src_rgn, drawable, x1, y1, x2-x1, y2-y1, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn, drawable, x1, y1, x2-x1, y2-y1, TRUE, TRUE);
+  picman_pixel_rgn_init (&src_rgn, drawable, x1, y1, x2-x1, y2-y1, FALSE, FALSE);
+  picman_pixel_rgn_init (&dest_rgn, drawable, x1, y1, x2-x1, y2-y1, TRUE, TRUE);
 
-  for (pr = gimp_pixel_rgns_register (2, &src_rgn, &dest_rgn);
+  for (pr = picman_pixel_rgns_register (2, &src_rgn, &dest_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       srcrow  = src_rgn.data;
       destrow = dest_rgn.data;
@@ -342,15 +342,15 @@ edge (GimpDrawable *drawable)
                    * version
                    */
 
-                  gimp_pixel_fetcher_get_pixel (pft, x-1, y-1, pix00);
-                  gimp_pixel_fetcher_get_pixel (pft, x  , y-1, pix10);
-                  gimp_pixel_fetcher_get_pixel (pft, x+1, y-1, pix20);
-                  gimp_pixel_fetcher_get_pixel (pft, x-1, y  , pix01);
-                  gimp_pixel_fetcher_get_pixel (pft, x  , y  , pix11);
-                  gimp_pixel_fetcher_get_pixel (pft, x+1, y  , pix21);
-                  gimp_pixel_fetcher_get_pixel (pft, x-1, y+1, pix02);
-                  gimp_pixel_fetcher_get_pixel (pft, x  , y+1, pix12);
-                  gimp_pixel_fetcher_get_pixel (pft, x+1, y+1, pix22);
+                  picman_pixel_fetcher_get_pixel (pft, x-1, y-1, pix00);
+                  picman_pixel_fetcher_get_pixel (pft, x  , y-1, pix10);
+                  picman_pixel_fetcher_get_pixel (pft, x+1, y-1, pix20);
+                  picman_pixel_fetcher_get_pixel (pft, x-1, y  , pix01);
+                  picman_pixel_fetcher_get_pixel (pft, x  , y  , pix11);
+                  picman_pixel_fetcher_get_pixel (pft, x+1, y  , pix21);
+                  picman_pixel_fetcher_get_pixel (pft, x-1, y+1, pix02);
+                  picman_pixel_fetcher_get_pixel (pft, x  , y+1, pix12);
+                  picman_pixel_fetcher_get_pixel (pft, x+1, y+1, pix22);
 
                   for (chan = 0; chan < alpha; chan++)
                     {
@@ -379,17 +379,17 @@ edge (GimpDrawable *drawable)
         {
           cur_progress = cur_progress - max_progress;
           per_progress = per_progress + 0.01;
-          gimp_progress_update (per_progress);
+          picman_progress_update (per_progress);
         }
     }
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
-  gimp_pixel_fetcher_destroy (pft);
+  picman_pixel_fetcher_destroy (pft);
 
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, (x2 - x1), (y2 - y1));
 }
 
 /* ***********************   Edge Detection   ******************** */
@@ -601,7 +601,7 @@ laplace (const guchar *data)
 /*******************************************************/
 
 static gboolean
-edge_dialog (GimpDrawable *drawable)
+edge_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -614,15 +614,15 @@ edge_dialog (GimpDrawable *drawable)
   GSList    *group = NULL;
   gboolean   run;
 
-  gboolean use_wrap  = (evals.wrapmode == GIMP_PIXEL_FETCHER_EDGE_WRAP);
-  gboolean use_smear = (evals.wrapmode == GIMP_PIXEL_FETCHER_EDGE_SMEAR);
-  gboolean use_black = (evals.wrapmode == GIMP_PIXEL_FETCHER_EDGE_BLACK);
+  gboolean use_wrap  = (evals.wrapmode == PICMAN_PIXEL_FETCHER_EDGE_WRAP);
+  gboolean use_smear = (evals.wrapmode == PICMAN_PIXEL_FETCHER_EDGE_SMEAR);
+  gboolean use_black = (evals.wrapmode == PICMAN_PIXEL_FETCHER_EDGE_BLACK);
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Edge Detection"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Edge Detection"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -634,7 +634,7 @@ edge_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -642,7 +642,7 @@ edge_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -656,7 +656,7 @@ edge_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  combo = gimp_int_combo_box_new (_("Sobel"),           SOBEL,
+  combo = picman_int_combo_box_new (_("Sobel"),           SOBEL,
                                   _("Prewitt compass"), PREWITT,
                                   _("Gradient"),        GRADIENT,
                                   _("Roberts"),         ROBERTS,
@@ -664,30 +664,30 @@ edge_dialog (GimpDrawable *drawable)
                                   _("Laplace"),         LAPLACE,
                                   NULL);
 
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                               evals.edgemode,
-                              G_CALLBACK (gimp_int_combo_box_get_active),
+                              G_CALLBACK (picman_int_combo_box_get_active),
                               &evals.edgemode);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("_Algorithm:"), 0.0, 0.5,
                              combo, 2, FALSE);
   g_signal_connect_swapped (combo, "changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*  Label, scale, entry for evals.amount  */
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                                      _("A_mount:"), 100, 0,
                                      evals.amount, 1.0, 10.0, 0.1, 1.0, 1,
                                      FALSE, 1.0, G_MAXFLOAT,
                                      NULL, NULL);
 
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &evals.amount);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*  Radio buttons WRAP, SMEAR, BLACK  */
@@ -704,10 +704,10 @@ edge_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &use_wrap);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_radio_button_new_with_mnemonic (group, _("_Smear"));
@@ -717,10 +717,10 @@ edge_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &use_smear);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_radio_button_new_with_mnemonic (group, _("_Black"));
@@ -730,33 +730,33 @@ edge_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &use_black);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
   if (use_wrap)
-    evals.wrapmode = GIMP_PIXEL_FETCHER_EDGE_WRAP;
+    evals.wrapmode = PICMAN_PIXEL_FETCHER_EDGE_WRAP;
   else if (use_smear)
-    evals.wrapmode = GIMP_PIXEL_FETCHER_EDGE_SMEAR;
+    evals.wrapmode = PICMAN_PIXEL_FETCHER_EDGE_SMEAR;
   else if (use_black)
-    evals.wrapmode = GIMP_PIXEL_FETCHER_EDGE_BLACK;
+    evals.wrapmode = PICMAN_PIXEL_FETCHER_EDGE_BLACK;
 
   return run;
 }
 
 static void
-edge_preview_update (GimpPreview *preview)
+edge_preview_update (PicmanPreview *preview)
 {
   /* drawable */
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   glong         bytes;
   gint          alpha;
   gboolean      has_alpha;
@@ -769,34 +769,34 @@ edge_preview_update (GimpPreview *preview)
   gint          height;               /* Height of preview widget */
   gint          x1;                   /* Upper-left X of preview */
   gint          y1;                   /* Upper-left Y of preview */
-  GimpPixelRgn  srcPR;                /* Pixel regions */
+  PicmanPixelRgn  srcPR;                /* Pixel regions */
 
   /* algorithm */
   gint x, y;
 
   /* Get drawable info */
   drawable =
-    gimp_drawable_preview_get_drawable (GIMP_DRAWABLE_PREVIEW (preview));
-  bytes  = gimp_drawable_bpp (drawable->drawable_id);
+    picman_drawable_preview_get_drawable (PICMAN_DRAWABLE_PREVIEW (preview));
+  bytes  = picman_drawable_bpp (drawable->drawable_id);
   alpha  = bytes;
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
   if (has_alpha)
     alpha--;
 
   /*
    * Setup for filter...
    */
-  gimp_preview_get_position (preview, &x1, &y1);
-  gimp_preview_get_size (preview, &width, &height);
+  picman_preview_get_position (preview, &x1, &y1);
+  picman_preview_get_size (preview, &width, &height);
 
   /* initialize pixel regions */
-  gimp_pixel_rgn_init (&srcPR, drawable,
+  picman_pixel_rgn_init (&srcPR, drawable,
                        x1, y1, width, height, FALSE, FALSE);
   src = g_new (guchar, width * height * bytes);
   render_buffer = g_new (guchar, width * height * bytes);
 
   /* render image */
-  gimp_pixel_rgn_get_rect(&srcPR, src, x1, y1, width, height);
+  picman_pixel_rgn_get_rect(&srcPR, src, x1, y1, width, height);
   dest = render_buffer;
 
   /* render algorithm */
@@ -831,7 +831,7 @@ edge_preview_update (GimpPreview *preview)
   /*
    * Draw the preview image on the screen...
    */
-  gimp_preview_draw_buffer (preview, render_buffer, width * bytes);
+  picman_preview_draw_buffer (preview, render_buffer, width * bytes);
 
   g_free (render_buffer);
   g_free (src);

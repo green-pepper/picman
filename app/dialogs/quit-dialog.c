@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,67 +22,67 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplay-foreach.h"
-#include "display/gimpdisplayshell.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplay-foreach.h"
+#include "display/picmandisplayshell.h"
 
-#include "widgets/gimpcontainertreeview.h"
-#include "widgets/gimpcontainerview.h"
-#include "widgets/gimpdnd.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
+#include "widgets/picmancontainertreeview.h"
+#include "widgets/picmancontainerview.h"
+#include "widgets/picmandnd.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
 
 #include "quit-dialog.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GtkWidget * quit_close_all_dialog_new               (Gimp              *gimp,
+static GtkWidget * quit_close_all_dialog_new               (Picman              *picman,
                                                             gboolean           do_quit);
 static void        quit_close_all_dialog_response          (GtkWidget         *dialog,
                                                             gint               response_id,
-                                                            Gimp              *gimp);
-static void        quit_close_all_dialog_container_changed (GimpContainer     *images,
-                                                            GimpObject        *image,
-                                                            GimpMessageBox    *box);
-static void        quit_close_all_dialog_image_activated   (GimpContainerView *view,
-                                                            GimpImage         *image,
+                                                            Picman              *picman);
+static void        quit_close_all_dialog_container_changed (PicmanContainer     *images,
+                                                            PicmanObject        *image,
+                                                            PicmanMessageBox    *box);
+static void        quit_close_all_dialog_image_activated   (PicmanContainerView *view,
+                                                            PicmanImage         *image,
                                                             gpointer           insert_data,
-                                                            Gimp              *gimp);
+                                                            Picman              *picman);
 
 
 /*  public functions  */
 
 GtkWidget *
-quit_dialog_new (Gimp *gimp)
+quit_dialog_new (Picman *picman)
 {
-  return quit_close_all_dialog_new (gimp, TRUE);
+  return quit_close_all_dialog_new (picman, TRUE);
 }
 
 GtkWidget *
-close_all_dialog_new (Gimp *gimp)
+close_all_dialog_new (Picman *picman)
 {
-  return quit_close_all_dialog_new (gimp, FALSE);
+  return quit_close_all_dialog_new (picman, FALSE);
 }
 
 static GtkWidget *
-quit_close_all_dialog_new (Gimp     *gimp,
+quit_close_all_dialog_new (Picman     *picman,
                            gboolean  do_quit)
 {
-  GimpContainer  *images;
-  GimpContext    *context;
-  GimpMessageBox *box;
+  PicmanContainer  *images;
+  PicmanContext    *context;
+  PicmanMessageBox *box;
   GtkWidget      *dialog;
   GtkWidget      *label;
   GtkWidget      *button;
@@ -91,23 +91,23 @@ quit_close_all_dialog_new (Gimp     *gimp,
   gint            rows;
   gint            view_size;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
   /* FIXME: need container of dirty images */
 
-  images  = gimp_displays_get_dirty_images (gimp);
-  context = gimp_context_new (gimp, "close-all-dialog",
-                              gimp_get_user_context (gimp));
+  images  = picman_displays_get_dirty_images (picman);
+  context = picman_context_new (picman, "close-all-dialog",
+                              picman_get_user_context (picman));
 
   g_return_val_if_fail (images != NULL, NULL);
 
   dialog =
-    gimp_message_dialog_new (do_quit ? _("Quit GIMP") : _("Close All Images"),
-                             GIMP_STOCK_WARNING,
+    picman_message_dialog_new (do_quit ? _("Quit PICMAN") : _("Close All Images"),
+                             PICMAN_STOCK_WARNING,
                              NULL, 0,
-                             gimp_standard_help_func,
+                             picman_standard_help_func,
                              do_quit ?
-                             GIMP_HELP_FILE_QUIT : GIMP_HELP_FILE_CLOSE_ALL,
+                             PICMAN_HELP_FILE_QUIT : PICMAN_HELP_FILE_CLOSE_ALL,
 
                              GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 
@@ -120,9 +120,9 @@ quit_close_all_dialog_new (Gimp     *gimp,
 
   g_signal_connect (dialog, "response",
                     G_CALLBACK (quit_close_all_dialog_response),
-                    gimp);
+                    picman);
 
-  box = GIMP_MESSAGE_DIALOG (dialog)->box;
+  box = PICMAN_MESSAGE_DIALOG (dialog)->box;
 
   button = gtk_dialog_add_button (GTK_DIALOG (dialog), "", GTK_RESPONSE_OK);
 
@@ -141,11 +141,11 @@ quit_close_all_dialog_new (Gimp     *gimp,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  view_size = gimp->config->layer_preview_size;
-  rows      = CLAMP (gimp_container_get_n_children (images), 3, 6);
+  view_size = picman->config->layer_preview_size;
+  rows      = CLAMP (picman_container_get_n_children (images), 3, 6);
 
-  view = gimp_container_tree_view_new (images, context, view_size, 1);
-  gimp_container_box_set_size_request (GIMP_CONTAINER_BOX (view),
+  view = picman_container_tree_view_new (images, context, view_size, 1);
+  picman_container_box_set_size_request (PICMAN_CONTAINER_BOX (view),
                                        -1,
                                        rows * (view_size + 2));
   gtk_box_pack_start (GTK_BOX (box), view, TRUE, TRUE, 0);
@@ -153,15 +153,15 @@ quit_close_all_dialog_new (Gimp     *gimp,
 
   g_signal_connect (view, "activate-item",
                     G_CALLBACK (quit_close_all_dialog_image_activated),
-                    gimp);
+                    picman);
 
-  dnd_widget = gimp_container_view_get_dnd_widget (GIMP_CONTAINER_VIEW (view));
-  gimp_dnd_xds_source_add (dnd_widget,
-                           (GimpDndDragViewableFunc) gimp_dnd_get_drag_data,
+  dnd_widget = picman_container_view_get_dnd_widget (PICMAN_CONTAINER_VIEW (view));
+  picman_dnd_xds_source_add (dnd_widget,
+                           (PicmanDndDragViewableFunc) picman_dnd_get_drag_data,
                            NULL);
 
   if (do_quit)
-    label = gtk_label_new (_("If you quit GIMP now, "
+    label = gtk_label_new (_("If you quit PICMAN now, "
                              "these changes will be lost."));
   else
     label = gtk_label_new (_("If you close these images now, "
@@ -174,7 +174,7 @@ quit_close_all_dialog_new (Gimp     *gimp,
   g_object_set_data (G_OBJECT (box), "lost-label", label);
 
   quit_close_all_dialog_container_changed (images, NULL,
-                                           GIMP_MESSAGE_DIALOG (dialog)->box);
+                                           PICMAN_MESSAGE_DIALOG (dialog)->box);
 
   return dialog;
 }
@@ -182,9 +182,9 @@ quit_close_all_dialog_new (Gimp     *gimp,
 static void
 quit_close_all_dialog_response (GtkWidget *dialog,
                                 gint       response_id,
-                                Gimp      *gimp)
+                                Picman      *picman)
 {
-  GimpMessageBox *box     = GIMP_MESSAGE_DIALOG (dialog)->box;
+  PicmanMessageBox *box     = PICMAN_MESSAGE_DIALOG (dialog)->box;
   gboolean        do_quit = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (box),
                                                                 "do-quit"));
 
@@ -193,24 +193,24 @@ quit_close_all_dialog_response (GtkWidget *dialog,
   if (response_id == GTK_RESPONSE_OK)
     {
       if (do_quit)
-        gimp_exit (gimp, TRUE);
+        picman_exit (picman, TRUE);
       else
-        gimp_displays_close (gimp);
+        picman_displays_close (picman);
     }
 }
 
 static void
-quit_close_all_dialog_container_changed (GimpContainer  *images,
-                                         GimpObject     *image,
-                                         GimpMessageBox *box)
+quit_close_all_dialog_container_changed (PicmanContainer  *images,
+                                         PicmanObject     *image,
+                                         PicmanMessageBox *box)
 {
-  gint       num_images = gimp_container_get_n_children (images);
+  gint       num_images = picman_container_get_n_children (images);
   GtkWidget *label      = g_object_get_data (G_OBJECT (box), "lost-label");
   GtkWidget *button     = g_object_get_data (G_OBJECT (box), "ok-button");
   GtkWidget *dialog     = gtk_widget_get_toplevel (button);
   gboolean   do_quit    = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (box),
                                                               "do-quit"));
-  gimp_message_box_set_primary_text (box,
+  picman_message_box_set_primary_text (box,
 				     ngettext ("There is one image with "
 					       "unsaved changes:",
 					       "There are %d images with "
@@ -243,20 +243,20 @@ quit_close_all_dialog_container_changed (GimpContainer  *images,
 }
 
 static void
-quit_close_all_dialog_image_activated (GimpContainerView *view,
-                                       GimpImage         *image,
+quit_close_all_dialog_image_activated (PicmanContainerView *view,
+                                       PicmanImage         *image,
                                        gpointer           insert_data,
-                                       Gimp              *gimp)
+                                       Picman              *picman)
 {
   GList *list;
 
-  for (list = gimp_get_display_iter (gimp);
+  for (list = picman_get_display_iter (picman);
        list;
        list = g_list_next (list))
     {
-      GimpDisplay *display = list->data;
+      PicmanDisplay *display = list->data;
 
-      if (gimp_display_get_image (display) == image)
-        gimp_display_shell_present (gimp_display_get_shell (display));
+      if (picman_display_get_image (display) == image)
+        picman_display_shell_present (picman_display_get_shell (display));
     }
 }

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-debug.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picman-debug.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DEBUG_H__
-#define __GIMP_DEBUG_H__
+#ifndef __PICMAN_DEBUG_H__
+#define __PICMAN_DEBUG_H__
 
 
-void  gimp_debug_enable_instances (void);
+void  picman_debug_enable_instances (void);
 
-void  gimp_debug_add_instance     (GObject      *instance,
+void  picman_debug_add_instance     (GObject      *instance,
                                    GObjectClass *klass);
-void  gimp_debug_remove_instance  (GObject      *instance);
+void  picman_debug_remove_instance  (GObject      *instance);
 
-void  gimp_debug_instances        (void);
+void  picman_debug_instances        (void);
 
 
-#endif /* __GIMP_DEBUG_H__ */
+#endif /* __PICMAN_DEBUG_H__ */

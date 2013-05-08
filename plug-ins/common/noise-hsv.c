@@ -1,4 +1,4 @@
-/* scatter_hsv.c -- This is a plug-in for GIMP (1.0's API)
+/* scatter_hsv.c -- This is a plug-in for PICMAN (1.0's API)
  * Author: Shuji Narazaki <narazaki@InetQ.or.jp>
  * Time-stamp: <2000-01-08 02:49:39 yasuhiro>
  * Version: 0.42
@@ -23,16 +23,16 @@
 
 #include <stdlib.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define HSV_NOISE_PROC   "plug-in-hsv-noise"
 #define SCATTER_HSV_PROC "plug-in-scatter-hsv"
 #define PLUG_IN_BINARY   "noise-hsv"
-#define PLUG_IN_ROLE     "gimp-noise-hsv"
+#define PLUG_IN_ROLE     "picman-noise-hsv"
 #define SCALE_WIDTH      100
 #define ENTRY_WIDTH        3
 
@@ -40,13 +40,13 @@
 static void     query               (void);
 static void     run                 (const gchar      *name,
                                      gint              nparams,
-                                     const GimpParam  *param,
+                                     const PicmanParam  *param,
                                      gint             *nreturn_vals,
-                                     GimpParam       **return_vals);
+                                     PicmanParam       **return_vals);
 
-static void     scatter_hsv         (GimpDrawable     *drawable);
-static gboolean scatter_hsv_dialog  (GimpDrawable     *drawable);
-static void     scatter_hsv_preview (GimpPreview      *preview);
+static void     scatter_hsv         (PicmanDrawable     *drawable);
+static gboolean scatter_hsv_dialog  (PicmanDrawable     *drawable);
+static void     scatter_hsv_preview (PicmanPreview      *preview);
 
 static void     scatter_hsv_scatter (guchar           *r,
                                      guchar           *g,
@@ -59,7 +59,7 @@ static gint     randomize_value     (gint              now,
                                      gint              rand_max);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -88,18 +88,18 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args [] =
+  static const PicmanParamDef args [] =
   {
-    { GIMP_PDB_INT32,    "run-mode",            "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",               "Input image (not used)" },
-    { GIMP_PDB_DRAWABLE, "drawable",            "Input drawable" },
-    { GIMP_PDB_INT32,    "holdness",            "convolution strength" },
-    { GIMP_PDB_INT32,    "hue-distance",        "scattering of hue angle [0,180]" },
-    { GIMP_PDB_INT32,    "saturation-distance", "distribution distance on saturation axis [0,255]" },
-    { GIMP_PDB_INT32,    "value-distance",      "distribution distance on value axis [0,255]" }
+    { PICMAN_PDB_INT32,    "run-mode",            "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",               "Input image (not used)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",            "Input drawable" },
+    { PICMAN_PDB_INT32,    "holdness",            "convolution strength" },
+    { PICMAN_PDB_INT32,    "hue-distance",        "scattering of hue angle [0,180]" },
+    { PICMAN_PDB_INT32,    "saturation-distance", "distribution distance on saturation axis [0,255]" },
+    { PICMAN_PDB_INT32,    "value-distance",      "distribution distance on value axis [0,255]" }
   };
 
-  gimp_install_procedure (HSV_NOISE_PROC,
+  picman_install_procedure (HSV_NOISE_PROC,
                           N_("Randomize hue/saturation/value independently"),
                           "Scattering pixel values in HSV space",
                           "Shuji Narazaki (narazaki@InetQ.or.jp)",
@@ -107,13 +107,13 @@ query (void)
                           "1997",
                           N_("HSV Noise..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (HSV_NOISE_PROC, "<Image>/Filters/Noise");
+  picman_plugin_menu_register (HSV_NOISE_PROC, "<Image>/Filters/Noise");
 
-  gimp_install_procedure (SCATTER_HSV_PROC,
+  picman_install_procedure (SCATTER_HSV_PROC,
                           "Scattering pixel values in HSV space",
                           "Scattering pixel values in HSV space",
                           "Shuji Narazaki (narazaki@InetQ.or.jp)",
@@ -121,7 +121,7 @@ query (void)
                           "1997",
                           NULL,
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -129,31 +129,31 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpRunMode        run_mode;
-  GimpDrawable      *drawable;
+  static PicmanParam   values[1];
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanRunMode        run_mode;
+  PicmanDrawable      *drawable;
 
   INIT_I18N ();
 
   run_mode = param[0].data.d_int32;
-  drawable = gimp_drawable_get (param[2].data.d_int32);
+  drawable = picman_drawable_get (param[2].data.d_int32);
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (HSV_NOISE_PROC, &VALS);
-      if (!gimp_drawable_is_rgb (drawable->drawable_id))
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (HSV_NOISE_PROC, &VALS);
+      if (!picman_drawable_is_rgb (drawable->drawable_id))
         {
           g_message (_("Can only operate on RGB drawables."));
           return;
@@ -162,26 +162,26 @@ run (const gchar      *name,
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       VALS.holdness            = CLAMP (param[3].data.d_int32, 1, 8);
       VALS.hue_distance        = CLAMP (param[4].data.d_int32, 0, 180);
       VALS.saturation_distance = CLAMP (param[5].data.d_int32, 0, 255);
       VALS.value_distance      = CLAMP (param[6].data.d_int32, 0, 255);
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (HSV_NOISE_PROC, &VALS);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (HSV_NOISE_PROC, &VALS);
       break;
     }
 
   scatter_hsv (drawable);
 
-  if (run_mode != GIMP_RUN_NONINTERACTIVE)
-    gimp_displays_flush();
-  if (run_mode == GIMP_RUN_INTERACTIVE && status == GIMP_PDB_SUCCESS )
-    gimp_set_data (HSV_NOISE_PROC, &VALS, sizeof (ValueType));
+  if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+    picman_displays_flush();
+  if (run_mode == PICMAN_RUN_INTERACTIVE && status == PICMAN_PDB_SUCCESS )
+    picman_set_data (HSV_NOISE_PROC, &VALS, sizeof (ValueType));
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 }
 
@@ -208,15 +208,15 @@ scatter_hsv_func (const guchar *src,
 }
 
 static void
-scatter_hsv (GimpDrawable *drawable)
+scatter_hsv (PicmanDrawable *drawable)
 {
-  gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width () + 1));
+  picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width () + 1));
 
-  gimp_progress_init (_("HSV Noise"));
+  picman_progress_init (_("HSV Noise"));
 
-  gimp_rgn_iterate2 (drawable, 0 /* unused */, scatter_hsv_func, NULL);
+  picman_rgn_iterate2 (drawable, 0 /* unused */, scatter_hsv_func, NULL);
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static gint
@@ -276,7 +276,7 @@ scatter_hsv_scatter (guchar *r,
 
   h = *r; s = *g; v = *b;
 
-  gimp_rgb_to_hsv_int (&h, &s, &v);
+  picman_rgb_to_hsv_int (&h, &s, &v);
 
   /* there is no need for scattering hue of desaturated pixels here */
   if ((VALS.hue_distance > 0) && (s > 0))
@@ -294,11 +294,11 @@ scatter_hsv_scatter (guchar *r,
 
   h1 = h; s1 = s; v1 = v;
 
-  gimp_hsv_to_rgb_int (&h, &s, &v); /* don't believe ! */
+  picman_hsv_to_rgb_int (&h, &s, &v); /* don't believe ! */
 
   h2 = h; s2 = s; v2 = v;
 
-  gimp_rgb_to_hsv_int (&h2, &s2, &v2); /* h2 should be h1. But... */
+  picman_rgb_to_hsv_int (&h2, &s2, &v2); /* h2 should be h1. But... */
 
   if ((abs (h1 - h2) <= VALS.hue_distance)        &&
       (abs (s1 - s2) <= VALS.saturation_distance) &&
@@ -311,10 +311,10 @@ scatter_hsv_scatter (guchar *r,
 }
 
 static void
-scatter_hsv_preview (GimpPreview *preview)
+scatter_hsv_preview (PicmanPreview *preview)
 {
-  GimpDrawable *drawable;
-  GimpPixelRgn  src_rgn;
+  PicmanDrawable *drawable;
+  PicmanPixelRgn  src_rgn;
   guchar       *src, *dst;
   gint          i;
   gint          x1, y1;
@@ -322,25 +322,25 @@ scatter_hsv_preview (GimpPreview *preview)
   gint          bpp;
 
   drawable =
-    gimp_drawable_preview_get_drawable (GIMP_DRAWABLE_PREVIEW (preview));
+    picman_drawable_preview_get_drawable (PICMAN_DRAWABLE_PREVIEW (preview));
 
-  gimp_preview_get_position (preview, &x1, &y1);
-  gimp_preview_get_size (preview, &width, &height);
+  picman_preview_get_position (preview, &x1, &y1);
+  picman_preview_get_size (preview, &width, &height);
 
   bpp = drawable->bpp;
 
   src = g_new (guchar, width * height * bpp);
   dst = g_new (guchar, width * height * bpp);
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x1, y1, width, height,
                        FALSE, FALSE);
-  gimp_pixel_rgn_get_rect (&src_rgn, src, x1, y1, width, height);
+  picman_pixel_rgn_get_rect (&src_rgn, src, x1, y1, width, height);
 
   for (i = 0; i < width * height; i++)
     scatter_hsv_func (src + i * bpp, dst + i * bpp, bpp, NULL);
 
-  gimp_preview_draw_buffer (preview, dst, width * bpp);
+  picman_preview_draw_buffer (preview, dst, width * bpp);
 
   g_free (src);
   g_free (dst);
@@ -350,7 +350,7 @@ scatter_hsv_preview (GimpPreview *preview)
 /* dialog stuff */
 
 static gboolean
-scatter_hsv_dialog (GimpDrawable *drawable)
+scatter_hsv_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -359,11 +359,11 @@ scatter_hsv_dialog (GimpDrawable *drawable)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("HSV Noise"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("HSV Noise"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, HSV_NOISE_PROC,
+                            picman_standard_help_func, HSV_NOISE_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -375,7 +375,7 @@ scatter_hsv_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -383,7 +383,7 @@ scatter_hsv_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -397,57 +397,57 @@ scatter_hsv_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Holdness:"), SCALE_WIDTH, ENTRY_WIDTH,
                               VALS.holdness, 1, 8, 1, 2, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &VALS.holdness);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("H_ue:"), SCALE_WIDTH, ENTRY_WIDTH,
                               VALS.hue_distance, 0, 180, 1, 6, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &VALS.hue_distance);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("_Saturation:"), SCALE_WIDTH, ENTRY_WIDTH,
                               VALS.saturation_distance, 0, 255, 1, 8, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &VALS.saturation_distance);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 3,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 3,
                               _("_Value:"), SCALE_WIDTH, ENTRY_WIDTH,
                               VALS.value_distance, 0, 255, 1, 8, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &VALS.value_distance);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

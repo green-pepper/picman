@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcolorizeconfig.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmancolorizeconfig.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,12 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "operations-types.h"
 
-#include "gimpcolorizeconfig.h"
+#include "picmancolorizeconfig.h"
 
 
 enum
@@ -41,62 +41,62 @@ enum
 };
 
 
-static void   gimp_colorize_config_get_property (GObject      *object,
+static void   picman_colorize_config_get_property (GObject      *object,
                                                  guint         property_id,
                                                  GValue       *value,
                                                  GParamSpec   *pspec);
-static void   gimp_colorize_config_set_property (GObject      *object,
+static void   picman_colorize_config_set_property (GObject      *object,
                                                  guint         property_id,
                                                  const GValue *value,
                                                  GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpColorizeConfig, gimp_colorize_config,
-                         GIMP_TYPE_IMAGE_MAP_CONFIG,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanColorizeConfig, picman_colorize_config,
+                         PICMAN_TYPE_IMAGE_MAP_CONFIG,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL))
 
-#define parent_class gimp_colorize_config_parent_class
+#define parent_class picman_colorize_config_parent_class
 
 
 static void
-gimp_colorize_config_class_init (GimpColorizeConfigClass *klass)
+picman_colorize_config_class_init (PicmanColorizeConfigClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->set_property       = gimp_colorize_config_set_property;
-  object_class->get_property       = gimp_colorize_config_get_property;
+  object_class->set_property       = picman_colorize_config_set_property;
+  object_class->get_property       = picman_colorize_config_get_property;
 
-  viewable_class->default_stock_id = "gimp-tool-colorize";
+  viewable_class->default_stock_id = "picman-tool-colorize";
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_HUE,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_HUE,
                                    "hue",
                                    "Hue",
                                    0.0, 1.0, 0.5, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SATURATION,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SATURATION,
                                    "saturation",
                                    "Saturation",
                                    0.0, 1.0, 0.5, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LIGHTNESS,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LIGHTNESS,
                                    "lightness",
                                    "Lightness",
                                    -1.0, 1.0, 0.0, 0);
 }
 
 static void
-gimp_colorize_config_init (GimpColorizeConfig *self)
+picman_colorize_config_init (PicmanColorizeConfig *self)
 {
 }
 
 static void
-gimp_colorize_config_get_property (GObject    *object,
+picman_colorize_config_get_property (GObject    *object,
                                    guint       property_id,
                                    GValue     *value,
                                    GParamSpec *pspec)
 {
-  GimpColorizeConfig *self = GIMP_COLORIZE_CONFIG (object);
+  PicmanColorizeConfig *self = PICMAN_COLORIZE_CONFIG (object);
 
   switch (property_id)
     {
@@ -119,12 +119,12 @@ gimp_colorize_config_get_property (GObject    *object,
 }
 
 static void
-gimp_colorize_config_set_property (GObject      *object,
+picman_colorize_config_set_property (GObject      *object,
                                    guint         property_id,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  GimpColorizeConfig *self = GIMP_COLORIZE_CONFIG (object);
+  PicmanColorizeConfig *self = PICMAN_COLORIZE_CONFIG (object);
 
   switch (property_id)
     {
@@ -150,32 +150,32 @@ gimp_colorize_config_set_property (GObject      *object,
 /*  public functions  */
 
 void
-gimp_colorize_config_get_color (GimpColorizeConfig *config,
-                                GimpRGB            *color)
+picman_colorize_config_get_color (PicmanColorizeConfig *config,
+                                PicmanRGB            *color)
 {
-  GimpHSL hsl;
+  PicmanHSL hsl;
 
-  g_return_if_fail (GIMP_IS_COLORIZE_CONFIG (config));
+  g_return_if_fail (PICMAN_IS_COLORIZE_CONFIG (config));
   g_return_if_fail (color != NULL);
 
-  gimp_hsl_set (&hsl,
+  picman_hsl_set (&hsl,
                 config->hue,
                 config->saturation,
                 (config->lightness + 1.0) / 2.0);
-  gimp_hsl_to_rgb (&hsl, color);
-  gimp_rgb_set_alpha (color, 1.0);
+  picman_hsl_to_rgb (&hsl, color);
+  picman_rgb_set_alpha (color, 1.0);
 }
 
 void
-gimp_colorize_config_set_color (GimpColorizeConfig *config,
-                                const GimpRGB      *color)
+picman_colorize_config_set_color (PicmanColorizeConfig *config,
+                                const PicmanRGB      *color)
 {
-  GimpHSL hsl;
+  PicmanHSL hsl;
 
-  g_return_if_fail (GIMP_IS_COLORIZE_CONFIG (config));
+  g_return_if_fail (PICMAN_IS_COLORIZE_CONFIG (config));
   g_return_if_fail (color != NULL);
 
-  gimp_rgb_to_hsl (color, &hsl);
+  picman_rgb_to_hsl (color, &hsl);
 
   if (hsl.h == -1)
     hsl.h = config->hue;

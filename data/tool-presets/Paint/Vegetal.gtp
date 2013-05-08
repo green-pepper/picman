@@ -1,9 +1,9 @@
-# GIMP tool preset file
+# PICMAN tool preset file
 
-(stock-id "gimp-tool-paintbrush")
+(stock-id "picman-tool-paintbrush")
 (name "Vegetation")
-(tool-options "GimpPaintOptions"
-    (tool "gimp-paintbrush-tool")
+(tool-options "PicmanPaintOptions"
+    (tool "picman-paintbrush-tool")
     (brush "Vegetation 02")
     (dynamics "Pressure Opacity")
     (gradient "FG to BG (RGB)")
@@ -20,4 +20,4 @@
 (use-palette no)
 (use-font no)
 
-# end of GIMP tool preset file
+# end of PICMAN tool preset file

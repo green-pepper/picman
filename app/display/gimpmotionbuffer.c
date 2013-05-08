@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,15 +22,15 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "core/gimpcoords.h"
-#include "core/gimpcoords-interpolate.h"
-#include "core/gimpmarshal.h"
+#include "core/picmancoords.h"
+#include "core/picmancoords-interpolate.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpmotionbuffer.h"
+#include "picmanmotionbuffer.h"
 
 
 /* Velocity unit is screen pixels per millisecond we pass to tools as 1. */
@@ -55,38 +55,38 @@ enum
 
 /*  local function prototypes  */
 
-static void     gimp_motion_buffer_dispose             (GObject          *object);
-static void     gimp_motion_buffer_finalize            (GObject          *object);
-static void     gimp_motion_buffer_set_property        (GObject          *object,
+static void     picman_motion_buffer_dispose             (GObject          *object);
+static void     picman_motion_buffer_finalize            (GObject          *object);
+static void     picman_motion_buffer_set_property        (GObject          *object,
                                                         guint             property_id,
                                                         const GValue     *value,
                                                         GParamSpec       *pspec);
-static void     gimp_motion_buffer_get_property        (GObject          *object,
+static void     picman_motion_buffer_get_property        (GObject          *object,
                                                         guint             property_id,
                                                         GValue           *value,
                                                         GParamSpec       *pspec);
 
-static void     gimp_motion_buffer_push_event_history  (GimpMotionBuffer *buffer,
-                                                        const GimpCoords *coords);
-static void     gimp_motion_buffer_pop_event_queue     (GimpMotionBuffer *buffer,
-                                                        GimpCoords       *coords);
+static void     picman_motion_buffer_push_event_history  (PicmanMotionBuffer *buffer,
+                                                        const PicmanCoords *coords);
+static void     picman_motion_buffer_pop_event_queue     (PicmanMotionBuffer *buffer,
+                                                        PicmanCoords       *coords);
 
-static void     gimp_motion_buffer_interpolate_stroke  (GimpMotionBuffer *buffer,
-                                                        GimpCoords       *coords);
-static gboolean gimp_motion_buffer_event_queue_timeout (GimpMotionBuffer *buffer);
+static void     picman_motion_buffer_interpolate_stroke  (PicmanMotionBuffer *buffer,
+                                                        PicmanCoords       *coords);
+static gboolean picman_motion_buffer_event_queue_timeout (PicmanMotionBuffer *buffer);
 
 
-G_DEFINE_TYPE (GimpMotionBuffer, gimp_motion_buffer, GIMP_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanMotionBuffer, picman_motion_buffer, PICMAN_TYPE_OBJECT)
 
-#define parent_class gimp_motion_buffer_parent_class
+#define parent_class picman_motion_buffer_parent_class
 
 static guint motion_buffer_signals[LAST_SIGNAL] = { 0 };
 
-static const GimpCoords default_coords = GIMP_COORDS_DEFAULT_VALUES;
+static const PicmanCoords default_coords = PICMAN_COORDS_DEFAULT_VALUES;
 
 
 static void
-gimp_motion_buffer_class_init (GimpMotionBufferClass *klass)
+picman_motion_buffer_class_init (PicmanMotionBufferClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -94,9 +94,9 @@ gimp_motion_buffer_class_init (GimpMotionBufferClass *klass)
     g_signal_new ("stroke",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpMotionBufferClass, stroke),
+                  G_STRUCT_OFFSET (PicmanMotionBufferClass, stroke),
                   NULL, NULL,
-                  gimp_marshal_VOID__POINTER_UINT_FLAGS,
+                  picman_marshal_VOID__POINTER_UINT_FLAGS,
                   G_TYPE_NONE, 3,
                   G_TYPE_POINTER,
                   G_TYPE_UINT,
@@ -106,31 +106,31 @@ gimp_motion_buffer_class_init (GimpMotionBufferClass *klass)
     g_signal_new ("hover",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpMotionBufferClass, hover),
+                  G_STRUCT_OFFSET (PicmanMotionBufferClass, hover),
                   NULL, NULL,
-                  gimp_marshal_VOID__POINTER_FLAGS_BOOLEAN,
+                  picman_marshal_VOID__POINTER_FLAGS_BOOLEAN,
                   G_TYPE_NONE, 3,
                   G_TYPE_POINTER,
                   GDK_TYPE_MODIFIER_TYPE,
                   G_TYPE_BOOLEAN);
 
-  object_class->dispose      = gimp_motion_buffer_dispose;
-  object_class->finalize     = gimp_motion_buffer_finalize;
-  object_class->set_property = gimp_motion_buffer_set_property;
-  object_class->get_property = gimp_motion_buffer_get_property;
+  object_class->dispose      = picman_motion_buffer_dispose;
+  object_class->finalize     = picman_motion_buffer_finalize;
+  object_class->set_property = picman_motion_buffer_set_property;
+  object_class->get_property = picman_motion_buffer_get_property;
 }
 
 static void
-gimp_motion_buffer_init (GimpMotionBuffer *buffer)
+picman_motion_buffer_init (PicmanMotionBuffer *buffer)
 {
-  buffer->event_history = g_array_new (FALSE, FALSE, sizeof (GimpCoords));
-  buffer->event_queue   = g_array_new (FALSE, FALSE, sizeof (GimpCoords));
+  buffer->event_history = g_array_new (FALSE, FALSE, sizeof (PicmanCoords));
+  buffer->event_queue   = g_array_new (FALSE, FALSE, sizeof (PicmanCoords));
 }
 
 static void
-gimp_motion_buffer_dispose (GObject *object)
+picman_motion_buffer_dispose (GObject *object)
 {
-  GimpMotionBuffer *buffer = GIMP_MOTION_BUFFER (object);
+  PicmanMotionBuffer *buffer = PICMAN_MOTION_BUFFER (object);
 
   if (buffer->event_delay_timeout)
     {
@@ -142,9 +142,9 @@ gimp_motion_buffer_dispose (GObject *object)
 }
 
 static void
-gimp_motion_buffer_finalize (GObject *object)
+picman_motion_buffer_finalize (GObject *object)
 {
-  GimpMotionBuffer *buffer = GIMP_MOTION_BUFFER (object);
+  PicmanMotionBuffer *buffer = PICMAN_MOTION_BUFFER (object);
 
   if (buffer->event_history)
     {
@@ -162,7 +162,7 @@ gimp_motion_buffer_finalize (GObject *object)
 }
 
 static void
-gimp_motion_buffer_set_property (GObject      *object,
+picman_motion_buffer_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
@@ -176,7 +176,7 @@ gimp_motion_buffer_set_property (GObject      *object,
 }
 
 static void
-gimp_motion_buffer_get_property (GObject    *object,
+picman_motion_buffer_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
@@ -192,19 +192,19 @@ gimp_motion_buffer_get_property (GObject    *object,
 
 /*  public functions  */
 
-GimpMotionBuffer *
-gimp_motion_buffer_new (void)
+PicmanMotionBuffer *
+picman_motion_buffer_new (void)
 {
-  return g_object_new (GIMP_TYPE_MOTION_BUFFER,
+  return g_object_new (PICMAN_TYPE_MOTION_BUFFER,
                        NULL);
 }
 
 void
-gimp_motion_buffer_begin_stroke (GimpMotionBuffer *buffer,
+picman_motion_buffer_begin_stroke (PicmanMotionBuffer *buffer,
                                  guint32           time,
-                                 GimpCoords       *last_motion)
+                                 PicmanCoords       *last_motion)
 {
-  g_return_if_fail (GIMP_IS_MOTION_BUFFER (buffer));
+  g_return_if_fail (PICMAN_IS_MOTION_BUFFER (buffer));
   g_return_if_fail (last_motion != NULL);
 
   buffer->last_read_motion_time = time;
@@ -213,9 +213,9 @@ gimp_motion_buffer_begin_stroke (GimpMotionBuffer *buffer,
 }
 
 void
-gimp_motion_buffer_end_stroke (GimpMotionBuffer *buffer)
+picman_motion_buffer_end_stroke (PicmanMotionBuffer *buffer)
 {
-  g_return_if_fail (GIMP_IS_MOTION_BUFFER (buffer));
+  g_return_if_fail (PICMAN_IS_MOTION_BUFFER (buffer));
 
   if (buffer->event_delay_timeout)
     {
@@ -223,11 +223,11 @@ gimp_motion_buffer_end_stroke (GimpMotionBuffer *buffer)
       buffer->event_delay_timeout = 0;
     }
 
-  gimp_motion_buffer_event_queue_timeout (buffer);
+  picman_motion_buffer_event_queue_timeout (buffer);
 }
 
 /**
- * gimp_motion_buffer_motion_event:
+ * picman_motion_buffer_motion_event:
  * @buffer:
  * @coords:
  * @time:
@@ -245,7 +245,7 @@ gimp_motion_buffer_end_stroke (GimpMotionBuffer *buffer)
  * for other event adjustment like pressure curve or calculating other
  * derived dynamics factors like angular velocity calculation from
  * tilt values, to allow for even more dynamic brushes. Calculated
- * distance to last event is stored in GimpCoords because its a
+ * distance to last event is stored in PicmanCoords because its a
  * sideproduct of velocity calculation and is currently calculated in
  * each tool. If they were to use this distance, more resouces on
  * recalculating the same value would be saved.
@@ -254,8 +254,8 @@ gimp_motion_buffer_end_stroke (GimpMotionBuffer *buffer)
  *               processed, %FALSE otherwise.
  **/
 gboolean
-gimp_motion_buffer_motion_event (GimpMotionBuffer *buffer,
-                                 GimpCoords       *coords,
+picman_motion_buffer_motion_event (PicmanMotionBuffer *buffer,
+                                 PicmanCoords       *coords,
                                  guint32           time,
                                  gdouble           scale_x,
                                  gdouble           scale_y,
@@ -266,7 +266,7 @@ gimp_motion_buffer_motion_event (GimpMotionBuffer *buffer,
   gdouble  delta_y     = 0.0;
   gdouble  distance    = 1.0;
 
-  g_return_val_if_fail (GIMP_IS_MOTION_BUFFER (buffer), FALSE);
+  g_return_val_if_fail (PICMAN_IS_MOTION_BUFFER (buffer), FALSE);
   g_return_val_if_fail (coords != NULL, FALSE);
 
   /*  the last_read_motion_time most be set unconditionally, so set
@@ -286,7 +286,7 @@ gimp_motion_buffer_motion_event (GimpMotionBuffer *buffer,
     }
   else
     {
-      GimpCoords last_dir_event = buffer->last_coords;
+      PicmanCoords last_dir_event = buffer->last_coords;
       gdouble    filter;
       gdouble    dist;
       gdouble    delta_dir;
@@ -352,7 +352,7 @@ gimp_motion_buffer_motion_event (GimpMotionBuffer *buffer,
                  (x >= 0))
             {
               last_dir_event = g_array_index (buffer->event_history,
-                                              GimpCoords, x);
+                                              PicmanCoords, x);
 
               dir_delta_x = last_dir_event.x - coords->x;
               dir_delta_y = last_dir_event.y - coords->y;
@@ -368,7 +368,7 @@ gimp_motion_buffer_motion_event (GimpMotionBuffer *buffer,
         }
       else
         {
-          coords->direction = gimp_coords_direction (&last_dir_event, coords);
+          coords->direction = picman_coords_direction (&last_dir_event, coords);
         }
 
       coords->direction = coords->direction - floor (coords->direction);
@@ -400,12 +400,12 @@ gimp_motion_buffer_motion_event (GimpMotionBuffer *buffer,
         {
           if (buffer->event_delay)
             {
-              gimp_motion_buffer_interpolate_stroke (buffer, coords);
+              picman_motion_buffer_interpolate_stroke (buffer, coords);
             }
           else
             {
               buffer->event_delay = TRUE;
-              gimp_motion_buffer_push_event_history (buffer, coords);
+              picman_motion_buffer_push_event_history (buffer, coords);
             }
         }
       else
@@ -413,7 +413,7 @@ gimp_motion_buffer_motion_event (GimpMotionBuffer *buffer,
           if (buffer->event_delay)
             buffer->event_delay = FALSE;
 
-          gimp_motion_buffer_push_event_history (buffer, coords);
+          picman_motion_buffer_push_event_history (buffer, coords);
         }
 
 #ifdef EVENT_VERBOSE
@@ -441,22 +441,22 @@ gimp_motion_buffer_motion_event (GimpMotionBuffer *buffer,
 }
 
 guint32
-gimp_motion_buffer_get_last_motion_time (GimpMotionBuffer *buffer)
+picman_motion_buffer_get_last_motion_time (PicmanMotionBuffer *buffer)
 {
-  g_return_val_if_fail (GIMP_IS_MOTION_BUFFER (buffer), 0);
+  g_return_val_if_fail (PICMAN_IS_MOTION_BUFFER (buffer), 0);
 
   return buffer->last_read_motion_time;
 }
 
 void
-gimp_motion_buffer_request_stroke (GimpMotionBuffer *buffer,
+picman_motion_buffer_request_stroke (PicmanMotionBuffer *buffer,
                                    GdkModifierType   state,
                                    guint32           time)
 {
   GdkModifierType  event_state;
   gint             keep = 0;
 
-  g_return_if_fail (GIMP_IS_MOTION_BUFFER (buffer));
+  g_return_if_fail (PICMAN_IS_MOTION_BUFFER (buffer));
 
   if (buffer->event_delay)
     {
@@ -481,9 +481,9 @@ gimp_motion_buffer_request_stroke (GimpMotionBuffer *buffer,
 
   while (buffer->event_queue->len > keep)
     {
-      GimpCoords buf_coords;
+      PicmanCoords buf_coords;
 
-      gimp_motion_buffer_pop_event_queue (buffer, &buf_coords);
+      picman_motion_buffer_pop_event_queue (buffer, &buf_coords);
 
       g_signal_emit (buffer, motion_buffer_signals[STROKE], 0,
                      &buf_coords, time, event_state);
@@ -493,22 +493,22 @@ gimp_motion_buffer_request_stroke (GimpMotionBuffer *buffer,
     {
       buffer->event_delay_timeout =
         g_timeout_add (50,
-                       (GSourceFunc) gimp_motion_buffer_event_queue_timeout,
+                       (GSourceFunc) picman_motion_buffer_event_queue_timeout,
                        buffer);
     }
 }
 
 void
-gimp_motion_buffer_request_hover (GimpMotionBuffer *buffer,
+picman_motion_buffer_request_hover (PicmanMotionBuffer *buffer,
                                   GdkModifierType   state,
                                   gboolean          proximity)
 {
-  g_return_if_fail (GIMP_IS_MOTION_BUFFER (buffer));
+  g_return_if_fail (PICMAN_IS_MOTION_BUFFER (buffer));
 
   if (buffer->event_queue->len > 0)
     {
-      GimpCoords buf_coords = g_array_index (buffer->event_queue,
-                                             GimpCoords,
+      PicmanCoords buf_coords = g_array_index (buffer->event_queue,
+                                             PicmanCoords,
                                              buffer->event_queue->len - 1);
 
       g_signal_emit (buffer, motion_buffer_signals[HOVER], 0,
@@ -522,8 +522,8 @@ gimp_motion_buffer_request_hover (GimpMotionBuffer *buffer,
 /*  private functions  */
 
 static void
-gimp_motion_buffer_push_event_history (GimpMotionBuffer *buffer,
-                                       const GimpCoords *coords)
+picman_motion_buffer_push_event_history (PicmanMotionBuffer *buffer,
+                                       const PicmanCoords *coords)
 {
   if (buffer->event_history->len == 4)
     g_array_remove_index (buffer->event_history, 0);
@@ -532,17 +532,17 @@ gimp_motion_buffer_push_event_history (GimpMotionBuffer *buffer,
 }
 
 static void
-gimp_motion_buffer_pop_event_queue (GimpMotionBuffer *buffer,
-                                    GimpCoords       *coords)
+picman_motion_buffer_pop_event_queue (PicmanMotionBuffer *buffer,
+                                    PicmanCoords       *coords)
 {
-  *coords = g_array_index (buffer->event_queue, GimpCoords, 0);
+  *coords = g_array_index (buffer->event_queue, PicmanCoords, 0);
 
   g_array_remove_index (buffer->event_queue, 0);
 }
 
 static void
-gimp_motion_buffer_interpolate_stroke (GimpMotionBuffer *buffer,
-                                       GimpCoords       *coords)
+picman_motion_buffer_interpolate_stroke (PicmanMotionBuffer *buffer,
+                                       PicmanCoords       *coords)
 {
   GArray *ret_coords;
   gint    i = buffer->event_history->len - 1;
@@ -550,48 +550,48 @@ gimp_motion_buffer_interpolate_stroke (GimpMotionBuffer *buffer,
   /* Note that there must be exactly one event in buffer or bad things
    * can happen. This must never get called under other circumstances.
    */
-  ret_coords = g_array_new (FALSE, FALSE, sizeof (GimpCoords));
+  ret_coords = g_array_new (FALSE, FALSE, sizeof (PicmanCoords));
 
-  gimp_coords_interpolate_catmull (g_array_index (buffer->event_history,
-                                                  GimpCoords, i - 1),
+  picman_coords_interpolate_catmull (g_array_index (buffer->event_history,
+                                                  PicmanCoords, i - 1),
                                    g_array_index (buffer->event_history,
-                                                  GimpCoords, i),
+                                                  PicmanCoords, i),
                                    g_array_index (buffer->event_queue,
-                                                  GimpCoords, 0),
+                                                  PicmanCoords, 0),
                                    *coords,
                                    EVENT_FILL_PRECISION / 2,
                                    &ret_coords,
                                    NULL);
 
   /* Push the last actual event in history */
-  gimp_motion_buffer_push_event_history (buffer,
+  picman_motion_buffer_push_event_history (buffer,
                                          &g_array_index (buffer->event_queue,
-                                                         GimpCoords, 0));
+                                                         PicmanCoords, 0));
 
   g_array_set_size (buffer->event_queue, 0);
 
   g_array_append_vals (buffer->event_queue,
-                       &g_array_index (ret_coords, GimpCoords, 0),
+                       &g_array_index (ret_coords, PicmanCoords, 0),
                        ret_coords->len);
 
   g_array_free (ret_coords, TRUE);
 }
 
 static gboolean
-gimp_motion_buffer_event_queue_timeout (GimpMotionBuffer *buffer)
+picman_motion_buffer_event_queue_timeout (PicmanMotionBuffer *buffer)
 {
   buffer->event_delay         = FALSE;
   buffer->event_delay_timeout = 0;
 
   if (buffer->event_queue->len > 0)
     {
-      GimpCoords last_coords = g_array_index (buffer->event_queue,
-                                              GimpCoords,
+      PicmanCoords last_coords = g_array_index (buffer->event_queue,
+                                              PicmanCoords,
                                               buffer->event_queue->len - 1);
 
-      gimp_motion_buffer_push_event_history (buffer, &last_coords);
+      picman_motion_buffer_push_event_history (buffer, &last_coords);
 
-      gimp_motion_buffer_request_stroke (buffer,
+      picman_motion_buffer_request_stroke (buffer,
                                          buffer->last_active_state,
                                          buffer->last_read_motion_time);
     }

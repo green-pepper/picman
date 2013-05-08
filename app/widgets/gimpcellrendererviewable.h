@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcellrendererviewable.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmancellrendererviewable.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,48 +18,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CELL_RENDERER_VIEWABLE_H__
-#define __GIMP_CELL_RENDERER_VIEWABLE_H__
+#ifndef __PICMAN_CELL_RENDERER_VIEWABLE_H__
+#define __PICMAN_CELL_RENDERER_VIEWABLE_H__
 
 
-#define GIMP_TYPE_CELL_RENDERER_VIEWABLE            (gimp_cell_renderer_viewable_get_type ())
-#define GIMP_CELL_RENDERER_VIEWABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CELL_RENDERER_VIEWABLE, GimpCellRendererViewable))
-#define GIMP_CELL_RENDERER_VIEWABLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CELL_RENDERER_VIEWABLE, GimpCellRendererViewableClass))
-#define GIMP_IS_CELL_RENDERER_VIEWABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CELL_RENDERER_VIEWABLE))
-#define GIMP_IS_CELL_RENDERER_VIEWABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CELL_RENDERER_VIEWABLE))
-#define GIMP_CELL_RENDERER_VIEWABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CELL_RENDERER_VIEWABLE, GimpCellRendererViewableClass))
+#define PICMAN_TYPE_CELL_RENDERER_VIEWABLE            (picman_cell_renderer_viewable_get_type ())
+#define PICMAN_CELL_RENDERER_VIEWABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CELL_RENDERER_VIEWABLE, PicmanCellRendererViewable))
+#define PICMAN_CELL_RENDERER_VIEWABLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CELL_RENDERER_VIEWABLE, PicmanCellRendererViewableClass))
+#define PICMAN_IS_CELL_RENDERER_VIEWABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CELL_RENDERER_VIEWABLE))
+#define PICMAN_IS_CELL_RENDERER_VIEWABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CELL_RENDERER_VIEWABLE))
+#define PICMAN_CELL_RENDERER_VIEWABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CELL_RENDERER_VIEWABLE, PicmanCellRendererViewableClass))
 
 
-typedef struct _GimpCellRendererViewableClass GimpCellRendererViewableClass;
+typedef struct _PicmanCellRendererViewableClass PicmanCellRendererViewableClass;
 
-struct _GimpCellRendererViewable
+struct _PicmanCellRendererViewable
 {
   GtkCellRenderer   parent_instance;
 
-  GimpViewRenderer *renderer;
+  PicmanViewRenderer *renderer;
 };
 
-struct _GimpCellRendererViewableClass
+struct _PicmanCellRendererViewableClass
 {
   GtkCellRendererClass  parent_class;
 
-  gboolean (* pre_clicked) (GimpCellRendererViewable *cell,
+  gboolean (* pre_clicked) (PicmanCellRendererViewable *cell,
                             const gchar              *path,
                             GdkModifierType           state);
-  void     (* clicked)     (GimpCellRendererViewable *cell,
+  void     (* clicked)     (PicmanCellRendererViewable *cell,
                             const gchar              *path,
                             GdkModifierType           state);
 };
 
 
-GType             gimp_cell_renderer_viewable_get_type    (void) G_GNUC_CONST;
-GtkCellRenderer * gimp_cell_renderer_viewable_new         (void);
-gboolean          gimp_cell_renderer_viewable_pre_clicked (GimpCellRendererViewable *cell,
+GType             picman_cell_renderer_viewable_get_type    (void) G_GNUC_CONST;
+GtkCellRenderer * picman_cell_renderer_viewable_new         (void);
+gboolean          picman_cell_renderer_viewable_pre_clicked (PicmanCellRendererViewable *cell,
                                                            const gchar              *path,
                                                            GdkModifierType           state);
-void              gimp_cell_renderer_viewable_clicked     (GimpCellRendererViewable *cell,
+void              picman_cell_renderer_viewable_clicked     (PicmanCellRendererViewable *cell,
                                                            const gchar              *path,
                                                            GdkModifierType           state);
 
 
-#endif /* __GIMP_CELL_RENDERER_VIEWABLE_H__ */
+#endif /* __PICMAN_CELL_RENDERER_VIEWABLE_H__ */

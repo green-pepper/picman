@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,10 +23,10 @@
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimpimage.h"
-#include "gimppickable.h"
-#include "gimppickable-auto-shrink.h"
+#include "picman.h"
+#include "picmanimage.h"
+#include "picmanpickable.h"
+#include "picmanpickable-auto-shrink.h"
 
 
 typedef enum
@@ -43,22 +43,22 @@ typedef gboolean (* ColorsEqualFunc) (guchar *col1,
 
 /*  local function prototypes  */
 
-static AutoShrinkType   gimp_pickable_guess_bgcolor (GimpPickable *pickable,
+static AutoShrinkType   picman_pickable_guess_bgcolor (PicmanPickable *pickable,
                                                      guchar       *color,
                                                      gint          x1,
                                                      gint          x2,
                                                      gint          y1,
                                                      gint          y2);
-static gboolean         gimp_pickable_colors_equal  (guchar       *col1,
+static gboolean         picman_pickable_colors_equal  (guchar       *col1,
                                                      guchar       *col2);
-static gboolean         gimp_pickable_colors_alpha  (guchar       *col1,
+static gboolean         picman_pickable_colors_alpha  (guchar       *col1,
                                                      guchar       *col2);
 
 
 /*  public functions  */
 
 gboolean
-gimp_pickable_auto_shrink (GimpPickable *pickable,
+picman_pickable_auto_shrink (PicmanPickable *pickable,
                            gint          start_x1,
                            gint          start_y1,
                            gint          start_x2,
@@ -79,13 +79,13 @@ gimp_pickable_auto_shrink (GimpPickable *pickable,
   gint             x, y, abort;
   gboolean         retval = FALSE;
 
-  g_return_val_if_fail (GIMP_IS_PICKABLE (pickable), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICKABLE (pickable), FALSE);
   g_return_val_if_fail (shrunk_x1 != NULL, FALSE);
   g_return_val_if_fail (shrunk_y1 != NULL, FALSE);
   g_return_val_if_fail (shrunk_x2 != NULL, FALSE);
   g_return_val_if_fail (shrunk_y2 != NULL, FALSE);
 
-  gimp_set_busy (gimp_pickable_get_image (pickable)->gimp);
+  picman_set_busy (picman_pickable_get_image (pickable)->picman);
 
   /* You should always keep in mind that x2 and y2 are the NOT the
    * coordinates of the bottomright corner of the area to be
@@ -93,9 +93,9 @@ gimp_pickable_auto_shrink (GimpPickable *pickable,
    * to the bottom.
    */
 
-  gimp_pickable_flush (pickable);
+  picman_pickable_flush (pickable);
 
-  buffer = gimp_pickable_get_buffer (pickable);
+  buffer = picman_pickable_get_buffer (pickable);
 
   x1 = MAX (start_x1, 0);
   y1 = MAX (start_y1, 0);
@@ -104,14 +104,14 @@ gimp_pickable_auto_shrink (GimpPickable *pickable,
 
   format = babl_format ("R'G'B'A u8");
 
-  switch (gimp_pickable_guess_bgcolor (pickable, bgcolor,
+  switch (picman_pickable_guess_bgcolor (pickable, bgcolor,
                                        x1, x2 - 1, y1, y2 - 1))
     {
     case AUTO_SHRINK_ALPHA:
-      colors_equal_func = gimp_pickable_colors_alpha;
+      colors_equal_func = picman_pickable_colors_alpha;
       break;
     case AUTO_SHRINK_COLOR:
-      colors_equal_func = gimp_pickable_colors_equal;
+      colors_equal_func = picman_pickable_colors_equal;
       break;
     default:
       goto FINISH;
@@ -214,7 +214,7 @@ gimp_pickable_auto_shrink (GimpPickable *pickable,
     }
 
   g_free (buf);
-  gimp_unset_busy (gimp_pickable_get_image (pickable)->gimp);
+  picman_unset_busy (picman_pickable_get_image (pickable)->picman);
 
   return retval;
 }
@@ -223,7 +223,7 @@ gimp_pickable_auto_shrink (GimpPickable *pickable,
 /*  private functions  */
 
 static AutoShrinkType
-gimp_pickable_guess_bgcolor (GimpPickable *pickable,
+picman_pickable_guess_bgcolor (PicmanPickable *pickable,
                              guchar       *color,
                              gint          x1,
                              gint          x2,
@@ -244,10 +244,10 @@ gimp_pickable_guess_bgcolor (GimpPickable *pickable,
    * background-color to see if at least 2 corners are equal.
    */
 
-  if (! gimp_pickable_get_pixel_at (pickable, x1, y1, format, tl) ||
-      ! gimp_pickable_get_pixel_at (pickable, x1, y2, format, tr) ||
-      ! gimp_pickable_get_pixel_at (pickable, x2, y1, format, bl) ||
-      ! gimp_pickable_get_pixel_at (pickable, x2, y2, format, br))
+  if (! picman_pickable_get_pixel_at (pickable, x1, y1, format, tl) ||
+      ! picman_pickable_get_pixel_at (pickable, x1, y2, format, tr) ||
+      ! picman_pickable_get_pixel_at (pickable, x2, y1, format, bl) ||
+      ! picman_pickable_get_pixel_at (pickable, x2, y2, format, br))
     {
       return AUTO_SHRINK_NOTHING;
     }
@@ -260,15 +260,15 @@ gimp_pickable_guess_bgcolor (GimpPickable *pickable,
       return AUTO_SHRINK_ALPHA;
     }
 
-  if (gimp_pickable_colors_equal (tl, tr) ||
-      gimp_pickable_colors_equal (tl, bl))
+  if (picman_pickable_colors_equal (tl, tr) ||
+      picman_pickable_colors_equal (tl, bl))
     {
       memcpy (color, tl, 4);
       return AUTO_SHRINK_COLOR;
     }
 
-  if (gimp_pickable_colors_equal (br, bl) ||
-      gimp_pickable_colors_equal (br, tr))
+  if (picman_pickable_colors_equal (br, bl) ||
+      picman_pickable_colors_equal (br, tr))
     {
       memcpy (color, br, 4);
       return AUTO_SHRINK_COLOR;
@@ -278,7 +278,7 @@ gimp_pickable_guess_bgcolor (GimpPickable *pickable,
 }
 
 static gboolean
-gimp_pickable_colors_equal (guchar *col1,
+picman_pickable_colors_equal (guchar *col1,
                             guchar *col2)
 {
   gint b;
@@ -293,7 +293,7 @@ gimp_pickable_colors_equal (guchar *col1,
 }
 
 static gboolean
-gimp_pickable_colors_alpha (guchar *dummy,
+picman_pickable_colors_alpha (guchar *dummy,
                             guchar *col)
 {
   return (col[ALPHA] == 0);

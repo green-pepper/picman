@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpImageProfileView
- * Copyright (C) 2006  Sven Neumann <sven@gimp.org>
+ * PicmanImageProfileView
+ * Copyright (C) 2006  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,47 +25,47 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
 
 #include "plug-in/plug-in-icc-profile.h"
 
-#include "gimpimageprofileview.h"
+#include "picmanimageprofileview.h"
 
-#include "gimp-intl.h"
-
-
-static void  gimp_image_profile_view_dispose (GObject               *object);
-
-static void  gimp_image_profile_view_update  (GimpImageParasiteView *view);
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpImageProfileView,
-               gimp_image_profile_view, GIMP_TYPE_IMAGE_PARASITE_VIEW)
+static void  picman_image_profile_view_dispose (GObject               *object);
 
-#define parent_class gimp_image_profile_view_parent_class
+static void  picman_image_profile_view_update  (PicmanImageParasiteView *view);
+
+
+G_DEFINE_TYPE (PicmanImageProfileView,
+               picman_image_profile_view, PICMAN_TYPE_IMAGE_PARASITE_VIEW)
+
+#define parent_class picman_image_profile_view_parent_class
 
 
 static void
-gimp_image_profile_view_class_init (GimpImageProfileViewClass *klass)
+picman_image_profile_view_class_init (PicmanImageProfileViewClass *klass)
 {
   GObjectClass               *object_class = G_OBJECT_CLASS (klass);
-  GimpImageParasiteViewClass *view_class;
+  PicmanImageParasiteViewClass *view_class;
 
-  view_class = GIMP_IMAGE_PARASITE_VIEW_CLASS (klass);
+  view_class = PICMAN_IMAGE_PARASITE_VIEW_CLASS (klass);
 
-  object_class->dispose = gimp_image_profile_view_dispose;
+  object_class->dispose = picman_image_profile_view_dispose;
 
-  view_class->update    = gimp_image_profile_view_update;
+  view_class->update    = picman_image_profile_view_update;
 }
 
 static void
-gimp_image_profile_view_init (GimpImageProfileView *view)
+picman_image_profile_view_init (PicmanImageProfileView *view)
 {
   GtkWidget *scrolled_window;
   GtkWidget *text_view;
@@ -104,9 +104,9 @@ gimp_image_profile_view_init (GimpImageProfileView *view)
 }
 
 static void
-gimp_image_profile_view_dispose (GObject *object)
+picman_image_profile_view_dispose (GObject *object)
 {
-  GimpImageProfileView *view = GIMP_IMAGE_PROFILE_VIEW (object);
+  PicmanImageProfileView *view = PICMAN_IMAGE_PROFILE_VIEW (object);
 
   if (view->idle_id)
     {
@@ -121,11 +121,11 @@ gimp_image_profile_view_dispose (GObject *object)
 /*  public functions  */
 
 GtkWidget *
-gimp_image_profile_view_new (GimpImage *image)
+picman_image_profile_view_new (PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return g_object_new (GIMP_TYPE_IMAGE_PROFILE_VIEW,
+  return g_object_new (PICMAN_TYPE_IMAGE_PROFILE_VIEW,
                        "image",    image,
                        "parasite", "icc-profile",
                        NULL);
@@ -135,9 +135,9 @@ gimp_image_profile_view_new (GimpImage *image)
 /*  private functions  */
 
 static gboolean
-gimp_image_profile_view_query (GimpImageProfileView *view)
+picman_image_profile_view_query (PicmanImageProfileView *view)
 {
-  GimpImage   *image;
+  PicmanImage   *image;
   gchar       *name  = NULL;
   gchar       *desc  = NULL;
   gchar       *info  = NULL;
@@ -147,10 +147,10 @@ gimp_image_profile_view_query (GimpImageProfileView *view)
   gtk_text_buffer_set_text (view->buffer, "", 0);
   gtk_text_buffer_get_start_iter (view->buffer, &iter);
 
-  image = gimp_image_parasite_view_get_image (GIMP_IMAGE_PARASITE_VIEW (view));
+  image = picman_image_parasite_view_get_image (PICMAN_IMAGE_PARASITE_VIEW (view));
 
   if (plug_in_icc_profile_info (image,
-                                gimp_get_user_context (image->gimp),
+                                picman_get_user_context (image->picman),
                                 NULL,
                                 &name, &desc, &info,
                                 &error))
@@ -189,9 +189,9 @@ gimp_image_profile_view_query (GimpImageProfileView *view)
 }
 
 static void
-gimp_image_profile_view_update (GimpImageParasiteView *view)
+picman_image_profile_view_update (PicmanImageParasiteView *view)
 {
-  GimpImageProfileView *profile_view = GIMP_IMAGE_PROFILE_VIEW (view);
+  PicmanImageProfileView *profile_view = PICMAN_IMAGE_PROFILE_VIEW (view);
   GtkTextIter           iter;
 
   gtk_text_buffer_set_text (profile_view->buffer, "", 0);
@@ -204,5 +204,5 @@ gimp_image_profile_view_update (GimpImageParasiteView *view)
     g_source_remove (profile_view->idle_id);
 
   profile_view->idle_id =
-    g_idle_add ((GSourceFunc) gimp_image_profile_view_query, profile_view);
+    g_idle_add ((GSourceFunc) picman_image_profile_view_query, profile_view);
 }

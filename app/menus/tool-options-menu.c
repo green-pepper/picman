@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,41 +20,41 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "menus-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimplist.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanlist.h"
+#include "core/picmantoolinfo.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpuimanager.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanuimanager.h"
 
 #include "tool-options-menu.h"
 
 
 /*  local function prototypes  */
 
-static void   tool_options_menu_update         (GimpUIManager *manager,
+static void   tool_options_menu_update         (PicmanUIManager *manager,
                                                 gpointer       update_data,
                                                 const gchar   *ui_path);
-static void   tool_options_menu_update_after   (GimpUIManager *manager,
+static void   tool_options_menu_update_after   (PicmanUIManager *manager,
                                                 gpointer       update_data,
                                                 const gchar   *ui_path);
-static void   tool_options_menu_update_presets (GimpUIManager *manager,
+static void   tool_options_menu_update_presets (PicmanUIManager *manager,
                                                 guint          merge_id,
                                                 const gchar   *ui_path,
                                                 const gchar   *menu_path,
                                                 const gchar   *which_action,
-                                                GimpContainer *presets);
+                                                PicmanContainer *presets);
 
 
 /*  public functions  */
 
 void
-tool_options_menu_setup (GimpUIManager *manager,
+tool_options_menu_setup (PicmanUIManager *manager,
                          const gchar   *ui_path)
 {
   g_signal_connect (manager, "update",
@@ -69,7 +69,7 @@ tool_options_menu_setup (GimpUIManager *manager,
 /*  private functions  */
 
 static void
-tool_options_menu_update (GimpUIManager *manager,
+tool_options_menu_update (PicmanUIManager *manager,
                           gpointer       update_data,
                           const gchar   *ui_path)
 {
@@ -90,16 +90,16 @@ tool_options_menu_update (GimpUIManager *manager,
 }
 
 static void
-tool_options_menu_update_after (GimpUIManager *manager,
+tool_options_menu_update_after (PicmanUIManager *manager,
                                 gpointer       update_data,
                                 const gchar   *ui_path)
 {
-  GimpContext  *context;
-  GimpToolInfo *tool_info;
+  PicmanContext  *context;
+  PicmanToolInfo *tool_info;
   guint         merge_id;
 
-  context   = gimp_get_user_context (manager->gimp);
-  tool_info = gimp_context_get_tool (context);
+  context   = picman_get_user_context (manager->picman);
+  tool_info = picman_context_get_tool (context);
 
   if (! tool_info->presets)
     return;
@@ -129,17 +129,17 @@ tool_options_menu_update_after (GimpUIManager *manager,
 }
 
 static void
-tool_options_menu_update_presets (GimpUIManager *manager,
+tool_options_menu_update_presets (PicmanUIManager *manager,
                                   guint          merge_id,
                                   const gchar   *ui_path,
                                   const gchar   *menu_path,
                                   const gchar   *which_action,
-                                  GimpContainer *presets)
+                                  PicmanContainer *presets)
 {
   gint n_children;
   gint i;
 
-  n_children = gimp_container_get_n_children (presets);
+  n_children = picman_container_get_n_children (presets);
 
   for (i = 0; i < n_children; i++)
     {

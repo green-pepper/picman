@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,17 +20,17 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "widgets/gimppropwidgets.h"
+#include "widgets/picmanpropwidgets.h"
 
-#include "gimpiscissorstool.h"
-#include "gimpiscissorsoptions.h"
+#include "picmaniscissorstool.h"
+#include "picmaniscissorsoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -40,50 +40,50 @@ enum
 };
 
 
-static void   gimp_iscissors_options_set_property (GObject      *object,
+static void   picman_iscissors_options_set_property (GObject      *object,
                                                    guint         property_id,
                                                    const GValue *value,
                                                    GParamSpec   *pspec);
-static void   gimp_iscissors_options_get_property (GObject      *object,
+static void   picman_iscissors_options_get_property (GObject      *object,
                                                    guint         property_id,
                                                    GValue       *value,
                                                    GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpIscissorsOptions, gimp_iscissors_options,
-               GIMP_TYPE_SELECTION_OPTIONS)
+G_DEFINE_TYPE (PicmanIscissorsOptions, picman_iscissors_options,
+               PICMAN_TYPE_SELECTION_OPTIONS)
 
-#define parent_class gimp_iscissors_options_parent_class
+#define parent_class picman_iscissors_options_parent_class
 
 
 static void
-gimp_iscissors_options_class_init (GimpIscissorsOptionsClass *klass)
+picman_iscissors_options_class_init (PicmanIscissorsOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_iscissors_options_set_property;
-  object_class->get_property = gimp_iscissors_options_get_property;
+  object_class->set_property = picman_iscissors_options_set_property;
+  object_class->get_property = picman_iscissors_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_INTERACTIVE,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_INTERACTIVE,
                                     "interactive",
                                     N_("Display future selection segment "
                                        "as you drag a control node"),
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_iscissors_options_init (GimpIscissorsOptions *options)
+picman_iscissors_options_init (PicmanIscissorsOptions *options)
 {
 }
 
 static void
-gimp_iscissors_options_set_property (GObject      *object,
+picman_iscissors_options_set_property (GObject      *object,
                                      guint         property_id,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  GimpIscissorsOptions *options = GIMP_ISCISSORS_OPTIONS (object);
+  PicmanIscissorsOptions *options = PICMAN_ISCISSORS_OPTIONS (object);
 
   switch (property_id)
     {
@@ -98,12 +98,12 @@ gimp_iscissors_options_set_property (GObject      *object,
 }
 
 static void
-gimp_iscissors_options_get_property (GObject    *object,
+picman_iscissors_options_get_property (GObject    *object,
                                      guint       property_id,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  GimpIscissorsOptions *options = GIMP_ISCISSORS_OPTIONS (object);
+  PicmanIscissorsOptions *options = PICMAN_ISCISSORS_OPTIONS (object);
 
   switch (property_id)
     {
@@ -118,13 +118,13 @@ gimp_iscissors_options_get_property (GObject    *object,
 }
 
 GtkWidget *
-gimp_iscissors_options_gui (GimpToolOptions *tool_options)
+picman_iscissors_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config  = G_OBJECT (tool_options);
-  GtkWidget *vbox    = gimp_selection_options_gui (tool_options);
+  GtkWidget *vbox    = picman_selection_options_gui (tool_options);
   GtkWidget *button;
 
-  button = gimp_prop_check_button_new (config, "interactive",
+  button = picman_prop_check_button_new (config, "interactive",
                                        _("Interactive boundary"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);

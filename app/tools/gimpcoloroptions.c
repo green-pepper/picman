@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis, and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,18 +20,18 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "widgets/gimppropwidgets.h"
+#include "widgets/picmanpropwidgets.h"
 
-#include "gimphistogramoptions.h"
-#include "gimpcoloroptions.h"
-#include "gimptooloptions-gui.h"
+#include "picmanhistogramoptions.h"
+#include "picmancoloroptions.h"
+#include "picmantooloptions-gui.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -43,55 +43,55 @@ enum
 };
 
 
-static void   gimp_color_options_set_property (GObject      *object,
+static void   picman_color_options_set_property (GObject      *object,
                                                guint         property_id,
                                                const GValue *value,
                                                GParamSpec   *pspec);
-static void   gimp_color_options_get_property (GObject      *object,
+static void   picman_color_options_get_property (GObject      *object,
                                                guint         property_id,
                                                GValue       *value,
                                                GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpColorOptions, gimp_color_options,
-               GIMP_TYPE_IMAGE_MAP_OPTIONS)
+G_DEFINE_TYPE (PicmanColorOptions, picman_color_options,
+               PICMAN_TYPE_IMAGE_MAP_OPTIONS)
 
 
 static void
-gimp_color_options_class_init (GimpColorOptionsClass *klass)
+picman_color_options_class_init (PicmanColorOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_color_options_set_property;
-  object_class->get_property = gimp_color_options_get_property;
+  object_class->set_property = picman_color_options_set_property;
+  object_class->get_property = picman_color_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_MERGED,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_MERGED,
                                     "sample-merged", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_AVERAGE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAMPLE_AVERAGE,
                                     "sample-average", NULL,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_AVERAGE_RADIUS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_AVERAGE_RADIUS,
                                    "average-radius",
                                    _("Color Picker Average Radius"),
                                    1.0, 300.0, 3.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_color_options_init (GimpColorOptions *options)
+picman_color_options_init (PicmanColorOptions *options)
 {
 }
 
 static void
-gimp_color_options_set_property (GObject      *object,
+picman_color_options_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  GimpColorOptions *options = GIMP_COLOR_OPTIONS (object);
+  PicmanColorOptions *options = PICMAN_COLOR_OPTIONS (object);
 
   switch (property_id)
     {
@@ -111,12 +111,12 @@ gimp_color_options_set_property (GObject      *object,
 }
 
 static void
-gimp_color_options_get_property (GObject    *object,
+picman_color_options_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  GimpColorOptions *options = GIMP_COLOR_OPTIONS (object);
+  PicmanColorOptions *options = PICMAN_COLOR_OPTIONS (object);
 
   switch (property_id)
     {
@@ -136,7 +136,7 @@ gimp_color_options_get_property (GObject    *object,
 }
 
 GtkWidget *
-gimp_color_options_gui (GimpToolOptions *tool_options)
+picman_color_options_gui (PicmanToolOptions *tool_options)
 {
   GObject   *config = G_OBJECT (tool_options);
   GtkWidget *vbox;
@@ -144,23 +144,23 @@ gimp_color_options_gui (GimpToolOptions *tool_options)
   GtkWidget *scale;
   GtkWidget *button;
 
-  if (GIMP_IS_HISTOGRAM_OPTIONS (tool_options))
-    vbox = gimp_histogram_options_gui (tool_options);
+  if (PICMAN_IS_HISTOGRAM_OPTIONS (tool_options))
+    vbox = picman_histogram_options_gui (tool_options);
   else
-    vbox = gimp_tool_options_gui (tool_options);
+    vbox = picman_tool_options_gui (tool_options);
 
   /*  the sample average options  */
-  frame = gimp_frame_new (NULL);
+  frame = picman_frame_new (NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
-  scale = gimp_prop_spin_scale_new (config, "average-radius",
+  scale = picman_prop_spin_scale_new (config, "average-radius",
                                     _("Radius"),
                                     1.0, 10.0, 0);
   gtk_container_add (GTK_CONTAINER (frame), scale);
   gtk_widget_show (scale);
 
-  button = gimp_prop_check_button_new (config, "sample-average",
+  button = picman_prop_check_button_new (config, "sample-average",
                                        _("Sample average"));
   gtk_frame_set_label_widget (GTK_FRAME (frame), button);
   gtk_widget_show (button);

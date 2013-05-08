@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,37 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CLONE_OPTIONS_H__
-#define __GIMP_CLONE_OPTIONS_H__
+#ifndef __PICMAN_CLONE_OPTIONS_H__
+#define __PICMAN_CLONE_OPTIONS_H__
 
 
-#include "gimpsourceoptions.h"
+#include "picmansourceoptions.h"
 
 
-#define GIMP_TYPE_CLONE_OPTIONS            (gimp_clone_options_get_type ())
-#define GIMP_CLONE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CLONE_OPTIONS, GimpCloneOptions))
-#define GIMP_CLONE_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CLONE_OPTIONS, GimpCloneOptionsClass))
-#define GIMP_IS_CLONE_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CLONE_OPTIONS))
-#define GIMP_IS_CLONE_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CLONE_OPTIONS))
-#define GIMP_CLONE_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CLONE_OPTIONS, GimpCloneOptionsClass))
+#define PICMAN_TYPE_CLONE_OPTIONS            (picman_clone_options_get_type ())
+#define PICMAN_CLONE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CLONE_OPTIONS, PicmanCloneOptions))
+#define PICMAN_CLONE_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CLONE_OPTIONS, PicmanCloneOptionsClass))
+#define PICMAN_IS_CLONE_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CLONE_OPTIONS))
+#define PICMAN_IS_CLONE_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CLONE_OPTIONS))
+#define PICMAN_CLONE_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CLONE_OPTIONS, PicmanCloneOptionsClass))
 
 
-typedef struct _GimpCloneOptionsClass GimpCloneOptionsClass;
+typedef struct _PicmanCloneOptionsClass PicmanCloneOptionsClass;
 
-struct _GimpCloneOptions
+struct _PicmanCloneOptions
 {
-  GimpSourceOptions  parent_instance;
+  PicmanSourceOptions  parent_instance;
 
-  GimpCloneType      clone_type;
+  PicmanCloneType      clone_type;
 };
 
-struct _GimpCloneOptionsClass
+struct _PicmanCloneOptionsClass
 {
-  GimpSourceOptionsClass  parent_class;
+  PicmanSourceOptionsClass  parent_class;
 };
 
 
-GType   gimp_clone_options_get_type (void) G_GNUC_CONST;
+GType   picman_clone_options_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_CLONE_OPTIONS_H__  */
+#endif  /*  __PICMAN_CLONE_OPTIONS_H__  */

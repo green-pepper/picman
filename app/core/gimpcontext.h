@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcontext.h
+ * picmancontext.h
  * Copyright (C) 1999-2010 Michael Natterer
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,25 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTEXT_H__
-#define __GIMP_CONTEXT_H__
+#ifndef __PICMAN_CONTEXT_H__
+#define __PICMAN_CONTEXT_H__
 
 
-#include "gimpviewable.h"
+#include "picmanviewable.h"
 
 
-#define GIMP_TYPE_CONTEXT            (gimp_context_get_type ())
-#define GIMP_CONTEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CONTEXT, GimpContext))
-#define GIMP_CONTEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST (klass, GIMP_TYPE_CONTEXT, GimpContextClass))
-#define GIMP_IS_CONTEXT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CONTEXT))
-#define GIMP_IS_CONTEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CONTEXT))
-#define GIMP_CONTEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS (obj, GIMP_TYPE_CONTEXT, GimpContextClass))
+#define PICMAN_TYPE_CONTEXT            (picman_context_get_type ())
+#define PICMAN_CONTEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CONTEXT, PicmanContext))
+#define PICMAN_CONTEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST (klass, PICMAN_TYPE_CONTEXT, PicmanContextClass))
+#define PICMAN_IS_CONTEXT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CONTEXT))
+#define PICMAN_IS_CONTEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CONTEXT))
+#define PICMAN_CONTEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS (obj, PICMAN_TYPE_CONTEXT, PicmanContextClass))
 
 
-typedef struct _GimpContextClass GimpContextClass;
+typedef struct _PicmanContextClass PicmanContextClass;
 
 /**
- * GimpContext:
+ * PicmanContext:
  *
  * Holds state such as the active image, active display, active brush,
  * active foreground and background color, and so on. There can many
@@ -44,315 +44,315 @@ typedef struct _GimpContextClass GimpContextClass;
  * interacts with but there can also be contexts for docks and for
  * plug-ins.
  */
-struct _GimpContext
+struct _PicmanContext
 {
-  GimpViewable          parent_instance;
+  PicmanViewable          parent_instance;
 
-  Gimp                 *gimp;
+  Picman                 *picman;
 
-  GimpContext          *parent;
+  PicmanContext          *parent;
 
   guint32               defined_props;
   guint32               serialize_props;
 
-  GimpImage            *image;
+  PicmanImage            *image;
   gpointer              display;
 
-  GimpToolInfo         *tool_info;
+  PicmanToolInfo         *tool_info;
   gchar                *tool_name;
 
-  GimpPaintInfo        *paint_info;
+  PicmanPaintInfo        *paint_info;
   gchar                *paint_name;
 
-  GimpRGB               foreground;
-  GimpRGB               background;
+  PicmanRGB               foreground;
+  PicmanRGB               background;
 
   gdouble               opacity;
-  GimpLayerModeEffects  paint_mode;
+  PicmanLayerModeEffects  paint_mode;
 
-  GimpBrush            *brush;
+  PicmanBrush            *brush;
   gchar                *brush_name;
 
-  GimpDynamics         *dynamics;
+  PicmanDynamics         *dynamics;
   gchar                *dynamics_name;
 
-  GimpPattern          *pattern;
+  PicmanPattern          *pattern;
   gchar                *pattern_name;
 
-  GimpGradient         *gradient;
+  PicmanGradient         *gradient;
   gchar                *gradient_name;
 
-  GimpPalette          *palette;
+  PicmanPalette          *palette;
   gchar                *palette_name;
 
-  GimpToolPreset       *tool_preset;
+  PicmanToolPreset       *tool_preset;
   gchar                *tool_preset_name;
 
-  GimpFont             *font;
+  PicmanFont             *font;
   gchar                *font_name;
 
-  GimpBuffer           *buffer;
+  PicmanBuffer           *buffer;
   gchar                *buffer_name;
 
-  GimpImagefile        *imagefile;
+  PicmanImagefile        *imagefile;
   gchar                *imagefile_name;
 
-  GimpTemplate         *template;
+  PicmanTemplate         *template;
   gchar                *template_name;
 };
 
-struct _GimpContextClass
+struct _PicmanContextClass
 {
-  GimpViewableClass  parent_class;
+  PicmanViewableClass  parent_class;
 
-  void (* image_changed)      (GimpContext          *context,
-                               GimpImage            *image);
-  void (* display_changed)    (GimpContext          *context,
+  void (* image_changed)      (PicmanContext          *context,
+                               PicmanImage            *image);
+  void (* display_changed)    (PicmanContext          *context,
                                gpointer              display);
 
-  void (* tool_changed)       (GimpContext          *context,
-                               GimpToolInfo         *tool_info);
-  void (* paint_info_changed) (GimpContext          *context,
-                               GimpPaintInfo        *paint_info);
+  void (* tool_changed)       (PicmanContext          *context,
+                               PicmanToolInfo         *tool_info);
+  void (* paint_info_changed) (PicmanContext          *context,
+                               PicmanPaintInfo        *paint_info);
 
-  void (* foreground_changed) (GimpContext          *context,
-                               GimpRGB              *color);
-  void (* background_changed) (GimpContext          *context,
-                               GimpRGB              *color);
-  void (* opacity_changed)    (GimpContext          *context,
+  void (* foreground_changed) (PicmanContext          *context,
+                               PicmanRGB              *color);
+  void (* background_changed) (PicmanContext          *context,
+                               PicmanRGB              *color);
+  void (* opacity_changed)    (PicmanContext          *context,
                                gdouble               opacity);
-  void (* paint_mode_changed) (GimpContext          *context,
-                               GimpLayerModeEffects  paint_mode);
-  void (* brush_changed)      (GimpContext          *context,
-                               GimpBrush            *brush);
-  void (* dynamics_changed)   (GimpContext          *context,
-                               GimpDynamics         *dynamics);
-  void (* pattern_changed)    (GimpContext          *context,
-                               GimpPattern          *pattern);
-  void (* gradient_changed)   (GimpContext          *context,
-                               GimpGradient         *gradient);
-  void (* palette_changed)    (GimpContext          *context,
-                               GimpPalette          *palette);
-  void (* tool_preset_changed)(GimpContext          *context,
-                               GimpToolPreset       *tool_preset);
-  void (* font_changed)       (GimpContext          *context,
-                               GimpFont             *font);
-  void (* buffer_changed)     (GimpContext          *context,
-                               GimpBuffer           *buffer);
-  void (* imagefile_changed)  (GimpContext          *context,
-                               GimpImagefile        *imagefile);
-  void (* template_changed)   (GimpContext          *context,
-                               GimpTemplate         *template);
+  void (* paint_mode_changed) (PicmanContext          *context,
+                               PicmanLayerModeEffects  paint_mode);
+  void (* brush_changed)      (PicmanContext          *context,
+                               PicmanBrush            *brush);
+  void (* dynamics_changed)   (PicmanContext          *context,
+                               PicmanDynamics         *dynamics);
+  void (* pattern_changed)    (PicmanContext          *context,
+                               PicmanPattern          *pattern);
+  void (* gradient_changed)   (PicmanContext          *context,
+                               PicmanGradient         *gradient);
+  void (* palette_changed)    (PicmanContext          *context,
+                               PicmanPalette          *palette);
+  void (* tool_preset_changed)(PicmanContext          *context,
+                               PicmanToolPreset       *tool_preset);
+  void (* font_changed)       (PicmanContext          *context,
+                               PicmanFont             *font);
+  void (* buffer_changed)     (PicmanContext          *context,
+                               PicmanBuffer           *buffer);
+  void (* imagefile_changed)  (PicmanContext          *context,
+                               PicmanImagefile        *imagefile);
+  void (* template_changed)   (PicmanContext          *context,
+                               PicmanTemplate         *template);
 };
 
 
-GType         gimp_context_get_type          (void) G_GNUC_CONST;
+GType         picman_context_get_type          (void) G_GNUC_CONST;
 
-GimpContext * gimp_context_new               (Gimp                *gimp,
+PicmanContext * picman_context_new               (Picman                *picman,
                                               const gchar         *name,
-                                              GimpContext         *template);
+                                              PicmanContext         *template);
 
-GimpContext * gimp_context_get_parent        (const GimpContext   *context);
-void          gimp_context_set_parent        (GimpContext         *context,
-                                              GimpContext         *parent);
+PicmanContext * picman_context_get_parent        (const PicmanContext   *context);
+void          picman_context_set_parent        (PicmanContext         *context,
+                                              PicmanContext         *parent);
 
 /*  define / undefinine context properties
  *
  *  the value of an undefined property will be taken from the parent context.
  */
-void          gimp_context_define_property   (GimpContext         *context,
-                                              GimpContextPropType  prop,
+void          picman_context_define_property   (PicmanContext         *context,
+                                              PicmanContextPropType  prop,
                                               gboolean             defined);
 
-gboolean      gimp_context_property_defined  (GimpContext         *context,
-                                              GimpContextPropType  prop);
+gboolean      picman_context_property_defined  (PicmanContext         *context,
+                                              PicmanContextPropType  prop);
 
-void          gimp_context_define_properties (GimpContext         *context,
-                                              GimpContextPropMask  props_mask,
+void          picman_context_define_properties (PicmanContext         *context,
+                                              PicmanContextPropMask  props_mask,
                                               gboolean             defined);
 
 
 /*  specify which context properties will be serialized
  */
-void   gimp_context_set_serialize_properties (GimpContext         *context,
-                                              GimpContextPropMask  props_mask);
+void   picman_context_set_serialize_properties (PicmanContext         *context,
+                                              PicmanContextPropMask  props_mask);
 
-GimpContextPropMask
-       gimp_context_get_serialize_properties (GimpContext         *context);
+PicmanContextPropMask
+       picman_context_get_serialize_properties (PicmanContext         *context);
 
 
 /*  copying context properties
  */
-void          gimp_context_copy_property     (GimpContext         *src,
-                                              GimpContext         *dest,
-                                              GimpContextPropType  prop);
+void          picman_context_copy_property     (PicmanContext         *src,
+                                              PicmanContext         *dest,
+                                              PicmanContextPropType  prop);
 
-void          gimp_context_copy_properties   (GimpContext         *src,
-                                              GimpContext         *dest,
-                                              GimpContextPropMask  props_mask);
+void          picman_context_copy_properties   (PicmanContext         *src,
+                                              PicmanContext         *dest,
+                                              PicmanContextPropMask  props_mask);
 
 
 /*  manipulate by GType  */
-GimpContextPropType   gimp_context_type_to_property    (GType     type);
-const gchar         * gimp_context_type_to_prop_name   (GType     type);
-const gchar         * gimp_context_type_to_signal_name (GType     type);
+PicmanContextPropType   picman_context_type_to_property    (GType     type);
+const gchar         * picman_context_type_to_prop_name   (GType     type);
+const gchar         * picman_context_type_to_signal_name (GType     type);
 
-GimpObject     * gimp_context_get_by_type         (GimpContext     *context,
+PicmanObject     * picman_context_get_by_type         (PicmanContext     *context,
                                                    GType            type);
-void             gimp_context_set_by_type         (GimpContext     *context,
+void             picman_context_set_by_type         (PicmanContext     *context,
                                                    GType            type,
-                                                   GimpObject      *object);
-void             gimp_context_changed_by_type     (GimpContext     *context,
+                                                   PicmanObject      *object);
+void             picman_context_changed_by_type     (PicmanContext     *context,
                                                    GType            type);
 
 
 /*  image  */
-GimpImage      * gimp_context_get_image           (GimpContext     *context);
-void             gimp_context_set_image           (GimpContext     *context,
-                                                   GimpImage       *image);
-void             gimp_context_image_changed       (GimpContext     *context);
+PicmanImage      * picman_context_get_image           (PicmanContext     *context);
+void             picman_context_set_image           (PicmanContext     *context,
+                                                   PicmanImage       *image);
+void             picman_context_image_changed       (PicmanContext     *context);
 
 
 /*  display  */
-gpointer         gimp_context_get_display         (GimpContext     *context);
-void             gimp_context_set_display         (GimpContext     *context,
+gpointer         picman_context_get_display         (PicmanContext     *context);
+void             picman_context_set_display         (PicmanContext     *context,
                                                    gpointer         display);
-void             gimp_context_display_changed     (GimpContext     *context);
+void             picman_context_display_changed     (PicmanContext     *context);
 
 
 /*  tool  */
-GimpToolInfo   * gimp_context_get_tool            (GimpContext     *context);
-void             gimp_context_set_tool            (GimpContext     *context,
-                                                   GimpToolInfo    *tool_info);
-void             gimp_context_tool_changed        (GimpContext     *context);
+PicmanToolInfo   * picman_context_get_tool            (PicmanContext     *context);
+void             picman_context_set_tool            (PicmanContext     *context,
+                                                   PicmanToolInfo    *tool_info);
+void             picman_context_tool_changed        (PicmanContext     *context);
 
 
 /*  paint info  */
-GimpPaintInfo  * gimp_context_get_paint_info      (GimpContext     *context);
-void             gimp_context_set_paint_info      (GimpContext     *context,
-                                                   GimpPaintInfo   *paint_info);
-void             gimp_context_paint_info_changed  (GimpContext     *context);
+PicmanPaintInfo  * picman_context_get_paint_info      (PicmanContext     *context);
+void             picman_context_set_paint_info      (PicmanContext     *context,
+                                                   PicmanPaintInfo   *paint_info);
+void             picman_context_paint_info_changed  (PicmanContext     *context);
 
 
 /*  foreground color  */
-void             gimp_context_get_foreground       (GimpContext     *context,
-                                                    GimpRGB         *color);
-void             gimp_context_get_foreground_pixel (GimpContext     *context,
+void             picman_context_get_foreground       (PicmanContext     *context,
+                                                    PicmanRGB         *color);
+void             picman_context_get_foreground_pixel (PicmanContext     *context,
                                                     const Babl      *pixel_format,
                                                     gpointer         pixel);
-void             gimp_context_set_foreground       (GimpContext     *context,
-                                                    const GimpRGB   *color);
-void             gimp_context_set_foreground_pixel (GimpContext     *context,
+void             picman_context_set_foreground       (PicmanContext     *context,
+                                                    const PicmanRGB   *color);
+void             picman_context_set_foreground_pixel (PicmanContext     *context,
                                                     const Babl      *pixel_format,
                                                     gconstpointer    pixel);
-void             gimp_context_foreground_changed   (GimpContext     *context);
+void             picman_context_foreground_changed   (PicmanContext     *context);
 
 
 /*  background color  */
-void             gimp_context_get_background       (GimpContext     *context,
-                                                    GimpRGB         *color);
-void             gimp_context_get_background_pixel (GimpContext     *context,
+void             picman_context_get_background       (PicmanContext     *context,
+                                                    PicmanRGB         *color);
+void             picman_context_get_background_pixel (PicmanContext     *context,
                                                     const Babl      *pixel_format,
                                                     gpointer         pixel);
-void             gimp_context_set_background       (GimpContext     *context,
-                                                    const GimpRGB   *color);
-void             gimp_context_set_background_pixel (GimpContext     *context,
+void             picman_context_set_background       (PicmanContext     *context,
+                                                    const PicmanRGB   *color);
+void             picman_context_set_background_pixel (PicmanContext     *context,
                                                     const Babl      *pixel_format,
                                                     gconstpointer    pixel);
-void             gimp_context_background_changed   (GimpContext     *context);
+void             picman_context_background_changed   (PicmanContext     *context);
 
 
 /*  color utility functions  */
-void             gimp_context_set_default_colors  (GimpContext     *context);
-void             gimp_context_swap_colors         (GimpContext     *context);
+void             picman_context_set_default_colors  (PicmanContext     *context);
+void             picman_context_swap_colors         (PicmanContext     *context);
 
 
 /*  opacity  */
-gdouble          gimp_context_get_opacity         (GimpContext     *context);
-void             gimp_context_set_opacity         (GimpContext     *context,
+gdouble          picman_context_get_opacity         (PicmanContext     *context);
+void             picman_context_set_opacity         (PicmanContext     *context,
                                                    gdouble          opacity);
-void             gimp_context_opacity_changed     (GimpContext     *context);
+void             picman_context_opacity_changed     (PicmanContext     *context);
 
 
 /*  paint mode  */
-GimpLayerModeEffects
-                 gimp_context_get_paint_mode      (GimpContext     *context);
-void             gimp_context_set_paint_mode      (GimpContext     *context,
-                                              GimpLayerModeEffects  paint_mode);
-void             gimp_context_paint_mode_changed  (GimpContext     *context);
+PicmanLayerModeEffects
+                 picman_context_get_paint_mode      (PicmanContext     *context);
+void             picman_context_set_paint_mode      (PicmanContext     *context,
+                                              PicmanLayerModeEffects  paint_mode);
+void             picman_context_paint_mode_changed  (PicmanContext     *context);
 
 
 /*  brush  */
-GimpBrush      * gimp_context_get_brush           (GimpContext     *context);
-void             gimp_context_set_brush           (GimpContext     *context,
-                                                   GimpBrush       *brush);
-void             gimp_context_brush_changed       (GimpContext     *context);
+PicmanBrush      * picman_context_get_brush           (PicmanContext     *context);
+void             picman_context_set_brush           (PicmanContext     *context,
+                                                   PicmanBrush       *brush);
+void             picman_context_brush_changed       (PicmanContext     *context);
 
 
 /*  dynamics  */
-GimpDynamics   * gimp_context_get_dynamics        (GimpContext     *context);
-void             gimp_context_set_dynamics        (GimpContext     *context,
-                                                   GimpDynamics    *dynamics);
-void             gimp_context_dynamics_changed    (GimpContext     *context);
+PicmanDynamics   * picman_context_get_dynamics        (PicmanContext     *context);
+void             picman_context_set_dynamics        (PicmanContext     *context,
+                                                   PicmanDynamics    *dynamics);
+void             picman_context_dynamics_changed    (PicmanContext     *context);
 
 
 /*  pattern  */
-GimpPattern    * gimp_context_get_pattern         (GimpContext     *context);
-void             gimp_context_set_pattern         (GimpContext     *context,
-                                                   GimpPattern     *pattern);
-void             gimp_context_pattern_changed     (GimpContext     *context);
+PicmanPattern    * picman_context_get_pattern         (PicmanContext     *context);
+void             picman_context_set_pattern         (PicmanContext     *context,
+                                                   PicmanPattern     *pattern);
+void             picman_context_pattern_changed     (PicmanContext     *context);
 
 
 /*  gradient  */
-GimpGradient   * gimp_context_get_gradient        (GimpContext     *context);
-void             gimp_context_set_gradient        (GimpContext     *context,
-                                                   GimpGradient    *gradient);
-void             gimp_context_gradient_changed    (GimpContext     *context);
+PicmanGradient   * picman_context_get_gradient        (PicmanContext     *context);
+void             picman_context_set_gradient        (PicmanContext     *context,
+                                                   PicmanGradient    *gradient);
+void             picman_context_gradient_changed    (PicmanContext     *context);
 
 
 /*  palette  */
-GimpPalette    * gimp_context_get_palette         (GimpContext     *context);
-void             gimp_context_set_palette         (GimpContext     *context,
-                                                   GimpPalette     *palette);
-void             gimp_context_palette_changed     (GimpContext     *context);
+PicmanPalette    * picman_context_get_palette         (PicmanContext     *context);
+void             picman_context_set_palette         (PicmanContext     *context,
+                                                   PicmanPalette     *palette);
+void             picman_context_palette_changed     (PicmanContext     *context);
 
 
 /*  tool_preset  */
-GimpToolPreset * gimp_context_get_tool_preset     (GimpContext     *context);
-void             gimp_context_set_tool_preset     (GimpContext     *context,
-                                                   GimpToolPreset  *tool_preset);
-void             gimp_context_tool_preset_changed (GimpContext     *context);
+PicmanToolPreset * picman_context_get_tool_preset     (PicmanContext     *context);
+void             picman_context_set_tool_preset     (PicmanContext     *context,
+                                                   PicmanToolPreset  *tool_preset);
+void             picman_context_tool_preset_changed (PicmanContext     *context);
 
 
 /*  font  */
-GimpFont       * gimp_context_get_font            (GimpContext     *context);
-void             gimp_context_set_font            (GimpContext     *context,
-                                                   GimpFont        *font);
-const gchar    * gimp_context_get_font_name       (GimpContext     *context);
-void             gimp_context_set_font_name       (GimpContext     *context,
+PicmanFont       * picman_context_get_font            (PicmanContext     *context);
+void             picman_context_set_font            (PicmanContext     *context,
+                                                   PicmanFont        *font);
+const gchar    * picman_context_get_font_name       (PicmanContext     *context);
+void             picman_context_set_font_name       (PicmanContext     *context,
                                                    const gchar     *name);
-void             gimp_context_font_changed        (GimpContext     *context);
+void             picman_context_font_changed        (PicmanContext     *context);
 
 
 /*  buffer  */
-GimpBuffer     * gimp_context_get_buffer          (GimpContext     *context);
-void             gimp_context_set_buffer          (GimpContext     *context,
-                                                   GimpBuffer      *palette);
-void             gimp_context_buffer_changed      (GimpContext     *context);
+PicmanBuffer     * picman_context_get_buffer          (PicmanContext     *context);
+void             picman_context_set_buffer          (PicmanContext     *context,
+                                                   PicmanBuffer      *palette);
+void             picman_context_buffer_changed      (PicmanContext     *context);
 
 
 /*  imagefile  */
-GimpImagefile  * gimp_context_get_imagefile       (GimpContext     *context);
-void             gimp_context_set_imagefile       (GimpContext     *context,
-                                                   GimpImagefile   *imagefile);
-void             gimp_context_imagefile_changed   (GimpContext     *context);
+PicmanImagefile  * picman_context_get_imagefile       (PicmanContext     *context);
+void             picman_context_set_imagefile       (PicmanContext     *context,
+                                                   PicmanImagefile   *imagefile);
+void             picman_context_imagefile_changed   (PicmanContext     *context);
 
 
 /*  template  */
-GimpTemplate   * gimp_context_get_template        (GimpContext     *context);
-void             gimp_context_set_template        (GimpContext     *context,
-                                                   GimpTemplate    *template);
-void             gimp_context_template_changed    (GimpContext     *context);
+PicmanTemplate   * picman_context_get_template        (PicmanContext     *context);
+void             picman_context_set_template        (PicmanContext     *context,
+                                                   PicmanTemplate    *template);
+void             picman_context_template_changed    (PicmanContext     *context);
 
 
-#endif /* __GIMP_CONTEXT_H__ */
+#endif /* __PICMAN_CONTEXT_H__ */

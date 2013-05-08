@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdialogfactory.c
- * Copyright (C) 2001-2008 Michael Natterer <mitch@gimp.org>
+ * picmandialogfactory.c
+ * Copyright (C) 2001-2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,29 +26,29 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpmarshal.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpcursor.h"
-#include "gimpdialogfactory.h"
-#include "gimpdock.h"
-#include "gimpdockbook.h"
-#include "gimpdockable.h"
-#include "gimpdockcontainer.h"
-#include "gimpdockwindow.h"
-#include "gimpmenufactory.h"
-#include "gimpsessioninfo.h"
-#include "gimpwidgets-utils.h"
+#include "picmancursor.h"
+#include "picmandialogfactory.h"
+#include "picmandock.h"
+#include "picmandockbook.h"
+#include "picmandockable.h"
+#include "picmandockcontainer.h"
+#include "picmandockwindow.h"
+#include "picmanmenufactory.h"
+#include "picmansessioninfo.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-log.h"
+#include "picman-log.h"
 
 
 enum
@@ -59,47 +59,47 @@ enum
 };
 
 
-struct _GimpDialogFactoryPrivate
+struct _PicmanDialogFactoryPrivate
 {
-  GimpContext      *context;
-  GimpMenuFactory  *menu_factory;
+  PicmanContext      *context;
+  PicmanMenuFactory  *menu_factory;
 
   GList            *open_dialogs;
   GList            *session_infos;
 
   GList            *registered_dialogs;
 
-  GimpDialogsState  dialog_state;
+  PicmanDialogsState  dialog_state;
 };
 
 
-static void        gimp_dialog_factory_dispose              (GObject                *object);
-static void        gimp_dialog_factory_finalize             (GObject                *object);
-static GtkWidget * gimp_dialog_factory_constructor          (GimpDialogFactory      *factory,
-                                                             GimpDialogFactoryEntry *entry,
-                                                             GimpContext            *context,
-                                                             GimpUIManager          *ui_manager,
+static void        picman_dialog_factory_dispose              (GObject                *object);
+static void        picman_dialog_factory_finalize             (GObject                *object);
+static GtkWidget * picman_dialog_factory_constructor          (PicmanDialogFactory      *factory,
+                                                             PicmanDialogFactoryEntry *entry,
+                                                             PicmanContext            *context,
+                                                             PicmanUIManager          *ui_manager,
                                                              gint                    view_size);
-static void        gimp_dialog_factory_config_notify        (GimpDialogFactory      *factory,
+static void        picman_dialog_factory_config_notify        (PicmanDialogFactory      *factory,
                                                              GParamSpec             *pspec,
-                                                             GimpGuiConfig          *config);
-static void        gimp_dialog_factory_set_widget_data      (GtkWidget              *dialog,
-                                                             GimpDialogFactory      *factory,
-                                                             GimpDialogFactoryEntry *entry);
-static void        gimp_dialog_factory_unset_widget_data    (GtkWidget              *dialog);
-static gboolean    gimp_dialog_factory_set_user_pos         (GtkWidget              *dialog,
+                                                             PicmanGuiConfig          *config);
+static void        picman_dialog_factory_set_widget_data      (GtkWidget              *dialog,
+                                                             PicmanDialogFactory      *factory,
+                                                             PicmanDialogFactoryEntry *entry);
+static void        picman_dialog_factory_unset_widget_data    (GtkWidget              *dialog);
+static gboolean    picman_dialog_factory_set_user_pos         (GtkWidget              *dialog,
                                                              GdkEventConfigure      *cevent,
                                                              gpointer                data);
-static gboolean    gimp_dialog_factory_dialog_configure     (GtkWidget              *dialog,
+static gboolean    picman_dialog_factory_dialog_configure     (GtkWidget              *dialog,
                                                              GdkEventConfigure      *cevent,
-                                                             GimpDialogFactory      *factory);
-static void        gimp_dialog_factory_hide                 (GimpDialogFactory      *factory);
-static void        gimp_dialog_factory_show                 (GimpDialogFactory      *factory);
+                                                             PicmanDialogFactory      *factory);
+static void        picman_dialog_factory_hide                 (PicmanDialogFactory      *factory);
+static void        picman_dialog_factory_show                 (PicmanDialogFactory      *factory);
 
 
-G_DEFINE_TYPE (GimpDialogFactory, gimp_dialog_factory, GIMP_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanDialogFactory, picman_dialog_factory, PICMAN_TYPE_OBJECT)
 
-#define parent_class gimp_dialog_factory_parent_class
+#define parent_class picman_dialog_factory_parent_class
 
 static guint factory_signals[LAST_SIGNAL] = { 0 };
 
@@ -109,53 +109,53 @@ static guint factory_signals[LAST_SIGNAL] = { 0 };
  * FIXME: The layer above should not do this kind of initialization of
  * layers below.
  */
-static GimpDialogFactory *gimp_toplevel_factory = NULL;
+static PicmanDialogFactory *picman_toplevel_factory = NULL;
 
 
 static void
-gimp_dialog_factory_class_init (GimpDialogFactoryClass *klass)
+picman_dialog_factory_class_init (PicmanDialogFactoryClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->dispose  = gimp_dialog_factory_dispose;
-  object_class->finalize = gimp_dialog_factory_finalize;
+  object_class->dispose  = picman_dialog_factory_dispose;
+  object_class->finalize = picman_dialog_factory_finalize;
 
   factory_signals[DOCK_WINDOW_ADDED] =
     g_signal_new ("dock-window-added",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpDialogFactoryClass, dock_window_added),
+                  G_STRUCT_OFFSET (PicmanDialogFactoryClass, dock_window_added),
                   NULL, NULL,
-                  gimp_marshal_VOID__OBJECT,
+                  picman_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_DOCK_WINDOW);
+                  PICMAN_TYPE_DOCK_WINDOW);
 
   factory_signals[DOCK_WINDOW_REMOVED] =
     g_signal_new ("dock-window-removed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (GimpDialogFactoryClass, dock_window_removed),
+                  G_STRUCT_OFFSET (PicmanDialogFactoryClass, dock_window_removed),
                   NULL, NULL,
-                  gimp_marshal_VOID__OBJECT,
+                  picman_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_DOCK_WINDOW);
+                  PICMAN_TYPE_DOCK_WINDOW);
 
-  g_type_class_add_private (klass, sizeof (GimpDialogFactoryPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanDialogFactoryPrivate));
 }
 
 static void
-gimp_dialog_factory_init (GimpDialogFactory *factory)
+picman_dialog_factory_init (PicmanDialogFactory *factory)
 {
   factory->p = G_TYPE_INSTANCE_GET_PRIVATE (factory,
-                                            GIMP_TYPE_DIALOG_FACTORY,
-                                            GimpDialogFactoryPrivate);
-  factory->p->dialog_state = GIMP_DIALOGS_SHOWN;
+                                            PICMAN_TYPE_DIALOG_FACTORY,
+                                            PicmanDialogFactoryPrivate);
+  factory->p->dialog_state = PICMAN_DIALOGS_SHOWN;
 }
 
 static void
-gimp_dialog_factory_dispose (GObject *object)
+picman_dialog_factory_dispose (GObject *object)
 {
-  GimpDialogFactory *factory = GIMP_DIALOG_FACTORY (object);
+  PicmanDialogFactory *factory = PICMAN_DIALOG_FACTORY (object);
   GList             *list;
 
   /*  start iterating from the beginning each time we destroyed a
@@ -201,14 +201,14 @@ gimp_dialog_factory_dispose (GObject *object)
 }
 
 static void
-gimp_dialog_factory_finalize (GObject *object)
+picman_dialog_factory_finalize (GObject *object)
 {
-  GimpDialogFactory *factory = GIMP_DIALOG_FACTORY (object);
+  PicmanDialogFactory *factory = PICMAN_DIALOG_FACTORY (object);
   GList             *list;
 
   for (list = factory->p->registered_dialogs; list; list = g_list_next (list))
     {
-      GimpDialogFactoryEntry *entry = list->data;
+      PicmanDialogFactoryEntry *entry = list->data;
 
       g_free (entry->identifier);
       g_free (entry->name);
@@ -216,7 +216,7 @@ gimp_dialog_factory_finalize (GObject *object)
       g_free (entry->stock_id);
       g_free (entry->help_id);
 
-      g_slice_free (GimpDialogFactoryEntry, entry);
+      g_slice_free (PicmanDialogFactoryEntry, entry);
     }
 
   if (factory->p->registered_dialogs)
@@ -228,47 +228,47 @@ gimp_dialog_factory_finalize (GObject *object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
-GimpDialogFactory *
-gimp_dialog_factory_new (const gchar           *name,
-                         GimpContext           *context,
-                         GimpMenuFactory       *menu_factory)
+PicmanDialogFactory *
+picman_dialog_factory_new (const gchar           *name,
+                         PicmanContext           *context,
+                         PicmanMenuFactory       *menu_factory)
 {
-  GimpDialogFactory *factory;
-  GimpGuiConfig     *config;
+  PicmanDialogFactory *factory;
+  PicmanGuiConfig     *config;
 
   g_return_val_if_fail (name != NULL, NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
-  g_return_val_if_fail (! menu_factory || GIMP_IS_MENU_FACTORY (menu_factory),
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (! menu_factory || PICMAN_IS_MENU_FACTORY (menu_factory),
                         NULL);
 
-  factory = g_object_new (GIMP_TYPE_DIALOG_FACTORY, NULL);
+  factory = g_object_new (PICMAN_TYPE_DIALOG_FACTORY, NULL);
 
-  gimp_object_set_name (GIMP_OBJECT (factory), name);
+  picman_object_set_name (PICMAN_OBJECT (factory), name);
 
-  config = GIMP_GUI_CONFIG (context->gimp->config);
+  config = PICMAN_GUI_CONFIG (context->picman->config);
 
   factory->p->context      = context;
   factory->p->menu_factory = menu_factory;
   factory->p->dialog_state = (config->hide_docks ?
-                              GIMP_DIALOGS_HIDDEN_EXPLICITLY :
-                              GIMP_DIALOGS_SHOWN);
+                              PICMAN_DIALOGS_HIDDEN_EXPLICITLY :
+                              PICMAN_DIALOGS_SHOWN);
 
   g_signal_connect_object (config, "notify::hide-docks",
-                           G_CALLBACK (gimp_dialog_factory_config_notify),
+                           G_CALLBACK (picman_dialog_factory_config_notify),
                            factory, G_CONNECT_SWAPPED);
 
   return factory;
 }
 
 void
-gimp_dialog_factory_register_entry (GimpDialogFactory    *factory,
+picman_dialog_factory_register_entry (PicmanDialogFactory    *factory,
                                     const gchar          *identifier,
                                     const gchar          *name,
                                     const gchar          *blurb,
                                     const gchar          *stock_id,
                                     const gchar          *help_id,
-                                    GimpDialogNewFunc     new_func,
-                                    GimpDialogRestoreFunc restore_func,
+                                    PicmanDialogNewFunc     new_func,
+                                    PicmanDialogRestoreFunc restore_func,
                                     gint                  view_size,
                                     gboolean              singleton,
                                     gboolean              session_managed,
@@ -278,12 +278,12 @@ gimp_dialog_factory_register_entry (GimpDialogFactory    *factory,
                                     gboolean              image_window,
                                     gboolean              dockable)
 {
-  GimpDialogFactoryEntry *entry;
+  PicmanDialogFactoryEntry *entry;
 
-  g_return_if_fail (GIMP_IS_DIALOG_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_DIALOG_FACTORY (factory));
   g_return_if_fail (identifier != NULL);
 
-  entry = g_slice_new0 (GimpDialogFactoryEntry);
+  entry = g_slice_new0 (PicmanDialogFactoryEntry);
 
   entry->identifier       = g_strdup (identifier);
   entry->name             = g_strdup (name);
@@ -305,18 +305,18 @@ gimp_dialog_factory_register_entry (GimpDialogFactory    *factory,
                                                    entry);
 }
 
-GimpDialogFactoryEntry *
-gimp_dialog_factory_find_entry (GimpDialogFactory *factory,
+PicmanDialogFactoryEntry *
+picman_dialog_factory_find_entry (PicmanDialogFactory *factory,
                                 const gchar       *identifier)
 {
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
   g_return_val_if_fail (identifier != NULL, NULL);
 
   for (list = factory->p->registered_dialogs; list; list = g_list_next (list))
     {
-      GimpDialogFactoryEntry *entry = list->data;
+      PicmanDialogFactoryEntry *entry = list->data;
 
       if (! strcmp (identifier, entry->identifier))
         return entry;
@@ -325,22 +325,22 @@ gimp_dialog_factory_find_entry (GimpDialogFactory *factory,
   return NULL;
 }
 
-GimpSessionInfo *
-gimp_dialog_factory_find_session_info (GimpDialogFactory *factory,
+PicmanSessionInfo *
+picman_dialog_factory_find_session_info (PicmanDialogFactory *factory,
                                        const gchar       *identifier)
 {
   GList *list;
 
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
   g_return_val_if_fail (identifier != NULL, NULL);
 
   for (list = factory->p->session_infos; list; list = g_list_next (list))
     {
-      GimpSessionInfo *info = list->data;
+      PicmanSessionInfo *info = list->data;
 
-      if (gimp_session_info_get_factory_entry (info) &&
+      if (picman_session_info_get_factory_entry (info) &&
           g_str_equal (identifier,
-                       gimp_session_info_get_factory_entry (info)->identifier))
+                       picman_session_info_get_factory_entry (info)->identifier))
         {
           return info;
         }
@@ -350,27 +350,27 @@ gimp_dialog_factory_find_session_info (GimpDialogFactory *factory,
 }
 
 GtkWidget *
-gimp_dialog_factory_find_widget (GimpDialogFactory *factory,
+picman_dialog_factory_find_widget (PicmanDialogFactory *factory,
                                  const gchar       *identifiers)
 {
   GtkWidget  *widget = NULL;
   gchar     **ids;
   gint        i;
 
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
   g_return_val_if_fail (identifiers != NULL, NULL);
 
   ids = g_strsplit (identifiers, "|", 0);
 
   for (i = 0; ids[i]; i++)
     {
-      GimpSessionInfo *info;
+      PicmanSessionInfo *info;
 
-      info = gimp_dialog_factory_find_session_info (factory, ids[i]);
+      info = picman_dialog_factory_find_session_info (factory, ids[i]);
 
       if (info)
         {
-          widget =  gimp_session_info_get_widget (info);
+          widget =  picman_session_info_get_widget (info);
 
           if (widget)
             break;
@@ -383,7 +383,7 @@ gimp_dialog_factory_find_widget (GimpDialogFactory *factory,
 }
 
 /**
- * gimp_dialog_factory_dialog_sane:
+ * picman_dialog_factory_dialog_sane:
  * @factory:
  * @widget_factory:
  * @widget_entry:
@@ -395,21 +395,21 @@ gimp_dialog_factory_find_widget (GimpDialogFactory *factory,
  * Returns: %TRUE if that is the case, %FALSE otherwise.
  **/
 static gboolean
-gimp_dialog_factory_dialog_sane (GimpDialogFactory      *factory,
-                                 GimpDialogFactory      *widget_factory,
-                                 GimpDialogFactoryEntry *widget_entry,
+picman_dialog_factory_dialog_sane (PicmanDialogFactory      *factory,
+                                 PicmanDialogFactory      *widget_factory,
+                                 PicmanDialogFactoryEntry *widget_entry,
                                  GtkWidget              *widget)
 {
   if (! widget_factory || ! widget_entry)
     {
-      g_warning ("%s: dialog was not created by a GimpDialogFactory",
+      g_warning ("%s: dialog was not created by a PicmanDialogFactory",
                  G_STRFUNC);
       return FALSE;
     }
 
   if (widget_factory != factory)
     {
-      g_warning ("%s: dialog was created by a different GimpDialogFactory",
+      g_warning ("%s: dialog was created by a different PicmanDialogFactory",
                  G_STRFUNC);
       return FALSE;
     }
@@ -418,7 +418,7 @@ gimp_dialog_factory_dialog_sane (GimpDialogFactory      *factory,
 }
 
 /**
- * gimp_dialog_factory_dialog_new_internal:
+ * picman_dialog_factory_dialog_new_internal:
  * @factory:
  * @screen:
  * @context:
@@ -439,24 +439,24 @@ gimp_dialog_factory_dialog_sane (GimpDialogFactory      *factory,
  * Returns: A created or existing #GtkWidget.
  **/
 static GtkWidget *
-gimp_dialog_factory_dialog_new_internal (GimpDialogFactory *factory,
+picman_dialog_factory_dialog_new_internal (PicmanDialogFactory *factory,
                                          GdkScreen         *screen,
-                                         GimpContext       *context,
-                                         GimpUIManager     *ui_manager,
+                                         PicmanContext       *context,
+                                         PicmanUIManager     *ui_manager,
                                          const gchar       *identifier,
                                          gint               view_size,
                                          gboolean           return_existing,
                                          gboolean           present,
                                          gboolean           create_containers)
 {
-  GimpDialogFactoryEntry *entry    = NULL;
+  PicmanDialogFactoryEntry *entry    = NULL;
   GtkWidget              *dialog   = NULL;
   GtkWidget              *toplevel = NULL;
 
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
   g_return_val_if_fail (identifier != NULL, NULL);
 
-  entry = gimp_dialog_factory_find_entry (factory, identifier);
+  entry = picman_dialog_factory_find_entry (factory, identifier);
 
   if (! entry)
     {
@@ -475,7 +475,7 @@ gimp_dialog_factory_dialog_new_internal (GimpDialogFactory *factory,
   /*  a singleton dialog is always returned if it already exisits  */
   if (return_existing || entry->singleton)
     {
-      dialog = gimp_dialog_factory_find_widget (factory, identifier);
+      dialog = picman_dialog_factory_find_widget (factory, identifier);
     }
 
   /*  create the dialog if it was not found  */
@@ -498,31 +498,31 @@ gimp_dialog_factory_dialog_new_internal (GimpDialogFactory *factory,
                *  dialog. We do this because the new dockable needs to be
                *  created in its dock's context.
                */
-              dock     = gimp_dock_with_window_new (factory,
+              dock     = picman_dock_with_window_new (factory,
                                                     screen,
                                                     FALSE /*toolbox*/);
-              dockbook = gimp_dockbook_new (factory->p->menu_factory);
+              dockbook = picman_dockbook_new (factory->p->menu_factory);
 
-              gimp_dock_add_book (GIMP_DOCK (dock),
-                                  GIMP_DOCKBOOK (dockbook),
+              picman_dock_add_book (PICMAN_DOCK (dock),
+                                  PICMAN_DOCKBOOK (dockbook),
                                   0);
             }
-          else if (strcmp ("gimp-toolbox", entry->identifier) == 0)
+          else if (strcmp ("picman-toolbox", entry->identifier) == 0)
             {
-              GimpDockContainer *dock_container;
+              PicmanDockContainer *dock_container;
 
-              dock_window = gimp_dialog_factory_dialog_new (factory,
+              dock_window = picman_dialog_factory_dialog_new (factory,
                                                             screen,
                                                             NULL /*ui_manager*/,
-                                                            "gimp-toolbox-window",
+                                                            "picman-toolbox-window",
                                                             -1 /*view_size*/,
                                                             FALSE /*present*/);
 
               /* When we get a dock window, we also get a UI
                * manager
                */
-              dock_container = GIMP_DOCK_CONTAINER (dock_window);
-              ui_manager     = gimp_dock_container_get_ui_manager (dock_container);
+              dock_container = PICMAN_DOCK_CONTAINER (dock_window);
+              ui_manager     = picman_dock_container_get_ui_manager (dock_container);
             }
         }
 
@@ -532,46 +532,46 @@ gimp_dialog_factory_dialog_new_internal (GimpDialogFactory *factory,
        *  - the factory's context, which happens when raising a toplevel
        *    dialog was the original request.
        */
-      if (view_size < GIMP_VIEW_SIZE_TINY)
+      if (view_size < PICMAN_VIEW_SIZE_TINY)
         view_size = entry->view_size;
 
       if (context)
-        dialog = gimp_dialog_factory_constructor (factory, entry,
+        dialog = picman_dialog_factory_constructor (factory, entry,
                                                   context,
                                                   ui_manager,
                                                   view_size);
       else if (dock)
-        dialog = gimp_dialog_factory_constructor (factory, entry,
-                                                  gimp_dock_get_context (GIMP_DOCK (dock)),
-                                                  gimp_dock_get_ui_manager (GIMP_DOCK (dock)),
+        dialog = picman_dialog_factory_constructor (factory, entry,
+                                                  picman_dock_get_context (PICMAN_DOCK (dock)),
+                                                  picman_dock_get_ui_manager (PICMAN_DOCK (dock)),
                                                   view_size);
       else
-        dialog = gimp_dialog_factory_constructor (factory, entry,
+        dialog = picman_dialog_factory_constructor (factory, entry,
                                                   factory->p->context,
                                                   ui_manager,
                                                   view_size);
 
       if (dialog)
         {
-          gimp_dialog_factory_set_widget_data (dialog, factory, entry);
+          picman_dialog_factory_set_widget_data (dialog, factory, entry);
 
           /*  If we created a dock before, the newly created dialog is
-           *  supposed to be a GimpDockable.
+           *  supposed to be a PicmanDockable.
            */
           if (dock)
             {
-              if (GIMP_IS_DOCKABLE (dialog))
+              if (PICMAN_IS_DOCKABLE (dialog))
                 {
-                  gimp_dock_add (GIMP_DOCK (dock), GIMP_DOCKABLE (dialog),
+                  picman_dock_add (PICMAN_DOCK (dock), PICMAN_DOCKABLE (dialog),
                                  0, 0);
 
                   gtk_widget_show (dock);
                 }
               else
                 {
-                  g_warning ("%s: GimpDialogFactory is a dockable factory "
+                  g_warning ("%s: PicmanDialogFactory is a dockable factory "
                              "but constructor for \"%s\" did not return a "
-                             "GimpDockable",
+                             "PicmanDockable",
                              G_STRFUNC, identifier);
 
                   gtk_widget_destroy (dialog);
@@ -583,10 +583,10 @@ gimp_dialog_factory_dialog_new_internal (GimpDialogFactory *factory,
             }
           else if (dock_window)
             {
-              if (GIMP_IS_DOCK (dialog))
+              if (PICMAN_IS_DOCK (dialog))
                 {
-                  gimp_dock_window_add_dock (GIMP_DOCK_WINDOW (dock_window),
-                                             GIMP_DOCK (dialog),
+                  picman_dock_window_add_dock (PICMAN_DOCK_WINDOW (dock_window),
+                                             PICMAN_DOCK (dialog),
                                              -1 /*index*/);
 
                   gtk_widget_set_visible (dialog, present);
@@ -594,9 +594,9 @@ gimp_dialog_factory_dialog_new_internal (GimpDialogFactory *factory,
                 }
               else
                 {
-                  g_warning ("%s: GimpDialogFactory is a dock factory entry "
+                  g_warning ("%s: PicmanDialogFactory is a dock factory entry "
                              "but constructor for \"%s\" did not return a "
-                             "GimpDock",
+                             "PicmanDock",
                              G_STRFUNC, identifier);
 
                   gtk_widget_destroy (dialog);
@@ -618,7 +618,7 @@ gimp_dialog_factory_dialog_new_internal (GimpDialogFactory *factory,
         }
 
       if (dialog)
-        gimp_dialog_factory_add_dialog (factory, dialog);
+        picman_dialog_factory_add_dialog (factory, dialog);
     }
 
   /*  Finally, if we found an existing dialog or created a new one, raise it.
@@ -632,25 +632,25 @@ gimp_dialog_factory_dialog_new_internal (GimpDialogFactory *factory,
 
       toplevel = dialog;
     }
-  else if (GIMP_IS_DOCK (dialog))
+  else if (PICMAN_IS_DOCK (dialog))
     {
       toplevel = gtk_widget_get_toplevel (dialog);
     }
-  else if (GIMP_IS_DOCKABLE (dialog))
+  else if (PICMAN_IS_DOCKABLE (dialog))
     {
-      GimpDockable *dockable = GIMP_DOCKABLE (dialog);
+      PicmanDockable *dockable = PICMAN_DOCKABLE (dialog);
 
-      if (gimp_dockable_get_dockbook (dockable) &&
-          gimp_dockbook_get_dock (gimp_dockable_get_dockbook (dockable)))
+      if (picman_dockable_get_dockbook (dockable) &&
+          picman_dockbook_get_dock (picman_dockable_get_dockbook (dockable)))
         {
-          GtkNotebook *notebook = GTK_NOTEBOOK (gimp_dockable_get_dockbook (dockable));
+          GtkNotebook *notebook = GTK_NOTEBOOK (picman_dockable_get_dockbook (dockable));
           gint         num      = gtk_notebook_page_num (notebook, dialog);
 
           if (num != -1)
             {
               gtk_notebook_set_current_page (notebook, num);
 
-              gimp_dockable_blink (dockable);
+              picman_dockable_blink (dockable);
             }
         }
 
@@ -671,34 +671,34 @@ gimp_dialog_factory_dialog_new_internal (GimpDialogFactory *factory,
 }
 
 /**
- * gimp_dialog_factory_dialog_new:
- * @factory:      a #GimpDialogFactory
+ * picman_dialog_factory_dialog_new:
+ * @factory:      a #PicmanDialogFactory
  * @screen:       the #GdkScreen the dialog should appear on
- * @ui_manager:   A #GimpUIManager, if applicable.
+ * @ui_manager:   A #PicmanUIManager, if applicable.
  * @identifier:   the identifier of the dialog as registered with
- *                gimp_dialog_factory_register_entry()
+ *                picman_dialog_factory_register_entry()
  * @view_size:    the initial preview size
  * @present:      whether gtk_window_present() should be called
  *
- * Creates a new toplevel dialog or a #GimpDockable, depending on whether
+ * Creates a new toplevel dialog or a #PicmanDockable, depending on whether
  * %factory is a toplevel of dockable factory.
  *
  * Return value: the newly created dialog or an already existing singleton
  *               dialog.
  **/
 GtkWidget *
-gimp_dialog_factory_dialog_new (GimpDialogFactory *factory,
+picman_dialog_factory_dialog_new (PicmanDialogFactory *factory,
                                 GdkScreen         *screen,
-                                GimpUIManager     *ui_manager,
+                                PicmanUIManager     *ui_manager,
                                 const gchar       *identifier,
                                 gint               view_size,
                                 gboolean           present)
 {
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
   g_return_val_if_fail (GDK_IS_SCREEN (screen), NULL);
   g_return_val_if_fail (identifier != NULL, NULL);
 
-  return gimp_dialog_factory_dialog_new_internal (factory,
+  return picman_dialog_factory_dialog_new_internal (factory,
                                                   screen,
                                                   factory->p->context,
                                                   ui_manager,
@@ -709,44 +709,44 @@ gimp_dialog_factory_dialog_new (GimpDialogFactory *factory,
                                                   FALSE /*create_containers*/);
 }
 
-GimpContext *
-gimp_dialog_factory_get_context (GimpDialogFactory *factory)
+PicmanContext *
+picman_dialog_factory_get_context (PicmanDialogFactory *factory)
 {
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
 
   return factory->p->context;
 }
 
-GimpMenuFactory *
-gimp_dialog_factory_get_menu_factory (GimpDialogFactory *factory)
+PicmanMenuFactory *
+picman_dialog_factory_get_menu_factory (PicmanDialogFactory *factory)
 {
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
 
   return factory->p->menu_factory;
 }
 
 GList *
-gimp_dialog_factory_get_open_dialogs (GimpDialogFactory *factory)
+picman_dialog_factory_get_open_dialogs (PicmanDialogFactory *factory)
 {
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
 
   return factory->p->open_dialogs;
 }
 
 GList *
-gimp_dialog_factory_get_session_infos (GimpDialogFactory *factory)
+picman_dialog_factory_get_session_infos (PicmanDialogFactory *factory)
 {
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
 
   return factory->p->session_infos;
 }
 
 void
-gimp_dialog_factory_add_session_info (GimpDialogFactory *factory,
-                                      GimpSessionInfo   *info)
+picman_dialog_factory_add_session_info (PicmanDialogFactory *factory,
+                                      PicmanSessionInfo   *info)
 {
-  g_return_if_fail (GIMP_IS_DIALOG_FACTORY (factory));
-  g_return_if_fail (GIMP_IS_SESSION_INFO (info));
+  g_return_if_fail (PICMAN_IS_DIALOG_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_SESSION_INFO (info));
 
   /* We want to append rather than prepend so that the serialized
    * order in sessionrc remains the same
@@ -756,15 +756,15 @@ gimp_dialog_factory_add_session_info (GimpDialogFactory *factory,
 }
 
 /**
- * gimp_dialog_factory_dialog_raise:
- * @factory:      a #GimpDialogFactory
+ * picman_dialog_factory_dialog_raise:
+ * @factory:      a #PicmanDialogFactory
  * @screen:       the #GdkScreen the dialog should appear on
  * @identifiers:  a '|' separated list of identifiers of dialogs as
- *                registered with gimp_dialog_factory_register_entry()
+ *                registered with picman_dialog_factory_register_entry()
  * @view_size:    the initial preview size if a dialog needs to be created
  *
  * Raises any of a list of already existing toplevel dialog or
- * #GimpDockable if it was already created by this %facory.
+ * #PicmanDockable if it was already created by this %facory.
  *
  * Implicitly creates the first dialog in the list if none of the dialogs
  * were found.
@@ -772,7 +772,7 @@ gimp_dialog_factory_add_session_info (GimpDialogFactory *factory,
  * Return value: the raised or newly created dialog.
  **/
 GtkWidget *
-gimp_dialog_factory_dialog_raise (GimpDialogFactory *factory,
+picman_dialog_factory_dialog_raise (PicmanDialogFactory *factory,
                                   GdkScreen         *screen,
                                   const gchar       *identifiers,
                                   gint               view_size)
@@ -781,7 +781,7 @@ gimp_dialog_factory_dialog_raise (GimpDialogFactory *factory,
   gchar    **ids;
   gint       i;
 
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
   g_return_val_if_fail (GDK_IS_SCREEN (screen), NULL);
   g_return_val_if_fail (identifiers != NULL, NULL);
 
@@ -794,11 +794,11 @@ gimp_dialog_factory_dialog_raise (GimpDialogFactory *factory,
   ids = g_strsplit (identifiers, "|", 0);
   for (i = 0; ids[i]; i++)
     {
-      if (gimp_dialog_factory_find_widget (factory, ids[i]))
+      if (picman_dialog_factory_find_widget (factory, ids[i]))
         break;
     }
 
-  dialog = gimp_dialog_factory_dialog_new_internal (factory,
+  dialog = picman_dialog_factory_dialog_new_internal (factory,
                                                     screen,
                                                     NULL,
                                                     NULL,
@@ -813,37 +813,37 @@ gimp_dialog_factory_dialog_raise (GimpDialogFactory *factory,
 }
 
 /**
- * gimp_dialog_factory_dockable_new:
- * @factory:      a #GimpDialogFactory
- * @dock:         a #GimpDock crated by this %factory.
+ * picman_dialog_factory_dockable_new:
+ * @factory:      a #PicmanDialogFactory
+ * @dock:         a #PicmanDock crated by this %factory.
  * @identifier:   the identifier of the dialog as registered with
- *                gimp_dialog_factory_register_entry()
+ *                picman_dialog_factory_register_entry()
  * @view_size:
  *
- * Creates a new #GimpDockable in the context of the #GimpDock it will be
+ * Creates a new #PicmanDockable in the context of the #PicmanDock it will be
  * added to.
  *
  * Implicitly raises & returns an already existing singleton dockable,
- * so callers should check that gimp_dockable_get_dockbook (dockable)
- * is NULL before trying to add it to it's #GimpDockbook.
+ * so callers should check that picman_dockable_get_dockbook (dockable)
+ * is NULL before trying to add it to it's #PicmanDockbook.
  *
- * Return value: the newly created #GimpDockable or an already existing
+ * Return value: the newly created #PicmanDockable or an already existing
  *               singleton dockable.
  **/
 GtkWidget *
-gimp_dialog_factory_dockable_new (GimpDialogFactory *factory,
-                                  GimpDock          *dock,
+picman_dialog_factory_dockable_new (PicmanDialogFactory *factory,
+                                  PicmanDock          *dock,
                                   const gchar       *identifier,
                                   gint               view_size)
 {
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), NULL);
-  g_return_val_if_fail (GIMP_IS_DOCK (dock), NULL);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK (dock), NULL);
   g_return_val_if_fail (identifier != NULL, NULL);
 
-  return gimp_dialog_factory_dialog_new_internal (factory,
+  return picman_dialog_factory_dialog_new_internal (factory,
                                                   gtk_widget_get_screen (GTK_WIDGET (dock)),
-                                                  gimp_dock_get_context (dock),
-                                                  gimp_dock_get_ui_manager (dock),
+                                                  picman_dock_get_context (dock),
+                                                  picman_dock_get_ui_manager (dock),
                                                   identifier,
                                                   view_size,
                                                   FALSE /*return_existing*/,
@@ -852,16 +852,16 @@ gimp_dialog_factory_dockable_new (GimpDialogFactory *factory,
 }
 
 void
-gimp_dialog_factory_add_dialog (GimpDialogFactory *factory,
+picman_dialog_factory_add_dialog (PicmanDialogFactory *factory,
                                 GtkWidget         *dialog)
 {
-  GimpDialogFactory      *dialog_factory = NULL;
-  GimpDialogFactoryEntry *entry          = NULL;
-  GimpSessionInfo        *info           = NULL;
+  PicmanDialogFactory      *dialog_factory = NULL;
+  PicmanDialogFactoryEntry *entry          = NULL;
+  PicmanSessionInfo        *info           = NULL;
   GList                  *list           = NULL;
   gboolean                toplevel       = FALSE;
 
-  g_return_if_fail (GIMP_IS_DIALOG_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_DIALOG_FACTORY (factory));
   g_return_if_fail (GTK_IS_WIDGET (dialog));
 
   if (g_list_find (factory->p->open_dialogs, dialog))
@@ -870,9 +870,9 @@ gimp_dialog_factory_add_dialog (GimpDialogFactory *factory,
       return;
     }
 
-  dialog_factory = gimp_dialog_factory_from_widget (dialog, &entry);
+  dialog_factory = picman_dialog_factory_from_widget (dialog, &entry);
 
-  if (! gimp_dialog_factory_dialog_sane (factory,
+  if (! picman_dialog_factory_dialog_sane (factory,
                                          dialog_factory,
                                          entry,
                                          dialog))
@@ -882,29 +882,29 @@ gimp_dialog_factory_add_dialog (GimpDialogFactory *factory,
 
   if (entry)
     {
-      /* dialog is a toplevel (but not a GimpDockWindow) or a GimpDockable */
+      /* dialog is a toplevel (but not a PicmanDockWindow) or a PicmanDockable */
 
-      GIMP_LOG (DIALOG_FACTORY, "adding %s \"%s\"",
+      PICMAN_LOG (DIALOG_FACTORY, "adding %s \"%s\"",
                 toplevel ? "toplevel" : "dockable",
                 entry->identifier);
 
       for (list = factory->p->session_infos; list; list = g_list_next (list))
         {
-          GimpSessionInfo *current_info = list->data;
+          PicmanSessionInfo *current_info = list->data;
 
-          if (gimp_session_info_get_factory_entry (current_info) == entry)
+          if (picman_session_info_get_factory_entry (current_info) == entry)
             {
-              if (gimp_session_info_get_widget (current_info))
+              if (picman_session_info_get_widget (current_info))
                 {
-                  if (gimp_session_info_is_singleton (current_info))
+                  if (picman_session_info_is_singleton (current_info))
                     {
                       g_warning ("%s: singleton dialog \"%s\" created twice",
                                  G_STRFUNC, entry->identifier);
 
-                      GIMP_LOG (DIALOG_FACTORY,
+                      PICMAN_LOG (DIALOG_FACTORY,
                                 "corrupt session info: %p (widget %p)",
                                 current_info,
-                                gimp_session_info_get_widget (current_info));
+                                picman_session_info_get_widget (current_info));
 
                       return;
                     }
@@ -912,20 +912,20 @@ gimp_dialog_factory_add_dialog (GimpDialogFactory *factory,
                   continue;
                 }
 
-              gimp_session_info_set_widget (current_info, dialog);
+              picman_session_info_set_widget (current_info, dialog);
 
-              GIMP_LOG (DIALOG_FACTORY,
+              PICMAN_LOG (DIALOG_FACTORY,
                         "updating session info %p (widget %p) for %s \"%s\"",
                         current_info,
-                        gimp_session_info_get_widget (current_info),
+                        picman_session_info_get_widget (current_info),
                         toplevel ? "toplevel" : "dockable",
                         entry->identifier);
 
               if (toplevel &&
-                  gimp_session_info_is_session_managed (current_info) &&
+                  picman_session_info_is_session_managed (current_info) &&
                   ! gtk_widget_get_visible (dialog))
                 {
-                  gimp_session_info_apply_geometry (current_info);
+                  picman_session_info_apply_geometry (current_info);
                 }
 
               info = current_info;
@@ -935,20 +935,20 @@ gimp_dialog_factory_add_dialog (GimpDialogFactory *factory,
 
       if (! info)
         {
-          info = gimp_session_info_new ();
+          info = picman_session_info_new ();
 
-          gimp_session_info_set_widget (info, dialog);
+          picman_session_info_set_widget (info, dialog);
 
-          GIMP_LOG (DIALOG_FACTORY,
+          PICMAN_LOG (DIALOG_FACTORY,
                     "creating session info %p (widget %p) for %s \"%s\"",
                     info,
-                    gimp_session_info_get_widget (info),
+                    picman_session_info_get_widget (info),
                     toplevel ? "toplevel" : "dockable",
                     entry->identifier);
 
-          gimp_session_info_set_factory_entry (info, entry);
+          picman_session_info_set_factory_entry (info, entry);
 
-          if (gimp_session_info_is_session_managed (info))
+          if (picman_session_info_is_session_managed (info))
             {
               /* Make the dialog show up at the user position the
                * first time it is shown. After it has been shown the
@@ -956,22 +956,22 @@ gimp_dialog_factory_add_dialog (GimpDialogFactory *factory,
                * next time. Think of the use cases "hide and show with
                * tab" and "change virtual desktops"
                */
-              GIMP_LOG (WM, "setting GTK_WIN_POS_MOUSE for %p (\"%s\")\n",
+              PICMAN_LOG (WM, "setting GTK_WIN_POS_MOUSE for %p (\"%s\")\n",
                         dialog, entry->identifier);
 
               gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_MOUSE);
               g_signal_connect (dialog, "configure-event",
-                                G_CALLBACK (gimp_dialog_factory_set_user_pos),
+                                G_CALLBACK (picman_dialog_factory_set_user_pos),
                                 NULL);
             }
 
-          gimp_dialog_factory_add_session_info (factory, info);
+          picman_dialog_factory_add_session_info (factory, info);
           g_object_unref (info);
         }
     }
 
   /* Some special logic for dock windows */
-  if (GIMP_IS_DOCK_WINDOW (dialog))
+  if (PICMAN_IS_DOCK_WINDOW (dialog))
     {
       g_signal_emit (factory, factory_signals[DOCK_WINDOW_ADDED], 0, dialog);
     }
@@ -979,40 +979,40 @@ gimp_dialog_factory_add_dialog (GimpDialogFactory *factory,
   factory->p->open_dialogs = g_list_prepend (factory->p->open_dialogs, dialog);
 
   g_signal_connect_object (dialog, "destroy",
-                           G_CALLBACK (gimp_dialog_factory_remove_dialog),
+                           G_CALLBACK (picman_dialog_factory_remove_dialog),
                            factory,
                            G_CONNECT_SWAPPED);
 
-  if (gimp_session_info_is_session_managed (info))
+  if (picman_session_info_is_session_managed (info))
     g_signal_connect_object (dialog, "configure-event",
-                             G_CALLBACK (gimp_dialog_factory_dialog_configure),
+                             G_CALLBACK (picman_dialog_factory_dialog_configure),
                              factory,
                              0);
 }
 
 void
-gimp_dialog_factory_add_foreign (GimpDialogFactory *factory,
+picman_dialog_factory_add_foreign (PicmanDialogFactory *factory,
                                  const gchar       *identifier,
                                  GtkWidget         *dialog)
 {
-  GimpDialogFactory      *dialog_factory;
-  GimpDialogFactoryEntry *entry;
+  PicmanDialogFactory      *dialog_factory;
+  PicmanDialogFactoryEntry *entry;
 
-  g_return_if_fail (GIMP_IS_DIALOG_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_DIALOG_FACTORY (factory));
   g_return_if_fail (identifier != NULL);
   g_return_if_fail (GTK_IS_WIDGET (dialog));
   g_return_if_fail (gtk_widget_is_toplevel (dialog));
 
-  dialog_factory = gimp_dialog_factory_from_widget (dialog, &entry);
+  dialog_factory = picman_dialog_factory_from_widget (dialog, &entry);
 
   if (dialog_factory || entry)
     {
-      g_warning ("%s: dialog was created by a GimpDialogFactory",
+      g_warning ("%s: dialog was created by a PicmanDialogFactory",
                  G_STRFUNC);
       return;
     }
 
-  entry = gimp_dialog_factory_find_entry (factory, identifier);
+  entry = picman_dialog_factory_find_entry (factory, identifier);
 
   if (! entry)
     {
@@ -1028,20 +1028,20 @@ gimp_dialog_factory_add_foreign (GimpDialogFactory *factory,
       return;
     }
 
-  gimp_dialog_factory_set_widget_data (dialog, factory, entry);
+  picman_dialog_factory_set_widget_data (dialog, factory, entry);
 
-  gimp_dialog_factory_add_dialog (factory, dialog);
+  picman_dialog_factory_add_dialog (factory, dialog);
 }
 
 void
-gimp_dialog_factory_remove_dialog (GimpDialogFactory *factory,
+picman_dialog_factory_remove_dialog (PicmanDialogFactory *factory,
                                    GtkWidget         *dialog)
 {
-  GimpDialogFactory      *dialog_factory;
-  GimpDialogFactoryEntry *entry;
+  PicmanDialogFactory      *dialog_factory;
+  PicmanDialogFactoryEntry *entry;
   GList                  *list;
 
-  g_return_if_fail (GIMP_IS_DIALOG_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_DIALOG_FACTORY (factory));
   g_return_if_fail (GTK_IS_WIDGET (dialog));
 
   if (! g_list_find (factory->p->open_dialogs, dialog))
@@ -1052,46 +1052,46 @@ gimp_dialog_factory_remove_dialog (GimpDialogFactory *factory,
 
   factory->p->open_dialogs = g_list_remove (factory->p->open_dialogs, dialog);
 
-  dialog_factory = gimp_dialog_factory_from_widget (dialog, &entry);
+  dialog_factory = picman_dialog_factory_from_widget (dialog, &entry);
 
-  if (! gimp_dialog_factory_dialog_sane (factory,
+  if (! picman_dialog_factory_dialog_sane (factory,
                                          dialog_factory,
                                          entry,
                                          dialog))
     return;
 
-  GIMP_LOG (DIALOG_FACTORY, "removing \"%s\" (dialog = %p)",
+  PICMAN_LOG (DIALOG_FACTORY, "removing \"%s\" (dialog = %p)",
             entry->identifier,
             dialog);
 
   for (list = factory->p->session_infos; list; list = g_list_next (list))
     {
-      GimpSessionInfo *session_info = list->data;
+      PicmanSessionInfo *session_info = list->data;
 
-      if (gimp_session_info_get_widget (session_info) == dialog)
+      if (picman_session_info_get_widget (session_info) == dialog)
         {
-          GIMP_LOG (DIALOG_FACTORY,
+          PICMAN_LOG (DIALOG_FACTORY,
                     "clearing session info %p (widget %p) for \"%s\"",
-                    session_info, gimp_session_info_get_widget (session_info),
+                    session_info, picman_session_info_get_widget (session_info),
                     entry->identifier);
 
-          gimp_session_info_set_widget (session_info, NULL);
+          picman_session_info_set_widget (session_info, NULL);
 
-          gimp_dialog_factory_unset_widget_data (dialog);
+          picman_dialog_factory_unset_widget_data (dialog);
 
           g_signal_handlers_disconnect_by_func (dialog,
-                                                gimp_dialog_factory_set_user_pos,
+                                                picman_dialog_factory_set_user_pos,
                                                 NULL);
           g_signal_handlers_disconnect_by_func (dialog,
-                                                gimp_dialog_factory_remove_dialog,
+                                                picman_dialog_factory_remove_dialog,
                                                 factory);
 
-          if (gimp_session_info_is_session_managed (session_info))
+          if (picman_session_info_is_session_managed (session_info))
             g_signal_handlers_disconnect_by_func (dialog,
-                                                  gimp_dialog_factory_dialog_configure,
+                                                  picman_dialog_factory_dialog_configure,
                                                   factory);
 
-          if (GIMP_IS_DOCK_WINDOW (dialog))
+          if (PICMAN_IS_DOCK_WINDOW (dialog))
             {
               /*  don't save session info for empty docks  */
               factory->p->session_infos = g_list_remove (factory->p->session_infos,
@@ -1108,129 +1108,129 @@ gimp_dialog_factory_remove_dialog (GimpDialogFactory *factory,
 }
 
 void
-gimp_dialog_factory_hide_dialog (GtkWidget *dialog)
+picman_dialog_factory_hide_dialog (GtkWidget *dialog)
 {
-  GimpDialogFactory *factory = NULL;
+  PicmanDialogFactory *factory = NULL;
 
   g_return_if_fail (GTK_IS_WIDGET (dialog));
   g_return_if_fail (gtk_widget_is_toplevel (dialog));
 
-  if (! (factory = gimp_dialog_factory_from_widget (dialog, NULL)))
+  if (! (factory = picman_dialog_factory_from_widget (dialog, NULL)))
     {
-      g_warning ("%s: dialog was not created by a GimpDialogFactory",
+      g_warning ("%s: dialog was not created by a PicmanDialogFactory",
                  G_STRFUNC);
       return;
     }
 
   gtk_widget_hide (dialog);
 
-  if (factory->p->dialog_state != GIMP_DIALOGS_SHOWN)
-    g_object_set_data (G_OBJECT (dialog), GIMP_DIALOG_VISIBILITY_KEY,
-                       GINT_TO_POINTER (GIMP_DIALOG_VISIBILITY_INVISIBLE));
+  if (factory->p->dialog_state != PICMAN_DIALOGS_SHOWN)
+    g_object_set_data (G_OBJECT (dialog), PICMAN_DIALOG_VISIBILITY_KEY,
+                       GINT_TO_POINTER (PICMAN_DIALOG_VISIBILITY_INVISIBLE));
 }
 
 void
-gimp_dialog_factory_set_state (GimpDialogFactory *factory,
-                               GimpDialogsState   state)
+picman_dialog_factory_set_state (PicmanDialogFactory *factory,
+                               PicmanDialogsState   state)
 {
-  g_return_if_fail (GIMP_IS_DIALOG_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_DIALOG_FACTORY (factory));
 
   factory->p->dialog_state = state;
 
-  if (state == GIMP_DIALOGS_SHOWN)
+  if (state == PICMAN_DIALOGS_SHOWN)
     {
-      gimp_dialog_factory_show (factory);
+      picman_dialog_factory_show (factory);
     }
   else
     {
-      gimp_dialog_factory_hide (factory);
+      picman_dialog_factory_hide (factory);
     }
 }
 
-GimpDialogsState
-gimp_dialog_factory_get_state (GimpDialogFactory *factory)
+PicmanDialogsState
+picman_dialog_factory_get_state (PicmanDialogFactory *factory)
 {
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (factory), 0);
+  g_return_val_if_fail (PICMAN_IS_DIALOG_FACTORY (factory), 0);
 
   return factory->p->dialog_state;
 }
 
 void
-gimp_dialog_factory_show_with_display (GimpDialogFactory *factory)
+picman_dialog_factory_show_with_display (PicmanDialogFactory *factory)
 {
-  g_return_if_fail (GIMP_IS_DIALOG_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_DIALOG_FACTORY (factory));
 
-  if (factory->p->dialog_state == GIMP_DIALOGS_HIDDEN_WITH_DISPLAY)
+  if (factory->p->dialog_state == PICMAN_DIALOGS_HIDDEN_WITH_DISPLAY)
     {
-      gimp_dialog_factory_set_state (factory, GIMP_DIALOGS_SHOWN);
+      picman_dialog_factory_set_state (factory, PICMAN_DIALOGS_SHOWN);
     }
 }
 
 void
-gimp_dialog_factory_hide_with_display (GimpDialogFactory *factory)
+picman_dialog_factory_hide_with_display (PicmanDialogFactory *factory)
 {
-  g_return_if_fail (GIMP_IS_DIALOG_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_DIALOG_FACTORY (factory));
 
-  if (factory->p->dialog_state == GIMP_DIALOGS_SHOWN)
+  if (factory->p->dialog_state == PICMAN_DIALOGS_SHOWN)
     {
-      gimp_dialog_factory_set_state (factory, GIMP_DIALOGS_HIDDEN_WITH_DISPLAY);
+      picman_dialog_factory_set_state (factory, PICMAN_DIALOGS_HIDDEN_WITH_DISPLAY);
     }
 }
 
-static GQuark gimp_dialog_factory_key       = 0;
-static GQuark gimp_dialog_factory_entry_key = 0;
+static GQuark picman_dialog_factory_key       = 0;
+static GQuark picman_dialog_factory_entry_key = 0;
 
-GimpDialogFactory *
-gimp_dialog_factory_from_widget (GtkWidget               *dialog,
-                                 GimpDialogFactoryEntry **entry)
+PicmanDialogFactory *
+picman_dialog_factory_from_widget (GtkWidget               *dialog,
+                                 PicmanDialogFactoryEntry **entry)
 {
   g_return_val_if_fail (GTK_IS_WIDGET (dialog), NULL);
 
-  if (! gimp_dialog_factory_key)
+  if (! picman_dialog_factory_key)
     {
-      gimp_dialog_factory_key =
-        g_quark_from_static_string ("gimp-dialog-factory");
+      picman_dialog_factory_key =
+        g_quark_from_static_string ("picman-dialog-factory");
 
-      gimp_dialog_factory_entry_key =
-        g_quark_from_static_string ("gimp-dialog-factory-entry");
+      picman_dialog_factory_entry_key =
+        g_quark_from_static_string ("picman-dialog-factory-entry");
     }
 
   if (entry)
     *entry = g_object_get_qdata (G_OBJECT (dialog),
-                                 gimp_dialog_factory_entry_key);
+                                 picman_dialog_factory_entry_key);
 
-  return g_object_get_qdata (G_OBJECT (dialog), gimp_dialog_factory_key);
+  return g_object_get_qdata (G_OBJECT (dialog), picman_dialog_factory_key);
 }
 
-#define GIMP_DIALOG_FACTORY_MIN_SIZE_KEY "gimp-dialog-factory-min-size"
+#define PICMAN_DIALOG_FACTORY_MIN_SIZE_KEY "picman-dialog-factory-min-size"
 
 void
-gimp_dialog_factory_set_has_min_size (GtkWindow *window,
+picman_dialog_factory_set_has_min_size (GtkWindow *window,
                                       gboolean   has_min_size)
 {
   g_return_if_fail (GTK_IS_WINDOW (window));
 
-  g_object_set_data (G_OBJECT (window), GIMP_DIALOG_FACTORY_MIN_SIZE_KEY,
+  g_object_set_data (G_OBJECT (window), PICMAN_DIALOG_FACTORY_MIN_SIZE_KEY,
                      GINT_TO_POINTER (has_min_size ? TRUE : FALSE));
 }
 
 gboolean
-gimp_dialog_factory_get_has_min_size (GtkWindow *window)
+picman_dialog_factory_get_has_min_size (GtkWindow *window)
 {
   g_return_val_if_fail (GTK_IS_WINDOW (window), FALSE);
 
   return GPOINTER_TO_INT (g_object_get_data (G_OBJECT (window),
-                                             GIMP_DIALOG_FACTORY_MIN_SIZE_KEY));
+                                             PICMAN_DIALOG_FACTORY_MIN_SIZE_KEY));
 }
 
 
 /*  private functions  */
 
 static GtkWidget *
-gimp_dialog_factory_constructor (GimpDialogFactory      *factory,
-                                 GimpDialogFactoryEntry *entry,
-                                 GimpContext            *context,
-                                 GimpUIManager          *ui_manager,
+picman_dialog_factory_constructor (PicmanDialogFactory      *factory,
+                                 PicmanDialogFactoryEntry *entry,
+                                 PicmanContext            *context,
+                                 PicmanUIManager          *ui_manager,
                                  gint                    view_size)
 {
   GtkWidget *widget;
@@ -1244,13 +1244,13 @@ gimp_dialog_factory_constructor (GimpDialogFactory      *factory,
     {
       GtkWidget *dockable = NULL;
 
-      dockable = gimp_dockable_new (entry->name, entry->blurb,
+      dockable = picman_dockable_new (entry->name, entry->blurb,
                                     entry->stock_id, entry->help_id);
       gtk_container_add (GTK_CONTAINER (dockable), widget);
       gtk_widget_show (widget);
 
       /* EEK */
-      g_object_set_data (G_OBJECT (dockable), "gimp-dialog-identifier",
+      g_object_set_data (G_OBJECT (dockable), "picman-dialog-identifier",
                          entry->identifier);
 
       /* Return the dockable instead */
@@ -1261,61 +1261,61 @@ gimp_dialog_factory_constructor (GimpDialogFactory      *factory,
 }
 
 static void
-gimp_dialog_factory_config_notify (GimpDialogFactory *factory,
+picman_dialog_factory_config_notify (PicmanDialogFactory *factory,
                                    GParamSpec        *pspec,
-                                   GimpGuiConfig     *config)
+                                   PicmanGuiConfig     *config)
 {
-  GimpDialogsState state     = gimp_dialog_factory_get_state (factory);
-  GimpDialogsState new_state = state;
+  PicmanDialogsState state     = picman_dialog_factory_get_state (factory);
+  PicmanDialogsState new_state = state;
 
   /* Make sure the state and config are in sync */
-  if (config->hide_docks && state == GIMP_DIALOGS_SHOWN)
-    new_state = GIMP_DIALOGS_HIDDEN_EXPLICITLY;
+  if (config->hide_docks && state == PICMAN_DIALOGS_SHOWN)
+    new_state = PICMAN_DIALOGS_HIDDEN_EXPLICITLY;
   else if (! config->hide_docks)
-    new_state = GIMP_DIALOGS_SHOWN;
+    new_state = PICMAN_DIALOGS_SHOWN;
 
   if (state != new_state)
-    gimp_dialog_factory_set_state (factory, new_state);
+    picman_dialog_factory_set_state (factory, new_state);
 }
 
 static void
-gimp_dialog_factory_set_widget_data (GtkWidget              *dialog,
-                                     GimpDialogFactory      *factory,
-                                     GimpDialogFactoryEntry *entry)
+picman_dialog_factory_set_widget_data (GtkWidget              *dialog,
+                                     PicmanDialogFactory      *factory,
+                                     PicmanDialogFactoryEntry *entry)
 {
   g_return_if_fail (GTK_IS_WIDGET (dialog));
-  g_return_if_fail (GIMP_IS_DIALOG_FACTORY (factory));
+  g_return_if_fail (PICMAN_IS_DIALOG_FACTORY (factory));
 
-  if (! gimp_dialog_factory_key)
+  if (! picman_dialog_factory_key)
     {
-      gimp_dialog_factory_key =
-        g_quark_from_static_string ("gimp-dialog-factory");
+      picman_dialog_factory_key =
+        g_quark_from_static_string ("picman-dialog-factory");
 
-      gimp_dialog_factory_entry_key =
-        g_quark_from_static_string ("gimp-dialog-factory-entry");
+      picman_dialog_factory_entry_key =
+        g_quark_from_static_string ("picman-dialog-factory-entry");
     }
 
-  g_object_set_qdata (G_OBJECT (dialog), gimp_dialog_factory_key, factory);
+  g_object_set_qdata (G_OBJECT (dialog), picman_dialog_factory_key, factory);
 
   if (entry)
-    g_object_set_qdata (G_OBJECT (dialog), gimp_dialog_factory_entry_key,
+    g_object_set_qdata (G_OBJECT (dialog), picman_dialog_factory_entry_key,
                         entry);
 }
 
 static void
-gimp_dialog_factory_unset_widget_data (GtkWidget *dialog)
+picman_dialog_factory_unset_widget_data (GtkWidget *dialog)
 {
   g_return_if_fail (GTK_IS_WIDGET (dialog));
 
-  if (! gimp_dialog_factory_key)
+  if (! picman_dialog_factory_key)
     return;
 
-  g_object_set_qdata (G_OBJECT (dialog), gimp_dialog_factory_key,       NULL);
-  g_object_set_qdata (G_OBJECT (dialog), gimp_dialog_factory_entry_key, NULL);
+  g_object_set_qdata (G_OBJECT (dialog), picman_dialog_factory_key,       NULL);
+  g_object_set_qdata (G_OBJECT (dialog), picman_dialog_factory_entry_key, NULL);
 }
 
 static gboolean
-gimp_dialog_factory_set_user_pos (GtkWidget         *dialog,
+picman_dialog_factory_set_user_pos (GtkWidget         *dialog,
                                   GdkEventConfigure *cevent,
                                   gpointer           data)
 {
@@ -1324,13 +1324,13 @@ gimp_dialog_factory_set_user_pos (GtkWidget         *dialog,
   /* Not only set geometry hints, also reset window position */
   gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_NONE);
   g_signal_handlers_disconnect_by_func (dialog,
-                                        gimp_dialog_factory_set_user_pos,
+                                        picman_dialog_factory_set_user_pos,
                                         data);
 
-  GIMP_LOG (WM, "setting GDK_HINT_USER_POS for %p\n", dialog);
+  PICMAN_LOG (WM, "setting GDK_HINT_USER_POS for %p\n", dialog);
   geometry_mask = GDK_HINT_USER_POS;
 
-  if (gimp_dialog_factory_get_has_min_size (GTK_WINDOW (dialog)))
+  if (picman_dialog_factory_get_has_min_size (GTK_WINDOW (dialog)))
     geometry_mask |= GDK_HINT_MIN_SIZE;
 
   gtk_window_set_geometry_hints (GTK_WINDOW (dialog), NULL, NULL,
@@ -1340,12 +1340,12 @@ gimp_dialog_factory_set_user_pos (GtkWidget         *dialog,
 }
 
 static gboolean
-gimp_dialog_factory_dialog_configure (GtkWidget         *dialog,
+picman_dialog_factory_dialog_configure (GtkWidget         *dialog,
                                       GdkEventConfigure *cevent,
-                                      GimpDialogFactory *factory)
+                                      PicmanDialogFactory *factory)
 {
-  GimpDialogFactory      *dialog_factory;
-  GimpDialogFactoryEntry *entry;
+  PicmanDialogFactory      *dialog_factory;
+  PicmanDialogFactoryEntry *entry;
   GList                  *list;
 
   if (! g_list_find (factory->p->open_dialogs, dialog))
@@ -1354,9 +1354,9 @@ gimp_dialog_factory_dialog_configure (GtkWidget         *dialog,
       return FALSE;
     }
 
-  dialog_factory = gimp_dialog_factory_from_widget (dialog, &entry);
+  dialog_factory = picman_dialog_factory_from_widget (dialog, &entry);
 
-  if (! gimp_dialog_factory_dialog_sane (factory,
+  if (! picman_dialog_factory_dialog_sane (factory,
                                          dialog_factory,
                                          entry,
                                          dialog))
@@ -1364,20 +1364,20 @@ gimp_dialog_factory_dialog_configure (GtkWidget         *dialog,
 
   for (list = factory->p->session_infos; list; list = g_list_next (list))
     {
-      GimpSessionInfo *session_info = list->data;
+      PicmanSessionInfo *session_info = list->data;
 
-      if (gimp_session_info_get_widget (session_info) == dialog)
+      if (picman_session_info_get_widget (session_info) == dialog)
         {
-          gimp_session_info_read_geometry (session_info, cevent);
+          picman_session_info_read_geometry (session_info, cevent);
 
-          GIMP_LOG (DIALOG_FACTORY,
+          PICMAN_LOG (DIALOG_FACTORY,
                     "updated session info for \"%s\" from window geometry "
                     "(x=%d y=%d  %dx%d)",
                     entry->identifier,
-                    gimp_session_info_get_x (session_info),
-                    gimp_session_info_get_y (session_info),
-                    gimp_session_info_get_width (session_info),
-                    gimp_session_info_get_height (session_info));
+                    picman_session_info_get_x (session_info),
+                    picman_session_info_get_y (session_info),
+                    picman_session_info_get_width (session_info),
+                    picman_session_info_get_height (session_info));
 
           break;
         }
@@ -1387,57 +1387,57 @@ gimp_dialog_factory_dialog_configure (GtkWidget         *dialog,
 }
 
 void
-gimp_dialog_factory_save (GimpDialogFactory *factory,
-                          GimpConfigWriter  *writer)
+picman_dialog_factory_save (PicmanDialogFactory *factory,
+                          PicmanConfigWriter  *writer)
 {
   GList *infos;
 
   for (infos = factory->p->session_infos; infos; infos = g_list_next (infos))
     {
-      GimpSessionInfo *info = infos->data;
+      PicmanSessionInfo *info = infos->data;
 
       /*  we keep session info entries for all toplevel dialogs created
        *  by the factory but don't save them if they don't want to be
        *  managed
        */
-      if (! gimp_session_info_is_session_managed (info) ||
-          gimp_session_info_get_factory_entry (info) == NULL)
+      if (! picman_session_info_is_session_managed (info) ||
+          picman_session_info_get_factory_entry (info) == NULL)
         continue;
 
-      if (gimp_session_info_get_widget (info))
-        gimp_session_info_get_info (info);
+      if (picman_session_info_get_widget (info))
+        picman_session_info_get_info (info);
 
-      gimp_config_writer_open (writer, "session-info");
-      gimp_config_writer_string (writer,
-                                 gimp_object_get_name (factory));
+      picman_config_writer_open (writer, "session-info");
+      picman_config_writer_string (writer,
+                                 picman_object_get_name (factory));
 
-      GIMP_CONFIG_GET_INTERFACE (info)->serialize (GIMP_CONFIG (info),
+      PICMAN_CONFIG_GET_INTERFACE (info)->serialize (PICMAN_CONFIG (info),
                                                    writer,
                                                    NULL);
 
-      gimp_config_writer_close (writer);
+      picman_config_writer_close (writer);
 
-      if (gimp_session_info_get_widget (info))
-        gimp_session_info_clear_info (info);
+      if (picman_session_info_get_widget (info))
+        picman_session_info_clear_info (info);
     }
 }
 
 void
-gimp_dialog_factory_restore (GimpDialogFactory *factory)
+picman_dialog_factory_restore (PicmanDialogFactory *factory)
 {
   GList *infos;
 
   for (infos = factory->p->session_infos; infos; infos = g_list_next (infos))
     {
-      GimpSessionInfo *info = infos->data;
+      PicmanSessionInfo *info = infos->data;
 
-      if (gimp_session_info_get_open (info))
+      if (picman_session_info_get_open (info))
         {
-          gimp_session_info_restore (info, factory);
+          picman_session_info_restore (info, factory);
         }
       else
         {
-          GIMP_LOG (DIALOG_FACTORY,
+          PICMAN_LOG (DIALOG_FACTORY,
                     "skipping to restore session info %p, not open",
                     info);
         }
@@ -1445,7 +1445,7 @@ gimp_dialog_factory_restore (GimpDialogFactory *factory)
 }
 
 static void
-gimp_dialog_factory_hide (GimpDialogFactory *factory)
+picman_dialog_factory_hide (PicmanDialogFactory *factory)
 {
   GList *list;
 
@@ -1455,36 +1455,36 @@ gimp_dialog_factory_hide (GimpDialogFactory *factory)
 
       if (GTK_IS_WIDGET (widget) && gtk_widget_is_toplevel (widget))
         {
-          GimpDialogFactoryEntry    *entry      = NULL;
-          GimpDialogVisibilityState  visibility = GIMP_DIALOG_VISIBILITY_UNKNOWN;
+          PicmanDialogFactoryEntry    *entry      = NULL;
+          PicmanDialogVisibilityState  visibility = PICMAN_DIALOG_VISIBILITY_UNKNOWN;
 
-          gimp_dialog_factory_from_widget (widget, &entry);
+          picman_dialog_factory_from_widget (widget, &entry);
           if (! entry->hideable)
             continue;
 
           if (gtk_widget_get_visible (widget))
             {
               gtk_widget_hide (widget);
-              visibility = GIMP_DIALOG_VISIBILITY_HIDDEN;
+              visibility = PICMAN_DIALOG_VISIBILITY_HIDDEN;
 
-              GIMP_LOG (WM, "Hiding '%s' [%p]",
+              PICMAN_LOG (WM, "Hiding '%s' [%p]",
                         gtk_window_get_title (GTK_WINDOW (widget)),
                         widget);
             }
           else
             {
-              visibility = GIMP_DIALOG_VISIBILITY_INVISIBLE;
+              visibility = PICMAN_DIALOG_VISIBILITY_INVISIBLE;
             }
 
           g_object_set_data (G_OBJECT (widget),
-                             GIMP_DIALOG_VISIBILITY_KEY,
+                             PICMAN_DIALOG_VISIBILITY_KEY,
                              GINT_TO_POINTER (visibility));
         }
     }
 }
 
 static void
-gimp_dialog_factory_show (GimpDialogFactory *factory)
+picman_dialog_factory_show (PicmanDialogFactory *factory)
 {
   GList *list;
 
@@ -1494,16 +1494,16 @@ gimp_dialog_factory_show (GimpDialogFactory *factory)
 
       if (GTK_IS_WIDGET (widget) && gtk_widget_is_toplevel (widget))
         {
-          GimpDialogVisibilityState visibility;
+          PicmanDialogVisibilityState visibility;
 
           visibility =
             GPOINTER_TO_INT (g_object_get_data (G_OBJECT (widget),
-                                                GIMP_DIALOG_VISIBILITY_KEY));
+                                                PICMAN_DIALOG_VISIBILITY_KEY));
 
           if (! gtk_widget_get_visible (widget) &&
-              visibility == GIMP_DIALOG_VISIBILITY_HIDDEN)
+              visibility == PICMAN_DIALOG_VISIBILITY_HIDDEN)
             {
-              GIMP_LOG (WM, "Showing '%s' [%p]",
+              PICMAN_LOG (WM, "Showing '%s' [%p]",
                         gtk_window_get_title (GTK_WINDOW (widget)),
                         widget);
 
@@ -1512,8 +1512,8 @@ gimp_dialog_factory_show (GimpDialogFactory *factory)
                */
               gtk_widget_show (widget);
               g_object_set_data (G_OBJECT (widget),
-                                 GIMP_DIALOG_VISIBILITY_KEY,
-                                 GINT_TO_POINTER (GIMP_DIALOG_VISIBILITY_VISIBLE));
+                                 PICMAN_DIALOG_VISIBILITY_KEY,
+                                 GINT_TO_POINTER (PICMAN_DIALOG_VISIBILITY_VISIBLE));
 
               if (gtk_widget_get_visible (widget))
                 gdk_window_raise (gtk_widget_get_window (widget));
@@ -1523,7 +1523,7 @@ gimp_dialog_factory_show (GimpDialogFactory *factory)
 }
 
 void
-gimp_dialog_factory_set_busy (GimpDialogFactory *factory)
+picman_dialog_factory_set_busy (PicmanDialogFactory *factory)
 {
   GdkDisplay *display = NULL;
   GdkCursor  *cursor  = NULL;
@@ -1545,11 +1545,11 @@ gimp_dialog_factory_set_busy (GimpDialogFactory *factory)
               if (cursor)
                 gdk_cursor_unref (cursor);
 
-              cursor = gimp_cursor_new (display,
-                                        GIMP_HANDEDNESS_RIGHT,
+              cursor = picman_cursor_new (display,
+                                        PICMAN_HANDEDNESS_RIGHT,
                                         GDK_WATCH,
-                                        GIMP_TOOL_CURSOR_NONE,
-                                        GIMP_CURSOR_MODIFIER_NONE);
+                                        PICMAN_TOOL_CURSOR_NONE,
+                                        PICMAN_CURSOR_MODIFIER_NONE);
             }
 
           if (gtk_widget_get_window (widget))
@@ -1562,7 +1562,7 @@ gimp_dialog_factory_set_busy (GimpDialogFactory *factory)
 }
 
 void
-gimp_dialog_factory_unset_busy (GimpDialogFactory *factory)
+picman_dialog_factory_unset_busy (PicmanDialogFactory *factory)
 {
   GList *list;
 
@@ -1582,30 +1582,30 @@ gimp_dialog_factory_unset_busy (GimpDialogFactory *factory)
 }
 
 /**
- * gimp_dialog_factory_get_singleton:
+ * picman_dialog_factory_get_singleton:
  *
- * Returns: The toplevel GimpDialogFactory instance.
+ * Returns: The toplevel PicmanDialogFactory instance.
  **/
-GimpDialogFactory *
-gimp_dialog_factory_get_singleton (void)
+PicmanDialogFactory *
+picman_dialog_factory_get_singleton (void)
 {
-  g_return_val_if_fail (gimp_toplevel_factory != NULL, NULL);
+  g_return_val_if_fail (picman_toplevel_factory != NULL, NULL);
 
-  return gimp_toplevel_factory;
+  return picman_toplevel_factory;
 }
 
 /**
- * gimp_dialog_factory_set_singleton:
+ * picman_dialog_factory_set_singleton:
  * @:
  *
- * Set the toplevel GimpDialogFactory instance. Must only be called by
+ * Set the toplevel PicmanDialogFactory instance. Must only be called by
  * dialogs_init()!.
  **/
 void
-gimp_dialog_factory_set_singleton (GimpDialogFactory *factory)
+picman_dialog_factory_set_singleton (PicmanDialogFactory *factory)
 {
-  g_return_if_fail (gimp_toplevel_factory == NULL ||
+  g_return_if_fail (picman_toplevel_factory == NULL ||
                     factory               == NULL);
 
-  gimp_toplevel_factory = factory;
+  picman_toplevel_factory = factory;
 }

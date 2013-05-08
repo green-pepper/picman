@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * color-history.c
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "gui-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
 #include "color-history.h"
 
@@ -41,30 +41,30 @@ enum
 
 
 static void   color_history_init        (void);
-static void   color_history_add_from_rc (GimpRGB *color);
+static void   color_history_add_from_rc (PicmanRGB *color);
 
 
-static GimpRGB   color_history[COLOR_HISTORY_SIZE];
+static PicmanRGB   color_history[COLOR_HISTORY_SIZE];
 static gboolean  color_history_initialized = FALSE;
 
 
 void
-color_history_save (Gimp *gimp)
+color_history_save (Picman *picman)
 {
-  GimpConfigWriter *writer;
+  PicmanConfigWriter *writer;
   gchar            *filename;
   gint              i;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  filename = gimp_personal_rc_file ("colorrc");
+  filename = picman_personal_rc_file ("colorrc");
 
-  if (gimp->be_verbose)
-    g_print ("Writing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Writing '%s'\n", picman_filename_to_utf8 (filename));
 
-  writer = gimp_config_writer_new_file (filename,
+  writer = picman_config_writer_new_file (filename,
                                         TRUE,
-                                        "GIMP colorrc\n\n"
+                                        "PICMAN colorrc\n\n"
                                         "This file holds a list of "
                                         "recently used colors.",
                                         NULL);
@@ -76,7 +76,7 @@ color_history_save (Gimp *gimp)
   if (! color_history_initialized)
     color_history_init ();
 
-  gimp_config_writer_open (writer, "color-history");
+  picman_config_writer_open (writer, "color-history");
 
   for (i = 0; i < COLOR_HISTORY_SIZE; i++)
     {
@@ -91,32 +91,32 @@ color_history_save (Gimp *gimp)
       g_ascii_formatd (buf[3],
                        G_ASCII_DTOSTR_BUF_SIZE, "%f", color_history[i].a);
 
-      gimp_config_writer_open (writer, "color-rgba");
-      gimp_config_writer_printf (writer, "%s %s %s %s",
+      picman_config_writer_open (writer, "color-rgba");
+      picman_config_writer_printf (writer, "%s %s %s %s",
                                  buf[0], buf[1], buf[2], buf[3]);
-      gimp_config_writer_close (writer);
+      picman_config_writer_close (writer);
     }
 
-  gimp_config_writer_close (writer);
+  picman_config_writer_close (writer);
 
-  gimp_config_writer_finish (writer, "end of colorrc", NULL);
+  picman_config_writer_finish (writer, "end of colorrc", NULL);
 }
 
 void
-color_history_restore (Gimp *gimp)
+color_history_restore (Picman *picman)
 {
   gchar      *filename;
   GScanner   *scanner;
   GTokenType  token;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  filename = gimp_personal_rc_file ("colorrc");
+  filename = picman_personal_rc_file ("colorrc");
 
-  if (gimp->be_verbose)
-    g_print ("Parsing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Parsing '%s'\n", picman_filename_to_utf8 (filename));
 
-  scanner = gimp_scanner_new_file (filename, NULL);
+  scanner = picman_scanner_new_file (filename, NULL);
   g_free (filename);
 
   if (! scanner)
@@ -142,9 +142,9 @@ color_history_restore (Gimp *gimp)
             {
               while (g_scanner_peek_next_token (scanner) == G_TOKEN_LEFT_PAREN)
                 {
-                  GimpRGB color;
+                  PicmanRGB color;
 
-                  if (! gimp_scanner_parse_color (scanner, &color))
+                  if (! picman_scanner_parse_color (scanner, &color))
                     goto error;
 
                   color_history_add_from_rc (&color);
@@ -163,12 +163,12 @@ color_history_restore (Gimp *gimp)
     }
 
  error:
-  gimp_scanner_destroy (scanner);
+  picman_scanner_destroy (scanner);
 }
 
 void
 color_history_set (gint           index,
-                   const GimpRGB *rgb)
+                   const PicmanRGB *rgb)
 {
   g_return_if_fail (index >= 0);
   g_return_if_fail (index < COLOR_HISTORY_SIZE);
@@ -182,7 +182,7 @@ color_history_set (gint           index,
 
 void
 color_history_get (gint     index,
-                   GimpRGB *rgb)
+                   PicmanRGB *rgb)
 {
   g_return_if_fail (index >= 0);
   g_return_if_fail (index < COLOR_HISTORY_SIZE);
@@ -195,7 +195,7 @@ color_history_get (gint     index,
 }
 
 gint
-color_history_add (const GimpRGB *rgb)
+color_history_add (const PicmanRGB *rgb)
 {
   gint shift_begin = -1;
   gint i, j;
@@ -208,7 +208,7 @@ color_history_add (const GimpRGB *rgb)
   /*  is the added color already there?  */
   for (i = 0; i < COLOR_HISTORY_SIZE; i++)
     {
-      if (gimp_rgba_distance (&color_history[i], rgb) < 0.0001)
+      if (picman_rgba_distance (&color_history[i], rgb) < 0.0001)
         {
           shift_begin = i;
 
@@ -223,7 +223,7 @@ color_history_add (const GimpRGB *rgb)
         {
           for (j = i + 1; j < COLOR_HISTORY_SIZE; j++)
             {
-              if (gimp_rgba_distance (&color_history[i],
+              if (picman_rgba_distance (&color_history[i],
                                       &color_history[j]) < 0.0001)
                 {
                   shift_begin = i;
@@ -257,13 +257,13 @@ color_history_init (void)
   gint i;
 
   for (i = 0; i < COLOR_HISTORY_SIZE; i++)
-    gimp_rgba_set (&color_history[i], 1.0, 1.0, 1.0, GIMP_OPACITY_OPAQUE);
+    picman_rgba_set (&color_history[i], 1.0, 1.0, 1.0, PICMAN_OPACITY_OPAQUE);
 
   color_history_initialized = TRUE;
 }
 
 static void
-color_history_add_from_rc (GimpRGB *color)
+color_history_add_from_rc (PicmanRGB *color)
 {
   static gint index = 0;
 

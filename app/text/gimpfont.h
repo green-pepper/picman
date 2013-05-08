@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfont.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
- *                    Sven Neumann <sven@gimp.org>
+ * picmanfont.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
+ *                    Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,27 +19,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FONT_H__
-#define __GIMP_FONT_H__
+#ifndef __PICMAN_FONT_H__
+#define __PICMAN_FONT_H__
 
 
-#include "core/gimpviewable.h"
+#include "core/picmanviewable.h"
 
 
-#define GIMP_TYPE_FONT            (gimp_font_get_type ())
-#define GIMP_FONT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FONT, GimpFont))
-#define GIMP_FONT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FONT, GimpFontClass))
-#define GIMP_IS_FONT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FONT))
-#define GIMP_IS_FONT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FONT))
-#define GIMP_FONT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FONT, GimpFontClass))
+#define PICMAN_TYPE_FONT            (picman_font_get_type ())
+#define PICMAN_FONT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FONT, PicmanFont))
+#define PICMAN_FONT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FONT, PicmanFontClass))
+#define PICMAN_IS_FONT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FONT))
+#define PICMAN_IS_FONT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FONT))
+#define PICMAN_FONT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FONT, PicmanFontClass))
 
 
-typedef struct _GimpFontClass GimpFontClass;
+typedef struct _PicmanFontClass PicmanFontClass;
 
 
-GType      gimp_font_get_type     (void) G_GNUC_CONST;
+GType      picman_font_get_type     (void) G_GNUC_CONST;
 
-GimpFont * gimp_font_get_standard (void);
+PicmanFont * picman_font_get_standard (void);
 
 
-#endif /* __GIMP_FONT_H__ */
+#endif /* __PICMAN_FONT_H__ */

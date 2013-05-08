@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptemplateeditor.h
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * picmantemplateeditor.h
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,42 +18,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEMPLATE_EDITOR_H__
-#define __GIMP_TEMPLATE_EDITOR_H__
+#ifndef __PICMAN_TEMPLATE_EDITOR_H__
+#define __PICMAN_TEMPLATE_EDITOR_H__
 
 
-#define GIMP_TYPE_TEMPLATE_EDITOR            (gimp_template_editor_get_type ())
-#define GIMP_TEMPLATE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TEMPLATE_EDITOR, GimpTemplateEditor))
-#define GIMP_TEMPLATE_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TEMPLATE_EDITOR, GimpTemplateEditorClass))
-#define GIMP_IS_TEMPLATE_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TEMPLATE_EDITOR))
-#define GIMP_IS_TEMPLATE_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TEMPLATE_EDITOR))
-#define GIMP_TEMPLATE_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TEMPLATE_EDITOR, GimpTemplateEditorClass))
+#define PICMAN_TYPE_TEMPLATE_EDITOR            (picman_template_editor_get_type ())
+#define PICMAN_TEMPLATE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TEMPLATE_EDITOR, PicmanTemplateEditor))
+#define PICMAN_TEMPLATE_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TEMPLATE_EDITOR, PicmanTemplateEditorClass))
+#define PICMAN_IS_TEMPLATE_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TEMPLATE_EDITOR))
+#define PICMAN_IS_TEMPLATE_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TEMPLATE_EDITOR))
+#define PICMAN_TEMPLATE_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TEMPLATE_EDITOR, PicmanTemplateEditorClass))
 
 
-typedef struct _GimpTemplateEditorClass GimpTemplateEditorClass;
+typedef struct _PicmanTemplateEditorClass PicmanTemplateEditorClass;
 
-struct _GimpTemplateEditor
+struct _PicmanTemplateEditor
 {
   GtkBox  parent_instance;
 };
 
-struct _GimpTemplateEditorClass
+struct _PicmanTemplateEditorClass
 {
   GtkBoxClass   parent_class;
 };
 
 
-GType          gimp_template_editor_get_type      (void) G_GNUC_CONST;
+GType          picman_template_editor_get_type      (void) G_GNUC_CONST;
 
-GtkWidget    * gimp_template_editor_new           (GimpTemplate       *template,
-                                                   Gimp               *gimp,
+GtkWidget    * picman_template_editor_new           (PicmanTemplate       *template,
+                                                   Picman               *picman,
                                                    gboolean            edit_template);
 
-GimpTemplate * gimp_template_editor_get_template  (GimpTemplateEditor *editor);
+PicmanTemplate * picman_template_editor_get_template  (PicmanTemplateEditor *editor);
 
-void           gimp_template_editor_show_advanced (GimpTemplateEditor *editor,
+void           picman_template_editor_show_advanced (PicmanTemplateEditor *editor,
                                                    gboolean            expanded);
-GtkWidget    * gimp_template_editor_get_size_se   (GimpTemplateEditor *editor);
+GtkWidget    * picman_template_editor_get_size_se   (PicmanTemplateEditor *editor);
 
 
-#endif  /*  __GIMP_TEMPLATE_EDITOR_H__  */
+#endif  /*  __PICMAN_TEMPLATE_EDITOR_H__  */

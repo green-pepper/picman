@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1999 Peter Mattis and Spencer Kimball
  *
- * gimplimits.h
+ * picmanlimits.h
  * Copyright (C) 1999 Michael Natterer <mitschel@cs.tu-berlin.de>
  *
  * This library is free software: you can redistribute it and/or
@@ -19,74 +19,74 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_BASE_H_INSIDE__) && !defined (GIMP_BASE_COMPILATION)
-#error "Only <libgimpbase/gimpbase.h> can be included directly."
+#if !defined (__PICMAN_BASE_H_INSIDE__) && !defined (PICMAN_BASE_COMPILATION)
+#error "Only <libpicmanbase/picmanbase.h> can be included directly."
 #endif
 
-#ifndef __GIMP_LIMITS_H__
-#define __GIMP_LIMITS_H__
+#ifndef __PICMAN_LIMITS_H__
+#define __PICMAN_LIMITS_H__
 
 G_BEGIN_DECLS
 
 
 /**
- * SECTION: gimplimits
- * @title: gimplimits
- * @short_description: Boundaries of some GIMP data types and some
+ * SECTION: picmanlimits
+ * @title: picmanlimits
+ * @short_description: Boundaries of some PICMAN data types and some
  *                     global constants.
  *
- * Boundaries of some GIMP data types and some global constants.
+ * Boundaries of some PICMAN data types and some global constants.
  **/
 
 
 /**
- * GIMP_MIN_IMAGE_SIZE:
+ * PICMAN_MIN_IMAGE_SIZE:
  *
- * The minimum width and height of a GIMP image in pixels.
+ * The minimum width and height of a PICMAN image in pixels.
  **/
-#define GIMP_MIN_IMAGE_SIZE  1
+#define PICMAN_MIN_IMAGE_SIZE  1
 
 /**
- * GIMP_MAX_IMAGE_SIZE:
+ * PICMAN_MAX_IMAGE_SIZE:
  *
- * The maximum width and height of a GIMP image in pixels. This is a
+ * The maximum width and height of a PICMAN image in pixels. This is a
  * somewhat arbitray value that can be used when an upper value for
  * pixel sizes is needed; for example to give a spin button an upper
  * limit.
  **/
-#define GIMP_MAX_IMAGE_SIZE  262144    /*  2^18  */
+#define PICMAN_MAX_IMAGE_SIZE  262144    /*  2^18  */
 
 
 /**
- * GIMP_MIN_RESOLUTION:
+ * PICMAN_MIN_RESOLUTION:
  *
- * The minimum resolution of a GIMP image in pixels per inch. This is
+ * The minimum resolution of a PICMAN image in pixels per inch. This is
  * a somewhat arbitray value that can be used when a lower value for a
- * resolution is needed. GIMP will not accept resolutions smaller than
+ * resolution is needed. PICMAN will not accept resolutions smaller than
  * this value.
  **/
-#define GIMP_MIN_RESOLUTION  5e-3      /*  shouldn't display as 0.000  */
+#define PICMAN_MIN_RESOLUTION  5e-3      /*  shouldn't display as 0.000  */
 
 /**
- * GIMP_MAX_RESOLUTION:
+ * PICMAN_MAX_RESOLUTION:
  *
- * The maximum resolution of a GIMP image in pixels per inch. This is
+ * The maximum resolution of a PICMAN image in pixels per inch. This is
  * a somewhat arbitray value that can be used to when an upper value
- * for a resolution is needed. GIMP will not accept resolutions larger
+ * for a resolution is needed. PICMAN will not accept resolutions larger
  * than this value.
  **/
-#define GIMP_MAX_RESOLUTION  1048576.0
+#define PICMAN_MAX_RESOLUTION  1048576.0
 
 
 /**
- * GIMP_MAX_MEMSIZE:
+ * PICMAN_MAX_MEMSIZE:
  *
  * A large but arbitrary value that can be used when an upper limit
  * for a memory size (in bytes) is needed. It is smaller than
- * %G_MAXDOUBLE since the #GimpMemsizeEntry doesn't handle larger
+ * %G_MAXDOUBLE since the #PicmanMemsizeEntry doesn't handle larger
  * values.
  **/
-#define GIMP_MAX_MEMSIZE     ((guint64) 1 << 42) /*  4 terabyte;
+#define PICMAN_MAX_MEMSIZE     ((guint64) 1 << 42) /*  4 terabyte;
                                                   *  needs a 64bit variable
                                                   *  and must be < G_MAXDOUBLE
                                                   */
@@ -94,4 +94,4 @@ G_BEGIN_DECLS
 
 G_END_DECLS
 
-#endif /* __GIMP_LIMITS_H__ */
+#endif /* __PICMAN_LIMITS_H__ */

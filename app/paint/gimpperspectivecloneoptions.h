@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,37 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PERSPECTIVE_CLONE_OPTIONS_H__
-#define __GIMP_PERSPECTIVE_CLONE_OPTIONS_H__
+#ifndef __PICMAN_PERSPECTIVE_CLONE_OPTIONS_H__
+#define __PICMAN_PERSPECTIVE_CLONE_OPTIONS_H__
 
 
-#include "gimpcloneoptions.h"
+#include "picmancloneoptions.h"
 
 
-#define GIMP_TYPE_PERSPECTIVE_CLONE_OPTIONS            (gimp_perspective_clone_options_get_type ())
-#define GIMP_PERSPECTIVE_CLONE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PERSPECTIVE_CLONE_OPTIONS, GimpPerspectiveCloneOptions))
-#define GIMP_PERSPECTIVE_CLONE_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PERSPECTIVE_CLONE_OPTIONS, GimpPerspectiveCloneOptionsClass))
-#define GIMP_IS_PERSPECTIVE_CLONE_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PERSPECTIVE_CLONE_OPTIONS))
-#define GIMP_IS_PERSPECTIVE_CLONE_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PERSPECTIVE_CLONE_OPTIONS))
-#define GIMP_PERSPECTIVE_CLONE_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PERSPECTIVE_CLONE_OPTIONS, GimpPerspectiveCloneOptionsClass))
+#define PICMAN_TYPE_PERSPECTIVE_CLONE_OPTIONS            (picman_perspective_clone_options_get_type ())
+#define PICMAN_PERSPECTIVE_CLONE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PERSPECTIVE_CLONE_OPTIONS, PicmanPerspectiveCloneOptions))
+#define PICMAN_PERSPECTIVE_CLONE_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PERSPECTIVE_CLONE_OPTIONS, PicmanPerspectiveCloneOptionsClass))
+#define PICMAN_IS_PERSPECTIVE_CLONE_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PERSPECTIVE_CLONE_OPTIONS))
+#define PICMAN_IS_PERSPECTIVE_CLONE_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PERSPECTIVE_CLONE_OPTIONS))
+#define PICMAN_PERSPECTIVE_CLONE_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PERSPECTIVE_CLONE_OPTIONS, PicmanPerspectiveCloneOptionsClass))
 
 
-typedef struct _GimpPerspectiveCloneOptionsClass GimpPerspectiveCloneOptionsClass;
+typedef struct _PicmanPerspectiveCloneOptionsClass PicmanPerspectiveCloneOptionsClass;
 
-struct _GimpPerspectiveCloneOptions
+struct _PicmanPerspectiveCloneOptions
 {
-  GimpCloneOptions          paint_instance;
+  PicmanCloneOptions          paint_instance;
 
-  GimpPerspectiveCloneMode  clone_mode;
+  PicmanPerspectiveCloneMode  clone_mode;
 };
 
-struct _GimpPerspectiveCloneOptionsClass
+struct _PicmanPerspectiveCloneOptionsClass
 {
-  GimpCloneOptionsClass  parent_class;
+  PicmanCloneOptionsClass  parent_class;
 };
 
 
-GType   gimp_perspective_clone_options_get_type (void) G_GNUC_CONST;
+GType   picman_perspective_clone_options_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_PERSPECTIVE_CLONE_OPTIONS_H__  */
+#endif  /*  __PICMAN_PERSPECTIVE_CLONE_OPTIONS_H__  */

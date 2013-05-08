@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasitem-utils.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasitem-utils.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_ITEM_UTILS_H__
-#define __GIMP_CANVAS_ITEM_UTILS_H__
+#ifndef __PICMAN_CANVAS_ITEM_UTILS_H__
+#define __PICMAN_CANVAS_ITEM_UTILS_H__
 
 
-void   gimp_canvas_item_shift_to_north_west (GimpHandleAnchor  anchor,
+void   picman_canvas_item_shift_to_north_west (PicmanHandleAnchor  anchor,
                                              gdouble           x,
                                              gdouble           y,
                                              gint              width,
                                              gint              height,
                                              gdouble          *shifted_x,
                                              gdouble          *shifted_y);
-void   gimp_canvas_item_shift_to_center     (GimpHandleAnchor  anchor,
+void   picman_canvas_item_shift_to_center     (PicmanHandleAnchor  anchor,
                                              gdouble           x,
                                              gdouble           y,
                                              gint              width,
@@ -38,4 +38,4 @@ void   gimp_canvas_item_shift_to_center     (GimpHandleAnchor  anchor,
                                              gdouble          *shifted_y);
 
 
-#endif /* __GIMP_CANVAS_ITEM_UTILS_H__ */
+#endif /* __PICMAN_CANVAS_ITEM_UTILS_H__ */

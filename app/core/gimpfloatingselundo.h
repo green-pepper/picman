@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,37 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FLOATING_SEL_UNDO_H__
-#define __GIMP_FLOATING_SEL_UNDO_H__
+#ifndef __PICMAN_FLOATING_SEL_UNDO_H__
+#define __PICMAN_FLOATING_SEL_UNDO_H__
 
 
-#include "gimpitemundo.h"
+#include "picmanitemundo.h"
 
 
-#define GIMP_TYPE_FLOATING_SEL_UNDO            (gimp_floating_sel_undo_get_type ())
-#define GIMP_FLOATING_SEL_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FLOATING_SEL_UNDO, GimpFloatingSelUndo))
-#define GIMP_FLOATING_SEL_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FLOATING_SEL_UNDO, GimpFloatingSelUndoClass))
-#define GIMP_IS_FLOATING_SEL_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FLOATING_SEL_UNDO))
-#define GIMP_IS_FLOATING_SEL_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FLOATING_SEL_UNDO))
-#define GIMP_FLOATING_SEL_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FLOATING_SEL_UNDO, GimpFloatingSelUndoClass))
+#define PICMAN_TYPE_FLOATING_SEL_UNDO            (picman_floating_sel_undo_get_type ())
+#define PICMAN_FLOATING_SEL_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FLOATING_SEL_UNDO, PicmanFloatingSelUndo))
+#define PICMAN_FLOATING_SEL_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FLOATING_SEL_UNDO, PicmanFloatingSelUndoClass))
+#define PICMAN_IS_FLOATING_SEL_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FLOATING_SEL_UNDO))
+#define PICMAN_IS_FLOATING_SEL_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FLOATING_SEL_UNDO))
+#define PICMAN_FLOATING_SEL_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FLOATING_SEL_UNDO, PicmanFloatingSelUndoClass))
 
 
-typedef struct _GimpFloatingSelUndoClass GimpFloatingSelUndoClass;
+typedef struct _PicmanFloatingSelUndoClass PicmanFloatingSelUndoClass;
 
-struct _GimpFloatingSelUndo
+struct _PicmanFloatingSelUndo
 {
-  GimpItemUndo  parent_instance;
+  PicmanItemUndo  parent_instance;
 
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
 };
 
-struct _GimpFloatingSelUndoClass
+struct _PicmanFloatingSelUndoClass
 {
-  GimpItemUndoClass  parent_class;
+  PicmanItemUndoClass  parent_class;
 };
 
 
-GType   gimp_floating_sel_undo_get_type (void) G_GNUC_CONST;
+GType   picman_floating_sel_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_FLOATING_SEL_UNDO_H__ */
+#endif /* __PICMAN_FLOATING_SEL_UNDO_H__ */

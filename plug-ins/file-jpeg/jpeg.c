@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,10 +28,10 @@
 #include <libexif/exif-data.h>
 #endif /* HAVE_LIBEXIF */
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #include "jpeg.h"
 #include "jpeg-settings.h"
@@ -39,7 +39,7 @@
 #include "jpeg-save.h"
 #ifdef HAVE_LIBEXIF
 #include "jpeg-exif.h"
-#include "gimpexif.h"
+#include "picmanexif.h"
 #endif
 
 
@@ -49,9 +49,9 @@
 static void  query (void);
 static void  run   (const gchar      *name,
                     gint              nparams,
-                    const GimpParam  *param,
+                    const PicmanParam  *param,
                     gint             *nreturn_vals,
-                    GimpParam       **return_vals);
+                    PicmanParam       **return_vals);
 
 gboolean         undo_touched;
 gboolean         load_interactive;
@@ -70,7 +70,7 @@ gint             num_quant_tables;
 ExifData        *exif_data = NULL;
 #endif
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -85,52 +85,52 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to load" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to load" }
   };
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,   "image",         "Output image" }
+    { PICMAN_PDB_IMAGE,   "image",         "Output image" }
   };
 
 #ifdef HAVE_LIBEXIF
 
-  static const GimpParamDef thumb_args[] =
+  static const PicmanParamDef thumb_args[] =
   {
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load"  },
-    { GIMP_PDB_INT32,  "thumb-size",   "Preferred thumbnail size"      }
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load"  },
+    { PICMAN_PDB_INT32,  "thumb-size",   "Preferred thumbnail size"      }
   };
-  static const GimpParamDef thumb_return_vals[] =
+  static const PicmanParamDef thumb_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,  "image",        "Thumbnail image"               },
-    { GIMP_PDB_INT32,  "image-width",  "Width of full-sized image"     },
-    { GIMP_PDB_INT32,  "image-height", "Height of full-sized image"    }
+    { PICMAN_PDB_IMAGE,  "image",        "Thumbnail image"               },
+    { PICMAN_PDB_INT32,  "image-width",  "Width of full-sized image"     },
+    { PICMAN_PDB_INT32,  "image-height", "Height of full-sized image"    }
   };
 
 #endif /* HAVE_LIBEXIF */
 
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },
-    { GIMP_PDB_FLOAT,    "quality",      "Quality of saved image (0 <= quality <= 1)" },
-    { GIMP_PDB_FLOAT,    "smoothing",    "Smoothing factor for saved image (0 <= smoothing <= 1)" },
-    { GIMP_PDB_INT32,    "optimize",     "Optimization of entropy encoding parameters (0/1)" },
-    { GIMP_PDB_INT32,    "progressive",  "Enable progressive jpeg image loading (0/1)" },
-    { GIMP_PDB_STRING,   "comment",      "Image comment" },
-    { GIMP_PDB_INT32,    "subsmp",       "The subsampling option number" },
-    { GIMP_PDB_INT32,    "baseline",     "Force creation of a baseline JPEG (non-baseline JPEGs can't be read by all decoders) (0/1)" },
-    { GIMP_PDB_INT32,    "restart",      "Interval of restart markers (in MCU rows, 0 = no restart markers)" },
-    { GIMP_PDB_INT32,    "dct",          "DCT algorithm to use (speed/quality tradeoff)" }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },
+    { PICMAN_PDB_FLOAT,    "quality",      "Quality of saved image (0 <= quality <= 1)" },
+    { PICMAN_PDB_FLOAT,    "smoothing",    "Smoothing factor for saved image (0 <= smoothing <= 1)" },
+    { PICMAN_PDB_INT32,    "optimize",     "Optimization of entropy encoding parameters (0/1)" },
+    { PICMAN_PDB_INT32,    "progressive",  "Enable progressive jpeg image loading (0/1)" },
+    { PICMAN_PDB_STRING,   "comment",      "Image comment" },
+    { PICMAN_PDB_INT32,    "subsmp",       "The subsampling option number" },
+    { PICMAN_PDB_INT32,    "baseline",     "Force creation of a baseline JPEG (non-baseline JPEGs can't be read by all decoders) (0/1)" },
+    { PICMAN_PDB_INT32,    "restart",      "Interval of restart markers (in MCU rows, 0 = no restart markers)" },
+    { PICMAN_PDB_INT32,    "dct",          "DCT algorithm to use (speed/quality tradeoff)" }
   };
 
-  gimp_install_procedure (LOAD_PROC,
+  picman_install_procedure (LOAD_PROC,
                           "loads files in the JPEG file format",
                           "loads files in the JPEG file format",
                           "Spencer Kimball, Peter Mattis & others",
@@ -138,37 +138,37 @@ query (void)
                           "1995-2007",
                           N_("JPEG image"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_file_handler_mime (LOAD_PROC, "image/jpeg");
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_register_file_handler_mime (LOAD_PROC, "image/jpeg");
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "jpg,jpeg,jpe",
                                     "",
                                     "6,string,JFIF,6,string,Exif");
 
 #ifdef HAVE_LIBEXIF
 
-  gimp_install_procedure (LOAD_THUMB_PROC,
+  picman_install_procedure (LOAD_THUMB_PROC,
                           "Loads a thumbnail from a JPEG image",
                           "Loads a thumbnail from a JPEG image (only if it exists)",
-                          "Mukund Sivaraman <muks@mukund.org>, Sven Neumann <sven@gimp.org>",
-                          "Mukund Sivaraman <muks@mukund.org>, Sven Neumann <sven@gimp.org>",
+                          "Mukund Sivaraman <muks@mukund.org>, Sven Neumann <sven@picman.org>",
+                          "Mukund Sivaraman <muks@mukund.org>, Sven Neumann <sven@picman.org>",
                           "November 15, 2004",
                           NULL,
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (thumb_args),
                           G_N_ELEMENTS (thumb_return_vals),
                           thumb_args, thumb_return_vals);
 
-  gimp_register_thumbnail_loader (LOAD_PROC, LOAD_THUMB_PROC);
+  picman_register_thumbnail_loader (LOAD_PROC, LOAD_THUMB_PROC);
 
 #endif /* HAVE_LIBEXIF */
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "saves files in the JPEG file format",
                           "saves files in the lossy, widely supported JPEG format",
                           "Spencer Kimball, Peter Mattis & others",
@@ -176,29 +176,29 @@ query (void)
                           "1995-2007",
                           N_("JPEG image"),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_file_handler_mime (SAVE_PROC, "image/jpeg");
-  gimp_register_save_handler (SAVE_PROC, "jpg,jpeg,jpe", "");
+  picman_register_file_handler_mime (SAVE_PROC, "image/jpeg");
+  picman_register_save_handler (SAVE_PROC, "jpg,jpeg,jpe", "");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[6];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[6];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint32             image_ID;
   gint32             drawable_ID;
   gint32             orig_image_ID;
-  GimpParasite      *parasite;
-  GimpExportReturn   export = GIMP_EXPORT_CANCEL;
+  PicmanParasite      *parasite;
+  PicmanExportReturn   export = PICMAN_EXPORT_CANCEL;
   GError            *error  = NULL;
 
   run_mode = param[0].data.d_int32;
@@ -207,8 +207,8 @@ run (const gchar      *name,
 
   *nreturn_vals = 1;
   *return_vals  = values;
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   preview_image_ID = -1;
   preview_layer_ID = -1;
@@ -222,9 +222,9 @@ run (const gchar      *name,
     {
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
           load_interactive = TRUE;
           break;
         default:
@@ -237,12 +237,12 @@ run (const gchar      *name,
       if (image_ID != -1)
         {
           *nreturn_vals = 2;
-          values[1].type         = GIMP_PDB_IMAGE;
+          values[1].type         = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_ID;
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
 
     }
@@ -253,14 +253,14 @@ run (const gchar      *name,
     {
       if (nparams < 2)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       else
         {
           const gchar  *filename = param[0].data.d_string;
           gint          width    = 0;
           gint          height   = 0;
-          GimpImageType type     = -1;
+          PicmanImageType type     = -1;
 
           image_ID = load_thumbnail_image (filename, &width, &height, &type,
                                            &error);
@@ -268,20 +268,20 @@ run (const gchar      *name,
           if (image_ID != -1)
             {
               *nreturn_vals = 6;
-              values[1].type         = GIMP_PDB_IMAGE;
+              values[1].type         = PICMAN_PDB_IMAGE;
               values[1].data.d_image = image_ID;
-              values[2].type         = GIMP_PDB_INT32;
+              values[2].type         = PICMAN_PDB_INT32;
               values[2].data.d_int32 = width;
-              values[3].type         = GIMP_PDB_INT32;
+              values[3].type         = PICMAN_PDB_INT32;
               values[3].data.d_int32 = height;
-              values[4].type         = GIMP_PDB_INT32;
+              values[4].type         = PICMAN_PDB_INT32;
               values[4].data.d_int32 = type;
-              values[5].type         = GIMP_PDB_INT32;
+              values[5].type         = PICMAN_PDB_INT32;
               values[5].data.d_int32 = 1; /* num_layers */
             }
           else
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
     }
@@ -296,31 +296,31 @@ run (const gchar      *name,
        /*  eventually export the image */
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
-          export = gimp_export_image (&image_ID, &drawable_ID, NULL,
-                                      (GIMP_EXPORT_CAN_HANDLE_RGB |
-                                       GIMP_EXPORT_CAN_HANDLE_GRAY));
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
+          export = picman_export_image (&image_ID, &drawable_ID, NULL,
+                                      (PICMAN_EXPORT_CAN_HANDLE_RGB |
+                                       PICMAN_EXPORT_CAN_HANDLE_GRAY));
           switch (export)
             {
-            case GIMP_EXPORT_EXPORT:
+            case PICMAN_EXPORT_EXPORT:
               {
                 gchar *tmp = g_filename_from_utf8 (_("Export Preview"), -1,
                                                    NULL, NULL, NULL);
                 if (tmp)
                   {
-                    gimp_image_set_filename (image_ID, tmp);
+                    picman_image_set_filename (image_ID, tmp);
                     g_free (tmp);
                   }
 
                 display_ID = -1;
               }
               break;
-            case GIMP_EXPORT_IGNORE:
+            case PICMAN_EXPORT_IGNORE:
               break;
-            case GIMP_EXPORT_CANCEL:
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+            case PICMAN_EXPORT_CANCEL:
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
               break;
             }
@@ -332,24 +332,24 @@ run (const gchar      *name,
       g_free (image_comment);
       image_comment = NULL;
 
-      parasite = gimp_image_get_parasite (orig_image_ID, "gimp-comment");
+      parasite = picman_image_get_parasite (orig_image_ID, "picman-comment");
       if (parasite)
         {
-          image_comment = g_strndup (gimp_parasite_data (parasite),
-                                     gimp_parasite_data_size (parasite));
-          gimp_parasite_free (parasite);
+          image_comment = g_strndup (picman_parasite_data (parasite),
+                                     picman_parasite_data_size (parasite));
+          picman_parasite_free (parasite);
         }
 
-      parasite = gimp_image_get_parasite (orig_image_ID, "gimp-metadata");
+      parasite = picman_image_get_parasite (orig_image_ID, "picman-metadata");
       if (parasite)
         {
           has_metadata = TRUE;
-          gimp_parasite_free (parasite);
+          picman_parasite_free (parasite);
         }
 
 #ifdef HAVE_LIBEXIF
 
-      exif_data = gimp_metadata_generate_exif (orig_image_ID);
+      exif_data = picman_metadata_generate_exif (orig_image_ID);
       if (exif_data)
         jpeg_setup_exif_for_save (exif_data, orig_image_ID);
 
@@ -359,13 +359,13 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           /*  Make sure all the arguments are there!  */
           /*  pw - added two more progressive and comment */
           /*  sg - added subsampling, preview, baseline, restarts and DCT */
           if (nparams != 14)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
@@ -389,18 +389,18 @@ run (const gchar      *name,
               jsvals.preview = FALSE;
 
               if (jsvals.quality < 0.0 || jsvals.quality > 100.0)
-                status = GIMP_PDB_CALLING_ERROR;
+                status = PICMAN_PDB_CALLING_ERROR;
               else if (jsvals.smoothing < 0.0 || jsvals.smoothing > 1.0)
-                status = GIMP_PDB_CALLING_ERROR;
+                status = PICMAN_PDB_CALLING_ERROR;
               else if (jsvals.subsmp < 0 || jsvals.subsmp > 3)
-                status = GIMP_PDB_CALLING_ERROR;
+                status = PICMAN_PDB_CALLING_ERROR;
               else if (jsvals.dct < 0 || jsvals.dct > 2)
-                status = GIMP_PDB_CALLING_ERROR;
+                status = PICMAN_PDB_CALLING_ERROR;
             }
           break;
 
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
           /* restore the values found when loading the file (if available) */
           jpeg_restore_original_settings (orig_image_ID,
                                           &orig_quality,
@@ -408,11 +408,11 @@ run (const gchar      *name,
                                           &num_quant_tables);
 
           /* load up the previously used values (if file was saved once) */
-          parasite = gimp_image_get_parasite (orig_image_ID,
+          parasite = picman_image_get_parasite (orig_image_ID,
                                               "jpeg-save-options");
           if (parasite)
             {
-              const JpegSaveVals *save_vals = gimp_parasite_data (parasite);
+              const JpegSaveVals *save_vals = picman_parasite_data (parasite);
 
               jsvals.quality          = save_vals->quality;
               jsvals.smoothing        = save_vals->smoothing;
@@ -428,16 +428,16 @@ run (const gchar      *name,
               jsvals.save_xmp         = save_vals->save_xmp;
               jsvals.use_orig_quality = save_vals->use_orig_quality;
 
-              gimp_parasite_free (parasite);
+              picman_parasite_free (parasite);
             }
           else
             {
-              /* We are called with GIMP_RUN_WITH_LAST_VALS but this image
+              /* We are called with PICMAN_RUN_WITH_LAST_VALS but this image
                * doesn't have a "jpeg-save-options" parasite. It's better
                * to prompt the user with a dialog now so that she has control
                * over the JPEG encoding parameters.
                */
-              run_mode = GIMP_RUN_INTERACTIVE;
+              run_mode = PICMAN_RUN_INTERACTIVE;
 
               /* If this image was loaded from a JPEG file and has not been
                * saved yet, try to use some of the settings from the
@@ -459,13 +459,13 @@ run (const gchar      *name,
           break;
         }
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
           if (jsvals.preview)
             {
               /* we freeze undo saving so that we can avoid sucking up
                * tile cache with our unneeded preview steps. */
-              gimp_image_undo_freeze (image_ID);
+              picman_image_undo_freeze (image_ID);
 
               undo_touched = TRUE;
             }
@@ -476,71 +476,71 @@ run (const gchar      *name,
           drawable_ID_global = drawable_ID;
 
           /*  First acquire information with a dialog  */
-          status = (save_dialog () ? GIMP_PDB_SUCCESS : GIMP_PDB_CANCEL);
+          status = (save_dialog () ? PICMAN_PDB_SUCCESS : PICMAN_PDB_CANCEL);
 
           if (undo_touched)
             {
               /* thaw undo saving and flush the displays to have them
                * reflect the current shortcuts */
-              gimp_image_undo_thaw (image_ID);
-              gimp_displays_flush ();
+              picman_image_undo_thaw (image_ID);
+              picman_displays_flush ();
             }
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           if (! save_image (param[3].data.d_string,
                             image_ID, drawable_ID, orig_image_ID, FALSE,
                             &error))
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
+      if (export == PICMAN_EXPORT_EXPORT)
         {
           /* If the image was exported, delete the new display. */
           /* This also deletes the image.                       */
 
           if (display_ID != -1)
-            gimp_display_delete (display_ID);
+            picman_display_delete (display_ID);
           else
-            gimp_image_delete (image_ID);
+            picman_image_delete (image_ID);
        }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           /* pw - now we need to change the defaults to be whatever
            * was used to save this image.  Dump the old parasites
            * and add new ones. */
 
-          gimp_image_detach_parasite (orig_image_ID, "gimp-comment");
+          picman_image_detach_parasite (orig_image_ID, "picman-comment");
           if (image_comment && strlen (image_comment))
             {
-              parasite = gimp_parasite_new ("gimp-comment",
-                                            GIMP_PARASITE_PERSISTENT,
+              parasite = picman_parasite_new ("picman-comment",
+                                            PICMAN_PARASITE_PERSISTENT,
                                             strlen (image_comment) + 1,
                                             image_comment);
-              gimp_image_attach_parasite (orig_image_ID, parasite);
-              gimp_parasite_free (parasite);
+              picman_image_attach_parasite (orig_image_ID, parasite);
+              picman_parasite_free (parasite);
             }
 
-          gimp_image_detach_parasite (orig_image_ID, "jpeg-save-options");
-          parasite = gimp_parasite_new ("jpeg-save-options",
+          picman_image_detach_parasite (orig_image_ID, "jpeg-save-options");
+          parasite = picman_parasite_new ("jpeg-save-options",
                                         0, sizeof (jsvals), &jsvals);
-          gimp_image_attach_parasite (orig_image_ID, parasite);
-          gimp_parasite_free (parasite);
+          picman_image_attach_parasite (orig_image_ID, parasite);
+          picman_parasite_free (parasite);
         }
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 

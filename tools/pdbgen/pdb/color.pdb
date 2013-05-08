@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub brightness_contrast {
     $blurb = 'Modify brightness/contrast in the specified drawable.';
@@ -38,21 +38,21 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("operations/gimpbrightnesscontrastconfig.h") ],
+        headers => [ qw("operations/picmanbrightnesscontrastconfig.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GObject *config = g_object_new (GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG,
+      GObject *config = g_object_new (PICMAN_TYPE_BRIGHTNESS_CONTRAST_CONFIG,
                                       "brightness", brightness / 127.0,
                                       "contrast",   contrast   / 127.0,
                                       NULL);
 
-      gimp_drawable_apply_operation_by_name (drawable, progress,
+      picman_drawable_apply_operation_by_name (drawable, progress,
                                              C_("undo-type", "Brightness-Contrast"),
-                                             "gimp:brightness-contrast",
+                                             "picman:brightness-contrast",
                                              config);
       g_object_unref (config);
     }
@@ -84,7 +84,7 @@ HELP
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
 	  desc => 'The drawable' },
-	{ name => 'channel', type => 'enum GimpHistogramChannel',
+	{ name => 'channel', type => 'enum PicmanHistogramChannel',
 	  desc => 'The channel to modify' },
 	{ name => 'low_input', type => '0 <= int32 <= 255',
 	  desc => "Intensity of lowest input" },
@@ -99,17 +99,17 @@ HELP
     );
 
     %invoke = (
-	headers => [ qw("operations/gimplevelsconfig.h") ],
+	headers => [ qw("operations/picmanlevelsconfig.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error) &&
-      (gimp_drawable_has_alpha (drawable) || channel != GIMP_HISTOGRAM_ALPHA) &&
-      (! gimp_drawable_is_gray (drawable) ||
-       channel == GIMP_HISTOGRAM_VALUE || channel == GIMP_HISTOGRAM_ALPHA))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error) &&
+      (picman_drawable_has_alpha (drawable) || channel != PICMAN_HISTOGRAM_ALPHA) &&
+      (! picman_drawable_is_gray (drawable) ||
+       channel == PICMAN_HISTOGRAM_VALUE || channel == PICMAN_HISTOGRAM_ALPHA))
     {
-      GObject *config = g_object_new (GIMP_TYPE_LEVELS_CONFIG,
+      GObject *config = g_object_new (PICMAN_TYPE_LEVELS_CONFIG,
                                       "channel", channel,
                                       NULL);
 
@@ -121,9 +121,9 @@ HELP
                     "high-output", high_output / 255.0,
                     NULL);
 
-      gimp_drawable_apply_operation_by_name (drawable, progress,
+      picman_drawable_apply_operation_by_name (drawable, progress,
                                              C_("undo-type", "Levels"),
-                                             "gimp:levels",
+                                             "picman:levels",
                                              config);
       g_object_unref (config);
     }
@@ -152,14 +152,14 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpdrawable-levels.h") ],
+        headers => [ qw("core/picmandrawable-levels.h") ],
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      gimp_drawable_levels_stretch (drawable, progress);
+      picman_drawable_levels_stretch (drawable, progress);
     }
   else
     success = FALSE;
@@ -169,7 +169,7 @@ CODE
 }
 
 sub levels_auto {
-    &std_pdb_deprecated ('gimp-levels-stretch');
+    &std_pdb_deprecated ('picman-levels-stretch');
 
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
@@ -177,14 +177,14 @@ sub levels_auto {
     );
 
     %invoke = (
-        headers => [ qw("core/gimpdrawable-levels.h") ],
+        headers => [ qw("core/picmandrawable-levels.h") ],
         code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      gimp_drawable_levels_stretch (drawable, progress);
+      picman_drawable_levels_stretch (drawable, progress);
     }
   else
     success = FALSE;
@@ -212,20 +212,20 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("operations/gimpposterizeconfig.h") ],
+        headers => [ qw("operations/picmanposterizeconfig.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GObject *config = g_object_new (GIMP_TYPE_POSTERIZE_CONFIG,
+      GObject *config = g_object_new (PICMAN_TYPE_POSTERIZE_CONFIG,
                                       "levels", levels,
                                       NULL);
 
-      gimp_drawable_apply_operation_by_name (drawable, progress,
+      picman_drawable_apply_operation_by_name (drawable, progress,
                                              _("Posterize"),
-                                             "gimp:posterize",
+                                             "picman:posterize",
                                              config);
       g_object_unref (config);
     }
@@ -252,21 +252,21 @@ HELP
     );
 
     %invoke = (
-	headers => [ qw("operations/gimpdesaturateconfig.h") ],
+	headers => [ qw("operations/picmandesaturateconfig.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error) &&
-      gimp_drawable_is_rgb (drawable))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error) &&
+      picman_drawable_is_rgb (drawable))
     {
-      GObject *config = g_object_new (GIMP_TYPE_DESATURATE_CONFIG,
-                                      "mode", GIMP_DESATURATE_LIGHTNESS,
+      GObject *config = g_object_new (PICMAN_TYPE_DESATURATE_CONFIG,
+                                      "mode", PICMAN_DESATURATE_LIGHTNESS,
                                       NULL);
 
-      gimp_drawable_apply_operation_by_name (drawable, progress,
+      picman_drawable_apply_operation_by_name (drawable, progress,
                                              _("Desaturate"),
-                                             "gimp:desaturate",
+                                             "picman:desaturate",
                                              config);
       g_object_unref (config);
     }
@@ -295,26 +295,26 @@ HELP
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
 	  desc => 'The drawable' },
-	{ name => 'desaturate_mode', type => 'enum GimpDesaturateMode',
+	{ name => 'desaturate_mode', type => 'enum PicmanDesaturateMode',
 	  desc => 'The formula to use to desaturate' }
     );
 
     %invoke = (
-	headers => [ qw("operations/gimpdesaturateconfig.h") ],
+	headers => [ qw("operations/picmandesaturateconfig.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error) &&
-      gimp_drawable_is_rgb (drawable))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error) &&
+      picman_drawable_is_rgb (drawable))
     {
-      GObject *config = g_object_new (GIMP_TYPE_DESATURATE_CONFIG,
+      GObject *config = g_object_new (PICMAN_TYPE_DESATURATE_CONFIG,
                                       "mode", desaturate_mode,
                                       NULL);
 
-      gimp_drawable_apply_operation_by_name (drawable, progress,
+      picman_drawable_apply_operation_by_name (drawable, progress,
                                              _("Desaturate"),
-                                             "gimp:desaturate",
+                                             "picman:desaturate",
                                              config);
       g_object_unref (config);
     }
@@ -348,16 +348,16 @@ HELP
     );
 
     %invoke = (
-	headers => [ qw("core/gimpdrawable-equalize.h") ],
+	headers => [ qw("core/picmandrawable-equalize.h") ],
 	code => <<'CODE'
 {
-  if (! gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                   GIMP_PDB_ITEM_CONTENT, error) ||
-      ! gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (! picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                   PICMAN_PDB_ITEM_CONTENT, error) ||
+      ! picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     success = FALSE;
 
   if (success)
-    gimp_drawable_equalize (drawable, mask_only);
+    picman_drawable_equalize (drawable, mask_only);
 }
 CODE
     );
@@ -382,11 +382,11 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      gimp_drawable_apply_operation_by_name (drawable, progress,
+      picman_drawable_apply_operation_by_name (drawable, progress,
                                              _("Invert"),
                                              "gegl:invert",
                                              NULL);
@@ -406,7 +406,7 @@ Modifies the intensity mapping for one channel in the specified drawable. The
 drawable must be either grayscale or RGB, and the channel can be either an
 intensity component, or the value. The 'control_pts' parameter is an array of
 integers which define a set of control points which describe a Catmull Rom
-spline which yields the final intensity curve. Use the gimp_curves_explicit()
+spline which yields the final intensity curve. Use the picman_curves_explicit()
 function to explicitly modify intensity levels.
 HELP
 
@@ -415,7 +415,7 @@ HELP
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
 	  desc => 'The drawable' },
-	{ name => 'channel', type => 'enum GimpHistogramChannel',
+	{ name => 'channel', type => 'enum PicmanHistogramChannel',
 	  desc => 'The channel to modify' },
 	{ name => 'control_pts', type => 'int8array',
 	  desc => 'The spline control points: { cp1.x, cp1.y, cp2.x, cp2.y,
@@ -426,24 +426,24 @@ HELP
     );
 
     %invoke = (
-	headers => [ qw("operations/gimpcurvesconfig.h") ],
+	headers => [ qw("operations/picmancurvesconfig.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error) &&
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error) &&
       ! (num_points & 1) &&
-      (gimp_drawable_has_alpha (drawable) || channel != GIMP_HISTOGRAM_ALPHA) &&
-      (! gimp_drawable_is_gray (drawable) ||
-       channel == GIMP_HISTOGRAM_VALUE || channel == GIMP_HISTOGRAM_ALPHA))
+      (picman_drawable_has_alpha (drawable) || channel != PICMAN_HISTOGRAM_ALPHA) &&
+      (! picman_drawable_is_gray (drawable) ||
+       channel == PICMAN_HISTOGRAM_VALUE || channel == PICMAN_HISTOGRAM_ALPHA))
     {
-      GObject *config = gimp_curves_config_new_spline (channel,
+      GObject *config = picman_curves_config_new_spline (channel,
                                                        control_pts,
                                                        num_points);
 
-      gimp_drawable_apply_operation_by_name (drawable, progress,
+      picman_drawable_apply_operation_by_name (drawable, progress,
                                              C_("undo-type", "Curves"),
-                                             "gimp:curves",
+                                             "picman:curves",
                                              config);
       g_object_unref (config);
     }
@@ -462,7 +462,7 @@ Modifies the intensity mapping for one channel in the specified drawable. The
 drawable must be either grayscale or RGB, and the channel can be either an
 intensity component, or the value. The 'curve' parameter is an array of bytes
 which explicitly defines how each pixel value in the drawable will be modified.
-Use the gimp_curves_spline() function to modify intensity levels with Catmull
+Use the picman_curves_spline() function to modify intensity levels with Catmull
 Rom splines.
 HELP
 
@@ -471,7 +471,7 @@ HELP
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
 	  desc => 'The drawable' },
-	{ name => 'channel', type => 'enum GimpHistogramChannel',
+	{ name => 'channel', type => 'enum PicmanHistogramChannel',
 	  desc => 'The channel to modify' },
 	{ name => 'curve', type => 'int8array',
 	  desc => 'The explicit curve',
@@ -481,24 +481,24 @@ HELP
     );
 
     %invoke = (
-	headers => [ qw("operations/gimpcurvesconfig.h") ],
+	headers => [ qw("operations/picmancurvesconfig.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error) &&
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error) &&
       (num_bytes == 256) &&
-      (gimp_drawable_has_alpha (drawable) || channel != GIMP_HISTOGRAM_ALPHA) &&
-      (! gimp_drawable_is_gray (drawable) ||
-       channel == GIMP_HISTOGRAM_VALUE || channel == GIMP_HISTOGRAM_ALPHA))
+      (picman_drawable_has_alpha (drawable) || channel != PICMAN_HISTOGRAM_ALPHA) &&
+      (! picman_drawable_is_gray (drawable) ||
+       channel == PICMAN_HISTOGRAM_VALUE || channel == PICMAN_HISTOGRAM_ALPHA))
     {
-      GObject *config = gimp_curves_config_new_spline (channel,
+      GObject *config = picman_curves_config_new_spline (channel,
                                                        curve,
                                                        num_bytes);
 
-      gimp_drawable_apply_operation_by_name (drawable, progress,
+      picman_drawable_apply_operation_by_name (drawable, progress,
                                              C_("undo-type", "Curves"),
-                                             "gimp:curves",
+                                             "picman:curves",
                                              config);
       g_object_unref (config);
     }
@@ -528,7 +528,7 @@ HELP
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
 	  desc => 'The drawable' },
-	{ name => 'transfer_mode', type => 'enum GimpTransferMode',
+	{ name => 'transfer_mode', type => 'enum PicmanTransferMode',
 	  desc => 'Transfer mode' },
 	{ name => 'preserve_lum', type => 'boolean',
 	  desc => 'Preserve luminosity values at each pixel' },
@@ -541,14 +541,14 @@ HELP
     );
 
     %invoke = (
-	headers => [ qw("operations/gimpcolorbalanceconfig.h") ],
+	headers => [ qw("operations/picmancolorbalanceconfig.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error)  &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error)  &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GObject *config = g_object_new (GIMP_TYPE_COLORIZE_CONFIG,
+      GObject *config = g_object_new (PICMAN_TYPE_COLORIZE_CONFIG,
                                       "range",               transfer_mode,
                                       "preserve-luminosity", preserve_lum,
                                       NULL);
@@ -559,9 +559,9 @@ HELP
                     "yellow-blue",   yellow_blue   / 100.0,
                     NULL);
 
-      gimp_drawable_apply_operation_by_name (drawable, progress,
+      picman_drawable_apply_operation_by_name (drawable, progress,
                                              C_("undo-type", "Color Balance"),
-                                             "gimp:color-balance",
+                                             "picman:color-balance",
                                              config);
       g_object_unref (config);
     }
@@ -594,23 +594,23 @@ HELP
     );
 
     %invoke = (
-	headers => [ qw("operations/gimpcolorizeconfig.h") ],
+	headers => [ qw("operations/picmancolorizeconfig.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error) &&
-      ! gimp_drawable_is_gray (drawable))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error) &&
+      ! picman_drawable_is_gray (drawable))
     {
-      GObject *config = g_object_new (GIMP_TYPE_COLORIZE_CONFIG,
+      GObject *config = g_object_new (PICMAN_TYPE_COLORIZE_CONFIG,
                                       "hue",        hue        / 360.0,
                                       "saturation", saturation / 100.0,
                                       "lightness",  lightness  / 100.0,
                                       NULL);
 
-      gimp_drawable_apply_operation_by_name (drawable, progress,
+      picman_drawable_apply_operation_by_name (drawable, progress,
                                              C_("undo-type", "Colorize"),
-                                             "gimp:colorize",
+                                             "picman:colorize",
                                              config);
       g_object_unref (config);
     }
@@ -631,7 +631,7 @@ This tool makes it possible to gather information about the intensity histogram
 of a drawable. A channel to examine is first specified. This can be either
 value, red, green, or blue, depending on whether the drawable is of type color
 or grayscale. The drawable may not be indexed. Second, a range of intensities
-are specified. The gimp_histogram() function returns statistics based on the
+are specified. The picman_histogram() function returns statistics based on the
 pixels in the drawable that fall under this range of values. Mean, standard
 deviation, median, number of pixels, and percentile are all returned.
 Additionally, the total count of pixels in the image is returned. Counts of
@@ -645,7 +645,7 @@ HELP
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
 	  desc => 'The drawable' },
-	{ name => 'channel', type => 'enum GimpHistogramChannel',
+	{ name => 'channel', type => 'enum PicmanHistogramChannel',
 	  desc => 'The channel to modify' },
 	{ name => 'start_range', type => '0 <= int32 < 256',
 	  desc => 'Start of the intensity measurement range' },
@@ -669,36 +669,36 @@ HELP
     );
 
     %invoke = (
-	headers => [ qw("core/gimpdrawable-histogram.h"
-                        "core/gimphistogram.h") ],
+	headers => [ qw("core/picmandrawable-histogram.h"
+                        "core/picmanhistogram.h") ],
 	code => <<'CODE'
 {
-  if (! gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL, 0, error) ||
-      gimp_drawable_is_indexed (drawable) ||
-      (! gimp_drawable_has_alpha (drawable) &&
-       channel == GIMP_HISTOGRAM_ALPHA) ||
-      (gimp_drawable_is_gray (drawable) &&
-       channel != GIMP_HISTOGRAM_VALUE && channel != GIMP_HISTOGRAM_ALPHA))
+  if (! picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL, 0, error) ||
+      picman_drawable_is_indexed (drawable) ||
+      (! picman_drawable_has_alpha (drawable) &&
+       channel == PICMAN_HISTOGRAM_ALPHA) ||
+      (picman_drawable_is_gray (drawable) &&
+       channel != PICMAN_HISTOGRAM_VALUE && channel != PICMAN_HISTOGRAM_ALPHA))
     success = FALSE;
 
   if (success)
     {
-      GimpHistogram *histogram = gimp_histogram_new ();
+      PicmanHistogram *histogram = picman_histogram_new ();
 
-      gimp_drawable_calculate_histogram (drawable, histogram);
+      picman_drawable_calculate_histogram (drawable, histogram);
 
-      mean       = gimp_histogram_get_mean (histogram, channel,
+      mean       = picman_histogram_get_mean (histogram, channel,
 		 			    start_range, end_range);
-      std_dev    = gimp_histogram_get_std_dev (histogram, channel,
+      std_dev    = picman_histogram_get_std_dev (histogram, channel,
 					       start_range, end_range);
-      median     = gimp_histogram_get_median (histogram, channel,
+      median     = picman_histogram_get_median (histogram, channel,
 					      start_range, end_range);
-      pixels     = gimp_histogram_get_count (histogram, channel, 0, 255);
-      count      = gimp_histogram_get_count (histogram, channel,
+      pixels     = picman_histogram_get_count (histogram, channel, 0, 255);
+      count      = picman_histogram_get_count (histogram, channel,
                                              start_range, end_range);
       percentile = count / pixels;
 
-      gimp_histogram_unref (histogram);
+      picman_histogram_unref (histogram);
     }
 }
 CODE
@@ -722,7 +722,7 @@ HELP
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
 	  desc => 'The drawable' },
-	{ name => 'hue_range', type => 'enum GimpHueRange',
+	{ name => 'hue_range', type => 'enum PicmanHueRange',
 	  desc => 'Range of affected hues' },
 	{ name => 'hue_offset', type => '-180 <= float <= 180',
 	  desc => 'Hue offset in degrees' },
@@ -733,14 +733,14 @@ HELP
     );
 
     %invoke = (
-	headers => [ qw("operations/gimphuesaturationconfig.h") ],
+	headers => [ qw("operations/picmanhuesaturationconfig.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GObject *config = g_object_new (GIMP_TYPE_HUE_SATURATION_CONFIG,
+      GObject *config = g_object_new (PICMAN_TYPE_HUE_SATURATION_CONFIG,
                                       "range", hue_range,
                                       NULL);
 
@@ -750,9 +750,9 @@ HELP
                      "lightness",  lightness  / 100.0,
                      NULL);
 
-      gimp_drawable_apply_operation_by_name (drawable, progress,
+      picman_drawable_apply_operation_by_name (drawable, progress,
                                              _("Hue-Saturation"),
-                                             "gimp:hue-saturation",
+                                             "picman:hue-saturation",
                                              config);
       g_object_unref (config);
     }
@@ -785,21 +785,21 @@ HELP
     );
 
     %invoke = (
-	headers => [ qw("operations/gimpthresholdconfig.h") ],
+	headers => [ qw("operations/picmanthresholdconfig.h") ],
 	code => <<'CODE'
 {
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+  if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                 PICMAN_PDB_ITEM_CONTENT, error) &&
+      picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
     {
-      GObject *config = g_object_new (GIMP_TYPE_THRESHOLD_CONFIG,
+      GObject *config = g_object_new (PICMAN_TYPE_THRESHOLD_CONFIG,
                                       "low",  low_threshold  / 255.0,
                                       "high", high_threshold / 255.0,
                                       NULL);
 
-      gimp_drawable_apply_operation_by_name (drawable, progress,
+      picman_drawable_apply_operation_by_name (drawable, progress,
                                              _("Threshold"),
-                                             "gimp:threshold",
+                                             "picman:threshold",
                                              config);
       g_object_unref (config);
     }
@@ -811,10 +811,10 @@ CODE
 }
 
 
-@headers = qw("core/gimpdrawable.h"
-              "core/gimpdrawable-operation.h"
-              "gimppdb-utils.h"
-              "gimp-intl.h");
+@headers = qw("core/picmandrawable.h"
+              "core/picmandrawable-operation.h"
+              "picmanpdb-utils.h"
+              "picman-intl.h");
 
 @procs = qw(brightness_contrast
             levels levels_auto levels_stretch
@@ -832,7 +832,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Color';
-$doc_title = 'gimpcolor';
+$doc_title = 'picmancolor';
 $doc_short_desc = 'Functions for manipulating color.';
 $doc_long_desc = 'Functions for manipulating color, including curves and histograms.';
 

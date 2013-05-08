@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpfileops_pdb.c
+ * picmanfileops_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,12 @@
 
 #include <string.h>
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpfileops
- * @title: gimpfileops
+ * SECTION: picmanfileops
+ * @title: picmanfileops
  * @short_description: File operations (load, save, etc.)
  *
  * File operations (load, save, etc.)
@@ -37,7 +37,7 @@
 
 
 /**
- * gimp_file_load:
+ * picman_file_load:
  * @run_mode: The run mode.
  * @filename: The name of the file to load.
  * @raw_filename: The name as entered by the user.
@@ -49,37 +49,37 @@
  * not. The name of the file to load is typically a full pathname, and
  * the name entered is what the user actually typed before prepending a
  * directory path. The reason for this is that if the user types
- * http://www.xcf/~gimp/ he wants to fetch a URL, and the full pathname
+ * http://www.xcf/~picman/ he wants to fetch a URL, and the full pathname
  * will not look like a URL.\"
  *
  * Returns: The output image.
  **/
 gint32
-gimp_file_load (GimpRunMode  run_mode,
+picman_file_load (PicmanRunMode  run_mode,
                 const gchar *filename,
                 const gchar *raw_filename)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 image_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-file-load",
+  return_vals = picman_run_procedure ("picman-file-load",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, run_mode,
-                                    GIMP_PDB_STRING, filename,
-                                    GIMP_PDB_STRING, raw_filename,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, run_mode,
+                                    PICMAN_PDB_STRING, filename,
+                                    PICMAN_PDB_STRING, raw_filename,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     image_ID = return_vals[1].data.d_image;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return image_ID;
 }
 
 /**
- * gimp_file_load_layer:
+ * picman_file_load_layer:
  * @run_mode: The run mode.
  * @image_ID: Destination image.
  * @filename: The name of the file to load.
@@ -89,38 +89,38 @@ gimp_file_load (GimpRunMode  run_mode,
  * This procedure behaves like the file-load procedure but opens the
  * specified image as a layer for an existing image. The returned layer
  * needs to be added to the existing image with
- * gimp_image_insert_layer().
+ * picman_image_insert_layer().
  *
  * Returns: The layer created when loading the image file.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint32
-gimp_file_load_layer (GimpRunMode  run_mode,
+picman_file_load_layer (PicmanRunMode  run_mode,
                       gint32       image_ID,
                       const gchar *filename)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 layer_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-file-load-layer",
+  return_vals = picman_run_procedure ("picman-file-load-layer",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, run_mode,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_STRING, filename,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, run_mode,
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_STRING, filename,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     layer_ID = return_vals[1].data.d_layer;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return layer_ID;
 }
 
 /**
- * gimp_file_load_layers:
+ * picman_file_load_layers:
  * @run_mode: The run mode.
  * @image_ID: Destination image.
  * @filename: The name of the file to load.
@@ -131,32 +131,32 @@ gimp_file_load_layer (GimpRunMode  run_mode,
  * This procedure behaves like the file-load procedure but opens the
  * specified image as layers for an existing image. The returned layers
  * needs to be added to the existing image with
- * gimp_image_insert_layer().
+ * picman_image_insert_layer().
  *
  * Returns: The list of loaded layers.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gint *
-gimp_file_load_layers (GimpRunMode  run_mode,
+picman_file_load_layers (PicmanRunMode  run_mode,
                        gint32       image_ID,
                        const gchar *filename,
                        gint        *num_layers)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint *layer_ids = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-file-load-layers",
+  return_vals = picman_run_procedure ("picman-file-load-layers",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, run_mode,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_STRING, filename,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, run_mode,
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_STRING, filename,
+                                    PICMAN_PDB_END);
 
   *num_layers = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_layers = return_vals[1].data.d_int32;
       layer_ids = g_new (gint32, *num_layers);
@@ -165,13 +165,13 @@ gimp_file_load_layers (GimpRunMode  run_mode,
               *num_layers * sizeof (gint32));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return layer_ids;
 }
 
 /**
- * gimp_file_save:
+ * picman_file_save:
  * @run_mode: The run mode.
  * @image_ID: Input image.
  * @drawable_ID: Drawable to save.
@@ -184,40 +184,40 @@ gimp_file_load_layers (GimpRunMode  run_mode,
  * the file's extension and/or prefix. The name of the file to save is
  * typically a full pathname, and the name entered is what the user
  * actually typed before prepending a directory path. The reason for
- * this is that if the user types http://www.xcf/~gimp/ she wants to
+ * this is that if the user types http://www.xcf/~picman/ she wants to
  * fetch a URL, and the full pathname will not look like a URL.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_file_save (GimpRunMode  run_mode,
+picman_file_save (PicmanRunMode  run_mode,
                 gint32       image_ID,
                 gint32       drawable_ID,
                 const gchar *filename,
                 const gchar *raw_filename)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-file-save",
+  return_vals = picman_run_procedure ("picman-file-save",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, run_mode,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_STRING, filename,
-                                    GIMP_PDB_STRING, raw_filename,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, run_mode,
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_STRING, filename,
+                                    PICMAN_PDB_STRING, raw_filename,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_file_save_thumbnail:
+ * picman_file_save_thumbnail:
  * @image_ID: The image.
  * @filename: The name of the file the thumbnail belongs to.
  *
@@ -233,59 +233,59 @@ gimp_file_save (GimpRunMode  run_mode,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_file_save_thumbnail (gint32       image_ID,
+picman_file_save_thumbnail (gint32       image_ID,
                           const gchar *filename)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-file-save-thumbnail",
+  return_vals = picman_run_procedure ("picman-file-save-thumbnail",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_STRING, filename,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_STRING, filename,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_temp_name:
+ * picman_temp_name:
  * @extension: The extension the file will have.
  *
  * Generates a unique filename.
  *
  * Generates a unique filename using the temp path supplied in the
- * user's gimprc.
+ * user's picmanrc.
  *
  * Returns: The new temp filename.
  **/
 gchar *
-gimp_temp_name (const gchar *extension)
+picman_temp_name (const gchar *extension)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-temp-name",
+  return_vals = picman_run_procedure ("picman-temp-name",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, extension,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, extension,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     name = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return name;
 }
 
 /**
- * gimp_register_magic_load_handler:
+ * picman_register_magic_load_handler:
  * @procedure_name: The name of the procedure to be used for loading.
  * @extensions: comma separated list of extensions this handler can load (i.e. \"jpg,jpeg\").
  * @prefixes: comma separated list of prefixes this handler can load (i.e. \"http:,ftp:\").
@@ -299,32 +299,32 @@ gimp_temp_name (const gchar *extension)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_register_magic_load_handler (const gchar *procedure_name,
+picman_register_magic_load_handler (const gchar *procedure_name,
                                   const gchar *extensions,
                                   const gchar *prefixes,
                                   const gchar *magics)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-register-magic-load-handler",
+  return_vals = picman_run_procedure ("picman-register-magic-load-handler",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, procedure_name,
-                                    GIMP_PDB_STRING, extensions,
-                                    GIMP_PDB_STRING, prefixes,
-                                    GIMP_PDB_STRING, magics,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, procedure_name,
+                                    PICMAN_PDB_STRING, extensions,
+                                    PICMAN_PDB_STRING, prefixes,
+                                    PICMAN_PDB_STRING, magics,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_register_load_handler:
+ * picman_register_load_handler:
  * @procedure_name: The name of the procedure to be used for loading.
  * @extensions: comma separated list of extensions this handler can load (i.e. \"jpg,jpeg\").
  * @prefixes: comma separated list of prefixes this handler can load (i.e. \"http:,ftp:\").
@@ -337,30 +337,30 @@ gimp_register_magic_load_handler (const gchar *procedure_name,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_register_load_handler (const gchar *procedure_name,
+picman_register_load_handler (const gchar *procedure_name,
                             const gchar *extensions,
                             const gchar *prefixes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-register-load-handler",
+  return_vals = picman_run_procedure ("picman-register-load-handler",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, procedure_name,
-                                    GIMP_PDB_STRING, extensions,
-                                    GIMP_PDB_STRING, prefixes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, procedure_name,
+                                    PICMAN_PDB_STRING, extensions,
+                                    PICMAN_PDB_STRING, prefixes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_register_save_handler:
+ * picman_register_save_handler:
  * @procedure_name: The name of the procedure to be used for saving.
  * @extensions: comma separated list of extensions this handler can save (i.e. \"jpg,jpeg\").
  * @prefixes: comma separated list of prefixes this handler can save (i.e. \"http:,ftp:\").
@@ -373,100 +373,100 @@ gimp_register_load_handler (const gchar *procedure_name,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_register_save_handler (const gchar *procedure_name,
+picman_register_save_handler (const gchar *procedure_name,
                             const gchar *extensions,
                             const gchar *prefixes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-register-save-handler",
+  return_vals = picman_run_procedure ("picman-register-save-handler",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, procedure_name,
-                                    GIMP_PDB_STRING, extensions,
-                                    GIMP_PDB_STRING, prefixes,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, procedure_name,
+                                    PICMAN_PDB_STRING, extensions,
+                                    PICMAN_PDB_STRING, prefixes,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_register_file_handler_mime:
+ * picman_register_file_handler_mime:
  * @procedure_name: The name of the procedure to associate a MIME type with.
  * @mime_type: A single MIME type, like for example \"image/jpeg\".
  *
  * Associates a MIME type with a file handler procedure.
  *
- * Registers a MIME type for a file handler procedure. This allows GIMP
+ * Registers a MIME type for a file handler procedure. This allows PICMAN
  * to determine the MIME type of the file opened or saved using this
  * procedure.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_register_file_handler_mime (const gchar *procedure_name,
+picman_register_file_handler_mime (const gchar *procedure_name,
                                  const gchar *mime_type)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-register-file-handler-mime",
+  return_vals = picman_run_procedure ("picman-register-file-handler-mime",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, procedure_name,
-                                    GIMP_PDB_STRING, mime_type,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, procedure_name,
+                                    PICMAN_PDB_STRING, mime_type,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_register_file_handler_uri:
+ * picman_register_file_handler_uri:
  * @procedure_name: The name of the procedure to enable URIs for.
  *
  * Registers a file handler procedure as capable of handling URIs.
  *
  * Registers a file handler procedure as capable of handling URIs. This
- * allows GIMP to call the procecure directly for all kinds of URIs,
+ * allows PICMAN to call the procecure directly for all kinds of URIs,
  * and the 'filename' traditionally passed to file procesures turns
  * into an URI.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 gboolean
-gimp_register_file_handler_uri (const gchar *procedure_name)
+picman_register_file_handler_uri (const gchar *procedure_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-register-file-handler-uri",
+  return_vals = picman_run_procedure ("picman-register-file-handler-uri",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, procedure_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, procedure_name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_register_thumbnail_loader:
+ * picman_register_thumbnail_loader:
  * @load_proc: The name of the procedure the thumbnail loader with.
  * @thumb_proc: The name of the thumbnail load procedure.
  *
@@ -475,31 +475,31 @@ gimp_register_file_handler_uri (const gchar *procedure_name)
  * Some file formats allow for embedded thumbnails, other file formats
  * contain a scalable image or provide the image data in different
  * resolutions. A file plug-in for such a format may register a special
- * procedure that allows GIMP to load a thumbnail preview of the image.
+ * procedure that allows PICMAN to load a thumbnail preview of the image.
  * This procedure is then associated with the standard load procedure
  * using this function.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_register_thumbnail_loader (const gchar *load_proc,
+picman_register_thumbnail_loader (const gchar *load_proc,
                                 const gchar *thumb_proc)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-register-thumbnail-loader",
+  return_vals = picman_run_procedure ("picman-register-thumbnail-loader",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, load_proc,
-                                    GIMP_PDB_STRING, thumb_proc,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, load_proc,
+                                    PICMAN_PDB_STRING, thumb_proc,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

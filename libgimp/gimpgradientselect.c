@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpgradientselect.c
+ * picmangradientselect.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 typedef struct
@@ -30,50 +30,50 @@ typedef struct
   gchar                   *gradient_name;
   gint                     width;
   gdouble                 *gradient_data;
-  GimpRunGradientCallback  callback;
+  PicmanRunGradientCallback  callback;
   gboolean                 closing;
   gpointer                 data;
-} GimpGradientData;
+} PicmanGradientData;
 
 
 /*  local function prototypes  */
 
-static void      gimp_gradient_data_free     (GimpGradientData  *data);
+static void      picman_gradient_data_free     (PicmanGradientData  *data);
 
-static void      gimp_temp_gradient_run      (const gchar       *name,
+static void      picman_temp_gradient_run      (const gchar       *name,
                                               gint               nparams,
-                                              const GimpParam   *param,
+                                              const PicmanParam   *param,
                                               gint              *nreturn_vals,
-                                              GimpParam        **return_vals);
-static gboolean  gimp_temp_gradient_run_idle (GimpGradientData  *gradient_data);
+                                              PicmanParam        **return_vals);
+static gboolean  picman_temp_gradient_run_idle (PicmanGradientData  *gradient_data);
 
 
 /*  private variables  */
 
-static GHashTable *gimp_gradient_select_ht = NULL;
+static GHashTable *picman_gradient_select_ht = NULL;
 
 
 /*  public functions  */
 
 const gchar *
-gimp_gradient_select_new (const gchar             *title,
+picman_gradient_select_new (const gchar             *title,
                           const gchar             *gradient_name,
                           gint                     sample_size,
-                          GimpRunGradientCallback  callback,
+                          PicmanRunGradientCallback  callback,
                           gpointer                 data)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_STRING,    "str",            "String"                     },
-    { GIMP_PDB_INT32,     "gradient width", "Gradient width"             },
-    { GIMP_PDB_FLOATARRAY,"gradient data",  "The gradient mask data"     },
-    { GIMP_PDB_INT32,     "dialog status",  "If the dialog was closing "
+    { PICMAN_PDB_STRING,    "str",            "String"                     },
+    { PICMAN_PDB_INT32,     "gradient width", "Gradient width"             },
+    { PICMAN_PDB_FLOATARRAY,"gradient data",  "The gradient mask data"     },
+    { PICMAN_PDB_INT32,     "dialog status",  "If the dialog was closing "
                                             "[0 = No, 1 = Yes]"          }
   };
 
-  gchar *gradient_callback = gimp_procedural_db_temp_name ();
+  gchar *gradient_callback = picman_procedural_db_temp_name ();
 
-  gimp_install_temp_proc (gradient_callback,
+  picman_install_temp_proc (gradient_callback,
                           "Temporary gradient popup callback procedure",
                           "",
                           "",
@@ -81,54 +81,54 @@ gimp_gradient_select_new (const gchar             *title,
                           "",
                           NULL,
                           "",
-                          GIMP_TEMPORARY,
+                          PICMAN_TEMPORARY,
                           G_N_ELEMENTS (args), 0,
                           args, NULL,
-                          gimp_temp_gradient_run);
+                          picman_temp_gradient_run);
 
-  if (gimp_gradients_popup (gradient_callback, title, gradient_name,
+  if (picman_gradients_popup (gradient_callback, title, gradient_name,
                             sample_size))
     {
-      GimpGradientData *gradient_data;
+      PicmanGradientData *gradient_data;
 
-      gimp_extension_enable (); /* Allow callbacks to be watched */
+      picman_extension_enable (); /* Allow callbacks to be watched */
 
       /* Now add to hash table so we can find it again */
-      if (! gimp_gradient_select_ht)
+      if (! picman_gradient_select_ht)
         {
-          gimp_gradient_select_ht =
+          picman_gradient_select_ht =
             g_hash_table_new_full (g_str_hash, g_str_equal,
                                    g_free,
-                                   (GDestroyNotify) gimp_gradient_data_free);
+                                   (GDestroyNotify) picman_gradient_data_free);
         }
 
-      gradient_data = g_slice_new0 (GimpGradientData);
+      gradient_data = g_slice_new0 (PicmanGradientData);
 
       gradient_data->gradient_callback = gradient_callback;
       gradient_data->callback          = callback;
       gradient_data->data              = data;
 
-      g_hash_table_insert (gimp_gradient_select_ht,
+      g_hash_table_insert (picman_gradient_select_ht,
                            gradient_callback, gradient_data);
 
       return gradient_callback;
     }
 
-  gimp_uninstall_temp_proc (gradient_callback);
+  picman_uninstall_temp_proc (gradient_callback);
   g_free (gradient_callback);
 
   return NULL;
 }
 
 void
-gimp_gradient_select_destroy (const gchar *gradient_callback)
+picman_gradient_select_destroy (const gchar *gradient_callback)
 {
-  GimpGradientData *gradient_data;
+  PicmanGradientData *gradient_data;
 
   g_return_if_fail (gradient_callback != NULL);
-  g_return_if_fail (gimp_gradient_select_ht != NULL);
+  g_return_if_fail (picman_gradient_select_ht != NULL);
 
-  gradient_data = g_hash_table_lookup (gimp_gradient_select_ht,
+  gradient_data = g_hash_table_lookup (picman_gradient_select_ht,
                                        gradient_callback);
 
   if (! gradient_data)
@@ -144,33 +144,33 @@ gimp_gradient_select_destroy (const gchar *gradient_callback)
   g_free (gradient_data->gradient_data);
 
   if (gradient_data->gradient_callback)
-    gimp_gradients_close_popup (gradient_data->gradient_callback);
+    picman_gradients_close_popup (gradient_data->gradient_callback);
 
-  gimp_uninstall_temp_proc (gradient_callback);
+  picman_uninstall_temp_proc (gradient_callback);
 
-  g_hash_table_remove (gimp_gradient_select_ht, gradient_callback);
+  g_hash_table_remove (picman_gradient_select_ht, gradient_callback);
 }
 
 
 /*  private functions  */
 
 static void
-gimp_gradient_data_free (GimpGradientData *data)
+picman_gradient_data_free (PicmanGradientData *data)
 {
-  g_slice_free (GimpGradientData, data);
+  g_slice_free (PicmanGradientData, data);
 }
 
 static void
-gimp_temp_gradient_run (const gchar      *name,
+picman_temp_gradient_run (const gchar      *name,
                         gint              nparams,
-                        const GimpParam  *param,
+                        const PicmanParam  *param,
                         gint             *nreturn_vals,
-                        GimpParam       **return_vals)
+                        PicmanParam       **return_vals)
 {
-  static GimpParam  values[1];
-  GimpGradientData *gradient_data;
+  static PicmanParam  values[1];
+  PicmanGradientData *gradient_data;
 
-  gradient_data = g_hash_table_lookup (gimp_gradient_select_ht, name);
+  gradient_data = g_hash_table_lookup (picman_gradient_select_ht, name);
 
   if (! gradient_data)
     {
@@ -190,19 +190,19 @@ gimp_temp_gradient_run (const gchar      *name,
 
       if (! gradient_data->idle_id)
         gradient_data->idle_id =
-          g_idle_add ((GSourceFunc) gimp_temp_gradient_run_idle,
+          g_idle_add ((GSourceFunc) picman_temp_gradient_run_idle,
                       gradient_data);
     }
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_SUCCESS;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_SUCCESS;
 }
 
 static gboolean
-gimp_temp_gradient_run_idle (GimpGradientData *gradient_data)
+picman_temp_gradient_run_idle (PicmanGradientData *gradient_data)
 {
   gradient_data->idle_id = 0;
 
@@ -218,7 +218,7 @@ gimp_temp_gradient_run_idle (GimpGradientData *gradient_data)
       gchar *gradient_callback = gradient_data->gradient_callback;
 
       gradient_data->gradient_callback = NULL;
-      gimp_gradient_select_destroy (gradient_callback);
+      picman_gradient_select_destroy (gradient_callback);
     }
 
   return FALSE;

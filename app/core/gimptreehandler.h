@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpTreeHandler
- * Copyright (C) 2009  Michael Natterer <mitch@gimp.org>
+ * PicmanTreeHandler
+ * Copyright (C) 2009  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,47 +18,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TREE_HANDLER_H__
-#define __GIMP_TREE_HANDLER_H__
+#ifndef __PICMAN_TREE_HANDLER_H__
+#define __PICMAN_TREE_HANDLER_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-#define GIMP_TYPE_TREE_HANDLER            (gimp_tree_handler_get_type ())
-#define GIMP_TREE_HANDLER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TREE_HANDLER, GimpTreeHandler))
-#define GIMP_TREE_HANDLER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TREE_HANDLER, GimpTreeHandlerClass))
-#define GIMP_IS_TREE_HANDLER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TREE_HANDLER))
-#define GIMP_IS_TREE_HANDLER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TREE_HANDLER))
-#define GIMP_TREE_HANDLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TREE_HANDLER, GimpTreeHandlerClass))
+#define PICMAN_TYPE_TREE_HANDLER            (picman_tree_handler_get_type ())
+#define PICMAN_TREE_HANDLER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TREE_HANDLER, PicmanTreeHandler))
+#define PICMAN_TREE_HANDLER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TREE_HANDLER, PicmanTreeHandlerClass))
+#define PICMAN_IS_TREE_HANDLER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TREE_HANDLER))
+#define PICMAN_IS_TREE_HANDLER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TREE_HANDLER))
+#define PICMAN_TREE_HANDLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TREE_HANDLER, PicmanTreeHandlerClass))
 
 
-typedef struct _GimpTreeHandlerClass GimpTreeHandlerClass;
+typedef struct _PicmanTreeHandlerClass PicmanTreeHandlerClass;
 
-struct _GimpTreeHandler
+struct _PicmanTreeHandler
 {
-  GimpObject     parent_instance;
+  PicmanObject     parent_instance;
 
-  GimpContainer *container;
+  PicmanContainer *container;
 
   gchar         *signal_name;
   GCallback      callback;
   gpointer       user_data;
 };
 
-struct _GimpTreeHandlerClass
+struct _PicmanTreeHandlerClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType             gimp_tree_handler_get_type   (void) G_GNUC_CONST;
+GType             picman_tree_handler_get_type   (void) G_GNUC_CONST;
 
-GimpTreeHandler * gimp_tree_handler_connect    (GimpContainer   *container,
+PicmanTreeHandler * picman_tree_handler_connect    (PicmanContainer   *container,
                                                 const gchar     *signal_name,
                                                 GCallback        callback,
                                                 gpointer         user_data);
-void              gimp_tree_handler_disconnect (GimpTreeHandler *handler);
+void              picman_tree_handler_disconnect (PicmanTreeHandler *handler);
 
 
-#endif /* __GIMP_TREE_HANDLER_H__ */
+#endif /* __PICMAN_TREE_HANDLER_H__ */

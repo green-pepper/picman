@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpblobeditor.h
+ * picmanblobeditor.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_BLOB_EDITOR_H__
-#define  __GIMP_BLOB_EDITOR_H__
+#ifndef  __PICMAN_BLOB_EDITOR_H__
+#define  __PICMAN_BLOB_EDITOR_H__
 
 
-#define GIMP_TYPE_BLOB_EDITOR            (gimp_blob_editor_get_type ())
-#define GIMP_BLOB_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BLOB_EDITOR, GimpBlobEditor))
-#define GIMP_BLOB_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BLOB_EDITOR, GimpBlobEditorClass))
-#define GIMP_IS_BLOB_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BLOB_EDITOR))
-#define GIMP_IS_BLOB_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BLOB_EDITOR))
-#define GIMP_BLOB_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BLOB_EDITOR, GimpBlobEditorClass))
+#define PICMAN_TYPE_BLOB_EDITOR            (picman_blob_editor_get_type ())
+#define PICMAN_BLOB_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BLOB_EDITOR, PicmanBlobEditor))
+#define PICMAN_BLOB_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BLOB_EDITOR, PicmanBlobEditorClass))
+#define PICMAN_IS_BLOB_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BLOB_EDITOR))
+#define PICMAN_IS_BLOB_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BLOB_EDITOR))
+#define PICMAN_BLOB_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BLOB_EDITOR, PicmanBlobEditorClass))
 
 
-typedef struct _GimpBlobEditorClass GimpBlobEditorClass;
+typedef struct _PicmanBlobEditorClass PicmanBlobEditorClass;
 
-struct _GimpBlobEditor
+struct _PicmanBlobEditor
 {
   GtkDrawingArea       parent_instance;
 
-  GimpInkBlobType      type;
+  PicmanInkBlobType      type;
   gdouble              aspect;
   gdouble              angle;
 
@@ -43,17 +43,17 @@ struct _GimpBlobEditor
   gboolean             active;
 };
 
-struct _GimpBlobEditorClass
+struct _PicmanBlobEditorClass
 {
   GtkDrawingAreaClass  parent_class;
 };
 
 
-GType       gimp_blob_editor_get_type (void) G_GNUC_CONST;
+GType       picman_blob_editor_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_blob_editor_new      (GimpInkBlobType  type,
+GtkWidget * picman_blob_editor_new      (PicmanInkBlobType  type,
                                        gdouble          aspect,
                                        gdouble          angle);
 
 
-#endif  /*  __GIMP_BLOB_EDITOR_H__  */
+#endif  /*  __PICMAN_BLOB_EDITOR_H__  */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,16 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TOOL_PRESET_LOAD_H__
-#define __GIMP_TOOL_PRESET_LOAD_H__
+#ifndef __PICMAN_TOOL_PRESET_LOAD_H__
+#define __PICMAN_TOOL_PRESET_LOAD_H__
 
 
-#define GIMP_TOOL_PRESET_FILE_EXTENSION ".gtp"
+#define PICMAN_TOOL_PRESET_FILE_EXTENSION ".gtp"
 
 
-GList * gimp_tool_preset_load (GimpContext  *context,
+GList * picman_tool_preset_load (PicmanContext  *context,
                                const gchar  *filename,
                                GError      **error);
 
 
-#endif /* __GIMP_TOOL_PRESET_LOAD_H__ */
+#endif /* __PICMAN_TOOL_PRESET_LOAD_H__ */

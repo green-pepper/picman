@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpText
- * Copyright (C) 2002-2003  Sven Neumann <sven@gimp.org>
+ * PicmanText
+ * Copyright (C) 2002-2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,31 +24,31 @@
 
 #include "text-types.h"
 
-#include "gimptextlayout.h"
-#include "gimptextlayout-render.h"
+#include "picmantextlayout.h"
+#include "picmantextlayout-render.h"
 
 
 void
-gimp_text_layout_render (GimpTextLayout    *layout,
+picman_text_layout_render (PicmanTextLayout    *layout,
                          cairo_t           *cr,
-                         GimpTextDirection  base_dir,
+                         PicmanTextDirection  base_dir,
                          gboolean           path)
 {
   PangoLayout    *pango_layout;
   cairo_matrix_t  trafo;
   gint            x, y;
 
-  g_return_if_fail (GIMP_IS_TEXT_LAYOUT (layout));
+  g_return_if_fail (PICMAN_IS_TEXT_LAYOUT (layout));
   g_return_if_fail (cr != NULL);
 
-  gimp_text_layout_get_offsets (layout, &x, &y);
+  picman_text_layout_get_offsets (layout, &x, &y);
 
   cairo_translate (cr, x, y);
 
-  gimp_text_layout_get_transform (layout, &trafo);
+  picman_text_layout_get_transform (layout, &trafo);
   cairo_transform (cr, &trafo);
 
-  pango_layout = gimp_text_layout_get_pango_layout (layout);
+  pango_layout = picman_text_layout_get_pango_layout (layout);
 
   if (path)
     pango_cairo_layout_path (cr, pango_layout);

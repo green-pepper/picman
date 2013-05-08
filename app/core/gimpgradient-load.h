@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,20 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GRADIENT_LOAD_H__
-#define __GIMP_GRADIENT_LOAD_H__
+#ifndef __PICMAN_GRADIENT_LOAD_H__
+#define __PICMAN_GRADIENT_LOAD_H__
 
 
-#define GIMP_GRADIENT_FILE_EXTENSION     ".ggr"
-#define GIMP_GRADIENT_SVG_FILE_EXTENSION ".svg"
+#define PICMAN_GRADIENT_FILE_EXTENSION     ".ggr"
+#define PICMAN_GRADIENT_SVG_FILE_EXTENSION ".svg"
 
 
-GList  * gimp_gradient_load     (GimpContext  *context,
+GList  * picman_gradient_load     (PicmanContext  *context,
                                  const gchar  *filename,
                                  GError      **error);
-GList  * gimp_gradient_load_svg (GimpContext  *context,
+GList  * picman_gradient_load_svg (PicmanContext  *context,
                                  const gchar  *filename,
                                  GError      **error);
 
 
-#endif /* __GIMP_GRADIENT_LOAD_H__ */
+#endif /* __PICMAN_GRADIENT_LOAD_H__ */

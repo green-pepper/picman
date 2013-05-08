@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptranslationstore.h
- * Copyright (C) 2009  Sven Neumann <sven@gimp.org>
+ * picmantranslationstore.h
+ * Copyright (C) 2009  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TRANSLATION_STORE_H__
-#define __GIMP_TRANSLATION_STORE_H__
+#ifndef __PICMAN_TRANSLATION_STORE_H__
+#define __PICMAN_TRANSLATION_STORE_H__
 
 
-#include "gimplanguagestore.h"
+#include "picmanlanguagestore.h"
 
 
-#define GIMP_TYPE_TRANSLATION_STORE            (gimp_translation_store_get_type ())
-#define GIMP_TRANSLATION_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TRANSLATION_STORE, GimpTranslationStore))
-#define GIMP_TRANSLATION_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TRANSLATION_STORE, GimpTranslationStoreClass))
-#define GIMP_IS_TRANSLATION_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TRANSLATION_STORE))
-#define GIMP_IS_TRANSLATION_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TRANSLATION_STORE))
-#define GIMP_TRANSLATION_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TRANSLATION_STORE, GimpTranslationStoreClass))
+#define PICMAN_TYPE_TRANSLATION_STORE            (picman_translation_store_get_type ())
+#define PICMAN_TRANSLATION_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TRANSLATION_STORE, PicmanTranslationStore))
+#define PICMAN_TRANSLATION_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TRANSLATION_STORE, PicmanTranslationStoreClass))
+#define PICMAN_IS_TRANSLATION_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TRANSLATION_STORE))
+#define PICMAN_IS_TRANSLATION_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TRANSLATION_STORE))
+#define PICMAN_TRANSLATION_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TRANSLATION_STORE, PicmanTranslationStoreClass))
 
 
-typedef struct _GimpTranslationStoreClass  GimpTranslationStoreClass;
+typedef struct _PicmanTranslationStoreClass  PicmanTranslationStoreClass;
 
 
-GType          gimp_translation_store_get_type (void) G_GNUC_CONST;
+GType          picman_translation_store_get_type (void) G_GNUC_CONST;
 
-GtkListStore * gimp_translation_store_new      (void);
+GtkListStore * picman_translation_store_new      (void);
 
 
-#endif  /* __GIMP_TRANSLATION_STORE_H__ */
+#endif  /* __PICMAN_TRANSLATION_STORE_H__ */

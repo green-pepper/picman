@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewrendererbuffer.c
- * Copyright (C) 2004-2006 Michael Natterer <mitch@gimp.org>
+ * picmanviewrendererbuffer.c
+ * Copyright (C) 2004-2006 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,41 +23,41 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimptempbuf.h"
-#include "core/gimpviewable.h"
+#include "core/picmantempbuf.h"
+#include "core/picmanviewable.h"
 
-#include "gimpviewrendererbuffer.h"
+#include "picmanviewrendererbuffer.h"
 
 
-static void   gimp_view_renderer_buffer_render (GimpViewRenderer *renderer,
+static void   picman_view_renderer_buffer_render (PicmanViewRenderer *renderer,
                                                 GtkWidget        *widget);
 
 
-G_DEFINE_TYPE (GimpViewRendererBuffer, gimp_view_renderer_buffer,
-               GIMP_TYPE_VIEW_RENDERER)
+G_DEFINE_TYPE (PicmanViewRendererBuffer, picman_view_renderer_buffer,
+               PICMAN_TYPE_VIEW_RENDERER)
 
-#define parent_class gimp_view_renderer_buffer_class_init
+#define parent_class picman_view_renderer_buffer_class_init
 
 
 static void
-gimp_view_renderer_buffer_class_init (GimpViewRendererBufferClass *klass)
+picman_view_renderer_buffer_class_init (PicmanViewRendererBufferClass *klass)
 {
-  GimpViewRendererClass *renderer_class = GIMP_VIEW_RENDERER_CLASS (klass);
+  PicmanViewRendererClass *renderer_class = PICMAN_VIEW_RENDERER_CLASS (klass);
 
-  renderer_class->render = gimp_view_renderer_buffer_render;
+  renderer_class->render = picman_view_renderer_buffer_render;
 }
 
 static void
-gimp_view_renderer_buffer_init (GimpViewRendererBuffer *renderer)
+picman_view_renderer_buffer_init (PicmanViewRendererBuffer *renderer)
 {
 }
 
 static void
-gimp_view_renderer_buffer_render (GimpViewRenderer *renderer,
+picman_view_renderer_buffer_render (PicmanViewRenderer *renderer,
                                   GtkWidget        *widget)
 {
   gint         buffer_width;
@@ -65,11 +65,11 @@ gimp_view_renderer_buffer_render (GimpViewRenderer *renderer,
   gint         view_width;
   gint         view_height;
   gboolean     scaling_up;
-  GimpTempBuf *render_buf = NULL;
+  PicmanTempBuf *render_buf = NULL;
 
-  gimp_viewable_get_size (renderer->viewable, &buffer_width, &buffer_height);
+  picman_viewable_get_size (renderer->viewable, &buffer_width, &buffer_height);
 
-  gimp_viewable_calc_preview_size (buffer_width,
+  picman_viewable_calc_preview_size (buffer_width,
                                    buffer_height,
                                    renderer->width,
                                    renderer->height,
@@ -80,38 +80,38 @@ gimp_view_renderer_buffer_render (GimpViewRenderer *renderer,
 
   if (scaling_up)
     {
-      GimpTempBuf *temp_buf;
+      PicmanTempBuf *temp_buf;
 
-      temp_buf = gimp_viewable_get_new_preview (renderer->viewable,
+      temp_buf = picman_viewable_get_new_preview (renderer->viewable,
                                                 renderer->context,
                                                 buffer_width, buffer_height);
 
       if (temp_buf)
         {
-          render_buf = gimp_temp_buf_scale (temp_buf, view_width, view_height);
+          render_buf = picman_temp_buf_scale (temp_buf, view_width, view_height);
 
-          gimp_temp_buf_unref (temp_buf);
+          picman_temp_buf_unref (temp_buf);
         }
     }
   else
     {
-      render_buf = gimp_viewable_get_new_preview (renderer->viewable,
+      render_buf = picman_viewable_get_new_preview (renderer->viewable,
                                                   renderer->context,
                                                   view_width, view_height);
     }
 
   if (render_buf)
     {
-      gimp_view_renderer_render_temp_buf_simple (renderer, render_buf);
+      picman_view_renderer_render_temp_buf_simple (renderer, render_buf);
 
-      gimp_temp_buf_unref (render_buf);
+      picman_temp_buf_unref (render_buf);
     }
   else /* no preview available */
     {
       const gchar  *stock_id;
 
-      stock_id = gimp_viewable_get_stock_id (renderer->viewable);
+      stock_id = picman_viewable_get_stock_id (renderer->viewable);
 
-      gimp_view_renderer_render_stock (renderer, widget, stock_id);
+      picman_view_renderer_render_stock (renderer, widget, stock_id);
     }
 }

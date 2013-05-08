@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpmenufactory.h
- * Copyright (C) 2003-2004 Michael Natterer <mitch@gimp.org>
+ * picmanmenufactory.h
+ * Copyright (C) 2003-2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_MENU_FACTORY_H__
-#define __GIMP_MENU_FACTORY_H__
+#ifndef __PICMAN_MENU_FACTORY_H__
+#define __PICMAN_MENU_FACTORY_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-typedef struct _GimpMenuFactoryEntry GimpMenuFactoryEntry;
+typedef struct _PicmanMenuFactoryEntry PicmanMenuFactoryEntry;
 
-struct _GimpMenuFactoryEntry
+struct _PicmanMenuFactoryEntry
 {
   gchar *identifier;
   GList *action_groups;
@@ -35,43 +35,43 @@ struct _GimpMenuFactoryEntry
 };
 
 
-#define GIMP_TYPE_MENU_FACTORY            (gimp_menu_factory_get_type ())
-#define GIMP_MENU_FACTORY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_MENU_FACTORY, GimpMenuFactory))
-#define GIMP_MENU_FACTORY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_MENU_FACTORY, GimpMenuFactoryClass))
-#define GIMP_IS_MENU_FACTORY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_MENU_FACTORY))
-#define GIMP_IS_MENU_FACTORY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_MENU_FACTORY))
-#define GIMP_MENU_FACTORY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_MENU_FACTORY, GimpMenuFactoryClass))
+#define PICMAN_TYPE_MENU_FACTORY            (picman_menu_factory_get_type ())
+#define PICMAN_MENU_FACTORY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_MENU_FACTORY, PicmanMenuFactory))
+#define PICMAN_MENU_FACTORY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_MENU_FACTORY, PicmanMenuFactoryClass))
+#define PICMAN_IS_MENU_FACTORY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_MENU_FACTORY))
+#define PICMAN_IS_MENU_FACTORY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_MENU_FACTORY))
+#define PICMAN_MENU_FACTORY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_MENU_FACTORY, PicmanMenuFactoryClass))
 
 
-typedef struct _GimpMenuFactoryPrivate  GimpMenuFactoryPrivate;
-typedef struct _GimpMenuFactoryClass    GimpMenuFactoryClass;
+typedef struct _PicmanMenuFactoryPrivate  PicmanMenuFactoryPrivate;
+typedef struct _PicmanMenuFactoryClass    PicmanMenuFactoryClass;
 
-struct _GimpMenuFactory
+struct _PicmanMenuFactory
 {
-  GimpObject              parent_instance;
+  PicmanObject              parent_instance;
 
-  GimpMenuFactoryPrivate *p;
+  PicmanMenuFactoryPrivate *p;
 };
 
-struct _GimpMenuFactoryClass
+struct _PicmanMenuFactoryClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType             gimp_menu_factory_get_type             (void) G_GNUC_CONST;
-GimpMenuFactory * gimp_menu_factory_new                  (Gimp              *gimp,
-                                                          GimpActionFactory *action_factory);
-void              gimp_menu_factory_manager_register     (GimpMenuFactory   *factory,
+GType             picman_menu_factory_get_type             (void) G_GNUC_CONST;
+PicmanMenuFactory * picman_menu_factory_new                  (Picman              *picman,
+                                                          PicmanActionFactory *action_factory);
+void              picman_menu_factory_manager_register     (PicmanMenuFactory   *factory,
                                                           const gchar       *identifier,
                                                           const gchar       *first_group,
                                                           ...)  G_GNUC_NULL_TERMINATED;
-GList           * gimp_menu_factory_get_registered_menus (GimpMenuFactory   *factory);
-GimpUIManager   * gimp_menu_factory_manager_new          (GimpMenuFactory   *factory,
+GList           * picman_menu_factory_get_registered_menus (PicmanMenuFactory   *factory);
+PicmanUIManager   * picman_menu_factory_manager_new          (PicmanMenuFactory   *factory,
                                                           const gchar       *identifier,
                                                           gpointer           callback_data,
                                                           gboolean           create_tearoff);
 
 
 
-#endif  /*  __GIMP_MENU_FACTORY_H__  */
+#endif  /*  __PICMAN_MENU_FACTORY_H__  */

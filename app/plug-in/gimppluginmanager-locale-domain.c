@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginmanager-locale-domain.c
+ * picmanpluginmanager-locale-domain.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,20 +23,20 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "plug-in-types.h"
 
-#include "gimppluginmanager.h"
-#include "gimppluginmanager-locale-domain.h"
+#include "picmanpluginmanager.h"
+#include "picmanpluginmanager-locale-domain.h"
 
 
 #define STD_PLUG_INS_LOCALE_DOMAIN GETTEXT_PACKAGE "-std-plug-ins"
 
 
-typedef struct _GimpPlugInLocaleDomain GimpPlugInLocaleDomain;
+typedef struct _PicmanPlugInLocaleDomain PicmanPlugInLocaleDomain;
 
-struct _GimpPlugInLocaleDomain
+struct _PicmanPlugInLocaleDomain
 {
   gchar *prog_name;
   gchar *domain_name;
@@ -45,20 +45,20 @@ struct _GimpPlugInLocaleDomain
 
 
 void
-gimp_plug_in_manager_locale_domain_exit (GimpPlugInManager *manager)
+picman_plug_in_manager_locale_domain_exit (PicmanPlugInManager *manager)
 {
   GSList *list;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
 
   for (list = manager->locale_domains; list; list = list->next)
     {
-      GimpPlugInLocaleDomain *domain = list->data;
+      PicmanPlugInLocaleDomain *domain = list->data;
 
       g_free (domain->prog_name);
       g_free (domain->domain_name);
       g_free (domain->domain_path);
-      g_slice_free (GimpPlugInLocaleDomain, domain);
+      g_slice_free (PicmanPlugInLocaleDomain, domain);
     }
 
   g_slist_free (manager->locale_domains);
@@ -66,18 +66,18 @@ gimp_plug_in_manager_locale_domain_exit (GimpPlugInManager *manager)
 }
 
 void
-gimp_plug_in_manager_add_locale_domain (GimpPlugInManager *manager,
+picman_plug_in_manager_add_locale_domain (PicmanPlugInManager *manager,
                                         const gchar       *prog_name,
                                         const gchar       *domain_name,
                                         const gchar       *domain_path)
 {
-  GimpPlugInLocaleDomain *domain;
+  PicmanPlugInLocaleDomain *domain;
 
-  g_return_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager));
+  g_return_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager));
   g_return_if_fail (prog_name != NULL);
   g_return_if_fail (domain_name != NULL);
 
-  domain = g_slice_new (GimpPlugInLocaleDomain);
+  domain = g_slice_new (PicmanPlugInLocaleDomain);
 
   domain->prog_name   = g_strdup (prog_name);
   domain->domain_name = g_strdup (domain_name);
@@ -89,29 +89,29 @@ gimp_plug_in_manager_add_locale_domain (GimpPlugInManager *manager,
   g_print ("added locale domain \"%s\" for path \"%s\"\n",
            domain->domain_name ? domain->domain_name : "(null)",
            domain->domain_path ?
-           gimp_filename_to_utf8 (domain->domain_path) : "(null)");
+           picman_filename_to_utf8 (domain->domain_path) : "(null)");
 #endif
 }
 
 const gchar *
-gimp_plug_in_manager_get_locale_domain (GimpPlugInManager  *manager,
+picman_plug_in_manager_get_locale_domain (PicmanPlugInManager  *manager,
                                         const gchar        *prog_name,
                                         const gchar       **domain_path)
 {
   GSList *list;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager), NULL);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager), NULL);
 
   if (domain_path)
-    *domain_path = gimp_locale_directory ();
+    *domain_path = picman_locale_directory ();
 
-  /*  A NULL prog_name is GIMP itself, return the default domain  */
+  /*  A NULL prog_name is PICMAN itself, return the default domain  */
   if (! prog_name)
     return NULL;
 
   for (list = manager->locale_domains; list; list = list->next)
     {
-      GimpPlugInLocaleDomain *domain = list->data;
+      PicmanPlugInLocaleDomain *domain = list->data;
 
       if (domain && domain->prog_name &&
           ! strcmp (domain->prog_name, prog_name))
@@ -127,7 +127,7 @@ gimp_plug_in_manager_get_locale_domain (GimpPlugInManager  *manager,
 }
 
 gint
-gimp_plug_in_manager_get_locale_domains (GimpPlugInManager   *manager,
+picman_plug_in_manager_get_locale_domains (PicmanPlugInManager   *manager,
                                          gchar             ***locale_domains,
                                          gchar             ***locale_paths)
 {
@@ -136,13 +136,13 @@ gimp_plug_in_manager_get_locale_domains (GimpPlugInManager   *manager,
   gint    n_domains;
   gint    i;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN_MANAGER (manager), 0);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN_MANAGER (manager), 0);
   g_return_val_if_fail (locale_domains != NULL, 0);
   g_return_val_if_fail (locale_paths != NULL, 0);
 
   for (list = manager->locale_domains; list; list = list->next)
     {
-      GimpPlugInLocaleDomain *domain = list->data;
+      PicmanPlugInLocaleDomain *domain = list->data;
       GSList                 *tmp;
 
       for (tmp = unique; tmp; tmp = tmp->next)
@@ -161,16 +161,16 @@ gimp_plug_in_manager_get_locale_domains (GimpPlugInManager   *manager,
   *locale_paths   = g_new0 (gchar *, n_domains + 1);
 
   (*locale_domains)[0] = g_strdup (STD_PLUG_INS_LOCALE_DOMAIN);
-  (*locale_paths)[0]   = g_strdup (gimp_locale_directory ());
+  (*locale_paths)[0]   = g_strdup (picman_locale_directory ());
 
   for (list = unique, i = 1; list; list = list->next, i++)
     {
-      GimpPlugInLocaleDomain *domain = list->data;
+      PicmanPlugInLocaleDomain *domain = list->data;
 
       (*locale_domains)[i] = g_strdup (domain->domain_name);
       (*locale_paths)[i]   = (domain->domain_path ?
                               g_strdup (domain->domain_path) :
-                              g_strdup (gimp_locale_directory ()));
+                              g_strdup (picman_locale_directory ()));
     }
 
   g_slist_free (unique);

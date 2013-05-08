@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpradioaction.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
- * Copyright (C) 2008 Sven Neumann <sven@gimp.org>
+ * picmanradioaction.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
+ * Copyright (C) 2008 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,57 +23,57 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "gimpradioaction.h"
+#include "picmanradioaction.h"
 
 
-static void   gimp_radio_action_connect_proxy     (GtkAction        *action,
+static void   picman_radio_action_connect_proxy     (GtkAction        *action,
                                                    GtkWidget        *proxy);
-static void   gimp_radio_action_set_proxy_tooltip (GimpRadioAction  *action,
+static void   picman_radio_action_set_proxy_tooltip (PicmanRadioAction  *action,
                                                    GtkWidget        *proxy);
-static void   gimp_radio_action_tooltip_notify    (GimpRadioAction  *action,
+static void   picman_radio_action_tooltip_notify    (PicmanRadioAction  *action,
                                                    const GParamSpec *pspec,
                                                    gpointer          data);
 
 
-G_DEFINE_TYPE (GimpRadioAction, gimp_radio_action, GTK_TYPE_RADIO_ACTION)
+G_DEFINE_TYPE (PicmanRadioAction, picman_radio_action, GTK_TYPE_RADIO_ACTION)
 
-#define parent_class gimp_radio_action_parent_class
+#define parent_class picman_radio_action_parent_class
 
 
 static void
-gimp_radio_action_class_init (GimpRadioActionClass *klass)
+picman_radio_action_class_init (PicmanRadioActionClass *klass)
 {
   GtkActionClass *action_class = GTK_ACTION_CLASS (klass);
 
-  action_class->connect_proxy = gimp_radio_action_connect_proxy;
+  action_class->connect_proxy = picman_radio_action_connect_proxy;
 }
 
 static void
-gimp_radio_action_init (GimpRadioAction *action)
+picman_radio_action_init (PicmanRadioAction *action)
 {
   g_signal_connect (action, "notify::tooltip",
-                    G_CALLBACK (gimp_radio_action_tooltip_notify),
+                    G_CALLBACK (picman_radio_action_tooltip_notify),
                     NULL);
 }
 
 static void
-gimp_radio_action_connect_proxy (GtkAction *action,
+picman_radio_action_connect_proxy (GtkAction *action,
                                  GtkWidget *proxy)
 {
   GTK_ACTION_CLASS (parent_class)->connect_proxy (action, proxy);
 
-  gimp_radio_action_set_proxy_tooltip (GIMP_RADIO_ACTION (action), proxy);
+  picman_radio_action_set_proxy_tooltip (PICMAN_RADIO_ACTION (action), proxy);
 }
 
 
 /*  public functions  */
 
 GtkRadioAction *
-gimp_radio_action_new (const gchar *name,
+picman_radio_action_new (const gchar *name,
                        const gchar *label,
                        const gchar *tooltip,
                        const gchar *stock_id,
@@ -81,7 +81,7 @@ gimp_radio_action_new (const gchar *name,
 {
   GtkRadioAction *action;
 
-  action = g_object_new (GIMP_TYPE_RADIO_ACTION,
+  action = g_object_new (PICMAN_TYPE_RADIO_ACTION,
                          "name",    name,
                          "label",   label,
                          "tooltip", tooltip,
@@ -104,19 +104,19 @@ gimp_radio_action_new (const gchar *name,
 
 
 static void
-gimp_radio_action_set_proxy_tooltip (GimpRadioAction *action,
+picman_radio_action_set_proxy_tooltip (PicmanRadioAction *action,
                                      GtkWidget       *proxy)
 {
   const gchar *tooltip = gtk_action_get_tooltip (GTK_ACTION (action));
 
   if (tooltip)
-    gimp_help_set_help_data (proxy, tooltip,
+    picman_help_set_help_data (proxy, tooltip,
                              g_object_get_qdata (G_OBJECT (proxy),
-                                                 GIMP_HELP_ID));
+                                                 PICMAN_HELP_ID));
 }
 
 static void
-gimp_radio_action_tooltip_notify (GimpRadioAction  *action,
+picman_radio_action_tooltip_notify (PicmanRadioAction  *action,
                                   const GParamSpec *pspec,
                                   gpointer          data)
 {
@@ -126,6 +126,6 @@ gimp_radio_action_tooltip_notify (GimpRadioAction  *action,
        list;
        list = g_slist_next (list))
     {
-      gimp_radio_action_set_proxy_tooltip (action, list->data);
+      picman_radio_action_set_proxy_tooltip (action, list->data);
     }
 }

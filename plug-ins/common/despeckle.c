@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Despeckle (adaptive median) filter
@@ -24,10 +24,10 @@
 
 #include <stdlib.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /*
@@ -36,7 +36,7 @@
 
 #define PLUG_IN_PROC     "plug-in-despeckle"
 #define PLUG_IN_BINARY   "despeckle"
-#define PLUG_IN_ROLE     "gimp-despeckle"
+#define PLUG_IN_ROLE     "picman-despeckle"
 #define PLUG_IN_VERSION  "May 2010"
 #define SCALE_WIDTH      100
 #define ENTRY_WIDTH        3
@@ -85,9 +85,9 @@ static DespeckleHistogram  histogram;
 static void      query (void);
 static void      run   (const gchar      *name,
                         gint              nparams,
-                        const GimpParam  *param,
+                        const PicmanParam  *param,
                         gint             *nreturn_vals,
-                        GimpParam       **return_vals);
+                        PicmanParam       **return_vals);
 
 static void      despeckle                 (void);
 static void      despeckle_median          (guchar        *src,
@@ -111,7 +111,7 @@ static void      preview_update            (GtkWidget     *preview);
  * Globals...
  */
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init  */
   NULL,  /* quit  */
@@ -120,7 +120,7 @@ const GimpPlugInInfo PLUG_IN_INFO =
 };
 
 static GtkWidget    *preview;                 /* Preview widget   */
-static GimpDrawable *drawable = NULL;         /* Current drawable */
+static PicmanDrawable *drawable = NULL;         /* Current drawable */
 
 
 static gint despeckle_vals[4] =
@@ -133,7 +133,7 @@ static gint despeckle_vals[4] =
 
 
 /*
- * 'main()' - Main entry - just call gimp_main()...
+ * 'main()' - Main entry - just call picman_main()...
  */
 
 MAIN ()
@@ -145,18 +145,18 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef   args[] =
+  static const PicmanParamDef   args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable" },
-    { GIMP_PDB_INT32,    "radius",   "Filter box radius (default = 3)" },
-    { GIMP_PDB_INT32,    "type",     "Filter type { MEDIAN (0), ADAPTIVE (1), RECURSIVE-MEDIAN (2), RECURSIVE-ADAPTIVE (3) }" },
-    { GIMP_PDB_INT32,    "black",    "Black level (-1 to 255)" },
-    { GIMP_PDB_INT32,    "white",    "White level (0 to 256)" }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable" },
+    { PICMAN_PDB_INT32,    "radius",   "Filter box radius (default = 3)" },
+    { PICMAN_PDB_INT32,    "type",     "Filter type { MEDIAN (0), ADAPTIVE (1), RECURSIVE-MEDIAN (2), RECURSIVE-ADAPTIVE (3) }" },
+    { PICMAN_PDB_INT32,    "black",    "Black level (-1 to 255)" },
+    { PICMAN_PDB_INT32,    "white",    "White level (0 to 256)" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Remove speckle noise from the image"),
                           "This plug-in selectively performs a median or "
                           "adaptive box filter on an image.",
@@ -165,11 +165,11 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("Des_peckle..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Enhance");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Enhance");
 }
 
 
@@ -180,13 +180,13 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status;
-  static GimpParam   values[1];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status;
+  static PicmanParam   values[1];
 
   INIT_I18N ();
 
@@ -194,10 +194,10 @@ run (const gchar      *name,
    * Initialize parameter data...
    */
 
-  status   = GIMP_PDB_SUCCESS;
+  status   = PICMAN_PDB_SUCCESS;
   run_mode = param[0].data.d_int32;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   *nreturn_vals = 1;
@@ -207,7 +207,7 @@ run (const gchar      *name,
    * Get drawable information...
    */
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*
    * See how we will run
@@ -215,31 +215,31 @@ run (const gchar      *name,
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE :
+    case PICMAN_RUN_INTERACTIVE :
       /*
        * Possibly retrieve data...
        */
 
-      gimp_get_data (PLUG_IN_PROC, &despeckle_radius);
+      picman_get_data (PLUG_IN_PROC, &despeckle_radius);
 
       /*
        * Get information from the dialog...
        */
-      if (gimp_drawable_is_rgb(drawable->drawable_id) ||
-          gimp_drawable_is_gray(drawable->drawable_id))
+      if (picman_drawable_is_rgb(drawable->drawable_id) ||
+          picman_drawable_is_gray(drawable->drawable_id))
        {
           if (! despeckle_dialog ())
           return;
        }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*
        * Make sure all the arguments are present...
        */
 
       if (nparams < 4 || nparams > 9)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
       else if (nparams == 4)
         {
           despeckle_radius = param[3].data.d_int32;
@@ -270,17 +270,17 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*
        * Possibly retrieve data...
        */
 
       INIT_I18N();
-      gimp_get_data (PLUG_IN_PROC, despeckle_vals);
+      picman_get_data (PLUG_IN_PROC, despeckle_vals);
         break;
 
     default:
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
       break;
     }
 
@@ -288,10 +288,10 @@ run (const gchar      *name,
    * Despeckle the image...
    */
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
-        if (gimp_drawable_is_rgb(drawable->drawable_id) ||
-            gimp_drawable_is_gray(drawable->drawable_id))
+        if (picman_drawable_is_rgb(drawable->drawable_id) ||
+            picman_drawable_is_gray(drawable->drawable_id))
         {
 
           /*
@@ -304,19 +304,19 @@ run (const gchar      *name,
            * If run prevmode is interactive, flush displays...
            */
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
           /*
            * Store data...
            */
 
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC,
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC,
                            despeckle_vals, sizeof (despeckle_vals));
         }
       else
-        status = GIMP_PDB_EXECUTION_ERROR;
+        status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   /*
@@ -329,7 +329,7 @@ run (const gchar      *name,
    * Detach from the drawable...
    */
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static inline guchar
@@ -344,7 +344,7 @@ pixel_luminance (const guchar *p,
 
     case 3:
     case 4:
-      return GIMP_RGB_LUMINANCE (p[0], p[1], p[2]);
+      return PICMAN_RGB_LUMINANCE (p[0], p[1], p[2]);
 
     default:
       return 0; /* should not be reached */
@@ -384,35 +384,35 @@ pixel_copy (guchar       *dest,
 static void
 despeckle (void)
 {
-  GimpPixelRgn  src_rgn;        /* Source image region */
-  GimpPixelRgn  dst_rgn;
+  PicmanPixelRgn  src_rgn;        /* Source image region */
+  PicmanPixelRgn  dst_rgn;
   guchar       *src;
   guchar       *dst;
   gint          img_bpp;
   gint          x, y;
   gint          width, height;
 
-  img_bpp = gimp_drawable_bpp (drawable->drawable_id);
+  img_bpp = picman_drawable_bpp (drawable->drawable_id);
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &x, &y, &width, &height))
     return;
 
-  gimp_pixel_rgn_init (&src_rgn, drawable, x, y, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dst_rgn, drawable, x, y, width, height, TRUE, TRUE);
+  picman_pixel_rgn_init (&src_rgn, drawable, x, y, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&dst_rgn, drawable, x, y, width, height, TRUE, TRUE);
 
   src = g_new (guchar, width * height * img_bpp);
   dst = g_new (guchar, width * height * img_bpp);
 
-  gimp_pixel_rgn_get_rect (&src_rgn, src, x, y, width, height);
+  picman_pixel_rgn_get_rect (&src_rgn, src, x, y, width, height);
 
   despeckle_median (src, dst, width, height, img_bpp, despeckle_radius, FALSE);
 
-  gimp_pixel_rgn_set_rect (&dst_rgn, dst, x, y, width, height);
+  picman_pixel_rgn_set_rect (&dst_rgn, dst, x, y, width, height);
 
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x, y, width, height);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x, y, width, height);
 
   g_free (dst);
   g_free (src);
@@ -436,11 +436,11 @@ despeckle_dialog (void)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Despeckle"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Despeckle"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -452,7 +452,7 @@ despeckle_dialog (void)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -460,7 +460,7 @@ despeckle_dialog (void)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -468,7 +468,7 @@ despeckle_dialog (void)
                     G_CALLBACK (preview_update),
                     NULL);
 
-  frame = gimp_frame_new (_("Median"));
+  frame = picman_frame_new (_("Median"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -506,48 +506,48 @@ despeckle_dialog (void)
    * Box size (diameter) control...
    */
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                               _("_Radius:"), SCALE_WIDTH, ENTRY_WIDTH,
                               despeckle_radius, 1, MAX_RADIUS, 1, 5, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &despeckle_radius);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*
    * Black level control...
    */
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("_Black level:"), SCALE_WIDTH, ENTRY_WIDTH,
                               black_level, -1, 255, 1, 8, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &black_level);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*
    * White level control...
    */
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("_White level:"), SCALE_WIDTH, ENTRY_WIDTH,
                               white_level, 0, 256, 1, 8, 0,
                               TRUE, 0, 0,
                               NULL, NULL);
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &white_level);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*
@@ -556,7 +556,7 @@ despeckle_dialog (void)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -574,33 +574,33 @@ despeckle_dialog (void)
 static void
 preview_update (GtkWidget *widget)
 {
-  GimpPixelRgn  src_rgn;        /* Source image region */
+  PicmanPixelRgn  src_rgn;        /* Source image region */
   guchar       *dst;            /* Output image */
-  GimpPreview  *preview;        /* The preview widget */
+  PicmanPreview  *preview;        /* The preview widget */
   guchar       *src;            /* Source pixel rows */
   gint          img_bpp;
   gint          x1,y1;
   gint          width, height;
 
-  preview = GIMP_PREVIEW (widget);
+  preview = PICMAN_PREVIEW (widget);
 
-  img_bpp = gimp_drawable_bpp (drawable->drawable_id);
+  img_bpp = picman_drawable_bpp (drawable->drawable_id);
 
   width  = preview->width;
   height = preview->height;
 
-  gimp_preview_get_position (preview, &x1, &y1);
+  picman_preview_get_position (preview, &x1, &y1);
 
-  gimp_pixel_rgn_init (&src_rgn, drawable, x1, y1, width, height, FALSE, FALSE);
+  picman_pixel_rgn_init (&src_rgn, drawable, x1, y1, width, height, FALSE, FALSE);
 
   dst = g_new (guchar, width * height * img_bpp);
   src = g_new (guchar, width * height * img_bpp);
 
-  gimp_pixel_rgn_get_rect (&src_rgn, src, x1, y1, width, height);
+  picman_pixel_rgn_get_rect (&src_rgn, src, x1, y1, width, height);
 
   despeckle_median (src, dst, width, height, img_bpp, despeckle_radius, TRUE);
 
-  gimp_preview_draw_buffer (preview, dst, width * img_bpp);
+  picman_preview_draw_buffer (preview, dst, width * img_bpp);
 
   g_free (src);
   g_free (dst);
@@ -616,7 +616,7 @@ dialog_adaptive_callback (GtkWidget *widget,
   else
     filter_type &= ~FILTER_ADAPTIVE;
 
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }
 
 static void
@@ -628,7 +628,7 @@ dialog_recursive_callback (GtkWidget *widget,
   else
     filter_type &= ~FILTER_RECURSIVE;
 
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }
 
 
@@ -869,7 +869,7 @@ despeckle_median (guchar   *src,
   max_progress = width * height;
 
   if (! preview)
-    gimp_progress_init(_("Despeckle"));
+    picman_progress_init(_("Despeckle"));
 
   adapt_radius = radius;
   for (y = 0; y < height; y++)
@@ -935,9 +935,9 @@ despeckle_median (guchar   *src,
       progress += width;
 
       if (! preview && y % 32 == 0)
-        gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+        picman_progress_update ((gdouble) progress / (gdouble) max_progress);
     }
 
   if (! preview)
-    gimp_progress_update (1.0);
+    picman_progress_update (1.0);
 }

@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpprogress.h
+ * picmanprogress.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,19 +18,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
-#ifndef __GIMP_PROGRESS_H__
-#define __GIMP_PROGRESS_H__
+#ifndef __PICMAN_PROGRESS_H__
+#define __PICMAN_PROGRESS_H__
 
 G_BEGIN_DECLS
 
 
-typedef struct _GimpProgressVtable GimpProgressVtable;
+typedef struct _PicmanProgressVtable PicmanProgressVtable;
 
-struct _GimpProgressVtable
+struct _PicmanProgressVtable
 {
   void    (* start)        (const gchar *message,
                             gboolean     cancelable,
@@ -45,50 +45,50 @@ struct _GimpProgressVtable
   guint32 (* get_window)   (gpointer     user_data);
 
   /* Padding for future expansion. Must be initialized with NULL! */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
-  void (* _gimp_reserved5) (void);
-  void (* _gimp_reserved6) (void);
-  void (* _gimp_reserved7) (void);
-  void (* _gimp_reserved8) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
+  void (* _picman_reserved5) (void);
+  void (* _picman_reserved6) (void);
+  void (* _picman_reserved7) (void);
+  void (* _picman_reserved8) (void);
 };
 
 
-const gchar * gimp_progress_install_vtable  (const GimpProgressVtable *vtable,
+const gchar * picman_progress_install_vtable  (const PicmanProgressVtable *vtable,
                                              gpointer                  user_data);
-gpointer      gimp_progress_uninstall       (const gchar              *progress_callback);
+gpointer      picman_progress_uninstall       (const gchar              *progress_callback);
 
-gboolean      gimp_progress_init            (const gchar              *message);
-gboolean      gimp_progress_init_printf     (const gchar              *format,
+gboolean      picman_progress_init            (const gchar              *message);
+gboolean      picman_progress_init_printf     (const gchar              *format,
                                              ...) G_GNUC_PRINTF (1, 2);
 
-gboolean      gimp_progress_set_text_printf (const gchar              *format,
+gboolean      picman_progress_set_text_printf (const gchar              *format,
                                              ...) G_GNUC_PRINTF (1, 2);
 
-gboolean      gimp_progress_update          (gdouble                   percentage);
+gboolean      picman_progress_update          (gdouble                   percentage);
 
 
-#ifndef GIMP_DISABLE_DEPRECATED
-typedef void (* GimpProgressStartCallback) (const gchar *message,
+#ifndef PICMAN_DISABLE_DEPRECATED
+typedef void (* PicmanProgressStartCallback) (const gchar *message,
                                             gboolean     cancelable,
                                             gpointer     user_data);
-typedef void (* GimpProgressEndCallback)   (gpointer     user_data);
-typedef void (* GimpProgressTextCallback)  (const gchar *message,
+typedef void (* PicmanProgressEndCallback)   (gpointer     user_data);
+typedef void (* PicmanProgressTextCallback)  (const gchar *message,
                                             gpointer     user_data);
-typedef void (* GimpProgressValueCallback) (gdouble      percentage,
+typedef void (* PicmanProgressValueCallback) (gdouble      percentage,
                                             gpointer     user_data);
 
-GIMP_DEPRECATED_FOR(gimp_progress_install_vtable)
-const gchar * gimp_progress_install       (GimpProgressStartCallback  start_callback,
-                                           GimpProgressEndCallback    end_callback,
-                                           GimpProgressTextCallback   text_callback,
-                                           GimpProgressValueCallback  value_callback,
+PICMAN_DEPRECATED_FOR(picman_progress_install_vtable)
+const gchar * picman_progress_install       (PicmanProgressStartCallback  start_callback,
+                                           PicmanProgressEndCallback    end_callback,
+                                           PicmanProgressTextCallback   text_callback,
+                                           PicmanProgressValueCallback  value_callback,
                                            gpointer                   user_data);
-#endif /* GIMP_DISABLE_DEPRECATED */
+#endif /* PICMAN_DISABLE_DEPRECATED */
 
 
 G_END_DECLS
 
-#endif /* __GIMP_PROGRESS_H__ */
+#endif /* __PICMAN_PROGRESS_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptool-progress.c
- * Copyright (C) 2011 Michael Natterer <mitch@gimp.org>
+ * picmantool-progress.c
+ * Copyright (C) 2011 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,37 +24,37 @@
 
 #include "tools-types.h"
 
-#include "core/gimpprogress.h"
+#include "core/picmanprogress.h"
 
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpcanvasprogress.h"
+#include "display/picmancanvasprogress.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-items.h"
-#include "display/gimpdisplayshell-transform.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-items.h"
+#include "display/picmandisplayshell-transform.h"
 
-#include "gimptool.h"
-#include "gimptool-progress.h"
+#include "picmantool.h"
+#include "picmantool-progress.h"
 
 
 /*  local function prototypes  */
 
-static GimpProgress * gimp_tool_progress_start     (GimpProgress        *progress,
+static PicmanProgress * picman_tool_progress_start     (PicmanProgress        *progress,
                                                     const gchar         *message,
                                                     gboolean             cancelable);
-static void           gimp_tool_progress_end       (GimpProgress        *progress);
-static gboolean       gimp_tool_progress_is_active (GimpProgress        *progress);
-static void           gimp_tool_progress_set_text  (GimpProgress        *progress,
+static void           picman_tool_progress_end       (PicmanProgress        *progress);
+static gboolean       picman_tool_progress_is_active (PicmanProgress        *progress);
+static void           picman_tool_progress_set_text  (PicmanProgress        *progress,
                                                     const gchar         *message);
-static void           gimp_tool_progress_set_value (GimpProgress        *progress,
+static void           picman_tool_progress_set_value (PicmanProgress        *progress,
                                                     gdouble              percentage);
-static gdouble        gimp_tool_progress_get_value (GimpProgress        *progress);
-static void           gimp_tool_progress_pulse     (GimpProgress        *progress);
-static gboolean       gimp_tool_progress_message   (GimpProgress        *progress,
-                                                    Gimp                *gimp,
-                                                    GimpMessageSeverity  severity,
+static gdouble        picman_tool_progress_get_value (PicmanProgress        *progress);
+static void           picman_tool_progress_pulse     (PicmanProgress        *progress);
+static gboolean       picman_tool_progress_message   (PicmanProgress        *progress,
+                                                    Picman                *picman,
+                                                    PicmanMessageSeverity  severity,
                                                     const gchar         *domain,
                                                     const gchar         *message);
 
@@ -62,49 +62,49 @@ static gboolean       gimp_tool_progress_message   (GimpProgress        *progres
 /*  public functions  */
 
 void
-gimp_tool_progress_iface_init (GimpProgressInterface *iface)
+picman_tool_progress_iface_init (PicmanProgressInterface *iface)
 {
-  iface->start     = gimp_tool_progress_start;
-  iface->end       = gimp_tool_progress_end;
-  iface->is_active = gimp_tool_progress_is_active;
-  iface->set_text  = gimp_tool_progress_set_text;
-  iface->set_value = gimp_tool_progress_set_value;
-  iface->get_value = gimp_tool_progress_get_value;
-  iface->pulse     = gimp_tool_progress_pulse;
-  iface->message   = gimp_tool_progress_message;
+  iface->start     = picman_tool_progress_start;
+  iface->end       = picman_tool_progress_end;
+  iface->is_active = picman_tool_progress_is_active;
+  iface->set_text  = picman_tool_progress_set_text;
+  iface->set_value = picman_tool_progress_set_value;
+  iface->get_value = picman_tool_progress_get_value;
+  iface->pulse     = picman_tool_progress_pulse;
+  iface->message   = picman_tool_progress_message;
 }
 
 
 /*  private functions  */
 
-static GimpProgress *
-gimp_tool_progress_start (GimpProgress *progress,
+static PicmanProgress *
+picman_tool_progress_start (PicmanProgress *progress,
                           const gchar  *message,
                           gboolean      cancelable)
 {
-  GimpTool         *tool = GIMP_TOOL (progress);
-  GimpDisplayShell *shell;
+  PicmanTool         *tool = PICMAN_TOOL (progress);
+  PicmanDisplayShell *shell;
   gint              x, y;
 
-  g_return_val_if_fail (GIMP_IS_DISPLAY (tool->display), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY (tool->display), NULL);
   g_return_val_if_fail (tool->progress == NULL, NULL);
 
-  shell = gimp_display_get_shell (tool->display);
+  shell = picman_display_get_shell (tool->display);
 
   x = shell->disp_width  / 2;
   y = shell->disp_height / 2;
 
-  gimp_display_shell_unzoom_xy (shell, x, y, &x, &y, FALSE);
+  picman_display_shell_unzoom_xy (shell, x, y, &x, &y, FALSE);
 
-  tool->progress = gimp_canvas_progress_new (shell,
-                                             GIMP_HANDLE_ANCHOR_CENTER,
+  tool->progress = picman_canvas_progress_new (shell,
+                                             PICMAN_HANDLE_ANCHOR_CENTER,
                                              x, y);
-  gimp_display_shell_add_unrotated_item (shell, tool->progress);
+  picman_display_shell_add_unrotated_item (shell, tool->progress);
   g_object_unref (tool->progress);
 
-  gimp_progress_start (GIMP_PROGRESS (tool->progress),
+  picman_progress_start (PICMAN_PROGRESS (tool->progress),
                        message, FALSE);
-  gimp_widget_flush_expose (shell->canvas);
+  picman_widget_flush_expose (shell->canvas);
 
   tool->progress_display = tool->display;
 
@@ -112,16 +112,16 @@ gimp_tool_progress_start (GimpProgress *progress,
 }
 
 static void
-gimp_tool_progress_end (GimpProgress *progress)
+picman_tool_progress_end (PicmanProgress *progress)
 {
-  GimpTool *tool = GIMP_TOOL (progress);
+  PicmanTool *tool = PICMAN_TOOL (progress);
 
   if (tool->progress)
     {
-      GimpDisplayShell *shell = gimp_display_get_shell (tool->progress_display);
+      PicmanDisplayShell *shell = picman_display_get_shell (tool->progress_display);
 
-      gimp_progress_end (GIMP_PROGRESS (tool->progress));
-      gimp_display_shell_remove_unrotated_item (shell, tool->progress);
+      picman_progress_end (PICMAN_PROGRESS (tool->progress));
+      picman_display_shell_remove_unrotated_item (shell, tool->progress);
 
       tool->progress         = NULL;
       tool->progress_display = NULL;
@@ -129,63 +129,63 @@ gimp_tool_progress_end (GimpProgress *progress)
 }
 
 static gboolean
-gimp_tool_progress_is_active (GimpProgress *progress)
+picman_tool_progress_is_active (PicmanProgress *progress)
 {
-  GimpTool *tool = GIMP_TOOL (progress);
+  PicmanTool *tool = PICMAN_TOOL (progress);
 
   return tool->progress != NULL;
 }
 
 static void
-gimp_tool_progress_set_text (GimpProgress *progress,
+picman_tool_progress_set_text (PicmanProgress *progress,
                              const gchar  *message)
 {
-  GimpTool *tool = GIMP_TOOL (progress);
+  PicmanTool *tool = PICMAN_TOOL (progress);
 
   if (tool->progress)
     {
-      GimpDisplayShell *shell = gimp_display_get_shell (tool->progress_display);
+      PicmanDisplayShell *shell = picman_display_get_shell (tool->progress_display);
 
-      gimp_progress_set_text (GIMP_PROGRESS (tool->progress), message);
-      gimp_widget_flush_expose (shell->canvas);
+      picman_progress_set_text (PICMAN_PROGRESS (tool->progress), message);
+      picman_widget_flush_expose (shell->canvas);
     }
 }
 
 static void
-gimp_tool_progress_set_value (GimpProgress *progress,
+picman_tool_progress_set_value (PicmanProgress *progress,
                               gdouble       percentage)
 {
-  GimpTool *tool = GIMP_TOOL (progress);
+  PicmanTool *tool = PICMAN_TOOL (progress);
 
   if (tool->progress)
     {
-      GimpDisplayShell *shell = gimp_display_get_shell (tool->progress_display);
+      PicmanDisplayShell *shell = picman_display_get_shell (tool->progress_display);
 
-      gimp_progress_set_value (GIMP_PROGRESS (tool->progress), percentage);
-      gimp_widget_flush_expose (shell->canvas);
+      picman_progress_set_value (PICMAN_PROGRESS (tool->progress), percentage);
+      picman_widget_flush_expose (shell->canvas);
     }
 }
 
 static gdouble
-gimp_tool_progress_get_value (GimpProgress *progress)
+picman_tool_progress_get_value (PicmanProgress *progress)
 {
-  GimpTool *tool = GIMP_TOOL (progress);
+  PicmanTool *tool = PICMAN_TOOL (progress);
 
   if (tool->progress)
-    return gimp_progress_get_value (GIMP_PROGRESS (tool->progress));
+    return picman_progress_get_value (PICMAN_PROGRESS (tool->progress));
 
   return 0.0;
 }
 
 static void
-gimp_tool_progress_pulse (GimpProgress *progress)
+picman_tool_progress_pulse (PicmanProgress *progress)
 {
 }
 
 static gboolean
-gimp_tool_progress_message (GimpProgress        *progress,
-                            Gimp                *gimp,
-                            GimpMessageSeverity  severity,
+picman_tool_progress_message (PicmanProgress        *progress,
+                            Picman                *picman,
+                            PicmanMessageSeverity  severity,
                             const gchar         *domain,
                             const gchar         *message)
 {

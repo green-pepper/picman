@@ -1,9 +1,9 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcairo.c
- * Copyright (C) 2007      Sven Neumann <sven@gimp.org>
- *               2010-2012 Michael Natterer <mitch@gimp.org>
+ * picmancairo.c
+ * Copyright (C) 2007      Sven Neumann <sven@picman.org>
+ *               2010-2012 Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,63 +25,63 @@
 #include <cairo.h>
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpcolortypes.h"
+#include "picmancolortypes.h"
 
-#include "gimpcairo.h"
+#include "picmancairo.h"
 
 
 /**
- * SECTION: gimpcairo
- * @title: GimpCairo
+ * SECTION: picmancairo
+ * @title: PicmanCairo
  * @short_description: Color utility functions for cairo
  *
- * Utility functions that make cairo easier to use with GIMP color
+ * Utility functions that make cairo easier to use with PICMAN color
  * data types.
  **/
 
 
 /**
- * gimp_cairo_set_source_rgb:
+ * picman_cairo_set_source_rgb:
  * @cr:    Cairo context
- * @color: GimpRGB color
+ * @color: PicmanRGB color
  *
  * Sets the source pattern within @cr to the solid opaque color
  * described by @color.
  *
  * This function calls cairo_set_source_rgb() for you.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 void
-gimp_cairo_set_source_rgb (cairo_t       *cr,
-                           const GimpRGB *color)
+picman_cairo_set_source_rgb (cairo_t       *cr,
+                           const PicmanRGB *color)
 {
   cairo_set_source_rgb (cr, color->r, color->g, color->b);
 }
 
 /**
- * gimp_cairo_set_source_rgba:
+ * picman_cairo_set_source_rgba:
  * @cr:    Cairo context
- * @color: GimpRGB color
+ * @color: PicmanRGB color
  *
  * Sets the source pattern within @cr to the solid translucent color
  * described by @color.
  *
  * This function calls cairo_set_source_rgba() for you.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 void
-gimp_cairo_set_source_rgba (cairo_t       *cr,
-                            const GimpRGB *color)
+picman_cairo_set_source_rgba (cairo_t       *cr,
+                            const PicmanRGB *color)
 {
   cairo_set_source_rgba (cr, color->r, color->g, color->b, color->a);
 }
 
 /**
- * gimp_cairo_checkerboard_create:
+ * picman_cairo_checkerboard_create:
  * @cr:    Cairo context
  * @size:  check size
  * @light: light check color or %NULL to use the default light gray
@@ -91,13 +91,13 @@ gimp_cairo_set_source_rgba (cairo_t       *cr,
  *
  * Return value: a new Cairo pattern that can be used as a source on @cr.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 cairo_pattern_t *
-gimp_cairo_checkerboard_create (cairo_t       *cr,
+picman_cairo_checkerboard_create (cairo_t       *cr,
                                 gint           size,
-                                const GimpRGB *light,
-                                const GimpRGB *dark)
+                                const PicmanRGB *light,
+                                const PicmanRGB *dark)
 {
   cairo_t         *context;
   cairo_surface_t *surface;
@@ -112,20 +112,20 @@ gimp_cairo_checkerboard_create (cairo_t       *cr,
   context = cairo_create (surface);
 
   if (light)
-    gimp_cairo_set_source_rgb (context, light);
+    picman_cairo_set_source_rgb (context, light);
   else
     cairo_set_source_rgb (context,
-                          GIMP_CHECK_LIGHT, GIMP_CHECK_LIGHT, GIMP_CHECK_LIGHT);
+                          PICMAN_CHECK_LIGHT, PICMAN_CHECK_LIGHT, PICMAN_CHECK_LIGHT);
 
   cairo_rectangle (context, 0,    0,    size, size);
   cairo_rectangle (context, size, size, size, size);
   cairo_fill (context);
 
   if (dark)
-    gimp_cairo_set_source_rgb (context, dark);
+    picman_cairo_set_source_rgb (context, dark);
   else
     cairo_set_source_rgb (context,
-                          GIMP_CHECK_DARK, GIMP_CHECK_DARK, GIMP_CHECK_DARK);
+                          PICMAN_CHECK_DARK, PICMAN_CHECK_DARK, PICMAN_CHECK_DARK);
 
   cairo_rectangle (context, 0,    size, size, size);
   cairo_rectangle (context, size, 0,    size, size);
@@ -142,7 +142,7 @@ gimp_cairo_checkerboard_create (cairo_t       *cr,
 }
 
 const Babl *
-gimp_cairo_surface_get_format (cairo_surface_t *surface)
+picman_cairo_surface_get_format (cairo_surface_t *surface)
 {
   g_return_val_if_fail (surface != NULL, NULL);
   g_return_val_if_fail (cairo_surface_get_type (surface) ==
@@ -161,7 +161,7 @@ gimp_cairo_surface_get_format (cairo_surface_t *surface)
 }
 
 GeglBuffer *
-gimp_cairo_surface_create_buffer (cairo_surface_t *surface)
+picman_cairo_surface_create_buffer (cairo_surface_t *surface)
 {
   const Babl *format;
   gint        width;
@@ -171,7 +171,7 @@ gimp_cairo_surface_create_buffer (cairo_surface_t *surface)
   g_return_val_if_fail (cairo_surface_get_type (surface) ==
                         CAIRO_SURFACE_TYPE_IMAGE, NULL);
 
-  format = gimp_cairo_surface_get_format  (surface);
+  format = picman_cairo_surface_get_format  (surface);
   width  = cairo_image_surface_get_width  (surface);
   height = cairo_image_surface_get_height (surface);
 

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfontselect.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanfontselect.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,70 +23,70 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmanparamspecs.h"
 
-#include "text/gimpfont.h"
+#include "text/picmanfont.h"
 
-#include "pdb/gimppdb.h"
+#include "pdb/picmanpdb.h"
 
-#include "gimpcontainerbox.h"
-#include "gimpfontselect.h"
-#include "gimpfontview.h"
+#include "picmancontainerbox.h"
+#include "picmanfontselect.h"
+#include "picmanfontview.h"
 
 
-static void             gimp_font_select_constructed  (GObject        *object);
+static void             picman_font_select_constructed  (GObject        *object);
 
-static GimpValueArray * gimp_font_select_run_callback (GimpPdbDialog  *dialog,
-                                                       GimpObject     *object,
+static PicmanValueArray * picman_font_select_run_callback (PicmanPdbDialog  *dialog,
+                                                       PicmanObject     *object,
                                                        gboolean        closing,
                                                        GError        **error);
 
 
-G_DEFINE_TYPE (GimpFontSelect, gimp_font_select, GIMP_TYPE_PDB_DIALOG)
+G_DEFINE_TYPE (PicmanFontSelect, picman_font_select, PICMAN_TYPE_PDB_DIALOG)
 
-#define parent_class gimp_font_select_parent_class
+#define parent_class picman_font_select_parent_class
 
 
 static void
-gimp_font_select_class_init (GimpFontSelectClass *klass)
+picman_font_select_class_init (PicmanFontSelectClass *klass)
 {
   GObjectClass       *object_class = G_OBJECT_CLASS (klass);
-  GimpPdbDialogClass *pdb_class    = GIMP_PDB_DIALOG_CLASS (klass);
+  PicmanPdbDialogClass *pdb_class    = PICMAN_PDB_DIALOG_CLASS (klass);
 
-  object_class->constructed = gimp_font_select_constructed;
+  object_class->constructed = picman_font_select_constructed;
 
-  pdb_class->run_callback   = gimp_font_select_run_callback;
+  pdb_class->run_callback   = picman_font_select_run_callback;
 }
 
 static void
-gimp_font_select_init (GimpFontSelect *select)
+picman_font_select_init (PicmanFontSelect *select)
 {
 }
 
 static void
-gimp_font_select_constructed (GObject *object)
+picman_font_select_constructed (GObject *object)
 {
-  GimpPdbDialog *dialog = GIMP_PDB_DIALOG (object);
+  PicmanPdbDialog *dialog = PICMAN_PDB_DIALOG (object);
   GtkWidget     *content_area;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  dialog->view = gimp_font_view_new (GIMP_VIEW_TYPE_LIST,
-                                     dialog->context->gimp->fonts,
+  dialog->view = picman_font_view_new (PICMAN_VIEW_TYPE_LIST,
+                                     dialog->context->picman->fonts,
                                      dialog->context,
-                                     GIMP_VIEW_SIZE_MEDIUM, 1,
+                                     PICMAN_VIEW_SIZE_MEDIUM, 1,
                                      dialog->menu_factory);
 
-  gimp_container_box_set_size_request (GIMP_CONTAINER_BOX (GIMP_CONTAINER_EDITOR (dialog->view)->view),
-                                       6 * (GIMP_VIEW_SIZE_MEDIUM + 2),
-                                       6 * (GIMP_VIEW_SIZE_MEDIUM + 2));
+  picman_container_box_set_size_request (PICMAN_CONTAINER_BOX (PICMAN_CONTAINER_EDITOR (dialog->view)->view),
+                                       6 * (PICMAN_VIEW_SIZE_MEDIUM + 2),
+                                       6 * (PICMAN_VIEW_SIZE_MEDIUM + 2));
 
   gtk_container_set_border_width (GTK_CONTAINER (dialog->view), 12);
 
@@ -95,17 +95,17 @@ gimp_font_select_constructed (GObject *object)
   gtk_widget_show (dialog->view);
 }
 
-static GimpValueArray *
-gimp_font_select_run_callback (GimpPdbDialog  *dialog,
-                               GimpObject     *object,
+static PicmanValueArray *
+picman_font_select_run_callback (PicmanPdbDialog  *dialog,
+                               PicmanObject     *object,
                                gboolean        closing,
                                GError        **error)
 {
-  return gimp_pdb_execute_procedure_by_name (dialog->pdb,
+  return picman_pdb_execute_procedure_by_name (dialog->pdb,
                                              dialog->caller_context,
                                              NULL, error,
                                              dialog->callback_name,
-                                             G_TYPE_STRING,   gimp_object_get_name (object),
-                                             GIMP_TYPE_INT32, closing,
+                                             G_TYPE_STRING,   picman_object_get_name (object),
+                                             PICMAN_TYPE_INT32, closing,
                                              G_TYPE_NONE);
 }

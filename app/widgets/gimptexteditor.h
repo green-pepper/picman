@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpTextEditor
- * Copyright (C) 2002-2003  Sven Neumann <sven@gimp.org>
+ * PicmanTextEditor
+ * Copyright (C) 2002-2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,62 +18,62 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEXT_EDITOR_H__
-#define __GIMP_TEXT_EDITOR_H__
+#ifndef __PICMAN_TEXT_EDITOR_H__
+#define __PICMAN_TEXT_EDITOR_H__
 
 
-#define GIMP_TYPE_TEXT_EDITOR    (gimp_text_editor_get_type ())
-#define GIMP_TEXT_EDITOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TEXT_EDITOR, GimpTextEditor))
-#define GIMP_IS_TEXT_EDITOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TEXT_EDITOR))
+#define PICMAN_TYPE_TEXT_EDITOR    (picman_text_editor_get_type ())
+#define PICMAN_TEXT_EDITOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TEXT_EDITOR, PicmanTextEditor))
+#define PICMAN_IS_TEXT_EDITOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TEXT_EDITOR))
 
 
-typedef struct _GimpTextEditorClass  GimpTextEditorClass;
+typedef struct _PicmanTextEditorClass  PicmanTextEditorClass;
 
-struct _GimpTextEditor
+struct _PicmanTextEditor
 {
-  GimpDialog         parent_instance;
+  PicmanDialog         parent_instance;
 
   /*<  private  >*/
-  GimpTextDirection  base_dir;
+  PicmanTextDirection  base_dir;
   gchar             *font_name;
 
   GtkWidget         *view;
   GtkWidget         *font_toggle;
   GtkWidget         *file_dialog;
-  GimpUIManager     *ui_manager;
+  PicmanUIManager     *ui_manager;
 };
 
-struct _GimpTextEditorClass
+struct _PicmanTextEditorClass
 {
-  GimpDialogClass   parent_class;
+  PicmanDialogClass   parent_class;
 
-  void (* text_changed) (GimpTextEditor *editor);
-  void (* dir_changed)  (GimpTextEditor *editor);
+  void (* text_changed) (PicmanTextEditor *editor);
+  void (* dir_changed)  (PicmanTextEditor *editor);
 };
 
 
-GType               gimp_text_editor_get_type      (void) G_GNUC_CONST;
-GtkWidget         * gimp_text_editor_new           (const gchar       *title,
+GType               picman_text_editor_get_type      (void) G_GNUC_CONST;
+GtkWidget         * picman_text_editor_new           (const gchar       *title,
                                                     GtkWindow         *parent,
-                                                    Gimp              *gimp,
-                                                    GimpMenuFactory   *menu_factory,
-                                                    GimpText          *text,
-                                                    GimpTextBuffer    *text_buffer,
+                                                    Picman              *picman,
+                                                    PicmanMenuFactory   *menu_factory,
+                                                    PicmanText          *text,
+                                                    PicmanTextBuffer    *text_buffer,
                                                     gdouble            xres,
                                                     gdouble            yres);
 
-void                gimp_text_editor_set_text      (GimpTextEditor    *editor,
+void                picman_text_editor_set_text      (PicmanTextEditor    *editor,
                                                     const gchar       *text,
                                                     gint               len);
-gchar             * gimp_text_editor_get_text      (GimpTextEditor    *editor);
+gchar             * picman_text_editor_get_text      (PicmanTextEditor    *editor);
 
-void                gimp_text_editor_set_direction (GimpTextEditor    *editor,
-                                                    GimpTextDirection  base_dir);
-GimpTextDirection   gimp_text_editor_get_direction (GimpTextEditor    *editor);
+void                picman_text_editor_set_direction (PicmanTextEditor    *editor,
+                                                    PicmanTextDirection  base_dir);
+PicmanTextDirection   picman_text_editor_get_direction (PicmanTextEditor    *editor);
 
-void                gimp_text_editor_set_font_name (GimpTextEditor    *editor,
+void                picman_text_editor_set_font_name (PicmanTextEditor    *editor,
                                                     const gchar       *font_name);
-const gchar       * gimp_text_editor_get_font_name (GimpTextEditor    *editor);
+const gchar       * picman_text_editor_get_font_name (PicmanTextEditor    *editor);
 
 
-#endif  /* __GIMP_TEXT_EDITOR_H__ */
+#endif  /* __PICMAN_TEXT_EDITOR_H__ */

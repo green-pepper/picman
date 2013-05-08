@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpbrushmenu.h
+ * picmanbrushmenu.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,12 +18,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_UI_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimpui.h> can be included directly."
+#if !defined (__PICMAN_UI_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picmanui.h> can be included directly."
 #endif
 
-#ifndef __GIMP_BRUSH_MENU_H__
-#define __GIMP_BRUSH_MENU_H__
+#ifndef __PICMAN_BRUSH_MENU_H__
+#define __PICMAN_BRUSH_MENU_H__
 
 /*  These functions are deprecated and should not be used in newly
  *  written code.
@@ -31,25 +31,25 @@
 
 G_BEGIN_DECLS
 
-GIMP_DEPRECATED_FOR(gimp_brush_select_button_new)
-GtkWidget * gimp_brush_select_widget_new   (const gchar          *title,
+PICMAN_DEPRECATED_FOR(picman_brush_select_button_new)
+GtkWidget * picman_brush_select_widget_new   (const gchar          *title,
                                             const gchar          *brush_name,
                                             gdouble               opacity,
                                             gint                  spacing,
-                                            GimpLayerModeEffects  paint_mode,
-                                            GimpRunBrushCallback  callback,
+                                            PicmanLayerModeEffects  paint_mode,
+                                            PicmanRunBrushCallback  callback,
                                             gpointer              data);
 
-GIMP_DEPRECATED_FOR(gimp_select_button_close_popup)
-void        gimp_brush_select_widget_close (GtkWidget            *widget);
-GIMP_DEPRECATED_FOR(gimp_brush_select_button_set_brush)
-void        gimp_brush_select_widget_set   (GtkWidget            *widget,
+PICMAN_DEPRECATED_FOR(picman_select_button_close_popup)
+void        picman_brush_select_widget_close (GtkWidget            *widget);
+PICMAN_DEPRECATED_FOR(picman_brush_select_button_set_brush)
+void        picman_brush_select_widget_set   (GtkWidget            *widget,
                                             const gchar          *brush_name,
                                             gdouble               opacity,
                                             gint                  spacing,
-                                            GimpLayerModeEffects  paint_mode);
+                                            PicmanLayerModeEffects  paint_mode);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_BRUSH_MENU_H__ */
+#endif /* __PICMAN_BRUSH_MENU_H__ */

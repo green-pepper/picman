@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcombotagentry.h
+ * picmancombotagentry.h
  * Copyright (C) 2008 Aurimas Juška <aurisj@svn.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,24 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COMBO_TAG_ENTRY_H__
-#define __GIMP_COMBO_TAG_ENTRY_H__
+#ifndef __PICMAN_COMBO_TAG_ENTRY_H__
+#define __PICMAN_COMBO_TAG_ENTRY_H__
 
-#include "gimptagentry.h"
+#include "picmantagentry.h"
 
-#define GIMP_TYPE_COMBO_TAG_ENTRY            (gimp_combo_tag_entry_get_type ())
-#define GIMP_COMBO_TAG_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COMBO_TAG_ENTRY, GimpComboTagEntry))
-#define GIMP_COMBO_TAG_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COMBO_TAG_ENTRY, GimpComboTagEntryClass))
-#define GIMP_IS_COMBO_TAG_ENTRY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COMBO_TAG_ENTRY))
-#define GIMP_IS_COMBO_TAG_ENTRY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COMBO_TAG_ENTRY))
-#define GIMP_COMBO_TAG_ENTRY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COMBO_TAG_ENTRY, GimpComboTagEntryClass))
+#define PICMAN_TYPE_COMBO_TAG_ENTRY            (picman_combo_tag_entry_get_type ())
+#define PICMAN_COMBO_TAG_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COMBO_TAG_ENTRY, PicmanComboTagEntry))
+#define PICMAN_COMBO_TAG_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COMBO_TAG_ENTRY, PicmanComboTagEntryClass))
+#define PICMAN_IS_COMBO_TAG_ENTRY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COMBO_TAG_ENTRY))
+#define PICMAN_IS_COMBO_TAG_ENTRY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COMBO_TAG_ENTRY))
+#define PICMAN_COMBO_TAG_ENTRY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COMBO_TAG_ENTRY, PicmanComboTagEntryClass))
 
 
-typedef struct _GimpComboTagEntryClass  GimpComboTagEntryClass;
+typedef struct _PicmanComboTagEntryClass  PicmanComboTagEntryClass;
 
-struct _GimpComboTagEntry
+struct _PicmanComboTagEntry
 {
-  GimpTagEntry    parent_instance;
+  PicmanTagEntry    parent_instance;
 
   GdkPixbuf      *arrow_pixbuf;
 
@@ -46,16 +46,16 @@ struct _GimpComboTagEntry
   GdkColor        selected_item_color;
 };
 
-struct _GimpComboTagEntryClass
+struct _PicmanComboTagEntryClass
 {
-  GimpTagEntryClass  parent_class;
+  PicmanTagEntryClass  parent_class;
 };
 
 
-GType       gimp_combo_tag_entry_get_type (void) G_GNUC_CONST;
+GType       picman_combo_tag_entry_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_combo_tag_entry_new      (GimpTaggedContainer *container,
-                                           GimpTagEntryMode     mode);
+GtkWidget * picman_combo_tag_entry_new      (PicmanTaggedContainer *container,
+                                           PicmanTagEntryMode     mode);
 
 
-#endif  /*  __GIMP_COMBO_TAG_ENTRY_H__  */
+#endif  /*  __PICMAN_COMBO_TAG_ENTRY_H__  */

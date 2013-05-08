@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppluginmanager-history.h
+ * picmanpluginmanager-history.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PLUG_IN_MANAGER_HISTORY_H__
-#define __GIMP_PLUG_IN_MANAGER_HISTORY_H__
+#ifndef __PICMAN_PLUG_IN_MANAGER_HISTORY_H__
+#define __PICMAN_PLUG_IN_MANAGER_HISTORY_H__
 
 
-guint                 gimp_plug_in_manager_history_size   (GimpPlugInManager   *manager);
-guint                 gimp_plug_in_manager_history_length (GimpPlugInManager   *manager);
-GimpPlugInProcedure * gimp_plug_in_manager_history_nth    (GimpPlugInManager   *manager,
+guint                 picman_plug_in_manager_history_size   (PicmanPlugInManager   *manager);
+guint                 picman_plug_in_manager_history_length (PicmanPlugInManager   *manager);
+PicmanPlugInProcedure * picman_plug_in_manager_history_nth    (PicmanPlugInManager   *manager,
                                                            guint                n);
-void                  gimp_plug_in_manager_history_add    (GimpPlugInManager   *manager,
-                                                           GimpPlugInProcedure *procedure);
-void                  gimp_plug_in_manager_history_remove (GimpPlugInManager   *manager,
-                                                           GimpPlugInProcedure *procedure);
-void                  gimp_plug_in_manager_history_clear  (GimpPlugInManager   *manager);
+void                  picman_plug_in_manager_history_add    (PicmanPlugInManager   *manager,
+                                                           PicmanPlugInProcedure *procedure);
+void                  picman_plug_in_manager_history_remove (PicmanPlugInManager   *manager,
+                                                           PicmanPlugInProcedure *procedure);
+void                  picman_plug_in_manager_history_clear  (PicmanPlugInManager   *manager);
 
 
-#endif /* __GIMP_PLUG_IN_MANAGER_HISTORY_H__ */
+#endif /* __PICMAN_PLUG_IN_MANAGER_HISTORY_H__ */

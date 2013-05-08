@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfont.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
- *                    Sven Neumann <sven@gimp.org>
+ * picmanfont.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
+ *                    Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,18 +31,18 @@
 
 #include "text-types.h"
 
-#include "core/gimptempbuf.h"
+#include "core/picmantempbuf.h"
 
-#include "gimpfont.h"
+#include "picmanfont.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /* This is a so-called pangram; it's supposed to
    contain all characters found in the alphabet. */
-#define GIMP_TEXT_PANGRAM     N_("Pack my box with\nfive dozen liquor jugs.")
+#define PICMAN_TEXT_PANGRAM     N_("Pack my box with\nfive dozen liquor jugs.")
 
-#define GIMP_FONT_POPUP_SIZE  (PANGO_SCALE * 30)
+#define PICMAN_FONT_POPUP_SIZE  (PANGO_SCALE * 30)
 
 #define DEBUGPRINT(x) /* g_print x */
 
@@ -53,9 +53,9 @@ enum
 };
 
 
-struct _GimpFont
+struct _PicmanFont
 {
-  GimpViewable  parent_instance;
+  PicmanViewable  parent_instance;
 
   PangoContext *pango_context;
 
@@ -64,56 +64,56 @@ struct _GimpFont
   gint          popup_height;
 };
 
-struct _GimpFontClass
+struct _PicmanFontClass
 {
-  GimpViewableClass   parent_class;
+  PicmanViewableClass   parent_class;
 };
 
 
-static void          gimp_font_finalize         (GObject       *object);
-static void          gimp_font_set_property     (GObject       *object,
+static void          picman_font_finalize         (GObject       *object);
+static void          picman_font_set_property     (GObject       *object,
                                                  guint          property_id,
                                                  const GValue  *value,
                                                  GParamSpec    *pspec);
 
-static void          gimp_font_get_preview_size (GimpViewable  *viewable,
+static void          picman_font_get_preview_size (PicmanViewable  *viewable,
                                                  gint           size,
                                                  gboolean       popup,
                                                  gboolean       dot_for_dot,
                                                  gint          *width,
                                                  gint          *height);
-static gboolean      gimp_font_get_popup_size   (GimpViewable  *viewable,
+static gboolean      picman_font_get_popup_size   (PicmanViewable  *viewable,
                                                  gint           width,
                                                  gint           height,
                                                  gboolean       dot_for_dot,
                                                  gint          *popup_width,
                                                  gint          *popup_height);
-static GimpTempBuf * gimp_font_get_new_preview  (GimpViewable  *viewable,
-                                                 GimpContext   *context,
+static PicmanTempBuf * picman_font_get_new_preview  (PicmanViewable  *viewable,
+                                                 PicmanContext   *context,
                                                  gint           width,
                                                  gint           height);
 
-static const gchar * gimp_font_get_sample_string (PangoContext         *context,
+static const gchar * picman_font_get_sample_string (PangoContext         *context,
                                                   PangoFontDescription *font_desc);
 
 
-G_DEFINE_TYPE (GimpFont, gimp_font, GIMP_TYPE_VIEWABLE)
+G_DEFINE_TYPE (PicmanFont, picman_font, PICMAN_TYPE_VIEWABLE)
 
-#define parent_class gimp_font_parent_class
+#define parent_class picman_font_parent_class
 
 
 static void
-gimp_font_class_init (GimpFontClass *klass)
+picman_font_class_init (PicmanFontClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->finalize     = gimp_font_finalize;
-  object_class->set_property = gimp_font_set_property;
+  object_class->finalize     = picman_font_finalize;
+  object_class->set_property = picman_font_set_property;
 
-  viewable_class->get_preview_size = gimp_font_get_preview_size;
-  viewable_class->get_popup_size   = gimp_font_get_popup_size;
-  viewable_class->get_new_preview  = gimp_font_get_new_preview;
+  viewable_class->get_preview_size = picman_font_get_preview_size;
+  viewable_class->get_popup_size   = picman_font_get_popup_size;
+  viewable_class->get_new_preview  = picman_font_get_new_preview;
 
   viewable_class->default_stock_id = "gtk-select-font";
 
@@ -121,19 +121,19 @@ gimp_font_class_init (GimpFontClass *klass)
                                    g_param_spec_object ("pango-context",
                                                         NULL, NULL,
                                                         PANGO_TYPE_CONTEXT,
-                                                        GIMP_PARAM_WRITABLE));
+                                                        PICMAN_PARAM_WRITABLE));
 }
 
 static void
-gimp_font_init (GimpFont *font)
+picman_font_init (PicmanFont *font)
 {
   font->pango_context = NULL;
 }
 
 static void
-gimp_font_finalize (GObject *object)
+picman_font_finalize (GObject *object)
 {
-  GimpFont *font = GIMP_FONT (object);
+  PicmanFont *font = PICMAN_FONT (object);
 
   if (font->pango_context)
     {
@@ -151,12 +151,12 @@ gimp_font_finalize (GObject *object)
 }
 
 static void
-gimp_font_set_property (GObject       *object,
+picman_font_set_property (GObject       *object,
                         guint          property_id,
                         const GValue  *value,
                         GParamSpec    *pspec)
 {
-  GimpFont *font = GIMP_FONT (object);
+  PicmanFont *font = PICMAN_FONT (object);
 
   switch (property_id)
     {
@@ -173,7 +173,7 @@ gimp_font_set_property (GObject       *object,
 }
 
 static void
-gimp_font_get_preview_size (GimpViewable *viewable,
+picman_font_get_preview_size (PicmanViewable *viewable,
                             gint          size,
                             gboolean      popup,
                             gboolean      dot_for_dot,
@@ -185,14 +185,14 @@ gimp_font_get_preview_size (GimpViewable *viewable,
 }
 
 static gboolean
-gimp_font_get_popup_size (GimpViewable *viewable,
+picman_font_get_popup_size (PicmanViewable *viewable,
                           gint          width,
                           gint          height,
                           gboolean      dot_for_dot,
                           gint         *popup_width,
                           gint         *popup_height)
 {
-  GimpFont             *font = GIMP_FONT (viewable);
+  PicmanFont             *font = PICMAN_FONT (viewable);
   PangoFontDescription *font_desc;
   PangoRectangle        ink;
   PangoRectangle        logical;
@@ -201,12 +201,12 @@ gimp_font_get_popup_size (GimpViewable *viewable,
   if (! font->pango_context)
     return FALSE;
 
-  name = gimp_object_get_name (font);
+  name = picman_object_get_name (font);
 
   font_desc = pango_font_description_from_string (name);
   g_return_val_if_fail (font_desc != NULL, FALSE);
 
-  pango_font_description_set_size (font_desc, GIMP_FONT_POPUP_SIZE);
+  pango_font_description_set_size (font_desc, PICMAN_FONT_POPUP_SIZE);
 
   if (font->popup_layout)
     g_object_unref (font->popup_layout);
@@ -215,7 +215,7 @@ gimp_font_get_popup_size (GimpViewable *viewable,
   pango_layout_set_font_description (font->popup_layout, font_desc);
   pango_font_description_free (font_desc);
 
-  pango_layout_set_text (font->popup_layout, gettext (GIMP_TEXT_PANGRAM), -1);
+  pango_layout_set_text (font->popup_layout, gettext (PICMAN_TEXT_PANGRAM), -1);
   pango_layout_get_pixel_extents (font->popup_layout, &ink, &logical);
 
   *popup_width  = MAX (ink.width,  logical.width)  + 6;
@@ -229,13 +229,13 @@ gimp_font_get_popup_size (GimpViewable *viewable,
   return TRUE;
 }
 
-static GimpTempBuf *
-gimp_font_get_new_preview (GimpViewable *viewable,
-                           GimpContext  *context,
+static PicmanTempBuf *
+picman_font_get_new_preview (PicmanViewable *viewable,
+                           PicmanContext  *context,
                            gint          width,
                            gint          height)
 {
-  GimpFont        *font = GIMP_FONT (viewable);
+  PicmanFont        *font = PICMAN_FONT (viewable);
   PangoLayout     *layout;
   PangoRectangle   ink;
   PangoRectangle   logical;
@@ -243,7 +243,7 @@ gimp_font_get_new_preview (GimpViewable *viewable,
   gint             layout_height;
   gint             layout_x;
   gint             layout_y;
-  GimpTempBuf     *temp_buf;
+  PicmanTempBuf     *temp_buf;
   cairo_t         *cr;
   cairo_surface_t *surface;
 
@@ -256,7 +256,7 @@ gimp_font_get_new_preview (GimpViewable *viewable,
       PangoFontDescription *font_desc;
       const gchar          *name;
 
-      name = gimp_object_get_name (font);
+      name = picman_object_get_name (font);
 
       DEBUGPRINT (("%s: ", name));
 
@@ -270,7 +270,7 @@ gimp_font_get_new_preview (GimpViewable *viewable,
 
       pango_layout_set_font_description (layout, font_desc);
       pango_layout_set_text (layout,
-                             gimp_font_get_sample_string (font->pango_context,
+                             picman_font_get_sample_string (font->pango_context,
                                                           font_desc),
                              -1);
 
@@ -283,10 +283,10 @@ gimp_font_get_new_preview (GimpViewable *viewable,
 
   width = cairo_format_stride_for_width (CAIRO_FORMAT_A8, width);
 
-  temp_buf = gimp_temp_buf_new (width, height, babl_format ("Y' u8"));
-  memset (gimp_temp_buf_get_data (temp_buf), 255, width * height);
+  temp_buf = picman_temp_buf_new (width, height, babl_format ("Y' u8"));
+  memset (picman_temp_buf_get_data (temp_buf), 255, width * height);
 
-  surface = cairo_image_surface_create_for_data (gimp_temp_buf_get_data (temp_buf),
+  surface = cairo_image_surface_create_for_data (picman_temp_buf_get_data (temp_buf),
                                                  CAIRO_FORMAT_A8,
                                                  width, height, width);
 
@@ -318,13 +318,13 @@ gimp_font_get_new_preview (GimpViewable *viewable,
   return temp_buf;
 }
 
-GimpFont *
-gimp_font_get_standard (void)
+PicmanFont *
+picman_font_get_standard (void)
 {
-  static GimpFont *standard_font = NULL;
+  static PicmanFont *standard_font = NULL;
 
   if (! standard_font)
-    standard_font = g_object_new (GIMP_TYPE_FONT,
+    standard_font = g_object_new (PICMAN_TYPE_FONT,
                                   "name", "Sans",
                                   NULL);
 
@@ -333,7 +333,7 @@ gimp_font_get_standard (void)
 
 
 static inline gboolean
-gimp_font_covers_string (PangoFcFont *font,
+picman_font_covers_string (PangoFcFont *font,
                          const gchar *sample)
 {
   const gchar *p;
@@ -349,7 +349,7 @@ gimp_font_covers_string (PangoFcFont *font,
 
 /* Guess a suitable short sample string for the font. */
 static const gchar *
-gimp_font_get_sample_string (PangoContext         *context,
+picman_font_get_sample_string (PangoContext         *context,
                              PangoFontDescription *font_desc)
 {
   PangoFont        *font;
@@ -670,7 +670,7 @@ gimp_font_get_sample_string (PangoContext         *context,
 #define TAG(s) FT_MAKE_TAG (s[0], s[1], s[2], s[3])
 
                     if (slist[j] == TAG (scripts[i].script) &&
-                        gimp_font_covers_string (PANGO_FC_FONT (font),
+                        picman_font_covers_string (PANGO_FC_FONT (font),
                                                  scripts[i].sample))
                       {
                         ot_alts[n_ot_alts++] = i;
@@ -700,7 +700,7 @@ gimp_font_get_sample_string (PangoContext         *context,
         {
           if (scripts[i].bit >= 0 &&
               (&os2->ulUnicodeRange1)[scripts[i].bit/32] & (1 << (scripts[i].bit % 32)) &&
-              gimp_font_covers_string (PANGO_FC_FONT (font),
+              picman_font_covers_string (PANGO_FC_FONT (font),
                                        scripts[i].sample))
             {
               sr_alts[n_sr_alts++] = i;

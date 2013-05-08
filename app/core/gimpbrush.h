@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,70 +15,70 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_H__
-#define __GIMP_BRUSH_H__
+#ifndef __PICMAN_BRUSH_H__
+#define __PICMAN_BRUSH_H__
 
 
-#include "gimpdata.h"
+#include "picmandata.h"
 
 
-#define GIMP_TYPE_BRUSH            (gimp_brush_get_type ())
-#define GIMP_BRUSH(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_BRUSH, GimpBrush))
-#define GIMP_BRUSH_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_BRUSH, GimpBrushClass))
-#define GIMP_IS_BRUSH(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_BRUSH))
-#define GIMP_IS_BRUSH_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_BRUSH))
-#define GIMP_BRUSH_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_BRUSH, GimpBrushClass))
+#define PICMAN_TYPE_BRUSH            (picman_brush_get_type ())
+#define PICMAN_BRUSH(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_BRUSH, PicmanBrush))
+#define PICMAN_BRUSH_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_BRUSH, PicmanBrushClass))
+#define PICMAN_IS_BRUSH(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_BRUSH))
+#define PICMAN_IS_BRUSH_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_BRUSH))
+#define PICMAN_BRUSH_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_BRUSH, PicmanBrushClass))
 
 
-typedef struct _GimpBrushClass GimpBrushClass;
+typedef struct _PicmanBrushClass PicmanBrushClass;
 
-struct _GimpBrush
+struct _PicmanBrush
 {
-  GimpData        parent_instance;
+  PicmanData        parent_instance;
 
-  GimpTempBuf    *mask;       /*  the actual mask                */
-  GimpTempBuf    *pixmap;     /*  optional pixmap data           */
+  PicmanTempBuf    *mask;       /*  the actual mask                */
+  PicmanTempBuf    *pixmap;     /*  optional pixmap data           */
 
   gint            spacing;    /*  brush's spacing                */
-  GimpVector2     x_axis;     /*  for calculating brush spacing  */
-  GimpVector2     y_axis;     /*  for calculating brush spacing  */
+  PicmanVector2     x_axis;     /*  for calculating brush spacing  */
+  PicmanVector2     y_axis;     /*  for calculating brush spacing  */
 
   gint            use_count;  /*  for keeping the caches alive   */
-  GimpBrushCache *mask_cache;
-  GimpBrushCache *pixmap_cache;
-  GimpBrushCache *boundary_cache;
+  PicmanBrushCache *mask_cache;
+  PicmanBrushCache *pixmap_cache;
+  PicmanBrushCache *boundary_cache;
 };
 
-struct _GimpBrushClass
+struct _PicmanBrushClass
 {
-  GimpDataClass  parent_class;
+  PicmanDataClass  parent_class;
 
   /*  virtual functions  */
-  void             (* begin_use)          (GimpBrush        *brush);
-  void             (* end_use)            (GimpBrush        *brush);
-  GimpBrush      * (* select_brush)       (GimpBrush        *brush,
-                                           const GimpCoords *last_coords,
-                                           const GimpCoords *current_coords);
-  gboolean         (* want_null_motion)   (GimpBrush        *brush,
-                                           const GimpCoords *last_coords,
-                                           const GimpCoords *current_coords);
-  void             (* transform_size)     (GimpBrush        *brush,
+  void             (* begin_use)          (PicmanBrush        *brush);
+  void             (* end_use)            (PicmanBrush        *brush);
+  PicmanBrush      * (* select_brush)       (PicmanBrush        *brush,
+                                           const PicmanCoords *last_coords,
+                                           const PicmanCoords *current_coords);
+  gboolean         (* want_null_motion)   (PicmanBrush        *brush,
+                                           const PicmanCoords *last_coords,
+                                           const PicmanCoords *current_coords);
+  void             (* transform_size)     (PicmanBrush        *brush,
                                            gdouble           scale,
                                            gdouble           aspect_ratio,
                                            gdouble           angle,
                                            gint             *width,
                                            gint             *height);
-  GimpTempBuf    * (* transform_mask)     (GimpBrush        *brush,
+  PicmanTempBuf    * (* transform_mask)     (PicmanBrush        *brush,
                                            gdouble           scale,
                                            gdouble           aspect_ratio,
                                            gdouble           angle,
                                            gdouble           hardness);
-  GimpTempBuf    * (* transform_pixmap)   (GimpBrush        *brush,
+  PicmanTempBuf    * (* transform_pixmap)   (PicmanBrush        *brush,
                                            gdouble           scale,
                                            gdouble           aspect_ratio,
                                            gdouble           angle,
                                            gdouble           hardness);
-  GimpBezierDesc * (* transform_boundary) (GimpBrush        *brush,
+  PicmanBezierDesc * (* transform_boundary) (PicmanBrush        *brush,
                                            gdouble           scale,
                                            gdouble           aspect_ratio,
                                            gdouble           angle,
@@ -87,46 +87,46 @@ struct _GimpBrushClass
                                            gint             *height);
 
   /*  signals  */
-  void             (* spacing_changed)    (GimpBrush        *brush);
+  void             (* spacing_changed)    (PicmanBrush        *brush);
 };
 
 
-GType                  gimp_brush_get_type           (void) G_GNUC_CONST;
+GType                  picman_brush_get_type           (void) G_GNUC_CONST;
 
-GimpData             * gimp_brush_new                (GimpContext      *context,
+PicmanData             * picman_brush_new                (PicmanContext      *context,
                                                       const gchar      *name);
-GimpData             * gimp_brush_get_standard       (GimpContext      *context);
+PicmanData             * picman_brush_get_standard       (PicmanContext      *context);
 
-void                   gimp_brush_begin_use          (GimpBrush        *brush);
-void                   gimp_brush_end_use            (GimpBrush        *brush);
+void                   picman_brush_begin_use          (PicmanBrush        *brush);
+void                   picman_brush_end_use            (PicmanBrush        *brush);
 
-GimpBrush            * gimp_brush_select_brush       (GimpBrush        *brush,
-                                                      const GimpCoords *last_coords,
-                                                      const GimpCoords *current_coords);
-gboolean               gimp_brush_want_null_motion   (GimpBrush        *brush,
-                                                      const GimpCoords *last_coords,
-                                                      const GimpCoords *current_coords);
+PicmanBrush            * picman_brush_select_brush       (PicmanBrush        *brush,
+                                                      const PicmanCoords *last_coords,
+                                                      const PicmanCoords *current_coords);
+gboolean               picman_brush_want_null_motion   (PicmanBrush        *brush,
+                                                      const PicmanCoords *last_coords,
+                                                      const PicmanCoords *current_coords);
 
 /* Gets width and height of a transformed mask of the brush, for
  * provided parameters.
  */
-void                   gimp_brush_transform_size     (GimpBrush        *brush,
+void                   picman_brush_transform_size     (PicmanBrush        *brush,
                                                       gdouble           scale,
                                                       gdouble           aspect_ratio,
                                                       gdouble           angle,
                                                       gint             *width,
                                                       gint             *height);
-const GimpTempBuf    * gimp_brush_transform_mask     (GimpBrush        *brush,
+const PicmanTempBuf    * picman_brush_transform_mask     (PicmanBrush        *brush,
                                                       gdouble           scale,
                                                       gdouble           aspect_ratio,
                                                       gdouble           angle,
                                                       gdouble           hardness);
-const GimpTempBuf    * gimp_brush_transform_pixmap   (GimpBrush        *brush,
+const PicmanTempBuf    * picman_brush_transform_pixmap   (PicmanBrush        *brush,
                                                       gdouble           scale,
                                                       gdouble           aspect_ratio,
                                                       gdouble           angle,
                                                       gdouble           hardness);
-const GimpBezierDesc * gimp_brush_transform_boundary (GimpBrush        *brush,
+const PicmanBezierDesc * picman_brush_transform_boundary (PicmanBrush        *brush,
                                                       gdouble           scale,
                                                       gdouble           aspect_ratio,
                                                       gdouble           angle,
@@ -134,12 +134,12 @@ const GimpBezierDesc * gimp_brush_transform_boundary (GimpBrush        *brush,
                                                       gint             *width,
                                                       gint             *height);
 
-GimpTempBuf          * gimp_brush_get_mask           (const GimpBrush  *brush);
-GimpTempBuf          * gimp_brush_get_pixmap         (const GimpBrush  *brush);
+PicmanTempBuf          * picman_brush_get_mask           (const PicmanBrush  *brush);
+PicmanTempBuf          * picman_brush_get_pixmap         (const PicmanBrush  *brush);
 
-gint                   gimp_brush_get_spacing        (const GimpBrush  *brush);
-void                   gimp_brush_set_spacing        (GimpBrush        *brush,
+gint                   picman_brush_get_spacing        (const PicmanBrush  *brush);
+void                   picman_brush_set_spacing        (PicmanBrush        *brush,
                                                       gint              spacing);
 
 
-#endif /* __GIMP_BRUSH_H__ */
+#endif /* __PICMAN_BRUSH_H__ */

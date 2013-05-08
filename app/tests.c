@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 2009 Martin Nordholts
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,127 +30,127 @@
 
 #include "menus/menus.h"
 
-#include "widgets/gimpsessioninfo.h"
+#include "widgets/picmansessioninfo.h"
 
-#include "config/gimpgeglconfig.h"
+#include "config/picmangeglconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimp-contexts.h"
+#include "core/picman.h"
+#include "core/picman-contexts.h"
 
-#include "gegl/gimp-gegl.h"
+#include "gegl/picman-gegl.h"
 
-#include "gimp-log.h"
+#include "picman-log.h"
 #include "tests.h"
 #include "units.h"
 
 
 static void
-gimp_status_func_dummy (const gchar *text1,
+picman_status_func_dummy (const gchar *text1,
                         const gchar *text2,
                         gdouble      percentage)
 {
 }
 
 /**
- * gimp_init_for_testing:
+ * picman_init_for_testing:
  *
- * Initialize the GIMP object system for unit testing. This is a
+ * Initialize the PICMAN object system for unit testing. This is a
  * selected subset of the initialization happning in app_run().
  **/
-Gimp *
-gimp_init_for_testing (void)
+Picman *
+picman_init_for_testing (void)
 {
-  Gimp *gimp;
+  Picman *picman;
 
   g_type_init();
-  gimp_log_init ();
+  picman_log_init ();
   gegl_init (NULL, NULL);
 
-  gimp = gimp_new ("Unit Tested GIMP", NULL, NULL, FALSE, TRUE, TRUE, TRUE,
+  picman = picman_new ("Unit Tested PICMAN", NULL, NULL, FALSE, TRUE, TRUE, TRUE,
                    FALSE, TRUE, TRUE, FALSE);
 
-  units_init (gimp);
+  units_init (picman);
 
-  gimp_load_config (gimp, NULL, NULL);
+  picman_load_config (picman, NULL, NULL);
 
-  gimp_gegl_init (gimp);
-  gimp_initialize (gimp, gimp_status_func_dummy);
-  gimp_restore (gimp, gimp_status_func_dummy);
+  picman_gegl_init (picman);
+  picman_initialize (picman, picman_status_func_dummy);
+  picman_restore (picman, picman_status_func_dummy);
 
-  return gimp;
+  return picman;
 }
 
 
-#ifndef GIMP_CONSOLE_COMPILATION
+#ifndef PICMAN_CONSOLE_COMPILATION
 
-static Gimp *
-gimp_init_for_gui_testing_internal (gboolean     show_gui,
-                                    const gchar *gimprc)
+static Picman *
+picman_init_for_gui_testing_internal (gboolean     show_gui,
+                                    const gchar *picmanrc)
 {
-  GimpSessionInfoClass *klass;
-  Gimp                 *gimp;
+  PicmanSessionInfoClass *klass;
+  Picman                 *picman;
 
   /* from main() */
   g_type_init();
-  gimp_log_init ();
+  picman_log_init ();
   gegl_init (NULL, NULL);
 
   /* Introduce an error margin for positions written to sessionrc */
-  klass = g_type_class_ref (GIMP_TYPE_SESSION_INFO);
-  gimp_session_info_class_set_position_accuracy (klass, 5);
+  klass = g_type_class_ref (PICMAN_TYPE_SESSION_INFO);
+  picman_session_info_class_set_position_accuracy (klass, 5);
 
   /* from app_run() */
-  gimp = gimp_new ("Unit Tested GIMP", NULL, NULL, FALSE, TRUE, TRUE, !show_gui,
+  picman = picman_new ("Unit Tested PICMAN", NULL, NULL, FALSE, TRUE, TRUE, !show_gui,
                    FALSE, TRUE, TRUE, FALSE);
-  gimp_set_show_gui (gimp, show_gui);
-  units_init (gimp);
-  gimp_load_config (gimp, gimprc, NULL);
-  gimp_gegl_init (gimp);
-  gui_init (gimp, TRUE);
-  gimp_initialize (gimp, gimp_status_func_dummy);
-  gimp_restore (gimp, gimp_status_func_dummy);
+  picman_set_show_gui (picman, show_gui);
+  units_init (picman);
+  picman_load_config (picman, picmanrc, NULL);
+  picman_gegl_init (picman);
+  gui_init (picman, TRUE);
+  picman_initialize (picman, picman_status_func_dummy);
+  picman_restore (picman, picman_status_func_dummy);
 
   g_type_class_unref (klass);
 
-  return gimp;
+  return picman;
 }
 
 /**
- * gimp_init_for_gui_testing:
+ * picman_init_for_gui_testing:
  * @show_gui:
  *
- * Initializes a #Gimp instance for use in test cases that rely on GUI
+ * Initializes a #Picman instance for use in test cases that rely on GUI
  * code to be initialized.
  *
- * Returns: The #Gimp instance.
+ * Returns: The #Picman instance.
  **/
-Gimp *
-gimp_init_for_gui_testing (gboolean show_gui)
+Picman *
+picman_init_for_gui_testing (gboolean show_gui)
 {
-  return gimp_init_for_gui_testing_internal (show_gui, NULL);
+  return picman_init_for_gui_testing_internal (show_gui, NULL);
 }
 
 /**
- * gimp_init_for_gui_testing:
+ * picman_init_for_gui_testing:
  * @show_gui:
- * @gimprc:
+ * @picmanrc:
  *
- * Like gimp_init_for_gui_testing(), but also allows a custom gimprc
+ * Like picman_init_for_gui_testing(), but also allows a custom picmanrc
  * filename to be specified.
  *
- * Returns: The #Gimp instance.
+ * Returns: The #Picman instance.
  **/
-Gimp *
-gimp_init_for_gui_testing_with_rc (gboolean     show_gui,
-                                   const gchar *gimprc)
+Picman *
+picman_init_for_gui_testing_with_rc (gboolean     show_gui,
+                                   const gchar *picmanrc)
 {
-  return gimp_init_for_gui_testing_internal (show_gui, gimprc);
+  return picman_init_for_gui_testing_internal (show_gui, picmanrc);
 }
 
-#endif /* GIMP_CONSOLE_COMPILATION */
+#endif /* PICMAN_CONSOLE_COMPILATION */
 
 static gboolean
-gimp_tests_quit_mainloop (GMainLoop *loop)
+picman_tests_quit_mainloop (GMainLoop *loop)
 {
   g_main_loop_quit (loop);
 
@@ -158,21 +158,21 @@ gimp_tests_quit_mainloop (GMainLoop *loop)
 }
 
 /**
- * gimp_test_run_temp_mainloop:
+ * picman_test_run_temp_mainloop:
  * @running_time: The time to run the main loop.
  *
  * Helper function for tests that wants to run a main loop for a
- * while. Useful when you want GIMP's state to settle before doing
+ * while. Useful when you want PICMAN's state to settle before doing
  * tests.
  **/
 void
-gimp_test_run_temp_mainloop (guint32 running_time)
+picman_test_run_temp_mainloop (guint32 running_time)
 {
   GMainLoop *loop;
   loop = g_main_loop_new (NULL, FALSE);
 
   g_timeout_add (running_time,
-                 (GSourceFunc) gimp_tests_quit_mainloop,
+                 (GSourceFunc) picman_tests_quit_mainloop,
                  loop);
 
   g_main_loop_run (loop);
@@ -181,17 +181,17 @@ gimp_test_run_temp_mainloop (guint32 running_time)
 }
 
 /**
- * gimp_test_run_mainloop_until_idle:
+ * picman_test_run_mainloop_until_idle:
  *
  * Creates and runs a main loop until it is idle, i.e. has no more
  * work to do.
  **/
 void
-gimp_test_run_mainloop_until_idle (void)
+picman_test_run_mainloop_until_idle (void)
 {
   GMainLoop *loop = g_main_loop_new (NULL, FALSE);
 
-  g_idle_add ((GSourceFunc) gimp_tests_quit_mainloop, loop);
+  g_idle_add ((GSourceFunc) picman_tests_quit_mainloop, loop);
 
   g_main_loop_run (loop);
 
@@ -199,14 +199,14 @@ gimp_test_run_mainloop_until_idle (void)
 }
 
 /**
- * gimp_test_bail_if_no_display:
+ * picman_test_bail_if_no_display:
  * @void:
  *
  * If no DISPLAY is set, call exit(EXIT_SUCCESS). There is no use in
  * having UI tests failing in DISPLAY-less environments.
  **/
 void
-gimp_test_bail_if_no_display (void)
+picman_test_bail_if_no_display (void)
 {
   if (! g_getenv ("DISPLAY"))
     {

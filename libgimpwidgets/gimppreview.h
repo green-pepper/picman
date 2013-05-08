@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppreview.h
+ * picmanpreview.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,12 +18,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_PREVIEW_H__
-#define __GIMP_PREVIEW_H__
+#ifndef __PICMAN_PREVIEW_H__
+#define __PICMAN_PREVIEW_H__
 
 G_BEGIN_DECLS
 
@@ -31,17 +31,17 @@ G_BEGIN_DECLS
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_PREVIEW            (gimp_preview_get_type ())
-#define GIMP_PREVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PREVIEW, GimpPreview))
-#define GIMP_PREVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PREVIEW, GimpPreviewClass))
-#define GIMP_IS_PREVIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PREVIEW))
-#define GIMP_IS_PREVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PREVIEW))
-#define GIMP_PREVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PREVIEW, GimpPreviewClass))
+#define PICMAN_TYPE_PREVIEW            (picman_preview_get_type ())
+#define PICMAN_PREVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PREVIEW, PicmanPreview))
+#define PICMAN_PREVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PREVIEW, PicmanPreviewClass))
+#define PICMAN_IS_PREVIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PREVIEW))
+#define PICMAN_IS_PREVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PREVIEW))
+#define PICMAN_PREVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PREVIEW, PicmanPreviewClass))
 
 
-typedef struct _GimpPreviewClass  GimpPreviewClass;
+typedef struct _PicmanPreviewClass  PicmanPreviewClass;
 
-struct _GimpPreview
+struct _PicmanPreview
 {
   GtkBox        parent_instance;
 
@@ -63,87 +63,87 @@ struct _GimpPreview
   guint         timeout_id;
 };
 
-struct _GimpPreviewClass
+struct _PicmanPreviewClass
 {
   GtkBoxClass  parent_class;
 
   /* virtual methods */
-  void   (* draw)        (GimpPreview     *preview);
-  void   (* draw_thumb)  (GimpPreview     *preview,
-                          GimpPreviewArea *area,
+  void   (* draw)        (PicmanPreview     *preview);
+  void   (* draw_thumb)  (PicmanPreview     *preview,
+                          PicmanPreviewArea *area,
                           gint             width,
                           gint             height);
-  void   (* draw_buffer) (GimpPreview     *preview,
+  void   (* draw_buffer) (PicmanPreview     *preview,
                           const guchar    *buffer,
                           gint             rowstride);
-  void   (* set_cursor)  (GimpPreview     *preview);
+  void   (* set_cursor)  (PicmanPreview     *preview);
 
   /* signal */
-  void   (* invalidated) (GimpPreview     *preview);
+  void   (* invalidated) (PicmanPreview     *preview);
 
   /* virtual methods */
-  void   (* transform)   (GimpPreview     *preview,
+  void   (* transform)   (PicmanPreview     *preview,
                           gint             src_x,
                           gint             src_y,
                           gint            *dest_x,
                           gint            *dest_y);
-  void   (* untransform) (GimpPreview     *preview,
+  void   (* untransform) (PicmanPreview     *preview,
                           gint             src_x,
                           gint             src_y,
                           gint            *dest_x,
                           gint            *dest_y);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType       gimp_preview_get_type           (void) G_GNUC_CONST;
+GType       picman_preview_get_type           (void) G_GNUC_CONST;
 
-void        gimp_preview_set_update         (GimpPreview  *preview,
+void        picman_preview_set_update         (PicmanPreview  *preview,
                                              gboolean      update);
-gboolean    gimp_preview_get_update         (GimpPreview  *preview);
+gboolean    picman_preview_get_update         (PicmanPreview  *preview);
 
-void        gimp_preview_set_bounds         (GimpPreview  *preview,
+void        picman_preview_set_bounds         (PicmanPreview  *preview,
                                              gint          xmin,
                                              gint          ymin,
                                              gint          xmax,
                                              gint          ymax);
 
-void        gimp_preview_get_position       (GimpPreview  *preview,
+void        picman_preview_get_position       (PicmanPreview  *preview,
                                              gint         *x,
                                              gint         *y);
-void        gimp_preview_get_size           (GimpPreview  *preview,
+void        picman_preview_get_size           (PicmanPreview  *preview,
                                              gint         *width,
                                              gint         *height);
 
-void        gimp_preview_transform          (GimpPreview *preview,
+void        picman_preview_transform          (PicmanPreview *preview,
                                              gint         src_x,
                                              gint         src_y,
                                              gint        *dest_x,
                                              gint        *dest_y);
-void        gimp_preview_untransform        (GimpPreview *preview,
+void        picman_preview_untransform        (PicmanPreview *preview,
                                              gint         src_x,
                                              gint         src_y,
                                              gint        *dest_x,
                                              gint        *dest_y);
 
-GtkWidget * gimp_preview_get_area           (GimpPreview  *preview);
+GtkWidget * picman_preview_get_area           (PicmanPreview  *preview);
 
-void        gimp_preview_draw               (GimpPreview  *preview);
-void        gimp_preview_draw_buffer        (GimpPreview  *preview,
+void        picman_preview_draw               (PicmanPreview  *preview);
+void        picman_preview_draw_buffer        (PicmanPreview  *preview,
                                              const guchar *buffer,
                                              gint          rowstride);
 
-void        gimp_preview_invalidate         (GimpPreview  *preview);
+void        picman_preview_invalidate         (PicmanPreview  *preview);
 
-void        gimp_preview_set_default_cursor (GimpPreview  *preview,
+void        picman_preview_set_default_cursor (PicmanPreview  *preview,
                                              GdkCursor    *cursor);
 
-GtkWidget * gimp_preview_get_controls       (GimpPreview  *preview);
+GtkWidget * picman_preview_get_controls       (PicmanPreview  *preview);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_PREVIEW_H__ */
+#endif /* __PICMAN_PREVIEW_H__ */

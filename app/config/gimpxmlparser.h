@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * GimpXmlParser
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * PicmanXmlParser
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_XML_PARSER_H__
-#define __GIMP_XML_PARSER_H__
+#ifndef __PICMAN_XML_PARSER_H__
+#define __PICMAN_XML_PARSER_H__
 
 
-GimpXmlParser * gimp_xml_parser_new              (const GMarkupParser *markup_parser,
+PicmanXmlParser * picman_xml_parser_new              (const GMarkupParser *markup_parser,
                                                   gpointer             user_data);
-gboolean        gimp_xml_parser_parse_file       (GimpXmlParser       *parser,
+gboolean        picman_xml_parser_parse_file       (PicmanXmlParser       *parser,
                                                   const gchar         *filename,
                                                   GError             **error);
-gboolean        gimp_xml_parser_parse_fd         (GimpXmlParser       *parser,
+gboolean        picman_xml_parser_parse_fd         (PicmanXmlParser       *parser,
                                                   gint                 fd,
                                                   GError             **error);
-gboolean        gimp_xml_parser_parse_io_channel (GimpXmlParser       *parser,
+gboolean        picman_xml_parser_parse_io_channel (PicmanXmlParser       *parser,
                                                   GIOChannel          *io,
                                                   GError             **error);
-gboolean        gimp_xml_parser_parse_buffer     (GimpXmlParser       *parser,
+gboolean        picman_xml_parser_parse_buffer     (PicmanXmlParser       *parser,
                                                   const gchar         *buffer,
                                                   gssize               len,
                                                   GError             **error);
-void            gimp_xml_parser_free             (GimpXmlParser       *parser);
+void            picman_xml_parser_free             (PicmanXmlParser       *parser);
 
 
-#endif  /* __GIMP_XML_PARSER_H__ */
+#endif  /* __PICMAN_XML_PARSER_H__ */

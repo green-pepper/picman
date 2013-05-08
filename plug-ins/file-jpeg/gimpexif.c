@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,23 +23,23 @@
 
 #include <stdlib.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include <libexif/exif-data.h>
 #include <libexif/exif-content.h>
 #include <libexif/exif-utils.h>
 
-#include "gimpexif.h"
+#include "picmanexif.h"
 
 
 #define EXIF_HEADER_SIZE 8
 
 /*
- * gimp_metadata_store_exif:
- * @image_ID:    the GIMP image to work on.
+ * picman_metadata_store_exif:
+ * @image_ID:    the PICMAN image to work on.
  * @exif_data:   the Exif data that is to be stored.
  *
- * This function is supposed to load the "gimp-metadata" parasite
+ * This function is supposed to load the "picman-metadata" parasite
  * (which is in XMP format), parse it, add the exif information,
  * reformat it into XMP, and store the result as the new parasite.
  * The infrastructure to do this is not yet available, so for the
@@ -47,12 +47,12 @@
  * to serialize the exif data, and stores the result in a parasite
  * called "exif-data".
  */
-void gimp_metadata_store_exif    (gint32    image_ID,
+void picman_metadata_store_exif    (gint32    image_ID,
                                   ExifData *exif_data)
 {
-  GimpParam    *return_vals;
+  PicmanParam    *return_vals;
   gint          nreturn_vals;
-  GimpParasite *parasite      = NULL;
+  PicmanParasite *parasite      = NULL;
   guchar       *exif_buf      = NULL;
   guint         exif_buf_len  = 0;
 
@@ -60,29 +60,29 @@ void gimp_metadata_store_exif    (gint32    image_ID,
 
   if (exif_buf_len > EXIF_HEADER_SIZE)
     {
-      parasite = gimp_parasite_new ("exif-data",
-                                    GIMP_PARASITE_PERSISTENT,
+      parasite = picman_parasite_new ("exif-data",
+                                    PICMAN_PARASITE_PERSISTENT,
                                     exif_buf_len, exif_buf);
-      gimp_image_attach_parasite (image_ID, parasite);
-      gimp_parasite_free (parasite);
+      picman_image_attach_parasite (image_ID, parasite);
+      picman_parasite_free (parasite);
     }
-  return_vals = gimp_run_procedure ("plug-in-metadata-decode-exif",
+  return_vals = picman_run_procedure ("plug-in-metadata-decode-exif",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE,      image_ID,
-                                    GIMP_PDB_INT32,      7,
-                                    GIMP_PDB_INT8ARRAY,  "unused",
-                                    GIMP_PDB_END);
-  if (return_vals[0].data.d_status != GIMP_PDB_SUCCESS)
+                                    PICMAN_PDB_IMAGE,      image_ID,
+                                    PICMAN_PDB_INT32,      7,
+                                    PICMAN_PDB_INT8ARRAY,  "unused",
+                                    PICMAN_PDB_END);
+  if (return_vals[0].data.d_status != PICMAN_PDB_SUCCESS)
     g_warning ("JPEG Exif -> XMP Merge failed");
 
   free (exif_buf);
 }
 
 /*
- * gimp_metadata_generate_exif:
- * @image_ID:   the ID of the GIMP image to work on.
+ * picman_metadata_generate_exif:
+ * @image_ID:   the ID of the PICMAN image to work on.
  *
- * This function is supposed to load the "gimp-metadata" parasite
+ * This function is supposed to load the "picman-metadata" parasite
  * (which is a block of XMP info), parse it, extract the exif
  * values, and build an ExifData structure from them.
  * The infrastructure to do this is not yet available, so for the
@@ -93,17 +93,17 @@ void gimp_metadata_store_exif    (gint32    image_ID,
  * returns: The reconstructed exif data, or NULL if none exists.
  */
 ExifData *
-gimp_metadata_generate_exif (gint32 image_ID)
+picman_metadata_generate_exif (gint32 image_ID)
 {
   ExifData     *exif_data;
-  GimpParasite *parasite = gimp_image_get_parasite (image_ID, "exif-data");
+  PicmanParasite *parasite = picman_image_get_parasite (image_ID, "exif-data");
 
   if (parasite)
     {
-      exif_data = exif_data_new_from_data (gimp_parasite_data (parasite),
-                                           gimp_parasite_data_size (parasite));
+      exif_data = exif_data_new_from_data (picman_parasite_data (parasite),
+                                           picman_parasite_data_size (parasite));
 
-      gimp_parasite_free (parasite);
+      picman_parasite_free (parasite);
       return exif_data;
     }
 
@@ -111,7 +111,7 @@ gimp_metadata_generate_exif (gint32 image_ID)
 }
 
 /*
- * gimp_exif_content_get_value:
+ * picman_exif_content_get_value:
  * @content:   ExifContent block from which to get value
  * @tag:       Tag whose value to get
  * @value:     Place to put the result
@@ -124,7 +124,7 @@ gimp_metadata_generate_exif (gint32 image_ID)
  * @value must be pre-allocated.
  */
 const gchar *
-gimp_exif_content_get_value (ExifContent *content,
+picman_exif_content_get_value (ExifContent *content,
                              ExifTag      tag,
                              gchar       *value,
                              gint         maxlen)
@@ -138,7 +138,7 @@ gimp_exif_content_get_value (ExifContent *content,
 }
 
 /*
- * gimp_exif_data_remove_entry:
+ * picman_exif_data_remove_entry:
  * @data:      ExifData pointer
  * @ifd:       Index of the ifd holding the entry to be removed
  * @tag:       Tag of the entry to be removed
@@ -148,7 +148,7 @@ gimp_exif_content_get_value (ExifContent *content,
  * exists, the function returns without doing anything.
  */
 void
-gimp_exif_data_remove_entry (ExifData *exif_data,
+picman_exif_data_remove_entry (ExifData *exif_data,
                              ExifIfd   ifd,
                              ExifTag   tag)
 {

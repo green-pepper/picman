@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,50 +19,50 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "paint-types.h"
 
-#include "core/gimpboundary.h"
-#include "core/gimpdrawable.h"
-#include "core/gimperror.h"
-#include "core/gimpcoords.h"
+#include "core/picmanboundary.h"
+#include "core/picmandrawable.h"
+#include "core/picmanerror.h"
+#include "core/picmancoords.h"
 
-#include "vectors/gimpstroke.h"
-#include "vectors/gimpvectors.h"
+#include "vectors/picmanstroke.h"
+#include "vectors/picmanvectors.h"
 
-#include "gimppaintcore.h"
-#include "gimppaintcore-stroke.h"
-#include "gimppaintoptions.h"
+#include "picmanpaintcore.h"
+#include "picmanpaintcore-stroke.h"
+#include "picmanpaintoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void gimp_paint_core_stroke_emulate_dynamics (GimpCoords *coords,
+static void picman_paint_core_stroke_emulate_dynamics (PicmanCoords *coords,
                                                      gint        length);
 
 
-static const GimpCoords default_coords = GIMP_COORDS_DEFAULT_VALUES;
+static const PicmanCoords default_coords = PICMAN_COORDS_DEFAULT_VALUES;
 
 
 gboolean
-gimp_paint_core_stroke (GimpPaintCore     *core,
-                        GimpDrawable      *drawable,
-                        GimpPaintOptions  *paint_options,
-                        GimpCoords        *strokes,
+picman_paint_core_stroke (PicmanPaintCore     *core,
+                        PicmanDrawable      *drawable,
+                        PicmanPaintOptions  *paint_options,
+                        PicmanCoords        *strokes,
                         gint               n_strokes,
                         gboolean           push_undo,
                         GError           **error)
 {
-  g_return_val_if_fail (GIMP_IS_PAINT_CORE (core), FALSE);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), FALSE);
-  g_return_val_if_fail (GIMP_IS_PAINT_OPTIONS (paint_options), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PAINT_CORE (core), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PAINT_OPTIONS (paint_options), FALSE);
   g_return_val_if_fail (strokes != NULL, FALSE);
   g_return_val_if_fail (n_strokes > 0, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  if (gimp_paint_core_start (core, drawable, paint_options, &strokes[0],
+  if (picman_paint_core_start (core, drawable, paint_options, &strokes[0],
                              error))
     {
       gint i;
@@ -70,24 +70,24 @@ gimp_paint_core_stroke (GimpPaintCore     *core,
       core->start_coords = strokes[0];
       core->last_coords  = strokes[0];
 
-      gimp_paint_core_paint (core, drawable, paint_options,
-                             GIMP_PAINT_STATE_INIT, 0);
+      picman_paint_core_paint (core, drawable, paint_options,
+                             PICMAN_PAINT_STATE_INIT, 0);
 
-      gimp_paint_core_paint (core, drawable, paint_options,
-                             GIMP_PAINT_STATE_MOTION, 0);
+      picman_paint_core_paint (core, drawable, paint_options,
+                             PICMAN_PAINT_STATE_MOTION, 0);
 
       for (i = 1; i < n_strokes; i++)
         {
-          gimp_paint_core_interpolate (core, drawable, paint_options,
+          picman_paint_core_interpolate (core, drawable, paint_options,
                                        &strokes[i], 0);
         }
 
-      gimp_paint_core_paint (core, drawable, paint_options,
-                             GIMP_PAINT_STATE_FINISH, 0);
+      picman_paint_core_paint (core, drawable, paint_options,
+                             PICMAN_PAINT_STATE_FINISH, 0);
 
-      gimp_paint_core_finish (core, drawable, push_undo);
+      picman_paint_core_finish (core, drawable, push_undo);
 
-      gimp_paint_core_cleanup (core);
+      picman_paint_core_cleanup (core);
 
       return TRUE;
     }
@@ -96,46 +96,46 @@ gimp_paint_core_stroke (GimpPaintCore     *core,
 }
 
 gboolean
-gimp_paint_core_stroke_boundary (GimpPaintCore      *core,
-                                 GimpDrawable       *drawable,
-                                 GimpPaintOptions   *paint_options,
+picman_paint_core_stroke_boundary (PicmanPaintCore      *core,
+                                 PicmanDrawable       *drawable,
+                                 PicmanPaintOptions   *paint_options,
                                  gboolean            emulate_dynamics,
-                                 const GimpBoundSeg *bound_segs,
+                                 const PicmanBoundSeg *bound_segs,
                                  gint                n_bound_segs,
                                  gint                offset_x,
                                  gint                offset_y,
                                  gboolean            push_undo,
                                  GError            **error)
 {
-  GimpBoundSeg *stroke_segs;
+  PicmanBoundSeg *stroke_segs;
   gint          n_stroke_segs;
   gint          off_x;
   gint          off_y;
-  GimpCoords   *coords;
+  PicmanCoords   *coords;
   gboolean      initialized = FALSE;
   gint          n_coords;
   gint          seg;
   gint          s;
 
-  g_return_val_if_fail (GIMP_IS_PAINT_CORE (core), FALSE);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), FALSE);
-  g_return_val_if_fail (GIMP_IS_PAINT_OPTIONS (paint_options), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PAINT_CORE (core), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PAINT_OPTIONS (paint_options), FALSE);
   g_return_val_if_fail (bound_segs != NULL && n_bound_segs > 0, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  stroke_segs = gimp_boundary_sort (bound_segs, n_bound_segs,
+  stroke_segs = picman_boundary_sort (bound_segs, n_bound_segs,
                                     &n_stroke_segs);
 
   if (n_stroke_segs == 0)
     return TRUE;
 
-  gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+  picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
 
   off_x -= offset_x;
   off_y -= offset_y;
 
-  coords = g_new0 (GimpCoords, n_bound_segs + 4);
+  coords = g_new0 (PicmanCoords, n_bound_segs + 4);
 
   seg      = 0;
   n_coords = 0;
@@ -169,10 +169,10 @@ gimp_paint_core_stroke_boundary (GimpPaintCore      *core,
       n_coords++;
 
       if (emulate_dynamics)
-        gimp_paint_core_stroke_emulate_dynamics (coords, n_coords);
+        picman_paint_core_stroke_emulate_dynamics (coords, n_coords);
 
       if (initialized ||
-          gimp_paint_core_start (core, drawable, paint_options, &coords[0],
+          picman_paint_core_start (core, drawable, paint_options, &coords[0],
                                  error))
         {
           gint i;
@@ -183,20 +183,20 @@ gimp_paint_core_stroke_boundary (GimpPaintCore      *core,
           core->start_coords = coords[0];
           core->last_coords  = coords[0];
 
-          gimp_paint_core_paint (core, drawable, paint_options,
-                                 GIMP_PAINT_STATE_INIT, 0);
+          picman_paint_core_paint (core, drawable, paint_options,
+                                 PICMAN_PAINT_STATE_INIT, 0);
 
-          gimp_paint_core_paint (core, drawable, paint_options,
-                                 GIMP_PAINT_STATE_MOTION, 0);
+          picman_paint_core_paint (core, drawable, paint_options,
+                                 PICMAN_PAINT_STATE_MOTION, 0);
 
           for (i = 1; i < n_coords; i++)
             {
-              gimp_paint_core_interpolate (core, drawable, paint_options,
+              picman_paint_core_interpolate (core, drawable, paint_options,
                                            &coords[i], 0);
             }
 
-          gimp_paint_core_paint (core, drawable, paint_options,
-                                 GIMP_PAINT_STATE_FINISH, 0);
+          picman_paint_core_paint (core, drawable, paint_options,
+                                 PICMAN_PAINT_STATE_FINISH, 0);
         }
       else
         {
@@ -215,9 +215,9 @@ gimp_paint_core_stroke_boundary (GimpPaintCore      *core,
 
   if (initialized)
     {
-      gimp_paint_core_finish (core, drawable, push_undo);
+      picman_paint_core_finish (core, drawable, push_undo);
 
-      gimp_paint_core_cleanup (core);
+      picman_paint_core_cleanup (core);
     }
 
   g_free (coords);
@@ -227,11 +227,11 @@ gimp_paint_core_stroke_boundary (GimpPaintCore      *core,
 }
 
 gboolean
-gimp_paint_core_stroke_vectors (GimpPaintCore     *core,
-                                GimpDrawable      *drawable,
-                                GimpPaintOptions  *paint_options,
+picman_paint_core_stroke_vectors (PicmanPaintCore     *core,
+                                PicmanDrawable      *drawable,
+                                PicmanPaintOptions  *paint_options,
                                 gboolean           emulate_dynamics,
-                                GimpVectors       *vectors,
+                                PicmanVectors       *vectors,
                                 gboolean           push_undo,
                                 GError           **error)
 {
@@ -241,15 +241,15 @@ gimp_paint_core_stroke_vectors (GimpPaintCore     *core,
   gint      off_x, off_y;
   gint      vectors_off_x, vectors_off_y;
 
-  g_return_val_if_fail (GIMP_IS_PAINT_CORE (core), FALSE);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), FALSE);
-  g_return_val_if_fail (GIMP_IS_PAINT_OPTIONS (paint_options), FALSE);
-  g_return_val_if_fail (GIMP_IS_VECTORS (vectors), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PAINT_CORE (core), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PAINT_OPTIONS (paint_options), FALSE);
+  g_return_val_if_fail (PICMAN_IS_VECTORS (vectors), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  gimp_item_get_offset (GIMP_ITEM (vectors),  &vectors_off_x, &vectors_off_y);
-  gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+  picman_item_get_offset (PICMAN_ITEM (vectors),  &vectors_off_x, &vectors_off_y);
+  picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
 
   off_x -= vectors_off_x;
   off_y -= vectors_off_y;
@@ -259,7 +259,7 @@ gimp_paint_core_stroke_vectors (GimpPaintCore     *core,
       GArray   *coords;
       gboolean  closed;
 
-      coords = gimp_stroke_interpolate (GIMP_STROKE (stroke->data),
+      coords = picman_stroke_interpolate (PICMAN_STROKE (stroke->data),
                                         1.0, &closed);
 
       if (coords && coords->len)
@@ -268,40 +268,40 @@ gimp_paint_core_stroke_vectors (GimpPaintCore     *core,
 
           for (i = 0; i < coords->len; i++)
             {
-              g_array_index (coords, GimpCoords, i).x -= off_x;
-              g_array_index (coords, GimpCoords, i).y -= off_y;
+              g_array_index (coords, PicmanCoords, i).x -= off_x;
+              g_array_index (coords, PicmanCoords, i).y -= off_y;
             }
 
           if (emulate_dynamics)
-            gimp_paint_core_stroke_emulate_dynamics ((GimpCoords *) coords->data,
+            picman_paint_core_stroke_emulate_dynamics ((PicmanCoords *) coords->data,
                                                      coords->len);
 
           if (initialized ||
-              gimp_paint_core_start (core, drawable, paint_options,
-                                     &g_array_index (coords, GimpCoords, 0),
+              picman_paint_core_start (core, drawable, paint_options,
+                                     &g_array_index (coords, PicmanCoords, 0),
                                      error))
             {
               initialized = TRUE;
 
-              core->cur_coords   = g_array_index (coords, GimpCoords, 0);
-              core->start_coords = g_array_index (coords, GimpCoords, 0);
-              core->last_coords  = g_array_index (coords, GimpCoords, 0);
+              core->cur_coords   = g_array_index (coords, PicmanCoords, 0);
+              core->start_coords = g_array_index (coords, PicmanCoords, 0);
+              core->last_coords  = g_array_index (coords, PicmanCoords, 0);
 
-              gimp_paint_core_paint (core, drawable, paint_options,
-                                     GIMP_PAINT_STATE_INIT, 0);
+              picman_paint_core_paint (core, drawable, paint_options,
+                                     PICMAN_PAINT_STATE_INIT, 0);
 
-              gimp_paint_core_paint (core, drawable, paint_options,
-                                     GIMP_PAINT_STATE_MOTION, 0);
+              picman_paint_core_paint (core, drawable, paint_options,
+                                     PICMAN_PAINT_STATE_MOTION, 0);
 
               for (i = 1; i < coords->len; i++)
                 {
-                  gimp_paint_core_interpolate (core, drawable, paint_options,
-                                               &g_array_index (coords, GimpCoords, i),
+                  picman_paint_core_interpolate (core, drawable, paint_options,
+                                               &g_array_index (coords, PicmanCoords, i),
                                                0);
                 }
 
-              gimp_paint_core_paint (core, drawable, paint_options,
-                                     GIMP_PAINT_STATE_FINISH, 0);
+              picman_paint_core_paint (core, drawable, paint_options,
+                                     PICMAN_PAINT_STATE_FINISH, 0);
             }
           else
             {
@@ -322,14 +322,14 @@ gimp_paint_core_stroke_vectors (GimpPaintCore     *core,
 
   if (initialized)
     {
-      gimp_paint_core_finish (core, drawable, push_undo);
+      picman_paint_core_finish (core, drawable, push_undo);
 
-      gimp_paint_core_cleanup (core);
+      picman_paint_core_cleanup (core);
     }
 
   if (! initialized && due_to_lack_of_points && *error == NULL)
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
                            _("Not enough points to stroke"));
     }
 
@@ -337,7 +337,7 @@ gimp_paint_core_stroke_vectors (GimpPaintCore     *core,
 }
 
 static void
-gimp_paint_core_stroke_emulate_dynamics (GimpCoords *coords,
+picman_paint_core_stroke_emulate_dynamics (PicmanCoords *coords,
                                          gint        length)
 {
   const gint ramp_length = length / 3;
@@ -380,7 +380,7 @@ gimp_paint_core_stroke_emulate_dynamics (GimpCoords *coords,
       /* Fill in direction */
       for (i = 1; i < length; i++)
         {
-           coords[i].direction = gimp_coords_direction (&coords[i-1], &coords[i]);
+           coords[i].direction = picman_coords_direction (&coords[i-1], &coords[i]);
 
         }
 

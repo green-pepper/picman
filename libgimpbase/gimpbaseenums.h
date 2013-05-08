@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,16 +16,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BASE_ENUMS_H__
-#define __GIMP_BASE_ENUMS_H__
+#ifndef __PICMAN_BASE_ENUMS_H__
+#define __PICMAN_BASE_ENUMS_H__
 
 
 /**
- * SECTION: gimpbaseenums
- * @title: gimpbaseenums
- * @short_description: Basic GIMP enumeration data types.
+ * SECTION: picmanbaseenums
+ * @title: picmanbaseenums
+ * @short_description: Basic PICMAN enumeration data types.
  *
- * Basic GIMP enumeration data types.
+ * Basic PICMAN enumeration data types.
  **/
 
 
@@ -34,510 +34,510 @@ G_BEGIN_DECLS
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_ADD_MASK_TYPE (gimp_add_mask_type_get_type ())
+#define PICMAN_TYPE_ADD_MASK_TYPE (picman_add_mask_type_get_type ())
 
-GType gimp_add_mask_type_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_ADD_WHITE_MASK,          /*< desc="_White (full opacity)"           >*/
-  GIMP_ADD_BLACK_MASK,          /*< desc="_Black (full transparency)"      >*/
-  GIMP_ADD_ALPHA_MASK,          /*< desc="Layer's _alpha channel"          >*/
-  GIMP_ADD_ALPHA_TRANSFER_MASK, /*< desc="_Transfer layer's alpha channel" >*/
-  GIMP_ADD_SELECTION_MASK,      /*< desc="_Selection"                      >*/
-  GIMP_ADD_COPY_MASK,           /*< desc="_Grayscale copy of layer"        >*/
-  GIMP_ADD_CHANNEL_MASK         /*< desc="C_hannel"                        >*/
-} GimpAddMaskType;
-
-
-#define GIMP_TYPE_BLEND_MODE (gimp_blend_mode_get_type ())
-
-GType gimp_blend_mode_get_type (void) G_GNUC_CONST;
+GType picman_add_mask_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_FG_BG_RGB_MODE,         /*< desc="FG to BG (RGB)"    >*/
-  GIMP_FG_BG_HSV_MODE,         /*< desc="FG to BG (HSV)"    >*/
-  GIMP_FG_TRANSPARENT_MODE,    /*< desc="FG to transparent" >*/
-  GIMP_CUSTOM_MODE             /*< desc="Custom gradient"   >*/
-} GimpBlendMode;
+  PICMAN_ADD_WHITE_MASK,          /*< desc="_White (full opacity)"           >*/
+  PICMAN_ADD_BLACK_MASK,          /*< desc="_Black (full transparency)"      >*/
+  PICMAN_ADD_ALPHA_MASK,          /*< desc="Layer's _alpha channel"          >*/
+  PICMAN_ADD_ALPHA_TRANSFER_MASK, /*< desc="_Transfer layer's alpha channel" >*/
+  PICMAN_ADD_SELECTION_MASK,      /*< desc="_Selection"                      >*/
+  PICMAN_ADD_COPY_MASK,           /*< desc="_Grayscale copy of layer"        >*/
+  PICMAN_ADD_CHANNEL_MASK         /*< desc="C_hannel"                        >*/
+} PicmanAddMaskType;
 
 
-#define GIMP_TYPE_BUCKET_FILL_MODE (gimp_bucket_fill_mode_get_type ())
+#define PICMAN_TYPE_BLEND_MODE (picman_blend_mode_get_type ())
 
-GType gimp_bucket_fill_mode_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_FG_BUCKET_FILL,      /*< desc="FG color fill" >*/
-  GIMP_BG_BUCKET_FILL,      /*< desc="BG color fill" >*/
-  GIMP_PATTERN_BUCKET_FILL  /*< desc="Pattern fill"  >*/
-} GimpBucketFillMode;
-
-
-#define GIMP_TYPE_CHANNEL_OPS (gimp_channel_ops_get_type ())
-
-GType gimp_channel_ops_get_type (void) G_GNUC_CONST;
+GType picman_blend_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_CHANNEL_OP_ADD,       /*< desc="Add to the current selection"         >*/
-  GIMP_CHANNEL_OP_SUBTRACT,  /*< desc="Subtract from the current selection"  >*/
-  GIMP_CHANNEL_OP_REPLACE,   /*< desc="Replace the current selection"        >*/
-  GIMP_CHANNEL_OP_INTERSECT  /*< desc="Intersect with the current selection" >*/
-} GimpChannelOps;
+  PICMAN_FG_BG_RGB_MODE,         /*< desc="FG to BG (RGB)"    >*/
+  PICMAN_FG_BG_HSV_MODE,         /*< desc="FG to BG (HSV)"    >*/
+  PICMAN_FG_TRANSPARENT_MODE,    /*< desc="FG to transparent" >*/
+  PICMAN_CUSTOM_MODE             /*< desc="Custom gradient"   >*/
+} PicmanBlendMode;
 
 
-#define GIMP_TYPE_CHANNEL_TYPE (gimp_channel_type_get_type ())
+#define PICMAN_TYPE_BUCKET_FILL_MODE (picman_bucket_fill_mode_get_type ())
 
-GType gimp_channel_type_get_type (void) G_GNUC_CONST;
+GType picman_bucket_fill_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_RED_CHANNEL,      /*< desc="Red"     >*/
-  GIMP_GREEN_CHANNEL,    /*< desc="Green"   >*/
-  GIMP_BLUE_CHANNEL,     /*< desc="Blue"    >*/
-  GIMP_GRAY_CHANNEL,     /*< desc="Gray"    >*/
-  GIMP_INDEXED_CHANNEL,  /*< desc="Indexed" >*/
-  GIMP_ALPHA_CHANNEL     /*< desc="Alpha"   >*/
-} GimpChannelType;
+  PICMAN_FG_BUCKET_FILL,      /*< desc="FG color fill" >*/
+  PICMAN_BG_BUCKET_FILL,      /*< desc="BG color fill" >*/
+  PICMAN_PATTERN_BUCKET_FILL  /*< desc="Pattern fill"  >*/
+} PicmanBucketFillMode;
 
 
-#define GIMP_TYPE_CHECK_SIZE (gimp_check_size_get_type ())
+#define PICMAN_TYPE_CHANNEL_OPS (picman_channel_ops_get_type ())
 
-GType gimp_check_size_get_type (void) G_GNUC_CONST;
+GType picman_channel_ops_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_CHANNEL_OP_ADD,       /*< desc="Add to the current selection"         >*/
+  PICMAN_CHANNEL_OP_SUBTRACT,  /*< desc="Subtract from the current selection"  >*/
+  PICMAN_CHANNEL_OP_REPLACE,   /*< desc="Replace the current selection"        >*/
+  PICMAN_CHANNEL_OP_INTERSECT  /*< desc="Intersect with the current selection" >*/
+} PicmanChannelOps;
+
+
+#define PICMAN_TYPE_CHANNEL_TYPE (picman_channel_type_get_type ())
+
+GType picman_channel_type_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_RED_CHANNEL,      /*< desc="Red"     >*/
+  PICMAN_GREEN_CHANNEL,    /*< desc="Green"   >*/
+  PICMAN_BLUE_CHANNEL,     /*< desc="Blue"    >*/
+  PICMAN_GRAY_CHANNEL,     /*< desc="Gray"    >*/
+  PICMAN_INDEXED_CHANNEL,  /*< desc="Indexed" >*/
+  PICMAN_ALPHA_CHANNEL     /*< desc="Alpha"   >*/
+} PicmanChannelType;
+
+
+#define PICMAN_TYPE_CHECK_SIZE (picman_check_size_get_type ())
+
+GType picman_check_size_get_type (void) G_GNUC_CONST;
 
 typedef enum  /*< pdb-skip >*/
 {
-  GIMP_CHECK_SIZE_SMALL_CHECKS  = 0,  /*< desc="Small"  >*/
-  GIMP_CHECK_SIZE_MEDIUM_CHECKS = 1,  /*< desc="Medium" >*/
-  GIMP_CHECK_SIZE_LARGE_CHECKS  = 2   /*< desc="Large"  >*/
-} GimpCheckSize;
+  PICMAN_CHECK_SIZE_SMALL_CHECKS  = 0,  /*< desc="Small"  >*/
+  PICMAN_CHECK_SIZE_MEDIUM_CHECKS = 1,  /*< desc="Medium" >*/
+  PICMAN_CHECK_SIZE_LARGE_CHECKS  = 2   /*< desc="Large"  >*/
+} PicmanCheckSize;
 
 
-#define GIMP_TYPE_CHECK_TYPE (gimp_check_type_get_type ())
+#define PICMAN_TYPE_CHECK_TYPE (picman_check_type_get_type ())
 
-GType gimp_check_type_get_type (void) G_GNUC_CONST;
+GType picman_check_type_get_type (void) G_GNUC_CONST;
 
 typedef enum  /*< pdb-skip >*/
 {
-  GIMP_CHECK_TYPE_LIGHT_CHECKS = 0,  /*< desc="Light checks"    >*/
-  GIMP_CHECK_TYPE_GRAY_CHECKS  = 1,  /*< desc="Mid-tone checks" >*/
-  GIMP_CHECK_TYPE_DARK_CHECKS  = 2,  /*< desc="Dark checks"     >*/
-  GIMP_CHECK_TYPE_WHITE_ONLY   = 3,  /*< desc="White only"      >*/
-  GIMP_CHECK_TYPE_GRAY_ONLY    = 4,  /*< desc="Gray only"       >*/
-  GIMP_CHECK_TYPE_BLACK_ONLY   = 5   /*< desc="Black only"      >*/
-} GimpCheckType;
+  PICMAN_CHECK_TYPE_LIGHT_CHECKS = 0,  /*< desc="Light checks"    >*/
+  PICMAN_CHECK_TYPE_GRAY_CHECKS  = 1,  /*< desc="Mid-tone checks" >*/
+  PICMAN_CHECK_TYPE_DARK_CHECKS  = 2,  /*< desc="Dark checks"     >*/
+  PICMAN_CHECK_TYPE_WHITE_ONLY   = 3,  /*< desc="White only"      >*/
+  PICMAN_CHECK_TYPE_GRAY_ONLY    = 4,  /*< desc="Gray only"       >*/
+  PICMAN_CHECK_TYPE_BLACK_ONLY   = 5   /*< desc="Black only"      >*/
+} PicmanCheckType;
 
 
-#define GIMP_TYPE_CLONE_TYPE (gimp_clone_type_get_type ())
+#define PICMAN_TYPE_CLONE_TYPE (picman_clone_type_get_type ())
 
-GType gimp_clone_type_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_IMAGE_CLONE,   /*< desc="Image"   >*/
-  GIMP_PATTERN_CLONE  /*< desc="Pattern" >*/
-} GimpCloneType;
-
-
-#define GIMP_TYPE_DESATURATE_MODE (gimp_desaturate_mode_get_type ())
-
-GType gimp_desaturate_mode_get_type (void) G_GNUC_CONST;
+GType picman_clone_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_DESATURATE_LIGHTNESS,   /*< desc="Lightness"  >*/
-  GIMP_DESATURATE_LUMINOSITY,  /*< desc="Luminosity" >*/
-  GIMP_DESATURATE_AVERAGE      /*< desc="Average"    >*/
-} GimpDesaturateMode;
+  PICMAN_IMAGE_CLONE,   /*< desc="Image"   >*/
+  PICMAN_PATTERN_CLONE  /*< desc="Pattern" >*/
+} PicmanCloneType;
 
 
-#define GIMP_TYPE_DODGE_BURN_TYPE (gimp_dodge_burn_type_get_type ())
+#define PICMAN_TYPE_DESATURATE_MODE (picman_desaturate_mode_get_type ())
 
-GType gimp_dodge_burn_type_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_DODGE,  /*< desc="Dodge" >*/
-  GIMP_BURN    /*< desc="Burn"  >*/
-} GimpDodgeBurnType;
-
-
-#define GIMP_TYPE_FOREGROUND_EXTRACT_MODE (gimp_foreground_extract_mode_get_type ())
-
-GType gimp_foreground_extract_mode_get_type (void) G_GNUC_CONST;
+GType picman_desaturate_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_FOREGROUND_EXTRACT_SIOX
-} GimpForegroundExtractMode;
+  PICMAN_DESATURATE_LIGHTNESS,   /*< desc="Lightness"  >*/
+  PICMAN_DESATURATE_LUMINOSITY,  /*< desc="Luminosity" >*/
+  PICMAN_DESATURATE_AVERAGE      /*< desc="Average"    >*/
+} PicmanDesaturateMode;
 
 
-#define GIMP_TYPE_GRADIENT_TYPE (gimp_gradient_type_get_type ())
+#define PICMAN_TYPE_DODGE_BURN_TYPE (picman_dodge_burn_type_get_type ())
 
-GType gimp_gradient_type_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_GRADIENT_LINEAR,                /*< desc="Linear"            >*/
-  GIMP_GRADIENT_BILINEAR,              /*< desc="Bi-linear"         >*/
-  GIMP_GRADIENT_RADIAL,                /*< desc="Radial"            >*/
-  GIMP_GRADIENT_SQUARE,                /*< desc="Square"            >*/
-  GIMP_GRADIENT_CONICAL_SYMMETRIC,     /*< desc="Conical (sym)"     >*/
-  GIMP_GRADIENT_CONICAL_ASYMMETRIC,    /*< desc="Conical (asym)"    >*/
-  GIMP_GRADIENT_SHAPEBURST_ANGULAR,    /*< desc="Shaped (angular)"  >*/
-  GIMP_GRADIENT_SHAPEBURST_SPHERICAL,  /*< desc="Shaped (spherical)">*/
-  GIMP_GRADIENT_SHAPEBURST_DIMPLED,    /*< desc="Shaped (dimpled)"  >*/
-  GIMP_GRADIENT_SPIRAL_CLOCKWISE,      /*< desc="Spiral (cw)"       >*/
-  GIMP_GRADIENT_SPIRAL_ANTICLOCKWISE   /*< desc="Spiral (ccw)"      >*/
-} GimpGradientType;
-
-
-#define GIMP_TYPE_GRID_STYLE (gimp_grid_style_get_type ())
-
-GType gimp_grid_style_get_type (void) G_GNUC_CONST;
+GType picman_dodge_burn_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_GRID_DOTS,           /*< desc="Intersections (dots)"       >*/
-  GIMP_GRID_INTERSECTIONS,  /*< desc="Intersections (crosshairs)" >*/
-  GIMP_GRID_ON_OFF_DASH,    /*< desc="Dashed"                     >*/
-  GIMP_GRID_DOUBLE_DASH,    /*< desc="Double dashed"              >*/
-  GIMP_GRID_SOLID           /*< desc="Solid"                      >*/
-} GimpGridStyle;
+  PICMAN_DODGE,  /*< desc="Dodge" >*/
+  PICMAN_BURN    /*< desc="Burn"  >*/
+} PicmanDodgeBurnType;
 
 
-#define GIMP_TYPE_ICON_TYPE (gimp_icon_type_get_type ())
+#define PICMAN_TYPE_FOREGROUND_EXTRACT_MODE (picman_foreground_extract_mode_get_type ())
 
-GType gimp_icon_type_get_type (void) G_GNUC_CONST;
+GType picman_foreground_extract_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_ICON_TYPE_STOCK_ID,      /*< desc="Stock ID"      >*/
-  GIMP_ICON_TYPE_INLINE_PIXBUF, /*< desc="Inline pixbuf" >*/
-  GIMP_ICON_TYPE_IMAGE_FILE     /*< desc="Image file"    >*/
-} GimpIconType;
+  PICMAN_FOREGROUND_EXTRACT_SIOX
+} PicmanForegroundExtractMode;
 
 
-#define GIMP_TYPE_IMAGE_BASE_TYPE (gimp_image_base_type_get_type ())
+#define PICMAN_TYPE_GRADIENT_TYPE (picman_gradient_type_get_type ())
 
-GType gimp_image_base_type_get_type (void) G_GNUC_CONST;
+GType picman_gradient_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_RGB,     /*< desc="RGB color"     >*/
-  GIMP_GRAY,    /*< desc="Grayscale"     >*/
-  GIMP_INDEXED  /*< desc="Indexed color" >*/
-} GimpImageBaseType;
+  PICMAN_GRADIENT_LINEAR,                /*< desc="Linear"            >*/
+  PICMAN_GRADIENT_BILINEAR,              /*< desc="Bi-linear"         >*/
+  PICMAN_GRADIENT_RADIAL,                /*< desc="Radial"            >*/
+  PICMAN_GRADIENT_SQUARE,                /*< desc="Square"            >*/
+  PICMAN_GRADIENT_CONICAL_SYMMETRIC,     /*< desc="Conical (sym)"     >*/
+  PICMAN_GRADIENT_CONICAL_ASYMMETRIC,    /*< desc="Conical (asym)"    >*/
+  PICMAN_GRADIENT_SHAPEBURST_ANGULAR,    /*< desc="Shaped (angular)"  >*/
+  PICMAN_GRADIENT_SHAPEBURST_SPHERICAL,  /*< desc="Shaped (spherical)">*/
+  PICMAN_GRADIENT_SHAPEBURST_DIMPLED,    /*< desc="Shaped (dimpled)"  >*/
+  PICMAN_GRADIENT_SPIRAL_CLOCKWISE,      /*< desc="Spiral (cw)"       >*/
+  PICMAN_GRADIENT_SPIRAL_ANTICLOCKWISE   /*< desc="Spiral (ccw)"      >*/
+} PicmanGradientType;
 
 
-#define GIMP_TYPE_IMAGE_TYPE (gimp_image_type_get_type ())
+#define PICMAN_TYPE_GRID_STYLE (picman_grid_style_get_type ())
 
-GType gimp_image_type_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_RGB_IMAGE,      /*< desc="RGB"             >*/
-  GIMP_RGBA_IMAGE,     /*< desc="RGB-alpha"       >*/
-  GIMP_GRAY_IMAGE,     /*< desc="Grayscale"       >*/
-  GIMP_GRAYA_IMAGE,    /*< desc="Grayscale-alpha" >*/
-  GIMP_INDEXED_IMAGE,  /*< desc="Indexed"         >*/
-  GIMP_INDEXEDA_IMAGE  /*< desc="Indexed-alpha"   >*/
-} GimpImageType;
-
-
-#define GIMP_TYPE_INTERPOLATION_TYPE (gimp_interpolation_type_get_type ())
-
-GType gimp_interpolation_type_get_type (void) G_GNUC_CONST;
+GType picman_grid_style_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_INTERPOLATION_NONE,   /*< desc="None"   >*/
-  GIMP_INTERPOLATION_LINEAR, /*< desc="Linear" >*/
-  GIMP_INTERPOLATION_CUBIC,  /*< desc="Cubic"  >*/
-  GIMP_INTERPOLATION_NOHALO, /*< desc="NoHalo" >*/
-  GIMP_INTERPOLATION_LOHALO, /*< desc="LoHalo" >*/
-  GIMP_INTERPOLATION_LANCZOS = GIMP_INTERPOLATION_NOHALO /*< skip */
-} GimpInterpolationType;
+  PICMAN_GRID_DOTS,           /*< desc="Intersections (dots)"       >*/
+  PICMAN_GRID_INTERSECTIONS,  /*< desc="Intersections (crosshairs)" >*/
+  PICMAN_GRID_ON_OFF_DASH,    /*< desc="Dashed"                     >*/
+  PICMAN_GRID_DOUBLE_DASH,    /*< desc="Double dashed"              >*/
+  PICMAN_GRID_SOLID           /*< desc="Solid"                      >*/
+} PicmanGridStyle;
 
 
-#define GIMP_TYPE_PAINT_APPLICATION_MODE (gimp_paint_application_mode_get_type ())
+#define PICMAN_TYPE_ICON_TYPE (picman_icon_type_get_type ())
 
-GType gimp_paint_application_mode_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_PAINT_CONSTANT,    /*< desc="Constant"    >*/
-  GIMP_PAINT_INCREMENTAL  /*< desc="Incremental" >*/
-} GimpPaintApplicationMode;
-
-
-#define GIMP_TYPE_REPEAT_MODE (gimp_repeat_mode_get_type ())
-
-GType gimp_repeat_mode_get_type (void) G_GNUC_CONST;
+GType picman_icon_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_REPEAT_NONE,       /*< desc="None"            >*/
-  GIMP_REPEAT_SAWTOOTH,   /*< desc="Sawtooth wave"   >*/
-  GIMP_REPEAT_TRIANGULAR  /*< desc="Triangular wave" >*/
-} GimpRepeatMode;
+  PICMAN_ICON_TYPE_STOCK_ID,      /*< desc="Stock ID"      >*/
+  PICMAN_ICON_TYPE_INLINE_PIXBUF, /*< desc="Inline pixbuf" >*/
+  PICMAN_ICON_TYPE_IMAGE_FILE     /*< desc="Image file"    >*/
+} PicmanIconType;
 
 
-#define GIMP_TYPE_RUN_MODE (gimp_run_mode_get_type ())
+#define PICMAN_TYPE_IMAGE_BASE_TYPE (picman_image_base_type_get_type ())
 
-GType gimp_run_mode_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_RUN_INTERACTIVE,     /*< desc="Run interactively"         >*/
-  GIMP_RUN_NONINTERACTIVE,  /*< desc="Run non-interactively"     >*/
-  GIMP_RUN_WITH_LAST_VALS   /*< desc="Run with last used values" >*/
-} GimpRunMode;
-
-
-#define GIMP_TYPE_SIZE_TYPE (gimp_size_type_get_type ())
-
-GType gimp_size_type_get_type (void) G_GNUC_CONST;
+GType picman_image_base_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_PIXELS,  /*< desc="Pixels" >*/
-  GIMP_POINTS   /*< desc="Points" >*/
-} GimpSizeType;
+  PICMAN_RGB,     /*< desc="RGB color"     >*/
+  PICMAN_GRAY,    /*< desc="Grayscale"     >*/
+  PICMAN_INDEXED  /*< desc="Indexed color" >*/
+} PicmanImageBaseType;
 
 
-#define GIMP_TYPE_TRANSFER_MODE (gimp_transfer_mode_get_type ())
+#define PICMAN_TYPE_IMAGE_TYPE (picman_image_type_get_type ())
 
-GType gimp_transfer_mode_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_SHADOWS,     /*< desc="Shadows"    >*/
-  GIMP_MIDTONES,    /*< desc="Midtones"   >*/
-  GIMP_HIGHLIGHTS   /*< desc="Highlights" >*/
-} GimpTransferMode;
-
-
-#define GIMP_TYPE_TRANSFORM_DIRECTION (gimp_transform_direction_get_type ())
-
-GType gimp_transform_direction_get_type (void) G_GNUC_CONST;
+GType picman_image_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_TRANSFORM_FORWARD,   /*< desc="Normal (Forward)" >*/
-  GIMP_TRANSFORM_BACKWARD   /*< desc="Corrective (Backward)" >*/
-} GimpTransformDirection;
+  PICMAN_RGB_IMAGE,      /*< desc="RGB"             >*/
+  PICMAN_RGBA_IMAGE,     /*< desc="RGB-alpha"       >*/
+  PICMAN_GRAY_IMAGE,     /*< desc="Grayscale"       >*/
+  PICMAN_GRAYA_IMAGE,    /*< desc="Grayscale-alpha" >*/
+  PICMAN_INDEXED_IMAGE,  /*< desc="Indexed"         >*/
+  PICMAN_INDEXEDA_IMAGE  /*< desc="Indexed-alpha"   >*/
+} PicmanImageType;
 
 
-#define GIMP_TYPE_TRANSFORM_RESIZE (gimp_transform_resize_get_type ())
+#define PICMAN_TYPE_INTERPOLATION_TYPE (picman_interpolation_type_get_type ())
 
-GType gimp_transform_resize_get_type (void) G_GNUC_CONST;
+GType picman_interpolation_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_TRANSFORM_RESIZE_ADJUST           = 0, /*< desc="Adjust" >*/
-  GIMP_TRANSFORM_RESIZE_CLIP             = 1, /*< desc="Clip" >*/
-  GIMP_TRANSFORM_RESIZE_CROP,                 /*< desc="Crop to result" >*/
-  GIMP_TRANSFORM_RESIZE_CROP_WITH_ASPECT      /*< desc="Crop with aspect" >*/
-} GimpTransformResize;
+  PICMAN_INTERPOLATION_NONE,   /*< desc="None"   >*/
+  PICMAN_INTERPOLATION_LINEAR, /*< desc="Linear" >*/
+  PICMAN_INTERPOLATION_CUBIC,  /*< desc="Cubic"  >*/
+  PICMAN_INTERPOLATION_NOHALO, /*< desc="NoHalo" >*/
+  PICMAN_INTERPOLATION_LOHALO, /*< desc="LoHalo" >*/
+  PICMAN_INTERPOLATION_LANCZOS = PICMAN_INTERPOLATION_NOHALO /*< skip */
+} PicmanInterpolationType;
+
+
+#define PICMAN_TYPE_PAINT_APPLICATION_MODE (picman_paint_application_mode_get_type ())
+
+GType picman_paint_application_mode_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_PAINT_CONSTANT,    /*< desc="Constant"    >*/
+  PICMAN_PAINT_INCREMENTAL  /*< desc="Incremental" >*/
+} PicmanPaintApplicationMode;
+
+
+#define PICMAN_TYPE_REPEAT_MODE (picman_repeat_mode_get_type ())
+
+GType picman_repeat_mode_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_REPEAT_NONE,       /*< desc="None"            >*/
+  PICMAN_REPEAT_SAWTOOTH,   /*< desc="Sawtooth wave"   >*/
+  PICMAN_REPEAT_TRIANGULAR  /*< desc="Triangular wave" >*/
+} PicmanRepeatMode;
+
+
+#define PICMAN_TYPE_RUN_MODE (picman_run_mode_get_type ())
+
+GType picman_run_mode_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_RUN_INTERACTIVE,     /*< desc="Run interactively"         >*/
+  PICMAN_RUN_NONINTERACTIVE,  /*< desc="Run non-interactively"     >*/
+  PICMAN_RUN_WITH_LAST_VALS   /*< desc="Run with last used values" >*/
+} PicmanRunMode;
+
+
+#define PICMAN_TYPE_SIZE_TYPE (picman_size_type_get_type ())
+
+GType picman_size_type_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_PIXELS,  /*< desc="Pixels" >*/
+  PICMAN_POINTS   /*< desc="Points" >*/
+} PicmanSizeType;
+
+
+#define PICMAN_TYPE_TRANSFER_MODE (picman_transfer_mode_get_type ())
+
+GType picman_transfer_mode_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_SHADOWS,     /*< desc="Shadows"    >*/
+  PICMAN_MIDTONES,    /*< desc="Midtones"   >*/
+  PICMAN_HIGHLIGHTS   /*< desc="Highlights" >*/
+} PicmanTransferMode;
+
+
+#define PICMAN_TYPE_TRANSFORM_DIRECTION (picman_transform_direction_get_type ())
+
+GType picman_transform_direction_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_TRANSFORM_FORWARD,   /*< desc="Normal (Forward)" >*/
+  PICMAN_TRANSFORM_BACKWARD   /*< desc="Corrective (Backward)" >*/
+} PicmanTransformDirection;
+
+
+#define PICMAN_TYPE_TRANSFORM_RESIZE (picman_transform_resize_get_type ())
+
+GType picman_transform_resize_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_TRANSFORM_RESIZE_ADJUST           = 0, /*< desc="Adjust" >*/
+  PICMAN_TRANSFORM_RESIZE_CLIP             = 1, /*< desc="Clip" >*/
+  PICMAN_TRANSFORM_RESIZE_CROP,                 /*< desc="Crop to result" >*/
+  PICMAN_TRANSFORM_RESIZE_CROP_WITH_ASPECT      /*< desc="Crop with aspect" >*/
+} PicmanTransformResize;
 
 
 typedef enum /*< skip >*/
 {
-  GIMP_UNIT_PIXEL   = 0,
+  PICMAN_UNIT_PIXEL   = 0,
 
-  GIMP_UNIT_INCH    = 1,
-  GIMP_UNIT_MM      = 2,
-  GIMP_UNIT_POINT   = 3,
-  GIMP_UNIT_PICA    = 4,
+  PICMAN_UNIT_INCH    = 1,
+  PICMAN_UNIT_MM      = 2,
+  PICMAN_UNIT_POINT   = 3,
+  PICMAN_UNIT_PICA    = 4,
 
-  GIMP_UNIT_END     = 5,
+  PICMAN_UNIT_END     = 5,
 
-  GIMP_UNIT_PERCENT = 65536 /*< pdb-skip >*/
-} GimpUnit;
+  PICMAN_UNIT_PERCENT = 65536 /*< pdb-skip >*/
+} PicmanUnit;
 
 
-#define GIMP_TYPE_PDB_ARG_TYPE (gimp_pdb_arg_type_get_type ())
+#define PICMAN_TYPE_PDB_ARG_TYPE (picman_pdb_arg_type_get_type ())
 
-GType gimp_pdb_arg_type_get_type (void) G_GNUC_CONST;
+GType picman_pdb_arg_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_PDB_INT32,
-  GIMP_PDB_INT16,
-  GIMP_PDB_INT8,
-  GIMP_PDB_FLOAT,
-  GIMP_PDB_STRING,
-  GIMP_PDB_INT32ARRAY,
-  GIMP_PDB_INT16ARRAY,
-  GIMP_PDB_INT8ARRAY,
-  GIMP_PDB_FLOATARRAY,
-  GIMP_PDB_STRINGARRAY,
-  GIMP_PDB_COLOR,
-  GIMP_PDB_ITEM,
-  GIMP_PDB_DISPLAY,
-  GIMP_PDB_IMAGE,
-  GIMP_PDB_LAYER,
-  GIMP_PDB_CHANNEL,
-  GIMP_PDB_DRAWABLE,
-  GIMP_PDB_SELECTION,
-  GIMP_PDB_COLORARRAY,
-  GIMP_PDB_VECTORS,
-  GIMP_PDB_PARASITE,
-  GIMP_PDB_STATUS,
-  GIMP_PDB_END,
+  PICMAN_PDB_INT32,
+  PICMAN_PDB_INT16,
+  PICMAN_PDB_INT8,
+  PICMAN_PDB_FLOAT,
+  PICMAN_PDB_STRING,
+  PICMAN_PDB_INT32ARRAY,
+  PICMAN_PDB_INT16ARRAY,
+  PICMAN_PDB_INT8ARRAY,
+  PICMAN_PDB_FLOATARRAY,
+  PICMAN_PDB_STRINGARRAY,
+  PICMAN_PDB_COLOR,
+  PICMAN_PDB_ITEM,
+  PICMAN_PDB_DISPLAY,
+  PICMAN_PDB_IMAGE,
+  PICMAN_PDB_LAYER,
+  PICMAN_PDB_CHANNEL,
+  PICMAN_PDB_DRAWABLE,
+  PICMAN_PDB_SELECTION,
+  PICMAN_PDB_COLORARRAY,
+  PICMAN_PDB_VECTORS,
+  PICMAN_PDB_PARASITE,
+  PICMAN_PDB_STATUS,
+  PICMAN_PDB_END,
 
   /*  the following aliases are deprecated  */
-  GIMP_PDB_PATH     = GIMP_PDB_VECTORS,     /*< skip >*/
-  GIMP_PDB_BOUNDARY = GIMP_PDB_COLORARRAY,  /*< skip >*/
-  GIMP_PDB_REGION   = GIMP_PDB_ITEM         /*< skip >*/
-} GimpPDBArgType;
+  PICMAN_PDB_PATH     = PICMAN_PDB_VECTORS,     /*< skip >*/
+  PICMAN_PDB_BOUNDARY = PICMAN_PDB_COLORARRAY,  /*< skip >*/
+  PICMAN_PDB_REGION   = PICMAN_PDB_ITEM         /*< skip >*/
+} PicmanPDBArgType;
 
 
-#define GIMP_TYPE_PDB_ERROR_HANDLER (gimp_pdb_error_handler_get_type ())
+#define PICMAN_TYPE_PDB_ERROR_HANDLER (picman_pdb_error_handler_get_type ())
 
-GType gimp_pdb_error_handler_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_PDB_ERROR_HANDLER_INTERNAL,
-  GIMP_PDB_ERROR_HANDLER_PLUGIN
-} GimpPDBErrorHandler;
-
-
-#define GIMP_TYPE_PDB_PROC_TYPE (gimp_pdb_proc_type_get_type ())
-
-GType gimp_pdb_proc_type_get_type (void) G_GNUC_CONST;
+GType picman_pdb_error_handler_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_INTERNAL,   /*< desc="Internal GIMP procedure" >*/
-  GIMP_PLUGIN,     /*< desc="GIMP Plug-In" >*/
-  GIMP_EXTENSION,  /*< desc="GIMP Extension" >*/
-  GIMP_TEMPORARY   /*< desc="Temporary Procedure" >*/
-} GimpPDBProcType;
+  PICMAN_PDB_ERROR_HANDLER_INTERNAL,
+  PICMAN_PDB_ERROR_HANDLER_PLUGIN
+} PicmanPDBErrorHandler;
 
 
-#define GIMP_TYPE_PDB_STATUS_TYPE (gimp_pdb_status_type_get_type ())
+#define PICMAN_TYPE_PDB_PROC_TYPE (picman_pdb_proc_type_get_type ())
 
-GType gimp_pdb_status_type_get_type (void) G_GNUC_CONST;
+GType picman_pdb_proc_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_PDB_EXECUTION_ERROR,
-  GIMP_PDB_CALLING_ERROR,
-  GIMP_PDB_PASS_THROUGH,
-  GIMP_PDB_SUCCESS,
-  GIMP_PDB_CANCEL
-} GimpPDBStatusType;
+  PICMAN_INTERNAL,   /*< desc="Internal PICMAN procedure" >*/
+  PICMAN_PLUGIN,     /*< desc="PICMAN Plug-In" >*/
+  PICMAN_EXTENSION,  /*< desc="PICMAN Extension" >*/
+  PICMAN_TEMPORARY   /*< desc="Temporary Procedure" >*/
+} PicmanPDBProcType;
 
 
-#define GIMP_TYPE_MESSAGE_HANDLER_TYPE (gimp_message_handler_type_get_type ())
+#define PICMAN_TYPE_PDB_STATUS_TYPE (picman_pdb_status_type_get_type ())
 
-GType gimp_message_handler_type_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_MESSAGE_BOX,
-  GIMP_CONSOLE,
-  GIMP_ERROR_CONSOLE
-} GimpMessageHandlerType;
-
-
-#define GIMP_TYPE_STACK_TRACE_MODE (gimp_stack_trace_mode_get_type ())
-
-GType gimp_stack_trace_mode_get_type (void) G_GNUC_CONST;
+GType picman_pdb_status_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_STACK_TRACE_NEVER,
-  GIMP_STACK_TRACE_QUERY,
-  GIMP_STACK_TRACE_ALWAYS
-} GimpStackTraceMode;
+  PICMAN_PDB_EXECUTION_ERROR,
+  PICMAN_PDB_CALLING_ERROR,
+  PICMAN_PDB_PASS_THROUGH,
+  PICMAN_PDB_SUCCESS,
+  PICMAN_PDB_CANCEL
+} PicmanPDBStatusType;
 
 
-#define GIMP_TYPE_PROGRESS_COMMAND (gimp_progress_command_get_type ())
+#define PICMAN_TYPE_MESSAGE_HANDLER_TYPE (picman_message_handler_type_get_type ())
 
-GType gimp_progress_command_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_PROGRESS_COMMAND_START,
-  GIMP_PROGRESS_COMMAND_END,
-  GIMP_PROGRESS_COMMAND_SET_TEXT,
-  GIMP_PROGRESS_COMMAND_SET_VALUE,
-  GIMP_PROGRESS_COMMAND_PULSE,
-  GIMP_PROGRESS_COMMAND_GET_WINDOW
-} GimpProgressCommand;
-
-
-#define GIMP_TYPE_TEXT_DIRECTION (gimp_text_direction_get_type ())
-
-GType gimp_text_direction_get_type (void) G_GNUC_CONST;
+GType picman_message_handler_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_TEXT_DIRECTION_LTR,   /*< desc="From left to right" >*/
-  GIMP_TEXT_DIRECTION_RTL    /*< desc="From right to left" >*/
-} GimpTextDirection;
+  PICMAN_MESSAGE_BOX,
+  PICMAN_CONSOLE,
+  PICMAN_ERROR_CONSOLE
+} PicmanMessageHandlerType;
 
 
-#define GIMP_TYPE_TEXT_HINT_STYLE (gimp_text_hint_style_get_type ())
+#define PICMAN_TYPE_STACK_TRACE_MODE (picman_stack_trace_mode_get_type ())
 
-GType gimp_text_hint_style_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_TEXT_HINT_STYLE_NONE,     /*< desc="None"   >*/
-  GIMP_TEXT_HINT_STYLE_SLIGHT,   /*< desc="Slight" >*/
-  GIMP_TEXT_HINT_STYLE_MEDIUM,   /*< desc="Medium" >*/
-  GIMP_TEXT_HINT_STYLE_FULL      /*< desc="Full"   >*/
-} GimpTextHintStyle;
-
-
-#define GIMP_TYPE_TEXT_JUSTIFICATION (gimp_text_justification_get_type ())
-
-GType gimp_text_justification_get_type (void) G_GNUC_CONST;
+GType picman_stack_trace_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_TEXT_JUSTIFY_LEFT,    /*< desc="Left justified"  >*/
-  GIMP_TEXT_JUSTIFY_RIGHT,   /*< desc="Right justified" >*/
-  GIMP_TEXT_JUSTIFY_CENTER,  /*< desc="Centered"        >*/
-  GIMP_TEXT_JUSTIFY_FILL     /*< desc="Filled"          >*/
-} GimpTextJustification;
+  PICMAN_STACK_TRACE_NEVER,
+  PICMAN_STACK_TRACE_QUERY,
+  PICMAN_STACK_TRACE_ALWAYS
+} PicmanStackTraceMode;
 
 
-#ifndef GIMP_DISABLE_DEPRECATED
-#define GIMP_TYPE_USER_DIRECTORY (gimp_user_directory_get_type ())
+#define PICMAN_TYPE_PROGRESS_COMMAND (picman_progress_command_get_type ())
 
-GType gimp_user_directory_get_type (void) G_GNUC_CONST;
+GType picman_progress_command_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_USER_DIRECTORY_DESKTOP,
-  GIMP_USER_DIRECTORY_DOCUMENTS,
-  GIMP_USER_DIRECTORY_DOWNLOAD,
-  GIMP_USER_DIRECTORY_MUSIC,
-  GIMP_USER_DIRECTORY_PICTURES,
-  GIMP_USER_DIRECTORY_PUBLIC_SHARE,
-  GIMP_USER_DIRECTORY_TEMPLATES,
-  GIMP_USER_DIRECTORY_VIDEOS
-} GimpUserDirectory;
-#endif /* !GIMP_DISABLE_DEPRECATED */
+  PICMAN_PROGRESS_COMMAND_START,
+  PICMAN_PROGRESS_COMMAND_END,
+  PICMAN_PROGRESS_COMMAND_SET_TEXT,
+  PICMAN_PROGRESS_COMMAND_SET_VALUE,
+  PICMAN_PROGRESS_COMMAND_PULSE,
+  PICMAN_PROGRESS_COMMAND_GET_WINDOW
+} PicmanProgressCommand;
 
 
-#define GIMP_TYPE_VECTORS_STROKE_TYPE (gimp_vectors_stroke_type_get_type ())
+#define PICMAN_TYPE_TEXT_DIRECTION (picman_text_direction_get_type ())
 
-GType gimp_vectors_stroke_type_get_type (void) G_GNUC_CONST;
+GType picman_text_direction_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_VECTORS_STROKE_TYPE_BEZIER
-} GimpVectorsStrokeType;
+  PICMAN_TEXT_DIRECTION_LTR,   /*< desc="From left to right" >*/
+  PICMAN_TEXT_DIRECTION_RTL    /*< desc="From right to left" >*/
+} PicmanTextDirection;
+
+
+#define PICMAN_TYPE_TEXT_HINT_STYLE (picman_text_hint_style_get_type ())
+
+GType picman_text_hint_style_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_TEXT_HINT_STYLE_NONE,     /*< desc="None"   >*/
+  PICMAN_TEXT_HINT_STYLE_SLIGHT,   /*< desc="Slight" >*/
+  PICMAN_TEXT_HINT_STYLE_MEDIUM,   /*< desc="Medium" >*/
+  PICMAN_TEXT_HINT_STYLE_FULL      /*< desc="Full"   >*/
+} PicmanTextHintStyle;
+
+
+#define PICMAN_TYPE_TEXT_JUSTIFICATION (picman_text_justification_get_type ())
+
+GType picman_text_justification_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_TEXT_JUSTIFY_LEFT,    /*< desc="Left justified"  >*/
+  PICMAN_TEXT_JUSTIFY_RIGHT,   /*< desc="Right justified" >*/
+  PICMAN_TEXT_JUSTIFY_CENTER,  /*< desc="Centered"        >*/
+  PICMAN_TEXT_JUSTIFY_FILL     /*< desc="Filled"          >*/
+} PicmanTextJustification;
+
+
+#ifndef PICMAN_DISABLE_DEPRECATED
+#define PICMAN_TYPE_USER_DIRECTORY (picman_user_directory_get_type ())
+
+GType picman_user_directory_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_USER_DIRECTORY_DESKTOP,
+  PICMAN_USER_DIRECTORY_DOCUMENTS,
+  PICMAN_USER_DIRECTORY_DOWNLOAD,
+  PICMAN_USER_DIRECTORY_MUSIC,
+  PICMAN_USER_DIRECTORY_PICTURES,
+  PICMAN_USER_DIRECTORY_PUBLIC_SHARE,
+  PICMAN_USER_DIRECTORY_TEMPLATES,
+  PICMAN_USER_DIRECTORY_VIDEOS
+} PicmanUserDirectory;
+#endif /* !PICMAN_DISABLE_DEPRECATED */
+
+
+#define PICMAN_TYPE_VECTORS_STROKE_TYPE (picman_vectors_stroke_type_get_type ())
+
+GType picman_vectors_stroke_type_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  PICMAN_VECTORS_STROKE_TYPE_BEZIER
+} PicmanVectorsStrokeType;
 
 G_END_DECLS
 
-#endif  /* __GIMP_BASE_ENUMS_H__ */
+#endif  /* __PICMAN_BASE_ENUMS_H__ */

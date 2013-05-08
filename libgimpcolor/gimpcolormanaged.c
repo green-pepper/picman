@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * GimpColorManaged interface
- * Copyright (C) 2007  Sven Neumann <sven@gimp.org>
+ * PicmanColorManaged interface
+ * Copyright (C) 2007  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,14 +23,14 @@
 
 #include <glib-object.h>
 
-#include "gimpcolortypes.h"
+#include "picmancolortypes.h"
 
-#include "gimpcolormanaged.h"
+#include "picmancolormanaged.h"
 
 
 /**
- * SECTION: gimpcolormanaged
- * @title: GimpColorManaged
+ * SECTION: picmancolormanaged
+ * @title: PicmanColorManaged
  * @short_description: An interface dealing with color profiles.
  *
  * An interface dealing with color profiles.
@@ -44,14 +44,14 @@ enum
 };
 
 
-static void  gimp_color_managed_base_init (GimpColorManagedInterface *iface);
+static void  picman_color_managed_base_init (PicmanColorManagedInterface *iface);
 
 
-static guint gimp_color_managed_signals[LAST_SIGNAL] = { 0 };
+static guint picman_color_managed_signals[LAST_SIGNAL] = { 0 };
 
 
 GType
-gimp_color_managed_interface_get_type (void)
+picman_color_managed_interface_get_type (void)
 {
   static GType iface_type = 0;
 
@@ -59,13 +59,13 @@ gimp_color_managed_interface_get_type (void)
     {
       const GTypeInfo iface_info =
       {
-        sizeof (GimpColorManagedInterface),
-        (GBaseInitFunc)     gimp_color_managed_base_init,
+        sizeof (PicmanColorManagedInterface),
+        (GBaseInitFunc)     picman_color_managed_base_init,
         (GBaseFinalizeFunc) NULL,
       };
 
       iface_type = g_type_register_static (G_TYPE_INTERFACE,
-                                           "GimpColorManagedInterface",
+                                           "PicmanColorManagedInterface",
                                            &iface_info, 0);
 
       g_type_interface_add_prerequisite (iface_type, G_TYPE_OBJECT);
@@ -75,17 +75,17 @@ gimp_color_managed_interface_get_type (void)
 }
 
 static void
-gimp_color_managed_base_init (GimpColorManagedInterface *iface)
+picman_color_managed_base_init (PicmanColorManagedInterface *iface)
 {
   static gboolean initialized = FALSE;
 
   if (! initialized)
     {
-      gimp_color_managed_signals[PROFILE_CHANGED] =
+      picman_color_managed_signals[PROFILE_CHANGED] =
         g_signal_new ("profile-changed",
                       G_TYPE_FROM_INTERFACE (iface),
                       G_SIGNAL_RUN_FIRST,
-                      G_STRUCT_OFFSET (GimpColorManagedInterface,
+                      G_STRUCT_OFFSET (PicmanColorManagedInterface,
                                        profile_changed),
                       NULL, NULL,
                       g_cclosure_marshal_VOID__VOID,
@@ -99,27 +99,27 @@ gimp_color_managed_base_init (GimpColorManagedInterface *iface)
 }
 
 /**
- * gimp_color_managed_get_icc_profile:
- * @managed: an object the implements the #GimpColorManaged interface
+ * picman_color_managed_get_icc_profile:
+ * @managed: an object the implements the #PicmanColorManaged interface
  * @len:     return location for the number of bytes in the profile data
  *
  * Return value: A pointer to a blob of data that represents an ICC
  *               color profile.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 const guint8 *
-gimp_color_managed_get_icc_profile (GimpColorManaged *managed,
+picman_color_managed_get_icc_profile (PicmanColorManaged *managed,
                                     gsize            *len)
 {
-  GimpColorManagedInterface *iface;
+  PicmanColorManagedInterface *iface;
 
-  g_return_val_if_fail (GIMP_IS_COLOR_MANAGED (managed), NULL);
+  g_return_val_if_fail (PICMAN_IS_COLOR_MANAGED (managed), NULL);
   g_return_val_if_fail (len != NULL, NULL);
 
   *len = 0;
 
-  iface = GIMP_COLOR_MANAGED_GET_INTERFACE (managed);
+  iface = PICMAN_COLOR_MANAGED_GET_INTERFACE (managed);
 
   if (iface->get_icc_profile)
     return iface->get_icc_profile (managed, len);
@@ -128,17 +128,17 @@ gimp_color_managed_get_icc_profile (GimpColorManaged *managed,
 }
 
 /**
- * gimp_color_managed_profile_changed:
- * @managed: an object the implements the #GimpColorManaged interface
+ * picman_color_managed_profile_changed:
+ * @managed: an object the implements the #PicmanColorManaged interface
  *
  * Emits the "profile-changed" signal.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_color_managed_profile_changed (GimpColorManaged *managed)
+picman_color_managed_profile_changed (PicmanColorManaged *managed)
 {
-  g_return_if_fail (GIMP_IS_COLOR_MANAGED (managed));
+  g_return_if_fail (PICMAN_IS_COLOR_MANAGED (managed));
 
-  g_signal_emit (managed, gimp_color_managed_signals[PROFILE_CHANGED], 0);
+  g_signal_emit (managed, picman_color_managed_signals[PROFILE_CHANGED], 0);
 }

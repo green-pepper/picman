@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,15 +26,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC    "plug-in-mosaic"
 #define PLUG_IN_BINARY  "mosaic"
-#define PLUG_IN_ROLE    "gimp-mosaic"
+#define PLUG_IN_ROLE    "picman-mosaic"
 
 #define SCALE_WIDTH     150
 
@@ -100,29 +100,29 @@ typedef struct
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
-static void      mosaic (GimpDrawable     *drawable,
-                         GimpPreview      *preview);
+                         PicmanParam       **return_vals);
+static void      mosaic (PicmanDrawable     *drawable,
+                         PicmanPreview      *preview);
 
 /*  user interface functions  */
-static gboolean  mosaic_dialog     (GimpDrawable *drawable);
+static gboolean  mosaic_dialog     (PicmanDrawable *drawable);
 
 /*  gradient finding machinery  */
-static void      find_gradients    (GimpDrawable *drawable,
+static void      find_gradients    (PicmanDrawable *drawable,
                                     gdouble       std_dev,
                                     gint          x1,
                                     gint          y1,
                                     gint          width,
                                     gint          height,
-                                    GimpPreview  *preview);
-static void      find_max_gradient (GimpPixelRgn *src_rgn,
-                                    GimpPixelRgn *dest_rgn);
+                                    PicmanPreview  *preview);
+static void      find_max_gradient (PicmanPixelRgn *src_rgn,
+                                    PicmanPixelRgn *dest_rgn);
 
 /*  gaussian & 1st derivative  */
-static void      gaussian_deriv    (GimpPixelRgn *src_rgn,
-                                    GimpPixelRgn *dest_rgn,
+static void      gaussian_deriv    (PicmanPixelRgn *src_rgn,
+                                    PicmanPixelRgn *dest_rgn,
                                     gint          direction,
                                     gdouble       std_dev,
                                     gint         *prog,
@@ -132,7 +132,7 @@ static void      gaussian_deriv    (GimpPixelRgn *src_rgn,
                                     gint          y1,
                                     gint          x2,
                                     gint          y2,
-                                    GimpPreview  *preview);
+                                    PicmanPreview  *preview);
 static void      make_curve        (gint         *curve,
                                     gint         *sum,
                                     gdouble       std_dev,
@@ -165,14 +165,14 @@ static void      grid_localize         (gint x1,
                                         gint x2,
                                         gint y2);
 
-static void      grid_render           (GimpDrawable *drawable,
+static void      grid_render           (PicmanDrawable *drawable,
                                         gint          x1,
                                         gint          y1,
                                         gint          x2,
                                         gint          y2,
-                                        GimpPreview  *preview);
+                                        PicmanPreview  *preview);
 static void      split_poly            (Polygon      *poly,
-                                        GimpDrawable *drawable,
+                                        PicmanDrawable *drawable,
                                         guchar       *col,
                                         gdouble      *dir,
                                         gdouble       color_vary,
@@ -194,7 +194,7 @@ static void      clip_point            (gdouble      *dir,
                                         Polygon      *poly);
 static void      process_poly          (Polygon      *poly,
                                         gboolean      allow_split,
-                                        GimpDrawable *drawable,
+                                        PicmanDrawable *drawable,
                                         guchar       *col,
                                         gboolean      vary,
                                         gint          x1,
@@ -203,7 +203,7 @@ static void      process_poly          (Polygon      *poly,
                                         gint          y2,
                                         guchar       *dest);
 static void      render_poly           (Polygon      *poly,
-                                        GimpDrawable *drawable,
+                                        PicmanDrawable *drawable,
                                         guchar       *col,
                                         gdouble       vary,
                                         gint          x1,
@@ -222,7 +222,7 @@ static void      find_poly_dir         (Polygon      *poly,
                                         gint          x2,
                                         gint          y2);
 static void      find_poly_color       (Polygon      *poly,
-                                        GimpDrawable *drawable,
+                                        PicmanDrawable *drawable,
                                         guchar       *col,
                                         double        vary,
                                         gint          x1,
@@ -234,7 +234,7 @@ static void      scale_poly            (Polygon      *poly,
                                         gdouble       cy,
                                         gdouble       scale);
 static void      fill_poly_color       (Polygon      *poly,
-                                        GimpDrawable *drawable,
+                                        PicmanDrawable *drawable,
                                         guchar       *col,
                                         gint          x1,
                                         gint          y1,
@@ -242,7 +242,7 @@ static void      fill_poly_color       (Polygon      *poly,
                                         gint          y2,
                                         guchar       *dest);
 static void      fill_poly_image       (Polygon      *poly,
-                                        GimpDrawable *drawable,
+                                        PicmanDrawable *drawable,
                                         gdouble       vary,
                                         gint          x1,
                                         gint          y1,
@@ -322,7 +322,7 @@ static MosaicVals mvals =
   BW           /* grout_color */
 };
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -336,26 +336,26 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",        "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",            "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",         "Input drawable" },
-    { GIMP_PDB_FLOAT,    "tile-size",        "Average diameter of each tile (in pixels)" },
-    { GIMP_PDB_FLOAT,    "tile-height",      "Apparent height of each tile (in pixels)" },
-    { GIMP_PDB_FLOAT,    "tile-spacing",     "Inter-tile spacing (in pixels)" },
-    { GIMP_PDB_FLOAT,    "tile-neatness",    "Deviation from perfectly formed tiles (0.0 - 1.0)" },
-    { GIMP_PDB_INT32,    "tile-allow-split", "Allows splitting tiles at hard edges" },
-    { GIMP_PDB_FLOAT,    "light-dir",        "Direction of light-source (in degrees)" },
-    { GIMP_PDB_FLOAT,    "color-variation",  "Magnitude of random color variations (0.0 - 1.0)" },
-    { GIMP_PDB_INT32,    "antialiasing",     "Enables smoother tile output at the cost of speed" },
-    { GIMP_PDB_INT32,    "color-averaging",  "Tile color based on average of subsumed pixels" },
-    { GIMP_PDB_INT32,    "tile-type",        "Tile geometry { SQUARES (0), HEXAGONS (1), OCTAGONS (2), TRIANGLES (3) }" },
-    { GIMP_PDB_INT32,    "tile-surface",     "Surface characteristics { SMOOTH (0), ROUGH (1) }" },
-    { GIMP_PDB_INT32,    "grout-color",      "Grout color (black/white or fore/background) { BW (0), FG-BG (1) }" }
+    { PICMAN_PDB_INT32,    "run-mode",        "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",            "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",         "Input drawable" },
+    { PICMAN_PDB_FLOAT,    "tile-size",        "Average diameter of each tile (in pixels)" },
+    { PICMAN_PDB_FLOAT,    "tile-height",      "Apparent height of each tile (in pixels)" },
+    { PICMAN_PDB_FLOAT,    "tile-spacing",     "Inter-tile spacing (in pixels)" },
+    { PICMAN_PDB_FLOAT,    "tile-neatness",    "Deviation from perfectly formed tiles (0.0 - 1.0)" },
+    { PICMAN_PDB_INT32,    "tile-allow-split", "Allows splitting tiles at hard edges" },
+    { PICMAN_PDB_FLOAT,    "light-dir",        "Direction of light-source (in degrees)" },
+    { PICMAN_PDB_FLOAT,    "color-variation",  "Magnitude of random color variations (0.0 - 1.0)" },
+    { PICMAN_PDB_INT32,    "antialiasing",     "Enables smoother tile output at the cost of speed" },
+    { PICMAN_PDB_INT32,    "color-averaging",  "Tile color based on average of subsumed pixels" },
+    { PICMAN_PDB_INT32,    "tile-type",        "Tile geometry { SQUARES (0), HEXAGONS (1), OCTAGONS (2), TRIANGLES (3) }" },
+    { PICMAN_PDB_INT32,    "tile-surface",     "Surface characteristics { SMOOTH (0), ROUGH (1) }" },
+    { PICMAN_PDB_INT32,    "grout-color",      "Grout color (black/white or fore/background) { BW (0), FG-BG (1) }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Convert the image into irregular tiles"),
                           "Help not yet written for this plug-in",
                           "Spencer Kimball",
@@ -363,24 +363,24 @@ query (void)
                           "1996",
                           N_("_Mosaic..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Distorts");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpDrawable      *drawable;
+  static PicmanParam   values[1];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanDrawable      *drawable;
 
   run_mode = param[0].data.d_int32;
 
@@ -388,33 +388,33 @@ run (const gchar      *name,
 
   *nreturn_vals = 1;
   *return_vals  = values;
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*  Get the active drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*  set the tile cache size so that the gaussian blur works well  */
-  gimp_tile_cache_ntiles (2 * (MAX (drawable->width,
+  picman_tile_cache_ntiles (2 * (MAX (drawable->width,
                                     drawable->height) /
-                                   gimp_tile_width () + 1));
+                                   picman_tile_width () + 1));
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &mvals);
+      picman_get_data (PLUG_IN_PROC, &mvals);
 
       /*  First acquire information with a dialog  */
       if (! mosaic_dialog (drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 15)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
           break;
         }
 
@@ -435,13 +435,13 @@ run (const gchar      *name,
           mvals.tile_surface < SMOOTH  || mvals.tile_surface > ROUGH     ||
           mvals.grout_color  < BW      || mvals.grout_color  > FG_BG)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &mvals);
+      picman_get_data (PLUG_IN_PROC, &mvals);
       break;
 
     default:
@@ -449,52 +449,52 @@ run (const gchar      *name,
     }
 
   /*  Create the mosaic  */
-  if ((status == GIMP_PDB_SUCCESS) &&
-      (gimp_drawable_is_rgb (drawable->drawable_id) ||
-       gimp_drawable_is_gray (drawable->drawable_id)))
+  if ((status == PICMAN_PDB_SUCCESS) &&
+      (picman_drawable_is_rgb (drawable->drawable_id) ||
+       picman_drawable_is_gray (drawable->drawable_id)))
     {
       /*  run the effect  */
       mosaic (drawable, NULL);
 
       /*  If the run mode is interactive, flush the displays  */
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
       /*  Store mvals data  */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &mvals, sizeof (MosaicVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &mvals, sizeof (MosaicVals));
     }
-  else if (status == GIMP_PDB_SUCCESS)
+  else if (status == PICMAN_PDB_SUCCESS)
     {
-      /* gimp_message ("mosaic: cannot operate on indexed color images"); */
-      status = GIMP_PDB_EXECUTION_ERROR;
+      /* picman_message ("mosaic: cannot operate on indexed color images"); */
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static void
-mosaic (GimpDrawable *drawable,
-        GimpPreview  *preview)
+mosaic (PicmanDrawable *drawable,
+        PicmanPreview  *preview)
 {
   gint     x1, y1, x2, y2;
   gint     width, height;
-  GimpRGB  color;
+  PicmanRGB  color;
 
   /*  Find the mask bounds  */
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
 
       x2 = x1 + width;
       y2 = y1 + height;
     }
   else
     {
-      if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+      if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                           &x1, &y1, &width, &height))
         return;
 
@@ -502,7 +502,7 @@ mosaic (GimpDrawable *drawable,
       y2 = y1 + height;
 
       /*  progress bar for gradient finding  */
-      gimp_progress_init (_("Finding edges"));
+      picman_progress_init (_("Finding edges"));
     }
 
   /*  Find the gradients  */
@@ -538,11 +538,11 @@ mosaic (GimpDrawable *drawable,
       break;
 
     case FG_BG:
-      gimp_context_get_foreground (&color);
-      gimp_drawable_get_color_uchar (drawable->drawable_id, &color, fore);
+      picman_context_get_foreground (&color);
+      picman_drawable_get_color_uchar (drawable->drawable_id, &color, fore);
 
-      gimp_context_get_background (&color);
-      gimp_drawable_get_color_uchar (drawable->drawable_id, &color, back);
+      picman_context_get_background (&color);
+      picman_drawable_get_color_uchar (drawable->drawable_id, &color, back);
       break;
     }
 
@@ -554,7 +554,7 @@ mosaic (GimpDrawable *drawable,
   if (!preview)
     {
       /*  Progress bar for rendering tiles  */
-      gimp_progress_init (_("Rendering tiles"));
+      picman_progress_init (_("Rendering tiles"));
     }
 
   /*  Render the tiles  */
@@ -563,15 +563,15 @@ mosaic (GimpDrawable *drawable,
   if (!preview)
     {
       /*  merge the shadow, update the drawable  */
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x1, y1,
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x1, y1,
                             (x2 - x1), (y2 - y1));
     }
 }
 
 static gboolean
-mosaic_dialog (GimpDrawable *drawable)
+mosaic_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -585,11 +585,11 @@ mosaic_dialog (GimpDrawable *drawable)
   gint       row = 0;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Mosaic"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Mosaic"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -601,7 +601,7 @@ mosaic_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -610,7 +610,7 @@ mosaic_dialog (GimpDrawable *drawable)
   gtk_widget_show (main_vbox);
 
   /* A preview */
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
   g_signal_connect_swapped (preview, "invalidated",
@@ -628,97 +628,97 @@ mosaic_dialog (GimpDrawable *drawable)
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);
   gtk_widget_show (table);
 
-  combo = gimp_int_combo_box_new (_("Squares"),            SQUARES,
+  combo = picman_int_combo_box_new (_("Squares"),            SQUARES,
                                   _("Hexagons"),           HEXAGONS,
                                   _("Octagons & squares"), OCTAGONS,
                                   _("Triangles"),          TRIANGLES,
                                   NULL);
-  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_connect (PICMAN_INT_COMBO_BOX (combo),
                               mvals.tile_type,
-                              G_CALLBACK (gimp_int_combo_box_get_active),
+                              G_CALLBACK (picman_int_combo_box_get_active),
                               &mvals.tile_type);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, row++,
                              _("_Tiling primitives:"), 0.0, 0.5,
                              combo, 2, FALSE);
 
   g_signal_connect_swapped (combo, "changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                                      _("Tile _size:"), SCALE_WIDTH, 5,
                                      mvals.tile_size, 5.0, 100.0, 1.0, 10.0, 1,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &mvals.tile_size);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                                      _("Tile _height:"), SCALE_WIDTH, 5,
                                      mvals.tile_height, 1.0, 50.0, 1.0, 10.0, 1,
                                      TRUE, 0, 0,
                                      NULL, NULL);
 
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &mvals.tile_height);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                                      _("Til_e spacing:"), SCALE_WIDTH, 5,
                                      mvals.tile_spacing, 1.0, 50.0, 1.0, 10.0, 1,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &mvals.tile_spacing);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                                      _("Tile _neatness:"), SCALE_WIDTH, 5,
                                      mvals.tile_neatness,
                                      0.0, 1.0, 0.10, 0.1, 2,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &mvals.tile_neatness);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                                      _("Light _direction:"), SCALE_WIDTH, 5,
                                      mvals.light_dir, 0.0, 360.0, 1.0, 15.0, 1,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &mvals.light_dir);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  scale_data = gimp_scale_entry_new (GTK_TABLE (table), 0, row++,
+  scale_data = picman_scale_entry_new (GTK_TABLE (table), 0, row++,
                                      _("Color _variation:"), SCALE_WIDTH, 5,
                                      mvals.color_variation,
                                      0.0, 1.0, 0.01, 0.1, 2,
                                      TRUE, 0, 0,
                                      NULL, NULL);
   g_signal_connect (scale_data, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &mvals.color_variation);
   g_signal_connect_swapped (scale_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /*  the vertical box and its toggle buttons  */
@@ -732,10 +732,10 @@ mosaic_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mvals.antialiasing);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_check_button_new_with_mnemonic ( _("Co_lor averaging"));
@@ -745,10 +745,10 @@ mosaic_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mvals.color_averaging);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_check_button_new_with_mnemonic ( _("Allo_w tile splitting"));
@@ -758,10 +758,10 @@ mosaic_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mvals.tile_allow_split);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_check_button_new_with_mnemonic ( _("_Pitted surfaces"));
@@ -771,10 +771,10 @@ mosaic_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mvals.tile_surface);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_check_button_new_with_mnemonic ( _("_FG/BG lighting"));
@@ -784,15 +784,15 @@ mosaic_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mvals.grout_color);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -804,16 +804,16 @@ mosaic_dialog (GimpDrawable *drawable)
  */
 
 static void
-find_gradients (GimpDrawable *drawable,
+find_gradients (PicmanDrawable *drawable,
                 gdouble       std_dev,
                 gint          x1,
                 gint          y1,
                 gint          width,
                 gint          height,
-                GimpPreview  *preview)
+                PicmanPreview  *preview)
 {
-  GimpPixelRgn  src_rgn;
-  GimpPixelRgn  dest_rgn;
+  PicmanPixelRgn  src_rgn;
+  PicmanPixelRgn  dest_rgn;
   gint          i, j;
   guchar       *gr, *dh, *dv;
   gint          hmax, vmax;
@@ -833,17 +833,17 @@ find_gradients (GimpDrawable *drawable,
   row = 0;
 
   /*  Get the horizontal derivative  */
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x1, y1, width, height,
                        FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        x1, y1, width, height,
                        preview == NULL, TRUE);
   gaussian_deriv (&src_rgn, &dest_rgn,
                   HORIZONTAL, std_dev, &row, rows, ith_row,
                   x1, y1, x1 + width, y1 + height, preview);
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x1, y1, width, height,
                        FALSE, TRUE);
   dest_rgn.x = dest_rgn.y = 0;
@@ -855,17 +855,17 @@ find_gradients (GimpDrawable *drawable,
   find_max_gradient (&src_rgn, &dest_rgn);
 
   /*  Get the vertical derivative  */
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x1, y1, width, height,
                        FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        x1, y1, width, height,
                        preview == NULL, TRUE);
   gaussian_deriv (&src_rgn, &dest_rgn,
                   VERTICAL, std_dev, &row, rows, ith_row,
                   x1, y1, x1 + width, y1 + height, preview);
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                         x1, y1, width, height,
                         FALSE, TRUE);
   dest_rgn.x = dest_rgn.y = 0;
@@ -877,7 +877,7 @@ find_gradients (GimpDrawable *drawable,
   find_max_gradient (&src_rgn, &dest_rgn);
 
   if (!preview)
-    gimp_progress_update (1.0);
+    picman_progress_update (1.0);
 
   /*  fill in the gradient map  */
   gr = m_grad;
@@ -906,8 +906,8 @@ find_gradients (GimpDrawable *drawable,
 
 
 static void
-find_max_gradient (GimpPixelRgn *src_rgn,
-                   GimpPixelRgn *dest_rgn)
+find_max_gradient (PicmanPixelRgn *src_rgn,
+                   PicmanPixelRgn *dest_rgn)
 {
   guchar   *s, *d, *s_iter, *s_end;
   gpointer  pr;
@@ -916,7 +916,7 @@ find_max_gradient (GimpPixelRgn *src_rgn,
   gint      max;
 
   /*  Find the maximum value amongst intensity channels  */
-  pr = gimp_pixel_rgns_register (2, src_rgn, dest_rgn);
+  pr = picman_pixel_rgns_register (2, src_rgn, dest_rgn);
   while (pr)
     {
       s = src_rgn->data;
@@ -953,7 +953,7 @@ find_max_gradient (GimpPixelRgn *src_rgn,
           d += (dest_rgn->rowstride - dest_rgn->w);
         }
 
-      pr = gimp_pixel_rgns_process (pr);
+      pr = picman_pixel_rgns_process (pr);
     }
 }
 
@@ -964,8 +964,8 @@ find_max_gradient (GimpPixelRgn *src_rgn,
 
 
 static void
-gaussian_deriv (GimpPixelRgn *src_rgn,
-                GimpPixelRgn *dest_rgn,
+gaussian_deriv (PicmanPixelRgn *src_rgn,
+                PicmanPixelRgn *dest_rgn,
                 gint          type,
                 gdouble       std_dev,
                 gint         *prog,
@@ -975,7 +975,7 @@ gaussian_deriv (GimpPixelRgn *src_rgn,
                 gint          y1,
                 gint          x2,
                 gint          y2,
-                GimpPreview  *preview)
+                PicmanPreview  *preview)
 {
   guchar *dest, *dp;
   guchar *src, *sp, *s;
@@ -1027,7 +1027,7 @@ gaussian_deriv (GimpPixelRgn *src_rgn,
 
   for (col = x1; col < x2; col++)
     {
-      gimp_pixel_rgn_get_col (src_rgn, src, col, y1, (y2 - y1));
+      picman_pixel_rgn_get_col (src_rgn, src, col, y1, (y2 - y1));
 
       sp = src;
       dp = dest;
@@ -1091,10 +1091,10 @@ gaussian_deriv (GimpPixelRgn *src_rgn,
             dp += bytes;
           }
 
-      gimp_pixel_rgn_set_col (dest_rgn, dest, col, y1, (y2 - y1));
+      picman_pixel_rgn_set_col (dest_rgn, dest, col, y1, (y2 - y1));
 
       if (! ((*prog)++ % ith_prog) && !preview)
-        gimp_progress_update ((gdouble) *prog / (gdouble) max_prog);
+        picman_progress_update ((gdouble) *prog / (gdouble) max_prog);
     }
 
   if (type == HORIZONTAL)
@@ -1110,7 +1110,7 @@ gaussian_deriv (GimpPixelRgn *src_rgn,
 
   for (row = y1; row < y2; row++)
     {
-      gimp_pixel_rgn_get_row (dest_rgn, src, x1, row, (x2 - x1));
+      picman_pixel_rgn_get_row (dest_rgn, src, x1, row, (x2 - x1));
 
       sp = src;
       dp = dest;
@@ -1174,10 +1174,10 @@ gaussian_deriv (GimpPixelRgn *src_rgn,
             dp += bytes;
           }
 
-      gimp_pixel_rgn_set_row (dest_rgn, dest, x1, row, (x2 - x1));
+      picman_pixel_rgn_set_row (dest_rgn, dest, x1, row, (x2 - x1));
 
       if (! ((*prog)++ % ith_prog) && !preview)
-        gimp_progress_update ((gdouble) *prog / (gdouble) max_prog);
+        picman_progress_update ((gdouble) *prog / (gdouble) max_prog);
     }
 
   g_free (buf);
@@ -1512,14 +1512,14 @@ grid_localize (gint x1,
 }
 
 static void
-grid_render (GimpDrawable *drawable,
+grid_render (PicmanDrawable *drawable,
              gint          x1,
              gint          y1,
              gint          x2,
              gint          y2,
-             GimpPreview  *preview)
+             PicmanPreview  *preview)
 {
-  GimpPixelRgn  src_rgn;
+  PicmanPixelRgn  src_rgn;
   gint          i, j, k;
   guchar       *dest = NULL, *d;
   guchar        col[4];
@@ -1544,12 +1544,12 @@ grid_render (GimpDrawable *drawable,
   else
     {
       /*  Fill the image with the background color  */
-      gimp_pixel_rgn_init (&src_rgn, drawable,
+      picman_pixel_rgn_init (&src_rgn, drawable,
                            x1, y1, (x2 - x1), (y2 - y1),
                            TRUE, TRUE);
-      for (pr = gimp_pixel_rgns_register (1, &src_rgn);
+      for (pr = picman_pixel_rgns_register (1, &src_rgn);
            pr != NULL;
-           pr = gimp_pixel_rgns_process (pr))
+           pr = picman_pixel_rgns_process (pr))
         {
           dest = src_rgn.data;
 
@@ -1782,25 +1782,25 @@ grid_render (GimpDrawable *drawable,
           }
 
         if (!preview)
-          gimp_progress_update ((gdouble) count++ / (gdouble) size);
+          picman_progress_update ((gdouble) count++ / (gdouble) size);
       }
 
   if (preview)
     {
-      gimp_preview_draw_buffer (preview,
+      picman_preview_draw_buffer (preview,
                                 dest,
                                 (x2 - x1) * bytes);
     }
   else
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
     }
 }
 
 static void
 process_poly (Polygon      *poly,
               gboolean      allow_split,
-              GimpDrawable *drawable,
+              PicmanDrawable *drawable,
               guchar       *col,
               gboolean      vary,
               gint          x1,
@@ -1845,7 +1845,7 @@ process_poly (Polygon      *poly,
 
 static void
 render_poly (Polygon      *poly,
-             GimpDrawable *drawable,
+             PicmanDrawable *drawable,
              guchar       *col,
              gdouble       vary,
              gint          x1,
@@ -1872,7 +1872,7 @@ render_poly (Polygon      *poly,
 
 static void
 split_poly (Polygon      *poly,
-            GimpDrawable *drawable,
+            PicmanDrawable *drawable,
             guchar       *col,
             gdouble      *dir,
             gdouble       vary,
@@ -2140,7 +2140,7 @@ find_poly_dir (Polygon *poly,
 
 static void
 find_poly_color (Polygon      *poly,
-                 GimpDrawable *drawable,
+                 PicmanDrawable *drawable,
                  guchar       *col,
                  gdouble       color_var,
                  gint          x1,
@@ -2148,7 +2148,7 @@ find_poly_color (Polygon      *poly,
                  gint          x2,
                  gint          y2)
 {
-  GimpPixelRgn  src_rgn;
+  PicmanPixelRgn  src_rgn;
   gdouble       dmin_x = 0.0, dmin_y = 0.0;
   gdouble       dmax_x = 0.0, dmax_y = 0.0;
   gint          xs, ys;
@@ -2196,7 +2196,7 @@ find_poly_color (Polygon      *poly,
                        min_scanlines, max_scanlines);
     }
 
-  gimp_pixel_rgn_init (&src_rgn, drawable, 0, 0,
+  picman_pixel_rgn_init (&src_rgn, drawable, 0, 0,
                        drawable->width, drawable->height,
                        FALSE, FALSE);
 
@@ -2210,7 +2210,7 @@ find_poly_color (Polygon      *poly,
             {
               if (j >= x1 && j < x2)
                 {
-                  gimp_pixel_rgn_get_pixel (&src_rgn, col, j, y);
+                  picman_pixel_rgn_get_pixel (&src_rgn, col, j, y);
 
                   for (b = 0; b < bytes; b++)
                     col_sum[b] += col[b];
@@ -2245,7 +2245,7 @@ scale_poly (Polygon *poly,
 
 static void
 fill_poly_color (Polygon      *poly,
-                 GimpDrawable *drawable,
+                 PicmanDrawable *drawable,
                  guchar       *col,
                  gint          x1,
                  gint          y1,
@@ -2253,7 +2253,7 @@ fill_poly_color (Polygon      *poly,
                  gint          y2,
                  guchar       *dest)
 {
-  GimpPixelRgn  src_rgn;
+  PicmanPixelRgn  src_rgn;
   gdouble       dmin_x = 0.0, dmin_y = 0.0;
   gdouble       dmax_x = 0.0, dmax_y = 0.0;
   gint          xs, ys;
@@ -2364,7 +2364,7 @@ fill_poly_color (Polygon      *poly,
         }
     }
 
-  gimp_pixel_rgn_init (&src_rgn, drawable, 0, 0,
+  picman_pixel_rgn_init (&src_rgn, drawable, 0, 0,
                        drawable->width, drawable->height,
                        dest == NULL, TRUE);
 
@@ -2417,7 +2417,7 @@ fill_poly_color (Polygon      *poly,
                           if (dest)
                             memcpy (dest + ((y - y1) * (x2 - x1) + (x - x1)) * bytes, buf, bytes);
                           else
-                            gimp_pixel_rgn_set_pixel (&src_rgn, buf, x, y);
+                            picman_pixel_rgn_set_pixel (&src_rgn, buf, x, y);
                         }
                     }
                 }
@@ -2432,7 +2432,7 @@ fill_poly_color (Polygon      *poly,
 
 static void
 fill_poly_image (Polygon      *poly,
-                 GimpDrawable *drawable,
+                 PicmanDrawable *drawable,
                  gdouble       vary,
                  gint          x1,
                  gint          y1,
@@ -2440,7 +2440,7 @@ fill_poly_image (Polygon      *poly,
                  gint          y2,
                  guchar       *dest)
 {
-  GimpPixelRgn  src_rgn, dest_rgn;
+  PicmanPixelRgn  src_rgn, dest_rgn;
   gdouble       dmin_x = 0.0, dmin_y = 0.0;
   gdouble       dmax_x = 0.0, dmax_y = 0.0;
   gint          xs, ys;
@@ -2518,11 +2518,11 @@ fill_poly_image (Polygon      *poly,
                        min_scanlines, max_scanlines);
     }
 
-  gimp_pixel_rgn_init (&src_rgn, drawable, 0, 0,
+  picman_pixel_rgn_init (&src_rgn, drawable, 0, 0,
                        drawable->width, drawable->height,
                        FALSE, FALSE);
   if (!dest)
-    gimp_pixel_rgn_init (&dest_rgn, drawable, 0, 0,
+    picman_pixel_rgn_init (&dest_rgn, drawable, 0, 0,
                          drawable->width, drawable->height,
                          TRUE, TRUE);
 
@@ -2562,7 +2562,7 @@ fill_poly_image (Polygon      *poly,
                           xx = (double) j / (double) supersample + min_x;
                           contrib = calc_spec_contrib (vecs, poly->npts, xx, yy);
 
-                          gimp_pixel_rgn_get_pixel (&src_rgn, buf, x, y);
+                          picman_pixel_rgn_get_pixel (&src_rgn, buf, x, y);
 
                           for (b = 0; b < bytes; b++)
                             {
@@ -2581,7 +2581,7 @@ fill_poly_image (Polygon      *poly,
                           if (dest)
                             memcpy (dest + ((y - y1) * (x2 - x1) + (x - x1)) * bytes, buf, bytes);
                           else
-                            gimp_pixel_rgn_set_pixel (&dest_rgn, buf, x, y);
+                            picman_pixel_rgn_set_pixel (&dest_rgn, buf, x, y);
                         }
                     }
                 }

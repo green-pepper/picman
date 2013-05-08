@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbrush-load.c
+ * picmanbrush-load.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,24 +37,24 @@
 #include <gegl.h>
 #include <glib/gstdio.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #ifdef G_OS_WIN32
-#include "libgimpbase/gimpwin32-io.h"
+#include "libpicmanbase/picmanwin32-io.h"
 #endif
 
 #include "core-types.h"
 
-#include "gimpbrush.h"
-#include "gimpbrush-header.h"
-#include "gimpbrush-load.h"
-#include "gimptempbuf.h"
+#include "picmanbrush.h"
+#include "picmanbrush-header.h"
+#include "picmanbrush-load.h"
+#include "picmantempbuf.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /* stuff from abr2gbr Copyright (C) 2001 Marco Lamberto <lm@sunnyspot.org>  */
-/* the above is GPL  see http://the.sunnyspot.org/gimp/  */
+/* the above is GPL  see http://the.sunnyspot.org/picman/  */
 
 typedef struct _AbrHeader               AbrHeader;
 typedef struct _AbrBrushHeader          AbrBrushHeader;
@@ -86,20 +86,20 @@ struct _AbrSampledBrushHeader
 
 /*  local function prototypes  */
 
-static GList     * gimp_brush_load_abr_v12       (FILE         *file,
+static GList     * picman_brush_load_abr_v12       (FILE         *file,
                                                   AbrHeader    *abr_hdr,
                                                   const gchar  *filename,
                                                   GError      **error);
-static GList     * gimp_brush_load_abr_v6        (FILE         *file,
+static GList     * picman_brush_load_abr_v6        (FILE         *file,
                                                   AbrHeader    *abr_hdr,
                                                   const gchar  *filename,
                                                   GError      **error);
-static GimpBrush * gimp_brush_load_abr_brush_v12 (FILE         *file,
+static PicmanBrush * picman_brush_load_abr_brush_v12 (FILE         *file,
                                                   AbrHeader    *abr_hdr,
                                                   gint          index,
                                                   const gchar  *filename,
                                                   GError      **error);
-static GimpBrush * gimp_brush_load_abr_brush_v6  (FILE         *file,
+static PicmanBrush * picman_brush_load_abr_brush_v6  (FILE         *file,
                                                   AbrHeader    *abr_hdr,
                                                   gint32        max_offset,
                                                   gint          index,
@@ -123,11 +123,11 @@ static gint32      abr_rle_decode                (FILE         *file,
 /*  public functions  */
 
 GList *
-gimp_brush_load (GimpContext  *context,
+picman_brush_load (PicmanContext  *context,
                  const gchar  *filename,
                  GError      **error)
 {
-  GimpBrush *brush;
+  PicmanBrush *brush;
   gint       fd;
 
   g_return_val_if_fail (filename != NULL, NULL);
@@ -137,13 +137,13 @@ gimp_brush_load (GimpContext  *context,
   fd = g_open (filename, O_RDONLY | _O_BINARY, 0);
   if (fd == -1)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
-  brush = gimp_brush_load_brush (context, fd, filename, error);
+  brush = picman_brush_load_brush (context, fd, filename, error);
 
   close (fd);
 
@@ -153,13 +153,13 @@ gimp_brush_load (GimpContext  *context,
   return g_list_prepend (NULL, brush);
 }
 
-GimpBrush *
-gimp_brush_load_brush (GimpContext  *context,
+PicmanBrush *
+picman_brush_load_brush (PicmanContext  *context,
                        gint          fd,
                        const gchar  *filename,
                        GError      **error)
 {
-  GimpBrush   *brush;
+  PicmanBrush   *brush;
   gint         bn_size;
   BrushHeader  header;
   gchar       *name = NULL;
@@ -175,12 +175,12 @@ gimp_brush_load_brush (GimpContext  *context,
   /*  Read in the header size  */
   if (read (fd, &header, sizeof (header)) != sizeof (header))
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    ngettext ("Could not read %d byte from '%s': %s",
                              "Could not read %d bytes from '%s': %s",
                              (gint) sizeof (header)),
                    (gint) sizeof (header),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
@@ -197,28 +197,28 @@ gimp_brush_load_brush (GimpContext  *context,
 
   if (header.width == 0)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in brush file '%s': "
                      "Width = 0."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return NULL;
     }
 
   if (header.height == 0)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in brush file '%s': "
                      "Height = 0."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return NULL;
     }
 
   if (header.bytes == 0)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in brush file '%s': "
                      "Bytes = 0."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return NULL;
     }
 
@@ -239,10 +239,10 @@ gimp_brush_load_brush (GimpContext  *context,
         }
       else
         {
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Fatal parse error in brush file '%s': "
                          "Unknown depth %d."),
-                       gimp_filename_to_utf8 (filename), header.bytes);
+                       picman_filename_to_utf8 (filename), header.bytes);
           return NULL;
         }
       /*  fallthrough  */
@@ -252,10 +252,10 @@ gimp_brush_load_brush (GimpContext  *context,
         break;
 
     default:
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in brush file '%s': "
                      "Unknown version %d."),
-                   gimp_filename_to_utf8 (filename), header.version);
+                   picman_filename_to_utf8 (filename), header.version);
       return NULL;
     }
 
@@ -268,17 +268,17 @@ gimp_brush_load_brush (GimpContext  *context,
 
       if ((read (fd, name, bn_size)) < bn_size)
         {
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Fatal parse error in brush file '%s': "
                          "File appears truncated."),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           g_free (name);
           return NULL;
         }
 
-      utf8 = gimp_any_to_utf8 (name, -1,
+      utf8 = picman_any_to_utf8 (name, -1,
                                _("Invalid UTF-8 string in brush file '%s'."),
-                               gimp_filename_to_utf8 (filename));
+                               picman_filename_to_utf8 (filename));
       g_free (name);
       name = utf8;
     }
@@ -286,16 +286,16 @@ gimp_brush_load_brush (GimpContext  *context,
   if (!name)
     name = g_strdup (_("Unnamed"));
 
-  brush = g_object_new (GIMP_TYPE_BRUSH,
+  brush = g_object_new (PICMAN_TYPE_BRUSH,
                         "name",      name,
-                        "mime-type", "image/x-gimp-gbr",
+                        "mime-type", "image/x-picman-gbr",
                         NULL);
   g_free (name);
 
-  brush->mask = gimp_temp_buf_new (header.width, header.height,
+  brush->mask = picman_temp_buf_new (header.width, header.height,
                                    babl_format ("Y u8"));
 
-  mask = gimp_temp_buf_get_data (brush->mask);
+  mask = picman_temp_buf_get_data (brush->mask);
   size = header.width * header.height * header.bytes;
 
   switch (header.bytes)
@@ -347,9 +347,9 @@ gimp_brush_load_brush (GimpContext  *context,
       {
         guchar buf[8 * 1024];
 
-        brush->pixmap = gimp_temp_buf_new (header.width, header.height,
+        brush->pixmap = picman_temp_buf_new (header.width, header.height,
                                            babl_format ("R'G'B' u8"));
-        pixmap = gimp_temp_buf_get_data (brush->pixmap);
+        pixmap = picman_temp_buf_get_data (brush->pixmap);
 
         for (i = 0; success && i < size;)
           {
@@ -378,21 +378,21 @@ gimp_brush_load_brush (GimpContext  *context,
 
     default:
       g_object_unref (brush);
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in brush file '%s': "
                      "Unsupported brush depth %d\n"
-                     "GIMP brushes must be GRAY or RGBA."),
-                   gimp_filename_to_utf8 (filename), header.bytes);
+                     "PICMAN brushes must be GRAY or RGBA."),
+                   picman_filename_to_utf8 (filename), header.bytes);
       return NULL;
     }
 
   if (! success)
     {
       g_object_unref (brush);
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in brush file '%s': "
                      "File appears truncated."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return NULL;
     }
 
@@ -406,7 +406,7 @@ gimp_brush_load_brush (GimpContext  *context,
 }
 
 GList *
-gimp_brush_load_abr (GimpContext  *context,
+picman_brush_load_abr (PicmanContext  *context,
                      const gchar  *filename,
                      GError      **error)
 {
@@ -422,9 +422,9 @@ gimp_brush_load_abr (GimpContext  *context,
 
   if (! file)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
@@ -437,12 +437,12 @@ gimp_brush_load_abr (GimpContext  *context,
         {
         case 1:
         case 2:
-          brush_list = gimp_brush_load_abr_v12 (file, &abr_hdr,
+          brush_list = picman_brush_load_abr_v12 (file, &abr_hdr,
                                                 filename, error);
           break;
 
         case 6:
-          brush_list = gimp_brush_load_abr_v6 (file, &abr_hdr,
+          brush_list = picman_brush_load_abr_v6 (file, &abr_hdr,
                                                filename, error);
         }
     }
@@ -450,10 +450,10 @@ gimp_brush_load_abr (GimpContext  *context,
   fclose (file);
 
   if (! brush_list && (error && ! *error))
-    g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+    g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                  _("Fatal parse error in brush file '%s': "
                    "unable to decode abr format version %d."),
-                 gimp_filename_to_utf8 (filename), abr_hdr.version);
+                 picman_filename_to_utf8 (filename), abr_hdr.version);
 
   return g_list_reverse (brush_list);
 }
@@ -462,7 +462,7 @@ gimp_brush_load_abr (GimpContext  *context,
 /*  private functions  */
 
 static GList *
-gimp_brush_load_abr_v12 (FILE         *file,
+picman_brush_load_abr_v12 (FILE         *file,
                          AbrHeader    *abr_hdr,
                          const gchar  *filename,
                          GError      **error)
@@ -472,10 +472,10 @@ gimp_brush_load_abr_v12 (FILE         *file,
 
   for (i = 0; i < abr_hdr->count; i++)
     {
-      GimpBrush *brush;
+      PicmanBrush *brush;
       GError    *my_error = NULL;
 
-      brush = gimp_brush_load_abr_brush_v12 (file, abr_hdr, i,
+      brush = picman_brush_load_abr_brush_v12 (file, abr_hdr, i,
                                              filename, &my_error);
 
       /*  a NULL brush without an error means an unsupported brush
@@ -497,7 +497,7 @@ gimp_brush_load_abr_v12 (FILE         *file,
 }
 
 static GList *
-gimp_brush_load_abr_v6 (FILE         *file,
+picman_brush_load_abr_v6 (FILE         *file,
                         AbrHeader    *abr_hdr,
                         const gchar  *filename,
                         GError      **error)
@@ -515,10 +515,10 @@ gimp_brush_load_abr_v6 (FILE         *file,
 
   while (ftell (file) < sample_section_end)
     {
-      GimpBrush *brush;
+      PicmanBrush *brush;
       GError    *my_error = NULL;
 
-      brush = gimp_brush_load_abr_brush_v6 (file, abr_hdr, sample_section_end,
+      brush = picman_brush_load_abr_brush_v6 (file, abr_hdr, sample_section_end,
                                             i, filename, &my_error);
 
       /*  a NULL brush without an error means an unsupported brush
@@ -541,14 +541,14 @@ gimp_brush_load_abr_v6 (FILE         *file,
   return brush_list;
 }
 
-static GimpBrush *
-gimp_brush_load_abr_brush_v12 (FILE         *file,
+static PicmanBrush *
+picman_brush_load_abr_brush_v12 (FILE         *file,
                                AbrHeader    *abr_hdr,
                                gint          index,
                                const gchar  *filename,
                                GError      **error)
 {
-  GimpBrush      *brush = NULL;
+  PicmanBrush      *brush = NULL;
   AbrBrushHeader  abr_brush_hdr;
 
   g_return_val_if_fail (filename != NULL, NULL);
@@ -617,10 +617,10 @@ gimp_brush_load_abr_brush_v12 (FILE         *file,
           {
             /* FIXME: support wide brushes */
 
-            g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+            g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                          _("Fatal parse error in brush file '%s': "
                            "Wide brushes are not supported."),
-                         gimp_filename_to_utf8 (filename));
+                         picman_filename_to_utf8 (filename));
             return NULL;
           }
 
@@ -638,7 +638,7 @@ gimp_brush_load_abr_brush_v12 (FILE         *file,
           }
         g_free (tmp);
 
-        brush = g_object_new (GIMP_TYPE_BRUSH,
+        brush = g_object_new (PICMAN_TYPE_BRUSH,
                               "name",      name,
                               /*  FIXME: MIME type!!  */
                               "mime-type", "application/x-photoshop-abr",
@@ -651,10 +651,10 @@ gimp_brush_load_abr_brush_v12 (FILE         *file,
         brush->x_axis.y = 0.0;
         brush->y_axis.x = 0.0;
         brush->y_axis.y = height / 2.0;
-        brush->mask     = gimp_temp_buf_new (width, height,
+        brush->mask     = picman_temp_buf_new (width, height,
                                              babl_format ("Y u8"));
 
-        mask = gimp_temp_buf_get_data (brush->mask);
+        mask = picman_temp_buf_get_data (brush->mask);
         size = width * height * bytes;
 
         compress = abr_read_char (file);
@@ -680,15 +680,15 @@ gimp_brush_load_abr_brush_v12 (FILE         *file,
   return brush;
 }
 
-static GimpBrush *
-gimp_brush_load_abr_brush_v6 (FILE         *file,
+static PicmanBrush *
+picman_brush_load_abr_brush_v6 (FILE         *file,
                               AbrHeader    *abr_hdr,
                               gint32        max_offset,
                               gint          index,
                               const gchar  *filename,
                               GError      **error)
 {
-  GimpBrush *brush = NULL;
+  PicmanBrush *brush = NULL;
   guchar    *mask;
 
   gint32     brush_size;
@@ -724,10 +724,10 @@ gimp_brush_load_abr_brush_v6 (FILE         *file,
 
   if (r == -1)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in brush file '%s': "
                      "File appears truncated."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return NULL;
     }
 
@@ -746,7 +746,7 @@ gimp_brush_load_abr_brush_v6 (FILE         *file,
   name = g_strdup_printf ("%s-%03d", tmp, index);
   g_free (tmp);
 
-  brush = g_object_new (GIMP_TYPE_BRUSH,
+  brush = g_object_new (PICMAN_TYPE_BRUSH,
                         "name",      name,
                         /*  FIXME: MIME type!!  */
                         "mime-type", "application/x-photoshop-abr",
@@ -759,10 +759,10 @@ gimp_brush_load_abr_brush_v6 (FILE         *file,
   brush->x_axis.y = 0.0;
   brush->y_axis.x = 0.0;
   brush->y_axis.y = height / 2.0;
-  brush->mask     = gimp_temp_buf_new (width, height,
+  brush->mask     = picman_temp_buf_new (width, height,
                                        babl_format ("Y u8"));
 
-  mask = gimp_temp_buf_get_data (brush->mask);
+  mask = picman_temp_buf_get_data (brush->mask);
 
   /* data decoding */
   if (! compress)
@@ -852,10 +852,10 @@ abr_supported (AbrHeader    *abr_hdr,
         return TRUE;
 
       if (error && ! (*error))
-        g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+        g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                      _("Fatal parse error in brush file '%s': "
                        "unable to decode abr format version %d."),
-                     gimp_filename_to_utf8 (filename),
+                     picman_filename_to_utf8 (filename),
 
                      /* horrid subversion display, but better than
                       * having yet another translatable string for

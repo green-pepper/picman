@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpgradientselect_pdb.c
+ * picmangradientselect_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpgradientselect
- * @title: gimpgradientselect
+ * SECTION: picmangradientselect
+ * @title: picmangradientselect
  * @short_description: Functions providing a gradient selection dialog.
  *
  * Functions providing a gradient selection dialog.
@@ -35,45 +35,45 @@
 
 
 /**
- * gimp_gradients_popup:
+ * picman_gradients_popup:
  * @gradient_callback: The callback PDB proc to call when gradient selection is made.
  * @popup_title: Title of the gradient selection dialog.
  * @initial_gradient: The name of the gradient to set as the first selected.
  * @sample_size: Size of the sample to return when the gradient is changed.
  *
- * Invokes the Gimp gradients selection.
+ * Invokes the Picman gradients selection.
  *
  * This procedure opens the gradient selection dialog.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_gradients_popup (const gchar *gradient_callback,
+picman_gradients_popup (const gchar *gradient_callback,
                       const gchar *popup_title,
                       const gchar *initial_gradient,
                       gint         sample_size)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-gradients-popup",
+  return_vals = picman_run_procedure ("picman-gradients-popup",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, gradient_callback,
-                                    GIMP_PDB_STRING, popup_title,
-                                    GIMP_PDB_STRING, initial_gradient,
-                                    GIMP_PDB_INT32, sample_size,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, gradient_callback,
+                                    PICMAN_PDB_STRING, popup_title,
+                                    PICMAN_PDB_STRING, initial_gradient,
+                                    PICMAN_PDB_INT32, sample_size,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_gradients_close_popup:
+ * picman_gradients_close_popup:
  * @gradient_callback: The name of the callback registered for this pop-up.
  *
  * Close the gradient selection dialog.
@@ -83,26 +83,26 @@ gimp_gradients_popup (const gchar *gradient_callback,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_gradients_close_popup (const gchar *gradient_callback)
+picman_gradients_close_popup (const gchar *gradient_callback)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-gradients-close-popup",
+  return_vals = picman_run_procedure ("picman-gradients-close-popup",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, gradient_callback,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, gradient_callback,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_gradients_set_popup:
+ * picman_gradients_set_popup:
  * @gradient_callback: The name of the callback registered for this pop-up.
  * @gradient_name: The name of the gradient to set as selected.
  *
@@ -113,22 +113,22 @@ gimp_gradients_close_popup (const gchar *gradient_callback)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_gradients_set_popup (const gchar *gradient_callback,
+picman_gradients_set_popup (const gchar *gradient_callback,
                           const gchar *gradient_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-gradients-set-popup",
+  return_vals = picman_run_procedure ("picman-gradients-set-popup",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, gradient_callback,
-                                    GIMP_PDB_STRING, gradient_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, gradient_callback,
+                                    PICMAN_PDB_STRING, gradient_name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,39 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ELLIPSE_SELECT_TOOL_H__
-#define __GIMP_ELLIPSE_SELECT_TOOL_H__
+#ifndef __PICMAN_ELLIPSE_SELECT_TOOL_H__
+#define __PICMAN_ELLIPSE_SELECT_TOOL_H__
 
 
-#include "gimprectangleselecttool.h"
+#include "picmanrectangleselecttool.h"
 
 
-#define GIMP_TYPE_ELLIPSE_SELECT_TOOL            (gimp_ellipse_select_tool_get_type ())
-#define GIMP_ELLIPSE_SELECT_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ELLIPSE_SELECT_TOOL, GimpEllipseSelectTool))
-#define GIMP_ELLIPSE_SELECT_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ELLIPSE_SELECT_TOOL, GimpEllipseSelectToolClass))
-#define GIMP_IS_ELLIPSE_SELECT_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ELLIPSE_SELECT_TOOL))
-#define GIMP_IS_ELLIPSE_SELECT_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ELLIPSE_SELECT_TOOL))
-#define GIMP_ELLIPSE_SELECT_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_ELLIPSE_SELECT_TOOL, GimpEllipseSelectToolClass))
+#define PICMAN_TYPE_ELLIPSE_SELECT_TOOL            (picman_ellipse_select_tool_get_type ())
+#define PICMAN_ELLIPSE_SELECT_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ELLIPSE_SELECT_TOOL, PicmanEllipseSelectTool))
+#define PICMAN_ELLIPSE_SELECT_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ELLIPSE_SELECT_TOOL, PicmanEllipseSelectToolClass))
+#define PICMAN_IS_ELLIPSE_SELECT_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ELLIPSE_SELECT_TOOL))
+#define PICMAN_IS_ELLIPSE_SELECT_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ELLIPSE_SELECT_TOOL))
+#define PICMAN_ELLIPSE_SELECT_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_ELLIPSE_SELECT_TOOL, PicmanEllipseSelectToolClass))
 
 
-typedef struct _GimpEllipseSelectTool      GimpEllipseSelectTool;
-typedef struct _GimpEllipseSelectToolClass GimpEllipseSelectToolClass;
+typedef struct _PicmanEllipseSelectTool      PicmanEllipseSelectTool;
+typedef struct _PicmanEllipseSelectToolClass PicmanEllipseSelectToolClass;
 
-struct _GimpEllipseSelectTool
+struct _PicmanEllipseSelectTool
 {
-  GimpRectangleSelectTool  parent_instance;
+  PicmanRectangleSelectTool  parent_instance;
 };
 
-struct _GimpEllipseSelectToolClass
+struct _PicmanEllipseSelectToolClass
 {
-  GimpRectangleSelectToolClass  parent_class;
+  PicmanRectangleSelectToolClass  parent_class;
 };
 
 
-void    gimp_ellipse_select_tool_register (GimpToolRegisterCallback  callback,
+void    picman_ellipse_select_tool_register (PicmanToolRegisterCallback  callback,
                                            gpointer                  data);
 
-GType   gimp_ellipse_select_tool_get_type (void) G_GNUC_CONST;
+GType   picman_ellipse_select_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_ELLIPSE_SELECT_TOOL_H__  */
+#endif  /*  __PICMAN_ELLIPSE_SELECT_TOOL_H__  */

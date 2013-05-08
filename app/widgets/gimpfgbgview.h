@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfgbgview.h
- * Copyright (C) 2005  Sven Neumann <sven@gimp.org>
+ * picmanfgbgview.h
+ * Copyright (C) 2005  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,38 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FG_BG_VIEW_H__
-#define __GIMP_FG_BG_VIEW_H__
+#ifndef __PICMAN_FG_BG_VIEW_H__
+#define __PICMAN_FG_BG_VIEW_H__
 
 
-#define GIMP_TYPE_FG_BG_VIEW            (gimp_fg_bg_view_get_type ())
-#define GIMP_FG_BG_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FG_BG_VIEW, GimpFgBgView))
-#define GIMP_FG_BG_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FG_BG_VIEW, GimpFgBgViewClass))
-#define GIMP_IS_FG_BG_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FG_BG_VIEW))
-#define GIMP_IS_FG_BG_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FG_BG_VIEW))
-#define GIMP_FG_BG_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FG_BG_VIEW, GimpFgBgViewClass))
+#define PICMAN_TYPE_FG_BG_VIEW            (picman_fg_bg_view_get_type ())
+#define PICMAN_FG_BG_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FG_BG_VIEW, PicmanFgBgView))
+#define PICMAN_FG_BG_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FG_BG_VIEW, PicmanFgBgViewClass))
+#define PICMAN_IS_FG_BG_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FG_BG_VIEW))
+#define PICMAN_IS_FG_BG_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FG_BG_VIEW))
+#define PICMAN_FG_BG_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FG_BG_VIEW, PicmanFgBgViewClass))
 
 
-typedef struct _GimpFgBgViewClass GimpFgBgViewClass;
+typedef struct _PicmanFgBgViewClass PicmanFgBgViewClass;
 
-struct _GimpFgBgView
+struct _PicmanFgBgView
 {
   GtkWidget    parent_instance;
 
-  GimpContext *context;
+  PicmanContext *context;
 };
 
-struct _GimpFgBgViewClass
+struct _PicmanFgBgViewClass
 {
   GtkWidgetClass  parent_class;
 };
 
 
-GType       gimp_fg_bg_view_get_type    (void) G_GNUC_CONST;
+GType       picman_fg_bg_view_get_type    (void) G_GNUC_CONST;
 
-GtkWidget * gimp_fg_bg_view_new         (GimpContext  *context);
-void        gimp_fg_bg_view_set_context (GimpFgBgView *view,
-                                         GimpContext  *context);
+GtkWidget * picman_fg_bg_view_new         (PicmanContext  *context);
+void        picman_fg_bg_view_set_context (PicmanFgBgView *view,
+                                         PicmanContext  *context);
 
 
-#endif  /*  __GIMP_FG_BG_VIEW_H__  */
+#endif  /*  __PICMAN_FG_BG_VIEW_H__  */

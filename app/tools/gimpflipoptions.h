@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,35 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FLIP_OPTIONS_H__
-#define __GIMP_FLIP_OPTIONS_H__
+#ifndef __PICMAN_FLIP_OPTIONS_H__
+#define __PICMAN_FLIP_OPTIONS_H__
 
 
-#include "gimptransformoptions.h"
+#include "picmantransformoptions.h"
 
 
-#define GIMP_TYPE_FLIP_OPTIONS            (gimp_flip_options_get_type ())
-#define GIMP_FLIP_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FLIP_OPTIONS, GimpFlipOptions))
-#define GIMP_FLIP_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FLIP_OPTIONS, GimpFlipOptionsClass))
-#define GIMP_IS_FLIP_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FLIP_OPTIONS))
-#define GIMP_IS_FLIP_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FLIP_OPTIONS))
-#define GIMP_FLIP_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FLIP_OPTIONS, GimpFlipOptionsClass))
+#define PICMAN_TYPE_FLIP_OPTIONS            (picman_flip_options_get_type ())
+#define PICMAN_FLIP_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FLIP_OPTIONS, PicmanFlipOptions))
+#define PICMAN_FLIP_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FLIP_OPTIONS, PicmanFlipOptionsClass))
+#define PICMAN_IS_FLIP_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FLIP_OPTIONS))
+#define PICMAN_IS_FLIP_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FLIP_OPTIONS))
+#define PICMAN_FLIP_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FLIP_OPTIONS, PicmanFlipOptionsClass))
 
 
-typedef struct _GimpFlipOptions      GimpFlipOptions;
-typedef struct _GimpToolOptionsClass GimpFlipOptionsClass;
+typedef struct _PicmanFlipOptions      PicmanFlipOptions;
+typedef struct _PicmanToolOptionsClass PicmanFlipOptionsClass;
 
-struct _GimpFlipOptions
+struct _PicmanFlipOptions
 {
-  GimpTransformOptions  parent_instance;
+  PicmanTransformOptions  parent_instance;
 
-  GimpOrientationType   flip_type;
+  PicmanOrientationType   flip_type;
 };
 
 
-GType       gimp_flip_options_get_type (void) G_GNUC_CONST;
+GType       picman_flip_options_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_flip_options_gui      (GimpToolOptions *tool_options);
+GtkWidget * picman_flip_options_gui      (PicmanToolOptions *tool_options);
 
 
-#endif /* __GIMP_FLIP_OPTIONS_H__ */
+#endif /* __PICMAN_FLIP_OPTIONS_H__ */

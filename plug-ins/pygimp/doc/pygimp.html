@@ -2,7 +2,7 @@
 <HTML
 ><HEAD
 ><TITLE
->Gimp Python Documentation</TITLE
+>Picman Python Documentation</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.77+"></HEAD
@@ -22,7 +22,7 @@ CLASS="TITLE"
 ><A
 NAME="AEN2"
 ></A
->Gimp Python Documentation</H1
+>Picman Python Documentation</H1
 ><H3
 CLASS="AUTHOR"
 ><A
@@ -57,13 +57,13 @@ NAME="AEN11"
 ><P
 ></P
 ><P
->This document outlines the interfaces to Gimp-Python,
+>This document outlines the interfaces to Picman-Python,
       which is a set of Python modules that act as a wrapper to
       <TT
 CLASS="FILENAME"
->libgimp</TT
+>libpicman</TT
 > allowing the writing of
-      plug-ins for Gimp.  In this way, Gimp-Python is similar to
+      plug-ins for Picman.  In this way, Picman-Python is similar to
       Script-Fu, except that you can use the full set of Python
       extension modules from the plug-in.</P
 ><P
@@ -130,8 +130,8 @@ HREF="#PROCEDURAL-DATABASE"
 ><DL
 ><DT
 >3.1. <A
-HREF="#GIMP-PYTHON-MODEL"
->The Gimp-Python Model</A
+HREF="#PICMAN-PYTHON-MODEL"
+>The Picman-Python Model</A
 ></DT
 ><DT
 >3.2. <A
@@ -147,8 +147,8 @@ HREF="#MORE-INFORMATION"
 ></DD
 ><DT
 >4. <A
-HREF="#GIMP-MODULE-PROCEDURES"
->Gimp Module Procedures</A
+HREF="#PICMAN-MODULE-PROCEDURES"
+>Picman Module Procedures</A
 ></DT
 ><DD
 ><DL
@@ -191,8 +191,8 @@ HREF="#PARASITES"
 ></DD
 ><DT
 >5. <A
-HREF="#GIMP-OBJECTS"
->Gimp Objects</A
+HREF="#PICMAN-OBJECTS"
+>Picman Objects</A
 ></DT
 ><DD
 ><DL
@@ -331,23 +331,23 @@ HREF="#SUPPORT-MODULES"
 ><DL
 ><DT
 >6.1. <A
-HREF="#GIMPENUMS-MODULE"
->The gimpenums Module</A
+HREF="#PICMANENUMS-MODULE"
+>The picmanenums Module</A
 ></DT
 ><DT
 >6.2. <A
 HREF="#AEN1468"
->The gimpfu Module</A
+>The picmanfu Module</A
 ></DT
 ><DT
 >6.3. <A
-HREF="#GIMPPLUGIN-MODULE"
->The gimpplugin Module</A
+HREF="#PICMANPLUGIN-MODULE"
+>The picmanplugin Module</A
 ></DT
 ><DT
 >6.4. <A
-HREF="#GIMPSHELF-MODULE"
->The gimpshelf Module</A
+HREF="#PICMANSHELF-MODULE"
+>The picmanshelf Module</A
 ></DT
 ></DL
 ></DD
@@ -375,34 +375,34 @@ NAME="WHAT-IS-IT"
 ></A
 >1.1. What is it?</H3
 ><P
->Gimp-Python is a scripting extension for Gimp, similar to
+>Picman-Python is a scripting extension for Picman, similar to
       Script-Fu.  The main difference is in what is called first.  In
       Script-Fu, the script-fu plugin executes the script, while in
-      Gimp-Python the script is in control.</P
+      Picman-Python the script is in control.</P
 ><P
->In fact, you will find that the Gimp-Python scripts start
+>In fact, you will find that the Picman-Python scripts start
       with the line <TT
 CLASS="LITERAL"
 >&num;!/usr/bin/python</TT
 >.  The
-      gimp extension is loaded with the familiar
+      picman extension is loaded with the familiar
       <TT
 CLASS="LITERAL"
 >import</TT
 > command.</P
 ><P
->Another point of difference between Gimp-Python and
-      Script-Fu is that Gimp-Python stores images, layers, channels
+>Another point of difference between Picman-Python and
+      Script-Fu is that Picman-Python stores images, layers, channels
       and other types as objects rather than just storing their ID.
       This allows better type checking that is missing from Script-Fu,
       and allows those types to act as objects, complete with
       attributes and methods.</P
 ><P
->Also, Gimp-Python is not limited to just calling
+>Also, Picman-Python is not limited to just calling
       procedures from the PDB.  It also implements the rest of
       <TT
 CLASS="FILENAME"
->libgimp</TT
+>libpicman</TT
 >, including tiles and pixel regions,
       and access to other lower level functions.</P
 ></DIV
@@ -415,8 +415,8 @@ NAME="INSTALLATION"
 ></A
 >1.2. Installation</H3
 ><P
->Gimp-python consists of a Python module written in C and
-      some native python support modules.  You can build pygimp with
+>Picman-python consists of a Python module written in C and
+      some native python support modules.  You can build pypicman with
       the commands:</P
 ><PRE
 CLASS="PROGRAMLISTING"
@@ -424,8 +424,8 @@ CLASS="PROGRAMLISTING"
 make
 make install</PRE
 ><P
->This will build and install gimpmodule and its supporting
-      modules, and install the sample plugins in gimp's plugin
+>This will build and install picmanmodule and its supporting
+      modules, and install the sample plugins in picman's plugin
       directory.</P
 ></DIV
 ></DIV
@@ -441,7 +441,7 @@ NAME="STRUCTURE-OF-PLUGIN"
 >The majority of code in this package resides in
     <TT
 CLASS="FILENAME"
->gimpmodule.c</TT
+>picmanmodule.c</TT
 >, but this provides a poor
     interface for implementing some portions of a plugin.  For this
     reason, there is a python module called
@@ -460,9 +460,9 @@ CLASS="FILENAME"
     this, it handles tracebacks, which are otherwise ignored by
     <TT
 CLASS="FILENAME"
->libgimp</TT
+>libpicman</TT
 >, and gives a method to call
-    other Gimp-Python plug-ins without going through the procedural
+    other Picman-Python plug-ins without going through the procedural
     database.</P
 ><DIV
 CLASS="SECT2"
@@ -491,24 +491,24 @@ NAME="AEN41"
 CLASS="PROGRAMLISTING"
 >#!/usr/bin/python
 import math
-from gimpfu import *
+from picmanfu import *
 
-have_gimp11 = gimp.major_version &#62; 1 or \
-	      gimp.major_version == 1 and gimp.minor_version &#62;= 1
+have_picman11 = picman.major_version &#62; 1 or \
+	      picman.major_version == 1 and picman.minor_version &#62;= 1
 
 def python_clothify(timg, tdrawable, bx=9, by=9,
 		    azimuth=135, elevation=45, depth=3):
 	bx = 9 ; by = 9 ; azimuth = 135 ; elevation = 45 ; depth = 3
 	width = tdrawable.width
 	height = tdrawable.height
-	img = gimp.image(width, height, RGB)
-	layer_one = gimp.layer(img, "X Dots", width, height, RGB_IMAGE,
+	img = picman.image(width, height, RGB)
+	layer_one = picman.layer(img, "X Dots", width, height, RGB_IMAGE,
 			       100, NORMAL_MODE)
 	img.disable_undo()
-	if have_gimp11:
-		pdb.gimp_edit_fill(layer_one)
+	if have_picman11:
+		pdb.picman_edit_fill(layer_one)
 	else:
-		pdb.gimp_edit_fill(img, layer_one)
+		pdb.picman_edit_fill(img, layer_one)
 	img.add_layer(layer_one, 0)
 	pdb.plug_in_noisify(img, layer_one, 0, 0.7, 0.7, 0.7, 0.7)
 	layer_two = layer_one.copy()
@@ -523,7 +523,7 @@ def python_clothify(timg, tdrawable, bx=9, by=9,
 	pdb.plug_in_noisify(img, bump_layer, 0, 0.2, 0.2, 0.2, 0.2)
 	pdb.plug_in_bump_map(img, tdrawable, bump_layer, azimuth,
 			     elevation, depth, 0, 0, 0, 0, TRUE, FALSE, 0)
-	gimp.delete(img)
+	picman.delete(img)
 
 register(
 	"python_fu_clothify",
@@ -565,14 +565,14 @@ NAME="IMPORTANT-MODULES"
 ><P
 ><TT
 CLASS="FILENAME"
->gimpfu</TT
+>picmanfu</TT
 >: this module provides a
 	  simple interface for writing plugins, similar to what
 	  script-fu provides.  It provides the GUI for entering in
 	  parameters in interactive mode and performs some sanity
 	  checks when registering the plugin.</P
 ><P
->By using "from gimpfu import *", this module also
+>By using "from picmanfu import *", this module also
 	  provides an easy way to get all the commonly used symbols
 	  into the plugin's namespace.</P
 ></LI
@@ -580,24 +580,24 @@ CLASS="FILENAME"
 ><P
 ><TT
 CLASS="FILENAME"
->gimp</TT
->: the main part of the gimp
-	  extension.  This is imported with gimpfu.</P
+>picman</TT
+>: the main part of the picman
+	  extension.  This is imported with picmanfu.</P
 ></LI
 ><LI
 ><P
 ><TT
 CLASS="FILENAME"
->gimpenums</TT
+>picmanenums</TT
 >: a number of useful
 	  constants.  This is also automatically imported with
-	  gimpfu.</P
+	  picmanfu.</P
 ></LI
 ></UL
 ><P
 >The pdb variable is a variable for accessing the
       procedural database.  It is imported into the plugin's namespace
-      with gimpfu for convenience.</P
+      with picmanfu for convenience.</P
 ></DIV
 ><DIV
 CLASS="SECT2"
@@ -608,13 +608,13 @@ NAME="PLUGIN-FRAMEWORK"
 ></A
 >2.3. Plugin Framework</H3
 ><P
->With pygimp-0.4, the gimpfu module was introduced.  It
+>With pypicman-0.4, the picmanfu module was introduced.  It
       simplifies writing plugins a lot.  It handles the run mode
       (interactive, non interactive or run with last values),
       providing a GUI for interactive mode and saving the last used
       settings.</P
 ><P
->Using the gimpfu plugin, all you need to do is write the
+>Using the picmanfu plugin, all you need to do is write the
       function that should be run, make a call to
       <TT
 CLASS="FUNCTION"
@@ -637,9 +637,9 @@ CLASS="FUNCTION"
       <TT
 CLASS="FUNCTION"
 >register</TT
-> to register the plugin with gimp
+> to register the plugin with picman
       (When the plugin is run to query it, this information is passed
-      to gimp.  When it is run interactively, this information is used
+      to picman.  When it is run interactively, this information is used
       to construct the GUI).  The parameters to
       <TT
 CLASS="FUNCTION"
@@ -706,7 +706,7 @@ BORDER="0"
 ><P
 >The params parameter holds a list parameters for the
       function.  It is a list of tuples.  Note that you do not have to
-      specify the run_type, image or drawable parameters, as gimpfu
+      specify the run_type, image or drawable parameters, as picmanfu
       will add these automatically for you.  The tuple format is
       (type, name, description, default [, extra]).  The allowed type
       codes are:</P
@@ -841,7 +841,7 @@ BORDER="0"
 ></P
 ><P
 >These values map onto the standard PARAM_* constants.  The
-      reason to use the extra constants is that they give gimpfu more
+      reason to use the extra constants is that they give picmanfu more
       information, so it can produce a better interface (for instance,
       the PF_FONT type is equivalent to PARAM_STRING, but in the GUI
       you get a small button that will bring up a font selection
@@ -882,7 +882,7 @@ NAME="PROCEDURAL-DATABASE"
 ></A
 >3. The Procedural Database</H2
 ><P
->The procedural database is a registry of things gimp and its
+>The procedural database is a registry of things picman and its
     plugins can do.  When you install a procedure for your plugin, you
     are extending the procedural database.</P
 ><P
@@ -894,21 +894,21 @@ CLASS="SECT2"
 ><HR><H3
 CLASS="SECT2"
 ><A
-NAME="GIMP-PYTHON-MODEL"
+NAME="PICMAN-PYTHON-MODEL"
 ></A
->3.1. The Gimp-Python Model</H3
+>3.1. The Picman-Python Model</H3
 ><P
->In Gimp-Python, the procedural database is represented by
+>In Picman-Python, the procedural database is represented by
       the object <TT
 CLASS="PARAMETER"
 ><I
->gimp.pdb</I
+>picman.pdb</I
 ></TT
 >.  In most of my
       plugins, I make an assignment from <TT
 CLASS="PARAMETER"
 ><I
->gimp.pdb</I
+>picman.pdb</I
 ></TT
 >
       to <TT
@@ -960,15 +960,15 @@ CLASS="PARAMETER"
 > as a mapping objest.  As an example,
       the probedure <TT
 CLASS="FUNCTION"
->gimp_edit_fill</TT
+>picman_edit_fill</TT
 > can be
       accessed as either <TT
 CLASS="FUNCTION"
->pdb.gimp_edit_fill</TT
+>pdb.picman_edit_fill</TT
 > or
       <TT
 CLASS="FUNCTION"
->pdb['gimp_edit_fill']</TT
+>pdb['picman_edit_fill']</TT
 >.  The second form is
       mainly for procedures whose names are not valid Python names (eg
       in script-fu-..., the dashes are interpreted as minuses).</P
@@ -1061,7 +1061,7 @@ CLASS="LITERAL"
 ></DIV
 ><P
 >A procedure object may also be called.  At this point,
-      Gimp-Python doesn't support keyword arguments for PDB
+      Picman-Python doesn't support keyword arguments for PDB
       procedures.  Arguments are passed to the procedure in the normal
       method.  The return depends on the number of return values:</P
 ><P
@@ -1108,15 +1108,15 @@ CLASS="SECT1"
 ><HR><H2
 CLASS="SECT1"
 ><A
-NAME="GIMP-MODULE-PROCEDURES"
+NAME="PICMAN-MODULE-PROCEDURES"
 ></A
->4. Gimp Module Procedures</H2
+>4. Picman Module Procedures</H2
 ><P
 >The <TT
 CLASS="FILENAME"
->gimp</TT
+>picman</TT
 > module contains a number of
-    procedures and functions, as well as the definitions of many gimp
+    procedures and functions, as well as the definitions of many picman
     types such as images, and the procedural database.  This section
     explains the base level procedures.</P
 ><DIV
@@ -1131,9 +1131,9 @@ NAME="CONSTRUCTORS-AND-DESTRUCTORS"
 >There are a number of functions in the
       <TT
 CLASS="FILENAME"
->gimp</TT
+>picman</TT
 > module that are used to create the objects
-      used to make up an image in Gimp.  Here is a set of descriptions
+      used to make up an image in Picman.  Here is a set of descriptions
       of these constructors:</P
 ><P
 ></P
@@ -1143,7 +1143,7 @@ CLASS="VARIABLELIST"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.image</TT
+>picman.image</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1181,7 +1181,7 @@ CLASS="LITERAL"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.layer</TT
+>picman.layer</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1262,7 +1262,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.channel</TT
+>picman.channel</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1322,7 +1322,7 @@ CLASS="LITERAL"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.display</TT
+>picman.display</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1335,37 +1335,37 @@ CLASS="PARAMETER"
             The window will not be displayed until a call to
             <TT
 CLASS="FUNCTION"
->gimp.displays_flush</TT
+>picman.displays_flush</TT
 > is made.</P
 ></DD
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.parasite(name, flags, data)</TT
+>picman.parasite(name, flags, data)</TT
 ></DT
 ><DD
 ><P
 >Create a new parasite.  The parasite can then be
-	    attached to gimp, an image or a drawable.  This is only
-	    available in gimp &#62;= 1.1</P
+	    attached to picman, an image or a drawable.  This is only
+	    available in picman &#62;= 1.1</P
 ></DD
 ></DL
 ></DIV
 ><P
 >When any of these objects get removed from memory (such as
-      when their name goes out of range), the gimp thing it represents
+      when their name goes out of range), the picman thing it represents
       does not get deleted with it (otherwise when your plugin
       finished running, it would delete all its work).  In order to
       delete the thing the Python object represents, you should use
       the <TT
 CLASS="FUNCTION"
->gimp.delete</TT
+>picman.delete</TT
 > procedure.  It deletes the
-      gimp thing associated with the Python object given as a
+      picman thing associated with the Python object given as a
       parameter.  If the object is not an image, layer, channel,
       drawable or display <TT
 CLASS="FUNCTION"
->gimp.delete</TT
+>picman.delete</TT
 > does
       nothing.</P
 ></DIV
@@ -1388,11 +1388,11 @@ CLASS="VARIABLELIST"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.color_cube</TT
+>picman.color_cube</TT
 >() or
 	  <TT
 CLASS="FUNCTION"
->gimp.colour_cube</TT
+>picman.colour_cube</TT
 >()</DT
 ><DD
 ><P
@@ -1401,7 +1401,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.gamma</TT
+>picman.gamma</TT
 >()</DT
 ><DD
 ><P
@@ -1410,7 +1410,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.install_cmap</TT
+>picman.install_cmap</TT
 >()</DT
 ><DD
 ><P
@@ -1420,17 +1420,17 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.use_xshm</TT
+>picman.use_xshm</TT
 >()</DT
 ><DD
 ><P
->Returns non-zero if Gimp is using X shared
+>Returns non-zero if Picman is using X shared
 	    memory.</P
 ></DD
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.gtkrc</TT
+>picman.gtkrc</TT
 >()</DT
 ><DD
 ><P
@@ -1459,7 +1459,7 @@ CLASS="VARIABLELIST"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.get_background</TT
+>picman.get_background</TT
 >()</DT
 ><DD
 ><P
@@ -1469,7 +1469,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.get_foreground</TT
+>picman.get_foreground</TT
 >()</DT
 ><DD
 ><P
@@ -1479,7 +1479,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.set_background</TT
+>picman.set_background</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1503,13 +1503,13 @@ CLASS="PARAMETER"
             arguments can be replaced by a single 3-tuple like that
             returned by <TT
 CLASS="FUNCTION"
->gimp.get_background</TT
+>picman.get_background</TT
 >.</P
 ></DD
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.set_foreground</TT
+>picman.set_foreground</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1532,7 +1532,7 @@ CLASS="PARAMETER"
 >Sets the current foreground colour.  Like
             <TT
 CLASS="FUNCTION"
->gimp.set_background</TT
+>picman.set_background</TT
 >, the arguments may
             be replaced by a 3-tuple.</P
 ></DD
@@ -1557,7 +1557,7 @@ CLASS="VARIABLELIST"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.gradients_get_active</TT
+>picman.gradients_get_active</TT
 >()</DT
 ><DD
 ><P
@@ -1566,7 +1566,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.gradients_set_active</TT
+>picman.gradients_set_active</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1580,7 +1580,7 @@ CLASS="PARAMETER"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.gradients_get_list</TT
+>picman.gradients_get_list</TT
 >()</DT
 ><DD
 ><P
@@ -1590,7 +1590,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.gradients_sample_uniform</TT
+>picman.gradients_sample_uniform</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1612,7 +1612,7 @@ CLASS="PARAMETER"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.gradients_sample_custom</TT
+>picman.gradients_sample_custom</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1624,7 +1624,7 @@ CLASS="PARAMETER"
 >Similar to
             <TT
 CLASS="FUNCTION"
->gimp.gradients_sample_uniform</TT
+>picman.gradients_sample_uniform</TT
 >, except
             the samples are taken at the positions given in the list
             of floats <TT
@@ -1648,13 +1648,13 @@ NAME="PDB-REGISTRATION-FUNCTIONS"
 >4.5. PDB Registration Functions</H3
 ><P
 >These functions either install procedures into the PDB or
-      alert gimp to their special use (eg as file handlers).</P
+      alert picman to their special use (eg as file handlers).</P
 ><P
 >For simple plugins, you will usually only need to use
       <TT
 CLASS="FUNCTION"
 >register</TT
-> from gimpfu.</P
+> from picmanfu.</P
 ><P
 ></P
 ><DIV
@@ -1663,7 +1663,7 @@ CLASS="VARIABLELIST"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.install_procedure</TT
+>picman.install_procedure</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1749,7 +1749,7 @@ CLASS="LITERAL"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.install_temp_proc</TT
+>picman.install_temp_proc</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1812,13 +1812,13 @@ CLASS="PARAMETER"
 ><P
 >This procedure is used to install a procedure into
             the PDB temporarily.  That is, it must be added again
-            every time gimp is run.  This procedure will be called the
+            every time picman is run.  This procedure will be called the
             same way as all other procedures for a plugin.</P
 ></DD
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.uninstall_temp_proc</TT
+>picman.uninstall_temp_proc</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1833,7 +1833,7 @@ CLASS="PARAMETER"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.register_magic_load_handle</TT
+>picman.register_magic_load_handle</TT
 >r(<TT
 CLASS="PARAMETER"
 ><I
@@ -1860,7 +1860,7 @@ CLASS="PARAMETER"
 >)</DT
 ><DD
 ><P
->This procedure tells Gimp that the PDB procedure
+>This procedure tells Picman that the PDB procedure
             <TT
 CLASS="PARAMETER"
 ><I
@@ -1889,7 +1889,7 @@ CLASS="PARAMETER"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.register_load_handler</TT
+>picman.register_load_handler</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1910,7 +1910,7 @@ CLASS="PARAMETER"
 >)</DT
 ><DD
 ><P
->This procedure tells Gimp that the PDB procedure
+>This procedure tells Picman that the PDB procedure
             <TT
 CLASS="PARAMETER"
 ><I
@@ -1933,7 +1933,7 @@ CLASS="PARAMETER"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.register_save_handler</TT
+>picman.register_save_handler</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -1954,7 +1954,7 @@ CLASS="PARAMETER"
 >)</DT
 ><DD
 ><P
->This procedure tells Gimp that the PDB procedure
+>This procedure tells Picman that the PDB procedure
             <TT
 CLASS="PARAMETER"
 ><I
@@ -1989,7 +1989,7 @@ NAME="OTHER-FUNCTIONS"
 >These are the other functions in the
       <TT
 CLASS="FILENAME"
->gimp</TT
+>picman</TT
 > module.</P
 ><P
 ></P
@@ -1999,7 +1999,7 @@ CLASS="VARIABLELIST"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.main</TT
+>picman.main</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -2027,10 +2027,10 @@ CLASS="PARAMETER"
 ><DD
 ><P
 >This function is the one that controls the execution
-            of a Gimp-Python plugin.  It is better to not use this
+            of a Picman-Python plugin.  It is better to not use this
             directly but rather subclass the plugin class, defined in
             the <A
-HREF="#GIMPPLUGIN-MODULE"
+HREF="#PICMANPLUGIN-MODULE"
 >Section 6.3</A
 >.</P
 ></DD
@@ -2038,7 +2038,7 @@ HREF="#GIMPPLUGIN-MODULE"
 ><TT
 CLASS="PARAMETER"
 ><I
->gimp.pdb</I
+>picman.pdb</I
 ></TT
 ></DT
 ><DD
@@ -2048,7 +2048,7 @@ CLASS="PARAMETER"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.progress_init</TT
+>picman.progress_init</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -2069,7 +2069,7 @@ CLASS="PARAMETER"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.progress_update</TT
+>picman.progress_update</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -2089,7 +2089,7 @@ CLASS="PARAMETER"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.query_images</TT
+>picman.query_images</TT
 >()</DT
 ><DD
 ><P
@@ -2098,7 +2098,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.quit</TT
+>picman.quit</TT
 >()</DT
 ><DD
 ><P
@@ -2107,7 +2107,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.displays_flush</TT
+>picman.displays_flush</TT
 >()</DT
 ><DD
 ><P
@@ -2116,7 +2116,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.tile_width</TT
+>picman.tile_width</TT
 >()</DT
 ><DD
 ><P
@@ -2125,7 +2125,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.tile_height</TT
+>picman.tile_height</TT
 >()</DT
 ><DD
 ><P
@@ -2134,7 +2134,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.tile_cache_size</TT
+>picman.tile_cache_size</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -2148,7 +2148,7 @@ CLASS="PARAMETER"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.tile_cache_ntiles</TT
+>picman.tile_cache_ntiles</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -2162,7 +2162,7 @@ CLASS="PARAMETER"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.get_data</TT
+>picman.get_data</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -2179,14 +2179,14 @@ CLASS="PARAMETER"
 ></TT
 >.  The data will be a string.
             This function should probably be used through the <A
-HREF="#GIMPSHELF-MODULE"
+HREF="#PICMANSHELF-MODULE"
 >Section 6.4</A
 >.</P
 ></DD
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.set_data</TT
+>picman.set_data</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -2214,22 +2214,22 @@ CLASS="PARAMETER"
 >key</I
 ></TT
 >.  The data will persist for the
-            whole gimp session.  Rather than directly accessing this
+            whole picman session.  Rather than directly accessing this
             function, it is better to go through the <A
-HREF="#GIMPSHELF-MODULE"
+HREF="#PICMANSHELF-MODULE"
 >Section 6.4</A
 >.</P
 ></DD
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.extension_ack</TT
+>picman.extension_ack</TT
 >()</DT
 ><DD
 ><P
->Tells gimp that the plugin has finished its work,
+>Tells picman that the plugin has finished its work,
             while keeping the plugin connection open.  This is used by
-            an extension plugin to tell gimp it can continue, while
+            an extension plugin to tell picman it can continue, while
             leaving the plugin connection open.  This is what the
             script-fu plugin does so that only one scheme interpretter
             is needed.</P
@@ -2237,7 +2237,7 @@ CLASS="FUNCTION"
 ><DT
 ><TT
 CLASS="FUNCTION"
->gimp.extension_process</TT
+>picman.extension_process</TT
 >(<TT
 CLASS="PARAMETER"
 ><I
@@ -2246,9 +2246,9 @@ CLASS="PARAMETER"
 >)</DT
 ><DD
 ><P
->Makes the plugin check for messages from gimp.
+>Makes the plugin check for messages from picman.
             generally this is not needed, as messages are checked
-            during most calls in the gimp module.</P
+            during most calls in the picman module.</P
 ></DD
 ></DL
 ></DIV
@@ -2262,7 +2262,7 @@ NAME="PARASITES"
 ></A
 >4.7. Parasites</H3
 ><P
->In gimp &#62;= 1.1, it is possible to attach arbitrary data to
+>In picman &#62;= 1.1, it is possible to attach arbitrary data to
       an image through the use of parasites.  Parasites are simply
       wrappers for the data, containing its name and some flags.
       Parasites have the following parameters:</P
@@ -2321,7 +2321,7 @@ CLASS="FUNCTION"
       manipulate parasites.  They exist as functions in the
       <TT
 CLASS="FILENAME"
->gimp</TT
+>picman</TT
 > module, and methods for image and
       drawable objects.  They are:</P
 ><P
@@ -2404,11 +2404,11 @@ CLASS="SECT1"
 ><HR><H2
 CLASS="SECT1"
 ><A
-NAME="GIMP-OBJECTS"
+NAME="PICMAN-OBJECTS"
 ></A
->5. Gimp Objects</H2
+>5. Picman Objects</H2
 ><P
->Gimp-Python implements a number of special object types that
+>Picman-Python implements a number of special object types that
     represent the different types of parameters you can pass to a PDB
     procedure.  Rather than just making these place holders, I have
     added a number of members and methods to them that allow a lot of
@@ -3296,7 +3296,7 @@ NAME="CHANNEL-OBJECT"
 ></A
 >5.2. Channel Objects</H3
 ><P
->These objects represent a Gimp Image's colour channels.
+>These objects represent a Picman Image's colour channels.
       In this section, <TT
 CLASS="REPLACEABLE"
 ><I
@@ -3549,7 +3549,7 @@ NAME="LAYER-OBJECT"
 ></A
 >5.3. Layer Objects</H3
 ><P
->Layer objects represent the layers of a Gimp image.  In
+>Layer objects represent the layers of a Picman image.  In
       this section I will refer to a generic layer called
       <TT
 CLASS="REPLACEABLE"
@@ -4564,16 +4564,16 @@ NAME="TILE-OBJECT"
 ></A
 >5.5. Tile Objects</H3
 ><P
->Tile objects represent the way Gimp stores information.  A
+>Tile objects represent the way Picman stores information.  A
       tile is basically just a 64x64 pixel region of the drawable.
-      The reason Gimp breaks the image into small pieces like this is
+      The reason Picman breaks the image into small pieces like this is
       so that the whole image doesn't have to be loaded into memory in
       order to alter one part of it.  This becomes important with
       larger images.</P
 ><P
->In Gimp-Python, you would use Tiles if you wanted to
+>In Picman-Python, you would use Tiles if you wanted to
       perform some low level operation on the image, instead of using
-      procedures in the PDB.  This type of object gives a Gimp-Python
+      procedures in the PDB.  This type of object gives a Picman-Python
       plugin the power of a C plugin, rather than just the power of a
       Script-Fu script.  Tile objects are created with either the
       <TT
@@ -5269,7 +5269,7 @@ NAME="SUPPORT-MODULES"
 >This section describes the modules that help make using the
     <TT
 CLASS="FILENAME"
->gimp</TT
+>picman</TT
 > module easier.  These range from a set
     of constants to storing persistent data.</P
 ><DIV
@@ -5277,14 +5277,14 @@ CLASS="SECT2"
 ><HR><H3
 CLASS="SECT2"
 ><A
-NAME="GIMPENUMS-MODULE"
+NAME="PICMANENUMS-MODULE"
 ></A
->6.1. The gimpenums Module</H3
+>6.1. The picmanenums Module</H3
 ><P
 >This module contains all the constants found in the header
       <TT
 CLASS="FILENAME"
->libgimp/gimpenums.h</TT
+>libpicman/picmanenums.h</TT
 >, as well as some extra
       constants that are available in Script-Fu.</P
 ></DIV
@@ -5295,7 +5295,7 @@ CLASS="SECT2"
 ><A
 NAME="AEN1468"
 ></A
->6.2. The gimpfu Module</H3
+>6.2. The picmanfu Module</H3
 ><P
 >This module was fully described in an earlier section.  It
       provides an easy interface for writing plugins, where you do not
@@ -5307,35 +5307,35 @@ CLASS="SECT2"
 ><HR><H3
 CLASS="SECT2"
 ><A
-NAME="GIMPPLUGIN-MODULE"
+NAME="PICMANPLUGIN-MODULE"
 ></A
->6.3. The gimpplugin Module</H3
+>6.3. The picmanplugin Module</H3
 ><P
->This module provides the framework for writing Gimp
+>This module provides the framework for writing Picman
       plugins in Python.  It gives more flexibility for writing
-      plugins than the gimpfu module, but does not offer as many
+      plugins than the picmanfu module, but does not offer as many
       features (such as automatic GUI building).</P
 ><P
 >To use this framework you subclass
       <TT
 CLASS="FUNCTION"
->gimpplugin.plugin</TT
+>picmanplugin.plugin</TT
 > like so:</P
 ><PRE
 CLASS="PROGRAMLISTING"
->import gimpplugin
-class myplugin(gimpplugin.plugin):
+>import picmanplugin
+class myplugin(picmanplugin.plugin):
 	def init(self):
 		# initialisation routines
-		# called when gimp starts.
+		# called when picman starts.
 	def quit(self):
 		# clean up routines
-		# called when gimp exits (normally).
+		# called when picman exits (normally).
 	def query(self):
 		# called to find what functionality the plugin provides.
-		gimp.install_procedure("procname", ...)
+		picman.install_procedure("procname", ...)
 	# note that this method name matches the first arg of
-	# gimp.install_procedure
+	# picman.install_procedure
 	def procname(self, arg1, ...):
 		# do what ever this plugin should do</PRE
 ></DIV
@@ -5344,22 +5344,22 @@ CLASS="SECT2"
 ><HR><H3
 CLASS="SECT2"
 ><A
-NAME="GIMPSHELF-MODULE"
+NAME="PICMANSHELF-MODULE"
 ></A
->6.4. The gimpshelf Module</H3
+>6.4. The picmanshelf Module</H3
 ><P
 >This module gives a nicer interface to the persistent
-      storage interface for Gimp plugins.  Due to the complicated
+      storage interface for Picman plugins.  Due to the complicated
       nature of Python objects (there is often a lot of connections
       between them), it can be dificult to work out what to store in
-      gimp's persistent storage.  The python interface only allows
+      picman's persistent storage.  The python interface only allows
       storage of strings, so this module wraps pickle and unpickle to
       allow persistentstorage of any python object.</P
 ><P
 >Here is some examples of using this module:</P
 ><PRE
 CLASS="SCREEN"
->&#62;&#62;&#62; from gimpshelf import shelf
+>&#62;&#62;&#62; from picmanshelf import shelf
 &#62;&#62;&#62; shelf['james'] = ['forty-two', (42, 42L, 42.0)]
 &#62;&#62;&#62; shelf.has_key('james')
 1
@@ -5369,8 +5369,8 @@ CLASS="SCREEN"
 >Anything you store with
       <TT
 CLASS="FUNCTION"
->gimpshelf.shelf</TT
-> will exist until Gimp
+>picmanshelf.shelf</TT
+> will exist until Picman
       exits.  This makes this interface perfect for when a plugin is
       executed with the run mode
       <TT
@@ -5389,7 +5389,7 @@ NAME="END-NOTE"
 >7. End Note</H2
 ><P
 >This package is not yet complete, but it has enough in it to
-    be useful for writing plugins for Gimp.  If you write any plugins
+    be useful for writing plugins for Picman.  If you write any plugins
     that might be useful as examples, please mail me at <A
 HREF="mailto:james@daa.com.au"
 TARGET="_top"

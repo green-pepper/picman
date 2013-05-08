@@ -1,4 +1,4 @@
-/* parasitelist.h: Copyright 1998 Jay Cox <jaycox@gimp.org>
+/* parasitelist.h: Copyright 1998 Jay Cox <jaycox@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,56 +14,56 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PARASITE_LIST_H__
-#define __GIMP_PARASITE_LIST_H__
+#ifndef __PICMAN_PARASITE_LIST_H__
+#define __PICMAN_PARASITE_LIST_H__
 
 
-#include "gimpobject.h"
+#include "picmanobject.h"
 
 
-#define GIMP_TYPE_PARASITE_LIST            (gimp_parasite_list_get_type ())
-#define GIMP_PARASITE_LIST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PARASITE_LIST, GimpParasiteList))
-#define GIMP_PARASITE_LIST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PARASITE_LIST, GimpParasiteListClass))
-#define GIMP_IS_PARASITE_LIST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PARASITE_LIST))
-#define GIMP_IS_PARASITE_LIST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PARASITE_LIST))
-#define GIMP_PARASITE_LIST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PARASITE_LIST, GimpParasiteListClass))
+#define PICMAN_TYPE_PARASITE_LIST            (picman_parasite_list_get_type ())
+#define PICMAN_PARASITE_LIST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PARASITE_LIST, PicmanParasiteList))
+#define PICMAN_PARASITE_LIST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PARASITE_LIST, PicmanParasiteListClass))
+#define PICMAN_IS_PARASITE_LIST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PARASITE_LIST))
+#define PICMAN_IS_PARASITE_LIST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PARASITE_LIST))
+#define PICMAN_PARASITE_LIST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PARASITE_LIST, PicmanParasiteListClass))
 
 
-typedef struct _GimpParasiteListClass GimpParasiteListClass;
+typedef struct _PicmanParasiteListClass PicmanParasiteListClass;
 
-struct _GimpParasiteList
+struct _PicmanParasiteList
 {
-  GimpObject  object;
+  PicmanObject  object;
 
   GHashTable *table;
 };
 
-struct _GimpParasiteListClass
+struct _PicmanParasiteListClass
 {
-  GimpObjectClass parent_class;
+  PicmanObjectClass parent_class;
 
-  void (* add)    (GimpParasiteList *list,
-                   GimpParasite     *parasite);
-  void (* remove) (GimpParasiteList *list,
-                   GimpParasite     *parasite);
+  void (* add)    (PicmanParasiteList *list,
+                   PicmanParasite     *parasite);
+  void (* remove) (PicmanParasiteList *list,
+                   PicmanParasite     *parasite);
 };
 
 
-GType                gimp_parasite_list_get_type (void) G_GNUC_CONST;
+GType                picman_parasite_list_get_type (void) G_GNUC_CONST;
 
-GimpParasiteList   * gimp_parasite_list_new      (void);
-GimpParasiteList   * gimp_parasite_list_copy     (const GimpParasiteList *list);
-void                 gimp_parasite_list_add      (GimpParasiteList       *list,
-                                                  const GimpParasite     *parasite);
-void                 gimp_parasite_list_remove   (GimpParasiteList       *list,
+PicmanParasiteList   * picman_parasite_list_new      (void);
+PicmanParasiteList   * picman_parasite_list_copy     (const PicmanParasiteList *list);
+void                 picman_parasite_list_add      (PicmanParasiteList       *list,
+                                                  const PicmanParasite     *parasite);
+void                 picman_parasite_list_remove   (PicmanParasiteList       *list,
                                                   const gchar            *name);
-gint                 gimp_parasite_list_length   (GimpParasiteList       *list);
-gint                 gimp_parasite_list_persistent_length (GimpParasiteList *list);
-void                 gimp_parasite_list_foreach  (GimpParasiteList       *list,
+gint                 picman_parasite_list_length   (PicmanParasiteList       *list);
+gint                 picman_parasite_list_persistent_length (PicmanParasiteList *list);
+void                 picman_parasite_list_foreach  (PicmanParasiteList       *list,
                                                   GHFunc                  function,
                                                   gpointer                user_data);
-const GimpParasite * gimp_parasite_list_find     (GimpParasiteList       *list,
+const PicmanParasite * picman_parasite_list_find     (PicmanParasiteList       *list,
                                                   const gchar            *name);
 
 
-#endif  /*  __GIMP_PARASITE_LIST_H__  */
+#endif  /*  __PICMAN_PARASITE_LIST_H__  */

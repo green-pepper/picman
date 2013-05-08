@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpeditor.h
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * picmaneditor.h
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,78 +18,78 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_EDITOR_H__
-#define __GIMP_EDITOR_H__
+#ifndef __PICMAN_EDITOR_H__
+#define __PICMAN_EDITOR_H__
 
 
-#define GIMP_TYPE_EDITOR            (gimp_editor_get_type ())
-#define GIMP_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_EDITOR, GimpEditor))
-#define GIMP_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_EDITOR, GimpEditorClass))
-#define GIMP_IS_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_EDITOR))
-#define GIMP_IS_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_EDITOR))
-#define GIMP_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_EDITOR, GimpEditorClass))
+#define PICMAN_TYPE_EDITOR            (picman_editor_get_type ())
+#define PICMAN_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_EDITOR, PicmanEditor))
+#define PICMAN_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_EDITOR, PicmanEditorClass))
+#define PICMAN_IS_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_EDITOR))
+#define PICMAN_IS_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_EDITOR))
+#define PICMAN_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_EDITOR, PicmanEditorClass))
 
 
-typedef struct _GimpEditorClass    GimpEditorClass;
-typedef struct _GimpEditorPrivate  GimpEditorPrivate;
+typedef struct _PicmanEditorClass    PicmanEditorClass;
+typedef struct _PicmanEditorPrivate  PicmanEditorPrivate;
 
-struct _GimpEditor
+struct _PicmanEditor
 {
   GtkBox            parent_instance;
 
-  GimpEditorPrivate *priv;
+  PicmanEditorPrivate *priv;
 };
 
-struct _GimpEditorClass
+struct _PicmanEditorClass
 {
   GtkBoxClass  parent_class;
 };
 
 
-GType       gimp_editor_get_type          (void) G_GNUC_CONST;
+GType       picman_editor_get_type          (void) G_GNUC_CONST;
 
-GtkWidget * gimp_editor_new               (void);
+GtkWidget * picman_editor_new               (void);
 
-void        gimp_editor_create_menu       (GimpEditor           *editor,
-                                           GimpMenuFactory      *menu_factory,
+void        picman_editor_create_menu       (PicmanEditor           *editor,
+                                           PicmanMenuFactory      *menu_factory,
                                            const gchar          *menu_identifier,
                                            const gchar          *ui_path,
                                            gpointer              popup_data);
-gboolean    gimp_editor_popup_menu        (GimpEditor           *editor,
-                                           GimpMenuPositionFunc  position_func,
+gboolean    picman_editor_popup_menu        (PicmanEditor           *editor,
+                                           PicmanMenuPositionFunc  position_func,
                                            gpointer              position_data);
 
-GtkWidget * gimp_editor_add_button        (GimpEditor           *editor,
+GtkWidget * picman_editor_add_button        (PicmanEditor           *editor,
                                            const gchar          *stock_id,
                                            const gchar          *tooltip,
                                            const gchar          *help_id,
                                            GCallback             callback,
                                            GCallback             extended_callback,
                                            gpointer              callback_data);
-GtkWidget * gimp_editor_add_stock_box     (GimpEditor           *editor,
+GtkWidget * picman_editor_add_stock_box     (PicmanEditor           *editor,
                                            GType                 enum_type,
                                            const gchar          *stock_prefix,
                                            GCallback             callback,
                                            gpointer              callback_data);
 
-GtkWidget * gimp_editor_add_action_button (GimpEditor           *editor,
+GtkWidget * picman_editor_add_action_button (PicmanEditor           *editor,
                                            const gchar          *group_name,
                                            const gchar          *action_name,
                                            ...) G_GNUC_NULL_TERMINATED;
 
-void        gimp_editor_set_show_name       (GimpEditor         *editor,
+void        picman_editor_set_show_name       (PicmanEditor         *editor,
                                              gboolean            show);
-void        gimp_editor_set_name            (GimpEditor         *editor,
+void        picman_editor_set_name            (PicmanEditor         *editor,
                                              const gchar        *name);
 
-void        gimp_editor_set_box_style       (GimpEditor         *editor,
+void        picman_editor_set_box_style       (PicmanEditor         *editor,
                                              GtkBox             *box);
-GimpUIManager *
-            gimp_editor_get_ui_manager      (GimpEditor         *editor);
-GtkBox    * gimp_editor_get_button_box      (GimpEditor         *editor);
-GimpMenuFactory *
-            gimp_editor_get_menu_factory    (GimpEditor         *editor);
-gpointer *  gimp_editor_get_popup_data      (GimpEditor         *editor);
-gchar *     gimp_editor_get_ui_path         (GimpEditor         *editor);
+PicmanUIManager *
+            picman_editor_get_ui_manager      (PicmanEditor         *editor);
+GtkBox    * picman_editor_get_button_box      (PicmanEditor         *editor);
+PicmanMenuFactory *
+            picman_editor_get_menu_factory    (PicmanEditor         *editor);
+gpointer *  picman_editor_get_popup_data      (PicmanEditor         *editor);
+gchar *     picman_editor_get_ui_path         (PicmanEditor         *editor);
 
-#endif  /*  __GIMP_EDITOR_H__  */
+#endif  /*  __PICMAN_EDITOR_H__  */

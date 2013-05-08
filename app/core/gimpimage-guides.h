@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,46 +15,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_GUIDES_H__
-#define __GIMP_IMAGE_GUIDES_H__
+#ifndef __PICMAN_IMAGE_GUIDES_H__
+#define __PICMAN_IMAGE_GUIDES_H__
 
 
 /*  public guide adding API
  */
-GimpGuide * gimp_image_add_hguide     (GimpImage *image,
+PicmanGuide * picman_image_add_hguide     (PicmanImage *image,
                                        gint       position,
                                        gboolean   push_undo);
-GimpGuide * gimp_image_add_vguide     (GimpImage *image,
+PicmanGuide * picman_image_add_vguide     (PicmanImage *image,
                                        gint       position,
                                        gboolean   push_undo);
 
 /*  internal guide adding API, does not check the guide's position and
  *  is publically declared only to be used from undo
  */
-void        gimp_image_add_guide      (GimpImage *image,
-                                       GimpGuide *guide,
+void        picman_image_add_guide      (PicmanImage *image,
+                                       PicmanGuide *guide,
                                        gint       position);
 
-void        gimp_image_remove_guide   (GimpImage *image,
-                                       GimpGuide *guide,
+void        picman_image_remove_guide   (PicmanImage *image,
+                                       PicmanGuide *guide,
                                        gboolean   push_undo);
-void        gimp_image_move_guide     (GimpImage *image,
-                                       GimpGuide *guide,
+void        picman_image_move_guide     (PicmanImage *image,
+                                       PicmanGuide *guide,
                                        gint       position,
                                        gboolean   push_undo);
 
-GList     * gimp_image_get_guides     (GimpImage *image);
-GimpGuide * gimp_image_get_guide      (GimpImage *image,
+GList     * picman_image_get_guides     (PicmanImage *image);
+PicmanGuide * picman_image_get_guide      (PicmanImage *image,
                                        guint32    id);
-GimpGuide * gimp_image_get_next_guide (GimpImage *image,
+PicmanGuide * picman_image_get_next_guide (PicmanImage *image,
                                        guint32    id,
                                        gboolean  *guide_found);
 
-GimpGuide * gimp_image_find_guide     (GimpImage *image,
+PicmanGuide * picman_image_find_guide     (PicmanImage *image,
                                        gdouble    x,
                                        gdouble    y,
                                        gdouble    epsilon_x,
                                        gdouble    epsilon_y);
 
 
-#endif /* __GIMP_IMAGE_GUIDES_H__ */
+#endif /* __PICMAN_IMAGE_GUIDES_H__ */

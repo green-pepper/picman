@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolordisplay.c
- * Copyright (C) 1999 Manish Singh <yosh@gimp.org>
+ * picmancolordisplay.c
+ * Copyright (C) 1999 Manish Singh <yosh@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,36 +19,36 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_WIDGETS_H_INSIDE__) && !defined (GIMP_WIDGETS_COMPILATION)
-#error "Only <libgimpwidgets/gimpwidgets.h> can be included directly."
+#if !defined (__PICMAN_WIDGETS_H_INSIDE__) && !defined (PICMAN_WIDGETS_COMPILATION)
+#error "Only <libpicmanwidgets/picmanwidgets.h> can be included directly."
 #endif
 
-#ifndef __GIMP_COLOR_DISPLAY_H__
-#define __GIMP_COLOR_DISPLAY_H__
+#ifndef __PICMAN_COLOR_DISPLAY_H__
+#define __PICMAN_COLOR_DISPLAY_H__
 
 G_BEGIN_DECLS
 
 /* For information look at the html documentation */
 
 
-#define GIMP_TYPE_COLOR_DISPLAY            (gimp_color_display_get_type ())
-#define GIMP_COLOR_DISPLAY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_DISPLAY, GimpColorDisplay))
-#define GIMP_COLOR_DISPLAY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_DISPLAY, GimpColorDisplayClass))
-#define GIMP_IS_COLOR_DISPLAY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_DISPLAY))
-#define GIMP_IS_COLOR_DISPLAY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_DISPLAY))
-#define GIMP_COLOR_DISPLAY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_DISPLAY, GimpColorDisplayClass))
+#define PICMAN_TYPE_COLOR_DISPLAY            (picman_color_display_get_type ())
+#define PICMAN_COLOR_DISPLAY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_DISPLAY, PicmanColorDisplay))
+#define PICMAN_COLOR_DISPLAY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_DISPLAY, PicmanColorDisplayClass))
+#define PICMAN_IS_COLOR_DISPLAY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_DISPLAY))
+#define PICMAN_IS_COLOR_DISPLAY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_DISPLAY))
+#define PICMAN_COLOR_DISPLAY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_DISPLAY, PicmanColorDisplayClass))
 
 
-typedef struct _GimpColorDisplayClass GimpColorDisplayClass;
+typedef struct _PicmanColorDisplayClass PicmanColorDisplayClass;
 
-struct _GimpColorDisplay
+struct _PicmanColorDisplay
 {
   GObject  parent_instance;
 
   gboolean enabled;
 };
 
-struct _GimpColorDisplayClass
+struct _PicmanColorDisplayClass
 {
   GObjectClass  parent_class;
 
@@ -57,74 +57,74 @@ struct _GimpColorDisplayClass
 
   /*  virtual functions  */
 
-  /*  implementing the GimpColorDisplay::clone method is deprecated       */
-  GimpColorDisplay * (* clone)           (GimpColorDisplay *display);
+  /*  implementing the PicmanColorDisplay::clone method is deprecated       */
+  PicmanColorDisplay * (* clone)           (PicmanColorDisplay *display);
 
-  /*  implementing the GimpColorDisplay::convert method is deprecated     */
-  void               (* convert)         (GimpColorDisplay *display,
+  /*  implementing the PicmanColorDisplay::convert method is deprecated     */
+  void               (* convert)         (PicmanColorDisplay *display,
                                           guchar           *buf,
                                           gint              width,
                                           gint              height,
                                           gint              bpp,
                                           gint              bpl);
 
-  /*  implementing the GimpColorDisplay::load_state method is deprecated  */
-  void               (* load_state)      (GimpColorDisplay *display,
-                                          GimpParasite     *state);
+  /*  implementing the PicmanColorDisplay::load_state method is deprecated  */
+  void               (* load_state)      (PicmanColorDisplay *display,
+                                          PicmanParasite     *state);
 
-  /*  implementing the GimpColorDisplay::save_state method is deprecated  */
-  GimpParasite     * (* save_state)      (GimpColorDisplay *display);
+  /*  implementing the PicmanColorDisplay::save_state method is deprecated  */
+  PicmanParasite     * (* save_state)      (PicmanColorDisplay *display);
 
-  GtkWidget        * (* configure)       (GimpColorDisplay *display);
+  GtkWidget        * (* configure)       (PicmanColorDisplay *display);
 
-  /*  implementing the GimpColorDisplay::configure_reset method is deprecated */
-  void               (* configure_reset) (GimpColorDisplay *display);
+  /*  implementing the PicmanColorDisplay::configure_reset method is deprecated */
+  void               (* configure_reset) (PicmanColorDisplay *display);
 
   /*  signals  */
-  void               (* changed)         (GimpColorDisplay *display);
+  void               (* changed)         (PicmanColorDisplay *display);
 
   const gchar  *stock_id;
 
-  void               (* convert_surface) (GimpColorDisplay *display,
+  void               (* convert_surface) (PicmanColorDisplay *display,
                                           cairo_surface_t  *surface);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType              gimp_color_display_get_type    (void) G_GNUC_CONST;
+GType              picman_color_display_get_type    (void) G_GNUC_CONST;
 
-GIMP_DEPRECATED_FOR(g_object_new)
-GimpColorDisplay * gimp_color_display_new         (GType             display_type);
-GimpColorDisplay * gimp_color_display_clone       (GimpColorDisplay *display);
+PICMAN_DEPRECATED_FOR(g_object_new)
+PicmanColorDisplay * picman_color_display_new         (GType             display_type);
+PicmanColorDisplay * picman_color_display_clone       (PicmanColorDisplay *display);
 
-void           gimp_color_display_convert_surface (GimpColorDisplay *display,
+void           picman_color_display_convert_surface (PicmanColorDisplay *display,
                                                    cairo_surface_t  *surface);
-GIMP_DEPRECATED_FOR(gimp_color_display_convert_surface)
-void           gimp_color_display_convert         (GimpColorDisplay *display,
+PICMAN_DEPRECATED_FOR(picman_color_display_convert_surface)
+void           picman_color_display_convert         (PicmanColorDisplay *display,
                                                    guchar           *buf,
                                                    gint              width,
                                                    gint              height,
                                                    gint              bpp,
                                                    gint              bpl);
-void           gimp_color_display_load_state      (GimpColorDisplay *display,
-                                                   GimpParasite     *state);
-GimpParasite * gimp_color_display_save_state      (GimpColorDisplay *display);
-GtkWidget    * gimp_color_display_configure       (GimpColorDisplay *display);
-void           gimp_color_display_configure_reset (GimpColorDisplay *display);
+void           picman_color_display_load_state      (PicmanColorDisplay *display,
+                                                   PicmanParasite     *state);
+PicmanParasite * picman_color_display_save_state      (PicmanColorDisplay *display);
+GtkWidget    * picman_color_display_configure       (PicmanColorDisplay *display);
+void           picman_color_display_configure_reset (PicmanColorDisplay *display);
 
-void           gimp_color_display_changed         (GimpColorDisplay *display);
+void           picman_color_display_changed         (PicmanColorDisplay *display);
 
-void           gimp_color_display_set_enabled     (GimpColorDisplay *display,
+void           picman_color_display_set_enabled     (PicmanColorDisplay *display,
                                                    gboolean          enabled);
-gboolean       gimp_color_display_get_enabled     (GimpColorDisplay *display);
+gboolean       picman_color_display_get_enabled     (PicmanColorDisplay *display);
 
-GimpColorConfig  * gimp_color_display_get_config  (GimpColorDisplay *display);
-GimpColorManaged * gimp_color_display_get_managed (GimpColorDisplay *display);
+PicmanColorConfig  * picman_color_display_get_config  (PicmanColorDisplay *display);
+PicmanColorManaged * picman_color_display_get_managed (PicmanColorDisplay *display);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_COLOR_DISPLAY_H__ */
+#endif /* __PICMAN_COLOR_DISPLAY_H__ */

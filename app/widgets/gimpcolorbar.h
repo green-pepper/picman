@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,21 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COLOR_BAR_H__
-#define __GIMP_COLOR_BAR_H__
+#ifndef __PICMAN_COLOR_BAR_H__
+#define __PICMAN_COLOR_BAR_H__
 
 
-#define GIMP_TYPE_COLOR_BAR            (gimp_color_bar_get_type ())
-#define GIMP_COLOR_BAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_BAR, GimpColorBar))
-#define GIMP_COLOR_BAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_BAR, GimpColorBarClass))
-#define GIMP_IS_COLOR_BAR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_BAR))
-#define GIMP_IS_COLOR_BAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_BAR))
-#define GIMP_COLOR_BAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_BAR, GimpColorBarClass))
+#define PICMAN_TYPE_COLOR_BAR            (picman_color_bar_get_type ())
+#define PICMAN_COLOR_BAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_BAR, PicmanColorBar))
+#define PICMAN_COLOR_BAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_BAR, PicmanColorBarClass))
+#define PICMAN_IS_COLOR_BAR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_BAR))
+#define PICMAN_IS_COLOR_BAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_BAR))
+#define PICMAN_COLOR_BAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_BAR, PicmanColorBarClass))
 
 
-typedef struct _GimpColorBarClass  GimpColorBarClass;
+typedef struct _PicmanColorBarClass  PicmanColorBarClass;
 
-struct _GimpColorBar
+struct _PicmanColorBar
 {
   GtkEventBox     parent_class;
 
@@ -37,24 +37,24 @@ struct _GimpColorBar
   guchar          buf[3 * 256];
 };
 
-struct _GimpColorBarClass
+struct _PicmanColorBarClass
 {
   GtkEventBoxClass  parent_class;
 };
 
 
-GType       gimp_color_bar_get_type    (void) G_GNUC_CONST;
+GType       picman_color_bar_get_type    (void) G_GNUC_CONST;
 
-GtkWidget * gimp_color_bar_new         (GtkOrientation        orientation);
+GtkWidget * picman_color_bar_new         (GtkOrientation        orientation);
 
-void        gimp_color_bar_set_color   (GimpColorBar         *bar,
-                                        const GimpRGB        *color);
-void        gimp_color_bar_set_channel (GimpColorBar         *bar,
-                                        GimpHistogramChannel  channel);
-void        gimp_color_bar_set_buffers (GimpColorBar         *bar,
+void        picman_color_bar_set_color   (PicmanColorBar         *bar,
+                                        const PicmanRGB        *color);
+void        picman_color_bar_set_channel (PicmanColorBar         *bar,
+                                        PicmanHistogramChannel  channel);
+void        picman_color_bar_set_buffers (PicmanColorBar         *bar,
                                         const guchar         *red,
                                         const guchar         *green,
                                         const guchar         *blue);
 
 
-#endif  /*  __GIMP_COLOR_BAR_H__  */
+#endif  /*  __PICMAN_COLOR_BAR_H__  */

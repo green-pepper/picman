@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GIMP PSD Plug-in
+ * PICMAN PSD Plug-in
  * Copyright 2007 by John Marshall
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 #include <errno.h>
 
 #include <glib/gstdio.h>
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
 #include "psd.h"
 #include "psd-util.h"
@@ -32,7 +32,7 @@
 #include "psd-layer-res-load.h"
 #include "psd-load.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define COMP_MODE_SIZE sizeof(guint16)
@@ -59,7 +59,7 @@ static gint             read_merged_image_block    (PSDimage     *img_a,
                                                     FILE         *f,
                                                     GError      **error);
 
-static gint32           create_gimp_image          (PSDimage     *img_a,
+static gint32           create_picman_image          (PSDimage     *img_a,
                                                     const gchar  *filename);
 
 static gint             add_color_map              (const gint32  image_id,
@@ -84,9 +84,9 @@ static gint             add_merged_image           (const gint32  image_id,
 /*  Local utility function prototypes  */
 static gchar          * get_psd_color_mode_name    (PSDColorMode  mode);
 
-static void             psd_to_gimp_color_map      (guchar       *map256);
+static void             psd_to_picman_color_map      (guchar       *map256);
 
-static GimpImageType    get_gimp_image_type        (const GimpImageBaseType image_base_type,
+static PicmanImageType    get_picman_image_type        (const PicmanImageBaseType image_base_type,
                                                     const gboolean          alpha);
 
 static gint             read_channel_data          (PSDchannel     *channel,
@@ -122,87 +122,87 @@ load_image (const gchar  *filename,
   if (g_stat (filename, &st) == -1)
     return -1;
 
-  IFDBG(1) g_debug ("Open file %s", gimp_filename_to_utf8 (filename));
+  IFDBG(1) g_debug ("Open file %s", picman_filename_to_utf8 (filename));
   f = g_fopen (filename, "rb");
   if (f == NULL)
     {
       g_set_error (load_error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   /* ----- Read the PSD file Header block ----- */
   IFDBG(2) g_debug ("Read header block");
   if (read_header_block (&img_a, f, &error) < 0)
     goto load_error;
-  gimp_progress_update (0.1);
+  picman_progress_update (0.1);
 
   /* ----- Read the PSD file Colour Mode block ----- */
   IFDBG(2) g_debug ("Read colour mode block");
   if (read_color_mode_block (&img_a, f, &error) < 0)
     goto load_error;
-  gimp_progress_update (0.2);
+  picman_progress_update (0.2);
 
   /* ----- Read the PSD file Image Resource block ----- */
   IFDBG(2) g_debug ("Read image resource block");
   if (read_image_resource_block (&img_a, f, &error) < 0)
     goto load_error;
-  gimp_progress_update (0.3);
+  picman_progress_update (0.3);
 
   /* ----- Read the PSD file Layer & Mask block ----- */
   IFDBG(2) g_debug ("Read layer & mask block");
   lyr_a = read_layer_block (&img_a, f, &error);
   if (img_a.num_layers != 0 && lyr_a == NULL)
     goto load_error;
-  gimp_progress_update (0.4);
+  picman_progress_update (0.4);
 
   /* ----- Read the PSD file Merged Image Data block ----- */
   IFDBG(2) g_debug ("Read merged image and extra alpha channel block");
   if (read_merged_image_block (&img_a, f, &error) < 0)
     goto load_error;
-  gimp_progress_update (0.5);
+  picman_progress_update (0.5);
 
-  /* ----- Create GIMP image ----- */
-  IFDBG(2) g_debug ("Create GIMP image");
-  image_id = create_gimp_image (&img_a, filename);
+  /* ----- Create PICMAN image ----- */
+  IFDBG(2) g_debug ("Create PICMAN image");
+  image_id = create_picman_image (&img_a, filename);
   if (image_id < 0)
     goto load_error;
-  gimp_progress_update (0.6);
+  picman_progress_update (0.6);
 
   /* ----- Add colour map ----- */
   IFDBG(2) g_debug ("Add color map");
   if (add_color_map (image_id, &img_a) < 0)
     goto load_error;
-  gimp_progress_update (0.7);
+  picman_progress_update (0.7);
 
   /* ----- Add image resources ----- */
   IFDBG(2) g_debug ("Add image resources");
   if (add_image_resources (image_id, &img_a, f, &error) < 0)
     goto load_error;
-  gimp_progress_update (0.8);
+  picman_progress_update (0.8);
 
   /* ----- Add layers -----*/
   IFDBG(2) g_debug ("Add layers");
   if (add_layers (image_id, &img_a, lyr_a, f, &error) < 0)
     goto load_error;
-  gimp_progress_update (0.9);
+  picman_progress_update (0.9);
 
   /* ----- Add merged image data and extra alpha channels ----- */
   IFDBG(2) g_debug ("Add merged image data and extra alpha channels");
   if (add_merged_image (image_id, &img_a, f, &error) < 0)
     goto load_error;
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   IFDBG(2) g_debug ("Close file & return, image id: %d", image_id);
   IFDBG(1) g_debug ("\n----------------------------------------"
                     "----------------------------------------\n");
 
-  gimp_image_clean_all (image_id);
-  gimp_image_undo_enable (image_id);
+  picman_image_clean_all (image_id);
+  picman_image_undo_enable (image_id);
   fclose (f);
   return image_id;
 
@@ -217,7 +217,7 @@ load_image (const gchar  *filename,
 
   /* Delete partially loaded image */
   if (image_id > 0)
-    gimp_image_delete (image_id);
+    picman_image_delete (image_id);
 
   /* Close file if Open */
   if (! (f == NULL))
@@ -285,9 +285,9 @@ read_header_block (PSDimage  *img_a,
     }
 
     /* Photoshop CS (version 8) supports 300000 x 300000, but this
-       is currently larger than GIMP_MAX_IMAGE_SIZE */
+       is currently larger than PICMAN_MAX_IMAGE_SIZE */
 
-  if (img_a->rows < 1 || img_a->rows > GIMP_MAX_IMAGE_SIZE)
+  if (img_a->rows < 1 || img_a->rows > PICMAN_MAX_IMAGE_SIZE)
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                   _("Unsupported or invalid image height: %d"),
@@ -295,7 +295,7 @@ read_header_block (PSDimage  *img_a,
       return -1;
     }
 
-  if (img_a->columns < 1 || img_a->columns > GIMP_MAX_IMAGE_SIZE)
+  if (img_a->columns < 1 || img_a->columns > PICMAN_MAX_IMAGE_SIZE)
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                   _("Unsupported or invalid image width: %d"),
@@ -331,7 +331,7 @@ read_header_block (PSDimage  *img_a,
         IFDBG(3) g_debug ("16 Bit Data");
         if (CONVERSION_WARNINGS)
           g_message (_("Warning:\n"
-                       "The image you are loading has 16 bits per channel. GIMP "
+                       "The image you are loading has 16 bits per channel. PICMAN "
                        "can only handle 8 bit, so it will be converted for you. "
                        "Information will be lost because of this conversion."));
         break;
@@ -404,7 +404,7 @@ read_color_mode_block (PSDimage  *img_a,
             }
           else
             {
-              psd_to_gimp_color_map (img_a->color_map);
+              psd_to_picman_color_map (img_a->color_map);
               img_a->color_map_entries = 256;
             }
         }
@@ -556,7 +556,7 @@ read_layer_block (PSDimage  *img_a,
                   return NULL;
                 }
               if (lyr_a[lidx]->bottom < lyr_a[lidx]->top ||
-                  lyr_a[lidx]->bottom - lyr_a[lidx]->top > GIMP_MAX_IMAGE_SIZE)
+                  lyr_a[lidx]->bottom - lyr_a[lidx]->top > PICMAN_MAX_IMAGE_SIZE)
                 {
                   g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                               _("Unsupported or invalid layer height: %d"),
@@ -564,7 +564,7 @@ read_layer_block (PSDimage  *img_a,
                   return NULL;
                 }
               if (lyr_a[lidx]->right < lyr_a[lidx]->left ||
-                  lyr_a[lidx]->right - lyr_a[lidx]->left > GIMP_MAX_IMAGE_SIZE)
+                  lyr_a[lidx]->right - lyr_a[lidx]->left > PICMAN_MAX_IMAGE_SIZE)
                 {
                   g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                               _("Unsupported or invalid layer width: %d"),
@@ -757,7 +757,7 @@ read_layer_block (PSDimage  *img_a,
 
               /* sanity checks */
               if (lyr_a[lidx]->layer_mask.bottom < lyr_a[lidx]->layer_mask.top ||
-                  lyr_a[lidx]->layer_mask.bottom - lyr_a[lidx]->layer_mask.top > GIMP_MAX_IMAGE_SIZE)
+                  lyr_a[lidx]->layer_mask.bottom - lyr_a[lidx]->layer_mask.top > PICMAN_MAX_IMAGE_SIZE)
                 {
                   g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                                _("Unsupported or invalid layer mask height: %d"),
@@ -765,7 +765,7 @@ read_layer_block (PSDimage  *img_a,
                   return NULL;
                 }
               if (lyr_a[lidx]->layer_mask.right < lyr_a[lidx]->layer_mask.left ||
-                  lyr_a[lidx]->layer_mask.right - lyr_a[lidx]->layer_mask.left > GIMP_MAX_IMAGE_SIZE)
+                  lyr_a[lidx]->layer_mask.right - lyr_a[lidx]->layer_mask.left > PICMAN_MAX_IMAGE_SIZE)
                 {
                   g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                                _("Unsupported or invalid layer mask width: %d"),
@@ -896,7 +896,7 @@ read_merged_image_block (PSDimage  *img_a,
 }
 
 static gint32
-create_gimp_image (PSDimage    *img_a,
+create_picman_image (PSDimage    *img_a,
                    const gchar *filename)
 {
   gint32 image_id = -1;
@@ -905,16 +905,16 @@ create_gimp_image (PSDimage    *img_a,
     {
       case PSD_GRAYSCALE:
       case PSD_DUOTONE:
-        img_a->base_type = GIMP_GRAY;
+        img_a->base_type = PICMAN_GRAY;
         break;
 
       case PSD_BITMAP:
       case PSD_INDEXED:
-        img_a->base_type = GIMP_INDEXED;
+        img_a->base_type = PICMAN_INDEXED;
         break;
 
       case PSD_RGB:
-        img_a->base_type = GIMP_RGB;
+        img_a->base_type = PICMAN_RGB;
         break;
 
       default:
@@ -924,12 +924,12 @@ create_gimp_image (PSDimage    *img_a,
         break;
     }
 
-  /* Create gimp image */
+  /* Create picman image */
   IFDBG(2) g_debug ("Create image");
-  image_id = gimp_image_new (img_a->columns, img_a->rows, img_a->base_type);
+  image_id = picman_image_new (img_a->columns, img_a->rows, img_a->base_type);
 
-  gimp_image_set_filename (image_id, filename);
-  gimp_image_undo_disable (image_id);
+  picman_image_set_filename (image_id, filename);
+  picman_image_undo_disable (image_id);
 
   return image_id;
 }
@@ -938,23 +938,23 @@ static gint
 add_color_map (const gint32  image_id,
                PSDimage     *img_a)
 {
-  GimpParasite *parasite;
+  PicmanParasite *parasite;
 
   if (img_a->color_map_len)
     {
       if (img_a->color_mode != PSD_DUOTONE)
         {
-          gimp_image_set_colormap (image_id, img_a->color_map,
+          picman_image_set_colormap (image_id, img_a->color_map,
                                    img_a->color_map_entries);
         }
       else
         {
            /* Add parasite for Duotone color data */
           IFDBG(2) g_debug ("Add Duotone color data parasite");
-          parasite = gimp_parasite_new (PSD_PARASITE_DUOTONE_DATA, 0,
+          parasite = picman_parasite_new (PSD_PARASITE_DUOTONE_DATA, 0,
                                         img_a->color_map_len, img_a->color_map);
-          gimp_image_attach_parasite (image_id, parasite);
-          gimp_parasite_free (parasite);
+          picman_image_attach_parasite (image_id, parasite);
+          picman_parasite_free (parasite);
         }
       g_free (img_a->color_map);
     }
@@ -1041,10 +1041,10 @@ add_layers (const gint32  image_id,
   gboolean              user_mask;
   gboolean              empty;
   gboolean              empty_mask;
-  GimpDrawable         *drawable;
-  GimpPixelRgn          pixel_rgn;
-  GimpImageType         image_type;
-  GimpLayerModeEffects  layer_mode;
+  PicmanDrawable         *drawable;
+  PicmanPixelRgn          pixel_rgn;
+  PicmanImageType         image_type;
+  PicmanLayerModeEffects  layer_mode;
 
 
   IFDBG(2) g_debug ("Number of layers: %d", img_a->num_layers);
@@ -1094,7 +1094,7 @@ add_layers (const gint32  image_id,
                 {
                   /* the </Layer group> marker layers are used to
                      assemble the layer structure in a single pass */
-                  layer_id = gimp_layer_group_new (image_id);
+                  layer_id = picman_layer_group_new (image_id);
                 }
               else /* group-type == 1 || group_type == 2 */
                 {
@@ -1281,47 +1281,47 @@ add_layers (const gint32  image_id,
                 {
                   IFDBG(2) g_debug ("Create placeholder group layer");
                   g_free (lyr_a[lidx]->name);
-                  gimp_image_insert_layer (image_id, layer_id, parent_group_id, 0);
+                  picman_image_insert_layer (image_id, layer_id, parent_group_id, 0);
                   /* add this group layer as the new parent */
                   g_array_append_val (parent_group_stack, layer_id);
                 }
               else
                 {
                   IFDBG(2) g_debug ("End group layer id %d.", layer_id);
-                  drawable = gimp_drawable_get (layer_id);
-                  layer_mode = psd_to_gimp_blend_mode (lyr_a[lidx]->blend_mode);
-                  gimp_layer_set_mode (layer_id, layer_mode);
-                  gimp_layer_set_opacity (layer_id, 
+                  drawable = picman_drawable_get (layer_id);
+                  layer_mode = psd_to_picman_blend_mode (lyr_a[lidx]->blend_mode);
+                  picman_layer_set_mode (layer_id, layer_mode);
+                  picman_layer_set_opacity (layer_id, 
                                           lyr_a[lidx]->opacity * 100 / 255);
-                  gimp_item_set_name (drawable->drawable_id, lyr_a[lidx]->name);
+                  picman_item_set_name (drawable->drawable_id, lyr_a[lidx]->name);
                   g_free (lyr_a[lidx]->name);
-                  gimp_item_set_visible (drawable->drawable_id,
+                  picman_item_set_visible (drawable->drawable_id,
                                          lyr_a[lidx]->layer_flags.visible);
                   if (lyr_a[lidx]->id)
-                    gimp_item_set_tattoo (drawable->drawable_id,
+                    picman_item_set_tattoo (drawable->drawable_id,
                                           lyr_a[lidx]->id);
-                  gimp_drawable_flush (drawable);
-                  gimp_drawable_detach (drawable);
+                  picman_drawable_flush (drawable);
+                  picman_drawable_detach (drawable);
                 }
             }
           else if (empty)
             {
               IFDBG(2) g_debug ("Create blank layer");
-              image_type = get_gimp_image_type (img_a->base_type, TRUE);
-              layer_id = gimp_layer_new (image_id, lyr_a[lidx]->name,
+              image_type = get_picman_image_type (img_a->base_type, TRUE);
+              layer_id = picman_layer_new (image_id, lyr_a[lidx]->name,
                                          img_a->columns, img_a->rows,
-                                         image_type, 0, GIMP_NORMAL_MODE);
+                                         image_type, 0, PICMAN_NORMAL_MODE);
               g_free (lyr_a[lidx]->name);
-              gimp_image_insert_layer (image_id, layer_id, parent_group_id, -1);
-              drawable = gimp_drawable_get (layer_id);
-              gimp_drawable_fill (drawable->drawable_id, GIMP_TRANSPARENT_FILL);
-              gimp_item_set_visible (drawable->drawable_id, lyr_a[lidx]->layer_flags.visible);
+              picman_image_insert_layer (image_id, layer_id, parent_group_id, -1);
+              drawable = picman_drawable_get (layer_id);
+              picman_drawable_fill (drawable->drawable_id, PICMAN_TRANSPARENT_FILL);
+              picman_item_set_visible (drawable->drawable_id, lyr_a[lidx]->layer_flags.visible);
               if (lyr_a[lidx]->id)
-                gimp_item_set_tattoo (drawable->drawable_id, lyr_a[lidx]->id);
+                picman_item_set_tattoo (drawable->drawable_id, lyr_a[lidx]->id);
               if (lyr_a[lidx]->layer_flags.irrelevant)
-                gimp_item_set_visible (drawable->drawable_id, FALSE);
-              gimp_drawable_flush (drawable);
-              gimp_drawable_detach (drawable);
+                picman_item_set_visible (drawable->drawable_id, FALSE);
+              picman_drawable_flush (drawable);
+              picman_drawable_detach (drawable);
             }
           else
             {
@@ -1331,7 +1331,7 @@ add_layers (const gint32  image_id,
               l_h = lyr_a[lidx]->bottom - lyr_a[lidx]->top;
 
               IFDBG(3) g_debug ("Draw layer");
-              image_type = get_gimp_image_type (img_a->base_type, alpha);
+              image_type = get_picman_image_type (img_a->base_type, alpha);
               IFDBG(3) g_debug ("Layer type %d", image_type);
               layer_size = l_w * l_h;
               pixels = g_malloc (layer_size * layer_channels);
@@ -1343,25 +1343,25 @@ add_layers (const gint32  image_id,
                   g_free (lyr_chn[channel_idx[cidx]]->data);
                 }
 
-              layer_mode = psd_to_gimp_blend_mode (lyr_a[lidx]->blend_mode);
-              layer_id = gimp_layer_new (image_id, lyr_a[lidx]->name, l_w, l_h,
+              layer_mode = psd_to_picman_blend_mode (lyr_a[lidx]->blend_mode);
+              layer_id = picman_layer_new (image_id, lyr_a[lidx]->name, l_w, l_h,
                                          image_type, lyr_a[lidx]->opacity * 100 / 255,
                                          layer_mode);
               IFDBG(3) g_debug ("Layer tattoo: %d", layer_id);
               g_free (lyr_a[lidx]->name);
-              gimp_image_insert_layer (image_id, layer_id, parent_group_id, -1);
-              gimp_layer_set_offsets (layer_id, l_x, l_y);
-              gimp_layer_set_lock_alpha  (layer_id, lyr_a[lidx]->layer_flags.trans_prot);
-              drawable = gimp_drawable_get (layer_id);
-              gimp_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
+              picman_image_insert_layer (image_id, layer_id, parent_group_id, -1);
+              picman_layer_set_offsets (layer_id, l_x, l_y);
+              picman_layer_set_lock_alpha  (layer_id, lyr_a[lidx]->layer_flags.trans_prot);
+              drawable = picman_drawable_get (layer_id);
+              picman_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
                                    drawable->width, drawable->height, TRUE, FALSE);
-              gimp_pixel_rgn_set_rect (&pixel_rgn, pixels,
+              picman_pixel_rgn_set_rect (&pixel_rgn, pixels,
                                        0, 0, drawable->width, drawable->height);
-              gimp_item_set_visible (drawable->drawable_id, lyr_a[lidx]->layer_flags.visible);
+              picman_item_set_visible (drawable->drawable_id, lyr_a[lidx]->layer_flags.visible);
               if (lyr_a[lidx]->id)
-                gimp_item_set_tattoo (drawable->drawable_id, lyr_a[lidx]->id);
-              gimp_drawable_flush (drawable);
-              gimp_drawable_detach (drawable);
+                picman_item_set_tattoo (drawable->drawable_id, lyr_a[lidx]->id);
+              picman_drawable_flush (drawable);
+              picman_drawable_detach (drawable);
               g_free (pixels);
             }
 
@@ -1372,11 +1372,11 @@ add_layers (const gint32  image_id,
                 {
                   IFDBG(3) g_debug ("Create empty mask");
                   if (lyr_a[lidx]->layer_mask.def_color == 255)
-                    mask_id = gimp_layer_create_mask (layer_id, GIMP_ADD_WHITE_MASK);
+                    mask_id = picman_layer_create_mask (layer_id, PICMAN_ADD_WHITE_MASK);
                   else
-                    mask_id = gimp_layer_create_mask (layer_id, GIMP_ADD_BLACK_MASK);
-                  gimp_layer_add_mask (layer_id, mask_id);
-                  gimp_layer_set_apply_mask (layer_id,
+                    mask_id = picman_layer_create_mask (layer_id, PICMAN_ADD_BLACK_MASK);
+                  picman_layer_add_mask (layer_id, mask_id);
+                  picman_layer_set_apply_mask (layer_id,
                     ! lyr_a[lidx]->layer_mask.mask_flags.disabled);
                 }
               else
@@ -1453,19 +1453,19 @@ add_layers (const gint32  image_id,
                   IFDBG(3) g_debug ("Mask %d %d %d %d", lm_x, lm_y, lm_w, lm_h);
 
                   if (lyr_a[lidx]->layer_mask.def_color == 255)
-                    mask_id = gimp_layer_create_mask (layer_id, GIMP_ADD_WHITE_MASK);
+                    mask_id = picman_layer_create_mask (layer_id, PICMAN_ADD_WHITE_MASK);
                   else
-                    mask_id = gimp_layer_create_mask (layer_id, GIMP_ADD_BLACK_MASK);
+                    mask_id = picman_layer_create_mask (layer_id, PICMAN_ADD_BLACK_MASK);
 
                   IFDBG(3) g_debug ("New layer mask %d", mask_id);
-                  gimp_layer_add_mask (layer_id, mask_id);
-                  drawable = gimp_drawable_get (mask_id);
-                  gimp_pixel_rgn_init (&pixel_rgn, drawable, 0 , 0,
+                  picman_layer_add_mask (layer_id, mask_id);
+                  drawable = picman_drawable_get (mask_id);
+                  picman_pixel_rgn_init (&pixel_rgn, drawable, 0 , 0,
                                        drawable->width, drawable->height, TRUE, FALSE);
-                  gimp_pixel_rgn_set_rect (&pixel_rgn, pixels, lm_x, lm_y, lm_w, lm_h);
-                  gimp_drawable_flush (drawable);
-                  gimp_drawable_detach (drawable);
-                  gimp_layer_set_apply_mask (layer_id,
+                  picman_pixel_rgn_set_rect (&pixel_rgn, pixels, lm_x, lm_y, lm_w, lm_h);
+                  picman_drawable_flush (drawable);
+                  picman_drawable_detach (drawable);
+                  picman_layer_set_apply_mask (layer_id,
                     ! lyr_a[lidx]->layer_mask.mask_flags.disabled);
                   g_free (pixels);
                 }
@@ -1510,10 +1510,10 @@ add_merged_image (const gint32  image_id,
   gint                  offset;
   gint                  i;
   gboolean              alpha_visible;
-  GimpDrawable         *drawable;
-  GimpPixelRgn          pixel_rgn;
-  GimpImageType         image_type;
-  GimpRGB               alpha_rgb;
+  PicmanDrawable         *drawable;
+  PicmanPixelRgn          pixel_rgn;
+  PicmanImageType         image_type;
+  PicmanRGB               alpha_rgb;
 
   total_channels = img_a->channels;
   extra_channels = 0;
@@ -1619,7 +1619,7 @@ add_merged_image (const gint32  image_id,
   /* ----- Draw merged image ----- */
   if (img_a->num_layers == 0)            /* Merged image - Photoshop 2 style */
     {
-      image_type = get_gimp_image_type (img_a->base_type, img_a->transparency);
+      image_type = get_picman_image_type (img_a->base_type, img_a->transparency);
 
       layer_size = img_a->columns * img_a->rows;
       pixels = g_malloc (layer_size * base_channels);
@@ -1634,18 +1634,18 @@ add_merged_image (const gint32  image_id,
 
       /* Add background layer */
       IFDBG(2) g_debug ("Draw merged image");
-      layer_id = gimp_layer_new (image_id, _("Background"),
+      layer_id = picman_layer_new (image_id, _("Background"),
                                  img_a->columns, img_a->rows,
                                  image_type,
-                                 100, GIMP_NORMAL_MODE);
-      gimp_image_insert_layer (image_id, layer_id, -1, 0);
-      drawable = gimp_drawable_get (layer_id);
-      gimp_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
+                                 100, PICMAN_NORMAL_MODE);
+      picman_image_insert_layer (image_id, layer_id, -1, 0);
+      drawable = picman_drawable_get (layer_id);
+      picman_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
                            drawable->width, drawable->height, TRUE, FALSE);
-      gimp_pixel_rgn_set_rect (&pixel_rgn, pixels,
+      picman_pixel_rgn_set_rect (&pixel_rgn, pixels,
                                0, 0, drawable->width, drawable->height);
-      gimp_drawable_flush (drawable);
-      gimp_drawable_detach (drawable);
+      picman_drawable_flush (drawable);
+      picman_drawable_detach (drawable);
       g_free (pixels);
     }
   else
@@ -1695,7 +1695,7 @@ add_merged_image (const gint32  image_id,
                 alpha_name = g_ptr_array_index (img_a->alpha_names, i + offset);
                 if (alpha_name)
                   g_free (alpha_name);
-                alpha_name = g_strdup (GIMP_IMAGE_QUICK_MASK_NAME);
+                alpha_name = g_strdup (PICMAN_IMAGE_QUICK_MASK_NAME);
                 alpha_visible = TRUE;
               }
           if (! alpha_name && img_a->alpha_names)
@@ -1713,35 +1713,35 @@ add_merged_image (const gint32  image_id,
           if (offset < img_a->alpha_display_count &&
               i + offset <= img_a->alpha_display_count)
             {
-              alpha_rgb = img_a->alpha_display_info[i + offset]->gimp_color;
+              alpha_rgb = img_a->alpha_display_info[i + offset]->picman_color;
               alpha_opacity = img_a->alpha_display_info[i + offset]->opacity;
             }
           else
             {
-              gimp_rgba_set (&alpha_rgb, 1.0, 0.0, 0.0, 1.0);
+              picman_rgba_set (&alpha_rgb, 1.0, 0.0, 0.0, 1.0);
               alpha_opacity = 50;
             }
 
           cidx = base_channels + i;
           pixels = g_realloc (pixels, chn_a[cidx].columns * chn_a[cidx].rows);
           memcpy (pixels, chn_a[cidx].data, chn_a[cidx].columns * chn_a[cidx].rows);
-          channel_id = gimp_channel_new (image_id, alpha_name,
+          channel_id = picman_channel_new (image_id, alpha_name,
                                          chn_a[cidx].columns, chn_a[cidx].rows,
                                          alpha_opacity, &alpha_rgb);
-          gimp_image_insert_channel (image_id, channel_id, -1, 0);
+          picman_image_insert_channel (image_id, channel_id, -1, 0);
           g_free (alpha_name);
-          drawable = gimp_drawable_get (channel_id);
+          drawable = picman_drawable_get (channel_id);
           if (alpha_id)
-            gimp_item_set_tattoo (drawable->drawable_id, alpha_id);
-          gimp_item_set_visible (drawable->drawable_id, alpha_visible);
-          gimp_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
+            picman_item_set_tattoo (drawable->drawable_id, alpha_id);
+          picman_item_set_visible (drawable->drawable_id, alpha_visible);
+          picman_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
                                 drawable->width, drawable->height,
                                 TRUE, FALSE);
-          gimp_pixel_rgn_set_rect (&pixel_rgn, pixels,
+          picman_pixel_rgn_set_rect (&pixel_rgn, pixels,
                                    0, 0, drawable->width,
                                    drawable->height);
-          gimp_drawable_flush (drawable);
-          gimp_drawable_detach (drawable);
+          picman_drawable_flush (drawable);
+          picman_drawable_detach (drawable);
           g_free (chn_a[cidx].data);
         }
 
@@ -1761,15 +1761,15 @@ add_merged_image (const gint32  image_id,
     }
 
   /* Set active layer */
-  lyr_lst = gimp_image_get_layers (image_id, &lyr_count);
+  lyr_lst = picman_image_get_layers (image_id, &lyr_count);
   if (img_a->layer_state + 1 > lyr_count ||
       img_a->layer_state + 1 < 0)
     img_a->layer_state = 0;
   active_layer = lyr_lst[lyr_count - img_a->layer_state - 1];
-  gimp_image_set_active_layer (image_id, active_layer);
+  picman_image_set_active_layer (image_id, active_layer);
   g_free (lyr_lst);
 
-  /* FIXME gimp image tattoo state */
+  /* FIXME picman image tattoo state */
 
   return 0;
 }
@@ -1805,7 +1805,7 @@ get_psd_color_mode_name (PSDColorMode mode)
 }
 
 static void
-psd_to_gimp_color_map (guchar *map256)
+psd_to_picman_color_map (guchar *map256)
 {
   guchar *tmpmap;
   gint    i;
@@ -1823,24 +1823,24 @@ psd_to_gimp_color_map (guchar *map256)
   g_free (tmpmap);
 }
 
-static GimpImageType
-get_gimp_image_type (const GimpImageBaseType image_base_type,
+static PicmanImageType
+get_picman_image_type (const PicmanImageBaseType image_base_type,
                      const gboolean          alpha)
 {
-  GimpImageType image_type;
+  PicmanImageType image_type;
 
   switch (image_base_type)
     {
-      case GIMP_GRAY:
-        image_type = (alpha) ? GIMP_GRAYA_IMAGE : GIMP_GRAY_IMAGE;
+      case PICMAN_GRAY:
+        image_type = (alpha) ? PICMAN_GRAYA_IMAGE : PICMAN_GRAY_IMAGE;
         break;
 
-      case GIMP_INDEXED:
-        image_type = (alpha) ? GIMP_INDEXEDA_IMAGE : GIMP_INDEXED_IMAGE;
+      case PICMAN_INDEXED:
+        image_type = (alpha) ? PICMAN_INDEXEDA_IMAGE : PICMAN_INDEXED_IMAGE;
         break;
 
-      case GIMP_RGB:
-        image_type = (alpha) ? GIMP_RGBA_IMAGE : GIMP_RGB_IMAGE;
+      case PICMAN_RGB:
+        image_type = (alpha) ? PICMAN_RGBA_IMAGE : PICMAN_RGB_IMAGE;
         break;
 
       default:
@@ -1921,7 +1921,7 @@ read_channel_data (PSDchannel     *channel,
         break;
     }
 
-  /* Convert channel data to GIMP format */
+  /* Convert channel data to PICMAN format */
   switch (bps)
     {
       case 16:

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfiledialog.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanfiledialog.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,153 +25,153 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
+#include "core/picmanprogress.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
 #include "file/file-utils.h"
-#include "file/gimp-file.h"
+#include "file/picman-file.h"
 
-#include "pdb/gimppdb.h"
+#include "pdb/picmanpdb.h"
 
-#include "plug-in/gimppluginmanager.h"
-#include "plug-in/gimppluginprocedure.h"
+#include "plug-in/picmanpluginmanager.h"
+#include "plug-in/picmanpluginprocedure.h"
 
-#include "gimpfiledialog.h"
-#include "gimpfileprocview.h"
-#include "gimphelp-ids.h"
-#include "gimpprogressbox.h"
-#include "gimpview.h"
-#include "gimpviewrendererimagefile.h"
-#include "gimpthumbbox.h"
-#include "gimpwidgets-utils.h"
+#include "picmanfiledialog.h"
+#include "picmanfileprocview.h"
+#include "picmanhelp-ids.h"
+#include "picmanprogressbox.h"
+#include "picmanview.h"
+#include "picmanviewrendererimagefile.h"
+#include "picmanthumbbox.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  an arbitrary limit to keep the file dialog from becoming too wide  */
 #define MAX_EXTENSIONS  4
 
 
-struct _GimpFileDialogState
+struct _PicmanFileDialogState
 {
   gchar *filter_name;
 };
 
 
-static void     gimp_file_dialog_progress_iface_init    (GimpProgressInterface *iface);
+static void     picman_file_dialog_progress_iface_init    (PicmanProgressInterface *iface);
 
-static void     gimp_file_dialog_dispose                (GObject          *object);
+static void     picman_file_dialog_dispose                (GObject          *object);
 
-static gboolean gimp_file_dialog_delete_event           (GtkWidget        *widget,
+static gboolean picman_file_dialog_delete_event           (GtkWidget        *widget,
                                                          GdkEventAny      *event);
-static void     gimp_file_dialog_response               (GtkDialog        *dialog,
+static void     picman_file_dialog_response               (GtkDialog        *dialog,
                                                          gint              response_id);
-static GimpProgress *
-                gimp_file_dialog_progress_start         (GimpProgress     *progress,
+static PicmanProgress *
+                picman_file_dialog_progress_start         (PicmanProgress     *progress,
                                                          const gchar      *message,
                                                          gboolean          cancelable);
-static void     gimp_file_dialog_progress_end           (GimpProgress     *progress);
-static gboolean gimp_file_dialog_progress_is_active     (GimpProgress     *progress);
-static void     gimp_file_dialog_progress_set_text      (GimpProgress     *progress,
+static void     picman_file_dialog_progress_end           (PicmanProgress     *progress);
+static gboolean picman_file_dialog_progress_is_active     (PicmanProgress     *progress);
+static void     picman_file_dialog_progress_set_text      (PicmanProgress     *progress,
                                                          const gchar      *message);
-static void     gimp_file_dialog_progress_set_value     (GimpProgress     *progress,
+static void     picman_file_dialog_progress_set_value     (PicmanProgress     *progress,
                                                          gdouble           percentage);
-static gdouble  gimp_file_dialog_progress_get_value     (GimpProgress     *progress);
-static void     gimp_file_dialog_progress_pulse         (GimpProgress     *progress);
-static guint32  gimp_file_dialog_progress_get_window_id (GimpProgress     *progress);
+static gdouble  picman_file_dialog_progress_get_value     (PicmanProgress     *progress);
+static void     picman_file_dialog_progress_pulse         (PicmanProgress     *progress);
+static guint32  picman_file_dialog_progress_get_window_id (PicmanProgress     *progress);
 
-static void     gimp_file_dialog_add_user_dir           (GimpFileDialog   *dialog,
+static void     picman_file_dialog_add_user_dir           (PicmanFileDialog   *dialog,
                                                          GUserDirectory    directory);
-static void     gimp_file_dialog_add_preview            (GimpFileDialog   *dialog,
-                                                         Gimp             *gimp);
-static void     gimp_file_dialog_add_filters            (GimpFileDialog   *dialog,
-                                                         Gimp             *gimp,
-                                                         GimpFileChooserAction
+static void     picman_file_dialog_add_preview            (PicmanFileDialog   *dialog,
+                                                         Picman             *picman);
+static void     picman_file_dialog_add_filters            (PicmanFileDialog   *dialog,
+                                                         Picman             *picman,
+                                                         PicmanFileChooserAction
                                                                            action,
                                                          GSList           *file_procs,
                                                          GSList           *file_procs_all_images);
-static void     gimp_file_dialog_process_procedure      (GimpPlugInProcedure
+static void     picman_file_dialog_process_procedure      (PicmanPlugInProcedure
                                                                           *file_proc,
                                                          GtkFileFilter   **filter_out,
                                                          GtkFileFilter    *all,
                                                          GtkFileFilter    *all_savable);
-static void     gimp_file_dialog_add_proc_selection     (GimpFileDialog   *dialog,
-                                                         Gimp             *gimp,
+static void     picman_file_dialog_add_proc_selection     (PicmanFileDialog   *dialog,
+                                                         Picman             *picman,
                                                          GSList           *file_procs,
                                                          const gchar      *automatic,
                                                          const gchar      *automatic_help_id);
 
-static void     gimp_file_dialog_selection_changed      (GtkFileChooser   *chooser,
-                                                         GimpFileDialog   *dialog);
-static void     gimp_file_dialog_update_preview         (GtkFileChooser   *chooser,
-                                                         GimpFileDialog   *dialog);
+static void     picman_file_dialog_selection_changed      (GtkFileChooser   *chooser,
+                                                         PicmanFileDialog   *dialog);
+static void     picman_file_dialog_update_preview         (GtkFileChooser   *chooser,
+                                                         PicmanFileDialog   *dialog);
 
-static void     gimp_file_dialog_proc_changed           (GimpFileProcView *view,
-                                                         GimpFileDialog   *dialog);
+static void     picman_file_dialog_proc_changed           (PicmanFileProcView *view,
+                                                         PicmanFileDialog   *dialog);
 
-static void     gimp_file_dialog_help_func              (const gchar      *help_id,
+static void     picman_file_dialog_help_func              (const gchar      *help_id,
                                                          gpointer          help_data);
-static void     gimp_file_dialog_help_clicked           (GtkWidget        *widget,
+static void     picman_file_dialog_help_clicked           (GtkWidget        *widget,
                                                          gpointer          dialog);
 
-static gchar  * gimp_file_dialog_pattern_from_extension (const gchar   *extension);
-static gchar  * gimp_file_dialog_get_default_uri        (Gimp          *gimp);
-static gchar  * gimp_file_dialog_get_dirname_from_uri   (const gchar   *uri);
+static gchar  * picman_file_dialog_pattern_from_extension (const gchar   *extension);
+static gchar  * picman_file_dialog_get_default_uri        (Picman          *picman);
+static gchar  * picman_file_dialog_get_dirname_from_uri   (const gchar   *uri);
 
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpFileDialog, gimp_file_dialog,
+G_DEFINE_TYPE_WITH_CODE (PicmanFileDialog, picman_file_dialog,
                          GTK_TYPE_FILE_CHOOSER_DIALOG,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PROGRESS,
-                                                gimp_file_dialog_progress_iface_init))
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PROGRESS,
+                                                picman_file_dialog_progress_iface_init))
 
-#define parent_class gimp_file_dialog_parent_class
+#define parent_class picman_file_dialog_parent_class
 
 
 static void
-gimp_file_dialog_class_init (GimpFileDialogClass *klass)
+picman_file_dialog_class_init (PicmanFileDialogClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   GtkDialogClass *dialog_class = GTK_DIALOG_CLASS (klass);
 
-  object_class->dispose      = gimp_file_dialog_dispose;
+  object_class->dispose      = picman_file_dialog_dispose;
 
-  widget_class->delete_event = gimp_file_dialog_delete_event;
+  widget_class->delete_event = picman_file_dialog_delete_event;
 
-  dialog_class->response     = gimp_file_dialog_response;
+  dialog_class->response     = picman_file_dialog_response;
 }
 
 static void
-gimp_file_dialog_init (GimpFileDialog *dialog)
+picman_file_dialog_init (PicmanFileDialog *dialog)
 {
 }
 
 static void
-gimp_file_dialog_progress_iface_init (GimpProgressInterface *iface)
+picman_file_dialog_progress_iface_init (PicmanProgressInterface *iface)
 {
-  iface->start         = gimp_file_dialog_progress_start;
-  iface->end           = gimp_file_dialog_progress_end;
-  iface->is_active     = gimp_file_dialog_progress_is_active;
-  iface->set_text      = gimp_file_dialog_progress_set_text;
-  iface->set_value     = gimp_file_dialog_progress_set_value;
-  iface->get_value     = gimp_file_dialog_progress_get_value;
-  iface->pulse         = gimp_file_dialog_progress_pulse;
-  iface->get_window_id = gimp_file_dialog_progress_get_window_id;
+  iface->start         = picman_file_dialog_progress_start;
+  iface->end           = picman_file_dialog_progress_end;
+  iface->is_active     = picman_file_dialog_progress_is_active;
+  iface->set_text      = picman_file_dialog_progress_set_text;
+  iface->set_value     = picman_file_dialog_progress_set_value;
+  iface->get_value     = picman_file_dialog_progress_get_value;
+  iface->pulse         = picman_file_dialog_progress_pulse;
+  iface->get_window_id = picman_file_dialog_progress_get_window_id;
 }
 
 static void
-gimp_file_dialog_dispose (GObject *object)
+picman_file_dialog_dispose (GObject *object)
 {
-  GimpFileDialog *dialog = GIMP_FILE_DIALOG (object);
+  PicmanFileDialog *dialog = PICMAN_FILE_DIALOG (object);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 
@@ -179,42 +179,42 @@ gimp_file_dialog_dispose (GObject *object)
 }
 
 static gboolean
-gimp_file_dialog_delete_event (GtkWidget   *widget,
+picman_file_dialog_delete_event (GtkWidget   *widget,
                                GdkEventAny *event)
 {
   return TRUE;
 }
 
 static void
-gimp_file_dialog_response (GtkDialog *dialog,
+picman_file_dialog_response (GtkDialog *dialog,
                            gint       response_id)
 {
-  GimpFileDialog *file_dialog = GIMP_FILE_DIALOG (dialog);
+  PicmanFileDialog *file_dialog = PICMAN_FILE_DIALOG (dialog);
 
   if (response_id != GTK_RESPONSE_OK && file_dialog->busy)
     {
       file_dialog->canceled = TRUE;
 
       if (file_dialog->progress                             &&
-          GIMP_PROGRESS_BOX (file_dialog->progress)->active &&
-          GIMP_PROGRESS_BOX (file_dialog->progress)->cancelable)
+          PICMAN_PROGRESS_BOX (file_dialog->progress)->active &&
+          PICMAN_PROGRESS_BOX (file_dialog->progress)->cancelable)
         {
-          gimp_progress_cancel (GIMP_PROGRESS (dialog));
+          picman_progress_cancel (PICMAN_PROGRESS (dialog));
         }
     }
 }
 
-static GimpProgress *
-gimp_file_dialog_progress_start (GimpProgress *progress,
+static PicmanProgress *
+picman_file_dialog_progress_start (PicmanProgress *progress,
                                  const gchar  *message,
                                  gboolean      cancelable)
 {
-  GimpFileDialog *dialog = GIMP_FILE_DIALOG (progress);
-  GimpProgress   *retval = NULL;
+  PicmanFileDialog *dialog = PICMAN_FILE_DIALOG (progress);
+  PicmanProgress   *retval = NULL;
 
   if (dialog->progress)
     {
-      retval = gimp_progress_start (GIMP_PROGRESS (dialog->progress),
+      retval = picman_progress_start (PICMAN_PROGRESS (dialog->progress),
                                     message, cancelable);
       gtk_widget_show (dialog->progress);
 
@@ -226,88 +226,88 @@ gimp_file_dialog_progress_start (GimpProgress *progress,
 }
 
 static void
-gimp_file_dialog_progress_end (GimpProgress *progress)
+picman_file_dialog_progress_end (PicmanProgress *progress)
 {
-  GimpFileDialog *dialog = GIMP_FILE_DIALOG (progress);
+  PicmanFileDialog *dialog = PICMAN_FILE_DIALOG (progress);
 
   if (dialog->progress)
     {
-      gimp_progress_end (GIMP_PROGRESS (dialog->progress));
+      picman_progress_end (PICMAN_PROGRESS (dialog->progress));
       gtk_widget_hide (dialog->progress);
     }
 }
 
 static gboolean
-gimp_file_dialog_progress_is_active (GimpProgress *progress)
+picman_file_dialog_progress_is_active (PicmanProgress *progress)
 {
-  GimpFileDialog *dialog = GIMP_FILE_DIALOG (progress);
+  PicmanFileDialog *dialog = PICMAN_FILE_DIALOG (progress);
 
   if (dialog->progress)
-    return gimp_progress_is_active (GIMP_PROGRESS (dialog->progress));
+    return picman_progress_is_active (PICMAN_PROGRESS (dialog->progress));
 
   return FALSE;
 }
 
 static void
-gimp_file_dialog_progress_set_text (GimpProgress *progress,
+picman_file_dialog_progress_set_text (PicmanProgress *progress,
                                     const gchar  *message)
 {
-  GimpFileDialog *dialog = GIMP_FILE_DIALOG (progress);
+  PicmanFileDialog *dialog = PICMAN_FILE_DIALOG (progress);
 
   if (dialog->progress)
-    gimp_progress_set_text (GIMP_PROGRESS (dialog->progress), message);
+    picman_progress_set_text (PICMAN_PROGRESS (dialog->progress), message);
 }
 
 static void
-gimp_file_dialog_progress_set_value (GimpProgress *progress,
+picman_file_dialog_progress_set_value (PicmanProgress *progress,
                                      gdouble       percentage)
 {
-  GimpFileDialog *dialog = GIMP_FILE_DIALOG (progress);
+  PicmanFileDialog *dialog = PICMAN_FILE_DIALOG (progress);
 
   if (dialog->progress)
-    gimp_progress_set_value (GIMP_PROGRESS (dialog->progress), percentage);
+    picman_progress_set_value (PICMAN_PROGRESS (dialog->progress), percentage);
 }
 
 static gdouble
-gimp_file_dialog_progress_get_value (GimpProgress *progress)
+picman_file_dialog_progress_get_value (PicmanProgress *progress)
 {
-  GimpFileDialog *dialog = GIMP_FILE_DIALOG (progress);
+  PicmanFileDialog *dialog = PICMAN_FILE_DIALOG (progress);
 
   if (dialog->progress)
-    return gimp_progress_get_value (GIMP_PROGRESS (dialog->progress));
+    return picman_progress_get_value (PICMAN_PROGRESS (dialog->progress));
 
   return 0.0;
 }
 
 static void
-gimp_file_dialog_progress_pulse (GimpProgress *progress)
+picman_file_dialog_progress_pulse (PicmanProgress *progress)
 {
-  GimpFileDialog *dialog = GIMP_FILE_DIALOG (progress);
+  PicmanFileDialog *dialog = PICMAN_FILE_DIALOG (progress);
 
   if (dialog->progress)
-    gimp_progress_pulse (GIMP_PROGRESS (dialog->progress));
+    picman_progress_pulse (PICMAN_PROGRESS (dialog->progress));
 }
 
 static guint32
-gimp_file_dialog_progress_get_window_id (GimpProgress *progress)
+picman_file_dialog_progress_get_window_id (PicmanProgress *progress)
 {
-  GimpFileDialog *dialog = GIMP_FILE_DIALOG (progress);
+  PicmanFileDialog *dialog = PICMAN_FILE_DIALOG (progress);
 
-  return gimp_window_get_native_id (GTK_WINDOW (dialog));
+  return picman_window_get_native_id (GTK_WINDOW (dialog));
 }
 
 
 /*  public functions  */
 
 GtkWidget *
-gimp_file_dialog_new (Gimp                  *gimp,
-                      GimpFileChooserAction  action,
+picman_file_dialog_new (Picman                  *picman,
+                      PicmanFileChooserAction  action,
                       const gchar           *title,
                       const gchar           *role,
                       const gchar           *stock_id,
                       const gchar           *help_id)
 {
-  GimpFileDialog       *dialog                = NULL;
+  PicmanFileDialog       *dialog                = NULL;
   GSList               *file_procs            = NULL;
   GSList               *file_procs_all_images = NULL;
   const gchar          *automatic             = NULL;
@@ -315,7 +315,7 @@ gimp_file_dialog_new (Gimp                  *gimp,
   gboolean              local_only            = FALSE;
   GtkFileChooserAction  gtk_action            = 0;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (title != NULL, NULL);
   g_return_val_if_fail (role != NULL, NULL);
   g_return_val_if_fail (stock_id != NULL, NULL);
@@ -323,32 +323,32 @@ gimp_file_dialog_new (Gimp                  *gimp,
 
   switch (action)
     {
-    case GIMP_FILE_CHOOSER_ACTION_OPEN:
+    case PICMAN_FILE_CHOOSER_ACTION_OPEN:
       gtk_action            = GTK_FILE_CHOOSER_ACTION_OPEN;
-      file_procs            = gimp->plug_in_manager->load_procs;
+      file_procs            = picman->plug_in_manager->load_procs;
       file_procs_all_images = NULL;
       automatic             = _("Automatically Detected");
-      automatic_help_id     = GIMP_HELP_FILE_OPEN_BY_EXTENSION;
+      automatic_help_id     = PICMAN_HELP_FILE_OPEN_BY_EXTENSION;
 
       /* FIXME */
-      local_only = (gimp_pdb_lookup_procedure (gimp->pdb,
+      local_only = (picman_pdb_lookup_procedure (picman->pdb,
                                                "file-uri-load") == NULL);
       break;
 
-    case GIMP_FILE_CHOOSER_ACTION_SAVE:
-    case GIMP_FILE_CHOOSER_ACTION_EXPORT:
+    case PICMAN_FILE_CHOOSER_ACTION_SAVE:
+    case PICMAN_FILE_CHOOSER_ACTION_EXPORT:
       gtk_action            = GTK_FILE_CHOOSER_ACTION_SAVE;
-      file_procs            = (action == GIMP_FILE_CHOOSER_ACTION_SAVE ?
-                               gimp->plug_in_manager->save_procs :
-                               gimp->plug_in_manager->export_procs);
-      file_procs_all_images = (action == GIMP_FILE_CHOOSER_ACTION_SAVE ?
-                               gimp->plug_in_manager->export_procs :
-                               gimp->plug_in_manager->save_procs);
+      file_procs            = (action == PICMAN_FILE_CHOOSER_ACTION_SAVE ?
+                               picman->plug_in_manager->save_procs :
+                               picman->plug_in_manager->export_procs);
+      file_procs_all_images = (action == PICMAN_FILE_CHOOSER_ACTION_SAVE ?
+                               picman->plug_in_manager->export_procs :
+                               picman->plug_in_manager->save_procs);
       automatic             = _("By Extension");
-      automatic_help_id     = GIMP_HELP_FILE_SAVE_BY_EXTENSION;
+      automatic_help_id     = PICMAN_HELP_FILE_SAVE_BY_EXTENSION;
 
       /* FIXME */
-      local_only = (gimp_pdb_lookup_procedure (gimp->pdb,
+      local_only = (picman_pdb_lookup_procedure (picman->pdb,
                                                "file-uri-save") == NULL);
       break;
 
@@ -357,7 +357,7 @@ gimp_file_dialog_new (Gimp                  *gimp,
       return NULL;
     }
 
-  dialog = g_object_new (GIMP_TYPE_FILE_DIALOG,
+  dialog = g_object_new (PICMAN_TYPE_FILE_DIALOG,
                          "title",                     title,
                          "role",                      role,
                          "action",                    gtk_action,
@@ -376,10 +376,10 @@ gimp_file_dialog_new (Gimp                  *gimp,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_help_connect (GTK_WIDGET (dialog),
-                     gimp_file_dialog_help_func, help_id, dialog);
+  picman_help_connect (GTK_WIDGET (dialog),
+                     picman_file_dialog_help_func, help_id, dialog);
 
-  if (GIMP_GUI_CONFIG (gimp->config)->show_help_button && help_id)
+  if (PICMAN_GUI_CONFIG (picman->config)->show_help_button && help_id)
     {
       GtkWidget *action_area = gtk_dialog_get_action_area (GTK_DIALOG (dialog));
       GtkWidget *button      = gtk_button_new_from_stock (GTK_STOCK_HELP);
@@ -389,30 +389,30 @@ gimp_file_dialog_new (Gimp                  *gimp,
                                           button, TRUE);
       gtk_widget_show (button);
 
-      g_object_set_data_full (G_OBJECT (dialog), "gimp-dialog-help-id",
+      g_object_set_data_full (G_OBJECT (dialog), "picman-dialog-help-id",
                               g_strdup (help_id),
                               (GDestroyNotify) g_free);
 
       g_signal_connect (button, "clicked",
-                        G_CALLBACK (gimp_file_dialog_help_clicked),
+                        G_CALLBACK (picman_file_dialog_help_clicked),
                         dialog);
 
-      g_object_set_data (G_OBJECT (dialog), "gimp-dialog-help-button", button);
+      g_object_set_data (G_OBJECT (dialog), "picman-dialog-help-button", button);
     }
 
-  gimp_file_dialog_add_user_dir (dialog, G_USER_DIRECTORY_PICTURES);
-  gimp_file_dialog_add_user_dir (dialog, G_USER_DIRECTORY_DOCUMENTS);
+  picman_file_dialog_add_user_dir (dialog, G_USER_DIRECTORY_PICTURES);
+  picman_file_dialog_add_user_dir (dialog, G_USER_DIRECTORY_DOCUMENTS);
 
-  gimp_file_dialog_add_preview (dialog, gimp);
+  picman_file_dialog_add_preview (dialog, picman);
 
-  gimp_file_dialog_add_filters (dialog, gimp, action,
+  picman_file_dialog_add_filters (dialog, picman, action,
                                 file_procs,
                                 file_procs_all_images);
 
-  gimp_file_dialog_add_proc_selection (dialog, gimp, file_procs, automatic,
+  picman_file_dialog_add_proc_selection (dialog, picman, file_procs, automatic,
                                        automatic_help_id);
 
-  dialog->progress = gimp_progress_box_new ();
+  dialog->progress = picman_progress_box_new ();
   gtk_box_pack_end (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))),
                     dialog->progress, FALSE, FALSE, 0);
 
@@ -420,14 +420,14 @@ gimp_file_dialog_new (Gimp                  *gimp,
 }
 
 void
-gimp_file_dialog_set_sensitive (GimpFileDialog *dialog,
+picman_file_dialog_set_sensitive (PicmanFileDialog *dialog,
                                 gboolean        sensitive)
 {
   GtkWidget *content_area;
   GList     *children;
   GList     *list;
 
-  g_return_if_fail (GIMP_IS_FILE_DIALOG (dialog));
+  g_return_if_fail (PICMAN_IS_FILE_DIALOG (dialog));
 
   /*  bail out if we are already destroyed  */
   if (! dialog->progress)
@@ -458,36 +458,36 @@ gimp_file_dialog_set_sensitive (GimpFileDialog *dialog,
 }
 
 void
-gimp_file_dialog_set_file_proc (GimpFileDialog      *dialog,
-                                GimpPlugInProcedure *file_proc)
+picman_file_dialog_set_file_proc (PicmanFileDialog      *dialog,
+                                PicmanPlugInProcedure *file_proc)
 {
-  g_return_if_fail (GIMP_IS_FILE_DIALOG (dialog));
+  g_return_if_fail (PICMAN_IS_FILE_DIALOG (dialog));
 
   if (file_proc != dialog->file_proc)
-    gimp_file_proc_view_set_proc (GIMP_FILE_PROC_VIEW (dialog->proc_view),
+    picman_file_proc_view_set_proc (PICMAN_FILE_PROC_VIEW (dialog->proc_view),
                                   file_proc);
 }
 
 void
-gimp_file_dialog_set_open_image (GimpFileDialog *dialog,
-                                 GimpImage      *image,
+picman_file_dialog_set_open_image (PicmanFileDialog *dialog,
+                                 PicmanImage      *image,
                                  gboolean        open_as_layers)
 {
-  g_return_if_fail (GIMP_IS_FILE_DIALOG (dialog));
-  g_return_if_fail (image == NULL || GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_FILE_DIALOG (dialog));
+  g_return_if_fail (image == NULL || PICMAN_IS_IMAGE (image));
 
   dialog->image          = image;
   dialog->open_as_layers = open_as_layers;
 }
 
 void
-gimp_file_dialog_set_save_image (GimpFileDialog *dialog,
-                                 Gimp           *gimp,
-                                 GimpImage      *image,
+picman_file_dialog_set_save_image (PicmanFileDialog *dialog,
+                                 Picman           *picman,
+                                 PicmanImage      *image,
                                  gboolean        save_a_copy,
                                  gboolean        export,
                                  gboolean        close_after_saving,
-                                 GimpObject     *display)
+                                 PicmanObject     *display)
 {
   const gchar *dir_uri     = NULL;
   const gchar *name_uri    = NULL;
@@ -496,10 +496,10 @@ gimp_file_dialog_set_save_image (GimpFileDialog *dialog,
   gchar       *dirname     = NULL;
   gchar       *basename    = NULL;
 
-  g_return_if_fail (GIMP_IS_FILE_DIALOG (dialog));
-  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_FILE_DIALOG (dialog));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
 
-  default_uri = gimp_file_dialog_get_default_uri (gimp);
+  default_uri = picman_file_dialog_get_default_uri (picman);
 
   dialog->image              = image;
   dialog->save_a_copy        = save_a_copy;
@@ -507,7 +507,7 @@ gimp_file_dialog_set_save_image (GimpFileDialog *dialog,
   dialog->close_after_saving = close_after_saving;
   dialog->display_to_close   = display;
 
-  gimp_file_dialog_set_file_proc (dialog, NULL);
+  picman_file_dialog_set_file_proc (dialog, NULL);
 
   if (! export)
     {
@@ -518,26 +518,26 @@ gimp_file_dialog_set_save_image (GimpFileDialog *dialog,
        *   2. Last Save path
        *   3. Path of source XCF
        *   4. Path of Import source
-       *   5. Last Save path of any GIMP document
+       *   5. Last Save path of any PICMAN document
        *   6. The default path (usually the OS 'Documents' path)
        */
 
       if (save_a_copy)
-        dir_uri = gimp_image_get_save_a_copy_uri (image);
+        dir_uri = picman_image_get_save_a_copy_uri (image);
 
       if (! dir_uri)
-        dir_uri = gimp_image_get_uri (image);
+        dir_uri = picman_image_get_uri (image);
 
       if (! dir_uri)
         dir_uri = g_object_get_data (G_OBJECT (image),
-                                     "gimp-image-source-uri");
+                                     "picman-image-source-uri");
 
       if (! dir_uri)
-        dir_uri = gimp_image_get_imported_uri (image);
+        dir_uri = picman_image_get_imported_uri (image);
 
       if (! dir_uri)
-        dir_uri = g_object_get_data (G_OBJECT (gimp),
-                                     GIMP_FILE_SAVE_LAST_URI_KEY);
+        dir_uri = g_object_get_data (G_OBJECT (picman),
+                                     PICMAN_FILE_SAVE_LAST_URI_KEY);
 
       if (! dir_uri)
         dir_uri = default_uri;
@@ -553,19 +553,19 @@ gimp_file_dialog_set_save_image (GimpFileDialog *dialog,
        */
 
       if (save_a_copy)
-        name_uri = gimp_image_get_save_a_copy_uri (image);
+        name_uri = picman_image_get_save_a_copy_uri (image);
 
       if (! name_uri)
-        name_uri = gimp_image_get_uri (image);
+        name_uri = picman_image_get_uri (image);
 
       if (! name_uri)
-        name_uri = gimp_image_get_exported_uri (image);
+        name_uri = picman_image_get_exported_uri (image);
 
       if (! name_uri)
-        name_uri = gimp_image_get_imported_uri (image);
+        name_uri = picman_image_get_imported_uri (image);
 
       if (! name_uri)
-        name_uri = gimp_image_get_string_untitled ();
+        name_uri = picman_image_get_string_untitled ();
 
 
       /* Priority of default type/extension for Save:
@@ -573,7 +573,7 @@ gimp_file_dialog_set_save_image (GimpFileDialog *dialog,
        *   1. Type of last Save
        *   2. .xcf (which we don't explicitly append)
        */
-      ext_uri = gimp_image_get_uri (image);
+      ext_uri = picman_image_get_uri (image);
 
       if (! ext_uri)
         ext_uri = "file:///we/only/care/about/extension.xcf";
@@ -591,25 +591,25 @@ gimp_file_dialog_set_save_image (GimpFileDialog *dialog,
        *   6. The default path (usually the OS 'Documents' path)
        */
 
-      dir_uri = gimp_image_get_exported_uri (image);
+      dir_uri = picman_image_get_exported_uri (image);
 
       if (! dir_uri)
         dir_uri = g_object_get_data (G_OBJECT (image),
-                                     "gimp-image-source-uri");
+                                     "picman-image-source-uri");
 
       if (! dir_uri)
-        dir_uri = gimp_image_get_imported_uri (image);
+        dir_uri = picman_image_get_imported_uri (image);
 
       if (! dir_uri)
-        dir_uri = gimp_image_get_uri (image);
+        dir_uri = picman_image_get_uri (image);
 
       if (! dir_uri)
-        dir_uri = g_object_get_data (G_OBJECT (gimp),
-                                     GIMP_FILE_SAVE_LAST_URI_KEY);
+        dir_uri = g_object_get_data (G_OBJECT (picman),
+                                     PICMAN_FILE_SAVE_LAST_URI_KEY);
 
       if (! dir_uri)
-        dir_uri = g_object_get_data (G_OBJECT (gimp),
-                                     GIMP_FILE_EXPORT_LAST_URI_KEY);
+        dir_uri = g_object_get_data (G_OBJECT (picman),
+                                     PICMAN_FILE_EXPORT_LAST_URI_KEY);
 
       if (! dir_uri)
         dir_uri = default_uri;
@@ -623,16 +623,16 @@ gimp_file_dialog_set_save_image (GimpFileDialog *dialog,
        *   3. 'Untitled'
        */
 
-      name_uri = gimp_image_get_exported_uri (image);
+      name_uri = picman_image_get_exported_uri (image);
 
       if (! name_uri)
-        name_uri = gimp_image_get_uri (image);
+        name_uri = picman_image_get_uri (image);
 
       if (! name_uri)
-        name_uri = gimp_image_get_imported_uri (image);
+        name_uri = picman_image_get_imported_uri (image);
 
       if (! name_uri)
-        name_uri = gimp_image_get_string_untitled ();
+        name_uri = picman_image_get_string_untitled ();
 
 
       /* Priority of default type/extension for Export:
@@ -642,20 +642,20 @@ gimp_file_dialog_set_save_image (GimpFileDialog *dialog,
        *   3. Type of latest Export of any document
        *   4. .png
        */
-      ext_uri = gimp_image_get_exported_uri (image);
+      ext_uri = picman_image_get_exported_uri (image);
 
       if (! ext_uri)
-        ext_uri = gimp_image_get_imported_uri (image);
+        ext_uri = picman_image_get_imported_uri (image);
 
       if (! ext_uri)
-        ext_uri = g_object_get_data (G_OBJECT (gimp),
-                                     GIMP_FILE_EXPORT_LAST_URI_KEY);
+        ext_uri = g_object_get_data (G_OBJECT (picman),
+                                     PICMAN_FILE_EXPORT_LAST_URI_KEY);
 
       if (! ext_uri)
         ext_uri = "file:///we/only/care/about/extension.png";
     }
 
-  dirname = gimp_file_dialog_get_dirname_from_uri (dir_uri);
+  dirname = picman_file_dialog_get_dirname_from_uri (dir_uri);
 
   if (ext_uri)
     {
@@ -677,15 +677,15 @@ gimp_file_dialog_set_save_image (GimpFileDialog *dialog,
   g_free (dirname);
 }
 
-GimpFileDialogState *
-gimp_file_dialog_get_state (GimpFileDialog *dialog)
+PicmanFileDialogState *
+picman_file_dialog_get_state (PicmanFileDialog *dialog)
 {
-  GimpFileDialogState *state;
+  PicmanFileDialogState *state;
   GtkFileFilter       *filter;
 
-  g_return_val_if_fail (GIMP_IS_FILE_DIALOG (dialog), NULL);
+  g_return_val_if_fail (PICMAN_IS_FILE_DIALOG (dialog), NULL);
 
-  state = g_slice_new0 (GimpFileDialogState);
+  state = g_slice_new0 (PicmanFileDialogState);
 
   filter = gtk_file_chooser_get_filter (GTK_FILE_CHOOSER (dialog));
 
@@ -696,10 +696,10 @@ gimp_file_dialog_get_state (GimpFileDialog *dialog)
 }
 
 void
-gimp_file_dialog_set_state (GimpFileDialog      *dialog,
-                            GimpFileDialogState *state)
+picman_file_dialog_set_state (PicmanFileDialog      *dialog,
+                            PicmanFileDialogState *state)
 {
-  g_return_if_fail (GIMP_IS_FILE_DIALOG (dialog));
+  g_return_if_fail (PICMAN_IS_FILE_DIALOG (dialog));
   g_return_if_fail (state != NULL);
 
   if (state->filter_name)
@@ -726,19 +726,19 @@ gimp_file_dialog_set_state (GimpFileDialog      *dialog,
 }
 
 void
-gimp_file_dialog_state_destroy (GimpFileDialogState *state)
+picman_file_dialog_state_destroy (PicmanFileDialogState *state)
 {
   g_return_if_fail (state != NULL);
 
   g_free (state->filter_name);
-  g_slice_free (GimpFileDialogState, state);
+  g_slice_free (PicmanFileDialogState, state);
 }
 
 
 /*  private functions  */
 
 static void
-gimp_file_dialog_add_user_dir (GimpFileDialog *dialog,
+picman_file_dialog_add_user_dir (PicmanFileDialog *dialog,
                                GUserDirectory  directory)
 {
   const gchar *user_dir = g_get_user_special_dir (directory);
@@ -749,36 +749,36 @@ gimp_file_dialog_add_user_dir (GimpFileDialog *dialog,
 }
 
 static void
-gimp_file_dialog_add_preview (GimpFileDialog *dialog,
-                              Gimp           *gimp)
+picman_file_dialog_add_preview (PicmanFileDialog *dialog,
+                              Picman           *picman)
 {
-  if (gimp->config->thumbnail_size <= 0)
+  if (picman->config->thumbnail_size <= 0)
     return;
 
   gtk_file_chooser_set_use_preview_label (GTK_FILE_CHOOSER (dialog), FALSE);
 
   g_signal_connect (dialog, "selection-changed",
-                    G_CALLBACK (gimp_file_dialog_selection_changed),
+                    G_CALLBACK (picman_file_dialog_selection_changed),
                     dialog);
   g_signal_connect (dialog, "update-preview",
-                    G_CALLBACK (gimp_file_dialog_update_preview),
+                    G_CALLBACK (picman_file_dialog_update_preview),
                     dialog);
 
-  dialog->thumb_box = gimp_thumb_box_new (gimp_get_user_context (gimp));
+  dialog->thumb_box = picman_thumb_box_new (picman_get_user_context (picman));
   gtk_widget_set_sensitive (GTK_WIDGET (dialog->thumb_box), FALSE);
   gtk_file_chooser_set_preview_widget (GTK_FILE_CHOOSER (dialog),
                                        dialog->thumb_box);
   gtk_widget_show (dialog->thumb_box);
 
 #ifdef ENABLE_FILE_SYSTEM_ICONS
-  GIMP_VIEW_RENDERER_IMAGEFILE (GIMP_VIEW (GIMP_THUMB_BOX (dialog->thumb_box)->preview)->renderer)->file_system = _gtk_file_chooser_get_file_system (GTK_FILE_CHOOSER (dialog));
+  PICMAN_VIEW_RENDERER_IMAGEFILE (PICMAN_VIEW (PICMAN_THUMB_BOX (dialog->thumb_box)->preview)->renderer)->file_system = _gtk_file_chooser_get_file_system (GTK_FILE_CHOOSER (dialog));
 #endif
 }
 
 /**
- * gimp_file_dialog_add_filters:
+ * picman_file_dialog_add_filters:
  * @dialog:
- * @gimp:
+ * @picman:
  * @action:
  * @file_procs:            The image types that can be chosen from
  *                         the file type list
@@ -787,9 +787,9 @@ gimp_file_dialog_add_preview (GimpFileDialog *dialog,
  *
  **/
 static void
-gimp_file_dialog_add_filters (GimpFileDialog        *dialog,
-                              Gimp                  *gimp,
-                              GimpFileChooserAction  action,
+picman_file_dialog_add_filters (PicmanFileDialog        *dialog,
+                              Picman                  *picman,
+                              PicmanFileChooserAction  action,
                               GSList                *file_procs,
                               GSList                *file_procs_all_images)
 {
@@ -809,7 +809,7 @@ gimp_file_dialog_add_filters (GimpFileDialog        *dialog,
   if (file_procs_all_images)
     {
       all_savable = gtk_file_filter_new ();
-      if (action == GIMP_FILE_CHOOSER_ACTION_SAVE)
+      if (action == PICMAN_FILE_CHOOSER_ACTION_SAVE)
         gtk_file_filter_set_name (all_savable, _("All XCF images"));
       else
         gtk_file_filter_set_name (all_savable, _("All export images"));
@@ -819,10 +819,10 @@ gimp_file_dialog_add_filters (GimpFileDialog        *dialog,
   /* Add the normal file procs */
   for (list = file_procs; list; list = g_slist_next (list))
     {
-      GimpPlugInProcedure *file_proc = list->data;
+      PicmanPlugInProcedure *file_proc = list->data;
       GtkFileFilter       *filter    = NULL;
 
-      gimp_file_dialog_process_procedure (file_proc,
+      picman_file_dialog_process_procedure (file_proc,
                                           &filter,
                                           all, all_savable);
       if (filter)
@@ -838,9 +838,9 @@ gimp_file_dialog_add_filters (GimpFileDialog        *dialog,
    */
   for (list = file_procs_all_images; list; list = g_slist_next (list))
     {
-      GimpPlugInProcedure *file_proc = list->data;
+      PicmanPlugInProcedure *file_proc = list->data;
 
-      gimp_file_dialog_process_procedure (file_proc,
+      picman_file_dialog_process_procedure (file_proc,
                                           NULL,
                                           all, NULL);
     }
@@ -853,7 +853,7 @@ gimp_file_dialog_add_filters (GimpFileDialog        *dialog,
 
 
 /**
- * gimp_file_dialog_process_procedure:
+ * picman_file_dialog_process_procedure:
  * @file_proc:
  * @filter_out:
  * @all:
@@ -864,7 +864,7 @@ gimp_file_dialog_add_filters (GimpFileDialog        *dialog,
  * must be unreffed when used.
  **/
 static void
-gimp_file_dialog_process_procedure (GimpPlugInProcedure  *file_proc,
+picman_file_dialog_process_procedure (PicmanPlugInProcedure  *file_proc,
                                     GtkFileFilter       **filter_out,
                                     GtkFileFilter        *all,
                                     GtkFileFilter        *all_savable)
@@ -878,7 +878,7 @@ gimp_file_dialog_process_procedure (GimpPlugInProcedure  *file_proc,
     return;
 
   filter = gtk_file_filter_new ();
-  str    = g_string_new (gimp_plug_in_procedure_get_label (file_proc));
+  str    = g_string_new (picman_plug_in_procedure_get_label (file_proc));
 
   /* Take ownership directly so we don't have to mess with a floating
    * ref
@@ -892,7 +892,7 @@ gimp_file_dialog_process_procedure (GimpPlugInProcedure  *file_proc,
       const gchar *extension = ext->data;
       gchar       *pattern;
 
-      pattern = gimp_file_dialog_pattern_from_extension (extension);
+      pattern = picman_file_dialog_pattern_from_extension (extension);
       gtk_file_filter_add_pattern (filter, pattern);
       gtk_file_filter_add_pattern (all, pattern);
       if (all_savable)
@@ -934,8 +934,8 @@ gimp_file_dialog_process_procedure (GimpPlugInProcedure  *file_proc,
 }
 
 static void
-gimp_file_dialog_add_proc_selection (GimpFileDialog *dialog,
-                                     Gimp           *gimp,
+picman_file_dialog_add_proc_selection (PicmanFileDialog *dialog,
+                                     Picman           *picman,
                                      GSList         *file_procs,
                                      const gchar    *automatic,
                                      const gchar    *automatic_help_id)
@@ -957,42 +957,42 @@ gimp_file_dialog_add_proc_selection (GimpFileDialog *dialog,
 
   gtk_widget_set_size_request (scrolled_window, -1, 200);
 
-  dialog->proc_view = gimp_file_proc_view_new (gimp, file_procs, automatic,
+  dialog->proc_view = picman_file_proc_view_new (picman, file_procs, automatic,
                                                automatic_help_id);
   gtk_container_add (GTK_CONTAINER (scrolled_window), dialog->proc_view);
   gtk_widget_show (dialog->proc_view);
 
   g_signal_connect (dialog->proc_view, "changed",
-                    G_CALLBACK (gimp_file_dialog_proc_changed),
+                    G_CALLBACK (picman_file_dialog_proc_changed),
                     dialog);
 
-  gimp_file_proc_view_set_proc (GIMP_FILE_PROC_VIEW (dialog->proc_view), NULL);
+  picman_file_proc_view_set_proc (PICMAN_FILE_PROC_VIEW (dialog->proc_view), NULL);
 }
 
 static void
-gimp_file_dialog_selection_changed (GtkFileChooser *chooser,
-                                    GimpFileDialog *dialog)
+picman_file_dialog_selection_changed (GtkFileChooser *chooser,
+                                    PicmanFileDialog *dialog)
 {
-  gimp_thumb_box_take_uris (GIMP_THUMB_BOX (dialog->thumb_box),
+  picman_thumb_box_take_uris (PICMAN_THUMB_BOX (dialog->thumb_box),
                             gtk_file_chooser_get_uris (chooser));
 }
 
 static void
-gimp_file_dialog_update_preview (GtkFileChooser *chooser,
-                                 GimpFileDialog *dialog)
+picman_file_dialog_update_preview (GtkFileChooser *chooser,
+                                 PicmanFileDialog *dialog)
 {
-  gimp_thumb_box_take_uri (GIMP_THUMB_BOX (dialog->thumb_box),
+  picman_thumb_box_take_uri (PICMAN_THUMB_BOX (dialog->thumb_box),
                            gtk_file_chooser_get_preview_uri (chooser));
 }
 
 static void
-gimp_file_dialog_proc_changed (GimpFileProcView *view,
-                               GimpFileDialog   *dialog)
+picman_file_dialog_proc_changed (PicmanFileProcView *view,
+                               PicmanFileDialog   *dialog)
 {
   GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
   gchar          *name;
 
-  dialog->file_proc = gimp_file_proc_view_get_proc (view, &name);
+  dialog->file_proc = picman_file_proc_view_get_proc (view, &name);
 
   if (name)
     {
@@ -1006,7 +1006,7 @@ gimp_file_dialog_proc_changed (GimpFileProcView *view,
 
   if (gtk_file_chooser_get_action (chooser) == GTK_FILE_CHOOSER_ACTION_SAVE)
     {
-      GimpPlugInProcedure *proc = dialog->file_proc;
+      PicmanPlugInProcedure *proc = dialog->file_proc;
 
       if (proc && proc->extensions_list)
         {
@@ -1076,10 +1076,10 @@ gimp_file_dialog_proc_changed (GimpFileProcView *view,
 }
 
 static void
-gimp_file_dialog_help_func (const gchar *help_id,
+picman_file_dialog_help_func (const gchar *help_id,
                             gpointer     help_data)
 {
-  GimpFileDialog *dialog = GIMP_FILE_DIALOG (help_data);
+  PicmanFileDialog *dialog = PICMAN_FILE_DIALOG (help_data);
   GtkWidget      *focus;
 
   focus = gtk_window_get_focus (GTK_WINDOW (dialog));
@@ -1089,28 +1089,28 @@ gimp_file_dialog_help_func (const gchar *help_id,
       gchar *proc_help_id;
 
       proc_help_id =
-        gimp_file_proc_view_get_help_id (GIMP_FILE_PROC_VIEW (dialog->proc_view));
+        picman_file_proc_view_get_help_id (PICMAN_FILE_PROC_VIEW (dialog->proc_view));
 
-      gimp_standard_help_func (proc_help_id, NULL);
+      picman_standard_help_func (proc_help_id, NULL);
 
       g_free (proc_help_id);
     }
   else
     {
-      gimp_standard_help_func (help_id, NULL);
+      picman_standard_help_func (help_id, NULL);
     }
 }
 
 static void
-gimp_file_dialog_help_clicked (GtkWidget *widget,
+picman_file_dialog_help_clicked (GtkWidget *widget,
                                gpointer   dialog)
 {
-  gimp_standard_help_func (g_object_get_data (dialog, "gimp-dialog-help-id"),
+  picman_standard_help_func (g_object_get_data (dialog, "picman-dialog-help-id"),
                            NULL);
 }
 
 static gchar *
-gimp_file_dialog_pattern_from_extension (const gchar *extension)
+picman_file_dialog_pattern_from_extension (const gchar *extension)
 {
   gchar *pattern;
   gchar *p;
@@ -1143,11 +1143,11 @@ gimp_file_dialog_pattern_from_extension (const gchar *extension)
 }
 
 static gchar *
-gimp_file_dialog_get_default_uri (Gimp *gimp)
+picman_file_dialog_get_default_uri (Picman *picman)
 {
-  if (gimp->default_folder)
+  if (picman->default_folder)
     {
-      return g_strdup (gimp->default_folder);
+      return g_strdup (picman->default_folder);
     }
   else
     {
@@ -1167,7 +1167,7 @@ gimp_file_dialog_get_default_uri (Gimp *gimp)
 }
 
 static gchar *
-gimp_file_dialog_get_dirname_from_uri (const gchar *uri)
+picman_file_dialog_get_dirname_from_uri (const gchar *uri)
 {
   gchar *dirname = NULL;
 

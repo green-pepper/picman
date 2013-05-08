@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpvectoroptions.c
- * Copyright (C) 1999 Sven Neumann <sven@gimp.org>
+ * picmanvectoroptions.c
+ * Copyright (C) 1999 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,18 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpconfig/gimpconfig.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanconfig/picmanconfig.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimpvectoroptions.h"
-#include "gimptooloptions-gui.h"
+#include "picmanvectoroptions.h"
+#include "picmantooloptions-gui.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -45,52 +45,52 @@ enum
 };
 
 
-static void   gimp_vector_options_set_property (GObject      *object,
+static void   picman_vector_options_set_property (GObject      *object,
                                                 guint         property_id,
                                                 const GValue *value,
                                                 GParamSpec   *pspec);
-static void   gimp_vector_options_get_property (GObject      *object,
+static void   picman_vector_options_get_property (GObject      *object,
                                                 guint         property_id,
                                                 GValue       *value,
                                                 GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpVectorOptions, gimp_vector_options, GIMP_TYPE_TOOL_OPTIONS)
+G_DEFINE_TYPE (PicmanVectorOptions, picman_vector_options, PICMAN_TYPE_TOOL_OPTIONS)
 
 
 static void
-gimp_vector_options_class_init (GimpVectorOptionsClass *klass)
+picman_vector_options_class_init (PicmanVectorOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_vector_options_set_property;
-  object_class->get_property = gimp_vector_options_get_property;
+  object_class->set_property = picman_vector_options_set_property;
+  object_class->get_property = picman_vector_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_VECTORS_EDIT_MODE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_VECTORS_EDIT_MODE,
                                  "vectors-edit-mode", NULL,
-                                 GIMP_TYPE_VECTOR_MODE,
-                                 GIMP_VECTOR_MODE_DESIGN,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_VECTOR_MODE,
+                                 PICMAN_VECTOR_MODE_DESIGN,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_VECTORS_POLYGONAL,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_VECTORS_POLYGONAL,
                                     "vectors-polygonal",
                                     N_("Restrict editing to polygons"),
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_vector_options_init (GimpVectorOptions *options)
+picman_vector_options_init (PicmanVectorOptions *options)
 {
 }
 
 static void
-gimp_vector_options_set_property (GObject      *object,
+picman_vector_options_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  GimpVectorOptions *options = GIMP_VECTOR_OPTIONS (object);
+  PicmanVectorOptions *options = PICMAN_VECTOR_OPTIONS (object);
 
   switch (property_id)
     {
@@ -108,12 +108,12 @@ gimp_vector_options_set_property (GObject      *object,
 
 
 static void
-gimp_vector_options_get_property (GObject    *object,
+picman_vector_options_get_property (GObject    *object,
                                   guint       property_id,
                                   GValue     *value,
                                   GParamSpec *pspec)
 {
-  GimpVectorOptions *options = GIMP_VECTOR_OPTIONS (object);
+  PicmanVectorOptions *options = PICMAN_VECTOR_OPTIONS (object);
 
   switch (property_id)
     {
@@ -135,24 +135,24 @@ button_append_modifier (GtkWidget       *button,
 {
   gchar *str = g_strdup_printf ("%s (%s)",
                                 gtk_button_get_label (GTK_BUTTON (button)),
-                                gimp_get_mod_string (modifiers));
+                                picman_get_mod_string (modifiers));
 
   gtk_button_set_label (GTK_BUTTON (button), str);
   g_free (str);
 }
 
 GtkWidget *
-gimp_vector_options_gui (GimpToolOptions *tool_options)
+picman_vector_options_gui (PicmanToolOptions *tool_options)
 {
   GObject           *config  = G_OBJECT (tool_options);
-  GimpVectorOptions *options = GIMP_VECTOR_OPTIONS (tool_options);
-  GtkWidget         *vbox    = gimp_tool_options_gui (tool_options);
+  PicmanVectorOptions *options = PICMAN_VECTOR_OPTIONS (tool_options);
+  GtkWidget         *vbox    = picman_tool_options_gui (tool_options);
   GtkWidget         *frame;
   GtkWidget         *button;
   gchar             *str;
 
   /*  tool toggle  */
-  frame = gimp_prop_enum_radio_frame_new (config, "vectors-edit-mode",
+  frame = picman_prop_enum_radio_frame_new (config, "vectors-edit-mode",
                                           _("Edit Mode"), 0, 0);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
@@ -163,15 +163,15 @@ gimp_vector_options_gui (GimpToolOptions *tool_options)
     {
       GSList *list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (button));
 
-      /* GIMP_VECTOR_MODE_MOVE  */
+      /* PICMAN_VECTOR_MODE_MOVE  */
       button_append_modifier (list->data, GDK_MOD1_MASK);
 
-      if (list->next)   /* GIMP_VECTOR_MODE_EDIT  */
+      if (list->next)   /* PICMAN_VECTOR_MODE_EDIT  */
         button_append_modifier (list->next->data,
-                                gimp_get_toggle_behavior_mask ());
+                                picman_get_toggle_behavior_mask ());
     }
 
-  button = gimp_prop_check_button_new (config, "vectors-polygonal",
+  button = picman_prop_check_button_new (config, "vectors-polygonal",
                                        _("Polygonal"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
@@ -180,17 +180,17 @@ gimp_vector_options_gui (GimpToolOptions *tool_options)
                            "%s  Add\n"
                            "%s  Subtract\n"
                            "%s  Intersect"),
-                         gimp_get_mod_string (gimp_get_extend_selection_mask ()),
-                         gimp_get_mod_string (gimp_get_modify_selection_mask ()),
-                         gimp_get_mod_string (gimp_get_extend_selection_mask () |
-                                              gimp_get_modify_selection_mask ()));
+                         picman_get_mod_string (picman_get_extend_selection_mask ()),
+                         picman_get_mod_string (picman_get_modify_selection_mask ()),
+                         picman_get_mod_string (picman_get_extend_selection_mask () |
+                                              picman_get_modify_selection_mask ()));
 
-  button = gimp_button_new ();
+  button = picman_button_new ();
   /*  Create a selection from the current path  */
   gtk_button_set_label (GTK_BUTTON (button), _("Selection from Path"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_set_sensitive (button, FALSE);
-  gimp_help_set_help_data (button, str, GIMP_HELP_PATH_SELECTION_REPLACE);
+  picman_help_set_help_data (button, str, PICMAN_HELP_PATH_SELECTION_REPLACE);
   gtk_widget_show (button);
 
   g_free (str);
@@ -200,7 +200,7 @@ gimp_vector_options_gui (GimpToolOptions *tool_options)
   button = gtk_button_new_with_label (_("Stroke Path"));
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_widget_set_sensitive (button, FALSE);
-  gimp_help_set_help_data (button, NULL, GIMP_HELP_PATH_STROKE);
+  picman_help_set_help_data (button, NULL, PICMAN_HELP_PATH_STROKE);
   gtk_widget_show (button);
 
   options->stroke_button = button;

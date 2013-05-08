@@ -2,7 +2,7 @@
 
 SUBDIRS = preferences
 
-themedatadir = $(gimpdatadir)/themes/Default/images
+themedatadir = $(picmandatadir)/themes/Default/images
 
 
 ## A warning Wilber that is used from the core
@@ -372,11 +372,11 @@ EXTRA_DIST = \
 	$(CORE_IMAGES)		\
 	$(STOCK_IMAGES)		\
 	$(WILBER_IMAGES)	\
-	gimp-dialog-icons.xcf.gz
+	picman-dialog-icons.xcf.gz
 
 noinst_DATA = \
-	gimp-core-pixbufs.h	\
-	gimp-stock-pixbufs.h
+	picman-core-pixbufs.h	\
+	picman-stock-pixbufs.h
 
 CLEANFILES = $(noinst_DATA) stock-icons.list
 
@@ -389,8 +389,8 @@ stock-icons.list: $(STOCK_IMAGES) Makefile.am
 	    echo "  $(srcdir)/$$image" >> $@; \
 	  done )
 
-gimp-core-pixbufs.h: $(CORE_IMAGES) Makefile.am
+picman-core-pixbufs.h: $(CORE_IMAGES) Makefile.am
 	$(AM_V_GEN) $(GDK_PIXBUF_CSOURCE) --raw --build-list $(CORE_VARIABLES) > $(@F)
 
-gimp-stock-pixbufs.h: stock-icons.list
+picman-stock-pixbufs.h: stock-icons.list
 	$(AM_V_GEN) $(GDK_PIXBUF_CSOURCE) --raw --build-list `cat $<` > $(@F)

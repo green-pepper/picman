@@ -3,7 +3,7 @@
  * by tim copperfield [timecop@japan.co.jp]
  * http://www.ne.jp/asahi/linux/timecop
  *
- * Updated for Gimp 2.1 by pg@futureware.at and mitch@gimp.org
+ * Updated for Picman 2.1 by pg@futureware.at and mitch@picman.org
  *
  * This plugin is not based on any other plugin.
  *
@@ -40,16 +40,16 @@
 #include <io.h>
 #endif
 
-#include "libgimp/gimp.h"
-#include "libgimp/gimpui.h"
+#include "libpicman/picman.h"
+#include "libpicman/picmanui.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define LOAD_PROC      "file-raw-load"
 #define SAVE_PROC      "file-raw-save"
 #define PLUG_IN_BINARY "file-raw"
-#define PLUG_IN_ROLE   "gimp-file-raw"
+#define PLUG_IN_ROLE   "picman-file-raw"
 #define PREVIEW_SIZE   350
 
 
@@ -90,30 +90,30 @@ typedef struct
 typedef struct
 {
   FILE         *fp;        /* pointer to the already open file */
-  GimpDrawable *drawable;  /* gimp drawable                    */
-  GimpPixelRgn  region;    /* gimp pixel region                */
-  gint32        image_id;  /* gimp image id                    */
+  PicmanDrawable *drawable;  /* picman drawable                    */
+  PicmanPixelRgn  region;    /* picman pixel region                */
+  gint32        image_id;  /* picman image id                    */
   guchar        cmap[768]; /* color map for indexed images     */
-} RawGimpData;
+} RawPicmanData;
 
 
 static void              query               (void);
 static void              run                 (const gchar      *name,
                                               gint              nparams,
-                                              const GimpParam  *param,
+                                              const PicmanParam  *param,
                                               gint             *nreturn_vals,
-                                              GimpParam       **return_vals);
+                                              PicmanParam       **return_vals);
 
 /* prototypes for the new load functions */
-static gboolean          raw_load_standard   (RawGimpData      *data,
+static gboolean          raw_load_standard   (RawPicmanData      *data,
                                               gint              bpp);
-static gboolean          raw_load_gray       (RawGimpData      *data,
+static gboolean          raw_load_gray       (RawPicmanData      *data,
                                               gint              bpp,
                                               gint              bitspp);
-static gboolean          raw_load_rgb565     (RawGimpData      *data,
+static gboolean          raw_load_rgb565     (RawPicmanData      *data,
                                               RawType           type);
-static gboolean          raw_load_planar     (RawGimpData      *data);
-static gboolean          raw_load_palette    (RawGimpData      *data,
+static gboolean          raw_load_planar     (RawPicmanData      *data);
+static gboolean          raw_load_palette    (RawPicmanData      *data,
                                               const gchar      *palette_filename);
 
 /* support functions */
@@ -134,21 +134,21 @@ static void              rgb_565_to_888      (guint16          *in,
 
 static gint32            load_image          (const gchar      *filename,
                                               GError          **error);
-static GimpPDBStatusType save_image          (const gchar      *filename,
+static PicmanPDBStatusType save_image          (const gchar      *filename,
                                               gint32            image_id,
                                               gint32            drawable_id,
                                               GError          **error);
 
 /* gui functions */
-static void              preview_update_size (GimpPreviewArea  *preview);
-static void              preview_update      (GimpPreviewArea  *preview);
-static void              palette_update      (GimpPreviewArea  *preview);
+static void              preview_update_size (PicmanPreviewArea  *preview);
+static void              preview_update      (PicmanPreviewArea  *preview);
+static void              palette_update      (PicmanPreviewArea  *preview);
 static gboolean          load_dialog         (const gchar      *filename);
 static gboolean          save_dialog         (const gchar      *filename,
                                               gint32            image_id,
                                               gint32            drawable_id);
 static void              palette_callback    (GtkFileChooser   *button,
-                                              GimpPreviewArea  *preview);
+                                              PicmanPreviewArea  *preview);
 
 
 static RawConfig *runtime             = NULL;
@@ -158,7 +158,7 @@ static guchar     preview_cmap[1024];
 static gboolean   preview_cmap_update = TRUE;
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,   /* init_proc  */
   NULL,   /* quit_proc  */
@@ -171,28 +171,28 @@ MAIN()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0) }"                  },
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename", "The name entered"             }
+    { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0) }"                  },
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename", "The name entered"             }
   };
 
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "image", "Output image" }
+    { PICMAN_PDB_IMAGE, "image", "Output image" }
   };
 
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image"                  },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save"             },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name entered"             }
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image"                  },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save"             },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name entered"             }
   };
 
-  gimp_install_procedure (LOAD_PROC,
+  picman_install_procedure (LOAD_PROC,
                           "Load raw images, specifying image information",
                           "Load raw images, specifying image information",
                           "timecop, pg@futureware.at",
@@ -200,14 +200,14 @@ query (void)
                           "Aug 2004",
                           N_("Raw image data"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args, load_return_vals);
 
-  gimp_register_load_handler (LOAD_PROC, "data", "");
+  picman_register_load_handler (LOAD_PROC, "data", "");
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "Dump images to disk in raw format",
                           "Dump images to disk in raw format",
                           "timecop, pg@futureware.at",
@@ -215,23 +215,23 @@ query (void)
                           "Aug 2004",
                           N_("Raw image data"),
                           "INDEXED, GRAY, RGB, RGBA",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
 
-  gimp_register_save_handler (SAVE_PROC, "", "");
+  picman_register_save_handler (SAVE_PROC, "", "");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   GError            *error  = NULL;
   gint32             image_id;
   gint32             drawable_id;
@@ -243,8 +243,8 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   /* allocate config structure and fill with defaults */
   runtime = g_new0 (RawConfig, 1);
@@ -257,9 +257,9 @@ run (const gchar      *name,
 
   if (strcmp (name, LOAD_PROC) == 0)
     {
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
-          gimp_get_data (LOAD_PROC, runtime);
+          picman_get_data (LOAD_PROC, runtime);
 
           preview_fd = g_open (param[1].data.d_string, O_RDONLY, 0);
 
@@ -268,15 +268,15 @@ run (const gchar      *name,
               g_set_error (&error,
                            G_FILE_ERROR, g_file_error_from_errno (errno),
                            _("Could not open '%s' for reading: %s"),
-                           gimp_filename_to_utf8 (param[1].data.d_string),
+                           picman_filename_to_utf8 (param[1].data.d_string),
                            g_strerror (errno));
 
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
           else
             {
               if (! load_dialog (param[1].data.d_string))
-                status = GIMP_PDB_CANCEL;
+                status = PICMAN_PDB_CANCEL;
 
               close (preview_fd);
             }
@@ -287,25 +287,25 @@ run (const gchar      *name,
            * things like generate preview etc like to call us non-
            * interactively.  here we stop that.
            */
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
 
       /* we are okay, and the user clicked OK in the load dialog */
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           image_id = load_image (param[1].data.d_string, &error);
 
           if (image_id != -1)
             {
-              gimp_set_data (LOAD_PROC, runtime, sizeof (RawConfig));
+              picman_set_data (LOAD_PROC, runtime, sizeof (RawConfig));
 
               *nreturn_vals = 2;
-              values[1].type         = GIMP_PDB_IMAGE;
+              values[1].type         = PICMAN_PDB_IMAGE;
               values[1].data.d_image = image_id;
             }
           else
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
     }
@@ -314,18 +314,18 @@ run (const gchar      *name,
       image_id    = param[1].data.d_int32;
       drawable_id = param[2].data.d_int32;
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
         {
-          gimp_get_data (SAVE_PROC, runtime);
+          picman_get_data (SAVE_PROC, runtime);
 
           if (nparams != 5)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else if (! save_dialog (param[3].data.d_string,
                                   image_id, drawable_id))
             {
-              status = GIMP_PDB_CANCEL;
+              status = PICMAN_PDB_CANCEL;
             }
         }
       else
@@ -333,10 +333,10 @@ run (const gchar      *name,
           /* we want to make sure we always do save-as for raw images
            * to avoid confusion and data loss
            */
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           status = save_image (param[3].data.d_string, image_id, drawable_id,
                                &error);
@@ -345,10 +345,10 @@ run (const gchar      *name,
 
   g_free (runtime);
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -401,7 +401,7 @@ mmap_read (gint    fd,
 
 /* this handles 1, 2, 3, 4 bpp "standard" images */
 static gboolean
-raw_load_standard (RawGimpData *data,
+raw_load_standard (RawPicmanData *data,
                    gint         bpp)
 {
   guchar *row = NULL;
@@ -412,7 +412,7 @@ raw_load_standard (RawGimpData *data,
 
   raw_read_row (data->fp, row, runtime->file_offset,
                 (runtime->image_width * runtime->image_height * bpp));
-  gimp_pixel_rgn_set_rect (&data->region, row,
+  picman_pixel_rgn_set_rect (&data->region, row,
                            0, 0, runtime->image_width, runtime->image_height);
   g_free (row);
   return TRUE;
@@ -422,7 +422,7 @@ raw_load_standard (RawGimpData *data,
  * pixel images - hopefully lots of binaries too
  */
 static gboolean
-raw_load_gray (RawGimpData *data,
+raw_load_gray (RawPicmanData *data,
                gint         bpp,
                gint         bitspp)
 {
@@ -490,7 +490,7 @@ raw_load_gray (RawGimpData *data,
         }
     }
 
-  gimp_pixel_rgn_set_rect (&data->region, out_raw,
+  picman_pixel_rgn_set_rect (&data->region, out_raw,
                            0, 0, runtime->image_width, runtime->image_height);
   g_free (in_raw);
   g_free (out_raw);
@@ -500,7 +500,7 @@ raw_load_gray (RawGimpData *data,
 
 /* this handles RGB565 images */
 static gboolean
-raw_load_rgb565 (RawGimpData *data,
+raw_load_rgb565 (RawPicmanData *data,
                  RawType      type)
 {
   gint32   num_pixels = runtime->image_width * runtime->image_height;
@@ -510,7 +510,7 @@ raw_load_rgb565 (RawGimpData *data,
   raw_read_row (data->fp, (guchar *)in, runtime->file_offset, num_pixels * 2);
   rgb_565_to_888 (in, row, num_pixels, type);
 
-  gimp_pixel_rgn_set_rect (&data->region, row,
+  picman_pixel_rgn_set_rect (&data->region, row,
                            0, 0, runtime->image_width, runtime->image_height);
   g_free (in);
   g_free (row);
@@ -580,7 +580,7 @@ rgb_565_to_888 (guint16 *in,
 
 /* this handles 3 bpp "planar" images */
 static gboolean
-raw_load_planar (RawGimpData *data)
+raw_load_planar (RawPicmanData *data)
 {
   gint32  r_offset, g_offset, b_offset, i, j, k;
   guchar *r_row, *b_row, *g_row, *row;
@@ -616,10 +616,10 @@ raw_load_planar (RawGimpData *data)
           row[k++] = b_row[j];
         }
 
-      gimp_pixel_rgn_set_row (&data->region, row, 0, i, runtime->image_width);
-      gimp_progress_update ((gfloat) i / (gfloat) runtime->image_height);
+      picman_pixel_rgn_set_row (&data->region, row, 0, i, runtime->image_width);
+      picman_progress_update ((gfloat) i / (gfloat) runtime->image_height);
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   g_free (row);
   g_free (r_row);
@@ -630,7 +630,7 @@ raw_load_planar (RawGimpData *data)
 }
 
 static gboolean
-raw_load_palette (RawGimpData *data,
+raw_load_palette (RawPicmanData *data,
                   const gchar *palette_file)
 {
   guchar temp[1024];
@@ -675,21 +675,21 @@ raw_load_palette (RawGimpData *data,
         }
     }
 
-  gimp_image_set_colormap (data->image_id, data->cmap, 256);
+  picman_image_set_colormap (data->image_id, data->cmap, 256);
 
   return TRUE;
 }
 
 /* end new image handle functions */
 
-static GimpPDBStatusType
+static PicmanPDBStatusType
 save_image (const gchar  *filename,
             gint32        image_id,
             gint32        drawable_id,
             GError      **error)
 {
-  GimpDrawable     *drawable;
-  GimpPixelRgn      pixel_rgn;
+  PicmanDrawable     *drawable;
+  PicmanPixelRgn      pixel_rgn;
   guchar           *cmap = NULL;  /* colormap for indexed images */
   guchar           *buf;
   guchar           *red, *green, *blue, *alpha = NULL;
@@ -698,27 +698,27 @@ save_image (const gchar  *filename,
   FILE             *fp;
   gint              i, j = 0;
   gint              palsize = 0;
-  GimpPDBStatusType ret = GIMP_PDB_EXECUTION_ERROR;
+  PicmanPDBStatusType ret = PICMAN_PDB_EXECUTION_ERROR;
 
   /* get info about the current image */
-  drawable = gimp_drawable_get (drawable_id);
+  drawable = picman_drawable_get (drawable_id);
 
-  bpp        = gimp_drawable_bpp (drawable_id);
-  have_alpha = gimp_drawable_has_alpha (drawable_id);
+  bpp        = picman_drawable_bpp (drawable_id);
+  have_alpha = picman_drawable_has_alpha (drawable_id);
 
-  if (gimp_drawable_is_indexed (drawable_id))
-    cmap = gimp_image_get_colormap (image_id, &palsize);
+  if (picman_drawable_is_indexed (drawable_id))
+    cmap = picman_image_get_colormap (image_id, &palsize);
 
   width  = drawable->width;
   height = drawable->height;
 
-  gimp_pixel_rgn_init (&pixel_rgn, drawable,
+  picman_pixel_rgn_init (&pixel_rgn, drawable,
                        0, 0, drawable->width, drawable->height,
                        FALSE, FALSE);
 
   buf = g_new (guchar, width * height * bpp);
 
-  gimp_pixel_rgn_get_rect (&pixel_rgn, buf, 0, 0, width, height);
+  picman_pixel_rgn_get_rect (&pixel_rgn, buf, 0, 0, width, height);
 
   fp = g_fopen (filename, "wb");
 
@@ -726,18 +726,18 @@ save_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
-      return GIMP_PDB_EXECUTION_ERROR;
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
 
-  ret = GIMP_PDB_SUCCESS;
+  ret = PICMAN_PDB_SUCCESS;
 
   switch (runtime->image_type)
     {
     case RAW_RGB:
       if (! fwrite (buf, width * height * bpp, 1, fp))
         {
-          return GIMP_PDB_EXECUTION_ERROR;
+          return PICMAN_PDB_EXECUTION_ERROR;
         }
 
       fclose (fp);
@@ -754,15 +754,15 @@ save_image (const gchar  *filename,
             {
               g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                            _("Could not open '%s' for writing: %s"),
-                           gimp_filename_to_utf8 (newfile), g_strerror (errno));
-              return GIMP_PDB_EXECUTION_ERROR;
+                           picman_filename_to_utf8 (newfile), g_strerror (errno));
+              return PICMAN_PDB_EXECUTION_ERROR;
             }
 
           switch (runtime->palette_type)
             {
             case RAW_PALETTE_RGB:
               if (!fwrite (cmap, palsize * 3, 1, fp))
-                ret = GIMP_PDB_EXECUTION_ERROR;
+                ret = PICMAN_PDB_EXECUTION_ERROR;
               fclose (fp);
               break;
 
@@ -776,7 +776,7 @@ save_image (const gchar  *filename,
                   temp[j++] = 0;
                 }
               if (!fwrite (temp, palsize * 4, 1, fp))
-                ret = GIMP_PDB_EXECUTION_ERROR;
+                ret = PICMAN_PDB_EXECUTION_ERROR;
               fclose (fp);
               g_free (temp);
               break;
@@ -801,17 +801,17 @@ save_image (const gchar  *filename,
           j++;
         }
 
-      ret = GIMP_PDB_SUCCESS;
+      ret = PICMAN_PDB_SUCCESS;
       if (!fwrite (red, width * height, 1, fp))
-        ret = GIMP_PDB_EXECUTION_ERROR;
+        ret = PICMAN_PDB_EXECUTION_ERROR;
       if (!fwrite (green, width * height, 1, fp))
-        ret = GIMP_PDB_EXECUTION_ERROR;
+        ret = PICMAN_PDB_EXECUTION_ERROR;
       if (!fwrite (blue, width * height, 1, fp))
-        ret = GIMP_PDB_EXECUTION_ERROR;
+        ret = PICMAN_PDB_EXECUTION_ERROR;
       if (have_alpha)
         {
           if (!fwrite (alpha, width * height, 1, fp))
-            ret = GIMP_PDB_EXECUTION_ERROR;
+            ret = PICMAN_PDB_EXECUTION_ERROR;
         }
       g_free (red);
       g_free (green);
@@ -832,27 +832,27 @@ static gint32
 load_image (const gchar  *filename,
             GError      **error)
 {
-  RawGimpData       *data;
+  RawPicmanData       *data;
   gint32             layer_id = -1;
-  GimpImageType      ltype    = GIMP_RGB;
-  GimpImageBaseType  itype    = GIMP_RGB_IMAGE;
+  PicmanImageType      ltype    = PICMAN_RGB;
+  PicmanImageBaseType  itype    = PICMAN_RGB_IMAGE;
   gint32             size;
   gint               bpp = 0;
   gint               bitspp = 8;
 
-  data = g_new0 (RawGimpData, 1);
+  data = g_new0 (RawPicmanData, 1);
 
   data->fp = g_fopen (filename, "rb");
   if (! data->fp)
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   size = get_file_info (filename);
 
@@ -861,8 +861,8 @@ load_image (const gchar  *filename,
     case RAW_RGB:             /* standard RGB */
     case RAW_PLANAR:          /* planar RGB */
       bpp   = 3;
-      ltype = GIMP_RGB_IMAGE;
-      itype = GIMP_RGB;
+      ltype = PICMAN_RGB_IMAGE;
+      itype = PICMAN_RGB;
       break;
 
     case RAW_RGB565_BE:       /* RGB565 big endian */
@@ -870,50 +870,50 @@ load_image (const gchar  *filename,
     case RAW_BGR565_BE:       /* RGB565 big endian */
     case RAW_BGR565_LE:       /* RGB565 little endian */
       bpp   = 2;
-      ltype = GIMP_RGB_IMAGE;
-      itype = GIMP_RGB;
+      ltype = PICMAN_RGB_IMAGE;
+      itype = PICMAN_RGB;
       break;
 
     case RAW_RGBA:            /* RGB + alpha */
       bpp   = 4;
-      ltype = GIMP_RGBA_IMAGE;
-      itype = GIMP_RGB;
+      ltype = PICMAN_RGBA_IMAGE;
+      itype = PICMAN_RGB;
       break;
 
     case RAW_GRAY_1BPP:
       bpp    = 1;
       bitspp = 1;
-      ltype  = GIMP_RGB_IMAGE;
-      itype  = GIMP_RGB;
+      ltype  = PICMAN_RGB_IMAGE;
+      itype  = PICMAN_RGB;
       break;
     case RAW_GRAY_2BPP:
       bpp    = 1;
       bitspp = 2;
-      ltype  = GIMP_RGB_IMAGE;
-      itype  = GIMP_RGB;
+      ltype  = PICMAN_RGB_IMAGE;
+      itype  = PICMAN_RGB;
       break;
     case RAW_GRAY_4BPP:
       bpp    = 1;
       bitspp = 4;
-      ltype  = GIMP_RGB_IMAGE;
-      itype  = GIMP_RGB;
+      ltype  = PICMAN_RGB_IMAGE;
+      itype  = PICMAN_RGB;
       break;
     case RAW_GRAY_8BPP:
       bpp   = 1;
-      ltype = GIMP_RGB_IMAGE;
-      itype = GIMP_RGB;
+      ltype = PICMAN_RGB_IMAGE;
+      itype = PICMAN_RGB;
       break;
 
     case RAW_INDEXED:         /* Indexed */
       bpp   = 1;
-      ltype = GIMP_INDEXED_IMAGE;
-      itype = GIMP_INDEXED;
+      ltype = PICMAN_INDEXED_IMAGE;
+      itype = PICMAN_INDEXED;
       break;
 
     case RAW_INDEXEDA:        /* Indexed + alpha */
       bpp   = 2;
-      ltype = GIMP_INDEXEDA_IMAGE;
-      itype = GIMP_INDEXED;
+      ltype = PICMAN_INDEXEDA_IMAGE;
+      itype = PICMAN_INDEXED;
       break;
     }
 
@@ -921,18 +921,18 @@ load_image (const gchar  *filename,
   if (runtime->image_height > (size / runtime->image_width / bpp * 8 / bitspp))
     runtime->image_height = size / runtime->image_width / bpp * 8 / bitspp;
 
-  data->image_id = gimp_image_new (runtime->image_width,
+  data->image_id = picman_image_new (runtime->image_width,
                                    runtime->image_height,
                                    itype);
-  gimp_image_set_filename(data->image_id, filename);
-  layer_id = gimp_layer_new (data->image_id, _("Background"),
+  picman_image_set_filename(data->image_id, filename);
+  layer_id = picman_layer_new (data->image_id, _("Background"),
                              runtime->image_width, runtime->image_height, ltype,
-                             100, GIMP_NORMAL_MODE);
-  gimp_image_insert_layer (data->image_id, layer_id, -1, 0);
+                             100, PICMAN_NORMAL_MODE);
+  picman_image_insert_layer (data->image_id, layer_id, -1, 0);
 
-  data->drawable = gimp_drawable_get (layer_id);
+  data->drawable = picman_drawable_get (layer_id);
 
-  gimp_pixel_rgn_init (&data->region, data->drawable,
+  picman_pixel_rgn_init (&data->region, data->drawable,
                        0, 0, runtime->image_width, runtime->image_height,
                        TRUE, FALSE);
 
@@ -976,8 +976,8 @@ load_image (const gchar  *filename,
 
   fclose (data->fp);
 
-  gimp_drawable_flush (data->drawable);
-  gimp_drawable_detach (data->drawable);
+  picman_drawable_flush (data->drawable);
+  picman_drawable_detach (data->drawable);
 
   return data->image_id;
 }
@@ -986,14 +986,14 @@ load_image (const gchar  *filename,
 /* misc GUI stuff */
 
 static void
-preview_update_size (GimpPreviewArea *preview)
+preview_update_size (PicmanPreviewArea *preview)
 {
   gtk_widget_set_size_request (GTK_WIDGET (preview),
                                runtime->image_width, runtime->image_height);
 }
 
 static void
-preview_update (GimpPreviewArea *preview)
+preview_update (PicmanPreviewArea *preview)
 {
   gint     width;
   gint     height;
@@ -1004,7 +1004,7 @@ preview_update (GimpPreviewArea *preview)
   width  = MIN (runtime->image_width,  preview->width);
   height = MIN (runtime->image_height, preview->height);
 
-  gimp_preview_area_fill (preview,
+  picman_preview_area_fill (preview,
                           0, 0, preview->width, preview->height,
                           255, 255, 255);
 
@@ -1020,8 +1020,8 @@ preview_update (GimpPreviewArea *preview)
             pos = runtime->file_offset + runtime->image_width * y * 3;
             mmap_read (preview_fd, row, width * 3, pos, width * 3);
 
-            gimp_preview_area_draw (preview, 0, y, width, 1,
-                                    GIMP_RGB_IMAGE, row, width * 3);
+            picman_preview_area_draw (preview, 0, y, width, 1,
+                                    PICMAN_RGB_IMAGE, row, width * 3);
           }
 
         g_free (row);
@@ -1038,8 +1038,8 @@ preview_update (GimpPreviewArea *preview)
             pos = runtime->file_offset + runtime->image_width * y * 4;
             mmap_read (preview_fd, row, width * 4, pos, width * 4);
 
-            gimp_preview_area_draw (preview, 0, y, width, 1,
-                                    GIMP_RGBA_IMAGE, row, width * 4);
+            picman_preview_area_draw (preview, 0, y, width, 1,
+                                    PICMAN_RGBA_IMAGE, row, width * 4);
           }
 
         g_free (row);
@@ -1061,8 +1061,8 @@ preview_update (GimpPreviewArea *preview)
             mmap_read (preview_fd, in, width * 2, pos, width * 2);
             rgb_565_to_888 (in, row, width, runtime->image_type);
 
-            gimp_preview_area_draw (preview, 0, y, width, 1,
-                                    GIMP_RGB_IMAGE, row, width * 3);
+            picman_preview_area_draw (preview, 0, y, width, 1,
+                                    PICMAN_RGB_IMAGE, row, width * 3);
           }
 
         g_free (row);
@@ -1100,8 +1100,8 @@ preview_update (GimpPreviewArea *preview)
                 row[k++] = b_row[j];
               }
 
-            gimp_preview_area_draw (preview, 0, y, width, 1,
-                                    GIMP_RGB_IMAGE, row, width * 3);
+            picman_preview_area_draw (preview, 0, y, width, 1,
+                                    PICMAN_RGB_IMAGE, row, width * 3);
           }
 
         g_free (b_row);
@@ -1174,8 +1174,8 @@ preview_update (GimpPreviewArea *preview)
               }
           }
 
-        gimp_preview_area_draw (preview, 0, 0, width, height,
-                                GIMP_RGB_IMAGE, out_raw, width * 3);
+        picman_preview_area_draw (preview, 0, 0, width, height,
+                                PICMAN_RGB_IMAGE, out_raw, width * 3);
         g_free (in_raw);
         g_free (out_raw);
       }
@@ -1252,8 +1252,8 @@ preview_update (GimpPreviewArea *preview)
                       }
                   }
 
-                gimp_preview_area_draw (preview, 0, y, width, 1,
-                                        GIMP_RGBA_IMAGE, row, width * 4);
+                picman_preview_area_draw (preview, 0, y, width, 1,
+                                        PICMAN_RGBA_IMAGE, row, width * 4);
               }
             else
               {
@@ -1277,8 +1277,8 @@ preview_update (GimpPreviewArea *preview)
                       }
                   }
 
-                gimp_preview_area_draw (preview, 0, y, width, 1,
-                                        GIMP_RGB_IMAGE, row, width * 3);
+                picman_preview_area_draw (preview, 0, y, width, 1,
+                                        PICMAN_RGB_IMAGE, row, width * 3);
               }
           }
 
@@ -1290,7 +1290,7 @@ preview_update (GimpPreviewArea *preview)
 }
 
 static void
-palette_update (GimpPreviewArea *preview)
+palette_update (PicmanPreviewArea *preview)
 {
   preview_cmap_update = TRUE;
 
@@ -1314,11 +1314,11 @@ load_dialog (const gchar *filename)
 
   file_size = get_file_info (filename);
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Load Image from Raw Data"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Load Image from Raw Data"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, LOAD_PROC,
+                            picman_standard_help_func, LOAD_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OPEN,   GTK_RESPONSE_OK,
@@ -1344,7 +1344,7 @@ load_dialog (const gchar *filename)
   gtk_widget_set_size_request (sw, PREVIEW_SIZE, PREVIEW_SIZE);
   gtk_widget_show (sw);
 
-  preview = gimp_preview_area_new ();
+  preview = picman_preview_area_new ();
   gtk_widget_set_size_request (preview,
                                runtime->image_width, runtime->image_height);
   gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (sw), preview);
@@ -1354,7 +1354,7 @@ load_dialog (const gchar *filename)
                           G_CALLBACK (preview_update),
                           NULL);
 
-  frame = gimp_frame_new (_("Image"));
+  frame = picman_frame_new (_("Image"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1364,7 +1364,7 @@ load_dialog (const gchar *filename)
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  combo = gimp_int_combo_box_new (_("RGB"),                  RAW_RGB,
+  combo = picman_int_combo_box_new (_("RGB"),                  RAW_RGB,
                                   _("RGB Alpha"),            RAW_RGBA,
                                   _("RGB565 Big Endian"),    RAW_RGB565_BE,
                                   _("RGB565 Little Endian"), RAW_RGB565_LE,
@@ -1378,40 +1378,40 @@ load_dialog (const gchar *filename)
                                   _("Indexed"),              RAW_INDEXED,
                                   _("Indexed Alpha"),        RAW_INDEXEDA,
                                   NULL);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo),
                                  runtime->image_type);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("Image _Type:"), 0.0, 0.5,
                              combo, 2, FALSE);
 
   g_signal_connect (combo, "changed",
-                    G_CALLBACK (gimp_int_combo_box_get_active),
+                    G_CALLBACK (picman_int_combo_box_get_active),
                     &runtime->image_type);
   g_signal_connect_swapped (combo, "changed",
                             G_CALLBACK (preview_update),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("O_ffset:"), -1, 9,
                               runtime->file_offset, 0, file_size, 1, 1000, 0,
                               TRUE, 0.0, 0.0,
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &runtime->file_offset);
   g_signal_connect_swapped (adj, "value-changed",
                             G_CALLBACK (preview_update),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                               _("_Width:"), -1, 9,
                               runtime->image_width, 1, file_size, 1, 10, 0,
                               TRUE, 0.0, 0.0,
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &runtime->image_width);
   g_signal_connect_swapped (adj, "value-changed",
                             G_CALLBACK (preview_update_size),
@@ -1420,14 +1420,14 @@ load_dialog (const gchar *filename)
                             G_CALLBACK (preview_update),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 3,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 3,
                               _("_Height:"), -1, 9,
                               runtime->image_height, 1, file_size, 1, 10, 0,
                               TRUE, 0.0, 0.0,
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &runtime->image_height);
   g_signal_connect_swapped (adj, "value-changed",
                             G_CALLBACK (preview_update_size),
@@ -1437,7 +1437,7 @@ load_dialog (const gchar *filename)
                             preview);
 
 
-  frame = gimp_frame_new (_("Palette"));
+  frame = picman_frame_new (_("Palette"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1447,30 +1447,30 @@ load_dialog (const gchar *filename)
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  combo = gimp_int_combo_box_new (_("R, G, B (normal)"),       RAW_PALETTE_RGB,
+  combo = picman_int_combo_box_new (_("R, G, B (normal)"),       RAW_PALETTE_RGB,
                                   _("B, G, R, X (BMP style)"), RAW_PALETTE_BGR,
                                   NULL);
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (combo),
                                  runtime->palette_type);
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 0,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 0,
                              _("_Palette Type:"), 0.0, 0.5,
                              combo, 2, FALSE);
 
   g_signal_connect (combo, "changed",
-                    G_CALLBACK (gimp_int_combo_box_get_active),
+                    G_CALLBACK (picman_int_combo_box_get_active),
                     &runtime->palette_type);
   g_signal_connect_swapped (combo, "changed",
                             G_CALLBACK (palette_update),
                             preview);
 
-  adj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  adj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                               _("Off_set:"), -1, 0,
                               runtime->palette_offset, 0, 1 << 24, 1, 768, 0,
                               TRUE, 0.0, 0.0,
                               NULL, NULL);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &runtime->palette_offset);
   g_signal_connect_swapped (adj, "value-changed",
                             G_CALLBACK (palette_update),
@@ -1481,7 +1481,7 @@ load_dialog (const gchar *filename)
   if (palfile)
     gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (button), palfile);
 
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, 2,
+  picman_table_attach_aligned (GTK_TABLE (table), 0, 2,
                              _("Pal_ette File:"), 0.0, 0.5,
                              button, 2, FALSE);
 
@@ -1491,7 +1491,7 @@ load_dialog (const gchar *filename)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -1508,18 +1508,18 @@ save_dialog (const gchar *filename,
   GtkWidget *frame;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_export_dialog_new (_("Raw Image"), PLUG_IN_BINARY, SAVE_PROC);
+  dialog = picman_export_dialog_new (_("Raw Image"), PLUG_IN_BINARY, SAVE_PROC);
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       main_vbox, FALSE, FALSE, 0);
   gtk_widget_show (main_vbox);
 
-  frame = gimp_int_radio_group_new (TRUE, _("RGB Save Type"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("RGB Save Type"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &runtime->image_type,
                                     runtime->image_type,
                                     _("Standard (R,G,B)"),     RAW_RGB,    NULL,
@@ -1528,8 +1528,8 @@ save_dialog (const gchar *filename,
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Indexed Palette Type"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Indexed Palette Type"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &runtime->palette_type,
                                     runtime->palette_type,
                                     _("R, G, B (normal)"),
@@ -1542,7 +1542,7 @@ save_dialog (const gchar *filename,
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -1551,7 +1551,7 @@ save_dialog (const gchar *filename,
 
 static void
 palette_callback (GtkFileChooser  *button,
-                  GimpPreviewArea *preview)
+                  PicmanPreviewArea *preview)
 {
   if (palfile)
     g_free (palfile);

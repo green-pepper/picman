@@ -29,22 +29,22 @@
                                   inCopy)
   (let* (
         (theImage (if (= inCopy TRUE)
-                      (car (gimp-image-duplicate inImage))
+                      (car (picman-image-duplicate inImage))
                       inImage))
-        (theLayer (car (gimp-image-get-active-layer theImage)))
+        (theLayer (car (picman-image-get-active-layer theImage)))
         (n 0)
         (ang (* (/ 360 inFrames)
                 (if (= inFromLeft TRUE) 1 -1) ))
         (theFrame 0)
         )
 
-  (gimp-layer-add-alpha theLayer)
+  (picman-layer-add-alpha theLayer)
 
   (while (> inFrames n)
     (set! n (+ n 1))
-    (set! theFrame (car (gimp-layer-copy theLayer FALSE)))
-    (gimp-image-insert-layer theImage theFrame 0 0)
-    (gimp-item-set-name theFrame
+    (set! theFrame (car (picman-layer-copy theLayer FALSE)))
+    (picman-image-insert-layer theImage theFrame 0 0)
+    (picman-item-set-name theFrame
                          (string-append "Anim Frame: "
                                         (number->string (- inFrames n) 10)
                                         " (replace)"))
@@ -70,22 +70,22 @@
     )
   )
 
-  (gimp-image-remove-layer theImage theLayer)
+  (picman-image-remove-layer theImage theLayer)
   (plug-in-autocrop RUN-NONINTERACTIVE theImage theFrame)
 
   (if (= inIndex 0)
       ()
-      (gimp-image-convert-indexed theImage FS-DITHER MAKE-PALETTE inIndex
+      (picman-image-convert-indexed theImage FS-DITHER MAKE-PALETTE inIndex
                                   FALSE FALSE ""))
 
   (if (= inCopy TRUE)
     (begin
-      (gimp-image-clean-all theImage)
-      (gimp-display-new theImage)
+      (picman-image-clean-all theImage)
+      (picman-display-new theImage)
     )
   )
 
-  (gimp-displays-flush)
+  (picman-displays-flush)
   )
 )
 

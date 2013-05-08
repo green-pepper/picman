@@ -1,11 +1,11 @@
-# Malay Translation of libgimp.
+# Malay Translation of libpicman.
 # Copyright (C) 2003 Mimos Open Source Developement Group
 # This file is distributed under the same license as the PACKAGE package.
 # MIMOS Open Source Development Group <opensource@mimos.my>, 2003.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: libgimp\n"
+"Project-Id-Version: libpicman\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-02 19:53+0100\n"
 "PO-Revision-Date: 2003-10-30 08:00+0800\n"
@@ -15,84 +15,84 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../libgimp/gimpbrushmenu.c:129
+#: ../libpicman/picmanbrushmenu.c:129
 msgid "Brush Selection"
 msgstr "Pemilihan Berus"
 
-#: ../libgimp/gimpbrushmenu.c:158 ../libgimp/gimppatternmenu.c:142
+#: ../libpicman/picmanbrushmenu.c:158 ../libpicman/picmanpatternmenu.c:142
 msgid "_Browse..."
 msgstr "_Layar..."
 
-#: ../libgimp/gimpexport.c:215 ../libgimp/gimpexport.c:251
+#: ../libpicman/picmanexport.c:215 ../libpicman/picmanexport.c:251
 #, c-format
 msgid "%s can't handle layers"
 msgstr "%s tidak boleh mengendalikan lapisan"
 
-#: ../libgimp/gimpexport.c:216 ../libgimp/gimpexport.c:225
-#: ../libgimp/gimpexport.c:234
+#: ../libpicman/picmanexport.c:216 ../libpicman/picmanexport.c:225
+#: ../libpicman/picmanexport.c:234
 msgid "Merge Visible Layers"
 msgstr "Cantumkan Lapisan yang Dapat Dilihat"
 
-#: ../libgimp/gimpexport.c:224
+#: ../libpicman/picmanexport.c:224
 #, c-format
 msgid "%s can't handle layer offsets, size or opacity"
 msgstr "%s tidak boleh mengendalikan ofset, saiz atau keupayaan lapisan"
 
-#: ../libgimp/gimpexport.c:233 ../libgimp/gimpexport.c:242
+#: ../libpicman/picmanexport.c:233 ../libpicman/picmanexport.c:242
 #, c-format
 msgid "%s can only handle layers as animation frames"
 msgstr "%s hanya boleh mengendalikan lapisan sebagai bingkai animasi"
 
-#: ../libgimp/gimpexport.c:234 ../libgimp/gimpexport.c:243
+#: ../libpicman/picmanexport.c:234 ../libpicman/picmanexport.c:243
 msgid "Save as Animation"
 msgstr "Simpan sebagai Animasi"
 
-#: ../libgimp/gimpexport.c:243 ../libgimp/gimpexport.c:252
-#: ../libgimp/gimpexport.c:261
+#: ../libpicman/picmanexport.c:243 ../libpicman/picmanexport.c:252
+#: ../libpicman/picmanexport.c:261
 msgid "Flatten Image"
 msgstr "Ratakan Imej"
 
-#: ../libgimp/gimpexport.c:260
+#: ../libpicman/picmanexport.c:260
 #, c-format
 msgid "%s can't handle transparency"
 msgstr "%s tidak boleh mengendalikan kelutsinaran"
 
-#: ../libgimp/gimpexport.c:269
+#: ../libpicman/picmanexport.c:269
 #, fuzzy, c-format
 msgid "%s can't handle layer masks"
 msgstr "%s tidak boleh mengendalikan lapisan"
 
-#: ../libgimp/gimpexport.c:270
+#: ../libpicman/picmanexport.c:270
 msgid "Apply Layer Masks"
 msgstr ""
 
-#: ../libgimp/gimpexport.c:278
+#: ../libpicman/picmanexport.c:278
 #, c-format
 msgid "%s can only handle RGB images"
 msgstr "%s hanya boleh mengendalikan imej RGB"
 
-#: ../libgimp/gimpexport.c:279 ../libgimp/gimpexport.c:317
-#: ../libgimp/gimpexport.c:326
+#: ../libpicman/picmanexport.c:279 ../libpicman/picmanexport.c:317
+#: ../libpicman/picmanexport.c:326
 msgid "Convert to RGB"
 msgstr "Tukarkan kepada RGB"
 
-#: ../libgimp/gimpexport.c:287
+#: ../libpicman/picmanexport.c:287
 #, c-format
 msgid "%s can only handle grayscale images"
 msgstr "%s hanya boleh mengendalikan imej skala kelabu"
 
-#: ../libgimp/gimpexport.c:288 ../libgimp/gimpexport.c:317
-#: ../libgimp/gimpexport.c:338
+#: ../libpicman/picmanexport.c:288 ../libpicman/picmanexport.c:317
+#: ../libpicman/picmanexport.c:338
 msgid "Convert to Grayscale"
 msgstr "Tukarkan kepada Skala kelabu"
 
-#: ../libgimp/gimpexport.c:296
+#: ../libpicman/picmanexport.c:296
 #, c-format
 msgid "%s can only handle indexed images"
 msgstr "%s hanya boleh mengendalikan imej berindeks"
 
-#: ../libgimp/gimpexport.c:297 ../libgimp/gimpexport.c:326
-#: ../libgimp/gimpexport.c:336
+#: ../libpicman/picmanexport.c:297 ../libpicman/picmanexport.c:326
+#: ../libpicman/picmanexport.c:336
 msgid ""
 "Convert to Indexed using default settings\n"
 "(Do it manually to tune the result)"
@@ -100,12 +100,12 @@ msgstr ""
 "Tukarkan kepada Berindeks dengan menggunakan seting piawai\n"
 "(Lakukannya secara manual untuk memadankan hasil tersebut"
 
-#: ../libgimp/gimpexport.c:306
+#: ../libpicman/picmanexport.c:306
 #, fuzzy, c-format
 msgid "%s can only handle bitmap (two color) indexed images"
 msgstr "%s hanya boleh mengendalikan imej RGB atau imej berindeks"
 
-#: ../libgimp/gimpexport.c:307
+#: ../libpicman/picmanexport.c:307
 #, fuzzy
 msgid ""
 "Convert to Indexed using bitmap default settings\n"
@@ -114,54 +114,54 @@ msgstr ""
 "Tukarkan kepada Berindeks dengan menggunakan seting piawai\n"
 "(Lakukannya secara manual untuk memadankan hasil tersebut"
 
-#: ../libgimp/gimpexport.c:316
+#: ../libpicman/picmanexport.c:316
 #, c-format
 msgid "%s can only handle RGB or grayscale images"
 msgstr "%s hanya boleh mengendalikan imej RGB atau imej skala kelabu"
 
-#: ../libgimp/gimpexport.c:325
+#: ../libpicman/picmanexport.c:325
 #, c-format
 msgid "%s can only handle RGB or indexed images"
 msgstr "%s hanya boleh mengendalikan imej RGB atau imej berindeks"
 
-#: ../libgimp/gimpexport.c:335
+#: ../libpicman/picmanexport.c:335
 #, c-format
 msgid "%s can only handle grayscale or indexed images"
 msgstr "%s hanya boleh mengendalikan imej skala kelabu atau imej berindeks"
 
-#: ../libgimp/gimpexport.c:346
+#: ../libpicman/picmanexport.c:346
 #, c-format
 msgid "%s needs an alpha channel"
 msgstr "%s memerlukan saluran alfa"
 
-#: ../libgimp/gimpexport.c:347
+#: ../libpicman/picmanexport.c:347
 msgid "Add Alpha Channel"
 msgstr "Tambahkan Saluran Alfa"
 
-#: ../libgimp/gimpexport.c:381
+#: ../libpicman/picmanexport.c:381
 msgid "Confirm Save"
 msgstr "Sahkan Simpan"
 
-#: ../libgimp/gimpexport.c:387
+#: ../libpicman/picmanexport.c:387
 msgid "Confirm"
 msgstr "Sahkan"
 
-#: ../libgimp/gimpexport.c:454
+#: ../libpicman/picmanexport.c:454
 msgid "Export File"
 msgstr "Eksport Fail"
 
-#: ../libgimp/gimpexport.c:458
+#: ../libpicman/picmanexport.c:458
 #, fuzzy
 msgid "_Ignore"
 msgstr "Abai"
 
-#: ../libgimp/gimpexport.c:460
+#: ../libpicman/picmanexport.c:460
 #, fuzzy
 msgid "_Export"
 msgstr "Eksport"
 
 #. the headline
-#: ../libgimp/gimpexport.c:482
+#: ../libpicman/picmanexport.c:482
 #, fuzzy, c-format
 msgid ""
 "Your image should be exported before it can be saved as %s for the following "
@@ -171,11 +171,11 @@ msgstr ""
 "berikut;"
 
 #. the footline
-#: ../libgimp/gimpexport.c:553
+#: ../libpicman/picmanexport.c:553
 msgid "The export conversion won't modify your original image."
 msgstr "Penukaran eksport tidak akan mengubah suai imej asal anda."
 
-#: ../libgimp/gimpexport.c:653
+#: ../libpicman/picmanexport.c:653
 #, c-format
 msgid ""
 "You are about to save a layer mask as %s.\n"
@@ -184,7 +184,7 @@ msgstr ""
 "Anda akan menyimpan topeng lapisan sebagai %s.\n"
 "Cara ini tidak akan menyimpan lapisan yang dapat dilihat."
 
-#: ../libgimp/gimpexport.c:659
+#: ../libpicman/picmanexport.c:659
 #, c-format
 msgid ""
 "You are about to save a channel (saved selection) as %s.\n"
@@ -193,452 +193,452 @@ msgstr ""
 "Anda akan menyimpan saluran (pemilihan yang disimpan) sebagai %s.\n"
 "Cara ini tidak akan menyimpan lapisan yang dapat dilihat."
 
-#: ../libgimp/gimpfontmenu.c:89
+#: ../libpicman/picmanfontmenu.c:89
 msgid "Font Selection"
 msgstr "Pemilihan Fon"
 
-#: ../libgimp/gimpgradientmenu.c:104
+#: ../libpicman/picmangradientmenu.c:104
 msgid "Gradient Selection"
 msgstr "Pemilihan Kecerunan"
 
-#: ../libgimp/gimpmenu.c:406 ../libgimpwidgets/gimpintstore.c:181
+#: ../libpicman/picmanmenu.c:406 ../libpicmanwidgets/picmanintstore.c:181
 msgid "(Empty)"
 msgstr ""
 
-#: ../libgimp/gimppalettemenu.c:91
+#: ../libpicman/picmanpalettemenu.c:91
 #, fuzzy
 msgid "Palette Selection"
 msgstr "Pemilihan Corak"
 
-#: ../libgimp/gimppatternmenu.c:113
+#: ../libpicman/picmanpatternmenu.c:113
 msgid "Pattern Selection"
 msgstr "Pemilihan Corak"
 
-#: ../libgimp/gimpunitcache.c:57
+#: ../libpicman/picmanunitcache.c:57
 msgid "percent"
 msgstr "peratus"
 
-#: ../libgimpbase/gimpbaseenums.c:26
+#: ../libpicmanbase/picmanbaseenums.c:26
 #, fuzzy
 msgid "_White (full opacity)"
 msgstr "_Putih (Kelegapan Penuh)"
 
-#: ../libgimpbase/gimpbaseenums.c:27
+#: ../libpicmanbase/picmanbaseenums.c:27
 #, fuzzy
 msgid "_Black (full transparency)"
 msgstr "_Hitam (Kelutsinaran Penuh)"
 
-#: ../libgimpbase/gimpbaseenums.c:28
+#: ../libpicmanbase/picmanbaseenums.c:28
 #, fuzzy
 msgid "Layer's _alpha channel"
 msgstr "Saluran _Alfa Lapisan"
 
-#: ../libgimpbase/gimpbaseenums.c:29
+#: ../libpicmanbase/picmanbaseenums.c:29
 #, fuzzy
 msgid "_Transfer layer's alpha channel"
 msgstr "Saluran _Alfa Lapisan"
 
-#: ../libgimpbase/gimpbaseenums.c:30
+#: ../libpicmanbase/picmanbaseenums.c:30
 msgid "_Selection"
 msgstr "_Pemilihan"
 
-#: ../libgimpbase/gimpbaseenums.c:31
+#: ../libpicmanbase/picmanbaseenums.c:31
 #, fuzzy
 msgid "_Grayscale copy of layer"
 msgstr "_Salinan Skala kelabu Lapisan"
 
-#: ../libgimpbase/gimpbaseenums.c:61
+#: ../libpicmanbase/picmanbaseenums.c:61
 msgid "FG to BG (RGB)"
 msgstr "FG ke BG (RGB)"
 
-#: ../libgimpbase/gimpbaseenums.c:62
+#: ../libpicmanbase/picmanbaseenums.c:62
 msgid "FG to BG (HSV)"
 msgstr "FG ke BG (HSV)"
 
-#: ../libgimpbase/gimpbaseenums.c:63
+#: ../libpicmanbase/picmanbaseenums.c:63
 #, fuzzy
 msgid "FG to transparent"
 msgstr "FG ke Lut sinar"
 
-#: ../libgimpbase/gimpbaseenums.c:64
+#: ../libpicmanbase/picmanbaseenums.c:64
 #, fuzzy
 msgid "Custom gradient"
 msgstr "Kecerunan Biasa"
 
-#: ../libgimpbase/gimpbaseenums.c:93
+#: ../libpicmanbase/picmanbaseenums.c:93
 #, fuzzy
 msgid "FG color fill"
 msgstr "Isian Warna FG"
 
-#: ../libgimpbase/gimpbaseenums.c:94
+#: ../libpicmanbase/picmanbaseenums.c:94
 #, fuzzy
 msgid "BG color fill"
 msgstr "Isian Warna BG"
 
-#: ../libgimpbase/gimpbaseenums.c:95
+#: ../libpicmanbase/picmanbaseenums.c:95
 #, fuzzy
 msgid "Pattern fill"
 msgstr "Isian Corak"
 
-#: ../libgimpbase/gimpbaseenums.c:125
+#: ../libpicmanbase/picmanbaseenums.c:125
 msgid "Add to the current selection"
 msgstr "Tambahkan ke pemilihan semasa"
 
-#: ../libgimpbase/gimpbaseenums.c:126
+#: ../libpicmanbase/picmanbaseenums.c:126
 msgid "Subtract from the current selection"
 msgstr "Tolak dari pemilihan semasa"
 
-#: ../libgimpbase/gimpbaseenums.c:127
+#: ../libpicmanbase/picmanbaseenums.c:127
 msgid "Replace the current selection"
 msgstr "Gantikan pemilihan semasa"
 
-#: ../libgimpbase/gimpbaseenums.c:128
+#: ../libpicmanbase/picmanbaseenums.c:128
 msgid "Intersect with the current selection"
 msgstr "Bersilang dengan pemilihan semasa"
 
-#: ../libgimpbase/gimpbaseenums.c:160 ../libgimpwidgets/gimpcolorscales.c:168
-#: ../libgimpwidgets/gimpcolorselect.c:352
+#: ../libpicmanbase/picmanbaseenums.c:160 ../libpicmanwidgets/picmancolorscales.c:168
+#: ../libpicmanwidgets/picmancolorselect.c:352
 msgid "Red"
 msgstr "Merah"
 
-#: ../libgimpbase/gimpbaseenums.c:161 ../libgimpwidgets/gimpcolorscales.c:169
-#: ../libgimpwidgets/gimpcolorselect.c:353
+#: ../libpicmanbase/picmanbaseenums.c:161 ../libpicmanwidgets/picmancolorscales.c:169
+#: ../libpicmanwidgets/picmancolorselect.c:353
 msgid "Green"
 msgstr "Hijau"
 
-#: ../libgimpbase/gimpbaseenums.c:162 ../libgimpwidgets/gimpcolorscales.c:170
-#: ../libgimpwidgets/gimpcolorselect.c:354
+#: ../libpicmanbase/picmanbaseenums.c:162 ../libpicmanwidgets/picmancolorscales.c:170
+#: ../libpicmanwidgets/picmancolorselect.c:354
 msgid "Blue"
 msgstr "Biru"
 
-#: ../libgimpbase/gimpbaseenums.c:163
+#: ../libpicmanbase/picmanbaseenums.c:163
 msgid "Gray"
 msgstr "Kelabu"
 
-#: ../libgimpbase/gimpbaseenums.c:164 ../libgimpbase/gimpbaseenums.c:436
+#: ../libpicmanbase/picmanbaseenums.c:164 ../libpicmanbase/picmanbaseenums.c:436
 msgid "Indexed"
 msgstr "Berindeks"
 
-#: ../libgimpbase/gimpbaseenums.c:165 ../libgimpwidgets/gimpcolorscales.c:171
-#: ../libgimpwidgets/gimpcolorselect.c:355
+#: ../libpicmanbase/picmanbaseenums.c:165 ../libpicmanwidgets/picmancolorscales.c:171
+#: ../libpicmanwidgets/picmancolorselect.c:355
 msgid "Alpha"
 msgstr "Alfa"
 
-#: ../libgimpbase/gimpbaseenums.c:194
+#: ../libpicmanbase/picmanbaseenums.c:194
 msgid "Small"
 msgstr "Kecil"
 
-#: ../libgimpbase/gimpbaseenums.c:195
+#: ../libpicmanbase/picmanbaseenums.c:195
 msgid "Medium"
 msgstr "Sederhana"
 
-#: ../libgimpbase/gimpbaseenums.c:196
+#: ../libpicmanbase/picmanbaseenums.c:196
 msgid "Large"
 msgstr "Besar"
 
-#: ../libgimpbase/gimpbaseenums.c:228
+#: ../libpicmanbase/picmanbaseenums.c:228
 msgid "Light Checks"
 msgstr "Corak Dam yang Terang"
 
-#: ../libgimpbase/gimpbaseenums.c:229
+#: ../libpicmanbase/picmanbaseenums.c:229
 msgid "Mid-Tone Checks"
 msgstr "Corak Dam Ton Sederhana"
 
-#: ../libgimpbase/gimpbaseenums.c:230
+#: ../libpicmanbase/picmanbaseenums.c:230
 msgid "Dark Checks"
 msgstr "Corak Dam yang Gelap"
 
-#: ../libgimpbase/gimpbaseenums.c:231
+#: ../libpicmanbase/picmanbaseenums.c:231
 msgid "White Only"
 msgstr "Putih Sahaja"
 
-#: ../libgimpbase/gimpbaseenums.c:232
+#: ../libpicmanbase/picmanbaseenums.c:232
 msgid "Gray Only"
 msgstr "Kelabu Sahaja"
 
-#: ../libgimpbase/gimpbaseenums.c:233
+#: ../libpicmanbase/picmanbaseenums.c:233
 msgid "Black Only"
 msgstr "Hitam Sahaja"
 
-#: ../libgimpbase/gimpbaseenums.c:261
+#: ../libpicmanbase/picmanbaseenums.c:261
 #, fuzzy
 msgid "Image source"
 msgstr "Sumber Imej"
 
-#: ../libgimpbase/gimpbaseenums.c:262
+#: ../libpicmanbase/picmanbaseenums.c:262
 #, fuzzy
 msgid "Pattern source"
 msgstr "Sumber Corak"
 
-#: ../libgimpbase/gimpbaseenums.c:290
+#: ../libpicmanbase/picmanbaseenums.c:290
 msgid "Dodge"
 msgstr "Tepis"
 
-#: ../libgimpbase/gimpbaseenums.c:291
+#: ../libpicmanbase/picmanbaseenums.c:291
 msgid "Burn"
 msgstr "Lebur"
 
-#: ../libgimpbase/gimpbaseenums.c:328 ../libgimpbase/gimpbaseenums.c:468
+#: ../libpicmanbase/picmanbaseenums.c:328 ../libpicmanbase/picmanbaseenums.c:468
 msgid "Linear"
 msgstr "Linear"
 
-#: ../libgimpbase/gimpbaseenums.c:329
+#: ../libpicmanbase/picmanbaseenums.c:329
 #, fuzzy
 msgid "Bi-linear"
 msgstr "Bi-Linear"
 
-#: ../libgimpbase/gimpbaseenums.c:330
+#: ../libpicmanbase/picmanbaseenums.c:330
 msgid "Radial"
 msgstr "Jejari"
 
-#: ../libgimpbase/gimpbaseenums.c:331
+#: ../libpicmanbase/picmanbaseenums.c:331
 msgid "Square"
 msgstr "Segi empat sama"
 
-#: ../libgimpbase/gimpbaseenums.c:332
+#: ../libpicmanbase/picmanbaseenums.c:332
 #, fuzzy
 msgid "Conical (sym)"
 msgstr "Kon (simetrik)"
 
-#: ../libgimpbase/gimpbaseenums.c:333
+#: ../libpicmanbase/picmanbaseenums.c:333
 #, fuzzy
 msgid "Conical (asym)"
 msgstr "Kon (asimetrik)"
 
-#: ../libgimpbase/gimpbaseenums.c:334
+#: ../libpicmanbase/picmanbaseenums.c:334
 #, fuzzy
 msgid "Shaped (angular)"
 msgstr "Taburan bentuk (sudut)"
 
-#: ../libgimpbase/gimpbaseenums.c:335
+#: ../libpicmanbase/picmanbaseenums.c:335
 #, fuzzy
 msgid "Shaped (spherical)"
 msgstr "Taburan bentuk (sfera)"
 
-#: ../libgimpbase/gimpbaseenums.c:336
+#: ../libpicmanbase/picmanbaseenums.c:336
 #, fuzzy
 msgid "Shaped (dimpled)"
 msgstr "Taburan bentuk (berlekuk)"
 
-#: ../libgimpbase/gimpbaseenums.c:337
+#: ../libpicmanbase/picmanbaseenums.c:337
 #, fuzzy
 msgid "Spiral (cw)"
 msgstr "Lingkaran (ikut jam)"
 
-#: ../libgimpbase/gimpbaseenums.c:338
+#: ../libpicmanbase/picmanbaseenums.c:338
 #, fuzzy
 msgid "Spiral (ccw)"
 msgstr "Lingkaran (ikut jam)"
 
-#: ../libgimpbase/gimpbaseenums.c:367
+#: ../libpicmanbase/picmanbaseenums.c:367
 msgid "Stock ID"
 msgstr ""
 
-#: ../libgimpbase/gimpbaseenums.c:368
+#: ../libpicmanbase/picmanbaseenums.c:368
 msgid "Inline pixbuf"
 msgstr ""
 
-#: ../libgimpbase/gimpbaseenums.c:369
+#: ../libpicmanbase/picmanbaseenums.c:369
 #, fuzzy
 msgid "Image file"
 msgstr "Saiz Imej"
 
-#: ../libgimpbase/gimpbaseenums.c:398
+#: ../libpicmanbase/picmanbaseenums.c:398
 msgid "RGB color"
 msgstr ""
 
-#: ../libgimpbase/gimpbaseenums.c:399 ../libgimpbase/gimpbaseenums.c:434
+#: ../libpicmanbase/picmanbaseenums.c:399 ../libpicmanbase/picmanbaseenums.c:434
 msgid "Grayscale"
 msgstr "Skala kelabu"
 
-#: ../libgimpbase/gimpbaseenums.c:400
+#: ../libpicmanbase/picmanbaseenums.c:400
 msgid "Indexed color"
 msgstr ""
 
-#: ../libgimpbase/gimpbaseenums.c:432
+#: ../libpicmanbase/picmanbaseenums.c:432
 msgid "RGB"
 msgstr "RGB"
 
-#: ../libgimpbase/gimpbaseenums.c:433
+#: ../libpicmanbase/picmanbaseenums.c:433
 msgid "RGB-alpha"
 msgstr ""
 
-#: ../libgimpbase/gimpbaseenums.c:435
+#: ../libpicmanbase/picmanbaseenums.c:435
 msgid "Grayscale-alpha"
 msgstr ""
 
-#: ../libgimpbase/gimpbaseenums.c:437
+#: ../libpicmanbase/picmanbaseenums.c:437
 msgid "Indexed-alpha"
 msgstr ""
 
-#: ../libgimpbase/gimpbaseenums.c:467
+#: ../libpicmanbase/picmanbaseenums.c:467
 msgid "None (Fastest)"
 msgstr "Tiada (Paling laju)"
 
-#: ../libgimpbase/gimpbaseenums.c:469
+#: ../libpicmanbase/picmanbaseenums.c:469
 msgid "Cubic"
 msgstr ""
 
-#: ../libgimpbase/gimpbaseenums.c:470
+#: ../libpicmanbase/picmanbaseenums.c:470
 #, fuzzy
 msgid "Lanczos (Best)"
 msgstr "Kubik (Terbaik)"
 
-#: ../libgimpbase/gimpbaseenums.c:498
+#: ../libpicmanbase/picmanbaseenums.c:498
 msgid "Constant"
 msgstr "Pemalar"
 
-#: ../libgimpbase/gimpbaseenums.c:499
+#: ../libpicmanbase/picmanbaseenums.c:499
 msgid "Incremental"
 msgstr "Tambahan"
 
-#: ../libgimpbase/gimpbaseenums.c:528
+#: ../libpicmanbase/picmanbaseenums.c:528
 msgid "None"
 msgstr "Tiada"
 
-#: ../libgimpbase/gimpbaseenums.c:529
+#: ../libpicmanbase/picmanbaseenums.c:529
 #, fuzzy
 msgid "Sawtooth wave"
 msgstr "Gelombang Gigi gergaji"
 
-#: ../libgimpbase/gimpbaseenums.c:530
+#: ../libpicmanbase/picmanbaseenums.c:530
 #, fuzzy
 msgid "Triangular wave"
 msgstr "Gelombang Tiga segi"
 
-#: ../libgimpbase/gimpbaseenums.c:558
+#: ../libpicmanbase/picmanbaseenums.c:558
 msgid "Pixels"
 msgstr "Piksel"
 
-#: ../libgimpbase/gimpbaseenums.c:559
+#: ../libpicmanbase/picmanbaseenums.c:559
 #, fuzzy
 msgid "Points"
 msgstr "titik"
 
-#: ../libgimpbase/gimpbaseenums.c:588
+#: ../libpicmanbase/picmanbaseenums.c:588
 msgid "Shadows"
 msgstr "Bayang"
 
-#: ../libgimpbase/gimpbaseenums.c:589
+#: ../libpicmanbase/picmanbaseenums.c:589
 msgid "Midtones"
 msgstr "Ton sederhana"
 
-#: ../libgimpbase/gimpbaseenums.c:590
+#: ../libpicmanbase/picmanbaseenums.c:590
 msgid "Highlights"
 msgstr "Tonjolan"
 
-#: ../libgimpbase/gimpbaseenums.c:618
+#: ../libpicmanbase/picmanbaseenums.c:618
 #, fuzzy
 msgid "Forward (traditional)"
 msgstr "Ke depan (Tradisional)"
 
-#: ../libgimpbase/gimpbaseenums.c:619
+#: ../libpicmanbase/picmanbaseenums.c:619
 #, fuzzy
 msgid "Backward (corrective)"
 msgstr "Ke belakang (Pembetulan)"
 
-#: ../libgimpbase/gimpmemsize.c:177
+#: ../libpicmanbase/picmanmemsize.c:177
 #, c-format
 msgid "%d Bytes"
 msgstr "%d Bait"
 
-#: ../libgimpbase/gimpmemsize.c:182
+#: ../libpicmanbase/picmanmemsize.c:182
 #, c-format
 msgid "%.2f KB"
 msgstr "%.2f KB"
 
-#: ../libgimpbase/gimpmemsize.c:186
+#: ../libpicmanbase/picmanmemsize.c:186
 #, c-format
 msgid "%.1f KB"
 msgstr "%.1f KB"
 
-#: ../libgimpbase/gimpmemsize.c:190
+#: ../libpicmanbase/picmanmemsize.c:190
 #, c-format
 msgid "%d KB"
 msgstr "%d KB"
 
-#: ../libgimpbase/gimpmemsize.c:197
+#: ../libpicmanbase/picmanmemsize.c:197
 #, c-format
 msgid "%.2f MB"
 msgstr "%.2f MB"
 
-#: ../libgimpbase/gimpmemsize.c:201
+#: ../libpicmanbase/picmanmemsize.c:201
 #, c-format
 msgid "%.1f MB"
 msgstr "%.1f MB"
 
-#: ../libgimpbase/gimpmemsize.c:205
+#: ../libpicmanbase/picmanmemsize.c:205
 #, fuzzy, c-format
 msgid "%d MB"
 msgstr "%d KB"
 
-#: ../libgimpbase/gimpmemsize.c:212
+#: ../libpicmanbase/picmanmemsize.c:212
 #, fuzzy, c-format
 msgid "%.2f GB"
 msgstr "%.2f MB"
 
-#: ../libgimpbase/gimpmemsize.c:216
+#: ../libpicmanbase/picmanmemsize.c:216
 #, fuzzy, c-format
 msgid "%.1f GB"
 msgstr "%.1f MB"
 
-#: ../libgimpbase/gimpmemsize.c:220
+#: ../libpicmanbase/picmanmemsize.c:220
 #, fuzzy, c-format
 msgid "%d GB"
 msgstr "%d KB"
 
-#: ../libgimpbase/gimputils.c:169 ../libgimpbase/gimputils.c:174
+#: ../libpicmanbase/picmanutils.c:169 ../libpicmanbase/picmanutils.c:174
 msgid "(invalid UTF-8 string)"
 msgstr "(rentetan UTF-8 tak sah)"
 
-#: ../libgimpconfig/gimpconfig-deserialize.c:95
+#: ../libpicmanconfig/picmanconfig-deserialize.c:95
 #, c-format
 msgid "value for token %s is not a valid UTF-8 string"
 msgstr "nilai bagi token %s bukan rentetan UTF-8 yang sah"
 
 #. please don't translate 'yes' and 'no'
-#: ../libgimpconfig/gimpconfig-deserialize.c:423
+#: ../libpicmanconfig/picmanconfig-deserialize.c:423
 #, c-format
 msgid "expected 'yes' or 'no' for boolean token %s, got '%s'"
 msgstr "menjangkakan 'ya' atau 'tidak' bagi token boolean %s, dapat '%s'"
 
-#: ../libgimpconfig/gimpconfig-deserialize.c:497
+#: ../libpicmanconfig/picmanconfig-deserialize.c:497
 #, c-format
 msgid "invalid value '%s' for token %s"
 msgstr "nilai tak sah '%s' bagi token %s"
 
-#: ../libgimpconfig/gimpconfig-deserialize.c:512
+#: ../libpicmanconfig/picmanconfig-deserialize.c:512
 #, c-format
 msgid "invalid value '%ld' for token %s"
 msgstr "nilai tak sah '%ld' bagi token %s"
 
-#: ../libgimpconfig/gimpconfig-deserialize.c:581
+#: ../libpicmanconfig/picmanconfig-deserialize.c:581
 #, fuzzy, c-format
 msgid "while parsing token '%s': %s"
 msgstr "semasa menghuraikan token %s: %s"
 
-#: ../libgimpconfig/gimpconfig-iface.c:454
-#: ../libgimpconfig/gimpconfig-iface.c:467 ../libgimpconfig/gimpscanner.c:513
-#: ../libgimpconfig/gimpscanner.c:594
+#: ../libpicmanconfig/picmanconfig-iface.c:454
+#: ../libpicmanconfig/picmanconfig-iface.c:467 ../libpicmanconfig/picmanscanner.c:513
+#: ../libpicmanconfig/picmanscanner.c:594
 msgid "fatal parse error"
 msgstr "ralat huraian mati"
 
-#: ../libgimpconfig/gimpconfig-path.c:349
+#: ../libpicmanconfig/picmanconfig-path.c:349
 #, fuzzy, c-format
 msgid "Cannot expand ${%s}"
 msgstr "tidak dapat menambahkan ${%s}"
 
-#: ../libgimpconfig/gimpconfigwriter.c:134
+#: ../libpicmanconfig/picmanconfigwriter.c:134
 #, fuzzy, c-format
 msgid "Could not create temporary file for '%s': %s"
 msgstr "Gagal mewujudkan fail sementara bagi '%s': %s"
 
-#: ../libgimpconfig/gimpconfigwriter.c:147
+#: ../libpicmanconfig/picmanconfigwriter.c:147
 #, c-format
 msgid "Could not open '%s' for writing: %s"
 msgstr "Tidak dapat membuka '%s' untuk menulis: %s"
 
-#: ../libgimpconfig/gimpconfigwriter.c:666
+#: ../libpicmanconfig/picmanconfigwriter.c:666
 #, c-format
 msgid ""
 "Error writing to temporary file for '%s': %s\n"
@@ -647,7 +647,7 @@ msgstr ""
 "Ralat menulis ke fail sementara bagi '%s': %s\n"
 "Fail asal tidak diganggu."
 
-#: ../libgimpconfig/gimpconfigwriter.c:674
+#: ../libpicmanconfig/picmanconfigwriter.c:674
 #, c-format
 msgid ""
 "Error writing to temporary file for '%s': %s\n"
@@ -656,201 +656,201 @@ msgstr ""
 "Ralat menulis ke fail sementara bagi '%s': %s\n"
 "Tiada fail diwujudkan."
 
-#: ../libgimpconfig/gimpconfigwriter.c:685
+#: ../libpicmanconfig/picmanconfigwriter.c:685
 #, c-format
 msgid "Error writing to '%s': %s"
 msgstr "Ralat menulis ke '%s': %s"
 
-#: ../libgimpconfig/gimpconfigwriter.c:703
+#: ../libpicmanconfig/picmanconfigwriter.c:703
 #, fuzzy, c-format
 msgid "Could not create '%s': %s"
 msgstr "Tidak dapat menghapuskan '%s': %s"
 
-#: ../libgimpconfig/gimpscanner.c:100
+#: ../libpicmanconfig/picmanscanner.c:100
 #, c-format
 msgid "Could not open '%s' for reading: %s"
 msgstr "Tidak dapat membuka '%s' untuk mebaca: %s"
 
-#: ../libgimpconfig/gimpscanner.c:270
+#: ../libpicmanconfig/picmanscanner.c:270
 msgid "invalid UTF-8 string"
 msgstr "rentetan UTF-8 tak sah"
 
-#: ../libgimpconfig/gimpscanner.c:621
+#: ../libpicmanconfig/picmanscanner.c:621
 #, fuzzy, c-format
 msgid "Error while parsing '%s' in line %d: %s"
 msgstr ""
 "Ralat semasa menghuraikan '%s' dalam baris %d:\n"
 "%s"
 
-#: ../libgimpmodule/gimpmodule.c:177
+#: ../libpicmanmodule/picmanmodule.c:177
 #, c-format
 msgid "Loading module: '%s'\n"
 msgstr "Memuatkan modul: '%s'\n"
 
-#: ../libgimpmodule/gimpmodule.c:193 ../libgimpmodule/gimpmodule.c:212
-#: ../libgimpmodule/gimpmodule.c:326 ../libgimpmodule/gimpmodule.c:354
-#: ../libgimpmodule/gimpmodule.c:478
+#: ../libpicmanmodule/picmanmodule.c:193 ../libpicmanmodule/picmanmodule.c:212
+#: ../libpicmanmodule/picmanmodule.c:326 ../libpicmanmodule/picmanmodule.c:354
+#: ../libpicmanmodule/picmanmodule.c:478
 #, fuzzy, c-format
 msgid "Module '%s' load error: %s"
 msgstr ""
 "Ralat muat modul '%s':\n"
 "%s"
 
-#: ../libgimpmodule/gimpmodule.c:282
+#: ../libpicmanmodule/picmanmodule.c:282
 #, c-format
 msgid "Skipping module: '%s'\n"
 msgstr "Melangkau modul: '%s'\n"
 
-#: ../libgimpmodule/gimpmodule.c:422
+#: ../libpicmanmodule/picmanmodule.c:422
 msgid "Module error"
 msgstr "Ralat modul"
 
-#: ../libgimpmodule/gimpmodule.c:423
+#: ../libpicmanmodule/picmanmodule.c:423
 msgid "Loaded"
 msgstr "Termuat"
 
-#: ../libgimpmodule/gimpmodule.c:424
+#: ../libpicmanmodule/picmanmodule.c:424
 msgid "Load failed"
 msgstr "Muat gagal dilakukan"
 
-#: ../libgimpmodule/gimpmodule.c:425
+#: ../libpicmanmodule/picmanmodule.c:425
 msgid "Not loaded"
 msgstr "Tidak dimuatkan"
 
-#: ../libgimpthumb/gimpthumb-utils.c:227 ../libgimpthumb/gimpthumb-utils.c:295
+#: ../libpicmanthumb/picmanthumb-utils.c:227 ../libpicmanthumb/picmanthumb-utils.c:295
 #, c-format
 msgid "Failed to create thumbnail folder '%s'."
 msgstr ""
 
-#: ../libgimpthumb/gimpthumbnail.c:919
+#: ../libpicmanthumb/picmanthumbnail.c:919
 #, c-format
 msgid "Could not create thumbnail for %s: %s"
 msgstr ""
 
-#: ../libgimpwidgets/gimpcolorbutton.c:99
+#: ../libpicmanwidgets/picmancolorbutton.c:99
 #, fuzzy
 msgid "_Foreground Color"
 msgstr "/Warna Latar depan"
 
-#: ../libgimpwidgets/gimpcolorbutton.c:103
+#: ../libpicmanwidgets/picmancolorbutton.c:103
 #, fuzzy
 msgid "_Background Color"
 msgstr "/Warna Latar belakang"
 
-#: ../libgimpwidgets/gimpcolorbutton.c:107
+#: ../libpicmanwidgets/picmancolorbutton.c:107
 #, fuzzy
 msgid "Blac_k"
 msgstr "/Hitam"
 
-#: ../libgimpwidgets/gimpcolorbutton.c:111
+#: ../libpicmanwidgets/picmancolorbutton.c:111
 #, fuzzy
 msgid "_White"
 msgstr "/Putih"
 
-#: ../libgimpwidgets/gimpcolorscales.c:133
+#: ../libpicmanwidgets/picmancolorscales.c:133
 msgid "Scales"
 msgstr "Skala"
 
-#: ../libgimpwidgets/gimpcolorscales.c:155
-#: ../libgimpwidgets/gimpcolorselect.c:345
+#: ../libpicmanwidgets/picmancolorscales.c:155
+#: ../libpicmanwidgets/picmancolorselect.c:345
 msgid "_H"
 msgstr "_H"
 
-#: ../libgimpwidgets/gimpcolorscales.c:156
-#: ../libgimpwidgets/gimpcolorselect.c:345
+#: ../libpicmanwidgets/picmancolorscales.c:156
+#: ../libpicmanwidgets/picmancolorselect.c:345
 msgid "_S"
 msgstr "_S"
 
-#: ../libgimpwidgets/gimpcolorscales.c:157
-#: ../libgimpwidgets/gimpcolorselect.c:345
+#: ../libpicmanwidgets/picmancolorscales.c:157
+#: ../libpicmanwidgets/picmancolorselect.c:345
 msgid "_V"
 msgstr "_V"
 
-#: ../libgimpwidgets/gimpcolorscales.c:158
-#: ../libgimpwidgets/gimpcolorselect.c:345
+#: ../libpicmanwidgets/picmancolorscales.c:158
+#: ../libpicmanwidgets/picmancolorselect.c:345
 msgid "_R"
 msgstr "_R"
 
-#: ../libgimpwidgets/gimpcolorscales.c:159
-#: ../libgimpwidgets/gimpcolorselect.c:345
+#: ../libpicmanwidgets/picmancolorscales.c:159
+#: ../libpicmanwidgets/picmancolorselect.c:345
 msgid "_G"
 msgstr "_G"
 
-#: ../libgimpwidgets/gimpcolorscales.c:160
-#: ../libgimpwidgets/gimpcolorselect.c:345
+#: ../libpicmanwidgets/picmancolorscales.c:160
+#: ../libpicmanwidgets/picmancolorselect.c:345
 msgid "_B"
 msgstr "_B"
 
-#: ../libgimpwidgets/gimpcolorscales.c:161
+#: ../libpicmanwidgets/picmancolorscales.c:161
 msgid "_A"
 msgstr "_A"
 
-#: ../libgimpwidgets/gimpcolorscales.c:165
-#: ../libgimpwidgets/gimpcolorselect.c:349
+#: ../libpicmanwidgets/picmancolorscales.c:165
+#: ../libpicmanwidgets/picmancolorselect.c:349
 msgid "Hue"
 msgstr "Warna"
 
-#: ../libgimpwidgets/gimpcolorscales.c:166
-#: ../libgimpwidgets/gimpcolorselect.c:350 ../modules/cdisplay_proof.c:59
+#: ../libpicmanwidgets/picmancolorscales.c:166
+#: ../libpicmanwidgets/picmancolorselect.c:350 ../modules/cdisplay_proof.c:59
 msgid "Saturation"
 msgstr "Ketepuan"
 
-#: ../libgimpwidgets/gimpcolorscales.c:167
-#: ../libgimpwidgets/gimpcolorselect.c:351
+#: ../libpicmanwidgets/picmancolorscales.c:167
+#: ../libpicmanwidgets/picmancolorselect.c:351
 msgid "Value"
 msgstr "Nilai"
 
-#: ../libgimpwidgets/gimpcolorscales.c:243
+#: ../libpicmanwidgets/picmancolorscales.c:243
 #, fuzzy
 msgid "Hexadecimal color notation as used in HTML and CSS"
 msgstr "Tatatanda perenambelasan warna seperti yang digunakan pada HTML"
 
-#: ../libgimpwidgets/gimpcolorscales.c:248
+#: ../libpicmanwidgets/picmancolorscales.c:248
 msgid "HTML _Notation:"
 msgstr ""
 
-#: ../libgimpwidgets/gimpcolorselection.c:203
+#: ../libpicmanwidgets/picmancolorselection.c:203
 msgid "Current:"
 msgstr "Semasa:"
 
-#: ../libgimpwidgets/gimpcolorselection.c:225
+#: ../libpicmanwidgets/picmancolorselection.c:225
 msgid "Old:"
 msgstr "Lama:"
 
-#: ../libgimpwidgets/gimpfileentry.c:351
+#: ../libpicmanwidgets/picmanfileentry.c:351
 msgid "Select Folder"
 msgstr "Pilih Folder"
 
-#: ../libgimpwidgets/gimpfileentry.c:353
+#: ../libpicmanwidgets/picmanfileentry.c:353
 msgid "Select File"
 msgstr "Pilih Fail"
 
-#: ../libgimpwidgets/gimpmemsizeentry.c:232
+#: ../libpicmanwidgets/picmanmemsizeentry.c:232
 #, fuzzy
 msgid "Kilobytes"
 msgstr "KiloBait"
 
-#: ../libgimpwidgets/gimpmemsizeentry.c:233
+#: ../libpicmanwidgets/picmanmemsizeentry.c:233
 #, fuzzy
 msgid "Megabytes"
 msgstr "MegaBait"
 
-#: ../libgimpwidgets/gimpmemsizeentry.c:234
+#: ../libpicmanwidgets/picmanmemsizeentry.c:234
 #, fuzzy
 msgid "Gigabytes"
 msgstr "Gigabait"
 
-#: ../libgimpwidgets/gimppatheditor.c:243
+#: ../libpicmanwidgets/picmanpatheditor.c:243
 #, fuzzy
 msgid "Writable"
 msgstr "Segi tiga"
 
-#: ../libgimpwidgets/gimppatheditor.c:252
+#: ../libpicmanwidgets/picmanpatheditor.c:252
 #, fuzzy
 msgid "Folder"
 msgstr "Pilih Folder"
 
-#: ../libgimpwidgets/gimppickbutton.c:138
+#: ../libpicmanwidgets/picmanpickbutton.c:138
 msgid ""
 "Click the eyedropper, then click a color anywhere on your screen to select "
 "that color."
@@ -858,108 +858,108 @@ msgstr ""
 "Klik penitis mata, selepas itu klik warna di mana-mana sahaja pada skrin "
 "anda untuk memilih warna tersebut."
 
-#: ../libgimpwidgets/gimppreviewarea.c:126
+#: ../libpicmanwidgets/picmanpreviewarea.c:126
 msgid "Check Size"
 msgstr ""
 
-#: ../libgimpwidgets/gimppreviewarea.c:133
+#: ../libpicmanwidgets/picmanpreviewarea.c:133
 msgid "Check Style"
 msgstr ""
 
 #. toggle button to (des)activate the instant preview
-#: ../libgimpwidgets/gimppreview.c:240
+#: ../libpicmanwidgets/picmanpreview.c:240
 msgid "_Preview"
 msgstr "_Pralihat"
 
-#: ../libgimpwidgets/gimpstock.c:113
+#: ../libpicmanwidgets/picmanstock.c:113
 msgid "Anchor"
 msgstr "Tambat"
 
-#: ../libgimpwidgets/gimpstock.c:114
+#: ../libpicmanwidgets/picmanstock.c:114
 msgid "C_enter"
 msgstr ""
 
-#: ../libgimpwidgets/gimpstock.c:115
+#: ../libpicmanwidgets/picmanstock.c:115
 msgid "_Duplicate"
 msgstr "_Pendua"
 
-#: ../libgimpwidgets/gimpstock.c:116
+#: ../libpicmanwidgets/picmanstock.c:116
 msgid "_Edit"
 msgstr "_Edit"
 
-#: ../libgimpwidgets/gimpstock.c:117
+#: ../libpicmanwidgets/picmanstock.c:117
 msgid "Linked"
 msgstr "Terpaut"
 
-#: ../libgimpwidgets/gimpstock.c:118
+#: ../libpicmanwidgets/picmanstock.c:118
 msgid "Paste as New"
 msgstr "Tampal sebagai Baru"
 
-#: ../libgimpwidgets/gimpstock.c:119
+#: ../libpicmanwidgets/picmanstock.c:119
 msgid "Paste Into"
 msgstr "Tampal Ke dalam"
 
-#: ../libgimpwidgets/gimpstock.c:120
+#: ../libpicmanwidgets/picmanstock.c:120
 msgid "_Reset"
 msgstr "_Set semula"
 
-#: ../libgimpwidgets/gimpstock.c:121
+#: ../libpicmanwidgets/picmanstock.c:121
 msgid "Visible"
 msgstr "Dapat dilihat"
 
-#: ../libgimpwidgets/gimpstock.c:154 ../libgimpwidgets/gimpstock.c:158
+#: ../libpicmanwidgets/picmanstock.c:154 ../libpicmanwidgets/picmanstock.c:158
 msgid "_Stroke"
 msgstr ""
 
-#: ../libgimpwidgets/gimpstock.c:170
+#: ../libpicmanwidgets/picmanstock.c:170
 msgid "L_etter Spacing"
 msgstr "Langkauan A_ksara"
 
-#: ../libgimpwidgets/gimpstock.c:171
+#: ../libpicmanwidgets/picmanstock.c:171
 msgid "L_ine Spacing"
 msgstr "Langkauan B_aris"
 
-#: ../libgimpwidgets/gimpstock.c:187
+#: ../libpicmanwidgets/picmanstock.c:187
 msgid "_Resize"
 msgstr "_Saiz semula"
 
-#: ../libgimpwidgets/gimpstock.c:188 ../libgimpwidgets/gimpstock.c:292
+#: ../libpicmanwidgets/picmanstock.c:188 ../libpicmanwidgets/picmanstock.c:292
 msgid "_Scale"
 msgstr "_Skala"
 
-#: ../libgimpwidgets/gimpstock.c:271
+#: ../libpicmanwidgets/picmanstock.c:271
 msgid "Crop"
 msgstr "Potong"
 
-#: ../libgimpwidgets/gimpstock.c:288
+#: ../libpicmanwidgets/picmanstock.c:288
 msgid "_Transform"
 msgstr "_Jelma"
 
-#: ../libgimpwidgets/gimpstock.c:291
+#: ../libpicmanwidgets/picmanstock.c:291
 msgid "_Rotate"
 msgstr "_Putar"
 
-#: ../libgimpwidgets/gimpstock.c:293
+#: ../libpicmanwidgets/picmanstock.c:293
 msgid "_Shear"
 msgstr "_Ricih"
 
-#: ../libgimpwidgets/gimpunitmenu.c:302
+#: ../libpicmanwidgets/picmanunitmenu.c:302
 msgid "More..."
 msgstr "Lagi..."
 
-#: ../libgimpwidgets/gimpunitmenu.c:612
+#: ../libpicmanwidgets/picmanunitmenu.c:612
 msgid "Unit Selection"
 msgstr "Pemilihan Unit"
 
-#: ../libgimpwidgets/gimpunitmenu.c:655
+#: ../libpicmanwidgets/picmanunitmenu.c:655
 msgid "Unit"
 msgstr "Unit"
 
-#: ../libgimpwidgets/gimpunitmenu.c:659
+#: ../libpicmanwidgets/picmanunitmenu.c:659
 msgid "Factor"
 msgstr "Faktor"
 
-#: ../libgimpwidgets/gimpwidgets.c:1001
+#: ../libpicmanwidgets/picmanwidgets.c:1001
 msgid ""
 "Use this value for random number generator seed - this allows you to repeat "
 "a given \"random\" operation"
@@ -967,15 +967,15 @@ msgstr ""
 "Gunakan nilai ini bagi permulaan penjana nombor rawak - ini membolehkan anda "
 "mengulangi operasi \"rawak\" yang diberikan"
 
-#: ../libgimpwidgets/gimpwidgets.c:1005
+#: ../libpicmanwidgets/picmanwidgets.c:1005
 msgid "_New Seed"
 msgstr ""
 
-#: ../libgimpwidgets/gimpwidgets.c:1018
+#: ../libpicmanwidgets/picmanwidgets.c:1018
 msgid "Seed random number generator with a generated random number"
 msgstr "Mulakan penjana nombor rawak dengan nombor rawak yang dijanakan"
 
-#: ../libgimpwidgets/gimpwidgets.c:1022
+#: ../libpicmanwidgets/picmanwidgets.c:1022
 #, fuzzy
 msgid "_Randomize"
 msgstr "_Rawakkan"

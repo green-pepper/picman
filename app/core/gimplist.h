@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimplist.h
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmanlist.h
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_LIST_H__
-#define __GIMP_LIST_H__
+#ifndef __PICMAN_LIST_H__
+#define __PICMAN_LIST_H__
 
 
-#include "gimpcontainer.h"
+#include "picmancontainer.h"
 
 
-#define GIMP_TYPE_LIST            (gimp_list_get_type ())
-#define GIMP_LIST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_LIST, GimpList))
-#define GIMP_LIST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_LIST, GimpListClass))
-#define GIMP_IS_LIST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_LIST))
-#define GIMP_IS_LIST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_LIST))
-#define GIMP_LIST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_LIST, GimpListClass))
+#define PICMAN_TYPE_LIST            (picman_list_get_type ())
+#define PICMAN_LIST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_LIST, PicmanList))
+#define PICMAN_LIST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_LIST, PicmanListClass))
+#define PICMAN_IS_LIST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_LIST))
+#define PICMAN_IS_LIST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_LIST))
+#define PICMAN_LIST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_LIST, PicmanListClass))
 
 
-typedef struct _GimpListClass GimpListClass;
+typedef struct _PicmanListClass PicmanListClass;
 
-struct _GimpList
+struct _PicmanList
 {
-  GimpContainer  parent_instance;
+  PicmanContainer  parent_instance;
 
   GList         *list;
   gboolean       unique_names;
@@ -45,26 +45,26 @@ struct _GimpList
   gboolean       append;
 };
 
-struct _GimpListClass
+struct _PicmanListClass
 {
-  GimpContainerClass  parent_class;
+  PicmanContainerClass  parent_class;
 };
 
 
-GType           gimp_list_get_type      (void) G_GNUC_CONST;
+GType           picman_list_get_type      (void) G_GNUC_CONST;
 
-GimpContainer * gimp_list_new           (GType         children_type,
+PicmanContainer * picman_list_new           (GType         children_type,
                                          gboolean      unique_names);
-GimpContainer * gimp_list_new_weak      (GType         children_type,
+PicmanContainer * picman_list_new_weak      (GType         children_type,
                                          gboolean      unique_names);
 
-void            gimp_list_reverse       (GimpList     *list);
-void            gimp_list_set_sort_func (GimpList     *list,
+void            picman_list_reverse       (PicmanList     *list);
+void            picman_list_set_sort_func (PicmanList     *list,
                                          GCompareFunc  sort_func);
-GCompareFunc    gimp_list_get_sort_func (GimpList     *list);
-void            gimp_list_sort          (GimpList     *list,
+GCompareFunc    picman_list_get_sort_func (PicmanList     *list);
+void            picman_list_sort          (PicmanList     *list,
                                          GCompareFunc  sort_func);
-void            gimp_list_sort_by_name  (GimpList     *list);
+void            picman_list_sort_by_name  (PicmanList     *list);
 
 
-#endif  /* __GIMP_LIST_H__ */
+#endif  /* __PICMAN_LIST_H__ */

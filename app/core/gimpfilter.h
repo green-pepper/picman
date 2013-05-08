@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfilter.h
+ * picmanfilter.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,49 +17,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FILTER_H__
-#define __GIMP_FILTER_H__
+#ifndef __PICMAN_FILTER_H__
+#define __PICMAN_FILTER_H__
 
 
-#include "gimpviewable.h"
+#include "picmanviewable.h"
 
 
-#define GIMP_TYPE_FILTER            (gimp_filter_get_type ())
-#define GIMP_FILTER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FILTER, GimpFilter))
-#define GIMP_FILTER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FILTER, GimpFilterClass))
-#define GIMP_IS_FILTER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FILTER))
-#define GIMP_IS_FILTER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FILTER))
-#define GIMP_FILTER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FILTER, GimpFilterClass))
+#define PICMAN_TYPE_FILTER            (picman_filter_get_type ())
+#define PICMAN_FILTER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FILTER, PicmanFilter))
+#define PICMAN_FILTER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FILTER, PicmanFilterClass))
+#define PICMAN_IS_FILTER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FILTER))
+#define PICMAN_IS_FILTER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FILTER))
+#define PICMAN_FILTER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FILTER, PicmanFilterClass))
 
 
-typedef struct _GimpFilterClass GimpFilterClass;
+typedef struct _PicmanFilterClass PicmanFilterClass;
 
-struct _GimpFilter
+struct _PicmanFilter
 {
-  GimpViewable  parent_instance;
+  PicmanViewable  parent_instance;
 };
 
-struct _GimpFilterClass
+struct _PicmanFilterClass
 {
-  GimpViewableClass  parent_class;
+  PicmanViewableClass  parent_class;
 
-  GeglNode * (* get_node) (GimpFilter *filter);
+  GeglNode * (* get_node) (PicmanFilter *filter);
 };
 
 
-GType            gimp_filter_get_type         (void) G_GNUC_CONST;
-GimpFilter     * gimp_filter_new              (const gchar    *name);
+GType            picman_filter_get_type         (void) G_GNUC_CONST;
+PicmanFilter     * picman_filter_new              (const gchar    *name);
 
-GeglNode       * gimp_filter_get_node         (GimpFilter     *filter);
-GeglNode       * gimp_filter_peek_node        (GimpFilter     *filter);
+GeglNode       * picman_filter_get_node         (PicmanFilter     *filter);
+GeglNode       * picman_filter_peek_node        (PicmanFilter     *filter);
 
-void             gimp_filter_set_is_last_node (GimpFilter     *filter,
+void             picman_filter_set_is_last_node (PicmanFilter     *filter,
                                                gboolean        is_last_node);
-gboolean         gimp_filter_get_is_last_node (GimpFilter     *filter);
+gboolean         picman_filter_get_is_last_node (PicmanFilter     *filter);
 
-void             gimp_filter_set_applicator   (GimpFilter     *filter,
-                                               GimpApplicator *applicator);
-GimpApplicator * gimp_filter_get_applicator   (GimpFilter     *filter);
+void             picman_filter_set_applicator   (PicmanFilter     *filter,
+                                               PicmanApplicator *applicator);
+PicmanApplicator * picman_filter_get_applicator   (PicmanFilter     *filter);
 
 
-#endif /* __GIMP_FILTER_H__ */
+#endif /* __PICMAN_FILTER_H__ */

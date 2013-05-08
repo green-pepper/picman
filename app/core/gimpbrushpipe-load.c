@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * Copyright (C) 1999 Adrian Likins and Tor Lillqvist
  *
@@ -40,25 +40,25 @@
 #include <io.h>
 #endif
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpbase/gimpparasiteio.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanbase/picmanparasiteio.h"
 
 #include "core-types.h"
 
-#include "gimpbrush-load.h"
-#include "gimpbrushpipe.h"
-#include "gimpbrushpipe-load.h"
+#include "picmanbrush-load.h"
+#include "picmanbrushpipe.h"
+#include "picmanbrushpipe-load.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 GList *
-gimp_brush_pipe_load (GimpContext  *context,
+picman_brush_pipe_load (PicmanContext  *context,
                       const gchar  *filename,
                       GError      **error)
 {
-  GimpBrushPipe     *pipe = NULL;
-  GimpPixPipeParams  params;
+  PicmanBrushPipe     *pipe = NULL;
+  PicmanPixPipeParams  params;
   gint               i;
   gint               num_of_brushes = 0;
   gint               totalcells;
@@ -75,9 +75,9 @@ gimp_brush_pipe_load (GimpContext  *context,
 
   if (fd == -1)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return NULL;
     }
 
@@ -91,13 +91,13 @@ gimp_brush_pipe_load (GimpContext  *context,
   if (buffer->len > 0 && buffer->len < 1024)
     {
       gchar *utf8 =
-        gimp_any_to_utf8 (buffer->str, buffer->len,
+        picman_any_to_utf8 (buffer->str, buffer->len,
                           _("Invalid UTF-8 string in brush file '%s'."),
-                          gimp_filename_to_utf8 (filename));
+                          picman_filename_to_utf8 (filename));
 
-      pipe = g_object_new (GIMP_TYPE_BRUSH_PIPE,
+      pipe = g_object_new (PICMAN_TYPE_BRUSH_PIPE,
                            "name",      utf8,
-                           "mime-type", "image/x-gimp-gih",
+                           "mime-type", "image/x-picman-gih",
                            NULL);
 
       g_free (utf8);
@@ -107,10 +107,10 @@ gimp_brush_pipe_load (GimpContext  *context,
 
   if (! pipe)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in brush file '%s': "
                      "File is corrupt."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       close (fd);
       return NULL;
     }
@@ -127,10 +127,10 @@ gimp_brush_pipe_load (GimpContext  *context,
 
   if (num_of_brushes < 1)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                    _("Fatal parse error in brush file '%s': "
                      "File is corrupt."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       close (fd);
       g_object_unref (pipe);
       g_string_free (buffer, TRUE);
@@ -142,8 +142,8 @@ gimp_brush_pipe_load (GimpContext  *context,
 
   if (*paramstring)
     {
-      gimp_pixpipe_params_init (&params);
-      gimp_pixpipe_params_parse (paramstring, &params);
+      picman_pixpipe_params_init (&params);
+      picman_pixpipe_params_parse (paramstring, &params);
 
       pipe->dimension = params.dim;
       pipe->rank      = g_new0 (gint, pipe->dimension);
@@ -204,24 +204,24 @@ gimp_brush_pipe_load (GimpContext  *context,
     }
   g_assert (pipe->stride[pipe->dimension-1] == 1);
 
-  pipe->brushes = g_new0 (GimpBrush *, num_of_brushes);
+  pipe->brushes = g_new0 (PicmanBrush *, num_of_brushes);
 
   while (pipe->n_brushes < num_of_brushes)
     {
-      pipe->brushes[pipe->n_brushes] = gimp_brush_load_brush (context,
+      pipe->brushes[pipe->n_brushes] = picman_brush_load_brush (context,
                                                               fd, filename, NULL);
 
       if (pipe->brushes[pipe->n_brushes])
         {
-          gimp_object_set_name (GIMP_OBJECT (pipe->brushes[pipe->n_brushes]),
+          picman_object_set_name (PICMAN_OBJECT (pipe->brushes[pipe->n_brushes]),
                                 NULL);
         }
       else
         {
-          g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_READ,
+          g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_READ,
                        _("Fatal parse error in brush file '%s': "
                          "File is corrupt."),
-                       gimp_filename_to_utf8 (filename));
+                       picman_filename_to_utf8 (filename));
           close (fd);
           g_object_unref (pipe);
           return NULL;
@@ -236,11 +236,11 @@ gimp_brush_pipe_load (GimpContext  *context,
   pipe->current = pipe->brushes[0];
 
   /*  just to satisfy the code that relies on this crap  */
-  GIMP_BRUSH (pipe)->spacing  = pipe->current->spacing;
-  GIMP_BRUSH (pipe)->x_axis   = pipe->current->x_axis;
-  GIMP_BRUSH (pipe)->y_axis   = pipe->current->y_axis;
-  GIMP_BRUSH (pipe)->mask     = pipe->current->mask;
-  GIMP_BRUSH (pipe)->pixmap   = pipe->current->pixmap;
+  PICMAN_BRUSH (pipe)->spacing  = pipe->current->spacing;
+  PICMAN_BRUSH (pipe)->x_axis   = pipe->current->x_axis;
+  PICMAN_BRUSH (pipe)->y_axis   = pipe->current->y_axis;
+  PICMAN_BRUSH (pipe)->mask     = pipe->current->mask;
+  PICMAN_BRUSH (pipe)->pixmap   = pipe->current->pixmap;
 
   return g_list_prepend (NULL, pipe);
 }

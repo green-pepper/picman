@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpText
- * Copyright (C) 2002-2003  Sven Neumann <sven@gimp.org>
+ * PicmanText
+ * Copyright (C) 2002-2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,18 +27,18 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <pango/pango.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "text-types.h"
 
-#include "core/gimpmarshal.h"
-#include "core/gimpstrokeoptions.h"
-#include "core/gimp-utils.h"
+#include "core/picmanmarshal.h"
+#include "core/picmanstrokeoptions.h"
+#include "core/picman-utils.h"
 
-#include "gimptext.h"
+#include "picmantext.h"
 
 
 enum
@@ -79,199 +79,199 @@ enum
 };
 
 
-static void     gimp_text_finalize                    (GObject      *object);
-static void     gimp_text_get_property                (GObject      *object,
+static void     picman_text_finalize                    (GObject      *object);
+static void     picman_text_get_property                (GObject      *object,
                                                        guint         property_id,
                                                        GValue       *value,
                                                        GParamSpec   *pspec);
-static void     gimp_text_set_property                (GObject      *object,
+static void     picman_text_set_property                (GObject      *object,
                                                        guint         property_id,
                                                        const GValue *value,
                                                        GParamSpec   *pspec);
-static void     gimp_text_dispatch_properties_changed (GObject      *object,
+static void     picman_text_dispatch_properties_changed (GObject      *object,
                                                        guint         n_pspecs,
                                                        GParamSpec  **pspecs);
-static gint64   gimp_text_get_memsize                 (GimpObject   *object,
+static gint64   picman_text_get_memsize                 (PicmanObject   *object,
                                                        gint64       *gui_size);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpText, gimp_text, GIMP_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanText, picman_text, PICMAN_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL))
 
-#define parent_class gimp_text_parent_class
+#define parent_class picman_text_parent_class
 
 static guint text_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_text_class_init (GimpTextClass *klass)
+picman_text_class_init (PicmanTextClass *klass)
 {
   GObjectClass    *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpRGB          black;
-  GimpMatrix2      identity;
+  PicmanObjectClass *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanRGB          black;
+  PicmanMatrix2      identity;
   gchar           *language;
 
   text_signals[CHANGED] =
     g_signal_new ("changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpTextClass, changed),
+                  G_STRUCT_OFFSET (PicmanTextClass, changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->finalize                    = gimp_text_finalize;
-  object_class->get_property                = gimp_text_get_property;
-  object_class->set_property                = gimp_text_set_property;
-  object_class->dispatch_properties_changed = gimp_text_dispatch_properties_changed;
+  object_class->finalize                    = picman_text_finalize;
+  object_class->get_property                = picman_text_get_property;
+  object_class->set_property                = picman_text_set_property;
+  object_class->dispatch_properties_changed = picman_text_dispatch_properties_changed;
 
-  gimp_object_class->get_memsize            = gimp_text_get_memsize;
+  picman_object_class->get_memsize            = picman_text_get_memsize;
 
-  gimp_rgba_set (&black, 0.0, 0.0, 0.0, GIMP_OPACITY_OPAQUE);
-  gimp_matrix2_identity (&identity);
+  picman_rgba_set (&black, 0.0, 0.0, 0.0, PICMAN_OPACITY_OPAQUE);
+  picman_matrix2_identity (&identity);
 
-  language = gimp_get_default_language (NULL);
+  language = picman_get_default_language (NULL);
 
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_TEXT,
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_TEXT,
                                    "text", NULL,
                                    NULL,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_MARKUP,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_MARKUP,
                                    "markup", NULL,
                                    NULL,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_FONT,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_FONT,
                                    "font", NULL,
                                    "Sans",
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_FONT_SIZE,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_FONT_SIZE,
                                    "font-size", NULL,
                                    0.0, 8192.0, 24.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
   /*
    *  We use the name "font-size-unit" for backward compatibility.
    *  The unit is also used for other sizes in the text object.
    */
-  GIMP_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_UNIT,
+  PICMAN_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_UNIT,
                                  "font-size-unit", NULL,
-                                 TRUE, FALSE, GIMP_UNIT_PIXEL,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ANTIALIAS,
+                                 TRUE, FALSE, PICMAN_UNIT_PIXEL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_ANTIALIAS,
                                     "antialias", NULL,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_HINT_STYLE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_HINT_STYLE,
                                 "hint-style", NULL,
-                                 GIMP_TYPE_TEXT_HINT_STYLE,
-                                 GIMP_TEXT_HINT_STYLE_MEDIUM,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_DEFAULTS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_KERNING,
+                                 PICMAN_TYPE_TEXT_HINT_STYLE,
+                                 PICMAN_TEXT_HINT_STYLE_MEDIUM,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_DEFAULTS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_KERNING,
                                     "kerning", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS |
-                                    GIMP_CONFIG_PARAM_DEFAULTS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_LANGUAGE,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_DEFAULTS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_LANGUAGE,
                                    "language", NULL,
                                    language,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_BASE_DIR,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_BASE_DIR,
                                 "base-direction", NULL,
-                                 GIMP_TYPE_TEXT_DIRECTION,
-                                 GIMP_TEXT_DIRECTION_LTR,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_RGB (object_class, PROP_COLOR,
+                                 PICMAN_TYPE_TEXT_DIRECTION,
+                                 PICMAN_TEXT_DIRECTION_LTR,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_RGB (object_class, PROP_COLOR,
                                 "color", NULL,
                                 FALSE, &black,
-                                GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_OUTLINE,
+                                PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_OUTLINE,
                                 "outline", NULL,
-                                 GIMP_TYPE_TEXT_OUTLINE,
-                                 GIMP_TEXT_OUTLINE_NONE,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_DEFAULTS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_JUSTIFICATION,
+                                 PICMAN_TYPE_TEXT_OUTLINE,
+                                 PICMAN_TEXT_OUTLINE_NONE,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_DEFAULTS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_JUSTIFICATION,
                                 "justify", NULL,
-                                 GIMP_TYPE_TEXT_JUSTIFICATION,
-                                 GIMP_TEXT_JUSTIFY_LEFT,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_INDENTATION,
+                                 PICMAN_TYPE_TEXT_JUSTIFICATION,
+                                 PICMAN_TEXT_JUSTIFY_LEFT,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_INDENTATION,
                                    "indent", NULL,
                                    -8192.0, 8192.0, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_DEFAULTS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LINE_SPACING,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_DEFAULTS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LINE_SPACING,
                                    "line-spacing", NULL,
                                    -8192.0, 8192.0, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_DEFAULTS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LETTER_SPACING,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_DEFAULTS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_LETTER_SPACING,
                                    "letter-spacing", NULL,
                                    -8192.0, 8192.0, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_DEFAULTS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_BOX_MODE,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_DEFAULTS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_BOX_MODE,
                                 "box-mode",
                                  NULL,
-                                 GIMP_TYPE_TEXT_BOX_MODE,
-                                 GIMP_TEXT_BOX_DYNAMIC,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BOX_WIDTH,
+                                 PICMAN_TYPE_TEXT_BOX_MODE,
+                                 PICMAN_TEXT_BOX_DYNAMIC,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BOX_WIDTH,
                                    "box-width", NULL,
-                                   0.0, GIMP_MAX_IMAGE_SIZE, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_DEFAULTS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BOX_HEIGHT,
+                                   0.0, PICMAN_MAX_IMAGE_SIZE, 0.0,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_DEFAULTS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BOX_HEIGHT,
                                    "box-height", NULL,
-                                   0.0, GIMP_MAX_IMAGE_SIZE, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_DEFAULTS);
-  GIMP_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_BOX_UNIT,
+                                   0.0, PICMAN_MAX_IMAGE_SIZE, 0.0,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_DEFAULTS);
+  PICMAN_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_BOX_UNIT,
                                  "box-unit", NULL,
-                                 TRUE, FALSE, GIMP_UNIT_PIXEL,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_MATRIX2 (object_class, PROP_TRANSFORMATION,
+                                 TRUE, FALSE, PICMAN_UNIT_PIXEL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_MATRIX2 (object_class, PROP_TRANSFORMATION,
                                     "transformation", NULL,
                                     &identity,
-                                    GIMP_PARAM_STATIC_STRINGS |
-                                    GIMP_CONFIG_PARAM_DEFAULTS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_OFFSET_X,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_DEFAULTS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_OFFSET_X,
                                    "offset-x", NULL,
                                    -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_DEFAULTS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_OFFSET_Y,
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_DEFAULTS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_OFFSET_Y,
                                    "offset-y", NULL,
                                    -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS |
-                                   GIMP_CONFIG_PARAM_DEFAULTS);
+                                   PICMAN_PARAM_STATIC_STRINGS |
+                                   PICMAN_CONFIG_PARAM_DEFAULTS);
 
   /*  border does only exist to implement the old text API  */
   g_object_class_install_property (object_class, PROP_BORDER,
                                    g_param_spec_int ("border", NULL, NULL,
-                                                     0, GIMP_MAX_IMAGE_SIZE, 0,
+                                                     0, PICMAN_MAX_IMAGE_SIZE, 0,
                                                      G_PARAM_CONSTRUCT |
-                                                     GIMP_PARAM_WRITABLE));
+                                                     PICMAN_PARAM_WRITABLE));
 
   /*  the old hinting options have been replaced by 'hint-style'  */
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_HINTING,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_HINTING,
                                     "hinting", NULL,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
   g_free (language);
 }
 
 static void
-gimp_text_init (GimpText *text)
+picman_text_init (PicmanText *text)
 {
 }
 
 static void
-gimp_text_finalize (GObject *object)
+picman_text_finalize (GObject *object)
 {
-  GimpText *text = GIMP_TEXT (object);
+  PicmanText *text = PICMAN_TEXT (object);
 
   if (text->text)
     {
@@ -298,12 +298,12 @@ gimp_text_finalize (GObject *object)
 }
 
 static void
-gimp_text_get_property (GObject      *object,
+picman_text_get_property (GObject      *object,
                         guint         property_id,
                         GValue       *value,
                         GParamSpec   *pspec)
 {
-  GimpText *text = GIMP_TEXT (object);
+  PicmanText *text = PICMAN_TEXT (object);
 
   switch (property_id)
     {
@@ -378,7 +378,7 @@ gimp_text_get_property (GObject      *object,
       break;
     case PROP_HINTING:
       g_value_set_boolean (value,
-                           text->hint_style != GIMP_TEXT_HINT_STYLE_NONE);
+                           text->hint_style != PICMAN_TEXT_HINT_STYLE_NONE);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -387,14 +387,14 @@ gimp_text_get_property (GObject      *object,
 }
 
 static void
-gimp_text_set_property (GObject      *object,
+picman_text_set_property (GObject      *object,
                         guint         property_id,
                         const GValue *value,
                         GParamSpec   *pspec)
 {
-  GimpText    *text = GIMP_TEXT (object);
-  GimpRGB     *color;
-  GimpMatrix2 *matrix;
+  PicmanText    *text = PICMAN_TEXT (object);
+  PicmanRGB     *color;
+  PicmanMatrix2 *matrix;
 
   switch (property_id)
     {
@@ -508,12 +508,12 @@ gimp_text_set_property (GObject      *object,
     case PROP_HINTING:
       /* interpret "hinting" only if "hint-style" has its default
        * value, so we don't overwrite a serialized new hint-style with
-       * a compat "hinting" that is only there for old GIMP versions
+       * a compat "hinting" that is only there for old PICMAN versions
        */
-      if (text->hint_style == GIMP_TEXT_HINT_STYLE_MEDIUM)
+      if (text->hint_style == PICMAN_TEXT_HINT_STYLE_MEDIUM)
         text->hint_style = (g_value_get_boolean (value) ?
-                            GIMP_TEXT_HINT_STYLE_MEDIUM :
-                            GIMP_TEXT_HINT_STYLE_NONE);
+                            PICMAN_TEXT_HINT_STYLE_MEDIUM :
+                            PICMAN_TEXT_HINT_STYLE_NONE);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -522,7 +522,7 @@ gimp_text_set_property (GObject      *object,
 }
 
 static void
-gimp_text_dispatch_properties_changed (GObject     *object,
+picman_text_dispatch_properties_changed (GObject     *object,
                                        guint        n_pspecs,
                                        GParamSpec **pspecs)
 {
@@ -533,26 +533,26 @@ gimp_text_dispatch_properties_changed (GObject     *object,
 }
 
 static gint64
-gimp_text_get_memsize (GimpObject *object,
+picman_text_get_memsize (PicmanObject *object,
                        gint64     *gui_size)
 {
-  GimpText *text    = GIMP_TEXT (object);
+  PicmanText *text    = PICMAN_TEXT (object);
   gint64    memsize = 0;
 
-  memsize += gimp_string_get_memsize (text->text);
-  memsize += gimp_string_get_memsize (text->markup);
-  memsize += gimp_string_get_memsize (text->font);
-  memsize += gimp_string_get_memsize (text->language);
+  memsize += picman_string_get_memsize (text->text);
+  memsize += picman_string_get_memsize (text->markup);
+  memsize += picman_string_get_memsize (text->font);
+  memsize += picman_string_get_memsize (text->language);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 void
-gimp_text_get_transformation (GimpText    *text,
-                              GimpMatrix3 *matrix)
+picman_text_get_transformation (PicmanText    *text,
+                              PicmanMatrix3 *matrix)
 {
-  g_return_if_fail (GIMP_IS_TEXT (text));
+  g_return_if_fail (PICMAN_IS_TEXT (text));
   g_return_if_fail (matrix != NULL);
 
   matrix->coeff[0][0] = text->transformation.coeff[0][0];

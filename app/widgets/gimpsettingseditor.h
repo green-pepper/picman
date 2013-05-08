@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpsettingseditor.h
- * Copyright (C) 2008-2011 Michael Natterer <mitch@gimp.org>
+ * picmansettingseditor.h
+ * Copyright (C) 2008-2011 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SETTINGS_EDITOR_H__
-#define __GIMP_SETTINGS_EDITOR_H__
+#ifndef __PICMAN_SETTINGS_EDITOR_H__
+#define __PICMAN_SETTINGS_EDITOR_H__
 
 
-#define GIMP_TYPE_SETTINGS_EDITOR            (gimp_settings_editor_get_type ())
-#define GIMP_SETTINGS_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SETTINGS_EDITOR, GimpSettingsEditor))
-#define GIMP_SETTINGS_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SETTINGS_EDITOR, GimpSettingsEditorClass))
-#define GIMP_IS_SETTINGS_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SETTINGS_EDITOR))
-#define GIMP_IS_SETTINGS_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SETTINGS_EDITOR))
-#define GIMP_SETTINGS_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SETTINGS_EDITOR, GimpSettingsEditorClass))
+#define PICMAN_TYPE_SETTINGS_EDITOR            (picman_settings_editor_get_type ())
+#define PICMAN_SETTINGS_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SETTINGS_EDITOR, PicmanSettingsEditor))
+#define PICMAN_SETTINGS_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SETTINGS_EDITOR, PicmanSettingsEditorClass))
+#define PICMAN_IS_SETTINGS_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SETTINGS_EDITOR))
+#define PICMAN_IS_SETTINGS_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SETTINGS_EDITOR))
+#define PICMAN_SETTINGS_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SETTINGS_EDITOR, PicmanSettingsEditorClass))
 
 
-typedef struct _GimpSettingsEditorClass GimpSettingsEditorClass;
+typedef struct _PicmanSettingsEditorClass PicmanSettingsEditorClass;
 
-struct _GimpSettingsEditor
+struct _PicmanSettingsEditor
 {
   GtkBox  parent_instance;
 };
 
-struct _GimpSettingsEditorClass
+struct _PicmanSettingsEditorClass
 {
   GtkBoxClass  parent_class;
 };
 
 
-GType       gimp_settings_editor_get_type (void) G_GNUC_CONST;
+GType       picman_settings_editor_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_settings_editor_new      (Gimp          *gimp,
+GtkWidget * picman_settings_editor_new      (Picman          *picman,
                                            GObject       *config,
-                                           GimpContainer *container);
+                                           PicmanContainer *container);
 
 
-#endif  /*  __GIMP_SETTINGS_EDITOR_H__  */
+#endif  /*  __PICMAN_SETTINGS_EDITOR_H__  */

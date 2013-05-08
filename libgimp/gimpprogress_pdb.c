@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpprogress_pdb.c
+ * picmanprogress_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpprogress
- * @title: gimpprogress
+ * SECTION: picmanprogress
+ * @title: picmanprogress
  * @short_description: Functions for embedding the progress bar into a plug-in's GUI.
  *
  * Functions for embedding the progress bar into a plug-in's GUI.
@@ -35,9 +35,9 @@
 
 
 /**
- * _gimp_progress_init:
+ * _picman_progress_init:
  * @message: Message to use in the progress dialog.
- * @gdisplay_ID: GimpDisplay to update progressbar in, or -1 for a separate window.
+ * @gdisplay_ID: PicmanDisplay to update progressbar in, or -1 for a separate window.
  *
  * Initializes the progress bar for the current plug-in.
  *
@@ -47,28 +47,28 @@
  * Returns: TRUE on success.
  **/
 gboolean
-_gimp_progress_init (const gchar *message,
+_picman_progress_init (const gchar *message,
                      gint32       gdisplay_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-progress-init",
+  return_vals = picman_run_procedure ("picman-progress-init",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, message,
-                                    GIMP_PDB_DISPLAY, gdisplay_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, message,
+                                    PICMAN_PDB_DISPLAY, gdisplay_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * _gimp_progress_update:
+ * _picman_progress_update:
  * @percentage: Percentage of progress completed which must be between 0.0 and 1.0.
  *
  * Updates the progress bar for the current plug-in.
@@ -79,92 +79,92 @@ _gimp_progress_init (const gchar *message,
  * Returns: TRUE on success.
  **/
 gboolean
-_gimp_progress_update (gdouble percentage)
+_picman_progress_update (gdouble percentage)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-progress-update",
+  return_vals = picman_run_procedure ("picman-progress-update",
                                     &nreturn_vals,
-                                    GIMP_PDB_FLOAT, percentage,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_FLOAT, percentage,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_progress_pulse:
+ * picman_progress_pulse:
  *
  * Pulses the progress bar for the current plug-in.
  *
  * Updates the progress bar for the current plug-in. It is only valid
  * to call this procedure from a plug-in. Use this function instead of
- * gimp_progress_update() if you cannot tell how much progress has been
+ * picman_progress_update() if you cannot tell how much progress has been
  * made. This usually causes the the progress bar to enter \"activity
  * mode\", where a block bounces back and forth.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_progress_pulse (void)
+picman_progress_pulse (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-progress-pulse",
+  return_vals = picman_run_procedure ("picman-progress-pulse",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_progress_set_text:
+ * picman_progress_set_text:
  * @message: Message to use in the progress dialog.
  *
  * Changes the text in the progress bar for the current plug-in.
  *
  * This function changes the text in the progress bar for the current
- * plug-in. Unlike gimp_progress_init() it does not change the
+ * plug-in. Unlike picman_progress_init() it does not change the
  * displayed value.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_progress_set_text (const gchar *message)
+picman_progress_set_text (const gchar *message)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-progress-set-text",
+  return_vals = picman_run_procedure ("picman-progress-set-text",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, message,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, message,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_progress_end:
+ * picman_progress_end:
  *
  * Ends the progress bar for the current plug-in.
  *
@@ -174,28 +174,28 @@ gimp_progress_set_text (const gchar *message)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_progress_end (void)
+picman_progress_end (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-progress-end",
+  return_vals = picman_run_procedure ("picman-progress-end",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_progress_get_window_handle:
+ * picman_progress_get_window_handle:
  *
  * Returns the native window ID of the toplevel window this plug-in's
  * progress is displayed in.
@@ -205,29 +205,29 @@ gimp_progress_end (void)
  *
  * Returns: The progress bar's toplevel window.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gint
-gimp_progress_get_window_handle (void)
+picman_progress_get_window_handle (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint window = 0;
 
-  return_vals = gimp_run_procedure ("gimp-progress-get-window-handle",
+  return_vals = picman_run_procedure ("picman-progress-get-window-handle",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     window = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return window;
 }
 
 /**
- * _gimp_progress_install:
+ * _picman_progress_install:
  * @progress_callback: The callback PDB proc to call.
  *
  * Installs a progress callback for the current plug-in.
@@ -239,61 +239,61 @@ gimp_progress_get_window_handle (void)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-_gimp_progress_install (const gchar *progress_callback)
+_picman_progress_install (const gchar *progress_callback)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-progress-install",
+  return_vals = picman_run_procedure ("picman-progress-install",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, progress_callback,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, progress_callback,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * _gimp_progress_uninstall:
+ * _picman_progress_uninstall:
  * @progress_callback: The name of the callback registered for this progress.
  *
  * Uninstalls the progress callback for the current plug-in.
  *
  * This function uninstalls any progress callback installed with
- * gimp_progress_install() before.
+ * picman_progress_install() before.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-_gimp_progress_uninstall (const gchar *progress_callback)
+_picman_progress_uninstall (const gchar *progress_callback)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-progress-uninstall",
+  return_vals = picman_run_procedure ("picman-progress-uninstall",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, progress_callback,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, progress_callback,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_progress_cancel:
+ * picman_progress_cancel:
  * @progress_callback: The name of the callback registered for this progress.
  *
  * Cancels a running progress.
@@ -302,23 +302,23 @@ _gimp_progress_uninstall (const gchar *progress_callback)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 gboolean
-gimp_progress_cancel (const gchar *progress_callback)
+picman_progress_cancel (const gchar *progress_callback)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-progress-cancel",
+  return_vals = picman_run_procedure ("picman-progress-cancel",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, progress_callback,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, progress_callback,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

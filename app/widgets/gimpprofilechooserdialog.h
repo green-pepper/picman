@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpProfileChooserDialog
- * Copyright (C) 2006 Sven Neumann <sven@gimp.org>
+ * PicmanProfileChooserDialog
+ * Copyright (C) 2006 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PROFILE_CHOOSER_DIALOG_H__
-#define __GIMP_PROFILE_CHOOSER_DIALOG_H__
+#ifndef __PICMAN_PROFILE_CHOOSER_DIALOG_H__
+#define __PICMAN_PROFILE_CHOOSER_DIALOG_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_PROFILE_CHOOSER_DIALOG            (gimp_profile_chooser_dialog_get_type ())
-#define GIMP_PROFILE_CHOOSER_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PROFILE_CHOOSER_DIALOG, GimpProfileChooserDialog))
-#define GIMP_PROFILE_CHOOSER_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PROFILE_CHOOSER_DIALOG, GimpProfileChooserDialogClass))
-#define GIMP_IS_PROFILE_CHOOSER_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PROFILE_CHOOSER_DIALOG))
-#define GIMP_IS_PROFILE_CHOOSER_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PROFILE_CHOOSER_DIALOG))
-#define GIMP_PROFILE_CHOOSER_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PROFILE_CHOOSER_DIALOG, GimpProfileChooserDialogClass))
+#define PICMAN_TYPE_PROFILE_CHOOSER_DIALOG            (picman_profile_chooser_dialog_get_type ())
+#define PICMAN_PROFILE_CHOOSER_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PROFILE_CHOOSER_DIALOG, PicmanProfileChooserDialog))
+#define PICMAN_PROFILE_CHOOSER_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PROFILE_CHOOSER_DIALOG, PicmanProfileChooserDialogClass))
+#define PICMAN_IS_PROFILE_CHOOSER_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PROFILE_CHOOSER_DIALOG))
+#define PICMAN_IS_PROFILE_CHOOSER_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PROFILE_CHOOSER_DIALOG))
+#define PICMAN_PROFILE_CHOOSER_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PROFILE_CHOOSER_DIALOG, PicmanProfileChooserDialogClass))
 
 
-typedef struct _GimpProfileChooserDialogClass  GimpProfileChooserDialogClass;
+typedef struct _PicmanProfileChooserDialogClass  PicmanProfileChooserDialogClass;
 
-struct _GimpProfileChooserDialog
+struct _PicmanProfileChooserDialog
 {
   GtkFileChooserDialog  parent_instance;
 
-  Gimp                 *gimp;
+  Picman                 *picman;
   GtkTextBuffer        *buffer;
 
   gchar                *filename;
@@ -47,18 +47,18 @@ struct _GimpProfileChooserDialog
   guint                 idle_id;
 };
 
-struct _GimpProfileChooserDialogClass
+struct _PicmanProfileChooserDialogClass
 {
   GtkFileChooserDialogClass  parent_class;
 };
 
 
-GType       gimp_profile_chooser_dialog_get_type (void) G_GNUC_CONST;
+GType       picman_profile_chooser_dialog_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_profile_chooser_dialog_new      (Gimp        *gimp,
+GtkWidget * picman_profile_chooser_dialog_new      (Picman        *picman,
                                                   const gchar *title);
 
-gchar     * gimp_profile_chooser_dialog_get_desc (GimpProfileChooserDialog *dialog,
+gchar     * picman_profile_chooser_dialog_get_desc (PicmanProfileChooserDialog *dialog,
                                                   const gchar              *uri);
 
-#endif /* __GIMP_PROFILE_CHOOSER_DIALOG_H__ */
+#endif /* __PICMAN_PROFILE_CHOOSER_DIALOG_H__ */

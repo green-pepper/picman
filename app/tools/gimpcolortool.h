@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,72 +15,72 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_COLOR_TOOL_H__
-#define  __GIMP_COLOR_TOOL_H__
+#ifndef  __PICMAN_COLOR_TOOL_H__
+#define  __PICMAN_COLOR_TOOL_H__
 
 
-#include "gimpdrawtool.h"
+#include "picmandrawtool.h"
 
 
-#define GIMP_TYPE_COLOR_TOOL            (gimp_color_tool_get_type ())
-#define GIMP_COLOR_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_TOOL, GimpColorTool))
-#define GIMP_COLOR_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_TOOL, GimpColorToolClass))
-#define GIMP_IS_COLOR_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_TOOL))
-#define GIMP_IS_COLOR_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_TOOL))
-#define GIMP_COLOR_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_TOOL, GimpColorToolClass))
+#define PICMAN_TYPE_COLOR_TOOL            (picman_color_tool_get_type ())
+#define PICMAN_COLOR_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_TOOL, PicmanColorTool))
+#define PICMAN_COLOR_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_TOOL, PicmanColorToolClass))
+#define PICMAN_IS_COLOR_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_TOOL))
+#define PICMAN_IS_COLOR_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_TOOL))
+#define PICMAN_COLOR_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_TOOL, PicmanColorToolClass))
 
-#define GIMP_COLOR_TOOL_GET_OPTIONS(t)  (GIMP_COLOR_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_COLOR_TOOL_GET_OPTIONS(t)  (PICMAN_COLOR_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpColorToolClass GimpColorToolClass;
+typedef struct _PicmanColorToolClass PicmanColorToolClass;
 
-struct _GimpColorTool
+struct _PicmanColorTool
 {
-  GimpDrawTool       parent_instance;
+  PicmanDrawTool       parent_instance;
 
   gboolean           enabled;
   gint               center_x;
   gint               center_y;
-  GimpColorPickMode  pick_mode;
+  PicmanColorPickMode  pick_mode;
 
-  GimpColorOptions  *options;
+  PicmanColorOptions  *options;
 
-  GimpSamplePoint   *sample_point;
+  PicmanSamplePoint   *sample_point;
   gboolean           moving_sample_point;
   gint               sample_point_x;
   gint               sample_point_y;
 };
 
-struct _GimpColorToolClass
+struct _PicmanColorToolClass
 {
-  GimpDrawToolClass  parent_class;
+  PicmanDrawToolClass  parent_class;
 
   /*  virtual functions  */
-  gboolean (* pick)   (GimpColorTool      *tool,
+  gboolean (* pick)   (PicmanColorTool      *tool,
                        gint                x,
                        gint                y,
                        const Babl        **sample_format,
-                       GimpRGB            *color,
+                       PicmanRGB            *color,
                        gint               *color_index);
 
   /*  signals  */
-  void     (* picked) (GimpColorTool      *tool,
-                       GimpColorPickState  pick_state,
+  void     (* picked) (PicmanColorTool      *tool,
+                       PicmanColorPickState  pick_state,
                        const Babl         *sample_format,
-                       const GimpRGB      *color,
+                       const PicmanRGB      *color,
                        gint                color_index);
 };
 
 
-GType      gimp_color_tool_get_type           (void) G_GNUC_CONST;
+GType      picman_color_tool_get_type           (void) G_GNUC_CONST;
 
-void       gimp_color_tool_enable             (GimpColorTool    *color_tool,
-                                               GimpColorOptions *options);
-void       gimp_color_tool_disable            (GimpColorTool    *color_tool);
-gboolean   gimp_color_tool_is_enabled         (GimpColorTool    *color_tool);
+void       picman_color_tool_enable             (PicmanColorTool    *color_tool,
+                                               PicmanColorOptions *options);
+void       picman_color_tool_disable            (PicmanColorTool    *color_tool);
+gboolean   picman_color_tool_is_enabled         (PicmanColorTool    *color_tool);
 
-void       gimp_color_tool_start_sample_point (GimpTool         *tool,
-                                               GimpDisplay      *display);
+void       picman_color_tool_start_sample_point (PicmanTool         *tool,
+                                               PicmanDisplay      *display);
 
 
-#endif  /*  __GIMP_COLOR_TOOL_H__  */
+#endif  /*  __PICMAN_COLOR_TOOL_H__  */

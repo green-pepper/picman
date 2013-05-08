@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,96 +23,96 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "gimp-utils.h"
-#include "gimppalette.h"
-#include "gimppalette-load.h"
-#include "gimppalette-save.h"
-#include "gimptagged.h"
-#include "gimptempbuf.h"
+#include "picman-utils.h"
+#include "picmanpalette.h"
+#include "picmanpalette-load.h"
+#include "picmanpalette-save.h"
+#include "picmantagged.h"
+#include "picmantempbuf.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 #define EPSILON 1e-10
 
 /*  local function prototypes  */
 
-static void          gimp_palette_tagged_iface_init (GimpTaggedInterface  *iface);
+static void          picman_palette_tagged_iface_init (PicmanTaggedInterface  *iface);
 
-static void          gimp_palette_finalize          (GObject              *object);
+static void          picman_palette_finalize          (GObject              *object);
 
-static gint64        gimp_palette_get_memsize       (GimpObject           *object,
+static gint64        picman_palette_get_memsize       (PicmanObject           *object,
                                                      gint64               *gui_size);
 
-static void          gimp_palette_get_preview_size  (GimpViewable         *viewable,
+static void          picman_palette_get_preview_size  (PicmanViewable         *viewable,
                                                      gint                  size,
                                                      gboolean              popup,
                                                      gboolean              dot_for_dot,
                                                      gint                 *width,
                                                      gint                 *height);
-static gboolean      gimp_palette_get_popup_size    (GimpViewable         *viewable,
+static gboolean      picman_palette_get_popup_size    (PicmanViewable         *viewable,
                                                      gint                  width,
                                                      gint                  height,
                                                      gboolean              dot_for_dot,
                                                      gint                 *popup_width,
                                                      gint                 *popup_height);
-static GimpTempBuf * gimp_palette_get_new_preview   (GimpViewable         *viewable,
-                                                     GimpContext          *context,
+static PicmanTempBuf * picman_palette_get_new_preview   (PicmanViewable         *viewable,
+                                                     PicmanContext          *context,
                                                      gint                  width,
                                                      gint                  height);
-static gchar       * gimp_palette_get_description   (GimpViewable         *viewable,
+static gchar       * picman_palette_get_description   (PicmanViewable         *viewable,
                                                      gchar               **tooltip);
-static const gchar * gimp_palette_get_extension     (GimpData             *data);
-static GimpData    * gimp_palette_duplicate         (GimpData             *data);
+static const gchar * picman_palette_get_extension     (PicmanData             *data);
+static PicmanData    * picman_palette_duplicate         (PicmanData             *data);
 
-static void          gimp_palette_entry_free        (GimpPaletteEntry     *entry);
-static gint64        gimp_palette_entry_get_memsize (GimpPaletteEntry     *entry,
+static void          picman_palette_entry_free        (PicmanPaletteEntry     *entry);
+static gint64        picman_palette_entry_get_memsize (PicmanPaletteEntry     *entry,
                                                      gint64               *gui_size);
-static gchar       * gimp_palette_get_checksum      (GimpTagged           *tagged);
+static gchar       * picman_palette_get_checksum      (PicmanTagged           *tagged);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpPalette, gimp_palette, GIMP_TYPE_DATA,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_TAGGED,
-                                                gimp_palette_tagged_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanPalette, picman_palette, PICMAN_TYPE_DATA,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_TAGGED,
+                                                picman_palette_tagged_iface_init))
 
-#define parent_class gimp_palette_parent_class
+#define parent_class picman_palette_parent_class
 
 
 static void
-gimp_palette_class_init (GimpPaletteClass *klass)
+picman_palette_class_init (PicmanPaletteClass *klass)
 {
   GObjectClass      *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass   *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class    = GIMP_VIEWABLE_CLASS (klass);
-  GimpDataClass     *data_class        = GIMP_DATA_CLASS (klass);
+  PicmanObjectClass   *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanViewableClass *viewable_class    = PICMAN_VIEWABLE_CLASS (klass);
+  PicmanDataClass     *data_class        = PICMAN_DATA_CLASS (klass);
 
-  object_class->finalize           = gimp_palette_finalize;
+  object_class->finalize           = picman_palette_finalize;
 
-  gimp_object_class->get_memsize   = gimp_palette_get_memsize;
+  picman_object_class->get_memsize   = picman_palette_get_memsize;
 
   viewable_class->default_stock_id = "gtk-select-color";
-  viewable_class->get_preview_size = gimp_palette_get_preview_size;
-  viewable_class->get_popup_size   = gimp_palette_get_popup_size;
-  viewable_class->get_new_preview  = gimp_palette_get_new_preview;
-  viewable_class->get_description  = gimp_palette_get_description;
+  viewable_class->get_preview_size = picman_palette_get_preview_size;
+  viewable_class->get_popup_size   = picman_palette_get_popup_size;
+  viewable_class->get_new_preview  = picman_palette_get_new_preview;
+  viewable_class->get_description  = picman_palette_get_description;
 
-  data_class->save                 = gimp_palette_save;
-  data_class->get_extension        = gimp_palette_get_extension;
-  data_class->duplicate            = gimp_palette_duplicate;
+  data_class->save                 = picman_palette_save;
+  data_class->get_extension        = picman_palette_get_extension;
+  data_class->duplicate            = picman_palette_duplicate;
 }
 
 static void
-gimp_palette_tagged_iface_init (GimpTaggedInterface *iface)
+picman_palette_tagged_iface_init (PicmanTaggedInterface *iface)
 {
-  iface->get_checksum = gimp_palette_get_checksum;
+  iface->get_checksum = picman_palette_get_checksum;
 }
 
 static void
-gimp_palette_init (GimpPalette *palette)
+picman_palette_init (PicmanPalette *palette)
 {
   palette->colors    = NULL;
   palette->n_colors  = 0;
@@ -120,14 +120,14 @@ gimp_palette_init (GimpPalette *palette)
 }
 
 static void
-gimp_palette_finalize (GObject *object)
+picman_palette_finalize (GObject *object)
 {
-  GimpPalette *palette = GIMP_PALETTE (object);
+  PicmanPalette *palette = PICMAN_PALETTE (object);
 
   if (palette->colors)
     {
       g_list_free_full (palette->colors,
-                        (GDestroyNotify) gimp_palette_entry_free);
+                        (GDestroyNotify) picman_palette_entry_free);
       palette->colors = NULL;
     }
 
@@ -135,23 +135,23 @@ gimp_palette_finalize (GObject *object)
 }
 
 static gint64
-gimp_palette_get_memsize (GimpObject *object,
+picman_palette_get_memsize (PicmanObject *object,
                           gint64     *gui_size)
 {
-  GimpPalette *palette = GIMP_PALETTE (object);
+  PicmanPalette *palette = PICMAN_PALETTE (object);
   gint64       memsize = 0;
 
-  memsize += gimp_g_list_get_memsize_foreach (palette->colors,
-                                              (GimpMemsizeFunc)
-                                              gimp_palette_entry_get_memsize,
+  memsize += picman_g_list_get_memsize_foreach (palette->colors,
+                                              (PicmanMemsizeFunc)
+                                              picman_palette_entry_get_memsize,
                                               gui_size);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 static void
-gimp_palette_get_preview_size (GimpViewable *viewable,
+picman_palette_get_preview_size (PicmanViewable *viewable,
                                gint          size,
                                gboolean      popup,
                                gboolean      dot_for_dot,
@@ -163,14 +163,14 @@ gimp_palette_get_preview_size (GimpViewable *viewable,
 }
 
 static gboolean
-gimp_palette_get_popup_size (GimpViewable *viewable,
+picman_palette_get_popup_size (PicmanViewable *viewable,
                              gint          width,
                              gint          height,
                              gboolean      dot_for_dot,
                              gint         *popup_width,
                              gint         *popup_height)
 {
-  GimpPalette *palette = GIMP_PALETTE (viewable);
+  PicmanPalette *palette = PICMAN_PALETTE (viewable);
   gint         p_width;
   gint         p_height;
 
@@ -195,14 +195,14 @@ gimp_palette_get_popup_size (GimpViewable *viewable,
   return FALSE;
 }
 
-static GimpTempBuf *
-gimp_palette_get_new_preview (GimpViewable *viewable,
-                              GimpContext  *context,
+static PicmanTempBuf *
+picman_palette_get_new_preview (PicmanViewable *viewable,
+                              PicmanContext  *context,
                               gint          width,
                               gint          height)
 {
-  GimpPalette *palette  = GIMP_PALETTE (viewable);
-  GimpTempBuf *temp_buf;
+  PicmanPalette *palette  = PICMAN_PALETTE (viewable);
+  PicmanTempBuf *temp_buf;
   guchar      *buf;
   guchar      *b;
   GList       *list;
@@ -211,8 +211,8 @@ gimp_palette_get_new_preview (GimpViewable *viewable,
   gint         cell_size;
   gint         x, y;
 
-  temp_buf = gimp_temp_buf_new (width, height, babl_format ("R'G'B' u8"));
-  memset (gimp_temp_buf_get_data (temp_buf), 255, width * height * 3);
+  temp_buf = picman_temp_buf_new (width, height, babl_format ("R'G'B' u8"));
+  memset (picman_temp_buf_get_data (temp_buf), 255, width * height * 3);
 
   if (palette->n_columns > 1)
     cell_size = MAX (4, width / palette->n_columns);
@@ -222,7 +222,7 @@ gimp_palette_get_new_preview (GimpViewable *viewable,
   columns = width  / cell_size;
   rows    = height / cell_size;
 
-  buf = gimp_temp_buf_get_data (temp_buf);
+  buf = picman_temp_buf_get_data (temp_buf);
   b   = g_new (guchar, width * 3);
 
   list = palette->colors;
@@ -235,11 +235,11 @@ gimp_palette_get_new_preview (GimpViewable *viewable,
 
       for (x = 0; x < columns && list; x++)
         {
-          GimpPaletteEntry *entry = list->data;
+          PicmanPaletteEntry *entry = list->data;
 
           list = g_list_next (list);
 
-          gimp_rgb_get_uchar (&entry->color,
+          picman_rgb_get_uchar (&entry->color,
                               &b[x * cell_size * 3 + 0],
                               &b[x * cell_size * 3 + 1],
                               &b[x * cell_size * 3 + 2]);
@@ -262,39 +262,39 @@ gimp_palette_get_new_preview (GimpViewable *viewable,
 }
 
 static gchar *
-gimp_palette_get_description (GimpViewable  *viewable,
+picman_palette_get_description (PicmanViewable  *viewable,
                               gchar        **tooltip)
 {
-  GimpPalette *palette = GIMP_PALETTE (viewable);
+  PicmanPalette *palette = PICMAN_PALETTE (viewable);
 
   return g_strdup_printf ("%s (%d)",
-                          gimp_object_get_name (palette),
+                          picman_object_get_name (palette),
                           palette->n_colors);
 }
 
-GimpData *
-gimp_palette_new (GimpContext *context,
+PicmanData *
+picman_palette_new (PicmanContext *context,
                   const gchar *name)
 {
   g_return_val_if_fail (name != NULL, NULL);
   g_return_val_if_fail (*name != '\0', NULL);
 
-  return g_object_new (GIMP_TYPE_PALETTE,
+  return g_object_new (PICMAN_TYPE_PALETTE,
                        "name", name,
                        NULL);
 }
 
-GimpData *
-gimp_palette_get_standard (GimpContext *context)
+PicmanData *
+picman_palette_get_standard (PicmanContext *context)
 {
-  static GimpData *standard_palette = NULL;
+  static PicmanData *standard_palette = NULL;
 
   if (! standard_palette)
     {
-      standard_palette = gimp_palette_new (context, "Standard");
+      standard_palette = picman_palette_new (context, "Standard");
 
-      gimp_data_clean (standard_palette);
-      gimp_data_make_internal (standard_palette, "gimp-palette-standard");
+      picman_data_clean (standard_palette);
+      picman_data_make_internal (standard_palette, "picman-palette-standard");
 
       g_object_add_weak_pointer (G_OBJECT (standard_palette),
                                  (gpointer *) &standard_palette);
@@ -304,36 +304,36 @@ gimp_palette_get_standard (GimpContext *context)
 }
 
 static const gchar *
-gimp_palette_get_extension (GimpData *data)
+picman_palette_get_extension (PicmanData *data)
 {
-  return GIMP_PALETTE_FILE_EXTENSION;
+  return PICMAN_PALETTE_FILE_EXTENSION;
 }
 
-static GimpData *
-gimp_palette_duplicate (GimpData *data)
+static PicmanData *
+picman_palette_duplicate (PicmanData *data)
 {
-  GimpPalette *palette = GIMP_PALETTE (data);
-  GimpPalette *new;
+  PicmanPalette *palette = PICMAN_PALETTE (data);
+  PicmanPalette *new;
   GList       *list;
 
-  new = g_object_new (GIMP_TYPE_PALETTE, NULL);
+  new = g_object_new (PICMAN_TYPE_PALETTE, NULL);
 
   new->n_columns = palette->n_columns;
 
   for (list = palette->colors; list; list = g_list_next (list))
     {
-      GimpPaletteEntry *entry = list->data;
+      PicmanPaletteEntry *entry = list->data;
 
-      gimp_palette_add_entry (new, -1, entry->name, &entry->color);
+      picman_palette_add_entry (new, -1, entry->name, &entry->color);
     }
 
-  return GIMP_DATA (new);
+  return PICMAN_DATA (new);
 }
 
 static gchar *
-gimp_palette_get_checksum (GimpTagged *tagged)
+picman_palette_get_checksum (PicmanTagged *tagged)
 {
-  GimpPalette *palette         = GIMP_PALETTE (tagged);
+  PicmanPalette *palette         = PICMAN_PALETTE (tagged);
   gchar       *checksum_string = NULL;
 
   if (palette->n_colors > 0)
@@ -346,7 +346,7 @@ gimp_palette_get_checksum (GimpTagged *tagged)
 
       while (color_iterator)
         {
-          GimpPaletteEntry *entry = (GimpPaletteEntry *) color_iterator->data;
+          PicmanPaletteEntry *entry = (PicmanPaletteEntry *) color_iterator->data;
 
           g_checksum_update (checksum, (const guchar *) &entry->color, sizeof (entry->color));
           if (entry->name)
@@ -367,33 +367,33 @@ gimp_palette_get_checksum (GimpTagged *tagged)
 /*  public functions  */
 
 GList *
-gimp_palette_get_colors (GimpPalette *palette)
+picman_palette_get_colors (PicmanPalette *palette)
 {
-  g_return_val_if_fail (GIMP_IS_PALETTE (palette), NULL);
+  g_return_val_if_fail (PICMAN_IS_PALETTE (palette), NULL);
 
   return palette->colors;
 }
 
 gint
-gimp_palette_get_n_colors (GimpPalette *palette)
+picman_palette_get_n_colors (PicmanPalette *palette)
 {
-  g_return_val_if_fail (GIMP_IS_PALETTE (palette), 0);
+  g_return_val_if_fail (PICMAN_IS_PALETTE (palette), 0);
 
   return palette->n_colors;
 }
 
-GimpPaletteEntry *
-gimp_palette_add_entry (GimpPalette   *palette,
+PicmanPaletteEntry *
+picman_palette_add_entry (PicmanPalette   *palette,
                         gint           position,
                         const gchar   *name,
-                        const GimpRGB *color)
+                        const PicmanRGB *color)
 {
-  GimpPaletteEntry *entry;
+  PicmanPaletteEntry *entry;
 
-  g_return_val_if_fail (GIMP_IS_PALETTE (palette), NULL);
+  g_return_val_if_fail (PICMAN_IS_PALETTE (palette), NULL);
   g_return_val_if_fail (color != NULL, NULL);
 
-  entry = g_slice_new0 (GimpPaletteEntry);
+  entry = g_slice_new0 (PicmanPaletteEntry);
 
   entry->color = *color;
   entry->name  = g_strdup (name ? name : _("Untitled"));
@@ -415,7 +415,7 @@ gimp_palette_add_entry (GimpPalette   *palette,
            list;
            list = g_list_next (list))
         {
-          GimpPaletteEntry *entry2 = list->data;
+          PicmanPaletteEntry *entry2 = list->data;
 
           entry2->position += 1;
         }
@@ -423,25 +423,25 @@ gimp_palette_add_entry (GimpPalette   *palette,
 
   palette->n_colors += 1;
 
-  gimp_data_dirty (GIMP_DATA (palette));
+  picman_data_dirty (PICMAN_DATA (palette));
 
   return entry;
 }
 
 void
-gimp_palette_delete_entry (GimpPalette      *palette,
-                           GimpPaletteEntry *entry)
+picman_palette_delete_entry (PicmanPalette      *palette,
+                           PicmanPaletteEntry *entry)
 {
   GList *list;
   gint   pos = 0;
 
-  g_return_if_fail (GIMP_IS_PALETTE (palette));
+  g_return_if_fail (PICMAN_IS_PALETTE (palette));
   g_return_if_fail (entry != NULL);
 
   if (g_list_find (palette->colors, entry))
     {
       pos = entry->position;
-      gimp_palette_entry_free (entry);
+      picman_palette_entry_free (entry);
 
       palette->colors = g_list_remove (palette->colors, entry);
 
@@ -451,27 +451,27 @@ gimp_palette_delete_entry (GimpPalette      *palette,
            list;
            list = g_list_next (list))
         {
-          entry = (GimpPaletteEntry *) list->data;
+          entry = (PicmanPaletteEntry *) list->data;
 
           entry->position = pos++;
         }
 
-      gimp_data_dirty (GIMP_DATA (palette));
+      picman_data_dirty (PICMAN_DATA (palette));
     }
 }
 
 gboolean
-gimp_palette_set_entry (GimpPalette   *palette,
+picman_palette_set_entry (PicmanPalette   *palette,
                         gint           position,
                         const gchar   *name,
-                        const GimpRGB *color)
+                        const PicmanRGB *color)
 {
-  GimpPaletteEntry *entry;
+  PicmanPaletteEntry *entry;
 
-  g_return_val_if_fail (GIMP_IS_PALETTE (palette), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PALETTE (palette), FALSE);
   g_return_val_if_fail (color != NULL, FALSE);
 
-  entry = gimp_palette_get_entry (palette, position);
+  entry = picman_palette_get_entry (palette, position);
 
   if (! entry)
     return FALSE;
@@ -483,43 +483,43 @@ gimp_palette_set_entry (GimpPalette   *palette,
 
   entry->name = g_strdup (name);
 
-  gimp_data_dirty (GIMP_DATA (palette));
+  picman_data_dirty (PICMAN_DATA (palette));
 
   return TRUE;
 }
 
 gboolean
-gimp_palette_set_entry_color (GimpPalette   *palette,
+picman_palette_set_entry_color (PicmanPalette   *palette,
                               gint           position,
-                              const GimpRGB *color)
+                              const PicmanRGB *color)
 {
-  GimpPaletteEntry *entry;
+  PicmanPaletteEntry *entry;
 
-  g_return_val_if_fail (GIMP_IS_PALETTE (palette), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PALETTE (palette), FALSE);
   g_return_val_if_fail (color != NULL, FALSE);
 
-  entry = gimp_palette_get_entry (palette, position);
+  entry = picman_palette_get_entry (palette, position);
 
   if (! entry)
     return FALSE;
 
   entry->color = *color;
 
-  gimp_data_dirty (GIMP_DATA (palette));
+  picman_data_dirty (PICMAN_DATA (palette));
 
   return TRUE;
 }
 
 gboolean
-gimp_palette_set_entry_name (GimpPalette *palette,
+picman_palette_set_entry_name (PicmanPalette *palette,
                              gint         position,
                              const gchar *name)
 {
-  GimpPaletteEntry *entry;
+  PicmanPaletteEntry *entry;
 
-  g_return_val_if_fail (GIMP_IS_PALETTE (palette), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PALETTE (palette), FALSE);
 
-  entry = gimp_palette_get_entry (palette, position);
+  entry = picman_palette_get_entry (palette, position);
 
   if (! entry)
     return FALSE;
@@ -529,25 +529,25 @@ gimp_palette_set_entry_name (GimpPalette *palette,
 
   entry->name = g_strdup (name);
 
-  gimp_data_dirty (GIMP_DATA (palette));
+  picman_data_dirty (PICMAN_DATA (palette));
 
   return TRUE;
 }
 
-GimpPaletteEntry *
-gimp_palette_get_entry (GimpPalette *palette,
+PicmanPaletteEntry *
+picman_palette_get_entry (PicmanPalette *palette,
                         gint         position)
 {
-  g_return_val_if_fail (GIMP_IS_PALETTE (palette), NULL);
+  g_return_val_if_fail (PICMAN_IS_PALETTE (palette), NULL);
 
   return g_list_nth_data (palette->colors, position);
 }
 
 void
-gimp_palette_set_columns (GimpPalette *palette,
+picman_palette_set_columns (PicmanPalette *palette,
                           gint         columns)
 {
-  g_return_if_fail (GIMP_IS_PALETTE (palette));
+  g_return_if_fail (PICMAN_IS_PALETTE (palette));
 
   columns = CLAMP (columns, 0, 64);
 
@@ -555,26 +555,26 @@ gimp_palette_set_columns (GimpPalette *palette,
     {
       palette->n_columns = columns;
 
-      gimp_data_dirty (GIMP_DATA (palette));
+      picman_data_dirty (PICMAN_DATA (palette));
     }
 }
 
 gint
-gimp_palette_get_columns (GimpPalette *palette)
+picman_palette_get_columns (PicmanPalette *palette)
 {
-  g_return_val_if_fail (GIMP_IS_PALETTE (palette), 0);
+  g_return_val_if_fail (PICMAN_IS_PALETTE (palette), 0);
 
   return palette->n_columns;
 }
 
-GimpPaletteEntry *
-gimp_palette_find_entry (GimpPalette      *palette,
-                         const GimpRGB    *color,
-                         GimpPaletteEntry *start_from)
+PicmanPaletteEntry *
+picman_palette_find_entry (PicmanPalette      *palette,
+                         const PicmanRGB    *color,
+                         PicmanPaletteEntry *start_from)
 {
-  GimpPaletteEntry *entry;
+  PicmanPaletteEntry *entry;
 
-  g_return_val_if_fail (GIMP_IS_PALETTE (palette), NULL);
+  g_return_val_if_fail (PICMAN_IS_PALETTE (palette), NULL);
   g_return_val_if_fail (color != NULL, NULL);
 
   if (! start_from)
@@ -585,12 +585,12 @@ gimp_palette_find_entry (GimpPalette      *palette,
 
       for (list = palette->colors; list; list = g_list_next (list))
         {
-          entry = (GimpPaletteEntry *) list->data;
-          if (gimp_rgb_distance (&entry->color, color) < EPSILON)
+          entry = (PicmanPaletteEntry *) list->data;
+          if (picman_rgb_distance (&entry->color, color) < EPSILON)
             return entry;
         }
     }
-  else if (gimp_rgb_distance (&start_from->color, color) < EPSILON)
+  else if (picman_rgb_distance (&start_from->color, color) < EPSILON)
     {
       return start_from;
     }
@@ -611,8 +611,8 @@ gimp_palette_find_entry (GimpPalette      *palette,
         {
           if (next)
             {
-              entry = (GimpPaletteEntry *) next->data;
-              if (gimp_rgb_distance (&entry->color, color) < EPSILON)
+              entry = (PicmanPaletteEntry *) next->data;
+              if (picman_rgb_distance (&entry->color, color) < EPSILON)
                 return entry;
 
               next = next->next;
@@ -620,8 +620,8 @@ gimp_palette_find_entry (GimpPalette      *palette,
 
           if (prev)
             {
-              entry = (GimpPaletteEntry *) prev->data;
-              if (gimp_rgb_distance (&entry->color, color) < EPSILON)
+              entry = (PicmanPaletteEntry *) prev->data;
+              if (picman_rgb_distance (&entry->color, color) < EPSILON)
                 return entry;
 
               prev = prev->prev;
@@ -636,22 +636,22 @@ gimp_palette_find_entry (GimpPalette      *palette,
 /*  private functions  */
 
 static void
-gimp_palette_entry_free (GimpPaletteEntry *entry)
+picman_palette_entry_free (PicmanPaletteEntry *entry)
 {
   g_return_if_fail (entry != NULL);
 
   g_free (entry->name);
 
-  g_slice_free (GimpPaletteEntry, entry);
+  g_slice_free (PicmanPaletteEntry, entry);
 }
 
 static gint64
-gimp_palette_entry_get_memsize (GimpPaletteEntry *entry,
+picman_palette_entry_get_memsize (PicmanPaletteEntry *entry,
                                 gint64           *gui_size)
 {
-  gint64 memsize = sizeof (GimpPaletteEntry);
+  gint64 memsize = sizeof (PicmanPaletteEntry);
 
-  memsize += gimp_string_get_memsize (entry->name);
+  memsize += picman_string_get_memsize (entry->name);
 
   return memsize;
 }

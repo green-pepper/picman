@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,155 +25,155 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpdrawable-operation.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpimage-crop.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimpimage.h"
-#include "core/gimpparamspecs.h"
-#include "core/gimppickable-auto-shrink.h"
-#include "core/gimppickable.h"
-#include "gegl/gimp-gegl-utils.h"
+#include "core/picmancontext.h"
+#include "core/picmandrawable-operation.h"
+#include "core/picmandrawable.h"
+#include "core/picmanimage-crop.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanimage.h"
+#include "core/picmanparamspecs.h"
+#include "core/picmanpickable-auto-shrink.h"
+#include "core/picmanpickable.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimppdb.h"
-#include "gimppdb-utils.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanpdb-utils.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GimpValueArray *
-plug_in_autocrop_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+plug_in_autocrop_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
-  GimpDrawable *drawable;
+  PicmanImage *image;
+  PicmanDrawable *drawable;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 1), gimp);
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 1), picman);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error))
         {
           gint x1, y1, x2, y2;
 
-          if (gimp_pickable_auto_shrink (GIMP_PICKABLE (drawable),
+          if (picman_pickable_auto_shrink (PICMAN_PICKABLE (drawable),
                                          0, 0,
-                                         gimp_item_get_width  (GIMP_ITEM (drawable)),
-                                         gimp_item_get_height (GIMP_ITEM (drawable)),
+                                         picman_item_get_width  (PICMAN_ITEM (drawable)),
+                                         picman_item_get_height (PICMAN_ITEM (drawable)),
                                          &x1, &y1, &x2, &y2))
             {
               gint off_x, off_y;
 
-              gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
+              picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
 
               x1 += off_x; x2 += off_x;
               y1 += off_y; y2 += off_y;
 
-              gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_ITEM_RESIZE,
+              picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_ITEM_RESIZE,
                                            _("Autocrop image"));
 
-              gimp_image_crop (image, context,
+              picman_image_crop (image, context,
                                x2 - x1, y2 - y1, -x1, -y1, TRUE);
 
-              gimp_image_undo_group_end (image);
+              picman_image_undo_group_end (image);
             }
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-plug_in_autocrop_layer_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+plug_in_autocrop_layer_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpImage *image;
-  GimpDrawable *drawable;
+  PicmanImage *image;
+  PicmanDrawable *drawable;
 
-  image = gimp_value_get_image (gimp_value_array_index (args, 1), gimp);
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
+  image = picman_value_get_image (picman_value_array_index (args, 1), picman);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error))
         {
-          GimpLayer *layer = gimp_image_get_active_layer (image);
+          PicmanLayer *layer = picman_image_get_active_layer (image);
           gint       x1, y1, x2, y2;
 
           if (layer &&
-              gimp_pickable_auto_shrink (GIMP_PICKABLE (drawable),
+              picman_pickable_auto_shrink (PICMAN_PICKABLE (drawable),
                                          0, 0,
-                                         gimp_item_get_width  (GIMP_ITEM (drawable)),
-                                         gimp_item_get_height (GIMP_ITEM (drawable)),
+                                         picman_item_get_width  (PICMAN_ITEM (drawable)),
+                                         picman_item_get_height (PICMAN_ITEM (drawable)),
                                          &x1, &y1, &x2, &y2))
             {
-              gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_ITEM_RESIZE,
+              picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_ITEM_RESIZE,
                                            _("Autocrop layer"));
 
-              gimp_item_resize (GIMP_ITEM (layer), context,
+              picman_item_resize (PICMAN_ITEM (layer), context,
                                 x2 - x1, y2 - y1, -x1, -y1);
 
-              gimp_image_undo_group_end (image);
+              picman_image_undo_group_end (image);
             }
         }
       else
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-plug_in_colortoalpha_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+plug_in_colortoalpha_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
-  GimpRGB color;
+  PicmanDrawable *drawable;
+  PicmanRGB color;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
-  gimp_value_get_rgb (gimp_value_array_index (args, 3), &color);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
+  picman_value_get_rgb (picman_value_array_index (args, 3), &color);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
           /* XXX: fixme disable for gray, and add alpha when needed */
 
-          GeglColor *gegl_color = gimp_gegl_color_new (&color);
+          GeglColor *gegl_color = picman_gegl_color_new (&color);
           GeglNode  *node =
             gegl_node_new_child (NULL,
                                  "operation", "gegl:color-to-alpha",
@@ -181,7 +181,7 @@ plug_in_colortoalpha_invoker (GimpProcedure         *procedure,
                                  NULL);
           g_object_unref (gegl_color);
 
-          gimp_drawable_apply_operation (drawable, progress,
+          picman_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Color to Alpha"),
                                          node);
 
@@ -191,30 +191,30 @@ plug_in_colortoalpha_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-plug_in_pixelize_invoker (GimpProcedure         *procedure,
-                          Gimp                  *gimp,
-                          GimpContext           *context,
-                          GimpProgress          *progress,
-                          const GimpValueArray  *args,
+static PicmanValueArray *
+plug_in_pixelize_invoker (PicmanProcedure         *procedure,
+                          Picman                  *picman,
+                          PicmanContext           *context,
+                          PicmanProgress          *progress,
+                          const PicmanValueArray  *args,
                           GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 pixel_width;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
-  pixel_width = g_value_get_int (gimp_value_array_index (args, 3));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
+  pixel_width = g_value_get_int (picman_value_array_index (args, 3));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
           GeglNode *node =
             gegl_node_new_child (NULL,
@@ -223,7 +223,7 @@ plug_in_pixelize_invoker (GimpProcedure         *procedure,
                                  "size-y",    pixel_width,
                                  NULL);
 
-          gimp_drawable_apply_operation (drawable, progress,
+          picman_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Pixelize"),
                                          node);
 
@@ -233,32 +233,32 @@ plug_in_pixelize_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-plug_in_pixelize2_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+plug_in_pixelize2_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 pixel_width;
   gint32 pixel_height;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
-  pixel_width = g_value_get_int (gimp_value_array_index (args, 3));
-  pixel_height = g_value_get_int (gimp_value_array_index (args, 4));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
+  pixel_width = g_value_get_int (picman_value_array_index (args, 3));
+  pixel_height = g_value_get_int (picman_value_array_index (args, 4));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
           GeglNode *node =
             gegl_node_new_child (NULL,
@@ -267,7 +267,7 @@ plug_in_pixelize2_invoker (GimpProcedure         *procedure,
                                  "size-y",    pixel_height,
                                  NULL);
 
-          gimp_drawable_apply_operation (drawable, progress,
+          picman_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Pixelize"),
                                          node);
 
@@ -277,38 +277,38 @@ plug_in_pixelize2_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-plug_in_polar_coords_invoker (GimpProcedure         *procedure,
-                              Gimp                  *gimp,
-                              GimpContext           *context,
-                              GimpProgress          *progress,
-                              const GimpValueArray  *args,
+static PicmanValueArray *
+plug_in_polar_coords_invoker (PicmanProcedure         *procedure,
+                              Picman                  *picman,
+                              PicmanContext           *context,
+                              PicmanProgress          *progress,
+                              const PicmanValueArray  *args,
                               GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gdouble circle;
   gdouble angle;
   gboolean backwards;
   gboolean inverse;
   gboolean polrec;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
-  circle = g_value_get_double (gimp_value_array_index (args, 3));
-  angle = g_value_get_double (gimp_value_array_index (args, 4));
-  backwards = g_value_get_boolean (gimp_value_array_index (args, 5));
-  inverse = g_value_get_boolean (gimp_value_array_index (args, 6));
-  polrec = g_value_get_boolean (gimp_value_array_index (args, 7));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
+  circle = g_value_get_double (picman_value_array_index (args, 3));
+  angle = g_value_get_double (picman_value_array_index (args, 4));
+  backwards = g_value_get_boolean (picman_value_array_index (args, 5));
+  inverse = g_value_get_boolean (picman_value_array_index (args, 6));
+  polrec = g_value_get_boolean (picman_value_array_index (args, 7));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
           GeglNode *node =
             gegl_node_new_child (NULL,
@@ -320,7 +320,7 @@ plug_in_polar_coords_invoker (GimpProcedure         *procedure,
                                  "polar",     polrec,
                                  NULL);
 
-          gimp_drawable_apply_operation (drawable, progress,
+          picman_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Polar Coordinates"),
                                          node);
 
@@ -330,36 +330,36 @@ plug_in_polar_coords_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-plug_in_randomize_hurl_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+plug_in_randomize_hurl_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gdouble rndm_pct;
   gdouble rndm_rcount;
   gboolean randomize;
   gint32 seed;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
-  rndm_pct = g_value_get_double (gimp_value_array_index (args, 3));
-  rndm_rcount = g_value_get_double (gimp_value_array_index (args, 4));
-  randomize = g_value_get_boolean (gimp_value_array_index (args, 5));
-  seed = g_value_get_int (gimp_value_array_index (args, 6));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
+  rndm_pct = g_value_get_double (picman_value_array_index (args, 3));
+  rndm_rcount = g_value_get_double (picman_value_array_index (args, 4));
+  randomize = g_value_get_boolean (picman_value_array_index (args, 5));
+  seed = g_value_get_int (picman_value_array_index (args, 6));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
           GeglNode *node;
 
@@ -374,7 +374,7 @@ plug_in_randomize_hurl_invoker (GimpProcedure         *procedure,
                                  "repeat",     (gint) rndm_rcount,
                                  NULL);
 
-          gimp_drawable_apply_operation (drawable, progress,
+          picman_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Random Hurl"),
                                          node);
 
@@ -384,36 +384,36 @@ plug_in_randomize_hurl_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-plug_in_randomize_pick_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+plug_in_randomize_pick_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gdouble rndm_pct;
   gdouble rndm_rcount;
   gboolean randomize;
   gint32 seed;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
-  rndm_pct = g_value_get_double (gimp_value_array_index (args, 3));
-  rndm_rcount = g_value_get_double (gimp_value_array_index (args, 4));
-  randomize = g_value_get_boolean (gimp_value_array_index (args, 5));
-  seed = g_value_get_int (gimp_value_array_index (args, 6));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
+  rndm_pct = g_value_get_double (picman_value_array_index (args, 3));
+  rndm_rcount = g_value_get_double (picman_value_array_index (args, 4));
+  randomize = g_value_get_boolean (picman_value_array_index (args, 5));
+  seed = g_value_get_int (picman_value_array_index (args, 6));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
           GeglNode *node;
 
@@ -428,7 +428,7 @@ plug_in_randomize_pick_invoker (GimpProcedure         *procedure,
                                  "repeat",     (gint) rndm_rcount,
                                  NULL);
 
-          gimp_drawable_apply_operation (drawable, progress,
+          picman_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Random Pick"),
                                          node);
 
@@ -438,36 +438,36 @@ plug_in_randomize_pick_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-plug_in_randomize_slur_invoker (GimpProcedure         *procedure,
-                                Gimp                  *gimp,
-                                GimpContext           *context,
-                                GimpProgress          *progress,
-                                const GimpValueArray  *args,
+static PicmanValueArray *
+plug_in_randomize_slur_invoker (PicmanProcedure         *procedure,
+                                Picman                  *picman,
+                                PicmanContext           *context,
+                                PicmanProgress          *progress,
+                                const PicmanValueArray  *args,
                                 GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gdouble rndm_pct;
   gdouble rndm_rcount;
   gboolean randomize;
   gint32 seed;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
-  rndm_pct = g_value_get_double (gimp_value_array_index (args, 3));
-  rndm_rcount = g_value_get_double (gimp_value_array_index (args, 4));
-  randomize = g_value_get_boolean (gimp_value_array_index (args, 5));
-  seed = g_value_get_int (gimp_value_array_index (args, 6));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
+  rndm_pct = g_value_get_double (picman_value_array_index (args, 3));
+  rndm_rcount = g_value_get_double (picman_value_array_index (args, 4));
+  randomize = g_value_get_boolean (picman_value_array_index (args, 5));
+  seed = g_value_get_int (picman_value_array_index (args, 6));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
           GeglNode *node;
 
@@ -482,7 +482,7 @@ plug_in_randomize_slur_invoker (GimpProcedure         *procedure,
                                  "repeat",     (gint) rndm_rcount,
                                  NULL);
 
-          gimp_drawable_apply_operation (drawable, progress,
+          picman_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Random Slur"),
                                          node);
 
@@ -492,42 +492,42 @@ plug_in_randomize_slur_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-plug_in_semiflatten_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
+static PicmanValueArray *
+plug_in_semiflatten_invoker (PicmanProcedure         *procedure,
+                             Picman                  *picman,
+                             PicmanContext           *context,
+                             PicmanProgress          *progress,
+                             const PicmanValueArray  *args,
                              GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error) &&
-          gimp_drawable_has_alpha (drawable))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error) &&
+          picman_drawable_has_alpha (drawable))
         {
           GeglNode *node;
-          GimpRGB   color;
+          PicmanRGB   color;
 
-          gimp_context_get_background (context, &color);
+          picman_context_get_background (context, &color);
 
           node =
             gegl_node_new_child (NULL,
-                                 "operation", "gimp:semi-flatten",
+                                 "operation", "picman:semi-flatten",
                                  "color",     &color,
                                  NULL);
 
-          gimp_drawable_apply_operation (drawable, progress,
+          picman_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Semi-Flatten"),
                                          node);
 
@@ -537,39 +537,39 @@ plug_in_semiflatten_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-plug_in_threshold_alpha_invoker (GimpProcedure         *procedure,
-                                 Gimp                  *gimp,
-                                 GimpContext           *context,
-                                 GimpProgress          *progress,
-                                 const GimpValueArray  *args,
+static PicmanValueArray *
+plug_in_threshold_alpha_invoker (PicmanProcedure         *procedure,
+                                 Picman                  *picman,
+                                 PicmanContext           *context,
+                                 PicmanProgress          *progress,
+                                 const PicmanValueArray  *args,
                                  GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
   gint32 threshold;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
-  threshold = g_value_get_int (gimp_value_array_index (args, 3));
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
+  threshold = g_value_get_int (picman_value_array_index (args, 3));
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error) &&
-          gimp_drawable_has_alpha (drawable))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error) &&
+          picman_drawable_has_alpha (drawable))
         {
           GeglNode *node =
             gegl_node_new_child (NULL,
-                                 "operation", "gimp:threshold-alpha",
+                                 "operation", "picman:threshold-alpha",
                                  "value",     threshold / 255.0,
                                  NULL);
 
-          gimp_drawable_apply_operation (drawable, progress,
+          picman_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Threshold Alpha"),
                                          node);
 
@@ -579,35 +579,35 @@ plug_in_threshold_alpha_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-plug_in_vinvert_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+plug_in_vinvert_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
-  GimpDrawable *drawable;
+  PicmanDrawable *drawable;
 
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
+  drawable = picman_value_get_drawable (picman_value_array_index (args, 2), picman);
 
   if (success)
     {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
+      if (picman_pdb_item_is_attached (PICMAN_ITEM (drawable), NULL,
+                                     PICMAN_PDB_ITEM_CONTENT, error) &&
+          picman_pdb_item_is_not_group (PICMAN_ITEM (drawable), error))
         {
           GeglNode *node =
             gegl_node_new_child (NULL,
                                  "operation", "gegl:value-invert",
                                  NULL);
 
-          gimp_drawable_apply_operation (drawable, progress,
+          picman_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Value Invert"),
                                          node);
 
@@ -617,22 +617,22 @@ plug_in_vinvert_invoker (GimpProcedure         *procedure,
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_plug_in_compat_procs (GimpPDB *pdb)
+register_plug_in_compat_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-plug-in-autocrop
+   * picman-plug-in-autocrop
    */
-  procedure = gimp_procedure_new (plug_in_autocrop_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+  procedure = picman_procedure_new (plug_in_autocrop_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
                                "plug-in-autocrop");
-  gimp_procedure_set_static_strings (procedure,
+  picman_procedure_set_static_strings (procedure,
                                      "plug-in-autocrop",
                                      "Remove empty borders from the image",
                                      "Remove empty borders from the image.",
@@ -640,35 +640,35 @@ register_plug_in_compat_procs (GimpPDB *pdb)
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Input drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-plug-in-autocrop-layer
+   * picman-plug-in-autocrop-layer
    */
-  procedure = gimp_procedure_new (plug_in_autocrop_layer_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+  procedure = picman_procedure_new (plug_in_autocrop_layer_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
                                "plug-in-autocrop-layer");
-  gimp_procedure_set_static_strings (procedure,
+  picman_procedure_set_static_strings (procedure,
                                      "plug-in-autocrop-layer",
                                      "Remove empty borders from the layer",
                                      "Remove empty borders from the layer.",
@@ -676,35 +676,35 @@ register_plug_in_compat_procs (GimpPDB *pdb)
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Input drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-plug-in-colortoalpha
+   * picman-plug-in-colortoalpha
    */
-  procedure = gimp_procedure_new (plug_in_colortoalpha_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+  procedure = picman_procedure_new (plug_in_colortoalpha_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
                                "plug-in-colortoalpha");
-  gimp_procedure_set_static_strings (procedure,
+  picman_procedure_set_static_strings (procedure,
                                      "plug-in-colortoalpha",
                                      "Convert a specified color to transparency",
                                      "This replaces as much of a given color as possible in each pixel with a corresponding amount of alpha, then readjusts the color accordingly.",
@@ -712,42 +712,42 @@ register_plug_in_compat_procs (GimpPDB *pdb)
                                      "Spencer Kimball & Peter Mattis",
                                      "1999",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image (unused)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Input drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_rgb ("color",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_rgb ("color",
                                                     "color",
                                                     "Color to remove",
                                                     FALSE,
                                                     NULL,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                    PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-plug-in-pixelize
+   * picman-plug-in-pixelize
    */
-  procedure = gimp_procedure_new (plug_in_pixelize_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+  procedure = picman_procedure_new (plug_in_pixelize_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
                                "plug-in-pixelize");
-  gimp_procedure_set_static_strings (procedure,
+  picman_procedure_set_static_strings (procedure,
                                      "plug-in-pixelize",
                                      "Simplify image into an array of solid-colored squares",
                                      "Pixelize the contents of the specified drawable with specified pixelizing width.",
@@ -755,41 +755,41 @@ register_plug_in_compat_procs (GimpPDB *pdb)
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image (unused)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Input drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("pixel-width",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("pixel-width",
                                                       "pixel width",
                                                       "Pixel width (the decrease in resolution)",
-                                                      1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-plug-in-pixelize2
+   * picman-plug-in-pixelize2
    */
-  procedure = gimp_procedure_new (plug_in_pixelize2_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+  procedure = picman_procedure_new (plug_in_pixelize2_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
                                "plug-in-pixelize2");
-  gimp_procedure_set_static_strings (procedure,
+  picman_procedure_set_static_strings (procedure,
                                      "plug-in-pixelize2",
                                      "Simplify image into an array of solid-colored rectangles",
                                      "Pixelize the contents of the specified drawable with specified pixelizing width and height.",
@@ -797,47 +797,47 @@ register_plug_in_compat_procs (GimpPDB *pdb)
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image (unused)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Input drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("pixel-width",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("pixel-width",
                                                       "pixel width",
                                                       "Pixel width (the decrease in horizontal resolution)",
-                                                      1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("pixel-height",
+                                                      1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("pixel-height",
                                                       "pixel height",
                                                       "Pixel height (the decrease in vertical resolution)",
-                                                      1, GIMP_MAX_IMAGE_SIZE, 1,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      1, PICMAN_MAX_IMAGE_SIZE, 1,
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-plug-in-polar-coords
+   * picman-plug-in-polar-coords
    */
-  procedure = gimp_procedure_new (plug_in_polar_coords_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+  procedure = picman_procedure_new (plug_in_polar_coords_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
                                "plug-in-polar-coords");
-  gimp_procedure_set_static_strings (procedure,
+  picman_procedure_set_static_strings (procedure,
                                      "plug-in-polar-coords",
                                      "Convert image to or from polar coordinates",
                                      "Remaps and image from rectangular coordinates to polar coordinates or vice versa.",
@@ -845,65 +845,65 @@ register_plug_in_compat_procs (GimpPDB *pdb)
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image (unused)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Input drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("circle",
                                                     "circle",
                                                     "Circle depth in %",
                                                     0.0, 100.0, 0.0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("angle",
                                                     "angle",
                                                     "Offset angle",
                                                     0.0, 360.0, 0.0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("backwards",
                                                      "backwards",
                                                      "Map backwards",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("inverse",
                                                      "inverse",
                                                      "Map from top",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("polrec",
                                                      "polrec",
                                                      "Polar to rectangular",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                     PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-plug-in-randomize-hurl
+   * picman-plug-in-randomize-hurl
    */
-  procedure = gimp_procedure_new (plug_in_randomize_hurl_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+  procedure = picman_procedure_new (plug_in_randomize_hurl_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
                                "plug-in-randomize-hurl");
-  gimp_procedure_set_static_strings (procedure,
+  picman_procedure_set_static_strings (procedure,
                                      "plug-in-randomize-hurl",
                                      "Completely randomize a fraction of pixels",
                                      "This plug-in \"hurls\" randomly-valued pixels onto the selection or image. You may select the percentage of pixels to modify and the number of times to repeat the process.",
@@ -911,59 +911,59 @@ register_plug_in_compat_procs (GimpPDB *pdb)
                                      "Compatibility procedure. Please see 'gegl:noise-hurl' for credits.",
                                      "2013",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image (unused)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Input drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("rndm-pct",
                                                     "rndm pct",
                                                     "Randomization percentage",
                                                     1.0, 100.0, 1.0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("rndm-rcount",
                                                     "rndm rcount",
                                                     "Repeat count",
                                                     1.0, 100.0, 1.0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("randomize",
                                                      "randomize",
                                                      "Use random seed",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("seed",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("seed",
                                                       "seed",
                                                       "Seed value (used only if randomize is FALSE)",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-plug-in-randomize-pick
+   * picman-plug-in-randomize-pick
    */
-  procedure = gimp_procedure_new (plug_in_randomize_pick_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+  procedure = picman_procedure_new (plug_in_randomize_pick_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
                                "plug-in-randomize-pick");
-  gimp_procedure_set_static_strings (procedure,
+  picman_procedure_set_static_strings (procedure,
                                      "plug-in-randomize-pick",
                                      "Randomly interchange some pixels with neighbors",
                                      "This plug-in replaces a pixel with a random adjacent pixel. You may select the percentage of pixels to modify and the number of times to repeat the process.",
@@ -971,59 +971,59 @@ register_plug_in_compat_procs (GimpPDB *pdb)
                                      "Compatibility procedure. Please see 'gegl:noise-pick' for credits.",
                                      "2013",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image (unused)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Input drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("rndm-pct",
                                                     "rndm pct",
                                                     "Randomization percentage",
                                                     1.0, 100.0, 1.0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("rndm-rcount",
                                                     "rndm rcount",
                                                     "Repeat count",
                                                     1.0, 100.0, 1.0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("randomize",
                                                      "randomize",
                                                      "Use random seed",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("seed",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("seed",
                                                       "seed",
                                                       "Seed value (used only if randomize is FALSE)",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-plug-in-randomize-slur
+   * picman-plug-in-randomize-slur
    */
-  procedure = gimp_procedure_new (plug_in_randomize_slur_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+  procedure = picman_procedure_new (plug_in_randomize_slur_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
                                "plug-in-randomize-slur");
-  gimp_procedure_set_static_strings (procedure,
+  picman_procedure_set_static_strings (procedure,
                                      "plug-in-randomize-slur",
                                      "Randomly slide some pixels downward (similar to melting",
                                      "This plug-in \"slurs\" (melts like a bunch of icicles) an image. You may select the percentage of pixels to modify and the number of times to repeat the process.",
@@ -1031,95 +1031,95 @@ register_plug_in_compat_procs (GimpPDB *pdb)
                                      "Compatibility procedure. Please see 'gegl:noise-slur' for credits.",
                                      "2013",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image (unused)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Input drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("rndm-pct",
                                                     "rndm pct",
                                                     "Randomization percentage",
                                                     1.0, 100.0, 1.0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_double ("rndm-rcount",
                                                     "rndm rcount",
                                                     "Repeat count",
                                                     1.0, 100.0, 1.0,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
+                                                    PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
                                g_param_spec_boolean ("randomize",
                                                      "randomize",
                                                      "Use random seed",
                                                      FALSE,
-                                                     GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("seed",
+                                                     PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("seed",
                                                       "seed",
                                                       "Seed value (used only if randomize is FALSE)",
                                                       G_MININT32, G_MAXINT32, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-plug-in-semiflatten
+   * picman-plug-in-semiflatten
    */
-  procedure = gimp_procedure_new (plug_in_semiflatten_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+  procedure = picman_procedure_new (plug_in_semiflatten_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
                                "plug-in-semiflatten");
-  gimp_procedure_set_static_strings (procedure,
+  picman_procedure_set_static_strings (procedure,
                                      "plug-in-semiflatten",
                                      "Replace partial transparency with the current background color",
-                                     "This plugin flattens pixels in an RGBA image that aren't completely transparent against the current GIMP background color.",
+                                     "This plugin flattens pixels in an RGBA image that aren't completely transparent against the current PICMAN background color.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image (unused)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Input drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-plug-in-threshold-alpha
+   * picman-plug-in-threshold-alpha
    */
-  procedure = gimp_procedure_new (plug_in_threshold_alpha_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+  procedure = picman_procedure_new (plug_in_threshold_alpha_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
                                "plug-in-threshold-alpha");
-  gimp_procedure_set_static_strings (procedure,
+  picman_procedure_set_static_strings (procedure,
                                      "plug-in-threshold-alpha",
                                      "Make transparency all-or-nothing",
                                      "Make transparency all-or-nothing.",
@@ -1127,41 +1127,41 @@ register_plug_in_compat_procs (GimpPDB *pdb)
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image (unused)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Input drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("threshold",
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_int32 ("threshold",
                                                       "threshold",
                                                       "Threshold",
                                                       0, 255, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                      PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-plug-in-vinvert
+   * picman-plug-in-vinvert
    */
-  procedure = gimp_procedure_new (plug_in_vinvert_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+  procedure = picman_procedure_new (plug_in_vinvert_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
                                "plug-in-vinvert");
-  gimp_procedure_set_static_strings (procedure,
+  picman_procedure_set_static_strings (procedure,
                                      "plug-in-vinvert",
                                      "Invert the brightness of each pixel",
                                      "This function takes an indexed/RGB image and inverts its 'value' in HSV space. The upshot of this is that the color and saturation at any given point remains the same, but its brightness is effectively inverted. Quite strange. Sometimes produces unpleasant color artifacts on images from lossy sources (ie. JPEG).",
@@ -1169,25 +1169,25 @@ register_plug_in_compat_procs (GimpPDB *pdb)
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
+  picman_procedure_add_argument (procedure,
                                g_param_spec_enum ("run-mode",
                                                   "run mode",
                                                   "The run mode",
-                                                  GIMP_TYPE_RUN_MODE,
-                                                  GIMP_RUN_INTERACTIVE,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
+                                                  PICMAN_TYPE_RUN_MODE,
+                                                  PICMAN_RUN_INTERACTIVE,
+                                                  PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_image_id ("image",
                                                          "image",
                                                          "Input image (unused)",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
+                                                         pdb->picman, FALSE,
+                                                         PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_drawable_id ("drawable",
                                                             "drawable",
                                                             "Input drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                            pdb->picman, FALSE,
+                                                            PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

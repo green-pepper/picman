@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,24 +22,24 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimp-transform-utils.h"
-#include "core/gimpimage.h"
-#include "core/gimpdrawable-transform.h"
+#include "core/picman-transform-utils.h"
+#include "core/picmanimage.h"
+#include "core/picmandrawable-transform.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimpperspectivetool.h"
-#include "gimptoolcontrol.h"
-#include "gimptransformoptions.h"
+#include "picmanperspectivetool.h"
+#include "picmantoolcontrol.h"
+#include "picmantransformoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  index into trans_info array  */
@@ -58,57 +58,57 @@ enum
 
 /*  local function prototypes  */
 
-static void    gimp_perspective_tool_dialog        (GimpTransformTool *tr_tool);
-static void    gimp_perspective_tool_dialog_update (GimpTransformTool *tr_tool);
-static void    gimp_perspective_tool_prepare       (GimpTransformTool *tr_tool);
-static void    gimp_perspective_tool_motion        (GimpTransformTool *tr_tool);
-static void    gimp_perspective_tool_recalc_matrix (GimpTransformTool *tr_tool);
-static gchar * gimp_perspective_tool_get_undo_desc (GimpTransformTool *tr_tool);
+static void    picman_perspective_tool_dialog        (PicmanTransformTool *tr_tool);
+static void    picman_perspective_tool_dialog_update (PicmanTransformTool *tr_tool);
+static void    picman_perspective_tool_prepare       (PicmanTransformTool *tr_tool);
+static void    picman_perspective_tool_motion        (PicmanTransformTool *tr_tool);
+static void    picman_perspective_tool_recalc_matrix (PicmanTransformTool *tr_tool);
+static gchar * picman_perspective_tool_get_undo_desc (PicmanTransformTool *tr_tool);
 
 
-G_DEFINE_TYPE (GimpPerspectiveTool, gimp_perspective_tool,
-               GIMP_TYPE_TRANSFORM_TOOL)
+G_DEFINE_TYPE (PicmanPerspectiveTool, picman_perspective_tool,
+               PICMAN_TYPE_TRANSFORM_TOOL)
 
 
 void
-gimp_perspective_tool_register (GimpToolRegisterCallback  callback,
+picman_perspective_tool_register (PicmanToolRegisterCallback  callback,
                                 gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_PERSPECTIVE_TOOL,
-                GIMP_TYPE_TRANSFORM_OPTIONS,
-                gimp_transform_options_gui,
-                GIMP_CONTEXT_BACKGROUND_MASK,
-                "gimp-perspective-tool",
+  (* callback) (PICMAN_TYPE_PERSPECTIVE_TOOL,
+                PICMAN_TYPE_TRANSFORM_OPTIONS,
+                picman_transform_options_gui,
+                PICMAN_CONTEXT_BACKGROUND_MASK,
+                "picman-perspective-tool",
                 _("Perspective"),
                 _("Perspective Tool: "
                   "Change perspective of the layer, selection or path"),
                 N_("_Perspective"), "<shift>P",
-                NULL, GIMP_HELP_TOOL_PERSPECTIVE,
-                GIMP_STOCK_TOOL_PERSPECTIVE,
+                NULL, PICMAN_HELP_TOOL_PERSPECTIVE,
+                PICMAN_STOCK_TOOL_PERSPECTIVE,
                 data);
 }
 
 static void
-gimp_perspective_tool_class_init (GimpPerspectiveToolClass *klass)
+picman_perspective_tool_class_init (PicmanPerspectiveToolClass *klass)
 {
-  GimpTransformToolClass *trans_class = GIMP_TRANSFORM_TOOL_CLASS (klass);
+  PicmanTransformToolClass *trans_class = PICMAN_TRANSFORM_TOOL_CLASS (klass);
 
-  trans_class->dialog        = gimp_perspective_tool_dialog;
-  trans_class->dialog_update = gimp_perspective_tool_dialog_update;
-  trans_class->prepare       = gimp_perspective_tool_prepare;
-  trans_class->motion        = gimp_perspective_tool_motion;
-  trans_class->recalc_matrix = gimp_perspective_tool_recalc_matrix;
-  trans_class->get_undo_desc = gimp_perspective_tool_get_undo_desc;
+  trans_class->dialog        = picman_perspective_tool_dialog;
+  trans_class->dialog_update = picman_perspective_tool_dialog_update;
+  trans_class->prepare       = picman_perspective_tool_prepare;
+  trans_class->motion        = picman_perspective_tool_motion;
+  trans_class->recalc_matrix = picman_perspective_tool_recalc_matrix;
+  trans_class->get_undo_desc = picman_perspective_tool_get_undo_desc;
 }
 
 static void
-gimp_perspective_tool_init (GimpPerspectiveTool *perspective_tool)
+picman_perspective_tool_init (PicmanPerspectiveTool *perspective_tool)
 {
-  GimpTool          *tool    = GIMP_TOOL (perspective_tool);
-  GimpTransformTool *tr_tool = GIMP_TRANSFORM_TOOL (perspective_tool);
+  PicmanTool          *tool    = PICMAN_TOOL (perspective_tool);
+  PicmanTransformTool *tr_tool = PICMAN_TRANSFORM_TOOL (perspective_tool);
 
-  gimp_tool_control_set_tool_cursor (tool->control,
-                                     GIMP_TOOL_CURSOR_PERSPECTIVE);
+  picman_tool_control_set_tool_cursor (tool->control,
+                                     PICMAN_TOOL_CURSOR_PERSPECTIVE);
 
   tr_tool->progress_text = _("Perspective transformation");
 
@@ -118,9 +118,9 @@ gimp_perspective_tool_init (GimpPerspectiveTool *perspective_tool)
 }
 
 static void
-gimp_perspective_tool_dialog (GimpTransformTool *tr_tool)
+picman_perspective_tool_dialog (PicmanTransformTool *tr_tool)
 {
-  GimpPerspectiveTool *perspective = GIMP_PERSPECTIVE_TOOL (tr_tool);
+  PicmanPerspectiveTool *perspective = PICMAN_PERSPECTIVE_TOOL (tr_tool);
   GtkWidget           *content_area;
   GtkWidget           *frame;
   GtkWidget           *table;
@@ -128,7 +128,7 @@ gimp_perspective_tool_dialog (GimpTransformTool *tr_tool)
 
   content_area = gtk_dialog_get_content_area (GTK_DIALOG (tr_tool->dialog));
 
-  frame = gimp_frame_new (_("Transformation Matrix"));
+  frame = picman_frame_new (_("Transformation Matrix"));
   gtk_container_set_border_width (GTK_CONTAINER (frame), 6);
   gtk_box_pack_start (GTK_BOX (content_area), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
@@ -155,9 +155,9 @@ gimp_perspective_tool_dialog (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_perspective_tool_dialog_update (GimpTransformTool *tr_tool)
+picman_perspective_tool_dialog_update (PicmanTransformTool *tr_tool)
 {
-  GimpPerspectiveTool *perspective = GIMP_PERSPECTIVE_TOOL (tr_tool);
+  PicmanPerspectiveTool *perspective = PICMAN_PERSPECTIVE_TOOL (tr_tool);
   gint                 x, y;
 
   for (y = 0; y < 3; y++)
@@ -173,7 +173,7 @@ gimp_perspective_tool_dialog_update (GimpTransformTool *tr_tool)
 }
 
 static void
-gimp_perspective_tool_prepare (GimpTransformTool  *tr_tool)
+picman_perspective_tool_prepare (PicmanTransformTool  *tr_tool)
 {
   tr_tool->trans_info[X0] = (gdouble) tr_tool->x1;
   tr_tool->trans_info[Y0] = (gdouble) tr_tool->y1;
@@ -186,7 +186,7 @@ gimp_perspective_tool_prepare (GimpTransformTool  *tr_tool)
 }
 
 static void
-gimp_perspective_tool_motion (GimpTransformTool *transform_tool)
+picman_perspective_tool_motion (PicmanTransformTool *transform_tool)
 {
   gdouble diff_x, diff_y;
 
@@ -232,10 +232,10 @@ gimp_perspective_tool_motion (GimpTransformTool *transform_tool)
 }
 
 static void
-gimp_perspective_tool_recalc_matrix (GimpTransformTool *tr_tool)
+picman_perspective_tool_recalc_matrix (PicmanTransformTool *tr_tool)
 {
-  gimp_matrix3_identity (&tr_tool->transform);
-  gimp_transform_matrix_perspective (&tr_tool->transform,
+  picman_matrix3_identity (&tr_tool->transform);
+  picman_transform_matrix_perspective (&tr_tool->transform,
                                      tr_tool->x1,
                                      tr_tool->y1,
                                      tr_tool->x2 - tr_tool->x1,
@@ -251,7 +251,7 @@ gimp_perspective_tool_recalc_matrix (GimpTransformTool *tr_tool)
 }
 
 static gchar *
-gimp_perspective_tool_get_undo_desc (GimpTransformTool *tr_tool)
+picman_perspective_tool_get_undo_desc (PicmanTransformTool *tr_tool)
 {
   return g_strdup (C_("undo-type", "Perspective"));
 }

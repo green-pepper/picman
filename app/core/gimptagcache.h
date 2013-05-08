@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptagcache.h
+ * picmantagcache.h
  * Copyright (C) 2008 Aurimas Juška <aurisj@svn.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,46 +18,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TAG_CACHE_H__
-#define __GIMP_TAG_CACHE_H__
+#ifndef __PICMAN_TAG_CACHE_H__
+#define __PICMAN_TAG_CACHE_H__
 
 
-#include "gimpobject.h"
+#include "picmanobject.h"
 
 
-#define GIMP_TYPE_TAG_CACHE            (gimp_tag_cache_get_type ())
-#define GIMP_TAG_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TAG_CACHE, GimpTagCache))
-#define GIMP_TAG_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TAG_CACHE, GimpTagCacheClass))
-#define GIMP_IS_TAG_CACHE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TAG_CACHE))
-#define GIMP_IS_TAG_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TAG_CACHE))
-#define GIMP_TAG_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TAG_CACHE, GimpTagCacheClass))
+#define PICMAN_TYPE_TAG_CACHE            (picman_tag_cache_get_type ())
+#define PICMAN_TAG_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TAG_CACHE, PicmanTagCache))
+#define PICMAN_TAG_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TAG_CACHE, PicmanTagCacheClass))
+#define PICMAN_IS_TAG_CACHE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TAG_CACHE))
+#define PICMAN_IS_TAG_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TAG_CACHE))
+#define PICMAN_TAG_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TAG_CACHE, PicmanTagCacheClass))
 
 
-typedef struct _GimpTagCacheClass  GimpTagCacheClass;
-typedef struct _GimpTagCachePriv   GimpTagCachePriv;
+typedef struct _PicmanTagCacheClass  PicmanTagCacheClass;
+typedef struct _PicmanTagCachePriv   PicmanTagCachePriv;
 
-struct _GimpTagCache
+struct _PicmanTagCache
 {
-  GimpObject        parent_instance;
+  PicmanObject        parent_instance;
 
-  GimpTagCachePriv *priv;
+  PicmanTagCachePriv *priv;
 };
 
-struct _GimpTagCacheClass
+struct _PicmanTagCacheClass
 {
-  GimpObjectClass  parent_class;
+  PicmanObjectClass  parent_class;
 };
 
 
-GType           gimp_tag_cache_get_type      (void) G_GNUC_CONST;
+GType           picman_tag_cache_get_type      (void) G_GNUC_CONST;
 
-GimpTagCache *  gimp_tag_cache_new           (void);
+PicmanTagCache *  picman_tag_cache_new           (void);
 
-void            gimp_tag_cache_save          (GimpTagCache  *cache);
-void            gimp_tag_cache_load          (GimpTagCache  *cache);
+void            picman_tag_cache_save          (PicmanTagCache  *cache);
+void            picman_tag_cache_load          (PicmanTagCache  *cache);
 
-void            gimp_tag_cache_add_container (GimpTagCache  *cache,
-                                              GimpContainer *container);
+void            picman_tag_cache_add_container (PicmanTagCache  *cache,
+                                              PicmanContainer *container);
 
 
-#endif  /*  __GIMP_TAG_CACHE_H__  */
+#endif  /*  __PICMAN_TAG_CACHE_H__  */

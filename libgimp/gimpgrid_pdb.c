@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpgrid_pdb.c
+ * picmangrid_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpgrid
- * @title: gimpgrid
+ * SECTION: picmangrid
+ * @title: picmangrid
  * @short_description: Functions manuipulating an image's grid.
  *
  * Functions manuipulating an image's grid.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_image_grid_get_spacing:
+ * picman_image_grid_get_spacing:
  * @image_ID: The image.
  * @xspacing: The image's grid horizontal spacing.
  * @yspacing: The image's grid vertical spacing.
@@ -47,26 +47,26 @@
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_grid_get_spacing (gint32   image_ID,
+picman_image_grid_get_spacing (gint32   image_ID,
                              gdouble *xspacing,
                              gdouble *yspacing)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-grid-get-spacing",
+  return_vals = picman_run_procedure ("picman-image-grid-get-spacing",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
   *xspacing = 0.0;
   *yspacing = 0.0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -74,13 +74,13 @@ gimp_image_grid_get_spacing (gint32   image_ID,
       *yspacing = return_vals[2].data.d_float;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_grid_set_spacing:
+ * picman_image_grid_set_spacing:
  * @image_ID: The image.
  * @xspacing: The image's grid horizontal spacing.
  * @yspacing: The image's grid vertical spacing.
@@ -92,33 +92,33 @@ gimp_image_grid_get_spacing (gint32   image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_grid_set_spacing (gint32  image_ID,
+picman_image_grid_set_spacing (gint32  image_ID,
                              gdouble xspacing,
                              gdouble yspacing)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-grid-set-spacing",
+  return_vals = picman_run_procedure ("picman-image-grid-set-spacing",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_FLOAT, xspacing,
-                                    GIMP_PDB_FLOAT, yspacing,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_FLOAT, xspacing,
+                                    PICMAN_PDB_FLOAT, yspacing,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_grid_get_offset:
+ * picman_image_grid_get_offset:
  * @image_ID: The image.
  * @xoffset: The image's grid horizontal offset.
  * @yoffset: The image's grid vertical offset.
@@ -130,26 +130,26 @@ gimp_image_grid_set_spacing (gint32  image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_grid_get_offset (gint32   image_ID,
+picman_image_grid_get_offset (gint32   image_ID,
                             gdouble *xoffset,
                             gdouble *yoffset)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-grid-get-offset",
+  return_vals = picman_run_procedure ("picman-image-grid-get-offset",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
   *xoffset = 0.0;
   *yoffset = 0.0;
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     {
@@ -157,13 +157,13 @@ gimp_image_grid_get_offset (gint32   image_ID,
       *yoffset = return_vals[2].data.d_float;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_grid_set_offset:
+ * picman_image_grid_set_offset:
  * @image_ID: The image.
  * @xoffset: The image's grid horizontal offset.
  * @yoffset: The image's grid vertical offset.
@@ -175,33 +175,33 @@ gimp_image_grid_get_offset (gint32   image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_grid_set_offset (gint32  image_ID,
+picman_image_grid_set_offset (gint32  image_ID,
                             gdouble xoffset,
                             gdouble yoffset)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-grid-set-offset",
+  return_vals = picman_run_procedure ("picman-image-grid-set-offset",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_FLOAT, xoffset,
-                                    GIMP_PDB_FLOAT, yoffset,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_FLOAT, xoffset,
+                                    PICMAN_PDB_FLOAT, yoffset,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_grid_get_foreground_color:
+ * picman_image_grid_get_foreground_color:
  * @image_ID: The image.
  * @fgcolor: The image's grid foreground color.
  *
@@ -211,33 +211,33 @@ gimp_image_grid_set_offset (gint32  image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_grid_get_foreground_color (gint32   image_ID,
-                                      GimpRGB *fgcolor)
+picman_image_grid_get_foreground_color (gint32   image_ID,
+                                      PicmanRGB *fgcolor)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-grid-get-foreground-color",
+  return_vals = picman_run_procedure ("picman-image-grid-get-foreground-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     *fgcolor = return_vals[1].data.d_color;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_grid_set_foreground_color:
+ * picman_image_grid_set_foreground_color:
  * @image_ID: The image.
  * @fgcolor: The new foreground color.
  *
@@ -247,31 +247,31 @@ gimp_image_grid_get_foreground_color (gint32   image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_grid_set_foreground_color (gint32         image_ID,
-                                      const GimpRGB *fgcolor)
+picman_image_grid_set_foreground_color (gint32         image_ID,
+                                      const PicmanRGB *fgcolor)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-grid-set-foreground-color",
+  return_vals = picman_run_procedure ("picman-image-grid-set-foreground-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_COLOR, fgcolor,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_COLOR, fgcolor,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_grid_get_background_color:
+ * picman_image_grid_get_background_color:
  * @image_ID: The image.
  * @bgcolor: The image's grid background color.
  *
@@ -281,33 +281,33 @@ gimp_image_grid_set_foreground_color (gint32         image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_grid_get_background_color (gint32   image_ID,
-                                      GimpRGB *bgcolor)
+picman_image_grid_get_background_color (gint32   image_ID,
+                                      PicmanRGB *bgcolor)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-grid-get-background-color",
+  return_vals = picman_run_procedure ("picman-image-grid-get-background-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     *bgcolor = return_vals[1].data.d_color;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_grid_set_background_color:
+ * picman_image_grid_set_background_color:
  * @image_ID: The image.
  * @bgcolor: The new background color.
  *
@@ -317,31 +317,31 @@ gimp_image_grid_get_background_color (gint32   image_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_grid_set_background_color (gint32         image_ID,
-                                      const GimpRGB *bgcolor)
+picman_image_grid_set_background_color (gint32         image_ID,
+                                      const PicmanRGB *bgcolor)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-grid-set-background-color",
+  return_vals = picman_run_procedure ("picman-image-grid-set-background-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_COLOR, bgcolor,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_COLOR, bgcolor,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_image_grid_get_style:
+ * picman_image_grid_get_style:
  * @image_ID: The image.
  *
  * Gets the style of an image's grid.
@@ -350,30 +350,30 @@ gimp_image_grid_set_background_color (gint32         image_ID,
  *
  * Returns: The image's grid style.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
-GimpGridStyle
-gimp_image_grid_get_style (gint32 image_ID)
+PicmanGridStyle
+picman_image_grid_get_style (gint32 image_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpGridStyle style = 0;
+  PicmanGridStyle style = 0;
 
-  return_vals = gimp_run_procedure ("gimp-image-grid-get-style",
+  return_vals = picman_run_procedure ("picman-image-grid-get-style",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     style = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return style;
 }
 
 /**
- * gimp_image_grid_set_style:
+ * picman_image_grid_set_style:
  * @image_ID: The image.
  * @style: The image's grid style.
  *
@@ -384,25 +384,25 @@ gimp_image_grid_get_style (gint32 image_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_image_grid_set_style (gint32        image_ID,
-                           GimpGridStyle style)
+picman_image_grid_set_style (gint32        image_ID,
+                           PicmanGridStyle style)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-image-grid-set-style",
+  return_vals = picman_run_procedure ("picman-image-grid-set-style",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_INT32, style,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_INT32, style,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

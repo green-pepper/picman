@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,45 +22,45 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "core/gimp.h"
-#include "core/gimp-edit.h"
-#include "core/gimpbuffer.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpdrawable.h"
-#include "core/gimplayer.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-new.h"
-#include "core/gimpimage-undo.h"
+#include "core/picman.h"
+#include "core/picman-edit.h"
+#include "core/picmanbuffer.h"
+#include "core/picmancontainer.h"
+#include "core/picmandrawable.h"
+#include "core/picmanlayer.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-new.h"
+#include "core/picmanimage-undo.h"
 
-#include "vectors/gimpvectors-import.h"
+#include "vectors/picmanvectors-import.h"
 
-#include "widgets/gimpclipboard.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
-#include "widgets/gimpwindowstrategy.h"
+#include "widgets/picmanclipboard.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
+#include "widgets/picmanwindowstrategy.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-transform.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-transform.h"
 
 #include "dialogs/fade-dialog.h"
 
 #include "actions.h"
 #include "edit-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   edit_paste                         (GimpDisplay *display,
+static void   edit_paste                         (PicmanDisplay *display,
                                                   gboolean     paste_into);
 static void   cut_named_buffer_callback          (GtkWidget   *widget,
                                                   const gchar *name,
@@ -79,53 +79,53 @@ void
 edit_undo_cmd_callback (GtkAction *action,
                         gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   return_if_no_image (image, data);
 
-  if (gimp_image_undo (image))
-    gimp_image_flush (image);
+  if (picman_image_undo (image))
+    picman_image_flush (image);
 }
 
 void
 edit_redo_cmd_callback (GtkAction *action,
                         gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   return_if_no_image (image, data);
 
-  if (gimp_image_redo (image))
-    gimp_image_flush (image);
+  if (picman_image_redo (image))
+    picman_image_flush (image);
 }
 
 void
 edit_strong_undo_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   return_if_no_image (image, data);
 
-  if (gimp_image_strong_undo (image))
-    gimp_image_flush (image);
+  if (picman_image_strong_undo (image))
+    picman_image_flush (image);
 }
 
 void
 edit_strong_redo_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   return_if_no_image (image, data);
 
-  if (gimp_image_strong_redo (image))
-    gimp_image_flush (image);
+  if (picman_image_strong_redo (image))
+    picman_image_flush (image);
 }
 
 void
 edit_undo_clear_cmd_callback (GtkAction *action,
                               gpointer   data)
 {
-  GimpImage     *image;
-  GimpUndoStack *undo_stack;
-  GimpUndoStack *redo_stack;
+  PicmanImage     *image;
+  PicmanUndoStack *undo_stack;
+  PicmanUndoStack *redo_stack;
   GtkWidget     *widget;
   GtkWidget     *dialog;
   gchar         *size;
@@ -134,12 +134,12 @@ edit_undo_clear_cmd_callback (GtkAction *action,
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
 
-  dialog = gimp_message_dialog_new (_("Clear Undo History"), GIMP_STOCK_WARNING,
+  dialog = picman_message_dialog_new (_("Clear Undo History"), PICMAN_STOCK_WARNING,
                                     widget,
                                     GTK_DIALOG_MODAL |
                                     GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    gimp_standard_help_func,
-                                    GIMP_HELP_EDIT_UNDO_CLEAR,
+                                    picman_standard_help_func,
+                                    PICMAN_HELP_EDIT_UNDO_CLEAR,
 
                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                     GTK_STOCK_CLEAR,  GTK_RESPONSE_OK,
@@ -159,29 +159,29 @@ edit_undo_clear_cmd_callback (GtkAction *action,
                            G_CALLBACK (gtk_widget_destroy),
                            dialog, G_CONNECT_SWAPPED);
 
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                      _("Really clear image's undo history?"));
 
-  undo_stack = gimp_image_get_undo_stack (image);
-  redo_stack = gimp_image_get_redo_stack (image);
+  undo_stack = picman_image_get_undo_stack (image);
+  redo_stack = picman_image_get_redo_stack (image);
 
-  memsize =  gimp_object_get_memsize (GIMP_OBJECT (undo_stack), &guisize);
+  memsize =  picman_object_get_memsize (PICMAN_OBJECT (undo_stack), &guisize);
   memsize += guisize;
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (redo_stack), &guisize);
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (redo_stack), &guisize);
   memsize += guisize;
 
   size = g_format_size (memsize);
 
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                              _("Clearing the undo history of this "
                                "image will gain %s of memory."), size);
   g_free (size);
 
-  if (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK)
+  if (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK)
     {
-      gimp_image_undo_disable (image);
-      gimp_image_undo_enable (image);
-      gimp_image_flush (image);
+      picman_image_undo_disable (image);
+      picman_image_undo_enable (image);
+      picman_image_flush (image);
     }
 
   gtk_widget_destroy (dialog);
@@ -191,27 +191,27 @@ void
 edit_cut_cmd_callback (GtkAction *action,
                        gpointer   data)
 {
-  GimpImage    *image;
-  GimpDrawable *drawable;
+  PicmanImage    *image;
+  PicmanDrawable *drawable;
   GError       *error = NULL;
   return_if_no_drawable (image, drawable, data);
 
-  if (gimp_edit_cut (image, drawable, action_data_get_context (data), &error))
+  if (picman_edit_cut (image, drawable, action_data_get_context (data), &error))
     {
-      GimpDisplay *display = action_data_get_display (data);
+      PicmanDisplay *display = action_data_get_display (data);
 
       if (display)
-        gimp_message_literal (image->gimp,
-			      G_OBJECT (display), GIMP_MESSAGE_INFO,
+        picman_message_literal (image->picman,
+			      G_OBJECT (display), PICMAN_MESSAGE_INFO,
 			      _("Cut pixels to the clipboard"));
 
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
   else
     {
-      gimp_message_literal (image->gimp,
+      picman_message_literal (image->picman,
 			    G_OBJECT (action_data_get_display (data)),
-			    GIMP_MESSAGE_WARNING,
+			    PICMAN_MESSAGE_WARNING,
 			    error->message);
       g_clear_error (&error);
     }
@@ -221,27 +221,27 @@ void
 edit_copy_cmd_callback (GtkAction *action,
                         gpointer   data)
 {
-  GimpImage    *image;
-  GimpDrawable *drawable;
+  PicmanImage    *image;
+  PicmanDrawable *drawable;
   GError       *error = NULL;
   return_if_no_drawable (image, drawable, data);
 
-  if (gimp_edit_copy (image, drawable, action_data_get_context (data), &error))
+  if (picman_edit_copy (image, drawable, action_data_get_context (data), &error))
     {
-      GimpDisplay *display = action_data_get_display (data);
+      PicmanDisplay *display = action_data_get_display (data);
 
       if (display)
-        gimp_message_literal (image->gimp,
-			      G_OBJECT (display), GIMP_MESSAGE_INFO,
+        picman_message_literal (image->picman,
+			      G_OBJECT (display), PICMAN_MESSAGE_INFO,
 			      _("Copied pixels to the clipboard"));
 
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
   else
     {
-      gimp_message_literal (image->gimp,
+      picman_message_literal (image->picman,
 			    G_OBJECT (action_data_get_display (data)),
-			    GIMP_MESSAGE_WARNING,
+			    PICMAN_MESSAGE_WARNING,
 			    error->message);
       g_clear_error (&error);
     }
@@ -251,26 +251,26 @@ void
 edit_copy_visible_cmd_callback (GtkAction *action,
                                 gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   GError    *error = NULL;
   return_if_no_image (image, data);
 
-  if (gimp_edit_copy_visible (image, action_data_get_context (data), &error))
+  if (picman_edit_copy_visible (image, action_data_get_context (data), &error))
     {
-      GimpDisplay *display = action_data_get_display (data);
+      PicmanDisplay *display = action_data_get_display (data);
 
       if (display)
-        gimp_message_literal (image->gimp,
-			      G_OBJECT (display), GIMP_MESSAGE_INFO,
+        picman_message_literal (image->picman,
+			      G_OBJECT (display), PICMAN_MESSAGE_INFO,
 			      _("Copied pixels to the clipboard"));
 
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
   else
     {
-      gimp_message_literal (image->gimp,
+      picman_message_literal (image->picman,
 			    G_OBJECT (action_data_get_display (data)),
-			    GIMP_MESSAGE_WARNING,
+			    PICMAN_MESSAGE_WARNING,
 			    error->message);
       g_clear_error (&error);
     }
@@ -280,9 +280,9 @@ void
 edit_paste_cmd_callback (GtkAction *action,
                          gpointer   data)
 {
-  GimpDisplay *display = action_data_get_display (data);
+  PicmanDisplay *display = action_data_get_display (data);
 
-  if (display && gimp_display_get_image (display))
+  if (display && picman_display_get_image (display))
     edit_paste (display, FALSE);
   else
     edit_paste_as_new_cmd_callback (action, data);
@@ -292,7 +292,7 @@ void
 edit_paste_into_cmd_callback (GtkAction *action,
                               gpointer   data)
 {
-  GimpDisplay *display;
+  PicmanDisplay *display;
   return_if_no_display (display, data);
 
   edit_paste (display, TRUE);
@@ -302,26 +302,26 @@ void
 edit_paste_as_new_cmd_callback (GtkAction *action,
                                 gpointer   data)
 {
-  Gimp       *gimp;
-  GimpBuffer *buffer;
-  return_if_no_gimp (gimp, data);
+  Picman       *picman;
+  PicmanBuffer *buffer;
+  return_if_no_picman (picman, data);
 
-  buffer = gimp_clipboard_get_buffer (gimp);
+  buffer = picman_clipboard_get_buffer (picman);
 
   if (buffer)
     {
-      GimpImage *image;
+      PicmanImage *image;
 
-      image = gimp_image_new_from_buffer (gimp, action_data_get_image (data),
+      image = picman_image_new_from_buffer (picman, action_data_get_image (data),
                                           buffer);
       g_object_unref (buffer);
 
-      gimp_create_display (image->gimp, image, GIMP_UNIT_PIXEL, 1.0);
+      picman_create_display (image->picman, image, PICMAN_UNIT_PIXEL, 1.0);
       g_object_unref (image);
     }
   else
     {
-      gimp_message_literal (gimp, NULL, GIMP_MESSAGE_WARNING,
+      picman_message_literal (picman, NULL, PICMAN_MESSAGE_WARNING,
 			    _("There is no image data in the clipboard to paste."));
     }
 }
@@ -330,34 +330,34 @@ void
 edit_paste_as_new_layer_cmd_callback (GtkAction *action,
                                       gpointer   data)
 {
-  Gimp       *gimp;
-  GimpImage  *image;
-  GimpBuffer *buffer;
-  return_if_no_gimp (gimp, data);
+  Picman       *picman;
+  PicmanImage  *image;
+  PicmanBuffer *buffer;
+  return_if_no_picman (picman, data);
   return_if_no_image (image, data);
 
-  buffer = gimp_clipboard_get_buffer (gimp);
+  buffer = picman_clipboard_get_buffer (picman);
 
   if (buffer)
     {
-      GimpLayer *layer;
+      PicmanLayer *layer;
 
-      layer = gimp_layer_new_from_buffer (gimp_buffer_get_buffer (buffer),
+      layer = picman_layer_new_from_buffer (picman_buffer_get_buffer (buffer),
                                           image,
-                                          gimp_image_get_layer_format (image,
+                                          picman_image_get_layer_format (image,
                                                                        TRUE),
                                           _("Clipboard"),
-                                          GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+                                          PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
       g_object_unref (buffer);
 
-      gimp_image_add_layer (image, layer,
-                            GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);
+      picman_image_add_layer (image, layer,
+                            PICMAN_IMAGE_ACTIVE_PARENT, -1, TRUE);
 
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
   else
     {
-      gimp_message_literal (gimp, NULL, GIMP_MESSAGE_WARNING,
+      picman_message_literal (picman, NULL, PICMAN_MESSAGE_WARNING,
 			    _("There is no image data in the clipboard to paste."));
     }
 }
@@ -366,15 +366,15 @@ void
 edit_named_cut_cmd_callback (GtkAction *action,
                              gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   GtkWidget *widget;
   GtkWidget *dialog;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
 
-  dialog = gimp_query_string_box (_("Cut Named"), widget,
-                                  gimp_standard_help_func,
-                                  GIMP_HELP_BUFFER_CUT,
+  dialog = picman_query_string_box (_("Cut Named"), widget,
+                                  picman_standard_help_func,
+                                  PICMAN_HELP_BUFFER_CUT,
                                   _("Enter a name for this buffer"),
                                   NULL,
                                   G_OBJECT (image), "disconnect",
@@ -386,7 +386,7 @@ void
 edit_fade_cmd_callback (GtkAction *action,
                         gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   GtkWidget *widget;
   GtkWidget *dialog;
   return_if_no_image (image, data);
@@ -407,15 +407,15 @@ void
 edit_named_copy_cmd_callback (GtkAction *action,
                               gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   GtkWidget *widget;
   GtkWidget *dialog;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
 
-  dialog = gimp_query_string_box (_("Copy Named"), widget,
-                                  gimp_standard_help_func,
-                                  GIMP_HELP_BUFFER_COPY,
+  dialog = picman_query_string_box (_("Copy Named"), widget,
+                                  picman_standard_help_func,
+                                  PICMAN_HELP_BUFFER_COPY,
                                   _("Enter a name for this buffer"),
                                   NULL,
                                   G_OBJECT (image), "disconnect",
@@ -427,15 +427,15 @@ void
 edit_named_copy_visible_cmd_callback (GtkAction *action,
                                       gpointer   data)
 {
-  GimpImage *image;
+  PicmanImage *image;
   GtkWidget *widget;
   GtkWidget *dialog;
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
 
-  dialog = gimp_query_string_box (_("Copy Visible Named "), widget,
-                                  gimp_standard_help_func,
-                                  GIMP_HELP_BUFFER_COPY,
+  dialog = picman_query_string_box (_("Copy Visible Named "), widget,
+                                  picman_standard_help_func,
+                                  PICMAN_HELP_BUFFER_COPY,
                                   _("Enter a name for this buffer"),
                                   NULL,
                                   G_OBJECT (image), "disconnect",
@@ -447,28 +447,28 @@ void
 edit_named_paste_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
-  Gimp      *gimp;
+  Picman      *picman;
   GtkWidget *widget;
-  return_if_no_gimp (gimp, data);
+  return_if_no_picman (picman, data);
   return_if_no_widget (widget, data);
 
-  gimp_window_strategy_show_dockable_dialog (GIMP_WINDOW_STRATEGY (gimp_get_window_strategy (gimp)),
-                                             gimp,
-                                             gimp_dialog_factory_get_singleton (),
+  picman_window_strategy_show_dockable_dialog (PICMAN_WINDOW_STRATEGY (picman_get_window_strategy (picman)),
+                                             picman,
+                                             picman_dialog_factory_get_singleton (),
                                              gtk_widget_get_screen (widget),
-                                             "gimp-buffer-list|gimp-buffer-grid");
+                                             "picman-buffer-list|picman-buffer-grid");
 }
 
 void
 edit_clear_cmd_callback (GtkAction *action,
                          gpointer   data)
 {
-  GimpImage    *image;
-  GimpDrawable *drawable;
+  PicmanImage    *image;
+  PicmanDrawable *drawable;
   return_if_no_drawable (image, drawable, data);
 
-  gimp_edit_clear (image, drawable, action_data_get_context (data));
-  gimp_image_flush (image);
+  picman_edit_clear (image, drawable, action_data_get_context (data));
+  picman_image_flush (image);
 }
 
 void
@@ -476,71 +476,71 @@ edit_fill_cmd_callback (GtkAction *action,
                         gint       value,
                         gpointer   data)
 {
-  GimpImage    *image;
-  GimpDrawable *drawable;
-  GimpFillType  fill_type;
+  PicmanImage    *image;
+  PicmanDrawable *drawable;
+  PicmanFillType  fill_type;
   return_if_no_drawable (image, drawable, data);
 
-  fill_type = (GimpFillType) value;
+  fill_type = (PicmanFillType) value;
 
-  gimp_edit_fill (image, drawable, action_data_get_context (data),
-                  fill_type, GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
-  gimp_image_flush (image);
+  picman_edit_fill (image, drawable, action_data_get_context (data),
+                  fill_type, PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
+  picman_image_flush (image);
 }
 
 
 /*  private functions  */
 
 static void
-edit_paste (GimpDisplay *display,
+edit_paste (PicmanDisplay *display,
             gboolean     paste_into)
 {
-  GimpImage *image = gimp_display_get_image (display);
+  PicmanImage *image = picman_display_get_image (display);
   gchar     *svg;
   gsize      svg_size;
 
-  svg = gimp_clipboard_get_svg (display->gimp, &svg_size);
+  svg = picman_clipboard_get_svg (display->picman, &svg_size);
 
   if (svg)
     {
-      if (gimp_vectors_import_buffer (image, svg, svg_size,
+      if (picman_vectors_import_buffer (image, svg, svg_size,
                                       TRUE, FALSE,
-                                      GIMP_IMAGE_ACTIVE_PARENT, -1,
+                                      PICMAN_IMAGE_ACTIVE_PARENT, -1,
                                       NULL, NULL))
         {
-          gimp_image_flush (image);
+          picman_image_flush (image);
         }
 
       g_free (svg);
     }
   else
     {
-      GimpBuffer *buffer;
+      PicmanBuffer *buffer;
 
-      buffer = gimp_clipboard_get_buffer (display->gimp);
+      buffer = picman_clipboard_get_buffer (display->picman);
 
       if (buffer)
         {
-          GimpDisplayShell *shell = gimp_display_get_shell (display);
+          PicmanDisplayShell *shell = picman_display_get_shell (display);
           gint              x, y;
           gint              width, height;
 
-          gimp_display_shell_untransform_viewport (shell,
+          picman_display_shell_untransform_viewport (shell,
                                                    &x, &y, &width, &height);
 
-          if (gimp_edit_paste (image,
-                               gimp_image_get_active_drawable (image),
+          if (picman_edit_paste (image,
+                               picman_image_get_active_drawable (image),
                                buffer, paste_into, x, y, width, height))
             {
-              gimp_image_flush (image);
+              picman_image_flush (image);
             }
 
           g_object_unref (buffer);
         }
       else
         {
-          gimp_message_literal (display->gimp, G_OBJECT (display),
-				GIMP_MESSAGE_WARNING,
+          picman_message_literal (display->picman, G_OBJECT (display),
+				PICMAN_MESSAGE_WARNING,
 				_("There is no image data in the clipboard to paste."));
         }
     }
@@ -551,13 +551,13 @@ cut_named_buffer_callback (GtkWidget   *widget,
                            const gchar *name,
                            gpointer     data)
 {
-  GimpImage    *image    = GIMP_IMAGE (data);
-  GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+  PicmanImage    *image    = PICMAN_IMAGE (data);
+  PicmanDrawable *drawable = picman_image_get_active_drawable (image);
   GError       *error    = NULL;
 
   if (! drawable)
     {
-      gimp_message_literal (image->gimp, NULL, GIMP_MESSAGE_WARNING,
+      picman_message_literal (image->picman, NULL, PICMAN_MESSAGE_WARNING,
 			    _("There is no active layer or channel to cut from."));
       return;
     }
@@ -565,14 +565,14 @@ cut_named_buffer_callback (GtkWidget   *widget,
   if (! (name && strlen (name)))
     name = _("(Unnamed Buffer)");
 
-  if (gimp_edit_named_cut (image, name, drawable,
-                           gimp_get_user_context (image->gimp), &error))
+  if (picman_edit_named_cut (image, name, drawable,
+                           picman_get_user_context (image->picman), &error))
     {
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
   else
     {
-      gimp_message_literal (image->gimp, NULL, GIMP_MESSAGE_WARNING,
+      picman_message_literal (image->picman, NULL, PICMAN_MESSAGE_WARNING,
 			    error->message);
       g_clear_error (&error);
     }
@@ -583,13 +583,13 @@ copy_named_buffer_callback (GtkWidget   *widget,
                             const gchar *name,
                             gpointer     data)
 {
-  GimpImage    *image    = GIMP_IMAGE (data);
-  GimpDrawable *drawable = gimp_image_get_active_drawable (image);
+  PicmanImage    *image    = PICMAN_IMAGE (data);
+  PicmanDrawable *drawable = picman_image_get_active_drawable (image);
   GError       *error    = NULL;
 
   if (! drawable)
     {
-      gimp_message_literal (image->gimp, NULL, GIMP_MESSAGE_WARNING,
+      picman_message_literal (image->picman, NULL, PICMAN_MESSAGE_WARNING,
 			    _("There is no active layer or channel to copy from."));
       return;
     }
@@ -597,14 +597,14 @@ copy_named_buffer_callback (GtkWidget   *widget,
   if (! (name && strlen (name)))
     name = _("(Unnamed Buffer)");
 
-  if (gimp_edit_named_copy (image, name, drawable,
-                            gimp_get_user_context (image->gimp), &error))
+  if (picman_edit_named_copy (image, name, drawable,
+                            picman_get_user_context (image->picman), &error))
     {
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
   else
     {
-      gimp_message_literal (image->gimp, NULL, GIMP_MESSAGE_WARNING,
+      picman_message_literal (image->picman, NULL, PICMAN_MESSAGE_WARNING,
 			    error->message);
       g_clear_error (&error);
     }
@@ -615,21 +615,21 @@ copy_named_visible_buffer_callback (GtkWidget   *widget,
                                     const gchar *name,
                                     gpointer     data)
 {
-  GimpImage *image = GIMP_IMAGE (data);
+  PicmanImage *image = PICMAN_IMAGE (data);
   GError    *error = NULL;
 
   if (! (name && strlen (name)))
     name = _("(Unnamed Buffer)");
 
-  if (gimp_edit_named_copy_visible (image, name,
-                                    gimp_get_user_context (image->gimp),
+  if (picman_edit_named_copy_visible (image, name,
+                                    picman_get_user_context (image->picman),
                                     &error))
     {
-      gimp_image_flush (image);
+      picman_image_flush (image);
     }
   else
     {
-      gimp_message_literal (image->gimp, NULL, GIMP_MESSAGE_WARNING,
+      picman_message_literal (image->picman, NULL, PICMAN_MESSAGE_WARNING,
 			    error->message);
       g_clear_error (&error);
     }

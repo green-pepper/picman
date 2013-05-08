@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Colormap-Rotation plug-in. Exchanges two color ranges.
  *
@@ -28,7 +28,7 @@
  *
  * Version 2.0, 04 April 1999.
  *  Nearly complete rewrite, made plug-in stable.
- *  (Works with GIMP 1.1 and GTK+ 1.2)
+ *  (Works with PICMAN 1.1 and GTK+ 1.2)
  *
  * Version 1.0, 27 March 1997.
  *  Initial (unstable) release by Pavel Grinfeld

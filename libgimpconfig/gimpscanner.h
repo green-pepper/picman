@@ -1,9 +1,9 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpscanner.h
- * Copyright (C) 2002  Sven Neumann <sven@gimp.org>
- *                     Michael Natterer <mitch@gimp.org>
+ * picmanscanner.h
+ * Copyright (C) 2002  Sven Neumann <sven@picman.org>
+ *                     Michael Natterer <mitch@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,42 +20,42 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_CONFIG_H_INSIDE__) && !defined (GIMP_CONFIG_COMPILATION)
-#error "Only <libgimpconfig/gimpconfig.h> can be included directly."
+#if !defined (__PICMAN_CONFIG_H_INSIDE__) && !defined (PICMAN_CONFIG_COMPILATION)
+#error "Only <libpicmanconfig/picmanconfig.h> can be included directly."
 #endif
 
-#ifndef __GIMP_SCANNER_H__
-#define __GIMP_SCANNER_H__
+#ifndef __PICMAN_SCANNER_H__
+#define __PICMAN_SCANNER_H__
 
 
-GScanner * gimp_scanner_new_file                 (const gchar  *filename,
+GScanner * picman_scanner_new_file                 (const gchar  *filename,
                                                   GError      **error);
-GScanner * gimp_scanner_new_string               (const gchar  *text,
+GScanner * picman_scanner_new_string               (const gchar  *text,
                                                   gint          text_len,
                                                   GError      **error);
-void       gimp_scanner_destroy                  (GScanner     *scanner);
+void       picman_scanner_destroy                  (GScanner     *scanner);
 
-gboolean   gimp_scanner_parse_token              (GScanner     *scanner,
+gboolean   picman_scanner_parse_token              (GScanner     *scanner,
                                                   GTokenType    token);
-gboolean   gimp_scanner_parse_identifier         (GScanner     *scanner,
+gboolean   picman_scanner_parse_identifier         (GScanner     *scanner,
                                                   const gchar  *identifier);
-gboolean   gimp_scanner_parse_string             (GScanner     *scanner,
+gboolean   picman_scanner_parse_string             (GScanner     *scanner,
                                                   gchar       **dest);
-gboolean   gimp_scanner_parse_string_no_validate (GScanner     *scanner,
+gboolean   picman_scanner_parse_string_no_validate (GScanner     *scanner,
                                                   gchar       **dest);
-gboolean   gimp_scanner_parse_data               (GScanner     *scanner,
+gboolean   picman_scanner_parse_data               (GScanner     *scanner,
                                                   gint          length,
                                                   guint8      **dest);
-gboolean   gimp_scanner_parse_int                (GScanner     *scanner,
+gboolean   picman_scanner_parse_int                (GScanner     *scanner,
                                                   gint         *dest);
-gboolean   gimp_scanner_parse_float              (GScanner     *scanner,
+gboolean   picman_scanner_parse_float              (GScanner     *scanner,
                                                   gdouble      *dest);
-gboolean   gimp_scanner_parse_boolean            (GScanner     *scanner,
+gboolean   picman_scanner_parse_boolean            (GScanner     *scanner,
                                                   gboolean     *dest);
-gboolean   gimp_scanner_parse_color              (GScanner     *scanner,
-                                                  GimpRGB      *dest);
-gboolean   gimp_scanner_parse_matrix2            (GScanner     *scanner,
-                                                  GimpMatrix2  *dest);
+gboolean   picman_scanner_parse_color              (GScanner     *scanner,
+                                                  PicmanRGB      *dest);
+gboolean   picman_scanner_parse_matrix2            (GScanner     *scanner,
+                                                  PicmanMatrix2  *dest);
 
 
-#endif /* __GIMP_SCANNER_H__ */
+#endif /* __PICMAN_SCANNER_H__ */

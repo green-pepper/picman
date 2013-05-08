@@ -1,7 +1,7 @@
-/*  gimprc-blurbs.h  --  descriptions for gimprc properties  */
+/*  picmanrc-blurbs.h  --  descriptions for picmanrc properties  */
 
-#ifndef __GIMP_RC_BLURBS_H__
-#define __GIMP_RC_BLURBS_H__
+#ifndef __PICMAN_RC_BLURBS_H__
+#define __PICMAN_RC_BLURBS_H__
 
 
 /*  Not all strings defined here are used in the user interface
@@ -137,7 +137,7 @@ N_("The window type hint that is set on dock windows and the toolbox " \
 "to between 2.0 and 2.6. One important thing to keep in mind: Many images " \
 "that you might get from outside sources will in all likelihood already " \
 "be gamma-corrected.  In these cases, the image will look washed-out if " \
-"GIMP has gamma-correction turned on.  If you are going to work with " \
+"PICMAN has gamma-correction turned on.  If you are going to work with " \
 "images of this sort, turn gamma correction off by setting the value to 1.0."
 #endif
 
@@ -147,8 +147,8 @@ N_("The window type hint that is set on dock windows and the toolbox " \
 #define GFLARE_PATH_BLURB \
 "Where to search for gflares used by the GFlare plug-in."
 
-#define GIMPRESSIONIST_PATH_BLURB \
-"Where to search for data used by the Gimpressionist plug-in."
+#define PICMANRESSIONIST_PATH_BLURB \
+"Where to search for data used by the Picmanressionist plug-in."
 
 #define GLOBAL_BRUSH_BLURB \
 N_("When enabled, the selected brush will be used for all tools.")
@@ -215,14 +215,14 @@ N_("Speed of marching ants in the selection outline.  This value is in " \
    "milliseconds (less time indicates faster marching).")
 
 #define MAX_NEW_IMAGE_SIZE_BLURB  \
-N_("GIMP will warn the user if an attempt is made to create an image that " \
+N_("PICMAN will warn the user if an attempt is made to create an image that " \
    "would take more memory than the size specified here.")
 
 #define MODULE_PATH_BLURB \
 "Sets the module search path."
 
 #define MONITOR_RES_FROM_GDK_BLURB \
-"When enabled, GIMP will use the monitor resolution from the windowing system."
+"When enabled, PICMAN will use the monitor resolution from the windowing system."
 
 #define MONITOR_XRESOLUTION_BLURB \
 N_("Sets the monitor's horizontal resolution, in dots per inch.  If set to " \
@@ -243,7 +243,7 @@ N_("Sets the size of the navigation preview available in the lower right " \
    "corner of the image window.")
 
 #define NUM_PROCESSORS_BLURB \
-N_("Sets how many processors GIMP should try to use simultaneously.")
+N_("Sets how many processors PICMAN should try to use simultaneously.")
 
 #define PALETTE_PATH_BLURB \
 "Sets the palette search path."
@@ -272,7 +272,7 @@ N_("When enabled, the X server is queried for the mouse's current position " \
 "Sets the pluginrc search path."
 
 #define LAYER_PREVIEWS_BLURB \
-N_("Sets whether GIMP should create previews of layers and channels. " \
+N_("Sets whether PICMAN should create previews of layers and channels. " \
    "Previews in the layers and channels dialog are nice to have but they " \
    "can slow things down when working with large images.")
 
@@ -292,10 +292,10 @@ N_("When enabled, the image window will automatically resize itself " \
    "when zooming into and out of images.")
 
 #define RESTORE_SESSION_BLURB \
-N_("Let GIMP try to restore your last saved session on each startup.")
+N_("Let PICMAN try to restore your last saved session on each startup.")
 
 #define SAVE_DEVICE_STATUS_BLURB \
-N_("Remember the current tool, pattern, color, and brush across GIMP " \
+N_("Remember the current tool, pattern, color, and brush across PICMAN " \
    "sessions.")
 
 #define SAVE_DOCUMENT_HISTORY_BLURB \
@@ -303,10 +303,10 @@ N_("Keep a permanent record of all opened and saved files in the Recent " \
    "Documents list.")
 
 #define SAVE_SESSION_INFO_BLURB \
-N_("Save the positions and sizes of the main dialogs when GIMP exits.")
+N_("Save the positions and sizes of the main dialogs when PICMAN exits.")
 
 #define SAVE_TOOL_OPTIONS_BLURB \
-N_("Save the tool options when GIMP exits.")
+N_("Save the tool options when PICMAN exits.")
 
 #define SCRIPT_FU_PATH_BLURB \
 "This path will be searched for scripts when the Script-Fu plug-in is run."
@@ -364,7 +364,7 @@ N_("When enabled, the sample points are visible by default. This can also be " \
 N_("Show a tooltip when the pointer hovers over an item.")
 
 #define SINGLE_WINDOW_MODE_BLURB \
-N_("Use GIMP in a single-window mode.")
+N_("Use PICMAN in a single-window mode.")
 
 #define HIDE_DOCKS_BLURB \
 N_("Hide docks and other windows, leaving only image windows.")
@@ -373,10 +373,10 @@ N_("Hide docks and other windows, leaving only image windows.")
 N_("What to do when the space bar is pressed in the image window.")
 
 #define SWAP_PATH_BLURB \
-N_("Sets the swap file location. GIMP uses a tile based memory allocation " \
+N_("Sets the swap file location. PICMAN uses a tile based memory allocation " \
    "scheme. The swap file is used to quickly and easily swap tiles out to " \
    "disk and back in. Be aware that the swap file can easily get very large " \
-   "if GIMP is used with large images. " \
+   "if PICMAN is used with large images. " \
    "Also, things can get horribly slow if the swap file is created on " \
    "a folder that is mounted over NFS.  For these reasons, it may be " \
    "desirable to put your swap file in \"/tmp\".")
@@ -389,15 +389,15 @@ N_("When enabled, you can change keyboard shortcuts for menu items " \
    "by hitting a key combination while the menu item is highlighted.")
 
 #define SAVE_ACCELS_BLURB \
-N_("Save changed keyboard shortcuts when GIMP exits.")
+N_("Save changed keyboard shortcuts when PICMAN exits.")
 
 #define RESTORE_ACCELS_BLURB \
-N_("Restore saved keyboard shortcuts on each GIMP startup.")
+N_("Restore saved keyboard shortcuts on each PICMAN startup.")
 
 #define TEMP_PATH_BLURB \
 N_("Sets the folder for temporary storage. Files will appear here " \
-   "during the course of running GIMP.  Most files will disappear " \
-   "when GIMP exits, but some files are likely to remain, so it " \
+   "during the course of running PICMAN.  Most files will disappear " \
+   "when PICMAN exits, but some files are likely to remain, so it " \
    "is best if this folder not be one that is shared by other users.")
 
 #define THEME_BLURB \
@@ -414,7 +414,7 @@ N_("The thumbnail in the Open dialog will be automatically updated " \
    "if the file being previewed is smaller than the size set here.")
 
 #define TILE_CACHE_SIZE_BLURB \
-N_("When the amount of pixel data exceeds this limit, GIMP will start to " \
+N_("When the amount of pixel data exceeds this limit, PICMAN will start to " \
    "swap tiles to disk.  This is a lot slower but it makes it possible to " \
    "work on images that wouldn't fit into memory otherwise.  If you have a " \
    "lot of RAM, you may want to set this to a higher value.")
@@ -429,7 +429,7 @@ N_("Show the currently selected brush, pattern and gradient in the toolbox.")
 N_("Show the currently active image in the toolbox.")
 
 #define TOOLBOX_WILBER_BLURB \
-"Show the GIMP mascot at the top of the toolbox."
+"Show the PICMAN mascot at the top of the toolbox."
 
 #define TRANSPARENCY_TYPE_BLURB \
 N_("Sets the manner in which transparency is displayed in images.")
@@ -438,7 +438,7 @@ N_("Sets the manner in which transparency is displayed in images.")
 N_("Sets the size of the checkerboard used to display transparency.")
 
 #define TRUST_DIRTY_FLAG_BLURB \
-N_("When enabled, GIMP will not save an image if it has not been changed " \
+N_("When enabled, PICMAN will not save an image if it has not been changed " \
    "since it was opened.")
 
 #define UNDO_LEVELS_BLURB \
@@ -471,4 +471,4 @@ N_("When enabled, pressing F1 will open the help browser.")
 "Bugs in event history buffer are frequent so in case of cursor " \
 "offset problems turning it off helps."
 
-#endif  /* __GIMP_RC_BLURBS_H__ */
+#endif  /* __PICMAN_RC_BLURBS_H__ */

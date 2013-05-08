@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpText
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * PicmanText
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,20 +22,20 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 #include "text-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpdrawable-private.h" /* eek */
-#include "core/gimpimage.h"
-#include "core/gimpparasitelist.h"
+#include "core/picman.h"
+#include "core/picmandrawable-private.h" /* eek */
+#include "core/picmanimage.h"
+#include "core/picmanparasitelist.h"
 
-#include "gimptext.h"
-#include "gimptext-parasite.h"
-#include "gimptextlayer.h"
-#include "gimptextlayer-xcf.h"
+#include "picmantext.h"
+#include "picmantext-parasite.h"
+#include "picmantextlayer.h"
+#include "picmantextlayer-xcf.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -46,70 +46,70 @@ enum
 };
 
 
-static GimpLayer * gimp_text_layer_from_layer (GimpLayer *layer,
-                                               GimpText  *text);
+static PicmanLayer * picman_text_layer_from_layer (PicmanLayer *layer,
+                                               PicmanText  *text);
 
 
 gboolean
-gimp_text_layer_xcf_load_hack (GimpLayer **layer)
+picman_text_layer_xcf_load_hack (PicmanLayer **layer)
 {
   const gchar        *name;
-  GimpText           *text = NULL;
-  const GimpParasite *parasite;
+  PicmanText           *text = NULL;
+  const PicmanParasite *parasite;
 
   g_return_val_if_fail (layer != NULL, FALSE);
-  g_return_val_if_fail (GIMP_IS_LAYER (*layer), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LAYER (*layer), FALSE);
 
-  name = gimp_text_parasite_name ();
-  parasite = gimp_item_parasite_find (GIMP_ITEM (*layer), name);
+  name = picman_text_parasite_name ();
+  parasite = picman_item_parasite_find (PICMAN_ITEM (*layer), name);
 
   if (parasite)
     {
       GError *error = NULL;
 
-      text = gimp_text_from_parasite (parasite, &error);
+      text = picman_text_from_parasite (parasite, &error);
 
       if (error)
         {
-          gimp_message (gimp_item_get_image (GIMP_ITEM (*layer))->gimp, NULL,
-                        GIMP_MESSAGE_ERROR,
+          picman_message (picman_item_get_image (PICMAN_ITEM (*layer))->picman, NULL,
+                        PICMAN_MESSAGE_ERROR,
                         _("Problems parsing the text parasite for layer '%s':\n"
                           "%s\n\n"
                           "Some text properties may be wrong. "
                           "Unless you want to edit the text layer, "
                           "you don't need to worry about this."),
-                        gimp_object_get_name (*layer),
+                        picman_object_get_name (*layer),
                         error->message);
           g_clear_error (&error);
         }
     }
   else
     {
-      name = gimp_text_gdyntext_parasite_name ();
+      name = picman_text_gdyntext_parasite_name ();
 
-      parasite = gimp_item_parasite_find (GIMP_ITEM (*layer), name);
+      parasite = picman_item_parasite_find (PICMAN_ITEM (*layer), name);
 
       if (parasite)
-        text = gimp_text_from_gdyntext_parasite (parasite);
+        text = picman_text_from_gdyntext_parasite (parasite);
     }
 
   if (text)
     {
-      *layer = gimp_text_layer_from_layer (*layer, text);
+      *layer = picman_text_layer_from_layer (*layer, text);
 
       /*  let the text layer knows what parasite was used to create it  */
-      GIMP_TEXT_LAYER (*layer)->text_parasite = name;
+      PICMAN_TEXT_LAYER (*layer)->text_parasite = name;
     }
 
   return (text != NULL);
 }
 
 void
-gimp_text_layer_xcf_save_prepare (GimpTextLayer *layer)
+picman_text_layer_xcf_save_prepare (PicmanTextLayer *layer)
 {
-  GimpText *text;
+  PicmanText *text;
 
-  g_return_if_fail (GIMP_IS_TEXT_LAYER (layer));
+  g_return_if_fail (PICMAN_IS_TEXT_LAYER (layer));
 
   /*  If the layer has a text parasite already, it wasn't changed and we
    *  can simply save the original parasite back which is still attached.
@@ -117,26 +117,26 @@ gimp_text_layer_xcf_save_prepare (GimpTextLayer *layer)
   if (layer->text_parasite)
     return;
 
-  text = gimp_text_layer_get_text (layer);
+  text = picman_text_layer_get_text (layer);
   if (text)
     {
-      GimpParasite *parasite = gimp_text_to_parasite (text);
+      PicmanParasite *parasite = picman_text_to_parasite (text);
 
       /*  Don't push an undo because the parasite only exists temporarily
        *  while the text layer is saved to XCF.
        */
-      gimp_item_parasite_attach (GIMP_ITEM (layer), parasite, FALSE);
+      picman_item_parasite_attach (PICMAN_ITEM (layer), parasite, FALSE);
 
-      gimp_parasite_free (parasite);
+      picman_parasite_free (parasite);
     }
 }
 
 guint32
-gimp_text_layer_get_xcf_flags (GimpTextLayer *text_layer)
+picman_text_layer_get_xcf_flags (PicmanTextLayer *text_layer)
 {
   guint flags = 0;
 
-  g_return_val_if_fail (GIMP_IS_TEXT_LAYER (text_layer), 0);
+  g_return_val_if_fail (PICMAN_IS_TEXT_LAYER (text_layer), 0);
 
   if (! text_layer->auto_rename)
     flags |= TEXT_LAYER_XCF_DONT_AUTO_RENAME;
@@ -148,10 +148,10 @@ gimp_text_layer_get_xcf_flags (GimpTextLayer *text_layer)
 }
 
 void
-gimp_text_layer_set_xcf_flags (GimpTextLayer *text_layer,
+picman_text_layer_set_xcf_flags (PicmanTextLayer *text_layer,
                                guint32        flags)
 {
-  g_return_if_fail (GIMP_IS_TEXT_LAYER (text_layer));
+  g_return_if_fail (PICMAN_IS_TEXT_LAYER (text_layer));
 
   g_object_set (text_layer,
                 "auto-rename", (flags & TEXT_LAYER_XCF_DONT_AUTO_RENAME) == 0,
@@ -161,12 +161,12 @@ gimp_text_layer_set_xcf_flags (GimpTextLayer *text_layer,
 
 
 /**
- * gimp_text_layer_from_layer:
- * @layer: a #GimpLayer object
- * @text: a #GimpText object
+ * picman_text_layer_from_layer:
+ * @layer: a #PicmanLayer object
+ * @text: a #PicmanText object
  *
- * Converts a standard #GimpLayer and a #GimpText object into a
- * #GimpTextLayer. The new text layer takes ownership of the @text and
+ * Converts a standard #PicmanLayer and a #PicmanText object into a
+ * #PicmanTextLayer. The new text layer takes ownership of the @text and
  * @layer objects.  The @layer object is rendered unusable by this
  * function. Don't even try to use if afterwards!
  *
@@ -174,40 +174,40 @@ gimp_text_layer_set_xcf_flags (GimpTextLayer *text_layer,
  * from XCF files in a backwards-compatible way. Please don't use it
  * for anything else!
  *
- * Return value: a newly allocated #GimpTextLayer object
+ * Return value: a newly allocated #PicmanTextLayer object
  **/
-static GimpLayer *
-gimp_text_layer_from_layer (GimpLayer *layer,
-                            GimpText  *text)
+static PicmanLayer *
+picman_text_layer_from_layer (PicmanLayer *layer,
+                            PicmanText  *text)
 {
-  GimpTextLayer *text_layer;
-  GimpDrawable  *drawable;
+  PicmanTextLayer *text_layer;
+  PicmanDrawable  *drawable;
 
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), NULL);
-  g_return_val_if_fail (GIMP_IS_TEXT (text), NULL);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), NULL);
+  g_return_val_if_fail (PICMAN_IS_TEXT (text), NULL);
 
-  text_layer = g_object_new (GIMP_TYPE_TEXT_LAYER,
-                             "image", gimp_item_get_image (GIMP_ITEM (layer)),
+  text_layer = g_object_new (PICMAN_TYPE_TEXT_LAYER,
+                             "image", picman_item_get_image (PICMAN_ITEM (layer)),
                              NULL);
 
-  gimp_item_replace_item (GIMP_ITEM (text_layer), GIMP_ITEM (layer));
+  picman_item_replace_item (PICMAN_ITEM (text_layer), PICMAN_ITEM (layer));
 
-  drawable = GIMP_DRAWABLE (text_layer);
+  drawable = PICMAN_DRAWABLE (text_layer);
 
-  drawable->private->buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (layer));
-  GIMP_DRAWABLE (layer)->private->buffer = NULL;
+  drawable->private->buffer = picman_drawable_get_buffer (PICMAN_DRAWABLE (layer));
+  PICMAN_DRAWABLE (layer)->private->buffer = NULL;
 
-  gimp_layer_set_opacity    (GIMP_LAYER (text_layer),
-                             gimp_layer_get_opacity (layer), FALSE);
-  gimp_layer_set_mode       (GIMP_LAYER (text_layer),
-                             gimp_layer_get_mode (layer), FALSE);
-  gimp_layer_set_lock_alpha (GIMP_LAYER (text_layer),
-                             gimp_layer_get_lock_alpha (layer), FALSE);
+  picman_layer_set_opacity    (PICMAN_LAYER (text_layer),
+                             picman_layer_get_opacity (layer), FALSE);
+  picman_layer_set_mode       (PICMAN_LAYER (text_layer),
+                             picman_layer_get_mode (layer), FALSE);
+  picman_layer_set_lock_alpha (PICMAN_LAYER (text_layer),
+                             picman_layer_get_lock_alpha (layer), FALSE);
 
-  gimp_text_layer_set_text (text_layer, text);
+  picman_text_layer_set_text (text_layer, text);
 
   g_object_unref (text);
   g_object_unref (layer);
 
-  return GIMP_LAYER (text_layer);
+  return PICMAN_LAYER (text_layer);
 }

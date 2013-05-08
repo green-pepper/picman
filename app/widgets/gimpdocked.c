@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdocked.c
- * Copyright (C) 2003  Michael Natterer <mitch@gimp.org>
+ * picmandocked.c
+ * Copyright (C) 2003  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,11 @@
 
 #include "widgets-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpmarshal.h"
+#include "core/picmancontext.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpdocked.h"
-#include "gimpsessioninfo-aux.h"
+#include "picmandocked.h"
+#include "picmansessioninfo-aux.h"
 
 
 enum
@@ -41,11 +41,11 @@ enum
 };
 
 
-static void    gimp_docked_iface_base_init    (GimpDockedInterface *docked_iface);
+static void    picman_docked_iface_base_init    (PicmanDockedInterface *docked_iface);
 
-static void    gimp_docked_iface_set_aux_info (GimpDocked          *docked,
+static void    picman_docked_iface_set_aux_info (PicmanDocked          *docked,
                                                GList               *aux_info);
-static GList * gimp_docked_iface_get_aux_info (GimpDocked          *docked);
+static GList * picman_docked_iface_get_aux_info (PicmanDocked          *docked);
 
 
 
@@ -53,7 +53,7 @@ static guint docked_signals[LAST_SIGNAL] = { 0 };
 
 
 GType
-gimp_docked_interface_get_type (void)
+picman_docked_interface_get_type (void)
 {
   static GType docked_iface_type = 0;
 
@@ -61,13 +61,13 @@ gimp_docked_interface_get_type (void)
     {
       const GTypeInfo docked_iface_info =
       {
-        sizeof (GimpDockedInterface),
-        (GBaseInitFunc)     gimp_docked_iface_base_init,
+        sizeof (PicmanDockedInterface),
+        (GBaseInitFunc)     picman_docked_iface_base_init,
         (GBaseFinalizeFunc) NULL,
       };
 
       docked_iface_type = g_type_register_static (G_TYPE_INTERFACE,
-                                                  "GimpDockedInterface",
+                                                  "PicmanDockedInterface",
                                                   &docked_iface_info,
                                                   0);
 
@@ -78,25 +78,25 @@ gimp_docked_interface_get_type (void)
 }
 
 static void
-gimp_docked_iface_base_init (GimpDockedInterface *docked_iface)
+picman_docked_iface_base_init (PicmanDockedInterface *docked_iface)
 {
   static gboolean initialized = FALSE;
 
   if (! docked_iface->get_aux_info)
     {
-      docked_iface->get_aux_info = gimp_docked_iface_get_aux_info;
-      docked_iface->set_aux_info = gimp_docked_iface_set_aux_info;
+      docked_iface->get_aux_info = picman_docked_iface_get_aux_info;
+      docked_iface->set_aux_info = picman_docked_iface_set_aux_info;
     }
 
   if (! initialized)
     {
       docked_signals[TITLE_CHANGED] =
         g_signal_new ("title-changed",
-                      GIMP_TYPE_DOCKED,
+                      PICMAN_TYPE_DOCKED,
                       G_SIGNAL_RUN_FIRST,
-                      G_STRUCT_OFFSET (GimpDockedInterface, title_changed),
+                      G_STRUCT_OFFSET (PicmanDockedInterface, title_changed),
                       NULL, NULL,
-                      gimp_marshal_VOID__VOID,
+                      picman_marshal_VOID__VOID,
                       G_TYPE_NONE, 0);
 
       initialized = TRUE;
@@ -106,33 +106,33 @@ gimp_docked_iface_base_init (GimpDockedInterface *docked_iface)
 #define AUX_INFO_SHOW_BUTTON_BAR "show-button-bar"
 
 static void
-gimp_docked_iface_set_aux_info (GimpDocked *docked,
+picman_docked_iface_set_aux_info (PicmanDocked *docked,
                                 GList      *aux_info)
 {
   GList *list;
 
   for (list = aux_info; list; list = g_list_next (list))
     {
-      GimpSessionInfoAux *aux = list->data;
+      PicmanSessionInfoAux *aux = list->data;
 
       if (strcmp (aux->name, AUX_INFO_SHOW_BUTTON_BAR) == 0)
         {
           gboolean show = g_ascii_strcasecmp (aux->value, "false");
 
-          gimp_docked_set_show_button_bar (docked, show);
+          picman_docked_set_show_button_bar (docked, show);
         }
     }
 }
 
 static GList *
-gimp_docked_iface_get_aux_info (GimpDocked *docked)
+picman_docked_iface_get_aux_info (PicmanDocked *docked)
 {
-  if (gimp_docked_has_button_bar (docked))
+  if (picman_docked_has_button_bar (docked))
     {
-      gboolean show = gimp_docked_get_show_button_bar (docked);
+      gboolean show = picman_docked_get_show_button_bar (docked);
 
       return g_list_append (NULL,
-                            gimp_session_info_aux_new (AUX_INFO_SHOW_BUTTON_BAR,
+                            picman_session_info_aux_new (AUX_INFO_SHOW_BUTTON_BAR,
                                                        show ? "true" : "false"));
     }
 
@@ -140,35 +140,35 @@ gimp_docked_iface_get_aux_info (GimpDocked *docked)
 }
 
 void
-gimp_docked_title_changed (GimpDocked *docked)
+picman_docked_title_changed (PicmanDocked *docked)
 {
-  g_return_if_fail (GIMP_IS_DOCKED (docked));
+  g_return_if_fail (PICMAN_IS_DOCKED (docked));
 
   g_signal_emit (docked, docked_signals[TITLE_CHANGED], 0);
 }
 
 void
-gimp_docked_set_aux_info (GimpDocked *docked,
+picman_docked_set_aux_info (PicmanDocked *docked,
                           GList      *aux_info)
 {
-  GimpDockedInterface *docked_iface;
+  PicmanDockedInterface *docked_iface;
 
-  g_return_if_fail (GIMP_IS_DOCKED (docked));
+  g_return_if_fail (PICMAN_IS_DOCKED (docked));
 
-  docked_iface = GIMP_DOCKED_GET_INTERFACE (docked);
+  docked_iface = PICMAN_DOCKED_GET_INTERFACE (docked);
 
   if (docked_iface->set_aux_info)
     docked_iface->set_aux_info (docked, aux_info);
 }
 
 GList *
-gimp_docked_get_aux_info (GimpDocked *docked)
+picman_docked_get_aux_info (PicmanDocked *docked)
 {
-  GimpDockedInterface *docked_iface;
+  PicmanDockedInterface *docked_iface;
 
-  g_return_val_if_fail (GIMP_IS_DOCKED (docked), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCKED (docked), NULL);
 
-  docked_iface = GIMP_DOCKED_GET_INTERFACE (docked);
+  docked_iface = PICMAN_DOCKED_GET_INTERFACE (docked);
 
   if (docked_iface->get_aux_info)
     return docked_iface->get_aux_info (docked);
@@ -177,15 +177,15 @@ gimp_docked_get_aux_info (GimpDocked *docked)
 }
 
 GtkWidget *
-gimp_docked_get_preview (GimpDocked  *docked,
-                         GimpContext *context,
+picman_docked_get_preview (PicmanDocked  *docked,
+                         PicmanContext *context,
                          GtkIconSize  size)
 {
-  GimpDockedInterface *docked_iface;
+  PicmanDockedInterface *docked_iface;
 
-  g_return_val_if_fail (GIMP_IS_DOCKED (docked), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCKED (docked), NULL);
 
-  docked_iface = GIMP_DOCKED_GET_INTERFACE (docked);
+  docked_iface = PICMAN_DOCKED_GET_INTERFACE (docked);
 
   if (docked_iface->get_preview)
     return docked_iface->get_preview (docked, context, size);
@@ -194,13 +194,13 @@ gimp_docked_get_preview (GimpDocked  *docked,
 }
 
 gboolean
-gimp_docked_get_prefer_icon (GimpDocked *docked)
+picman_docked_get_prefer_icon (PicmanDocked *docked)
 {
-  GimpDockedInterface *docked_iface;
+  PicmanDockedInterface *docked_iface;
 
-  g_return_val_if_fail (GIMP_IS_DOCKED (docked), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DOCKED (docked), FALSE);
 
-  docked_iface = GIMP_DOCKED_GET_INTERFACE (docked);
+  docked_iface = PICMAN_DOCKED_GET_INTERFACE (docked);
 
   if (docked_iface->get_prefer_icon)
     return docked_iface->get_prefer_icon (docked);
@@ -208,18 +208,18 @@ gimp_docked_get_prefer_icon (GimpDocked *docked)
   return FALSE;
 }
 
-GimpUIManager *
-gimp_docked_get_menu (GimpDocked     *docked,
+PicmanUIManager *
+picman_docked_get_menu (PicmanDocked     *docked,
                       const gchar   **ui_path,
                       gpointer       *popup_data)
 {
-  GimpDockedInterface *docked_iface;
+  PicmanDockedInterface *docked_iface;
 
-  g_return_val_if_fail (GIMP_IS_DOCKED (docked), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCKED (docked), NULL);
   g_return_val_if_fail (ui_path != NULL, NULL);
   g_return_val_if_fail (popup_data != NULL, NULL);
 
-  docked_iface = GIMP_DOCKED_GET_INTERFACE (docked);
+  docked_iface = PICMAN_DOCKED_GET_INTERFACE (docked);
 
   if (docked_iface->get_menu)
     return docked_iface->get_menu (docked, ui_path, popup_data);
@@ -228,13 +228,13 @@ gimp_docked_get_menu (GimpDocked     *docked,
 }
 
 gchar *
-gimp_docked_get_title (GimpDocked *docked)
+picman_docked_get_title (PicmanDocked *docked)
 {
-  GimpDockedInterface *docked_iface;
+  PicmanDockedInterface *docked_iface;
 
-  g_return_val_if_fail (GIMP_IS_DOCKED (docked), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCKED (docked), NULL);
 
-  docked_iface = GIMP_DOCKED_GET_INTERFACE (docked);
+  docked_iface = PICMAN_DOCKED_GET_INTERFACE (docked);
 
   if (docked_iface->get_title)
     return docked_iface->get_title (docked);
@@ -243,28 +243,28 @@ gimp_docked_get_title (GimpDocked *docked)
 }
 
 void
-gimp_docked_set_context (GimpDocked  *docked,
-                         GimpContext *context)
+picman_docked_set_context (PicmanDocked  *docked,
+                         PicmanContext *context)
 {
-  GimpDockedInterface *docked_iface;
+  PicmanDockedInterface *docked_iface;
 
-  g_return_if_fail (GIMP_IS_DOCKED (docked));
-  g_return_if_fail (context == NULL || GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_DOCKED (docked));
+  g_return_if_fail (context == NULL || PICMAN_IS_CONTEXT (context));
 
-  docked_iface = GIMP_DOCKED_GET_INTERFACE (docked);
+  docked_iface = PICMAN_DOCKED_GET_INTERFACE (docked);
 
   if (docked_iface->set_context)
     docked_iface->set_context (docked, context);
 }
 
 gboolean
-gimp_docked_has_button_bar (GimpDocked *docked)
+picman_docked_has_button_bar (PicmanDocked *docked)
 {
-  GimpDockedInterface *docked_iface;
+  PicmanDockedInterface *docked_iface;
 
-  g_return_val_if_fail (GIMP_IS_DOCKED (docked), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DOCKED (docked), FALSE);
 
-  docked_iface = GIMP_DOCKED_GET_INTERFACE (docked);
+  docked_iface = PICMAN_DOCKED_GET_INTERFACE (docked);
 
   if (docked_iface->has_button_bar)
     return docked_iface->has_button_bar (docked);
@@ -273,27 +273,27 @@ gimp_docked_has_button_bar (GimpDocked *docked)
 }
 
 void
-gimp_docked_set_show_button_bar (GimpDocked *docked,
+picman_docked_set_show_button_bar (PicmanDocked *docked,
                                  gboolean    show)
 {
-  GimpDockedInterface *docked_iface;
+  PicmanDockedInterface *docked_iface;
 
-  g_return_if_fail (GIMP_IS_DOCKED (docked));
+  g_return_if_fail (PICMAN_IS_DOCKED (docked));
 
-  docked_iface = GIMP_DOCKED_GET_INTERFACE (docked);
+  docked_iface = PICMAN_DOCKED_GET_INTERFACE (docked);
 
   if (docked_iface->set_show_button_bar)
     docked_iface->set_show_button_bar (docked, show ? TRUE : FALSE);
 }
 
 gboolean
-gimp_docked_get_show_button_bar (GimpDocked *docked)
+picman_docked_get_show_button_bar (PicmanDocked *docked)
 {
-  GimpDockedInterface *docked_iface;
+  PicmanDockedInterface *docked_iface;
 
-  g_return_val_if_fail (GIMP_IS_DOCKED (docked), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DOCKED (docked), FALSE);
 
-  docked_iface = GIMP_DOCKED_GET_INTERFACE (docked);
+  docked_iface = PICMAN_DOCKED_GET_INTERFACE (docked);
 
   if (docked_iface->get_show_button_bar)
     return docked_iface->get_show_button_bar (docked);

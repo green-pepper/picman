@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,10 +34,10 @@
 #include <lcms2.h>
 #endif
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #include "jpeg.h"
 #include "jpeg-icc.h"
@@ -45,7 +45,7 @@
 #include "jpeg-load.h"
 #ifdef HAVE_LIBEXIF
 #include "jpeg-exif.h"
-#include "gimpexif.h"
+#include "picmanexif.h"
 #endif
 
 
@@ -67,19 +67,19 @@ static void      jpeg_load_cmyk_to_rgb      (guchar   *buf,
                                              gpointer  transform);
 
 
-GimpDrawable    *drawable_global;
+PicmanDrawable    *drawable_global;
 gint32 volatile  preview_image_ID;
 gint32           preview_layer_ID;
 
 
 gint32
 load_image (const gchar  *filename,
-            GimpRunMode   runmode,
+            PicmanRunMode   runmode,
             gboolean      preview,
             GError      **error)
 {
-  GimpPixelRgn     pixel_rgn;
-  GimpDrawable    *drawable;
+  PicmanPixelRgn     pixel_rgn;
+  PicmanDrawable    *drawable;
   gint32 volatile  image_ID;
   gint32           layer_ID;
   struct jpeg_decompress_struct cinfo;
@@ -115,13 +115,13 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return -1;
     }
 
   if (!preview)
-    gimp_progress_init_printf (_("Opening '%s'"),
-                               gimp_filename_to_utf8 (filename));
+    picman_progress_init_printf (_("Opening '%s'"),
+                               picman_filename_to_utf8 (filename));
 
   image_ID = -1;
 
@@ -136,7 +136,7 @@ load_image (const gchar  *filename,
         fclose (infile);
 
       if (image_ID != -1 && !preview)
-        gimp_image_delete (image_ID);
+        picman_image_delete (image_ID);
 
       if (preview)
         destroy_preview ();
@@ -190,7 +190,7 @@ load_image (const gchar  *filename,
    */
 
   /* temporary buffer */
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   buf = g_new (guchar,
                tile_height * cinfo.output_width * cinfo.output_components);
 
@@ -202,20 +202,20 @@ load_image (const gchar  *filename,
   switch (cinfo.output_components)
     {
     case 1:
-      image_type = GIMP_GRAY;
-      layer_type = GIMP_GRAY_IMAGE;
+      image_type = PICMAN_GRAY;
+      layer_type = PICMAN_GRAY_IMAGE;
       break;
 
     case 3:
-      image_type = GIMP_RGB;
-      layer_type = GIMP_RGB_IMAGE;
+      image_type = PICMAN_RGB;
+      layer_type = PICMAN_RGB_IMAGE;
       break;
 
     case 4:
       if (cinfo.out_color_space == JCS_CMYK)
         {
-          image_type = GIMP_RGB;
-          layer_type = GIMP_RGB_IMAGE;
+          image_type = PICMAN_RGB;
+          layer_type = PICMAN_RGB_IMAGE;
           break;
         }
       /*fallthrough*/
@@ -235,31 +235,31 @@ load_image (const gchar  *filename,
     }
   else
     {
-      image_ID = gimp_image_new (cinfo.output_width, cinfo.output_height,
+      image_ID = picman_image_new (cinfo.output_width, cinfo.output_height,
                                  image_type);
 
-      gimp_image_undo_disable (image_ID);
-      gimp_image_set_filename (image_ID, filename);
+      picman_image_undo_disable (image_ID);
+      picman_image_set_filename (image_ID, filename);
     }
 
   if (preview)
     {
-      preview_layer_ID = gimp_layer_new (preview_image_ID, _("JPEG preview"),
+      preview_layer_ID = picman_layer_new (preview_image_ID, _("JPEG preview"),
                                          cinfo.output_width,
                                          cinfo.output_height,
-                                         layer_type, 100, GIMP_NORMAL_MODE);
+                                         layer_type, 100, PICMAN_NORMAL_MODE);
       layer_ID = preview_layer_ID;
     }
   else
     {
-      layer_ID = gimp_layer_new (image_ID, _("Background"),
+      layer_ID = picman_layer_new (image_ID, _("Background"),
                                  cinfo.output_width,
                                  cinfo.output_height,
-                                 layer_type, 100, GIMP_NORMAL_MODE);
+                                 layer_type, 100, PICMAN_NORMAL_MODE);
     }
 
-  drawable_global = drawable = gimp_drawable_get (layer_ID);
-  gimp_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
+  drawable_global = drawable = picman_drawable_get (layer_ID);
+  picman_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
                        drawable->width, drawable->height, TRUE, FALSE);
 
   if (! preview)
@@ -282,7 +282,7 @@ load_image (const gchar  *filename,
 
           if (marker->marker == JPEG_COM)
             {
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
               g_print ("jpeg-load: found image comment (%d bytes)\n",
                        marker->data_length);
 #endif
@@ -302,7 +302,7 @@ load_image (const gchar  *filename,
                    && (len > sizeof (JPEG_APP_HEADER_EXIF) + 8)
                    && ! strcmp (JPEG_APP_HEADER_EXIF, data))
             {
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
               g_print ("jpeg-load: found EXIF block (%d bytes)\n",
                        (gint) (len - sizeof (JPEG_APP_HEADER_EXIF)));
 #endif
@@ -323,15 +323,15 @@ load_image (const gchar  *filename,
       /* if we found any comments, then make a parasite for them */
       if (comment_buffer && comment_buffer->len)
         {
-          GimpParasite *parasite;
+          PicmanParasite *parasite;
 
           jpeg_load_sanitize_comment (comment_buffer->str);
-          parasite = gimp_parasite_new ("gimp-comment",
-                                        GIMP_PARASITE_PERSISTENT,
+          parasite = picman_parasite_new ("picman-comment",
+                                        PICMAN_PARASITE_PERSISTENT,
                                         strlen (comment_buffer->str) + 1,
                                         comment_buffer->str);
-          gimp_image_attach_parasite (image_ID, parasite);
-          gimp_parasite_free (parasite);
+          picman_image_attach_parasite (image_ID, parasite);
+          picman_parasite_free (parasite);
 
           g_string_free (comment_buffer, TRUE);
         }
@@ -340,7 +340,7 @@ load_image (const gchar  *filename,
       /* if we found any EXIF block, then attach the metadata to the image */
       if (exif_data)
         {
-          gimp_metadata_store_exif (image_ID, exif_data);
+          picman_metadata_store_exif (image_ID, exif_data);
           orientation = jpeg_exif_get_orientation (exif_data);
           exif_data_unref (exif_data);
           exif_data = NULL;
@@ -357,11 +357,11 @@ load_image (const gchar  *filename,
               && (len > sizeof (JPEG_APP_HEADER_XMP) + 20)
               && ! strcmp (JPEG_APP_HEADER_XMP, data))
             {
-              GimpParam *return_vals;
+              PicmanParam *return_vals;
               gint       nreturn_vals;
               gchar     *xmp_packet;
 
-#ifdef GIMP_UNSTABLE
+#ifdef PICMAN_UNSTABLE
               g_print ("jpeg-load: found XMP packet (%d bytes)\n",
                        (gint) (len - sizeof (JPEG_APP_HEADER_XMP)));
 #endif
@@ -369,18 +369,18 @@ load_image (const gchar  *filename,
                                       len - sizeof (JPEG_APP_HEADER_XMP));
 
               /* FIXME: running this through the PDB is not very efficient */
-              return_vals = gimp_run_procedure ("plug-in-metadata-decode-xmp",
+              return_vals = picman_run_procedure ("plug-in-metadata-decode-xmp",
                                                 &nreturn_vals,
-                                                GIMP_PDB_IMAGE, image_ID,
-                                                GIMP_PDB_STRING, xmp_packet,
-                                                GIMP_PDB_END);
+                                                PICMAN_PDB_IMAGE, image_ID,
+                                                PICMAN_PDB_STRING, xmp_packet,
+                                                PICMAN_PDB_END);
 
-              if (return_vals[0].data.d_status != GIMP_PDB_SUCCESS)
+              if (return_vals[0].data.d_status != PICMAN_PDB_SUCCESS)
                 {
                   g_warning ("JPEG - unable to decode XMP metadata packet");
                 }
 
-              gimp_destroy_params (return_vals, nreturn_vals);
+              picman_destroy_params (return_vals, nreturn_vals);
               g_free (xmp_packet);
             }
         }
@@ -394,14 +394,14 @@ load_image (const gchar  *filename,
         }
       else if (profile) /* don't attach the profile if we are transforming */
         {
-          GimpParasite *parasite;
+          PicmanParasite *parasite;
 
-          parasite = gimp_parasite_new ("icc-profile",
-                                        GIMP_PARASITE_PERSISTENT |
-                                        GIMP_PARASITE_UNDOABLE,
+          parasite = picman_parasite_new ("icc-profile",
+                                        PICMAN_PARASITE_PERSISTENT |
+                                        PICMAN_PARASITE_UNDOABLE,
                                         profile_size, profile);
-          gimp_image_attach_parasite (image_ID, parasite);
-          gimp_parasite_free (parasite);
+          picman_image_attach_parasite (image_ID, parasite);
+          picman_parasite_free (parasite);
         }
 
       g_free (profile);
@@ -432,11 +432,11 @@ load_image (const gchar  *filename,
         jpeg_load_cmyk_to_rgb (buf, drawable->width * scanlines,
                                cmyk_transform);
 
-      gimp_pixel_rgn_set_rect (&pixel_rgn, buf,
+      picman_pixel_rgn_set_rect (&pixel_rgn, buf,
                                0, start, drawable->width, scanlines);
 
       if (! preview && (cinfo.output_scanline % 32) == 0)
-        gimp_progress_update ((gdouble) cinfo.output_scanline /
+        picman_progress_update ((gdouble) cinfo.output_scanline /
                               (gdouble) cinfo.output_height);
     }
 
@@ -476,11 +476,11 @@ load_image (const gchar  *filename,
    */
   if (! preview)
     {
-      gimp_progress_update (1.0);
-      gimp_drawable_detach (drawable);
+      picman_progress_update (1.0);
+      picman_drawable_detach (drawable);
     }
 
-  gimp_image_insert_layer (image_ID, layer_ID, -1, 0);
+  picman_image_insert_layer (image_ID, layer_ID, -1, 0);
 
 #ifdef HAVE_LIBEXIF
   jpeg_exif_rotate_query (image_ID, orientation);
@@ -506,7 +506,7 @@ jpeg_load_resolution (gint32                         image_ID,
                  */
           asymmetry = xresolution / yresolution;
 
-          gimp_image_get_resolution (image_ID, &xresolution, &yresolution);
+          picman_image_get_resolution (image_ID, &xresolution, &yresolution);
 
           xresolution *= asymmetry;
           break;
@@ -517,7 +517,7 @@ jpeg_load_resolution (gint32                         image_ID,
         case 2: /* dots per cm */
           xresolution *= 2.54;
           yresolution *= 2.54;
-          gimp_image_set_unit (image_ID, GIMP_UNIT_MM);
+          picman_image_set_unit (image_ID, PICMAN_UNIT_MM);
           break;
 
         default:
@@ -526,7 +526,7 @@ jpeg_load_resolution (gint32                         image_ID,
           break;
         }
 
-      gimp_image_set_resolution (image_ID, xresolution, yresolution);
+      picman_image_set_resolution (image_ID, xresolution, yresolution);
     }
 }
 
@@ -558,7 +558,7 @@ jpeg_load_exif_resolution (gint32        image_ID,
     case 3: /* dots per cm */
       xresolution *= 2.54;
       yresolution *= 2.54;
-      gimp_image_set_unit (image_ID, GIMP_UNIT_MM);
+      picman_image_set_unit (image_ID, PICMAN_UNIT_MM);
       success = TRUE;
       break;
     default:
@@ -569,7 +569,7 @@ jpeg_load_exif_resolution (gint32        image_ID,
 
   if (success)
     {
-      gimp_image_set_resolution (image_ID, xresolution, yresolution);
+      picman_image_set_resolution (image_ID, xresolution, yresolution);
     }
 
   return success;
@@ -580,7 +580,7 @@ jpeg_load_exif_resolution (gint32        image_ID,
 /*
  * A number of JPEG files have comments written in a local character set
  * instead of UTF-8.  Some of these files may have been saved by older
- * versions of GIMP.  It is not possible to reliably detect the character
+ * versions of PICMAN.  It is not possible to reliably detect the character
  * set used, but it is better to keep all characters in the ASCII range
  * and replace the non-ASCII characters instead of discarding the whole
  * comment.  This is especially useful if the comment contains only a few
@@ -656,13 +656,13 @@ gint32
 load_thumbnail_image (const gchar   *filename,
                       gint          *width,
                       gint          *height,
-                      GimpImageType *type,
+                      PicmanImageType *type,
                       GError       **error)
 {
   gint32 volatile  image_ID;
   ExifData        *exif_data;
-  GimpPixelRgn     pixel_rgn;
-  GimpDrawable    *drawable;
+  PicmanPixelRgn     pixel_rgn;
+  PicmanDrawable    *drawable;
   gint32           layer_ID;
   struct jpeg_decompress_struct cinfo;
   struct my_error_mgr           jerr;
@@ -689,8 +689,8 @@ load_thumbnail_image (const gchar   *filename,
   jerr.pub.error_exit     = my_error_exit;
   jerr.pub.output_message = my_output_message;
 
-  gimp_progress_init_printf (_("Opening thumbnail for '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening thumbnail for '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   /* Establish the setjmp return context for my_error_exit to use. */
   if (setjmp (jerr.setjmp_buffer))
@@ -702,7 +702,7 @@ load_thumbnail_image (const gchar   *filename,
       jpeg_destroy_decompress (&cinfo);
 
       if (image_ID != -1)
-        gimp_image_delete (image_ID);
+        picman_image_delete (image_ID);
 
       if (exif_data)
         {
@@ -760,7 +760,7 @@ load_thumbnail_image (const gchar   *filename,
    */
 
   /* temporary buffer */
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   buf = g_new (guchar,
                tile_height * cinfo.output_width * cinfo.output_components);
 
@@ -775,20 +775,20 @@ load_thumbnail_image (const gchar   *filename,
   switch (cinfo.output_components)
     {
     case 1:
-      image_type = GIMP_GRAY;
-      layer_type = GIMP_GRAY_IMAGE;
+      image_type = PICMAN_GRAY;
+      layer_type = PICMAN_GRAY_IMAGE;
       break;
 
     case 3:
-      image_type = GIMP_RGB;
-      layer_type = GIMP_RGB_IMAGE;
+      image_type = PICMAN_RGB;
+      layer_type = PICMAN_RGB_IMAGE;
       break;
 
     case 4:
       if (cinfo.out_color_space == JCS_CMYK)
         {
-          image_type = GIMP_RGB;
-          layer_type = GIMP_RGB_IMAGE;
+          image_type = PICMAN_RGB;
+          layer_type = PICMAN_RGB_IMAGE;
           break;
         }
       /*fallthrough*/
@@ -809,21 +809,21 @@ load_thumbnail_image (const gchar   *filename,
       break;
     }
 
-  image_ID = gimp_image_new (cinfo.output_width, cinfo.output_height,
+  image_ID = picman_image_new (cinfo.output_width, cinfo.output_height,
                              image_type);
 
-  gimp_image_undo_disable (image_ID);
-  gimp_image_set_filename (image_ID, filename);
+  picman_image_undo_disable (image_ID);
+  picman_image_set_filename (image_ID, filename);
 
   jpeg_load_resolution (image_ID, &cinfo);
 
-  layer_ID = gimp_layer_new (image_ID, _("Background"),
+  layer_ID = picman_layer_new (image_ID, _("Background"),
                              cinfo.output_width,
                              cinfo.output_height,
-                             layer_type, 100, GIMP_NORMAL_MODE);
+                             layer_type, 100, PICMAN_NORMAL_MODE);
 
-  drawable_global = drawable = gimp_drawable_get (layer_ID);
-  gimp_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
+  drawable_global = drawable = picman_drawable_get (layer_ID);
+  picman_pixel_rgn_init (&pixel_rgn, drawable, 0, 0,
                        drawable->width, drawable->height, TRUE, FALSE);
 
   /* Step 6: while (scan lines remain to be read) */
@@ -845,10 +845,10 @@ load_thumbnail_image (const gchar   *filename,
       if (cinfo.out_color_space == JCS_CMYK)
         jpeg_load_cmyk_to_rgb (buf, drawable->width * scanlines, NULL);
 
-      gimp_pixel_rgn_set_rect (&pixel_rgn, buf,
+      picman_pixel_rgn_set_rect (&pixel_rgn, buf,
                                0, start, drawable->width, scanlines);
 
-      gimp_progress_update ((gdouble) cinfo.output_scanline /
+      picman_progress_update ((gdouble) cinfo.output_scanline /
                             (gdouble) cinfo.output_height);
     }
 
@@ -874,7 +874,7 @@ load_thumbnail_image (const gchar   *filename,
    * corrupt-data warnings occurred (test whether
    * jerr.num_warnings is nonzero).
    */
-  gimp_image_insert_layer (image_ID, layer_ID, -1, 0);
+  picman_image_insert_layer (image_ID, layer_ID, -1, 0);
 
 
   /* NOW to get the dimensions of the actual image to return the
@@ -888,7 +888,7 @@ load_thumbnail_image (const gchar   *filename,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
 
       if (exif_data)
         {
@@ -909,7 +909,7 @@ load_thumbnail_image (const gchar   *filename,
       jpeg_destroy_decompress (&cinfo);
 
       if (image_ID != -1)
-        gimp_image_delete (image_ID);
+        picman_image_delete (image_ID);
 
       if (exif_data)
         {
@@ -966,7 +966,7 @@ jpeg_load_cmyk_transform (guint8 *profile_data,
                           gsize   profile_len)
 {
 #ifdef HAVE_LCMS
-  GimpColorConfig *config       = gimp_get_color_configuration ();
+  PicmanColorConfig *config       = picman_get_color_configuration ();
   cmsHPROFILE      cmyk_profile = NULL;
   cmsHPROFILE      rgb_profile  = NULL;
   cmsUInt32Number  flags        = 0;
@@ -1025,7 +1025,7 @@ jpeg_load_cmyk_transform (guint8 *profile_data,
     }
 
   if (config->display_intent ==
-      GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC)
+      PICMAN_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC)
     {
       flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
     }

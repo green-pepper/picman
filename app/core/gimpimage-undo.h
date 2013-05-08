@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,45 +15,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE__UNDO_H__
-#define __GIMP_IMAGE__UNDO_H__
+#ifndef __PICMAN_IMAGE__UNDO_H__
+#define __PICMAN_IMAGE__UNDO_H__
 
 
-gboolean        gimp_image_undo_is_enabled      (const GimpImage  *image);
-gboolean        gimp_image_undo_enable          (GimpImage        *image);
-gboolean        gimp_image_undo_disable         (GimpImage        *image);
-gboolean        gimp_image_undo_freeze          (GimpImage        *image);
-gboolean        gimp_image_undo_thaw            (GimpImage        *image);
+gboolean        picman_image_undo_is_enabled      (const PicmanImage  *image);
+gboolean        picman_image_undo_enable          (PicmanImage        *image);
+gboolean        picman_image_undo_disable         (PicmanImage        *image);
+gboolean        picman_image_undo_freeze          (PicmanImage        *image);
+gboolean        picman_image_undo_thaw            (PicmanImage        *image);
 
-gboolean        gimp_image_undo                 (GimpImage        *image);
-gboolean        gimp_image_redo                 (GimpImage        *image);
+gboolean        picman_image_undo                 (PicmanImage        *image);
+gboolean        picman_image_redo                 (PicmanImage        *image);
 
-gboolean        gimp_image_strong_undo          (GimpImage        *image);
-gboolean        gimp_image_strong_redo          (GimpImage        *image);
+gboolean        picman_image_strong_undo          (PicmanImage        *image);
+gboolean        picman_image_strong_redo          (PicmanImage        *image);
 
-GimpUndoStack * gimp_image_get_undo_stack       (const GimpImage  *image);
-GimpUndoStack * gimp_image_get_redo_stack       (const GimpImage  *image);
+PicmanUndoStack * picman_image_get_undo_stack       (const PicmanImage  *image);
+PicmanUndoStack * picman_image_get_redo_stack       (const PicmanImage  *image);
 
-void            gimp_image_undo_free            (GimpImage        *image);
+void            picman_image_undo_free            (PicmanImage        *image);
 
-gint            gimp_image_get_undo_group_count (const GimpImage  *image);
-gboolean        gimp_image_undo_group_start     (GimpImage        *image,
-                                                 GimpUndoType      undo_type,
+gint            picman_image_get_undo_group_count (const PicmanImage  *image);
+gboolean        picman_image_undo_group_start     (PicmanImage        *image,
+                                                 PicmanUndoType      undo_type,
                                                  const gchar      *name);
-gboolean        gimp_image_undo_group_end       (GimpImage        *image);
+gboolean        picman_image_undo_group_end       (PicmanImage        *image);
 
-GimpUndo      * gimp_image_undo_push            (GimpImage        *image,
+PicmanUndo      * picman_image_undo_push            (PicmanImage        *image,
                                                  GType             object_type,
-                                                 GimpUndoType      undo_type,
+                                                 PicmanUndoType      undo_type,
                                                  const gchar      *name,
-                                                 GimpDirtyMask     dirty_mask,
+                                                 PicmanDirtyMask     dirty_mask,
                                                  ...) G_GNUC_NULL_TERMINATED;
 
-GimpUndo      * gimp_image_undo_can_compress    (GimpImage        *image,
+PicmanUndo      * picman_image_undo_can_compress    (PicmanImage        *image,
                                                  GType             object_type,
-                                                 GimpUndoType      undo_type);
+                                                 PicmanUndoType      undo_type);
 
-GimpUndo      * gimp_image_undo_get_fadeable    (GimpImage        *image);
+PicmanUndo      * picman_image_undo_get_fadeable    (PicmanImage        *image);
 
 
-#endif /* __GIMP_IMAGE__UNDO_H__ */
+#endif /* __PICMAN_IMAGE__UNDO_H__ */

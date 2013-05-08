@@ -1,6 +1,6 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  *
- * gimpoperationcage.c
+ * picmanoperationcage.c
  * Copyright (C) 2010 Michael Muré <batolettre@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,15 +23,15 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "operations-types.h"
 
-#include "gimpoperationcagetransform.h"
-#include "gimpcageconfig.h"
+#include "picmanoperationcagetransform.h"
+#include "picmancageconfig.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 enum
 {
@@ -42,84 +42,84 @@ enum
 };
 
 
-static void         gimp_operation_cage_transform_finalize                (GObject             *object);
-static void         gimp_operation_cage_transform_get_property            (GObject             *object,
+static void         picman_operation_cage_transform_finalize                (GObject             *object);
+static void         picman_operation_cage_transform_get_property            (GObject             *object,
                                                                            guint                property_id,
                                                                            GValue              *value,
                                                                            GParamSpec          *pspec);
-static void         gimp_operation_cage_transform_set_property            (GObject             *object,
+static void         picman_operation_cage_transform_set_property            (GObject             *object,
                                                                            guint                property_id,
                                                                            const GValue        *value,
                                                                            GParamSpec          *pspec);
-static void         gimp_operation_cage_transform_prepare                 (GeglOperation       *operation);
-static gboolean     gimp_operation_cage_transform_process                 (GeglOperation       *operation,
+static void         picman_operation_cage_transform_prepare                 (GeglOperation       *operation);
+static gboolean     picman_operation_cage_transform_process                 (GeglOperation       *operation,
                                                                            GeglBuffer          *in_buf,
                                                                            GeglBuffer          *aux_buf,
                                                                            GeglBuffer          *out_buf,
                                                                            const GeglRectangle *roi,
                                                                            gint                 level);
-static void         gimp_operation_cage_transform_interpolate_source_coords_recurs
-                                                                          (GimpOperationCageTransform  *oct,
+static void         picman_operation_cage_transform_interpolate_source_coords_recurs
+                                                                          (PicmanOperationCageTransform  *oct,
                                                                            GeglBuffer          *out_buf,
                                                                            const GeglRectangle *roi,
-                                                                           GimpVector2          p1_s,
-                                                                           GimpVector2          p1_d,
-                                                                           GimpVector2          p2_s,
-                                                                           GimpVector2          p2_d,
-                                                                           GimpVector2          p3_s,
-                                                                           GimpVector2          p3_d,
+                                                                           PicmanVector2          p1_s,
+                                                                           PicmanVector2          p1_d,
+                                                                           PicmanVector2          p2_s,
+                                                                           PicmanVector2          p2_d,
+                                                                           PicmanVector2          p3_s,
+                                                                           PicmanVector2          p3_d,
                                                                            gint                 recursion_depth,
                                                                            gfloat              *coords);
-static GimpVector2  gimp_cage_transform_compute_destination               (GimpCageConfig      *config,
+static PicmanVector2  picman_cage_transform_compute_destination               (PicmanCageConfig      *config,
                                                                            gfloat              *coef,
                                                                            const Babl          *format_coef,
                                                                            GeglBuffer          *coef_buf,
-                                                                           GimpVector2          coords);
-GeglRectangle       gimp_operation_cage_transform_get_cached_region       (GeglOperation       *operation,
+                                                                           PicmanVector2          coords);
+GeglRectangle       picman_operation_cage_transform_get_cached_region       (GeglOperation       *operation,
                                                                            const GeglRectangle *roi);
-GeglRectangle       gimp_operation_cage_transform_get_required_for_output (GeglOperation       *operation,
+GeglRectangle       picman_operation_cage_transform_get_required_for_output (GeglOperation       *operation,
                                                                            const gchar         *input_pad,
                                                                            const GeglRectangle *roi);
-GeglRectangle       gimp_operation_cage_transform_get_bounding_box        (GeglOperation       *operation);
+GeglRectangle       picman_operation_cage_transform_get_bounding_box        (GeglOperation       *operation);
 
 
-G_DEFINE_TYPE (GimpOperationCageTransform, gimp_operation_cage_transform,
+G_DEFINE_TYPE (PicmanOperationCageTransform, picman_operation_cage_transform,
                       GEGL_TYPE_OPERATION_COMPOSER)
 
-#define parent_class gimp_operation_cage_transform_parent_class
+#define parent_class picman_operation_cage_transform_parent_class
 
 
 static void
-gimp_operation_cage_transform_class_init (GimpOperationCageTransformClass *klass)
+picman_operation_cage_transform_class_init (PicmanOperationCageTransformClass *klass)
 {
   GObjectClass               *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass         *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationComposerClass *filter_class    = GEGL_OPERATION_COMPOSER_CLASS (klass);
 
-  object_class->get_property               = gimp_operation_cage_transform_get_property;
-  object_class->set_property               = gimp_operation_cage_transform_set_property;
-  object_class->finalize                   = gimp_operation_cage_transform_finalize;
+  object_class->get_property               = picman_operation_cage_transform_get_property;
+  object_class->set_property               = picman_operation_cage_transform_set_property;
+  object_class->finalize                   = picman_operation_cage_transform_finalize;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:cage-transform",
+                                 "name",        "picman:cage-transform",
                                  "categories",  "transform",
-                                 "description", _("Convert a set of coefficient buffer to a coordinate buffer for the GIMP cage tool"),
+                                 "description", _("Convert a set of coefficient buffer to a coordinate buffer for the PICMAN cage tool"),
                                  NULL);
 
-  operation_class->prepare                 = gimp_operation_cage_transform_prepare;
+  operation_class->prepare                 = picman_operation_cage_transform_prepare;
 
-  operation_class->get_required_for_output = gimp_operation_cage_transform_get_required_for_output;
-  operation_class->get_cached_region       = gimp_operation_cage_transform_get_cached_region;
+  operation_class->get_required_for_output = picman_operation_cage_transform_get_required_for_output;
+  operation_class->get_cached_region       = picman_operation_cage_transform_get_cached_region;
   operation_class->no_cache                = FALSE;
-  operation_class->get_bounding_box        = gimp_operation_cage_transform_get_bounding_box;
+  operation_class->get_bounding_box        = picman_operation_cage_transform_get_bounding_box;
 
-  filter_class->process                    = gimp_operation_cage_transform_process;
+  filter_class->process                    = picman_operation_cage_transform_process;
 
   g_object_class_install_property (object_class, PROP_CONFIG,
                                    g_param_spec_object ("config",
                                                         "Config",
-                                                        "A GimpCageConfig object, that define the transformation",
-                                                        GIMP_TYPE_CAGE_CONFIG,
+                                                        "A PicmanCageConfig object, that define the transformation",
+                                                        PICMAN_TYPE_CAGE_CONFIG,
                                                         G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 
@@ -139,15 +139,15 @@ gimp_operation_cage_transform_class_init (GimpOperationCageTransformClass *klass
 }
 
 static void
-gimp_operation_cage_transform_init (GimpOperationCageTransform *self)
+picman_operation_cage_transform_init (PicmanOperationCageTransform *self)
 {
   self->format_coords = babl_format_n(babl_type("float"), 2);
 }
 
 static void
-gimp_operation_cage_transform_finalize (GObject *object)
+picman_operation_cage_transform_finalize (GObject *object)
 {
-  GimpOperationCageTransform *self = GIMP_OPERATION_CAGE_TRANSFORM (object);
+  PicmanOperationCageTransform *self = PICMAN_OPERATION_CAGE_TRANSFORM (object);
 
   if (self->config)
     {
@@ -159,12 +159,12 @@ gimp_operation_cage_transform_finalize (GObject *object)
 }
 
 static void
-gimp_operation_cage_transform_get_property (GObject    *object,
+picman_operation_cage_transform_get_property (GObject    *object,
                                             guint       property_id,
                                             GValue     *value,
                                             GParamSpec *pspec)
 {
-  GimpOperationCageTransform *self = GIMP_OPERATION_CAGE_TRANSFORM (object);
+  PicmanOperationCageTransform *self = PICMAN_OPERATION_CAGE_TRANSFORM (object);
 
   switch (property_id)
     {
@@ -185,12 +185,12 @@ gimp_operation_cage_transform_get_property (GObject    *object,
 }
 
 static void
-gimp_operation_cage_transform_set_property (GObject      *object,
+picman_operation_cage_transform_set_property (GObject      *object,
                                             guint         property_id,
                                             const GValue *value,
                                             GParamSpec   *pspec)
 {
-  GimpOperationCageTransform *self = GIMP_OPERATION_CAGE_TRANSFORM (object);
+  PicmanOperationCageTransform *self = PICMAN_OPERATION_CAGE_TRANSFORM (object);
 
   switch (property_id)
     {
@@ -210,49 +210,49 @@ gimp_operation_cage_transform_set_property (GObject      *object,
 }
 
 static void
-gimp_operation_cage_transform_prepare (GeglOperation *operation)
+picman_operation_cage_transform_prepare (GeglOperation *operation)
 {
-  GimpOperationCageTransform *oct    = GIMP_OPERATION_CAGE_TRANSFORM (operation);
-  GimpCageConfig             *config = GIMP_CAGE_CONFIG (oct->config);
+  PicmanOperationCageTransform *oct    = PICMAN_OPERATION_CAGE_TRANSFORM (operation);
+  PicmanCageConfig             *config = PICMAN_CAGE_CONFIG (oct->config);
 
   gegl_operation_set_format (operation, "input",
                              babl_format_n (babl_type ("float"),
-                                            2 * gimp_cage_config_get_n_points (config)));
+                                            2 * picman_cage_config_get_n_points (config)));
   gegl_operation_set_format (operation, "output",
                              babl_format_n (babl_type ("float"), 2));
 }
 
 static gboolean
-gimp_operation_cage_transform_process (GeglOperation       *operation,
+picman_operation_cage_transform_process (GeglOperation       *operation,
                                        GeglBuffer          *in_buf,
                                        GeglBuffer          *aux_buf,
                                        GeglBuffer          *out_buf,
                                        const GeglRectangle *roi,
                                        gint                 level)
 {
-  GimpOperationCageTransform *oct    = GIMP_OPERATION_CAGE_TRANSFORM (operation);
-  GimpCageConfig             *config = GIMP_CAGE_CONFIG (oct->config);
+  PicmanOperationCageTransform *oct    = PICMAN_OPERATION_CAGE_TRANSFORM (operation);
+  PicmanCageConfig             *config = PICMAN_CAGE_CONFIG (oct->config);
   GeglRectangle               cage_bb;
   gfloat                     *coords;
   gfloat                     *coef;
   const Babl                 *format_coef;
-  GimpVector2                 plain_color;
+  PicmanVector2                 plain_color;
   GeglBufferIterator         *it;
   gint                        x, y;
   gboolean                    output_set;
-  GimpCagePoint              *point;
+  PicmanCagePoint              *point;
   guint                       n_cage_vertices;
 
   /* pre-fill the out buffer with no-displacement coordinate */
   it      = gegl_buffer_iterator_new (out_buf, roi, 0, NULL,
                                       GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
-  cage_bb = gimp_cage_config_get_bounding_box (config);
+  cage_bb = picman_cage_config_get_bounding_box (config);
 
-  point = &(g_array_index (config->cage_points, GimpCagePoint, 0));
+  point = &(g_array_index (config->cage_points, PicmanCagePoint, 0));
   plain_color.x = (gint) point->src_point.x;
   plain_color.y = (gint) point->src_point.y;
 
-  n_cage_vertices = gimp_cage_config_get_n_points (config);
+  n_cage_vertices = picman_cage_config_get_n_points (config);
 
   while (gegl_buffer_iterator_next (it))
     {
@@ -273,7 +273,7 @@ gimp_operation_cage_transform_process (GeglOperation       *operation,
                   x < cage_bb.x + cage_bb.width &&
                   y < cage_bb.y + cage_bb.height)
                 {
-                  if (gimp_cage_config_point_inside (config, x, y))
+                  if (picman_cage_config_point_inside (config, x, y))
                     {
                       output[0] = plain_color.x;
                       output[1] = plain_color.y;
@@ -310,8 +310,8 @@ gimp_operation_cage_transform_process (GeglOperation       *operation,
   /* compute, reverse and interpolate the transformation */
   for (y = cage_bb.y; y < cage_bb.y + cage_bb.height - 1; y++)
     {
-      GimpVector2 p1_d, p2_d, p3_d, p4_d;
-      GimpVector2 p1_s, p2_s, p3_s, p4_s;
+      PicmanVector2 p1_d, p2_d, p3_d, p4_d;
+      PicmanVector2 p1_s, p2_s, p3_s, p4_s;
 
       p1_s.y = y;
       p2_s.y = y+1;
@@ -320,8 +320,8 @@ gimp_operation_cage_transform_process (GeglOperation       *operation,
       p4_s.y = y;
       p4_s.x = cage_bb.x;
 
-      p3_d = gimp_cage_transform_compute_destination (config, coef, format_coef, aux_buf, p3_s);
-      p4_d = gimp_cage_transform_compute_destination (config, coef, format_coef, aux_buf, p4_s);
+      p3_d = picman_cage_transform_compute_destination (config, coef, format_coef, aux_buf, p3_s);
+      p4_d = picman_cage_transform_compute_destination (config, coef, format_coef, aux_buf, p4_s);
 
       for (x = cage_bb.x; x < cage_bb.x + cage_bb.width - 1; x++)
         {
@@ -332,12 +332,12 @@ gimp_operation_cage_transform_process (GeglOperation       *operation,
 
           p1_d = p4_d;
           p2_d = p3_d;
-          p3_d = gimp_cage_transform_compute_destination (config, coef, format_coef, aux_buf, p3_s);
-          p4_d = gimp_cage_transform_compute_destination (config, coef, format_coef, aux_buf, p4_s);
+          p3_d = picman_cage_transform_compute_destination (config, coef, format_coef, aux_buf, p3_s);
+          p4_d = picman_cage_transform_compute_destination (config, coef, format_coef, aux_buf, p4_s);
 
-          if (gimp_cage_config_point_inside (config, x, y))
+          if (picman_cage_config_point_inside (config, x, y))
             {
-              gimp_operation_cage_transform_interpolate_source_coords_recurs (oct,
+              picman_operation_cage_transform_interpolate_source_coords_recurs (oct,
                                                                               out_buf,
                                                                               roi,
                                                                               p1_s, p1_d,
@@ -346,7 +346,7 @@ gimp_operation_cage_transform_process (GeglOperation       *operation,
                                                                               0,
                                                                               coords);
 
-              gimp_operation_cage_transform_interpolate_source_coords_recurs (oct,
+              picman_operation_cage_transform_interpolate_source_coords_recurs (oct,
                                                                               out_buf,
                                                                               roi,
                                                                               p1_s, p1_d,
@@ -382,15 +382,15 @@ gimp_operation_cage_transform_process (GeglOperation       *operation,
 
 
 static void
-gimp_operation_cage_transform_interpolate_source_coords_recurs (GimpOperationCageTransform *oct,
+picman_operation_cage_transform_interpolate_source_coords_recurs (PicmanOperationCageTransform *oct,
                                                                 GeglBuffer                 *out_buf,
                                                                 const GeglRectangle        *roi,
-                                                                GimpVector2                 p1_s,
-                                                                GimpVector2                 p1_d,
-                                                                GimpVector2                 p2_s,
-                                                                GimpVector2                 p2_d,
-                                                                GimpVector2                 p3_s,
-                                                                GimpVector2                 p3_d,
+                                                                PicmanVector2                 p1_s,
+                                                                PicmanVector2                 p1_d,
+                                                                PicmanVector2                 p2_s,
+                                                                PicmanVector2                 p2_d,
+                                                                PicmanVector2                 p3_s,
+                                                                PicmanVector2                 p3_d,
                                                                 gint                        recursion_depth,
                                                                 gfloat                     *coords)
 {
@@ -484,8 +484,8 @@ gimp_operation_cage_transform_interpolate_source_coords_recurs (GimpOperationCag
        *
        */
 
-      GimpVector2 pm1_d, pm2_d, pm3_d;
-      GimpVector2 pm1_s, pm2_s, pm3_s;
+      PicmanVector2 pm1_d, pm2_d, pm3_d;
+      PicmanVector2 pm1_s, pm2_s, pm3_s;
       gint        next_depth = recursion_depth + 1;
 
       pm1_d.x = (p1_d.x + p2_d.x) / 2.0;
@@ -506,7 +506,7 @@ gimp_operation_cage_transform_interpolate_source_coords_recurs (GimpOperationCag
       pm3_s.x = (p3_s.x + p1_s.x) / 2.0;
       pm3_s.y = (p3_s.y + p1_s.y) / 2.0;
 
-      gimp_operation_cage_transform_interpolate_source_coords_recurs (oct,
+      picman_operation_cage_transform_interpolate_source_coords_recurs (oct,
                                                                       out_buf,
                                                                       roi,
                                                                       p1_s, p1_d,
@@ -515,7 +515,7 @@ gimp_operation_cage_transform_interpolate_source_coords_recurs (GimpOperationCag
                                                                       next_depth,
                                                                       coords);
 
-      gimp_operation_cage_transform_interpolate_source_coords_recurs (oct,
+      picman_operation_cage_transform_interpolate_source_coords_recurs (oct,
                                                                       out_buf,
                                                                       roi,
                                                                       pm1_s, pm1_d,
@@ -524,7 +524,7 @@ gimp_operation_cage_transform_interpolate_source_coords_recurs (GimpOperationCag
                                                                       next_depth,
                                                                       coords);
 
-      gimp_operation_cage_transform_interpolate_source_coords_recurs (oct,
+      picman_operation_cage_transform_interpolate_source_coords_recurs (oct,
                                                                       out_buf,
                                                                       roi,
                                                                       pm1_s, pm1_d,
@@ -533,7 +533,7 @@ gimp_operation_cage_transform_interpolate_source_coords_recurs (GimpOperationCag
                                                                       next_depth,
                                                                       coords);
 
-      gimp_operation_cage_transform_interpolate_source_coords_recurs (oct,
+      picman_operation_cage_transform_interpolate_source_coords_recurs (oct,
                                                                       out_buf,
                                                                       roi,
                                                                       pm3_s, pm3_d,
@@ -544,17 +544,17 @@ gimp_operation_cage_transform_interpolate_source_coords_recurs (GimpOperationCag
     }
 }
 
-static GimpVector2
-gimp_cage_transform_compute_destination (GimpCageConfig *config,
+static PicmanVector2
+picman_cage_transform_compute_destination (PicmanCageConfig *config,
                                          gfloat         *coef,
                                          const Babl     *format_coef,
                                          GeglBuffer     *coef_buf,
-                                         GimpVector2     coords)
+                                         PicmanVector2     coords)
 {
-  GimpVector2    result = {0, 0};
-  gint           n_cage_vertices = gimp_cage_config_get_n_points (config);
+  PicmanVector2    result = {0, 0};
+  gint           n_cage_vertices = picman_cage_config_get_n_points (config);
   gint           i;
-  GimpCagePoint *point;
+  PicmanCagePoint *point;
 
   /* When Gegl bug #645810 will be solved, this should be a good optimisation */
   #ifdef GEGL_BUG_645810_SOLVED
@@ -573,7 +573,7 @@ gimp_cage_transform_compute_destination (GimpCageConfig *config,
 
   for (i = 0; i < n_cage_vertices; i++)
     {
-      point = &g_array_index (config->cage_points, GimpCagePoint, i);
+      point = &g_array_index (config->cage_points, PicmanCagePoint, i);
 
       result.x += coef[i] * point->dest_point.x;
       result.y += coef[i] * point->dest_point.y;
@@ -586,7 +586,7 @@ gimp_cage_transform_compute_destination (GimpCageConfig *config,
 }
 
 GeglRectangle
-gimp_operation_cage_transform_get_cached_region (GeglOperation       *operation,
+picman_operation_cage_transform_get_cached_region (GeglOperation       *operation,
                                                  const GeglRectangle *roi)
 {
   GeglRectangle result = *gegl_operation_source_get_bounding_box (operation,
@@ -596,7 +596,7 @@ gimp_operation_cage_transform_get_cached_region (GeglOperation       *operation,
 }
 
 GeglRectangle
-gimp_operation_cage_transform_get_required_for_output (GeglOperation       *operation,
+picman_operation_cage_transform_get_required_for_output (GeglOperation       *operation,
                                                        const gchar         *input_pad,
                                                        const GeglRectangle *roi)
 {
@@ -607,7 +607,7 @@ gimp_operation_cage_transform_get_required_for_output (GeglOperation       *oper
 }
 
 GeglRectangle
-gimp_operation_cage_transform_get_bounding_box (GeglOperation *operation)
+picman_operation_cage_transform_get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle result = *gegl_operation_source_get_bounding_box (operation,
                                                                   "input");

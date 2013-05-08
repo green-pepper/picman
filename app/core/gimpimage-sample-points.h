@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_SAMPLE_POINTS_H__
-#define __GIMP_IMAGE_SAMPLE_POINTS_H__
+#ifndef __PICMAN_IMAGE_SAMPLE_POINTS_H__
+#define __PICMAN_IMAGE_SAMPLE_POINTS_H__
 
 
 /*  public sample point adding API
  */
-GimpSamplePoint * gimp_image_add_sample_point_at_pos (GimpImage        *image,
+PicmanSamplePoint * picman_image_add_sample_point_at_pos (PicmanImage        *image,
                                                       gint              x,
                                                       gint              y,
                                                       gboolean          push_undo);
@@ -30,26 +30,26 @@ GimpSamplePoint * gimp_image_add_sample_point_at_pos (GimpImage        *image,
  *  point's position and is publically declared only to be used from
  *  undo
  */
-void              gimp_image_add_sample_point        (GimpImage       *image,
-                                                      GimpSamplePoint *sample_point,
+void              picman_image_add_sample_point        (PicmanImage       *image,
+                                                      PicmanSamplePoint *sample_point,
                                                       gint             x,
                                                       gint             y);
 
-void              gimp_image_remove_sample_point     (GimpImage       *image,
-                                                      GimpSamplePoint *sample_point,
+void              picman_image_remove_sample_point     (PicmanImage       *image,
+                                                      PicmanSamplePoint *sample_point,
                                                       gboolean         push_undo);
-void              gimp_image_move_sample_point       (GimpImage       *image,
-                                                      GimpSamplePoint *sample_point,
+void              picman_image_move_sample_point       (PicmanImage       *image,
+                                                      PicmanSamplePoint *sample_point,
                                                       gint             x,
                                                       gint             y,
                                                       gboolean         push_undo);
 
-GList           * gimp_image_get_sample_points       (GimpImage       *image);
-GimpSamplePoint * gimp_image_find_sample_point       (GimpImage       *image,
+GList           * picman_image_get_sample_points       (PicmanImage       *image);
+PicmanSamplePoint * picman_image_find_sample_point       (PicmanImage       *image,
                                                       gdouble          x,
                                                       gdouble          y,
                                                       gdouble          epsilon_x,
                                                       gdouble          epsilon_y);
 
 
-#endif /* __GIMP_IMAGE_SAMPLE_POINTS_H__ */
+#endif /* __PICMAN_IMAGE_SAMPLE_POINTS_H__ */

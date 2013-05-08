@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdockbook.h
- * Copyright (C) 2001-2007 Michael Natterer <mitch@gimp.org>
+ * picmandockbook.h
+ * Copyright (C) 2001-2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,71 +18,71 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DOCKBOOK_H__
-#define __GIMP_DOCKBOOK_H__
+#ifndef __PICMAN_DOCKBOOK_H__
+#define __PICMAN_DOCKBOOK_H__
 
 
-#define GIMP_TYPE_DOCKBOOK            (gimp_dockbook_get_type ())
-#define GIMP_DOCKBOOK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_DOCKBOOK, GimpDockbook))
-#define GIMP_DOCKBOOK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_DOCKBOOK, GimpDockbookClass))
-#define GIMP_IS_DOCKBOOK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_DOCKBOOK))
-#define GIMP_IS_DOCKBOOK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_DOCKBOOK))
-#define GIMP_DOCKBOOK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_DOCKBOOK, GimpDockbookClass))
+#define PICMAN_TYPE_DOCKBOOK            (picman_dockbook_get_type ())
+#define PICMAN_DOCKBOOK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_DOCKBOOK, PicmanDockbook))
+#define PICMAN_DOCKBOOK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_DOCKBOOK, PicmanDockbookClass))
+#define PICMAN_IS_DOCKBOOK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_DOCKBOOK))
+#define PICMAN_IS_DOCKBOOK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_DOCKBOOK))
+#define PICMAN_DOCKBOOK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_DOCKBOOK, PicmanDockbookClass))
 
 
-typedef struct _GimpDockbookClass    GimpDockbookClass;
-typedef struct _GimpDockbookPrivate  GimpDockbookPrivate;
+typedef struct _PicmanDockbookClass    PicmanDockbookClass;
+typedef struct _PicmanDockbookPrivate  PicmanDockbookPrivate;
 
 /**
- * GimpDockbook:
+ * PicmanDockbook:
  *
- * Holds GimpDockables which are presented on different tabs using
+ * Holds PicmanDockables which are presented on different tabs using
  * GtkNotebook.
  */
-struct _GimpDockbook
+struct _PicmanDockbook
 {
   GtkNotebook parent_instance;
 
-  GimpDockbookPrivate *p;
+  PicmanDockbookPrivate *p;
 };
 
-struct _GimpDockbookClass
+struct _PicmanDockbookClass
 {
   GtkNotebookClass parent_class;
 
-  void (* dockable_added)     (GimpDockbook *dockbook,
-                               GimpDockable *dockable);
-  void (* dockable_removed)   (GimpDockbook *dockbook,
-                               GimpDockable *dockable);
-  void (* dockable_reordered) (GimpDockbook *dockbook,
-                               GimpDockable *dockable);
+  void (* dockable_added)     (PicmanDockbook *dockbook,
+                               PicmanDockable *dockable);
+  void (* dockable_removed)   (PicmanDockbook *dockbook,
+                               PicmanDockable *dockable);
+  void (* dockable_reordered) (PicmanDockbook *dockbook,
+                               PicmanDockable *dockable);
 };
 
 
-GType           gimp_dockbook_get_type                  (void) G_GNUC_CONST;
-GtkWidget     * gimp_dockbook_new                       (GimpMenuFactory *menu_factory);
-GimpDock      * gimp_dockbook_get_dock                  (GimpDockbook    *dockbook);
-void            gimp_dockbook_set_dock                  (GimpDockbook    *dockbook,
-                                                         GimpDock        *dock);
-GimpUIManager * gimp_dockbook_get_ui_manager            (GimpDockbook    *dockbook);
-void            gimp_dockbook_add                       (GimpDockbook    *dockbook,
-                                                         GimpDockable    *dockable,
+GType           picman_dockbook_get_type                  (void) G_GNUC_CONST;
+GtkWidget     * picman_dockbook_new                       (PicmanMenuFactory *menu_factory);
+PicmanDock      * picman_dockbook_get_dock                  (PicmanDockbook    *dockbook);
+void            picman_dockbook_set_dock                  (PicmanDockbook    *dockbook,
+                                                         PicmanDock        *dock);
+PicmanUIManager * picman_dockbook_get_ui_manager            (PicmanDockbook    *dockbook);
+void            picman_dockbook_add                       (PicmanDockbook    *dockbook,
+                                                         PicmanDockable    *dockable,
                                                          gint             position);
-GtkWidget     * gimp_dockbook_add_from_dialog_factory   (GimpDockbook    *dockbook,
+GtkWidget     * picman_dockbook_add_from_dialog_factory   (PicmanDockbook    *dockbook,
                                                          const gchar     *identifiers,
                                                          gint             position);
-void            gimp_dockbook_remove                    (GimpDockbook    *dockbook,
-                                                         GimpDockable    *dockable);
-void            gimp_dockbook_update_with_context       (GimpDockbook    *dockbook,
-                                                         GimpContext     *context);
-GtkWidget    *  gimp_dockbook_create_tab_widget         (GimpDockbook    *dockbook,
-                                                         GimpDockable    *dockable);
-void            gimp_dockbook_update_auto_tab_style     (GimpDockbook    *dockbook);
-gboolean        gimp_dockbook_drop_dockable             (GimpDockbook    *dockbook,
+void            picman_dockbook_remove                    (PicmanDockbook    *dockbook,
+                                                         PicmanDockable    *dockable);
+void            picman_dockbook_update_with_context       (PicmanDockbook    *dockbook,
+                                                         PicmanContext     *context);
+GtkWidget    *  picman_dockbook_create_tab_widget         (PicmanDockbook    *dockbook,
+                                                         PicmanDockable    *dockable);
+void            picman_dockbook_update_auto_tab_style     (PicmanDockbook    *dockbook);
+gboolean        picman_dockbook_drop_dockable             (PicmanDockbook    *dockbook,
                                                          GtkWidget       *drag_source);
-void            gimp_dockbook_set_drag_handler          (GimpDockbook    *dockbook,
-                                                         GimpPanedBox    *drag_handler);
-GimpDockable *  gimp_dockbook_drag_source_to_dockable   (GtkWidget       *drag_source);
+void            picman_dockbook_set_drag_handler          (PicmanDockbook    *dockbook,
+                                                         PicmanPanedBox    *drag_handler);
+PicmanDockable *  picman_dockbook_drag_source_to_dockable   (GtkWidget       *drag_source);
 
 
-#endif /* __GIMP_DOCKBOOK_H__ */
+#endif /* __PICMAN_DOCKBOOK_H__ */

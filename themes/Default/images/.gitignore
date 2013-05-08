@@ -3,5 +3,5 @@
 /.xvpics
 /.thumbnails
 /stock-icons.list
-/gimp-core-pixbufs.h
-/gimp-stock-pixbufs.h
+/picman-core-pixbufs.h
+/picman-stock-pixbufs.h

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@
 
 #include "widgets-types.h"
 
-#include "gimpcursor.h"
+#include "picmancursor.h"
 
-#include "cursors/gimp-tool-cursors.h"
+#include "cursors/picman-tool-cursors.h"
 
 
 #define cursor_default_x_hot 10
@@ -39,9 +39,9 @@
 #define cursor_color_picker_y_hot 30
 
 
-typedef struct _GimpCursor GimpCursor;
+typedef struct _PicmanCursor PicmanCursor;
 
-struct _GimpCursor
+struct _PicmanCursor
 {
   const guint8 *pixbuf_data;
   const gint    x_hot, y_hot;
@@ -50,9 +50,9 @@ struct _GimpCursor
 };
 
 
-static GimpCursor gimp_cursors[] =
+static PicmanCursor picman_cursors[] =
 {
-  /* these have to match up with enum GimpCursorType in widgets-enums.h */
+  /* these have to match up with enum PicmanCursorType in widgets-enums.h */
 
   {
     cursor_none,
@@ -152,9 +152,9 @@ static GimpCursor gimp_cursors[] =
   }
 };
 
-static GimpCursor gimp_tool_cursors[] =
+static PicmanCursor picman_tool_cursors[] =
 {
-  /* these have to match up with enum GimpToolCursorType in widgets-enums.h */
+  /* these have to match up with enum PicmanToolCursorType in widgets-enums.h */
 
   { NULL },
   { tool_rect_select },
@@ -195,9 +195,9 @@ static GimpCursor gimp_tool_cursors[] =
   { tool_hand }
 };
 
-static GimpCursor gimp_cursor_modifiers[] =
+static PicmanCursor picman_cursor_modifiers[] =
 {
-  /* these have to match up with enum GimpCursorModifier in widgets-enums.h */
+  /* these have to match up with enum PicmanCursorModifier in widgets-enums.h */
 
   { NULL },
   { modifier_bad },
@@ -217,7 +217,7 @@ static GimpCursor gimp_cursor_modifiers[] =
 
 
 static const GdkPixbuf *
-get_cursor_pixbuf (GimpCursor *cursor)
+get_cursor_pixbuf (PicmanCursor *cursor)
 {
   if (! cursor->pixbuf)
     cursor->pixbuf = gdk_pixbuf_new_from_inline (-1,
@@ -229,96 +229,96 @@ get_cursor_pixbuf (GimpCursor *cursor)
 }
 
 GdkCursor *
-gimp_cursor_new (GdkDisplay         *display,
-                 GimpHandedness      cursor_handedness,
-                 GimpCursorType      cursor_type,
-                 GimpToolCursorType  tool_cursor,
-                 GimpCursorModifier  modifier)
+picman_cursor_new (GdkDisplay         *display,
+                 PicmanHandedness      cursor_handedness,
+                 PicmanCursorType      cursor_type,
+                 PicmanToolCursorType  tool_cursor,
+                 PicmanCursorModifier  modifier)
 {
-  GimpCursor *bmcursor   = NULL;
-  GimpCursor *bmmodifier = NULL;
-  GimpCursor *bmtool     = NULL;
+  PicmanCursor *bmcursor   = NULL;
+  PicmanCursor *bmmodifier = NULL;
+  PicmanCursor *bmtool     = NULL;
   GdkCursor  *cursor;
   GdkPixbuf  *pixbuf;
 
   g_return_val_if_fail (GDK_IS_DISPLAY (display), NULL);
-  g_return_val_if_fail (cursor_type < GIMP_CURSOR_LAST, NULL);
+  g_return_val_if_fail (cursor_type < PICMAN_CURSOR_LAST, NULL);
 
-  if (cursor_type <= (GimpCursorType) GDK_LAST_CURSOR)
+  if (cursor_type <= (PicmanCursorType) GDK_LAST_CURSOR)
     return gdk_cursor_new_for_display (display, cursor_type);
 
-  g_return_val_if_fail (cursor_type >= GIMP_CURSOR_NONE, NULL);
+  g_return_val_if_fail (cursor_type >= PICMAN_CURSOR_NONE, NULL);
 
   /*  disallow the small tool cursor with some cursors
    */
-  if (cursor_type <= GIMP_CURSOR_NONE         ||
-      cursor_type == GIMP_CURSOR_CROSSHAIR    ||
-      cursor_type == GIMP_CURSOR_ZOOM         ||
-      cursor_type == GIMP_CURSOR_COLOR_PICKER ||
-      cursor_type >= GIMP_CURSOR_LAST)
+  if (cursor_type <= PICMAN_CURSOR_NONE         ||
+      cursor_type == PICMAN_CURSOR_CROSSHAIR    ||
+      cursor_type == PICMAN_CURSOR_ZOOM         ||
+      cursor_type == PICMAN_CURSOR_COLOR_PICKER ||
+      cursor_type >= PICMAN_CURSOR_LAST)
     {
-      tool_cursor = GIMP_TOOL_CURSOR_NONE;
+      tool_cursor = PICMAN_TOOL_CURSOR_NONE;
     }
 
   /*  don't allow anything with the empty cursor
    */
-  if (cursor_type == GIMP_CURSOR_NONE)
+  if (cursor_type == PICMAN_CURSOR_NONE)
     {
-      tool_cursor = GIMP_TOOL_CURSOR_NONE;
-      modifier    = GIMP_CURSOR_MODIFIER_NONE;
+      tool_cursor = PICMAN_TOOL_CURSOR_NONE;
+      modifier    = PICMAN_CURSOR_MODIFIER_NONE;
     }
 
   /*  some more sanity checks
    */
-  if (cursor_type == GIMP_CURSOR_MOVE &&
-      modifier    == GIMP_CURSOR_MODIFIER_MOVE)
+  if (cursor_type == PICMAN_CURSOR_MOVE &&
+      modifier    == PICMAN_CURSOR_MODIFIER_MOVE)
     {
-      modifier = GIMP_CURSOR_MODIFIER_NONE;
+      modifier = PICMAN_CURSOR_MODIFIER_NONE;
     }
 
   /*  when cursor is "corner" or "side" sides must be exchanged for
    *  left-hand-mice-flipping of pixbuf below
    */
 
-  if (cursor_handedness == GIMP_HANDEDNESS_LEFT)
+  if (cursor_handedness == PICMAN_HANDEDNESS_LEFT)
     {
       switch (cursor_type)
         {
-        case GIMP_CURSOR_CORNER_TOP_LEFT:
-          cursor_type = GIMP_CURSOR_CORNER_TOP_RIGHT; break;
+        case PICMAN_CURSOR_CORNER_TOP_LEFT:
+          cursor_type = PICMAN_CURSOR_CORNER_TOP_RIGHT; break;
 
-        case GIMP_CURSOR_CORNER_TOP_RIGHT:
-          cursor_type = GIMP_CURSOR_CORNER_TOP_LEFT; break;
+        case PICMAN_CURSOR_CORNER_TOP_RIGHT:
+          cursor_type = PICMAN_CURSOR_CORNER_TOP_LEFT; break;
 
-        case GIMP_CURSOR_CORNER_LEFT:
-          cursor_type = GIMP_CURSOR_CORNER_RIGHT; break;
+        case PICMAN_CURSOR_CORNER_LEFT:
+          cursor_type = PICMAN_CURSOR_CORNER_RIGHT; break;
 
-        case GIMP_CURSOR_CORNER_RIGHT:
-          cursor_type = GIMP_CURSOR_CORNER_LEFT; break;
+        case PICMAN_CURSOR_CORNER_RIGHT:
+          cursor_type = PICMAN_CURSOR_CORNER_LEFT; break;
 
-        case GIMP_CURSOR_CORNER_BOTTOM_LEFT:
-          cursor_type = GIMP_CURSOR_CORNER_BOTTOM_RIGHT; break;
+        case PICMAN_CURSOR_CORNER_BOTTOM_LEFT:
+          cursor_type = PICMAN_CURSOR_CORNER_BOTTOM_RIGHT; break;
 
-        case GIMP_CURSOR_CORNER_BOTTOM_RIGHT:
-          cursor_type = GIMP_CURSOR_CORNER_BOTTOM_LEFT; break;
+        case PICMAN_CURSOR_CORNER_BOTTOM_RIGHT:
+          cursor_type = PICMAN_CURSOR_CORNER_BOTTOM_LEFT; break;
 
-        case GIMP_CURSOR_SIDE_TOP_LEFT:
-          cursor_type = GIMP_CURSOR_SIDE_TOP_RIGHT; break;
+        case PICMAN_CURSOR_SIDE_TOP_LEFT:
+          cursor_type = PICMAN_CURSOR_SIDE_TOP_RIGHT; break;
 
-        case GIMP_CURSOR_SIDE_TOP_RIGHT:
-          cursor_type = GIMP_CURSOR_SIDE_TOP_LEFT; break;
+        case PICMAN_CURSOR_SIDE_TOP_RIGHT:
+          cursor_type = PICMAN_CURSOR_SIDE_TOP_LEFT; break;
 
-        case GIMP_CURSOR_SIDE_LEFT:
-          cursor_type = GIMP_CURSOR_SIDE_RIGHT; break;
+        case PICMAN_CURSOR_SIDE_LEFT:
+          cursor_type = PICMAN_CURSOR_SIDE_RIGHT; break;
 
-        case GIMP_CURSOR_SIDE_RIGHT:
-          cursor_type = GIMP_CURSOR_SIDE_LEFT; break;
+        case PICMAN_CURSOR_SIDE_RIGHT:
+          cursor_type = PICMAN_CURSOR_SIDE_LEFT; break;
 
-        case GIMP_CURSOR_SIDE_BOTTOM_LEFT:
-          cursor_type = GIMP_CURSOR_SIDE_BOTTOM_RIGHT; break;
+        case PICMAN_CURSOR_SIDE_BOTTOM_LEFT:
+          cursor_type = PICMAN_CURSOR_SIDE_BOTTOM_RIGHT; break;
 
-        case GIMP_CURSOR_SIDE_BOTTOM_RIGHT:
-          cursor_type = GIMP_CURSOR_SIDE_BOTTOM_LEFT; break;
+        case PICMAN_CURSOR_SIDE_BOTTOM_RIGHT:
+          cursor_type = PICMAN_CURSOR_SIDE_BOTTOM_LEFT; break;
 
         default:
           break;
@@ -327,23 +327,23 @@ gimp_cursor_new (GdkDisplay         *display,
 
   /*  prepare the main cursor  */
 
-  cursor_type -= GIMP_CURSOR_NONE;
-  bmcursor = &gimp_cursors[cursor_type];
+  cursor_type -= PICMAN_CURSOR_NONE;
+  bmcursor = &picman_cursors[cursor_type];
 
   /*  prepare the tool cursor  */
 
-  if (tool_cursor > GIMP_TOOL_CURSOR_NONE &&
-      tool_cursor < GIMP_TOOL_CURSOR_LAST)
+  if (tool_cursor > PICMAN_TOOL_CURSOR_NONE &&
+      tool_cursor < PICMAN_TOOL_CURSOR_LAST)
     {
-      bmtool = &gimp_tool_cursors[tool_cursor];
+      bmtool = &picman_tool_cursors[tool_cursor];
     }
 
   /*  prepare the cursor modifier  */
 
-  if (modifier > GIMP_CURSOR_MODIFIER_NONE &&
-      modifier < GIMP_CURSOR_MODIFIER_LAST)
+  if (modifier > PICMAN_CURSOR_MODIFIER_NONE &&
+      modifier < PICMAN_CURSOR_MODIFIER_LAST)
     {
-      bmmodifier = &gimp_cursor_modifiers[modifier];
+      bmmodifier = &picman_cursor_modifiers[modifier];
     }
 
   pixbuf = gdk_pixbuf_copy (get_cursor_pixbuf (bmcursor));
@@ -368,7 +368,7 @@ gimp_cursor_new (GdkDisplay         *display,
 
   /*  flip the cursor if mouse setting is left-handed  */
 
-  if (cursor_handedness == GIMP_HANDEDNESS_LEFT)
+  if (cursor_handedness == PICMAN_HANDEDNESS_LEFT)
     {
       GdkPixbuf *flipped = gdk_pixbuf_flip (pixbuf, TRUE);
       gint       width   = gdk_pixbuf_get_width (flipped);
@@ -391,18 +391,18 @@ gimp_cursor_new (GdkDisplay         *display,
 }
 
 void
-gimp_cursor_set (GtkWidget          *widget,
-                 GimpHandedness      cursor_handedness,
-                 GimpCursorType      cursor_type,
-                 GimpToolCursorType  tool_cursor,
-                 GimpCursorModifier  modifier)
+picman_cursor_set (GtkWidget          *widget,
+                 PicmanHandedness      cursor_handedness,
+                 PicmanCursorType      cursor_type,
+                 PicmanToolCursorType  tool_cursor,
+                 PicmanCursorModifier  modifier)
 {
   GdkCursor *cursor;
 
   g_return_if_fail (GTK_IS_WIDGET (widget));
   g_return_if_fail (gtk_widget_get_realized (widget));
 
-  cursor = gimp_cursor_new (gtk_widget_get_display (widget),
+  cursor = picman_cursor_new (gtk_widget_get_display (widget),
                             cursor_handedness,
                             cursor_type,
                             tool_cursor,
@@ -411,27 +411,27 @@ gimp_cursor_set (GtkWidget          *widget,
   gdk_cursor_unref (cursor);
 }
 
-GimpCursorType
-gimp_cursor_rotate (GimpCursorType  cursor,
+PicmanCursorType
+picman_cursor_rotate (PicmanCursorType  cursor,
                     gdouble         angle)
 {
-  if (cursor >= GIMP_CURSOR_CORNER_TOP &&
-      cursor <= GIMP_CURSOR_SIDE_TOP_LEFT)
+  if (cursor >= PICMAN_CURSOR_CORNER_TOP &&
+      cursor <= PICMAN_CURSOR_SIDE_TOP_LEFT)
     {
       gint offset = (gint) (angle / 45 + 0.5);
 
-      if (cursor < GIMP_CURSOR_SIDE_TOP)
+      if (cursor < PICMAN_CURSOR_SIDE_TOP)
         {
           cursor += offset;
 
-          if (cursor > GIMP_CURSOR_CORNER_TOP_LEFT)
+          if (cursor > PICMAN_CURSOR_CORNER_TOP_LEFT)
             cursor -= 8;
         }
       else
         {
           cursor += offset;
 
-          if (cursor > GIMP_CURSOR_SIDE_TOP_LEFT)
+          if (cursor > PICMAN_CURSOR_SIDE_TOP_LEFT)
             cursor -= 8;
         }
    }

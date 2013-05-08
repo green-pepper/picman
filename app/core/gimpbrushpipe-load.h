@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * Copyright (C) 1999 Adrian Likins and Tor Lillqvist
  *
@@ -16,16 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_PIPE_LOAD_H__
-#define __GIMP_BRUSH_PIPE_LOAD_H__
+#ifndef __PICMAN_BRUSH_PIPE_LOAD_H__
+#define __PICMAN_BRUSH_PIPE_LOAD_H__
 
 
-#define GIMP_BRUSH_PIPE_FILE_EXTENSION ".gih"
+#define PICMAN_BRUSH_PIPE_FILE_EXTENSION ".gih"
 
 
-GList * gimp_brush_pipe_load (GimpContext  *context,
+GList * picman_brush_pipe_load (PicmanContext  *context,
                               const gchar  *filename,
                               GError      **error);
 
 
-#endif  /* __GIMP_BRUSH_PIPE_LOAD_H__ */
+#endif  /* __PICMAN_BRUSH_PIPE_LOAD_H__ */

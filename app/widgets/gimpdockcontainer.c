@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdockcontainer.c
+ * picmandockcontainer.c
  * Copyright (C) 2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,14 +24,14 @@
 
 #include "widgets-types.h"
 
-#include "gimpdockcontainer.h"
+#include "picmandockcontainer.h"
 
 
-static void   gimp_dock_container_iface_base_init   (GimpDockContainerInterface *container_iface);
+static void   picman_dock_container_iface_base_init   (PicmanDockContainerInterface *container_iface);
 
 
 GType
-gimp_dock_container_interface_get_type (void)
+picman_dock_container_interface_get_type (void)
 {
   static GType iface_type = 0;
 
@@ -39,13 +39,13 @@ gimp_dock_container_interface_get_type (void)
     {
       const GTypeInfo iface_info =
       {
-        sizeof (GimpDockContainerInterface),
-        (GBaseInitFunc)     gimp_dock_container_iface_base_init,
+        sizeof (PicmanDockContainerInterface),
+        (GBaseInitFunc)     picman_dock_container_iface_base_init,
         (GBaseFinalizeFunc) NULL,
       };
 
       iface_type = g_type_register_static (G_TYPE_INTERFACE,
-                                           "GimpDockContainerInterface",
+                                           "PicmanDockContainerInterface",
                                            &iface_info,
                                            0);
 
@@ -56,7 +56,7 @@ gimp_dock_container_interface_get_type (void)
 }
 
 static void
-gimp_dock_container_iface_base_init (GimpDockContainerInterface *container_iface)
+picman_dock_container_iface_base_init (PicmanDockContainerInterface *container_iface)
 {
   static gboolean initialized = FALSE;
 
@@ -69,20 +69,20 @@ gimp_dock_container_iface_base_init (GimpDockContainerInterface *container_iface
 }
 
 /**
- * gimp_dock_container_get_docks:
- * @container: A #GimpDockContainer
+ * picman_dock_container_get_docks:
+ * @container: A #PicmanDockContainer
  *
- * Returns: A list of #GimpDock:s in the dock container. Free with
+ * Returns: A list of #PicmanDock:s in the dock container. Free with
  *          g_list_free() when done.
  **/
 GList *
-gimp_dock_container_get_docks (GimpDockContainer *container)
+picman_dock_container_get_docks (PicmanDockContainer *container)
 {
-  GimpDockContainerInterface *iface;
+  PicmanDockContainerInterface *iface;
 
-  g_return_val_if_fail (GIMP_IS_DOCK_CONTAINER (container), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK_CONTAINER (container), NULL);
 
-  iface = GIMP_DOCK_CONTAINER_GET_INTERFACE (container);
+  iface = PICMAN_DOCK_CONTAINER_GET_INTERFACE (container);
 
   if (iface->get_docks)
     return iface->get_docks (container);
@@ -91,19 +91,19 @@ gimp_dock_container_get_docks (GimpDockContainer *container)
 }
 
 /**
- * gimp_dock_container_get_ui_manager:
- * @container: A #GimpDockContainer
+ * picman_dock_container_get_ui_manager:
+ * @container: A #PicmanDockContainer
  *
- * Returns: The #GimpUIManager of the #GimpDockContainer
+ * Returns: The #PicmanUIManager of the #PicmanDockContainer
  **/
-GimpUIManager *
-gimp_dock_container_get_ui_manager (GimpDockContainer *container)
+PicmanUIManager *
+picman_dock_container_get_ui_manager (PicmanDockContainer *container)
 {
-  GimpDockContainerInterface *iface;
+  PicmanDockContainerInterface *iface;
 
-  g_return_val_if_fail (GIMP_IS_DOCK_CONTAINER (container), NULL);
+  g_return_val_if_fail (PICMAN_IS_DOCK_CONTAINER (container), NULL);
 
-  iface = GIMP_DOCK_CONTAINER_GET_INTERFACE (container);
+  iface = PICMAN_DOCK_CONTAINER_GET_INTERFACE (container);
 
   if (iface->get_ui_manager)
     return iface->get_ui_manager (container);
@@ -112,23 +112,23 @@ gimp_dock_container_get_ui_manager (GimpDockContainer *container)
 }
 
 /**
- * gimp_dock_container_add_dock:
- * @container: A #GimpDockContainer
- * @dock:      The newly created #GimpDock to add to the container.
- * @dock_info: The #GimpSessionInfoDock the @dock was created from.
+ * picman_dock_container_add_dock:
+ * @container: A #PicmanDockContainer
+ * @dock:      The newly created #PicmanDock to add to the container.
+ * @dock_info: The #PicmanSessionInfoDock the @dock was created from.
  *
  * Add @dock that was created from @dock_info to @container.
  **/
 void
-gimp_dock_container_add_dock (GimpDockContainer   *container,
-                              GimpDock            *dock,
-                              GimpSessionInfoDock *dock_info)
+picman_dock_container_add_dock (PicmanDockContainer   *container,
+                              PicmanDock            *dock,
+                              PicmanSessionInfoDock *dock_info)
 {
-  GimpDockContainerInterface *iface;
+  PicmanDockContainerInterface *iface;
 
-  g_return_if_fail (GIMP_IS_DOCK_CONTAINER (container));
+  g_return_if_fail (PICMAN_IS_DOCK_CONTAINER (container));
 
-  iface = GIMP_DOCK_CONTAINER_GET_INTERFACE (container);
+  iface = PICMAN_DOCK_CONTAINER_GET_INTERFACE (container);
 
   if (iface->add_dock)
     iface->add_dock (container,
@@ -137,23 +137,23 @@ gimp_dock_container_add_dock (GimpDockContainer   *container,
 }
 
 /**
- * gimp_dock_container_get_dock_side:
- * @container: A #GimpDockContainer
- * @dock:      A #GimpDock
+ * picman_dock_container_get_dock_side:
+ * @container: A #PicmanDockContainer
+ * @dock:      A #PicmanDock
  *
  * Returns: What side @dock is in in @container, either
- *          GIMP_ALIGN_LEFT or GIMP_ALIGN_RIGHT, or -1 if the side
+ *          PICMAN_ALIGN_LEFT or PICMAN_ALIGN_RIGHT, or -1 if the side
  *          concept is not applicable.
  **/
-GimpAlignmentType
-gimp_dock_container_get_dock_side (GimpDockContainer   *container,
-                                   GimpDock            *dock)
+PicmanAlignmentType
+picman_dock_container_get_dock_side (PicmanDockContainer   *container,
+                                   PicmanDock            *dock)
 {
-  GimpDockContainerInterface *iface;
+  PicmanDockContainerInterface *iface;
 
-  g_return_val_if_fail (GIMP_IS_DOCK_CONTAINER (container), -1);
+  g_return_val_if_fail (PICMAN_IS_DOCK_CONTAINER (container), -1);
 
-  iface = GIMP_DOCK_CONTAINER_GET_INTERFACE (container);
+  iface = PICMAN_DOCK_CONTAINER_GET_INTERFACE (container);
 
   if (iface->get_dock_side)
     return iface->get_dock_side (container, dock);

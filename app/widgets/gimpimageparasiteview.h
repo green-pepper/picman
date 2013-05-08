@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpImageParasiteView
- * Copyright (C) 2006  Sven Neumann <sven@gimp.org>
+ * PicmanImageParasiteView
+ * Copyright (C) 2006  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,43 +18,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_PARASITE_VIEW_H__
-#define __GIMP_IMAGE_PARASITE_VIEW_H__
+#ifndef __PICMAN_IMAGE_PARASITE_VIEW_H__
+#define __PICMAN_IMAGE_PARASITE_VIEW_H__
 
 
-#define GIMP_TYPE_IMAGE_PARASITE_VIEW            (gimp_image_parasite_view_get_type ())
-#define GIMP_IMAGE_PARASITE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_IMAGE_PARASITE_VIEW, GimpImageParasiteView))
-#define GIMP_IMAGE_PARASITE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_IMAGE_PARASITE_VIEW, GimpImageParasiteViewClass))
-#define GIMP_IS_IMAGE_PARASITE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_IMAGE_PARASITE_VIEW))
-#define GIMP_IS_IMAGE_PARASITE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_IMAGE_PARASITE_VIEW))
-#define GIMP_IMAGE_PARASITE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_IMAGE_PARASITE_VIEW, GimpImageParasiteViewClass))
+#define PICMAN_TYPE_IMAGE_PARASITE_VIEW            (picman_image_parasite_view_get_type ())
+#define PICMAN_IMAGE_PARASITE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_IMAGE_PARASITE_VIEW, PicmanImageParasiteView))
+#define PICMAN_IMAGE_PARASITE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_IMAGE_PARASITE_VIEW, PicmanImageParasiteViewClass))
+#define PICMAN_IS_IMAGE_PARASITE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_IMAGE_PARASITE_VIEW))
+#define PICMAN_IS_IMAGE_PARASITE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_IMAGE_PARASITE_VIEW))
+#define PICMAN_IMAGE_PARASITE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_IMAGE_PARASITE_VIEW, PicmanImageParasiteViewClass))
 
 
-typedef struct _GimpImageParasiteViewClass GimpImageParasiteViewClass;
+typedef struct _PicmanImageParasiteViewClass PicmanImageParasiteViewClass;
 
-struct _GimpImageParasiteView
+struct _PicmanImageParasiteView
 {
   GtkBox     parent_instance;
 
-  GimpImage *image;
+  PicmanImage *image;
   gchar     *parasite;
 };
 
-struct _GimpImageParasiteViewClass
+struct _PicmanImageParasiteViewClass
 {
   GtkBoxClass  parent_class;
 
   /*  signals  */
-  void (* update) (GimpImageParasiteView *view);
+  void (* update) (PicmanImageParasiteView *view);
 };
 
 
-GType                gimp_image_parasite_view_get_type     (void) G_GNUC_CONST;
+GType                picman_image_parasite_view_get_type     (void) G_GNUC_CONST;
 
-GtkWidget          * gimp_image_parasite_view_new          (GimpImage   *image,
+GtkWidget          * picman_image_parasite_view_new          (PicmanImage   *image,
                                                             const gchar *parasite);
-GimpImage          * gimp_image_parasite_view_get_image    (GimpImageParasiteView *view);
-const GimpParasite * gimp_image_parasite_view_get_parasite (GimpImageParasiteView *view);
+PicmanImage          * picman_image_parasite_view_get_image    (PicmanImageParasiteView *view);
+const PicmanParasite * picman_image_parasite_view_get_parasite (PicmanImageParasiteView *view);
 
 
-#endif /*  __GIMP_IMAGE_PARASITE_VIEW_H__  */
+#endif /*  __PICMAN_IMAGE_PARASITE_VIEW_H__  */

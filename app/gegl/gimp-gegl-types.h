@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-gegl-types.h
+ * picman-gegl-types.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,18 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GEGL_TYPES_H__
-#define __GIMP_GEGL_TYPES_H__
+#ifndef __PICMAN_GEGL_TYPES_H__
+#define __PICMAN_GEGL_TYPES_H__
 
 
 #include "core/core-types.h"
 
-#include "gegl/gimp-gegl-enums.h"
+#include "gegl/picman-gegl-enums.h"
 
 #include "operations/operations-types.h"
 
 
-typedef struct _GimpApplicator GimpApplicator;
+typedef struct _PicmanApplicator PicmanApplicator;
 
 
-#endif /* __GIMP_GEGL_TYPES_H__ */
+#endif /* __PICMAN_GEGL_TYPES_H__ */

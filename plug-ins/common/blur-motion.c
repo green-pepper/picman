@@ -1,10 +1,10 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * Motion Blur plug-in for GIMP 0.99
+ * Motion Blur plug-in for PICMAN 0.99
  * Copyright (C) 1997 Daniel Skarda (0rfelyus@atrey.karlin.mff.cuni.cz)
  *
- * This plug-in is port of Motion Blur plug-in for GIMP 0.54 by
+ * This plug-in is port of Motion Blur plug-in for PICMAN 0.54 by
  * Thorsten Martinsen
  *      Copyright (C) 1996 Torsten Martinsen <torsten@danbbs.dk>
  *      Bresenham algorithm stuff hacked from HP2xx written by
@@ -35,16 +35,16 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC         "plug-in-mblur"
 #define PLUG_IN_PROC_INWARD  "plug-in-mblur-inward"
 #define PLUG_IN_BINARY       "blur-motion"
-#define PLUG_IN_ROLE         "gimp-blur-motion"
+#define PLUG_IN_ROLE         "picman-blur-motion"
 #define PLUG_IN_VERSION      "May 2007, 1.3"
 
 
@@ -76,37 +76,37 @@ typedef struct
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparams,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 
-static void      mblur        (GimpDrawable *drawable,
-                               GimpPreview  *preview);
-static void      mblur_linear (GimpDrawable *drawable,
-                               GimpPreview  *preview,
+static void      mblur        (PicmanDrawable *drawable,
+                               PicmanPreview  *preview);
+static void      mblur_linear (PicmanDrawable *drawable,
+                               PicmanPreview  *preview,
                                gint          x1,
                                gint          y1,
                                gint          width,
                                gint          height);
-static void      mblur_radial (GimpDrawable *drawable,
-                               GimpPreview  *preview,
+static void      mblur_radial (PicmanDrawable *drawable,
+                               PicmanPreview  *preview,
                                gint          x1,
                                gint          y1,
                                gint          width,
                                gint          height);
-static void      mblur_zoom   (GimpDrawable *drawable,
-                               GimpPreview  *preview,
+static void      mblur_zoom   (PicmanDrawable *drawable,
+                               PicmanPreview  *preview,
                                gint          x1,
                                gint          y1,
                                gint          width,
                                gint          height);
 
 static gboolean  mblur_dialog (gint32        image_ID,
-                               GimpDrawable *drawable);
+                               PicmanDrawable *drawable);
 
 /***** Variables *****/
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -141,19 +141,19 @@ MAIN()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",     "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",  "Input drawable" },
-    { GIMP_PDB_INT32,    "type",      "Type of motion blur { LINEAR (0), RADIAL (1), ZOOM (2) }" },
-    { GIMP_PDB_INT32,    "length",    "Length" },
-    { GIMP_PDB_INT32,    "angle",     "Angle" },
-    { GIMP_PDB_FLOAT,    "center-x",  "Center X (optional)" },
-    { GIMP_PDB_FLOAT,    "center-y",  "Center Y (optional)" },
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",     "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "Input drawable" },
+    { PICMAN_PDB_INT32,    "type",      "Type of motion blur { LINEAR (0), RADIAL (1), ZOOM (2) }" },
+    { PICMAN_PDB_INT32,    "length",    "Length" },
+    { PICMAN_PDB_INT32,    "angle",     "Angle" },
+    { PICMAN_PDB_FLOAT,    "center-x",  "Center X (optional)" },
+    { PICMAN_PDB_FLOAT,    "center-y",  "Center Y (optional)" },
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Simulate movement using directional blur"),
                           "This plug-in simulates the effect seen when "
                           "photographing a moving object at a slow shutter "
@@ -163,11 +163,11 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("_Motion Blur..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_install_procedure (PLUG_IN_PROC_INWARD,
+  picman_install_procedure (PLUG_IN_PROC_INWARD,
                           N_("Simulate movement using directional blur"),
                           "This procedure is equivalent to plug-in-mblur but "
                           "performs the zoom blur inward instead of outward.",
@@ -176,65 +176,65 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("_Motion Blur..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Blur");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Blur");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status;
-  GimpDrawable      *drawable;
+  static PicmanParam   values[1];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status;
+  PicmanDrawable      *drawable;
   gint               x1, y1, x2, y2;
 
   INIT_I18N ();
 
-  status   = GIMP_PDB_SUCCESS;
+  status   = PICMAN_PDB_SUCCESS;
   run_mode = param[0].data.d_int32;
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /* Get the active drawable info */
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
-  img_width  = gimp_drawable_width (drawable->drawable_id);
-  img_height = gimp_drawable_height (drawable->drawable_id);
-  img_bpp    = gimp_drawable_bpp (drawable->drawable_id);
+  img_width  = picman_drawable_width (drawable->drawable_id);
+  img_height = picman_drawable_height (drawable->drawable_id);
+  img_bpp    = picman_drawable_bpp (drawable->drawable_id);
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
 
   mbvals.center_x = (gdouble) (x1 + x2 - 1) / 2.0;
   mbvals.center_y = (gdouble) (y1 + y2 - 1) / 2.0;
 
   /* Set the tile cache size */
-  gimp_tile_cache_ntiles (2 * drawable->ntile_cols);
+  picman_tile_cache_ntiles (2 * drawable->ntile_cols);
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /* Possibly retrieve data */
-      gimp_get_data (PLUG_IN_PROC, &mbvals);
+      picman_get_data (PLUG_IN_PROC, &mbvals);
 
       /* Get information from the dialog */
       if (! mblur_dialog (param[1].data.d_image, drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (strcmp (name, PLUG_IN_PROC_INWARD) == 0)
         mbvals.blur_outward = FALSE;
 
@@ -245,10 +245,10 @@ run (const gchar      *name,
         }
       else if (nparams != 6)
         {
-          status = GIMP_PDB_CALLING_ERROR;
+          status = PICMAN_PDB_CALLING_ERROR;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           mbvals.mblur_type = param[3].data.d_int32;
           mbvals.length     = param[4].data.d_int32;
@@ -256,12 +256,12 @@ run (const gchar      *name,
         }
 
     if ((mbvals.mblur_type < 0) || (mbvals.mblur_type > MBLUR_MAX))
-      status= GIMP_PDB_CALLING_ERROR;
+      status= PICMAN_PDB_CALLING_ERROR;
     break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /* Possibly retrieve data */
-      gimp_get_data (PLUG_IN_PROC, &mbvals);
+      picman_get_data (PLUG_IN_PROC, &mbvals);
       break;
 
     default:
@@ -270,43 +270,43 @@ run (const gchar      *name,
 
   /* Blur the image */
 
-  if ((status == GIMP_PDB_SUCCESS) &&
-      (gimp_drawable_is_rgb(drawable->drawable_id) ||
-       gimp_drawable_is_gray(drawable->drawable_id)))
+  if ((status == PICMAN_PDB_SUCCESS) &&
+      (picman_drawable_is_rgb(drawable->drawable_id) ||
+       picman_drawable_is_gray(drawable->drawable_id)))
     {
 
       /* Run! */
-      has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+      has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
       mblur (drawable, NULL);
 
       /* If run mode is interactive, flush displays */
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
       /* Store data */
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &mbvals, sizeof (mblur_vals_t));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &mbvals, sizeof (mblur_vals_t));
     }
-  else if (status == GIMP_PDB_SUCCESS)
-    status = GIMP_PDB_EXECUTION_ERROR;
+  else if (status == PICMAN_PDB_SUCCESS)
+    status = PICMAN_PDB_EXECUTION_ERROR;
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static void
-mblur_linear (GimpDrawable *drawable,
-              GimpPreview  *preview,
+mblur_linear (PicmanDrawable *drawable,
+              PicmanPreview  *preview,
               gint          x1,
               gint          y1,
               gint          width,
               gint          height)
 {
-  GimpPixelRgn      dest_rgn;
-  GimpPixelFetcher *pft;
+  PicmanPixelRgn      dest_rgn;
+  PicmanPixelFetcher *pft;
   gpointer          pr;
-  GimpRGB           background;
+  PicmanRGB           background;
 
   guchar *dest;
   guchar *d;
@@ -317,13 +317,13 @@ mblur_linear (GimpDrawable *drawable,
   gint    x, y, i, n;
   gint    dx, dy, px, py, swapdir, err, e, s1, s2;
 
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        x1, y1, width, height, (preview == NULL), TRUE);
 
-  pft = gimp_pixel_fetcher_new (drawable, FALSE);
+  pft = picman_pixel_fetcher_new (drawable, FALSE);
 
-  gimp_context_get_background (&background);
-  gimp_pixel_fetcher_set_bg_color (pft, &background);
+  picman_context_get_background (&background);
+  picman_pixel_fetcher_set_bg_color (pft, &background);
 
   progress     = 0;
   max_progress = width * height;
@@ -377,9 +377,9 @@ mblur_linear (GimpDrawable *drawable,
   err = dy - dx;        /* Initial error term   */
   dx *= 2;
 
-  for (pr = gimp_pixel_rgns_register (1, &dest_rgn), p = 0;
+  for (pr = picman_pixel_rgns_register (1, &dest_rgn), p = 0;
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr), p++)
+       pr = picman_pixel_rgns_process (pr), p++)
     {
       dest = dest_rgn.data;
 
@@ -400,7 +400,7 @@ mblur_linear (GimpDrawable *drawable,
 
               for (i = 0; i < n; )
                 {
-                  gimp_pixel_fetcher_get_pixel (pft, xx, yy, pixel);
+                  picman_pixel_fetcher_get_pixel (pft, xx, yy, pixel);
 
                   if (has_alpha)
                     {
@@ -440,7 +440,7 @@ mblur_linear (GimpDrawable *drawable,
 
               if (i == 0)
                 {
-                  gimp_pixel_fetcher_get_pixel (pft, xx, yy, d);
+                  picman_pixel_fetcher_get_pixel (pft, xx, yy, d);
                 }
               else
                 {
@@ -469,7 +469,7 @@ mblur_linear (GimpDrawable *drawable,
 
       if (preview)
         {
-          gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview),
+          picman_drawable_preview_draw_region (PICMAN_DRAWABLE_PREVIEW (preview),
                                              &dest_rgn);
         }
       else
@@ -477,26 +477,26 @@ mblur_linear (GimpDrawable *drawable,
           progress += dest_rgn.w * dest_rgn.h;
 
           if ((p % 8) == 0)
-            gimp_progress_update ((gdouble) progress / max_progress);
+            picman_progress_update ((gdouble) progress / max_progress);
         }
     }
 
-  gimp_pixel_fetcher_destroy (pft);
+  picman_pixel_fetcher_destroy (pft);
 }
 
 
 static void
-mblur_radial (GimpDrawable *drawable,
-              GimpPreview  *preview,
+mblur_radial (PicmanDrawable *drawable,
+              PicmanPreview  *preview,
               gint          x1,
               gint          y1,
               gint          width,
               gint          height)
 {
-  GimpPixelRgn      dest_rgn;
-  GimpPixelFetcher *pft;
+  PicmanPixelRgn      dest_rgn;
+  PicmanPixelFetcher *pft;
   gpointer          pr;
-  GimpRGB           background;
+  PicmanRGB           background;
 
   gdouble   center_x;
   gdouble   center_y;
@@ -518,22 +518,22 @@ mblur_radial (GimpDrawable *drawable,
   center_x = mbvals.center_x;
   center_y = mbvals.center_y;
 
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        x1, y1, width, height, (preview == NULL), TRUE);
 
-  pft = gimp_pixel_fetcher_new (drawable, FALSE);
+  pft = picman_pixel_fetcher_new (drawable, FALSE);
 
-  gimp_context_get_background (&background);
-  gimp_pixel_fetcher_set_bg_color (pft, &background);
+  picman_context_get_background (&background);
+  picman_pixel_fetcher_set_bg_color (pft, &background);
 
   progress     = 0;
   max_progress = width * height;
 
-  angle = gimp_deg_to_rad (mbvals.angle);
+  angle = picman_deg_to_rad (mbvals.angle);
 
-  for (pr = gimp_pixel_rgns_register (1, &dest_rgn), p = 0;
+  for (pr = picman_pixel_rgns_register (1, &dest_rgn), p = 0;
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr), p++)
+       pr = picman_pixel_rgns_process (pr), p++)
     {
       dest = dest_rgn.data;
 
@@ -554,7 +554,7 @@ mblur_radial (GimpDrawable *drawable,
 
               if (angle == 0.0)
                 {
-                  gimp_pixel_fetcher_get_pixel (pft, x, y, d);
+                  picman_pixel_fetcher_get_pixel (pft, x, y, d);
                   d += dest_rgn.bpp;
                   continue;
                 }
@@ -611,10 +611,10 @@ mblur_radial (GimpDrawable *drawable,
                       dx = xx - floor (xx);
                       dy = yy - floor (yy);
 
-                      gimp_pixel_fetcher_get_pixel (pft, xx,   yy,   p1);
-                      gimp_pixel_fetcher_get_pixel (pft, xx+1, yy,   p2);
-                      gimp_pixel_fetcher_get_pixel (pft, xx,   yy+1, p3);
-                      gimp_pixel_fetcher_get_pixel (pft, xx+1, yy+1, p4);
+                      picman_pixel_fetcher_get_pixel (pft, xx,   yy,   p1);
+                      picman_pixel_fetcher_get_pixel (pft, xx+1, yy,   p2);
+                      picman_pixel_fetcher_get_pixel (pft, xx,   yy+1, p3);
+                      picman_pixel_fetcher_get_pixel (pft, xx+1, yy+1, p4);
 
                       for (c = 0; c < img_bpp; c++)
                         {
@@ -626,7 +626,7 @@ mblur_radial (GimpDrawable *drawable,
                     }
                   else
                     {
-                      gimp_pixel_fetcher_get_pixel (pft, xx+.5, yy+.5, pixel);
+                      picman_pixel_fetcher_get_pixel (pft, xx+.5, yy+.5, pixel);
                     }
 
                   if (has_alpha)
@@ -647,7 +647,7 @@ mblur_radial (GimpDrawable *drawable,
 
               if (count == 0)
                 {
-                  gimp_pixel_fetcher_get_pixel (pft, xx, yy, d);
+                  picman_pixel_fetcher_get_pixel (pft, xx, yy, d);
                 }
               else
                 {
@@ -676,7 +676,7 @@ mblur_radial (GimpDrawable *drawable,
 
       if (preview)
         {
-          gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview),
+          picman_drawable_preview_draw_region (PICMAN_DRAWABLE_PREVIEW (preview),
                                              &dest_rgn);
         }
       else
@@ -684,27 +684,27 @@ mblur_radial (GimpDrawable *drawable,
           progress += dest_rgn.w * dest_rgn.h;
 
           if ((p % 8) == 0)
-            gimp_progress_update ((gdouble) progress / max_progress);
+            picman_progress_update ((gdouble) progress / max_progress);
         }
     }
 
-  gimp_pixel_fetcher_destroy (pft);
+  picman_pixel_fetcher_destroy (pft);
 
 }
 
 
 static void
-mblur_zoom (GimpDrawable *drawable,
-            GimpPreview  *preview,
+mblur_zoom (PicmanDrawable *drawable,
+            PicmanPreview  *preview,
             gint          x1,
             gint          y1,
             gint          width,
             gint          height)
 {
-  GimpPixelRgn      dest_rgn;
-  GimpPixelFetcher *pft;
+  PicmanPixelRgn      dest_rgn;
+  PicmanPixelFetcher *pft;
   gpointer          pr;
-  GimpRGB           background;
+  PicmanRGB           background;
 
   gdouble   center_x;
   gdouble   center_y;
@@ -728,16 +728,16 @@ mblur_zoom (GimpDrawable *drawable,
   center_x = mbvals.center_x;
   center_y = mbvals.center_y;
 
-  gimp_drawable_mask_bounds (drawable->drawable_id,
+  picman_drawable_mask_bounds (drawable->drawable_id,
                              &drawable_x1, &drawable_y1,
                              &drawable_x2, &drawable_y2);
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        x1, y1, width, height, (preview == NULL), TRUE);
 
-  pft = gimp_pixel_fetcher_new (drawable, FALSE);
+  pft = picman_pixel_fetcher_new (drawable, FALSE);
 
-  gimp_context_get_background (&background);
-  gimp_pixel_fetcher_set_bg_color (pft, &background);
+  picman_context_get_background (&background);
+  picman_pixel_fetcher_set_bg_color (pft, &background);
 
   progress     = 0;
   max_progress = width * height;
@@ -751,9 +751,9 @@ mblur_zoom (GimpDrawable *drawable,
   n = ((gdouble) n * r / MBLUR_LENGTH_MAX);
   f = (r-n)/r;
 
-  for (pr = gimp_pixel_rgns_register (1, &dest_rgn), p = 0;
+  for (pr = picman_pixel_rgns_register (1, &dest_rgn), p = 0;
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr), p++)
+       pr = picman_pixel_rgns_process (pr), p++)
     {
       dest = dest_rgn.data;
 
@@ -804,10 +804,10 @@ mblur_zoom (GimpDrawable *drawable,
                       dx = xx - floor (xx);
                       dy = yy - floor (yy);
 
-                      gimp_pixel_fetcher_get_pixel (pft, xx,   yy,   p1);
-                      gimp_pixel_fetcher_get_pixel (pft, xx+1, yy,   p2);
-                      gimp_pixel_fetcher_get_pixel (pft, xx,   yy+1, p3);
-                      gimp_pixel_fetcher_get_pixel (pft, xx+1, yy+1, p4);
+                      picman_pixel_fetcher_get_pixel (pft, xx,   yy,   p1);
+                      picman_pixel_fetcher_get_pixel (pft, xx+1, yy,   p2);
+                      picman_pixel_fetcher_get_pixel (pft, xx,   yy+1, p3);
+                      picman_pixel_fetcher_get_pixel (pft, xx+1, yy+1, p4);
 
                       for (c = 0; c < img_bpp; c++)
                         {
@@ -819,7 +819,7 @@ mblur_zoom (GimpDrawable *drawable,
                     }
                   else
                     {
-                      gimp_pixel_fetcher_get_pixel (pft, xx+.5, yy+.5, pixel);
+                      picman_pixel_fetcher_get_pixel (pft, xx+.5, yy+.5, pixel);
                     }
 
                   if (has_alpha)
@@ -843,7 +843,7 @@ mblur_zoom (GimpDrawable *drawable,
 
               if (i == 0)
                 {
-                  gimp_pixel_fetcher_get_pixel (pft, xx, yy, d);
+                  picman_pixel_fetcher_get_pixel (pft, xx, yy, d);
                 }
               else
                 {
@@ -872,7 +872,7 @@ mblur_zoom (GimpDrawable *drawable,
 
       if (preview)
         {
-          gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview),
+          picman_drawable_preview_draw_region (PICMAN_DRAWABLE_PREVIEW (preview),
                                              &dest_rgn);
         }
       else
@@ -880,33 +880,33 @@ mblur_zoom (GimpDrawable *drawable,
           progress += dest_rgn.w * dest_rgn.h;
 
           if ((p % 8) == 0)
-            gimp_progress_update ((gdouble) progress / max_progress);
+            picman_progress_update ((gdouble) progress / max_progress);
         }
     }
 
-  gimp_pixel_fetcher_destroy (pft);
+  picman_pixel_fetcher_destroy (pft);
 }
 
 static void
-mblur (GimpDrawable *drawable,
-       GimpPreview  *preview)
+mblur (PicmanDrawable *drawable,
+       PicmanPreview  *preview)
 {
   gint x, y;
   gint width, height;
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x, &y);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x, &y);
+      picman_preview_get_size (preview, &width, &height);
     }
-  else if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  else if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                            &x, &y, &width, &height))
     {
       return;
     }
 
   if (! preview)
-    gimp_progress_init (_("Motion blurring"));
+    picman_progress_init (_("Motion blurring"));
 
   switch (mbvals.mblur_type)
     {
@@ -928,11 +928,11 @@ mblur (GimpDrawable *drawable,
 
   if (! preview)
     {
-      gimp_progress_update (1.0);
+      picman_progress_update (1.0);
 
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x, y, width, height);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x, y, width, height);
     }
 }
 
@@ -949,22 +949,22 @@ mblur_set_sensitivity (void)
   switch (mbvals.mblur_type)
     {
     case MBLUR_LINEAR:
-      gimp_scale_entry_set_sensitive (length, TRUE);
-      gimp_scale_entry_set_sensitive (angle, TRUE);
+      picman_scale_entry_set_sensitive (length, TRUE);
+      picman_scale_entry_set_sensitive (angle, TRUE);
       gtk_widget_set_sensitive (center, FALSE);
       gtk_widget_set_sensitive (dir_button, FALSE);
       break;
 
     case MBLUR_RADIAL:
-      gimp_scale_entry_set_sensitive (length, FALSE);
-      gimp_scale_entry_set_sensitive (angle, TRUE);
+      picman_scale_entry_set_sensitive (length, FALSE);
+      picman_scale_entry_set_sensitive (angle, TRUE);
       gtk_widget_set_sensitive (center, TRUE);
       gtk_widget_set_sensitive (dir_button, FALSE);
       break;
 
     case MBLUR_ZOOM:
-      gimp_scale_entry_set_sensitive (length, TRUE);
-      gimp_scale_entry_set_sensitive (angle, FALSE);
+      picman_scale_entry_set_sensitive (length, TRUE);
+      picman_scale_entry_set_sensitive (angle, FALSE);
       gtk_widget_set_sensitive (center, TRUE);
       gtk_widget_set_sensitive (dir_button, TRUE);
       break;
@@ -978,21 +978,21 @@ static void
 mblur_radio_button_update (GtkWidget *widget,
                            gpointer   data)
 {
-  gimp_radio_button_update (widget, data);
+  picman_radio_button_update (widget, data);
   mblur_set_sensitivity ();
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }
 
 static void
-mblur_center_update (GimpSizeEntry *entry)
+mblur_center_update (PicmanSizeEntry *entry)
 {
-  mbvals.center_x = gimp_size_entry_get_refval (entry, 0);
-  mbvals.center_y = gimp_size_entry_get_refval (entry, 1);
+  mbvals.center_x = picman_size_entry_get_refval (entry, 0);
+  mbvals.center_y = picman_size_entry_get_refval (entry, 1);
 }
 
 static gboolean
 mblur_dialog (gint32        image_ID,
-              GimpDrawable *drawable)
+              PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -1007,11 +1007,11 @@ mblur_dialog (gint32        image_ID,
   gdouble    xres, yres;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Motion Blur"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Motion Blur"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -1023,7 +1023,7 @@ mblur_dialog (gint32        image_ID,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -1031,7 +1031,7 @@ mblur_dialog (gint32        image_ID,
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -1043,7 +1043,7 @@ mblur_dialog (gint32        image_ID,
   gtk_box_pack_start (GTK_BOX (main_vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Blur Type"),
+  frame = picman_int_radio_group_new (TRUE, _("Blur Type"),
                                     G_CALLBACK (mblur_radio_button_update),
                                     &mbvals.mblur_type, mbvals.mblur_type,
 
@@ -1056,7 +1056,7 @@ mblur_dialog (gint32        image_ID,
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
-  center = gimp_frame_new (_("Blur Center"));
+  center = picman_frame_new (_("Blur Center"));
   gtk_box_pack_start (GTK_BOX (hbox), center, FALSE, FALSE, 0);
   gtk_widget_show (center);
 
@@ -1064,12 +1064,12 @@ mblur_dialog (gint32        image_ID,
   gtk_container_add (GTK_CONTAINER (center), vbox);
   gtk_widget_show (vbox);
 
-  gimp_image_get_resolution (image_ID, &xres, &yres);
+  picman_image_get_resolution (image_ID, &xres, &yres);
 
-  entry = gimp_size_entry_new (1,
-                               GIMP_UNIT_PIXEL, "%a",
+  entry = picman_size_entry_new (1,
+                               PICMAN_UNIT_PIXEL, "%a",
                                TRUE, FALSE, FALSE, 5,
-                               GIMP_SIZE_ENTRY_UPDATE_SIZE);
+                               PICMAN_SIZE_ENTRY_UPDATE_SIZE);
   gtk_table_set_row_spacings (GTK_TABLE (entry), 2);
   gtk_table_set_col_spacing (GTK_TABLE (entry), 0, 6);
   gtk_table_set_col_spacing (GTK_TABLE (entry), 2, 6);
@@ -1080,23 +1080,23 @@ mblur_dialog (gint32        image_ID,
                     G_CALLBACK (mblur_center_update),
                     NULL);
   g_signal_connect_swapped (entry, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  spinbutton = gimp_spin_button_new (&adj, 1, 0, 1, 1, 10, 0, 1, 2);
-  gimp_size_entry_add_field (GIMP_SIZE_ENTRY (entry),
+  spinbutton = picman_spin_button_new (&adj, 1, 0, 1, 1, 10, 0, 1, 2);
+  picman_size_entry_add_field (PICMAN_SIZE_ENTRY (entry),
                              GTK_SPIN_BUTTON (spinbutton), NULL);
   gtk_table_attach_defaults (GTK_TABLE (entry), spinbutton, 1, 2, 0, 1);
   gtk_widget_show (spinbutton);
 
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (entry), 0, xres, TRUE);
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (entry), 0, mbvals.center_x);
-  gimp_size_entry_attach_label (GIMP_SIZE_ENTRY (entry),
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (entry), 0, xres, TRUE);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (entry), 0, mbvals.center_x);
+  picman_size_entry_attach_label (PICMAN_SIZE_ENTRY (entry),
                                 _("_X:"), 0, 0, 0.0);
 
-  gimp_size_entry_set_resolution (GIMP_SIZE_ENTRY (entry), 1, yres, TRUE);
-  gimp_size_entry_set_refval (GIMP_SIZE_ENTRY (entry), 1, mbvals.center_y);
-  gimp_size_entry_attach_label (GIMP_SIZE_ENTRY (entry),
+  picman_size_entry_set_resolution (PICMAN_SIZE_ENTRY (entry), 1, yres, TRUE);
+  picman_size_entry_set_refval (PICMAN_SIZE_ENTRY (entry), 1, mbvals.center_y);
+  picman_size_entry_attach_label (PICMAN_SIZE_ENTRY (entry),
                                 _("_Y:"), 1, 0, 0.0);
 
   button = gtk_check_button_new_with_mnemonic (_("Blur _outward"));
@@ -1105,14 +1105,14 @@ mblur_dialog (gint32        image_ID,
   gtk_box_pack_start (GTK_BOX (main_vbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
   g_signal_connect (button, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &mbvals.blur_outward);
   g_signal_connect_swapped (button, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   dir_button = button;
 
-  frame = gimp_frame_new (_("Blur Parameters"));
+  frame = picman_frame_new (_("Blur Parameters"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -1122,37 +1122,37 @@ mblur_dialog (gint32        image_ID,
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  length = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  length = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                  _("L_ength:"), 150, 3,
                                  mbvals.length, 1.0, MBLUR_LENGTH_MAX, 1.0, 8.0, 0,
                                  TRUE, 0, 0,
                                  NULL, NULL);
 
   g_signal_connect (length, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &mbvals.length);
   g_signal_connect_swapped (length, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  angle = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  angle = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                                 _("_Angle:"), 150, 3,
                                 mbvals.angle, 0.0, 360.0, 1.0, 15.0, 0,
                                 TRUE, 0, 0,
                                 NULL, NULL);
 
   g_signal_connect (angle, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &mbvals.angle);
   g_signal_connect_swapped (angle, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   mblur_set_sensitivity ();
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

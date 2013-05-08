@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,59 +22,59 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpbuffer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-new.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimplayer.h"
-#include "core/gimplayermask.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmanbuffer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-new.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanlayer.h"
+#include "core/picmanlayermask.h"
+#include "core/picmantoolinfo.h"
 
 #include "file/file-open.h"
 #include "file/file-utils.h"
 
-#include "gimpdnd.h"
-#include "gimptoolbox.h"
-#include "gimptoolbox-dnd.h"
+#include "picmandnd.h"
+#include "picmantoolbox.h"
+#include "picmantoolbox-dnd.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   gimp_toolbox_drop_uri_list  (GtkWidget       *widget,
+static void   picman_toolbox_drop_uri_list  (GtkWidget       *widget,
                                            gint             x,
                                            gint             y,
                                            GList           *uri_list,
                                            gpointer         data);
-static void   gimp_toolbox_drop_drawable  (GtkWidget       *widget,
+static void   picman_toolbox_drop_drawable  (GtkWidget       *widget,
                                            gint             x,
                                            gint             y,
-                                           GimpViewable    *viewable,
+                                           PicmanViewable    *viewable,
                                            gpointer         data);
-static void   gimp_toolbox_drop_tool      (GtkWidget       *widget,
+static void   picman_toolbox_drop_tool      (GtkWidget       *widget,
                                            gint             x,
                                            gint             y,
-                                           GimpViewable    *viewable,
+                                           PicmanViewable    *viewable,
                                            gpointer         data);
-static void   gimp_toolbox_drop_buffer    (GtkWidget       *widget,
+static void   picman_toolbox_drop_buffer    (GtkWidget       *widget,
                                            gint             x,
                                            gint             y,
-                                           GimpViewable    *viewable,
+                                           PicmanViewable    *viewable,
                                            gpointer         data);
-static void   gimp_toolbox_drop_component (GtkWidget       *widget,
+static void   picman_toolbox_drop_component (GtkWidget       *widget,
                                            gint             x,
                                            gint             y,
-                                           GimpImage       *image,
-                                           GimpChannelType  component,
+                                           PicmanImage       *image,
+                                           PicmanChannelType  component,
                                            gpointer         data);
-static void   gimp_toolbox_drop_pixbuf    (GtkWidget       *widget,
+static void   picman_toolbox_drop_pixbuf    (GtkWidget       *widget,
                                            gint             x,
                                            gint             y,
                                            GdkPixbuf       *pixbuf,
@@ -84,15 +84,15 @@ static void   gimp_toolbox_drop_pixbuf    (GtkWidget       *widget,
 /*  public functions  */
 
 void
-gimp_toolbox_dnd_init (GimpToolbox *toolbox,
+picman_toolbox_dnd_init (PicmanToolbox *toolbox,
                        GtkWidget   *vbox)
 {
-  GimpContext *context = NULL;
+  PicmanContext *context = NULL;
 
-  g_return_if_fail (GIMP_IS_TOOLBOX (toolbox));
+  g_return_if_fail (PICMAN_IS_TOOLBOX (toolbox));
   g_return_if_fail (GTK_IS_BOX (vbox));
 
-  context = gimp_toolbox_get_context (toolbox);
+  context = picman_toolbox_get_context (toolbox);
 
   /* Before caling any dnd helper functions, setup the drag
    * destination manually since we want to handle all drag events
@@ -103,34 +103,34 @@ gimp_toolbox_dnd_init (GimpToolbox *toolbox,
                      0, NULL, 0,
                      GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
-  gimp_dnd_viewable_dest_add  (vbox,
-                               GIMP_TYPE_LAYER,
-                               gimp_toolbox_drop_drawable,
+  picman_dnd_viewable_dest_add  (vbox,
+                               PICMAN_TYPE_LAYER,
+                               picman_toolbox_drop_drawable,
                                context);
-  gimp_dnd_viewable_dest_add  (vbox,
-                               GIMP_TYPE_LAYER_MASK,
-                               gimp_toolbox_drop_drawable,
+  picman_dnd_viewable_dest_add  (vbox,
+                               PICMAN_TYPE_LAYER_MASK,
+                               picman_toolbox_drop_drawable,
                                context);
-  gimp_dnd_viewable_dest_add  (vbox,
-                               GIMP_TYPE_CHANNEL,
-                               gimp_toolbox_drop_drawable,
+  picman_dnd_viewable_dest_add  (vbox,
+                               PICMAN_TYPE_CHANNEL,
+                               picman_toolbox_drop_drawable,
                                context);
-  gimp_dnd_viewable_dest_add  (vbox,
-                               GIMP_TYPE_TOOL_INFO,
-                               gimp_toolbox_drop_tool,
+  picman_dnd_viewable_dest_add  (vbox,
+                               PICMAN_TYPE_TOOL_INFO,
+                               picman_toolbox_drop_tool,
                                context);
-  gimp_dnd_viewable_dest_add  (vbox,
-                               GIMP_TYPE_BUFFER,
-                               gimp_toolbox_drop_buffer,
+  picman_dnd_viewable_dest_add  (vbox,
+                               PICMAN_TYPE_BUFFER,
+                               picman_toolbox_drop_buffer,
                                context);
-  gimp_dnd_component_dest_add (vbox,
-                               gimp_toolbox_drop_component,
+  picman_dnd_component_dest_add (vbox,
+                               picman_toolbox_drop_component,
                                context);
-  gimp_dnd_uri_list_dest_add  (vbox,
-                               gimp_toolbox_drop_uri_list,
+  picman_dnd_uri_list_dest_add  (vbox,
+                               picman_toolbox_drop_uri_list,
                                context);
-  gimp_dnd_pixbuf_dest_add    (vbox,
-                               gimp_toolbox_drop_pixbuf,
+  picman_dnd_pixbuf_dest_add    (vbox,
+                               picman_toolbox_drop_pixbuf,
                                context);
 }
 
@@ -138,33 +138,33 @@ gimp_toolbox_dnd_init (GimpToolbox *toolbox,
 /*  private functions  */
 
 static void
-gimp_toolbox_drop_uri_list (GtkWidget *widget,
+picman_toolbox_drop_uri_list (GtkWidget *widget,
                             gint       x,
                             gint       y,
                             GList     *uri_list,
                             gpointer   data)
 {
-  GimpContext *context = GIMP_CONTEXT (data);
+  PicmanContext *context = PICMAN_CONTEXT (data);
   GList       *list;
 
-  if (context->gimp->busy)
+  if (context->picman->busy)
     return;
 
   for (list = uri_list; list; list = g_list_next (list))
     {
       const gchar       *uri   = list->data;
-      GimpImage         *image;
-      GimpPDBStatusType  status;
+      PicmanImage         *image;
+      PicmanPDBStatusType  status;
       GError            *error = NULL;
 
-      image = file_open_with_display (context->gimp, context, NULL,
+      image = file_open_with_display (context->picman, context, NULL,
                                       uri, FALSE, &status, &error);
 
-      if (! image && status != GIMP_PDB_CANCEL)
+      if (! image && status != PICMAN_PDB_CANCEL)
         {
           gchar *filename = file_utils_uri_display_name (uri);
 
-          gimp_message (context->gimp, G_OBJECT (widget), GIMP_MESSAGE_ERROR,
+          picman_message (context->picman, G_OBJECT (widget), PICMAN_MESSAGE_ERROR,
                         _("Opening '%s' failed:\n\n%s"),
                         filename, error->message);
 
@@ -175,93 +175,93 @@ gimp_toolbox_drop_uri_list (GtkWidget *widget,
 }
 
 static void
-gimp_toolbox_drop_drawable (GtkWidget    *widget,
+picman_toolbox_drop_drawable (GtkWidget    *widget,
                             gint          x,
                             gint          y,
-                            GimpViewable *viewable,
+                            PicmanViewable *viewable,
                             gpointer      data)
 {
-  GimpContext *context = GIMP_CONTEXT (data);
-  GimpImage   *new_image;
+  PicmanContext *context = PICMAN_CONTEXT (data);
+  PicmanImage   *new_image;
 
-  if (context->gimp->busy)
+  if (context->picman->busy)
     return;
 
-  new_image = gimp_image_new_from_drawable (context->gimp,
-                                            GIMP_DRAWABLE (viewable));
-  gimp_create_display (context->gimp, new_image, GIMP_UNIT_PIXEL, 1.0);
+  new_image = picman_image_new_from_drawable (context->picman,
+                                            PICMAN_DRAWABLE (viewable));
+  picman_create_display (context->picman, new_image, PICMAN_UNIT_PIXEL, 1.0);
   g_object_unref (new_image);
 }
 
 static void
-gimp_toolbox_drop_tool (GtkWidget    *widget,
+picman_toolbox_drop_tool (GtkWidget    *widget,
                         gint          x,
                         gint          y,
-                        GimpViewable *viewable,
+                        PicmanViewable *viewable,
                         gpointer      data)
 {
-  GimpContext *context = GIMP_CONTEXT (data);
+  PicmanContext *context = PICMAN_CONTEXT (data);
 
-  if (context->gimp->busy)
+  if (context->picman->busy)
     return;
 
-  gimp_context_set_tool (context, GIMP_TOOL_INFO (viewable));
+  picman_context_set_tool (context, PICMAN_TOOL_INFO (viewable));
 }
 
 static void
-gimp_toolbox_drop_buffer (GtkWidget    *widget,
+picman_toolbox_drop_buffer (GtkWidget    *widget,
                           gint          x,
                           gint          y,
-                          GimpViewable *viewable,
+                          PicmanViewable *viewable,
                           gpointer      data)
 {
-  GimpContext *context = GIMP_CONTEXT (data);
-  GimpImage   *image;
+  PicmanContext *context = PICMAN_CONTEXT (data);
+  PicmanImage   *image;
 
-  if (context->gimp->busy)
+  if (context->picman->busy)
     return;
 
-  image = gimp_image_new_from_buffer (context->gimp, NULL,
-                                      GIMP_BUFFER (viewable));
-  gimp_create_display (image->gimp, image, GIMP_UNIT_PIXEL, 1.0);
+  image = picman_image_new_from_buffer (context->picman, NULL,
+                                      PICMAN_BUFFER (viewable));
+  picman_create_display (image->picman, image, PICMAN_UNIT_PIXEL, 1.0);
   g_object_unref (image);
 }
 
 static void
-gimp_toolbox_drop_component (GtkWidget       *widget,
+picman_toolbox_drop_component (GtkWidget       *widget,
                              gint             x,
                              gint             y,
-                             GimpImage       *image,
-                             GimpChannelType  component,
+                             PicmanImage       *image,
+                             PicmanChannelType  component,
                              gpointer         data)
 {
-  GimpContext *context = GIMP_CONTEXT (data);
-  GimpImage   *new_image;
+  PicmanContext *context = PICMAN_CONTEXT (data);
+  PicmanImage   *new_image;
 
-  if (context->gimp->busy)
+  if (context->picman->busy)
     return;
 
-  new_image = gimp_image_new_from_component (context->gimp,
+  new_image = picman_image_new_from_component (context->picman,
                                              image, component);
-  gimp_create_display (new_image->gimp, new_image, GIMP_UNIT_PIXEL, 1.0);
+  picman_create_display (new_image->picman, new_image, PICMAN_UNIT_PIXEL, 1.0);
   g_object_unref (new_image);
 }
 
 static void
-gimp_toolbox_drop_pixbuf (GtkWidget *widget,
+picman_toolbox_drop_pixbuf (GtkWidget *widget,
                           gint       x,
                           gint       y,
                           GdkPixbuf *pixbuf,
                           gpointer   data)
 {
-  GimpContext   *context = GIMP_CONTEXT (data);
-  GimpImage     *new_image;
+  PicmanContext   *context = PICMAN_CONTEXT (data);
+  PicmanImage     *new_image;
 
-  if (context->gimp->busy)
+  if (context->picman->busy)
     return;
 
-  new_image = gimp_image_new_from_pixbuf (context->gimp, pixbuf,
+  new_image = picman_image_new_from_pixbuf (context->picman, pixbuf,
                                           _("Dropped Buffer"));
-  gimp_create_display (new_image->gimp, new_image, GIMP_UNIT_PIXEL, 1.0);
+  picman_create_display (new_image->picman, new_image, PICMAN_UNIT_PIXEL, 1.0);
   g_object_unref (new_image);
 }

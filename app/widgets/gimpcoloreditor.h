@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcoloreditor.h
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * picmancoloreditor.h
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COLOR_EDITOR_H__
-#define __GIMP_COLOR_EDITOR_H__
+#ifndef __PICMAN_COLOR_EDITOR_H__
+#define __PICMAN_COLOR_EDITOR_H__
 
 
-#include "gimpeditor.h"
+#include "picmaneditor.h"
 
 
-#define GIMP_TYPE_COLOR_EDITOR            (gimp_color_editor_get_type ())
-#define GIMP_COLOR_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLOR_EDITOR, GimpColorEditor))
-#define GIMP_COLOR_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_COLOR_EDITOR, GimpColorEditorClass))
-#define GIMP_IS_COLOR_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLOR_EDITOR))
-#define GIMP_IS_COLOR_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_COLOR_EDITOR))
-#define GIMP_COLOR_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_COLOR_EDITOR, GimpColorEditorClass))
+#define PICMAN_TYPE_COLOR_EDITOR            (picman_color_editor_get_type ())
+#define PICMAN_COLOR_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLOR_EDITOR, PicmanColorEditor))
+#define PICMAN_COLOR_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_COLOR_EDITOR, PicmanColorEditorClass))
+#define PICMAN_IS_COLOR_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLOR_EDITOR))
+#define PICMAN_IS_COLOR_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_COLOR_EDITOR))
+#define PICMAN_COLOR_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_COLOR_EDITOR, PicmanColorEditorClass))
 
 
-typedef struct _GimpColorEditorClass GimpColorEditorClass;
+typedef struct _PicmanColorEditorClass PicmanColorEditorClass;
 
-struct _GimpColorEditor
+struct _PicmanColorEditor
 {
-  GimpEditor   parent_instance;
+  PicmanEditor   parent_instance;
 
-  GimpContext *context;
+  PicmanContext *context;
   gboolean     edit_bg;
 
   GtkWidget   *hbox;
@@ -48,15 +48,15 @@ struct _GimpColorEditor
   GtkWidget   *hex_entry;
 };
 
-struct _GimpColorEditorClass
+struct _PicmanColorEditorClass
 {
-  GimpEditorClass  parent_class;
+  PicmanEditorClass  parent_class;
 };
 
 
-GType       gimp_color_editor_get_type (void) G_GNUC_CONST;
+GType       picman_color_editor_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_color_editor_new      (GimpContext *context);
+GtkWidget * picman_color_editor_new      (PicmanContext *context);
 
 
-#endif /* __GIMP_COLOR_EDITOR_H__ */
+#endif /* __PICMAN_COLOR_EDITOR_H__ */

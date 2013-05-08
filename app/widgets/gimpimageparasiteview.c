@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpImageParasiteView
- * Copyright (C) 2006  Sven Neumann <sven@gimp.org>
+ * PicmanImageParasiteView
+ * Copyright (C) 2006  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,16 +25,16 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
-#include "core/gimpmarshal.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
+#include "core/picmanmarshal.h"
 
-#include "gimpimageparasiteview.h"
+#include "picmanimageparasiteview.h"
 
 
 enum
@@ -51,31 +51,31 @@ enum
 };
 
 
-static void   gimp_image_parasite_view_constructed  (GObject     *object);
-static void   gimp_image_parasite_view_finalize     (GObject     *object);
-static void   gimp_image_parasite_view_set_property (GObject     *object,
+static void   picman_image_parasite_view_constructed  (GObject     *object);
+static void   picman_image_parasite_view_finalize     (GObject     *object);
+static void   picman_image_parasite_view_set_property (GObject     *object,
                                                      guint         property_id,
                                                      const GValue *value,
                                                      GParamSpec   *pspec);
-static void   gimp_image_parasite_view_get_property (GObject     *object,
+static void   picman_image_parasite_view_get_property (GObject     *object,
                                                      guint         property_id,
                                                      GValue       *value,
                                                      GParamSpec   *pspec);
 
-static void   gimp_image_parasite_view_parasite_changed (GimpImageParasiteView *view,
+static void   picman_image_parasite_view_parasite_changed (PicmanImageParasiteView *view,
                                                          const gchar          *name);
-static void   gimp_image_parasite_view_update           (GimpImageParasiteView *view);
+static void   picman_image_parasite_view_update           (PicmanImageParasiteView *view);
 
 
-G_DEFINE_TYPE (GimpImageParasiteView, gimp_image_parasite_view, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanImageParasiteView, picman_image_parasite_view, GTK_TYPE_BOX)
 
-#define parent_class gimp_image_parasite_view_parent_class
+#define parent_class picman_image_parasite_view_parent_class
 
 static guint view_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_image_parasite_view_class_init (GimpImageParasiteViewClass *klass)
+picman_image_parasite_view_class_init (PicmanImageParasiteViewClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -83,32 +83,32 @@ gimp_image_parasite_view_class_init (GimpImageParasiteViewClass *klass)
     g_signal_new ("update",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpImageParasiteViewClass, update),
+                  G_STRUCT_OFFSET (PicmanImageParasiteViewClass, update),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->constructed  = gimp_image_parasite_view_constructed;
-  object_class->finalize     = gimp_image_parasite_view_finalize;
-  object_class->set_property = gimp_image_parasite_view_set_property;
-  object_class->get_property = gimp_image_parasite_view_get_property;
+  object_class->constructed  = picman_image_parasite_view_constructed;
+  object_class->finalize     = picman_image_parasite_view_finalize;
+  object_class->set_property = picman_image_parasite_view_set_property;
+  object_class->get_property = picman_image_parasite_view_get_property;
 
   klass->update              = NULL;
 
   g_object_class_install_property (object_class, PROP_IMAGE,
                                    g_param_spec_object ("image", NULL, NULL,
-                                                        GIMP_TYPE_IMAGE,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_IMAGE,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (object_class, PROP_PARASITE,
                                    g_param_spec_string ("parasite", NULL, NULL,
                                                         NULL,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_image_parasite_view_init (GimpImageParasiteView *view)
+picman_image_parasite_view_init (PicmanImageParasiteView *view)
 {
   gtk_orientable_set_orientation (GTK_ORIENTABLE (view),
                                   GTK_ORIENTATION_VERTICAL);
@@ -117,9 +117,9 @@ gimp_image_parasite_view_init (GimpImageParasiteView *view)
 }
 
 static void
-gimp_image_parasite_view_constructed (GObject *object)
+picman_image_parasite_view_constructed (GObject *object)
 {
-  GimpImageParasiteView *view = GIMP_IMAGE_PARASITE_VIEW (object);
+  PicmanImageParasiteView *view = PICMAN_IMAGE_PARASITE_VIEW (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
@@ -127,21 +127,21 @@ gimp_image_parasite_view_constructed (GObject *object)
   g_assert (view->image != NULL);
 
   g_signal_connect_object (view->image, "parasite-attached",
-                           G_CALLBACK (gimp_image_parasite_view_parasite_changed),
+                           G_CALLBACK (picman_image_parasite_view_parasite_changed),
                            G_OBJECT (view),
                            G_CONNECT_SWAPPED);
   g_signal_connect_object (view->image, "parasite-detached",
-                           G_CALLBACK (gimp_image_parasite_view_parasite_changed),
+                           G_CALLBACK (picman_image_parasite_view_parasite_changed),
                            G_OBJECT (view),
                            G_CONNECT_SWAPPED);
 
-  gimp_image_parasite_view_update (view);
+  picman_image_parasite_view_update (view);
 }
 
 static void
-gimp_image_parasite_view_finalize (GObject *object)
+picman_image_parasite_view_finalize (GObject *object)
 {
-  GimpImageParasiteView *view = GIMP_IMAGE_PARASITE_VIEW (object);
+  PicmanImageParasiteView *view = PICMAN_IMAGE_PARASITE_VIEW (object);
 
   if (view->parasite)
     {
@@ -154,12 +154,12 @@ gimp_image_parasite_view_finalize (GObject *object)
 }
 
 static void
-gimp_image_parasite_view_set_property (GObject      *object,
+picman_image_parasite_view_set_property (GObject      *object,
                                       guint         property_id,
                                       const GValue *value,
                                       GParamSpec   *pspec)
 {
-  GimpImageParasiteView *view = GIMP_IMAGE_PARASITE_VIEW (object);
+  PicmanImageParasiteView *view = PICMAN_IMAGE_PARASITE_VIEW (object);
 
   switch (property_id)
     {
@@ -176,12 +176,12 @@ gimp_image_parasite_view_set_property (GObject      *object,
 }
 
 static void
-gimp_image_parasite_view_get_property (GObject    *object,
+picman_image_parasite_view_get_property (GObject    *object,
                                       guint       property_id,
                                       GValue     *value,
                                       GParamSpec *pspec)
 {
-  GimpImageParasiteView *view = GIMP_IMAGE_PARASITE_VIEW (object);
+  PicmanImageParasiteView *view = PICMAN_IMAGE_PARASITE_VIEW (object);
 
   switch (property_id)
     {
@@ -198,48 +198,48 @@ gimp_image_parasite_view_get_property (GObject    *object,
 }
 
 GtkWidget *
-gimp_image_parasite_view_new (GimpImage   *image,
+picman_image_parasite_view_new (PicmanImage   *image,
                               const gchar *parasite)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (parasite != NULL, NULL);
 
-  return g_object_new (GIMP_TYPE_IMAGE_PARASITE_VIEW,
+  return g_object_new (PICMAN_TYPE_IMAGE_PARASITE_VIEW,
                        "image",    image,
                        "parasite", parasite,
                        NULL);
 }
 
 
-GimpImage *
-gimp_image_parasite_view_get_image (GimpImageParasiteView *view)
+PicmanImage *
+picman_image_parasite_view_get_image (PicmanImageParasiteView *view)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE_PARASITE_VIEW (view), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE_PARASITE_VIEW (view), NULL);
 
   return view->image;
 }
 
-const GimpParasite *
-gimp_image_parasite_view_get_parasite (GimpImageParasiteView *view)
+const PicmanParasite *
+picman_image_parasite_view_get_parasite (PicmanImageParasiteView *view)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE_PARASITE_VIEW (view), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE_PARASITE_VIEW (view), NULL);
 
-  return gimp_image_parasite_find (view->image, view->parasite);
+  return picman_image_parasite_find (view->image, view->parasite);
 }
 
 
 /*  private functions  */
 
 static void
-gimp_image_parasite_view_parasite_changed (GimpImageParasiteView *view,
+picman_image_parasite_view_parasite_changed (PicmanImageParasiteView *view,
                                            const gchar           *name)
 {
   if (name && view->parasite && strcmp (name, view->parasite) == 0)
-    gimp_image_parasite_view_update (view);
+    picman_image_parasite_view_update (view);
 }
 
 static void
-gimp_image_parasite_view_update (GimpImageParasiteView *view)
+picman_image_parasite_view_update (PicmanImageParasiteView *view)
 {
   g_signal_emit (view, view_signals[UPDATE], 0);
 }

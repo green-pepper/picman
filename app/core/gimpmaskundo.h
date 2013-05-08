@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,26 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_MASK_UNDO_H__
-#define __GIMP_MASK_UNDO_H__
+#ifndef __PICMAN_MASK_UNDO_H__
+#define __PICMAN_MASK_UNDO_H__
 
 
-#include "gimpitemundo.h"
+#include "picmanitemundo.h"
 
 
-#define GIMP_TYPE_MASK_UNDO            (gimp_mask_undo_get_type ())
-#define GIMP_MASK_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_MASK_UNDO, GimpMaskUndo))
-#define GIMP_MASK_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_MASK_UNDO, GimpMaskUndoClass))
-#define GIMP_IS_MASK_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_MASK_UNDO))
-#define GIMP_IS_MASK_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_MASK_UNDO))
-#define GIMP_MASK_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_MASK_UNDO, GimpMaskUndoClass))
+#define PICMAN_TYPE_MASK_UNDO            (picman_mask_undo_get_type ())
+#define PICMAN_MASK_UNDO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_MASK_UNDO, PicmanMaskUndo))
+#define PICMAN_MASK_UNDO_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_MASK_UNDO, PicmanMaskUndoClass))
+#define PICMAN_IS_MASK_UNDO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_MASK_UNDO))
+#define PICMAN_IS_MASK_UNDO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_MASK_UNDO))
+#define PICMAN_MASK_UNDO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_MASK_UNDO, PicmanMaskUndoClass))
 
 
-typedef struct _GimpMaskUndoClass GimpMaskUndoClass;
+typedef struct _PicmanMaskUndoClass PicmanMaskUndoClass;
 
-struct _GimpMaskUndo
+struct _PicmanMaskUndo
 {
-  GimpItemUndo  parent_instance;
+  PicmanItemUndo  parent_instance;
 
   gboolean      convert_format;
 
@@ -44,13 +44,13 @@ struct _GimpMaskUndo
   const Babl   *format;
 };
 
-struct _GimpMaskUndoClass
+struct _PicmanMaskUndoClass
 {
-  GimpItemUndoClass  parent_class;
+  PicmanItemUndoClass  parent_class;
 };
 
 
-GType   gimp_mask_undo_get_type (void) G_GNUC_CONST;
+GType   picman_mask_undo_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_MASK_UNDO_H__ */
+#endif /* __PICMAN_MASK_UNDO_H__ */

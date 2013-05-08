@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,23 +21,23 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "paint-types.h"
 
-#include "core/gimpbrush.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdynamics.h"
-#include "core/gimperror.h"
-#include "core/gimpimage.h"
-#include "core/gimppickable.h"
-#include "core/gimptempbuf.h"
+#include "core/picmanbrush.h"
+#include "core/picmandrawable.h"
+#include "core/picmandynamics.h"
+#include "core/picmanerror.h"
+#include "core/picmanimage.h"
+#include "core/picmanpickable.h"
+#include "core/picmantempbuf.h"
 
-#include "gimpheal.h"
-#include "gimpsourceoptions.h"
+#include "picmanheal.h"
+#include "picmansourceoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 
@@ -59,18 +59,18 @@
  * Jean-Yves Couleaud cjyves@free.fr
  */
 
-static gboolean     gimp_heal_start              (GimpPaintCore    *paint_core,
-                                                  GimpDrawable     *drawable,
-                                                  GimpPaintOptions *paint_options,
-                                                  const GimpCoords *coords,
+static gboolean     picman_heal_start              (PicmanPaintCore    *paint_core,
+                                                  PicmanDrawable     *drawable,
+                                                  PicmanPaintOptions *paint_options,
+                                                  const PicmanCoords *coords,
                                                   GError          **error);
 
-static void         gimp_heal_motion             (GimpSourceCore   *source_core,
-                                                  GimpDrawable     *drawable,
-                                                  GimpPaintOptions *paint_options,
-                                                  const GimpCoords *coords,
+static void         picman_heal_motion             (PicmanSourceCore   *source_core,
+                                                  PicmanDrawable     *drawable,
+                                                  PicmanPaintOptions *paint_options,
+                                                  const PicmanCoords *coords,
                                                   gdouble           opacity,
-                                                  GimpPickable     *src_pickable,
+                                                  PicmanPickable     *src_pickable,
                                                   GeglBuffer       *src_buffer,
                                                   GeglRectangle    *src_rect,
                                                   gint              src_offset_x,
@@ -84,58 +84,58 @@ static void         gimp_heal_motion             (GimpSourceCore   *source_core,
                                                   gint              paint_area_height);
 
 
-G_DEFINE_TYPE (GimpHeal, gimp_heal, GIMP_TYPE_SOURCE_CORE)
+G_DEFINE_TYPE (PicmanHeal, picman_heal, PICMAN_TYPE_SOURCE_CORE)
 
-#define parent_class gimp_heal_parent_class
+#define parent_class picman_heal_parent_class
 
 
 void
-gimp_heal_register (Gimp                      *gimp,
-                    GimpPaintRegisterCallback  callback)
+picman_heal_register (Picman                      *picman,
+                    PicmanPaintRegisterCallback  callback)
 {
-  (* callback) (gimp,
-                GIMP_TYPE_HEAL,
-                GIMP_TYPE_SOURCE_OPTIONS,
-                "gimp-heal",
+  (* callback) (picman,
+                PICMAN_TYPE_HEAL,
+                PICMAN_TYPE_SOURCE_OPTIONS,
+                "picman-heal",
                 _("Heal"),
-                "gimp-tool-heal");
+                "picman-tool-heal");
 }
 
 static void
-gimp_heal_class_init (GimpHealClass *klass)
+picman_heal_class_init (PicmanHealClass *klass)
 {
-  GimpPaintCoreClass  *paint_core_class  = GIMP_PAINT_CORE_CLASS (klass);
-  GimpSourceCoreClass *source_core_class = GIMP_SOURCE_CORE_CLASS (klass);
+  PicmanPaintCoreClass  *paint_core_class  = PICMAN_PAINT_CORE_CLASS (klass);
+  PicmanSourceCoreClass *source_core_class = PICMAN_SOURCE_CORE_CLASS (klass);
 
-  paint_core_class->start   = gimp_heal_start;
+  paint_core_class->start   = picman_heal_start;
 
-  source_core_class->motion = gimp_heal_motion;
+  source_core_class->motion = picman_heal_motion;
 }
 
 static void
-gimp_heal_init (GimpHeal *heal)
+picman_heal_init (PicmanHeal *heal)
 {
 }
 
 static gboolean
-gimp_heal_start (GimpPaintCore     *paint_core,
-                 GimpDrawable      *drawable,
-                 GimpPaintOptions  *paint_options,
-                 const GimpCoords  *coords,
+picman_heal_start (PicmanPaintCore     *paint_core,
+                 PicmanDrawable      *drawable,
+                 PicmanPaintOptions  *paint_options,
+                 const PicmanCoords  *coords,
                  GError           **error)
 {
-  GimpSourceCore *source_core = GIMP_SOURCE_CORE (paint_core);
+  PicmanSourceCore *source_core = PICMAN_SOURCE_CORE (paint_core);
 
-  if (! GIMP_PAINT_CORE_CLASS (parent_class)->start (paint_core, drawable,
+  if (! PICMAN_PAINT_CORE_CLASS (parent_class)->start (paint_core, drawable,
                                                      paint_options, coords,
                                                      error))
     {
       return FALSE;
     }
 
-  if (! source_core->set_source && gimp_drawable_is_indexed (drawable))
+  if (! source_core->set_source && picman_drawable_is_indexed (drawable))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
                            _("Healing does not operate on indexed layers."));
       return FALSE;
     }
@@ -146,7 +146,7 @@ gimp_heal_start (GimpPaintCore     *paint_core,
 /* Subtract bottom from top and store in result as a double
  */
 static void
-gimp_heal_sub (GeglBuffer          *top_buffer,
+picman_heal_sub (GeglBuffer          *top_buffer,
                const GeglRectangle *top_rect,
                GeglBuffer          *bottom_buffer,
                const GeglRectangle *bottom_rect,
@@ -189,7 +189,7 @@ gimp_heal_sub (GeglBuffer          *top_buffer,
 /* Add first to second and store in result
  */
 static void
-gimp_heal_add (GeglBuffer          *first_buffer,
+picman_heal_add (GeglBuffer          *first_buffer,
                const GeglRectangle *first_rect,
                GeglBuffer          *second_buffer,
                const GeglRectangle *second_rect,
@@ -235,7 +235,7 @@ gimp_heal_add (GeglBuffer          *first_buffer,
  * of the solution.
  */
 static gdouble
-gimp_heal_laplace_iteration (gdouble *matrix,
+picman_heal_laplace_iteration (gdouble *matrix,
                              gint     height,
                              gint     depth,
                              gint     width,
@@ -346,7 +346,7 @@ gimp_heal_laplace_iteration (gdouble *matrix,
 /* Solve the laplace equation for matrix and store the result in solution.
  */
 static void
-gimp_heal_laplace_loop (gdouble *matrix,
+picman_heal_laplace_loop (gdouble *matrix,
                         gint     height,
                         gint     depth,
                         gint     width,
@@ -363,7 +363,7 @@ gimp_heal_laplace_loop (gdouble *matrix,
       gdouble sqr_err;
 
       /* do one iteration and store the amount of error */
-      sqr_err = gimp_heal_laplace_iteration (matrix, height, depth, width,
+      sqr_err = picman_heal_laplace_iteration (matrix, height, depth, width,
                                              solution, mask);
 
       /* copy solution to matrix */
@@ -380,7 +380,7 @@ gimp_heal_laplace_loop (gdouble *matrix,
  * http://www.tgeorgiev.net/Photoshop_Healing.pdf
  */
 static void
-gimp_heal (GeglBuffer          *src_buffer,
+picman_heal (GeglBuffer          *src_buffer,
            const GeglRectangle *src_rect,
            GeglBuffer          *dest_buffer,
            const GeglRectangle *dest_rect,
@@ -429,7 +429,7 @@ gimp_heal (GeglBuffer          *src_buffer,
                                       (GDestroyNotify) g_free, i_2);
 
   /* subtract pattern from image and store the result as a double in i_1 */
-  gimp_heal_sub (dest_buffer, dest_rect,
+  picman_heal_sub (dest_buffer, dest_rect,
                  src_buffer, src_rect,
                  i_1_buffer, GEGL_RECTANGLE (0, 0, width, height));
 
@@ -439,12 +439,12 @@ gimp_heal (GeglBuffer          *src_buffer,
                    mask, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   /* FIXME: is a faster implementation needed? */
-  gimp_heal_laplace_loop (i_1, height, src_components, width, i_2, mask);
+  picman_heal_laplace_loop (i_1, height, src_components, width, i_2, mask);
 
   g_free (mask);
 
   /* add solution to original image and store in dest */
-  gimp_heal_add (i_2_buffer, GEGL_RECTANGLE (0, 0, width, height),
+  picman_heal_add (i_2_buffer, GEGL_RECTANGLE (0, 0, width, height),
                  src_buffer, src_rect,
                  dest_buffer, dest_rect);
 
@@ -453,12 +453,12 @@ gimp_heal (GeglBuffer          *src_buffer,
 }
 
 static void
-gimp_heal_motion (GimpSourceCore   *source_core,
-                  GimpDrawable     *drawable,
-                  GimpPaintOptions *paint_options,
-                  const GimpCoords *coords,
+picman_heal_motion (PicmanSourceCore   *source_core,
+                  PicmanDrawable     *drawable,
+                  PicmanPaintOptions *paint_options,
+                  const PicmanCoords *coords,
                   gdouble           opacity,
-                  GimpPickable     *src_pickable,
+                  PicmanPickable     *src_pickable,
                   GeglBuffer       *src_buffer,
                   GeglRectangle    *src_rect,
                   gint              src_offset_x,
@@ -471,30 +471,30 @@ gimp_heal_motion (GimpSourceCore   *source_core,
                   gint              paint_area_width,
                   gint              paint_area_height)
 {
-  GimpPaintCore     *paint_core = GIMP_PAINT_CORE (source_core);
-  GimpContext       *context    = GIMP_CONTEXT (paint_options);
-  GimpDynamics      *dynamics   = GIMP_BRUSH_CORE (paint_core)->dynamics;
-  GimpImage         *image      = gimp_item_get_image (GIMP_ITEM (drawable));
+  PicmanPaintCore     *paint_core = PICMAN_PAINT_CORE (source_core);
+  PicmanContext       *context    = PICMAN_CONTEXT (paint_options);
+  PicmanDynamics      *dynamics   = PICMAN_BRUSH_CORE (paint_core)->dynamics;
+  PicmanImage         *image      = picman_item_get_image (PICMAN_ITEM (drawable));
   GeglBuffer        *src_copy;
   GeglBuffer        *mask_buffer;
-  const GimpTempBuf *mask_buf;
+  const PicmanTempBuf *mask_buf;
   gdouble            fade_point;
   gdouble            hardness;
   gint               mask_off_x;
   gint               mask_off_y;
 
-  fade_point = gimp_paint_options_get_fade (paint_options, image,
+  fade_point = picman_paint_options_get_fade (paint_options, image,
                                             paint_core->pixel_dist);
 
-  hardness = gimp_dynamics_get_linear_value (dynamics,
-                                             GIMP_DYNAMICS_OUTPUT_HARDNESS,
+  hardness = picman_dynamics_get_linear_value (dynamics,
+                                             PICMAN_DYNAMICS_OUTPUT_HARDNESS,
                                              coords,
                                              paint_options,
                                              fade_point);
 
-  mask_buf = gimp_brush_core_get_brush_mask (GIMP_BRUSH_CORE (source_core),
+  mask_buf = picman_brush_core_get_brush_mask (PICMAN_BRUSH_CORE (source_core),
                                              coords,
-                                             GIMP_BRUSH_HARD,
+                                             PICMAN_BRUSH_HARD,
                                              hardness);
 
   /* check that all buffers are of the same size */
@@ -521,7 +521,7 @@ gimp_heal_motion (GimpSourceCore   *source_core,
                                     src_rect->width,
                                     src_rect->height));
 
-  gegl_buffer_copy (gimp_drawable_get_buffer (drawable),
+  gegl_buffer_copy (picman_drawable_get_buffer (drawable),
                     GEGL_RECTANGLE (paint_buffer_x, paint_buffer_y,
                                     gegl_buffer_get_width  (paint_buffer),
                                     gegl_buffer_get_height (paint_buffer)),
@@ -531,7 +531,7 @@ gimp_heal_motion (GimpSourceCore   *source_core,
                                     paint_area_width,
                                     paint_area_height));
 
-  mask_buffer = gimp_temp_buf_create_buffer ((GimpTempBuf *) mask_buf);
+  mask_buffer = picman_temp_buf_create_buffer ((PicmanTempBuf *) mask_buf);
 
   /* find the offset of the brush mask's rect */
   {
@@ -542,7 +542,7 @@ gimp_heal_motion (GimpSourceCore   *source_core,
     mask_off_y = (y < 0) ? -y : 0;
   }
 
-  gimp_heal (src_copy,
+  picman_heal (src_copy,
              GEGL_RECTANGLE (0, 0,
                              gegl_buffer_get_width  (src_copy),
                              gegl_buffer_get_height (src_copy)),
@@ -560,11 +560,11 @@ gimp_heal_motion (GimpSourceCore   *source_core,
   g_object_unref (mask_buffer);
 
   /* replace the canvas with our healed data */
-  gimp_brush_core_replace_canvas (GIMP_BRUSH_CORE (paint_core), drawable,
+  picman_brush_core_replace_canvas (PICMAN_BRUSH_CORE (paint_core), drawable,
                                   coords,
-                                  MIN (opacity, GIMP_OPACITY_OPAQUE),
-                                  gimp_context_get_opacity (context),
-                                  gimp_paint_options_get_brush_mode (paint_options),
+                                  MIN (opacity, PICMAN_OPACITY_OPAQUE),
+                                  picman_context_get_opacity (context),
+                                  picman_paint_options_get_brush_mode (paint_options),
                                   hardness,
-                                  GIMP_PAINT_INCREMENTAL);
+                                  PICMAN_PAINT_INCREMENTAL);
 }

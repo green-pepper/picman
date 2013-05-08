@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,122 +21,122 @@
 
 #include "display-types.h"
 
-#include "core/gimpprogress.h"
+#include "core/picmanprogress.h"
 
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-progress.h"
-#include "gimpstatusbar.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-progress.h"
+#include "picmanstatusbar.h"
 
 
-static GimpProgress *
-gimp_display_shell_progress_start (GimpProgress *progress,
+static PicmanProgress *
+picman_display_shell_progress_start (PicmanProgress *progress,
                                    const gchar  *message,
                                    gboolean      cancelable)
 {
-  GimpDisplayShell *shell     = GIMP_DISPLAY_SHELL (progress);
-  GimpStatusbar    *statusbar = gimp_display_shell_get_statusbar (shell);
+  PicmanDisplayShell *shell     = PICMAN_DISPLAY_SHELL (progress);
+  PicmanStatusbar    *statusbar = picman_display_shell_get_statusbar (shell);
 
-  return gimp_progress_start (GIMP_PROGRESS (statusbar), message, cancelable);
+  return picman_progress_start (PICMAN_PROGRESS (statusbar), message, cancelable);
 }
 
 static void
-gimp_display_shell_progress_end (GimpProgress *progress)
+picman_display_shell_progress_end (PicmanProgress *progress)
 {
-  GimpDisplayShell *shell     = GIMP_DISPLAY_SHELL (progress);
-  GimpStatusbar    *statusbar = gimp_display_shell_get_statusbar (shell);
+  PicmanDisplayShell *shell     = PICMAN_DISPLAY_SHELL (progress);
+  PicmanStatusbar    *statusbar = picman_display_shell_get_statusbar (shell);
 
-  gimp_progress_end (GIMP_PROGRESS (statusbar));
+  picman_progress_end (PICMAN_PROGRESS (statusbar));
 }
 
 static gboolean
-gimp_display_shell_progress_is_active (GimpProgress *progress)
+picman_display_shell_progress_is_active (PicmanProgress *progress)
 {
-  GimpDisplayShell *shell     = GIMP_DISPLAY_SHELL (progress);
-  GimpStatusbar    *statusbar = gimp_display_shell_get_statusbar (shell);
+  PicmanDisplayShell *shell     = PICMAN_DISPLAY_SHELL (progress);
+  PicmanStatusbar    *statusbar = picman_display_shell_get_statusbar (shell);
 
-  return gimp_progress_is_active (GIMP_PROGRESS (statusbar));
+  return picman_progress_is_active (PICMAN_PROGRESS (statusbar));
 }
 
 static void
-gimp_display_shell_progress_set_text (GimpProgress *progress,
+picman_display_shell_progress_set_text (PicmanProgress *progress,
                                       const gchar  *message)
 {
-  GimpDisplayShell *shell     = GIMP_DISPLAY_SHELL (progress);
-  GimpStatusbar    *statusbar = gimp_display_shell_get_statusbar (shell);
+  PicmanDisplayShell *shell     = PICMAN_DISPLAY_SHELL (progress);
+  PicmanStatusbar    *statusbar = picman_display_shell_get_statusbar (shell);
 
-  gimp_progress_set_text (GIMP_PROGRESS (statusbar), message);
+  picman_progress_set_text (PICMAN_PROGRESS (statusbar), message);
 }
 
 static void
-gimp_display_shell_progress_set_value (GimpProgress *progress,
+picman_display_shell_progress_set_value (PicmanProgress *progress,
                                        gdouble       percentage)
 {
-  GimpDisplayShell *shell     = GIMP_DISPLAY_SHELL (progress);
-  GimpStatusbar    *statusbar = gimp_display_shell_get_statusbar (shell);
+  PicmanDisplayShell *shell     = PICMAN_DISPLAY_SHELL (progress);
+  PicmanStatusbar    *statusbar = picman_display_shell_get_statusbar (shell);
 
-  gimp_progress_set_value (GIMP_PROGRESS (statusbar), percentage);
+  picman_progress_set_value (PICMAN_PROGRESS (statusbar), percentage);
 }
 
 static gdouble
-gimp_display_shell_progress_get_value (GimpProgress *progress)
+picman_display_shell_progress_get_value (PicmanProgress *progress)
 {
-  GimpDisplayShell *shell     = GIMP_DISPLAY_SHELL (progress);
-  GimpStatusbar    *statusbar = gimp_display_shell_get_statusbar (shell);
+  PicmanDisplayShell *shell     = PICMAN_DISPLAY_SHELL (progress);
+  PicmanStatusbar    *statusbar = picman_display_shell_get_statusbar (shell);
 
-  return gimp_progress_get_value (GIMP_PROGRESS (statusbar));
+  return picman_progress_get_value (PICMAN_PROGRESS (statusbar));
 }
 
 static void
-gimp_display_shell_progress_pulse (GimpProgress *progress)
+picman_display_shell_progress_pulse (PicmanProgress *progress)
 {
-  GimpDisplayShell *shell     = GIMP_DISPLAY_SHELL (progress);
-  GimpStatusbar    *statusbar = gimp_display_shell_get_statusbar (shell);
+  PicmanDisplayShell *shell     = PICMAN_DISPLAY_SHELL (progress);
+  PicmanStatusbar    *statusbar = picman_display_shell_get_statusbar (shell);
 
-  gimp_progress_pulse (GIMP_PROGRESS (statusbar));
+  picman_progress_pulse (PICMAN_PROGRESS (statusbar));
 }
 
 static guint32
-gimp_display_shell_progress_get_window_id (GimpProgress *progress)
+picman_display_shell_progress_get_window_id (PicmanProgress *progress)
 {
   GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (progress));
 
   if (GTK_IS_WINDOW (toplevel))
-    return gimp_window_get_native_id (GTK_WINDOW (toplevel));
+    return picman_window_get_native_id (GTK_WINDOW (toplevel));
 
   return 0;
 }
 
 static gboolean
-gimp_display_shell_progress_message (GimpProgress        *progress,
-                                     Gimp                *gimp,
-                                     GimpMessageSeverity  severity,
+picman_display_shell_progress_message (PicmanProgress        *progress,
+                                     Picman                *picman,
+                                     PicmanMessageSeverity  severity,
                                      const gchar         *domain,
                                      const gchar         *message)
 {
-  GimpDisplayShell *shell     = GIMP_DISPLAY_SHELL (progress);
-  GimpStatusbar    *statusbar = gimp_display_shell_get_statusbar (shell);
+  PicmanDisplayShell *shell     = PICMAN_DISPLAY_SHELL (progress);
+  PicmanStatusbar    *statusbar = picman_display_shell_get_statusbar (shell);
 
   switch (severity)
     {
-    case GIMP_MESSAGE_ERROR:
+    case PICMAN_MESSAGE_ERROR:
       /* error messages are never handled here */
       break;
 
-    case GIMP_MESSAGE_WARNING:
+    case PICMAN_MESSAGE_WARNING:
       /* warning messages go to the statusbar, if it's visible */
-      if (! gimp_statusbar_get_visible (statusbar))
+      if (! picman_statusbar_get_visible (statusbar))
         break;
       else
-        return gimp_progress_message (GIMP_PROGRESS (statusbar), gimp,
+        return picman_progress_message (PICMAN_PROGRESS (statusbar), picman,
                                       severity, domain, message);
 
-    case GIMP_MESSAGE_INFO:
+    case PICMAN_MESSAGE_INFO:
       /* info messages go to the statusbar;
        * if they are not handled there, they are swallowed
        */
-      gimp_progress_message (GIMP_PROGRESS (statusbar), gimp,
+      picman_progress_message (PICMAN_PROGRESS (statusbar), picman,
                              severity, domain, message);
       return TRUE;
     }
@@ -145,15 +145,15 @@ gimp_display_shell_progress_message (GimpProgress        *progress,
 }
 
 void
-gimp_display_shell_progress_iface_init (GimpProgressInterface *iface)
+picman_display_shell_progress_iface_init (PicmanProgressInterface *iface)
 {
-  iface->start         = gimp_display_shell_progress_start;
-  iface->end           = gimp_display_shell_progress_end;
-  iface->is_active     = gimp_display_shell_progress_is_active;
-  iface->set_text      = gimp_display_shell_progress_set_text;
-  iface->set_value     = gimp_display_shell_progress_set_value;
-  iface->get_value     = gimp_display_shell_progress_get_value;
-  iface->pulse         = gimp_display_shell_progress_pulse;
-  iface->get_window_id = gimp_display_shell_progress_get_window_id;
-  iface->message       = gimp_display_shell_progress_message;
+  iface->start         = picman_display_shell_progress_start;
+  iface->end           = picman_display_shell_progress_end;
+  iface->is_active     = picman_display_shell_progress_is_active;
+  iface->set_text      = picman_display_shell_progress_set_text;
+  iface->set_value     = picman_display_shell_progress_set_value;
+  iface->get_value     = picman_display_shell_progress_get_value;
+  iface->pulse         = picman_display_shell_progress_pulse;
+  iface->get_window_id = picman_display_shell_progress_get_window_id;
+  iface->message       = picman_display_shell_progress_message;
 }

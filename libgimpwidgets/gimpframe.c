@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpframe.c
- * Copyright (C) 2004  Sven Neumann <sven@gimp.org>
+ * picmanframe.c
+ * Copyright (C) 2004  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,14 +25,14 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpframe.h"
+#include "picmanframe.h"
 
 
 /**
- * SECTION: gimpframe
- * @title: GimpFrame
+ * SECTION: picmanframe
+ * @title: PicmanFrame
  * @short_description: A widget providing a HIG-compliant subclass
  *                     of #GtkFrame.
  *
@@ -43,39 +43,39 @@
 #define DEFAULT_LABEL_SPACING       6
 #define DEFAULT_LABEL_BOLD          TRUE
 
-#define GIMP_FRAME_INDENT_KEY       "gimp-frame-indent"
-#define GIMP_FRAME_IN_EXPANDER_KEY  "gimp-frame-in-expander"
+#define PICMAN_FRAME_INDENT_KEY       "picman-frame-indent"
+#define PICMAN_FRAME_IN_EXPANDER_KEY  "picman-frame-in-expander"
 
 
-static void      gimp_frame_size_request        (GtkWidget      *widget,
+static void      picman_frame_size_request        (GtkWidget      *widget,
                                                  GtkRequisition *requisition);
-static void      gimp_frame_size_allocate       (GtkWidget      *widget,
+static void      picman_frame_size_allocate       (GtkWidget      *widget,
                                                  GtkAllocation  *allocation);
-static void      gimp_frame_style_set           (GtkWidget      *widget,
+static void      picman_frame_style_set           (GtkWidget      *widget,
                                                  GtkStyle       *previous);
-static gboolean  gimp_frame_expose_event        (GtkWidget      *widget,
+static gboolean  picman_frame_expose_event        (GtkWidget      *widget,
                                                  GdkEventExpose *event);
-static void      gimp_frame_child_allocate      (GtkFrame       *frame,
+static void      picman_frame_child_allocate      (GtkFrame       *frame,
                                                  GtkAllocation  *allocation);
-static void      gimp_frame_label_widget_notify (GtkFrame       *frame);
-static gint      gimp_frame_get_indent          (GtkWidget      *widget);
-static gint      gimp_frame_get_label_spacing   (GtkFrame       *frame);
+static void      picman_frame_label_widget_notify (GtkFrame       *frame);
+static gint      picman_frame_get_indent          (GtkWidget      *widget);
+static gint      picman_frame_get_label_spacing   (GtkFrame       *frame);
 
 
-G_DEFINE_TYPE (GimpFrame, gimp_frame, GTK_TYPE_FRAME)
+G_DEFINE_TYPE (PicmanFrame, picman_frame, GTK_TYPE_FRAME)
 
-#define parent_class gimp_frame_parent_class
+#define parent_class picman_frame_parent_class
 
 
 static void
-gimp_frame_class_init (GimpFrameClass *klass)
+picman_frame_class_init (PicmanFrameClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  widget_class->size_request  = gimp_frame_size_request;
-  widget_class->size_allocate = gimp_frame_size_allocate;
-  widget_class->style_set     = gimp_frame_style_set;
-  widget_class->expose_event  = gimp_frame_expose_event;
+  widget_class->size_request  = picman_frame_size_request;
+  widget_class->size_allocate = picman_frame_size_allocate;
+  widget_class->style_set     = picman_frame_style_set;
+  widget_class->expose_event  = picman_frame_expose_event;
 
   gtk_widget_class_install_style_property (widget_class,
                                            g_param_spec_boolean ("label-bold",
@@ -93,15 +93,15 @@ gimp_frame_class_init (GimpFrameClass *klass)
 
 
 static void
-gimp_frame_init (GimpFrame *frame)
+picman_frame_init (PicmanFrame *frame)
 {
   g_signal_connect (frame, "notify::label-widget",
-                    G_CALLBACK (gimp_frame_label_widget_notify),
+                    G_CALLBACK (picman_frame_label_widget_notify),
                     NULL);
 }
 
 static void
-gimp_frame_size_request (GtkWidget      *widget,
+picman_frame_size_request (GtkWidget      *widget,
                          GtkRequisition *requisition)
 {
   GtkFrame       *frame        = GTK_FRAME (widget);
@@ -120,11 +120,11 @@ gimp_frame_size_request (GtkWidget      *widget,
       requisition->height = 0;
     }
 
-  requisition->height += gimp_frame_get_label_spacing (frame);
+  requisition->height += picman_frame_get_label_spacing (frame);
 
   if (child && gtk_widget_get_visible (child))
     {
-      gint indent = gimp_frame_get_indent (widget);
+      gint indent = picman_frame_get_indent (widget);
 
       gtk_widget_size_request (child, &child_requisition);
 
@@ -140,7 +140,7 @@ gimp_frame_size_request (GtkWidget      *widget,
 }
 
 static void
-gimp_frame_size_allocate (GtkWidget     *widget,
+picman_frame_size_allocate (GtkWidget     *widget,
                           GtkAllocation *allocation)
 {
   GtkFrame      *frame        = GTK_FRAME (widget);
@@ -150,7 +150,7 @@ gimp_frame_size_allocate (GtkWidget     *widget,
 
   gtk_widget_set_allocation (widget, allocation);
 
-  gimp_frame_child_allocate (frame, &child_allocation);
+  picman_frame_child_allocate (frame, &child_allocation);
 
   if (child && gtk_widget_get_visible (child))
     gtk_widget_size_allocate (child, &child_allocation);
@@ -176,7 +176,7 @@ gimp_frame_size_allocate (GtkWidget     *widget,
 }
 
 static void
-gimp_frame_child_allocate (GtkFrame      *frame,
+picman_frame_child_allocate (GtkFrame      *frame,
                            GtkAllocation *child_allocation)
 {
   GtkWidget     *widget       = GTK_WIDGET (frame);
@@ -184,7 +184,7 @@ gimp_frame_child_allocate (GtkFrame      *frame,
   GtkAllocation  allocation;
   gint           border_width;
   gint           spacing      = 0;
-  gint           indent       = gimp_frame_get_indent (widget);
+  gint           indent       = picman_frame_get_indent (widget);
 
   gtk_widget_get_allocation (widget, &allocation);
 
@@ -198,7 +198,7 @@ gimp_frame_child_allocate (GtkFrame      *frame,
       spacing += child_requisition.height;
     }
 
-  spacing += gimp_frame_get_label_spacing (frame);
+  spacing += picman_frame_get_label_spacing (frame);
 
   if (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_LTR)
     child_allocation->x    = border_width + indent;
@@ -217,18 +217,18 @@ gimp_frame_child_allocate (GtkFrame      *frame,
 }
 
 static void
-gimp_frame_style_set (GtkWidget *widget,
+picman_frame_style_set (GtkWidget *widget,
                       GtkStyle  *previous)
 {
   /*  font changes invalidate the indentation  */
-  g_object_set_data (G_OBJECT (widget), GIMP_FRAME_INDENT_KEY, NULL);
+  g_object_set_data (G_OBJECT (widget), PICMAN_FRAME_INDENT_KEY, NULL);
 
   /*  for "label_bold"  */
-  gimp_frame_label_widget_notify (GTK_FRAME (widget));
+  picman_frame_label_widget_notify (GTK_FRAME (widget));
 }
 
 static gboolean
-gimp_frame_expose_event (GtkWidget      *widget,
+picman_frame_expose_event (GtkWidget      *widget,
                          GdkEventExpose *event)
 {
   if (gtk_widget_is_drawable (widget))
@@ -242,7 +242,7 @@ gimp_frame_expose_event (GtkWidget      *widget,
 }
 
 static void
-gimp_frame_label_widget_notify (GtkFrame *frame)
+picman_frame_label_widget_notify (GtkFrame *frame)
 {
   GtkWidget *label_widget = gtk_frame_get_label_widget (frame);
 
@@ -290,10 +290,10 @@ gimp_frame_label_widget_notify (GtkFrame *frame)
 }
 
 static gint
-gimp_frame_get_indent (GtkWidget *widget)
+picman_frame_get_indent (GtkWidget *widget)
 {
   gint width = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (widget),
-                                                   GIMP_FRAME_INDENT_KEY));
+                                                   PICMAN_FRAME_INDENT_KEY));
 
   if (! width)
     {
@@ -305,20 +305,20 @@ gimp_frame_get_indent (GtkWidget *widget)
       g_object_unref (layout);
 
       g_object_set_data (G_OBJECT (widget),
-                         GIMP_FRAME_INDENT_KEY, GINT_TO_POINTER (width));
+                         PICMAN_FRAME_INDENT_KEY, GINT_TO_POINTER (width));
     }
 
   return width;
 }
 
 static gint
-gimp_frame_get_label_spacing (GtkFrame *frame)
+picman_frame_get_label_spacing (GtkFrame *frame)
 {
   GtkWidget *label_widget = gtk_frame_get_label_widget (frame);
   gint       spacing      = 0;
 
   if ((label_widget && gtk_widget_get_visible (label_widget)) ||
-      (g_object_get_data (G_OBJECT (frame), GIMP_FRAME_IN_EXPANDER_KEY)))
+      (g_object_get_data (G_OBJECT (frame), PICMAN_FRAME_IN_EXPANDER_KEY)))
     {
       gtk_widget_style_get (GTK_WIDGET (frame),
                             "label_spacing", &spacing,
@@ -329,39 +329,39 @@ gimp_frame_get_label_spacing (GtkFrame *frame)
 }
 
 /**
- * gimp_frame_new:
+ * picman_frame_new:
  * @label: text to set as the frame's title label (or %NULL for no title)
  *
- * Creates a #GimpFrame widget. A #GimpFrame is a HIG-compliant
+ * Creates a #PicmanFrame widget. A #PicmanFrame is a HIG-compliant
  * variant of #GtkFrame. It doesn't render a frame at all but
  * otherwise behaves like a frame. The frame's title is rendered in
  * bold and the frame content is indented four spaces as suggested by
  * the GNOME HIG (see http://developer.gnome.org/projects/gup/hig/).
  *
- * Return value: a new #GimpFrame widget
+ * Return value: a new #PicmanFrame widget
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 GtkWidget *
-gimp_frame_new (const gchar *label)
+picman_frame_new (const gchar *label)
 {
   GtkWidget *frame;
   gboolean   expander = FALSE;
 
-  /*  somewhat hackish, should perhaps be an object property of GimpFrame  */
+  /*  somewhat hackish, should perhaps be an object property of PicmanFrame  */
   if (label && strcmp (label, "<expander>") == 0)
     {
       expander = TRUE;
       label    = NULL;
     }
 
-  frame = g_object_new (GIMP_TYPE_FRAME,
+  frame = g_object_new (PICMAN_TYPE_FRAME,
                         "label", label,
                         NULL);
 
   if (expander)
     g_object_set_data (G_OBJECT (frame),
-                       GIMP_FRAME_IN_EXPANDER_KEY, (gpointer) TRUE);
+                       PICMAN_FRAME_IN_EXPANDER_KEY, (gpointer) TRUE);
 
   return frame;
 }

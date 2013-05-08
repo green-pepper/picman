@@ -1,13 +1,13 @@
-# Romanian GIMP translation
+# Romanian PICMAN translation
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # Robert Claudiu Gheorghe <rgheorghe AT writeme DOT com>, 2001.
 # Cristian Secară <cristi AT secarica DOT ro>, 2008-2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-python\n"
+"Project-Id-Version: picman-python\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2011-12-05 22:52+0000\n"
 "PO-Revision-Date: 2011-12-06 14:35+0300\n"
 "Last-Translator: Cristian Secară <cristi AT secarica DOT ro>\n"
@@ -20,328 +20,328 @@ msgstr ""
 "20)) ? 1 : 2);;\n"
 
 # hm ? sau despre excepție ?
-#: ../plug-ins/pygimp/gimpfu.py:394
+#: ../plug-ins/pypicman/picmanfu.py:394
 msgid "Missing exception information"
 msgstr "Lipsește informația asupra excepției"
 
-#: ../plug-ins/pygimp/gimpfu.py:403
+#: ../plug-ins/pypicman/picmanfu.py:403
 #, python-format
 msgid "An error occurred running %s"
 msgstr "A apărut o eroare în timpul rulării %s"
 
-#: ../plug-ins/pygimp/gimpfu.py:414
+#: ../plug-ins/pypicman/picmanfu.py:414
 msgid "_More Information"
 msgstr "_Mai multe informații"
 
-#: ../plug-ins/pygimp/gimpfu.py:526 ../plug-ins/pygimp/gimpfu.py:538
-#: ../plug-ins/pygimp/gimpfu.py:544
+#: ../plug-ins/pypicman/picmanfu.py:526 ../plug-ins/pypicman/picmanfu.py:538
+#: ../plug-ins/pypicman/picmanfu.py:544
 msgid "No"
 msgstr "Nu"
 
-#: ../plug-ins/pygimp/gimpfu.py:536 ../plug-ins/pygimp/gimpfu.py:544
+#: ../plug-ins/pypicman/picmanfu.py:536 ../plug-ins/pypicman/picmanfu.py:544
 msgid "Yes"
 msgstr "Da"
 
-#: ../plug-ins/pygimp/gimpfu.py:596 ../plug-ins/pygimp/gimpui.py:223
+#: ../plug-ins/pypicman/picmanfu.py:596 ../plug-ins/pypicman/picmanui.py:223
 msgid "Python-Fu File Selection"
 msgstr "Selecție de fișier Python-Fu"
 
-#: ../plug-ins/pygimp/gimpfu.py:607
+#: ../plug-ins/pypicman/picmanfu.py:607
 msgid "Python-Fu Folder Selection"
 msgstr "Selecție de dosar Python-Fu"
 
-#: ../plug-ins/pygimp/gimpfu.py:696
+#: ../plug-ins/pypicman/picmanfu.py:696
 #, python-format
 msgid "Invalid input for '%s'"
 msgstr "Intrarea pentru „%s” nu este validă"
 
-#: ../plug-ins/pygimp/gimpui.py:176
+#: ../plug-ins/pypicman/picmanui.py:176
 msgid "Python-Fu Color Selection"
 msgstr "Selecție de culoare Python-Fu"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:109
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:109
 msgid "Saving as colored XHTML"
 msgstr "Salvare ca XHTML colorat"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:186
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:186
 msgid "Save as colored XHTML"
 msgstr "Salvează ca XHTML colorat"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:191
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:191
 msgid "Colored XHTML"
 msgstr "XHTML colorat"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:198
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:198
 msgid "Character _source"
 msgstr "_Sursă caracter"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:199
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:199
 msgid "Source code"
 msgstr "Cod sursă"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:200
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:200
 msgid "Text file"
 msgstr "Fișier text"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:201
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:201
 msgid "Entry box"
 msgstr "Căsuță de intrare"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:202
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:202
 msgid "_File to read or characters to use"
 msgstr "_Fișier de citit sau caracter pentru a fi utilizat"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:204
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:204
 msgid "Fo_nt size in pixels"
 msgstr "Dimensiune de fo_nt în pixeli"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:205
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:205
 msgid "_Write a separate CSS file"
 msgstr "_Scrie un fișier CSS separat"
 
-#: ../plug-ins/pygimp/plug-ins/gradients-save-as-css.py:96
+#: ../plug-ins/pypicman/plug-ins/gradients-save-as-css.py:96
 msgid "Gradient to use"
 msgstr "Degradeul de folosit"
 
-#: ../plug-ins/pygimp/plug-ins/gradients-save-as-css.py:97
+#: ../plug-ins/pypicman/plug-ins/gradients-save-as-css.py:97
 msgid "File Name"
 msgstr "Nume de fișier"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:56
+#: ../plug-ins/pypicman/plug-ins/foggify.py:56
 msgid "Add a layer of fog"
 msgstr "Adaugă un strat de ceață"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:61
+#: ../plug-ins/pypicman/plug-ins/foggify.py:61
 msgid "_Fog..."
 msgstr "_Ceață..."
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:66
+#: ../plug-ins/pypicman/plug-ins/foggify.py:66
 msgid "_Layer name"
 msgstr "_Nume strat"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:66
+#: ../plug-ins/pypicman/plug-ins/foggify.py:66
 msgid "Clouds"
 msgstr "Nori"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:67
+#: ../plug-ins/pypicman/plug-ins/foggify.py:67
 msgid "_Fog color"
 msgstr "_Culoare ceață"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:68
+#: ../plug-ins/pypicman/plug-ins/foggify.py:68
 msgid "_Turbulence"
 msgstr "_Turbulență"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:69
+#: ../plug-ins/pypicman/plug-ins/foggify.py:69
 msgid "Op_acity"
 msgstr "Op_acitate"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:44
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:44
 msgid "Offset the colors in a palette"
 msgstr "Decalează culorile într-o paletă"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:49
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:49
 msgid "_Offset Palette..."
 msgstr "_Paletă de decalaj..."
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:52
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:56
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:59
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:81
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:52
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:56
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:59
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:81
 msgid "Palette"
 msgstr "Paletă"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:53
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:53
 msgid "Off_set"
 msgstr "_Decalaj"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:48
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:48
 msgid "Sort the colors in a palette"
 msgstr "Sortează culorile într-o paletă"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:53
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:53
 msgid "_Sort Palette..."
 msgstr "_Sortează paleta..."
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:57
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:57
 msgid "Color _model"
 msgstr "_Model de culoare"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:58
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:58
 msgid "RGB"
 msgstr "RGB"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:59
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:59
 msgid "HSV"
 msgstr "HSV"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:60
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:60
 msgid "Channel to _sort"
 msgstr "Canal la _sortare"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:61
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:61
 msgid "Red or Hue"
 msgstr "Roșu sau nuanță"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:62
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:62
 msgid "Green or Saturation"
 msgstr "Verde sau saturație"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:63
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:63
 msgid "Blue or Value"
 msgstr "Albastru sau valoare"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:64
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:64
 msgid "_Ascending"
 msgstr "_Ascendent"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:52
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:52
 msgid "Create a repeating gradient using colors from the palette"
 msgstr "Creează un degrade repetitiv folosind culorile din paletă"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:57
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:57
 msgid "Palette to _Repeating Gradient"
 msgstr "Paletă la degrade _repetitiv"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:74
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:74
 msgid "Create a gradient using colors from the palette"
 msgstr "Creează un degrade folosind culorile din paletă"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:79
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:79
 msgid "Palette to _Gradient"
 msgstr "Paletă la de_grade"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:59
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:59
 msgid "Slice"
 msgstr "Felie"
 
 #. table snippet means a small piece of HTML code here
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:420
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:420
 msgid "Cuts an image along its guides, creates images and a HTML table snippet"
 msgstr ""
 "Taie o imagine în lungul ghidajelor ei, creează un fragment de imagine și "
 "tebelă HTML"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:431
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:431
 msgid "_Slice..."
 msgstr "_Felie..."
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:436
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:436
 msgid "Path for HTML export"
 msgstr "Cale pentru exportul HTML"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:437
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:437
 msgid "Filename for export"
 msgstr "Nume de fișier de exportat"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:438
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:438
 msgid "Image name prefix"
 msgstr "Prefix de nume de imagine"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:439
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:439
 msgid "Image format"
 msgstr "Format de imagine"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:440
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:440
 msgid "Separate image folder"
 msgstr "Dosar de imagine separat"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:442
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:442
 msgid "Folder for image export"
 msgstr "Dosar pentru export de imagine"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:443
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:443
 msgid "Space between table elements"
 msgstr "Spațiu între elementele de tabel"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:445
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:445
 msgid "Javascript for onmouseover and clicked"
 msgstr "Javascript pentru onmouseover și clicked"
 
 # hm ?
 #. table caps are table cells on the edge of the table
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:448
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:448
 msgid "Skip animation for table caps"
 msgstr "Ignoră animația pentru capetele de tabel"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:56
+#: ../plug-ins/pypicman/plug-ins/python-console.py:56
 msgid "Python Console"
 msgstr "Consolă Python"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:60
+#: ../plug-ins/pypicman/plug-ins/python-console.py:60
 msgid "_Browse..."
 msgstr "_Răsfoiește..."
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:138
+#: ../plug-ins/pypicman/plug-ins/python-console.py:138
 msgid "Python Procedure Browser"
 msgstr "Navigator de procedură Python"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:167
+#: ../plug-ins/pypicman/plug-ins/python-console.py:167
 #, python-format
 msgid "Could not open '%s' for writing: %s"
 msgstr "Nu s-a putut deschide „%s” pentru scriere: %s"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:182
+#: ../plug-ins/pypicman/plug-ins/python-console.py:182
 #, python-format
 msgid "Could not write to '%s': %s"
 msgstr "Nu s-a putut scrie în „%s”: %s"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:190
+#: ../plug-ins/pypicman/plug-ins/python-console.py:190
 msgid "Save Python-Fu Console Output"
 msgstr "Salvează ieșirea consolei Python-Fu"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:216
-msgid "Interactive GIMP Python interpreter"
-msgstr "Interpretor interactiv GIMP Python"
+#: ../plug-ins/pypicman/plug-ins/python-console.py:216
+msgid "Interactive PICMAN Python interpreter"
+msgstr "Interpretor interactiv PICMAN Python"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:221
+#: ../plug-ins/pypicman/plug-ins/python-console.py:221
 msgid "_Console"
 msgstr "_Consolă"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:60
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:60
 msgid "Add a drop shadow to a layer, and optionally bevel it"
 msgstr "Adaugă o umbră detașată la un strat și opțional scoate-l în relief"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:65
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:65
 msgid "_Drop Shadow and Bevel..."
 msgstr "_Umbră detașată și scoatere în relief..."
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:70
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:70
 msgid "_Shadow blur"
 msgstr "_Neclaritate umbră"
 
 # hm ?
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:71
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:71
 msgid "_Bevel"
 msgstr "Î_n relief"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:72
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:72
 msgid "_Drop shadow"
 msgstr "_Umbră detașată"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:73
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:73
 msgid "Drop shadow _X displacement"
 msgstr "Deplasare pe axa _X a umbrei detașate"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:74
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:74
 msgid "Drop shadow _Y displacement"
 msgstr "Deplasare pe axa _Y a umbrei detașate"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:75
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:75
 msgid "Create a new brush with characters from a text sequence"
 msgstr "Creează un penel nou cu caractere dintr-o secvență de text"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:81
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:81
 msgid "New Brush from _Text..."
 msgstr "Penel nou din _text..."
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:84
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:84
 msgid "Font"
 msgstr "Font"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:85
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:85
 msgid "Pixel Size"
 msgstr "Dimensiune pixel"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:86
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:86
 msgid "Text"
 msgstr "Text"

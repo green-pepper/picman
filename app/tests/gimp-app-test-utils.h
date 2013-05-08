@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 2009 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,24 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_APP_TEST_UTILS_H__
-#define  __GIMP_APP_TEST_UTILS_H__
+#ifndef  __PICMAN_APP_TEST_UTILS_H__
+#define  __PICMAN_APP_TEST_UTILS_H__
 
 
-void            gimp_test_utils_set_env_to_subpath   (const gchar *root_env_var,
+void            picman_test_utils_set_env_to_subpath   (const gchar *root_env_var,
                                                       const gchar *subdir,
                                                       const gchar *target_env_var);
-void            gimp_test_utils_set_gimp2_directory  (const gchar *root_env_var,
+void            picman_test_utils_set_picman2_directory  (const gchar *root_env_var,
                                                       const gchar *subdir);
-void            gimp_test_utils_setup_menus_dir      (void);
-void            gimp_test_utils_create_image         (Gimp        *gimp,
+void            picman_test_utils_setup_menus_dir      (void);
+void            picman_test_utils_create_image         (Picman        *picman,
                                                       gint         width,
                                                       gint         height);
-void            gimp_test_utils_synthesize_key_event (GtkWidget   *widget,
+void            picman_test_utils_synthesize_key_event (GtkWidget   *widget,
                                                       guint        keyval);
-GimpUIManager * gimp_test_utils_get_ui_manager       (Gimp        *gimp);
-GimpImage     * gimp_test_utils_create_image_from_dialog
-                                                     (Gimp        *gimp);
+PicmanUIManager * picman_test_utils_get_ui_manager       (Picman        *picman);
+PicmanImage     * picman_test_utils_create_image_from_dialog
+                                                     (Picman        *picman);
 
 
-#endif /* __GIMP_APP_TEST_UTILS_H__ */
+#endif /* __PICMAN_APP_TEST_UTILS_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,9 +22,9 @@
 
 #include "tools-types.h"
 
-#include "gimptoolcontrol.h"
-#include "gimptransformtool.h"
-#include "gimptransformtoolundo.h"
+#include "picmantoolcontrol.h"
+#include "picmantransformtool.h"
+#include "picmantransformtoolundo.h"
 
 
 enum
@@ -34,64 +34,64 @@ enum
 };
 
 
-static void   gimp_transform_tool_undo_constructed  (GObject             *object);
-static void   gimp_transform_tool_undo_set_property (GObject             *object,
+static void   picman_transform_tool_undo_constructed  (GObject             *object);
+static void   picman_transform_tool_undo_set_property (GObject             *object,
                                                      guint                property_id,
                                                      const GValue        *value,
                                                      GParamSpec          *pspec);
-static void   gimp_transform_tool_undo_get_property (GObject             *object,
+static void   picman_transform_tool_undo_get_property (GObject             *object,
                                                      guint                property_id,
                                                      GValue              *value,
                                                      GParamSpec          *pspec);
 
-static void   gimp_transform_tool_undo_pop          (GimpUndo            *undo,
-                                                     GimpUndoMode         undo_mode,
-                                                     GimpUndoAccumulator *accum);
-static void   gimp_transform_tool_undo_free         (GimpUndo            *undo,
-                                                     GimpUndoMode         undo_mode);
+static void   picman_transform_tool_undo_pop          (PicmanUndo            *undo,
+                                                     PicmanUndoMode         undo_mode,
+                                                     PicmanUndoAccumulator *accum);
+static void   picman_transform_tool_undo_free         (PicmanUndo            *undo,
+                                                     PicmanUndoMode         undo_mode);
 
 
-G_DEFINE_TYPE (GimpTransformToolUndo, gimp_transform_tool_undo, GIMP_TYPE_UNDO)
+G_DEFINE_TYPE (PicmanTransformToolUndo, picman_transform_tool_undo, PICMAN_TYPE_UNDO)
 
-#define parent_class gimp_transform_tool_undo_parent_class
+#define parent_class picman_transform_tool_undo_parent_class
 
 
 static void
-gimp_transform_tool_undo_class_init (GimpTransformToolUndoClass *klass)
+picman_transform_tool_undo_class_init (PicmanTransformToolUndoClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
-  GimpUndoClass *undo_class   = GIMP_UNDO_CLASS (klass);
+  PicmanUndoClass *undo_class   = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed  = gimp_transform_tool_undo_constructed;
-  object_class->set_property = gimp_transform_tool_undo_set_property;
-  object_class->get_property = gimp_transform_tool_undo_get_property;
+  object_class->constructed  = picman_transform_tool_undo_constructed;
+  object_class->set_property = picman_transform_tool_undo_set_property;
+  object_class->get_property = picman_transform_tool_undo_get_property;
 
-  undo_class->pop            = gimp_transform_tool_undo_pop;
-  undo_class->free           = gimp_transform_tool_undo_free;
+  undo_class->pop            = picman_transform_tool_undo_pop;
+  undo_class->free           = picman_transform_tool_undo_free;
 
   g_object_class_install_property (object_class, PROP_TRANSFORM_TOOL,
                                    g_param_spec_object ("transform-tool",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_TRANSFORM_TOOL,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_TRANSFORM_TOOL,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_transform_tool_undo_init (GimpTransformToolUndo *undo)
+picman_transform_tool_undo_init (PicmanTransformToolUndo *undo)
 {
 }
 
 static void
-gimp_transform_tool_undo_constructed (GObject *object)
+picman_transform_tool_undo_constructed (GObject *object)
 {
-  GimpTransformToolUndo *transform_tool_undo = GIMP_TRANSFORM_TOOL_UNDO (object);
-  GimpTransformTool     *transform_tool;
+  PicmanTransformToolUndo *transform_tool_undo = PICMAN_TRANSFORM_TOOL_UNDO (object);
+  PicmanTransformTool     *transform_tool;
   gint                   i;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_TRANSFORM_TOOL (transform_tool_undo->transform_tool));
+  g_assert (PICMAN_IS_TRANSFORM_TOOL (transform_tool_undo->transform_tool));
 
   transform_tool = transform_tool_undo->transform_tool;
 
@@ -108,12 +108,12 @@ gimp_transform_tool_undo_constructed (GObject *object)
 }
 
 static void
-gimp_transform_tool_undo_set_property (GObject      *object,
+picman_transform_tool_undo_set_property (GObject      *object,
                                        guint         property_id,
                                        const GValue *value,
                                        GParamSpec   *pspec)
 {
-  GimpTransformToolUndo *transform_tool_undo = GIMP_TRANSFORM_TOOL_UNDO (object);
+  PicmanTransformToolUndo *transform_tool_undo = PICMAN_TRANSFORM_TOOL_UNDO (object);
 
   switch (property_id)
     {
@@ -128,12 +128,12 @@ gimp_transform_tool_undo_set_property (GObject      *object,
 }
 
 static void
-gimp_transform_tool_undo_get_property (GObject    *object,
+picman_transform_tool_undo_get_property (GObject    *object,
                                        guint       property_id,
                                        GValue     *value,
                                        GParamSpec *pspec)
 {
-  GimpTransformToolUndo *transform_tool_undo = GIMP_TRANSFORM_TOOL_UNDO (object);
+  PicmanTransformToolUndo *transform_tool_undo = PICMAN_TRANSFORM_TOOL_UNDO (object);
 
   switch (property_id)
     {
@@ -148,17 +148,17 @@ gimp_transform_tool_undo_get_property (GObject    *object,
 }
 
 static void
-gimp_transform_tool_undo_pop (GimpUndo              *undo,
-                              GimpUndoMode           undo_mode,
-                              GimpUndoAccumulator   *accum)
+picman_transform_tool_undo_pop (PicmanUndo              *undo,
+                              PicmanUndoMode           undo_mode,
+                              PicmanUndoAccumulator   *accum)
 {
-  GimpTransformToolUndo *transform_tool_undo = GIMP_TRANSFORM_TOOL_UNDO (undo);
+  PicmanTransformToolUndo *transform_tool_undo = PICMAN_TRANSFORM_TOOL_UNDO (undo);
 
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 
   if (transform_tool_undo->transform_tool)
     {
-      GimpTransformTool *transform_tool;
+      PicmanTransformTool *transform_tool;
 #if 0
       TileManager       *temp;
 #endif
@@ -185,21 +185,21 @@ gimp_transform_tool_undo_pop (GimpUndo              *undo,
 
 #if 0
       /*  If we're re-implementing the first transform, reactivate tool  */
-      if (undo_mode == GIMP_UNDO_MODE_REDO && transform_tool->original)
+      if (undo_mode == PICMAN_UNDO_MODE_REDO && transform_tool->original)
         {
-          gimp_tool_control_activate (GIMP_TOOL (transform_tool)->control);
+          picman_tool_control_activate (PICMAN_TOOL (transform_tool)->control);
 
-          gimp_draw_tool_resume (GIMP_DRAW_TOOL (transform_tool));
+          picman_draw_tool_resume (PICMAN_DRAW_TOOL (transform_tool));
         }
 #endif
     }
  }
 
 static void
-gimp_transform_tool_undo_free (GimpUndo     *undo,
-                               GimpUndoMode  undo_mode)
+picman_transform_tool_undo_free (PicmanUndo     *undo,
+                               PicmanUndoMode  undo_mode)
 {
-  GimpTransformToolUndo *transform_tool_undo = GIMP_TRANSFORM_TOOL_UNDO (undo);
+  PicmanTransformToolUndo *transform_tool_undo = PICMAN_TRANSFORM_TOOL_UNDO (undo);
 
   if (transform_tool_undo->transform_tool)
     {
@@ -216,5 +216,5 @@ gimp_transform_tool_undo_free (GimpUndo     *undo,
     }
 #endif
 
-  GIMP_UNDO_CLASS (parent_class)->free (undo, undo_mode);
+  PICMAN_UNDO_CLASS (parent_class)->free (undo, undo_mode);
 }

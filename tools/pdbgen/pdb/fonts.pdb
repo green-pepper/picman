@@ -1,4 +1,4 @@
-# GIMP - The GNU Image Manipulation Program
+# PICMAN - The GNU Image Manipulation Program
 # Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# "Perlized" from C source by Manish Singh <yosh@gimp.org>
+# "Perlized" from C source by Manish Singh <yosh@picman.org>
 
 sub fonts_refresh {
     $blurb = 'Refresh current fonts. This function always succeeds.';
@@ -29,7 +29,7 @@ HELP
     %invoke = (
 	code => <<'CODE'
 {
-  gimp_fonts_load (gimp);
+  picman_fonts_load (picman);
 }
 CODE
     );
@@ -57,10 +57,10 @@ HELP
     );
 
     %invoke = (
-        headers => [ qw("core/gimpcontainer-filter.h") ],
+        headers => [ qw("core/picmancontainer-filter.h") ],
 	code => <<'CODE'
 {
-  font_list = gimp_container_get_filtered_name_array (gimp->fonts,
+  font_list = picman_container_get_filtered_name_array (picman->fonts,
                                                       filter, &num_fonts);
 }
 CODE
@@ -68,9 +68,9 @@ CODE
 }
 
 
-@headers = qw("core/gimp.h"
-              "core/gimpcontainer.h"
-              "text/gimp-fonts.h");
+@headers = qw("core/picman.h"
+              "core/picmancontainer.h"
+              "text/picman-fonts.h");
 
 @procs = qw(fonts_refresh
             fonts_get_list);
@@ -78,7 +78,7 @@ CODE
 %exports = (app => [@procs], lib => [@procs]);
 
 $desc = 'Fonts';
-$doc_title = 'gimpfonts';
+$doc_title = 'picmanfonts';
 $doc_short_desc = 'Operations related to fonts.';
 $doc_long_desc = 'Operations related to fonts.';
 

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcontainerpopup.c
- * Copyright (C) 2003-2005 Michael Natterer <mitch@gimp.org>
+ * picmancontainerpopup.c
+ * Copyright (C) 2003-2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,26 +24,26 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpmarshal.h"
-#include "core/gimpviewable.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
+#include "core/picmancontainer.h"
+#include "core/picmanmarshal.h"
+#include "core/picmanviewable.h"
 
-#include "gimpcontainerbox.h"
-#include "gimpcontainereditor.h"
-#include "gimpcontainerpopup.h"
-#include "gimpcontainertreeview.h"
-#include "gimpcontainerview.h"
-#include "gimpdialogfactory.h"
-#include "gimpviewrenderer.h"
-#include "gimpwindowstrategy.h"
+#include "picmancontainerbox.h"
+#include "picmancontainereditor.h"
+#include "picmancontainerpopup.h"
+#include "picmancontainertreeview.h"
+#include "picmancontainerview.h"
+#include "picmandialogfactory.h"
+#include "picmanviewrenderer.h"
+#include "picmanwindowstrategy.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -54,38 +54,38 @@ enum
 };
 
 
-static void     gimp_container_popup_finalize     (GObject            *object);
+static void     picman_container_popup_finalize     (GObject            *object);
 
-static void     gimp_container_popup_map          (GtkWidget          *widget);
-static gboolean gimp_container_popup_button_press (GtkWidget          *widget,
+static void     picman_container_popup_map          (GtkWidget          *widget);
+static gboolean picman_container_popup_button_press (GtkWidget          *widget,
                                                    GdkEventButton     *bevent);
-static gboolean gimp_container_popup_key_press    (GtkWidget          *widget,
+static gboolean picman_container_popup_key_press    (GtkWidget          *widget,
                                                    GdkEventKey        *kevent);
 
-static void     gimp_container_popup_real_cancel  (GimpContainerPopup *popup);
-static void     gimp_container_popup_real_confirm (GimpContainerPopup *popup);
+static void     picman_container_popup_real_cancel  (PicmanContainerPopup *popup);
+static void     picman_container_popup_real_confirm (PicmanContainerPopup *popup);
 
-static void     gimp_container_popup_create_view  (GimpContainerPopup *popup);
+static void     picman_container_popup_create_view  (PicmanContainerPopup *popup);
 
-static void gimp_container_popup_smaller_clicked  (GtkWidget          *button,
-                                                   GimpContainerPopup *popup);
-static void gimp_container_popup_larger_clicked   (GtkWidget          *button,
-                                                   GimpContainerPopup *popup);
-static void gimp_container_popup_view_type_toggled(GtkWidget          *button,
-                                                   GimpContainerPopup *popup);
-static void gimp_container_popup_dialog_clicked   (GtkWidget          *button,
-                                                   GimpContainerPopup *popup);
+static void picman_container_popup_smaller_clicked  (GtkWidget          *button,
+                                                   PicmanContainerPopup *popup);
+static void picman_container_popup_larger_clicked   (GtkWidget          *button,
+                                                   PicmanContainerPopup *popup);
+static void picman_container_popup_view_type_toggled(GtkWidget          *button,
+                                                   PicmanContainerPopup *popup);
+static void picman_container_popup_dialog_clicked   (GtkWidget          *button,
+                                                   PicmanContainerPopup *popup);
 
 
-G_DEFINE_TYPE (GimpContainerPopup, gimp_container_popup, GTK_TYPE_WINDOW)
+G_DEFINE_TYPE (PicmanContainerPopup, picman_container_popup, GTK_TYPE_WINDOW)
 
-#define parent_class gimp_container_popup_parent_class
+#define parent_class picman_container_popup_parent_class
 
 static guint popup_signals[LAST_SIGNAL];
 
 
 static void
-gimp_container_popup_class_init (GimpContainerPopupClass *klass)
+picman_container_popup_class_init (PicmanContainerPopupClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
@@ -95,28 +95,28 @@ gimp_container_popup_class_init (GimpContainerPopupClass *klass)
     g_signal_new ("cancel",
                   G_OBJECT_CLASS_TYPE (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                  G_STRUCT_OFFSET (GimpContainerPopupClass, cancel),
+                  G_STRUCT_OFFSET (PicmanContainerPopupClass, cancel),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
   popup_signals[CONFIRM] =
     g_signal_new ("confirm",
                   G_OBJECT_CLASS_TYPE (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                  G_STRUCT_OFFSET (GimpContainerPopupClass, confirm),
+                  G_STRUCT_OFFSET (PicmanContainerPopupClass, confirm),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->finalize           = gimp_container_popup_finalize;
+  object_class->finalize           = picman_container_popup_finalize;
 
-  widget_class->map                = gimp_container_popup_map;
-  widget_class->button_press_event = gimp_container_popup_button_press;
-  widget_class->key_press_event    = gimp_container_popup_key_press;
+  widget_class->map                = picman_container_popup_map;
+  widget_class->button_press_event = picman_container_popup_button_press;
+  widget_class->key_press_event    = picman_container_popup_key_press;
 
-  klass->cancel                    = gimp_container_popup_real_cancel;
-  klass->confirm                   = gimp_container_popup_real_confirm;
+  klass->cancel                    = picman_container_popup_real_cancel;
+  klass->confirm                   = picman_container_popup_real_confirm;
 
   binding_set = gtk_binding_set_by_class (klass);
 
@@ -135,11 +135,11 @@ gimp_container_popup_class_init (GimpContainerPopupClass *klass)
 }
 
 static void
-gimp_container_popup_init (GimpContainerPopup *popup)
+picman_container_popup_init (PicmanContainerPopup *popup)
 {
-  popup->view_type         = GIMP_VIEW_TYPE_LIST;
-  popup->default_view_size = GIMP_VIEW_SIZE_SMALL;
-  popup->view_size         = GIMP_VIEW_SIZE_SMALL;
+  popup->view_type         = PICMAN_VIEW_TYPE_LIST;
+  popup->default_view_size = PICMAN_VIEW_SIZE_SMALL;
+  popup->view_size         = PICMAN_VIEW_SIZE_SMALL;
   popup->view_border_width = 1;
 
   popup->frame = gtk_frame_new (NULL);
@@ -149,9 +149,9 @@ gimp_container_popup_init (GimpContainerPopup *popup)
 }
 
 static void
-gimp_container_popup_finalize (GObject *object)
+picman_container_popup_finalize (GObject *object)
 {
-  GimpContainerPopup *popup = GIMP_CONTAINER_POPUP (object);
+  PicmanContainerPopup *popup = PICMAN_CONTAINER_POPUP (object);
 
   if (popup->context)
     {
@@ -181,7 +181,7 @@ gimp_container_popup_finalize (GObject *object)
 }
 
 static void
-gimp_container_popup_grab_notify (GtkWidget *widget,
+picman_container_popup_grab_notify (GtkWidget *widget,
                                   gboolean   was_grabbed)
 {
   if (was_grabbed)
@@ -195,16 +195,16 @@ gimp_container_popup_grab_notify (GtkWidget *widget,
 }
 
 static gboolean
-gimp_container_popup_grab_broken_event (GtkWidget          *widget,
+picman_container_popup_grab_broken_event (GtkWidget          *widget,
                                         GdkEventGrabBroken *event)
 {
-  gimp_container_popup_grab_notify (widget, FALSE);
+  picman_container_popup_grab_notify (widget, FALSE);
 
   return FALSE;
 }
 
 static void
-gimp_container_popup_map (GtkWidget *widget)
+picman_container_popup_map (GtkWidget *widget)
 {
   GTK_WIDGET_CLASS (parent_class)->map (widget);
 
@@ -223,10 +223,10 @@ gimp_container_popup_map (GtkWidget *widget)
           gtk_grab_add (widget);
 
           g_signal_connect (widget, "grab-notify",
-                            G_CALLBACK (gimp_container_popup_grab_notify),
+                            G_CALLBACK (picman_container_popup_grab_notify),
                             widget);
           g_signal_connect (widget, "grab-broken-event",
-                            G_CALLBACK (gimp_container_popup_grab_broken_event),
+                            G_CALLBACK (picman_container_popup_grab_broken_event),
                             widget);
 
           return;
@@ -245,7 +245,7 @@ gimp_container_popup_map (GtkWidget *widget)
 }
 
 static gboolean
-gimp_container_popup_button_press (GtkWidget      *widget,
+picman_container_popup_button_press (GtkWidget      *widget,
                                    GdkEventButton *bevent)
 {
   GtkWidget *event_widget;
@@ -260,21 +260,21 @@ gimp_container_popup_button_press (GtkWidget      *widget,
       gtk_widget_get_allocation (widget, &allocation);
 
       /*  the event was on the popup, which can either be really on the
-       *  popup or outside gimp (owner_events == TRUE, see map())
+       *  popup or outside picman (owner_events == TRUE, see map())
        */
       if (bevent->x < 0                ||
           bevent->y < 0                ||
           bevent->x > allocation.width ||
           bevent->y > allocation.height)
         {
-          /*  the event was outsde gimp  */
+          /*  the event was outsde picman  */
 
           cancel = TRUE;
         }
     }
   else if (gtk_widget_get_toplevel (event_widget) != widget)
     {
-      /*  the event was on a gimp widget, but not inside the popup  */
+      /*  the event was on a picman widget, but not inside the popup  */
 
       cancel = TRUE;
     }
@@ -286,13 +286,13 @@ gimp_container_popup_button_press (GtkWidget      *widget,
 }
 
 static gboolean
-gimp_container_popup_key_press (GtkWidget   *widget,
+picman_container_popup_key_press (GtkWidget   *widget,
                                 GdkEventKey *kevent)
 {
   GtkBindingSet *binding_set;
 
   binding_set =
-    gtk_binding_set_by_class (GIMP_CONTAINER_POPUP_GET_CLASS (widget));
+    gtk_binding_set_by_class (PICMAN_CONTAINER_POPUP_GET_CLASS (widget));
 
   /*  invoke the popup's binding entries manually, because otherwise
    *  the focus widget (GtkTreeView e.g.) would consume it
@@ -309,7 +309,7 @@ gimp_container_popup_key_press (GtkWidget   *widget,
 }
 
 static void
-gimp_container_popup_real_cancel (GimpContainerPopup *popup)
+picman_container_popup_real_cancel (PicmanContainerPopup *popup)
 {
   GtkWidget *widget = GTK_WIDGET (popup);
 
@@ -320,15 +320,15 @@ gimp_container_popup_real_cancel (GimpContainerPopup *popup)
 }
 
 static void
-gimp_container_popup_real_confirm (GimpContainerPopup *popup)
+picman_container_popup_real_confirm (PicmanContainerPopup *popup)
 {
   GtkWidget  *widget = GTK_WIDGET (popup);
-  GimpObject *object;
+  PicmanObject *object;
 
-  object = gimp_context_get_by_type (popup->context,
-                                     gimp_container_get_children_type (popup->container));
-  gimp_context_set_by_type (popup->orig_context,
-                            gimp_container_get_children_type (popup->container),
+  object = picman_context_get_by_type (popup->context,
+                                     picman_container_get_children_type (popup->container));
+  picman_context_set_by_type (popup->orig_context,
+                            picman_container_get_children_type (popup->container),
                             object);
 
   if (gtk_grab_get_current () == widget)
@@ -338,9 +338,9 @@ gimp_container_popup_real_confirm (GimpContainerPopup *popup)
 }
 
 static void
-gimp_container_popup_context_changed (GimpContext        *context,
-                                      GimpViewable       *viewable,
-                                      GimpContainerPopup *popup)
+picman_container_popup_context_changed (PicmanContext        *context,
+                                      PicmanViewable       *viewable,
+                                      PicmanContainerPopup *popup)
 {
   GdkEvent *current_event;
   gboolean  confirm = FALSE;
@@ -361,31 +361,31 @@ gimp_container_popup_context_changed (GimpContext        *context,
 }
 
 GtkWidget *
-gimp_container_popup_new (GimpContainer     *container,
-                          GimpContext       *context,
-                          GimpViewType       view_type,
+picman_container_popup_new (PicmanContainer     *container,
+                          PicmanContext       *context,
+                          PicmanViewType       view_type,
                           gint               default_view_size,
                           gint               view_size,
                           gint               view_border_width,
-                          GimpDialogFactory *dialog_factory,
+                          PicmanDialogFactory *dialog_factory,
                           const gchar       *dialog_identifier,
                           const gchar       *dialog_stock_id,
                           const gchar       *dialog_tooltip)
 {
-  GimpContainerPopup *popup;
+  PicmanContainerPopup *popup;
 
-  g_return_val_if_fail (GIMP_IS_CONTAINER (container), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTAINER (container), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (default_view_size >  0 &&
-                        default_view_size <= GIMP_VIEWABLE_MAX_POPUP_SIZE,
+                        default_view_size <= PICMAN_VIEWABLE_MAX_POPUP_SIZE,
                         NULL);
   g_return_val_if_fail (view_size >  0 &&
-                        view_size <= GIMP_VIEWABLE_MAX_POPUP_SIZE, NULL);
+                        view_size <= PICMAN_VIEWABLE_MAX_POPUP_SIZE, NULL);
   g_return_val_if_fail (view_border_width >= 0 &&
-                        view_border_width <= GIMP_VIEW_MAX_BORDER_WIDTH,
+                        view_border_width <= PICMAN_VIEW_MAX_BORDER_WIDTH,
                         NULL);
   g_return_val_if_fail (dialog_factory == NULL ||
-                        GIMP_IS_DIALOG_FACTORY (dialog_factory), NULL);
+                        PICMAN_IS_DIALOG_FACTORY (dialog_factory), NULL);
   if (dialog_factory)
     {
       g_return_val_if_fail (dialog_identifier != NULL, NULL);
@@ -393,14 +393,14 @@ gimp_container_popup_new (GimpContainer     *container,
       g_return_val_if_fail (dialog_tooltip != NULL, NULL);
     }
 
-  popup = g_object_new (GIMP_TYPE_CONTAINER_POPUP,
+  popup = g_object_new (PICMAN_TYPE_CONTAINER_POPUP,
                         "type", GTK_WINDOW_POPUP,
                         NULL);
   gtk_window_set_resizable (GTK_WINDOW (popup), FALSE);
 
   popup->container    = container;
   popup->orig_context = context;
-  popup->context      = gimp_context_new (context->gimp, "popup", context);
+  popup->context      = picman_context_new (context->picman, "popup", context);
 
   popup->view_type         = view_type;
   popup->default_view_size = default_view_size;
@@ -408,8 +408,8 @@ gimp_container_popup_new (GimpContainer     *container,
   popup->view_border_width = view_border_width;
 
   g_signal_connect (popup->context,
-                    gimp_context_type_to_signal_name (gimp_container_get_children_type (container)),
-                    G_CALLBACK (gimp_container_popup_context_changed),
+                    picman_context_type_to_signal_name (picman_container_get_children_type (container)),
+                    G_CALLBACK (picman_container_popup_context_changed),
                     popup);
 
   if (dialog_factory)
@@ -420,13 +420,13 @@ gimp_container_popup_new (GimpContainer     *container,
       popup->dialog_tooltip    = g_strdup (dialog_tooltip);
     }
 
-  gimp_container_popup_create_view (popup);
+  picman_container_popup_create_view (popup);
 
   return GTK_WIDGET (popup);
 }
 
 void
-gimp_container_popup_show (GimpContainerPopup *popup,
+picman_container_popup_show (PicmanContainerPopup *popup,
                            GtkWidget          *widget)
 {
   GdkScreen      *screen;
@@ -439,7 +439,7 @@ gimp_container_popup_show (GimpContainerPopup *popup,
   gint            x;
   gint            y;
 
-  g_return_if_fail (GIMP_IS_CONTAINER_POPUP (popup));
+  g_return_if_fail (PICMAN_IS_CONTAINER_POPUP (popup));
   g_return_if_fail (GTK_IS_WIDGET (widget));
 
   gtk_widget_size_request (GTK_WIDGET (popup), &requisition);
@@ -486,61 +486,61 @@ gimp_container_popup_show (GimpContainerPopup *popup,
   gtk_widget_show (GTK_WIDGET (popup));
 }
 
-GimpViewType
-gimp_container_popup_get_view_type (GimpContainerPopup *popup)
+PicmanViewType
+picman_container_popup_get_view_type (PicmanContainerPopup *popup)
 {
-  g_return_val_if_fail (GIMP_IS_CONTAINER_POPUP (popup), GIMP_VIEW_TYPE_LIST);
+  g_return_val_if_fail (PICMAN_IS_CONTAINER_POPUP (popup), PICMAN_VIEW_TYPE_LIST);
 
   return popup->view_type;
 }
 
 void
-gimp_container_popup_set_view_type (GimpContainerPopup *popup,
-                                    GimpViewType        view_type)
+picman_container_popup_set_view_type (PicmanContainerPopup *popup,
+                                    PicmanViewType        view_type)
 {
-  g_return_if_fail (GIMP_IS_CONTAINER_POPUP (popup));
+  g_return_if_fail (PICMAN_IS_CONTAINER_POPUP (popup));
 
   if (view_type != popup->view_type)
     {
       popup->view_type = view_type;
 
       gtk_widget_destroy (GTK_WIDGET (popup->editor));
-      gimp_container_popup_create_view (popup);
+      picman_container_popup_create_view (popup);
     }
 }
 
 gint
-gimp_container_popup_get_view_size (GimpContainerPopup *popup)
+picman_container_popup_get_view_size (PicmanContainerPopup *popup)
 {
-  g_return_val_if_fail (GIMP_IS_CONTAINER_POPUP (popup), GIMP_VIEW_SIZE_SMALL);
+  g_return_val_if_fail (PICMAN_IS_CONTAINER_POPUP (popup), PICMAN_VIEW_SIZE_SMALL);
 
   return popup->view_size;
 }
 
 void
-gimp_container_popup_set_view_size (GimpContainerPopup *popup,
+picman_container_popup_set_view_size (PicmanContainerPopup *popup,
                                     gint                view_size)
 {
   GtkWidget     *scrolled_win;
   GtkWidget     *viewport;
   GtkAllocation  allocation;
 
-  g_return_if_fail (GIMP_IS_CONTAINER_POPUP (popup));
+  g_return_if_fail (PICMAN_IS_CONTAINER_POPUP (popup));
 
-  scrolled_win = GIMP_CONTAINER_BOX (popup->editor->view)->scrolled_win;
+  scrolled_win = PICMAN_CONTAINER_BOX (popup->editor->view)->scrolled_win;
   viewport     = gtk_bin_get_child (GTK_BIN (scrolled_win));
 
   gtk_widget_get_allocation (viewport, &allocation);
 
-  view_size = CLAMP (view_size, GIMP_VIEW_SIZE_TINY,
-                     MIN (GIMP_VIEW_SIZE_GIGANTIC,
+  view_size = CLAMP (view_size, PICMAN_VIEW_SIZE_TINY,
+                     MIN (PICMAN_VIEW_SIZE_GIGANTIC,
                           allocation.width - 2 * popup->view_border_width));
 
   if (view_size != popup->view_size)
     {
       popup->view_size = view_size;
 
-      gimp_container_view_set_view_size (popup->editor->view,
+      picman_container_view_set_view_size (popup->editor->view,
                                          popup->view_size,
                                          popup->view_border_width);
     }
@@ -550,12 +550,12 @@ gimp_container_popup_set_view_size (GimpContainerPopup *popup,
 /*  private functions  */
 
 static void
-gimp_container_popup_create_view (GimpContainerPopup *popup)
+picman_container_popup_create_view (PicmanContainerPopup *popup)
 {
-  GimpEditor *editor;
+  PicmanEditor *editor;
   GtkWidget  *button;
 
-  popup->editor = g_object_new (GIMP_TYPE_CONTAINER_EDITOR,
+  popup->editor = g_object_new (PICMAN_TYPE_CONTAINER_EDITOR,
                                 "view-type",         popup->view_type,
                                 "container",         popup->container,
                                 "context",           popup->context,
@@ -563,55 +563,55 @@ gimp_container_popup_create_view (GimpContainerPopup *popup)
                                 "view-border-width", popup->view_border_width,
                                 NULL);
 
-  gimp_container_view_set_reorderable (GIMP_CONTAINER_VIEW (popup->editor->view),
+  picman_container_view_set_reorderable (PICMAN_CONTAINER_VIEW (popup->editor->view),
                                        FALSE);
 
-  if (popup->view_type == GIMP_VIEW_TYPE_LIST)
+  if (popup->view_type == PICMAN_VIEW_TYPE_LIST)
     {
       GtkWidget *search_entry;
 
       search_entry = gtk_entry_new ();
       gtk_box_pack_end (GTK_BOX (popup->editor->view), search_entry,
                         FALSE, FALSE, 0);
-      gtk_tree_view_set_search_entry (GTK_TREE_VIEW (GIMP_CONTAINER_TREE_VIEW (GIMP_CONTAINER_VIEW (popup->editor->view))->view),
+      gtk_tree_view_set_search_entry (GTK_TREE_VIEW (PICMAN_CONTAINER_TREE_VIEW (PICMAN_CONTAINER_VIEW (popup->editor->view))->view),
                                       GTK_ENTRY (search_entry));
       gtk_widget_show (search_entry);
     }
 
-  gimp_container_box_set_size_request (GIMP_CONTAINER_BOX (popup->editor->view),
+  picman_container_box_set_size_request (PICMAN_CONTAINER_BOX (popup->editor->view),
                                        6  * (popup->default_view_size +
                                              2 * popup->view_border_width),
                                        10 * (popup->default_view_size +
                                              2 * popup->view_border_width));
 
-  if (GIMP_IS_EDITOR (popup->editor->view))
-    gimp_editor_set_show_name (GIMP_EDITOR (popup->editor->view), FALSE);
+  if (PICMAN_IS_EDITOR (popup->editor->view))
+    picman_editor_set_show_name (PICMAN_EDITOR (popup->editor->view), FALSE);
 
   gtk_container_add (GTK_CONTAINER (popup->frame), GTK_WIDGET (popup->editor));
   gtk_widget_show (GTK_WIDGET (popup->editor));
 
-  editor = GIMP_EDITOR (popup->editor->view);
+  editor = PICMAN_EDITOR (popup->editor->view);
 
-  gimp_editor_add_button (editor, GTK_STOCK_ZOOM_OUT,
+  picman_editor_add_button (editor, GTK_STOCK_ZOOM_OUT,
                           _("Smaller Previews"), NULL,
-                          G_CALLBACK (gimp_container_popup_smaller_clicked),
+                          G_CALLBACK (picman_container_popup_smaller_clicked),
                           NULL,
                           popup);
-  gimp_editor_add_button (editor, GTK_STOCK_ZOOM_IN,
+  picman_editor_add_button (editor, GTK_STOCK_ZOOM_IN,
                           _("Larger Previews"), NULL,
-                          G_CALLBACK (gimp_container_popup_larger_clicked),
+                          G_CALLBACK (picman_container_popup_larger_clicked),
                           NULL,
                           popup);
 
-  button = gimp_editor_add_stock_box (editor, GIMP_TYPE_VIEW_TYPE, "gimp",
-                                      G_CALLBACK (gimp_container_popup_view_type_toggled),
+  button = picman_editor_add_stock_box (editor, PICMAN_TYPE_VIEW_TYPE, "picman",
+                                      G_CALLBACK (picman_container_popup_view_type_toggled),
                                       popup);
-  gimp_int_radio_group_set_active (GTK_RADIO_BUTTON (button), popup->view_type);
+  picman_int_radio_group_set_active (GTK_RADIO_BUTTON (button), popup->view_type);
 
   if (popup->dialog_factory)
-    gimp_editor_add_button (editor, popup->dialog_stock_id,
+    picman_editor_add_button (editor, popup->dialog_stock_id,
                             popup->dialog_tooltip, NULL,
-                            G_CALLBACK (gimp_container_popup_dialog_clicked),
+                            G_CALLBACK (picman_container_popup_dialog_clicked),
                             NULL,
                             popup);
 
@@ -619,48 +619,48 @@ gimp_container_popup_create_view (GimpContainerPopup *popup)
 }
 
 static void
-gimp_container_popup_smaller_clicked (GtkWidget          *button,
-                                      GimpContainerPopup *popup)
+picman_container_popup_smaller_clicked (GtkWidget          *button,
+                                      PicmanContainerPopup *popup)
 {
   gint view_size;
 
-  view_size = gimp_container_view_get_view_size (popup->editor->view, NULL);
+  view_size = picman_container_view_get_view_size (popup->editor->view, NULL);
 
-  gimp_container_popup_set_view_size (popup, view_size * 0.8);
+  picman_container_popup_set_view_size (popup, view_size * 0.8);
 }
 
 static void
-gimp_container_popup_larger_clicked (GtkWidget          *button,
-                                     GimpContainerPopup *popup)
+picman_container_popup_larger_clicked (GtkWidget          *button,
+                                     PicmanContainerPopup *popup)
 {
   gint view_size;
 
-  view_size = gimp_container_view_get_view_size (popup->editor->view, NULL);
+  view_size = picman_container_view_get_view_size (popup->editor->view, NULL);
 
-  gimp_container_popup_set_view_size (popup, view_size * 1.2);
+  picman_container_popup_set_view_size (popup, view_size * 1.2);
 }
 
 static void
-gimp_container_popup_view_type_toggled (GtkWidget          *button,
-                                        GimpContainerPopup *popup)
+picman_container_popup_view_type_toggled (GtkWidget          *button,
+                                        PicmanContainerPopup *popup)
 {
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)))
     {
-      GimpViewType view_type;
+      PicmanViewType view_type;
 
       view_type = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
-                                                      "gimp-item-data"));
+                                                      "picman-item-data"));
 
-      gimp_container_popup_set_view_type (popup, view_type);
+      picman_container_popup_set_view_type (popup, view_type);
     }
 }
 
 static void
-gimp_container_popup_dialog_clicked (GtkWidget          *button,
-                                     GimpContainerPopup *popup)
+picman_container_popup_dialog_clicked (GtkWidget          *button,
+                                     PicmanContainerPopup *popup)
 {
-  gimp_window_strategy_show_dockable_dialog (GIMP_WINDOW_STRATEGY (gimp_get_window_strategy (popup->context->gimp)),
-                                             popup->context->gimp,
+  picman_window_strategy_show_dockable_dialog (PICMAN_WINDOW_STRATEGY (picman_get_window_strategy (popup->context->picman)),
+                                             popup->context->picman,
                                              popup->dialog_factory,
                                              gtk_widget_get_screen (button),
                                              popup->dialog_identifier);

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 2011 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,20 +24,20 @@
 #include <string.h>
 #include <utime.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "dialogs/dialogs-types.h"
 
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpsessioninfo.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmansessioninfo.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
 
 #include "tests.h"
 
-#include "gimp-app-test-utils.h"
-#include "gimp-test-session-utils.h"
+#include "picman-app-test-utils.h"
+#include "picman-test-session-utils.h"
 
 
 typedef struct
@@ -45,12 +45,12 @@ typedef struct
   gchar    *filename;
   gchar    *md5;
   GTimeVal  modtime;
-} GimpTestFileState;
+} PicmanTestFileState;
 
 
 static gboolean
-gimp_test_get_file_state_verbose (const gchar       *filename,
-                                  GimpTestFileState *filestate)
+picman_test_get_file_state_verbose (const gchar       *filename,
+                                  PicmanTestFileState *filestate)
 {
   gboolean success = TRUE;
 
@@ -104,9 +104,9 @@ gimp_test_get_file_state_verbose (const gchar       *filename,
 }
 
 static gboolean
-gimp_test_file_state_changes (const gchar       *filename,
-                              GimpTestFileState *state1,
-                              GimpTestFileState *state2)
+picman_test_file_state_changes (const gchar       *filename,
+                              PicmanTestFileState *state1,
+                              PicmanTestFileState *state2)
 {
   if (state1->modtime.tv_sec  == state2->modtime.tv_sec &&
       state1->modtime.tv_usec == state2->modtime.tv_usec)
@@ -146,7 +146,7 @@ gimp_test_file_state_changes (const gchar       *filename,
 }
 
 /**
- * gimp_test_session_load_and_write_session_files:
+ * picman_test_session_load_and_write_session_files:
  * @loaded_sessionrc:   The name of the file of the sessionrc file to
  *                      load
  * @loaded_dockrc:      The name of the file of the dockrc file to load
@@ -156,89 +156,89 @@ gimp_test_file_state_changes (const gchar       *filename,
  *                      file content
  *
  * Utility function for the various session management tests. We can't
- * easily have all those tests in a single program several Gimp
+ * easily have all those tests in a single program several Picman
  * instance can't easily be initialized in the same process.
  **/
 void
-gimp_test_session_load_and_write_session_files (const gchar *loaded_sessionrc,
+picman_test_session_load_and_write_session_files (const gchar *loaded_sessionrc,
                                                 const gchar *loaded_dockrc,
                                                 const gchar *expected_sessionrc,
                                                 const gchar *expected_dockrc,
                                                 gboolean     single_window_mode)
 {
-  Gimp              *gimp;
-  GimpTestFileState  initial_sessionrc_state = { NULL, NULL, { 0, 0 } };
-  GimpTestFileState  initial_dockrc_state    = { NULL, NULL, { 0, 0 } };
-  GimpTestFileState  final_sessionrc_state   = { NULL, NULL, { 0, 0 } };
-  GimpTestFileState  final_dockrc_state      = { NULL, NULL, { 0, 0 } };
+  Picman              *picman;
+  PicmanTestFileState  initial_sessionrc_state = { NULL, NULL, { 0, 0 } };
+  PicmanTestFileState  initial_dockrc_state    = { NULL, NULL, { 0, 0 } };
+  PicmanTestFileState  final_sessionrc_state   = { NULL, NULL, { 0, 0 } };
+  PicmanTestFileState  final_dockrc_state      = { NULL, NULL, { 0, 0 } };
   gchar             *sessionrc_filename      = NULL;
   gchar             *dockrc_filename         = NULL;
 
-  /* Make sure to run this before we use any GIMP functions */
-  gimp_test_utils_set_gimp2_directory ("GIMP_TESTING_ABS_TOP_SRCDIR",
-                                       "app/tests/gimpdir");
-  gimp_test_utils_setup_menus_dir ();
+  /* Make sure to run this before we use any PICMAN functions */
+  picman_test_utils_set_picman2_directory ("PICMAN_TESTING_ABS_TOP_SRCDIR",
+                                       "app/tests/picmandir");
+  picman_test_utils_setup_menus_dir ();
 
   /* Note that we expect the resulting sessionrc to be different from
    * the read file, which is why we check the MD5 of the -expected
    * variant
    */
-  sessionrc_filename = gimp_personal_rc_file (expected_sessionrc);
-  dockrc_filename    = gimp_personal_rc_file (expected_dockrc);
+  sessionrc_filename = picman_personal_rc_file (expected_sessionrc);
+  dockrc_filename    = picman_personal_rc_file (expected_dockrc);
 
   /* Remember the modtimes and MD5s */
-  g_assert (gimp_test_get_file_state_verbose (sessionrc_filename,
+  g_assert (picman_test_get_file_state_verbose (sessionrc_filename,
                                               &initial_sessionrc_state));
-  g_assert (gimp_test_get_file_state_verbose (dockrc_filename,
+  g_assert (picman_test_get_file_state_verbose (dockrc_filename,
                                               &initial_dockrc_state));
 
   /* Use specific input files when restoring the session */
-  g_setenv ("GIMP_TESTING_SESSIONRC_NAME", loaded_sessionrc, TRUE /*overwrite*/);
-  g_setenv ("GIMP_TESTING_DOCKRC_NAME", loaded_dockrc, TRUE /*overwrite*/);
+  g_setenv ("PICMAN_TESTING_SESSIONRC_NAME", loaded_sessionrc, TRUE /*overwrite*/);
+  g_setenv ("PICMAN_TESTING_DOCKRC_NAME", loaded_dockrc, TRUE /*overwrite*/);
 
-  /* Start up GIMP */
-  gimp = gimp_init_for_gui_testing (TRUE /*show_gui*/);
+  /* Start up PICMAN */
+  picman = picman_init_for_gui_testing (TRUE /*show_gui*/);
 
   /* Let the main loop run until idle to let things stabilize. This
    * includes parsing sessionrc and dockrc
    */
-  gimp_test_run_mainloop_until_idle ();
+  picman_test_run_mainloop_until_idle ();
 
-  /* Change the gimp dir to the output dir so files are written there,
+  /* Change the picman dir to the output dir so files are written there,
    * we don't want to (can't always) write to files in the source
    * dir. There is a hook in Makefile.am that makes sure the output
    * dir exists
    */
-  gimp_test_utils_set_gimp2_directory ("GIMP_TESTING_ABS_TOP_BUILDDIR",
-                                       "app/tests/gimpdir-output");
+  picman_test_utils_set_picman2_directory ("PICMAN_TESTING_ABS_TOP_BUILDDIR",
+                                       "app/tests/picmandir-output");
   /* Use normal output names */
-  g_unsetenv ("GIMP_TESTING_SESSIONRC_NAME");
-  g_unsetenv ("GIMP_TESTING_DOCKRC_NAME");
+  g_unsetenv ("PICMAN_TESTING_SESSIONRC_NAME");
+  g_unsetenv ("PICMAN_TESTING_DOCKRC_NAME");
 
   g_free (sessionrc_filename);
   g_free (dockrc_filename);
-  sessionrc_filename = gimp_personal_rc_file ("sessionrc");
-  dockrc_filename    = gimp_personal_rc_file ("dockrc");
+  sessionrc_filename = picman_personal_rc_file ("sessionrc");
+  dockrc_filename    = picman_personal_rc_file ("dockrc");
 
   /* Exit. This includes writing sessionrc and dockrc*/
-  gimp_exit (gimp, TRUE);
+  picman_exit (picman, TRUE);
 
   /* Now get the new modtimes and MD5s */
-  g_assert (gimp_test_get_file_state_verbose (sessionrc_filename,
+  g_assert (picman_test_get_file_state_verbose (sessionrc_filename,
                                               &final_sessionrc_state));
-  g_assert (gimp_test_get_file_state_verbose (dockrc_filename,
+  g_assert (picman_test_get_file_state_verbose (dockrc_filename,
                                               &final_dockrc_state));
 
-  /* If things have gone our way, GIMP will have deserialized
+  /* If things have gone our way, PICMAN will have deserialized
    * sessionrc and dockrc, shown the GUI, and then serialized the new
    * files. To make sure we have new files we check the modtime, and
    * to make sure that their content remains the same we compare their
    * MD5
    */
-  g_assert (gimp_test_file_state_changes ("sessionrc",
+  g_assert (picman_test_file_state_changes ("sessionrc",
                                           &initial_sessionrc_state,
                                           &final_sessionrc_state));
-  g_assert (gimp_test_file_state_changes ("dockrc",
+  g_assert (picman_test_file_state_changes ("dockrc",
                                           &initial_dockrc_state,
                                           &final_dockrc_state));
 }

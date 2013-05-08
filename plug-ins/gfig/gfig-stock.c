@@ -1,12 +1,12 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Generates images containing vector type drawings.
  *
  * Copyright (C) 1997 Andy Thomas  <alt@picnic.demon.co.uk>
- *               2003 Sven Neumann  <sven@gimp.org>
+ *               2003 Sven Neumann  <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 
 #include "images/gfig-stock-pixbufs.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 static GtkIconFactory *gfig_icon_factory = NULL;

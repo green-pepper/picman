@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-operations.h
+ * picman-operations.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATIONS_H__
-#define __GIMP_OPERATIONS_H__
+#ifndef __PICMAN_OPERATIONS_H__
+#define __PICMAN_OPERATIONS_H__
 
 
-void   gimp_operations_init (void);
+void   picman_operations_init (void);
 
 
-#endif /* __GIMP_OPERATIONS_H__ */
+#endif /* __PICMAN_OPERATIONS_H__ */

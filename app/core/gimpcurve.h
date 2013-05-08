@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,31 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CURVE_H__
-#define __GIMP_CURVE_H__
+#ifndef __PICMAN_CURVE_H__
+#define __PICMAN_CURVE_H__
 
 
-#include "gimpdata.h"
+#include "picmandata.h"
 
 
-#define GIMP_TYPE_CURVE            (gimp_curve_get_type ())
-#define GIMP_CURVE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CURVE, GimpCurve))
-#define GIMP_CURVE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CURVE, GimpCurveClass))
-#define GIMP_IS_CURVE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CURVE))
-#define GIMP_IS_CURVE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CURVE))
-#define GIMP_CURVE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CURVE, GimpCurveClass))
+#define PICMAN_TYPE_CURVE            (picman_curve_get_type ())
+#define PICMAN_CURVE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CURVE, PicmanCurve))
+#define PICMAN_CURVE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CURVE, PicmanCurveClass))
+#define PICMAN_IS_CURVE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CURVE))
+#define PICMAN_IS_CURVE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CURVE))
+#define PICMAN_CURVE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CURVE, PicmanCurveClass))
 
 
-typedef struct _GimpCurveClass GimpCurveClass;
+typedef struct _PicmanCurveClass PicmanCurveClass;
 
-struct _GimpCurve
+struct _PicmanCurve
 {
-  GimpData       parent_instance;
+  PicmanData       parent_instance;
 
-  GimpCurveType  curve_type;
+  PicmanCurveType  curve_type;
 
   gint           n_points;
-  GimpVector2   *points;
+  PicmanVector2   *points;
 
   gint           n_samples;
   gdouble       *samples;
@@ -47,53 +47,53 @@ struct _GimpCurve
   gboolean       identity;  /* whether the curve is an identiy mapping */
 };
 
-struct _GimpCurveClass
+struct _PicmanCurveClass
 {
-  GimpDataClass  parent_class;
+  PicmanDataClass  parent_class;
 };
 
 
-GType           gimp_curve_get_type          (void) G_GNUC_CONST;
+GType           picman_curve_get_type          (void) G_GNUC_CONST;
 
-GimpData      * gimp_curve_new               (const gchar   *name);
-GimpData      * gimp_curve_get_standard      (void);
+PicmanData      * picman_curve_new               (const gchar   *name);
+PicmanData      * picman_curve_get_standard      (void);
 
-void            gimp_curve_reset             (GimpCurve     *curve,
+void            picman_curve_reset             (PicmanCurve     *curve,
                                               gboolean       reset_type);
 
-void            gimp_curve_set_curve_type    (GimpCurve     *curve,
-                                              GimpCurveType  curve_type);
-GimpCurveType   gimp_curve_get_curve_type    (GimpCurve     *curve);
+void            picman_curve_set_curve_type    (PicmanCurve     *curve,
+                                              PicmanCurveType  curve_type);
+PicmanCurveType   picman_curve_get_curve_type    (PicmanCurve     *curve);
 
-gint            gimp_curve_get_n_points      (GimpCurve     *curve);
-gint            gimp_curve_get_n_samples     (GimpCurve     *curve);
+gint            picman_curve_get_n_points      (PicmanCurve     *curve);
+gint            picman_curve_get_n_samples     (PicmanCurve     *curve);
 
-gint            gimp_curve_get_closest_point (GimpCurve     *curve,
+gint            picman_curve_get_closest_point (PicmanCurve     *curve,
                                               gdouble        x);
 
-void            gimp_curve_set_point         (GimpCurve     *curve,
+void            picman_curve_set_point         (PicmanCurve     *curve,
                                               gint           point,
                                               gdouble        x,
                                               gdouble        y);
-void            gimp_curve_move_point        (GimpCurve     *curve,
+void            picman_curve_move_point        (PicmanCurve     *curve,
                                               gint           point,
                                               gdouble        y);
-void            gimp_curve_delete_point      (GimpCurve     *curve,
+void            picman_curve_delete_point      (PicmanCurve     *curve,
                                               gint           point);
-void            gimp_curve_get_point         (GimpCurve     *curve,
+void            picman_curve_get_point         (PicmanCurve     *curve,
                                               gint           point,
                                               gdouble       *x,
                                               gdouble       *y);
 
-void            gimp_curve_set_curve         (GimpCurve     *curve,
+void            picman_curve_set_curve         (PicmanCurve     *curve,
                                               gdouble        x,
                                               gdouble        y);
 
-gboolean        gimp_curve_is_identity       (GimpCurve     *curve);
+gboolean        picman_curve_is_identity       (PicmanCurve     *curve);
 
-void            gimp_curve_get_uchar         (GimpCurve     *curve,
+void            picman_curve_get_uchar         (PicmanCurve     *curve,
                                               gint           n_samples,
                                               guchar        *samples);
 
 
-#endif /* __GIMP_CURVE_H__ */
+#endif /* __PICMAN_CURVE_H__ */

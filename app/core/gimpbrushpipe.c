@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * Copyright (C) 1999 Adrian Likins and Tor Lillqvist
  *
@@ -20,63 +20,63 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gimpbrushpipe.h"
-#include "gimpbrushpipe-load.h"
+#include "picmanbrushpipe.h"
+#include "picmanbrushpipe-load.h"
 
 
-static void        gimp_brush_pipe_finalize         (GObject          *object);
+static void        picman_brush_pipe_finalize         (GObject          *object);
 
-static gint64      gimp_brush_pipe_get_memsize      (GimpObject       *object,
+static gint64      picman_brush_pipe_get_memsize      (PicmanObject       *object,
                                                      gint64           *gui_size);
 
-static gboolean    gimp_brush_pipe_get_popup_size   (GimpViewable     *viewable,
+static gboolean    picman_brush_pipe_get_popup_size   (PicmanViewable     *viewable,
                                                      gint              width,
                                                      gint              height,
                                                      gboolean          dot_for_dot,
                                                      gint             *popup_width,
                                                      gint             *popup_height);
 
-static void        gimp_brush_pipe_begin_use        (GimpBrush        *brush);
-static void        gimp_brush_pipe_end_use          (GimpBrush        *brush);
-static GimpBrush * gimp_brush_pipe_select_brush     (GimpBrush        *brush,
-                                                     const GimpCoords *last_coords,
-                                                     const GimpCoords *current_coords);
-static gboolean    gimp_brush_pipe_want_null_motion (GimpBrush        *brush,
-                                                     const GimpCoords *last_coords,
-                                                     const GimpCoords *current_coords);
+static void        picman_brush_pipe_begin_use        (PicmanBrush        *brush);
+static void        picman_brush_pipe_end_use          (PicmanBrush        *brush);
+static PicmanBrush * picman_brush_pipe_select_brush     (PicmanBrush        *brush,
+                                                     const PicmanCoords *last_coords,
+                                                     const PicmanCoords *current_coords);
+static gboolean    picman_brush_pipe_want_null_motion (PicmanBrush        *brush,
+                                                     const PicmanCoords *last_coords,
+                                                     const PicmanCoords *current_coords);
 
 
-G_DEFINE_TYPE (GimpBrushPipe, gimp_brush_pipe, GIMP_TYPE_BRUSH);
+G_DEFINE_TYPE (PicmanBrushPipe, picman_brush_pipe, PICMAN_TYPE_BRUSH);
 
-#define parent_class gimp_brush_pipe_parent_class
+#define parent_class picman_brush_pipe_parent_class
 
 
 static void
-gimp_brush_pipe_class_init (GimpBrushPipeClass *klass)
+picman_brush_pipe_class_init (PicmanBrushPipeClass *klass)
 {
   GObjectClass      *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass   *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class    = GIMP_VIEWABLE_CLASS (klass);
-  GimpBrushClass    *brush_class       = GIMP_BRUSH_CLASS (klass);
+  PicmanObjectClass   *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanViewableClass *viewable_class    = PICMAN_VIEWABLE_CLASS (klass);
+  PicmanBrushClass    *brush_class       = PICMAN_BRUSH_CLASS (klass);
 
-  object_class->finalize         = gimp_brush_pipe_finalize;
+  object_class->finalize         = picman_brush_pipe_finalize;
 
-  gimp_object_class->get_memsize = gimp_brush_pipe_get_memsize;
+  picman_object_class->get_memsize = picman_brush_pipe_get_memsize;
 
-  viewable_class->get_popup_size = gimp_brush_pipe_get_popup_size;
+  viewable_class->get_popup_size = picman_brush_pipe_get_popup_size;
 
-  brush_class->begin_use         = gimp_brush_pipe_begin_use;
-  brush_class->end_use           = gimp_brush_pipe_end_use;
-  brush_class->select_brush      = gimp_brush_pipe_select_brush;
-  brush_class->want_null_motion  = gimp_brush_pipe_want_null_motion;
+  brush_class->begin_use         = picman_brush_pipe_begin_use;
+  brush_class->end_use           = picman_brush_pipe_end_use;
+  brush_class->select_brush      = picman_brush_pipe_select_brush;
+  brush_class->want_null_motion  = picman_brush_pipe_want_null_motion;
 }
 
 static void
-gimp_brush_pipe_init (GimpBrushPipe *pipe)
+picman_brush_pipe_init (PicmanBrushPipe *pipe)
 {
   pipe->current   = NULL;
   pipe->dimension = 0;
@@ -89,9 +89,9 @@ gimp_brush_pipe_init (GimpBrushPipe *pipe)
 }
 
 static void
-gimp_brush_pipe_finalize (GObject *object)
+picman_brush_pipe_finalize (GObject *object)
 {
-  GimpBrushPipe *pipe = GIMP_BRUSH_PIPE (object);
+  PicmanBrushPipe *pipe = PICMAN_BRUSH_PIPE (object);
 
   if (pipe->rank)
     {
@@ -127,17 +127,17 @@ gimp_brush_pipe_finalize (GObject *object)
       pipe->index = NULL;
     }
 
-  GIMP_BRUSH (pipe)->mask   = NULL;
-  GIMP_BRUSH (pipe)->pixmap = NULL;
+  PICMAN_BRUSH (pipe)->mask   = NULL;
+  PICMAN_BRUSH (pipe)->pixmap = NULL;
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static gint64
-gimp_brush_pipe_get_memsize (GimpObject *object,
+picman_brush_pipe_get_memsize (PicmanObject *object,
                              gint64     *gui_size)
 {
-  GimpBrushPipe *pipe    = GIMP_BRUSH_PIPE (object);
+  PicmanBrushPipe *pipe    = PICMAN_BRUSH_PIPE (object);
   gint64         memsize = 0;
   gint           i;
 
@@ -146,61 +146,61 @@ gimp_brush_pipe_get_memsize (GimpObject *object,
                                 sizeof (PipeSelectModes));
 
   for (i = 0; i < pipe->n_brushes; i++)
-    memsize += gimp_object_get_memsize (GIMP_OBJECT (pipe->brushes[i]),
+    memsize += picman_object_get_memsize (PICMAN_OBJECT (pipe->brushes[i]),
                                         gui_size);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 static gboolean
-gimp_brush_pipe_get_popup_size (GimpViewable *viewable,
+picman_brush_pipe_get_popup_size (PicmanViewable *viewable,
                                 gint          width,
                                 gint          height,
                                 gboolean      dot_for_dot,
                                 gint         *popup_width,
                                 gint         *popup_height)
 {
-  return gimp_viewable_get_size (viewable, popup_width, popup_height);
+  return picman_viewable_get_size (viewable, popup_width, popup_height);
 }
 
 static void
-gimp_brush_pipe_begin_use (GimpBrush *brush)
+picman_brush_pipe_begin_use (PicmanBrush *brush)
 {
-  GimpBrushPipe *pipe = GIMP_BRUSH_PIPE (brush);
+  PicmanBrushPipe *pipe = PICMAN_BRUSH_PIPE (brush);
   gint           i;
 
-  GIMP_BRUSH_CLASS (parent_class)->begin_use (brush);
+  PICMAN_BRUSH_CLASS (parent_class)->begin_use (brush);
 
   for (i = 0; i < pipe->n_brushes; i++)
     if (pipe->brushes[i])
-      gimp_brush_begin_use (pipe->brushes[i]);
+      picman_brush_begin_use (pipe->brushes[i]);
 }
 
 static void
-gimp_brush_pipe_end_use (GimpBrush *brush)
+picman_brush_pipe_end_use (PicmanBrush *brush)
 {
-  GimpBrushPipe *pipe = GIMP_BRUSH_PIPE (brush);
+  PicmanBrushPipe *pipe = PICMAN_BRUSH_PIPE (brush);
   gint           i;
 
-  GIMP_BRUSH_CLASS (parent_class)->end_use (brush);
+  PICMAN_BRUSH_CLASS (parent_class)->end_use (brush);
 
   for (i = 0; i < pipe->n_brushes; i++)
     if (pipe->brushes[i])
-      gimp_brush_end_use (pipe->brushes[i]);
+      picman_brush_end_use (pipe->brushes[i]);
 }
 
-static GimpBrush *
-gimp_brush_pipe_select_brush (GimpBrush        *brush,
-                              const GimpCoords *last_coords,
-                              const GimpCoords *current_coords)
+static PicmanBrush *
+picman_brush_pipe_select_brush (PicmanBrush        *brush,
+                              const PicmanCoords *last_coords,
+                              const PicmanCoords *current_coords)
 {
-  GimpBrushPipe *pipe = GIMP_BRUSH_PIPE (brush);
+  PicmanBrushPipe *pipe = PICMAN_BRUSH_PIPE (brush);
   gint           i, brushix, ix;
   gdouble        velocity;
 
   if (pipe->n_brushes == 1)
-    return GIMP_BRUSH (pipe->current);
+    return PICMAN_BRUSH (pipe->current);
 
   brushix = 0;
   for (i = 0; i < pipe->dimension; i++)
@@ -257,15 +257,15 @@ gimp_brush_pipe_select_brush (GimpBrush        *brush,
 
   pipe->current = pipe->brushes[brushix];
 
-  return GIMP_BRUSH (pipe->current);
+  return PICMAN_BRUSH (pipe->current);
 }
 
 static gboolean
-gimp_brush_pipe_want_null_motion (GimpBrush        *brush,
-                                  const GimpCoords *last_coords,
-                                  const GimpCoords *current_coords)
+picman_brush_pipe_want_null_motion (PicmanBrush        *brush,
+                                  const PicmanCoords *last_coords,
+                                  const PicmanCoords *current_coords)
 {
-  GimpBrushPipe *pipe = GIMP_BRUSH_PIPE (brush);
+  PicmanBrushPipe *pipe = PICMAN_BRUSH_PIPE (brush);
   gint           i;
 
   if (pipe->n_brushes == 1)

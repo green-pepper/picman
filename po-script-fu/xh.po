@@ -1,12 +1,12 @@
-# Xhosa translation of gimp-script-fu
+# Xhosa translation of picman-script-fu
 # Copyright (C) 2005 Canonical Ltd.
-# This file is distributed under the same license as the gimp package.
+# This file is distributed under the same license as the picman package.
 # Translation by Canonical Ltd <translations@canonical.com> with thanks to
 # Translation World CC in South Africa, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp20-script-fu\n"
+"Project-Id-Version: picman20-script-fu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-04-13 16:09+0200\n"
 "PO-Revision-Date: 2005-03-31 09:03+0200\n"
@@ -119,17 +119,17 @@ msgid "(none)"
 msgstr "(akukho nanye)"
 
 #: ../plug-ins/script-fu/script-fu-interface.c:1083
-#: ../plug-ins/dbbrowser/gimpprocview.c:199
+#: ../plug-ins/dbbrowser/picmanprocview.c:199
 msgid "Author:"
 msgstr "uMqulunqi:"
 
 #: ../plug-ins/script-fu/script-fu-interface.c:1090
-#: ../plug-ins/dbbrowser/gimpprocview.c:221
+#: ../plug-ins/dbbrowser/picmanprocview.c:221
 msgid "Copyright:"
 msgstr "Amalungelo oMqulunqi"
 
 #: ../plug-ins/script-fu/script-fu-interface.c:1097
-#: ../plug-ins/dbbrowser/gimpprocview.c:210
+#: ../plug-ins/dbbrowser/picmanprocview.c:210
 msgid "Date:"
 msgstr "uMhla:"
 
@@ -225,7 +225,7 @@ msgid "_Beveled Pattern"
 msgstr "iPateni"
 
 #: ../plug-ins/script-fu/script-fu.c:293
-msgid "_Classic.Gimp.Org"
+msgid "_Classic.Picman.Org"
 msgstr ""
 
 #: ../plug-ins/script-fu/script-fu.c:296
@@ -271,74 +271,74 @@ msgstr ""
 msgid "_Refresh Scripts"
 msgstr "_Hlaziya iziKripti"
 
-#: ../plug-ins/dbbrowser/gimpprocbrowser.c:126
+#: ../plug-ins/dbbrowser/picmanprocbrowser.c:126
 msgid "Procedure Browser"
 msgstr "Isikhangeli seNkqubo"
 
-#: ../plug-ins/dbbrowser/gimpprocbrowser.c:130
+#: ../plug-ins/dbbrowser/picmanprocbrowser.c:130
 msgid "Search by _Name"
 msgstr "Khangela nge _Gama"
 
-#: ../plug-ins/dbbrowser/gimpprocbrowser.c:131
+#: ../plug-ins/dbbrowser/picmanprocbrowser.c:131
 #, fuzzy
 msgid "Search by _Description"
 msgstr "Khangela nge _Gama"
 
-#: ../plug-ins/dbbrowser/gimpprocbrowser.c:213
+#: ../plug-ins/dbbrowser/picmanprocbrowser.c:213
 msgid "_Search:"
 msgstr "_Khangela:"
 
-#: ../plug-ins/dbbrowser/gimpprocbrowser.c:375
+#: ../plug-ins/dbbrowser/picmanprocbrowser.c:375
 msgid "Searching by name - please wait"
 msgstr "Ikhangela ngegama - nceda ulinde"
 
-#: ../plug-ins/dbbrowser/gimpprocbrowser.c:399
+#: ../plug-ins/dbbrowser/picmanprocbrowser.c:399
 msgid "Searching by blurb - please wait"
 msgstr ""
 "Ikhangela ngenkcazo yencwadi eshicilelwe kwisigqumathelo sencwadi - nceda ume"
 
-#: ../plug-ins/dbbrowser/gimpprocbrowser.c:410
+#: ../plug-ins/dbbrowser/picmanprocbrowser.c:410
 msgid "Searching - please wait"
 msgstr "Iyakhangela - nceda ulinde"
 
-#: ../plug-ins/dbbrowser/gimpprocbrowser.c:417
+#: ../plug-ins/dbbrowser/picmanprocbrowser.c:417
 msgid "1 Procedure"
 msgstr "Inkqubo 1"
 
-#: ../plug-ins/dbbrowser/gimpprocbrowser.c:419
+#: ../plug-ins/dbbrowser/picmanprocbrowser.c:419
 #, c-format
 msgid "%d Procedures"
 msgstr "%d yeeNkqubo"
 
-#: ../plug-ins/dbbrowser/gimpprocbrowser.c:465
+#: ../plug-ins/dbbrowser/picmanprocbrowser.c:465
 msgid "No matches"
 msgstr "Akukho ngqinelwano"
 
-#: ../plug-ins/dbbrowser/gimpprocview.c:134
+#: ../plug-ins/dbbrowser/picmanprocview.c:134
 msgid "Parameters"
 msgstr "Iiparamitha"
 
-#: ../plug-ins/dbbrowser/gimpprocview.c:147
+#: ../plug-ins/dbbrowser/picmanprocview.c:147
 msgid "Return Values"
 msgstr "Amaxabiso okubuyisa"
 
-#: ../plug-ins/dbbrowser/gimpprocview.c:160
+#: ../plug-ins/dbbrowser/picmanprocview.c:160
 msgid "Additional Information"
 msgstr "Ulwazi olongezelelekileyo"
 
-#: ../plug-ins/dbbrowser/gimpprocview.c:320
-msgid "Internal GIMP procedure"
-msgstr "Inkqubo ye-GIMP yangaphakathi"
+#: ../plug-ins/dbbrowser/picmanprocview.c:320
+msgid "Internal PICMAN procedure"
+msgstr "Inkqubo ye-PICMAN yangaphakathi"
 
-#: ../plug-ins/dbbrowser/gimpprocview.c:321
-msgid "GIMP Plug-In"
-msgstr "Ungeniso lwe-GIMP"
+#: ../plug-ins/dbbrowser/picmanprocview.c:321
+msgid "PICMAN Plug-In"
+msgstr "Ungeniso lwe-PICMAN"
 
-#: ../plug-ins/dbbrowser/gimpprocview.c:322
-msgid "GIMP Extension"
-msgstr "Ulwandiso lwe-GIMP"
+#: ../plug-ins/dbbrowser/picmanprocview.c:322
+msgid "PICMAN Extension"
+msgstr "Ulwandiso lwe-PICMAN"
 
-#: ../plug-ins/dbbrowser/gimpprocview.c:323
+#: ../plug-ins/dbbrowser/picmanprocview.c:323
 msgid "Temporary Procedure"
 msgstr "Inkqubo yeXeshana"
 
@@ -374,8 +374,8 @@ msgstr "Imimiselo emiselweyo ye-bumpmap"
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:4
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:5
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:3
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:3
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:2
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:3
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:2
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:6
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:3
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:6
@@ -414,8 +414,8 @@ msgstr "iFonti"
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:5
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:4
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:4
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:3
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:3
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:7
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:4
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:7
@@ -484,8 +484,8 @@ msgstr "Umakha-sangqa omfiliba wesithunzi"
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:8
 #: ../plug-ins/script-fu/scripts/crystal-logo.scm.h:7
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:11
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:13
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:17
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:6
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:9
@@ -524,7 +524,7 @@ msgstr "i-3_D Truchet..."
 #: ../plug-ins/script-fu/scripts/comic-logo.scm.h:1
 #: ../plug-ins/script-fu/scripts/coolmetal-logo.scm.h:1
 #: ../plug-ins/script-fu/scripts/frosty-logo.scm.h:1
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:1
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:1
 #: ../plug-ins/script-fu/scripts/glossy.scm.h:1
 #: ../plug-ins/script-fu/scripts/glowing-logo.scm.h:1
 #: ../plug-ins/script-fu/scripts/gradient-bevel-logo.scm.h:1
@@ -717,8 +717,8 @@ msgstr "Isongezo senkcukacha"
 #: ../plug-ins/script-fu/scripts/beveled-button.scm.h:9
 #: ../plug-ins/script-fu/scripts/beveled-pattern-button.scm.h:7
 #: ../plug-ins/script-fu/scripts/blended-logo.scm.h:16
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:12
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:14
 #: ../plug-ins/script-fu/scripts/i26-gunya2.scm.h:7
 #: ../plug-ins/script-fu/scripts/news-text.scm.h:10
 #: ../plug-ins/script-fu/scripts/pupi-button.scm.h:13
@@ -801,7 +801,7 @@ msgid "H_eading..."
 msgstr "iS_ihloko..."
 
 #: ../plug-ins/script-fu/scripts/beveled-pattern-hrule.scm.h:1
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:4
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:4
 #: ../plug-ins/script-fu/scripts/gradient-example.scm.h:3
 #: ../plug-ins/script-fu/scripts/mkbrush.scm.h:3
 #: ../plug-ins/script-fu/scripts/swirltile.scm.h:6
@@ -861,7 +861,7 @@ msgstr "i-FG-eCacileyo"
 #: ../plug-ins/script-fu/scripts/land.scm.h:2
 #: ../plug-ins/script-fu/scripts/lava.scm.h:1
 #: ../plug-ins/script-fu/scripts/rendermap.scm.h:3
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:9
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:9
 msgid "Gradient"
 msgstr "i-Gradient"
 
@@ -1218,17 +1218,17 @@ msgstr "Umakha-sangqa omfiliba"
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:3
 #: ../plug-ins/script-fu/scripts/fuzzyborder.scm.h:4
 #: ../plug-ins/script-fu/scripts/perspective-shadow.scm.h:4
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:4
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:4
 msgid "Color"
 msgstr "Umbala"
 
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:4
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:7
 msgid "Offset X"
 msgstr "Okungamiselwanga kuka-X"
 
 #: ../plug-ins/script-fu/scripts/drop-shadow.scm.h:5
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:8
 msgid "Offset Y"
 msgstr "Okungamiselwanga kuka-Y"
 
@@ -1412,65 +1412,65 @@ msgstr "Ubunzima besithunzi (%)"
 msgid "_Fuzzy Border..."
 msgstr "_Umda ongacacanga..."
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:1
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:1
 msgid "Autocrop"
 msgstr "i-Autocrop"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:2
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:2
 msgid "Dark color"
 msgstr "Umbala omdaka"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:5
 #: ../plug-ins/script-fu/scripts/xach-effect.scm.h:8
 msgid "Highlight color"
 msgstr "Qaqambisa umbala"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:6
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:5
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:5
 msgid "Index image"
 msgstr "Umfanekiso wesalathisi"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:7
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:6
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:7
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:6
 msgid "Number of colors"
 msgstr "Inani lemibala"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:8
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:8
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:9
 msgid "Remove background"
 msgstr "Susa okungasemva"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:9
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:9
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:10
 msgid "Select-by-color threshold"
 msgstr "Khetha ngomda-wombala"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:10
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:11
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:10
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:11
 msgid "Shadow color"
 msgstr "Umbala wesithunzi"
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:13
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:13
 msgid "_Big Header..."
 msgstr "_Okubhalwe emantla ephepha okuKhulu..."
 
-#: ../plug-ins/script-fu/scripts/gimp-headers.scm.h:14
+#: ../plug-ins/script-fu/scripts/picman-headers.scm.h:14
 msgid "_Small Header..."
 msgstr "_Okubhalwe emantla ephepha okuNcinane..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:12
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:12
 msgid "T_ube Sub-Button Label..."
 msgstr "iLebhile yeQhoshana leTyhu_bhu Sub-Button..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:15
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:15
 msgid "Tub_e Sub-Sub-Button Label..."
 msgstr "iLebhile yeQhoshana ekiNcinane letyhubh_u..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:16
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:16
 msgid "_General Tube Labels..."
 msgstr "iiLebhile eziziTyhubhu _Jikelele..."
 
-#: ../plug-ins/script-fu/scripts/gimp-labels.scm.h:17
+#: ../plug-ins/script-fu/scripts/picman-labels.scm.h:17
 msgid "_Tube Button Label..."
 msgstr "iLebhile eyi_Tyhubhu yeQhosha..."
 
@@ -2060,130 +2060,130 @@ msgstr "Jika usuka ekhohlo uye ekunene"
 msgid "_Spinning Globe..."
 msgstr "i_Glowubhu ejikelezayo..."
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:1
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:1
 msgid "Airbrush"
 msgstr "Ibhrashi yomoya"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:2
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:2
 msgid "Brush"
 msgstr "iBhrashi"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:3
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:3
 msgid "Circle"
 msgstr "Isangqa"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:5
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:5
 msgid "Color method"
 msgstr "Indlela yombala"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:6
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:6
 msgid ""
 "Draws Spirographs, Epitrochoids and Lissajous Curves. More info at http://"
-"netword.com/*spyrogimp"
+"netword.com/*spyropicman"
 msgstr ""
 "Izoba ii-Spirographs, Epitrochoids namagophe e-Lissajous. Ulwazi oluthe "
-"vetshe e-info at http://netword.com/*spyrogimp"
+"vetshe e-info at http://netword.com/*spyropicman"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:7
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:7
 msgid "Epitrochoid"
 msgstr "i-Epitrochoid"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:8
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:8
 msgid "Frame"
 msgstr "i-Frame"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:10
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:10
 msgid "Gradient: Loop Sawtooth"
 msgstr "i-Gradient: Isarha ebuzinyo yeseti yeengxelo"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:11
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:11
 msgid "Gradient: Loop Triangle"
 msgstr "i-Gradient: Unxanthathu weseti yeengxelo"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:12
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:12
 msgid "Hexagon"
 msgstr "uNxantathu oValekileyo"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:13
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:13
 msgid "Hole ratio"
 msgstr "Izinga lomngxunya"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:14
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:14
 msgid "Inner teeth"
 msgstr "Izinyo elingaphakathi"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:15
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:15
 msgid "Lissajous"
 msgstr "i-Lissajous"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:16
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:16
 msgid "Margin (pixels)"
 msgstr "Umda wephepha (ii-pixels)"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:17
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:17
 msgid "Outer teeth"
 msgstr "Amazinyo angaphandle"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:18
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:18
 msgid "Pencil"
 msgstr "Ipensile"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:19
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:19
 msgid "Pentagon"
 msgstr "Umbombo-ntlanu"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:20
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:20
 msgid "Polygon: 10 sides"
 msgstr "Umbombo-ninzi: amacala ali-10"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:21
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:21
 msgid "Polygon: 7 sides"
 msgstr "Umbombo-ninzi: amacala asi-7"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:22
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:22
 msgid "Polygon: 8 sides"
 msgstr "Umbombo-ninzi: amacala asi-8"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:23
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:23
 msgid "Polygon: 9 sides"
 msgstr "Umbombo-ninzi: amacala ali-9"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:24
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:24
 msgid "Shape"
 msgstr "Imilo"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:25
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:25
 msgid "Solid Color"
 msgstr "Umbala ongqindilili"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:26
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:26
 msgid "Spyrograph"
 msgstr "i-Spyrograph"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:27
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:27
 msgid "Square"
 msgstr "IsiKwere"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:28
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:28
 #: ../plug-ins/script-fu/scripts/text-circle.scm.h:6
 msgid "Start angle"
 msgstr "Qala i-engile"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:29
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:29
 msgid "Tool"
 msgstr "Isixhobo"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:30
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:30
 msgid "Triangle"
 msgstr "uNxantathu"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:31
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:31
 msgid "Type"
 msgstr "Uhlobo"
 
-#: ../plug-ins/script-fu/scripts/spyrogimp.scm.h:32
-msgid "_Spyrogimp..."
-msgstr "i-_Spyrogimp..."
+#: ../plug-ins/script-fu/scripts/spyropicman.scm.h:32
+msgid "_Spyropicman..."
+msgstr "i-_Spyropicman..."
 
 #: ../plug-ins/script-fu/scripts/starburst-logo.scm.h:2
 msgid "Burst color"
@@ -2487,10 +2487,10 @@ msgstr "i-_Xach-Effect..."
 #~ msgid "<Toolbox>/Xtns/Script-Fu/Utils"
 #~ msgstr "<Ibhokisi yezixhobo>/Xtns/iSkripti-Fu/Utils"
 
-#~ msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Gimp.Org"
+#~ msgid "<Toolbox>/Xtns/Script-Fu/Web Page Themes/Classic.Picman.Org"
 #~ msgstr ""
 #~ "<Ibhokisi yezixhobo>/Xtns/iSkripti-Fu/Imixholo yamaPhepha e-Web/Classic."
-#~ "Gimp.Org"
+#~ "Picman.Org"
 
 #~ msgid "<Image>/Script-Fu/Utils"
 #~ msgstr "<Umfanekiso>/iScripti-Fu/Utils"
@@ -2510,5 +2510,5 @@ msgstr "i-_Xach-Effect..."
 #~ msgid "<Toolbox>/Xtns/Script-Fu/Misc"
 #~ msgstr "<Ibhokisi yezixhobo>/Xtns/iSkripti-Fu/Misc"
 
-#~ msgid "<Toolbox>/Help/The GIMP Online"
-#~ msgstr "<Ibhokisi yezixhobo>/uNcedo/i-GIMP inonxibelelwano"
+#~ msgid "<Toolbox>/Help/The PICMAN Online"
+#~ msgstr "<Ibhokisi yezixhobo>/uNcedo/i-PICMAN inonxibelelwano"

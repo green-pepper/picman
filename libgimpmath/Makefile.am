@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
 
 if PLATFORM_WIN32
 no_undefined = -no-undefined
@@ -12,43 +12,43 @@ libm = -lm
 endif
 
 if OS_WIN32
-gimpmath_def = gimpmath.def
-libgimpmath_export_symbols = -export-symbols gimpmath.def
+picmanmath_def = picmanmath.def
+libpicmanmath_export_symbols = -export-symbols picmanmath.def
 
 install-libtool-import-lib:
-	$(INSTALL) .libs/libgimpmath-$(GIMP_API_VERSION).dll.a $(DESTDIR)$(libdir)
-	$(INSTALL) gimpmath.def $(DESTDIR)$(libdir)
+	$(INSTALL) .libs/libpicmanmath-$(PICMAN_API_VERSION).dll.a $(DESTDIR)$(libdir)
+	$(INSTALL) picmanmath.def $(DESTDIR)$(libdir)
 
 uninstall-libtool-import-lib:
-	-rm $(DESTDIR)$(libdir)/libgimpmath-$(GIMP_API_VERSION).dll.a
-	-rm $(DESTDIR)$(libdir)/gimpmath.def
+	-rm $(DESTDIR)$(libdir)/libpicmanmath-$(PICMAN_API_VERSION).dll.a
+	-rm $(DESTDIR)$(libdir)/picmanmath.def
 else
 install-libtool-import-lib:
 uninstall-libtool-import-lib:
 endif
 
 if MS_LIB_AVAILABLE
-noinst_DATA = gimpmath-$(GIMP_API_VERSION).lib
+noinst_DATA = picmanmath-$(PICMAN_API_VERSION).lib
 
 install-ms-lib:
-	$(INSTALL) gimpmath-$(GIMP_API_VERSION).lib $(DESTDIR)$(libdir)
+	$(INSTALL) picmanmath-$(PICMAN_API_VERSION).lib $(DESTDIR)$(libdir)
 
 uninstall-ms-lib:
-	-rm $(DESTDIR)$(libdir)/gimpmath-$(GIMP_API_VERSION).lib
+	-rm $(DESTDIR)$(libdir)/picmanmath-$(PICMAN_API_VERSION).lib
 
-gimpmath-@GIMP_API_VERSION@.lib: gimpmath.def
-	lib -name:libgimpmath-$(GIMP_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:gimpmath.def -out:$@
+picmanmath-@PICMAN_API_VERSION@.lib: picmanmath.def
+	lib -name:libpicmanmath-$(PICMAN_API_VERSION)-@LT_CURRENT_MINUS_AGE@.dll -def:picmanmath.def -out:$@
 
 else
 install-ms-lib:
 uninstall-ms-lib:
 endif
 
-libgimpmathincludedir = $(includedir)/gimp-$(GIMP_API_VERSION)/libgimpmath
+libpicmanmathincludedir = $(includedir)/picman-$(PICMAN_API_VERSION)/libpicmanmath
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"LibGimpMath\"	\
-	-DGIMP_MATH_COMPILATION
+	-DG_LOG_DOMAIN=\"LibPicmanMath\"	\
+	-DPICMAN_MATH_COMPILATION
 
 INCLUDES = \
 	-I$(top_srcdir)	\
@@ -56,37 +56,37 @@ INCLUDES = \
 	-I$(includedir)
 
 EXTRA_DIST = \
-	gimpmath.def
+	picmanmath.def
 
-lib_LTLIBRARIES = libgimpmath-@GIMP_API_VERSION@.la
+lib_LTLIBRARIES = libpicmanmath-@PICMAN_API_VERSION@.la
 
-libgimpmath_@GIMP_API_VERSION@_la_SOURCES = \
-	gimpmath.h	\
-	gimpmathtypes.h	\
-	gimpmatrix.c	\
-	gimpmatrix.h	\
-	gimpmd5.c	\
-	gimpmd5.h	\
-	gimpvector.c	\
-	gimpvector.h
+libpicmanmath_@PICMAN_API_VERSION@_la_SOURCES = \
+	picmanmath.h	\
+	picmanmathtypes.h	\
+	picmanmatrix.c	\
+	picmanmatrix.h	\
+	picmanmd5.c	\
+	picmanmd5.h	\
+	picmanvector.c	\
+	picmanvector.h
 
-libgimpmathinclude_HEADERS = \
-	gimpmath.h	\
-	gimpmathtypes.h	\
-	gimpmatrix.h	\
-	gimpmd5.h	\
-	gimpvector.h
+libpicmanmathinclude_HEADERS = \
+	picmanmath.h	\
+	picmanmathtypes.h	\
+	picmanmatrix.h	\
+	picmanmd5.h	\
+	picmanvector.h
 
-libgimpmath_@GIMP_API_VERSION@_la_LDFLAGS = \
+libpicmanmath_@PICMAN_API_VERSION@_la_LDFLAGS = \
 	-version-info $(LT_VERSION_INFO)	\
 	$(no_undefined)				\
-	$(libgimpmath_export_symbols)
+	$(libpicmanmath_export_symbols)
 
-libgimpmath_@GIMP_API_VERSION@_la_DEPENDENCIES = \
-	$(gimpmath_def)	\
-	$(libgimpbase)
+libpicmanmath_@PICMAN_API_VERSION@_la_DEPENDENCIES = \
+	$(picmanmath_def)	\
+	$(libpicmanbase)
 
-libgimpmath_@GIMP_API_VERSION@_la_LIBADD = \
+libpicmanmath_@PICMAN_API_VERSION@_la_LIBADD = \
 	$(GLIB_LIBS)	\
 	$(libm)
 

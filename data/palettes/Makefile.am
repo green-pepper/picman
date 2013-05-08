@@ -1,6 +1,6 @@
-## Makefile.am for gimp/data/palettes
+## Makefile.am for picman/data/palettes
 
-palettedatadir = $(gimpdatadir)/palettes
+palettedatadir = $(picmandatadir)/palettes
 
 palettedata_DATA = \
 	Bears.gpl		\

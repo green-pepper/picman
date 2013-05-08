@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 # The name of the module.
-DOC_MODULE = libgimpmodule
+DOC_MODULE = libpicmanmodule
 
 # The top-level SGML file.
 DOC_MAIN_SGML_FILE = $(DOC_MODULE)-docs.sgml
@@ -13,10 +13,10 @@ DOC_SOURCE_DIR = $(top_srcdir)/$(DOC_MODULE)
 SCANGOBJ_OPTIONS =
 
 # Extra options to supply to gtkdoc-scan
-SCAN_OPTIONS = --deprecated-guards="GIMP_DISABLE_DEPRECATED"
+SCAN_OPTIONS = --deprecated-guards="PICMAN_DISABLE_DEPRECATED"
 
 # Extra options to supply to gtkdoc-mkdb
-MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=gimp
+MKDB_OPTIONS = --sgml-mode --output-format=xml --name-space=picman
 
 # Extra options to supply to gtkdoc-fixref
 FIXXREF_OPTIONS =
@@ -47,7 +47,7 @@ GTKDOC_CFLAGS = \
 	@GMODULE_NO_EXPORT_CFLAGS@
 
 GTKDOC_LIBS = \
-	$(top_builddir)/libgimpmodule/libgimpmodule-$(GIMP_API_VERSION).la \
+	$(top_builddir)/libpicmanmodule/libpicmanmodule-$(PICMAN_API_VERSION).la \
 	@GLIB_LIBS@ \
 	@GMODULE_NO_EXPORT_LIBS@
 

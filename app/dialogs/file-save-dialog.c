@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995, 1996, 1997 Spencer Kimball and Peter Mattis
  * Copyright (C) 1997 Josh MacDonald
  *
@@ -23,57 +23,57 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpimage.h"
-#include "core/gimpprogress.h"
+#include "core/picman.h"
+#include "core/picmanimage.h"
+#include "core/picmanprogress.h"
 
-#include "plug-in/gimppluginmanager.h"
-#include "plug-in/gimppluginprocedure.h"
+#include "plug-in/picmanpluginmanager.h"
+#include "plug-in/picmanpluginprocedure.h"
 
 #include "file/file-procedure.h"
 #include "file/file-save.h"
 #include "file/file-utils.h"
-#include "file/gimp-file.h"
+#include "file/picman-file.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimpfiledialog.h"
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpmessagebox.h"
-#include "widgets/gimpmessagedialog.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanfiledialog.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanmessagebox.h"
+#include "widgets/picmanmessagedialog.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
 
 #include "file-save-dialog.h"
 
-#include "gimp-log.h"
-#include "gimp-intl.h"
+#include "picman-log.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
 static GtkFileChooserConfirmation
                  file_save_dialog_confirm_overwrite         (GtkWidget            *save_dialog,
-                                                             Gimp                 *gimp);
+                                                             Picman                 *picman);
 static void      file_save_dialog_response                  (GtkWidget            *save_dialog,
                                                              gint                  response_id,
-                                                             Gimp                 *gimp);
+                                                             Picman                 *picman);
 static gboolean  file_save_dialog_check_uri                 (GtkWidget            *save_dialog,
-                                                             Gimp                 *gimp,
+                                                             Picman                 *picman,
                                                              gchar               **ret_uri,
                                                              gchar               **ret_basename,
-                                                             GimpPlugInProcedure **ret_save_proc);
-static gboolean  file_save_dialog_no_overwrite_confirmation (GimpFileDialog       *dialog,
-                                                             Gimp                 *gimp);
-static gchar *   file_save_dialog_get_uri                   (GimpFileDialog       *dialog);
-static GSList *  file_save_dialog_get_procs                 (GimpFileDialog       *dialog,
-                                                             Gimp                 *gimp);
-static void      file_save_dialog_unknown_ext_msg           (GimpFileDialog       *dialog,
-                                                             Gimp                 *gimp,
+                                                             PicmanPlugInProcedure **ret_save_proc);
+static gboolean  file_save_dialog_no_overwrite_confirmation (PicmanFileDialog       *dialog,
+                                                             Picman                 *picman);
+static gchar *   file_save_dialog_get_uri                   (PicmanFileDialog       *dialog);
+static GSList *  file_save_dialog_get_procs                 (PicmanFileDialog       *dialog,
+                                                             Picman                 *picman);
+static void      file_save_dialog_unknown_ext_msg           (PicmanFileDialog       *dialog,
+                                                             Picman                 *picman,
                                                              const gchar          *basename);
 static gboolean  file_save_dialog_use_extension             (GtkWidget            *save_dialog,
                                                              const gchar          *uri);
@@ -82,45 +82,45 @@ static gboolean  file_save_dialog_use_extension             (GtkWidget          
 /*  public functions  */
 
 GtkWidget *
-file_save_dialog_new (Gimp     *gimp,
+file_save_dialog_new (Picman     *picman,
                       gboolean  export)
 {
   GtkWidget           *dialog;
-  GimpFileDialogState *state;
+  PicmanFileDialogState *state;
 
   if (! export)
     {
-      dialog = gimp_file_dialog_new (gimp,
-                                     GIMP_FILE_CHOOSER_ACTION_SAVE,
-                                     _("Save Image"), "gimp-file-save",
+      dialog = picman_file_dialog_new (picman,
+                                     PICMAN_FILE_CHOOSER_ACTION_SAVE,
+                                     _("Save Image"), "picman-file-save",
                                      GTK_STOCK_SAVE,
-                                     GIMP_HELP_FILE_SAVE);
+                                     PICMAN_HELP_FILE_SAVE);
 
-      state = g_object_get_data (G_OBJECT (gimp), "gimp-file-save-dialog-state");
+      state = g_object_get_data (G_OBJECT (picman), "picman-file-save-dialog-state");
     }
   else
     {
-      dialog = gimp_file_dialog_new (gimp,
-                                     GIMP_FILE_CHOOSER_ACTION_EXPORT,
-                                     _("Export Image"), "gimp-file-export",
+      dialog = picman_file_dialog_new (picman,
+                                     PICMAN_FILE_CHOOSER_ACTION_EXPORT,
+                                     _("Export Image"), "picman-file-export",
                                      _("_Export"),
-                                     GIMP_HELP_FILE_EXPORT);
+                                     PICMAN_HELP_FILE_EXPORT);
 
-      state = g_object_get_data (G_OBJECT (gimp), "gimp-file-export-dialog-state");
+      state = g_object_get_data (G_OBJECT (picman), "picman-file-export-dialog-state");
     }
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
   if (state)
-    gimp_file_dialog_set_state (GIMP_FILE_DIALOG (dialog), state);
+    picman_file_dialog_set_state (PICMAN_FILE_DIALOG (dialog), state);
 
   g_signal_connect (dialog, "confirm-overwrite",
                     G_CALLBACK (file_save_dialog_confirm_overwrite),
-                    gimp);
+                    picman);
 
   g_signal_connect (dialog, "response",
                     G_CALLBACK (file_save_dialog_response),
-                    gimp);
+                    picman);
 
   return dialog;
 }
@@ -130,11 +130,11 @@ file_save_dialog_new (Gimp     *gimp,
 
 static GtkFileChooserConfirmation
 file_save_dialog_confirm_overwrite (GtkWidget *save_dialog,
-                                    Gimp      *gimp)
+                                    Picman      *picman)
 {
-  GimpFileDialog *dialog = GIMP_FILE_DIALOG (save_dialog);
+  PicmanFileDialog *dialog = PICMAN_FILE_DIALOG (save_dialog);
 
-  if (file_save_dialog_no_overwrite_confirmation (dialog, gimp))
+  if (file_save_dialog_no_overwrite_confirmation (dialog, picman))
     /* The URI will not be accepted whatever happens, so don't
      * bother asking the user about overwriting files
      */
@@ -146,25 +146,25 @@ file_save_dialog_confirm_overwrite (GtkWidget *save_dialog,
 static void
 file_save_dialog_response (GtkWidget *save_dialog,
                            gint       response_id,
-                           Gimp      *gimp)
+                           Picman      *picman)
 {
-  GimpFileDialog      *dialog = GIMP_FILE_DIALOG (save_dialog);
+  PicmanFileDialog      *dialog = PICMAN_FILE_DIALOG (save_dialog);
   gchar               *uri;
   gchar               *basename;
-  GimpPlugInProcedure *save_proc;
+  PicmanPlugInProcedure *save_proc;
   gulong               handler_id;
 
   if (! dialog->export)
     {
-      g_object_set_data_full (G_OBJECT (gimp), "gimp-file-save-dialog-state",
-                              gimp_file_dialog_get_state (dialog),
-                              (GDestroyNotify) gimp_file_dialog_state_destroy);
+      g_object_set_data_full (G_OBJECT (picman), "picman-file-save-dialog-state",
+                              picman_file_dialog_get_state (dialog),
+                              (GDestroyNotify) picman_file_dialog_state_destroy);
     }
   else
     {
-      g_object_set_data_full (G_OBJECT (gimp), "gimp-file-export-dialog-state",
-                              gimp_file_dialog_get_state (dialog),
-                              (GDestroyNotify) gimp_file_dialog_state_destroy);
+      g_object_set_data_full (G_OBJECT (picman), "picman-file-export-dialog-state",
+                              picman_file_dialog_get_state (dialog),
+                              (GDestroyNotify) picman_file_dialog_state_destroy);
     }
 
   if (response_id != GTK_RESPONSE_OK)
@@ -179,17 +179,17 @@ file_save_dialog_response (GtkWidget *save_dialog,
                                  G_CALLBACK (gtk_widget_destroyed),
                                  &dialog);
 
-  if (file_save_dialog_check_uri (save_dialog, gimp,
+  if (file_save_dialog_check_uri (save_dialog, picman,
                                   &uri, &basename, &save_proc))
     {
-      gimp_file_dialog_set_sensitive (dialog, FALSE);
+      picman_file_dialog_set_sensitive (dialog, FALSE);
 
-      if (file_save_dialog_save_image (GIMP_PROGRESS (save_dialog),
-                                       gimp,
+      if (file_save_dialog_save_image (PICMAN_PROGRESS (save_dialog),
+                                       picman,
                                        dialog->image,
                                        uri,
                                        save_proc,
-                                       GIMP_RUN_INTERACTIVE,
+                                       PICMAN_RUN_INTERACTIVE,
                                        ! dialog->save_a_copy && ! dialog->export,
                                        FALSE,
                                        dialog->export,
@@ -201,26 +201,26 @@ file_save_dialog_response (GtkWidget *save_dialog,
            * file_save()
            */
           if (dialog->save_a_copy)
-            gimp_image_set_save_a_copy_uri (dialog->image, uri);
+            picman_image_set_save_a_copy_uri (dialog->image, uri);
 
           if (! dialog->export)
-            g_object_set_data_full (G_OBJECT (dialog->image->gimp),
-                                    GIMP_FILE_SAVE_LAST_URI_KEY,
+            g_object_set_data_full (G_OBJECT (dialog->image->picman),
+                                    PICMAN_FILE_SAVE_LAST_URI_KEY,
                                     g_strdup (uri), (GDestroyNotify) g_free);
           else
-            g_object_set_data_full (G_OBJECT (dialog->image->gimp),
-                                    GIMP_FILE_EXPORT_LAST_URI_KEY,
+            g_object_set_data_full (G_OBJECT (dialog->image->picman),
+                                    PICMAN_FILE_EXPORT_LAST_URI_KEY,
                                     g_strdup (uri), (GDestroyNotify) g_free);
 
           /*  make sure the menus are updated with the keys we've just set  */
-          gimp_image_flush (dialog->image);
+          picman_image_flush (dialog->image);
 
           /* Handle close-after-saving */
           if (dialog->close_after_saving && dialog->display_to_close)
             {
-              GimpDisplay *display = GIMP_DISPLAY (dialog->display_to_close);
-              if (display && ! gimp_image_is_dirty (gimp_display_get_image (display)))
-                gimp_display_close (display);
+              PicmanDisplay *display = PICMAN_DISPLAY (dialog->display_to_close);
+              if (display && ! picman_image_is_dirty (picman_display_get_image (display)))
+                picman_display_close (display);
             }
 
           gtk_widget_destroy (save_dialog);
@@ -230,7 +230,7 @@ file_save_dialog_response (GtkWidget *save_dialog,
       g_free (basename);
 
       if (dialog)
-        gimp_file_dialog_set_sensitive (dialog, TRUE);
+        picman_file_dialog_set_sensitive (dialog, TRUE);
     }
 
   if (dialog)
@@ -245,17 +245,17 @@ file_save_dialog_response (GtkWidget *save_dialog,
  */
 static gboolean
 file_save_dialog_check_uri (GtkWidget            *save_dialog,
-                            Gimp                 *gimp,
+                            Picman                 *picman,
                             gchar               **ret_uri,
                             gchar               **ret_basename,
-                            GimpPlugInProcedure **ret_save_proc)
+                            PicmanPlugInProcedure **ret_save_proc)
 {
-  GimpFileDialog      *dialog = GIMP_FILE_DIALOG (save_dialog);
+  PicmanFileDialog      *dialog = PICMAN_FILE_DIALOG (save_dialog);
   gchar               *uri;
   gchar               *basename;
-  GimpPlugInProcedure *save_proc;
-  GimpPlugInProcedure *uri_proc;
-  GimpPlugInProcedure *basename_proc;
+  PicmanPlugInProcedure *save_proc;
+  PicmanPlugInProcedure *uri_proc;
+  PicmanPlugInProcedure *basename_proc;
 
   uri = file_save_dialog_get_uri (dialog);
 
@@ -265,32 +265,32 @@ file_save_dialog_check_uri (GtkWidget            *save_dialog,
   basename      = file_utils_uri_display_basename (uri);
 
   save_proc     = dialog->file_proc;
-  uri_proc      = file_procedure_find (file_save_dialog_get_procs (dialog, gimp),
+  uri_proc      = file_procedure_find (file_save_dialog_get_procs (dialog, picman),
                                        uri, NULL);
-  basename_proc = file_procedure_find (file_save_dialog_get_procs (dialog, gimp),
+  basename_proc = file_procedure_find (file_save_dialog_get_procs (dialog, picman),
                                        basename, NULL);
 
-  GIMP_LOG (SAVE_DIALOG, "URI = %s", uri);
-  GIMP_LOG (SAVE_DIALOG, "basename = %s", basename);
-  GIMP_LOG (SAVE_DIALOG, "selected save_proc: %s",
+  PICMAN_LOG (SAVE_DIALOG, "URI = %s", uri);
+  PICMAN_LOG (SAVE_DIALOG, "basename = %s", basename);
+  PICMAN_LOG (SAVE_DIALOG, "selected save_proc: %s",
             save_proc && save_proc->menu_label ?
             save_proc->menu_label : "NULL");
-  GIMP_LOG (SAVE_DIALOG, "URI save_proc: %s",
+  PICMAN_LOG (SAVE_DIALOG, "URI save_proc: %s",
             uri_proc ? uri_proc->menu_label : "NULL");
-  GIMP_LOG (SAVE_DIALOG, "basename save_proc: %s",
+  PICMAN_LOG (SAVE_DIALOG, "basename save_proc: %s",
             basename_proc && basename_proc->menu_label ?
             basename_proc->menu_label : "NULL");
 
   /*  first check if the user entered an extension at all  */
   if (! basename_proc)
     {
-      GIMP_LOG (SAVE_DIALOG, "basename has no valid extension");
+      PICMAN_LOG (SAVE_DIALOG, "basename has no valid extension");
 
       if (! strchr (basename, '.'))
         {
           const gchar *ext = NULL;
 
-          GIMP_LOG (SAVE_DIALOG, "basename has no '.', trying to add extension");
+          PICMAN_LOG (SAVE_DIALOG, "basename has no '.', trying to add extension");
 
           if (! save_proc && ! dialog->export)
             {
@@ -306,7 +306,7 @@ file_save_dialog_check_uri (GtkWidget            *save_dialog,
               gchar *ext_basename;
               gchar *utf8;
 
-              GIMP_LOG (SAVE_DIALOG, "appending .%s to basename", ext);
+              PICMAN_LOG (SAVE_DIALOG, "appending .%s to basename", ext);
 
               ext_basename = g_strconcat (basename, ".", ext, NULL);
 
@@ -320,7 +320,7 @@ file_save_dialog_check_uri (GtkWidget            *save_dialog,
                                                  utf8);
               g_free (utf8);
 
-              GIMP_LOG (SAVE_DIALOG,
+              PICMAN_LOG (SAVE_DIALOG,
                         "set basename to %s, rerunning response and bailing out",
                         basename);
 
@@ -335,7 +335,7 @@ file_save_dialog_check_uri (GtkWidget            *save_dialog,
             }
           else
             {
-              GIMP_LOG (SAVE_DIALOG,
+              PICMAN_LOG (SAVE_DIALOG,
                         "save_proc has no extensions, continuing without");
 
               /*  there may be file formats with no extension at all, use
@@ -349,10 +349,10 @@ file_save_dialog_check_uri (GtkWidget            *save_dialog,
 
           if (! basename_proc)
             {
-              GIMP_LOG (SAVE_DIALOG,
+              PICMAN_LOG (SAVE_DIALOG,
                         "unable to figure save_proc, bailing out");
 
-              file_save_dialog_unknown_ext_msg (dialog, gimp, basename);
+              file_save_dialog_unknown_ext_msg (dialog, picman, basename);
 
               g_free (uri);
               g_free (basename);
@@ -361,7 +361,7 @@ file_save_dialog_check_uri (GtkWidget            *save_dialog,
         }
       else if (save_proc && ! save_proc->extensions_list)
         {
-          GIMP_LOG (SAVE_DIALOG,
+          PICMAN_LOG (SAVE_DIALOG,
                     "basename has '.', but save_proc has no extensions, "
                     "accepting random extension");
 
@@ -378,21 +378,21 @@ file_save_dialog_check_uri (GtkWidget            *save_dialog,
   /*  then check if the selected format matches the entered extension  */
   if (! save_proc)
     {
-      GIMP_LOG (SAVE_DIALOG, "no save_proc was selected from the list");
+      PICMAN_LOG (SAVE_DIALOG, "no save_proc was selected from the list");
 
       if (! basename_proc)
         {
-          GIMP_LOG (SAVE_DIALOG,
+          PICMAN_LOG (SAVE_DIALOG,
                     "basename has no useful extension, bailing out");
 
-          file_save_dialog_unknown_ext_msg (dialog, gimp, basename);
+          file_save_dialog_unknown_ext_msg (dialog, picman, basename);
 
           g_free (uri);
           g_free (basename);
           return FALSE;
         }
 
-      GIMP_LOG (SAVE_DIALOG, "use URI's proc '%s' so indirect saving works",
+      PICMAN_LOG (SAVE_DIALOG, "use URI's proc '%s' so indirect saving works",
                 uri_proc->menu_label ? uri_proc->menu_label : "<unnamed>");
 
       /*  use the URI's proc if no save proc was selected  */
@@ -400,22 +400,22 @@ file_save_dialog_check_uri (GtkWidget            *save_dialog,
     }
   else
     {
-      GIMP_LOG (SAVE_DIALOG, "save_proc '%s' was selected from the list",
+      PICMAN_LOG (SAVE_DIALOG, "save_proc '%s' was selected from the list",
                 save_proc->menu_label ? save_proc->menu_label : "<unnamed>");
 
       if (save_proc != basename_proc)
         {
-          GIMP_LOG (SAVE_DIALOG, "however the basename's proc is '%s'",
+          PICMAN_LOG (SAVE_DIALOG, "however the basename's proc is '%s'",
                     basename_proc ? basename_proc->menu_label : "NULL");
 
           if (uri_proc != basename_proc)
             {
-              GIMP_LOG (SAVE_DIALOG,
+              PICMAN_LOG (SAVE_DIALOG,
                         "that's impossible for remote URIs, bailing out");
 
               /*  remote URI  */
 
-              gimp_message (gimp, G_OBJECT (save_dialog), GIMP_MESSAGE_WARNING,
+              picman_message (picman, G_OBJECT (save_dialog), PICMAN_MESSAGE_WARNING,
                             _("Saving remote files needs to determine the "
                               "file format from the file extension. "
                               "Please enter a file extension that matches "
@@ -427,7 +427,7 @@ file_save_dialog_check_uri (GtkWidget            *save_dialog,
             }
           else
             {
-              GIMP_LOG (SAVE_DIALOG,
+              PICMAN_LOG (SAVE_DIALOG,
                         "ask the user if she really wants that filename");
 
               /*  local URI  */
@@ -442,7 +442,7 @@ file_save_dialog_check_uri (GtkWidget            *save_dialog,
         }
       else if (save_proc != uri_proc)
         {
-          GIMP_LOG (SAVE_DIALOG,
+          PICMAN_LOG (SAVE_DIALOG,
                     "use URI's proc '%s' so indirect saving works",
                     uri_proc->menu_label ? uri_proc->menu_label : "<unnamed>");
 
@@ -470,15 +470,15 @@ file_save_dialog_check_uri (GtkWidget            *save_dialog,
  * IMPORTANT: Keep this up to date with file_save_dialog_check_uri().
  */
 static gboolean
-file_save_dialog_no_overwrite_confirmation (GimpFileDialog *dialog,
-                                            Gimp           *gimp)
+file_save_dialog_no_overwrite_confirmation (PicmanFileDialog *dialog,
+                                            Picman           *picman)
 {
   gboolean             uri_will_change = FALSE;
   gboolean             unknown_ext     = FALSE;
   gchar               *uri             = NULL;
   gchar               *basename        = NULL;
-  GimpPlugInProcedure *basename_proc   = NULL;
-  GimpPlugInProcedure *save_proc       = NULL;
+  PicmanPlugInProcedure *basename_proc   = NULL;
+  PicmanPlugInProcedure *save_proc       = NULL;
 
   uri = file_save_dialog_get_uri (dialog);
 
@@ -487,7 +487,7 @@ file_save_dialog_no_overwrite_confirmation (GimpFileDialog *dialog,
 
   basename      = file_utils_uri_display_basename (uri);
   save_proc     = dialog->file_proc;
-  basename_proc = file_procedure_find (file_save_dialog_get_procs (dialog, gimp),
+  basename_proc = file_procedure_find (file_save_dialog_get_procs (dialog, picman),
                                        basename, NULL);
 
   uri_will_change = (! basename_proc &&
@@ -504,7 +504,7 @@ file_save_dialog_no_overwrite_confirmation (GimpFileDialog *dialog,
 }
 
 static gchar *
-file_save_dialog_get_uri (GimpFileDialog *dialog)
+file_save_dialog_get_uri (PicmanFileDialog *dialog)
 {
   gchar *uri = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (dialog));
 
@@ -518,44 +518,44 @@ file_save_dialog_get_uri (GimpFileDialog *dialog)
 }
 
 static GSList *
-file_save_dialog_get_procs (GimpFileDialog *dialog,
-                            Gimp           *gimp)
+file_save_dialog_get_procs (PicmanFileDialog *dialog,
+                            Picman           *picman)
 {
   return (! dialog->export ?
-          gimp->plug_in_manager->save_procs :
-          gimp->plug_in_manager->export_procs);
+          picman->plug_in_manager->save_procs :
+          picman->plug_in_manager->export_procs);
 }
 
 static void
-file_save_dialog_unknown_ext_msg (GimpFileDialog *dialog,
-                                  Gimp           *gimp,
+file_save_dialog_unknown_ext_msg (PicmanFileDialog *dialog,
+                                  Picman           *picman,
                                   const gchar    *basename)
 {
-  GimpPlugInProcedure *proc_in_other_group;
+  PicmanPlugInProcedure *proc_in_other_group;
 
   proc_in_other_group =
     file_procedure_find ((dialog->export ?
-                          gimp->plug_in_manager->save_procs :
-                          gimp->plug_in_manager->export_procs),
+                          picman->plug_in_manager->save_procs :
+                          picman->plug_in_manager->export_procs),
                          basename,
                          NULL);
 
   if (dialog->export && proc_in_other_group)
     {
-      gimp_message (gimp, G_OBJECT (dialog), GIMP_MESSAGE_WARNING,
+      picman_message (picman, G_OBJECT (dialog), PICMAN_MESSAGE_WARNING,
                     _("You can use this dialog to export to various file formats. "
-                      "If you want to save the image to the GIMP XCF format, use "
+                      "If you want to save the image to the PICMAN XCF format, use "
                       "File→Save instead."));
     }
   else if (! dialog->export && proc_in_other_group)
     {
-      gimp_message (gimp, G_OBJECT (dialog), GIMP_MESSAGE_WARNING,
-                    _("You can use this dialog to save to the GIMP XCF "
+      picman_message (picman, G_OBJECT (dialog), PICMAN_MESSAGE_WARNING,
+                    _("You can use this dialog to save to the PICMAN XCF "
                       "format. Use File→Export to export to other file formats."));
     }
   else
     {
-      gimp_message (gimp, G_OBJECT (dialog), GIMP_MESSAGE_WARNING,
+      picman_message (picman, G_OBJECT (dialog), PICMAN_MESSAGE_WARNING,
                     _("The given filename does not have any known "
                       "file extension. Please enter a known file "
                       "extension or select a file format from the "
@@ -570,10 +570,10 @@ file_save_dialog_use_extension (GtkWidget   *save_dialog,
   GtkWidget *dialog;
   gboolean   use_name = FALSE;
 
-  dialog = gimp_message_dialog_new (_("Extension Mismatch"),
-                                    GIMP_STOCK_QUESTION,
+  dialog = picman_message_dialog_new (_("Extension Mismatch"),
+                                    PICMAN_STOCK_QUESTION,
                                     save_dialog, GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    gimp_standard_help_func, NULL,
+                                    picman_standard_help_func, NULL,
 
                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                     GTK_STOCK_SAVE,   GTK_RESPONSE_OK,
@@ -585,11 +585,11 @@ file_save_dialog_use_extension (GtkWidget   *save_dialog,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_message_box_set_primary_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_primary_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                                      _("The given file extension does "
                                        "not match the chosen file type."));
 
-  gimp_message_box_set_text (GIMP_MESSAGE_DIALOG (dialog)->box,
+  picman_message_box_set_text (PICMAN_MESSAGE_DIALOG (dialog)->box,
                              _("Do you want to save the image using this "
                                "name anyway?"));
 
@@ -598,7 +598,7 @@ file_save_dialog_use_extension (GtkWidget   *save_dialog,
 
   g_object_ref (dialog);
 
-  use_name = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  use_name = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
   g_object_unref (dialog);
@@ -610,44 +610,44 @@ file_save_dialog_use_extension (GtkWidget   *save_dialog,
 }
 
 gboolean
-file_save_dialog_save_image (GimpProgress        *progress,
-                             Gimp                *gimp,
-                             GimpImage           *image,
+file_save_dialog_save_image (PicmanProgress        *progress,
+                             Picman                *picman,
+                             PicmanImage           *image,
                              const gchar         *uri,
-                             GimpPlugInProcedure *save_proc,
-                             GimpRunMode          run_mode,
+                             PicmanPlugInProcedure *save_proc,
+                             PicmanRunMode          run_mode,
                              gboolean             change_saved_state,
                              gboolean             export_backward,
                              gboolean             export_forward,
                              gboolean             verbose_cancel)
 {
-  GimpPDBStatusType  status;
+  PicmanPDBStatusType  status;
   GError            *error   = NULL;
   GList             *list;
   gboolean           success = FALSE;
 
-  for (list = gimp_action_groups_from_name ("file");
+  for (list = picman_action_groups_from_name ("file");
        list;
        list = g_list_next (list))
     {
-      gimp_action_group_set_action_sensitive (list->data, "file-quit", FALSE);
+      picman_action_group_set_action_sensitive (list->data, "file-quit", FALSE);
     }
 
-  status = file_save (gimp, image, progress, uri,
+  status = file_save (picman, image, progress, uri,
                       save_proc, run_mode,
                       change_saved_state, export_backward, export_forward,
                       &error);
 
   switch (status)
     {
-    case GIMP_PDB_SUCCESS:
+    case PICMAN_PDB_SUCCESS:
       success = TRUE;
       break;
 
-    case GIMP_PDB_CANCEL:
+    case PICMAN_PDB_CANCEL:
       if (verbose_cancel)
-        gimp_message_literal (gimp,
-                              G_OBJECT (progress), GIMP_MESSAGE_INFO,
+        picman_message_literal (picman,
+                              G_OBJECT (progress), PICMAN_MESSAGE_INFO,
                               _("Saving canceled"));
       break;
 
@@ -655,7 +655,7 @@ file_save_dialog_save_image (GimpProgress        *progress,
       {
         gchar *filename = file_utils_uri_display_name (uri);
 
-        gimp_message (gimp, G_OBJECT (progress), GIMP_MESSAGE_ERROR,
+        picman_message (picman, G_OBJECT (progress), PICMAN_MESSAGE_ERROR,
                       _("Saving '%s' failed:\n\n%s"), filename, error->message);
         g_clear_error (&error);
         g_free (filename);
@@ -663,11 +663,11 @@ file_save_dialog_save_image (GimpProgress        *progress,
       break;
     }
 
-  for (list = gimp_action_groups_from_name ("file");
+  for (list = picman_action_groups_from_name ("file");
        list;
        list = g_list_next (list))
     {
-      gimp_action_group_set_action_sensitive (list->data, "file-quit", TRUE);
+      picman_action_group_set_action_sensitive (list->data, "file-quit", TRUE);
     }
 
   return success;

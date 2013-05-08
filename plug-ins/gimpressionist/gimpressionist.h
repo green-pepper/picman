@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,20 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMPRESSIONIST_H
-#define __GIMPRESSIONIST_H
+#ifndef __PICMANRESSIONIST_H
+#define __PICMANRESSIONIST_H
 
 /* Includes necessary for the correct processing of this file. */
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "ppmtool.h"
 /* Defines */
 
-#define PLUG_IN_PROC    "plug-in-gimpressionist"
+#define PLUG_IN_PROC    "plug-in-picmanressionist"
 #define PLUG_IN_VERSION "v1.0, November 2003"
-#define PLUG_IN_BINARY  "gimpressionist"
-#define PLUG_IN_ROLE    "gimp-gimpressionist"
+#define PLUG_IN_BINARY  "picmanressionist"
+#define PLUG_IN_ROLE    "picman-picmanressionist"
 
 #define PREVIEWSIZE     150
 #define MAXORIENTVECT   50
@@ -70,7 +70,7 @@ typedef struct
   int        run;
   char       selected_brush[200];
   char       selected_paper[200];
-  GimpRGB    color;
+  PicmanRGB    color;
   int        general_paint_edges;
   int        place_type;
   vector_t   orient_vectors[MAXORIENTVECT];
@@ -101,7 +101,7 @@ typedef struct
 
   int        color_type;
   double     color_noise;
-} gimpressionist_vals_t;
+} picmanressionist_vals_t;
 
 /* Enumerations */
 
@@ -121,7 +121,7 @@ enum PRESETS_LIST_COLUMN_ENUM
 
 /* Globals */
 
-extern gimpressionist_vals_t pcvals;
+extern picmanressionist_vals_t pcvals;
 
 
 /* Prototypes */
@@ -160,7 +160,7 @@ double getsiz_proto (double x, double y, int n, smvector_t *vec,
 
 
 void set_colorbrushes (const gchar *fn);
-int  create_gimpressionist (void);
+int  create_picmanressionist (void);
 
 double dist (double x, double y, double dx, double dy);
 
@@ -176,6 +176,6 @@ GtkWidget *create_radio_button (GtkWidget *box, int orient_type,
 
 #define CLAMP_UP_TO(x, max) (CLAMP((x),(0),(max-1)))
 
-#endif /* #ifndef __GIMPRESSIONIST_H */
+#endif /* #ifndef __PICMANRESSIONIST_H */
 
 

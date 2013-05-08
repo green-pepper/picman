@@ -1,9 +1,9 @@
-# GIMP tool preset file
+# PICMAN tool preset file
 
-(stock-id "gimp-tool-paintbrush")
+(stock-id "picman-tool-paintbrush")
 (name "Pencil Soft")
-(tool-options "GimpPaintOptions"
-    (tool "gimp-paintbrush-tool")
+(tool-options "PicmanPaintOptions"
+    (tool "picman-paintbrush-tool")
     (foreground (color-rgb 0.007812 0.007812 0.007812))
     (opacity 0.500000)
     (brush "Charcoal 02")
@@ -23,4 +23,4 @@
 (use-palette no)
 (use-font no)
 
-# end of GIMP tool preset file
+# end of PICMAN tool preset file

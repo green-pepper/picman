@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbrightnesscontrastconfig.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanbrightnesscontrastconfig.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "operations-types.h"
 
-#include "gimpbrightnesscontrastconfig.h"
-#include "gimplevelsconfig.h"
+#include "picmanbrightnesscontrastconfig.h"
+#include "picmanlevelsconfig.h"
 
 
 enum
@@ -39,58 +39,58 @@ enum
 };
 
 
-static void   gimp_brightness_contrast_config_get_property (GObject      *object,
+static void   picman_brightness_contrast_config_get_property (GObject      *object,
                                                             guint         property_id,
                                                             GValue       *value,
                                                             GParamSpec   *pspec);
-static void   gimp_brightness_contrast_config_set_property (GObject      *object,
+static void   picman_brightness_contrast_config_set_property (GObject      *object,
                                                             guint         property_id,
                                                             const GValue *value,
                                                             GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpBrightnessContrastConfig,
-                         gimp_brightness_contrast_config,
-                         GIMP_TYPE_IMAGE_MAP_CONFIG,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL))
+G_DEFINE_TYPE_WITH_CODE (PicmanBrightnessContrastConfig,
+                         picman_brightness_contrast_config,
+                         PICMAN_TYPE_IMAGE_MAP_CONFIG,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG, NULL))
 
-#define parent_class gimp_brightness_contrast_config_parent_class
+#define parent_class picman_brightness_contrast_config_parent_class
 
 
 static void
-gimp_brightness_contrast_config_class_init (GimpBrightnessContrastConfigClass *klass)
+picman_brightness_contrast_config_class_init (PicmanBrightnessContrastConfigClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
+  PicmanViewableClass *viewable_class = PICMAN_VIEWABLE_CLASS (klass);
 
-  object_class->set_property       = gimp_brightness_contrast_config_set_property;
-  object_class->get_property       = gimp_brightness_contrast_config_get_property;
+  object_class->set_property       = picman_brightness_contrast_config_set_property;
+  object_class->get_property       = picman_brightness_contrast_config_get_property;
 
-  viewable_class->default_stock_id = "gimp-tool-brightness-contrast";
+  viewable_class->default_stock_id = "picman-tool-brightness-contrast";
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BRIGHTNESS,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BRIGHTNESS,
                                    "brightness",
                                    "Brightness",
                                    -1.0, 1.0, 0.0, 0);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_CONTRAST,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_CONTRAST,
                                    "contrast",
                                    "Contrast",
                                    -1.0, 1.0, 0.0, 0);
 }
 
 static void
-gimp_brightness_contrast_config_init (GimpBrightnessContrastConfig *self)
+picman_brightness_contrast_config_init (PicmanBrightnessContrastConfig *self)
 {
 }
 
 static void
-gimp_brightness_contrast_config_get_property (GObject    *object,
+picman_brightness_contrast_config_get_property (GObject    *object,
                                               guint       property_id,
                                               GValue     *value,
                                               GParamSpec *pspec)
 {
-  GimpBrightnessContrastConfig *self = GIMP_BRIGHTNESS_CONTRAST_CONFIG (object);
+  PicmanBrightnessContrastConfig *self = PICMAN_BRIGHTNESS_CONTRAST_CONFIG (object);
 
   switch (property_id)
     {
@@ -109,12 +109,12 @@ gimp_brightness_contrast_config_get_property (GObject    *object,
 }
 
 static void
-gimp_brightness_contrast_config_set_property (GObject      *object,
+picman_brightness_contrast_config_set_property (GObject      *object,
                                               guint         property_id,
                                               const GValue *value,
                                               GParamSpec   *pspec)
 {
-  GimpBrightnessContrastConfig *self = GIMP_BRIGHTNESS_CONTRAST_CONFIG (object);
+  PicmanBrightnessContrastConfig *self = PICMAN_BRIGHTNESS_CONTRAST_CONFIG (object);
 
   switch (property_id)
     {
@@ -135,17 +135,17 @@ gimp_brightness_contrast_config_set_property (GObject      *object,
 
 /*  public functions  */
 
-GimpLevelsConfig *
-gimp_brightness_contrast_config_to_levels_config (GimpBrightnessContrastConfig *config)
+PicmanLevelsConfig *
+picman_brightness_contrast_config_to_levels_config (PicmanBrightnessContrastConfig *config)
 {
-  GimpLevelsConfig *levels;
+  PicmanLevelsConfig *levels;
   gdouble           brightness;
   gdouble           slant;
   gdouble           value;
 
-  g_return_val_if_fail (GIMP_IS_BRIGHTNESS_CONTRAST_CONFIG (config), NULL);
+  g_return_val_if_fail (PICMAN_IS_BRIGHTNESS_CONTRAST_CONFIG (config), NULL);
 
-  levels = g_object_new (GIMP_TYPE_LEVELS_CONFIG, NULL);
+  levels = g_object_new (PICMAN_TYPE_LEVELS_CONFIG, NULL);
 
   brightness = config->brightness / 2.0;
   slant = tan ((config->contrast + 1) * G_PI_4);
@@ -161,11 +161,11 @@ gimp_brightness_contrast_config_to_levels_config (GimpBrightnessContrastConfig *
           /* this slightly convoluted math follows by inverting the
            * calculation of the brightness/contrast LUT in base/lut-funcs.h */
 
-          levels->low_input[GIMP_HISTOGRAM_VALUE] =
+          levels->low_input[PICMAN_HISTOGRAM_VALUE] =
             (- brightness * slant + 0.5 * slant - 0.5) / (slant - brightness * slant);
         }
 
-      levels->low_output[GIMP_HISTOGRAM_VALUE] = value;
+      levels->low_output[PICMAN_HISTOGRAM_VALUE] = value;
 
       value = 0.5 * slant + 0.5;
 
@@ -173,11 +173,11 @@ gimp_brightness_contrast_config_to_levels_config (GimpBrightnessContrastConfig *
         {
           value = 1.0;
 
-          levels->high_input[GIMP_HISTOGRAM_VALUE] =
+          levels->high_input[PICMAN_HISTOGRAM_VALUE] =
             (- brightness * slant + 0.5 * slant + 0.5) / (slant - brightness * slant);
         }
 
-      levels->high_output[GIMP_HISTOGRAM_VALUE] = value;
+      levels->high_output[PICMAN_HISTOGRAM_VALUE] = value;
     }
   else
     {
@@ -187,11 +187,11 @@ gimp_brightness_contrast_config_to_levels_config (GimpBrightnessContrastConfig *
         {
           value = 0.0;
 
-          levels->low_input[GIMP_HISTOGRAM_VALUE] =
+          levels->low_input[PICMAN_HISTOGRAM_VALUE] =
             (0.5 * slant - 0.5) / (slant + brightness * slant);
         }
 
-      levels->low_output[GIMP_HISTOGRAM_VALUE] = value;
+      levels->low_output[PICMAN_HISTOGRAM_VALUE] = value;
 
       value = slant * brightness + slant * 0.5 + 0.5;
 
@@ -199,11 +199,11 @@ gimp_brightness_contrast_config_to_levels_config (GimpBrightnessContrastConfig *
         {
           value = 1.0;
 
-          levels->high_input[GIMP_HISTOGRAM_VALUE] =
+          levels->high_input[PICMAN_HISTOGRAM_VALUE] =
             (0.5 * slant + 0.5) / (slant + brightness * slant);
         }
 
-      levels->high_output[GIMP_HISTOGRAM_VALUE] = value;
+      levels->high_output[PICMAN_HISTOGRAM_VALUE] = value;
     }
 
   return levels;

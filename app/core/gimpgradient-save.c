@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,39 +23,39 @@
 #include <gegl.h>
 #include <glib/gstdio.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "core-types.h"
 
-#include "gimpgradient.h"
-#include "gimpgradient-save.h"
+#include "picmangradient.h"
+#include "picmangradient-save.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 gboolean
-gimp_gradient_save (GimpData  *data,
+picman_gradient_save (PicmanData  *data,
                     GError   **error)
 {
-  GimpGradient        *gradient = GIMP_GRADIENT (data);
-  GimpGradientSegment *seg;
+  PicmanGradient        *gradient = PICMAN_GRADIENT (data);
+  PicmanGradientSegment *seg;
   gint                 num_segments;
   FILE                *file;
 
-  file = g_fopen (gimp_data_get_filename (data), "wb");
+  file = g_fopen (picman_data_get_filename (data), "wb");
 
   if (! file)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (gimp_data_get_filename (data)),
+                   picman_filename_to_utf8 (picman_data_get_filename (data)),
                    g_strerror (errno));
       return FALSE;
     }
 
   /* File format is:
    *
-   *   GIMP Gradient
+   *   PICMAN Gradient
    *   Name: name
    *   number_of_segments
    *   left middle right r0 g0 b0 a0 r1 g1 b1 a1 type coloring left_color_type
@@ -63,9 +63,9 @@ gimp_gradient_save (GimpData  *data,
    *   ...
    */
 
-  fprintf (file, "GIMP Gradient\n");
+  fprintf (file, "PICMAN Gradient\n");
 
-  fprintf (file, "Name: %s\n", gimp_object_get_name (gradient));
+  fprintf (file, "Name: %s\n", picman_object_get_name (gradient));
 
   /* Count number of segments */
   num_segments = 0;
@@ -123,16 +123,16 @@ gimp_gradient_save (GimpData  *data,
 }
 
 gboolean
-gimp_gradient_save_pov (GimpGradient  *gradient,
+picman_gradient_save_pov (PicmanGradient  *gradient,
                         const gchar   *filename,
                         GError       **error)
 {
   FILE                *file;
-  GimpGradientSegment *seg;
+  PicmanGradientSegment *seg;
   gchar                buf[G_ASCII_DTOSTR_BUF_SIZE];
   gchar                color_buf[4][G_ASCII_DTOSTR_BUF_SIZE];
 
-  g_return_val_if_fail (GIMP_IS_GRADIENT (gradient), FALSE);
+  g_return_val_if_fail (PICMAN_IS_GRADIENT (gradient), FALSE);
   g_return_val_if_fail (filename != NULL, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
@@ -140,15 +140,15 @@ gimp_gradient_save_pov (GimpGradient  *gradient,
 
   if (! file)
     {
-      g_set_error (error, GIMP_DATA_ERROR, GIMP_DATA_ERROR_OPEN,
+      g_set_error (error, PICMAN_DATA_ERROR, PICMAN_DATA_ERROR_OPEN,
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       return FALSE;
     }
   else
     {
-      fprintf (file, "/* color_map file created by GIMP */\n");
-      fprintf (file, "/* http://www.gimp.org/           */\n");
+      fprintf (file, "/* color_map file created by PICMAN */\n");
+      fprintf (file, "/* http://www.picman.org/           */\n");
 
       fprintf (file, "color_map {\n");
 

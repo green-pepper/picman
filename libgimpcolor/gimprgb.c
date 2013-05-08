@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -21,18 +21,18 @@
 #include <babl/babl.h>
 #include <glib-object.h>
 
-#define GIMP_DISABLE_DEPRECATION_WARNINGS /*  for GIMP_RGB_INTENSITY()  */
-#include "libgimpmath/gimpmath.h"
+#define PICMAN_DISABLE_DEPRECATION_WARNINGS /*  for PICMAN_RGB_INTENSITY()  */
+#include "libpicmanmath/picmanmath.h"
 
-#include "gimpcolortypes.h"
+#include "picmancolortypes.h"
 
-#undef GIMP_DISABLE_DEPRECATED  /*  for GIMP_RGB_INTENSITY()  */
-#include "gimprgb.h"
+#undef PICMAN_DISABLE_DEPRECATED  /*  for PICMAN_RGB_INTENSITY()  */
+#include "picmanrgb.h"
 
 
 /**
- * SECTION: gimprgb
- * @title: GimpRGB
+ * SECTION: picmanrgb
+ * @title: PicmanRGB
  * @short_description: Definitions and Functions relating to RGB colors.
  *
  * Definitions and Functions relating to RGB colors.
@@ -40,60 +40,60 @@
 
 
 /*
- * GIMP_TYPE_RGB
+ * PICMAN_TYPE_RGB
  */
 
-static GimpRGB * gimp_rgb_copy (const GimpRGB *rgb);
+static PicmanRGB * picman_rgb_copy (const PicmanRGB *rgb);
 
 
 GType
-gimp_rgb_get_type (void)
+picman_rgb_get_type (void)
 {
   static GType rgb_type = 0;
 
   if (!rgb_type)
-    rgb_type = g_boxed_type_register_static ("GimpRGB",
-                                             (GBoxedCopyFunc) gimp_rgb_copy,
+    rgb_type = g_boxed_type_register_static ("PicmanRGB",
+                                             (GBoxedCopyFunc) picman_rgb_copy,
                                              (GBoxedFreeFunc) g_free);
 
   return rgb_type;
 }
 
 void
-gimp_value_get_rgb (const GValue *value,
-                    GimpRGB      *rgb)
+picman_value_get_rgb (const GValue *value,
+                    PicmanRGB      *rgb)
 {
-  g_return_if_fail (GIMP_VALUE_HOLDS_RGB (value));
+  g_return_if_fail (PICMAN_VALUE_HOLDS_RGB (value));
   g_return_if_fail (rgb != NULL);
 
   if (value->data[0].v_pointer)
-    *rgb = *((GimpRGB *) value->data[0].v_pointer);
+    *rgb = *((PicmanRGB *) value->data[0].v_pointer);
   else
-    gimp_rgba_set (rgb, 0.0, 0.0, 0.0, 1.0);
+    picman_rgba_set (rgb, 0.0, 0.0, 0.0, 1.0);
 }
 
 void
-gimp_value_set_rgb (GValue        *value,
-                    const GimpRGB *rgb)
+picman_value_set_rgb (GValue        *value,
+                    const PicmanRGB *rgb)
 {
-  g_return_if_fail (GIMP_VALUE_HOLDS_RGB (value));
+  g_return_if_fail (PICMAN_VALUE_HOLDS_RGB (value));
   g_return_if_fail (rgb != NULL);
 
   g_value_set_boxed (value, rgb);
 }
 
-static GimpRGB *
-gimp_rgb_copy (const GimpRGB *rgb)
+static PicmanRGB *
+picman_rgb_copy (const PicmanRGB *rgb)
 {
-  return g_memdup (rgb, sizeof (GimpRGB));
+  return g_memdup (rgb, sizeof (PicmanRGB));
 }
 
 
 /*  RGB functions  */
 
 /**
- * gimp_rgb_set:
- * @rgb:   a #GimpRGB struct
+ * picman_rgb_set:
+ * @rgb:   a #PicmanRGB struct
  * @red:   the red component
  * @green: the green component
  * @blue:  the blue component
@@ -104,7 +104,7 @@ gimp_rgb_copy (const GimpRGB *rgb)
  * set exactly as they are passed in.
  **/
 void
-gimp_rgb_set (GimpRGB *rgb,
+picman_rgb_set (PicmanRGB *rgb,
               gdouble  r,
               gdouble  g,
               gdouble  b)
@@ -117,14 +117,14 @@ gimp_rgb_set (GimpRGB *rgb,
 }
 
 /**
- * gimp_rgb_set_alpha:
- * @rgb:   a #GimpRGB struct
+ * picman_rgb_set_alpha:
+ * @rgb:   a #PicmanRGB struct
  * @alpha: the alpha component
  *
  * Sets the alpha component of @rgb and leaves the RGB components unchanged.
  **/
 void
-gimp_rgb_set_alpha (GimpRGB *rgb,
+picman_rgb_set_alpha (PicmanRGB *rgb,
                     gdouble  a)
 {
   g_return_if_fail (rgb != NULL);
@@ -133,8 +133,8 @@ gimp_rgb_set_alpha (GimpRGB *rgb,
 }
 
 /**
- * gimp_rgb_set:
- * @rgb:    a #GimpRGB struct
+ * picman_rgb_set:
+ * @rgb:    a #PicmanRGB struct
  * @format: a Babl format
  * @pixel:  pointer to the source pixel
  *
@@ -142,10 +142,10 @@ gimp_rgb_set_alpha (GimpRGB *rgb,
  * stored in @pixel. The pixel format of @pixel is determined by
  * @format.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 void
-gimp_rgb_set_pixel (GimpRGB       *rgb,
+picman_rgb_set_pixel (PicmanRGB       *rgb,
                     const Babl    *format,
                     gconstpointer  pixel)
 {
@@ -159,8 +159,8 @@ gimp_rgb_set_pixel (GimpRGB       *rgb,
 }
 
 /**
- * gimp_rgb_get:
- * @rgb:    a #GimpRGB struct
+ * picman_rgb_get:
+ * @rgb:    a #PicmanRGB struct
  * @format: a Babl format
  * @pixel:  pointer to the destination pixel
  *
@@ -168,10 +168,10 @@ gimp_rgb_set_pixel (GimpRGB       *rgb,
  * color stored in @pixel. The pixel format of @pixel is determined by
  * @format.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 void
-gimp_rgb_get_pixel (const GimpRGB *rgb,
+picman_rgb_get_pixel (const PicmanRGB *rgb,
                     const Babl    *format,
                     gpointer       pixel)
 {
@@ -185,8 +185,8 @@ gimp_rgb_get_pixel (const GimpRGB *rgb,
 }
 
 /**
- * gimp_rgb_set_uchar:
- * @rgb:   a #GimpRGB struct
+ * picman_rgb_set_uchar:
+ * @rgb:   a #PicmanRGB struct
  * @red:   the red component
  * @green: the green component
  * @blue:  the blue component
@@ -195,7 +195,7 @@ gimp_rgb_get_pixel (const GimpRGB *rgb,
  * (0 to 255) and leaves the alpha component unchanged.
  **/
 void
-gimp_rgb_set_uchar (GimpRGB *rgb,
+picman_rgb_set_uchar (PicmanRGB *rgb,
                     guchar   r,
                     guchar   g,
                     guchar   b)
@@ -208,7 +208,7 @@ gimp_rgb_set_uchar (GimpRGB *rgb,
 }
 
 void
-gimp_rgb_get_uchar (const GimpRGB *rgb,
+picman_rgb_get_uchar (const PicmanRGB *rgb,
                     guchar        *r,
                     guchar        *g,
                     guchar        *b)
@@ -221,8 +221,8 @@ gimp_rgb_get_uchar (const GimpRGB *rgb,
 }
 
 void
-gimp_rgb_add (GimpRGB       *rgb1,
-              const GimpRGB *rgb2)
+picman_rgb_add (PicmanRGB       *rgb1,
+              const PicmanRGB *rgb2)
 {
   g_return_if_fail (rgb1 != NULL);
   g_return_if_fail (rgb2 != NULL);
@@ -233,8 +233,8 @@ gimp_rgb_add (GimpRGB       *rgb1,
 }
 
 void
-gimp_rgb_subtract (GimpRGB       *rgb1,
-                   const GimpRGB *rgb2)
+picman_rgb_subtract (PicmanRGB       *rgb1,
+                   const PicmanRGB *rgb2)
 {
   g_return_if_fail (rgb1 != NULL);
   g_return_if_fail (rgb2 != NULL);
@@ -245,7 +245,7 @@ gimp_rgb_subtract (GimpRGB       *rgb1,
 }
 
 void
-gimp_rgb_multiply (GimpRGB *rgb,
+picman_rgb_multiply (PicmanRGB *rgb,
                    gdouble  factor)
 {
   g_return_if_fail (rgb != NULL);
@@ -256,8 +256,8 @@ gimp_rgb_multiply (GimpRGB *rgb,
 }
 
 gdouble
-gimp_rgb_distance (const GimpRGB *rgb1,
-                   const GimpRGB *rgb2)
+picman_rgb_distance (const PicmanRGB *rgb1,
+                   const PicmanRGB *rgb2)
 {
   g_return_val_if_fail (rgb1 != NULL, 0.0);
   g_return_val_if_fail (rgb2 != NULL, 0.0);
@@ -268,7 +268,7 @@ gimp_rgb_distance (const GimpRGB *rgb1,
 }
 
 gdouble
-gimp_rgb_max (const GimpRGB *rgb)
+picman_rgb_max (const PicmanRGB *rgb)
 {
   g_return_val_if_fail (rgb != NULL, 0.0);
 
@@ -279,7 +279,7 @@ gimp_rgb_max (const GimpRGB *rgb)
 }
 
 gdouble
-gimp_rgb_min (const GimpRGB *rgb)
+picman_rgb_min (const PicmanRGB *rgb)
 {
   g_return_val_if_fail (rgb != NULL, 0.0);
 
@@ -290,7 +290,7 @@ gimp_rgb_min (const GimpRGB *rgb)
 }
 
 void
-gimp_rgb_clamp (GimpRGB *rgb)
+picman_rgb_clamp (PicmanRGB *rgb)
 {
   g_return_if_fail (rgb != NULL);
 
@@ -301,7 +301,7 @@ gimp_rgb_clamp (GimpRGB *rgb)
 }
 
 void
-gimp_rgb_gamma (GimpRGB *rgb,
+picman_rgb_gamma (PicmanRGB *rgb,
                 gdouble  gamma)
 {
   gdouble ig;
@@ -319,91 +319,91 @@ gimp_rgb_gamma (GimpRGB *rgb,
 }
 
 /**
- * gimp_rgb_luminance:
- * @rgb: a #GimpRGB struct
+ * picman_rgb_luminance:
+ * @rgb: a #PicmanRGB struct
  *
  * Return value: the luminous intensity of the range from 0.0 to 1.0.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gdouble
-gimp_rgb_luminance (const GimpRGB *rgb)
+picman_rgb_luminance (const PicmanRGB *rgb)
 {
   gdouble luminance;
 
   g_return_val_if_fail (rgb != NULL, 0.0);
 
-  luminance = GIMP_RGB_LUMINANCE (rgb->r, rgb->g, rgb->b);
+  luminance = PICMAN_RGB_LUMINANCE (rgb->r, rgb->g, rgb->b);
 
   return CLAMP (luminance, 0.0, 1.0);
 }
 
 /**
- * gimp_rgb_luminance_uchar:
- * @rgb: a #GimpRGB struct
+ * picman_rgb_luminance_uchar:
+ * @rgb: a #PicmanRGB struct
  *
  * Return value: the luminous intensity in the range from 0 to 255.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 guchar
-gimp_rgb_luminance_uchar (const GimpRGB *rgb)
+picman_rgb_luminance_uchar (const PicmanRGB *rgb)
 {
   g_return_val_if_fail (rgb != NULL, 0);
 
-  return ROUND (gimp_rgb_luminance (rgb) * 255.0);
+  return ROUND (picman_rgb_luminance (rgb) * 255.0);
 }
 
 /**
- * gimp_rgb_intensity:
- * @rgb: a #GimpRGB struct
+ * picman_rgb_intensity:
+ * @rgb: a #PicmanRGB struct
  *
- * This function is deprecated! Use gimp_rgb_luminance() instead.
+ * This function is deprecated! Use picman_rgb_luminance() instead.
  *
  * Return value: the intensity in the range from 0.0 to 1.0.
  **/
 gdouble
-gimp_rgb_intensity (const GimpRGB *rgb)
+picman_rgb_intensity (const PicmanRGB *rgb)
 {
   gdouble intensity;
 
   g_return_val_if_fail (rgb != NULL, 0.0);
 
-  intensity = GIMP_RGB_INTENSITY (rgb->r, rgb->g, rgb->b);
+  intensity = PICMAN_RGB_INTENSITY (rgb->r, rgb->g, rgb->b);
 
   return CLAMP (intensity, 0.0, 1.0);
 }
 
 /**
- * gimp_rgb_intensity_uchar:
- * @rgb: a #GimpRGB struct
+ * picman_rgb_intensity_uchar:
+ * @rgb: a #PicmanRGB struct
  *
- * This function is deprecated! Use gimp_rgb_luminance_uchar() instead.
+ * This function is deprecated! Use picman_rgb_luminance_uchar() instead.
  *
  * Return value: the intensity in the range from 0 to 255.
  **/
 guchar
-gimp_rgb_intensity_uchar (const GimpRGB *rgb)
+picman_rgb_intensity_uchar (const PicmanRGB *rgb)
 {
   g_return_val_if_fail (rgb != NULL, 0);
 
-  return ROUND (gimp_rgb_intensity (rgb) * 255.0);
+  return ROUND (picman_rgb_intensity (rgb) * 255.0);
 }
 
 void
-gimp_rgb_composite (GimpRGB              *color1,
-                    const GimpRGB        *color2,
-                    GimpRGBCompositeMode  mode)
+picman_rgb_composite (PicmanRGB              *color1,
+                    const PicmanRGB        *color2,
+                    PicmanRGBCompositeMode  mode)
 {
   g_return_if_fail (color1 != NULL);
   g_return_if_fail (color2 != NULL);
 
   switch (mode)
     {
-    case GIMP_RGB_COMPOSITE_NONE:
+    case PICMAN_RGB_COMPOSITE_NONE:
       break;
 
-    case GIMP_RGB_COMPOSITE_NORMAL:
+    case PICMAN_RGB_COMPOSITE_NORMAL:
       /*  put color2 on top of color1  */
       if (color2->a == 1.0)
         {
@@ -420,7 +420,7 @@ gimp_rgb_composite (GimpRGB              *color1,
         }
       break;
 
-    case GIMP_RGB_COMPOSITE_BEHIND:
+    case PICMAN_RGB_COMPOSITE_BEHIND:
       /*  put color2 below color1  */
       if (color1->a < 1.0)
         {
@@ -438,8 +438,8 @@ gimp_rgb_composite (GimpRGB              *color1,
 /*  RGBA functions  */
 
 /**
- * gimp_rgba_set:
- * @rgba:   a #GimpRGB struct
+ * picman_rgba_set:
+ * @rgba:   a #PicmanRGB struct
  * @format: a Babl format
  * @pixel:  pointer to the source pixel
  *
@@ -447,10 +447,10 @@ gimp_rgb_composite (GimpRGB              *color1,
  * color stored in @pixel. The pixel format of @pixel is determined
  * by @format.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 void
-gimp_rgba_set_pixel (GimpRGB       *rgba,
+picman_rgba_set_pixel (PicmanRGB       *rgba,
                      const Babl    *format,
                      gconstpointer  pixel)
 {
@@ -464,8 +464,8 @@ gimp_rgba_set_pixel (GimpRGB       *rgba,
 }
 
 /**
- * gimp_rgba_get:
- * @rgba:   a #GimpRGB struct
+ * picman_rgba_get:
+ * @rgba:   a #PicmanRGB struct
  * @format: a Babl format
  * @pixel:  pointer to the destination pixel
  *
@@ -473,10 +473,10 @@ gimp_rgba_set_pixel (GimpRGB       *rgba,
  * color stored in @pixel. The pixel format of @pixel is determined by
  * @format.
  *
- * Since: GIMP 2.10
+ * Since: PICMAN 2.10
  **/
 void
-gimp_rgba_get_pixel (const GimpRGB *rgba,
+picman_rgba_get_pixel (const PicmanRGB *rgba,
                      const Babl    *format,
                      gpointer       pixel)
 {
@@ -490,8 +490,8 @@ gimp_rgba_get_pixel (const GimpRGB *rgba,
 }
 
 /**
- * gimp_rgba_set:
- * @rgba:  a #GimpRGB struct
+ * picman_rgba_set:
+ * @rgba:  a #PicmanRGB struct
  * @red:   the red component
  * @green: the green component
  * @blue:  the blue component
@@ -502,7 +502,7 @@ gimp_rgba_get_pixel (const GimpRGB *rgba,
  * and the values are set exactly as they are passed in.
  **/
 void
-gimp_rgba_set (GimpRGB *rgba,
+picman_rgba_set (PicmanRGB *rgba,
                gdouble  r,
                gdouble  g,
                gdouble  b,
@@ -517,8 +517,8 @@ gimp_rgba_set (GimpRGB *rgba,
 }
 
 /**
- * gimp_rgba_set_uchar:
- * @rgba:  a #GimpRGB struct
+ * picman_rgba_set_uchar:
+ * @rgba:  a #PicmanRGB struct
  * @red:   the red component
  * @green: the green component
  * @blue:  the blue component
@@ -528,7 +528,7 @@ gimp_rgba_set (GimpRGB *rgba,
  * values (0 to 255).
  **/
 void
-gimp_rgba_set_uchar (GimpRGB *rgba,
+picman_rgba_set_uchar (PicmanRGB *rgba,
                      guchar   r,
                      guchar   g,
                      guchar   b,
@@ -543,7 +543,7 @@ gimp_rgba_set_uchar (GimpRGB *rgba,
 }
 
 void
-gimp_rgba_get_uchar (const GimpRGB *rgba,
+picman_rgba_get_uchar (const PicmanRGB *rgba,
                      guchar        *r,
                      guchar        *g,
                      guchar        *b,
@@ -558,8 +558,8 @@ gimp_rgba_get_uchar (const GimpRGB *rgba,
 }
 
 void
-gimp_rgba_add (GimpRGB       *rgba1,
-               const GimpRGB *rgba2)
+picman_rgba_add (PicmanRGB       *rgba1,
+               const PicmanRGB *rgba2)
 {
   g_return_if_fail (rgba1 != NULL);
   g_return_if_fail (rgba2 != NULL);
@@ -571,8 +571,8 @@ gimp_rgba_add (GimpRGB       *rgba1,
 }
 
 void
-gimp_rgba_subtract (GimpRGB       *rgba1,
-                    const GimpRGB *rgba2)
+picman_rgba_subtract (PicmanRGB       *rgba1,
+                    const PicmanRGB *rgba2)
 {
   g_return_if_fail (rgba1 != NULL);
   g_return_if_fail (rgba2 != NULL);
@@ -584,7 +584,7 @@ gimp_rgba_subtract (GimpRGB       *rgba1,
 }
 
 void
-gimp_rgba_multiply (GimpRGB *rgba,
+picman_rgba_multiply (PicmanRGB *rgba,
                     gdouble  factor)
 {
   g_return_if_fail (rgba != NULL);
@@ -596,8 +596,8 @@ gimp_rgba_multiply (GimpRGB *rgba,
 }
 
 gdouble
-gimp_rgba_distance (const GimpRGB *rgba1,
-                    const GimpRGB *rgba2)
+picman_rgba_distance (const PicmanRGB *rgba1,
+                    const PicmanRGB *rgba2)
 {
   g_return_val_if_fail (rgba1 != NULL, 0.0);
   g_return_val_if_fail (rgba2 != NULL, 0.0);
@@ -610,42 +610,42 @@ gimp_rgba_distance (const GimpRGB *rgba1,
 
 
 /*
- * GIMP_TYPE_PARAM_RGB
+ * PICMAN_TYPE_PARAM_RGB
  */
 
-#define GIMP_PARAM_SPEC_RGB(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GIMP_TYPE_PARAM_RGB, GimpParamSpecRGB))
+#define PICMAN_PARAM_SPEC_RGB(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), PICMAN_TYPE_PARAM_RGB, PicmanParamSpecRGB))
 
-typedef struct _GimpParamSpecRGB GimpParamSpecRGB;
+typedef struct _PicmanParamSpecRGB PicmanParamSpecRGB;
 
-struct _GimpParamSpecRGB
+struct _PicmanParamSpecRGB
 {
   GParamSpecBoxed  parent_instance;
 
   gboolean         has_alpha;
-  GimpRGB          default_value;
+  PicmanRGB          default_value;
 };
 
-static void       gimp_param_rgb_class_init  (GParamSpecClass *class);
-static void       gimp_param_rgb_init        (GParamSpec      *pspec);
-static void       gimp_param_rgb_set_default (GParamSpec      *pspec,
+static void       picman_param_rgb_class_init  (GParamSpecClass *class);
+static void       picman_param_rgb_init        (GParamSpec      *pspec);
+static void       picman_param_rgb_set_default (GParamSpec      *pspec,
                                               GValue          *value);
-static gboolean   gimp_param_rgb_validate    (GParamSpec      *pspec,
+static gboolean   picman_param_rgb_validate    (GParamSpec      *pspec,
                                               GValue          *value);
-static gint       gimp_param_rgb_values_cmp  (GParamSpec      *pspec,
+static gint       picman_param_rgb_values_cmp  (GParamSpec      *pspec,
                                               const GValue    *value1,
                                               const GValue    *value2);
 
 /**
- * gimp_param_rgb_get_type:
+ * picman_param_rgb_get_type:
  *
  * Reveals the object type
  *
- * Returns: the #GType for a GimpParamRGB object
+ * Returns: the #GType for a PicmanParamRGB object
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GType
-gimp_param_rgb_get_type (void)
+picman_param_rgb_get_type (void)
 {
   static GType spec_type = 0;
 
@@ -655,15 +655,15 @@ gimp_param_rgb_get_type (void)
       {
         sizeof (GParamSpecClass),
         NULL, NULL,
-        (GClassInitFunc) gimp_param_rgb_class_init,
+        (GClassInitFunc) picman_param_rgb_class_init,
         NULL, NULL,
-        sizeof (GimpParamSpecRGB),
+        sizeof (PicmanParamSpecRGB),
         0,
-        (GInstanceInitFunc) gimp_param_rgb_init
+        (GInstanceInitFunc) picman_param_rgb_init
       };
 
       spec_type = g_type_register_static (G_TYPE_PARAM_BOXED,
-                                          "GimpParamRGB",
+                                          "PicmanParamRGB",
                                           &type_info, 0);
     }
 
@@ -671,59 +671,59 @@ gimp_param_rgb_get_type (void)
 }
 
 static void
-gimp_param_rgb_class_init (GParamSpecClass *class)
+picman_param_rgb_class_init (GParamSpecClass *class)
 {
-  class->value_type        = GIMP_TYPE_RGB;
-  class->value_set_default = gimp_param_rgb_set_default;
-  class->value_validate    = gimp_param_rgb_validate;
-  class->values_cmp        = gimp_param_rgb_values_cmp;
+  class->value_type        = PICMAN_TYPE_RGB;
+  class->value_set_default = picman_param_rgb_set_default;
+  class->value_validate    = picman_param_rgb_validate;
+  class->values_cmp        = picman_param_rgb_values_cmp;
 }
 
 static void
-gimp_param_rgb_init (GParamSpec *pspec)
+picman_param_rgb_init (GParamSpec *pspec)
 {
-  GimpParamSpecRGB *cspec = GIMP_PARAM_SPEC_RGB (pspec);
+  PicmanParamSpecRGB *cspec = PICMAN_PARAM_SPEC_RGB (pspec);
 
-  gimp_rgba_set (&cspec->default_value, 0.0, 0.0, 0.0, 1.0);
+  picman_rgba_set (&cspec->default_value, 0.0, 0.0, 0.0, 1.0);
 }
 
 static void
-gimp_param_rgb_set_default (GParamSpec *pspec,
+picman_param_rgb_set_default (GParamSpec *pspec,
                             GValue     *value)
 {
-  GimpParamSpecRGB *cspec = GIMP_PARAM_SPEC_RGB (pspec);
+  PicmanParamSpecRGB *cspec = PICMAN_PARAM_SPEC_RGB (pspec);
 
   g_value_set_static_boxed (value, &cspec->default_value);
 }
 
 static gboolean
-gimp_param_rgb_validate (GParamSpec *pspec,
+picman_param_rgb_validate (GParamSpec *pspec,
                          GValue     *value)
 {
-  GimpRGB *rgb = value->data[0].v_pointer;
+  PicmanRGB *rgb = value->data[0].v_pointer;
 
   if (rgb)
     {
-      GimpRGB oval = *rgb;
+      PicmanRGB oval = *rgb;
 
-      gimp_rgb_clamp (rgb);
+      picman_rgb_clamp (rgb);
 
       return (oval.r != rgb->r ||
               oval.g != rgb->g ||
               oval.b != rgb->b ||
-              (GIMP_PARAM_SPEC_RGB (pspec)->has_alpha && oval.a != rgb->a));
+              (PICMAN_PARAM_SPEC_RGB (pspec)->has_alpha && oval.a != rgb->a));
     }
 
   return FALSE;
 }
 
 static gint
-gimp_param_rgb_values_cmp (GParamSpec   *pspec,
+picman_param_rgb_values_cmp (GParamSpec   *pspec,
                            const GValue *value1,
                            const GValue *value2)
 {
-  GimpRGB *rgb1 = value1->data[0].v_pointer;
-  GimpRGB *rgb2 = value2->data[0].v_pointer;
+  PicmanRGB *rgb1 = value1->data[0].v_pointer;
+  PicmanRGB *rgb2 = value2->data[0].v_pointer;
 
   /*  try to return at least *something*, it's useless anyway...  */
 
@@ -740,14 +740,14 @@ gimp_param_rgb_values_cmp (GParamSpec   *pspec,
       guint32 int1 = 0;
       guint32 int2 = 0;
 
-      if (GIMP_PARAM_SPEC_RGB (pspec)->has_alpha)
+      if (PICMAN_PARAM_SPEC_RGB (pspec)->has_alpha)
         {
-          gimp_rgba_get_uchar (rgb1,
+          picman_rgba_get_uchar (rgb1,
                                ((guchar *) &int1) + 0,
                                ((guchar *) &int1) + 1,
                                ((guchar *) &int1) + 2,
                                ((guchar *) &int1) + 3);
-          gimp_rgba_get_uchar (rgb2,
+          picman_rgba_get_uchar (rgb2,
                                ((guchar *) &int2) + 0,
                                ((guchar *) &int2) + 1,
                                ((guchar *) &int2) + 2,
@@ -755,11 +755,11 @@ gimp_param_rgb_values_cmp (GParamSpec   *pspec,
         }
       else
         {
-          gimp_rgb_get_uchar (rgb1,
+          picman_rgb_get_uchar (rgb1,
                               ((guchar *) &int1) + 0,
                               ((guchar *) &int1) + 1,
                               ((guchar *) &int1) + 2);
-          gimp_rgb_get_uchar (rgb2,
+          picman_rgb_get_uchar (rgb2,
                               ((guchar *) &int2) + 0,
                               ((guchar *) &int2) + 1,
                               ((guchar *) &int2) + 2);
@@ -770,7 +770,7 @@ gimp_param_rgb_values_cmp (GParamSpec   *pspec,
 }
 
 /**
- * gimp_param_spec_rgb:
+ * picman_param_spec_rgb:
  * @name:          Canonical name of the param
  * @nick:          Nickname of the param
  * @blurb:         Brief desciption of param.
@@ -778,24 +778,24 @@ gimp_param_rgb_values_cmp (GParamSpec   *pspec,
  * @default_value: Value to use if none is assigned.
  * @flags:         a combination of #GParamFlags
  *
- * Creates a param spec to hold an #GimpRGB value.
+ * Creates a param spec to hold an #PicmanRGB value.
  * See g_param_spec_internal() for more information.
  *
  * Returns: a newly allocated #GParamSpec instance
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GParamSpec *
-gimp_param_spec_rgb (const gchar   *name,
+picman_param_spec_rgb (const gchar   *name,
                      const gchar   *nick,
                      const gchar   *blurb,
                      gboolean       has_alpha,
-                     const GimpRGB *default_value,
+                     const PicmanRGB *default_value,
                      GParamFlags    flags)
 {
-  GimpParamSpecRGB *cspec;
+  PicmanParamSpecRGB *cspec;
 
-  cspec = g_param_spec_internal (GIMP_TYPE_PARAM_RGB,
+  cspec = g_param_spec_internal (PICMAN_TYPE_PARAM_RGB,
                                  name, nick, blurb, flags);
 
   cspec->has_alpha = has_alpha;
@@ -807,17 +807,17 @@ gimp_param_spec_rgb (const gchar   *name,
 }
 
 /**
- * gimp_param_spec_rgb_has_alpha:
- * @pspec: a #GParamSpec to hold an #GimpRGB value.
+ * picman_param_spec_rgb_has_alpha:
+ * @pspec: a #GParamSpec to hold an #PicmanRGB value.
  *
  * Returns: %TRUE if the alpha channel is relevant.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-gimp_param_spec_rgb_has_alpha (GParamSpec *pspec)
+picman_param_spec_rgb_has_alpha (GParamSpec *pspec)
 {
-  g_return_val_if_fail (GIMP_IS_PARAM_SPEC_RGB (pspec), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PARAM_SPEC_RGB (pspec), FALSE);
 
-  return GIMP_PARAM_SPEC_RGB (pspec)->has_alpha;
+  return PICMAN_PARAM_SPEC_RGB (pspec)->has_alpha;
 }

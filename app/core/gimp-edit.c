@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,138 +23,138 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
 #include "core-types.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimp.h"
-#include "gimp-edit.h"
-#include "gimpbuffer.h"
-#include "gimpchannel.h"
-#include "gimpcontext.h"
-#include "gimpdrawableundo.h"
-#include "gimpimage.h"
-#include "gimpimage-undo.h"
-#include "gimplayer.h"
-#include "gimplayer-floating-sel.h"
-#include "gimplist.h"
-#include "gimppattern.h"
-#include "gimppickable.h"
-#include "gimpselection.h"
-#include "gimptempbuf.h"
+#include "picman.h"
+#include "picman-edit.h"
+#include "picmanbuffer.h"
+#include "picmanchannel.h"
+#include "picmancontext.h"
+#include "picmandrawableundo.h"
+#include "picmanimage.h"
+#include "picmanimage-undo.h"
+#include "picmanlayer.h"
+#include "picmanlayer-floating-sel.h"
+#include "picmanlist.h"
+#include "picmanpattern.h"
+#include "picmanpickable.h"
+#include "picmanselection.h"
+#include "picmantempbuf.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function protypes  */
 
-static GimpBuffer * gimp_edit_extract (GimpImage     *image,
-                                       GimpPickable  *pickable,
-                                       GimpContext   *context,
+static PicmanBuffer * picman_edit_extract (PicmanImage     *image,
+                                       PicmanPickable  *pickable,
+                                       PicmanContext   *context,
                                        gboolean       cut_pixels,
                                        GError       **error);
 
 
 /*  public functions  */
 
-const GimpBuffer *
-gimp_edit_cut (GimpImage     *image,
-               GimpDrawable  *drawable,
-               GimpContext   *context,
+const PicmanBuffer *
+picman_edit_cut (PicmanImage     *image,
+               PicmanDrawable  *drawable,
+               PicmanContext   *context,
                GError       **error)
 {
-  GimpBuffer *buffer;
+  PicmanBuffer *buffer;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  buffer = gimp_edit_extract (image, GIMP_PICKABLE (drawable),
+  buffer = picman_edit_extract (image, PICMAN_PICKABLE (drawable),
                               context, TRUE, error);
 
   if (buffer)
     {
-      gimp_set_global_buffer (image->gimp, buffer);
+      picman_set_global_buffer (image->picman, buffer);
       g_object_unref (buffer);
 
-      return image->gimp->global_buffer;
+      return image->picman->global_buffer;
     }
 
   return NULL;
 }
 
-const GimpBuffer *
-gimp_edit_copy (GimpImage     *image,
-                GimpDrawable  *drawable,
-                GimpContext   *context,
+const PicmanBuffer *
+picman_edit_copy (PicmanImage     *image,
+                PicmanDrawable  *drawable,
+                PicmanContext   *context,
                 GError       **error)
 {
-  GimpBuffer *buffer;
+  PicmanBuffer *buffer;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  buffer = gimp_edit_extract (image, GIMP_PICKABLE (drawable),
+  buffer = picman_edit_extract (image, PICMAN_PICKABLE (drawable),
                               context, FALSE, error);
 
   if (buffer)
     {
-      gimp_set_global_buffer (image->gimp, buffer);
+      picman_set_global_buffer (image->picman, buffer);
       g_object_unref (buffer);
 
-      return image->gimp->global_buffer;
+      return image->picman->global_buffer;
     }
 
   return NULL;
 }
 
-const GimpBuffer *
-gimp_edit_copy_visible (GimpImage    *image,
-                        GimpContext  *context,
+const PicmanBuffer *
+picman_edit_copy_visible (PicmanImage    *image,
+                        PicmanContext  *context,
                         GError      **error)
 {
-  GimpProjection *projection;
-  GimpBuffer     *buffer;
+  PicmanProjection *projection;
+  PicmanBuffer     *buffer;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  projection = gimp_image_get_projection (image);
+  projection = picman_image_get_projection (image);
 
-  buffer = gimp_edit_extract (image, GIMP_PICKABLE (projection),
+  buffer = picman_edit_extract (image, PICMAN_PICKABLE (projection),
                               context, FALSE, error);
 
   if (buffer)
     {
-      gimp_set_global_buffer (image->gimp, buffer);
+      picman_set_global_buffer (image->picman, buffer);
       g_object_unref (buffer);
 
-      return image->gimp->global_buffer;
+      return image->picman->global_buffer;
     }
 
   return NULL;
 }
 
-GimpLayer *
-gimp_edit_paste (GimpImage    *image,
-                 GimpDrawable *drawable,
-                 GimpBuffer   *paste,
+PicmanLayer *
+picman_edit_paste (PicmanImage    *image,
+                 PicmanDrawable *drawable,
+                 PicmanBuffer   *paste,
                  gboolean      paste_into,
                  gint          viewport_x,
                  gint          viewport_y,
                  gint          viewport_width,
                  gint          viewport_height)
 {
-  GimpLayer  *layer;
+  PicmanLayer  *layer;
   const Babl *format;
   gint        image_width;
   gint        image_height;
@@ -164,35 +164,35 @@ gimp_edit_paste (GimpImage    *image,
   gint        offset_y;
   gboolean    clamp_to_image = TRUE;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (drawable == NULL || GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (drawable == NULL || PICMAN_IS_DRAWABLE (drawable), NULL);
   g_return_val_if_fail (drawable == NULL ||
-                        gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_BUFFER (paste), NULL);
+                        picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_BUFFER (paste), NULL);
 
   /*  Make a new layer: if drawable == NULL,
    *  user is pasting into an empty image.
    */
 
   if (drawable)
-    format = gimp_drawable_get_format_with_alpha (drawable);
+    format = picman_drawable_get_format_with_alpha (drawable);
   else
-    format = gimp_image_get_layer_format (image, TRUE);
+    format = picman_image_get_layer_format (image, TRUE);
 
-  layer = gimp_layer_new_from_buffer (gimp_buffer_get_buffer (paste),
+  layer = picman_layer_new_from_buffer (picman_buffer_get_buffer (paste),
                                       image,
                                       format,
                                       _("Pasted Layer"),
-                                      GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+                                      PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
 
   if (! layer)
     return NULL;
 
-  image_width  = gimp_image_get_width  (image);
-  image_height = gimp_image_get_height (image);
+  image_width  = picman_image_get_width  (image);
+  image_height = picman_image_get_height (image);
 
-  width  = gimp_item_get_width  (GIMP_ITEM (layer));
-  height = gimp_item_get_height (GIMP_ITEM (layer));
+  width  = picman_item_get_width  (PICMAN_ITEM (layer));
+  height = picman_item_get_height (PICMAN_ITEM (layer));
 
   if (viewport_width  == image_width &&
       viewport_height == image_height)
@@ -215,8 +215,8 @@ gimp_edit_paste (GimpImage    *image,
       gint     paste_width, paste_height;
       gboolean have_mask;
 
-      gimp_item_get_offset (GIMP_ITEM (drawable), &off_x, &off_y);
-      have_mask = gimp_item_mask_bounds (GIMP_ITEM (drawable),
+      picman_item_get_offset (PICMAN_ITEM (drawable), &off_x, &off_y);
+      have_mask = picman_item_mask_bounds (PICMAN_ITEM (drawable),
                                          &x1, &y1, &x2, &y2);
 
       if (! have_mask         && /* if we have no mask */
@@ -226,7 +226,7 @@ gimp_edit_paste (GimpImage    *image,
            height < (y2 - y1)) &&
 
           /* and the viewport intersects with the target */
-          gimp_rectangle_intersect (viewport_x, viewport_y,
+          picman_rectangle_intersect (viewport_x, viewport_y,
                                     viewport_width, viewport_height,
                                     off_x, off_y,
                                     x2 - x1, y2 - y1,
@@ -281,240 +281,240 @@ gimp_edit_paste (GimpImage    *image,
       offset_y = MAX (offset_y, 0);
     }
 
-  gimp_item_set_offset (GIMP_ITEM (layer), offset_x, offset_y);
+  picman_item_set_offset (PICMAN_ITEM (layer), offset_x, offset_y);
 
   /*  Start a group undo  */
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_EDIT_PASTE,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_EDIT_PASTE,
                                C_("undo-type", "Paste"));
 
   /*  If there is a selection mask clear it--
    *  this might not always be desired, but in general,
    *  it seems like the correct behavior.
    */
-  if (! gimp_channel_is_empty (gimp_image_get_mask (image)) && ! paste_into)
-    gimp_channel_clear (gimp_image_get_mask (image), NULL, TRUE);
+  if (! picman_channel_is_empty (picman_image_get_mask (image)) && ! paste_into)
+    picman_channel_clear (picman_image_get_mask (image), NULL, TRUE);
 
   /*  if there's a drawable, add a new floating selection  */
   if (drawable)
     floating_sel_attach (layer, drawable);
   else
-    gimp_image_add_layer (image, layer, NULL, 0, TRUE);
+    picman_image_add_layer (image, layer, NULL, 0, TRUE);
 
   /*  end the group undo  */
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
   return layer;
 }
 
 const gchar *
-gimp_edit_named_cut (GimpImage     *image,
+picman_edit_named_cut (PicmanImage     *image,
                      const gchar   *name,
-                     GimpDrawable  *drawable,
-                     GimpContext   *context,
+                     PicmanDrawable  *drawable,
+                     PicmanContext   *context,
                      GError       **error)
 {
-  GimpBuffer *buffer;
+  PicmanBuffer *buffer;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (name != NULL, NULL);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  buffer = gimp_edit_extract (image, GIMP_PICKABLE (drawable),
+  buffer = picman_edit_extract (image, PICMAN_PICKABLE (drawable),
                               context, TRUE, error);
 
   if (buffer)
     {
-      gimp_object_set_name (GIMP_OBJECT (buffer), name);
-      gimp_container_add (image->gimp->named_buffers, GIMP_OBJECT (buffer));
+      picman_object_set_name (PICMAN_OBJECT (buffer), name);
+      picman_container_add (image->picman->named_buffers, PICMAN_OBJECT (buffer));
       g_object_unref (buffer);
 
-      return gimp_object_get_name (buffer);
+      return picman_object_get_name (buffer);
     }
 
   return NULL;
 }
 
 const gchar *
-gimp_edit_named_copy (GimpImage     *image,
+picman_edit_named_copy (PicmanImage     *image,
                       const gchar   *name,
-                      GimpDrawable  *drawable,
-                      GimpContext   *context,
+                      PicmanDrawable  *drawable,
+                      PicmanContext   *context,
                       GError       **error)
 {
-  GimpBuffer *buffer;
+  PicmanBuffer *buffer;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (name != NULL, NULL);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  buffer = gimp_edit_extract (image, GIMP_PICKABLE (drawable),
+  buffer = picman_edit_extract (image, PICMAN_PICKABLE (drawable),
                               context, FALSE, error);
 
   if (buffer)
     {
-      gimp_object_set_name (GIMP_OBJECT (buffer), name);
-      gimp_container_add (image->gimp->named_buffers, GIMP_OBJECT (buffer));
+      picman_object_set_name (PICMAN_OBJECT (buffer), name);
+      picman_container_add (image->picman->named_buffers, PICMAN_OBJECT (buffer));
       g_object_unref (buffer);
 
-      return gimp_object_get_name (buffer);
+      return picman_object_get_name (buffer);
     }
 
   return NULL;
 }
 
 const gchar *
-gimp_edit_named_copy_visible (GimpImage    *image,
+picman_edit_named_copy_visible (PicmanImage    *image,
                               const gchar  *name,
-                              GimpContext  *context,
+                              PicmanContext  *context,
                               GError      **error)
 {
-  GimpProjection *projection;
-  GimpBuffer     *buffer;
+  PicmanProjection *projection;
+  PicmanBuffer     *buffer;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (name != NULL, NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  projection = gimp_image_get_projection (image);
+  projection = picman_image_get_projection (image);
 
-  buffer = gimp_edit_extract (image, GIMP_PICKABLE (projection),
+  buffer = picman_edit_extract (image, PICMAN_PICKABLE (projection),
                               context, FALSE, error);
 
   if (buffer)
     {
-      gimp_object_set_name (GIMP_OBJECT (buffer), name);
-      gimp_container_add (image->gimp->named_buffers, GIMP_OBJECT (buffer));
+      picman_object_set_name (PICMAN_OBJECT (buffer), name);
+      picman_container_add (image->picman->named_buffers, PICMAN_OBJECT (buffer));
       g_object_unref (buffer);
 
-      return gimp_object_get_name (buffer);
+      return picman_object_get_name (buffer);
     }
 
   return NULL;
 }
 
 gboolean
-gimp_edit_clear (GimpImage    *image,
-                 GimpDrawable *drawable,
-                 GimpContext  *context)
+picman_edit_clear (PicmanImage    *image,
+                 PicmanDrawable *drawable,
+                 PicmanContext  *context)
 {
-  GimpRGB              background;
-  GimpLayerModeEffects paint_mode;
+  PicmanRGB              background;
+  PicmanLayerModeEffects paint_mode;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), FALSE);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), FALSE);
 
-  gimp_context_get_background (context, &background);
+  picman_context_get_background (context, &background);
 
-  if (gimp_drawable_has_alpha (drawable))
-    paint_mode = GIMP_ERASE_MODE;
+  if (picman_drawable_has_alpha (drawable))
+    paint_mode = PICMAN_ERASE_MODE;
   else
-    paint_mode = GIMP_NORMAL_MODE;
+    paint_mode = PICMAN_NORMAL_MODE;
 
-  return gimp_edit_fill_full (image, drawable,
+  return picman_edit_fill_full (image, drawable,
                               &background, NULL,
-                              GIMP_OPACITY_OPAQUE, paint_mode,
+                              PICMAN_OPACITY_OPAQUE, paint_mode,
                               C_("undo-type", "Clear"));
 }
 
 gboolean
-gimp_edit_fill (GimpImage            *image,
-                GimpDrawable         *drawable,
-                GimpContext          *context,
-                GimpFillType          fill_type,
+picman_edit_fill (PicmanImage            *image,
+                PicmanDrawable         *drawable,
+                PicmanContext          *context,
+                PicmanFillType          fill_type,
                 gdouble               opacity,
-                GimpLayerModeEffects  paint_mode)
+                PicmanLayerModeEffects  paint_mode)
 {
-  GimpRGB      color;
-  GimpPattern *pattern = NULL;
+  PicmanRGB      color;
+  PicmanPattern *pattern = NULL;
   const gchar *undo_desc;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), FALSE);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), FALSE);
 
   switch (fill_type)
     {
-    case GIMP_FOREGROUND_FILL:
-      gimp_context_get_foreground (context, &color);
+    case PICMAN_FOREGROUND_FILL:
+      picman_context_get_foreground (context, &color);
       undo_desc = C_("undo-type", "Fill with Foreground Color");
       break;
 
-    case GIMP_BACKGROUND_FILL:
-      gimp_context_get_background (context, &color);
+    case PICMAN_BACKGROUND_FILL:
+      picman_context_get_background (context, &color);
       undo_desc = C_("undo-type", "Fill with Background Color");
       break;
 
-    case GIMP_WHITE_FILL:
-      gimp_rgba_set (&color, 1.0, 1.0, 1.0, GIMP_OPACITY_OPAQUE);
+    case PICMAN_WHITE_FILL:
+      picman_rgba_set (&color, 1.0, 1.0, 1.0, PICMAN_OPACITY_OPAQUE);
       undo_desc = C_("undo-type", "Fill with White");
       break;
 
-    case GIMP_TRANSPARENT_FILL:
-      gimp_context_get_background (context, &color);
+    case PICMAN_TRANSPARENT_FILL:
+      picman_context_get_background (context, &color);
       undo_desc = C_("undo-type", "Fill with Transparency");
       break;
 
-    case GIMP_PATTERN_FILL:
-      pattern = gimp_context_get_pattern (context);
+    case PICMAN_PATTERN_FILL:
+      pattern = picman_context_get_pattern (context);
       undo_desc = C_("undo-type", "Fill with Pattern");
       break;
 
-    case GIMP_NO_FILL:
+    case PICMAN_NO_FILL:
       return TRUE;  /*  nothing to do, but the fill succeeded  */
 
     default:
       g_warning ("%s: unknown fill type", G_STRFUNC);
-      return gimp_edit_fill (image, drawable,
-                             context, GIMP_BACKGROUND_FILL,
-                             GIMP_OPACITY_OPAQUE, GIMP_NORMAL_MODE);
+      return picman_edit_fill (image, drawable,
+                             context, PICMAN_BACKGROUND_FILL,
+                             PICMAN_OPACITY_OPAQUE, PICMAN_NORMAL_MODE);
     }
 
-  return gimp_edit_fill_full (image, drawable,
+  return picman_edit_fill_full (image, drawable,
                               &color, pattern,
                               opacity, paint_mode,
                               undo_desc);
 }
 
 gboolean
-gimp_edit_fill_full (GimpImage            *image,
-                     GimpDrawable         *drawable,
-                     const GimpRGB        *color,
-                     GimpPattern          *pattern,
+picman_edit_fill_full (PicmanImage            *image,
+                     PicmanDrawable         *drawable,
+                     const PicmanRGB        *color,
+                     PicmanPattern          *pattern,
                      gdouble               opacity,
-                     GimpLayerModeEffects  paint_mode,
+                     PicmanLayerModeEffects  paint_mode,
                      const gchar          *undo_desc)
 {
   GeglBuffer *dest_buffer;
   const Babl *format;
   gint        x, y, width, height;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
-  g_return_val_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), FALSE);
+  g_return_val_if_fail (picman_item_is_attached (PICMAN_ITEM (drawable)), FALSE);
   g_return_val_if_fail (color != NULL || pattern != NULL, FALSE);
 
-  if (! gimp_item_mask_intersect (GIMP_ITEM (drawable), &x, &y, &width, &height))
+  if (! picman_item_mask_intersect (PICMAN_ITEM (drawable), &x, &y, &width, &height))
     return TRUE;  /*  nothing to do, but the fill succeeded  */
 
   if (pattern &&
-      babl_format_has_alpha (gimp_temp_buf_get_format (pattern->mask)) &&
-      ! gimp_drawable_has_alpha (drawable))
+      babl_format_has_alpha (picman_temp_buf_get_format (pattern->mask)) &&
+      ! picman_drawable_has_alpha (drawable))
     {
-      format = gimp_drawable_get_format_with_alpha (drawable);
+      format = picman_drawable_get_format_with_alpha (drawable);
     }
   else
     {
-      format = gimp_drawable_get_format (drawable);
+      format = picman_drawable_get_format (drawable);
     }
 
   dest_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0, width, height),
@@ -522,20 +522,20 @@ gimp_edit_fill_full (GimpImage            *image,
 
   if (pattern)
     {
-      GeglBuffer *src_buffer = gimp_pattern_create_buffer (pattern);
+      GeglBuffer *src_buffer = picman_pattern_create_buffer (pattern);
 
       gegl_buffer_set_pattern (dest_buffer, NULL, src_buffer, 0, 0);
       g_object_unref (src_buffer);
     }
   else
     {
-      GeglColor *gegl_color = gimp_gegl_color_new (color);
+      GeglColor *gegl_color = picman_gegl_color_new (color);
 
       gegl_buffer_set_color (dest_buffer, NULL, gegl_color);
       g_object_unref (gegl_color);
     }
 
-  gimp_drawable_apply_buffer (drawable, dest_buffer,
+  picman_drawable_apply_buffer (drawable, dest_buffer,
                               GEGL_RECTANGLE (0, 0, width, height),
                               TRUE, undo_desc,
                               opacity, paint_mode,
@@ -543,42 +543,42 @@ gimp_edit_fill_full (GimpImage            *image,
 
   g_object_unref (dest_buffer);
 
-  gimp_drawable_update (drawable, x, y, width, height);
+  picman_drawable_update (drawable, x, y, width, height);
 
   return TRUE;
 }
 
 gboolean
-gimp_edit_fade (GimpImage   *image,
-                GimpContext *context)
+picman_edit_fade (PicmanImage   *image,
+                PicmanContext *context)
 {
-  GimpDrawableUndo *undo;
+  PicmanDrawableUndo *undo;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), FALSE);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), FALSE);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), FALSE);
 
-  undo = GIMP_DRAWABLE_UNDO (gimp_image_undo_get_fadeable (image));
+  undo = PICMAN_DRAWABLE_UNDO (picman_image_undo_get_fadeable (image));
 
   if (undo && undo->applied_buffer)
     {
-      GimpDrawable *drawable;
+      PicmanDrawable *drawable;
       GeglBuffer   *buffer;
 
-      drawable = GIMP_DRAWABLE (GIMP_ITEM_UNDO (undo)->item);
+      drawable = PICMAN_DRAWABLE (PICMAN_ITEM_UNDO (undo)->item);
 
       g_object_ref (undo);
       buffer = g_object_ref (undo->applied_buffer);
 
-      gimp_image_undo (image);
+      picman_image_undo (image);
 
-      gimp_drawable_apply_buffer (drawable, buffer,
+      picman_drawable_apply_buffer (drawable, buffer,
                                   GEGL_RECTANGLE (0, 0,
                                                   gegl_buffer_get_width (undo->buffer),
                                                   gegl_buffer_get_height (undo->buffer)),
                                   TRUE,
-                                  gimp_object_get_name (undo),
-                                  gimp_context_get_opacity (context),
-                                  gimp_context_get_paint_mode (context),
+                                  picman_object_get_name (undo),
+                                  picman_context_get_opacity (context),
+                                  picman_context_get_paint_mode (context),
                                   NULL, undo->x, undo->y);
 
       g_object_unref (buffer);
@@ -593,10 +593,10 @@ gimp_edit_fade (GimpImage   *image,
 
 /*  private functions  */
 
-static GimpBuffer *
-gimp_edit_extract (GimpImage     *image,
-                   GimpPickable  *pickable,
-                   GimpContext   *context,
+static PicmanBuffer *
+picman_edit_extract (PicmanImage     *image,
+                   PicmanPickable  *pickable,
+                   PicmanContext   *context,
                    gboolean       cut_pixels,
                    GError       **error)
 {
@@ -605,24 +605,24 @@ gimp_edit_extract (GimpImage     *image,
   gint        offset_y;
 
   if (cut_pixels)
-    gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_EDIT_CUT, C_("undo-type", "Cut"));
+    picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_EDIT_CUT, C_("undo-type", "Cut"));
 
   /*  Cut/copy the mask portion from the image  */
-  buffer = gimp_selection_extract (GIMP_SELECTION (gimp_image_get_mask (image)),
+  buffer = picman_selection_extract (PICMAN_SELECTION (picman_image_get_mask (image)),
                                    pickable, context,
                                    cut_pixels, FALSE, FALSE,
                                    &offset_x, &offset_y, error);
 
   if (cut_pixels)
-    gimp_image_undo_group_end (image);
+    picman_image_undo_group_end (image);
 
   if (buffer)
     {
-      GimpBuffer *gimp_buffer = gimp_buffer_new (buffer, _("Global Buffer"),
+      PicmanBuffer *picman_buffer = picman_buffer_new (buffer, _("Global Buffer"),
                                                  offset_x, offset_y, FALSE);
       g_object_unref (buffer);
 
-      return gimp_buffer;
+      return picman_buffer;
     }
 
   return NULL;

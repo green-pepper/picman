@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,171 +22,171 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "config/gimpdisplayconfig.h"
-#include "config/gimpguiconfig.h"
+#include "config/picmandisplayconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpguide.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-guides.h"
-#include "core/gimpimage-pick-layer.h"
-#include "core/gimplayer.h"
-#include "core/gimpimage-undo.h"
-#include "core/gimplayermask.h"
-#include "core/gimplayer-floating-sel.h"
-#include "core/gimpundostack.h"
+#include "core/picman.h"
+#include "core/picmanguide.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-guides.h"
+#include "core/picmanimage-pick-layer.h"
+#include "core/picmanlayer.h"
+#include "core/picmanimage-undo.h"
+#include "core/picmanlayermask.h"
+#include "core/picmanlayer-floating-sel.h"
+#include "core/picmanundostack.h"
 
-#include "widgets/gimphelp-ids.h"
-#include "widgets/gimpwidgets-utils.h"
+#include "widgets/picmanhelp-ids.h"
+#include "widgets/picmanwidgets-utils.h"
 
-#include "display/gimpcanvasitem.h"
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-appearance.h"
-#include "display/gimpdisplayshell-selection.h"
-#include "display/gimpdisplayshell-transform.h"
+#include "display/picmancanvasitem.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-appearance.h"
+#include "display/picmandisplayshell-selection.h"
+#include "display/picmandisplayshell-transform.h"
 
-#include "gimpeditselectiontool.h"
-#include "gimpmoveoptions.h"
-#include "gimpmovetool.h"
-#include "gimptoolcontrol.h"
+#include "picmaneditselectiontool.h"
+#include "picmanmoveoptions.h"
+#include "picmanmovetool.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define GUIDE_POSITION_INVALID G_MININT
 
-#define SWAP_ORIENT(orient) ((orient) == GIMP_ORIENTATION_HORIZONTAL ? \
-                             GIMP_ORIENTATION_VERTICAL : \
-                             GIMP_ORIENTATION_HORIZONTAL)
+#define SWAP_ORIENT(orient) ((orient) == PICMAN_ORIENTATION_HORIZONTAL ? \
+                             PICMAN_ORIENTATION_VERTICAL : \
+                             PICMAN_ORIENTATION_HORIZONTAL)
 
 
 /*  local function prototypes  */
 
-static void   gimp_move_tool_button_press   (GimpTool              *tool,
-                                             const GimpCoords      *coords,
+static void   picman_move_tool_button_press   (PicmanTool              *tool,
+                                             const PicmanCoords      *coords,
                                              guint32                time,
                                              GdkModifierType        state,
-                                             GimpButtonPressType    press_type,
-                                             GimpDisplay           *display);
-static void   gimp_move_tool_button_release (GimpTool              *tool,
-                                             const GimpCoords      *coords,
+                                             PicmanButtonPressType    press_type,
+                                             PicmanDisplay           *display);
+static void   picman_move_tool_button_release (PicmanTool              *tool,
+                                             const PicmanCoords      *coords,
                                              guint32                time,
                                              GdkModifierType        state,
-                                             GimpButtonReleaseType  release_type,
-                                             GimpDisplay           *display);
-static void   gimp_move_tool_motion         (GimpTool              *tool,
-                                             const GimpCoords      *coords,
+                                             PicmanButtonReleaseType  release_type,
+                                             PicmanDisplay           *display);
+static void   picman_move_tool_motion         (PicmanTool              *tool,
+                                             const PicmanCoords      *coords,
                                              guint32                time,
                                              GdkModifierType        state,
-                                             GimpDisplay           *display);
-static gboolean gimp_move_tool_key_press    (GimpTool              *tool,
+                                             PicmanDisplay           *display);
+static gboolean picman_move_tool_key_press    (PicmanTool              *tool,
                                              GdkEventKey           *kevent,
-                                             GimpDisplay           *display);
-static void   gimp_move_tool_modifier_key   (GimpTool              *tool,
+                                             PicmanDisplay           *display);
+static void   picman_move_tool_modifier_key   (PicmanTool              *tool,
                                              GdkModifierType        key,
                                              gboolean               press,
                                              GdkModifierType        state,
-                                             GimpDisplay           *display);
-static void   gimp_move_tool_oper_update    (GimpTool              *tool,
-                                             const GimpCoords      *coords,
+                                             PicmanDisplay           *display);
+static void   picman_move_tool_oper_update    (PicmanTool              *tool,
+                                             const PicmanCoords      *coords,
                                              GdkModifierType        state,
                                              gboolean               proximity,
-                                             GimpDisplay           *display);
-static void   gimp_move_tool_cursor_update  (GimpTool              *tool,
-                                             const GimpCoords      *coords,
+                                             PicmanDisplay           *display);
+static void   picman_move_tool_cursor_update  (PicmanTool              *tool,
+                                             const PicmanCoords      *coords,
                                              GdkModifierType        state,
-                                             GimpDisplay           *display);
+                                             PicmanDisplay           *display);
 
-static void   gimp_move_tool_draw           (GimpDrawTool          *draw_tool);
+static void   picman_move_tool_draw           (PicmanDrawTool          *draw_tool);
 
-static void   gimp_move_tool_start_guide    (GimpMoveTool          *move,
-                                             GimpDisplay           *display,
-                                             GimpOrientationType    orientation);
+static void   picman_move_tool_start_guide    (PicmanMoveTool          *move,
+                                             PicmanDisplay           *display,
+                                             PicmanOrientationType    orientation);
 
 
-G_DEFINE_TYPE (GimpMoveTool, gimp_move_tool, GIMP_TYPE_DRAW_TOOL)
+G_DEFINE_TYPE (PicmanMoveTool, picman_move_tool, PICMAN_TYPE_DRAW_TOOL)
 
-#define parent_class gimp_move_tool_parent_class
+#define parent_class picman_move_tool_parent_class
 
 
 void
-gimp_move_tool_register (GimpToolRegisterCallback  callback,
+picman_move_tool_register (PicmanToolRegisterCallback  callback,
                          gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_MOVE_TOOL,
-                GIMP_TYPE_MOVE_OPTIONS,
-                gimp_move_options_gui,
+  (* callback) (PICMAN_TYPE_MOVE_TOOL,
+                PICMAN_TYPE_MOVE_OPTIONS,
+                picman_move_options_gui,
                 0,
-                "gimp-move-tool",
+                "picman-move-tool",
                 C_("tool", "Move"),
                 _("Move Tool: Move layers, selections, and other objects"),
                 N_("_Move"), "M",
-                NULL, GIMP_HELP_TOOL_MOVE,
-                GIMP_STOCK_TOOL_MOVE,
+                NULL, PICMAN_HELP_TOOL_MOVE,
+                PICMAN_STOCK_TOOL_MOVE,
                 data);
 }
 
 static void
-gimp_move_tool_class_init (GimpMoveToolClass *klass)
+picman_move_tool_class_init (PicmanMoveToolClass *klass)
 {
-  GimpToolClass     *tool_class      = GIMP_TOOL_CLASS (klass);
-  GimpDrawToolClass *draw_tool_class = GIMP_DRAW_TOOL_CLASS (klass);
+  PicmanToolClass     *tool_class      = PICMAN_TOOL_CLASS (klass);
+  PicmanDrawToolClass *draw_tool_class = PICMAN_DRAW_TOOL_CLASS (klass);
 
-  tool_class->button_press   = gimp_move_tool_button_press;
-  tool_class->button_release = gimp_move_tool_button_release;
-  tool_class->motion         = gimp_move_tool_motion;
-  tool_class->key_press      = gimp_move_tool_key_press;
-  tool_class->modifier_key   = gimp_move_tool_modifier_key;
-  tool_class->oper_update    = gimp_move_tool_oper_update;
-  tool_class->cursor_update  = gimp_move_tool_cursor_update;
+  tool_class->button_press   = picman_move_tool_button_press;
+  tool_class->button_release = picman_move_tool_button_release;
+  tool_class->motion         = picman_move_tool_motion;
+  tool_class->key_press      = picman_move_tool_key_press;
+  tool_class->modifier_key   = picman_move_tool_modifier_key;
+  tool_class->oper_update    = picman_move_tool_oper_update;
+  tool_class->cursor_update  = picman_move_tool_cursor_update;
 
-  draw_tool_class->draw      = gimp_move_tool_draw;
+  draw_tool_class->draw      = picman_move_tool_draw;
 }
 
 static void
-gimp_move_tool_init (GimpMoveTool *move_tool)
+picman_move_tool_init (PicmanMoveTool *move_tool)
 {
-  GimpTool *tool = GIMP_TOOL (move_tool);
+  PicmanTool *tool = PICMAN_TOOL (move_tool);
 
-  gimp_tool_control_set_motion_mode        (tool->control,
-                                            GIMP_MOTION_MODE_COMPRESS);
-  gimp_tool_control_set_snap_to            (tool->control, FALSE);
-  gimp_tool_control_set_handle_empty_image (tool->control, TRUE);
-  gimp_tool_control_set_tool_cursor        (tool->control,
-                                            GIMP_TOOL_CURSOR_MOVE);
+  picman_tool_control_set_motion_mode        (tool->control,
+                                            PICMAN_MOTION_MODE_COMPRESS);
+  picman_tool_control_set_snap_to            (tool->control, FALSE);
+  picman_tool_control_set_handle_empty_image (tool->control, TRUE);
+  picman_tool_control_set_tool_cursor        (tool->control,
+                                            PICMAN_TOOL_CURSOR_MOVE);
 
   move_tool->floating_layer     = NULL;
   move_tool->guide              = NULL;
 
   move_tool->moving_guide       = FALSE;
   move_tool->guide_position     = GUIDE_POSITION_INVALID;
-  move_tool->guide_orientation  = GIMP_ORIENTATION_UNKNOWN;
+  move_tool->guide_orientation  = PICMAN_ORIENTATION_UNKNOWN;
 
-  move_tool->saved_type         = GIMP_TRANSFORM_TYPE_LAYER;
+  move_tool->saved_type         = PICMAN_TRANSFORM_TYPE_LAYER;
 
   move_tool->old_active_layer   = NULL;
   move_tool->old_active_vectors = NULL;
 }
 
 static void
-gimp_move_tool_button_press (GimpTool            *tool,
-                             const GimpCoords    *coords,
+picman_move_tool_button_press (PicmanTool            *tool,
+                             const PicmanCoords    *coords,
                              guint32              time,
                              GdkModifierType      state,
-                             GimpButtonPressType  press_type,
-                             GimpDisplay         *display)
+                             PicmanButtonPressType  press_type,
+                             PicmanDisplay         *display)
 {
-  GimpMoveTool     *move           = GIMP_MOVE_TOOL (tool);
-  GimpMoveOptions  *options        = GIMP_MOVE_TOOL_GET_OPTIONS (tool);
-  GimpDisplayShell *shell          = gimp_display_get_shell (display);
-  GimpImage        *image          = gimp_display_get_image (display);
-  GimpItem         *active_item    = NULL;
+  PicmanMoveTool     *move           = PICMAN_MOVE_TOOL (tool);
+  PicmanMoveOptions  *options        = PICMAN_MOVE_TOOL_GET_OPTIONS (tool);
+  PicmanDisplayShell *shell          = picman_display_get_shell (display);
+  PicmanImage        *image          = picman_display_get_image (display);
+  PicmanItem         *active_item    = NULL;
   const gchar      *null_message   = NULL;
   const gchar      *locked_message = NULL;
 
@@ -200,19 +200,19 @@ gimp_move_tool_button_press (GimpTool            *tool,
 
   if (! options->move_current)
     {
-      if (options->move_type == GIMP_TRANSFORM_TYPE_PATH)
+      if (options->move_type == PICMAN_TRANSFORM_TYPE_PATH)
         {
-          GimpVectors *vectors;
+          PicmanVectors *vectors;
 
-          if (gimp_draw_tool_on_vectors (GIMP_DRAW_TOOL (tool), display,
+          if (picman_draw_tool_on_vectors (PICMAN_DRAW_TOOL (tool), display,
                                          coords, 7, 7,
                                          NULL, NULL, NULL, NULL, NULL,
                                          &vectors))
             {
               move->old_active_vectors =
-                gimp_image_get_active_vectors (image);
+                picman_image_get_active_vectors (image);
 
-              gimp_image_set_active_vectors (image, vectors);
+              picman_image_set_active_vectors (image, vectors);
             }
           else
             {
@@ -220,35 +220,35 @@ gimp_move_tool_button_press (GimpTool            *tool,
               return;
             }
         }
-      else if (options->move_type == GIMP_TRANSFORM_TYPE_LAYER)
+      else if (options->move_type == PICMAN_TRANSFORM_TYPE_LAYER)
         {
-          GimpGuide  *guide;
-          GimpLayer  *layer;
+          PicmanGuide  *guide;
+          PicmanLayer  *layer;
           const gint  snap_distance = display->config->snap_distance;
 
-          if (gimp_display_shell_get_show_guides (shell) &&
-              (guide = gimp_image_find_guide (image,
+          if (picman_display_shell_get_show_guides (shell) &&
+              (guide = picman_image_find_guide (image,
                                               coords->x, coords->y,
                                               FUNSCALEX (shell, snap_distance),
                                               FUNSCALEY (shell, snap_distance))))
             {
               move->guide             = guide;
               move->moving_guide      = TRUE;
-              move->guide_position    = gimp_guide_get_position (guide);
-              move->guide_orientation = gimp_guide_get_orientation (guide);
+              move->guide_position    = picman_guide_get_position (guide);
+              move->guide_orientation = picman_guide_get_orientation (guide);
 
-              gimp_tool_control_set_scroll_lock (tool->control, TRUE);
-              gimp_tool_control_set_precision   (tool->control,
-                                                 GIMP_CURSOR_PRECISION_PIXEL_BORDER);
+              picman_tool_control_set_scroll_lock (tool->control, TRUE);
+              picman_tool_control_set_precision   (tool->control,
+                                                 PICMAN_CURSOR_PRECISION_PIXEL_BORDER);
 
-              gimp_tool_control_activate (tool->control);
+              picman_tool_control_activate (tool->control);
 
-              gimp_display_shell_selection_pause (shell);
+              picman_display_shell_selection_pause (shell);
 
-              if (! gimp_draw_tool_is_active (GIMP_DRAW_TOOL (tool)))
-                gimp_draw_tool_start (GIMP_DRAW_TOOL (tool), display);
+              if (! picman_draw_tool_is_active (PICMAN_DRAW_TOOL (tool)))
+                picman_draw_tool_start (PICMAN_DRAW_TOOL (tool), display);
 
-              gimp_tool_push_status_length (tool, display,
+              picman_tool_push_status_length (tool, display,
                                             _("Move Guide: "),
                                             SWAP_ORIENT (move->guide_orientation),
                                             move->guide_position,
@@ -256,28 +256,28 @@ gimp_move_tool_button_press (GimpTool            *tool,
 
               return;
             }
-          else if ((layer = gimp_image_pick_layer (image,
+          else if ((layer = picman_image_pick_layer (image,
                                                    coords->x,
                                                    coords->y)))
             {
-              if (gimp_image_get_floating_selection (image) &&
-                  ! gimp_layer_is_floating_sel (layer))
+              if (picman_image_get_floating_selection (image) &&
+                  ! picman_layer_is_floating_sel (layer))
                 {
                   /*  If there is a floating selection, and this aint it,
                    *  use the move tool to anchor it.
                    */
                   move->floating_layer =
-                    gimp_image_get_floating_selection (image);
+                    picman_image_get_floating_selection (image);
 
-                  gimp_tool_control_activate (tool->control);
+                  picman_tool_control_activate (tool->control);
 
                   return;
                 }
               else
                 {
-                  move->old_active_layer = gimp_image_get_active_layer (image);
+                  move->old_active_layer = picman_image_get_active_layer (image);
 
-                  gimp_image_set_active_layer (image, layer);
+                  picman_image_set_active_layer (image, layer);
                 }
             }
           else
@@ -291,37 +291,37 @@ gimp_move_tool_button_press (GimpTool            *tool,
 
   switch (options->move_type)
     {
-    case GIMP_TRANSFORM_TYPE_PATH:
+    case PICMAN_TRANSFORM_TYPE_PATH:
       {
-        active_item    = GIMP_ITEM (gimp_image_get_active_vectors (image));
+        active_item    = PICMAN_ITEM (picman_image_get_active_vectors (image));
         null_message   = _("There is no path to move.");
         locked_message = _("The active path's position is locked.");
 
-        if (active_item && ! gimp_item_is_position_locked (active_item))
+        if (active_item && ! picman_item_is_position_locked (active_item))
           {
-            gimp_tool_control_activate (tool->control);
-            gimp_edit_selection_tool_start (tool, display, coords,
-                                            GIMP_TRANSLATE_MODE_VECTORS,
+            picman_tool_control_activate (tool->control);
+            picman_edit_selection_tool_start (tool, display, coords,
+                                            PICMAN_TRANSLATE_MODE_VECTORS,
                                             TRUE);
             return;
           }
       }
       break;
 
-    case GIMP_TRANSFORM_TYPE_SELECTION:
+    case PICMAN_TRANSFORM_TYPE_SELECTION:
       {
-        active_item    = GIMP_ITEM (gimp_image_get_mask (image));
+        active_item    = PICMAN_ITEM (picman_image_get_mask (image));
         /* cannot happen, so don't translate these messages */
         null_message   = "There is no selection to move.";
         locked_message = "The selection's position is locked.";
 
-        if (active_item && ! gimp_item_is_position_locked (active_item))
+        if (active_item && ! picman_item_is_position_locked (active_item))
           {
-            if (! gimp_channel_is_empty (gimp_image_get_mask (image)))
+            if (! picman_channel_is_empty (picman_image_get_mask (image)))
               {
-                gimp_tool_control_activate (tool->control);
-                gimp_edit_selection_tool_start (tool, display, coords,
-                                                GIMP_TRANSLATE_MODE_MASK,
+                picman_tool_control_activate (tool->control);
+                picman_edit_selection_tool_start (tool, display, coords,
+                                                PICMAN_TRANSLATE_MODE_MASK,
                                                 TRUE);
                 return;
               }
@@ -331,46 +331,46 @@ gimp_move_tool_button_press (GimpTool            *tool,
       }
       break;
 
-    case GIMP_TRANSFORM_TYPE_LAYER:
+    case PICMAN_TRANSFORM_TYPE_LAYER:
       {
-        active_item  = GIMP_ITEM (gimp_image_get_active_drawable (image));
+        active_item  = PICMAN_ITEM (picman_image_get_active_drawable (image));
         null_message = _("There is no layer to move.");
 
-        if (GIMP_IS_LAYER_MASK (active_item))
+        if (PICMAN_IS_LAYER_MASK (active_item))
           {
             locked_message = _("The active layer's position is locked.");
 
-            if (! gimp_item_is_position_locked (active_item))
+            if (! picman_item_is_position_locked (active_item))
               {
-                gimp_tool_control_activate (tool->control);
-                gimp_edit_selection_tool_start (tool, display, coords,
-                                                GIMP_TRANSLATE_MODE_LAYER_MASK,
+                picman_tool_control_activate (tool->control);
+                picman_edit_selection_tool_start (tool, display, coords,
+                                                PICMAN_TRANSLATE_MODE_LAYER_MASK,
                                                 TRUE);
                 return;
               }
           }
-        else if (GIMP_IS_CHANNEL (active_item))
+        else if (PICMAN_IS_CHANNEL (active_item))
           {
             locked_message = _("The active channel's position is locked.");
 
-            if (! gimp_item_is_position_locked (active_item))
+            if (! picman_item_is_position_locked (active_item))
               {
-                gimp_tool_control_activate (tool->control);
-                gimp_edit_selection_tool_start (tool, display, coords,
-                                                GIMP_TRANSLATE_MODE_CHANNEL,
+                picman_tool_control_activate (tool->control);
+                picman_edit_selection_tool_start (tool, display, coords,
+                                                PICMAN_TRANSLATE_MODE_CHANNEL,
                                                 TRUE);
                 return;
               }
           }
-        else if (GIMP_IS_LAYER (active_item))
+        else if (PICMAN_IS_LAYER (active_item))
           {
             locked_message = _("The active layer's position is locked.");
 
-            if (! gimp_item_is_position_locked (active_item))
+            if (! picman_item_is_position_locked (active_item))
               {
-                gimp_tool_control_activate (tool->control);
-                gimp_edit_selection_tool_start (tool, display, coords,
-                                                GIMP_TRANSLATE_MODE_LAYER,
+                picman_tool_control_activate (tool->control);
+                picman_edit_selection_tool_start (tool, display, coords,
+                                                PICMAN_TRANSLATE_MODE_LAYER,
                                                 TRUE);
                 return;
               }
@@ -381,65 +381,65 @@ gimp_move_tool_button_press (GimpTool            *tool,
 
   if (! active_item)
     {
-      gimp_tool_message_literal (tool, display, null_message);
-      gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, display);
+      picman_tool_message_literal (tool, display, null_message);
+      picman_tool_control (tool, PICMAN_TOOL_ACTION_HALT, display);
     }
   else
     {
-      gimp_tool_message_literal (tool, display, locked_message);
-      gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, display);
+      picman_tool_message_literal (tool, display, locked_message);
+      picman_tool_control (tool, PICMAN_TOOL_ACTION_HALT, display);
     }
 }
 
 static void
-gimp_move_tool_button_release (GimpTool              *tool,
-                               const GimpCoords      *coords,
+picman_move_tool_button_release (PicmanTool              *tool,
+                               const PicmanCoords      *coords,
                                guint32                time,
                                GdkModifierType        state,
-                               GimpButtonReleaseType  release_type,
-                               GimpDisplay           *display)
+                               PicmanButtonReleaseType  release_type,
+                               PicmanDisplay           *display)
 {
-  GimpMoveTool     *move   = GIMP_MOVE_TOOL (tool);
-  GimpGuiConfig    *config = GIMP_GUI_CONFIG (display->gimp->config);
-  GimpDisplayShell *shell  = gimp_display_get_shell (display);
-  GimpImage        *image  = gimp_display_get_image (display);
+  PicmanMoveTool     *move   = PICMAN_MOVE_TOOL (tool);
+  PicmanGuiConfig    *config = PICMAN_GUI_CONFIG (display->picman->config);
+  PicmanDisplayShell *shell  = picman_display_get_shell (display);
+  PicmanImage        *image  = picman_display_get_image (display);
 
-  gimp_tool_control_halt (tool->control);
+  picman_tool_control_halt (tool->control);
 
   if (move->moving_guide)
     {
       gboolean delete_guide = FALSE;
-      gint     width  = gimp_image_get_width  (image);
-      gint     height = gimp_image_get_height (image);
+      gint     width  = picman_image_get_width  (image);
+      gint     height = picman_image_get_height (image);
 
-      gimp_tool_pop_status (tool, display);
+      picman_tool_pop_status (tool, display);
 
-      gimp_tool_control_set_scroll_lock (tool->control, FALSE);
-      gimp_tool_control_set_precision   (tool->control,
-                                         GIMP_CURSOR_PRECISION_PIXEL_CENTER);
+      picman_tool_control_set_scroll_lock (tool->control, FALSE);
+      picman_tool_control_set_precision   (tool->control,
+                                         PICMAN_CURSOR_PRECISION_PIXEL_CENTER);
 
-      gimp_draw_tool_stop (GIMP_DRAW_TOOL (tool));
+      picman_draw_tool_stop (PICMAN_DRAW_TOOL (tool));
 
-      if (release_type == GIMP_BUTTON_RELEASE_CANCEL)
+      if (release_type == PICMAN_BUTTON_RELEASE_CANCEL)
         {
           move->moving_guide      = FALSE;
           move->guide_position    = GUIDE_POSITION_INVALID;
-          move->guide_orientation = GIMP_ORIENTATION_UNKNOWN;
+          move->guide_orientation = PICMAN_ORIENTATION_UNKNOWN;
 
-          gimp_display_shell_selection_resume (shell);
+          picman_display_shell_selection_resume (shell);
           return;
         }
 
       switch (move->guide_orientation)
         {
-        case GIMP_ORIENTATION_HORIZONTAL:
+        case PICMAN_ORIENTATION_HORIZONTAL:
           if (move->guide_position == GUIDE_POSITION_INVALID ||
               move->guide_position <  0                      ||
               move->guide_position >= height)
             delete_guide = TRUE;
           break;
 
-        case GIMP_ORIENTATION_VERTICAL:
+        case PICMAN_ORIENTATION_VERTICAL:
           if (move->guide_position == GUIDE_POSITION_INVALID ||
               move->guide_position <  0                      ||
               move->guide_position >= width)
@@ -454,7 +454,7 @@ gimp_move_tool_button_release (GimpTool              *tool,
         {
           if (move->guide)
             {
-              gimp_image_remove_guide (image, move->guide, TRUE);
+              picman_image_remove_guide (image, move->guide, TRUE);
               move->guide = NULL;
             }
         }
@@ -462,21 +462,21 @@ gimp_move_tool_button_release (GimpTool              *tool,
         {
           if (move->guide)
             {
-              gimp_image_move_guide (image, move->guide,
+              picman_image_move_guide (image, move->guide,
                                      move->guide_position, TRUE);
             }
           else
             {
               switch (move->guide_orientation)
                 {
-                case GIMP_ORIENTATION_HORIZONTAL:
-                  move->guide = gimp_image_add_hguide (image,
+                case PICMAN_ORIENTATION_HORIZONTAL:
+                  move->guide = picman_image_add_hguide (image,
                                                        move->guide_position,
                                                        TRUE);
                   break;
 
-                case GIMP_ORIENTATION_VERTICAL:
-                  move->guide = gimp_image_add_vguide (image,
+                case PICMAN_ORIENTATION_VERTICAL:
+                  move->guide = picman_image_add_vguide (image,
                                                        move->guide_position,
                                                        TRUE);
                   break;
@@ -487,26 +487,26 @@ gimp_move_tool_button_release (GimpTool              *tool,
             }
         }
 
-      gimp_display_shell_selection_resume (shell);
-      gimp_image_flush (image);
+      picman_display_shell_selection_resume (shell);
+      picman_image_flush (image);
 
       move->moving_guide      = FALSE;
       move->guide_position    = GUIDE_POSITION_INVALID;
-      move->guide_orientation = GIMP_ORIENTATION_UNKNOWN;
+      move->guide_orientation = PICMAN_ORIENTATION_UNKNOWN;
 
       if (move->guide)
-        gimp_draw_tool_start (GIMP_DRAW_TOOL (tool), display);
+        picman_draw_tool_start (PICMAN_DRAW_TOOL (tool), display);
     }
   else
     {
       gboolean flush = FALSE;
 
       if (! config->move_tool_changes_active ||
-          (release_type == GIMP_BUTTON_RELEASE_CANCEL))
+          (release_type == PICMAN_BUTTON_RELEASE_CANCEL))
         {
           if (move->old_active_layer)
             {
-              gimp_image_set_active_layer (image, move->old_active_layer);
+              picman_image_set_active_layer (image, move->old_active_layer);
               move->old_active_layer = NULL;
 
               flush = TRUE;
@@ -514,14 +514,14 @@ gimp_move_tool_button_release (GimpTool              *tool,
 
           if (move->old_active_vectors)
             {
-              gimp_image_set_active_vectors (image, move->old_active_vectors);
+              picman_image_set_active_vectors (image, move->old_active_vectors);
               move->old_active_vectors = NULL;
 
               flush = TRUE;
             }
         }
 
-      if (release_type != GIMP_BUTTON_RELEASE_CANCEL)
+      if (release_type != PICMAN_BUTTON_RELEASE_CANCEL)
         {
           if (move->floating_layer)
             {
@@ -532,29 +532,29 @@ gimp_move_tool_button_release (GimpTool              *tool,
         }
 
       if (flush)
-        gimp_image_flush (image);
+        picman_image_flush (image);
     }
 }
 
 static void
-gimp_move_tool_motion (GimpTool         *tool,
-                       const GimpCoords *coords,
+picman_move_tool_motion (PicmanTool         *tool,
+                       const PicmanCoords *coords,
                        guint32           time,
                        GdkModifierType   state,
-                       GimpDisplay      *display)
+                       PicmanDisplay      *display)
 
 {
-  GimpMoveTool     *move  = GIMP_MOVE_TOOL (tool);
-  GimpDisplayShell *shell = gimp_display_get_shell (display);
+  PicmanMoveTool     *move  = PICMAN_MOVE_TOOL (tool);
+  PicmanDisplayShell *shell = picman_display_get_shell (display);
 
   if (move->moving_guide)
     {
       gint      tx, ty;
       gboolean  delete_guide = FALSE;
 
-      gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
+      picman_draw_tool_pause (PICMAN_DRAW_TOOL (tool));
 
-      gimp_display_shell_transform_xy (shell,
+      picman_display_shell_transform_xy (shell,
                                        coords->x, coords->y,
                                        &tx, &ty);
 
@@ -567,24 +567,24 @@ gimp_move_tool_motion (GimpTool         *tool,
         }
       else
         {
-          GimpImage *image  = gimp_display_get_image (display);
-          gint       width  = gimp_image_get_width  (image);
-          gint       height = gimp_image_get_height (image);
+          PicmanImage *image  = picman_display_get_image (display);
+          gint       width  = picman_image_get_width  (image);
+          gint       height = picman_image_get_height (image);
 
-          if (move->guide_orientation == GIMP_ORIENTATION_HORIZONTAL)
+          if (move->guide_orientation == PICMAN_ORIENTATION_HORIZONTAL)
             move->guide_position = RINT (coords->y);
           else
             move->guide_position = RINT (coords->x);
 
           switch (move->guide_orientation)
             {
-            case GIMP_ORIENTATION_HORIZONTAL:
+            case PICMAN_ORIENTATION_HORIZONTAL:
               if (move->guide_position <  0 ||
                   move->guide_position >= height)
                 delete_guide = TRUE;
               break;
 
-            case GIMP_ORIENTATION_VERTICAL:
+            case PICMAN_ORIENTATION_VERTICAL:
               if (move->guide_position <  0 ||
                   move->guide_position >= width)
                 delete_guide = TRUE;
@@ -595,19 +595,19 @@ gimp_move_tool_motion (GimpTool         *tool,
             }
         }
 
-      gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
+      picman_draw_tool_resume (PICMAN_DRAW_TOOL (tool));
 
-      gimp_tool_pop_status (tool, display);
+      picman_tool_pop_status (tool, display);
 
       if (delete_guide)
         {
-          gimp_tool_push_status (tool, display,
+          picman_tool_push_status (tool, display,
                                  move->guide ?
                                  _("Remove Guide") : _("Cancel Guide"));
         }
       else
         {
-          gimp_tool_push_status_length (tool, display,
+          picman_tool_push_status_length (tool, display,
                                         move->guide ?
                                         _("Move Guide: ") : _("Add Guide: "),
                                         SWAP_ORIENT (move->guide_orientation),
@@ -618,42 +618,42 @@ gimp_move_tool_motion (GimpTool         *tool,
 }
 
 static gboolean
-gimp_move_tool_key_press (GimpTool    *tool,
+picman_move_tool_key_press (PicmanTool    *tool,
                           GdkEventKey *kevent,
-                          GimpDisplay *display)
+                          PicmanDisplay *display)
 {
-  GimpMoveOptions *options = GIMP_MOVE_TOOL_GET_OPTIONS (tool);
+  PicmanMoveOptions *options = PICMAN_MOVE_TOOL_GET_OPTIONS (tool);
 
-  return gimp_edit_selection_tool_translate (tool, kevent,
+  return picman_edit_selection_tool_translate (tool, kevent,
                                              options->move_type,
                                              display);
 }
 
 static void
-gimp_move_tool_modifier_key (GimpTool        *tool,
+picman_move_tool_modifier_key (PicmanTool        *tool,
                              GdkModifierType  key,
                              gboolean         press,
                              GdkModifierType  state,
-                             GimpDisplay     *display)
+                             PicmanDisplay     *display)
 {
-  GimpMoveTool    *move    = GIMP_MOVE_TOOL (tool);
-  GimpMoveOptions *options = GIMP_MOVE_TOOL_GET_OPTIONS (tool);
+  PicmanMoveTool    *move    = PICMAN_MOVE_TOOL (tool);
+  PicmanMoveOptions *options = PICMAN_MOVE_TOOL_GET_OPTIONS (tool);
 
   if (key == GDK_SHIFT_MASK)
     {
       g_object_set (options, "move-current", ! options->move_current, NULL);
     }
   else if (key == GDK_MOD1_MASK ||
-           key == gimp_get_toggle_behavior_mask ())
+           key == picman_get_toggle_behavior_mask ())
     {
-      GimpTransformType button_type;
+      PicmanTransformType button_type;
 
       button_type = options->move_type;
 
       if (press)
         {
           if (key == (state & (GDK_MOD1_MASK |
-                               gimp_get_toggle_behavior_mask ())))
+                               picman_get_toggle_behavior_mask ())))
             {
               /*  first modifier pressed  */
 
@@ -663,7 +663,7 @@ gimp_move_tool_modifier_key (GimpTool        *tool,
       else
         {
           if (! (state & (GDK_MOD1_MASK |
-                          gimp_get_toggle_behavior_mask ())))
+                          picman_get_toggle_behavior_mask ())))
             {
               /*  last modifier released  */
 
@@ -673,11 +673,11 @@ gimp_move_tool_modifier_key (GimpTool        *tool,
 
       if (state & GDK_MOD1_MASK)
         {
-          button_type = GIMP_TRANSFORM_TYPE_SELECTION;
+          button_type = PICMAN_TRANSFORM_TYPE_SELECTION;
         }
-      else if (state & gimp_get_toggle_behavior_mask ())
+      else if (state & picman_get_toggle_behavior_mask ())
         {
-          button_type = GIMP_TRANSFORM_TYPE_PATH;
+          button_type = PICMAN_TRANSFORM_TYPE_PATH;
         }
 
       if (button_type != options->move_type)
@@ -688,168 +688,168 @@ gimp_move_tool_modifier_key (GimpTool        *tool,
 }
 
 static void
-gimp_move_tool_oper_update (GimpTool         *tool,
-                            const GimpCoords *coords,
+picman_move_tool_oper_update (PicmanTool         *tool,
+                            const PicmanCoords *coords,
                             GdkModifierType   state,
                             gboolean          proximity,
-                            GimpDisplay      *display)
+                            PicmanDisplay      *display)
 {
-  GimpMoveTool     *move    = GIMP_MOVE_TOOL (tool);
-  GimpMoveOptions  *options = GIMP_MOVE_TOOL_GET_OPTIONS (tool);
-  GimpDisplayShell *shell   = gimp_display_get_shell (display);
-  GimpImage        *image   = gimp_display_get_image (display);
-  GimpGuide        *guide   = NULL;
+  PicmanMoveTool     *move    = PICMAN_MOVE_TOOL (tool);
+  PicmanMoveOptions  *options = PICMAN_MOVE_TOOL_GET_OPTIONS (tool);
+  PicmanDisplayShell *shell   = picman_display_get_shell (display);
+  PicmanImage        *image   = picman_display_get_image (display);
+  PicmanGuide        *guide   = NULL;
 
-  if (options->move_type == GIMP_TRANSFORM_TYPE_LAYER &&
+  if (options->move_type == PICMAN_TRANSFORM_TYPE_LAYER &&
       ! options->move_current                         &&
-      gimp_display_shell_get_show_guides (shell)      &&
+      picman_display_shell_get_show_guides (shell)      &&
       proximity)
     {
       gint snap_distance = display->config->snap_distance;
 
-      guide = gimp_image_find_guide (image, coords->x, coords->y,
+      guide = picman_image_find_guide (image, coords->x, coords->y,
                                      FUNSCALEX (shell, snap_distance),
                                      FUNSCALEY (shell, snap_distance));
     }
 
   if (move->guide != guide)
     {
-      GimpDrawTool *draw_tool = GIMP_DRAW_TOOL (tool);
+      PicmanDrawTool *draw_tool = PICMAN_DRAW_TOOL (tool);
 
-      gimp_draw_tool_pause (draw_tool);
+      picman_draw_tool_pause (draw_tool);
 
-      if (gimp_draw_tool_is_active (draw_tool) &&
+      if (picman_draw_tool_is_active (draw_tool) &&
           draw_tool->display != display)
-        gimp_draw_tool_stop (draw_tool);
+        picman_draw_tool_stop (draw_tool);
 
       move->guide = guide;
 
-      if (! gimp_draw_tool_is_active (draw_tool))
-        gimp_draw_tool_start (draw_tool, display);
+      if (! picman_draw_tool_is_active (draw_tool))
+        picman_draw_tool_start (draw_tool, display);
 
-      gimp_draw_tool_resume (draw_tool);
+      picman_draw_tool_resume (draw_tool);
     }
 }
 
 static void
-gimp_move_tool_cursor_update (GimpTool         *tool,
-                              const GimpCoords *coords,
+picman_move_tool_cursor_update (PicmanTool         *tool,
+                              const PicmanCoords *coords,
                               GdkModifierType   state,
-                              GimpDisplay      *display)
+                              PicmanDisplay      *display)
 {
-  GimpMoveOptions    *options     = GIMP_MOVE_TOOL_GET_OPTIONS (tool);
-  GimpDisplayShell   *shell       = gimp_display_get_shell (display);
-  GimpImage          *image       = gimp_display_get_image (display);
-  GimpCursorType      cursor      = GIMP_CURSOR_MOUSE;
-  GimpToolCursorType  tool_cursor = GIMP_TOOL_CURSOR_MOVE;
-  GimpCursorModifier  modifier    = GIMP_CURSOR_MODIFIER_NONE;
+  PicmanMoveOptions    *options     = PICMAN_MOVE_TOOL_GET_OPTIONS (tool);
+  PicmanDisplayShell   *shell       = picman_display_get_shell (display);
+  PicmanImage          *image       = picman_display_get_image (display);
+  PicmanCursorType      cursor      = PICMAN_CURSOR_MOUSE;
+  PicmanToolCursorType  tool_cursor = PICMAN_TOOL_CURSOR_MOVE;
+  PicmanCursorModifier  modifier    = PICMAN_CURSOR_MODIFIER_NONE;
 
-  if (options->move_type == GIMP_TRANSFORM_TYPE_PATH)
+  if (options->move_type == PICMAN_TRANSFORM_TYPE_PATH)
     {
-      tool_cursor = GIMP_TOOL_CURSOR_PATHS;
-      modifier    = GIMP_CURSOR_MODIFIER_MOVE;
+      tool_cursor = PICMAN_TOOL_CURSOR_PATHS;
+      modifier    = PICMAN_CURSOR_MODIFIER_MOVE;
 
       if (options->move_current)
         {
-          GimpItem *item = GIMP_ITEM (gimp_image_get_active_vectors (image));
+          PicmanItem *item = PICMAN_ITEM (picman_image_get_active_vectors (image));
 
-          if (! item || gimp_item_is_position_locked (item))
-            modifier = GIMP_CURSOR_MODIFIER_BAD;
+          if (! item || picman_item_is_position_locked (item))
+            modifier = PICMAN_CURSOR_MODIFIER_BAD;
         }
       else
         {
-          if (gimp_draw_tool_on_vectors (GIMP_DRAW_TOOL (tool), display,
+          if (picman_draw_tool_on_vectors (PICMAN_DRAW_TOOL (tool), display,
                                          coords, 7, 7,
                                          NULL, NULL, NULL, NULL, NULL, NULL))
             {
-              tool_cursor = GIMP_TOOL_CURSOR_HAND;
+              tool_cursor = PICMAN_TOOL_CURSOR_HAND;
             }
           else
             {
-              modifier = GIMP_CURSOR_MODIFIER_BAD;
+              modifier = PICMAN_CURSOR_MODIFIER_BAD;
             }
         }
     }
-  else if (options->move_type == GIMP_TRANSFORM_TYPE_SELECTION)
+  else if (options->move_type == PICMAN_TRANSFORM_TYPE_SELECTION)
     {
-      tool_cursor = GIMP_TOOL_CURSOR_RECT_SELECT;
-      modifier    = GIMP_CURSOR_MODIFIER_MOVE;
+      tool_cursor = PICMAN_TOOL_CURSOR_RECT_SELECT;
+      modifier    = PICMAN_CURSOR_MODIFIER_MOVE;
 
-      if (gimp_channel_is_empty (gimp_image_get_mask (image)))
-        modifier = GIMP_CURSOR_MODIFIER_BAD;
+      if (picman_channel_is_empty (picman_image_get_mask (image)))
+        modifier = PICMAN_CURSOR_MODIFIER_BAD;
     }
   else if (options->move_current)
     {
-      GimpItem *item = GIMP_ITEM (gimp_image_get_active_drawable (image));
+      PicmanItem *item = PICMAN_ITEM (picman_image_get_active_drawable (image));
 
-      if (! item || gimp_item_is_position_locked (item))
-        modifier = GIMP_CURSOR_MODIFIER_BAD;
+      if (! item || picman_item_is_position_locked (item))
+        modifier = PICMAN_CURSOR_MODIFIER_BAD;
     }
   else
     {
-      GimpLayer  *layer;
+      PicmanLayer  *layer;
       const gint  snap_distance = display->config->snap_distance;
 
-      if (gimp_display_shell_get_show_guides (shell) &&
-          gimp_image_find_guide (image, coords->x, coords->y,
+      if (picman_display_shell_get_show_guides (shell) &&
+          picman_image_find_guide (image, coords->x, coords->y,
                                  FUNSCALEX (shell, snap_distance),
                                  FUNSCALEY (shell, snap_distance)))
         {
-          tool_cursor = GIMP_TOOL_CURSOR_HAND;
-          modifier    = GIMP_CURSOR_MODIFIER_MOVE;
+          tool_cursor = PICMAN_TOOL_CURSOR_HAND;
+          modifier    = PICMAN_CURSOR_MODIFIER_MOVE;
         }
-      else if ((layer = gimp_image_pick_layer (image,
+      else if ((layer = picman_image_pick_layer (image,
                                                coords->x, coords->y)))
         {
           /*  if there is a floating selection, and this aint it...  */
-          if (gimp_image_get_floating_selection (image) &&
-              ! gimp_layer_is_floating_sel (layer))
+          if (picman_image_get_floating_selection (image) &&
+              ! picman_layer_is_floating_sel (layer))
             {
-              tool_cursor = GIMP_TOOL_CURSOR_MOVE;
-              modifier    = GIMP_CURSOR_MODIFIER_ANCHOR;
+              tool_cursor = PICMAN_TOOL_CURSOR_MOVE;
+              modifier    = PICMAN_CURSOR_MODIFIER_ANCHOR;
             }
-          else if (gimp_item_is_position_locked (GIMP_ITEM (layer)))
+          else if (picman_item_is_position_locked (PICMAN_ITEM (layer)))
             {
-              modifier = GIMP_CURSOR_MODIFIER_BAD;
+              modifier = PICMAN_CURSOR_MODIFIER_BAD;
             }
-          else if (layer != gimp_image_get_active_layer (image))
+          else if (layer != picman_image_get_active_layer (image))
             {
-              tool_cursor = GIMP_TOOL_CURSOR_HAND;
-	      modifier    = GIMP_CURSOR_MODIFIER_MOVE;
+              tool_cursor = PICMAN_TOOL_CURSOR_HAND;
+	      modifier    = PICMAN_CURSOR_MODIFIER_MOVE;
             }
         }
       else
         {
-          modifier = GIMP_CURSOR_MODIFIER_BAD;
+          modifier = PICMAN_CURSOR_MODIFIER_BAD;
         }
     }
 
-  gimp_tool_control_set_cursor          (tool->control, cursor);
-  gimp_tool_control_set_tool_cursor     (tool->control, tool_cursor);
-  gimp_tool_control_set_cursor_modifier (tool->control, modifier);
+  picman_tool_control_set_cursor          (tool->control, cursor);
+  picman_tool_control_set_tool_cursor     (tool->control, tool_cursor);
+  picman_tool_control_set_cursor_modifier (tool->control, modifier);
 
-  GIMP_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
+  PICMAN_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
 }
 
 static void
-gimp_move_tool_draw (GimpDrawTool *draw_tool)
+picman_move_tool_draw (PicmanDrawTool *draw_tool)
 {
-  GimpMoveTool *move = GIMP_MOVE_TOOL (draw_tool);
+  PicmanMoveTool *move = PICMAN_MOVE_TOOL (draw_tool);
 
   if (move->guide)
     {
-      GimpCanvasItem *item;
+      PicmanCanvasItem *item;
 
-      item = gimp_draw_tool_add_guide (draw_tool,
-                                       gimp_guide_get_orientation (move->guide),
-                                       gimp_guide_get_position (move->guide),
+      item = picman_draw_tool_add_guide (draw_tool,
+                                       picman_guide_get_orientation (move->guide),
+                                       picman_guide_get_position (move->guide),
                                        TRUE);
-      gimp_canvas_item_set_highlight (item, TRUE);
+      picman_canvas_item_set_highlight (item, TRUE);
     }
 
   if (move->moving_guide && move->guide_position != GUIDE_POSITION_INVALID)
     {
-      gimp_draw_tool_add_guide (draw_tool,
+      picman_draw_tool_add_guide (draw_tool,
                                 move->guide_orientation,
                                 move->guide_position,
                                 FALSE);
@@ -857,52 +857,52 @@ gimp_move_tool_draw (GimpDrawTool *draw_tool)
 }
 
 void
-gimp_move_tool_start_hguide (GimpTool    *tool,
-                             GimpDisplay *display)
+picman_move_tool_start_hguide (PicmanTool    *tool,
+                             PicmanDisplay *display)
 {
-  g_return_if_fail (GIMP_IS_MOVE_TOOL (tool));
-  g_return_if_fail (GIMP_IS_DISPLAY (display));
+  g_return_if_fail (PICMAN_IS_MOVE_TOOL (tool));
+  g_return_if_fail (PICMAN_IS_DISPLAY (display));
 
-  gimp_move_tool_start_guide (GIMP_MOVE_TOOL (tool), display,
-                              GIMP_ORIENTATION_HORIZONTAL);
+  picman_move_tool_start_guide (PICMAN_MOVE_TOOL (tool), display,
+                              PICMAN_ORIENTATION_HORIZONTAL);
 }
 
 void
-gimp_move_tool_start_vguide (GimpTool    *tool,
-                             GimpDisplay *display)
+picman_move_tool_start_vguide (PicmanTool    *tool,
+                             PicmanDisplay *display)
 {
-  g_return_if_fail (GIMP_IS_MOVE_TOOL (tool));
-  g_return_if_fail (GIMP_IS_DISPLAY (display));
+  g_return_if_fail (PICMAN_IS_MOVE_TOOL (tool));
+  g_return_if_fail (PICMAN_IS_DISPLAY (display));
 
-  gimp_move_tool_start_guide (GIMP_MOVE_TOOL (tool), display,
-                              GIMP_ORIENTATION_VERTICAL);
+  picman_move_tool_start_guide (PICMAN_MOVE_TOOL (tool), display,
+                              PICMAN_ORIENTATION_VERTICAL);
 }
 
 static void
-gimp_move_tool_start_guide (GimpMoveTool        *move,
-                            GimpDisplay         *display,
-                            GimpOrientationType  orientation)
+picman_move_tool_start_guide (PicmanMoveTool        *move,
+                            PicmanDisplay         *display,
+                            PicmanOrientationType  orientation)
 {
-  GimpTool *tool = GIMP_TOOL (move);
+  PicmanTool *tool = PICMAN_TOOL (move);
 
-  gimp_display_shell_selection_pause (gimp_display_get_shell (display));
+  picman_display_shell_selection_pause (picman_display_get_shell (display));
 
   tool->display = display;
-  gimp_tool_control_activate (tool->control);
-  gimp_tool_control_set_scroll_lock (tool->control, TRUE);
+  picman_tool_control_activate (tool->control);
+  picman_tool_control_set_scroll_lock (tool->control, TRUE);
 
-  if (gimp_draw_tool_is_active  (GIMP_DRAW_TOOL (tool)))
-    gimp_draw_tool_stop (GIMP_DRAW_TOOL (tool));
+  if (picman_draw_tool_is_active  (PICMAN_DRAW_TOOL (tool)))
+    picman_draw_tool_stop (PICMAN_DRAW_TOOL (tool));
 
   move->guide             = NULL;
   move->moving_guide      = TRUE;
   move->guide_position    = GUIDE_POSITION_INVALID;
   move->guide_orientation = orientation;
 
-  gimp_tool_set_cursor (tool, display,
-                        GIMP_CURSOR_MOUSE,
-                        GIMP_TOOL_CURSOR_HAND,
-                        GIMP_CURSOR_MODIFIER_MOVE);
+  picman_tool_set_cursor (tool, display,
+                        PICMAN_CURSOR_MOUSE,
+                        PICMAN_TOOL_CURSOR_HAND,
+                        PICMAN_CURSOR_MODIFIER_MOVE);
 
-  gimp_draw_tool_start (GIMP_DRAW_TOOL (move), display);
+  picman_draw_tool_start (PICMAN_DRAW_TOOL (move), display);
 }

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdocumentview.c
- * Copyright (C) 2001 Michael Natterer <mitch@gimp.org>
+ * picmandocumentview.c
+ * Copyright (C) 2001 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,44 +23,44 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcontainer.h"
-#include "core/gimpcontext.h"
-#include "core/gimpimage.h"
+#include "core/picmancontainer.h"
+#include "core/picmancontext.h"
+#include "core/picmanimage.h"
 
-#include "gimpcontainerview.h"
-#include "gimpeditor.h"
-#include "gimpimageview.h"
-#include "gimpdnd.h"
-#include "gimpmenufactory.h"
-#include "gimpuimanager.h"
-#include "gimpviewrenderer.h"
+#include "picmancontainerview.h"
+#include "picmaneditor.h"
+#include "picmanimageview.h"
+#include "picmandnd.h"
+#include "picmanmenufactory.h"
+#include "picmanuimanager.h"
+#include "picmanviewrenderer.h"
 
-#include "gimp-intl.h"
-
-
-static void   gimp_image_view_activate_item (GimpContainerEditor *editor,
-                                             GimpViewable        *viewable);
+#include "picman-intl.h"
 
 
-G_DEFINE_TYPE (GimpImageView, gimp_image_view, GIMP_TYPE_CONTAINER_EDITOR)
+static void   picman_image_view_activate_item (PicmanContainerEditor *editor,
+                                             PicmanViewable        *viewable);
 
-#define parent_class gimp_image_view_parent_class
+
+G_DEFINE_TYPE (PicmanImageView, picman_image_view, PICMAN_TYPE_CONTAINER_EDITOR)
+
+#define parent_class picman_image_view_parent_class
 
 
 static void
-gimp_image_view_class_init (GimpImageViewClass *klass)
+picman_image_view_class_init (PicmanImageViewClass *klass)
 {
-  GimpContainerEditorClass *editor_class = GIMP_CONTAINER_EDITOR_CLASS (klass);
+  PicmanContainerEditorClass *editor_class = PICMAN_CONTAINER_EDITOR_CLASS (klass);
 
-  editor_class->activate_item = gimp_image_view_activate_item;
+  editor_class->activate_item = picman_image_view_activate_item;
 }
 
 static void
-gimp_image_view_init (GimpImageView *view)
+picman_image_view_init (PicmanImageView *view)
 {
   view->raise_button  = NULL;
   view->new_button    = NULL;
@@ -68,27 +68,27 @@ gimp_image_view_init (GimpImageView *view)
 }
 
 GtkWidget *
-gimp_image_view_new (GimpViewType     view_type,
-                     GimpContainer   *container,
-                     GimpContext     *context,
+picman_image_view_new (PicmanViewType     view_type,
+                     PicmanContainer   *container,
+                     PicmanContext     *context,
                      gint             view_size,
                      gint             view_border_width,
-                     GimpMenuFactory *menu_factory)
+                     PicmanMenuFactory *menu_factory)
 {
-  GimpImageView       *image_view;
-  GimpContainerEditor *editor;
+  PicmanImageView       *image_view;
+  PicmanContainerEditor *editor;
 
-  g_return_val_if_fail (GIMP_IS_CONTAINER (container), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTAINER (container), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (view_size > 0 &&
-                        view_size <= GIMP_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
+                        view_size <= PICMAN_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
   g_return_val_if_fail (view_border_width >= 0 &&
-                        view_border_width <= GIMP_VIEW_MAX_BORDER_WIDTH,
+                        view_border_width <= PICMAN_VIEW_MAX_BORDER_WIDTH,
                         NULL);
   g_return_val_if_fail (menu_factory == NULL ||
-                        GIMP_IS_MENU_FACTORY (menu_factory), NULL);
+                        PICMAN_IS_MENU_FACTORY (menu_factory), NULL);
 
-  image_view = g_object_new (GIMP_TYPE_IMAGE_VIEW,
+  image_view = g_object_new (PICMAN_TYPE_IMAGE_VIEW,
                              "view-type",         view_type,
                              "container",         container,
                              "context",           context,
@@ -99,60 +99,60 @@ gimp_image_view_new (GimpViewType     view_type,
                              "ui-path",           "/images-popup",
                              NULL);
 
-  editor = GIMP_CONTAINER_EDITOR (image_view);
+  editor = PICMAN_CONTAINER_EDITOR (image_view);
 
   image_view->raise_button =
-    gimp_editor_add_action_button (GIMP_EDITOR (editor->view), "images",
+    picman_editor_add_action_button (PICMAN_EDITOR (editor->view), "images",
                                    "images-raise-views", NULL);
 
   image_view->new_button =
-    gimp_editor_add_action_button (GIMP_EDITOR (editor->view), "images",
+    picman_editor_add_action_button (PICMAN_EDITOR (editor->view), "images",
                                    "images-new-view", NULL);
 
   image_view->delete_button =
-    gimp_editor_add_action_button (GIMP_EDITOR (editor->view), "images",
+    picman_editor_add_action_button (PICMAN_EDITOR (editor->view), "images",
                                    "images-delete", NULL);
 
-  if (view_type == GIMP_VIEW_TYPE_LIST)
+  if (view_type == PICMAN_VIEW_TYPE_LIST)
     {
       GtkWidget *dnd_widget;
 
-      dnd_widget = gimp_container_view_get_dnd_widget (editor->view);
+      dnd_widget = picman_container_view_get_dnd_widget (editor->view);
 
-      gimp_dnd_xds_source_add (dnd_widget,
-                               (GimpDndDragViewableFunc) gimp_dnd_get_drag_data,
+      picman_dnd_xds_source_add (dnd_widget,
+                               (PicmanDndDragViewableFunc) picman_dnd_get_drag_data,
                                NULL);
     }
 
-  gimp_container_view_enable_dnd (editor->view,
+  picman_container_view_enable_dnd (editor->view,
                                   GTK_BUTTON (image_view->raise_button),
-                                  GIMP_TYPE_IMAGE);
-  gimp_container_view_enable_dnd (editor->view,
+                                  PICMAN_TYPE_IMAGE);
+  picman_container_view_enable_dnd (editor->view,
                                   GTK_BUTTON (image_view->new_button),
-                                  GIMP_TYPE_IMAGE);
-  gimp_container_view_enable_dnd (editor->view,
+                                  PICMAN_TYPE_IMAGE);
+  picman_container_view_enable_dnd (editor->view,
                                   GTK_BUTTON (image_view->delete_button),
-                                  GIMP_TYPE_IMAGE);
+                                  PICMAN_TYPE_IMAGE);
 
-  gimp_ui_manager_update (gimp_editor_get_ui_manager (GIMP_EDITOR (editor->view)),
+  picman_ui_manager_update (picman_editor_get_ui_manager (PICMAN_EDITOR (editor->view)),
                           editor);
 
   return GTK_WIDGET (image_view);
 }
 
 static void
-gimp_image_view_activate_item (GimpContainerEditor *editor,
-                               GimpViewable        *viewable)
+picman_image_view_activate_item (PicmanContainerEditor *editor,
+                               PicmanViewable        *viewable)
 {
-  GimpImageView *view = GIMP_IMAGE_VIEW (editor);
-  GimpContainer *container;
+  PicmanImageView *view = PICMAN_IMAGE_VIEW (editor);
+  PicmanContainer *container;
 
-  if (GIMP_CONTAINER_EDITOR_CLASS (parent_class)->activate_item)
-    GIMP_CONTAINER_EDITOR_CLASS (parent_class)->activate_item (editor, viewable);
+  if (PICMAN_CONTAINER_EDITOR_CLASS (parent_class)->activate_item)
+    PICMAN_CONTAINER_EDITOR_CLASS (parent_class)->activate_item (editor, viewable);
 
-  container = gimp_container_view_get_container (editor->view);
+  container = picman_container_view_get_container (editor->view);
 
-  if (viewable && gimp_container_have (container, GIMP_OBJECT (viewable)))
+  if (viewable && picman_container_have (container, PICMAN_OBJECT (viewable)))
     {
       gtk_button_clicked (GTK_BUTTON (view->raise_button));
     }

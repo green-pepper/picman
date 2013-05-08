@@ -23,7 +23,7 @@
 
 #include "images/color-rotate-stock-pixbufs.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 static GtkIconFactory *color_rotate_icon_factory = NULL;

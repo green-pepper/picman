@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpprogress.h
- * Copyright (C) 2004  Michael Natterer <mitch@gimp.org>
+ * picmanprogress.h
+ * Copyright (C) 2004  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,78 +18,78 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PROGRESS_H__
-#define __GIMP_PROGRESS_H__
+#ifndef __PICMAN_PROGRESS_H__
+#define __PICMAN_PROGRESS_H__
 
 
-#define GIMP_TYPE_PROGRESS               (gimp_progress_interface_get_type ())
-#define GIMP_IS_PROGRESS(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PROGRESS))
-#define GIMP_PROGRESS(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PROGRESS, GimpProgress))
-#define GIMP_PROGRESS_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GIMP_TYPE_PROGRESS, GimpProgressInterface))
+#define PICMAN_TYPE_PROGRESS               (picman_progress_interface_get_type ())
+#define PICMAN_IS_PROGRESS(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PROGRESS))
+#define PICMAN_PROGRESS(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PROGRESS, PicmanProgress))
+#define PICMAN_PROGRESS_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), PICMAN_TYPE_PROGRESS, PicmanProgressInterface))
 
 
-typedef struct _GimpProgressInterface GimpProgressInterface;
+typedef struct _PicmanProgressInterface PicmanProgressInterface;
 
-struct _GimpProgressInterface
+struct _PicmanProgressInterface
 {
   GTypeInterface base_iface;
 
   /*  virtual functions  */
-  GimpProgress * (* start)         (GimpProgress        *progress,
+  PicmanProgress * (* start)         (PicmanProgress        *progress,
                                     const gchar         *message,
                                     gboolean             cancelable);
-  void           (* end)           (GimpProgress        *progress);
-  gboolean       (* is_active)     (GimpProgress        *progress);
+  void           (* end)           (PicmanProgress        *progress);
+  gboolean       (* is_active)     (PicmanProgress        *progress);
 
-  void           (* set_text)      (GimpProgress        *progress,
+  void           (* set_text)      (PicmanProgress        *progress,
                                     const gchar         *message);
-  void           (* set_value)     (GimpProgress        *progress,
+  void           (* set_value)     (PicmanProgress        *progress,
                                     gdouble              percentage);
-  gdouble        (* get_value)     (GimpProgress        *progress);
-  void           (* pulse)         (GimpProgress        *progress);
+  gdouble        (* get_value)     (PicmanProgress        *progress);
+  void           (* pulse)         (PicmanProgress        *progress);
 
-  guint32        (* get_window_id) (GimpProgress        *progress);
+  guint32        (* get_window_id) (PicmanProgress        *progress);
 
-  gboolean       (* message)       (GimpProgress        *progress,
-                                    Gimp                *gimp,
-                                    GimpMessageSeverity  severity,
+  gboolean       (* message)       (PicmanProgress        *progress,
+                                    Picman                *picman,
+                                    PicmanMessageSeverity  severity,
                                     const gchar         *domain,
                                     const gchar         *message);
 
   /*  signals  */
-  void           (* cancel)        (GimpProgress        *progress);
+  void           (* cancel)        (PicmanProgress        *progress);
 };
 
 
-GType          gimp_progress_interface_get_type (void) G_GNUC_CONST;
+GType          picman_progress_interface_get_type (void) G_GNUC_CONST;
 
-GimpProgress * gimp_progress_start              (GimpProgress        *progress,
+PicmanProgress * picman_progress_start              (PicmanProgress        *progress,
                                                  const gchar         *message,
                                                  gboolean             cancelable);
-void           gimp_progress_end                (GimpProgress        *progress);
-gboolean       gimp_progress_is_active          (GimpProgress        *progress);
+void           picman_progress_end                (PicmanProgress        *progress);
+gboolean       picman_progress_is_active          (PicmanProgress        *progress);
 
-void           gimp_progress_set_text           (GimpProgress        *progress,
+void           picman_progress_set_text           (PicmanProgress        *progress,
                                                  const gchar         *message);
-void           gimp_progress_set_value          (GimpProgress        *progress,
+void           picman_progress_set_value          (PicmanProgress        *progress,
                                                  gdouble              percentage);
-gdouble        gimp_progress_get_value          (GimpProgress        *progress);
-void           gimp_progress_pulse              (GimpProgress        *progress);
+gdouble        picman_progress_get_value          (PicmanProgress        *progress);
+void           picman_progress_pulse              (PicmanProgress        *progress);
 
-guint32        gimp_progress_get_window_id      (GimpProgress        *progress);
+guint32        picman_progress_get_window_id      (PicmanProgress        *progress);
 
-gboolean       gimp_progress_message            (GimpProgress        *progress,
-                                                 Gimp                *gimp,
-                                                 GimpMessageSeverity  severity,
+gboolean       picman_progress_message            (PicmanProgress        *progress,
+                                                 Picman                *picman,
+                                                 PicmanMessageSeverity  severity,
                                                  const gchar         *domain,
                                                  const gchar         *message);
 
-void           gimp_progress_cancel             (GimpProgress        *progress);
+void           picman_progress_cancel             (PicmanProgress        *progress);
 
-void           gimp_progress_update_and_flush   (gint                 min,
+void           picman_progress_update_and_flush   (gint                 min,
                                                  gint                 max,
                                                  gint                 current,
                                                  gpointer             data);
 
 
-#endif /* __GIMP_PROGRESS_H__ */
+#endif /* __PICMAN_PROGRESS_H__ */

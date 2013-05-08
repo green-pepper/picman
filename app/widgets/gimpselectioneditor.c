@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,94 +20,94 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpchannel-select.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpimage.h"
-#include "core/gimpimage-pick-color.h"
-#include "core/gimpselection.h"
-#include "core/gimptoolinfo.h"
+#include "core/picman.h"
+#include "core/picmanchannel-select.h"
+#include "core/picmancontainer.h"
+#include "core/picmanimage.h"
+#include "core/picmanimage-pick-color.h"
+#include "core/picmanselection.h"
+#include "core/picmantoolinfo.h"
 
 /* FIXME: #include "tools/tools-types.h" */
 #include "tools/tools-types.h"
-#include "tools/gimpregionselectoptions.h"
+#include "tools/picmanregionselectoptions.h"
 
-#include "gimpselectioneditor.h"
-#include "gimpdnd.h"
-#include "gimpdocked.h"
-#include "gimpmenufactory.h"
-#include "gimpview.h"
-#include "gimpviewrenderer.h"
-#include "gimpwidgets-utils.h"
+#include "picmanselectioneditor.h"
+#include "picmandnd.h"
+#include "picmandocked.h"
+#include "picmanmenufactory.h"
+#include "picmanview.h"
+#include "picmanviewrenderer.h"
+#include "picmanwidgets-utils.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void  gimp_selection_editor_docked_iface_init (GimpDockedInterface *iface);
+static void  picman_selection_editor_docked_iface_init (PicmanDockedInterface *iface);
 
-static void   gimp_selection_editor_constructed    (GObject             *object);
+static void   picman_selection_editor_constructed    (GObject             *object);
 
-static void   gimp_selection_editor_set_image      (GimpImageEditor     *editor,
-                                                    GimpImage           *image);
+static void   picman_selection_editor_set_image      (PicmanImageEditor     *editor,
+                                                    PicmanImage           *image);
 
-static void   gimp_selection_editor_set_context    (GimpDocked          *docked,
-                                                    GimpContext         *context);
+static void   picman_selection_editor_set_context    (PicmanDocked          *docked,
+                                                    PicmanContext         *context);
 
-static gboolean gimp_selection_view_button_press   (GtkWidget           *widget,
+static gboolean picman_selection_view_button_press   (GtkWidget           *widget,
                                                     GdkEventButton      *bevent,
-                                                    GimpSelectionEditor *editor);
-static void   gimp_selection_editor_drop_color     (GtkWidget           *widget,
+                                                    PicmanSelectionEditor *editor);
+static void   picman_selection_editor_drop_color     (GtkWidget           *widget,
                                                     gint                 x,
                                                     gint                 y,
-                                                    const GimpRGB       *color,
+                                                    const PicmanRGB       *color,
                                                     gpointer             data);
 
-static void   gimp_selection_editor_mask_changed   (GimpImage           *image,
-                                                    GimpSelectionEditor *editor);
+static void   picman_selection_editor_mask_changed   (PicmanImage           *image,
+                                                    PicmanSelectionEditor *editor);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpSelectionEditor, gimp_selection_editor,
-                         GIMP_TYPE_IMAGE_EDITOR,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_DOCKED,
-                                                gimp_selection_editor_docked_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanSelectionEditor, picman_selection_editor,
+                         PICMAN_TYPE_IMAGE_EDITOR,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_DOCKED,
+                                                picman_selection_editor_docked_iface_init))
 
-#define parent_class gimp_selection_editor_parent_class
+#define parent_class picman_selection_editor_parent_class
 
-static GimpDockedInterface *parent_docked_iface = NULL;
+static PicmanDockedInterface *parent_docked_iface = NULL;
 
 
 static void
-gimp_selection_editor_class_init (GimpSelectionEditorClass *klass)
+picman_selection_editor_class_init (PicmanSelectionEditorClass *klass)
 {
   GObjectClass         *object_class       = G_OBJECT_CLASS (klass);
-  GimpImageEditorClass *image_editor_class = GIMP_IMAGE_EDITOR_CLASS (klass);
+  PicmanImageEditorClass *image_editor_class = PICMAN_IMAGE_EDITOR_CLASS (klass);
 
-  object_class->constructed     = gimp_selection_editor_constructed;
+  object_class->constructed     = picman_selection_editor_constructed;
 
-  image_editor_class->set_image = gimp_selection_editor_set_image;
+  image_editor_class->set_image = picman_selection_editor_set_image;
 }
 
 static void
-gimp_selection_editor_docked_iface_init (GimpDockedInterface *iface)
+picman_selection_editor_docked_iface_init (PicmanDockedInterface *iface)
 {
   parent_docked_iface = g_type_interface_peek_parent (iface);
 
   if (! parent_docked_iface)
-    parent_docked_iface = g_type_default_interface_peek (GIMP_TYPE_DOCKED);
+    parent_docked_iface = g_type_default_interface_peek (PICMAN_TYPE_DOCKED);
 
-  iface->set_context = gimp_selection_editor_set_context;
+  iface->set_context = picman_selection_editor_set_context;
 }
 
 static void
-gimp_selection_editor_init (GimpSelectionEditor *editor)
+picman_selection_editor_init (PicmanSelectionEditor *editor)
 {
   GtkWidget *frame;
 
@@ -116,62 +116,62 @@ gimp_selection_editor_init (GimpSelectionEditor *editor)
   gtk_box_pack_start (GTK_BOX (editor), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
-  editor->view = gimp_view_new_by_types (NULL,
-                                         GIMP_TYPE_VIEW,
-                                         GIMP_TYPE_SELECTION,
-                                         GIMP_VIEW_SIZE_HUGE,
+  editor->view = picman_view_new_by_types (NULL,
+                                         PICMAN_TYPE_VIEW,
+                                         PICMAN_TYPE_SELECTION,
+                                         PICMAN_VIEW_SIZE_HUGE,
                                          0, TRUE);
-  gimp_view_renderer_set_background (GIMP_VIEW (editor->view)->renderer,
-                                     GIMP_STOCK_TEXTURE);
+  picman_view_renderer_set_background (PICMAN_VIEW (editor->view)->renderer,
+                                     PICMAN_STOCK_TEXTURE);
   gtk_widget_set_size_request (editor->view,
-                               GIMP_VIEW_SIZE_HUGE, GIMP_VIEW_SIZE_HUGE);
-  gimp_view_set_expand (GIMP_VIEW (editor->view), TRUE);
+                               PICMAN_VIEW_SIZE_HUGE, PICMAN_VIEW_SIZE_HUGE);
+  picman_view_set_expand (PICMAN_VIEW (editor->view), TRUE);
   gtk_container_add (GTK_CONTAINER (frame), editor->view);
   gtk_widget_show (editor->view);
 
   g_signal_connect (editor->view, "button-press-event",
-                    G_CALLBACK (gimp_selection_view_button_press),
+                    G_CALLBACK (picman_selection_view_button_press),
                     editor);
 
-  gimp_dnd_color_dest_add (editor->view,
-                           gimp_selection_editor_drop_color,
+  picman_dnd_color_dest_add (editor->view,
+                           picman_selection_editor_drop_color,
                            editor);
 
   gtk_widget_set_sensitive (GTK_WIDGET (editor), FALSE);
 }
 
 static void
-gimp_selection_editor_constructed (GObject *object)
+picman_selection_editor_constructed (GObject *object)
 {
-  GimpSelectionEditor *editor = GIMP_SELECTION_EDITOR (object);
+  PicmanSelectionEditor *editor = PICMAN_SELECTION_EDITOR (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
   editor->all_button =
-    gimp_editor_add_action_button (GIMP_EDITOR (editor), "select",
+    picman_editor_add_action_button (PICMAN_EDITOR (editor), "select",
                                    "select-all", NULL);
 
   editor->none_button =
-    gimp_editor_add_action_button (GIMP_EDITOR (editor), "select",
+    picman_editor_add_action_button (PICMAN_EDITOR (editor), "select",
                                    "select-none", NULL);
 
   editor->invert_button =
-    gimp_editor_add_action_button (GIMP_EDITOR (editor), "select",
+    picman_editor_add_action_button (PICMAN_EDITOR (editor), "select",
                                    "select-invert", NULL);
 
   editor->save_button =
-    gimp_editor_add_action_button (GIMP_EDITOR (editor), "select",
+    picman_editor_add_action_button (PICMAN_EDITOR (editor), "select",
                                    "select-save", NULL);
 
   editor->path_button =
-    gimp_editor_add_action_button (GIMP_EDITOR (editor), "vectors",
+    picman_editor_add_action_button (PICMAN_EDITOR (editor), "vectors",
                                    "vectors-selection-to-vectors",
                                    "vectors-selection-to-vectors-advanced",
                                    GDK_SHIFT_MASK,
                                    NULL);
 
   editor->stroke_button =
-    gimp_editor_add_action_button (GIMP_EDITOR (editor), "select",
+    picman_editor_add_action_button (PICMAN_EDITOR (editor), "select",
                                    "select-stroke",
                                    "select-stroke-last-values",
                                    GDK_SHIFT_MASK,
@@ -179,44 +179,44 @@ gimp_selection_editor_constructed (GObject *object)
 }
 
 static void
-gimp_selection_editor_set_image (GimpImageEditor *image_editor,
-                                 GimpImage       *image)
+picman_selection_editor_set_image (PicmanImageEditor *image_editor,
+                                 PicmanImage       *image)
 {
-  GimpSelectionEditor *editor = GIMP_SELECTION_EDITOR (image_editor);
+  PicmanSelectionEditor *editor = PICMAN_SELECTION_EDITOR (image_editor);
 
   if (image_editor->image)
     {
       g_signal_handlers_disconnect_by_func (image_editor->image,
-                                            gimp_selection_editor_mask_changed,
+                                            picman_selection_editor_mask_changed,
                                             editor);
     }
 
-  GIMP_IMAGE_EDITOR_CLASS (parent_class)->set_image (image_editor, image);
+  PICMAN_IMAGE_EDITOR_CLASS (parent_class)->set_image (image_editor, image);
 
   if (image)
     {
       g_signal_connect (image, "mask-changed",
-                        G_CALLBACK (gimp_selection_editor_mask_changed),
+                        G_CALLBACK (picman_selection_editor_mask_changed),
                         editor);
 
-      gimp_view_set_viewable (GIMP_VIEW (editor->view),
-                              GIMP_VIEWABLE (gimp_image_get_mask (image)));
+      picman_view_set_viewable (PICMAN_VIEW (editor->view),
+                              PICMAN_VIEWABLE (picman_image_get_mask (image)));
     }
   else
     {
-      gimp_view_set_viewable (GIMP_VIEW (editor->view), NULL);
+      picman_view_set_viewable (PICMAN_VIEW (editor->view), NULL);
     }
 }
 
 static void
-gimp_selection_editor_set_context (GimpDocked  *docked,
-                                   GimpContext *context)
+picman_selection_editor_set_context (PicmanDocked  *docked,
+                                   PicmanContext *context)
 {
-  GimpSelectionEditor *editor = GIMP_SELECTION_EDITOR (docked);
+  PicmanSelectionEditor *editor = PICMAN_SELECTION_EDITOR (docked);
 
   parent_docked_iface->set_context (docked, context);
 
-  gimp_view_renderer_set_context (GIMP_VIEW (editor->view)->renderer,
+  picman_view_renderer_set_context (PICMAN_VIEW (editor->view)->renderer,
                                   context);
 }
 
@@ -224,11 +224,11 @@ gimp_selection_editor_set_context (GimpDocked  *docked,
 /*  public functions  */
 
 GtkWidget *
-gimp_selection_editor_new (GimpMenuFactory *menu_factory)
+picman_selection_editor_new (PicmanMenuFactory *menu_factory)
 {
-  g_return_val_if_fail (GIMP_IS_MENU_FACTORY (menu_factory), NULL);
+  g_return_val_if_fail (PICMAN_IS_MENU_FACTORY (menu_factory), NULL);
 
-  return g_object_new (GIMP_TYPE_SELECTION_EDITOR,
+  return g_object_new (PICMAN_TYPE_SELECTION_EDITOR,
                        "menu-factory",    menu_factory,
                        "menu-identifier", "<Selection>",
                        "ui-path",         "/selection-popup",
@@ -236,51 +236,51 @@ gimp_selection_editor_new (GimpMenuFactory *menu_factory)
 }
 
 static gboolean
-gimp_selection_view_button_press (GtkWidget           *widget,
+picman_selection_view_button_press (GtkWidget           *widget,
                                   GdkEventButton      *bevent,
-                                  GimpSelectionEditor *editor)
+                                  PicmanSelectionEditor *editor)
 {
-  GimpImageEditor         *image_editor = GIMP_IMAGE_EDITOR (editor);
-  GimpViewRenderer        *renderer;
-  GimpToolInfo            *tool_info;
-  GimpSelectionOptions    *sel_options;
-  GimpRegionSelectOptions *options;
-  GimpDrawable            *drawable;
-  GimpChannelOps           operation;
+  PicmanImageEditor         *image_editor = PICMAN_IMAGE_EDITOR (editor);
+  PicmanViewRenderer        *renderer;
+  PicmanToolInfo            *tool_info;
+  PicmanSelectionOptions    *sel_options;
+  PicmanRegionSelectOptions *options;
+  PicmanDrawable            *drawable;
+  PicmanChannelOps           operation;
   gint                     x, y;
-  GimpRGB                  color;
+  PicmanRGB                  color;
 
   if (! image_editor->image)
     return TRUE;
 
-  renderer = GIMP_VIEW (editor->view)->renderer;
+  renderer = PICMAN_VIEW (editor->view)->renderer;
 
-  tool_info = gimp_get_tool_info (image_editor->image->gimp,
-                                  "gimp-by-color-select-tool");
+  tool_info = picman_get_tool_info (image_editor->image->picman,
+                                  "picman-by-color-select-tool");
 
   if (! tool_info)
     return TRUE;
 
-  sel_options = GIMP_SELECTION_OPTIONS (tool_info->tool_options);
-  options     = GIMP_REGION_SELECT_OPTIONS (tool_info->tool_options);
+  sel_options = PICMAN_SELECTION_OPTIONS (tool_info->tool_options);
+  options     = PICMAN_REGION_SELECT_OPTIONS (tool_info->tool_options);
 
-  drawable = gimp_image_get_active_drawable (image_editor->image);
+  drawable = picman_image_get_active_drawable (image_editor->image);
 
   if (! drawable)
     return TRUE;
 
-  operation = gimp_modifiers_to_channel_op (bevent->state);
+  operation = picman_modifiers_to_channel_op (bevent->state);
 
-  x = gimp_image_get_width  (image_editor->image) * bevent->x / renderer->width;
-  y = gimp_image_get_height (image_editor->image) * bevent->y / renderer->height;
+  x = picman_image_get_width  (image_editor->image) * bevent->x / renderer->width;
+  y = picman_image_get_height (image_editor->image) * bevent->y / renderer->height;
 
-  if (gimp_image_pick_color (image_editor->image, drawable, x, y,
+  if (picman_image_pick_color (image_editor->image, drawable, x, y,
                              options->sample_merged,
                              FALSE, 0.0,
                              NULL,
                              &color, NULL))
     {
-      gimp_channel_select_by_color (gimp_image_get_mask (image_editor->image),
+      picman_channel_select_by_color (picman_image_get_mask (image_editor->image),
                                     drawable,
                                     options->sample_merged,
                                     &color,
@@ -292,42 +292,42 @@ gimp_selection_view_button_press (GtkWidget           *widget,
                                     sel_options->feather,
                                     sel_options->feather_radius,
                                     sel_options->feather_radius);
-      gimp_image_flush (image_editor->image);
+      picman_image_flush (image_editor->image);
     }
 
   return TRUE;
 }
 
 static void
-gimp_selection_editor_drop_color (GtkWidget     *widget,
+picman_selection_editor_drop_color (GtkWidget     *widget,
                                   gint           x,
                                   gint           y,
-                                  const GimpRGB *color,
+                                  const PicmanRGB *color,
                                   gpointer       data)
 {
-  GimpImageEditor         *editor = GIMP_IMAGE_EDITOR (data);
-  GimpToolInfo            *tool_info;
-  GimpSelectionOptions    *sel_options;
-  GimpRegionSelectOptions *options;
-  GimpDrawable            *drawable;
+  PicmanImageEditor         *editor = PICMAN_IMAGE_EDITOR (data);
+  PicmanToolInfo            *tool_info;
+  PicmanSelectionOptions    *sel_options;
+  PicmanRegionSelectOptions *options;
+  PicmanDrawable            *drawable;
 
   if (! editor->image)
     return;
 
-  tool_info = gimp_get_tool_info (editor->image->gimp,
-                                  "gimp-by-color-select-tool");
+  tool_info = picman_get_tool_info (editor->image->picman,
+                                  "picman-by-color-select-tool");
   if (! tool_info)
     return;
 
-  sel_options = GIMP_SELECTION_OPTIONS (tool_info->tool_options);
-  options     = GIMP_REGION_SELECT_OPTIONS (tool_info->tool_options);
+  sel_options = PICMAN_SELECTION_OPTIONS (tool_info->tool_options);
+  options     = PICMAN_REGION_SELECT_OPTIONS (tool_info->tool_options);
 
-  drawable = gimp_image_get_active_drawable (editor->image);
+  drawable = picman_image_get_active_drawable (editor->image);
 
   if (! drawable)
     return;
 
-  gimp_channel_select_by_color (gimp_image_get_mask (editor->image),
+  picman_channel_select_by_color (picman_image_get_mask (editor->image),
                                 drawable,
                                 options->sample_merged,
                                 color,
@@ -339,12 +339,12 @@ gimp_selection_editor_drop_color (GtkWidget     *widget,
                                 sel_options->feather,
                                 sel_options->feather_radius,
                                 sel_options->feather_radius);
-  gimp_image_flush (editor->image);
+  picman_image_flush (editor->image);
 }
 
 static void
-gimp_selection_editor_mask_changed (GimpImage           *image,
-                                    GimpSelectionEditor *editor)
+picman_selection_editor_mask_changed (PicmanImage           *image,
+                                    PicmanSelectionEditor *editor)
 {
-  gimp_view_renderer_invalidate (GIMP_VIEW (editor->view)->renderer);
+  picman_view_renderer_invalidate (PICMAN_VIEW (editor->view)->renderer);
 }

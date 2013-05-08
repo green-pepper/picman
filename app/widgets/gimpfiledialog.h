@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfiledialog.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanfiledialog.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,34 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FILE_DIALOG_H__
-#define __GIMP_FILE_DIALOG_H__
+#ifndef __PICMAN_FILE_DIALOG_H__
+#define __PICMAN_FILE_DIALOG_H__
 
 G_BEGIN_DECLS
 
 
-#define GIMP_TYPE_FILE_DIALOG            (gimp_file_dialog_get_type ())
-#define GIMP_FILE_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FILE_DIALOG, GimpFileDialog))
-#define GIMP_FILE_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FILE_DIALOG, GimpFileDialogClass))
-#define GIMP_IS_FILE_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FILE_DIALOG))
-#define GIMP_IS_FILE_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FILE_DIALOG))
-#define GIMP_FILE_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FILE_DIALOG, GimpFileDialogClass))
+#define PICMAN_TYPE_FILE_DIALOG            (picman_file_dialog_get_type ())
+#define PICMAN_FILE_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FILE_DIALOG, PicmanFileDialog))
+#define PICMAN_FILE_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FILE_DIALOG, PicmanFileDialogClass))
+#define PICMAN_IS_FILE_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FILE_DIALOG))
+#define PICMAN_IS_FILE_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FILE_DIALOG))
+#define PICMAN_FILE_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FILE_DIALOG, PicmanFileDialogClass))
 
 
-typedef struct _GimpFileDialogClass  GimpFileDialogClass;
+typedef struct _PicmanFileDialogClass  PicmanFileDialogClass;
 
-struct _GimpFileDialog
+struct _PicmanFileDialog
 {
   GtkFileChooserDialog  parent_instance;
 
-  GimpPlugInProcedure  *file_proc;
+  PicmanPlugInProcedure  *file_proc;
 
-  GimpImage            *image;
+  PicmanImage            *image;
   gboolean              open_as_layers;
   gboolean              save_a_copy;
   gboolean              export;
   gboolean              close_after_saving;
-  GimpObject           *display_to_close;
+  PicmanObject           *display_to_close;
 
   GtkWidget            *thumb_box;
   GtkWidget            *proc_expander;
@@ -56,47 +56,47 @@ struct _GimpFileDialog
   gboolean              canceled;
 };
 
-struct _GimpFileDialogClass
+struct _PicmanFileDialogClass
 {
   GtkFileChooserDialogClass  parent_class;
 };
 
 
-typedef struct _GimpFileDialogState GimpFileDialogState;
+typedef struct _PicmanFileDialogState PicmanFileDialogState;
 
 
-GType       gimp_file_dialog_get_type       (void) G_GNUC_CONST;
+GType       picman_file_dialog_get_type       (void) G_GNUC_CONST;
 
-GtkWidget * gimp_file_dialog_new            (Gimp                 *gimp,
-                                             GimpFileChooserAction action,
+GtkWidget * picman_file_dialog_new            (Picman                 *picman,
+                                             PicmanFileChooserAction action,
                                              const gchar          *title,
                                              const gchar          *role,
                                              const gchar          *stock_id,
                                              const gchar          *help_id);
 
-void        gimp_file_dialog_set_sensitive  (GimpFileDialog       *dialog,
+void        picman_file_dialog_set_sensitive  (PicmanFileDialog       *dialog,
                                              gboolean              sensitive);
 
-void        gimp_file_dialog_set_file_proc  (GimpFileDialog       *dialog,
-                                             GimpPlugInProcedure  *file_proc);
+void        picman_file_dialog_set_file_proc  (PicmanFileDialog       *dialog,
+                                             PicmanPlugInProcedure  *file_proc);
 
-void        gimp_file_dialog_set_open_image (GimpFileDialog       *dialog,
-                                             GimpImage            *image,
+void        picman_file_dialog_set_open_image (PicmanFileDialog       *dialog,
+                                             PicmanImage            *image,
                                              gboolean              open_as_layers);
-void        gimp_file_dialog_set_save_image (GimpFileDialog       *dialog,
-                                             Gimp                 *gimp,
-                                             GimpImage            *image,
+void        picman_file_dialog_set_save_image (PicmanFileDialog       *dialog,
+                                             Picman                 *picman,
+                                             PicmanImage            *image,
                                              gboolean              save_a_copy,
                                              gboolean              export,
                                              gboolean              close_after_saving,
-                                             GimpObject           *display);
+                                             PicmanObject           *display);
 
-GimpFileDialogState * gimp_file_dialog_get_state     (GimpFileDialog      *dialog);
-void                  gimp_file_dialog_set_state     (GimpFileDialog      *dialog,
-                                                      GimpFileDialogState *state);
-void                  gimp_file_dialog_state_destroy (GimpFileDialogState *state);
+PicmanFileDialogState * picman_file_dialog_get_state     (PicmanFileDialog      *dialog);
+void                  picman_file_dialog_set_state     (PicmanFileDialog      *dialog,
+                                                      PicmanFileDialogState *state);
+void                  picman_file_dialog_state_destroy (PicmanFileDialogState *state);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_FILE_DIALOG_H__ */
+#endif /* __PICMAN_FILE_DIALOG_H__ */

@@ -1,9 +1,9 @@
-# Translation of gimp-python to Croatiann
+# Translation of picman-python to Croatiann
 # Copyright (C) Croatiann team
 # Translators: Automatski Prijevod <>,Denis Lackovic <delacko@fly.srk.fer.hr>,Ivan Jankovic <rbrrneck@gmx.net>,Nikola Planinac <>,pr pr <delacko@192.168.0.1>,Robert Sedak <robert.sedak@sk.tel.hr>,
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-python 0\n"
+"Project-Id-Version: picman-python 0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-09-13 21:07+0200\n"
 "PO-Revision-Date: 2004-03-20 14:50+CET\n"
@@ -14,20 +14,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: TransDict server\n"
 
-#: ../plug-ins/pygimp/plug-ins/gimpcons.py:43
+#: ../plug-ins/pypicman/plug-ins/picmancons.py:43
 msgid "Python Console"
 msgstr "Python Konzola"
 
-#: ../plug-ins/pygimp/plug-ins/gimpcons.py:75
+#: ../plug-ins/pypicman/plug-ins/picmancons.py:75
 #, fuzzy
 msgid "_Browse..."
 msgstr "Potraži..."
 
-#: ../plug-ins/pygimp/plug-ins/gtkcons.py:217
+#: ../plug-ins/pypicman/plug-ins/gtkcons.py:217
 #, fuzzy
-msgid "Gimp-Python Console"
+msgid "Picman-Python Console"
 msgstr "Python Konzola"
 
-#: ../plug-ins/pygimp/plug-ins/gtkcons.py:218
+#: ../plug-ins/pypicman/plug-ins/gtkcons.py:218
 msgid "Interactive Python Development"
 msgstr ""

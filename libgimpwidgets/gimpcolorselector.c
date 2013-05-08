@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcolorselector.c
- * Copyright (C) 2002 Michael Natterer <mitch@gimp.org>
+ * picmancolorselector.c
+ * Copyright (C) 2002 Michael Natterer <mitch@picman.org>
  *
  * based on:
  * Colour selector module
@@ -28,22 +28,22 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpcolorselector.h"
-#include "gimpwidgetsmarshal.h"
+#include "picmancolorselector.h"
+#include "picmanwidgetsmarshal.h"
 
 
 /**
- * SECTION: gimpcolorselector
- * @title: GimpColorSelector
- * @short_description: Pluggable GIMP color selector modules.
- * @see_also: #GModule, #GTypeModule, #GimpModule
+ * SECTION: picmancolorselector
+ * @title: PicmanColorSelector
+ * @short_description: Pluggable PICMAN color selector modules.
+ * @see_also: #GModule, #GTypeModule, #PicmanModule
  *
- * Functions and definitions for creating pluggable GIMP color
+ * Functions and definitions for creating pluggable PICMAN color
  * selector modules.
  **/
 
@@ -56,30 +56,30 @@ enum
 };
 
 
-static void   gimp_color_selector_dispose (GObject *object);
+static void   picman_color_selector_dispose (GObject *object);
 
 
-G_DEFINE_TYPE (GimpColorSelector, gimp_color_selector, GTK_TYPE_BOX)
+G_DEFINE_TYPE (PicmanColorSelector, picman_color_selector, GTK_TYPE_BOX)
 
-#define parent_class gimp_color_selector_parent_class
+#define parent_class picman_color_selector_parent_class
 
 static guint selector_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_color_selector_class_init (GimpColorSelectorClass *klass)
+picman_color_selector_class_init (PicmanColorSelectorClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->dispose = gimp_color_selector_dispose;
+  object_class->dispose = picman_color_selector_dispose;
 
   selector_signals[COLOR_CHANGED] =
     g_signal_new ("color-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpColorSelectorClass, color_changed),
+                  G_STRUCT_OFFSET (PicmanColorSelectorClass, color_changed),
                   NULL, NULL,
-                  _gimp_widgets_marshal_VOID__POINTER_POINTER,
+                  _picman_widgets_marshal_VOID__POINTER_POINTER,
                   G_TYPE_NONE, 2,
                   G_TYPE_POINTER,
                   G_TYPE_POINTER);
@@ -88,9 +88,9 @@ gimp_color_selector_class_init (GimpColorSelectorClass *klass)
     g_signal_new ("channel-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpColorSelectorClass, channel_changed),
+                  G_STRUCT_OFFSET (PicmanColorSelectorClass, channel_changed),
                   NULL, NULL,
-                  _gimp_widgets_marshal_VOID__INT,
+                  _picman_widgets_marshal_VOID__INT,
                   G_TYPE_NONE, 1,
                   G_TYPE_INT);
 
@@ -109,7 +109,7 @@ gimp_color_selector_class_init (GimpColorSelectorClass *klass)
 }
 
 static void
-gimp_color_selector_init (GimpColorSelector *selector)
+picman_color_selector_init (PicmanColorSelector *selector)
 {
   selector->toggles_visible   = TRUE;
   selector->toggles_sensitive = TRUE;
@@ -118,54 +118,54 @@ gimp_color_selector_init (GimpColorSelector *selector)
   gtk_orientable_set_orientation (GTK_ORIENTABLE (selector),
                                   GTK_ORIENTATION_VERTICAL);
 
-  gimp_rgba_set (&selector->rgb, 0.0, 0.0, 0.0, 1.0);
-  gimp_rgb_to_hsv (&selector->rgb, &selector->hsv);
+  picman_rgba_set (&selector->rgb, 0.0, 0.0, 0.0, 1.0);
+  picman_rgb_to_hsv (&selector->rgb, &selector->hsv);
 
-  selector->channel = GIMP_COLOR_SELECTOR_HUE;
+  selector->channel = PICMAN_COLOR_SELECTOR_HUE;
 }
 
 static void
-gimp_color_selector_dispose (GObject *object)
+picman_color_selector_dispose (GObject *object)
 {
-  gimp_color_selector_set_config (GIMP_COLOR_SELECTOR (object), NULL);
+  picman_color_selector_set_config (PICMAN_COLOR_SELECTOR (object), NULL);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 GtkWidget *
-gimp_color_selector_new (GType                     selector_type,
-                         const GimpRGB            *rgb,
-                         const GimpHSV            *hsv,
-                         GimpColorSelectorChannel  channel)
+picman_color_selector_new (GType                     selector_type,
+                         const PicmanRGB            *rgb,
+                         const PicmanHSV            *hsv,
+                         PicmanColorSelectorChannel  channel)
 {
-  GimpColorSelector *selector;
+  PicmanColorSelector *selector;
 
-  g_return_val_if_fail (g_type_is_a (selector_type, GIMP_TYPE_COLOR_SELECTOR),
+  g_return_val_if_fail (g_type_is_a (selector_type, PICMAN_TYPE_COLOR_SELECTOR),
                         NULL);
   g_return_val_if_fail (rgb != NULL, NULL);
   g_return_val_if_fail (hsv != NULL, NULL);
 
   selector = g_object_new (selector_type, NULL);
 
-  gimp_color_selector_set_color (selector, rgb, hsv);
-  gimp_color_selector_set_channel (selector, channel);
+  picman_color_selector_set_color (selector, rgb, hsv);
+  picman_color_selector_set_channel (selector, channel);
 
   return GTK_WIDGET (selector);
 }
 
 void
-gimp_color_selector_set_toggles_visible (GimpColorSelector *selector,
+picman_color_selector_set_toggles_visible (PicmanColorSelector *selector,
                                          gboolean           visible)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTOR (selector));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTOR (selector));
 
   if (selector->toggles_visible != visible)
     {
-      GimpColorSelectorClass *selector_class;
+      PicmanColorSelectorClass *selector_class;
 
       selector->toggles_visible = visible ? TRUE : FALSE;
 
-      selector_class = GIMP_COLOR_SELECTOR_GET_CLASS (selector);
+      selector_class = PICMAN_COLOR_SELECTOR_GET_CLASS (selector);
 
       if (selector_class->set_toggles_visible)
         selector_class->set_toggles_visible (selector, visible);
@@ -173,18 +173,18 @@ gimp_color_selector_set_toggles_visible (GimpColorSelector *selector,
 }
 
 void
-gimp_color_selector_set_toggles_sensitive (GimpColorSelector *selector,
+picman_color_selector_set_toggles_sensitive (PicmanColorSelector *selector,
                                            gboolean           sensitive)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTOR (selector));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTOR (selector));
 
   if (selector->toggles_sensitive != sensitive)
     {
-      GimpColorSelectorClass *selector_class;
+      PicmanColorSelectorClass *selector_class;
 
       selector->toggles_sensitive = sensitive ? TRUE : FALSE;
 
-      selector_class = GIMP_COLOR_SELECTOR_GET_CLASS (selector);
+      selector_class = PICMAN_COLOR_SELECTOR_GET_CLASS (selector);
 
       if (selector_class->set_toggles_sensitive)
         selector_class->set_toggles_sensitive (selector, sensitive);
@@ -192,18 +192,18 @@ gimp_color_selector_set_toggles_sensitive (GimpColorSelector *selector,
 }
 
 void
-gimp_color_selector_set_show_alpha (GimpColorSelector *selector,
+picman_color_selector_set_show_alpha (PicmanColorSelector *selector,
                                     gboolean           show_alpha)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTOR (selector));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTOR (selector));
 
   if (show_alpha != selector->show_alpha)
     {
-      GimpColorSelectorClass *selector_class;
+      PicmanColorSelectorClass *selector_class;
 
       selector->show_alpha = show_alpha ? TRUE : FALSE;
 
-      selector_class = GIMP_COLOR_SELECTOR_GET_CLASS (selector);
+      selector_class = PICMAN_COLOR_SELECTOR_GET_CLASS (selector);
 
       if (selector_class->set_show_alpha)
         selector_class->set_show_alpha (selector, show_alpha);
@@ -211,85 +211,85 @@ gimp_color_selector_set_show_alpha (GimpColorSelector *selector,
 }
 
 void
-gimp_color_selector_set_color (GimpColorSelector *selector,
-                               const GimpRGB     *rgb,
-                               const GimpHSV     *hsv)
+picman_color_selector_set_color (PicmanColorSelector *selector,
+                               const PicmanRGB     *rgb,
+                               const PicmanHSV     *hsv)
 {
-  GimpColorSelectorClass *selector_class;
+  PicmanColorSelectorClass *selector_class;
 
-  g_return_if_fail (GIMP_IS_COLOR_SELECTOR (selector));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTOR (selector));
   g_return_if_fail (rgb != NULL);
   g_return_if_fail (hsv != NULL);
 
   selector->rgb = *rgb;
   selector->hsv = *hsv;
 
-  selector_class = GIMP_COLOR_SELECTOR_GET_CLASS (selector);
+  selector_class = PICMAN_COLOR_SELECTOR_GET_CLASS (selector);
 
   if (selector_class->set_color)
     selector_class->set_color (selector, rgb, hsv);
 
-  gimp_color_selector_color_changed (selector);
+  picman_color_selector_color_changed (selector);
 }
 
 void
-gimp_color_selector_set_channel (GimpColorSelector        *selector,
-                                 GimpColorSelectorChannel  channel)
+picman_color_selector_set_channel (PicmanColorSelector        *selector,
+                                 PicmanColorSelectorChannel  channel)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTOR (selector));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTOR (selector));
 
   if (channel != selector->channel)
     {
-      GimpColorSelectorClass *selector_class;
+      PicmanColorSelectorClass *selector_class;
 
       selector->channel = channel;
 
-      selector_class = GIMP_COLOR_SELECTOR_GET_CLASS (selector);
+      selector_class = PICMAN_COLOR_SELECTOR_GET_CLASS (selector);
 
       if (selector_class->set_channel)
         selector_class->set_channel (selector, channel);
 
-      gimp_color_selector_channel_changed (selector);
+      picman_color_selector_channel_changed (selector);
     }
 }
 
 void
-gimp_color_selector_color_changed (GimpColorSelector *selector)
+picman_color_selector_color_changed (PicmanColorSelector *selector)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTOR (selector));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTOR (selector));
 
   g_signal_emit (selector, selector_signals[COLOR_CHANGED], 0,
                  &selector->rgb, &selector->hsv);
 }
 
 void
-gimp_color_selector_channel_changed (GimpColorSelector *selector)
+picman_color_selector_channel_changed (PicmanColorSelector *selector)
 {
-  g_return_if_fail (GIMP_IS_COLOR_SELECTOR (selector));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTOR (selector));
 
   g_signal_emit (selector, selector_signals[CHANNEL_CHANGED], 0,
                  selector->channel);
 }
 
 /**
- * gimp_color_selector_set_config:
- * @selector: a #GimpColorSelector widget.
- * @config:   a #GimpColorConfig object.
+ * picman_color_selector_set_config:
+ * @selector: a #PicmanColorSelector widget.
+ * @config:   a #PicmanColorConfig object.
  *
  * Sets the color management configuration to use with this color selector.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 void
-gimp_color_selector_set_config (GimpColorSelector *selector,
-                                GimpColorConfig   *config)
+picman_color_selector_set_config (PicmanColorSelector *selector,
+                                PicmanColorConfig   *config)
 {
-  GimpColorSelectorClass *selector_class;
+  PicmanColorSelectorClass *selector_class;
 
-  g_return_if_fail (GIMP_IS_COLOR_SELECTOR (selector));
-  g_return_if_fail (config == NULL || GIMP_IS_COLOR_CONFIG (config));
+  g_return_if_fail (PICMAN_IS_COLOR_SELECTOR (selector));
+  g_return_if_fail (config == NULL || PICMAN_IS_COLOR_CONFIG (config));
 
-  selector_class = GIMP_COLOR_SELECTOR_GET_CLASS (selector);
+  selector_class = PICMAN_COLOR_SELECTOR_GET_CLASS (selector);
 
   if (selector_class->set_config)
     selector_class->set_config (selector, config);

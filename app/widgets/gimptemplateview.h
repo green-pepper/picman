@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptemplateview.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
+ * picmantemplateview.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEMPLATE_VIEW_H__
-#define __GIMP_TEMPLATE_VIEW_H__
+#ifndef __PICMAN_TEMPLATE_VIEW_H__
+#define __PICMAN_TEMPLATE_VIEW_H__
 
 
-#include "gimpcontainereditor.h"
+#include "picmancontainereditor.h"
 
 
-#define GIMP_TYPE_TEMPLATE_VIEW            (gimp_template_view_get_type ())
-#define GIMP_TEMPLATE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TEMPLATE_VIEW, GimpTemplateView))
-#define GIMP_TEMPLATE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TEMPLATE_VIEW, GimpTemplateViewClass))
-#define GIMP_IS_TEMPLATE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TEMPLATE_VIEW))
-#define GIMP_IS_TEMPLATE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TEMPLATE_VIEW))
-#define GIMP_TEMPLATE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TEMPLATE_VIEW, GimpTemplateViewClass))
+#define PICMAN_TYPE_TEMPLATE_VIEW            (picman_template_view_get_type ())
+#define PICMAN_TEMPLATE_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TEMPLATE_VIEW, PicmanTemplateView))
+#define PICMAN_TEMPLATE_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TEMPLATE_VIEW, PicmanTemplateViewClass))
+#define PICMAN_IS_TEMPLATE_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TEMPLATE_VIEW))
+#define PICMAN_IS_TEMPLATE_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TEMPLATE_VIEW))
+#define PICMAN_TEMPLATE_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TEMPLATE_VIEW, PicmanTemplateViewClass))
 
 
-typedef struct _GimpTemplateViewClass  GimpTemplateViewClass;
+typedef struct _PicmanTemplateViewClass  PicmanTemplateViewClass;
 
-struct _GimpTemplateView
+struct _PicmanTemplateView
 {
-  GimpContainerEditor  parent_instance;
+  PicmanContainerEditor  parent_instance;
 
   GtkWidget           *create_button;
   GtkWidget           *new_button;
@@ -46,20 +46,20 @@ struct _GimpTemplateView
   GtkWidget           *delete_button;
 };
 
-struct _GimpTemplateViewClass
+struct _PicmanTemplateViewClass
 {
-  GimpContainerEditorClass  parent_class;
+  PicmanContainerEditorClass  parent_class;
 };
 
 
-GType       gimp_template_view_get_type (void) G_GNUC_CONST;
+GType       picman_template_view_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_template_view_new      (GimpViewType     view_type,
-                                         GimpContainer   *container,
-                                         GimpContext     *context,
+GtkWidget * picman_template_view_new      (PicmanViewType     view_type,
+                                         PicmanContainer   *container,
+                                         PicmanContext     *context,
                                          gint             view_size,
                                          gint             view_border_width,
-                                         GimpMenuFactory *menu_factory);
+                                         PicmanMenuFactory *menu_factory);
 
 
-#endif  /*  __GIMP_TEMPLATE_VIEW_H__  */
+#endif  /*  __PICMAN_TEMPLATE_VIEW_H__  */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CURVE_SAVE_H__
-#define __GIMP_CURVE_SAVE_H__
+#ifndef __PICMAN_CURVE_SAVE_H__
+#define __PICMAN_CURVE_SAVE_H__
 
 
-/*  don't call this function directly, use gimp_data_save() instead  */
-gboolean   gimp_curve_save (GimpData  *data,
+/*  don't call this function directly, use picman_data_save() instead  */
+gboolean   picman_curve_save (PicmanData  *data,
                             GError   **error);
 
 
-#endif /* __GIMP_CURVE_SAVE_H__ */
+#endif /* __PICMAN_CURVE_SAVE_H__ */

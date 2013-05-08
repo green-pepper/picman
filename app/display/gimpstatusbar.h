@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_STATUSBAR_H__
-#define __GIMP_STATUSBAR_H__
+#ifndef __PICMAN_STATUSBAR_H__
+#define __PICMAN_STATUSBAR_H__
 
 G_BEGIN_DECLS
 
@@ -25,20 +25,20 @@ G_BEGIN_DECLS
 #define CURSOR_FORMAT_LENGTH 32
 
 
-#define GIMP_TYPE_STATUSBAR            (gimp_statusbar_get_type ())
-#define GIMP_STATUSBAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_STATUSBAR, GimpStatusbar))
-#define GIMP_STATUSBAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_STATUSBAR, GimpStatusbarClass))
-#define GIMP_IS_STATUSBAR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_STATUSBAR))
-#define GIMP_IS_STATUSBAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_STATUSBAR))
-#define GIMP_STATUSBAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_STATUSBAR, GimpStatusbarClass))
+#define PICMAN_TYPE_STATUSBAR            (picman_statusbar_get_type ())
+#define PICMAN_STATUSBAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_STATUSBAR, PicmanStatusbar))
+#define PICMAN_STATUSBAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_STATUSBAR, PicmanStatusbarClass))
+#define PICMAN_IS_STATUSBAR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_STATUSBAR))
+#define PICMAN_IS_STATUSBAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_STATUSBAR))
+#define PICMAN_STATUSBAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_STATUSBAR, PicmanStatusbarClass))
 
-typedef struct _GimpStatusbarClass GimpStatusbarClass;
+typedef struct _PicmanStatusbarClass PicmanStatusbarClass;
 
-struct _GimpStatusbar
+struct _PicmanStatusbar
 {
   GtkStatusbar         parent_instance;
 
-  GimpDisplayShell    *shell;
+  PicmanDisplayShell    *shell;
 
   GSList              *messages;
   GHashTable          *context_ids;
@@ -48,7 +48,7 @@ struct _GimpStatusbar
 
   guint                temp_context_id;
   guint                temp_timeout_id;
-  GimpMessageSeverity  temp_severity;
+  PicmanMessageSeverity  temp_severity;
 
   gchar                cursor_format_str[CURSOR_FORMAT_LENGTH];
   gchar                cursor_format_str_f[CURSOR_FORMAT_LENGTH];
@@ -66,87 +66,87 @@ struct _GimpStatusbar
   gdouble              progress_value;
 };
 
-struct _GimpStatusbarClass
+struct _PicmanStatusbarClass
 {
   GtkStatusbarClass parent_class;
 };
 
 
-GType       gimp_statusbar_get_type              (void) G_GNUC_CONST;
-GtkWidget * gimp_statusbar_new                   (void);
+GType       picman_statusbar_get_type              (void) G_GNUC_CONST;
+GtkWidget * picman_statusbar_new                   (void);
 
-void        gimp_statusbar_set_shell             (GimpStatusbar       *statusbar,
-                                                  GimpDisplayShell    *shell);
+void        picman_statusbar_set_shell             (PicmanStatusbar       *statusbar,
+                                                  PicmanDisplayShell    *shell);
 
-gboolean    gimp_statusbar_get_visible           (GimpStatusbar       *statusbar);
-void        gimp_statusbar_set_visible           (GimpStatusbar       *statusbar,
+gboolean    picman_statusbar_get_visible           (PicmanStatusbar       *statusbar);
+void        picman_statusbar_set_visible           (PicmanStatusbar       *statusbar,
                                                   gboolean             visible);
-void        gimp_statusbar_empty                 (GimpStatusbar       *statusbar);
-void        gimp_statusbar_fill                  (GimpStatusbar       *statusbar);
+void        picman_statusbar_empty                 (PicmanStatusbar       *statusbar);
+void        picman_statusbar_fill                  (PicmanStatusbar       *statusbar);
 
-void        gimp_statusbar_override_window_title (GimpStatusbar       *statusbar);
-void        gimp_statusbar_restore_window_title  (GimpStatusbar       *statusbar);
+void        picman_statusbar_override_window_title (PicmanStatusbar       *statusbar);
+void        picman_statusbar_restore_window_title  (PicmanStatusbar       *statusbar);
 
-void        gimp_statusbar_push                  (GimpStatusbar       *statusbar,
+void        picman_statusbar_push                  (PicmanStatusbar       *statusbar,
                                                   const gchar         *context,
                                                   const gchar         *stock_id,
                                                   const gchar         *format,
                                                   ...) G_GNUC_PRINTF(4,5);
-void        gimp_statusbar_push_valist           (GimpStatusbar       *statusbar,
+void        picman_statusbar_push_valist           (PicmanStatusbar       *statusbar,
                                                   const gchar         *context,
                                                   const gchar         *stock_id,
                                                   const gchar         *format,
                                                   va_list              args);
-void        gimp_statusbar_push_coords           (GimpStatusbar       *statusbar,
+void        picman_statusbar_push_coords           (PicmanStatusbar       *statusbar,
                                                   const gchar         *context,
                                                   const gchar         *stock_id,
-                                                  GimpCursorPrecision  precision,
+                                                  PicmanCursorPrecision  precision,
                                                   const gchar         *title,
                                                   gdouble              x,
                                                   const gchar         *separator,
                                                   gdouble              y,
                                                   const gchar         *help);
-void        gimp_statusbar_push_length           (GimpStatusbar       *statusbar,
+void        picman_statusbar_push_length           (PicmanStatusbar       *statusbar,
                                                   const gchar         *context,
                                                   const gchar         *stock_id,
                                                   const gchar         *title,
-                                                  GimpOrientationType  axis,
+                                                  PicmanOrientationType  axis,
                                                   gdouble              value,
                                                   const gchar         *help);
-void        gimp_statusbar_replace               (GimpStatusbar       *statusbar,
+void        picman_statusbar_replace               (PicmanStatusbar       *statusbar,
                                                   const gchar         *context,
                                                   const gchar         *stock_id,
                                                   const gchar         *format,
                                                   ...) G_GNUC_PRINTF(4,5);
-void        gimp_statusbar_replace_valist        (GimpStatusbar       *statusbar,
+void        picman_statusbar_replace_valist        (PicmanStatusbar       *statusbar,
                                                   const gchar         *context,
                                                   const gchar         *stock_id,
                                                   const gchar         *format,
                                                   va_list              args);
-const gchar * gimp_statusbar_peek                (GimpStatusbar       *statusbar,
+const gchar * picman_statusbar_peek                (PicmanStatusbar       *statusbar,
                                                   const gchar         *context);
-void        gimp_statusbar_pop                   (GimpStatusbar       *statusbar,
+void        picman_statusbar_pop                   (PicmanStatusbar       *statusbar,
                                                   const gchar         *context);
 
-void        gimp_statusbar_push_temp             (GimpStatusbar       *statusbar,
-                                                  GimpMessageSeverity  severity,
+void        picman_statusbar_push_temp             (PicmanStatusbar       *statusbar,
+                                                  PicmanMessageSeverity  severity,
                                                   const gchar         *stock_id,
                                                   const gchar         *format,
                                                   ...) G_GNUC_PRINTF(4,5);
-void        gimp_statusbar_push_temp_valist      (GimpStatusbar       *statusbar,
-                                                  GimpMessageSeverity  severity,
+void        picman_statusbar_push_temp_valist      (PicmanStatusbar       *statusbar,
+                                                  PicmanMessageSeverity  severity,
                                                   const gchar         *stock_id,
                                                   const gchar         *format,
                                                   va_list              args);
-void        gimp_statusbar_pop_temp              (GimpStatusbar       *statusbar);
+void        picman_statusbar_pop_temp              (PicmanStatusbar       *statusbar);
 
-void        gimp_statusbar_update_cursor         (GimpStatusbar       *statusbar,
-                                                  GimpCursorPrecision  precision,
+void        picman_statusbar_update_cursor         (PicmanStatusbar       *statusbar,
+                                                  PicmanCursorPrecision  precision,
                                                   gdouble              x,
                                                   gdouble              y);
-void        gimp_statusbar_clear_cursor          (GimpStatusbar       *statusbar);
+void        picman_statusbar_clear_cursor          (PicmanStatusbar       *statusbar);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_STATUSBAR_H__ */
+#endif /* __PICMAN_STATUSBAR_H__ */

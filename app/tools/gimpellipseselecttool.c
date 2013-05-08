@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,83 +20,83 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "tools-types.h"
 
-#include "core/gimpchannel-select.h"
-#include "core/gimpimage.h"
+#include "core/picmanchannel-select.h"
+#include "core/picmanimage.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpdisplay.h"
+#include "display/picmandisplay.h"
 
-#include "gimpellipseselecttool.h"
-#include "gimprectangleselectoptions.h"
-#include "gimptoolcontrol.h"
+#include "picmanellipseselecttool.h"
+#include "picmanrectangleselectoptions.h"
+#include "picmantoolcontrol.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void   gimp_ellipse_select_tool_draw   (GimpDrawTool            *draw_tool);
+static void   picman_ellipse_select_tool_draw   (PicmanDrawTool            *draw_tool);
 
-static void   gimp_ellipse_select_tool_select (GimpRectangleSelectTool *rect_tool,
-                                               GimpChannelOps           operation,
+static void   picman_ellipse_select_tool_select (PicmanRectangleSelectTool *rect_tool,
+                                               PicmanChannelOps           operation,
                                                gint                     x,
                                                gint                     y,
                                                gint                     w,
                                                gint                     h);
 
 
-G_DEFINE_TYPE (GimpEllipseSelectTool, gimp_ellipse_select_tool,
-               GIMP_TYPE_RECTANGLE_SELECT_TOOL)
+G_DEFINE_TYPE (PicmanEllipseSelectTool, picman_ellipse_select_tool,
+               PICMAN_TYPE_RECTANGLE_SELECT_TOOL)
 
-#define parent_class gimp_ellipse_select_tool_parent_class
+#define parent_class picman_ellipse_select_tool_parent_class
 
 
 void
-gimp_ellipse_select_tool_register (GimpToolRegisterCallback  callback,
+picman_ellipse_select_tool_register (PicmanToolRegisterCallback  callback,
                                    gpointer                  data)
 {
-  (* callback) (GIMP_TYPE_ELLIPSE_SELECT_TOOL,
-                GIMP_TYPE_RECTANGLE_SELECT_OPTIONS,
-                gimp_rectangle_select_options_gui,
+  (* callback) (PICMAN_TYPE_ELLIPSE_SELECT_TOOL,
+                PICMAN_TYPE_RECTANGLE_SELECT_OPTIONS,
+                picman_rectangle_select_options_gui,
                 0,
-                "gimp-ellipse-select-tool",
+                "picman-ellipse-select-tool",
                 _("Ellipse Select"),
                 _("Ellipse Select Tool: Select an elliptical region"),
                 N_("_Ellipse Select"), "E",
-                NULL, GIMP_HELP_TOOL_ELLIPSE_SELECT,
-                GIMP_STOCK_TOOL_ELLIPSE_SELECT,
+                NULL, PICMAN_HELP_TOOL_ELLIPSE_SELECT,
+                PICMAN_STOCK_TOOL_ELLIPSE_SELECT,
                 data);
 }
 
 static void
-gimp_ellipse_select_tool_class_init (GimpEllipseSelectToolClass *klass)
+picman_ellipse_select_tool_class_init (PicmanEllipseSelectToolClass *klass)
 {
-  GimpDrawToolClass            *draw_tool_class = GIMP_DRAW_TOOL_CLASS (klass);
-  GimpRectangleSelectToolClass *rect_tool_class = GIMP_RECTANGLE_SELECT_TOOL_CLASS (klass);
+  PicmanDrawToolClass            *draw_tool_class = PICMAN_DRAW_TOOL_CLASS (klass);
+  PicmanRectangleSelectToolClass *rect_tool_class = PICMAN_RECTANGLE_SELECT_TOOL_CLASS (klass);
 
-  draw_tool_class->draw   = gimp_ellipse_select_tool_draw;
+  draw_tool_class->draw   = picman_ellipse_select_tool_draw;
 
-  rect_tool_class->select = gimp_ellipse_select_tool_select;
+  rect_tool_class->select = picman_ellipse_select_tool_select;
 }
 
 static void
-gimp_ellipse_select_tool_init (GimpEllipseSelectTool *ellipse_select)
+picman_ellipse_select_tool_init (PicmanEllipseSelectTool *ellipse_select)
 {
-  GimpTool *tool = GIMP_TOOL (ellipse_select);
+  PicmanTool *tool = PICMAN_TOOL (ellipse_select);
 
-  gimp_tool_control_set_tool_cursor (tool->control,
-                                     GIMP_TOOL_CURSOR_ELLIPSE_SELECT);
+  picman_tool_control_set_tool_cursor (tool->control,
+                                     PICMAN_TOOL_CURSOR_ELLIPSE_SELECT);
 }
 
 static void
-gimp_ellipse_select_tool_draw (GimpDrawTool *draw_tool)
+picman_ellipse_select_tool_draw (PicmanDrawTool *draw_tool)
 {
   gint x1, y1, x2, y2;
 
-  GIMP_DRAW_TOOL_CLASS (parent_class)->draw (draw_tool);
+  PICMAN_DRAW_TOOL_CLASS (parent_class)->draw (draw_tool);
 
   g_object_get (draw_tool,
                 "x1", &x1,
@@ -105,7 +105,7 @@ gimp_ellipse_select_tool_draw (GimpDrawTool *draw_tool)
                 "y2", &y2,
                 NULL);
 
-  gimp_draw_tool_add_arc (draw_tool,
+  picman_draw_tool_add_arc (draw_tool,
                           FALSE,
                           x1, y1,
                           x2 - x1, y2 - y1,
@@ -113,18 +113,18 @@ gimp_ellipse_select_tool_draw (GimpDrawTool *draw_tool)
 }
 
 static void
-gimp_ellipse_select_tool_select (GimpRectangleSelectTool *rect_tool,
-                                 GimpChannelOps           operation,
+picman_ellipse_select_tool_select (PicmanRectangleSelectTool *rect_tool,
+                                 PicmanChannelOps           operation,
                                  gint                     x,
                                  gint                     y,
                                  gint                     w,
                                  gint                     h)
 {
-  GimpTool             *tool    = GIMP_TOOL (rect_tool);
-  GimpSelectionOptions *options = GIMP_SELECTION_TOOL_GET_OPTIONS (rect_tool);
-  GimpImage            *image   = gimp_display_get_image (tool->display);
+  PicmanTool             *tool    = PICMAN_TOOL (rect_tool);
+  PicmanSelectionOptions *options = PICMAN_SELECTION_TOOL_GET_OPTIONS (rect_tool);
+  PicmanImage            *image   = picman_display_get_image (tool->display);
 
-  gimp_channel_select_ellipse (gimp_image_get_mask (image),
+  picman_channel_select_ellipse (picman_image_get_mask (image),
                                x, y, w, h,
                                operation,
                                options->antialias,

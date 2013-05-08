@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcolorizeconfig.h
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmancolorizeconfig.h
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,44 +18,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COLORIZE_CONFIG_H__
-#define __GIMP_COLORIZE_CONFIG_H__
+#ifndef __PICMAN_COLORIZE_CONFIG_H__
+#define __PICMAN_COLORIZE_CONFIG_H__
 
 
-#include "core/gimpimagemapconfig.h"
+#include "core/picmanimagemapconfig.h"
 
 
-#define GIMP_TYPE_COLORIZE_CONFIG            (gimp_colorize_config_get_type ())
-#define GIMP_COLORIZE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_COLORIZE_CONFIG, GimpColorizeConfig))
-#define GIMP_COLORIZE_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_COLORIZE_CONFIG, GimpColorizeConfigClass))
-#define GIMP_IS_COLORIZE_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_COLORIZE_CONFIG))
-#define GIMP_IS_COLORIZE_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_COLORIZE_CONFIG))
-#define GIMP_COLORIZE_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_COLORIZE_CONFIG, GimpColorizeConfigClass))
+#define PICMAN_TYPE_COLORIZE_CONFIG            (picman_colorize_config_get_type ())
+#define PICMAN_COLORIZE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_COLORIZE_CONFIG, PicmanColorizeConfig))
+#define PICMAN_COLORIZE_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_COLORIZE_CONFIG, PicmanColorizeConfigClass))
+#define PICMAN_IS_COLORIZE_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_COLORIZE_CONFIG))
+#define PICMAN_IS_COLORIZE_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_COLORIZE_CONFIG))
+#define PICMAN_COLORIZE_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_COLORIZE_CONFIG, PicmanColorizeConfigClass))
 
 
-typedef struct _GimpColorizeConfigClass GimpColorizeConfigClass;
+typedef struct _PicmanColorizeConfigClass PicmanColorizeConfigClass;
 
-struct _GimpColorizeConfig
+struct _PicmanColorizeConfig
 {
-  GimpImageMapConfig  parent_instance;
+  PicmanImageMapConfig  parent_instance;
 
   gdouble             hue;
   gdouble             saturation;
   gdouble             lightness;
 };
 
-struct _GimpColorizeConfigClass
+struct _PicmanColorizeConfigClass
 {
-  GimpImageMapConfigClass  parent_class;
+  PicmanImageMapConfigClass  parent_class;
 };
 
 
-GType   gimp_colorize_config_get_type  (void) G_GNUC_CONST;
+GType   picman_colorize_config_get_type  (void) G_GNUC_CONST;
 
-void    gimp_colorize_config_get_color (GimpColorizeConfig *config,
-                                        GimpRGB            *color);
-void    gimp_colorize_config_set_color (GimpColorizeConfig *config,
-                                        const GimpRGB      *color);
+void    picman_colorize_config_get_color (PicmanColorizeConfig *config,
+                                        PicmanRGB            *color);
+void    picman_colorize_config_set_color (PicmanColorizeConfig *config,
+                                        const PicmanRGB      *color);
 
 
-#endif /* __GIMP_COLORIZE_CONFIG_H__ */
+#endif /* __PICMAN_COLORIZE_CONFIG_H__ */

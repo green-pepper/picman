@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppixbuf.c
- * Copyright (C) 2004 Sven Neumann <sven@gimp.org>
+ * picmanpixbuf.c
+ * Copyright (C) 2004 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,29 +21,29 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
-#include "gimppixbuf.h"
+#include "picmanpixbuf.h"
 
 
 /**
- * SECTION: gimppixbuf
- * @title: gimppixbuf
+ * SECTION: picmanpixbuf
+ * @title: picmanpixbuf
  * @short_description: Get a thumbnail pixbuf for a drawable or image.
  *
  * Get a thumbnail pixbuf for a drawable or image.
  **/
 
 
-static GdkPixbuf * gimp_pixbuf_from_data (guchar                 *data,
+static GdkPixbuf * picman_pixbuf_from_data (guchar                 *data,
                                           gint                    width,
                                           gint                    height,
                                           gint                    bpp,
-                                          GimpPixbufTransparency  alpha);
+                                          PicmanPixbufTransparency  alpha);
 
 
 /**
- * gimp_image_get_thumbnail:
+ * picman_image_get_thumbnail:
  * @image_ID: the image ID
  * @width:    the requested thumbnail width  (<= 1024 pixels)
  * @height:   the requested thumbnail height (<= 1024 pixels)
@@ -54,13 +54,13 @@ static GdkPixbuf * gimp_pixbuf_from_data (guchar                 *data,
  *
  * Return value: a new #GdkPixbuf
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 GdkPixbuf *
-gimp_image_get_thumbnail (gint32                  image_ID,
+picman_image_get_thumbnail (gint32                  image_ID,
                           gint                    width,
                           gint                    height,
-                          GimpPixbufTransparency  alpha)
+                          PicmanPixbufTransparency  alpha)
 {
   gint    thumb_width  = width;
   gint    thumb_height = height;
@@ -70,12 +70,12 @@ gimp_image_get_thumbnail (gint32                  image_ID,
   g_return_val_if_fail (width  > 0 && width  <= 1024, NULL);
   g_return_val_if_fail (height > 0 && height <= 1024, NULL);
 
-  data = gimp_image_get_thumbnail_data (image_ID,
+  data = picman_image_get_thumbnail_data (image_ID,
                                         &thumb_width,
                                         &thumb_height,
                                         &thumb_bpp);
   if (data)
-    return gimp_pixbuf_from_data (data,
+    return picman_pixbuf_from_data (data,
                                   thumb_width, thumb_height, thumb_bpp,
                                   alpha);
   else
@@ -83,7 +83,7 @@ gimp_image_get_thumbnail (gint32                  image_ID,
 }
 
 /**
- * gimp_drawable_get_thumbnail:
+ * picman_drawable_get_thumbnail:
  * @drawable_ID: the drawable ID
  * @width:       the requested thumbnail width  (<= 1024 pixels)
  * @height:      the requested thumbnail height (<= 1024 pixels)
@@ -95,13 +95,13 @@ gimp_image_get_thumbnail (gint32                  image_ID,
  *
  * Return value: a new #GdkPixbuf
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 GdkPixbuf *
-gimp_drawable_get_thumbnail (gint32                  drawable_ID,
+picman_drawable_get_thumbnail (gint32                  drawable_ID,
                              gint                    width,
                              gint                    height,
-                             GimpPixbufTransparency  alpha)
+                             PicmanPixbufTransparency  alpha)
 {
   gint    thumb_width  = width;
   gint    thumb_height = height;
@@ -111,13 +111,13 @@ gimp_drawable_get_thumbnail (gint32                  drawable_ID,
   g_return_val_if_fail (width  > 0 && width  <= 1024, NULL);
   g_return_val_if_fail (height > 0 && height <= 1024, NULL);
 
-  data = gimp_drawable_get_thumbnail_data (drawable_ID,
+  data = picman_drawable_get_thumbnail_data (drawable_ID,
                                            &thumb_width,
                                            &thumb_height,
                                            &thumb_bpp);
 
   if (data)
-    return gimp_pixbuf_from_data (data,
+    return picman_pixbuf_from_data (data,
                                   thumb_width, thumb_height, thumb_bpp,
                                   alpha);
 
@@ -125,7 +125,7 @@ gimp_drawable_get_thumbnail (gint32                  drawable_ID,
 }
 
 /**
- * gimp_drawable_get_sub_thumbnail:
+ * picman_drawable_get_sub_thumbnail:
  * @drawable_ID: the drawable ID
  * @src_x:       the x coordinate of the area
  * @src_y:       the y coordinate of the area
@@ -141,17 +141,17 @@ gimp_drawable_get_thumbnail (gint32                  drawable_ID,
  *
  * Return value: a new #GdkPixbuf
  *
- * Since: GIMP 2.2
+ * Since: PICMAN 2.2
  **/
 GdkPixbuf *
-gimp_drawable_get_sub_thumbnail (gint32                  drawable_ID,
+picman_drawable_get_sub_thumbnail (gint32                  drawable_ID,
                                  gint                    src_x,
                                  gint                    src_y,
                                  gint                    src_width,
                                  gint                    src_height,
                                  gint                    dest_width,
                                  gint                    dest_height,
-                                 GimpPixbufTransparency  alpha)
+                                 PicmanPixbufTransparency  alpha)
 {
   gint    thumb_width  = dest_width;
   gint    thumb_height = dest_height;
@@ -165,7 +165,7 @@ gimp_drawable_get_sub_thumbnail (gint32                  drawable_ID,
   g_return_val_if_fail (dest_width  > 0 && dest_width  <= 1024, NULL);
   g_return_val_if_fail (dest_height > 0 && dest_height <= 1024, NULL);
 
-  data = gimp_drawable_get_sub_thumbnail_data (drawable_ID,
+  data = picman_drawable_get_sub_thumbnail_data (drawable_ID,
                                                src_x, src_y,
                                                src_width, src_height,
                                                &thumb_width,
@@ -173,7 +173,7 @@ gimp_drawable_get_sub_thumbnail (gint32                  drawable_ID,
                                                &thumb_bpp);
 
   if (data)
-    return gimp_pixbuf_from_data (data,
+    return picman_pixbuf_from_data (data,
                                   thumb_width, thumb_height, thumb_bpp,
                                   alpha);
 
@@ -186,11 +186,11 @@ gimp_drawable_get_sub_thumbnail (gint32                  drawable_ID,
  * owned by the returned pixbuf.
  */
 static GdkPixbuf *
-gimp_pixbuf_from_data (guchar                 *data,
+picman_pixbuf_from_data (guchar                 *data,
                        gint                    width,
                        gint                    height,
                        gint                    bpp,
-                       GimpPixbufTransparency  alpha)
+                       PicmanPixbufTransparency  alpha)
 {
   GdkPixbuf *pixbuf;
 
@@ -275,15 +275,15 @@ gimp_pixbuf_from_data (guchar                 *data,
 
       switch (alpha)
         {
-        case GIMP_PIXBUF_KEEP_ALPHA:
+        case PICMAN_PIXBUF_KEEP_ALPHA:
           return pixbuf;
 
-        case GIMP_PIXBUF_SMALL_CHECKS:
-          check_size = GIMP_CHECK_SIZE_SM;
+        case PICMAN_PIXBUF_SMALL_CHECKS:
+          check_size = PICMAN_CHECK_SIZE_SM;
           break;
 
-        case GIMP_PIXBUF_LARGE_CHECKS:
-          check_size = GIMP_CHECK_SIZE;
+        case PICMAN_PIXBUF_LARGE_CHECKS:
+          check_size = PICMAN_CHECK_SIZE;
           break;
         }
 

@@ -1,5 +1,5 @@
 /****************************************************************************
- * This is a plugin for GIMP v 2.0 or later.
+ * This is a plugin for PICMAN v 2.0 or later.
  *
  * Copyright (C) 2002 Martin Guldahl <mguldahl@xmission.com>
  * Based on GTK code from:
@@ -30,15 +30,15 @@
 
 #include <glib/gstdio.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC    "plug-in-colors-channel-mixer"
 #define PLUG_IN_BINARY  "channel-mixer"
-#define PLUG_IN_ROLE    "gimp-channel-mixer"
+#define PLUG_IN_ROLE    "picman-channel-mixer"
 #define CM_LINE_SIZE    1024
 
 typedef enum
@@ -84,16 +84,16 @@ typedef struct
 static void     query (void);
 static void     run   (const gchar      *name,
                        gint              nparams,
-                       const GimpParam  *param,
+                       const PicmanParam  *param,
                        gint             *nreturn_vals,
-                       GimpParam       **return_vals);
+                       PicmanParam       **return_vals);
 
 static void     cm_set_defaults                 (CmParamsType     *mix);
 
 static void     channel_mixer                   (CmParamsType     *mix,
-                                                 GimpDrawable     *drawable);
+                                                 PicmanDrawable     *drawable);
 static gboolean cm_dialog                       (CmParamsType     *mix,
-                                                 GimpDrawable     *drawable);
+                                                 PicmanDrawable     *drawable);
 
 static void     cm_red_scale_callback           (GtkAdjustment    *adjustment,
                                                  CmParamsType     *mix);
@@ -130,7 +130,7 @@ static inline guchar cm_mix_pixel               (CmChannelType    *ch,
                                                  gdouble           norm);
 
 static void     cm_preview                      (CmParamsType      *mix,
-                                                 GimpPreview       *preview);
+                                                 PicmanPreview       *preview);
 static void     cm_set_adjusters                (CmParamsType      *mix);
 static void     cm_update_ui                    (CmParamsType      *mix);
 
@@ -138,7 +138,7 @@ static void     cm_save_file                    (CmParamsType      *mix,
                                                  FILE              *fp);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -154,24 +154,24 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",      "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",   "Input drawable" },
-    { GIMP_PDB_INT32,    "monochrome", "Monochrome { TRUE, FALSE }" },
-    { GIMP_PDB_FLOAT,    "rr-gain",    "Set the red gain for the red channel" },
-    { GIMP_PDB_FLOAT,    "rg-gain",    "Set the green gain for the red channel" },
-    { GIMP_PDB_FLOAT,    "rb-gain",    "Set the blue gain for the red channel" },
-    { GIMP_PDB_FLOAT,    "gr-gain",    "Set the red gain for the green channel" },
-    { GIMP_PDB_FLOAT,    "gg-gain",    "Set the green gain for the green channel" },
-    { GIMP_PDB_FLOAT,    "gb-gain",    "Set the blue gain for the green channel" },
-    { GIMP_PDB_FLOAT,    "br-gain",    "Set the red gain for the blue channel" },
-    { GIMP_PDB_FLOAT,    "bg-gain",    "Set the green gain for the blue channel" },
-    { GIMP_PDB_FLOAT,    "bb-gain",    "Set the blue gain for the blue channel" }
+    { PICMAN_PDB_INT32,    "run-mode",   "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",      "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",   "Input drawable" },
+    { PICMAN_PDB_INT32,    "monochrome", "Monochrome { TRUE, FALSE }" },
+    { PICMAN_PDB_FLOAT,    "rr-gain",    "Set the red gain for the red channel" },
+    { PICMAN_PDB_FLOAT,    "rg-gain",    "Set the green gain for the red channel" },
+    { PICMAN_PDB_FLOAT,    "rb-gain",    "Set the blue gain for the red channel" },
+    { PICMAN_PDB_FLOAT,    "gr-gain",    "Set the red gain for the green channel" },
+    { PICMAN_PDB_FLOAT,    "gg-gain",    "Set the green gain for the green channel" },
+    { PICMAN_PDB_FLOAT,    "gb-gain",    "Set the blue gain for the green channel" },
+    { PICMAN_PDB_FLOAT,    "br-gain",    "Set the red gain for the blue channel" },
+    { PICMAN_PDB_FLOAT,    "bg-gain",    "Set the green gain for the blue channel" },
+    { PICMAN_PDB_FLOAT,    "bb-gain",    "Set the blue gain for the blue channel" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Alter colors by mixing RGB Channels"),
                           "This plug-in mixes the RGB channels.",
                           "Martin Guldahl <mguldahl@xmission.com>",
@@ -179,25 +179,25 @@ query (void)
                           "2002",
                           N_("Channel Mi_xer..."),
                           "RGB*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Components");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Components");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
   CmParamsType       mix;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
@@ -206,30 +206,30 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
-  if (gimp_drawable_is_rgb (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id))
     {
       cm_set_defaults (&mix);
       mix.preview = TRUE;
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-          gimp_get_data (PLUG_IN_PROC, &mix);
+        case PICMAN_RUN_INTERACTIVE:
+          picman_get_data (PLUG_IN_PROC, &mix);
 
           if (! cm_dialog (&mix, drawable))
             {
-              gimp_drawable_detach (drawable);
+              picman_drawable_detach (drawable);
               return;
             }
 
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           mix.monochrome = param[3].data.d_int32;
 
           if (mix.monochrome)
@@ -254,39 +254,39 @@ run (const gchar      *name,
             }
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_get_data (PLUG_IN_PROC, &mix);
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_get_data (PLUG_IN_PROC, &mix);
           break;
 
         default:
           break;
         }
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           /* printf("Channel Mixer:: Mode:%d  r %f  g %f  b %f\n ",
                  param[3].data.d_int32, mix.black.red_gain,
                  mix.black.green_gain, mix.black.blue_gain); */
 
-          gimp_progress_init (_("Channel Mixer"));
+          picman_progress_init (_("Channel Mixer"));
 
           channel_mixer (&mix, drawable);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
 
-          if (run_mode == GIMP_RUN_INTERACTIVE)
-            gimp_set_data (PLUG_IN_PROC, &mix, sizeof (CmParamsType));
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
+            picman_set_data (PLUG_IN_PROC, &mix, sizeof (CmParamsType));
         }
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static void
@@ -356,9 +356,9 @@ cm_process_pixel (CmParamsType  *mix,
 
 static void
 channel_mixer (CmParamsType *mix,
-               GimpDrawable *drawable)
+               PicmanDrawable *drawable)
 {
-  GimpPixelRgn  src_rgn, dest_rgn;
+  PicmanPixelRgn  src_rgn, dest_rgn;
   gpointer      pr;
   gboolean      has_alpha;
   gdouble       red_norm, green_norm, blue_norm, black_norm;
@@ -366,7 +366,7 @@ channel_mixer (CmParamsType *mix,
   gint          x1, y1;
   gint          width, height;
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &x1, &y1, &width, &height))
     return;
 
@@ -375,18 +375,18 @@ channel_mixer (CmParamsType *mix,
   blue_norm  = cm_calculate_norm (mix, &mix->blue);
   black_norm = cm_calculate_norm (mix, &mix->black);
 
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        x1, y1, width, height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn, drawable,
+  picman_pixel_rgn_init (&dest_rgn, drawable,
                        x1, y1, width, height, TRUE, TRUE);
 
   total = width * height;
 
-  for (pr = gimp_pixel_rgns_register (2, &src_rgn, &dest_rgn), i = 0;
+  for (pr = picman_pixel_rgns_register (2, &src_rgn, &dest_rgn), i = 0;
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr), i++)
+       pr = picman_pixel_rgns_process (pr), i++)
     {
       const guchar *src  = src_rgn.data;
       guchar       *dest = dest_rgn.data;
@@ -424,19 +424,19 @@ channel_mixer (CmParamsType *mix,
       processed += src_rgn.w * src_rgn.h;
 
       if (i % 16 == 0)
-        gimp_progress_update ((gdouble) processed / (gdouble) total);
+        picman_progress_update ((gdouble) processed / (gdouble) total);
     }
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, width, height);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, width, height);
 }
 
 static gboolean
 cm_dialog (CmParamsType *mix,
-           GimpDrawable *drawable)
+           PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -450,7 +450,7 @@ cm_dialog (CmParamsType *mix,
   gdouble    red_value, green_value, blue_value;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
   /* get values */
   if (mix->monochrome)
@@ -489,9 +489,9 @@ cm_dialog (CmParamsType *mix,
         }
     }
 
-  dialog = gimp_dialog_new (_("Channel Mixer"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Channel Mixer"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -503,7 +503,7 @@ cm_dialog (CmParamsType *mix,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -511,7 +511,7 @@ cm_dialog (CmParamsType *mix,
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_zoom_preview_new (drawable);
+  preview = picman_zoom_preview_new (drawable);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -519,7 +519,7 @@ cm_dialog (CmParamsType *mix,
                             G_CALLBACK (cm_preview),
                             mix);
 
-  frame = gimp_frame_new (NULL);
+  frame = picman_frame_new (NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -532,25 +532,25 @@ cm_dialog (CmParamsType *mix,
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  mix->combo = g_object_new (GIMP_TYPE_INT_COMBO_BOX, NULL);
+  mix->combo = g_object_new (PICMAN_TYPE_INT_COMBO_BOX, NULL);
 
-  gimp_int_combo_box_append (GIMP_INT_COMBO_BOX (mix->combo),
-                             GIMP_INT_STORE_VALUE,    CM_RED_CHANNEL,
-                             GIMP_INT_STORE_LABEL,    _("Red"),
-                             GIMP_INT_STORE_STOCK_ID, GIMP_STOCK_CHANNEL_RED,
+  picman_int_combo_box_append (PICMAN_INT_COMBO_BOX (mix->combo),
+                             PICMAN_INT_STORE_VALUE,    CM_RED_CHANNEL,
+                             PICMAN_INT_STORE_LABEL,    _("Red"),
+                             PICMAN_INT_STORE_STOCK_ID, PICMAN_STOCK_CHANNEL_RED,
                              -1);
-  gimp_int_combo_box_append (GIMP_INT_COMBO_BOX (mix->combo),
-                             GIMP_INT_STORE_VALUE,    CM_GREEN_CHANNEL,
-                             GIMP_INT_STORE_LABEL,    _("Green"),
-                             GIMP_INT_STORE_STOCK_ID, GIMP_STOCK_CHANNEL_GREEN,
+  picman_int_combo_box_append (PICMAN_INT_COMBO_BOX (mix->combo),
+                             PICMAN_INT_STORE_VALUE,    CM_GREEN_CHANNEL,
+                             PICMAN_INT_STORE_LABEL,    _("Green"),
+                             PICMAN_INT_STORE_STOCK_ID, PICMAN_STOCK_CHANNEL_GREEN,
                              -1);
-  gimp_int_combo_box_append (GIMP_INT_COMBO_BOX (mix->combo),
-                             GIMP_INT_STORE_VALUE,    CM_BLUE_CHANNEL,
-                             GIMP_INT_STORE_LABEL,    _("Blue"),
-                             GIMP_INT_STORE_STOCK_ID, GIMP_STOCK_CHANNEL_BLUE,
+  picman_int_combo_box_append (PICMAN_INT_COMBO_BOX (mix->combo),
+                             PICMAN_INT_STORE_VALUE,    CM_BLUE_CHANNEL,
+                             PICMAN_INT_STORE_LABEL,    _("Blue"),
+                             PICMAN_INT_STORE_STOCK_ID, PICMAN_STOCK_CHANNEL_BLUE,
                              -1);
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (mix->combo),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (mix->combo),
                                  mix->output_channel);
 
   g_signal_connect (mix->combo, "changed",
@@ -573,14 +573,14 @@ cm_dialog (CmParamsType *mix,
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  image = gtk_image_new_from_stock (GIMP_STOCK_CHANNEL_RED,
+  image = gtk_image_new_from_stock (PICMAN_STOCK_CHANNEL_RED,
                                     GTK_ICON_SIZE_BUTTON);
   gtk_table_attach (GTK_TABLE (table), image,
                     0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (image);
 
   mix->red_data =
-    GTK_ADJUSTMENT (gimp_scale_entry_new (GTK_TABLE (table), 1, 0,
+    GTK_ADJUSTMENT (picman_scale_entry_new (GTK_TABLE (table), 1, 0,
                                           _("_Red:"), 150, -1,
                                           red_value, -200.0, 200.0,
                                           1.0, 10.0, 1,
@@ -591,14 +591,14 @@ cm_dialog (CmParamsType *mix,
                     G_CALLBACK (cm_red_scale_callback),
                     mix);
 
-  image = gtk_image_new_from_stock (GIMP_STOCK_CHANNEL_GREEN,
+  image = gtk_image_new_from_stock (PICMAN_STOCK_CHANNEL_GREEN,
                                     GTK_ICON_SIZE_BUTTON);
   gtk_table_attach (GTK_TABLE (table), image,
                     0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (image);
 
   mix->green_data =
-    GTK_ADJUSTMENT (gimp_scale_entry_new (GTK_TABLE (table), 1, 1,
+    GTK_ADJUSTMENT (picman_scale_entry_new (GTK_TABLE (table), 1, 1,
                                           _("_Green:"), 150, -1,
                                           green_value, -200.0, 200.0,
                                           1.0, 10.0, 1,
@@ -610,14 +610,14 @@ cm_dialog (CmParamsType *mix,
                     mix);
 
 
-  image = gtk_image_new_from_stock (GIMP_STOCK_CHANNEL_BLUE,
+  image = gtk_image_new_from_stock (PICMAN_STOCK_CHANNEL_BLUE,
                                     GTK_ICON_SIZE_BUTTON);
   gtk_table_attach (GTK_TABLE (table), image,
                     0, 1, 2, 3, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (image);
 
   mix->blue_data =
-    GTK_ADJUSTMENT (gimp_scale_entry_new (GTK_TABLE (table), 1, 2,
+    GTK_ADJUSTMENT (picman_scale_entry_new (GTK_TABLE (table), 1, 2,
                                           _("_Blue:"), 150, -1,
                                           blue_value, -200.0, 200.0,
                                           1.0, 10.0, 1,
@@ -681,7 +681,7 @@ cm_dialog (CmParamsType *mix,
                     G_CALLBACK (cm_save_file_callback),
                     mix);
 
-  button = gtk_button_new_from_stock (GIMP_STOCK_RESET);
+  button = gtk_button_new_from_stock (PICMAN_STOCK_RESET);
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
   gtk_widget_show (button);
 
@@ -691,7 +691,7 @@ cm_dialog (CmParamsType *mix,
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -722,7 +722,7 @@ cm_red_scale_callback (GtkAdjustment *adjustment,
         }
     }
 
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }
 
 static void
@@ -749,7 +749,7 @@ cm_green_scale_callback (GtkAdjustment *adjustment,
         }
     }
 
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }
 
 static void
@@ -776,12 +776,12 @@ cm_blue_scale_callback (GtkAdjustment *adjustment,
         }
     }
 
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }
 
 static void
 cm_preview (CmParamsType *mix,
-            GimpPreview  *preview)
+            PicmanPreview  *preview)
 {
   guchar       *src, *s;
   guchar       *dst, *d;
@@ -794,7 +794,7 @@ cm_preview (CmParamsType *mix,
   blue_norm  = cm_calculate_norm (mix, &mix->blue);
   black_norm = cm_calculate_norm (mix, &mix->black);
 
-  src = s = gimp_zoom_preview_get_source (GIMP_ZOOM_PREVIEW (preview),
+  src = s = picman_zoom_preview_get_source (PICMAN_ZOOM_PREVIEW (preview),
                                           &width, &height, &bpp);
 
   dst = d = g_new (guchar, width * height * bpp);
@@ -812,7 +812,7 @@ cm_preview (CmParamsType *mix,
         }
     }
 
-  gimp_preview_draw_buffer (GIMP_PREVIEW (preview), dst, bpp * width);
+  picman_preview_draw_buffer (PICMAN_PREVIEW (preview), dst, bpp * width);
 
   g_free (src);
   g_free (dst);
@@ -837,7 +837,7 @@ cm_monochrome_callback (GtkWidget    *widget,
 
   cm_set_adjusters (mix);
 
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }
 
 static void
@@ -849,13 +849,13 @@ cm_preserve_luminosity_callback (GtkWidget    *widget,
   else
     mix->preserve_luminosity = FALSE;
 
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }
 
 static gchar *
 cm_settings_filename (void)
 {
-  return g_build_filename (gimp_directory (),
+  return g_build_filename (picman_directory (),
                            "channel-mixer",
                            "settings",
                            NULL);
@@ -978,7 +978,7 @@ cm_load_file_response_callback (GtkWidget    *dialog,
       else
         {
           g_message (_("Could not open '%s' for reading: %s"),
-                     gimp_filename_to_utf8 (filename),
+                     picman_filename_to_utf8 (filename),
                      g_strerror (errno));
         }
 
@@ -1056,7 +1056,7 @@ cm_save_file_response_callback (GtkWidget    *dialog,
   if (! file)
     {
       g_message (_("Could not open '%s' for writing: %s"),
-                 gimp_filename_to_utf8 (filename), g_strerror (errno));
+                 picman_filename_to_utf8 (filename), g_strerror (errno));
       g_free (filename);
       return;
     }
@@ -1064,7 +1064,7 @@ cm_save_file_response_callback (GtkWidget    *dialog,
   cm_save_file (mix, file);
 
   g_message (_("Parameters were saved to '%s'"),
-             gimp_filename_to_utf8 (filename));
+             picman_filename_to_utf8 (filename));
 
   gtk_widget_hide (dialog);
 }
@@ -1150,7 +1150,7 @@ cm_combo_callback (GtkWidget    *widget,
 {
   gint value;
 
-  if (gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget), &value))
+  if (picman_int_combo_box_get_active (PICMAN_INT_COMBO_BOX (widget), &value))
     {
       mix->output_channel = value;
 
@@ -1201,10 +1201,10 @@ cm_update_ui (CmParamsType *mix)
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (mix->preserve_luminosity_toggle),
                                 mix->preserve_luminosity);
 
-  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (mix->combo),
+  picman_int_combo_box_set_active (PICMAN_INT_COMBO_BOX (mix->combo),
                                  mix->output_channel);
 
   cm_set_adjusters (mix);
 
-  gimp_preview_invalidate (GIMP_PREVIEW (preview));
+  picman_preview_invalidate (PICMAN_PREVIEW (preview));
 }

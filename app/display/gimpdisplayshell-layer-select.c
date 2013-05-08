@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,24 +21,24 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "display-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontainer.h"
-#include "core/gimpimage.h"
-#include "core/gimplayer.h"
+#include "core/picman.h"
+#include "core/picmancontainer.h"
+#include "core/picmanimage.h"
+#include "core/picmanlayer.h"
 
-#include "widgets/gimpview.h"
+#include "widgets/picmanview.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-layer-select.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-layer-select.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 typedef struct
@@ -47,15 +47,15 @@ typedef struct
   GtkWidget *view;
   GtkWidget *label;
 
-  GimpImage *image;
-  GimpLayer *orig_layer;
+  PicmanImage *image;
+  PicmanLayer *orig_layer;
 } LayerSelect;
 
 
 /*  local function prototypes  */
 
-static LayerSelect * layer_select_new       (GimpImage   *image,
-                                             GimpLayer   *layer,
+static LayerSelect * layer_select_new       (PicmanImage   *image,
+                                             PicmanLayer   *layer,
                                              gint         view_size);
 static void          layer_select_destroy   (LayerSelect *layer_select,
                                              guint32      time);
@@ -69,25 +69,25 @@ static gboolean      layer_select_events    (GtkWidget   *widget,
 /*  public functions  */
 
 void
-gimp_display_shell_layer_select_init (GimpDisplayShell *shell,
+picman_display_shell_layer_select_init (PicmanDisplayShell *shell,
                                       gint              move,
                                       guint32           time)
 {
   LayerSelect *layer_select;
-  GimpImage   *image;
-  GimpLayer   *layer;
+  PicmanImage   *image;
+  PicmanLayer   *layer;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
-  image = gimp_display_get_image (shell->display);
+  image = picman_display_get_image (shell->display);
 
-  layer = gimp_image_get_active_layer (image);
+  layer = picman_image_get_active_layer (image);
 
   if (! layer)
     return;
 
   layer_select = layer_select_new (image, layer,
-                                   image->gimp->config->layer_preview_size);
+                                   image->picman->config->layer_preview_size);
   layer_select_advance (layer_select, move);
 
   gtk_window_set_screen (GTK_WINDOW (layer_select->window),
@@ -102,8 +102,8 @@ gimp_display_shell_layer_select_init (GimpDisplayShell *shell,
 /*  private functions  */
 
 static LayerSelect *
-layer_select_new (GimpImage *image,
-                  GimpLayer *layer,
+layer_select_new (PicmanImage *image,
+                  PicmanLayer *layer,
                   gint       view_size)
 {
   LayerSelect *layer_select;
@@ -118,7 +118,7 @@ layer_select_new (GimpImage *image,
   layer_select->orig_layer = layer;
 
   layer_select->window = gtk_window_new (GTK_WINDOW_POPUP);
-  gtk_window_set_role (GTK_WINDOW (layer_select->window), "gimp-layer-select");
+  gtk_window_set_role (GTK_WINDOW (layer_select->window), "picman-layer-select");
   gtk_window_set_title (GTK_WINDOW (layer_select->window), _("Layer Select"));
   gtk_window_set_position (GTK_WINDOW (layer_select->window), GTK_WIN_POS_MOUSE);
   gtk_widget_set_events (layer_select->window,
@@ -151,18 +151,18 @@ layer_select_new (GimpImage *image,
   gtk_widget_show (alignment);
 
   layer_select->view =
-    gimp_view_new_by_types (gimp_get_user_context (image->gimp),
-                            GIMP_TYPE_VIEW,
-                            GIMP_TYPE_LAYER,
+    picman_view_new_by_types (picman_get_user_context (image->picman),
+                            PICMAN_TYPE_VIEW,
+                            PICMAN_TYPE_LAYER,
                             view_size, 1, FALSE);
-  gimp_view_set_viewable (GIMP_VIEW (layer_select->view),
-                          GIMP_VIEWABLE (layer));
+  picman_view_set_viewable (PICMAN_VIEW (layer_select->view),
+                          PICMAN_VIEWABLE (layer));
   gtk_container_add (GTK_CONTAINER (alignment), layer_select->view);
   gtk_widget_show (layer_select->view);
   gtk_widget_show (alignment);
 
   /*  the layer name label */
-  layer_select->label = gtk_label_new (gimp_object_get_name (layer));
+  layer_select->label = gtk_label_new (picman_object_get_name (layer));
   gtk_box_pack_start (GTK_BOX (hbox), layer_select->label, FALSE, FALSE, 0);
   gtk_widget_show (layer_select->label);
 
@@ -179,9 +179,9 @@ layer_select_destroy (LayerSelect *layer_select,
   gtk_widget_destroy (layer_select->window);
 
   if (layer_select->orig_layer !=
-      gimp_image_get_active_layer (layer_select->image))
+      picman_image_get_active_layer (layer_select->image))
     {
-      gimp_image_flush (layer_select->image);
+      picman_image_flush (layer_select->image);
     }
 
   g_slice_free (LayerSelect, layer_select);
@@ -191,8 +191,8 @@ static void
 layer_select_advance (LayerSelect *layer_select,
                       gint         move)
 {
-  GimpLayer *active_layer;
-  GimpLayer *next_layer;
+  PicmanLayer *active_layer;
+  PicmanLayer *next_layer;
   GList     *layers;
   gint       n_layers;
   gint       index;
@@ -201,12 +201,12 @@ layer_select_advance (LayerSelect *layer_select,
     return;
 
   /*  If there is a floating selection, allow no advancement  */
-  if (gimp_image_get_floating_selection (layer_select->image))
+  if (picman_image_get_floating_selection (layer_select->image))
     return;
 
-  active_layer = gimp_image_get_active_layer (layer_select->image);
+  active_layer = picman_image_get_active_layer (layer_select->image);
 
-  layers   = gimp_image_get_layer_list (layer_select->image);
+  layers   = picman_image_get_layer_list (layer_select->image);
   n_layers = g_list_length (layers);
 
   index = g_list_index (layers, active_layer);
@@ -223,15 +223,15 @@ layer_select_advance (LayerSelect *layer_select,
 
   if (next_layer && next_layer != active_layer)
     {
-      active_layer = gimp_image_set_active_layer (layer_select->image,
+      active_layer = picman_image_set_active_layer (layer_select->image,
                                                   next_layer);
 
       if (active_layer)
         {
-          gimp_view_set_viewable (GIMP_VIEW (layer_select->view),
-                                  GIMP_VIEWABLE (active_layer));
+          picman_view_set_viewable (PICMAN_VIEW (layer_select->view),
+                                  PICMAN_VIEWABLE (active_layer));
           gtk_label_set_text (GTK_LABEL (layer_select->label),
-                              gimp_object_get_name (active_layer));
+                              picman_object_get_name (active_layer));
         }
     }
 }

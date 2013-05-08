@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpimage-convert-precision.c
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picmanimage-convert-precision.c
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,77 +24,77 @@
 
 #include "core-types.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "gimpdrawable.h"
-#include "gimpimage.h"
-#include "gimpimage-convert-precision.h"
-#include "gimpimage-undo.h"
-#include "gimpimage-undo-push.h"
-#include "gimpprogress.h"
+#include "picmandrawable.h"
+#include "picmanimage.h"
+#include "picmanimage-convert-precision.h"
+#include "picmanimage-undo.h"
+#include "picmanimage-undo-push.h"
+#include "picmanprogress.h"
 
-#include "text/gimptextlayer.h"
+#include "text/picmantextlayer.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 void
-gimp_image_convert_precision (GimpImage     *image,
-                              GimpPrecision  precision,
+picman_image_convert_precision (PicmanImage     *image,
+                              PicmanPrecision  precision,
                               gint           layer_dither_type,
                               gint           text_layer_dither_type,
                               gint           mask_dither_type,
-                              GimpProgress  *progress)
+                              PicmanProgress  *progress)
 {
   GList       *all_drawables;
   GList       *list;
   const gchar *undo_desc = NULL;
   gint         nth_drawable, n_drawables;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (precision != gimp_image_get_precision (image));
-  g_return_if_fail (precision == GIMP_PRECISION_U8 ||
-                    gimp_image_get_base_type (image) != GIMP_INDEXED);
-  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (precision != picman_image_get_precision (image));
+  g_return_if_fail (precision == PICMAN_PRECISION_U8 ||
+                    picman_image_get_base_type (image) != PICMAN_INDEXED);
+  g_return_if_fail (progress == NULL || PICMAN_IS_PROGRESS (progress));
 
-  all_drawables = g_list_concat (gimp_image_get_layer_list (image),
-                                 gimp_image_get_channel_list (image));
+  all_drawables = g_list_concat (picman_image_get_layer_list (image),
+                                 picman_image_get_channel_list (image));
 
   n_drawables = g_list_length (all_drawables) + 1 /* + selection */;
 
   switch (precision)
     {
-    case GIMP_PRECISION_U8:
+    case PICMAN_PRECISION_U8:
       undo_desc = C_("undo-type", "Convert Image to 8 bit integer");
       break;
 
-    case GIMP_PRECISION_U16:
+    case PICMAN_PRECISION_U16:
       undo_desc = C_("undo-type", "Convert Image to 16 bit integer");
       break;
 
-    case GIMP_PRECISION_U32:
+    case PICMAN_PRECISION_U32:
       undo_desc = C_("undo-type", "Convert Image to 32 bit integer");
       break;
 
-    case GIMP_PRECISION_HALF:
+    case PICMAN_PRECISION_HALF:
       undo_desc = C_("undo-type", "Convert Image to 16 bit floating point");
       break;
 
-    case GIMP_PRECISION_FLOAT:
+    case PICMAN_PRECISION_FLOAT:
       undo_desc = C_("undo-type", "Convert Image to 32 bit floating point");
       break;
     }
 
   if (progress)
-    gimp_progress_start (progress, undo_desc, FALSE);
+    picman_progress_start (progress, undo_desc, FALSE);
 
   g_object_freeze_notify (G_OBJECT (image));
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_IMAGE_CONVERT,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_IMAGE_CONVERT,
                                undo_desc);
 
   /*  Push the image precision to the stack  */
-  gimp_image_undo_push_image_precision (image, NULL);
+  picman_image_undo_push_image_precision (image, NULL);
 
   /*  Set the new precision  */
   g_object_set (image, "precision", precision, NULL);
@@ -103,57 +103,57 @@ gimp_image_convert_precision (GimpImage     *image,
        list;
        list = g_list_next (list), nth_drawable++)
     {
-      GimpDrawable *drawable = list->data;
+      PicmanDrawable *drawable = list->data;
       gint          dither_type;
 
-      if (gimp_item_is_text_layer (GIMP_ITEM (drawable)))
+      if (picman_item_is_text_layer (PICMAN_ITEM (drawable)))
         dither_type = text_layer_dither_type;
       else
         dither_type = layer_dither_type;
 
-      gimp_drawable_convert_type (drawable, image,
-                                  gimp_drawable_get_base_type (drawable),
+      picman_drawable_convert_type (drawable, image,
+                                  picman_drawable_get_base_type (drawable),
                                   precision,
                                   dither_type,
                                   mask_dither_type,
                                   TRUE);
 
       if (progress)
-        gimp_progress_set_value (progress,
+        picman_progress_set_value (progress,
                                  (gdouble) nth_drawable / (gdouble) n_drawables);
     }
   g_list_free (all_drawables);
 
   /*  convert the selection mask  */
   {
-    GimpChannel *mask = gimp_image_get_mask (image);
+    PicmanChannel *mask = picman_image_get_mask (image);
     GeglBuffer  *buffer;
 
-    gimp_image_undo_push_mask_precision (image, NULL, mask);
+    picman_image_undo_push_mask_precision (image, NULL, mask);
 
     buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
-                                              gimp_image_get_width  (image),
-                                              gimp_image_get_height (image)),
-                              gimp_image_get_mask_format (image));
+                                              picman_image_get_width  (image),
+                                              picman_image_get_height (image)),
+                              picman_image_get_mask_format (image));
 
-    gegl_buffer_copy (gimp_drawable_get_buffer (GIMP_DRAWABLE (mask)), NULL,
+    gegl_buffer_copy (picman_drawable_get_buffer (PICMAN_DRAWABLE (mask)), NULL,
                       buffer, NULL);
 
-    gimp_drawable_set_buffer (GIMP_DRAWABLE (mask), FALSE, NULL, buffer);
+    picman_drawable_set_buffer (PICMAN_DRAWABLE (mask), FALSE, NULL, buffer);
     g_object_unref (buffer);
 
     nth_drawable++;
 
     if (progress)
-      gimp_progress_set_value (progress,
+      picman_progress_set_value (progress,
                                (gdouble) nth_drawable / (gdouble) n_drawables);
   }
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 
-  gimp_image_precision_changed (image);
+  picman_image_precision_changed (image);
   g_object_thaw_notify (G_OBJECT (image));
 
   if (progress)
-    gimp_progress_end (progress);
+    picman_progress_end (progress);
 }

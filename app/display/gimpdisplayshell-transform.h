@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,47 +15,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DISPLAY_SHELL_TRANSFORM_H__
-#define __GIMP_DISPLAY_SHELL_TRANSFORM_H__
+#ifndef __PICMAN_DISPLAY_SHELL_TRANSFORM_H__
+#define __PICMAN_DISPLAY_SHELL_TRANSFORM_H__
 
 
 /*  zoom: functions to transform from image space to unrotated display
  *  space and back, taking into account scroll offset and scale
  */
 
-void  gimp_display_shell_zoom_coords          (const GimpDisplayShell *shell,
-                                               const GimpCoords       *image_coords,
-                                               GimpCoords             *display_coords);
-void  gimp_display_shell_unzoom_coords        (const GimpDisplayShell *shell,
-                                               const GimpCoords       *display_coords,
-                                               GimpCoords             *image_coords);
+void  picman_display_shell_zoom_coords          (const PicmanDisplayShell *shell,
+                                               const PicmanCoords       *image_coords,
+                                               PicmanCoords             *display_coords);
+void  picman_display_shell_unzoom_coords        (const PicmanDisplayShell *shell,
+                                               const PicmanCoords       *display_coords,
+                                               PicmanCoords             *image_coords);
 
-void  gimp_display_shell_zoom_xy              (const GimpDisplayShell *shell,
+void  picman_display_shell_zoom_xy              (const PicmanDisplayShell *shell,
                                                gdouble                 x,
                                                gdouble                 y,
                                                gint                   *nx,
                                                gint                   *ny);
-void  gimp_display_shell_unzoom_xy            (const GimpDisplayShell *shell,
+void  picman_display_shell_unzoom_xy            (const PicmanDisplayShell *shell,
                                                gint                    x,
                                                gint                    y,
                                                gint                   *nx,
                                                gint                   *ny,
                                                gboolean                round);
 
-void  gimp_display_shell_zoom_xy_f            (const GimpDisplayShell *shell,
+void  picman_display_shell_zoom_xy_f            (const PicmanDisplayShell *shell,
                                                gdouble                 x,
                                                gdouble                 y,
                                                gdouble                *nx,
                                                gdouble                *ny);
-void  gimp_display_shell_unzoom_xy_f          (const GimpDisplayShell *shell,
+void  picman_display_shell_unzoom_xy_f          (const PicmanDisplayShell *shell,
                                                gdouble                 x,
                                                gdouble                 y,
                                                gdouble                *nx,
                                                gdouble                *ny);
 
-void  gimp_display_shell_zoom_segments        (const GimpDisplayShell *shell,
-                                               const GimpBoundSeg     *src_segs,
-                                               GimpSegment            *dest_segs,
+void  picman_display_shell_zoom_segments        (const PicmanDisplayShell *shell,
+                                               const PicmanBoundSeg     *src_segs,
+                                               PicmanSegment            *dest_segs,
                                                gint                    n_segs,
                                                gdouble                 offset_x,
                                                gdouble                 offset_y);
@@ -65,36 +65,36 @@ void  gimp_display_shell_zoom_segments        (const GimpDisplayShell *shell,
  *  space to rotated display space and back
  */
 
-void  gimp_display_shell_rotate_coords        (const GimpDisplayShell *shell,
-                                               const GimpCoords       *image_coords,
-                                               GimpCoords             *display_coords);
-void  gimp_display_shell_unrotate_coords      (const GimpDisplayShell *shell,
-                                               const GimpCoords       *display_coords,
-                                               GimpCoords             *image_coords);
+void  picman_display_shell_rotate_coords        (const PicmanDisplayShell *shell,
+                                               const PicmanCoords       *image_coords,
+                                               PicmanCoords             *display_coords);
+void  picman_display_shell_unrotate_coords      (const PicmanDisplayShell *shell,
+                                               const PicmanCoords       *display_coords,
+                                               PicmanCoords             *image_coords);
 
-void  gimp_display_shell_rotate_xy            (const GimpDisplayShell *shell,
+void  picman_display_shell_rotate_xy            (const PicmanDisplayShell *shell,
                                                gdouble                 x,
                                                gdouble                 y,
                                                gint                   *nx,
                                                gint                   *ny);
-void  gimp_display_shell_unrotate_xy          (const GimpDisplayShell *shell,
+void  picman_display_shell_unrotate_xy          (const PicmanDisplayShell *shell,
                                                gint                    x,
                                                gint                    y,
                                                gint                   *nx,
                                                gint                   *ny);
 
-void  gimp_display_shell_rotate_xy_f          (const GimpDisplayShell *shell,
+void  picman_display_shell_rotate_xy_f          (const PicmanDisplayShell *shell,
                                                gdouble                 x,
                                                gdouble                 y,
                                                gdouble                *nx,
                                                gdouble                *ny);
-void  gimp_display_shell_unrotate_xy_f        (const GimpDisplayShell *shell,
+void  picman_display_shell_unrotate_xy_f        (const PicmanDisplayShell *shell,
                                                gdouble                 x,
                                                gdouble                 y,
                                                gdouble                *nx,
                                                gdouble                *ny);
 
-void  gimp_display_shell_rotate_bounds        (GimpDisplayShell       *shell,
+void  picman_display_shell_rotate_bounds        (PicmanDisplayShell       *shell,
                                                gdouble                 x1,
                                                gdouble                 y1,
                                                gdouble                 x2,
@@ -103,7 +103,7 @@ void  gimp_display_shell_rotate_bounds        (GimpDisplayShell       *shell,
                                                gdouble                *ny1,
                                                gdouble                *nx2,
                                                gdouble                *ny2);
-void  gimp_display_shell_unrotate_bounds      (GimpDisplayShell       *shell,
+void  picman_display_shell_unrotate_bounds      (PicmanDisplayShell       *shell,
                                                gdouble                 x1,
                                                gdouble                 y1,
                                                gdouble                 x2,
@@ -118,37 +118,37 @@ void  gimp_display_shell_unrotate_bounds      (GimpDisplayShell       *shell,
  *  space and back, taking into account scroll offset, scale, and rotation
  */
 
-void  gimp_display_shell_transform_coords     (const GimpDisplayShell *shell,
-                                               const GimpCoords       *image_coords,
-                                               GimpCoords             *display_coords);
-void  gimp_display_shell_untransform_coords   (const GimpDisplayShell *shell,
-                                               const GimpCoords       *display_coords,
-                                               GimpCoords             *image_coords);
+void  picman_display_shell_transform_coords     (const PicmanDisplayShell *shell,
+                                               const PicmanCoords       *image_coords,
+                                               PicmanCoords             *display_coords);
+void  picman_display_shell_untransform_coords   (const PicmanDisplayShell *shell,
+                                               const PicmanCoords       *display_coords,
+                                               PicmanCoords             *image_coords);
 
-void  gimp_display_shell_transform_xy         (const GimpDisplayShell *shell,
+void  picman_display_shell_transform_xy         (const PicmanDisplayShell *shell,
                                                gdouble                 x,
                                                gdouble                 y,
                                                gint                   *nx,
                                                gint                   *ny);
-void  gimp_display_shell_untransform_xy       (const GimpDisplayShell *shell,
+void  picman_display_shell_untransform_xy       (const PicmanDisplayShell *shell,
                                                gint                    x,
                                                gint                    y,
                                                gint                   *nx,
                                                gint                   *ny,
                                                gboolean                round);
 
-void  gimp_display_shell_transform_xy_f       (const GimpDisplayShell *shell,
+void  picman_display_shell_transform_xy_f       (const PicmanDisplayShell *shell,
                                                gdouble                 x,
                                                gdouble                 y,
                                                gdouble                *nx,
                                                gdouble                *ny);
-void  gimp_display_shell_untransform_xy_f     (const GimpDisplayShell *shell,
+void  picman_display_shell_untransform_xy_f     (const PicmanDisplayShell *shell,
                                                gdouble                 x,
                                                gdouble                 y,
                                                gdouble                *nx,
                                                gdouble                *ny);
 
-void  gimp_display_shell_transform_bounds     (const GimpDisplayShell *shell,
+void  picman_display_shell_transform_bounds     (const PicmanDisplayShell *shell,
                                                gdouble                 x1,
                                                gdouble                 y1,
                                                gdouble                 x2,
@@ -157,7 +157,7 @@ void  gimp_display_shell_transform_bounds     (const GimpDisplayShell *shell,
                                                gdouble                *ny1,
                                                gdouble                *nx2,
                                                gdouble                *ny2);
-void  gimp_display_shell_untransform_bounds   (const GimpDisplayShell *shell,
+void  picman_display_shell_untransform_bounds   (const PicmanDisplayShell *shell,
                                                gdouble                 x1,
                                                gdouble                 y1,
                                                gdouble                 x2,
@@ -167,11 +167,11 @@ void  gimp_display_shell_untransform_bounds   (const GimpDisplayShell *shell,
                                                gdouble                *nx2,
                                                gdouble                *ny2);
 
-void  gimp_display_shell_untransform_viewport (const GimpDisplayShell *shell,
+void  picman_display_shell_untransform_viewport (const PicmanDisplayShell *shell,
                                                gint                   *x,
                                                gint                   *y,
                                                gint                   *width,
                                                gint                   *height);
 
 
-#endif /* __GIMP_DISPLAY_SHELL_TRANSFORM_H__ */
+#endif /* __PICMAN_DISPLAY_SHELL_TRANSFORM_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,19 +19,19 @@
 
 #include <gegl.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimptoolinfo.h"
-#include "gimptooloptions.h"
-#include "gimptoolpreset.h"
-#include "gimptoolpreset-load.h"
-#include "gimptoolpreset-save.h"
+#include "picman.h"
+#include "picmantoolinfo.h"
+#include "picmantooloptions.h"
+#include "picmantoolpreset.h"
+#include "picmantoolpreset-load.h"
+#include "picmantoolpreset-save.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 #define DEFAULT_USE_FG_BG    FALSE
@@ -46,7 +46,7 @@ enum
 {
   PROP_0,
   PROP_NAME,
-  PROP_GIMP,
+  PROP_PICMAN,
   PROP_TOOL_OPTIONS,
   PROP_USE_FG_BG,
   PROP_USE_BRUSH,
@@ -58,162 +58,162 @@ enum
 };
 
 
-static void          gimp_tool_preset_config_iface_init    (GimpConfigInterface *iface);
+static void          picman_tool_preset_config_iface_init    (PicmanConfigInterface *iface);
 
-static void          gimp_tool_preset_constructed          (GObject          *object);
-static void          gimp_tool_preset_finalize             (GObject          *object);
-static void          gimp_tool_preset_set_property         (GObject          *object,
+static void          picman_tool_preset_constructed          (GObject          *object);
+static void          picman_tool_preset_finalize             (GObject          *object);
+static void          picman_tool_preset_set_property         (GObject          *object,
                                                             guint             property_id,
                                                             const GValue     *value,
                                                             GParamSpec       *pspec);
-static void          gimp_tool_preset_get_property         (GObject          *object,
+static void          picman_tool_preset_get_property         (GObject          *object,
                                                             guint             property_id,
                                                             GValue           *value,
                                                             GParamSpec       *pspec);
 static void
-             gimp_tool_preset_dispatch_properties_changed  (GObject          *object,
+             picman_tool_preset_dispatch_properties_changed  (GObject          *object,
                                                             guint             n_pspecs,
                                                             GParamSpec      **pspecs);
 
-static const gchar * gimp_tool_preset_get_extension        (GimpData         *data);
+static const gchar * picman_tool_preset_get_extension        (PicmanData         *data);
 
-static gboolean      gimp_tool_preset_deserialize_property (GimpConfig       *config,
+static gboolean      picman_tool_preset_deserialize_property (PicmanConfig       *config,
                                                             guint             property_id,
                                                             GValue           *value,
                                                             GParamSpec       *pspec,
                                                             GScanner         *scanner,
                                                             GTokenType       *expected);
 
-static void          gimp_tool_preset_set_options          (GimpToolPreset   *preset,
-                                                            GimpToolOptions  *options);
-static void          gimp_tool_preset_options_notify       (GObject          *tool_options,
+static void          picman_tool_preset_set_options          (PicmanToolPreset   *preset,
+                                                            PicmanToolOptions  *options);
+static void          picman_tool_preset_options_notify       (GObject          *tool_options,
                                                             const GParamSpec *pspec,
-                                                            GimpToolPreset   *preset);
+                                                            PicmanToolPreset   *preset);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpToolPreset, gimp_tool_preset, GIMP_TYPE_DATA,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG,
-                                                gimp_tool_preset_config_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanToolPreset, picman_tool_preset, PICMAN_TYPE_DATA,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG,
+                                                picman_tool_preset_config_iface_init))
 
-#define parent_class gimp_tool_preset_parent_class
+#define parent_class picman_tool_preset_parent_class
 
 
 static void
-gimp_tool_preset_class_init (GimpToolPresetClass *klass)
+picman_tool_preset_class_init (PicmanToolPresetClass *klass)
 {
   GObjectClass  *object_class = G_OBJECT_CLASS (klass);
-  GimpDataClass *data_class   = GIMP_DATA_CLASS (klass);
+  PicmanDataClass *data_class   = PICMAN_DATA_CLASS (klass);
 
-  object_class->constructed                 = gimp_tool_preset_constructed;
-  object_class->finalize                    = gimp_tool_preset_finalize;
-  object_class->set_property                = gimp_tool_preset_set_property;
-  object_class->get_property                = gimp_tool_preset_get_property;
-  object_class->dispatch_properties_changed = gimp_tool_preset_dispatch_properties_changed;
+  object_class->constructed                 = picman_tool_preset_constructed;
+  object_class->finalize                    = picman_tool_preset_finalize;
+  object_class->set_property                = picman_tool_preset_set_property;
+  object_class->get_property                = picman_tool_preset_get_property;
+  object_class->dispatch_properties_changed = picman_tool_preset_dispatch_properties_changed;
 
-  data_class->save                          = gimp_tool_preset_save;
-  data_class->get_extension                 = gimp_tool_preset_get_extension;
+  data_class->save                          = picman_tool_preset_save;
+  data_class->get_extension                 = picman_tool_preset_get_extension;
 
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_NAME,
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_NAME,
                                    "name", NULL,
                                    "Unnamed",
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp",
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_TOOL_OPTIONS,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_TOOL_OPTIONS,
                                    "tool-options", NULL,
-                                   GIMP_TYPE_TOOL_OPTIONS,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_TYPE_TOOL_OPTIONS,
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_FG_BG,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_FG_BG,
                                     "use-fg-bg", NULL,
                                     DEFAULT_USE_FG_BG,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_BRUSH,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_BRUSH,
                                     "use-brush", NULL,
                                     DEFAULT_USE_BRUSH,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_DYNAMICS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_DYNAMICS,
                                     "use-dynamics", NULL,
                                     DEFAULT_USE_DYNAMICS,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_PATTERN,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_PATTERN,
                                     "use-pattern", NULL,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_PALETTE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_PALETTE,
                                     "use-palette", NULL,
                                     DEFAULT_USE_PALETTE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_GRADIENT,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_GRADIENT,
                                     "use-gradient", NULL,
                                     DEFAULT_USE_GRADIENT,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_FONT,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_FONT,
                                     "use-font", NULL,
                                     DEFAULT_USE_FONT,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_tool_preset_config_iface_init (GimpConfigInterface *iface)
+picman_tool_preset_config_iface_init (PicmanConfigInterface *iface)
 {
-  iface->deserialize_property = gimp_tool_preset_deserialize_property;
+  iface->deserialize_property = picman_tool_preset_deserialize_property;
 }
 
 static void
-gimp_tool_preset_init (GimpToolPreset *tool_preset)
+picman_tool_preset_init (PicmanToolPreset *tool_preset)
 {
   tool_preset->tool_options = NULL;
 }
 
 static void
-gimp_tool_preset_constructed (GObject *object)
+picman_tool_preset_constructed (GObject *object)
 {
-  GimpToolPreset *preset = GIMP_TOOL_PRESET (object);
+  PicmanToolPreset *preset = PICMAN_TOOL_PRESET (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_GIMP (preset->gimp));
+  g_assert (PICMAN_IS_PICMAN (preset->picman));
 }
 
 static void
-gimp_tool_preset_finalize (GObject *object)
+picman_tool_preset_finalize (GObject *object)
 {
-  GimpToolPreset *tool_preset = GIMP_TOOL_PRESET (object);
+  PicmanToolPreset *tool_preset = PICMAN_TOOL_PRESET (object);
 
-  gimp_tool_preset_set_options (tool_preset, NULL);
+  picman_tool_preset_set_options (tool_preset, NULL);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
-gimp_tool_preset_set_property (GObject      *object,
+picman_tool_preset_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpToolPreset *tool_preset = GIMP_TOOL_PRESET (object);
+  PicmanToolPreset *tool_preset = PICMAN_TOOL_PRESET (object);
 
   switch (property_id)
     {
     case PROP_NAME:
-      gimp_object_set_name (GIMP_OBJECT (tool_preset),
+      picman_object_set_name (PICMAN_OBJECT (tool_preset),
                             g_value_get_string (value));
       break;
 
-    case PROP_GIMP:
-      tool_preset->gimp = g_value_get_object (value); /* don't ref */
+    case PROP_PICMAN:
+      tool_preset->picman = g_value_get_object (value); /* don't ref */
       break;
 
     case PROP_TOOL_OPTIONS:
-      gimp_tool_preset_set_options (tool_preset,
-                                    GIMP_TOOL_OPTIONS (g_value_get_object (value)));
+      picman_tool_preset_set_options (tool_preset,
+                                    PICMAN_TOOL_OPTIONS (g_value_get_object (value)));
       break;
 
     case PROP_USE_FG_BG:
@@ -245,21 +245,21 @@ gimp_tool_preset_set_property (GObject      *object,
 }
 
 static void
-gimp_tool_preset_get_property (GObject    *object,
+picman_tool_preset_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpToolPreset *tool_preset = GIMP_TOOL_PRESET (object);
+  PicmanToolPreset *tool_preset = PICMAN_TOOL_PRESET (object);
 
   switch (property_id)
     {
     case PROP_NAME:
-      g_value_set_string (value, gimp_object_get_name (tool_preset));
+      g_value_set_string (value, picman_object_get_name (tool_preset));
       break;
 
-    case PROP_GIMP:
-      g_value_set_object (value, tool_preset->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, tool_preset->picman);
       break;
 
     case PROP_TOOL_OPTIONS:
@@ -295,7 +295,7 @@ gimp_tool_preset_get_property (GObject    *object,
 }
 
 static void
-gimp_tool_preset_dispatch_properties_changed (GObject     *object,
+picman_tool_preset_dispatch_properties_changed (GObject     *object,
                                               guint        n_pspecs,
                                               GParamSpec **pspecs)
 {
@@ -306,29 +306,29 @@ gimp_tool_preset_dispatch_properties_changed (GObject     *object,
 
   for (i = 0; i < n_pspecs; i++)
     {
-      if (pspecs[i]->flags & GIMP_CONFIG_PARAM_SERIALIZE)
+      if (pspecs[i]->flags & PICMAN_CONFIG_PARAM_SERIALIZE)
         {
-          gimp_data_dirty (GIMP_DATA (object));
+          picman_data_dirty (PICMAN_DATA (object));
           break;
         }
     }
 }
 
 static const gchar *
-gimp_tool_preset_get_extension (GimpData *data)
+picman_tool_preset_get_extension (PicmanData *data)
 {
-  return GIMP_TOOL_PRESET_FILE_EXTENSION;
+  return PICMAN_TOOL_PRESET_FILE_EXTENSION;
 }
 
 static gboolean
-gimp_tool_preset_deserialize_property (GimpConfig *config,
+picman_tool_preset_deserialize_property (PicmanConfig *config,
                                        guint       property_id,
                                        GValue     *value,
                                        GParamSpec *pspec,
                                        GScanner   *scanner,
                                        GTokenType *expected)
 {
-  GimpToolPreset *tool_preset = GIMP_TOOL_PRESET (config);
+  PicmanToolPreset *tool_preset = PICMAN_TOOL_PRESET (config);
 
   switch (property_id)
     {
@@ -337,9 +337,9 @@ gimp_tool_preset_deserialize_property (GimpConfig *config,
         GObject             *options;
         gchar               *type_name;
         GType                type;
-        GimpContextPropMask  serialize_props;
+        PicmanContextPropMask  serialize_props;
 
-        if (! gimp_scanner_parse_string (scanner, &type_name))
+        if (! picman_scanner_parse_string (scanner, &type_name))
           {
             *expected = G_TOKEN_STRING;
             break;
@@ -357,10 +357,10 @@ gimp_tool_preset_deserialize_property (GimpConfig *config,
             break;
           }
 
-        if (! g_type_is_a (type, GIMP_TYPE_TOOL_OPTIONS))
+        if (! g_type_is_a (type, PICMAN_TYPE_TOOL_OPTIONS))
           {
             g_scanner_error (scanner,
-                             "'%s' is not a subclass of GimpToolOptions",
+                             "'%s' is not a subclass of PicmanToolOptions",
                              type_name);
             *expected = G_TOKEN_STRING;
             g_free (type_name);
@@ -370,10 +370,10 @@ gimp_tool_preset_deserialize_property (GimpConfig *config,
         g_free (type_name);
 
         options = g_object_new (type,
-                                "gimp", tool_preset->gimp,
+                                "picman", tool_preset->picman,
                                 NULL);
 
-        if (! GIMP_CONFIG_GET_INTERFACE (options)->deserialize (GIMP_CONFIG (options),
+        if (! PICMAN_CONFIG_GET_INTERFACE (options)->deserialize (PICMAN_CONFIG (options),
                                                                 scanner, 1,
                                                                 NULL))
           {
@@ -382,17 +382,17 @@ gimp_tool_preset_deserialize_property (GimpConfig *config,
           }
 
         /* we need both tool and tool-info on the options */
-        if (gimp_context_get_tool (GIMP_CONTEXT (options)))
+        if (picman_context_get_tool (PICMAN_CONTEXT (options)))
           {
             g_object_set (options,
                           "tool-info",
-                          gimp_context_get_tool (GIMP_CONTEXT (options)),
+                          picman_context_get_tool (PICMAN_CONTEXT (options)),
                           NULL);
           }
-        else if (GIMP_TOOL_OPTIONS (options)->tool_info)
+        else if (PICMAN_TOOL_OPTIONS (options)->tool_info)
           {
             g_object_set (options,
-                          "tool", GIMP_TOOL_OPTIONS (options)->tool_info,
+                          "tool", PICMAN_TOOL_OPTIONS (options)->tool_info,
                           NULL);
           }
         else
@@ -407,11 +407,11 @@ gimp_tool_preset_deserialize_property (GimpConfig *config,
           }
 
         serialize_props =
-          gimp_context_get_serialize_properties (GIMP_CONTEXT (options));
+          picman_context_get_serialize_properties (PICMAN_CONTEXT (options));
 
-        gimp_context_set_serialize_properties (GIMP_CONTEXT (options),
+        picman_context_set_serialize_properties (PICMAN_CONTEXT (options),
                                                serialize_props |
-                                               GIMP_CONTEXT_TOOL_MASK);
+                                               PICMAN_CONTEXT_TOOL_MASK);
 
         g_value_take_object (value, options);
       }
@@ -425,13 +425,13 @@ gimp_tool_preset_deserialize_property (GimpConfig *config,
 }
 
 static void
-gimp_tool_preset_set_options (GimpToolPreset  *preset,
-                              GimpToolOptions *options)
+picman_tool_preset_set_options (PicmanToolPreset  *preset,
+                              PicmanToolOptions *options)
 {
   if (preset->tool_options)
     {
       g_signal_handlers_disconnect_by_func (preset->tool_options,
-                                            gimp_tool_preset_options_notify,
+                                            picman_tool_preset_options_notify,
                                             preset);
 
       g_object_unref (preset->tool_options);
@@ -440,41 +440,41 @@ gimp_tool_preset_set_options (GimpToolPreset  *preset,
 
   if (options)
     {
-      GimpContextPropMask serialize_props;
+      PicmanContextPropMask serialize_props;
 
       preset->tool_options =
-        GIMP_TOOL_OPTIONS (gimp_config_duplicate (GIMP_CONFIG (options)));
+        PICMAN_TOOL_OPTIONS (picman_config_duplicate (PICMAN_CONFIG (options)));
 
       serialize_props =
-        gimp_context_get_serialize_properties (GIMP_CONTEXT (preset->tool_options));
+        picman_context_get_serialize_properties (PICMAN_CONTEXT (preset->tool_options));
 
-      gimp_context_set_serialize_properties (GIMP_CONTEXT (preset->tool_options),
+      picman_context_set_serialize_properties (PICMAN_CONTEXT (preset->tool_options),
                                              serialize_props |
-                                             GIMP_CONTEXT_TOOL_MASK);
+                                             PICMAN_CONTEXT_TOOL_MASK);
 
-      if (! (serialize_props & GIMP_CONTEXT_FOREGROUND_MASK))
+      if (! (serialize_props & PICMAN_CONTEXT_FOREGROUND_MASK))
         g_object_set (preset, "use-fg-bg", FALSE, NULL);
 
-      if (! (serialize_props & GIMP_CONTEXT_BRUSH_MASK))
+      if (! (serialize_props & PICMAN_CONTEXT_BRUSH_MASK))
         g_object_set (preset, "use-brush", FALSE, NULL);
 
-      if (! (serialize_props & GIMP_CONTEXT_DYNAMICS_MASK))
+      if (! (serialize_props & PICMAN_CONTEXT_DYNAMICS_MASK))
         g_object_set (preset, "use-dynamics", FALSE, NULL);
 
-      if (! (serialize_props & GIMP_CONTEXT_GRADIENT_MASK))
+      if (! (serialize_props & PICMAN_CONTEXT_GRADIENT_MASK))
         g_object_set (preset, "use-gradient", FALSE, NULL);
 
-      if (! (serialize_props & GIMP_CONTEXT_PATTERN_MASK))
+      if (! (serialize_props & PICMAN_CONTEXT_PATTERN_MASK))
         g_object_set (preset, "use-pattern", FALSE, NULL);
 
-      if (! (serialize_props & GIMP_CONTEXT_PALETTE_MASK))
+      if (! (serialize_props & PICMAN_CONTEXT_PALETTE_MASK))
         g_object_set (preset, "use-palette", FALSE, NULL);
 
-      if (! (serialize_props & GIMP_CONTEXT_FONT_MASK))
+      if (! (serialize_props & PICMAN_CONTEXT_FONT_MASK))
         g_object_set (preset, "use-font", FALSE, NULL);
 
       g_signal_connect (preset->tool_options, "notify",
-                        G_CALLBACK (gimp_tool_preset_options_notify),
+                        G_CALLBACK (picman_tool_preset_options_notify),
                         preset);
     }
 
@@ -482,9 +482,9 @@ gimp_tool_preset_set_options (GimpToolPreset  *preset,
 }
 
 static void
-gimp_tool_preset_options_notify (GObject          *tool_options,
+picman_tool_preset_options_notify (GObject          *tool_options,
                                  const GParamSpec *pspec,
-                                 GimpToolPreset   *preset)
+                                 PicmanToolPreset   *preset)
 {
   g_object_notify (G_OBJECT (preset), "tool-options");
 }
@@ -492,63 +492,63 @@ gimp_tool_preset_options_notify (GObject          *tool_options,
 
 /*  public functions  */
 
-GimpData *
-gimp_tool_preset_new (GimpContext *context,
+PicmanData *
+picman_tool_preset_new (PicmanContext *context,
                       const gchar *unused)
 {
-  GimpToolInfo *tool_info;
+  PicmanToolInfo *tool_info;
   const gchar  *stock_id;
 
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_CONTEXT (context), NULL);
 
-  tool_info = gimp_context_get_tool (context);
+  tool_info = picman_context_get_tool (context);
 
   g_return_val_if_fail (tool_info != NULL, NULL);
 
-  stock_id = gimp_viewable_get_stock_id (GIMP_VIEWABLE (tool_info));
+  stock_id = picman_viewable_get_stock_id (PICMAN_VIEWABLE (tool_info));
 
-  return g_object_new (GIMP_TYPE_TOOL_PRESET,
+  return g_object_new (PICMAN_TYPE_TOOL_PRESET,
                        "name",         tool_info->blurb,
                        "stock-id",     stock_id,
-                       "gimp",         context->gimp,
+                       "picman",         context->picman,
                        "tool-options", tool_info->tool_options,
                        NULL);
 }
 
-GimpContextPropMask
-gimp_tool_preset_get_prop_mask (GimpToolPreset *preset)
+PicmanContextPropMask
+picman_tool_preset_get_prop_mask (PicmanToolPreset *preset)
 {
-  GimpContextPropMask serialize_props;
-  GimpContextPropMask use_props = 0;
+  PicmanContextPropMask serialize_props;
+  PicmanContextPropMask use_props = 0;
 
-  g_return_val_if_fail (GIMP_IS_TOOL_PRESET (preset), 0);
+  g_return_val_if_fail (PICMAN_IS_TOOL_PRESET (preset), 0);
 
   serialize_props =
-    gimp_context_get_serialize_properties (GIMP_CONTEXT (preset->tool_options));
+    picman_context_get_serialize_properties (PICMAN_CONTEXT (preset->tool_options));
 
   if (preset->use_fg_bg)
     {
-      use_props |= (GIMP_CONTEXT_FOREGROUND_MASK & serialize_props);
-      use_props |= (GIMP_CONTEXT_BACKGROUND_MASK & serialize_props);
+      use_props |= (PICMAN_CONTEXT_FOREGROUND_MASK & serialize_props);
+      use_props |= (PICMAN_CONTEXT_BACKGROUND_MASK & serialize_props);
     }
 
   if (preset->use_brush)
-    use_props |= (GIMP_CONTEXT_BRUSH_MASK & serialize_props);
+    use_props |= (PICMAN_CONTEXT_BRUSH_MASK & serialize_props);
 
   if (preset->use_dynamics)
-    use_props |= (GIMP_CONTEXT_DYNAMICS_MASK & serialize_props);
+    use_props |= (PICMAN_CONTEXT_DYNAMICS_MASK & serialize_props);
 
   if (preset->use_pattern)
-    use_props |= (GIMP_CONTEXT_PATTERN_MASK & serialize_props);
+    use_props |= (PICMAN_CONTEXT_PATTERN_MASK & serialize_props);
 
   if (preset->use_palette)
-    use_props |= (GIMP_CONTEXT_PALETTE_MASK & serialize_props);
+    use_props |= (PICMAN_CONTEXT_PALETTE_MASK & serialize_props);
 
   if (preset->use_gradient)
-    use_props |= (GIMP_CONTEXT_GRADIENT_MASK & serialize_props);
+    use_props |= (PICMAN_CONTEXT_GRADIENT_MASK & serialize_props);
 
   if (preset->use_font)
-    use_props |= (GIMP_CONTEXT_FONT_MASK & serialize_props);
+    use_props |= (PICMAN_CONTEXT_FONT_MASK & serialize_props);
 
   return use_props;
 }

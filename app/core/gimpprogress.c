@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpprogress.c
- * Copyright (C) 2004  Michael Natterer <mitch@gimp.org>
+ * picmanprogress.c
+ * Copyright (C) 2004  Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimpmarshal.h"
-#include "gimpprogress.h"
+#include "picman.h"
+#include "picmanmarshal.h"
+#include "picmanprogress.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -42,14 +42,14 @@ enum
 
 /*  local function prototypes  */
 
-static void   gimp_progress_iface_base_init (GimpProgressInterface *progress_iface);
+static void   picman_progress_iface_base_init (PicmanProgressInterface *progress_iface);
 
 
 static guint progress_signals[LAST_SIGNAL] = { 0 };
 
 
 GType
-gimp_progress_interface_get_type (void)
+picman_progress_interface_get_type (void)
 {
   static GType progress_iface_type = 0;
 
@@ -57,13 +57,13 @@ gimp_progress_interface_get_type (void)
     {
       const GTypeInfo progress_iface_info =
       {
-        sizeof (GimpProgressInterface),
-        (GBaseInitFunc)     gimp_progress_iface_base_init,
+        sizeof (PicmanProgressInterface),
+        (GBaseInitFunc)     picman_progress_iface_base_init,
         (GBaseFinalizeFunc) NULL,
       };
 
       progress_iface_type = g_type_register_static (G_TYPE_INTERFACE,
-                                                    "GimpProgressInterface",
+                                                    "PicmanProgressInterface",
                                                     &progress_iface_info,
                                                     0);
 
@@ -74,7 +74,7 @@ gimp_progress_interface_get_type (void)
 }
 
 static void
-gimp_progress_iface_base_init (GimpProgressInterface *progress_iface)
+picman_progress_iface_base_init (PicmanProgressInterface *progress_iface)
 {
   static gboolean initialized = FALSE;
 
@@ -84,28 +84,28 @@ gimp_progress_iface_base_init (GimpProgressInterface *progress_iface)
         g_signal_new ("cancel",
                       G_TYPE_FROM_INTERFACE (progress_iface),
                       G_SIGNAL_RUN_FIRST,
-                      G_STRUCT_OFFSET (GimpProgressInterface, cancel),
+                      G_STRUCT_OFFSET (PicmanProgressInterface, cancel),
                       NULL, NULL,
-                      gimp_marshal_VOID__VOID,
+                      picman_marshal_VOID__VOID,
                       G_TYPE_NONE, 0);
 
       initialized = TRUE;
     }
 }
 
-GimpProgress *
-gimp_progress_start (GimpProgress *progress,
+PicmanProgress *
+picman_progress_start (PicmanProgress *progress,
                      const gchar  *message,
                      gboolean      cancelable)
 {
-  GimpProgressInterface *progress_iface;
+  PicmanProgressInterface *progress_iface;
 
-  g_return_val_if_fail (GIMP_IS_PROGRESS (progress), NULL);
+  g_return_val_if_fail (PICMAN_IS_PROGRESS (progress), NULL);
 
   if (! message)
     message = _("Please wait");
 
-  progress_iface = GIMP_PROGRESS_GET_INTERFACE (progress);
+  progress_iface = PICMAN_PROGRESS_GET_INTERFACE (progress);
 
   if (progress_iface->start)
     return progress_iface->start (progress, message, cancelable);
@@ -114,26 +114,26 @@ gimp_progress_start (GimpProgress *progress,
 }
 
 void
-gimp_progress_end (GimpProgress *progress)
+picman_progress_end (PicmanProgress *progress)
 {
-  GimpProgressInterface *progress_iface;
+  PicmanProgressInterface *progress_iface;
 
-  g_return_if_fail (GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_PROGRESS (progress));
 
-  progress_iface = GIMP_PROGRESS_GET_INTERFACE (progress);
+  progress_iface = PICMAN_PROGRESS_GET_INTERFACE (progress);
 
   if (progress_iface->end)
     progress_iface->end (progress);
 }
 
 gboolean
-gimp_progress_is_active (GimpProgress *progress)
+picman_progress_is_active (PicmanProgress *progress)
 {
-  GimpProgressInterface *progress_iface;
+  PicmanProgressInterface *progress_iface;
 
-  g_return_val_if_fail (GIMP_IS_PROGRESS (progress), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PROGRESS (progress), FALSE);
 
-  progress_iface = GIMP_PROGRESS_GET_INTERFACE (progress);
+  progress_iface = PICMAN_PROGRESS_GET_INTERFACE (progress);
 
   if (progress_iface->is_active)
     return progress_iface->is_active (progress);
@@ -142,46 +142,46 @@ gimp_progress_is_active (GimpProgress *progress)
 }
 
 void
-gimp_progress_set_text (GimpProgress *progress,
+picman_progress_set_text (PicmanProgress *progress,
                         const gchar  *message)
 {
-  GimpProgressInterface *progress_iface;
+  PicmanProgressInterface *progress_iface;
 
-  g_return_if_fail (GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_PROGRESS (progress));
 
   if (! message || ! strlen (message))
     message = _("Please wait");
 
-  progress_iface = GIMP_PROGRESS_GET_INTERFACE (progress);
+  progress_iface = PICMAN_PROGRESS_GET_INTERFACE (progress);
 
   if (progress_iface->set_text)
     progress_iface->set_text (progress, message);
 }
 
 void
-gimp_progress_set_value (GimpProgress *progress,
+picman_progress_set_value (PicmanProgress *progress,
                          gdouble       percentage)
 {
-  GimpProgressInterface *progress_iface;
+  PicmanProgressInterface *progress_iface;
 
-  g_return_if_fail (GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_PROGRESS (progress));
 
   percentage = CLAMP (percentage, 0.0, 1.0);
 
-  progress_iface = GIMP_PROGRESS_GET_INTERFACE (progress);
+  progress_iface = PICMAN_PROGRESS_GET_INTERFACE (progress);
 
   if (progress_iface->set_value)
     progress_iface->set_value (progress, percentage);
 }
 
 gdouble
-gimp_progress_get_value (GimpProgress *progress)
+picman_progress_get_value (PicmanProgress *progress)
 {
-  GimpProgressInterface *progress_iface;
+  PicmanProgressInterface *progress_iface;
 
-  g_return_val_if_fail (GIMP_IS_PROGRESS (progress), 0.0);
+  g_return_val_if_fail (PICMAN_IS_PROGRESS (progress), 0.0);
 
-  progress_iface = GIMP_PROGRESS_GET_INTERFACE (progress);
+  progress_iface = PICMAN_PROGRESS_GET_INTERFACE (progress);
 
   if (progress_iface->get_value)
     return progress_iface->get_value (progress);
@@ -190,26 +190,26 @@ gimp_progress_get_value (GimpProgress *progress)
 }
 
 void
-gimp_progress_pulse (GimpProgress *progress)
+picman_progress_pulse (PicmanProgress *progress)
 {
-  GimpProgressInterface *progress_iface;
+  PicmanProgressInterface *progress_iface;
 
-  g_return_if_fail (GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_PROGRESS (progress));
 
-  progress_iface = GIMP_PROGRESS_GET_INTERFACE (progress);
+  progress_iface = PICMAN_PROGRESS_GET_INTERFACE (progress);
 
   if (progress_iface->pulse)
     progress_iface->pulse (progress);
 }
 
 guint32
-gimp_progress_get_window_id (GimpProgress *progress)
+picman_progress_get_window_id (PicmanProgress *progress)
 {
-  GimpProgressInterface *progress_iface;
+  PicmanProgressInterface *progress_iface;
 
-  g_return_val_if_fail (GIMP_IS_PROGRESS (progress), 0);
+  g_return_val_if_fail (PICMAN_IS_PROGRESS (progress), 0);
 
-  progress_iface = GIMP_PROGRESS_GET_INTERFACE (progress);
+  progress_iface = PICMAN_PROGRESS_GET_INTERFACE (progress);
 
   if (progress_iface->get_window_id)
     return progress_iface->get_window_id (progress);
@@ -218,42 +218,42 @@ gimp_progress_get_window_id (GimpProgress *progress)
 }
 
 gboolean
-gimp_progress_message (GimpProgress        *progress,
-                       Gimp                *gimp,
-                       GimpMessageSeverity  severity,
+picman_progress_message (PicmanProgress        *progress,
+                       Picman                *picman,
+                       PicmanMessageSeverity  severity,
                        const gchar         *domain,
                        const gchar         *message)
 {
-  GimpProgressInterface *progress_iface;
+  PicmanProgressInterface *progress_iface;
 
-  g_return_val_if_fail (GIMP_IS_PROGRESS (progress), FALSE);
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PROGRESS (progress), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
   g_return_val_if_fail (domain != NULL, FALSE);
   g_return_val_if_fail (message != NULL, FALSE);
 
-  progress_iface = GIMP_PROGRESS_GET_INTERFACE (progress);
+  progress_iface = PICMAN_PROGRESS_GET_INTERFACE (progress);
 
   if (progress_iface->message)
-    return progress_iface->message (progress, gimp, severity, domain, message);
+    return progress_iface->message (progress, picman, severity, domain, message);
 
   return FALSE;
 }
 
 void
-gimp_progress_cancel (GimpProgress *progress)
+picman_progress_cancel (PicmanProgress *progress)
 {
-  g_return_if_fail (GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (PICMAN_IS_PROGRESS (progress));
 
   g_signal_emit (progress, progress_signals[CANCEL], 0);
 }
 
 void
-gimp_progress_update_and_flush (gint     min,
+picman_progress_update_and_flush (gint     min,
                                 gint     max,
                                 gint     current,
                                 gpointer data)
 {
-  gimp_progress_set_value (GIMP_PROGRESS (data),
+  picman_progress_set_value (PICMAN_PROGRESS (data),
                            (gdouble) (current - min) / (gdouble) (max - min));
 
   while (g_main_context_pending (NULL))

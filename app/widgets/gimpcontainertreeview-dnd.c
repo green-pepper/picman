@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcontainertreeview-dnd.c
- * Copyright (C) 2003-2009 Michael Natterer <mitch@gimp.org>
+ * picmancontainertreeview-dnd.c
+ * Copyright (C) 2003-2009 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,43 +25,43 @@
 
 #include "widgets-types.h"
 
-#include "core/gimpcontainer.h"
-#include "core/gimpviewable.h"
+#include "core/picmancontainer.h"
+#include "core/picmanviewable.h"
 
-#include "gimpcontainertreestore.h"
-#include "gimpcontainertreeview.h"
-#include "gimpcontainertreeview-dnd.h"
-#include "gimpcontainertreeview-private.h"
-#include "gimpcontainerview.h"
-#include "gimpdnd.h"
-#include "gimpviewrenderer.h"
-#include "gimpselectiondata.h"
+#include "picmancontainertreestore.h"
+#include "picmancontainertreeview.h"
+#include "picmancontainertreeview-dnd.h"
+#include "picmancontainertreeview-private.h"
+#include "picmancontainerview.h"
+#include "picmandnd.h"
+#include "picmanviewrenderer.h"
+#include "picmanselectiondata.h"
 
 
 static gboolean
-gimp_container_tree_view_drop_status (GimpContainerTreeView    *tree_view,
+picman_container_tree_view_drop_status (PicmanContainerTreeView    *tree_view,
                                       GdkDragContext           *context,
                                       gint                      x,
                                       gint                      y,
                                       guint                     time,
                                       GtkTreePath             **return_path,
                                       GdkAtom                  *return_atom,
-                                      GimpDndType              *return_src_type,
-                                      GimpViewable            **return_src,
-                                      GimpViewable            **return_dest,
+                                      PicmanDndType              *return_src_type,
+                                      PicmanViewable            **return_src,
+                                      PicmanViewable            **return_dest,
                                       GtkTreeViewDropPosition  *return_pos)
 {
-  GimpViewable            *src_viewable  = NULL;
-  GimpViewable            *dest_viewable = NULL;
+  PicmanViewable            *src_viewable  = NULL;
+  PicmanViewable            *dest_viewable = NULL;
   GtkTreePath             *drop_path     = NULL;
   GtkTargetList           *target_list;
   GdkAtom                  target_atom;
-  GimpDndType              src_type;
+  PicmanDndType              src_type;
   GtkTreeViewDropPosition  drop_pos      = GTK_TREE_VIEW_DROP_BEFORE;
   GdkDragAction            drag_action   = 0;
 
-  if (! gimp_container_view_get_container (GIMP_CONTAINER_VIEW (tree_view)) ||
-      ! gimp_container_view_get_reorderable (GIMP_CONTAINER_VIEW (tree_view)))
+  if (! picman_container_view_get_container (PICMAN_CONTAINER_VIEW (tree_view)) ||
+      ! picman_container_view_get_reorderable (PICMAN_CONTAINER_VIEW (tree_view)))
     goto drop_impossible;
 
   target_list = gtk_drag_dest_get_target_list (GTK_WIDGET (tree_view->view));
@@ -72,14 +72,14 @@ gimp_container_tree_view_drop_status (GimpContainerTreeView    *tree_view,
 
   switch (src_type)
     {
-    case GIMP_DND_TYPE_URI_LIST:
-    case GIMP_DND_TYPE_TEXT_PLAIN:
-    case GIMP_DND_TYPE_NETSCAPE_URL:
-    case GIMP_DND_TYPE_COLOR:
-    case GIMP_DND_TYPE_SVG:
-    case GIMP_DND_TYPE_SVG_XML:
-    case GIMP_DND_TYPE_COMPONENT:
-    case GIMP_DND_TYPE_PIXBUF:
+    case PICMAN_DND_TYPE_URI_LIST:
+    case PICMAN_DND_TYPE_TEXT_PLAIN:
+    case PICMAN_DND_TYPE_NETSCAPE_URL:
+    case PICMAN_DND_TYPE_COLOR:
+    case PICMAN_DND_TYPE_SVG:
+    case PICMAN_DND_TYPE_SVG_XML:
+    case PICMAN_DND_TYPE_COMPONENT:
+    case PICMAN_DND_TYPE_PIXBUF:
       break;
 
     default:
@@ -89,9 +89,9 @@ gimp_container_tree_view_drop_status (GimpContainerTreeView    *tree_view,
         if (! src_widget)
           goto drop_impossible;
 
-        src_viewable = gimp_dnd_get_drag_data (src_widget);
+        src_viewable = picman_dnd_get_drag_data (src_widget);
 
-        if (! GIMP_IS_VIEWABLE (src_viewable))
+        if (! PICMAN_IS_VIEWABLE (src_viewable))
           goto drop_impossible;
       }
       break;
@@ -100,14 +100,14 @@ gimp_container_tree_view_drop_status (GimpContainerTreeView    *tree_view,
   if (gtk_tree_view_get_path_at_pos (tree_view->view, x, y,
                                      &drop_path, NULL, NULL, NULL))
     {
-      GimpViewRenderer *renderer;
+      PicmanViewRenderer *renderer;
       GtkTreeIter       iter;
       GdkRectangle      cell_area;
 
       gtk_tree_model_get_iter (tree_view->model, &iter, drop_path);
 
       gtk_tree_model_get (tree_view->model, &iter,
-                          GIMP_CONTAINER_TREE_STORE_COLUMN_RENDERER, &renderer,
+                          PICMAN_CONTAINER_TREE_STORE_COLUMN_RENDERER, &renderer,
                           -1);
 
       dest_viewable = renderer->viewable;
@@ -116,7 +116,7 @@ gimp_container_tree_view_drop_status (GimpContainerTreeView    *tree_view,
 
       gtk_tree_view_get_cell_area (tree_view->view, drop_path, NULL, &cell_area);
 
-      if (gimp_viewable_get_children (dest_viewable))
+      if (picman_viewable_get_children (dest_viewable))
         {
           if (gtk_tree_view_row_expanded (tree_view->view, drop_path))
             {
@@ -154,10 +154,10 @@ gimp_container_tree_view_drop_status (GimpContainerTreeView    *tree_view,
           gtk_tree_model_iter_nth_child (tree_view->model, &iter,
                                          NULL, n_children - 1))
         {
-          GimpViewRenderer *renderer;
+          PicmanViewRenderer *renderer;
 
           gtk_tree_model_get (tree_view->model, &iter,
-                              GIMP_CONTAINER_TREE_STORE_COLUMN_RENDERER,
+                              PICMAN_CONTAINER_TREE_STORE_COLUMN_RENDERER,
                               &renderer,
                               -1);
 
@@ -171,7 +171,7 @@ gimp_container_tree_view_drop_status (GimpContainerTreeView    *tree_view,
 
   if (dest_viewable || tree_view->priv->dnd_drop_to_empty)
     {
-      if (GIMP_CONTAINER_TREE_VIEW_GET_CLASS (tree_view)->drop_possible (tree_view,
+      if (PICMAN_CONTAINER_TREE_VIEW_GET_CLASS (tree_view)->drop_possible (tree_view,
                                                                          src_type,
                                                                          src_viewable,
                                                                          dest_viewable,
@@ -218,9 +218,9 @@ gimp_container_tree_view_drop_status (GimpContainerTreeView    *tree_view,
 /* #define SCROLL_DEBUG 1 */
 
 static gboolean
-gimp_container_tree_view_scroll_timeout (gpointer data)
+picman_container_tree_view_scroll_timeout (gpointer data)
 {
-  GimpContainerTreeView *tree_view = GIMP_CONTAINER_TREE_VIEW (data);
+  PicmanContainerTreeView *tree_view = PICMAN_CONTAINER_TREE_VIEW (data);
   GtkAdjustment         *adj;
   gdouble                new_value;
 
@@ -248,7 +248,7 @@ gimp_container_tree_view_scroll_timeout (gpointer data)
 
       tree_view->priv->scroll_timeout_id =
         g_timeout_add (tree_view->priv->scroll_timeout_interval,
-                       gimp_container_tree_view_scroll_timeout,
+                       picman_container_tree_view_scroll_timeout,
                        tree_view);
     }
 
@@ -256,10 +256,10 @@ gimp_container_tree_view_scroll_timeout (gpointer data)
 }
 
 void
-gimp_container_tree_view_drag_leave (GtkWidget             *widget,
+picman_container_tree_view_drag_leave (GtkWidget             *widget,
                                      GdkDragContext        *context,
                                      guint                  time,
-                                     GimpContainerTreeView *tree_view)
+                                     PicmanContainerTreeView *tree_view)
 {
   if (tree_view->priv->scroll_timeout_id)
     {
@@ -271,12 +271,12 @@ gimp_container_tree_view_drag_leave (GtkWidget             *widget,
 }
 
 gboolean
-gimp_container_tree_view_drag_motion (GtkWidget             *widget,
+picman_container_tree_view_drag_motion (GtkWidget             *widget,
                                       GdkDragContext        *context,
                                       gint                   x,
                                       gint                   y,
                                       guint                  time,
-                                      GimpContainerTreeView *tree_view)
+                                      PicmanContainerTreeView *tree_view)
 {
   GtkAllocation            allocation;
   GtkTreePath             *drop_path;
@@ -309,7 +309,7 @@ gimp_container_tree_view_drag_motion (GtkWidget             *widget,
       if (! tree_view->priv->scroll_timeout_id)
         tree_view->priv->scroll_timeout_id =
           g_timeout_add (tree_view->priv->scroll_timeout_interval,
-                         gimp_container_tree_view_scroll_timeout,
+                         picman_container_tree_view_scroll_timeout,
                          tree_view);
     }
   else if (tree_view->priv->scroll_timeout_id)
@@ -318,7 +318,7 @@ gimp_container_tree_view_drag_motion (GtkWidget             *widget,
       tree_view->priv->scroll_timeout_id = 0;
     }
 
-  if (gimp_container_tree_view_drop_status (tree_view,
+  if (picman_container_tree_view_drop_status (tree_view,
                                             context, x, y, time,
                                             &drop_path, NULL, NULL, NULL, NULL,
                                             &drop_pos))
@@ -336,16 +336,16 @@ gimp_container_tree_view_drag_motion (GtkWidget             *widget,
 }
 
 gboolean
-gimp_container_tree_view_drag_drop (GtkWidget             *widget,
+picman_container_tree_view_drag_drop (GtkWidget             *widget,
                                     GdkDragContext        *context,
                                     gint                   x,
                                     gint                   y,
                                     guint                  time,
-                                    GimpContainerTreeView *tree_view)
+                                    PicmanContainerTreeView *tree_view)
 {
-  GimpDndType              src_type;
-  GimpViewable            *src_viewable;
-  GimpViewable            *dest_viewable;
+  PicmanDndType              src_type;
+  PicmanViewable            *src_viewable;
+  PicmanViewable            *dest_viewable;
   GdkAtom                  target;
   GtkTreeViewDropPosition  drop_pos;
 
@@ -355,21 +355,21 @@ gimp_container_tree_view_drag_drop (GtkWidget             *widget,
       tree_view->priv->scroll_timeout_id = 0;
     }
 
-  if (gimp_container_tree_view_drop_status (tree_view,
+  if (picman_container_tree_view_drop_status (tree_view,
                                             context, x, y, time,
                                             NULL, &target, &src_type,
                                             &src_viewable,
                                             &dest_viewable, &drop_pos))
     {
-      GimpContainerTreeViewClass *tree_view_class;
+      PicmanContainerTreeViewClass *tree_view_class;
 
-      tree_view_class = GIMP_CONTAINER_TREE_VIEW_GET_CLASS (tree_view);
+      tree_view_class = PICMAN_CONTAINER_TREE_VIEW_GET_CLASS (tree_view);
 
       if (src_viewable)
         {
           gboolean success = TRUE;
 
-          /* XXX: Make GimpContainerTreeViewClass::drop_viewable()
+          /* XXX: Make PicmanContainerTreeViewClass::drop_viewable()
            * return success?
            */
           tree_view_class->drop_viewable (tree_view, src_viewable,
@@ -389,38 +389,38 @@ gimp_container_tree_view_drag_drop (GtkWidget             *widget,
 }
 
 void
-gimp_container_tree_view_drag_data_received (GtkWidget             *widget,
+picman_container_tree_view_drag_data_received (GtkWidget             *widget,
                                              GdkDragContext        *context,
                                              gint                   x,
                                              gint                   y,
                                              GtkSelectionData      *selection_data,
                                              guint                  info,
                                              guint                  time,
-                                             GimpContainerTreeView *tree_view)
+                                             PicmanContainerTreeView *tree_view)
 {
-  GimpViewable            *dest_viewable;
+  PicmanViewable            *dest_viewable;
   GtkTreeViewDropPosition  drop_pos;
   gboolean                 success = FALSE;
 
-  if (gimp_container_tree_view_drop_status (tree_view,
+  if (picman_container_tree_view_drop_status (tree_view,
                                             context, x, y, time,
                                             NULL, NULL, NULL, NULL,
                                             &dest_viewable, &drop_pos))
     {
-      GimpContainerTreeViewClass *tree_view_class;
+      PicmanContainerTreeViewClass *tree_view_class;
 
-      tree_view_class = GIMP_CONTAINER_TREE_VIEW_GET_CLASS (tree_view);
+      tree_view_class = PICMAN_CONTAINER_TREE_VIEW_GET_CLASS (tree_view);
 
       switch (info)
         {
-        case GIMP_DND_TYPE_URI_LIST:
-        case GIMP_DND_TYPE_TEXT_PLAIN:
-        case GIMP_DND_TYPE_NETSCAPE_URL:
+        case PICMAN_DND_TYPE_URI_LIST:
+        case PICMAN_DND_TYPE_TEXT_PLAIN:
+        case PICMAN_DND_TYPE_NETSCAPE_URL:
           if (tree_view_class->drop_uri_list)
             {
               GList *uri_list;
 
-              uri_list = gimp_selection_data_get_uri_list (selection_data);
+              uri_list = picman_selection_data_get_uri_list (selection_data);
 
               if (uri_list)
                 {
@@ -434,12 +434,12 @@ gimp_container_tree_view_drag_data_received (GtkWidget             *widget,
             }
           break;
 
-        case GIMP_DND_TYPE_COLOR:
+        case PICMAN_DND_TYPE_COLOR:
           if (tree_view_class->drop_color)
             {
-              GimpRGB color;
+              PicmanRGB color;
 
-              if (gimp_selection_data_get_color (selection_data, &color))
+              if (picman_selection_data_get_color (selection_data, &color))
                 {
                   tree_view_class->drop_color (tree_view, &color,
                                                dest_viewable, drop_pos);
@@ -449,14 +449,14 @@ gimp_container_tree_view_drag_data_received (GtkWidget             *widget,
             }
           break;
 
-        case GIMP_DND_TYPE_SVG:
-        case GIMP_DND_TYPE_SVG_XML:
+        case PICMAN_DND_TYPE_SVG:
+        case PICMAN_DND_TYPE_SVG_XML:
           if (tree_view_class->drop_svg)
             {
               const guchar *stream;
               gsize         stream_length;
 
-              stream = gimp_selection_data_get_stream (selection_data,
+              stream = picman_selection_data_get_stream (selection_data,
                                                        &stream_length);
 
               if (stream)
@@ -471,15 +471,15 @@ gimp_container_tree_view_drag_data_received (GtkWidget             *widget,
             }
           break;
 
-        case GIMP_DND_TYPE_COMPONENT:
+        case PICMAN_DND_TYPE_COMPONENT:
           if (tree_view_class->drop_component)
             {
-              GimpImage       *image = NULL;
-              GimpChannelType  component;
+              PicmanImage       *image = NULL;
+              PicmanChannelType  component;
 
-              if (tree_view->dnd_gimp)
-                image = gimp_selection_data_get_component (selection_data,
-                                                           tree_view->dnd_gimp,
+              if (tree_view->dnd_picman)
+                image = picman_selection_data_get_component (selection_data,
+                                                           tree_view->dnd_picman,
                                                            &component);
 
               if (image)
@@ -493,7 +493,7 @@ gimp_container_tree_view_drag_data_received (GtkWidget             *widget,
             }
           break;
 
-        case GIMP_DND_TYPE_PIXBUF:
+        case PICMAN_DND_TYPE_PIXBUF:
           if (tree_view_class->drop_pixbuf)
             {
               GdkPixbuf *pixbuf;
@@ -521,65 +521,65 @@ gimp_container_tree_view_drag_data_received (GtkWidget             *widget,
 }
 
 gboolean
-gimp_container_tree_view_real_drop_possible (GimpContainerTreeView   *tree_view,
-                                             GimpDndType              src_type,
-                                             GimpViewable            *src_viewable,
-                                             GimpViewable            *dest_viewable,
+picman_container_tree_view_real_drop_possible (PicmanContainerTreeView   *tree_view,
+                                             PicmanDndType              src_type,
+                                             PicmanViewable            *src_viewable,
+                                             PicmanViewable            *dest_viewable,
                                              GtkTreePath             *drop_path,
                                              GtkTreeViewDropPosition  drop_pos,
                                              GtkTreeViewDropPosition *return_drop_pos,
                                              GdkDragAction           *return_drag_action)
 {
-  GimpContainerView *view           = GIMP_CONTAINER_VIEW (tree_view);
-  GimpContainer     *container      = gimp_container_view_get_container (view);
-  GimpContainer     *src_container  = NULL;
-  GimpContainer     *dest_container = NULL;
+  PicmanContainerView *view           = PICMAN_CONTAINER_VIEW (tree_view);
+  PicmanContainer     *container      = picman_container_view_get_container (view);
+  PicmanContainer     *src_container  = NULL;
+  PicmanContainer     *dest_container = NULL;
   gint               src_index      = -1;
   gint               dest_index     = -1;
 
   if (src_viewable)
     {
-      GimpViewable *parent = gimp_viewable_get_parent (src_viewable);
+      PicmanViewable *parent = picman_viewable_get_parent (src_viewable);
 
       if (parent)
-        src_container = gimp_viewable_get_children (parent);
-      else if (gimp_container_have (container, GIMP_OBJECT (src_viewable)))
+        src_container = picman_viewable_get_children (parent);
+      else if (picman_container_have (container, PICMAN_OBJECT (src_viewable)))
         src_container = container;
 
       if (src_container)
-        src_index = gimp_container_get_child_index (src_container,
-                                                    GIMP_OBJECT (src_viewable));
+        src_index = picman_container_get_child_index (src_container,
+                                                    PICMAN_OBJECT (src_viewable));
     }
 
   if (dest_viewable)
     {
-      GimpViewable *parent;
+      PicmanViewable *parent;
 
       /*  dropping on the lower third of a group item drops into that group  */
       if (drop_pos == GTK_TREE_VIEW_DROP_INTO_OR_AFTER &&
-          gimp_viewable_get_children (dest_viewable))
+          picman_viewable_get_children (dest_viewable))
         {
           parent = dest_viewable;
         }
       else
         {
-          parent = gimp_viewable_get_parent (dest_viewable);
+          parent = picman_viewable_get_parent (dest_viewable);
         }
 
       if (parent)
-        dest_container = gimp_viewable_get_children (parent);
-      else if (gimp_container_have (container, GIMP_OBJECT (dest_viewable)))
+        dest_container = picman_viewable_get_children (parent);
+      else if (picman_container_have (container, PICMAN_OBJECT (dest_viewable)))
         dest_container = container;
 
       if (parent == dest_viewable)
         dest_index = 0;
       else
-        dest_index = gimp_container_get_child_index (dest_container,
-                                                     GIMP_OBJECT (dest_viewable));
+        dest_index = picman_container_get_child_index (dest_container,
+                                                     PICMAN_OBJECT (dest_viewable));
     }
 
   if (src_viewable && g_type_is_a (G_TYPE_FROM_INSTANCE (src_viewable),
-                                   gimp_container_get_children_type (container)))
+                                   picman_container_get_children_type (container)))
     {
       if (src_viewable == dest_viewable)
         return FALSE;
@@ -589,7 +589,7 @@ gimp_container_tree_view_real_drop_possible (GimpContainerTreeView   *tree_view,
 
       /*  don't allow dropping a parent node onto one of its descendants
        */
-      if (gimp_viewable_is_ancestor (src_viewable, dest_viewable))
+      if (picman_viewable_is_ancestor (src_viewable, dest_viewable))
         return FALSE;
     }
 
@@ -613,7 +613,7 @@ gimp_container_tree_view_real_drop_possible (GimpContainerTreeView   *tree_view,
   if (return_drag_action)
     {
       if (src_viewable && g_type_is_a (G_TYPE_FROM_INSTANCE (src_viewable),
-                                       gimp_container_get_children_type (container)))
+                                       picman_container_get_children_type (container)))
         *return_drag_action = GDK_ACTION_MOVE;
       else
         *return_drag_action = GDK_ACTION_COPY;
@@ -623,20 +623,20 @@ gimp_container_tree_view_real_drop_possible (GimpContainerTreeView   *tree_view,
 }
 
 void
-gimp_container_tree_view_real_drop_viewable (GimpContainerTreeView   *tree_view,
-                                             GimpViewable            *src_viewable,
-                                             GimpViewable            *dest_viewable,
+picman_container_tree_view_real_drop_viewable (PicmanContainerTreeView   *tree_view,
+                                             PicmanViewable            *src_viewable,
+                                             PicmanViewable            *dest_viewable,
                                              GtkTreeViewDropPosition  drop_pos)
 {
-  GimpContainerView *view      = GIMP_CONTAINER_VIEW (tree_view);
-  GimpContainer     *container = gimp_container_view_get_container (view);
+  PicmanContainerView *view      = PICMAN_CONTAINER_VIEW (tree_view);
+  PicmanContainer     *container = picman_container_view_get_container (view);
   gint               src_index;
   gint               dest_index;
 
-  src_index  = gimp_container_get_child_index (container,
-                                               GIMP_OBJECT (src_viewable));
-  dest_index = gimp_container_get_child_index (container,
-                                               GIMP_OBJECT (dest_viewable));
+  src_index  = picman_container_get_child_index (container,
+                                               PICMAN_OBJECT (src_viewable));
+  dest_index = picman_container_get_child_index (container,
+                                               PICMAN_OBJECT (dest_viewable));
 
   if (drop_pos == GTK_TREE_VIEW_DROP_AFTER && src_index > dest_index)
     {
@@ -647,5 +647,5 @@ gimp_container_tree_view_real_drop_viewable (GimpContainerTreeView   *tree_view,
       dest_index--;
     }
 
-  gimp_container_reorder (container, GIMP_OBJECT (src_viewable), dest_index);
+  picman_container_reorder (container, PICMAN_OBJECT (src_viewable), dest_index);
 }

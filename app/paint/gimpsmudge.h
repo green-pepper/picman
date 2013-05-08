@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,41 +15,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SMUDGE_H__
-#define __GIMP_SMUDGE_H__
+#ifndef __PICMAN_SMUDGE_H__
+#define __PICMAN_SMUDGE_H__
 
 
-#include "gimpbrushcore.h"
+#include "picmanbrushcore.h"
 
 
-#define GIMP_TYPE_SMUDGE            (gimp_smudge_get_type ())
-#define GIMP_SMUDGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SMUDGE, GimpSmudge))
-#define GIMP_SMUDGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SMUDGE, GimpSmudgeClass))
-#define GIMP_IS_SMUDGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SMUDGE))
-#define GIMP_IS_SMUDGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SMUDGE))
-#define GIMP_SMUDGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SMUDGE, GimpSmudgeClass))
+#define PICMAN_TYPE_SMUDGE            (picman_smudge_get_type ())
+#define PICMAN_SMUDGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SMUDGE, PicmanSmudge))
+#define PICMAN_SMUDGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SMUDGE, PicmanSmudgeClass))
+#define PICMAN_IS_SMUDGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SMUDGE))
+#define PICMAN_IS_SMUDGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SMUDGE))
+#define PICMAN_SMUDGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SMUDGE, PicmanSmudgeClass))
 
 
-typedef struct _GimpSmudgeClass GimpSmudgeClass;
+typedef struct _PicmanSmudgeClass PicmanSmudgeClass;
 
-struct _GimpSmudge
+struct _PicmanSmudge
 {
-  GimpBrushCore  parent_instance;
+  PicmanBrushCore  parent_instance;
 
   gboolean       initialized;
   GeglBuffer    *accum_buffer;
 };
 
-struct _GimpSmudgeClass
+struct _PicmanSmudgeClass
 {
-  GimpBrushCoreClass  parent_class;
+  PicmanBrushCoreClass  parent_class;
 };
 
 
-void    gimp_smudge_register (Gimp                      *gimp,
-                              GimpPaintRegisterCallback  callback);
+void    picman_smudge_register (Picman                      *picman,
+                              PicmanPaintRegisterCallback  callback);
 
-GType   gimp_smudge_get_type (void) G_GNUC_CONST;
+GType   picman_smudge_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_SMUDGE_H__  */
+#endif  /*  __PICMAN_SMUDGE_H__  */

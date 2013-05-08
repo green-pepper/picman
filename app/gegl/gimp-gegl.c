@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-gegl.c
- * Copyright (C) 2007 Øyvind Kolås <pippin@gimp.org>
+ * picman-gegl.c
+ * Copyright (C) 2007 Øyvind Kolås <pippin@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,30 +22,30 @@
 
 #include <gegl.h>
 
-#include "gimp-gegl-types.h"
+#include "picman-gegl-types.h"
 
-#include "config/gimpgeglconfig.h"
+#include "config/picmangeglconfig.h"
 
-#include "operations/gimp-operations.h"
+#include "operations/picman-operations.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "gimp-babl.h"
-#include "gimp-gegl.h"
+#include "picman-babl.h"
+#include "picman-gegl.h"
 
 
-static void  gimp_gegl_notify_tile_cache_size (GimpGeglConfig *config);
-static void  gimp_gegl_notify_num_processors  (GimpGeglConfig *config);
+static void  picman_gegl_notify_tile_cache_size (PicmanGeglConfig *config);
+static void  picman_gegl_notify_num_processors  (PicmanGeglConfig *config);
 
 
 void
-gimp_gegl_init (Gimp *gimp)
+picman_gegl_init (Picman *picman)
 {
-  GimpGeglConfig *config;
+  PicmanGeglConfig *config;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  config = GIMP_GEGL_CONFIG (gimp->config);
+  config = PICMAN_GEGL_CONFIG (picman->config);
 
 #ifdef __GNUC__
 #warning not setting GeglConfig:threads
@@ -84,19 +84,19 @@ gimp_gegl_init (Gimp *gimp)
                 NULL);
 
   g_signal_connect (config, "notify::tile-cache-size",
-                    G_CALLBACK (gimp_gegl_notify_tile_cache_size),
+                    G_CALLBACK (picman_gegl_notify_tile_cache_size),
                     NULL);
   g_signal_connect (config, "notify::num-processors",
-                    G_CALLBACK (gimp_gegl_notify_num_processors),
+                    G_CALLBACK (picman_gegl_notify_num_processors),
                     NULL);
 
-  gimp_babl_init ();
+  picman_babl_init ();
 
-  gimp_operations_init ();
+  picman_operations_init ();
 }
 
 static void
-gimp_gegl_notify_tile_cache_size (GimpGeglConfig *config)
+picman_gegl_notify_tile_cache_size (PicmanGeglConfig *config)
 {
   if (g_object_class_find_property (G_OBJECT_GET_CLASS (gegl_config ()),
                                     "tile-cache-size"))
@@ -114,7 +114,7 @@ gimp_gegl_notify_tile_cache_size (GimpGeglConfig *config)
 }
 
 static void
-gimp_gegl_notify_num_processors (GimpGeglConfig *config)
+picman_gegl_notify_num_processors (PicmanGeglConfig *config)
 {
 #if 0
   g_object_set (gegl_config (),

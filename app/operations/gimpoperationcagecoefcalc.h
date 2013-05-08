@@ -1,6 +1,6 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  *
- * gimpoperationcagecoefcalc.h
+ * picmanoperationcagecoefcalc.h
  * Copyright (C) 2010 Michael Muré <batolettre@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_OPERATION_CAGE_COEF_CALC_H__
-#define __GIMP_OPERATION_CAGE_COEF_CALC_H__
+#ifndef __PICMAN_OPERATION_CAGE_COEF_CALC_H__
+#define __PICMAN_OPERATION_CAGE_COEF_CALC_H__
 
 
 #include <gegl-plugin.h>
@@ -27,36 +27,36 @@
 
 enum
 {
-  GIMP_OPERATION_CAGE_COEF_CALC_PROP_0,
-  GIMP_OPERATION_CAGE_COEF_CALC_PROP_CONFIG
+  PICMAN_OPERATION_CAGE_COEF_CALC_PROP_0,
+  PICMAN_OPERATION_CAGE_COEF_CALC_PROP_CONFIG
 };
 
 
-#define GIMP_TYPE_OPERATION_CAGE_COEF_CALC            (gimp_operation_cage_coef_calc_get_type ())
-#define GIMP_OPERATION_CAGE_COEF_CALC(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_OPERATION_CAGE_COEF_CALC, GimpOperationCageCoefCalc))
-#define GIMP_OPERATION_CAGE_COEF_CALC_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_OPERATION_CAGE_COEF_CALC, GimpOperationCageCoefCalcClass))
-#define GIMP_IS_OPERATION_CAGE_COEF_CALC(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_OPERATION_CAGE_COEF_CALC))
-#define GIMP_IS_OPERATION_CAGE_COEF_CALC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_OPERATION_CAGE_COEF_CALC))
-#define GIMP_OPERATION_CAGE_COEF_CALC_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_OPERATION_CAGE_COEF_CALC, GimpOperationCageCoefCalcClass))
+#define PICMAN_TYPE_OPERATION_CAGE_COEF_CALC            (picman_operation_cage_coef_calc_get_type ())
+#define PICMAN_OPERATION_CAGE_COEF_CALC(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_OPERATION_CAGE_COEF_CALC, PicmanOperationCageCoefCalc))
+#define PICMAN_OPERATION_CAGE_COEF_CALC_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_OPERATION_CAGE_COEF_CALC, PicmanOperationCageCoefCalcClass))
+#define PICMAN_IS_OPERATION_CAGE_COEF_CALC(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_OPERATION_CAGE_COEF_CALC))
+#define PICMAN_IS_OPERATION_CAGE_COEF_CALC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_OPERATION_CAGE_COEF_CALC))
+#define PICMAN_OPERATION_CAGE_COEF_CALC_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_OPERATION_CAGE_COEF_CALC, PicmanOperationCageCoefCalcClass))
 
 
-typedef struct _GimpOperationCageCoefCalc      GimpOperationCageCoefCalc;
-typedef struct _GimpOperationCageCoefCalcClass GimpOperationCageCoefCalcClass;
+typedef struct _PicmanOperationCageCoefCalc      PicmanOperationCageCoefCalc;
+typedef struct _PicmanOperationCageCoefCalcClass PicmanOperationCageCoefCalcClass;
 
-struct _GimpOperationCageCoefCalc
+struct _PicmanOperationCageCoefCalc
 {
   GeglOperationSource  parent_instance;
 
-  GimpCageConfig      *config;
+  PicmanCageConfig      *config;
 };
 
-struct _GimpOperationCageCoefCalcClass
+struct _PicmanOperationCageCoefCalcClass
 {
   GeglOperationSourceClass  parent_class;
 };
 
 
-GType   gimp_operation_cage_coef_calc_get_type (void) G_GNUC_CONST;
+GType   picman_operation_cage_coef_calc_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_OPERATION_CAGE_COEF_CALC_H__ */
+#endif /* __PICMAN_OPERATION_CAGE_COEF_CALC_H__ */

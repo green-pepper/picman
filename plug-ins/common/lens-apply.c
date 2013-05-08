@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Apply lens plug-in --- makes your selected part of the image look like it
@@ -38,15 +38,15 @@
 
 #include "config.h"
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-applylens"
 #define PLUG_IN_BINARY "lens-apply"
-#define PLUG_IN_ROLE   "gimp-lens-apply"
+#define PLUG_IN_ROLE   "picman-lens-apply"
 
 
 /* Declare local functions.
@@ -54,16 +54,16 @@
 static void      query (void);
 static void      run   (const gchar      *name,
                         gint              nparams,
-                        const GimpParam  *param,
+                        const PicmanParam  *param,
                         gint             *nreturn_vals,
-                        GimpParam       **return_vals);
+                        PicmanParam       **return_vals);
 
-static void      drawlens    (GimpDrawable *drawable,
-                              GimpPreview  *preview);
-static gboolean  lens_dialog (GimpDrawable *drawable);
+static void      drawlens    (PicmanDrawable *drawable,
+                              PicmanPreview  *preview);
+static gboolean  lens_dialog (PicmanDrawable *drawable);
 
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -93,18 +93,18 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",          "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",             "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",          "Input drawable" },
-    { GIMP_PDB_FLOAT,    "refraction",        "Lens refraction index" },
-    { GIMP_PDB_INT32,    "keep-surroundings", "Keep lens surroundings { TRUE, FALSE }" },
-    { GIMP_PDB_INT32,    "set-background",    "Set lens surroundings to BG value { TRUE, FALSE }" },
-    { GIMP_PDB_INT32,    "set-transparent",   "Set lens surroundings transparent { TRUE, FALSE }" }
+    { PICMAN_PDB_INT32,    "run-mode",          "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",             "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",          "Input drawable" },
+    { PICMAN_PDB_FLOAT,    "refraction",        "Lens refraction index" },
+    { PICMAN_PDB_INT32,    "keep-surroundings", "Keep lens surroundings { TRUE, FALSE }" },
+    { PICMAN_PDB_INT32,    "set-background",    "Set lens surroundings to BG value { TRUE, FALSE }" },
+    { PICMAN_PDB_INT32,    "set-transparent",   "Set lens surroundings transparent { TRUE, FALSE }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Simulate an elliptical lens over the image"),
                           "This plug-in uses Snell's law to draw "
                           "an ellipsoid lens over the image",
@@ -113,51 +113,51 @@ query (void)
                           "1997",
                           N_("Apply _Lens..."),
                           "RGB*, GRAY*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC,
+  picman_plugin_menu_register (PLUG_IN_PROC,
                              "<Image>/Filters/Distorts");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   INIT_I18N ();
 
   run_mode = param[0].data.d_int32;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   switch(run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &lvals);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &lvals);
       if (!lens_dialog (drawable))
         return;
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams != 7)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           lvals.refraction      = param[3].data.d_float;
           lvals.keep_surr       = param[4].data.d_int32;
@@ -165,30 +165,30 @@ run (const gchar      *name,
           lvals.set_transparent = param[6].data.d_int32;
         }
 
-      if (status == GIMP_PDB_SUCCESS && (lvals.refraction < 1.0))
-        status = GIMP_PDB_CALLING_ERROR;
+      if (status == PICMAN_PDB_SUCCESS && (lvals.refraction < 1.0))
+        status = PICMAN_PDB_CALLING_ERROR;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &lvals);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &lvals);
       break;
 
     default:
       break;
     }
 
-  gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width () + 1));
-  gimp_progress_init (_("Applying lens"));
+  picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width () + 1));
+  picman_progress_init (_("Applying lens"));
   drawlens (drawable, NULL);
 
-  if (run_mode != GIMP_RUN_NONINTERACTIVE)
-    gimp_displays_flush ();
-  if (run_mode == GIMP_RUN_INTERACTIVE)
-    gimp_set_data (PLUG_IN_PROC, &lvals, sizeof (LensValues));
+  if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+    picman_displays_flush ();
+  if (run_mode == PICMAN_RUN_INTERACTIVE)
+    picman_set_data (PLUG_IN_PROC, &lvals, sizeof (LensValues));
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 /*
@@ -224,11 +224,11 @@ find_projected_pos (gfloat  a2,
 }
 
 static void
-drawlens (GimpDrawable *drawable,
-          GimpPreview  *preview)
+drawlens (PicmanDrawable *drawable,
+          PicmanPreview  *preview)
 {
-  GimpImageType  drawtype = gimp_drawable_type (drawable->drawable_id);
-  GimpPixelRgn   srcPR, destPR;
+  PicmanImageType  drawtype = picman_drawable_type (drawable->drawable_id);
+  PicmanPixelRgn   srcPR, destPR;
   gint           width, height;
   gint           bytes;
   gint           row;
@@ -238,41 +238,41 @@ drawlens (GimpDrawable *drawable,
   gfloat         regionwidth, regionheight, dx, dy, xsqr, ysqr;
   gfloat         a, b, c, asqr, bsqr, csqr, x, y;
   glong          pixelpos, pos;
-  GimpRGB        background;
+  PicmanRGB        background;
   guchar         bgr_red, bgr_blue, bgr_green;
   guchar         alphaval;
 
-  gimp_context_get_background (&background);
-  gimp_rgb_get_uchar (&background,
+  picman_context_get_background (&background);
+  picman_rgb_get_uchar (&background,
                       &bgr_red, &bgr_green, &bgr_blue);
 
   bytes = drawable->bpp;
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
       x2 = x1 + width;
       y2 = y1 + height;
-      src = gimp_drawable_get_thumbnail_data (drawable->drawable_id,
+      src = picman_drawable_get_thumbnail_data (drawable->drawable_id,
                                               &width, &height, &bytes);
       regionwidth  = width;
       regionheight = height;
     }
   else
     {
-      gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+      picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
       regionwidth = x2 - x1;
       regionheight = y2 - y1;
       width = drawable->width;
       height = drawable->height;
-      gimp_pixel_rgn_init (&srcPR, drawable,
+      picman_pixel_rgn_init (&srcPR, drawable,
                            0, 0, width, height, FALSE, FALSE);
-      gimp_pixel_rgn_init (&destPR, drawable,
+      picman_pixel_rgn_init (&destPR, drawable,
                            0, 0, width, height, TRUE, TRUE);
 
       src  = g_new (guchar, regionwidth * regionheight * bytes);
-      gimp_pixel_rgn_get_rect (&srcPR, src,
+      picman_pixel_rgn_get_rect (&srcPR, src,
                                x1, y1, regionwidth, regionheight);
     }
 
@@ -325,23 +325,23 @@ drawlens (GimpDrawable *drawable,
 
                   switch (drawtype)
                     {
-                    case GIMP_INDEXEDA_IMAGE:
+                    case PICMAN_INDEXEDA_IMAGE:
                       dest[pixelpos + 1] = alphaval;
-                    case GIMP_INDEXED_IMAGE:
+                    case PICMAN_INDEXED_IMAGE:
                       dest[pixelpos + 0] = 0;
                       break;
 
-                    case GIMP_RGBA_IMAGE:
+                    case PICMAN_RGBA_IMAGE:
                       dest[pixelpos + 3] = alphaval;
-                    case GIMP_RGB_IMAGE:
+                    case PICMAN_RGB_IMAGE:
                       dest[pixelpos + 0] = bgr_red;
                       dest[pixelpos + 1] = bgr_green;
                       dest[pixelpos + 2] = bgr_blue;
                       break;
 
-                    case GIMP_GRAYA_IMAGE:
+                    case PICMAN_GRAYA_IMAGE:
                       dest[pixelpos + 1] = alphaval;
-                    case GIMP_GRAY_IMAGE:
+                    case PICMAN_GRAY_IMAGE:
                       dest[pixelpos+0] = bgr_red;
                       break;
                     }
@@ -352,23 +352,23 @@ drawlens (GimpDrawable *drawable,
       if (!preview)
         {
           if (((gint) (regionwidth-col) % 5) == 0)
-            gimp_progress_update ((gdouble) col / (gdouble) regionwidth);
+            picman_progress_update ((gdouble) col / (gdouble) regionwidth);
         }
     }
 
   if (preview)
     {
-      gimp_preview_draw_buffer (preview, dest, bytes * regionwidth);
+      picman_preview_draw_buffer (preview, dest, bytes * regionwidth);
     }
   else
     {
-      gimp_progress_update (1.0);
-      gimp_pixel_rgn_set_rect (&destPR, dest, x1, y1,
+      picman_progress_update (1.0);
+      picman_pixel_rgn_set_rect (&destPR, dest, x1, y1,
                                regionwidth, regionheight);
 
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id, x1, y1, x2 - x1, y2 - y1);
     }
 
   g_free (src);
@@ -376,7 +376,7 @@ drawlens (GimpDrawable *drawable,
 }
 
 static gboolean
-lens_dialog (GimpDrawable *drawable)
+lens_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -389,11 +389,11 @@ lens_dialog (GimpDrawable *drawable)
   GtkObject *adj;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dialog = gimp_dialog_new (_("Lens Effect"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Lens Effect"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -405,7 +405,7 @@ lens_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -413,7 +413,7 @@ lens_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_aspect_preview_new (drawable, NULL);
+  preview = picman_aspect_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -432,15 +432,15 @@ lens_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &lvals.keep_surr);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   toggle = gtk_radio_button_new_with_mnemonic_from_widget
     (GTK_RADIO_BUTTON (toggle),
-     gimp_drawable_is_indexed (drawable->drawable_id)
+     picman_drawable_is_indexed (drawable->drawable_id)
      ? _("_Set surroundings to index 0")
      : _("_Set surroundings to background color"));
   gtk_box_pack_start(GTK_BOX (vbox), toggle, FALSE, FALSE, 0);
@@ -448,13 +448,13 @@ lens_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &lvals.use_bkgr);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  if (gimp_drawable_has_alpha (drawable->drawable_id))
+  if (picman_drawable_has_alpha (drawable->drawable_id))
     {
       toggle = gtk_radio_button_new_with_mnemonic_from_widget
         (GTK_RADIO_BUTTON (toggle), _("_Make surroundings transparent"));
@@ -464,10 +464,10 @@ lens_dialog (GimpDrawable *drawable)
       gtk_widget_show (toggle);
 
       g_signal_connect (toggle, "toggled",
-                        G_CALLBACK (gimp_toggle_button_update),
+                        G_CALLBACK (picman_toggle_button_update),
                         &lvals.set_transparent);
       g_signal_connect_swapped (toggle, "toggled",
-                                G_CALLBACK (gimp_preview_invalidate),
+                                G_CALLBACK (picman_preview_invalidate),
                                 preview);
   }
 
@@ -478,7 +478,7 @@ lens_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  spinbutton = gimp_spin_button_new (&adj, lvals.refraction,
+  spinbutton = picman_spin_button_new (&adj, lvals.refraction,
                                      1.0, 100.0, 0.1, 1.0, 0, 1, 2);
   gtk_box_pack_start (GTK_BOX (hbox), spinbutton, FALSE, FALSE, 0);
   gtk_widget_show (spinbutton);
@@ -486,16 +486,16 @@ lens_dialog (GimpDrawable *drawable)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), spinbutton);
 
   g_signal_connect (adj, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &lvals.refraction);
   g_signal_connect_swapped (adj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (hbox);
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

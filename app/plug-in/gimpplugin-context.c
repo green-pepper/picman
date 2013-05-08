@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpplugin-context.c
+ * picmanplugin-context.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,32 +23,32 @@
 
 #include "plug-in-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "pdb/gimppdbcontext.h"
+#include "pdb/picmanpdbcontext.h"
 
-#include "gimpplugin.h"
-#include "gimpplugin-context.h"
-#include "gimppluginmanager.h"
+#include "picmanplugin.h"
+#include "picmanplugin-context.h"
+#include "picmanpluginmanager.h"
 
 
 gboolean
-gimp_plug_in_context_push (GimpPlugIn *plug_in)
+picman_plug_in_context_push (PicmanPlugIn *plug_in)
 {
-  GimpPlugInProcFrame *proc_frame;
-  GimpContext         *parent;
-  GimpContext         *context;
+  PicmanPlugInProcFrame *proc_frame;
+  PicmanContext         *parent;
+  PicmanContext         *context;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN (plug_in), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN (plug_in), FALSE);
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
 
   if (proc_frame->context_stack)
     parent = proc_frame->context_stack->data;
   else
     parent = proc_frame->main_context;
 
-  context = gimp_pdb_context_new (plug_in->manager->gimp, parent, FALSE);
+  context = picman_pdb_context_new (plug_in->manager->picman, parent, FALSE);
 
   proc_frame->context_stack = g_list_prepend (proc_frame->context_stack,
                                               context);
@@ -57,17 +57,17 @@ gimp_plug_in_context_push (GimpPlugIn *plug_in)
 }
 
 gboolean
-gimp_plug_in_context_pop (GimpPlugIn *plug_in)
+picman_plug_in_context_pop (PicmanPlugIn *plug_in)
 {
-  GimpPlugInProcFrame *proc_frame;
+  PicmanPlugInProcFrame *proc_frame;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN (plug_in), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN (plug_in), FALSE);
 
-  proc_frame = gimp_plug_in_get_proc_frame (plug_in);
+  proc_frame = picman_plug_in_get_proc_frame (plug_in);
 
   if (proc_frame->context_stack)
     {
-      GimpContext *context = proc_frame->context_stack->data;
+      PicmanContext *context = proc_frame->context_stack->data;
 
       proc_frame->context_stack = g_list_remove (proc_frame->context_stack,
                                                  context);

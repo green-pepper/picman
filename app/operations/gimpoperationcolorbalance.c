@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationcolorbalance.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanoperationcolorbalance.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +24,16 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "operations-types.h"
 
-#include "gimpcolorbalanceconfig.h"
-#include "gimpoperationcolorbalance.h"
+#include "picmancolorbalanceconfig.h"
+#include "picmanoperationcolorbalance.h"
 
 
-static gboolean gimp_operation_color_balance_process (GeglOperation       *operation,
+static gboolean picman_operation_color_balance_process (GeglOperation       *operation,
                                                       void                *in_buf,
                                                       void                *out_buf,
                                                       glong                samples,
@@ -41,47 +41,47 @@ static gboolean gimp_operation_color_balance_process (GeglOperation       *opera
                                                       gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationColorBalance, gimp_operation_color_balance,
-               GIMP_TYPE_OPERATION_POINT_FILTER)
+G_DEFINE_TYPE (PicmanOperationColorBalance, picman_operation_color_balance,
+               PICMAN_TYPE_OPERATION_POINT_FILTER)
 
-#define parent_class gimp_operation_color_balance_parent_class
+#define parent_class picman_operation_color_balance_parent_class
 
 
 static void
-gimp_operation_color_balance_class_init (GimpOperationColorBalanceClass *klass)
+picman_operation_color_balance_class_init (PicmanOperationColorBalanceClass *klass)
 {
   GObjectClass                  *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass            *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationPointFilterClass *point_class     = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  object_class->set_property   = gimp_operation_point_filter_set_property;
-  object_class->get_property   = gimp_operation_point_filter_get_property;
+  object_class->set_property   = picman_operation_point_filter_set_property;
+  object_class->get_property   = picman_operation_point_filter_get_property;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:color-balance",
+                                 "name",        "picman:color-balance",
                                  "categories",  "color",
-                                 "description", "GIMP Color Balance operation",
+                                 "description", "PICMAN Color Balance operation",
                                  NULL);
 
-  point_class->process = gimp_operation_color_balance_process;
+  point_class->process = picman_operation_color_balance_process;
 
   g_object_class_install_property (object_class,
-                                   GIMP_OPERATION_POINT_FILTER_PROP_CONFIG,
+                                   PICMAN_OPERATION_POINT_FILTER_PROP_CONFIG,
                                    g_param_spec_object ("config",
                                                         "Config",
                                                         "The config object",
-                                                        GIMP_TYPE_COLOR_BALANCE_CONFIG,
+                                                        PICMAN_TYPE_COLOR_BALANCE_CONFIG,
                                                         G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_operation_color_balance_init (GimpOperationColorBalance *self)
+picman_operation_color_balance_init (PicmanOperationColorBalance *self)
 {
 }
 
 static inline gfloat
-gimp_operation_color_balance_map (gfloat  value,
+picman_operation_color_balance_map (gfloat  value,
                                   gdouble lightness,
                                   gdouble shadows,
                                   gdouble midtones,
@@ -116,15 +116,15 @@ gimp_operation_color_balance_map (gfloat  value,
 }
 
 static gboolean
-gimp_operation_color_balance_process (GeglOperation       *operation,
+picman_operation_color_balance_process (GeglOperation       *operation,
                                       void                *in_buf,
                                       void                *out_buf,
                                       glong                samples,
                                       const GeglRectangle *roi,
                                       gint                 level)
 {
-  GimpOperationPointFilter *point  = GIMP_OPERATION_POINT_FILTER (operation);
-  GimpColorBalanceConfig   *config = GIMP_COLOR_BALANCE_CONFIG (point->config);
+  PicmanOperationPointFilter *point  = PICMAN_OPERATION_POINT_FILTER (operation);
+  PicmanColorBalanceConfig   *config = PICMAN_COLOR_BALANCE_CONFIG (point->config);
   gfloat                   *src    = in_buf;
   gfloat                   *dest   = out_buf;
 
@@ -140,43 +140,43 @@ gimp_operation_color_balance_process (GeglOperation       *operation,
       gfloat g_n;
       gfloat b_n;
 
-      GimpRGB rgb = { r, g, b};
-      GimpHSL hsl;
+      PicmanRGB rgb = { r, g, b};
+      PicmanHSL hsl;
 
-      gimp_rgb_to_hsl (&rgb, &hsl);
+      picman_rgb_to_hsl (&rgb, &hsl);
 
-      r_n = gimp_operation_color_balance_map (r, hsl.l,
-                                              config->cyan_red[GIMP_SHADOWS],
-                                              config->cyan_red[GIMP_MIDTONES],
-                                              config->cyan_red[GIMP_HIGHLIGHTS]);
+      r_n = picman_operation_color_balance_map (r, hsl.l,
+                                              config->cyan_red[PICMAN_SHADOWS],
+                                              config->cyan_red[PICMAN_MIDTONES],
+                                              config->cyan_red[PICMAN_HIGHLIGHTS]);
 
-      g_n = gimp_operation_color_balance_map (g, hsl.l,
-                                              config->magenta_green[GIMP_SHADOWS],
-                                              config->magenta_green[GIMP_MIDTONES],
-                                              config->magenta_green[GIMP_HIGHLIGHTS]);
+      g_n = picman_operation_color_balance_map (g, hsl.l,
+                                              config->magenta_green[PICMAN_SHADOWS],
+                                              config->magenta_green[PICMAN_MIDTONES],
+                                              config->magenta_green[PICMAN_HIGHLIGHTS]);
 
-      b_n = gimp_operation_color_balance_map (b, hsl.l,
-                                              config->yellow_blue[GIMP_SHADOWS],
-                                              config->yellow_blue[GIMP_MIDTONES],
-                                              config->yellow_blue[GIMP_HIGHLIGHTS]);
+      b_n = picman_operation_color_balance_map (b, hsl.l,
+                                              config->yellow_blue[PICMAN_SHADOWS],
+                                              config->yellow_blue[PICMAN_MIDTONES],
+                                              config->yellow_blue[PICMAN_HIGHLIGHTS]);
 
       if (config->preserve_luminosity)
         {
-          GimpHSL hsl2;
+          PicmanHSL hsl2;
 
           rgb.r = r_n;
           rgb.g = g_n;
           rgb.b = b_n;
-          gimp_rgb_to_hsl (&rgb, &hsl);
+          picman_rgb_to_hsl (&rgb, &hsl);
 
           rgb.r = r;
           rgb.g = g;
           rgb.b = b;
-          gimp_rgb_to_hsl (&rgb, &hsl2);
+          picman_rgb_to_hsl (&rgb, &hsl2);
 
           hsl.l = hsl2.l;
 
-          gimp_hsl_to_rgb (&hsl, &rgb);
+          picman_hsl_to_rgb (&hsl, &rgb);
 
           r_n = rgb.r;
           g_n = rgb.g;

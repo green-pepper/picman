@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,18 +19,18 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "paint-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpdrawable.h"
-#include "core/gimppaintinfo.h"
+#include "core/picman.h"
+#include "core/picmandrawable.h"
+#include "core/picmanpaintinfo.h"
 
-#include "gimpinkoptions.h"
-#include "gimpink-blob.h"
+#include "picmaninkoptions.h"
+#include "picmanink-blob.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -47,76 +47,76 @@ enum
 };
 
 
-static void   gimp_ink_options_set_property (GObject      *object,
+static void   picman_ink_options_set_property (GObject      *object,
                                              guint         property_id,
                                              const GValue *value,
                                              GParamSpec   *pspec);
-static void   gimp_ink_options_get_property (GObject      *object,
+static void   picman_ink_options_get_property (GObject      *object,
                                              guint         property_id,
                                              GValue       *value,
                                              GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpInkOptions, gimp_ink_options, GIMP_TYPE_PAINT_OPTIONS)
+G_DEFINE_TYPE (PicmanInkOptions, picman_ink_options, PICMAN_TYPE_PAINT_OPTIONS)
 
 
 static void
-gimp_ink_options_class_init (GimpInkOptionsClass *klass)
+picman_ink_options_class_init (PicmanInkOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_ink_options_set_property;
-  object_class->get_property = gimp_ink_options_get_property;
+  object_class->set_property = picman_ink_options_set_property;
+  object_class->get_property = picman_ink_options_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SIZE,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SIZE,
                                    "size", _("Ink Blob Size"),
                                    0.0, 200.0, 16.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_TILT_ANGLE,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_TILT_ANGLE,
                                    "tilt-angle", NULL,
                                    -90.0, 90.0, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SIZE_SENSITIVITY,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_SIZE_SENSITIVITY,
                                    "size-sensitivity", NULL,
                                    0.0, 1.0, 1.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_VEL_SENSITIVITY,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_VEL_SENSITIVITY,
                                    "vel-sensitivity", NULL,
                                    0.0, 1.0, 0.8,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_TILT_SENSITIVITY,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_TILT_SENSITIVITY,
                                    "tilt-sensitivity", NULL,
                                    0.0, 1.0, 0.4,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_BLOB_TYPE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_BLOB_TYPE,
                                  "blob-type", NULL,
-                                 GIMP_TYPE_INK_BLOB_TYPE,
-                                 GIMP_INK_BLOB_TYPE_CIRCLE,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BLOB_ASPECT,
+                                 PICMAN_TYPE_INK_BLOB_TYPE,
+                                 PICMAN_INK_BLOB_TYPE_CIRCLE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BLOB_ASPECT,
                                    "blob-aspect", _("Ink Blob Aspect Ratio"),
                                    1.0, 10.0, 1.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BLOB_ANGLE,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_BLOB_ANGLE,
                                    "blob-angle", _("Ink Blob Angle"),
                                    -90.0, 90.0, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 }
 
 static void
-gimp_ink_options_init (GimpInkOptions *options)
+picman_ink_options_init (PicmanInkOptions *options)
 {
 }
 
 static void
-gimp_ink_options_set_property (GObject      *object,
+picman_ink_options_set_property (GObject      *object,
                                guint         property_id,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
-  GimpInkOptions *options = GIMP_INK_OPTIONS (object);
+  PicmanInkOptions *options = PICMAN_INK_OPTIONS (object);
 
   switch (property_id)
     {
@@ -151,12 +151,12 @@ gimp_ink_options_set_property (GObject      *object,
 }
 
 static void
-gimp_ink_options_get_property (GObject    *object,
+picman_ink_options_get_property (GObject    *object,
                                guint       property_id,
                                GValue     *value,
                                GParamSpec *pspec)
 {
-  GimpInkOptions *options = GIMP_INK_OPTIONS (object);
+  PicmanInkOptions *options = PICMAN_INK_OPTIONS (object);
 
   switch (property_id)
     {

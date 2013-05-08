@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * This is a plug-in for GIMP.
+ * This is a plug-in for PICMAN.
  *
  * Blinds plug-in. Distort an image as though it was stuck to
  * window blinds and the blinds where opened/closed.
@@ -33,16 +33,16 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 /***** Magic numbers *****/
 
 #define PLUG_IN_PROC   "plug-in-blinds"
 #define PLUG_IN_BINARY "blinds"
-#define PLUG_IN_ROLE   "gimp-blinds"
+#define PLUG_IN_ROLE   "picman-blinds"
 
 #define SCALE_WIDTH    150
 
@@ -53,7 +53,7 @@ typedef struct data
 {
   gint                 angledsp;
   gint                 numsegs;
-  GimpOrientationType  orientation;
+  PicmanOrientationType  orientation;
   gboolean bg_trans;
 } BlindVals;
 
@@ -66,17 +66,17 @@ static gint fanwidths[MAX_FANS];
 static void      query  (void);
 static void      run    (const gchar      *name,
                          gint              nparams,
-                         const GimpParam  *param,
+                         const PicmanParam  *param,
                          gint             *nreturn_vals,
-                         GimpParam       **return_vals);
+                         PicmanParam       **return_vals);
 
-static gboolean  blinds_dialog         (GimpDrawable  *drawable);
+static gboolean  blinds_dialog         (PicmanDrawable  *drawable);
 
-static void      dialog_update_preview (GimpDrawable  *drawable,
-                                        GimpPreview   *preview);
-static void      apply_blinds          (GimpDrawable  *drawable);
+static void      dialog_update_preview (PicmanDrawable  *drawable,
+                                        PicmanPreview   *preview);
+static void      apply_blinds          (PicmanDrawable  *drawable);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,    /* init_proc */
   NULL,    /* quit_proc */
@@ -89,7 +89,7 @@ static BlindVals bvals =
 {
   30,
   3,
-  GIMP_ORIENTATION_HORIZONTAL,
+  PICMAN_ORIENTATION_HORIZONTAL,
   FALSE
 };
 
@@ -98,18 +98,18 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",       "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",          "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable",       "Input drawable" },
-    { GIMP_PDB_INT32,    "angle-dsp",      "Angle of Displacement" },
-    { GIMP_PDB_INT32,    "num-segments",   "Number of segments in blinds" },
-    { GIMP_PDB_INT32,    "orientation",    "The orientation { ORIENTATION-HORIZONTAL (0), ORIENTATION-VERTICAL (1) }" },
-    { GIMP_PDB_INT32,    "bg-transparent", "Background transparent { FALSE, TRUE }" }
+    { PICMAN_PDB_INT32,    "run-mode",       "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",          "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable",       "Input drawable" },
+    { PICMAN_PDB_INT32,    "angle-dsp",      "Angle of Displacement" },
+    { PICMAN_PDB_INT32,    "num-segments",   "Number of segments in blinds" },
+    { PICMAN_PDB_INT32,    "orientation",    "The orientation { ORIENTATION-HORIZONTAL (0), ORIENTATION-VERTICAL (1) }" },
+    { PICMAN_PDB_INT32,    "bg-transparent", "Background transparent { FALSE, TRUE }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Simulate an image painted on window blinds"),
                           "More here later",
                           "Andy Thomas",
@@ -117,7 +117,7 @@ query (void)
                           "1997",
                           N_("_Blinds..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 }
@@ -125,14 +125,14 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam values[1];
-  GimpDrawable *drawable;
-  GimpRunMode run_mode;
-  GimpPDBStatusType status = GIMP_PDB_SUCCESS;
+  static PicmanParam values[1];
+  PicmanDrawable *drawable;
+  PicmanRunMode run_mode;
+  PicmanPDBStatusType status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
@@ -141,26 +141,26 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals = values;
 
-  values[0].type = GIMP_PDB_STATUS;
+  values[0].type = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
-      gimp_get_data (PLUG_IN_PROC, &bvals);
+    case PICMAN_RUN_INTERACTIVE:
+      picman_get_data (PLUG_IN_PROC, &bvals);
       if (! blinds_dialog (drawable))
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       if (nparams != 7)
-        status = GIMP_PDB_CALLING_ERROR;
-      if (status == GIMP_PDB_SUCCESS)
+        status = PICMAN_PDB_CALLING_ERROR;
+      if (status == PICMAN_PDB_SUCCESS)
         {
           bvals.angledsp    = param[3].data.d_int32;
           bvals.numsegs     = param[4].data.d_int32;
@@ -169,40 +169,40 @@ run (const gchar      *name,
         }
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
-      gimp_get_data (PLUG_IN_PROC, &bvals);
+    case PICMAN_RUN_WITH_LAST_VALS:
+      picman_get_data (PLUG_IN_PROC, &bvals);
       break;
 
     default:
       break;
     }
 
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
-      gimp_progress_init (_("Adding blinds"));
+      picman_progress_init (_("Adding blinds"));
 
       apply_blinds (drawable);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
 
-      if (run_mode == GIMP_RUN_INTERACTIVE)
-        gimp_set_data (PLUG_IN_PROC, &bvals, sizeof (BlindVals));
+      if (run_mode == PICMAN_RUN_INTERACTIVE)
+        picman_set_data (PLUG_IN_PROC, &bvals, sizeof (BlindVals));
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 
 static gboolean
-blinds_dialog (GimpDrawable *drawable)
+blinds_dialog (PicmanDrawable *drawable)
 {
   GtkWidget *dialog;
   GtkWidget *main_vbox;
@@ -216,11 +216,11 @@ blinds_dialog (GimpDrawable *drawable)
   GtkWidget *vertical;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Blinds"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Blinds"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -232,7 +232,7 @@ blinds_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -240,7 +240,7 @@ blinds_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_aspect_preview_new (drawable, NULL);
+  preview = picman_aspect_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -253,14 +253,14 @@ blinds_dialog (GimpDrawable *drawable)
   gtk_widget_show (hbox);
 
   frame =
-    gimp_int_radio_group_new (TRUE, _("Orientation"),
-                              G_CALLBACK (gimp_radio_button_update),
+    picman_int_radio_group_new (TRUE, _("Orientation"),
+                              G_CALLBACK (picman_radio_button_update),
                               &bvals.orientation, bvals.orientation,
 
-                              _("_Horizontal"), GIMP_ORIENTATION_HORIZONTAL,
+                              _("_Horizontal"), PICMAN_ORIENTATION_HORIZONTAL,
                               &horizontal,
 
-                              _("_Vertical"),   GIMP_ORIENTATION_VERTICAL,
+                              _("_Vertical"),   PICMAN_ORIENTATION_VERTICAL,
                               &vertical,
 
                               NULL);
@@ -268,13 +268,13 @@ blinds_dialog (GimpDrawable *drawable)
   gtk_widget_show (frame);
 
   g_signal_connect_swapped (horizontal, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
   g_signal_connect_swapped (vertical, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  frame = gimp_frame_new (_("Background"));
+  frame = picman_frame_new (_("Background"));
   gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
@@ -283,15 +283,15 @@ blinds_dialog (GimpDrawable *drawable)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &bvals.bg_trans);
   g_signal_connect_swapped (toggle, "toggled",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle), bvals.bg_trans);
 
-  if (!gimp_drawable_has_alpha (drawable->drawable_id))
+  if (!picman_drawable_has_alpha (drawable->drawable_id))
     {
       gtk_widget_set_sensitive (toggle, FALSE);
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle), FALSE);
@@ -303,33 +303,33 @@ blinds_dialog (GimpDrawable *drawable)
   gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
-  size_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  size_data = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                     _("_Displacement:"), SCALE_WIDTH, 0,
                                     bvals.angledsp, 1, 90, 1, 15, 0,
                                     TRUE, 0, 0,
                                     NULL, NULL);
   g_signal_connect (size_data, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &bvals.angledsp);
   g_signal_connect_swapped (size_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  size_data = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  size_data = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                                     _("_Number of segments:"), SCALE_WIDTH, 0,
                                     bvals.numsegs, 1, MAX_FANS, 1, 2, 0,
                                     TRUE, 0, 0,
                                     NULL, NULL);
   g_signal_connect (size_data, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &bvals.numsegs);
   g_signal_connect_swapped (size_data, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -442,31 +442,31 @@ blindsapply (guchar *srow,
 }
 
 static void
-dialog_update_preview (GimpDrawable *drawable,
-                       GimpPreview  *preview)
+dialog_update_preview (PicmanDrawable *drawable,
+                       PicmanPreview  *preview)
 {
   gint     y;
   guchar  *p, *buffer, *cache;
-  GimpRGB  background;
+  PicmanRGB  background;
   guchar   bg[4];
   gint     width, height, bpp;
 
-  gimp_preview_get_size (preview, &width, &height);
-  bpp = gimp_drawable_bpp (drawable->drawable_id);
-  cache = gimp_drawable_get_thumbnail_data (drawable->drawable_id,
+  picman_preview_get_size (preview, &width, &height);
+  bpp = picman_drawable_bpp (drawable->drawable_id);
+  cache = picman_drawable_get_thumbnail_data (drawable->drawable_id,
                                             &width, &height, &bpp);
   p = cache;
 
-  gimp_context_get_background (&background);
+  picman_context_get_background (&background);
 
   if (bvals.bg_trans)
-    gimp_rgb_set_alpha (&background, 0.0);
+    picman_rgb_set_alpha (&background, 0.0);
 
-  gimp_drawable_get_color_uchar (drawable->drawable_id, &background, bg);
+  picman_drawable_get_color_uchar (drawable->drawable_id, &background, bg);
 
   buffer = g_new (guchar, width * height * bpp);
 
-  if (bvals.orientation == GIMP_ORIENTATION_VERTICAL)
+  if (bvals.orientation == PICMAN_ORIENTATION_VERTICAL)
     {
       for (y = 0; y < height; y++)
         {
@@ -535,7 +535,7 @@ dialog_update_preview (GimpDrawable *drawable,
       g_free (dr);
     }
 
-  gimp_preview_draw_buffer (preview, buffer, width * bpp);
+  picman_preview_draw_buffer (preview, buffer, width * bpp);
 
   g_free (buffer);
   g_free (cache);
@@ -549,38 +549,38 @@ dialog_update_preview (GimpDrawable *drawable,
 #define STEP 40
 
 static void
-apply_blinds (GimpDrawable *drawable)
+apply_blinds (PicmanDrawable *drawable)
 {
-  GimpPixelRgn  des_rgn;
-  GimpPixelRgn  src_rgn;
+  PicmanPixelRgn  des_rgn;
+  PicmanPixelRgn  src_rgn;
   guchar       *src_rows, *des_rows;
   gint          x, y;
-  GimpRGB       background;
+  PicmanRGB       background;
   guchar        bg[4];
   gint          sel_x1, sel_y1;
   gint          sel_width, sel_height;
 
-  gimp_context_get_background (&background);
+  picman_context_get_background (&background);
 
   if (bvals.bg_trans)
-    gimp_rgb_set_alpha (&background, 0.0);
+    picman_rgb_set_alpha (&background, 0.0);
 
-  gimp_drawable_get_color_uchar (drawable->drawable_id, &background, bg);
+  picman_drawable_get_color_uchar (drawable->drawable_id, &background, bg);
 
-  if (! gimp_drawable_mask_intersect (drawable->drawable_id,
+  if (! picman_drawable_mask_intersect (drawable->drawable_id,
                                       &sel_x1, &sel_y1,
                                       &sel_width, &sel_height))
     return;
 
-  gimp_pixel_rgn_init (&src_rgn, drawable,
+  picman_pixel_rgn_init (&src_rgn, drawable,
                        sel_x1, sel_y1, sel_width, sel_height, FALSE, FALSE);
-  gimp_pixel_rgn_init (&des_rgn, drawable,
+  picman_pixel_rgn_init (&des_rgn, drawable,
                        sel_x1, sel_y1, sel_width, sel_height, TRUE, TRUE);
 
   src_rows = g_new (guchar, MAX (sel_width, sel_height) * 4 * STEP);
   des_rows = g_new (guchar, MAX (sel_width, sel_height) * 4 * STEP);
 
-  if (bvals.orientation == GIMP_ORIENTATION_VERTICAL)
+  if (bvals.orientation == PICMAN_ORIENTATION_VERTICAL)
     {
       for (y = 0; y < sel_height; y += STEP)
         {
@@ -592,7 +592,7 @@ apply_blinds (GimpDrawable *drawable)
           else
             step = STEP;
 
-          gimp_pixel_rgn_get_rect (&src_rgn,
+          picman_pixel_rgn_get_rect (&src_rgn,
                                    src_rows,
                                    sel_x1,
                                    sel_y1 + y,
@@ -605,14 +605,14 @@ apply_blinds (GimpDrawable *drawable)
                          des_rows + (sel_width * rr * src_rgn.bpp),
                          sel_width, src_rgn.bpp, bg);
 
-          gimp_pixel_rgn_set_rect (&des_rgn,
+          picman_pixel_rgn_set_rect (&des_rgn,
                                    des_rows,
                                    sel_x1,
                                    sel_y1 + y,
                                    sel_width,
                                    step);
 
-          gimp_progress_update ((double) y / (double) sel_height);
+          picman_progress_update ((double) y / (double) sel_height);
         }
     }
   else
@@ -666,7 +666,7 @@ apply_blinds (GimpDrawable *drawable)
           else
             step = STEP;
 
-          gimp_pixel_rgn_get_rect (&src_rgn,
+          picman_pixel_rgn_get_rect (&src_rgn,
                                    src_rows,
                                    sel_x1 + x,
                                    sel_y1,
@@ -690,14 +690,14 @@ apply_blinds (GimpDrawable *drawable)
                       step * src_rgn.bpp);
             }
 
-          gimp_pixel_rgn_set_rect (&des_rgn,
+          picman_pixel_rgn_set_rect (&des_rgn,
                                    des_rows,
                                    sel_x1 + x,
                                    sel_y1,
                                    step,
                                    sel_height);
 
-          gimp_progress_update ((double) x / (double) sel_width);
+          picman_progress_update ((double) x / (double) sel_width);
         }
 
       g_free (dst);
@@ -708,9 +708,9 @@ apply_blinds (GimpDrawable *drawable)
   g_free (src_rows);
   g_free (des_rows);
 
-  gimp_progress_update (1.0);
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id,
+  picman_progress_update (1.0);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id,
                         sel_x1, sel_y1, sel_width, sel_height);
 }

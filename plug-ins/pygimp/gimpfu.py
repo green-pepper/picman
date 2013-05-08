@@ -1,4 +1,4 @@
-#   Gimp-Python - allows the writing of GIMP plug-ins in Python.
+#   Picman-Python - allows the writing of PICMAN plug-ins in Python.
 #   Copyright (C) 1997  James Henstridge <james@daa.com.au>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -14,15 +14,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Simple interface for writing GIMP plug-ins in Python.
+"""Simple interface for writing PICMAN plug-ins in Python.
 
 Instead of worrying about all the user interaction, saving last used
-values and everything, the gimpfu module can take care of it for you.
+values and everything, the picmanfu module can take care of it for you.
 It provides a simple register() function that will register your
 plug-in if needed, and cause your plug-in function to be called when
 needed.
 
-Gimpfu will also handle showing a user interface for editing plug-in
+Picmanfu will also handle showing a user interface for editing plug-in
 parameters if the plug-in is called interactively, and will also save
 the last used parameters, so the RUN_WITH_LAST_VALUES run_type will
 work correctly.  It will also make sure that the displays are flushed
@@ -31,8 +31,8 @@ on completion if the plug-in was run interactively.
 When registering the plug-in, you do not need to worry about
 specifying the run_type parameter.
 
-A typical gimpfu plug-in would look like this:
-  from gimpfu import *
+A typical picmanfu plug-in would look like this:
+  from picmanfu import *
 
   def plugin_func(image, drawable, args):
               # do what plugins do best
@@ -54,8 +54,8 @@ A typical gimpfu plug-in would look like this:
               plugin_func, menu="<Image>/Somewhere")
   main()
 
-The call to "from gimpfu import *" will import all the gimp constants
-into the plug-in namespace, and also import the symbols gimp, pdb,
+The call to "from picmanfu import *" will import all the picman constants
+into the plug-in namespace, and also import the symbols picman, pdb,
 register and main.  This should be just about all any plug-in needs.
 
 You can use any of the PF_* constants below as parameter types, and an
@@ -73,13 +73,13 @@ the translations are installed.
 
 import string as _string
 import math
-import gimp
-import gimpcolor
-from gimpenums import *
-pdb = gimp.pdb
+import picman
+import picmancolor
+from picmanenums import *
+pdb = picman.pdb
 
 import gettext
-t = gettext.translation("gimp20-python", gimp.locale_directory, fallback=True)
+t = gettext.translation("picman20-python", picman.locale_directory, fallback=True)
 _ = t.ugettext
 
 class error(RuntimeError): pass
@@ -178,14 +178,14 @@ _obj_mapping = {
     #PF_INT32ARRAY  : list,
     #PF_FLOATARRAY  : list,
     #PF_STRINGARRAY : list,
-    PF_COLOR       : gimpcolor.RGB,
+    PF_COLOR       : picmancolor.RGB,
     PF_ITEM        : int,
-    PF_DISPLAY     : gimp.Display,
-    PF_IMAGE       : gimp.Image,
-    PF_LAYER       : gimp.Layer,
-    PF_CHANNEL     : gimp.Channel,
-    PF_DRAWABLE    : gimp.Drawable,
-    PF_VECTORS     : gimp.Vectors,
+    PF_DISPLAY     : picman.Display,
+    PF_IMAGE       : picman.Image,
+    PF_LAYER       : picman.Layer,
+    PF_CHANNEL     : picman.Channel,
+    PF_DRAWABLE    : picman.Drawable,
+    PF_VECTORS     : picman.Vectors,
 
     PF_TOGGLE      : bool,
     PF_SLIDER      : float,
@@ -314,21 +314,21 @@ def _query():
         if domain:
             try:
                 (domain, locale_dir) = domain
-                gimp.domain_register(domain, locale_dir)
+                picman.domain_register(domain, locale_dir)
             except ValueError:
-                gimp.domain_register(domain)
+                picman.domain_register(domain)
 
-        gimp.install_procedure(plugin, blurb, help, author, copyright,
+        picman.install_procedure(plugin, blurb, help, author, copyright,
                                date, label, imagetypes, plugin_type,
                                params, results)
 
         if menu:
-            gimp.menu_register(plugin, menu)
+            picman.menu_register(plugin, menu)
         if on_query:
             on_query()
 
 def _get_defaults(proc_name):
-    import gimpshelf
+    import picmanshelf
 
     (blurb, help, author, copyright, date,
      label, imagetypes, plugin_type,
@@ -337,17 +337,17 @@ def _get_defaults(proc_name):
 
     key = "python-fu-save--" + proc_name
 
-    if gimpshelf.shelf.has_key(key):
-        return gimpshelf.shelf[key]
+    if picmanshelf.shelf.has_key(key):
+        return picmanshelf.shelf[key]
     else:
         # return the default values
         return [x[3] for x in params]
 
 def _set_defaults(proc_name, defaults):
-    import gimpshelf
+    import picmanshelf
 
     key = "python-fu-save--" + proc_name
-    gimpshelf.shelf[key] = defaults
+    picmanshelf.shelf[key] = defaults
 
 def _interact(proc_name, start_params):
     (blurb, help, author, copyright, date,
@@ -369,7 +369,7 @@ def _interact(proc_name, start_params):
     import pygtk
     pygtk.require('2.0')
 
-    import gimpui
+    import picmanui
     import gtk
 #    import pango
 
@@ -623,13 +623,13 @@ def _interact(proc_name, start_params):
             #PF_INT32ARRAY  : ArrayEntry,
             #PF_FLOATARRAY  : ArrayEntry,
             #PF_STRINGARRAY : ArrayEntry,
-            PF_COLOR       : gimpui.ColorSelector,
+            PF_COLOR       : picmanui.ColorSelector,
             PF_ITEM        : IntEntry,  # should handle differently ...
-            PF_IMAGE       : gimpui.ImageSelector,
-            PF_LAYER       : gimpui.LayerSelector,
-            PF_CHANNEL     : gimpui.ChannelSelector,
-            PF_DRAWABLE    : gimpui.DrawableSelector,
-            PF_VECTORS     : gimpui.VectorsSelector,
+            PF_IMAGE       : picmanui.ImageSelector,
+            PF_LAYER       : picmanui.LayerSelector,
+            PF_CHANNEL     : picmanui.ChannelSelector,
+            PF_DRAWABLE    : picmanui.DrawableSelector,
+            PF_VECTORS     : picmanui.VectorsSelector,
 
             PF_TOGGLE      : ToggleEntry,
             PF_SLIDER      : SliderEntry,
@@ -637,21 +637,21 @@ def _interact(proc_name, start_params):
             PF_RADIO       : RadioEntry,
             PF_OPTION      : ComboEntry,
 
-            PF_FONT        : gimpui.FontSelector,
+            PF_FONT        : picmanui.FontSelector,
             PF_FILE        : FileSelector,
             PF_FILENAME    : FilenameSelector,
             PF_DIRNAME     : DirnameSelector,
-            PF_BRUSH       : gimpui.BrushSelector,
-            PF_PATTERN     : gimpui.PatternSelector,
-            PF_GRADIENT    : gimpui.GradientSelector,
-            PF_PALETTE     : gimpui.PaletteSelector,
+            PF_BRUSH       : picmanui.BrushSelector,
+            PF_PATTERN     : picmanui.PatternSelector,
+            PF_GRADIENT    : picmanui.GradientSelector,
+            PF_PALETTE     : picmanui.PaletteSelector,
             PF_TEXT        : TextEntry
     }
 
     if on_run:
         on_run()
 
-    dialog = gimpui.Dialog(proc_name, "python-fu", None, 0, None, proc_name,
+    dialog = picmanui.Dialog(proc_name, "python-fu", None, 0, None, proc_name,
                            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                             gtk.STOCK_OK, gtk.RESPONSE_OK))
 
@@ -672,7 +672,7 @@ def _interact(proc_name, start_params):
             except ValueError:
                 trans = gettext.translation(domain, fallback=True)
             blurb = trans.ugettext(blurb)
-        box = gimpui.HintBox(blurb)
+        box = picmanui.HintBox(blurb)
         vbox.pack_start(box, expand=False)
         box.show()
 
@@ -742,7 +742,7 @@ def _interact(proc_name, start_params):
     vbox.pack_end(progress_vbox, expand=False)
     progress_vbox.show()
 
-    progress = gimpui.ProgressBar()
+    progress = picmanui.ProgressBar()
     progress_vbox.pack_start(progress)
     progress.show()
 
@@ -806,17 +806,17 @@ def _run(proc_name, params):
     else:
         res = apply(func, params[1:])
 
-    gimp.displays_flush()
+    picman.displays_flush()
 
     return res
 
 def main():
     """This should be called after registering the plug-in."""
-    gimp.main(None, None, _query, _run)
+    picman.main(None, None, _query, _run)
 
 def fail(msg):
     """Display an error message and quit"""
-    gimp.message(msg)
+    picman.message(msg)
     raise error, msg
 
 def N_(message):

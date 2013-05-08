@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,72 +21,72 @@
 
 #include "paint-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpbrush.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdynamics.h"
-#include "core/gimpgradient.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmanbrush.h"
+#include "core/picmandrawable.h"
+#include "core/picmandynamics.h"
+#include "core/picmangradient.h"
+#include "core/picmanimage.h"
 
-#include "gimpairbrush.h"
-#include "gimpairbrushoptions.h"
+#include "picmanairbrush.h"
+#include "picmanairbrushoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void       gimp_airbrush_finalize (GObject          *object);
+static void       picman_airbrush_finalize (GObject          *object);
 
-static void       gimp_airbrush_paint    (GimpPaintCore    *paint_core,
-                                          GimpDrawable     *drawable,
-                                          GimpPaintOptions *paint_options,
-                                          const GimpCoords *coords,
-                                          GimpPaintState    paint_state,
+static void       picman_airbrush_paint    (PicmanPaintCore    *paint_core,
+                                          PicmanDrawable     *drawable,
+                                          PicmanPaintOptions *paint_options,
+                                          const PicmanCoords *coords,
+                                          PicmanPaintState    paint_state,
                                           guint32           time);
-static void       gimp_airbrush_motion   (GimpPaintCore    *paint_core,
-                                          GimpDrawable     *drawable,
-                                          GimpPaintOptions *paint_options,
-                                          const GimpCoords *coords);
-static gboolean   gimp_airbrush_timeout  (gpointer          data);
+static void       picman_airbrush_motion   (PicmanPaintCore    *paint_core,
+                                          PicmanDrawable     *drawable,
+                                          PicmanPaintOptions *paint_options,
+                                          const PicmanCoords *coords);
+static gboolean   picman_airbrush_timeout  (gpointer          data);
 
 
-G_DEFINE_TYPE (GimpAirbrush, gimp_airbrush, GIMP_TYPE_PAINTBRUSH)
+G_DEFINE_TYPE (PicmanAirbrush, picman_airbrush, PICMAN_TYPE_PAINTBRUSH)
 
-#define parent_class gimp_airbrush_parent_class
+#define parent_class picman_airbrush_parent_class
 
 
 void
-gimp_airbrush_register (Gimp                      *gimp,
-                        GimpPaintRegisterCallback  callback)
+picman_airbrush_register (Picman                      *picman,
+                        PicmanPaintRegisterCallback  callback)
 {
-  (* callback) (gimp,
-                GIMP_TYPE_AIRBRUSH,
-                GIMP_TYPE_AIRBRUSH_OPTIONS,
-                "gimp-airbrush",
+  (* callback) (picman,
+                PICMAN_TYPE_AIRBRUSH,
+                PICMAN_TYPE_AIRBRUSH_OPTIONS,
+                "picman-airbrush",
                 _("Airbrush"),
-                "gimp-tool-airbrush");
+                "picman-tool-airbrush");
 }
 
 static void
-gimp_airbrush_class_init (GimpAirbrushClass *klass)
+picman_airbrush_class_init (PicmanAirbrushClass *klass)
 {
   GObjectClass       *object_class     = G_OBJECT_CLASS (klass);
-  GimpPaintCoreClass *paint_core_class = GIMP_PAINT_CORE_CLASS (klass);
+  PicmanPaintCoreClass *paint_core_class = PICMAN_PAINT_CORE_CLASS (klass);
 
-  object_class->finalize  = gimp_airbrush_finalize;
+  object_class->finalize  = picman_airbrush_finalize;
 
-  paint_core_class->paint = gimp_airbrush_paint;
+  paint_core_class->paint = picman_airbrush_paint;
 }
 
 static void
-gimp_airbrush_init (GimpAirbrush *airbrush)
+picman_airbrush_init (PicmanAirbrush *airbrush)
 {
   airbrush->timeout_id = 0;
 }
 
 static void
-gimp_airbrush_finalize (GObject *object)
+picman_airbrush_finalize (GObject *object)
 {
-  GimpAirbrush *airbrush = GIMP_AIRBRUSH (object);
+  PicmanAirbrush *airbrush = PICMAN_AIRBRUSH (object);
 
   if (airbrush->timeout_id)
     {
@@ -98,56 +98,56 @@ gimp_airbrush_finalize (GObject *object)
 }
 
 static void
-gimp_airbrush_paint (GimpPaintCore    *paint_core,
-                     GimpDrawable     *drawable,
-                     GimpPaintOptions *paint_options,
-                     const GimpCoords *coords,
-                     GimpPaintState    paint_state,
+picman_airbrush_paint (PicmanPaintCore    *paint_core,
+                     PicmanDrawable     *drawable,
+                     PicmanPaintOptions *paint_options,
+                     const PicmanCoords *coords,
+                     PicmanPaintState    paint_state,
                      guint32           time)
 {
-  GimpAirbrush        *airbrush = GIMP_AIRBRUSH (paint_core);
-  GimpAirbrushOptions *options  = GIMP_AIRBRUSH_OPTIONS (paint_options);
-  GimpDynamics        *dynamics = GIMP_BRUSH_CORE (paint_core)->dynamics;
+  PicmanAirbrush        *airbrush = PICMAN_AIRBRUSH (paint_core);
+  PicmanAirbrushOptions *options  = PICMAN_AIRBRUSH_OPTIONS (paint_options);
+  PicmanDynamics        *dynamics = PICMAN_BRUSH_CORE (paint_core)->dynamics;
 
   switch (paint_state)
     {
-    case GIMP_PAINT_STATE_INIT:
+    case PICMAN_PAINT_STATE_INIT:
       if (airbrush->timeout_id)
         {
           g_source_remove (airbrush->timeout_id);
           airbrush->timeout_id = 0;
         }
 
-      GIMP_PAINT_CORE_CLASS (parent_class)->paint (paint_core, drawable,
+      PICMAN_PAINT_CORE_CLASS (parent_class)->paint (paint_core, drawable,
                                                    paint_options,
                                                    coords,
                                                    paint_state, time);
       break;
 
-    case GIMP_PAINT_STATE_MOTION:
+    case PICMAN_PAINT_STATE_MOTION:
       if (airbrush->timeout_id)
         {
           g_source_remove (airbrush->timeout_id);
           airbrush->timeout_id = 0;
         }
 
-      gimp_airbrush_motion (paint_core, drawable, paint_options, coords);
+      picman_airbrush_motion (paint_core, drawable, paint_options, coords);
 
       if ((options->rate != 0.0) && (!options->motion_only))
         {
-          GimpImage *image = gimp_item_get_image (GIMP_ITEM (drawable));
+          PicmanImage *image = picman_item_get_image (PICMAN_ITEM (drawable));
           gdouble    fade_point;
           gdouble    dynamic_rate;
           gint       timeout;
 
-          fade_point = gimp_paint_options_get_fade (paint_options, image,
+          fade_point = picman_paint_options_get_fade (paint_options, image,
                                                     paint_core->pixel_dist);
 
           airbrush->drawable      = drawable;
           airbrush->paint_options = paint_options;
 
-          dynamic_rate = gimp_dynamics_get_linear_value (dynamics,
-                                                         GIMP_DYNAMICS_OUTPUT_RATE,
+          dynamic_rate = picman_dynamics_get_linear_value (dynamics,
+                                                         PICMAN_DYNAMICS_OUTPUT_RATE,
                                                          coords,
                                                          paint_options,
                                                          fade_point);
@@ -155,19 +155,19 @@ gimp_airbrush_paint (GimpPaintCore    *paint_core,
           timeout = 10000 / (options->rate * dynamic_rate);
 
           airbrush->timeout_id = g_timeout_add (timeout,
-                                                gimp_airbrush_timeout,
+                                                picman_airbrush_timeout,
                                                 airbrush);
         }
       break;
 
-    case GIMP_PAINT_STATE_FINISH:
+    case PICMAN_PAINT_STATE_FINISH:
       if (airbrush->timeout_id)
         {
           g_source_remove (airbrush->timeout_id);
           airbrush->timeout_id = 0;
         }
 
-      GIMP_PAINT_CORE_CLASS (parent_class)->paint (paint_core, drawable,
+      PICMAN_PAINT_CORE_CLASS (parent_class)->paint (paint_core, drawable,
                                                    paint_options,
                                                    coords,
                                                    paint_state, time);
@@ -176,46 +176,46 @@ gimp_airbrush_paint (GimpPaintCore    *paint_core,
 }
 
 static void
-gimp_airbrush_motion (GimpPaintCore    *paint_core,
-                      GimpDrawable     *drawable,
-                      GimpPaintOptions *paint_options,
-                      const GimpCoords *coords)
+picman_airbrush_motion (PicmanPaintCore    *paint_core,
+                      PicmanDrawable     *drawable,
+                      PicmanPaintOptions *paint_options,
+                      const PicmanCoords *coords)
 
 {
-  GimpAirbrushOptions *options  = GIMP_AIRBRUSH_OPTIONS (paint_options);
-  GimpDynamics        *dynamics = GIMP_BRUSH_CORE (paint_core)->dynamics;
-  GimpImage           *image    = gimp_item_get_image (GIMP_ITEM (drawable));
+  PicmanAirbrushOptions *options  = PICMAN_AIRBRUSH_OPTIONS (paint_options);
+  PicmanDynamics        *dynamics = PICMAN_BRUSH_CORE (paint_core)->dynamics;
+  PicmanImage           *image    = picman_item_get_image (PICMAN_ITEM (drawable));
   gdouble              opacity;
   gdouble              fade_point;
 
-  fade_point = gimp_paint_options_get_fade (paint_options, image,
+  fade_point = picman_paint_options_get_fade (paint_options, image,
                                             paint_core->pixel_dist);
 
   opacity = (options->flow / 100.0 *
-             gimp_dynamics_get_linear_value (dynamics,
-                                             GIMP_DYNAMICS_OUTPUT_FLOW,
+             picman_dynamics_get_linear_value (dynamics,
+                                             PICMAN_DYNAMICS_OUTPUT_FLOW,
                                              coords,
                                              paint_options,
                                              fade_point));
 
-  _gimp_paintbrush_motion (paint_core, drawable, paint_options, coords, opacity);
+  _picman_paintbrush_motion (paint_core, drawable, paint_options, coords, opacity);
 }
 
 static gboolean
-gimp_airbrush_timeout (gpointer data)
+picman_airbrush_timeout (gpointer data)
 {
-  GimpAirbrush *airbrush = GIMP_AIRBRUSH (data);
-  GimpCoords    coords;
+  PicmanAirbrush *airbrush = PICMAN_AIRBRUSH (data);
+  PicmanCoords    coords;
 
-  gimp_paint_core_get_current_coords (GIMP_PAINT_CORE (airbrush), &coords);
+  picman_paint_core_get_current_coords (PICMAN_PAINT_CORE (airbrush), &coords);
 
-  gimp_airbrush_paint (GIMP_PAINT_CORE (airbrush),
+  picman_airbrush_paint (PICMAN_PAINT_CORE (airbrush),
                        airbrush->drawable,
                        airbrush->paint_options,
                        &coords,
-                       GIMP_PAINT_STATE_MOTION, 0);
+                       PICMAN_PAINT_STATE_MOTION, 0);
 
-  gimp_image_flush (gimp_item_get_image (GIMP_ITEM (airbrush->drawable)));
+  picman_image_flush (picman_item_get_image (PICMAN_ITEM (airbrush->drawable)));
 
   return FALSE;
 }

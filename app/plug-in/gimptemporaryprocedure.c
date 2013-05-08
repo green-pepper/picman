@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptemporaryprocedure.c
+ * picmantemporaryprocedure.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,135 +21,135 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "plug-in-types.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "gimpplugin.h"
-#define __YES_I_NEED_GIMP_PLUG_IN_MANAGER_CALL__
-#include "gimppluginmanager-call.h"
-#include "gimptemporaryprocedure.h"
+#include "picmanplugin.h"
+#define __YES_I_NEED_PICMAN_PLUG_IN_MANAGER_CALL__
+#include "picmanpluginmanager-call.h"
+#include "picmantemporaryprocedure.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void             gimp_temporary_procedure_finalize (GObject        *object);
+static void             picman_temporary_procedure_finalize (GObject        *object);
 
-static GimpValueArray * gimp_temporary_procedure_execute  (GimpProcedure  *procedure,
-                                                           Gimp           *gimp,
-                                                           GimpContext    *context,
-                                                           GimpProgress   *progress,
-                                                           GimpValueArray *args,
+static PicmanValueArray * picman_temporary_procedure_execute  (PicmanProcedure  *procedure,
+                                                           Picman           *picman,
+                                                           PicmanContext    *context,
+                                                           PicmanProgress   *progress,
+                                                           PicmanValueArray *args,
                                                            GError        **error);
-static void        gimp_temporary_procedure_execute_async (GimpProcedure  *procedure,
-                                                           Gimp           *gimp,
-                                                           GimpContext    *context,
-                                                           GimpProgress   *progress,
-                                                           GimpValueArray *args,
-                                                           GimpObject     *display);
+static void        picman_temporary_procedure_execute_async (PicmanProcedure  *procedure,
+                                                           Picman           *picman,
+                                                           PicmanContext    *context,
+                                                           PicmanProgress   *progress,
+                                                           PicmanValueArray *args,
+                                                           PicmanObject     *display);
 
-const gchar       * gimp_temporary_procedure_get_progname (const GimpPlugInProcedure *procedure);
+const gchar       * picman_temporary_procedure_get_progname (const PicmanPlugInProcedure *procedure);
 
 
-G_DEFINE_TYPE (GimpTemporaryProcedure, gimp_temporary_procedure,
-               GIMP_TYPE_PLUG_IN_PROCEDURE)
+G_DEFINE_TYPE (PicmanTemporaryProcedure, picman_temporary_procedure,
+               PICMAN_TYPE_PLUG_IN_PROCEDURE)
 
-#define parent_class gimp_temporary_procedure_parent_class
+#define parent_class picman_temporary_procedure_parent_class
 
 
 static void
-gimp_temporary_procedure_class_init (GimpTemporaryProcedureClass *klass)
+picman_temporary_procedure_class_init (PicmanTemporaryProcedureClass *klass)
 {
   GObjectClass             *object_class = G_OBJECT_CLASS (klass);
-  GimpProcedureClass       *proc_class   = GIMP_PROCEDURE_CLASS (klass);
-  GimpPlugInProcedureClass *plug_class   = GIMP_PLUG_IN_PROCEDURE_CLASS (klass);
+  PicmanProcedureClass       *proc_class   = PICMAN_PROCEDURE_CLASS (klass);
+  PicmanPlugInProcedureClass *plug_class   = PICMAN_PLUG_IN_PROCEDURE_CLASS (klass);
 
-  object_class->finalize    = gimp_temporary_procedure_finalize;
+  object_class->finalize    = picman_temporary_procedure_finalize;
 
-  proc_class->execute       = gimp_temporary_procedure_execute;
-  proc_class->execute_async = gimp_temporary_procedure_execute_async;
+  proc_class->execute       = picman_temporary_procedure_execute;
+  proc_class->execute_async = picman_temporary_procedure_execute_async;
 
-  plug_class->get_progname  = gimp_temporary_procedure_get_progname;
+  plug_class->get_progname  = picman_temporary_procedure_get_progname;
 }
 
 static void
-gimp_temporary_procedure_init (GimpTemporaryProcedure *proc)
+picman_temporary_procedure_init (PicmanTemporaryProcedure *proc)
 {
-  GIMP_PROCEDURE (proc)->proc_type = GIMP_TEMPORARY;
+  PICMAN_PROCEDURE (proc)->proc_type = PICMAN_TEMPORARY;
 }
 
 static void
-gimp_temporary_procedure_finalize (GObject *object)
+picman_temporary_procedure_finalize (GObject *object)
 {
-  /* GimpTemporaryProcedure *proc = GIMP_TEMPORARY_PROCEDURE (object); */
+  /* PicmanTemporaryProcedure *proc = PICMAN_TEMPORARY_PROCEDURE (object); */
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
-static GimpValueArray *
-gimp_temporary_procedure_execute (GimpProcedure   *procedure,
-                                  Gimp            *gimp,
-                                  GimpContext     *context,
-                                  GimpProgress    *progress,
-                                  GimpValueArray  *args,
+static PicmanValueArray *
+picman_temporary_procedure_execute (PicmanProcedure   *procedure,
+                                  Picman            *picman,
+                                  PicmanContext     *context,
+                                  PicmanProgress    *progress,
+                                  PicmanValueArray  *args,
                                   GError         **error)
 {
-  return gimp_plug_in_manager_call_run_temp (gimp->plug_in_manager,
+  return picman_plug_in_manager_call_run_temp (picman->plug_in_manager,
                                              context, progress,
-                                             GIMP_TEMPORARY_PROCEDURE (procedure),
+                                             PICMAN_TEMPORARY_PROCEDURE (procedure),
                                              args);
 }
 
 static void
-gimp_temporary_procedure_execute_async (GimpProcedure  *procedure,
-                                        Gimp           *gimp,
-                                        GimpContext    *context,
-                                        GimpProgress   *progress,
-                                        GimpValueArray *args,
-                                        GimpObject     *display)
+picman_temporary_procedure_execute_async (PicmanProcedure  *procedure,
+                                        Picman           *picman,
+                                        PicmanContext    *context,
+                                        PicmanProgress   *progress,
+                                        PicmanValueArray *args,
+                                        PicmanObject     *display)
 {
-  GimpTemporaryProcedure *temp_procedure = GIMP_TEMPORARY_PROCEDURE (procedure);
-  GimpValueArray         *return_vals;
+  PicmanTemporaryProcedure *temp_procedure = PICMAN_TEMPORARY_PROCEDURE (procedure);
+  PicmanValueArray         *return_vals;
 
-  return_vals = gimp_plug_in_manager_call_run_temp (gimp->plug_in_manager,
+  return_vals = picman_plug_in_manager_call_run_temp (picman->plug_in_manager,
                                                     context, progress,
                                                     temp_procedure,
                                                     args);
 
   if (return_vals)
     {
-      GimpPlugInProcedure *proc = GIMP_PLUG_IN_PROCEDURE (procedure);
+      PicmanPlugInProcedure *proc = PICMAN_PLUG_IN_PROCEDURE (procedure);
 
-      gimp_plug_in_procedure_handle_return_values (proc,
-                                                   gimp, progress,
+      picman_plug_in_procedure_handle_return_values (proc,
+                                                   picman, progress,
                                                    return_vals);
-      gimp_value_array_unref (return_vals);
+      picman_value_array_unref (return_vals);
     }
 }
 
 const gchar *
-gimp_temporary_procedure_get_progname (const GimpPlugInProcedure *procedure)
+picman_temporary_procedure_get_progname (const PicmanPlugInProcedure *procedure)
 {
-  return GIMP_TEMPORARY_PROCEDURE (procedure)->plug_in->prog;
+  return PICMAN_TEMPORARY_PROCEDURE (procedure)->plug_in->prog;
 }
 
 
 /*  public functions  */
 
-GimpProcedure *
-gimp_temporary_procedure_new (GimpPlugIn *plug_in)
+PicmanProcedure *
+picman_temporary_procedure_new (PicmanPlugIn *plug_in)
 {
-  GimpTemporaryProcedure *proc;
+  PicmanTemporaryProcedure *proc;
 
-  g_return_val_if_fail (GIMP_IS_PLUG_IN (plug_in), NULL);
+  g_return_val_if_fail (PICMAN_IS_PLUG_IN (plug_in), NULL);
 
-  proc = g_object_new (GIMP_TYPE_TEMPORARY_PROCEDURE, NULL);
+  proc = g_object_new (PICMAN_TYPE_TEMPORARY_PROCEDURE, NULL);
 
   proc->plug_in = plug_in;
 
-  GIMP_PLUG_IN_PROCEDURE (proc)->prog = g_strdup ("none");
+  PICMAN_PLUG_IN_PROCEDURE (proc)->prog = g_strdup ("none");
 
-  return GIMP_PROCEDURE (proc);
+  return PICMAN_PROCEDURE (proc);
 }

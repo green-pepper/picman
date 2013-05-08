@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpfloatingsel_pdb.c
+ * picmanfloatingsel_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpfloatingsel
- * @title: gimpfloatingsel
+ * SECTION: picmanfloatingsel
+ * @title: picmanfloatingsel
  * @short_description: Functions for removing or attaching floating selections.
  *
  * Functions for removing or attaching floating selections.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_floating_sel_remove:
+ * picman_floating_sel_remove:
  * @floating_sel_ID: The floating selection.
  *
  * Remove the specified floating selection from its associated
@@ -47,26 +47,26 @@
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_floating_sel_remove (gint32 floating_sel_ID)
+picman_floating_sel_remove (gint32 floating_sel_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-floating-sel-remove",
+  return_vals = picman_run_procedure ("picman-floating-sel-remove",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, floating_sel_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, floating_sel_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_floating_sel_anchor:
+ * picman_floating_sel_anchor:
  * @floating_sel_ID: The floating selection.
  *
  * Anchor the specified floating selection to its associated drawable.
@@ -79,26 +79,26 @@ gimp_floating_sel_remove (gint32 floating_sel_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_floating_sel_anchor (gint32 floating_sel_ID)
+picman_floating_sel_anchor (gint32 floating_sel_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-floating-sel-anchor",
+  return_vals = picman_run_procedure ("picman-floating-sel-anchor",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, floating_sel_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, floating_sel_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_floating_sel_to_layer:
+ * picman_floating_sel_to_layer:
  * @floating_sel_ID: The floating selection.
  *
  * Transforms the specified floating selection into a layer.
@@ -115,26 +115,26 @@ gimp_floating_sel_anchor (gint32 floating_sel_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_floating_sel_to_layer (gint32 floating_sel_ID)
+picman_floating_sel_to_layer (gint32 floating_sel_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-floating-sel-to-layer",
+  return_vals = picman_run_procedure ("picman-floating-sel-to-layer",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, floating_sel_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, floating_sel_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_floating_sel_attach:
+ * picman_floating_sel_attach:
  * @layer_ID: The layer (is attached as floating selection).
  * @drawable_ID: The drawable (where to attach the floating selection).
  *
@@ -146,28 +146,28 @@ gimp_floating_sel_to_layer (gint32 floating_sel_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_floating_sel_attach (gint32 layer_ID,
+picman_floating_sel_attach (gint32 layer_ID,
                           gint32 drawable_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-floating-sel-attach",
+  return_vals = picman_run_procedure ("picman-floating-sel-attach",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_DRAWABLE, drawable_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_floating_sel_rigor:
+ * picman_floating_sel_rigor:
  * @floating_sel_ID: The floating selection.
  * @undo: .
  *
@@ -176,28 +176,28 @@ gimp_floating_sel_attach (gint32 layer_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_floating_sel_rigor (gint32   floating_sel_ID,
+picman_floating_sel_rigor (gint32   floating_sel_ID,
                          gboolean undo)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-floating-sel-rigor",
+  return_vals = picman_run_procedure ("picman-floating-sel-rigor",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, floating_sel_ID,
-                                    GIMP_PDB_INT32, undo,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, floating_sel_ID,
+                                    PICMAN_PDB_INT32, undo,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_floating_sel_relax:
+ * picman_floating_sel_relax:
  * @floating_sel_ID: The floating selection.
  * @undo: .
  *
@@ -206,22 +206,22 @@ gimp_floating_sel_rigor (gint32   floating_sel_ID,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_floating_sel_relax (gint32   floating_sel_ID,
+picman_floating_sel_relax (gint32   floating_sel_ID,
                          gboolean undo)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-floating-sel-relax",
+  return_vals = picman_run_procedure ("picman-floating-sel-relax",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, floating_sel_ID,
-                                    GIMP_PDB_INT32, undo,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, floating_sel_ID,
+                                    PICMAN_PDB_INT32, undo,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

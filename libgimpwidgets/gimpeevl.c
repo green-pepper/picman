@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpeevl.c
+ * picmaneevl.c
  * Copyright (C) 2008 Fredrik Alstromer <roe@excu.se>
  * Copyright (C) 2008 Martin Nordholts <martinn@svn.gnome.org>
  *
@@ -68,26 +68,26 @@
 
 #include <glib-object.h>
 
-#include "gimpeevl.h"
-#include "gimpwidgets-error.h"
+#include "picmaneevl.h"
+#include "picmanwidgets-error.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 typedef enum
 {
-  GIMP_EEVL_TOKEN_NUM        = 30000,
-  GIMP_EEVL_TOKEN_IDENTIFIER = 30001,
+  PICMAN_EEVL_TOKEN_NUM        = 30000,
+  PICMAN_EEVL_TOKEN_IDENTIFIER = 30001,
 
-  GIMP_EEVL_TOKEN_ANY        = 40000,
+  PICMAN_EEVL_TOKEN_ANY        = 40000,
 
-  GIMP_EEVL_TOKEN_END        = 50000
-} GimpEevlTokenType;
+  PICMAN_EEVL_TOKEN_END        = 50000
+} PicmanEevlTokenType;
 
 
 typedef struct
 {
-  GimpEevlTokenType type;
+  PicmanEevlTokenType type;
 
   union
   {
@@ -101,57 +101,57 @@ typedef struct
 
   } value;
 
-} GimpEevlToken;
+} PicmanEevlToken;
 
 typedef struct
 {
   const gchar             *string;
-  GimpEevlUnitResolverProc unit_resolver_proc;
+  PicmanEevlUnitResolverProc unit_resolver_proc;
   gpointer                 data;
 
-  GimpEevlToken            current_token;
+  PicmanEevlToken            current_token;
   const gchar             *start_of_current_token;
   
 
   jmp_buf                  catcher;
   const gchar             *error_message;
 
-} GimpEevl;
+} PicmanEevl;
 
 
-static void             gimp_eevl_init                     (GimpEevl                 *eva,
+static void             picman_eevl_init                     (PicmanEevl                 *eva,
                                                             const gchar              *string,
-                                                            GimpEevlUnitResolverProc  unit_resolver_proc,
+                                                            PicmanEevlUnitResolverProc  unit_resolver_proc,
                                                             gpointer                  data);
-static GimpEevlQuantity gimp_eevl_complete                 (GimpEevl                 *eva);
-static GimpEevlQuantity gimp_eevl_expression               (GimpEevl                 *eva);
-static GimpEevlQuantity gimp_eevl_term                     (GimpEevl                 *eva);
-static GimpEevlQuantity gimp_eevl_signed_factor            (GimpEevl                 *eva);
-static GimpEevlQuantity gimp_eevl_factor                   (GimpEevl                 *eva);
-static gboolean         gimp_eevl_accept                   (GimpEevl                 *eva,
-                                                            GimpEevlTokenType         token_type,
-                                                            GimpEevlToken            *consumed_token);
-static void             gimp_eevl_lex                      (GimpEevl                 *eva);
-static void             gimp_eevl_lex_accept_count          (GimpEevl                 *eva,
+static PicmanEevlQuantity picman_eevl_complete                 (PicmanEevl                 *eva);
+static PicmanEevlQuantity picman_eevl_expression               (PicmanEevl                 *eva);
+static PicmanEevlQuantity picman_eevl_term                     (PicmanEevl                 *eva);
+static PicmanEevlQuantity picman_eevl_signed_factor            (PicmanEevl                 *eva);
+static PicmanEevlQuantity picman_eevl_factor                   (PicmanEevl                 *eva);
+static gboolean         picman_eevl_accept                   (PicmanEevl                 *eva,
+                                                            PicmanEevlTokenType         token_type,
+                                                            PicmanEevlToken            *consumed_token);
+static void             picman_eevl_lex                      (PicmanEevl                 *eva);
+static void             picman_eevl_lex_accept_count          (PicmanEevl                 *eva,
                                                             gint                      count,
-                                                            GimpEevlTokenType         token_type);
-static void             gimp_eevl_lex_accept_to             (GimpEevl                 *eva,
+                                                            PicmanEevlTokenType         token_type);
+static void             picman_eevl_lex_accept_to             (PicmanEevl                 *eva,
                                                             gchar                    *to,
-                                                            GimpEevlTokenType         token_type);
-static void             gimp_eevl_move_past_whitespace     (GimpEevl                 *eva);
-static gboolean         gimp_eevl_unit_identifier_start    (gunichar                  c);
-static gboolean         gimp_eevl_unit_identifier_continue (gunichar                  c);
-static gint             gimp_eevl_unit_identifier_size     (const gchar              *s,
+                                                            PicmanEevlTokenType         token_type);
+static void             picman_eevl_move_past_whitespace     (PicmanEevl                 *eva);
+static gboolean         picman_eevl_unit_identifier_start    (gunichar                  c);
+static gboolean         picman_eevl_unit_identifier_continue (gunichar                  c);
+static gint             picman_eevl_unit_identifier_size     (const gchar              *s,
                                                             gint                      start);
-static void             gimp_eevl_expect                   (GimpEevl                 *eva,
-                                                            GimpEevlTokenType         token_type,
-                                                            GimpEevlToken            *value);
-static void             gimp_eevl_error                    (GimpEevl                 *eva,
+static void             picman_eevl_expect                   (PicmanEevl                 *eva,
+                                                            PicmanEevlTokenType         token_type,
+                                                            PicmanEevlToken            *value);
+static void             picman_eevl_error                    (PicmanEevl                 *eva,
                                                             gchar                    *msg);
 
 
 /**
- * gimp_eevl_evaluate:
+ * picman_eevl_evaluate:
  * @string:             The NULL-terminated string to be evaluated.
  * @unit_resolver_proc: Unit resolver callback.
  * @result:             Result of evaluation.
@@ -166,36 +166,36 @@ static void             gimp_eevl_error                    (GimpEevl            
  * analysis, and basic unit conversions.
  *
  * All units conversions factors are relative to some implicit
- * base-unit (which in GIMP is inches). This is also the unit of the
+ * base-unit (which in PICMAN is inches). This is also the unit of the
  * returned value.
  *
- * Returns: A #GimpEevlQuantity with a value given in the base unit along with
+ * Returns: A #PicmanEevlQuantity with a value given in the base unit along with
  * the order of the dimension (i.e. if the base unit is inches, a dimension
  * order of two menas in^2).
  **/
 gboolean
-gimp_eevl_evaluate (const gchar               *string,
-                    GimpEevlUnitResolverProc   unit_resolver_proc,
-                    GimpEevlQuantity          *result,
+picman_eevl_evaluate (const gchar               *string,
+                    PicmanEevlUnitResolverProc   unit_resolver_proc,
+                    PicmanEevlQuantity          *result,
                     gpointer                   data,
                     const gchar              **error_pos,
                     GError                   **error)
 {
-  GimpEevl eva;
+  PicmanEevl eva;
 
   g_return_val_if_fail (g_utf8_validate (string, -1, NULL), FALSE);
   g_return_val_if_fail (unit_resolver_proc != NULL, FALSE);
   g_return_val_if_fail (result != NULL, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  gimp_eevl_init (&eva,
+  picman_eevl_init (&eva,
                   string,
                   unit_resolver_proc,
                   data);
 
   if (!setjmp (eva.catcher))  /* try... */
     {
-      *result = gimp_eevl_complete (&eva);
+      *result = picman_eevl_complete (&eva);
 
       return TRUE;
     }
@@ -205,8 +205,8 @@ gimp_eevl_evaluate (const gchar               *string,
         *error_pos = eva.start_of_current_token;
 
       g_set_error_literal (error,
-                           GIMP_WIDGETS_ERROR,
-                           GIMP_WIDGETS_PARSE_ERROR,
+                           PICMAN_WIDGETS_ERROR,
+                           PICMAN_WIDGETS_PARSE_ERROR,
                            eva.error_message);
 
       return FALSE;
@@ -214,37 +214,37 @@ gimp_eevl_evaluate (const gchar               *string,
 }
 
 static void
-gimp_eevl_init (GimpEevl                  *eva,
+picman_eevl_init (PicmanEevl                  *eva,
                 const gchar               *string,
-                GimpEevlUnitResolverProc   unit_resolver_proc,
+                PicmanEevlUnitResolverProc   unit_resolver_proc,
                 gpointer                   data)
 {
   eva->string              = string;
   eva->unit_resolver_proc  = unit_resolver_proc;
   eva->data                = data;
 
-  eva->current_token.type  = GIMP_EEVL_TOKEN_END;
+  eva->current_token.type  = PICMAN_EEVL_TOKEN_END;
 
   eva->error_message       = NULL;
 
   /* Preload symbol... */
-  gimp_eevl_lex (eva);
+  picman_eevl_lex (eva);
 }
 
-static GimpEevlQuantity
-gimp_eevl_complete (GimpEevl *eva)
+static PicmanEevlQuantity
+picman_eevl_complete (PicmanEevl *eva)
 {
-  GimpEevlQuantity result = {0, 0};
-  GimpEevlQuantity default_unit_factor;
+  PicmanEevlQuantity result = {0, 0};
+  PicmanEevlQuantity default_unit_factor;
 
   /* Empty expression evaluates to 0 */
-  if (gimp_eevl_accept (eva, GIMP_EEVL_TOKEN_END, NULL))
+  if (picman_eevl_accept (eva, PICMAN_EEVL_TOKEN_END, NULL))
     return result;
 
-  result = gimp_eevl_expression (eva);
+  result = picman_eevl_expression (eva);
 
   /* There should be nothing left to parse by now */
-  gimp_eevl_expect (eva, GIMP_EEVL_TOKEN_END, 0);
+  picman_eevl_expect (eva, PICMAN_EEVL_TOKEN_END, 0);
 
   eva->unit_resolver_proc (NULL,
                            &default_unit_factor,
@@ -261,26 +261,26 @@ gimp_eevl_complete (GimpEevl *eva)
   return result;
 }
 
-static GimpEevlQuantity
-gimp_eevl_expression (GimpEevl *eva)
+static PicmanEevlQuantity
+picman_eevl_expression (PicmanEevl *eva)
 {
   gboolean         subtract;
-  GimpEevlQuantity evaluated_terms;
+  PicmanEevlQuantity evaluated_terms;
 
-  evaluated_terms = gimp_eevl_term (eva);
+  evaluated_terms = picman_eevl_term (eva);
 
   /* continue evaluating terms, chained with + or -. */
   for (subtract = FALSE;
-       gimp_eevl_accept (eva, '+', NULL) ||
-       (subtract = gimp_eevl_accept (eva, '-', NULL));
+       picman_eevl_accept (eva, '+', NULL) ||
+       (subtract = picman_eevl_accept (eva, '-', NULL));
        subtract = FALSE)
     {
-      GimpEevlQuantity new_term = gimp_eevl_term (eva);
+      PicmanEevlQuantity new_term = picman_eevl_term (eva);
 
       /* If dimensions missmatch, attempt default unit assignent */
       if (new_term.dimension != evaluated_terms.dimension)
         {
-          GimpEevlQuantity default_unit_factor;
+          PicmanEevlQuantity default_unit_factor;
 
           eva->unit_resolver_proc (NULL,
                                    &default_unit_factor,
@@ -300,7 +300,7 @@ gimp_eevl_expression (GimpEevl *eva)
             }
           else
             {
-              gimp_eevl_error (eva, "Dimension missmatch during addition");
+              picman_eevl_error (eva, "Dimension missmatch during addition");
             }
         }
 
@@ -310,20 +310,20 @@ gimp_eevl_expression (GimpEevl *eva)
   return evaluated_terms;
 }
 
-static GimpEevlQuantity
-gimp_eevl_term (GimpEevl *eva)
+static PicmanEevlQuantity
+picman_eevl_term (PicmanEevl *eva)
 {
   gboolean         division;
-  GimpEevlQuantity evaluated_signed_factors;
+  PicmanEevlQuantity evaluated_signed_factors;
 
-  evaluated_signed_factors = gimp_eevl_signed_factor (eva);
+  evaluated_signed_factors = picman_eevl_signed_factor (eva);
 
   for (division = FALSE;
-       gimp_eevl_accept (eva, '*', NULL) ||
-       (division = gimp_eevl_accept (eva, '/', NULL));
+       picman_eevl_accept (eva, '*', NULL) ||
+       (division = picman_eevl_accept (eva, '/', NULL));
        division = FALSE)
     {
-      GimpEevlQuantity new_signed_factor = gimp_eevl_signed_factor (eva);
+      PicmanEevlQuantity new_signed_factor = picman_eevl_signed_factor (eva);
 
       if (division)
         {
@@ -341,51 +341,51 @@ gimp_eevl_term (GimpEevl *eva)
   return evaluated_signed_factors;
 }
 
-static GimpEevlQuantity
-gimp_eevl_signed_factor (GimpEevl *eva)
+static PicmanEevlQuantity
+picman_eevl_signed_factor (PicmanEevl *eva)
 {
-  GimpEevlQuantity result;
+  PicmanEevlQuantity result;
   gboolean         negate = FALSE;
 
-  if (! gimp_eevl_accept (eva, '+', NULL))
-    negate = gimp_eevl_accept (eva, '-', NULL);
+  if (! picman_eevl_accept (eva, '+', NULL))
+    negate = picman_eevl_accept (eva, '-', NULL);
 
-  result = gimp_eevl_factor (eva);
+  result = picman_eevl_factor (eva);
 
   if (negate) result.value = -result.value;
 
   return result;
 }
 
-static GimpEevlQuantity
-gimp_eevl_factor (GimpEevl *eva)
+static PicmanEevlQuantity
+picman_eevl_factor (PicmanEevl *eva)
 {
-  GimpEevlQuantity evaluated_factor = { 0, 0 };
-  GimpEevlToken    consumed_token;
+  PicmanEevlQuantity evaluated_factor = { 0, 0 };
+  PicmanEevlToken    consumed_token;
 
-  if (gimp_eevl_accept (eva,
-                        GIMP_EEVL_TOKEN_NUM,
+  if (picman_eevl_accept (eva,
+                        PICMAN_EEVL_TOKEN_NUM,
                         &consumed_token))
     {
       evaluated_factor.value = consumed_token.value.fl;
     }
-  else if (gimp_eevl_accept (eva, '(', NULL))
+  else if (picman_eevl_accept (eva, '(', NULL))
     {
-      evaluated_factor = gimp_eevl_expression (eva);
-      gimp_eevl_expect (eva, ')', 0);
+      evaluated_factor = picman_eevl_expression (eva);
+      picman_eevl_expect (eva, ')', 0);
     }
   else
     {
-      gimp_eevl_error (eva, "Expected number or '('");
+      picman_eevl_error (eva, "Expected number or '('");
     }
 
-  if (eva->current_token.type == GIMP_EEVL_TOKEN_IDENTIFIER)
+  if (eva->current_token.type == PICMAN_EEVL_TOKEN_IDENTIFIER)
     {
       gchar            *identifier;
-      GimpEevlQuantity  result;
+      PicmanEevlQuantity  result;
 
-      gimp_eevl_accept (eva,
-                        GIMP_EEVL_TOKEN_ANY,
+      picman_eevl_accept (eva,
+                        PICMAN_EEVL_TOKEN_ANY,
                         &consumed_token);
 
       identifier = g_newa (gchar, consumed_token.value.size + 1);
@@ -402,7 +402,7 @@ gimp_eevl_factor (GimpEevl *eva)
         }
       else
         {
-          gimp_eevl_error (eva, "Unit was not resolved");
+          picman_eevl_error (eva, "Unit was not resolved");
         }
     }
 
@@ -410,14 +410,14 @@ gimp_eevl_factor (GimpEevl *eva)
 }
 
 static gboolean
-gimp_eevl_accept (GimpEevl          *eva,
-                  GimpEevlTokenType  token_type,
-                  GimpEevlToken     *consumed_token)
+picman_eevl_accept (PicmanEevl          *eva,
+                  PicmanEevlTokenType  token_type,
+                  PicmanEevlToken     *consumed_token)
 {
   gboolean existed = FALSE;
 
   if (token_type == eva->current_token.type ||
-      token_type == GIMP_EEVL_TOKEN_ANY)
+      token_type == PICMAN_EEVL_TOKEN_ANY)
     {
       existed = TRUE;
 
@@ -425,32 +425,32 @@ gimp_eevl_accept (GimpEevl          *eva,
         *consumed_token = eva->current_token;
 
       /* Parse next token */
-      gimp_eevl_lex (eva);
+      picman_eevl_lex (eva);
     }
 
   return existed;
 }
 
 static void
-gimp_eevl_lex (GimpEevl *eva)
+picman_eevl_lex (PicmanEevl *eva)
 {
   const gchar *s;
 
-  gimp_eevl_move_past_whitespace (eva);
+  picman_eevl_move_past_whitespace (eva);
   s = eva->string;
   eva->start_of_current_token = s;
 
   if (! s || s[0] == '\0')
     {
       /* We're all done */
-      eva->current_token.type = GIMP_EEVL_TOKEN_END;
+      eva->current_token.type = PICMAN_EEVL_TOKEN_END;
     }
   else if (s[0] == '+' || s[0] == '-')
     {
       /* Snatch these before the g_strtod() does, othewise they might
        * be used in a numeric conversion.
        */
-      gimp_eevl_lex_accept_count (eva, 1, s[0]);
+      picman_eevl_lex_accept_count (eva, 1, s[0]);
     }
   else
     
@@ -464,46 +464,46 @@ gimp_eevl_lex (GimpEevl *eva)
           /* A numeric could be parsed, use it */
           eva->current_token.value.fl = value;
 
-          gimp_eevl_lex_accept_to (eva, endptr, GIMP_EEVL_TOKEN_NUM);
+          picman_eevl_lex_accept_to (eva, endptr, PICMAN_EEVL_TOKEN_NUM);
         }
-      else if (gimp_eevl_unit_identifier_start (s[0]))
+      else if (picman_eevl_unit_identifier_start (s[0]))
         {
           /* Unit identifier */
           eva->current_token.value.c    = s;
-          eva->current_token.value.size = gimp_eevl_unit_identifier_size (s, 0);
+          eva->current_token.value.size = picman_eevl_unit_identifier_size (s, 0);
 
-          gimp_eevl_lex_accept_count (eva,
+          picman_eevl_lex_accept_count (eva,
                                       eva->current_token.value.size,
-                                      GIMP_EEVL_TOKEN_IDENTIFIER);
+                                      PICMAN_EEVL_TOKEN_IDENTIFIER);
         }
       else
         {
           /* Everything else is a single character token */
-          gimp_eevl_lex_accept_count (eva, 1, s[0]);
+          picman_eevl_lex_accept_count (eva, 1, s[0]);
         }
     }
 }
 
 static void
-gimp_eevl_lex_accept_count (GimpEevl          *eva,
+picman_eevl_lex_accept_count (PicmanEevl          *eva,
                             gint               count,
-                            GimpEevlTokenType  token_type)
+                            PicmanEevlTokenType  token_type)
 {
   eva->current_token.type  = token_type;
   eva->string             += count;
 }
 
 static void
-gimp_eevl_lex_accept_to (GimpEevl          *eva,
+picman_eevl_lex_accept_to (PicmanEevl          *eva,
                          gchar             *to,
-                         GimpEevlTokenType  token_type)
+                         PicmanEevlTokenType  token_type)
 {
   eva->current_token.type = token_type;
   eva->string             = to;
 }
 
 static void
-gimp_eevl_move_past_whitespace (GimpEevl *eva)
+picman_eevl_move_past_whitespace (PicmanEevl *eva)
 {
   if (! eva->string)
     return;
@@ -513,7 +513,7 @@ gimp_eevl_move_past_whitespace (GimpEevl *eva)
 }
 
 static gboolean
-gimp_eevl_unit_identifier_start (gunichar c)
+picman_eevl_unit_identifier_start (gunichar c)
 {
   return (g_unichar_isalpha (c) ||
           c == (gunichar) '%'   ||
@@ -521,14 +521,14 @@ gimp_eevl_unit_identifier_start (gunichar c)
 }
 
 static gboolean
-gimp_eevl_unit_identifier_continue (gunichar c)
+picman_eevl_unit_identifier_continue (gunichar c)
 {
-  return (gimp_eevl_unit_identifier_start (c) ||
+  return (picman_eevl_unit_identifier_start (c) ||
           g_unichar_isdigit (c));
 }
 
 /**
- * gimp_eevl_unit_identifier_size:
+ * picman_eevl_unit_identifier_size:
  * @s:
  * @start:
  *
@@ -536,7 +536,7 @@ gimp_eevl_unit_identifier_continue (gunichar c)
  * terminator).
  **/
 static gint
-gimp_eevl_unit_identifier_size (const gchar *string,
+picman_eevl_unit_identifier_size (const gchar *string,
                                 gint         start_offset)
 {
   const gchar *start  = g_utf8_offset_to_pointer (string, start_offset);
@@ -544,13 +544,13 @@ gimp_eevl_unit_identifier_size (const gchar *string,
   gunichar     c      = g_utf8_get_char (s);
   gint         length = 0;
 
-  if (gimp_eevl_unit_identifier_start (c))
+  if (picman_eevl_unit_identifier_start (c))
     {
       s = g_utf8_next_char (s);
       c = g_utf8_get_char (s);
       length++;
 
-      while (gimp_eevl_unit_identifier_continue (c))
+      while (picman_eevl_unit_identifier_continue (c))
         {
           s = g_utf8_next_char (s);
           c = g_utf8_get_char (s);
@@ -562,16 +562,16 @@ gimp_eevl_unit_identifier_size (const gchar *string,
 }
 
 static void
-gimp_eevl_expect (GimpEevl          *eva,
-                  GimpEevlTokenType  token_type,
-                  GimpEevlToken     *value)
+picman_eevl_expect (PicmanEevl          *eva,
+                  PicmanEevlTokenType  token_type,
+                  PicmanEevlToken     *value)
 {
-  if (! gimp_eevl_accept (eva, token_type, value))
-    gimp_eevl_error (eva, "Unexpected token");
+  if (! picman_eevl_accept (eva, token_type, value))
+    picman_eevl_error (eva, "Unexpected token");
 }
 
 static void
-gimp_eevl_error (GimpEevl *eva,
+picman_eevl_error (PicmanEevl *eva,
                  gchar    *msg)
 {
   eva->error_message = msg;

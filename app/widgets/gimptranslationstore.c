@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimptranslationstore.c
- * Copyright (C) 2008, 2009  Sven Neumann <sven@gimp.org>
+ * picmantranslationstore.c
+ * Copyright (C) 2008, 2009  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,56 +24,56 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "widgets-types.h"
 
-#include "gimptranslationstore.h"
+#include "picmantranslationstore.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-struct _GimpTranslationStoreClass
+struct _PicmanTranslationStoreClass
 {
-  GimpLanguageStoreClass  parent_class;
+  PicmanLanguageStoreClass  parent_class;
 };
 
-struct _GimpTranslationStore
+struct _PicmanTranslationStore
 {
-  GimpLanguageStore  parent_instance;
+  PicmanLanguageStore  parent_instance;
 
   GHashTable        *map;
 };
 
 
-static void   gimp_translation_store_constructed (GObject              *object);
+static void   picman_translation_store_constructed (GObject              *object);
 
-static void   gimp_translation_store_add         (GimpLanguageStore    *store,
+static void   picman_translation_store_add         (PicmanLanguageStore    *store,
                                                   const gchar          *lang,
                                                   const gchar          *code);
 
-static void   gimp_translation_store_populate    (GimpTranslationStore *store);
+static void   picman_translation_store_populate    (PicmanTranslationStore *store);
 
 
-G_DEFINE_TYPE (GimpTranslationStore, gimp_translation_store,
-               GIMP_TYPE_LANGUAGE_STORE)
+G_DEFINE_TYPE (PicmanTranslationStore, picman_translation_store,
+               PICMAN_TYPE_LANGUAGE_STORE)
 
-#define parent_class gimp_translation_store_parent_class
+#define parent_class picman_translation_store_parent_class
 
 
 static void
-gimp_translation_store_class_init (GimpTranslationStoreClass *klass)
+picman_translation_store_class_init (PicmanTranslationStoreClass *klass)
 {
   GObjectClass           *object_class = G_OBJECT_CLASS (klass);
-  GimpLanguageStoreClass *store_class  = GIMP_LANGUAGE_STORE_CLASS (klass);
+  PicmanLanguageStoreClass *store_class  = PICMAN_LANGUAGE_STORE_CLASS (klass);
 
-  object_class->constructed = gimp_translation_store_constructed;
+  object_class->constructed = picman_translation_store_constructed;
 
-  store_class->add          = gimp_translation_store_add;
+  store_class->add          = picman_translation_store_add;
 }
 
 static void
-gimp_translation_store_init (GimpTranslationStore *store)
+picman_translation_store_init (PicmanTranslationStore *store)
 {
   store->map = g_hash_table_new_full (g_str_hash, g_str_equal,
                                       (GDestroyNotify) g_free,
@@ -81,31 +81,31 @@ gimp_translation_store_init (GimpTranslationStore *store)
 }
 
 static void
-gimp_translation_store_constructed (GObject *object)
+picman_translation_store_constructed (GObject *object)
 {
-  GimpTranslationStore *store = GIMP_TRANSLATION_STORE (object);
+  PicmanTranslationStore *store = PICMAN_TRANSLATION_STORE (object);
   gchar                *label;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  gimp_translation_store_populate (store);
+  picman_translation_store_populate (store);
 
   /*  we don't need the map any longer  */
   g_hash_table_unref (store->map);
   store->map = NULL;
 
   /*  add special entries for system locale and for "C"  */
-  GIMP_LANGUAGE_STORE_CLASS (parent_class)->add (GIMP_LANGUAGE_STORE (store),
+  PICMAN_LANGUAGE_STORE_CLASS (parent_class)->add (PICMAN_LANGUAGE_STORE (store),
                                                  _("System Language"),
                                                  NULL);
   label = g_strdup_printf ("%s [%s]", _("English"), "en_US");
-  GIMP_LANGUAGE_STORE_CLASS (parent_class)->add (GIMP_LANGUAGE_STORE (store),
+  PICMAN_LANGUAGE_STORE_CLASS (parent_class)->add (PICMAN_LANGUAGE_STORE (store),
                                                  label, "en_US");
   g_free (label);
 }
 
 static const gchar *
-gimp_translation_store_map (GimpTranslationStore *store,
+picman_translation_store_map (PicmanTranslationStore *store,
                             const gchar          *locale)
 {
   const gchar *lang;
@@ -132,10 +132,10 @@ gimp_translation_store_map (GimpTranslationStore *store,
 }
 
 static void
-gimp_translation_store_populate (GimpTranslationStore *store)
+picman_translation_store_populate (PicmanTranslationStore *store)
 {
   /*  FIXME: this should better be done asynchronously  */
-  GDir        *dir = g_dir_open (gimp_locale_directory (), 0, NULL);
+  GDir        *dir = g_dir_open (picman_locale_directory (), 0, NULL);
   const gchar *dirname;
 
   if (! dir)
@@ -143,23 +143,23 @@ gimp_translation_store_populate (GimpTranslationStore *store)
 
   while ((dirname = g_dir_read_name (dir)) != NULL)
     {
-      gchar *filename = g_build_filename (gimp_locale_directory (),
+      gchar *filename = g_build_filename (picman_locale_directory (),
                                           dirname,
                                           "LC_MESSAGES",
                                           GETTEXT_PACKAGE ".mo",
                                           NULL);
       if (g_file_test (filename, G_FILE_TEST_EXISTS))
         {
-          const gchar *lang = gimp_translation_store_map (store, dirname);
+          const gchar *lang = picman_translation_store_map (store, dirname);
 
           if (lang)
             {
-              GimpLanguageStore *language_store = GIMP_LANGUAGE_STORE (store);
+              PicmanLanguageStore *language_store = PICMAN_LANGUAGE_STORE (store);
               gchar             *label;
 
               label = g_strdup_printf ("%s [%s]", lang, dirname);
 
-              GIMP_LANGUAGE_STORE_CLASS (parent_class)->add (language_store,
+              PICMAN_LANGUAGE_STORE_CLASS (parent_class)->add (language_store,
                                                              label, dirname);
               g_free (label);
             }
@@ -172,17 +172,17 @@ gimp_translation_store_populate (GimpTranslationStore *store)
 }
 
 static void
-gimp_translation_store_add (GimpLanguageStore *store,
+picman_translation_store_add (PicmanLanguageStore *store,
                             const gchar       *lang,
                             const gchar       *code)
 {
-  g_hash_table_replace (GIMP_TRANSLATION_STORE (store)->map,
+  g_hash_table_replace (PICMAN_TRANSLATION_STORE (store)->map,
                         g_strdup (code),
                         g_strdup (lang));
 }
 
 GtkListStore *
-gimp_translation_store_new (void)
+picman_translation_store_new (void)
 {
-  return g_object_new (GIMP_TYPE_TRANSLATION_STORE, NULL);
+  return g_object_new (PICMAN_TYPE_TRANSLATION_STORE, NULL);
 }

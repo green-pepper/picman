@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,26 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_INK_OPTIONS_H__
-#define  __GIMP_INK_OPTIONS_H__
+#ifndef  __PICMAN_INK_OPTIONS_H__
+#define  __PICMAN_INK_OPTIONS_H__
 
 
-#include "gimppaintoptions.h"
+#include "picmanpaintoptions.h"
 
 
-#define GIMP_TYPE_INK_OPTIONS            (gimp_ink_options_get_type ())
-#define GIMP_INK_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_INK_OPTIONS, GimpInkOptions))
-#define GIMP_INK_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_INK_OPTIONS, GimpInkOptionsClass))
-#define GIMP_IS_INK_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_INK_OPTIONS))
-#define GIMP_IS_INK_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_INK_OPTIONS))
-#define GIMP_INK_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_INK_OPTIONS, GimpInkOptionsClass))
+#define PICMAN_TYPE_INK_OPTIONS            (picman_ink_options_get_type ())
+#define PICMAN_INK_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_INK_OPTIONS, PicmanInkOptions))
+#define PICMAN_INK_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_INK_OPTIONS, PicmanInkOptionsClass))
+#define PICMAN_IS_INK_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_INK_OPTIONS))
+#define PICMAN_IS_INK_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_INK_OPTIONS))
+#define PICMAN_INK_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_INK_OPTIONS, PicmanInkOptionsClass))
 
 
-typedef struct _GimpInkOptionsClass GimpInkOptionsClass;
+typedef struct _PicmanInkOptionsClass PicmanInkOptionsClass;
 
-struct _GimpInkOptions
+struct _PicmanInkOptions
 {
-  GimpPaintOptions  parent_instance;
+  PicmanPaintOptions  parent_instance;
 
   gdouble           size;
   gdouble           tilt_angle;
@@ -43,18 +43,18 @@ struct _GimpInkOptions
   gdouble           vel_sensitivity;
   gdouble           tilt_sensitivity;
 
-  GimpInkBlobType   blob_type;
+  PicmanInkBlobType   blob_type;
   gdouble           blob_aspect;
   gdouble           blob_angle;
 };
 
-struct _GimpInkOptionsClass
+struct _PicmanInkOptionsClass
 {
-  GimpPaintOptionsClass  parent_instance;
+  PicmanPaintOptionsClass  parent_instance;
 };
 
 
-GType   gimp_ink_options_get_type (void) G_GNUC_CONST;
+GType   picman_ink_options_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_INK_OPTIONS_H__  */
+#endif  /*  __PICMAN_INK_OPTIONS_H__  */

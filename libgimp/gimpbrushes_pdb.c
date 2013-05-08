@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimpbrushes_pdb.c
+ * picmanbrushes_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,12 @@
 
 #include <string.h>
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimpbrushes
- * @title: gimpbrushes
+ * SECTION: picmanbrushes
+ * @title: picmanbrushes
  * @short_description: Functions for manipulating brushes.
  *
  * Functions related to getting and setting brushes.
@@ -37,7 +37,7 @@
 
 
 /**
- * gimp_brushes_refresh:
+ * picman_brushes_refresh:
  *
  * Refresh current brushes. This function always succeeds.
  *
@@ -47,54 +47,54 @@
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_brushes_refresh (void)
+picman_brushes_refresh (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-brushes-refresh",
+  return_vals = picman_run_procedure ("picman-brushes-refresh",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_brushes_get_list:
+ * picman_brushes_get_list:
  * @filter: An optional regular expression used to filter the list.
  * @num_brushes: The number of brushes in the brush list.
  *
  * Retrieve a complete listing of the available brushes.
  *
- * This procedure returns a complete listing of available GIMP brushes.
+ * This procedure returns a complete listing of available PICMAN brushes.
  * Each name returned can be used as input to the
- * gimp_context_set_brush() procedure.
+ * picman_context_set_brush() procedure.
  *
  * Returns: The list of brush names. The returned value must be freed
  * with g_strfreev().
  **/
 gchar **
-gimp_brushes_get_list (const gchar *filter,
+picman_brushes_get_list (const gchar *filter,
                        gint        *num_brushes)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar **brush_list = NULL;
   gint i;
 
-  return_vals = gimp_run_procedure ("gimp-brushes-get-list",
+  return_vals = picman_run_procedure ("picman-brushes-get-list",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, filter,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, filter,
+                                    PICMAN_PDB_END);
 
   *num_brushes = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       *num_brushes = return_vals[1].data.d_int32;
       brush_list = g_new (gchar *, *num_brushes + 1);
@@ -103,35 +103,35 @@ gimp_brushes_get_list (const gchar *filter,
       brush_list[i] = NULL;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return brush_list;
 }
 
 /**
- * gimp_brushes_get_brush:
+ * picman_brushes_get_brush:
  * @width: The brush width.
  * @height: The brush height.
  * @spacing: The brush spacing.
  *
- * Deprecated: Use gimp_context_get_brush() instead.
+ * Deprecated: Use picman_context_get_brush() instead.
  *
  * Returns: The brush name.
  **/
 gchar *
-gimp_brushes_get_brush (gint *width,
+picman_brushes_get_brush (gint *width,
                         gint *height,
                         gint *spacing)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-brushes-get-brush",
+  return_vals = picman_run_procedure ("picman-brushes-get-brush",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       name = g_strdup (return_vals[1].data.d_string);
       *width = return_vals[2].data.d_int32;
@@ -139,66 +139,66 @@ gimp_brushes_get_brush (gint *width,
       *spacing = return_vals[4].data.d_int32;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return name;
 }
 
 /**
- * gimp_brushes_get_spacing:
+ * picman_brushes_get_spacing:
  *
- * Deprecated: Use gimp_brush_get_spacing() instead.
+ * Deprecated: Use picman_brush_get_spacing() instead.
  *
  * Returns: The brush spacing.
  **/
 gint
-gimp_brushes_get_spacing (void)
+picman_brushes_get_spacing (void)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint spacing = 0;
 
-  return_vals = gimp_run_procedure ("gimp-brushes-get-spacing",
+  return_vals = picman_run_procedure ("picman-brushes-get-spacing",
                                     &nreturn_vals,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     spacing = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return spacing;
 }
 
 /**
- * gimp_brushes_set_spacing:
+ * picman_brushes_set_spacing:
  * @spacing: The brush spacing.
  *
- * Deprecated: Use gimp_brush_set_spacing() instead.
+ * Deprecated: Use picman_brush_set_spacing() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_brushes_set_spacing (gint spacing)
+picman_brushes_set_spacing (gint spacing)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-brushes-set-spacing",
+  return_vals = picman_run_procedure ("picman-brushes-set-spacing",
                                     &nreturn_vals,
-                                    GIMP_PDB_INT32, spacing,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_INT32, spacing,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_brushes_get_brush_data:
+ * picman_brushes_get_brush_data:
  * @name: The brush name (\"\" means current active brush).
  * @opacity: The brush opacity.
  * @spacing: The brush spacing.
@@ -208,32 +208,32 @@ gimp_brushes_set_spacing (gint spacing)
  * @length: Length of brush mask data.
  * @mask_data: The brush mask data.
  *
- * Deprecated: Use gimp_brush_get_pixels() instead.
+ * Deprecated: Use picman_brush_get_pixels() instead.
  *
  * Returns: The brush name.
  **/
 gchar *
-gimp_brushes_get_brush_data (const gchar           *name,
+picman_brushes_get_brush_data (const gchar           *name,
                              gdouble               *opacity,
                              gint                  *spacing,
-                             GimpLayerModeEffects  *paint_mode,
+                             PicmanLayerModeEffects  *paint_mode,
                              gint                  *width,
                              gint                  *height,
                              gint                  *length,
                              guint8               **mask_data)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *actual_name = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-brushes-get-brush-data",
+  return_vals = picman_run_procedure ("picman-brushes-get-brush-data",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, name,
+                                    PICMAN_PDB_END);
 
   *length = 0;
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       actual_name = g_strdup (return_vals[1].data.d_string);
       *opacity = return_vals[2].data.d_float;
@@ -248,7 +248,7 @@ gimp_brushes_get_brush_data (const gchar           *name,
               *length * sizeof (guint8));
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return actual_name;
 }

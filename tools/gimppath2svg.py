@@ -3,8 +3,8 @@
 import sys,re
 
 """
-gimppath2svg.py -- Converts Gimp-Paths to a SVG-File.
-Copyright (C) 2000  Simon Budig <simon@gimp.org>
+picmanpath2svg.py -- Converts Picman-Paths to a SVG-File.
+Copyright (C) 2000  Simon Budig <simon@picman.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Usage: gimppath2svg.py [infile [outfile]]
+Usage: picmanpath2svg.py [infile [outfile]]
 """
 
 
@@ -44,10 +44,10 @@ class Path:
    def __init__(self):
       self.name = ""
       self.svgpath = ""
-      self.gimppoints = [[]]
+      self.picmanpoints = [[]]
       self.bounds = None
 
-   def readgimpfile (self, filedesc):
+   def readpicmanfile (self, filedesc):
       text = filedesc.readlines()
       for line in text:
 	 namematch = re.match ("Name: (.*)$", line)
@@ -56,9 +56,9 @@ class Path:
 	 pointmatch = re.match ("TYPE: (\d) X: (\d+) Y: (\d+)", line)
 	 if pointmatch:
 	    if pointmatch.group (1) == "3":
-	       path.gimppoints.append ([])
+	       path.picmanpoints.append ([])
 	    (x, y) = map (int, pointmatch.groups()[1:])
-	    path.gimppoints[-1].append (map (int, pointmatch.groups()))
+	    path.picmanpoints[-1].append (map (int, pointmatch.groups()))
 	    if self.bounds:
 	       if self.bounds[0] > x: self.bounds[0] = x
 	       if self.bounds[1] > y: self.bounds[1] = y
@@ -68,7 +68,7 @@ class Path:
 	       self.bounds = [x,y,x,y]
 
    def makesvg (self):
-      for path in self.gimppoints:
+      for path in self.picmanpoints:
          if path:
 	    start = path[0]
 	    svg = "M %d %d " % tuple (start[1:])
@@ -112,7 +112,7 @@ else:
 
 
 path = Path()
-path.readgimpfile (infile)
+path.readpicmanfile (infile)
 path.makesvg()
 path.writesvgfile (outfile)
 

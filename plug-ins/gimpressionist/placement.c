@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "gimpressionist.h"
+#include "picmanressionist.h"
 #include "placement.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define NUM_PLACE_RADIO 2
@@ -69,8 +69,8 @@ create_placementpage (GtkNotebook *notebook)
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
   gtk_widget_show (vbox);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Placement"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Placement"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &pcvals.place_type, 0,
 
                                     _("Randomly"),
@@ -83,11 +83,11 @@ create_placementpage (GtkNotebook *notebook)
 
                                     NULL);
 
-  gimp_help_set_help_data
+  picman_help_set_help_data
     (placement_radio[PLACEMENT_TYPE_RANDOM],
      _("Place strokes randomly around the image"),
      NULL);
-  gimp_help_set_help_data
+  picman_help_set_help_data
     (placement_radio[PLACEMENT_TYPE_EVEN_DIST],
      _("The strokes are evenly distributed across the image"),
      NULL);
@@ -103,7 +103,7 @@ create_placementpage (GtkNotebook *notebook)
 
   gtk_box_pack_start (GTK_BOX (vbox), tmpw, FALSE, FALSE, 0);
   gtk_widget_show (tmpw);
-  gimp_help_set_help_data
+  picman_help_set_help_data
     (tmpw, _("Focus the brush strokes around the center of the image"), NULL);
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (tmpw),
@@ -115,7 +115,7 @@ create_placementpage (GtkNotebook *notebook)
   gtk_widget_show (table);
 
   brush_density_adjust =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                           _("Stroke _density:"),
                           100, -1, pcvals.brush_density,
                           1.0, 50.0, 1.0, 5.0, 0,
@@ -123,7 +123,7 @@ create_placementpage (GtkNotebook *notebook)
                           _("The relative density of the brush strokes"),
                           NULL);
   g_signal_connect (brush_density_adjust, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pcvals.brush_density);
 
   gtk_notebook_append_page_menu (notebook, vbox, label, NULL);

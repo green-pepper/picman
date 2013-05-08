@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpbrush-transform.h
+ * picmanbrush-transform.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,35 +17,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BRUSH_TRANSFORM_H__
-#define __GIMP_BRUSH_TRANSFORM_H__
+#ifndef __PICMAN_BRUSH_TRANSFORM_H__
+#define __PICMAN_BRUSH_TRANSFORM_H__
 
 
-/*  virtual functions of GimpBrush, don't call directly  */
+/*  virtual functions of PicmanBrush, don't call directly  */
 
-void          gimp_brush_real_transform_size   (GimpBrush   *brush,
+void          picman_brush_real_transform_size   (PicmanBrush   *brush,
                                                 gdouble      scale,
                                                 gdouble      aspect_ratio,
                                                 gdouble      angle,
                                                 gint        *scaled_width,
                                                 gint        *scaled_height);
-GimpTempBuf * gimp_brush_real_transform_mask   (GimpBrush   *brush,
+PicmanTempBuf * picman_brush_real_transform_mask   (PicmanBrush   *brush,
                                                 gdouble      scale,
                                                 gdouble      aspect_ratio,
                                                 gdouble      angle,
                                                 gdouble      hardness);
-GimpTempBuf * gimp_brush_real_transform_pixmap (GimpBrush   *brush,
+PicmanTempBuf * picman_brush_real_transform_pixmap (PicmanBrush   *brush,
                                                 gdouble      scale,
                                                 gdouble      aspect_ratio,
                                                 gdouble      angle,
                                                 gdouble      hardness);
 
-void          gimp_brush_transform_matrix      (gdouble      width,
+void          picman_brush_transform_matrix      (gdouble      width,
                                                 gdouble      height,
                                                 gdouble      scale,
                                                 gdouble      aspect_ratio,
                                                 gdouble      angle,
-                                                GimpMatrix3 *matrix);
+                                                PicmanMatrix3 *matrix);
 
 
-#endif  /*  __GIMP_BRUSH_TRANSFORM_H__  */
+#endif  /*  __PICMAN_BRUSH_TRANSFORM_H__  */

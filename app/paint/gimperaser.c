@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,74 +21,74 @@
 
 #include "paint-types.h"
 
-#include "gegl/gimp-gegl-utils.h"
+#include "gegl/picman-gegl-utils.h"
 
-#include "core/gimp.h"
-#include "core/gimpdrawable.h"
-#include "core/gimpdynamics.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picmandrawable.h"
+#include "core/picmandynamics.h"
+#include "core/picmanimage.h"
 
-#include "gimperaser.h"
-#include "gimperaseroptions.h"
+#include "picmaneraser.h"
+#include "picmaneraseroptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void   gimp_eraser_paint  (GimpPaintCore    *paint_core,
-                                  GimpDrawable     *drawable,
-                                  GimpPaintOptions *paint_options,
-                                  const GimpCoords *coords,
-                                  GimpPaintState    paint_state,
+static void   picman_eraser_paint  (PicmanPaintCore    *paint_core,
+                                  PicmanDrawable     *drawable,
+                                  PicmanPaintOptions *paint_options,
+                                  const PicmanCoords *coords,
+                                  PicmanPaintState    paint_state,
                                   guint32           time);
-static void   gimp_eraser_motion (GimpPaintCore    *paint_core,
-                                  GimpDrawable     *drawable,
-                                  GimpPaintOptions *paint_options,
-                                  const GimpCoords *coords);
+static void   picman_eraser_motion (PicmanPaintCore    *paint_core,
+                                  PicmanDrawable     *drawable,
+                                  PicmanPaintOptions *paint_options,
+                                  const PicmanCoords *coords);
 
 
-G_DEFINE_TYPE (GimpEraser, gimp_eraser, GIMP_TYPE_BRUSH_CORE)
+G_DEFINE_TYPE (PicmanEraser, picman_eraser, PICMAN_TYPE_BRUSH_CORE)
 
 
 void
-gimp_eraser_register (Gimp                      *gimp,
-                      GimpPaintRegisterCallback  callback)
+picman_eraser_register (Picman                      *picman,
+                      PicmanPaintRegisterCallback  callback)
 {
-  (* callback) (gimp,
-                GIMP_TYPE_ERASER,
-                GIMP_TYPE_ERASER_OPTIONS,
-                "gimp-eraser",
+  (* callback) (picman,
+                PICMAN_TYPE_ERASER,
+                PICMAN_TYPE_ERASER_OPTIONS,
+                "picman-eraser",
                 _("Eraser"),
-                "gimp-tool-eraser");
+                "picman-tool-eraser");
 }
 
 static void
-gimp_eraser_class_init (GimpEraserClass *klass)
+picman_eraser_class_init (PicmanEraserClass *klass)
 {
-  GimpPaintCoreClass *paint_core_class = GIMP_PAINT_CORE_CLASS (klass);
-  GimpBrushCoreClass *brush_core_class = GIMP_BRUSH_CORE_CLASS (klass);
+  PicmanPaintCoreClass *paint_core_class = PICMAN_PAINT_CORE_CLASS (klass);
+  PicmanBrushCoreClass *brush_core_class = PICMAN_BRUSH_CORE_CLASS (klass);
 
-  paint_core_class->paint = gimp_eraser_paint;
+  paint_core_class->paint = picman_eraser_paint;
 
   brush_core_class->handles_changing_brush = TRUE;
 }
 
 static void
-gimp_eraser_init (GimpEraser *eraser)
+picman_eraser_init (PicmanEraser *eraser)
 {
 }
 
 static void
-gimp_eraser_paint (GimpPaintCore    *paint_core,
-                   GimpDrawable     *drawable,
-                   GimpPaintOptions *paint_options,
-                   const GimpCoords *coords,
-                   GimpPaintState    paint_state,
+picman_eraser_paint (PicmanPaintCore    *paint_core,
+                   PicmanDrawable     *drawable,
+                   PicmanPaintOptions *paint_options,
+                   const PicmanCoords *coords,
+                   PicmanPaintState    paint_state,
                    guint32           time)
 {
   switch (paint_state)
     {
-    case GIMP_PAINT_STATE_MOTION:
-      gimp_eraser_motion (paint_core, drawable, paint_options, coords);
+    case PICMAN_PAINT_STATE_MOTION:
+      picman_eraser_motion (paint_core, drawable, paint_options, coords);
       break;
 
     default:
@@ -97,68 +97,68 @@ gimp_eraser_paint (GimpPaintCore    *paint_core,
 }
 
 static void
-gimp_eraser_motion (GimpPaintCore    *paint_core,
-                    GimpDrawable     *drawable,
-                    GimpPaintOptions *paint_options,
-                    const GimpCoords *coords)
+picman_eraser_motion (PicmanPaintCore    *paint_core,
+                    PicmanDrawable     *drawable,
+                    PicmanPaintOptions *paint_options,
+                    const PicmanCoords *coords)
 {
-  GimpEraserOptions    *options  = GIMP_ERASER_OPTIONS (paint_options);
-  GimpContext          *context  = GIMP_CONTEXT (paint_options);
-  GimpDynamics         *dynamics = GIMP_BRUSH_CORE (paint_core)->dynamics;
-  GimpImage            *image    = gimp_item_get_image (GIMP_ITEM (drawable));
+  PicmanEraserOptions    *options  = PICMAN_ERASER_OPTIONS (paint_options);
+  PicmanContext          *context  = PICMAN_CONTEXT (paint_options);
+  PicmanDynamics         *dynamics = PICMAN_BRUSH_CORE (paint_core)->dynamics;
+  PicmanImage            *image    = picman_item_get_image (PICMAN_ITEM (drawable));
   gdouble               fade_point;
   gdouble               opacity;
-  GimpLayerModeEffects  paint_mode;
+  PicmanLayerModeEffects  paint_mode;
   GeglBuffer           *paint_buffer;
   gint                  paint_buffer_x;
   gint                  paint_buffer_y;
-  GimpRGB               background;
+  PicmanRGB               background;
   GeglColor            *color;
   gdouble               force;
 
-  fade_point = gimp_paint_options_get_fade (paint_options, image,
+  fade_point = picman_paint_options_get_fade (paint_options, image,
                                             paint_core->pixel_dist);
 
-  opacity = gimp_dynamics_get_linear_value (dynamics,
-                                            GIMP_DYNAMICS_OUTPUT_OPACITY,
+  opacity = picman_dynamics_get_linear_value (dynamics,
+                                            PICMAN_DYNAMICS_OUTPUT_OPACITY,
                                             coords,
                                             paint_options,
                                             fade_point);
   if (opacity == 0.0)
     return;
 
-  paint_buffer = gimp_paint_core_get_paint_buffer (paint_core, drawable,
+  paint_buffer = picman_paint_core_get_paint_buffer (paint_core, drawable,
                                                    paint_options, coords,
                                                    &paint_buffer_x,
                                                    &paint_buffer_y);
   if (! paint_buffer)
     return;
 
-  gimp_context_get_background (context, &background);
-  color = gimp_gegl_color_new (&background);
+  picman_context_get_background (context, &background);
+  color = picman_gegl_color_new (&background);
 
   gegl_buffer_set_color (paint_buffer, NULL, color);
   g_object_unref (color);
 
   if (options->anti_erase)
-    paint_mode = GIMP_ANTI_ERASE_MODE;
-  else if (gimp_drawable_has_alpha (drawable))
-    paint_mode = GIMP_ERASE_MODE;
+    paint_mode = PICMAN_ANTI_ERASE_MODE;
+  else if (picman_drawable_has_alpha (drawable))
+    paint_mode = PICMAN_ERASE_MODE;
   else
-    paint_mode = GIMP_NORMAL_MODE;
+    paint_mode = PICMAN_NORMAL_MODE;
 
-  force = gimp_dynamics_get_linear_value (dynamics,
-                                          GIMP_DYNAMICS_OUTPUT_FORCE,
+  force = picman_dynamics_get_linear_value (dynamics,
+                                          PICMAN_DYNAMICS_OUTPUT_FORCE,
                                           coords,
                                           paint_options,
                                           fade_point);
 
-  gimp_brush_core_paste_canvas (GIMP_BRUSH_CORE (paint_core), drawable,
+  picman_brush_core_paste_canvas (PICMAN_BRUSH_CORE (paint_core), drawable,
                                 coords,
-                                MIN (opacity, GIMP_OPACITY_OPAQUE),
-                                gimp_context_get_opacity (context),
+                                MIN (opacity, PICMAN_OPACITY_OPAQUE),
+                                picman_context_get_opacity (context),
                                 paint_mode,
-                                gimp_paint_options_get_brush_mode (paint_options),
+                                picman_paint_options_get_brush_mode (paint_options),
                                 force,
                                 paint_options->application_mode);
 }

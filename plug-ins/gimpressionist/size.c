@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,14 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "gimpressionist.h"
+#include "picmanressionist.h"
 #include "ppmtool.h"
 #include "size.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #define NUMSIZERADIO 8
 
@@ -104,7 +104,7 @@ create_sizepage (GtkNotebook *notebook)
   gtk_widget_show (table);
 
   sizenumadjust =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                           _("Size variants:"),
                           150, -1, pcvals.size_num,
                           1.0, 30.0, 1.0, 1.0, 0,
@@ -112,11 +112,11 @@ create_sizepage (GtkNotebook *notebook)
                           _("The number of sizes of brushes to use"),
                           NULL);
   g_signal_connect (sizenumadjust, "value-changed",
-                    G_CALLBACK (gimp_int_adjustment_update),
+                    G_CALLBACK (picman_int_adjustment_update),
                     &pcvals.size_num);
 
   sizefirstadjust =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                           _("Minimum size:"),
                           150, -1, pcvals.size_first,
                           0.0, 360.0, 1.0, 10.0, 0,
@@ -124,11 +124,11 @@ create_sizepage (GtkNotebook *notebook)
                           _("The smallest brush to create"),
                           NULL);
   g_signal_connect (sizefirstadjust, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pcvals.size_first);
 
   sizelastadjust =
-    gimp_scale_entry_new (GTK_TABLE (table), 0, 2,
+    picman_scale_entry_new (GTK_TABLE (table), 0, 2,
                           _("Maximum size:"),
                           150, -1, pcvals.size_last,
                           0.0, 360.0, 1.0, 10.0, 0,
@@ -136,7 +136,7 @@ create_sizepage (GtkNotebook *notebook)
                           _("The largest brush to create"),
                           NULL);
   g_signal_connect (sizelastadjust, "value-changed",
-                    G_CALLBACK (gimp_double_adjustment_update),
+                    G_CALLBACK (picman_double_adjustment_update),
                     &pcvals.size_last);
 
   box2 = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
@@ -204,7 +204,7 @@ create_sizepage (GtkNotebook *notebook)
   gtk_widget_show (tmpw);
   g_signal_connect (tmpw, "clicked",
                     G_CALLBACK (create_sizemap_dialog_helper), NULL);
-  gimp_help_set_help_data (tmpw, _("Opens up the Size Map Editor"), NULL);
+  picman_help_set_help_data (tmpw, _("Opens up the Size Map Editor"), NULL);
 
   gtk_notebook_append_page_menu (notebook, thispage, label, NULL);
 }

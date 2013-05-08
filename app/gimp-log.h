@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,44 +15,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_LOG_H__
-#define __GIMP_LOG_H__
+#ifndef __PICMAN_LOG_H__
+#define __PICMAN_LOG_H__
 
 
 typedef enum
 {
-  GIMP_LOG_TOOL_EVENTS        = 1 << 0,
-  GIMP_LOG_TOOL_FOCUS         = 1 << 1,
-  GIMP_LOG_DND                = 1 << 2,
-  GIMP_LOG_HELP               = 1 << 3,
-  GIMP_LOG_DIALOG_FACTORY     = 1 << 4,
-  GIMP_LOG_MENUS              = 1 << 5,
-  GIMP_LOG_SAVE_DIALOG        = 1 << 6,
-  GIMP_LOG_IMAGE_SCALE        = 1 << 7,
-  GIMP_LOG_SHADOW_TILES       = 1 << 8,
-  GIMP_LOG_SCALE              = 1 << 9,
-  GIMP_LOG_WM                 = 1 << 10,
-  GIMP_LOG_FLOATING_SELECTION = 1 << 11,
-  GIMP_LOG_SHM                = 1 << 12,
-  GIMP_LOG_TEXT_EDITING       = 1 << 13,
-  GIMP_LOG_KEY_EVENTS         = 1 << 14,
-  GIMP_LOG_AUTO_TAB_STYLE     = 1 << 15,
-  GIMP_LOG_INSTANCES          = 1 << 16,
-  GIMP_LOG_RECTANGLE_TOOL     = 1 << 17,
-  GIMP_LOG_BRUSH_CACHE        = 1 << 18
-} GimpLogFlags;
+  PICMAN_LOG_TOOL_EVENTS        = 1 << 0,
+  PICMAN_LOG_TOOL_FOCUS         = 1 << 1,
+  PICMAN_LOG_DND                = 1 << 2,
+  PICMAN_LOG_HELP               = 1 << 3,
+  PICMAN_LOG_DIALOG_FACTORY     = 1 << 4,
+  PICMAN_LOG_MENUS              = 1 << 5,
+  PICMAN_LOG_SAVE_DIALOG        = 1 << 6,
+  PICMAN_LOG_IMAGE_SCALE        = 1 << 7,
+  PICMAN_LOG_SHADOW_TILES       = 1 << 8,
+  PICMAN_LOG_SCALE              = 1 << 9,
+  PICMAN_LOG_WM                 = 1 << 10,
+  PICMAN_LOG_FLOATING_SELECTION = 1 << 11,
+  PICMAN_LOG_SHM                = 1 << 12,
+  PICMAN_LOG_TEXT_EDITING       = 1 << 13,
+  PICMAN_LOG_KEY_EVENTS         = 1 << 14,
+  PICMAN_LOG_AUTO_TAB_STYLE     = 1 << 15,
+  PICMAN_LOG_INSTANCES          = 1 << 16,
+  PICMAN_LOG_RECTANGLE_TOOL     = 1 << 17,
+  PICMAN_LOG_BRUSH_CACHE        = 1 << 18
+} PicmanLogFlags;
 
 
-extern GimpLogFlags gimp_log_flags;
+extern PicmanLogFlags picman_log_flags;
 
 
-void   gimp_log_init (void);
-void   gimp_log      (GimpLogFlags  flags,
+void   picman_log_init (void);
+void   picman_log      (PicmanLogFlags  flags,
                       const gchar  *function,
                       gint          line,
                       const gchar  *format,
                       ...) G_GNUC_PRINTF (4, 5);
-void   gimp_logv     (GimpLogFlags  flags,
+void   picman_logv     (PicmanLogFlags  flags,
                       const gchar  *function,
                       gint          line,
                       const gchar  *format,
@@ -61,18 +61,18 @@ void   gimp_logv     (GimpLogFlags  flags,
 
 #ifdef G_HAVE_ISO_VARARGS
 
-#define GIMP_LOG(type, ...) \
+#define PICMAN_LOG(type, ...) \
         G_STMT_START { \
-        if (gimp_log_flags & GIMP_LOG_##type) \
-          gimp_log (GIMP_LOG_##type, G_STRFUNC, __LINE__, __VA_ARGS__);       \
+        if (picman_log_flags & PICMAN_LOG_##type) \
+          picman_log (PICMAN_LOG_##type, G_STRFUNC, __LINE__, __VA_ARGS__);       \
         } G_STMT_END
 
 #elif defined(G_HAVE_GNUC_VARARGS)
 
-#define GIMP_LOG(type, format...) \
+#define PICMAN_LOG(type, format...) \
         G_STMT_START { \
-        if (gimp_log_flags & GIMP_LOG_##type) \
-          gimp_log (GIMP_LOG_##type, G_STRFUNC, __LINE__, format);  \
+        if (picman_log_flags & PICMAN_LOG_##type) \
+          picman_log (PICMAN_LOG_##type, G_STRFUNC, __LINE__, format);  \
         } G_STMT_END
 
 #else /* no varargs macros */
@@ -80,45 +80,45 @@ void   gimp_logv     (GimpLogFlags  flags,
 /* need to expand all the short forms
  * to make them known constants at compile time
  */
-#define TOOL_EVENTS        GIMP_LOG_TOOL_EVENTS
-#define TOOL_FOCUS         GIMP_LOG_TOOL_FOCUS
-#define DND                GIMP_LOG_DND
-#define HELP               GIMP_LOG_HELP
-#define DIALOG_FACTORY     GIMP_LOG_DIALOG_FACTORY
-#define MENUS              GIMP_LOG_MENUS
-#define SAVE_DIALOG        GIMP_LOG_SAVE_DIALOG
-#define IMAGE_SCALE        GIMP_LOG_IMAGE_SCALE
-#define SHADOW_TILES       GIMP_LOG_SHADOW_TILES
-#define SCALE              GIMP_LOG_SCALE
-#define WM                 GIMP_LOG_WM
-#define FLOATING_SELECTION GIMP_LOG_FLOATING_SELECTION
-#define SHM                GIMP_LOG_SHM
-#define TEXT_EDITING       GIMP_LOG_TEXT_EDITING
-#define KEY_EVENTS         GIMP_LOG_KEY_EVENTS
-#define AUTO_TAB_STYLE     GIMP_LOG_AUTO_TAB_STYLE
-#define INSTANCES          GIMP_LOG_INSTANCES
-#define RECTANGLE_TOOL     GIMP_LOG_RECTANGLE_TOOL
-#define BRUSH_CACHE        GIMP_LOG_BRUSH_CACHE
+#define TOOL_EVENTS        PICMAN_LOG_TOOL_EVENTS
+#define TOOL_FOCUS         PICMAN_LOG_TOOL_FOCUS
+#define DND                PICMAN_LOG_DND
+#define HELP               PICMAN_LOG_HELP
+#define DIALOG_FACTORY     PICMAN_LOG_DIALOG_FACTORY
+#define MENUS              PICMAN_LOG_MENUS
+#define SAVE_DIALOG        PICMAN_LOG_SAVE_DIALOG
+#define IMAGE_SCALE        PICMAN_LOG_IMAGE_SCALE
+#define SHADOW_TILES       PICMAN_LOG_SHADOW_TILES
+#define SCALE              PICMAN_LOG_SCALE
+#define WM                 PICMAN_LOG_WM
+#define FLOATING_SELECTION PICMAN_LOG_FLOATING_SELECTION
+#define SHM                PICMAN_LOG_SHM
+#define TEXT_EDITING       PICMAN_LOG_TEXT_EDITING
+#define KEY_EVENTS         PICMAN_LOG_KEY_EVENTS
+#define AUTO_TAB_STYLE     PICMAN_LOG_AUTO_TAB_STYLE
+#define INSTANCES          PICMAN_LOG_INSTANCES
+#define RECTANGLE_TOOL     PICMAN_LOG_RECTANGLE_TOOL
+#define BRUSH_CACHE        PICMAN_LOG_BRUSH_CACHE
 
 #if 0 /* last resort */
-#  define GIMP_LOG /* nothing => no varargs, no log */
+#  define PICMAN_LOG /* nothing => no varargs, no log */
 #endif
 
 static void
-GIMP_LOG (GimpLogFlags flags,
+PICMAN_LOG (PicmanLogFlags flags,
           const gchar *format,
           ...)
 {
   va_list args;
   va_start (args, format);
-  if (gimp_log_flags & flags)
-    gimp_logv (type, "", 0, format, args);
+  if (picman_log_flags & flags)
+    picman_logv (type, "", 0, format, args);
   va_end (args);
 }
 
 #endif  /* !__GNUC__ */
 
-#define geimnum(vienna)  gimp_l##vienna##l_dialog()
-#define fnord(kosmoso)   void gimp_##kosmoso##bl_dialog(void);
+#define geimnum(vienna)  picman_l##vienna##l_dialog()
+#define fnord(kosmoso)   void picman_##kosmoso##bl_dialog(void);
 
-#endif /* __GIMP_LOG_H__ */
+#endif /* __PICMAN_LOG_H__ */

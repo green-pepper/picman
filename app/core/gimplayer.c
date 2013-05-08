@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,30 +24,30 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gegl/gimp-gegl-apply-operation.h"
-#include "gegl/gimp-gegl-nodes.h"
+#include "gegl/picman-gegl-apply-operation.h"
+#include "gegl/picman-gegl-nodes.h"
 
-#include "gimpboundary.h"
-#include "gimpchannel-select.h"
-#include "gimpcontext.h"
-#include "gimpcontainer.h"
-#include "gimperror.h"
-#include "gimpimage-undo-push.h"
-#include "gimpimage-undo.h"
-#include "gimpimage.h"
-#include "gimplayer-floating-sel.h"
-#include "gimplayer.h"
-#include "gimplayermask.h"
-#include "gimpmarshal.h"
-#include "gimppickable.h"
+#include "picmanboundary.h"
+#include "picmanchannel-select.h"
+#include "picmancontext.h"
+#include "picmancontainer.h"
+#include "picmanerror.h"
+#include "picmanimage-undo-push.h"
+#include "picmanimage-undo.h"
+#include "picmanimage.h"
+#include "picmanlayer-floating-sel.h"
+#include "picmanlayer.h"
+#include "picmanlayermask.h"
+#include "picmanmarshal.h"
+#include "picmanpickable.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -73,226 +73,226 @@ enum
 };
 
 
-static void   gimp_layer_pickable_iface_init (GimpPickableInterface *iface);
+static void   picman_layer_pickable_iface_init (PicmanPickableInterface *iface);
 
-static void       gimp_layer_set_property       (GObject            *object,
+static void       picman_layer_set_property       (GObject            *object,
                                                  guint               property_id,
                                                  const GValue       *value,
                                                  GParamSpec         *pspec);
-static void       gimp_layer_get_property       (GObject            *object,
+static void       picman_layer_get_property       (GObject            *object,
                                                  guint               property_id,
                                                  GValue             *value,
                                                  GParamSpec         *pspec);
-static void       gimp_layer_dispose            (GObject            *object);
-static void       gimp_layer_finalize           (GObject            *object);
-static void       gimp_layer_notify             (GObject            *object,
+static void       picman_layer_dispose            (GObject            *object);
+static void       picman_layer_finalize           (GObject            *object);
+static void       picman_layer_notify             (GObject            *object,
                                                  GParamSpec         *pspec);
 
-static void       gimp_layer_name_changed       (GimpObject         *object);
-static gint64     gimp_layer_get_memsize        (GimpObject         *object,
+static void       picman_layer_name_changed       (PicmanObject         *object);
+static gint64     picman_layer_get_memsize        (PicmanObject         *object,
                                                  gint64             *gui_size);
 
-static void       gimp_layer_invalidate_preview (GimpViewable       *viewable);
-static gchar    * gimp_layer_get_description    (GimpViewable       *viewable,
+static void       picman_layer_invalidate_preview (PicmanViewable       *viewable);
+static gchar    * picman_layer_get_description    (PicmanViewable       *viewable,
                                                  gchar             **tooltip);
 
-static GeglNode * gimp_layer_get_node           (GimpFilter         *filter);
+static GeglNode * picman_layer_get_node           (PicmanFilter         *filter);
 
-static void       gimp_layer_removed            (GimpItem           *item);
-static void       gimp_layer_unset_removed      (GimpItem           *item);
-static gboolean   gimp_layer_is_attached        (const GimpItem     *item);
-static GimpItemTree * gimp_layer_get_tree       (GimpItem           *item);
-static GimpItem * gimp_layer_duplicate          (GimpItem           *item,
+static void       picman_layer_removed            (PicmanItem           *item);
+static void       picman_layer_unset_removed      (PicmanItem           *item);
+static gboolean   picman_layer_is_attached        (const PicmanItem     *item);
+static PicmanItemTree * picman_layer_get_tree       (PicmanItem           *item);
+static PicmanItem * picman_layer_duplicate          (PicmanItem           *item,
                                                  GType               new_type);
-static void       gimp_layer_convert            (GimpItem           *item,
-                                                 GimpImage          *dest_image);
-static gboolean   gimp_layer_rename             (GimpItem           *item,
+static void       picman_layer_convert            (PicmanItem           *item,
+                                                 PicmanImage          *dest_image);
+static gboolean   picman_layer_rename             (PicmanItem           *item,
                                                  const gchar        *new_name,
                                                  const gchar        *undo_desc,
                                                  GError            **error);
-static void       gimp_layer_translate          (GimpItem           *item,
+static void       picman_layer_translate          (PicmanItem           *item,
                                                  gint                offset_x,
                                                  gint                offset_y,
                                                  gboolean            push_undo);
-static void       gimp_layer_scale              (GimpItem           *item,
+static void       picman_layer_scale              (PicmanItem           *item,
                                                  gint                new_width,
                                                  gint                new_height,
                                                  gint                new_offset_x,
                                                  gint                new_offset_y,
-                                                 GimpInterpolationType  interp_type,
-                                                 GimpProgress       *progress);
-static void       gimp_layer_resize             (GimpItem           *item,
-                                                 GimpContext        *context,
+                                                 PicmanInterpolationType  interp_type,
+                                                 PicmanProgress       *progress);
+static void       picman_layer_resize             (PicmanItem           *item,
+                                                 PicmanContext        *context,
                                                  gint                new_width,
                                                  gint                new_height,
                                                  gint                offset_x,
                                                  gint                offset_y);
-static void       gimp_layer_flip               (GimpItem           *item,
-                                                 GimpContext        *context,
-                                                 GimpOrientationType flip_type,
+static void       picman_layer_flip               (PicmanItem           *item,
+                                                 PicmanContext        *context,
+                                                 PicmanOrientationType flip_type,
                                                  gdouble             axis,
                                                  gboolean            clip_result);
-static void       gimp_layer_rotate             (GimpItem           *item,
-                                                 GimpContext        *context,
-                                                 GimpRotationType    rotate_type,
+static void       picman_layer_rotate             (PicmanItem           *item,
+                                                 PicmanContext        *context,
+                                                 PicmanRotationType    rotate_type,
                                                  gdouble             center_x,
                                                  gdouble             center_y,
                                                  gboolean            clip_result);
-static void       gimp_layer_transform          (GimpItem           *item,
-                                                 GimpContext        *context,
-                                                 const GimpMatrix3  *matrix,
-                                                 GimpTransformDirection direction,
-                                                 GimpInterpolationType  interpolation_type,
+static void       picman_layer_transform          (PicmanItem           *item,
+                                                 PicmanContext        *context,
+                                                 const PicmanMatrix3  *matrix,
+                                                 PicmanTransformDirection direction,
+                                                 PicmanInterpolationType  interpolation_type,
                                                  gint                recursion_level,
-                                                 GimpTransformResize clip_result,
-                                                 GimpProgress       *progress);
-static void       gimp_layer_to_selection       (GimpItem           *item,
-                                                 GimpChannelOps      op,
+                                                 PicmanTransformResize clip_result,
+                                                 PicmanProgress       *progress);
+static void       picman_layer_to_selection       (PicmanItem           *item,
+                                                 PicmanChannelOps      op,
                                                  gboolean            antialias,
                                                  gboolean            feather,
                                                  gdouble             feather_radius_x,
                                                  gdouble             feather_radius_y);
 
-static gint64  gimp_layer_estimate_memsize      (const GimpDrawable *drawable,
+static gint64  picman_layer_estimate_memsize      (const PicmanDrawable *drawable,
                                                  gint                width,
                                                  gint                height);
-static void    gimp_layer_convert_type          (GimpDrawable       *drawable,
-                                                 GimpImage          *dest_image,
+static void    picman_layer_convert_type          (PicmanDrawable       *drawable,
+                                                 PicmanImage          *dest_image,
                                                  const Babl         *new_format,
-                                                 GimpImageBaseType   new_base_type,
-                                                 GimpPrecision       new_precision,
+                                                 PicmanImageBaseType   new_base_type,
+                                                 PicmanPrecision       new_precision,
                                                  gint                layer_dither_type,
                                                  gint                mask_dither_type,
                                                  gboolean            push_undo);
-static void    gimp_layer_invalidate_boundary   (GimpDrawable       *drawable);
-static void    gimp_layer_get_active_components (const GimpDrawable *drawable,
+static void    picman_layer_invalidate_boundary   (PicmanDrawable       *drawable);
+static void    picman_layer_get_active_components (const PicmanDrawable *drawable,
                                                  gboolean           *active);
-static GimpComponentMask
-               gimp_layer_get_active_mask       (const GimpDrawable *drawable);
+static PicmanComponentMask
+               picman_layer_get_active_mask       (const PicmanDrawable *drawable);
 
-static gdouble gimp_layer_get_opacity_at        (GimpPickable       *pickable,
+static gdouble picman_layer_get_opacity_at        (PicmanPickable       *pickable,
                                                  gint                x,
                                                  gint                y);
 
-static void       gimp_layer_layer_mask_update  (GimpDrawable       *layer_mask,
+static void       picman_layer_layer_mask_update  (PicmanDrawable       *layer_mask,
                                                  gint                x,
                                                  gint                y,
                                                  gint                width,
                                                  gint                height,
-                                                 GimpLayer          *layer);
+                                                 PicmanLayer          *layer);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpLayer, gimp_layer, GIMP_TYPE_DRAWABLE,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PICKABLE,
-                                                gimp_layer_pickable_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanLayer, picman_layer, PICMAN_TYPE_DRAWABLE,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PICKABLE,
+                                                picman_layer_pickable_iface_init))
 
-#define parent_class gimp_layer_parent_class
+#define parent_class picman_layer_parent_class
 
 static guint layer_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_layer_class_init (GimpLayerClass *klass)
+picman_layer_class_init (PicmanLayerClass *klass)
 {
   GObjectClass      *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass   *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpViewableClass *viewable_class    = GIMP_VIEWABLE_CLASS (klass);
-  GimpFilterClass   *filter_class      = GIMP_FILTER_CLASS (klass);
-  GimpItemClass     *item_class        = GIMP_ITEM_CLASS (klass);
-  GimpDrawableClass *drawable_class    = GIMP_DRAWABLE_CLASS (klass);
+  PicmanObjectClass   *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanViewableClass *viewable_class    = PICMAN_VIEWABLE_CLASS (klass);
+  PicmanFilterClass   *filter_class      = PICMAN_FILTER_CLASS (klass);
+  PicmanItemClass     *item_class        = PICMAN_ITEM_CLASS (klass);
+  PicmanDrawableClass *drawable_class    = PICMAN_DRAWABLE_CLASS (klass);
 
   layer_signals[OPACITY_CHANGED] =
     g_signal_new ("opacity-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpLayerClass, opacity_changed),
+                  G_STRUCT_OFFSET (PicmanLayerClass, opacity_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
   layer_signals[MODE_CHANGED] =
     g_signal_new ("mode-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpLayerClass, mode_changed),
+                  G_STRUCT_OFFSET (PicmanLayerClass, mode_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
   layer_signals[LOCK_ALPHA_CHANGED] =
     g_signal_new ("lock-alpha-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpLayerClass, lock_alpha_changed),
+                  G_STRUCT_OFFSET (PicmanLayerClass, lock_alpha_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
   layer_signals[MASK_CHANGED] =
     g_signal_new ("mask-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpLayerClass, mask_changed),
+                  G_STRUCT_OFFSET (PicmanLayerClass, mask_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
   layer_signals[APPLY_MASK_CHANGED] =
     g_signal_new ("apply-mask-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpLayerClass, apply_mask_changed),
+                  G_STRUCT_OFFSET (PicmanLayerClass, apply_mask_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
   layer_signals[EDIT_MASK_CHANGED] =
     g_signal_new ("edit-mask-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpLayerClass, edit_mask_changed),
+                  G_STRUCT_OFFSET (PicmanLayerClass, edit_mask_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
   layer_signals[SHOW_MASK_CHANGED] =
     g_signal_new ("show-mask-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpLayerClass, show_mask_changed),
+                  G_STRUCT_OFFSET (PicmanLayerClass, show_mask_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->set_property          = gimp_layer_set_property;
-  object_class->get_property          = gimp_layer_get_property;
-  object_class->dispose               = gimp_layer_dispose;
-  object_class->finalize              = gimp_layer_finalize;
-  object_class->notify                = gimp_layer_notify;
+  object_class->set_property          = picman_layer_set_property;
+  object_class->get_property          = picman_layer_get_property;
+  object_class->dispose               = picman_layer_dispose;
+  object_class->finalize              = picman_layer_finalize;
+  object_class->notify                = picman_layer_notify;
 
-  gimp_object_class->name_changed     = gimp_layer_name_changed;
-  gimp_object_class->get_memsize      = gimp_layer_get_memsize;
+  picman_object_class->name_changed     = picman_layer_name_changed;
+  picman_object_class->get_memsize      = picman_layer_get_memsize;
 
-  viewable_class->default_stock_id    = "gimp-layer";
-  viewable_class->invalidate_preview  = gimp_layer_invalidate_preview;
-  viewable_class->get_description     = gimp_layer_get_description;
+  viewable_class->default_stock_id    = "picman-layer";
+  viewable_class->invalidate_preview  = picman_layer_invalidate_preview;
+  viewable_class->get_description     = picman_layer_get_description;
 
-  filter_class->get_node              = gimp_layer_get_node;
+  filter_class->get_node              = picman_layer_get_node;
 
-  item_class->removed                 = gimp_layer_removed;
-  item_class->unset_removed           = gimp_layer_unset_removed;
-  item_class->is_attached             = gimp_layer_is_attached;
-  item_class->get_tree                = gimp_layer_get_tree;
-  item_class->duplicate               = gimp_layer_duplicate;
-  item_class->convert                 = gimp_layer_convert;
-  item_class->rename                  = gimp_layer_rename;
-  item_class->translate               = gimp_layer_translate;
-  item_class->scale                   = gimp_layer_scale;
-  item_class->resize                  = gimp_layer_resize;
-  item_class->flip                    = gimp_layer_flip;
-  item_class->rotate                  = gimp_layer_rotate;
-  item_class->transform               = gimp_layer_transform;
-  item_class->to_selection            = gimp_layer_to_selection;
+  item_class->removed                 = picman_layer_removed;
+  item_class->unset_removed           = picman_layer_unset_removed;
+  item_class->is_attached             = picman_layer_is_attached;
+  item_class->get_tree                = picman_layer_get_tree;
+  item_class->duplicate               = picman_layer_duplicate;
+  item_class->convert                 = picman_layer_convert;
+  item_class->rename                  = picman_layer_rename;
+  item_class->translate               = picman_layer_translate;
+  item_class->scale                   = picman_layer_scale;
+  item_class->resize                  = picman_layer_resize;
+  item_class->flip                    = picman_layer_flip;
+  item_class->rotate                  = picman_layer_rotate;
+  item_class->transform               = picman_layer_transform;
+  item_class->to_selection            = picman_layer_to_selection;
   item_class->default_name            = _("Layer");
   item_class->rename_desc             = C_("undo-type", "Rename Layer");
   item_class->translate_desc          = C_("undo-type", "Move Layer");
@@ -310,11 +310,11 @@ gimp_layer_class_init (GimpLayerClass *klass)
   item_class->raise_failed            = _("Layer cannot be raised higher.");
   item_class->lower_failed            = _("Layer cannot be lowered more.");
 
-  drawable_class->estimate_memsize      = gimp_layer_estimate_memsize;
-  drawable_class->convert_type          = gimp_layer_convert_type;
-  drawable_class->invalidate_boundary   = gimp_layer_invalidate_boundary;
-  drawable_class->get_active_components = gimp_layer_get_active_components;
-  drawable_class->get_active_mask       = gimp_layer_get_active_mask;
+  drawable_class->estimate_memsize      = picman_layer_estimate_memsize;
+  drawable_class->convert_type          = picman_layer_convert_type;
+  drawable_class->invalidate_boundary   = picman_layer_invalidate_boundary;
+  drawable_class->get_active_components = picman_layer_get_active_components;
+  drawable_class->get_active_mask       = picman_layer_get_active_mask;
 
   klass->opacity_changed              = NULL;
   klass->mode_changed                 = NULL;
@@ -326,41 +326,41 @@ gimp_layer_class_init (GimpLayerClass *klass)
 
   g_object_class_install_property (object_class, PROP_OPACITY,
                                    g_param_spec_double ("opacity", NULL, NULL,
-                                                        GIMP_OPACITY_TRANSPARENT,
-                                                        GIMP_OPACITY_OPAQUE,
-                                                        GIMP_OPACITY_OPAQUE,
-                                                        GIMP_PARAM_READABLE));
+                                                        PICMAN_OPACITY_TRANSPARENT,
+                                                        PICMAN_OPACITY_OPAQUE,
+                                                        PICMAN_OPACITY_OPAQUE,
+                                                        PICMAN_PARAM_READABLE));
 
   g_object_class_install_property (object_class, PROP_MODE,
                                    g_param_spec_enum ("mode", NULL, NULL,
-                                                      GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                      GIMP_NORMAL_MODE,
-                                                      GIMP_PARAM_READABLE));
+                                                      PICMAN_TYPE_LAYER_MODE_EFFECTS,
+                                                      PICMAN_NORMAL_MODE,
+                                                      PICMAN_PARAM_READABLE));
 
   g_object_class_install_property (object_class, PROP_LOCK_ALPHA,
                                    g_param_spec_boolean ("lock-alpha",
                                                          NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READABLE));
+                                                         PICMAN_PARAM_READABLE));
 
   g_object_class_install_property (object_class, PROP_MASK,
                                    g_param_spec_object ("mask",
                                                         NULL, NULL,
-                                                        GIMP_TYPE_LAYER_MASK,
-                                                        GIMP_PARAM_READABLE));
+                                                        PICMAN_TYPE_LAYER_MASK,
+                                                        PICMAN_PARAM_READABLE));
 
   g_object_class_install_property (object_class, PROP_FLOATING_SELECTION,
                                    g_param_spec_boolean ("floating-selection",
                                                          NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READABLE));
+                                                         PICMAN_PARAM_READABLE));
 }
 
 static void
-gimp_layer_init (GimpLayer *layer)
+picman_layer_init (PicmanLayer *layer)
 {
-  layer->opacity    = GIMP_OPACITY_OPAQUE;
-  layer->mode       = GIMP_NORMAL_MODE;
+  layer->opacity    = PICMAN_OPACITY_OPAQUE;
+  layer->mode       = PICMAN_NORMAL_MODE;
   layer->lock_alpha = FALSE;
 
   layer->mask       = NULL;
@@ -376,13 +376,13 @@ gimp_layer_init (GimpLayer *layer)
 }
 
 static void
-gimp_layer_pickable_iface_init (GimpPickableInterface *iface)
+picman_layer_pickable_iface_init (PicmanPickableInterface *iface)
 {
-  iface->get_opacity_at = gimp_layer_get_opacity_at;
+  iface->get_opacity_at = picman_layer_get_opacity_at;
 }
 
 static void
-gimp_layer_set_property (GObject      *object,
+picman_layer_set_property (GObject      *object,
                          guint         property_id,
                          const GValue *value,
                          GParamSpec   *pspec)
@@ -396,29 +396,29 @@ gimp_layer_set_property (GObject      *object,
 }
 
 static void
-gimp_layer_get_property (GObject    *object,
+picman_layer_get_property (GObject    *object,
                          guint       property_id,
                          GValue     *value,
                          GParamSpec *pspec)
 {
-  GimpLayer *layer = GIMP_LAYER (object);
+  PicmanLayer *layer = PICMAN_LAYER (object);
 
   switch (property_id)
     {
     case PROP_OPACITY:
-      g_value_set_double (value, gimp_layer_get_opacity (layer));
+      g_value_set_double (value, picman_layer_get_opacity (layer));
       break;
     case PROP_MODE:
-      g_value_set_enum (value, gimp_layer_get_mode (layer));
+      g_value_set_enum (value, picman_layer_get_mode (layer));
       break;
     case PROP_LOCK_ALPHA:
-      g_value_set_boolean (value, gimp_layer_get_lock_alpha (layer));
+      g_value_set_boolean (value, picman_layer_get_lock_alpha (layer));
       break;
     case PROP_MASK:
-      g_value_set_object (value, gimp_layer_get_mask (layer));
+      g_value_set_object (value, picman_layer_get_mask (layer));
       break;
     case PROP_FLOATING_SELECTION:
-      g_value_set_boolean (value, gimp_layer_is_floating_sel (layer));
+      g_value_set_boolean (value, picman_layer_is_floating_sel (layer));
       break;
 
     default:
@@ -428,33 +428,33 @@ gimp_layer_get_property (GObject    *object,
 }
 
 static void
-gimp_layer_dispose (GObject *object)
+picman_layer_dispose (GObject *object)
 {
-  GimpLayer *layer = GIMP_LAYER (object);
+  PicmanLayer *layer = PICMAN_LAYER (object);
 
   if (layer->mask)
     g_signal_handlers_disconnect_by_func (layer->mask,
-                                          gimp_layer_layer_mask_update,
+                                          picman_layer_layer_mask_update,
                                           layer);
 
-  if (gimp_layer_is_floating_sel (layer))
+  if (picman_layer_is_floating_sel (layer))
     {
-      GimpDrawable *fs_drawable = gimp_layer_get_floating_sel_drawable (layer);
+      PicmanDrawable *fs_drawable = picman_layer_get_floating_sel_drawable (layer);
 
       /* only detach if this is actually the drawable's fs because the
        * layer might be on the undo stack and not attached to anyhing
        */
-      if (gimp_drawable_get_floating_sel (fs_drawable) == layer)
-        gimp_drawable_detach_floating_sel (fs_drawable);
+      if (picman_drawable_get_floating_sel (fs_drawable) == layer)
+        picman_drawable_detach_floating_sel (fs_drawable);
     }
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_layer_finalize (GObject *object)
+picman_layer_finalize (GObject *object)
 {
-  GimpLayer *layer = GIMP_LAYER (object);
+  PicmanLayer *layer = PICMAN_LAYER (object);
 
   if (layer->mask)
     {
@@ -472,112 +472,112 @@ gimp_layer_finalize (GObject *object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
-static GimpLayerModeEffects
-gimp_layer_get_visible_mode (GimpLayer *layer)
+static PicmanLayerModeEffects
+picman_layer_get_visible_mode (PicmanLayer *layer)
 {
-  if (layer->mode != GIMP_DISSOLVE_MODE &&
-      gimp_filter_get_is_last_node (GIMP_FILTER (layer)))
-    return GIMP_NORMAL_MODE;
+  if (layer->mode != PICMAN_DISSOLVE_MODE &&
+      picman_filter_get_is_last_node (PICMAN_FILTER (layer)))
+    return PICMAN_NORMAL_MODE;
 
   return layer->mode;
 }
 
 static void
-gimp_layer_notify (GObject    *object,
+picman_layer_notify (GObject    *object,
                    GParamSpec *pspec)
 {
   if (! strcmp (pspec->name, "is-last-node") &&
-      gimp_filter_peek_node (GIMP_FILTER (object)))
+      picman_filter_peek_node (PICMAN_FILTER (object)))
     {
-      GimpLayer *layer = GIMP_LAYER (object);
+      PicmanLayer *layer = PICMAN_LAYER (object);
       GeglNode  *mode_node;
       gboolean   linear;
 
-      mode_node = gimp_drawable_get_mode_node (GIMP_DRAWABLE (layer));
-      linear    = gimp_drawable_get_linear (GIMP_DRAWABLE (layer));
+      mode_node = picman_drawable_get_mode_node (PICMAN_DRAWABLE (layer));
+      linear    = picman_drawable_get_linear (PICMAN_DRAWABLE (layer));
 
-      gimp_gegl_mode_node_set_mode (mode_node,
-                                    gimp_layer_get_visible_mode (layer),
+      picman_gegl_mode_node_set_mode (mode_node,
+                                    picman_layer_get_visible_mode (layer),
                                     linear);
 
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
+      picman_drawable_update (PICMAN_DRAWABLE (layer),
                             0, 0,
-                            gimp_item_get_width  (GIMP_ITEM (layer)),
-                            gimp_item_get_height (GIMP_ITEM (layer)));
+                            picman_item_get_width  (PICMAN_ITEM (layer)),
+                            picman_item_get_height (PICMAN_ITEM (layer)));
     }
 }
 
 static void
-gimp_layer_name_changed (GimpObject *object)
+picman_layer_name_changed (PicmanObject *object)
 {
-  GimpLayer *layer = GIMP_LAYER (object);
+  PicmanLayer *layer = PICMAN_LAYER (object);
 
-  if (GIMP_OBJECT_CLASS (parent_class)->name_changed)
-    GIMP_OBJECT_CLASS (parent_class)->name_changed (object);
+  if (PICMAN_OBJECT_CLASS (parent_class)->name_changed)
+    PICMAN_OBJECT_CLASS (parent_class)->name_changed (object);
 
   if (layer->mask)
     {
       gchar *mask_name = g_strdup_printf (_("%s mask"),
-                                          gimp_object_get_name (object));
+                                          picman_object_get_name (object));
 
-      gimp_object_take_name (GIMP_OBJECT (layer->mask), mask_name);
+      picman_object_take_name (PICMAN_OBJECT (layer->mask), mask_name);
     }
 }
 
 static gint64
-gimp_layer_get_memsize (GimpObject *object,
+picman_layer_get_memsize (PicmanObject *object,
                         gint64     *gui_size)
 {
-  GimpLayer *layer   = GIMP_LAYER (object);
+  PicmanLayer *layer   = PICMAN_LAYER (object);
   gint64     memsize = 0;
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (layer->mask), gui_size);
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (layer->mask), gui_size);
 
-  *gui_size += layer->fs.num_segs * sizeof (GimpBoundSeg);
+  *gui_size += layer->fs.num_segs * sizeof (PicmanBoundSeg);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 static void
-gimp_layer_invalidate_preview (GimpViewable *viewable)
+picman_layer_invalidate_preview (PicmanViewable *viewable)
 {
-  GimpLayer *layer = GIMP_LAYER (viewable);
+  PicmanLayer *layer = PICMAN_LAYER (viewable);
 
-  GIMP_VIEWABLE_CLASS (parent_class)->invalidate_preview (viewable);
+  PICMAN_VIEWABLE_CLASS (parent_class)->invalidate_preview (viewable);
 
-  if (gimp_layer_is_floating_sel (layer))
+  if (picman_layer_is_floating_sel (layer))
     floating_sel_invalidate (layer);
 }
 
 static gchar *
-gimp_layer_get_description (GimpViewable  *viewable,
+picman_layer_get_description (PicmanViewable  *viewable,
                             gchar        **tooltip)
 {
-  if (gimp_layer_is_floating_sel (GIMP_LAYER (viewable)))
+  if (picman_layer_is_floating_sel (PICMAN_LAYER (viewable)))
     {
       return g_strdup_printf (_("Floating Selection\n(%s)"),
-                              gimp_object_get_name (viewable));
+                              picman_object_get_name (viewable));
     }
 
-  return GIMP_VIEWABLE_CLASS (parent_class)->get_description (viewable,
+  return PICMAN_VIEWABLE_CLASS (parent_class)->get_description (viewable,
                                                               tooltip);
 }
 
 static GeglNode *
-gimp_layer_get_node (GimpFilter *filter)
+picman_layer_get_node (PicmanFilter *filter)
 {
-  GimpDrawable *drawable = GIMP_DRAWABLE (filter);
-  GimpLayer    *layer    = GIMP_LAYER (filter);
+  PicmanDrawable *drawable = PICMAN_DRAWABLE (filter);
+  PicmanLayer    *layer    = PICMAN_LAYER (filter);
   GeglNode     *node;
   GeglNode     *source;
   GeglNode     *mode_node;
   gboolean      linear;
   gboolean      source_node_hijacked = FALSE;
 
-  node = GIMP_FILTER_CLASS (parent_class)->get_node (filter);
+  node = PICMAN_FILTER_CLASS (parent_class)->get_node (filter);
 
-  source = gimp_drawable_get_source_node (drawable);
+  source = picman_drawable_get_source_node (drawable);
 
   /* if the source node already has a parent, we are a floating
    * selection and the source node has been hijacked by the fs'
@@ -595,26 +595,26 @@ gimp_layer_get_node (GimpFilter *filter)
   /* the mode node connects it all, and has aux and aux2 inputs for
    * the layer and its mask
    */
-  mode_node = gimp_drawable_get_mode_node (drawable);
-  linear    = gimp_drawable_get_linear (drawable);
+  mode_node = picman_drawable_get_mode_node (drawable);
+  linear    = picman_drawable_get_linear (drawable);
 
-  gimp_gegl_mode_node_set_mode (mode_node,
-                                gimp_layer_get_visible_mode (layer),
+  picman_gegl_mode_node_set_mode (mode_node,
+                                picman_layer_get_visible_mode (layer),
                                 linear);
-  gimp_gegl_mode_node_set_opacity (mode_node,
+  picman_gegl_mode_node_set_opacity (mode_node,
                                    layer->opacity);
 
   /* the layer's offset node */
   layer->layer_offset_node = gegl_node_new_child (node,
                                                   "operation", "gegl:translate",
                                                   NULL);
-  gimp_item_add_offset_node (GIMP_ITEM (layer), layer->layer_offset_node);
+  picman_item_add_offset_node (PICMAN_ITEM (layer), layer->layer_offset_node);
 
   /* the layer mask's offset node */
   layer->mask_offset_node = gegl_node_new_child (node,
                                                  "operation", "gegl:translate",
                                                   NULL);
-  gimp_item_add_offset_node (GIMP_ITEM (layer), layer->mask_offset_node);
+  picman_item_add_offset_node (PICMAN_ITEM (layer), layer->mask_offset_node);
 
   if (! source_node_hijacked)
     {
@@ -622,7 +622,7 @@ gimp_layer_get_node (GimpFilter *filter)
                             layer->layer_offset_node, "input");
     }
 
-  if (! (layer->mask && gimp_layer_get_show_mask (layer)))
+  if (! (layer->mask && picman_layer_get_show_mask (layer)))
     {
       gegl_node_connect_to (layer->layer_offset_node, "output",
                             mode_node,                "aux");
@@ -632,17 +632,17 @@ gimp_layer_get_node (GimpFilter *filter)
     {
       GeglNode *mask;
 
-      mask = gimp_drawable_get_source_node (GIMP_DRAWABLE (layer->mask));
+      mask = picman_drawable_get_source_node (PICMAN_DRAWABLE (layer->mask));
 
       gegl_node_connect_to (mask,                    "output",
                             layer->mask_offset_node, "input");
 
-      if (gimp_layer_get_show_mask (layer))
+      if (picman_layer_get_show_mask (layer))
         {
           gegl_node_connect_to (layer->mask_offset_node, "output",
                                 mode_node,               "aux");
         }
-      else if (gimp_layer_get_apply_mask (layer))
+      else if (picman_layer_get_apply_mask (layer))
         {
           gegl_node_connect_to (layer->mask_offset_node, "output",
                                 mode_node,               "aux2");
@@ -653,82 +653,82 @@ gimp_layer_get_node (GimpFilter *filter)
 }
 
 static void
-gimp_layer_removed (GimpItem *item)
+picman_layer_removed (PicmanItem *item)
 {
-  GimpLayer *layer = GIMP_LAYER (item);
+  PicmanLayer *layer = PICMAN_LAYER (item);
 
   if (layer->mask)
-    gimp_item_removed (GIMP_ITEM (layer->mask));
+    picman_item_removed (PICMAN_ITEM (layer->mask));
 
-  if (GIMP_ITEM_CLASS (parent_class)->removed)
-    GIMP_ITEM_CLASS (parent_class)->removed (item);
+  if (PICMAN_ITEM_CLASS (parent_class)->removed)
+    PICMAN_ITEM_CLASS (parent_class)->removed (item);
 }
 
 static void
-gimp_layer_unset_removed (GimpItem *item)
+picman_layer_unset_removed (PicmanItem *item)
 {
-  GimpLayer *layer = GIMP_LAYER (item);
+  PicmanLayer *layer = PICMAN_LAYER (item);
 
   if (layer->mask)
-    gimp_item_unset_removed (GIMP_ITEM (layer->mask));
+    picman_item_unset_removed (PICMAN_ITEM (layer->mask));
 
-  if (GIMP_ITEM_CLASS (parent_class)->unset_removed)
-    GIMP_ITEM_CLASS (parent_class)->unset_removed (item);
+  if (PICMAN_ITEM_CLASS (parent_class)->unset_removed)
+    PICMAN_ITEM_CLASS (parent_class)->unset_removed (item);
 }
 
 static gboolean
-gimp_layer_is_attached (const GimpItem *item)
+picman_layer_is_attached (const PicmanItem *item)
 {
-  GimpImage *image = gimp_item_get_image (item);
+  PicmanImage *image = picman_item_get_image (item);
 
-  return (GIMP_IS_IMAGE (image) &&
-          gimp_container_have (gimp_image_get_layers (image),
-                               GIMP_OBJECT (item)));
+  return (PICMAN_IS_IMAGE (image) &&
+          picman_container_have (picman_image_get_layers (image),
+                               PICMAN_OBJECT (item)));
 }
 
-static GimpItemTree *
-gimp_layer_get_tree (GimpItem *item)
+static PicmanItemTree *
+picman_layer_get_tree (PicmanItem *item)
 {
-  if (gimp_item_is_attached (item))
+  if (picman_item_is_attached (item))
     {
-      GimpImage *image = gimp_item_get_image (item);
+      PicmanImage *image = picman_item_get_image (item);
 
-      return gimp_image_get_layer_tree (image);
+      return picman_image_get_layer_tree (image);
     }
 
   return NULL;
 }
 
-static GimpItem *
-gimp_layer_duplicate (GimpItem *item,
+static PicmanItem *
+picman_layer_duplicate (PicmanItem *item,
                       GType     new_type)
 {
-  GimpItem *new_item;
+  PicmanItem *new_item;
 
-  g_return_val_if_fail (g_type_is_a (new_type, GIMP_TYPE_DRAWABLE), NULL);
+  g_return_val_if_fail (g_type_is_a (new_type, PICMAN_TYPE_DRAWABLE), NULL);
 
-  new_item = GIMP_ITEM_CLASS (parent_class)->duplicate (item, new_type);
+  new_item = PICMAN_ITEM_CLASS (parent_class)->duplicate (item, new_type);
 
-  if (GIMP_IS_LAYER (new_item))
+  if (PICMAN_IS_LAYER (new_item))
     {
-      GimpLayer *layer     = GIMP_LAYER (item);
-      GimpLayer *new_layer = GIMP_LAYER (new_item);
+      PicmanLayer *layer     = PICMAN_LAYER (item);
+      PicmanLayer *new_layer = PICMAN_LAYER (new_item);
 
-      gimp_layer_set_mode    (new_layer, gimp_layer_get_mode (layer),    FALSE);
-      gimp_layer_set_opacity (new_layer, gimp_layer_get_opacity (layer), FALSE);
+      picman_layer_set_mode    (new_layer, picman_layer_get_mode (layer),    FALSE);
+      picman_layer_set_opacity (new_layer, picman_layer_get_opacity (layer), FALSE);
 
-      if (gimp_layer_can_lock_alpha (new_layer))
-        gimp_layer_set_lock_alpha (new_layer,
-                                   gimp_layer_get_lock_alpha (layer), FALSE);
+      if (picman_layer_can_lock_alpha (new_layer))
+        picman_layer_set_lock_alpha (new_layer,
+                                   picman_layer_get_lock_alpha (layer), FALSE);
 
       /*  duplicate the layer mask if necessary  */
       if (layer->mask)
         {
-          GimpItem *mask;
+          PicmanItem *mask;
 
-          mask = gimp_item_duplicate (GIMP_ITEM (layer->mask),
+          mask = picman_item_duplicate (PICMAN_ITEM (layer->mask),
                                       G_TYPE_FROM_INSTANCE (layer->mask));
-          gimp_layer_add_mask (new_layer, GIMP_LAYER_MASK (mask), FALSE, NULL);
+          picman_layer_add_mask (new_layer, PICMAN_LAYER_MASK (mask), FALSE, NULL);
 
           new_layer->apply_mask = layer->apply_mask;
           new_layer->edit_mask  = layer->edit_mask;
@@ -740,56 +740,56 @@ gimp_layer_duplicate (GimpItem *item,
 }
 
 static void
-gimp_layer_convert (GimpItem  *item,
-                    GimpImage *dest_image)
+picman_layer_convert (PicmanItem  *item,
+                    PicmanImage *dest_image)
 {
-  GimpLayer         *layer    = GIMP_LAYER (item);
-  GimpDrawable      *drawable = GIMP_DRAWABLE (item);
-  GimpImageBaseType  old_base_type;
-  GimpImageBaseType  new_base_type;
-  GimpPrecision      old_precision;
-  GimpPrecision      new_precision;
+  PicmanLayer         *layer    = PICMAN_LAYER (item);
+  PicmanDrawable      *drawable = PICMAN_DRAWABLE (item);
+  PicmanImageBaseType  old_base_type;
+  PicmanImageBaseType  new_base_type;
+  PicmanPrecision      old_precision;
+  PicmanPrecision      new_precision;
 
-  old_base_type = gimp_drawable_get_base_type (drawable);
-  new_base_type = gimp_image_get_base_type (dest_image);
+  old_base_type = picman_drawable_get_base_type (drawable);
+  new_base_type = picman_image_get_base_type (dest_image);
 
-  old_precision = gimp_drawable_get_precision (drawable);
-  new_precision = gimp_image_get_precision (dest_image);
+  old_precision = picman_drawable_get_precision (drawable);
+  new_precision = picman_image_get_precision (dest_image);
 
   if (old_base_type != new_base_type ||
       old_precision != new_precision)
     {
-      gimp_drawable_convert_type (drawable, dest_image,
+      picman_drawable_convert_type (drawable, dest_image,
                                   new_base_type, new_precision,
                                   0, 0,
                                   FALSE);
     }
 
   if (layer->mask)
-    gimp_item_set_image (GIMP_ITEM (layer->mask), dest_image);
+    picman_item_set_image (PICMAN_ITEM (layer->mask), dest_image);
 
-  GIMP_ITEM_CLASS (parent_class)->convert (item, dest_image);
+  PICMAN_ITEM_CLASS (parent_class)->convert (item, dest_image);
 }
 
 static gboolean
-gimp_layer_rename (GimpItem     *item,
+picman_layer_rename (PicmanItem     *item,
                    const gchar  *new_name,
                    const gchar  *undo_desc,
                    GError      **error)
 {
-  GimpLayer *layer = GIMP_LAYER (item);
-  GimpImage *image = gimp_item_get_image (item);
+  PicmanLayer *layer = PICMAN_LAYER (item);
+  PicmanImage *image = picman_item_get_image (item);
   gboolean   attached;
   gboolean   floating_sel;
 
-  attached     = gimp_item_is_attached (item);
-  floating_sel = gimp_layer_is_floating_sel (layer);
+  attached     = picman_item_is_attached (item);
+  floating_sel = picman_layer_is_floating_sel (layer);
 
   if (floating_sel)
     {
-      if (GIMP_IS_CHANNEL (gimp_layer_get_floating_sel_drawable (layer)))
+      if (PICMAN_IS_CHANNEL (picman_layer_get_floating_sel_drawable (layer)))
         {
-          g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+          g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			       _("Cannot create a new layer from the floating "
 				 "selection because it belongs to a layer mask "
 				 "or channel."));
@@ -798,224 +798,224 @@ gimp_layer_rename (GimpItem     *item,
 
       if (attached)
         {
-          gimp_image_undo_group_start (image,
-                                       GIMP_UNDO_GROUP_ITEM_PROPERTIES,
+          picman_image_undo_group_start (image,
+                                       PICMAN_UNDO_GROUP_ITEM_PROPERTIES,
                                        undo_desc);
 
           floating_sel_to_layer (layer, NULL);
         }
     }
 
-  GIMP_ITEM_CLASS (parent_class)->rename (item, new_name, undo_desc, error);
+  PICMAN_ITEM_CLASS (parent_class)->rename (item, new_name, undo_desc, error);
 
   if (attached && floating_sel)
-    gimp_image_undo_group_end (image);
+    picman_image_undo_group_end (image);
 
   return TRUE;
 }
 
 static void
-gimp_layer_translate (GimpItem *item,
+picman_layer_translate (PicmanItem *item,
                       gint      offset_x,
                       gint      offset_y,
                       gboolean  push_undo)
 {
-  GimpLayer *layer = GIMP_LAYER (item);
+  PicmanLayer *layer = PICMAN_LAYER (item);
 
   if (push_undo)
-    gimp_image_undo_push_item_displace (gimp_item_get_image (item), NULL, item);
+    picman_image_undo_push_item_displace (picman_item_get_image (item), NULL, item);
 
   /*  update the old region  */
-  gimp_drawable_update (GIMP_DRAWABLE (layer),
+  picman_drawable_update (PICMAN_DRAWABLE (layer),
                         0, 0,
-                        gimp_item_get_width  (item),
-                        gimp_item_get_height (item));
+                        picman_item_get_width  (item),
+                        picman_item_get_height (item));
 
   /*  invalidate the selection boundary because of a layer modification  */
-  gimp_drawable_invalidate_boundary (GIMP_DRAWABLE (layer));
+  picman_drawable_invalidate_boundary (PICMAN_DRAWABLE (layer));
 
-  GIMP_ITEM_CLASS (parent_class)->translate (item, offset_x, offset_y,
+  PICMAN_ITEM_CLASS (parent_class)->translate (item, offset_x, offset_y,
                                              push_undo);
 
   /*  update the new region  */
-  gimp_drawable_update (GIMP_DRAWABLE (layer),
+  picman_drawable_update (PICMAN_DRAWABLE (layer),
                         0, 0,
-                        gimp_item_get_width  (item),
-                        gimp_item_get_height (item));
+                        picman_item_get_width  (item),
+                        picman_item_get_height (item));
 
   if (layer->mask)
     {
       gint off_x, off_y;
 
-      gimp_item_get_offset (item, &off_x, &off_y);
-      gimp_item_set_offset (GIMP_ITEM (layer->mask), off_x, off_y);
+      picman_item_get_offset (item, &off_x, &off_y);
+      picman_item_set_offset (PICMAN_ITEM (layer->mask), off_x, off_y);
 
-      gimp_viewable_invalidate_preview (GIMP_VIEWABLE (layer->mask));
+      picman_viewable_invalidate_preview (PICMAN_VIEWABLE (layer->mask));
     }
 }
 
 static void
-gimp_layer_scale (GimpItem              *item,
+picman_layer_scale (PicmanItem              *item,
                   gint                   new_width,
                   gint                   new_height,
                   gint                   new_offset_x,
                   gint                   new_offset_y,
-                  GimpInterpolationType  interpolation_type,
-                  GimpProgress          *progress)
+                  PicmanInterpolationType  interpolation_type,
+                  PicmanProgress          *progress)
 {
-  GimpLayer *layer = GIMP_LAYER (item);
+  PicmanLayer *layer = PICMAN_LAYER (item);
 
-  GIMP_ITEM_CLASS (parent_class)->scale (item, new_width, new_height,
+  PICMAN_ITEM_CLASS (parent_class)->scale (item, new_width, new_height,
                                          new_offset_x, new_offset_y,
                                          interpolation_type, progress);
 
   if (layer->mask)
-    gimp_item_scale (GIMP_ITEM (layer->mask),
+    picman_item_scale (PICMAN_ITEM (layer->mask),
                      new_width, new_height,
                      new_offset_x, new_offset_y,
                      interpolation_type, progress);
 }
 
 static void
-gimp_layer_resize (GimpItem    *item,
-                   GimpContext *context,
+picman_layer_resize (PicmanItem    *item,
+                   PicmanContext *context,
                    gint         new_width,
                    gint         new_height,
                    gint         offset_x,
                    gint         offset_y)
 {
-  GimpLayer *layer  = GIMP_LAYER (item);
+  PicmanLayer *layer  = PICMAN_LAYER (item);
 
-  GIMP_ITEM_CLASS (parent_class)->resize (item, context, new_width, new_height,
+  PICMAN_ITEM_CLASS (parent_class)->resize (item, context, new_width, new_height,
                                           offset_x, offset_y);
 
   if (layer->mask)
-    gimp_item_resize (GIMP_ITEM (layer->mask), context,
+    picman_item_resize (PICMAN_ITEM (layer->mask), context,
                       new_width, new_height, offset_x, offset_y);
 }
 
 static void
-gimp_layer_flip (GimpItem            *item,
-                 GimpContext         *context,
-                 GimpOrientationType  flip_type,
+picman_layer_flip (PicmanItem            *item,
+                 PicmanContext         *context,
+                 PicmanOrientationType  flip_type,
                  gdouble              axis,
                  gboolean             clip_result)
 {
-  GimpLayer *layer = GIMP_LAYER (item);
+  PicmanLayer *layer = PICMAN_LAYER (item);
 
-  GIMP_ITEM_CLASS (parent_class)->flip (item, context, flip_type, axis,
+  PICMAN_ITEM_CLASS (parent_class)->flip (item, context, flip_type, axis,
                                         clip_result);
 
   if (layer->mask)
-    gimp_item_flip (GIMP_ITEM (layer->mask), context,
+    picman_item_flip (PICMAN_ITEM (layer->mask), context,
                     flip_type, axis, clip_result);
 }
 
 static void
-gimp_layer_rotate (GimpItem         *item,
-                   GimpContext      *context,
-                   GimpRotationType  rotate_type,
+picman_layer_rotate (PicmanItem         *item,
+                   PicmanContext      *context,
+                   PicmanRotationType  rotate_type,
                    gdouble           center_x,
                    gdouble           center_y,
                    gboolean          clip_result)
 {
-  GimpLayer *layer = GIMP_LAYER (item);
+  PicmanLayer *layer = PICMAN_LAYER (item);
 
-  GIMP_ITEM_CLASS (parent_class)->rotate (item, context,
+  PICMAN_ITEM_CLASS (parent_class)->rotate (item, context,
                                           rotate_type, center_x, center_y,
                                           clip_result);
 
   if (layer->mask)
-    gimp_item_rotate (GIMP_ITEM (layer->mask), context,
+    picman_item_rotate (PICMAN_ITEM (layer->mask), context,
                       rotate_type, center_x, center_y, clip_result);
 }
 
 static void
-gimp_layer_transform (GimpItem               *item,
-                      GimpContext            *context,
-                      const GimpMatrix3      *matrix,
-                      GimpTransformDirection  direction,
-                      GimpInterpolationType   interpolation_type,
+picman_layer_transform (PicmanItem               *item,
+                      PicmanContext            *context,
+                      const PicmanMatrix3      *matrix,
+                      PicmanTransformDirection  direction,
+                      PicmanInterpolationType   interpolation_type,
                       gint                    recursion_level,
-                      GimpTransformResize     clip_result,
-                      GimpProgress           *progress)
+                      PicmanTransformResize     clip_result,
+                      PicmanProgress           *progress)
 {
-  GimpLayer *layer = GIMP_LAYER (item);
+  PicmanLayer *layer = PICMAN_LAYER (item);
 
   /* FIXME: make interpolated transformations work on layers without alpha */
-  if (interpolation_type != GIMP_INTERPOLATION_NONE &&
-      ! gimp_drawable_has_alpha (GIMP_DRAWABLE (item)))
-    gimp_layer_add_alpha (layer);
+  if (interpolation_type != PICMAN_INTERPOLATION_NONE &&
+      ! picman_drawable_has_alpha (PICMAN_DRAWABLE (item)))
+    picman_layer_add_alpha (layer);
 
-  GIMP_ITEM_CLASS (parent_class)->transform (item, context, matrix, direction,
+  PICMAN_ITEM_CLASS (parent_class)->transform (item, context, matrix, direction,
                                              interpolation_type,
                                              recursion_level,
                                              clip_result,
                                              progress);
 
   if (layer->mask)
-    gimp_item_transform (GIMP_ITEM (layer->mask), context,
+    picman_item_transform (PICMAN_ITEM (layer->mask), context,
                          matrix, direction,
                          interpolation_type, recursion_level,
                          clip_result, progress);
 }
 
 static void
-gimp_layer_to_selection (GimpItem       *item,
-                         GimpChannelOps  op,
+picman_layer_to_selection (PicmanItem       *item,
+                         PicmanChannelOps  op,
                          gboolean        antialias,
                          gboolean        feather,
                          gdouble         feather_radius_x,
                          gdouble         feather_radius_y)
 {
-  GimpLayer *layer = GIMP_LAYER (item);
-  GimpImage *image = gimp_item_get_image (item);
+  PicmanLayer *layer = PICMAN_LAYER (item);
+  PicmanImage *image = picman_item_get_image (item);
 
-  gimp_channel_select_alpha (gimp_image_get_mask (image),
-                             GIMP_DRAWABLE (layer),
+  picman_channel_select_alpha (picman_image_get_mask (image),
+                             PICMAN_DRAWABLE (layer),
                              op,
                              feather, feather_radius_x, feather_radius_y);
 }
 
 static gint64
-gimp_layer_estimate_memsize (const GimpDrawable *drawable,
+picman_layer_estimate_memsize (const PicmanDrawable *drawable,
                              gint                width,
                              gint                height)
 {
-  GimpLayer *layer   = GIMP_LAYER (drawable);
+  PicmanLayer *layer   = PICMAN_LAYER (drawable);
   gint64     memsize = 0;
 
   if (layer->mask)
-    memsize += gimp_drawable_estimate_memsize (GIMP_DRAWABLE (layer->mask),
+    memsize += picman_drawable_estimate_memsize (PICMAN_DRAWABLE (layer->mask),
                                                width, height);
 
-  return memsize + GIMP_DRAWABLE_CLASS (parent_class)->estimate_memsize (drawable,
+  return memsize + PICMAN_DRAWABLE_CLASS (parent_class)->estimate_memsize (drawable,
                                                                          width,
                                                                          height);
 }
 
 static void
-gimp_layer_convert_type (GimpDrawable      *drawable,
-                         GimpImage         *dest_image,
+picman_layer_convert_type (PicmanDrawable      *drawable,
+                         PicmanImage         *dest_image,
                          const Babl        *new_format,
-                         GimpImageBaseType  new_base_type,
-                         GimpPrecision      new_precision,
+                         PicmanImageBaseType  new_base_type,
+                         PicmanPrecision      new_precision,
                          gint               layer_dither_type,
                          gint               mask_dither_type,
                          gboolean           push_undo)
 {
-  GimpLayer  *layer = GIMP_LAYER (drawable);
+  PicmanLayer  *layer = PICMAN_LAYER (drawable);
   GeglBuffer *dest_buffer;
 
   dest_buffer =
     gegl_buffer_new (GEGL_RECTANGLE (0, 0,
-                                     gimp_item_get_width  (GIMP_ITEM (drawable)),
-                                     gimp_item_get_height (GIMP_ITEM (drawable))),
+                                     picman_item_get_width  (PICMAN_ITEM (drawable)),
+                                     picman_item_get_height (PICMAN_ITEM (drawable))),
                      new_format);
 
   if (layer_dither_type == 0)
     {
-      gegl_buffer_copy (gimp_drawable_get_buffer (drawable), NULL,
+      gegl_buffer_copy (picman_drawable_get_buffer (drawable), NULL,
                         dest_buffer, NULL);
     }
   else
@@ -1025,98 +1025,98 @@ gimp_layer_convert_type (GimpDrawable      *drawable,
       bits = (babl_format_get_bytes_per_pixel (new_format) * 8 /
               babl_format_get_n_components (new_format));
 
-      gimp_gegl_apply_color_reduction (gimp_drawable_get_buffer (drawable),
+      picman_gegl_apply_color_reduction (picman_drawable_get_buffer (drawable),
                                        NULL, NULL,
                                        dest_buffer, bits, layer_dither_type);
     }
 
-  gimp_drawable_set_buffer (drawable, push_undo, NULL, dest_buffer);
+  picman_drawable_set_buffer (drawable, push_undo, NULL, dest_buffer);
   g_object_unref (dest_buffer);
 
   if (layer->mask &&
-      new_precision != gimp_drawable_get_precision (GIMP_DRAWABLE (layer->mask)))
+      new_precision != picman_drawable_get_precision (PICMAN_DRAWABLE (layer->mask)))
     {
-      gimp_drawable_convert_type (GIMP_DRAWABLE (layer->mask), dest_image,
-                                  GIMP_GRAY, new_precision,
+      picman_drawable_convert_type (PICMAN_DRAWABLE (layer->mask), dest_image,
+                                  PICMAN_GRAY, new_precision,
                                   layer_dither_type, mask_dither_type,
                                   push_undo);
     }
 }
 
 static void
-gimp_layer_invalidate_boundary (GimpDrawable *drawable)
+picman_layer_invalidate_boundary (PicmanDrawable *drawable)
 {
-  GimpLayer   *layer = GIMP_LAYER (drawable);
-  GimpImage   *image;
-  GimpChannel *mask;
+  PicmanLayer   *layer = PICMAN_LAYER (drawable);
+  PicmanImage   *image;
+  PicmanChannel *mask;
 
-  if (! (image = gimp_item_get_image (GIMP_ITEM (layer))))
+  if (! (image = picman_item_get_image (PICMAN_ITEM (layer))))
     return;
 
   /*  Turn the current selection off  */
-  gimp_image_selection_invalidate (image);
+  picman_image_selection_invalidate (image);
 
   /*  get the selection mask channel  */
-  mask = gimp_image_get_mask (image);
+  mask = picman_image_get_mask (image);
 
   /*  Only bother with the bounds if there is a selection  */
-  if (! gimp_channel_is_empty (mask))
+  if (! picman_channel_is_empty (mask))
     {
       mask->bounds_known   = FALSE;
       mask->boundary_known = FALSE;
     }
 
-  if (gimp_layer_is_floating_sel (layer))
+  if (picman_layer_is_floating_sel (layer))
     floating_sel_invalidate (layer);
 }
 
 static void
-gimp_layer_get_active_components (const GimpDrawable *drawable,
+picman_layer_get_active_components (const PicmanDrawable *drawable,
                                   gboolean           *active)
 {
-  GimpLayer  *layer  = GIMP_LAYER (drawable);
-  GimpImage  *image  = gimp_item_get_image (GIMP_ITEM (drawable));
-  const Babl *format = gimp_drawable_get_format (drawable);
+  PicmanLayer  *layer  = PICMAN_LAYER (drawable);
+  PicmanImage  *image  = picman_item_get_image (PICMAN_ITEM (drawable));
+  const Babl *format = picman_drawable_get_format (drawable);
 
   /*  first copy the image active channels  */
-  gimp_image_get_active_array (image, active);
+  picman_image_get_active_array (image, active);
 
-  if (gimp_drawable_has_alpha (drawable) && layer->lock_alpha)
+  if (picman_drawable_has_alpha (drawable) && layer->lock_alpha)
     active[babl_format_get_n_components (format) - 1] = FALSE;
 }
 
-static GimpComponentMask
-gimp_layer_get_active_mask (const GimpDrawable *drawable)
+static PicmanComponentMask
+picman_layer_get_active_mask (const PicmanDrawable *drawable)
 {
-  GimpLayer         *layer = GIMP_LAYER (drawable);
-  GimpImage         *image = gimp_item_get_image (GIMP_ITEM (drawable));
-  GimpComponentMask  mask  = gimp_image_get_active_mask (image);
+  PicmanLayer         *layer = PICMAN_LAYER (drawable);
+  PicmanImage         *image = picman_item_get_image (PICMAN_ITEM (drawable));
+  PicmanComponentMask  mask  = picman_image_get_active_mask (image);
 
-  if (gimp_drawable_has_alpha (drawable) && layer->lock_alpha)
-    mask &= ~GIMP_COMPONENT_ALPHA;
+  if (picman_drawable_has_alpha (drawable) && layer->lock_alpha)
+    mask &= ~PICMAN_COMPONENT_ALPHA;
 
   return mask;
 }
 
 static gdouble
-gimp_layer_get_opacity_at (GimpPickable *pickable,
+picman_layer_get_opacity_at (PicmanPickable *pickable,
                            gint          x,
                            gint          y)
 {
-  GimpLayer *layer = GIMP_LAYER (pickable);
-  gdouble    value = GIMP_OPACITY_TRANSPARENT;
+  PicmanLayer *layer = PICMAN_LAYER (pickable);
+  gdouble    value = PICMAN_OPACITY_TRANSPARENT;
 
-  if (x >= 0 && x < gimp_item_get_width  (GIMP_ITEM (layer)) &&
-      y >= 0 && y < gimp_item_get_height (GIMP_ITEM (layer)) &&
-      gimp_item_is_visible (GIMP_ITEM (layer)))
+  if (x >= 0 && x < picman_item_get_width  (PICMAN_ITEM (layer)) &&
+      y >= 0 && y < picman_item_get_height (PICMAN_ITEM (layer)) &&
+      picman_item_is_visible (PICMAN_ITEM (layer)))
     {
-      if (! gimp_drawable_has_alpha (GIMP_DRAWABLE (layer)))
+      if (! picman_drawable_has_alpha (PICMAN_DRAWABLE (layer)))
         {
-          value = GIMP_OPACITY_OPAQUE;
+          value = PICMAN_OPACITY_OPAQUE;
         }
       else
         {
-          gegl_buffer_sample (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
+          gegl_buffer_sample (picman_drawable_get_buffer (PICMAN_DRAWABLE (layer)),
                               x, y, NULL, &value, babl_format ("A double"),
                               GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
         }
@@ -1125,7 +1125,7 @@ gimp_layer_get_opacity_at (GimpPickable *pickable,
         {
           gdouble mask_value;
 
-          mask_value = gimp_pickable_get_opacity_at (GIMP_PICKABLE (layer->mask),
+          mask_value = picman_pickable_get_opacity_at (PICMAN_PICKABLE (layer->mask),
                                                      x, y);
 
           value *= mask_value;
@@ -1136,17 +1136,17 @@ gimp_layer_get_opacity_at (GimpPickable *pickable,
 }
 
 static void
-gimp_layer_layer_mask_update (GimpDrawable *drawable,
+picman_layer_layer_mask_update (PicmanDrawable *drawable,
                               gint          x,
                               gint          y,
                               gint          width,
                               gint          height,
-                              GimpLayer    *layer)
+                              PicmanLayer    *layer)
 {
-  if (gimp_layer_get_apply_mask (layer) ||
-      gimp_layer_get_show_mask (layer))
+  if (picman_layer_get_apply_mask (layer) ||
+      picman_layer_get_show_mask (layer))
     {
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
+      picman_drawable_update (PICMAN_DRAWABLE (layer),
                             x, y, width, height);
     }
 }
@@ -1154,28 +1154,28 @@ gimp_layer_layer_mask_update (GimpDrawable *drawable,
 
 /*  public functions  */
 
-GimpLayer *
-gimp_layer_new (GimpImage            *image,
+PicmanLayer *
+picman_layer_new (PicmanImage            *image,
                 gint                  width,
                 gint                  height,
                 const Babl           *format,
                 const gchar          *name,
                 gdouble               opacity,
-                GimpLayerModeEffects  mode)
+                PicmanLayerModeEffects  mode)
 {
-  GimpLayer *layer;
+  PicmanLayer *layer;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (width > 0, NULL);
   g_return_val_if_fail (height > 0, NULL);
   g_return_val_if_fail (format != NULL, NULL);
 
-  layer = GIMP_LAYER (gimp_drawable_new (GIMP_TYPE_LAYER,
+  layer = PICMAN_LAYER (picman_drawable_new (PICMAN_TYPE_LAYER,
                                          image, name,
                                          0, 0, width, height,
                                          format));
 
-  opacity = CLAMP (opacity, GIMP_OPACITY_TRANSPARENT, GIMP_OPACITY_OPAQUE);
+  opacity = CLAMP (opacity, PICMAN_OPACITY_TRANSPARENT, PICMAN_OPACITY_OPAQUE);
 
   layer->opacity = opacity;
   layer->mode    = mode;
@@ -1184,7 +1184,7 @@ gimp_layer_new (GimpImage            *image,
 }
 
 /**
- * gimp_layer_new_from_buffer:
+ * picman_layer_new_from_buffer:
  * @buffer:     The buffer to make the new layer from.
  * @dest_image: The image the new layer will be added to.
  * @format:     The #Babl format of the new layer.
@@ -1198,38 +1198,38 @@ gimp_layer_new (GimpImage            *image,
  *
  * Return value: The new layer.
  **/
-GimpLayer *
-gimp_layer_new_from_buffer (GeglBuffer           *buffer,
-                            GimpImage            *dest_image,
+PicmanLayer *
+picman_layer_new_from_buffer (GeglBuffer           *buffer,
+                            PicmanImage            *dest_image,
                             const Babl           *format,
                             const gchar          *name,
                             gdouble               opacity,
-                            GimpLayerModeEffects  mode)
+                            PicmanLayerModeEffects  mode)
 {
-  GimpLayer  *layer;
+  PicmanLayer  *layer;
   GeglBuffer *dest;
 
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
-  g_return_val_if_fail (GIMP_IS_IMAGE (dest_image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (dest_image), NULL);
   g_return_val_if_fail (format != NULL, NULL);
 
   /*  do *not* use the buffer's format because this function gets
    *  buffers of any format passed, and converts them
    */
-  layer = gimp_layer_new (dest_image,
+  layer = picman_layer_new (dest_image,
                           gegl_buffer_get_width  (buffer),
                           gegl_buffer_get_height (buffer),
                           format,
                           name, opacity, mode);
 
-  dest = gimp_drawable_get_buffer (GIMP_DRAWABLE (layer));
+  dest = picman_drawable_get_buffer (PICMAN_DRAWABLE (layer));
   gegl_buffer_copy (buffer, NULL, dest, NULL);
 
   return layer;
 }
 
 /**
- * gimp_layer_new_from_pixbuf:
+ * picman_layer_new_from_pixbuf:
  * @pixbuf:     The pixbuf to make the new layer from.
  * @dest_image: The image the new layer will be added to.
  * @format:     The #Babl format of the new layer.
@@ -1243,24 +1243,24 @@ gimp_layer_new_from_buffer (GeglBuffer           *buffer,
  *
  * Return value: The new layer.
  **/
-GimpLayer *
-gimp_layer_new_from_pixbuf (GdkPixbuf            *pixbuf,
-                            GimpImage            *dest_image,
+PicmanLayer *
+picman_layer_new_from_pixbuf (GdkPixbuf            *pixbuf,
+                            PicmanImage            *dest_image,
                             const Babl           *format,
                             const gchar          *name,
                             gdouble               opacity,
-                            GimpLayerModeEffects  mode)
+                            PicmanLayerModeEffects  mode)
 {
   GeglBuffer *buffer;
-  GimpLayer  *layer;
+  PicmanLayer  *layer;
 
   g_return_val_if_fail (GDK_IS_PIXBUF (pixbuf), NULL);
-  g_return_val_if_fail (GIMP_IS_IMAGE (dest_image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (dest_image), NULL);
   g_return_val_if_fail (format != NULL, NULL);
 
-  buffer = gimp_pixbuf_create_buffer (pixbuf);
+  buffer = picman_pixbuf_create_buffer (pixbuf);
 
-  layer = gimp_layer_new_from_buffer (buffer, dest_image, format,
+  layer = picman_layer_new_from_buffer (buffer, dest_image, format,
                                       name, opacity, mode);
 
   g_object_unref (buffer);
@@ -1268,62 +1268,62 @@ gimp_layer_new_from_pixbuf (GdkPixbuf            *pixbuf,
   return layer;
 }
 
-GimpLayer *
-gimp_layer_get_parent (GimpLayer *layer)
+PicmanLayer *
+picman_layer_get_parent (PicmanLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), NULL);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), NULL);
 
-  return GIMP_LAYER (gimp_viewable_get_parent (GIMP_VIEWABLE (layer)));
+  return PICMAN_LAYER (picman_viewable_get_parent (PICMAN_VIEWABLE (layer)));
 }
 
-GimpLayerMask *
-gimp_layer_get_mask (const GimpLayer *layer)
+PicmanLayerMask *
+picman_layer_get_mask (const PicmanLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), NULL);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), NULL);
 
   return layer->mask;
 }
 
-GimpLayerMask *
-gimp_layer_add_mask (GimpLayer      *layer,
-                     GimpLayerMask  *mask,
+PicmanLayerMask *
+picman_layer_add_mask (PicmanLayer      *layer,
+                     PicmanLayerMask  *mask,
                      gboolean        push_undo,
                      GError        **error)
 {
-  GimpImage *image;
+  PicmanImage *image;
 
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), NULL);
-  g_return_val_if_fail (GIMP_IS_LAYER_MASK (mask), NULL);
-  g_return_val_if_fail (gimp_item_get_image (GIMP_ITEM (layer)) ==
-                        gimp_item_get_image (GIMP_ITEM (mask)), NULL);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), NULL);
+  g_return_val_if_fail (PICMAN_IS_LAYER_MASK (mask), NULL);
+  g_return_val_if_fail (picman_item_get_image (PICMAN_ITEM (layer)) ==
+                        picman_item_get_image (PICMAN_ITEM (mask)), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  if (! gimp_item_is_attached (GIMP_ITEM (layer)))
+  if (! picman_item_is_attached (PICMAN_ITEM (layer)))
     push_undo = FALSE;
 
-  image = gimp_item_get_image (GIMP_ITEM (layer));
+  image = picman_item_get_image (PICMAN_ITEM (layer));
 
   if (layer->mask)
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			   _("Unable to add a layer mask since "
 			     "the layer already has one."));
       return NULL;
     }
 
-  if ((gimp_item_get_width (GIMP_ITEM (layer)) !=
-       gimp_item_get_width (GIMP_ITEM (mask))) ||
-      (gimp_item_get_height (GIMP_ITEM (layer)) !=
-       gimp_item_get_height (GIMP_ITEM (mask))))
+  if ((picman_item_get_width (PICMAN_ITEM (layer)) !=
+       picman_item_get_width (PICMAN_ITEM (mask))) ||
+      (picman_item_get_height (PICMAN_ITEM (layer)) !=
+       picman_item_get_height (PICMAN_ITEM (mask))))
     {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
+      g_set_error_literal (error, PICMAN_ERROR, PICMAN_FAILED,
 			   _("Cannot add layer mask of different "
 			     "dimensions than specified layer."));
       return NULL;
     }
 
   if (push_undo)
-    gimp_image_undo_push_layer_mask_add (image, C_("undo-type", "Add Layer Mask"),
+    picman_image_undo_push_layer_mask_add (image, C_("undo-type", "Add Layer Mask"),
                                          layer, mask);
 
   layer->mask = g_object_ref_sink (mask);
@@ -1331,16 +1331,16 @@ gimp_layer_add_mask (GimpLayer      *layer,
   layer->edit_mask  = TRUE;
   layer->show_mask  = FALSE;
 
-  gimp_layer_mask_set_layer (mask, layer);
+  picman_layer_mask_set_layer (mask, layer);
 
-  if (gimp_filter_peek_node (GIMP_FILTER (layer)))
+  if (picman_filter_peek_node (PICMAN_FILTER (layer)))
     {
       GeglNode *mode_node;
       GeglNode *mask;
 
-      mode_node = gimp_drawable_get_mode_node (GIMP_DRAWABLE (layer));
+      mode_node = picman_drawable_get_mode_node (PICMAN_DRAWABLE (layer));
 
-      mask = gimp_drawable_get_source_node (GIMP_DRAWABLE (layer->mask));
+      mask = picman_drawable_get_source_node (PICMAN_DRAWABLE (layer->mask));
 
       gegl_node_connect_to (mask,                    "output",
                             layer->mask_offset_node, "input");
@@ -1357,17 +1357,17 @@ gimp_layer_add_mask (GimpLayer      *layer,
         }
     }
 
-  if (gimp_layer_get_apply_mask (layer) ||
-      gimp_layer_get_show_mask (layer))
+  if (picman_layer_get_apply_mask (layer) ||
+      picman_layer_get_show_mask (layer))
     {
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
+      picman_drawable_update (PICMAN_DRAWABLE (layer),
                             0, 0,
-                            gimp_item_get_width  (GIMP_ITEM (layer)),
-                            gimp_item_get_height (GIMP_ITEM (layer)));
+                            picman_item_get_width  (PICMAN_ITEM (layer)),
+                            picman_item_get_height (PICMAN_ITEM (layer)));
     }
 
   g_signal_connect (mask, "update",
-                    G_CALLBACK (gimp_layer_layer_mask_update),
+                    G_CALLBACK (picman_layer_layer_mask_update),
                     layer);
 
   g_signal_emit (layer, layer_signals[MASK_CHANGED], 0);
@@ -1375,50 +1375,50 @@ gimp_layer_add_mask (GimpLayer      *layer,
   g_object_notify (G_OBJECT (layer), "mask");
 
   /*  if the mask came from the undo stack, reset its "removed" state  */
-  if (gimp_item_is_removed (GIMP_ITEM (mask)))
-    gimp_item_unset_removed (GIMP_ITEM (mask));
+  if (picman_item_is_removed (PICMAN_ITEM (mask)))
+    picman_item_unset_removed (PICMAN_ITEM (mask));
 
   return layer->mask;
 }
 
-GimpLayerMask *
-gimp_layer_create_mask (const GimpLayer *layer,
-                        GimpAddMaskType  add_mask_type,
-                        GimpChannel     *channel)
+PicmanLayerMask *
+picman_layer_create_mask (const PicmanLayer *layer,
+                        PicmanAddMaskType  add_mask_type,
+                        PicmanChannel     *channel)
 {
-  GimpDrawable  *drawable;
-  GimpItem      *item;
-  GimpLayerMask *mask;
-  GimpImage     *image;
+  PicmanDrawable  *drawable;
+  PicmanItem      *item;
+  PicmanLayerMask *mask;
+  PicmanImage     *image;
   gchar         *mask_name;
-  GimpRGB        black = { 0.0, 0.0, 0.0, GIMP_OPACITY_OPAQUE };
+  PicmanRGB        black = { 0.0, 0.0, 0.0, PICMAN_OPACITY_OPAQUE };
 
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), NULL);
-  g_return_val_if_fail (add_mask_type != GIMP_ADD_CHANNEL_MASK ||
-                        GIMP_IS_CHANNEL (channel), NULL);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), NULL);
+  g_return_val_if_fail (add_mask_type != PICMAN_ADD_CHANNEL_MASK ||
+                        PICMAN_IS_CHANNEL (channel), NULL);
 
-  drawable = GIMP_DRAWABLE (layer);
-  item     = GIMP_ITEM (layer);
-  image    = gimp_item_get_image (item);
+  drawable = PICMAN_DRAWABLE (layer);
+  item     = PICMAN_ITEM (layer);
+  image    = picman_item_get_image (item);
 
   mask_name = g_strdup_printf (_("%s mask"),
-                               gimp_object_get_name (layer));
+                               picman_object_get_name (layer));
 
-  mask = gimp_layer_mask_new (image,
-                              gimp_item_get_width  (item),
-                              gimp_item_get_height (item),
+  mask = picman_layer_mask_new (image,
+                              picman_item_get_width  (item),
+                              picman_item_get_height (item),
                               mask_name, &black);
 
   g_free (mask_name);
 
   switch (add_mask_type)
     {
-    case GIMP_ADD_WHITE_MASK:
-      gimp_channel_all (GIMP_CHANNEL (mask), FALSE);
+    case PICMAN_ADD_WHITE_MASK:
+      picman_channel_all (PICMAN_CHANNEL (mask), FALSE);
       return mask;
 
-    case GIMP_ADD_BLACK_MASK:
-      gimp_channel_clear (GIMP_CHANNEL (mask), NULL, FALSE);
+    case PICMAN_ADD_BLACK_MASK:
+      picman_channel_clear (PICMAN_CHANNEL (mask), NULL, FALSE);
       return mask;
 
     default:
@@ -1427,80 +1427,80 @@ gimp_layer_create_mask (const GimpLayer *layer,
 
   switch (add_mask_type)
     {
-    case GIMP_ADD_WHITE_MASK:
-    case GIMP_ADD_BLACK_MASK:
+    case PICMAN_ADD_WHITE_MASK:
+    case PICMAN_ADD_BLACK_MASK:
       break;
 
-    case GIMP_ADD_ALPHA_MASK:
-    case GIMP_ADD_ALPHA_TRANSFER_MASK:
-      if (gimp_drawable_has_alpha (drawable))
+    case PICMAN_ADD_ALPHA_MASK:
+    case PICMAN_ADD_ALPHA_TRANSFER_MASK:
+      if (picman_drawable_has_alpha (drawable))
         {
           GeglBuffer *dest_buffer;
           const Babl *component_format;
 
-          dest_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (mask));
+          dest_buffer = picman_drawable_get_buffer (PICMAN_DRAWABLE (mask));
 
           component_format =
-            gimp_image_get_component_format (image, GIMP_ALPHA_CHANNEL);
+            picman_image_get_component_format (image, PICMAN_ALPHA_CHANNEL);
 
           gegl_buffer_set_format (dest_buffer, component_format);
-          gegl_buffer_copy (gimp_drawable_get_buffer (drawable), NULL,
+          gegl_buffer_copy (picman_drawable_get_buffer (drawable), NULL,
                             dest_buffer, NULL);
           gegl_buffer_set_format (dest_buffer, NULL);
 
-          if (add_mask_type == GIMP_ADD_ALPHA_TRANSFER_MASK)
+          if (add_mask_type == PICMAN_ADD_ALPHA_TRANSFER_MASK)
             {
-              gimp_drawable_push_undo (drawable,
+              picman_drawable_push_undo (drawable,
                                        C_("undo-type", "Transfer Alpha to Mask"),
                                        NULL,
                                        0, 0,
-                                       gimp_item_get_width  (item),
-                                       gimp_item_get_height (item));
+                                       picman_item_get_width  (item),
+                                       picman_item_get_height (item));
 
-              gimp_gegl_apply_set_alpha (gimp_drawable_get_buffer (drawable),
+              picman_gegl_apply_set_alpha (picman_drawable_get_buffer (drawable),
                                          NULL, NULL,
-                                         gimp_drawable_get_buffer (drawable),
+                                         picman_drawable_get_buffer (drawable),
                                          1.0);
             }
         }
       break;
 
-    case GIMP_ADD_SELECTION_MASK:
-    case GIMP_ADD_CHANNEL_MASK:
+    case PICMAN_ADD_SELECTION_MASK:
+    case PICMAN_ADD_CHANNEL_MASK:
       {
         gboolean channel_empty;
         gint     offset_x, offset_y;
         gint     copy_x, copy_y;
         gint     copy_width, copy_height;
 
-        if (add_mask_type == GIMP_ADD_SELECTION_MASK)
-          channel = GIMP_CHANNEL (gimp_image_get_mask (image));
+        if (add_mask_type == PICMAN_ADD_SELECTION_MASK)
+          channel = PICMAN_CHANNEL (picman_image_get_mask (image));
 
-        channel_empty = gimp_channel_is_empty (channel);
+        channel_empty = picman_channel_is_empty (channel);
 
-        gimp_item_get_offset (item, &offset_x, &offset_y);
+        picman_item_get_offset (item, &offset_x, &offset_y);
 
-        gimp_rectangle_intersect (0, 0,
-                                  gimp_image_get_width  (image),
-                                  gimp_image_get_height (image),
+        picman_rectangle_intersect (0, 0,
+                                  picman_image_get_width  (image),
+                                  picman_image_get_height (image),
                                   offset_x, offset_y,
-                                  gimp_item_get_width  (item),
-                                  gimp_item_get_height (item),
+                                  picman_item_get_width  (item),
+                                  picman_item_get_height (item),
                                   &copy_x, &copy_y,
                                   &copy_width, &copy_height);
 
-        if (copy_width  < gimp_item_get_width  (item) ||
-            copy_height < gimp_item_get_height (item) ||
+        if (copy_width  < picman_item_get_width  (item) ||
+            copy_height < picman_item_get_height (item) ||
             channel_empty)
-          gimp_channel_clear (GIMP_CHANNEL (mask), NULL, FALSE);
+          picman_channel_clear (PICMAN_CHANNEL (mask), NULL, FALSE);
 
         if ((copy_width || copy_height) && ! channel_empty)
           {
             GeglBuffer    *src;
             GeglBuffer    *dest;
 
-            src  = gimp_drawable_get_buffer (GIMP_DRAWABLE (channel));
-            dest = gimp_drawable_get_buffer (GIMP_DRAWABLE (mask));
+            src  = picman_drawable_get_buffer (PICMAN_DRAWABLE (channel));
+            dest = picman_drawable_get_buffer (PICMAN_DRAWABLE (mask));
 
             gegl_buffer_copy (src,
                               GEGL_RECTANGLE (copy_x, copy_y,
@@ -1509,47 +1509,47 @@ gimp_layer_create_mask (const GimpLayer *layer,
                               GEGL_RECTANGLE (copy_x - offset_x, copy_y - offset_y,
                                               0, 0));
 
-            GIMP_CHANNEL (mask)->bounds_known = FALSE;
+            PICMAN_CHANNEL (mask)->bounds_known = FALSE;
           }
       }
       break;
 
-    case GIMP_ADD_COPY_MASK:
+    case PICMAN_ADD_COPY_MASK:
       {
         GeglBuffer *src_buffer;
         GeglBuffer *dest_buffer;
 
-        if (! gimp_drawable_is_gray (drawable))
+        if (! picman_drawable_is_gray (drawable))
           {
             const Babl *copy_format =
-              gimp_image_get_format (image, GIMP_GRAY,
-                                     gimp_drawable_get_precision (drawable),
-                                     gimp_drawable_has_alpha (drawable));
+              picman_image_get_format (image, PICMAN_GRAY,
+                                     picman_drawable_get_precision (drawable),
+                                     picman_drawable_has_alpha (drawable));
 
             src_buffer =
               gegl_buffer_new (GEGL_RECTANGLE (0, 0,
-                                               gimp_item_get_width  (item),
-                                               gimp_item_get_height (item)),
+                                               picman_item_get_width  (item),
+                                               picman_item_get_height (item)),
                                copy_format);
 
-            gegl_buffer_copy (gimp_drawable_get_buffer (drawable), NULL,
+            gegl_buffer_copy (picman_drawable_get_buffer (drawable), NULL,
                               src_buffer, NULL);
           }
         else
           {
-            src_buffer = gimp_drawable_get_buffer (drawable);
+            src_buffer = picman_drawable_get_buffer (drawable);
             g_object_ref (src_buffer);
           }
 
-        dest_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (mask));
+        dest_buffer = picman_drawable_get_buffer (PICMAN_DRAWABLE (mask));
 
-        if (gimp_drawable_has_alpha (drawable))
+        if (picman_drawable_has_alpha (drawable))
           {
-            GimpRGB background;
+            PicmanRGB background;
 
-            gimp_rgba_set (&background, 0.0, 0.0, 0.0, 0.0);
+            picman_rgba_set (&background, 0.0, 0.0, 0.0, 0.0);
 
-            gimp_gegl_apply_flatten (src_buffer, NULL, NULL,
+            picman_gegl_apply_flatten (src_buffer, NULL, NULL,
                                      dest_buffer, &background);
           }
         else
@@ -1560,7 +1560,7 @@ gimp_layer_create_mask (const GimpLayer *layer,
         g_object_unref (src_buffer);
       }
 
-      GIMP_CHANNEL (mask)->bounds_known = FALSE;
+      PICMAN_CHANNEL (mask)->bounds_known = FALSE;
       break;
     }
 
@@ -1568,95 +1568,95 @@ gimp_layer_create_mask (const GimpLayer *layer,
 }
 
 void
-gimp_layer_apply_mask (GimpLayer         *layer,
-                       GimpMaskApplyMode  mode,
+picman_layer_apply_mask (PicmanLayer         *layer,
+                       PicmanMaskApplyMode  mode,
                        gboolean           push_undo)
 {
-  GimpItem      *item;
-  GimpImage     *image;
-  GimpLayerMask *mask;
+  PicmanItem      *item;
+  PicmanImage     *image;
+  PicmanLayerMask *mask;
   gboolean       view_changed = FALSE;
 
-  g_return_if_fail (GIMP_IS_LAYER (layer));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
 
-  mask = gimp_layer_get_mask (layer);
+  mask = picman_layer_get_mask (layer);
 
   if (! mask)
     return;
 
   /*  APPLY can only be done to layers with an alpha channel  */
-  if (! gimp_drawable_has_alpha (GIMP_DRAWABLE (layer)))
-    g_return_if_fail (mode == GIMP_MASK_DISCARD || push_undo == TRUE);
+  if (! picman_drawable_has_alpha (PICMAN_DRAWABLE (layer)))
+    g_return_if_fail (mode == PICMAN_MASK_DISCARD || push_undo == TRUE);
 
-  item  = GIMP_ITEM (layer);
-  image = gimp_item_get_image (item);
+  item  = PICMAN_ITEM (layer);
+  image = picman_item_get_image (item);
 
   if (! image)
     return;
 
   if (push_undo)
     {
-      gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_LAYER_APPLY_MASK,
-                                   (mode == GIMP_MASK_APPLY) ?
+      picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_LAYER_APPLY_MASK,
+                                   (mode == PICMAN_MASK_APPLY) ?
                                    C_("undo-type", "Apply Layer Mask") :
                                    C_("undo-type", "Delete Layer Mask"));
 
-      gimp_image_undo_push_layer_mask_show (image, NULL, layer);
-      gimp_image_undo_push_layer_mask_apply (image, NULL, layer);
-      gimp_image_undo_push_layer_mask_remove (image, NULL, layer, mask);
+      picman_image_undo_push_layer_mask_show (image, NULL, layer);
+      picman_image_undo_push_layer_mask_apply (image, NULL, layer);
+      picman_image_undo_push_layer_mask_remove (image, NULL, layer, mask);
 
-      if (mode == GIMP_MASK_APPLY &&
-          ! gimp_drawable_has_alpha (GIMP_DRAWABLE (layer)))
+      if (mode == PICMAN_MASK_APPLY &&
+          ! picman_drawable_has_alpha (PICMAN_DRAWABLE (layer)))
         {
-          gimp_layer_add_alpha (layer);
+          picman_layer_add_alpha (layer);
         }
     }
 
   /*  check if applying the mask changes the projection  */
-  if (gimp_layer_get_show_mask (layer)                                   ||
-      (mode == GIMP_MASK_APPLY   && ! gimp_layer_get_apply_mask (layer)) ||
-      (mode == GIMP_MASK_DISCARD &&   gimp_layer_get_apply_mask (layer)))
+  if (picman_layer_get_show_mask (layer)                                   ||
+      (mode == PICMAN_MASK_APPLY   && ! picman_layer_get_apply_mask (layer)) ||
+      (mode == PICMAN_MASK_DISCARD &&   picman_layer_get_apply_mask (layer)))
     {
       view_changed = TRUE;
     }
 
-  if (mode == GIMP_MASK_APPLY)
+  if (mode == PICMAN_MASK_APPLY)
     {
       GeglBuffer *mask_buffer;
       GeglBuffer *dest_buffer;
 
       if (push_undo)
-        gimp_drawable_push_undo (GIMP_DRAWABLE (layer), NULL,
+        picman_drawable_push_undo (PICMAN_DRAWABLE (layer), NULL,
                                  NULL,
                                  0, 0,
-                                 gimp_item_get_width  (item),
-                                 gimp_item_get_height (item));
+                                 picman_item_get_width  (item),
+                                 picman_item_get_height (item));
 
       /*  Combine the current layer's alpha channel and the mask  */
-      mask_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (mask));
-      dest_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (layer));
+      mask_buffer = picman_drawable_get_buffer (PICMAN_DRAWABLE (mask));
+      dest_buffer = picman_drawable_get_buffer (PICMAN_DRAWABLE (layer));
 
-      gimp_gegl_apply_opacity (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
+      picman_gegl_apply_opacity (picman_drawable_get_buffer (PICMAN_DRAWABLE (layer)),
                                NULL, NULL, dest_buffer,
                                mask_buffer, 0, 0, 1.0);
     }
 
   g_signal_handlers_disconnect_by_func (mask,
-                                        gimp_layer_layer_mask_update,
+                                        picman_layer_layer_mask_update,
                                         layer);
 
-  gimp_item_removed (GIMP_ITEM (mask));
+  picman_item_removed (PICMAN_ITEM (mask));
   g_object_unref (mask);
   layer->mask = NULL;
 
   if (push_undo)
-    gimp_image_undo_group_end (image);
+    picman_image_undo_group_end (image);
 
-  if (gimp_filter_peek_node (GIMP_FILTER (layer)))
+  if (picman_filter_peek_node (PICMAN_FILTER (layer)))
     {
       GeglNode *mode_node;
 
-      mode_node = gimp_drawable_get_mode_node (GIMP_DRAWABLE (layer));
+      mode_node = picman_drawable_get_mode_node (PICMAN_DRAWABLE (layer));
 
       if (layer->show_mask)
         {
@@ -1672,14 +1672,14 @@ gimp_layer_apply_mask (GimpLayer         *layer,
   /*  If applying actually changed the view  */
   if (view_changed)
     {
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
+      picman_drawable_update (PICMAN_DRAWABLE (layer),
                             0, 0,
-                            gimp_item_get_width  (item),
-                            gimp_item_get_height (item));
+                            picman_item_get_width  (item),
+                            picman_item_get_height (item));
     }
   else
     {
-      gimp_viewable_invalidate_preview (GIMP_VIEWABLE (layer));
+      picman_viewable_invalidate_preview (PICMAN_VIEWABLE (layer));
     }
 
   g_signal_emit (layer, layer_signals[MASK_CHANGED], 0);
@@ -1688,19 +1688,19 @@ gimp_layer_apply_mask (GimpLayer         *layer,
 }
 
 void
-gimp_layer_set_apply_mask (GimpLayer *layer,
+picman_layer_set_apply_mask (PicmanLayer *layer,
                            gboolean   apply,
                            gboolean   push_undo)
 {
-  g_return_if_fail (GIMP_IS_LAYER (layer));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
   g_return_if_fail (layer->mask != NULL);
 
   if (layer->apply_mask != apply)
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (layer));
 
       if (push_undo)
-        gimp_image_undo_push_layer_mask_apply (image,
+        picman_image_undo_push_layer_mask_apply (image,
                                                apply ?
                                                C_("undo-type", "Enable Layer Mask") :
                                                C_("undo-type", "Disable Layer Mask"),
@@ -1708,12 +1708,12 @@ gimp_layer_set_apply_mask (GimpLayer *layer,
 
       layer->apply_mask = apply ? TRUE : FALSE;
 
-      if (gimp_filter_peek_node (GIMP_FILTER (layer)) &&
-          ! gimp_layer_get_show_mask (layer))
+      if (picman_filter_peek_node (PICMAN_FILTER (layer)) &&
+          ! picman_layer_get_show_mask (layer))
         {
           GeglNode *mode_node;
 
-          mode_node = gimp_drawable_get_mode_node (GIMP_DRAWABLE (layer));
+          mode_node = picman_drawable_get_mode_node (PICMAN_DRAWABLE (layer));
 
           if (layer->apply_mask)
             {
@@ -1726,29 +1726,29 @@ gimp_layer_set_apply_mask (GimpLayer *layer,
             }
         }
 
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
+      picman_drawable_update (PICMAN_DRAWABLE (layer),
                             0, 0,
-                            gimp_item_get_width  (GIMP_ITEM (layer)),
-                            gimp_item_get_height (GIMP_ITEM (layer)));
+                            picman_item_get_width  (PICMAN_ITEM (layer)),
+                            picman_item_get_height (PICMAN_ITEM (layer)));
 
       g_signal_emit (layer, layer_signals[APPLY_MASK_CHANGED], 0);
     }
 }
 
 gboolean
-gimp_layer_get_apply_mask (const GimpLayer *layer)
+picman_layer_get_apply_mask (const PicmanLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), FALSE);
   g_return_val_if_fail (layer->mask, FALSE);
 
   return layer->apply_mask;
 }
 
 void
-gimp_layer_set_edit_mask (GimpLayer *layer,
+picman_layer_set_edit_mask (PicmanLayer *layer,
                           gboolean   edit)
 {
-  g_return_if_fail (GIMP_IS_LAYER (layer));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
   g_return_if_fail (layer->mask != NULL);
 
   if (layer->edit_mask != edit)
@@ -1760,38 +1760,38 @@ gimp_layer_set_edit_mask (GimpLayer *layer,
 }
 
 gboolean
-gimp_layer_get_edit_mask (const GimpLayer *layer)
+picman_layer_get_edit_mask (const PicmanLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), FALSE);
   g_return_val_if_fail (layer->mask, FALSE);
 
   return layer->edit_mask;
 }
 
 void
-gimp_layer_set_show_mask (GimpLayer *layer,
+picman_layer_set_show_mask (PicmanLayer *layer,
                           gboolean   show,
                           gboolean   push_undo)
 {
-  g_return_if_fail (GIMP_IS_LAYER (layer));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
   g_return_if_fail (layer->mask != NULL);
 
   if (layer->show_mask != show)
     {
-      GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
+      PicmanImage *image = picman_item_get_image (PICMAN_ITEM (layer));
 
       if (push_undo)
-        gimp_image_undo_push_layer_mask_show (image,
+        picman_image_undo_push_layer_mask_show (image,
                                               C_("undo-type", "Show Layer Mask"),
                                               layer);
 
       layer->show_mask = show ? TRUE : FALSE;
 
-      if (gimp_filter_peek_node (GIMP_FILTER (layer)))
+      if (picman_filter_peek_node (PICMAN_FILTER (layer)))
         {
           GeglNode *mode_node;
 
-          mode_node = gimp_drawable_get_mode_node (GIMP_DRAWABLE (layer));
+          mode_node = picman_drawable_get_mode_node (PICMAN_DRAWABLE (layer));
 
           if (layer->show_mask)
             {
@@ -1805,7 +1805,7 @@ gimp_layer_set_show_mask (GimpLayer *layer,
               gegl_node_connect_to (layer->layer_offset_node, "output",
                                     mode_node,                "aux");
 
-              if (gimp_layer_get_apply_mask (layer))
+              if (picman_layer_get_apply_mask (layer))
                 {
                   gegl_node_connect_to (layer->mask_offset_node, "output",
                                         mode_node,               "aux2");
@@ -1813,130 +1813,130 @@ gimp_layer_set_show_mask (GimpLayer *layer,
             }
         }
 
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
+      picman_drawable_update (PICMAN_DRAWABLE (layer),
                             0, 0,
-                            gimp_item_get_width  (GIMP_ITEM (layer)),
-                            gimp_item_get_height (GIMP_ITEM (layer)));
+                            picman_item_get_width  (PICMAN_ITEM (layer)),
+                            picman_item_get_height (PICMAN_ITEM (layer)));
 
       g_signal_emit (layer, layer_signals[SHOW_MASK_CHANGED], 0);
     }
 }
 
 gboolean
-gimp_layer_get_show_mask (const GimpLayer *layer)
+picman_layer_get_show_mask (const PicmanLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), FALSE);
   g_return_val_if_fail (layer->mask, FALSE);
 
   return layer->show_mask;
 }
 
 void
-gimp_layer_add_alpha (GimpLayer *layer)
+picman_layer_add_alpha (PicmanLayer *layer)
 {
-  GimpItem     *item;
-  GimpDrawable *drawable;
+  PicmanItem     *item;
+  PicmanDrawable *drawable;
   GeglBuffer   *new_buffer;
 
-  g_return_if_fail (GIMP_IS_LAYER (layer));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
 
-  if (gimp_drawable_has_alpha (GIMP_DRAWABLE (layer)))
+  if (picman_drawable_has_alpha (PICMAN_DRAWABLE (layer)))
     return;
 
-  item     = GIMP_ITEM (layer);
-  drawable = GIMP_DRAWABLE (layer);
+  item     = PICMAN_ITEM (layer);
+  drawable = PICMAN_DRAWABLE (layer);
 
   new_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
-                                                gimp_item_get_width  (item),
-                                                gimp_item_get_height (item)),
-                                gimp_drawable_get_format_with_alpha (drawable));
+                                                picman_item_get_width  (item),
+                                                picman_item_get_height (item)),
+                                picman_drawable_get_format_with_alpha (drawable));
 
-  gegl_buffer_copy (gimp_drawable_get_buffer (drawable), NULL,
+  gegl_buffer_copy (picman_drawable_get_buffer (drawable), NULL,
                     new_buffer, NULL);
 
-  gimp_drawable_set_buffer (GIMP_DRAWABLE (layer),
-                            gimp_item_is_attached (GIMP_ITEM (layer)),
+  picman_drawable_set_buffer (PICMAN_DRAWABLE (layer),
+                            picman_item_is_attached (PICMAN_ITEM (layer)),
                             C_("undo-type", "Add Alpha Channel"),
                             new_buffer);
   g_object_unref (new_buffer);
 }
 
 void
-gimp_layer_flatten (GimpLayer   *layer,
-                    GimpContext *context)
+picman_layer_flatten (PicmanLayer   *layer,
+                    PicmanContext *context)
 {
   GeglBuffer *new_buffer;
-  GimpRGB     background;
+  PicmanRGB     background;
 
-  g_return_if_fail (GIMP_IS_LAYER (layer));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
 
-  if (! gimp_drawable_has_alpha (GIMP_DRAWABLE (layer)))
+  if (! picman_drawable_has_alpha (PICMAN_DRAWABLE (layer)))
     return;
 
   new_buffer =
     gegl_buffer_new (GEGL_RECTANGLE (0, 0,
-                                     gimp_item_get_width  (GIMP_ITEM (layer)),
-                                     gimp_item_get_height (GIMP_ITEM (layer))),
-                     gimp_drawable_get_format_without_alpha (GIMP_DRAWABLE (layer)));
+                                     picman_item_get_width  (PICMAN_ITEM (layer)),
+                                     picman_item_get_height (PICMAN_ITEM (layer))),
+                     picman_drawable_get_format_without_alpha (PICMAN_DRAWABLE (layer)));
 
-  gimp_context_get_background (context, &background);
+  picman_context_get_background (context, &background);
 
-  gimp_gegl_apply_flatten (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
+  picman_gegl_apply_flatten (picman_drawable_get_buffer (PICMAN_DRAWABLE (layer)),
                            NULL, NULL,
                            new_buffer, &background);
 
-  gimp_drawable_set_buffer (GIMP_DRAWABLE (layer),
-                            gimp_item_is_attached (GIMP_ITEM (layer)),
+  picman_drawable_set_buffer (PICMAN_DRAWABLE (layer),
+                            picman_item_is_attached (PICMAN_ITEM (layer)),
                             C_("undo-type", "Remove Alpha Channel"),
                             new_buffer);
   g_object_unref (new_buffer);
 }
 
 void
-gimp_layer_resize_to_image (GimpLayer   *layer,
-                            GimpContext *context)
+picman_layer_resize_to_image (PicmanLayer   *layer,
+                            PicmanContext *context)
 {
-  GimpImage *image;
+  PicmanImage *image;
   gint       offset_x;
   gint       offset_y;
 
-  g_return_if_fail (GIMP_IS_LAYER (layer));
-  g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (layer)));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
+  g_return_if_fail (picman_item_is_attached (PICMAN_ITEM (layer)));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
 
-  image = gimp_item_get_image (GIMP_ITEM (layer));
+  image = picman_item_get_image (PICMAN_ITEM (layer));
 
-  gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_ITEM_RESIZE,
+  picman_image_undo_group_start (image, PICMAN_UNDO_GROUP_ITEM_RESIZE,
                                C_("undo-type", "Layer to Image Size"));
 
-  gimp_item_get_offset (GIMP_ITEM (layer), &offset_x, &offset_y);
-  gimp_item_resize (GIMP_ITEM (layer), context,
-                    gimp_image_get_width  (image),
-                    gimp_image_get_height (image),
+  picman_item_get_offset (PICMAN_ITEM (layer), &offset_x, &offset_y);
+  picman_item_resize (PICMAN_ITEM (layer), context,
+                    picman_image_get_width  (image),
+                    picman_image_get_height (image),
                     offset_x, offset_y);
 
-  gimp_image_undo_group_end (image);
+  picman_image_undo_group_end (image);
 }
 
 /**********************/
 /*  access functions  */
 /**********************/
 
-GimpDrawable *
-gimp_layer_get_floating_sel_drawable (const GimpLayer *layer)
+PicmanDrawable *
+picman_layer_get_floating_sel_drawable (const PicmanLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), NULL);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), NULL);
 
   return layer->fs.drawable;
 }
 
 void
-gimp_layer_set_floating_sel_drawable (GimpLayer    *layer,
-                                      GimpDrawable *drawable)
+picman_layer_set_floating_sel_drawable (PicmanLayer    *layer,
+                                      PicmanDrawable *drawable)
 {
-  g_return_if_fail (GIMP_IS_LAYER (layer));
-  g_return_if_fail (drawable == NULL || GIMP_IS_DRAWABLE (drawable));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
+  g_return_if_fail (drawable == NULL || PICMAN_IS_DRAWABLE (drawable));
 
   if (layer->fs.drawable != drawable)
     {
@@ -1954,29 +1954,29 @@ gimp_layer_set_floating_sel_drawable (GimpLayer    *layer,
 }
 
 gboolean
-gimp_layer_is_floating_sel (const GimpLayer *layer)
+picman_layer_is_floating_sel (const PicmanLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), FALSE);
 
-  return (gimp_layer_get_floating_sel_drawable (layer) != NULL);
+  return (picman_layer_get_floating_sel_drawable (layer) != NULL);
 }
 
 void
-gimp_layer_set_opacity (GimpLayer *layer,
+picman_layer_set_opacity (PicmanLayer *layer,
                         gdouble    opacity,
                         gboolean   push_undo)
 {
-  g_return_if_fail (GIMP_IS_LAYER (layer));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
 
-  opacity = CLAMP (opacity, GIMP_OPACITY_TRANSPARENT, GIMP_OPACITY_OPAQUE);
+  opacity = CLAMP (opacity, PICMAN_OPACITY_TRANSPARENT, PICMAN_OPACITY_OPAQUE);
 
   if (layer->opacity != opacity)
     {
-      if (push_undo && gimp_item_is_attached (GIMP_ITEM (layer)))
+      if (push_undo && picman_item_is_attached (PICMAN_ITEM (layer)))
         {
-          GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
+          PicmanImage *image = picman_item_get_image (PICMAN_ITEM (layer));
 
-          gimp_image_undo_push_layer_opacity (image, NULL, layer);
+          picman_image_undo_push_layer_opacity (image, NULL, layer);
         }
 
       layer->opacity = opacity;
@@ -1984,44 +1984,44 @@ gimp_layer_set_opacity (GimpLayer *layer,
       g_signal_emit (layer, layer_signals[OPACITY_CHANGED], 0);
       g_object_notify (G_OBJECT (layer), "opacity");
 
-      if (gimp_filter_peek_node (GIMP_FILTER (layer)))
+      if (picman_filter_peek_node (PICMAN_FILTER (layer)))
         {
           GeglNode *mode_node;
 
-          mode_node = gimp_drawable_get_mode_node (GIMP_DRAWABLE (layer));
+          mode_node = picman_drawable_get_mode_node (PICMAN_DRAWABLE (layer));
 
-          gimp_gegl_mode_node_set_opacity (mode_node, layer->opacity);
+          picman_gegl_mode_node_set_opacity (mode_node, layer->opacity);
         }
 
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
+      picman_drawable_update (PICMAN_DRAWABLE (layer),
                             0, 0,
-                            gimp_item_get_width  (GIMP_ITEM (layer)),
-                            gimp_item_get_height (GIMP_ITEM (layer)));
+                            picman_item_get_width  (PICMAN_ITEM (layer)),
+                            picman_item_get_height (PICMAN_ITEM (layer)));
     }
 }
 
 gdouble
-gimp_layer_get_opacity (const GimpLayer *layer)
+picman_layer_get_opacity (const PicmanLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), GIMP_OPACITY_OPAQUE);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), PICMAN_OPACITY_OPAQUE);
 
   return layer->opacity;
 }
 
 void
-gimp_layer_set_mode (GimpLayer            *layer,
-                     GimpLayerModeEffects  mode,
+picman_layer_set_mode (PicmanLayer            *layer,
+                     PicmanLayerModeEffects  mode,
                      gboolean              push_undo)
 {
-  g_return_if_fail (GIMP_IS_LAYER (layer));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
 
   if (layer->mode != mode)
     {
-      if (push_undo && gimp_item_is_attached (GIMP_ITEM (layer)))
+      if (push_undo && picman_item_is_attached (PICMAN_ITEM (layer)))
         {
-          GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
+          PicmanImage *image = picman_item_get_image (PICMAN_ITEM (layer));
 
-          gimp_image_undo_push_layer_mode (image, NULL, layer);
+          picman_image_undo_push_layer_mode (image, NULL, layer);
         }
 
       layer->mode = mode;
@@ -2029,51 +2029,51 @@ gimp_layer_set_mode (GimpLayer            *layer,
       g_signal_emit (layer, layer_signals[MODE_CHANGED], 0);
       g_object_notify (G_OBJECT (layer), "mode");
 
-      if (gimp_filter_peek_node (GIMP_FILTER (layer)))
+      if (picman_filter_peek_node (PICMAN_FILTER (layer)))
         {
           GeglNode *mode_node;
           gboolean  linear;
 
-          mode_node = gimp_drawable_get_mode_node (GIMP_DRAWABLE (layer));
-          linear    = gimp_drawable_get_linear (GIMP_DRAWABLE (layer));
+          mode_node = picman_drawable_get_mode_node (PICMAN_DRAWABLE (layer));
+          linear    = picman_drawable_get_linear (PICMAN_DRAWABLE (layer));
 
-          gimp_gegl_mode_node_set_mode (mode_node,
-                                        gimp_layer_get_visible_mode (layer),
+          picman_gegl_mode_node_set_mode (mode_node,
+                                        picman_layer_get_visible_mode (layer),
                                         linear);
         }
 
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
+      picman_drawable_update (PICMAN_DRAWABLE (layer),
                             0, 0,
-                            gimp_item_get_width  (GIMP_ITEM (layer)),
-                            gimp_item_get_height (GIMP_ITEM (layer)));
+                            picman_item_get_width  (PICMAN_ITEM (layer)),
+                            picman_item_get_height (PICMAN_ITEM (layer)));
     }
 }
 
-GimpLayerModeEffects
-gimp_layer_get_mode (const GimpLayer *layer)
+PicmanLayerModeEffects
+picman_layer_get_mode (const PicmanLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), GIMP_NORMAL_MODE);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), PICMAN_NORMAL_MODE);
 
   return layer->mode;
 }
 
 void
-gimp_layer_set_lock_alpha (GimpLayer *layer,
+picman_layer_set_lock_alpha (PicmanLayer *layer,
                            gboolean   lock_alpha,
                            gboolean   push_undo)
 {
-  g_return_if_fail (GIMP_IS_LAYER (layer));
-  g_return_if_fail (gimp_layer_can_lock_alpha (layer));
+  g_return_if_fail (PICMAN_IS_LAYER (layer));
+  g_return_if_fail (picman_layer_can_lock_alpha (layer));
 
   lock_alpha = lock_alpha ? TRUE : FALSE;
 
   if (layer->lock_alpha != lock_alpha)
     {
-      if (push_undo && gimp_item_is_attached (GIMP_ITEM (layer)))
+      if (push_undo && picman_item_is_attached (PICMAN_ITEM (layer)))
         {
-          GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
+          PicmanImage *image = picman_item_get_image (PICMAN_ITEM (layer));
 
-          gimp_image_undo_push_layer_lock_alpha (image, NULL, layer);
+          picman_image_undo_push_layer_lock_alpha (image, NULL, layer);
         }
 
       layer->lock_alpha = lock_alpha;
@@ -2084,19 +2084,19 @@ gimp_layer_set_lock_alpha (GimpLayer *layer,
 }
 
 gboolean
-gimp_layer_get_lock_alpha (const GimpLayer *layer)
+picman_layer_get_lock_alpha (const PicmanLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), FALSE);
 
   return layer->lock_alpha;
 }
 
 gboolean
-gimp_layer_can_lock_alpha (const GimpLayer *layer)
+picman_layer_can_lock_alpha (const PicmanLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LAYER (layer), FALSE);
 
-  if (gimp_viewable_get_children (GIMP_VIEWABLE (layer)))
+  if (picman_viewable_get_children (PICMAN_VIEWABLE (layer)))
     return FALSE;
 
   return TRUE;

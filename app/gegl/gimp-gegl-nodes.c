@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-gegl-nodes.h
- * Copyright (C) 2012 Michael Natterer <mitch@gimp.org>
+ * picman-gegl-nodes.h
+ * Copyright (C) 2012 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,14 @@
 
 #include <gegl.h>
 
-#include "gimp-gegl-types.h"
+#include "picman-gegl-types.h"
 
-#include "gimp-gegl-nodes.h"
-#include "gimp-gegl-utils.h"
+#include "picman-gegl-nodes.h"
+#include "picman-gegl-utils.h"
 
 
 GeglNode *
-gimp_gegl_create_flatten_node (const GimpRGB *background)
+picman_gegl_create_flatten_node (const PicmanRGB *background)
 {
   GeglNode  *node;
   GeglNode  *input;
@@ -45,7 +45,7 @@ gimp_gegl_create_flatten_node (const GimpRGB *background)
   input  = gegl_node_get_input_proxy  (node, "input");
   output = gegl_node_get_output_proxy (node, "output");
 
-  c = gimp_gegl_color_new (background);
+  c = picman_gegl_color_new (background);
   color = gegl_node_new_child (node,
                                "operation", "gegl:color",
                                "value",     c,
@@ -67,7 +67,7 @@ gimp_gegl_create_flatten_node (const GimpRGB *background)
 }
 
 GeglNode *
-gimp_gegl_create_apply_opacity_node (GeglBuffer *mask,
+picman_gegl_create_apply_opacity_node (GeglBuffer *mask,
                                      gint        mask_offset_x,
                                      gint        mask_offset_y,
                                      gdouble     opacity)
@@ -90,7 +90,7 @@ gimp_gegl_create_apply_opacity_node (GeglBuffer *mask,
                                       "value",     opacity,
                                       NULL);
 
-  mask_source = gimp_gegl_add_buffer_source (node, mask,
+  mask_source = picman_gegl_add_buffer_source (node, mask,
                                              mask_offset_x,
                                              mask_offset_y);
 
@@ -105,7 +105,7 @@ gimp_gegl_create_apply_opacity_node (GeglBuffer *mask,
 }
 
 GeglNode *
-gimp_gegl_add_buffer_source (GeglNode   *parent,
+picman_gegl_add_buffer_source (GeglNode   *parent,
                              GeglBuffer *buffer,
                              gint        offset_x,
                              gint        offset_y)
@@ -139,42 +139,42 @@ gimp_gegl_add_buffer_source (GeglNode   *parent,
 }
 
 void
-gimp_gegl_mode_node_set_mode (GeglNode             *node,
-                              GimpLayerModeEffects  mode,
+picman_gegl_mode_node_set_mode (GeglNode             *node,
+                              PicmanLayerModeEffects  mode,
                               gboolean              linear)
 {
-  const gchar *operation = "gimp:normal-mode";
+  const gchar *operation = "picman:normal-mode";
 
   g_return_if_fail (GEGL_IS_NODE (node));
 
   switch (mode)
     {
-    case GIMP_NORMAL_MODE:        operation = "gimp:normal-mode"; break;
-    case GIMP_DISSOLVE_MODE:      operation = "gimp:dissolve-mode"; break;
-    case GIMP_BEHIND_MODE:        operation = "gimp:behind-mode"; break;
-    case GIMP_MULTIPLY_MODE:      operation = "gimp:multiply-mode"; break;
-    case GIMP_SCREEN_MODE:        operation = "gimp:screen-mode"; break;
-    case GIMP_OVERLAY_MODE:       operation = "gimp:overlay-mode"; break;
-    case GIMP_DIFFERENCE_MODE:    operation = "gimp:difference-mode"; break;
-    case GIMP_ADDITION_MODE:      operation = "gimp:addition-mode"; break;
-    case GIMP_SUBTRACT_MODE:      operation = "gimp:subtract-mode"; break;
-    case GIMP_DARKEN_ONLY_MODE:   operation = "gimp:darken-only-mode"; break;
-    case GIMP_LIGHTEN_ONLY_MODE:  operation = "gimp:lighten-only-mode"; break;
-    case GIMP_HUE_MODE:           operation = "gimp:hue-mode"; break;
-    case GIMP_SATURATION_MODE:    operation = "gimp:saturation-mode"; break;
-    case GIMP_COLOR_MODE:         operation = "gimp:color-mode"; break;
-    case GIMP_VALUE_MODE:         operation = "gimp:value-mode"; break;
-    case GIMP_DIVIDE_MODE:        operation = "gimp:divide-mode"; break;
-    case GIMP_DODGE_MODE:         operation = "gimp:dodge-mode"; break;
-    case GIMP_BURN_MODE:          operation = "gimp:burn-mode"; break;
-    case GIMP_HARDLIGHT_MODE:     operation = "gimp:hardlight-mode"; break;
-    case GIMP_SOFTLIGHT_MODE:     operation = "gimp:softlight-mode"; break;
-    case GIMP_GRAIN_EXTRACT_MODE: operation = "gimp:grain-extract-mode"; break;
-    case GIMP_GRAIN_MERGE_MODE:   operation = "gimp:grain-merge-mode"; break;
-    case GIMP_COLOR_ERASE_MODE:   operation = "gimp:color-erase-mode"; break;
-    case GIMP_ERASE_MODE:         operation = "gimp:erase-mode"; break;
-    case GIMP_REPLACE_MODE:       operation = "gimp:replace-mode"; break;
-    case GIMP_ANTI_ERASE_MODE:    operation = "gimp:anti-erase-mode"; break;
+    case PICMAN_NORMAL_MODE:        operation = "picman:normal-mode"; break;
+    case PICMAN_DISSOLVE_MODE:      operation = "picman:dissolve-mode"; break;
+    case PICMAN_BEHIND_MODE:        operation = "picman:behind-mode"; break;
+    case PICMAN_MULTIPLY_MODE:      operation = "picman:multiply-mode"; break;
+    case PICMAN_SCREEN_MODE:        operation = "picman:screen-mode"; break;
+    case PICMAN_OVERLAY_MODE:       operation = "picman:overlay-mode"; break;
+    case PICMAN_DIFFERENCE_MODE:    operation = "picman:difference-mode"; break;
+    case PICMAN_ADDITION_MODE:      operation = "picman:addition-mode"; break;
+    case PICMAN_SUBTRACT_MODE:      operation = "picman:subtract-mode"; break;
+    case PICMAN_DARKEN_ONLY_MODE:   operation = "picman:darken-only-mode"; break;
+    case PICMAN_LIGHTEN_ONLY_MODE:  operation = "picman:lighten-only-mode"; break;
+    case PICMAN_HUE_MODE:           operation = "picman:hue-mode"; break;
+    case PICMAN_SATURATION_MODE:    operation = "picman:saturation-mode"; break;
+    case PICMAN_COLOR_MODE:         operation = "picman:color-mode"; break;
+    case PICMAN_VALUE_MODE:         operation = "picman:value-mode"; break;
+    case PICMAN_DIVIDE_MODE:        operation = "picman:divide-mode"; break;
+    case PICMAN_DODGE_MODE:         operation = "picman:dodge-mode"; break;
+    case PICMAN_BURN_MODE:          operation = "picman:burn-mode"; break;
+    case PICMAN_HARDLIGHT_MODE:     operation = "picman:hardlight-mode"; break;
+    case PICMAN_SOFTLIGHT_MODE:     operation = "picman:softlight-mode"; break;
+    case PICMAN_GRAIN_EXTRACT_MODE: operation = "picman:grain-extract-mode"; break;
+    case PICMAN_GRAIN_MERGE_MODE:   operation = "picman:grain-merge-mode"; break;
+    case PICMAN_COLOR_ERASE_MODE:   operation = "picman:color-erase-mode"; break;
+    case PICMAN_ERASE_MODE:         operation = "picman:erase-mode"; break;
+    case PICMAN_REPLACE_MODE:       operation = "picman:replace-mode"; break;
+    case PICMAN_ANTI_ERASE_MODE:    operation = "picman:anti-erase-mode"; break;
     default:
       break;
     }
@@ -186,7 +186,7 @@ gimp_gegl_mode_node_set_mode (GeglNode             *node,
 }
 
 void
-gimp_gegl_mode_node_set_opacity (GeglNode *node,
+picman_gegl_mode_node_set_opacity (GeglNode *node,
                                  gdouble   opacity)
 {
   g_return_if_fail (GEGL_IS_NODE (node));
@@ -197,8 +197,8 @@ gimp_gegl_mode_node_set_opacity (GeglNode *node,
 }
 
 void
-gimp_gegl_node_set_matrix (GeglNode          *node,
-                           const GimpMatrix3 *matrix)
+picman_gegl_node_set_matrix (GeglNode          *node,
+                           const PicmanMatrix3 *matrix)
 {
   gchar *matrix_string;
 

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,30 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_SOURCE_CORE_H__
-#define __GIMP_SOURCE_CORE_H__
+#ifndef __PICMAN_SOURCE_CORE_H__
+#define __PICMAN_SOURCE_CORE_H__
 
 
-#include "gimpbrushcore.h"
+#include "picmanbrushcore.h"
 
 
-#define GIMP_TYPE_SOURCE_CORE            (gimp_source_core_get_type ())
-#define GIMP_SOURCE_CORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_SOURCE_CORE, GimpSourceCore))
-#define GIMP_SOURCE_CORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_SOURCE_CORE, GimpSourceCoreClass))
-#define GIMP_IS_SOURCE_CORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_SOURCE_CORE))
-#define GIMP_IS_SOURCE_CORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_SOURCE_CORE))
-#define GIMP_SOURCE_CORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_SOURCE_CORE, GimpSourceCoreClass))
+#define PICMAN_TYPE_SOURCE_CORE            (picman_source_core_get_type ())
+#define PICMAN_SOURCE_CORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_SOURCE_CORE, PicmanSourceCore))
+#define PICMAN_SOURCE_CORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_SOURCE_CORE, PicmanSourceCoreClass))
+#define PICMAN_IS_SOURCE_CORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_SOURCE_CORE))
+#define PICMAN_IS_SOURCE_CORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_SOURCE_CORE))
+#define PICMAN_SOURCE_CORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_SOURCE_CORE, PicmanSourceCoreClass))
 
 
-typedef struct _GimpSourceCoreClass GimpSourceCoreClass;
+typedef struct _PicmanSourceCoreClass PicmanSourceCoreClass;
 
-struct _GimpSourceCore
+struct _PicmanSourceCore
 {
-  GimpBrushCore  parent_instance;
+  PicmanBrushCore  parent_instance;
 
   gboolean       set_source;
 
-  GimpDrawable  *src_drawable;
+  PicmanDrawable  *src_drawable;
   gdouble        src_x;
   gdouble        src_y;
 
@@ -50,17 +50,17 @@ struct _GimpSourceCore
   gboolean       first_stroke;
 };
 
-struct _GimpSourceCoreClass
+struct _PicmanSourceCoreClass
 {
-  GimpBrushCoreClass  parent_class;
+  PicmanBrushCoreClass  parent_class;
 
-  gboolean     (* use_source) (GimpSourceCore    *source_core,
-                               GimpSourceOptions *options);
+  gboolean     (* use_source) (PicmanSourceCore    *source_core,
+                               PicmanSourceOptions *options);
 
-  GeglBuffer * (* get_source) (GimpSourceCore    *source_core,
-                               GimpDrawable      *drawable,
-                               GimpPaintOptions  *paint_options,
-                               GimpPickable      *src_pickable,
+  GeglBuffer * (* get_source) (PicmanSourceCore    *source_core,
+                               PicmanDrawable      *drawable,
+                               PicmanPaintOptions  *paint_options,
+                               PicmanPickable      *src_pickable,
                                gint               src_offset_x,
                                gint               src_offset_y,
                                GeglBuffer        *paint_buffer,
@@ -73,12 +73,12 @@ struct _GimpSourceCoreClass
                                gint              *paint_area_height,
                                GeglRectangle     *src_rect);
 
-  void         (*  motion)    (GimpSourceCore    *source_core,
-                               GimpDrawable      *drawable,
-                               GimpPaintOptions  *paint_options,
-                               const GimpCoords  *coords,
+  void         (*  motion)    (PicmanSourceCore    *source_core,
+                               PicmanDrawable      *drawable,
+                               PicmanPaintOptions  *paint_options,
+                               const PicmanCoords  *coords,
                                gdouble            opacity,
-                               GimpPickable      *src_pickable,
+                               PicmanPickable      *src_pickable,
                                GeglBuffer        *src_buffer,
                                GeglRectangle     *src_rect,
                                gint               src_offset_x,
@@ -94,16 +94,16 @@ struct _GimpSourceCoreClass
 };
 
 
-GType    gimp_source_core_get_type   (void) G_GNUC_CONST;
+GType    picman_source_core_get_type   (void) G_GNUC_CONST;
 
-gboolean gimp_source_core_use_source (GimpSourceCore    *source_core,
-                                      GimpSourceOptions *options);
+gboolean picman_source_core_use_source (PicmanSourceCore    *source_core,
+                                      PicmanSourceOptions *options);
 
 /* TEMP HACK */
-void     gimp_source_core_motion     (GimpSourceCore    *source_core,
-                                      GimpDrawable      *drawable,
-                                      GimpPaintOptions  *paint_options,
-                                      const GimpCoords  *coords);
+void     picman_source_core_motion     (PicmanSourceCore    *source_core,
+                                      PicmanDrawable      *drawable,
+                                      PicmanPaintOptions  *paint_options,
+                                      const PicmanCoords  *coords);
 
 
-#endif  /*  __GIMP_SOURCE_CORE_H__  */
+#endif  /*  __PICMAN_SOURCE_CORE_H__  */

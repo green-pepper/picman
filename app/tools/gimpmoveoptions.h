@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,36 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_MOVE_OPTIONS_H__
-#define __GIMP_MOVE_OPTIONS_H__
+#ifndef __PICMAN_MOVE_OPTIONS_H__
+#define __PICMAN_MOVE_OPTIONS_H__
 
 
-#include "core/gimptooloptions.h"
+#include "core/picmantooloptions.h"
 
 
-#define GIMP_TYPE_MOVE_OPTIONS            (gimp_move_options_get_type ())
-#define GIMP_MOVE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_MOVE_OPTIONS, GimpMoveOptions))
-#define GIMP_MOVE_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_MOVE_OPTIONS, GimpMoveOptionsClass))
-#define GIMP_IS_MOVE_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_MOVE_OPTIONS))
-#define GIMP_IS_MOVE_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_MOVE_OPTIONS))
-#define GIMP_MOVE_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_MOVE_OPTIONS, GimpMoveOptionsClass))
+#define PICMAN_TYPE_MOVE_OPTIONS            (picman_move_options_get_type ())
+#define PICMAN_MOVE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_MOVE_OPTIONS, PicmanMoveOptions))
+#define PICMAN_MOVE_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_MOVE_OPTIONS, PicmanMoveOptionsClass))
+#define PICMAN_IS_MOVE_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_MOVE_OPTIONS))
+#define PICMAN_IS_MOVE_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_MOVE_OPTIONS))
+#define PICMAN_MOVE_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_MOVE_OPTIONS, PicmanMoveOptionsClass))
 
 
-typedef struct _GimpMoveOptions      GimpMoveOptions;
-typedef struct _GimpToolOptionsClass GimpMoveOptionsClass;
+typedef struct _PicmanMoveOptions      PicmanMoveOptions;
+typedef struct _PicmanToolOptionsClass PicmanMoveOptionsClass;
 
-struct _GimpMoveOptions
+struct _PicmanMoveOptions
 {
-  GimpToolOptions    parent_instence;
+  PicmanToolOptions    parent_instence;
 
-  GimpTransformType  move_type;
+  PicmanTransformType  move_type;
   gboolean           move_current;
 };
 
 
-GType       gimp_move_options_get_type (void) G_GNUC_CONST;
+GType       picman_move_options_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_move_options_gui      (GimpToolOptions *tool_options);
+GtkWidget * picman_move_options_gui      (PicmanToolOptions *tool_options);
 
 
-#endif /* __GIMP_MOVE_OPTIONS_H__ */
+#endif /* __PICMAN_MOVE_OPTIONS_H__ */

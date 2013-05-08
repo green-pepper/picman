@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasarc.c
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvasarc.c
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,15 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "core/gimp-cairo.h"
+#include "core/picman-cairo.h"
 
-#include "gimpcanvasarc.h"
-#include "gimpdisplayshell.h"
+#include "picmancanvasarc.h"
+#include "picmandisplayshell.h"
 
 
 enum
@@ -47,9 +47,9 @@ enum
 };
 
 
-typedef struct _GimpCanvasArcPrivate GimpCanvasArcPrivate;
+typedef struct _PicmanCanvasArcPrivate PicmanCanvasArcPrivate;
 
-struct _GimpCanvasArcPrivate
+struct _PicmanCanvasArcPrivate
 {
   gdouble  center_x;
   gdouble  center_y;
@@ -62,95 +62,95 @@ struct _GimpCanvasArcPrivate
 
 #define GET_PRIVATE(arc) \
         G_TYPE_INSTANCE_GET_PRIVATE (arc, \
-                                     GIMP_TYPE_CANVAS_ARC, \
-                                     GimpCanvasArcPrivate)
+                                     PICMAN_TYPE_CANVAS_ARC, \
+                                     PicmanCanvasArcPrivate)
 
 
 /*  local function prototypes  */
 
-static void             gimp_canvas_arc_set_property (GObject        *object,
+static void             picman_canvas_arc_set_property (GObject        *object,
                                                       guint           property_id,
                                                       const GValue   *value,
                                                       GParamSpec     *pspec);
-static void             gimp_canvas_arc_get_property (GObject        *object,
+static void             picman_canvas_arc_get_property (GObject        *object,
                                                       guint           property_id,
                                                       GValue         *value,
                                                       GParamSpec     *pspec);
-static void             gimp_canvas_arc_draw         (GimpCanvasItem *item,
+static void             picman_canvas_arc_draw         (PicmanCanvasItem *item,
                                                       cairo_t        *cr);
-static cairo_region_t * gimp_canvas_arc_get_extents  (GimpCanvasItem *item);
+static cairo_region_t * picman_canvas_arc_get_extents  (PicmanCanvasItem *item);
 
 
-G_DEFINE_TYPE (GimpCanvasArc, gimp_canvas_arc,
-               GIMP_TYPE_CANVAS_ITEM)
+G_DEFINE_TYPE (PicmanCanvasArc, picman_canvas_arc,
+               PICMAN_TYPE_CANVAS_ITEM)
 
-#define parent_class gimp_canvas_arc_parent_class
+#define parent_class picman_canvas_arc_parent_class
 
 
 static void
-gimp_canvas_arc_class_init (GimpCanvasArcClass *klass)
+picman_canvas_arc_class_init (PicmanCanvasArcClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpCanvasItemClass *item_class   = GIMP_CANVAS_ITEM_CLASS (klass);
+  PicmanCanvasItemClass *item_class   = PICMAN_CANVAS_ITEM_CLASS (klass);
 
-  object_class->set_property = gimp_canvas_arc_set_property;
-  object_class->get_property = gimp_canvas_arc_get_property;
+  object_class->set_property = picman_canvas_arc_set_property;
+  object_class->get_property = picman_canvas_arc_get_property;
 
-  item_class->draw           = gimp_canvas_arc_draw;
-  item_class->get_extents    = gimp_canvas_arc_get_extents;
+  item_class->draw           = picman_canvas_arc_draw;
+  item_class->get_extents    = picman_canvas_arc_get_extents;
 
   g_object_class_install_property (object_class, PROP_CENTER_X,
                                    g_param_spec_double ("center-x", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_CENTER_Y,
                                    g_param_spec_double ("center-y", NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_RADIUS_X,
                                    g_param_spec_double ("radius-x", NULL, NULL,
-                                                        0, GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        0, PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_RADIUS_Y,
                                    g_param_spec_double ("radius-y", NULL, NULL,
-                                                        0, GIMP_MAX_IMAGE_SIZE, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        0, PICMAN_MAX_IMAGE_SIZE, 0,
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_START_ANGLE,
                                    g_param_spec_double ("start-angle", NULL, NULL,
                                                         -1000, 1000, 0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_SLICE_ANGLE,
                                    g_param_spec_double ("slice-angle", NULL, NULL,
                                                         -1000, 1000, 2 * G_PI,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_FILLED,
                                    g_param_spec_boolean ("filled", NULL, NULL,
                                                          FALSE,
-                                                         GIMP_PARAM_READWRITE));
+                                                         PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpCanvasArcPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanCanvasArcPrivate));
 }
 
 static void
-gimp_canvas_arc_init (GimpCanvasArc *arc)
+picman_canvas_arc_init (PicmanCanvasArc *arc)
 {
 }
 
 static void
-gimp_canvas_arc_set_property (GObject      *object,
+picman_canvas_arc_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  GimpCanvasArcPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasArcPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -183,12 +183,12 @@ gimp_canvas_arc_set_property (GObject      *object,
 }
 
 static void
-gimp_canvas_arc_get_property (GObject    *object,
+picman_canvas_arc_get_property (GObject    *object,
                               guint       property_id,
                               GValue     *value,
                               GParamSpec *pspec)
 {
-  GimpCanvasArcPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasArcPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -221,21 +221,21 @@ gimp_canvas_arc_get_property (GObject    *object,
 }
 
 static void
-gimp_canvas_arc_transform (GimpCanvasItem *item,
+picman_canvas_arc_transform (PicmanCanvasItem *item,
                            gdouble        *center_x,
                            gdouble        *center_y,
                            gdouble        *radius_x,
                            gdouble        *radius_y)
 {
-  GimpCanvasArcPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasArcPrivate *private = GET_PRIVATE (item);
   gdouble               x1, y1;
   gdouble               x2, y2;
 
-  gimp_canvas_item_transform_xy_f (item,
+  picman_canvas_item_transform_xy_f (item,
                                    private->center_x - private->radius_x,
                                    private->center_y - private->radius_y,
                                    &x1, &y1);
-  gimp_canvas_item_transform_xy_f (item,
+  picman_canvas_item_transform_xy_f (item,
                                    private->center_x + private->radius_x,
                                    private->center_y + private->radius_y,
                                    &x2, &y2);
@@ -259,40 +259,40 @@ gimp_canvas_arc_transform (GimpCanvasItem *item,
 }
 
 static void
-gimp_canvas_arc_draw (GimpCanvasItem *item,
+picman_canvas_arc_draw (PicmanCanvasItem *item,
                       cairo_t        *cr)
 {
-  GimpCanvasArcPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasArcPrivate *private = GET_PRIVATE (item);
   gdouble               center_x, center_y;
   gdouble               radius_x, radius_y;
 
-  gimp_canvas_arc_transform (item,
+  picman_canvas_arc_transform (item,
                              &center_x, &center_y,
                              &radius_x, &radius_y);
 
   cairo_save (cr);
   cairo_translate (cr, center_x, center_y);
   cairo_scale (cr, radius_x, radius_y);
-  gimp_cairo_add_arc (cr, 0.0, 0.0, 1.0,
+  picman_cairo_add_arc (cr, 0.0, 0.0, 1.0,
                       private->start_angle, private->slice_angle);
   cairo_restore (cr);
 
   if (private->filled)
-    _gimp_canvas_item_fill (item, cr);
+    _picman_canvas_item_fill (item, cr);
   else
-    _gimp_canvas_item_stroke (item, cr);
+    _picman_canvas_item_stroke (item, cr);
 }
 
 static cairo_region_t *
-gimp_canvas_arc_get_extents (GimpCanvasItem *item)
+picman_canvas_arc_get_extents (PicmanCanvasItem *item)
 {
-  GimpCanvasArcPrivate  *private = GET_PRIVATE (item);
+  PicmanCanvasArcPrivate  *private = GET_PRIVATE (item);
   cairo_region_t        *region;
   cairo_rectangle_int_t  rectangle;
   gdouble                center_x, center_y;
   gdouble                radius_x, radius_y;
 
-  gimp_canvas_arc_transform (item,
+  picman_canvas_arc_transform (item,
                              &center_x, &center_y,
                              &radius_x, &radius_y);
 
@@ -321,8 +321,8 @@ gimp_canvas_arc_get_extents (GimpCanvasItem *item)
   return region;
 }
 
-GimpCanvasItem *
-gimp_canvas_arc_new (GimpDisplayShell *shell,
+PicmanCanvasItem *
+picman_canvas_arc_new (PicmanDisplayShell *shell,
                      gdouble          center_x,
                      gdouble          center_y,
                      gdouble          radius_x,
@@ -331,9 +331,9 @@ gimp_canvas_arc_new (GimpDisplayShell *shell,
                      gdouble          slice_angle,
                      gboolean         filled)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
 
-  return g_object_new (GIMP_TYPE_CANVAS_ARC,
+  return g_object_new (PICMAN_TYPE_CANVAS_ARC,
                        "shell",       shell,
                        "center-x",    center_x,
                        "center-y",    center_y,

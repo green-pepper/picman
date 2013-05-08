@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,23 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_DRAWABLE_COMBINE_H__
-#define __GIMP_DRAWABLE_COMBINE_H__
+#ifndef __PICMAN_DRAWABLE_COMBINE_H__
+#define __PICMAN_DRAWABLE_COMBINE_H__
 
 
-/*  virtual functions of GimpDrawable, don't call directly  */
+/*  virtual functions of PicmanDrawable, don't call directly  */
 
-void   gimp_drawable_real_apply_buffer   (GimpDrawable         *drawable,
+void   picman_drawable_real_apply_buffer   (PicmanDrawable         *drawable,
                                           GeglBuffer           *buffer,
                                           const GeglRectangle  *buffer_region,
                                           gboolean              push_undo,
                                           const gchar          *undo_desc,
                                           gdouble               opacity,
-                                          GimpLayerModeEffects  mode,
+                                          PicmanLayerModeEffects  mode,
                                           GeglBuffer           *base_buffer,
                                           gint                  base_x,
                                           gint                  base_y);
-void   gimp_drawable_real_replace_buffer (GimpDrawable         *drawable,
+void   picman_drawable_real_replace_buffer (PicmanDrawable         *drawable,
                                           GeglBuffer           *buffer,
                                           const GeglRectangle  *buffer_region,
                                           gboolean              push_undo,
@@ -43,4 +43,4 @@ void   gimp_drawable_real_replace_buffer (GimpDrawable         *drawable,
                                           gint                  y);
 
 
-#endif /* __GIMP_DRAWABLE_COMBINE_H__ */
+#endif /* __PICMAN_DRAWABLE_COMBINE_H__ */

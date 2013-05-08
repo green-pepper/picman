@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,171 +21,171 @@
 
 #include "core-types.h"
 
-#include "gimp.h"
-#include "gimpimage.h"
-#include "gimpguide.h"
-#include "gimpimage-guides.h"
-#include "gimpimage-private.h"
-#include "gimpimage-undo-push.h"
+#include "picman.h"
+#include "picmanimage.h"
+#include "picmanguide.h"
+#include "picmanimage-guides.h"
+#include "picmanimage-private.h"
+#include "picmanimage-undo-push.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  public functions  */
 
-GimpGuide *
-gimp_image_add_hguide (GimpImage *image,
+PicmanGuide *
+picman_image_add_hguide (PicmanImage *image,
                        gint       position,
                        gboolean   push_undo)
 {
-  GimpGuide *guide;
+  PicmanGuide *guide;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (position >= 0 &&
-                        position <= gimp_image_get_height (image), NULL);
+                        position <= picman_image_get_height (image), NULL);
 
-  guide = gimp_guide_new (GIMP_ORIENTATION_HORIZONTAL,
-                          image->gimp->next_guide_ID++);
+  guide = picman_guide_new (PICMAN_ORIENTATION_HORIZONTAL,
+                          image->picman->next_guide_ID++);
 
   if (push_undo)
-    gimp_image_undo_push_guide (image,
+    picman_image_undo_push_guide (image,
                                 C_("undo-type", "Add Horizontal Guide"), guide);
 
-  gimp_image_add_guide (image, guide, position);
+  picman_image_add_guide (image, guide, position);
   g_object_unref (G_OBJECT (guide));
 
   return guide;
 }
 
-GimpGuide *
-gimp_image_add_vguide (GimpImage *image,
+PicmanGuide *
+picman_image_add_vguide (PicmanImage *image,
                        gint       position,
                        gboolean   push_undo)
 {
-  GimpGuide *guide;
+  PicmanGuide *guide;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (position >= 0 &&
-                        position <= gimp_image_get_width (image), NULL);
+                        position <= picman_image_get_width (image), NULL);
 
-  guide = gimp_guide_new (GIMP_ORIENTATION_VERTICAL,
-                          image->gimp->next_guide_ID++);
+  guide = picman_guide_new (PICMAN_ORIENTATION_VERTICAL,
+                          image->picman->next_guide_ID++);
 
   if (push_undo)
-    gimp_image_undo_push_guide (image,
+    picman_image_undo_push_guide (image,
                                 C_("undo-type", "Add Vertical Guide"), guide);
 
-  gimp_image_add_guide (image, guide, position);
+  picman_image_add_guide (image, guide, position);
   g_object_unref (G_OBJECT (guide));
 
   return guide;
 }
 
 void
-gimp_image_add_guide (GimpImage *image,
-                      GimpGuide *guide,
+picman_image_add_guide (PicmanImage *image,
+                      PicmanGuide *guide,
                       gint       position)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_GUIDE (guide));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_GUIDE (guide));
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   private->guides = g_list_prepend (private->guides, guide);
 
-  gimp_guide_set_position (guide, position);
+  picman_guide_set_position (guide, position);
   g_object_ref (G_OBJECT (guide));
 
-  gimp_image_guide_added (image, guide);
+  picman_image_guide_added (image, guide);
 }
 
 void
-gimp_image_remove_guide (GimpImage *image,
-                         GimpGuide *guide,
+picman_image_remove_guide (PicmanImage *image,
+                         PicmanGuide *guide,
                          gboolean   push_undo)
 {
-  GimpImagePrivate *private;
+  PicmanImagePrivate *private;
 
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_GUIDE (guide));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_GUIDE (guide));
 
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  private = PICMAN_IMAGE_GET_PRIVATE (image);
 
   if (push_undo)
-    gimp_image_undo_push_guide (image, C_("undo-type", "Remove Guide"), guide);
+    picman_image_undo_push_guide (image, C_("undo-type", "Remove Guide"), guide);
 
   private->guides = g_list_remove (private->guides, guide);
-  gimp_guide_removed (guide);
+  picman_guide_removed (guide);
 
-  gimp_image_guide_removed (image, guide);
+  picman_image_guide_removed (image, guide);
 
-  gimp_guide_set_position (guide, -1);
+  picman_guide_set_position (guide, -1);
   g_object_unref (G_OBJECT (guide));
 }
 
 void
-gimp_image_move_guide (GimpImage *image,
-                       GimpGuide *guide,
+picman_image_move_guide (PicmanImage *image,
+                       PicmanGuide *guide,
                        gint       position,
                        gboolean   push_undo)
 {
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-  g_return_if_fail (GIMP_IS_GUIDE (guide));
+  g_return_if_fail (PICMAN_IS_IMAGE (image));
+  g_return_if_fail (PICMAN_IS_GUIDE (guide));
   g_return_if_fail (position >= 0);
 
-  if (gimp_guide_get_orientation (guide) == GIMP_ORIENTATION_HORIZONTAL)
-    g_return_if_fail (position <= gimp_image_get_height (image));
+  if (picman_guide_get_orientation (guide) == PICMAN_ORIENTATION_HORIZONTAL)
+    g_return_if_fail (position <= picman_image_get_height (image));
   else
-    g_return_if_fail (position <= gimp_image_get_width (image));
+    g_return_if_fail (position <= picman_image_get_width (image));
 
   if (push_undo)
-    gimp_image_undo_push_guide (image, C_("undo-type", "Move Guide"), guide);
+    picman_image_undo_push_guide (image, C_("undo-type", "Move Guide"), guide);
 
-  gimp_guide_set_position (guide, position);
+  picman_guide_set_position (guide, position);
 
-  gimp_image_guide_moved (image, guide);
+  picman_image_guide_moved (image, guide);
 }
 
 GList *
-gimp_image_get_guides (GimpImage *image)
+picman_image_get_guides (PicmanImage *image)
 {
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->guides;
+  return PICMAN_IMAGE_GET_PRIVATE (image)->guides;
 }
 
-GimpGuide *
-gimp_image_get_guide (GimpImage *image,
+PicmanGuide *
+picman_image_get_guide (PicmanImage *image,
                       guint32    id)
 {
   GList *guides;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
 
-  for (guides = GIMP_IMAGE_GET_PRIVATE (image)->guides;
+  for (guides = PICMAN_IMAGE_GET_PRIVATE (image)->guides;
        guides;
        guides = g_list_next (guides))
     {
-      GimpGuide *guide = guides->data;
+      PicmanGuide *guide = guides->data;
 
-      if (gimp_guide_get_ID (guide) == id &&
-          gimp_guide_get_position (guide) >= 0)
+      if (picman_guide_get_ID (guide) == id &&
+          picman_guide_get_position (guide) >= 0)
         return guide;
     }
 
   return NULL;
 }
 
-GimpGuide *
-gimp_image_get_next_guide (GimpImage *image,
+PicmanGuide *
+picman_image_get_next_guide (PicmanImage *image,
                            guint32    id,
                            gboolean  *guide_found)
 {
   GList *guides;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (guide_found != NULL, NULL);
 
   if (id == 0)
@@ -193,53 +193,53 @@ gimp_image_get_next_guide (GimpImage *image,
   else
     *guide_found = FALSE;
 
-  for (guides = GIMP_IMAGE_GET_PRIVATE (image)->guides;
+  for (guides = PICMAN_IMAGE_GET_PRIVATE (image)->guides;
        guides;
        guides = g_list_next (guides))
     {
-      GimpGuide *guide = guides->data;
+      PicmanGuide *guide = guides->data;
 
-      if (gimp_guide_get_position (guide) < 0)
+      if (picman_guide_get_position (guide) < 0)
         continue;
 
       if (*guide_found) /* this is the first guide after the found one */
         return guide;
 
-      if (gimp_guide_get_ID (guide) == id) /* found it, next one will be returned */
+      if (picman_guide_get_ID (guide) == id) /* found it, next one will be returned */
         *guide_found = TRUE;
     }
 
   return NULL;
 }
 
-GimpGuide *
-gimp_image_find_guide (GimpImage *image,
+PicmanGuide *
+picman_image_find_guide (PicmanImage *image,
                        gdouble    x,
                        gdouble    y,
                        gdouble    epsilon_x,
                        gdouble    epsilon_y)
 {
   GList     *list;
-  GimpGuide *ret     = NULL;
+  PicmanGuide *ret     = NULL;
   gdouble    mindist = G_MAXDOUBLE;
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
   g_return_val_if_fail (epsilon_x > 0 && epsilon_y > 0, NULL);
 
-  for (list = GIMP_IMAGE_GET_PRIVATE (image)->guides;
+  for (list = PICMAN_IMAGE_GET_PRIVATE (image)->guides;
        list;
        list = g_list_next (list))
     {
-      GimpGuide *guide    = list->data;
-      gint       position = gimp_guide_get_position (guide);
+      PicmanGuide *guide    = list->data;
+      gint       position = picman_guide_get_position (guide);
       gdouble    dist;
 
       if (position < 0)
         continue;
 
-      switch (gimp_guide_get_orientation (guide))
+      switch (picman_guide_get_orientation (guide))
         {
-        case GIMP_ORIENTATION_HORIZONTAL:
+        case PICMAN_ORIENTATION_HORIZONTAL:
           dist = ABS (position - y);
           if (dist < MIN (epsilon_y, mindist))
             {
@@ -249,7 +249,7 @@ gimp_image_find_guide (GimpImage *image,
           break;
 
         /* mindist always is in vertical resolution to make it comparable */
-        case GIMP_ORIENTATION_VERTICAL:
+        case PICMAN_ORIENTATION_VERTICAL:
           dist = ABS (position - x);
           if (dist < MIN (epsilon_x, mindist / epsilon_y * epsilon_x))
             {

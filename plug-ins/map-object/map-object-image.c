@@ -13,8 +13,8 @@
 
 #include <gtk/gtk.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "map-object-main.h"
 #include "map-object-preview.h"
@@ -23,14 +23,14 @@
 #include "map-object-image.h"
 
 
-GimpDrawable *input_drawable, *output_drawable;
-GimpPixelRgn source_region,dest_region;
+PicmanDrawable *input_drawable, *output_drawable;
+PicmanPixelRgn source_region,dest_region;
 
-GimpDrawable *box_drawables[6];
-GimpPixelRgn box_regions[6];
+PicmanDrawable *box_drawables[6];
+PicmanPixelRgn box_regions[6];
 
-GimpDrawable *cylinder_drawables[2];
-GimpPixelRgn cylinder_regions[2];
+PicmanDrawable *cylinder_drawables[2];
+PicmanPixelRgn cylinder_regions[2];
 
 guchar          *preview_rgb_data = NULL;
 gint             preview_rgb_stride;
@@ -38,7 +38,7 @@ cairo_surface_t *preview_surface = NULL;
 
 glong   maxcounter,old_depth,max_depth;
 gint    imgtype,width,height,in_channels,out_channels,image_id;
-GimpRGB  background;
+PicmanRGB  background;
 gdouble oldtreshold;
 
 gint border_x1, border_y1, border_x2, border_y2;
@@ -47,15 +47,15 @@ gint border_x1, border_y1, border_x2, border_y2;
 /* Implementation */
 /******************/
 
-GimpRGB
+PicmanRGB
 peek (gint x,
       gint y)
 {
   static guchar data[4];
 
-  GimpRGB color;
+  PicmanRGB color;
 
-  gimp_pixel_rgn_get_pixel (&source_region, data, x, y);
+  picman_pixel_rgn_get_pixel (&source_region, data, x, y);
 
   color.r = (gdouble) (data[0]) / 255.0;
   color.g = (gdouble) (data[1]) / 255.0;
@@ -76,16 +76,16 @@ peek (gint x,
   return color;
 }
 
-static GimpRGB
+static PicmanRGB
 peek_box_image (gint image,
                 gint x,
                 gint y)
 {
   static guchar data[4];
 
-  GimpRGB color;
+  PicmanRGB color;
 
-  gimp_pixel_rgn_get_pixel (&box_regions[image], data, x, y);
+  picman_pixel_rgn_get_pixel (&box_regions[image], data, x, y);
 
   color.r = (gdouble) (data[0]) / 255.0;
   color.g = (gdouble) (data[1]) / 255.0;
@@ -93,7 +93,7 @@ peek_box_image (gint image,
 
   if (box_drawables[image]->bpp == 4)
     {
-      if (gimp_drawable_has_alpha (box_drawables[image]->drawable_id))
+      if (picman_drawable_has_alpha (box_drawables[image]->drawable_id))
         color.a = (gdouble) (data[3]) / 255.0;
       else
         color.a = 1.0;
@@ -106,16 +106,16 @@ peek_box_image (gint image,
   return color;
 }
 
-static GimpRGB
+static PicmanRGB
 peek_cylinder_image (gint image,
                      gint x,
                      gint y)
 {
   static guchar data[4];
 
-  GimpRGB color;
+  PicmanRGB color;
 
-  gimp_pixel_rgn_get_pixel (&cylinder_regions[image],data, x, y);
+  picman_pixel_rgn_get_pixel (&cylinder_regions[image],data, x, y);
 
   color.r = (gdouble) (data[0]) / 255.0;
   color.g = (gdouble) (data[1]) / 255.0;
@@ -123,7 +123,7 @@ peek_cylinder_image (gint image,
 
   if (cylinder_drawables[image]->bpp == 4)
     {
-      if (gimp_drawable_has_alpha (cylinder_drawables[image]->drawable_id))
+      if (picman_drawable_has_alpha (cylinder_drawables[image]->drawable_id))
         color.a = (gdouble) (data[3]) / 255.0;
       else
         color.a = 1.0;
@@ -139,14 +139,14 @@ peek_cylinder_image (gint image,
 void
 poke (gint      x,
       gint      y,
-      GimpRGB  *color,
+      PicmanRGB  *color,
       gpointer  data)
 {
   static guchar col[4];
 
-  gimp_rgba_get_uchar (color, &col[0], &col[1], &col[2], &col[3]);
+  picman_rgba_get_uchar (color, &col[0], &col[1], &col[2], &col[3]);
 
-  gimp_pixel_rgn_set_pixel (&dest_region, col, x, y);
+  picman_pixel_rgn_set_pixel (&dest_region, col, x, y);
 }
 
 gint
@@ -191,11 +191,11 @@ checkbounds_cylinder_image (gint image,
     return TRUE;
 }
 
-GimpVector3
+PicmanVector3
 int_to_pos (gint x,
             gint y)
 {
-  GimpVector3 pos;
+  PicmanVector3 pos;
 
   pos.x = (gdouble) x / (gdouble) width;
   pos.y = (gdouble) y / (gdouble) height;
@@ -219,13 +219,13 @@ pos_to_int (gdouble  x,
 /* Quartics bilinear interpolation stuff.     */
 /**********************************************/
 
-GimpRGB
+PicmanRGB
 get_image_color (gdouble  u,
                  gdouble  v,
                  gint    *inside)
 {
   gint    x1, y1, x2, y2;
-  GimpRGB p[4];
+  PicmanRGB p[4];
 
   pos_to_int (u, v, &x1, &y1);
 
@@ -247,7 +247,7 @@ get_image_color (gdouble  u,
       p[2] = peek (x1, y2);
       p[3] = peek (x2, y2);
 
-      return gimp_bilinear_rgba (u * width, v * height, p);
+      return picman_bilinear_rgba (u * width, v * height, p);
     }
 
   if (checkbounds (x1, y1) == FALSE)
@@ -274,17 +274,17 @@ get_image_color (gdouble  u,
   p[2] = peek (x1, y2);
   p[3] = peek (x2, y2);
 
-  return gimp_bilinear_rgba (u * width, v * height, p);
+  return picman_bilinear_rgba (u * width, v * height, p);
 }
 
-GimpRGB
+PicmanRGB
 get_box_image_color (gint    image,
                      gdouble u,
                      gdouble v)
 {
   gint    w, h;
   gint    x1, y1, x2, y2;
-  GimpRGB p[4];
+  PicmanRGB p[4];
 
   w = box_drawables[image]->width;
   h = box_drawables[image]->height;
@@ -306,17 +306,17 @@ get_box_image_color (gint    image,
   p[2] = peek_box_image (image, x1, y2);
   p[3] = peek_box_image (image, x2, y2);
 
-  return gimp_bilinear_rgba (u * w, v * h, p);
+  return picman_bilinear_rgba (u * w, v * h, p);
 }
 
-GimpRGB
+PicmanRGB
 get_cylinder_image_color (gint    image,
                           gdouble u,
                           gdouble v)
 {
   gint    w, h;
   gint    x1, y1, x2, y2;
-  GimpRGB p[4];
+  PicmanRGB p[4];
 
   w = cylinder_drawables[image]->width;
   h = cylinder_drawables[image]->height;
@@ -338,7 +338,7 @@ get_cylinder_image_color (gint    image,
   p[2] = peek_cylinder_image (image, x1, y2);
   p[3] = peek_cylinder_image (image, x2, y2);
 
-  return gimp_bilinear_rgba (u * w, v * h, p);
+  return picman_bilinear_rgba (u * w, v * h, p);
 }
 
 /****************************************/
@@ -346,14 +346,14 @@ get_cylinder_image_color (gint    image,
 /****************************************/
 
 gint
-image_setup (GimpDrawable *drawable,
+image_setup (PicmanDrawable *drawable,
              gint       interactive)
 {
   /* Set the tile cache size */
   /* ======================= */
 
-  gimp_tile_cache_ntiles ((drawable->width + gimp_tile_width() - 1) /
-                          gimp_tile_width ());
+  picman_tile_cache_ntiles ((drawable->width + picman_tile_width() - 1) /
+                          picman_tile_width ());
 
   /* Get some useful info on the input drawable */
   /* ========================================== */
@@ -361,32 +361,32 @@ image_setup (GimpDrawable *drawable,
   input_drawable  = drawable;
   output_drawable = drawable;
 
-  gimp_drawable_mask_bounds (drawable->drawable_id,
+  picman_drawable_mask_bounds (drawable->drawable_id,
                              &border_x1, &border_y1, &border_x2, &border_y2);
 
   width  = input_drawable->width;
   height = input_drawable->height;
 
-  gimp_pixel_rgn_init (&source_region, input_drawable,
+  picman_pixel_rgn_init (&source_region, input_drawable,
                        0, 0, width, height, FALSE, FALSE);
 
   maxcounter = (glong) width * (glong) height;
 
   if (mapvals.transparent_background == TRUE)
     {
-      gimp_rgba_set (&background, 0.0, 0.0, 0.0, 0.0);
+      picman_rgba_set (&background, 0.0, 0.0, 0.0, 0.0);
     }
   else
     {
-      gimp_context_get_background (&background);
-      gimp_rgb_set_alpha (&background, 1.0);
+      picman_context_get_background (&background);
+      picman_rgb_set_alpha (&background, 1.0);
     }
 
   /* Assume at least RGB */
   /* =================== */
 
   in_channels = 3;
-  if (gimp_drawable_has_alpha (input_drawable->drawable_id) == TRUE)
+  if (picman_drawable_has_alpha (input_drawable->drawable_id) == TRUE)
     in_channels++;
 
   if (interactive == TRUE)

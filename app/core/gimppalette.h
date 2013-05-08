@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,24 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PALETTE_H__
-#define __GIMP_PALETTE_H__
+#ifndef __PICMAN_PALETTE_H__
+#define __PICMAN_PALETTE_H__
 
 
-#include "gimpdata.h"
+#include "picmandata.h"
 
 
-#define GIMP_TYPE_PALETTE            (gimp_palette_get_type ())
-#define GIMP_PALETTE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PALETTE, GimpPalette))
-#define GIMP_PALETTE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PALETTE, GimpPaletteClass))
-#define GIMP_IS_PALETTE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PALETTE))
-#define GIMP_IS_PALETTE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PALETTE))
-#define GIMP_PALETTE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PALETTE, GimpPaletteClass))
+#define PICMAN_TYPE_PALETTE            (picman_palette_get_type ())
+#define PICMAN_PALETTE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PALETTE, PicmanPalette))
+#define PICMAN_PALETTE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PALETTE, PicmanPaletteClass))
+#define PICMAN_IS_PALETTE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PALETTE))
+#define PICMAN_IS_PALETTE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PALETTE))
+#define PICMAN_PALETTE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PALETTE, PicmanPaletteClass))
 
 
-struct _GimpPaletteEntry
+struct _PicmanPaletteEntry
 {
-  GimpRGB  color;
+  PicmanRGB  color;
   gchar   *name;
 
   /* EEK */
@@ -40,11 +40,11 @@ struct _GimpPaletteEntry
 };
 
 
-typedef struct _GimpPaletteClass GimpPaletteClass;
+typedef struct _PicmanPaletteClass PicmanPaletteClass;
 
-struct _GimpPalette
+struct _PicmanPalette
 {
-  GimpData  parent_instance;
+  PicmanData  parent_instance;
 
   GList    *colors;
   gint      n_colors;
@@ -52,48 +52,48 @@ struct _GimpPalette
   gint      n_columns;
 };
 
-struct _GimpPaletteClass
+struct _PicmanPaletteClass
 {
-  GimpDataClass  parent_class;
+  PicmanDataClass  parent_class;
 };
 
 
-GType              gimp_palette_get_type        (void) G_GNUC_CONST;
+GType              picman_palette_get_type        (void) G_GNUC_CONST;
 
-GimpData         * gimp_palette_new             (GimpContext      *context,
+PicmanData         * picman_palette_new             (PicmanContext      *context,
                                                  const gchar      *name);
-GimpData         * gimp_palette_get_standard    (GimpContext      *context);
+PicmanData         * picman_palette_get_standard    (PicmanContext      *context);
 
-GList            * gimp_palette_get_colors      (GimpPalette      *palette);
-gint               gimp_palette_get_n_colors    (GimpPalette      *palette);
+GList            * picman_palette_get_colors      (PicmanPalette      *palette);
+gint               picman_palette_get_n_colors    (PicmanPalette      *palette);
 
-GimpPaletteEntry * gimp_palette_add_entry       (GimpPalette      *palette,
+PicmanPaletteEntry * picman_palette_add_entry       (PicmanPalette      *palette,
                                                  gint              position,
                                                  const gchar      *name,
-                                                 const GimpRGB    *color);
-void               gimp_palette_delete_entry    (GimpPalette      *palette,
-                                                 GimpPaletteEntry *entry);
+                                                 const PicmanRGB    *color);
+void               picman_palette_delete_entry    (PicmanPalette      *palette,
+                                                 PicmanPaletteEntry *entry);
 
-gboolean           gimp_palette_set_entry       (GimpPalette      *palette,
+gboolean           picman_palette_set_entry       (PicmanPalette      *palette,
                                                  gint              position,
                                                  const gchar      *name,
-                                                 const GimpRGB    *color);
-gboolean           gimp_palette_set_entry_color (GimpPalette      *palette,
+                                                 const PicmanRGB    *color);
+gboolean           picman_palette_set_entry_color (PicmanPalette      *palette,
                                                  gint              position,
-                                                 const GimpRGB    *color);
-gboolean           gimp_palette_set_entry_name  (GimpPalette      *palette,
+                                                 const PicmanRGB    *color);
+gboolean           picman_palette_set_entry_name  (PicmanPalette      *palette,
                                                  gint              position,
                                                  const gchar      *name);
-GimpPaletteEntry * gimp_palette_get_entry       (GimpPalette      *palette,
+PicmanPaletteEntry * picman_palette_get_entry       (PicmanPalette      *palette,
                                                  gint              position);
 
-void               gimp_palette_set_columns     (GimpPalette      *palette,
+void               picman_palette_set_columns     (PicmanPalette      *palette,
                                                  gint              columns);
-gint               gimp_palette_get_columns     (GimpPalette      *palette);
+gint               picman_palette_get_columns     (PicmanPalette      *palette);
 
-GimpPaletteEntry * gimp_palette_find_entry      (GimpPalette      *palette,
-                                                 const GimpRGB    *color,
-                                                 GimpPaletteEntry *start_from);
+PicmanPaletteEntry * picman_palette_find_entry      (PicmanPalette      *palette,
+                                                 const PicmanRGB    *color,
+                                                 PicmanPaletteEntry *start_from);
 
 
-#endif /* __GIMP_PALETTE_H__ */
+#endif /* __PICMAN_PALETTE_H__ */

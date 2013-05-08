@@ -1,4 +1,4 @@
-<!-- Simple DTD for GIMP tags -->
+<!-- Simple DTD for PICMAN tags -->
 
 <!ELEMENT tags (resource+)>
 

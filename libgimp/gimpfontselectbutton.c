@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpfontselectbutton.c
- * Copyright (C) 2003  Sven Neumann  <sven@gimp.org>
+ * picmanfontselectbutton.c
+ * Copyright (C) 2003  Sven Neumann  <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,31 +23,31 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
-#include "gimp.h"
+#include "picman.h"
 
-#include "gimpuitypes.h"
-#include "gimpfontselectbutton.h"
-#include "gimpuimarshal.h"
+#include "picmanuitypes.h"
+#include "picmanfontselectbutton.h"
+#include "picmanuimarshal.h"
 
-#include "libgimp-intl.h"
+#include "libpicman-intl.h"
 
 
 /**
- * SECTION: gimpfontselectbutton
- * @title: GimpFontSelectButton
+ * SECTION: picmanfontselectbutton
+ * @title: PicmanFontSelectButton
  * @short_description: A button which pops up a font selection dialog.
  *
  * A button which pops up a font selection dialog.
  **/
 
 
-#define GIMP_FONT_SELECT_BUTTON_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GIMP_TYPE_FONT_SELECT_BUTTON, GimpFontSelectButtonPrivate))
+#define PICMAN_FONT_SELECT_BUTTON_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PICMAN_TYPE_FONT_SELECT_BUTTON, PicmanFontSelectButtonPrivate))
 
-typedef struct _GimpFontSelectButtonPrivate GimpFontSelectButtonPrivate;
+typedef struct _PicmanFontSelectButtonPrivate PicmanFontSelectButtonPrivate;
 
-struct _GimpFontSelectButtonPrivate
+struct _PicmanFontSelectButtonPrivate
 {
   gchar       *title;
 
@@ -73,24 +73,24 @@ enum
 
 /*  local function prototypes  */
 
-static void   gimp_font_select_button_finalize     (GObject      *object);
+static void   picman_font_select_button_finalize     (GObject      *object);
 
-static void   gimp_font_select_button_set_property (GObject      *object,
+static void   picman_font_select_button_set_property (GObject      *object,
                                                     guint         property_id,
                                                     const GValue *value,
                                                     GParamSpec   *pspec);
-static void   gimp_font_select_button_get_property (GObject      *object,
+static void   picman_font_select_button_get_property (GObject      *object,
                                                     guint         property_id,
                                                     GValue       *value,
                                                     GParamSpec   *pspec);
 
-static void   gimp_font_select_button_clicked  (GimpFontSelectButton *button);
+static void   picman_font_select_button_clicked  (PicmanFontSelectButton *button);
 
-static void   gimp_font_select_button_callback (const gchar *font_name,
+static void   picman_font_select_button_callback (const gchar *font_name,
                                                 gboolean     dialog_closing,
                                                 gpointer     user_data);
 
-static void   gimp_font_select_drag_data_received (GimpFontSelectButton *button,
+static void   picman_font_select_drag_data_received (PicmanFontSelectButton *button,
                                                    GdkDragContext       *context,
                                                    gint                  x,
                                                    gint                  y,
@@ -98,101 +98,101 @@ static void   gimp_font_select_drag_data_received (GimpFontSelectButton *button,
                                                    guint                 info,
                                                    guint                 time);
 
-static GtkWidget * gimp_font_select_button_create_inside (GimpFontSelectButton *button);
+static GtkWidget * picman_font_select_button_create_inside (PicmanFontSelectButton *button);
 
 
-static const GtkTargetEntry target = { "application/x-gimp-font-name", 0 };
+static const GtkTargetEntry target = { "application/x-picman-font-name", 0 };
 
 static guint font_button_signals[LAST_SIGNAL] = { 0 };
 
 
-G_DEFINE_TYPE (GimpFontSelectButton, gimp_font_select_button,
-               GIMP_TYPE_SELECT_BUTTON)
+G_DEFINE_TYPE (PicmanFontSelectButton, picman_font_select_button,
+               PICMAN_TYPE_SELECT_BUTTON)
 
 
 static void
-gimp_font_select_button_class_init (GimpFontSelectButtonClass *klass)
+picman_font_select_button_class_init (PicmanFontSelectButtonClass *klass)
 {
   GObjectClass          *object_class        = G_OBJECT_CLASS (klass);
-  GimpSelectButtonClass *select_button_class = GIMP_SELECT_BUTTON_CLASS (klass);
+  PicmanSelectButtonClass *select_button_class = PICMAN_SELECT_BUTTON_CLASS (klass);
 
-  object_class->finalize     = gimp_font_select_button_finalize;
-  object_class->set_property = gimp_font_select_button_set_property;
-  object_class->get_property = gimp_font_select_button_get_property;
+  object_class->finalize     = picman_font_select_button_finalize;
+  object_class->set_property = picman_font_select_button_set_property;
+  object_class->get_property = picman_font_select_button_get_property;
 
-  select_button_class->select_destroy = gimp_font_select_destroy;
+  select_button_class->select_destroy = picman_font_select_destroy;
 
   klass->font_set = NULL;
 
   /**
-   * GimpFontSelectButton:title:
+   * PicmanFontSelectButton:title:
    *
    * The title to be used for the font selection popup dialog.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class, PROP_TITLE,
                                    g_param_spec_string ("title",
                                                         "Title",
                                                         "The title to be used for the font selection popup dialog",
                                                         _("Font Selection"),
-                                                        GIMP_PARAM_READWRITE |
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
   /**
-   * GimpFontSelectButton:font-name:
+   * PicmanFontSelectButton:font-name:
    *
    * The name of the currently selected font.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class, PROP_FONT_NAME,
                                    g_param_spec_string ("font-name",
                                                         "Font name",
                                                         "The name of the currently selected font",
                                                         _("Sans"),
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   /**
-   * GimpFontSelectButton::font-set:
+   * PicmanFontSelectButton::font-set:
    * @widget: the object which received the signal.
    * @font_name: the name of the currently selected font.
    * @dialog_closing: whether the dialog was closed or not.
    *
    * The ::font-set signal is emitted when the user selects a font.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   font_button_signals[FONT_SET] =
     g_signal_new ("font-set",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpFontSelectButtonClass, font_set),
+                  G_STRUCT_OFFSET (PicmanFontSelectButtonClass, font_set),
                   NULL, NULL,
-                  _gimpui_marshal_VOID__STRING_BOOLEAN,
+                  _picmanui_marshal_VOID__STRING_BOOLEAN,
                   G_TYPE_NONE, 2,
                   G_TYPE_STRING,
                   G_TYPE_BOOLEAN);
 
   g_type_class_add_private (object_class,
-                            sizeof (GimpFontSelectButtonPrivate));
+                            sizeof (PicmanFontSelectButtonPrivate));
 }
 
 static void
-gimp_font_select_button_init (GimpFontSelectButton *button)
+picman_font_select_button_init (PicmanFontSelectButton *button)
 {
-  GimpFontSelectButtonPrivate *priv;
+  PicmanFontSelectButtonPrivate *priv;
 
-  priv = GIMP_FONT_SELECT_BUTTON_GET_PRIVATE (button);
+  priv = PICMAN_FONT_SELECT_BUTTON_GET_PRIVATE (button);
 
   priv->font_name = NULL;
 
-  priv->inside = gimp_font_select_button_create_inside (button);
+  priv->inside = picman_font_select_button_create_inside (button);
   gtk_container_add (GTK_CONTAINER (button), priv->inside);
 }
 
 /**
- * gimp_font_select_button_new:
+ * picman_font_select_button_new:
  * @title:     Title of the dialog to use or %NULL to use the default title.
  * @font_name: Initial font name.
  *
@@ -202,21 +202,21 @@ gimp_font_select_button_init (GimpFontSelectButton *button)
  *
  * Returns: A #GtkWidget that you can use in your UI.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 GtkWidget *
-gimp_font_select_button_new (const gchar *title,
+picman_font_select_button_new (const gchar *title,
                              const gchar *font_name)
 {
   GtkWidget *button;
 
   if (title)
-    button = g_object_new (GIMP_TYPE_FONT_SELECT_BUTTON,
+    button = g_object_new (PICMAN_TYPE_FONT_SELECT_BUTTON,
                            "title",     title,
                            "font-name", font_name,
                            NULL);
   else
-    button = g_object_new (GIMP_TYPE_FONT_SELECT_BUTTON,
+    button = g_object_new (PICMAN_TYPE_FONT_SELECT_BUTTON,
                            "font-name", font_name,
                            NULL);
 
@@ -224,60 +224,60 @@ gimp_font_select_button_new (const gchar *title,
 }
 
 /**
- * gimp_font_select_button_get_font:
- * @button: A #GimpFontSelectButton
+ * picman_font_select_button_get_font:
+ * @button: A #PicmanFontSelectButton
  *
  * Retrieves the name of currently selected font.
  *
  * Returns: an internal copy of the font name which must not be freed.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 const gchar *
-gimp_font_select_button_get_font (GimpFontSelectButton *button)
+picman_font_select_button_get_font (PicmanFontSelectButton *button)
 {
-  GimpFontSelectButtonPrivate *priv;
+  PicmanFontSelectButtonPrivate *priv;
 
-  g_return_val_if_fail (GIMP_IS_FONT_SELECT_BUTTON (button), NULL);
+  g_return_val_if_fail (PICMAN_IS_FONT_SELECT_BUTTON (button), NULL);
 
-  priv = GIMP_FONT_SELECT_BUTTON_GET_PRIVATE (button);
+  priv = PICMAN_FONT_SELECT_BUTTON_GET_PRIVATE (button);
   return priv->font_name;
 }
 
 /**
- * gimp_font_select_button_set_font:
- * @button: A #GimpFontSelectButton
+ * picman_font_select_button_set_font:
+ * @button: A #PicmanFontSelectButton
  * @font_name: Font name to set; %NULL means no change.
  *
  * Sets the current font for the font select button.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  */
 void
-gimp_font_select_button_set_font (GimpFontSelectButton *button,
+picman_font_select_button_set_font (PicmanFontSelectButton *button,
                                   const gchar          *font_name)
 {
-  GimpSelectButton *select_button;
+  PicmanSelectButton *select_button;
 
-  g_return_if_fail (GIMP_IS_FONT_SELECT_BUTTON (button));
+  g_return_if_fail (PICMAN_IS_FONT_SELECT_BUTTON (button));
 
-  select_button = GIMP_SELECT_BUTTON (button);
+  select_button = PICMAN_SELECT_BUTTON (button);
 
   if (select_button->temp_callback)
-    gimp_fonts_set_popup (select_button->temp_callback, font_name);
+    picman_fonts_set_popup (select_button->temp_callback, font_name);
   else
-    gimp_font_select_button_callback (font_name, FALSE, button);
+    picman_font_select_button_callback (font_name, FALSE, button);
 }
 
 
 /*  private functions  */
 
 static void
-gimp_font_select_button_finalize (GObject *object)
+picman_font_select_button_finalize (GObject *object)
 {
-  GimpFontSelectButtonPrivate *priv;
+  PicmanFontSelectButtonPrivate *priv;
 
-  priv = GIMP_FONT_SELECT_BUTTON_GET_PRIVATE (object);
+  priv = PICMAN_FONT_SELECT_BUTTON_GET_PRIVATE (object);
 
   g_free (priv->font_name);
   priv->font_name = NULL;
@@ -285,19 +285,19 @@ gimp_font_select_button_finalize (GObject *object)
   g_free (priv->title);
   priv->title = NULL;
 
-  G_OBJECT_CLASS (gimp_font_select_button_parent_class)->finalize (object);
+  G_OBJECT_CLASS (picman_font_select_button_parent_class)->finalize (object);
 }
 
 static void
-gimp_font_select_button_set_property (GObject      *object,
+picman_font_select_button_set_property (GObject      *object,
                                       guint         property_id,
                                       const GValue *value,
                                       GParamSpec   *pspec)
 {
-  GimpFontSelectButton        *button = GIMP_FONT_SELECT_BUTTON (object);
-  GimpFontSelectButtonPrivate *priv;
+  PicmanFontSelectButton        *button = PICMAN_FONT_SELECT_BUTTON (object);
+  PicmanFontSelectButtonPrivate *priv;
 
-  priv = GIMP_FONT_SELECT_BUTTON_GET_PRIVATE (button);
+  priv = PICMAN_FONT_SELECT_BUTTON_GET_PRIVATE (button);
 
   switch (property_id)
     {
@@ -305,7 +305,7 @@ gimp_font_select_button_set_property (GObject      *object,
       priv->title = g_value_dup_string (value);
       break;
     case PROP_FONT_NAME:
-      gimp_font_select_button_set_font (button,
+      picman_font_select_button_set_font (button,
                                         g_value_get_string (value));
       break;
     default:
@@ -315,15 +315,15 @@ gimp_font_select_button_set_property (GObject      *object,
 }
 
 static void
-gimp_font_select_button_get_property (GObject    *object,
+picman_font_select_button_get_property (GObject    *object,
                                       guint       property_id,
                                       GValue     *value,
                                       GParamSpec *pspec)
 {
-  GimpFontSelectButton        *button = GIMP_FONT_SELECT_BUTTON (object);
-  GimpFontSelectButtonPrivate *priv;
+  PicmanFontSelectButton        *button = PICMAN_FONT_SELECT_BUTTON (object);
+  PicmanFontSelectButtonPrivate *priv;
 
-  priv = GIMP_FONT_SELECT_BUTTON_GET_PRIVATE (button);
+  priv = PICMAN_FONT_SELECT_BUTTON_GET_PRIVATE (button);
 
   switch (property_id)
     {
@@ -340,18 +340,18 @@ gimp_font_select_button_get_property (GObject    *object,
 }
 
 static void
-gimp_font_select_button_callback (const gchar *font_name,
+picman_font_select_button_callback (const gchar *font_name,
                                   gboolean     dialog_closing,
                                   gpointer     user_data)
 {
-  GimpFontSelectButton        *button;
-  GimpFontSelectButtonPrivate *priv;
-  GimpSelectButton            *select_button;
+  PicmanFontSelectButton        *button;
+  PicmanFontSelectButtonPrivate *priv;
+  PicmanSelectButton            *select_button;
 
-  button = GIMP_FONT_SELECT_BUTTON (user_data);
+  button = PICMAN_FONT_SELECT_BUTTON (user_data);
 
-  priv = GIMP_FONT_SELECT_BUTTON_GET_PRIVATE (button);
-  select_button = GIMP_SELECT_BUTTON (button);
+  priv = PICMAN_FONT_SELECT_BUTTON_GET_PRIVATE (button);
+  select_button = PICMAN_SELECT_BUTTON (button);
 
   g_free (priv->font_name);
   priv->font_name = g_strdup (font_name);
@@ -367,31 +367,31 @@ gimp_font_select_button_callback (const gchar *font_name,
 }
 
 static void
-gimp_font_select_button_clicked (GimpFontSelectButton *button)
+picman_font_select_button_clicked (PicmanFontSelectButton *button)
 {
-  GimpFontSelectButtonPrivate *priv;
-  GimpSelectButton            *select_button;
+  PicmanFontSelectButtonPrivate *priv;
+  PicmanSelectButton            *select_button;
 
-  priv = GIMP_FONT_SELECT_BUTTON_GET_PRIVATE (button);
-  select_button = GIMP_SELECT_BUTTON (button);
+  priv = PICMAN_FONT_SELECT_BUTTON_GET_PRIVATE (button);
+  select_button = PICMAN_SELECT_BUTTON (button);
 
   if (select_button->temp_callback)
     {
-      /*  calling gimp_fonts_set_popup() raises the dialog  */
-      gimp_fonts_set_popup (select_button->temp_callback,
+      /*  calling picman_fonts_set_popup() raises the dialog  */
+      picman_fonts_set_popup (select_button->temp_callback,
                             priv->font_name);
     }
   else
     {
       select_button->temp_callback =
-        gimp_font_select_new (priv->title, priv->font_name,
-                              gimp_font_select_button_callback,
+        picman_font_select_new (priv->title, priv->font_name,
+                              picman_font_select_button_callback,
                               button);
     }
 }
 
 static void
-gimp_font_select_drag_data_received (GimpFontSelectButton *button,
+picman_font_select_drag_data_received (PicmanFontSelectButton *button,
                                      GdkDragContext       *context,
                                      gint                  x,
                                      gint                  y,
@@ -418,11 +418,11 @@ gimp_font_select_drag_data_received (GimpFontSelectButton *button,
       gint     name_offset = 0;
 
       if (sscanf (str, "%i:%p:%n", &pid, &unused, &name_offset) >= 2 &&
-          pid == gimp_getpid () && name_offset > 0)
+          pid == picman_getpid () && name_offset > 0)
         {
           gchar *name = str + name_offset;
 
-          gimp_font_select_button_set_font (button, name);
+          picman_font_select_button_set_font (button, name);
         }
     }
 
@@ -430,14 +430,14 @@ gimp_font_select_drag_data_received (GimpFontSelectButton *button,
 }
 
 static GtkWidget *
-gimp_font_select_button_create_inside (GimpFontSelectButton *font_button)
+picman_font_select_button_create_inside (PicmanFontSelectButton *font_button)
 {
   GtkWidget                   *button;
   GtkWidget                   *hbox;
   GtkWidget                   *image;
-  GimpFontSelectButtonPrivate *priv;
+  PicmanFontSelectButtonPrivate *priv;
 
-  priv = GIMP_FONT_SELECT_BUTTON_GET_PRIVATE (font_button);
+  priv = PICMAN_FONT_SELECT_BUTTON_GET_PRIVATE (font_button);
 
   gtk_widget_push_composite_child ();
 
@@ -446,7 +446,7 @@ gimp_font_select_button_create_inside (GimpFontSelectButton *font_button)
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 4);
   gtk_container_add (GTK_CONTAINER (button), hbox);
 
-  image = gtk_image_new_from_stock (GIMP_STOCK_FONT, GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_stock (PICMAN_STOCK_FONT, GTK_ICON_SIZE_BUTTON);
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
 
   priv->label = gtk_label_new (priv->font_name);
@@ -455,7 +455,7 @@ gimp_font_select_button_create_inside (GimpFontSelectButton *font_button)
   gtk_widget_show_all (button);
 
   g_signal_connect_swapped (button, "clicked",
-                            G_CALLBACK (gimp_font_select_button_clicked),
+                            G_CALLBACK (picman_font_select_button_clicked),
                             font_button);
 
   gtk_drag_dest_set (GTK_WIDGET (button),
@@ -466,7 +466,7 @@ gimp_font_select_button_create_inside (GimpFontSelectButton *font_button)
                      GDK_ACTION_COPY);
 
   g_signal_connect_swapped (button, "drag-data-received",
-                            G_CALLBACK (gimp_font_select_drag_data_received),
+                            G_CALLBACK (picman_font_select_drag_data_received),
                             font_button);
 
   gtk_widget_pop_composite_child ();

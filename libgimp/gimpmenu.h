@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpmenu.h
+ * picmanmenu.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,12 +18,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_UI_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimpui.h> can be included directly."
+#if !defined (__PICMAN_UI_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picmanui.h> can be included directly."
 #endif
 
-#ifndef __GIMP_MENU_H__
-#define __GIMP_MENU_H__
+#ifndef __PICMAN_MENU_H__
+#define __PICMAN_MENU_H__
 
 /*  These functions are deprecated and should not be used in newly
  *  written code.
@@ -31,38 +31,38 @@
 
 G_BEGIN_DECLS
 
-#ifndef GIMP_DISABLE_DEPRECATED
+#ifndef PICMAN_DISABLE_DEPRECATED
 
-typedef gboolean (* GimpConstraintFunc) (gint32   image_id,
+typedef gboolean (* PicmanConstraintFunc) (gint32   image_id,
                                          gint32   drawable_id,
                                          gpointer data);
-typedef void     (* GimpMenuCallback)   (gint32   any_id,
+typedef void     (* PicmanMenuCallback)   (gint32   any_id,
                                          gpointer data);
 
 
-GIMP_DEPRECATED_FOR(gimp_image_combo_box_new)
-GtkWidget * gimp_image_menu_new    (GimpConstraintFunc constraint,
-                                    GimpMenuCallback   callback,
+PICMAN_DEPRECATED_FOR(picman_image_combo_box_new)
+GtkWidget * picman_image_menu_new    (PicmanConstraintFunc constraint,
+                                    PicmanMenuCallback   callback,
                                     gpointer           data,
                                     gint32             active_image);
-GIMP_DEPRECATED_FOR(gimp_layer_combo_box_new)
-GtkWidget * gimp_layer_menu_new    (GimpConstraintFunc constraint,
-                                    GimpMenuCallback   callback,
+PICMAN_DEPRECATED_FOR(picman_layer_combo_box_new)
+GtkWidget * picman_layer_menu_new    (PicmanConstraintFunc constraint,
+                                    PicmanMenuCallback   callback,
                                     gpointer           data,
                                     gint32             active_layer);
-GIMP_DEPRECATED_FOR(gimp_channel_combo_box_new)
-GtkWidget * gimp_channel_menu_new  (GimpConstraintFunc constraint,
-                                    GimpMenuCallback   callback,
+PICMAN_DEPRECATED_FOR(picman_channel_combo_box_new)
+GtkWidget * picman_channel_menu_new  (PicmanConstraintFunc constraint,
+                                    PicmanMenuCallback   callback,
                                     gpointer           data,
                                     gint32             active_channel);
-GIMP_DEPRECATED_FOR(gimp_drawable_combo_box_new)
-GtkWidget * gimp_drawable_menu_new (GimpConstraintFunc constraint,
-                                    GimpMenuCallback   callback,
+PICMAN_DEPRECATED_FOR(picman_drawable_combo_box_new)
+GtkWidget * picman_drawable_menu_new (PicmanConstraintFunc constraint,
+                                    PicmanMenuCallback   callback,
                                     gpointer           data,
                                     gint32             active_drawable);
 
-#endif /*  GIMP_DISABLE_DEPRECATED  */
+#endif /*  PICMAN_DISABLE_DEPRECATED  */
 
 G_END_DECLS
 
-#endif /* __GIMP_MENU_H__ */
+#endif /* __PICMAN_MENU_H__ */

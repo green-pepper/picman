@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,23 +24,23 @@
 
 #include "widgets-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpbuffer.h"
-#include "core/gimpcurve.h"
+#include "core/picman.h"
+#include "core/picmanbuffer.h"
+#include "core/picmancurve.h"
 
-#include "gimpclipboard.h"
-#include "gimppixbuf.h"
-#include "gimpselectiondata.h"
+#include "picmanclipboard.h"
+#include "picmanpixbuf.h"
+#include "picmanselectiondata.h"
 
-#include "gimp-intl.h"
-
-
-#define GIMP_CLIPBOARD_KEY "gimp-clipboard"
+#include "picman-intl.h"
 
 
-typedef struct _GimpClipboard GimpClipboard;
+#define PICMAN_CLIPBOARD_KEY "picman-clipboard"
 
-struct _GimpClipboard
+
+typedef struct _PicmanClipboard PicmanClipboard;
+
+struct _PicmanClipboard
 {
   GSList         *pixbuf_formats;
 
@@ -53,58 +53,58 @@ struct _GimpClipboard
   GtkTargetEntry *curve_target_entries;
   gint            n_curve_target_entries;
 
-  GimpBuffer     *buffer;
+  PicmanBuffer     *buffer;
   gchar          *svg;
-  GimpCurve      *curve;
+  PicmanCurve      *curve;
 };
 
 
-static GimpClipboard * gimp_clipboard_get        (Gimp             *gimp);
-static void            gimp_clipboard_clear      (GimpClipboard    *gimp_clip);
-static void            gimp_clipboard_free       (GimpClipboard    *gimp_clip);
+static PicmanClipboard * picman_clipboard_get        (Picman             *picman);
+static void            picman_clipboard_clear      (PicmanClipboard    *picman_clip);
+static void            picman_clipboard_free       (PicmanClipboard    *picman_clip);
 
-static GdkAtom * gimp_clipboard_wait_for_targets (Gimp             *gimp,
+static GdkAtom * picman_clipboard_wait_for_targets (Picman             *picman,
                                                   gint             *n_targets);
-static GdkAtom   gimp_clipboard_wait_for_buffer  (Gimp             *gimp);
-static GdkAtom   gimp_clipboard_wait_for_svg     (Gimp             *gimp);
-static GdkAtom   gimp_clipboard_wait_for_curve   (Gimp             *gimp);
+static GdkAtom   picman_clipboard_wait_for_buffer  (Picman             *picman);
+static GdkAtom   picman_clipboard_wait_for_svg     (Picman             *picman);
+static GdkAtom   picman_clipboard_wait_for_curve   (Picman             *picman);
 
-static void      gimp_clipboard_send_buffer      (GtkClipboard     *clipboard,
+static void      picman_clipboard_send_buffer      (GtkClipboard     *clipboard,
                                                   GtkSelectionData *selection_data,
                                                   guint             info,
-                                                  Gimp             *gimp);
-static void      gimp_clipboard_send_svg         (GtkClipboard     *clipboard,
+                                                  Picman             *picman);
+static void      picman_clipboard_send_svg         (GtkClipboard     *clipboard,
                                                   GtkSelectionData *selection_data,
                                                   guint             info,
-                                                  Gimp             *gimp);
-static void      gimp_clipboard_send_curve       (GtkClipboard     *clipboard,
+                                                  Picman             *picman);
+static void      picman_clipboard_send_curve       (GtkClipboard     *clipboard,
                                                   GtkSelectionData *selection_data,
                                                   guint             info,
-                                                  Gimp             *gimp);
+                                                  Picman             *picman);
 
 
 /*  public functions  */
 
 void
-gimp_clipboard_init (Gimp *gimp)
+picman_clipboard_init (Picman *picman)
 {
-  GimpClipboard *gimp_clip;
+  PicmanClipboard *picman_clip;
   GSList        *list;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  gimp_clip = gimp_clipboard_get (gimp);
+  picman_clip = picman_clipboard_get (picman);
 
-  g_return_if_fail (gimp_clip == NULL);
+  g_return_if_fail (picman_clip == NULL);
 
-  gimp_clip = g_slice_new0 (GimpClipboard);
+  picman_clip = g_slice_new0 (PicmanClipboard);
 
-  g_object_set_data_full (G_OBJECT (gimp), GIMP_CLIPBOARD_KEY,
-                          gimp_clip, (GDestroyNotify) gimp_clipboard_free);
+  g_object_set_data_full (G_OBJECT (picman), PICMAN_CLIPBOARD_KEY,
+                          picman_clip, (GDestroyNotify) picman_clipboard_free);
 
-  gimp_clip->pixbuf_formats = gimp_pixbuf_get_formats ();
+  picman_clip->pixbuf_formats = picman_pixbuf_get_formats ();
 
-  for (list = gimp_clip->pixbuf_formats; list; list = g_slist_next (list))
+  for (list = picman_clip->pixbuf_formats; list; list = g_slist_next (list))
     {
       GdkPixbufFormat *format = list->data;
 
@@ -116,20 +116,20 @@ gimp_clipboard_init (Gimp *gimp)
           mime_types = gdk_pixbuf_format_get_mime_types (format);
 
           for (type = mime_types; *type; type++)
-            gimp_clip->n_target_entries++;
+            picman_clip->n_target_entries++;
 
           g_strfreev (mime_types);
         }
     }
 
-  if (gimp_clip->n_target_entries > 0)
+  if (picman_clip->n_target_entries > 0)
     {
       gint i = 0;
 
-      gimp_clip->target_entries = g_new0 (GtkTargetEntry,
-                                          gimp_clip->n_target_entries);
+      picman_clip->target_entries = g_new0 (GtkTargetEntry,
+                                          picman_clip->n_target_entries);
 
-      for (list = gimp_clip->pixbuf_formats; list; list = g_slist_next (list))
+      for (list = picman_clip->pixbuf_formats; list; list = g_slist_next (list))
         {
           GdkPixbufFormat *format = list->data;
 
@@ -146,13 +146,13 @@ gimp_clipboard_init (Gimp *gimp)
                 {
                   const gchar *mime_type = *type;
 
-                  if (gimp->be_verbose)
+                  if (picman->be_verbose)
                     g_printerr ("clipboard: writable pixbuf format: %s\n",
                                 mime_type);
 
-                  gimp_clip->target_entries[i].target = g_strdup (mime_type);
-                  gimp_clip->target_entries[i].flags  = 0;
-                  gimp_clip->target_entries[i].info   = i;
+                  picman_clip->target_entries[i].target = g_strdup (mime_type);
+                  picman_clip->target_entries[i].flags  = 0;
+                  picman_clip->target_entries[i].info   = i;
 
                   i++;
                 }
@@ -163,47 +163,47 @@ gimp_clipboard_init (Gimp *gimp)
         }
     }
 
-  gimp_clip->n_svg_target_entries = 2;
-  gimp_clip->svg_target_entries   = g_new0 (GtkTargetEntry, 2);
+  picman_clip->n_svg_target_entries = 2;
+  picman_clip->svg_target_entries   = g_new0 (GtkTargetEntry, 2);
 
-  gimp_clip->svg_target_entries[0].target = g_strdup ("image/svg");
-  gimp_clip->svg_target_entries[0].flags  = 0;
-  gimp_clip->svg_target_entries[0].info   = 0;
+  picman_clip->svg_target_entries[0].target = g_strdup ("image/svg");
+  picman_clip->svg_target_entries[0].flags  = 0;
+  picman_clip->svg_target_entries[0].info   = 0;
 
-  gimp_clip->svg_target_entries[1].target = g_strdup ("image/svg+xml");
-  gimp_clip->svg_target_entries[1].flags  = 0;
-  gimp_clip->svg_target_entries[1].info   = 1;
+  picman_clip->svg_target_entries[1].target = g_strdup ("image/svg+xml");
+  picman_clip->svg_target_entries[1].flags  = 0;
+  picman_clip->svg_target_entries[1].info   = 1;
 
-  gimp_clip->n_curve_target_entries = 1;
-  gimp_clip->curve_target_entries   = g_new0 (GtkTargetEntry, 1);
+  picman_clip->n_curve_target_entries = 1;
+  picman_clip->curve_target_entries   = g_new0 (GtkTargetEntry, 1);
 
-  gimp_clip->curve_target_entries[0].target = g_strdup ("application/x-gimp-curve");
-  gimp_clip->curve_target_entries[0].flags  = 0;
-  gimp_clip->curve_target_entries[0].info   = 0;
+  picman_clip->curve_target_entries[0].target = g_strdup ("application/x-picman-curve");
+  picman_clip->curve_target_entries[0].flags  = 0;
+  picman_clip->curve_target_entries[0].info   = 0;
 }
 
 void
-gimp_clipboard_exit (Gimp *gimp)
+picman_clipboard_exit (Picman *picman)
 {
   GtkClipboard *clipboard;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
   clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
                                              GDK_SELECTION_CLIPBOARD);
 
-  if (clipboard && gtk_clipboard_get_owner (clipboard) == G_OBJECT (gimp))
+  if (clipboard && gtk_clipboard_get_owner (clipboard) == G_OBJECT (picman))
     gtk_clipboard_store (clipboard);
 
-  g_object_set_data (G_OBJECT (gimp), GIMP_CLIPBOARD_KEY, NULL);
+  g_object_set_data (G_OBJECT (picman), PICMAN_CLIPBOARD_KEY, NULL);
 }
 
 /**
- * gimp_clipboard_has_buffer:
- * @gimp: pointer to #Gimp
+ * picman_clipboard_has_buffer:
+ * @picman: pointer to #Picman
  *
  * Tests if there's image data in the clipboard. If the global cut
- * buffer of @gimp is empty, this function checks if there's image
+ * buffer of @picman is empty, this function checks if there's image
  * data in %GDK_SELECTION_CLIPBOARD. This is done in a main-loop
  * similar to gtk_clipboard_wait_is_text_available(). The same caveats
  * apply here.
@@ -211,31 +211,31 @@ gimp_clipboard_exit (Gimp *gimp)
  * Return value: %TRUE if there's image data in the clipboard, %FALSE otherwise
  **/
 gboolean
-gimp_clipboard_has_buffer (Gimp *gimp)
+picman_clipboard_has_buffer (Picman *picman)
 {
-  GimpClipboard *gimp_clip;
+  PicmanClipboard *picman_clip;
   GtkClipboard  *clipboard;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
 
   clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
                                              GDK_SELECTION_CLIPBOARD);
 
   if (clipboard                                                &&
-      gtk_clipboard_get_owner (clipboard)   != G_OBJECT (gimp) &&
-      gimp_clipboard_wait_for_buffer (gimp) != GDK_NONE)
+      gtk_clipboard_get_owner (clipboard)   != G_OBJECT (picman) &&
+      picman_clipboard_wait_for_buffer (picman) != GDK_NONE)
     {
       return TRUE;
     }
 
-  gimp_clip = gimp_clipboard_get (gimp);
+  picman_clip = picman_clipboard_get (picman);
 
-  return (gimp_clip->buffer != NULL);
+  return (picman_clip->buffer != NULL);
 }
 
 /**
- * gimp_clipboard_has_svg:
- * @gimp: pointer to #Gimp
+ * picman_clipboard_has_svg:
+ * @picman: pointer to #Picman
  *
  * Tests if there's SVG data in %GDK_SELECTION_CLIPBOARD.
  * This is done in a main-loop similar to
@@ -244,31 +244,31 @@ gimp_clipboard_has_buffer (Gimp *gimp)
  * Return value: %TRUE if there's SVG data in the clipboard, %FALSE otherwise
  **/
 gboolean
-gimp_clipboard_has_svg (Gimp *gimp)
+picman_clipboard_has_svg (Picman *picman)
 {
-  GimpClipboard *gimp_clip;
+  PicmanClipboard *picman_clip;
   GtkClipboard  *clipboard;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
 
   clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
                                              GDK_SELECTION_CLIPBOARD);
 
   if (clipboard                                              &&
-      gtk_clipboard_get_owner (clipboard) != G_OBJECT (gimp) &&
-      gimp_clipboard_wait_for_svg (gimp)  != GDK_NONE)
+      gtk_clipboard_get_owner (clipboard) != G_OBJECT (picman) &&
+      picman_clipboard_wait_for_svg (picman)  != GDK_NONE)
     {
       return TRUE;
     }
 
-  gimp_clip = gimp_clipboard_get (gimp);
+  picman_clip = picman_clipboard_get (picman);
 
-  return (gimp_clip->svg != NULL);
+  return (picman_clip->svg != NULL);
 }
 
 /**
- * gimp_clipboard_has_curve:
- * @gimp: pointer to #Gimp
+ * picman_clipboard_has_curve:
+ * @picman: pointer to #Picman
  *
  * Tests if there's curve data in %GDK_SELECTION_CLIPBOARD.
  * This is done in a main-loop similar to
@@ -277,61 +277,61 @@ gimp_clipboard_has_svg (Gimp *gimp)
  * Return value: %TRUE if there's curve data in the clipboard, %FALSE otherwise
  **/
 gboolean
-gimp_clipboard_has_curve (Gimp *gimp)
+picman_clipboard_has_curve (Picman *picman)
 {
-  GimpClipboard *gimp_clip;
+  PicmanClipboard *picman_clip;
   GtkClipboard  *clipboard;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
 
   clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
                                              GDK_SELECTION_CLIPBOARD);
 
   if (clipboard                                              &&
-      gtk_clipboard_get_owner (clipboard) != G_OBJECT (gimp) &&
-      gimp_clipboard_wait_for_curve (gimp)  != GDK_NONE)
+      gtk_clipboard_get_owner (clipboard) != G_OBJECT (picman) &&
+      picman_clipboard_wait_for_curve (picman)  != GDK_NONE)
     {
       return TRUE;
     }
 
-  gimp_clip = gimp_clipboard_get (gimp);
+  picman_clip = picman_clipboard_get (picman);
 
-  return (gimp_clip->curve != NULL);
+  return (picman_clip->curve != NULL);
 }
 
 /**
- * gimp_clipboard_get_buffer:
- * @gimp: pointer to #Gimp
+ * picman_clipboard_get_buffer:
+ * @picman: pointer to #Picman
  *
  * Retrieves either image data from %GDK_SELECTION_CLIPBOARD or from
- * the global cut buffer of @gimp.
+ * the global cut buffer of @picman.
  *
- * The returned #GimpBuffer needs to be unref'ed when it's no longer
+ * The returned #PicmanBuffer needs to be unref'ed when it's no longer
  * needed.
  *
- * Return value: a reference to a #GimpBuffer or %NULL if there's no
+ * Return value: a reference to a #PicmanBuffer or %NULL if there's no
  *               image data
  **/
-GimpBuffer *
-gimp_clipboard_get_buffer (Gimp *gimp)
+PicmanBuffer *
+picman_clipboard_get_buffer (Picman *picman)
 {
-  GimpClipboard *gimp_clip;
+  PicmanClipboard *picman_clip;
   GtkClipboard  *clipboard;
   GdkAtom        atom;
-  GimpBuffer    *buffer = NULL;
+  PicmanBuffer    *buffer = NULL;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
   clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
                                              GDK_SELECTION_CLIPBOARD);
 
   if (clipboard                                                         &&
-      gtk_clipboard_get_owner (clipboard)            != G_OBJECT (gimp) &&
-      (atom = gimp_clipboard_wait_for_buffer (gimp)) != GDK_NONE)
+      gtk_clipboard_get_owner (clipboard)            != G_OBJECT (picman) &&
+      (atom = picman_clipboard_wait_for_buffer (picman)) != GDK_NONE)
     {
       GtkSelectionData *data;
 
-      gimp_set_busy (gimp);
+      picman_set_busy (picman);
 
       data = gtk_clipboard_wait_for_contents (clipboard, atom);
 
@@ -343,58 +343,58 @@ gimp_clipboard_get_buffer (Gimp *gimp)
 
           if (pixbuf)
             {
-              buffer = gimp_buffer_new_from_pixbuf (pixbuf, _("Clipboard"),
+              buffer = picman_buffer_new_from_pixbuf (pixbuf, _("Clipboard"),
                                                     0, 0);
               g_object_unref (pixbuf);
             }
         }
 
-      gimp_unset_busy (gimp);
+      picman_unset_busy (picman);
     }
 
-  gimp_clip = gimp_clipboard_get (gimp);
+  picman_clip = picman_clipboard_get (picman);
 
-  if (! buffer && gimp_clip->buffer)
-    buffer = g_object_ref (gimp_clip->buffer);
+  if (! buffer && picman_clip->buffer)
+    buffer = g_object_ref (picman_clip->buffer);
 
   return buffer;
 }
 
 /**
- * gimp_clipboard_get_svg:
- * @gimp: pointer to #Gimp
+ * picman_clipboard_get_svg:
+ * @picman: pointer to #Picman
  * @svg_length: returns the size of the SVG stream in bytes
  *
  * Retrieves SVG data from %GDK_SELECTION_CLIPBOARD or from the global
- * SVG buffer of @gimp.
+ * SVG buffer of @picman.
  *
  * The returned data needs to be freed when it's no longer needed.
  *
- * Return value: a reference to a #GimpBuffer or %NULL if there's no
+ * Return value: a reference to a #PicmanBuffer or %NULL if there's no
  *               image data
  **/
 gchar *
-gimp_clipboard_get_svg (Gimp  *gimp,
+picman_clipboard_get_svg (Picman  *picman,
                         gsize *svg_length)
 {
-  GimpClipboard *gimp_clip;
+  PicmanClipboard *picman_clip;
   GtkClipboard  *clipboard;
   GdkAtom        atom;
   gchar         *svg = NULL;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
   g_return_val_if_fail (svg_length != NULL, NULL);
 
   clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
                                              GDK_SELECTION_CLIPBOARD);
 
   if (clipboard                                                      &&
-      gtk_clipboard_get_owner (clipboard)         != G_OBJECT (gimp) &&
-      (atom = gimp_clipboard_wait_for_svg (gimp)) != GDK_NONE)
+      gtk_clipboard_get_owner (clipboard)         != G_OBJECT (picman) &&
+      (atom = picman_clipboard_wait_for_svg (picman)) != GDK_NONE)
     {
       GtkSelectionData *data;
 
-      gimp_set_busy (gimp);
+      picman_set_busy (picman);
 
       data = gtk_clipboard_wait_for_contents (clipboard, atom);
 
@@ -402,7 +402,7 @@ gimp_clipboard_get_svg (Gimp  *gimp,
         {
           const guchar *stream;
 
-          stream = gimp_selection_data_get_stream (data, svg_length);
+          stream = picman_selection_data_get_stream (data, svg_length);
 
           if (stream)
             svg = g_memdup (stream, *svg_length);
@@ -410,14 +410,14 @@ gimp_clipboard_get_svg (Gimp  *gimp,
           gtk_selection_data_free (data);
         }
 
-      gimp_unset_busy (gimp);
+      picman_unset_busy (picman);
     }
 
-  gimp_clip = gimp_clipboard_get (gimp);
+  picman_clip = picman_clipboard_get (picman);
 
-  if (! svg && gimp_clip->svg)
+  if (! svg && picman_clip->svg)
     {
-      svg = g_strdup (gimp_clip->svg);
+      svg = g_strdup (picman_clip->svg);
       *svg_length = strlen (svg);
     }
 
@@ -425,167 +425,167 @@ gimp_clipboard_get_svg (Gimp  *gimp,
 }
 
 /**
- * gimp_clipboard_get_curve:
- * @gimp: pointer to #Gimp
+ * picman_clipboard_get_curve:
+ * @picman: pointer to #Picman
  *
  * Retrieves curve data from %GDK_SELECTION_CLIPBOARD or from the global
- * curve buffer of @gimp.
+ * curve buffer of @picman.
  *
  * The returned curve needs to be unref'ed when it's no longer needed.
  *
- * Return value: a reference to a #GimpCurve or %NULL if there's no
+ * Return value: a reference to a #PicmanCurve or %NULL if there's no
  *               curve data
  **/
-GimpCurve *
-gimp_clipboard_get_curve (Gimp *gimp)
+PicmanCurve *
+picman_clipboard_get_curve (Picman *picman)
 {
-  GimpClipboard *gimp_clip;
+  PicmanClipboard *picman_clip;
   GtkClipboard  *clipboard;
   GdkAtom        atom;
-  GimpCurve     *curve = NULL;
+  PicmanCurve     *curve = NULL;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
   clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
                                              GDK_SELECTION_CLIPBOARD);
 
   if (clipboard                                                        &&
-      gtk_clipboard_get_owner (clipboard)           != G_OBJECT (gimp) &&
-      (atom = gimp_clipboard_wait_for_curve (gimp)) != GDK_NONE)
+      gtk_clipboard_get_owner (clipboard)           != G_OBJECT (picman) &&
+      (atom = picman_clipboard_wait_for_curve (picman)) != GDK_NONE)
     {
       GtkSelectionData *data;
 
-      gimp_set_busy (gimp);
+      picman_set_busy (picman);
 
       data = gtk_clipboard_wait_for_contents (clipboard, atom);
 
       if (data)
         {
-          curve = gimp_selection_data_get_curve (data);
+          curve = picman_selection_data_get_curve (data);
 
           gtk_selection_data_free (data);
         }
 
-      gimp_unset_busy (gimp);
+      picman_unset_busy (picman);
     }
 
-  gimp_clip = gimp_clipboard_get (gimp);
+  picman_clip = picman_clipboard_get (picman);
 
-  if (! curve && gimp_clip->curve)
-    curve = g_object_ref (gimp_clip->curve);
+  if (! curve && picman_clip->curve)
+    curve = g_object_ref (picman_clip->curve);
 
   return curve;
 }
 
 /**
- * gimp_clipboard_set_buffer:
- * @gimp:   pointer to #Gimp
- * @buffer: a #GimpBuffer, or %NULL.
+ * picman_clipboard_set_buffer:
+ * @picman:   pointer to #Picman
+ * @buffer: a #PicmanBuffer, or %NULL.
  *
  * Offers the buffer in %GDK_SELECTION_CLIPBOARD.
  **/
 void
-gimp_clipboard_set_buffer (Gimp       *gimp,
-                           GimpBuffer *buffer)
+picman_clipboard_set_buffer (Picman       *picman,
+                           PicmanBuffer *buffer)
 {
-  GimpClipboard *gimp_clip;
+  PicmanClipboard *picman_clip;
   GtkClipboard  *clipboard;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (buffer == NULL || GIMP_IS_BUFFER (buffer));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (buffer == NULL || PICMAN_IS_BUFFER (buffer));
 
   clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
                                              GDK_SELECTION_CLIPBOARD);
   if (! clipboard)
     return;
 
-  gimp_clip = gimp_clipboard_get (gimp);
+  picman_clip = picman_clipboard_get (picman);
 
-  gimp_clipboard_clear (gimp_clip);
+  picman_clipboard_clear (picman_clip);
 
   if (buffer)
     {
-      gimp_clip->buffer = g_object_ref (buffer);
+      picman_clip->buffer = g_object_ref (buffer);
 
       gtk_clipboard_set_with_owner (clipboard,
-                                    gimp_clip->target_entries,
-                                    gimp_clip->n_target_entries,
-                                    (GtkClipboardGetFunc) gimp_clipboard_send_buffer,
+                                    picman_clip->target_entries,
+                                    picman_clip->n_target_entries,
+                                    (GtkClipboardGetFunc) picman_clipboard_send_buffer,
                                     (GtkClipboardClearFunc) NULL,
-                                    G_OBJECT (gimp));
+                                    G_OBJECT (picman));
 
       /*  mark the first entry (image/png) as suitable for storing  */
-      if (gimp_clip->n_target_entries > 0)
-        gtk_clipboard_set_can_store (clipboard, gimp_clip->target_entries, 1);
+      if (picman_clip->n_target_entries > 0)
+        gtk_clipboard_set_can_store (clipboard, picman_clip->target_entries, 1);
     }
-  else if (gtk_clipboard_get_owner (clipboard) == G_OBJECT (gimp))
+  else if (gtk_clipboard_get_owner (clipboard) == G_OBJECT (picman))
     {
       gtk_clipboard_clear (clipboard);
     }
 }
 
 /**
- * gimp_clipboard_set_svg:
- * @gimp: pointer to #Gimp
+ * picman_clipboard_set_svg:
+ * @picman: pointer to #Picman
  * @svg: a string containing the SVG data, or %NULL
  *
  * Offers SVG data in %GDK_SELECTION_CLIPBOARD.
  **/
 void
-gimp_clipboard_set_svg (Gimp        *gimp,
+picman_clipboard_set_svg (Picman        *picman,
                         const gchar *svg)
 {
-  GimpClipboard *gimp_clip;
+  PicmanClipboard *picman_clip;
   GtkClipboard  *clipboard;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
   clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
                                              GDK_SELECTION_CLIPBOARD);
   if (! clipboard)
     return;
 
-  gimp_clip = gimp_clipboard_get (gimp);
+  picman_clip = picman_clipboard_get (picman);
 
-  gimp_clipboard_clear (gimp_clip);
+  picman_clipboard_clear (picman_clip);
 
   if (svg)
     {
-      gimp_clip->svg = g_strdup (svg);
+      picman_clip->svg = g_strdup (svg);
 
       gtk_clipboard_set_with_owner (clipboard,
-                                    gimp_clip->svg_target_entries,
-                                    gimp_clip->n_svg_target_entries,
-                                    (GtkClipboardGetFunc) gimp_clipboard_send_svg,
+                                    picman_clip->svg_target_entries,
+                                    picman_clip->n_svg_target_entries,
+                                    (GtkClipboardGetFunc) picman_clipboard_send_svg,
                                     (GtkClipboardClearFunc) NULL,
-                                    G_OBJECT (gimp));
+                                    G_OBJECT (picman));
 
       /*  mark the first entry (image/svg) as suitable for storing  */
-      gtk_clipboard_set_can_store (clipboard, gimp_clip->svg_target_entries, 1);
+      gtk_clipboard_set_can_store (clipboard, picman_clip->svg_target_entries, 1);
     }
-  else if (gtk_clipboard_get_owner (clipboard) == G_OBJECT (gimp))
+  else if (gtk_clipboard_get_owner (clipboard) == G_OBJECT (picman))
     {
       gtk_clipboard_clear (clipboard);
     }
 }
 
 /**
- * gimp_clipboard_set_text:
- * @gimp: pointer to #Gimp
+ * picman_clipboard_set_text:
+ * @picman: pointer to #Picman
  * @text: a %NULL-terminated string in UTF-8 encoding
  *
  * Offers @text in %GDK_SELECTION_CLIPBOARD and %GDK_SELECTION_PRIMARY.
  **/
 void
-gimp_clipboard_set_text (Gimp        *gimp,
+picman_clipboard_set_text (Picman        *picman,
                          const gchar *text)
 {
   GtkClipboard *clipboard;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
   g_return_if_fail (text != NULL);
 
-  gimp_clipboard_clear (gimp_clipboard_get (gimp));
+  picman_clipboard_clear (picman_clipboard_get (picman));
 
   clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
                                              GDK_SELECTION_CLIPBOARD);
@@ -599,45 +599,45 @@ gimp_clipboard_set_text (Gimp        *gimp,
 }
 
 /**
- * gimp_clipboard_set_curve:
- * @gimp: pointer to #Gimp
- * @curve: a #GimpCurve, or %NULL
+ * picman_clipboard_set_curve:
+ * @picman: pointer to #Picman
+ * @curve: a #PicmanCurve, or %NULL
  *
  * Offers curve data in %GDK_SELECTION_CLIPBOARD.
  **/
 void
-gimp_clipboard_set_curve (Gimp      *gimp,
-                          GimpCurve *curve)
+picman_clipboard_set_curve (Picman      *picman,
+                          PicmanCurve *curve)
 {
-  GimpClipboard *gimp_clip;
+  PicmanClipboard *picman_clip;
   GtkClipboard  *clipboard;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (curve == NULL || GIMP_IS_CURVE (curve));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (curve == NULL || PICMAN_IS_CURVE (curve));
 
   clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
                                              GDK_SELECTION_CLIPBOARD);
   if (! clipboard)
     return;
 
-  gimp_clip = gimp_clipboard_get (gimp);
+  picman_clip = picman_clipboard_get (picman);
 
-  gimp_clipboard_clear (gimp_clip);
+  picman_clipboard_clear (picman_clip);
 
   if (curve)
     {
-      gimp_clip->curve = g_object_ref (curve);
+      picman_clip->curve = g_object_ref (curve);
 
       gtk_clipboard_set_with_owner (clipboard,
-                                    gimp_clip->curve_target_entries,
-                                    gimp_clip->n_curve_target_entries,
-                                    (GtkClipboardGetFunc) gimp_clipboard_send_curve,
+                                    picman_clip->curve_target_entries,
+                                    picman_clip->n_curve_target_entries,
+                                    (GtkClipboardGetFunc) picman_clipboard_send_curve,
                                     (GtkClipboardClearFunc) NULL,
-                                    G_OBJECT (gimp));
+                                    G_OBJECT (picman));
 
-      gtk_clipboard_set_can_store (clipboard, gimp_clip->curve_target_entries, 1);
+      gtk_clipboard_set_can_store (clipboard, picman_clip->curve_target_entries, 1);
     }
-  else if (gtk_clipboard_get_owner (clipboard) == G_OBJECT (gimp))
+  else if (gtk_clipboard_get_owner (clipboard) == G_OBJECT (picman))
     {
       gtk_clipboard_clear (clipboard);
     }
@@ -646,63 +646,63 @@ gimp_clipboard_set_curve (Gimp      *gimp,
 
 /*  private functions  */
 
-static GimpClipboard *
-gimp_clipboard_get (Gimp *gimp)
+static PicmanClipboard *
+picman_clipboard_get (Picman *picman)
 {
-  return g_object_get_data (G_OBJECT (gimp), GIMP_CLIPBOARD_KEY);
+  return g_object_get_data (G_OBJECT (picman), PICMAN_CLIPBOARD_KEY);
 }
 
 static void
-gimp_clipboard_clear (GimpClipboard *gimp_clip)
+picman_clipboard_clear (PicmanClipboard *picman_clip)
 {
-  if (gimp_clip->buffer)
+  if (picman_clip->buffer)
     {
-      g_object_unref (gimp_clip->buffer);
-      gimp_clip->buffer = NULL;
+      g_object_unref (picman_clip->buffer);
+      picman_clip->buffer = NULL;
     }
 
-  if (gimp_clip->svg)
+  if (picman_clip->svg)
     {
-      g_free (gimp_clip->svg);
-      gimp_clip->svg = NULL;
+      g_free (picman_clip->svg);
+      picman_clip->svg = NULL;
     }
 
-  if (gimp_clip->curve)
+  if (picman_clip->curve)
     {
-      g_object_unref (gimp_clip->curve);
-      gimp_clip->curve = NULL;
+      g_object_unref (picman_clip->curve);
+      picman_clip->curve = NULL;
     }
 }
 
 static void
-gimp_clipboard_free (GimpClipboard *gimp_clip)
+picman_clipboard_free (PicmanClipboard *picman_clip)
 {
   gint i;
 
-  gimp_clipboard_clear (gimp_clip);
+  picman_clipboard_clear (picman_clip);
 
-  g_slist_free (gimp_clip->pixbuf_formats);
+  g_slist_free (picman_clip->pixbuf_formats);
 
-  for (i = 0; i < gimp_clip->n_target_entries; i++)
-    g_free ((gchar *) gimp_clip->target_entries[i].target);
+  for (i = 0; i < picman_clip->n_target_entries; i++)
+    g_free ((gchar *) picman_clip->target_entries[i].target);
 
-  g_free (gimp_clip->target_entries);
+  g_free (picman_clip->target_entries);
 
-  for (i = 0; i < gimp_clip->n_svg_target_entries; i++)
-    g_free ((gchar *) gimp_clip->svg_target_entries[i].target);
+  for (i = 0; i < picman_clip->n_svg_target_entries; i++)
+    g_free ((gchar *) picman_clip->svg_target_entries[i].target);
 
-  g_free (gimp_clip->svg_target_entries);
+  g_free (picman_clip->svg_target_entries);
 
-  for (i = 0; i < gimp_clip->n_curve_target_entries; i++)
-    g_free ((gchar *) gimp_clip->curve_target_entries[i].target);
+  for (i = 0; i < picman_clip->n_curve_target_entries; i++)
+    g_free ((gchar *) picman_clip->curve_target_entries[i].target);
 
-  g_free (gimp_clip->curve_target_entries);
+  g_free (picman_clip->curve_target_entries);
 
-  g_slice_free (GimpClipboard, gimp_clip);
+  g_slice_free (PicmanClipboard, picman_clip);
 }
 
 static GdkAtom *
-gimp_clipboard_wait_for_targets (Gimp *gimp,
+picman_clipboard_wait_for_targets (Picman *picman,
                                  gint *n_targets)
 {
   GtkClipboard *clipboard;
@@ -728,7 +728,7 @@ gimp_clipboard_wait_for_targets (Gimp *gimp,
 
           if (success)
             {
-              if (gimp->be_verbose)
+              if (picman->be_verbose)
                 {
                   gint i;
 
@@ -748,26 +748,26 @@ gimp_clipboard_wait_for_targets (Gimp *gimp,
 }
 
 static GdkAtom
-gimp_clipboard_wait_for_buffer (Gimp *gimp)
+picman_clipboard_wait_for_buffer (Picman *picman)
 {
-  GimpClipboard *gimp_clip = gimp_clipboard_get (gimp);
+  PicmanClipboard *picman_clip = picman_clipboard_get (picman);
   GdkAtom       *targets;
   gint           n_targets;
   GdkAtom        result    = GDK_NONE;
 
-  targets = gimp_clipboard_wait_for_targets (gimp, &n_targets);
+  targets = picman_clipboard_wait_for_targets (picman, &n_targets);
 
   if (targets)
     {
       GSList *list;
 
-      for (list = gimp_clip->pixbuf_formats; list; list = g_slist_next (list))
+      for (list = picman_clip->pixbuf_formats; list; list = g_slist_next (list))
         {
           GdkPixbufFormat  *format = list->data;
           gchar           **mime_types;
           gchar           **type;
 
-          if (gimp->be_verbose)
+          if (picman->be_verbose)
             g_printerr ("clipboard: checking pixbuf format '%s'\n",
                         gdk_pixbuf_format_get_name (format));
 
@@ -779,7 +779,7 @@ gimp_clipboard_wait_for_buffer (Gimp *gimp)
               GdkAtom  atom      = gdk_atom_intern (mime_type, FALSE);
               gint     i;
 
-              if (gimp->be_verbose)
+              if (picman->be_verbose)
                 g_printerr ("  - checking mime type '%s'\n", mime_type);
 
               for (i = 0; i < n_targets; i++)
@@ -808,13 +808,13 @@ gimp_clipboard_wait_for_buffer (Gimp *gimp)
 }
 
 static GdkAtom
-gimp_clipboard_wait_for_svg (Gimp *gimp)
+picman_clipboard_wait_for_svg (Picman *picman)
 {
   GdkAtom *targets;
   gint     n_targets;
   GdkAtom  result = GDK_NONE;
 
-  targets = gimp_clipboard_wait_for_targets (gimp, &n_targets);
+  targets = picman_clipboard_wait_for_targets (picman, &n_targets);
 
   if (targets)
     {
@@ -843,17 +843,17 @@ gimp_clipboard_wait_for_svg (Gimp *gimp)
 }
 
 static GdkAtom
-gimp_clipboard_wait_for_curve (Gimp *gimp)
+picman_clipboard_wait_for_curve (Picman *picman)
 {
   GdkAtom *targets;
   gint     n_targets;
   GdkAtom  result = GDK_NONE;
 
-  targets = gimp_clipboard_wait_for_targets (gimp, &n_targets);
+  targets = picman_clipboard_wait_for_targets (picman, &n_targets);
 
   if (targets)
     {
-      GdkAtom curve_atom = gdk_atom_intern_static_string ("application/x-gimp-curve");
+      GdkAtom curve_atom = gdk_atom_intern_static_string ("application/x-picman-curve");
       gint    i;
 
       for (i = 0; i < n_targets; i++)
@@ -872,79 +872,79 @@ gimp_clipboard_wait_for_curve (Gimp *gimp)
 }
 
 static void
-gimp_clipboard_send_buffer (GtkClipboard     *clipboard,
+picman_clipboard_send_buffer (GtkClipboard     *clipboard,
                             GtkSelectionData *selection_data,
                             guint             info,
-                            Gimp             *gimp)
+                            Picman             *picman)
 {
-  GimpClipboard *gimp_clip = gimp_clipboard_get (gimp);
+  PicmanClipboard *picman_clip = picman_clipboard_get (picman);
   GdkPixbuf     *pixbuf;
 
-  gimp_set_busy (gimp);
+  picman_set_busy (picman);
 
-  pixbuf = gimp_viewable_get_pixbuf (GIMP_VIEWABLE (gimp_clip->buffer),
-                                     gimp_get_user_context (gimp),
-                                     gimp_buffer_get_width (gimp_clip->buffer),
-                                     gimp_buffer_get_height (gimp_clip->buffer));
+  pixbuf = picman_viewable_get_pixbuf (PICMAN_VIEWABLE (picman_clip->buffer),
+                                     picman_get_user_context (picman),
+                                     picman_buffer_get_width (picman_clip->buffer),
+                                     picman_buffer_get_height (picman_clip->buffer));
 
   if (pixbuf)
     {
-      if (gimp->be_verbose)
+      if (picman->be_verbose)
         g_printerr ("clipboard: sending pixbuf data as '%s'\n",
-                    gimp_clip->target_entries[info].target);
+                    picman_clip->target_entries[info].target);
 
       gtk_selection_data_set_pixbuf (selection_data, pixbuf);
     }
   else
     {
-      g_warning ("%s: gimp_viewable_get_pixbuf() failed", G_STRFUNC);
+      g_warning ("%s: picman_viewable_get_pixbuf() failed", G_STRFUNC);
     }
 
-  gimp_unset_busy (gimp);
+  picman_unset_busy (picman);
 }
 
 static void
-gimp_clipboard_send_svg (GtkClipboard     *clipboard,
+picman_clipboard_send_svg (GtkClipboard     *clipboard,
                          GtkSelectionData *selection_data,
                          guint             info,
-                         Gimp             *gimp)
+                         Picman             *picman)
 {
-  GimpClipboard *gimp_clip = gimp_clipboard_get (gimp);
+  PicmanClipboard *picman_clip = picman_clipboard_get (picman);
 
-  gimp_set_busy (gimp);
+  picman_set_busy (picman);
 
-  if (gimp_clip->svg)
+  if (picman_clip->svg)
     {
-      if (gimp->be_verbose)
+      if (picman->be_verbose)
         g_printerr ("clipboard: sending SVG data as '%s'\n",
-                    gimp_clip->svg_target_entries[info].target);
+                    picman_clip->svg_target_entries[info].target);
 
-      gimp_selection_data_set_stream (selection_data,
-                                      (const guchar *) gimp_clip->svg,
-                                      strlen (gimp_clip->svg));
+      picman_selection_data_set_stream (selection_data,
+                                      (const guchar *) picman_clip->svg,
+                                      strlen (picman_clip->svg));
     }
 
-  gimp_unset_busy (gimp);
+  picman_unset_busy (picman);
 }
 
 static void
-gimp_clipboard_send_curve (GtkClipboard     *clipboard,
+picman_clipboard_send_curve (GtkClipboard     *clipboard,
                            GtkSelectionData *selection_data,
                            guint             info,
-                           Gimp             *gimp)
+                           Picman             *picman)
 {
-  GimpClipboard *gimp_clip = gimp_clipboard_get (gimp);
+  PicmanClipboard *picman_clip = picman_clipboard_get (picman);
 
-  gimp_set_busy (gimp);
+  picman_set_busy (picman);
 
-  if (gimp_clip->curve)
+  if (picman_clip->curve)
     {
-      if (gimp->be_verbose)
+      if (picman->be_verbose)
         g_printerr ("clipboard: sending curve data as '%s'\n",
-                    gimp_clip->curve_target_entries[info].target);
+                    picman_clip->curve_target_entries[info].target);
 
-      gimp_selection_data_set_curve (selection_data, gimp_clip->curve);
+      picman_selection_data_set_curve (selection_data, picman_clip->curve);
     }
 
-  gimp_unset_busy (gimp);
+  picman_unset_busy (picman);
 }

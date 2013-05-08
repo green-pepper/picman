@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimppatternclipboard.h
- * Copyright (C) 2006 Michael Natterer <mitch@gimp.org>
+ * picmanpatternclipboard.h
+ * Copyright (C) 2006 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,39 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PATTERN_CLIPBOARD_H__
-#define __GIMP_PATTERN_CLIPBOARD_H__
+#ifndef __PICMAN_PATTERN_CLIPBOARD_H__
+#define __PICMAN_PATTERN_CLIPBOARD_H__
 
 
-#include "gimppattern.h"
+#include "picmanpattern.h"
 
 
-#define GIMP_TYPE_PATTERN_CLIPBOARD            (gimp_pattern_clipboard_get_type ())
-#define GIMP_PATTERN_CLIPBOARD(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PATTERN_CLIPBOARD, GimpPatternClipboard))
-#define GIMP_PATTERN_CLIPBOARD_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PATTERN_CLIPBOARD, GimpPatternClipboardClass))
-#define GIMP_IS_PATTERN_CLIPBOARD(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PATTERN_CLIPBOARD))
-#define GIMP_IS_PATTERN_CLIPBOARD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PATTERN_CLIPBOARD))
-#define GIMP_PATTERN_CLIPBOARD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PATTERN_CLIPBOARD, GimpPatternClipboardClass))
+#define PICMAN_TYPE_PATTERN_CLIPBOARD            (picman_pattern_clipboard_get_type ())
+#define PICMAN_PATTERN_CLIPBOARD(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PATTERN_CLIPBOARD, PicmanPatternClipboard))
+#define PICMAN_PATTERN_CLIPBOARD_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PATTERN_CLIPBOARD, PicmanPatternClipboardClass))
+#define PICMAN_IS_PATTERN_CLIPBOARD(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PATTERN_CLIPBOARD))
+#define PICMAN_IS_PATTERN_CLIPBOARD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PATTERN_CLIPBOARD))
+#define PICMAN_PATTERN_CLIPBOARD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PATTERN_CLIPBOARD, PicmanPatternClipboardClass))
 
 
-typedef struct _GimpPatternClipboardClass GimpPatternClipboardClass;
+typedef struct _PicmanPatternClipboardClass PicmanPatternClipboardClass;
 
-struct _GimpPatternClipboard
+struct _PicmanPatternClipboard
 {
-  GimpPattern  parent_instance;
+  PicmanPattern  parent_instance;
 
-  Gimp        *gimp;
+  Picman        *picman;
 };
 
-struct _GimpPatternClipboardClass
+struct _PicmanPatternClipboardClass
 {
-  GimpPatternClass  parent_class;
+  PicmanPatternClass  parent_class;
 };
 
 
-GType      gimp_pattern_clipboard_get_type (void) G_GNUC_CONST;
+GType      picman_pattern_clipboard_get_type (void) G_GNUC_CONST;
 
-GimpData * gimp_pattern_clipboard_new      (Gimp *gimp);
+PicmanData * picman_pattern_clipboard_new      (Picman *picman);
 
 
-#endif  /*  __GIMP_PATTERN_CLIPBOARD_H__  */
+#endif  /*  __PICMAN_PATTERN_CLIPBOARD_H__  */

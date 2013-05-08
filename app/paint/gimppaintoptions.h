@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,48 +15,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PAINT_OPTIONS_H__
-#define __GIMP_PAINT_OPTIONS_H__
+#ifndef __PICMAN_PAINT_OPTIONS_H__
+#define __PICMAN_PAINT_OPTIONS_H__
 
 
-#include "core/gimptooloptions.h"
+#include "core/picmantooloptions.h"
 
 
-#define GIMP_PAINT_OPTIONS_CONTEXT_MASK GIMP_CONTEXT_FOREGROUND_MASK | \
-                                        GIMP_CONTEXT_BACKGROUND_MASK | \
-                                        GIMP_CONTEXT_OPACITY_MASK    | \
-                                        GIMP_CONTEXT_PAINT_MODE_MASK | \
-                                        GIMP_CONTEXT_BRUSH_MASK      | \
-                                        GIMP_CONTEXT_DYNAMICS_MASK   | \
-                                        GIMP_CONTEXT_PALETTE_MASK
+#define PICMAN_PAINT_OPTIONS_CONTEXT_MASK PICMAN_CONTEXT_FOREGROUND_MASK | \
+                                        PICMAN_CONTEXT_BACKGROUND_MASK | \
+                                        PICMAN_CONTEXT_OPACITY_MASK    | \
+                                        PICMAN_CONTEXT_PAINT_MODE_MASK | \
+                                        PICMAN_CONTEXT_BRUSH_MASK      | \
+                                        PICMAN_CONTEXT_DYNAMICS_MASK   | \
+                                        PICMAN_CONTEXT_PALETTE_MASK
 
 
-typedef struct _GimpJitterOptions   GimpJitterOptions;
-typedef struct _GimpFadeOptions     GimpFadeOptions;
-typedef struct _GimpGradientOptions GimpGradientOptions;
-typedef struct _GimpSmoothingOptions GimpSmoothingOptions;
+typedef struct _PicmanJitterOptions   PicmanJitterOptions;
+typedef struct _PicmanFadeOptions     PicmanFadeOptions;
+typedef struct _PicmanGradientOptions PicmanGradientOptions;
+typedef struct _PicmanSmoothingOptions PicmanSmoothingOptions;
 
-struct _GimpJitterOptions
+struct _PicmanJitterOptions
 {
   gboolean  use_jitter;
   gdouble   jitter_amount;
 };
 
-struct _GimpFadeOptions
+struct _PicmanFadeOptions
 {
   gboolean        fade_reverse;
   gdouble         fade_length;
-  GimpUnit        fade_unit;
-  GimpRepeatMode  fade_repeat;
+  PicmanUnit        fade_unit;
+  PicmanRepeatMode  fade_repeat;
 };
 
-struct _GimpGradientOptions
+struct _PicmanGradientOptions
 {
   gboolean        gradient_reverse;
-  GimpRepeatMode  gradient_repeat;
+  PicmanRepeatMode  gradient_repeat;
 };
 
-struct _GimpSmoothingOptions
+struct _PicmanSmoothingOptions
 {
   gboolean use_smoothing;
   gint     smoothing_quality;
@@ -64,80 +64,80 @@ struct _GimpSmoothingOptions
 };
 
 
-#define GIMP_TYPE_PAINT_OPTIONS            (gimp_paint_options_get_type ())
-#define GIMP_PAINT_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PAINT_OPTIONS, GimpPaintOptions))
-#define GIMP_PAINT_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PAINT_OPTIONS, GimpPaintOptionsClass))
-#define GIMP_IS_PAINT_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PAINT_OPTIONS))
-#define GIMP_IS_PAINT_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PAINT_OPTIONS))
-#define GIMP_PAINT_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PAINT_OPTIONS, GimpPaintOptionsClass))
+#define PICMAN_TYPE_PAINT_OPTIONS            (picman_paint_options_get_type ())
+#define PICMAN_PAINT_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PAINT_OPTIONS, PicmanPaintOptions))
+#define PICMAN_PAINT_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PAINT_OPTIONS, PicmanPaintOptionsClass))
+#define PICMAN_IS_PAINT_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PAINT_OPTIONS))
+#define PICMAN_IS_PAINT_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PAINT_OPTIONS))
+#define PICMAN_PAINT_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PAINT_OPTIONS, PicmanPaintOptionsClass))
 
 
-typedef struct _GimpPaintOptionsClass GimpPaintOptionsClass;
+typedef struct _PicmanPaintOptionsClass PicmanPaintOptionsClass;
 
-struct _GimpPaintOptions
+struct _PicmanPaintOptions
 {
-  GimpToolOptions           parent_instance;
+  PicmanToolOptions           parent_instance;
 
-  GimpPaintInfo            *paint_info;
+  PicmanPaintInfo            *paint_info;
 
   gdouble                   brush_size;
   gdouble                   brush_angle;
   gdouble                   brush_aspect_ratio;
 
-  GimpPaintApplicationMode  application_mode;
-  GimpPaintApplicationMode  application_mode_save;
+  PicmanPaintApplicationMode  application_mode;
+  PicmanPaintApplicationMode  application_mode_save;
 
   gboolean                  hard;
 
-  GimpJitterOptions        *jitter_options;
+  PicmanJitterOptions        *jitter_options;
 
   gboolean                  dynamics_expanded;
-  GimpFadeOptions          *fade_options;
-  GimpGradientOptions      *gradient_options;
-  GimpSmoothingOptions     *smoothing_options;
+  PicmanFadeOptions          *fade_options;
+  PicmanGradientOptions      *gradient_options;
+  PicmanSmoothingOptions     *smoothing_options;
 
-  GimpViewType              brush_view_type;
-  GimpViewSize              brush_view_size;
-  GimpViewType              dynamics_view_type;
-  GimpViewSize              dynamics_view_size;
-  GimpViewType              pattern_view_type;
-  GimpViewSize              pattern_view_size;
-  GimpViewType              gradient_view_type;
-  GimpViewSize              gradient_view_size;
+  PicmanViewType              brush_view_type;
+  PicmanViewSize              brush_view_size;
+  PicmanViewType              dynamics_view_type;
+  PicmanViewSize              dynamics_view_size;
+  PicmanViewType              pattern_view_type;
+  PicmanViewSize              pattern_view_size;
+  PicmanViewType              gradient_view_type;
+  PicmanViewSize              gradient_view_size;
 };
 
-struct _GimpPaintOptionsClass
+struct _PicmanPaintOptionsClass
 {
-  GimpToolOptionsClass  parent_instance;
+  PicmanToolOptionsClass  parent_instance;
 };
 
 
-GType              gimp_paint_options_get_type (void) G_GNUC_CONST;
+GType              picman_paint_options_get_type (void) G_GNUC_CONST;
 
-GimpPaintOptions * gimp_paint_options_new      (GimpPaintInfo    *paint_info);
+PicmanPaintOptions * picman_paint_options_new      (PicmanPaintInfo    *paint_info);
 
-gdouble            gimp_paint_options_get_fade (GimpPaintOptions *paint_options,
-                                                GimpImage        *image,
+gdouble            picman_paint_options_get_fade (PicmanPaintOptions *paint_options,
+                                                PicmanImage        *image,
                                                 gdouble           pixel_dist);
 
-gdouble          gimp_paint_options_get_jitter (GimpPaintOptions *paint_options,
-                                                GimpImage        *image);
+gdouble          picman_paint_options_get_jitter (PicmanPaintOptions *paint_options,
+                                                PicmanImage        *image);
 
-gboolean gimp_paint_options_get_gradient_color (GimpPaintOptions *paint_options,
-                                                GimpImage        *image,
+gboolean picman_paint_options_get_gradient_color (PicmanPaintOptions *paint_options,
+                                                PicmanImage        *image,
                                                 gdouble           grad_point,
                                                 gdouble           pixel_dist,
-                                                GimpRGB          *color);
+                                                PicmanRGB          *color);
 
-GimpBrushApplicationMode
-             gimp_paint_options_get_brush_mode (GimpPaintOptions *paint_options);
+PicmanBrushApplicationMode
+             picman_paint_options_get_brush_mode (PicmanPaintOptions *paint_options);
 
-void    gimp_paint_options_copy_brush_props    (GimpPaintOptions *src,
-                                                GimpPaintOptions *dest);
-void    gimp_paint_options_copy_dynamics_props (GimpPaintOptions *src,
-                                                GimpPaintOptions *dest);
-void    gimp_paint_options_copy_gradient_props (GimpPaintOptions *src,
-                                                GimpPaintOptions *dest);
+void    picman_paint_options_copy_brush_props    (PicmanPaintOptions *src,
+                                                PicmanPaintOptions *dest);
+void    picman_paint_options_copy_dynamics_props (PicmanPaintOptions *src,
+                                                PicmanPaintOptions *dest);
+void    picman_paint_options_copy_gradient_props (PicmanPaintOptions *src,
+                                                PicmanPaintOptions *dest);
 
 
-#endif  /*  __GIMP_PAINT_OPTIONS_H__  */
+#endif  /*  __PICMAN_PAINT_OPTIONS_H__  */

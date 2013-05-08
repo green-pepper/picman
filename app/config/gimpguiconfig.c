@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpGuiConfig class
- * Copyright (C) 2001  Sven Neumann <sven@gimp.org>
+ * PicmanGuiConfig class
+ * Copyright (C) 2001  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,22 +22,22 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "config-types.h"
 
-#include "gimprc-blurbs.h"
-#include "gimpguiconfig.h"
+#include "picmanrc-blurbs.h"
+#include "picmanguiconfig.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-#define DEFAULT_HELP_BROWSER   GIMP_HELP_BROWSER_GIMP
+#define DEFAULT_HELP_BROWSER   PICMAN_HELP_BROWSER_PICMAN
 #define DEFAULT_THEME          "Default"
 
 #define DEFAULT_USER_MANUAL_ONLINE_URI \
-  "http://docs.gimp.org/" GIMP_APP_VERSION_STRING
+  "http://docs.picman.org/" PICMAN_APP_VERSION_STRING
 
 
 enum
@@ -88,167 +88,167 @@ enum
 };
 
 
-static void   gimp_gui_config_finalize     (GObject      *object);
-static void   gimp_gui_config_set_property (GObject      *object,
+static void   picman_gui_config_finalize     (GObject      *object);
+static void   picman_gui_config_set_property (GObject      *object,
                                             guint         property_id,
                                             const GValue *value,
                                             GParamSpec   *pspec);
-static void   gimp_gui_config_get_property (GObject      *object,
+static void   picman_gui_config_get_property (GObject      *object,
                                             guint         property_id,
                                             GValue       *value,
                                             GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GimpGuiConfig, gimp_gui_config, GIMP_TYPE_DISPLAY_CONFIG)
+G_DEFINE_TYPE (PicmanGuiConfig, picman_gui_config, PICMAN_TYPE_DISPLAY_CONFIG)
 
-#define parent_class gimp_gui_config_parent_class
+#define parent_class picman_gui_config_parent_class
 
 
 static void
-gimp_gui_config_class_init (GimpGuiConfigClass *klass)
+picman_gui_config_class_init (PicmanGuiConfigClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   gchar        *path;
 
-  object_class->finalize     = gimp_gui_config_finalize;
-  object_class->set_property = gimp_gui_config_set_property;
-  object_class->get_property = gimp_gui_config_get_property;
+  object_class->finalize     = picman_gui_config_finalize;
+  object_class->set_property = picman_gui_config_set_property;
+  object_class->get_property = picman_gui_config_get_property;
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_MOVE_TOOL_CHANGES_ACTIVE,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_MOVE_TOOL_CHANGES_ACTIVE,
                                     "move-tool-changes-active",
                                     MOVE_TOOL_CHANGES_ACTIVE_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_IMAGE_MAP_TOOL_MAX_RECENT,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_IMAGE_MAP_TOOL_MAX_RECENT,
                                 "image-map-tool-max-recent",
                                 IMAGE_MAP_TOOL_MAX_RECENT_BLURB,
                                 0, 255, 10,
-                                GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TRUST_DIRTY_FLAG,
+                                PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TRUST_DIRTY_FLAG,
                                     "trust-dirty-flag",
                                     TRUST_DIRTY_FLAG_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAVE_DEVICE_STATUS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAVE_DEVICE_STATUS,
                                     "save-device-status",
                                     SAVE_DEVICE_STATUS_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAVE_SESSION_INFO,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAVE_SESSION_INFO,
                                     "save-session-info",
                                     SAVE_SESSION_INFO_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_RESTORE_SESSION,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_RESTORE_SESSION,
                                     "restore-session", RESTORE_SESSION_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAVE_TOOL_OPTIONS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAVE_TOOL_OPTIONS,
                                     "save-tool-options",
                                     SAVE_TOOL_OPTIONS_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_TOOLTIPS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_TOOLTIPS,
                                     "show-tooltips", SHOW_TOOLTIPS_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS |
-                                    GIMP_CONFIG_PARAM_RESTART);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TEAROFF_MENUS,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_RESTART);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TEAROFF_MENUS,
                                     "tearoff-menus", TEAROFF_MENUS_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CAN_CHANGE_ACCELS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_CAN_CHANGE_ACCELS,
                                     "can-change-accels", CAN_CHANGE_ACCELS_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAVE_ACCELS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SAVE_ACCELS,
                                     "save-accels", SAVE_ACCELS_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_RESTORE_ACCELS,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_RESTORE_ACCELS,
                                     "restore-accels", RESTORE_ACCELS_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_INT (object_class, PROP_LAST_OPENED_SIZE,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_INT (object_class, PROP_LAST_OPENED_SIZE,
                                 "last-opened-size", LAST_OPENED_SIZE_BLURB,
                                 0, 1024, 10,
-                                GIMP_PARAM_STATIC_STRINGS |
-                                GIMP_CONFIG_PARAM_RESTART);
-  GIMP_CONFIG_INSTALL_PROP_MEMSIZE (object_class, PROP_MAX_NEW_IMAGE_SIZE,
+                                PICMAN_PARAM_STATIC_STRINGS |
+                                PICMAN_CONFIG_PARAM_RESTART);
+  PICMAN_CONFIG_INSTALL_PROP_MEMSIZE (object_class, PROP_MAX_NEW_IMAGE_SIZE,
                                     "max-new-image-size",
                                     MAX_NEW_IMAGE_SIZE_BLURB,
-                                    0, GIMP_MAX_MEMSIZE, 1 << 27, /* 128MB */
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TOOLBOX_COLOR_AREA,
+                                    0, PICMAN_MAX_MEMSIZE, 1 << 27, /* 128MB */
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TOOLBOX_COLOR_AREA,
                                     "toolbox-color-area",
                                     TOOLBOX_COLOR_AREA_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TOOLBOX_FOO_AREA,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TOOLBOX_FOO_AREA,
                                     "toolbox-foo-area",
                                     TOOLBOX_FOO_AREA_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TOOLBOX_IMAGE_AREA,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TOOLBOX_IMAGE_AREA,
                                     "toolbox-image-area",
                                     TOOLBOX_IMAGE_AREA_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TOOLBOX_WILBER,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TOOLBOX_WILBER,
                                     "toolbox-wilber",
                                     TOOLBOX_WILBER_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  path = gimp_config_build_data_path ("themes");
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_THEME_PATH,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  path = picman_config_build_data_path ("themes");
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_THEME_PATH,
                                  "theme-path", THEME_PATH_BLURB,
-                                 GIMP_CONFIG_PATH_DIR_LIST, path,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
+                                 PICMAN_CONFIG_PATH_DIR_LIST, path,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
   g_free (path);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_THEME,
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_THEME,
                                    "theme", THEME_BLURB,
                                    DEFAULT_THEME,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_HELP,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USE_HELP,
                                     "use-help", USE_HELP_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_HELP_BUTTON,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_HELP_BUTTON,
                                     "show-help-button", SHOW_HELP_BUTTON_BLURB,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_HELP_LOCALES,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_HELP_LOCALES,
                                    "help-locales", HELP_LOCALES_BLURB,
                                    "",
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_HELP_BROWSER,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_HELP_BROWSER,
                                  "help-browser", HELP_BROWSER_BLURB,
-                                 GIMP_TYPE_HELP_BROWSER_TYPE,
+                                 PICMAN_TYPE_HELP_BROWSER_TYPE,
                                  DEFAULT_HELP_BROWSER,
-                                 GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USER_MANUAL_ONLINE,
+                                 PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_USER_MANUAL_ONLINE,
                                     "user-manual-online",
                                     USER_MANUAL_ONLINE_BLURB,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_STRING (object_class, PROP_USER_MANUAL_ONLINE_URI,
+                                    PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_STRING (object_class, PROP_USER_MANUAL_ONLINE_URI,
                                    "user-manual-online-uri",
                                    USER_MANUAL_ONLINE_URI_BLURB,
                                    DEFAULT_USER_MANUAL_ONLINE_URI,
-                                   GIMP_PARAM_STATIC_STRINGS);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_DOCK_WINDOW_HINT,
+                                   PICMAN_PARAM_STATIC_STRINGS);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_DOCK_WINDOW_HINT,
                                  "dock-window-hint",
                                  DOCK_WINDOW_HINT_BLURB,
-                                 GIMP_TYPE_WINDOW_HINT,
-                                 GIMP_WINDOW_HINT_UTILITY,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_RESTART);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CURSOR_HANDEDNESS,
+                                 PICMAN_TYPE_WINDOW_HINT,
+                                 PICMAN_WINDOW_HINT_UTILITY,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_RESTART);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CURSOR_HANDEDNESS,
                                  "cursor-handedness", CURSOR_HANDEDNESS_BLURB,
-                                 GIMP_TYPE_HANDEDNESS,
-                                 GIMP_HANDEDNESS_RIGHT,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_HANDEDNESS,
+                                 PICMAN_HANDEDNESS_RIGHT,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
   g_object_class_install_property (object_class, PROP_HIDE_DOCKS,
                                    g_param_spec_boolean ("hide-docks",
@@ -257,7 +257,7 @@ gimp_gui_config_class_init (GimpGuiConfigClass *klass)
                                                          FALSE,
                                                          G_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT |
-                                                         GIMP_PARAM_STATIC_STRINGS));
+                                                         PICMAN_PARAM_STATIC_STRINGS));
   g_object_class_install_property (object_class, PROP_SINGLE_WINDOW_MODE,
                                    g_param_spec_boolean ("single-window-mode",
                                                          NULL,
@@ -265,71 +265,71 @@ gimp_gui_config_class_init (GimpGuiConfigClass *klass)
                                                          FALSE,
                                                          G_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT |
-                                                         GIMP_PARAM_STATIC_STRINGS));
+                                                         PICMAN_PARAM_STATIC_STRINGS));
   g_object_class_install_property (object_class, PROP_LAST_TIP_SHOWN,
                                    g_param_spec_int ("last-tip-shown",
                                                      NULL, NULL,
                                                      0, G_MAXINT, 0,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT |
-                                                     GIMP_PARAM_STATIC_STRINGS));
+                                                     PICMAN_PARAM_STATIC_STRINGS));
 
   /*  only for backward compatibility:  */
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CURSOR_FORMAT,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CURSOR_FORMAT,
                                  "cursor-format", CURSOR_FORMAT_BLURB,
-                                 GIMP_TYPE_CURSOR_FORMAT,
-                                 GIMP_CURSOR_FORMAT_PIXBUF,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_IGNORE);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_INFO_WINDOW_PER_DISPLAY,
+                                 PICMAN_TYPE_CURSOR_FORMAT,
+                                 PICMAN_CURSOR_FORMAT_PIXBUF,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_IGNORE);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_INFO_WINDOW_PER_DISPLAY,
                                     "info-window-per-display",
                                     NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS |
-                                    GIMP_CONFIG_PARAM_IGNORE);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_MENU_MNEMONICS,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_IGNORE);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_MENU_MNEMONICS,
                                     "menu-mnemonics", NULL,
                                     TRUE,
-                                    GIMP_PARAM_STATIC_STRINGS |
-                                    GIMP_CONFIG_PARAM_IGNORE);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_TOOL_TIPS,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_IGNORE);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_TOOL_TIPS,
                                     "show-tool-tips", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS |
-                                    GIMP_CONFIG_PARAM_IGNORE);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_TIPS,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_IGNORE);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_SHOW_TIPS,
                                     "show-tips", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS |
-                                    GIMP_CONFIG_PARAM_IGNORE);
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TOOLBOX_WINDOW_HINT,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_IGNORE);
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_TOOLBOX_WINDOW_HINT,
                                  "toolbox-window-hint", NULL,
-                                 GIMP_TYPE_WINDOW_HINT,
-                                 GIMP_WINDOW_HINT_UTILITY,
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_IGNORE);
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TRANSIENT_DOCKS,
+                                 PICMAN_TYPE_WINDOW_HINT,
+                                 PICMAN_WINDOW_HINT_UTILITY,
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_IGNORE);
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_TRANSIENT_DOCKS,
                                     "transient-docks", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS |
-                                    GIMP_CONFIG_PARAM_IGNORE);
-  GIMP_CONFIG_INSTALL_PROP_PATH (object_class, PROP_WEB_BROWSER,
+                                    PICMAN_PARAM_STATIC_STRINGS |
+                                    PICMAN_CONFIG_PARAM_IGNORE);
+  PICMAN_CONFIG_INSTALL_PROP_PATH (object_class, PROP_WEB_BROWSER,
                                  "web-browser", NULL,
-                                 GIMP_CONFIG_PATH_FILE,
+                                 PICMAN_CONFIG_PATH_FILE,
                                  "not used any longer",
-                                 GIMP_PARAM_STATIC_STRINGS |
-                                 GIMP_CONFIG_PARAM_IGNORE);
+                                 PICMAN_PARAM_STATIC_STRINGS |
+                                 PICMAN_CONFIG_PARAM_IGNORE);
 }
 
 static void
-gimp_gui_config_init (GimpGuiConfig *config)
+picman_gui_config_init (PicmanGuiConfig *config)
 {
 }
 
 static void
-gimp_gui_config_finalize (GObject *object)
+picman_gui_config_finalize (GObject *object)
 {
-  GimpGuiConfig *gui_config = GIMP_GUI_CONFIG (object);
+  PicmanGuiConfig *gui_config = PICMAN_GUI_CONFIG (object);
 
   g_free (gui_config->theme_path);
   g_free (gui_config->theme);
@@ -341,12 +341,12 @@ gimp_gui_config_finalize (GObject *object)
 }
 
 static void
-gimp_gui_config_set_property (GObject      *object,
+picman_gui_config_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  GimpGuiConfig *gui_config = GIMP_GUI_CONFIG (object);
+  PicmanGuiConfig *gui_config = PICMAN_GUI_CONFIG (object);
 
   switch (property_id)
     {
@@ -467,12 +467,12 @@ gimp_gui_config_set_property (GObject      *object,
 }
 
 static void
-gimp_gui_config_get_property (GObject    *object,
+picman_gui_config_get_property (GObject    *object,
                               guint       property_id,
                               GValue     *value,
                               GParamSpec *pspec)
 {
-  GimpGuiConfig *gui_config = GIMP_GUI_CONFIG (object);
+  PicmanGuiConfig *gui_config = PICMAN_GUI_CONFIG (object);
 
   switch (property_id)
     {

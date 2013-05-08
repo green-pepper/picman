@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewrenderer.c
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
- * Copyright (C) 2007 Sven Neumann <sven@gimp.org>
+ * picmanviewrenderer.c
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
+ * Copyright (C) 2007 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,22 +26,22 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpcontext.h"
-#include "core/gimpmarshal.h"
-#include "core/gimptempbuf.h"
-#include "core/gimpviewable.h"
+#include "core/picmancontext.h"
+#include "core/picmanmarshal.h"
+#include "core/picmantempbuf.h"
+#include "core/picmanviewable.h"
 
-#include "gimprender.h"
-#include "gimpviewrenderer.h"
-#include "gimpviewrenderer-utils.h"
-#include "gimpwidgets-utils.h"
+#include "picmanrender.h"
+#include "picmanviewrenderer.h"
+#include "picmanviewrenderer-utils.h"
+#include "picmanwidgets-utils.h"
 
 
 enum
@@ -51,55 +51,55 @@ enum
 };
 
 
-static void      gimp_view_renderer_dispose           (GObject            *object);
-static void      gimp_view_renderer_finalize          (GObject            *object);
+static void      picman_view_renderer_dispose           (GObject            *object);
+static void      picman_view_renderer_finalize          (GObject            *object);
 
-static gboolean  gimp_view_renderer_idle_update       (GimpViewRenderer   *renderer);
-static void      gimp_view_renderer_real_set_context  (GimpViewRenderer   *renderer,
-                                                       GimpContext        *context);
-static void      gimp_view_renderer_real_invalidate   (GimpViewRenderer   *renderer);
-static void      gimp_view_renderer_real_draw         (GimpViewRenderer   *renderer,
+static gboolean  picman_view_renderer_idle_update       (PicmanViewRenderer   *renderer);
+static void      picman_view_renderer_real_set_context  (PicmanViewRenderer   *renderer,
+                                                       PicmanContext        *context);
+static void      picman_view_renderer_real_invalidate   (PicmanViewRenderer   *renderer);
+static void      picman_view_renderer_real_draw         (PicmanViewRenderer   *renderer,
                                                        GtkWidget          *widget,
                                                        cairo_t            *cr,
                                                        gint                available_width,
                                                        gint                available_height);
-static void      gimp_view_renderer_real_render       (GimpViewRenderer   *renderer,
+static void      picman_view_renderer_real_render       (PicmanViewRenderer   *renderer,
                                                        GtkWidget          *widget);
 
-static void      gimp_view_renderer_size_changed      (GimpViewRenderer   *renderer,
-                                                       GimpViewable       *viewable);
+static void      picman_view_renderer_size_changed      (PicmanViewRenderer   *renderer,
+                                                       PicmanViewable       *viewable);
 
 static cairo_pattern_t *
-                 gimp_view_renderer_create_background (GimpViewRenderer   *renderer,
+                 picman_view_renderer_create_background (PicmanViewRenderer   *renderer,
                                                        GtkWidget          *widget);
 
-static void      gimp_view_render_temp_buf_to_surface (GimpViewRenderer   *renderer,
-                                                       GimpTempBuf        *temp_buf,
+static void      picman_view_render_temp_buf_to_surface (PicmanViewRenderer   *renderer,
+                                                       PicmanTempBuf        *temp_buf,
                                                        gint                temp_buf_x,
                                                        gint                temp_buf_y,
                                                        gint                channel,
-                                                       GimpViewBG          inside_bg,
-                                                       GimpViewBG          outside_bg,
+                                                       PicmanViewBG          inside_bg,
+                                                       PicmanViewBG          outside_bg,
                                                        cairo_surface_t    *surface,
                                                        gint                dest_width,
                                                        gint                dest_height);
 
 
 
-G_DEFINE_TYPE (GimpViewRenderer, gimp_view_renderer, G_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanViewRenderer, picman_view_renderer, G_TYPE_OBJECT)
 
-#define parent_class gimp_view_renderer_parent_class
+#define parent_class picman_view_renderer_parent_class
 
 static guint renderer_signals[LAST_SIGNAL] = { 0 };
 
-static GimpRGB  black_color;
-static GimpRGB  white_color;
-static GimpRGB  green_color;
-static GimpRGB  red_color;
+static PicmanRGB  black_color;
+static PicmanRGB  white_color;
+static PicmanRGB  green_color;
+static PicmanRGB  red_color;
 
 
 static void
-gimp_view_renderer_class_init (GimpViewRendererClass *klass)
+picman_view_renderer_class_init (PicmanViewRendererClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -107,19 +107,19 @@ gimp_view_renderer_class_init (GimpViewRendererClass *klass)
     g_signal_new ("update",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpViewRendererClass, update),
+                  G_STRUCT_OFFSET (PicmanViewRendererClass, update),
                   NULL, NULL,
-                  gimp_marshal_VOID__VOID,
+                  picman_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->dispose  = gimp_view_renderer_dispose;
-  object_class->finalize = gimp_view_renderer_finalize;
+  object_class->dispose  = picman_view_renderer_dispose;
+  object_class->finalize = picman_view_renderer_finalize;
 
   klass->update          = NULL;
-  klass->set_context     = gimp_view_renderer_real_set_context;
-  klass->invalidate      = gimp_view_renderer_real_invalidate;
-  klass->draw            = gimp_view_renderer_real_draw;
-  klass->render          = gimp_view_renderer_real_render;
+  klass->set_context     = picman_view_renderer_real_set_context;
+  klass->invalidate      = picman_view_renderer_real_invalidate;
+  klass->draw            = picman_view_renderer_real_draw;
+  klass->render          = picman_view_renderer_real_render;
 
   klass->frame           = NULL;
   klass->frame_left      = 0;
@@ -127,14 +127,14 @@ gimp_view_renderer_class_init (GimpViewRendererClass *klass)
   klass->frame_top       = 0;
   klass->frame_bottom    = 0;
 
-  gimp_rgba_set (&black_color, 0.0, 0.0, 0.0, GIMP_OPACITY_OPAQUE);
-  gimp_rgba_set (&white_color, 1.0, 1.0, 1.0, GIMP_OPACITY_OPAQUE);
-  gimp_rgba_set (&green_color, 0.0, 0.94, 0.0, GIMP_OPACITY_OPAQUE);
-  gimp_rgba_set (&red_color,   1.0, 0.0, 0.0, GIMP_OPACITY_OPAQUE);
+  picman_rgba_set (&black_color, 0.0, 0.0, 0.0, PICMAN_OPACITY_OPAQUE);
+  picman_rgba_set (&white_color, 1.0, 1.0, 1.0, PICMAN_OPACITY_OPAQUE);
+  picman_rgba_set (&green_color, 0.0, 0.94, 0.0, PICMAN_OPACITY_OPAQUE);
+  picman_rgba_set (&red_color,   1.0, 0.0, 0.0, PICMAN_OPACITY_OPAQUE);
 }
 
 static void
-gimp_view_renderer_init (GimpViewRenderer *renderer)
+picman_view_renderer_init (PicmanViewRenderer *renderer)
 {
   renderer->context       = NULL;
 
@@ -147,7 +147,7 @@ gimp_view_renderer_init (GimpViewRenderer *renderer)
   renderer->dot_for_dot   = TRUE;
   renderer->is_popup      = FALSE;
 
-  renderer->border_type   = GIMP_VIEW_BORDER_BLACK;
+  renderer->border_type   = PICMAN_VIEW_BORDER_BLACK;
   renderer->border_color  = black_color;
 
   renderer->surface       = NULL;
@@ -161,25 +161,25 @@ gimp_view_renderer_init (GimpViewRenderer *renderer)
 }
 
 static void
-gimp_view_renderer_dispose (GObject *object)
+picman_view_renderer_dispose (GObject *object)
 {
-  GimpViewRenderer *renderer = GIMP_VIEW_RENDERER (object);
+  PicmanViewRenderer *renderer = PICMAN_VIEW_RENDERER (object);
 
   if (renderer->viewable)
-    gimp_view_renderer_set_viewable (renderer, NULL);
+    picman_view_renderer_set_viewable (renderer, NULL);
 
   if (renderer->context)
-    gimp_view_renderer_set_context (renderer, NULL);
+    picman_view_renderer_set_context (renderer, NULL);
 
-  gimp_view_renderer_remove_idle (renderer);
+  picman_view_renderer_remove_idle (renderer);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_view_renderer_finalize (GObject *object)
+picman_view_renderer_finalize (GObject *object)
 {
-  GimpViewRenderer *renderer = GIMP_VIEW_RENDERER (object);
+  PicmanViewRenderer *renderer = PICMAN_VIEW_RENDERER (object);
 
   if (renderer->pattern)
     {
@@ -208,21 +208,21 @@ gimp_view_renderer_finalize (GObject *object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
-static GimpViewRenderer *
-gimp_view_renderer_new_internal (GimpContext *context,
+static PicmanViewRenderer *
+picman_view_renderer_new_internal (PicmanContext *context,
                                  GType        viewable_type,
                                  gboolean     is_popup)
 {
-  GimpViewRenderer *renderer;
+  PicmanViewRenderer *renderer;
 
-  renderer = g_object_new (gimp_view_renderer_type_from_viewable_type (viewable_type),
+  renderer = g_object_new (picman_view_renderer_type_from_viewable_type (viewable_type),
                            NULL);
 
   renderer->viewable_type = viewable_type;
   renderer->is_popup      = is_popup ? TRUE : FALSE;
 
   if (context)
-    gimp_view_renderer_set_context (renderer, context);
+    picman_view_renderer_set_context (renderer, context);
 
   return renderer;
 }
@@ -230,91 +230,91 @@ gimp_view_renderer_new_internal (GimpContext *context,
 
 /*  public functions  */
 
-GimpViewRenderer *
-gimp_view_renderer_new (GimpContext *context,
+PicmanViewRenderer *
+picman_view_renderer_new (PicmanContext *context,
                         GType        viewable_type,
                         gint         size,
                         gint         border_width,
                         gboolean     is_popup)
 {
-  GimpViewRenderer *renderer;
+  PicmanViewRenderer *renderer;
 
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), NULL);
-  g_return_val_if_fail (g_type_is_a (viewable_type, GIMP_TYPE_VIEWABLE), NULL);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (g_type_is_a (viewable_type, PICMAN_TYPE_VIEWABLE), NULL);
   g_return_val_if_fail (size >  0 &&
-                        size <= GIMP_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
+                        size <= PICMAN_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
   g_return_val_if_fail (border_width >= 0 &&
-                        border_width <= GIMP_VIEW_MAX_BORDER_WIDTH, NULL);
+                        border_width <= PICMAN_VIEW_MAX_BORDER_WIDTH, NULL);
 
-  renderer = gimp_view_renderer_new_internal (context, viewable_type,
+  renderer = picman_view_renderer_new_internal (context, viewable_type,
                                               is_popup);
 
-  gimp_view_renderer_set_size (renderer, size, border_width);
-  gimp_view_renderer_remove_idle (renderer);
+  picman_view_renderer_set_size (renderer, size, border_width);
+  picman_view_renderer_remove_idle (renderer);
 
   return renderer;
 }
 
-GimpViewRenderer *
-gimp_view_renderer_new_full (GimpContext *context,
+PicmanViewRenderer *
+picman_view_renderer_new_full (PicmanContext *context,
                              GType        viewable_type,
                              gint         width,
                              gint         height,
                              gint         border_width,
                              gboolean     is_popup)
 {
-  GimpViewRenderer *renderer;
+  PicmanViewRenderer *renderer;
 
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), NULL);
-  g_return_val_if_fail (g_type_is_a (viewable_type, GIMP_TYPE_VIEWABLE), NULL);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (g_type_is_a (viewable_type, PICMAN_TYPE_VIEWABLE), NULL);
   g_return_val_if_fail (width >  0 &&
-                        width <= GIMP_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
+                        width <= PICMAN_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
   g_return_val_if_fail (height > 0 &&
-                        height <= GIMP_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
+                        height <= PICMAN_VIEWABLE_MAX_PREVIEW_SIZE, NULL);
   g_return_val_if_fail (border_width >= 0 &&
-                        border_width <= GIMP_VIEW_MAX_BORDER_WIDTH, NULL);
+                        border_width <= PICMAN_VIEW_MAX_BORDER_WIDTH, NULL);
 
-  renderer = gimp_view_renderer_new_internal (context, viewable_type,
+  renderer = picman_view_renderer_new_internal (context, viewable_type,
                                               is_popup);
 
-  gimp_view_renderer_set_size_full (renderer, width, height, border_width);
-  gimp_view_renderer_remove_idle (renderer);
+  picman_view_renderer_set_size_full (renderer, width, height, border_width);
+  picman_view_renderer_remove_idle (renderer);
 
   return renderer;
 }
 
 void
-gimp_view_renderer_set_context (GimpViewRenderer *renderer,
-                                GimpContext      *context)
+picman_view_renderer_set_context (PicmanViewRenderer *renderer,
+                                PicmanContext      *context)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
-  g_return_if_fail (context == NULL || GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (context == NULL || PICMAN_IS_CONTEXT (context));
 
   if (context != renderer->context)
     {
-      GIMP_VIEW_RENDERER_GET_CLASS (renderer)->set_context (renderer,
+      PICMAN_VIEW_RENDERER_GET_CLASS (renderer)->set_context (renderer,
                                                             context);
 
       if (renderer->viewable)
-        gimp_view_renderer_invalidate (renderer);
+        picman_view_renderer_invalidate (renderer);
     }
 }
 
 static void
-gimp_view_renderer_weak_notify (GimpViewRenderer *renderer,
-                                GimpViewable     *viewable)
+picman_view_renderer_weak_notify (PicmanViewRenderer *renderer,
+                                PicmanViewable     *viewable)
 {
   renderer->viewable = NULL;
 
-  gimp_view_renderer_update_idle (renderer);
+  picman_view_renderer_update_idle (renderer);
 }
 
 void
-gimp_view_renderer_set_viewable (GimpViewRenderer *renderer,
-                                 GimpViewable     *viewable)
+picman_view_renderer_set_viewable (PicmanViewRenderer *renderer,
+                                 PicmanViewable     *viewable)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
-  g_return_if_fail (viewable == NULL || GIMP_IS_VIEWABLE (viewable));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (viewable == NULL || PICMAN_IS_VIEWABLE (viewable));
 
   if (viewable)
     g_return_if_fail (g_type_is_a (G_TYPE_FROM_INSTANCE (viewable),
@@ -338,15 +338,15 @@ gimp_view_renderer_set_viewable (GimpViewRenderer *renderer,
   if (renderer->viewable)
     {
       g_object_weak_unref (G_OBJECT (renderer->viewable),
-                           (GWeakNotify) gimp_view_renderer_weak_notify,
+                           (GWeakNotify) picman_view_renderer_weak_notify,
                            renderer);
 
       g_signal_handlers_disconnect_by_func (renderer->viewable,
-                                            G_CALLBACK (gimp_view_renderer_invalidate),
+                                            G_CALLBACK (picman_view_renderer_invalidate),
                                             renderer);
 
       g_signal_handlers_disconnect_by_func (renderer->viewable,
-                                            G_CALLBACK (gimp_view_renderer_size_changed),
+                                            G_CALLBACK (picman_view_renderer_size_changed),
                                             renderer);
     }
 
@@ -355,50 +355,50 @@ gimp_view_renderer_set_viewable (GimpViewRenderer *renderer,
   if (renderer->viewable)
     {
       g_object_weak_ref (G_OBJECT (renderer->viewable),
-                         (GWeakNotify) gimp_view_renderer_weak_notify,
+                         (GWeakNotify) picman_view_renderer_weak_notify,
                          renderer);
 
       g_signal_connect_swapped (renderer->viewable,
                                 "invalidate-preview",
-                                G_CALLBACK (gimp_view_renderer_invalidate),
+                                G_CALLBACK (picman_view_renderer_invalidate),
                                 renderer);
 
       g_signal_connect_swapped (renderer->viewable,
                                 "size-changed",
-                                G_CALLBACK (gimp_view_renderer_size_changed),
+                                G_CALLBACK (picman_view_renderer_size_changed),
                                 renderer);
 
       if (renderer->size != -1)
-        gimp_view_renderer_set_size (renderer, renderer->size,
+        picman_view_renderer_set_size (renderer, renderer->size,
                                      renderer->border_width);
 
-      gimp_view_renderer_invalidate (renderer);
+      picman_view_renderer_invalidate (renderer);
     }
   else
     {
-      gimp_view_renderer_update_idle (renderer);
+      picman_view_renderer_update_idle (renderer);
     }
 }
 
 void
-gimp_view_renderer_set_size (GimpViewRenderer *renderer,
+picman_view_renderer_set_size (PicmanViewRenderer *renderer,
                              gint              view_size,
                              gint              border_width)
 {
   gint width;
   gint height;
 
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
   g_return_if_fail (view_size >  0 &&
-                    view_size <= GIMP_VIEWABLE_MAX_PREVIEW_SIZE);
+                    view_size <= PICMAN_VIEWABLE_MAX_PREVIEW_SIZE);
   g_return_if_fail (border_width >= 0 &&
-                    border_width <= GIMP_VIEW_MAX_BORDER_WIDTH);
+                    border_width <= PICMAN_VIEW_MAX_BORDER_WIDTH);
 
   renderer->size = view_size;
 
   if (renderer->viewable)
     {
-      gimp_viewable_get_preview_size (renderer->viewable,
+      picman_viewable_get_preview_size (renderer->viewable,
                                       view_size,
                                       renderer->is_popup,
                                       renderer->dot_for_dot,
@@ -410,22 +410,22 @@ gimp_view_renderer_set_size (GimpViewRenderer *renderer,
       height = view_size;
     }
 
-  gimp_view_renderer_set_size_full (renderer, width, height, border_width);
+  picman_view_renderer_set_size_full (renderer, width, height, border_width);
 }
 
 void
-gimp_view_renderer_set_size_full (GimpViewRenderer *renderer,
+picman_view_renderer_set_size_full (PicmanViewRenderer *renderer,
                                   gint              width,
                                   gint              height,
                                   gint              border_width)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
   g_return_if_fail (width >  0 &&
-                    width <= GIMP_VIEWABLE_MAX_PREVIEW_SIZE);
+                    width <= PICMAN_VIEWABLE_MAX_PREVIEW_SIZE);
   g_return_if_fail (height > 0 &&
-                    height <= GIMP_VIEWABLE_MAX_PREVIEW_SIZE);
+                    height <= PICMAN_VIEWABLE_MAX_PREVIEW_SIZE);
   g_return_if_fail (border_width >= 0 &&
-                    border_width <= GIMP_VIEW_MAX_BORDER_WIDTH);
+                    border_width <= PICMAN_VIEW_MAX_BORDER_WIDTH);
 
   if (width        != renderer->width  ||
       height       != renderer->height ||
@@ -442,77 +442,77 @@ gimp_view_renderer_set_size_full (GimpViewRenderer *renderer,
         }
 
       if (renderer->viewable)
-        gimp_view_renderer_invalidate (renderer);
+        picman_view_renderer_invalidate (renderer);
     }
 }
 
 void
-gimp_view_renderer_set_dot_for_dot (GimpViewRenderer *renderer,
+picman_view_renderer_set_dot_for_dot (PicmanViewRenderer *renderer,
                                     gboolean             dot_for_dot)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
 
   if (dot_for_dot != renderer->dot_for_dot)
     {
       renderer->dot_for_dot = dot_for_dot ? TRUE: FALSE;
 
       if (renderer->size != -1)
-        gimp_view_renderer_set_size (renderer, renderer->size,
+        picman_view_renderer_set_size (renderer, renderer->size,
                                      renderer->border_width);
 
-      gimp_view_renderer_invalidate (renderer);
+      picman_view_renderer_invalidate (renderer);
     }
 }
 
 void
-gimp_view_renderer_set_border_type (GimpViewRenderer   *renderer,
-                                    GimpViewBorderType  border_type)
+picman_view_renderer_set_border_type (PicmanViewRenderer   *renderer,
+                                    PicmanViewBorderType  border_type)
 {
-  GimpRGB *border_color = &black_color;
+  PicmanRGB *border_color = &black_color;
 
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
 
   renderer->border_type = border_type;
 
   switch (border_type)
     {
-    case GIMP_VIEW_BORDER_BLACK:
+    case PICMAN_VIEW_BORDER_BLACK:
       border_color = &black_color;
       break;
-    case GIMP_VIEW_BORDER_WHITE:
+    case PICMAN_VIEW_BORDER_WHITE:
       border_color = &white_color;
       break;
-    case GIMP_VIEW_BORDER_GREEN:
+    case PICMAN_VIEW_BORDER_GREEN:
       border_color = &green_color;
       break;
-    case GIMP_VIEW_BORDER_RED:
+    case PICMAN_VIEW_BORDER_RED:
       border_color = &red_color;
       break;
     }
 
-  gimp_view_renderer_set_border_color (renderer, border_color);
+  picman_view_renderer_set_border_color (renderer, border_color);
 }
 
 void
-gimp_view_renderer_set_border_color (GimpViewRenderer *renderer,
-                                     const GimpRGB    *color)
+picman_view_renderer_set_border_color (PicmanViewRenderer *renderer,
+                                     const PicmanRGB    *color)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
   g_return_if_fail (color != NULL);
 
-  if (gimp_rgb_distance (&renderer->border_color, color))
+  if (picman_rgb_distance (&renderer->border_color, color))
     {
       renderer->border_color = *color;
 
-      gimp_view_renderer_update_idle (renderer);
+      picman_view_renderer_update_idle (renderer);
     }
 }
 
 void
-gimp_view_renderer_set_background (GimpViewRenderer *renderer,
+picman_view_renderer_set_background (PicmanViewRenderer *renderer,
                                    const gchar      *stock_id)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
 
   if (renderer->bg_stock_id)
     g_free (renderer->bg_stock_id);
@@ -527,9 +527,9 @@ gimp_view_renderer_set_background (GimpViewRenderer *renderer,
 }
 
 void
-gimp_view_renderer_invalidate (GimpViewRenderer *renderer)
+picman_view_renderer_invalidate (PicmanViewRenderer *renderer)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
 
   if (renderer->idle_id)
     {
@@ -537,18 +537,18 @@ gimp_view_renderer_invalidate (GimpViewRenderer *renderer)
       renderer->idle_id = 0;
     }
 
-  GIMP_VIEW_RENDERER_GET_CLASS (renderer)->invalidate (renderer);
+  PICMAN_VIEW_RENDERER_GET_CLASS (renderer)->invalidate (renderer);
 
   renderer->idle_id =
-    g_idle_add_full (GIMP_VIEWABLE_PRIORITY_IDLE,
-                     (GSourceFunc) gimp_view_renderer_idle_update,
+    g_idle_add_full (PICMAN_VIEWABLE_PRIORITY_IDLE,
+                     (GSourceFunc) picman_view_renderer_idle_update,
                      renderer, NULL);
 }
 
 void
-gimp_view_renderer_update (GimpViewRenderer *renderer)
+picman_view_renderer_update (PicmanViewRenderer *renderer)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
 
   if (renderer->idle_id)
     {
@@ -560,23 +560,23 @@ gimp_view_renderer_update (GimpViewRenderer *renderer)
 }
 
 void
-gimp_view_renderer_update_idle (GimpViewRenderer *renderer)
+picman_view_renderer_update_idle (PicmanViewRenderer *renderer)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
 
   if (renderer->idle_id)
     g_source_remove (renderer->idle_id);
 
   renderer->idle_id =
-    g_idle_add_full (GIMP_VIEWABLE_PRIORITY_IDLE,
-                     (GSourceFunc) gimp_view_renderer_idle_update,
+    g_idle_add_full (PICMAN_VIEWABLE_PRIORITY_IDLE,
+                     (GSourceFunc) picman_view_renderer_idle_update,
                      renderer, NULL);
 }
 
 void
-gimp_view_renderer_remove_idle (GimpViewRenderer *renderer)
+picman_view_renderer_remove_idle (PicmanViewRenderer *renderer)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
 
   if (renderer->idle_id)
     {
@@ -586,13 +586,13 @@ gimp_view_renderer_remove_idle (GimpViewRenderer *renderer)
 }
 
 void
-gimp_view_renderer_draw (GimpViewRenderer *renderer,
+picman_view_renderer_draw (PicmanViewRenderer *renderer,
                          GtkWidget        *widget,
                          cairo_t          *cr,
                          gint              available_width,
                          gint              available_height)
 {
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
   g_return_if_fail (GTK_IS_WIDGET (widget));
   g_return_if_fail (cr != NULL);
 
@@ -606,7 +606,7 @@ gimp_view_renderer_draw (GimpViewRenderer *renderer,
     {
       cairo_save (cr);
 
-      GIMP_VIEW_RENDERER_GET_CLASS (renderer)->draw (renderer, widget, cr,
+      PICMAN_VIEW_RENDERER_GET_CLASS (renderer)->draw (renderer, widget, cr,
                                                      available_width,
                                                      available_height);
 
@@ -614,17 +614,17 @@ gimp_view_renderer_draw (GimpViewRenderer *renderer,
     }
   else
     {
-      GimpViewableClass *viewable_class;
+      PicmanViewableClass *viewable_class;
 
       viewable_class = g_type_class_ref (renderer->viewable_type);
 
-      gimp_view_renderer_render_stock (renderer,
+      picman_view_renderer_render_stock (renderer,
                                        widget,
                                        viewable_class->default_stock_id);
 
       g_type_class_unref (viewable_class);
 
-      gimp_view_renderer_real_draw (renderer, widget, cr,
+      picman_view_renderer_real_draw (renderer, widget, cr,
                                     available_width,
                                     available_height);
     }
@@ -637,7 +637,7 @@ gimp_view_renderer_draw (GimpViewRenderer *renderer,
 
       cairo_set_line_width (cr, renderer->border_width);
       cairo_set_line_join (cr, CAIRO_LINE_JOIN_ROUND);
-      gimp_cairo_set_source_rgb (cr, &renderer->border_color);
+      picman_cairo_set_source_rgb (cr, &renderer->border_color);
 
       x = (available_width  - width)  / 2.0;
       y = (available_height - height) / 2.0;
@@ -651,18 +651,18 @@ gimp_view_renderer_draw (GimpViewRenderer *renderer,
 /*  private functions  */
 
 static gboolean
-gimp_view_renderer_idle_update (GimpViewRenderer *renderer)
+picman_view_renderer_idle_update (PicmanViewRenderer *renderer)
 {
   renderer->idle_id = 0;
 
-  gimp_view_renderer_update (renderer);
+  picman_view_renderer_update (renderer);
 
   return FALSE;
 }
 
 static void
-gimp_view_renderer_real_set_context (GimpViewRenderer *renderer,
-                                     GimpContext      *context)
+picman_view_renderer_real_set_context (PicmanViewRenderer *renderer,
+                                     PicmanContext      *context)
 {
   if (renderer->context)
     g_object_unref (renderer->context);
@@ -674,20 +674,20 @@ gimp_view_renderer_real_set_context (GimpViewRenderer *renderer,
 }
 
 static void
-gimp_view_renderer_real_invalidate (GimpViewRenderer *renderer)
+picman_view_renderer_real_invalidate (PicmanViewRenderer *renderer)
 {
   renderer->needs_render = TRUE;
 }
 
 static void
-gimp_view_renderer_real_draw (GimpViewRenderer *renderer,
+picman_view_renderer_real_draw (PicmanViewRenderer *renderer,
                               GtkWidget        *widget,
                               cairo_t          *cr,
                               gint              available_width,
                               gint              available_height)
 {
   if (renderer->needs_render)
-    GIMP_VIEW_RENDERER_GET_CLASS (renderer)->render (renderer, widget);
+    PICMAN_VIEW_RENDERER_GET_CLASS (renderer)->render (renderer, widget);
 
   if (renderer->pixbuf)
     {
@@ -699,7 +699,7 @@ gimp_view_renderer_real_draw (GimpViewRenderer *renderer,
         {
           if (! renderer->pattern)
             {
-              renderer->pattern = gimp_view_renderer_create_background (renderer,
+              renderer->pattern = picman_view_renderer_create_background (renderer,
                                                                         widget);
             }
 
@@ -730,9 +730,9 @@ gimp_view_renderer_real_draw (GimpViewRenderer *renderer,
         {
           if (! renderer->pattern)
             renderer->pattern =
-              gimp_cairo_checkerboard_create (cr, GIMP_CHECK_SIZE_SM,
-                                              gimp_render_light_check_color (),
-                                              gimp_render_dark_check_color ());
+              picman_cairo_checkerboard_create (cr, PICMAN_CHECK_SIZE_SM,
+                                              picman_render_light_check_color (),
+                                              picman_render_dark_check_color ());
 
           cairo_set_source (cr, renderer->pattern);
           cairo_fill_preserve (cr);
@@ -746,65 +746,65 @@ gimp_view_renderer_real_draw (GimpViewRenderer *renderer,
 }
 
 static void
-gimp_view_renderer_real_render (GimpViewRenderer *renderer,
+picman_view_renderer_real_render (PicmanViewRenderer *renderer,
                                 GtkWidget        *widget)
 {
   GdkPixbuf   *pixbuf;
-  GimpTempBuf *temp_buf;
+  PicmanTempBuf *temp_buf;
   const gchar *stock_id;
 
-  pixbuf = gimp_viewable_get_pixbuf (renderer->viewable,
+  pixbuf = picman_viewable_get_pixbuf (renderer->viewable,
                                      renderer->context,
                                      renderer->width,
                                      renderer->height);
   if (pixbuf)
     {
-      gimp_view_renderer_render_pixbuf (renderer, pixbuf);
+      picman_view_renderer_render_pixbuf (renderer, pixbuf);
       return;
     }
 
-  temp_buf = gimp_viewable_get_preview (renderer->viewable,
+  temp_buf = picman_viewable_get_preview (renderer->viewable,
                                         renderer->context,
                                         renderer->width,
                                         renderer->height);
   if (temp_buf)
     {
-      gimp_view_renderer_render_temp_buf_simple (renderer, temp_buf);
+      picman_view_renderer_render_temp_buf_simple (renderer, temp_buf);
       return;
     }
 
-  stock_id = gimp_viewable_get_stock_id (renderer->viewable);
-  gimp_view_renderer_render_stock (renderer, widget, stock_id);
+  stock_id = picman_viewable_get_stock_id (renderer->viewable);
+  picman_view_renderer_render_stock (renderer, widget, stock_id);
 }
 
 static void
-gimp_view_renderer_size_changed (GimpViewRenderer *renderer,
-                                 GimpViewable     *viewable)
+picman_view_renderer_size_changed (PicmanViewRenderer *renderer,
+                                 PicmanViewable     *viewable)
 {
   if (renderer->size != -1)
-    gimp_view_renderer_set_size (renderer, renderer->size,
+    picman_view_renderer_set_size (renderer, renderer->size,
                                  renderer->border_width);
 
-  gimp_view_renderer_invalidate (renderer);
+  picman_view_renderer_invalidate (renderer);
 }
 
 
 /*  protected functions  */
 
 void
-gimp_view_renderer_render_temp_buf_simple (GimpViewRenderer *renderer,
-                                           GimpTempBuf      *temp_buf)
+picman_view_renderer_render_temp_buf_simple (PicmanViewRenderer *renderer,
+                                           PicmanTempBuf      *temp_buf)
 {
   gint temp_buf_x = 0;
   gint temp_buf_y = 0;
   gint temp_buf_width;
   gint temp_buf_height;
 
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
   g_return_if_fail (temp_buf != NULL);
 
-  temp_buf_width  = gimp_temp_buf_get_width  (temp_buf);
-  temp_buf_height = gimp_temp_buf_get_height (temp_buf);
+  temp_buf_width  = picman_temp_buf_get_width  (temp_buf);
+  temp_buf_height = picman_temp_buf_get_height (temp_buf);
 
   if (temp_buf_width < renderer->width)
     temp_buf_x = (renderer->width - temp_buf_width)  / 2;
@@ -812,21 +812,21 @@ gimp_view_renderer_render_temp_buf_simple (GimpViewRenderer *renderer,
   if (temp_buf_height < renderer->height)
     temp_buf_y = (renderer->height - temp_buf_height) / 2;
 
-  gimp_view_renderer_render_temp_buf (renderer, temp_buf,
+  picman_view_renderer_render_temp_buf (renderer, temp_buf,
                                       temp_buf_x, temp_buf_y,
                                       -1,
-                                      GIMP_VIEW_BG_CHECKS,
-                                      GIMP_VIEW_BG_WHITE);
+                                      PICMAN_VIEW_BG_CHECKS,
+                                      PICMAN_VIEW_BG_WHITE);
 }
 
 void
-gimp_view_renderer_render_temp_buf (GimpViewRenderer *renderer,
-                                    GimpTempBuf      *temp_buf,
+picman_view_renderer_render_temp_buf (PicmanViewRenderer *renderer,
+                                    PicmanTempBuf      *temp_buf,
                                     gint              temp_buf_x,
                                     gint              temp_buf_y,
                                     gint              channel,
-                                    GimpViewBG        inside_bg,
-                                    GimpViewBG        outside_bg)
+                                    PicmanViewBG        inside_bg,
+                                    PicmanViewBG        outside_bg)
 {
   if (renderer->pixbuf)
     {
@@ -839,7 +839,7 @@ gimp_view_renderer_render_temp_buf (GimpViewRenderer *renderer,
                                                     renderer->width,
                                                     renderer->height);
 
-  gimp_view_render_temp_buf_to_surface (renderer,
+  picman_view_render_temp_buf_to_surface (renderer,
                                         temp_buf,
                                         temp_buf_x,
                                         temp_buf_y,
@@ -855,7 +855,7 @@ gimp_view_renderer_render_temp_buf (GimpViewRenderer *renderer,
 
 
 void
-gimp_view_renderer_render_pixbuf (GimpViewRenderer *renderer,
+picman_view_renderer_render_pixbuf (PicmanViewRenderer *renderer,
                                   GdkPixbuf        *pixbuf)
 {
   if (renderer->surface)
@@ -875,14 +875,14 @@ gimp_view_renderer_render_pixbuf (GimpViewRenderer *renderer,
 }
 
 void
-gimp_view_renderer_render_stock (GimpViewRenderer *renderer,
+picman_view_renderer_render_stock (PicmanViewRenderer *renderer,
                                  GtkWidget        *widget,
                                  const gchar      *stock_id)
 {
   GdkPixbuf   *pixbuf = NULL;
   GtkIconSize  icon_size;
 
-  g_return_if_fail (GIMP_IS_VIEW_RENDERER (renderer));
+  g_return_if_fail (PICMAN_IS_VIEW_RENDERER (renderer));
   g_return_if_fail (GTK_IS_WIDGET (widget));
   g_return_if_fail (stock_id != NULL);
 
@@ -898,7 +898,7 @@ gimp_view_renderer_render_stock (GimpViewRenderer *renderer,
       renderer->surface = NULL;
     }
 
-  icon_size = gimp_get_icon_size (widget, stock_id, GTK_ICON_SIZE_INVALID,
+  icon_size = picman_get_icon_size (widget, stock_id, GTK_ICON_SIZE_INVALID,
                                   renderer->width, renderer->height);
 
   if (icon_size)
@@ -913,7 +913,7 @@ gimp_view_renderer_render_stock (GimpViewRenderer *renderer,
         {
           GdkPixbuf *scaled_pixbuf;
 
-          gimp_viewable_calc_preview_size (width, height,
+          picman_viewable_calc_preview_size (width, height,
                                            renderer->width, renderer->height,
                                            TRUE, 1.0, 1.0,
                                            &width, &height,
@@ -934,13 +934,13 @@ gimp_view_renderer_render_stock (GimpViewRenderer *renderer,
 }
 
 static void
-gimp_view_render_temp_buf_to_surface (GimpViewRenderer *renderer,
-                                      GimpTempBuf      *temp_buf,
+picman_view_render_temp_buf_to_surface (PicmanViewRenderer *renderer,
+                                      PicmanTempBuf      *temp_buf,
                                       gint              temp_buf_x,
                                       gint              temp_buf_y,
                                       gint              channel,
-                                      GimpViewBG        inside_bg,
-                                      GimpViewBG        outside_bg,
+                                      PicmanViewBG        inside_bg,
+                                      PicmanViewBG        outside_bg,
                                       cairo_surface_t  *surface,
                                       gint              surface_width,
                                       gint              surface_height)
@@ -955,9 +955,9 @@ gimp_view_render_temp_buf_to_surface (GimpViewRenderer *renderer,
   g_return_if_fail (temp_buf != NULL);
   g_return_if_fail (surface != NULL);
 
-  temp_buf_format = gimp_temp_buf_get_format (temp_buf);
-  temp_buf_width  = gimp_temp_buf_get_width  (temp_buf);
-  temp_buf_height = gimp_temp_buf_get_height (temp_buf);
+  temp_buf_format = picman_temp_buf_get_format (temp_buf);
+  temp_buf_width  = picman_temp_buf_get_width  (temp_buf);
+  temp_buf_height = picman_temp_buf_get_height (temp_buf);
 
   /*  Here are the different cases this functions handles correctly:
    *  1)  Offset temp_buf which does not necessarily cover full image area
@@ -973,30 +973,30 @@ gimp_view_render_temp_buf_to_surface (GimpViewRenderer *renderer,
 
   cr = cairo_create (surface);
 
-  if (outside_bg == GIMP_VIEW_BG_CHECKS ||
-      inside_bg  == GIMP_VIEW_BG_CHECKS)
+  if (outside_bg == PICMAN_VIEW_BG_CHECKS ||
+      inside_bg  == PICMAN_VIEW_BG_CHECKS)
     {
       if (! renderer->pattern)
         renderer->pattern =
-          gimp_cairo_checkerboard_create (cr, GIMP_CHECK_SIZE_SM,
-                                          gimp_render_light_check_color (),
-                                          gimp_render_dark_check_color ());
+          picman_cairo_checkerboard_create (cr, PICMAN_CHECK_SIZE_SM,
+                                          picman_render_light_check_color (),
+                                          picman_render_dark_check_color ());
     }
 
   switch (outside_bg)
     {
-    case GIMP_VIEW_BG_CHECKS:
+    case PICMAN_VIEW_BG_CHECKS:
       cairo_set_source (cr, renderer->pattern);
       break;
 
-    case GIMP_VIEW_BG_WHITE:
+    case PICMAN_VIEW_BG_WHITE:
       cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
       break;
     }
 
   cairo_paint (cr);
 
-  if (! gimp_rectangle_intersect (0, 0,
+  if (! picman_rectangle_intersect (0, 0,
                                   surface_width, surface_height,
                                   temp_buf_x, temp_buf_y,
                                   temp_buf_width, temp_buf_height,
@@ -1014,11 +1014,11 @@ gimp_view_render_temp_buf_to_surface (GimpViewRenderer *renderer,
 
       switch (inside_bg)
         {
-        case GIMP_VIEW_BG_CHECKS:
+        case PICMAN_VIEW_BG_CHECKS:
           cairo_set_source (cr, renderer->pattern);
           break;
 
-        case GIMP_VIEW_BG_WHITE:
+        case PICMAN_VIEW_BG_WHITE:
           cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
           break;
         }
@@ -1035,8 +1035,8 @@ gimp_view_render_temp_buf_to_surface (GimpViewRenderer *renderer,
       alpha_surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
                                                   width, height);
 
-      src_buffer  = gimp_temp_buf_create_buffer (temp_buf);
-      dest_buffer = gimp_cairo_surface_create_buffer (alpha_surface);
+      src_buffer  = picman_temp_buf_create_buffer (temp_buf);
+      dest_buffer = picman_cairo_surface_create_buffer (alpha_surface);
 
       gegl_buffer_copy (src_buffer,
                         GEGL_RECTANGLE (x - temp_buf_x,
@@ -1064,8 +1064,8 @@ gimp_view_render_temp_buf_to_surface (GimpViewRenderer *renderer,
 
       cairo_surface_flush (surface);
 
-      src_buffer  = gimp_temp_buf_create_buffer (temp_buf);
-      dest_buffer = gimp_cairo_surface_create_buffer (surface);
+      src_buffer  = picman_temp_buf_create_buffer (temp_buf);
+      dest_buffer = picman_cairo_surface_create_buffer (surface);
 
       gegl_buffer_copy (src_buffer,
                         GEGL_RECTANGLE (x - temp_buf_x,
@@ -1094,7 +1094,7 @@ gimp_view_render_temp_buf_to_surface (GimpViewRenderer *renderer,
       bytes     = babl_format_get_bytes_per_pixel (temp_buf_format);
       rowstride = temp_buf_width * bytes;
 
-      src = gimp_temp_buf_get_data (temp_buf) + ((y - temp_buf_y) * rowstride +
+      src = picman_temp_buf_get_data (temp_buf) + ((y - temp_buf_y) * rowstride +
                                                  (x - temp_buf_x) * bytes);
 
       dest        = cairo_image_surface_get_data (surface);
@@ -1141,7 +1141,7 @@ gimp_view_render_temp_buf_to_surface (GimpViewRenderer *renderer,
  * if renderer->bg_stock_id is set.
  */
 static cairo_pattern_t *
-gimp_view_renderer_create_background (GimpViewRenderer *renderer,
+picman_view_renderer_create_background (PicmanViewRenderer *renderer,
                                       GtkWidget        *widget)
 {
   cairo_pattern_t *pattern = NULL;
@@ -1156,7 +1156,7 @@ gimp_view_renderer_create_background (GimpViewRenderer *renderer,
         {
           cairo_surface_t *surface;
 
-          surface = gimp_cairo_surface_create_from_pixbuf (pixbuf);
+          surface = picman_cairo_surface_create_from_pixbuf (pixbuf);
 
           g_object_unref (pixbuf);
 

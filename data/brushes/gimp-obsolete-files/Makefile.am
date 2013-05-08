@@ -1,6 +1,6 @@
-## Makefile.am for gimp/data/brushes/brushes/gimp-obsolete-files
+## Makefile.am for picman/data/brushes/brushes/picman-obsolete-files
 
-obsoletebrushdatadir = $(gimpdatadir)/brushes/gimp-obsolete-files
+obsoletebrushdatadir = $(picmandatadir)/brushes/picman-obsolete-files
 
 obsoletebrushdata_DATA = \
 	10x10square.gbr			\

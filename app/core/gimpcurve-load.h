@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CURVE_LOAD_H__
-#define __GIMP_CURVE_LOAD_H__
+#ifndef __PICMAN_CURVE_LOAD_H__
+#define __PICMAN_CURVE_LOAD_H__
 
 
-#define GIMP_CURVE_FILE_EXTENSION ".curve"
+#define PICMAN_CURVE_FILE_EXTENSION ".curve"
 
 
-GList * gimp_curve_load (const gchar  *filename,
+GList * picman_curve_load (const gchar  *filename,
                          GError      **error);
 
 
-#endif /* __GIMP_CURVE_LOAD_H__ */
+#endif /* __PICMAN_CURVE_LOAD_H__ */

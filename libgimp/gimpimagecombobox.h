@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpimagecombobox.h
- * Copyright (C) 2004 Sven Neumann <sven@gimp.org>
+ * picmanimagecombobox.h
+ * Copyright (C) 2004 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,33 +19,33 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_UI_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimpui.h> can be included directly."
+#if !defined (__PICMAN_UI_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picmanui.h> can be included directly."
 #endif
 
-#ifndef __GIMP_IMAGE_COMBO_BOX_H__
-#define __GIMP_IMAGE_COMBO_BOX_H__
+#ifndef __PICMAN_IMAGE_COMBO_BOX_H__
+#define __PICMAN_IMAGE_COMBO_BOX_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-#define GIMP_TYPE_IMAGE_COMBO_BOX       (gimp_image_combo_box_get_type ())
-#define GIMP_IMAGE_COMBO_BOX(obj)       (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_IMAGE_COMBO_BOX, GimpImageComboBox))
-#define GIMP_IS_IMAGE_COMBO_BOX(obj)    (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_IMAGE_COMBO_BOX)
+#define PICMAN_TYPE_IMAGE_COMBO_BOX       (picman_image_combo_box_get_type ())
+#define PICMAN_IMAGE_COMBO_BOX(obj)       (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_IMAGE_COMBO_BOX, PicmanImageComboBox))
+#define PICMAN_IS_IMAGE_COMBO_BOX(obj)    (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_IMAGE_COMBO_BOX)
 
 
-typedef gboolean (* GimpImageConstraintFunc) (gint32   image_id,
+typedef gboolean (* PicmanImageConstraintFunc) (gint32   image_id,
                                               gpointer data);
 
 
-GType       gimp_image_combo_box_get_type (void) G_GNUC_CONST;
+GType       picman_image_combo_box_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_image_combo_box_new (GimpImageConstraintFunc  constraint,
+GtkWidget * picman_image_combo_box_new (PicmanImageConstraintFunc  constraint,
                                       gpointer                 data);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_IMAGE_COMBO_BOX_H__ */
+#endif /* __PICMAN_IMAGE_COMBO_BOX_H__ */

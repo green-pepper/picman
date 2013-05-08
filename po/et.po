@@ -1,9 +1,9 @@
-# Gimp-i eesti keele tõlge.
-# Estonian translation of Gimp.
+# Picman-i eesti keele tõlge.
+# Estonian translation of Picman.
 #
 # Copyright (C) 2001-2005 Free Software Foundation, Inc.
 # Copyright (C) 2007,2008 The GNOME Project
-# This file is distributed under the same license as the Gimp package.
+# This file is distributed under the same license as the Picman package.
 #
 # Olle Niit <olle paalalinn com>, 2005-2007.
 # Priit Laes <plaes plaes org>, 2007,2008.
@@ -12,9 +12,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp_et\n"
+"Project-Id-Version: picman_et\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-12-19 14:19+0000\n"
 "PO-Revision-Date: 2012-12-19 19:05+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz@gmail.com>\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 msgid "GNU Image Manipulation Program"
-msgstr "GIMP - GNU pilditöötlusprogramm"
+msgstr "PICMAN - GNU pilditöötlusprogramm"
 
 msgid "Image Editor"
 msgstr "Pildiredaktor"
@@ -34,43 +34,43 @@ msgstr "Pildiredaktor"
 msgid "Create images and edit photographs"
 msgstr "Joonistamine ja fotode töötlemine"
 
-msgid "GIMP"
-msgstr "GIMP"
+msgid "PICMAN"
+msgstr "PICMAN"
 
 #. The year of the last commit (UTC) will be inserted into this string.
 #, c-format
 msgid ""
 "Copyright © 1995-%s\n"
-"Spencer Kimball, Peter Mattis and the GIMP Development Team"
+"Spencer Kimball, Peter Mattis and the PICMAN Development Team"
 msgstr ""
 "Autoriõigus © 1995-%s\n"
-"Spencer Kimball, Peter Mattis ja GIMP-i arendusmeeskond"
+"Spencer Kimball, Peter Mattis ja PICMAN-i arendusmeeskond"
 
 msgid ""
-"GIMP is free software: you can redistribute it and/or modify it under the "
+"PICMAN is free software: you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
 "Foundation; either version 3 of the License, or (at your option) any later "
 "version.\n"
 "\n"
-"GIMP is distributed in the hope that it will be useful, but WITHOUT ANY "
+"PICMAN is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
 "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
 "details.\n"
 "\n"
 "You should have received a copy of the GNU General Public License along with "
-"GIMP.  If not, see http://www.gnu.org/licenses/."
+"PICMAN.  If not, see http://www.gnu.org/licenses/."
 msgstr ""
-"GIMP on vaba tarkvara; te võite seda edasi levitada ja/või muuta vastavalt "
+"PICMAN on vaba tarkvara; te võite seda edasi levitada ja/või muuta vastavalt "
 "GNU Üldise Avaliku Litsentsi tingimustele, nagu need on Vaba Tarkvara Fondi "
 "poolt avaldatud; kas Litsentsi versioon number 3 või (vastavalt teie "
 "valikule) ükskõik milline hilisem versioon.\n"
 "\n"
-"GIMP-i levitatakse lootuses, et see on kasulik, kuid ILMA IGASUGUSE "
+"PICMAN-i levitatakse lootuses, et see on kasulik, kuid ILMA IGASUGUSE "
 "GARANTIITA; isegi ilma KESKMISE/TAVALISE KVALITEEDI GARANTIITA või "
 "SOBIVUSELE TEATUD KINDLAKS EESMÄRGIKS. Üksikasjade suhtes vaata GNU Üldist "
 "Avalikku Litsentsi.\n"
 "\n"
-"Te peaks olema saanud GNU Üldise Avaliku Litsentsi koopia koos GIMP-iga. Kui "
+"Te peaks olema saanud GNU Üldise Avaliku Litsentsi koopia koos PICMAN-iga. Kui "
 "ei, siis vaadake http://www.gnu.org/licenses/."
 
 #, c-format
@@ -94,8 +94,8 @@ msgstr "Litsentsiteabe näitamine ja väljumine"
 msgid "Be more verbose"
 msgstr "Rohkemate teadete väljastamine"
 
-msgid "Start a new GIMP instance"
-msgstr "Uue GIMP-i protsessi käivitamine"
+msgid "Start a new PICMAN instance"
+msgstr "Uue PICMAN-i protsessi käivitamine"
 
 msgid "Open images as new"
 msgstr "Piltide avamine uuena"
@@ -112,8 +112,8 @@ msgstr "Ei laadi ühtegi fonti"
 msgid "Do not show a splash screen"
 msgstr "Ei näita käivitusakent"
 
-msgid "Do not use shared memory between GIMP and plugins"
-msgstr "GIMP-i ja pluginate jaoks ei kasutata ühismälu"
+msgid "Do not use shared memory between PICMAN and plugins"
+msgstr "PICMAN-i ja pluginate jaoks ei kasutata ühismälu"
 
 msgid "Do not use special CPU acceleration functions"
 msgstr "Ei kasuta spetsiaalseid CPU kiirenduse funktsioone"
@@ -121,11 +121,11 @@ msgstr "Ei kasuta spetsiaalseid CPU kiirenduse funktsioone"
 msgid "Use an alternate sessionrc file"
 msgstr "Kasuta alternatiivset sessionrc faili"
 
-msgid "Use an alternate user gimprc file"
-msgstr "Kasuta alternatiivset gimprc faili"
+msgid "Use an alternate user picmanrc file"
+msgstr "Kasuta alternatiivset picmanrc faili"
 
-msgid "Use an alternate system gimprc file"
-msgstr "Kasuta alternatiivset süsteemset gimprc faili"
+msgid "Use an alternate system picmanrc file"
+msgstr "Kasuta alternatiivset süsteemset picmanrc faili"
 
 msgid "Batch command to run (can be used multiple times)"
 msgstr "Käivitatav pakktöötluse käsk (võib kasutada mitu korda)"
@@ -150,8 +150,8 @@ msgstr "Luba ületatavate vigade signaalihaldurid"
 msgid "Make all warnings fatal"
 msgstr "Käsitle kõik hoiatusi kui ületamatuid vigu"
 
-msgid "Output a gimprc file with default settings"
-msgstr "Väljasta vaikesätetega gimprc fail"
+msgid "Output a picmanrc file with default settings"
+msgstr "Väljasta vaikesätetega picmanrc fail"
 
 msgid "Output a sorted list of deprecated procedures in the PDB"
 msgstr "PDB aegunud protseduuride sorditud loendi väljastamine"
@@ -160,24 +160,24 @@ msgid "[FILE|URI...]"
 msgstr "[FAIL|URI...]"
 
 msgid ""
-"GIMP could not initialize the graphical user interface.\n"
+"PICMAN could not initialize the graphical user interface.\n"
 "Make sure a proper setup for your display environment exists."
 msgstr ""
-"GIMP ei suutnud graafilist kasutajaliidest käivitada.\n"
+"PICMAN ei suutnud graafilist kasutajaliidest käivitada.\n"
 "Kontrolli, et graafilise keskkonnaga oleks kõik korras."
 
-msgid "Another GIMP instance is already running."
-msgstr "Üks GIMP-i protsess juba käib."
+msgid "Another PICMAN instance is already running."
+msgstr "Üks PICMAN-i protsess juba käib."
 
-msgid "GIMP output. Type any character to close this window."
-msgstr "GIMP-i väljund. Akna sulgemiseks vajuta suvalist klahvi."
+msgid "PICMAN output. Type any character to close this window."
+msgstr "PICMAN-i väljund. Akna sulgemiseks vajuta suvalist klahvi."
 
 #, c-format
 msgid "(Type any character to close this window)\n"
 msgstr "(Vajuta suvalist klahvi selle akna sulgemiseks)\n"
 
-msgid "GIMP output. You can minimize this window, but don't close it."
-msgstr "GIMP-i väljund. Võid selle akna minimeerida, aga ära seda sulge."
+msgid "PICMAN output. You can minimize this window, but don't close it."
+msgstr "PICMAN-i väljund. Võid selle akna minimeerida, aga ära seda sulge."
 
 #, c-format
 msgid ""
@@ -191,21 +191,21 @@ msgstr ""
 
 #, c-format
 msgid ""
-"The name of the directory holding the GIMP user configuration cannot be "
+"The name of the directory holding the PICMAN user configuration cannot be "
 "converted to UTF-8: %s\n"
 "\n"
 "Your filesystem probably stores files in an encoding other than UTF-8 and "
 "you didn't tell GLib about this. Please set the environment variable "
 "G_FILENAME_ENCODING."
 msgstr ""
-"Kataloogi nimi, kus hoitakse GIMP-i kasutaja häälestusfaili ei ole UTF-8 "
+"Kataloogi nimi, kus hoitakse PICMAN-i kasutaja häälestusfaili ei ole UTF-8 "
 "kodeeringusse tõlgitav: %s\n"
 "\n"
 "Kõige tõenäolisemalt kasutab sinu failisüsteem kodeeringut mis erineb UTF-8-"
 "st ja sa ei öelnud seda GLib-ile. Palun määra töökeskkonna muutuja "
 "G_FILENAME_ENCODING."
 
-#. show versions of libraries used by GIMP
+#. show versions of libraries used by PICMAN
 #, c-format
 msgid "using %s version %s (compiled against version %s)"
 msgstr "kasutatakse %s versiooni %s (kompileeritud kasutama versiooni %s)"
@@ -217,7 +217,7 @@ msgstr "%s versioon %s"
 msgid "Brush Editor"
 msgstr "Pintsliredaktor"
 
-#. initialize the list of gimp brushes
+#. initialize the list of picman brushes
 msgid "Brushes"
 msgstr "Pintslid"
 
@@ -280,7 +280,7 @@ msgstr "Fondid"
 msgid "Gradient Editor"
 msgstr "Värvisulanduste redaktor"
 
-#. initialize the list of gimp gradients
+#. initialize the list of picman gradients
 msgid "Gradients"
 msgstr "Värvisulandused"
 
@@ -306,11 +306,11 @@ msgstr "Kihid"
 msgid "Palette Editor"
 msgstr "Paletiredaktor"
 
-#. initialize the list of gimp palettes
+#. initialize the list of picman palettes
 msgid "Palettes"
 msgstr "Paletid"
 
-#. initialize the list of gimp patterns
+#. initialize the list of picman patterns
 msgid "Patterns"
 msgstr "Mustrid"
 
@@ -1031,16 +1031,16 @@ msgid "_Tip of the Day"
 msgstr "_Tänane vihje"
 
 msgctxt "dialogs-action"
-msgid "Show some helpful tips on using GIMP"
-msgstr "Näidatakse vihjeid GIMP-i kasutamise kohta"
+msgid "Show some helpful tips on using PICMAN"
+msgstr "Näidatakse vihjeid PICMAN-i kasutamise kohta"
 
 msgctxt "dialogs-action"
 msgid "_About"
 msgstr "T_eave"
 
 msgctxt "dialogs-action"
-msgid "About GIMP"
-msgstr "Lähem teave GIMP-i kohta"
+msgid "About PICMAN"
+msgstr "Lähem teave PICMAN-i kohta"
 
 msgid "Toolbox"
 msgstr "Tööriistakast"
@@ -1327,7 +1327,7 @@ msgctxt "drawable-action"
 msgid "Toggle the linked state"
 msgstr "Lingitud oleku sisse-/väljalülitamine"
 
-#. GIMP_STOCK_LOCK
+#. PICMAN_STOCK_LOCK
 msgctxt "drawable-action"
 msgid "L_ock pixels"
 msgstr "_Pikslite lukustamine"
@@ -1531,7 +1531,7 @@ msgctxt "edit-action"
 msgid "Copy the selected pixels to the clipboard"
 msgstr "Valitud pikslite kopeerimine lõikelauale"
 
-#. GIMP_STOCK_COPY_VISIBLE,
+#. PICMAN_STOCK_COPY_VISIBLE,
 msgctxt "edit-action"
 msgid "Copy _Visible"
 msgstr "Kopeeri nähta_v"
@@ -1592,7 +1592,7 @@ msgctxt "edit-action"
 msgid "Copy the selected pixels to a named buffer"
 msgstr "Valitud pikslite nimelisse puhvrisse kopeerimine"
 
-#. GIMP_STOCK_COPY_VISIBLE,
+#. PICMAN_STOCK_COPY_VISIBLE,
 msgctxt "edit-action"
 msgid "Copy _Visible Named..."
 msgstr "Kopeeri nähta_v nimega..."
@@ -2476,8 +2476,8 @@ msgid "_Help"
 msgstr "_Abi"
 
 msgctxt "help-action"
-msgid "Open the GIMP user manual"
-msgstr "GIMP-i kasutusjuhendi avamine"
+msgid "Open the PICMAN user manual"
+msgstr "PICMAN-i kasutusjuhendi avamine"
 
 msgctxt "help-action"
 msgid "_Context Help"
@@ -4179,7 +4179,7 @@ msgctxt "vectors-action"
 msgid "_Linked"
 msgstr "_Lingitud"
 
-#. GIMP_STOCK_LOCK
+#. PICMAN_STOCK_LOCK
 msgctxt "vectors-action"
 msgid "L_ock strokes"
 msgstr "Pintslitõmmete _lukustamine"
@@ -4691,8 +4691,8 @@ msgid "Single-Window Mode"
 msgstr "Ühe-akna režiim"
 
 msgctxt "windows-action"
-msgid "When enabled GIMP is in a single-window mode."
-msgstr "Kui lubatud, töötab GIMP ühe-akna režiimis."
+msgid "When enabled PICMAN is in a single-window mode."
+msgstr "Kui lubatud, töötab PICMAN ühe-akna režiimis."
 
 msgid ""
 "The chosen recent dock contains a toolbox. Please close the currently open "
@@ -4750,8 +4750,8 @@ msgid "High"
 msgstr "Kõrge"
 
 msgctxt "help-browser-type"
-msgid "GIMP help browser"
-msgstr "GIMP-i abiteabe sirvija"
+msgid "PICMAN help browser"
+msgstr "PICMAN-i abiteabe sirvija"
 
 msgctxt "help-browser-type"
 msgid "Web browser"
@@ -4925,10 +4925,10 @@ msgstr ""
 "liikumine)."
 
 msgid ""
-"GIMP will warn the user if an attempt is made to create an image that would "
+"PICMAN will warn the user if an attempt is made to create an image that would "
 "take more memory than the size specified here."
 msgstr ""
-"GIMP hoiatab kasutajat, kui see püüab luua pilti, mis võtab rohkem mälu kui "
+"PICMAN hoiatab kasutajat, kui see püüab luua pilti, mis võtab rohkem mälu kui "
 "siinkohal määratud."
 
 msgid ""
@@ -4959,8 +4959,8 @@ msgid ""
 "of the image window."
 msgstr "Määrab navigatsiooni eelvaate pildiakna kagunurka."
 
-msgid "Sets how many processors GIMP should try to use simultaneously."
-msgstr "Paneb paika, mitu protsessorit võib GIMP korraga kasutada."
+msgid "Sets how many processors PICMAN should try to use simultaneously."
+msgstr "Paneb paika, mitu protsessorit võib PICMAN korraga kasutada."
 
 msgid ""
 "When enabled, the X server is queried for the mouse's current position on "
@@ -4975,11 +4975,11 @@ msgstr ""
 "puhul tulemus hoopis kiirem maalimine."
 
 msgid ""
-"Sets whether GIMP should create previews of layers and channels. Previews in "
+"Sets whether PICMAN should create previews of layers and channels. Previews in "
 "the layers and channels dialog are nice to have but they can slow things "
 "down when working with large images."
 msgstr ""
-"Kas GIMP peaks looma kihtidest ja kanalitest eelvaated. Eelvaated kihtide ja "
+"Kas PICMAN peaks looma kihtidest ja kanalitest eelvaated. Eelvaated kihtide ja "
 "kanalite dokis näevad küll kenad välja, kuid võivad suurte piltidega "
 "töötamisel tööd aeglustada."
 
@@ -5003,14 +5003,14 @@ msgid ""
 "into and out of images."
 msgstr "Kui lubatud, muudetakse suurendamisel akna suurust automaatselt."
 
-msgid "Let GIMP try to restore your last saved session on each startup."
+msgid "Let PICMAN try to restore your last saved session on each startup."
 msgstr ""
-"Lase GIMP-il proovida taastada sinu salvestatud sessioni igal käivitamisel."
+"Lase PICMAN-il proovida taastada sinu salvestatud sessioni igal käivitamisel."
 
 msgid ""
-"Remember the current tool, pattern, color, and brush across GIMP sessions."
+"Remember the current tool, pattern, color, and brush across PICMAN sessions."
 msgstr ""
-"Pea kasutatud tööriist, muster, värv ja pintsel meeles läbi GIMP-i "
+"Pea kasutatud tööriist, muster, värv ja pintsel meeles läbi PICMAN-i "
 "sessioonide."
 
 msgid ""
@@ -5020,11 +5020,11 @@ msgstr ""
 "Lisa kõik avatud ja salvestatud failid kettal asuvasse dokumentide ajaloo "
 "faili."
 
-msgid "Save the positions and sizes of the main dialogs when GIMP exits."
-msgstr "Salvesta dokkide asukohad ja suurused GIMP-ist väljumisel."
+msgid "Save the positions and sizes of the main dialogs when PICMAN exits."
+msgstr "Salvesta dokkide asukohad ja suurused PICMAN-ist väljumisel."
 
-msgid "Save the tool options when GIMP exits."
-msgstr "Salvesta tööriista seaded GIMP-ist väljumisel."
+msgid "Save the tool options when PICMAN exits."
+msgstr "Salvesta tööriista seaded PICMAN-ist väljumisel."
 
 msgid ""
 "When enabled, all brush-based paint tools will show a preview of the current "
@@ -5112,8 +5112,8 @@ msgstr ""
 msgid "Show a tooltip when the pointer hovers over an item."
 msgstr "Kui kursor jääb kirjele, näidatakse vihjet."
 
-msgid "Use GIMP in a single-window mode."
-msgstr "GIMPi kasutamine ühe-akna režiimis."
+msgid "Use PICMAN in a single-window mode."
+msgstr "PICMANi kasutamine ühe-akna režiimis."
 
 msgid "Hide docks and other windows, leaving only image windows."
 msgstr "Dokkide ja muude akende varjamine, jättes ainult pildiaknad."
@@ -5122,16 +5122,16 @@ msgid "What to do when the space bar is pressed in the image window."
 msgstr "Mida teha kui tühiku klahvi all hoitakse."
 
 msgid ""
-"Sets the swap file location. GIMP uses a tile based memory allocation "
+"Sets the swap file location. PICMAN uses a tile based memory allocation "
 "scheme. The swap file is used to quickly and easily swap tiles out to disk "
-"and back in. Be aware that the swap file can easily get very large if GIMP "
+"and back in. Be aware that the swap file can easily get very large if PICMAN "
 "is used with large images. Also, things can get horribly slow if the swap "
 "file is created on a folder that is mounted over NFS.  For these reasons, it "
 "may be desirable to put your swap file in \"/tmp\"."
 msgstr ""
-"Saalefaili asukoht. GIMP kasutab ruutude kaupa mäluhalduse skeemi. "
+"Saalefaili asukoht. PICMAN kasutab ruutude kaupa mäluhalduse skeemi. "
 "Saalefaili kasutatakse, et kiiresti ja lihtsalt ruudukesed kettale kirjutada "
-"ja uuesti mällu lugeda. Hoiatus! Kui GIMP-i kasutatakse suurte failidega, "
+"ja uuesti mällu lugeda. Hoiatus! Kui PICMAN-i kasutatakse suurte failidega, "
 "võib saalefail kasvada väga suureks. Lisaks võib töö minna kohutavalt "
 "aeglaseks, kui saalefail on kaustas, mis on haagitud üle NFS-i. Sel põhjusel "
 "võib olla kasulik saalefaili suunamine \"/tmp\" kausta."
@@ -5146,20 +5146,20 @@ msgstr ""
 "Kui lubatud, saad menüüelementide kiirklahve seada klahvikombiatsiooni "
 "vajutades, kui menüüelement on märgitud."
 
-msgid "Save changed keyboard shortcuts when GIMP exits."
-msgstr "GIMP-i sulgemisel salvestatakse muudetud kiirklahvid."
+msgid "Save changed keyboard shortcuts when PICMAN exits."
+msgstr "PICMAN-i sulgemisel salvestatakse muudetud kiirklahvid."
 
-msgid "Restore saved keyboard shortcuts on each GIMP startup."
-msgstr "Taasta salvestatud klaviatuuri kiirklahvid igal GIMP-i käivitumisel."
+msgid "Restore saved keyboard shortcuts on each PICMAN startup."
+msgstr "Taasta salvestatud klaviatuuri kiirklahvid igal PICMAN-i käivitumisel."
 
 msgid ""
 "Sets the folder for temporary storage. Files will appear here during the "
-"course of running GIMP.  Most files will disappear when GIMP exits, but some "
+"course of running PICMAN.  Most files will disappear when PICMAN exits, but some "
 "files are likely to remain, so it is best if this folder not be one that is "
 "shared by other users."
 msgstr ""
-"Määrab ajutiste failide kataloogi. Failid on seal GIMP-i töötamise ajal. "
-"Enamik faile kustuvad, kui töö GIMP-iga lõpetada, kuid mõned võivad siiski "
+"Määrab ajutiste failide kataloogi. Failid on seal PICMAN-i töötamise ajal. "
+"Enamik faile kustuvad, kui töö PICMAN-iga lõpetada, kuid mõned võivad siiski "
 "alles jääda. Sellepärast on parem, kui kasuta ei jagata teiste kasutajatega."
 
 msgid "Sets the size of the thumbnail shown in the Open dialog."
@@ -5173,12 +5173,12 @@ msgstr ""
 "siinmääratud suurusest väiksem."
 
 msgid ""
-"When the amount of pixel data exceeds this limit, GIMP will start to swap "
+"When the amount of pixel data exceeds this limit, PICMAN will start to swap "
 "tiles to disk.  This is a lot slower but it makes it possible to work on "
 "images that wouldn't fit into memory otherwise.  If you have a lot of RAM, "
 "you may want to set this to a higher value."
 msgstr ""
-"Kui pilt muutub töötlemisel suuremaks kui see limiit, alustab GIMP osaliselt "
+"Kui pilt muutub töötlemisel suuremaks kui see limiit, alustab PICMAN osaliselt "
 "andmete hoidmist kõvakettal saalefailis. See on küll kõvasti aeglasem, aga "
 "võimaldab siiski töötada piltidega, mis muud moodi mällu ära ei mahu. Kui "
 "arvutil on rohkem mälu, võib olla vajalik seda numbrit suurendada."
@@ -5199,10 +5199,10 @@ msgid "Sets the size of the checkerboard used to display transparency."
 msgstr "Määrab pildi läbipaistva osa näitamisel kasutatava malelaua suuruse."
 
 msgid ""
-"When enabled, GIMP will not save an image if it has not been changed since "
+"When enabled, PICMAN will not save an image if it has not been changed since "
 "it was opened."
 msgstr ""
-"Kui lubatud, ei salvesta GIMP pilti juhul, kui peale avamist pilti muudetud "
+"Kui lubatud, ei salvesta PICMAN pilti juhul, kui peale avamist pilti muudetud "
 "ei ole."
 
 msgid ""
@@ -6049,15 +6049,15 @@ msgid "Brush Angle"
 msgstr "Pintsli nurk"
 
 #, c-format
-msgid "Fatal parse error in brush file '%s': Not a GIMP brush file."
+msgid "Fatal parse error in brush file '%s': Not a PICMAN brush file."
 msgstr ""
-"Ületamatu parsimisviga pintslifailis '%s': see ei ole GIMP-i pintslifail."
+"Ületamatu parsimisviga pintslifailis '%s': see ei ole PICMAN-i pintslifail."
 
 #, c-format
 msgid ""
-"Fatal parse error in brush file '%s': Unknown GIMP brush version in line %d."
+"Fatal parse error in brush file '%s': Unknown PICMAN brush version in line %d."
 msgstr ""
-"Ületamatu parsimisviga pintslifailis '%s': tundmatu GIMP-i pintsliversioon "
+"Ületamatu parsimisviga pintslifailis '%s': tundmatu PICMAN-i pintsliversioon "
 "real %d."
 
 #, c-format
@@ -6066,9 +6066,9 @@ msgstr "Vigane UTF-8 tekstilõik pintslifailis '%s'."
 
 #, c-format
 msgid ""
-"Fatal parse error in brush file '%s': Unknown GIMP brush shape in line %d."
+"Fatal parse error in brush file '%s': Unknown PICMAN brush shape in line %d."
 msgstr ""
-"Ületamatu parsimisviga pintslifailis '%s': tundmatu GIMP-i pintslikuju real "
+"Ületamatu parsimisviga pintslifailis '%s': tundmatu PICMAN-i pintslikuju real "
 "%d."
 
 #, c-format
@@ -6121,10 +6121,10 @@ msgstr "Nimetu"
 #, c-format
 msgid ""
 "Fatal parse error in brush file '%s': Unsupported brush depth %d\n"
-"GIMP brushes must be GRAY or RGBA."
+"PICMAN brushes must be GRAY or RGBA."
 msgstr ""
 "Ületamatu parsimisviga pintslifailis '%s': mittetoetatud pintsli sügavus %d\n"
-"GIMP-i pintslite värvid peavad olema GRAY või RGBA."
+"PICMAN-i pintslite värvid peavad olema GRAY või RGBA."
 
 #, c-format
 msgid ""
@@ -6156,7 +6156,7 @@ msgstr "Andmefailide otsimine"
 msgid "Parasites"
 msgstr "Parasiidid"
 
-#. initialize the list of gimp dynamics
+#. initialize the list of picman dynamics
 msgid "Dynamics"
 msgstr "Pintslidünaamika"
 
@@ -6353,11 +6353,11 @@ msgstr ""
 #, c-format
 msgid ""
 "You have a writable data folder configured, but this folder is not part of "
-"your data search path. You probably edited the gimprc file manually, please "
+"your data search path. You probably edited the picmanrc file manually, please "
 "fix it in the Preferences dialog's 'Folders' section."
 msgstr ""
 "Sul on seadistatud kirjutatav andmekataloog, kuid see kataloog ei kuulu sinu "
-"otsingurajale. Sa tõenäoliselt muutsid gimprc faili käsitsi, palun paranda "
+"otsingurajale. Sa tõenäoliselt muutsid picmanrc faili käsitsi, palun paranda "
 "see seadistus eelistuste dialoogi sektsioonis 'Kaustad'."
 
 #, c-format
@@ -6473,9 +6473,9 @@ msgstr ""
 "Ületamatu parsimisviga värvisulanduse failis '%s': Lugemise viga real %d."
 
 #, c-format
-msgid "Fatal parse error in gradient file '%s': Not a GIMP gradient file."
+msgid "Fatal parse error in gradient file '%s': Not a PICMAN gradient file."
 msgstr ""
-"Ületamatu parsimisviga värvisulanduse failis '%s': See pole GIMP-i "
+"Ületamatu parsimisviga värvisulanduse failis '%s': See pole PICMAN-i "
 "värvisulanduse fail."
 
 #, c-format
@@ -7052,7 +7052,7 @@ msgstr ""
 #, c-format
 msgid ""
 "Fatal parse error in pattern file '%s: Unsupported pattern depth %d.\n"
-"GIMP Patterns must be GRAY or RGB."
+"PICMAN Patterns must be GRAY or RGB."
 msgstr ""
 "Ületamatu parsimisviga mustrifailis '%s': %d värvisügavus pole toetatud. "
 "Toetatud on RGBA ja GRAY ."
@@ -7132,9 +7132,9 @@ msgstr ""
 "limiit."
 
 #. This is a special string to specify the language identifier to
-#. * look for in the gimp-tags-default.xml file. Please translate the
+#. * look for in the picman-tags-default.xml file. Please translate the
 #. * C in it according to the name of the po file used for
-#. * gimp-tags-default.xml. E.g. lithuanian for the translation,
+#. * picman-tags-default.xml. E.g. lithuanian for the translation,
 #. * that would be "tags-locale:lt".
 #.
 msgid "tags-locale:C"
@@ -7199,18 +7199,18 @@ msgstr "protsent"
 
 #, c-format
 msgid ""
-"It seems you have used GIMP %s before.  GIMP will now migrate your user "
+"It seems you have used PICMAN %s before.  PICMAN will now migrate your user "
 "settings to '%s'."
 msgstr ""
-"Paistab, et oled varem kasutanud GIMP-i versiooni %s. Sätted migreeritakse "
+"Paistab, et oled varem kasutanud PICMAN-i versiooni %s. Sätted migreeritakse "
 "'%s' alla."
 
 #, c-format
 msgid ""
-"It appears that you are using GIMP for the first time.  GIMP will now create "
+"It appears that you are using PICMAN for the first time.  PICMAN will now create "
 "a folder named '%s' and copy some files to it."
 msgstr ""
-"Paistab, et kasutad GIMP-i esmakordselt. GIMP loob nüüd kausta '%s' ja "
+"Paistab, et kasutad PICMAN-i esmakordselt. PICMAN loob nüüd kausta '%s' ja "
 "kopeerib sinna mõned failid."
 
 #, c-format
@@ -7225,11 +7225,11 @@ msgstr "Kausta '%s' loomine..."
 msgid "Cannot create folder '%s': %s"
 msgstr "Kataloogi '%s' pole võimalik luua: %s"
 
-msgid "About GIMP"
-msgstr "Lähem teave GIMP kohta"
+msgid "About PICMAN"
+msgstr "Lähem teave PICMAN kohta"
 
-msgid "Visit the GIMP website"
-msgstr "Külasta GIMP-i kodulehekülge"
+msgid "Visit the PICMAN website"
+msgstr "Külasta PICMAN-i kodulehekülge"
 
 #. Translators: insert your names here,
 #. separated by newline
@@ -7240,8 +7240,8 @@ msgstr ""
 "Alexia Death <alexiadeath gmail com>, 2008, 2009.\n"
 "Mattias Põldaru <mahfiaz gmail com>, 2008, 2009."
 
-msgid "GIMP is brought to you by"
-msgstr "GIMP-i tõid teieni"
+msgid "PICMAN is brought to you by"
+msgstr "PICMAN-i tõid teieni"
 
 msgid "This is an unstable development release."
 msgstr "See on ebastabiilne arendusväljalase."
@@ -7366,8 +7366,8 @@ msgstr "esiplaan/taust"
 msgid "FG/BG Color"
 msgstr "Esiplaani/tausta värv"
 
-msgid "GIMP Message"
-msgstr "GIMP-i teade"
+msgid "PICMAN Message"
+msgstr "PICMAN-i teade"
 
 #, c-format
 msgid "Fade %s"
@@ -7408,17 +7408,17 @@ msgstr ""
 
 msgid ""
 "You can use this dialog to export to various file formats. If you want to "
-"save the image to the GIMP XCF format, use File→Save instead."
+"save the image to the PICMAN XCF format, use File→Save instead."
 msgstr ""
 "Selle dialoogi abil saab eksportida paljudesse failivormingutesse. Kui sa "
-"tahad pildi salvestada GIMP XCF vormingusse, kasuta selle asemel Fail → "
+"tahad pildi salvestada PICMAN XCF vormingusse, kasuta selle asemel Fail → "
 "Salvesta."
 
 msgid ""
-"You can use this dialog to save to the GIMP XCF format. Use File→Export to "
+"You can use this dialog to save to the PICMAN XCF format. Use File→Export to "
 "export to other file formats."
 msgstr ""
-"Selle dialoogi abil saab salvestada GIMPi XCF vormingusse. Kui sa tahad "
+"Selle dialoogi abil saab salvestada PICMANi XCF vormingusse. Kui sa tahad "
 "pildi salvestada teistesse vormingutesse, kasuta selle asemel Fail → "
 "Ekspordi."
 
@@ -7557,7 +7557,7 @@ msgstr ""
 "Kiirklahvi tühistamiseks vajuta BackSpace klahvi."
 
 msgid "S_ave keyboard shortcuts on exit"
-msgstr "GIMP-i sulgemisel salvestatakse kiirklahvid"
+msgstr "PICMAN-i sulgemisel salvestatakse kiirklahvid"
 
 msgid "Add a Mask to the Layer"
 msgstr "Lisa kihile mask"
@@ -7626,8 +7626,8 @@ msgstr "Tapja-GEGLid avakosmosest"
 msgid "Module Manager"
 msgstr "Moodulihaldur"
 
-msgid "You will have to restart GIMP for the changes to take effect."
-msgstr "Pane GIMP uuesti käima, et muudatused jõustuksid."
+msgid "You will have to restart PICMAN for the changes to take effect."
+msgstr "Pane PICMAN uuesti käima, et muudatused jõustuksid."
 
 msgid "Module"
 msgstr "Moodul"
@@ -7755,13 +7755,13 @@ msgstr ""
 "Kas tahad tõesti kõik häälestused lähtestada ehk taastada häälestuste "
 "algolekud?"
 
-msgid "You will have to restart GIMP for the following changes to take effect:"
-msgstr "Pane GIMP uuesti käima, siis jõustuvad järgmised muudatused:"
+msgid "You will have to restart PICMAN for the following changes to take effect:"
+msgstr "Pane PICMAN uuesti käima, siis jõustuvad järgmised muudatused:"
 
 msgid ""
 "Your keyboard shortcuts will be reset to default values the next time you "
-"start GIMP."
-msgstr "Klaviatuuri kiirklahvid lähtestatakse GIMP-i järgmisel käivitamisel."
+"start PICMAN."
+msgstr "Klaviatuuri kiirklahvid lähtestatakse PICMAN-i järgmisel käivitamisel."
 
 msgid "Remove all Keyboard Shortcuts"
 msgstr "Eemalda kõik klaviatuuri kiirklahvid"
@@ -7771,17 +7771,17 @@ msgstr "Kas sa tahad tõesti eemaldada kõikidest menüüdest kõik kiirklahvid?
 
 msgid ""
 "Your window setup will be reset to default values the next time you start "
-"GIMP."
-msgstr "Järgmisel GIMP-i käivitamisel on akende sätete algseis taastatud."
+"PICMAN."
+msgstr "Järgmisel PICMAN-i käivitamisel on akende sätete algseis taastatud."
 
 msgid ""
 "Your input device settings will be reset to default values the next time you "
-"start GIMP."
+"start PICMAN."
 msgstr "Sisendseadmete sätted lähtestatakse järgmisel käivitamisel."
 
 msgid ""
 "Your tool options will be reset to default values the next time you start "
-"GIMP."
+"PICMAN."
 msgstr "Sinu tööriistasätted lähtestatakse järgmisel käivitamisel."
 
 msgid "Show _menubar"
@@ -7887,7 +7887,7 @@ msgid "Configure _Keyboard Shortcuts..."
 msgstr "Seadista _klaviatuuri kiirklahve..."
 
 msgid "_Save keyboard shortcuts on exit"
-msgstr "_GIMP-i sulgemisel salvestatakse klaviatuuri kiirklahvid"
+msgstr "_PICMAN-i sulgemisel salvestatakse klaviatuuri kiirklahvid"
 
 msgid "Save Keyboard Shortcuts _Now"
 msgstr "Salvesta klaviatuuri kiirklahvid _kohe praegu"
@@ -8363,14 +8363,14 @@ msgstr "_Y-eraldusvõime:"
 msgid "pixels/%a"
 msgstr "pikslit/%a"
 
-msgid "Quit GIMP"
-msgstr "GIMP-ist väljumine"
+msgid "Quit PICMAN"
+msgstr "PICMAN-ist väljumine"
 
 msgid "Close All Images"
 msgstr "Sulge kõik pildid"
 
-msgid "If you quit GIMP now, these changes will be lost."
-msgstr "Kui praegu GIMP-ist väljud, lähevad muudatused kaduma."
+msgid "If you quit PICMAN now, these changes will be lost."
+msgstr "Kui praegu PICMAN-ist väljud, lähevad muudatused kaduma."
 
 msgid "If you close these images now, changes will be lost."
 msgstr "Kui need pildid kohe sulged, lähevad muudatused kaduma."
@@ -8434,21 +8434,21 @@ msgstr "Joonistamise tööriist:"
 msgid "_Emulate brush dynamics"
 msgstr "_Pintsli dünaamika emuleerimine"
 
-msgid "The GIMP tips file is empty!"
-msgstr "GIMP-i vihjetefail on tühi!"
+msgid "The PICMAN tips file is empty!"
+msgstr "PICMAN-i vihjetefail on tühi!"
 
-msgid "The GIMP tips file appears to be missing!"
-msgstr "Tundub et sinu GIMP-i vihjefail on kadunud!"
+msgid "The PICMAN tips file appears to be missing!"
+msgstr "Tundub et sinu PICMAN-i vihjefail on kadunud!"
 
 #, c-format
 msgid "There should be a file called '%s'. Please check your installation."
 msgstr "Siin peaks olema fail nimega '%s'. Palun kontrolli paigaldust."
 
-msgid "The GIMP tips file could not be parsed!"
-msgstr "GIMP-i vihjefaili pole võimalik parsida!"
+msgid "The PICMAN tips file could not be parsed!"
+msgstr "PICMAN-i vihjefaili pole võimalik parsida!"
 
-msgid "GIMP Tip of the Day"
-msgstr "GIMP tänane vihje"
+msgid "PICMAN Tip of the Day"
+msgstr "PICMAN tänane vihje"
 
 msgid "_Previous Tip"
 msgstr "_Eelmine vihje"
@@ -8461,22 +8461,22 @@ msgid "Learn more"
 msgstr "Veel infot"
 
 #. This is a special string to specify the language identifier to
-#. look for in the gimp-tips.xml file. Please translate the C in it
-#. according to the name of the po file used for gimp-tips.xml.
+#. look for in the picman-tips.xml file. Please translate the C in it
+#. according to the name of the po file used for picman-tips.xml.
 #. E.g. for the german translation, that would be "tips-locale:de".
 #.
 msgid "tips-locale:C"
 msgstr "tips-locale:et"
 
-msgid "GIMP User Installation"
-msgstr "GIMP-i kasutajapaigaldus"
+msgid "PICMAN User Installation"
+msgstr "PICMAN-i kasutajapaigaldus"
 
 msgid "User installation failed!"
 msgstr "Kasutajapaigaldus nurjus!"
 
-msgid "The GIMP user installation failed; see the log for details."
+msgid "The PICMAN user installation failed; see the log for details."
 msgstr ""
-"GIMP-i kasutajapaigaldus ei õnnestunud; täpsema info leiad logifailist."
+"PICMAN-i kasutajapaigaldus ei õnnestunud; täpsema info leiad logifailist."
 
 msgid "Installation Log"
 msgstr "Paigaldamise logi"
@@ -8773,23 +8773,23 @@ msgctxt "cage-mode"
 msgid "Deform the cage to deform the image"
 msgstr "Pildi deformeerimiseks muuda puuri kuju"
 
-msgid "not a GIMP Curves file"
-msgstr "ei ole GIMP-i kurvide fail"
+msgid "not a PICMAN Curves file"
+msgstr "ei ole PICMAN-i kurvide fail"
 
 msgid "parse error"
 msgstr "parsimisviga"
 
-msgid "not a GIMP Levels file"
-msgstr "ei ole GIMP-i tasemete fail"
+msgid "not a PICMAN Levels file"
+msgstr "ei ole PICMAN-i tasemete fail"
 
-msgid "Compute a set of coefficient buffer for the GIMP cage tool"
-msgstr "Tegurite puhvri väljaarvutamine GIMPi puurimuunduse tööriista jaoks"
+msgid "Compute a set of coefficient buffer for the PICMAN cage tool"
+msgstr "Tegurite puhvri väljaarvutamine PICMANi puurimuunduse tööriista jaoks"
 
 msgid ""
-"Convert a set of coefficient buffer to a coordinate buffer for the GIMP cage "
+"Convert a set of coefficient buffer to a coordinate buffer for the PICMAN cage "
 "tool"
 msgstr ""
-"Tegurite puhvri väljaarvutamine GIMPi puurimuunduse tööriista koordinaatide "
+"Tegurite puhvri väljaarvutamine PICMANi puurimuunduse tööriista koordinaatide "
 "puhvri jaoks"
 
 msgid "Fill with plain color"
@@ -8802,8 +8802,8 @@ msgstr "Puuri esialgse asukoha täitmine ühtlase värviga"
 msgid "Documents"
 msgstr "Dokumendid"
 
-msgid "GIMP Startup"
-msgstr "GIMP-i käivitamine"
+msgid "PICMAN Startup"
+msgstr "PICMAN-i käivitamine"
 
 msgid "Airbrush"
 msgstr "Pihusti"
@@ -9341,14 +9341,14 @@ msgid ""
 "Plug-in crashed: \"%s\"\n"
 "(%s)\n"
 "\n"
-"The dying plug-in may have messed up GIMP's internal state. You may want to "
-"save your images and restart GIMP to be on the safe side."
+"The dying plug-in may have messed up PICMAN's internal state. You may want to "
+"save your images and restart PICMAN to be on the safe side."
 msgstr ""
 "Plugin jooksis kokku: \"%s\"\n"
 "(%s)\n"
 "\n"
-"On võimalik, et kokkujooksnud plugin mõjutab ka GIMP-i ennast. Igaks juhuks "
-"võiksid oma pildid salvestada ja GIMP-i taaskäivitada."
+"On võimalik, et kokkujooksnud plugin mõjutab ka PICMAN-i ennast. Igaks juhuks "
+"võiksid oma pildid salvestada ja PICMAN-i taaskäivitada."
 
 msgid "Plug-In Interpreters"
 msgstr "Pluginate interpretaatorid"
@@ -9419,12 +9419,12 @@ msgid "Plug-In missing (%s)"
 msgstr "Plugin puudub (%s)"
 
 #, c-format
-msgid "Skipping '%s': wrong GIMP protocol version."
-msgstr "'%s' jäetakse vahele: vale GIMP-i protokolli versioon."
+msgid "Skipping '%s': wrong PICMAN protocol version."
+msgstr "'%s' jäetakse vahele: vale PICMAN-i protokolli versioon."
 
 #, c-format
 msgid "Skipping '%s': wrong pluginrc file format version."
-msgstr "'%s' jäetakse vahele: vale GIMP-i vormingu versioon."
+msgstr "'%s' jäetakse vahele: vale PICMAN-i vormingu versioon."
 
 #, c-format
 msgid "invalid value '%s' for icon type"
@@ -11091,8 +11091,8 @@ msgstr ""
 "\n"
 "Sa võid kas kihti muuta või luua selle tekstiomadustest uue kihi."
 
-msgid "GIMP Text Editor"
-msgstr "GIMP-i tekstiredaktor"
+msgid "PICMAN Text Editor"
+msgstr "PICMAN-i tekstiredaktor"
 
 msgid "Threshold Tool: Reduce image to two colors using a threshold"
 msgstr "Läve tööriist: pildi kahevärviliseks muutmine kasutades läve"
@@ -11968,7 +11968,7 @@ msgid "Messages are redirected to stderr."
 msgstr "Veateated on ümber suunatud stderr faili."
 
 #. %s is a message domain,
-#. * like "GIMP Message" or
+#. * like "PICMAN Message" or
 #. * "PNG Message"
 #.
 #, c-format
@@ -12092,33 +12092,33 @@ msgstr "Kõrgus"
 msgid "Help browser is missing"
 msgstr "Abiinfo sirvija puudub"
 
-msgid "The GIMP help browser is not available."
-msgstr "GIMP-i abiinfo sirvija pole saadaval."
+msgid "The PICMAN help browser is not available."
+msgstr "PICMAN-i abiinfo sirvija pole saadaval."
 
 msgid ""
-"The GIMP help browser plug-in appears to be missing from your installation. "
+"The PICMAN help browser plug-in appears to be missing from your installation. "
 "You may instead use the web browser for reading the help pages."
 msgstr ""
-"Paistab, et GIMP-i paigalduskomplektist puudub abiinfo sirvimise plugin. "
+"Paistab, et PICMAN-i paigalduskomplektist puudub abiinfo sirvimise plugin. "
 "Selle asemel võid abiinfo lugemiseks kasutada veebisirvijat."
 
 msgid "Help browser doesn't start"
 msgstr "Abiinfo sirvija ei käivitu"
 
-msgid "Could not start the GIMP help browser plug-in."
-msgstr "GIMP-i abiinfo sirvija pluginat pole võimalik käivitada."
+msgid "Could not start the PICMAN help browser plug-in."
+msgstr "PICMAN-i abiinfo sirvija pluginat pole võimalik käivitada."
 
 msgid "Use _Web Browser"
 msgstr "_Veebibrauseri kasutamine"
 
-msgid "GIMP user manual is missing"
-msgstr "GIMP-i kasutamisjuhendi puudumine"
+msgid "PICMAN user manual is missing"
+msgstr "PICMAN-i kasutamisjuhendi puudumine"
 
 msgid "_Read Online"
 msgstr "_Loe veebist"
 
-msgid "The GIMP user manual is not installed on your computer."
-msgstr "GIMP-i kasutusjuhend pole sinu arvutisse paigaldatud."
+msgid "The PICMAN user manual is not installed on your computer."
+msgstr "PICMAN-i kasutusjuhend pole sinu arvutisse paigaldatud."
 
 msgid ""
 "You may either install the additional help package or change your "
@@ -12548,8 +12548,8 @@ msgstr "Süsteemi keel"
 msgid "English"
 msgstr "Inglise"
 
-msgid "Your GIMP installation is incomplete:"
-msgstr "Sinu GIMP-i paigaldus on poolik:"
+msgid "Your PICMAN installation is incomplete:"
+msgstr "Sinu PICMAN-i paigaldus on poolik:"
 
 msgid "Please make sure the menu XML files are correctly installed."
 msgstr "Palun kontrolli, et menüü XML-failid oleksid korralikult paigaldatud."
@@ -12685,8 +12685,8 @@ msgctxt "tab-style"
 msgid "Undefined"
 msgstr "Määramata"
 
-msgid "GIMP XCF image"
-msgstr "GIMP XCF pilt"
+msgid "PICMAN XCF image"
+msgstr "PICMAN XCF pilt"
 
 #, c-format
 msgid "Opening '%s'"
@@ -12817,14 +12817,14 @@ msgstr "hägune"
 #~ msgstr "Suurenda"
 
 #~ msgid ""
-#~ "Unable to open swap file. GIMP has run out of memory and cannot use the "
+#~ "Unable to open swap file. PICMAN has run out of memory and cannot use the "
 #~ "swap file. Some parts of your images may be corrupted. Try to save your "
-#~ "work using different filenames, restart GIMP and check the location of "
+#~ "work using different filenames, restart PICMAN and check the location of "
 #~ "the swap directory in your Preferences."
 #~ msgstr ""
-#~ "Saalefaili ei saanud avada. GIMP-il sai mälu otsa ja ei saanud ka "
+#~ "Saalefaili ei saanud avada. PICMAN-il sai mälu otsa ja ei saanud ka "
 #~ "saalefaili kasutama hakata. Mõned osad sinu piltidest võivad olla viga "
-#~ "saanud. Püüa oma töö salvestada teistsuguse failinimega, pane GIMP uuesti "
+#~ "saanud. Püüa oma töö salvestada teistsuguse failinimega, pane PICMAN uuesti "
 #~ "käima ja kontolli häälestustes saalefaili asukohta."
 
 #~ msgid "Failed to resize swap file: %s"
@@ -12957,20 +12957,20 @@ msgstr "hägune"
 #~ msgid "Error saving tool options presets: %s"
 #~ msgstr "Viga tööriista valmisseadistuste salvestamisel: %s"
 
-#~ msgid "Use a running GIMP only, never start a new one"
-#~ msgstr "Kasuta ainult töötavat GIMP-i, ära kunagi käivita uut"
+#~ msgid "Use a running PICMAN only, never start a new one"
+#~ msgstr "Kasuta ainult töötavat PICMAN-i, ära kunagi käivita uut"
 
-#~ msgid "Only check if GIMP is running, then quit"
-#~ msgstr "Kontrolli ainult, kas GIMP töötab ja siis välju"
+#~ msgid "Only check if PICMAN is running, then quit"
+#~ msgstr "Kontrolli ainult, kas PICMAN töötab ja siis välju"
 
-#~ msgid "Print X window ID of GIMP toolbox window, then quit"
+#~ msgid "Print X window ID of PICMAN toolbox window, then quit"
 #~ msgstr "Prindi tööriistakasti X-i akna ID ja välju"
 
-#~ msgid "Start GIMP without showing the startup window"
-#~ msgstr "Käivita GIMP käivitusakent näitamata"
+#~ msgid "Start PICMAN without showing the startup window"
+#~ msgstr "Käivita PICMAN käivitusakent näitamata"
 
-#~ msgid "Could not connect to GIMP."
-#~ msgstr "Ei saanud GIMP-iga ühendust."
+#~ msgid "Could not connect to PICMAN."
+#~ msgstr "Ei saanud PICMAN-iga ühendust."
 
 #~ msgid "Make sure that the Toolbox is visible!"
 #~ msgstr "Kontrolli üle, kas Tööriistakast on ikka nähtav!"

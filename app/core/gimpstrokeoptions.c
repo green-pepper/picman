@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimpstrokeoptions.c
+ * picmanstrokeoptions.c
  * Copyright (C) 2003 Simon Budig
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,25 +23,25 @@
 
 #include <gegl.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/picmancoreconfig.h"
 
-#include "gimp.h"
-#include "gimpbrush.h"
-#include "gimpcontext.h"
-#include "gimpdashpattern.h"
-#include "gimpmarshal.h"
-#include "gimppaintinfo.h"
-#include "gimpparamspecs.h"
-#include "gimpstrokeoptions.h"
+#include "picman.h"
+#include "picmanbrush.h"
+#include "picmancontext.h"
+#include "picmandashpattern.h"
+#include "picmanmarshal.h"
+#include "picmanpaintinfo.h"
+#include "picmanparamspecs.h"
+#include "picmanstrokeoptions.h"
 
-#include "paint/gimppaintoptions.h"
+#include "paint/picmanpaintoptions.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 enum
@@ -72,18 +72,18 @@ enum
 };
 
 
-typedef struct _GimpStrokeOptionsPrivate GimpStrokeOptionsPrivate;
+typedef struct _PicmanStrokeOptionsPrivate PicmanStrokeOptionsPrivate;
 
-struct _GimpStrokeOptionsPrivate
+struct _PicmanStrokeOptionsPrivate
 {
-  GimpStrokeMethod  method;
+  PicmanStrokeMethod  method;
 
   /*  options for medhod == LIBART  */
   gdouble           width;
-  GimpUnit          unit;
+  PicmanUnit          unit;
 
-  GimpCapStyle      cap_style;
-  GimpJoinStyle     join_style;
+  PicmanCapStyle      cap_style;
+  PicmanJoinStyle     join_style;
 
   gdouble           miter_limit;
 
@@ -91,53 +91,53 @@ struct _GimpStrokeOptionsPrivate
   GArray           *dash_info;
 
   /*  options for method == PAINT_TOOL  */
-  GimpPaintOptions *paint_options;
+  PicmanPaintOptions *paint_options;
   gboolean          emulate_dynamics;
 };
 
 #define GET_PRIVATE(options) \
         G_TYPE_INSTANCE_GET_PRIVATE (options, \
-                                     GIMP_TYPE_STROKE_OPTIONS, \
-                                     GimpStrokeOptionsPrivate)
+                                     PICMAN_TYPE_STROKE_OPTIONS, \
+                                     PicmanStrokeOptionsPrivate)
 
 
-static void   gimp_stroke_options_config_iface_init (gpointer      iface,
+static void   picman_stroke_options_config_iface_init (gpointer      iface,
                                                      gpointer      iface_data);
 
-static void   gimp_stroke_options_finalize          (GObject      *object);
-static void   gimp_stroke_options_set_property      (GObject      *object,
+static void   picman_stroke_options_finalize          (GObject      *object);
+static void   picman_stroke_options_set_property      (GObject      *object,
                                                      guint         property_id,
                                                      const GValue *value,
                                                      GParamSpec   *pspec);
-static void   gimp_stroke_options_get_property      (GObject      *object,
+static void   picman_stroke_options_get_property      (GObject      *object,
                                                      guint         property_id,
                                                      GValue       *value,
                                                      GParamSpec   *pspec);
 
-static GimpConfig * gimp_stroke_options_duplicate   (GimpConfig   *config);
+static PicmanConfig * picman_stroke_options_duplicate   (PicmanConfig   *config);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpStrokeOptions, gimp_stroke_options,
-                         GIMP_TYPE_FILL_OPTIONS,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG,
-                                                gimp_stroke_options_config_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanStrokeOptions, picman_stroke_options,
+                         PICMAN_TYPE_FILL_OPTIONS,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_CONFIG,
+                                                picman_stroke_options_config_iface_init))
 
-#define parent_class gimp_stroke_options_parent_class
+#define parent_class picman_stroke_options_parent_class
 
-static GimpConfigInterface *parent_config_iface = NULL;
+static PicmanConfigInterface *parent_config_iface = NULL;
 
 static guint stroke_options_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
-gimp_stroke_options_class_init (GimpStrokeOptionsClass *klass)
+picman_stroke_options_class_init (PicmanStrokeOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GParamSpec   *array_spec;
 
-  object_class->finalize     = gimp_stroke_options_finalize;
-  object_class->set_property = gimp_stroke_options_set_property;
-  object_class->get_property = gimp_stroke_options_get_property;
+  object_class->finalize     = picman_stroke_options_finalize;
+  object_class->set_property = picman_stroke_options_set_property;
+  object_class->get_property = picman_stroke_options_get_property;
 
   klass->dash_info_changed = NULL;
 
@@ -145,101 +145,101 @@ gimp_stroke_options_class_init (GimpStrokeOptionsClass *klass)
     g_signal_new ("dash-info-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpStrokeOptionsClass, dash_info_changed),
+                  G_STRUCT_OFFSET (PicmanStrokeOptionsClass, dash_info_changed),
                   NULL, NULL,
-                  gimp_marshal_VOID__ENUM,
+                  picman_marshal_VOID__ENUM,
                   G_TYPE_NONE, 1,
-                  GIMP_TYPE_DASH_PRESET);
+                  PICMAN_TYPE_DASH_PRESET);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_METHOD,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_METHOD,
                                  "method", NULL,
-                                 GIMP_TYPE_STROKE_METHOD,
-                                 GIMP_STROKE_METHOD_LIBART,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_STROKE_METHOD,
+                                 PICMAN_STROKE_METHOD_LIBART,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_WIDTH,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_WIDTH,
                                    "width", NULL,
                                    0.0, 2000.0, 6.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_UNIT,
+  PICMAN_CONFIG_INSTALL_PROP_UNIT (object_class, PROP_UNIT,
                                  "unit", NULL,
-                                 TRUE, FALSE, GIMP_UNIT_PIXEL,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 TRUE, FALSE, PICMAN_UNIT_PIXEL,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CAP_STYLE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_CAP_STYLE,
                                  "cap-style", NULL,
-                                 GIMP_TYPE_CAP_STYLE, GIMP_CAP_BUTT,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_CAP_STYLE, PICMAN_CAP_BUTT,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_JOIN_STYLE,
+  PICMAN_CONFIG_INSTALL_PROP_ENUM (object_class, PROP_JOIN_STYLE,
                                  "join-style", NULL,
-                                 GIMP_TYPE_JOIN_STYLE, GIMP_JOIN_MITER,
-                                 GIMP_PARAM_STATIC_STRINGS);
+                                 PICMAN_TYPE_JOIN_STYLE, PICMAN_JOIN_MITER,
+                                 PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_MITER_LIMIT,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_MITER_LIMIT,
                                    "miter-limit",
                                    _("Convert a mitered join to a bevelled "
                                      "join if the miter would extend to a "
                                      "distance of more than miter-limit * "
                                      "line-width from the actual join point."),
                                    0.0, 100.0, 10.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_DASH_OFFSET,
+  PICMAN_CONFIG_INSTALL_PROP_DOUBLE (object_class, PROP_DASH_OFFSET,
                                    "dash-offset", NULL,
                                    0.0, 2000.0, 0.0,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
   array_spec = g_param_spec_double ("dash-length", NULL, NULL,
-                                    0.0, 2000.0, 1.0, GIMP_PARAM_READWRITE);
+                                    0.0, 2000.0, 1.0, PICMAN_PARAM_READWRITE);
   g_object_class_install_property (object_class, PROP_DASH_INFO,
-                                   gimp_param_spec_value_array ("dash-info",
+                                   picman_param_spec_value_array ("dash-info",
                                                                 NULL, NULL,
                                                                 array_spec,
-                                                                GIMP_PARAM_STATIC_STRINGS |
-                                                                GIMP_CONFIG_PARAM_FLAGS));
+                                                                PICMAN_PARAM_STATIC_STRINGS |
+                                                                PICMAN_CONFIG_PARAM_FLAGS));
 
-  GIMP_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_PAINT_OPTIONS,
+  PICMAN_CONFIG_INSTALL_PROP_OBJECT (object_class, PROP_PAINT_OPTIONS,
                                    "paint-options", NULL,
-                                   GIMP_TYPE_PAINT_OPTIONS,
-                                   GIMP_PARAM_STATIC_STRINGS);
+                                   PICMAN_TYPE_PAINT_OPTIONS,
+                                   PICMAN_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_EMULATE_DYNAMICS,
+  PICMAN_CONFIG_INSTALL_PROP_BOOLEAN (object_class, PROP_EMULATE_DYNAMICS,
                                     "emulate-brush-dynamics", NULL,
                                     FALSE,
-                                    GIMP_PARAM_STATIC_STRINGS);
+                                    PICMAN_PARAM_STATIC_STRINGS);
 
-  g_type_class_add_private (klass, sizeof (GimpStrokeOptionsPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanStrokeOptionsPrivate));
 }
 
 static void
-gimp_stroke_options_config_iface_init (gpointer  iface,
+picman_stroke_options_config_iface_init (gpointer  iface,
                                        gpointer  iface_data)
 {
-  GimpConfigInterface *config_iface = (GimpConfigInterface *) iface;
+  PicmanConfigInterface *config_iface = (PicmanConfigInterface *) iface;
 
   parent_config_iface = g_type_interface_peek_parent (config_iface);
 
   if (! parent_config_iface)
-    parent_config_iface = g_type_default_interface_peek (GIMP_TYPE_CONFIG);
+    parent_config_iface = g_type_default_interface_peek (PICMAN_TYPE_CONFIG);
 
-  config_iface->duplicate = gimp_stroke_options_duplicate;
+  config_iface->duplicate = picman_stroke_options_duplicate;
 }
 
 static void
-gimp_stroke_options_init (GimpStrokeOptions *options)
+picman_stroke_options_init (PicmanStrokeOptions *options)
 {
 }
 
 static void
-gimp_stroke_options_finalize (GObject *object)
+picman_stroke_options_finalize (GObject *object)
 {
-  GimpStrokeOptionsPrivate *private = GET_PRIVATE (object);
+  PicmanStrokeOptionsPrivate *private = GET_PRIVATE (object);
 
   if (private->dash_info)
     {
-      gimp_dash_pattern_free (private->dash_info);
+      picman_dash_pattern_free (private->dash_info);
       private->dash_info = NULL;
     }
 
@@ -253,13 +253,13 @@ gimp_stroke_options_finalize (GObject *object)
 }
 
 static void
-gimp_stroke_options_set_property (GObject      *object,
+picman_stroke_options_set_property (GObject      *object,
                                   guint         property_id,
                                   const GValue *value,
                                   GParamSpec   *pspec)
 {
-  GimpStrokeOptions        *options = GIMP_STROKE_OPTIONS (object);
-  GimpStrokeOptionsPrivate *private = GET_PRIVATE (object);
+  PicmanStrokeOptions        *options = PICMAN_STROKE_OPTIONS (object);
+  PicmanStrokeOptionsPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -287,11 +287,11 @@ gimp_stroke_options_set_property (GObject      *object,
       break;
     case PROP_DASH_INFO:
       {
-        GimpValueArray *value_array = g_value_get_boxed (value);
+        PicmanValueArray *value_array = g_value_get_boxed (value);
         GArray         *pattern;
 
-        pattern = gimp_dash_pattern_from_value_array (value_array);
-        gimp_stroke_options_take_dash_pattern (options, GIMP_DASH_CUSTOM,
+        pattern = picman_dash_pattern_from_value_array (value_array);
+        picman_stroke_options_take_dash_pattern (options, PICMAN_DASH_CUSTOM,
                                                pattern);
       }
       break;
@@ -312,12 +312,12 @@ gimp_stroke_options_set_property (GObject      *object,
 }
 
 static void
-gimp_stroke_options_get_property (GObject    *object,
+picman_stroke_options_get_property (GObject    *object,
                                   guint       property_id,
                                   GValue     *value,
                                   GParamSpec *pspec)
 {
-  GimpStrokeOptionsPrivate *private = GET_PRIVATE (object);
+  PicmanStrokeOptionsPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -345,9 +345,9 @@ gimp_stroke_options_get_property (GObject    *object,
       break;
     case PROP_DASH_INFO:
       {
-        GimpValueArray *value_array;
+        PicmanValueArray *value_array;
 
-        value_array = gimp_dash_pattern_to_value_array (private->dash_info);
+        value_array = picman_dash_pattern_to_value_array (private->dash_info);
         g_value_take_boxed (value, value_array);
       }
       break;
@@ -365,175 +365,175 @@ gimp_stroke_options_get_property (GObject    *object,
     }
 }
 
-static GimpConfig *
-gimp_stroke_options_duplicate (GimpConfig *config)
+static PicmanConfig *
+picman_stroke_options_duplicate (PicmanConfig *config)
 {
-  GimpStrokeOptions        *options = GIMP_STROKE_OPTIONS (config);
-  GimpStrokeOptionsPrivate *private = GET_PRIVATE (options);
-  GimpStrokeOptions        *new_options;
+  PicmanStrokeOptions        *options = PICMAN_STROKE_OPTIONS (config);
+  PicmanStrokeOptionsPrivate *private = GET_PRIVATE (options);
+  PicmanStrokeOptions        *new_options;
 
-  new_options = GIMP_STROKE_OPTIONS (parent_config_iface->duplicate (config));
+  new_options = PICMAN_STROKE_OPTIONS (parent_config_iface->duplicate (config));
 
   if (private->paint_options)
     {
       GObject *paint_options;
 
-      paint_options = gimp_config_duplicate (GIMP_CONFIG (private->paint_options));
+      paint_options = picman_config_duplicate (PICMAN_CONFIG (private->paint_options));
       g_object_set (new_options, "paint-options", paint_options, NULL);
       g_object_unref (paint_options);
     }
 
-  return GIMP_CONFIG (new_options);
+  return PICMAN_CONFIG (new_options);
 }
 
 
 /*  public functions  */
 
-GimpStrokeOptions *
-gimp_stroke_options_new (Gimp        *gimp,
-                         GimpContext *context,
+PicmanStrokeOptions *
+picman_stroke_options_new (Picman        *picman,
+                         PicmanContext *context,
                          gboolean     use_context_color)
 {
-  GimpPaintInfo     *paint_info = NULL;
-  GimpStrokeOptions *options;
+  PicmanPaintInfo     *paint_info = NULL;
+  PicmanStrokeOptions *options;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (context == NULL || GIMP_IS_CONTEXT (context), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
+  g_return_val_if_fail (context == NULL || PICMAN_IS_CONTEXT (context), NULL);
   g_return_val_if_fail (use_context_color == FALSE || context != NULL, NULL);
 
   if (context)
-    paint_info = gimp_context_get_paint_info (context);
+    paint_info = picman_context_get_paint_info (context);
 
   if (! paint_info)
-    paint_info = gimp_paint_info_get_standard (gimp);
+    paint_info = picman_paint_info_get_standard (picman);
 
-  options = g_object_new (GIMP_TYPE_STROKE_OPTIONS,
-                          "gimp",       gimp,
+  options = g_object_new (PICMAN_TYPE_STROKE_OPTIONS,
+                          "picman",       picman,
                           "paint-info", paint_info,
                           NULL);
 
   if (use_context_color)
     {
-      gimp_context_define_properties (GIMP_CONTEXT (options),
-                                      GIMP_CONTEXT_FOREGROUND_MASK |
-                                      GIMP_CONTEXT_PATTERN_MASK,
+      picman_context_define_properties (PICMAN_CONTEXT (options),
+                                      PICMAN_CONTEXT_FOREGROUND_MASK |
+                                      PICMAN_CONTEXT_PATTERN_MASK,
                                       FALSE);
 
-      gimp_context_set_parent (GIMP_CONTEXT (options), context);
+      picman_context_set_parent (PICMAN_CONTEXT (options), context);
     }
 
   return options;
 }
 
-GimpStrokeMethod
-gimp_stroke_options_get_method (GimpStrokeOptions *options)
+PicmanStrokeMethod
+picman_stroke_options_get_method (PicmanStrokeOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_STROKE_OPTIONS (options),
-                        GIMP_STROKE_METHOD_LIBART);
+  g_return_val_if_fail (PICMAN_IS_STROKE_OPTIONS (options),
+                        PICMAN_STROKE_METHOD_LIBART);
 
   return GET_PRIVATE (options)->method;
 }
 
 gdouble
-gimp_stroke_options_get_width (GimpStrokeOptions *options)
+picman_stroke_options_get_width (PicmanStrokeOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_STROKE_OPTIONS (options), 1.0);
+  g_return_val_if_fail (PICMAN_IS_STROKE_OPTIONS (options), 1.0);
 
   return GET_PRIVATE (options)->width;
 }
 
-GimpUnit
-gimp_stroke_options_get_unit (GimpStrokeOptions *options)
+PicmanUnit
+picman_stroke_options_get_unit (PicmanStrokeOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_STROKE_OPTIONS (options), GIMP_UNIT_PIXEL);
+  g_return_val_if_fail (PICMAN_IS_STROKE_OPTIONS (options), PICMAN_UNIT_PIXEL);
 
   return GET_PRIVATE (options)->unit;
 }
 
-GimpCapStyle
-gimp_stroke_options_get_cap_style (GimpStrokeOptions *options)
+PicmanCapStyle
+picman_stroke_options_get_cap_style (PicmanStrokeOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_STROKE_OPTIONS (options), GIMP_CAP_BUTT);
+  g_return_val_if_fail (PICMAN_IS_STROKE_OPTIONS (options), PICMAN_CAP_BUTT);
 
   return GET_PRIVATE (options)->cap_style;
 }
 
-GimpJoinStyle
-gimp_stroke_options_get_join_style (GimpStrokeOptions *options)
+PicmanJoinStyle
+picman_stroke_options_get_join_style (PicmanStrokeOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_STROKE_OPTIONS (options), GIMP_JOIN_MITER);
+  g_return_val_if_fail (PICMAN_IS_STROKE_OPTIONS (options), PICMAN_JOIN_MITER);
 
   return GET_PRIVATE (options)->join_style;
 }
 
 gdouble
-gimp_stroke_options_get_miter_limit (GimpStrokeOptions *options)
+picman_stroke_options_get_miter_limit (PicmanStrokeOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_STROKE_OPTIONS (options), 1.0);
+  g_return_val_if_fail (PICMAN_IS_STROKE_OPTIONS (options), 1.0);
 
   return GET_PRIVATE (options)->miter_limit;
 }
 
 gdouble
-gimp_stroke_options_get_dash_offset (GimpStrokeOptions *options)
+picman_stroke_options_get_dash_offset (PicmanStrokeOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_STROKE_OPTIONS (options), 0.0);
+  g_return_val_if_fail (PICMAN_IS_STROKE_OPTIONS (options), 0.0);
 
   return GET_PRIVATE (options)->dash_offset;
 }
 
 GArray *
-gimp_stroke_options_get_dash_info (GimpStrokeOptions *options)
+picman_stroke_options_get_dash_info (PicmanStrokeOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_STROKE_OPTIONS (options), NULL);
+  g_return_val_if_fail (PICMAN_IS_STROKE_OPTIONS (options), NULL);
 
   return GET_PRIVATE (options)->dash_info;
 }
 
-GimpPaintOptions *
-gimp_stroke_options_get_paint_options (GimpStrokeOptions *options)
+PicmanPaintOptions *
+picman_stroke_options_get_paint_options (PicmanStrokeOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_STROKE_OPTIONS (options), NULL);
+  g_return_val_if_fail (PICMAN_IS_STROKE_OPTIONS (options), NULL);
 
   return GET_PRIVATE (options)->paint_options;
 }
 
 gboolean
-gimp_stroke_options_get_emulate_dynamics (GimpStrokeOptions *options)
+picman_stroke_options_get_emulate_dynamics (PicmanStrokeOptions *options)
 {
-  g_return_val_if_fail (GIMP_IS_STROKE_OPTIONS (options), FALSE);
+  g_return_val_if_fail (PICMAN_IS_STROKE_OPTIONS (options), FALSE);
 
   return GET_PRIVATE (options)->emulate_dynamics;
 }
 
 /**
- * gimp_stroke_options_take_dash_pattern:
- * @options: a #GimpStrokeOptions object
- * @preset: a value out of the #GimpDashPreset enum
- * @pattern: a #GArray or %NULL if @preset is not %GIMP_DASH_CUSTOM
+ * picman_stroke_options_take_dash_pattern:
+ * @options: a #PicmanStrokeOptions object
+ * @preset: a value out of the #PicmanDashPreset enum
+ * @pattern: a #GArray or %NULL if @preset is not %PICMAN_DASH_CUSTOM
  *
  * Sets the dash pattern. Either a @preset is passed and @pattern is
- * %NULL or @preset is %GIMP_DASH_CUSTOM and @pattern is the #GArray
+ * %NULL or @preset is %PICMAN_DASH_CUSTOM and @pattern is the #GArray
  * to use as the dash pattern. Note that this function takes ownership
  * of the passed pattern.
  */
 void
-gimp_stroke_options_take_dash_pattern (GimpStrokeOptions *options,
-                                       GimpDashPreset     preset,
+picman_stroke_options_take_dash_pattern (PicmanStrokeOptions *options,
+                                       PicmanDashPreset     preset,
                                        GArray            *pattern)
 {
-  GimpStrokeOptionsPrivate *private;
+  PicmanStrokeOptionsPrivate *private;
 
-  g_return_if_fail (GIMP_IS_STROKE_OPTIONS (options));
-  g_return_if_fail (preset == GIMP_DASH_CUSTOM || pattern == NULL);
+  g_return_if_fail (PICMAN_IS_STROKE_OPTIONS (options));
+  g_return_if_fail (preset == PICMAN_DASH_CUSTOM || pattern == NULL);
 
   private = GET_PRIVATE (options);
 
-  if (preset != GIMP_DASH_CUSTOM)
-    pattern = gimp_dash_pattern_new_from_preset (preset);
+  if (preset != PICMAN_DASH_CUSTOM)
+    pattern = picman_dash_pattern_new_from_preset (preset);
 
   if (private->dash_info)
-    gimp_dash_pattern_free (private->dash_info);
+    picman_dash_pattern_free (private->dash_info);
 
   private->dash_info = pattern;
 
@@ -544,41 +544,41 @@ gimp_stroke_options_take_dash_pattern (GimpStrokeOptions *options,
 }
 
 void
-gimp_stroke_options_prepare (GimpStrokeOptions *options,
-                             GimpContext       *context,
+picman_stroke_options_prepare (PicmanStrokeOptions *options,
+                             PicmanContext       *context,
                              gboolean           use_default_values)
 {
-  GimpStrokeOptionsPrivate *private;
+  PicmanStrokeOptionsPrivate *private;
 
-  g_return_if_fail (GIMP_IS_STROKE_OPTIONS (options));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_STROKE_OPTIONS (options));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
 
   private = GET_PRIVATE (options);
 
   switch (private->method)
     {
-    case GIMP_STROKE_METHOD_LIBART:
+    case PICMAN_STROKE_METHOD_LIBART:
       break;
 
-    case GIMP_STROKE_METHOD_PAINT_CORE:
+    case PICMAN_STROKE_METHOD_PAINT_CORE:
       {
-        GimpPaintInfo    *paint_info = GIMP_CONTEXT (options)->paint_info;
-        GimpPaintOptions *paint_options;
+        PicmanPaintInfo    *paint_info = PICMAN_CONTEXT (options)->paint_info;
+        PicmanPaintOptions *paint_options;
 
         if (use_default_values)
           {
-            GimpBrush *brush;
+            PicmanBrush *brush;
             gdouble    brush_size;
             gint       height;
             gint       width;
 
-            paint_options = gimp_paint_options_new (paint_info);
+            paint_options = picman_paint_options_new (paint_info);
 
-            brush = gimp_context_get_brush (context);
+            brush = picman_context_get_brush (context);
 
-            if (GIMP_IS_BRUSH (brush))
+            if (PICMAN_IS_BRUSH (brush))
               {
-                gimp_brush_transform_size (brush, 1.0, 1.0, 0.0, &height, &width);
+                picman_brush_transform_size (brush, 1.0, 1.0, 0.0, &height, &width);
                 brush_size = MAX (height, width);
 
                 g_object_set (paint_options,
@@ -589,38 +589,38 @@ gimp_stroke_options_prepare (GimpStrokeOptions *options,
             /*  undefine the paint-relevant context properties and get them
              *  from the passed context
              */
-            gimp_context_define_properties (GIMP_CONTEXT (paint_options),
-                                            GIMP_CONTEXT_PAINT_PROPS_MASK,
+            picman_context_define_properties (PICMAN_CONTEXT (paint_options),
+                                            PICMAN_CONTEXT_PAINT_PROPS_MASK,
                                             FALSE);
-            gimp_context_set_parent (GIMP_CONTEXT (paint_options), context);
+            picman_context_set_parent (PICMAN_CONTEXT (paint_options), context);
           }
         else
           {
-            GimpCoreConfig      *config       = context->gimp->config;
-            GimpContextPropMask  global_props = 0;
+            PicmanCoreConfig      *config       = context->picman->config;
+            PicmanContextPropMask  global_props = 0;
 
             paint_options =
-              gimp_config_duplicate (GIMP_CONFIG (paint_info->paint_options));
+              picman_config_duplicate (PICMAN_CONFIG (paint_info->paint_options));
 
             /*  FG and BG are always shared between all tools  */
-            global_props |= GIMP_CONTEXT_FOREGROUND_MASK;
-            global_props |= GIMP_CONTEXT_BACKGROUND_MASK;
+            global_props |= PICMAN_CONTEXT_FOREGROUND_MASK;
+            global_props |= PICMAN_CONTEXT_BACKGROUND_MASK;
 
             if (config->global_brush)
-              global_props |= GIMP_CONTEXT_BRUSH_MASK;
+              global_props |= PICMAN_CONTEXT_BRUSH_MASK;
             if (config->global_dynamics)
-              global_props |= GIMP_CONTEXT_DYNAMICS_MASK;
+              global_props |= PICMAN_CONTEXT_DYNAMICS_MASK;
             if (config->global_pattern)
-              global_props |= GIMP_CONTEXT_PATTERN_MASK;
+              global_props |= PICMAN_CONTEXT_PATTERN_MASK;
             if (config->global_palette)
-              global_props |= GIMP_CONTEXT_PALETTE_MASK;
+              global_props |= PICMAN_CONTEXT_PALETTE_MASK;
             if (config->global_gradient)
-              global_props |= GIMP_CONTEXT_GRADIENT_MASK;
+              global_props |= PICMAN_CONTEXT_GRADIENT_MASK;
             if (config->global_font)
-              global_props |= GIMP_CONTEXT_FONT_MASK;
+              global_props |= PICMAN_CONTEXT_FONT_MASK;
 
-            gimp_context_copy_properties (context,
-                                          GIMP_CONTEXT (paint_options),
+            picman_context_copy_properties (context,
+                                          PICMAN_CONTEXT (paint_options),
                                           global_props);
           }
 
@@ -635,9 +635,9 @@ gimp_stroke_options_prepare (GimpStrokeOptions *options,
 }
 
 void
-gimp_stroke_options_finish (GimpStrokeOptions *options)
+picman_stroke_options_finish (PicmanStrokeOptions *options)
 {
-  g_return_if_fail (GIMP_IS_STROKE_OPTIONS (options));
+  g_return_if_fail (PICMAN_IS_STROKE_OPTIONS (options));
 
   g_object_set (options, "paint-options", NULL, NULL);
 }

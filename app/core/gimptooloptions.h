@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,50 +15,50 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TOOL_OPTIONS_H__
-#define __GIMP_TOOL_OPTIONS_H__
+#ifndef __PICMAN_TOOL_OPTIONS_H__
+#define __PICMAN_TOOL_OPTIONS_H__
 
 
-#include "gimpcontext.h"
+#include "picmancontext.h"
 
 
-#define GIMP_TYPE_TOOL_OPTIONS            (gimp_tool_options_get_type ())
-#define GIMP_TOOL_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TOOL_OPTIONS, GimpToolOptions))
-#define GIMP_TOOL_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TOOL_OPTIONS, GimpToolOptionsClass))
-#define GIMP_IS_TOOL_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TOOL_OPTIONS))
-#define GIMP_IS_TOOL_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TOOL_OPTIONS))
-#define GIMP_TOOL_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TOOL_OPTIONS, GimpToolOptionsClass))
+#define PICMAN_TYPE_TOOL_OPTIONS            (picman_tool_options_get_type ())
+#define PICMAN_TOOL_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TOOL_OPTIONS, PicmanToolOptions))
+#define PICMAN_TOOL_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TOOL_OPTIONS, PicmanToolOptionsClass))
+#define PICMAN_IS_TOOL_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TOOL_OPTIONS))
+#define PICMAN_IS_TOOL_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TOOL_OPTIONS))
+#define PICMAN_TOOL_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TOOL_OPTIONS, PicmanToolOptionsClass))
 
 
-typedef struct _GimpToolOptionsClass GimpToolOptionsClass;
+typedef struct _PicmanToolOptionsClass PicmanToolOptionsClass;
 
-struct _GimpToolOptions
+struct _PicmanToolOptions
 {
-  GimpContext   parent_instance;
+  PicmanContext   parent_instance;
 
-  GimpToolInfo *tool_info;
+  PicmanToolInfo *tool_info;
 };
 
-struct _GimpToolOptionsClass
+struct _PicmanToolOptionsClass
 {
-  GimpContextClass parent_class;
+  PicmanContextClass parent_class;
 
-  void (* reset) (GimpToolOptions *tool_options);
+  void (* reset) (PicmanToolOptions *tool_options);
 };
 
 
-GType      gimp_tool_options_get_type      (void) G_GNUC_CONST;
+GType      picman_tool_options_get_type      (void) G_GNUC_CONST;
 
-void       gimp_tool_options_reset         (GimpToolOptions  *tool_options);
+void       picman_tool_options_reset         (PicmanToolOptions  *tool_options);
 
-gboolean   gimp_tool_options_serialize     (GimpToolOptions   *tool_options,
+gboolean   picman_tool_options_serialize     (PicmanToolOptions   *tool_options,
                                             GError           **error);
-gboolean   gimp_tool_options_deserialize   (GimpToolOptions   *tool_options,
+gboolean   picman_tool_options_deserialize   (PicmanToolOptions   *tool_options,
                                             GError           **error);
 
-gboolean   gimp_tool_options_delete        (GimpToolOptions   *tool_options,
+gboolean   picman_tool_options_delete        (PicmanToolOptions   *tool_options,
                                             GError           **error);
-void       gimp_tool_options_create_folder (void);
+void       picman_tool_options_create_folder (void);
 
 
-#endif  /*  __GIMP_TOOL_OPTIONS_H__  */
+#endif  /*  __PICMAN_TOOL_OPTIONS_H__  */

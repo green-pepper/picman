@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpprofilestore.c
- * Copyright (C) 2004-2008  Sven Neumann <sven@gimp.org>
+ * picmanprofilestore.c
+ * Copyright (C) 2004-2008  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,20 +25,20 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "gimpcolorprofilestore.h"
-#include "gimpcolorprofilestore-private.h"
+#include "picmancolorprofilestore.h"
+#include "picmancolorprofilestore-private.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpcolorprofilestore
- * @title: GimpColorProfileStore
+ * SECTION: picmancolorprofilestore
+ * @title: PicmanColorProfileStore
  * @short_description: A #GtkListStore subclass that keep color profiles.
  *
  * A #GtkListStore subclass that keep color profiles.
@@ -54,75 +54,75 @@ enum
 };
 
 
-static void      gimp_color_profile_store_constructed    (GObject               *object);
-static void      gimp_color_profile_store_dispose        (GObject               *object);
-static void      gimp_color_profile_store_finalize       (GObject               *object);
-static void      gimp_color_profile_store_set_property   (GObject               *object,
+static void      picman_color_profile_store_constructed    (GObject               *object);
+static void      picman_color_profile_store_dispose        (GObject               *object);
+static void      picman_color_profile_store_finalize       (GObject               *object);
+static void      picman_color_profile_store_set_property   (GObject               *object,
                                                           guint                  property_id,
                                                           const GValue          *value,
                                                           GParamSpec            *pspec);
-static void      gimp_color_profile_store_get_property   (GObject               *object,
+static void      picman_color_profile_store_get_property   (GObject               *object,
                                                           guint                  property_id,
                                                           GValue                *value,
                                                           GParamSpec            *pspec);
 
-static gboolean  gimp_color_profile_store_history_insert (GimpColorProfileStore *store,
+static gboolean  picman_color_profile_store_history_insert (PicmanColorProfileStore *store,
                                                           GtkTreeIter           *iter,
                                                           const gchar           *filename,
                                                           const gchar           *label,
                                                           gint                   index);
-static void      gimp_color_profile_store_get_separator  (GimpColorProfileStore  *store,
+static void      picman_color_profile_store_get_separator  (PicmanColorProfileStore  *store,
                                                           GtkTreeIter            *iter,
                                                           gboolean                top);
-static gboolean  gimp_color_profile_store_save           (GimpColorProfileStore  *store,
+static gboolean  picman_color_profile_store_save           (PicmanColorProfileStore  *store,
                                                           const gchar            *filename,
                                                           GError                **error);
-static gboolean  gimp_color_profile_store_load           (GimpColorProfileStore  *store,
+static gboolean  picman_color_profile_store_load           (PicmanColorProfileStore  *store,
                                                           const gchar            *filename,
                                                           GError                **error);
 
 
-G_DEFINE_TYPE (GimpColorProfileStore,
-               gimp_color_profile_store, GTK_TYPE_LIST_STORE)
+G_DEFINE_TYPE (PicmanColorProfileStore,
+               picman_color_profile_store, GTK_TYPE_LIST_STORE)
 
-#define parent_class gimp_color_profile_store_parent_class
+#define parent_class picman_color_profile_store_parent_class
 
 
 static void
-gimp_color_profile_store_class_init (GimpColorProfileStoreClass *klass)
+picman_color_profile_store_class_init (PicmanColorProfileStoreClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->constructed  = gimp_color_profile_store_constructed;
-  object_class->dispose      = gimp_color_profile_store_dispose;
-  object_class->finalize     = gimp_color_profile_store_finalize;
-  object_class->set_property = gimp_color_profile_store_set_property;
-  object_class->get_property = gimp_color_profile_store_get_property;
+  object_class->constructed  = picman_color_profile_store_constructed;
+  object_class->dispose      = picman_color_profile_store_dispose;
+  object_class->finalize     = picman_color_profile_store_finalize;
+  object_class->set_property = picman_color_profile_store_set_property;
+  object_class->get_property = picman_color_profile_store_get_property;
 
   /**
-   * GimpColorProfileStore:history:
+   * PicmanColorProfileStore:history:
    *
    * Filename of the color history used to populate the profile store.
    *
-   * Since: GIMP 2.4
+   * Since: PICMAN 2.4
    */
   g_object_class_install_property (object_class,
                                    PROP_HISTORY,
                                    g_param_spec_string ("history", NULL, NULL,
                                                         NULL,
                                                         G_PARAM_CONSTRUCT_ONLY |
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 }
 
 static void
-gimp_color_profile_store_init (GimpColorProfileStore *store)
+picman_color_profile_store_init (PicmanColorProfileStore *store)
 {
   GType types[] =
     {
-      G_TYPE_INT,     /*  GIMP_COLOR_PROFILE_STORE_ITEM_TYPE  */
-      G_TYPE_STRING,  /*  GIMP_COLOR_PROFILE_STORE_LABEL      */
-      G_TYPE_STRING,  /*  GIMP_COLOR_PROFILE_STORE_FILENAME   */
-      G_TYPE_INT      /*  GIMP_COLOR_PROFILE_STORE_INDEX      */
+      G_TYPE_INT,     /*  PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE  */
+      G_TYPE_STRING,  /*  PICMAN_COLOR_PROFILE_STORE_LABEL      */
+      G_TYPE_STRING,  /*  PICMAN_COLOR_PROFILE_STORE_FILENAME   */
+      G_TYPE_INT      /*  PICMAN_COLOR_PROFILE_STORE_INDEX      */
     };
 
   gtk_list_store_set_column_types (GTK_LIST_STORE (store),
@@ -130,44 +130,44 @@ gimp_color_profile_store_init (GimpColorProfileStore *store)
 }
 
 static void
-gimp_color_profile_store_constructed (GObject *object)
+picman_color_profile_store_constructed (GObject *object)
 {
-  GimpColorProfileStore *store = GIMP_COLOR_PROFILE_STORE (object);
+  PicmanColorProfileStore *store = PICMAN_COLOR_PROFILE_STORE (object);
   GtkTreeIter            iter;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
   gtk_list_store_append (GTK_LIST_STORE (store), &iter);
   gtk_list_store_set (GTK_LIST_STORE (store), &iter,
-                      GIMP_COLOR_PROFILE_STORE_ITEM_TYPE,
-                      GIMP_COLOR_PROFILE_STORE_ITEM_DIALOG,
-                      GIMP_COLOR_PROFILE_STORE_LABEL,
+                      PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE,
+                      PICMAN_COLOR_PROFILE_STORE_ITEM_DIALOG,
+                      PICMAN_COLOR_PROFILE_STORE_LABEL,
                       _("Select color profile from disk..."),
                       -1);
 
   if (store->history)
     {
-      gimp_color_profile_store_load (store, store->history, NULL);
+      picman_color_profile_store_load (store, store->history, NULL);
     }
 }
 
 static void
-gimp_color_profile_store_dispose (GObject *object)
+picman_color_profile_store_dispose (GObject *object)
 {
-  GimpColorProfileStore *store = GIMP_COLOR_PROFILE_STORE (object);
+  PicmanColorProfileStore *store = PICMAN_COLOR_PROFILE_STORE (object);
 
   if (store->history)
     {
-      gimp_color_profile_store_save (store, store->history, NULL);
+      picman_color_profile_store_save (store, store->history, NULL);
     }
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
-gimp_color_profile_store_finalize (GObject *object)
+picman_color_profile_store_finalize (GObject *object)
 {
-  GimpColorProfileStore *store = GIMP_COLOR_PROFILE_STORE (object);
+  PicmanColorProfileStore *store = PICMAN_COLOR_PROFILE_STORE (object);
 
   if (store->history)
     {
@@ -179,12 +179,12 @@ gimp_color_profile_store_finalize (GObject *object)
 }
 
 static void
-gimp_color_profile_store_set_property (GObject      *object,
+picman_color_profile_store_set_property (GObject      *object,
                                        guint         property_id,
                                        const GValue *value,
                                        GParamSpec   *pspec)
 {
-  GimpColorProfileStore *store = GIMP_COLOR_PROFILE_STORE (object);
+  PicmanColorProfileStore *store = PICMAN_COLOR_PROFILE_STORE (object);
 
   switch (property_id)
     {
@@ -200,12 +200,12 @@ gimp_color_profile_store_set_property (GObject      *object,
 }
 
 static void
-gimp_color_profile_store_get_property (GObject    *object,
+picman_color_profile_store_get_property (GObject    *object,
                                        guint       property_id,
                                        GValue     *value,
                                        GParamSpec *pspec)
 {
-  GimpColorProfileStore *store = GIMP_COLOR_PROFILE_STORE (object);
+  PicmanColorProfileStore *store = PICMAN_COLOR_PROFILE_STORE (object);
 
   switch (property_id)
     {
@@ -221,39 +221,39 @@ gimp_color_profile_store_get_property (GObject    *object,
 
 
 /**
- * gimp_color_profile_store_new:
+ * picman_color_profile_store_new:
  * @history: filename of the profilerc (or %NULL for no history)
  *
- * Creates a new #GimpColorProfileStore object and populates it with
+ * Creates a new #PicmanColorProfileStore object and populates it with
  * last used profiles read from the file @history. The updated history
  * is written back to disk when the store is disposed.
  *
  * The filename passed as @history is typically created using the
  * following code snippet:
  * <informalexample><programlisting>
- *  gchar *history = gimp_personal_rc_file ("profilerc");
+ *  gchar *history = picman_personal_rc_file ("profilerc");
  * </programlisting></informalexample>
  *
- * Return value: a new #GimpColorProfileStore
+ * Return value: a new #PicmanColorProfileStore
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 GtkListStore *
-gimp_color_profile_store_new (const gchar *history)
+picman_color_profile_store_new (const gchar *history)
 {
-  return g_object_new (GIMP_TYPE_COLOR_PROFILE_STORE,
+  return g_object_new (PICMAN_TYPE_COLOR_PROFILE_STORE,
                        "history", history,
                        NULL);
 }
 
 /**
- * gimp_color_profile_store_add:
- * @store:    a #GimpColorProfileStore
+ * picman_color_profile_store_add:
+ * @store:    a #PicmanColorProfileStore
  * @filename: filename of the profile to add (or %NULL)
  * @label:    label to use for the profile
  *            (may only be %NULL if @filename is %NULL)
  *
- * Adds a color profile item to the #GimpColorProfileStore. Items
+ * Adds a color profile item to the #PicmanColorProfileStore. Items
  * added with this function will be kept at the top, separated from
  * the history of last used color profiles.
  *
@@ -262,47 +262,47 @@ gimp_color_profile_store_new (const gchar *history)
  * @label will be set to the string "None" for you (and translated for
  * the user).
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-gimp_color_profile_store_add (GimpColorProfileStore *store,
+picman_color_profile_store_add (PicmanColorProfileStore *store,
                               const gchar           *filename,
                               const gchar           *label)
 {
   GtkTreeIter  separator;
   GtkTreeIter  iter;
 
-  g_return_if_fail (GIMP_IS_COLOR_PROFILE_STORE (store));
+  g_return_if_fail (PICMAN_IS_COLOR_PROFILE_STORE (store));
   g_return_if_fail (label != NULL || filename == NULL);
 
   if (! filename && ! label)
     label = C_("profile", "None");
 
-  gimp_color_profile_store_get_separator (store, &separator, TRUE);
+  picman_color_profile_store_get_separator (store, &separator, TRUE);
 
   gtk_list_store_insert_before (GTK_LIST_STORE (store), &iter, &separator);
   gtk_list_store_set (GTK_LIST_STORE (store), &iter,
-                      GIMP_COLOR_PROFILE_STORE_ITEM_TYPE,
-                      GIMP_COLOR_PROFILE_STORE_ITEM_FILE,
-                      GIMP_COLOR_PROFILE_STORE_FILENAME, filename,
-                      GIMP_COLOR_PROFILE_STORE_LABEL, label,
-                      GIMP_COLOR_PROFILE_STORE_INDEX, -1,
+                      PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE,
+                      PICMAN_COLOR_PROFILE_STORE_ITEM_FILE,
+                      PICMAN_COLOR_PROFILE_STORE_FILENAME, filename,
+                      PICMAN_COLOR_PROFILE_STORE_LABEL, label,
+                      PICMAN_COLOR_PROFILE_STORE_INDEX, -1,
                       -1);
 }
 
 /**
- * _gimp_color_profile_store_history_add:
- * @store:    a #GimpColorProfileStore
+ * _picman_color_profile_store_history_add:
+ * @store:    a #PicmanColorProfileStore
  * @filename: filename of the profile to add (or %NULL)
  * @label:    label to use for the profile (or %NULL)
  * @iter:     a #GtkTreeIter
  *
  * Return value: %TRUE if the iter is valid and pointing to the item
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 gboolean
-_gimp_color_profile_store_history_add (GimpColorProfileStore *store,
+_picman_color_profile_store_history_add (PicmanColorProfileStore *store,
                                        const gchar           *filename,
                                        const gchar           *label,
                                        GtkTreeIter           *iter)
@@ -311,7 +311,7 @@ _gimp_color_profile_store_history_add (GimpColorProfileStore *store,
   gboolean      iter_valid;
   gint          max = -1;
 
-  g_return_val_if_fail (GIMP_IS_COLOR_PROFILE_STORE (store), FALSE);
+  g_return_val_if_fail (PICMAN_IS_COLOR_PROFILE_STORE (store), FALSE);
   g_return_val_if_fail (iter != NULL, FALSE);
 
   model = GTK_TREE_MODEL (store);
@@ -325,11 +325,11 @@ _gimp_color_profile_store_history_add (GimpColorProfileStore *store,
       gchar *this;
 
       gtk_tree_model_get (model, iter,
-                          GIMP_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
-                          GIMP_COLOR_PROFILE_STORE_INDEX,     &index,
+                          PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
+                          PICMAN_COLOR_PROFILE_STORE_INDEX,     &index,
                           -1);
 
-      if (type != GIMP_COLOR_PROFILE_STORE_ITEM_FILE)
+      if (type != PICMAN_COLOR_PROFILE_STORE_ITEM_FILE)
         continue;
 
       if (index > max)
@@ -337,7 +337,7 @@ _gimp_color_profile_store_history_add (GimpColorProfileStore *store,
 
       /*  check if we found a filename match  */
       gtk_tree_model_get (model, iter,
-                          GIMP_COLOR_PROFILE_STORE_FILENAME, &this,
+                          PICMAN_COLOR_PROFILE_STORE_FILENAME, &this,
                           -1);
 
       if ((this && filename && strcmp (filename, this) == 0) ||
@@ -346,7 +346,7 @@ _gimp_color_profile_store_history_add (GimpColorProfileStore *store,
           /*  update the label  */
           if (label && *label)
             gtk_list_store_set (GTK_LIST_STORE (store), iter,
-                                GIMP_COLOR_PROFILE_STORE_LABEL, label,
+                                PICMAN_COLOR_PROFILE_STORE_LABEL, label,
                                 -1);
 
           g_free (this);
@@ -359,7 +359,7 @@ _gimp_color_profile_store_history_add (GimpColorProfileStore *store,
 
   if (label && *label)
     {
-      iter_valid = gimp_color_profile_store_history_insert (store, iter,
+      iter_valid = picman_color_profile_store_history_insert (store, iter,
                                                             filename, label,
                                                             ++max);
     }
@@ -367,7 +367,7 @@ _gimp_color_profile_store_history_add (GimpColorProfileStore *store,
     {
       gchar *basename = g_filename_display_basename (filename);
 
-      iter_valid = gimp_color_profile_store_history_insert (store, iter,
+      iter_valid = picman_color_profile_store_history_insert (store, iter,
                                                             filename, basename,
                                                             ++max);
       g_free (basename);
@@ -377,29 +377,29 @@ _gimp_color_profile_store_history_add (GimpColorProfileStore *store,
 }
 
 /**
- * _gimp_color_profile_store_history_reorder
- * @store: a #GimpColorProfileStore
+ * _picman_color_profile_store_history_reorder
+ * @store: a #PicmanColorProfileStore
  * @iter:  a #GtkTreeIter
  *
  * Moves the entry pointed to by @iter to the front of the MRU list.
  *
- * Since: GIMP 2.4
+ * Since: PICMAN 2.4
  **/
 void
-_gimp_color_profile_store_history_reorder (GimpColorProfileStore *store,
+_picman_color_profile_store_history_reorder (PicmanColorProfileStore *store,
                                            GtkTreeIter           *iter)
 {
   GtkTreeModel *model;
   gint          index;
   gboolean      iter_valid;
 
-  g_return_if_fail (GIMP_IS_COLOR_PROFILE_STORE (store));
+  g_return_if_fail (PICMAN_IS_COLOR_PROFILE_STORE (store));
   g_return_if_fail (iter != NULL);
 
   model = GTK_TREE_MODEL (store);
 
   gtk_tree_model_get (model, iter,
-                      GIMP_COLOR_PROFILE_STORE_INDEX, &index,
+                      PICMAN_COLOR_PROFILE_STORE_INDEX, &index,
                       -1);
 
   if (index == 0)
@@ -413,11 +413,11 @@ _gimp_color_profile_store_history_reorder (GimpColorProfileStore *store,
       gint this_index;
 
       gtk_tree_model_get (model, iter,
-                          GIMP_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
-                          GIMP_COLOR_PROFILE_STORE_INDEX,     &this_index,
+                          PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
+                          PICMAN_COLOR_PROFILE_STORE_INDEX,     &this_index,
                           -1);
 
-      if (type == GIMP_COLOR_PROFILE_STORE_ITEM_FILE && this_index > -1)
+      if (type == PICMAN_COLOR_PROFILE_STORE_ITEM_FILE && this_index > -1)
         {
           if (this_index < index)
             {
@@ -429,14 +429,14 @@ _gimp_color_profile_store_history_reorder (GimpColorProfileStore *store,
             }
 
           gtk_list_store_set (GTK_LIST_STORE (store), iter,
-                              GIMP_COLOR_PROFILE_STORE_INDEX, this_index,
+                              PICMAN_COLOR_PROFILE_STORE_INDEX, this_index,
                               -1);
         }
     }
 }
 
 static gboolean
-gimp_color_profile_store_history_insert (GimpColorProfileStore *store,
+picman_color_profile_store_history_insert (PicmanColorProfileStore *store,
                                          GtkTreeIter           *iter,
                                          const gchar           *filename,
                                          const gchar           *label,
@@ -450,7 +450,7 @@ gimp_color_profile_store_history_insert (GimpColorProfileStore *store,
   g_return_val_if_fail (label != NULL, FALSE);
   g_return_val_if_fail (index > -1, FALSE);
 
-  gimp_color_profile_store_get_separator (store, iter, FALSE);
+  picman_color_profile_store_get_separator (store, iter, FALSE);
 
   for (iter_valid = gtk_tree_model_get_iter_first (model, &sibling);
        iter_valid;
@@ -460,23 +460,23 @@ gimp_color_profile_store_history_insert (GimpColorProfileStore *store,
       gint this_index;
 
       gtk_tree_model_get (model, &sibling,
-                          GIMP_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
-                          GIMP_COLOR_PROFILE_STORE_INDEX,     &this_index,
+                          PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
+                          PICMAN_COLOR_PROFILE_STORE_INDEX,     &this_index,
                           -1);
 
-      if (type == GIMP_COLOR_PROFILE_STORE_ITEM_SEPARATOR_BOTTOM)
+      if (type == PICMAN_COLOR_PROFILE_STORE_ITEM_SEPARATOR_BOTTOM)
         {
           gtk_list_store_insert_before (GTK_LIST_STORE (store),
                                         iter, &sibling);
           break;
         }
 
-      if (type == GIMP_COLOR_PROFILE_STORE_ITEM_FILE && this_index > -1)
+      if (type == PICMAN_COLOR_PROFILE_STORE_ITEM_FILE && this_index > -1)
         {
           gchar *this_label;
 
           gtk_tree_model_get (model, &sibling,
-                              GIMP_COLOR_PROFILE_STORE_LABEL, &this_label,
+                              PICMAN_COLOR_PROFILE_STORE_LABEL, &this_label,
                               -1);
 
           if (this_label && g_utf8_collate (label, this_label) < 0)
@@ -493,18 +493,18 @@ gimp_color_profile_store_history_insert (GimpColorProfileStore *store,
 
   if (iter_valid)
     gtk_list_store_set (GTK_LIST_STORE (store), iter,
-                        GIMP_COLOR_PROFILE_STORE_ITEM_TYPE,
-                        GIMP_COLOR_PROFILE_STORE_ITEM_FILE,
-                        GIMP_COLOR_PROFILE_STORE_FILENAME, filename,
-                        GIMP_COLOR_PROFILE_STORE_LABEL,    label,
-                        GIMP_COLOR_PROFILE_STORE_INDEX,    index,
+                        PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE,
+                        PICMAN_COLOR_PROFILE_STORE_ITEM_FILE,
+                        PICMAN_COLOR_PROFILE_STORE_FILENAME, filename,
+                        PICMAN_COLOR_PROFILE_STORE_LABEL,    label,
+                        PICMAN_COLOR_PROFILE_STORE_INDEX,    index,
                         -1);
 
   return iter_valid;
 }
 
 static void
-gimp_color_profile_store_create_separator (GimpColorProfileStore *store,
+picman_color_profile_store_create_separator (PicmanColorProfileStore *store,
                                            GtkTreeIter           *iter,
                                            gboolean               top)
 {
@@ -525,10 +525,10 @@ gimp_color_profile_store_create_separator (GimpColorProfileStore *store,
           gint type;
 
           gtk_tree_model_get (model, &sibling,
-                              GIMP_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
+                              PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
                               -1);
 
-          if (type == GIMP_COLOR_PROFILE_STORE_ITEM_DIALOG)
+          if (type == PICMAN_COLOR_PROFILE_STORE_ITEM_DIALOG)
             break;
         }
 
@@ -537,16 +537,16 @@ gimp_color_profile_store_create_separator (GimpColorProfileStore *store,
     }
 
   gtk_list_store_set (GTK_LIST_STORE (store), iter,
-                      GIMP_COLOR_PROFILE_STORE_ITEM_TYPE,
+                      PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE,
                       top ?
-                      GIMP_COLOR_PROFILE_STORE_ITEM_SEPARATOR_TOP :
-                      GIMP_COLOR_PROFILE_STORE_ITEM_SEPARATOR_BOTTOM,
-                      GIMP_COLOR_PROFILE_STORE_INDEX, -1,
+                      PICMAN_COLOR_PROFILE_STORE_ITEM_SEPARATOR_TOP :
+                      PICMAN_COLOR_PROFILE_STORE_ITEM_SEPARATOR_BOTTOM,
+                      PICMAN_COLOR_PROFILE_STORE_INDEX, -1,
                       -1);
 }
 
 static void
-gimp_color_profile_store_get_separator (GimpColorProfileStore *store,
+picman_color_profile_store_get_separator (PicmanColorProfileStore *store,
                                         GtkTreeIter           *iter,
                                         gboolean               top)
 {
@@ -555,8 +555,8 @@ gimp_color_profile_store_get_separator (GimpColorProfileStore *store,
   gint          needle;
 
   needle = (top ?
-            GIMP_COLOR_PROFILE_STORE_ITEM_SEPARATOR_TOP :
-            GIMP_COLOR_PROFILE_STORE_ITEM_SEPARATOR_BOTTOM);
+            PICMAN_COLOR_PROFILE_STORE_ITEM_SEPARATOR_TOP :
+            PICMAN_COLOR_PROFILE_STORE_ITEM_SEPARATOR_BOTTOM);
 
   for (iter_valid = gtk_tree_model_get_iter_first (model, iter);
        iter_valid;
@@ -565,18 +565,18 @@ gimp_color_profile_store_get_separator (GimpColorProfileStore *store,
       gint type;
 
       gtk_tree_model_get (model, iter,
-                          GIMP_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
+                          PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
                           -1);
 
       if (type == needle)
         return;
     }
 
-  gimp_color_profile_store_create_separator (store, iter, top);
+  picman_color_profile_store_create_separator (store, iter, top);
 }
 
 static GTokenType
-gimp_color_profile_store_load_profile (GimpColorProfileStore *store,
+picman_color_profile_store_load_profile (PicmanColorProfileStore *store,
                                        GScanner              *scanner,
                                        gint                   index)
 {
@@ -584,14 +584,14 @@ gimp_color_profile_store_load_profile (GimpColorProfileStore *store,
   gchar       *label = NULL;
   gchar       *uri   = NULL;
 
-  if (gimp_scanner_parse_string (scanner, &label) &&
-      gimp_scanner_parse_string (scanner, &uri))
+  if (picman_scanner_parse_string (scanner, &label) &&
+      picman_scanner_parse_string (scanner, &uri))
     {
       gchar *filename = g_filename_from_uri (uri, NULL, NULL);
 
       if (filename && g_file_test (filename, G_FILE_TEST_IS_REGULAR))
         {
-          gimp_color_profile_store_history_insert (store, &iter,
+          picman_color_profile_store_history_insert (store, &iter,
                                                    filename, label, index);
         }
 
@@ -609,7 +609,7 @@ gimp_color_profile_store_load_profile (GimpColorProfileStore *store,
 }
 
 static gboolean
-gimp_color_profile_store_load (GimpColorProfileStore  *store,
+picman_color_profile_store_load (PicmanColorProfileStore  *store,
                                const gchar            *filename,
                                GError                **error)
 {
@@ -617,7 +617,7 @@ gimp_color_profile_store_load (GimpColorProfileStore  *store,
   GTokenType  token;
   gint        i = 0;
 
-  scanner = gimp_scanner_new_file (filename, error);
+  scanner = picman_scanner_new_file (filename, error);
   if (! scanner)
     return FALSE;
 
@@ -636,7 +636,7 @@ gimp_color_profile_store_load (GimpColorProfileStore  *store,
           break;
 
         case G_TOKEN_SYMBOL:
-          token = gimp_color_profile_store_load_profile (store, scanner, i++);
+          token = picman_color_profile_store_load_profile (store, scanner, i++);
           break;
 
         case G_TOKEN_RIGHT_PAREN:
@@ -655,17 +655,17 @@ gimp_color_profile_store_load (GimpColorProfileStore  *store,
                              _("fatal parse error"), TRUE);
     }
 
-  gimp_scanner_destroy (scanner);
+  picman_scanner_destroy (scanner);
 
   return TRUE;
 }
 
 static gboolean
-gimp_color_profile_store_save (GimpColorProfileStore  *store,
+picman_color_profile_store_save (PicmanColorProfileStore  *store,
                                const gchar            *filename,
                                GError                **error)
 {
-  GimpConfigWriter *writer;
+  PicmanConfigWriter *writer;
   GtkTreeModel     *model;
   GtkTreeIter       iter;
   gchar            *labels[HISTORY_SIZE]    = { NULL, };
@@ -673,9 +673,9 @@ gimp_color_profile_store_save (GimpColorProfileStore  *store,
   gboolean          iter_valid;
   gint              i;
 
-  writer = gimp_config_writer_new_file (filename,
+  writer = picman_config_writer_new_file (filename,
                                         TRUE,
-                                        "GIMP color profile history",
+                                        "PICMAN color profile history",
                                         error);
   if (! writer)
     return FALSE;
@@ -690,11 +690,11 @@ gimp_color_profile_store_save (GimpColorProfileStore  *store,
       gint index;
 
       gtk_tree_model_get (model, &iter,
-                          GIMP_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
-                          GIMP_COLOR_PROFILE_STORE_INDEX,     &index,
+                          PICMAN_COLOR_PROFILE_STORE_ITEM_TYPE, &type,
+                          PICMAN_COLOR_PROFILE_STORE_INDEX,     &index,
                           -1);
 
-      if (type == GIMP_COLOR_PROFILE_STORE_ITEM_FILE &&
+      if (type == PICMAN_COLOR_PROFILE_STORE_ITEM_FILE &&
           index >= 0                                 &&
           index < HISTORY_SIZE)
         {
@@ -702,9 +702,9 @@ gimp_color_profile_store_save (GimpColorProfileStore  *store,
             g_warning ("%s: double index %d", G_STRFUNC, index);
 
           gtk_tree_model_get (model, &iter,
-                              GIMP_COLOR_PROFILE_STORE_LABEL,
+                              PICMAN_COLOR_PROFILE_STORE_LABEL,
                               &labels[index],
-                              GIMP_COLOR_PROFILE_STORE_FILENAME,
+                              PICMAN_COLOR_PROFILE_STORE_FILENAME,
                               &filenames[index],
                               -1);
         }
@@ -719,10 +719,10 @@ gimp_color_profile_store_save (GimpColorProfileStore  *store,
 
           if (uri)
             {
-              gimp_config_writer_open (writer, "color-profile");
-              gimp_config_writer_string (writer, labels[i]);
-              gimp_config_writer_string (writer, uri);
-              gimp_config_writer_close (writer);
+              picman_config_writer_open (writer, "color-profile");
+              picman_config_writer_string (writer, labels[i]);
+              picman_config_writer_string (writer, uri);
+              picman_config_writer_close (writer);
 
               g_free (uri);
             }
@@ -732,6 +732,6 @@ gimp_color_profile_store_save (GimpColorProfileStore  *store,
       g_free (labels[i]);
     }
 
-  return gimp_config_writer_finish (writer,
+  return picman_config_writer_finish (writer,
                                     "end of color profile history", error);
 }

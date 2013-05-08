@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpprogressbox.c
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanprogressbox.c
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,53 +22,53 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanmath/picmanmath.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "widgets-types.h"
 
-#include "core/gimpprogress.h"
+#include "core/picmanprogress.h"
 
-#include "gimpprogressbox.h"
+#include "picmanprogressbox.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static void     gimp_progress_box_progress_iface_init (GimpProgressInterface *iface);
+static void     picman_progress_box_progress_iface_init (PicmanProgressInterface *iface);
 
-static void     gimp_progress_box_dispose            (GObject      *object);
+static void     picman_progress_box_dispose            (GObject      *object);
 
-static GimpProgress *
-                gimp_progress_box_progress_start     (GimpProgress *progress,
+static PicmanProgress *
+                picman_progress_box_progress_start     (PicmanProgress *progress,
                                                       const gchar  *message,
                                                       gboolean      cancelable);
-static void     gimp_progress_box_progress_end       (GimpProgress *progress);
-static gboolean gimp_progress_box_progress_is_active (GimpProgress *progress);
-static void     gimp_progress_box_progress_set_text  (GimpProgress *progress,
+static void     picman_progress_box_progress_end       (PicmanProgress *progress);
+static gboolean picman_progress_box_progress_is_active (PicmanProgress *progress);
+static void     picman_progress_box_progress_set_text  (PicmanProgress *progress,
                                                       const gchar  *message);
-static void     gimp_progress_box_progress_set_value (GimpProgress *progress,
+static void     picman_progress_box_progress_set_value (PicmanProgress *progress,
                                                       gdouble       percentage);
-static gdouble  gimp_progress_box_progress_get_value (GimpProgress *progress);
-static void     gimp_progress_box_progress_pulse     (GimpProgress *progress);
+static gdouble  picman_progress_box_progress_get_value (PicmanProgress *progress);
+static void     picman_progress_box_progress_pulse     (PicmanProgress *progress);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpProgressBox, gimp_progress_box, GTK_TYPE_BOX,
-                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_PROGRESS,
-                                                gimp_progress_box_progress_iface_init))
+G_DEFINE_TYPE_WITH_CODE (PicmanProgressBox, picman_progress_box, GTK_TYPE_BOX,
+                         G_IMPLEMENT_INTERFACE (PICMAN_TYPE_PROGRESS,
+                                                picman_progress_box_progress_iface_init))
 
-#define parent_class gimp_progress_box_parent_class
+#define parent_class picman_progress_box_parent_class
 
 
 static void
-gimp_progress_box_class_init (GimpProgressBoxClass *klass)
+picman_progress_box_class_init (PicmanProgressBoxClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->dispose = gimp_progress_box_dispose;
+  object_class->dispose = picman_progress_box_dispose;
 }
 
 static void
-gimp_progress_box_init (GimpProgressBox *box)
+picman_progress_box_init (PicmanProgressBox *box)
 {
   gtk_orientable_set_orientation (GTK_ORIENTABLE (box),
                                   GTK_ORIENTATION_VERTICAL);
@@ -83,7 +83,7 @@ gimp_progress_box_init (GimpProgressBox *box)
   box->label = gtk_label_new ("");
   gtk_label_set_ellipsize (GTK_LABEL (box->label), PANGO_ELLIPSIZE_MIDDLE);
   gtk_misc_set_alignment (GTK_MISC (box->label), 0.0, 0.5);
-  gimp_label_set_attributes (GTK_LABEL (box->label),
+  picman_label_set_attributes (GTK_LABEL (box->label),
                              PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
                              -1);
   gtk_box_pack_start (GTK_BOX (box), box->label, FALSE, FALSE, 0);
@@ -91,33 +91,33 @@ gimp_progress_box_init (GimpProgressBox *box)
 }
 
 static void
-gimp_progress_box_progress_iface_init (GimpProgressInterface *iface)
+picman_progress_box_progress_iface_init (PicmanProgressInterface *iface)
 {
-  iface->start     = gimp_progress_box_progress_start;
-  iface->end       = gimp_progress_box_progress_end;
-  iface->is_active = gimp_progress_box_progress_is_active;
-  iface->set_text  = gimp_progress_box_progress_set_text;
-  iface->set_value = gimp_progress_box_progress_set_value;
-  iface->get_value = gimp_progress_box_progress_get_value;
-  iface->pulse     = gimp_progress_box_progress_pulse;
+  iface->start     = picman_progress_box_progress_start;
+  iface->end       = picman_progress_box_progress_end;
+  iface->is_active = picman_progress_box_progress_is_active;
+  iface->set_text  = picman_progress_box_progress_set_text;
+  iface->set_value = picman_progress_box_progress_set_value;
+  iface->get_value = picman_progress_box_progress_get_value;
+  iface->pulse     = picman_progress_box_progress_pulse;
 }
 
 static void
-gimp_progress_box_dispose (GObject *object)
+picman_progress_box_dispose (GObject *object)
 {
-  GimpProgressBox *box = GIMP_PROGRESS_BOX (object);
+  PicmanProgressBox *box = PICMAN_PROGRESS_BOX (object);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 
   box->progress = NULL;
 }
 
-static GimpProgress *
-gimp_progress_box_progress_start (GimpProgress *progress,
+static PicmanProgress *
+picman_progress_box_progress_start (PicmanProgress *progress,
                                   const gchar  *message,
                                   gboolean      cancelable)
 {
-  GimpProgressBox *box = GIMP_PROGRESS_BOX (progress);
+  PicmanProgressBox *box = PICMAN_PROGRESS_BOX (progress);
 
   if (! box->progress)
     return NULL;
@@ -144,11 +144,11 @@ gimp_progress_box_progress_start (GimpProgress *progress,
 }
 
 static void
-gimp_progress_box_progress_end (GimpProgress *progress)
+picman_progress_box_progress_end (PicmanProgress *progress)
 {
-  if (gimp_progress_box_progress_is_active (progress))
+  if (picman_progress_box_progress_is_active (progress))
     {
-      GimpProgressBox *box = GIMP_PROGRESS_BOX (progress);
+      PicmanProgressBox *box = PICMAN_PROGRESS_BOX (progress);
       GtkProgressBar  *bar = GTK_PROGRESS_BAR (box->progress);
 
       gtk_label_set_text (GTK_LABEL (box->label), "");
@@ -161,20 +161,20 @@ gimp_progress_box_progress_end (GimpProgress *progress)
 }
 
 static gboolean
-gimp_progress_box_progress_is_active (GimpProgress *progress)
+picman_progress_box_progress_is_active (PicmanProgress *progress)
 {
-  GimpProgressBox *box = GIMP_PROGRESS_BOX (progress);
+  PicmanProgressBox *box = PICMAN_PROGRESS_BOX (progress);
 
   return (box->progress && box->active);
 }
 
 static void
-gimp_progress_box_progress_set_text (GimpProgress *progress,
+picman_progress_box_progress_set_text (PicmanProgress *progress,
                                      const gchar  *message)
 {
-  if (gimp_progress_box_progress_is_active (progress))
+  if (picman_progress_box_progress_is_active (progress))
     {
-      GimpProgressBox *box = GIMP_PROGRESS_BOX (progress);
+      PicmanProgressBox *box = PICMAN_PROGRESS_BOX (progress);
 
       gtk_label_set_text (GTK_LABEL (box->label), message);
 
@@ -185,12 +185,12 @@ gimp_progress_box_progress_set_text (GimpProgress *progress,
 }
 
 static void
-gimp_progress_box_progress_set_value (GimpProgress *progress,
+picman_progress_box_progress_set_value (PicmanProgress *progress,
                                       gdouble       percentage)
 {
-  if (gimp_progress_box_progress_is_active (progress))
+  if (picman_progress_box_progress_is_active (progress))
     {
-      GimpProgressBox *box = GIMP_PROGRESS_BOX (progress);
+      PicmanProgressBox *box = PICMAN_PROGRESS_BOX (progress);
       GtkProgressBar  *bar = GTK_PROGRESS_BAR (box->progress);
       GtkAllocation    allocation;
 
@@ -212,22 +212,22 @@ gimp_progress_box_progress_set_value (GimpProgress *progress,
 }
 
 static gdouble
-gimp_progress_box_progress_get_value (GimpProgress *progress)
+picman_progress_box_progress_get_value (PicmanProgress *progress)
 {
-  if (gimp_progress_box_progress_is_active (progress))
+  if (picman_progress_box_progress_is_active (progress))
     {
-      return GIMP_PROGRESS_BOX (progress)->value;
+      return PICMAN_PROGRESS_BOX (progress)->value;
     }
 
   return 0.0;
 }
 
 static void
-gimp_progress_box_progress_pulse (GimpProgress *progress)
+picman_progress_box_progress_pulse (PicmanProgress *progress)
 {
-  if (gimp_progress_box_progress_is_active (progress))
+  if (picman_progress_box_progress_is_active (progress))
     {
-      GimpProgressBox *box = GIMP_PROGRESS_BOX (progress);
+      PicmanProgressBox *box = PICMAN_PROGRESS_BOX (progress);
       GtkProgressBar  *bar = GTK_PROGRESS_BAR (box->progress);
 
       gtk_progress_bar_pulse (bar);
@@ -239,7 +239,7 @@ gimp_progress_box_progress_pulse (GimpProgress *progress)
 }
 
 GtkWidget *
-gimp_progress_box_new (void)
+picman_progress_box_new (void)
 {
-  return g_object_new (GIMP_TYPE_PROGRESS_BOX, NULL);
+  return g_object_new (PICMAN_TYPE_PROGRESS_BOX, NULL);
 }

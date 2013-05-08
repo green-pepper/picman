@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpmodule.c
- * (C) 1999 Austin Donnelly <austin@gimp.org>
+ * picmanmodule.c
+ * (C) 1999 Austin Donnelly <austin@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,16 +25,16 @@
 
 #include <glib-object.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
-#include "gimpmodule.h"
+#include "picmanmodule.h"
 
-#include "libgimp/libgimp-intl.h"
+#include "libpicman/libpicman-intl.h"
 
 
 /**
- * SECTION: gimpmodule
- * @title: GimpModule
+ * SECTION: picmanmodule
+ * @title: PicmanModule
  * @short_description: A #GTypeModule subclass which implements module
  *                     loading using #GModule.
  * @see_also: #GModule, #GTypeModule
@@ -50,26 +50,26 @@ enum
 };
 
 
-static void       gimp_module_finalize       (GObject     *object);
+static void       picman_module_finalize       (GObject     *object);
 
-static gboolean   gimp_module_load           (GTypeModule *module);
-static void       gimp_module_unload         (GTypeModule *module);
+static gboolean   picman_module_load           (GTypeModule *module);
+static void       picman_module_unload         (GTypeModule *module);
 
-static gboolean   gimp_module_open           (GimpModule  *module);
-static gboolean   gimp_module_close          (GimpModule  *module);
-static void       gimp_module_set_last_error (GimpModule  *module,
+static gboolean   picman_module_open           (PicmanModule  *module);
+static gboolean   picman_module_close          (PicmanModule  *module);
+static void       picman_module_set_last_error (PicmanModule  *module,
                                               const gchar *error_str);
 
 
-G_DEFINE_TYPE (GimpModule, gimp_module, G_TYPE_TYPE_MODULE)
+G_DEFINE_TYPE (PicmanModule, picman_module, G_TYPE_TYPE_MODULE)
 
-#define parent_class gimp_module_parent_class
+#define parent_class picman_module_parent_class
 
 static guint module_signals[LAST_SIGNAL];
 
 
 static void
-gimp_module_class_init (GimpModuleClass *klass)
+picman_module_class_init (PicmanModuleClass *klass)
 {
   GObjectClass     *object_class = G_OBJECT_CLASS (klass);
   GTypeModuleClass *module_class = G_TYPE_MODULE_CLASS (klass);
@@ -78,25 +78,25 @@ gimp_module_class_init (GimpModuleClass *klass)
     g_signal_new ("modified",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (GimpModuleClass, modified),
+                  G_STRUCT_OFFSET (PicmanModuleClass, modified),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  object_class->finalize = gimp_module_finalize;
+  object_class->finalize = picman_module_finalize;
 
-  module_class->load     = gimp_module_load;
-  module_class->unload   = gimp_module_unload;
+  module_class->load     = picman_module_load;
+  module_class->unload   = picman_module_unload;
 
   klass->modified        = NULL;
 }
 
 static void
-gimp_module_init (GimpModule *module)
+picman_module_init (PicmanModule *module)
 {
   module->filename          = NULL;
   module->verbose           = FALSE;
-  module->state             = GIMP_MODULE_STATE_ERROR;
+  module->state             = PICMAN_MODULE_STATE_ERROR;
   module->on_disk           = FALSE;
   module->load_inhibit      = FALSE;
 
@@ -109,13 +109,13 @@ gimp_module_init (GimpModule *module)
 }
 
 static void
-gimp_module_finalize (GObject *object)
+picman_module_finalize (GObject *object)
 {
-  GimpModule *module = GIMP_MODULE (object);
+  PicmanModule *module = PICMAN_MODULE (object);
 
   if (module->info)
     {
-      gimp_module_info_free (module->info);
+      picman_module_info_free (module->info);
       module->info = NULL;
     }
 
@@ -135,101 +135,101 @@ gimp_module_finalize (GObject *object)
 }
 
 static gboolean
-gimp_module_load (GTypeModule *module)
+picman_module_load (GTypeModule *module)
 {
-  GimpModule *gimp_module = GIMP_MODULE (module);
+  PicmanModule *picman_module = PICMAN_MODULE (module);
   gpointer    func;
 
-  g_return_val_if_fail (gimp_module->filename != NULL, FALSE);
-  g_return_val_if_fail (gimp_module->module == NULL, FALSE);
+  g_return_val_if_fail (picman_module->filename != NULL, FALSE);
+  g_return_val_if_fail (picman_module->module == NULL, FALSE);
 
-  if (gimp_module->verbose)
+  if (picman_module->verbose)
     g_print ("Loading module '%s'\n",
-             gimp_filename_to_utf8 (gimp_module->filename));
+             picman_filename_to_utf8 (picman_module->filename));
 
-  if (! gimp_module_open (gimp_module))
+  if (! picman_module_open (picman_module))
     return FALSE;
 
-  if (! gimp_module_query_module (gimp_module))
+  if (! picman_module_query_module (picman_module))
     return FALSE;
 
-  /* find the gimp_module_register symbol */
-  if (! g_module_symbol (gimp_module->module, "gimp_module_register", &func))
+  /* find the picman_module_register symbol */
+  if (! g_module_symbol (picman_module->module, "picman_module_register", &func))
     {
-      gimp_module_set_last_error (gimp_module,
-                                  "Missing gimp_module_register() symbol");
+      picman_module_set_last_error (picman_module,
+                                  "Missing picman_module_register() symbol");
 
       g_message (_("Module '%s' load error: %s"),
-                 gimp_filename_to_utf8 (gimp_module->filename),
-                 gimp_module->last_module_error);
+                 picman_filename_to_utf8 (picman_module->filename),
+                 picman_module->last_module_error);
 
-      gimp_module_close (gimp_module);
+      picman_module_close (picman_module);
 
-      gimp_module->state = GIMP_MODULE_STATE_ERROR;
+      picman_module->state = PICMAN_MODULE_STATE_ERROR;
 
       return FALSE;
     }
 
-  gimp_module->register_module = func;
+  picman_module->register_module = func;
 
-  if (! gimp_module->register_module (module))
+  if (! picman_module->register_module (module))
     {
-      gimp_module_set_last_error (gimp_module,
-                                  "gimp_module_register() returned FALSE");
+      picman_module_set_last_error (picman_module,
+                                  "picman_module_register() returned FALSE");
 
       g_message (_("Module '%s' load error: %s"),
-                 gimp_filename_to_utf8 (gimp_module->filename),
-                 gimp_module->last_module_error);
+                 picman_filename_to_utf8 (picman_module->filename),
+                 picman_module->last_module_error);
 
-      gimp_module_close (gimp_module);
+      picman_module_close (picman_module);
 
-      gimp_module->state = GIMP_MODULE_STATE_LOAD_FAILED;
+      picman_module->state = PICMAN_MODULE_STATE_LOAD_FAILED;
 
       return FALSE;
     }
 
-  gimp_module->state = GIMP_MODULE_STATE_LOADED;
+  picman_module->state = PICMAN_MODULE_STATE_LOADED;
 
   return TRUE;
 }
 
 static void
-gimp_module_unload (GTypeModule *module)
+picman_module_unload (GTypeModule *module)
 {
-  GimpModule *gimp_module = GIMP_MODULE (module);
+  PicmanModule *picman_module = PICMAN_MODULE (module);
 
-  g_return_if_fail (gimp_module->module != NULL);
+  g_return_if_fail (picman_module->module != NULL);
 
-  if (gimp_module->verbose)
+  if (picman_module->verbose)
     g_print ("Unloading module '%s'\n",
-             gimp_filename_to_utf8 (gimp_module->filename));
+             picman_filename_to_utf8 (picman_module->filename));
 
-  gimp_module_close (gimp_module);
+  picman_module_close (picman_module);
 }
 
 
 /*  public functions  */
 
 /**
- * gimp_module_new:
+ * picman_module_new:
  * @filename:     The filename of a loadable module.
  * @load_inhibit: Pass %TRUE to exclude this module from auto-loading.
  * @verbose:      Pass %TRUE to enable debugging output.
  *
- * Creates a new #GimpModule instance.
+ * Creates a new #PicmanModule instance.
  *
- * Return value: The new #GimpModule object.
+ * Return value: The new #PicmanModule object.
  **/
-GimpModule *
-gimp_module_new (const gchar *filename,
+PicmanModule *
+picman_module_new (const gchar *filename,
                  gboolean     load_inhibit,
                  gboolean     verbose)
 {
-  GimpModule *module;
+  PicmanModule *module;
 
   g_return_val_if_fail (filename != NULL, NULL);
 
-  module = g_object_new (GIMP_TYPE_MODULE, NULL);
+  module = g_object_new (PICMAN_TYPE_MODULE, NULL);
 
   module->filename     = g_strdup (filename);
   module->load_inhibit = load_inhibit ? TRUE : FALSE;
@@ -238,61 +238,61 @@ gimp_module_new (const gchar *filename,
 
   if (! module->load_inhibit)
     {
-      if (gimp_module_load (G_TYPE_MODULE (module)))
-        gimp_module_unload (G_TYPE_MODULE (module));
+      if (picman_module_load (G_TYPE_MODULE (module)))
+        picman_module_unload (G_TYPE_MODULE (module));
     }
   else
     {
       if (verbose)
         g_print ("Skipping module '%s'\n",
-                 gimp_filename_to_utf8 (filename));
+                 picman_filename_to_utf8 (filename));
 
-      module->state = GIMP_MODULE_STATE_NOT_LOADED;
+      module->state = PICMAN_MODULE_STATE_NOT_LOADED;
     }
 
   return module;
 }
 
 /**
- * gimp_module_query_module:
- * @module: A #GimpModule.
+ * picman_module_query_module:
+ * @module: A #PicmanModule.
  *
  * Queries the module without actually registering any of the types it
  * may implement. After successful query, the @info field of the
- * #GimpModule struct will be available for further inspection.
+ * #PicmanModule struct will be available for further inspection.
  *
  * Return value: %TRUE on success.
  **/
 gboolean
-gimp_module_query_module (GimpModule *module)
+picman_module_query_module (PicmanModule *module)
 {
-  const GimpModuleInfo *info;
+  const PicmanModuleInfo *info;
   gboolean              close_module = FALSE;
   gpointer              func;
 
-  g_return_val_if_fail (GIMP_IS_MODULE (module), FALSE);
+  g_return_val_if_fail (PICMAN_IS_MODULE (module), FALSE);
 
   if (! module->module)
     {
-      if (! gimp_module_open (module))
+      if (! picman_module_open (module))
         return FALSE;
 
       close_module = TRUE;
     }
 
-  /* find the gimp_module_query symbol */
-  if (! g_module_symbol (module->module, "gimp_module_query", &func))
+  /* find the picman_module_query symbol */
+  if (! g_module_symbol (module->module, "picman_module_query", &func))
     {
-      gimp_module_set_last_error (module,
-                                  "Missing gimp_module_query() symbol");
+      picman_module_set_last_error (module,
+                                  "Missing picman_module_query() symbol");
 
       g_message (_("Module '%s' load error: %s"),
-                 gimp_filename_to_utf8 (module->filename),
+                 picman_filename_to_utf8 (module->filename),
                  module->last_module_error);
 
-      gimp_module_close (module);
+      picman_module_close (module);
 
-      module->state = GIMP_MODULE_STATE_ERROR;
+      module->state = PICMAN_MODULE_STATE_ERROR;
       return FALSE;
     }
 
@@ -300,84 +300,84 @@ gimp_module_query_module (GimpModule *module)
 
   if (module->info)
     {
-      gimp_module_info_free (module->info);
+      picman_module_info_free (module->info);
       module->info = NULL;
     }
 
   info = module->query_module (G_TYPE_MODULE (module));
 
-  if (! info || info->abi_version != GIMP_MODULE_ABI_VERSION)
+  if (! info || info->abi_version != PICMAN_MODULE_ABI_VERSION)
     {
-      gimp_module_set_last_error (module,
+      picman_module_set_last_error (module,
                                   info ?
                                   "module ABI version does not match" :
-                                  "gimp_module_query() returned NULL");
+                                  "picman_module_query() returned NULL");
 
       g_message (_("Module '%s' load error: %s"),
-                 gimp_filename_to_utf8 (module->filename),
+                 picman_filename_to_utf8 (module->filename),
                  module->last_module_error);
 
-      gimp_module_close (module);
+      picman_module_close (module);
 
-      module->state = GIMP_MODULE_STATE_ERROR;
+      module->state = PICMAN_MODULE_STATE_ERROR;
       return FALSE;
     }
 
-  module->info = gimp_module_info_copy (info);
+  module->info = picman_module_info_copy (info);
 
   if (close_module)
-    return gimp_module_close (module);
+    return picman_module_close (module);
 
   return TRUE;
 }
 
 /**
- * gimp_module_modified:
- * @module: A #GimpModule.
+ * picman_module_modified:
+ * @module: A #PicmanModule.
  *
  * Emits the "modified" signal. Call it whenever you have modified the module
  * manually (which you shouldn't do).
  **/
 void
-gimp_module_modified (GimpModule *module)
+picman_module_modified (PicmanModule *module)
 {
-  g_return_if_fail (GIMP_IS_MODULE (module));
+  g_return_if_fail (PICMAN_IS_MODULE (module));
 
   g_signal_emit (module, module_signals[MODIFIED], 0);
 }
 
 /**
- * gimp_module_set_load_inhibit:
- * @module:       A #GimpModule.
+ * picman_module_set_load_inhibit:
+ * @module:       A #PicmanModule.
  * @load_inhibit: Pass %TRUE to exclude this module from auto-loading.
  *
  * Sets the @load_inhibit property if the module. Emits "modified".
  **/
 void
-gimp_module_set_load_inhibit (GimpModule *module,
+picman_module_set_load_inhibit (PicmanModule *module,
                               gboolean    load_inhibit)
 {
-  g_return_if_fail (GIMP_IS_MODULE (module));
+  g_return_if_fail (PICMAN_IS_MODULE (module));
 
   if (load_inhibit != module->load_inhibit)
     {
       module->load_inhibit = load_inhibit ? TRUE : FALSE;
 
-      gimp_module_modified (module);
+      picman_module_modified (module);
     }
 }
 
 /**
- * gimp_module_state_name:
- * @state: A #GimpModuleState.
+ * picman_module_state_name:
+ * @state: A #PicmanModuleState.
  *
- * Returns the translated textual representation of a #GimpModuleState.
+ * Returns the translated textual representation of a #PicmanModuleState.
  * The returned string must not be freed.
  *
  * Return value: The @state's name.
  **/
 const gchar *
-gimp_module_state_name (GimpModuleState state)
+picman_module_state_name (PicmanModuleState state)
 {
   static const gchar * const statenames[] =
   {
@@ -387,14 +387,14 @@ gimp_module_state_name (GimpModuleState state)
     N_("Not loaded")
   };
 
-  g_return_val_if_fail (state >= GIMP_MODULE_STATE_ERROR &&
-                        state <= GIMP_MODULE_STATE_NOT_LOADED, NULL);
+  g_return_val_if_fail (state >= PICMAN_MODULE_STATE_ERROR &&
+                        state <= PICMAN_MODULE_STATE_NOT_LOADED, NULL);
 
   return gettext (statenames[state]);
 }
 
 /**
- * gimp_module_register_enum:
+ * picman_module_register_enum:
  * @module:              a module
  * @name:                the name of the new enum type
  * @const_static_values: the enum values
@@ -404,7 +404,7 @@ gimp_module_state_name (GimpModuleState state)
  * Return value: a new enum #GType
  **/
 GType
-gimp_module_register_enum (GTypeModule      *module,
+picman_module_register_enum (GTypeModule      *module,
                            const gchar      *name,
                            const GEnumValue *const_static_values)
 {
@@ -412,35 +412,35 @@ gimp_module_register_enum (GTypeModule      *module,
 }
 
 /**
- * gimp_module_error_quark:
+ * picman_module_error_quark:
  *
- * This function is never called directly. Use GIMP_MODULE_ERROR() instead.
+ * This function is never called directly. Use PICMAN_MODULE_ERROR() instead.
  *
- * Return value: the #GQuark that defines the GIMP module error domain.
+ * Return value: the #GQuark that defines the PICMAN module error domain.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 GQuark
-gimp_module_error_quark (void)
+picman_module_error_quark (void)
 {
-  return g_quark_from_static_string ("gimp-module-error-quark");
+  return g_quark_from_static_string ("picman-module-error-quark");
 }
 
 
 /*  private functions  */
 
 static gboolean
-gimp_module_open (GimpModule *module)
+picman_module_open (PicmanModule *module)
 {
   module->module = g_module_open (module->filename, 0);
 
   if (! module->module)
     {
-      module->state = GIMP_MODULE_STATE_ERROR;
-      gimp_module_set_last_error (module, g_module_error ());
+      module->state = PICMAN_MODULE_STATE_ERROR;
+      picman_module_set_last_error (module, g_module_error ());
 
       g_message (_("Module '%s' load error: %s"),
-                 gimp_filename_to_utf8 (module->filename),
+                 picman_filename_to_utf8 (module->filename),
                  module->last_module_error);
 
       return FALSE;
@@ -450,20 +450,20 @@ gimp_module_open (GimpModule *module)
 }
 
 static gboolean
-gimp_module_close (GimpModule *module)
+picman_module_close (PicmanModule *module)
 {
   g_module_close (module->module); /* FIXME: error handling */
   module->module          = NULL;
   module->query_module    = NULL;
   module->register_module = NULL;
 
-  module->state = GIMP_MODULE_STATE_NOT_LOADED;
+  module->state = PICMAN_MODULE_STATE_NOT_LOADED;
 
   return TRUE;
 }
 
 static void
-gimp_module_set_last_error (GimpModule  *module,
+picman_module_set_last_error (PicmanModule  *module,
                             const gchar *error_str)
 {
   if (module->last_module_error)
@@ -473,30 +473,30 @@ gimp_module_set_last_error (GimpModule  *module,
 }
 
 
-/*  GimpModuleInfo functions  */
+/*  PicmanModuleInfo functions  */
 
 /**
- * gimp_module_info_new:
- * @abi_version: The #GIMP_MODULE_ABI_VERSION the module was compiled against.
+ * picman_module_info_new:
+ * @abi_version: The #PICMAN_MODULE_ABI_VERSION the module was compiled against.
  * @purpose:     The module's general purpose.
  * @author:      The module's author.
  * @version:     The module's version.
  * @copyright:   The module's copyright.
  * @date:        The module's release date.
  *
- * Creates a newly allocated #GimpModuleInfo struct.
+ * Creates a newly allocated #PicmanModuleInfo struct.
  *
- * Return value: The new #GimpModuleInfo struct.
+ * Return value: The new #PicmanModuleInfo struct.
  **/
-GimpModuleInfo *
-gimp_module_info_new (guint32      abi_version,
+PicmanModuleInfo *
+picman_module_info_new (guint32      abi_version,
                       const gchar *purpose,
                       const gchar *author,
                       const gchar *version,
                       const gchar *copyright,
                       const gchar *date)
 {
-  GimpModuleInfo *info = g_slice_new0 (GimpModuleInfo);
+  PicmanModuleInfo *info = g_slice_new0 (PicmanModuleInfo);
 
   info->abi_version = abi_version;
   info->purpose     = g_strdup (purpose);
@@ -509,19 +509,19 @@ gimp_module_info_new (guint32      abi_version,
 }
 
 /**
- * gimp_module_info_copy:
- * @info: The #GimpModuleInfo struct to copy.
+ * picman_module_info_copy:
+ * @info: The #PicmanModuleInfo struct to copy.
  *
- * Copies a #GimpModuleInfo struct.
+ * Copies a #PicmanModuleInfo struct.
  *
  * Return value: The new copy.
  **/
-GimpModuleInfo *
-gimp_module_info_copy (const GimpModuleInfo *info)
+PicmanModuleInfo *
+picman_module_info_copy (const PicmanModuleInfo *info)
 {
   g_return_val_if_fail (info != NULL, NULL);
 
-  return gimp_module_info_new (info->abi_version,
+  return picman_module_info_new (info->abi_version,
                                info->purpose,
                                info->author,
                                info->version,
@@ -530,13 +530,13 @@ gimp_module_info_copy (const GimpModuleInfo *info)
 }
 
 /**
- * gimp_module_info_free:
- * @info: The #GimpModuleInfo struct to free
+ * picman_module_info_free:
+ * @info: The #PicmanModuleInfo struct to free
  *
- * Frees the passed #GimpModuleInfo.
+ * Frees the passed #PicmanModuleInfo.
  **/
 void
-gimp_module_info_free (GimpModuleInfo *info)
+picman_module_info_free (PicmanModuleInfo *info)
 {
   g_return_if_fail (info != NULL);
 
@@ -546,5 +546,5 @@ gimp_module_info_free (GimpModuleInfo *info)
   g_free (info->copyright);
   g_free (info->date);
 
-  g_slice_free (GimpModuleInfo, info);
+  g_slice_free (PicmanModuleInfo, info);
 }

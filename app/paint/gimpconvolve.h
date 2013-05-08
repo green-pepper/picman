@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,40 +15,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONVOLVE_H__
-#define __GIMP_CONVOLVE_H__
+#ifndef __PICMAN_CONVOLVE_H__
+#define __PICMAN_CONVOLVE_H__
 
 
-#include "gimpbrushcore.h"
+#include "picmanbrushcore.h"
 
 
-#define GIMP_TYPE_CONVOLVE            (gimp_convolve_get_type ())
-#define GIMP_CONVOLVE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CONVOLVE, GimpConvolve))
-#define GIMP_CONVOLVE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CONVOLVE, GimpConvolveClass))
-#define GIMP_IS_CONVOLVE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CONVOLVE))
-#define GIMP_IS_CONVOLVE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CONVOLVE))
-#define GIMP_CONVOLVE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CONVOLVE, GimpConvolveClass))
+#define PICMAN_TYPE_CONVOLVE            (picman_convolve_get_type ())
+#define PICMAN_CONVOLVE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CONVOLVE, PicmanConvolve))
+#define PICMAN_CONVOLVE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CONVOLVE, PicmanConvolveClass))
+#define PICMAN_IS_CONVOLVE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CONVOLVE))
+#define PICMAN_IS_CONVOLVE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CONVOLVE))
+#define PICMAN_CONVOLVE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CONVOLVE, PicmanConvolveClass))
 
 
-typedef struct _GimpConvolveClass GimpConvolveClass;
+typedef struct _PicmanConvolveClass PicmanConvolveClass;
 
-struct _GimpConvolve
+struct _PicmanConvolve
 {
-  GimpBrushCore  parent_instance;
+  PicmanBrushCore  parent_instance;
   gfloat         matrix[9];
   gfloat         matrix_divisor;
 };
 
-struct _GimpConvolveClass
+struct _PicmanConvolveClass
 {
-  GimpBrushCoreClass parent_class;
+  PicmanBrushCoreClass parent_class;
 };
 
 
-void    gimp_convolve_register (Gimp                      *gimp,
-                                GimpPaintRegisterCallback  callback);
+void    picman_convolve_register (Picman                      *picman,
+                                PicmanPaintRegisterCallback  callback);
 
-GType   gimp_convolve_get_type (void) G_GNUC_CONST;
+GType   picman_convolve_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_CONVOLVE_H__  */
+#endif  /*  __PICMAN_CONVOLVE_H__  */

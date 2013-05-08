@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpfontselect.h
+ * picmanfontselect.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,28 +18,28 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
-#ifndef __GIMP_FONT_SELECT_H__
-#define __GIMP_FONT_SELECT_H__
+#ifndef __PICMAN_FONT_SELECT_H__
+#define __PICMAN_FONT_SELECT_H__
 
 G_BEGIN_DECLS
 
 
-typedef void (* GimpRunFontCallback)   (const gchar *font_name,
+typedef void (* PicmanRunFontCallback)   (const gchar *font_name,
                                         gboolean     dialog_closing,
                                         gpointer     user_data);
 
 
-const gchar * gimp_font_select_new     (const gchar         *title,
+const gchar * picman_font_select_new     (const gchar         *title,
                                         const gchar         *font_name,
-                                        GimpRunFontCallback  callback,
+                                        PicmanRunFontCallback  callback,
                                         gpointer             data);
-void          gimp_font_select_destroy (const gchar         *font_callback);
+void          picman_font_select_destroy (const gchar         *font_callback);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_FONT_SELECT_H__ */
+#endif /* __PICMAN_FONT_SELECT_H__ */

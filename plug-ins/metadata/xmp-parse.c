@@ -1,6 +1,6 @@
 /* xmp-parse.c - simple parser for XMP metadata
  *
- * Copyright (C) 2004-2007, Raphaël Quinet <raphael@gimp.org>
+ * Copyright (C) 2004-2007, Raphaël Quinet <raphael@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,10 +45,10 @@
  *   instead of the GMarkup parser
  */
 
-#ifndef WITHOUT_GIMP
+#ifndef WITHOUT_PICMAN
 #  include "config.h"
 #  include <string.h>
-#  include "libgimp/stdplugins-intl.h"
+#  include "libpicman/stdplugins-intl.h"
 #else
 #  include <string.h>
 #  define _(String) (String)

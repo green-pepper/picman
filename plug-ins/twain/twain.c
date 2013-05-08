@@ -30,7 +30,7 @@
  * Any suggestions, bug-reports or patches are welcome.
  *
  * This plug-in interfaces to the TWAIN support library in order
- * to capture images from TWAIN devices directly into GIMP images.
+ * to capture images from TWAIN devices directly into PICMAN images.
  * The plug-in is capable of acquiring the following type of
  * images:
  * - B/W (1 bit images translated to grayscale B/W)
@@ -69,8 +69,8 @@
 #include "tw_platform.h"
 #include "tw_local.h"
 
-#include "libgimp/gimp.h"
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/picman.h"
+#include "libpicman/stdplugins-intl.h"
 
 #include "tw_func.h"
 #include "tw_util.h"
@@ -124,12 +124,12 @@ void postTransferCallback(int, void *);
 static void query (void);
 static void run   (const gchar      *name,
 		   gint              nparams,
-		   const GimpParam  *param,
+		   const PicmanParam  *param,
 		   gint             *nreturn_vals,
-		   GimpParam       **return_vals);
+		   PicmanParam       **return_vals);
 
 /* This plug-in's functions */
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,    /* init_proc */
   NULL,    /* quit_proc */
@@ -137,7 +137,7 @@ const GimpPlugInInfo PLUG_IN_INFO =
   run,     /* run_proc */
 };
 
-extern void set_gimp_PLUG_IN_INFO_PTR(GimpPlugInInfo *);
+extern void set_picman_PLUG_IN_INFO_PTR(PicmanPlugInInfo *);
 
 /* Data structure holding data between runs */
 /* Currently unused... Eventually may be used
@@ -232,13 +232,13 @@ getAppIdentity(void)
   appIdentity->Version.MinorNum = 1;
   appIdentity->Version.Language = TWLG_USA;
   appIdentity->Version.Country = TWCY_USA;
-  strcpy(appIdentity->Version.Info, "GIMP TWAIN 0.6");
+  strcpy(appIdentity->Version.Info, "PICMAN TWAIN 0.6");
   appIdentity->ProtocolMajor = TWON_PROTOCOLMAJOR;
   appIdentity->ProtocolMinor = TWON_PROTOCOLMINOR;
   appIdentity->SupportedGroups = DG_IMAGE;
   strcpy(appIdentity->Manufacturer, "Craig Setera");
-  strcpy(appIdentity->ProductFamily, "GIMP");
-  strcpy(appIdentity->ProductName, "GIMP");
+  strcpy(appIdentity->ProductFamily, "PICMAN");
+  strcpy(appIdentity->ProductName, "PICMAN");
 
   return appIdentity;
 }
@@ -273,18 +273,18 @@ initializeTwain(void)
 }
 
 /******************************************************************
- * GIMP Plug-in entry points
+ * PICMAN Plug-in entry points
  ******************************************************************/
 
 /*
  * Plug-in Parameter definitions
  */
 #define NUMBER_IN_ARGS 1
-#define IN_ARGS { GIMP_PDB_INT32, "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" }
+#define IN_ARGS { PICMAN_PDB_INT32, "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" }
 #define NUMBER_OUT_ARGS 2
 #define OUT_ARGS \
-	{ GIMP_PDB_INT32, "image-count", "Number of acquired images" }, \
-	{ GIMP_PDB_INT32ARRAY, "image-ids", "Array of acquired image identifiers" }
+	{ PICMAN_PDB_INT32, "image-count", "Number of acquired images" }, \
+	{ PICMAN_PDB_INT32ARRAY, "image-ids", "Array of acquired image identifiers" }
 
 
 /*
@@ -296,14 +296,14 @@ initializeTwain(void)
 static void
 query (void)
 {
-  static const GimpParamDef args[] = { IN_ARGS };
-  static const GimpParamDef return_vals[] = { OUT_ARGS };
+  static const PicmanParamDef args[] = { IN_ARGS };
+  static const PicmanParamDef return_vals[] = { OUT_ARGS };
 
 #ifdef _DEBUG
   if (twain_run_mode == RUN_DUMP)
     {
       /* the installation of the plugin */
-      gimp_install_procedure(PLUG_IN_D_NAME,
+      picman_install_procedure(PLUG_IN_D_NAME,
                              PLUG_IN_DESCRIPTION,
                              PLUG_IN_HELP,
                              PLUG_IN_AUTHOR,
@@ -311,18 +311,18 @@ query (void)
                              PLUG_IN_VERSION,
                              "TWAIN (Dump)...",
                              NULL,
-                             GIMP_PLUGIN,
+                             PICMAN_PLUGIN,
                              NUMBER_IN_ARGS,
                              NUMBER_OUT_ARGS,
                              args,
                              return_vals);
 
-      gimp_plugin_menu_register (PLUG_IN_D_NAME, "<Image>/File/Create/Acquire");
+      picman_plugin_menu_register (PLUG_IN_D_NAME, "<Image>/File/Create/Acquire");
     }
   else if (twain_run_mode == RUN_READDUMP)
     {
       /* the installation of the plugin */
-      gimp_install_procedure(PLUG_IN_R_NAME,
+      picman_install_procedure(PLUG_IN_R_NAME,
                              PLUG_IN_DESCRIPTION,
                              PLUG_IN_HELP,
                              PLUG_IN_AUTHOR,
@@ -330,19 +330,19 @@ query (void)
                              PLUG_IN_VERSION,
                              "TWAIN (Read)...",
                              NULL,
-                             GIMP_PLUGIN,
+                             PICMAN_PLUGIN,
                              NUMBER_IN_ARGS,
                              NUMBER_OUT_ARGS,
                              args,
                              return_vals);
 
-      gimp_plugin_menu_register (PLUG_IN_R_NAME, "<Image>/File/Create/Acquire");
+      picman_plugin_menu_register (PLUG_IN_R_NAME, "<Image>/File/Create/Acquire");
     }
   else
 #endif /* _DEBUG */
     {
       /* the installation of the plugin */
-      gimp_install_procedure(PLUG_IN_NAME,
+      picman_install_procedure(PLUG_IN_NAME,
                              PLUG_IN_DESCRIPTION,
                              PLUG_IN_HELP,
                              PLUG_IN_AUTHOR,
@@ -350,19 +350,19 @@ query (void)
                              PLUG_IN_VERSION,
                              N_("_Scanner/Camera..."),
                              NULL,
-                             GIMP_PLUGIN,
+                             PICMAN_PLUGIN,
                              NUMBER_IN_ARGS,
                              NUMBER_OUT_ARGS,
                              args,
                              return_vals);
 
-      gimp_plugin_menu_register (PLUG_IN_NAME, "<Image>/File/Create/Acquire");
+      picman_plugin_menu_register (PLUG_IN_NAME, "<Image>/File/Create/Acquire");
     }
 }
 
 
 /* Return values storage */
-static GimpParam values[3];
+static PicmanParam values[3];
 
 /*
  * run
@@ -373,17 +373,17 @@ static GimpParam values[3];
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  GimpRunMode run_mode = param[0].data.d_int32;
+  PicmanRunMode run_mode = param[0].data.d_int32;
 
   /* Initialize the return values
    * Always return at least the status to the caller.
    */
-  values[0].type = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_SUCCESS;
+  values[0].type = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_SUCCESS;
   *nreturn_vals = 1;
   *return_vals = values;
 
@@ -394,37 +394,37 @@ run (const gchar      *name,
    * to be used in doing the acquire.
    */
   if (!twainIsAvailable()) {
-    values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+    values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
     return;
   }
 
   /* Set up the rest of the return parameters */
-  values[1].type = GIMP_PDB_INT32;
+  values[1].type = PICMAN_PDB_INT32;
   values[1].data.d_int32 = 0;
-  values[2].type = GIMP_PDB_INT32ARRAY;
+  values[2].type = PICMAN_PDB_INT32ARRAY;
   values[2].data.d_int32array = g_new (gint32, MAX_IMAGES);
 
   /* How are we running today? */
   switch (run_mode) {
-  case GIMP_RUN_INTERACTIVE:
+  case PICMAN_RUN_INTERACTIVE:
     /* Retrieve values from the last run...
      * Currently ignored
      */
-    gimp_get_data(PLUG_IN_NAME, &twainvals);
+    picman_get_data(PLUG_IN_NAME, &twainvals);
     break;
 
-  case GIMP_RUN_NONINTERACTIVE:
+  case PICMAN_RUN_NONINTERACTIVE:
     /* Currently, we don't do non-interactive calls.
      * Bail if someone tries to call us non-interactively
      */
-    values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+    values[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
     return;
 
-  case GIMP_RUN_WITH_LAST_VALS:
+  case PICMAN_RUN_WITH_LAST_VALS:
     /* Retrieve values from the last run...
      * Currently ignored
      */
-    gimp_get_data(PLUG_IN_NAME, &twainvals);
+    picman_get_data(PLUG_IN_NAME, &twainvals);
     break;
 
   default:
@@ -432,7 +432,7 @@ run (const gchar      *name,
   } /* switch */
 
   /* Have we succeeded so far? */
-  if (values[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (values[0].data.d_status == PICMAN_PDB_SUCCESS)
     twainMain ();
 
   /* Check to make sure we got at least one valid
@@ -443,15 +443,15 @@ run (const gchar      *name,
      * datasource.  Do final Interactive
      * steps.
      */
-    if (run_mode == GIMP_RUN_INTERACTIVE) {
+    if (run_mode == PICMAN_RUN_INTERACTIVE) {
       /* Store variable states for next run */
-      gimp_set_data(PLUG_IN_NAME, &twainvals, sizeof (TwainValues));
+      picman_set_data(PLUG_IN_NAME, &twainvals, sizeof (TwainValues));
     }
 
     /* Set return values */
     *nreturn_vals = 3;
   } else {
-    values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+    values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
   }
 }
 
@@ -465,8 +465,8 @@ run (const gchar      *name,
 typedef struct {
   gint32 image_id;
   gint32 layer_id;
-  GimpPixelRgn pixel_rgn;
-  GimpDrawable *drawable;
+  PicmanPixelRgn pixel_rgn;
+  PicmanDrawable *drawable;
   pTW_PALETTE8 paletteData;
   int totalPixels;
   int completedPixels;
@@ -482,7 +482,7 @@ void
 preTransferCallback(void *clientData)
 {
   /* Initialize our progress dialog */
-  gimp_progress_init (_("Transferring data from scanner/camera"));
+  picman_progress_init (_("Transferring data from scanner/camera"));
 }
 
 /*
@@ -507,14 +507,14 @@ beginTransferCallback(pTW_IMAGEINFO imageInfo, void *clientData)
   case TWPT_BW:
   case TWPT_GRAY:
     /* Set up the image and layer types */
-    imageType = GIMP_GRAY;
-    layerType = GIMP_GRAY_IMAGE;
+    imageType = PICMAN_GRAY;
+    layerType = PICMAN_GRAY_IMAGE;
     break;
 
   case TWPT_RGB:
     /* Set up the image and layer types */
-    imageType = GIMP_RGB;
-    layerType = GIMP_RGB_IMAGE;
+    imageType = PICMAN_RGB;
+    layerType = PICMAN_RGB_IMAGE;
     break;
 
   case TWPT_PALETTE:
@@ -529,14 +529,14 @@ beginTransferCallback(pTW_IMAGEINFO imageInfo, void *clientData)
     switch (theClientData->paletteData->PaletteType) {
     case TWPA_RGB:
       /* Set up the image and layer types */
-      imageType = GIMP_RGB;
-      layerType = GIMP_RGB_IMAGE;
+      imageType = PICMAN_RGB;
+      layerType = PICMAN_RGB_IMAGE;
       break;
 
     case TWPA_GRAY:
       /* Set up the image and layer types */
-      imageType = GIMP_GRAY;
-      layerType = GIMP_GRAY_IMAGE;
+      imageType = PICMAN_GRAY;
+      layerType = PICMAN_GRAY_IMAGE;
       break;
 
     default:
@@ -552,37 +552,37 @@ beginTransferCallback(pTW_IMAGEINFO imageInfo, void *clientData)
     return FALSE;
   }
 
-  /* Create the GIMP image */
-  theClientData->image_id = gimp_image_new(imageInfo->ImageWidth,
+  /* Create the PICMAN image */
+  theClientData->image_id = picman_image_new(imageInfo->ImageWidth,
 					   imageInfo->ImageLength, imageType);
 
   /* Set the actual resolution */
-  gimp_image_set_resolution (theClientData->image_id,
+  picman_image_set_resolution (theClientData->image_id,
                              FIX32ToFloat(imageInfo->XResolution),
                              FIX32ToFloat(imageInfo->YResolution));
-  gimp_image_set_unit (theClientData->image_id, GIMP_UNIT_INCH);
+  picman_image_set_unit (theClientData->image_id, PICMAN_UNIT_INCH);
 
   /* Create a layer */
-  theClientData->layer_id = gimp_layer_new(theClientData->image_id,
+  theClientData->layer_id = picman_layer_new(theClientData->image_id,
 					   _("Background"),
 					   imageInfo->ImageWidth,
 					   imageInfo->ImageLength,
-					   layerType, 100, GIMP_NORMAL_MODE);
+					   layerType, 100, PICMAN_NORMAL_MODE);
 
   /* Add the layer to the image */
-  gimp_image_insert_layer(theClientData->image_id,
+  picman_image_insert_layer(theClientData->image_id,
                           theClientData->layer_id, -1, 0);
 
   /* Update the progress dialog */
   theClientData->totalPixels = imageInfo->ImageWidth * imageInfo->ImageLength;
   theClientData->completedPixels = 0;
-  gimp_progress_update((double) 0);
+  picman_progress_update((double) 0);
 
   /* Get our drawable */
-  theClientData->drawable = gimp_drawable_get(theClientData->layer_id);
+  theClientData->drawable = picman_drawable_get(theClientData->layer_id);
 
   /* Initialize a pixel region for writing to the image */
-  gimp_pixel_rgn_init(&(theClientData->pixel_rgn), theClientData->drawable,
+  picman_pixel_rgn_init(&(theClientData->pixel_rgn), theClientData->drawable,
 		      0, 0, imageInfo->ImageWidth, imageInfo->ImageLength,
 		      TRUE, FALSE);
 
@@ -605,7 +605,7 @@ beginTransferCallback(pTW_IMAGEINFO imageInfo, void *clientData)
  * the image type is Black/White.
  *
  * Black and white data is unpacked from bit data
- * into byte data and written into a gray scale GIMP
+ * into byte data and written into a gray scale PICMAN
  * image.
  */
 static char bitMasks[] = { 128, 64, 32, 16, 8, 4, 2, 1 };
@@ -635,14 +635,14 @@ bitTransferCallback(pTW_IMAGEINFO imageInfo,
   }
 
   /* Update the complete chunk */
-  gimp_pixel_rgn_set_rect(&(theClientData->pixel_rgn),
+  picman_pixel_rgn_set_rect(&(theClientData->pixel_rgn),
 			  (guchar *) destBuf,
 			  imageMemXfer->XOffset, imageMemXfer->YOffset,
 			  cols, rows);
 
   /* Update the user on our progress */
   theClientData->completedPixels += (cols * rows);
-  gimp_progress_update((double) theClientData->completedPixels /
+  picman_progress_update((double) theClientData->completedPixels /
 		       (double) theClientData->totalPixels);
 
   return TRUE;
@@ -656,7 +656,7 @@ bitTransferCallback(pTW_IMAGEINFO imageInfo,
  * the image type is Grayscale or RGB.  This transfer
  * mode is quicker than the modes that require translation
  * from a greater number of bits per sample down to the
- * 8 bits per sample understood by GIMP.
+ * 8 bits per sample understood by PICMAN.
  */
 static int
 oneBytePerSampleTransferCallback(pTW_IMAGEINFO imageInfo,
@@ -675,12 +675,12 @@ oneBytePerSampleTransferCallback(pTW_IMAGEINFO imageInfo,
     destBuf = g_new (char, rows * cols * bytesPerPixel);
 
   /* The bytes coming from the source may not be padded in
-   * a way that GIMP is terribly happy with.  It is
+   * a way that PICMAN is terribly happy with.  It is
    * possible to transfer row by row, but that is particularly
    * expensive in terms of performance.  It is much cheaper
    * to rearrange the data and transfer it in one large chunk.
    * The next chunk of code rearranges the incoming data into
-   * a non-padded chunk for GIMP.
+   * a non-padded chunk for PICMAN.
    */
   srcBuf = (char *) imageMemXfer->Memory.TheMem;
   for (row = 0; row < rows; row++) {
@@ -691,14 +691,14 @@ oneBytePerSampleTransferCallback(pTW_IMAGEINFO imageInfo,
   }
 
   /* Update the complete chunk */
-  gimp_pixel_rgn_set_rect(&(theClientData->pixel_rgn),
+  picman_pixel_rgn_set_rect(&(theClientData->pixel_rgn),
 			  (guchar *) destBuf,
 			  imageMemXfer->XOffset, imageMemXfer->YOffset,
 			  cols, rows);
 
   /* Update the user on our progress */
   theClientData->completedPixels += (cols * rows);
-  gimp_progress_update((double) theClientData->completedPixels /
+  picman_progress_update((double) theClientData->completedPixels /
 		       (double) theClientData->totalPixels);
 
   return TRUE;
@@ -731,12 +731,12 @@ twoBytesPerSampleTransferCallback(pTW_IMAGEINFO imageInfo,
     destBuf = g_new (char, rows * cols * imageInfo->SamplesPerPixel);
 
   /* The bytes coming from the source may not be padded in
-   * a way that GIMP is terribly happy with.  It is
+   * a way that PICMAN is terribly happy with.  It is
    * possible to transfer row by row, but that is particularly
    * expensive in terms of performance.  It is much cheaper
    * to rearrange the data and transfer it in one large chunk.
    * The next chunk of code rearranges the incoming data into
-   * a non-padded chunk for GIMP.  This function must also
+   * a non-padded chunk for PICMAN.  This function must also
    * reduce from multiple bytes per sample down to single byte
    * per sample.
    */
@@ -767,14 +767,14 @@ twoBytesPerSampleTransferCallback(pTW_IMAGEINFO imageInfo,
   }
 
   /* Send the complete chunk */
-  gimp_pixel_rgn_set_rect(&(theClientData->pixel_rgn),
+  picman_pixel_rgn_set_rect(&(theClientData->pixel_rgn),
 			  (guchar *) destBuf,
 			  imageMemXfer->XOffset, imageMemXfer->YOffset,
 			  cols, rows);
 
   /* Update the user on our progress */
   theClientData->completedPixels += (cols * rows);
-  gimp_progress_update((double) theClientData->completedPixels /
+  picman_progress_update((double) theClientData->completedPixels /
 		       (double) theClientData->totalPixels);
 
   return TRUE;
@@ -786,7 +786,7 @@ twoBytesPerSampleTransferCallback(pTW_IMAGEINFO imageInfo,
  * The following function is called for each memory
  * block that is transferred from the data source if
  * the image type is paletted.  This does not create
- * an indexed image type in GIMP because for some
+ * an indexed image type in PICMAN because for some
  * reason it does not allow creation of a specific
  * palette.  This function will create an RGB or Gray
  * image and use the palette to set the details of
@@ -844,14 +844,14 @@ palettedTransferCallback(pTW_IMAGEINFO imageInfo,
   }
 
   /* Send the complete chunk */
-  gimp_pixel_rgn_set_rect(&(theClientData->pixel_rgn),
+  picman_pixel_rgn_set_rect(&(theClientData->pixel_rgn),
 			  (guchar *) destBuf,
 			  imageMemXfer->XOffset, imageMemXfer->YOffset,
 			  cols, rows);
 
   /* Update the user on our progress */
   theClientData->completedPixels += (cols * rows);
-  gimp_progress_update((double) theClientData->completedPixels /
+  picman_progress_update((double) theClientData->completedPixels /
 		       (double) theClientData->totalPixels);
 
   return TRUE;
@@ -927,23 +927,23 @@ endTransferCallback(int completionState, int pendingCount, void *clientData)
     g_free (destBuf);
     destBuf = NULL;
   }
-  gimp_drawable_flush(theClientData->drawable);
-  gimp_drawable_detach(theClientData->drawable);
+  picman_drawable_flush(theClientData->drawable);
+  picman_drawable_detach(theClientData->drawable);
 
   /* Make sure to check our return code */
   if (completionState == TWRC_XFERDONE) {
     /* We have a completed image transfer */
-    values[2].type = GIMP_PDB_INT32ARRAY;
+    values[2].type = PICMAN_PDB_INT32ARRAY;
     values[2].data.d_int32array[values[1].data.d_int32++] =
       theClientData->image_id;
 
     /* Display the image */
     LogMessage("Displaying image %d\n", theClientData->image_id);
-    gimp_display_new (theClientData->image_id);
+    picman_display_new (theClientData->image_id);
   } else {
     /* The transfer did not complete successfully */
     LogMessage("Deleting image\n");
-    gimp_image_delete(theClientData->image_id);
+    picman_image_delete(theClientData->image_id);
   }
 
   /* Shut down if we have received all of the possible images */

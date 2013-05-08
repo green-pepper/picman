@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-paperdatadir = $(gimpdatadir)/gimpressionist/Paper
+paperdatadir = $(picmandatadir)/picmanressionist/Paper
 
 paperdata_DATA = \
 	bricks.pgm		\

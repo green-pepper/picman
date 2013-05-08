@@ -1,5 +1,5 @@
 /*
- * GIMP - The GNU Image Manipulation Program
+ * PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -66,15 +66,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-hot"
 #define PLUG_IN_BINARY "hot"
-#define PLUG_IN_ROLE   "gimp-hot"
+#define PLUG_IN_ROLE   "picman-hot"
 
 
 typedef struct
@@ -145,9 +145,9 @@ static gint     icompos_lim;         /* composite amplitude limit (scaled intege
 static void       query         (void);
 static void       run           (const gchar      *name,
                                  gint              nparam,
-                                 const GimpParam  *param,
+                                 const PicmanParam  *param,
                                  gint             *nretvals,
-                                 GimpParam       **retvals);
+                                 PicmanParam       **retvals);
 
 static gboolean   pluginCore    (piArgs           *argp);
 static gboolean   plugin_dialog (piArgs           *argp);
@@ -180,7 +180,7 @@ static void       build_tab     (gint              m);
 #define pix_decode(v)  ((double)v / (double)MAXPIX)
 #define pix_encode(v)  ((int)(v * (double)MAXPIX + 0.5))
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -193,17 +193,17 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",     "The Image" },
-    { GIMP_PDB_DRAWABLE, "drawable",  "The Drawable" },
-    { GIMP_PDB_INT32,    "mode",      "Mode { NTSC (0), PAL (1) }" },
-    { GIMP_PDB_INT32,    "action",    "The action to perform" },
-    { GIMP_PDB_INT32,    "new-layer", "Create a new layer { TRUE, FALSE }" }
+    { PICMAN_PDB_INT32,    "run-mode",  "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",     "The Image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",  "The Drawable" },
+    { PICMAN_PDB_INT32,    "mode",      "Mode { NTSC (0), PAL (1) }" },
+    { PICMAN_PDB_INT32,    "action",    "The action to perform" },
+    { PICMAN_PDB_INT32,    "new-layer", "Create a new layer { TRUE, FALSE }" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Find and fix pixels that may be unsafely bright"),
                           "hot scans an image for pixels that will give unsave "
                           "values of chrominance or composite signale "
@@ -216,21 +216,21 @@ query (void)
                           "1997",
                           N_("_Hot..."),
                           "RGB",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Modify");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Colors/Modify");
 }
 
 static void
 run (const gchar      *name,
      gint              nparam,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nretvals,
-     GimpParam       **retvals)
+     PicmanParam       **retvals)
 {
-  static GimpParam rvals[1];
+  static PicmanParam rvals[1];
   piArgs           args;
 
   *nretvals = 1;
@@ -241,17 +241,17 @@ run (const gchar      *name,
   memset (&args, 0, sizeof (args));
   args.mode = -1;
 
-  gimp_get_data (PLUG_IN_PROC, &args);
+  picman_get_data (PLUG_IN_PROC, &args);
 
   args.image    = param[1].data.d_image;
   args.drawable = param[2].data.d_drawable;
 
-  rvals[0].type          = GIMP_PDB_STATUS;
-  rvals[0].data.d_status = GIMP_PDB_SUCCESS;
+  rvals[0].type          = PICMAN_PDB_STATUS;
+  rvals[0].data.d_status = PICMAN_PDB_SUCCESS;
 
   switch (param[0].data.d_int32)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /* XXX: add code here for interactive running */
       if (args.mode == -1)
         {
@@ -264,22 +264,22 @@ run (const gchar      *name,
         {
           if (! pluginCore (&args))
             {
-              rvals[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+              rvals[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
       else
         {
-          rvals[0].data.d_status = GIMP_PDB_CANCEL;
+          rvals[0].data.d_status = PICMAN_PDB_CANCEL;
         }
 
-      gimp_set_data (PLUG_IN_PROC, &args, sizeof (args));
+      picman_set_data (PLUG_IN_PROC, &args, sizeof (args));
     break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /* XXX: add code here for non-interactive running */
       if (nparam != 6)
         {
-          rvals[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+          rvals[0].data.d_status = PICMAN_PDB_CALLING_ERROR;
           break;
         }
       args.mode       = param[3].data.d_int32;
@@ -288,16 +288,16 @@ run (const gchar      *name,
 
       if (! pluginCore (&args))
         {
-          rvals[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+          rvals[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
           break;
         }
     break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /* XXX: add code here for last-values running */
       if (! pluginCore (&args))
         {
-          rvals[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+          rvals[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
         }
     break;
   }
@@ -306,8 +306,8 @@ run (const gchar      *name,
 static gboolean
 pluginCore (piArgs *argp)
 {
-  GimpDrawable *drw, *ndrw = NULL;
-  GimpPixelRgn  srcPr, dstPr;
+  PicmanDrawable *drw, *ndrw = NULL;
+  PicmanPixelRgn  srcPr, dstPr;
   gboolean      success = TRUE;
   gint          nl      = 0;
   gint          y, i;
@@ -323,7 +323,7 @@ pluginCore (piArgs *argp)
   gdouble       pr, pg, pb;
   gdouble       py;
 
-  drw = gimp_drawable_get (argp->drawable);
+  drw = picman_drawable_get (argp->drawable);
 
   width  = drw->width;
   height = drw->height;
@@ -348,14 +348,14 @@ pluginCore (piArgs *argp)
                   mode_names[argp->mode],
                   action_names[argp->action]);
 
-      nl = gimp_layer_new (argp->image, name, width, height,
-                           GIMP_RGBA_IMAGE, (gdouble)100, GIMP_NORMAL_MODE);
-      ndrw = gimp_drawable_get (nl);
-      gimp_drawable_fill (nl, GIMP_TRANSPARENT_FILL);
-      gimp_image_insert_layer (argp->image, nl, -1, 0);
+      nl = picman_layer_new (argp->image, name, width, height,
+                           PICMAN_RGBA_IMAGE, (gdouble)100, PICMAN_NORMAL_MODE);
+      ndrw = picman_drawable_get (nl);
+      picman_drawable_fill (nl, PICMAN_TRANSPARENT_FILL);
+      picman_image_insert_layer (argp->image, nl, -1, 0);
     }
 
-  gimp_drawable_mask_bounds (drw->drawable_id,
+  picman_drawable_mask_bounds (drw->drawable_id,
                              &sel_x1, &sel_y1, &sel_x2, &sel_y2);
 
   width  = sel_x2 - sel_x1;
@@ -363,28 +363,28 @@ pluginCore (piArgs *argp)
 
   src = g_new (guchar, width * height * bpp);
   dst = g_new (guchar, width * height * 4);
-  gimp_pixel_rgn_init (&srcPr, drw, sel_x1, sel_y1, width, height,
+  picman_pixel_rgn_init (&srcPr, drw, sel_x1, sel_y1, width, height,
                        FALSE, FALSE);
 
   if (argp->new_layerp)
     {
-      gimp_pixel_rgn_init (&dstPr, ndrw, sel_x1, sel_y1, width, height,
+      picman_pixel_rgn_init (&dstPr, ndrw, sel_x1, sel_y1, width, height,
                            FALSE, FALSE);
     }
   else
     {
-      gimp_pixel_rgn_init (&dstPr, drw, sel_x1, sel_y1, width, height,
+      picman_pixel_rgn_init (&dstPr, drw, sel_x1, sel_y1, width, height,
                            TRUE, TRUE);
     }
 
-  gimp_pixel_rgn_get_rect (&srcPr, src, sel_x1, sel_y1, width, height);
+  picman_pixel_rgn_get_rect (&srcPr, src, sel_x1, sel_y1, width, height);
 
   s = src;
   d = dst;
 
   build_tab (argp->mode);
 
-  gimp_progress_init (_("Hot"));
+  picman_progress_init (_("Hot"));
   prog_interval = height / 10;
 
   for (y = sel_y1; y < sel_y2; y++)
@@ -392,7 +392,7 @@ pluginCore (piArgs *argp)
       gint x;
 
       if (y % prog_interval == 0)
-        gimp_progress_update ((double) y / (double) (sel_y2 - sel_y1));
+        picman_progress_update ((double) y / (double) (sel_y2 - sel_y1));
 
       for (x = sel_x1; x < sel_x2; x++)
         {
@@ -548,26 +548,26 @@ pluginCore (piArgs *argp)
             }
         }
     }
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
-  gimp_pixel_rgn_set_rect (&dstPr, dst, sel_x1, sel_y1, width, height);
+  picman_pixel_rgn_set_rect (&dstPr, dst, sel_x1, sel_y1, width, height);
 
   g_free (src);
   g_free (dst);
 
   if (argp->new_layerp)
     {
-      gimp_drawable_flush (ndrw);
-      gimp_drawable_update (nl, sel_x1, sel_y1, width, height);
+      picman_drawable_flush (ndrw);
+      picman_drawable_update (nl, sel_x1, sel_y1, width, height);
     }
   else
     {
-      gimp_drawable_flush (drw);
-      gimp_drawable_merge_shadow (drw->drawable_id, TRUE);
-      gimp_drawable_update (drw->drawable_id, sel_x1, sel_y1, width, height);
+      picman_drawable_flush (drw);
+      picman_drawable_merge_shadow (drw->drawable_id, TRUE);
+      picman_drawable_update (drw->drawable_id, sel_x1, sel_y1, width, height);
     }
 
-  gimp_displays_flush ();
+  picman_displays_flush ();
 
   return success;
 }
@@ -582,11 +582,11 @@ plugin_dialog (piArgs *argp)
   GtkWidget *frame;
   gboolean   run;
 
-  gimp_ui_init (PLUG_IN_BINARY, FALSE);
+  picman_ui_init (PLUG_IN_BINARY, FALSE);
 
-  dlg = gimp_dialog_new (_("Hot"), PLUG_IN_ROLE,
+  dlg = picman_dialog_new (_("Hot"), PLUG_IN_ROLE,
                          NULL, 0,
-                         gimp_standard_help_func, PLUG_IN_PROC,
+                         picman_standard_help_func, PLUG_IN_PROC,
 
                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                          GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -598,7 +598,7 @@ plugin_dialog (piArgs *argp)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dlg));
+  picman_window_set_transient (GTK_WINDOW (dlg));
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 12);
@@ -610,8 +610,8 @@ plugin_dialog (piArgs *argp)
   gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Mode"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Mode"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &argp->mode, argp->mode,
 
                                     "N_TSC", MODE_NTSC, NULL,
@@ -628,11 +628,11 @@ plugin_dialog (piArgs *argp)
   gtk_widget_show (toggle);
 
   g_signal_connect (toggle, "toggled",
-                    G_CALLBACK (gimp_toggle_button_update),
+                    G_CALLBACK (picman_toggle_button_update),
                     &argp->new_layerp);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Action"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Action"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &argp->action, argp->action,
 
                                     _("Reduce _Luminance"),  ACT_LREDUX, NULL,
@@ -646,7 +646,7 @@ plugin_dialog (piArgs *argp)
 
   gtk_widget_show (dlg);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dlg)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dlg)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dlg);
 

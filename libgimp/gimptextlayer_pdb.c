@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimptextlayer_pdb.c
+ * picmantextlayer_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimptextlayer
- * @title: gimptextlayer
+ * SECTION: picmantextlayer
+ * @title: picmantextlayer
  * @short_description: Functions for querying and manipulating text layers.
  *
  * Functions for querying and manipulating text layers.
@@ -35,7 +35,7 @@
 
 
 /**
- * gimp_text_layer_new:
+ * picman_text_layer_new:
  * @image_ID: The image.
  * @text: The text to generate (in UTF-8 encoding).
  * @fontname: The name of the font.
@@ -47,44 +47,44 @@
  * This procedure creates a new text layer. The arguments are kept as
  * simple as necessary for the normal case. All text attributes,
  * however, can be modified with the appropriate
- * gimp_text_layer_set_*() procedures. The new layer still needs to be
+ * picman_text_layer_set_*() procedures. The new layer still needs to be
  * added to the image, as this is not automatic. Add the new layer
- * using gimp_image_insert_layer().
+ * using picman_image_insert_layer().
  *
  * Returns: The new text layer.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gint32
-gimp_text_layer_new (gint32       image_ID,
+picman_text_layer_new (gint32       image_ID,
                      const gchar *text,
                      const gchar *fontname,
                      gdouble      size,
-                     GimpUnit     unit)
+                     PicmanUnit     unit)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gint32 layer_ID = -1;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-new",
+  return_vals = picman_run_procedure ("picman-text-layer-new",
                                     &nreturn_vals,
-                                    GIMP_PDB_IMAGE, image_ID,
-                                    GIMP_PDB_STRING, text,
-                                    GIMP_PDB_STRING, fontname,
-                                    GIMP_PDB_FLOAT, size,
-                                    GIMP_PDB_INT32, unit,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_IMAGE, image_ID,
+                                    PICMAN_PDB_STRING, text,
+                                    PICMAN_PDB_STRING, fontname,
+                                    PICMAN_PDB_FLOAT, size,
+                                    PICMAN_PDB_INT32, unit,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     layer_ID = return_vals[1].data.d_layer;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return layer_ID;
 }
 
 /**
- * gimp_text_layer_get_text:
+ * picman_text_layer_get_text:
  * @layer_ID: The text layer.
  *
  * Get the text from a text layer as string.
@@ -93,30 +93,30 @@ gimp_text_layer_new (gint32       image_ID,
  *
  * Returns: The text from the specified text layer.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gchar *
-gimp_text_layer_get_text (gint32 layer_ID)
+picman_text_layer_get_text (gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *text = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-text",
+  return_vals = picman_run_procedure ("picman-text-layer-get-text",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     text = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return text;
 }
 
 /**
- * gimp_text_layer_set_text:
+ * picman_text_layer_set_text:
  * @layer_ID: The text layer.
  * @text: The new text to set.
  *
@@ -126,31 +126,31 @@ gimp_text_layer_get_text (gint32 layer_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_text (gint32       layer_ID,
+picman_text_layer_set_text (gint32       layer_ID,
                           const gchar *text)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-text",
+  return_vals = picman_run_procedure ("picman-text-layer-set-text",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_STRING, text,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_STRING, text,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_markup:
+ * picman_text_layer_get_markup:
  * @layer_ID: The text layer.
  *
  * Get the markup from a text layer as string.
@@ -164,30 +164,30 @@ gimp_text_layer_set_text (gint32       layer_ID,
  * Returns: The markup which represents the style of the specified text
  * layer.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gchar *
-gimp_text_layer_get_markup (gint32 layer_ID)
+picman_text_layer_get_markup (gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *markup = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-markup",
+  return_vals = picman_run_procedure ("picman-text-layer-get-markup",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     markup = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return markup;
 }
 
 /**
- * gimp_text_layer_get_font:
+ * picman_text_layer_get_font:
  * @layer_ID: The text layer.
  *
  * Get the font from a text layer as string.
@@ -196,30 +196,30 @@ gimp_text_layer_get_markup (gint32 layer_ID)
  *
  * Returns: The font which is used in the specified text layer.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gchar *
-gimp_text_layer_get_font (gint32 layer_ID)
+picman_text_layer_get_font (gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *font = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-font",
+  return_vals = picman_run_procedure ("picman-text-layer-get-font",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     font = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return font;
 }
 
 /**
- * gimp_text_layer_set_font:
+ * picman_text_layer_set_font:
  * @layer_ID: The text layer.
  * @font: The new font to use.
  *
@@ -229,31 +229,31 @@ gimp_text_layer_get_font (gint32 layer_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_font (gint32       layer_ID,
+picman_text_layer_set_font (gint32       layer_ID,
                           const gchar *font)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-font",
+  return_vals = picman_run_procedure ("picman-text-layer-set-font",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_STRING, font,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_STRING, font,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_font_size:
+ * picman_text_layer_get_font_size:
  * @layer_ID: The text layer.
  * @unit: The unit used for the font size.
  *
@@ -265,34 +265,34 @@ gimp_text_layer_set_font (gint32       layer_ID,
  *
  * Returns: The font size.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gdouble
-gimp_text_layer_get_font_size (gint32    layer_ID,
-                               GimpUnit *unit)
+picman_text_layer_get_font_size (gint32    layer_ID,
+                               PicmanUnit *unit)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble font_size = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-font-size",
+  return_vals = picman_run_procedure ("picman-text-layer-get-font-size",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       font_size = return_vals[1].data.d_float;
       *unit = return_vals[2].data.d_unit;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return font_size;
 }
 
 /**
- * gimp_text_layer_set_font_size:
+ * picman_text_layer_set_font_size:
  * @layer_ID: The text layer.
  * @font_size: The font size.
  * @unit: The unit to use for the font size.
@@ -304,33 +304,33 @@ gimp_text_layer_get_font_size (gint32    layer_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_font_size (gint32   layer_ID,
+picman_text_layer_set_font_size (gint32   layer_ID,
                                gdouble  font_size,
-                               GimpUnit unit)
+                               PicmanUnit unit)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-font-size",
+  return_vals = picman_run_procedure ("picman-text-layer-set-font-size",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_FLOAT, font_size,
-                                    GIMP_PDB_INT32, unit,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_FLOAT, font_size,
+                                    PICMAN_PDB_INT32, unit,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_antialias:
+ * picman_text_layer_get_antialias:
  * @layer_ID: The text layer.
  *
  * Check if antialiasing is used in the text layer.
@@ -341,30 +341,30 @@ gimp_text_layer_set_font_size (gint32   layer_ID,
  * Returns: A flag which is true if antialiasing is used for rendering
  * the font in the text layer.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_get_antialias (gint32 layer_ID)
+picman_text_layer_get_antialias (gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean antialias = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-antialias",
+  return_vals = picman_run_procedure ("picman-text-layer-get-antialias",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     antialias = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return antialias;
 }
 
 /**
- * gimp_text_layer_set_antialias:
+ * picman_text_layer_set_antialias:
  * @layer_ID: The text layer.
  * @antialias: Enable/disable antialiasing of the text.
  *
@@ -375,31 +375,31 @@ gimp_text_layer_get_antialias (gint32 layer_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_antialias (gint32   layer_ID,
+picman_text_layer_set_antialias (gint32   layer_ID,
                                gboolean antialias)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-antialias",
+  return_vals = picman_run_procedure ("picman-text-layer-set-antialias",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_INT32, antialias,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_INT32, antialias,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_hint_style:
+ * picman_text_layer_get_hint_style:
  * @layer_ID: The text layer.
  *
  * Get information about hinting in the specified text layer.
@@ -410,30 +410,30 @@ gimp_text_layer_set_antialias (gint32   layer_ID,
  *
  * Returns: The hint style used for font outlines.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
-GimpTextHintStyle
-gimp_text_layer_get_hint_style (gint32 layer_ID)
+PicmanTextHintStyle
+picman_text_layer_get_hint_style (gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpTextHintStyle style = 0;
+  PicmanTextHintStyle style = 0;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-hint-style",
+  return_vals = picman_run_procedure ("picman-text-layer-get-hint-style",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     style = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return style;
 }
 
 /**
- * gimp_text_layer_set_hint_style:
+ * picman_text_layer_set_hint_style:
  * @layer_ID: The text layer.
  * @style: The new hint style.
  *
@@ -445,31 +445,31 @@ gimp_text_layer_get_hint_style (gint32 layer_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_text_layer_set_hint_style (gint32            layer_ID,
-                                GimpTextHintStyle style)
+picman_text_layer_set_hint_style (gint32            layer_ID,
+                                PicmanTextHintStyle style)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-hint-style",
+  return_vals = picman_run_procedure ("picman-text-layer-set-hint-style",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_INT32, style,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_INT32, style,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_kerning:
+ * picman_text_layer_get_kerning:
  * @layer_ID: The text layer.
  *
  * Check if kerning is used in the text layer.
@@ -479,30 +479,30 @@ gimp_text_layer_set_hint_style (gint32            layer_ID,
  *
  * Returns: A flag which is true if kerning is used in the text layer.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_get_kerning (gint32 layer_ID)
+picman_text_layer_get_kerning (gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean kerning = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-kerning",
+  return_vals = picman_run_procedure ("picman-text-layer-get-kerning",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     kerning = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return kerning;
 }
 
 /**
- * gimp_text_layer_set_kerning:
+ * picman_text_layer_set_kerning:
  * @layer_ID: The text layer.
  * @kerning: Enable/disable kerning in the text.
  *
@@ -512,31 +512,31 @@ gimp_text_layer_get_kerning (gint32 layer_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_kerning (gint32   layer_ID,
+picman_text_layer_set_kerning (gint32   layer_ID,
                              gboolean kerning)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-kerning",
+  return_vals = picman_run_procedure ("picman-text-layer-set-kerning",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_INT32, kerning,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_INT32, kerning,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_language:
+ * picman_text_layer_get_language:
  * @layer_ID: The text layer.
  *
  * Get the language used in the text layer.
@@ -546,30 +546,30 @@ gimp_text_layer_set_kerning (gint32   layer_ID,
  *
  * Returns: The language used in the text layer.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gchar *
-gimp_text_layer_get_language (gint32 layer_ID)
+picman_text_layer_get_language (gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gchar *language = NULL;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-language",
+  return_vals = picman_run_procedure ("picman-text-layer-get-language",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     language = g_strdup (return_vals[1].data.d_string);
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return language;
 }
 
 /**
- * gimp_text_layer_set_language:
+ * picman_text_layer_set_language:
  * @layer_ID: The text layer.
  * @language: The new language to use for the text layer.
  *
@@ -580,31 +580,31 @@ gimp_text_layer_get_language (gint32 layer_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_language (gint32       layer_ID,
+picman_text_layer_set_language (gint32       layer_ID,
                               const gchar *language)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-language",
+  return_vals = picman_run_procedure ("picman-text-layer-set-language",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_STRING, language,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_STRING, language,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_base_direction:
+ * picman_text_layer_get_base_direction:
  * @layer_ID: The text layer.
  *
  * Get the base direction used for rendering the text layer.
@@ -614,30 +614,30 @@ gimp_text_layer_set_language (gint32       layer_ID,
  *
  * Returns: The based direction used for the text layer.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
-GimpTextDirection
-gimp_text_layer_get_base_direction (gint32 layer_ID)
+PicmanTextDirection
+picman_text_layer_get_base_direction (gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpTextDirection direction = 0;
+  PicmanTextDirection direction = 0;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-base-direction",
+  return_vals = picman_run_procedure ("picman-text-layer-get-base-direction",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     direction = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return direction;
 }
 
 /**
- * gimp_text_layer_set_base_direction:
+ * picman_text_layer_set_base_direction:
  * @layer_ID: The text layer.
  * @direction: The base direction of the text.
  *
@@ -648,31 +648,31 @@ gimp_text_layer_get_base_direction (gint32 layer_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_base_direction (gint32            layer_ID,
-                                    GimpTextDirection direction)
+picman_text_layer_set_base_direction (gint32            layer_ID,
+                                    PicmanTextDirection direction)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-base-direction",
+  return_vals = picman_run_procedure ("picman-text-layer-set-base-direction",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_INT32, direction,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_INT32, direction,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_justification:
+ * picman_text_layer_get_justification:
  * @layer_ID: The text layer.
  *
  * Get the text justification information of the text layer.
@@ -682,30 +682,30 @@ gimp_text_layer_set_base_direction (gint32            layer_ID,
  *
  * Returns: The justification used in the text layer.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
-GimpTextJustification
-gimp_text_layer_get_justification (gint32 layer_ID)
+PicmanTextJustification
+picman_text_layer_get_justification (gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
-  GimpTextJustification justify = 0;
+  PicmanTextJustification justify = 0;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-justification",
+  return_vals = picman_run_procedure ("picman-text-layer-get-justification",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     justify = return_vals[1].data.d_int32;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return justify;
 }
 
 /**
- * gimp_text_layer_set_justification:
+ * picman_text_layer_set_justification:
  * @layer_ID: The text layer.
  * @justify: The justification for your text.
  *
@@ -716,31 +716,31 @@ gimp_text_layer_get_justification (gint32 layer_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_justification (gint32                layer_ID,
-                                   GimpTextJustification justify)
+picman_text_layer_set_justification (gint32                layer_ID,
+                                   PicmanTextJustification justify)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-justification",
+  return_vals = picman_run_procedure ("picman-text-layer-set-justification",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_INT32, justify,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_INT32, justify,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_color:
+ * picman_text_layer_get_color:
  * @layer_ID: The text layer.
  * @color: The color of the text.
  *
@@ -750,33 +750,33 @@ gimp_text_layer_set_justification (gint32                layer_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_get_color (gint32   layer_ID,
-                           GimpRGB *color)
+picman_text_layer_get_color (gint32   layer_ID,
+                           PicmanRGB *color)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-color",
+  return_vals = picman_run_procedure ("picman-text-layer-get-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
   if (success)
     *color = return_vals[1].data.d_color;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_set_color:
+ * picman_text_layer_set_color:
  * @layer_ID: The text layer.
  * @color: The color to use for the text.
  *
@@ -786,31 +786,31 @@ gimp_text_layer_get_color (gint32   layer_ID,
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_color (gint32         layer_ID,
-                           const GimpRGB *color)
+picman_text_layer_set_color (gint32         layer_ID,
+                           const PicmanRGB *color)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-color",
+  return_vals = picman_run_procedure ("picman-text-layer-set-color",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_COLOR, color,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_COLOR, color,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_indent:
+ * picman_text_layer_get_indent:
  * @layer_ID: The text layer.
  *
  * Get the line indentation of text layer.
@@ -820,30 +820,30 @@ gimp_text_layer_set_color (gint32         layer_ID,
  *
  * Returns: The indentation value of the first line.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gdouble
-gimp_text_layer_get_indent (gint32 layer_ID)
+picman_text_layer_get_indent (gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble indent = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-indent",
+  return_vals = picman_run_procedure ("picman-text-layer-get-indent",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     indent = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return indent;
 }
 
 /**
- * gimp_text_layer_set_indent:
+ * picman_text_layer_set_indent:
  * @layer_ID: The text layer.
  * @indent: The indentation for the first line.
  *
@@ -854,31 +854,31 @@ gimp_text_layer_get_indent (gint32 layer_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_indent (gint32  layer_ID,
+picman_text_layer_set_indent (gint32  layer_ID,
                             gdouble indent)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-indent",
+  return_vals = picman_run_procedure ("picman-text-layer-set-indent",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_FLOAT, indent,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_FLOAT, indent,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_line_spacing:
+ * picman_text_layer_get_line_spacing:
  * @layer_ID: The text layer.
  *
  * Get the spacing between lines of text.
@@ -888,30 +888,30 @@ gimp_text_layer_set_indent (gint32  layer_ID,
  *
  * Returns: The line-spacing value.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gdouble
-gimp_text_layer_get_line_spacing (gint32 layer_ID)
+picman_text_layer_get_line_spacing (gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble line_spacing = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-line-spacing",
+  return_vals = picman_run_procedure ("picman-text-layer-get-line-spacing",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     line_spacing = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return line_spacing;
 }
 
 /**
- * gimp_text_layer_set_line_spacing:
+ * picman_text_layer_set_line_spacing:
  * @layer_ID: The text layer.
  * @line_spacing: The additional line spacing to use.
  *
@@ -922,31 +922,31 @@ gimp_text_layer_get_line_spacing (gint32 layer_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_line_spacing (gint32  layer_ID,
+picman_text_layer_set_line_spacing (gint32  layer_ID,
                                   gdouble line_spacing)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-line-spacing",
+  return_vals = picman_run_procedure ("picman-text-layer-set-line-spacing",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_FLOAT, line_spacing,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_FLOAT, line_spacing,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_letter_spacing:
+ * picman_text_layer_get_letter_spacing:
  * @layer_ID: The text layer.
  *
  * Get the letter spacing used in a text layer.
@@ -956,30 +956,30 @@ gimp_text_layer_set_line_spacing (gint32  layer_ID,
  *
  * Returns: The letter-spacing value.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gdouble
-gimp_text_layer_get_letter_spacing (gint32 layer_ID)
+picman_text_layer_get_letter_spacing (gint32 layer_ID)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gdouble letter_spacing = 0.0;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-letter-spacing",
+  return_vals = picman_run_procedure ("picman-text-layer-get-letter-spacing",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     letter_spacing = return_vals[1].data.d_float;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return letter_spacing;
 }
 
 /**
- * gimp_text_layer_set_letter_spacing:
+ * picman_text_layer_set_letter_spacing:
  * @layer_ID: The text layer.
  * @letter_spacing: The additional letter spacing to use.
  *
@@ -990,31 +990,31 @@ gimp_text_layer_get_letter_spacing (gint32 layer_ID)
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_letter_spacing (gint32  layer_ID,
+picman_text_layer_set_letter_spacing (gint32  layer_ID,
                                     gdouble letter_spacing)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-letter-spacing",
+  return_vals = picman_run_procedure ("picman-text-layer-set-letter-spacing",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_FLOAT, letter_spacing,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_FLOAT, letter_spacing,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_resize:
+ * picman_text_layer_resize:
  * @layer_ID: The text layer.
  * @width: The new box width in pixels.
  * @height: The new box height in pixels.
@@ -1023,99 +1023,99 @@ gimp_text_layer_set_letter_spacing (gint32  layer_ID,
  *
  * This procedure changes the width and height of a text layer while
  * keeping it as a text layer and not converting it to a bitmap like
- * gimp_layer_resize() would do.
+ * picman_layer_resize() would do.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.8
+ * Since: PICMAN 2.8
  **/
 gboolean
-gimp_text_layer_resize (gint32  layer_ID,
+picman_text_layer_resize (gint32  layer_ID,
                         gdouble width,
                         gdouble height)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-resize",
+  return_vals = picman_run_procedure ("picman-text-layer-resize",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_FLOAT, width,
-                                    GIMP_PDB_FLOAT, height,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_FLOAT, width,
+                                    PICMAN_PDB_FLOAT, height,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_text_layer_get_hinting:
+ * picman_text_layer_get_hinting:
  * @layer_ID: The text layer.
  * @autohint: A flag which is true if the text layer is forced to use the autohinter from FreeType.
  *
- * Deprecated: Use gimp_text_layer_get_hint_style() instead.
+ * Deprecated: Use picman_text_layer_get_hint_style() instead.
  *
  * Returns: A flag which is true if hinting is used on the font.
  **/
 gboolean
-gimp_text_layer_get_hinting (gint32    layer_ID,
+picman_text_layer_get_hinting (gint32    layer_ID,
                              gboolean *autohint)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean hinting = FALSE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-get-hinting",
+  return_vals = picman_run_procedure ("picman-text-layer-get-hinting",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_END);
 
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
+  if (return_vals[0].data.d_status == PICMAN_PDB_SUCCESS)
     {
       hinting = return_vals[1].data.d_int32;
       *autohint = return_vals[2].data.d_int32;
     }
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return hinting;
 }
 
 /**
- * gimp_text_layer_set_hinting:
+ * picman_text_layer_set_hinting:
  * @layer_ID: The text layer.
  * @hinting: Enable/disable the use of hinting on the text.
  * @autohint: Force the use of the autohinter provided through FreeType.
  *
- * Deprecated: Use gimp_text_layer_set_hint_style() instead.
+ * Deprecated: Use picman_text_layer_set_hint_style() instead.
  *
  * Returns: TRUE on success.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_text_layer_set_hinting (gint32   layer_ID,
+picman_text_layer_set_hinting (gint32   layer_ID,
                              gboolean hinting,
                              gboolean autohint)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-text-layer-set-hinting",
+  return_vals = picman_run_procedure ("picman-text-layer-set-hinting",
                                     &nreturn_vals,
-                                    GIMP_PDB_LAYER, layer_ID,
-                                    GIMP_PDB_INT32, hinting,
-                                    GIMP_PDB_INT32, autohint,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_LAYER, layer_ID,
+                                    PICMAN_PDB_INT32, hinting,
+                                    PICMAN_PDB_INT32, autohint,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

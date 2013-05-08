@@ -5,13 +5,13 @@ CLEANFILES = $(EXTRA_PROGRAMS)
 
 $(TESTS): output-dir
 
-libgimpbase = $(top_builddir)/libgimpbase/libgimpbase-$(GIMP_API_VERSION).la
-libgimpconfig = $(top_builddir)/libgimpconfig/libgimpconfig-$(GIMP_API_VERSION).la
-libgimpcolor = $(top_builddir)/libgimpcolor/libgimpcolor-$(GIMP_API_VERSION).la
-libgimpmath = $(top_builddir)/libgimpmath/libgimpmath-$(GIMP_API_VERSION).la
-libgimpmodule = $(top_builddir)/libgimpmodule/libgimpmodule-$(GIMP_API_VERSION).la
-libgimpwidgets = $(top_builddir)/libgimpwidgets/libgimpwidgets-$(GIMP_API_VERSION).la
-libgimpthumb = $(top_builddir)/libgimpthumb/libgimpthumb-$(GIMP_API_VERSION).la
+libpicmanbase = $(top_builddir)/libpicmanbase/libpicmanbase-$(PICMAN_API_VERSION).la
+libpicmanconfig = $(top_builddir)/libpicmanconfig/libpicmanconfig-$(PICMAN_API_VERSION).la
+libpicmancolor = $(top_builddir)/libpicmancolor/libpicmancolor-$(PICMAN_API_VERSION).la
+libpicmanmath = $(top_builddir)/libpicmanmath/libpicmanmath-$(PICMAN_API_VERSION).la
+libpicmanmodule = $(top_builddir)/libpicmanmodule/libpicmanmodule-$(PICMAN_API_VERSION).la
+libpicmanwidgets = $(top_builddir)/libpicmanwidgets/libpicmanwidgets-$(PICMAN_API_VERSION).la
+libpicmanthumb = $(top_builddir)/libpicmanthumb/libpicmanthumb-$(PICMAN_API_VERSION).la
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)		\
@@ -24,12 +24,12 @@ AM_CPPFLAGS = \
 AM_LDFLAGS = \
 	-Wl,-u,$(SYMPREFIX)xcf_init				\
 	-Wl,-u,$(SYMPREFIX)internal_procs_init			\
-	-Wl,-u,$(SYMPREFIX)gimp_plug_in_manager_restore		\
-	-Wl,-u,$(SYMPREFIX)gimp_pdb_compat_param_spec		\
+	-Wl,-u,$(SYMPREFIX)picman_plug_in_manager_restore		\
+	-Wl,-u,$(SYMPREFIX)picman_pdb_compat_param_spec		\
 	-Wl,-u,$(SYMPREFIX)plug_in_icc_profile_apply_rgb	\
-	-Wl,-u,$(SYMPREFIX)gimp_vectors_undo_get_type		\
-	-Wl,-u,$(SYMPREFIX)gimp_vectors_mod_undo_get_type	\
-	-Wl,-u,$(SYMPREFIX)gimp_vectors_prop_undo_get_type	
+	-Wl,-u,$(SYMPREFIX)picman_vectors_undo_get_type		\
+	-Wl,-u,$(SYMPREFIX)picman_vectors_mod_undo_get_type	\
+	-Wl,-u,$(SYMPREFIX)picman_vectors_prop_undo_get_type	
 
 # Note that we have some duplicate entries here too to work around
 # circular dependencies and systems on the same architectural layer as
@@ -48,12 +48,12 @@ LDADD = \
 	$(top_builddir)/app/libapp.a				\
 	$(top_builddir)/app/gegl/libappgegl.a			\
 	$(top_builddir)/app/operations/libappoperations.a	\
-	$(libgimpconfig)					\
-	$(libgimpmath)						\
-	$(libgimpthumb)						\
-	$(libgimpcolor)						\
-	$(libgimpmodule)					\
-	$(libgimpbase)						\
+	$(libpicmanconfig)					\
+	$(libpicmanmath)						\
+	$(libpicmanthumb)						\
+	$(libpicmancolor)						\
+	$(libpicmanmodule)					\
+	$(libpicmanbase)						\
 	$(GDK_PIXBUF_LIBS)					\
 	$(PANGOCAIRO_LIBS)					\
 	$(GEGL_LIBS)						\

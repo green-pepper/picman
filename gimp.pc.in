@@ -4,14 +4,14 @@ libdir=@libdir@
 includedir=@includedir@
 datarootdir=@datarootdir@
 
-gimpdatadir=@gimpdatadir@
-gimplibdir=@gimpplugindir@
-gimpsysconfdir=@gimpsysconfdir@
-gimplocaledir=@gimplocaledir@
+picmandatadir=@picmandatadir@
+picmanlibdir=@picmanplugindir@
+picmansysconfdir=@picmansysconfdir@
+picmanlocaledir=@picmanlocaledir@
 
-Name: GIMP
-Description: GIMP Library
-Version: @GIMP_REAL_VERSION@
+Name: PICMAN
+Description: PICMAN Library
+Version: @PICMAN_REAL_VERSION@
 Requires: gdk-pixbuf-2.0 >= @GDK_PIXBUF_REQUIRED_VERSION@ cairo >= @CAIRO_REQUIRED_VERSION@ gegl-0.2 >= @GEGL_REQUIRED_VERSION@
-Libs: -L${libdir} -lgimp-@GIMP_API_VERSION@ -lgimpmath-@GIMP_API_VERSION@  -lgimpconfig-@GIMP_API_VERSION@ -lgimpcolor-@GIMP_API_VERSION@ -lgimpbase-@GIMP_API_VERSION@ @RT_LIBS@
-Cflags: -I${includedir}/gimp-@GIMP_API_VERSION@
+Libs: -L${libdir} -lpicman-@PICMAN_API_VERSION@ -lpicmanmath-@PICMAN_API_VERSION@  -lpicmanconfig-@PICMAN_API_VERSION@ -lpicmancolor-@PICMAN_API_VERSION@ -lpicmanbase-@PICMAN_API_VERSION@ @RT_LIBS@
+Cflags: -I${includedir}/picman-@PICMAN_API_VERSION@

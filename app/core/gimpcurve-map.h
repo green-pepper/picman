@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,20 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CURVE_MAP_H__
-#define __GIMP_CURVE_MAP_H__
+#ifndef __PICMAN_CURVE_MAP_H__
+#define __PICMAN_CURVE_MAP_H__
 
 
-gdouble         gimp_curve_map_value         (GimpCurve     *curve,
+gdouble         picman_curve_map_value         (PicmanCurve     *curve,
                                               gdouble        value);
-void            gimp_curve_map_pixels        (GimpCurve     *curve_colors,
-                                              GimpCurve     *curve_red,
-                                              GimpCurve     *curve_green,
-                                              GimpCurve     *curve_blue,
-                                              GimpCurve     *curve_alpha,
+void            picman_curve_map_pixels        (PicmanCurve     *curve_colors,
+                                              PicmanCurve     *curve_red,
+                                              PicmanCurve     *curve_green,
+                                              PicmanCurve     *curve_blue,
+                                              PicmanCurve     *curve_alpha,
                                               gfloat        *src,
                                               gfloat        *dest,
                                               glong          samples);
 
 
-#endif /* __GIMP_CURVE_MAP_H__ */
+#endif /* __PICMAN_CURVE_MAP_H__ */

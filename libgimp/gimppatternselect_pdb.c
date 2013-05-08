@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-2003 Peter Mattis and Spencer Kimball
  *
- * gimppatternselect_pdb.c
+ * picmanpatternselect_pdb.c
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 
 #include "config.h"
 
-#include "gimp.h"
+#include "picman.h"
 
 
 /**
- * SECTION: gimppatternselect
- * @title: gimppatternselect
+ * SECTION: picmanpatternselect
+ * @title: picmanpatternselect
  * @short_description: Functions providing a pattern selection dialog.
  *
  * Functions providing a pattern selection dialog.
@@ -35,42 +35,42 @@
 
 
 /**
- * gimp_patterns_popup:
+ * picman_patterns_popup:
  * @pattern_callback: The callback PDB proc to call when pattern selection is made.
  * @popup_title: Title of the pattern selection dialog.
  * @initial_pattern: The name of the pattern to set as the first selected.
  *
- * Invokes the Gimp pattern selection.
+ * Invokes the Picman pattern selection.
  *
  * This procedure opens the pattern selection dialog.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_patterns_popup (const gchar *pattern_callback,
+picman_patterns_popup (const gchar *pattern_callback,
                      const gchar *popup_title,
                      const gchar *initial_pattern)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-patterns-popup",
+  return_vals = picman_run_procedure ("picman-patterns-popup",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, pattern_callback,
-                                    GIMP_PDB_STRING, popup_title,
-                                    GIMP_PDB_STRING, initial_pattern,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, pattern_callback,
+                                    PICMAN_PDB_STRING, popup_title,
+                                    PICMAN_PDB_STRING, initial_pattern,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_patterns_close_popup:
+ * picman_patterns_close_popup:
  * @pattern_callback: The name of the callback registered for this pop-up.
  *
  * Close the pattern selection dialog.
@@ -80,26 +80,26 @@ gimp_patterns_popup (const gchar *pattern_callback,
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_patterns_close_popup (const gchar *pattern_callback)
+picman_patterns_close_popup (const gchar *pattern_callback)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-patterns-close-popup",
+  return_vals = picman_run_procedure ("picman-patterns-close-popup",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, pattern_callback,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, pattern_callback,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }
 
 /**
- * gimp_patterns_set_popup:
+ * picman_patterns_set_popup:
  * @pattern_callback: The name of the callback registered for this pop-up.
  * @pattern_name: The name of the pattern to set as selected.
  *
@@ -110,22 +110,22 @@ gimp_patterns_close_popup (const gchar *pattern_callback)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_patterns_set_popup (const gchar *pattern_callback,
+picman_patterns_set_popup (const gchar *pattern_callback,
                          const gchar *pattern_name)
 {
-  GimpParam *return_vals;
+  PicmanParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-patterns-set-popup",
+  return_vals = picman_run_procedure ("picman-patterns-set-popup",
                                     &nreturn_vals,
-                                    GIMP_PDB_STRING, pattern_callback,
-                                    GIMP_PDB_STRING, pattern_name,
-                                    GIMP_PDB_END);
+                                    PICMAN_PDB_STRING, pattern_callback,
+                                    PICMAN_PDB_STRING, pattern_name,
+                                    PICMAN_PDB_END);
 
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
+  success = return_vals[0].data.d_status == PICMAN_PDB_SUCCESS;
 
-  gimp_destroy_params (return_vals, nreturn_vals);
+  picman_destroy_params (return_vals, nreturn_vals);
 
   return success;
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,33 +20,33 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-expose.h"
-#include "gimpdisplayshell-rotate.h"
-#include "gimpdisplayshell-scale.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-expose.h"
+#include "picmandisplayshell-rotate.h"
+#include "picmandisplayshell-scale.h"
 
 
 /*  public functions  */
 
 void
-gimp_display_shell_rotate (GimpDisplayShell *shell,
+picman_display_shell_rotate (PicmanDisplayShell *shell,
                            gdouble           delta)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
-  gimp_display_shell_rotate_to (shell, shell->rotate_angle + delta);
+  picman_display_shell_rotate_to (shell, shell->rotate_angle + delta);
 }
 
 void
-gimp_display_shell_rotate_to (GimpDisplayShell *shell,
+picman_display_shell_rotate_to (PicmanDisplayShell *shell,
                               gdouble           value)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   while (value < 0.0)
     value += 360;
@@ -56,12 +56,12 @@ gimp_display_shell_rotate_to (GimpDisplayShell *shell,
 
   shell->rotate_angle = value;
 
-  gimp_display_shell_rotated (shell);
-  gimp_display_shell_expose_full (shell);
+  picman_display_shell_rotated (shell);
+  picman_display_shell_expose_full (shell);
 }
 
 void
-gimp_display_shell_rotate_drag (GimpDisplayShell *shell,
+picman_display_shell_rotate_drag (PicmanDisplayShell *shell,
                                 gdouble           last_x,
                                 gdouble           last_y,
                                 gdouble           cur_x,
@@ -73,9 +73,9 @@ gimp_display_shell_rotate_drag (GimpDisplayShell *shell,
   gdouble x1, y1, x2, y2;
   gdouble angle1, angle2, angle;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
-  gimp_display_shell_scale_get_image_size (shell,
+  picman_display_shell_scale_get_image_size (shell,
                                            &image_width, &image_height);
 
   px = -shell->offset_x + image_width  / 2;
@@ -105,21 +105,21 @@ gimp_display_shell_rotate_drag (GimpDisplayShell *shell,
   if (shell->rotate_drag_angle >= 360.0)
     shell->rotate_drag_angle -= 360;
 
-  gimp_display_shell_rotate_to (shell,
+  picman_display_shell_rotate_to (shell,
                                 constrain ?
                                 (gint) shell->rotate_drag_angle / 15 * 15 :
                                 shell->rotate_drag_angle);
 }
 
 void
-gimp_display_shell_rotate_update_transform (GimpDisplayShell *shell)
+picman_display_shell_rotate_update_transform (PicmanDisplayShell *shell)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   g_free (shell->rotate_transform);
   g_free (shell->rotate_untransform);
 
-  if (shell->rotate_angle != 0.0 && gimp_display_get_image (shell->display))
+  if (shell->rotate_angle != 0.0 && picman_display_get_image (shell->display))
     {
       gint    image_width, image_height;
       gdouble cx, cy;
@@ -127,7 +127,7 @@ gimp_display_shell_rotate_update_transform (GimpDisplayShell *shell)
       shell->rotate_transform   = g_new (cairo_matrix_t, 1);
       shell->rotate_untransform = g_new (cairo_matrix_t, 1);
 
-      gimp_display_shell_scale_get_image_size (shell,
+      picman_display_shell_scale_get_image_size (shell,
                                                &image_width, &image_height);
 
       cx = -shell->offset_x + image_width  / 2;

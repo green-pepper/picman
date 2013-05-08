@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,21 +19,21 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "dialogs-types.h"
 
-#include "config/gimpguiconfig.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanhelp-ids.h"
 
 #include "tips-dialog.h"
 #include "tips-parser.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 enum
 {
@@ -41,13 +41,13 @@ enum
   RESPONSE_NEXT     = 2
 };
 
-static void  tips_dialog_set_tip  (GimpTip       *tip);
+static void  tips_dialog_set_tip  (PicmanTip       *tip);
 static void  tips_dialog_response (GtkWidget     *dialog,
                                    gint           response);
 static void  tips_dialog_destroy  (GtkWidget     *widget,
-                                   GimpGuiConfig *config);
+                                   PicmanGuiConfig *config);
 static void  more_button_clicked  (GtkWidget     *button,
-                                   Gimp          *gimp);
+                                   Picman          *picman);
 
 
 static GtkWidget *tips_dialog = NULL;
@@ -58,46 +58,46 @@ static GList     *current_tip = NULL;
 
 
 GtkWidget *
-tips_dialog_create (Gimp *gimp)
+tips_dialog_create (Picman *picman)
 {
-  GimpGuiConfig *config;
+  PicmanGuiConfig *config;
   GtkWidget     *vbox;
   GtkWidget     *hbox;
   GtkWidget     *button;
   GtkWidget     *image;
   gint           tips_count;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), NULL);
 
   if (!tips)
     {
       GError *error = NULL;
       gchar  *filename;
 
-      filename = g_build_filename (gimp_data_directory (), "tips",
-                                   "gimp-tips.xml", NULL);
+      filename = g_build_filename (picman_data_directory (), "tips",
+                                   "picman-tips.xml", NULL);
 
-      tips = gimp_tips_from_file (filename, &error);
+      tips = picman_tips_from_file (filename, &error);
 
       if (! tips)
         {
-          GimpTip *tip;
+          PicmanTip *tip;
 
           if (! error)
             {
-              tip = gimp_tip_new (_("The GIMP tips file is empty!"), NULL);
+              tip = picman_tip_new (_("The PICMAN tips file is empty!"), NULL);
             }
           else if (error->code == G_FILE_ERROR_NOENT)
             {
-              tip = gimp_tip_new (_("The GIMP tips file appears to be "
+              tip = picman_tip_new (_("The PICMAN tips file appears to be "
                                     "missing!"),
                                   _("There should be a file called '%s'. "
                                     "Please check your installation."),
-                                  gimp_filename_to_utf8 (filename));
+                                  picman_filename_to_utf8 (filename));
             }
           else
             {
-              tip = gimp_tip_new (_("The GIMP tips file could not be parsed!"),
+              tip = picman_tip_new (_("The PICMAN tips file could not be parsed!"),
                                   "%s", error->message);
             }
 
@@ -115,7 +115,7 @@ tips_dialog_create (Gimp *gimp)
 
   tips_count = g_list_length (tips);
 
-  config = GIMP_GUI_CONFIG (gimp->config);
+  config = PICMAN_GUI_CONFIG (picman->config);
 
   if (config->last_tip_shown >= tips_count || config->last_tip_shown < 0)
     config->last_tip_shown = 0;
@@ -125,8 +125,8 @@ tips_dialog_create (Gimp *gimp)
   if (tips_dialog)
     return tips_dialog;
 
-  tips_dialog = gimp_dialog_new (_("GIMP Tip of the Day"),
-                                 "gimp-tip-of-the-day",
+  tips_dialog = picman_dialog_new (_("PICMAN Tip of the Day"),
+                                 "picman-tip-of-the-day",
                                  NULL, 0, NULL, NULL,
                                  NULL);
 
@@ -169,7 +169,7 @@ tips_dialog_create (Gimp *gimp)
   gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
-  image = gtk_image_new_from_stock (GIMP_STOCK_INFO, GTK_ICON_SIZE_DIALOG);
+  image = gtk_image_new_from_stock (PICMAN_STOCK_INFO, GTK_ICON_SIZE_DIALOG);
   gtk_misc_set_alignment (GTK_MISC (image), 0.5, 0.0);
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
@@ -188,7 +188,7 @@ tips_dialog_create (Gimp *gimp)
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  more_button = gtk_link_button_new_with_label ("http://docs.gimp.org/",
+  more_button = gtk_link_button_new_with_label ("http://docs.picman.org/",
   /*  a link to the related section in the user manual  */
                                                 _("Learn more"));
   gtk_widget_show (more_button);
@@ -196,7 +196,7 @@ tips_dialog_create (Gimp *gimp)
 
   g_signal_connect (more_button, "clicked",
                     G_CALLBACK (more_button_clicked),
-                    gimp);
+                    picman);
 
   tips_dialog_set_tip (current_tip->data);
 
@@ -205,7 +205,7 @@ tips_dialog_create (Gimp *gimp)
 
 static void
 tips_dialog_destroy (GtkWidget     *widget,
-                     GimpGuiConfig *config)
+                     PicmanGuiConfig *config)
 {
   /* the last-shown-tip is saved in sessionrc */
   config->last_tip_shown = g_list_position (tips, current_tip);
@@ -213,7 +213,7 @@ tips_dialog_destroy (GtkWidget     *widget,
   tips_dialog = NULL;
   current_tip = NULL;
 
-  gimp_tips_free (tips);
+  picman_tips_free (tips);
   tips = NULL;
 }
 
@@ -240,7 +240,7 @@ tips_dialog_response (GtkWidget *dialog,
 }
 
 static void
-tips_dialog_set_tip (GimpTip *tip)
+tips_dialog_set_tip (PicmanTip *tip)
 {
   g_return_if_fail (tip != NULL);
 
@@ -248,17 +248,17 @@ tips_dialog_set_tip (GimpTip *tip)
 
   /*  set the URI to unset the "visited" state  */
   gtk_link_button_set_uri (GTK_LINK_BUTTON (more_button),
-                           "http://docs.gimp.org/");
+                           "http://docs.picman.org/");
 
   gtk_widget_set_sensitive (more_button, tip->help_id != NULL);
 }
 
 static void
 more_button_clicked (GtkWidget *button,
-                     Gimp      *gimp)
+                     Picman      *picman)
 {
-  GimpTip *tip = current_tip->data;
+  PicmanTip *tip = current_tip->data;
 
   if (tip->help_id)
-    gimp_help (gimp, NULL, NULL, tip->help_id);
+    picman_help (picman, NULL, NULL, tip->help_id);
 }

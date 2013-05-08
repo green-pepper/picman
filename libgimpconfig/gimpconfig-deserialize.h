@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * Object properties deserialization routines
- * Copyright (C) 2001-2002  Sven Neumann <sven@gimp.org>
+ * Copyright (C) 2001-2002  Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,26 +19,26 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_CONFIG_H_INSIDE__) && !defined (GIMP_CONFIG_COMPILATION)
-#error "Only <libgimpconfig/gimpconfig.h> can be included directly."
+#if !defined (__PICMAN_CONFIG_H_INSIDE__) && !defined (PICMAN_CONFIG_COMPILATION)
+#error "Only <libpicmanconfig/picmanconfig.h> can be included directly."
 #endif
 
-#ifndef __GIMP_CONFIG_DESERIALIZE_H__
-#define __GIMP_CONFIG_DESERIALIZE_H__
+#ifndef __PICMAN_CONFIG_DESERIALIZE_H__
+#define __PICMAN_CONFIG_DESERIALIZE_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-gboolean    gimp_config_deserialize_properties (GimpConfig *config,
+gboolean    picman_config_deserialize_properties (PicmanConfig *config,
                                                 GScanner   *scanner,
                                                 gint        nest_level);
-GTokenType  gimp_config_deserialize_property   (GimpConfig *config,
+GTokenType  picman_config_deserialize_property   (PicmanConfig *config,
                                                 GScanner   *scanner,
                                                 gint        nest_level);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_CONFIG_DESERIALIZE_H__ */
+#endif /* __PICMAN_CONFIG_DESERIALIZE_H__ */

@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpradioaction.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
- * Copyright (C) 2008 Sven Neumann <sven@gimp.org>
+ * picmanradioaction.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
+ * Copyright (C) 2008 Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,39 +19,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_RADIO_ACTION_H__
-#define __GIMP_RADIO_ACTION_H__
+#ifndef __PICMAN_RADIO_ACTION_H__
+#define __PICMAN_RADIO_ACTION_H__
 
 
-#define GIMP_TYPE_RADIO_ACTION            (gimp_radio_action_get_type ())
-#define GIMP_RADIO_ACTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_RADIO_ACTION, GimpRadioAction))
-#define GIMP_RADIO_ACTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_RADIO_ACTION, GimpRadioActionClass))
-#define GIMP_IS_RADIO_ACTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_RADIO_ACTION))
-#define GIMP_IS_RADIO_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), GIMP_TYPE_ACTION))
-#define GIMP_RADIO_ACTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), GIMP_TYPE_RADIO_ACTION, GimpRadioActionClass))
+#define PICMAN_TYPE_RADIO_ACTION            (picman_radio_action_get_type ())
+#define PICMAN_RADIO_ACTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_RADIO_ACTION, PicmanRadioAction))
+#define PICMAN_RADIO_ACTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_RADIO_ACTION, PicmanRadioActionClass))
+#define PICMAN_IS_RADIO_ACTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_RADIO_ACTION))
+#define PICMAN_IS_RADIO_ACTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), PICMAN_TYPE_ACTION))
+#define PICMAN_RADIO_ACTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PICMAN_TYPE_RADIO_ACTION, PicmanRadioActionClass))
 
 
-typedef struct _GimpRadioAction      GimpRadioAction;
-typedef struct _GimpRadioActionClass GimpRadioActionClass;
+typedef struct _PicmanRadioAction      PicmanRadioAction;
+typedef struct _PicmanRadioActionClass PicmanRadioActionClass;
 
-struct _GimpRadioAction
+struct _PicmanRadioAction
 {
   GtkRadioAction  parent_instance;
 };
 
-struct _GimpRadioActionClass
+struct _PicmanRadioActionClass
 {
   GtkRadioActionClass  parent_class;
 };
 
 
-GType            gimp_radio_action_get_type (void) G_GNUC_CONST;
+GType            picman_radio_action_get_type (void) G_GNUC_CONST;
 
-GtkRadioAction * gimp_radio_action_new      (const gchar *name,
+GtkRadioAction * picman_radio_action_new      (const gchar *name,
                                              const gchar *label,
                                              const gchar *tooltip,
                                              const gchar *stock_id,
                                              gint         value);
 
 
-#endif  /* __GIMP_RADIO_ACTION_H__ */
+#endif  /* __PICMAN_RADIO_ACTION_H__ */

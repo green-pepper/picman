@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpzoommodel.c
- * Copyright (C) 2005  David Odin <dindinx@gimp.org>
+ * picmanzoommodel.c
+ * Copyright (C) 2005  David Odin <dindinx@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,19 +23,19 @@
 
 #include <gtk/gtk.h>
 
-#include "gimpwidgetstypes.h"
+#include "picmanwidgetstypes.h"
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
-#include "gimphelpui.h"
-#include "gimpwidgetsmarshal.h"
-#include "gimpzoommodel.h"
+#include "picmanhelpui.h"
+#include "picmanwidgetsmarshal.h"
+#include "picmanzoommodel.h"
 
 
 /**
- * SECTION: gimpzoommodel
- * @title: GimpZoomModel
+ * SECTION: picmanzoommodel
+ * @title: PicmanZoomModel
  * @short_description: A model for zoom values.
  *
  * A model for zoom values.
@@ -67,17 +67,17 @@ typedef struct
   gdouble  value;
   gdouble  minimum;
   gdouble  maximum;
-} GimpZoomModelPrivate;
+} PicmanZoomModelPrivate;
 
-#define GIMP_ZOOM_MODEL_GET_PRIVATE(obj) \
-  ((GimpZoomModelPrivate *) ((GimpZoomModel *) (obj))->priv)
+#define PICMAN_ZOOM_MODEL_GET_PRIVATE(obj) \
+  ((PicmanZoomModelPrivate *) ((PicmanZoomModel *) (obj))->priv)
 
 
-static void  gimp_zoom_model_set_property (GObject      *object,
+static void  picman_zoom_model_set_property (GObject      *object,
                                            guint         property_id,
                                            const GValue *value,
                                            GParamSpec   *pspec);
-static void  gimp_zoom_model_get_property (GObject      *object,
+static void  picman_zoom_model_get_property (GObject      *object,
                                            guint         property_id,
                                            GValue       *value,
                                            GParamSpec   *pspec);
@@ -85,18 +85,18 @@ static void  gimp_zoom_model_get_property (GObject      *object,
 
 static guint zoom_model_signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (GimpZoomModel, gimp_zoom_model, G_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanZoomModel, picman_zoom_model, G_TYPE_OBJECT)
 
-#define parent_class gimp_zoom_model_parent_class
+#define parent_class picman_zoom_model_parent_class
 
 
 static void
-gimp_zoom_model_class_init (GimpZoomModelClass *klass)
+picman_zoom_model_class_init (PicmanZoomModelClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   /**
-   * GimpZoomModel::zoomed:
+   * PicmanZoomModel::zoomed:
    * @model: the object that received the signal
    * @old_factor: the zoom factor before it changes
    * @new_factor: the zoom factor after it has changed.
@@ -107,59 +107,59 @@ gimp_zoom_model_class_init (GimpZoomModelClass *klass)
       g_signal_new ("zoomed",
                     G_TYPE_FROM_CLASS (klass),
                     G_SIGNAL_RUN_LAST,
-                    G_STRUCT_OFFSET (GimpZoomModelClass,
+                    G_STRUCT_OFFSET (PicmanZoomModelClass,
                                      zoomed),
                     NULL, NULL,
-                    _gimp_widgets_marshal_VOID__DOUBLE_DOUBLE,
+                    _picman_widgets_marshal_VOID__DOUBLE_DOUBLE,
                     G_TYPE_NONE, 2,
                     G_TYPE_DOUBLE, G_TYPE_DOUBLE);
 
-  object_class->set_property = gimp_zoom_model_set_property;
-  object_class->get_property = gimp_zoom_model_get_property;
+  object_class->set_property = picman_zoom_model_set_property;
+  object_class->get_property = picman_zoom_model_get_property;
 
   g_object_class_install_property (object_class, PROP_VALUE,
                                    g_param_spec_double ("value",
                                                         "Zoom factor", NULL,
                                                         ZOOM_MIN, ZOOM_MAX,
                                                         1.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
   g_object_class_install_property (object_class, PROP_MINIMUM,
                                    g_param_spec_double ("minimum",
                                                         "Lower limit for the zoom factor", NULL,
                                                         ZOOM_MIN, ZOOM_MAX,
                                                         ZOOM_MIN,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
   g_object_class_install_property (object_class, PROP_MAXIMUM,
                                    g_param_spec_double ("maximum",
                                                         "Upper limit for the zoom factor", NULL,
                                                         ZOOM_MIN, ZOOM_MAX,
                                                         ZOOM_MAX,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_FRACTION,
                                    g_param_spec_string ("fraction",
                                                         "The zoom factor expressed as a fraction", NULL,
                                                         "1:1",
-                                                        GIMP_PARAM_READABLE));
+                                                        PICMAN_PARAM_READABLE));
   g_object_class_install_property (object_class, PROP_PERCENTAGE,
                                    g_param_spec_string ("percentage",
                                                         "The zoom factor expressed as a percentage", NULL,
                                                         "100%",
-                                                        GIMP_PARAM_READABLE));
+                                                        PICMAN_PARAM_READABLE));
 
-  g_type_class_add_private (object_class, sizeof (GimpZoomModelPrivate));
+  g_type_class_add_private (object_class, sizeof (PicmanZoomModelPrivate));
 }
 
 static void
-gimp_zoom_model_init (GimpZoomModel *model)
+picman_zoom_model_init (PicmanZoomModel *model)
 {
-  GimpZoomModelPrivate *priv;
+  PicmanZoomModelPrivate *priv;
 
   model->priv = G_TYPE_INSTANCE_GET_PRIVATE (model,
-                                             GIMP_TYPE_ZOOM_MODEL,
-                                             GimpZoomModelPrivate);
+                                             PICMAN_TYPE_ZOOM_MODEL,
+                                             PicmanZoomModelPrivate);
 
-  priv = GIMP_ZOOM_MODEL_GET_PRIVATE (model);
+  priv = PICMAN_ZOOM_MODEL_GET_PRIVATE (model);
 
   priv->value   = 1.0;
   priv->minimum = ZOOM_MIN;
@@ -167,12 +167,12 @@ gimp_zoom_model_init (GimpZoomModel *model)
 }
 
 static void
-gimp_zoom_model_set_property (GObject      *object,
+picman_zoom_model_set_property (GObject      *object,
                               guint         property_id,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  GimpZoomModelPrivate *priv  = GIMP_ZOOM_MODEL_GET_PRIVATE (object);
+  PicmanZoomModelPrivate *priv  = PICMAN_ZOOM_MODEL_GET_PRIVATE (object);
   gdouble               previous_value;
 
   previous_value = priv->value;
@@ -220,12 +220,12 @@ gimp_zoom_model_set_property (GObject      *object,
 }
 
 static void
-gimp_zoom_model_get_property (GObject    *object,
+picman_zoom_model_get_property (GObject    *object,
                               guint       property_id,
                               GValue     *value,
                               GParamSpec *pspec)
 {
-  GimpZoomModelPrivate *priv  = GIMP_ZOOM_MODEL_GET_PRIVATE (object);
+  PicmanZoomModelPrivate *priv  = PICMAN_ZOOM_MODEL_GET_PRIVATE (object);
   gchar                *tmp;
 
   switch (property_id)
@@ -247,7 +247,7 @@ gimp_zoom_model_get_property (GObject    *object,
         gint  numerator;
         gint  denominator;
 
-        gimp_zoom_model_get_fraction (GIMP_ZOOM_MODEL (object),
+        picman_zoom_model_get_fraction (PICMAN_ZOOM_MODEL (object),
                                       &numerator, &denominator);
 
         tmp = g_strdup_printf ("%d:%d", numerator, denominator);
@@ -270,55 +270,55 @@ gimp_zoom_model_get_property (GObject    *object,
 }
 
 static void
-gimp_zoom_model_zoom_in (GimpZoomModel *model)
+picman_zoom_model_zoom_in (PicmanZoomModel *model)
 {
-  GimpZoomModelPrivate *priv = GIMP_ZOOM_MODEL_GET_PRIVATE (model);
+  PicmanZoomModelPrivate *priv = PICMAN_ZOOM_MODEL_GET_PRIVATE (model);
 
   if (priv->value < priv->maximum)
-    gimp_zoom_model_zoom (model, GIMP_ZOOM_IN, 0.0);
+    picman_zoom_model_zoom (model, PICMAN_ZOOM_IN, 0.0);
 }
 
 static void
-gimp_zoom_model_zoom_out (GimpZoomModel *model)
+picman_zoom_model_zoom_out (PicmanZoomModel *model)
 {
-  GimpZoomModelPrivate *priv = GIMP_ZOOM_MODEL_GET_PRIVATE (model);
+  PicmanZoomModelPrivate *priv = PICMAN_ZOOM_MODEL_GET_PRIVATE (model);
 
   if (priv->value > priv->minimum)
-    gimp_zoom_model_zoom (model, GIMP_ZOOM_OUT, 0.0);
+    picman_zoom_model_zoom (model, PICMAN_ZOOM_OUT, 0.0);
 }
 
 /**
- * gimp_zoom_model_new:
+ * picman_zoom_model_new:
  *
- * Creates a new #GimpZoomModel.
+ * Creates a new #PicmanZoomModel.
  *
- * Return value: a new #GimpZoomModel.
+ * Return value: a new #PicmanZoomModel.
  *
- * Since GIMP 2.4
+ * Since PICMAN 2.4
  **/
-GimpZoomModel *
-gimp_zoom_model_new (void)
+PicmanZoomModel *
+picman_zoom_model_new (void)
 {
-  return g_object_new (GIMP_TYPE_ZOOM_MODEL, NULL);
+  return g_object_new (PICMAN_TYPE_ZOOM_MODEL, NULL);
 }
 
 
 /**
- * gimp_zoom_model_set_range:
- * @model: a #GimpZoomModel
+ * picman_zoom_model_set_range:
+ * @model: a #PicmanZoomModel
  * @min: new lower limit for zoom factor
  * @max: new upper limit for zoom factor
  *
  * Sets the allowed range of the @model.
  *
- * Since GIMP 2.4
+ * Since PICMAN 2.4
  **/
 void
-gimp_zoom_model_set_range (GimpZoomModel *model,
+picman_zoom_model_set_range (PicmanZoomModel *model,
                            gdouble        min,
                            gdouble        max)
 {
-  g_return_if_fail (GIMP_IS_ZOOM_MODEL (model));
+  g_return_if_fail (PICMAN_IS_ZOOM_MODEL (model));
   g_return_if_fail (min < max);
   g_return_if_fail (min >= ZOOM_MIN);
   g_return_if_fail (max <= ZOOM_MAX);
@@ -330,59 +330,59 @@ gimp_zoom_model_set_range (GimpZoomModel *model,
 }
 
 /**
- * gimp_zoom_model_zoom:
- * @model:     a #GimpZoomModel
- * @zoom_type: the #GimpZoomType
- * @scale:     ignored unless @zoom_type == %GIMP_ZOOM_TO
+ * picman_zoom_model_zoom:
+ * @model:     a #PicmanZoomModel
+ * @zoom_type: the #PicmanZoomType
+ * @scale:     ignored unless @zoom_type == %PICMAN_ZOOM_TO
  *
- * Since GIMP 2.4
+ * Since PICMAN 2.4
  **/
 void
-gimp_zoom_model_zoom (GimpZoomModel *model,
-                      GimpZoomType   zoom_type,
+picman_zoom_model_zoom (PicmanZoomModel *model,
+                      PicmanZoomType   zoom_type,
                       gdouble        scale)
 {
-  g_return_if_fail (GIMP_IS_ZOOM_MODEL (model));
+  g_return_if_fail (PICMAN_IS_ZOOM_MODEL (model));
 
-  if (zoom_type != GIMP_ZOOM_TO)
-    scale = gimp_zoom_model_get_factor (model);
+  if (zoom_type != PICMAN_ZOOM_TO)
+    scale = picman_zoom_model_get_factor (model);
 
   g_object_set (model,
-                "value", gimp_zoom_model_zoom_step (zoom_type, scale),
+                "value", picman_zoom_model_zoom_step (zoom_type, scale),
                 NULL);
 }
 
 /**
- * gimp_zoom_model_get_factor:
- * @model: a #GimpZoomModel
+ * picman_zoom_model_get_factor:
+ * @model: a #PicmanZoomModel
  *
  * Retrieves the current zoom factor of @model.
  *
  * Return value: the current scale factor
  *
- * Since GIMP 2.4
+ * Since PICMAN 2.4
  **/
 gdouble
-gimp_zoom_model_get_factor (GimpZoomModel *model)
+picman_zoom_model_get_factor (PicmanZoomModel *model)
 {
-  g_return_val_if_fail (GIMP_IS_ZOOM_MODEL (model), 1.0);
+  g_return_val_if_fail (PICMAN_IS_ZOOM_MODEL (model), 1.0);
 
-  return GIMP_ZOOM_MODEL_GET_PRIVATE (model)->value;
+  return PICMAN_ZOOM_MODEL_GET_PRIVATE (model)->value;
 }
 
 
 /**
- * gimp_zoom_model_get_fraction
- * @model:       a #GimpZoomModel
+ * picman_zoom_model_get_fraction
+ * @model:       a #PicmanZoomModel
  * @numerator:   return location for numerator
  * @denominator: return location for denominator
  *
  * Retrieves the current zoom factor of @model as a fraction.
  *
- * Since GIMP 2.4
+ * Since PICMAN 2.4
  **/
 void
-gimp_zoom_model_get_fraction (GimpZoomModel *model,
+picman_zoom_model_get_fraction (PicmanZoomModel *model,
                               gint          *numerator,
                               gint          *denominator)
 {
@@ -392,10 +392,10 @@ gimp_zoom_model_get_fraction (GimpZoomModel *model,
   gdouble  remainder, next_cf;
   gboolean swapped = FALSE;
 
-  g_return_if_fail (GIMP_IS_ZOOM_MODEL (model));
+  g_return_if_fail (PICMAN_IS_ZOOM_MODEL (model));
   g_return_if_fail (numerator != NULL && denominator != NULL);
 
-  zoom_factor = gimp_zoom_model_get_factor (model);
+  zoom_factor = picman_zoom_model_get_factor (model);
 
   /* make sure that zooming behaves symmetrically */
   if (zoom_factor < 1.0)
@@ -487,62 +487,62 @@ zoom_button_new (const gchar *stock_id,
 }
 
 static void
-zoom_in_button_callback (GimpZoomModel *model,
+zoom_in_button_callback (PicmanZoomModel *model,
                          gdouble        old,
                          gdouble        new,
                          GtkWidget     *button)
 {
-  GimpZoomModelPrivate *priv = GIMP_ZOOM_MODEL_GET_PRIVATE (model);
+  PicmanZoomModelPrivate *priv = PICMAN_ZOOM_MODEL_GET_PRIVATE (model);
 
   gtk_widget_set_sensitive (button, priv->value != priv->maximum);
 }
 
 static void
-zoom_out_button_callback (GimpZoomModel *model,
+zoom_out_button_callback (PicmanZoomModel *model,
                           gdouble        old,
                           gdouble        new,
                           GtkWidget     *button)
 {
-  GimpZoomModelPrivate *priv = GIMP_ZOOM_MODEL_GET_PRIVATE (model);
+  PicmanZoomModelPrivate *priv = PICMAN_ZOOM_MODEL_GET_PRIVATE (model);
 
   gtk_widget_set_sensitive (button, priv->value != priv->minimum);
 }
 
 /**
- * gimp_zoom_button_new:
- * @model:     a #GimpZoomModel
+ * picman_zoom_button_new:
+ * @model:     a #PicmanZoomModel
  * @zoom_type:
  * @icon_size: use 0 for a button with text labels
  *
  * Return value: a newly created GtkButton
  *
- * Since GIMP 2.4
+ * Since PICMAN 2.4
  **/
 GtkWidget *
-gimp_zoom_button_new (GimpZoomModel *model,
-                      GimpZoomType   zoom_type,
+picman_zoom_button_new (PicmanZoomModel *model,
+                      PicmanZoomType   zoom_type,
                       GtkIconSize    icon_size)
 {
   GtkWidget *button = NULL;
 
-  g_return_val_if_fail (GIMP_IS_ZOOM_MODEL (model), NULL);
+  g_return_val_if_fail (PICMAN_IS_ZOOM_MODEL (model), NULL);
 
   switch (zoom_type)
     {
-    case GIMP_ZOOM_IN:
+    case PICMAN_ZOOM_IN:
       button = zoom_button_new (GTK_STOCK_ZOOM_IN, icon_size);
       g_signal_connect_swapped (button, "clicked",
-                                G_CALLBACK (gimp_zoom_model_zoom_in),
+                                G_CALLBACK (picman_zoom_model_zoom_in),
                                 model);
       g_signal_connect_object (model, "zoomed",
                                G_CALLBACK (zoom_in_button_callback),
                                button, 0);
       break;
 
-    case GIMP_ZOOM_OUT:
+    case PICMAN_ZOOM_OUT:
       button = zoom_button_new (GTK_STOCK_ZOOM_OUT, icon_size);
       g_signal_connect_swapped (button, "clicked",
-                                G_CALLBACK (gimp_zoom_model_zoom_out),
+                                G_CALLBACK (picman_zoom_model_zoom_out),
                                 model);
       g_signal_connect_object (model, "zoomed",
                                G_CALLBACK (zoom_out_button_callback),
@@ -556,7 +556,7 @@ gimp_zoom_button_new (GimpZoomModel *model,
 
   if (button)
     {
-      gdouble zoom = gimp_zoom_model_get_factor (model);
+      gdouble zoom = picman_zoom_model_get_factor (model);
 
       /*  set initial button sensitivity  */
       g_signal_emit (model, zoom_model_signals[ZOOMED], 0, zoom, zoom);
@@ -565,10 +565,10 @@ gimp_zoom_button_new (GimpZoomModel *model,
         {
           const gchar *desc;
 
-          if (gimp_enum_get_value (GIMP_TYPE_ZOOM_TYPE, zoom_type,
+          if (picman_enum_get_value (PICMAN_TYPE_ZOOM_TYPE, zoom_type,
                                    NULL, NULL, &desc, NULL))
             {
-              gimp_help_set_help_data (button, desc, NULL);
+              picman_help_set_help_data (button, desc, NULL);
             }
         }
     }
@@ -577,18 +577,18 @@ gimp_zoom_button_new (GimpZoomModel *model,
 }
 
 /**
- * gimp_zoom_model_zoom_step:
+ * picman_zoom_model_zoom_step:
  * @zoom_type: the zoom type
- * @scale:     ignored unless @zoom_type == %GIMP_ZOOM_TO
+ * @scale:     ignored unless @zoom_type == %PICMAN_ZOOM_TO
  *
  * Utility function to calculate a new scale factor.
  *
  * Return value: the new scale factor
  *
- * Since GIMP 2.4
+ * Since PICMAN 2.4
  **/
 gdouble
-gimp_zoom_model_zoom_step (GimpZoomType zoom_type,
+picman_zoom_model_zoom_step (PicmanZoomType zoom_type,
                            gdouble      scale)
 {
   gint    i, n_presets;
@@ -625,7 +625,7 @@ gimp_zoom_model_zoom_step (GimpZoomType zoom_type,
 
   switch (zoom_type)
     {
-    case GIMP_ZOOM_IN:
+    case PICMAN_ZOOM_IN:
       scale *= ZOOM_MIN_STEP;
 
       new_scale = presets[n_presets - 1];
@@ -634,7 +634,7 @@ gimp_zoom_model_zoom_step (GimpZoomType zoom_type,
 
       break;
 
-    case GIMP_ZOOM_OUT:
+    case PICMAN_ZOOM_OUT:
       scale /= ZOOM_MIN_STEP;
 
       new_scale = presets[0];
@@ -643,29 +643,29 @@ gimp_zoom_model_zoom_step (GimpZoomType zoom_type,
 
       break;
 
-    case GIMP_ZOOM_IN_MORE:
-      scale = gimp_zoom_model_zoom_step (GIMP_ZOOM_IN, scale);
-      scale = gimp_zoom_model_zoom_step (GIMP_ZOOM_IN, scale);
-      scale = gimp_zoom_model_zoom_step (GIMP_ZOOM_IN, scale);
+    case PICMAN_ZOOM_IN_MORE:
+      scale = picman_zoom_model_zoom_step (PICMAN_ZOOM_IN, scale);
+      scale = picman_zoom_model_zoom_step (PICMAN_ZOOM_IN, scale);
+      scale = picman_zoom_model_zoom_step (PICMAN_ZOOM_IN, scale);
       new_scale = scale;
       break;
 
-    case GIMP_ZOOM_OUT_MORE:
-      scale = gimp_zoom_model_zoom_step (GIMP_ZOOM_OUT, scale);
-      scale = gimp_zoom_model_zoom_step (GIMP_ZOOM_OUT, scale);
-      scale = gimp_zoom_model_zoom_step (GIMP_ZOOM_OUT, scale);
+    case PICMAN_ZOOM_OUT_MORE:
+      scale = picman_zoom_model_zoom_step (PICMAN_ZOOM_OUT, scale);
+      scale = picman_zoom_model_zoom_step (PICMAN_ZOOM_OUT, scale);
+      scale = picman_zoom_model_zoom_step (PICMAN_ZOOM_OUT, scale);
       new_scale = scale;
       break;
 
-    case GIMP_ZOOM_IN_MAX:
+    case PICMAN_ZOOM_IN_MAX:
       new_scale = ZOOM_MAX;
       break;
 
-    case GIMP_ZOOM_OUT_MAX:
+    case PICMAN_ZOOM_OUT_MAX:
       new_scale = ZOOM_MIN;
       break;
 
-    case GIMP_ZOOM_TO:
+    case PICMAN_ZOOM_TO:
       new_scale = scale;
       break;
     }

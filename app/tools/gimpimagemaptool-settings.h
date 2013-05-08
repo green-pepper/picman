@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpimagemaptool-settings.h
+ * picmanimagemaptool-settings.h
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_MAP_TOOL_SETTINGS_H__
-#define __GIMP_IMAGE_MAP_TOOL_SETTINGS_H__
+#ifndef __PICMAN_IMAGE_MAP_TOOL_SETTINGS_H__
+#define __PICMAN_IMAGE_MAP_TOOL_SETTINGS_H__
 
 
-GtkWidget * gimp_image_map_tool_real_get_settings_ui (GimpImageMapTool *tool,
-                                                      GimpContainer     *settings,
+GtkWidget * picman_image_map_tool_real_get_settings_ui (PicmanImageMapTool *tool,
+                                                      PicmanContainer     *settings,
                                                       const gchar       *settings_filename,
                                                       const gchar       *import_dialog_title,
                                                       const gchar       *export_dialog_title,
                                                       const gchar       *file_dialog_help_id,
                                                       const gchar       *default_folder,
                                                       GtkWidget       **settings_box);
-gboolean    gimp_image_map_tool_real_settings_import (GimpImageMapTool *tool,
+gboolean    picman_image_map_tool_real_settings_import (PicmanImageMapTool *tool,
                                                       const gchar      *filename,
                                                       GError          **error);
-gboolean    gimp_image_map_tool_real_settings_export (GimpImageMapTool *tool,
+gboolean    picman_image_map_tool_real_settings_export (PicmanImageMapTool *tool,
                                                       const gchar      *filename,
                                                       GError          **error);
 
 
-#endif /* __GIMP_IMAGE_MAP_TOOL_SETTINGS_H__ */
+#endif /* __PICMAN_IMAGE_MAP_TOOL_SETTINGS_H__ */

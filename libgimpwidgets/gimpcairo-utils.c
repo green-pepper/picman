@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpcairo-utils.c
- * Copyright (C) 2007 Sven Neumann <sven@gimp.org>
+ * picmancairo-utils.c
+ * Copyright (C) 2007 Sven Neumann <sven@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,24 +26,24 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpcolor/gimpcolor.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmancolor/picmancolor.h"
 
-#include "gimpcairo-utils.h"
+#include "picmancairo-utils.h"
 
 
 /**
- * SECTION: gimpcairo-utils
- * @title: GimpCairo-utils
+ * SECTION: picmancairo-utils
+ * @title: PicmanCairo-utils
  * @short_description: Utility functions for cairo
  *
  * Utility functions that make cairo easier to use with common
- * GIMP data types.
+ * PICMAN data types.
  **/
 
 
 /**
- * gimp_cairo_set_focus_line_pattern:
+ * picman_cairo_set_focus_line_pattern:
  * @cr:     Cairo context
  * @widget: widget to draw the focus indicator on
  *
@@ -53,10 +53,10 @@
  * Return value: %TRUE if the widget style has a focus line pattern,
  *               %FALSE otherwise
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 gboolean
-gimp_cairo_set_focus_line_pattern (cairo_t   *cr,
+picman_cairo_set_focus_line_pattern (cairo_t   *cr,
                                    GtkWidget *widget)
 {
   gint8    *dash_list;
@@ -97,7 +97,7 @@ gimp_cairo_set_focus_line_pattern (cairo_t   *cr,
 }
 
 /**
- * gimp_cairo_surface_create_from_pixbuf:
+ * picman_cairo_surface_create_from_pixbuf:
  * @pixbuf: a #GdkPixbuf
  *
  * Create a Cairo image surface from a GdkPixbuf.
@@ -107,10 +107,10 @@ gimp_cairo_set_focus_line_pattern (cairo_t   *cr,
  *
  * Returns: a #cairo_surface_t.
  *
- * Since: GIMP 2.6
+ * Since: PICMAN 2.6
  **/
 cairo_surface_t *
-gimp_cairo_surface_create_from_pixbuf (GdkPixbuf *pixbuf)
+picman_cairo_surface_create_from_pixbuf (GdkPixbuf *pixbuf)
 {
   cairo_surface_t *surface;
   cairo_format_t   format;
@@ -161,7 +161,7 @@ gimp_cairo_surface_create_from_pixbuf (GdkPixbuf *pixbuf)
 
           while (w--)
             {
-              GIMP_CAIRO_RGB24_SET_PIXEL (d, s[0], s[1], s[2]);
+              PICMAN_CAIRO_RGB24_SET_PIXEL (d, s[0], s[1], s[2]);
 
               s += 3;
               d += 4;
@@ -181,7 +181,7 @@ gimp_cairo_surface_create_from_pixbuf (GdkPixbuf *pixbuf)
 
           while (w--)
             {
-              GIMP_CAIRO_ARGB32_SET_PIXEL (d, s[0], s[1], s[2], s[3]);
+              PICMAN_CAIRO_ARGB32_SET_PIXEL (d, s[0], s[1], s[2], s[3]);
 
               s += 4;
               d += 4;

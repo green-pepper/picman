@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpposterizeconfig.h
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanposterizeconfig.h
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,37 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_POSTERIZE_CONFIG_H__
-#define __GIMP_POSTERIZE_CONFIG_H__
+#ifndef __PICMAN_POSTERIZE_CONFIG_H__
+#define __PICMAN_POSTERIZE_CONFIG_H__
 
 
-#include "core/gimpimagemapconfig.h"
+#include "core/picmanimagemapconfig.h"
 
 
-#define GIMP_TYPE_POSTERIZE_CONFIG            (gimp_posterize_config_get_type ())
-#define GIMP_POSTERIZE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_POSTERIZE_CONFIG, GimpPosterizeConfig))
-#define GIMP_POSTERIZE_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_POSTERIZE_CONFIG, GimpPosterizeConfigClass))
-#define GIMP_IS_POSTERIZE_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_POSTERIZE_CONFIG))
-#define GIMP_IS_POSTERIZE_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_POSTERIZE_CONFIG))
-#define GIMP_POSTERIZE_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_POSTERIZE_CONFIG, GimpPosterizeConfigClass))
+#define PICMAN_TYPE_POSTERIZE_CONFIG            (picman_posterize_config_get_type ())
+#define PICMAN_POSTERIZE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_POSTERIZE_CONFIG, PicmanPosterizeConfig))
+#define PICMAN_POSTERIZE_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  PICMAN_TYPE_POSTERIZE_CONFIG, PicmanPosterizeConfigClass))
+#define PICMAN_IS_POSTERIZE_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_POSTERIZE_CONFIG))
+#define PICMAN_IS_POSTERIZE_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  PICMAN_TYPE_POSTERIZE_CONFIG))
+#define PICMAN_POSTERIZE_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  PICMAN_TYPE_POSTERIZE_CONFIG, PicmanPosterizeConfigClass))
 
 
-typedef struct _GimpPosterizeConfigClass GimpPosterizeConfigClass;
+typedef struct _PicmanPosterizeConfigClass PicmanPosterizeConfigClass;
 
-struct _GimpPosterizeConfig
+struct _PicmanPosterizeConfig
 {
-  GimpImageMapConfig  parent_instance;
+  PicmanImageMapConfig  parent_instance;
 
   gint                levels;
 };
 
-struct _GimpPosterizeConfigClass
+struct _PicmanPosterizeConfigClass
 {
-  GimpImageMapConfigClass  parent_class;
+  PicmanImageMapConfigClass  parent_class;
 };
 
 
-GType   gimp_posterize_config_get_type (void) G_GNUC_CONST;
+GType   picman_posterize_config_get_type (void) G_GNUC_CONST;
 
 
-#endif /* __GIMP_POSTERIZE_CONFIG_H__ */
+#endif /* __PICMAN_POSTERIZE_CONFIG_H__ */

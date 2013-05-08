@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpdrawable-stroke.h
- * Copyright (C) 2003 Simon Budig  <simon@gimp.org>
+ * picmandrawable-stroke.h
+ * Copyright (C) 2003 Simon Budig  <simon@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,35 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __GIMP_DRAWABLE_STROKE_H__
-#define  __GIMP_DRAWABLE_STROKE_H__
+#ifndef  __PICMAN_DRAWABLE_STROKE_H__
+#define  __PICMAN_DRAWABLE_STROKE_H__
 
 
-void       gimp_drawable_fill_boundary   (GimpDrawable       *drawable,
-                                          GimpFillOptions    *options,
-                                          const GimpBoundSeg *bound_segs,
+void       picman_drawable_fill_boundary   (PicmanDrawable       *drawable,
+                                          PicmanFillOptions    *options,
+                                          const PicmanBoundSeg *bound_segs,
                                           gint                n_bound_segs,
                                           gint                offset_x,
                                           gint                offset_y,
                                           gboolean            push_undo);
-void       gimp_drawable_stroke_boundary (GimpDrawable       *drawable,
-                                          GimpStrokeOptions   *options,
-                                          const GimpBoundSeg *bound_segs,
+void       picman_drawable_stroke_boundary (PicmanDrawable       *drawable,
+                                          PicmanStrokeOptions   *options,
+                                          const PicmanBoundSeg *bound_segs,
                                           gint                n_bound_segs,
                                           gint                offset_x,
                                           gint                offset_y,
                                           gboolean            push_undo);
 
-gboolean   gimp_drawable_fill_vectors    (GimpDrawable       *drawable,
-                                          GimpFillOptions    *options,
-                                          GimpVectors        *vectors,
+gboolean   picman_drawable_fill_vectors    (PicmanDrawable       *drawable,
+                                          PicmanFillOptions    *options,
+                                          PicmanVectors        *vectors,
                                           gboolean            push_undo,
                                           GError            **error);
-gboolean   gimp_drawable_stroke_vectors  (GimpDrawable       *drawable,
-                                          GimpStrokeOptions  *options,
-                                          GimpVectors        *vectors,
+gboolean   picman_drawable_stroke_vectors  (PicmanDrawable       *drawable,
+                                          PicmanStrokeOptions  *options,
+                                          PicmanVectors        *vectors,
                                           gboolean            push_undo,
                                           GError            **error);
 
 
-#endif  /*  __GIMP_DRAWABLE_STROKE_H__  */
+#endif  /*  __PICMAN_DRAWABLE_STROKE_H__  */

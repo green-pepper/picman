@@ -1,9 +1,9 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpfontlist.h
- * Copyright (C) 2003 Michael Natterer <mitch@gimp.org>
- *                    Sven Neumann <sven@gimp.org>
+ * picmanfontlist.h
+ * Copyright (C) 2003 Michael Natterer <mitch@picman.org>
+ *                    Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,42 +19,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FONT_LIST_H__
-#define __GIMP_FONT_LIST_H__
+#ifndef __PICMAN_FONT_LIST_H__
+#define __PICMAN_FONT_LIST_H__
 
 
-#include "core/gimplist.h"
+#include "core/picmanlist.h"
 
 
-#define GIMP_TYPE_FONT_LIST            (gimp_font_list_get_type ())
-#define GIMP_FONT_LIST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FONT_LIST, GimpFontList))
-#define GIMP_FONT_LIST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FONT_LIST, GimpFontListClass))
-#define GIMP_IS_FONT_LIST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FONT_LIST))
-#define GIMP_IS_FONT_LIST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FONT_LIST))
-#define GIMP_FONT_LIST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FONT_LIST, GimpFontListClass))
+#define PICMAN_TYPE_FONT_LIST            (picman_font_list_get_type ())
+#define PICMAN_FONT_LIST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FONT_LIST, PicmanFontList))
+#define PICMAN_FONT_LIST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FONT_LIST, PicmanFontListClass))
+#define PICMAN_IS_FONT_LIST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FONT_LIST))
+#define PICMAN_IS_FONT_LIST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FONT_LIST))
+#define PICMAN_FONT_LIST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FONT_LIST, PicmanFontListClass))
 
 
-typedef struct _GimpFontListClass GimpFontListClass;
+typedef struct _PicmanFontListClass PicmanFontListClass;
 
-struct _GimpFontList
+struct _PicmanFontList
 {
-  GimpList  parent_instance;
+  PicmanList  parent_instance;
 
   gdouble   xresolution;
   gdouble   yresolution;
 };
 
-struct _GimpFontListClass
+struct _PicmanFontListClass
 {
-  GimpListClass  parent_class;
+  PicmanListClass  parent_class;
 };
 
 
-GType           gimp_font_list_get_type (void) G_GNUC_CONST;
+GType           picman_font_list_get_type (void) G_GNUC_CONST;
 
-GimpContainer * gimp_font_list_new      (gdouble       xresolution,
+PicmanContainer * picman_font_list_new      (gdouble       xresolution,
                                          gdouble       yresolution);
-void            gimp_font_list_restore  (GimpFontList *list);
+void            picman_font_list_restore  (PicmanFontList *list);
 
 
-#endif  /*  __GIMP_FONT_LIST_H__  */
+#endif  /*  __PICMAN_FONT_LIST_H__  */

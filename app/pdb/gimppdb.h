@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,76 +15,76 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PDB_H__
-#define __GIMP_PDB_H__
+#ifndef __PICMAN_PDB_H__
+#define __PICMAN_PDB_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-#define GIMP_TYPE_PDB            (gimp_pdb_get_type ())
-#define GIMP_PDB(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_PDB, GimpPDB))
-#define GIMP_PDB_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_PDB, GimpPDBClass))
-#define GIMP_IS_PDB(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_PDB))
-#define GIMP_IS_PDB_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_PDB))
-#define GIMP_PDB_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_PDB, GimpPDBClass))
+#define PICMAN_TYPE_PDB            (picman_pdb_get_type ())
+#define PICMAN_PDB(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_PDB, PicmanPDB))
+#define PICMAN_PDB_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_PDB, PicmanPDBClass))
+#define PICMAN_IS_PDB(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_PDB))
+#define PICMAN_IS_PDB_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_PDB))
+#define PICMAN_PDB_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_PDB, PicmanPDBClass))
 
 
-typedef struct _GimpPDBClass GimpPDBClass;
+typedef struct _PicmanPDBClass PicmanPDBClass;
 
-struct _GimpPDB
+struct _PicmanPDB
 {
-  GimpObject  parent_instance;
+  PicmanObject  parent_instance;
 
-  Gimp       *gimp;
+  Picman       *picman;
 
   GHashTable *procedures;
   GHashTable *compat_proc_names;
 };
 
-struct _GimpPDBClass
+struct _PicmanPDBClass
 {
-  GimpObjectClass parent_class;
+  PicmanObjectClass parent_class;
 
-  void (* register_procedure)   (GimpPDB       *pdb,
-                                 GimpProcedure *procedure);
-  void (* unregister_procedure) (GimpPDB       *pdb,
-                                 GimpProcedure *procedure);
+  void (* register_procedure)   (PicmanPDB       *pdb,
+                                 PicmanProcedure *procedure);
+  void (* unregister_procedure) (PicmanPDB       *pdb,
+                                 PicmanProcedure *procedure);
 };
 
 
-GType            gimp_pdb_get_type                       (void) G_GNUC_CONST;
+GType            picman_pdb_get_type                       (void) G_GNUC_CONST;
 
-GimpPDB        * gimp_pdb_new                            (Gimp           *gimp);
+PicmanPDB        * picman_pdb_new                            (Picman           *picman);
 
-void             gimp_pdb_register_procedure             (GimpPDB        *pdb,
-                                                          GimpProcedure  *procedure);
-void             gimp_pdb_unregister_procedure           (GimpPDB        *pdb,
-                                                          GimpProcedure  *procedure);
+void             picman_pdb_register_procedure             (PicmanPDB        *pdb,
+                                                          PicmanProcedure  *procedure);
+void             picman_pdb_unregister_procedure           (PicmanPDB        *pdb,
+                                                          PicmanProcedure  *procedure);
 
-GimpProcedure  * gimp_pdb_lookup_procedure               (GimpPDB        *pdb,
+PicmanProcedure  * picman_pdb_lookup_procedure               (PicmanPDB        *pdb,
                                                           const gchar    *name);
 
-void             gimp_pdb_register_compat_proc_name      (GimpPDB        *pdb,
+void             picman_pdb_register_compat_proc_name      (PicmanPDB        *pdb,
                                                           const gchar    *old_name,
                                                           const gchar    *new_name);
-const gchar    * gimp_pdb_lookup_compat_proc_name        (GimpPDB        *pdb,
+const gchar    * picman_pdb_lookup_compat_proc_name        (PicmanPDB        *pdb,
                                                           const gchar    *old_name);
 
-GimpValueArray * gimp_pdb_execute_procedure_by_name_args (GimpPDB        *pdb,
-                                                          GimpContext    *context,
-                                                          GimpProgress   *progress,
+PicmanValueArray * picman_pdb_execute_procedure_by_name_args (PicmanPDB        *pdb,
+                                                          PicmanContext    *context,
+                                                          PicmanProgress   *progress,
                                                           GError        **error,
                                                           const gchar    *name,
-                                                          GimpValueArray *args);
-GimpValueArray * gimp_pdb_execute_procedure_by_name      (GimpPDB        *pdb,
-                                                          GimpContext    *context,
-                                                          GimpProgress   *progress,
+                                                          PicmanValueArray *args);
+PicmanValueArray * picman_pdb_execute_procedure_by_name      (PicmanPDB        *pdb,
+                                                          PicmanContext    *context,
+                                                          PicmanProgress   *progress,
                                                           GError        **error,
                                                           const gchar    *name,
                                                           ...);
 
-GList          * gimp_pdb_get_deprecated_procedures      (GimpPDB        *pdb);
+GList          * picman_pdb_get_deprecated_procedures      (PicmanPDB        *pdb);
 
 
-#endif  /*  __GIMP_PDB_H__  */
+#endif  /*  __PICMAN_PDB_H__  */

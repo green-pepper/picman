@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,29 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_HUE_SATURATION_TOOL_H__
-#define __GIMP_HUE_SATURATION_TOOL_H__
+#ifndef __PICMAN_HUE_SATURATION_TOOL_H__
+#define __PICMAN_HUE_SATURATION_TOOL_H__
 
 
-#include "gimpimagemaptool.h"
+#include "picmanimagemaptool.h"
 
 
-#define GIMP_TYPE_HUE_SATURATION_TOOL            (gimp_hue_saturation_tool_get_type ())
-#define GIMP_HUE_SATURATION_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_HUE_SATURATION_TOOL, GimpHueSaturationTool))
-#define GIMP_HUE_SATURATION_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_HUE_SATURATION_TOOL, GimpHueSaturationToolClass))
-#define GIMP_IS_HUE_SATURATION_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_HUE_SATURATION_TOOL))
-#define GIMP_IS_HUE_SATURATION_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_HUE_SATURATION_TOOL))
-#define GIMP_HUE_SATURATION_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_HUE_SATURATION_TOOL, GimpHueSaturationToolClass))
+#define PICMAN_TYPE_HUE_SATURATION_TOOL            (picman_hue_saturation_tool_get_type ())
+#define PICMAN_HUE_SATURATION_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_HUE_SATURATION_TOOL, PicmanHueSaturationTool))
+#define PICMAN_HUE_SATURATION_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_HUE_SATURATION_TOOL, PicmanHueSaturationToolClass))
+#define PICMAN_IS_HUE_SATURATION_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_HUE_SATURATION_TOOL))
+#define PICMAN_IS_HUE_SATURATION_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_HUE_SATURATION_TOOL))
+#define PICMAN_HUE_SATURATION_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_HUE_SATURATION_TOOL, PicmanHueSaturationToolClass))
 
 
-typedef struct _GimpHueSaturationTool      GimpHueSaturationTool;
-typedef struct _GimpHueSaturationToolClass GimpHueSaturationToolClass;
+typedef struct _PicmanHueSaturationTool      PicmanHueSaturationTool;
+typedef struct _PicmanHueSaturationToolClass PicmanHueSaturationToolClass;
 
-struct _GimpHueSaturationTool
+struct _PicmanHueSaturationTool
 {
-  GimpImageMapTool         parent_instance;
+  PicmanImageMapTool         parent_instance;
 
-  GimpHueSaturationConfig *config;
+  PicmanHueSaturationConfig *config;
 
   /*  dialog  */
   GtkWidget               *range_radio;
@@ -48,16 +48,16 @@ struct _GimpHueSaturationTool
   GtkAdjustment           *saturation_data;
 };
 
-struct _GimpHueSaturationToolClass
+struct _PicmanHueSaturationToolClass
 {
-  GimpImageMapToolClass  parent_class;
+  PicmanImageMapToolClass  parent_class;
 };
 
 
-void    gimp_hue_saturation_tool_register (GimpToolRegisterCallback  callback,
+void    picman_hue_saturation_tool_register (PicmanToolRegisterCallback  callback,
                                            gpointer                  data);
 
-GType   gimp_hue_saturation_tool_get_type (void) G_GNUC_CONST;
+GType   picman_hue_saturation_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_HUE_SATURATION_TOOL_H__  */
+#endif  /*  __PICMAN_HUE_SATURATION_TOOL_H__  */

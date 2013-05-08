@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpGuiConfig class
- * Copyright (C) 2001  Sven Neumann <sven@gimp.org>
+ * PicmanGuiConfig class
+ * Copyright (C) 2001  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GUI_CONFIG_H__
-#define __GIMP_GUI_CONFIG_H__
+#ifndef __PICMAN_GUI_CONFIG_H__
+#define __PICMAN_GUI_CONFIG_H__
 
-#include "config/gimpdisplayconfig.h"
-
-
-#define GIMP_TYPE_GUI_CONFIG            (gimp_gui_config_get_type ())
-#define GIMP_GUI_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_GUI_CONFIG, GimpGuiConfig))
-#define GIMP_GUI_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_GUI_CONFIG, GimpGuiConfigClass))
-#define GIMP_IS_GUI_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_GUI_CONFIG))
-#define GIMP_IS_GUI_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_GUI_CONFIG))
+#include "config/picmandisplayconfig.h"
 
 
-typedef struct _GimpGuiConfigClass GimpGuiConfigClass;
+#define PICMAN_TYPE_GUI_CONFIG            (picman_gui_config_get_type ())
+#define PICMAN_GUI_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_GUI_CONFIG, PicmanGuiConfig))
+#define PICMAN_GUI_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_GUI_CONFIG, PicmanGuiConfigClass))
+#define PICMAN_IS_GUI_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_GUI_CONFIG))
+#define PICMAN_IS_GUI_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_GUI_CONFIG))
 
-struct _GimpGuiConfig
+
+typedef struct _PicmanGuiConfigClass PicmanGuiConfigClass;
+
+struct _PicmanGuiConfig
 {
-  GimpDisplayConfig    parent_instance;
+  PicmanDisplayConfig    parent_instance;
 
   gboolean             move_tool_changes_active;
   gint                 image_map_tool_max_recent;
@@ -60,12 +60,12 @@ struct _GimpGuiConfig
   gboolean             use_help;
   gboolean             show_help_button;
   gchar               *help_locales;
-  GimpHelpBrowserType  help_browser;
+  PicmanHelpBrowserType  help_browser;
   gchar               *web_browser;
   gboolean             user_manual_online;
   gchar               *user_manual_online_uri;
-  GimpWindowHint       dock_window_hint;
-  GimpHandedness       cursor_handedness;
+  PicmanWindowHint       dock_window_hint;
+  PicmanHandedness       cursor_handedness;
 
   /* saved in sessionrc */
   gboolean             hide_docks;
@@ -73,13 +73,13 @@ struct _GimpGuiConfig
   gint                 last_tip_shown;
 };
 
-struct _GimpGuiConfigClass
+struct _PicmanGuiConfigClass
 {
-  GimpDisplayConfigClass  parent_class;
+  PicmanDisplayConfigClass  parent_class;
 };
 
 
-GType  gimp_gui_config_get_type (void) G_GNUC_CONST;
+GType  picman_gui_config_get_type (void) G_GNUC_CONST;
 
 
-#endif /* GIMP_GUI_CONFIG_H__ */
+#endif /* PICMAN_GUI_CONFIG_H__ */

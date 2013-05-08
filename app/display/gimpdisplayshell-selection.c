@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,31 +22,31 @@
 
 #include "display-types.h"
 
-#include "config/gimpdisplayconfig.h"
+#include "config/picmandisplayconfig.h"
 
-#include "core/gimp.h"
-#include "core/gimp-cairo.h"
-#include "core/gimpboundary.h"
-#include "core/gimpchannel.h"
-#include "core/gimpimage.h"
+#include "core/picman.h"
+#include "core/picman-cairo.h"
+#include "core/picmanboundary.h"
+#include "core/picmanchannel.h"
+#include "core/picmanimage.h"
 
-#include "gimpdisplay.h"
-#include "gimpdisplayshell.h"
-#include "gimpdisplayshell-appearance.h"
-#include "gimpdisplayshell-draw.h"
-#include "gimpdisplayshell-expose.h"
-#include "gimpdisplayshell-selection.h"
-#include "gimpdisplayshell-transform.h"
+#include "picmandisplay.h"
+#include "picmandisplayshell.h"
+#include "picmandisplayshell-appearance.h"
+#include "picmandisplayshell-draw.h"
+#include "picmandisplayshell-expose.h"
+#include "picmandisplayshell-selection.h"
+#include "picmandisplayshell-transform.h"
 
 
 struct _Selection
 {
-  GimpDisplayShell *shell;            /*  shell that owns the selection     */
+  PicmanDisplayShell *shell;            /*  shell that owns the selection     */
 
-  GimpSegment      *segs_in;          /*  gdk segments of area boundary     */
+  PicmanSegment      *segs_in;          /*  gdk segments of area boundary     */
   gint              n_segs_in;        /*  number of segments in segs_in     */
 
-  GimpSegment      *segs_out;         /*  gdk segments of area boundary     */
+  PicmanSegment      *segs_out;         /*  gdk segments of area boundary     */
   gint              n_segs_out;       /*  number of segments in segs_out    */
 
   guint             index;            /*  index of current stipple pattern  */
@@ -69,8 +69,8 @@ static void      selection_undraw         (Selection          *selection);
 static void      selection_render_mask    (Selection          *selection);
 
 static void      selection_zoom_segs      (Selection          *selection,
-                                           const GimpBoundSeg *src_segs,
-                                           GimpSegment        *dest_segs,
+                                           const PicmanBoundSeg *src_segs,
+                                           PicmanSegment        *dest_segs,
                                            gint                n_segs);
 static void      selection_generate_segs  (Selection          *selection);
 static void      selection_free_segs      (Selection          *selection);
@@ -89,18 +89,18 @@ static gboolean  selection_visibility_notify_event (GtkWidget           *shell,
 /*  public functions  */
 
 void
-gimp_display_shell_selection_init (GimpDisplayShell *shell)
+picman_display_shell_selection_init (PicmanDisplayShell *shell)
 {
   Selection *selection;
 
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
   g_return_if_fail (shell->selection == NULL);
 
   selection = g_slice_new0 (Selection);
 
   selection->shell          = shell;
   selection->shell_visible  = TRUE;
-  selection->show_selection = gimp_display_shell_get_show_selection (shell);
+  selection->show_selection = picman_display_shell_get_show_selection (shell);
 
   shell->selection = selection;
 
@@ -113,9 +113,9 @@ gimp_display_shell_selection_init (GimpDisplayShell *shell)
 }
 
 void
-gimp_display_shell_selection_free (GimpDisplayShell *shell)
+picman_display_shell_selection_free (PicmanDisplayShell *shell)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
   if (shell->selection)
     {
@@ -139,11 +139,11 @@ gimp_display_shell_selection_free (GimpDisplayShell *shell)
 }
 
 void
-gimp_display_shell_selection_undraw (GimpDisplayShell *shell)
+picman_display_shell_selection_undraw (PicmanDisplayShell *shell)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
-  if (shell->selection && gimp_display_get_image (shell->display))
+  if (shell->selection && picman_display_get_image (shell->display))
     {
       selection_undraw (shell->selection);
     }
@@ -155,22 +155,22 @@ gimp_display_shell_selection_undraw (GimpDisplayShell *shell)
 }
 
 void
-gimp_display_shell_selection_restart (GimpDisplayShell *shell)
+picman_display_shell_selection_restart (PicmanDisplayShell *shell)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
-  if (shell->selection && gimp_display_get_image (shell->display))
+  if (shell->selection && picman_display_get_image (shell->display))
     {
       selection_start (shell->selection);
     }
 }
 
 void
-gimp_display_shell_selection_pause (GimpDisplayShell *shell)
+picman_display_shell_selection_pause (PicmanDisplayShell *shell)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
-  if (shell->selection && gimp_display_get_image (shell->display))
+  if (shell->selection && picman_display_get_image (shell->display))
     {
       if (shell->selection->paused == 0)
         selection_stop (shell->selection);
@@ -180,11 +180,11 @@ gimp_display_shell_selection_pause (GimpDisplayShell *shell)
 }
 
 void
-gimp_display_shell_selection_resume (GimpDisplayShell *shell)
+picman_display_shell_selection_resume (PicmanDisplayShell *shell)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
-  if (shell->selection && gimp_display_get_image (shell->display))
+  if (shell->selection && picman_display_get_image (shell->display))
     {
       shell->selection->paused--;
 
@@ -194,12 +194,12 @@ gimp_display_shell_selection_resume (GimpDisplayShell *shell)
 }
 
 void
-gimp_display_shell_selection_set_show (GimpDisplayShell *shell,
+picman_display_shell_selection_set_show (PicmanDisplayShell *shell,
                                        gboolean          show)
 {
-  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
+  g_return_if_fail (PICMAN_IS_DISPLAY_SHELL (shell));
 
-  if (shell->selection && gimp_display_get_image (shell->display))
+  if (shell->selection && picman_display_get_image (shell->display))
     {
       Selection *selection = shell->selection;
 
@@ -249,7 +249,7 @@ selection_draw (Selection *selection)
 
       cr = gdk_cairo_create (gtk_widget_get_window (selection->shell->canvas));
 
-      gimp_display_shell_draw_selection_in (selection->shell, cr,
+      picman_display_shell_draw_selection_in (selection->shell, cr,
                                             selection->segs_in_mask,
                                             selection->index % 8);
 
@@ -264,10 +264,10 @@ selection_undraw (Selection *selection)
 
   selection_stop (selection);
 
-  if (gimp_display_shell_mask_bounds (selection->shell, &x1, &y1, &x2, &y2))
+  if (picman_display_shell_mask_bounds (selection->shell, &x1, &y1, &x2, &y2))
     {
       /* expose will restart the selection */
-      gimp_display_shell_expose_area (selection->shell,
+      picman_display_shell_expose_area (selection->shell,
                                       x1, y1, (x2 - x1), (y2 - y1));
     }
   else
@@ -295,7 +295,7 @@ selection_render_mask (Selection *selection)
   if (selection->shell->rotate_transform)
     cairo_transform (cr, selection->shell->rotate_transform);
 
-  gimp_cairo_add_segments (cr,
+  picman_cairo_add_segments (cr,
                            selection->segs_in,
                            selection->n_segs_in);
   cairo_stroke (cr);
@@ -308,15 +308,15 @@ selection_render_mask (Selection *selection)
 
 static void
 selection_zoom_segs (Selection          *selection,
-                     const GimpBoundSeg *src_segs,
-                     GimpSegment        *dest_segs,
+                     const PicmanBoundSeg *src_segs,
+                     PicmanSegment        *dest_segs,
                      gint                n_segs)
 {
   const gint xclamp = selection->shell->disp_width + 1;
   const gint yclamp = selection->shell->disp_height + 1;
   gint       i;
 
-  gimp_display_shell_zoom_segments (selection->shell,
+  picman_display_shell_zoom_segments (selection->shell,
                                     src_segs, dest_segs, n_segs,
                                     0.0, 0.0);
 
@@ -353,21 +353,21 @@ selection_zoom_segs (Selection          *selection,
 static void
 selection_generate_segs (Selection *selection)
 {
-  GimpImage          *image = gimp_display_get_image (selection->shell->display);
-  const GimpBoundSeg *segs_in;
-  const GimpBoundSeg *segs_out;
+  PicmanImage          *image = picman_display_get_image (selection->shell->display);
+  const PicmanBoundSeg *segs_in;
+  const PicmanBoundSeg *segs_out;
 
   /*  Ask the image for the boundary of its selected region...
-   *  Then transform that information into a new buffer of GimpSegments
+   *  Then transform that information into a new buffer of PicmanSegments
    */
-  gimp_channel_boundary (gimp_image_get_mask (image),
+  picman_channel_boundary (picman_image_get_mask (image),
                          &segs_in, &segs_out,
                          &selection->n_segs_in, &selection->n_segs_out,
                          0, 0, 0, 0);
 
   if (selection->n_segs_in)
     {
-      selection->segs_in = g_new (GimpSegment, selection->n_segs_in);
+      selection->segs_in = g_new (PicmanSegment, selection->n_segs_in);
       selection_zoom_segs (selection, segs_in,
                            selection->segs_in, selection->n_segs_in);
 
@@ -381,7 +381,7 @@ selection_generate_segs (Selection *selection)
   /*  Possible secondary boundary representation  */
   if (selection->n_segs_out)
     {
-      selection->segs_out = g_new (GimpSegment, selection->n_segs_out);
+      selection->segs_out = g_new (PicmanSegment, selection->n_segs_out);
       selection_zoom_segs (selection, segs_out,
                            selection->segs_out, selection->n_segs_out);
     }
@@ -421,7 +421,7 @@ selection_start_timeout (Selection *selection)
   selection_free_segs (selection);
   selection->timeout = 0;
 
-  if (! gimp_display_get_image (selection->shell->display))
+  if (! picman_display_get_image (selection->shell->display))
     return FALSE;
 
   selection_generate_segs (selection);
@@ -431,7 +431,7 @@ selection_start_timeout (Selection *selection)
   /*  Draw the ants  */
   if (selection->show_selection)
     {
-      GimpDisplayConfig *config = selection->shell->display->config;
+      PicmanDisplayConfig *config = selection->shell->display->config;
 
       selection_draw (selection);
 
@@ -444,7 +444,7 @@ selection_start_timeout (Selection *selection)
           if (selection->shell->rotate_transform)
             cairo_transform (cr, selection->shell->rotate_transform);
 
-          gimp_display_shell_draw_selection_out (selection->shell, cr,
+          picman_display_shell_draw_selection_out (selection->shell, cr,
                                                  selection->segs_out,
                                                  selection->n_segs_out);
 

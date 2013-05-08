@@ -1,16 +1,16 @@
-# Serbian translation of gimp
+# Serbian translation of picman
 # Courtesy of Prevod.org team (http://www.prevod.org/) -- 2003, 2004.
 #
-# This file is distributed under the same license as the gimp package.
+# This file is distributed under the same license as the picman package.
 #
 # Maintainer: Милош Поповић <gpopac@gmail.com>
 # Милош Поповић <gpopac@gmail.com>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gimp-python\n"
+"Project-Id-Version: picman-python\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gimp&keywords=I18N+L10N&component=general\n"
+"product=picman&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2011-08-25 19:40+0000\n"
 "PO-Revision-Date: 2011-08-28 08:41+0200\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
@@ -21,325 +21,325 @@ msgstr ""
 "Plural-Forms: nplurals=4;    plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 :    n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: ../plug-ins/pygimp/gimpfu.py:394
+#: ../plug-ins/pypicman/picmanfu.py:394
 msgid "Missing exception information"
 msgstr "Недостају подаци о изузецима"
 
-#: ../plug-ins/pygimp/gimpfu.py:403
+#: ../plug-ins/pypicman/picmanfu.py:403
 #, python-format
 #| msgid "An error occured running %s"
 msgid "An error occurred running %s"
 msgstr "Грешка при раду са %s"
 
-#: ../plug-ins/pygimp/gimpfu.py:414
+#: ../plug-ins/pypicman/picmanfu.py:414
 msgid "_More Information"
 msgstr "_Додатни подаци"
 
-#: ../plug-ins/pygimp/gimpfu.py:526 ../plug-ins/pygimp/gimpfu.py:538
-#: ../plug-ins/pygimp/gimpfu.py:544
+#: ../plug-ins/pypicman/picmanfu.py:526 ../plug-ins/pypicman/picmanfu.py:538
+#: ../plug-ins/pypicman/picmanfu.py:544
 msgid "No"
 msgstr "Не"
 
-#: ../plug-ins/pygimp/gimpfu.py:536 ../plug-ins/pygimp/gimpfu.py:544
+#: ../plug-ins/pypicman/picmanfu.py:536 ../plug-ins/pypicman/picmanfu.py:544
 msgid "Yes"
 msgstr "Да"
 
-#: ../plug-ins/pygimp/gimpfu.py:596 ../plug-ins/pygimp/gimpui.py:223
+#: ../plug-ins/pypicman/picmanfu.py:596 ../plug-ins/pypicman/picmanui.py:223
 msgid "Python-Fu File Selection"
 msgstr "Питонов избор датотеке"
 
-#: ../plug-ins/pygimp/gimpfu.py:607
+#: ../plug-ins/pypicman/picmanfu.py:607
 msgid "Python-Fu Folder Selection"
 msgstr "Питонов избор фасцикле"
 
-#: ../plug-ins/pygimp/gimpfu.py:696
+#: ../plug-ins/pypicman/picmanfu.py:696
 #, python-format
 msgid "Invalid input for '%s'"
 msgstr "Није исправан унос за „%s“"
 
-#: ../plug-ins/pygimp/gimpui.py:176
+#: ../plug-ins/pypicman/picmanui.py:176
 msgid "Python-Fu Color Selection"
 msgstr "Питонов избор боје"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:109
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:109
 msgid "Saving as colored XHTML"
 msgstr "Чувам као XHTML у боји"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:186
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:186
 msgid "Save as colored XHTML"
 msgstr "Сачувај као XHTML у боји"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:191
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:191
 msgid "Colored XHTML"
 msgstr "XHTML у боји"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:198
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:198
 msgid "Character _source"
 msgstr "_Извор знакова"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:199
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:199
 msgid "Source code"
 msgstr "Изворни код"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:200
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:200
 msgid "Text file"
 msgstr "Текстуална датотека"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:201
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:201
 msgid "Entry box"
 msgstr "Поље за унос"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:202
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:202
 msgid "_File to read or characters to use"
 msgstr "_Датотека за читање или знакови за употребу"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:204
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:204
 msgid "Fo_nt size in pixels"
 msgstr "Величина _фонта и пиксела"
 
-#: ../plug-ins/pygimp/plug-ins/colorxhtml.py:205
+#: ../plug-ins/pypicman/plug-ins/colorxhtml.py:205
 msgid "_Write a separate CSS file"
 msgstr "_Упиши засебну CSS датотеку"
 
-#: ../plug-ins/pygimp/plug-ins/gradients-save-as-css.py:96
+#: ../plug-ins/pypicman/plug-ins/gradients-save-as-css.py:96
 msgid "Gradient to use"
 msgstr "Прелив који се користи"
 
-#: ../plug-ins/pygimp/plug-ins/gradients-save-as-css.py:97
+#: ../plug-ins/pypicman/plug-ins/gradients-save-as-css.py:97
 msgid "File Name"
 msgstr "Име датотеке"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:56
+#: ../plug-ins/pypicman/plug-ins/foggify.py:56
 msgid "Add a layer of fog"
 msgstr "Додаје слој са ефектом магле"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:61
+#: ../plug-ins/pypicman/plug-ins/foggify.py:61
 msgid "_Fog..."
 msgstr "_Магла..."
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:66
+#: ../plug-ins/pypicman/plug-ins/foggify.py:66
 msgid "_Layer name"
 msgstr "_Назив слоја"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:66
+#: ../plug-ins/pypicman/plug-ins/foggify.py:66
 msgid "Clouds"
 msgstr "Облаци"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:67
+#: ../plug-ins/pypicman/plug-ins/foggify.py:67
 msgid "_Fog color"
 msgstr "_Боја магле"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:68
+#: ../plug-ins/pypicman/plug-ins/foggify.py:68
 msgid "_Turbulence"
 msgstr "_Турбуленција"
 
-#: ../plug-ins/pygimp/plug-ins/foggify.py:69
+#: ../plug-ins/pypicman/plug-ins/foggify.py:69
 msgid "Op_acity"
 msgstr "_Непровидност"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:44
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:44
 msgid "Offset the colors in a palette"
 msgstr "Помера боје у палети"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:49
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:49
 msgid "_Offset Palette..."
 msgstr "_Померај палете..."
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:52
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:56
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:59
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:81
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:52
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:56
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:59
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:81
 msgid "Palette"
 msgstr "Палета"
 
-#: ../plug-ins/pygimp/plug-ins/palette-offset.py:53
+#: ../plug-ins/pypicman/plug-ins/palette-offset.py:53
 msgid "Off_set"
 msgstr "По_мерај"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:48
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:48
 msgid "Sort the colors in a palette"
 msgstr "Уређује распоред боја у палети"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:53
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:53
 msgid "_Sort Palette..."
 msgstr "По_ређај палету..."
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:57
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:57
 msgid "Color _model"
 msgstr "_Модел боја"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:58
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:58
 msgid "RGB"
 msgstr "РГБ"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:59
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:59
 msgid "HSV"
 msgstr "ХСВ"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:60
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:60
 msgid "Channel to _sort"
 msgstr "Канали за _ређање"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:61
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:61
 msgid "Red or Hue"
 msgstr "Црвена или нијанса"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:62
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:62
 msgid "Green or Saturation"
 msgstr "Зелена или засићеност"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:63
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:63
 msgid "Blue or Value"
 msgstr "Плава или вредност"
 
-#: ../plug-ins/pygimp/plug-ins/palette-sort.py:64
+#: ../plug-ins/pypicman/plug-ins/palette-sort.py:64
 msgid "_Ascending"
 msgstr "_Растуће"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:52
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:52
 msgid "Create a repeating gradient using colors from the palette"
 msgstr "Прави прелив који се понавља на основу боја из палете"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:57
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:57
 msgid "Palette to _Repeating Gradient"
 msgstr "Палета у понов_љени прелив"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:74
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:74
 msgid "Create a gradient using colors from the palette"
 msgstr "Прави прелив на основу боја из палете"
 
-#: ../plug-ins/pygimp/plug-ins/palette-to-gradient.py:79
+#: ../plug-ins/pypicman/plug-ins/palette-to-gradient.py:79
 msgid "Palette to _Gradient"
 msgstr "Палета _у прелив"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:59
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:59
 msgid "Slice"
 msgstr "Парче"
 
 #. table snippet means a small piece of HTML code here
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:420
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:420
 msgid "Cuts an image along its guides, creates images and a HTML table snippet"
 msgstr "Исеца слику по вођицама, правећи слике и исечке за ХТМЛ табелу"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:431
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:431
 msgid "_Slice..."
 msgstr "_Испарчај..."
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:436
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:436
 msgid "Path for HTML export"
 msgstr "Путања за извоз ХТМЛ-а"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:437
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:437
 msgid "Filename for export"
 msgstr "Име датотеке за извоз"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:438
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:438
 msgid "Image name prefix"
 msgstr "Префикс имена слике"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:439
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:439
 msgid "Image format"
 msgstr "Формат слике"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:440
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:440
 msgid "Separate image folder"
 msgstr "Засебна фасцикла за слику"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:442
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:442
 msgid "Folder for image export"
 msgstr "Фасцикла за извоз слике"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:443
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:443
 msgid "Space between table elements"
 msgstr "Размак измеђи елемената у табели"
 
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:445
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:445
 msgid "Javascript for onmouseover and clicked"
 msgstr "Јаваскрипт за „onmouseover“ и „clicked“"
 
 #. table caps are table cells on the edge of the table
-#: ../plug-ins/pygimp/plug-ins/py-slice.py:448
+#: ../plug-ins/pypicman/plug-ins/py-slice.py:448
 msgid "Skip animation for table caps"
 msgstr "Искључи анимацију за ивична поља табеле"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:56
+#: ../plug-ins/pypicman/plug-ins/python-console.py:56
 msgid "Python Console"
 msgstr "Питонова конзола"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:60
+#: ../plug-ins/pypicman/plug-ins/python-console.py:60
 msgid "_Browse..."
 msgstr "_Разгледај..."
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:138
+#: ../plug-ins/pypicman/plug-ins/python-console.py:138
 msgid "Python Procedure Browser"
 msgstr "Разгледач Питонових процедура"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:167
+#: ../plug-ins/pypicman/plug-ins/python-console.py:167
 #, python-format
 msgid "Could not open '%s' for writing: %s"
 msgstr "Не могу да отворим „%s“ за упис: %s"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:182
+#: ../plug-ins/pypicman/plug-ins/python-console.py:182
 #, python-format
 msgid "Could not write to '%s': %s"
 msgstr "Не могу да упишем у „%s“: %s"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:190
+#: ../plug-ins/pypicman/plug-ins/python-console.py:190
 msgid "Save Python-Fu Console Output"
 msgstr "Сачувај излаз Питонове конзоле"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:216
-msgid "Interactive GIMP Python interpreter"
+#: ../plug-ins/pypicman/plug-ins/python-console.py:216
+msgid "Interactive PICMAN Python interpreter"
 msgstr "Покреће интерактивни интерпретер за Гимпов Питон"
 
-#: ../plug-ins/pygimp/plug-ins/python-console.py:221
+#: ../plug-ins/pypicman/plug-ins/python-console.py:221
 msgid "_Console"
 msgstr "_Конзола"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:60
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:60
 msgid "Add a drop shadow to a layer, and optionally bevel it"
 msgstr "Додаје сенку на слој и испупчење по жељу"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:65
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:65
 msgid "_Drop Shadow and Bevel..."
 msgstr "_Додај сенку и испупчење..."
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:70
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:70
 msgid "_Shadow blur"
 msgstr "_Замућење сенке"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:71
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:71
 msgid "_Bevel"
 msgstr "_Испупчење"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:72
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:72
 msgid "_Drop shadow"
 msgstr "Д_одај сенку"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:73
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:73
 msgid "Drop shadow _X displacement"
 msgstr "По_мерај сенке по X оси"
 
-#: ../plug-ins/pygimp/plug-ins/shadow_bevel.py:74
+#: ../plug-ins/pypicman/plug-ins/shadow_bevel.py:74
 msgid "Drop shadow _Y displacement"
 msgstr "Пом_ерај сенке по Y оси"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:75
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:75
 msgid "Create a new brush with characters from a text sequence"
 msgstr "Прави нову четкицу на основу слова из дела текста"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:81
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:81
 msgid "New Brush from _Text..."
 msgstr "Нова четкица из _текста..."
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:84
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:84
 msgid "Font"
 msgstr "Фонт"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:85
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:85
 msgid "Pixel Size"
 msgstr "Величина пиксела"
 
-#: ../plug-ins/pygimp/plug-ins/text-brush.py:86
+#: ../plug-ins/pypicman/plug-ins/text-brush.py:86
 msgid "Text"
 msgstr "Текст"

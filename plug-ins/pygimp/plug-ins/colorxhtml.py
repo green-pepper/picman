@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-#   Gimp-Python - allows the writing of Gimp plugins in Python.
-#   Copyright (C) 2003, 2005  Manish Singh <yosh@gimp.org>
+#   Picman-Python - allows the writing of Picman plugins in Python.
+#   Copyright (C) 2003, 2005  Manish Singh <yosh@picman.org>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -21,10 +21,10 @@ import struct
 import inspect
 import os.path
 
-import gimp
-from gimpfu import *
+import picman
+from picmanfu import *
 
-gettext.install("gimp20-python", gimp.locale_directory, unicode=True)
+gettext.install("picman20-python", picman.locale_directory, unicode=True)
 
 all_source_types = (CHARS_SOURCE, CHARS_FILE, CHARS_PARAMETER) = range(3)
 
@@ -47,7 +47,7 @@ preamble = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<title>CSS Color XHTML written by GIMP</title>
+<title>CSS Color XHTML written by PICMAN</title>
 %s
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
@@ -69,7 +69,7 @@ def colorxhtml(img, drawable, filename, raw_filename,
     if source_type not in all_source_types:
         return
 
-    gimp.tile_cache_ntiles(width / gimp.tile_width() + 1)
+    picman.tile_cache_ntiles(width / picman.tile_width() + 1)
 
     html = file(filename, 'w')
 
@@ -106,7 +106,7 @@ def colorxhtml(img, drawable, filename, raw_filename,
 
     pr = drawable.get_pixel_rgn(0, 0, width, height, False, False)
 
-    gimp.progress_init(_("Saving as colored XHTML"))
+    picman.progress_init(_("Saving as colored XHTML"))
 
     style = style_def % size
 
@@ -144,7 +144,7 @@ def colorxhtml(img, drawable, filename, raw_filename,
 
         html.write('\n')
 
-        gimp.progress_update(y / float(height))
+        picman.progress_update(y / float(height))
 
     html.write(postamble)
 
@@ -154,7 +154,7 @@ def colorxhtml(img, drawable, filename, raw_filename,
         css.close()
 
 def register_save():
-    gimp.register_save_handler("file-colorxhtml-save", "xhtml", "")
+    picman.register_save_handler("file-colorxhtml-save", "xhtml", "")
 
 class RowIterator:
     def __init__(self, row, bpp):
@@ -206,7 +206,7 @@ register(
     ],
     [],
     colorxhtml, on_query=register_save,
-    menu="<Save>", domain=("gimp20-python", gimp.locale_directory)
+    menu="<Save>", domain=("picman20-python", picman.locale_directory)
     )
 
 main()

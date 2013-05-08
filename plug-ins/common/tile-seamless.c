@@ -2,7 +2,7 @@
  * 22 May 1997
  * Tim Rowley <tor@cs.brown.edu>
  *
- * GIMP - The GNU Image Manipulation Program
+ * PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,9 +23,9 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC "plug-in-make-seamless"
@@ -36,13 +36,13 @@
 static void query (void);
 static void run   (const gchar      *name,
                    gint              nparams,
-                   const GimpParam  *param,
+                   const PicmanParam  *param,
                    gint             *nreturn_vals,
-                   GimpParam       **return_vals);
+                   PicmanParam       **return_vals);
 
-static void tile  (GimpDrawable     *drawable);
+static void tile  (PicmanDrawable     *drawable);
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -55,14 +55,14 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)" },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable" }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)" },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable" }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Alters edges to make the image seamlessly tileable"),
                           "This plugin creates a seamless tileable from "
                           "the input drawable",
@@ -71,55 +71,55 @@ query (void)
                           "1997",
                           N_("_Make Seamless"),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Map");
+  picman_plugin_menu_register (PLUG_IN_PROC, "<Image>/Filters/Map");
 }
 
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpDrawable      *drawable;
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[1];
+  PicmanDrawable      *drawable;
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
 
   run_mode = param[0].data.d_int32;
 
   INIT_I18N ();
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
+  drawable = picman_drawable_get (param[2].data.d_drawable);
 
   /*  Make sure that the drawable is gray or RGB color  */
-  if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-      gimp_drawable_is_gray (drawable->drawable_id))
+  if (picman_drawable_is_rgb (drawable->drawable_id) ||
+      picman_drawable_is_gray (drawable->drawable_id))
     {
-      gimp_tile_cache_ntiles (2 * (drawable->width / gimp_tile_width () + 1));
+      picman_tile_cache_ntiles (2 * (drawable->width / picman_tile_width () + 1));
       tile(drawable);
 
-      if (run_mode != GIMP_RUN_NONINTERACTIVE)
-        gimp_displays_flush ();
+      if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+        picman_displays_flush ();
     }
   else
     {
-      status = GIMP_PDB_EXECUTION_ERROR;
+      status = PICMAN_PDB_EXECUTION_ERROR;
     }
 
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static void
@@ -189,7 +189,7 @@ weld_pixels_alpha (guchar *dest1,
 }
 
 static void
-tile_region (GimpDrawable *drawable,
+tile_region (PicmanDrawable *drawable,
              gboolean      left,
              gint          x1,
              gint          y1,
@@ -203,13 +203,13 @@ tile_region (GimpDrawable *drawable,
   gint          rgn1_x, rgn2_x;
   static gint   progress = 0;
   gint          max_progress;
-  GimpPixelRgn  src1_rgn, src2_rgn, dest1_rgn, dest2_rgn;
+  PicmanPixelRgn  src1_rgn, src2_rgn, dest1_rgn, dest2_rgn;
   gpointer      pr;
   gboolean      has_alpha;
   guint         asymmetry_correction;
 
-  bpp = gimp_drawable_bpp (drawable->drawable_id);
-  has_alpha = gimp_drawable_has_alpha (drawable->drawable_id);
+  bpp = picman_drawable_bpp (drawable->drawable_id);
+  has_alpha = picman_drawable_has_alpha (drawable->drawable_id);
 
   height = y2 - y1;
   width = x2 - x1;
@@ -233,19 +233,19 @@ tile_region (GimpDrawable *drawable,
 
   asymmetry_correction = !wodd && !left;
 
-  gimp_pixel_rgn_init (&src1_rgn, drawable, rgn1_x, y1, w, h, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest1_rgn, drawable, rgn1_x, y1, w, h, TRUE, TRUE);
-  gimp_pixel_rgn_init (&src2_rgn, drawable, rgn2_x, y1 + h + hodd,
+  picman_pixel_rgn_init (&src1_rgn, drawable, rgn1_x, y1, w, h, FALSE, FALSE);
+  picman_pixel_rgn_init (&dest1_rgn, drawable, rgn1_x, y1, w, h, TRUE, TRUE);
+  picman_pixel_rgn_init (&src2_rgn, drawable, rgn2_x, y1 + h + hodd,
                        w, h, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest2_rgn, drawable, rgn2_x, y1 + h + hodd,
+  picman_pixel_rgn_init (&dest2_rgn, drawable, rgn2_x, y1 + h + hodd,
                        w, h, TRUE, TRUE);
 
   max_progress = width * height / 2;
 
-  for (pr = gimp_pixel_rgns_register (4, &src1_rgn, &dest1_rgn, &src2_rgn,
+  for (pr = picman_pixel_rgns_register (4, &src1_rgn, &dest1_rgn, &src2_rgn,
                                       &dest2_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       guchar *src1  = src1_rgn.data;
       guchar *dest1 = dest1_rgn.data;
@@ -293,26 +293,26 @@ tile_region (GimpDrawable *drawable,
         }
 
       progress += src1_rgn.w * src1_rgn.h;
-      gimp_progress_update ((gdouble) progress / (gdouble) max_progress);
+      picman_progress_update ((gdouble) progress / (gdouble) max_progress);
     }
 }
 
 static void
-copy_region (GimpDrawable *drawable,
+copy_region (PicmanDrawable *drawable,
              gint          x,
              gint          y,
              gint          w,
              gint          h)
 {
-  GimpPixelRgn src_rgn, dest_rgn;
+  PicmanPixelRgn src_rgn, dest_rgn;
   gpointer     pr;
 
-  gimp_pixel_rgn_init (&src_rgn, drawable, x, y, w, h, FALSE, FALSE);
-  gimp_pixel_rgn_init (&dest_rgn, drawable, x, y, w, h, TRUE, TRUE);
+  picman_pixel_rgn_init (&src_rgn, drawable, x, y, w, h, FALSE, FALSE);
+  picman_pixel_rgn_init (&dest_rgn, drawable, x, y, w, h, TRUE, TRUE);
 
-  for (pr = gimp_pixel_rgns_register (2, &src_rgn, &dest_rgn);
+  for (pr = picman_pixel_rgns_register (2, &src_rgn, &dest_rgn);
        pr != NULL;
-       pr = gimp_pixel_rgns_process (pr))
+       pr = picman_pixel_rgns_process (pr))
     {
       gint k;
 
@@ -326,13 +326,13 @@ copy_region (GimpDrawable *drawable,
 }
 
 static void
-tile (GimpDrawable *drawable)
+tile (PicmanDrawable *drawable)
 {
   glong width, height;
   gint  x1, y1, x2, y2;
 
-  gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
-  gimp_progress_init (_("Tiler"));
+  picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+  picman_progress_init (_("Tiler"));
 
   height = y2 - y1;
   width = x2 - x1;
@@ -349,9 +349,9 @@ tile (GimpDrawable *drawable)
 
   tile_region (drawable, TRUE, x1, y1, x2, y2);
   tile_region (drawable, FALSE, x1, y1, x2, y2);
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
-  gimp_drawable_flush (drawable);
-  gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-  gimp_drawable_update (drawable->drawable_id, x1, y1, width, height);
+  picman_drawable_flush (drawable);
+  picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+  picman_drawable_update (drawable->drawable_id, x1, y1, width, height);
 }

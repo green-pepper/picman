@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,24 +23,24 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #include "pdb-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpparamspecs.h"
+#include "core/picman.h"
+#include "core/picmanparamspecs.h"
 
-#include "gimppdb.h"
-#include "gimpprocedure.h"
+#include "picmanpdb.h"
+#include "picmanprocedure.h"
 #include "internal-procs.h"
 
 
-static GimpValueArray *
-fonts_popup_invoker (GimpProcedure         *procedure,
-                     Gimp                  *gimp,
-                     GimpContext           *context,
-                     GimpProgress          *progress,
-                     const GimpValueArray  *args,
+static PicmanValueArray *
+fonts_popup_invoker (PicmanProcedure         *procedure,
+                     Picman                  *picman,
+                     PicmanContext           *context,
+                     PicmanProgress          *progress,
+                     const PicmanValueArray  *args,
                      GError               **error)
 {
   gboolean success = TRUE;
@@ -48,172 +48,172 @@ fonts_popup_invoker (GimpProcedure         *procedure,
   const gchar *popup_title;
   const gchar *initial_font;
 
-  font_callback = g_value_get_string (gimp_value_array_index (args, 0));
-  popup_title = g_value_get_string (gimp_value_array_index (args, 1));
-  initial_font = g_value_get_string (gimp_value_array_index (args, 2));
+  font_callback = g_value_get_string (picman_value_array_index (args, 0));
+  popup_title = g_value_get_string (picman_value_array_index (args, 1));
+  initial_font = g_value_get_string (picman_value_array_index (args, 2));
 
   if (success)
     {
-      if (gimp->no_interface ||
-          ! gimp_pdb_lookup_procedure (gimp->pdb, font_callback) ||
-          ! gimp_pdb_dialog_new (gimp, context, progress, gimp->fonts,
+      if (picman->no_interface ||
+          ! picman_pdb_lookup_procedure (picman->pdb, font_callback) ||
+          ! picman_pdb_dialog_new (picman, context, progress, picman->fonts,
                                  popup_title, font_callback, initial_font,
                                  NULL))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-fonts_close_popup_invoker (GimpProcedure         *procedure,
-                           Gimp                  *gimp,
-                           GimpContext           *context,
-                           GimpProgress          *progress,
-                           const GimpValueArray  *args,
+static PicmanValueArray *
+fonts_close_popup_invoker (PicmanProcedure         *procedure,
+                           Picman                  *picman,
+                           PicmanContext           *context,
+                           PicmanProgress          *progress,
+                           const PicmanValueArray  *args,
                            GError               **error)
 {
   gboolean success = TRUE;
   const gchar *font_callback;
 
-  font_callback = g_value_get_string (gimp_value_array_index (args, 0));
+  font_callback = g_value_get_string (picman_value_array_index (args, 0));
 
   if (success)
     {
-      if (gimp->no_interface ||
-          ! gimp_pdb_lookup_procedure (gimp->pdb, font_callback) ||
-          ! gimp_pdb_dialog_close (gimp, gimp->fonts, font_callback))
+      if (picman->no_interface ||
+          ! picman_pdb_lookup_procedure (picman->pdb, font_callback) ||
+          ! picman_pdb_dialog_close (picman, picman->fonts, font_callback))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
-static GimpValueArray *
-fonts_set_popup_invoker (GimpProcedure         *procedure,
-                         Gimp                  *gimp,
-                         GimpContext           *context,
-                         GimpProgress          *progress,
-                         const GimpValueArray  *args,
+static PicmanValueArray *
+fonts_set_popup_invoker (PicmanProcedure         *procedure,
+                         Picman                  *picman,
+                         PicmanContext           *context,
+                         PicmanProgress          *progress,
+                         const PicmanValueArray  *args,
                          GError               **error)
 {
   gboolean success = TRUE;
   const gchar *font_callback;
   const gchar *font_name;
 
-  font_callback = g_value_get_string (gimp_value_array_index (args, 0));
-  font_name = g_value_get_string (gimp_value_array_index (args, 1));
+  font_callback = g_value_get_string (picman_value_array_index (args, 0));
+  font_name = g_value_get_string (picman_value_array_index (args, 1));
 
   if (success)
     {
-      if (gimp->no_interface ||
-          ! gimp_pdb_lookup_procedure (gimp->pdb, font_callback) ||
-          ! gimp_pdb_dialog_set (gimp, gimp->fonts, font_callback, font_name,
+      if (picman->no_interface ||
+          ! picman_pdb_lookup_procedure (picman->pdb, font_callback) ||
+          ! picman_pdb_dialog_set (picman, picman->fonts, font_callback, font_name,
                                  NULL))
         success = FALSE;
     }
 
-  return gimp_procedure_get_return_values (procedure, success,
+  return picman_procedure_get_return_values (procedure, success,
                                            error ? *error : NULL);
 }
 
 void
-register_font_select_procs (GimpPDB *pdb)
+register_font_select_procs (PicmanPDB *pdb)
 {
-  GimpProcedure *procedure;
+  PicmanProcedure *procedure;
 
   /*
-   * gimp-fonts-popup
+   * picman-fonts-popup
    */
-  procedure = gimp_procedure_new (fonts_popup_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-fonts-popup");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-fonts-popup",
-                                     "Invokes the Gimp font selection.",
+  procedure = picman_procedure_new (fonts_popup_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-fonts-popup");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-fonts-popup",
+                                     "Invokes the Picman font selection.",
                                      "This procedure opens the font selection dialog.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2003",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("font-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("font-callback",
                                                        "font callback",
                                                        "The callback PDB proc to call when font selection is made",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("popup-title",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("popup-title",
                                                        "popup title",
                                                        "Title of the font selection dialog",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("initial-font",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("initial-font",
                                                        "initial font",
                                                        "The name of the font to set as the first selected",
                                                        FALSE, TRUE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-fonts-close-popup
+   * picman-fonts-close-popup
    */
-  procedure = gimp_procedure_new (fonts_close_popup_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-fonts-close-popup");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-fonts-close-popup",
+  procedure = picman_procedure_new (fonts_close_popup_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-fonts-close-popup");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-fonts-close-popup",
                                      "Close the font selection dialog.",
                                      "This procedure closes an opened font selection dialog.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2003",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("font-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("font-callback",
                                                        "font callback",
                                                        "The name of the callback registered for this pop-up",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
   /*
-   * gimp-fonts-set-popup
+   * picman-fonts-set-popup
    */
-  procedure = gimp_procedure_new (fonts_set_popup_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-fonts-set-popup");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-fonts-set-popup",
+  procedure = picman_procedure_new (fonts_set_popup_invoker);
+  picman_object_set_static_name (PICMAN_OBJECT (procedure),
+                               "picman-fonts-set-popup");
+  picman_procedure_set_static_strings (procedure,
+                                     "picman-fonts-set-popup",
                                      "Sets the current font in a font selection dialog.",
                                      "Sets the current font in a font selection dialog.",
-                                     "Sven Neumann <sven@gimp.org>",
+                                     "Sven Neumann <sven@picman.org>",
                                      "Sven Neumann",
                                      "2003",
                                      NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("font-callback",
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("font-callback",
                                                        "font callback",
                                                        "The name of the callback registered for this pop-up",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("font-name",
+                                                       PICMAN_PARAM_READWRITE));
+  picman_procedure_add_argument (procedure,
+                               picman_param_spec_string ("font-name",
                                                        "font name",
                                                        "The name of the font to set as selected",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
-                                                       GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
+                                                       PICMAN_PARAM_READWRITE));
+  picman_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

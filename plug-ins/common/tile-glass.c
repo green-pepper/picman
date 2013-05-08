@@ -1,5 +1,5 @@
 /*
- * This is the Glass Tile plug-in for GIMP 1.2
+ * This is the Glass Tile plug-in for PICMAN 1.2
  * Version 1.02
  *
  * Copyright (C) 1997 Karl-Johan Andersson (t96kja@student.tdb.uu.se)
@@ -33,7 +33,7 @@
  * Noticed there is an issue with the algorithm if odd number of rows or
  * columns is requested.  Dunno why.  I am not a graphics expert :(
  *
- * May 2000 alt@gimp.org Made preview work and removed some boundary
+ * May 2000 alt@picman.org Made preview work and removed some boundary
  * conditions that caused "streaks" to appear when using some tile spaces.
  */
 
@@ -41,15 +41,15 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 #define PLUG_IN_PROC   "plug-in-glasstile"
 #define PLUG_IN_BINARY "tile-glass"
-#define PLUG_IN_ROLE   "gimp-tile-glass"
+#define PLUG_IN_ROLE   "picman-tile-glass"
 
 
 /* --- Typedefs --- */
@@ -72,23 +72,23 @@ typedef struct
 static void      query                   (void);
 static void      run                     (const gchar      *name,
                                           gint              nparams,
-                                          const GimpParam  *param,
+                                          const PicmanParam  *param,
                                           gint             *nreturn_vals,
-                                          GimpParam       **return_vals);
+                                          PicmanParam       **return_vals);
 
-static gboolean  glasstile_dialog        (GimpDrawable     *drawable);
+static gboolean  glasstile_dialog        (PicmanDrawable     *drawable);
 
 static void      glasstile_size_changed  (GtkObject        *adj,
                                           gpointer          data);
 static void      glasstile_chain_toggled (GtkWidget        *widget,
                                           gboolean         *value);
 
-static void      glasstile                (GimpDrawable    *drawable,
-                                           GimpPreview     *preview);
+static void      glasstile                (PicmanDrawable    *drawable,
+                                           PicmanPreview     *preview);
 
 
 /* --- Variables --- */
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,    /* init_proc */
   NULL,    /* quit_proc */
@@ -111,16 +111,16 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef args[] =
+  static const PicmanParamDef args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",    "Input image (unused)"         },
-    { GIMP_PDB_DRAWABLE, "drawable", "Input drawable"               },
-    { GIMP_PDB_INT32,    "tilex",    "Tile width (10 - 50)"         },
-    { GIMP_PDB_INT32,    "tiley",    "Tile height (10 - 50)"        }
+    { PICMAN_PDB_INT32,    "run-mode", "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",    "Input image (unused)"         },
+    { PICMAN_PDB_DRAWABLE, "drawable", "Input drawable"               },
+    { PICMAN_PDB_INT32,    "tilex",    "Tile width (10 - 50)"         },
+    { PICMAN_PDB_INT32,    "tiley",    "Tile height (10 - 50)"        }
   };
 
-  gimp_install_procedure (PLUG_IN_PROC,
+  picman_install_procedure (PLUG_IN_PROC,
                           N_("Simulate distortion caused by square glass tiles"),
                           "Divide the image into square glassblocks in "
                           "which the image is refracted.",
@@ -129,25 +129,25 @@ query (void)
                           "May 2000",
                           N_("_Glass Tile..."),
                           "RGB*, GRAY*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC,
+  picman_plugin_menu_register (PLUG_IN_PROC,
                              "<Image>/Filters/Artistic");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[1];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
-  GimpDrawable      *drawable;
+  static PicmanParam   values[1];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
+  PicmanDrawable      *drawable;
 
   run_mode = param[0].data.d_int32;
 
@@ -156,82 +156,82 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
+  values[0].type          = PICMAN_PDB_STATUS;
   values[0].data.d_status = status;
 
   /*  Get the specified drawable  */
-  drawable = gimp_drawable_get (param[2].data.d_drawable);
-  gimp_tile_cache_ntiles (2 * (drawable->ntile_cols));
+  drawable = picman_drawable_get (param[2].data.d_drawable);
+  picman_tile_cache_ntiles (2 * (drawable->ntile_cols));
 
   switch (run_mode)
     {
-    case GIMP_RUN_INTERACTIVE:
+    case PICMAN_RUN_INTERACTIVE:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &gtvals);
+      picman_get_data (PLUG_IN_PROC, &gtvals);
 
       /*  First acquire information with a dialog  */
       if (! glasstile_dialog (drawable))
         {
-          gimp_drawable_detach (drawable);
+          picman_drawable_detach (drawable);
           return;
         }
       break;
 
-    case GIMP_RUN_NONINTERACTIVE:
+    case PICMAN_RUN_NONINTERACTIVE:
       /*  Make sure all the arguments are there!  */
       if (nparams != 5)
-        status = GIMP_PDB_CALLING_ERROR;
-      if (status == GIMP_PDB_SUCCESS)
+        status = PICMAN_PDB_CALLING_ERROR;
+      if (status == PICMAN_PDB_SUCCESS)
         {
           gtvals.xblock = (gint) param[3].data.d_int32;
           gtvals.yblock = (gint) param[4].data.d_int32;
         }
       if (gtvals.xblock < 10 || gtvals.xblock > 50)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
       if (gtvals.yblock < 10 || gtvals.yblock > 50)
-        status = GIMP_PDB_CALLING_ERROR;
+        status = PICMAN_PDB_CALLING_ERROR;
       break;
 
-    case GIMP_RUN_WITH_LAST_VALS:
+    case PICMAN_RUN_WITH_LAST_VALS:
       /*  Possibly retrieve data  */
-      gimp_get_data (PLUG_IN_PROC, &gtvals);
+      picman_get_data (PLUG_IN_PROC, &gtvals);
       break;
 
     default:
       break;
     }
 
-  if (status == GIMP_PDB_SUCCESS)
+  if (status == PICMAN_PDB_SUCCESS)
     {
       /*  Make sure that the drawable is gray or RGB color  */
-      if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id))
+      if (picman_drawable_is_rgb (drawable->drawable_id) ||
+          picman_drawable_is_gray (drawable->drawable_id))
         {
-          gimp_progress_init (_("Glass Tile"));
+          picman_progress_init (_("Glass Tile"));
 
           glasstile (drawable, NULL);
 
-          if (run_mode != GIMP_RUN_NONINTERACTIVE)
-            gimp_displays_flush ();
+          if (run_mode != PICMAN_RUN_NONINTERACTIVE)
+            picman_displays_flush ();
           /*  Store data  */
-          if (run_mode == GIMP_RUN_INTERACTIVE)
+          if (run_mode == PICMAN_RUN_INTERACTIVE)
             {
-              gimp_set_data (PLUG_IN_PROC, &gtvals, sizeof (GlassValues));
+              picman_set_data (PLUG_IN_PROC, &gtvals, sizeof (GlassValues));
             }
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
 
   values[0].data.d_status = status;
 
-  gimp_drawable_detach (drawable);
+  picman_drawable_detach (drawable);
 }
 
 static gboolean
-glasstile_dialog (GimpDrawable *drawable)
+glasstile_dialog (PicmanDrawable *drawable)
 {
   GlassChainedValues *gv;
   GtkWidget *dialog;
@@ -245,11 +245,11 @@ glasstile_dialog (GimpDrawable *drawable)
   gv->gval = &gtvals;
   gtvals.constrain = TRUE;
 
-  gimp_ui_init (PLUG_IN_BINARY, TRUE);
+  picman_ui_init (PLUG_IN_BINARY, TRUE);
 
-  dialog = gimp_dialog_new (_("Glass Tile"), PLUG_IN_ROLE,
+  dialog = picman_dialog_new (_("Glass Tile"), PLUG_IN_ROLE,
                             NULL, 0,
-                            gimp_standard_help_func, PLUG_IN_PROC,
+                            picman_standard_help_func, PLUG_IN_PROC,
 
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK,     GTK_RESPONSE_OK,
@@ -261,7 +261,7 @@ glasstile_dialog (GimpDrawable *drawable)
                                            GTK_RESPONSE_CANCEL,
                                            -1);
 
-  gimp_window_set_transient (GTK_WINDOW (dialog));
+  picman_window_set_transient (GTK_WINDOW (dialog));
 
   main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 12);
@@ -269,7 +269,7 @@ glasstile_dialog (GimpDrawable *drawable)
                       main_vbox, TRUE, TRUE, 0);
   gtk_widget_show (main_vbox);
 
-  preview = gimp_drawable_preview_new (drawable, NULL);
+  preview = picman_drawable_preview_new (drawable, NULL);
   gtk_box_pack_start (GTK_BOX (main_vbox), preview, TRUE, TRUE, 0);
   gtk_widget_show (preview);
 
@@ -286,7 +286,7 @@ glasstile_dialog (GimpDrawable *drawable)
   gtk_widget_show (table);
 
   /* Horizontal scale - Width */
-  gv->xadj = gimp_scale_entry_new (GTK_TABLE (table), 0, 0,
+  gv->xadj = picman_scale_entry_new (GTK_TABLE (table), 0, 0,
                                    _("Tile _width:"), 150, 0,
                                    gtvals.xblock, 10, 50, 2, 10, 0,
                                    TRUE, 0, 0,
@@ -296,11 +296,11 @@ glasstile_dialog (GimpDrawable *drawable)
                     G_CALLBACK (glasstile_size_changed),
                     gv);
   g_signal_connect_swapped (gv->xadj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
   /* Horizontal scale - Height */
-  gv->yadj = gimp_scale_entry_new (GTK_TABLE (table), 0, 1,
+  gv->yadj = picman_scale_entry_new (GTK_TABLE (table), 0, 1,
                                    _("Tile _height:"), 150, 0,
                                    gtvals.yblock, 10, 50, 2, 10, 0,
                                    TRUE, 0, 0,
@@ -310,11 +310,11 @@ glasstile_dialog (GimpDrawable *drawable)
                     G_CALLBACK (glasstile_size_changed),
                     gv);
   g_signal_connect_swapped (gv->yadj, "value-changed",
-                            G_CALLBACK (gimp_preview_invalidate),
+                            G_CALLBACK (picman_preview_invalidate),
                             preview);
 
-  chainbutton = gimp_chain_button_new (GIMP_CHAIN_RIGHT);
-  gimp_chain_button_set_active (GIMP_CHAIN_BUTTON (chainbutton),
+  chainbutton = picman_chain_button_new (PICMAN_CHAIN_RIGHT);
+  picman_chain_button_set_active (PICMAN_CHAIN_BUTTON (chainbutton),
                                 gtvals.constrain);
   gtk_table_attach_defaults (GTK_TABLE(table), chainbutton, 3, 4, 0, 2);
   g_signal_connect (chainbutton, "toggled",
@@ -324,7 +324,7 @@ glasstile_dialog (GimpDrawable *drawable)
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 
@@ -339,14 +339,14 @@ glasstile_size_changed (GtkObject *adj,
 
   if (adj == gv->xadj)
     {
-      gimp_int_adjustment_update(GTK_ADJUSTMENT (gv->xadj), &gv->gval->xblock);
+      picman_int_adjustment_update(GTK_ADJUSTMENT (gv->xadj), &gv->gval->xblock);
       if (gv->gval->constrain)
         gtk_adjustment_set_value(GTK_ADJUSTMENT (gv->yadj),
                                  (gdouble) gv->gval->xblock);
     }
   else if (adj == gv->yadj)
     {
-      gimp_int_adjustment_update(GTK_ADJUSTMENT (gv->yadj), &gv->gval->yblock);
+      picman_int_adjustment_update(GTK_ADJUSTMENT (gv->yadj), &gv->gval->yblock);
       if (gv->gval->constrain)
         gtk_adjustment_set_value(GTK_ADJUSTMENT (gv->xadj),
                                  (gdouble) gv->gval->yblock);
@@ -357,15 +357,15 @@ static void
 glasstile_chain_toggled (GtkWidget *widget,
                          gboolean  *value)
 {
-  *value = gimp_chain_button_get_active (GIMP_CHAIN_BUTTON (widget));
+  *value = picman_chain_button_get_active (PICMAN_CHAIN_BUTTON (widget));
 }
 
 /*  -  Filter function  -  I wish all filter functions had a pmode :) */
 static void
-glasstile (GimpDrawable *drawable,
-           GimpPreview  *preview)
+glasstile (PicmanDrawable *drawable,
+           PicmanPreview  *preview)
 {
-  GimpPixelRgn  srcPR, destPR;
+  PicmanPixelRgn  srcPR, destPR;
   gint          width, height;
   gint          bytes;
   guchar       *dest, *d;
@@ -387,14 +387,14 @@ glasstile (GimpDrawable *drawable,
 
   if (preview)
     {
-      gimp_preview_get_position (preview, &x1, &y1);
-      gimp_preview_get_size (preview, &width, &height);
+      picman_preview_get_position (preview, &x1, &y1);
+      picman_preview_get_size (preview, &width, &height);
       x2 = x1 + width;
       y2 = y1 + height;
     }
   else
     {
-      gimp_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
+      picman_drawable_mask_bounds (drawable->drawable_id, &x1, &y1, &x2, &y2);
       width  = x2 - x1;
       height = y2 - y1;
     }
@@ -404,10 +404,10 @@ glasstile (GimpDrawable *drawable,
   dest    = g_new (guchar, width * bytes);
 
   /* initialize the pixel regions, set grid height/width */
-  gimp_pixel_rgn_init (&srcPR, drawable,
+  picman_pixel_rgn_init (&srcPR, drawable,
                         x1, y1, width, height,
                         FALSE, FALSE);
-  gimp_pixel_rgn_init (&destPR, drawable,
+  picman_pixel_rgn_init (&destPR, drawable,
                        x1, y1, width, height,
                        preview == NULL, TRUE);
 
@@ -431,7 +431,7 @@ glasstile (GimpDrawable *drawable,
       ypixel2 = ymitt + yoffs * 2;
       ypixel2 = CLAMP (ypixel2, 0, y2 - 1);
 
-      gimp_pixel_rgn_get_row (&srcPR, cur_row, x1, ypixel2, width);
+      picman_pixel_rgn_get_row (&srcPR, cur_row, x1, ypixel2, width);
       yoffs++;
 
       /* if current offset = half, do a displacement next time around */
@@ -472,26 +472,26 @@ glasstile (GimpDrawable *drawable,
         }
 
       /*  Store the dest  */
-      gimp_pixel_rgn_set_row (&destPR, dest, x1, row, width);
+      picman_pixel_rgn_set_row (&destPR, dest, x1, row, width);
 
       if (!preview && ((row % 5) == 0))
         {
-          gimp_progress_update ((gdouble) row / (gdouble) height);
+          picman_progress_update ((gdouble) row / (gdouble) height);
         }
     }
 
   /*  Update region  */
   if (preview)
     {
-      gimp_drawable_preview_draw_region (GIMP_DRAWABLE_PREVIEW (preview),
+      picman_drawable_preview_draw_region (PICMAN_DRAWABLE_PREVIEW (preview),
                                          &destPR);
     }
   else
     {
-      gimp_progress_update (1.0);
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id,
+      picman_progress_update (1.0);
+      picman_drawable_flush (drawable);
+      picman_drawable_merge_shadow (drawable->drawable_id, TRUE);
+      picman_drawable_update (drawable->drawable_id,
                             x1, y1, width, height);
     }
 

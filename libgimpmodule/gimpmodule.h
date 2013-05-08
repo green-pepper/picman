@@ -1,8 +1,8 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimpmodule.h
- * (C) 1999 Austin Donnelly <austin@gimp.org>
+ * picmanmodule.h
+ * (C) 1999 Austin Donnelly <austin@picman.org>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,75 +19,75 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_MODULE_H__
-#define __GIMP_MODULE_H__
+#ifndef __PICMAN_MODULE_H__
+#define __PICMAN_MODULE_H__
 
 #include <gmodule.h>
 
-#define __GIMP_MODULE_H_INSIDE__
+#define __PICMAN_MODULE_H_INSIDE__
 
-#include <libgimpmodule/gimpmoduletypes.h>
+#include <libpicmanmodule/picmanmoduletypes.h>
 
-#include <libgimpmodule/gimpmoduledb.h>
+#include <libpicmanmodule/picmanmoduledb.h>
 
-#undef __GIMP_MODULE_H_INSIDE__
+#undef __PICMAN_MODULE_H_INSIDE__
 
 G_BEGIN_DECLS
 
 
 /**
- * GIMP_MODULE_ABI_VERSION:
+ * PICMAN_MODULE_ABI_VERSION:
  *
  * The version of the module system's ABI. Modules put this value into
- * #GimpModuleInfo's @abi_version field so the code loading the modules
+ * #PicmanModuleInfo's @abi_version field so the code loading the modules
  * can check if it was compiled against the same module ABI the modules
  * are compiled against.
  *
- *  GIMP_MODULE_ABI_VERSION is incremented each time one of the
+ *  PICMAN_MODULE_ABI_VERSION is incremented each time one of the
  *  following changes:
  *
- *  - the libgimpmodule implementation (if the change affects modules).
+ *  - the libpicmanmodule implementation (if the change affects modules).
  *
- *  - one of the classes implemented by modules (currently #GimpColorDisplay,
- *    #GimpColorSelector and #GimpController).
+ *  - one of the classes implemented by modules (currently #PicmanColorDisplay,
+ *    #PicmanColorSelector and #PicmanController).
  **/
-#define GIMP_MODULE_ABI_VERSION 0x0004
+#define PICMAN_MODULE_ABI_VERSION 0x0004
 
 
 /**
- * GimpModuleState:
- * @GIMP_MODULE_STATE_ERROR:       Missing gimp_module_register() function
+ * PicmanModuleState:
+ * @PICMAN_MODULE_STATE_ERROR:       Missing picman_module_register() function
  *                                 or other error.
- * @GIMP_MODULE_STATE_LOADED:      An instance of a type implemented by
+ * @PICMAN_MODULE_STATE_LOADED:      An instance of a type implemented by
  *                                 this module is allocated.
- * @GIMP_MODULE_STATE_LOAD_FAILED: gimp_module_register() returned %FALSE.
- * @GIMP_MODULE_STATE_NOT_LOADED:  There are no instances allocated of
+ * @PICMAN_MODULE_STATE_LOAD_FAILED: picman_module_register() returned %FALSE.
+ * @PICMAN_MODULE_STATE_NOT_LOADED:  There are no instances allocated of
  *                                 types implemented by this module.
  *
- * The possible states a #GimpModule can be in.
+ * The possible states a #PicmanModule can be in.
  **/
 typedef enum
 {
-  GIMP_MODULE_STATE_ERROR,
-  GIMP_MODULE_STATE_LOADED,
-  GIMP_MODULE_STATE_LOAD_FAILED,
-  GIMP_MODULE_STATE_NOT_LOADED
-} GimpModuleState;
+  PICMAN_MODULE_STATE_ERROR,
+  PICMAN_MODULE_STATE_LOADED,
+  PICMAN_MODULE_STATE_LOAD_FAILED,
+  PICMAN_MODULE_STATE_NOT_LOADED
+} PicmanModuleState;
 
 
-#define GIMP_MODULE_ERROR (gimp_module_error_quark ())
+#define PICMAN_MODULE_ERROR (picman_module_error_quark ())
 
-GQuark  gimp_module_error_quark (void) G_GNUC_CONST;
+GQuark  picman_module_error_quark (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_MODULE_FAILED             /* generic error condition */
-} GimpModuleError;
+  PICMAN_MODULE_FAILED             /* generic error condition */
+} PicmanModuleError;
 
 
 /**
- * GimpModuleInfo:
- * @abi_version: The #GIMP_MODULE_ABI_VERSION the module was compiled against.
+ * PicmanModuleInfo:
+ * @abi_version: The #PICMAN_MODULE_ABI_VERSION the module was compiled against.
  * @purpose:     The module's general purpose.
  * @author:      The module's author.
  * @version:     The module's version.
@@ -96,7 +96,7 @@ typedef enum
  *
  * This structure contains information about a loadable module.
  **/
-struct _GimpModuleInfo
+struct _PicmanModuleInfo
 {
   guint32  abi_version;
   gchar   *purpose;
@@ -108,53 +108,53 @@ struct _GimpModuleInfo
 
 
 /**
- * GimpModuleQueryFunc:
- * @module:  The #GimpModule responsible for this loadable module.
- * @Returns: The #GimpModuleInfo struct describing the module.
+ * PicmanModuleQueryFunc:
+ * @module:  The #PicmanModule responsible for this loadable module.
+ * @Returns: The #PicmanModuleInfo struct describing the module.
  *
- * The signature of the query function a loadable GIMP module must
+ * The signature of the query function a loadable PICMAN module must
  * implement.  In the module, the function must be called
- * gimp_module_query().
+ * picman_module_query().
  *
- * #GimpModule will copy the returned #GimpModuleInfo struct, so the
+ * #PicmanModule will copy the returned #PicmanModuleInfo struct, so the
  * module doesn't need to keep these values around (however in most
  * cases the module will just return a pointer to a constant
  * structure).
  **/
-typedef const GimpModuleInfo * (* GimpModuleQueryFunc)    (GTypeModule *module);
+typedef const PicmanModuleInfo * (* PicmanModuleQueryFunc)    (GTypeModule *module);
 
 /**
- * GimpModuleRegisterFunc:
- * @module:  The #GimpModule responsible for this loadable module.
+ * PicmanModuleRegisterFunc:
+ * @module:  The #PicmanModule responsible for this loadable module.
  * @Returns: %TRUE on success, %FALSE otherwise.
  *
- * The signature of the register function a loadable GIMP module must
+ * The signature of the register function a loadable PICMAN module must
  * implement.  In the module, the function must be called
- * gimp_module_register().
+ * picman_module_register().
  *
  * When this function is called, the module should register all the types
  * it implements with the passed @module.
  **/
-typedef gboolean               (* GimpModuleRegisterFunc) (GTypeModule *module);
+typedef gboolean               (* PicmanModuleRegisterFunc) (GTypeModule *module);
 
 
-/* GimpModules have to implement these */
-G_MODULE_EXPORT const GimpModuleInfo * gimp_module_query    (GTypeModule *module);
-G_MODULE_EXPORT gboolean               gimp_module_register (GTypeModule *module);
+/* PicmanModules have to implement these */
+G_MODULE_EXPORT const PicmanModuleInfo * picman_module_query    (GTypeModule *module);
+G_MODULE_EXPORT gboolean               picman_module_register (GTypeModule *module);
 
 
-#define GIMP_TYPE_MODULE            (gimp_module_get_type ())
-#define GIMP_MODULE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_MODULE, GimpModule))
-#define GIMP_MODULE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_MODULE, GimpModuleClass))
-#define GIMP_IS_MODULE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_MODULE))
-#define GIMP_IS_MODULE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_MODULE))
-#define GIMP_MODULE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_MODULE, GimpModuleClass))
+#define PICMAN_TYPE_MODULE            (picman_module_get_type ())
+#define PICMAN_MODULE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_MODULE, PicmanModule))
+#define PICMAN_MODULE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_MODULE, PicmanModuleClass))
+#define PICMAN_IS_MODULE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_MODULE))
+#define PICMAN_IS_MODULE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_MODULE))
+#define PICMAN_MODULE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_MODULE, PicmanModuleClass))
 
 
-typedef struct _GimpModuleClass GimpModuleClass;
+typedef struct _PicmanModuleClass PicmanModuleClass;
 
 /**
- * GimpModule:
+ * PicmanModule:
  * @filename:
  * @verbose:
  * @state:
@@ -163,20 +163,20 @@ typedef struct _GimpModuleClass GimpModuleClass;
  * @info:
  * @last_module_error:
  *
- * #GimpModule is a generic mechanism to dynamically load modules into
- * GIMP.  It is a #GTypeModule subclass, implementing module loading
- * using #GModule.  #GimpModule does not know which functionality is
+ * #PicmanModule is a generic mechanism to dynamically load modules into
+ * PICMAN.  It is a #GTypeModule subclass, implementing module loading
+ * using #GModule.  #PicmanModule does not know which functionality is
  * implemented by the modules, it just provides a framework to get
  * arbitrary #GType implementations loaded from disk.
  **/
-struct _GimpModule
+struct _PicmanModule
 {
   GTypeModule      parent_instance;
 
   /*< public >*/
   gchar           *filename;     /* path to the module                       */
   gboolean         verbose;      /* verbose error reporting                  */
-  GimpModuleState  state;        /* what's happened to the module            */
+  PicmanModuleState  state;        /* what's happened to the module            */
   gboolean         on_disk;      /* TRUE if file still exists                */
   gboolean         load_inhibit; /* user requests not to load at boot time   */
 
@@ -185,60 +185,60 @@ struct _GimpModule
   GModule         *module;       /* handle on the module                     */
 
   /*< public >*/
-  GimpModuleInfo  *info;         /* returned values from module_query        */
+  PicmanModuleInfo  *info;         /* returned values from module_query        */
   gchar           *last_module_error;
 
   /*< private >*/
-  GimpModuleQueryFunc     query_module;
-  GimpModuleRegisterFunc  register_module;
+  PicmanModuleQueryFunc     query_module;
+  PicmanModuleRegisterFunc  register_module;
 };
 
-struct _GimpModuleClass
+struct _PicmanModuleClass
 {
   GTypeModuleClass  parent_class;
 
-  void (* modified) (GimpModule *module);
+  void (* modified) (PicmanModule *module);
 
   /* Padding for future expansion */
-  void (* _gimp_reserved1) (void);
-  void (* _gimp_reserved2) (void);
-  void (* _gimp_reserved3) (void);
-  void (* _gimp_reserved4) (void);
+  void (* _picman_reserved1) (void);
+  void (* _picman_reserved2) (void);
+  void (* _picman_reserved3) (void);
+  void (* _picman_reserved4) (void);
 };
 
 
-GType         gimp_module_get_type         (void) G_GNUC_CONST;
+GType         picman_module_get_type         (void) G_GNUC_CONST;
 
-GimpModule  * gimp_module_new              (const gchar     *filename,
+PicmanModule  * picman_module_new              (const gchar     *filename,
                                             gboolean         load_inhibit,
                                             gboolean         verbose);
 
-gboolean      gimp_module_query_module     (GimpModule      *module);
+gboolean      picman_module_query_module     (PicmanModule      *module);
 
-void          gimp_module_modified         (GimpModule      *module);
-void          gimp_module_set_load_inhibit (GimpModule      *module,
+void          picman_module_modified         (PicmanModule      *module);
+void          picman_module_set_load_inhibit (PicmanModule      *module,
                                             gboolean         load_inhibit);
 
-const gchar * gimp_module_state_name       (GimpModuleState  state);
+const gchar * picman_module_state_name       (PicmanModuleState  state);
 
-GIMP_DEPRECATED_FOR(g_type_module_register_enum)
-GType         gimp_module_register_enum    (GTypeModule      *module,
+PICMAN_DEPRECATED_FOR(g_type_module_register_enum)
+GType         picman_module_register_enum    (GTypeModule      *module,
                                             const gchar      *name,
                                             const GEnumValue *const_static_values);
 
 
-/*  GimpModuleInfo functions  */
+/*  PicmanModuleInfo functions  */
 
-GimpModuleInfo * gimp_module_info_new  (guint32               abi_version,
+PicmanModuleInfo * picman_module_info_new  (guint32               abi_version,
                                         const gchar          *purpose,
                                         const gchar          *author,
                                         const gchar          *version,
                                         const gchar          *copyright,
                                         const gchar          *date);
-GimpModuleInfo * gimp_module_info_copy (const GimpModuleInfo *info);
-void             gimp_module_info_free (GimpModuleInfo       *info);
+PicmanModuleInfo * picman_module_info_copy (const PicmanModuleInfo *info);
+void             picman_module_info_free (PicmanModuleInfo       *info);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_MODULE_H__ */
+#endif  /* __PICMAN_MODULE_H__ */

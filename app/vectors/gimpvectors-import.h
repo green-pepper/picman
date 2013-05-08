@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpVectors Import
- * Copyright (C) 2003  Sven Neumann <sven@gimp.org>
+ * PicmanVectors Import
+ * Copyright (C) 2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VECTORS_IMPORT_H__
-#define __GIMP_VECTORS_IMPORT_H__
+#ifndef __PICMAN_VECTORS_IMPORT_H__
+#define __PICMAN_VECTORS_IMPORT_H__
 
 
-gboolean  gimp_vectors_import_file   (GimpImage    *image,
+gboolean  picman_vectors_import_file   (PicmanImage    *image,
                                       const gchar  *filename,
                                       gboolean      merge,
                                       gboolean      scale,
-                                      GimpVectors  *parent,
+                                      PicmanVectors  *parent,
                                       gint          position,
                                       GList       **ret_vectors,
                                       GError      **error);
-gboolean  gimp_vectors_import_buffer (GimpImage    *image,
+gboolean  picman_vectors_import_buffer (PicmanImage    *image,
                                       const gchar  *buffer,
                                       gsize         len,
                                       gboolean      merge,
                                       gboolean      scale,
-                                      GimpVectors  *parent,
+                                      PicmanVectors  *parent,
                                       gint          position,
                                       GList       **ret_vectors,
                                       GError      **error);
 
 
-#endif /* __GIMP_VECTORS_IMPORT_H__ */
+#endif /* __PICMAN_VECTORS_IMPORT_H__ */

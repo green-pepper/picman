@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimp-gegl.h
- * Copyright (C) 2007 Øyvind Kolås <pippin@gimp.org>
+ * picman-gegl.h
+ * Copyright (C) 2007 Øyvind Kolås <pippin@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_GEGL_H__
-#define __GIMP_GEGL_H__
+#ifndef __PICMAN_GEGL_H__
+#define __PICMAN_GEGL_H__
 
 
-void   gimp_gegl_init (Gimp *gimp);
+void   picman_gegl_init (Picman *picman);
 
 
-#endif /* __GIMP_GEGL_H__ */
+#endif /* __PICMAN_GEGL_H__ */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,118 +21,118 @@
 
 #include "vectors-types.h"
 
-#include "gimpvectors.h"
-#include "gimpvectorsmodundo.h"
+#include "picmanvectors.h"
+#include "picmanvectorsmodundo.h"
 
 
-static void     gimp_vectors_mod_undo_constructed (GObject             *object);
+static void     picman_vectors_mod_undo_constructed (GObject             *object);
 
-static gint64   gimp_vectors_mod_undo_get_memsize (GimpObject          *object,
+static gint64   picman_vectors_mod_undo_get_memsize (PicmanObject          *object,
                                                    gint64              *gui_size);
 
-static void     gimp_vectors_mod_undo_pop         (GimpUndo            *undo,
-                                                   GimpUndoMode         undo_mode,
-                                                   GimpUndoAccumulator *accum);
-static void     gimp_vectors_mod_undo_free        (GimpUndo            *undo,
-                                                   GimpUndoMode         undo_mode);
+static void     picman_vectors_mod_undo_pop         (PicmanUndo            *undo,
+                                                   PicmanUndoMode         undo_mode,
+                                                   PicmanUndoAccumulator *accum);
+static void     picman_vectors_mod_undo_free        (PicmanUndo            *undo,
+                                                   PicmanUndoMode         undo_mode);
 
 
-G_DEFINE_TYPE (GimpVectorsModUndo, gimp_vectors_mod_undo, GIMP_TYPE_ITEM_UNDO)
+G_DEFINE_TYPE (PicmanVectorsModUndo, picman_vectors_mod_undo, PICMAN_TYPE_ITEM_UNDO)
 
-#define parent_class gimp_vectors_mod_undo_parent_class
+#define parent_class picman_vectors_mod_undo_parent_class
 
 
 static void
-gimp_vectors_mod_undo_class_init (GimpVectorsModUndoClass *klass)
+picman_vectors_mod_undo_class_init (PicmanVectorsModUndoClass *klass)
 {
   GObjectClass    *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpUndoClass   *undo_class        = GIMP_UNDO_CLASS (klass);
+  PicmanObjectClass *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanUndoClass   *undo_class        = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed      = gimp_vectors_mod_undo_constructed;
+  object_class->constructed      = picman_vectors_mod_undo_constructed;
 
-  gimp_object_class->get_memsize = gimp_vectors_mod_undo_get_memsize;
+  picman_object_class->get_memsize = picman_vectors_mod_undo_get_memsize;
 
-  undo_class->pop                = gimp_vectors_mod_undo_pop;
-  undo_class->free               = gimp_vectors_mod_undo_free;
+  undo_class->pop                = picman_vectors_mod_undo_pop;
+  undo_class->free               = picman_vectors_mod_undo_free;
 }
 
 static void
-gimp_vectors_mod_undo_init (GimpVectorsModUndo *undo)
+picman_vectors_mod_undo_init (PicmanVectorsModUndo *undo)
 {
 }
 
 static void
-gimp_vectors_mod_undo_constructed (GObject *object)
+picman_vectors_mod_undo_constructed (GObject *object)
 {
-  GimpVectorsModUndo *vectors_mod_undo = GIMP_VECTORS_MOD_UNDO (object);
-  GimpVectors        *vectors;
+  PicmanVectorsModUndo *vectors_mod_undo = PICMAN_VECTORS_MOD_UNDO (object);
+  PicmanVectors        *vectors;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_VECTORS (GIMP_ITEM_UNDO (object)->item));
+  g_assert (PICMAN_IS_VECTORS (PICMAN_ITEM_UNDO (object)->item));
 
-  vectors = GIMP_VECTORS (GIMP_ITEM_UNDO (object)->item);
+  vectors = PICMAN_VECTORS (PICMAN_ITEM_UNDO (object)->item);
 
   vectors_mod_undo->vectors =
-    GIMP_VECTORS (gimp_item_duplicate (GIMP_ITEM (vectors),
+    PICMAN_VECTORS (picman_item_duplicate (PICMAN_ITEM (vectors),
                                        G_TYPE_FROM_INSTANCE (vectors)));
 }
 
 static gint64
-gimp_vectors_mod_undo_get_memsize (GimpObject *object,
+picman_vectors_mod_undo_get_memsize (PicmanObject *object,
                                    gint64     *gui_size)
 {
-  GimpVectorsModUndo *vectors_mod_undo = GIMP_VECTORS_MOD_UNDO (object);
+  PicmanVectorsModUndo *vectors_mod_undo = PICMAN_VECTORS_MOD_UNDO (object);
   gint64              memsize          = 0;
 
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (vectors_mod_undo->vectors),
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (vectors_mod_undo->vectors),
                                       gui_size);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 static void
-gimp_vectors_mod_undo_pop (GimpUndo            *undo,
-                           GimpUndoMode         undo_mode,
-                           GimpUndoAccumulator *accum)
+picman_vectors_mod_undo_pop (PicmanUndo            *undo,
+                           PicmanUndoMode         undo_mode,
+                           PicmanUndoAccumulator *accum)
 {
-  GimpVectorsModUndo *vectors_mod_undo = GIMP_VECTORS_MOD_UNDO (undo);
-  GimpVectors        *vectors          = GIMP_VECTORS (GIMP_ITEM_UNDO (undo)->item);
-  GimpVectors        *temp;
+  PicmanVectorsModUndo *vectors_mod_undo = PICMAN_VECTORS_MOD_UNDO (undo);
+  PicmanVectors        *vectors          = PICMAN_VECTORS (PICMAN_ITEM_UNDO (undo)->item);
+  PicmanVectors        *temp;
   gint                offset_x;
   gint                offset_y;
 
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 
   temp = vectors_mod_undo->vectors;
 
   vectors_mod_undo->vectors =
-    GIMP_VECTORS (gimp_item_duplicate (GIMP_ITEM (vectors),
+    PICMAN_VECTORS (picman_item_duplicate (PICMAN_ITEM (vectors),
                                        G_TYPE_FROM_INSTANCE (vectors)));
 
-  gimp_vectors_freeze (vectors);
+  picman_vectors_freeze (vectors);
 
-  gimp_vectors_copy_strokes (temp, vectors);
+  picman_vectors_copy_strokes (temp, vectors);
 
-  gimp_item_get_offset (GIMP_ITEM (temp), &offset_x, &offset_y);
-  gimp_item_set_offset (GIMP_ITEM (vectors), offset_x, offset_y);
+  picman_item_get_offset (PICMAN_ITEM (temp), &offset_x, &offset_y);
+  picman_item_set_offset (PICMAN_ITEM (vectors), offset_x, offset_y);
 
-  gimp_item_set_size (GIMP_ITEM (vectors),
-                      gimp_item_get_width  (GIMP_ITEM (temp)),
-                      gimp_item_get_height (GIMP_ITEM (temp)));
+  picman_item_set_size (PICMAN_ITEM (vectors),
+                      picman_item_get_width  (PICMAN_ITEM (temp)),
+                      picman_item_get_height (PICMAN_ITEM (temp)));
 
   g_object_unref (temp);
 
-  gimp_vectors_thaw (vectors);
+  picman_vectors_thaw (vectors);
 }
 
 static void
-gimp_vectors_mod_undo_free (GimpUndo     *undo,
-                            GimpUndoMode  undo_mode)
+picman_vectors_mod_undo_free (PicmanUndo     *undo,
+                            PicmanUndoMode  undo_mode)
 {
-  GimpVectorsModUndo *vectors_mod_undo = GIMP_VECTORS_MOD_UNDO (undo);
+  PicmanVectorsModUndo *vectors_mod_undo = PICMAN_VECTORS_MOD_UNDO (undo);
 
   if (vectors_mod_undo->vectors)
     {
@@ -140,5 +140,5 @@ gimp_vectors_mod_undo_free (GimpUndo     *undo,
       vectors_mod_undo->vectors = NULL;
     }
 
-  GIMP_UNDO_CLASS (parent_class)->free (undo, undo_mode);
+  PICMAN_UNDO_CLASS (parent_class)->free (undo, undo_mode);
 }

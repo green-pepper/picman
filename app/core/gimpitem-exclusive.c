@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpitem-exclusive.c
- * Copyright (C) 2011 Michael Natterer <mitch@gimp.org>
+ * picmanitem-exclusive.c
+ * Copyright (C) 2011 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,20 +24,20 @@
 
 #include "core-types.h"
 
-#include "gimpcontext.h"
-#include "gimpimage-undo.h"
-#include "gimpimage-undo-push.h"
-#include "gimpitem.h"
-#include "gimpitem-exclusive.h"
-#include "gimpitemstack.h"
-#include "gimpitemtree.h"
-#include "gimpundostack.h"
+#include "picmancontext.h"
+#include "picmanimage-undo.h"
+#include "picmanimage-undo-push.h"
+#include "picmanitem.h"
+#include "picmanitem-exclusive.h"
+#include "picmanitemstack.h"
+#include "picmanitemtree.h"
+#include "picmanundostack.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static GList * gimp_item_exclusive_get_ancestry (GimpItem     *item);
-static void    gimp_item_exclusive_get_lists    (GimpItem     *item,
+static GList * picman_item_exclusive_get_ancestry (PicmanItem     *item);
+static void    picman_item_exclusive_get_lists    (PicmanItem     *item,
                                                  const gchar  *property,
                                                  GList       **on,
                                                  GList       **off);
@@ -46,29 +46,29 @@ static void    gimp_item_exclusive_get_lists    (GimpItem     *item,
 /*  public functions  */
 
 void
-gimp_item_toggle_exclusive_visible (GimpItem    *item,
-                                    GimpContext *context)
+picman_item_toggle_exclusive_visible (PicmanItem    *item,
+                                    PicmanContext *context)
 {
   GList *ancestry;
   GList *on;
   GList *off;
   GList *list;
 
-  g_return_if_fail (GIMP_IS_ITEM (item));
-  g_return_if_fail (gimp_item_is_attached (item));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_ITEM (item));
+  g_return_if_fail (picman_item_is_attached (item));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
 
-  ancestry = gimp_item_exclusive_get_ancestry (item);
-  gimp_item_exclusive_get_lists (item, "visible", &on, &off);
+  ancestry = picman_item_exclusive_get_ancestry (item);
+  picman_item_exclusive_get_lists (item, "visible", &on, &off);
 
-  if (on || off || ! gimp_item_is_visible (item))
+  if (on || off || ! picman_item_is_visible (item))
     {
-      GimpImage *image = gimp_item_get_image (item);
-      GimpUndo  *undo;
+      PicmanImage *image = picman_item_get_image (item);
+      PicmanUndo  *undo;
       gboolean   push_undo = TRUE;
 
-      undo = gimp_image_undo_can_compress (image, GIMP_TYPE_UNDO_STACK,
-                                           GIMP_UNDO_GROUP_ITEM_VISIBILITY);
+      undo = picman_image_undo_can_compress (image, PICMAN_TYPE_UNDO_STACK,
+                                           PICMAN_UNDO_GROUP_ITEM_VISIBILITY);
 
       if (undo && (g_object_get_data (G_OBJECT (undo), "exclusive-visible-item") ==
                    (gpointer) item))
@@ -76,12 +76,12 @@ gimp_item_toggle_exclusive_visible (GimpItem    *item,
 
       if (push_undo)
         {
-          if (gimp_image_undo_group_start (image,
-                                           GIMP_UNDO_GROUP_ITEM_VISIBILITY,
+          if (picman_image_undo_group_start (image,
+                                           PICMAN_UNDO_GROUP_ITEM_VISIBILITY,
                                            _("Set Item Exclusive Visible")))
             {
-              undo = gimp_image_undo_can_compress (image, GIMP_TYPE_UNDO_STACK,
-                                                   GIMP_UNDO_GROUP_ITEM_VISIBILITY);
+              undo = picman_image_undo_can_compress (image, PICMAN_TYPE_UNDO_STACK,
+                                                   PICMAN_UNDO_GROUP_ITEM_VISIBILITY);
 
               if (undo)
                 g_object_set_data (G_OBJECT (undo), "exclusive-visible-item",
@@ -89,33 +89,33 @@ gimp_item_toggle_exclusive_visible (GimpItem    *item,
             }
 
           for (list = ancestry; list; list = g_list_next (list))
-            gimp_image_undo_push_item_visibility (image, NULL, list->data);
+            picman_image_undo_push_item_visibility (image, NULL, list->data);
 
           for (list = on; list; list = g_list_next (list))
-            gimp_image_undo_push_item_visibility (image, NULL, list->data);
+            picman_image_undo_push_item_visibility (image, NULL, list->data);
 
           for (list = off; list; list = g_list_next (list))
-            gimp_image_undo_push_item_visibility (image, NULL, list->data);
+            picman_image_undo_push_item_visibility (image, NULL, list->data);
 
-          gimp_image_undo_group_end (image);
+          picman_image_undo_group_end (image);
         }
       else
         {
-          gimp_undo_refresh_preview (undo, context);
+          picman_undo_refresh_preview (undo, context);
         }
 
       for (list = ancestry; list; list = g_list_next (list))
-        gimp_item_set_visible (list->data, TRUE, FALSE);
+        picman_item_set_visible (list->data, TRUE, FALSE);
 
       if (on)
         {
           for (list = on; list; list = g_list_next (list))
-            gimp_item_set_visible (list->data, FALSE, FALSE);
+            picman_item_set_visible (list->data, FALSE, FALSE);
         }
       else if (off)
         {
           for (list = off; list; list = g_list_next (list))
-            gimp_item_set_visible (list->data, TRUE, FALSE);
+            picman_item_set_visible (list->data, TRUE, FALSE);
         }
 
       g_list_free (on);
@@ -126,40 +126,40 @@ gimp_item_toggle_exclusive_visible (GimpItem    *item,
 }
 
 void
-gimp_item_toggle_exclusive_linked (GimpItem    *item,
-                                   GimpContext *context)
+picman_item_toggle_exclusive_linked (PicmanItem    *item,
+                                   PicmanContext *context)
 {
   GList *on  = NULL;
   GList *off = NULL;
   GList *list;
 
-  g_return_if_fail (GIMP_IS_ITEM (item));
-  g_return_if_fail (gimp_item_is_attached (item));
-  g_return_if_fail (GIMP_IS_CONTEXT (context));
+  g_return_if_fail (PICMAN_IS_ITEM (item));
+  g_return_if_fail (picman_item_is_attached (item));
+  g_return_if_fail (PICMAN_IS_CONTEXT (context));
 
-  for (list = gimp_item_get_container_iter (item);
+  for (list = picman_item_get_container_iter (item);
        list;
        list = g_list_next (list))
     {
-      GimpItem *other = list->data;
+      PicmanItem *other = list->data;
 
       if (other != item)
         {
-          if (gimp_item_get_linked (other))
+          if (picman_item_get_linked (other))
             on = g_list_prepend (on, other);
           else
             off = g_list_prepend (off, other);
         }
     }
 
-  if (on || off || ! gimp_item_get_linked (item))
+  if (on || off || ! picman_item_get_linked (item))
     {
-      GimpImage *image = gimp_item_get_image (item);
-      GimpUndo  *undo;
+      PicmanImage *image = picman_item_get_image (item);
+      PicmanUndo  *undo;
       gboolean   push_undo = TRUE;
 
-      undo = gimp_image_undo_can_compress (image, GIMP_TYPE_UNDO_STACK,
-                                           GIMP_UNDO_GROUP_ITEM_LINKED);
+      undo = picman_image_undo_can_compress (image, PICMAN_TYPE_UNDO_STACK,
+                                           PICMAN_UNDO_GROUP_ITEM_LINKED);
 
       if (undo && (g_object_get_data (G_OBJECT (undo), "exclusive-linked-item") ==
                    (gpointer) item))
@@ -167,44 +167,44 @@ gimp_item_toggle_exclusive_linked (GimpItem    *item,
 
       if (push_undo)
         {
-          if (gimp_image_undo_group_start (image,
-                                           GIMP_UNDO_GROUP_ITEM_LINKED,
+          if (picman_image_undo_group_start (image,
+                                           PICMAN_UNDO_GROUP_ITEM_LINKED,
                                            _("Set Item Exclusive Linked")))
             {
-              undo = gimp_image_undo_can_compress (image, GIMP_TYPE_UNDO_STACK,
-                                                   GIMP_UNDO_GROUP_ITEM_LINKED);
+              undo = picman_image_undo_can_compress (image, PICMAN_TYPE_UNDO_STACK,
+                                                   PICMAN_UNDO_GROUP_ITEM_LINKED);
 
               if (undo)
                 g_object_set_data (G_OBJECT (undo), "exclusive-linked-item",
                                    (gpointer) item);
             }
 
-          gimp_image_undo_push_item_linked (image, NULL, item);
+          picman_image_undo_push_item_linked (image, NULL, item);
 
           for (list = on; list; list = g_list_next (list))
-            gimp_image_undo_push_item_linked (image, NULL, list->data);
+            picman_image_undo_push_item_linked (image, NULL, list->data);
 
           for (list = off; list; list = g_list_next (list))
-            gimp_image_undo_push_item_linked (image, NULL, list->data);
+            picman_image_undo_push_item_linked (image, NULL, list->data);
 
-          gimp_image_undo_group_end (image);
+          picman_image_undo_group_end (image);
         }
       else
         {
-          gimp_undo_refresh_preview (undo, context);
+          picman_undo_refresh_preview (undo, context);
         }
 
-      if (off || ! gimp_item_get_linked (item))
+      if (off || ! picman_item_get_linked (item))
         {
-          gimp_item_set_linked (item, TRUE, FALSE);
+          picman_item_set_linked (item, TRUE, FALSE);
 
           for (list = off; list; list = g_list_next (list))
-            gimp_item_set_linked (list->data, TRUE, FALSE);
+            picman_item_set_linked (list->data, TRUE, FALSE);
         }
       else
         {
           for (list = on; list; list = g_list_next (list))
-            gimp_item_set_linked (list->data, FALSE, FALSE);
+            picman_item_set_linked (list->data, FALSE, FALSE);
         }
 
       g_list_free (on);
@@ -216,14 +216,14 @@ gimp_item_toggle_exclusive_linked (GimpItem    *item,
 /*  private functions  */
 
 static GList *
-gimp_item_exclusive_get_ancestry (GimpItem *item)
+picman_item_exclusive_get_ancestry (PicmanItem *item)
 {
-  GimpViewable *parent;
+  PicmanViewable *parent;
   GList        *ancestry = NULL;
 
-  for (parent = GIMP_VIEWABLE (item);
+  for (parent = PICMAN_VIEWABLE (item);
        parent;
-       parent = gimp_viewable_get_parent (parent))
+       parent = picman_viewable_get_parent (parent))
     {
       ancestry = g_list_prepend (ancestry, parent);
     }
@@ -232,34 +232,34 @@ gimp_item_exclusive_get_ancestry (GimpItem *item)
 }
 
 static void
-gimp_item_exclusive_get_lists (GimpItem     *item,
+picman_item_exclusive_get_lists (PicmanItem     *item,
                                const gchar  *property,
                                GList       **on,
                                GList       **off)
 {
-  GimpItemTree *tree;
+  PicmanItemTree *tree;
   GList        *items;
   GList        *list;
 
   *on  = NULL;
   *off = NULL;
 
-  tree = gimp_item_get_tree (item);
+  tree = picman_item_get_tree (item);
 
-  items = gimp_item_stack_get_item_list (GIMP_ITEM_STACK (tree->container));
+  items = picman_item_stack_get_item_list (PICMAN_ITEM_STACK (tree->container));
 
   for (list = items; list; list = g_list_next (list))
     {
-      GimpItem *other = list->data;
+      PicmanItem *other = list->data;
 
       if (other != item)
         {
           /* we are only interested in toplevel items that are not
            * item's ancestor
            */
-          if (! gimp_viewable_get_parent (GIMP_VIEWABLE (other)) &&
-              ! gimp_viewable_is_ancestor (GIMP_VIEWABLE (other),
-                                           GIMP_VIEWABLE (item)))
+          if (! picman_viewable_get_parent (PICMAN_VIEWABLE (other)) &&
+              ! picman_viewable_is_ancestor (PICMAN_VIEWABLE (other),
+                                           PICMAN_VIEWABLE (item)))
             {
               gboolean value;
 

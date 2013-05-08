@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1999 Spencer Kimball and Peter Mattis
  *
- * gimpstrokeoptions.h
+ * picmanstrokeoptions.h
  * Copyright (C) 2003 Simon Budig
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,64 +18,64 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_STROKE_OPTIONS_H__
-#define __GIMP_STROKE_OPTIONS_H__
+#ifndef __PICMAN_STROKE_OPTIONS_H__
+#define __PICMAN_STROKE_OPTIONS_H__
 
 
-#include "gimpfilloptions.h"
+#include "picmanfilloptions.h"
 
 
-#define GIMP_TYPE_STROKE_OPTIONS            (gimp_stroke_options_get_type ())
-#define GIMP_STROKE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_STROKE_OPTIONS, GimpStrokeOptions))
-#define GIMP_STROKE_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_STROKE_OPTIONS, GimpStrokeOptionsClass))
-#define GIMP_IS_STROKE_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_STROKE_OPTIONS))
-#define GIMP_IS_STROKE_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_STROKE_OPTIONS))
-#define GIMP_STROKE_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_STROKE_OPTIONS, GimpStrokeOptionsClass))
+#define PICMAN_TYPE_STROKE_OPTIONS            (picman_stroke_options_get_type ())
+#define PICMAN_STROKE_OPTIONS(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_STROKE_OPTIONS, PicmanStrokeOptions))
+#define PICMAN_STROKE_OPTIONS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_STROKE_OPTIONS, PicmanStrokeOptionsClass))
+#define PICMAN_IS_STROKE_OPTIONS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_STROKE_OPTIONS))
+#define PICMAN_IS_STROKE_OPTIONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_STROKE_OPTIONS))
+#define PICMAN_STROKE_OPTIONS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_STROKE_OPTIONS, PicmanStrokeOptionsClass))
 
 
-typedef struct _GimpStrokeOptionsClass GimpStrokeOptionsClass;
+typedef struct _PicmanStrokeOptionsClass PicmanStrokeOptionsClass;
 
-struct _GimpStrokeOptions
+struct _PicmanStrokeOptions
 {
-  GimpFillOptions  parent_instance;
+  PicmanFillOptions  parent_instance;
 };
 
-struct _GimpStrokeOptionsClass
+struct _PicmanStrokeOptionsClass
 {
-  GimpFillOptionsClass  parent_class;
+  PicmanFillOptionsClass  parent_class;
 
-  void (* dash_info_changed) (GimpStrokeOptions *stroke_options,
-                              GimpDashPreset     preset);
+  void (* dash_info_changed) (PicmanStrokeOptions *stroke_options,
+                              PicmanDashPreset     preset);
 };
 
 
-GType               gimp_stroke_options_get_type             (void) G_GNUC_CONST;
+GType               picman_stroke_options_get_type             (void) G_GNUC_CONST;
 
-GimpStrokeOptions * gimp_stroke_options_new                  (Gimp              *gimp,
-                                                              GimpContext       *context,
+PicmanStrokeOptions * picman_stroke_options_new                  (Picman              *picman,
+                                                              PicmanContext       *context,
                                                               gboolean           use_context_color);
 
-GimpStrokeMethod    gimp_stroke_options_get_method           (GimpStrokeOptions *options);
+PicmanStrokeMethod    picman_stroke_options_get_method           (PicmanStrokeOptions *options);
 
-gdouble             gimp_stroke_options_get_width            (GimpStrokeOptions *options);
-GimpUnit            gimp_stroke_options_get_unit             (GimpStrokeOptions *options);
-GimpCapStyle        gimp_stroke_options_get_cap_style        (GimpStrokeOptions *options);
-GimpJoinStyle       gimp_stroke_options_get_join_style       (GimpStrokeOptions *options);
-gdouble             gimp_stroke_options_get_miter_limit      (GimpStrokeOptions *options);
-gdouble             gimp_stroke_options_get_dash_offset      (GimpStrokeOptions *options);
-GArray            * gimp_stroke_options_get_dash_info        (GimpStrokeOptions *options);
+gdouble             picman_stroke_options_get_width            (PicmanStrokeOptions *options);
+PicmanUnit            picman_stroke_options_get_unit             (PicmanStrokeOptions *options);
+PicmanCapStyle        picman_stroke_options_get_cap_style        (PicmanStrokeOptions *options);
+PicmanJoinStyle       picman_stroke_options_get_join_style       (PicmanStrokeOptions *options);
+gdouble             picman_stroke_options_get_miter_limit      (PicmanStrokeOptions *options);
+gdouble             picman_stroke_options_get_dash_offset      (PicmanStrokeOptions *options);
+GArray            * picman_stroke_options_get_dash_info        (PicmanStrokeOptions *options);
 
-GimpPaintOptions  * gimp_stroke_options_get_paint_options    (GimpStrokeOptions *options);
-gboolean            gimp_stroke_options_get_emulate_dynamics (GimpStrokeOptions *options);
+PicmanPaintOptions  * picman_stroke_options_get_paint_options    (PicmanStrokeOptions *options);
+gboolean            picman_stroke_options_get_emulate_dynamics (PicmanStrokeOptions *options);
 
-void                gimp_stroke_options_take_dash_pattern    (GimpStrokeOptions *options,
-                                                              GimpDashPreset     preset,
+void                picman_stroke_options_take_dash_pattern    (PicmanStrokeOptions *options,
+                                                              PicmanDashPreset     preset,
                                                               GArray            *pattern);
 
-void                gimp_stroke_options_prepare              (GimpStrokeOptions *options,
-                                                              GimpContext       *context,
+void                picman_stroke_options_prepare              (PicmanStrokeOptions *options,
+                                                              PicmanContext       *context,
                                                               gboolean           use_default_values);
-void                gimp_stroke_options_finish               (GimpStrokeOptions *options);
+void                picman_stroke_options_finish               (PicmanStrokeOptions *options);
 
 
-#endif /* __GIMP_STROKE_OPTIONS_H__ */
+#endif /* __PICMAN_STROKE_OPTIONS_H__ */

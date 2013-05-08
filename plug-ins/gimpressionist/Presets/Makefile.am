@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-presetsdatadir = $(gimpdatadir)/gimpressionist/Presets
+presetsdatadir = $(picmandatadir)/picmanressionist/Presets
 
 presetsdata_DATA = \
 	ApplyCanvas	\

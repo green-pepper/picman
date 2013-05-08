@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * Copyright (C) 1997 Daniel Risacher, magnus@alum.mit.edu
  *
@@ -19,7 +19,7 @@
 /* Minor changes to support file magic */
 /* 4 Oct 1997 -- Risacher */
 
-/* compressor plug-in for GIMP           */
+/* compressor plug-in for PICMAN           */
 /* based on gz.c which in turn is        */
 /* loosley based on url.c by             */
 /* Josh MacDonald, jmacd@cs.berkeley.edu */
@@ -30,7 +30,7 @@
 /* LZMA compression code is based on code by Lasse Collin which was
  * placed in the public-domain. */
 
-/* This is reads and writes compressed image files for GIMP
+/* This is reads and writes compressed image files for PICMAN
  *
  * It should work with file names of the form
  * filename.foo.[gz|bz2] where foo is some already-recognized extension
@@ -84,9 +84,9 @@
 #define _O_BINARY 0
 #endif
 
-#include <libgimp/gimp.h>
+#include <libpicman/picman.h>
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 #include <zlib.h>
 #include <bzlib.h>
@@ -133,11 +133,11 @@ struct _Compressor
 static void                query          (void);
 static void                run            (const gchar        *name,
                                            gint                nparams,
-                                           const GimpParam    *param,
+                                           const PicmanParam    *param,
                                            gint               *nreturn_vals,
-                                           GimpParam         **return_vals);
+                                           PicmanParam         **return_vals);
 
-static GimpPDBStatusType   save_image     (const Compressor   *compressor,
+static PicmanPDBStatusType   save_image     (const Compressor   *compressor,
                                            const gchar        *filename,
                                            gint32              image_ID,
                                            gint32              drawable_ID,
@@ -146,7 +146,7 @@ static GimpPDBStatusType   save_image     (const Compressor   *compressor,
 static gint32              load_image     (const Compressor   *compressor,
                                            const gchar        *filename,
                                            gint32              run_mode,
-                                           GimpPDBStatusType  *status,
+                                           PicmanPDBStatusType  *status,
                                            GError            **error);
 
 static gboolean            valid_file     (const gchar        *filename);
@@ -229,7 +229,7 @@ static const Compressor compressors[] =
   }
 };
 
-const GimpPlugInInfo PLUG_IN_INFO =
+const PicmanPlugInInfo PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -244,25 +244,25 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING, "raw-filename", "The name entered"             }
+    { PICMAN_PDB_INT32,  "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING, "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING, "raw-filename", "The name entered"             }
   };
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE, "image", "Output image" },
+    { PICMAN_PDB_IMAGE, "image", "Output image" },
   };
 
-  static const GimpParamDef save_args[] =
+  static const PicmanParamDef save_args[] =
   {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image"                  },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save"             },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to "
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image"                  },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save"             },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to "
                                          "save the image in"            },
-    { GIMP_PDB_STRING,   "raw-filename", "The name entered"             },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name entered"             },
   };
 
   gint i;
@@ -271,7 +271,7 @@ query (void)
     {
       const Compressor *compressor = &compressors[i];
 
-      gimp_install_procedure (compressor->load_proc,
+      picman_install_procedure (compressor->load_proc,
                               compressor->load_blurb,
                               compressor->load_help,
                               "Daniel Risacher",
@@ -279,19 +279,19 @@ query (void)
                               "1995-1997",
                               compressor->file_type,
                               NULL,
-                              GIMP_PLUGIN,
+                              PICMAN_PLUGIN,
                               G_N_ELEMENTS (load_args),
                               G_N_ELEMENTS (load_return_vals),
                               load_args, load_return_vals);
 
-      gimp_register_file_handler_mime (compressor->load_proc,
+      picman_register_file_handler_mime (compressor->load_proc,
                                        compressor->mime_type);
-      gimp_register_magic_load_handler (compressor->load_proc,
+      picman_register_magic_load_handler (compressor->load_proc,
                                         compressor->extensions,
                                         "",
                                         compressor->magic);
 
-      gimp_install_procedure (compressor->save_proc,
+      picman_install_procedure (compressor->save_proc,
                               compressor->save_blurb,
                               compressor->save_help,
                               "Daniel Risacher",
@@ -299,13 +299,13 @@ query (void)
                               "1995-1997",
                               compressor->file_type,
                               "RGB*, GRAY*, INDEXED*",
-                              GIMP_PLUGIN,
+                              PICMAN_PLUGIN,
                               G_N_ELEMENTS (save_args), 0,
                               save_args, NULL);
 
-      gimp_register_file_handler_mime (compressor->save_proc,
+      picman_register_file_handler_mime (compressor->save_proc,
                                        compressor->mime_type);
-      gimp_register_save_handler (compressor->save_proc,
+      picman_register_save_handler (compressor->save_proc,
                                   compressor->extensions, "");
     }
 }
@@ -313,13 +313,13 @@ query (void)
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   GError            *error  = NULL;
   gint32             image_ID;
   gint               i;
@@ -331,13 +331,13 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   /*  We handle PDB errors by forwarding them to the caller in
    *  our return values.
    */
-  gimp_plugin_set_pdb_error_handler (GIMP_PDB_ERROR_HANDLER_PLUGIN);
+  picman_plugin_set_pdb_error_handler (PICMAN_PDB_ERROR_HANDLER_PLUGIN);
 
   for (i = 0; i < G_N_ELEMENTS (compressors); i++)
     {
@@ -350,10 +350,10 @@ run (const gchar      *name,
                                  param[0].data.d_int32,
                                  &status, &error);
 
-          if (image_ID != -1 && status == GIMP_PDB_SUCCESS)
+          if (image_ID != -1 && status == PICMAN_PDB_SUCCESS)
             {
               *nreturn_vals = 2;
-              values[1].type         = GIMP_PDB_IMAGE;
+              values[1].type         = PICMAN_PDB_IMAGE;
               values[1].data.d_image = image_ID;
             }
 
@@ -363,21 +363,21 @@ run (const gchar      *name,
         {
           switch (run_mode)
             {
-            case GIMP_RUN_INTERACTIVE:
+            case PICMAN_RUN_INTERACTIVE:
               break;
-            case GIMP_RUN_NONINTERACTIVE:
+            case PICMAN_RUN_NONINTERACTIVE:
               /*  Make sure all the arguments are there!  */
               if (nparams != 5)
-                status = GIMP_PDB_CALLING_ERROR;
+                status = PICMAN_PDB_CALLING_ERROR;
               break;
-            case GIMP_RUN_WITH_LAST_VALS:
+            case PICMAN_RUN_WITH_LAST_VALS:
               break;
 
             default:
               break;
             }
 
-          if (status == GIMP_PDB_SUCCESS)
+          if (status == PICMAN_PDB_SUCCESS)
             status = save_image (compressor,
                                  param[3].data.d_string,
                                  param[1].data.d_int32,
@@ -390,19 +390,19 @@ run (const gchar      *name,
     }
 
   if (i == G_N_ELEMENTS (compressors))
-    status = GIMP_PDB_CALLING_ERROR;
+    status = PICMAN_PDB_CALLING_ERROR;
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
   values[0].data.d_status = status;
 }
 
-static GimpPDBStatusType
+static PicmanPDBStatusType
 save_image (const Compressor  *compressor,
             const gchar       *filename,
             gint32             image_ID,
@@ -423,9 +423,9 @@ save_image (const Compressor  *compressor,
 
   /* get a temp name with the right extension and save into it. */
 
-  tmpname = gimp_temp_name (ext + 1);
+  tmpname = picman_temp_name (ext + 1);
 
-  if (! (gimp_file_save (run_mode,
+  if (! (picman_file_save (run_mode,
                          image_ID,
                          drawable_ID,
                          tmpname,
@@ -435,9 +435,9 @@ save_image (const Compressor  *compressor,
       g_free (tmpname);
 
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
-                   "%s", gimp_get_pdb_error ());
+                   "%s", picman_get_pdb_error ());
 
-      return GIMP_PDB_EXECUTION_ERROR;
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
 
   if (!compressor->save_fn (tmpname, filename))
@@ -445,7 +445,7 @@ save_image (const Compressor  *compressor,
       g_unlink (tmpname);
       g_free (tmpname);
 
-      return GIMP_PDB_EXECUTION_ERROR;
+      return PICMAN_PDB_EXECUTION_ERROR;
     }
 
   g_unlink (tmpname);
@@ -453,16 +453,16 @@ save_image (const Compressor  *compressor,
 
   /* ask the core to save a thumbnail for compressed XCF files */
   if (strcmp (ext, ".xcf") == 0)
-    gimp_file_save_thumbnail (image_ID, filename);
+    picman_file_save_thumbnail (image_ID, filename);
 
-  return GIMP_PDB_SUCCESS;
+  return PICMAN_PDB_SUCCESS;
 }
 
 static gint32
 load_image (const Compressor   *compressor,
             const gchar        *filename,
             gint32              run_mode,
-            GimpPDBStatusType  *status,
+            PicmanPDBStatusType  *status,
             GError            **error)
 {
   gint32       image_ID;
@@ -479,34 +479,34 @@ load_image (const Compressor   *compressor,
     }
 
   /* find a temp name */
-  tmpname = gimp_temp_name (ext + 1);
+  tmpname = picman_temp_name (ext + 1);
 
   if (!compressor->load_fn (filename, tmpname))
     {
       g_free (tmpname);
-      *status = GIMP_PDB_EXECUTION_ERROR;
+      *status = PICMAN_PDB_EXECUTION_ERROR;
       return -1;
     }
 
   /* now that we uncompressed it, load the temp file */
 
-  image_ID = gimp_file_load (run_mode, tmpname, tmpname);
+  image_ID = picman_file_load (run_mode, tmpname, tmpname);
 
   g_unlink (tmpname);
   g_free (tmpname);
 
   if (image_ID != -1)
     {
-      *status = GIMP_PDB_SUCCESS;
+      *status = PICMAN_PDB_SUCCESS;
 
-      gimp_image_set_filename (image_ID, filename);
+      picman_image_set_filename (image_ID, filename);
     }
   else
     {
-      *status = GIMP_PDB_EXECUTION_ERROR;
+      *status = PICMAN_PDB_EXECUTION_ERROR;
 
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
-                   "%s", gimp_get_pdb_error ());
+                   "%s", picman_get_pdb_error ());
     }
 
   return image_ID;

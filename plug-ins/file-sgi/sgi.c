@@ -1,5 +1,5 @@
 /*
- * SGI image file plug-in for GIMP.
+ * SGI image file plug-in for PICMAN.
  *
  * Copyright 1997-1998 Michael Sweet (mike@easysw.com)
  *
@@ -18,7 +18,7 @@
  *
  * Contents:
  *
- *   main()                      - Main entry - just call gimp_main()...
+ *   main()                      - Main entry - just call picman_main()...
  *   query()                     - Respond to a plug-in query...
  *   run()                       - Run the plug-in...
  *   load_image()                - Load a PNG image into a new image window.
@@ -32,12 +32,12 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "sgi-lib.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 /*
@@ -47,7 +47,7 @@
 #define LOAD_PROC        "file-sgi-load"
 #define SAVE_PROC        "file-sgi-save"
 #define PLUG_IN_BINARY   "file-sgi"
-#define PLUG_IN_ROLE     "gimp-file-sgi"
+#define PLUG_IN_ROLE     "picman-file-sgi"
 #define PLUG_IN_VERSION  "1.1.1 - 17 May 1998"
 
 
@@ -58,9 +58,9 @@
 static void     query       (void);
 static void     run         (const gchar      *name,
                              gint              nparams,
-                             const GimpParam  *param,
+                             const PicmanParam  *param,
                              gint             *nreturn_vals,
-                             GimpParam       **return_vals);
+                             PicmanParam       **return_vals);
 
 static gint32   load_image  (const gchar      *filename,
                              GError          **error);
@@ -75,7 +75,7 @@ static gboolean save_dialog (void);
  * Globals...
  */
 
-const GimpPlugInInfo  PLUG_IN_INFO =
+const PicmanPlugInInfo  PLUG_IN_INFO =
 {
   NULL,  /* init_proc  */
   NULL,  /* quit_proc  */
@@ -91,28 +91,28 @@ MAIN ()
 static void
 query (void)
 {
-  static const GimpParamDef load_args[] =
+  static const PicmanParamDef load_args[] =
   {
-    { GIMP_PDB_INT32,      "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_STRING,     "filename",     "The name of the file to load" },
-    { GIMP_PDB_STRING,     "raw-filename", "The name of the file to load" },
+    { PICMAN_PDB_INT32,      "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_STRING,     "filename",     "The name of the file to load" },
+    { PICMAN_PDB_STRING,     "raw-filename", "The name of the file to load" },
   };
-  static const GimpParamDef load_return_vals[] =
+  static const PicmanParamDef load_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,      "image",        "Output image" },
-  };
-
-  static const GimpParamDef save_args[] =
-  {
-    { GIMP_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
-    { GIMP_PDB_IMAGE,    "image",        "Input image" },
-    { GIMP_PDB_DRAWABLE, "drawable",     "Drawable to save" },
-    { GIMP_PDB_STRING,   "filename",     "The name of the file to save the image in" },
-    { GIMP_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },
-    { GIMP_PDB_INT32,    "compression",  "Compression level (0 = none, 1 = RLE, 2 = ARLE)" }
+    { PICMAN_PDB_IMAGE,      "image",        "Output image" },
   };
 
-  gimp_install_procedure (LOAD_PROC,
+  static const PicmanParamDef save_args[] =
+  {
+    { PICMAN_PDB_INT32,    "run-mode",     "The run mode { RUN-INTERACTIVE (0), RUN-NONINTERACTIVE (1) }" },
+    { PICMAN_PDB_IMAGE,    "image",        "Input image" },
+    { PICMAN_PDB_DRAWABLE, "drawable",     "Drawable to save" },
+    { PICMAN_PDB_STRING,   "filename",     "The name of the file to save the image in" },
+    { PICMAN_PDB_STRING,   "raw-filename", "The name of the file to save the image in" },
+    { PICMAN_PDB_INT32,    "compression",  "Compression level (0 = none, 1 = RLE, 2 = ARLE)" }
+  };
+
+  picman_install_procedure (LOAD_PROC,
                           "Loads files in SGI image file format",
                           "This plug-in loads SGI image files.",
                           "Michael Sweet <mike@easysw.com>",
@@ -120,19 +120,19 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("Silicon Graphics IRIS image"),
                           NULL,
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (load_args),
                           G_N_ELEMENTS (load_return_vals),
                           load_args,
                           load_return_vals);
 
-  gimp_register_file_handler_mime (LOAD_PROC, "image/x-sgi");
-  gimp_register_magic_load_handler (LOAD_PROC,
+  picman_register_file_handler_mime (LOAD_PROC, "image/x-sgi");
+  picman_register_magic_load_handler (LOAD_PROC,
                                     "sgi,rgb,rgba,bw,icon",
                                     "",
                                     "0,short,474");
 
-  gimp_install_procedure (SAVE_PROC,
+  picman_install_procedure (SAVE_PROC,
                           "Saves files in SGI image file format",
                           "This plug-in saves SGI image files.",
                           "Michael Sweet <mike@easysw.com>",
@@ -140,29 +140,29 @@ query (void)
                           PLUG_IN_VERSION,
                           N_("Silicon Graphics IRIS image"),
                           "RGB*, GRAY*, INDEXED*",
-                          GIMP_PLUGIN,
+                          PICMAN_PLUGIN,
                           G_N_ELEMENTS (save_args),
                           0,
                           save_args,
                           NULL);
 
-  gimp_register_file_handler_mime (SAVE_PROC, "image/x-sgi");
-  gimp_register_save_handler (SAVE_PROC, "sgi,rgb,rgba,bw,icon", "");
+  picman_register_file_handler_mime (SAVE_PROC, "image/x-sgi");
+  picman_register_save_handler (SAVE_PROC, "sgi,rgb,rgba,bw,icon", "");
 }
 
 static void
 run (const gchar      *name,
      gint              nparams,
-     const GimpParam  *param,
+     const PicmanParam  *param,
      gint             *nreturn_vals,
-     GimpParam       **return_vals)
+     PicmanParam       **return_vals)
 {
-  static GimpParam   values[2];
-  GimpRunMode        run_mode;
-  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+  static PicmanParam   values[2];
+  PicmanRunMode        run_mode;
+  PicmanPDBStatusType  status = PICMAN_PDB_SUCCESS;
   gint32             image_ID;
   gint32             drawable_ID;
-  GimpExportReturn   export = GIMP_EXPORT_CANCEL;
+  PicmanExportReturn   export = PICMAN_EXPORT_CANCEL;
   GError            *error  = NULL;
 
   INIT_I18N ();
@@ -173,8 +173,8 @@ run (const gchar      *name,
   *nreturn_vals = 1;
   *return_vals  = values;
 
-  values[0].type          = GIMP_PDB_STATUS;
-  values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+  values[0].type          = PICMAN_PDB_STATUS;
+  values[0].data.d_status = PICMAN_PDB_EXECUTION_ERROR;
 
   if (strcmp (name, LOAD_PROC) == 0)
     {
@@ -183,12 +183,12 @@ run (const gchar      *name,
       if (image_ID != -1)
         {
           *nreturn_vals = 2;
-          values[1].type         = GIMP_PDB_IMAGE;
+          values[1].type         = PICMAN_PDB_IMAGE;
           values[1].data.d_image = image_ID;
         }
       else
         {
-          status = GIMP_PDB_EXECUTION_ERROR;
+          status = PICMAN_PDB_EXECUTION_ERROR;
         }
     }
   else if (strcmp (name, SAVE_PROC) == 0)
@@ -199,17 +199,17 @@ run (const gchar      *name,
       /*  eventually export the image */
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
-        case GIMP_RUN_WITH_LAST_VALS:
-          gimp_ui_init (PLUG_IN_BINARY, FALSE);
-          export = gimp_export_image (&image_ID, &drawable_ID, NULL,
-                                      GIMP_EXPORT_CAN_HANDLE_RGB     |
-                                      GIMP_EXPORT_CAN_HANDLE_GRAY    |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
-                                      GIMP_EXPORT_CAN_HANDLE_ALPHA);
-          if (export == GIMP_EXPORT_CANCEL)
+        case PICMAN_RUN_INTERACTIVE:
+        case PICMAN_RUN_WITH_LAST_VALS:
+          picman_ui_init (PLUG_IN_BINARY, FALSE);
+          export = picman_export_image (&image_ID, &drawable_ID, NULL,
+                                      PICMAN_EXPORT_CAN_HANDLE_RGB     |
+                                      PICMAN_EXPORT_CAN_HANDLE_GRAY    |
+                                      PICMAN_EXPORT_CAN_HANDLE_INDEXED |
+                                      PICMAN_EXPORT_CAN_HANDLE_ALPHA);
+          if (export == PICMAN_EXPORT_CANCEL)
             {
-              values[0].data.d_status = GIMP_PDB_CANCEL;
+              values[0].data.d_status = PICMAN_PDB_CANCEL;
               return;
             }
           break;
@@ -219,72 +219,72 @@ run (const gchar      *name,
 
       switch (run_mode)
         {
-        case GIMP_RUN_INTERACTIVE:
+        case PICMAN_RUN_INTERACTIVE:
           /*
            * Possibly retrieve data...
            */
-          gimp_get_data (SAVE_PROC, &compression);
+          picman_get_data (SAVE_PROC, &compression);
 
           /*
            * Then acquire information with a dialog...
            */
           if (!save_dialog ())
-            status = GIMP_PDB_CANCEL;
+            status = PICMAN_PDB_CANCEL;
           break;
 
-        case GIMP_RUN_NONINTERACTIVE:
+        case PICMAN_RUN_NONINTERACTIVE:
           /*
            * Make sure all the arguments are there!
            */
           if (nparams != 6)
             {
-              status = GIMP_PDB_CALLING_ERROR;
+              status = PICMAN_PDB_CALLING_ERROR;
             }
           else
             {
               compression = param[5].data.d_int32;
 
               if (compression < 0 || compression > 2)
-                status = GIMP_PDB_CALLING_ERROR;
+                status = PICMAN_PDB_CALLING_ERROR;
             };
           break;
 
-        case GIMP_RUN_WITH_LAST_VALS:
+        case PICMAN_RUN_WITH_LAST_VALS:
           /*
            * Possibly retrieve data...
            */
-          gimp_get_data (SAVE_PROC, &compression);
+          picman_get_data (SAVE_PROC, &compression);
           break;
 
         default:
           break;
         };
 
-      if (status == GIMP_PDB_SUCCESS)
+      if (status == PICMAN_PDB_SUCCESS)
         {
           if (save_image (param[3].data.d_string, image_ID, drawable_ID,
                           &error))
             {
-              gimp_set_data (SAVE_PROC, &compression, sizeof (compression));
+              picman_set_data (SAVE_PROC, &compression, sizeof (compression));
             }
           else
             {
-              status = GIMP_PDB_EXECUTION_ERROR;
+              status = PICMAN_PDB_EXECUTION_ERROR;
             }
         }
 
-      if (export == GIMP_EXPORT_EXPORT)
-        gimp_image_delete (image_ID);
+      if (export == PICMAN_EXPORT_EXPORT)
+        picman_image_delete (image_ID);
     }
   else
     {
-      status = GIMP_PDB_CALLING_ERROR;
+      status = PICMAN_PDB_CALLING_ERROR;
     }
 
-  if (status != GIMP_PDB_SUCCESS && error)
+  if (status != PICMAN_PDB_SUCCESS && error)
     {
       *nreturn_vals = 2;
-      values[1].type          = GIMP_PDB_STRING;
+      values[1].type          = PICMAN_PDB_STRING;
       values[1].data.d_string = error->message;
     }
 
@@ -305,7 +305,7 @@ load_image (const gchar  *filename,
                  y,           /* Current Y coordinate */
                  image_type,  /* Type of image */
                  layer_type,  /* Type of drawable/layer */
-                 tile_height, /* Height of tile in GIMP */
+                 tile_height, /* Height of tile in PICMAN */
                  count,       /* Count of rows to put in image */
                  bytes;       /* Number of channels to use */
   sgi_t         *sgip;        /* File pointer */
@@ -325,35 +325,35 @@ load_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("Could not open '%s' for reading."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return -1;
     };
 
-  gimp_progress_init_printf (_("Opening '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Opening '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   /*
    * Get the image dimensions and create the image...
    */
 
   /* Sanitize dimensions (note that they are unsigned short and can
-   * thus never be larger than GIMP_MAX_IMAGE_SIZE
+   * thus never be larger than PICMAN_MAX_IMAGE_SIZE
    */
-  if (sgip->xsize == 0 /*|| sgip->xsize > GIMP_MAX_IMAGE_SIZE*/)
+  if (sgip->xsize == 0 /*|| sgip->xsize > PICMAN_MAX_IMAGE_SIZE*/)
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
               _("Invalid width: %hu"), sgip->xsize);
       return -1;
     }
 
-  if (sgip->ysize == 0 /*|| sgip->ysize > GIMP_MAX_IMAGE_SIZE*/)
+  if (sgip->ysize == 0 /*|| sgip->ysize > PICMAN_MAX_IMAGE_SIZE*/)
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
               _("Invalid height: %hu"), sgip->ysize);
       return -1;
     }
 
-  if (sgip->zsize == 0 /*|| sgip->zsize > GIMP_MAX_IMAGE_SIZE*/)
+  if (sgip->zsize == 0 /*|| sgip->zsize > PICMAN_MAX_IMAGE_SIZE*/)
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
               _("Invalid number of channels: %hu"), sgip->zsize);
@@ -365,62 +365,62 @@ load_image (const gchar  *filename,
   switch (sgip->zsize)
     {
     case 1 :    /* Grayscale */
-      image_type = GIMP_GRAY;
-      layer_type = GIMP_GRAY_IMAGE;
+      image_type = PICMAN_GRAY;
+      layer_type = PICMAN_GRAY_IMAGE;
       break;
 
     case 2 :    /* Grayscale + alpha */
-      image_type = GIMP_GRAY;
-      layer_type = GIMP_GRAYA_IMAGE;
+      image_type = PICMAN_GRAY;
+      layer_type = PICMAN_GRAYA_IMAGE;
       break;
 
     case 3 :    /* RGB */
-      image_type = GIMP_RGB;
-      layer_type = GIMP_RGB_IMAGE;
+      image_type = PICMAN_RGB;
+      layer_type = PICMAN_RGB_IMAGE;
       break;
 
     case 4 :    /* RGBA */
-      image_type = GIMP_RGB;
-      layer_type = GIMP_RGBA_IMAGE;
+      image_type = PICMAN_RGB;
+      layer_type = PICMAN_RGBA_IMAGE;
       break;
 
     default:
-      image_type = GIMP_RGB;
-      layer_type = GIMP_RGBA_IMAGE;
+      image_type = PICMAN_RGB;
+      layer_type = PICMAN_RGBA_IMAGE;
       bytes = 4;
       break;
     }
 
-  image = gimp_image_new (sgip->xsize, sgip->ysize, image_type);
+  image = picman_image_new (sgip->xsize, sgip->ysize, image_type);
   if (image == -1)
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    "Could not allocate new image: %s",
-                   gimp_get_pdb_error());
+                   picman_get_pdb_error());
       return -1;
     }
 
-  gimp_image_set_filename (image, filename);
+  picman_image_set_filename (image, filename);
 
   /*
    * Create the "background" layer to hold the image...
    */
 
-  layer = gimp_layer_new (image, _("Background"), sgip->xsize, sgip->ysize,
-                          layer_type, 100, GIMP_NORMAL_MODE);
-  gimp_image_insert_layer (image, layer, -1, 0);
+  layer = picman_layer_new (image, _("Background"), sgip->xsize, sgip->ysize,
+                          layer_type, 100, PICMAN_NORMAL_MODE);
+  picman_image_insert_layer (image, layer, -1, 0);
 
   /*
    * Get the drawable and set the pixel region for our load...
    */
 
-  buffer = gimp_drawable_get_buffer (layer);
+  buffer = picman_drawable_get_buffer (layer);
 
   /*
    * Temporary buffers...
    */
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   pixels      = g_new (guchar *, tile_height);
   pixels[0]   = g_new (guchar, ((gsize) tile_height) * sgip->xsize * bytes);
 
@@ -449,7 +449,7 @@ load_image (const gchar  *filename,
 
           count = 0;
 
-          gimp_progress_update ((double) y / (double) sgip->ysize);
+          picman_progress_update ((double) y / (double) sgip->ysize);
         }
 
       for (i = 0; i < sgip->zsize; i ++)
@@ -500,7 +500,7 @@ load_image (const gchar  *filename,
 
   g_object_unref (buffer);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   return image;
 }
@@ -521,7 +521,7 @@ save_image (const gchar  *filename,
                y,           /* Current Y coordinate */
                width,       /* Drawable width */
                height,      /* Drawable height */
-               tile_height, /* Height of tile in GIMP */
+               tile_height, /* Height of tile in PICMAN */
                count,       /* Count of rows to put in image */
                zsize;       /* Number of channels in file */
   sgi_t       *sgip;        /* File pointer */
@@ -535,31 +535,31 @@ save_image (const gchar  *filename,
    * Get the drawable for the current image...
    */
 
-  width  = gimp_drawable_width  (drawable_ID);
-  height = gimp_drawable_height (drawable_ID);
+  width  = picman_drawable_width  (drawable_ID);
+  height = picman_drawable_height (drawable_ID);
 
-  buffer = gimp_drawable_get_buffer (drawable_ID);
+  buffer = picman_drawable_get_buffer (drawable_ID);
 
-  switch (gimp_drawable_type (drawable_ID))
+  switch (picman_drawable_type (drawable_ID))
     {
-    case GIMP_GRAY_IMAGE:
+    case PICMAN_GRAY_IMAGE:
       zsize = 1;
       format = babl_format ("Y' u8");
       break;
 
-    case GIMP_GRAYA_IMAGE:
+    case PICMAN_GRAYA_IMAGE:
       zsize = 2;
       format = babl_format ("Y'A u8");
       break;
 
-    case GIMP_RGB_IMAGE:
-    case GIMP_INDEXED_IMAGE:
+    case PICMAN_RGB_IMAGE:
+    case PICMAN_INDEXED_IMAGE:
       zsize = 3;
       format = babl_format ("R'G'B' u8");
       break;
 
-    case GIMP_RGBA_IMAGE:
-    case GIMP_INDEXEDA_IMAGE:
+    case PICMAN_RGBA_IMAGE:
+    case PICMAN_INDEXEDA_IMAGE:
       format = babl_format ("R'G'B'A u8");
       zsize = 4;
       break;
@@ -578,18 +578,18 @@ save_image (const gchar  *filename,
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("Could not open '%s' for writing."),
-                   gimp_filename_to_utf8 (filename));
+                   picman_filename_to_utf8 (filename));
       return FALSE;
     };
 
-  gimp_progress_init_printf (_("Saving '%s'"),
-                             gimp_filename_to_utf8 (filename));
+  picman_progress_init_printf (_("Saving '%s'"),
+                             picman_filename_to_utf8 (filename));
 
   /*
    * Allocate memory for "tile_height" rows...
    */
 
-  tile_height = gimp_tile_height ();
+  tile_height = picman_tile_height ();
   pixels      = g_new (guchar *, tile_height);
   pixels[0]   = g_new (guchar, ((gsize) tile_height) * width * zsize);
 
@@ -635,7 +635,7 @@ save_image (const gchar  *filename,
             sgiPutRow (sgip, rows[j], height - 1 - y - i, j);
         };
 
-      gimp_progress_update ((double) y / (double) height);
+      picman_progress_update ((double) y / (double) height);
     }
 
   /*
@@ -651,7 +651,7 @@ save_image (const gchar  *filename,
 
   g_object_unref (buffer);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   return TRUE;
 }
@@ -663,10 +663,10 @@ save_dialog (void)
   GtkWidget *frame;
   gboolean   run;
 
-  dialog = gimp_export_dialog_new (_("SGI"), PLUG_IN_BINARY, SAVE_PROC);
+  dialog = picman_export_dialog_new (_("SGI"), PLUG_IN_BINARY, SAVE_PROC);
 
-  frame = gimp_int_radio_group_new (TRUE, _("Compression type"),
-                                    G_CALLBACK (gimp_radio_button_update),
+  frame = picman_int_radio_group_new (TRUE, _("Compression type"),
+                                    G_CALLBACK (picman_radio_button_update),
                                     &compression, compression,
 
                                     _("No compression"),
@@ -679,13 +679,13 @@ save_dialog (void)
                                     NULL);
 
   gtk_container_set_border_width (GTK_CONTAINER (frame), 12);
-  gtk_box_pack_start (GTK_BOX (gimp_export_dialog_get_content_area (dialog)),
+  gtk_box_pack_start (GTK_BOX (picman_export_dialog_get_content_area (dialog)),
                       frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
   gtk_widget_show (dialog);
 
-  run = (gimp_dialog_run (GIMP_DIALOG (dialog)) == GTK_RESPONSE_OK);
+  run = (picman_dialog_run (PICMAN_DIALOG (dialog)) == GTK_RESPONSE_OK);
 
   gtk_widget_destroy (dialog);
 

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimplanguagecombobox.c
- * Copyright (C) 2009  Sven Neumann <sven@gimp.org>
+ * picmanlanguagecombobox.c
+ * Copyright (C) 2009  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* GimpLanguageComboBox is a combo-box widget to select the user
+/* PicmanLanguageComboBox is a combo-box widget to select the user
  * interface language.
  */
 
@@ -30,29 +30,29 @@
 
 #include "widgets-types.h"
 
-#include "gimplanguagecombobox.h"
-#include "gimptranslationstore.h"
+#include "picmanlanguagecombobox.h"
+#include "picmantranslationstore.h"
 
 
-struct _GimpLanguageComboBox
+struct _PicmanLanguageComboBox
 {
   GtkComboBox parent_instance;
 };
 
 
-G_DEFINE_TYPE (GimpLanguageComboBox,
-               gimp_language_combo_box, GTK_TYPE_COMBO_BOX)
+G_DEFINE_TYPE (PicmanLanguageComboBox,
+               picman_language_combo_box, GTK_TYPE_COMBO_BOX)
 
-#define parent_class gimp_language_combo_box_parent_class
+#define parent_class picman_language_combo_box_parent_class
 
 
 static void
-gimp_language_combo_box_class_init (GimpLanguageComboBoxClass *klass)
+picman_language_combo_box_class_init (PicmanLanguageComboBoxClass *klass)
 {
 }
 
 static void
-gimp_language_combo_box_init (GimpLanguageComboBox *combo)
+picman_language_combo_box_init (PicmanLanguageComboBox *combo)
 {
   GtkCellRenderer *renderer;
 
@@ -60,19 +60,19 @@ gimp_language_combo_box_init (GimpLanguageComboBox *combo)
 
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), renderer, TRUE);
   gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo), renderer,
-                                  "text",  GIMP_LANGUAGE_STORE_LABEL,
+                                  "text",  PICMAN_LANGUAGE_STORE_LABEL,
                                   NULL);
 }
 
 GtkWidget *
-gimp_language_combo_box_new (void)
+picman_language_combo_box_new (void)
 {
   GtkWidget    *combo;
   GtkListStore *store;
 
-  store = gimp_translation_store_new ();
+  store = picman_translation_store_new ();
 
-  combo = g_object_new (GIMP_TYPE_LANGUAGE_COMBO_BOX,
+  combo = g_object_new (PICMAN_TYPE_LANGUAGE_COMBO_BOX,
                         "model", store,
                         NULL);
 
@@ -82,31 +82,31 @@ gimp_language_combo_box_new (void)
 }
 
 gchar *
-gimp_language_combo_box_get_code (GimpLanguageComboBox *combo)
+picman_language_combo_box_get_code (PicmanLanguageComboBox *combo)
 {
   GtkTreeIter  iter;
   gchar       *code;
 
-  g_return_val_if_fail (GIMP_IS_LANGUAGE_COMBO_BOX (combo), NULL);
+  g_return_val_if_fail (PICMAN_IS_LANGUAGE_COMBO_BOX (combo), NULL);
 
   if (! gtk_combo_box_get_active_iter (GTK_COMBO_BOX (combo), &iter))
     return NULL;
 
   gtk_tree_model_get (gtk_combo_box_get_model (GTK_COMBO_BOX (combo)), &iter,
-                      GIMP_LANGUAGE_STORE_CODE, &code,
+                      PICMAN_LANGUAGE_STORE_CODE, &code,
                       -1);
 
   return code;
 }
 
 gboolean
-gimp_language_combo_box_set_code (GimpLanguageComboBox *combo,
+picman_language_combo_box_set_code (PicmanLanguageComboBox *combo,
                                   const gchar          *code)
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
 
-  g_return_val_if_fail (GIMP_IS_LANGUAGE_COMBO_BOX (combo), FALSE);
+  g_return_val_if_fail (PICMAN_IS_LANGUAGE_COMBO_BOX (combo), FALSE);
 
   if (! code || ! strlen (code))
     {
@@ -116,7 +116,7 @@ gimp_language_combo_box_set_code (GimpLanguageComboBox *combo,
 
   model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo));
 
-  if (gimp_language_store_lookup (GIMP_LANGUAGE_STORE (model), code, &iter))
+  if (picman_language_store_lookup (PICMAN_LANGUAGE_STORE (model), code, &iter))
     {
       gtk_combo_box_set_active_iter (GTK_COMBO_BOX (combo), &iter);
       return TRUE;

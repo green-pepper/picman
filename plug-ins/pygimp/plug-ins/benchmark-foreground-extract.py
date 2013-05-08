@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #   Foreground Extraction Benchmark
-#   Copyright 2005  Sven Neumann <sven@gimp.org>
+#   Copyright 2005  Sven Neumann <sven@picman.org>
 #
 #   This is a from-scratch implementation of the benchmark proposed in
 #   "GrabCut": interactive foreground extraction using iterated graph
@@ -13,7 +13,7 @@
 #
 #   The benchmark has been adapted work with the SIOX algorithm
 #   (http://www.siox.org). which is (currently) the only
-#   implementation of gimp_drawable_foreground_extract(). If other
+#   implementation of picman_drawable_foreground_extract(). If other
 #   implementations are being added, this benchmark should be changed
 #   accordingly.
 #
@@ -39,13 +39,13 @@
 
 import os, re, struct, sys, time
 
-from gimpfu import *
+from picmanfu import *
 
 
 def benchmark (folder, save_output):
     folder = os.path.abspath (folder)
     if not os.path.exists (folder):
-        gimp.message("Folder '" + folder + "' doesn't exist.\n")
+        picman.message("Folder '" + folder + "' doesn't exist.\n")
         return;
 
     total_unclassified = 0
@@ -56,8 +56,8 @@ def benchmark (folder, save_output):
     for name in os.listdir (images):
 
         try:
-            gimp.delete (image_display)
-            gimp.delete (mask_display)
+            picman.delete (image_display)
+            picman.delete (mask_display)
         except UnboundLocalError:
             pass
 
@@ -71,14 +71,14 @@ def benchmark (folder, save_output):
         mask_name = os.path.join (folder, "cm_bmp", name + '.png')
         truth_name = os.path.join (folder, "truth", name + '.bmp')
 
-        image = pdb.gimp_file_load (image_name, image_name)
+        image = pdb.picman_file_load (image_name, image_name)
         image_layer = image.active_layer;
 
-        mask = pdb.gimp_file_load (mask_name, mask_name)
+        mask = pdb.picman_file_load (mask_name, mask_name)
         convert_grayscale (mask)
         mask_layer = mask.active_layer;
 
-        truth = pdb.gimp_file_load (truth_name, truth_name)
+        truth = pdb.picman_file_load (truth_name, truth_name)
 	convert_grayscale (truth)
         truth_layer = truth.active_layer;
 
@@ -87,7 +87,7 @@ def benchmark (folder, save_output):
         sys.stderr.write (os.path.basename (image_name))
 
 	start = time.time ()
-        pdb.gimp_drawable_foreground_extract (image_layer,
+        pdb.picman_drawable_foreground_extract (image_layer,
 					      FOREGROUND_EXTRACT_SIOX,
 					      mask_layer)
 	end = time.time ()
@@ -99,15 +99,15 @@ def benchmark (folder, save_output):
         # Ignore errors when creating image displays;
         # allows us to be used without a display.
         try:
-            image_display = pdb.gimp_display_new (image)
-            mask_display = pdb.gimp_display_new (mask)
+            image_display = pdb.picman_display_new (image)
+            mask_display = pdb.picman_display_new (mask)
 
-            gimp.displays_flush ()
+            picman.displays_flush ()
             time.sleep (1.0)
         except:
             pass
 
-        gimp.delete (image)
+        picman.delete (image)
 
         misclassified = misclassified_pixels (mask_layer, truth_layer)
 
@@ -120,19 +120,19 @@ def benchmark (folder, save_output):
 	total_misclassified += misclassified
 	total_time += end - start
 
-        gimp.delete (truth)
+        picman.delete (truth)
 
 	if save_output:
 	    filename = os.path.join (folder, "output", name + '.png')
-	    pdb.gimp_file_save (mask, mask_layer, filename, filename)
+	    pdb.picman_file_save (mask, mask_layer, filename, filename)
 
-        gimp.delete (mask)
+        picman.delete (mask)
 
     # for loop ends
 
     try:
-	gimp.delete (image_display)
-	gimp.delete (mask_display)
+	picman.delete (image_display)
+	picman.delete (mask_display)
     except UnboundLocalError:
 	pass
 
@@ -143,12 +143,12 @@ def benchmark (folder, save_output):
 
 def convert_grayscale (image):
     if image.base_type != GRAY:
-	pdb.gimp_image_convert_grayscale (image)
+	pdb.picman_image_convert_grayscale (image)
 
 
 def unclassified_pixels (mask, truth):
     (mean, std_dev, median, pixels,
-     count, percentile) = pdb.gimp_histogram (mask, HISTOGRAM_VALUE, 1, 254)
+     count, percentile) = pdb.picman_histogram (mask, HISTOGRAM_VALUE, 1, 254)
 
     return count
 
@@ -156,7 +156,7 @@ def unclassified_pixels (mask, truth):
 def misclassified_pixels (mask, truth):
     image = truth.image
 
-    copy = pdb.gimp_layer_new_from_drawable (mask, image)
+    copy = pdb.picman_layer_new_from_drawable (mask, image)
     copy.name = "Difference"
     copy.mode = DIFFERENCE_MODE
 
@@ -173,7 +173,7 @@ def misclassified_pixels (mask, truth):
     # and thus are not counted as wrong.
 
     (mean, std_dev, median, pixels,
-     count, percentile) = pdb.gimp_histogram (image.flatten (),
+     count, percentile) = pdb.picman_histogram (image.flatten (),
 					      HISTOGRAM_VALUE, 255, 255)
 
     return count

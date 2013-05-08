@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvasrectangleguides.h
- * Copyright (C) 2011 Michael Natterer <mitch@gimp.org>
+ * picmancanvasrectangleguides.h
+ * Copyright (C) 2011 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,52 +18,52 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_RECTANGLE_GUIDES_H__
-#define __GIMP_CANVAS_RECTANGLE_GUIDES_H__
+#ifndef __PICMAN_CANVAS_RECTANGLE_GUIDES_H__
+#define __PICMAN_CANVAS_RECTANGLE_GUIDES_H__
 
 
-#include "gimpcanvasitem.h"
+#include "picmancanvasitem.h"
 
 
-#define GIMP_TYPE_CANVAS_RECTANGLE_GUIDES            (gimp_canvas_rectangle_guides_get_type ())
-#define GIMP_CANVAS_RECTANGLE_GUIDES(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_RECTANGLE_GUIDES, GimpCanvasRectangleGuides))
-#define GIMP_CANVAS_RECTANGLE_GUIDES_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_RECTANGLE_GUIDES, GimpCanvasRectangleGuidesClass))
-#define GIMP_IS_CANVAS_RECTANGLE_GUIDES(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_RECTANGLE_GUIDES))
-#define GIMP_IS_CANVAS_RECTANGLE_GUIDES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_RECTANGLE_GUIDES))
-#define GIMP_CANVAS_RECTANGLE_GUIDES_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_RECTANGLE_GUIDES, GimpCanvasRectangleGuidesClass))
+#define PICMAN_TYPE_CANVAS_RECTANGLE_GUIDES            (picman_canvas_rectangle_guides_get_type ())
+#define PICMAN_CANVAS_RECTANGLE_GUIDES(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_RECTANGLE_GUIDES, PicmanCanvasRectangleGuides))
+#define PICMAN_CANVAS_RECTANGLE_GUIDES_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_RECTANGLE_GUIDES, PicmanCanvasRectangleGuidesClass))
+#define PICMAN_IS_CANVAS_RECTANGLE_GUIDES(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_RECTANGLE_GUIDES))
+#define PICMAN_IS_CANVAS_RECTANGLE_GUIDES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_RECTANGLE_GUIDES))
+#define PICMAN_CANVAS_RECTANGLE_GUIDES_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_RECTANGLE_GUIDES, PicmanCanvasRectangleGuidesClass))
 
 
-typedef struct _GimpCanvasRectangleGuides      GimpCanvasRectangleGuides;
-typedef struct _GimpCanvasRectangleGuidesClass GimpCanvasRectangleGuidesClass;
+typedef struct _PicmanCanvasRectangleGuides      PicmanCanvasRectangleGuides;
+typedef struct _PicmanCanvasRectangleGuidesClass PicmanCanvasRectangleGuidesClass;
 
-struct _GimpCanvasRectangleGuides
+struct _PicmanCanvasRectangleGuides
 {
-  GimpCanvasItem  parent_instance;
+  PicmanCanvasItem  parent_instance;
 };
 
-struct _GimpCanvasRectangleGuidesClass
+struct _PicmanCanvasRectangleGuidesClass
 {
-  GimpCanvasItemClass  parent_class;
+  PicmanCanvasItemClass  parent_class;
 };
 
 
-GType            gimp_canvas_rectangle_guides_get_type (void) G_GNUC_CONST;
+GType            picman_canvas_rectangle_guides_get_type (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_canvas_rectangle_guides_new      (GimpDisplayShell *shell,
+PicmanCanvasItem * picman_canvas_rectangle_guides_new      (PicmanDisplayShell *shell,
                                                         gdouble           x,
                                                         gdouble           y,
                                                         gdouble           width,
                                                         gdouble           height,
-                                                        GimpGuidesType    type,
+                                                        PicmanGuidesType    type,
                                                         gint              n_guides);
 
-void             gimp_canvas_rectangle_guides_set      (GimpCanvasItem   *rectangle,
+void             picman_canvas_rectangle_guides_set      (PicmanCanvasItem   *rectangle,
                                                         gdouble           x,
                                                         gdouble           y,
                                                         gdouble           width,
                                                         gdouble           height,
-                                                        GimpGuidesType    type,
+                                                        PicmanGuidesType    type,
                                                         gint              n_guides);
 
 
-#endif /* __GIMP_CANVAS_RECTANGLE_GUIDES_H__ */
+#endif /* __PICMAN_CANVAS_RECTANGLE_GUIDES_H__ */

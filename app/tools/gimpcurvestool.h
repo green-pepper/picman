@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,28 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CURVES_TOOL_H__
-#define __GIMP_CURVES_TOOL_H__
+#ifndef __PICMAN_CURVES_TOOL_H__
+#define __PICMAN_CURVES_TOOL_H__
 
 
-#include "gimpimagemaptool.h"
+#include "picmanimagemaptool.h"
 
 
-#define GIMP_TYPE_CURVES_TOOL            (gimp_curves_tool_get_type ())
-#define GIMP_CURVES_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CURVES_TOOL, GimpCurvesTool))
-#define GIMP_IS_CURVES_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CURVES_TOOL))
-#define GIMP_CURVES_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CURVES_TOOL, GimpCurvesToolClass))
-#define GIMP_IS_CURVES_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CURVES_TOOL))
+#define PICMAN_TYPE_CURVES_TOOL            (picman_curves_tool_get_type ())
+#define PICMAN_CURVES_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CURVES_TOOL, PicmanCurvesTool))
+#define PICMAN_IS_CURVES_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CURVES_TOOL))
+#define PICMAN_CURVES_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CURVES_TOOL, PicmanCurvesToolClass))
+#define PICMAN_IS_CURVES_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CURVES_TOOL))
 
 
-typedef struct _GimpCurvesTool      GimpCurvesTool;
-typedef struct _GimpCurvesToolClass GimpCurvesToolClass;
+typedef struct _PicmanCurvesTool      PicmanCurvesTool;
+typedef struct _PicmanCurvesToolClass PicmanCurvesToolClass;
 
-struct _GimpCurvesTool
+struct _PicmanCurvesTool
 {
-  GimpImageMapTool      parent_instance;
+  PicmanImageMapTool      parent_instance;
 
-  GimpCurvesConfig     *config;
+  PicmanCurvesConfig     *config;
 
   /* dialog */
   gdouble               picked_color[5];
@@ -51,16 +51,16 @@ struct _GimpCurvesTool
   gboolean              export_old_format;
 };
 
-struct _GimpCurvesToolClass
+struct _PicmanCurvesToolClass
 {
-  GimpImageMapToolClass  parent_class;
+  PicmanImageMapToolClass  parent_class;
 };
 
 
-void    gimp_curves_tool_register (GimpToolRegisterCallback  callback,
+void    picman_curves_tool_register (PicmanToolRegisterCallback  callback,
                                    gpointer                  data);
 
-GType   gimp_curves_tool_get_type (void) G_GNUC_CONST;
+GType   picman_curves_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_CURVES_TOOL_H__  */
+#endif  /*  __PICMAN_CURVES_TOOL_H__  */

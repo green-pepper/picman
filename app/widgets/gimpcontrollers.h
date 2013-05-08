@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcontrollers.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmancontrollers.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CONTROLLERS_H__
-#define __GIMP_CONTROLLERS_H__
+#ifndef __PICMAN_CONTROLLERS_H__
+#define __PICMAN_CONTROLLERS_H__
 
 
-void             gimp_controllers_init           (Gimp          *gimp);
-void             gimp_controllers_exit           (Gimp          *gimp);
+void             picman_controllers_init           (Picman          *picman);
+void             picman_controllers_exit           (Picman          *picman);
 
-void             gimp_controllers_restore        (Gimp          *gimp,
-                                                  GimpUIManager *ui_manager);
-void             gimp_controllers_save           (Gimp          *gimp);
+void             picman_controllers_restore        (Picman          *picman,
+                                                  PicmanUIManager *ui_manager);
+void             picman_controllers_save           (Picman          *picman);
 
-GimpContainer  * gimp_controllers_get_list       (Gimp          *gimp);
-GimpUIManager  * gimp_controllers_get_ui_manager (Gimp          *gimp);
-GimpController * gimp_controllers_get_mouse      (Gimp          *gimp);
-GimpController * gimp_controllers_get_wheel      (Gimp          *gimp);
-GimpController * gimp_controllers_get_keyboard   (Gimp          *gimp);
+PicmanContainer  * picman_controllers_get_list       (Picman          *picman);
+PicmanUIManager  * picman_controllers_get_ui_manager (Picman          *picman);
+PicmanController * picman_controllers_get_mouse      (Picman          *picman);
+PicmanController * picman_controllers_get_wheel      (Picman          *picman);
+PicmanController * picman_controllers_get_keyboard   (Picman          *picman);
 
 
-#endif /* __GIMP_CONTROLLERS_H__ */
+#endif /* __PICMAN_CONTROLLERS_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpcanvastransformguides.c
- * Copyright (C) 2011 Michael Natterer <mitch@gimp.org>
+ * picmancanvastransformguides.c
+ * Copyright (C) 2011 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,16 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "display-types.h"
 
-#include "core/gimp-transform-utils.h"
-#include "core/gimp-utils.h"
+#include "core/picman-transform-utils.h"
+#include "core/picman-utils.h"
 
-#include "gimpcanvastransformguides.h"
-#include "gimpdisplayshell.h"
+#include "picmancanvastransformguides.h"
+#include "picmandisplayshell.h"
 
 
 #define SQRT5 2.236067977
@@ -51,131 +51,131 @@ enum
 };
 
 
-typedef struct _GimpCanvasTransformGuidesPrivate GimpCanvasTransformGuidesPrivate;
+typedef struct _PicmanCanvasTransformGuidesPrivate PicmanCanvasTransformGuidesPrivate;
 
-struct _GimpCanvasTransformGuidesPrivate
+struct _PicmanCanvasTransformGuidesPrivate
 {
-  GimpMatrix3    transform;
+  PicmanMatrix3    transform;
   gdouble        x1, y1;
   gdouble        x2, y2;
-  GimpGuidesType type;
+  PicmanGuidesType type;
   gint           n_guides;
 };
 
 #define GET_PRIVATE(transform) \
         G_TYPE_INSTANCE_GET_PRIVATE (transform, \
-                                     GIMP_TYPE_CANVAS_TRANSFORM_GUIDES, \
-                                     GimpCanvasTransformGuidesPrivate)
+                                     PICMAN_TYPE_CANVAS_TRANSFORM_GUIDES, \
+                                     PicmanCanvasTransformGuidesPrivate)
 
 
 /*  local function prototypes  */
 
-static void             gimp_canvas_transform_guides_set_property (GObject        *object,
+static void             picman_canvas_transform_guides_set_property (GObject        *object,
                                                                    guint           property_id,
                                                                    const GValue   *value,
                                                                    GParamSpec     *pspec);
-static void             gimp_canvas_transform_guides_get_property (GObject        *object,
+static void             picman_canvas_transform_guides_get_property (GObject        *object,
                                                                    guint           property_id,
                                                                    GValue         *value,
                                                                    GParamSpec     *pspec);
-static void             gimp_canvas_transform_guides_draw         (GimpCanvasItem *item,
+static void             picman_canvas_transform_guides_draw         (PicmanCanvasItem *item,
                                                                    cairo_t        *cr);
-static cairo_region_t * gimp_canvas_transform_guides_get_extents  (GimpCanvasItem *item);
+static cairo_region_t * picman_canvas_transform_guides_get_extents  (PicmanCanvasItem *item);
 
 
-G_DEFINE_TYPE (GimpCanvasTransformGuides, gimp_canvas_transform_guides,
-               GIMP_TYPE_CANVAS_ITEM)
+G_DEFINE_TYPE (PicmanCanvasTransformGuides, picman_canvas_transform_guides,
+               PICMAN_TYPE_CANVAS_ITEM)
 
-#define parent_class gimp_canvas_transform_guides_parent_class
+#define parent_class picman_canvas_transform_guides_parent_class
 
 
 static void
-gimp_canvas_transform_guides_class_init (GimpCanvasTransformGuidesClass *klass)
+picman_canvas_transform_guides_class_init (PicmanCanvasTransformGuidesClass *klass)
 {
   GObjectClass        *object_class = G_OBJECT_CLASS (klass);
-  GimpCanvasItemClass *item_class   = GIMP_CANVAS_ITEM_CLASS (klass);
+  PicmanCanvasItemClass *item_class   = PICMAN_CANVAS_ITEM_CLASS (klass);
 
-  object_class->set_property = gimp_canvas_transform_guides_set_property;
-  object_class->get_property = gimp_canvas_transform_guides_get_property;
+  object_class->set_property = picman_canvas_transform_guides_set_property;
+  object_class->get_property = picman_canvas_transform_guides_get_property;
 
-  item_class->draw           = gimp_canvas_transform_guides_draw;
-  item_class->get_extents    = gimp_canvas_transform_guides_get_extents;
+  item_class->draw           = picman_canvas_transform_guides_draw;
+  item_class->get_extents    = picman_canvas_transform_guides_get_extents;
 
   g_object_class_install_property (object_class, PROP_TRANSFORM,
-                                   gimp_param_spec_matrix3 ("transform",
+                                   picman_param_spec_matrix3 ("transform",
                                                             NULL, NULL,
                                                             NULL,
-                                                            GIMP_PARAM_READWRITE));
+                                                            PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_X1,
                                    g_param_spec_double ("x1",
                                                         NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE,
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_Y1,
                                    g_param_spec_double ("y1",
                                                         NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE,
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_X2,
                                    g_param_spec_double ("x2",
                                                         NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE,
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_Y2,
                                    g_param_spec_double ("y2",
                                                         NULL, NULL,
-                                                        -GIMP_MAX_IMAGE_SIZE,
-                                                        GIMP_MAX_IMAGE_SIZE,
+                                                        -PICMAN_MAX_IMAGE_SIZE,
+                                                        PICMAN_MAX_IMAGE_SIZE,
                                                         0.0,
-                                                        GIMP_PARAM_READWRITE));
+                                                        PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_TYPE,
                                    g_param_spec_enum ("type", NULL, NULL,
-                                                      GIMP_TYPE_GUIDES_TYPE,
-                                                      GIMP_GUIDES_NONE,
-                                                      GIMP_PARAM_READWRITE));
+                                                      PICMAN_TYPE_GUIDES_TYPE,
+                                                      PICMAN_GUIDES_NONE,
+                                                      PICMAN_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_N_GUIDES,
                                    g_param_spec_int ("n-guides", NULL, NULL,
                                                      1, 128, 4,
-                                                     GIMP_PARAM_READWRITE));
+                                                     PICMAN_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GimpCanvasTransformGuidesPrivate));
+  g_type_class_add_private (klass, sizeof (PicmanCanvasTransformGuidesPrivate));
 }
 
 static void
-gimp_canvas_transform_guides_init (GimpCanvasTransformGuides *transform)
+picman_canvas_transform_guides_init (PicmanCanvasTransformGuides *transform)
 {
 }
 
 static void
-gimp_canvas_transform_guides_set_property (GObject      *object,
+picman_canvas_transform_guides_set_property (GObject      *object,
                                            guint         property_id,
                                            const GValue *value,
                                            GParamSpec   *pspec)
 {
-  GimpCanvasTransformGuidesPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasTransformGuidesPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
     case PROP_TRANSFORM:
       {
-        GimpMatrix3 *transform = g_value_get_boxed (value);
+        PicmanMatrix3 *transform = g_value_get_boxed (value);
 
         if (transform)
           private->transform = *transform;
         else
-          gimp_matrix3_identity (&private->transform);
+          picman_matrix3_identity (&private->transform);
       }
       break;
 
@@ -210,12 +210,12 @@ gimp_canvas_transform_guides_set_property (GObject      *object,
 }
 
 static void
-gimp_canvas_transform_guides_get_property (GObject    *object,
+picman_canvas_transform_guides_get_property (GObject    *object,
                                            guint       property_id,
                                            GValue     *value,
                                            GParamSpec *pspec)
 {
-  GimpCanvasTransformGuidesPrivate *private = GET_PRIVATE (object);
+  PicmanCanvasTransformGuidesPrivate *private = GET_PRIVATE (object);
 
   switch (property_id)
     {
@@ -254,7 +254,7 @@ gimp_canvas_transform_guides_get_property (GObject    *object,
 }
 
 static gboolean
-gimp_canvas_transform_guides_transform (GimpCanvasItem *item,
+picman_canvas_transform_guides_transform (PicmanCanvasItem *item,
                                         gdouble        *tx1,
                                         gdouble        *ty1,
                                         gdouble        *tx2,
@@ -264,22 +264,22 @@ gimp_canvas_transform_guides_transform (GimpCanvasItem *item,
                                         gdouble        *tx4,
                                         gdouble        *ty4)
 {
-  GimpCanvasTransformGuidesPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasTransformGuidesPrivate *private = GET_PRIVATE (item);
 
-  gimp_matrix3_transform_point (&private->transform,
+  picman_matrix3_transform_point (&private->transform,
                                 private->x1, private->y1,
                                 tx1, ty1);
-  gimp_matrix3_transform_point (&private->transform,
+  picman_matrix3_transform_point (&private->transform,
                                 private->x2, private->y1,
                                 tx2, ty2);
-  gimp_matrix3_transform_point (&private->transform,
+  picman_matrix3_transform_point (&private->transform,
                                 private->x1, private->y2,
                                 tx3, ty3);
-  gimp_matrix3_transform_point (&private->transform,
+  picman_matrix3_transform_point (&private->transform,
                                 private->x2, private->y2,
                                 tx4, ty4);
 
-  return gimp_transform_polygon_is_convex (*tx1, *ty1,
+  return picman_transform_polygon_is_convex (*tx1, *ty1,
                                            *tx2, *ty2,
                                            *tx3, *ty3,
                                            *tx4, *ty4);
@@ -287,18 +287,18 @@ gimp_canvas_transform_guides_transform (GimpCanvasItem *item,
 
 static void
 draw_line (cairo_t        *cr,
-           GimpCanvasItem *item,
-           GimpMatrix3    *transform,
+           PicmanCanvasItem *item,
+           PicmanMatrix3    *transform,
            gdouble         x1,
            gdouble         y1,
            gdouble         x2,
            gdouble         y2)
 {
-  gimp_matrix3_transform_point (transform, x1, y1, &x1, &y1);
-  gimp_matrix3_transform_point (transform, x2, y2, &x2, &y2);
+  picman_matrix3_transform_point (transform, x1, y1, &x1, &y1);
+  picman_matrix3_transform_point (transform, x2, y2, &x2, &y2);
 
-  gimp_canvas_item_transform_xy_f (item, x1, y1, &x1, &y1);
-  gimp_canvas_item_transform_xy_f (item, x2, y2, &x2, &y2);
+  picman_canvas_item_transform_xy_f (item, x1, y1, &x1, &y1);
+  picman_canvas_item_transform_xy_f (item, x2, y2, &x2, &y2);
 
   x1 = floor (x1) + 0.5;
   y1 = floor (y1) + 0.5;
@@ -311,8 +311,8 @@ draw_line (cairo_t        *cr,
 
 static void
 draw_hline (cairo_t        *cr,
-            GimpCanvasItem *item,
-            GimpMatrix3    *transform,
+            PicmanCanvasItem *item,
+            PicmanMatrix3    *transform,
             gdouble         x1,
             gdouble         x2,
             gdouble         y)
@@ -322,8 +322,8 @@ draw_hline (cairo_t        *cr,
 
 static void
 draw_vline (cairo_t        *cr,
-            GimpCanvasItem *item,
-            GimpMatrix3    *transform,
+            PicmanCanvasItem *item,
+            PicmanMatrix3    *transform,
             gdouble         y1,
             gdouble         y2,
             gdouble         x)
@@ -332,10 +332,10 @@ draw_vline (cairo_t        *cr,
 }
 
 static void
-gimp_canvas_transform_guides_draw (GimpCanvasItem *item,
+picman_canvas_transform_guides_draw (PicmanCanvasItem *item,
                                    cairo_t        *cr)
 {
-  GimpCanvasTransformGuidesPrivate *private = GET_PRIVATE (item);
+  PicmanCanvasTransformGuidesPrivate *private = GET_PRIVATE (item);
   gdouble                           x1, y1;
   gdouble                           x2, y2;
   gdouble                           x3, y3;
@@ -343,16 +343,16 @@ gimp_canvas_transform_guides_draw (GimpCanvasItem *item,
   gboolean                          convex;
   gint                              i;
 
-  convex = gimp_canvas_transform_guides_transform (item,
+  convex = picman_canvas_transform_guides_transform (item,
                                                    &x1, &y1,
                                                    &x2, &y2,
                                                    &x3, &y3,
                                                    &x4, &y4);
 
-  gimp_canvas_item_transform_xy_f (item, x1, y1, &x1, &y1);
-  gimp_canvas_item_transform_xy_f (item, x2, y2, &x2, &y2);
-  gimp_canvas_item_transform_xy_f (item, x3, y3, &x3, &y3);
-  gimp_canvas_item_transform_xy_f (item, x4, y4, &x4, &y4);
+  picman_canvas_item_transform_xy_f (item, x1, y1, &x1, &y1);
+  picman_canvas_item_transform_xy_f (item, x2, y2, &x2, &y2);
+  picman_canvas_item_transform_xy_f (item, x3, y3, &x3, &y3);
+  picman_canvas_item_transform_xy_f (item, x4, y4, &x4, &y4);
 
   x1 = floor (x1) + 0.5;
   y1 = floor (y1) + 0.5;
@@ -371,23 +371,23 @@ gimp_canvas_transform_guides_draw (GimpCanvasItem *item,
 
   if (! convex)
     {
-      _gimp_canvas_item_stroke (item, cr);
+      _picman_canvas_item_stroke (item, cr);
       return;
     }
 
   switch (private->type)
     {
-    case GIMP_GUIDES_NONE:
+    case PICMAN_GUIDES_NONE:
       break;
 
-    case GIMP_GUIDES_CENTER_LINES:
+    case PICMAN_GUIDES_CENTER_LINES:
       draw_hline (cr, item, &private->transform,
                   private->x1, private->x2, (private->y1 + private->y2) / 2);
       draw_vline (cr, item, &private->transform,
                   private->y1, private->y2, (private->x1 + private->x2) / 2);
       break;
 
-    case GIMP_GUIDES_THIRDS:
+    case PICMAN_GUIDES_THIRDS:
       draw_hline (cr, item, &private->transform,
                   private->x1, private->x2, (2 * private->y1 + private->y2) / 3);
       draw_hline (cr, item, &private->transform,
@@ -399,7 +399,7 @@ gimp_canvas_transform_guides_draw (GimpCanvasItem *item,
                   private->y1, private->y2, (private->x1 + 2 * private->x2) / 3);
       break;
 
-    case GIMP_GUIDES_FIFTHS:
+    case PICMAN_GUIDES_FIFTHS:
       for (i = 0; i < 5; i++)
         {
           draw_hline (cr, item, &private->transform,
@@ -411,7 +411,7 @@ gimp_canvas_transform_guides_draw (GimpCanvasItem *item,
         }
       break;
 
-    case GIMP_GUIDES_GOLDEN:
+    case PICMAN_GUIDES_GOLDEN:
       draw_hline (cr, item, &private->transform,
                   private->x1, private->x2,
                   (2 * private->y1 + (1 + SQRT5) * private->y2) / (3 + SQRT5));
@@ -430,7 +430,7 @@ gimp_canvas_transform_guides_draw (GimpCanvasItem *item,
     /* This code implements the method of diagonals discovered by
      * Edwin Westhoff - see http://www.diagonalmethod.info/
      */
-    case GIMP_GUIDES_DIAGONALS:
+    case PICMAN_GUIDES_DIAGONALS:
       {
         /* the side of the largest square that can be
          * fitted in whole into the rectangle (x1, y1), (x2, y2)
@@ -464,8 +464,8 @@ gimp_canvas_transform_guides_draw (GimpCanvasItem *item,
       }
       break;
 
-    case GIMP_GUIDES_N_LINES:
-    case GIMP_GUIDES_SPACING:
+    case PICMAN_GUIDES_N_LINES:
+    case PICMAN_GUIDES_SPACING:
       {
         gint width, height;
         gint ngx, ngy;
@@ -473,7 +473,7 @@ gimp_canvas_transform_guides_draw (GimpCanvasItem *item,
         width  = MAX (1, private->x2 - private->x1);
         height = MAX (1, private->y2 - private->y1);
 
-        if (private->type == GIMP_GUIDES_N_LINES)
+        if (private->type == PICMAN_GUIDES_N_LINES)
           {
             if (width <= height)
               {
@@ -486,7 +486,7 @@ gimp_canvas_transform_guides_draw (GimpCanvasItem *item,
                 ngx = ngy * MAX (1, width / height);
               }
           }
-        else /* GIMP_GUIDES_SPACING */
+        else /* PICMAN_GUIDES_SPACING */
           {
             gint grid_size = MAX (2, private->n_guides);
 
@@ -516,11 +516,11 @@ gimp_canvas_transform_guides_draw (GimpCanvasItem *item,
       }
     }
 
-  _gimp_canvas_item_stroke (item, cr);
+  _picman_canvas_item_stroke (item, cr);
 }
 
 static cairo_region_t *
-gimp_canvas_transform_guides_get_extents (GimpCanvasItem *item)
+picman_canvas_transform_guides_get_extents (PicmanCanvasItem *item)
 {
   gdouble               x1, y1;
   gdouble               x2, y2;
@@ -528,16 +528,16 @@ gimp_canvas_transform_guides_get_extents (GimpCanvasItem *item)
   gdouble               x4, y4;
   cairo_rectangle_int_t extents;
 
-  gimp_canvas_transform_guides_transform (item,
+  picman_canvas_transform_guides_transform (item,
                                           &x1, &y1,
                                           &x2, &y2,
                                           &x3, &y3,
                                           &x4, &y4);
 
-  gimp_canvas_item_transform_xy_f (item, x1, y1, &x1, &y1);
-  gimp_canvas_item_transform_xy_f (item, x2, y2, &x2, &y2);
-  gimp_canvas_item_transform_xy_f (item, x3, y3, &x3, &y3);
-  gimp_canvas_item_transform_xy_f (item, x4, y4, &x4, &y4);
+  picman_canvas_item_transform_xy_f (item, x1, y1, &x1, &y1);
+  picman_canvas_item_transform_xy_f (item, x2, y2, &x2, &y2);
+  picman_canvas_item_transform_xy_f (item, x3, y3, &x3, &y3);
+  picman_canvas_item_transform_xy_f (item, x4, y4, &x4, &y4);
 
   extents.x      = (gint) floor (MIN4 (x1, x2, x3, x4) - 1.5);
   extents.y      = (gint) floor (MIN4 (y1, y2, y3, y4) - 1.5);
@@ -550,19 +550,19 @@ gimp_canvas_transform_guides_get_extents (GimpCanvasItem *item)
   return cairo_region_create_rectangle (&extents);
 }
 
-GimpCanvasItem *
-gimp_canvas_transform_guides_new (GimpDisplayShell  *shell,
-                                  const GimpMatrix3 *transform,
+PicmanCanvasItem *
+picman_canvas_transform_guides_new (PicmanDisplayShell  *shell,
+                                  const PicmanMatrix3 *transform,
                                   gdouble            x1,
                                   gdouble            y1,
                                   gdouble            x2,
                                   gdouble            y2,
-                                  GimpGuidesType     type,
+                                  PicmanGuidesType     type,
                                   gint               n_guides)
 {
-  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
+  g_return_val_if_fail (PICMAN_IS_DISPLAY_SHELL (shell), NULL);
 
-  return g_object_new (GIMP_TYPE_CANVAS_TRANSFORM_GUIDES,
+  return g_object_new (PICMAN_TYPE_CANVAS_TRANSFORM_GUIDES,
                        "shell",     shell,
                        "transform", transform,
                        "x1",        x1,
@@ -575,14 +575,14 @@ gimp_canvas_transform_guides_new (GimpDisplayShell  *shell,
 }
 
 void
-gimp_canvas_transform_guides_set (GimpCanvasItem    *guides,
-                                  const GimpMatrix3 *transform,
-                                  GimpGuidesType     type,
+picman_canvas_transform_guides_set (PicmanCanvasItem    *guides,
+                                  const PicmanMatrix3 *transform,
+                                  PicmanGuidesType     type,
                                   gint               n_guides)
 {
-  g_return_if_fail (GIMP_IS_CANVAS_TRANSFORM_GUIDES (guides));
+  g_return_if_fail (PICMAN_IS_CANVAS_TRANSFORM_GUIDES (guides));
 
-  gimp_canvas_item_begin_change (guides);
+  picman_canvas_item_begin_change (guides);
 
   g_object_set (guides,
                 "transform", transform,
@@ -590,5 +590,5 @@ gimp_canvas_transform_guides_set (GimpCanvasItem    *guides,
                 "n-guides",  n_guides,
                 NULL);
 
-  gimp_canvas_item_end_change (guides);
+  picman_canvas_item_end_change (guides);
 }

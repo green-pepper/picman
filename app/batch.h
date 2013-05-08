@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,12 +18,12 @@
 #ifndef __BATCH_H__
 #define __BATCH_H__
 
-#ifndef GIMP_APP_GLUE_COMPILATION
+#ifndef PICMAN_APP_GLUE_COMPILATION
 #error You must not #include "batch.h" from an app/ subdir
 #endif
 
 
-void   batch_run (Gimp         *gimp,
+void   batch_run (Picman         *picman,
                   const gchar  *batch_interpreter,
                   const gchar **batch_commands);
 

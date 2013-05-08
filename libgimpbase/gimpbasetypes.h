@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,15 +16,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_BASE_TYPES_H__
-#define __GIMP_BASE_TYPES_H__
+#ifndef __PICMAN_BASE_TYPES_H__
+#define __PICMAN_BASE_TYPES_H__
 
 
-#include <libgimpcolor/gimpcolortypes.h>
-#include <libgimpmath/gimpmathtypes.h>
+#include <libpicmancolor/picmancolortypes.h>
+#include <libpicmanmath/picmanmathtypes.h>
 
-#include <libgimpbase/gimpbaseenums.h>
-#include <libgimpbase/gimpparam.h>
+#include <libpicmanbase/picmanbaseenums.h>
+#include <libpicmanbase/picmanparam.h>
 
 
 G_BEGIN_DECLS
@@ -34,38 +34,38 @@ G_BEGIN_DECLS
 
 /* XXX FIXME move these to a separate file */
 
-#ifdef GIMP_DISABLE_DEPRECATION_WARNINGS
-#define GIMP_DEPRECATED
-#define GIMP_DEPRECATED_FOR(f)
-#define GIMP_UNAVAILABLE(maj,min)
+#ifdef PICMAN_DISABLE_DEPRECATION_WARNINGS
+#define PICMAN_DEPRECATED
+#define PICMAN_DEPRECATED_FOR(f)
+#define PICMAN_UNAVAILABLE(maj,min)
 #else
-#define GIMP_DEPRECATED G_DEPRECATED
-#define GIMP_DEPRECATED_FOR(f) G_DEPRECATED_FOR(f)
-#define GIMP_UNAVAILABLE(maj,min) G_UNAVAILABLE(maj,min)
+#define PICMAN_DEPRECATED G_DEPRECATED
+#define PICMAN_DEPRECATED_FOR(f) G_DEPRECATED_FOR(f)
+#define PICMAN_UNAVAILABLE(maj,min) G_UNAVAILABLE(maj,min)
 #endif
 
 
-typedef struct _GimpParasite     GimpParasite;
-typedef struct _GimpDatafileData GimpDatafileData;
-typedef struct _GimpEnumDesc     GimpEnumDesc;
-typedef struct _GimpFlagsDesc    GimpFlagsDesc;
-typedef struct _GimpValueArray   GimpValueArray;
+typedef struct _PicmanParasite     PicmanParasite;
+typedef struct _PicmanDatafileData PicmanDatafileData;
+typedef struct _PicmanEnumDesc     PicmanEnumDesc;
+typedef struct _PicmanFlagsDesc    PicmanFlagsDesc;
+typedef struct _PicmanValueArray   PicmanValueArray;
 
 
-typedef void (* GimpDatafileLoaderFunc) (const GimpDatafileData *file_data,
+typedef void (* PicmanDatafileLoaderFunc) (const PicmanDatafileData *file_data,
                                          gpointer                user_data);
 
 
 /**
- * GimpEnumDesc:
+ * PicmanEnumDesc:
  * @value:      An enum value.
  * @value_desc: The value's description.
  * @value_help: The value's help text.
  *
  * This structure is used to register translatable descriptions and
- * help texts for enum values. See gimp_enum_set_value_descriptions().
+ * help texts for enum values. See picman_enum_set_value_descriptions().
  **/
-struct _GimpEnumDesc
+struct _PicmanEnumDesc
 {
   gint         value;
   const gchar *value_desc;
@@ -73,15 +73,15 @@ struct _GimpEnumDesc
 };
 
 /**
- * GimpFlagsDesc:
+ * PicmanFlagsDesc:
  * @value:      A flag value.
  * @value_desc: The value's description.
  * @value_help: The value's help text.
  *
  * This structure is used to register translatable descriptions and
- * help texts for flag values. See gimp_flags_set_value_descriptions().
+ * help texts for flag values. See picman_flags_set_value_descriptions().
  **/
-struct _GimpFlagsDesc
+struct _PicmanFlagsDesc
 {
   guint        value;
   const gchar *value_desc;
@@ -89,23 +89,23 @@ struct _GimpFlagsDesc
 };
 
 
-void                  gimp_type_set_translation_domain  (GType                type,
+void                  picman_type_set_translation_domain  (GType                type,
                                                          const gchar         *domain);
-const gchar         * gimp_type_get_translation_domain  (GType                type);
+const gchar         * picman_type_get_translation_domain  (GType                type);
 
-void                  gimp_type_set_translation_context (GType                type,
+void                  picman_type_set_translation_context (GType                type,
                                                          const gchar         *context);
-const gchar         * gimp_type_get_translation_context (GType                type);
+const gchar         * picman_type_get_translation_context (GType                type);
 
-void                  gimp_enum_set_value_descriptions  (GType                enum_type,
-                                                         const GimpEnumDesc  *descriptions);
-const GimpEnumDesc  * gimp_enum_get_value_descriptions  (GType                enum_type);
+void                  picman_enum_set_value_descriptions  (GType                enum_type,
+                                                         const PicmanEnumDesc  *descriptions);
+const PicmanEnumDesc  * picman_enum_get_value_descriptions  (GType                enum_type);
 
-void                  gimp_flags_set_value_descriptions (GType                flags_type,
-                                                         const GimpFlagsDesc *descriptions);
-const GimpFlagsDesc * gimp_flags_get_value_descriptions (GType                flags_type);
+void                  picman_flags_set_value_descriptions (GType                flags_type,
+                                                         const PicmanFlagsDesc *descriptions);
+const PicmanFlagsDesc * picman_flags_get_value_descriptions (GType                flags_type);
 
 
 G_END_DECLS
 
-#endif  /* __GIMP_BASE_TYPES_H__ */
+#endif  /* __PICMAN_BASE_TYPES_H__ */

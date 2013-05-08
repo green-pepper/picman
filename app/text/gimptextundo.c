@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,19 +19,19 @@
 
 #include <gegl.h>
 
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "text-types.h"
 
-#include "gegl/gimp-babl.h"
+#include "gegl/picman-babl.h"
 
-#include "core/gimpitem.h"
-#include "core/gimpitemundo.h"
-#include "core/gimp-utils.h"
+#include "core/picmanitem.h"
+#include "core/picmanitemundo.h"
+#include "core/picman-utils.h"
 
-#include "gimptext.h"
-#include "gimptextlayer.h"
-#include "gimptextundo.h"
+#include "picmantext.h"
+#include "picmantextlayer.h"
+#include "picmantextundo.h"
 
 
 enum
@@ -41,77 +41,77 @@ enum
 };
 
 
-static void     gimp_text_undo_constructed  (GObject             *object);
-static void     gimp_text_undo_set_property (GObject             *object,
+static void     picman_text_undo_constructed  (GObject             *object);
+static void     picman_text_undo_set_property (GObject             *object,
                                              guint                property_id,
                                              const GValue        *value,
                                              GParamSpec          *pspec);
-static void     gimp_text_undo_get_property (GObject             *object,
+static void     picman_text_undo_get_property (GObject             *object,
                                              guint                property_id,
                                              GValue              *value,
                                              GParamSpec          *pspec);
 
-static gint64   gimp_text_undo_get_memsize  (GimpObject          *object,
+static gint64   picman_text_undo_get_memsize  (PicmanObject          *object,
                                              gint64              *gui_size);
 
-static void     gimp_text_undo_pop          (GimpUndo            *undo,
-                                             GimpUndoMode         undo_mode,
-                                             GimpUndoAccumulator *accum);
-static void     gimp_text_undo_free         (GimpUndo            *undo,
-                                             GimpUndoMode         undo_mode);
+static void     picman_text_undo_pop          (PicmanUndo            *undo,
+                                             PicmanUndoMode         undo_mode,
+                                             PicmanUndoAccumulator *accum);
+static void     picman_text_undo_free         (PicmanUndo            *undo,
+                                             PicmanUndoMode         undo_mode);
 
 
-G_DEFINE_TYPE (GimpTextUndo, gimp_text_undo, GIMP_TYPE_ITEM_UNDO)
+G_DEFINE_TYPE (PicmanTextUndo, picman_text_undo, PICMAN_TYPE_ITEM_UNDO)
 
-#define parent_class gimp_text_undo_parent_class
+#define parent_class picman_text_undo_parent_class
 
 
 static void
-gimp_text_undo_class_init (GimpTextUndoClass *klass)
+picman_text_undo_class_init (PicmanTextUndoClass *klass)
 {
   GObjectClass    *object_class      = G_OBJECT_CLASS (klass);
-  GimpObjectClass *gimp_object_class = GIMP_OBJECT_CLASS (klass);
-  GimpUndoClass   *undo_class        = GIMP_UNDO_CLASS (klass);
+  PicmanObjectClass *picman_object_class = PICMAN_OBJECT_CLASS (klass);
+  PicmanUndoClass   *undo_class        = PICMAN_UNDO_CLASS (klass);
 
-  object_class->constructed      = gimp_text_undo_constructed;
-  object_class->set_property     = gimp_text_undo_set_property;
-  object_class->get_property     = gimp_text_undo_get_property;
+  object_class->constructed      = picman_text_undo_constructed;
+  object_class->set_property     = picman_text_undo_set_property;
+  object_class->get_property     = picman_text_undo_get_property;
 
-  gimp_object_class->get_memsize = gimp_text_undo_get_memsize;
+  picman_object_class->get_memsize = picman_text_undo_get_memsize;
 
-  undo_class->pop                = gimp_text_undo_pop;
-  undo_class->free               = gimp_text_undo_free;
+  undo_class->pop                = picman_text_undo_pop;
+  undo_class->free               = picman_text_undo_free;
 
   g_object_class_install_property (object_class, PROP_PARAM,
                                    g_param_spec_param ("param", NULL, NULL,
                                                        G_TYPE_PARAM,
-                                                       GIMP_PARAM_READWRITE |
+                                                       PICMAN_PARAM_READWRITE |
                                                        G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
-gimp_text_undo_init (GimpTextUndo *undo)
+picman_text_undo_init (PicmanTextUndo *undo)
 {
 }
 
 static void
-gimp_text_undo_constructed (GObject *object)
+picman_text_undo_constructed (GObject *object)
 {
-  GimpTextUndo  *text_undo = GIMP_TEXT_UNDO (object);
-  GimpTextLayer *layer;
+  PicmanTextUndo  *text_undo = PICMAN_TEXT_UNDO (object);
+  PicmanTextLayer *layer;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
-  g_assert (GIMP_IS_TEXT_LAYER (GIMP_ITEM_UNDO (text_undo)->item));
+  g_assert (PICMAN_IS_TEXT_LAYER (PICMAN_ITEM_UNDO (text_undo)->item));
 
-  layer = GIMP_TEXT_LAYER (GIMP_ITEM_UNDO (text_undo)->item);
+  layer = PICMAN_TEXT_LAYER (PICMAN_ITEM_UNDO (text_undo)->item);
 
-  switch (GIMP_UNDO (object)->undo_type)
+  switch (PICMAN_UNDO (object)->undo_type)
     {
-    case GIMP_UNDO_TEXT_LAYER:
+    case PICMAN_UNDO_TEXT_LAYER:
       if (text_undo->pspec)
         {
-          g_assert (text_undo->pspec->owner_type == GIMP_TYPE_TEXT);
+          g_assert (text_undo->pspec->owner_type == PICMAN_TYPE_TEXT);
 
           text_undo->value = g_slice_new0 (GValue);
 
@@ -121,16 +121,16 @@ gimp_text_undo_constructed (GObject *object)
         }
       else if (layer->text)
         {
-          text_undo->text = gimp_config_duplicate (GIMP_CONFIG (layer->text));
+          text_undo->text = picman_config_duplicate (PICMAN_CONFIG (layer->text));
         }
       break;
 
-    case GIMP_UNDO_TEXT_LAYER_MODIFIED:
+    case PICMAN_UNDO_TEXT_LAYER_MODIFIED:
       text_undo->modified = layer->modified;
       break;
 
-    case GIMP_UNDO_TEXT_LAYER_CONVERT:
-      text_undo->format = gimp_drawable_get_format (GIMP_DRAWABLE (layer));
+    case PICMAN_UNDO_TEXT_LAYER_CONVERT:
+      text_undo->format = picman_drawable_get_format (PICMAN_DRAWABLE (layer));
       break;
 
     default:
@@ -139,12 +139,12 @@ gimp_text_undo_constructed (GObject *object)
 }
 
 static void
-gimp_text_undo_set_property (GObject      *object,
+picman_text_undo_set_property (GObject      *object,
                              guint         property_id,
                              const GValue *value,
                              GParamSpec   *pspec)
 {
-  GimpTextUndo *text_undo = GIMP_TEXT_UNDO (object);
+  PicmanTextUndo *text_undo = PICMAN_TEXT_UNDO (object);
 
   switch (property_id)
     {
@@ -159,12 +159,12 @@ gimp_text_undo_set_property (GObject      *object,
 }
 
 static void
-gimp_text_undo_get_property (GObject    *object,
+picman_text_undo_get_property (GObject    *object,
                              guint       property_id,
                              GValue     *value,
                              GParamSpec *pspec)
 {
-  GimpTextUndo *text_undo = GIMP_TEXT_UNDO (object);
+  PicmanTextUndo *text_undo = PICMAN_TEXT_UNDO (object);
 
   switch (property_id)
     {
@@ -179,32 +179,32 @@ gimp_text_undo_get_property (GObject    *object,
 }
 
 static gint64
-gimp_text_undo_get_memsize (GimpObject *object,
+picman_text_undo_get_memsize (PicmanObject *object,
                             gint64     *gui_size)
 {
-  GimpTextUndo *undo    = GIMP_TEXT_UNDO (object);
+  PicmanTextUndo *undo    = PICMAN_TEXT_UNDO (object);
   gint64        memsize = 0;
 
-  memsize += gimp_g_value_get_memsize (undo->value);
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (undo->text), NULL);
+  memsize += picman_g_value_get_memsize (undo->value);
+  memsize += picman_object_get_memsize (PICMAN_OBJECT (undo->text), NULL);
 
-  return memsize + GIMP_OBJECT_CLASS (parent_class)->get_memsize (object,
+  return memsize + PICMAN_OBJECT_CLASS (parent_class)->get_memsize (object,
                                                                   gui_size);
 }
 
 static void
-gimp_text_undo_pop (GimpUndo            *undo,
-                    GimpUndoMode         undo_mode,
-                    GimpUndoAccumulator *accum)
+picman_text_undo_pop (PicmanUndo            *undo,
+                    PicmanUndoMode         undo_mode,
+                    PicmanUndoAccumulator *accum)
 {
-  GimpTextUndo  *text_undo = GIMP_TEXT_UNDO (undo);
-  GimpTextLayer *layer     = GIMP_TEXT_LAYER (GIMP_ITEM_UNDO (undo)->item);
+  PicmanTextUndo  *text_undo = PICMAN_TEXT_UNDO (undo);
+  PicmanTextLayer *layer     = PICMAN_TEXT_LAYER (PICMAN_ITEM_UNDO (undo)->item);
 
-  GIMP_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
+  PICMAN_UNDO_CLASS (parent_class)->pop (undo, undo_mode, accum);
 
   switch (undo->undo_type)
     {
-    case GIMP_UNDO_TEXT_LAYER:
+    case PICMAN_UNDO_TEXT_LAYER:
       if (text_undo->pspec)
         {
           GValue *value;
@@ -227,16 +227,16 @@ gimp_text_undo_pop (GimpUndo            *undo,
         }
       else
         {
-          GimpText *text;
+          PicmanText *text;
 
           text = (layer->text ?
-                  gimp_config_duplicate (GIMP_CONFIG (layer->text)) : NULL);
+                  picman_config_duplicate (PICMAN_CONFIG (layer->text)) : NULL);
 
           if (layer->text && text_undo->text)
-            gimp_config_sync (G_OBJECT (text_undo->text),
+            picman_config_sync (G_OBJECT (text_undo->text),
                               G_OBJECT (layer->text), 0);
           else
-            gimp_text_layer_set_text (layer, text_undo->text);
+            picman_text_layer_set_text (layer, text_undo->text);
 
           if (text_undo->text)
             g_object_unref (text_undo->text);
@@ -245,7 +245,7 @@ gimp_text_undo_pop (GimpUndo            *undo,
         }
       break;
 
-    case GIMP_UNDO_TEXT_LAYER_MODIFIED:
+    case PICMAN_UNDO_TEXT_LAYER_MODIFIED:
       {
         gboolean modified;
 
@@ -259,19 +259,19 @@ gimp_text_undo_pop (GimpUndo            *undo,
         g_object_set (layer, "modified", text_undo->modified, NULL);
         text_undo->modified = modified;
 
-        gimp_viewable_invalidate_preview (GIMP_VIEWABLE (layer));
+        picman_viewable_invalidate_preview (PICMAN_VIEWABLE (layer));
       }
       break;
 
-    case GIMP_UNDO_TEXT_LAYER_CONVERT:
+    case PICMAN_UNDO_TEXT_LAYER_CONVERT:
       {
         const Babl *format;
 
-        format = gimp_drawable_get_format (GIMP_DRAWABLE (layer));
-        gimp_drawable_convert_type (GIMP_DRAWABLE (layer),
-                                    gimp_item_get_image (GIMP_ITEM (layer)),
-                                    gimp_babl_format_get_base_type (text_undo->format),
-                                    gimp_babl_format_get_precision (text_undo->format),
+        format = picman_drawable_get_format (PICMAN_DRAWABLE (layer));
+        picman_drawable_convert_type (PICMAN_DRAWABLE (layer),
+                                    picman_item_get_image (PICMAN_ITEM (layer)),
+                                    picman_babl_format_get_base_type (text_undo->format),
+                                    picman_babl_format_get_precision (text_undo->format),
                                     0, 0, FALSE);
         text_undo->format = format;
       }
@@ -283,10 +283,10 @@ gimp_text_undo_pop (GimpUndo            *undo,
 }
 
 static void
-gimp_text_undo_free (GimpUndo     *undo,
-                     GimpUndoMode  undo_mode)
+picman_text_undo_free (PicmanUndo     *undo,
+                     PicmanUndoMode  undo_mode)
 {
-  GimpTextUndo *text_undo = GIMP_TEXT_UNDO (undo);
+  PicmanTextUndo *text_undo = PICMAN_TEXT_UNDO (undo);
 
   if (text_undo->text)
     {
@@ -303,5 +303,5 @@ gimp_text_undo_free (GimpUndo     *undo,
       text_undo->pspec = NULL;
     }
 
-  GIMP_UNDO_CLASS (parent_class)->free (undo, undo_mode);
+  PICMAN_UNDO_CLASS (parent_class)->free (undo, undo_mode);
 }

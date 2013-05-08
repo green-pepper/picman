@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,41 +15,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FLIP_TOOL_H__
-#define __GIMP_FLIP_TOOL_H__
+#ifndef __PICMAN_FLIP_TOOL_H__
+#define __PICMAN_FLIP_TOOL_H__
 
 
-#include "gimptransformtool.h"
+#include "picmantransformtool.h"
 
 
-#define GIMP_TYPE_FLIP_TOOL            (gimp_flip_tool_get_type ())
-#define GIMP_FLIP_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_FLIP_TOOL, GimpFlipTool))
-#define GIMP_FLIP_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_FLIP_TOOL, GimpFlipToolClass))
-#define GIMP_IS_FLIP_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_FLIP_TOOL))
-#define GIMP_IS_FLIP_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_FLIP_TOOL))
-#define GIMP_FLIP_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_FLIP_TOOL, GimpFlipToolClass))
+#define PICMAN_TYPE_FLIP_TOOL            (picman_flip_tool_get_type ())
+#define PICMAN_FLIP_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_FLIP_TOOL, PicmanFlipTool))
+#define PICMAN_FLIP_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_FLIP_TOOL, PicmanFlipToolClass))
+#define PICMAN_IS_FLIP_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_FLIP_TOOL))
+#define PICMAN_IS_FLIP_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_FLIP_TOOL))
+#define PICMAN_FLIP_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_FLIP_TOOL, PicmanFlipToolClass))
 
-#define GIMP_FLIP_TOOL_GET_OPTIONS(t)  (GIMP_FLIP_OPTIONS (gimp_tool_get_options (GIMP_TOOL (t))))
+#define PICMAN_FLIP_TOOL_GET_OPTIONS(t)  (PICMAN_FLIP_OPTIONS (picman_tool_get_options (PICMAN_TOOL (t))))
 
 
-typedef struct _GimpFlipTool      GimpFlipTool;
-typedef struct _GimpFlipToolClass GimpFlipToolClass;
+typedef struct _PicmanFlipTool      PicmanFlipTool;
+typedef struct _PicmanFlipToolClass PicmanFlipToolClass;
 
-struct _GimpFlipTool
+struct _PicmanFlipTool
 {
-  GimpTransformTool  parent_instance;
+  PicmanTransformTool  parent_instance;
 };
 
-struct _GimpFlipToolClass
+struct _PicmanFlipToolClass
 {
-  GimpTransformToolClass  parent_class;
+  PicmanTransformToolClass  parent_class;
 };
 
 
-void    gimp_flip_tool_register (GimpToolRegisterCallback  callback,
+void    picman_flip_tool_register (PicmanToolRegisterCallback  callback,
                                  gpointer                  data);
 
-GType   gimp_flip_tool_get_type (void) G_GNUC_CONST;
+GType   picman_flip_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_FLIP_TOOL_H__  */
+#endif  /*  __PICMAN_FLIP_TOOL_H__  */

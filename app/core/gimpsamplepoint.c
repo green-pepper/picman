@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,28 +21,28 @@
 
 #include "core-types.h"
 
-#include "gimpsamplepoint.h"
+#include "picmansamplepoint.h"
 
 
 GType
-gimp_sample_point_get_type (void)
+picman_sample_point_get_type (void)
 {
   static GType type = 0;
 
   if (! type)
-    type = g_boxed_type_register_static ("GimpSamplePoint",
-                                         (GBoxedCopyFunc) gimp_sample_point_ref,
-                                         (GBoxedFreeFunc) gimp_sample_point_unref);
+    type = g_boxed_type_register_static ("PicmanSamplePoint",
+                                         (GBoxedCopyFunc) picman_sample_point_ref,
+                                         (GBoxedFreeFunc) picman_sample_point_unref);
 
   return type;
 }
 
-GimpSamplePoint *
-gimp_sample_point_new (guint32 sample_point_ID)
+PicmanSamplePoint *
+picman_sample_point_new (guint32 sample_point_ID)
 {
-  GimpSamplePoint *sample_point;
+  PicmanSamplePoint *sample_point;
 
-  sample_point = g_slice_new0 (GimpSamplePoint);
+  sample_point = g_slice_new0 (PicmanSamplePoint);
 
   sample_point->ref_count       = 1;
   sample_point->sample_point_ID = sample_point_ID;
@@ -52,8 +52,8 @@ gimp_sample_point_new (guint32 sample_point_ID)
   return sample_point;
 }
 
-GimpSamplePoint *
-gimp_sample_point_ref (GimpSamplePoint *sample_point)
+PicmanSamplePoint *
+picman_sample_point_ref (PicmanSamplePoint *sample_point)
 {
   g_return_val_if_fail (sample_point != NULL, NULL);
 
@@ -63,12 +63,12 @@ gimp_sample_point_ref (GimpSamplePoint *sample_point)
 }
 
 void
-gimp_sample_point_unref (GimpSamplePoint *sample_point)
+picman_sample_point_unref (PicmanSamplePoint *sample_point)
 {
   g_return_if_fail (sample_point != NULL);
 
   sample_point->ref_count--;
 
   if (sample_point->ref_count < 1)
-    g_slice_free (GimpSamplePoint, sample_point);
+    g_slice_free (PicmanSamplePoint, sample_point);
 }

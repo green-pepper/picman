@@ -1,64 +1,64 @@
-# Files from the Gimp distribution which have already been
+# Files from the Picman distribution which have already been
 # marked to allow runtime translation of messages
 
 [encoding: UTF-8]
 
-libgimp/gimp.c
-libgimp/gimpbrushmenu.c
-libgimp/gimpbrushselectbutton.c
-libgimp/gimpexport.c
-libgimp/gimpfontselectbutton.c
-libgimp/gimpgradientmenu.c
-libgimp/gimpgradientselectbutton.c
-libgimp/gimpmenu.c
-libgimp/gimppalettemenu.c
-libgimp/gimppaletteselectbutton.c
-libgimp/gimppatternmenu.c
-libgimp/gimppatternselectbutton.c
-libgimp/gimpprocbrowserdialog.c
-libgimp/gimpprocview.c
-libgimp/gimpunitcache.c
+libpicman/picman.c
+libpicman/picmanbrushmenu.c
+libpicman/picmanbrushselectbutton.c
+libpicman/picmanexport.c
+libpicman/picmanfontselectbutton.c
+libpicman/picmangradientmenu.c
+libpicman/picmangradientselectbutton.c
+libpicman/picmanmenu.c
+libpicman/picmanpalettemenu.c
+libpicman/picmanpaletteselectbutton.c
+libpicman/picmanpatternmenu.c
+libpicman/picmanpatternselectbutton.c
+libpicman/picmanprocbrowserdialog.c
+libpicman/picmanprocview.c
+libpicman/picmanunitcache.c
 
-libgimpbase/gimpbaseenums.c
-libgimpbase/gimpcpuaccel.c
-libgimpbase/gimpmemsize.c
-libgimpbase/gimputils.c
+libpicmanbase/picmanbaseenums.c
+libpicmanbase/picmancpuaccel.c
+libpicmanbase/picmanmemsize.c
+libpicmanbase/picmanutils.c
 
-libgimpconfig/gimpcolorconfig.c
-libgimpconfig/gimpcolorconfig-enums.c
-libgimpconfig/gimpconfig-deserialize.c
-libgimpconfig/gimpconfig-iface.c
-libgimpconfig/gimpconfig-path.c
-libgimpconfig/gimpconfigwriter.c
-libgimpconfig/gimpscanner.c
+libpicmanconfig/picmancolorconfig.c
+libpicmanconfig/picmancolorconfig-enums.c
+libpicmanconfig/picmanconfig-deserialize.c
+libpicmanconfig/picmanconfig-iface.c
+libpicmanconfig/picmanconfig-path.c
+libpicmanconfig/picmanconfigwriter.c
+libpicmanconfig/picmanscanner.c
 
-libgimpmodule/gimpmodule.c
+libpicmanmodule/picmanmodule.c
 
-libgimpthumb/gimpthumb-utils.c
-libgimpthumb/gimpthumbnail.c
+libpicmanthumb/picmanthumb-utils.c
+libpicmanthumb/picmanthumbnail.c
 
-libgimpwidgets/gimpbrowser.c
-libgimpwidgets/gimpcolorbutton.c
-libgimpwidgets/gimpcolorprofilestore.c
-libgimpwidgets/gimpcolorscales.c
-libgimpwidgets/gimpcolorselect.c
-libgimpwidgets/gimpcolorselection.c
-libgimpwidgets/gimpfileentry.c
-libgimpwidgets/gimphelpui.c
-libgimpwidgets/gimpintstore.c
-libgimpwidgets/gimpmemsizeentry.c
-libgimpwidgets/gimppageselector.c
-libgimpwidgets/gimppatheditor.c
-libgimpwidgets/gimppickbutton.c
-libgimpwidgets/gimppreview.c
-libgimpwidgets/gimppreviewarea.c
-libgimpwidgets/gimppropwidgets.c
-libgimpwidgets/gimpquerybox.c
-libgimpwidgets/gimpstock.c
-libgimpwidgets/gimpunitmenu.c
-libgimpwidgets/gimpwidgets.c
-libgimpwidgets/gimpwidgets-private.c
-libgimpwidgets/gimpwidgetsenums.c
+libpicmanwidgets/picmanbrowser.c
+libpicmanwidgets/picmancolorbutton.c
+libpicmanwidgets/picmancolorprofilestore.c
+libpicmanwidgets/picmancolorscales.c
+libpicmanwidgets/picmancolorselect.c
+libpicmanwidgets/picmancolorselection.c
+libpicmanwidgets/picmanfileentry.c
+libpicmanwidgets/picmanhelpui.c
+libpicmanwidgets/picmanintstore.c
+libpicmanwidgets/picmanmemsizeentry.c
+libpicmanwidgets/picmanpageselector.c
+libpicmanwidgets/picmanpatheditor.c
+libpicmanwidgets/picmanpickbutton.c
+libpicmanwidgets/picmanpreview.c
+libpicmanwidgets/picmanpreviewarea.c
+libpicmanwidgets/picmanpropwidgets.c
+libpicmanwidgets/picmanquerybox.c
+libpicmanwidgets/picmanstock.c
+libpicmanwidgets/picmanunitmenu.c
+libpicmanwidgets/picmanwidgets.c
+libpicmanwidgets/picmanwidgets-private.c
+libpicmanwidgets/picmanwidgetsenums.c
 
 modules/color-selector-cmyk-lcms.c
 modules/color-selector-cmyk.c

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 
 #include <string.h>
 
-#include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
+#include <libpicman/picman.h>
+#include <libpicman/picmanui.h>
 
 #include "print.h"
 #include "print-draw-page.h"
 
-#include "libgimp/stdplugins-intl.h"
+#include "libpicman/stdplugins-intl.h"
 
 
 static cairo_surface_t * print_surface_from_drawable (gint32  drawable_ID);
@@ -74,23 +74,23 @@ print_draw_page (GtkPrintContext *context,
 static cairo_surface_t *
 print_surface_from_drawable (gint32 drawable_ID)
 {
-  GeglBuffer         *buffer   = gimp_drawable_get_buffer (drawable_ID);
+  GeglBuffer         *buffer   = picman_drawable_get_buffer (drawable_ID);
   const Babl         *format;
   cairo_surface_t    *surface;
-  const gint          width    = gimp_drawable_width  (drawable_ID);
-  const gint          height   = gimp_drawable_height (drawable_ID);
+  const gint          width    = picman_drawable_width  (drawable_ID);
+  const gint          height   = picman_drawable_height (drawable_ID);
   GeglBufferIterator *iter;
   guchar             *pixels;
   gint                stride;
   guint               count    = 0;
   guint               done     = 0;
 
-  if (gimp_drawable_has_alpha (drawable_ID))
+  if (picman_drawable_has_alpha (drawable_ID))
     format = babl_format ("cairo-ARGB32");
   else
     format = babl_format ("cairo-RGB24");
 
-  surface = cairo_image_surface_create (gimp_drawable_has_alpha (drawable_ID) ?
+  surface = cairo_image_surface_create (picman_drawable_has_alpha (drawable_ID) ?
                                         CAIRO_FORMAT_ARGB32 :
                                         CAIRO_FORMAT_RGB24,
                                         width, height);
@@ -120,14 +120,14 @@ print_surface_from_drawable (gint32 drawable_ID)
       done += iter->roi->height * iter->roi->width;
 
       if (count++ % 16 == 0)
-        gimp_progress_update ((gdouble) done / (width * height));
+        picman_progress_update ((gdouble) done / (width * height));
     }
 
   g_object_unref (buffer);
 
   cairo_surface_mark_dirty (surface);
 
-  gimp_progress_update (1.0);
+  picman_progress_update (1.0);
 
   return surface;
 }

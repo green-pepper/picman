@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2003 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,60 +20,60 @@
 #ifndef __INTERNAL_PROCS_H__
 #define __INTERNAL_PROCS_H__
 
-void   internal_procs_init               (GimpPDB *pdb);
+void   internal_procs_init               (PicmanPDB *pdb);
 
 /* Forward declarations for registering PDB procs */
 
-void   register_brush_procs              (GimpPDB *pdb);
-void   register_brush_select_procs       (GimpPDB *pdb);
-void   register_brushes_procs            (GimpPDB *pdb);
-void   register_buffer_procs             (GimpPDB *pdb);
-void   register_channel_procs            (GimpPDB *pdb);
-void   register_color_procs              (GimpPDB *pdb);
-void   register_context_procs            (GimpPDB *pdb);
-void   register_convert_procs            (GimpPDB *pdb);
-void   register_display_procs            (GimpPDB *pdb);
-void   register_drawable_procs           (GimpPDB *pdb);
-void   register_drawable_transform_procs (GimpPDB *pdb);
-void   register_dynamics_procs           (GimpPDB *pdb);
-void   register_edit_procs               (GimpPDB *pdb);
-void   register_fileops_procs            (GimpPDB *pdb);
-void   register_floating_sel_procs       (GimpPDB *pdb);
-void   register_font_select_procs        (GimpPDB *pdb);
-void   register_fonts_procs              (GimpPDB *pdb);
-void   register_gimp_procs               (GimpPDB *pdb);
-void   register_gimprc_procs             (GimpPDB *pdb);
-void   register_gradient_procs           (GimpPDB *pdb);
-void   register_gradient_select_procs    (GimpPDB *pdb);
-void   register_gradients_procs          (GimpPDB *pdb);
-void   register_grid_procs               (GimpPDB *pdb);
-void   register_guides_procs             (GimpPDB *pdb);
-void   register_help_procs               (GimpPDB *pdb);
-void   register_image_procs              (GimpPDB *pdb);
-void   register_image_select_procs       (GimpPDB *pdb);
-void   register_item_procs               (GimpPDB *pdb);
-void   register_item_transform_procs     (GimpPDB *pdb);
-void   register_layer_procs              (GimpPDB *pdb);
-void   register_message_procs            (GimpPDB *pdb);
-void   register_paint_tools_procs        (GimpPDB *pdb);
-void   register_palette_procs            (GimpPDB *pdb);
-void   register_palette_select_procs     (GimpPDB *pdb);
-void   register_palettes_procs           (GimpPDB *pdb);
-void   register_paths_procs              (GimpPDB *pdb);
-void   register_pattern_procs            (GimpPDB *pdb);
-void   register_pattern_select_procs     (GimpPDB *pdb);
-void   register_patterns_procs           (GimpPDB *pdb);
-void   register_plug_in_procs            (GimpPDB *pdb);
-void   register_plug_in_compat_procs     (GimpPDB *pdb);
-void   register_procedural_db_procs      (GimpPDB *pdb);
-void   register_progress_procs           (GimpPDB *pdb);
-void   register_selection_procs          (GimpPDB *pdb);
-void   register_selection_tools_procs    (GimpPDB *pdb);
-void   register_text_layer_procs         (GimpPDB *pdb);
-void   register_text_tool_procs          (GimpPDB *pdb);
-void   register_transform_tools_procs    (GimpPDB *pdb);
-void   register_undo_procs               (GimpPDB *pdb);
-void   register_unit_procs               (GimpPDB *pdb);
-void   register_vectors_procs            (GimpPDB *pdb);
+void   register_brush_procs              (PicmanPDB *pdb);
+void   register_brush_select_procs       (PicmanPDB *pdb);
+void   register_brushes_procs            (PicmanPDB *pdb);
+void   register_buffer_procs             (PicmanPDB *pdb);
+void   register_channel_procs            (PicmanPDB *pdb);
+void   register_color_procs              (PicmanPDB *pdb);
+void   register_context_procs            (PicmanPDB *pdb);
+void   register_convert_procs            (PicmanPDB *pdb);
+void   register_display_procs            (PicmanPDB *pdb);
+void   register_drawable_procs           (PicmanPDB *pdb);
+void   register_drawable_transform_procs (PicmanPDB *pdb);
+void   register_dynamics_procs           (PicmanPDB *pdb);
+void   register_edit_procs               (PicmanPDB *pdb);
+void   register_fileops_procs            (PicmanPDB *pdb);
+void   register_floating_sel_procs       (PicmanPDB *pdb);
+void   register_font_select_procs        (PicmanPDB *pdb);
+void   register_fonts_procs              (PicmanPDB *pdb);
+void   register_picman_procs               (PicmanPDB *pdb);
+void   register_picmanrc_procs             (PicmanPDB *pdb);
+void   register_gradient_procs           (PicmanPDB *pdb);
+void   register_gradient_select_procs    (PicmanPDB *pdb);
+void   register_gradients_procs          (PicmanPDB *pdb);
+void   register_grid_procs               (PicmanPDB *pdb);
+void   register_guides_procs             (PicmanPDB *pdb);
+void   register_help_procs               (PicmanPDB *pdb);
+void   register_image_procs              (PicmanPDB *pdb);
+void   register_image_select_procs       (PicmanPDB *pdb);
+void   register_item_procs               (PicmanPDB *pdb);
+void   register_item_transform_procs     (PicmanPDB *pdb);
+void   register_layer_procs              (PicmanPDB *pdb);
+void   register_message_procs            (PicmanPDB *pdb);
+void   register_paint_tools_procs        (PicmanPDB *pdb);
+void   register_palette_procs            (PicmanPDB *pdb);
+void   register_palette_select_procs     (PicmanPDB *pdb);
+void   register_palettes_procs           (PicmanPDB *pdb);
+void   register_paths_procs              (PicmanPDB *pdb);
+void   register_pattern_procs            (PicmanPDB *pdb);
+void   register_pattern_select_procs     (PicmanPDB *pdb);
+void   register_patterns_procs           (PicmanPDB *pdb);
+void   register_plug_in_procs            (PicmanPDB *pdb);
+void   register_plug_in_compat_procs     (PicmanPDB *pdb);
+void   register_procedural_db_procs      (PicmanPDB *pdb);
+void   register_progress_procs           (PicmanPDB *pdb);
+void   register_selection_procs          (PicmanPDB *pdb);
+void   register_selection_tools_procs    (PicmanPDB *pdb);
+void   register_text_layer_procs         (PicmanPDB *pdb);
+void   register_text_tool_procs          (PicmanPDB *pdb);
+void   register_transform_tools_procs    (PicmanPDB *pdb);
+void   register_undo_procs               (PicmanPDB *pdb);
+void   register_unit_procs               (PicmanPDB *pdb);
+void   register_vectors_procs            (PicmanPDB *pdb);
 
 #endif /* __INTERNAL_PROCS_H__ */

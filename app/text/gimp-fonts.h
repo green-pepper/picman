@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-2001 Spencer Kimball, Peter Mattis and others
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_FONTS_H__
-#define __GIMP_FONTS_H__
+#ifndef __PICMAN_FONTS_H__
+#define __PICMAN_FONTS_H__
 
 
-void   gimp_fonts_init  (Gimp *gimp);
-void   gimp_fonts_load  (Gimp *gimp);
-void   gimp_fonts_reset (Gimp *gimp);
+void   picman_fonts_init  (Picman *picman);
+void   picman_fonts_load  (Picman *picman);
+void   picman_fonts_reset (Picman *picman);
 
 
-#endif  /* __GIMP_FONTS_H__ */
+#endif  /* __PICMAN_FONTS_H__ */

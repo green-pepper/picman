@@ -1,13 +1,13 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpimagefile.h
+ * picmanimagefile.h
  *
  * Thumbnail handling according to the Thumbnail Managing Standard.
  * http://triq.net/~pearl/thumbnail-spec/
  *
- * Copyright (C) 2001-2002  Sven Neumann <sven@gimp.org>
- *                          Michael Natterer <mitch@gimp.org>
+ * Copyright (C) 2001-2002  Sven Neumann <sven@picman.org>
+ *                          Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,62 +23,62 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGEFILE_H__
-#define __GIMP_IMAGEFILE_H__
+#ifndef __PICMAN_IMAGEFILE_H__
+#define __PICMAN_IMAGEFILE_H__
 
 
-#include "gimpviewable.h"
+#include "picmanviewable.h"
 
 
-#define GIMP_TYPE_IMAGEFILE            (gimp_imagefile_get_type ())
-#define GIMP_IMAGEFILE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_IMAGEFILE, GimpImagefile))
-#define GIMP_IMAGEFILE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_IMAGEFILE, GimpImagefileClass))
-#define GIMP_IS_IMAGEFILE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_IMAGEFILE))
-#define GIMP_IS_IMAGEFILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_IMAGEFILE))
-#define GIMP_IMAGEFILE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_IMAGEFILE, GimpImagefileClass))
+#define PICMAN_TYPE_IMAGEFILE            (picman_imagefile_get_type ())
+#define PICMAN_IMAGEFILE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_IMAGEFILE, PicmanImagefile))
+#define PICMAN_IMAGEFILE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_IMAGEFILE, PicmanImagefileClass))
+#define PICMAN_IS_IMAGEFILE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_IMAGEFILE))
+#define PICMAN_IS_IMAGEFILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_IMAGEFILE))
+#define PICMAN_IMAGEFILE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_IMAGEFILE, PicmanImagefileClass))
 
 
-typedef struct _GimpImagefileClass GimpImagefileClass;
+typedef struct _PicmanImagefileClass PicmanImagefileClass;
 
-struct _GimpImagefile
+struct _PicmanImagefile
 {
-  GimpViewable  parent_instance;
+  PicmanViewable  parent_instance;
 };
 
-struct _GimpImagefileClass
+struct _PicmanImagefileClass
 {
-  GimpViewableClass   parent_class;
+  PicmanViewableClass   parent_class;
 
-  void (* info_changed) (GimpImagefile *imagefile);
+  void (* info_changed) (PicmanImagefile *imagefile);
 };
 
 
-GType           gimp_imagefile_get_type              (void) G_GNUC_CONST;
+GType           picman_imagefile_get_type              (void) G_GNUC_CONST;
 
-GimpImagefile * gimp_imagefile_new                   (Gimp          *gimp,
+PicmanImagefile * picman_imagefile_new                   (Picman          *picman,
                                                       const gchar   *uri);
 
-GimpThumbnail * gimp_imagefile_get_thumbnail         (GimpImagefile *imagefile);
-GIcon         * gimp_imagefile_get_gicon             (GimpImagefile *imagefile);
+PicmanThumbnail * picman_imagefile_get_thumbnail         (PicmanImagefile *imagefile);
+GIcon         * picman_imagefile_get_gicon             (PicmanImagefile *imagefile);
 
-void            gimp_imagefile_set_mime_type         (GimpImagefile *imagefile,
+void            picman_imagefile_set_mime_type         (PicmanImagefile *imagefile,
                                                       const gchar   *mime_type);
-void            gimp_imagefile_update                (GimpImagefile *imagefile);
-void            gimp_imagefile_create_thumbnail      (GimpImagefile *imagefile,
-                                                      GimpContext   *context,
-                                                      GimpProgress  *progress,
+void            picman_imagefile_update                (PicmanImagefile *imagefile);
+void            picman_imagefile_create_thumbnail      (PicmanImagefile *imagefile,
+                                                      PicmanContext   *context,
+                                                      PicmanProgress  *progress,
                                                       gint           size,
                                                       gboolean       replace);
-void            gimp_imagefile_create_thumbnail_weak (GimpImagefile *imagefile,
-                                                      GimpContext   *context,
-                                                      GimpProgress  *progress,
+void            picman_imagefile_create_thumbnail_weak (PicmanImagefile *imagefile,
+                                                      PicmanContext   *context,
+                                                      PicmanProgress  *progress,
                                                       gint           size,
                                                       gboolean       replace);
-gboolean        gimp_imagefile_check_thumbnail       (GimpImagefile *imagefile);
-gboolean        gimp_imagefile_save_thumbnail        (GimpImagefile *imagefile,
+gboolean        picman_imagefile_check_thumbnail       (PicmanImagefile *imagefile);
+gboolean        picman_imagefile_save_thumbnail        (PicmanImagefile *imagefile,
                                                       const gchar   *mime_type,
-                                                      GimpImage     *image);
-const gchar   * gimp_imagefile_get_desc_string       (GimpImagefile *imagefile);
+                                                      PicmanImage     *image);
+const gchar   * picman_imagefile_get_desc_string       (PicmanImagefile *imagefile);
 
 
-#endif /* __GIMP_IMAGEFILE_H__ */
+#endif /* __PICMAN_IMAGEFILE_H__ */

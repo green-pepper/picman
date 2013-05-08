@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpparamspecs-duplicate.c
- * Copyright (C) 2008-2009 Michael Natterer <mitch@gimp.org>
+ * picmanparamspecs-duplicate.c
+ * Copyright (C) 2008-2009 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,19 +25,19 @@
 #include <gegl-paramspecs.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #include "core-types.h"
 
-#include "gimpparamspecs.h"
-#include "gimpparamspecs-duplicate.h"
+#include "picmanparamspecs.h"
+#include "picmanparamspecs-duplicate.h"
 
 
 /* FIXME: this code is not yet general as it should be (gegl tool only atm) */
 
 GParamSpec *
-gimp_param_spec_duplicate (GParamSpec *pspec)
+picman_param_spec_duplicate (GParamSpec *pspec)
 {
   g_return_val_if_fail (pspec != NULL, NULL);
 
@@ -47,13 +47,13 @@ gimp_param_spec_duplicate (GParamSpec *pspec)
 
       if (GEGL_IS_PARAM_SPEC_FILE_PATH (pspec))
         {
-          return gimp_param_spec_config_path (pspec->name,
+          return picman_param_spec_config_path (pspec->name,
                                               g_param_spec_get_nick (pspec),
                                               g_param_spec_get_blurb (pspec),
-                                              GIMP_CONFIG_PATH_FILE,
+                                              PICMAN_CONFIG_PATH_FILE,
                                               spec->default_value,
                                               pspec->flags |
-                                              GIMP_CONFIG_PARAM_SERIALIZE);
+                                              PICMAN_CONFIG_PARAM_SERIALIZE);
         }
       else
         {
@@ -68,7 +68,7 @@ gimp_param_spec_duplicate (GParamSpec *pspec)
                                      g_param_spec_get_blurb (pspec),
                                      spec->default_value,
                                      pspec->flags |
-                                     GIMP_CONFIG_PARAM_SERIALIZE);
+                                     PICMAN_CONFIG_PARAM_SERIALIZE);
 
           if (GEGL_IS_PARAM_SPEC_MULTILINE (pspec))
             {
@@ -88,7 +88,7 @@ gimp_param_spec_duplicate (GParamSpec *pspec)
                                    g_param_spec_get_blurb (pspec),
                                    spec->default_value,
                                    pspec->flags |
-                                   GIMP_CONFIG_PARAM_SERIALIZE);
+                                   PICMAN_CONFIG_PARAM_SERIALIZE);
     }
   else if (G_IS_PARAM_SPEC_ENUM (pspec))
     {
@@ -100,7 +100,7 @@ gimp_param_spec_duplicate (GParamSpec *pspec)
                                 G_TYPE_FROM_CLASS (spec->enum_class),
                                 spec->default_value,
                                 pspec->flags |
-                                GIMP_CONFIG_PARAM_SERIALIZE);
+                                PICMAN_CONFIG_PARAM_SERIALIZE);
     }
   else if (GEGL_IS_PARAM_SPEC_DOUBLE (pspec))
     {
@@ -117,7 +117,7 @@ gimp_param_spec_duplicate (GParamSpec *pspec)
                                      gspec->ui_maximum,
                                      gspec->ui_gamma,
                                      pspec->flags |
-                                     GIMP_CONFIG_PARAM_SERIALIZE);
+                                     PICMAN_CONFIG_PARAM_SERIALIZE);
     }
   else if (G_IS_PARAM_SPEC_DOUBLE (pspec))
     {
@@ -130,7 +130,7 @@ gimp_param_spec_duplicate (GParamSpec *pspec)
                                   spec->maximum,
                                   spec->default_value,
                                   pspec->flags |
-                                  GIMP_CONFIG_PARAM_SERIALIZE);
+                                  PICMAN_CONFIG_PARAM_SERIALIZE);
     }
   else if (G_IS_PARAM_SPEC_FLOAT (pspec))
     {
@@ -143,7 +143,7 @@ gimp_param_spec_duplicate (GParamSpec *pspec)
                                  spec->maximum,
                                  spec->default_value,
                                  pspec->flags |
-                                 GIMP_CONFIG_PARAM_SERIALIZE);
+                                 PICMAN_CONFIG_PARAM_SERIALIZE);
     }
   else if (GEGL_IS_PARAM_SPEC_INT (pspec))
     {
@@ -160,7 +160,7 @@ gimp_param_spec_duplicate (GParamSpec *pspec)
                                   gspec->ui_maximum,
                                   gspec->ui_gamma,
                                   pspec->flags |
-                                  GIMP_CONFIG_PARAM_SERIALIZE);
+                                  PICMAN_CONFIG_PARAM_SERIALIZE);
     }
   else if (GEGL_IS_PARAM_SPEC_SEED (pspec))
     {
@@ -168,7 +168,7 @@ gimp_param_spec_duplicate (GParamSpec *pspec)
                                    g_param_spec_get_nick (pspec),
                                    g_param_spec_get_blurb (pspec),
                                    pspec->flags |
-                                   GIMP_CONFIG_PARAM_SERIALIZE);
+                                   PICMAN_CONFIG_PARAM_SERIALIZE);
     }
   else if (G_IS_PARAM_SPEC_INT (pspec))
     {
@@ -181,7 +181,7 @@ gimp_param_spec_duplicate (GParamSpec *pspec)
                                spec->maximum,
                                spec->default_value,
                                pspec->flags |
-                               GIMP_CONFIG_PARAM_SERIALIZE);
+                               PICMAN_CONFIG_PARAM_SERIALIZE);
     }
   else if (G_IS_PARAM_SPEC_UINT (pspec))
     {
@@ -194,30 +194,30 @@ gimp_param_spec_duplicate (GParamSpec *pspec)
                                 spec->maximum,
                                 spec->default_value,
                                 pspec->flags |
-                                GIMP_CONFIG_PARAM_SERIALIZE);
+                                PICMAN_CONFIG_PARAM_SERIALIZE);
     }
-  else if (GIMP_IS_PARAM_SPEC_RGB (pspec))
+  else if (PICMAN_IS_PARAM_SPEC_RGB (pspec))
     {
       GValue  value = G_VALUE_INIT;
-      GimpRGB color;
+      PicmanRGB color;
 
-      g_value_init (&value, GIMP_TYPE_RGB);
+      g_value_init (&value, PICMAN_TYPE_RGB);
       g_param_value_set_default (pspec, &value);
-      gimp_value_get_rgb (&value, &color);
+      picman_value_get_rgb (&value, &color);
       g_value_unset (&value);
 
-      return gimp_param_spec_rgb (pspec->name,
+      return picman_param_spec_rgb (pspec->name,
                                   g_param_spec_get_nick (pspec),
                                   g_param_spec_get_blurb (pspec),
-                                  gimp_param_spec_rgb_has_alpha (pspec),
+                                  picman_param_spec_rgb_has_alpha (pspec),
                                   &color,
                                   pspec->flags |
-                                  GIMP_CONFIG_PARAM_SERIALIZE);
+                                  PICMAN_CONFIG_PARAM_SERIALIZE);
     }
   else if (GEGL_IS_PARAM_SPEC_COLOR (pspec))
     {
       GeglColor *gegl_color;
-      GimpRGB    gimp_color;
+      PicmanRGB    picman_color;
       gdouble    r = 0.0;
       gdouble    g = 0.0;
       gdouble    b = 0.0;
@@ -231,17 +231,17 @@ gimp_param_spec_duplicate (GParamSpec *pspec)
       if (gegl_color)
         gegl_color_get_rgba (gegl_color, &r, &g, &b, &a);
 
-      gimp_rgba_set (&gimp_color, r, g, b, a);
+      picman_rgba_set (&picman_color, r, g, b, a);
 
       g_value_unset (&value);
 
-      return gimp_param_spec_rgb (pspec->name,
+      return picman_param_spec_rgb (pspec->name,
                                   g_param_spec_get_nick (pspec),
                                   g_param_spec_get_blurb (pspec),
                                   TRUE,
-                                  &gimp_color,
+                                  &picman_color,
                                   pspec->flags |
-                                  GIMP_CONFIG_PARAM_SERIALIZE);
+                                  PICMAN_CONFIG_PARAM_SERIALIZE);
     }
   else if (G_IS_PARAM_SPEC_OBJECT (pspec) ||
            G_IS_PARAM_SPEC_POINTER (pspec))

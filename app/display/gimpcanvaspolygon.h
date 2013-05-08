@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program Copyright (C) 1995
+/* PICMAN - The GNU Image Manipulation Program Copyright (C) 1995
  * Spencer Kimball and Peter Mattis
  *
- * gimpcanvaspolygon.h
- * Copyright (C) 2010 Michael Natterer <mitch@gimp.org>
+ * picmancanvaspolygon.h
+ * Copyright (C) 2010 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,45 +18,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_CANVAS_POLYGON_H__
-#define __GIMP_CANVAS_POLYGON_H__
+#ifndef __PICMAN_CANVAS_POLYGON_H__
+#define __PICMAN_CANVAS_POLYGON_H__
 
 
-#include "gimpcanvasitem.h"
+#include "picmancanvasitem.h"
 
 
-#define GIMP_TYPE_CANVAS_POLYGON            (gimp_canvas_polygon_get_type ())
-#define GIMP_CANVAS_POLYGON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_CANVAS_POLYGON, GimpCanvasPolygon))
-#define GIMP_CANVAS_POLYGON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_CANVAS_POLYGON, GimpCanvasPolygonClass))
-#define GIMP_IS_CANVAS_POLYGON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_CANVAS_POLYGON))
-#define GIMP_IS_CANVAS_POLYGON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_CANVAS_POLYGON))
-#define GIMP_CANVAS_POLYGON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_CANVAS_POLYGON, GimpCanvasPolygonClass))
+#define PICMAN_TYPE_CANVAS_POLYGON            (picman_canvas_polygon_get_type ())
+#define PICMAN_CANVAS_POLYGON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_CANVAS_POLYGON, PicmanCanvasPolygon))
+#define PICMAN_CANVAS_POLYGON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_CANVAS_POLYGON, PicmanCanvasPolygonClass))
+#define PICMAN_IS_CANVAS_POLYGON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_CANVAS_POLYGON))
+#define PICMAN_IS_CANVAS_POLYGON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_CANVAS_POLYGON))
+#define PICMAN_CANVAS_POLYGON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_CANVAS_POLYGON, PicmanCanvasPolygonClass))
 
 
-typedef struct _GimpCanvasPolygon      GimpCanvasPolygon;
-typedef struct _GimpCanvasPolygonClass GimpCanvasPolygonClass;
+typedef struct _PicmanCanvasPolygon      PicmanCanvasPolygon;
+typedef struct _PicmanCanvasPolygonClass PicmanCanvasPolygonClass;
 
-struct _GimpCanvasPolygon
+struct _PicmanCanvasPolygon
 {
-  GimpCanvasItem  parent_instance;
+  PicmanCanvasItem  parent_instance;
 };
 
-struct _GimpCanvasPolygonClass
+struct _PicmanCanvasPolygonClass
 {
-  GimpCanvasItemClass  parent_class;
+  PicmanCanvasItemClass  parent_class;
 };
 
 
-GType            gimp_canvas_polygon_get_type        (void) G_GNUC_CONST;
+GType            picman_canvas_polygon_get_type        (void) G_GNUC_CONST;
 
-GimpCanvasItem * gimp_canvas_polygon_new             (GimpDisplayShell  *shell,
-                                                      const GimpVector2 *points,
+PicmanCanvasItem * picman_canvas_polygon_new             (PicmanDisplayShell  *shell,
+                                                      const PicmanVector2 *points,
                                                       gint               n_points,
                                                       gboolean           filled);
-GimpCanvasItem * gimp_canvas_polygon_new_from_coords (GimpDisplayShell  *shell,
-                                                      const GimpCoords  *coords,
+PicmanCanvasItem * picman_canvas_polygon_new_from_coords (PicmanDisplayShell  *shell,
+                                                      const PicmanCoords  *coords,
                                                       gint               n_coords,
                                                       gboolean           filled);
 
 
-#endif /* __GIMP_CANVAS_POLYGON_H__ */
+#endif /* __PICMAN_CANVAS_POLYGON_H__ */

@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * GimpText
- * Copyright (C) 2002-2003  Sven Neumann <sven@gimp.org>
+ * PicmanText
+ * Copyright (C) 2002-2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,66 +18,66 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_TEXT_H__
-#define __GIMP_TEXT_H__
+#ifndef __PICMAN_TEXT_H__
+#define __PICMAN_TEXT_H__
 
 
-#include "core/gimpobject.h"
+#include "core/picmanobject.h"
 
 
-#define GIMP_TYPE_TEXT            (gimp_text_get_type ())
-#define GIMP_TEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_TEXT, GimpText))
-#define GIMP_TEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_TEXT, GimpTextClass))
-#define GIMP_IS_TEXT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_TEXT))
-#define GIMP_IS_TEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_TEXT))
-#define GIMP_TEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_TEXT, GimpTextClass))
+#define PICMAN_TYPE_TEXT            (picman_text_get_type ())
+#define PICMAN_TEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_TEXT, PicmanText))
+#define PICMAN_TEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_TEXT, PicmanTextClass))
+#define PICMAN_IS_TEXT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_TEXT))
+#define PICMAN_IS_TEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_TEXT))
+#define PICMAN_TEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_TEXT, PicmanTextClass))
 
 
-typedef struct _GimpTextClass  GimpTextClass;
+typedef struct _PicmanTextClass  PicmanTextClass;
 
-struct _GimpText
+struct _PicmanText
 {
-  GimpObject             parent_instance;
+  PicmanObject             parent_instance;
 
   gchar                 *text;
   gchar                 *markup;
   gchar                 *font;
-  GimpUnit               unit;
+  PicmanUnit               unit;
   gdouble                font_size;
   gboolean               antialias;
-  GimpTextHintStyle      hint_style;
+  PicmanTextHintStyle      hint_style;
   gboolean               kerning;
   gchar                 *language;
-  GimpTextDirection      base_dir;
-  GimpRGB                color;
-  GimpTextOutline        outline;
-  GimpTextJustification  justify;
+  PicmanTextDirection      base_dir;
+  PicmanRGB                color;
+  PicmanTextOutline        outline;
+  PicmanTextJustification  justify;
   gdouble                indent;
   gdouble                line_spacing;
   gdouble                letter_spacing;
-  GimpTextBoxMode        box_mode;
+  PicmanTextBoxMode        box_mode;
   gdouble                box_width;
   gdouble                box_height;
-  GimpUnit               box_unit;
-  GimpMatrix2            transformation;
+  PicmanUnit               box_unit;
+  PicmanMatrix2            transformation;
   gdouble                offset_x;
   gdouble                offset_y;
 
   gdouble                border;
 };
 
-struct _GimpTextClass
+struct _PicmanTextClass
 {
-  GimpObjectClass        parent_class;
+  PicmanObjectClass        parent_class;
 
-  void (* changed) (GimpText *text);
+  void (* changed) (PicmanText *text);
 };
 
 
-GType  gimp_text_get_type           (void) G_GNUC_CONST;
+GType  picman_text_get_type           (void) G_GNUC_CONST;
 
-void   gimp_text_get_transformation (GimpText    *text,
-                                     GimpMatrix3 *matrix);
+void   picman_text_get_transformation (PicmanText    *text,
+                                     PicmanMatrix3 *matrix);
 
 
-#endif /* __GIMP_TEXT_H__ */
+#endif /* __PICMAN_TEXT_H__ */

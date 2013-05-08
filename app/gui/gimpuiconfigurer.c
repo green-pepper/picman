@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpuiconfigurer.c
+ * picmanuiconfigurer.c
  * Copyright (C) 2009 Martin Nordholts <martinn@src.gnome.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,106 +25,106 @@
 
 #include "gui-types.h"
 
-#include "core/gimp.h"
-#include "core/gimpcontext.h"
+#include "core/picman.h"
+#include "core/picmancontext.h"
 
-#include "widgets/gimpdialogfactory.h"
-#include "widgets/gimpdock.h"
-#include "widgets/gimpdockcolumns.h"
-#include "widgets/gimpdockcontainer.h"
-#include "widgets/gimpdockwindow.h"
-#include "widgets/gimptoolbox.h"
+#include "widgets/picmandialogfactory.h"
+#include "widgets/picmandock.h"
+#include "widgets/picmandockcolumns.h"
+#include "widgets/picmandockcontainer.h"
+#include "widgets/picmandockwindow.h"
+#include "widgets/picmantoolbox.h"
 
-#include "display/gimpdisplay.h"
-#include "display/gimpdisplayshell.h"
-#include "display/gimpdisplayshell-appearance.h"
-#include "display/gimpimagewindow.h"
+#include "display/picmandisplay.h"
+#include "display/picmandisplayshell.h"
+#include "display/picmandisplayshell-appearance.h"
+#include "display/picmanimagewindow.h"
 
 #include "menus/menus.h"
 
-#include "gimpuiconfigurer.h"
+#include "picmanuiconfigurer.h"
 
 
 enum
 {
   PROP_0,
-  PROP_GIMP
+  PROP_PICMAN
 };
 
 
-struct _GimpUIConfigurerPrivate
+struct _PicmanUIConfigurerPrivate
 {
-  Gimp *gimp;
+  Picman *picman;
 };
 
 
-static void              gimp_ui_configurer_set_property                (GObject           *object,
+static void              picman_ui_configurer_set_property                (GObject           *object,
                                                                          guint              property_id,
                                                                          const GValue      *value,
                                                                          GParamSpec        *pspec);
-static void              gimp_ui_configurer_get_property                (GObject           *object,
+static void              picman_ui_configurer_get_property                (GObject           *object,
                                                                          guint              property_id,
                                                                          GValue            *value,
                                                                          GParamSpec        *pspec);
-static void              gimp_ui_configurer_move_docks_to_columns       (GimpUIConfigurer  *ui_configurer,
-                                                                         GimpImageWindow   *uber_image_window);
-static void              gimp_ui_configurer_move_shells                 (GimpUIConfigurer  *ui_configurer,
-                                                                         GimpImageWindow   *source_image_window,
-                                                                         GimpImageWindow   *target_image_window);
-static void              gimp_ui_configurer_separate_docks              (GimpUIConfigurer  *ui_configurer,
-                                                                         GimpImageWindow   *source_image_window);
-static void              gimp_ui_configurer_move_docks_to_window        (GimpUIConfigurer  *ui_configurer,
-                                                                         GimpDockColumns   *dock_columns,
-                                                                         GimpAlignmentType  screen_side_destination);
-static void              gimp_ui_configurer_separate_shells             (GimpUIConfigurer  *ui_configurer,
-                                                                         GimpImageWindow   *source_image_window);
-static void              gimp_ui_configurer_configure_for_single_window (GimpUIConfigurer  *ui_configurer);
-static void              gimp_ui_configurer_configure_for_multi_window  (GimpUIConfigurer  *ui_configurer);
-static GimpImageWindow * gimp_ui_configurer_get_uber_window             (GimpUIConfigurer  *ui_configurer);
+static void              picman_ui_configurer_move_docks_to_columns       (PicmanUIConfigurer  *ui_configurer,
+                                                                         PicmanImageWindow   *uber_image_window);
+static void              picman_ui_configurer_move_shells                 (PicmanUIConfigurer  *ui_configurer,
+                                                                         PicmanImageWindow   *source_image_window,
+                                                                         PicmanImageWindow   *target_image_window);
+static void              picman_ui_configurer_separate_docks              (PicmanUIConfigurer  *ui_configurer,
+                                                                         PicmanImageWindow   *source_image_window);
+static void              picman_ui_configurer_move_docks_to_window        (PicmanUIConfigurer  *ui_configurer,
+                                                                         PicmanDockColumns   *dock_columns,
+                                                                         PicmanAlignmentType  screen_side_destination);
+static void              picman_ui_configurer_separate_shells             (PicmanUIConfigurer  *ui_configurer,
+                                                                         PicmanImageWindow   *source_image_window);
+static void              picman_ui_configurer_configure_for_single_window (PicmanUIConfigurer  *ui_configurer);
+static void              picman_ui_configurer_configure_for_multi_window  (PicmanUIConfigurer  *ui_configurer);
+static PicmanImageWindow * picman_ui_configurer_get_uber_window             (PicmanUIConfigurer  *ui_configurer);
 
 
-G_DEFINE_TYPE (GimpUIConfigurer, gimp_ui_configurer, GIMP_TYPE_OBJECT)
+G_DEFINE_TYPE (PicmanUIConfigurer, picman_ui_configurer, PICMAN_TYPE_OBJECT)
 
-#define parent_class gimp_ui_configurer_parent_class
+#define parent_class picman_ui_configurer_parent_class
 
 
 static void
-gimp_ui_configurer_class_init (GimpUIConfigurerClass *klass)
+picman_ui_configurer_class_init (PicmanUIConfigurerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = gimp_ui_configurer_set_property;
-  object_class->get_property = gimp_ui_configurer_get_property;
+  object_class->set_property = picman_ui_configurer_set_property;
+  object_class->get_property = picman_ui_configurer_get_property;
 
-  g_object_class_install_property (object_class, PROP_GIMP,
-                                   g_param_spec_object ("gimp", NULL, NULL,
-                                                        GIMP_TYPE_GIMP,
-                                                        GIMP_PARAM_READWRITE |
+  g_object_class_install_property (object_class, PROP_PICMAN,
+                                   g_param_spec_object ("picman", NULL, NULL,
+                                                        PICMAN_TYPE_PICMAN,
+                                                        PICMAN_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
   g_type_class_add_private (klass,
-                            sizeof (GimpUIConfigurerPrivate));
+                            sizeof (PicmanUIConfigurerPrivate));
 }
 
 static void
-gimp_ui_configurer_init (GimpUIConfigurer *ui_configurer)
+picman_ui_configurer_init (PicmanUIConfigurer *ui_configurer)
 {
   ui_configurer->p = G_TYPE_INSTANCE_GET_PRIVATE (ui_configurer,
-                                                  GIMP_TYPE_UI_CONFIGURER,
-                                                  GimpUIConfigurerPrivate);
+                                                  PICMAN_TYPE_UI_CONFIGURER,
+                                                  PicmanUIConfigurerPrivate);
 }
 
 static void
-gimp_ui_configurer_set_property (GObject      *object,
+picman_ui_configurer_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  GimpUIConfigurer *ui_configurer = GIMP_UI_CONFIGURER (object);
+  PicmanUIConfigurer *ui_configurer = PICMAN_UI_CONFIGURER (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      ui_configurer->p->gimp = g_value_get_object (value); /* don't ref */
+    case PROP_PICMAN:
+      ui_configurer->p->picman = g_value_get_object (value); /* don't ref */
       break;
 
     default:
@@ -134,17 +134,17 @@ gimp_ui_configurer_set_property (GObject      *object,
 }
 
 static void
-gimp_ui_configurer_get_property (GObject    *object,
+picman_ui_configurer_get_property (GObject    *object,
                                  guint       property_id,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  GimpUIConfigurer *ui_configurer = GIMP_UI_CONFIGURER (object);
+  PicmanUIConfigurer *ui_configurer = PICMAN_UI_CONFIGURER (object);
 
   switch (property_id)
     {
-    case PROP_GIMP:
-      g_value_set_object (value, ui_configurer->p->gimp);
+    case PROP_PICMAN:
+      g_value_set_object (value, ui_configurer->p->picman);
       break;
 
     default:
@@ -155,7 +155,7 @@ gimp_ui_configurer_get_property (GObject    *object,
 
 
 static void
-gimp_ui_configurer_get_window_center_pos (GtkWindow *window,
+picman_ui_configurer_get_window_center_pos (GtkWindow *window,
                                           gint      *out_x,
                                           gint      *out_y)
 {
@@ -170,74 +170,74 @@ gimp_ui_configurer_get_window_center_pos (GtkWindow *window,
 }
 
 /**
- * gimp_ui_configurer_get_relative_window_pos:
+ * picman_ui_configurer_get_relative_window_pos:
  * @window_a:
  * @window_b:
  *
  * Returns: At what side @window_b is relative to @window_a. Either
- * GIMP_ALIGN_LEFT or GIMP_ALIGN_RIGHT.
+ * PICMAN_ALIGN_LEFT or PICMAN_ALIGN_RIGHT.
  **/
-static GimpAlignmentType
-gimp_ui_configurer_get_relative_window_pos (GtkWindow *window_a,
+static PicmanAlignmentType
+picman_ui_configurer_get_relative_window_pos (GtkWindow *window_a,
                                             GtkWindow *window_b)
 {
   gint a_x, b_x;
 
-  gimp_ui_configurer_get_window_center_pos (window_a, &a_x, NULL);
-  gimp_ui_configurer_get_window_center_pos (window_b, &b_x, NULL);
+  picman_ui_configurer_get_window_center_pos (window_a, &a_x, NULL);
+  picman_ui_configurer_get_window_center_pos (window_b, &b_x, NULL);
 
-  return b_x < a_x ? GIMP_ALIGN_LEFT : GIMP_ALIGN_RIGHT;
+  return b_x < a_x ? PICMAN_ALIGN_LEFT : PICMAN_ALIGN_RIGHT;
 }
 
 static void
-gimp_ui_configurer_move_docks_to_columns (GimpUIConfigurer *ui_configurer,
-                                          GimpImageWindow  *uber_image_window)
+picman_ui_configurer_move_docks_to_columns (PicmanUIConfigurer *ui_configurer,
+                                          PicmanImageWindow  *uber_image_window)
 {
   GList *dialogs     = NULL;
   GList *dialog_iter = NULL;
 
   dialogs =
-    g_list_copy (gimp_dialog_factory_get_open_dialogs (gimp_dialog_factory_get_singleton ()));
+    g_list_copy (picman_dialog_factory_get_open_dialogs (picman_dialog_factory_get_singleton ()));
 
   for (dialog_iter = dialogs; dialog_iter; dialog_iter = dialog_iter->next)
     {
-      GimpDockWindow    *dock_window;
-      GimpDockContainer *dock_container;
-      GimpDockColumns   *dock_columns;
+      PicmanDockWindow    *dock_window;
+      PicmanDockContainer *dock_container;
+      PicmanDockColumns   *dock_columns;
       GList             *docks;
       GList             *dock_iter;
 
-      if (!GIMP_IS_DOCK_WINDOW (dialog_iter->data))
+      if (!PICMAN_IS_DOCK_WINDOW (dialog_iter->data))
         continue;
 
-      dock_window = GIMP_DOCK_WINDOW (dialog_iter->data);
+      dock_window = PICMAN_DOCK_WINDOW (dialog_iter->data);
 
       /* If the dock window is on the left side of the image window,
        * move the docks to the left side. If the dock window is on the
        * right side, move the docks to the right side of the image
        * window.
        */
-      if (gimp_ui_configurer_get_relative_window_pos (GTK_WINDOW (uber_image_window),
-                                                      GTK_WINDOW (dock_window)) == GIMP_ALIGN_LEFT)
-        dock_columns = gimp_image_window_get_left_docks (uber_image_window);
+      if (picman_ui_configurer_get_relative_window_pos (GTK_WINDOW (uber_image_window),
+                                                      GTK_WINDOW (dock_window)) == PICMAN_ALIGN_LEFT)
+        dock_columns = picman_image_window_get_left_docks (uber_image_window);
       else
-        dock_columns = gimp_image_window_get_right_docks (uber_image_window);
+        dock_columns = picman_image_window_get_right_docks (uber_image_window);
 
-      dock_container = GIMP_DOCK_CONTAINER (dock_window);
+      dock_container = PICMAN_DOCK_CONTAINER (dock_window);
       g_object_add_weak_pointer (G_OBJECT (dock_window),
                                  (gpointer) &dock_window);
 
-      docks = gimp_dock_container_get_docks (dock_container);
+      docks = picman_dock_container_get_docks (dock_container);
       for (dock_iter = docks; dock_iter; dock_iter = dock_iter->next)
         {
-          GimpDock *dock = GIMP_DOCK (dock_iter->data);
+          PicmanDock *dock = PICMAN_DOCK (dock_iter->data);
 
           /* Move the dock from the image window to the dock columns
            * widget. Note that we need a ref while the dock is parentless
            */
           g_object_ref (dock);
-          gimp_dock_window_remove_dock (dock_window, dock);
-          gimp_dock_columns_add_dock (dock_columns, dock, -1);
+          picman_dock_window_remove_dock (dock_window, dock);
+          picman_dock_columns_add_dock (dock_columns, dock, -1);
           g_object_unref (dock);
         }
       g_list_free (docks);
@@ -253,12 +253,12 @@ gimp_ui_configurer_move_docks_to_columns (GimpUIConfigurer *ui_configurer,
         {
           guint docks_len;
 
-          docks     = gimp_dock_container_get_docks (dock_container);
+          docks     = picman_dock_container_get_docks (dock_container);
           docks_len = g_list_length (docks);
 
           if (docks_len == 0)
             {
-              gimp_dialog_factory_remove_dialog (gimp_dialog_factory_get_singleton (),
+              picman_dialog_factory_remove_dialog (picman_dialog_factory_get_singleton (),
                                                  GTK_WIDGET (dock_window));
               gtk_widget_destroy (GTK_WIDGET (dock_window));
             }
@@ -271,7 +271,7 @@ gimp_ui_configurer_move_docks_to_columns (GimpUIConfigurer *ui_configurer,
 }
 
 /**
- * gimp_ui_configurer_move_shells:
+ * picman_ui_configurer_move_shells:
  * @ui_configurer:
  * @source_image_window:
  * @target_image_window:
@@ -279,60 +279,60 @@ gimp_ui_configurer_move_docks_to_columns (GimpUIConfigurer *ui_configurer,
  * Move all display shells from one image window to the another.
  **/
 static void
-gimp_ui_configurer_move_shells (GimpUIConfigurer  *ui_configurer,
-                                GimpImageWindow   *source_image_window,
-                                GimpImageWindow   *target_image_window)
+picman_ui_configurer_move_shells (PicmanUIConfigurer  *ui_configurer,
+                                PicmanImageWindow   *source_image_window,
+                                PicmanImageWindow   *target_image_window)
 {
-  while (gimp_image_window_get_n_shells (source_image_window) > 0)
+  while (picman_image_window_get_n_shells (source_image_window) > 0)
     {
-      GimpDisplayShell *shell;
+      PicmanDisplayShell *shell;
 
-      shell = gimp_image_window_get_shell (source_image_window, 0);
+      shell = picman_image_window_get_shell (source_image_window, 0);
 
       g_object_ref (shell);
-      gimp_image_window_remove_shell (source_image_window, shell);
-      gimp_image_window_add_shell (target_image_window, shell);
+      picman_image_window_remove_shell (source_image_window, shell);
+      picman_image_window_add_shell (target_image_window, shell);
       g_object_unref (shell);
     }
 }
 
 /**
- * gimp_ui_configurer_separate_docks:
+ * picman_ui_configurer_separate_docks:
  * @ui_configurer:
  * @image_window:
  *
  * Move out the docks from the image window.
  **/
 static void
-gimp_ui_configurer_separate_docks (GimpUIConfigurer  *ui_configurer,
-                                   GimpImageWindow   *image_window)
+picman_ui_configurer_separate_docks (PicmanUIConfigurer  *ui_configurer,
+                                   PicmanImageWindow   *image_window)
 {
-  GimpDockColumns *left_docks  = NULL;
-  GimpDockColumns *right_docks = NULL;
+  PicmanDockColumns *left_docks  = NULL;
+  PicmanDockColumns *right_docks = NULL;
 
-  left_docks  = gimp_image_window_get_left_docks (image_window);
-  right_docks = gimp_image_window_get_right_docks (image_window);
+  left_docks  = picman_image_window_get_left_docks (image_window);
+  right_docks = picman_image_window_get_right_docks (image_window);
 
-  gimp_ui_configurer_move_docks_to_window (ui_configurer, left_docks, GIMP_ALIGN_LEFT);
-  gimp_ui_configurer_move_docks_to_window (ui_configurer, right_docks, GIMP_ALIGN_RIGHT);
+  picman_ui_configurer_move_docks_to_window (ui_configurer, left_docks, PICMAN_ALIGN_LEFT);
+  picman_ui_configurer_move_docks_to_window (ui_configurer, right_docks, PICMAN_ALIGN_RIGHT);
 }
 
 /**
- * gimp_ui_configurer_move_docks_to_window:
+ * picman_ui_configurer_move_docks_to_window:
  * @dock_columns:
  * @screen_side_destination: At what side of the screen the dock window
  *                           should be put.
  *
- * Moves docks in @dock_columns into a new #GimpDockWindow and
+ * Moves docks in @dock_columns into a new #PicmanDockWindow and
  * position it on the screen in a non-overlapping manner.
  */
 static void
-gimp_ui_configurer_move_docks_to_window (GimpUIConfigurer  *ui_configurer,
-                                         GimpDockColumns   *dock_columns,
-                                         GimpAlignmentType  screen_side_destination)
+picman_ui_configurer_move_docks_to_window (PicmanUIConfigurer  *ui_configurer,
+                                         PicmanDockColumns   *dock_columns,
+                                         PicmanAlignmentType  screen_side_destination)
 {
   GdkScreen    *screen           = gtk_widget_get_screen (GTK_WIDGET (dock_columns));
-  GList        *docks            = g_list_copy (gimp_dock_columns_get_docks (dock_columns));
+  GList        *docks            = g_list_copy (picman_dock_columns_get_docks (dock_columns));
   GList        *iter             = NULL;
   gboolean      contains_toolbox = FALSE;
   GtkWidget    *dock_window      = NULL;
@@ -350,9 +350,9 @@ gimp_ui_configurer_move_docks_to_window (GimpUIConfigurer  *ui_configurer,
   /* Do we need a toolbox window? */
   for (iter = docks; iter; iter = iter->next)
     {
-      GimpDock *dock = GIMP_DOCK (iter->data);
+      PicmanDock *dock = PICMAN_DOCK (iter->data);
 
-      if (GIMP_IS_TOOLBOX (dock))
+      if (PICMAN_IS_TOOLBOX (dock))
         {
           contains_toolbox = TRUE;
           break;
@@ -360,35 +360,35 @@ gimp_ui_configurer_move_docks_to_window (GimpUIConfigurer  *ui_configurer,
     }
 
   /* Create a dock window to put the dock in. Checking for
-   * GIMP_IS_TOOLBOX() is kind of ugly but not a disaster. We need
+   * PICMAN_IS_TOOLBOX() is kind of ugly but not a disaster. We need
    * the dock window correctly configured if we create it for the
    * toolbox
    */
   dock_window =
-    gimp_dialog_factory_dialog_new (gimp_dialog_factory_get_singleton (),
+    picman_dialog_factory_dialog_new (picman_dialog_factory_get_singleton (),
                                     screen,
                                     NULL /*ui_manager*/,
                                     (contains_toolbox ?
-                                     "gimp-toolbox-window" :
-                                     "gimp-dock-window"),
+                                     "picman-toolbox-window" :
+                                     "picman-dock-window"),
                                     -1 /*view_size*/,
                                     FALSE /*present*/);
 
   for (iter = docks; iter; iter = iter->next)
     {
-      GimpDock *dock = GIMP_DOCK (iter->data);
+      PicmanDock *dock = PICMAN_DOCK (iter->data);
 
       /* Move the dock to the window */
       g_object_ref (dock);
-      gimp_dock_columns_remove_dock (dock_columns, dock);
-      gimp_dock_window_add_dock (GIMP_DOCK_WINDOW (dock_window), dock, -1);
+      picman_dock_columns_remove_dock (dock_columns, dock);
+      picman_dock_window_add_dock (PICMAN_DOCK_WINDOW (dock_window), dock, -1);
       g_object_unref (dock);
     }
 
   /* Position the window */
-  if (screen_side_destination == GIMP_ALIGN_LEFT)
+  if (screen_side_destination == PICMAN_ALIGN_LEFT)
     gtk_window_parse_geometry (GTK_WINDOW (dock_window), "+0+0");
-  else if (screen_side_destination == GIMP_ALIGN_RIGHT)
+  else if (screen_side_destination == PICMAN_ALIGN_RIGHT)
     gtk_window_parse_geometry (GTK_WINDOW (dock_window), "-0+0");
   else
     g_assert_not_reached ();
@@ -405,33 +405,33 @@ gimp_ui_configurer_move_docks_to_window (GimpUIConfigurer  *ui_configurer,
 }
 
 /**
- * gimp_ui_configurer_separate_shells:
+ * picman_ui_configurer_separate_shells:
  * @ui_configurer:
  * @source_image_window:
  *
  * Create one image window per display shell and move it there.
  **/
 static void
-gimp_ui_configurer_separate_shells (GimpUIConfigurer *ui_configurer,
-                                    GimpImageWindow  *source_image_window)
+picman_ui_configurer_separate_shells (PicmanUIConfigurer *ui_configurer,
+                                    PicmanImageWindow  *source_image_window)
 {
   /* The last display shell remains in its window */
-  while (gimp_image_window_get_n_shells (source_image_window) > 1)
+  while (picman_image_window_get_n_shells (source_image_window) > 1)
     {
-      GimpImageWindow  *new_image_window;
-      GimpDisplayShell *shell;
+      PicmanImageWindow  *new_image_window;
+      PicmanDisplayShell *shell;
 
       /* Create a new image window */
-      new_image_window = gimp_image_window_new (ui_configurer->p->gimp,
+      new_image_window = picman_image_window_new (ui_configurer->p->picman,
                                                 NULL,
                                                 global_menu_factory,
-                                                gimp_dialog_factory_get_singleton ());
+                                                picman_dialog_factory_get_singleton ());
       /* Move the shell there */
-      shell = gimp_image_window_get_shell (source_image_window, 1);
+      shell = picman_image_window_get_shell (source_image_window, 1);
 
       g_object_ref (shell);
-      gimp_image_window_remove_shell (source_image_window, shell);
-      gimp_image_window_add_shell (new_image_window, shell);
+      picman_image_window_remove_shell (source_image_window, shell);
+      picman_image_window_add_shell (new_image_window, shell);
       g_object_unref (shell);
 
       /* FIXME: If we don't set a size request here the window will be
@@ -445,30 +445,30 @@ gimp_ui_configurer_separate_shells (GimpUIConfigurer *ui_configurer,
 }
 
 /**
- * gimp_ui_configurer_configure_for_single_window:
+ * picman_ui_configurer_configure_for_single_window:
  * @ui_configurer:
  *
  * Move docks and display shells into a single window.
  **/
 static void
-gimp_ui_configurer_configure_for_single_window (GimpUIConfigurer *ui_configurer)
+picman_ui_configurer_configure_for_single_window (PicmanUIConfigurer *ui_configurer)
 {
-  Gimp            *gimp              = ui_configurer->p->gimp;
-  GList           *windows           = gimp_get_image_windows (gimp);
+  Picman            *picman              = ui_configurer->p->picman;
+  GList           *windows           = picman_get_image_windows (picman);
   GList           *iter              = NULL;
-  GimpImageWindow *uber_image_window = NULL;
+  PicmanImageWindow *uber_image_window = NULL;
 
   /* Get and setup the window to put everything in */
-  uber_image_window = gimp_ui_configurer_get_uber_window (ui_configurer);
+  uber_image_window = picman_ui_configurer_get_uber_window (ui_configurer);
 
   /* Mve docks to the left and right side of the image window */
-  gimp_ui_configurer_move_docks_to_columns (ui_configurer,
+  picman_ui_configurer_move_docks_to_columns (ui_configurer,
                                             uber_image_window);
 
   /* Move image shells from other windows to the uber image window */
   for (iter = windows; iter; iter = g_list_next (iter))
     {
-      GimpImageWindow *image_window = GIMP_IMAGE_WINDOW (iter->data);
+      PicmanImageWindow *image_window = PICMAN_IMAGE_WINDOW (iter->data);
 
       /* Don't move stuff to itself */
       if (image_window == uber_image_window)
@@ -477,89 +477,89 @@ gimp_ui_configurer_configure_for_single_window (GimpUIConfigurer *ui_configurer)
       /* Put the displays in the rest of the image windows into
        * the uber image window
        */
-      gimp_ui_configurer_move_shells (ui_configurer,
+      picman_ui_configurer_move_shells (ui_configurer,
                                       image_window,
                                       uber_image_window);
 
       /* Destroy the window */
-      gimp_image_window_destroy (image_window);
+      picman_image_window_destroy (image_window);
     }
 
   g_list_free (windows);
 }
 
 /**
- * gimp_ui_configurer_configure_for_multi_window:
+ * picman_ui_configurer_configure_for_multi_window:
  * @ui_configurer:
  *
  * Moves all display shells into their own image window.
  **/
 static void
-gimp_ui_configurer_configure_for_multi_window (GimpUIConfigurer *ui_configurer)
+picman_ui_configurer_configure_for_multi_window (PicmanUIConfigurer *ui_configurer)
 {
-  Gimp  *gimp    = ui_configurer->p->gimp;
-  GList *windows = gimp_get_image_windows (gimp);
+  Picman  *picman    = ui_configurer->p->picman;
+  GList *windows = picman_get_image_windows (picman);
   GList *iter    = NULL;
 
   for (iter = windows; iter; iter = g_list_next (iter))
     {
-      GimpImageWindow *image_window = GIMP_IMAGE_WINDOW (iter->data);
+      PicmanImageWindow *image_window = PICMAN_IMAGE_WINDOW (iter->data);
 
-      gimp_ui_configurer_separate_docks (ui_configurer, image_window);
+      picman_ui_configurer_separate_docks (ui_configurer, image_window);
 
-      gimp_ui_configurer_separate_shells (ui_configurer, image_window);
+      picman_ui_configurer_separate_shells (ui_configurer, image_window);
     }
 
   g_list_free (windows);
 }
 
 /**
- * gimp_ui_configurer_get_uber_window:
+ * picman_ui_configurer_get_uber_window:
  * @ui_configurer:
  *
  * Returns: The window to be used as the main window for single-window
  *          mode.
  **/
-static GimpImageWindow *
-gimp_ui_configurer_get_uber_window (GimpUIConfigurer *ui_configurer)
+static PicmanImageWindow *
+picman_ui_configurer_get_uber_window (PicmanUIConfigurer *ui_configurer)
 {
-  Gimp             *gimp         = ui_configurer->p->gimp;
-  GimpDisplay      *display      = gimp_get_display_iter (gimp)->data;
-  GimpDisplayShell *shell        = gimp_display_get_shell (display);
-  GimpImageWindow  *image_window = gimp_display_shell_get_window (shell);
+  Picman             *picman         = ui_configurer->p->picman;
+  PicmanDisplay      *display      = picman_get_display_iter (picman)->data;
+  PicmanDisplayShell *shell        = picman_display_get_shell (display);
+  PicmanImageWindow  *image_window = picman_display_shell_get_window (shell);
 
   return image_window;
 }
 
 /**
- * gimp_ui_configurer_update_appearance:
+ * picman_ui_configurer_update_appearance:
  * @ui_configurer:
  *
  * Updates the appearance of all shells in all image windows, so they
  * do whatever they deem necessary to fit the new UI mode mode.
  **/
 static void
-gimp_ui_configurer_update_appearance (GimpUIConfigurer *ui_configurer)
+picman_ui_configurer_update_appearance (PicmanUIConfigurer *ui_configurer)
 {
-  Gimp  *gimp    = ui_configurer->p->gimp;
-  GList *windows = gimp_get_image_windows (gimp);
+  Picman  *picman    = ui_configurer->p->picman;
+  GList *windows = picman_get_image_windows (picman);
   GList *list;
 
   for (list = windows; list; list = g_list_next (list))
     {
-      GimpImageWindow *image_window = GIMP_IMAGE_WINDOW (list->data);
+      PicmanImageWindow *image_window = PICMAN_IMAGE_WINDOW (list->data);
       gint             n_shells;
       gint             i;
 
-      n_shells = gimp_image_window_get_n_shells (image_window);
+      n_shells = picman_image_window_get_n_shells (image_window);
 
       for (i = 0; i < n_shells; i++)
         {
-          GimpDisplayShell *shell;
+          PicmanDisplayShell *shell;
 
-          shell = gimp_image_window_get_shell (image_window, i);
+          shell = picman_image_window_get_shell (image_window, i);
 
-          gimp_display_shell_appearance_update (shell);
+          picman_display_shell_appearance_update (shell);
         }
     }
 
@@ -567,20 +567,20 @@ gimp_ui_configurer_update_appearance (GimpUIConfigurer *ui_configurer)
 }
 
 /**
- * gimp_ui_configurer_configure:
+ * picman_ui_configurer_configure:
  * @ui_configurer:
  * @single_window_mode:
  *
  * Configure the UI.
  **/
 void
-gimp_ui_configurer_configure (GimpUIConfigurer *ui_configurer,
+picman_ui_configurer_configure (PicmanUIConfigurer *ui_configurer,
                               gboolean          single_window_mode)
 {
   if (single_window_mode)
-    gimp_ui_configurer_configure_for_single_window (ui_configurer);
+    picman_ui_configurer_configure_for_single_window (ui_configurer);
   else
-    gimp_ui_configurer_configure_for_multi_window (ui_configurer);
+    picman_ui_configurer_configure_for_multi_window (ui_configurer);
 
-  gimp_ui_configurer_update_appearance (ui_configurer);
+  picman_ui_configurer_update_appearance (ui_configurer);
 }

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 #include "xcf-private.h"
 #include "xcf-seek.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 gboolean
 xcf_seek_pos (XcfInfo  *info,

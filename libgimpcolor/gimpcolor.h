@@ -1,4 +1,4 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software: you can redistribute it and/or
@@ -16,24 +16,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_COLOR_H__
-#define __GIMP_COLOR_H__
+#ifndef __PICMAN_COLOR_H__
+#define __PICMAN_COLOR_H__
 
-#define __GIMP_COLOR_H_INSIDE__
+#define __PICMAN_COLOR_H_INSIDE__
 
-#include <libgimpcolor/gimpcolortypes.h>
+#include <libpicmancolor/picmancolortypes.h>
 
-#include <libgimpcolor/gimpadaptivesupersample.h>
-#include <libgimpcolor/gimpbilinear.h>
-#include <libgimpcolor/gimpcairo.h>
-#include <libgimpcolor/gimpcolormanaged.h>
-#include <libgimpcolor/gimpcolorspace.h>
-#include <libgimpcolor/gimpcmyk.h>
-#include <libgimpcolor/gimphsl.h>
-#include <libgimpcolor/gimphsv.h>
-#include <libgimpcolor/gimppixbuf.h>
-#include <libgimpcolor/gimprgb.h>
+#include <libpicmancolor/picmanadaptivesupersample.h>
+#include <libpicmancolor/picmanbilinear.h>
+#include <libpicmancolor/picmancairo.h>
+#include <libpicmancolor/picmancolormanaged.h>
+#include <libpicmancolor/picmancolorspace.h>
+#include <libpicmancolor/picmancmyk.h>
+#include <libpicmancolor/picmanhsl.h>
+#include <libpicmancolor/picmanhsv.h>
+#include <libpicmancolor/picmanpixbuf.h>
+#include <libpicmancolor/picmanrgb.h>
 
-#undef __GIMP_COLOR_H_INSIDE__
+#undef __PICMAN_COLOR_H_INSIDE__
 
-#endif  /* __GIMP_COLOR_H__ */
+#endif  /* __PICMAN_COLOR_H__ */

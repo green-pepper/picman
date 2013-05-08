@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * File Utitility functions for GimpConfig.
- * Copyright (C) 2001-2003  Sven Neumann <sven@gimp.org>
+ * File Utitility functions for PicmanConfig.
+ * Copyright (C) 2001-2003  Sven Neumann <sven@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,22 +26,22 @@
 #include <glib-object.h>
 #include <glib/gstdio.h>
 
-#include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
+#include "libpicmanbase/picmanbase.h"
+#include "libpicmanconfig/picmanconfig.h"
 
 #ifdef G_OS_WIN32
-#include "libgimpbase/gimpwin32-io.h"
+#include "libpicmanbase/picmanwin32-io.h"
 #endif
 
 #include "config-types.h"
 
-#include "gimpconfig-file.h"
+#include "picmanconfig-file.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 gboolean
-gimp_config_file_copy (const gchar        *source,
+picman_config_file_copy (const gchar        *source,
                        const gchar        *dest,
                        const gchar        *old_options_pattern,
                        GRegexEvalCallback  update_callback,
@@ -69,7 +69,7 @@ gimp_config_file_copy (const gchar        *source,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for reading: %s"),
-                   gimp_filename_to_utf8 (source), g_strerror (errno));
+                   picman_filename_to_utf8 (source), g_strerror (errno));
       if (old_options_regexp)
         g_regex_unref (old_options_regexp);
       return FALSE;
@@ -80,7 +80,7 @@ gimp_config_file_copy (const gchar        *source,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Could not open '%s' for writing: %s"),
-                   gimp_filename_to_utf8 (dest), g_strerror (errno));
+                   picman_filename_to_utf8 (dest), g_strerror (errno));
       fclose (sfile);
       if (old_options_regexp)
         g_regex_unref (old_options_regexp);
@@ -109,10 +109,10 @@ gimp_config_file_copy (const gchar        *source,
               /* We are in unlikely case where a single config line is
                * longer than the buffer!
                */
-              g_set_error (error, GIMP_CONFIG_ERROR, GIMP_CONFIG_ERROR_PARSE,
+              g_set_error (error, PICMAN_CONFIG_ERROR, PICMAN_CONFIG_ERROR_PARSE,
                            _("Error parsing '%s': line longer than %"
                              G_GINT64_FORMAT" characters."),
-                           gimp_filename_to_utf8 (source), (gint64) sizeof (buffer));
+                           picman_filename_to_utf8 (source), (gint64) sizeof (buffer));
               fclose (sfile);
               fclose (dfile);
               g_regex_unref (old_options_regexp);
@@ -142,7 +142,7 @@ gimp_config_file_copy (const gchar        *source,
         {
           g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                        _("Error writing '%s': %s"),
-                       gimp_filename_to_utf8 (dest), g_strerror (errno));
+                       picman_filename_to_utf8 (dest), g_strerror (errno));
           if (old_options_regexp && update_callback)
             {
               g_free (write_bytes);
@@ -172,7 +172,7 @@ gimp_config_file_copy (const gchar        *source,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Error reading '%s': %s"),
-                   gimp_filename_to_utf8 (source), g_strerror (errno));
+                   picman_filename_to_utf8 (source), g_strerror (errno));
       fclose (sfile);
       fclose (dfile);
       if (old_options_regexp)
@@ -186,7 +186,7 @@ gimp_config_file_copy (const gchar        *source,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    _("Error writing '%s': %s"),
-                   gimp_filename_to_utf8 (dest), g_strerror (errno));
+                   picman_filename_to_utf8 (dest), g_strerror (errno));
       if (old_options_regexp)
         g_regex_unref (old_options_regexp);
       return FALSE;
@@ -203,7 +203,7 @@ gimp_config_file_copy (const gchar        *source,
 }
 
 gboolean
-gimp_config_file_backup_on_error (const gchar  *filename,
+picman_config_file_backup_on_error (const gchar  *filename,
                                   const gchar  *name,
                                   GError      **error)
 {
@@ -216,13 +216,13 @@ gimp_config_file_backup_on_error (const gchar  *filename,
 
   backup = g_strconcat (filename, "~", NULL);
 
-  success = gimp_config_file_copy (filename, backup, NULL, NULL, error);
+  success = picman_config_file_copy (filename, backup, NULL, NULL, error);
 
   if (success)
     g_message (_("There was an error parsing your '%s' file. "
                  "Default values will be used. A backup of your "
                  "configuration has been created at '%s'."),
-               name, gimp_filename_to_utf8 (backup));
+               name, picman_filename_to_utf8 (backup));
 
   g_free (backup);
 

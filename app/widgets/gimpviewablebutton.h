@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpviewablebutton.h
- * Copyright (C) 2003-2005 Michael Natterer <mitch@gimp.org>
+ * picmanviewablebutton.h
+ * Copyright (C) 2003-2005 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,34 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_VIEWABLE_BUTTON_H__
-#define __GIMP_VIEWABLE_BUTTON_H__
+#ifndef __PICMAN_VIEWABLE_BUTTON_H__
+#define __PICMAN_VIEWABLE_BUTTON_H__
 
 
-#define GIMP_TYPE_VIEWABLE_BUTTON            (gimp_viewable_button_get_type ())
-#define GIMP_VIEWABLE_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_VIEWABLE_BUTTON, GimpViewableButton))
-#define GIMP_VIEWABLE_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_VIEWABLE_BUTTON, GimpViewableButtonClass))
-#define GIMP_IS_VIEWABLE_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_VIEWABLE_BUTTON))
-#define GIMP_IS_VIEWABLE_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_VIEWABLE_BUTTON))
-#define GIMP_VIEWABLE_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_VIEWABLE_BUTTON, GimpViewableButtonClass))
+#define PICMAN_TYPE_VIEWABLE_BUTTON            (picman_viewable_button_get_type ())
+#define PICMAN_VIEWABLE_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_VIEWABLE_BUTTON, PicmanViewableButton))
+#define PICMAN_VIEWABLE_BUTTON_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_VIEWABLE_BUTTON, PicmanViewableButtonClass))
+#define PICMAN_IS_VIEWABLE_BUTTON(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_VIEWABLE_BUTTON))
+#define PICMAN_IS_VIEWABLE_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_VIEWABLE_BUTTON))
+#define PICMAN_VIEWABLE_BUTTON_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PICMAN_TYPE_VIEWABLE_BUTTON, PicmanViewableButtonClass))
 
 
-typedef struct _GimpViewableButtonClass GimpViewableButtonClass;
+typedef struct _PicmanViewableButtonClass PicmanViewableButtonClass;
 
-struct _GimpViewableButton
+struct _PicmanViewableButton
 {
-  GimpButton         parent_instance;
+  PicmanButton         parent_instance;
 
-  GimpContainer     *container;
-  GimpContext       *context;
+  PicmanContainer     *container;
+  PicmanContext       *context;
 
-  GimpViewType       popup_view_type;
+  PicmanViewType       popup_view_type;
   gint               popup_view_size;
 
   gint               button_view_size;
   gint               view_border_width;
 
-  GimpDialogFactory *dialog_factory;
+  PicmanDialogFactory *dialog_factory;
   gchar             *dialog_identifier;
   gchar             *dialog_stock_id;
   gchar             *dialog_tooltip;
@@ -53,32 +53,32 @@ struct _GimpViewableButton
   GtkWidget         *view;
 };
 
-struct _GimpViewableButtonClass
+struct _PicmanViewableButtonClass
 {
-  GimpButtonClass  parent_class;
+  PicmanButtonClass  parent_class;
 };
 
 
-GType       gimp_viewable_button_get_type (void) G_GNUC_CONST;
+GType       picman_viewable_button_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gimp_viewable_button_new      (GimpContainer      *container,
-                                           GimpContext        *context,
-                                           GimpViewType        view_type,
+GtkWidget * picman_viewable_button_new      (PicmanContainer      *container,
+                                           PicmanContext        *context,
+                                           PicmanViewType        view_type,
                                            gint                button_view_size,
                                            gint                view_size,
                                            gint                view_border_width,
-                                           GimpDialogFactory  *dialog_factory,
+                                           PicmanDialogFactory  *dialog_factory,
                                            const gchar        *dialog_identifier,
                                            const gchar        *dialog_stock_id,
                                            const gchar        *dialog_tooltip);
 
-GimpViewType gimp_viewable_button_get_view_type (GimpViewableButton *button);
-void         gimp_viewable_button_set_view_type (GimpViewableButton *button,
-                                                 GimpViewType        view_type);
+PicmanViewType picman_viewable_button_get_view_type (PicmanViewableButton *button);
+void         picman_viewable_button_set_view_type (PicmanViewableButton *button,
+                                                 PicmanViewType        view_type);
 
-gint         gimp_viewable_button_get_view_size (GimpViewableButton *button);
-void         gimp_viewable_button_set_view_size (GimpViewableButton *button,
+gint         picman_viewable_button_get_view_size (PicmanViewableButton *button);
+void         picman_viewable_button_set_view_size (PicmanViewableButton *button,
                                                  gint                view_size);
 
 
-#endif /* __GIMP_VIEWABLE_BUTTON_H__ */
+#endif /* __PICMAN_VIEWABLE_BUTTON_H__ */

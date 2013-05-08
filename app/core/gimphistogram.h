@@ -1,7 +1,7 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimphistogram module Copyright (C) 1999 Jay Cox <jaycox@gimp.org>
+ * picmanhistogram module Copyright (C) 1999 Jay Cox <jaycox@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,54 +17,54 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_HISTOGRAM_H__
-#define __GIMP_HISTOGRAM_H__
+#ifndef __PICMAN_HISTOGRAM_H__
+#define __PICMAN_HISTOGRAM_H__
 
 
-GimpHistogram * gimp_histogram_new           (void);
+PicmanHistogram * picman_histogram_new           (void);
 
-GimpHistogram * gimp_histogram_ref           (GimpHistogram        *histogram);
-void            gimp_histogram_unref         (GimpHistogram        *histogram);
+PicmanHistogram * picman_histogram_ref           (PicmanHistogram        *histogram);
+void            picman_histogram_unref         (PicmanHistogram        *histogram);
 
-GimpHistogram * gimp_histogram_duplicate     (GimpHistogram        *histogram);
+PicmanHistogram * picman_histogram_duplicate     (PicmanHistogram        *histogram);
 
-void            gimp_histogram_calculate     (GimpHistogram        *histogram,
+void            picman_histogram_calculate     (PicmanHistogram        *histogram,
                                               GeglBuffer           *buffer,
                                               const GeglRectangle  *buffer_rect,
                                               GeglBuffer           *mask,
                                               const GeglRectangle  *mask_rect);
 
-void            gimp_histogram_clear_values  (GimpHistogram        *histogram);
+void            picman_histogram_clear_values  (PicmanHistogram        *histogram);
 
-gdouble         gimp_histogram_get_maximum   (GimpHistogram        *histogram,
-                                              GimpHistogramChannel  channel);
-gdouble         gimp_histogram_get_count     (GimpHistogram        *histogram,
-                                              GimpHistogramChannel  channel,
+gdouble         picman_histogram_get_maximum   (PicmanHistogram        *histogram,
+                                              PicmanHistogramChannel  channel);
+gdouble         picman_histogram_get_count     (PicmanHistogram        *histogram,
+                                              PicmanHistogramChannel  channel,
                                               gint                  start,
                                               gint                  end);
-gdouble         gimp_histogram_get_mean      (GimpHistogram        *histogram,
-                                              GimpHistogramChannel  channel,
+gdouble         picman_histogram_get_mean      (PicmanHistogram        *histogram,
+                                              PicmanHistogramChannel  channel,
                                               gint                  start,
                                               gint                  end);
-gint            gimp_histogram_get_median    (GimpHistogram        *histogram,
-                                              GimpHistogramChannel  channel,
+gint            picman_histogram_get_median    (PicmanHistogram        *histogram,
+                                              PicmanHistogramChannel  channel,
                                               gint                  start,
                                               gint                  end);
-gdouble         gimp_histogram_get_std_dev   (GimpHistogram        *histogram,
-                                              GimpHistogramChannel  channel,
+gdouble         picman_histogram_get_std_dev   (PicmanHistogram        *histogram,
+                                              PicmanHistogramChannel  channel,
                                               gint                  start,
                                               gint                  end);
-gdouble         gimp_histogram_get_threshold (GimpHistogram        *histogram,
-                                              GimpHistogramChannel  channel,
+gdouble         picman_histogram_get_threshold (PicmanHistogram        *histogram,
+                                              PicmanHistogramChannel  channel,
                                               gint                  start,
                                               gint                  end);
-gdouble         gimp_histogram_get_value     (GimpHistogram        *histogram,
-                                              GimpHistogramChannel  channel,
+gdouble         picman_histogram_get_value     (PicmanHistogram        *histogram,
+                                              PicmanHistogramChannel  channel,
                                               gint                  bin);
-gdouble         gimp_histogram_get_channel   (GimpHistogram        *histogram,
-                                              GimpHistogramChannel  channel,
+gdouble         picman_histogram_get_channel   (PicmanHistogram        *histogram,
+                                              PicmanHistogramChannel  channel,
                                               gint                  bin);
-gint            gimp_histogram_n_channels    (GimpHistogram        *histogram);
+gint            picman_histogram_n_channels    (PicmanHistogram        *histogram);
 
 
-#endif /* __GIMP_HISTOGRAM_H__ */
+#endif /* __PICMAN_HISTOGRAM_H__ */

@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"Gimp-GUI\"	\
-	-DGIMP_COMMAND=\"@GIMP_COMMAND@\"
+	-DG_LOG_DOMAIN=\"Picman-GUI\"	\
+	-DPICMAN_COMMAND=\"@PICMAN_COMMAND@\"
 
 INCLUDES = \
 	-I$(top_builddir)	\
@@ -19,10 +19,10 @@ noinst_LIBRARIES = libappgui.a
 libappgui_a_sources = \
 	color-history.c		\
 	color-history.h		\
-	gimpdbusservice.c	\
-	gimpdbusservice.h	\
-	gimpuiconfigurer.c	\
-	gimpuiconfigurer.h	\
+	picmandbusservice.c	\
+	picmandbusservice.h	\
+	picmanuiconfigurer.c	\
+	picmanuiconfigurer.h	\
 	gui.c			\
 	gui.h			\
 	gui-message.c		\
@@ -41,7 +41,7 @@ libappgui_a_sources = \
 	ige-mac-menu.c		\
 	ige-mac-menu.h
 
-libappgui_a_built_sources = gimpdbusservice-glue.h 
+libappgui_a_built_sources = picmandbusservice-glue.h 
 
 libappgui_a_SOURCES = $(libappgui_a_built_sources) $(libappgui_a_sources)
 
@@ -52,10 +52,10 @@ EXTRA_DIST = \
 # rules to generate built sources
 #
 # setup autogeneration dependencies
-gen_sources = gimpdbusservice-glue.h
+gen_sources = picmandbusservice-glue.h
 CLEANFILES = $(gen_sources)
 
-$(srcdir)/gimpdbusservice.c: gimpdbusservice-glue.h
+$(srcdir)/picmandbusservice.c: picmandbusservice-glue.h
 
-gimpdbusservice-glue.h: $(srcdir)/dbus-service.xml
-	$(DBUS_BINDING_TOOL) --mode=glib-server --prefix=gimp $< > $(@F)
+picmandbusservice-glue.h: $(srcdir)/dbus-service.xml
+	$(DBUS_BINDING_TOOL) --mode=glib-server --prefix=picman $< > $(@F)

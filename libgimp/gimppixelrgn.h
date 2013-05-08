@@ -1,7 +1,7 @@
-/* LIBGIMP - The GIMP Library
+/* LIBPICMAN - The PICMAN Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
- * gimppixelrgn.h
+ * picmanpixelrgn.h
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,22 +18,22 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__GIMP_H_INSIDE__) && !defined (GIMP_COMPILATION)
-#error "Only <libgimp/gimp.h> can be included directly."
+#if !defined (__PICMAN_H_INSIDE__) && !defined (PICMAN_COMPILATION)
+#error "Only <libpicman/picman.h> can be included directly."
 #endif
 
-#ifndef __GIMP_PIXEL_RGN_H__
-#define __GIMP_PIXEL_RGN_H__
+#ifndef __PICMAN_PIXEL_RGN_H__
+#define __PICMAN_PIXEL_RGN_H__
 
 G_BEGIN_DECLS
 
 /* For information look into the C source or the html documentation */
 
 
-struct _GimpPixelRgn
+struct _PicmanPixelRgn
 {
   guchar       *data;          /* pointer to region data */
-  GimpDrawable *drawable;      /* pointer to drawable */
+  PicmanDrawable *drawable;      /* pointer to drawable */
   gint          bpp;           /* bytes per pixel */
   gint          rowstride;     /* bytes per pixel row */
   gint          x, y;          /* origin */
@@ -44,79 +44,79 @@ struct _GimpPixelRgn
 };
 
 
-GIMP_DEPRECATED_FOR(gimp_drawable_get_buffer)
-void      gimp_pixel_rgn_init       (GimpPixelRgn  *pr,
-                                     GimpDrawable  *drawable,
+PICMAN_DEPRECATED_FOR(picman_drawable_get_buffer)
+void      picman_pixel_rgn_init       (PicmanPixelRgn  *pr,
+                                     PicmanDrawable  *drawable,
                                      gint           x,
                                      gint           y,
                                      gint           width,
                                      gint           height,
                                      gint           dirty,
                                      gint           shadow);
-GIMP_DEPRECATED
-void      gimp_pixel_rgn_resize     (GimpPixelRgn  *pr,
+PICMAN_DEPRECATED
+void      picman_pixel_rgn_resize     (PicmanPixelRgn  *pr,
                                      gint           x,
                                      gint           y,
                                      gint           width,
                                      gint           height);
-GIMP_DEPRECATED_FOR(gegl_buffer_sample)
-void      gimp_pixel_rgn_get_pixel  (GimpPixelRgn  *pr,
+PICMAN_DEPRECATED_FOR(gegl_buffer_sample)
+void      picman_pixel_rgn_get_pixel  (PicmanPixelRgn  *pr,
                                      guchar        *buf,
                                      gint           x,
                                      gint           y);
-GIMP_DEPRECATED_FOR(gegl_buffer_get)
-void      gimp_pixel_rgn_get_row    (GimpPixelRgn  *pr,
+PICMAN_DEPRECATED_FOR(gegl_buffer_get)
+void      picman_pixel_rgn_get_row    (PicmanPixelRgn  *pr,
                                      guchar        *buf,
                                      gint           x,
                                      gint           y,
                                      gint           width);
-GIMP_DEPRECATED_FOR(gegl_buffer_get)
-void      gimp_pixel_rgn_get_col    (GimpPixelRgn  *pr,
+PICMAN_DEPRECATED_FOR(gegl_buffer_get)
+void      picman_pixel_rgn_get_col    (PicmanPixelRgn  *pr,
                                      guchar        *buf,
                                      gint           x,
                                      gint           y,
                                      gint           height);
-GIMP_DEPRECATED_FOR(gegl_buffer_get)
-void      gimp_pixel_rgn_get_rect   (GimpPixelRgn  *pr,
+PICMAN_DEPRECATED_FOR(gegl_buffer_get)
+void      picman_pixel_rgn_get_rect   (PicmanPixelRgn  *pr,
                                      guchar        *buf,
                                      gint           x,
                                      gint           y,
                                      gint           width,
                                      gint           height);
-GIMP_DEPRECATED_FOR(gegl_buffer_set)
-void      gimp_pixel_rgn_set_pixel  (GimpPixelRgn  *pr,
+PICMAN_DEPRECATED_FOR(gegl_buffer_set)
+void      picman_pixel_rgn_set_pixel  (PicmanPixelRgn  *pr,
                                      const guchar  *buf,
                                      gint           x,
                                      gint           y);
-GIMP_DEPRECATED_FOR(gegl_buffer_set)
-void      gimp_pixel_rgn_set_row    (GimpPixelRgn  *pr,
+PICMAN_DEPRECATED_FOR(gegl_buffer_set)
+void      picman_pixel_rgn_set_row    (PicmanPixelRgn  *pr,
                                      const guchar  *buf,
                                      gint           x,
                                      gint           y,
                                      gint           width);
-GIMP_DEPRECATED_FOR(gegl_buffer_set)
-void      gimp_pixel_rgn_set_col    (GimpPixelRgn  *pr,
+PICMAN_DEPRECATED_FOR(gegl_buffer_set)
+void      picman_pixel_rgn_set_col    (PicmanPixelRgn  *pr,
                                      const guchar  *buf,
                                      gint           x,
                                      gint           y,
                                      gint           height);
-GIMP_DEPRECATED_FOR(gegl_buffer_set)
-void      gimp_pixel_rgn_set_rect   (GimpPixelRgn  *pr,
+PICMAN_DEPRECATED_FOR(gegl_buffer_set)
+void      picman_pixel_rgn_set_rect   (PicmanPixelRgn  *pr,
                                      const guchar  *buf,
                                      gint           x,
                                      gint           y,
                                      gint           width,
                                      gint           height);
-GIMP_DEPRECATED_FOR(gegl_buffer_iterator_new)
-gpointer  gimp_pixel_rgns_register  (gint           nrgns,
+PICMAN_DEPRECATED_FOR(gegl_buffer_iterator_new)
+gpointer  picman_pixel_rgns_register  (gint           nrgns,
                                      ...);
-GIMP_DEPRECATED_FOR(gegl_buffer_iterator_new)
-gpointer  gimp_pixel_rgns_register2 (gint           nrgns,
-                                     GimpPixelRgn **prs);
-GIMP_DEPRECATED_FOR(gegl_buffer_iterator_next)
-gpointer  gimp_pixel_rgns_process   (gpointer       pri_ptr);
+PICMAN_DEPRECATED_FOR(gegl_buffer_iterator_new)
+gpointer  picman_pixel_rgns_register2 (gint           nrgns,
+                                     PicmanPixelRgn **prs);
+PICMAN_DEPRECATED_FOR(gegl_buffer_iterator_next)
+gpointer  picman_pixel_rgns_process   (gpointer       pri_ptr);
 
 
 G_END_DECLS
 
-#endif /* __GIMP_PIXEL_RGN_H__ */
+#endif /* __PICMAN_PIXEL_RGN_H__ */

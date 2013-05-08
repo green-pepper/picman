@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpactiongroup.h
- * Copyright (C) 2004 Michael Natterer <mitch@gimp.org>
+ * picmanactiongroup.h
+ * Copyright (C) 2004 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,41 +18,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ACTION_GROUP_H__
-#define __GIMP_ACTION_GROUP_H__
+#ifndef __PICMAN_ACTION_GROUP_H__
+#define __PICMAN_ACTION_GROUP_H__
 
 
-#define GIMP_TYPE_ACTION_GROUP              (gimp_action_group_get_type ())
-#define GIMP_ACTION_GROUP(obj)              (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ACTION_GROUP, GimpActionGroup))
-#define GIMP_ACTION_GROUP_CLASS(vtable)     (G_TYPE_CHECK_CLASS_CAST ((vtable), GIMP_TYPE_ACTION_GROUP, GimpActionGroupClass))
-#define GIMP_IS_ACTION_GROUP(obj)           (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ACTION_GROUP))
-#define GIMP_IS_ACTION_GROUP_CLASS(vtable)  (G_TYPE_CHECK_CLASS_TYPE ((vtable), GIMP_TYPE_ACTION_GROUP))
-#define GIMP_ACTION_GROUP_GET_CLASS(inst)   (G_TYPE_INSTANCE_GET_CLASS ((inst), GIMP_TYPE_ACTION_GROUP, GimpActionGroupClass))
+#define PICMAN_TYPE_ACTION_GROUP              (picman_action_group_get_type ())
+#define PICMAN_ACTION_GROUP(obj)              (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ACTION_GROUP, PicmanActionGroup))
+#define PICMAN_ACTION_GROUP_CLASS(vtable)     (G_TYPE_CHECK_CLASS_CAST ((vtable), PICMAN_TYPE_ACTION_GROUP, PicmanActionGroupClass))
+#define PICMAN_IS_ACTION_GROUP(obj)           (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ACTION_GROUP))
+#define PICMAN_IS_ACTION_GROUP_CLASS(vtable)  (G_TYPE_CHECK_CLASS_TYPE ((vtable), PICMAN_TYPE_ACTION_GROUP))
+#define PICMAN_ACTION_GROUP_GET_CLASS(inst)   (G_TYPE_INSTANCE_GET_CLASS ((inst), PICMAN_TYPE_ACTION_GROUP, PicmanActionGroupClass))
 
 
-typedef struct _GimpActionGroupClass GimpActionGroupClass;
+typedef struct _PicmanActionGroupClass PicmanActionGroupClass;
 
-struct _GimpActionGroup
+struct _PicmanActionGroup
 {
   GtkActionGroup             parent_instance;
 
-  Gimp                      *gimp;
+  Picman                      *picman;
   gchar                     *label;
   gchar                     *stock_id;
 
   gpointer                   user_data;
 
-  GimpActionGroupUpdateFunc  update_func;
+  PicmanActionGroupUpdateFunc  update_func;
 };
 
-struct _GimpActionGroupClass
+struct _PicmanActionGroupClass
 {
   GtkActionGroupClass  parent_class;
 
   GHashTable          *groups;
 };
 
-struct _GimpActionEntry
+struct _PicmanActionEntry
 {
   const gchar *name;
   const gchar *stock_id;
@@ -64,7 +64,7 @@ struct _GimpActionEntry
   const gchar *help_id;
 };
 
-struct _GimpToggleActionEntry
+struct _PicmanToggleActionEntry
 {
   const gchar *name;
   const gchar *stock_id;
@@ -77,7 +77,7 @@ struct _GimpToggleActionEntry
   const gchar *help_id;
 };
 
-struct _GimpRadioActionEntry
+struct _PicmanRadioActionEntry
 {
   const gchar *name;
   const gchar *stock_id;
@@ -89,7 +89,7 @@ struct _GimpRadioActionEntry
   const gchar *help_id;
 };
 
-struct _GimpEnumActionEntry
+struct _PicmanEnumActionEntry
 {
   const gchar *name;
   const gchar *stock_id;
@@ -102,7 +102,7 @@ struct _GimpEnumActionEntry
   const gchar *help_id;
 };
 
-struct _GimpStringActionEntry
+struct _PicmanStringActionEntry
 {
   const gchar *name;
   const gchar *stock_id;
@@ -114,96 +114,96 @@ struct _GimpStringActionEntry
   const gchar *help_id;
 };
 
-struct _GimpPlugInActionEntry
+struct _PicmanPlugInActionEntry
 {
   const gchar         *name;
   const gchar         *stock_id;
   const gchar         *label;
   const gchar         *accelerator;
   const gchar         *tooltip;
-  GimpPlugInProcedure *procedure;
+  PicmanPlugInProcedure *procedure;
 
   const gchar         *help_id;
 };
 
 
-GType            gimp_action_group_get_type   (void) G_GNUC_CONST;
+GType            picman_action_group_get_type   (void) G_GNUC_CONST;
 
-GimpActionGroup *gimp_action_group_new        (Gimp                  *gimp,
+PicmanActionGroup *picman_action_group_new        (Picman                  *picman,
                                                const gchar           *name,
                                                const gchar           *label,
                                                const gchar           *stock_id,
                                                gpointer               user_data,
-                                               GimpActionGroupUpdateFunc update_func);
+                                               PicmanActionGroupUpdateFunc update_func);
 
-GList *gimp_action_groups_from_name           (const gchar           *name);
+GList *picman_action_groups_from_name           (const gchar           *name);
 
-void   gimp_action_group_update               (GimpActionGroup       *group,
+void   picman_action_group_update               (PicmanActionGroup       *group,
                                                gpointer               update_data);
 
-void   gimp_action_group_add_actions          (GimpActionGroup             *group,
+void   picman_action_group_add_actions          (PicmanActionGroup             *group,
 					       const gchar                 *msg_context,
-                                               const GimpActionEntry       *entries,
+                                               const PicmanActionEntry       *entries,
                                                guint                        n_entries);
-void   gimp_action_group_add_toggle_actions   (GimpActionGroup             *group,
+void   picman_action_group_add_toggle_actions   (PicmanActionGroup             *group,
 					       const gchar                 *msg_context,
-                                               const GimpToggleActionEntry *entries,
+                                               const PicmanToggleActionEntry *entries,
                                                guint                        n_entries);
-GSList *gimp_action_group_add_radio_actions   (GimpActionGroup             *group,
+GSList *picman_action_group_add_radio_actions   (PicmanActionGroup             *group,
 					       const gchar                 *msg_context,
-                                               const GimpRadioActionEntry  *entries,
+                                               const PicmanRadioActionEntry  *entries,
                                                guint                        n_entries,
                                                GSList                      *radio_group,
                                                gint                         value,
                                                GCallback                    callback);
-void   gimp_action_group_add_enum_actions     (GimpActionGroup             *group,
+void   picman_action_group_add_enum_actions     (PicmanActionGroup             *group,
 					       const gchar                 *msg_context,
-                                               const GimpEnumActionEntry   *entries,
+                                               const PicmanEnumActionEntry   *entries,
                                                guint                        n_entries,
                                                GCallback                    callback);
-void   gimp_action_group_add_string_actions   (GimpActionGroup             *group,
+void   picman_action_group_add_string_actions   (PicmanActionGroup             *group,
 					       const gchar                 *msg_context,
-                                               const GimpStringActionEntry *entries,
+                                               const PicmanStringActionEntry *entries,
                                                guint                        n_entries,
                                                GCallback                    callback);
-void   gimp_action_group_add_plug_in_actions  (GimpActionGroup             *group,
-                                               const GimpPlugInActionEntry *entries,
+void   picman_action_group_add_plug_in_actions  (PicmanActionGroup             *group,
+                                               const PicmanPlugInActionEntry *entries,
                                                guint                        n_entries,
                                                GCallback                    callback);
 
-void          gimp_action_group_activate_action       (GimpActionGroup *group,
+void          picman_action_group_activate_action       (PicmanActionGroup *group,
                                                        const gchar     *action_name);
-void          gimp_action_group_set_action_visible    (GimpActionGroup *group,
+void          picman_action_group_set_action_visible    (PicmanActionGroup *group,
                                                        const gchar     *action_name,
                                                        gboolean         visible);
-void          gimp_action_group_set_action_sensitive  (GimpActionGroup *group,
+void          picman_action_group_set_action_sensitive  (PicmanActionGroup *group,
                                                        const gchar     *action_name,
                                                        gboolean         sensitive);
-void          gimp_action_group_set_action_active     (GimpActionGroup *group,
+void          picman_action_group_set_action_active     (PicmanActionGroup *group,
                                                        const gchar     *action_name,
                                                        gboolean         active);
-void          gimp_action_group_set_action_label      (GimpActionGroup *group,
+void          picman_action_group_set_action_label      (PicmanActionGroup *group,
                                                        const gchar     *action_name,
                                                        const gchar     *label);
-void          gimp_action_group_set_action_tooltip    (GimpActionGroup *group,
+void          picman_action_group_set_action_tooltip    (PicmanActionGroup *group,
                                                        const gchar     *action_name,
                                                        const gchar     *tooltip);
-const gchar * gimp_action_group_get_action_tooltip    (GimpActionGroup *group,
+const gchar * picman_action_group_get_action_tooltip    (PicmanActionGroup *group,
                                                        const gchar     *action_name);
-void          gimp_action_group_set_action_color      (GimpActionGroup *group,
+void          picman_action_group_set_action_color      (PicmanActionGroup *group,
                                                        const gchar     *action_name,
-                                                       const GimpRGB   *color,
+                                                       const PicmanRGB   *color,
                                                        gboolean         set_label);
-void          gimp_action_group_set_action_viewable   (GimpActionGroup *group,
+void          picman_action_group_set_action_viewable   (PicmanActionGroup *group,
                                                        const gchar     *action_name,
-                                                       GimpViewable    *viewable);
-void          gimp_action_group_set_action_hide_empty (GimpActionGroup *group,
+                                                       PicmanViewable    *viewable);
+void          picman_action_group_set_action_hide_empty (PicmanActionGroup *group,
                                                        const gchar     *action_name,
                                                        gboolean         hide_empty);
-void   gimp_action_group_set_action_always_show_image (GimpActionGroup *group,
+void   picman_action_group_set_action_always_show_image (PicmanActionGroup *group,
                                                        const gchar     *action_name,
                                                        gboolean         always_show_image);
 
 
 
-#endif  /* __GIMP_ACTION_GROUP_H__ */
+#endif  /* __PICMAN_ACTION_GROUP_H__ */

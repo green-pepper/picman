@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,62 +19,62 @@
 
 #include <gtk/gtk.h>
 
-#include "libgimpwidgets/gimpwidgets.h"
+#include "libpicmanwidgets/picmanwidgets.h"
 
 #include "actions-types.h"
 
-#include "widgets/gimpactiongroup.h"
-#include "widgets/gimphelp-ids.h"
+#include "widgets/picmanactiongroup.h"
+#include "widgets/picmanhelp-ids.h"
 
-#include "display/gimpcursorview.h"
+#include "display/picmancursorview.h"
 
 #include "cursor-info-actions.h"
 #include "cursor-info-commands.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
-static const GimpActionEntry cursor_info_actions[] =
+static const PicmanActionEntry cursor_info_actions[] =
 {
-  { "cursor-info-popup", GIMP_STOCK_CURSOR,
+  { "cursor-info-popup", PICMAN_STOCK_CURSOR,
     NC_("cursor-info-action", "Pointer Information Menu"), NULL, NULL, NULL,
-    GIMP_HELP_POINTER_INFO_DIALOG }
+    PICMAN_HELP_POINTER_INFO_DIALOG }
 };
 
-static const GimpToggleActionEntry cursor_info_toggle_actions[] =
+static const PicmanToggleActionEntry cursor_info_toggle_actions[] =
 {
   { "cursor-info-sample-merged", NULL,
     NC_("cursor-info-action", "_Sample Merged"), "",
     NC_("cursor-info-action", "Use the composite color of all visible layers"),
     G_CALLBACK (cursor_info_sample_merged_cmd_callback),
     TRUE,
-    GIMP_HELP_POINTER_INFO_SAMPLE_MERGED }
+    PICMAN_HELP_POINTER_INFO_SAMPLE_MERGED }
 };
 
 
 void
-cursor_info_actions_setup (GimpActionGroup *group)
+cursor_info_actions_setup (PicmanActionGroup *group)
 {
-  gimp_action_group_add_actions (group, "cursor-info-action",
+  picman_action_group_add_actions (group, "cursor-info-action",
                                  cursor_info_actions,
                                  G_N_ELEMENTS (cursor_info_actions));
 
-  gimp_action_group_add_toggle_actions (group, "cursor-info-action",
+  picman_action_group_add_toggle_actions (group, "cursor-info-action",
                                         cursor_info_toggle_actions,
                                         G_N_ELEMENTS (cursor_info_toggle_actions));
 }
 
 void
-cursor_info_actions_update (GimpActionGroup *group,
+cursor_info_actions_update (PicmanActionGroup *group,
                             gpointer         data)
 {
-  GimpCursorView *view = GIMP_CURSOR_VIEW (data);
+  PicmanCursorView *view = PICMAN_CURSOR_VIEW (data);
 
 #define SET_ACTIVE(action,condition) \
-        gimp_action_group_set_action_active (group, action, (condition) != 0)
+        picman_action_group_set_action_active (group, action, (condition) != 0)
 
   SET_ACTIVE ("cursor-info-sample-merged",
-              gimp_cursor_view_get_sample_merged (view));
+              picman_cursor_view_get_sample_merged (view));
 
 #undef SET_ACTIVE
 }

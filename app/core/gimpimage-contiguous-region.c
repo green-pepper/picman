@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,23 +23,23 @@
 #include <gegl.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
-#include "libgimpmath/gimpmath.h"
+#include "libpicmancolor/picmancolor.h"
+#include "libpicmanmath/picmanmath.h"
 
 #include "core-types.h"
 
-#include "gegl/gimp-babl.h"
+#include "gegl/picman-babl.h"
 
-#include "gimpdrawable.h"
-#include "gimpimage.h"
-#include "gimpimage-contiguous-region.h"
-#include "gimppickable.h"
+#include "picmandrawable.h"
+#include "picmanimage.h"
+#include "picmanimage-contiguous-region.h"
+#include "picmanpickable.h"
 
 
 /*  local function prototypes  */
 
 static const Babl * choose_format         (GeglBuffer          *buffer,
-                                           GimpSelectCriterion  select_criterion,
+                                           PicmanSelectCriterion  select_criterion,
                                            gint                *n_components,
                                            gboolean            *has_alpha);
 static gfloat   pixel_difference          (const gfloat        *col1,
@@ -49,7 +49,7 @@ static gfloat   pixel_difference          (const gfloat        *col1,
                                            gint                 n_components,
                                            gboolean             has_alpha,
                                            gboolean             select_transparent,
-                                           GimpSelectCriterion  select_criterion);
+                                           PicmanSelectCriterion  select_criterion);
 static gboolean find_contiguous_segment   (const gfloat        *col,
                                            GeglBuffer          *src_buffer,
                                            GeglBuffer          *mask_buffer,
@@ -58,7 +58,7 @@ static gboolean find_contiguous_segment   (const gfloat        *col,
                                            gboolean             has_alpha,
                                            gint                 width,
                                            gboolean             select_transparent,
-                                           GimpSelectCriterion  select_criterion,
+                                           PicmanSelectCriterion  select_criterion,
                                            gboolean             antialias,
                                            gfloat               threshold,
                                            gint                 initial_x,
@@ -71,7 +71,7 @@ static void find_contiguous_region_helper (GeglBuffer          *src_buffer,
                                            gint                 n_components,
                                            gboolean             has_alpha,
                                            gboolean             select_transparent,
-                                           GimpSelectCriterion  select_criterion,
+                                           PicmanSelectCriterion  select_criterion,
                                            gboolean             antialias,
                                            gfloat               threshold,
                                            gint                 x,
@@ -82,17 +82,17 @@ static void find_contiguous_region_helper (GeglBuffer          *src_buffer,
 /*  public functions  */
 
 GeglBuffer *
-gimp_image_contiguous_region_by_seed (GimpImage           *image,
-                                      GimpDrawable        *drawable,
+picman_image_contiguous_region_by_seed (PicmanImage           *image,
+                                      PicmanDrawable        *drawable,
                                       gboolean             sample_merged,
                                       gboolean             antialias,
                                       gfloat               threshold,
                                       gboolean             select_transparent,
-                                      GimpSelectCriterion  select_criterion,
+                                      PicmanSelectCriterion  select_criterion,
                                       gint                 x,
                                       gint                 y)
 {
-  GimpPickable *pickable;
+  PicmanPickable *pickable;
   GeglBuffer   *src_buffer;
   GeglBuffer   *mask_buffer;
   const Babl   *format;
@@ -100,17 +100,17 @@ gimp_image_contiguous_region_by_seed (GimpImage           *image,
   gboolean      has_alpha;
   gfloat        start_col[MAX_CHANNELS];
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
 
   if (sample_merged)
-    pickable = GIMP_PICKABLE (gimp_image_get_projection (image));
+    pickable = PICMAN_PICKABLE (picman_image_get_projection (image));
   else
-    pickable = GIMP_PICKABLE (drawable);
+    pickable = PICMAN_PICKABLE (drawable);
 
-  gimp_pickable_flush (pickable);
+  picman_pickable_flush (pickable);
 
-  src_buffer = gimp_pickable_get_buffer (pickable);
+  src_buffer = picman_pickable_get_buffer (pickable);
 
   format = choose_format (src_buffer, select_criterion,
                           &n_components, &has_alpha);
@@ -147,14 +147,14 @@ gimp_image_contiguous_region_by_seed (GimpImage           *image,
 }
 
 GeglBuffer *
-gimp_image_contiguous_region_by_color (GimpImage            *image,
-                                       GimpDrawable         *drawable,
+picman_image_contiguous_region_by_color (PicmanImage            *image,
+                                       PicmanDrawable         *drawable,
                                        gboolean              sample_merged,
                                        gboolean              antialias,
                                        gfloat                threshold,
                                        gboolean              select_transparent,
-                                       GimpSelectCriterion   select_criterion,
-                                       const GimpRGB        *color)
+                                       PicmanSelectCriterion   select_criterion,
+                                       const PicmanRGB        *color)
 {
   /*  Scan over the image's active layer, finding pixels within the
    *  specified threshold from the given R, G, & B values.  If
@@ -163,7 +163,7 @@ gimp_image_contiguous_region_by_color (GimpImage            *image,
    *  additional selection
    */
   GeglBufferIterator *iter;
-  GimpPickable       *pickable;
+  PicmanPickable       *pickable;
   GeglBuffer         *src_buffer;
   GeglBuffer         *mask_buffer;
   const Babl         *format;
@@ -171,23 +171,23 @@ gimp_image_contiguous_region_by_color (GimpImage            *image,
   gboolean            has_alpha;
   gfloat              start_col[MAX_CHANNELS];
 
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
+  g_return_val_if_fail (PICMAN_IS_IMAGE (image), NULL);
+  g_return_val_if_fail (PICMAN_IS_DRAWABLE (drawable), NULL);
   g_return_val_if_fail (color != NULL, NULL);
 
   if (sample_merged)
-    pickable = GIMP_PICKABLE (gimp_image_get_projection (image));
+    pickable = PICMAN_PICKABLE (picman_image_get_projection (image));
   else
-    pickable = GIMP_PICKABLE (drawable);
+    pickable = PICMAN_PICKABLE (drawable);
 
-  gimp_pickable_flush (pickable);
+  picman_pickable_flush (pickable);
 
-  src_buffer = gimp_pickable_get_buffer (pickable);
+  src_buffer = picman_pickable_get_buffer (pickable);
 
   format = choose_format (src_buffer, select_criterion,
                           &n_components, &has_alpha);
 
-  gimp_rgba_get_pixel (color, format, start_col);
+  picman_rgba_get_pixel (color, format, start_col);
 
   if (has_alpha)
     {
@@ -244,7 +244,7 @@ gimp_image_contiguous_region_by_color (GimpImage            *image,
 
 static const Babl *
 choose_format (GeglBuffer          *buffer,
-               GimpSelectCriterion  select_criterion,
+               PicmanSelectCriterion  select_criterion,
                gint                *n_components,
                gboolean            *has_alpha)
 {
@@ -254,24 +254,24 @@ choose_format (GeglBuffer          *buffer,
 
   switch (select_criterion)
     {
-    case GIMP_SELECT_CRITERION_COMPOSITE:
+    case PICMAN_SELECT_CRITERION_COMPOSITE:
       if (babl_format_is_palette (format))
         format = babl_format ("RGBA float");
       else
-        format = gimp_babl_format (gimp_babl_format_get_base_type (format),
-                                   GIMP_PRECISION_FLOAT,
+        format = picman_babl_format (picman_babl_format_get_base_type (format),
+                                   PICMAN_PRECISION_FLOAT,
                                    *has_alpha);
       break;
 
-    case GIMP_SELECT_CRITERION_R:
-    case GIMP_SELECT_CRITERION_G:
-    case GIMP_SELECT_CRITERION_B:
+    case PICMAN_SELECT_CRITERION_R:
+    case PICMAN_SELECT_CRITERION_G:
+    case PICMAN_SELECT_CRITERION_B:
       format = babl_format ("RGBA float");
       break;
 
-    case GIMP_SELECT_CRITERION_H:
-    case GIMP_SELECT_CRITERION_S:
-    case GIMP_SELECT_CRITERION_V:
+    case PICMAN_SELECT_CRITERION_H:
+    case PICMAN_SELECT_CRITERION_S:
+    case PICMAN_SELECT_CRITERION_V:
       format = babl_format ("HSVA float");
       break;
 
@@ -293,7 +293,7 @@ pixel_difference (const gfloat        *col1,
                   gint                 n_components,
                   gboolean             has_alpha,
                   gboolean             select_transparent,
-                  GimpSelectCriterion  select_criterion)
+                  PicmanSelectCriterion  select_criterion)
 {
   gfloat max = 0.0;
 
@@ -315,7 +315,7 @@ pixel_difference (const gfloat        *col1,
 
       switch (select_criterion)
         {
-        case GIMP_SELECT_CRITERION_COMPOSITE:
+        case PICMAN_SELECT_CRITERION_COMPOSITE:
           for (b = 0; b < n_components; b++)
             {
               diff = fabs (col1[b] - col2[b]);
@@ -324,19 +324,19 @@ pixel_difference (const gfloat        *col1,
             }
           break;
 
-        case GIMP_SELECT_CRITERION_R:
+        case PICMAN_SELECT_CRITERION_R:
           max = fabs (col1[0] - col2[0]);
           break;
 
-        case GIMP_SELECT_CRITERION_G:
+        case PICMAN_SELECT_CRITERION_G:
           max = fabs (col1[1] - col2[1]);
           break;
 
-        case GIMP_SELECT_CRITERION_B:
+        case PICMAN_SELECT_CRITERION_B:
           max = fabs (col1[2] - col2[2]);
           break;
 
-        case GIMP_SELECT_CRITERION_H:
+        case PICMAN_SELECT_CRITERION_H:
           {
             /* wrap around candidates for the actual distance */
             gfloat dist1 = fabs (col1[0] - col2[0]);
@@ -349,11 +349,11 @@ pixel_difference (const gfloat        *col1,
           }
           break;
 
-        case GIMP_SELECT_CRITERION_S:
+        case PICMAN_SELECT_CRITERION_S:
           max = fabs (col1[1] - col2[1]);
           break;
 
-        case GIMP_SELECT_CRITERION_V:
+        case PICMAN_SELECT_CRITERION_V:
           max = fabs (col1[2] - col2[2]);
           break;
         }
@@ -388,7 +388,7 @@ find_contiguous_segment (const gfloat        *col,
                          gboolean             has_alpha,
                          gint                 width,
                          gboolean             select_transparent,
-                         GimpSelectCriterion  select_criterion,
+                         PicmanSelectCriterion  select_criterion,
                          gboolean             antialias,
                          gfloat               threshold,
                          gint                 initial_x,
@@ -463,7 +463,7 @@ find_contiguous_region_helper (GeglBuffer          *src_buffer,
                                gint                 n_components,
                                gboolean             has_alpha,
                                gboolean             select_transparent,
-                               GimpSelectCriterion  select_criterion,
+                               PicmanSelectCriterion  select_criterion,
                                gboolean             antialias,
                                gfloat               threshold,
                                gint                 x,

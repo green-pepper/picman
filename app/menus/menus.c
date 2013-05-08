@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,21 +26,21 @@
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
 
-#include "libgimpbase/gimpbase.h"
+#include "libpicmanbase/picmanbase.h"
 
 #ifdef G_OS_WIN32
-#include "libgimpbase/gimpwin32-io.h"
+#include "libpicmanbase/picmanwin32-io.h"
 #endif
 
 #include "menus-types.h"
 
-#include "config/gimpconfig-file.h"
-#include "config/gimpguiconfig.h"
+#include "config/picmanconfig-file.h"
+#include "config/picmanguiconfig.h"
 
-#include "core/gimp.h"
+#include "core/picman.h"
 
-#include "widgets/gimpactionfactory.h"
-#include "widgets/gimpmenufactory.h"
+#include "widgets/picmanactionfactory.h"
+#include "widgets/picmanmenufactory.h"
 
 #include "dockable-menu.h"
 #include "image-menu.h"
@@ -48,12 +48,12 @@
 #include "plug-in-menus.h"
 #include "tool-options-menu.h"
 
-#include "gimp-intl.h"
+#include "picman-intl.h"
 
 
 /*  local function prototypes  */
 
-static void   menus_can_change_accels (GimpGuiConfig   *config);
+static void   menus_can_change_accels (PicmanGuiConfig   *config);
 static void   menus_remove_accels     (gpointer         data,
                                        const gchar     *accel_path,
                                        guint            accel_key,
@@ -63,7 +63,7 @@ static void   menus_remove_accels     (gpointer         data,
 
 /*  global variables  */
 
-GimpMenuFactory * global_menu_factory = NULL;
+PicmanMenuFactory * global_menu_factory = NULL;
 
 
 /*  private variables  */
@@ -74,24 +74,24 @@ static gboolean   menurc_deleted      = FALSE;
 /*  public functions  */
 
 void
-menus_init (Gimp              *gimp,
-            GimpActionFactory *action_factory)
+menus_init (Picman              *picman,
+            PicmanActionFactory *action_factory)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
-  g_return_if_fail (GIMP_IS_ACTION_FACTORY (action_factory));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
+  g_return_if_fail (PICMAN_IS_ACTION_FACTORY (action_factory));
   g_return_if_fail (global_menu_factory == NULL);
 
   /* We need to make sure the property is installed before using it */
   g_type_class_ref (GTK_TYPE_MENU);
 
-  menus_can_change_accels (GIMP_GUI_CONFIG (gimp->config));
+  menus_can_change_accels (PICMAN_GUI_CONFIG (picman->config));
 
-  g_signal_connect (gimp->config, "notify::can-change-accels",
+  g_signal_connect (picman->config, "notify::can-change-accels",
                     G_CALLBACK (menus_can_change_accels), NULL);
 
-  global_menu_factory = gimp_menu_factory_new (gimp, action_factory);
+  global_menu_factory = picman_menu_factory_new (picman, action_factory);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Image>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Image>",
                                       "file",
                                       "context",
                                       "debug",
@@ -119,7 +119,7 @@ menus_init (Gimp              *gimp,
                                       "quick-mask-menu.xml", NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Toolbox>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Toolbox>",
                                       "file",
                                       "context",
                                       "help",
@@ -140,7 +140,7 @@ menus_init (Gimp              *gimp,
                                       NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Dock>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Dock>",
                                       "file",
                                       "context",
                                       "edit",
@@ -160,7 +160,7 @@ menus_init (Gimp              *gimp,
                                       NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Layers>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Layers>",
                                       "layers",
                                       "plug-in",
                                       "filters",
@@ -169,7 +169,7 @@ menus_init (Gimp              *gimp,
                                       "layers-menu.xml", plug_in_menus_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Channels>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Channels>",
                                       "channels",
                                       "plug-in",
                                       "filters",
@@ -178,7 +178,7 @@ menus_init (Gimp              *gimp,
                                       "channels-menu.xml", plug_in_menus_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Vectors>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Vectors>",
                                       "vectors",
                                       "plug-in",
                                       NULL,
@@ -186,7 +186,7 @@ menus_init (Gimp              *gimp,
                                       "vectors-menu.xml", plug_in_menus_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Colormap>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Colormap>",
                                       "colormap",
                                       "plug-in",
                                       NULL,
@@ -194,7 +194,7 @@ menus_init (Gimp              *gimp,
                                       "colormap-menu.xml", plug_in_menus_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Dockable>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Dockable>",
                                       "dockable",
                                       "dock",
                                       NULL,
@@ -202,7 +202,7 @@ menus_init (Gimp              *gimp,
                                       "dockable-menu.xml", dockable_menu_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Brushes>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Brushes>",
                                       "brushes",
                                       "plug-in",
                                       NULL,
@@ -210,7 +210,7 @@ menus_init (Gimp              *gimp,
                                       "brushes-menu.xml", plug_in_menus_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Dynamics>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Dynamics>",
                                       "dynamics",
                                       "plug-in",
                                       NULL,
@@ -218,7 +218,7 @@ menus_init (Gimp              *gimp,
                                       "dynamics-menu.xml", plug_in_menus_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Patterns>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Patterns>",
                                       "patterns",
                                       "plug-in",
                                       NULL,
@@ -226,7 +226,7 @@ menus_init (Gimp              *gimp,
                                       "patterns-menu.xml", plug_in_menus_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Gradients>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Gradients>",
                                       "gradients",
                                       "plug-in",
                                       NULL,
@@ -234,7 +234,7 @@ menus_init (Gimp              *gimp,
                                       "gradients-menu.xml", plug_in_menus_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Palettes>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Palettes>",
                                       "palettes",
                                       "plug-in",
                                       NULL,
@@ -243,7 +243,7 @@ menus_init (Gimp              *gimp,
                                       NULL);
 
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<ToolPresets>",
+  picman_menu_factory_manager_register (global_menu_factory, "<ToolPresets>",
                                       "tool-presets",
                                       "plug-in",
                                       NULL,
@@ -251,7 +251,7 @@ menus_init (Gimp              *gimp,
                                       "tool-presets-menu.xml", plug_in_menus_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Fonts>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Fonts>",
                                       "fonts",
                                       "plug-in",
                                       NULL,
@@ -259,7 +259,7 @@ menus_init (Gimp              *gimp,
                                       "fonts-menu.xml", plug_in_menus_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Buffers>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Buffers>",
                                       "buffers",
                                       "plug-in",
                                       NULL,
@@ -267,63 +267,63 @@ menus_init (Gimp              *gimp,
                                       "buffers-menu.xml", plug_in_menus_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Documents>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Documents>",
                                       "documents",
                                       NULL,
                                       "/documents-popup",
                                       "documents-menu.xml", NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Templates>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Templates>",
                                       "templates",
                                       NULL,
                                       "/templates-popup",
                                       "templates-menu.xml", NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Images>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Images>",
                                       "images",
                                       NULL,
                                       "/images-popup",
                                       "images-menu.xml", NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<BrushEditor>",
+  picman_menu_factory_manager_register (global_menu_factory, "<BrushEditor>",
                                       "brush-editor",
                                       NULL,
                                       "/brush-editor-popup",
                                       "brush-editor-menu.xml", NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<DynamicsEditor>",
+  picman_menu_factory_manager_register (global_menu_factory, "<DynamicsEditor>",
                                       "dynamics-editor",
                                       NULL,
                                       "/dynamics-editor-popup",
                                       "dynamics-editor-menu.xml", NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<GradientEditor>",
+  picman_menu_factory_manager_register (global_menu_factory, "<GradientEditor>",
                                       "gradient-editor",
                                       NULL,
                                       "/gradient-editor-popup",
                                       "gradient-editor-menu.xml", NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<PaletteEditor>",
+  picman_menu_factory_manager_register (global_menu_factory, "<PaletteEditor>",
                                       "palette-editor",
                                       NULL,
                                       "/palette-editor-popup",
                                       "palette-editor-menu.xml", NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<ToolPresetEditor>",
+  picman_menu_factory_manager_register (global_menu_factory, "<ToolPresetEditor>",
                                       "tool-preset-editor",
                                       NULL,
                                       "/tool-preset-editor-popup",
                                       "tool-preset-editor-menu.xml", NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Selection>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Selection>",
                                       "select",
                                       "vectors",
                                       NULL,
@@ -331,26 +331,26 @@ menus_init (Gimp              *gimp,
                                       "selection-menu.xml", NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<NavigationEditor>",
+  picman_menu_factory_manager_register (global_menu_factory, "<NavigationEditor>",
                                       "view",
                                       NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<Undo>",
+  picman_menu_factory_manager_register (global_menu_factory, "<Undo>",
                                       "edit",
                                       NULL,
                                       "/undo-popup",
                                       "undo-menu.xml", NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<ErrorConsole>",
+  picman_menu_factory_manager_register (global_menu_factory, "<ErrorConsole>",
                                       "error-console",
                                       NULL,
                                       "/error-console-popup",
                                       "error-console-menu.xml", NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<ToolOptions>",
+  picman_menu_factory_manager_register (global_menu_factory, "<ToolOptions>",
                                       "tool-options",
                                       NULL,
                                       "/tool-options-popup",
@@ -358,7 +358,7 @@ menus_init (Gimp              *gimp,
                                       tool_options_menu_setup,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<TextEditor>",
+  picman_menu_factory_manager_register (global_menu_factory, "<TextEditor>",
                                       "text-editor",
                                       NULL,
                                       "/text-editor-toolbar",
@@ -366,7 +366,7 @@ menus_init (Gimp              *gimp,
                                       NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<TextTool>",
+  picman_menu_factory_manager_register (global_menu_factory, "<TextTool>",
                                       "text-tool",
                                       NULL,
                                       "/text-tool-popup",
@@ -374,7 +374,7 @@ menus_init (Gimp              *gimp,
                                       NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<CursorInfo>",
+  picman_menu_factory_manager_register (global_menu_factory, "<CursorInfo>",
                                       "cursor-info",
                                       NULL,
                                       "/cursor-info-popup",
@@ -382,7 +382,7 @@ menus_init (Gimp              *gimp,
                                       NULL,
                                       NULL);
 
-  gimp_menu_factory_manager_register (global_menu_factory, "<SamplePoints>",
+  picman_menu_factory_manager_register (global_menu_factory, "<SamplePoints>",
                                       "sample-points",
                                       NULL,
                                       "/sample-points-popup",
@@ -392,50 +392,50 @@ menus_init (Gimp              *gimp,
 }
 
 void
-menus_exit (Gimp *gimp)
+menus_exit (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
   g_return_if_fail (global_menu_factory != NULL);
 
   g_object_unref (global_menu_factory);
   global_menu_factory = NULL;
 
-  g_signal_handlers_disconnect_by_func (gimp->config,
+  g_signal_handlers_disconnect_by_func (picman->config,
                                         menus_can_change_accels,
                                         NULL);
 }
 
 void
-menus_restore (Gimp *gimp)
+menus_restore (Picman *picman)
 {
   gchar *filename;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  filename = gimp_personal_rc_file ("menurc");
+  filename = picman_personal_rc_file ("menurc");
 
-  if (gimp->be_verbose)
-    g_print ("Parsing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Parsing '%s'\n", picman_filename_to_utf8 (filename));
 
   gtk_accel_map_load (filename);
   g_free (filename);
 }
 
 void
-menus_save (Gimp     *gimp,
+menus_save (Picman     *picman,
             gboolean  always_save)
 {
   gchar *filename;
 
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
   if (menurc_deleted && ! always_save)
     return;
 
-  filename = gimp_personal_rc_file ("menurc");
+  filename = picman_personal_rc_file ("menurc");
 
-  if (gimp->be_verbose)
-    g_print ("Writing '%s'\n", gimp_filename_to_utf8 (filename));
+  if (picman->be_verbose)
+    g_print ("Writing '%s'\n", picman_filename_to_utf8 (filename));
 
   gtk_accel_map_save (filename);
   g_free (filename);
@@ -444,20 +444,20 @@ menus_save (Gimp     *gimp,
 }
 
 gboolean
-menus_clear (Gimp    *gimp,
+menus_clear (Picman    *picman,
              GError **error)
 {
   gchar    *filename;
   gchar    *source;
   gboolean  success = TRUE;
 
-  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (PICMAN_IS_PICMAN (picman), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  filename = gimp_personal_rc_file ("menurc");
-  source = g_build_filename (gimp_sysconf_directory (), "menurc", NULL);
+  filename = picman_personal_rc_file ("menurc");
+  source = g_build_filename (picman_sysconf_directory (), "menurc", NULL);
 
-  if (gimp_config_file_copy (source, filename, NULL, NULL, NULL))
+  if (picman_config_file_copy (source, filename, NULL, NULL, NULL))
     {
       menurc_deleted = TRUE;
     }
@@ -465,7 +465,7 @@ menus_clear (Gimp    *gimp,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
 		   _("Deleting \"%s\" failed: %s"),
-                   gimp_filename_to_utf8 (filename), g_strerror (errno));
+                   picman_filename_to_utf8 (filename), g_strerror (errno));
       success = FALSE;
     }
   else
@@ -480,18 +480,18 @@ menus_clear (Gimp    *gimp,
 }
 
 void
-menus_remove (Gimp *gimp)
+menus_remove (Picman *picman)
 {
-  g_return_if_fail (GIMP_IS_GIMP (gimp));
+  g_return_if_fail (PICMAN_IS_PICMAN (picman));
 
-  gtk_accel_map_foreach (gimp, menus_remove_accels);
+  gtk_accel_map_foreach (picman, menus_remove_accels);
 }
 
 
 /*  private functions  */
 
 static void
-menus_can_change_accels (GimpGuiConfig *config)
+menus_can_change_accels (PicmanGuiConfig *config)
 {
   g_object_set (gtk_settings_get_for_screen (gdk_screen_get_default ()),
                 "gtk-can-change-accels", config->can_change_accels,

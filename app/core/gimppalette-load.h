@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,45 +15,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_PALETTE_LOAD_H__
-#define __GIMP_PALETTE_LOAD_H__
+#ifndef __PICMAN_PALETTE_LOAD_H__
+#define __PICMAN_PALETTE_LOAD_H__
 
 
-#define GIMP_PALETTE_FILE_EXTENSION ".gpl"
+#define PICMAN_PALETTE_FILE_EXTENSION ".gpl"
 
 
 typedef enum
 {
-  GIMP_PALETTE_FILE_FORMAT_UNKNOWN,
-  GIMP_PALETTE_FILE_FORMAT_GPL,      /* GIMP palette                        */
-  GIMP_PALETTE_FILE_FORMAT_RIFF_PAL, /* RIFF palette                        */
-  GIMP_PALETTE_FILE_FORMAT_ACT,      /* Photoshop binary color palette      */
-  GIMP_PALETTE_FILE_FORMAT_PSP_PAL,  /* JASC's Paint Shop Pro color palette */
-  GIMP_PALETTE_FILE_FORMAT_ACO,      /* Photoshop ACO color file            */
-  GIMP_PALETTE_FILE_FORMAT_CSS       /* Cascaded Stylesheet file (CSS)      */
-} GimpPaletteFileFormat;
+  PICMAN_PALETTE_FILE_FORMAT_UNKNOWN,
+  PICMAN_PALETTE_FILE_FORMAT_GPL,      /* PICMAN palette                        */
+  PICMAN_PALETTE_FILE_FORMAT_RIFF_PAL, /* RIFF palette                        */
+  PICMAN_PALETTE_FILE_FORMAT_ACT,      /* Photoshop binary color palette      */
+  PICMAN_PALETTE_FILE_FORMAT_PSP_PAL,  /* JASC's Paint Shop Pro color palette */
+  PICMAN_PALETTE_FILE_FORMAT_ACO,      /* Photoshop ACO color file            */
+  PICMAN_PALETTE_FILE_FORMAT_CSS       /* Cascaded Stylesheet file (CSS)      */
+} PicmanPaletteFileFormat;
 
 
-GList               * gimp_palette_load               (GimpContext  *context,
+GList               * picman_palette_load               (PicmanContext  *context,
                                                        const gchar  *filename,
                                                        GError      **error);
-GList               * gimp_palette_load_act           (GimpContext  *context,
+GList               * picman_palette_load_act           (PicmanContext  *context,
                                                        const gchar  *filename,
                                                        GError      **error);
-GList               * gimp_palette_load_riff          (GimpContext  *context,
+GList               * picman_palette_load_riff          (PicmanContext  *context,
                                                        const gchar  *filename,
                                                        GError      **error);
-GList               * gimp_palette_load_psp           (GimpContext  *context,
+GList               * picman_palette_load_psp           (PicmanContext  *context,
                                                        const gchar  *filename,
                                                        GError      **error);
-GList               * gimp_palette_load_aco           (GimpContext  *context,
+GList               * picman_palette_load_aco           (PicmanContext  *context,
                                                        const gchar  *filename,
                                                        GError      **error);
-GList               * gimp_palette_load_css           (GimpContext  *context,
+GList               * picman_palette_load_css           (PicmanContext  *context,
                                                        const gchar  *filename,
                                                        GError      **error);
 
-GimpPaletteFileFormat gimp_palette_load_detect_format (const gchar  *filename);
+PicmanPaletteFileFormat picman_palette_load_detect_format (const gchar  *filename);
 
 
-#endif /* __GIMP_PALETTE_H__ */
+#endif /* __PICMAN_PALETTE_H__ */

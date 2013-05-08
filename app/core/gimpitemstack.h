@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
  *
- * gimpitemstack.h
- * Copyright (C) 2008 Michael Natterer <mitch@gimp.org>
+ * picmanitemstack.h
+ * Copyright (C) 2008 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,48 +18,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_ITEM_STACK_H__
-#define __GIMP_ITEM_STACK_H__
+#ifndef __PICMAN_ITEM_STACK_H__
+#define __PICMAN_ITEM_STACK_H__
 
-#include "gimpfilterstack.h"
-
-
-#define GIMP_TYPE_ITEM_STACK            (gimp_item_stack_get_type ())
-#define GIMP_ITEM_STACK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_ITEM_STACK, GimpItemStack))
-#define GIMP_ITEM_STACK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_ITEM_STACK, GimpItemStackClass))
-#define GIMP_IS_ITEM_STACK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_ITEM_STACK))
-#define GIMP_IS_ITEM_STACK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_ITEM_STACK))
+#include "picmanfilterstack.h"
 
 
-typedef struct _GimpItemStackClass GimpItemStackClass;
+#define PICMAN_TYPE_ITEM_STACK            (picman_item_stack_get_type ())
+#define PICMAN_ITEM_STACK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PICMAN_TYPE_ITEM_STACK, PicmanItemStack))
+#define PICMAN_ITEM_STACK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PICMAN_TYPE_ITEM_STACK, PicmanItemStackClass))
+#define PICMAN_IS_ITEM_STACK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PICMAN_TYPE_ITEM_STACK))
+#define PICMAN_IS_ITEM_STACK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PICMAN_TYPE_ITEM_STACK))
 
-struct _GimpItemStack
+
+typedef struct _PicmanItemStackClass PicmanItemStackClass;
+
+struct _PicmanItemStack
 {
-  GimpFilterStack  parent_instance;
+  PicmanFilterStack  parent_instance;
 };
 
-struct _GimpItemStackClass
+struct _PicmanItemStackClass
 {
-  GimpFilterStackClass  parent_class;
+  PicmanFilterStackClass  parent_class;
 };
 
 
-GType           gimp_item_stack_get_type            (void) G_GNUC_CONST;
-GimpContainer * gimp_item_stack_new                 (GType          item_type);
+GType           picman_item_stack_get_type            (void) G_GNUC_CONST;
+PicmanContainer * picman_item_stack_new                 (GType          item_type);
 
-gint            gimp_item_stack_get_n_items         (GimpItemStack *stack);
-gboolean        gimp_item_stack_is_flat             (GimpItemStack *stack);
-GList         * gimp_item_stack_get_item_iter       (GimpItemStack *stack);
-GList         * gimp_item_stack_get_item_list       (GimpItemStack *stack);
-GimpItem      * gimp_item_stack_get_item_by_tattoo  (GimpItemStack *stack,
-                                                     GimpTattoo     tattoo);
-GimpItem      * gimp_item_stack_get_item_by_path    (GimpItemStack *stack,
+gint            picman_item_stack_get_n_items         (PicmanItemStack *stack);
+gboolean        picman_item_stack_is_flat             (PicmanItemStack *stack);
+GList         * picman_item_stack_get_item_iter       (PicmanItemStack *stack);
+GList         * picman_item_stack_get_item_list       (PicmanItemStack *stack);
+PicmanItem      * picman_item_stack_get_item_by_tattoo  (PicmanItemStack *stack,
+                                                     PicmanTattoo     tattoo);
+PicmanItem      * picman_item_stack_get_item_by_path    (PicmanItemStack *stack,
                                                      GList         *path);
-GimpItem      * gimp_item_stack_get_parent_by_path  (GimpItemStack *stack,
+PicmanItem      * picman_item_stack_get_parent_by_path  (PicmanItemStack *stack,
                                                      GList         *path,
                                                      gint          *index);
 
-void            gimp_item_stack_invalidate_previews (GimpItemStack *stack);
+void            picman_item_stack_invalidate_previews (PicmanItemStack *stack);
 
 
-#endif  /*  __GIMP_ITEM_STACK_H__  */
+#endif  /*  __PICMAN_ITEM_STACK_H__  */

@@ -1,4 +1,4 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,217 +15,217 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_IMAGE_UNDO_PUSH_H__
-#define __GIMP_IMAGE_UNDO_PUSH_H__
+#ifndef __PICMAN_IMAGE_UNDO_PUSH_H__
+#define __PICMAN_IMAGE_UNDO_PUSH_H__
 
 
 /*  image undos  */
 
-GimpUndo * gimp_image_undo_push_image_type          (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_image_type          (PicmanImage     *image,
                                                      const gchar   *undo_desc);
-GimpUndo * gimp_image_undo_push_image_precision     (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_image_precision     (PicmanImage     *image,
                                                      const gchar   *undo_desc);
-GimpUndo * gimp_image_undo_push_image_size          (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_image_size          (PicmanImage     *image,
                                                      const gchar   *undo_desc,
                                                      gint           previous_origin_x,
                                                      gint           previous_origin_y,
                                                      gint           previous_width,
                                                      gint           prevoius_height);
-GimpUndo * gimp_image_undo_push_image_resolution    (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_image_resolution    (PicmanImage     *image,
                                                      const gchar   *undo_desc);
-GimpUndo * gimp_image_undo_push_image_grid          (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_image_grid          (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpGrid      *grid);
-GimpUndo * gimp_image_undo_push_image_colormap      (GimpImage     *image,
+                                                     PicmanGrid      *grid);
+PicmanUndo * picman_image_undo_push_image_colormap      (PicmanImage     *image,
                                                      const gchar   *undo_desc);
-GimpUndo * gimp_image_undo_push_image_parasite      (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_image_parasite      (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     const GimpParasite *parasite);
-GimpUndo * gimp_image_undo_push_image_parasite_remove (GimpImage   *image,
+                                                     const PicmanParasite *parasite);
+PicmanUndo * picman_image_undo_push_image_parasite_remove (PicmanImage   *image,
                                                      const gchar   *undo_desc,
                                                      const gchar   *name);
 
 
 /*  guide & sample point undos  */
 
-GimpUndo * gimp_image_undo_push_guide               (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_guide               (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpGuide     *guide);
-GimpUndo * gimp_image_undo_push_sample_point        (GimpImage     *image,
+                                                     PicmanGuide     *guide);
+PicmanUndo * picman_image_undo_push_sample_point        (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpSamplePoint *sample_point);
+                                                     PicmanSamplePoint *sample_point);
 
 
 /*  drawable undos  */
 
-GimpUndo * gimp_image_undo_push_drawable            (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_drawable            (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpDrawable  *drawable,
+                                                     PicmanDrawable  *drawable,
                                                      GeglBuffer    *buffer,
                                                      gint           x,
                                                      gint           y);
-GimpUndo * gimp_image_undo_push_drawable_mod        (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_drawable_mod        (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpDrawable  *drawable,
+                                                     PicmanDrawable  *drawable,
                                                      gboolean       copy_buffer);
 
 
 /*  mask undos  */
 
-GimpUndo * gimp_image_undo_push_mask                (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_mask                (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpChannel   *mask);
-GimpUndo * gimp_image_undo_push_mask_precision      (GimpImage     *image,
+                                                     PicmanChannel   *mask);
+PicmanUndo * picman_image_undo_push_mask_precision      (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpChannel   *mask);
+                                                     PicmanChannel   *mask);
 
 
 /*  item undos  */
 
-GimpUndo * gimp_image_undo_push_item_reorder        (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_item_reorder        (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpItem      *item);
-GimpUndo * gimp_image_undo_push_item_rename         (GimpImage     *image,
+                                                     PicmanItem      *item);
+PicmanUndo * picman_image_undo_push_item_rename         (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpItem      *item);
-GimpUndo * gimp_image_undo_push_item_displace       (GimpImage     *image,
+                                                     PicmanItem      *item);
+PicmanUndo * picman_image_undo_push_item_displace       (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpItem      *item);
-GimpUndo * gimp_image_undo_push_item_visibility     (GimpImage     *image,
+                                                     PicmanItem      *item);
+PicmanUndo * picman_image_undo_push_item_visibility     (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpItem      *item);
-GimpUndo * gimp_image_undo_push_item_linked         (GimpImage     *image,
+                                                     PicmanItem      *item);
+PicmanUndo * picman_image_undo_push_item_linked         (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpItem      *item);
-GimpUndo * gimp_image_undo_push_item_lock_content   (GimpImage     *image,
+                                                     PicmanItem      *item);
+PicmanUndo * picman_image_undo_push_item_lock_content   (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpItem      *item);
-GimpUndo * gimp_image_undo_push_item_lock_position  (GimpImage     *image,
+                                                     PicmanItem      *item);
+PicmanUndo * picman_image_undo_push_item_lock_position  (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpItem      *item);
-GimpUndo * gimp_image_undo_push_item_parasite       (GimpImage     *image,
+                                                     PicmanItem      *item);
+PicmanUndo * picman_image_undo_push_item_parasite       (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpItem      *item,
-                                                     const GimpParasite *parasite);
-GimpUndo * gimp_image_undo_push_item_parasite_remove(GimpImage     *image,
+                                                     PicmanItem      *item,
+                                                     const PicmanParasite *parasite);
+PicmanUndo * picman_image_undo_push_item_parasite_remove(PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpItem      *item,
+                                                     PicmanItem      *item,
                                                      const gchar   *name);
 
 
 /*  layer undos  */
 
-GimpUndo * gimp_image_undo_push_layer_add           (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_layer_add           (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpLayer     *layer,
-                                                     GimpLayer     *prev_layer);
-GimpUndo * gimp_image_undo_push_layer_remove        (GimpImage     *image,
+                                                     PicmanLayer     *layer,
+                                                     PicmanLayer     *prev_layer);
+PicmanUndo * picman_image_undo_push_layer_remove        (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpLayer     *layer,
-                                                     GimpLayer     *prev_parent,
+                                                     PicmanLayer     *layer,
+                                                     PicmanLayer     *prev_parent,
                                                      gint           prev_position,
-                                                     GimpLayer     *prev_layer);
-GimpUndo * gimp_image_undo_push_layer_mode          (GimpImage     *image,
+                                                     PicmanLayer     *prev_layer);
+PicmanUndo * picman_image_undo_push_layer_mode          (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpLayer     *layer);
-GimpUndo * gimp_image_undo_push_layer_opacity       (GimpImage     *image,
+                                                     PicmanLayer     *layer);
+PicmanUndo * picman_image_undo_push_layer_opacity       (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpLayer     *layer);
-GimpUndo * gimp_image_undo_push_layer_lock_alpha    (GimpImage     *image,
+                                                     PicmanLayer     *layer);
+PicmanUndo * picman_image_undo_push_layer_lock_alpha    (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpLayer     *layer);
+                                                     PicmanLayer     *layer);
 
 
 /*  group layer undos  */
 
-GimpUndo * gimp_image_undo_push_group_layer_suspend (GimpImage      *image,
+PicmanUndo * picman_image_undo_push_group_layer_suspend (PicmanImage      *image,
                                                      const gchar    *undo_desc,
-                                                     GimpGroupLayer *group);
-GimpUndo * gimp_image_undo_push_group_layer_resume  (GimpImage      *image,
+                                                     PicmanGroupLayer *group);
+PicmanUndo * picman_image_undo_push_group_layer_resume  (PicmanImage      *image,
                                                      const gchar    *undo_desc,
-                                                     GimpGroupLayer *group);
-GimpUndo * gimp_image_undo_push_group_layer_convert (GimpImage      *image,
+                                                     PicmanGroupLayer *group);
+PicmanUndo * picman_image_undo_push_group_layer_convert (PicmanImage      *image,
                                                      const gchar    *undo_desc,
-                                                     GimpGroupLayer *group);
+                                                     PicmanGroupLayer *group);
 
 
 /*  text layer undos  */
 
-GimpUndo * gimp_image_undo_push_text_layer          (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_text_layer          (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpTextLayer *layer,
+                                                     PicmanTextLayer *layer,
                                                      const GParamSpec *pspec);
-GimpUndo * gimp_image_undo_push_text_layer_modified (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_text_layer_modified (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpTextLayer *layer);
-GimpUndo * gimp_image_undo_push_text_layer_convert  (GimpImage     *image,
+                                                     PicmanTextLayer *layer);
+PicmanUndo * picman_image_undo_push_text_layer_convert  (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpTextLayer *layer);
+                                                     PicmanTextLayer *layer);
 
 
 /*  layer mask undos  */
 
-GimpUndo * gimp_image_undo_push_layer_mask_add      (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_layer_mask_add      (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpLayer     *layer,
-                                                     GimpLayerMask *mask);
-GimpUndo * gimp_image_undo_push_layer_mask_remove   (GimpImage     *image,
+                                                     PicmanLayer     *layer,
+                                                     PicmanLayerMask *mask);
+PicmanUndo * picman_image_undo_push_layer_mask_remove   (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpLayer     *layer,
-                                                     GimpLayerMask *mask);
-GimpUndo * gimp_image_undo_push_layer_mask_apply    (GimpImage     *image,
+                                                     PicmanLayer     *layer,
+                                                     PicmanLayerMask *mask);
+PicmanUndo * picman_image_undo_push_layer_mask_apply    (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpLayer     *layer);
-GimpUndo * gimp_image_undo_push_layer_mask_show     (GimpImage     *image,
+                                                     PicmanLayer     *layer);
+PicmanUndo * picman_image_undo_push_layer_mask_show     (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpLayer     *layer);
+                                                     PicmanLayer     *layer);
 
 
 /*  channel undos  */
 
-GimpUndo * gimp_image_undo_push_channel_add         (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_channel_add         (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpChannel   *channel,
-                                                     GimpChannel   *prev_channel);
-GimpUndo * gimp_image_undo_push_channel_remove      (GimpImage     *image,
+                                                     PicmanChannel   *channel,
+                                                     PicmanChannel   *prev_channel);
+PicmanUndo * picman_image_undo_push_channel_remove      (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpChannel   *channel,
-                                                     GimpChannel   *prev_parent,
+                                                     PicmanChannel   *channel,
+                                                     PicmanChannel   *prev_parent,
                                                      gint           prev_position,
-                                                     GimpChannel   *prev_channel);
-GimpUndo * gimp_image_undo_push_channel_color       (GimpImage     *image,
+                                                     PicmanChannel   *prev_channel);
+PicmanUndo * picman_image_undo_push_channel_color       (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpChannel   *channel);
+                                                     PicmanChannel   *channel);
 
 
 /*  vectors undos  */
 
-GimpUndo * gimp_image_undo_push_vectors_add         (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_vectors_add         (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpVectors   *vectors,
-                                                     GimpVectors   *prev_vectors);
-GimpUndo * gimp_image_undo_push_vectors_remove      (GimpImage     *image,
+                                                     PicmanVectors   *vectors,
+                                                     PicmanVectors   *prev_vectors);
+PicmanUndo * picman_image_undo_push_vectors_remove      (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpVectors   *vectors,
-                                                     GimpVectors   *prev_parent,
+                                                     PicmanVectors   *vectors,
+                                                     PicmanVectors   *prev_parent,
                                                      gint           prev_position,
-                                                     GimpVectors   *prev_vectors);
-GimpUndo * gimp_image_undo_push_vectors_mod         (GimpImage     *image,
+                                                     PicmanVectors   *prev_vectors);
+PicmanUndo * picman_image_undo_push_vectors_mod         (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpVectors   *vectors);
+                                                     PicmanVectors   *vectors);
 
 
 /*  floating selection undos  */
 
-GimpUndo * gimp_image_undo_push_fs_to_layer         (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_fs_to_layer         (PicmanImage     *image,
                                                      const gchar   *undo_desc,
-                                                     GimpLayer     *floating_layer);
+                                                     PicmanLayer     *floating_layer);
 
 
 /*  EEK undo  */
 
-GimpUndo * gimp_image_undo_push_cantundo            (GimpImage     *image,
+PicmanUndo * picman_image_undo_push_cantundo            (PicmanImage     *image,
                                                      const gchar   *undo_desc);
 
 
-#endif  /* __GIMP_IMAGE_UNDO_PUSH_H__ */
+#endif  /* __PICMAN_IMAGE_UNDO_PUSH_H__ */

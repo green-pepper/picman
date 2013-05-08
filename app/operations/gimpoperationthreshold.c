@@ -1,8 +1,8 @@
-/* GIMP - The GNU Image Manipulation Program
+/* PICMAN - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationthreshold.c
- * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
+ * picmanoperationthreshold.c
+ * Copyright (C) 2007 Michael Natterer <mitch@picman.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@
 
 #include "operations-types.h"
 
-#include "gimpoperationthreshold.h"
-#include "gimpthresholdconfig.h"
+#include "picmanoperationthreshold.h"
+#include "picmanthresholdconfig.h"
 
 
-static gboolean gimp_operation_threshold_process (GeglOperation       *operation,
+static gboolean picman_operation_threshold_process (GeglOperation       *operation,
                                                   void                *in_buf,
                                                   void                *out_buf,
                                                   glong                samples,
@@ -37,55 +37,55 @@ static gboolean gimp_operation_threshold_process (GeglOperation       *operation
                                                   gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationThreshold, gimp_operation_threshold,
-               GIMP_TYPE_OPERATION_POINT_FILTER)
+G_DEFINE_TYPE (PicmanOperationThreshold, picman_operation_threshold,
+               PICMAN_TYPE_OPERATION_POINT_FILTER)
 
-#define parent_class gimp_operation_threshold_parent_class
+#define parent_class picman_operation_threshold_parent_class
 
 
 static void
-gimp_operation_threshold_class_init (GimpOperationThresholdClass *klass)
+picman_operation_threshold_class_init (PicmanOperationThresholdClass *klass)
 {
   GObjectClass                  *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass            *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationPointFilterClass *point_class     = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  object_class->set_property   = gimp_operation_point_filter_set_property;
-  object_class->get_property   = gimp_operation_point_filter_get_property;
+  object_class->set_property   = picman_operation_point_filter_set_property;
+  object_class->get_property   = picman_operation_point_filter_get_property;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:threshold",
+                                 "name",        "picman:threshold",
                                  "categories",  "color",
-                                 "description", "GIMP Threshold operation",
+                                 "description", "PICMAN Threshold operation",
                                  NULL);
 
-  point_class->process = gimp_operation_threshold_process;
+  point_class->process = picman_operation_threshold_process;
 
   g_object_class_install_property (object_class,
-                                   GIMP_OPERATION_POINT_FILTER_PROP_CONFIG,
+                                   PICMAN_OPERATION_POINT_FILTER_PROP_CONFIG,
                                    g_param_spec_object ("config",
                                                         "Config",
                                                         "The config object",
-                                                        GIMP_TYPE_THRESHOLD_CONFIG,
+                                                        PICMAN_TYPE_THRESHOLD_CONFIG,
                                                         G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_operation_threshold_init (GimpOperationThreshold *self)
+picman_operation_threshold_init (PicmanOperationThreshold *self)
 {
 }
 
 static gboolean
-gimp_operation_threshold_process (GeglOperation       *operation,
+picman_operation_threshold_process (GeglOperation       *operation,
                                   void                *in_buf,
                                   void                *out_buf,
                                   glong                samples,
                                   const GeglRectangle *roi,
                                   gint                 level)
 {
-  GimpOperationPointFilter *point  = GIMP_OPERATION_POINT_FILTER (operation);
-  GimpThresholdConfig      *config = GIMP_THRESHOLD_CONFIG (point->config);
+  PicmanOperationPointFilter *point  = PICMAN_OPERATION_POINT_FILTER (operation);
+  PicmanThresholdConfig      *config = PICMAN_THRESHOLD_CONFIG (point->config);
   gfloat                   *src    = in_buf;
   gfloat                   *dest   = out_buf;
 
